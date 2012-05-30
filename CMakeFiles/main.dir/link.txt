@@ -1,1 +1,0 @@
-/usr/bin/c++   -g   CMakeFiles/main.dir/main.cpp.o CMakeFiles/main.dir/account.cpp.o CMakeFiles/main.dir/application.cpp.o CMakeFiles/main.dir/database.cpp.o CMakeFiles/main.dir/identifier.cpp.o CMakeFiles/main.dir/stored_object.cpp.o  -o main -rdynamic -L/home/matthew/lib/jewel -lunittest++ -ljewel -Wl,-rpath,/home/matthew/lib/jewel 
