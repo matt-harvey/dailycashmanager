@@ -7,29 +7,27 @@
 Account	account.hpp	/^class Account: public StoredObject$/;"	c
 Application	application.hpp	/^class Application$/;"	c
 BalanceType	account.hpp	/^	typedef int BalanceType;$/;"	t	class:Account
+Commodity	commodity.hpp	/^class Commodity$/;"	c
 Database	database.hpp	/^class Database$/;"	c
 GUARD_account_hpp	account.hpp	2;"	d
 GUARD_application_hpp	application.hpp	2;"	d
+GUARD_commodity_hpp	commodity.hpp	2;"	d
 GUARD_database_hpp	database.hpp	2;"	d
 GUARD_identifier_hpp	identifier.hpp	2;"	d
 GUARD_stored_object_hpp	stored_object.hpp	2;"	d
 Identifier	identifier.hpp	/^class Identifier$/;"	c
 StoredObject	stored_object.hpp	/^class StoredObject$/;"	c
-balance	account.hpp	/^inline Account::BalanceType Account::balance() const$/;"	f	class:Account
 balance_	account.hpp	/^	BalanceType balance_;$/;"	m	class:Account
-description	account.hpp	/^inline std::string Account::description() const$/;"	f	class:Account
+commodity_	account.hpp	/^	Commodity commodity_;$/;"	m	class:Account
 description_	account.hpp	/^	std::string description_;$/;"	m	class:Account
 execute	application.hpp	/^inline void Application::execute()$/;"	f	class:Application
 filepath_	database.hpp	/^	std::string filepath_;$/;"	m	class:Database
 id_	stored_object.hpp	/^	Identifier id_;$/;"	m	class:StoredObject
 main	main.cpp	/^int main()$/;"	f
-name	account.hpp	/^inline std::string Account::name() const$/;"	f	class:Account
 name_	account.hpp	/^	std::string name_;$/;"	m	class:Account
 name_	database.hpp	/^	std::string name_;$/;"	m	class:Database
 run_closing_tests	application.hpp	/^inline void Application::run_closing_tests()$/;"	f	class:Application
 run_opening_tests	application.hpp	/^inline void Application::run_opening_tests()$/;"	f	class:Application
-set_balance	account.hpp	/^inline void Account::set_balance(Account::BalanceType new_balance)$/;"	f	class:Account
-set_description	account.hpp	/^inline void Account::set_description(std::string const& new_description)$/;"	f	class:Account
-set_name	account.hpp	/^inline void Account::set_name(std::string const& new_name)$/;"	f	class:Account
 storage_location_	identifier.hpp	/^	Database storage_location_;$/;"	m	class:Identifier
+str_rep_	commodity.hpp	/^	std::string str_rep_;$/;"	m	class:Commodity
 str_rep_	identifier.hpp	/^	std::string str_rep_;$/;"	m	class:Identifier
