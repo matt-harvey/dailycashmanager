@@ -6,8 +6,8 @@
 class Database
 {
 private:
-	std::string name_;
-	std::string filepath_;
+	std::string m_name;
+	std::string m_filepath;
 };
 
 #endif

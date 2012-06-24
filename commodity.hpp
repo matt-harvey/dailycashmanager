@@ -7,7 +7,7 @@ class Commodity
 {
 public:
 private:
-	std::string str_rep_;
+	std::string m_str_rep;
 };
 
 // inline member functions

@@ -7,8 +7,8 @@
 class Identifier
 {
 private:
-	std::string str_rep_;
-	Database storage_location_;
+	std::string m_str_rep;
+	Database m_storage_location;
 };
 
 #endif

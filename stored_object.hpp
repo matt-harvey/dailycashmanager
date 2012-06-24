@@ -9,7 +9,7 @@ public:
 	void save();
 	// type signature T.B.D. for method... load()
 private:
-	Identifier id_;
+	Identifier m_id;
 };
 	
 
