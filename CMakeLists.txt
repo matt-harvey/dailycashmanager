@@ -8,6 +8,7 @@ add_executable (main
 		application.cpp
 		database.cpp
 		identifier.cpp
+		money.cpp
 		stored_object.cpp)
 target_link_libraries (main unittest++)
 target_link_libraries (main jewel)
