@@ -1,4 +1,4 @@
-#include "application.hpp"
+#include "session.hpp"
 
 // #include "UnitTest++/src/UnitTest++.h"
 
@@ -14,6 +14,7 @@ using std::endl;
 
 int main(int argc, char* argv[])
 {
+	/*
 	if (argc == 0)
 	{	
 		cout << Decimal("0") << endl;
@@ -37,15 +38,13 @@ int main(int argc, char* argv[])
 		}
 	}
 	cout << sum << endl;
-
-
-
-	/*
-	Application app;
-	app.run_opening_tests();
-	app.execute();
-	app.run_closing_tests();
 	*/
+
+
+	Session session; 
+	session.run_opening_tests();
+	session.execute();
+	session.run_closing_tests();
 	return 0;
 	// return UnitTest::RunAllTests();
 }

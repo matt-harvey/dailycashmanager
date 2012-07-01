@@ -5,7 +5,7 @@ link_directories (/home/matthew/lib/jewel)
 add_executable (main 
                 main.cpp
 		account.cpp
-		application.cpp
+		session.cpp
 		database.cpp
 		identifier.cpp
 		money.cpp
