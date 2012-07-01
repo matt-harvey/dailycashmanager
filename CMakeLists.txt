@@ -7,6 +7,7 @@ add_executable (main
 		account.cpp
 		session.cpp
 		database.cpp
+		entity.cpp
 		identifier.cpp
 		money.cpp
 		stored_object.cpp)
