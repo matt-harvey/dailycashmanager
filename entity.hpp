@@ -3,6 +3,7 @@
 
 #include "general_typedefs.hpp"
 #include "database.hpp"
+#include <jewel/decimal.hpp>
 #include <string>
 
 
@@ -14,9 +15,17 @@ class Entity
 public:
 protected:
 private:
-	Database m_database;
+
 	std::string m_name;
-	IdType m_commodity_id;  // native commodity (currency) of the entity
+
+	std::string m_database_filepath;
+
+	// Native commodity (currency) of the entity
+	IdType m_commodity_id;
+	
+	// Provides conversion rates to convert between native and non-native
+	// commodities. Commodities are referenced by their m_commodity_id.
+	std::map<IdType, jewel::Decimal> m_conversion_table;
 };
 
 
