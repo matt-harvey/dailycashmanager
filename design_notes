@@ -9,7 +9,9 @@ Database
   boost::shared_ptr<DatabaseImpl> pimpl
 [end example]
 
-SUMMARY OF PHATBOOKS-SPECIFIC CLASSES
+SUMMARY OF PHATBOOKS-SPECIFIC CLASSES & TYPEDEFS
+
+typedef unsigned int IdType
 
 Session
   Entity entity
@@ -19,50 +21,51 @@ Database
 
 Entity
   Database database
-  std::vector<int> record_of_journals_to_be_resolved  // For tracking non-finalized FX transactions - there could be a very superficial interface to help users enter these in the first place
-  int commodity_id
+  std::string m_name;
+  std::vector<IdType> record_of_journals_to_be_resolved  // For tracking non-finalized FX transactions - there could be a very superficial interface to help users enter these in the first place
+  IdType commodity_id
 
-Date
+DateType
   (probably just typedef some Boost date class)
 
 Account
-  enum AccountType { balance_sheet, profit_and_loss }
+  enum AccountType { balance_sheet, profit_and_loss, envelope }
   AccountType account_type
   std::string name
-  int commodity_id
-  int id
-
-Envelope
-  std::string name
-  int id
+  std::string description
+  IdType commodity_id
+  IdType id
 
 Journal
   enum Status { working, saved, posted }
   Status status
-  Date date
+  DateType date
+  std::string comment
   std::vector<id> entry_ids
-  int id
+  IdType id
 
 Entry
   enum Status {	working, saved, posted }
   Status status
-  int account_id
+  DateType date
+  IdType account_id
   jewel::Decimal amount
-  int journal_id
-  int id
+  std::string comment
+  IdType journal_id
+  IdType id
 
 Commodity
   std::string name
   std::string abbreviation
-  int id
+  IdType id
 
 Repeater
-  Date next_due_date
+  DateType next_due_date
   enum IntervalScale { daily, monthly,... }
   IntervalScale interval_scale
-  int journal_id
   int interval_units
-  int id
+  IdType journal_id
+  IdType id
 
 ---
 

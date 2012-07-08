@@ -3,15 +3,20 @@
 
 #include <string>
 
+namespace phatbooks
+{
+
 class Commodity
 {
 public:
 private:
-	std::string m_str_rep;
+	std::string m_name;
+	std::string m_abbreviation;
+	IdType m_id;
 };
 
-// inline member functions
 
 
+}  // namespace phatbooks
 
 #endif

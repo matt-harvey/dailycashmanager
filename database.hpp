@@ -3,11 +3,16 @@
 
 #include <string>
 
+namespace phatbooks
+{
+
+
 class Database
 {
 private:
-	std::string m_name;
 	std::string m_filepath;
 };
 
+
+}  // namespace phatbooks
 #endif
