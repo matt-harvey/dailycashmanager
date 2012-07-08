@@ -1,6 +1,7 @@
 #ifndef GUARD_entity_hpp
 #define GUARD_entity_hpp
 
+#include "general_typedefs.hpp"
 #include "database.hpp"
 #include <string>
 
@@ -21,4 +22,4 @@ private:
 
 }  // namespace phatbooks
 
-#endif
+#endif  // GUARD_entity_hpp

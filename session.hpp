@@ -4,6 +4,9 @@
 #include "entity.hpp"
 #include <iostream>
 
+namespace phatbooks
+{
+
 class Session
 {
 public:
@@ -35,4 +38,7 @@ inline void Session::run_closing_tests()
 	return;
 }
 
-#endif
+
+}  // namespace phatbooks
+
+#endif  // GUARD_session_hpp

@@ -1,6 +1,7 @@
 #ifndef GUARD_entry_hpp
 #define GUARD_entry_hpp
 
+#include "general_typedefs.hpp"
 #include <string>
 #include <jewel/decimal.hpp>
 

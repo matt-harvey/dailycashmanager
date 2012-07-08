@@ -1,6 +1,7 @@
 #ifndef GUARD_account_hpp
 #define GUARD_account_hpp
 
+#include "general_typedefs.hpp"
 #include <string>
 
 namespace phatbooks
@@ -27,4 +28,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif
+#endif  // GUARD_account_hpp

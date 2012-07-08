@@ -1,6 +1,9 @@
 #ifndef GUARD_journal_hpp
 #define GUARD_journal_hpp
 
+
+#include "general_typedefs.hpp"
+
 namespace phatbooks
 {
 

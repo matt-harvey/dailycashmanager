@@ -1,6 +1,7 @@
 #ifndef GUARD_commodity_hpp
 #define GUARD_commodity_hpp
 
+#include "general_typedefs.hpp"
 #include <string>
 
 namespace phatbooks
@@ -19,4 +20,4 @@ private:
 
 }  // namespace phatbooks
 
-#endif
+#endif  // GUARD_commodity_hpp

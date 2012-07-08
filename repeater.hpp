@@ -1,6 +1,8 @@
 #ifndef GUARD_repeater_hpp
 #define GUARD_repeater_hpp
 
+#include "general_typedefs.hpp"
+
 namespace phatbooks
 {
 
