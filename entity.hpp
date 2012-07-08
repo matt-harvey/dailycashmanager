@@ -2,7 +2,6 @@
 #define GUARD_entity_hpp
 
 #include "general_typedefs.hpp"
-#include "database.hpp"
 #include <jewel/decimal.hpp>
 #include <string>
 
