@@ -14,7 +14,6 @@ using std::endl;
 
 int main(int argc, char* argv[])
 {
-	/*
 	if (argc == 0)
 	{	
 		cout << Decimal("0") << endl;
@@ -30,21 +29,21 @@ int main(int argc, char* argv[])
 		}
 		catch (UnsafeArithmeticException&)
 		{
-			cout << "Argument \"" << argv[i] <<"\" is either too long, "
-			        "or contains inappropriate characters, to be"
-					" treated as a decimal number."
+			cout << "Argument \"" << argv[i] <<"\" cannot safely be treated "
+			        "as a decimal number."
 				 << endl;
 			return 0;
 		}
 	}
 	cout << sum << endl;
-	*/
 
 
+	/*
 	Session session; 
 	session.run_opening_tests();
 	session.execute();
 	session.run_closing_tests();
 	return 0;
+	*/
 	// return UnitTest::RunAllTests();
 }
