@@ -16,7 +16,7 @@ protected:
 private:
 	Database m_database;
 	std::string m_name;
-	IdType commodity_id;
+	IdType m_commodity_id;  // native commodity (currency) of the entity
 };
 
 

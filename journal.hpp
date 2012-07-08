@@ -19,7 +19,7 @@ private:
 	Status m_status;
 	DateType m_date;	
 	std::string m_comment;
-	std::vector<IdType> entry_ids;
+	std::vector<IdType> m_entry_ids;
 	IdType m_id;
 };
 

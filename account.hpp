@@ -17,11 +17,11 @@ private:
 		profit_and_loss,
 		envelope
 	};
-	Account type m_account_type;
+	AccountType m_account_type;
 	std::string m_name;
-	IdType commodity_id;
+	IdType m_commodity_id;  // native commodity or currency of Account
 	std::string m_description;
-	IdType id;
+	IdType m_id;
 };
 
 
