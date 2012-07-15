@@ -16,6 +16,7 @@
  * separate type of account. Note this is a "medium term" action - for the
  * time being, I just want to get SQLite working with C++.
  *
+ * @todo Ensure create_database will work cross-platform.
  */
 
 namespace phatbooks
