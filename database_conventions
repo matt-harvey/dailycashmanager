@@ -1,0 +1,32 @@
+*** Database Design and Naming Conventions to be used in Phatbooks ***
+
+The database should be design in Third Normal Form. Denormalization should
+only occur if there are performance problems, and denormalization would solve
+those problems.
+
+Table names should be plural and in lower case. No prefix.
+
+Primary keys should be autoincrementing integer primary keys unless there is
+a very good reason for them not to be.
+
+Composite primary keys should be avoided.
+
+The primary key should be the first column in the table.
+
+Primary keys should be named as the singular form of the table, followed
+by "_id".
+
+Foreign keys should be named as the singular form of the foreign table,
+followed by "_id". Thus a foreign key will have the same name as the
+corresponding primary key.
+
+Columns that are neither primary keys nor foreign keys should not be prefixed
+with the table name.
+
+Underscores should be used to separate words within a table or column name.
+
+Capital letters should not be used in table or column names.
+
+
+
+
