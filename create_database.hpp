@@ -25,7 +25,13 @@ namespace phatbooks
  * This function creates a SQLite database and creates therein the
  * tables required for Phatbooks.
  * 
- * @arg filename is a char const* being the entire
+ * It is the callers responsibility to call sqlite3_initialize
+ * and sqlite3_shutdown at some stage before, and at some stage
+ * after, respectively, calling this function. However, the
+ * create_database function takes care of opening and closing the
+ * connection to the database.
+ *
+ * @param filename is a char const* being the entire
  * absolute Unix-style filepath including the filename
  * and extension, where you want the database to be stored.
  * The file will be created if it does not already exist, and will

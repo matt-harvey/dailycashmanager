@@ -24,7 +24,12 @@ using std::endl;
 
 int main()
 {
-	create_database("/home/matthew/Workbench/versioned/phatbooks/test_create_database.db");	
+	sqlite3_initialize();
+
+	create_database("/home/matthew/Workbench/versioned/phatbooks/"
+	                "test_create_database.db");	
+
+	sqlite3_shutdown();
 
 
 	/*
