@@ -18,7 +18,6 @@ private:
 		posted
 	};
 	DateType m_date;
-	IdType m_id;
 	jewel::Decimal m_amount;
 	std::string m_comment;
 	IdType m_journal_id;

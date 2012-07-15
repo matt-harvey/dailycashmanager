@@ -4,8 +4,7 @@ include_directories (/home/matthew/lib)
 link_directories (/home/matthew/lib/jewel)
 add_executable (main 
                 main.cpp)
-target_link_libraries (main unittest++)
-target_link_libraries (main jewel)
+target_link_libraries (main unittest++ jewel)
 
 
 

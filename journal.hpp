@@ -1,8 +1,8 @@
 #ifndef GUARD_journal_hpp
 #define GUARD_journal_hpp
 
-
 #include "general_typedefs.hpp"
+#include <vector>
 
 namespace phatbooks
 {
@@ -15,7 +15,7 @@ private:
 		working,
 		saved,
 		posted
-	}
+	};
 	Status m_status;
 	DateType m_date;	
 	std::string m_comment;

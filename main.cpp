@@ -1,4 +1,12 @@
 #include "session.hpp"
+#include "account.hpp"
+#include "commodity.hpp"
+#include "entity.hpp"
+#include "entry.hpp"
+#include "general_typedefs.hpp"
+#include "journal.hpp"
+#include "repeater.hpp"
+
 
 // #include "UnitTest++/src/UnitTest++.h"
 

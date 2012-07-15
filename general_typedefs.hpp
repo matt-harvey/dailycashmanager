@@ -2,7 +2,6 @@
 #define GUARD_general_typedefs_hpp
 
 
-#include "general_typedefs.hpp"
 
 namespace phatbooks
 {
