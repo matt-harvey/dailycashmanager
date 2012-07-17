@@ -15,7 +15,6 @@ public:
 	void run_closing_tests();
 protected:
 private:
-	Entity m_entity;
 };
 
 inline void Session::execute()
