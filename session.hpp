@@ -8,7 +8,7 @@
 namespace phatbooks
 {
 
-class Session
+class Session: private boost::noncopyable
 {
 public:
 	/**
