@@ -2,6 +2,7 @@
 #define GUARD_session_hpp
 
 #include <sqlite3.h>
+#include <boost/utility.hpp>
 #include <iostream>
 
 namespace phatbooks
