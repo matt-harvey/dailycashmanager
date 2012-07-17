@@ -1,7 +1,7 @@
 #ifndef GUARD_session_hpp
 #define GUARD_session_hpp
 
-#include "entity.hpp"
+#include <sqlite3.h>
 #include <iostream>
 
 namespace phatbooks
@@ -10,31 +10,37 @@ namespace phatbooks
 class Session
 {
 public:
-	void execute();
-	void run_opening_tests();
-	void run_closing_tests();
-protected:
+	/**
+	 * Starts a Phatbooks user session.
+	 * Initializes SQLite3 (but does not create database
+	 * connection).
+	 */
+	Session();
+
+	/**
+	 * Ends a Phatbooks user session.
+	 * Shuts down SQLite3. (It is assumed that there are no
+	 * open connections at this point.)
+	 */
+	~Session();
+
 private:
+
 };
 
-inline void Session::execute()
+
+inline Session::Session()
 {
-	std::cout << "Executing dummy session..." << std::endl;
-	return;
+	std::clog << "Creating session..." << std::endl;
+	sqlite3_initialize();
+	std::clog << "SQLite3 has been initialized." << std::endl;
 }
 
-inline void Session::run_opening_tests()
+inline Session::~Session()
 {
-	std::cout << "Running dummy session opening tests..."
-	          << std::endl;
-	return;
-}
-
-inline void Session::run_closing_tests()
-{
-	std::cout << "Running dummy session closing tests..."
-	          << std::endl;
-	return;
+	std::clog << "Destroying session..." << std::endl;
+	sqlite3_shutdown();
+	std::clog << "SQLite3 has been shut down." << std::endl;
 }
 
 

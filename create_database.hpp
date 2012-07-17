@@ -17,6 +17,13 @@
  * time being, I just want to get SQLite working with C++.
  *
  * @todo Ensure create_database will work cross-platform.
+ *
+ * @todo I should use RAII to manage the database connection in a
+ * DatabaseConnection class. The constructor should be passed a filename.
+ * It should have as a data member a smart pointer holding a sqlite3*.
+ * The constructor should connect to a Phatbooks database if it already
+ * exists with that name, or should create a new SQLite Phatbooks database
+ * if one does not already exist. The destructor should close the connection.
  */
 
 namespace phatbooks
