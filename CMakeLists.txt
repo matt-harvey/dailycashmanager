@@ -4,8 +4,13 @@ include_directories (/home/matthew/lib)
 link_directories (/home/matthew/lib/jewel)
 add_executable (main
                 main.cpp
-				create_database.cpp)
-target_link_libraries (main unittest++ jewel sqlite3)
+				session.cpp)
+target_link_libraries (main
+					   boost_filesystem
+					   boost_system
+                       unittest++
+					   jewel
+					   sqlite3)
 
 
 

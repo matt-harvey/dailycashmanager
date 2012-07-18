@@ -1,33 +1,91 @@
-#include "create_database.hpp"
+#include "session.hpp"
+#include <boost/filesystem.hpp>
 #include <sqlite3.h>
-#include <string>
-#include <vector>
+#include <cassert>
+#include <iostream>
+#include <stdexcept>
 
-using std::vector;
-
+using std::clog;
+using std::runtime_error;
+using std::endl;
 
 namespace phatbooks
 {
 
 
-void create_database(char const* filename)
+Session::Session():
+  m_database_connection(0)
 {
-	// Declare pointer to sqlite3 database connection
-	sqlite3* db;
+	assert (m_database_connection == 0);
+	clog << "Creating session..." << endl;
+	sqlite3_initialize();
+	clog << "SQLite3 has been initialized." << endl;
+}
+
+
+Session::~Session()
+{
+	clog << "Destroying session..." << endl;
+
+	if (m_database_connection)
+	{
+		sqlite3_close(m_database_connection);
+	}
+	sqlite3_shutdown();
+
+	clog << "SQLite3 has been shut down." << endl;
+}
+
+
+void
+Session::activate_database(char const* filename)
+{	
+	bool database_setup_required = false;
+	if (m_database_connection)
+	{
+		throw runtime_error("A database connection is already active");
+	}
 	
+	boost::filesystem::path p(filename);
+	boost::filesystem::file_status s = boost::filesystem::status(p);
+	if (boost::filesystem::exists(s))
+	{
+		clog << "Preexisting file " << filename << " detected." << endl;
+		return;
+	}
+	else
+	{
+		clog << "Creating file " << filename << "..." << endl;
+		database_setup_required = true;
+	}
+
 	// Open the connection
 	sqlite3_open_v2
 	(
 		filename,
-		&db,
+		&m_database_connection,
 		SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
 		0
 	);
+	clog << "Database connection to file " << filename << " has been opened, "
+	     << "and m_database_connection has been set to point there." << endl;
+	
+	if (database_setup_required)
+	{
+		create_database_tables();
+	}
+	return;
+}
+
+
+void
+Session::create_database_tables()
+{
 
 	// Create the tables
 	sqlite3_exec
 	(
-		db,	
+		m_database_connection,	
 		"begin transaction; "
 		"create table commodities"
 		"("
@@ -102,10 +160,10 @@ void create_database(char const* filename)
 		0
 	);
 
-	// Close the connection
-	sqlite3_close(db);
-
 	return;
 }
+
+
+
 
 }  // namespace phatbooks
