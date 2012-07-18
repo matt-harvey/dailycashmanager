@@ -12,6 +12,9 @@
  *
  * @todo Use boost::filesystem::path to make filepath passed to
  * activate_database more portable.
+ *
+ * @todo Check return values from SQLite3-interfacing functions.
+ * Throw exceptions where applicable.
  */
 
 
