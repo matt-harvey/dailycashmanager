@@ -9,6 +9,8 @@ namespace phatbooks
 class Repeater
 {
 private:
+	// enum order is significant, as the database contains
+	// a table with primary keys in this order
 	enum IntervalType
 	{
 		days = 1,

@@ -11,6 +11,8 @@ class Account
 {
 public:
 private:
+	// enum order is significant, as the database contains
+	// a table with primary keys in this order
 	enum AccountType
 	{
 		profit_and_loss = 1,
@@ -18,7 +20,7 @@ private:
 		envelope
 	};
 	std::string m_name;
-	AccountType m_account_type_name;
+	AccountType m_account_type;
 	std::string m_description;
 
 	// native commodity or currency of Account
