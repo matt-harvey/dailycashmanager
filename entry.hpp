@@ -17,11 +17,11 @@ private:
 		saved,
 		posted
 	};
+	Status m_status;
 	DateType m_date;
-	jewel::Decimal m_amount;
 	std::string m_comment;
-	IdType m_journal_id;
-	IdType m_id;
+	jewel::Decimal m_act_impact;
+	jewel::Decimal m_bud_impact;
 };
 
 

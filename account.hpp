@@ -13,15 +13,16 @@ public:
 private:
 	enum AccountType
 	{
+		profit_and_loss = 1,
 		balance_sheet,
-		profit_and_loss,
 		envelope
 	};
-	AccountType m_account_type;
 	std::string m_name;
-	IdType m_commodity_id;  // native commodity or currency of Account
+	AccountType m_account_type_name;
 	std::string m_description;
-	IdType m_id;
+
+	// native commodity or currency of Account
+	std::string m_commodity_abbreviation;
 };
 
 

@@ -9,18 +9,16 @@ namespace phatbooks
 class Repeater
 {
 private:
-	enum IntervalScale
+	enum IntervalType
 	{
-		days,
+		days = 1,
 		weeks,
 		months,
 		month_ends
 	};
-	IntervalScale m_interval_scale;
+	IntervalType m_interval_type;
 	int m_interval_units;
 	DateType m_next_date_due;
-	IdType m_journal_id;
-	IdType m_id;
 };
 
 
