@@ -2,6 +2,7 @@
 #define exceptions_hpp
 
 
+#include <stdexcept>
 #include <string>
 
 namespace phatbooks
