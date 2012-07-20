@@ -16,7 +16,7 @@ SQLiteException::~SQLiteException() throw()
 }
 
 const char*
-SQLiteException::what() throw()
+SQLiteException::what() const throw()
 {
 	return m_message.c_str();
 }

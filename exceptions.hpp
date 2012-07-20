@@ -11,9 +11,9 @@ namespace phatbooks
 class SQLiteException: public std::exception
 {
 public:
-	SQLiteException(std::string p_message);
-	~SQLiteException() throw();
-	const char* what() throw();
+	explicit SQLiteException(std::string p_message);
+	virtual ~SQLiteException() throw();
+	virtual const char* what() const throw();
 private:
 	std::string m_message;
 };
