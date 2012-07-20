@@ -8,7 +8,7 @@
 namespace phatbooks
 {
 
-class SQLiteException
+class SQLiteException: public std::exception
 {
 public:
 	SQLiteException(std::string p_message);
