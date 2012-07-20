@@ -1,4 +1,4 @@
-#include "session.hpp"
+#include "database_connection.hpp"
 #include "account.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
@@ -15,15 +15,13 @@
 
 using jewel::UnsafeArithmeticException;
 using jewel::Decimal;
-using phatbooks::Session;
+using phatbooks::DatabaseConnection;
 using std::cout;
 using std::endl;
 
 int main()
 {
-	Session s;
-
-	s.activate_database("/home/matthew/Workbench/versioned/phatbooks/"
+	DatabaseConnection db("/home/matthew/Workbench/versioned/phatbooks/"
 	  "test.db");	
 
 	return 0;

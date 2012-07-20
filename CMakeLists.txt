@@ -5,7 +5,7 @@ link_directories (/home/matthew/lib/jewel)
 add_executable (main
 				exceptions.cpp
                 main.cpp
-				session.cpp)
+				database_connection.cpp)
 target_link_libraries (main
 					   boost_filesystem
 					   boost_system

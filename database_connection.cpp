@@ -1,5 +1,5 @@
 #include "exceptions.hpp"
-#include "session.hpp"
+#include "database_connection.hpp"
 #include <boost/filesystem.hpp>
 #include <sqlite3.h>
 #include <cassert>
@@ -15,58 +15,28 @@ namespace phatbooks
 {
 
 
-Session::Session():
-  m_database_connection(0)
+DatabaseConnection::DatabaseConnection(char const* filename):
+  m_connection(0)
 {
-	assert (m_database_connection == 0);
-	clog << "Creating session..." << endl;
+		
+	assert (m_connection == 0);
+	clog << "Creating DatabaseConnection..." << endl;
+
+	// Initialize SQLite3
 	if (sqlite3_initialize() != SQLITE_OK)
 	{
 		throw SQLiteException("SQLite could not be initialized.");
 	}
 	clog << "SQLite3 has been initialized." << endl;
-}
 
-
-// Remember - don't throw exceptions from destructors!
-Session::~Session()
-{
-	clog << "Destroying session..." << endl;
-
-	if (m_database_connection)
-	{
-		if (sqlite3_close(m_database_connection) != SQLITE_OK)
-		{
-			clog << "SQLite3 database connection could not be successfully "
-			        "closed in Session destructor. " << endl;
-			std::abort();
-		}
-	}
-	if (sqlite3_shutdown() != SQLITE_OK)
-	{
-		clog << "SQLite3 shutdown failed in Session destructor." << endl;
-		std::abort();
-	}
-
-	clog << "SQLite3 has been shut down." << endl;
-}
-
-
-void
-Session::activate_database(char const* filename)
-{	
+	// Check if file already exists
 	bool database_setup_required = false;
-	if (m_database_connection)
-	{
-		throw runtime_error("A database connection is already active");
-	}
-	
 	boost::filesystem::path p(filename);
 	boost::filesystem::file_status s = boost::filesystem::status(p);
 	if (boost::filesystem::exists(s))
 	{
 		clog << "Preexisting file " << filename << " detected." << endl;
-		return;
+		clog << "Attempting to connect to this file..." << endl;
 	}
 	else
 	{
@@ -78,33 +48,61 @@ Session::activate_database(char const* filename)
 	int const return_code = sqlite3_open_v2
 	(
 		filename,
-		&m_database_connection,
+		&m_connection,
 		SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
 		0
 	);
 	if (return_code != SQLITE_OK)
 	{
-		throw SQLiteException("Database connection could not be opened.");
+		throw SQLiteException("Database connection could not be created.");
 	}
 	clog << "Database connection to file " << filename << " has been opened, "
-	     << "and m_database_connection has been set to point there." << endl;
+	     << "and m_connection has been set to point there." << endl;
 	
 	if (database_setup_required)
 	{
-		create_database_tables();
+		clog << "Setting up Phatbooks tables in database..." << endl;
+		create_phatbooks_tables();
+		clog << "Tables have been set up." << endl;
 	}
 	return;
+
+}
+
+
+// Remember - don't throw exceptions from destructors!
+DatabaseConnection::~DatabaseConnection()
+{
+	clog << "Destroying database connection..." << endl;
+
+	if (m_connection)
+	{
+		if (sqlite3_close(m_connection) != SQLITE_OK)
+		{
+			clog << "SQLite3 database connection could not be successfully "
+			        "closed in DatabaseConnection destructor. " << endl;
+			std::abort();
+		}
+	}
+	if (sqlite3_shutdown() != SQLITE_OK)
+	{
+		clog << "SQLite3 shutdown failed in DatabaseConnection destructor."
+		     << endl;
+		std::abort();
+	}
+
+	clog << "SQLite3 has been shut down." << endl;
 }
 
 
 void
-Session::create_database_tables()
+DatabaseConnection::create_phatbooks_tables()
 {
 
 	// Create the tables
 	int const return_code = sqlite3_exec
 	(
-		m_database_connection,	
+		m_connection,	
 
 		"begin transaction; "
 
