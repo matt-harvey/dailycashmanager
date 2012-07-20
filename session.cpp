@@ -1,7 +1,9 @@
+#include "exceptions.hpp"
 #include "session.hpp"
 #include <boost/filesystem.hpp>
 #include <sqlite3.h>
 #include <cassert>
+#include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 
@@ -18,20 +20,33 @@ Session::Session():
 {
 	assert (m_database_connection == 0);
 	clog << "Creating session..." << endl;
-	sqlite3_initialize();
+	if (sqlite3_initialize() != SQLITE_OK)
+	{
+		throw SQLiteException("SQLite could not be initialized.");
+	}
 	clog << "SQLite3 has been initialized." << endl;
 }
 
 
+// Remember - don't throw exceptions from destructors!
 Session::~Session()
 {
 	clog << "Destroying session..." << endl;
 
 	if (m_database_connection)
 	{
-		sqlite3_close(m_database_connection);
+		if (sqlite3_close(m_database_connection) != SQLITE_OK)
+		{
+			clog << "SQLite3 database connection could not be successfully "
+			        "closed in Session destructor. " << endl;
+			std::abort();
+		}
 	}
-	sqlite3_shutdown();
+	if (sqlite3_shutdown() != SQLITE_OK)
+	{
+		clog << "SQLite3 shutdown failed in Session destructor." << endl;
+		std::abort();
+	}
 
 	clog << "SQLite3 has been shut down." << endl;
 }
@@ -60,13 +75,17 @@ Session::activate_database(char const* filename)
 	}
 
 	// Open the connection
-	sqlite3_open_v2
+	int const return_code = sqlite3_open_v2
 	(
 		filename,
 		&m_database_connection,
 		SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
 		0
 	);
+	if (return_code != SQLITE_OK)
+	{
+		throw SQLiteException("Database connection could not be opened.");
+	}
 	clog << "Database connection to file " << filename << " has been opened, "
 	     << "and m_database_connection has been set to point there." << endl;
 	
@@ -83,7 +102,7 @@ Session::create_database_tables()
 {
 
 	// Create the tables
-	sqlite3_exec
+	int const return_code = sqlite3_exec
 	(
 		m_database_connection,	
 
@@ -176,11 +195,16 @@ Session::create_database_tables()
 			"bud_impact integer not null"
 		"); "
 
-		"end transaction; ",
+		"end transaction;",
 		0,
 		0,
 		0
 	);
+
+	if (return_code != SQLITE_OK)
+	{
+		throw SQLiteException("SQL execution returned a sqlite error code.");
+	}
 
 	return;
 }
