@@ -68,9 +68,9 @@ public:
 	 * setup_tables function is called, to set up
 	 * any application specific tables and initial data as desired.
 	 * This function is empty by default, but you can inherit from
-	 * this class and have your derived class override as setup_tables
+	 * this class and have your derived class override setup_tables
 	 * as desired to perform your application-specific code
-	 * to setup the datase.
+	 * to setup the database.
 	 *
 	 * @param filename file to connect to
 	 *
