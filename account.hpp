@@ -10,17 +10,34 @@ namespace phatbooks
 class Account
 {
 public:
-private:
-	// enum order is significant, as the database contains
-	// a table with primary keys in this order
+
 	enum AccountType
 	{
+		// enum order is significant, as the database contains
+		// a table with primary keys in this order
 		profit_and_loss = 1,
 		balance_sheet,
 		envelope
 	};
-	std::string m_name;
+
+	AccountType account_type() const;
+	
+	std::string name() const;
+
+	std::string description() const;
+
+	/**
+	 * Constructor
+	 * Does not throw
+	 */
+	Account(AccountType p_account_type = profit_and_loss,
+	  std::string p_name = "", std::string p_description = "");
+
+	// Default destructor suffices
+	
+private:
 	AccountType m_account_type;
+	std::string m_name;
 	std::string m_description;
 
 	// native commodity or currency of Account

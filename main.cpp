@@ -8,20 +8,19 @@
 
 // #include "UnitTest++/src/UnitTest++.h"
 
-#include <jewel/arithmetic_exceptions.hpp>
-#include <jewel/decimal.hpp>
-#include <cassert>
 #include <iostream>
 
-using jewel::UnsafeArithmeticException;
-using jewel::Decimal;
+using phatbooks::Account;
 using phatbooks::PhatbooksDatabaseConnection;
+using jewel::Decimal;
 using std::cout;
 using std::endl;
 
 int main()
 {
 	PhatbooksDatabaseConnection db;
-	db.open("/home/matthew/Workbench/versioned/phatbooks/test.pb");	
+	db.open("/home/matthew/Workbench/versioned/phatbooks/test.db");	
+	Account acc(Account::balance_sheet, "Cash", "Notes and coins");
+	db.store(acc);
 	return 0;
 }
