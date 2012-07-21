@@ -5,10 +5,11 @@
 #include <boost/utility.hpp>
 
 /**
- * @todo Make DatabaseConnection::open(const char*) check both for
- * existence of file, and to see whether the file if it does
- * exist is a Phatbooks-specific SQLite3 database file, or whether
- * it's just some file that happens to have the same name.
+ * @todo Make the DatabaseConnection class provide for a means
+ * to check whether the particular file being connected to is
+ * the right kind of file for the application that is using
+ * the DatabaseConnection class. At the moment it just checks whether
+ * the file exists. This could involve overriding some method or other.
  *
  * @todo Use boost::filesystem::path to make filepath passed to
  * activate_database more portable.
@@ -22,30 +23,30 @@
 
 
 
-namespace phatbooks
+namespace sqloxx
 {
 
 
 
-class DatabaseConnection: private boost::noncopyable
+/**
+ * Class to manage connection to SQLite3 database and execute
+ * SQL on that database. 
+ *
+ * This class can be derived from and certain member functions
+ * overridden to create application-specific database code.
+ */
+class DatabaseConnection:
+  private boost::noncopyable
 {
 public:
 	/**
-	 * Initializes SQLite3, and opens a database connection
-	 * to a SQLite3 database file \c filename. If the file
-	 * does not already exist it is created, and is populated with
-	 * the tables required for Phatbooks. Certain tables
-	 * containing specific "fixed" application data are populated
-	 * with rows in this process.
+	 * Initializes SQLite3 and creates a database connection
+	 * initially set to null.
 	 *
-	 * @param filename file to connect to
-	 *
-	 * @throws SQLiteException if SQLite3 initialization fails, or
-	 * if database connection cannot be opened, or if a new file
-	 * is created but setup of Phatbooks tables does not succeed.
-	 *
+	 * @throws SQLiteException if SQLite3 initialization fails,
+	 * or if database connection cannot be opened.
 	 */
-	DatabaseConnection(char const* filename);
+	DatabaseConnection();
 
 	/**
 	 * Closes any open SQLite3 database connection, and also
@@ -55,9 +56,28 @@ public:
 	 * the application is aborted with a diagnostic message written to
 	 * std::clog.
 	 */
-	~DatabaseConnection();
+	virtual ~DatabaseConnection();
 
-private:
+	/**
+	 * Points the datase connection to a specific file
+	 * given by \c filename. If the file
+	 * does not already exist it is created, and is populated with
+	 * the tables required for Phatbooks. Certain tables
+	 * containing specific "fixed" application data are populated
+	 * with data in this process. (When inheriting from this class, you
+	 * should override setup_tables() to have it peform the application-
+	 * specific setup code you require on the database.)
+	 *
+	 * @param filename file to connect to
+	 *
+	 * @throws SQLiteException if SQLite3
+	 * if database connection cannot be opened to the specified file,
+	 * or if a new file is created but setup of Phatbooks tables does not
+	 * succeed.
+	 */
+	void open(char const* filename);	
+
+protected:
 	
 	/**
 	 * A connection to a SQLite3 database file.
@@ -69,17 +89,20 @@ private:
 	sqlite3* m_connection;
 
 	/**
-	 * Create Phatbooks-specific tables in database.
+	 * Create application-specific tables in database.
 	 * Certain tables containing specific "fixed" application data are
 	 * populated with rows in this process.
 	 *
-	 * @throws phatbooks::SQLiteException if operation
+	 * This function should be overriden in derived class if required
+	 * to perform application-specific database setup.
+	 *
+	 * @throws sqloxx::SQLiteException if operation
 	 * fails.
 	 */
-	void create_phatbooks_tables();
+	virtual void setup_tables();
 
 };
 
-}  // namespace phatbooks
+}  // namespace sqloxx
 
 #endif  // GUARD_database_connection_hpp

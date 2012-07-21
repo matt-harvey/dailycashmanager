@@ -1,8 +1,8 @@
-#include "exceptions.hpp"
+#include "sqloxx_exceptions.hpp"
 
 #include <string>
 
-namespace phatbooks
+namespace sqloxx
 {
 
 

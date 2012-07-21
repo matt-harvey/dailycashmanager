@@ -1,11 +1,11 @@
-#ifndef exceptions_hpp
-#define exceptions_hpp
+#ifndef sqloxx_exceptions_hpp
+#define sqloxx_exceptions_hpp
 
 
 #include <stdexcept>
 #include <string>
 
-namespace phatbooks
+namespace sqloxx
 {
 
 class SQLiteException: public std::exception
@@ -25,4 +25,4 @@ private:
 
 }  // namespace phatbooks
 
-#endif  // exceptions_hpp
+#endif  // sqloxx_exceptions_hpp

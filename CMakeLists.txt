@@ -3,9 +3,10 @@ project (main)
 include_directories (/home/matthew/lib)
 link_directories (/home/matthew/lib/jewel)
 add_executable (main
-				exceptions.cpp
+				sqloxx_exceptions.cpp
                 main.cpp
-				database_connection.cpp)
+				database_connection.cpp
+				phatbooks_database_connection.cpp)
 target_link_libraries (main
 					   boost_filesystem
 					   boost_system

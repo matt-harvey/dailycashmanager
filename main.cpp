@@ -1,4 +1,4 @@
-#include "database_connection.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "account.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
@@ -15,14 +15,13 @@
 
 using jewel::UnsafeArithmeticException;
 using jewel::Decimal;
-using phatbooks::DatabaseConnection;
+using phatbooks::PhatbooksDatabaseConnection;
 using std::cout;
 using std::endl;
 
 int main()
 {
-	DatabaseConnection db("/home/matthew/Workbench/versioned/phatbooks/"
-	  "test.db");	
-
+	PhatbooksDatabaseConnection db;
+	db.open("/home/matthew/Workbench/versioned/phatbooks/test.pb");	
 	return 0;
 }
