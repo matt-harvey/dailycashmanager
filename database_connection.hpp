@@ -5,6 +5,9 @@
 #include <boost/utility.hpp>
 
 /**
+ *
+ * @todo Move sqloxx code to a separate library.
+ *
  * @todo Make the DatabaseConnection class provide for a means
  * to check whether the particular file being connected to is
  * the right kind of file for the application that is using
@@ -61,18 +64,19 @@ public:
 	/**
 	 * Points the datase connection to a specific file
 	 * given by \c filename. If the file
-	 * does not already exist it is created, and is populated with
-	 * the tables required for Phatbooks. Certain tables
-	 * containing specific "fixed" application data are populated
-	 * with data in this process. (When inheriting from this class, you
-	 * should override setup_tables() to have it peform the application-
-	 * specific setup code you require on the database.)
+	 * does not already exist it is created. Upon creation, the
+	 * setup_tables function is called, to set up
+	 * any application specific tables and initial data as desired.
+	 * This function is empty by default, but you can inherit from
+	 * this class and have your derived class override as setup_tables
+	 * as desired to perform your application-specific code
+	 * to setup the datase.
 	 *
 	 * @param filename file to connect to
 	 *
 	 * @throws SQLiteException if SQLite3
 	 * if database connection cannot be opened to the specified file,
-	 * or if a new file is created but setup of Phatbooks tables does not
+	 * or if a new file is created but setup_tables does not
 	 * succeed.
 	 */
 	void open(char const* filename);	

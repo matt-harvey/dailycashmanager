@@ -15,6 +15,7 @@ namespace sqloxx
 {
 
 
+// Remember - don't call virtual functions from constructors!
 DatabaseConnection::DatabaseConnection():
   m_connection(0)
 {
@@ -73,6 +74,7 @@ DatabaseConnection::open(char const* filename)
 
 
 // Remember - don't throw exceptions from destructors!
+// Remember - don't call virtual functions from destructors!
 DatabaseConnection::~DatabaseConnection()
 {
 	clog << "Destroying database connection..." << endl;
