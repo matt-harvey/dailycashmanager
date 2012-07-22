@@ -22,6 +22,26 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 {
 }
 
+/*
+ * With a proper SQLStatement wrapper class, the store(Account cons&) method
+ * (defined below) could be as simple as the below.
+void
+DatabaseConnection::store(Account const& p_account)
+{
+	SQLStatement statement
+	(	"insert into accounts(account_type_id, name, description) "
+		"values(?, ?, ?)"
+	);
+	statement.prepare(m_connection);
+	statement.bind(static_cast<int>(p_account.account_type()));
+	statement.bind(p_account.name().c_str());
+	statement.bind(p_account.description().c_str());
+	statement.execute();
+	return;
+}
+*/
+
+
 
 void
 PhatbooksDatabaseConnection::store(Account const& p_account)
