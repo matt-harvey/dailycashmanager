@@ -6,11 +6,14 @@ using std::string;
 namespace phatbooks
 {
 
-Account::Account(AccountType p_account_type, string p_name,
-  string p_description):
-  m_account_type(p_account_type),
-  m_name(p_name),
-  m_description(p_description)
+Account::Account
+(	AccountType p_account_type,
+	string p_name,
+	string p_description
+):
+	m_account_type(p_account_type),
+	m_name(p_name),
+	m_description(p_description)
 {
 }
  

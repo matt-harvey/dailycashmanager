@@ -17,7 +17,7 @@ namespace sqloxx
 
 // Remember - don't call virtual functions from constructors!
 DatabaseConnection::DatabaseConnection():
-  m_connection(0)
+	m_connection(0)
 {
 	clog << "Creating DatabaseConnection..." << endl;
 
@@ -47,8 +47,7 @@ DatabaseConnection::open(char const* filename)
 
 	// Open the connection
 	int const return_code = sqlite3_open_v2
-	(
-		filename,
+	(	filename,
 		&m_connection,
 		SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
 		0

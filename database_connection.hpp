@@ -21,6 +21,9 @@
  * database connections and shut down SQLite3. Current this is done
  * in the destructor, but this can't throw.
  *
+ * @todo I am putting log statements everywhere. I should create
+ * a DEBUG_LOG macro to facilitate these being compiled out except
+ * in debug builds.
  */
 
 
