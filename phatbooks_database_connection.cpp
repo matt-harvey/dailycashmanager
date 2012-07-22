@@ -31,19 +31,22 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	static string const sql_str =
 	  "insert into accounts(account_type_id, name,"
 	  " description) values(:account_type_id, :name, :description)";
-	                 
+	
+	int return_code;
 	sqlite3_stmt* sql_statement = 0;
-
-	int return_code = sqlite3_prepare_v2
+	return_code = sqlite3_prepare_v2
 	(	m_connection,
 		sql_str.c_str(),
 		-1,
-	    &sql_statement,
+		&sql_statement,
 		0
 	);
-
-	if (return_code != SQLITE_OK) throw_sqlite_exception();
-
+	if (return_code != SQLITE_OK)
+	{
+		sqlite3_finalize(sql_statement);
+		sql_statement = 0;
+		throw_sqlite_exception();
+	}
 
 	// Bind :account_type_id
 	
@@ -57,7 +60,12 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 		account_type_id_index,
 		static_cast<int>(p_account.account_type())
 	);
-	if (return_code != SQLITE_OK) throw_sqlite_exception();
+	if (return_code != SQLITE_OK)
+	{
+		sqlite3_finalize(sql_statement);
+		sql_statement = 0;
+		throw_sqlite_exception();
+	}
 
 
 	// Bind :name
@@ -74,7 +82,12 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 		-1,
 		0
 	);
-	if (return_code != SQLITE_OK) throw_sqlite_exception();
+	if (return_code != SQLITE_OK)
+	{
+		sqlite3_finalize(sql_statement);
+		sql_statement = 0;
+		throw_sqlite_exception();
+	}
 	                    
 	// Bind :description
 	
@@ -88,11 +101,21 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 		-1,
 		0
 	);
-	if (return_code != SQLITE_OK) throw_sqlite_exception();
+	if (return_code != SQLITE_OK)
+	{
+		sqlite3_finalize(sql_statement);
+		sql_statement = 0;
+		throw_sqlite_exception();
+	}
 
 	// Execute the SQL statement
 	
-	if (sqlite3_step(sql_statement) != SQLITE_DONE) throw_sqlite_exception();
+	if (sqlite3_step(sql_statement) != SQLITE_DONE)
+	{
+		sqlite3_finalize(sql_statement);
+		sql_statement = 0;
+		throw_sqlite_exception();
+	}
 	
 	// Clean up
 	sqlite3_finalize(sql_statement);

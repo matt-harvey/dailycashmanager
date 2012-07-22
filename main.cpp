@@ -20,7 +20,8 @@ int main()
 {
 	PhatbooksDatabaseConnection db;
 	db.open("/home/matthew/Workbench/versioned/phatbooks/test.db");	
-	Account acc(Account::balance_sheet, "Cash", "Notes and coins");
-	db.store(acc);
+	db.store(Account(Account::balance_sheet, "Cash", "Notes and coins"));
+	db.store(Account(Account::profit_and_loss, "Food", "Food and drink"));
+	// db.store(Account(Account::envelope, "Food", "Food and drink"));
 	return 0;
 }
