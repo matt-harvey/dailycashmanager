@@ -105,6 +105,16 @@ protected:
 	 */
 	virtual void setup_tables();
 
+	/**
+	 * Throws a SQLiteException with the current sqlite3_errmsg passed
+	 * to the constructor of the exception.
+	 *
+	 * This is essentially to save typing.
+	 *
+	 * @throws SQLiteException whenever called
+	 */
+	void throw_sqlite_exception();
+
 };
 
 }  // namespace sqloxx

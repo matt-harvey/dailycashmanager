@@ -22,10 +22,8 @@ DatabaseConnection::DatabaseConnection():
 	clog << "Creating DatabaseConnection..." << endl;
 
 	// Initialize SQLite3
-	if (sqlite3_initialize() != SQLITE_OK)
-	{
-		throw SQLiteException("SQLite could not be initialized.");
-	}
+	if (sqlite3_initialize() != SQLITE_OK) throw_sqlite_exception();
+
 	clog << "SQLite3 has been initialized." << endl;
 }
 
@@ -55,10 +53,7 @@ DatabaseConnection::open(char const* filename)
 		SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
 		0
 	);
-	if (return_code != SQLITE_OK)
-	{
-		throw SQLiteException("Database connection could not be created.");
-	}
+	if (return_code != SQLITE_OK) throw_sqlite_exception();
 	clog << "Database connection to file " << filename << " has been opened, "
 	     << "and m_connection has been set to point there." << endl;
 	
@@ -108,7 +103,11 @@ DatabaseConnection::setup_tables()
 	return;
 }
 
-
+void
+DatabaseConnection::throw_sqlite_exception()
+{
+	throw SQLiteException(sqlite3_errmsg(m_connection));
+}
 
 
 }  // namespace sqloxx

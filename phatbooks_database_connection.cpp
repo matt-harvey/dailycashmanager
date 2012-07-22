@@ -42,10 +42,7 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 		0
 	);
 
-	if (return_code != SQLITE_OK)
-	{
-		throw SQLiteException("Failure in preparation of SQL statement.");
-	}
+	if (return_code != SQLITE_OK) throw_sqlite_exception();
 
 
 	// Bind :account_type_id
@@ -54,21 +51,13 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	(	sql_statement,
 		":account_type_id"
 	);
-	if (account_type_id_index == 0)
-	{
-		throw SQLiteException("Failure in binding of account name to SQL "
-		  "statement.");
-	}
+	if (account_type_id_index == 0) throw_sqlite_exception();
 	return_code = sqlite3_bind_int
 	(	sql_statement,
 		account_type_id_index,
 		static_cast<int>(p_account.account_type())
 	);
-	if (return_code != SQLITE_OK)
-	{
-		throw SQLiteException("Failure in binding of account_type_id to"
-		  "SQL statement.");
-	}
+	if (return_code != SQLITE_OK) throw_sqlite_exception();
 
 
 	// Bind :name
@@ -77,11 +66,7 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	(	sql_statement,
 	  	":name"
 	);
-	if (account_name_index == 0)
-	{
-		throw SQLiteException("Failure in binding of account name to SQL "
-		  "statement");
-	}
+	if (account_name_index == 0) throw_sqlite_exception();
 	return_code = sqlite3_bind_text
 	(	sql_statement,
 		account_name_index,
@@ -89,21 +74,13 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 		-1,
 		0
 	);
-	if (return_code != SQLITE_OK)
-	{
-		throw SQLiteException("Failure in binding of account name to SQL "
-		  "statement.");
-	}
+	if (return_code != SQLITE_OK) throw_sqlite_exception();
 	                    
 	// Bind :description
 	
 	int const description_index = sqlite3_bind_parameter_index(sql_statement,
 	  ":description");
-	if (description_index == 0)
-	{
-		throw SQLiteException("Failure in binding of account description to "
-		  "SQL statement.");
-	}
+	if (description_index == 0) throw_sqlite_exception();
 	return_code = sqlite3_bind_text
 	(	sql_statement,
 		description_index,
@@ -111,18 +88,11 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 		-1,
 		0
 	);
-	if (return_code != SQLITE_OK)
-	{
-		throw SQLiteException("Failure in binding of account description to "
-		  "SQL statement.");
-	}
+	if (return_code != SQLITE_OK) throw_sqlite_exception();
 
 	// Execute the SQL statement
 	
-	if (sqlite3_step(sql_statement) != SQLITE_DONE)
-	{
-		throw SQLiteException(sqlite3_errmsg(m_connection));
-	}
+	if (sqlite3_step(sql_statement) != SQLITE_DONE) throw_sqlite_exception();
 	
 	// Clean up
 	sqlite3_finalize(sql_statement);
@@ -235,10 +205,7 @@ PhatbooksDatabaseConnection::setup_tables()
 		0
 	);
 
-	if (return_code != SQLITE_OK)
-	{
-		throw SQLiteException("SQL execution returned a sqlite error code.");
-	}
+	if (return_code != SQLITE_OK) throw_sqlite_exception();
 
 	return;
 }
