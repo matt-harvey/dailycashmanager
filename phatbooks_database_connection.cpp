@@ -34,12 +34,13 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	                 
 	sqlite3_stmt* sql_statement = 0;
 
-	int return_code =
-	  sqlite3_prepare_v2(m_connection,
-	                     sql_str.c_str(),
-						 -1,
-	                     &sql_statement,
-						 0);
+	int return_code = sqlite3_prepare_v2
+	(	m_connection,
+		sql_str.c_str(),
+		-1,
+	    &sql_statement,
+		0
+	);
 
 	if (return_code != SQLITE_OK)
 	{
@@ -49,16 +50,20 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 
 	// Bind :account_type_id
 	
-	int const account_type_id_index =
-	  sqlite3_bind_parameter_index(sql_statement, ":account_type_id");
+	int const account_type_id_index = sqlite3_bind_parameter_index
+	(	sql_statement,
+		":account_type_id"
+	);
 	if (account_type_id_index == 0)
 	{
 		throw SQLiteException("Failure in binding of account name to SQL "
 		  "statement.");
 	}
-	return_code =
-	  sqlite3_bind_int(sql_statement, account_type_id_index,
-	  static_cast<int>(p_account.account_type()));
+	return_code = sqlite3_bind_int
+	(	sql_statement,
+		account_type_id_index,
+		static_cast<int>(p_account.account_type())
+	);
 	if (return_code != SQLITE_OK)
 	{
 		throw SQLiteException("Failure in binding of account_type_id to"
@@ -68,19 +73,22 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 
 	// Bind :name
 	
-	int const account_name_index = sqlite3_bind_parameter_index(sql_statement,
-	  ":name");
+	int const account_name_index = sqlite3_bind_parameter_index
+	(	sql_statement,
+	  	":name"
+	);
 	if (account_name_index == 0)
 	{
 		throw SQLiteException("Failure in binding of account name to SQL "
 		  "statement");
 	}
-	return_code =
-	  sqlite3_bind_text(sql_statement,
-						account_name_index,
-						p_account.name().c_str(),
-						-1,
-						0);
+	return_code = sqlite3_bind_text
+	(	sql_statement,
+		account_name_index,
+		p_account.name().c_str(),
+		-1,
+		0
+	);
 	if (return_code != SQLITE_OK)
 	{
 		throw SQLiteException("Failure in binding of account name to SQL "
@@ -96,12 +104,13 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 		throw SQLiteException("Failure in binding of account description to "
 		  "SQL statement.");
 	}
-	return_code =
-	  sqlite3_bind_text(sql_statement,
-	                    description_index,
-						p_account.description().c_str(),
-						-1,
-						0);
+	return_code = sqlite3_bind_text
+	(	sql_statement,
+		description_index,
+		p_account.description().c_str(),
+		-1,
+		0
+	);
 	if (return_code != SQLITE_OK)
 	{
 		throw SQLiteException("Failure in binding of account description to "
@@ -130,9 +139,7 @@ PhatbooksDatabaseConnection::setup_tables()
 {
 	// Create the tables
 	int const return_code = sqlite3_exec
-	(
-		m_connection,	
-
+	(	m_connection,
 		"begin transaction; "
 
 		"create table commodities"
