@@ -42,7 +42,7 @@ namespace sqloxx
  * overridden to create application-specific database code.
  */
 class DatabaseConnection:
-  private boost::noncopyable
+	private boost::noncopyable
 {
 public:
 	/**

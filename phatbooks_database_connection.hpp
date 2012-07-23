@@ -28,7 +28,7 @@ namespace phatbooks
  * it causes a problem by being too slow.
  */
 class PhatbooksDatabaseConnection:
-  public sqloxx::DatabaseConnection
+	public sqloxx::DatabaseConnection
 {
 public:
 	PhatbooksDatabaseConnection();

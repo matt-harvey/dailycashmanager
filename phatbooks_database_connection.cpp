@@ -111,8 +111,10 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	                    
 	// Bind :description
 	
-	int const description_index = sqlite3_bind_parameter_index(sql_statement,
-	  ":description");
+	int const description_index = sqlite3_bind_parameter_index
+	(	sql_statement,
+		":description"
+	);
 	if (description_index == 0) throw_sqlite_exception();
 	return_code = sqlite3_bind_text
 	(	sql_statement,
