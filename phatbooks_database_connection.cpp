@@ -2,6 +2,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
+#include <sqlite3.h>
 #include <boost/numeric/conversion/cast.hpp>
 #include <iostream>
 #include <string>
