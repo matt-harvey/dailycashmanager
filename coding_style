@@ -43,12 +43,12 @@ int x = some_quite_long_function_call
 
 ClassName
 function_name
-variable_name
-constant_name
-class_constant_name
+local_variable_name
+local_constant_name
 file_name
 GUARD_header_guard_hpp
-m_private_member_variable
+m_member_variable
+s_static_class_variable
 p_parameter_if_required_to_distinguish_from_member_variable
 EnumName
 StructName
