@@ -2,7 +2,7 @@
 #define GUARD_database_connection_hpp
 
 #include <sqlite3.h>
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 
 /**
  *
@@ -24,6 +24,10 @@
  * @todo I am putting log statements everywhere. I should create
  * a DEBUG_LOG macro to facilitate these being compiled out except
  * in debug builds.
+ *
+ * @todo DatabaseConnection::is_valid should probably do more than
+ * just check whether m_connection exists. It should probably also
+ * at least check SQLite error status.
  */
 
 
@@ -66,6 +70,12 @@ public:
 	 * std::clog.
 	 */
 	virtual ~DatabaseConnection();
+
+	/**
+	 * Returns \true iff the DatabaseConnection is connected to a 
+	 * database.
+	 */
+	virtual bool is_valid();
 
 	/**
 	 * Points the datase connection to a specific file

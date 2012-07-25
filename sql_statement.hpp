@@ -2,6 +2,8 @@
 #define GUARD_sql_statement_hpp
 
 #include "database_connection.hpp"
+#include <boost/cstdint.hpp>
+#include <boost/noncopyable.hpp>
 #include <sqlite3.h>
 #include <string>
 
@@ -15,24 +17,26 @@ namespace sqloxx
  * should I have all SQLStatement functions be private and then
  * have DatabaseConnection declare it a friend?
  */
-class SQLStatement
+class SQLStatement:
+	private boost::noncopyable
 {
 public:
 
-	SQLStatement();
+	// Can dbconn be const&?
+	SQLStatement(DatabaseConnection& dbconn, std::string const& str);
 
 	~SQLStatement();
 
-	// Can DatabaseConnection param be const&?
-	void prepare
-	(	DatabaseConnection& dbconn,
-		std::string const& str
-	);
-
 	// I need to duplicate this for various different types
 	// that can be bound into SQLite statements.
-	void bind(std::string parameter_name, int value);
-	
+	void bind(std::string const& parameter_name, int value);
+	void bind(std::string const& parameter_name, boost::int64_t value);
+	void bind(std::string const& parameter_name, std::string);
+
+	// Execution of SQLite statements occurs by calling step function.
+	// This enables rows to be extracted one-by-one. Values in columns
+	// can then be extracted too. There needs to be a mechanism to
+	// achieve this.
 	void execute();
 
 

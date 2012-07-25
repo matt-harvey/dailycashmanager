@@ -92,6 +92,11 @@ DatabaseConnection::~DatabaseConnection()
 	clog << "SQLite3 has been shut down." << endl;
 }
 
+bool
+DatabaseConnection::is_valid()
+{
+	return m_connection != 0;
+}
 
 void
 DatabaseConnection::setup_tables()

@@ -30,13 +30,9 @@ void
 DatabaseConnection::store(Account const& p_account)
 {
 	SQLStatement statement
-	(	"insert into accounts(account_type_id, name, description) "
-		"values(?, ?, ?)"
-	);
-	statement.prepare
 	(	m_connection,
 		"insert into accounts(account_type_id, name, description) "
-		"values(?, ?, ?)
+		"values(?, ?, ?)"
 	);
 	statement.bind(static_cast<int>(p_account.account_type()));
 	statement.bind(p_account.name().c_str());
@@ -54,8 +50,8 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	clog << "Storing Account object in database." << endl;
 	
 	static string const sql_str =
-	  "insert into accounts(account_type_id, name,"
-	  " description) values(:account_type_id, :name, :description)";
+		"insert into accounts(account_type_id, name,"
+		" description) values(:account_type_id, :name, :description)";
 	
 	int return_code;
 	sqlite3_stmt* sql_statement = 0;
