@@ -33,7 +33,11 @@ DatabaseConnection::store(Account const& p_account)
 	(	"insert into accounts(account_type_id, name, description) "
 		"values(?, ?, ?)"
 	);
-	statement.prepare(m_connection);
+	statement.prepare
+	(	m_connection,
+		"insert into accounts(account_type_id, name, description) "
+		"values(?, ?, ?)
+	);
 	statement.bind(static_cast<int>(p_account.account_type()));
 	statement.bind(p_account.name().c_str());
 	statement.bind(p_account.description().c_str());

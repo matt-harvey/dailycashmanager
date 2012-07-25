@@ -45,6 +45,9 @@ class DatabaseConnection:
 	private boost::noncopyable
 {
 public:
+
+	friend class SQLStatement;
+
 	/**
 	 * Initializes SQLite3 and creates a database connection
 	 * initially set to null.

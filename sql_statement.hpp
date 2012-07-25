@@ -3,6 +3,7 @@
 
 #include "database_connection.hpp"
 #include <sqlite3.h>
+#include <string>
 
 namespace sqloxx
 {
@@ -22,12 +23,17 @@ public:
 
 	~SQLStatement();
 
-	// Can this param be const&?
-	void prepare(DatabaseConnection const&);
+	// Can DatabaseConnection param be const&?
+	void prepare
+	(	DatabaseConnection& dbconn,
+		std::string const& str
+	);
 
 	// I need to duplicate this for various different types
 	// that can be bound into SQLite statements.
-	void bind(char const* parameter_name, char const* value);
+	void bind(std::string parameter_name, int value);
+	
+	void execute();
 
 
 private:
