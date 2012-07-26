@@ -7,6 +7,8 @@
 /**
  *
  * @todo Move sqloxx code to a separate library.
+ * 
+ * @todo m_connection should be made private if possible.
  *
  * @todo Make the DatabaseConnection class provide for a means
  * to check whether the particular file being connected to is
@@ -98,15 +100,6 @@ public:
 	void open(char const* filename);	
 
 protected:
-	
-	/**
-	 * A connection to a SQLite3 database file.
-	 *
-	 * (Note this is a raw pointer not a smart pointer
-	 * to facilitate more straightforward interaction with the SQLite
-	 * C API.)
-	 */
-	sqlite3* m_connection;
 
 	/**
 	 * Create application-specific tables in database.
@@ -130,6 +123,16 @@ protected:
 	 * @throws SQLiteException whenever called
 	 */
 	void throw_sqlite_exception();
+	
+
+	/**
+	 * A connection to a SQLite3 database file.
+	 *
+	 * (Note this is a raw pointer not a smart pointer
+	 * to facilitate more straightforward interaction with the SQLite
+	 * C API.)
+	 */
+	sqlite3* m_connection;
 
 };
 

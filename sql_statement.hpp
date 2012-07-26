@@ -12,6 +12,11 @@ namespace sqloxx
 /**
  * Wrapper class for sqlite_stmt*.
  *
+ * @todo The constructor to create a SQLStatement should reject strings
+ * containing semicolons, since compound statements are not handled by
+ * step() properly. There should be some other class SQLMultiStatement or
+ * something, which can then executed using a wrapper around sqlite3_exec.
+ *
  * @todo Should this class be nested within DatabaseConnection?
  */
 class SQLStatement:
