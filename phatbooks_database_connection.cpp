@@ -2,6 +2,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
+#include "sql_statement.hpp"
 #include <sqlite3.h>
 #include <boost/numeric/conversion/cast.hpp>
 #include <iostream>
@@ -10,6 +11,7 @@
 using boost::numeric_cast;
 using sqloxx::DatabaseConnection;
 using sqloxx::SQLiteException;
+using sqloxx::SQLStatement;
 using std::clog;
 using std::endl;
 using std::string;
@@ -48,101 +50,24 @@ void
 PhatbooksDatabaseConnection::store(Account const& p_account)
 {
 	clog << "Storing Account object in database." << endl;
-	
-	static string const sql_str =
-		"insert into accounts(account_type_id, name,"
-		" description) values(:account_type_id, :name, :description)";
-	
-	int return_code;
-	sqlite3_stmt* sql_statement = 0;
-	return_code = sqlite3_prepare_v2
-	(	m_connection,
-		sql_str.c_str(),
-		-1,
-		&sql_statement,
-		0
-	);
-	if (return_code != SQLITE_OK)
-	{
-		sqlite3_finalize(sql_statement);
-		sql_statement = 0;
-		throw_sqlite_exception();
-	}
 
-	// Bind :account_type_id
-	
-	int const account_type_id_index = sqlite3_bind_parameter_index
-	(	sql_statement,
-		":account_type_id"
+	SQLStatement statement
+	(	*this,
+		"insert into accounts(account_type_id, name, description) "
+		"values(:account_type_id, :name, :description)"
 	);
-	if (account_type_id_index == 0) throw_sqlite_exception();
-	return_code = sqlite3_bind_int
-	(	sql_statement,
-		account_type_id_index,
+
+	statement.bind
+	(	":account_type_id",
 		static_cast<int>(p_account.account_type())
 	);
-	if (return_code != SQLITE_OK)
-	{
-		sqlite3_finalize(sql_statement);
-		sql_statement = 0;
-		throw_sqlite_exception();
-	}
-
-
-	// Bind :name
-	
-	int const account_name_index = sqlite3_bind_parameter_index
-	(	sql_statement,
-	  	":name"
-	);
-	if (account_name_index == 0) throw_sqlite_exception();
-	return_code = sqlite3_bind_text
-	(	sql_statement,
-		account_name_index,
-		p_account.name().c_str(),
-		-1,
-		0
-	);
-	if (return_code != SQLITE_OK)
-	{
-		sqlite3_finalize(sql_statement);
-		sql_statement = 0;
-		throw_sqlite_exception();
-	}
-	                    
-	// Bind :description
-	
-	int const description_index = sqlite3_bind_parameter_index
-	(	sql_statement,
-		":description"
-	);
-	if (description_index == 0) throw_sqlite_exception();
-	return_code = sqlite3_bind_text
-	(	sql_statement,
-		description_index,
-		p_account.description().c_str(),
-		-1,
-		0
-	);
-	if (return_code != SQLITE_OK)
-	{
-		sqlite3_finalize(sql_statement);
-		sql_statement = 0;
-		throw_sqlite_exception();
-	}
-
+	statement.bind(":name", p_account.name());
+	statement.bind(":description", p_account.description());
+     
 	// Execute the SQL statement
-	
-	if (sqlite3_step(sql_statement) != SQLITE_DONE)
+	while (statement.step())
 	{
-		sqlite3_finalize(sql_statement);
-		sql_statement = 0;
-		throw_sqlite_exception();
 	}
-	
-	// Clean up
-	sqlite3_finalize(sql_statement);
-
 	clog << "Account object has been successfully stored." << endl;
 	return;
 }
