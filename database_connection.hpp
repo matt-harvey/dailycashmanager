@@ -77,15 +77,19 @@ public:
 	virtual bool is_valid();
 
 	/**
-	 * Points the datase connection to a specific file
+	 * Points the database connection to a specific file
 	 * given by \c filename. If the file
-	 * does not already exist it is created. Upon creation, the
-	 * setup_tables function is called, to set up
+	 * does not already exist it is created. Upon creation, a separate
+	 * \c setup_tables function is called, to set up
 	 * any application specific tables and initial data as desired.
-	 * This function is empty by default, but you can inherit from
-	 * this class and have your derived class override setup_tables
-	 * as desired to perform your application-specific code
-	 * to setup the database.
+	 *
+	 * To customise this behaviour in a derived class, override
+	 * \c DatabaseConnection::setup_tables (which does nothing by default)
+	 * in your class derived from DatabaseConnection.
+	 *
+	 * \c DatabaseConnection::setup_tables has the signature:\n
+	 * 	<tt> virtual void setup_tables() </tt>\n
+	 * and is private. It should throw SQLiteException in case it fails.
 	 *
 	 * @param filename file to connect to
 	 *
@@ -109,18 +113,6 @@ protected:
 	 */
 	class SQLStatement;
 
-	/**
-	 * Create application-specific tables in database.
-	 * Certain tables containing specific "fixed" application data are
-	 * populated with rows in this process.
-	 *
-	 * This function should be redefined in derived class if required
-	 * to perform application-specific database setup.
-	 *
-	 * @throws sqloxx::SQLiteException if operation
-	 * fails.
-	 */
-	virtual void setup_tables();
 
 	/**
 	 * Throws a SQLiteException with the current sqlite3_errmsg passed
@@ -152,6 +144,19 @@ private:
 	 * C API.)
 	 */
 	sqlite3* m_connection;
+
+	/**
+	 * Create application-specific tables in database.
+	 * Certain tables containing specific "fixed" application data are
+	 * populated with rows in this process.
+	 *
+	 * This function should be redefined in derived class if required
+	 * to perform application-specific database setup.
+	 *
+	 * @throws sqloxx::SQLiteException if operation
+	 * fails.
+	 */
+	virtual void setup_tables();
 
 };
 
