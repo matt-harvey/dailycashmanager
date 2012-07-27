@@ -2,7 +2,6 @@
 #include "phatbooks_database_connection.hpp"
 #include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
-#include "sql_statement.hpp"
 #include <sqlite3.h>
 #include <boost/numeric/conversion/cast.hpp>
 #include <iostream>
@@ -11,7 +10,6 @@
 using boost::numeric_cast;
 using sqloxx::DatabaseConnection;
 using sqloxx::SQLiteException;
-using sqloxx::SQLStatement;
 using std::clog;
 using std::endl;
 using std::string;

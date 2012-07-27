@@ -7,8 +7,7 @@ add_executable (main
 				sqloxx_exceptions.cpp
                 main.cpp
 				database_connection.cpp
-				phatbooks_database_connection.cpp
-				sql_statement.cpp)
+				phatbooks_database_connection.cpp)
 target_link_libraries (main
 					   boost_filesystem
 					   boost_system
