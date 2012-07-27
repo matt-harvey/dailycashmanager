@@ -24,10 +24,6 @@
  * database connections and shut down SQLite3. Current this is done
  * in the destructor, but this can't throw.
  *
- * @todo I am putting log statements everywhere. I should create
- * a DEBUG_LOG macro to facilitate these being compiled out except
- * in debug builds.
- *
  * @todo DatabaseConnection::is_valid should probably do more than
  * just check whether m_connection exists. It should probably also
  * at least check SQLite error status.
