@@ -181,6 +181,12 @@ public:
 	 * the \c indexth column of the current row (where \c index starts
 	 * counting at 0).
 	 *
+	 * Currently the following types for T are supported:\n
+	 *	\c boost::int64_t\n
+	 *	int\n
+	 *	double\n
+	 *	std::string\n
+	 *
 	 * @param index is the column number (starting at 0) from which to
 	 * read the value.
 	 * 
