@@ -22,12 +22,12 @@ namespace sqloxx
 DatabaseConnection::DatabaseConnection():
 	m_connection(0)
 {
-	DEBUG_LOG << "Creating DatabaseConnection..." << endl;
+	JEWEL_DEBUG_LOG << "Creating DatabaseConnection..." << endl;
 
 	// Initialize SQLite3
 	if (sqlite3_initialize() != SQLITE_OK) throw_sqlite_exception();
 
-	DEBUG_LOG << "SQLite3 has been initialized." << endl;
+	JEWEL_DEBUG_LOG << "SQLite3 has been initialized." << endl;
 }
 
 void
@@ -39,12 +39,13 @@ DatabaseConnection::open(char const* filename)
 	boost::filesystem::file_status s = boost::filesystem::status(p);
 	if (boost::filesystem::exists(s))
 	{
-		DEBUG_LOG << "Preexisting file " << filename << " detected." << endl;
-		DEBUG_LOG << "Attempting to connect to this file..." << endl;
+		JEWEL_DEBUG_LOG << "Preexisting file " << filename << " detected."
+		                << endl;
+		JEWEL_DEBUG_LOG << "Attempting to connect to this file..." << endl;
 	}
 	else
 	{
-		DEBUG_LOG << "Creating file " << filename << "..." << endl;
+		JEWEL_DEBUG_LOG << "Creating file " << filename << "..." << endl;
 		database_setup_required = true;
 	}
 
@@ -56,16 +57,17 @@ DatabaseConnection::open(char const* filename)
 		0
 	);
 	if (return_code != SQLITE_OK) throw_sqlite_exception();
-	DEBUG_LOG << "Database connection to file "
+	JEWEL_DEBUG_LOG << "Database connection to file "
 	          << filename
 	          << " has been opened "
 	          << "and m_connection has been set to point there." << endl;
 	
 	if (database_setup_required)
 	{
-		DEBUG_LOG << "Setting up Phatbooks tables in database..." << endl;
+		JEWEL_DEBUG_LOG << "Setting up Phatbooks tables in database..."
+		                << endl;
 		setup_tables();
-		DEBUG_LOG << "Tables have been set up." << endl;
+		JEWEL_DEBUG_LOG << "Tables have been set up." << endl;
 	}
 	return;
 
@@ -76,7 +78,7 @@ DatabaseConnection::open(char const* filename)
 // Remember - don't call virtual functions from destructors!
 DatabaseConnection::~DatabaseConnection()
 {
-	DEBUG_LOG << "Destroying database connection..." << endl;
+	JEWEL_DEBUG_LOG << "Destroying database connection..." << endl;
 	if (m_connection)
 	{
 		if (sqlite3_close(m_connection) != SQLITE_OK)
@@ -93,7 +95,7 @@ DatabaseConnection::~DatabaseConnection()
 		     << endl;
 		std::abort();
 	}
-	DEBUG_LOG << "SQLite3 has been shut down." << endl;
+	JEWEL_DEBUG_LOG << "SQLite3 has been shut down." << endl;
 }
 
 bool
@@ -172,6 +174,33 @@ DatabaseConnection::SQLStatement::~SQLStatement()
 		m_statement = 0;
 	}
 }
+
+
+void
+DatabaseConnection::SQLStatement::check_column(int index, int value_type)
+{
+	int const num_columns = sqlite3_column_count(m_statement);
+	if (num_columns == 0)
+	{
+		throw SQLiteException("Result row not available.");
+	}
+	if (index > num_columns)
+	{
+		throw SQLiteException("Index is out of range.");
+	}
+	if (index < 0)
+	{
+		throw SQLiteException("Index is negative.");
+	}
+	if (value_type != sqlite3_column_type(m_statement, index))
+	{
+		throw SQLiteException
+		(	"Value type at index does not match specified value type."
+		);
+	}
+	return;
+}
+
 
 void
 DatabaseConnection::SQLStatement::check_ok(int err_code)

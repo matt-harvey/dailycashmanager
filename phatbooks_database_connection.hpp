@@ -39,6 +39,7 @@ public:
 	 * 	SQLite statement preparation fails.
 	 */
 	void store(Account const& p_account);
+
 private:
 	void setup_tables();	
 

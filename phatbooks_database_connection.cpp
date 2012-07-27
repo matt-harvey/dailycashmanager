@@ -27,7 +27,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 void
 PhatbooksDatabaseConnection::store(Account const& p_account)
 {
-	DEBUG_LOG << "Storing Account object in database." << endl;
+	JEWEL_DEBUG_LOG << "Storing Account object in database." << endl;
 
 	SQLStatement statement
 	(	*this,
@@ -46,11 +46,9 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	while (statement.step())
 	{
 	}
-	DEBUG_LOG << "Account object has been successfully stored." << endl;
+	JEWEL_DEBUG_LOG << "Account object has been successfully stored." << endl;
 	return;
 }
-
-
 
 
 void

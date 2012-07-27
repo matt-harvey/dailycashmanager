@@ -1,8 +1,11 @@
 #ifndef GUARD_database_connection_hpp
 #define GUARD_database_connection_hpp
 
+#include "sqloxx_exceptions.hpp"
 #include <sqlite3.h>
+#include <boost/cstdint.hpp>
 #include <boost/noncopyable.hpp>
+#include <cassert>
 #include <string>
 
 /**
@@ -172,6 +175,23 @@ public:
 	void bind(std::string const& parameter_name, int value);
 	void bind(std::string const& parameter_name, std::string const& str);
 
+	/**
+	 * Where a SQLStatement has a result set available,
+	 * this function (template) can be used to extract the value at
+	 * the \c indexth column of the current row (where \c index starts
+	 * counting at 0).
+	 *
+	 * @param index is the column number (starting at 0) from which to
+	 * read the value.
+	 * 
+	 * @throws SQLiteException if:\n
+	 * 	the index is out of range; or\n
+	 * 	the requested column contains type that is incompatible with T.
+	 */
+	template <typename T>
+	T extract(int index);
+
+
 	// Wraps sqlite3_step
 	// Returns true as long as there are further steps to go.
 	bool step();
@@ -184,12 +204,72 @@ private:
 	// Return index no. of named parameter in statement
 	int parameter_index(std::string const& parameter_name) const;
 
+	/**
+	 * Checks whether a column is available for extraction at
+	 * index \c index, of type \c value_type, and throws an
+	 * exception if not.
+	 *
+	 * @param index Position of column (starts from zero) in result
+	 * row.
+	 * 
+	 * @param value_type Should be a SQLite value type code, i.e. one of:\n
+	 * 	SQLITE_INTEGER, SQLITE_FLOAT, SQLITE_TEXT, SQLITE_BLOB, SQLITE_NULL.
+	 *
+	 * @throws SQLiteException if:\n
+	 * 	There are no results available for extraction;\n
+	 * 	\c index is out of range; or\n
+	 * 	\c the value at position \c index is not of value type \c value_type.
+	 */
+	void check_column(int index, int value_type);
+
 	// Check code is SQLITE_OK and if not finalize statement and
 	// throw SQLiteException.
 	void check_ok(int err_code);
 
 };
 
+
+// FUNCTION TEMPLATE DEFINITIONS
+
+
+template <>
+inline
+int
+DatabaseConnection::SQLStatement::extract<int>(int index)
+{
+	check_column(index, SQLITE_INTEGER);
+	return sqlite3_column_int(m_statement, index);
+}
+
+template <>
+inline
+boost::int64_t
+DatabaseConnection::SQLStatement::extract<boost::int64_t>(int index)
+{
+	check_column(index, SQLITE_INTEGER);
+	return sqlite3_column_int64(m_statement, index);
+}
+
+template <>
+inline
+double
+DatabaseConnection::SQLStatement::extract<double>(int index)
+{
+	check_column(index, SQLITE_FLOAT);
+	return sqlite3_column_double(m_statement, index);
+}
+
+template <>
+inline
+std::string
+DatabaseConnection::SQLStatement::extract<std::string>(int index)
+{
+	check_column(index, SQLITE_TEXT);
+	const unsigned char* begin = sqlite3_column_text(m_statement, index);
+	const unsigned char* end = begin;
+	while (*end != '\0') ++end;
+	return std::string(begin, end);
+}
 
 
 
