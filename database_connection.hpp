@@ -12,8 +12,6 @@
  *
  * @todo Move sqloxx code to a separate library.
  * 
- * @todo m_connection should be made private if possible.
- *
  * @todo Make the DatabaseConnection class provide for a means
  * to check whether the particular file being connected to is
  * the right kind of file for the application that is using
