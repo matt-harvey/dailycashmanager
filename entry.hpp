@@ -11,13 +11,6 @@ namespace phatbooks
 class Entry
 {
 private:
-	enum Status
-	{
-		working,
-		saved,
-		posted
-	};
-	Status m_status;
 	DateType m_date;
 	std::string m_comment;
 	jewel::Decimal m_act_impact;

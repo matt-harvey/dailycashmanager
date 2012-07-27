@@ -12,13 +12,6 @@ namespace phatbooks
 class Journal
 {
 private:
-	enum Status
-	{
-		working,
-		saved,
-		posted
-	};
-	Status m_status;
 	DateType m_date;	
 	std::string m_comment;
 	std::vector<Entry> m_entry_vec;
