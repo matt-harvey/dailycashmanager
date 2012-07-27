@@ -103,6 +103,17 @@ public:
 protected:
 
 	/**
+	 * Wrapper class for sqlite_stmt*.
+	 *
+	 * @todo The constructor to create a SQLStatement should reject strings
+	 * containing semicolons, since compound statements are not handled by
+	 * step() properly. There should be some other class SQLMultiStatement or
+	 * something, which can then executed using a wrapper around sqlite3_exec.
+	 *
+	 */
+	class SQLStatement;
+
+	/**
 	 * Create application-specific tables in database.
 	 * Certain tables containing specific "fixed" application data are
 	 * populated with rows in this process.
@@ -125,17 +136,25 @@ protected:
 	 */
 	void throw_sqlite_exception();
 
-	// BEGIN NESTED CLASS DECLARATION
+	
+// private:
+
 	/**
-	 * Wrapper class for sqlite_stmt*.
+	 * A connection to a SQLite3 database file.
 	 *
-	 * @todo The constructor to create a SQLStatement should reject strings
-	 * containing semicolons, since compound statements are not handled by
-	 * step() properly. There should be some other class SQLMultiStatement or
-	 * something, which can then executed using a wrapper around sqlite3_exec.
-	 *
+	 * (Note this is a raw pointer not a smart pointer
+	 * to facilitate more straightforward interaction with the SQLite
+	 * C API.)
 	 */
-	class SQLStatement:
+	sqlite3* m_connection;
+
+};
+
+
+
+
+
+class DatabaseConnection::SQLStatement:
 		private boost::noncopyable
 	{
 	public:
@@ -166,20 +185,6 @@ protected:
 		void check_ok(int err_code);
 
 	};
-	// END NESTED CLASS DECLARATION
-
-// private:
-
-	/**
-	 * A connection to a SQLite3 database file.
-	 *
-	 * (Note this is a raw pointer not a smart pointer
-	 * to facilitate more straightforward interaction with the SQLite
-	 * C API.)
-	 */
-	sqlite3* m_connection;
-
-};
 
 }  // namespace sqloxx
 
