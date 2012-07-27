@@ -6,14 +6,6 @@
 #include "journal.hpp"
 #include "repeater.hpp"
 
-/*
-#include <Poco/Data/Common.h>
-#include <Poco/Data/SQLite/Connector.h>
-*/
-
-
-// #include "UnitTest++/src/UnitTest++.h"
-
 #include <iostream>
 
 using phatbooks::Account;
@@ -22,34 +14,8 @@ using jewel::Decimal;
 using std::cout;
 using std::endl;
 
-// For now while I play with Poco...
-// using namespace Poco::Data;
-
-
-/*
-void init()
-{
-	SQLite::Connector::registerConnector();
-}
-
-void shutdown()
-{
-	SQLite::Connector::unregisterConnector();
-}
-*/
-
-
 int main()
 {
-	/*
-	init();
-	Session ses("SQLite", "sample.db");
-	int count = 0;
-	ses << "create table tab(num integer)", now;
-	shutdown();
-	*/
-
-
 
 	PhatbooksDatabaseConnection db;
 	db.open("/home/matthew/Workbench/versioned/phatbooks/test.db");	

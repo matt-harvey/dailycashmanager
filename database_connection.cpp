@@ -1,6 +1,7 @@
 #include "sqloxx_exceptions.hpp"
 #include "database_connection.hpp"
 #include <boost/filesystem.hpp>
+#include <jewel/debug_log.hpp>
 #include <sqlite3.h>
 #include <cassert>
 #include <cstdlib>
@@ -21,12 +22,12 @@ namespace sqloxx
 DatabaseConnection::DatabaseConnection():
 	m_connection(0)
 {
-	clog << "Creating DatabaseConnection..." << endl;
+	DEBUG_LOG << "Creating DatabaseConnection..." << endl;
 
 	// Initialize SQLite3
 	if (sqlite3_initialize() != SQLITE_OK) throw_sqlite_exception();
 
-	clog << "SQLite3 has been initialized." << endl;
+	DEBUG_LOG << "SQLite3 has been initialized." << endl;
 }
 
 void
@@ -38,12 +39,12 @@ DatabaseConnection::open(char const* filename)
 	boost::filesystem::file_status s = boost::filesystem::status(p);
 	if (boost::filesystem::exists(s))
 	{
-		clog << "Preexisting file " << filename << " detected." << endl;
-		clog << "Attempting to connect to this file..." << endl;
+		DEBUG_LOG << "Preexisting file " << filename << " detected." << endl;
+		DEBUG_LOG << "Attempting to connect to this file..." << endl;
 	}
 	else
 	{
-		clog << "Creating file " << filename << "..." << endl;
+		DEBUG_LOG << "Creating file " << filename << "..." << endl;
 		database_setup_required = true;
 	}
 
@@ -55,14 +56,16 @@ DatabaseConnection::open(char const* filename)
 		0
 	);
 	if (return_code != SQLITE_OK) throw_sqlite_exception();
-	clog << "Database connection to file " << filename << " has been opened, "
-	     << "and m_connection has been set to point there." << endl;
+	DEBUG_LOG << "Database connection to file "
+	          << filename
+	          << " has been opened "
+	          << "and m_connection has been set to point there." << endl;
 	
 	if (database_setup_required)
 	{
-		clog << "Setting up Phatbooks tables in database..." << endl;
+		DEBUG_LOG << "Setting up Phatbooks tables in database..." << endl;
 		setup_tables();
-		clog << "Tables have been set up." << endl;
+		DEBUG_LOG << "Tables have been set up." << endl;
 	}
 	return;
 
@@ -73,14 +76,14 @@ DatabaseConnection::open(char const* filename)
 // Remember - don't call virtual functions from destructors!
 DatabaseConnection::~DatabaseConnection()
 {
-	clog << "Destroying database connection..." << endl;
-
+	DEBUG_LOG << "Destroying database connection..." << endl;
 	if (m_connection)
 	{
 		if (sqlite3_close(m_connection) != SQLITE_OK)
 		{
-			clog << "SQLite3 database connection could not be successfully "
-			        "closed in DatabaseConnection destructor. " << endl;
+			clog << "SQLite3 database connection could not be "
+			             "successfully "
+			             "closed in DatabaseConnection destructor. " << endl;
 			std::abort();
 		}
 	}
@@ -90,8 +93,7 @@ DatabaseConnection::~DatabaseConnection()
 		     << endl;
 		std::abort();
 	}
-
-	clog << "SQLite3 has been shut down." << endl;
+	DEBUG_LOG << "SQLite3 has been shut down." << endl;
 }
 
 bool

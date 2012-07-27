@@ -4,13 +4,13 @@
 #include "sqloxx_exceptions.hpp"
 #include <sqlite3.h>
 #include <boost/numeric/conversion/cast.hpp>
+#include <jewel/debug_log.hpp>
 #include <iostream>
 #include <string>
 
 using boost::numeric_cast;
 using sqloxx::DatabaseConnection;
 using sqloxx::SQLiteException;
-using std::clog;
 using std::endl;
 using std::string;
 
@@ -23,31 +23,11 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 {
 }
 
-/*
- * With a proper SQLStatement wrapper class, the store(Account cons&) method
- * (defined below) could be as simple as the below.
-void
-DatabaseConnection::store(Account const& p_account)
-{
-	SQLStatement statement
-	(	m_connection,
-		"insert into accounts(account_type_id, name, description) "
-		"values(?, ?, ?)"
-	);
-	statement.bind(static_cast<int>(p_account.account_type()));
-	statement.bind(p_account.name().c_str());
-	statement.bind(p_account.description().c_str());
-	statement.execute();
-	return;
-}
-*/
-
-
 
 void
 PhatbooksDatabaseConnection::store(Account const& p_account)
 {
-	clog << "Storing Account object in database." << endl;
+	DEBUG_LOG << "Storing Account object in database." << endl;
 
 	SQLStatement statement
 	(	*this,
@@ -66,7 +46,7 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	while (statement.step())
 	{
 	}
-	clog << "Account object has been successfully stored." << endl;
+	DEBUG_LOG << "Account object has been successfully stored." << endl;
 	return;
 }
 

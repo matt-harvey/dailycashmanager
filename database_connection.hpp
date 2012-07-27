@@ -74,7 +74,7 @@ public:
 	virtual ~DatabaseConnection();
 
 	/**
-	 * Returns \true iff the DatabaseConnection is connected to a 
+	 * Returns \c true iff the DatabaseConnection is connected to a 
 	 * database.
 	 */
 	virtual bool is_valid();
@@ -117,7 +117,7 @@ protected:
 	 * Certain tables containing specific "fixed" application data are
 	 * populated with rows in this process.
 	 *
-	 * This function should be overriden in derived class if required
+	 * This function should be redefined in derived class if required
 	 * to perform application-specific database setup.
 	 *
 	 * @throws sqloxx::SQLiteException if operation
