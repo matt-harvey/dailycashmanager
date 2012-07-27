@@ -115,6 +115,20 @@ DatabaseConnection::throw_sqlite_exception()
 	throw SQLiteException(sqlite3_errmsg(m_connection));
 }
 
+void
+DatabaseConnection::execute_sql(string const& str)
+{
+	int const return_code = sqlite3_exec
+	(	m_connection,
+		str.c_str(),
+		0,
+		0,
+		0
+	);
+	if (return_code != SQLITE_OK) throw_sqlite_exception();
+	return;
+}
+
 
 
 /**************************************************************

@@ -53,7 +53,6 @@ class DatabaseConnection:
 {
 public:
 
-	friend class SQLStatement;
 
 	/**
 	 * Initializes SQLite3 and creates a database connection
@@ -100,6 +99,7 @@ public:
 	 */
 	void open(char const* filename);	
 
+
 protected:
 
 	/**
@@ -109,7 +109,6 @@ protected:
 	 * containing semicolons, since compound statements are not handled by
 	 * step() properly. There should be some other class SQLMultiStatement or
 	 * something, which can then executed using a wrapper around sqlite3_exec.
-	 *
 	 */
 	class SQLStatement;
 
@@ -136,8 +135,17 @@ protected:
 	 */
 	void throw_sqlite_exception();
 
+	/**
+	 * Executes a string on the database connection.
+	 * This should be used only where the developer has complete
+	 * control of the string being passed, to prevent SQL injection
+	 * attacks. Generally, the functions provided by SQLStatement should
+	 * be the preferred means for building and executing SQL statements.
+	 */
+	void execute_sql(std::string const& str);
+
 	
-// private:
+private:
 
 	/**
 	 * A connection to a SQLite3 database file.
@@ -155,36 +163,39 @@ protected:
 
 
 class DatabaseConnection::SQLStatement:
-		private boost::noncopyable
-	{
-	public:
+	private boost::noncopyable
+{
+public:
 
-		SQLStatement(DatabaseConnection& dbconn, std::string const& str);
+	SQLStatement(DatabaseConnection& dbconn, std::string const& str);
 
-		~SQLStatement();
+	~SQLStatement();
 
-		// Wrapper around SQLite bind functions
-		void bind(std::string const& parameter_name, double value);
-		void bind(std::string const& parameter_name, int value);
-		void bind(std::string const& parameter_name, std::string const& str);
+	// Wrapper around SQLite bind functions
+	void bind(std::string const& parameter_name, double value);
+	void bind(std::string const& parameter_name, int value);
+	void bind(std::string const& parameter_name, std::string const& str);
 
-		// Wraps sqlite3_step
-		// Returns true as long as there are further steps to go.
-		bool step();
+	// Wraps sqlite3_step
+	// Returns true as long as there are further steps to go.
+	bool step();
 
 
-	private:
-		sqlite3_stmt* m_statement;
-		DatabaseConnection& m_database_connection;
+private:
+	sqlite3_stmt* m_statement;
+	DatabaseConnection& m_database_connection;
 
-		// Return index no. of named parameter in statement
-		int parameter_index(std::string const& parameter_name) const;
+	// Return index no. of named parameter in statement
+	int parameter_index(std::string const& parameter_name) const;
 
-		// Check code is SQLITE_OK and if not finalize statement and
-		// throw SQLiteException.
-		void check_ok(int err_code);
+	// Check code is SQLITE_OK and if not finalize statement and
+	// throw SQLiteException.
+	void check_ok(int err_code);
 
-	};
+};
+
+
+
 
 }  // namespace sqloxx
 

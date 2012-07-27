@@ -77,10 +77,8 @@ void
 PhatbooksDatabaseConnection::setup_tables()
 {
 	// Create the tables
-	int const return_code = sqlite3_exec
-	(	m_connection,
-		"begin transaction; "
-
+	execute_sql
+	(	"begin transaction; "
 		"create table commodities"
 		"("
 			"commodity_id integer primary key autoincrement, "
@@ -91,7 +89,6 @@ PhatbooksDatabaseConnection::setup_tables()
 			"multiplier_to_base_intval integer not null, "
 			"multiplier_to_base_places integer not null"
 		"); "
-
 		"create table account_types"
 		"("
 			"account_type_id integer primary key autoincrement, "
@@ -168,13 +165,8 @@ PhatbooksDatabaseConnection::setup_tables()
 			"bud_impact integer not null"
 		"); "
 
-		"end transaction;",
-		0,
-		0,
-		0
+		"end transaction;"
 	);
-
-	if (return_code != SQLITE_OK) throw_sqlite_exception();
 
 	return;
 }
