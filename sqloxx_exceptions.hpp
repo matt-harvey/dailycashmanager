@@ -23,6 +23,6 @@ private:
 
 
 
-}  // namespace phatbooks
+}  // namespace sqloxx
 
 #endif  // sqloxx_exceptions_hpp

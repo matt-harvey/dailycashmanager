@@ -24,7 +24,7 @@ SQLiteException::what() const throw()
 
 
 
-}  // namespace phatbooks
+}  // namespace sqloxx
 
 
 
