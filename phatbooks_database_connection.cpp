@@ -52,7 +52,7 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 
 
 void
-PhatbooksDatabaseConnection::setup_tables()
+PhatbooksDatabaseConnection::setup()
 {
 	// Create the tables
 	execute_sql
@@ -142,10 +142,9 @@ PhatbooksDatabaseConnection::setup_tables()
 			"act_impact integer not null, "
 			"bud_impact integer not null"
 		"); "
-
+		
 		"end transaction;"
 	);
-
 	return;
 }
 

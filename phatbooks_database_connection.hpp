@@ -11,7 +11,7 @@ namespace phatbooks
  * See API documentation for sqloxx::DatabaseConnection,
  * for parts of API inherited from sqloxx::DatabaseConnection.
  *
- * @todo In setup_tables, commodity_id can be null. This is a
+ * @todo In \c setup, commodity_id can be null. This is a
  * temporary edit / hack. It is essential that this be fixed.
  *
  * @todo If speed becomes a problem, I should find a way to avoid
@@ -41,7 +41,7 @@ public:
 	void store(Account const& p_account);
 
 private:
-	void setup_tables();	
+	void setup();	
 
 
 };  // PhatbooksDatabaseConnection

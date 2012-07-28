@@ -66,7 +66,7 @@ DatabaseConnection::open(char const* filename)
 	{
 		JEWEL_DEBUG_LOG << "Setting up Phatbooks tables in database..."
 		                << endl;
-		setup_tables();
+		setup();
 		JEWEL_DEBUG_LOG << "Tables have been set up." << endl;
 	}
 	return;
@@ -105,7 +105,7 @@ DatabaseConnection::is_valid()
 }
 
 void
-DatabaseConnection::setup_tables()
+DatabaseConnection::setup()
 {
 	// Do nothing.
 	// This function should be overriden in inherited class
