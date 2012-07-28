@@ -9,6 +9,7 @@
 #include <iostream>
 
 using phatbooks::Account;
+using phatbooks::Commodity;
 using phatbooks::PhatbooksDatabaseConnection;
 using jewel::Decimal;
 using std::cout;
@@ -19,12 +20,28 @@ int main()
 
 	PhatbooksDatabaseConnection db;
 	db.open("/home/matthew/Workbench/versioned/phatbooks/test.db");	
-	/*
-	db.store(Account(Account::balance_sheet, "Cash", "Notes and coins"));
-	db.store(Account(Account::profit_and_loss, "Food", "Food and drink"));
-	*/
-
-
+	Commodity dollars
+	(	"AUD",
+		"Australian dollars",
+		"",
+		2,
+		Decimal("1")
+	);
+	db.store(dollars);
+	Account cash
+	(	"Cash",
+		"AUD",
+		Account::balance_sheet,
+		"Notes and coins"
+	);
+	Account food
+	(	"Food",
+		"AUD",
+		Account::profit_and_loss,
+		"Food and drink"
+	);
+	db.store(cash);
+	db.store(food);
 
 	return 0;
 }

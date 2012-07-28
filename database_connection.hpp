@@ -175,6 +175,7 @@ public:
 	// Wrapper around SQLite bind functions
 	void bind(std::string const& parameter_name, double value);
 	void bind(std::string const& parameter_name, int value);
+	void bind(std::string const& parameter_name, boost::int64_t value);
 	void bind(std::string const& parameter_name, std::string const& str);
 
 	/**

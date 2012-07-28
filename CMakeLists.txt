@@ -4,6 +4,7 @@ include_directories (/home/matthew/lib)
 link_directories (/home/matthew/lib/jewel)
 add_executable (main
 				account.cpp
+				commodity.cpp
 				date.cpp
 				entry.cpp
 				journal.cpp

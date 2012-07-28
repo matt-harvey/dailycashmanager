@@ -1,5 +1,6 @@
 #include "sqloxx_exceptions.hpp"
 #include "database_connection.hpp"
+#include <boost/cstdint.hpp>
 #include <boost/filesystem.hpp>
 #include <jewel/debug_log.hpp>
 #include <sqlite3.h>
@@ -9,6 +10,7 @@
 #include <stdexcept>
 #include <string>
 
+using boost::int64_t;
 using std::clog;
 using std::runtime_error;
 using std::endl;
@@ -34,7 +36,6 @@ void
 DatabaseConnection::open(char const* filename)
 {
 	// Check if file already exists
-	bool database_setup_required = false;
 	boost::filesystem::path p(filename);
 	boost::filesystem::file_status s = boost::filesystem::status(p);
 	if (boost::filesystem::exists(s))
@@ -188,6 +189,9 @@ DatabaseConnection::SQLStatement::check_column(int index, int value_type)
 	}
 	if (value_type != sqlite3_column_type(m_statement, index))
 	{
+		JEWEL_DEBUG_LOG << "requested value type: " << value_type << endl;
+		JEWEL_DEBUG_LOG << "value type at index: "
+		                << sqlite3_column_type(m_statement, index) << endl;
 		throw SQLiteException
 		(	"Value type at index does not match specified value type."
 		);
@@ -223,8 +227,21 @@ DatabaseConnection::SQLStatement::bind
 
 void
 DatabaseConnection::SQLStatement::bind
-(	std::string const& parameter_name,
-	std::string const& str
+(	string const& parameter_name,
+	int64_t value
+)
+{
+	int const index = parameter_index(parameter_name);
+	int const return_code = sqlite3_bind_int64(m_statement, index, value);
+	check_ok(return_code);
+	return;
+}
+
+
+void
+DatabaseConnection::SQLStatement::bind
+(	string const& parameter_name,
+	string const& str
 )
 {
 	int const index = parameter_index(parameter_name);
@@ -258,9 +275,10 @@ DatabaseConnection::SQLStatement::step()
 	return false;  // Silence compiler re. return from non-void function. 
 }
 
+
 int
 DatabaseConnection::SQLStatement::parameter_index
-(	std::string const& parameter_name
+(	string const& parameter_name
 )
 const
 {

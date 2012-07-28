@@ -10,7 +10,23 @@ namespace phatbooks
 
 class Commodity
 {
+
 public:
+
+	Commodity
+	(	std::string p_abbreviation,
+		std::string p_name = "",
+		std::string p_description = "",
+		int p_precision = 2,
+		jewel::Decimal p_multiplier_to_base = jewel::Decimal("1")
+	);
+	
+	std::string abbreviation() const;
+	std::string name() const;
+	std::string description() const;
+	int precision() const;
+	jewel::Decimal multiplier_to_base() const;
+
 private:
 	std::string m_abbreviation;
 	std::string m_name;

@@ -27,6 +27,7 @@ public:
 	 */
 	Account
 	(	std::string p_name,
+		std::string p_commodity_abbreviation,
 		AccountType p_account_type = profit_and_loss,
 		std::string p_description = ""
 	);
@@ -39,6 +40,10 @@ public:
 	 */
 	std::string name() const;
 
+	/** Returns abbreviation of native commodity of this account.
+	 */
+	std::string commodity_abbreviation() const;
+
 	/** Returns AccountType of account.
 	 */
 	AccountType account_type() const;
@@ -49,12 +54,16 @@ public:
 
 	
 private:
+
 	std::string m_name;
-	AccountType m_account_type;
-	std::string m_description;
 
 	// native commodity or currency of Account
 	std::string m_commodity_abbreviation;
+
+	AccountType m_account_type;
+
+	std::string m_description;
+
 };
 
 

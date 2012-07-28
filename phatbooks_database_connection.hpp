@@ -2,6 +2,7 @@
 #define GUARD_phatbooks_database_connection_hpp
 
 #include "account.hpp"
+#include "commodity.hpp"
 #include "database_connection.hpp"
 
 namespace phatbooks
@@ -11,8 +12,10 @@ namespace phatbooks
  * See API documentation for sqloxx::DatabaseConnection,
  * for parts of API inherited from sqloxx::DatabaseConnection.
  *
- * @todo In \c setup, commodity_id can be null. This is a
- * temporary edit / hack. It is essential that this be fixed.
+ * @todo HIGH PRIORITY
+ * In the function for storing an Account in the database,
+ * it needs to look up the commodity abbreviation in the commodities
+ * database to find the commodity_id.
  *
  * @todo If speed becomes a problem, I should find a way to avoid
  * having to call sqlite3_prepare_v2, by caching previously prepared
@@ -34,11 +37,32 @@ public:
 	PhatbooksDatabaseConnection();
 	
 	/** Store an Account object in the database
+	 * 
+	 * @todo Verify that throwing behaviour is as documented.
+	 * 
+	 * @throws std::runtime_error if p_account has invalid
+	 * commodity abbreviation. (Commodity abbreviation of
+	 * p_account must correspond to a commodity that has already
+	 * been stored in the database.)
 	 *
 	 * @throws sqloxx::SQLiteException if:
-	 * 	SQLite statement preparation fails.
+	 * 	SQLite statement preparation fails;
+	 * 	insertion fails (for reasons other than above).
+	 *
+	 * @param p_account the account to be stored.
 	 */
 	void store(Account const& p_account);
+
+	/** Store a Commodity object in the database
+	 *
+	 * @todo Verify that throwing behaviour is as documented.
+	 *
+	 * @throws sqloxx::SQLiteException if:
+	 * 	SQLite statement preparation fails;
+	 * 	insertion fails.
+	 */
+	void store(Commodity const& p_commodity);
+
 
 private:
 	void setup();	

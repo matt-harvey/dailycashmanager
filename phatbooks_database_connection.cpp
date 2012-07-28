@@ -1,8 +1,10 @@
 #include "account.hpp"
+#include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <sqlite3.h>
+#include <stdexcept>
 #include <boost/numeric/conversion/cast.hpp>
 #include <jewel/debug_log.hpp>
 #include <iostream>
@@ -12,6 +14,7 @@ using boost::numeric_cast;
 using sqloxx::DatabaseConnection;
 using sqloxx::SQLiteException;
 using std::endl;
+using std::runtime_error;
 using std::string;
 
 namespace phatbooks
@@ -25,23 +28,98 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 
 
 void
+PhatbooksDatabaseConnection::store(Commodity const& p_commodity)
+{
+	JEWEL_DEBUG_LOG << "Storing Commodity object in database." << endl;
+
+	SQLStatement statement
+	(	*this,
+		"insert into commodities"
+		"("
+			"abbreviation, "
+			"name, "
+			"description, "
+			"precision, "
+			"multiplier_to_base_intval, "
+			"multiplier_to_base_places"
+		") "
+		"values"
+		"("
+			":abbreviation, "
+			":name, "
+			":description, "
+			":precision, "
+			":multiplier_to_base_intval, "
+			":multiplier_to_base_places"
+		")"
+	);
+
+	statement.bind(":abbreviation", p_commodity.abbreviation());
+	statement.bind(":name", p_commodity.name());
+	statement.bind(":description", p_commodity.description());
+	statement.bind(":precision", p_commodity.precision());
+	statement.bind
+	(	":multiplier_to_base_intval",
+		p_commodity.multiplier_to_base().underlying_integer()
+	);
+	statement.bind
+	(	":multiplier_to_base_places",
+		p_commodity.multiplier_to_base().places()
+	);
+	// Execute the SQL statement
+	while (statement.step())
+	{
+	}
+	JEWEL_DEBUG_LOG << "Commodity object has been successfully stored." << endl;
+	return;
+}
+
+
+
+void
 PhatbooksDatabaseConnection::store(Account const& p_account)
 {
 	JEWEL_DEBUG_LOG << "Storing Account object in database." << endl;
 
+	// Find the commodity_id for Account.commodity_abbreviation()
+	SQLStatement commodity_finder
+	(	*this,
+		"select commodity_id from commodities where abbreviation = :ca"
+	);
+	commodity_finder.bind(":ca", p_account.commodity_abbreviation());
+	if (!commodity_finder.step())
+	{
+		// We have no commodity stored with this abbreviation.
+		throw runtime_error
+		(	"Attempted to store Account with invalid commodity abbreviation."
+		);
+	}
+	int const commodity_id = commodity_finder.extract<int>(0);
+	if (commodity_finder.step())
+	{
+		// We have multiple commodities with this id.
+		// This should never occur, unless the database has been tampered with
+		// from outside this program.
+		throw SQLiteException
+		(	"Integrity of commodities table has been violated. Table contains"
+			" multiple rows with the same commodity abbreviation."
+		);
+	}
+
+	// Now we can insert the account.
 	SQLStatement statement
 	(	*this,
-		"insert into accounts(account_type_id, name, description) "
-		"values(:account_type_id, :name, :description)"
+		"insert into accounts(account_type_id, name, description, "
+		"commodity_id) values(:account_type_id, :name, :description, "
+		":commodity_id)"
 	);
-
 	statement.bind
 	(	":account_type_id",
 		static_cast<int>(p_account.account_type())
 	);
 	statement.bind(":name", p_account.name());
 	statement.bind(":description", p_account.description());
-     
+    statement.bind(":commodity_id", commodity_id);
 	// Execute the SQL statement
 	while (statement.step())
 	{
