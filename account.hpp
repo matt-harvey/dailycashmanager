@@ -17,7 +17,7 @@ public:
 		// a table with primary keys in this order
 		profit_and_loss = 1,
 		balance_sheet,
-		envelope
+		pure_envelope
 	};
 
 	AccountType account_type() const;

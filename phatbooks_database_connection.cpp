@@ -84,7 +84,7 @@ PhatbooksDatabaseConnection::setup()
 		// with AccountType enum defined Account class.
 		"insert into account_types(name) values('profit and loss');"
 		"insert into account_types(name) values('balance sheet');"
-		"insert into account_types(name) values('envelope');"
+		"insert into account_types(name) values('pure_envelope');"
 		"create table interval_types"
 		"("
 			"interval_type_id integer primary key autoincrement, "
