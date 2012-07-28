@@ -79,11 +79,11 @@ public:
 	/**
 	 * Points the database connection to a specific file
 	 * given by \c filename. If the file
-	 * does not already exist it is created. Upon creation, a separate
+	 * does not already exist it is created. After creation, a separate
 	 * \c setup function is called, to set up
 	 * any application specific tables or etc. and initial data as desired.
 	 *
-	 * To customise this behaviour in a derived class, override
+	 * To customise this "setup" in a derived class, override
 	 * \c DatabaseConnection::setup (which does nothing by default)
 	 * in your class derived from DatabaseConnection.
 	 *

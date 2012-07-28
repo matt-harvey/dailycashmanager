@@ -54,7 +54,14 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 void
 PhatbooksDatabaseConnection::setup()
 {
+	if (setup_has_occurred())
+	{
+		return;
+	}
+	
+	assert (!setup_has_occurred());
 	// Create the tables
+	JEWEL_DEBUG_LOG << "Setting up Phatbooks tables." << endl;
 	execute_sql
 	(	"begin transaction; "
 		"create table commodities"
@@ -142,7 +149,9 @@ PhatbooksDatabaseConnection::setup()
 			"act_impact integer not null, "
 			"bud_impact integer not null"
 		"); "
-		
+
+		"create table " + s_setup_flag + "(dummy_column);"
+
 		"end transaction;"
 	);
 	return;
@@ -150,5 +159,22 @@ PhatbooksDatabaseConnection::setup()
 
 
 
+bool
+PhatbooksDatabaseConnection::setup_has_occurred()
+{
+	try
+	{
+		execute_sql("select * from " + s_setup_flag);
+		return true;
+	}
+	catch (SQLiteException&)
+	{
+		return false;
+	}
+}
+
+
+string const
+PhatbooksDatabaseConnection::s_setup_flag = "setup_flag_99879871986";
 
 }  // namespace phatbooks

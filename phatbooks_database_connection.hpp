@@ -42,7 +42,8 @@ public:
 
 private:
 	void setup();	
-
+	bool setup_has_occurred();
+	static std::string const s_setup_flag;
 
 };  // PhatbooksDatabaseConnection
 

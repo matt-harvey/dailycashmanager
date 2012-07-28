@@ -46,7 +46,6 @@ DatabaseConnection::open(char const* filename)
 	else
 	{
 		JEWEL_DEBUG_LOG << "Creating file " << filename << "..." << endl;
-		database_setup_required = true;
 	}
 
 	// Open the connection
@@ -58,17 +57,12 @@ DatabaseConnection::open(char const* filename)
 	);
 	if (return_code != SQLITE_OK) throw_sqlite_exception();
 	JEWEL_DEBUG_LOG << "Database connection to file "
-	          << filename
-	          << " has been opened "
-	          << "and m_connection has been set to point there." << endl;
-	
-	if (database_setup_required)
-	{
-		JEWEL_DEBUG_LOG << "Setting up Phatbooks tables in database..."
-		                << endl;
-		setup();
-		JEWEL_DEBUG_LOG << "Tables have been set up." << endl;
-	}
+	                << filename
+	                << " has been opened "
+	                << "and m_connection has been set to point there."
+					<< endl;
+
+	setup();
 	return;
 
 }
