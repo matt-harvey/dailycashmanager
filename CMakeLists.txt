@@ -4,6 +4,9 @@ include_directories (/home/matthew/lib)
 link_directories (/home/matthew/lib/jewel)
 add_executable (main
 				account.cpp
+				date.cpp
+				entry.cpp
+				journal.cpp
 				sqloxx_exceptions.cpp
                 main.cpp
 				database_connection.cpp

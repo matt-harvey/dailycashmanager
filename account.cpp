@@ -7,12 +7,12 @@ namespace phatbooks
 {
 
 Account::Account
-(	AccountType p_account_type,
-	string p_name,
+(	string p_name,
+	AccountType p_account_type,
 	string p_description
 ):
-	m_account_type(p_account_type),
 	m_name(p_name),
+	m_account_type(p_account_type),
 	m_description(p_description)
 {
 }

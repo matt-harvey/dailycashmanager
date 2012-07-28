@@ -11,6 +11,7 @@ class Account
 {
 public:
 
+
 	enum AccountType
 	{
 		// enum order is significant, as the database contains
@@ -20,24 +21,36 @@ public:
 		pure_envelope
 	};
 
-	AccountType account_type() const;
-	
-	std::string name() const;
-
-	std::string description() const;
-
 	/**
 	 * Constructor
 	 * Does not throw
 	 */
-	Account(AccountType p_account_type = profit_and_loss,
-	  std::string p_name = "", std::string p_description = "");
+	Account
+	(	std::string p_name,
+		AccountType p_account_type = profit_and_loss,
+		std::string p_description = ""
+	);
 
-	// Default destructor suffices
+	// Default copy contructor is fine.
+	// Default assignment is fine.
+	// Default destructor is fine.
+
+	/** Returns name of account.
+	 */
+	std::string name() const;
+
+	/** Returns AccountType of account.
+	 */
+	AccountType account_type() const;
+
+	/** Returns description of account.
+	 */
+	std::string description() const;
+
 	
 private:
-	AccountType m_account_type;
 	std::string m_name;
+	AccountType m_account_type;
 	std::string m_description;
 
 	// native commodity or currency of Account

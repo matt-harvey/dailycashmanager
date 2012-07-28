@@ -1,21 +1,36 @@
 #ifndef GUARD_journal_hpp
 #define GUARD_journal_hpp
 
-#include "entry.hpp"
 #include "general_typedefs.hpp"
-#include "repeater.hpp"
-#include <vector>
+#include <list>
+#include <string>
 
 namespace phatbooks
 {
 
+class Entry;
+class Repeater;
+
 class Journal
 {
+public:
+
+	/**
+	 * Constructor initializes journal date
+	 * to null date and journal comment to empty string,
+	 * The journal starts out with an empty list of entries
+	 * and an empty list of repeaters.
+	 * 
+	 * Does not throw.
+	 */
+	Journal();
+
+
 private:
 	DateType m_date;	
 	std::string m_comment;
-	std::vector<Entry> m_entry_vec;
-	std::vector<Repeater> m_repeater_vec;
+	std::list<Entry> m_entry_list;
+	std::list<Repeater> m_repeater_list;
 };
 
 

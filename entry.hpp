@@ -1,20 +1,37 @@
 #ifndef GUARD_entry_hpp
 #define GUARD_entry_hpp
 
+#include "date.hpp"
+#include "journal.hpp"
 #include "general_typedefs.hpp"
-#include <string>
+#include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
+#include <string>
 
 namespace phatbooks
 {
 
 class Entry
 {
+public:
+
+	/** Constructor.
+	 * Does not throw.
+	 */
+	Entry
+	(	boost::shared_ptr<Journal> p_journal,
+		std::string p_comment = "",
+		jewel::Decimal p_amount = jewel::Decimal("0"),
+		bool p_is_actual = true
+	);
+
+		
 private:
-	DateType m_date;
+	boost::shared_ptr<Journal> m_journal;
 	std::string m_comment;
-	jewel::Decimal m_act_impact;
-	jewel::Decimal m_bud_impact;
+	jewel::Decimal m_amount;
+	bool m_is_actual;
+
 };
 
 
