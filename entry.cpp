@@ -12,8 +12,8 @@ namespace phatbooks
 
 Entry::Entry
 (	shared_ptr<Journal> p_journal,
-	string p_comment,
-	Decimal p_amount,
+	string const& p_comment,
+	Decimal const& p_amount,
 	bool p_is_actual
 ):
 	m_journal(p_journal),

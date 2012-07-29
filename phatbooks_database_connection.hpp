@@ -40,11 +40,11 @@ public:
 	 * p_account must correspond to a commodity that has already
 	 * been stored in the database.)
 	 *
-	 * @throws sqloxx::SQLiteException if:
-	 * 	SQLite statement preparation fails;
+	 * @throws sqloxx::SQLiteException if:\n
+	 * 	SQLite statement preparation fails; or\n
 	 * 	insertion fails (for reasons other than above).
 	 *
-	 * @param p_account the account to be stored.
+	 * @param p_account the Account to be stored.
 	 */
 	void store(Account const& p_account);
 
@@ -52,9 +52,11 @@ public:
 	 *
 	 * @todo Verify that throwing behaviour is as documented.
 	 *
-	 * @throws sqloxx::SQLiteException if:
-	 * 	SQLite statement preparation fails;
+	 * @throws sqloxx::SQLiteException if:\n
+	 * 	SQLite statement preparation fails; or\n
 	 * 	insertion fails.
+	 *
+	 * @param p_commodity the Commodity to be stored.
 	 */
 	void store(Commodity const& p_commodity);
 
