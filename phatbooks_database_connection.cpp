@@ -17,6 +17,8 @@ using std::endl;
 using std::runtime_error;
 using std::string;
 
+
+
 namespace phatbooks
 {
 
@@ -60,7 +62,7 @@ PhatbooksDatabaseConnection::store(Commodity const& p_commodity)
 	statement.bind(":precision", p_commodity.precision());
 	statement.bind
 	(	":multiplier_to_base_intval",
-		p_commodity.multiplier_to_base().underlying_integer()
+		p_commodity.multiplier_to_base().intval()
 	);
 	statement.bind
 	(	":multiplier_to_base_places",
@@ -70,7 +72,8 @@ PhatbooksDatabaseConnection::store(Commodity const& p_commodity)
 	while (statement.step())
 	{
 	}
-	JEWEL_DEBUG_LOG << "Commodity object has been successfully stored." << endl;
+	JEWEL_DEBUG_LOG << "Commodity object has been successfully stored."
+	                << endl;
 	return;
 }
 

@@ -18,6 +18,11 @@ using std::endl;
 int main()
 {
 
+	cout << INT_MAX << endl;
+	
+
+	/*
+
 	PhatbooksDatabaseConnection db;
 	db.open("/home/matthew/Workbench/versioned/phatbooks/test.db");	
 	Commodity dollars
@@ -42,6 +47,8 @@ int main()
 	);
 	db.store(cash);
 	db.store(food);
+	
+	*/
 
 	return 0;
 }
