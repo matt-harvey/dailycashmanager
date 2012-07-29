@@ -17,10 +17,11 @@ class Journal
 public:
 
 	/**
-	 * Constructor initializes journal date
-	 * to null date and journal comment to empty string,
+	 * This constructor initializes journal date
+	 * to null date and journal comment to empty string.
 	 * The journal starts out with an empty list of entries
-	 * and an empty list of repeaters.
+	 * and an empty list of repeaters, and is marked as
+	 * non-posted.
 	 * 
 	 * Does not throw.
 	 */
@@ -29,6 +30,7 @@ public:
 
 private:
 	bool m_is_actual;
+	bool m_is_posted;
 	DateType m_date;	
 	std::string m_comment;
 	std::list<Entry> m_entry_list;

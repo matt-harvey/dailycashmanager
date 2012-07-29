@@ -138,6 +138,7 @@ PhatbooksDatabaseConnection::setup()
 	}
 	
 	assert (!setup_has_occurred());
+
 	// Create the tables
 	JEWEL_DEBUG_LOG << "Setting up Phatbooks tables." << endl;
 	execute_sql
@@ -147,7 +148,7 @@ PhatbooksDatabaseConnection::setup()
 		// table columns that must be 0 or 1.
 		"create table booleans"
 		"("
-			"representation integer not null unique"
+			"representation integer primary key"
 		"); "
 		"insert into booleans(representation) values(0); "
 		"insert into booleans(representation) values(1); "
@@ -162,6 +163,7 @@ PhatbooksDatabaseConnection::setup()
 			"multiplier_to_base_intval integer not null, "
 			"multiplier_to_base_places integer not null"
 		"); "
+
 		"create table account_types"
 		"("
 			"account_type_id integer primary key autoincrement, "

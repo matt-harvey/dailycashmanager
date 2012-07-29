@@ -13,6 +13,7 @@ namespace phatbooks
 
 Journal::Journal(bool p_is_actual):
 	m_is_actual(p_is_actual),
+	m_is_posted(false),
 	m_date((null_date())),
 	m_comment(""),
 	m_entry_list((list<Entry>())),
