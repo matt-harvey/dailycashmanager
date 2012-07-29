@@ -12,11 +12,6 @@ namespace phatbooks
  * See API documentation for sqloxx::DatabaseConnection,
  * for parts of API inherited from sqloxx::DatabaseConnection.
  *
- * @todo HIGH PRIORITY
- * In the function for storing an Account in the database,
- * it needs to look up the commodity abbreviation in the commodities
- * database to find the commodity_id.
- *
  * @todo If speed becomes a problem, I should find a way to avoid
  * having to call sqlite3_prepare_v2, by caching previously prepared
  * sqlite3_stmt* somehow. I think the only feasible way would be to store it
