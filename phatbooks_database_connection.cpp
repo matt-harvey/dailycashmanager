@@ -142,6 +142,16 @@ PhatbooksDatabaseConnection::setup()
 	JEWEL_DEBUG_LOG << "Setting up Phatbooks tables." << endl;
 	execute_sql
 	(	"begin transaction; "
+
+		// Boolean values to act as foreign key constraint for other
+		// table columns that must be 0 or 1.
+		"create table booleans"
+		"("
+			"representation integer not null unique"
+		"); "
+		"insert into booleans(representation) values(0); "
+		"insert into booleans(representation) values(1); "
+
 		"create table commodities"
 		"("
 			"commodity_id integer primary key autoincrement, "
@@ -155,7 +165,7 @@ PhatbooksDatabaseConnection::setup()
 		"create table account_types"
 		"("
 			"account_type_id integer primary key autoincrement, "
-			"name text not null "
+			"name text not null"
 		"); "
 
 		// Values inserted into account_types here must correspond
@@ -171,10 +181,10 @@ PhatbooksDatabaseConnection::setup()
 
 		// Values inserted into interval_types must correspond with
 		// IntervalType enum defined in Repeater class.
-		"insert into interval_types(name) values('days');"
-		"insert into interval_types(name) values('weeks');"
-		"insert into interval_types(name) values('months');"
-		"insert into interval_types(name) values('month ends');"
+		"insert into interval_types(name) values('days'); "
+		"insert into interval_types(name) values('weeks'); "
+		"insert into interval_types(name) values('months'); "
+		"insert into interval_types(name) values('month ends'); "
 
 		"create table accounts"
 		"("
@@ -188,6 +198,7 @@ PhatbooksDatabaseConnection::setup()
 		"create table draft_journals"
 		"("
 			"draft_journal_id integer primary key autoincrement, "
+			"is_actual integer not null references booleans, "
 			"name text unique not null, "
 			"comment text"
 		"); "
@@ -207,13 +218,13 @@ PhatbooksDatabaseConnection::setup()
 			"draft_journal_id not null references draft_journals, "
 			"comment text, "
 			"account_id not null references accounts, "
-			"act_impact integer not null, "
-			"bud_impact integer not null"
+			"amount integer not null "
 		"); "
 
 		"create table journals"
 		"("
 			"journal_id integer primary key autoincrement, "
+			"is_actual integer not null references booleans, "
 			"date text not null, "
 			"comment text"
 		"); "
@@ -224,8 +235,7 @@ PhatbooksDatabaseConnection::setup()
 			"journal_id not null references journals, "
 			"comment text, "
 			"account_id not null references accounts, "
-			"act_impact integer not null, "
-			"bud_impact integer not null"
+			"amount integer not null "
 		"); "
 
 		"create table " + s_setup_flag + "(dummy_column);"

@@ -11,7 +11,8 @@ using std::list;
 namespace phatbooks
 {
 
-Journal::Journal():
+Journal::Journal(bool p_is_actual):
+	m_is_actual(p_is_actual),
 	m_date((null_date())),
 	m_comment(""),
 	m_entry_list((list<Entry>())),

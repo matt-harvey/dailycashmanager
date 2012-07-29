@@ -11,6 +11,7 @@ namespace phatbooks
 class Entry;
 class Repeater;
 
+
 class Journal
 {
 public:
@@ -23,10 +24,11 @@ public:
 	 * 
 	 * Does not throw.
 	 */
-	Journal();
+	Journal(bool p_is_actual = true);
 
 
 private:
+	bool m_is_actual;
 	DateType m_date;	
 	std::string m_comment;
 	std::list<Entry> m_entry_list;

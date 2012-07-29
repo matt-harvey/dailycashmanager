@@ -21,8 +21,7 @@ public:
 	Entry
 	(	boost::shared_ptr<Journal> p_journal,
 		std::string const& p_comment = "",
-		jewel::Decimal const& p_amount = jewel::Decimal("0"),
-		bool p_is_actual = true
+		jewel::Decimal const& p_amount = jewel::Decimal("0")
 	);
 
 		
@@ -30,7 +29,6 @@ private:
 	boost::shared_ptr<Journal> m_journal;
 	std::string m_comment;
 	jewel::Decimal m_amount;
-	bool m_is_actual;
 
 };
 
