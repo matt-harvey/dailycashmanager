@@ -29,10 +29,9 @@
  * just check whether m_connection exists. It should probably also
  * at least check SQLite error status.
  *
- * @todo I should provide a SQLStatement::one_sole() function, that
- * clients can use when they expect that a statement will only have
- * one step to execute. This can then throw if fewer than, or more
- * than, one step is required.
+ * @todo I am often calling sqlite3_finalize() before throwing
+ * SQLiteException(). Is this necessary? Is this desirable? What
+ * about if reset() is preferred by the caller?
  */
 
 
@@ -209,6 +208,11 @@ public:
 	// Wraps sqlite3_step
 	// Returns true as long as there are further steps to go.
 	bool step();
+
+	// For executing statements which are not expected to return a result
+	// set. SQLiteException is thrown if there are one or more result rows.
+	void quick_step();
+
 
 
 private:

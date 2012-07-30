@@ -69,9 +69,7 @@ PhatbooksDatabaseConnection::store(Commodity const& p_commodity)
 		p_commodity.multiplier_to_base().places()
 	);
 	// Execute the SQL statement
-	while (statement.step())
-	{
-	}
+	statement.quick_step();
 	JEWEL_DEBUG_LOG << "Commodity object has been successfully stored."
 	                << endl;
 	return;
@@ -124,9 +122,7 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	statement.bind(":description", p_account.description());
     statement.bind(":commodity_id", commodity_id);
 	// Execute the SQL statement
-	while (statement.step())
-	{
-	}
+	statement.quick_step();
 	JEWEL_DEBUG_LOG << "Account object has been successfully stored." << endl;
 	return;
 }
@@ -265,6 +261,8 @@ PhatbooksDatabaseConnection::setup_has_occurred()
 		return false;
 	}
 }
+
+
 
 
 string const

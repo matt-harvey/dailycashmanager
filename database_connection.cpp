@@ -276,6 +276,19 @@ DatabaseConnection::SQLStatement::step()
 }
 
 
+void
+DatabaseConnection::SQLStatement::quick_step()
+{
+	if (step())
+	{
+		sqlite3_finalize(m_statement);
+		throw SQLiteException
+		(	"Statement yielded a result set when none was expected."
+		);
+	}
+	return;
+}
+
 int
 DatabaseConnection::SQLStatement::parameter_index
 (	string const& parameter_name
