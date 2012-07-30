@@ -8,6 +8,12 @@
 namespace sqloxx
 {
 
+
+/**
+ * @todo Make this into a proper hierarchy of exceptions, and use the
+ * hierarchy judiciously throughout the Phatbooks code to facilitate
+ * better diagnosis and handling of exceptions.
+ */
 class SQLiteException: public std::exception
 {
 public:

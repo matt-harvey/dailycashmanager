@@ -7,6 +7,7 @@
 #include <boost/noncopyable.hpp>
 #include <cassert>
 #include <string>
+#include <vector>
 
 /**
  *
@@ -137,6 +138,23 @@ protected:
 	 */
 	void execute_sql(std::string const& str);
 
+	/**
+	 * To find primary key of a table.
+	 *
+	 * Note, this function should not be used where \c table_name is
+	 * an untrusted string.
+	 *
+	 * @returns a vector of the names of all the columns making up the
+	 * primary key of the table named \c table_name. An empty vector
+	 * is returned if there is no primary key.
+	 *
+	 * @throws SQLiteException in case of invalid table name or other
+	 * SQL execution error.
+	 *
+	 * @param table_name name of table
+	 */
+	std::vector<std::string> primary_key(std::string const& table_name);
+
 	
 private:
 
@@ -214,7 +232,6 @@ public:
 	void quick_step();
 
 
-
 private:
 	sqlite3_stmt* m_statement;
 	DatabaseConnection& m_database_connection;
@@ -243,6 +260,7 @@ private:
 	// Check code is SQLITE_OK and if not finalize statement and
 	// throw SQLiteException.
 	void check_ok(int err_code);
+
 
 };
 

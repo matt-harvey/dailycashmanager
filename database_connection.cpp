@@ -9,12 +9,14 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 using boost::int64_t;
 using std::clog;
 using std::runtime_error;
 using std::endl;
 using std::string;
+using std::vector;
 
 namespace sqloxx
 {
@@ -127,6 +129,32 @@ DatabaseConnection::execute_sql(string const& str)
 	if (return_code != SQLITE_OK) throw_sqlite_exception();
 	return;
 }
+
+
+
+vector<string>
+DatabaseConnection::primary_key(string const& table_name)
+{
+	static int const pk_info_field = 5;
+	static int const column_name_field = 1;
+	vector<string> ret;
+	SQLStatement statement
+	(	*this,
+		"pragma table_info(" + table_name + ")"
+	);
+	bool steps_remain = true;
+	while ((steps_remain = statement.step()))
+	{
+		if (statement.extract<int>(pk_info_field) == 1)
+		{
+			ret.push_back(statement.extract<string>(column_name_field));
+		}
+	}
+	assert (!steps_remain);
+	return ret;
+}
+
+
 
 
 
@@ -288,6 +316,9 @@ DatabaseConnection::SQLStatement::quick_step()
 	}
 	return;
 }
+
+	
+
 
 int
 DatabaseConnection::SQLStatement::parameter_index

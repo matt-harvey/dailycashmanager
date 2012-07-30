@@ -22,6 +22,7 @@ int main()
 
 	PhatbooksDatabaseConnection db;
 	db.open("/home/matthew/Workbench/versioned/phatbooks/test.db");	
+
 	Commodity dollars
 	(	"AUD",
 		"Australian dollars",
@@ -44,7 +45,11 @@ int main()
 	);
 	db.store(cash);
 	db.store(food);
-	
+
+	/*
+	cout << db.primary_key("accounts")[0] << endl;
+	cout << db.primary_key("commodities")[0] << endl;
+	*/
 
 	return 0;
 }
