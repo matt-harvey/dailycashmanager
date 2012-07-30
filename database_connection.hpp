@@ -29,7 +29,7 @@
  * just check whether m_connection exists. It should probably also
  * at least check SQLite error status.
  *
- * @todo I should provide a SQLStatement::one_step() function, that
+ * @todo I should provide a SQLStatement::one_sole() function, that
  * clients can use when they expect that a statement will only have
  * one step to execute. This can then throw if fewer than, or more
  * than, one step is required.

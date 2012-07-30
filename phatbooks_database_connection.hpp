@@ -26,7 +26,6 @@ namespace phatbooks
  * it causes a problem by being too slow.
  *
  * @todo I should do the following:
- *	Change IdType to signed int;
  *	Have the PhatbooksDatabaseConnection::store(T const& obj) methods first
  *	check the maximum of the autoincrementing primary key column for their
  *	particular table, to ensure it is not INT_MAX; then have them store
