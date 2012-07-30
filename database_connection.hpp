@@ -144,6 +144,14 @@ protected:
 	 * Note, this function should not be used where \c table_name is
 	 * an untrusted string.
 	 *
+	 * @todo To speed execution, assuming the return value for a given
+	 * \c table_name never changes (is this a safe assumption?), the
+	 * return values could be cached either in a
+	 * map< string, vector<string> >, or by way of templatizing this
+	 * function with \c table_name as a (non-type) template parameter,
+	 * and the return value stored as a static variable inside the
+	 * function.
+	 *
 	 * @returns a vector of the names of all the columns making up the
 	 * primary key of the table named \c table_name. An empty vector
 	 * is returned if there is no primary key.
