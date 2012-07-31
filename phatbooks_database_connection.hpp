@@ -83,6 +83,7 @@ public:
 	void store(Commodity const& p_commodity);
 
 
+
 private:
 	void setup();	
 	bool setup_has_occurred();

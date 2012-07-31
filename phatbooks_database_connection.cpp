@@ -2,7 +2,6 @@
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "database_connection.hpp"
-#include "sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <sqlite3.h>
 #include <stdexcept>

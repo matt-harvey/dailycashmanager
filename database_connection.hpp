@@ -2,6 +2,8 @@
 #define GUARD_database_connection_hpp
 
 #include "sqloxx_exceptions.hpp"
+#include <jewel/checked_arithmetic.hpp>
+#include <jewel/debug_log.hpp>
 #include <sqlite3.h>
 #include <boost/cstdint.hpp>
 #include <boost/noncopyable.hpp>
@@ -138,6 +140,53 @@ protected:
 	 */
 	void execute_sql(std::string const& str);
 
+
+
+
+	/**
+	 * Given the name of a table in the connected database, assuming that
+	 * table has a single-column primary key, and assuming that column is
+	 * an autoincrementing primary key, this function will return the next
+	 * highest key value (the value 1 greater than the highest primary key
+	 * so far in the table). This will be the next key assigned by SQLite
+	 * for an ordinary insertion into the table (assuming the default
+	 * behaviour of SQLite in this regard has not been altered in some way).
+	 * This function does NOT check whether the primary
+	 * key is in fact autoincrementing. However, it DOES check whether the
+	 * table has a single-column primary key, and will throw an exception if
+	 * it doesn't. In addition, it will throw an exception if the next highest
+	 * key would exceed the maximum value for KeyType.
+	 *
+	 * KeyType should be an integral type, and should also be a type
+	 * supported by SQLStatement::extract. If not, behaviour is \e undefined,
+	 * although it is expected that compilation will fail where a KeyType
+	 * that is not accepted by SQLStatement::extract is provided.
+	 * 
+	 * It is the callers responsibility to ensure that KeyType is large
+	 * enough to accommodate the values that are \e already in the
+	 * primary key of the table - otherwise behaviour is undefined.
+	 *
+	 * This function should not be used f \c table_name is an untrusted
+	 * string.
+	 *
+	 * @param table_name The name of the table. 
+	 *
+	 * @returns the next highest primary key for the table, assuming it has
+	 * a single-column primary key. Note if there are gaps in the numbering
+	 * these are ignored. The returned value is always one greater than the
+	 * currently greatest value for the key (but see exceptions).
+	 *
+	 * @throws SQLiteException if:\n
+	 *   The table does not have a primary key;\n
+	 *   The table has a compound i.e. multi-column primary key; or\n
+	 *   The greatest primary key value already in the table is the maximum
+	 *   value for KeyType, so that another row could not be inserted without
+	 *   overflow.
+	 */
+	template<typename KeyType>
+	KeyType next_auto_key(std::string const& table_name);	
+
+
 	/**
 	 * To find primary key of a table.
 	 *
@@ -189,7 +238,179 @@ private:
 
 };
 
+// DEFINITION OF NESTED CLASS
 
+class DatabaseConnection::SQLStatement:
+	private boost::noncopyable
+{
+public:
+
+	SQLStatement(DatabaseConnection& dbconn, std::string const& str);
+
+	~SQLStatement();
+
+	// Wrapper around SQLite bind functions
+	void bind(std::string const& parameter_name, double value);
+	void bind(std::string const& parameter_name, int value);
+	void bind(std::string const& parameter_name, boost::int64_t value);
+	void bind(std::string const& parameter_name, std::string const& str);
+
+	/**
+	 * Where a SQLStatement has a result set available,
+	 * this function (template) can be used to extract the value at
+	 * the \c indexth column of the current row (where \c index starts
+	 * counting at 0).
+	 *
+	 * Currently the following types for T are supported:\n
+	 *	\c boost::int64_t\n
+	 *	int\n
+	 *	double\n
+	 *	std::string\n
+	 *
+	 * @param index is the column number (starting at 0) from which to
+	 * read the value.
+	 * 
+	 * @throws SQLiteException if:\n
+	 * 	the index is out of range; or\n
+	 * 	the requested column contains type that is incompatible with T.
+	 */
+	template <typename T>
+	T extract(int index);
+
+
+	// Wraps sqlite3_step
+	// Returns true as long as there are further steps to go.
+	bool step();
+
+	// For executing statements which are not expected to return a result
+	// set. SQLiteException is thrown if there are one or more result rows.
+	void quick_step();
+
+
+private:
+	sqlite3_stmt* m_statement;
+	DatabaseConnection& m_database_connection;
+
+	// Return index no. of named parameter in statement
+	int parameter_index(std::string const& parameter_name) const;
+
+	/**
+	 * Checks whether a column is available for extraction at
+	 * index \c index, of type \c value_type, and throws an
+	 * exception if not.
+	 *
+	 * @param index Position of column (starts from zero) in result
+	 * row.
+	 * 
+	 * @param value_type Should be a SQLite value type code, i.e. one of:\n
+	 * 	SQLITE_INTEGER, SQLITE_FLOAT, SQLITE_TEXT, SQLITE_BLOB, SQLITE_NULL.
+	 *
+	 * @throws SQLiteException if:\n
+	 * 	There are no results available for extraction;\n
+	 * 	\c index is out of range; or\n
+	 * 	\c the value at position \c index is not of value type \c value_type.
+	 */
+	void check_column(int index, int value_type);
+
+	// Check code is SQLITE_OK and if not finalize statement and
+	// throw SQLiteException.
+	void check_ok(int err_code);
+
+
+};
+
+
+// FUNCTION TEMPLATE DEFINITIONS FOR BOTH CLASSES
+
+
+
+template <>
+inline
+int
+DatabaseConnection::SQLStatement::extract<int>(int index)
+{
+	check_column(index, SQLITE_INTEGER);
+	return sqlite3_column_int(m_statement, index);
+}
+
+template <>
+inline
+boost::int64_t
+DatabaseConnection::SQLStatement::extract<boost::int64_t>(int index)
+{
+	check_column(index, SQLITE_INTEGER);
+	return sqlite3_column_int64(m_statement, index);
+}
+
+template <>
+inline
+double
+DatabaseConnection::SQLStatement::extract<double>(int index)
+{
+	check_column(index, SQLITE_FLOAT);
+	return sqlite3_column_double(m_statement, index);
+}
+
+template <>
+inline
+std::string
+DatabaseConnection::SQLStatement::extract<std::string>(int index)
+{
+	check_column(index, SQLITE_TEXT);
+	const unsigned char* begin = sqlite3_column_text(m_statement, index);
+	const unsigned char* end = begin;
+	while (*end != '\0') ++end;
+	return std::string(begin, end);
+}
+
+
+template<typename KeyType>
+inline
+KeyType
+DatabaseConnection::next_auto_key(std::string const& table_name)
+{
+	std::vector<std::string> const pk = primary_key(table_name);
+	switch (pk.size())
+	{
+	case 0:
+		throw SQLiteException("Table has no primary key.");
+		assert (false);  // Never executes
+	case 1:
+		break;
+	default:
+		assert (pk.size() > 1);
+		throw SQLiteException("Table has a multi-column primary key.");
+		assert (false);  // Never executes;
+	}
+	assert (pk.size() == 1);
+	std::string const key_name = pk[0];
+	SQLStatement max_finder
+	(	*this, 
+		"select max(" + key_name + ") from " + table_name
+	);
+	bool check = max_finder.step();
+	if (!check)
+	{
+		// Must have no rows or have null in primary key.
+		throw SQLiteException
+		(	"No row found containing value for primary key."
+		);
+	}
+	assert (check);
+	KeyType const max_key = max_finder.extract<KeyType>(0);		
+	check = max_finder.step();
+	// By the nature of the SQL max function, there must have been no more
+	// than one result row.
+	assert (!check);
+	if (max_key == std::numeric_limits<KeyType>::max())
+	{
+		throw SQLiteException
+		(	"Key cannot be safely incremented with given type."
+		);
+	}
+	return max_key + 1;
+	
+}
 
 
 }  // namespace sqloxx

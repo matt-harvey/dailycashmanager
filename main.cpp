@@ -11,6 +11,7 @@
 using phatbooks::Account;
 using phatbooks::Commodity;
 using phatbooks::PhatbooksDatabaseConnection;
+using phatbooks::IdType;
 using jewel::Decimal;
 using std::cout;
 using std::endl;
@@ -62,6 +63,7 @@ int main()
 	);
 	db.store(cash);
 	db.store(food);
+
 
 	return 0;
 }

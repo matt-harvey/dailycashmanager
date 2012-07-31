@@ -4,30 +4,126 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-Account	account.hpp	/^class Account: public StoredObject$/;"	c
-Application	application.hpp	/^class Application$/;"	c
-BalanceType	account.hpp	/^	typedef int BalanceType;$/;"	t	class:Account
-Commodity	commodity.hpp	/^class Commodity$/;"	c
-Database	database.hpp	/^class Database$/;"	c
+Account	account.cpp	/^Account::Account$/;"	f	class:phatbooks::Account
+Account	account.hpp	/^class Account$/;"	c	namespace:phatbooks
+AccountType	account.hpp	/^	enum AccountType$/;"	g	class:phatbooks::Account
+Commodity	commodity.cpp	/^Commodity::Commodity$/;"	f	class:phatbooks::Commodity
+Commodity	commodity.hpp	/^class Commodity$/;"	c	namespace:phatbooks
+DatabaseConnection	database_connection.cpp	/^DatabaseConnection::DatabaseConnection():$/;"	f	class:sqloxx::DatabaseConnection
+DatabaseConnection	database_connection.hpp	/^class DatabaseConnection:$/;"	c	namespace:sqloxx
+DateType	general_typedefs.hpp	/^typedef unsigned int DateType;$/;"	t	namespace:phatbooks
+Entry	entry.cpp	/^Entry::Entry$/;"	f	class:phatbooks::Entry
+Entry	entry.hpp	/^class Entry$/;"	c	namespace:phatbooks
 GUARD_account_hpp	account.hpp	2;"	d
-GUARD_application_hpp	application.hpp	2;"	d
 GUARD_commodity_hpp	commodity.hpp	2;"	d
-GUARD_database_hpp	database.hpp	2;"	d
-GUARD_identifier_hpp	identifier.hpp	2;"	d
-GUARD_stored_object_hpp	stored_object.hpp	2;"	d
-Identifier	identifier.hpp	/^class Identifier$/;"	c
-StoredObject	stored_object.hpp	/^class StoredObject$/;"	c
-balance_	account.hpp	/^	BalanceType balance_;$/;"	m	class:Account
-commodity_	account.hpp	/^	Commodity commodity_;$/;"	m	class:Account
-description_	account.hpp	/^	std::string description_;$/;"	m	class:Account
-execute	application.hpp	/^inline void Application::execute()$/;"	f	class:Application
-filepath_	database.hpp	/^	std::string filepath_;$/;"	m	class:Database
-id_	stored_object.hpp	/^	Identifier id_;$/;"	m	class:StoredObject
+GUARD_database_connection_hpp	database_connection.hpp	2;"	d
+GUARD_date_hpp	date.hpp	2;"	d
+GUARD_entry_hpp	entry.hpp	2;"	d
+GUARD_general_typedefs_hpp	general_typedefs.hpp	2;"	d
+GUARD_journal_hpp	journal.hpp	2;"	d
+GUARD_phatbooks_database_connection_hpp	phatbooks_database_connection.hpp	2;"	d
+GUARD_repeater_hpp	repeater.hpp	2;"	d
+IdType	general_typedefs.hpp	/^typedef int IdType;$/;"	t	namespace:phatbooks
+IntervalType	repeater.hpp	/^	enum IntervalType$/;"	g	class:phatbooks::Repeater
+Journal	journal.cpp	/^Journal::Journal(bool p_is_actual):$/;"	f	class:phatbooks::Journal
+Journal	journal.hpp	/^class Journal$/;"	c	namespace:phatbooks
+PhatbooksDatabaseConnection	phatbooks_database_connection.cpp	/^PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():$/;"	f	class:phatbooks::PhatbooksDatabaseConnection
+PhatbooksDatabaseConnection	phatbooks_database_connection.hpp	/^class PhatbooksDatabaseConnection:$/;"	c	namespace:phatbooks
+Repeater	repeater.cpp	/^Repeater::Repeater$/;"	f	class:phatbooks::Repeater
+Repeater	repeater.hpp	/^class Repeater$/;"	c	namespace:phatbooks
+SQLStatement	database_connection.cpp	/^DatabaseConnection::SQLStatement::SQLStatement$/;"	f	class:sqloxx::DatabaseConnection::SQLStatement
+SQLStatement	database_connection.hpp	/^class DatabaseConnection::SQLStatement:$/;"	c	class:sqloxx::DatabaseConnection
+SQLiteException	sqloxx_exceptions.cpp	/^SQLiteException::SQLiteException(std::string p_message):$/;"	f	class:sqloxx::SQLiteException
+SQLiteException	sqloxx_exceptions.hpp	/^class SQLiteException: public std::exception$/;"	c	namespace:sqloxx
+abbreviation	commodity.cpp	/^Commodity::abbreviation() const$/;"	f	class:phatbooks::Commodity
+account_type	account.cpp	/^Account::account_type() const$/;"	f	class:phatbooks::Account
+balance_sheet	account.hpp	/^		balance_sheet,$/;"	e	enum:phatbooks::Account::AccountType
+bind	database_connection.cpp	/^DatabaseConnection::SQLStatement::bind$/;"	f	class:sqloxx::DatabaseConnection::SQLStatement
+check_column	database_connection.cpp	/^DatabaseConnection::SQLStatement::check_column(int index, int value_type)$/;"	f	class:sqloxx::DatabaseConnection::SQLStatement
+check_ok	database_connection.cpp	/^DatabaseConnection::SQLStatement::check_ok(int err_code)$/;"	f	class:sqloxx::DatabaseConnection::SQLStatement
+commodity_abbreviation	account.cpp	/^string Account::commodity_abbreviation() const$/;"	f	class:phatbooks::Account
+days	repeater.hpp	/^		days = 1,$/;"	e	enum:phatbooks::Repeater::IntervalType
+description	account.cpp	/^string Account::description() const$/;"	f	class:phatbooks::Account
+description	commodity.cpp	/^Commodity::description() const$/;"	f	class:phatbooks::Commodity
+execute_sql	database_connection.cpp	/^DatabaseConnection::execute_sql(string const& str)$/;"	f	class:sqloxx::DatabaseConnection
+extract	database_connection.hpp	/^DatabaseConnection::SQLStatement::extract<boost::int64_t>(int index)$/;"	f	class:sqloxx::DatabaseConnection::SQLStatement
+extract	database_connection.hpp	/^DatabaseConnection::SQLStatement::extract<double>(int index)$/;"	f	class:sqloxx::DatabaseConnection::SQLStatement
+extract	database_connection.hpp	/^DatabaseConnection::SQLStatement::extract<int>(int index)$/;"	f	class:sqloxx::DatabaseConnection::SQLStatement
+extract	database_connection.hpp	/^DatabaseConnection::SQLStatement::extract<std::string>(int index)$/;"	f	class:sqloxx::DatabaseConnection::SQLStatement
+is_valid	database_connection.cpp	/^DatabaseConnection::is_valid()$/;"	f	class:sqloxx::DatabaseConnection
+is_valid_date	date.cpp	/^is_valid_date(DateType date)$/;"	f	namespace:phatbooks
+m_abbreviation	commodity.hpp	/^	std::string m_abbreviation;$/;"	m	class:phatbooks::Commodity
+m_account_type	account.hpp	/^	AccountType m_account_type;$/;"	m	class:phatbooks::Account
+m_amount	entry.hpp	/^	jewel::Decimal m_amount;$/;"	m	class:phatbooks::Entry
+m_comment	entry.hpp	/^	std::string m_comment;$/;"	m	class:phatbooks::Entry
+m_comment	journal.hpp	/^	std::string m_comment;$/;"	m	class:phatbooks::Journal
+m_commodity_abbreviation	account.hpp	/^	std::string m_commodity_abbreviation;$/;"	m	class:phatbooks::Account
+m_connection	database_connection.hpp	/^	sqlite3* m_connection;$/;"	m	class:sqloxx::DatabaseConnection
+m_database_connection	database_connection.hpp	/^	DatabaseConnection& m_database_connection;$/;"	m	class:sqloxx::DatabaseConnection::SQLStatement
+m_date	journal.hpp	/^	DateType m_date;	$/;"	m	class:phatbooks::Journal
+m_description	account.hpp	/^	std::string m_description;$/;"	m	class:phatbooks::Account
+m_description	commodity.hpp	/^	std::string m_description;$/;"	m	class:phatbooks::Commodity
+m_entry_list	journal.hpp	/^	std::list<Entry> m_entry_list;$/;"	m	class:phatbooks::Journal
+m_interval_type	repeater.hpp	/^	IntervalType m_interval_type;$/;"	m	class:phatbooks::Repeater
+m_interval_units	repeater.hpp	/^	int m_interval_units;$/;"	m	class:phatbooks::Repeater
+m_is_actual	journal.hpp	/^	bool m_is_actual;$/;"	m	class:phatbooks::Journal
+m_is_posted	journal.hpp	/^	bool m_is_posted;$/;"	m	class:phatbooks::Journal
+m_journal	entry.hpp	/^	boost::shared_ptr<Journal> m_journal;$/;"	m	class:phatbooks::Entry
+m_journal	repeater.hpp	/^	boost::shared_ptr<Journal> m_journal;$/;"	m	class:phatbooks::Repeater
+m_message	sqloxx_exceptions.hpp	/^	std::string m_message;$/;"	m	class:sqloxx::SQLiteException
+m_multiplier_to_base	commodity.hpp	/^	jewel::Decimal m_multiplier_to_base;$/;"	m	class:phatbooks::Commodity
+m_name	account.hpp	/^	std::string m_name;$/;"	m	class:phatbooks::Account
+m_name	commodity.hpp	/^	std::string m_name;$/;"	m	class:phatbooks::Commodity
+m_next_date	repeater.hpp	/^	DateType m_next_date;$/;"	m	class:phatbooks::Repeater
+m_precision	commodity.hpp	/^	int m_precision;$/;"	m	class:phatbooks::Commodity
+m_repeater_list	journal.hpp	/^	std::list<Repeater> m_repeater_list;$/;"	m	class:phatbooks::Journal
+m_statement	database_connection.hpp	/^	sqlite3_stmt* m_statement;$/;"	m	class:sqloxx::DatabaseConnection::SQLStatement
 main	main.cpp	/^int main()$/;"	f
-name_	account.hpp	/^	std::string name_;$/;"	m	class:Account
-name_	database.hpp	/^	std::string name_;$/;"	m	class:Database
-run_closing_tests	application.hpp	/^inline void Application::run_closing_tests()$/;"	f	class:Application
-run_opening_tests	application.hpp	/^inline void Application::run_opening_tests()$/;"	f	class:Application
-storage_location_	identifier.hpp	/^	Database storage_location_;$/;"	m	class:Identifier
-str_rep_	commodity.hpp	/^	std::string str_rep_;$/;"	m	class:Commodity
-str_rep_	identifier.hpp	/^	std::string str_rep_;$/;"	m	class:Identifier
+month_ends	repeater.hpp	/^		month_ends$/;"	e	enum:phatbooks::Repeater::IntervalType
+months	repeater.hpp	/^		months,$/;"	e	enum:phatbooks::Repeater::IntervalType
+multiplier_to_base	commodity.cpp	/^Commodity::multiplier_to_base() const$/;"	f	class:phatbooks::Commodity
+name	account.cpp	/^string Account::name() const$/;"	f	class:phatbooks::Account
+name	commodity.cpp	/^Commodity::name() const$/;"	f	class:phatbooks::Commodity
+next_auto_key	database_connection.hpp	/^DatabaseConnection::next_auto_key(std::string const& table_name)$/;"	f	class:sqloxx::DatabaseConnection
+null_date	date.cpp	/^null_date()$/;"	f	namespace:phatbooks
+open	database_connection.cpp	/^DatabaseConnection::open(char const* filename)$/;"	f	class:sqloxx::DatabaseConnection
+parameter_index	database_connection.cpp	/^DatabaseConnection::SQLStatement::parameter_index$/;"	f	class:sqloxx::DatabaseConnection::SQLStatement
+phatbooks	account.cpp	/^namespace phatbooks$/;"	n	file:
+phatbooks	account.hpp	/^namespace phatbooks$/;"	n
+phatbooks	commodity.cpp	/^namespace phatbooks$/;"	n	file:
+phatbooks	commodity.hpp	/^namespace phatbooks$/;"	n
+phatbooks	date.cpp	/^namespace phatbooks$/;"	n	file:
+phatbooks	date.hpp	/^namespace phatbooks$/;"	n
+phatbooks	entry.cpp	/^namespace phatbooks$/;"	n	file:
+phatbooks	entry.hpp	/^namespace phatbooks$/;"	n
+phatbooks	general_typedefs.hpp	/^namespace phatbooks$/;"	n
+phatbooks	journal.cpp	/^namespace phatbooks$/;"	n	file:
+phatbooks	journal.hpp	/^namespace phatbooks$/;"	n
+phatbooks	phatbooks_database_connection.cpp	/^namespace phatbooks$/;"	n	file:
+phatbooks	phatbooks_database_connection.hpp	/^namespace phatbooks$/;"	n
+phatbooks	repeater.cpp	/^namespace phatbooks$/;"	n	file:
+phatbooks	repeater.hpp	/^namespace phatbooks$/;"	n
+precision	commodity.cpp	/^Commodity::precision() const$/;"	f	class:phatbooks::Commodity
+primary_key	database_connection.cpp	/^DatabaseConnection::primary_key(string const& table_name)$/;"	f	class:sqloxx::DatabaseConnection
+profit_and_loss	account.hpp	/^		profit_and_loss = 1,$/;"	e	enum:phatbooks::Account::AccountType
+pure_envelope	account.hpp	/^		pure_envelope$/;"	e	enum:phatbooks::Account::AccountType
+quick_step	database_connection.cpp	/^DatabaseConnection::SQLStatement::quick_step()$/;"	f	class:sqloxx::DatabaseConnection::SQLStatement
+s_setup_flag	phatbooks_database_connection.cpp	/^PhatbooksDatabaseConnection::s_setup_flag = "setup_flag_99879871986";$/;"	m	class:phatbooks::PhatbooksDatabaseConnection	file:
+s_setup_flag	phatbooks_database_connection.hpp	/^	static std::string const s_setup_flag;$/;"	m	class:phatbooks::PhatbooksDatabaseConnection::std
+setup	database_connection.cpp	/^DatabaseConnection::setup()$/;"	f	class:sqloxx::DatabaseConnection
+setup	phatbooks_database_connection.cpp	/^PhatbooksDatabaseConnection::setup()$/;"	f	class:phatbooks::PhatbooksDatabaseConnection
+setup_has_occurred	phatbooks_database_connection.cpp	/^PhatbooksDatabaseConnection::setup_has_occurred()$/;"	f	class:phatbooks::PhatbooksDatabaseConnection
+sqloxx	database_connection.cpp	/^namespace sqloxx$/;"	n	file:
+sqloxx	database_connection.hpp	/^namespace sqloxx$/;"	n
+sqloxx	sqloxx_exceptions.cpp	/^namespace sqloxx$/;"	n	file:
+sqloxx	sqloxx_exceptions.hpp	/^namespace sqloxx$/;"	n
+sqloxx_exceptions_hpp	sqloxx_exceptions.hpp	2;"	d
+step	database_connection.cpp	/^DatabaseConnection::SQLStatement::step()$/;"	f	class:sqloxx::DatabaseConnection::SQLStatement
+store	phatbooks_database_connection.cpp	/^PhatbooksDatabaseConnection::store(Account const& p_account)$/;"	f	class:phatbooks::PhatbooksDatabaseConnection
+store	phatbooks_database_connection.cpp	/^PhatbooksDatabaseConnection::store(Commodity const& p_commodity)$/;"	f	class:phatbooks::PhatbooksDatabaseConnection
+throw_sqlite_exception	database_connection.cpp	/^DatabaseConnection::throw_sqlite_exception()$/;"	f	class:sqloxx::DatabaseConnection
+weeks	repeater.hpp	/^		weeks,$/;"	e	enum:phatbooks::Repeater::IntervalType
+what	sqloxx_exceptions.cpp	/^SQLiteException::what() const throw()$/;"	f	class:sqloxx::SQLiteException
+~DatabaseConnection	database_connection.cpp	/^DatabaseConnection::~DatabaseConnection()$/;"	f	class:sqloxx::DatabaseConnection
+~SQLStatement	database_connection.cpp	/^DatabaseConnection::SQLStatement::~SQLStatement()$/;"	f	class:sqloxx::DatabaseConnection::SQLStatement
+~SQLiteException	sqloxx_exceptions.cpp	/^SQLiteException::~SQLiteException() throw()$/;"	f	class:sqloxx::SQLiteException
