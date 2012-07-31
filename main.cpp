@@ -48,7 +48,7 @@ int main()
 		2,
 		Decimal("1")
 	);
-	db.store(dollars);
+	IdType const dollars_id = db.store(dollars);
 	Account cash
 	(	"Cash",
 		"AUD",
@@ -61,8 +61,12 @@ int main()
 		Account::profit_and_loss,
 		"Food and drink"
 	);
-	db.store(cash);
-	db.store(food);
+	IdType const cash_id = db.store(cash);
+	IdType const food_id = db.store(food);
+
+	cout << "Id for stored Commodity \"dollars\": " << dollars_id << endl;
+	cout << "Id for stored Account \"cash\": " << cash_id << endl;
+	cout << "Id for stored Account \"food\": " << food_id << endl;
 
 
 	return 0;

@@ -29,10 +29,13 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 }
 
 
-void
+IdType
 PhatbooksDatabaseConnection::store(Commodity const& p_commodity)
 {
 	JEWEL_DEBUG_LOG << "Storing Commodity object in database." << endl;
+
+	// Find the next key value
+	IdType const ret = next_auto_key<IdType>("commodities");
 
 	SQLStatement statement
 	(	*this,
@@ -72,15 +75,18 @@ PhatbooksDatabaseConnection::store(Commodity const& p_commodity)
 	statement.quick_step();
 	JEWEL_DEBUG_LOG << "Commodity object has been successfully stored."
 	                << endl;
-	return;
+	return ret;
 }
 
 
 
-void
+IdType
 PhatbooksDatabaseConnection::store(Account const& p_account)
 {
 	JEWEL_DEBUG_LOG << "Storing Account object in database." << endl;
+
+	// Find the next auto_key
+	IdType const ret = next_auto_key<IdType>("accounts");
 
 	// Find the commodity_id for Account.commodity_abbreviation()
 	SQLStatement commodity_finder
@@ -95,7 +101,7 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 		(	"Attempted to store Account with invalid commodity abbreviation."
 		);
 	}
-	int const commodity_id = commodity_finder.extract<int>(0);
+	IdType const commodity_id = commodity_finder.extract<IdType>(0);
 	if (commodity_finder.step())
 	{
 		// We have multiple commodities with this id.
@@ -124,7 +130,7 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	// Execute the SQL statement
 	statement.quick_step();
 	JEWEL_DEBUG_LOG << "Account object has been successfully stored." << endl;
-	return;
+	return ret;
 }
 
 

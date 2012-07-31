@@ -8,6 +8,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/noncopyable.hpp>
 #include <cassert>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -157,6 +158,8 @@ protected:
 	 * it doesn't. In addition, it will throw an exception if the next highest
 	 * key would exceed the maximum value for KeyType.
 	 *
+	 * Assumes keys start from 1.
+	 *
 	 * KeyType should be an integral type, and should also be a type
 	 * supported by SQLStatement::extract. If not, behaviour is \e undefined,
 	 * although it is expected that compilation will fail where a KeyType
@@ -168,6 +171,8 @@ protected:
 	 *
 	 * This function should not be used f \c table_name is an untrusted
 	 * string.
+	 *
+	 * @todo Make this more efficient.
 	 *
 	 * @param table_name The name of the table. 
 	 *
@@ -266,7 +271,7 @@ public:
 	 *	int\n
 	 *	double\n
 	 *	std::string\n
-	 *
+	 * 
 	 * @param index is the column number (starting at 0) from which to
 	 * read the value.
 	 * 
@@ -384,17 +389,39 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 	}
 	assert (pk.size() == 1);
 	std::string const key_name = pk[0];
+	
+	// Note we can't use binding to put key_name into statement here as this
+	// will result in binding a string into the max function when we need
+	// an integer. At least we know that if table_name is safe, so is
+	// key_name (since it must be a valid column name).
+	
+	// First count rows to see if there are any
+	SQLStatement row_counter
+	(	*this,
+		"select count(" + key_name + ") from " + table_name
+	);
+	bool check = row_counter.step();
+	assert (check);
+	KeyType const row_count = row_counter.extract<KeyType>(0);
+	check = row_counter.step();
+	assert (!check);
+	if (row_count == 0)
+	{
+		return 1;
+	}
+
+	assert (row_count > 0);
+	
+	// Then find the max - we do this separately as there might
+	// be gaps in the numbering.
 	SQLStatement max_finder
 	(	*this, 
 		"select max(" + key_name + ") from " + table_name
 	);
-	bool check = max_finder.step();
+	check = max_finder.step();
 	if (!check)
 	{
-		// Must have no rows or have null in primary key.
-		throw SQLiteException
-		(	"No row found containing value for primary key."
-		);
+		throw SQLiteException("Error finding max of primary key.");
 	}
 	assert (check);
 	KeyType const max_key = max_finder.extract<KeyType>(0);		

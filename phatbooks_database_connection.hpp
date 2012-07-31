@@ -64,11 +64,16 @@ public:
 	 *
 	 * @throws sqloxx::SQLiteException if:\n
 	 * 	SQLite statement preparation fails; or\n
-	 * 	insertion fails (for reasons other than above).
+	 * 	Insertion into database would cause the (auto-incrementing)
+	 * 	primary key to overflow IdType; or\n
+	 * 	Insertion fails (for reasons other than above).
 	 *
 	 * @param p_account the Account to be stored.
+	 *
+	 * @returns the integer primary key of the Account just stored.
+	 * (This is an autoincrementing primary key.)
 	 */
-	void store(Account const& p_account);
+	IdType store(Account const& p_account);
 
 	/** Store a Commodity object in the database
 	 *
@@ -76,11 +81,16 @@ public:
 	 *
 	 * @throws sqloxx::SQLiteException if:\n
 	 * 	SQLite statement preparation fails; or\n
-	 * 	insertion fails.
+	 * 	Insertion into database would cause the (auto-incrementing)
+	 * 	primary key to overflow IdType; or\n
+	 * 	Insertion fails (for reasons other than above).
 	 *
 	 * @param p_commodity the Commodity to be stored.
+	 *
+	 * @returns the integer primary key of the Account just stored.
+	 * (This is an autoincrementing primary key.)
 	 */
-	void store(Commodity const& p_commodity);
+	IdType store(Commodity const& p_commodity);
 
 
 
