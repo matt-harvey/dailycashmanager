@@ -18,6 +18,23 @@ using std::endl;
 int main()
 {
 
+	/*
+	map<string, int> m;
+	m["One"] = 1;
+	m["Two"] = 2;
+
+	map<string, int>::const_iterator it;
+	if ((it = m.find("Two")) == m.end())
+	{
+		cout << "Couldn't find." << endl;
+	}
+	else
+	{
+		cout << it->second << endl;
+	}
+	*/
+
+
 
 
 	PhatbooksDatabaseConnection db;
@@ -45,11 +62,6 @@ int main()
 	);
 	db.store(cash);
 	db.store(food);
-
-	/*
-	cout << db.primary_key("accounts")[0] << endl;
-	cout << db.primary_key("commodities")[0] << endl;
-	*/
 
 	return 0;
 }
