@@ -173,7 +173,7 @@ PhatbooksDatabaseConnection::setup()
 		"create table account_types"
 		"("
 			"account_type_id integer primary key autoincrement, "
-			"name text not null"
+			"name text not null unique"
 		"); "
 
 		// Values inserted into account_types here must correspond

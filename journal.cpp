@@ -4,9 +4,13 @@
 #include "general_typedefs.hpp"
 #include "entry.hpp"
 #include "repeater.hpp"
+#include <jewel/decimal.hpp>
 #include <list>
+#include <string>
 
+using jewel::Decimal;
 using std::list;
+using std::string;
 
 namespace phatbooks
 {
@@ -21,7 +25,16 @@ Journal::Journal(bool p_is_actual):
 {
 }
 
-
+void
+Journal::add_entry
+(	string const& account_name,
+	string const& entry_comment,
+	Decimal const& p_amount
+)
+{
+	m_entry_list.push_back(Entry(account_name, entry_comment, p_amount));
+	return;
+}
 	
 
 

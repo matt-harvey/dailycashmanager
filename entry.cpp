@@ -11,11 +11,11 @@ namespace phatbooks
 {
 
 Entry::Entry
-(	shared_ptr<Journal> p_journal,
+(	string const& p_account_name,
 	string const& p_comment,
 	Decimal const& p_amount
 ):
-	m_journal(p_journal),
+	m_account_name(p_account_name),
 	m_comment(p_comment),
 	m_amount(p_amount)
 {

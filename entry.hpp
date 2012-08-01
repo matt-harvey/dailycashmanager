@@ -19,14 +19,14 @@ public:
 	 * Does not throw.
 	 */
 	Entry
-	(	boost::shared_ptr<Journal> p_journal,
+	(	std::string const& p_account_name,	
 		std::string const& p_comment = "",
 		jewel::Decimal const& p_amount = jewel::Decimal("0")
 	);
 
 		
 private:
-	boost::shared_ptr<Journal> m_journal;
+	std::string m_account_name;
 	std::string m_comment;
 	jewel::Decimal m_amount;
 

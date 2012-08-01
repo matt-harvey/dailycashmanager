@@ -2,6 +2,7 @@
 #define GUARD_journal_hpp
 
 #include "date.hpp"
+#include <jewel/decimal.hpp>
 #include <list>
 #include <string>
 
@@ -23,9 +24,27 @@ public:
 	 * and an empty list of repeaters, and is marked as
 	 * non-posted.
 	 * 
+	 * @param p_is_actual determines whether this will be
+	 * an "actuals" journal (as opposed to a budget journal).
+	 *
 	 * Does not throw.
 	 */
 	Journal(bool p_is_actual = true);
+
+	/**
+	 * Creates an entry and adds it to the Journal.
+	 *
+	 * Throws only the underlying vector is out of memory.
+	 * 
+	 * @todo Verify throwing behaviour.
+	 *
+	 * @param p_entry Entry object to add
+	 */
+	void add_entry
+	(	std::string const& account_name,
+		std::string const& entry_comment = "",
+		jewel::Decimal const& p_amount = jewel::Decimal("0")
+	);
 
 
 private:
