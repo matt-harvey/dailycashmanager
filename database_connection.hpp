@@ -87,24 +87,12 @@ public:
 	/**
 	 * Points the database connection to a specific file
 	 * given by \c filename. If the file
-	 * does not already exist it is created. After creation, a separate
-	 * \c setup function is called, to set up
-	 * any application specific tables or etc. and initial data as desired.
-	 *
-	 * To customise this "setup" in a derived class, override
-	 * \c DatabaseConnection::setup (which does nothing by default)
-	 * in your class derived from DatabaseConnection.
-	 *
-	 * \c DatabaseConnection::setup has the signature:\n
-	 * 	<tt> virtual void setup() </tt>\n
-	 * and is private. It should throw SQLiteException in case it fails.
+	 * does not already exist it is created.
 	 *
 	 * @param filename file to connect to
 	 *
 	 * @throws SQLiteException if SQLite3
-	 * if database connection cannot be opened to the specified file,
-	 * or if a new file is created but \c setup does not
-	 * succeed.
+	 * if database connection cannot be opened to the specified file.
 	 */
 	void open(char const* filename);	
 
@@ -228,18 +216,6 @@ private:
 	 * C API.)
 	 */
 	sqlite3* m_connection;
-
-	/**
-	 * Create application-specific tables or perform other setup
-	 * when database is opened.
-	 *
-	 * This function should be redefined in derived class if required
-	 * to perform application-specific database setup.
-	 *
-	 * @throws sqloxx::SQLiteException if operation
-	 * fails.
-	 */
-	virtual void setup();
 
 };
 

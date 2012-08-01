@@ -93,9 +93,18 @@ public:
 	IdType store(Commodity const& p_commodity);
 
 
+	/**
+	 * Creates tables required for Phatbooks, and inserts rows
+	 * into certain tables to provide application-level data where
+	 * required. If the database already contains these tables,
+	 * the function does nothing. This function should always be
+	 * called after calling DatabaseConnection::open.
+	 *
+	 * @throws SQLiteException if unsuccesful.
+	 */
+	void setup();
 
 private:
-	void setup();	
 	bool setup_has_occurred();
 	static std::string const s_setup_flag;
 

@@ -65,7 +65,6 @@ DatabaseConnection::open(char const* filename)
 	                << "and m_connection has been set to point there."
 					<< endl;
 
-	setup();
 	return;
 
 }
@@ -99,15 +98,6 @@ bool
 DatabaseConnection::is_valid()
 {
 	return m_connection != 0;
-}
-
-void
-DatabaseConnection::setup()
-{
-	// Do nothing.
-	// This function should be overriden in inherited class
-	// to perform application-specific database setup.
-	return;
 }
 
 void

@@ -40,6 +40,7 @@ int main()
 
 	PhatbooksDatabaseConnection db;
 	db.open("/home/matthew/Workbench/versioned/phatbooks/test.db");	
+	db.setup();
 
 	Commodity dollars
 	(	"AUD",
