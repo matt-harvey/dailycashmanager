@@ -135,6 +135,18 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 }
 
 
+bool
+PhatbooksDatabaseConnection::has_account_named(string const& p_name)
+{
+	SQLStatement statement
+	(	*this,
+		"select name from accounts where name = :p"
+	);
+	statement.bind(":p", p_name);
+	return statement.step();
+}
+
+
 void
 PhatbooksDatabaseConnection::setup()
 {

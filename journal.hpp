@@ -13,6 +13,14 @@ class Entry;
 class Repeater;
 
 
+/**
+ * Class to represent accounting journals.
+ *
+ * @todo In API docs, should the accounting logic that Phatbooks
+ * is implementing be documented? It should be, but perhaps in a
+ * separate file of its own, rather than crammed into the class
+ * documentation.
+ */
 class Journal
 {
 public:
@@ -32,13 +40,14 @@ public:
 	Journal(bool p_is_actual = true);
 
 	/**
-	 * Creates an entry and adds it to the Journal.
+	 * Creates an Entry and adds it to the Journal.
 	 *
-	 * Throws only the underlying vector is out of memory.
-	 * 
-	 * @todo Verify throwing behaviour.
+	 * @todo Figure out throwing behaviour. Should it check that
+	 * the account exists? Etc. Etc.
 	 *
-	 * @param p_entry Entry object to add
+	 * @param account_name name of account of added entry
+	 * @param entry_comment Comment ("narration") for entry
+	 * @param p_amount Amount of entry
 	 */
 	void add_entry
 	(	std::string const& account_name,

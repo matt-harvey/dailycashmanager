@@ -92,6 +92,11 @@ public:
 	 */
 	IdType store(Commodity const& p_commodity);
 
+	/**
+	 * Returns true if and only if \c name is the name of an Account
+	 * stored in the database.
+	 */
+	bool has_account_named(std::string const& p_name);
 
 	/**
 	 * Creates tables required for Phatbooks, and inserts rows

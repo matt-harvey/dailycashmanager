@@ -69,6 +69,11 @@ int main()
 	cout << "Id for stored Account \"cash\": " << cash_id << endl;
 	cout << "Id for stored Account \"food\": " << food_id << endl;
 
+	cout << "Cash account exists? " << db.has_account_named("Cash") << endl;
+	cout << "Food account exists? " << db.has_account_named("Food") << endl;
+	cout << "Entertainment account exists? " 
+	     << db.has_account_named("Entertainment") << endl;
+
 
 	return 0;
 }
