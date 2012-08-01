@@ -121,6 +121,13 @@ protected:
 	 */
 	class SQLStatement;
 
+	/**
+	 * Class template to control static attributes of various classes of
+	 * object that might be stored in Database; for example, the name of the
+	 * table in which objects of the type are stored.
+	 */
+	template <typename T>
+	class Metadata;
 
 	/**
 	 * Throws a SQLiteException with the current sqlite3_errmsg passed
@@ -243,7 +250,11 @@ private:
 
 };
 
-// DEFINITION OF NESTED CLASS
+
+
+
+// DEFINITIONS OF NESTED CLASSES
+
 
 class DatabaseConnection::SQLStatement:
 	private boost::noncopyable
@@ -325,9 +336,57 @@ private:
 };
 
 
-// FUNCTION TEMPLATE DEFINITIONS FOR BOTH CLASSES
+
+template <typename T>
+class DatabaseConnection::Metadata
+{
+public:
+protected:
+
+	/**
+	 * Sets the name of the table in which members of the class
+	 * should be stored to \c table_name. No checking is performed
+	 * on whether \c table_name is a legitimate string as far as
+	 * SQL is concerned. This function does not throw.
+	 */
+	void set_table_name(std::string const& table_name);
+
+	/**
+	 * Getter for name of storage table for the class.
+	 * This function does not throw.
+	 */
+	std::string table_name() const;
+
+private:
+	/**
+	 * Constructor is private and unimplemented, because
+	 * this class should not be instantiated.
+	 */
+	Metadata();
+
+	std::string s_table_name;
+};
 
 
+// FUNCTION DEFINITIONS FOR CLASS TEMPLATE FUNCTIONS
+// AND FUNCTION TEMPLATES
+
+template<typename T>
+inline
+void
+DatabaseConnection::Metadata<T>::set_table_name
+(	std::string const& p_table_name
+)
+{
+	s_table_name = p_table_name;
+}
+
+template<typename T>
+inline
+std::string DatabaseConnection::Metadata<T>::table_name() const
+{
+	return s_table_name;
+}
 
 template <>
 inline
@@ -367,7 +426,6 @@ DatabaseConnection::SQLStatement::extract<std::string>(int index)
 	while (*end != '\0') ++end;
 	return std::string(begin, end);
 }
-
 
 template<typename KeyType>
 inline
