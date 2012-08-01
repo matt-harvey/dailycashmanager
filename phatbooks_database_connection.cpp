@@ -1,5 +1,6 @@
 #include "account.hpp"
 #include "commodity.hpp"
+#include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
@@ -26,8 +27,6 @@ namespace phatbooks
 PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
   DatabaseConnection()
 {
-	Metadata<Commodity>::set_table_name("commodities");
-	Metadata<Account>::set_table_name("accounts");
 }
 
 

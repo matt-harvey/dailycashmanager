@@ -121,13 +121,6 @@ protected:
 	 */
 	class SQLStatement;
 
-	/**
-	 * Class template to control static attributes of various classes of
-	 * object that might be stored in Database; for example, the name of the
-	 * table in which objects of the type are stored.
-	 */
-	template <typename T>
-	class Metadata;
 
 	/**
 	 * Throws a SQLiteException with the current sqlite3_errmsg passed
@@ -336,72 +329,7 @@ private:
 };
 
 
-
-template <typename T>
-class DatabaseConnection::Metadata
-{
-public:
-
-	/**
-	 * Sets the name of the table in which members of the type T
-	 * should be stored to \c table_name. No checking is performed
-	 * on whether \c table_name is a legitimate string as far as
-	 * SQL is concerned. This function does not throw.
-	 */
-	static void set_table_name(std::string const& table_name);
-
-	/**
-	 * Getter for name of storage table for the type T.
-	 * 
-	 * @throws std::runtime_error if \c table_name for T has
-	 * not yet been set.
-	 */
-	static std::string table_name();
-
-private:
-	/**
-	 * Constructor is private and unimplemented, because
-	 * this class should not be instantiated.
-	 */
-	Metadata();
-
-	static bool s_table_name_set;
-	static std::string s_table_name;
-};
-
-template<typename T>
-bool DatabaseConnection::Metadata<T>::s_table_name_set = false;
-
-template<typename T>
-std::string DatabaseConnection::Metadata<T>::s_table_name = "";
-
-// FUNCTION DEFINITIONS FOR CLASS TEMPLATE FUNCTIONS
-// AND FUNCTION TEMPLATES
-
-
-template<typename T>
-inline
-void
-DatabaseConnection::Metadata<T>::set_table_name
-(	std::string const& p_table_name
-)
-{
-	s_table_name = p_table_name;
-	s_table_name_set = true;
-	return;
-}
-
-template<typename T>
-inline
-std::string DatabaseConnection::Metadata<T>::table_name()
-{
-	if (!s_table_name_set)
-	{
-		throw std::runtime_error("Table name for type has not been set.");
-	}
-	assert (s_table_name_set);
-	return s_table_name;
-}
+// FUNCTION TEMPLATE DEFINITIONS
 
 template <>
 inline
