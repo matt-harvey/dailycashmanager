@@ -1,7 +1,7 @@
 #ifndef GUARD_repeater_hpp
 #define GUARD_repeater_hpp
 
-#include "general_typedefs.hpp"
+#include "date.hpp"
 #include "journal.hpp"
 #include <boost/shared_ptr.hpp>
 
@@ -16,8 +16,22 @@ namespace phatbooks
 class Repeater
 {
 public:
-	// enum order is significant, as the database contains
-	// a table with primary keys in this order
+
+	/**
+	 * Enumerated type representing different
+	 * date interval.
+	 *
+	 * Should be self-explanatory; except note that
+	 * \c month_ends represents an interval between the
+	 * last day of one month and the last day of the next,
+	 * whereas \c months simply represents an interval of
+	 * one month with no particular reference to the end
+	 * of the month.
+	 *
+	 * Note the numbering of the enumeration is significant.
+	 * The class PhatbooksDatabaseConnection relies on the
+	 * numbering shown here.
+	 */
 	enum IntervalType
 	{
 		days = 1,

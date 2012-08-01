@@ -50,7 +50,11 @@ DatabaseConnection::open(char const* filename)
 	{
 		JEWEL_DEBUG_LOG << "Creating file " << filename << "..." << endl;
 	}
-
+	// Throw if already connected
+	if (m_connection)
+	{
+		throw SQLiteException("Database already connected.");
+	}
 	// Open the connection
 	int const return_code = sqlite3_open_v2
 	(	filename,

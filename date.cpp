@@ -1,5 +1,4 @@
 #include "date.hpp"
-#include "general_typedefs.hpp"
 
 namespace phatbooks
 {

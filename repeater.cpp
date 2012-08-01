@@ -1,4 +1,5 @@
 #include "repeater.hpp"
+#include "date.hpp"
 #include "journal.hpp"
 #include <boost/shared_ptr.hpp>
 

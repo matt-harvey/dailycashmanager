@@ -25,6 +25,11 @@
  * @todo Use boost::filesystem::path to make filepath passed to
  * activate_database more portable.
  *
+ * @todo There should probably be a close method. Even though the
+ * connection is closed by the destructor, there should probably
+ * be a way of closing it independently, so that it can be connected
+ * elsewhere.
+ *
  * @todo Consider supplying public member function to close any
  * database connections and shut down SQLite3. Current this is done
  * in the destructor, but this can't throw.
@@ -91,8 +96,9 @@ public:
 	 *
 	 * @param filename file to connect to
 	 *
-	 * @throws SQLiteException if SQLite3
-	 * if database connection cannot be opened to the specified file.
+	 * @throws SQLiteException:\n
+	 *   if database connection cannot be opened to the specified file; or\n
+	 *   if already connected to a file.
 	 */
 	void open(char const* filename);	
 

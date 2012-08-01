@@ -1,7 +1,7 @@
 #ifndef GUARD_journal_hpp
 #define GUARD_journal_hpp
 
-#include "general_typedefs.hpp"
+#include "date.hpp"
 #include <list>
 #include <string>
 

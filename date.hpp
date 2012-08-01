@@ -6,6 +6,8 @@
 namespace phatbooks
 {
 
+typedef unsigned int DateType;
+
 bool is_valid_date(DateType date);
 
 DateType null_date();

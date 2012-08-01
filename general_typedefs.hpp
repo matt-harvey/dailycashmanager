@@ -11,7 +11,6 @@ namespace phatbooks
 {
 
 typedef int IdType;
-typedef unsigned int DateType;
 
 
 
