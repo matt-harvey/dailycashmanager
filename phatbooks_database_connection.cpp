@@ -26,6 +26,8 @@ namespace phatbooks
 PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
   DatabaseConnection()
 {
+	Metadata<Commodity>::set_table_name("commodities");
+	Metadata<Account>::set_table_name("accounts");
 }
 
 

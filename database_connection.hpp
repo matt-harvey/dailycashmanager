@@ -341,21 +341,22 @@ template <typename T>
 class DatabaseConnection::Metadata
 {
 public:
-protected:
 
 	/**
-	 * Sets the name of the table in which members of the class
+	 * Sets the name of the table in which members of the type T
 	 * should be stored to \c table_name. No checking is performed
 	 * on whether \c table_name is a legitimate string as far as
 	 * SQL is concerned. This function does not throw.
 	 */
-	void set_table_name(std::string const& table_name);
+	static void set_table_name(std::string const& table_name);
 
 	/**
-	 * Getter for name of storage table for the class.
-	 * This function does not throw.
+	 * Getter for name of storage table for the type T.
+	 * 
+	 * @throws std::runtime_error if \c table_name for T has
+	 * not yet been set.
 	 */
-	std::string table_name() const;
+	static std::string table_name();
 
 private:
 	/**
@@ -364,12 +365,19 @@ private:
 	 */
 	Metadata();
 
-	std::string s_table_name;
+	static bool s_table_name_set;
+	static std::string s_table_name;
 };
 
+template<typename T>
+bool DatabaseConnection::Metadata<T>::s_table_name_set = false;
+
+template<typename T>
+std::string DatabaseConnection::Metadata<T>::s_table_name = "";
 
 // FUNCTION DEFINITIONS FOR CLASS TEMPLATE FUNCTIONS
 // AND FUNCTION TEMPLATES
+
 
 template<typename T>
 inline
@@ -379,12 +387,19 @@ DatabaseConnection::Metadata<T>::set_table_name
 )
 {
 	s_table_name = p_table_name;
+	s_table_name_set = true;
+	return;
 }
 
 template<typename T>
 inline
-std::string DatabaseConnection::Metadata<T>::table_name() const
+std::string DatabaseConnection::Metadata<T>::table_name()
 {
+	if (!s_table_name_set)
+	{
+		throw std::runtime_error("Table name for type has not been set.");
+	}
+	assert (s_table_name_set);
 	return s_table_name;
 }
 
