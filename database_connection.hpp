@@ -165,11 +165,11 @@ protected:
 	 * although it is expected that compilation will fail where a KeyType
 	 * that is not accepted by SQLStatement::extract is provided.
 	 * 
-	 * It is the callers responsibility to ensure that KeyType is large
+	 * It is the caller's responsibility to ensure that KeyType is large
 	 * enough to accommodate the values that are \e already in the
 	 * primary key of the table - otherwise behaviour is undefined.
 	 *
-	 * This function should not be used f \c table_name is an untrusted
+	 * This function should not be used if \c table_name is an untrusted
 	 * string.
 	 *
 	 * @todo Make this more efficient.
@@ -292,7 +292,7 @@ public:
 	bool step();
 
 	// For executing statements which are not expected to return a result
-	// set. SQLiteException is thrown if there are one or more result rows.
+	// set. SQLiteException is thrown if there is a result set.
 	void quick_step();
 
 
