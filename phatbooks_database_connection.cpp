@@ -89,7 +89,7 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	// Find the next auto_key
 	IdType const ret = next_auto_key<IdType>("accounts");
 
-	// Find the commodity_id for Account.commodity_abbreviation()
+	// Find the commodity_id for account
 	SQLStatement commodity_finder
 	(	*this,
 		"select commodity_id from commodities where abbreviation = :ca"
