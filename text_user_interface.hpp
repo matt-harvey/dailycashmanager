@@ -45,14 +45,14 @@ public:
 	 * to the user, describing the option being presented, and a pointer
 	 * to a function to be called when the user selects that option.
 	 *
-	 * @todo document throwing behaviour. Should throw if string is
-	 * empty, or if string the string of an item already in the Menu.
+	 * @throws std::runtime_error if p_name is an empty string or if a
+	 * MenuItem with this name already exists in the Menu.
 	 *
 	 * @param str string describing option to the user
 	 * @param response pointer to function to be called on selection of
 	 * the option by the user
 	 */
-	void add_item(std::string const& name, ResponseType response);
+	void add_item(std::string const& p_name, ResponseType p_response);
 
 private:
 	struct MenuItem;
