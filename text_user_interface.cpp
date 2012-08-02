@@ -62,7 +62,7 @@ Menu::MenuItem::response() const
 }
 
 bool
-Menu::MenuItem::operator<(MenuItem const& rhs)
+Menu::MenuItem::operator<(MenuItem const& rhs) const
 {
 	return this->m_name < rhs.m_name;
 }

@@ -48,8 +48,8 @@ public:
 	 * @throws std::runtime_error if p_name is an empty string or if a
 	 * MenuItem with this name already exists in the Menu.
 	 *
-	 * @param str string describing option to the user
-	 * @param response pointer to function to be called on selection of
+	 * @param p_name string describing option to the user
+	 * @param p_response pointer to function to be called on selection of
 	 * the option by the user
 	 */
 	void add_item(std::string const& p_name, ResponseType p_response);
@@ -91,7 +91,7 @@ public:
 	 */
 	Menu::ResponseType response() const;
 
-	bool operator<(MenuItem const& rhs);
+	bool operator<(MenuItem const& rhs) const;
 
 private:
 	std::string m_name;
