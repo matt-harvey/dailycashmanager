@@ -5,6 +5,7 @@
 #include "general_typedefs.hpp"
 #include "journal.hpp"
 #include "repeater.hpp"
+#include "text_user_interface.hpp"
 
 #include <iostream>
 
@@ -15,9 +16,51 @@ using phatbooks::IdType;
 using jewel::Decimal;
 using std::cout;
 using std::endl;
+using phatbooks::text_user_interface::Menu;
+
+void say_hello()
+{
+	return;
+	cout << "Hello" << endl;
+}
+
+void say_goodbye()
+{
+	return;
+	cout << "Goodbye" << endl;
+}
+
+void get_outta_here()
+{
+	return;
+}
 
 int main()
 {
+	Menu menu;
+	menu.add_item("Say hello", say_hello);
+	menu.add_item("Say goodbye", say_goodbye);
+	menu.add_item("Quit", get_outta_here, "x");
+	menu.present_to_user();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	/*
 	map<string, int> m;
@@ -36,7 +79,7 @@ int main()
 	*/
 
 
-
+	/*
 
 	PhatbooksDatabaseConnection db;
 	db.open("/home/matthew/Workbench/versioned/phatbooks/test.db");	
@@ -73,7 +116,8 @@ int main()
 	cout << "Food account exists? " << db.has_account_named("Food") << endl;
 	cout << "Entertainment account exists? " 
 	     << db.has_account_named("Entertainment") << endl;
-
+	
+	*/
 
 	return 0;
 }
