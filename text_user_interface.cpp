@@ -84,8 +84,9 @@ Menu::present_to_user()
 		assert (items_iter != m_items.end());
 		cout << label_vec[i]
 		     << string(max_label_length + 1 - label_vec[i].size(), ' ')
-			 << (items_iter++)->name()
+			 << items_iter->name()
 			 << endl;
+		++items_iter;
 	}
 	cout << endl << "Enter an option from the above menu: ";
 	
