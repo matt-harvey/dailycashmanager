@@ -65,8 +65,6 @@ public:
 	 * Present menu to user, request user input, and respond accordingly
 	 *
 	 * @todo Document throwing behaviour, if any.
-	 * @todo Make the implementation of this more compact. (This will
-	 * probably also make it more efficient.)
 	 */
 	void present_to_user();	
 

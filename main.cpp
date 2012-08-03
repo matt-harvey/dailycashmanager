@@ -47,9 +47,11 @@ void reprint_menu()
 int main()
 {
 	menu.add_item("Say hello", say_hello);
-	menu.add_item("Say goodbye", say_goodbye);
+	menu.add_item("Say goodbye", say_goodbye, "1");
 	menu.add_item("Reprint this menu", reprint_menu, "Reprint");
 	menu.add_item("Quit", get_outta_here, "x");
+	menu.add_item("q23", get_outta_here, "afd");
+	menu.add_item("asdf", reprint_menu, "menuadsf");
 	menu.present_to_user();
 
 

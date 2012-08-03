@@ -1,7 +1,7 @@
 #ifndef sqloxx_exceptions_hpp
 #define sqloxx_exceptions_hpp
 
-
+#include <jewel/exception_macros.hpp>
 #include <stdexcept>
 #include <string>
 
@@ -10,21 +10,16 @@ namespace sqloxx
 
 
 /**
- * @todo Make this into a proper hierarchy of exceptions, and use the
- * hierarchy judiciously throughout the Phatbooks code to facilitate
- * better diagnosis and handling of exceptions.
+ * Exception to be thrown in response to exceptions
+ * originating in database-related code. See JEWEL_STANDARD_EXCEPTION for API.
  */
-class SQLiteException: public std::exception
-{
-public:
-	explicit SQLiteException(std::string p_message);
-	virtual ~SQLiteException() throw();
-	virtual const char* what() const throw();
-private:
-	std::string m_message;
-};
+JEWEL_STANDARD_EXCEPTION(DatabaseException);
 
-
+/**
+ * Exception to be thrown in response to database-related exceptions
+ * originating in SQLite.
+ */
+JEWEL_DERIVED_EXCEPTION(SQLiteException, DatabaseException);
 
 
 

@@ -91,10 +91,13 @@ Menu::present_to_user()
 	
 	// Get user input
 	string input;
-	while (true)
+	bool invocation_successful = false;
+	do
 	{
-		if (getline(cin, input))
+		bool input_successful = getline(cin, input);
+		if (input_successful)
 		{
+			// Find if input corresponds to an item label
 			ItemContainer::iterator items_iter2 = m_items.begin();
 			for (vector<string>::size_type i = 0; i != label_vec.size(); ++i)
 			{
@@ -103,17 +106,18 @@ Menu::present_to_user()
 				{
 					// User has selected one of the items.
 					items_iter2->invoke();
-					return;
+					invocation_successful = true;
 				}
 				++items_iter2;
 			}
 			assert (items_iter2 == m_items.end());
-			// User has not entered any of the available label strings.
-			cout << "Your input does not match any of the above items. "
-			     << "Please try again."
-				 << endl
-			     << "Enter an option from the above menu: ";
-
+			if (!invocation_successful)
+			{
+				cout << "Your input does not match any of the above items. "
+					 << "Please try again."
+					 << endl
+					 << "Enter an option from the above menu: ";
+			}
 		}
 		else
 		{
@@ -125,6 +129,8 @@ Menu::present_to_user()
 				 << "Please try again: " << endl;
 		}
 	}
+	while (!invocation_successful);
+
 	return;
 }
 		
