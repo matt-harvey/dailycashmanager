@@ -49,7 +49,8 @@ public:
 	 *
 	 * @throws std::runtime_error if p_name is an empty string or if a
 	 * MenuItem with this name already exists in the Menu.
-	 *
+	 * @todo Make it throw if an Item with this special label already
+	 * exists in the Menu.
 	 * @param p_name string describing option to the user
 	 * @param p_response pointer to function to be called on selection of
 	 * the option by the user
@@ -64,9 +65,8 @@ public:
 	 * Present menu to user, request user input, and respond accordingly
 	 *
 	 * @todo Document throwing behaviour, if any.
-	 * @todo Write part that accepts user input and then calls the
-	 * corresponding function - or asks again for input if the input
-	 * is invalid.
+	 * @todo Make the implementation of this more compact. (This will
+	 * probably also make it more efficient.)
 	 */
 	void present_to_user();	
 
@@ -131,7 +131,7 @@ public:
 	 *
 	 * Doesn't throw.
 	 */
-	void evoke() const;
+	void invoke() const;
 
 	bool operator<(MenuItem const& rhs) const;
 

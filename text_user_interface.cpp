@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <string>
 
+using std::cin;
 using std::cout;
 using std::endl;
 using std::ostringstream;
@@ -46,6 +47,7 @@ Menu::add_item
 void
 Menu::present_to_user()
 {
+	// Determine how to label each menu item
 	int item_number = 1;
 	string::size_type max_label_length = 0;
 	vector<string> label_vec;
@@ -73,6 +75,8 @@ Menu::present_to_user()
 		}
 		label_vec.push_back(label);
 	}
+
+	// Print the menu
 	ItemContainer::const_iterator items_iter = m_items.begin();
 	for (vector<string>::size_type i = 0; i != label_vec.size(); ++i)
 	{
@@ -83,9 +87,44 @@ Menu::present_to_user()
 			 << (items_iter++)->name()
 			 << endl;
 	}
-	cout << endl << "Enter an option from the above menu: " << endl;
-#warning incomplete function
-	// Enter code to get user input
+	cout << endl << "Enter an option from the above menu: ";
+	
+	// Get user input
+	string input;
+	while (true)
+	{
+		if (getline(cin, input))
+		{
+			ItemContainer::iterator items_iter2 = m_items.begin();
+			for (vector<string>::size_type i = 0; i != label_vec.size(); ++i)
+			{
+				assert (items_iter2 != m_items.end());
+				if (input == label_vec[i])
+				{
+					// User has selected one of the items.
+					items_iter2->invoke();
+					return;
+				}
+				++items_iter2;
+			}
+			assert (items_iter2 == m_items.end());
+			// User has not entered any of the available label strings.
+			cout << "Your input does not match any of the above items. "
+			     << "Please try again."
+				 << endl
+			     << "Enter an option from the above menu: ";
+
+		}
+		else
+		{
+			// There was an error receiving input
+			assert (!cin);
+			cin.clear();
+			assert (cin);
+			cout << "There has been an error receiving your input. "
+				 << "Please try again: " << endl;
+		}
+	}
 	return;
 }
 		
@@ -135,7 +174,7 @@ Menu::MenuItem::has_special_label() const
 }
 
 void
-Menu::MenuItem::evoke() const
+Menu::MenuItem::invoke() const
 {
 	m_response();
 	return;

@@ -20,14 +20,14 @@ using phatbooks::text_user_interface::Menu;
 
 void say_hello()
 {
-	return;
 	cout << "Hello" << endl;
+	return;
 }
 
 void say_goodbye()
 {
-	return;
 	cout << "Goodbye" << endl;
+	return;
 }
 
 void get_outta_here()
@@ -35,11 +35,20 @@ void get_outta_here()
 	return;
 }
 
+Menu menu;
+
+void reprint_menu()
+{
+	menu.present_to_user();
+	return;
+}
+
+
 int main()
 {
-	Menu menu;
 	menu.add_item("Say hello", say_hello);
 	menu.add_item("Say goodbye", say_goodbye);
+	menu.add_item("Reprint this menu", reprint_menu, "Reprint");
 	menu.add_item("Quit", get_outta_here, "x");
 	menu.present_to_user();
 
