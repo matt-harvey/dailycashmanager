@@ -9,21 +9,6 @@
  * \date 04 July 2012.
  *
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
- */
-
-
-#include "sqloxx_exceptions.hpp"
-#include <jewel/checked_arithmetic.hpp>
-#include <jewel/debug_log.hpp>
-#include <sqlite3.h>
-#include <boost/cstdint.hpp>
-#include <boost/noncopyable.hpp>
-#include <cassert>
-#include <limits>
-#include <string>
-#include <vector>
-
-/**
  *
  * @todo Move sqloxx code to a separate library.
  * 
@@ -55,8 +40,43 @@
  */
 
 
+#include "sqloxx_exceptions.hpp"
+#include <jewel/checked_arithmetic.hpp>
+#include <jewel/debug_log.hpp>
+#include <sqlite3.h>
+#include <boost/cstdint.hpp>
+#include <boost/noncopyable.hpp>
+#include <cassert>
+#include <limits>
+#include <string>
+#include <vector>
 
 
+
+
+/**
+ * Namespace for housing all Sqloxx code. Sqloxx is intended as a
+ * thin wrapper around SQLite, to facilitate using SQLite from C++,
+ * to facilitate managing the resources required by SQLite using RAII,
+ * and to reduce the verbosity required in client code wishing to
+ * using the SQLite library. Sqloxx will not necessarily provide
+ * much in the way of objected-relational mapping. The intention is
+ * that the C++ API of Sqloxx will largely mirror the C API of
+ * SQLite, so that Sqloxx could be used easily by anyone who is
+ * familiar with SQLite (and with C++).
+ *
+ * In any project that intends to use Sqloxx, the class
+ * \c sqloxx::DatabaseConnection should be extended by a
+ * project-specific class representing a connection to a database
+ * that is tailored to that class. That class then manages the
+ * execution of all SQL statements, and manages all other
+ * interaction with the database itself. The complexity of
+ * managing the database is thus encapsulated within the
+ * database connection class. This is reflected in the fact
+ * that the \c sqloxx::SQLStatement class is nested within the
+ * protected section of \c sqloxx::DatabaseConnection, so that
+ * other classes cannot directly access \c SQLStatement.
+ */
 namespace sqloxx
 {
 

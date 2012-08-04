@@ -23,13 +23,14 @@ namespace sqloxx
 
 /**
  * Exception to be thrown in response to exceptions
- * originating in database-related code. See JEWEL_STANDARD_EXCEPTION for API.
+ * originating in database-related code. See
+ * Jewel library, JEWEL_STANDARD_EXCEPTION for API.
  */
 JEWEL_STANDARD_EXCEPTION(DatabaseException);
 
 /**
  * Exception to be thrown in response to database-related exceptions
- * originating in SQLite.
+ * originating in SQLite. See Jewel library, JEWEL_DERIVED_EXCEPTION for API.
  */
 JEWEL_DERIVED_EXCEPTION(SQLiteException, DatabaseException);
 

@@ -17,7 +17,6 @@
 #include "general_typedefs.hpp"
 #include "journal.hpp"
 #include "repeater.hpp"
-#include "text_user_interface.hpp"
 
 #include <iostream>
 
@@ -28,60 +27,9 @@ using phatbooks::IdType;
 using jewel::Decimal;
 using std::cout;
 using std::endl;
-using phatbooks::text_user_interface::Menu;
-
-void say_hello()
-{
-	cout << "Hello" << endl;
-	return;
-}
-
-void say_goodbye()
-{
-	cout << "Goodbye" << endl;
-	return;
-}
-
-void get_outta_here()
-{
-	return;
-}
-
-Menu menu;
-
-void reprint_menu()
-{
-	menu.present_to_user();
-	return;
-}
-
 
 int main()
 {
-	menu.add_item("Say hello", say_hello);
-	menu.add_item("Say goodbye", say_goodbye, "1");
-	menu.add_item("Reprint this menu", reprint_menu, "Reprint");
-	menu.add_item("Quit", get_outta_here, "x");
-	menu.add_item("q23", get_outta_here, "afd");
-	menu.add_item("asdf", reprint_menu, "menuadsf");
-	menu.present_to_user();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

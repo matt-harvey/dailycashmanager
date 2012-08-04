@@ -1,5 +1,5 @@
 
-/** \file text_user_interface.cpp
+/** \file text_user_session.cpp
  *
  * \brief Contains source code relating to textual (console based)
  * user interface with Phatbooks application.
@@ -11,7 +11,7 @@
  */
 
 
-#include "text_user_interface.hpp"
+#include "text_user_session.hpp"
 #include <cassert>
 #include <iostream>
 #include <sstream>
@@ -29,12 +29,8 @@ using std::vector;
 namespace phatbooks
 {
 
-namespace text_user_interface
-{
-
-
 void
-Menu::add_item
+TextUserSession::Menu::add_item
 (	string const& p_name,
 	ResponseType p_response,
 	string const& p_special_label
@@ -58,7 +54,7 @@ Menu::add_item
 
 
 void
-Menu::present_to_user()
+TextUserSession::Menu::present_to_user()
 {
 	// Determine how to label each menu item
 	int item_number = 1;
@@ -151,7 +147,7 @@ Menu::present_to_user()
 		
 
 
-Menu::MenuItem::MenuItem
+TextUserSession::Menu::MenuItem::MenuItem
 (	string const& p_name,
 	Menu::ResponseType p_response,
 	string const& p_special_label
@@ -170,14 +166,14 @@ Menu::MenuItem::MenuItem
 
 
 string
-Menu::MenuItem::name() const
+TextUserSession::Menu::MenuItem::name() const
 {
 	return m_name;
 }
 
 
 string
-Menu::MenuItem::special_label() const
+TextUserSession::Menu::MenuItem::special_label() const
 {
 	if (m_special_label.empty())
 	{
@@ -188,28 +184,24 @@ Menu::MenuItem::special_label() const
 }
 
 bool
-Menu::MenuItem::has_special_label() const
+TextUserSession::Menu::MenuItem::has_special_label() const
 {
 	return !m_special_label.empty();
 }
 
 void
-Menu::MenuItem::invoke() const
+TextUserSession::Menu::MenuItem::invoke() const
 {
 	m_response();
 	return;
 }
 
 bool
-Menu::MenuItem::operator<(MenuItem const& rhs) const
+TextUserSession::Menu::MenuItem::operator<(MenuItem const& rhs) const
 {
 	return this->m_name < rhs.m_name;
 }
 
-
-
-
-}  // namespace text_user_interface
 
 
 }  // namespace phatbooks

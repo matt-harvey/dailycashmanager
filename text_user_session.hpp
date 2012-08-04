@@ -1,7 +1,7 @@
-#ifndef GUARD_text_user_interface_hpp
-#define GUARD_text_user_interface_hpp
+#ifndef GUARD_text_user_session_hpp
+#define GUARD_text_user_session_hpp
 
-/** \file text_user_interface.hpp
+/** \file text_user_session.hpp
  *
  * \brief Header file for textual (console based) user interface with
  * Phatbooks application
@@ -22,19 +22,11 @@
 namespace phatbooks
 {
 
-/** 
- * Namespace to hold code relating to a text user interface for Phatbooks
- */
-namespace text_user_interface
-{
-
-
-
 
 // CLASS DEFINITIONS
 
 /**
- * Class representing a text user session.
+ * Class representing a user session with a textual (console) interface.
  *
  * @todo Implement it, add constructor and destructor.
  */
@@ -43,6 +35,7 @@ class TextUserSession:
 {
 public:
 private:
+	class Menu;
 	PhatbooksDatabaseConnection m_database_connection;
 };
 
@@ -54,7 +47,7 @@ private:
  *
  * @todo Write constructor by which you give the menu a title.
  */
-class Menu:
+class TextUserSession::Menu:
 	private boost::noncopyable
 {
 public:
@@ -102,7 +95,7 @@ private:
  * Class representing an item in a menu of user options.
  * This class should only be accessible by the Menu class.
  */
-class Menu::MenuItem
+class TextUserSession::Menu::MenuItem
 {
 public:
 
@@ -171,8 +164,7 @@ private:
 
 
 
-}  // namespace text_user_interface
 
 }  // namespace phatbooks
 
-#endif  // GUARD_text_user_interface_hpp
+#endif  // GUARD_text_user_session_hpp

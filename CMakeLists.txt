@@ -12,7 +12,7 @@ add_executable (main
 				database_connection.cpp
 				phatbooks_database_connection.cpp
 				repeater.cpp
-				text_user_interface.cpp)
+				text_user_session.cpp)
 target_link_libraries (main
 					   boost_filesystem
 					   boost_system
