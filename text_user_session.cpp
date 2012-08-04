@@ -64,18 +64,21 @@ TextUserSession::TextUserSession():
 #warning unimplemented function body
 	// Set up all the Menu objects.
 	m_dummy_menu->add_item
-	(	"Say hello",
-		bind(&TextUserSession::say_hello, this)
+	(	MenuItem("Say hello", bind(&TextUserSession::say_hello, this))
 	);
 	m_dummy_menu->add_item
-	(	"Print some numbers",
-		bind(&TextUserSession::print_numbers, this)
+	(	MenuItem
+		(	"Print some numbers",
+			bind(&TextUserSession::print_numbers, this)
+		)
 	);
 	m_dummy_menu->add_item
-	(	"Quit",
-		bind(&TextUserSession::quit, this),
-		false,
-		"x"
+	(	MenuItem
+		(	"Quit",
+			bind(&TextUserSession::quit, this),
+			false,
+			"x"
+		)
 	);
 }
 
@@ -111,14 +114,8 @@ TextUserSession::run()
 
 
 void
-TextUserSession::Menu::add_item
-(	string const& p_name,
-	CallbackType p_callback,
-	bool p_repeat_menu,
-	string const& p_special_label
-)
+TextUserSession::Menu::add_item(MenuItem const& item)
 {
-	MenuItem item(p_name, p_callback, p_repeat_menu, p_special_label);
 	for
 	(	ItemContainer::const_iterator it = m_items.begin();
 		it != m_items.end();
@@ -214,7 +211,7 @@ TextUserSession::Menu::present_to_user()
 
 
 
-TextUserSession::Menu::MenuItem::MenuItem
+TextUserSession::MenuItem::MenuItem
 (	string const& p_name,
 	Menu::CallbackType p_callback,
 	bool p_repeat_menu,
@@ -235,14 +232,14 @@ TextUserSession::Menu::MenuItem::MenuItem
 
 
 string
-TextUserSession::Menu::MenuItem::name() const
+TextUserSession::MenuItem::name() const
 {
 	return m_name;
 }
 
 
 string
-TextUserSession::Menu::MenuItem::special_label() const
+TextUserSession::MenuItem::special_label() const
 {
 	if (m_special_label.empty())
 	{
@@ -253,25 +250,25 @@ TextUserSession::Menu::MenuItem::special_label() const
 }
 
 bool
-TextUserSession::Menu::MenuItem::repeat_menu() const
+TextUserSession::MenuItem::repeat_menu() const
 {
 	return m_repeat_menu;
 }
 
 bool
-TextUserSession::Menu::MenuItem::has_special_label() const
+TextUserSession::MenuItem::has_special_label() const
 {
 	return !m_special_label.empty();
 }
 
 void
-TextUserSession::Menu::MenuItem::invoke()
+TextUserSession::MenuItem::invoke()
 {
 	return m_callback();
 }
 
 bool
-TextUserSession::Menu::MenuItem::operator<(MenuItem const& rhs) const
+TextUserSession::MenuItem::operator<(MenuItem const& rhs) const
 {
 	return this->m_name < rhs.m_name;
 }
