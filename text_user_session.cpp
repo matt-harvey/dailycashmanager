@@ -173,48 +173,38 @@ TextUserSession::Menu::present_to_user()
 				 << string(max_label_length + 1 - label_vec[i].size(), ' ')
 				 << it->name() << endl;
 		}
-		cout << endl << "Enter an option from the above menu: ";
-		
-		// Get user input
-		bool invocation_successful = false;
-		string input;
-		do
+
+		// Receive and process user input
+		for (bool successful = false; !successful; )
 		{
+			cout << endl << "Enter an option from the above menu: ";
+			string input;
 			while (!getline(cin, input))
 			{
 				cin.clear();
-				cout << "There has been an error receiving your input."
-				     << "Please try again: ";
+				cout << endl
+				      << "There has been an error receiving your input. "
+					  << "Please try again: ";
 			}
-			
+
 			// See whether input corresponds to any of the item labels.
-			// This crude linear search is not optimal but it's simple,
-			// and is fast enough for all except ridiculously large
-			// user menus.
+			// This simple linear search is fast enough for all but
+			// ridiculously large user menus.
 			it = m_items.begin();
-			for
-			(	vec_sz i = 0;
-				i != label_vec.size() && !invocation_successful;
-				++i, ++it
-			)
+			for (vec_sz i = 0; i != label_vec.size(); ++it, ++i)
 			{
-				assert (it != m_items.end());
+				assert (it < m_items.end());
 				if (input == label_vec[i])
 				{
 					// User has selected one of the items.
 					it->invoke();
 					replay_menu = it->repeat_menu();
-					invocation_successful = true;
+					successful = true;
+					break;
 				}
 			}
-			if (!invocation_successful)
-			{
-				cout << "Your input does not match any of the available "
-					 << "options. Please try again." << endl
-					 << "Enter an option from the above menu: ";
-			}
+			if (!successful) cout << endl << "Please try again.";
 		}
-		while (!invocation_successful);
 	}
 	while (replay_menu);
 
