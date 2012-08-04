@@ -2,6 +2,17 @@
 #include <jewel/decimal.hpp>
 #include <string>
 
+/** \file commodity.cpp
+ *
+ * \brief Source file pertaining to Commodity class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 using jewel::Decimal;
 using std::string;
 

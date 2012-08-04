@@ -1,3 +1,17 @@
+
+/** \file repeater.cpp
+ *
+ * \brief Source file pertaining to Repeater class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
+
+
 #include "repeater.hpp"
 #include "date.hpp"
 #include "journal.hpp"

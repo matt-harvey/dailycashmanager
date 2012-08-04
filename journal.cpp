@@ -1,3 +1,16 @@
+
+/** \file journal.cpp
+ *
+ * \brief Source file relating to Journal class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
+
 #include "journal.hpp"
 #include "date.hpp"
 #include "entry.hpp"

@@ -1,6 +1,17 @@
 #ifndef GUARD_account_hpp
 #define GUARD_account_hpp
 
+/** \file account.hpp
+ *
+ * \brief Header file pertaining to Account class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include "general_typedefs.hpp"
 #include <string>
 

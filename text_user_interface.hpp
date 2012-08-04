@@ -3,8 +3,8 @@
 
 /** \file text_user_interface.hpp
  *
- * \brief Code for textual (console based) user interface with Phatbooks
- * application
+ * \brief Header file for textual (console based) user interface with
+ * Phatbooks application
  *
  * \author Matthew Harvey
  * \date 04 July 2012.

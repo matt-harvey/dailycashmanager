@@ -1,6 +1,17 @@
 #include "account.hpp"
 #include <string>
 
+/** \file account.cpp
+ *
+ * \brief Source file for code pertaining to Account class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 using std::string;
 
 namespace phatbooks

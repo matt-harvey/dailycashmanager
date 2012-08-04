@@ -1,6 +1,18 @@
 #ifndef sqloxx_exceptions_hpp
 #define sqloxx_exceptions_hpp
 
+/** \file sqloxx_exceptions.hpp
+ *
+ * \brief Header file containing declarations and definitions
+ * of exception classes specific to Sqloxx (a wrapper around SQLite).
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include <jewel/exception_macros.hpp>
 #include <stdexcept>
 #include <string>

@@ -1,6 +1,17 @@
 #ifndef GUARD_phatbooks_database_connection_hpp
 #define GUARD_phatbooks_database_connection_hpp
 
+/** \file phatbooks_database_connection.hpp
+ *
+ * \brief Header file pertaining to PhatbooksDatabaseConnection class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include "account.hpp"
 #include "commodity.hpp"
 #include "database_connection.hpp"

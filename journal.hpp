@@ -1,6 +1,17 @@
 #ifndef GUARD_journal_hpp
 #define GUARD_journal_hpp
 
+/** \file journal.hpp
+ *
+ * \brief Header file relating to Journal class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include "date.hpp"
 #include <jewel/decimal.hpp>
 #include <list>

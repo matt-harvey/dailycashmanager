@@ -1,6 +1,17 @@
 #ifndef GUARD_repeater_hpp
 #define GUARD_repeater_hpp
 
+/** \file repeater.hpp
+ *
+ * \brief Header file pertaining to Repeater class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include "date.hpp"
 #include "journal.hpp"
 #include <boost/shared_ptr.hpp>

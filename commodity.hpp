@@ -1,6 +1,17 @@
 #ifndef GUARD_commodity_hpp
 #define GUARD_commodity_hpp
 
+/** \file commodity.hpp
+ *
+ * \brief Header file pertaining to Commodity class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include "general_typedefs.hpp"
 #include <jewel/decimal.hpp>
 #include <string>

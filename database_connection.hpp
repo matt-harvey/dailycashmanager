@@ -1,6 +1,17 @@
 #ifndef GUARD_database_connection_hpp
 #define GUARD_database_connection_hpp
 
+/** \file database_connection.hpp
+ *
+ * \brief Header file pertaining to DatabaseConnection class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include "sqloxx_exceptions.hpp"
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/debug_log.hpp>

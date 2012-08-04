@@ -1,3 +1,15 @@
+
+/** \file main.cpp
+ *
+ * \brief Contains main.cpp function, and possibly some small amount
+ * of other code, relating to Phatbooks application.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
 #include "phatbooks_database_connection.hpp"
 #include "account.hpp"
 #include "commodity.hpp"

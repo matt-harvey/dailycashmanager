@@ -1,3 +1,17 @@
+
+/** \file entry.cpp
+ *
+ * \brief Source file pertaining to Entry class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
+
+
 #include "entry.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>

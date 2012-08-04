@@ -1,6 +1,17 @@
 #ifndef GUARD_entry_hpp
 #define GUARD_entry_hpp
 
+/** \file entry.hpp
+ *
+ * \brief Header file pertaining to Entry class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include "date.hpp"
 #include "journal.hpp"
 #include "general_typedefs.hpp"

@@ -1,3 +1,18 @@
+
+/** \file phatbooks_database_connection.cpp
+ *
+ * \brief Source file pertaining to PhatbooksDatabaseConnection class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
+
+
+
 #include "account.hpp"
 #include "commodity.hpp"
 #include "journal.hpp"

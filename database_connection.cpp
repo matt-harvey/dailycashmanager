@@ -1,3 +1,19 @@
+
+/** \file database_connection.cpp
+ *
+ * \brief Source file pertaining to DatabaseConnection class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
+
+
+
+
 #include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <boost/cstdint.hpp>

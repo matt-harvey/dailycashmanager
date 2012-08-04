@@ -1,3 +1,16 @@
+
+/** \file text_user_interface.cpp
+ *
+ * \brief Contains source code relating to textual (console based)
+ * user interface with Phatbooks application.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include "text_user_interface.hpp"
 #include <cassert>
 #include <iostream>
