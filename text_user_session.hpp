@@ -13,6 +13,9 @@
  */
 
 
+#include <istream>
+#include <iostream>
+#include <ostream>
 #include <vector>
 #include <string>
 #include <boost/function.hpp>
@@ -25,6 +28,35 @@ namespace phatbooks
 
 // FORWARD DECLARATIONS
 class PhatbooksDatabaseConnection;
+
+// NON-MEMBER FUNCTION DECLARATIONS
+
+/**
+ * Namespace for housing non-member functions that
+ * facilitate a textual, console based user interface.
+ */
+namespace text_interface_utilities
+{
+
+/**
+ * Function for safely getting a line of console input from a user.
+ *
+ * @param error_message Message to display to user if there is an error
+ * receiving their input.
+ *
+ * @param is Input stream from which to accept input. Defaults to \c std::cin.
+ * @returns text entered by the user
+ *
+ * @param os Output stream to which error message is printed in the event of
+ * an input error. Defaults to \c std::cout.
+ */
+std::string get_user_input
+(	std::string const& error_message,
+	std::istream& is = std::cin,
+	std::ostream& os = std::cout
+);
+
+}  // namespace text_interface_utilities
 
 // CLASS DEFINITIONS
 
@@ -59,8 +91,6 @@ private:
 	void say_hello();
 	void print_numbers();
 	void quit();
-
-
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 };
 

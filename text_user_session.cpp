@@ -16,7 +16,9 @@
 #include <boost/bind.hpp>
 #include <algorithm>
 #include <cassert>
+#include <istream>
 #include <iostream>
+#include <ostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -24,8 +26,10 @@
 using boost::bind;
 using std::cin;
 using std::cout;
+using std::istream;
 using std::endl;
 using std::max;
+using std::ostream;
 using std::ostringstream;
 using std::runtime_error;
 using std::string;
@@ -33,6 +37,35 @@ using std::vector;
 
 namespace phatbooks
 {
+
+
+
+
+namespace text_interface_utilities
+{
+
+string
+get_user_input
+(	string const& error_message,
+	istream& is,
+	ostream& os
+)
+{
+	string input;
+	while (!getline(is, input))
+	{
+		assert (!is);
+		is.clear();
+		assert (is);
+		os << error_message;
+	}
+	return input;
+}
+
+}  // namespace text_interface_utilities
+
+
+
 
 
 void TextUserSession::say_hello()
@@ -63,21 +96,25 @@ TextUserSession::TextUserSession():
 {
 #warning unimplemented function body
 	// Set up all the Menu objects.
+	
 	MenuItem say_hello_item
 	(	"Say hello",
 		bind(&TextUserSession::say_hello, this)
 	);
 	m_parent_menu->add_item(say_hello_item);
+
 	MenuItem print_numbers_item
 	(	"Print some numbers",
 		bind(&TextUserSession::print_numbers, this)
 	);
 	m_parent_menu->add_item(print_numbers_item);
+
 	MenuItem present_child_menu_item
 	(	"Go to inner menu",
 		bind(&Menu::present_to_user, m_child_menu)
 	);
 	m_parent_menu->add_item(present_child_menu_item);
+
 	MenuItem quit_item
 	(	"Quit",
 		bind(&TextUserSession::quit, this),
@@ -85,7 +122,9 @@ TextUserSession::TextUserSession():
 		"x"
 	);
 	m_parent_menu->add_item(quit_item);
+
 	m_child_menu->add_item(say_hello_item);
+
 	MenuItem return_to_parent_menu_item
 	(	"Return to previous menu",
 		bind(&TextUserSession::quit, this),
@@ -93,6 +132,7 @@ TextUserSession::TextUserSession():
 		"x"
 	);
 	m_child_menu->add_item(return_to_parent_menu_item);
+
 }
 
 TextUserSession::~TextUserSession()
@@ -148,6 +188,7 @@ TextUserSession::Menu::add_item(MenuItem const& item)
 void
 TextUserSession::Menu::present_to_user()
 {
+	using text_interface_utilities::get_user_input;
 	typedef vector<string>::size_type vec_sz;
 	bool replay_menu = false;
 
@@ -158,7 +199,7 @@ TextUserSession::Menu::present_to_user()
 		string::size_type max_label_length = 0;
 		vector<string> label_vec;
 		ItemContainer::iterator it;
-		for(it = m_items.begin(); it != m_items.end(); ++it)
+		for (it = m_items.begin(); it != m_items.end(); ++it)
 		{
 			if (it->has_special_label())
 			{
@@ -189,15 +230,10 @@ TextUserSession::Menu::present_to_user()
 		for (bool successful = false; !successful; )
 		{
 			cout << endl << "Enter an option from the above menu: ";
-			string input;
-			while (!getline(cin, input))
-			{
-				cin.clear();
-				cout << endl
-				      << "There has been an error receiving your input. "
-					  << "Please try again: ";
-			}
-
+			string input = get_user_input
+			(	"\nThere has been an error receiving your input. "
+				"Please try again: "
+			);
 			// See whether input corresponds to any of the item labels,
 			// and invoke the item if it does.
 			// This simple linear search is fast enough for all but
@@ -237,9 +273,9 @@ TextUserSession::MenuItem::MenuItem
 {
 	if (p_name.empty())
 	{
-		throw runtime_error("p_name is empty.");
+		throw runtime_error("Menu item name is empty.");
 	}
-	assert (p_name.size() > 0);
+	assert (p_name != "");
 	m_name = p_name;
 }
 
@@ -254,11 +290,11 @@ TextUserSession::MenuItem::name() const
 string
 TextUserSession::MenuItem::special_label() const
 {
-	if (m_special_label.empty())
+	if (!has_special_label())
 	{
 		throw runtime_error("Item does not have special label.");
 	}
-	assert (!m_special_label.empty());
+	assert (has_special_label());
 	return m_special_label;
 }
 
@@ -277,7 +313,8 @@ TextUserSession::MenuItem::has_special_label() const
 void
 TextUserSession::MenuItem::invoke()
 {
-	return m_callback();
+	m_callback();
+	return;
 }
 
 bool
