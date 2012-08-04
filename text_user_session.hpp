@@ -75,7 +75,15 @@ class TextUserSession::Menu:
 {
 public:
 
-	typedef boost::function< void() > ResponseType;
+	/**
+	 * Type of function to be passed to MenuItem constructor.
+	 * The function should return \c true to indicate that
+	 * the Menu in which it appears should again be presented
+	 * to the user after it has been invoked; or \c false to
+	 * indicate that the menu in which it appears should not again
+	 * be presented.
+	 */
+	typedef boost::function< void() > CallbackType;
 
 	// Default destructor is fine.
    
@@ -86,16 +94,36 @@ public:
 	 *
 	 * @throws std::runtime_error if p_name is an empty string or if a
 	 * MenuItem with this name already exists in the Menu.
+	 *
 	 * @todo Make it throw if an Item with this special label already
 	 * exists in the Menu.
+	 *
 	 * @param p_name string describing option to the user
-	 * @param p_response pointer to function to be called on selection of
+	 *
+	 * @param p_callback pointer to function to be called on selection of
 	 * the option by the user - or any callable type with a compatible
 	 * signature.
+	 * 
+	 * @param p_repeat_menu indicates what to do after \c p_callback has
+	 * finished executing. If \c true, the same menu (in which the item
+	 * appears) will again be presented to the user. If \c false, then after
+	 * the user has selected the item and the p_callback has executed,
+	 * execution will continue as normal rather than again repeating the
+	 * same menu. In practice this will generally mean the "parent" menu
+	 * will be presented (if there is one), or else the session will terminate
+	 * (if there is no parent menu). \c p_repeat_menu is \c true if not
+	 * specified.
+	 *
+	 * @param p_special_label is an optional non-numeric label by which the
+	 * item will be identified in the menu, and which the user will enter in
+	 * order to select that item. If non is provided, a numerical label will
+	 * automatically be generated based on the order of insertion of the item
+	 * into the menu.
 	 */
 	void add_item
 	(	std::string const& p_name,
-		ResponseType p_response,
+		CallbackType p_callback,
+		bool p_repeat_menu = true,
 		std::string const& p_special_label = ""
 	);
 
@@ -129,21 +157,29 @@ public:
 	/**
 	 * @param p_str non-empty string describing option to the user
 	 *
-	 * @param p_response pointer to function to be called on selection of
+	 * @param p_callback pointer to function to be called on selection of
 	 * the option by the user - or any callable type with a compatible
 	 * signature.
 	 *
-	 * @param p_special_label optional special label by which the item will
-	 * be "keyed" in the menu. The user will enter this label to select the
+	 * @param p_special_label is an optional special label by which the item
+	 * is "keyed" in the menu. The user will enter this label to select the
 	 * item. If no special label is identified, the item will be presented to
 	 * the user with a numeric label based on its ordering in the menu.
 	 * selects this option
+	 *
+	 * @param p_repeat_menu indicates the desired behaviour after the menu
+	 * item has been selected by the user and its callback function
+	 * has finished executing. \true indicates that the same menu in which
+	 * the item appeared, should again be presented to the user. \false
+	 * indicates that execution should continue past this point.
+	 * This parameter is \true by default.
 	 *
 	 * @throws std::runtime_error if \c str is empty
 	 */
 	MenuItem
 	(	std::string const& p_name,
-		Menu::ResponseType p_response,
+		Menu::CallbackType p_callback,
+		bool p_repeat_menu,
 		std::string const& p_special_label = ""
 	);
 
@@ -162,7 +198,14 @@ public:
 	std::string special_label() const;
 
 	/**
-	 * @returns true iff and only if the Item has a special label
+	 * @return \c true if and only if the menu in which this item appears
+	 * should be presented to the user after the item's callback has
+	 * finished executing.
+	 */
+	bool repeat_menu() const;
+
+	/**
+	 * @returns \c true if and only if the Item has a special label
 	 *
 	 * Does not throw.
 	 */
@@ -170,18 +213,18 @@ public:
 	
 	/**
 	 * Call function stored in MenuItem (whatever function was passed to
-	 * p_response). The throwing behaviour is just the throwing behaviour
-	 * of p_response.
-	 *
-	 * Doesn't throw.
+	 * p_callback). The throwing behaviour is just the throwing behaviour
+	 * of p_callback - no exception is thrown by the \c invoke function in
+	 * its own right.
 	 */
-	void invoke() const;
+	void invoke();
 
 	bool operator<(MenuItem const& rhs) const;
 
 private:
 	std::string m_name;
-	Menu::ResponseType m_response;
+	Menu::CallbackType m_callback;
+	bool m_repeat_menu;
 	std::string m_special_label;
 };
 

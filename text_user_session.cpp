@@ -36,7 +36,6 @@ namespace phatbooks
 void TextUserSession::say_hello()
 {
 	cout << "Hello!" << endl;
-	m_dummy_menu->present_to_user();
 	return;
 }
 
@@ -47,7 +46,6 @@ void TextUserSession::print_numbers()
 		cout << i << '\t';
 	}
 	cout << endl;
-	m_dummy_menu->present_to_user();
 	return;
 }
 
@@ -73,7 +71,9 @@ TextUserSession::TextUserSession():
 	);
 	m_dummy_menu->add_item
 	(	"Quit",
-		bind(&TextUserSession::quit, this)
+		bind(&TextUserSession::quit, this),
+		false,
+		"x"
 	);
 }
 
@@ -111,11 +111,12 @@ TextUserSession::run()
 void
 TextUserSession::Menu::add_item
 (	string const& p_name,
-	ResponseType p_response,
+	CallbackType p_callback,
+	bool p_repeat_menu,
 	string const& p_special_label
 )
 {
-	MenuItem item(p_name, p_response, p_special_label);
+	MenuItem item(p_name, p_callback, p_repeat_menu, p_special_label);
 	for
 	(	ItemContainer::const_iterator it = m_items.begin();
 		it != m_items.end();
@@ -135,90 +136,99 @@ TextUserSession::Menu::add_item
 void
 TextUserSession::Menu::present_to_user()
 {
-	// Determine how to label each menu item
-	int item_number = 1;
-	string::size_type max_label_length = 0;
-	vector<string> label_vec;
-	for
-	(	ItemContainer::const_iterator it = m_items.begin();
-		it != m_items.end();
-		++it
-	)
-	{
-		string label;
-		if (it->has_special_label())
-		{
-			label = it->special_label();
-		}
-		else
-		{	
-			ostringstream oss;
-			oss << item_number;
-			label = oss.str();
-			++item_number;
-		}
-		if (label.size() > max_label_length)
-		{
-			max_label_length = label.size();
-		}
-		label_vec.push_back(label);
-	}
-
-	// Print the menu
-	ItemContainer::const_iterator items_iter = m_items.begin();
-	for (vector<string>::size_type i = 0; i != label_vec.size(); ++i)
-	{
-		assert (i != m_items.size());
-		assert (items_iter != m_items.end());
-		cout << label_vec[i]
-		     << string(max_label_length + 1 - label_vec[i].size(), ' ')
-			 << items_iter->name()
-			 << endl;
-		++items_iter;
-	}
-	cout << endl << "Enter an option from the above menu: ";
-	
-	// Get user input
-	string input;
-	bool invocation_successful = false;
+	bool replay_menu = false;
 	do
 	{
-		bool input_successful = getline(cin, input);
-		if (input_successful)
+		// Determine how to label each menu item
+		int item_number = 1;
+		string::size_type max_label_length = 0;
+		vector<string> label_vec;
+		for
+		(	ItemContainer::const_iterator it = m_items.begin();
+			it != m_items.end();
+			++it
+		)
 		{
-			// Find if input corresponds to an item label
-			ItemContainer::iterator items_iter2 = m_items.begin();
-			for (vector<string>::size_type i = 0; i != label_vec.size(); ++i)
+			string label;
+			if (it->has_special_label())
 			{
-				assert (items_iter2 != m_items.end());
-				if (input == label_vec[i])
+				label = it->special_label();
+			}
+			else
+			{	
+				ostringstream oss;
+				oss << item_number;
+				label = oss.str();
+				++item_number;
+			}
+			if (label.size() > max_label_length)
+			{
+				max_label_length = label.size();
+			}
+			label_vec.push_back(label);
+		}
+
+		// Print the menu
+		ItemContainer::const_iterator items_iter = m_items.begin();
+		for (vector<string>::size_type i = 0; i != label_vec.size(); ++i)
+		{
+			assert (i != m_items.size());
+			assert (items_iter != m_items.end());
+			cout << label_vec[i]
+				 << string(max_label_length + 1 - label_vec[i].size(), ' ')
+				 << items_iter->name()
+				 << endl;
+			++items_iter;
+		}
+		cout << endl << "Enter an option from the above menu: ";
+		
+		// Get user input
+		bool invocation_successful = false;
+		string input;
+		do
+		{
+			bool input_successful = getline(cin, input);
+			if (input_successful)
+			{
+				// Find if input corresponds to an item label
+				ItemContainer::iterator items_iter2 = m_items.begin();
+				for (vector<string>::size_type i = 0; i != label_vec.size(); ++i)
 				{
-					// User has selected one of the items.
-					items_iter2->invoke();
-					invocation_successful = true;
+					assert (items_iter2 != m_items.end());
+					if (input == label_vec[i])
+					{
+						// User has selected one of the items.
+						items_iter2->invoke();
+						replay_menu = items_iter2->repeat_menu();
+						invocation_successful = true;
+						break;
+					}
+					else
+					{
+						++items_iter2;
+					}
 				}
-				++items_iter2;
+				if (!invocation_successful)
+				{
+					cout << "Your input does not match any of the available "
+					     << "options. Please try again."
+						 << endl
+						 << "Enter an option from the above menu: ";
+				}
 			}
-			assert (items_iter2 == m_items.end());
-			if (!invocation_successful)
+			else
 			{
-				cout << "Your input does not match any of the above items. "
-					 << "Please try again."
-					 << endl
-					 << "Enter an option from the above menu: ";
+				// There was an error receiving input
+				assert (!cin);
+				cin.clear();
+				assert (cin);
+				cout << "There has been an error receiving your input. "
+					 << "Please try again: " << endl;
 			}
 		}
-		else
-		{
-			// There was an error receiving input
-			assert (!cin);
-			cin.clear();
-			assert (cin);
-			cout << "There has been an error receiving your input. "
-				 << "Please try again: " << endl;
-		}
+		while (!invocation_successful);
 	}
-	while (!invocation_successful);
+	while (replay_menu);
 
 	return;
 }
@@ -227,11 +237,13 @@ TextUserSession::Menu::present_to_user()
 
 TextUserSession::Menu::MenuItem::MenuItem
 (	string const& p_name,
-	Menu::ResponseType p_response,
+	Menu::CallbackType p_callback,
+	bool p_repeat_menu,
 	string const& p_special_label
 ):
 	m_name(string()),
-	m_response(p_response),
+	m_callback(p_callback),
+	m_repeat_menu(p_repeat_menu),
 	m_special_label(p_special_label)
 {
 	if (p_name.empty())
@@ -262,16 +274,21 @@ TextUserSession::Menu::MenuItem::special_label() const
 }
 
 bool
+TextUserSession::Menu::MenuItem::repeat_menu() const
+{
+	return m_repeat_menu;
+}
+
+bool
 TextUserSession::Menu::MenuItem::has_special_label() const
 {
 	return !m_special_label.empty();
 }
 
 void
-TextUserSession::Menu::MenuItem::invoke() const
+TextUserSession::Menu::MenuItem::invoke()
 {
-	m_response();
-	return;
+	return m_callback();
 }
 
 bool
