@@ -12,12 +12,15 @@
 
 
 #include "text_user_session.hpp"
+#include "phatbooks_database_connection.hpp"
+#include <boost/bind.hpp>
 #include <cassert>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 
+using boost::bind;
 using std::cin;
 using std::cout;
 using std::endl;
@@ -28,6 +31,84 @@ using std::vector;
 
 namespace phatbooks
 {
+
+
+void TextUserSession::say_hello()
+{
+	cout << "Hello!" << endl;
+	m_dummy_menu->present_to_user();
+	return;
+}
+
+void TextUserSession::print_numbers()
+{
+	for (int i = 0; i != 5; ++i)
+	{
+		cout << i << '\t';
+	}
+	cout << endl;
+	m_dummy_menu->present_to_user();
+	return;
+}
+
+void TextUserSession::quit()
+{
+	cout << "Exiting application..." << endl;
+	return;
+}
+
+TextUserSession::TextUserSession():
+	m_dummy_menu(new Menu),
+	m_database_connection(new PhatbooksDatabaseConnection)
+{
+#warning unimplemented function body
+	// Set up all the Menu objects.
+	m_dummy_menu->add_item
+	(	"Say hello",
+		bind(&TextUserSession::say_hello, this)
+	);
+	m_dummy_menu->add_item
+	(	"Print some numbers",
+		bind(&TextUserSession::print_numbers, this)
+	);
+	m_dummy_menu->add_item
+	(	"Quit",
+		bind(&TextUserSession::quit, this)
+	);
+}
+
+TextUserSession::~TextUserSession()
+{
+	delete m_dummy_menu;
+	delete m_database_connection;
+}
+
+void
+TextUserSession::run()
+{
+	cout << endl << "Welcome to Phatbooks." << endl << endl;
+
+#warning unimplemented function body
+
+	// Get filename from user.
+	// ...
+	
+	// Open connection with file.
+	// ...
+	
+	// Setup file.
+	// ...
+	
+	// Present the first menu.
+	// ...
+	m_dummy_menu->present_to_user();
+	
+	// Farewell the user.
+	// ...
+	
+	return;
+}
+
 
 void
 TextUserSession::Menu::add_item
@@ -143,8 +224,7 @@ TextUserSession::Menu::present_to_user()
 
 	return;
 }
-		
-		
+
 
 
 TextUserSession::Menu::MenuItem::MenuItem

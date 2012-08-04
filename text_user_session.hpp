@@ -13,30 +13,52 @@
  */
 
 
-#include "phatbooks_database_connection.hpp"
 #include <vector>
 #include <string>
+#include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 
 
 namespace phatbooks
 {
 
+// FORWARD DECLARATIONS
+class PhatbooksDatabaseConnection;
 
 // CLASS DEFINITIONS
 
 /**
  * Class representing a user session with a textual (console) interface.
- *
- * @todo Implement it, add constructor and destructor.
  */
 class TextUserSession:
 	private boost::noncopyable
 {
 public:
+
+	TextUserSession();
+
+	~TextUserSession();
+
+	/**
+	 * Run the session, presenting text to the user and receiving
+	 * and processing text from the user.
+	 *
+	 * @todo Implement it!
+	 */
+	void run();
+
 private:
 	class Menu;
-	PhatbooksDatabaseConnection m_database_connection;
+	class MenuItem;
+	// Various Menu objects.
+
+#warning dummy members follow
+	Menu* m_dummy_menu;
+	void say_hello();
+	void print_numbers();
+	void quit();
+
+	PhatbooksDatabaseConnection* m_database_connection;
 };
 
 
@@ -52,7 +74,7 @@ class TextUserSession::Menu:
 {
 public:
 
-	typedef void (*ResponseType)();
+	typedef boost::function< void() > ResponseType;
 
 	// Default destructor is fine.
    
@@ -67,7 +89,8 @@ public:
 	 * exists in the Menu.
 	 * @param p_name string describing option to the user
 	 * @param p_response pointer to function to be called on selection of
-	 * the option by the user
+	 * the option by the user - or any callable type with a compatible
+	 * signature.
 	 */
 	void add_item
 	(	std::string const& p_name,
@@ -104,12 +127,17 @@ public:
 
 	/**
 	 * @param p_str non-empty string describing option to the user
-	 * @param p_response pointer to be called when the user
+	 *
+	 * @param p_response pointer to function to be called on selection of
+	 * the option by the user - or any callable type with a compatible
+	 * signature.
+	 *
 	 * @param p_special_label optional special label by which the item will
 	 * be "keyed" in the menu. The user will enter this label to select the
 	 * item. If no special label is identified, the item will be presented to
 	 * the user with a numeric label based on its ordering in the menu.
 	 * selects this option
+	 *
 	 * @throws std::runtime_error if \c str is empty
 	 */
 	MenuItem
