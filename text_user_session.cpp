@@ -14,6 +14,7 @@
 #include "text_user_session.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/bind.hpp>
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <sstream>
@@ -24,6 +25,7 @@ using boost::bind;
 using std::cin;
 using std::cout;
 using std::endl;
+using std::max;
 using std::ostringstream;
 using std::runtime_error;
 using std::string;
@@ -136,49 +138,40 @@ TextUserSession::Menu::add_item
 void
 TextUserSession::Menu::present_to_user()
 {
+	typedef vector<string>::size_type vec_sz;
 	bool replay_menu = false;
+
 	do
 	{
 		// Determine how to label each menu item
-		int item_number = 1;
+		int item_num = 1;
 		string::size_type max_label_length = 0;
 		vector<string> label_vec;
-		for
-		(	ItemContainer::const_iterator it = m_items.begin();
-			it != m_items.end();
-			++it
-		)
+		ItemContainer::iterator it;
+		for(it = m_items.begin(); it != m_items.end(); ++it)
 		{
-			string label;
 			if (it->has_special_label())
 			{
-				label = it->special_label();
+				label_vec.push_back(it->special_label());
 			}
 			else
-			{	
-				ostringstream oss;
-				oss << item_number;
-				label = oss.str();
-				++item_number;
-			}
-			if (label.size() > max_label_length)
 			{
-				max_label_length = label.size();
+				ostringstream oss;
+				oss << item_num++;
+				label_vec.push_back(oss.str());
 			}
-			label_vec.push_back(label);
+			max_label_length = max(label_vec.back().size(), max_label_length);
 		}
 
 		// Print the menu
-		ItemContainer::const_iterator items_iter = m_items.begin();
-		for (vector<string>::size_type i = 0; i != label_vec.size(); ++i)
+		it = m_items.begin();
+		cout << endl;
+		for (vec_sz i = 0; i != label_vec.size(); ++i, ++it)
 		{
-			assert (i != m_items.size());
-			assert (items_iter != m_items.end());
+			assert (it != m_items.end());
 			cout << label_vec[i]
 				 << string(max_label_length + 1 - label_vec[i].size(), ' ')
-				 << items_iter->name()
-				 << endl;
-			++items_iter;
+				 << it->name() << endl;
 		}
 		cout << endl << "Enter an option from the above menu: ";
 		
@@ -187,43 +180,38 @@ TextUserSession::Menu::present_to_user()
 		string input;
 		do
 		{
-			bool input_successful = getline(cin, input);
-			if (input_successful)
+			while (!getline(cin, input))
 			{
-				// Find if input corresponds to an item label
-				ItemContainer::iterator items_iter2 = m_items.begin();
-				for (vector<string>::size_type i = 0; i != label_vec.size(); ++i)
+				cin.clear();
+				cout << "There has been an error receiving your input."
+				     << "Please try again: ";
+			}
+			
+			// See whether input corresponds to any of the item labels.
+			// This crude linear search is not optimal but it's simple,
+			// and is fast enough for all except ridiculously large
+			// user menus.
+			it = m_items.begin();
+			for
+			(	vec_sz i = 0;
+				i != label_vec.size() && !invocation_successful;
+				++i, ++it
+			)
+			{
+				assert (it != m_items.end());
+				if (input == label_vec[i])
 				{
-					assert (items_iter2 != m_items.end());
-					if (input == label_vec[i])
-					{
-						// User has selected one of the items.
-						items_iter2->invoke();
-						replay_menu = items_iter2->repeat_menu();
-						invocation_successful = true;
-						break;
-					}
-					else
-					{
-						++items_iter2;
-					}
-				}
-				if (!invocation_successful)
-				{
-					cout << "Your input does not match any of the available "
-					     << "options. Please try again."
-						 << endl
-						 << "Enter an option from the above menu: ";
+					// User has selected one of the items.
+					it->invoke();
+					replay_menu = it->repeat_menu();
+					invocation_successful = true;
 				}
 			}
-			else
+			if (!invocation_successful)
 			{
-				// There was an error receiving input
-				assert (!cin);
-				cin.clear();
-				assert (cin);
-				cout << "There has been an error receiving your input. "
-					 << "Please try again: " << endl;
+				cout << "Your input does not match any of the available "
+					 << "options. Please try again." << endl
+					 << "Enter an option from the above menu: ";
 			}
 		}
 		while (!invocation_successful);
