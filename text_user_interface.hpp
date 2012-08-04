@@ -1,6 +1,19 @@
 #ifndef GUARD_text_user_interface_hpp
 #define GUARD_text_user_interface_hpp
 
+/** \file text_user_interface.hpp
+ *
+ * \brief Code for textual (console based) user interface with Phatbooks
+ * application
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
+#include "phatbooks_database_connection.hpp"
 #include <vector>
 #include <string>
 #include <boost/noncopyable.hpp>
@@ -11,14 +24,6 @@ namespace phatbooks
 
 /** 
  * Namespace to hold code relating to a text user interface for Phatbooks
- *
- * This namespace may hold various ordinary (non-class-member) functions, in
- * addition to object-oriented code. This
- * namespace is therefore provided to organise these functions together
- * despite not being within a class. It is also designed to house all user
- * interface oriented code where the interface is text/console based. It is
- * intended that a graphical user interface will also be provided in due
- * course.
  */
 namespace text_user_interface
 {
@@ -27,6 +32,22 @@ namespace text_user_interface
 
 
 // CLASS DEFINITIONS
+
+/**
+ * Class representing a text user session.
+ *
+ * @todo Implement it, add constructor and destructor.
+ */
+class TextUserSession:
+	private boost::noncopyable
+{
+public:
+private:
+	PhatbooksDatabaseConnection m_database_connection;
+};
+
+
+
 
 /**
  * Class representing textual menu of user options
@@ -73,6 +94,9 @@ private:
 	typedef std::vector<MenuItem> ItemContainer;
 	ItemContainer m_items;
 };
+
+
+
 
 /**
  * Class representing an item in a menu of user options.
