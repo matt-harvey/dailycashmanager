@@ -45,10 +45,13 @@ namespace text_interface_utilities
  * receiving their input.
  *
  * @param is Input stream from which to accept input. Defaults to \c std::cin.
- * @returns text entered by the user
  *
  * @param os Output stream to which error message is printed in the event of
  * an input error. Defaults to \c std::cout.
+ *
+ * @returns text entered by the user
+ *
+ * @todo Determine and document throwing behaviour.
  */
 std::string get_user_input
 (	std::string const& error_message,
@@ -107,16 +110,6 @@ class TextUserSession::Menu:
 {
 public:
 
-	/**
-	 * Type of function to be passed to MenuItem constructor.
-	 * The function should return \c true to indicate that
-	 * the Menu in which it appears should again be presented
-	 * to the user after it has been invoked; or \c false to
-	 * indicate that the menu in which it appears should not again
-	 * be presented.
-	 */
-	typedef boost::function< void() > CallbackType;
-
 	// Default destructor is fine.
    
 	/**
@@ -125,10 +118,11 @@ public:
 	 * @param item a MenuItem.
 	 *
 	 * @throws std::runtime_error if a
-	 * MenuItem with the same name as \c item name already exists in the Menu.
+	 * MenuItem with the same banner as \c item banner already exists in the
+	 * Menu.
 	 *
-	 * @todo Make it throw if an Item with this special label already
-	 * exists in the Menu.
+	 * @throws std::runtime_error if an item with the same special label is
+	 * already present in this menu.
 	 */
 	void add_item(MenuItem const& item);
 
@@ -149,48 +143,53 @@ private:
 
 /**
  * Class representing an item in a menu of user options.
- * This class should only be accessible by the Menu class.
  */
 class TextUserSession::MenuItem
 {
 public:
 
+	/**
+	 * Type of function to be passed to MenuItem constructor.
+	 */
+	typedef boost::function< void() > CallbackType;
+
 	 // Default destructor, copy constructor and assignment operator should
 	 // be OK.
 
 	/**
-	 * @param p_str non-empty string describing option to the user
+	 * @todo Make it throw if a numeric special label is provided.
+	 *
+	 * @param p_banner non-empty string describing option to the user
 	 *
 	 * @param p_callback pointer to function to be called on selection of
-	 * the option by the user - or any callable type with a compatible
-	 * signature.
+	 * the option by the user
 	 *
-	 * @param p_special_label is an optional special label by which the item
+	 * @param p_special_label An optional special label by which the item
 	 * is "keyed" in the menu. The user will enter this label to select the
 	 * item. If no special label is identified, the item will be presented to
 	 * the user with a numeric label based on its ordering in the menu.
-	 * selects this option
 	 *
-	 * @param p_repeat_menu indicates the desired behaviour after the menu
+	 * @param p_repeats_menu indicates the desired behaviour after the menu
 	 * item has been selected by the user and its callback function
-	 * has finished executing. \true indicates that the same menu in which
-	 * the item appeared, should again be presented to the user. \false
+	 * has finished executing. \c true indicates that the same menu in which
+	 * the item appeared, should again be presented to the user. \c false
 	 * indicates that execution should continue past this point.
-	 * This parameter is \true by default.
+	 * This parameter is \c true by default.
 	 *
-	 * @throws std::runtime_error if \c str is empty
+	 * @throws std::runtime_error if \c p_banner is empty
+	 *
 	 */
 	MenuItem
-	(	std::string const& p_name,
-		Menu::CallbackType p_callback,
-		bool p_repeat_menu = true,
+	(	std::string const& p_banner,
+		CallbackType p_callback,
+		bool p_repeats_menu = true,
 		std::string const& p_special_label = ""
 	);
 
 	/**
 	 * @returns string describing MenuItem to user
 	 */
-	std::string name() const;
+	std::string banner() const;
 
 	/**
 	 * @returns special label by which the Item will
@@ -206,7 +205,7 @@ public:
 	 * should be presented to the user after the item's callback has
 	 * finished executing.
 	 */
-	bool repeat_menu() const;
+	bool repeats_menu() const;
 
 	/**
 	 * @returns \c true if and only if the Item has a special label
@@ -223,12 +222,13 @@ public:
 	 */
 	void invoke();
 
+private:
+
 	bool operator<(MenuItem const& rhs) const;
 
-private:
-	std::string m_name;
-	Menu::CallbackType m_callback;
-	bool m_repeat_menu;
+	std::string m_banner;
+	CallbackType m_callback;
+	bool m_repeats_menu;
 	std::string m_special_label;
 };
 

@@ -175,9 +175,18 @@ TextUserSession::Menu::add_item(MenuItem const& item)
 		++it
 	)
 	{
-		if (item.name() == it->name())
+		if (item.banner() == it->banner())
 		{
-			throw runtime_error("MenuItem with name already in Menu.");
+			throw runtime_error("MenuItem with this banner already in Menu.");
+		}
+		if
+		(	item.has_special_label() && it->has_special_label() &&
+			item.special_label() == it->special_label()
+		)
+		{
+			throw runtime_error
+			(	"MenuItem with this special label already in Menu."
+			);
 		}
 	}
 	m_items.push_back(item);
@@ -215,14 +224,14 @@ TextUserSession::Menu::present_to_user()
 		}
 
 		// Print the menu
-		it = m_items.begin();
 		cout << endl;
+		it = m_items.begin();
 		for (vec_sz i = 0; i != label_vec.size(); ++i, ++it)
 		{
 			assert (it < m_items.end());
 			cout << label_vec[i]
 				 << string(max_label_length + 1 - label_vec[i].size(), ' ')
-				 << it->name()
+				 << it->banner()
 				 << endl;
 		}
 
@@ -245,7 +254,7 @@ TextUserSession::Menu::present_to_user()
 				if (input == label_vec[i])
 				{
 					it->invoke();
-					replay_menu = it->repeat_menu();
+					replay_menu = it->repeats_menu();
 					successful = true;
 					break;
 				}
@@ -261,29 +270,29 @@ TextUserSession::Menu::present_to_user()
 
 
 TextUserSession::MenuItem::MenuItem
-(	string const& p_name,
-	Menu::CallbackType p_callback,
-	bool p_repeat_menu,
+(	string const& p_banner,
+	MenuItem::CallbackType p_callback,
+	bool p_repeats_menu,
 	string const& p_special_label
 ):
-	m_name(string()),
+	m_banner(string()),
 	m_callback(p_callback),
-	m_repeat_menu(p_repeat_menu),
+	m_repeats_menu(p_repeats_menu),
 	m_special_label(p_special_label)
 {
-	if (p_name.empty())
+	if (p_banner.empty())
 	{
-		throw runtime_error("Menu item name is empty.");
+		throw runtime_error("Menu item banner is empty.");
 	}
-	assert (p_name != "");
-	m_name = p_name;
+	assert (p_banner != "");
+	m_banner = p_banner;
 }
 
 
 string
-TextUserSession::MenuItem::name() const
+TextUserSession::MenuItem::banner() const
 {
-	return m_name;
+	return m_banner;
 }
 
 
@@ -299,9 +308,9 @@ TextUserSession::MenuItem::special_label() const
 }
 
 bool
-TextUserSession::MenuItem::repeat_menu() const
+TextUserSession::MenuItem::repeats_menu() const
 {
-	return m_repeat_menu;
+	return m_repeats_menu;
 }
 
 bool
@@ -320,7 +329,7 @@ TextUserSession::MenuItem::invoke()
 bool
 TextUserSession::MenuItem::operator<(MenuItem const& rhs) const
 {
-	return this->m_name < rhs.m_name;
+	return this->m_banner < rhs.m_banner;
 }
 
 
