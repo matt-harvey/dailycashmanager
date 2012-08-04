@@ -17,6 +17,7 @@
 #include <string>
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
 
 
 namespace phatbooks
@@ -53,12 +54,12 @@ private:
 	// Various Menu objects.
 
 #warning dummy members follow
-	Menu* m_dummy_menu;
+	boost::shared_ptr<Menu> m_dummy_menu;
 	void say_hello();
 	void print_numbers();
 	void quit();
 
-	PhatbooksDatabaseConnection* m_database_connection;
+	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 };
 
 

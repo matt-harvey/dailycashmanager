@@ -79,8 +79,6 @@ TextUserSession::TextUserSession():
 
 TextUserSession::~TextUserSession()
 {
-	delete m_dummy_menu;
-	delete m_database_connection;
 }
 
 void
