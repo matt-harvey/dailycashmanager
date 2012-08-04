@@ -168,10 +168,11 @@ TextUserSession::Menu::present_to_user()
 		cout << endl;
 		for (vec_sz i = 0; i != label_vec.size(); ++i, ++it)
 		{
-			assert (it != m_items.end());
+			assert (it < m_items.end());
 			cout << label_vec[i]
 				 << string(max_label_length + 1 - label_vec[i].size(), ' ')
-				 << it->name() << endl;
+				 << it->name()
+				 << endl;
 		}
 
 		// Receive and process user input
@@ -187,16 +188,16 @@ TextUserSession::Menu::present_to_user()
 					  << "Please try again: ";
 			}
 
-			// See whether input corresponds to any of the item labels.
+			// See whether input corresponds to any of the item labels,
+			// and invoke the item if it does.
 			// This simple linear search is fast enough for all but
 			// ridiculously large user menus.
 			it = m_items.begin();
-			for (vec_sz i = 0; i != label_vec.size(); ++it, ++i)
+			for (vec_sz i = 0; i != label_vec.size(); ++i, ++it)
 			{
 				assert (it < m_items.end());
 				if (input == label_vec[i])
 				{
-					// User has selected one of the items.
 					it->invoke();
 					replay_menu = it->repeat_menu();
 					successful = true;
