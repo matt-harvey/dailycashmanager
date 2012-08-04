@@ -53,33 +53,46 @@ void TextUserSession::print_numbers()
 
 void TextUserSession::quit()
 {
-	cout << "Exiting application..." << endl;
 	return;
 }
 
 TextUserSession::TextUserSession():
-	m_dummy_menu(new Menu),
+	m_parent_menu(new Menu),
+	m_child_menu(new Menu),
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
 #warning unimplemented function body
 	// Set up all the Menu objects.
-	m_dummy_menu->add_item
-	(	MenuItem("Say hello", bind(&TextUserSession::say_hello, this))
+	MenuItem say_hello_item
+	(	"Say hello",
+		bind(&TextUserSession::say_hello, this)
 	);
-	m_dummy_menu->add_item
-	(	MenuItem
-		(	"Print some numbers",
-			bind(&TextUserSession::print_numbers, this)
-		)
+	m_parent_menu->add_item(say_hello_item);
+	MenuItem print_numbers_item
+	(	"Print some numbers",
+		bind(&TextUserSession::print_numbers, this)
 	);
-	m_dummy_menu->add_item
-	(	MenuItem
-		(	"Quit",
-			bind(&TextUserSession::quit, this),
-			false,
-			"x"
-		)
+	m_parent_menu->add_item(print_numbers_item);
+	MenuItem present_child_menu_item
+	(	"Go to inner menu",
+		bind(&Menu::present_to_user, m_child_menu)
 	);
+	m_parent_menu->add_item(present_child_menu_item);
+	MenuItem quit_item
+	(	"Quit",
+		bind(&TextUserSession::quit, this),
+		false,
+		"x"
+	);
+	m_parent_menu->add_item(quit_item);
+	m_child_menu->add_item(say_hello_item);
+	MenuItem return_to_parent_menu_item
+	(	"Return to previous menu",
+		bind(&TextUserSession::quit, this),
+		false,
+		"x"
+	);
+	m_child_menu->add_item(return_to_parent_menu_item);
 }
 
 TextUserSession::~TextUserSession()
@@ -104,7 +117,7 @@ TextUserSession::run()
 	
 	// Present the first menu.
 	// ...
-	m_dummy_menu->present_to_user();
+	m_parent_menu->present_to_user();
 	
 	// Farewell the user.
 	// ...

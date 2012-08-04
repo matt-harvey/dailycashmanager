@@ -54,10 +54,12 @@ private:
 	// Various Menu objects.
 
 #warning dummy members follow
-	boost::shared_ptr<Menu> m_dummy_menu;
+	boost::shared_ptr<Menu> m_parent_menu;
+	boost::shared_ptr<Menu> m_child_menu;
 	void say_hello();
 	void print_numbers();
 	void quit();
+
 
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 };
