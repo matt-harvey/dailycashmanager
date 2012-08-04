@@ -278,7 +278,7 @@ TextUserSession::MenuItem::MenuItem
 	m_banner(string()),
 	m_callback(p_callback),
 	m_repeats_menu(p_repeats_menu),
-	m_special_label(p_special_label)
+	m_special_label(string())
 {
 	if (p_banner.empty())
 	{
@@ -286,6 +286,15 @@ TextUserSession::MenuItem::MenuItem
 	}
 	assert (p_banner != "");
 	m_banner = p_banner;
+	if (!p_special_label.empty())
+	{
+		if (p_special_label.find_first_not_of("0123456789") == string::npos)
+		{
+			// The special label is all digits
+			throw runtime_error("Special label cannot contain only digits.");
+		}
+		m_special_label = p_special_label;
+	}
 }
 
 

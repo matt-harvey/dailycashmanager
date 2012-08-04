@@ -157,8 +157,6 @@ public:
 	 // be OK.
 
 	/**
-	 * @todo Make it throw if a numeric special label is provided.
-	 *
 	 * @param p_banner non-empty string describing option to the user
 	 *
 	 * @param p_callback pointer to function to be called on selection of
@@ -167,7 +165,10 @@ public:
 	 * @param p_special_label An optional special label by which the item
 	 * is "keyed" in the menu. The user will enter this label to select the
 	 * item. If no special label is identified, the item will be presented to
-	 * the user with a numeric label based on its ordering in the menu.
+	 * the user with a numeric label based on its ordering in the menu. If a
+	 * special label is provided, it must contain at least one non-digit
+	 * character (to avoid possible confusion with automatically generated
+	 * special labels).
 	 *
 	 * @param p_repeats_menu indicates the desired behaviour after the menu
 	 * item has been selected by the user and its callback function
@@ -178,6 +179,8 @@ public:
 	 *
 	 * @throws std::runtime_error if \c p_banner is empty
 	 *
+	 * @throws std::runtime_error if \c p_special_label is non-empty but
+	 * contains only digits.
 	 */
 	MenuItem
 	(	std::string const& p_banner,
