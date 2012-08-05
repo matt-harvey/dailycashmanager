@@ -10,15 +10,15 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
-#include "text_user_session.hpp"
+#include "phatbooks_text_session.hpp"
 
-using phatbooks::TextUserSession;
+using phatbooks::PhatbooksTextSession;
 
 int main()
 {
 	// The following assumes a text based session.
 	
-	TextUserSession session;
+	PhatbooksTextSession session;
 	session.run();
 
 

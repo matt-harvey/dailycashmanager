@@ -1,7 +1,7 @@
-#ifndef GUARD_text_user_session_hpp
-#define GUARD_text_user_session_hpp
+#ifndef GUARD_consolixx_hpp
+#define GUARD_consolixx_hpp
 
-/** \file text_user_session.hpp
+/** \file consolixx.hpp
  *
  * \brief Header file for \c consolixx - tools for creating text/console
  * based user interfaces.
@@ -65,17 +65,7 @@ class TextSession:
 {
 public:
 
-	TextSession();
-
 	virtual ~TextSession();
-
-	/**
-	 * Run the session, presenting text to the user and receiving
-	 * and processing text from the user.
-	 *
-	 * @todo Implement it!
-	virtual void run();
-	*/
 
 protected:
 	class Menu;
@@ -224,13 +214,7 @@ private:
 
 
 
-// NON-MEMBER FUNCTIONS
-
-
-
-
-
 
 }  // namespace consolixx
 
-#endif  // GUARD_text_user_session_hpp
+#endif  // GUARD_consolixx_hpp

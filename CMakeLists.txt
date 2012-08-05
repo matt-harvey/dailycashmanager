@@ -5,13 +5,14 @@ link_directories (/home/matthew/lib/jewel)
 add_executable (main
 				account.cpp
 				commodity.cpp
+				consolixx.cpp
 				date.cpp
 				entry.cpp
 				journal.cpp
                 main.cpp
 				database_connection.cpp
 				phatbooks_database_connection.cpp
-				phatbooks_tui.cpp
+				phatbooks_text_session.cpp
 				repeater.cpp)
 target_link_libraries (main
 					   boost_filesystem
