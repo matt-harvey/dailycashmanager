@@ -182,7 +182,7 @@ public:
 
 	/**
 	 * @return \c true if and only if the menu in which this item appears
-	 * should be presented to the user after the item's callback has
+	 * will be presented to the user after the item's callback has
 	 * finished executing.
 	 */
 	bool repeats_menu() const;
