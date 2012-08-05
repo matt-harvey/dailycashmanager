@@ -34,6 +34,71 @@ JEWEL_STANDARD_EXCEPTION(DatabaseException);
  */
 JEWEL_DERIVED_EXCEPTION(SQLiteException, DatabaseException);
 
+/**
+ * Exception to be thrown when trying to do something with an invalid database
+ * connection.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidConnection, DatabaseException);
+
+/**
+ * Exception to be thrown when SQLite (the library itself, not a database
+ * connection) has not been successfully initialized.
+ */
+JEWEL_DERIVED_EXCEPTION(SQLiteInitializationError, SQLiteException);
+
+/**
+ * Exception to be thrown when attempt is made to execute a \c SQLStatement
+ * in one step, via \c DatabaseConnection::SQLStatement::quick_step, but there
+ * is at least one result row, meaning that \c quick_step is an inappropriate
+ * means of execution.
+ */
+JEWEL_DERIVED_EXCEPTION(UnexpectedResultSet, DatabaseException);
+
+/**
+ * The following exceptions correspond to particular SQLite standard error
+ * codes. See the SQLite standard documentation for description of what the
+ * corresponding error codes signify. The pattern for naming these exceptions
+ * is as per the following example: the SQLite error code \c SQLITE_READONLY
+ * corresponds to the exception class \c SQLiteReadOnly.
+ */
+
+JEWEL_DERIVED_EXCEPTION(SQLiteError, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteInternal, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLitePerm, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteAbort, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteBusy, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteLocked, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteNoMem, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteReadOnly, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteInterrupt, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteIOErr, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteCorrupt, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteFull, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteCantOpen, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteEmpty, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteSchema, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteTooBig, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteConstraint, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteMismatch, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteMisuse, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteNoLFS, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteAuth, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteFormat, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteRange, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(SQLiteNotADB, SQLiteException);
+
+/**
+ * Exception to be thrown by DatabaseConnection::throw_sqlite_exception
+ * when the SQLite error code is \e not SQLite_OK, but is also none of
+ * the other known error codes.
+ */
+JEWEL_DERIVED_EXCEPTION(SQLiteUnknownErrorCode, SQLiteException);
+
+/**
+ * Exception to be thrown by DatabaseConnection::throw_sqlite_exception
+ * when the SQLite error code is SQLite_OK.
+ */
+JEWEL_DERIVED_EXCEPTION(SQLiteOK, DatabaseException);
 
 
 

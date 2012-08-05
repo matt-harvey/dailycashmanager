@@ -36,6 +36,10 @@ namespace phatbooks
  * Having said this, there's no point unless
  * it causes a problem by being too slow.
  *
+ * @todo Refine throwing behaviours. There need to be specific exception
+ * classes for specific things that go wrong. This all needs to be documented
+ * and should also be tested.
+ *
  * @todo I should do the following:
  *	Have the PhatbooksDatabaseConnection::store(T const& obj) methods first
  *	check the maximum of the autoincrementing primary key column for their

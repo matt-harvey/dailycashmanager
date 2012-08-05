@@ -45,7 +45,10 @@ DatabaseConnection::DatabaseConnection():
 	JEWEL_DEBUG_LOG << "Creating DatabaseConnection..." << endl;
 
 	// Initialize SQLite3
-	if (sqlite3_initialize() != SQLITE_OK) throw_sqlite_exception();
+	if (sqlite3_initialize() != SQLITE_OK)
+	{
+		throw SQLiteInitializationError("SQLite could not be initialized.");
+	}
 
 	JEWEL_DEBUG_LOG << "SQLite3 has been initialized." << endl;
 }
@@ -72,19 +75,20 @@ DatabaseConnection::open(char const* filename)
 		throw SQLiteException("Database already connected.");
 	}
 	// Open the connection
-	int const return_code = sqlite3_open_v2
+	sqlite3_open_v2
 	(	filename,
 		&m_connection,
 		SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
 		0
 	);
-	if (return_code != SQLITE_OK) throw_sqlite_exception();
+	check_ok();
 	JEWEL_DEBUG_LOG << "Database connection to file "
 	                << filename
 	                << " has been opened "
 	                << "and m_connection has been set to point there."
 					<< endl;
-
+	execute_sql("pragma foreign_keys = on;");
+	JEWEL_DEBUG_LOG << "Foreign key constraints enabled." << endl;
 	return;
 
 }
@@ -121,22 +125,99 @@ DatabaseConnection::is_valid()
 }
 
 void
-DatabaseConnection::throw_sqlite_exception()
+DatabaseConnection::check_ok()
 {
-	throw SQLiteException(sqlite3_errmsg(m_connection));
+	if (sqlite3_errcode(m_connection) == SQLITE_OK)
+	{
+		return;
+	}
+	string const msg = sqlite3_errmsg(m_connection);
+	switch (sqlite3_errcode(m_connection))
+	{
+	case SQLITE_ERROR:
+		throw SQLiteError(msg);
+		break;
+	case SQLITE_INTERNAL:
+		throw SQLiteInternal(msg);
+		break;
+	case SQLITE_PERM:
+		throw SQLitePerm(msg);
+		break;
+	case SQLITE_ABORT:
+		throw SQLiteAbort(msg);
+		break;
+	case SQLITE_BUSY:
+		throw SQLiteBusy(msg);
+		break;
+	case SQLITE_LOCKED:
+		throw SQLiteLocked(msg);
+		break;
+	case SQLITE_NOMEM:
+		throw SQLiteNoMem(msg);
+		break;
+	case SQLITE_READONLY:
+		throw SQLiteReadOnly(msg);
+		break;
+	case SQLITE_INTERRUPT:
+		throw SQLiteInterrupt(msg);
+		break;
+	case SQLITE_IOERR:
+		throw SQLiteIOErr(msg);
+		break;
+	case SQLITE_CORRUPT:
+		throw SQLiteCorrupt(msg);
+		break;
+	case SQLITE_FULL:
+		throw SQLiteFull(msg);
+		break;
+	case SQLITE_CANTOPEN:
+		throw SQLiteCantOpen(msg);
+		break;
+	case SQLITE_EMPTY:
+		throw SQLiteEmpty(msg);
+		break;
+	case SQLITE_SCHEMA:
+		throw SQLiteSchema(msg);
+		break;
+	case SQLITE_TOOBIG:
+		throw SQLiteTooBig(msg);
+		break;
+	case SQLITE_CONSTRAINT:
+		throw SQLiteConstraint(msg);
+		break;
+	case SQLITE_MISMATCH:
+		throw SQLiteMismatch(msg);
+		break;
+	case SQLITE_MISUSE:
+		throw SQLiteMisuse(msg);
+		break;
+	case SQLITE_NOLFS:
+		throw SQLiteNoLFS(msg);
+		break;
+	case SQLITE_AUTH:
+		throw SQLiteAuth(msg);
+		break;
+	case SQLITE_FORMAT:
+		throw SQLiteFormat(msg);
+		break;
+	case SQLITE_RANGE:
+		throw SQLiteRange(msg);
+		break;
+	case SQLITE_NOTADB:
+		throw SQLiteNotADB(msg);
+		break;
+	default:
+		throw SQLiteUnknownErrorCode(msg);
+	}
+	assert (false);  // Execution should never reach here.
+	return;
 }
 
 void
 DatabaseConnection::execute_sql(string const& str)
 {
-	int const return_code = sqlite3_exec
-	(	m_connection,
-		str.c_str(),
-		0,
-		0,
-		0
-	);
-	if (return_code != SQLITE_OK) throw_sqlite_exception();
+	sqlite3_exec(m_connection, str.c_str(), 0, 0, 0);
+	check_ok();
 	return;
 }
 
@@ -174,19 +255,19 @@ DatabaseConnection::SQLStatement::SQLStatement
 {
 	if (!dbconn.is_valid())
 	{
-		throw SQLiteException
+		throw InvalidConnection
 		(	"Attempt to initialize SQLStatement with invalid "
 			"DatabaseConnection."
 		);
 	}
-	int const return_code = sqlite3_prepare_v2
+	sqlite3_prepare_v2
 	(	m_database_connection.m_connection,
 		str.c_str(),
 		-1,
 		&m_statement,
 		0
 	);
-	check_ok(return_code);
+	check_ok();
 	return;
 }
 
@@ -231,13 +312,17 @@ DatabaseConnection::SQLStatement::check_column(int index, int value_type)
 
 
 void
-DatabaseConnection::SQLStatement::check_ok(int err_code)
+DatabaseConnection::SQLStatement::check_ok()
 {
-	if (err_code != SQLITE_OK)
+	try
+	{
+		m_database_connection.check_ok();
+	}
+	catch (SQLiteException&)
 	{
 		sqlite3_finalize(m_statement);
 		m_statement = 0;
-		m_database_connection.throw_sqlite_exception();
+		throw;
 	}
 	return;
 }
@@ -248,9 +333,8 @@ DatabaseConnection::SQLStatement::bind
 	int value
 )
 {
-	int const index = parameter_index(parameter_name);
-	int const return_code = sqlite3_bind_int(m_statement, index, value);
-	check_ok(return_code);
+	sqlite3_bind_int(m_statement, parameter_index(parameter_name), value);
+	check_ok();
 	return;
 }
 
@@ -261,9 +345,8 @@ DatabaseConnection::SQLStatement::bind
 	int64_t value
 )
 {
-	int const index = parameter_index(parameter_name);
-	int const return_code = sqlite3_bind_int64(m_statement, index, value);
-	check_ok(return_code);
+	sqlite3_bind_int64(m_statement, parameter_index(parameter_name), value);
+	check_ok();
 	return;
 }
 
@@ -274,15 +357,14 @@ DatabaseConnection::SQLStatement::bind
 	string const& str
 )
 {
-	int const index = parameter_index(parameter_name);
-	int const return_code = sqlite3_bind_text
+	sqlite3_bind_text
 	(	m_statement,
-		index,
+		parameter_index(parameter_name),
 		str.c_str(),
 		-1,
 		0
 	);
-	check_ok(return_code);
+	check_ok();
 	return;
 }
 		
@@ -300,7 +382,7 @@ DatabaseConnection::SQLStatement::step()
 		return true;
 	}
 	assert ( (return_code != SQLITE_DONE) && (return_code != SQLITE_ROW) );
-	m_database_connection.throw_sqlite_exception();
+	check_ok();
 	assert (false);  // Execution should never reach here.
 	return false;  // Silence compiler re. return from non-void function. 
 }
@@ -312,7 +394,7 @@ DatabaseConnection::SQLStatement::quick_step()
 	if (step())
 	{
 		sqlite3_finalize(m_statement);
-		throw SQLiteException
+		throw UnexpectedResultSet
 		(	"Statement yielded a result set when none was expected."
 		);
 	}

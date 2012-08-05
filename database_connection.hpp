@@ -99,8 +99,9 @@ public:
 	 * Initializes SQLite3 and creates a database connection
 	 * initially set to null.
 	 *
-	 * @throws SQLiteException if SQLite3 initialization fails,
-	 * or if database connection cannot be opened.
+	 * @todo Document throwing behaviour, and refine throwing behaviour
+	 * within the constructor body to make better use of available exception
+	 * classes - and make new exception classes if necessary.
 	 */
 	DatabaseConnection();
 
@@ -123,10 +124,16 @@ public:
 	/**
 	 * Points the database connection to a specific file
 	 * given by \c filename. If the file
-	 * does not already exist it is created.
+	 * does not already exist it is created. Note the SQLite pragma
+	 * foreign_keys is always executed immediately the file is opened, to
+	 * enable foreign key constraints.
 	 *
 	 * @param filename file to connect to
 	 *
+	 * @todo Refine throwing to 
+	 * make better use of available exception classes - and make new exception
+	 * classes if necessary.
+
 	 * @throws SQLiteException:\n
 	 *   if database connection cannot be opened to the specified file; or\n
 	 *   if already connected to a file.
@@ -136,8 +143,11 @@ public:
 
 protected:
 
+	
 	/**
 	 * Wrapper class for sqlite_stmt*.
+	 *
+	 * @todo Refine and document throwing behaviour.
 	 *
 	 * @todo The constructor to create a SQLStatement should reject strings
 	 * containing semicolons, since compound statements are not handled by
@@ -148,14 +158,14 @@ protected:
 
 
 	/**
-	 * Throws a SQLiteException with the current sqlite3_errmsg passed
-	 * to the constructor of the exception.
-	 *
-	 * This is essentially to save typing.
-	 *
-	 * @throws SQLiteException whenever called
+	 * If the database connection is in an error state recognized by SQLite,
+	 * this throws a \c SQLiteException with the current sqlite3_errmsg passed
+	 * to the constructor of the exception. The exact exception thrown
+	 * corresponds to the current SQLite error code for the connection. Any
+	 * thrown exception will be an instance of class that is, or extends,
+	 * \c SQLiteException.
 	 */
-	void throw_sqlite_exception();
+	void check_ok();
 
 	/**
 	 * Executes a string on the database connection.
@@ -163,11 +173,11 @@ protected:
 	 * control of the string being passed, to prevent SQL injection
 	 * attacks. Generally, the functions provided by SQLStatement should
 	 * be the preferred means for building and executing SQL statements.
+	 *
+	 * @throws SQLiteException, or some exception inheriting thereof, whenever
+	 * there is any kind of error executing the statement.
 	 */
 	void execute_sql(std::string const& str);
-
-
-
 
 	/**
 	 * Given the name of a table in the connected database, assuming that
@@ -235,6 +245,9 @@ protected:
 	 * primary key of the table named \c table_name. An empty vector
 	 * is returned if there is no primary key.
 	 *
+	 * @todo Refine throwing behaviour to make better use of available
+	 * exception classes, and make new exception classes if necessary.
+	 *
 	 * @throws SQLiteException in case of invalid table name or other
 	 * SQL execution error.
 	 *
@@ -267,11 +280,26 @@ class DatabaseConnection::SQLStatement:
 {
 public:
 
+	/**
+	 * Creates an object encapsulating a SQL statement.
+	 *
+	 * @throws InvalidConnection if the database connection passed to
+	 * \c dbconn is invalid.
+	 *
+	 * @throws SQLiteException, or an exception derived therefrom, if
+	 * the database connection is valid, but the statement could not
+	 * be properly prepared by SQLite.
+	 */
 	SQLStatement(DatabaseConnection& dbconn, std::string const& str);
 
 	~SQLStatement();
 
-	// Wrapper around SQLite bind functions
+	/**
+	 * Wrappers around SQLite bind functions.
+	 *
+	 * These throw \c SQLiteException, or an exception derived therefrom,
+	 * if SQLite could not properly bind the statement.
+	 */
 	void bind(std::string const& parameter_name, double value);
 	void bind(std::string const& parameter_name, int value);
 	void bind(std::string const& parameter_name, boost::int64_t value);
@@ -291,6 +319,9 @@ public:
 	 * 
 	 * @param index is the column number (starting at 0) from which to
 	 * read the value.
+	 *
+	 * @todo Refine throwing behaviour to make better use of available
+	 * exception classes, and create new classes if necessary.
 	 * 
 	 * @throws SQLiteException if:\n
 	 * 	the index is out of range; or\n
@@ -300,12 +331,27 @@ public:
 	T extract(int index);
 
 
-	// Wraps sqlite3_step
-	// Returns true as long as there are further steps to go.
+	/**
+	 * Wraps sqlite3_step
+	 * Returns true as long as there are further steps to go (i.e. result
+	 * rows to examine).
+	 *
+	 * @todo Figure out the conditions under which this throws.
+	 *
+	 * @throws SQLiteException, or some exception deriving therefrom,
+	 * if an error occurs.
+	 */
 	bool step();
 
-	// For executing statements which are not expected to return a result
-	// set. SQLiteException is thrown if there is a result set.
+	/**
+	 * For executing statements which are not expected to return a result
+	 * set.
+	 *
+	 * @throws UnexpectedResultSet if a result set is returned.
+	 * 
+	 * @throws SQLiteException, or an exception derived therefrom, if there
+	 * is any other error in executing the statement.
+	*/
 	void quick_step();
 
 
@@ -313,7 +359,10 @@ private:
 	sqlite3_stmt* m_statement;
 	DatabaseConnection& m_database_connection;
 
-	// Return index no. of named parameter in statement
+	/**
+	 * @todo Document this.
+	 * @todo Refine throwing behaviour.
+	 */
 	int parameter_index(std::string const& parameter_name) const;
 
 	/**
@@ -327,6 +376,8 @@ private:
 	 * @param value_type Should be a SQLite value type code, i.e. one of:\n
 	 * 	SQLITE_INTEGER, SQLITE_FLOAT, SQLITE_TEXT, SQLITE_BLOB, SQLITE_NULL.
 	 *
+	 * @todo Refine throwing behaviour.
+	 *
 	 * @throws SQLiteException if:\n
 	 * 	There are no results available for extraction;\n
 	 * 	\c index is out of range; or\n
@@ -334,9 +385,12 @@ private:
 	 */
 	void check_column(int index, int value_type);
 
-	// Check code is SQLITE_OK and if not finalize statement and
-	// throw SQLiteException.
-	void check_ok(int err_code);
+	/**
+	 * Check code is SQLITE_OK and if not finalize statement and
+	 * throw SQLiteException or derivative corresponding to the SQLite
+	 * error code.
+	 */
+	void check_ok();
 
 
 };
