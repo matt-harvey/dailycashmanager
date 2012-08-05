@@ -203,9 +203,6 @@ public:
 	void invoke();
 
 private:
-
-	bool operator<(MenuItem const& rhs) const;
-
 	std::string m_banner;
 	CallbackType m_callback;
 	bool m_repeats_menu;

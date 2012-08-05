@@ -230,13 +230,6 @@ TextSession::MenuItem::invoke()
 	return;
 }
 
-bool
-TextSession::MenuItem::operator<(MenuItem const& rhs) const
-{
-	return this->m_banner < rhs.m_banner;
-}
-
-
 
 }  // namespace consolixx
 
