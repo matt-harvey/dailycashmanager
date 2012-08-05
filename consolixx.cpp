@@ -1,8 +1,8 @@
 
 /** \file text_user_session.cpp
  *
- * \brief Contains source code relating to textual (console based)
- * user interface with Phatbooks application.
+ * \brief Source file for \c consolixx - tools for creating
+ * text\console based user interfaces
  *
  * \author Matthew Harvey
  * \date 04 July 2012.
@@ -12,7 +12,6 @@
 
 
 #include "text_user_session.hpp"
-#include "phatbooks_database_connection.hpp"
 #include <boost/bind.hpp>
 #include <algorithm>
 #include <cassert>
@@ -35,13 +34,8 @@ using std::runtime_error;
 using std::string;
 using std::vector;
 
-namespace phatbooks
-{
 
-
-
-
-namespace text_interface_utilities
+namespace consolixx
 {
 
 string
@@ -62,19 +56,19 @@ get_user_input
 	return input;
 }
 
-}  // namespace text_interface_utilities
 
 
 
+/*
 
 
-void TextUserSession::say_hello()
+void TextSession::say_hello()
 {
 	cout << "Hello!" << endl;
 	return;
 }
 
-void TextUserSession::print_numbers()
+void TextSession::print_numbers()
 {
 	for (int i = 0; i != 5; ++i)
 	{
@@ -84,12 +78,12 @@ void TextUserSession::print_numbers()
 	return;
 }
 
-void TextUserSession::quit()
+void TextSession::quit()
 {
 	return;
 }
 
-TextUserSession::TextUserSession():
+TextSession::TextSession():
 	m_parent_menu(new Menu),
 	m_child_menu(new Menu),
 	m_database_connection(new PhatbooksDatabaseConnection)
@@ -99,13 +93,13 @@ TextUserSession::TextUserSession():
 	
 	MenuItem say_hello_item
 	(	"Say hello",
-		bind(&TextUserSession::say_hello, this)
+		bind(&TextSession::say_hello, this)
 	);
 	m_parent_menu->add_item(say_hello_item);
 
 	MenuItem print_numbers_item
 	(	"Print some numbers",
-		bind(&TextUserSession::print_numbers, this)
+		bind(&TextSession::print_numbers, this)
 	);
 	m_parent_menu->add_item(print_numbers_item);
 
@@ -117,7 +111,7 @@ TextUserSession::TextUserSession():
 
 	MenuItem quit_item
 	(	"Quit",
-		bind(&TextUserSession::quit, this),
+		bind(&TextSession::quit, this),
 		false,
 		"x"
 	);
@@ -127,7 +121,7 @@ TextUserSession::TextUserSession():
 
 	MenuItem return_to_parent_menu_item
 	(	"Return to previous menu",
-		bind(&TextUserSession::quit, this),
+		bind(&TextSession::quit, this),
 		false,
 		"x"
 	);
@@ -135,39 +129,15 @@ TextUserSession::TextUserSession():
 
 }
 
-TextUserSession::~TextUserSession()
+*/
+
+TextSession::~TextSession()
 {
-}
-
-void
-TextUserSession::run()
-{
-	cout << endl << "Welcome to Phatbooks." << endl << endl;
-
-#warning unimplemented function body
-
-	// Get filename from user.
-	// ...
-	
-	// Open connection with file.
-	// ...
-	
-	// Setup file.
-	// ...
-	
-	// Present the first menu.
-	// ...
-	m_parent_menu->present_to_user();
-	
-	// Farewell the user.
-	// ...
-	
-	return;
 }
 
 
 void
-TextUserSession::Menu::add_item(MenuItem const& item)
+TextSession::Menu::add_item(MenuItem const& item)
 {
 	for
 	(	ItemContainer::const_iterator it = m_items.begin();
@@ -195,7 +165,7 @@ TextUserSession::Menu::add_item(MenuItem const& item)
 
 
 void
-TextUserSession::Menu::present_to_user()
+TextSession::Menu::present_to_user()
 {
 	using text_interface_utilities::get_user_input;
 	typedef vector<string>::size_type vec_sz;
@@ -269,7 +239,7 @@ TextUserSession::Menu::present_to_user()
 
 
 
-TextUserSession::MenuItem::MenuItem
+TextSession::MenuItem::MenuItem
 (	string const& p_banner,
 	MenuItem::CallbackType p_callback,
 	bool p_repeats_menu,
@@ -299,14 +269,14 @@ TextUserSession::MenuItem::MenuItem
 
 
 string
-TextUserSession::MenuItem::banner() const
+TextSession::MenuItem::banner() const
 {
 	return m_banner;
 }
 
 
 string
-TextUserSession::MenuItem::special_label() const
+TextSession::MenuItem::special_label() const
 {
 	if (!has_special_label())
 	{
@@ -317,31 +287,31 @@ TextUserSession::MenuItem::special_label() const
 }
 
 bool
-TextUserSession::MenuItem::repeats_menu() const
+TextSession::MenuItem::repeats_menu() const
 {
 	return m_repeats_menu;
 }
 
 bool
-TextUserSession::MenuItem::has_special_label() const
+TextSession::MenuItem::has_special_label() const
 {
 	return !m_special_label.empty();
 }
 
 void
-TextUserSession::MenuItem::invoke()
+TextSession::MenuItem::invoke()
 {
 	m_callback();
 	return;
 }
 
 bool
-TextUserSession::MenuItem::operator<(MenuItem const& rhs) const
+TextSession::MenuItem::operator<(MenuItem const& rhs) const
 {
 	return this->m_banner < rhs.m_banner;
 }
 
 
 
-}  // namespace phatbooks
+}  // namespace consolixx
 

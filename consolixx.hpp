@@ -3,8 +3,8 @@
 
 /** \file text_user_session.hpp
  *
- * \brief Header file for textual (console based) user interface with
- * Phatbooks application
+ * \brief Header file for \c consolixx - tools for creating text/console
+ * based user interfaces.
  *
  * \author Matthew Harvey
  * \date 04 July 2012.
@@ -20,23 +20,16 @@
 #include <string>
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
 
-
-namespace phatbooks
-{
-
-// FORWARD DECLARATIONS
-class PhatbooksDatabaseConnection;
-
-// NON-MEMBER FUNCTION DECLARATIONS
 
 /**
- * Namespace for housing non-member functions that
- * facilitate a textual, console based user interface.
+ * The \c consolixx namespace contains a suite of tools for creating
+ * text/console based user interfaces.
  */
-namespace text_interface_utilities
+namespace consolixx
 {
+
+// NON-MEMBER FUNCTION DECLARATIONS
 
 /**
  * Function for safely getting a line of console input from a user.
@@ -59,42 +52,34 @@ std::string get_user_input
 	std::ostream& os = std::cout
 );
 
-}  // namespace text_interface_utilities
 
 // CLASS DEFINITIONS
 
 /**
  * Class representing a user session with a textual (console) interface.
+ * Inherit from this class to create a project-specific text user session
+ * class.
  */
-class TextUserSession:
+class TextSession:
 	private boost::noncopyable
 {
 public:
 
-	TextUserSession();
+	TextSession();
 
-	~TextUserSession();
+	virtual ~TextSession();
 
 	/**
 	 * Run the session, presenting text to the user and receiving
 	 * and processing text from the user.
 	 *
 	 * @todo Implement it!
-	 */
-	void run();
+	virtual void run();
+	*/
 
-private:
+protected:
 	class Menu;
 	class MenuItem;
-	// Various Menu objects.
-
-#warning dummy members follow
-	boost::shared_ptr<Menu> m_parent_menu;
-	boost::shared_ptr<Menu> m_child_menu;
-	void say_hello();
-	void print_numbers();
-	void quit();
-	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 };
 
 
@@ -102,10 +87,11 @@ private:
 
 /**
  * Class representing textual menu of user options
+ * This class is not designed to be extended.
  *
  * @todo Write constructor by which you give the menu a title.
  */
-class TextUserSession::Menu:
+class TextSession::Menu:
 	private boost::noncopyable
 {
 public:
@@ -143,8 +129,9 @@ private:
 
 /**
  * Class representing an item in a menu of user options.
+ * This class is not designed to be extended.
  */
-class TextUserSession::MenuItem
+class TextSession::MenuItem
 {
 public:
 
@@ -244,6 +231,6 @@ private:
 
 
 
-}  // namespace phatbooks
+}  // namespace consolixx
 
 #endif  // GUARD_text_user_session_hpp
