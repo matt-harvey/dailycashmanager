@@ -58,6 +58,10 @@ things  // name of SQL table
 thing_id  // name of primary key
 
 
+// Exceptions
+
+All exception classes should be derived from std::exception (either directly
+or indirectly).
 
 
 
