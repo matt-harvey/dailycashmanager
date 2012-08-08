@@ -13,9 +13,7 @@
  */
 
 
-#include <jewel/exception_macros.hpp>
-#include <stdexcept>
-#include <string>
+#include <jewel/exception.hpp>
 
 namespace sqloxx
 {
@@ -26,7 +24,7 @@ namespace sqloxx
  * originating in database-related code. See
  * Jewel library, JEWEL_STANDARD_EXCEPTION for API.
  */
-JEWEL_STANDARD_EXCEPTION(DatabaseException);
+JEWEL_DERIVED_EXCEPTION(DatabaseException, jewel::Exception);
 
 /**
  * Exception to be thrown in response to database-related exceptions
@@ -54,7 +52,7 @@ JEWEL_DERIVED_EXCEPTION(SQLiteInitializationError, SQLiteException);
  */
 JEWEL_DERIVED_EXCEPTION(UnexpectedResultSet, DatabaseException);
 
-/**
+/* NOT DOXYGEN AS DOXYGEN DOESN'T HANDLE
  * The following exceptions correspond to particular SQLite standard error
  * codes. See the SQLite standard documentation for description of what the
  * corresponding error codes signify. The pattern for naming these exceptions
@@ -88,18 +86,11 @@ JEWEL_DERIVED_EXCEPTION(SQLiteRange, SQLiteException);
 JEWEL_DERIVED_EXCEPTION(SQLiteNotADB, SQLiteException);
 
 /**
- * Exception to be thrown by DatabaseConnection::throw_sqlite_exception
- * when the SQLite error code is \e not SQLite_OK, but is also none of
+ * Exception to be thrown
+ * when the SQLite error code is \e not SQLITE_OK, but is also none of
  * the other known error codes.
  */
 JEWEL_DERIVED_EXCEPTION(SQLiteUnknownErrorCode, SQLiteException);
-
-/**
- * Exception to be thrown by DatabaseConnection::throw_sqlite_exception
- * when the SQLite error code is SQLite_OK.
- */
-JEWEL_DERIVED_EXCEPTION(SQLiteOK, DatabaseException);
-
 
 
 }  // namespace sqloxx

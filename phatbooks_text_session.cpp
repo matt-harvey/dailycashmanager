@@ -5,6 +5,7 @@
 #include <boost/bind.hpp>
 #include <iostream>
 
+
 using consolixx::TextSession;
 using boost::bind;
 using std::cout;

@@ -10,7 +10,12 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
+
+
 #include "phatbooks_text_session.hpp"
+#include <iostream>
+#include <string>
+
 
 using phatbooks::PhatbooksTextSession;
 
@@ -20,8 +25,6 @@ int main()
 	
 	PhatbooksTextSession session;
 	session.run();
-
-
 
 	return 0;
 }

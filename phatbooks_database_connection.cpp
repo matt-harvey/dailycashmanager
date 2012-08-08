@@ -114,7 +114,8 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	{
 		// We have no commodity stored with this abbreviation.
 		throw runtime_error
-		(	"Attempted to store Account with invalid commodity abbreviation."
+		(	"Attempted to store Account with "
+			"invalid commodity abbreviation."
 		);
 	}
 	IdType const commodity_id = commodity_finder.extract<IdType>(0);

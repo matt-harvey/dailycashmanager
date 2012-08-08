@@ -131,7 +131,8 @@ DatabaseConnection::check_ok()
 	{
 		return;
 	}
-	string const msg = sqlite3_errmsg(m_connection);
+	assert (sqlite3_errcode(m_connection) != SQLITE_OK);
+	char const* msg = sqlite3_errmsg(m_connection);
 	switch (sqlite3_errcode(m_connection))
 	{
 	case SQLITE_ERROR:
