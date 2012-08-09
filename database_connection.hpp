@@ -215,6 +215,9 @@ protected:
 	 * a single-column primary key. Note if there are gaps in the numbering
 	 * these are ignored. The returned value is always one greater than the
 	 * currently greatest value for the key (but see exceptions).
+	 * 
+	 * @todo It is essential that a different exception be thrown for each
+	 * of the different circumstances outlined below.
 	 *
 	 * @throws SQLiteException if:\n
 	 *   The table does not have a primary key;\n

@@ -3,11 +3,13 @@
 #include "consolixx.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/bind.hpp>
+#include <boost/shared_ptr.hpp>
 #include <iostream>
 
 
 using consolixx::TextSession;
 using boost::bind;
+using boost::shared_ptr;
 using std::cout;
 using std::endl;
 
@@ -46,42 +48,51 @@ PhatbooksTextSession::PhatbooksTextSession():
 #warning unimplemented function body
 	// Set up all the Menu objects.
 	
-	MenuItem say_hello_item
-	(	"Say hello",
-		bind(&PhatbooksTextSession::say_hello, this)
+	shared_ptr<MenuItem> say_hello_item
+	(	new MenuItem
+		(	"Say hello",
+			bind(&PhatbooksTextSession::say_hello, this)
+		)
 	);
 	m_parent_menu->add_item(say_hello_item);
 
-	MenuItem print_numbers_item
-	(	"Print some numbers",
-		bind(&PhatbooksTextSession::print_numbers, this)
+	shared_ptr<MenuItem> print_numbers_item
+	(	new MenuItem
+		(	"Print some numbers",
+			bind(&PhatbooksTextSession::print_numbers, this)
+		)
 	);
 	m_parent_menu->add_item(print_numbers_item);
 
-	MenuItem present_child_menu_item
-	(	"Go to inner menu",
-		bind(&Menu::present_to_user, m_child_menu)
+	shared_ptr<MenuItem> present_child_menu_item
+	(	new MenuItem
+		(	"Go to inner menu",
+			bind(&Menu::present_to_user, m_child_menu)
+		)
 	);
 	m_parent_menu->add_item(present_child_menu_item);
 
-	MenuItem quit_item
-	(	"Quit",
-		bind(&PhatbooksTextSession::quit, this),
-		false,
-		"x"
+	shared_ptr<MenuItem> quit_item
+	(	new MenuItem
+		(	"Quit",
+			bind(&PhatbooksTextSession::quit, this),
+			false,
+			"x"
+		)
 	);
 	m_parent_menu->add_item(quit_item);
 
 	m_child_menu->add_item(say_hello_item);
 
-	MenuItem return_to_parent_menu_item
-	(	"Return to previous menu",
-		bind(&PhatbooksTextSession::quit, this),
-		false,
-		"x"
+	shared_ptr<MenuItem> return_to_parent_menu_item
+	(	new MenuItem
+		(	"Return to previous menu",
+			bind(&PhatbooksTextSession::quit, this),
+			false,
+			"x"
+		)
 	);
 	m_child_menu->add_item(return_to_parent_menu_item);
-
 }
 
 void PhatbooksTextSession::run()

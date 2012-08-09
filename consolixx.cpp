@@ -63,7 +63,7 @@ TextSession::~TextSession()
 
 
 void
-TextSession::Menu::add_item(MenuItem const& item)
+TextSession::Menu::add_item(boost::shared_ptr<MenuItem const> item)
 {
 	for
 	(	ItemContainer::const_iterator it = m_items.begin();
@@ -71,13 +71,13 @@ TextSession::Menu::add_item(MenuItem const& item)
 		++it
 	)
 	{
-		if (item.banner() == it->banner())
+		if (item->banner() == (*it)->banner())
 		{
 			throw runtime_error("MenuItem with this banner already in Menu.");
 		}
 		if
-		(	item.has_special_label() && it->has_special_label() &&
-			item.special_label() == it->special_label()
+		(	item->has_special_label() && (*it)->has_special_label() &&
+			item->special_label() == (*it)->special_label()
 		)
 		{
 			throw runtime_error
@@ -105,9 +105,9 @@ TextSession::Menu::present_to_user()
 		ItemContainer::iterator it;
 		for (it = m_items.begin(); it != m_items.end(); ++it)
 		{
-			if (it->has_special_label())
+			if ((*it)->has_special_label())
 			{
-				label_vec.push_back(it->special_label());
+				label_vec.push_back((*it)->special_label());
 			}
 			else
 			{
@@ -126,7 +126,7 @@ TextSession::Menu::present_to_user()
 			assert (it < m_items.end());
 			cout << label_vec[i]
 				 << string(max_label_length + 1 - label_vec[i].size(), ' ')
-				 << it->banner()
+				 << (*it)->banner()
 				 << endl;
 		}
 
@@ -148,8 +148,8 @@ TextSession::Menu::present_to_user()
 				assert (it < m_items.end());
 				if (input == label_vec[i])
 				{
-					it->invoke();
-					replay_menu = it->repeats_menu();
+					(*it)->invoke();
+					replay_menu = (*it)->repeats_menu();
 					successful = true;
 					break;
 				}
@@ -224,7 +224,7 @@ TextSession::MenuItem::has_special_label() const
 }
 
 void
-TextSession::MenuItem::invoke()
+TextSession::MenuItem::invoke() const
 {
 	m_callback();
 	return;

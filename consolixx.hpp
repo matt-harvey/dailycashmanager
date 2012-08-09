@@ -20,6 +20,7 @@
 #include <string>
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
 
 
 /**
@@ -100,7 +101,7 @@ public:
 	 * @throws std::runtime_error if an item with the same special label is
 	 * already present in this menu.
 	 */
-	void add_item(MenuItem const& item);
+	void add_item(boost::shared_ptr<MenuItem const> item);
 
 	/**
 	 * Present menu to user, request user input, and respond accordingly
@@ -110,7 +111,7 @@ public:
 	void present_to_user();	
 
 private:
-	typedef std::vector<MenuItem> ItemContainer;
+	typedef std::vector< boost::shared_ptr<MenuItem const> > ItemContainer;
 	ItemContainer m_items;
 };
 
@@ -200,7 +201,10 @@ public:
 	 * of p_callback - no exception is thrown by the \c invoke function in
 	 * its own right.
 	 */
-	void invoke();
+	void invoke() const;
+
+	
+
 
 private:
 	std::string m_banner;
