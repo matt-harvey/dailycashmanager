@@ -16,10 +16,6 @@
 namespace phatbooks
 {
 
-/**
- * @todo Should IdType be signed, to keep things
- * simple and avoid worries about conversions to int?
- */
 typedef int IdType;
 
 
