@@ -13,6 +13,8 @@
 
 #include "consolixx.hpp"
 #include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/shared_ptr.hpp>
 #include <algorithm>
 #include <cassert>
 #include <istream>
@@ -24,6 +26,8 @@
 #include <vector>
 
 using boost::bind;
+using boost::function;
+using boost::shared_ptr;
 using std::cin;
 using std::cout;
 using std::istream;
@@ -53,9 +57,54 @@ get_user_input
 		is.clear();
 		assert (is);
 		os << error_message;
+		os.flush();
 	}
 	return input;
 }
+
+
+string
+get_constrained_user_input
+(	function< bool(string const&) > criterion,
+	string const& message_on_invalid_input,
+	bool user_can_escape,
+	function< bool(string const&) > escape_criterion,
+	string const& escape_message,
+	string const& return_string_on_escape,
+	string const& message_on_unsuccessful_read,
+	istream& is,
+	ostream& os
+)
+{
+	do
+	{
+		string input = get_user_input(message_on_unsuccessful_read, is, os);
+		if (user_can_escape && escape_criterion(input))
+		{
+			os << escape_message;
+			os.flush();
+			return return_string_on_escape;
+		}
+		if (criterion(input))
+		{
+			return input;
+		}
+		assert (!criterion(input));
+		os << message_on_invalid_input;
+		os.flush();
+	}
+	while (true);
+}
+
+
+
+
+
+
+
+
+
+
 
 TextSession::~TextSession()
 {
@@ -63,7 +112,7 @@ TextSession::~TextSession()
 
 
 void
-TextSession::Menu::add_item(boost::shared_ptr<MenuItem const> item)
+TextSession::Menu::add_item(shared_ptr<MenuItem const> item)
 {
 	for
 	(	ItemContainer::const_iterator it = m_items.begin();
@@ -134,10 +183,7 @@ TextSession::Menu::present_to_user()
 		for (bool successful = false; !successful; )
 		{
 			cout << endl << "Enter an option from the above menu: ";
-			string input = get_user_input
-			(	"\nThere has been an error receiving your input. "
-				"Please try again: "
-			);
+			string input = get_user_input();
 			// See whether input corresponds to any of the item labels,
 			// and invoke the item if it does.
 			// This simple linear search is fast enough for all but

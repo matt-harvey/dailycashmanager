@@ -56,7 +56,7 @@ string PhatbooksTextSession::elicit_filename()
 {
 	cout << "Enter name of file to open (or to create if it doesn't already "
 	        "exist): ";
-	string filename = get_user_input("Input error. Please try again: ");
+	string filename = get_user_input();
 	return filename;
 }
 	
