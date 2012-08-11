@@ -92,7 +92,7 @@ public:
 	/**
 	 * Add an "item" to the menu.
 	 *
-	 * @param item a MenuItem.
+	 * @param a shared pointer to a const MenuItem
 	 *
 	 * @throws std::runtime_error if a
 	 * MenuItem with the same banner as \c item banner already exists in the
@@ -202,9 +202,6 @@ public:
 	 * its own right.
 	 */
 	void invoke() const;
-
-	
-
 
 private:
 	std::string m_banner;

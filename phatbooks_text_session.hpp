@@ -4,6 +4,7 @@
 #include "consolixx.hpp"
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
+#include <string>
 
 
 
@@ -22,17 +23,27 @@ class PhatbooksTextSession:
 public:
 	PhatbooksTextSession();
 	void run();
+	void run(std::string const& filename);
 private:
-	boost::shared_ptr<Menu> m_parent_menu;
-	boost::shared_ptr<Menu> m_child_menu;
+	boost::shared_ptr<Menu> m_main_menu;
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 
-#warning dummy members follow
-	void say_hello();
-	void print_numbers();
-	void quit();
+	std::string elicit_filename();
 
-
+	void display_balance_sheet();
+	void display_envelopes();
+	void display_profit_and_loss();
+	void display_transaction_listing();
+	void elicit_actuals_journal();
+	void elicit_budget_journal();
+	void display_draft_journals();
+	void display_posted_journals();
+	void display_impending_autoposts();
+	void display_commodities_menu();
+	void display_accounts_menu();
+	void display_utilities_menu();
+	
+	void wrap_up();
 
 };
 

@@ -5,103 +5,65 @@
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
+#include <string>
 
-
+using consolixx::get_user_input;
 using consolixx::TextSession;
 using boost::bind;
 using boost::shared_ptr;
 using std::cout;
 using std::endl;
+using std::string;
 
 namespace phatbooks
 {
 
 
-
-
-void PhatbooksTextSession::say_hello()
-{
-	cout << "Hello!" << endl;
-	return;
-}
-
-void PhatbooksTextSession::print_numbers()
-{
-	for (int i = 0; i != 5; ++i)
-	{
-		cout << i << '\t';
-	}
-	cout << endl;
-	return;
-}
-
-void PhatbooksTextSession::quit()
-{
-	return;
-}
-
 PhatbooksTextSession::PhatbooksTextSession():
-	m_parent_menu(new Menu),
-	m_child_menu(new Menu),
+	m_main_menu(new Menu),
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
-#warning unimplemented function body
 	// Set up all the Menu objects.
-	
-	shared_ptr<MenuItem> say_hello_item
-	(	new MenuItem
-		(	"Say hello",
-			bind(&PhatbooksTextSession::say_hello, this)
-		)
-	);
-	m_parent_menu->add_item(say_hello_item);
-
-	shared_ptr<MenuItem> print_numbers_item
-	(	new MenuItem
-		(	"Print some numbers",
-			bind(&PhatbooksTextSession::print_numbers, this)
-		)
-	);
-	m_parent_menu->add_item(print_numbers_item);
-
-	shared_ptr<MenuItem> present_child_menu_item
-	(	new MenuItem
-		(	"Go to inner menu",
-			bind(&Menu::present_to_user, m_child_menu)
-		)
-	);
-	m_parent_menu->add_item(present_child_menu_item);
 
 	shared_ptr<MenuItem> quit_item
 	(	new MenuItem
 		(	"Quit",
-			bind(&PhatbooksTextSession::quit, this),
+			bind(&PhatbooksTextSession::wrap_up, this),
 			false,
 			"x"
 		)
 	);
-	m_parent_menu->add_item(quit_item);
-
-	m_child_menu->add_item(say_hello_item);
-
-	shared_ptr<MenuItem> return_to_parent_menu_item
-	(	new MenuItem
-		(	"Return to previous menu",
-			bind(&PhatbooksTextSession::quit, this),
-			false,
-			"x"
-		)
-	);
-	m_child_menu->add_item(return_to_parent_menu_item);
+	m_main_menu->add_item(quit_item);
 }
 
 void PhatbooksTextSession::run()
 {
-	m_parent_menu->present_to_user();
+	string filename = elicit_filename();
+	run(filename);
 	return;
 }
 
+void PhatbooksTextSession::run(string const& filename)
+{
+	m_database_connection->open(filename.c_str());
+	m_database_connection->setup();
+	m_main_menu->present_to_user();	
+	wrap_up();
+	return;
+}
 
+string PhatbooksTextSession::elicit_filename()
+{
+	cout << "Enter name of file to open (or to create if it doesn't already "
+	        "exist): ";
+	string filename = get_user_input("Input error. Please try again: ");
+	return filename;
+}
+	
+void PhatbooksTextSession::wrap_up()
+{
+	return;
+}
 
 
 }  // namespace phatbooks
