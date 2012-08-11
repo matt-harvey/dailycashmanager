@@ -64,7 +64,7 @@ std::string get_user_input
  * Function for safely getting a line of console input from a user, where the
  * input is required to satisfy a given criterion. The user is repeatedly
  * prompted until they provide "satisactory" input, or else (if this option is
- * provided) escape the process by entering a string that satisfies the
+ * provided) escape the process by entering a string that satisfies
  * an "escape criterion".
  *
  * @param criterion Boolean test that must return true when applied to the
@@ -75,7 +75,7 @@ std::string get_user_input
  *
  * @param user_can_escape Boolean indicating whether the user has the option
  * to escape the operation by entering a string that satisfies
- * \c abortion_criterion.
+ * \c escape.
  *
  * @param escape_criterion Boolean test such that, if it returns true, the
  * user will escape this procedure. Note this takes higher priority over
