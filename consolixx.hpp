@@ -18,6 +18,7 @@
 #include <ostream>
 #include <vector>
 #include <string>
+#include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -30,25 +31,9 @@
 namespace consolixx
 {
 
-namespace
-{
 
-/**
- * Provided as default error message to be displayed to user under certain
- * circumstances.
- */
-std::string default_error_message = "\nThere has been an error reading your "
-                                  "input. Please try again: ";
 
-/**
- * Helper function to wrap string::empty as if it were a standalone function
- */
-bool is_empty(std::string s)
-{
-	return s.empty();
-}
 
-}  // end anonymous namespace
 
 
 // NON-MEMBER FUNCTION DECLARATIONS
@@ -69,7 +54,8 @@ bool is_empty(std::string s)
  * @todo Determine and document throwing behaviour.
  */
 std::string get_user_input
-(	std::string const& error_message = default_error_message,
+(	std::string const& error_message =
+		"\nThere has been an error reading your input. Please try again: ",
 	std::istream& is = std::cin,
 	std::ostream& os = std::cout
 );
@@ -117,10 +103,12 @@ std::string get_constrained_user_input
 (	boost::function< bool(std::string const&) > criterion,
 	std::string const& message_on_invalid_input,
 	bool user_can_escape = true,
-	boost::function< bool(std::string const&) > escape_criterion = is_empty,
+	boost::function< bool(std::string const&) > escape_criterion =
+		boost::bind(&std::string::empty, _1),
 	std::string const& escape_message = "\nProcedure aborted.\n",
 	std::string const& return_string_on_escape = "",
-	std::string const& message_on_unsuccessful_read = default_error_message,
+	std::string const& message_on_unsuccessful_read =
+		"\nThere has been an error reading your input. Please try again: ",	
 	std::istream& is = std::cin,
 	std::ostream& os = std::cout
 );

@@ -8,6 +8,7 @@
 #include <string>
 
 using consolixx::get_user_input;
+using consolixx::get_constrained_user_input;
 using consolixx::TextSession;
 using boost::bind;
 using boost::shared_ptr;
@@ -36,10 +37,27 @@ PhatbooksTextSession::PhatbooksTextSession():
 	m_main_menu->add_item(quit_item);
 }
 
+
+bool has_three_letters(string const& s)
+{
+	return s.size() == 3;
+}
+
 void PhatbooksTextSession::run()
 {
+	
+	cout << "Enter a three-letter word: ";
+	get_constrained_user_input
+	(	has_three_letters,
+		"Try again. Enter a three-letter word: ",
+		false
+	);
+
+
+	/*
 	string filename = elicit_filename();
 	run(filename);
+	*/
 	return;
 }
 

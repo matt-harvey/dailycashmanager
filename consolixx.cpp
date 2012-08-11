@@ -43,6 +43,7 @@ using std::vector;
 namespace consolixx
 {
 
+
 string
 get_user_input
 (	string const& error_message,
