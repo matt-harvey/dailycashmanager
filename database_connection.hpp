@@ -135,6 +135,7 @@ public:
 	 * classes if necessary.
 
 	 * @throws SQLiteException:\n
+	 *   if \c filename is an empty string; or\n
 	 *   if database connection cannot be opened to the specified file; or\n
 	 *   if already connected to a file.
 	 */

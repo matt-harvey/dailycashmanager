@@ -56,6 +56,10 @@ DatabaseConnection::DatabaseConnection():
 void
 DatabaseConnection::open(char const* filename)
 {
+	if (string(filename).empty())
+	{
+		throw SQLiteException("Cannot open file with empty filename.");
+	}
 	// Check if file already exists
 	boost::filesystem::path p(filename);
 	boost::filesystem::file_status s = boost::filesystem::status(p);
@@ -69,7 +73,7 @@ DatabaseConnection::open(char const* filename)
 	{
 		JEWEL_DEBUG_LOG << "Creating file " << filename << "..." << endl;
 	}
-	// Throw if already connected
+	// Throw if already connected or if filename is empty
 	if (m_connection)
 	{
 		throw SQLiteException("Database already connected.");

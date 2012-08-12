@@ -28,7 +28,6 @@ private:
 	boost::shared_ptr<Menu> m_main_menu;
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 
-	std::string elicit_filename();
 
 	void display_balance_sheet();
 	void display_envelopes();

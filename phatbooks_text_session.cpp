@@ -2,6 +2,7 @@
 
 #include "consolixx.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "sqloxx_exceptions.hpp"
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
@@ -10,6 +11,7 @@
 using consolixx::get_user_input;
 using consolixx::get_constrained_user_input;
 using consolixx::TextSession;
+using sqloxx::SQLiteException;
 using boost::bind;
 using boost::shared_ptr;
 using std::cout;
@@ -45,19 +47,28 @@ bool has_three_letters(string const& s)
 
 void PhatbooksTextSession::run()
 {
-	
-	cout << "Enter a three-letter word: ";
-	get_constrained_user_input
-	(	has_three_letters,
-		"Try again. Enter a three-letter word: ",
-		false
-	);
-
-
-	/*
-	string filename = elicit_filename();
-	run(filename);
-	*/
+	bool successful = false;
+	while (!successful)
+	{
+		cout << "Enter file to open (will be created if doesn't already "
+		     << "exist): ";
+		string filename = get_user_input();
+		try
+		{
+			m_database_connection->open(filename.c_str());
+			successful = true;
+		}
+		catch (SQLiteException&)
+		{
+			cout << "File named \"" << filename << "\" could not be opened."
+			     << " Please try again."
+				 << endl;
+			successful = false;
+		}
+	}
+	m_database_connection->setup();
+	m_main_menu->present_to_user();
+	wrap_up();
 	return;
 }
 
@@ -68,14 +79,6 @@ void PhatbooksTextSession::run(string const& filename)
 	m_main_menu->present_to_user();	
 	wrap_up();
 	return;
-}
-
-string PhatbooksTextSession::elicit_filename()
-{
-	cout << "Enter name of file to open (or to create if it doesn't already "
-	        "exist): ";
-	string filename = get_user_input();
-	return filename;
 }
 	
 void PhatbooksTextSession::wrap_up()
