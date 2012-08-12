@@ -4,6 +4,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <boost/bind.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
 #include <string>
@@ -39,46 +40,57 @@ PhatbooksTextSession::PhatbooksTextSession():
 	m_main_menu->add_item(quit_item);
 }
 
+PhatbooksTextSession::~PhatbooksTextSession()
+{
+	wrap_up();
+}
 
 bool has_three_letters(string const& s)
 {
 	return s.size() == 3;
 }
 
-void PhatbooksTextSession::run()
+namespace
 {
-	bool successful = false;
-	while (!successful)
+	bool is_yes_no(string const& s)
 	{
-		cout << "Enter file to open (will be created if doesn't already "
-		     << "exist): ";
-		string filename = get_user_input();
-		try
-		{
-			m_database_connection->open(filename.c_str());
-			successful = true;
-		}
-		catch (SQLiteException&)
-		{
-			cout << "File named \"" << filename << "\" could not be opened."
-			     << " Please try again."
-				 << endl;
-			successful = false;
-		}
+		return (s == "y" || s == "n");
 	}
-	m_database_connection->setup();
-	m_main_menu->present_to_user();
-	wrap_up();
-	return;
 }
 
-void PhatbooksTextSession::run(string const& filename)
+int PhatbooksTextSession::run(string const& filename)
 {
-	m_database_connection->open(filename.c_str());
+	boost::filesystem::file_status s =
+		boost::filesystem::status(boost::filesystem::path(filename));
+	if (!boost::filesystem::exists(s))
+	{
+		cout << "File does not exist. "
+		     << "Create file \"" << filename << "\"? (y/n): ";
+		string const response = get_constrained_user_input
+		(	is_yes_no,
+			"Try again, entering 'y' to create file, or 'n' to abort: ",
+			false
+		);
+		if (response != "y")
+		{
+			assert (response == "n");
+			cout << "Exiting program." << endl;
+			return 1;
+		}
+		assert (response == "y");
+	}
+	try
+	{
+		m_database_connection->open(filename.c_str());
+	}
+	catch (SQLiteException&)
+	{
+		cout << "Could not open file \"" << filename << "\"." << endl;
+		return 1;
+	}
 	m_database_connection->setup();
 	m_main_menu->present_to_user();	
-	wrap_up();
-	return;
+	return 0;
 }
 	
 void PhatbooksTextSession::wrap_up()

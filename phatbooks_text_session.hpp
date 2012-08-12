@@ -22,8 +22,11 @@ class PhatbooksTextSession:
 {
 public:
 	PhatbooksTextSession();
-	void run();
-	void run(std::string const& filename);
+	virtual ~PhatbooksTextSession();	
+	/**
+	 * Returns non-zero if session exits with error
+	 */
+	int run(std::string const& filename);
 private:
 	boost::shared_ptr<Menu> m_main_menu;
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;

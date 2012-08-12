@@ -16,15 +16,20 @@
 #include <iostream>
 #include <string>
 
-
 using phatbooks::PhatbooksTextSession;
+using std::cout;
+using std::endl;
 
-int main()
+int main(int argc, char** argv)
 {
-	// The following assumes a text based session.
-	
-	PhatbooksTextSession session;
-	session.run();
+	if (argc != 2)
+	{
+		cout << "Usage: " << argv[0] << " FILENAME" << endl;
+		return 1;
+	}
 
-	return 0;
+	// The following assumes a text based session.
+	PhatbooksTextSession session;
+	int const ret = session.run(argv[1]);
+	return ret;
 }
