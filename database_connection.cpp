@@ -65,13 +65,13 @@ DatabaseConnection::open(char const* filename)
 	boost::filesystem::file_status s = boost::filesystem::status(p);
 	if (boost::filesystem::exists(s))
 	{
-		JEWEL_DEBUG_LOG << "Preexisting file " << filename << " detected."
+		JEWEL_DEBUG_LOG << "Preexisting file \"" << filename << "\" detected."
 		                << endl;
-		JEWEL_DEBUG_LOG << "Attempting to connect to this file..." << endl;
+		JEWEL_DEBUG_LOG << "Attempting to connect to this file." << endl;
 	}
 	else
 	{
-		JEWEL_DEBUG_LOG << "Creating file " << filename << "..." << endl;
+		JEWEL_DEBUG_LOG << "Creating file \"" << filename << "\"." << endl;
 	}
 	// Throw if already connected or if filename is empty
 	if (m_connection)
@@ -86,9 +86,9 @@ DatabaseConnection::open(char const* filename)
 		0
 	);
 	check_ok();
-	JEWEL_DEBUG_LOG << "Database connection to file "
+	JEWEL_DEBUG_LOG << "Database connection to file \""
 	                << filename
-	                << " has been opened "
+	                << "\" has been opened "
 	                << "and m_connection has been set to point there."
 					<< endl;
 	execute_sql("pragma foreign_keys = on;");
