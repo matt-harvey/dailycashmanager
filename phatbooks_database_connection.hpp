@@ -40,26 +40,6 @@ namespace phatbooks
  * classes for specific things that go wrong. This all needs to be documented
  * and should also be tested.
  *
- * @todo I should do the following:
- *	Have the PhatbooksDatabaseConnection::store(T const& obj) methods first
- *	check the maximum of the autoincrementing primary key column for their
- *	particular table, to ensure it is not INT_MAX; then have them store
- *	the result of that maximum plus one, in a local variable \ret; then
- *	after successful completion of the storage
- *	operation, have them return \ret from the \c store function.
- *	This could be perhaps be done using the NVI idiom, to move
- *	this shared "bookkeeping" code to the base class DatabaseConnection.
- *	This will only work for tables that have an autoincrementing primary
- *	key column.
- *	I could do this more simply by just having a normal protected function
- *	provided by DatabaseConnection, which you pass a table name and a column
- *	name, and it (a) checks that the maximum of that column can be safely
- *	incremented, (b) perhaps checks that that column is an autoincrementing
- *	primary key, and (c) returns the value one more that the maximum of that
- *	column. The \c store functions would then just manually call this
- *	function before inserting... They would have to remember to do this
- *	though...
- *
  *
  */
 class PhatbooksDatabaseConnection:

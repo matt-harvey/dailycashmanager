@@ -219,6 +219,9 @@ protected:
 	 * 
 	 * @todo It is essential that a different exception be thrown for each
 	 * of the different circumstances outlined below.
+	 * 
+	 * @todo LOW PRIORITY Find a way either to make the body of this function
+	 * template briefer, or to get it out of the header file.
 	 *
 	 * @throws SQLiteException if:\n
 	 *   The table does not have a primary key;\n

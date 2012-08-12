@@ -17,6 +17,13 @@ class PhatbooksDatabaseConnection;
 
 // CLASSES
 
+/**
+ * @todo HIGH PRIORITY When the user provides a filename to open,
+ * the application needs to detect if that filename exists
+ * but is not a Phatbooks database file. If it is not a Phatbooks
+ * database file, it needs to be impossible for the user to proceed
+ * with creating a database connection to that file.
+ */
 class PhatbooksTextSession:
 	public consolixx::TextSession
 {
