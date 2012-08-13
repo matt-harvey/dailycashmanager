@@ -7,7 +7,7 @@
  * of exception classes specific to Consolixx (a text user interface module). 
  *
  * \author Matthew Harvey
- * \date 04 July 2012.
+ * \date 13 August 2012.
  *
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
