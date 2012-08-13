@@ -12,6 +12,7 @@
 
 
 #include "consolixx.hpp"
+#include "consolixx_exceptions.hpp"
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
@@ -123,14 +124,16 @@ TextSession::Menu::add_item(shared_ptr<MenuItem const> item)
 	{
 		if (item->banner() == (*it)->banner())
 		{
-			throw runtime_error("MenuItem with this banner already in Menu.");
+			throw MenuItemBannerException
+			(	"MenuItem with this banner already in Menu."
+			);
 		}
 		if
 		(	item->has_special_label() && (*it)->has_special_label() &&
 			item->special_label() == (*it)->special_label()
 		)
 		{
-			throw runtime_error
+			throw MenuItemLabelException
 			(	"MenuItem with this special label already in Menu."
 			);
 		}
@@ -224,7 +227,7 @@ TextSession::MenuItem::MenuItem
 {
 	if (p_banner.empty())
 	{
-		throw runtime_error("Menu item banner is empty.");
+		throw MenuItemBannerException("Menu item banner is empty.");
 	}
 	assert (p_banner != "");
 	m_banner = p_banner;
@@ -233,7 +236,9 @@ TextSession::MenuItem::MenuItem
 		if (p_special_label.find_first_not_of("0123456789") == string::npos)
 		{
 			// The special label is all digits
-			throw runtime_error("Special label cannot contain only digits.");
+			throw MenuItemLabelException
+			(	"Special label cannot contain only digits."
+			);
 		}
 		m_special_label = p_special_label;
 	}
@@ -252,7 +257,7 @@ TextSession::MenuItem::special_label() const
 {
 	if (!has_special_label())
 	{
-		throw runtime_error("Item does not have special label.");
+		throw MenuItemLabelException("Item does not have special label.");
 	}
 	assert (has_special_label());
 	return m_special_label;

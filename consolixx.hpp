@@ -155,12 +155,12 @@ public:
 	 *
 	 * @param a shared pointer to a const MenuItem
 	 *
-	 * @throws std::runtime_error if a
+	 * @throws consolixx::MenuItemBannerException if a
 	 * MenuItem with the same banner as \c item banner already exists in the
 	 * Menu.
 	 *
-	 * @throws std::runtime_error if an item with the same special label is
-	 * already present in this menu.
+	 * @throws consolixx::MenuItemLabelException if an item with the same
+	 * special label is already present in this menu.
 	 */
 	void add_item(boost::shared_ptr<MenuItem const> item);
 
@@ -216,10 +216,10 @@ public:
 	 * indicates that execution should continue past this point.
 	 * This parameter is \c true by default.
 	 *
-	 * @throws std::runtime_error if \c p_banner is empty
+	 * @throws consolixx::MenuItemBannerException if \c p_banner is empty
 	 *
-	 * @throws std::runtime_error if \c p_special_label is non-empty but
-	 * contains only digits.
+	 * @throws consolixx::MenuItemLabelException if \c p_special_label is
+	 * non-empty but contains only digits.
 	 */
 	MenuItem
 	(	std::string const& p_banner,
@@ -238,7 +238,8 @@ public:
 	 * be identified in the menu, and using which the user will select the
 	 * Item.
 	 *
-	 * @throws std::runtime_error if the Item does not have a special label.
+	 * @throws consolixx::MenuItemLabelException if the MenuItem does not
+	 * have a special label.
 	 */
 	std::string special_label() const;
 
