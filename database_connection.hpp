@@ -133,11 +133,15 @@ public:
 	 * @todo Refine throwing to 
 	 * make better use of available exception classes - and make new exception
 	 * classes if necessary.
-
-	 * @throws SQLiteException:\n
-	 *   if \c filename is an empty string; or\n
-	 *   if database connection cannot be opened to the specified file; or\n
-	 *   if already connected to a file.
+	 * 
+	 * @throws sqloxx::InvalidFilename if filename is an empty string.
+	 *
+	 * @throws sqloxx::MultipleConnectionException if already connected to a
+	 * database (be it this or another database).
+	 *
+	 * @throws SQLiteException, or an exception derived therefrom (likely, but
+	 * not guaranteed, to be SQLiteCantOpen) if for some other reason the
+	 * connection cannot be opened.
 	 */
 	void open(char const* filename);	
 
@@ -223,12 +227,19 @@ protected:
 	 * @todo LOW PRIORITY Find a way either to make the body of this function
 	 * template briefer, or to get it out of the header file.
 	 *
-	 * @throws SQLiteException if:\n
-	 *   The table does not have a primary key;\n
-	 *   The table has a compound i.e. multi-column primary key; or\n
-	 *   The greatest primary key value already in the table is the maximum
-	 *   value for KeyType, so that another row could not be inserted without
-	 *   overflow.
+	 * @throws sqloxx::NoPrimaryKeyException if the table does not have a
+	 * primary key.
+	 *
+	 * @throws sqloxx::CompoundPrimaryKeyException if the table has a
+	 * compound primary
+	 * key.
+	 *
+	 * @throws sqloxx::TableSizeException if the greatest primary key value 
+	 * already in the table is the maximum value for \c KeyType, so that
+	 * another row could not be inserted without overflow.
+	 *
+	 * @throws sqloxx::DatabaseException if there is some other error finding
+	 * the next primary key value.
 	 */
 	template<typename KeyType>
 	KeyType next_auto_key(std::string const& table_name);	
@@ -453,13 +464,15 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 	switch (pk.size())
 	{
 	case 0:
-		throw SQLiteException("Table has no primary key.");
+		throw NoPrimaryKeyException("Table has no primary key.");
 		assert (false);  // Never executes
 	case 1:
 		break;
 	default:
 		assert (pk.size() > 1);
-		throw SQLiteException("Table has a multi-column primary key.");
+		throw CompoundPrimaryKeyException
+		(	"Table has a multi-column primary key."
+		);
 		assert (false);  // Never executes;
 	}
 	assert (pk.size() == 1);
@@ -496,7 +509,7 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 	check = max_finder.step();
 	if (!check)
 	{
-		throw SQLiteException("Error finding max of primary key.");
+		throw DatabaseException("Error finding max of primary key.");
 	}
 	assert (check);
 	KeyType const max_key = max_finder.extract<KeyType>(0);		
@@ -506,7 +519,7 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 	assert (!check);
 	if (max_key == std::numeric_limits<KeyType>::max())
 	{
-		throw SQLiteException
+		throw TableSizeException
 		(	"Key cannot be safely incremented with given type."
 		);
 	}

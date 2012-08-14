@@ -18,13 +18,13 @@
 namespace sqloxx
 {
 
-
 /**
  * Exception to be thrown in response to exceptions
  * originating in database-related code. See
  * Jewel library, JEWEL_STANDARD_EXCEPTION for API.
  */
 JEWEL_DERIVED_EXCEPTION(DatabaseException, jewel::Exception);
+
 
 /**
  * Exception to be thrown in response to database-related exceptions
@@ -39,10 +39,15 @@ JEWEL_DERIVED_EXCEPTION(SQLiteException, DatabaseException);
 JEWEL_DERIVED_EXCEPTION(InvalidConnection, DatabaseException);
 
 /**
- * Exception to be thrown when SQLite (the library itself, not a database
- * connection) has not been successfully initialized.
+ * Exception to be thrown when filename passed to \c open method is invalid
  */
-JEWEL_DERIVED_EXCEPTION(SQLiteInitializationError, SQLiteException);
+JEWEL_DERIVED_EXCEPTION(InvalidFilename, DatabaseException);
+
+/**
+ * Exception to be thrown when trying to open connection to one file when
+ * already connected to another file
+ */
+JEWEL_DERIVED_EXCEPTION(MultipleConnectionException, DatabaseException);
 
 /**
  * Exception to be thrown when attempt is made to execute a \c SQLStatement
@@ -51,6 +56,31 @@ JEWEL_DERIVED_EXCEPTION(SQLiteInitializationError, SQLiteException);
  * means of execution.
  */
 JEWEL_DERIVED_EXCEPTION(UnexpectedResultSet, DatabaseException);
+
+/**
+ * Exception to be thrown when a function expects a database table to have
+ * a primary key, but it is found not to have one.
+ */
+JEWEL_DERIVED_EXCEPTION(NoPrimaryKeyException, DatabaseException);
+
+/**
+ * Exception to be thrown when a function expects a database table to have
+ * a single-column primary key, but instead finds it has a compound primary
+ * key.
+ */
+JEWEL_DERIVED_EXCEPTION(CompoundPrimaryKeyException, DatabaseException);
+
+/**
+ * Exception to be thrown when a table is found to have reached some kind
+ * of size limit, but a function expects there still to be room.
+ */
+JEWEL_DERIVED_EXCEPTION(TableSizeException, DatabaseException);
+
+/**
+ * Exception to be thrown when SQLite (the library itself, not a database
+ * connection) has not been successfully initialized.
+ */
+JEWEL_DERIVED_EXCEPTION(SQLiteInitializationError, SQLiteException);
 
 /* NOT DOXYGEN AS DOXYGEN DOESN'T HANDLE
  * The following exceptions correspond to particular SQLite standard error

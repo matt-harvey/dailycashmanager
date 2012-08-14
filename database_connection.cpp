@@ -58,7 +58,7 @@ DatabaseConnection::open(char const* filename)
 {
 	if (string(filename).empty())
 	{
-		throw SQLiteException("Cannot open file with empty filename.");
+		throw InvalidFilename("Cannot open file with empty filename.");
 	}
 	// Check if file already exists
 	boost::filesystem::path p(filename);
@@ -76,7 +76,7 @@ DatabaseConnection::open(char const* filename)
 	// Throw if already connected or if filename is empty
 	if (m_connection)
 	{
-		throw SQLiteException("Database already connected.");
+		throw MultipleConnectionException("Database already connected.");
 	}
 	// Open the connection
 	sqlite3_open_v2
