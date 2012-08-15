@@ -130,10 +130,6 @@ public:
 	 *
 	 * @param filename file to connect to
 	 *
-	 * @todo Refine throwing to 
-	 * make better use of available exception classes - and make new exception
-	 * classes if necessary.
-	 * 
 	 * @throws sqloxx::InvalidFilename if filename is an empty string.
 	 *
 	 * @throws sqloxx::MultipleConnectionException if already connected to a
@@ -221,9 +217,6 @@ protected:
 	 * these are ignored. The returned value is always one greater than the
 	 * currently greatest value for the key (but see exceptions).
 	 * 
-	 * @todo It is essential that a different exception be thrown for each
-	 * of the different circumstances outlined below.
-	 * 
 	 * @todo LOW PRIORITY Find a way either to make the body of this function
 	 * template briefer, or to get it out of the header file.
 	 *
@@ -263,11 +256,7 @@ protected:
 	 * primary key of the table named \c table_name. An empty vector
 	 * is returned if there is no primary key.
 	 *
-	 * @todo Refine throwing behaviour to make better use of available
-	 * exception classes, and make new exception classes if necessary.
-	 *
-	 * @throws SQLiteException in case of invalid table name or other
-	 * SQL execution error.
+	 * @todo Determine and document throwing behaviour.
 	 *
 	 * @param table_name name of table
 	 */
@@ -337,13 +326,11 @@ public:
 	 * 
 	 * @param index is the column number (starting at 0) from which to
 	 * read the value.
-	 *
-	 * @todo Refine throwing behaviour to make better use of available
-	 * exception classes, and create new classes if necessary.
 	 * 
-	 * @throws SQLiteException if:\n
-	 * 	the index is out of range; or\n
-	 * 	the requested column contains type that is incompatible with T.
+	 * @throws ResultIndexOutOfRange if \c index is out of range.
+	 *
+	 * @throws ValueTypeException if the requested column contains type that
+	 * is incompatible with T.
 	 */
 	template <typename T>
 	T extract(int index);
@@ -394,12 +381,14 @@ private:
 	 * @param value_type Should be a SQLite value type code, i.e. one of:\n
 	 * 	SQLITE_INTEGER, SQLITE_FLOAT, SQLITE_TEXT, SQLITE_BLOB, SQLITE_NULL.
 	 *
-	 * @todo Refine throwing behaviour.
+	 * @throws NoResultRowException if there are no results available for
+	 * extraction.
 	 *
-	 * @throws SQLiteException if:\n
-	 * 	There are no results available for extraction;\n
-	 * 	\c index is out of range; or\n
-	 * 	\c the value at position \c index is not of value type \c value_type.
+	 * @throws ResultIndexOutOfRange if \c index is negative or is otherwise
+	 * out of range.
+	 *
+	 * @throws ValueTypeException if the value at position \c index is not of
+	 * value type \c value_type.
 	 */
 	void check_column(int index, int value_type);
 

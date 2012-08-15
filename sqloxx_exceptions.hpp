@@ -77,6 +77,24 @@ JEWEL_DERIVED_EXCEPTION(CompoundPrimaryKeyException, DatabaseException);
 JEWEL_DERIVED_EXCEPTION(TableSizeException, DatabaseException);
 
 /**
+ * Exception to throw when a result row is not available to a function that
+ * expects a result row
+ */
+JEWEL_DERIVED_EXCEPTION(NoResultRowException, DatabaseException);
+
+/**
+ * Exception to throw when an index into a result row is out of range.
+ */
+JEWEL_DERIVED_EXCEPTION(ResultIndexOutOfRange, DatabaseException);
+
+/**
+ * Exception to be thrown when an incorrect assumption is made about the
+ * type (SQLite integer, text etc.) of a particular value stored in a
+ * database.
+ */
+JEWEL_DERIVED_EXCEPTION(ValueTypeException, DatabaseException);
+
+/**
  * Exception to be thrown when SQLite (the library itself, not a database
  * connection) has not been successfully initialized.
  */

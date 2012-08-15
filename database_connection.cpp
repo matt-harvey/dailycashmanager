@@ -239,6 +239,7 @@ DatabaseConnection::primary_key(string const& table_name)
 		"pragma table_info(" + table_name + ")"
 	);
 	bool steps_remain = true;
+	// Assignment operator is deliberate here
 	while ((steps_remain = statement.step()))
 	{
 		if (statement.extract<int>(pk_info_field) == 1)
@@ -293,22 +294,22 @@ DatabaseConnection::SQLStatement::check_column(int index, int value_type)
 	int const num_columns = sqlite3_column_count(m_statement);
 	if (num_columns == 0)
 	{
-		throw SQLiteException("Result row not available.");
+		throw NoResultRowException("Result row not available.");
 	}
 	if (index > num_columns)
 	{
-		throw SQLiteException("Index is out of range.");
+		throw ResultIndexOutOfRange("Index is out of range.");
 	}
 	if (index < 0)
 	{
-		throw SQLiteException("Index is negative.");
+		throw ResultIndexOutOfRange("Index is negative.");
 	}
 	if (value_type != sqlite3_column_type(m_statement, index))
 	{
 		JEWEL_DEBUG_LOG << "Requested value type: " << value_type << endl;
 		JEWEL_DEBUG_LOG << "Value type at index: "
 		                << sqlite3_column_type(m_statement, index) << endl;
-		throw SQLiteException
+		throw ValueTypeException
 		(	"Value type at index does not match specified value type."
 		);
 	}
