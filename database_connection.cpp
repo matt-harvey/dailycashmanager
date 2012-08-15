@@ -123,7 +123,7 @@ DatabaseConnection::~DatabaseConnection()
 }
 
 bool
-DatabaseConnection::is_valid()
+DatabaseConnection::is_valid() const
 {
 	return m_connection != 0;
 }

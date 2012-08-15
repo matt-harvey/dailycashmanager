@@ -99,9 +99,8 @@ public:
 	 * Initializes SQLite3 and creates a database connection
 	 * initially set to null.
 	 *
-	 * @todo Document throwing behaviour, and refine throwing behaviour
-	 * within the constructor body to make better use of available exception
-	 * classes - and make new exception classes if necessary.
+	 * @throws SQLiteInitializationError if initialization fails
+	 * for any reason.
 	 */
 	DatabaseConnection();
 
@@ -117,9 +116,9 @@ public:
 
 	/**
 	 * Returns \c true iff the DatabaseConnection is connected to a 
-	 * database.
+	 * database. Does not throw.
 	 */
-	virtual bool is_valid();
+	virtual bool is_valid() const;
 
 	/**
 	 * Points the database connection to a specific file
@@ -147,8 +146,6 @@ protected:
 	
 	/**
 	 * Wrapper class for sqlite_stmt*.
-	 *
-	 * @todo Refine and document throwing behaviour.
 	 *
 	 * @todo The constructor to create a SQLStatement should reject strings
 	 * containing semicolons, since compound statements are not handled by
@@ -258,6 +255,9 @@ protected:
 	 *
 	 * @todo Determine and document throwing behaviour.
 	 *
+	 * @throws InvalidConnection if database connection does not exist or
+	 * is otherwise invalid.
+	 *
 	 * @param table_name name of table
 	 */
 	std::vector<std::string> primary_key(std::string const& table_name);
@@ -341,10 +341,11 @@ public:
 	 * Returns true as long as there are further steps to go (i.e. result
 	 * rows to examine).
 	 *
-	 * @todo Figure out the conditions under which this throws.
-	 *
-	 * @throws SQLiteException, or some exception deriving therefrom,
-	 * if an error occurs.
+	 * @throws SQLiteException, or some exception deriving therefrom, if an
+	 * error occurs. This function should almost never throw, but it is
+	 * possible something will fail as the statement is being executed, in
+	 * which the resulting SQLite error condition will trigger the
+	 * corresponding exception class.
 	 */
 	bool step();
 
