@@ -16,6 +16,11 @@
 namespace phatbooks
 {
 
+/**
+ * IdType is the type used for primary keys in the database, for
+ * Phatbooks objects such as Entry and Commodity objects stored in
+ * the database.
+ */
 typedef int IdType;
 
 

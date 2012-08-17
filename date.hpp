@@ -20,8 +20,16 @@ namespace phatbooks
 
 typedef unsigned int DateType;
 
+/**
+ * Returns \c true iff \c date is a valid
+ * value for a date.
+ */
 bool is_valid_date(DateType date);
 
+/**
+ * Returns a DateType instance that is "null" in value, meaning that
+ * it doesn't represent any particular date.
+ */
 DateType null_date();
 
 }  // namespace phatbooks

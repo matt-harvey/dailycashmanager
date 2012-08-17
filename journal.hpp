@@ -25,12 +25,9 @@ class Repeater;
 
 
 /**
- * Class to represent accounting journals.
- *
- * @todo In API docs, should the accounting logic that Phatbooks
- * is implementing be documented? It should be, but perhaps in a
- * separate file of its own, rather than crammed into the class
- * documentation.
+ * Class to represent accounting journals. An accounting journal will
+ * typically comprise two or more accounting entries, plus some
+ * "journal level" data such as the date.
  */
 class Journal
 {

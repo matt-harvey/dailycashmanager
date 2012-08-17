@@ -22,12 +22,16 @@
 namespace phatbooks
 {
 
+/**
+ * Class representing an accounting entry, i.e. a single line in an account.
+ */
 class Entry
 {
 public:
 
 	/** Constructor.
-	 * Does not throw.
+	 * Does not throw (except possibly std::bad_alloc if the \c std::string
+	 * allocation fails).
 	 */
 	Entry
 	(	std::string const& p_account_name,	
