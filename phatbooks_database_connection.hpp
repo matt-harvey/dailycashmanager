@@ -35,12 +35,6 @@ namespace phatbooks
  * statement at the appropriate time.
  * Having said this, there's no point unless
  * it causes a problem by being too slow.
- *
- * @todo Refine throwing behaviours. There need to be specific exception
- * classes for specific things that go wrong. This all needs to be documented
- * and should also be tested.
- *
- *
  */
 class PhatbooksDatabaseConnection:
 	public sqloxx::DatabaseConnection
