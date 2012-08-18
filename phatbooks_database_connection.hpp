@@ -80,12 +80,12 @@ public:
 	 * resulting SQL statement. This not expected to occur except
 	 * in cases of a corrupt database or memory allocation failure.
 	 *
-	 * @param p_account the Account to be stored.
-	 *
 	 * @throws sqloxx::ConstraintException if there are multiple commodities
 	 * with the same commodity abbreviation as the commodity abbreviation
 	 * of \c p_account (It is not expected this will occur except case of
 	 * a corrupt database, or a bug in Phatbooks.)
+	 *
+	 * @param p_account the Account to be stored.
 	 *
 	 * @returns the integer primary key of the Account just stored.
 	 * (This is an autoincrementing primary key.)
