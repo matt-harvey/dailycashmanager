@@ -61,9 +61,8 @@ DatabaseConnection::open(char const* filename)
 		throw InvalidFilename("Cannot open file with empty filename.");
 	}
 	// Check if file already exists
-	boost::filesystem::path p(filename);
-	boost::filesystem::file_status s = boost::filesystem::status(p);
-	if (boost::filesystem::exists(s))
+	boost::filesystem::path const filepath(filename);
+	if (boost::filesystem::exists(boost::filesystem::status(filepath)))
 	{
 		JEWEL_DEBUG_LOG << "Preexisting file \"" << filename << "\" detected."
 		                << endl;
@@ -80,7 +79,7 @@ DatabaseConnection::open(char const* filename)
 	}
 	// Open the connection
 	sqlite3_open_v2
-	(	filename,
+	(	filepath.string().c_str(),
 		&m_connection,
 		SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
 		0

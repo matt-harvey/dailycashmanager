@@ -54,6 +54,9 @@ public:
 	 * manifested as an exception; or \c 0 on successful
 	 * completion.
 	 *
+	 * @throw Make this throw immediately (rather than going to user dialogue)
+	 * if \c filename is empty.
+	 *
 	 * @param filename Is the name of a file to which a database connection
 	 * should be opened for the session.
 	 */

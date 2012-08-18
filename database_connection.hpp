@@ -18,9 +18,6 @@
  * the DatabaseConnection class. At the moment it just checks whether
  * the file exists. This could involve overriding some method or other.
  *
- * @todo Use boost::filesystem::path to make filepath passed to
- * activate_database more portable.
- *
  * @todo There should probably be a close method. Even though the
  * connection is closed by the destructor, there should probably
  * be a way of closing it independently, so that it can be connected
@@ -127,7 +124,22 @@ public:
 	 * foreign_keys is always executed immediately the file is opened, to
 	 * enable foreign key constraints.
 	 *
-	 * @param filename file to connect to
+	 * @todo This should be made to support Unicode filepaths, which
+	 * apparently are used on Windows.
+	 *
+	 * @todo It appears that boost::filesystem::path::string() produces
+	 * a GENERIC string (safely passable to SQLite database connection
+	 * opening function) in Boost Version 1.42; but that in Version 1.46
+	 * this produced a NATIVE string! Currently this relies on the
+	 * behaviour in version 1.42. I should use a macro or something to
+	 * make it portable between versions of Boost.
+	 *
+	 * @param filename File to connect to. This can be an absolute or
+	 * relative path, and it can be in either Windows format
+	 * (with backslashes) or POSIX format (with forward slashes).
+	 *
+	 * @todo Do a full portability test to Windows, especially for cases
+	 * involving escape characters and such.
 	 *
 	 * @throws sqloxx::InvalidFilename if filename is an empty string.
 	 *
