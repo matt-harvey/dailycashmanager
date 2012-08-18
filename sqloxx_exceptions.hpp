@@ -26,6 +26,11 @@ namespace sqloxx
  */
 JEWEL_DERIVED_EXCEPTION(DatabaseException, jewel::Exception);
 
+/**
+ * Exception to be thrown when expected database constraints are believed
+ * to have been violated, indicating a possibly corrupted database.
+ */
+JEWEL_DERIVED_EXCEPTION(ConstraintException, DatabaseException);
 
 /**
  * Exception to be thrown in response to database-related exceptions

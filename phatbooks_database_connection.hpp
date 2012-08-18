@@ -57,9 +57,11 @@ public:
 	 * p_account must correspond to a commodity that has already
 	 * been stored in the database.)
 	 *
-	 * @throws phatbooks::BadTable if the table is not properly
-	 * set up for storing \c Account objects, for example if the table
-	 * does not have a single-column primary key.
+	 * @throws sqloxx::NoPrimaryKeyException if the table for storing
+	 * Account data does not have a primary key.
+	 *
+	 * @throws sqloxx::CompoundPrimaryKeyException if the table for storing
+	 * Account data has a compound primary key.
 	 * 
 	 * @throws sqloxx::TableSizeException if the table has reached its
 	 * maximum size and therefore cannot accept any additional rows.
@@ -79,6 +81,11 @@ public:
 	 * in cases of a corrupt database or memory allocation failure.
 	 *
 	 * @param p_account the Account to be stored.
+	 *
+	 * @throws sqloxx::ConstraintException if there are multiple commodities
+	 * with the same commodity abbreviation as the commodity abbreviation
+	 * of \c p_account (It is not expected this will occur except case of
+	 * a corrupt database, or a bug in Phatbooks.)
 	 *
 	 * @returns the integer primary key of the Account just stored.
 	 * (This is an autoincrementing primary key.)

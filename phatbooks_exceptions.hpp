@@ -30,12 +30,6 @@ namespace phatbooks
 JEWEL_DERIVED_EXCEPTION(PhatbooksException, jewel::Exception);
 
 /**
- * Exception to be thrown when a table is not properly constituted to perform
- * a task, for example, is not suitable for storage of a particular type.
- */
-JEWEL_DERIVED_EXCEPTION(BadTable, PhatbooksException);
-
-/**
  * Exception to be thrown when an object has not met certain preconditions
  * for being stored in the database.
  */

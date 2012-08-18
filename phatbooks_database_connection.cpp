@@ -51,31 +51,8 @@ PhatbooksDatabaseConnection::store(Commodity const& p_commodity)
 {
 	JEWEL_DEBUG_LOG << "Storing Commodity object in database." << endl;
 
-	IdType ret;
-	try
-	{
-		// Find the next key value
-		ret = next_auto_key<IdType>("commodities");
-	}
-	catch (sqloxx::NoPrimaryKeyException const& e)
-	{
-		// This should never happen
-		throw BadTable(e.what());
-	}
-	catch (sqloxx::CompoundPrimaryKeyException const& e)
-	{
-		// This should never happen
-		throw BadTable(e.what());
-	}
-	catch (sqloxx::TableSizeException&)
-	{
-		// Is there anything we can do here if the table is "maxed out",
-		// other than just rethrow the exception?
-		throw;
-	}
+	IdType ret = next_auto_key<IdType>("commodities");
 	
-
-
 	SQLStatement statement
 	(	*this,
 		"insert into commodities"
@@ -124,30 +101,8 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 {
 	JEWEL_DEBUG_LOG << "Storing Account object in database." << endl;
 
-	IdType ret;
-	try
-	{
-		// Find the next auto_key
-		ret = next_auto_key<IdType>("accounts");
-	}
-	catch (sqloxx::NoPrimaryKeyException const& e)
-	{
-		// This should never happen
-		throw BadTable(e.what());
-	}
-	catch (sqloxx::CompoundPrimaryKeyException const& e)
-	{
-		// This should never happen
-		throw BadTable(e.what());
-	}
-	catch (sqloxx::TableSizeException&)
-	{
-		// Is there anything we can do here if the table is "maxed out",
-		// other than just rethrow the exception?
-		throw;
-	}
+	IdType ret = next_auto_key<IdType>("accounts");
 	
-
 	// Find the commodity_id for account
 	SQLStatement commodity_finder
 	(	*this,
@@ -168,7 +123,7 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 		// We have multiple commodities with this id.
 		// This should never occur, unless the database has been tampered with
 		// from outside this program.
-		throw BadTable
+		throw PhatbooksException
 		(	"Integrity of commodities table has been violated. Table contains"
 			" multiple rows with the same commodity abbreviation."
 		);
