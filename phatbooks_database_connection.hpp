@@ -88,8 +88,19 @@ public:
 	IdType store(Commodity const& p_commodity);
 
 	/**
-	 * Returns true if and only if \c name is the name of an Account
+	 * @returns \c true if and only if \c p_name is the name of an Account
 	 * stored in the database.
+	 *
+	 * @param p_name name of Account.
+	 *
+	 * @throws SQLiteException or an exception derived therefrom, if
+	 * something goes wrong with the SQL involved in executing
+	 * the function. This might occur if \c p_name contains punctuation
+	 * marks, spaces or etc., or is a SQL keyword, so that it cannot validly
+	 * be a string parameter in a SQL statement. A SQLiteException or
+	 * derivative might also be thrown if the database connection is invalid
+	 * or the database corrupt. It is not guaranteed that these are the only
+	 * circumstances in which an exception might be thrown.
 	 */
 	bool has_account_named(std::string const& p_name);
 
@@ -100,7 +111,8 @@ public:
 	 * the function does nothing. This function should always be
 	 * called after calling DatabaseConnection::open.
 	 *
-	 * @throws SQLiteException if unsuccesful.
+	 * @throws SQLiteException, or some derivative thereof, if setup is
+	 * unsuccessful.
 	 */
 	void setup();
 
