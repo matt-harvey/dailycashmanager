@@ -46,6 +46,10 @@ class PhatbooksDatabaseConnection:
 	public sqloxx::DatabaseConnection
 {
 public:
+	/**
+	 * Exhibits the same throwing behaviour (if any) as
+	 * sqloxx::DatabaseConnection.
+	 */
 	PhatbooksDatabaseConnection();
 	
 	/** Store an Account object in the database
@@ -57,11 +61,26 @@ public:
 	 * p_account must correspond to a commodity that has already
 	 * been stored in the database.)
 	 *
-	 * @throws sqloxx::SQLiteException if:\n
-	 * 	SQLite statement preparation fails; or\n
-	 * 	Insertion into database would cause the (auto-incrementing)
-	 * 	primary key to overflow IdType; or\n
-	 * 	Insertion fails (for reasons other than above).
+	 * @throws phatbooks::BadTable if the table is not properly
+	 * set up for storing \c Account objects, for example if the table
+	 * does not have a single-column primary key.
+	 * 
+	 * @throws sqloxx::TableSizeException if the table has reached its
+	 * maximum size and therefore cannot accept any additional rows.
+	 *
+	 * @throws sqloxx:DatabaseExceptions, or some derivative thereof, if
+	 * something else goes wrong in finding the primary key to be
+	 * assigned to the inserted object. (This is not expected ever to occur
+	 * unless there is a heap allocation issue or the database is corrupt.)
+	 *
+	 * @throws sqloxx::InvalidConnection if the database connection is invalid
+	 * at the time the storage is attempted.
+	 *
+	 * @throws sqloxx::SQLiteException, or some derivative thereof, if there
+	 * is some error binding the data for \c p_account to the SQL statement
+	 * involved in storing the account, or in executing the
+	 * resulting SQL statement. This not expected to occur except
+	 * in cases of a corrupt database or memory allocation failure.
 	 *
 	 * @param p_account the Account to be stored.
 	 *
@@ -74,11 +93,8 @@ public:
 	 *
 	 * @todo Verify that throwing behaviour is as documented.
 	 *
-	 * @throws sqloxx::SQLiteException if:\n
-	 * 	SQLite statement preparation fails; or\n
-	 * 	Insertion into database would cause the (auto-incrementing)
-	 * 	primary key to overflow IdType; or\n
-	 * 	Insertion fails (for reasons other than above).
+	 * Exceptions throwing behaviour is essentially the same as that
+	 * of the \c store function for \c Account.
 	 *
 	 * @param p_commodity the Commodity to be stored.
 	 *

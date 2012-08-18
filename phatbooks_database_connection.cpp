@@ -17,6 +17,7 @@
 #include "commodity.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <sqlite3.h>
@@ -50,8 +51,30 @@ PhatbooksDatabaseConnection::store(Commodity const& p_commodity)
 {
 	JEWEL_DEBUG_LOG << "Storing Commodity object in database." << endl;
 
-	// Find the next key value
-	IdType const ret = next_auto_key<IdType>("commodities");
+	IdType ret;
+	try
+	{
+		// Find the next key value
+		ret = next_auto_key<IdType>("commodities");
+	}
+	catch (sqloxx::NoPrimaryKeyException const& e)
+	{
+		// This should never happen
+		throw BadTable(e.what());
+	}
+	catch (sqloxx::CompoundPrimaryKeyException const& e)
+	{
+		// This should never happen
+		throw BadTable(e.what());
+	}
+	catch (sqloxx::TableSizeException&)
+	{
+		// Is there anything we can do here if the table is "maxed out",
+		// other than just rethrow the exception?
+		throw;
+	}
+	
+
 
 	SQLStatement statement
 	(	*this,

@@ -21,7 +21,8 @@ namespace sqloxx
 /**
  * Exception to be thrown in response to exceptions
  * originating in database-related code. See
- * Jewel library, JEWEL_STANDARD_EXCEPTION for API.
+ * Jewel library, JEWEL_DERIVED_EXCEPTION for API, as well as the
+ * base class, jewel::Exception, also deined in the Jewel library.
  */
 JEWEL_DERIVED_EXCEPTION(DatabaseException, jewel::Exception);
 
