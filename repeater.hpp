@@ -19,10 +19,16 @@
 namespace phatbooks
 {
 
-/** Repeater
- * 
- * @todo document constructor properly.
+/**
+ * Instances of this class serve as "alarms" that "fire" at regular intervals.
+ * On firing, a \c Repeater triggers an automatic journal posting, and updates
+ * itself to await the next firing.
  *
+ * @todo Write firing method.
+ *
+ * @todo Write a method somewhere in either the session-level code, or in
+ * PhatbooksDatabaseConnection, that loads Repeater objects from the database,
+ * and inspects them all and fires those that are due.
  */
 class Repeater
 {
@@ -51,7 +57,22 @@ public:
 		month_ends
 	};
 
-	/** Constructor
+	/** 
+	 * @param p_journal The journal the posting of which is triggered
+	 * by the firing of this \c Repeater.
+	 *
+	 * @param p_interval_type The \c IntervalType such that the \c Repeater
+	 * "fires" after every \c p_interval_units intervals of
+	 * \c p_interval_type.
+	 *
+	 * @param p_interval_units The number of intervals of \c p_interval_type
+	 * such that duration between firings of the \c Repeater is this many
+	 * intervals of that type.
+	 *
+	 * @param p_next_date The date on which the \c Repeater is due to fire
+	 * next.
+	 *
+	 * This constructor does not throw.
 	 */
 	Repeater
 	(	boost::shared_ptr<Journal> p_journal,

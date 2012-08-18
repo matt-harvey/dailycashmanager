@@ -7,6 +7,17 @@
 #include <string>
 
 
+/** \file phatbooks_text_session.hpp
+ *
+ * \brief Header for text/console user interface for Phatbooks.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 
 namespace phatbooks
 {
@@ -30,8 +41,21 @@ class PhatbooksTextSession:
 public:
 	PhatbooksTextSession();
 	virtual ~PhatbooksTextSession();	
+
 	/**
-	 * Returns non-zero if session exits with error
+	 * Runs the user session, i.e. execute the chain of events such as
+	 * displaying menus, reacting to user input, etc. that constitutes
+	 * a Phatbooks text session. As this function calls many other functions,
+	 * which will vary in turn depending on the user's input, it is probably
+	 * impracticable to attempt to document every exception that might be
+	 * thrown.
+	 *
+	 * @returns \c 1 if there is some kind of error condition that is not
+	 * manifested as an exception; or \c 0 on successful
+	 * completion.
+	 *
+	 * @param filename Is the name of a file to which a database connection
+	 * should be opened for the session.
 	 */
 	int run(std::string const& filename);
 private:

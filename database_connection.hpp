@@ -134,7 +134,7 @@ public:
 	 * @throws sqloxx::MultipleConnectionException if already connected to a
 	 * database (be it this or another database).
 	 *
-	 * @throws SQLiteException, or an exception derived therefrom (likely, but
+	 * @throws SQLiteException or an exception derived therefrom (likely, but
 	 * not guaranteed, to be SQLiteCantOpen) if for some other reason the
 	 * connection cannot be opened.
 	 */
@@ -172,7 +172,7 @@ protected:
 	 * attacks. Generally, the functions provided by SQLStatement should
 	 * be the preferred means for building and executing SQL statements.
 	 *
-	 * @throws SQLiteException, or some exception inheriting thereof, whenever
+	 * @throws SQLiteException or some exception inheriting thereof, whenever
 	 * there is any kind of error executing the statement.
 	 */
 	void execute_sql(std::string const& str);
@@ -293,7 +293,7 @@ public:
 	 * @throws InvalidConnection if the database connection passed to
 	 * \c dbconn is invalid.
 	 *
-	 * @throws SQLiteException, or an exception derived therefrom, if
+	 * @throws SQLiteException or an exception derived therefrom, if
 	 * the database connection is valid, but the statement could not
 	 * be properly prepared by SQLite.
 	 */
@@ -341,7 +341,7 @@ public:
 	 * Returns true as long as there are further steps to go (i.e. result
 	 * rows to examine).
 	 *
-	 * @throws SQLiteException, or some exception deriving therefrom, if an
+	 * @throws SQLiteException or some exception deriving therefrom, if an
 	 * error occurs. This function should almost never throw, but it is
 	 * possible something will fail as the statement is being executed, in
 	 * which the resulting SQLite error condition will trigger the
@@ -355,7 +355,7 @@ public:
 	 *
 	 * @throws UnexpectedResultSet if a result set is returned.
 	 * 
-	 * @throws SQLiteException, or an exception derived therefrom, if there
+	 * @throws SQLiteException or an exception derived therefrom if there
 	 * is any other error in executing the statement.
 	*/
 	void quick_step();

@@ -1,5 +1,16 @@
 #include "phatbooks_text_session.hpp"
 
+/** \file phatbooks_text_session.cpp
+ *
+ * \brief Source file for text/console user interface code for Phatbooks.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include "consolixx.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
@@ -75,7 +86,7 @@ int PhatbooksTextSession::run(string const& filename)
 		{
 			assert (response == "n");
 			cout << "Exiting program." << endl;
-			return 1;
+			return 0;
 		}
 		assert (response == "y");
 	}
