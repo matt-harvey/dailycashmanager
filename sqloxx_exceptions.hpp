@@ -101,6 +101,7 @@ JEWEL_DERIVED_EXCEPTION(ValueTypeException, DatabaseException);
  */
 JEWEL_DERIVED_EXCEPTION(SQLiteInitializationError, SQLiteException);
 
+
 /* NOT DOXYGEN AS DOXYGEN DOESN'T HANDLE
  * The following exceptions correspond to particular SQLite standard error
  * codes. See the SQLite standard documentation for description of what the

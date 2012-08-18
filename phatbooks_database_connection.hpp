@@ -23,6 +23,8 @@ namespace phatbooks
  * See API documentation for sqloxx::DatabaseConnection,
  * for parts of API inherited from sqloxx::DatabaseConnection.
  *
+ * @todo Factor out code common to different \c store functions.
+ *
  * @todo If speed becomes a problem, I should find a way to avoid
  * having to call sqlite3_prepare_v2, by caching previously prepared
  * sqlite3_stmt* somehow. I think the only feasible way would be to store it
@@ -42,7 +44,7 @@ class PhatbooksDatabaseConnection:
 public:
 	/**
 	 * Exhibits the same throwing behaviour (if any) as
-	 * sqloxx::DatabaseConnection.
+	 * default constructor for sqloxx::DatabaseConnection.
 	 */
 	PhatbooksDatabaseConnection();
 	
@@ -50,7 +52,7 @@ public:
 	 * 
 	 * @todo Verify that throwing behaviour is as documented.
 	 * 
-	 * @throws std::runtime_error if p_account has invalid
+	 * @throws StoragePreconditionsException if p_account has invalid
 	 * commodity abbreviation. (Commodity abbreviation of
 	 * p_account must correspond to a commodity that has already
 	 * been stored in the database.)
@@ -62,7 +64,7 @@ public:
 	 * @throws sqloxx::TableSizeException if the table has reached its
 	 * maximum size and therefore cannot accept any additional rows.
 	 *
-	 * @throws sqloxx:DatabaseExceptions, or some derivative thereof, if
+	 * @throws sqloxx:DatabaseExceptions or some derivative thereof, if
 	 * something else goes wrong in finding the primary key to be
 	 * assigned to the inserted object. (This is not expected ever to occur
 	 * unless there is a heap allocation issue or the database is corrupt.)
@@ -70,7 +72,7 @@ public:
 	 * @throws sqloxx::InvalidConnection if the database connection is invalid
 	 * at the time the storage is attempted.
 	 *
-	 * @throws sqloxx::SQLiteException, or some derivative thereof, if there
+	 * @throws sqloxx::SQLiteException or some derivative thereof, if there
 	 * is some error binding the data for \c p_account to the SQL statement
 	 * involved in storing the account, or in executing the
 	 * resulting SQL statement. This not expected to occur except
@@ -88,7 +90,8 @@ public:
 	 * @todo Verify that throwing behaviour is as documented.
 	 *
 	 * Exceptions throwing behaviour is essentially the same as that
-	 * of the \c store function for \c Account.
+	 * of the \c store function for \c Account, except that
+	 * StoragePreconditionsException is not thrown.
 	 *
 	 * @param p_commodity the Commodity to be stored.
 	 *
@@ -121,7 +124,7 @@ public:
 	 * the function does nothing. This function should always be
 	 * called after calling DatabaseConnection::open.
 	 *
-	 * @throws SQLiteException, or some derivative thereof, if setup is
+	 * @throws SQLiteException or some derivative thereof, if setup is
 	 * unsuccessful.
 	 */
 	void setup();
