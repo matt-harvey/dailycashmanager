@@ -140,9 +140,11 @@ void PhatbooksTextSession::elicit_commodity()
 		string input = get_user_input();
 		if (input.empty())
 		{
-			cout << "Abbreviation cannot be empty string. Please try again.";
+			cout << "Abbreviation cannot be empty string. Please try again: ";
 		}
-		if (m_database_connection->has_commodity_with_abbreviation(input))
+		else if
+		(	m_database_connection->has_commodity_with_abbreviation(input)
+		)
 		{
 			cout << "A commodity with this abbreviation already exists. "
 			     << "Please try again: ";
@@ -254,7 +256,6 @@ void PhatbooksTextSession::elicit_commodity()
 		m_database_connection->store(comm);
 		cout << "Commodity created." << endl;
 	}
-
 	return;
 }
 

@@ -39,13 +39,18 @@ class PhatbooksTextSession:
 	public consolixx::TextSession
 {
 public:
+
 	PhatbooksTextSession();
 	virtual ~PhatbooksTextSession();	
 
 	/**
-	 * Runs the user session, i.e. execute the chain of events such as
+	 * Runs the user session, i.e. executes the chain of events such as
 	 * displaying menus, reacting to user input, etc. that constitutes
-	 * a Phatbooks text session. As this function calls many other functions,
+	 * a Phatbooks text session.
+	 * If the file does not already exist, the user will be asked whether
+	 * they want to create a file with this name.
+	 *
+	 * As this function calls many other functions,
 	 * which will vary in turn depending on the user's input, it is probably
 	 * impracticable to attempt to document every exception that might be
 	 * thrown.
@@ -60,7 +65,9 @@ public:
 	 * should be opened for the session.
 	 */
 	int run(std::string const& filename);
+
 private:
+
 	boost::shared_ptr<Menu> m_main_menu;
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 
