@@ -54,23 +54,28 @@ DatabaseConnection::DatabaseConnection():
 }
 
 void
-DatabaseConnection::open(char const* filename)
+DatabaseConnection::open(boost::filesystem::path const& filepath)
 {
-	if (string(filename).empty())
+	if (filepath.string().empty())
 	{
 		throw InvalidFilename("Cannot open file with empty filename.");
 	}
 	// Check if file already exists
-	boost::filesystem::path const filepath(filename);
 	if (boost::filesystem::exists(boost::filesystem::status(filepath)))
 	{
-		JEWEL_DEBUG_LOG << "Preexisting file \"" << filename << "\" detected."
+		JEWEL_DEBUG_LOG << "Preexisting file \""
+		                << filepath.string()
+						<< "\" detected."
 		                << endl;
-		JEWEL_DEBUG_LOG << "Attempting to connect to this file." << endl;
+		JEWEL_DEBUG_LOG << "Attempting to connect to this file."
+		                << endl;
 	}
 	else
 	{
-		JEWEL_DEBUG_LOG << "Creating file \"" << filename << "\"." << endl;
+		JEWEL_DEBUG_LOG << "Creating file \""
+		                << filepath.string()
+						<< "\"."
+						<< endl;
 	}
 	// Throw if already connected or if filename is empty
 	if (m_connection)
@@ -86,7 +91,7 @@ DatabaseConnection::open(char const* filename)
 	);
 	check_ok();
 	JEWEL_DEBUG_LOG << "Database connection to file \""
-	                << filename
+	                << filepath.string()
 	                << "\" has been opened "
 	                << "and m_connection has been set to point there."
 					<< endl;

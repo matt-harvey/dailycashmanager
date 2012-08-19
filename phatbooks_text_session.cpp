@@ -23,6 +23,7 @@
 using consolixx::get_user_input;
 using consolixx::get_constrained_user_input;
 using consolixx::TextSession;
+using sqloxx::InvalidFilename;
 using sqloxx::SQLiteException;
 using boost::bind;
 using boost::shared_ptr;
@@ -71,9 +72,12 @@ namespace
 
 int PhatbooksTextSession::run(string const& filename)
 {
-	boost::filesystem::file_status s =
-		boost::filesystem::status(boost::filesystem::path(filename));
-	if (!boost::filesystem::exists(s))
+	if (filename.empty())
+	{
+		throw InvalidFilename("Filename is empty string.");
+	}
+	boost::filesystem::path filepath(filename);
+	if (!boost::filesystem::exists(boost::filesystem::status(filepath)))
 	{
 		cout << "File does not exist. "
 		     << "Create file \"" << filename << "\"? (y/n): ";
@@ -92,7 +96,7 @@ int PhatbooksTextSession::run(string const& filename)
 	}
 	try
 	{
-		m_database_connection->open(filename.c_str());
+		m_database_connection->open(filepath);
 	}
 	catch (SQLiteException&)
 	{

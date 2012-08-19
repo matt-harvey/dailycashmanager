@@ -42,6 +42,7 @@
 #include <jewel/debug_log.hpp>
 #include <sqlite3.h>
 #include <boost/cstdint.hpp>
+#include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 #include <cassert>
 #include <limits>
@@ -134,9 +135,8 @@ public:
 	 * behaviour in version 1.42. I should use a macro or something to
 	 * make it portable between versions of Boost.
 	 *
-	 * @param filename File to connect to. This can be an absolute or
-	 * relative path, and it can be in either Windows format
-	 * (with backslashes) or POSIX format (with forward slashes).
+	 * @param filepath File to connect to. The is in the form of a
+	 * \c boost::filesystem::path to facilitate portability.
 	 *
 	 * @todo Do a full portability test to Windows, especially for cases
 	 * involving escape characters and such.
@@ -150,7 +150,7 @@ public:
 	 * not guaranteed, to be SQLiteCantOpen) if for some other reason the
 	 * connection cannot be opened.
 	 */
-	void open(char const* filename);	
+	void open(boost::filesystem::path const& filepath);	
 
 
 protected:
