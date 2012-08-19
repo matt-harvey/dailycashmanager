@@ -125,6 +125,18 @@ public:
 	bool has_account_named(std::string const& p_name);
 
 	/**
+	 * @returns \c true if and only if \c p_abbreviation is the abbreviation
+	 * of a Commodity stored in the database.
+	 */
+	bool has_commodity_with_abbreviation(std::string const& p_abbreviation);
+
+	/**
+	 * @returns \c true if and only if \c p_name is the name of a Commodity
+	 * stored in the database.
+	 */
+	bool has_commodity_named(std::string const& p_name);
+
+	/**
 	 * Creates tables required for Phatbooks, and inserts rows
 	 * into certain tables to provide application-level data where
 	 * required. If the database already contains these tables,

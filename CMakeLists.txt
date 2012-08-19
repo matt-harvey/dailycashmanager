@@ -16,6 +16,7 @@ add_executable (main
 				repeater.cpp)
 target_link_libraries (main
 					   boost_filesystem
+					   boost_regex
 					   boost_system
                        unittest++
 					   jewel

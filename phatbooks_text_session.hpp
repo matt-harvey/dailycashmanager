@@ -65,6 +65,18 @@ private:
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 
 
+	/**
+	 * \todo This is not very user-friendly. The user is asked about
+	 * precision, base commodities and so on. In fact, the user shouldn't
+	 * have to think about commodities at all unless they want to deal
+	 * with foreign currencies or investments. Work out a better way to set
+	 * up commodities in the database. Also there is no way for the user to
+	 * abort the dialogue if they so choose, and there is no way other than
+	 * asking the user to "try again" for them to "negotiate" things if the
+	 * precision or conversion rate they entered exceeds limits.
+	 */
+	void elicit_commodity();
+
 	void display_balance_sheet();
 	void display_envelopes();
 	void display_profit_and_loss();

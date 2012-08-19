@@ -161,6 +161,29 @@ PhatbooksDatabaseConnection::has_account_named(string const& p_name)
 	return statement.step();
 }
 
+bool
+PhatbooksDatabaseConnection::has_commodity_with_abbreviation
+(	string const& p_abbreviation
+)
+{
+	SQLStatement statement
+	(	*this,
+		"select abbreviation from commodities where abbreviation = :p"
+	);
+	statement.bind(":p", p_abbreviation);
+	return statement.step();
+}
+
+bool
+PhatbooksDatabaseConnection::has_commodity_named(string const& p_name)
+{
+	SQLStatement statement
+	(	*this,
+		"select name from commodities where name = :p"
+	);
+	statement.bind(":p", p_name);
+	return statement.step();
+}
 
 void
 PhatbooksDatabaseConnection::setup()
