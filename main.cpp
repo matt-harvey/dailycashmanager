@@ -19,6 +19,7 @@
 using phatbooks::PhatbooksTextSession;
 using std::cout;
 using std::endl;
+using std::string;
 
 int main(int argc, char** argv)
 {
@@ -27,9 +28,16 @@ int main(int argc, char** argv)
 		cout << "Usage: " << argv[0] << " FILENAME" << endl;
 		return 1;
 	}
+	string filename(argv[1]);
+	if (filename.empty())
+	{
+		cout << "FILENAME cannot be empty string." << endl;
+		return 1;
+	}
 
 	// The following assumes a text based session.
+	assert (argc == 2 && !filename.empty());
 	PhatbooksTextSession session;
-	int const ret = session.run(argv[1]);
+	int const ret = session.run(filename);
 	return ret;
 }
