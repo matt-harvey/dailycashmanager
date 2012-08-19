@@ -66,14 +66,22 @@ private:
 
 
 	/**
-	 * \todo This is not very user-friendly. The user is asked about
-	 * precision, base commodities and so on. In fact, the user shouldn't
+	 * @todo This is not very user-friendly. The user is asked about
+	 * precision, base commodities and so on. These concepts are not well
+	 * explained, and furhermore, the user shouldn't have to think about
 	 * have to think about commodities at all unless they want to deal
 	 * with foreign currencies or investments. Work out a better way to set
 	 * up commodities in the database. Also there is no way for the user to
 	 * abort the dialogue if they so choose, and there is no way other than
 	 * asking the user to "try again" for them to "negotiate" things if the
-	 * precision or conversion rate they entered exceeds limits.
+	 * precision or conversion rate they entered exceeds limits. Also there
+	 * is no exception handling at the point the commodity is actually created
+	 * and inserted into the database.
+	 *
+	 * @todo LOW PRIORITY There is code repetition in the part where the
+	 * maximum precision is presented to the user and so on. Also, the maximum
+	 * precision can probably be a bit more than 6 places. (Maybe it should
+	 * actually be a function of the maximum precision of the Decimal type.)
 	 */
 	void elicit_commodity();
 
