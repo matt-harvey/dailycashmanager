@@ -126,14 +126,18 @@ int PhatbooksTextSession::run(string const& filename)
 	return 0;
 }
 
+
+
 void PhatbooksTextSession::elicit_commodity()
 {
+	// We need the user's input to populate all these variables
 	string commodity_abbreviation;
 	string commodity_name;
 	string commodity_description;
 	int commodity_precision;
 	Decimal commodity_multiplier_to_base("0");
 
+	// Get abbreviation
 	cout << "Enter abbreviation for new commodity: ";
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
@@ -156,6 +160,7 @@ void PhatbooksTextSession::elicit_commodity()
 		}
 	}
 
+	// Get commodity name
 	cout << "Enter name for new commodity (or enter for no name): ";
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
@@ -178,10 +183,12 @@ void PhatbooksTextSession::elicit_commodity()
 		}
 	}
 		
-	cout << "Enter description for new commodity (or enter for no "
+	// Get description 
+	cout << "Enter description for new commodity (or hit enter for no "
 	        "description): ";
 	commodity_description = get_user_input();
 
+	// Get precision 
 	cout << "Enter precision required for this commodity "
 	     << "(a number from 0 to 6, representing the number of decimal "
 		 << "places of precision to the right of the decimal point): ";
@@ -200,6 +207,7 @@ void PhatbooksTextSession::elicit_commodity()
 	}
 	assert (commodity_precision >= 0 && commodity_precision <= 6);
 
+	// Get multiplier to base
 	cout << "Enter rate by which this commodity should be multiplied in order"
 	     << " to convert it to the base commodity for this entity: ";
 	for (bool input_is_valid = false; !input_is_valid; )
@@ -207,25 +215,27 @@ void PhatbooksTextSession::elicit_commodity()
 		try
 		{
 			commodity_multiplier_to_base = Decimal(get_user_input());
+			input_is_valid = true;
 		}
 		catch (DecimalFromStringException&)
 		{
 			assert (commodity_multiplier_to_base == Decimal("0"));
+			assert (!input_is_valid);
 			cout << "Please try again, entering a decimal number, "
 			     << "(e.g. \"1.343\"): ";
-			continue;
 		}
 		catch (DecimalRangeException&)
 		{
 			assert (commodity_multiplier_to_base == Decimal("0"));
+			assert (!input_is_valid);
 			cout << "This conversion rate is too large or too small to be "
 			     << "safely handled. Please try again: ";
-			continue;
 		}
-		input_is_valid = true;
 	}
+
+	// Confirm with user before creating commodity
 	cout << endl << "You have proposed to create the following commodity: "
-	     << endl
+	     << endl << endl
 	     << "Abbreviation: " << commodity_abbreviation << endl
 		 << "Name: " << commodity_name << endl
 		 << "Description: " << commodity_description << endl
@@ -258,6 +268,8 @@ void PhatbooksTextSession::elicit_commodity()
 	}
 	return;
 }
+
+
 
 void PhatbooksTextSession::wrap_up()
 {
