@@ -70,9 +70,15 @@ private:
 
 	boost::shared_ptr<Menu> m_main_menu;
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
-
+	static std::string const s_application_name;
 
 	/**
+	 * Enter a dialogue with the user for creating a new Commodity, which on
+	 * creation will be persisted to the database.
+	 *
+	 * This function does not throw, except for possibly \c std::bad_alloc
+	 * in extreme conditions.
+	 *
 	 * @todo This is not very user-friendly. The user is asked about
 	 * precision, base commodities and so on. These concepts are not well
 	 * explained, and furhermore, the user shouldn't have to think about
@@ -91,6 +97,7 @@ private:
 	 * actually be a function of the maximum precision of the Decimal type.)
 	 */
 	void elicit_commodity();
+
 
 	void display_balance_sheet();
 	void display_envelopes();

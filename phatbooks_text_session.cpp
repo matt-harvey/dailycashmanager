@@ -44,6 +44,7 @@ using std::string;
 namespace phatbooks
 {
 
+string const PhatbooksTextSession::s_application_name = "Phatbooks";
 
 PhatbooksTextSession::PhatbooksTextSession():
 	m_main_menu(new Menu),
@@ -70,15 +71,18 @@ PhatbooksTextSession::PhatbooksTextSession():
 	m_main_menu->add_item(quit_item);
 }
 
+
 PhatbooksTextSession::~PhatbooksTextSession()
 {
 	wrap_up();
 }
 
+
 bool has_three_letters(string const& s)
 {
 	return s.size() == 3;
 }
+
 
 namespace
 {
@@ -87,6 +91,7 @@ namespace
 		return (s == "y" || s == "n");
 	}
 }
+
 
 int PhatbooksTextSession::run(string const& filename)
 {
@@ -121,6 +126,9 @@ int PhatbooksTextSession::run(string const& filename)
 		cout << "Could not open file \"" << filename << "\"." << endl;
 		return 1;
 	}
+
+	cout << "Welcome to " << s_application_name << "!" << endl;
+
 	m_database_connection->setup();
 	m_main_menu->present_to_user();	
 	return 0;
