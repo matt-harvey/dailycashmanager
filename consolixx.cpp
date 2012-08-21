@@ -99,15 +99,6 @@ get_constrained_user_input
 }
 
 
-
-
-
-
-
-
-
-
-
 TextSession::~TextSession()
 {
 }
@@ -144,7 +135,7 @@ TextSession::Menu::add_item(shared_ptr<MenuItem const> item)
 
 
 TextSession::Menu::Menu():
-	m_recent_choices(3)
+	m_selection_record(1)
 {
 }
 
@@ -152,14 +143,16 @@ TextSession::Menu::Menu():
 boost::shared_ptr<TextSession::MenuItem const>
 TextSession::Menu::last_choice() const
 {
-	if (m_recent_choices.empty())
+	if (m_selection_record.empty())
 	{
 		throw NoMenuHistoryException
 		(	"User has yet to make any selection from this Menu."
 		);
 	}
-	assert (!m_recent_choices.empty());
-	History::const_iterator it = m_recent_choices.end();
+	assert (!m_selection_record.empty());
+	// Do this rather than going straight to begin(), to that this
+	// won't rely on m_last_choice_ctr having a capacity of 1.
+	History::const_iterator it = m_selection_record.end();
 	return *(--it);
 }
 
@@ -212,6 +205,7 @@ TextSession::Menu::present_to_user()
 		{
 			cout << endl << "Enter an option from the above menu: ";
 			string input = get_user_input();
+
 			// See whether input corresponds to any of the item labels,
 			// and invoke the item if it does.
 			// This simple linear search is fast enough for all but
@@ -222,7 +216,7 @@ TextSession::Menu::present_to_user()
 				assert (it < m_items.end());
 				if (input == label_vec[i])
 				{
-					m_recent_choices.push_back(*it);
+					m_selection_record.push_back(*it);  // Remember choice
 					(*it)->invoke();
 					replay_menu = (*it)->repeats_menu();
 					successful = true;

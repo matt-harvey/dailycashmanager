@@ -196,7 +196,7 @@ private:
 		boost::circular_buffer< boost::shared_ptr<MenuItem const> >
 		History;
 
-	History m_recent_choices;
+	History m_selection_record;
 
 };
 

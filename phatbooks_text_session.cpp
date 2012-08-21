@@ -18,7 +18,6 @@
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
 #include <boost/bind.hpp>
-#include <boost/function.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/filesystem.hpp>
@@ -37,7 +36,6 @@ using jewel::DecimalRangeException;
 using sqloxx::InvalidFilename;
 using sqloxx::SQLiteException;
 using boost::bind;
-using boost::function;
 using boost::lexical_cast;
 using boost::shared_ptr;
 using boost::regex;
@@ -89,12 +87,6 @@ PhatbooksTextSession::PhatbooksTextSession():
 PhatbooksTextSession::~PhatbooksTextSession()
 {
 	wrap_up();
-}
-
-
-bool has_three_letters(string const& s)
-{
-	return s.size() == 3;
 }
 
 
@@ -256,7 +248,7 @@ void PhatbooksTextSession::elicit_commodity()
 		 << "Conversion rate to base: " << commodity_multiplier_to_base
 		 << endl << endl;
 	cout << "Proceed with creating this commodity? (y/n) ";
-	string confirmation = get_constrained_user_input
+	string const confirmation = get_constrained_user_input
 	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
 		"Try again, entering \"y\" to create commodity "
 		"or \"n\" to abort: ",
@@ -367,9 +359,9 @@ void PhatbooksTextSession::elicit_account()
 		 << "Commodity: " << commodity_abbreviation << endl
 		 << "Type: " << account_type_name << endl
 		 << "Description: " << account_description << endl
-		 << endl << endl;
+		 << endl;
 	cout << "Proceed with creating this account? (y/n) ";
-	string confirmation = get_constrained_user_input
+	string const confirmation = get_constrained_user_input
 	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
 		"Try again, entering \"y\" to create account "
 		"or \"n\" to abort: ",
@@ -392,8 +384,6 @@ void PhatbooksTextSession::elicit_account()
 		cout << "Account created." << endl;
 	}
 	return;
-
-
 }
 
 

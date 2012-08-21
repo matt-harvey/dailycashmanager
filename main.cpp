@@ -13,6 +13,7 @@
 
 
 #include "phatbooks_text_session.hpp"
+#include <cassert>
 #include <iostream>
 #include <string>
 
@@ -34,13 +35,12 @@ int main(int argc, char** argv)
 	string filename(argv[1]);
 	if (filename.empty())
 	{
-		cout << "FILENAME cannot be empty string." << endl;
+		cout << "FILENAME cannot be empty." << endl;
 		return 1;
 	}
 
 	// The following assumes a text based session.
 	assert (argc == 2 && !filename.empty());
 	PhatbooksTextSession session;
-	int const ret = session.run(filename);
-	return ret;
+	return session.run(filename);
 }
