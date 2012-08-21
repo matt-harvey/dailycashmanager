@@ -1,5 +1,6 @@
 #include "account.hpp"
 #include <string>
+#include <map>
 
 /** \file account.cpp
  *
@@ -13,6 +14,7 @@
 
 
 using std::string;
+using std::map;
 
 namespace phatbooks
 {
@@ -30,6 +32,19 @@ Account::Account
 {
 }
  
+map<string, Account::AccountType>
+Account::account_type_dictionary()
+{
+	map<string, Account::AccountType> ret;
+	ret["Revenues and expenses"] =
+		profit_and_loss;
+	ret["Assets and liabilities"] =
+		balance_sheet;
+	ret["Pure envelopes"] =
+		pure_envelope;
+	return ret;
+}
+
 Account::AccountType
 Account::account_type() const
 {

@@ -98,6 +98,34 @@ private:
 	 */
 	void elicit_commodity();
 
+	/**
+	 * Enter a dialogue with the user for creating a new Account, which on
+	 * creation will be persisted to the database.
+	 *
+	 * This function does not throw, except possibly \c std::bad_alloc in
+	 * extreme conditions.
+	 *
+	 * @todo Verify throwing behaviour.
+	 *
+	 * @todo HIGH PRIORITY Need to ensure there is at least one comodity in
+	 * the database before the user enters this dialogue. The best
+	 * solution for this would be to force the user to create the native
+	 * commodity for the entity as a whole, immediately they create a new
+	 * entity (i.e. new database).
+	 *
+	 * @todo In the part of the implementation where the user is asked for
+	 * a commodity abbreviation, this should really be done by providing a
+	 * list of the available commodities from which to select. This could
+	 * possibly be done using a \c Menu object.
+	 *
+	 * @todo There is some code repetition here, between \c elicit_commodity
+	 * and \c elicit_account. This would best be eliminated by creating
+	 * an intermediate abstraction level, with functions to ask the user
+	 * for e.g. an existing account name string, or an non-existing commodity
+	 * string, etc..
+	 */
+	void elicit_account();
+
 
 	void display_balance_sheet();
 	void display_envelopes();

@@ -14,6 +14,7 @@
 
 #include "general_typedefs.hpp"
 #include <string>
+#include <map>
 
 namespace phatbooks
 {
@@ -31,6 +32,18 @@ public:
 		balance_sheet,
 		pure_envelope
 	};
+
+	/**
+	 * Returns a map from string representations of the account
+	 * type names, to AccountType values.
+	 *
+	 * Does not throw except possibly \c std::bad_alloc in extreme
+	 * circumstances.
+	 *
+	 * @todo Verify throwing behaviour.
+	 */
+	static std::map<std::string, Account::AccountType>
+	account_type_dictionary();
 
 	/**
 	 * Constructor

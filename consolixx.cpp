@@ -143,6 +143,30 @@ TextSession::Menu::add_item(shared_ptr<MenuItem const> item)
 }
 
 
+TextSession::Menu::Menu():
+	m_recent_choices(3)
+{
+}
+
+
+boost::shared_ptr<TextSession::MenuItem const>
+TextSession::Menu::last_choice() const
+{
+	if (m_recent_choices.empty())
+	{
+		throw NoMenuHistoryException
+		(	"User has yet to make any selection from this Menu."
+		);
+	}
+	assert (!m_recent_choices.empty());
+	History::const_iterator it = m_recent_choices.end();
+	return *(--it);
+}
+
+
+
+
+
 void
 TextSession::Menu::present_to_user()
 {
@@ -198,6 +222,7 @@ TextSession::Menu::present_to_user()
 				assert (it < m_items.end());
 				if (input == label_vec[i])
 				{
+					m_recent_choices.push_back(*it);
 					(*it)->invoke();
 					replay_menu = (*it)->repeats_menu();
 					successful = true;

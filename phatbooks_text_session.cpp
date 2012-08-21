@@ -11,17 +11,21 @@
  */
 
 
+#include "account.hpp"
 #include "consolixx.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
 #include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/lambda/lambda.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/regex.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
+#include <map>
 #include <string>
 
 using consolixx::get_user_input;
@@ -33,12 +37,14 @@ using jewel::DecimalRangeException;
 using sqloxx::InvalidFilename;
 using sqloxx::SQLiteException;
 using boost::bind;
+using boost::function;
 using boost::lexical_cast;
 using boost::shared_ptr;
 using boost::regex;
 using boost::regex_match;
 using std::cout;
 using std::endl;
+using std::map;
 using std::string;
 
 namespace phatbooks
@@ -59,6 +65,14 @@ PhatbooksTextSession::PhatbooksTextSession():
 		)
 	);
 	m_main_menu->add_item(elicit_commodity_item);
+
+	shared_ptr<MenuItem> elicit_account_item
+	(	new MenuItem
+		(	"New account",
+			bind(&PhatbooksTextSession::elicit_account, this)
+		)
+	);
+	m_main_menu->add_item(elicit_account_item);
 
 	shared_ptr<MenuItem> quit_item
 	(	new MenuItem
@@ -84,15 +98,6 @@ bool has_three_letters(string const& s)
 }
 
 
-namespace
-{
-	bool is_yes_no(string const& s)
-	{
-		return (s == "y" || s == "n");
-	}
-}
-
-
 int PhatbooksTextSession::run(string const& filename)
 {
 	if (filename.empty())
@@ -105,7 +110,7 @@ int PhatbooksTextSession::run(string const& filename)
 		cout << "File does not exist. "
 		     << "Create file \"" << filename << "\"? (y/n): ";
 		string const response = get_constrained_user_input
-		(	is_yes_no,
+		(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
 			"Try again, entering 'y' to create file, or 'n' to abort: ",
 			false
 		);
@@ -135,7 +140,6 @@ int PhatbooksTextSession::run(string const& filename)
 }
 
 
-
 void PhatbooksTextSession::elicit_commodity()
 {
 	// We need the user's input to populate all these variables
@@ -155,7 +159,8 @@ void PhatbooksTextSession::elicit_commodity()
 			cout << "Abbreviation cannot be empty string. Please try again: ";
 		}
 		else if
-		(	m_database_connection->has_commodity_with_abbreviation(input)
+		(
+			m_database_connection->has_commodity_with_abbreviation(input)
 		)
 		{
 			cout << "A commodity with this abbreviation already exists. "
@@ -252,7 +257,7 @@ void PhatbooksTextSession::elicit_commodity()
 		 << endl << endl;
 	cout << "Proceed with creating this commodity? (y/n) ";
 	string confirmation = get_constrained_user_input
-	(	is_yes_no,
+	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
 		"Try again, entering \"y\" to create commodity "
 		"or \"n\" to abort: ",
 		false
@@ -277,6 +282,119 @@ void PhatbooksTextSession::elicit_commodity()
 	return;
 }
 
+
+// Bleugh! Needed below.
+namespace
+{
+	void do_nothing()
+	{
+		return;
+	}
+}
+
+
+void PhatbooksTextSession::elicit_account()
+{
+	// We need the user's input to populate all these variables
+	string account_name;
+	string commodity_abbreviation;
+	string account_type_name;
+	Account::AccountType account_type;
+	string account_description;
+
+	// Get account name
+	cout << "Enter a name for the account: ";
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		string input = get_user_input();
+		if (input.empty())
+		{
+			cout << "Name cannot be empty string. Please try again: ";
+		}
+		else if (m_database_connection->has_account_named(input))
+		{
+			cout << "An account with this name already exists. "
+			     << "Please try again: ";
+		}
+		else
+		{
+			input_is_valid = true;
+			account_name = input;
+		}
+	}
+
+	// Get commodity abbreviation
+	cout << "Enter the abbreviation of the commodity that will be the "
+	     << "native commodity of this account: ";
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		string input = get_user_input();
+		if (!m_database_connection->has_commodity_with_abbreviation(input))
+		{
+			cout << "There is no commodity with this abbreviation. Please "
+			     << "try again: ";
+		}
+		else
+		{
+			input_is_valid = true;
+			commodity_abbreviation = input;
+		}
+	}
+
+	// Get account type
+	Menu account_type_menu;
+	typedef map<string, Account::AccountType> map_type;
+	map_type dict = Account::account_type_dictionary();
+	for (map_type::const_iterator it = dict.begin(); it != dict.end(); ++it)
+	{
+		shared_ptr<MenuItem> item(new MenuItem(it->first, do_nothing, false));
+		account_type_menu.add_item(item);
+	};
+	cout << "What kind of account do you wish to create?" << endl;
+	account_type_menu.present_to_user();
+	account_type_name = account_type_menu.last_choice()->banner();
+	account_type = dict[account_type_name];
+
+	// Get description 
+	cout << "Enter description for new account (or hit enter for no "
+	        "description): ";
+	account_description = get_user_input();
+	
+	// Confirm with user before creating account
+	cout << endl << "You have proposed to create the following account: "
+	     << endl << endl
+	     << "Name: " << account_name << endl
+		 << "Commodity: " << commodity_abbreviation << endl
+		 << "Type: " << account_type_name << endl
+		 << "Description: " << account_description << endl
+		 << endl << endl;
+	cout << "Proceed with creating this account? (y/n) ";
+	string confirmation = get_constrained_user_input
+	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
+		"Try again, entering \"y\" to create account "
+		"or \"n\" to abort: ",
+		false
+	);
+	if (confirmation == "n")
+	{
+		cout << "Account not created." << endl;
+	}
+	else
+	{
+		assert (confirmation == "y");
+		Account acc
+		(	account_name,
+			commodity_abbreviation,
+			account_type,
+			account_description
+		);
+		m_database_connection->store(acc);
+		cout << "Account created." << endl;
+	}
+	return;
+
+
+}
 
 
 void PhatbooksTextSession::wrap_up()

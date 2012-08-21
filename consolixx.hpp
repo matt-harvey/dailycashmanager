@@ -19,6 +19,7 @@
 #include <vector>
 #include <string>
 #include <boost/bind.hpp>
+#include <boost/circular_buffer.hpp>
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -141,6 +142,9 @@ protected:
  * Class representing textual menu of user options
  * This class is not designed to be extended.
  *
+ * When the user selects a MenuItem from the Menu, the selection is
+ * "remembered" in the menu.
+ *
  * @todo Write constructor by which you give the menu a title.
  */
 class TextSession::Menu:
@@ -148,7 +152,7 @@ class TextSession::Menu:
 {
 public:
 
-	// Default destructor is fine.
+   Menu();
    
 	/**
 	 * Add an "item" to the menu.
@@ -171,9 +175,29 @@ public:
 	 */
 	void present_to_user();	
 
+	/**
+	 * @returns the last selected MenuItem.
+	 *
+	 * @throws consolixx::NoMenuHistoryException if the MenuItem doesn't have
+	 * any history yet (i.e. the user has not yet made any selection from
+	 * the menu).
+	 */
+	boost::shared_ptr<MenuItem const> last_choice() const;
+
 private:
-	typedef std::vector< boost::shared_ptr<MenuItem const> > ItemContainer;
+
+	typedef
+		std::vector< boost::shared_ptr<MenuItem const> >
+		ItemContainer;
+
 	ItemContainer m_items;
+
+	typedef
+		boost::circular_buffer< boost::shared_ptr<MenuItem const> >
+		History;
+
+	History m_recent_choices;
+
 };
 
 
@@ -208,7 +232,7 @@ public:
 	 * special label is provided, it must contain at least one non-digit
 	 * character (to avoid possible confusion with automatically generated
 	 * special labels).
-	 *
+	 * 
 	 * @param p_repeats_menu indicates the desired behaviour after the menu
 	 * item has been selected by the user and its callback function
 	 * has finished executing. \c true indicates that the same menu in which

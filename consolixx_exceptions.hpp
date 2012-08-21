@@ -37,6 +37,12 @@ JEWEL_DERIVED_EXCEPTION(MenuItemBannerException, TextUserInterfaceException);
  */
 JEWEL_DERIVED_EXCEPTION(MenuItemLabelException, TextUserInterfaceException);
 
+/**
+ * Exception to be thrown when a Menu object is queried for some previous
+ * user choice, but there is no history stored in the Menu (generally because
+ * the user has not yet made any choices from that Menu).
+ */
+JEWEL_DERIVED_EXCEPTION(NoMenuHistoryException, TextUserInterfaceException);
 
 
 }  // namespace consolixx
