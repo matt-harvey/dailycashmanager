@@ -28,6 +28,20 @@ class Entry;
  * Class to represent accounting journals. An accounting journal will
  * typically comprise two or more accounting entries, plus some
  * "journal level" data such as the date.
+ *
+ * @todo HIGH PRIORITY Resolve design issues. I am confused about
+ * whether Journal objects need to have any in-memory reference
+ * to either Entry objects or Repeater objects. On the one hand,
+ * it would be good if the function for storing a journal in the
+ * database automatically stored all associated entries and
+ * repeaters - and if the function for retrieving a journal
+ * returned a single object containing or referring to all those
+ * journals and repeaters. On the other hand, if the objects are
+ * effectively referring to each other in the database, is it
+ * just adding complexity and entanglement to make them also
+ * refer to each other as in-memory objects? I'm not sure. It's
+ * really important that I work out the cleanest way to manage
+ * all this.
  */
 class Journal
 {
