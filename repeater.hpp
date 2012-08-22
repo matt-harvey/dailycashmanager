@@ -85,7 +85,6 @@ public:
 	);
 
 private:
-	IdType m_draft_journal_id;
 	IntervalType m_interval_type;
 	int m_interval_units;
 	DateType m_next_date;

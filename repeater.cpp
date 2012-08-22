@@ -23,7 +23,6 @@ Repeater::Repeater
 	int p_interval_units,
 	DateType p_next_date
 ):
-	m_draft_journal_id(0),
 	m_interval_type(p_interval_type),
 	m_interval_units(p_interval_units),
 	m_next_date(p_next_date)
