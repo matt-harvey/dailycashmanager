@@ -18,9 +18,11 @@
 #include "entry.hpp"
 #include "repeater.hpp"
 #include <jewel/decimal.hpp>
+#include <boost/shared_ptr.hpp>
 #include <list>
 #include <string>
 
+using boost::shared_ptr;
 using jewel::Decimal;
 using std::list;
 using std::string;
@@ -32,21 +34,24 @@ Journal::Journal(bool p_is_actual, string p_comment):
 	m_is_actual(p_is_actual),
 	m_date((null_date())),
 	m_comment(p_comment),
-	m_entries((list<Entry>()))
+	m_entries(list< shared_ptr<Entry> >()),
+	m_repeaters(list< shared_ptr<Repeater> >())
 {
 }
 
 void
-Journal::add_entry
-(	string const& account_name,
-	string const& entry_comment,
-	Decimal const& p_amount
-)
+Journal::add_entry(shared_ptr<Entry> entry)
 {
-	m_entries.push_back(Entry(account_name, entry_comment, p_amount));
+	m_entries.push_back(entry);
 	return;
 }
 
+void
+Journal::add_repeater(shared_ptr<Repeater> repeater)
+{
+	m_repeaters.push_back(repeater);
+	return;
+}
 
 bool
 Journal::is_posted() const

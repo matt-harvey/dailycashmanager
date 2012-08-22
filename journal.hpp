@@ -13,35 +13,23 @@
 
 
 #include "date.hpp"
-#include "repeater.hpp"
 #include <jewel/decimal.hpp>
+#include <boost/shared_ptr.hpp>
 #include <list>
 #include <string>
+
 
 namespace phatbooks
 {
 
 class Entry;
+class Repeater;
 
 
 /**
  * Class to represent accounting journals. An accounting journal will
  * typically comprise two or more accounting entries, plus some
  * "journal level" data such as the date.
- *
- * @todo HIGH PRIORITY Resolve design issues. I am confused about
- * whether Journal objects need to have any in-memory reference
- * to either Entry objects or Repeater objects. On the one hand,
- * it would be good if the function for storing a journal in the
- * database automatically stored all associated entries and
- * repeaters - and if the function for retrieving a journal
- * returned a single object containing or referring to all those
- * journals and repeaters. On the other hand, if the objects are
- * effectively referring to each other in the database, is it
- * just adding complexity and entanglement to make them also
- * refer to each other as in-memory objects? I'm not sure. It's
- * really important that I work out the cleanest way to manage
- * all this.
  */
 class Journal
 {
@@ -62,20 +50,19 @@ public:
 	Journal(bool p_is_actual = true, std::string p_comment = "");
 
 	/**
-	 * Creates an Entry and adds it to the Journal.
+	 * Add an Entry to the Journal.
 	 *
 	 * @todo Figure out throwing behaviour. Should it check that
 	 * the account exists? Etc. Etc.
-	 *
-	 * @param account_name name of account of added entry
-	 * @param entry_comment Comment ("narration") for entry
-	 * @param p_amount Amount of entry
 	 */
-	void add_entry
-	(	std::string const& account_name,
-		std::string const& entry_comment = "",
-		jewel::Decimal const& p_amount = jewel::Decimal("0")
-	);
+	void add_entry(boost::shared_ptr<Entry> entry);
+
+	/**
+	 * Add a Repeater to the Journal.
+	 *
+	 * @todo figure out throwing behaviour.
+	 */
+	void add_repeater(boost::shared_ptr<Repeater> repeater);
 
 	/**
 	 * @returns \t true if and only if the journal is a posted journal, as
@@ -92,7 +79,8 @@ private:
 	// draft journal (possibly autoposting).
 	DateType m_date;
 	std::string m_comment;
-	std::list<Entry> m_entries;
+	std::list< boost::shared_ptr<Entry> > m_entries;
+	std::list< boost::shared_ptr<Repeater> > m_repeaters;
 };
 
 
