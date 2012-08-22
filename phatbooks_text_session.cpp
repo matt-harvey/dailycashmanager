@@ -13,6 +13,7 @@
 
 #include "account.hpp"
 #include "consolixx.hpp"
+#include "date.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <jewel/decimal.hpp>
@@ -71,6 +72,14 @@ PhatbooksTextSession::PhatbooksTextSession():
 		)
 	);
 	m_main_menu->add_item(elicit_account_item);
+
+	shared_ptr<MenuItem> elicit_journal_item
+	(	new MenuItem
+		(	"Draft a journal",
+			bind(&PhatbooksTextSession::elicit_journal, this)
+		)
+	);
+	m_main_menu->add_item(elicit_journal_item);
 
 	shared_ptr<MenuItem> quit_item
 	(	new MenuItem
@@ -383,6 +392,20 @@ void PhatbooksTextSession::elicit_account()
 		m_database_connection->store(acc);
 		cout << "Account created." << endl;
 	}
+	return;
+}
+
+
+void PhatbooksTextSession::elicit_journal()
+{
+	// We need the user's input to populate all these variables
+	bool journal_is_actual;
+	DateType journal_date;
+	string journal_comment;
+	// We also need to insert Entry objects, and ensure the journal either
+	// balances or is to be a draft journal. If it's draft, we need to create
+	// Repeater objects if required.
+# warning unimplemented function
 	return;
 }
 

@@ -28,13 +28,11 @@ using std::string;
 namespace phatbooks
 {
 
-Journal::Journal(bool p_is_actual):
+Journal::Journal(bool p_is_actual, string p_comment):
 	m_is_actual(p_is_actual),
-	m_is_posted(false),
 	m_date((null_date())),
-	m_comment(""),
-	m_entry_list((list<Entry>())),
-	m_repeater_list((list<Repeater>()))
+	m_comment(p_comment),
+	m_entries((list<Entry>()))
 {
 }
 
@@ -45,10 +43,16 @@ Journal::add_entry
 	Decimal const& p_amount
 )
 {
-	m_entry_list.push_back(Entry(account_name, entry_comment, p_amount));
+	m_entries.push_back(Entry(account_name, entry_comment, p_amount));
 	return;
 }
-	
+
+
+bool
+Journal::is_posted() const
+{
+	return m_date != null_date();
+}
 
 
 

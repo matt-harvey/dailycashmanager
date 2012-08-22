@@ -126,6 +126,17 @@ private:
 	 */
 	void elicit_account();
 
+	/**
+	 * Enter a dialogue with the user for creating a new Journal, which on
+	 * creation will be persisted to the database.
+	 *
+	 * This function does not throw, except possibly \c std::bad_alloc in
+	 * extreme conditions.
+	 *
+	 * @todo Verify throwing behaviour
+	 */
+	void elicit_journal();
+
 
 	void display_balance_sheet();
 	void display_envelopes();

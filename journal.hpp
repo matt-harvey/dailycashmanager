@@ -13,6 +13,7 @@
 
 
 #include "date.hpp"
+#include "repeater.hpp"
 #include <jewel/decimal.hpp>
 #include <list>
 #include <string>
@@ -21,7 +22,6 @@ namespace phatbooks
 {
 
 class Entry;
-class Repeater;
 
 
 /**
@@ -45,7 +45,7 @@ public:
 	 *
 	 * Does not throw.
 	 */
-	Journal(bool p_is_actual = true);
+	Journal(bool p_is_actual = true, std::string p_comment = "");
 
 	/**
 	 * Creates an Entry and adds it to the Journal.
@@ -63,14 +63,22 @@ public:
 		jewel::Decimal const& p_amount = jewel::Decimal("0")
 	);
 
+	/**
+	 * @returns \t true if and only if the journal is a posted journal, as
+	 * opposed to a draft journal.
+	 *
+	 * Does not throw.
+	 */
+	bool is_posted() const;
+
 
 private:
 	bool m_is_actual;
-	bool m_is_posted;
-	DateType m_date;	
+	// if m_date == null_date(), this means it's not posted, but is a
+	// draft journal (possibly autoposting).
+	DateType m_date;
 	std::string m_comment;
-	std::list<Entry> m_entry_list;
-	std::list<Repeater> m_repeater_list;
+	std::list<Entry> m_entries;
 };
 
 

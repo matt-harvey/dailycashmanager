@@ -13,8 +13,7 @@
 
 
 #include "date.hpp"
-#include "journal.hpp"
-#include <boost/shared_ptr.hpp>
+
 
 namespace phatbooks
 {
@@ -25,6 +24,11 @@ namespace phatbooks
  * itself to await the next firing.
  *
  * @todo Write firing method.
+ *
+ * @todo The Repeater currently has not mechanism for associating itself
+ * with a journal. It should be associated using a journal_id, rather than
+ * having a link with the object. The journal_id in question will only ever
+ * refer to a journal stored in the draft_journals table.
  *
  * @todo Write a method somewhere in either the session-level code, or in
  * PhatbooksDatabaseConnection, that loads Repeater objects from the database,
@@ -75,14 +79,13 @@ public:
 	 * This constructor does not throw.
 	 */
 	Repeater
-	(	boost::shared_ptr<Journal> p_journal,
-		IntervalType p_interval_type,
+	(	IntervalType p_interval_type,
 		int p_interval_units,
 		DateType p_next_date
 	);
 
 private:
-	boost::shared_ptr<Journal> m_journal;
+	IdType m_draft_journal_id;
 	IntervalType m_interval_type;
 	int m_interval_units;
 	DateType m_next_date;
