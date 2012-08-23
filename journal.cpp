@@ -40,6 +40,20 @@ Journal::Journal(bool p_is_actual, string p_comment):
 }
 
 void
+Journal::set_whether_actual(bool is_actual)
+{
+	m_is_actual = is_actual;
+	return;
+}
+
+void
+Journal::set_comment(string const& comment)
+{
+	m_comment = comment;
+	return;
+}
+
+void
 Journal::add_entry(shared_ptr<Entry> entry)
 {
 	m_entries.push_back(entry);

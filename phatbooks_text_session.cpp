@@ -14,10 +14,11 @@
 #include "account.hpp"
 #include "consolixx.hpp"
 #include "date.hpp"
+#include "entry.hpp"
+#include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <jewel/decimal.hpp>
-#include <jewel/decimal_exceptions.hpp>
 #include <boost/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/numeric/conversion/cast.hpp>
@@ -30,10 +31,9 @@
 
 using consolixx::get_user_input;
 using consolixx::get_constrained_user_input;
+using consolixx::get_decimal_from_user;
 using consolixx::TextSession;
 using jewel::Decimal;
-using jewel::DecimalFromStringException;
-using jewel::DecimalRangeException;
 using sqloxx::InvalidFilename;
 using sqloxx::SQLiteException;
 using boost::bind;
@@ -75,7 +75,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 
 	shared_ptr<MenuItem> elicit_journal_item
 	(	new MenuItem
-		(	"Draft a journal",
+		(	"New transaction",
 			bind(&PhatbooksTextSession::elicit_journal, this)
 		)
 	);
@@ -224,28 +224,7 @@ void PhatbooksTextSession::elicit_commodity()
 	// Get multiplier to base
 	cout << "Enter rate by which this commodity should be multiplied in order"
 	     << " to convert it to the base commodity for this entity: ";
-	for (bool input_is_valid = false; !input_is_valid; )
-	{
-		try
-		{
-			commodity_multiplier_to_base = Decimal(get_user_input());
-			input_is_valid = true;
-		}
-		catch (DecimalFromStringException&)
-		{
-			assert (commodity_multiplier_to_base == Decimal("0"));
-			assert (!input_is_valid);
-			cout << "Please try again, entering a decimal number, "
-			     << "(e.g. \"1.343\"): ";
-		}
-		catch (DecimalRangeException&)
-		{
-			assert (commodity_multiplier_to_base == Decimal("0"));
-			assert (!input_is_valid);
-			cout << "This conversion rate is too large or too small to be "
-			     << "safely handled. Please try again: ";
-		}
-	}
+	commodity_multiplier_to_base = get_decimal_from_user();
 
 	// Confirm with user before creating commodity
 	cout << endl << "You have proposed to create the following commodity: "
@@ -400,12 +379,148 @@ void PhatbooksTextSession::elicit_journal()
 {
 	// We need the user's input to populate all these variables
 	bool journal_is_actual;
-	DateType journal_date;
 	string journal_comment;
+	DateType journal_date;
+	Journal journal;
+
+	// Find out what kind of journal this is going to be
+	// Do we want to have them all be general journals?
+	// Note all P&L entries should be done on the basis of
+	// envelope effect...
+	// Record an expenditure transaction
+	// Record a revenue transaction
+	// Record a transfer between asset or liabilities
+	// Transfer money between budgeting envelopes
+	
+	Menu transaction_menu;
+
+	shared_ptr<MenuItem> expenditure_selection
+	(	new MenuItem
+		(	"Record an expenditure transaction",
+			do_nothing,
+			false
+		)
+	);
+	transaction_menu.add_item(expenditure_selection);
+	
+	shared_ptr<MenuItem> revenue_selection
+	(	new MenuItem
+		(	"Record a revenue transaction",
+			do_nothing,
+			false
+		)
+	);
+	transaction_menu.add_item(revenue_selection);
+
+	shared_ptr<MenuItem> balance_sheet_transfer_selection
+	(	new MenuItem
+		(	"Record a transfer between assets or liabilities",
+			do_nothing,
+			false
+		)
+	);
+	transaction_menu.add_item(balance_sheet_transfer_selection);
+	
+	shared_ptr<MenuItem> envelope_transaction_selection
+	(	new MenuItem
+		(	"Transfer money between budgeting envelopes",
+			do_nothing,
+			false
+		)
+	);
+	transaction_menu.add_item(envelope_transaction_selection);
+
+	transaction_menu.present_to_user();
+	shared_ptr<MenuItem const> const transaction_type =
+		transaction_menu.last_choice();
+
+	// Determine whether journal is actual
+	journal.set_whether_actual
+	(	transaction_type != envelope_transaction_selection
+	);
+
+	// Get journal comment
+	cout << "Enter a comment describing the transaction (or Enter to "
+	        "leave blank): ";
+	journal.set_comment(get_user_input());
+
+	// Get amount
+	string account_prompt;
+	string amount_prompt;
+	if (transaction_type == expenditure_selection)
+	{
+		account_prompt = "account from which money was spent";
+		amount_prompt = "spent";
+	}
+	else if (transaction_type == revenue_selection)
+	{
+		account_prompt = "account into which funds were deposited";
+		amount_prompt = "earned";
+	}
+	else if (transaction_type == balance_sheet_transfer_selection)
+	{
+		account_prompt = "destination account";
+		amount_prompt = "transferred";
+	}
+	else
+	{
+		assert (transaction_type == envelope_transaction_selection);
+		account_prompt = "envelope you wish to top up";
+		amount_prompt = "to transfer";
+	}
+	
+	// Get primary entry account
+	string primary_entry_account_name;
+	cout << "Enter name of " << account_prompt << ": ";
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		string input = get_user_input();
+		if (!m_database_connection->has_account_named(input))
+		{
+			cout << "There is no account named " << input
+			     << ". Please try again: ";
+		}
+		else
+		{
+			input_is_valid = true;
+			primary_entry_account_name = input;
+		}
+	}
+
+	// Get primary entry amount
+#warning amount should be requested in terms of the primary account
+	cout << "Enter total amount " << amount_prompt << ": ";
+	Decimal primary_entry_amount = get_decimal_from_user();
+	// This needs to be rounded to the native precision for the
+	// native commodity of the primary account. Note the rounding operation
+	// can throw, and this will need to be handled.
+
+	// Get primary entry comment
+	cout << "Line specific comment (optional): ";
+	string primary_entry_comment = get_user_input();
+
+	shared_ptr<Entry> primary_entry
+	(	new Entry
+		(	primary_entry_account_name,
+			primary_entry_comment,
+			primary_entry_amount
+		)
+	);
+
+	journal.add_entry(primary_entry);
+
+	// Get other account/s
+	
+
+
+
 	// We also need to insert Entry objects, and ensure the journal either
 	// balances or is to be a draft journal. If it's draft, we need to create
 	// Repeater objects if required.
-# warning unimplemented function
+	// Note there are complications when a single Journal involves multiple
+	// commodities.
+				
+
 	return;
 }
 

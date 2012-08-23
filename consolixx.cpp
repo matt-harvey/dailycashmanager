@@ -13,6 +13,8 @@
 
 #include "consolixx.hpp"
 #include "consolixx_exceptions.hpp"
+#include <jewel/decimal.hpp>
+#include <jewel/decimal_exceptions.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
@@ -26,6 +28,9 @@
 #include <string>
 #include <vector>
 
+using jewel::Decimal;
+using jewel::DecimalFromStringException;
+using jewel::DecimalRangeException;
 using boost::bind;
 using boost::function;
 using boost::shared_ptr;
@@ -98,6 +103,32 @@ get_constrained_user_input
 	while (true);
 }
 
+
+Decimal get_decimal_from_user()
+{
+	Decimal ret("0");
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		try
+		{
+			ret = Decimal(get_user_input());
+			input_is_valid = true;
+		}
+		catch (DecimalFromStringException&)
+		{
+			assert (!input_is_valid);
+			cout << "Please try again, entering a decimal number, "
+			     << "(e.g. \"1.343\"): ";
+		}
+		catch (DecimalRangeException&)
+		{
+			assert (!input_is_valid);
+			cout << "The number you entered is too large or too small to be "
+			     << "safely handled. Please try again: ";
+		}
+	}
+	return ret;
+}
 
 TextSession::~TextSession()
 {

@@ -50,6 +50,21 @@ public:
 	Journal(bool p_is_actual = true, std::string p_comment = "");
 
 	/**
+	 * Change whether Journal is actual or budget
+	 * 
+	 * Does not throw.
+	 */
+	void set_whether_actual(bool is_actual);
+
+	/**
+	 * Set comment for journal
+	 *
+	 * Does not throw, except possibly \c std::bad_alloc in extreme
+	 * circumstances.
+	 */
+	void set_comment(std::string const& comment);
+
+	/**
 	 * Add an Entry to the Journal.
 	 *
 	 * @todo Figure out throwing behaviour. Should it check that

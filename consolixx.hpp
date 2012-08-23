@@ -13,6 +13,7 @@
  */
 
 
+#include <jewel/decimal.hpp>
 #include <istream>
 #include <iostream>
 #include <ostream>
@@ -31,7 +32,6 @@
  */
 namespace consolixx
 {
-
 
 
 
@@ -114,7 +114,13 @@ std::string get_constrained_user_input
 	std::ostream& os = std::cout
 );
 
-
+/**
+ * @returns a jewel::Decimal from user's input. User is reprompted until
+ * a valid Decimal is entered.
+ *
+ * Does not throw (except possibly std::bad_alloc in extreme conditions).
+ */
+jewel::Decimal get_decimal_from_user();
 
 // CLASS DEFINITIONS
 

@@ -107,6 +107,14 @@ private:
 	 *
 	 * @todo Verify throwing behaviour.
 	 *
+	 * @todo Most users think of "account" as meaning "bank account". The
+	 * wording in the dialogue that the user sees here should possibly
+	 * change to reflect this.
+	 *
+	 * @todo We need to stop the user from selecting a native currency
+	 * for P&L accounts that is not the native currency of the entity
+	 * itself.
+	 *
 	 * @todo HIGH PRIORITY Need to ensure there is at least one comodity in
 	 * the database before the user enters this dialogue. The best
 	 * solution for this would be to force the user to create the native
@@ -123,6 +131,11 @@ private:
 	 * an intermediate abstraction level, with functions to ask the user
 	 * for e.g. an existing account name string, or an non-existing commodity
 	 * string, etc..
+	 *
+	 * @todo Consider making account names case-insensitive.
+	 *
+	 * @todo We need to stop the user from assigning a currency other
+	 * than the entity's native currency to profit and loss accounts.
 	 */
 	void elicit_account();
 
@@ -134,6 +147,15 @@ private:
 	 * extreme conditions.
 	 *
 	 * @todo Verify throwing behaviour
+	 * 
+	 * @todo We need to stop users from entering this dialogue before
+	 * any accounts have been created.
+	 *
+	 * @todo We need to ask the user for an amount in the native currency of
+	 * the appropriate account.
+	 *
+	 * @todo Users should be presented with a list of accounts to choose
+	 * from.
 	 */
 	void elicit_journal();
 
