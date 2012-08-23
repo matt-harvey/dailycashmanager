@@ -12,9 +12,11 @@
  */
 
 
-#include "account.hpp"
-#include "commodity.hpp"
 #include "database_connection.hpp"
+
+// Forward declarations
+class Account;
+class Commodity;
 
 namespace phatbooks
 {
@@ -135,6 +137,12 @@ public:
 	 * stored in the database.
 	 */
 	bool has_commodity_named(std::string const& p_name);
+
+	/**
+	 * @returns the Commodity of a given account
+	 *
+	 * @todo Determine and document throwing behaviour
+	 */
 
 	/**
 	 * Creates tables required for Phatbooks, and inserts rows
