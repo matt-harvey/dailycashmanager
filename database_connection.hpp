@@ -341,12 +341,11 @@ public:
 	 * 
 	 * @throws ResultIndexOutOfRange if \c index is out of range.
 	 *
-	 * @throws ValueTypeException if the requested column contains type that
+	 * @throws ValueTypeException if the requested column contains a type that
 	 * is incompatible with T.
 	 */
 	template <typename T>
 	T extract(int index);
-
 
 	/**
 	 * Wraps sqlite3_step
@@ -378,10 +377,12 @@ private:
 	DatabaseConnection& m_database_connection;
 
 	/**
-	 * @todo Document this.
-	 * @todo Refine throwing behaviour.
+	 * @parameter_name is the name of a column in the result set.
+	 * 
+	 * @throws NoMatchingColumnException if \c parameter_name does not
+	 * name a column in the result set.
 	 */
-	int parameter_index(std::string const& parameter_name) const;
+	int parameter_index(std::string const& column_name) const;
 
 	/**
 	 * Checks whether a column is available for extraction at
@@ -456,6 +457,7 @@ DatabaseConnection::SQLStatement::extract<std::string>(int index)
 	while (*end != '\0') ++end;
 	return std::string(begin, end);
 }
+
 
 template<typename KeyType>
 inline

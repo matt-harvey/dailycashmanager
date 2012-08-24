@@ -38,13 +38,13 @@ using std::cin;
 using std::cout;
 using std::istream;
 using std::endl;
+using std::getline;
 using std::max;
 using std::ostream;
 using std::ostringstream;
 using std::runtime_error;
 using std::string;
 using std::vector;
-
 
 namespace consolixx
 {

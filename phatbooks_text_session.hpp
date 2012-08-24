@@ -156,6 +156,9 @@ private:
 	 *
 	 * @todo Users should be presented with a list of accounts to choose
 	 * from.
+	 *
+	 * @todo This function is enormous. It needs to be tidied and broken
+	 * into sensible chunks.
 	 */
 	void elicit_journal();
 

@@ -13,12 +13,14 @@
 
 #include "account.hpp"
 #include "consolixx.hpp"
+#include "commodity.hpp"
 #include "date.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <jewel/decimal.hpp>
+#include <jewel/decimal_exceptions.hpp>
 #include <boost/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/numeric/conversion/cast.hpp>
@@ -34,6 +36,7 @@ using consolixx::get_constrained_user_input;
 using consolixx::get_decimal_from_user;
 using consolixx::TextSession;
 using jewel::Decimal;
+using jewel::DecimalRangeException;
 using sqloxx::InvalidFilename;
 using sqloxx::SQLiteException;
 using boost::bind;
@@ -396,7 +399,7 @@ void PhatbooksTextSession::elicit_journal()
 
 	shared_ptr<MenuItem> expenditure_selection
 	(	new MenuItem
-		(	"Record an expenditure transaction",
+		(	"Expenditure transaction",
 			do_nothing,
 			false
 		)
@@ -405,7 +408,7 @@ void PhatbooksTextSession::elicit_journal()
 	
 	shared_ptr<MenuItem> revenue_selection
 	(	new MenuItem
-		(	"Record a revenue transaction",
+		(	"Revenue transaction",
 			do_nothing,
 			false
 		)
@@ -414,7 +417,7 @@ void PhatbooksTextSession::elicit_journal()
 
 	shared_ptr<MenuItem> balance_sheet_transfer_selection
 	(	new MenuItem
-		(	"Record a transfer between assets or liabilities",
+		(	"Transfer between assets or liabilities",
 			do_nothing,
 			false
 		)
@@ -423,7 +426,7 @@ void PhatbooksTextSession::elicit_journal()
 	
 	shared_ptr<MenuItem> envelope_transaction_selection
 	(	new MenuItem
-		(	"Transfer money between budgeting envelopes",
+		(	"Transfer between budgeting envelopes",
 			do_nothing,
 			false
 		)
@@ -488,15 +491,42 @@ void PhatbooksTextSession::elicit_journal()
 	}
 
 	// Get primary entry amount
-#warning amount should be requested in terms of the primary account
-	cout << "Enter total amount " << amount_prompt << ": ";
-	Decimal primary_entry_amount = get_decimal_from_user();
-	// This needs to be rounded to the native precision for the
-	// native commodity of the primary account. Note the rounding operation
-	// can throw, and this will need to be handled.
-
+	Commodity primary_commodity =
+		m_database_connection->commodity_for_account_named
+		(	primary_entry_account_name
+		);
+	Decimal primary_entry_amount;
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		cout << "Enter amount " << amount_prompt << " (in units of "
+			 << primary_commodity.abbreviation() << "): ";
+		primary_entry_amount = get_decimal_from_user();
+		Decimal::places_type const initial_precision =
+			primary_entry_amount.places();
+		try
+		{
+			primary_entry_amount = jewel::round
+			(	primary_entry_amount, primary_commodity.precision()
+			);
+			input_is_valid = true;
+			if (primary_entry_amount.places() < initial_precision)
+			{
+				cout << "Amount rounded to " << primary_entry_amount
+				     << "." << endl;
+			}
+		}
+		catch (DecimalRangeException&)
+		{
+			cout << "The number you entered cannot be safely"
+				 << " rounded to the precision required for "
+				 << primary_commodity.name() << ". Please try again."
+				 << endl;
+			assert (!input_is_valid);
+		}
+	}
+	
 	// Get primary entry comment
-	cout << "Line specific comment (optional): ";
+	cout << "Line specific comment (or Enter for no comment): ";
 	string primary_entry_comment = get_user_input();
 
 	shared_ptr<Entry> primary_entry
