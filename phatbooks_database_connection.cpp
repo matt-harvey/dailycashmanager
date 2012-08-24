@@ -22,12 +22,15 @@
 #include "sqloxx_exceptions.hpp"
 #include <sqlite3.h>
 #include <stdexcept>
+#include <boost/bimap.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <iostream>
 #include <string>
 
+
+using boost::bimap;
 using boost::numeric_cast;
 using jewel::Decimal;
 using sqloxx::DatabaseConnection;
@@ -163,6 +166,29 @@ PhatbooksDatabaseConnection::has_account_named(string const& p_name)
 	return statement.step();
 }
 
+bimap<Account::AccountType, string>
+PhatbooksDatabaseConnection::account_types()
+{
+	typedef bimap<Account::AccountType, string> return_type;
+	return_type ret;
+	SQLStatement statement
+	(	*this,
+		"select account_type_id, name from account_types order "
+		"by account_type_id"
+	);
+	while (statement.step())
+	{
+		Account::AccountType acctype = static_cast<Account::AccountType>
+		(	statement.extract<IdType>(0)
+		);
+		string accname = statement.extract<string>(1);
+		ret.insert(return_type::value_type(acctype, accname));
+	}
+	return ret;
+}
+
+
+
 bool
 PhatbooksDatabaseConnection::has_commodity_with_abbreviation
 (	string const& p_abbreviation
@@ -262,9 +288,11 @@ PhatbooksDatabaseConnection::setup()
 
 		// Values inserted into account_types here must correspond
 		// with AccountType enum defined Account class.
-		"insert into account_types(name) values('profit and loss');"
-		"insert into account_types(name) values('balance sheet');"
-		"insert into account_types(name) values('pure envelope');"
+		"insert into account_types(name) values('Asset');"
+		"insert into account_types(name) values('Liability');"
+		"insert into account_types(name) values('Revenue category');"
+		"insert into account_types(name) values('Expense category');"
+		"insert into account_types(name) values('Pure envelope');"
 		"create table interval_types"
 		"("
 			"interval_type_id integer primary key autoincrement, "

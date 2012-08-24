@@ -12,11 +12,16 @@
  */
 
 
+#include "account.hpp"
 #include "database_connection.hpp"
+#include <boost/bimap.hpp>
+#include <string>
+
 
 // Forward declarations
 class Account;
 class Commodity;
+
 
 namespace phatbooks
 {
@@ -125,6 +130,14 @@ public:
 	 * circumstances in which an exception might be thrown.
 	 */
 	bool has_account_named(std::string const& p_name);
+
+	/**
+	 * @returns a boost::bimap from AccountType to string, giving the
+	 * string name for each AccountType.
+	 *
+	 * @todo Determine and document throwing behaviour.
+	 */
+	boost::bimap<Account::AccountType, std::string> account_types();
 
 	/**
 	 * @returns \c true if and only if \c p_abbreviation is the abbreviation

@@ -31,19 +31,7 @@ Account::Account
 	m_description(p_description)
 {
 }
- 
-map<string, Account::AccountType>
-Account::account_type_dictionary()
-{
-	map<string, Account::AccountType> ret;
-	ret["Revenues and expenses"] =
-		profit_and_loss;
-	ret["Assets and liabilities"] =
-		balance_sheet;
-	ret["Pure envelopes"] =
-		pure_envelope;
-	return ret;
-}
+
 
 Account::AccountType
 Account::account_type() const

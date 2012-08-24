@@ -28,22 +28,12 @@ public:
 	{
 		// enum order is significant, as the database contains
 		// a table with primary keys in this order
-		profit_and_loss = 1,
-		balance_sheet,
+		revenue = 1,
+		expense,
+		asset,
+		liability,
 		pure_envelope
 	};
-
-	/**
-	 * Returns a map from string representations of the account
-	 * type names, to AccountType values.
-	 *
-	 * Does not throw except possibly \c std::bad_alloc in extreme
-	 * circumstances.
-	 *
-	 * @todo Verify throwing behaviour.
-	 */
-	static std::map<std::string, Account::AccountType>
-	account_type_dictionary();
 
 	/**
 	 * Constructor
@@ -52,7 +42,7 @@ public:
 	Account
 	(	std::string p_name,
 		std::string p_commodity_abbreviation,
-		AccountType p_account_type = profit_and_loss,
+		AccountType p_account_type = asset,
 		std::string p_description = ""
 	);
 

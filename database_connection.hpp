@@ -174,6 +174,9 @@ protected:
 	 * corresponds to the current SQLite error code for the connection. Any
 	 * thrown exception will be an instance of class that is, or extends,
 	 * \c SQLiteException.
+	 *
+	 * @todo If error code is SQLITE_DONE or SQLITE_ROWS, this throws
+	 * SQLiteUnknownErrorCode. Improve this behaviour.
 	 */
 	void check_ok();
 
@@ -410,6 +413,9 @@ private:
 	 * Check code is SQLITE_OK and if not finalize statement and
 	 * throw SQLiteException or derivative corresponding to the SQLite
 	 * error code.
+	 *
+	 * @throw If error code is SQLITE_DONE or SQLITE_ROWS then this
+	 * throws SQLiteUnknownErrorCode. Improve this behaviour.
 	 */
 	void check_ok();
 

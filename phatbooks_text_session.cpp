@@ -21,6 +21,7 @@
 #include "sqloxx_exceptions.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
+#include <boost/bimap.hpp>
 #include <boost/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/numeric/conversion/cast.hpp>
@@ -39,6 +40,7 @@ using jewel::Decimal;
 using jewel::DecimalRangeException;
 using sqloxx::InvalidFilename;
 using sqloxx::SQLiteException;
+using boost::bimap;
 using boost::bind;
 using boost::lexical_cast;
 using boost::shared_ptr;
@@ -326,17 +328,23 @@ void PhatbooksTextSession::elicit_account()
 
 	// Get account type
 	Menu account_type_menu;
-	typedef map<string, Account::AccountType> map_type;
-	map_type dict = Account::account_type_dictionary();
-	for (map_type::const_iterator it = dict.begin(); it != dict.end(); ++it)
+	typedef bimap<Account::AccountType, string> bimap_type;
+	bimap_type account_type_info = m_database_connection->account_types();
+	for
+	(	bimap_type::iterator it = account_type_info.begin();
+		it != account_type_info.end();
+		++it
+	)
 	{
-		shared_ptr<MenuItem> item(new MenuItem(it->first, do_nothing, false));
+		shared_ptr<MenuItem> item
+		(	new MenuItem(it->right, do_nothing, false)
+		);
 		account_type_menu.add_item(item);
 	};
 	cout << "What kind of account do you wish to create?" << endl;
 	account_type_menu.present_to_user();
 	account_type_name = account_type_menu.last_choice()->banner();
-	account_type = dict[account_type_name];
+	account_type = account_type_info.right.at(account_type_name);
 
 	// Get description 
 	cout << "Enter description for new account (or hit enter for no "
@@ -390,10 +398,6 @@ void PhatbooksTextSession::elicit_journal()
 	// Do we want to have them all be general journals?
 	// Note all P&L entries should be done on the basis of
 	// envelope effect...
-	// Record an expenditure transaction
-	// Record a revenue transaction
-	// Record a transfer between asset or liabilities
-	// Transfer money between budgeting envelopes
 	
 	Menu transaction_menu;
 
@@ -447,7 +451,7 @@ void PhatbooksTextSession::elicit_journal()
 	        "leave blank): ";
 	journal.set_comment(get_user_input());
 
-	// Get amount
+	// Set certain "prompt words"
 	string account_prompt;
 	string amount_prompt;
 	if (transaction_type == expenditure_selection)
@@ -482,6 +486,7 @@ void PhatbooksTextSession::elicit_journal()
 		{
 			cout << "There is no account named " << input
 			     << ". Please try again: ";
+			assert (!input_is_valid);
 		}
 		else
 		{
@@ -490,7 +495,7 @@ void PhatbooksTextSession::elicit_journal()
 		}
 	}
 
-	// Get primary entry amount
+	// Get primary entry amnount
 	Commodity primary_commodity =
 		m_database_connection->commodity_for_account_named
 		(	primary_entry_account_name
@@ -519,7 +524,7 @@ void PhatbooksTextSession::elicit_journal()
 		{
 			cout << "The number you entered cannot be safely"
 				 << " rounded to the precision required for "
-				 << primary_commodity.name() << ". Please try again."
+				 << primary_commodity.abbreviation() << ". Please try again."
 				 << endl;
 			assert (!input_is_valid);
 		}
@@ -540,7 +545,7 @@ void PhatbooksTextSession::elicit_journal()
 	journal.add_entry(primary_entry);
 
 	// Get other account/s
-	
+	//
 
 
 
