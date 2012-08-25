@@ -14,6 +14,7 @@
 
 
 #include "account.hpp"
+#include "account_storage_manager.hpp"
 #include "commodity.hpp"
 #include "commodity_storage_manager.hpp"
 #include "entry.hpp"
@@ -266,63 +267,32 @@ PhatbooksDatabaseConnection::setup()
 
 	// Create the tables
 	JEWEL_DEBUG_LOG << "Setting up Phatbooks tables." << endl;
+
+
+	execute_sql("begin transaction");
+
+	execute_sql("create table booleans(representation integer primary key)");
+	execute_sql("insert into booleans(representation) values(0)");
+	execute_sql("insert into booleans(representation) values(1)");
+
+	setup_tables<Commodity>();
+
+	setup_tables<Account>();	
+
 	execute_sql
-	(	"begin transaction; "
-
-		// Boolean values to act as foreign key constraint for other
-		// table columns that must be 0 or 1.
-		"create table booleans"
-		"("
-			"representation integer primary key"
-		"); "
-		"insert into booleans(representation) values(0); "
-		"insert into booleans(representation) values(1); "
-
-		"create table commodities"
-		"("
-			"commodity_id integer primary key autoincrement, "
-			"abbreviation text not null unique, "
-			"name text unique, "
-			"description text, "
-			"precision integer default 2 not null, "
-			"multiplier_to_base_intval integer not null, "
-			"multiplier_to_base_places integer not null"
-		"); "
-
-		"create table account_types"
-		"("
-			"account_type_id integer primary key autoincrement, "
-			"name text not null unique"
-		"); "
-
-		// Values inserted into account_types here must correspond
-		// with AccountType enum defined Account class.
-		"insert into account_types(name) values('Asset');"
-		"insert into account_types(name) values('Liability');"
-		"insert into account_types(name) values('Revenue category');"
-		"insert into account_types(name) values('Expense category');"
-		"insert into account_types(name) values('Pure envelope');"
+	(
 		"create table interval_types"
 		"("
 			"interval_type_id integer primary key autoincrement, "
-			"name text not null"
+			"name text unique not null"
 		"); "
-
+		
 		// Values inserted into interval_types must correspond with
 		// IntervalType enum defined in Repeater class.
 		"insert into interval_types(name) values('days'); "
 		"insert into interval_types(name) values('weeks'); "
 		"insert into interval_types(name) values('months'); "
 		"insert into interval_types(name) values('month ends'); "
-
-		"create table accounts"
-		"("
-			"account_id integer primary key autoincrement, "
-			"account_type_id not null references account_types, "
-			"name text not null unique, "
-			"description text, "
-			"commodity_id references commodities"
-		"); "
 
 		"create table draft_journals"
 		"("

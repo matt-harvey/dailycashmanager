@@ -16,6 +16,10 @@ class DatabaseConnection;
  *
  * This class should be specialized for T where you want objects of
  * type T to be managed in this way.
+ *
+ * @todo Implement this for all the phatbooks business object classes.
+ * This will also enable a simplification of a lot of the code in
+ * PhatbooksDatabaseConnection.
  * 
  * @todo Documentation, testing, everything...
  *
@@ -31,10 +35,8 @@ class StorageManager
 public:
 	StorageManager(DatabaseConnection& p_database_connection);
 	void save(T const& obj);
-	T load(Key key);
-	static void setup_table();
-	static std::string table_name();
-	static std::string key_name();
+	T load(Key const& key);
+	void setup_tables();
 private:
 	DatabaseConnection& m_database_connection;
 

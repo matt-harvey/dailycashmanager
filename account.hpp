@@ -14,7 +14,7 @@
 
 #include "general_typedefs.hpp"
 #include <string>
-#include <map>
+#include <vector>
 
 namespace phatbooks
 {
@@ -27,13 +27,21 @@ public:
 	enum AccountType
 	{
 		// enum order is significant, as the database contains
-		// a table with primary keys in this order
+		// a table with primary keys in this order - see
+		// account_storage_manager.hpp
 		revenue = 1,
 		expense,
 		asset,
 		liability,
 		pure_envelope
 	};
+
+	/**
+	 * Returns a vector of account type names, corresponding to the
+	 * AccountType enumerations, and in the same order.
+	 */
+	static std::vector<std::string> account_type_names();
+
 
 	/**
 	 * Constructor

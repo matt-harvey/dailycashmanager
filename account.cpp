@@ -1,6 +1,6 @@
 #include "account.hpp"
 #include <string>
-#include <map>
+#include <vector>
 
 /** \file account.cpp
  *
@@ -14,7 +14,7 @@
 
 
 using std::string;
-using std::map;
+using std::vector;
 
 namespace phatbooks
 {
@@ -32,6 +32,17 @@ Account::Account
 {
 }
 
+vector<string>
+Account::account_type_names()
+{
+	vector<string> ret;
+	ret.push_back("Asset");
+	ret.push_back("Liability");
+	ret.push_back("Revenue category");
+	ret.push_back("Expense category");
+	ret.push_back("Pure envelope");
+	return ret;
+}
 
 Account::AccountType
 Account::account_type() const

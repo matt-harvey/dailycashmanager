@@ -154,7 +154,19 @@ public:
 	void open(boost::filesystem::path const& filepath);	
 
 	/**
-	 * If \c T has a specialised class \c StorageManager<T> defined, then
+	 * If StorageManager<T> has been specialised for T, then
+	 * this template causes a table to be created for the storage
+	 * of objects of type T, and possibly some other code executed according
+	 * to what is provided for in the StorageManager<T> setup_tables() method.
+	 *
+	 * @todo Determine and document throwing behavior.
+	 */
+	template <typename T>
+	void setup_tables();
+
+
+	/**
+	 * If StorageManager<T> has been specialised for T, then
 	 * this template provides a function for an instance \c obj of
 	 * \c T to be stored in the database.
 	 * 
@@ -168,7 +180,7 @@ public:
 	void save(T const& obj);
 
 	/**
-	 * If \c T has a specialised class \c StorageManager<T> defined, then
+	 * If StorageManager<T> has been specialised for T, then
 	 * this template provides a function for an instance of \c T to be loaded
 	 * and returned by the function by looking into the database using \c key
 	 * as a key.
@@ -181,7 +193,7 @@ public:
 	 */
 	template <typename T>
 	T load(typename T::Key const& key);
-	
+
 	/**
 	 * Wrapper class for sqlite_stmt*.
 	 *
@@ -198,6 +210,18 @@ public:
 
 protected:
 
+	/**
+	 * Executes a string on the database connection.
+	 * This should be used only where the developer has complete
+	 * control of the string being passed, to prevent SQL injection
+	 * attacks. Generally, the functions provided by SQLStatement should
+	 * be the preferred means for building and executing SQL statements.
+	 *
+	 * @throws SQLiteException or some exception inheriting thereof, whenever
+	 * there is any kind of error executing the statement.
+	 */
+	void execute_sql(std::string const& str);
+
 
 	/**
 	 * If the database connection is in an error state recognized by SQLite,
@@ -211,18 +235,6 @@ protected:
 	 * SQLiteUnknownErrorCode. Improve this behaviour.
 	 */
 	void check_ok();
-
-	/**
-	 * Executes a string on the database connection.
-	 * This should be used only where the developer has complete
-	 * control of the string being passed, to prevent SQL injection
-	 * attacks. Generally, the functions provided by SQLStatement should
-	 * be the preferred means for building and executing SQL statements.
-	 *
-	 * @throws SQLiteException or some exception inheriting thereof, whenever
-	 * there is any kind of error executing the statement.
-	 */
-	void execute_sql(std::string const& str);
 
 	/**
 	 * Given the name of a table in the connected database, assuming that
@@ -476,7 +488,14 @@ DatabaseConnection::load(typename T::Key const& key)
 	return sm.load(key);
 }
 
-
+template <typename T>
+inline
+void
+DatabaseConnection::setup_tables()
+{
+	StorageManager<T> sm(*this);
+	sm.setup_tables();
+}
 
 
 template <>
