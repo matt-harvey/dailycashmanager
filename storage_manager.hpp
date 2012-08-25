@@ -1,6 +1,18 @@
 #ifndef GUARD_storage_manager_hpp
 #define GUARD_storage_manager_hpp
 
+/** \file storage_manager.hpp
+ *
+ * \brief Provides template code for managing the storage and retrieval
+ * of object data in and from a sqloxx::DatabaseConnection.
+ *
+ * \author Matthew Harvey
+ * \date 26 Aug 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include <string>
 
 
@@ -31,15 +43,11 @@ class DatabaseConnection;
 template <class T>
 class StorageManager
 {
-	typedef std::string Key;
 public:
-	StorageManager(DatabaseConnection& p_database_connection);
-	void save(T const& obj);
-	T load(Key const& key);
-	void setup_tables();
-private:
-	DatabaseConnection& m_database_connection;
-
+	typedef std::string Key;
+	static void save(T const& obj, DatabaseConnection&);
+	static T load(Key const& key, DatabaseConnection&);
+	static void setup_tables();
 };
 
 

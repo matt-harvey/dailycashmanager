@@ -1,6 +1,17 @@
 #ifndef GUARD_commodity_storage_manager_hpp
 #define GUARD_commodity_storage_manager_hpp
 
+/** \file commodity_storage_manager.hpp
+ *
+ * \brief Provides code for managing the storage and retrieval
+ * of Commodity object data in and from a sqloxx::DatabaseConnection.
+ *
+ * \author Matthew Harvey
+ * \date 26 Aug 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
 #include "commodity.hpp"
 #include "database_connection.hpp"
 #include "storage_manager.hpp"
@@ -22,37 +33,26 @@ namespace sqloxx
 template <>
 class StorageManager<phatbooks::Commodity>
 {
-	typedef std::string Key;
 public:
-	StorageManager(DatabaseConnection& p_database_connection);
-	void save(phatbooks::Commodity const& commodity);
+	typedef std::string Key;
+	static void save(phatbooks::Commodity const& commodity, DatabaseConnection&);
 	/**
 	 * @todo This needs to throw if there is no Commodity
 	 * with this key.
 	 */
-	phatbooks::Commodity load(Key const& abbreviation);
-	void setup_tables();
-private:
-	DatabaseConnection& m_database_connection;
+	static phatbooks::Commodity load(Key const& abbreviation, DatabaseConnection&);
+	static void setup_tables(DatabaseConnection&);
 };
 
 
 inline
-StorageManager<phatbooks::Commodity>::StorageManager
-(	DatabaseConnection& p_database_connection
-):
-	m_database_connection(p_database_connection)
-{
-}
-
-
-inline
 void StorageManager<phatbooks::Commodity>::save
-(	phatbooks::Commodity const& obj
+(	phatbooks::Commodity const& obj,
+	DatabaseConnection& dbc
 )
 {
 	DatabaseConnection::SQLStatement statement
-	(	m_database_connection,
+	(	dbc,
 		"insert into commodities(abbreviation, name, description, precision, "
 		"multiplier_to_base_intval, multiplier_to_base_places) "
 		"values(:abbreviation, :name, :description, :precision, "
@@ -76,11 +76,12 @@ void StorageManager<phatbooks::Commodity>::save
 
 inline
 phatbooks::Commodity StorageManager<phatbooks::Commodity>::load
-(	StorageManager<phatbooks::Commodity>::Key const& abbreviation
+(	StorageManager<phatbooks::Commodity>::Key const& abbreviation,
+	DatabaseConnection& dbc
 )
 {
 	DatabaseConnection::SQLStatement statement
-	(	m_database_connection,
+	(	dbc,
 		"select from commodities abbreviation, name, description, precision, "
 		"multiplier_to_base_intval, multiplier_to_base_places from "
 		"commodities where abbreviation = :p"
@@ -102,10 +103,12 @@ phatbooks::Commodity StorageManager<phatbooks::Commodity>::load
 }
 
 inline
-void StorageManager<phatbooks::Commodity>::setup_tables()
+void StorageManager<phatbooks::Commodity>::setup_tables
+(	DatabaseConnection& dbc
+)
 {
 	DatabaseConnection::SQLStatement statement
-	(	m_database_connection,
+	(	dbc,
 		"create table commodities"
 		"("
 			"commodity_id integer primary key autoincrement, "

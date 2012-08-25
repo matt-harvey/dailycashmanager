@@ -1,6 +1,18 @@
 #ifndef GUARD_account_storage_manager_hpp
 #define GUARD_account_storage_manager_hpp
 
+/** \file account_storage_manager.hpp
+ *
+ * \brief Provides code for managing the storage and retrieval
+ * of Account object data in and from a sqloxx::DatabaseConnection.
+ *
+ * \author Matthew Harvey
+ * \date 26 Aug 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include "account.hpp"
 #include "database_connection.hpp"
 #include "storage_manager.hpp"
@@ -20,36 +32,26 @@ namespace sqloxx
 template <>
 class StorageManager<phatbooks::Account>
 {
-	typedef std::string Key;
 public:
-	StorageManager(DatabaseConnection& p_database_connection);
-	void save(phatbooks::Account const& account);
+	typedef std::string Key;
+	static void save(phatbooks::Account const& account, DatabaseConnection& db);
 	/**
 	 * @todo This needs to throw if there is no Account
 	 * with this key.
 	 */
-	phatbooks::Account load(Key const& name);
-	void setup_tables();
-private:
-	DatabaseConnection& m_database_connection;
+	static phatbooks::Account load(Key const& name, DatabaseConnection& db);
+	static void setup_tables(DatabaseConnection& db);
 };
 
 
 inline
-StorageManager<phatbooks::Account>::StorageManager
-(	DatabaseConnection& p_database_connection
-):
-	m_database_connection(p_database_connection)
-{
-}
-
-
-inline
-void StorageManager<phatbooks::Account>::setup_tables()
+void StorageManager<phatbooks::Account>::setup_tables
+(	DatabaseConnection& dbc
+)
 {
 	typedef DatabaseConnection::SQLStatement Statement;
 	Statement account_types_table_stmt
-	(	m_database_connection,
+	(	dbc,
 		"create table account_types(account_type_id integer primary key "
 		"autoincrement, name text not null unique)"
 	);
@@ -63,11 +65,11 @@ void StorageManager<phatbooks::Account>::setup_tables()
 	{
 		std::string const str =
 			"insert into account_types(name) values('" + names[i] + "')";
-		Statement populator(m_database_connection, str);
+		Statement populator(dbc, str);
 		populator.quick_step();
 	}
 	Statement accounts_table_stmt
-	(	m_database_connection,
+	(	dbc,
 		"create table accounts "
 		"("
 			"account_id integer primary key autoincrement, "

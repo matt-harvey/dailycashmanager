@@ -474,8 +474,7 @@ inline
 void
 DatabaseConnection::save(T const& obj)
 {
-	StorageManager<T> sm(*this);
-	sm.save(obj);
+	StorageManager<T>::save(obj, *this);
 	return;
 }
 
@@ -484,8 +483,7 @@ inline
 T
 DatabaseConnection::load(typename T::Key const& key)
 {
-	StorageManager<T> sm(*this);
-	return sm.load(key);
+	return StorageManager<T>::load(key, *this);
 }
 
 template <typename T>
@@ -493,8 +491,8 @@ inline
 void
 DatabaseConnection::setup_tables()
 {
-	StorageManager<T> sm(*this);
-	sm.setup_tables();
+	StorageManager<T>::setup_tables(*this);
+	return;
 }
 
 

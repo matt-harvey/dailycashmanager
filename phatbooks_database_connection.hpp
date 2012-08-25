@@ -12,9 +12,11 @@
  */
 
 
-#include "database_connection.hpp"
+#include "account.hpp"
+#include "commodity.hpp"
 #include "account_storage_manager.hpp"
 #include "commodity_storage_manager.hpp"
+#include "database_connection.hpp"
 #include <boost/bimap.hpp>
 #include <string>
 
@@ -22,8 +24,6 @@ namespace phatbooks
 {
 
 // Forward declarations
-class Account;
-class Commodity;
 class Journal;
 
 
