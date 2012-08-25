@@ -15,6 +15,7 @@
 
 #include "account.hpp"
 #include "commodity.hpp"
+#include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -24,18 +25,22 @@
 #include <stdexcept>
 #include <boost/bimap.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/shared_ptr.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <iostream>
+#include <list>
 #include <string>
 
 
 using boost::bimap;
 using boost::numeric_cast;
+using boost::shared_ptr;
 using jewel::Decimal;
 using sqloxx::DatabaseConnection;
 using sqloxx::SQLiteException;
 using std::endl;
+using std::list;
 using std::runtime_error;
 using std::string;
 
@@ -151,6 +156,59 @@ PhatbooksDatabaseConnection::store(Account const& p_account)
 	// Execute the SQL statement
 	statement.quick_step();
 	JEWEL_DEBUG_LOG << "Account object has been successfully stored." << endl;
+	return ret;
+}
+
+IdType
+PhatbooksDatabaseConnection::store(Journal const& p_journal)
+{
+	JEWEL_DEBUG_LOG << "Storing Journal object in database..." << endl;
+	IdType const ret = next_auto_key<IdType>("journals");
+	execute_sql("begin transaction;");
+	SQLStatement statement
+	(	*this,
+		"insert into journals(is_actual, date, comment) "
+		"values(:is_actual, :date, :comment)"
+	);
+	statement.bind(":is_actual", static_cast<int>(p_journal.is_actual()));
+	statement.bind(":date", p_journal.date());
+	statement.bind(":comment", p_journal.comment());
+	statement.quick_step();
+
+	// WARNING I should make this more efficient by setting up the 
+	// account_id_finder and entry_storer outside the loop, and then
+	// just resetting within the loop. Better, there could be a view with
+	// some of this this stuff already worked out in the view, and I
+	// could just query that view.
+
+	typedef list< shared_ptr<Entry> > EntryCntnr;
+	typedef EntryCntnr::const_iterator Iter;
+	for
+	(	Iter it = p_journal.m_entries.begin();
+		it != p_journal.m_entries.end();
+		++it
+	)
+	{
+		SQLStatement account_id_finder
+		(	*this,
+			"select account_id from accounts where name = :aname"
+		);
+		account_id_finder.bind(":aname", (*it)->account_name());
+		account_id_finder.step();
+		IdType acct_id = account_id_finder.extract<IdType>(0);
+		SQLStatement entry_storer
+		(	*this,
+			"insert into entries(journal_id, comment, account_id, "
+			"amount) values(:journal_id, :comment, :account_id, :amount)"
+		);
+		entry_storer.bind(":journal_id", ret);
+		entry_storer.bind(":comment", (*it)->comment());
+		entry_storer.bind(":account_id", acct_id);
+		entry_storer.bind(":amount", (*it)->amount().intval());
+		entry_storer.quick_step();
+	}
+	execute_sql("end transaction;");
+	JEWEL_DEBUG_LOG << "Journal object has been successfully stored." << endl;
 	return ret;
 }
 

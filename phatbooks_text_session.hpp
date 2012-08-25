@@ -140,6 +140,16 @@ private:
 	void elicit_account();
 
 	/**
+	 * Elicit from user the name of an existing account.
+	 *
+	 * This function does not throw, except possibly \c std::bad_alloc in
+	 * extreme conditions.
+	 *
+	 * @todo Verify throwing behaviour.
+	 */
+	std::string elicit_existing_account_name();
+
+	/**
 	 * Enter a dialogue with the user for creating a new Journal, which on
 	 * creation will be persisted to the database.
 	 *
@@ -156,6 +166,11 @@ private:
 	 *
 	 * @todo Users should be presented with a list of accounts to choose
 	 * from.
+	 *
+	 * @todo Users should be prevented from entering certain account types
+	 * for certain transaction types. For example, and expenditure transaction
+	 * should have only expense accounts allowed when an "expense category" is
+	 * called for.
 	 *
 	 * @todo This function is enormous. It needs to be tidied and broken
 	 * into sensible chunks.

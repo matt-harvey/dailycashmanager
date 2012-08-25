@@ -38,7 +38,31 @@ public:
 		std::string const& p_comment = "",
 		jewel::Decimal const& p_amount = jewel::Decimal("0")
 	);
+	
+	/**
+	 * @returns Entry comment.
+	 * 
+	 * Does not throw except possibly \c std::bad_alloc in
+	 * extreme circumstances.
+	 */
+	std::string comment() const;
 
+	/**
+	 * @returns Entry amount (+ve for debits, -ve for credits).
+	 *
+	 * @todo Verify throwing behaviour.
+	 *
+	 * Does not throw.
+	 */
+	jewel::Decimal amount() const;
+
+	/**
+	 * @returns name of the Account that this entry effects.
+	 *
+	 * Does not throw, except possibly \c std::bad_alloc in
+	 * extreme circumstances.
+	 */
+	std::string account_name() const;
 		
 private:
 	std::string m_account_name;
@@ -46,6 +70,7 @@ private:
 	jewel::Decimal m_amount;
 
 };
+
 
 
 }  // namespace phatbooks

@@ -40,16 +40,16 @@ Journal::Journal(bool p_is_actual, string p_comment):
 }
 
 void
-Journal::set_whether_actual(bool is_actual)
+Journal::set_whether_actual(bool p_is_actual)
 {
-	m_is_actual = is_actual;
+	m_is_actual = p_is_actual;
 	return;
 }
 
 void
-Journal::set_comment(string const& comment)
+Journal::set_comment(string const& p_comment)
 {
-	m_comment = comment;
+	m_comment = p_comment;
 	return;
 }
 
@@ -73,7 +73,23 @@ Journal::is_posted() const
 	return m_date != null_date();
 }
 
+bool
+Journal::is_actual() const
+{
+	return m_is_actual;
+}
 
+DateType
+Journal::date() const
+{
+	return m_date;
+}
+
+string
+Journal::comment() const
+{
+	return m_comment;
+}
 
 
 

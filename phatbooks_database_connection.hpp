@@ -17,14 +17,14 @@
 #include <boost/bimap.hpp>
 #include <string>
 
+namespace phatbooks
+{
 
 // Forward declarations
 class Account;
 class Commodity;
+class Journal;
 
-
-namespace phatbooks
-{
 
 /** Phatbooks-specific database connection class.
  * See API documentation for sqloxx::DatabaseConnection,
@@ -113,6 +113,14 @@ public:
 	 * (This is an autoincrementing primary key.)
 	 */
 	IdType store(Commodity const& p_commodity);
+
+	/**
+	 * @todo Figure out and document throwing behaviour.
+	 *
+	 * @todo Resolve issue that this does not take draft journals
+	 * into account.
+	 */
+	IdType store(Journal const& p_journal);
 
 	/**
 	 * @returns \c true if and only if \c p_name is the name of an Account

@@ -18,7 +18,7 @@
 namespace phatbooks
 {
 
-typedef unsigned int DateType;
+typedef int DateType;
 
 /**
  * Returns \c true iff \c date is a valid

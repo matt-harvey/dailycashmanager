@@ -35,7 +35,23 @@ Entry::Entry
 {
 }
 
+string
+Entry::comment() const
+{
+	return m_comment;
+}
 
+jewel::Decimal
+Entry::amount() const
+{
+	return m_amount;
+}
+
+std::string
+Entry::account_name() const
+{
+	return m_account_name;
+}
 
 
 }  // namespace phatbooks

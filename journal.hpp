@@ -13,6 +13,7 @@
 
 
 #include "date.hpp"
+#include "phatbooks_database_connection.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/shared_ptr.hpp>
 #include <list>
@@ -35,6 +36,10 @@ class Journal
 {
 public:
 
+	friend IdType PhatbooksDatabaseConnection::store
+	(	Journal const& p_journal
+	);
+
 	/**
 	 * This constructor initializes journal date
 	 * to null date and journal comment to empty string.
@@ -54,7 +59,7 @@ public:
 	 * 
 	 * Does not throw.
 	 */
-	void set_whether_actual(bool is_actual);
+	void set_whether_actual(bool p_is_actual);
 
 	/**
 	 * Set comment for journal
@@ -62,7 +67,7 @@ public:
 	 * Does not throw, except possibly \c std::bad_alloc in extreme
 	 * circumstances.
 	 */
-	void set_comment(std::string const& comment);
+	void set_comment(std::string const& p_comment);
 
 	/**
 	 * Add an Entry to the Journal.
@@ -87,6 +92,39 @@ public:
 	 */
 	bool is_posted() const;
 
+	/**
+	 * @returns true if and only if journal contains actual (as opposed to
+	 * budget) transaction(s).
+	 *
+	 * Does not throw.
+	 */
+	bool is_actual() const;
+
+	/**
+	 * @returns journal date.
+	 *
+	 * @todo Verify throwing behaviour and determine dependence on DateType.
+	 */
+	DateType date() const;
+
+	/**
+	 * @returns journal comment.
+	 *
+	 * Does not throw, except perhaps \c std::bad_alloc in
+	 * extreme circumstances.
+	 */
+	std::string comment() const;
+
+	/**
+	 * @returns true if and only if the journal balances, i.e. the total
+	 * of the entries is equal to zero.
+	 *
+	 * @todo Implement it! Note, thinking a little about this function shows
+	 * that all entries in a journal must be expressed in a common currency.
+	 * It doesn't make sense to think of entries in a single journal as being
+	 * in different currencies. An entry must have its value frozen in time.
+	 */
+	bool is_balanced() const;
 
 private:
 	bool m_is_actual;

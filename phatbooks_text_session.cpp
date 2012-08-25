@@ -98,6 +98,22 @@ PhatbooksTextSession::PhatbooksTextSession():
 }
 
 
+string
+PhatbooksTextSession::elicit_existing_account_name()
+{
+	 while (true)
+	 {
+		string input = get_user_input();
+	 	if (m_database_connection->has_account_named(input))
+		{
+			return input;
+		}
+		cout << "There is no account named " << input
+		     << ". Please try again: ";
+	}
+}
+
+
 PhatbooksTextSession::~PhatbooksTextSession()
 {
 	wrap_up();
@@ -454,48 +470,43 @@ void PhatbooksTextSession::elicit_journal()
 	// Set certain "prompt words"
 	string account_prompt;
 	string amount_prompt;
+	string secondary_account_prompt;
+	bool primary_sign_needs_changing;
 	if (transaction_type == expenditure_selection)
 	{
 		account_prompt = "account from which money was spent";
 		amount_prompt = "spent";
+		secondary_account_prompt = "expenditure category";
+		primary_sign_needs_changing = true;
 	}
 	else if (transaction_type == revenue_selection)
 	{
 		account_prompt = "account into which funds were deposited";
 		amount_prompt = "earned";
+		secondary_account_prompt = "revenue category";
+		primary_sign_needs_changing = false;
 	}
 	else if (transaction_type == balance_sheet_transfer_selection)
 	{
 		account_prompt = "destination account";
 		amount_prompt = "transferred";
+		secondary_account_prompt = "source account";
+		primary_sign_needs_changing = false;
 	}
 	else
 	{
 		assert (transaction_type == envelope_transaction_selection);
 		account_prompt = "envelope you wish to top up";
 		amount_prompt = "to transfer";
+		secondary_account_prompt = "envelope from which to source funds";
+		primary_sign_needs_changing = false;
 	}
 	
 	// Get primary entry account
-	string primary_entry_account_name;
 	cout << "Enter name of " << account_prompt << ": ";
-	for (bool input_is_valid = false; !input_is_valid; )
-	{
-		string input = get_user_input();
-		if (!m_database_connection->has_account_named(input))
-		{
-			cout << "There is no account named " << input
-			     << ". Please try again: ";
-			assert (!input_is_valid);
-		}
-		else
-		{
-			input_is_valid = true;
-			primary_entry_account_name = input;
-		}
-	}
+	string primary_entry_account_name = elicit_existing_account_name();
 
-	// Get primary entry amnount
+	// Get primary entry amount
 	Commodity primary_commodity =
 		m_database_connection->commodity_for_account_named
 		(	primary_entry_account_name
@@ -529,33 +540,74 @@ void PhatbooksTextSession::elicit_journal()
 			assert (!input_is_valid);
 		}
 	}
-	
+	// Primary entry amount must be changed to the appropriate sign
+	// WARNING In theory this might throw.
+	Decimal normalized_primary_entry_amount =
+		primary_sign_needs_changing?
+		primary_entry_amount * Decimal("-1"):
+		primary_entry_amount;
+
 	// Get primary entry comment
 	cout << "Line specific comment (or Enter for no comment): ";
 	string primary_entry_comment = get_user_input();
 
+	// Create entry and add to journal
 	shared_ptr<Entry> primary_entry
 	(	new Entry
 		(	primary_entry_account_name,
 			primary_entry_comment,
-			primary_entry_amount
+			normalized_primary_entry_amount
 		)
 	);
-
 	journal.add_entry(primary_entry);
 
-	// Get other account/s
-	//
+	// Get other account and comment
+	cout << "Enter name of " << secondary_account_prompt << ": ";
+	string secondary_entry_account_name = elicit_existing_account_name();
+	// WARNING if secondary account is in a different currency then we
+	// need to respond appropriately.
+	Commodity secondary_commodity =
+		m_database_connection->
+			commodity_for_account_named(secondary_entry_account_name);
+	if
+	(	secondary_commodity.abbreviation() != primary_commodity.abbreviation()
+	)
+	{
+		JEWEL_DEBUG_LOG << "Here's where we're supposed to respond to "
+		                << "diverse commodities..." << endl;
+	}
 
+	cout << "Line specific comment (or Enter for no comment): ";
+	string secondary_entry_comment = get_user_input();
 
+	
 
+	shared_ptr<Entry> secondary_entry
+	(	new Entry
+		(	secondary_entry_account_name,
+			secondary_entry_comment,
+			-normalized_primary_entry_amount
+		)
+	);
+	journal.add_entry(secondary_entry);
+
+		
+
+	// WARNING
+	// We need to implement split transactions
+
+	// WARNING
 	// We also need to insert Entry objects, and ensure the journal either
 	// balances or is to be a draft journal. If it's draft, we need to create
-	// Repeater objects if required.
+	// Repeater objects if required. Before posting, we need to ensure
+	// the entries will not overflow the account balances.
 	// Note there are complications when a single Journal involves multiple
 	// commodities.
-				
+	
+	// WARNING
+	// Don't forget to get the date!
 
+	m_database_connection->store(journal);
 	return;
 }
 
