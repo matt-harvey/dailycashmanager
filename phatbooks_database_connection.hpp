@@ -14,6 +14,7 @@
 
 #include "account.hpp"
 #include "database_connection.hpp"
+#include "commodity_storage_manager.hpp"
 #include <boost/bimap.hpp>
 #include <string>
 
@@ -98,21 +99,6 @@ public:
 	 * (This is an autoincrementing primary key.)
 	 */
 	IdType store(Account const& p_account);
-
-	/** Store a Commodity object in the database
-	 *
-	 * @todo Verify that throwing behaviour is as documented.
-	 *
-	 * Exceptions throwing behaviour is essentially the same as that
-	 * of the \c store function for \c Account, except that
-	 * StoragePreconditionsException is not thrown.
-	 *
-	 * @param p_commodity the Commodity to be stored.
-	 *
-	 * @returns the integer primary key of the Account just stored.
-	 * (This is an autoincrementing primary key.)
-	 */
-	IdType store(Commodity const& p_commodity);
 
 	/**
 	 * @todo Figure out and document throwing behaviour.

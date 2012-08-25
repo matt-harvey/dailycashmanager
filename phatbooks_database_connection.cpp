@@ -15,6 +15,7 @@
 
 #include "account.hpp"
 #include "commodity.hpp"
+#include "commodity_storage_manager.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -54,56 +55,6 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
   DatabaseConnection()
 {
 }
-
-
-IdType
-PhatbooksDatabaseConnection::store(Commodity const& p_commodity)
-{
-	JEWEL_DEBUG_LOG << "Storing Commodity object in database." << endl;
-
-	IdType ret = next_auto_key<IdType>("commodities");
-	
-	SQLStatement statement
-	(	*this,
-		"insert into commodities"
-		"("
-			"abbreviation, "
-			"name, "
-			"description, "
-			"precision, "
-			"multiplier_to_base_intval, "
-			"multiplier_to_base_places"
-		") "
-		"values"
-		"("
-			":abbreviation, "
-			":name, "
-			":description, "
-			":precision, "
-			":multiplier_to_base_intval, "
-			":multiplier_to_base_places"
-		")"
-	);
-
-	statement.bind(":abbreviation", p_commodity.abbreviation());
-	statement.bind(":name", p_commodity.name());
-	statement.bind(":description", p_commodity.description());
-	statement.bind(":precision", p_commodity.precision());
-	statement.bind
-	(	":multiplier_to_base_intval",
-		p_commodity.multiplier_to_base().intval()
-	);
-	statement.bind
-	(	":multiplier_to_base_places",
-		p_commodity.multiplier_to_base().places()
-	);
-	// Execute the SQL statement
-	statement.quick_step();
-	JEWEL_DEBUG_LOG << "Commodity object has been successfully stored."
-	                << endl;
-	return ret;
-}
-
 
 
 IdType

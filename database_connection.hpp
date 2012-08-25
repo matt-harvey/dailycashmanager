@@ -38,6 +38,7 @@
 
 
 #include "sqloxx_exceptions.hpp"
+#include "storage_manager.hpp"
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/debug_log.hpp>
 #include <sqlite3.h>
@@ -152,12 +153,40 @@ public:
 	 */
 	void open(boost::filesystem::path const& filepath);	
 
+	/**
+	 * If \c T has a specialised class \c StorageManager<T> defined, then
+	 * this template provides a function for an instance \c obj of
+	 * \c T to be stored in the database.
+	 * 
+	 * See documentation for StorageManager class template for more
+	 * information on what is required to be implemented by the class
+	 * template specialisation.
+	 *
+	 * @todo Determine and document throwing behaviour.
+	 */
+	template <typename T>
+	void save(T const& obj);
 
-protected:
-
+	/**
+	 * If \c T has a specialised class \c StorageManager<T> defined, then
+	 * this template provides a function for an instance of \c T to be loaded
+	 * and returned by the function by looking into the database using \c key
+	 * as a key.
+	 *
+	 * See documentation for StorageManager class template for more
+	 * information on what is required to be implemented by the class template
+	 * specialisation.
+	 *
+	 * @todo Determine and document throwing behaviour.
+	 */
+	template <typename T>
+	T load(typename T::Key const& key);
 	
 	/**
 	 * Wrapper class for sqlite_stmt*.
+	 *
+	 * @todo This used to be protected but now it's public... What's the point
+	 * even nesting it now?
 	 *
 	 * @todo The constructor to create a SQLStatement should reject strings
 	 * containing semicolons, since compound statements are not handled by
@@ -165,6 +194,9 @@ protected:
 	 * something, which can then executed using a wrapper around sqlite3_exec.
 	 */
 	class SQLStatement;
+
+
+protected:
 
 
 	/**
@@ -424,6 +456,28 @@ private:
 
 
 // FUNCTION TEMPLATE DEFINITIONS
+
+template <typename T>
+inline
+void
+DatabaseConnection::save(T const& obj)
+{
+	StorageManager<T> sm(*this);
+	sm.save(obj);
+	return;
+}
+
+template <typename T>
+inline
+T
+DatabaseConnection::load(typename T::Key const& key)
+{
+	StorageManager<T> sm(*this);
+	return sm.load(key);
+}
+
+
+
 
 template <>
 inline

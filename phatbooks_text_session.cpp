@@ -277,7 +277,7 @@ void PhatbooksTextSession::elicit_commodity()
 			commodity_precision,
 			commodity_multiplier_to_base
 		);
-		m_database_connection->store(comm);
+		m_database_connection->save(comm);
 		cout << "Commodity created." << endl;
 	}
 	return;
