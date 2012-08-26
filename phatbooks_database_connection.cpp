@@ -59,59 +59,6 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 
 
 IdType
-PhatbooksDatabaseConnection::store(Account const& p_account)
-{
-	JEWEL_DEBUG_LOG << "Storing Account object in database." << endl;
-
-	IdType ret = next_auto_key<IdType>("accounts");
-	
-	// Find the commodity_id for account
-	SQLStatement commodity_finder
-	(	*this,
-		"select commodity_id from commodities where abbreviation = :ca"
-	);
-	commodity_finder.bind(":ca", p_account.commodity_abbreviation());
-	if (!commodity_finder.step())
-	{
-		// We have no commodity stored with this abbreviation.
-		throw StoragePreconditionsException
-		(	"Attempted to store Account with "
-			"invalid commodity abbreviation."
-		);
-	}
-	IdType const commodity_id = commodity_finder.extract<IdType>(0);
-	if (commodity_finder.step())
-	{
-		// We have multiple commodities with this id.
-		// This should never occur, unless the database has been tampered with
-		// from outside this program.
-		throw PhatbooksException
-		(	"Integrity of commodities table has been violated. Table contains"
-			" multiple rows with the same commodity abbreviation."
-		);
-	}
-
-	// Now we can insert the account.
-	SQLStatement statement
-	(	*this,
-		"insert into accounts(account_type_id, name, description, "
-		"commodity_id) values(:account_type_id, :name, :description, "
-		":commodity_id)"
-	);
-	statement.bind
-	(	":account_type_id",
-		static_cast<int>(p_account.account_type())
-	);
-	statement.bind(":name", p_account.name());
-	statement.bind(":description", p_account.description());
-    statement.bind(":commodity_id", commodity_id);
-	// Execute the SQL statement
-	statement.quick_step();
-	JEWEL_DEBUG_LOG << "Account object has been successfully stored." << endl;
-	return ret;
-}
-
-IdType
 PhatbooksDatabaseConnection::store(Journal const& p_journal)
 {
 	JEWEL_DEBUG_LOG << "Storing Journal object in database..." << endl;

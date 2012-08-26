@@ -396,7 +396,7 @@ void PhatbooksTextSession::elicit_account()
 			account_type,
 			account_description
 		);
-		m_database_connection->store(acc);
+		m_database_connection->save(acc);
 		cout << "Account created." << endl;
 	}
 	return;

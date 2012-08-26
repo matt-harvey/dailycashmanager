@@ -14,7 +14,9 @@
 
 
 #include "account.hpp"
+#include "commodity.hpp"
 #include "database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "storage_manager.hpp"
 
 namespace sqloxx
@@ -42,6 +44,53 @@ public:
 	static phatbooks::Account load(Key const& name, DatabaseConnection& db);
 	static void setup_tables(DatabaseConnection& db);
 };
+
+
+inline
+void StorageManager<phatbooks::Account>::save
+(	phatbooks::Account const& account,
+	DatabaseConnection& db
+)
+{
+	DatabaseConnection::SQLStatement commodity_finder
+	(	db,
+		"select commodity_id from commodities where "
+		"commodities.abbreviation = :p"
+	);
+	commodity_finder.bind(":p", account.commodity_abbreviation());
+	if (!commodity_finder.step())
+	{
+		throw phatbooks::StoragePreconditionsException
+		(	"Attempted to store Account with invalid "
+			"commodity abbreviation."
+		);
+	}
+	phatbooks::IdType commodity_id =
+		commodity_finder.extract<phatbooks::IdType>(0);
+	if (commodity_finder.step())
+	{
+		throw phatbooks::PhatbooksException
+		(	"Integrity of commodities table has been violated. Table "
+			"contains multiple rows with the same commodity abbreviation."
+		);
+	}
+	DatabaseConnection::SQLStatement statement
+	(	db,
+		"insert into accounts(account_type_id, name, description, "
+		"commodity_id) values(:account_type_id, :name, :description, "
+		":commodity_id)"
+	);
+	statement.bind
+	(	":account_type_id",
+		static_cast<int>(account.account_type())
+	);
+	statement.bind(":name", account.name());
+	statement.bind(":description", account.description());
+	statement.bind(":commodity_id", commodity_id);
+	statement.quick_step();
+	return;
+}
+
 
 
 inline
@@ -80,6 +129,17 @@ void StorageManager<phatbooks::Account>::setup_tables
 		")"
 	);
 	accounts_table_stmt.quick_step();
+	Statement account_view_stmt
+	( 	dbc,
+		"create view accounts_extended as "
+		"select account_id, account_type_id, accounts.name, "
+		"accounts.description, commodities.abbreviation, "
+		"commodity_id, "
+		"commodities.multiplier_to_base_intval, "
+		"commodities.multiplier_to_base_places from "
+		"accounts join commodities using(commodity_id)"
+	);
+	account_view_stmt.quick_step();
 	return;
 }
 
