@@ -1,11 +1,15 @@
 #include "commodity.hpp"
 #include "commodity_storage_manager.hpp"
+#include <jewel/decimal.hpp>
+#include <string>
+
+using phatbooks::Commodity;
+using jewel::Decimal;
+using std::string;
 
 
 namespace sqloxx
 {
-
-using phatbooks::Commodity;
 
 
 void StorageManager<Commodity>::save
@@ -50,13 +54,13 @@ Commodity StorageManager<Commodity>::load
 	statement.bind(":p", abbreviation);
 	statement.step();
 	return Commodity
-	(	statement.extract<std::string>(0),
-		statement.extract<std::string>(1),
-		statement.extract<std::string>(2),
+	(	statement.extract<string>(0),
+		statement.extract<string>(1),
+		statement.extract<string>(2),
 		statement.extract<int>(3),
-		jewel::Decimal
-		(	statement.extract<jewel::Decimal::int_type>(4),
-			boost::numeric_cast<jewel::Decimal::places_type>
+		Decimal
+		(	statement.extract<Decimal::int_type>(4),
+			boost::numeric_cast<Decimal::places_type>
 			(	statement.extract<boost::int64_t>(5)
 			)
 		)

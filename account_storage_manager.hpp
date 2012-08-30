@@ -26,10 +26,7 @@ namespace sqloxx
  * Specializes the StorageManager class template for
  * phatbooks::Account.
  * 
- * @todo Finish the implementation. Then use this
- * to simplify the code in the PhatbooksDatabaseConnection
- * class. In the end, I may not need PhatbooksDatabaseConnection
- * at all. We'll see...
+ * @todo Testing.
  */
 template <>
 class StorageManager<phatbooks::Account>

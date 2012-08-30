@@ -2,13 +2,14 @@
 #include "general_typedefs.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <string>
+#include <vector>
 
 using phatbooks::Account;
 using phatbooks::IdType;
 using phatbooks::PhatbooksException;
 using phatbooks::StoragePreconditionsException;
 using std::string;
-
+using std::vector;
 
 namespace sqloxx
 {
@@ -74,11 +75,11 @@ void StorageManager<Account>::setup_tables
 
 	// Values inserted into account_types here must correspond with
 	// AccountType enum defined in Account class
-	std::vector<std::string> const names =
+	vector<string> const names =
 		Account::account_type_names();
-	for (std::vector<std::string>::size_type i = 0; i != names.size(); ++i)
+	for (vector<string>::size_type i = 0; i != names.size(); ++i)
 	{
-		std::string const str =
+		string const str =
 			"insert into account_types(name) values('" + names[i] + "')";
 		Statement populator(dbc, str);
 		populator.quick_step();
