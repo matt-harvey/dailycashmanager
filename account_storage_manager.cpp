@@ -1,14 +1,17 @@
 #include "account_storage_manager.hpp"
 #include "general_typedefs.hpp"
 #include "phatbooks_exceptions.hpp"
-
-namespace sqloxx
-{
+#include <string>
 
 using phatbooks::Account;
 using phatbooks::IdType;
 using phatbooks::PhatbooksException;
 using phatbooks::StoragePreconditionsException;
+using std::string;
+
+
+namespace sqloxx
+{
 
 
 void StorageManager<Account>::save
@@ -106,5 +109,28 @@ void StorageManager<Account>::setup_tables
 	return;
 }
 
+
+Account StorageManager<Account>::load
+(	StorageManager<Account>::Key const& name,
+	DatabaseConnection& dbc
+)
+{
+	DatabaseConnection::SQLStatement statement
+	(	dbc,
+		"select accounts.name, "
+		"commodities.abbreviation, "
+		"accounts.account_type_id, "
+		"accounts.description from "
+		"accounts_extended where accounts.name = :p"
+	);
+	statement.bind(":p", name);
+	statement.step();
+	return Account
+	(	statement.extract<string>(0),
+		statement.extract<string>(1),
+		static_cast<Account::AccountType>(statement.extract<int>(2)),
+		statement.extract<string>(3)
+	);
+}
 
 }  // namespace sqloxx
