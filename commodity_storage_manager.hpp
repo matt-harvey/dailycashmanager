@@ -21,11 +21,6 @@
 namespace sqloxx
 {
 
-
-class Dummy
-{
-};
-
 /**
  * Specializes the StorageManager class template for
  * phatbooks::Commodity.
