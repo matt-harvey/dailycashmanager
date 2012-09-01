@@ -1,5 +1,6 @@
 #include "commodity.hpp"
 #include "commodity_storage_manager.hpp"
+#include "sql_statement.hpp"
 #include <jewel/decimal.hpp>
 #include <string>
 
@@ -17,7 +18,7 @@ void StorageManager<Commodity>::save
 	DatabaseConnection& dbc
 )
 {
-	DatabaseConnection::SQLStatement statement
+	SQLStatement statement
 	(	dbc,
 		"insert into commodities(abbreviation, name, description, precision, "
 		"multiplier_to_base_intval, multiplier_to_base_places) "
@@ -45,7 +46,7 @@ Commodity StorageManager<Commodity>::load
 	DatabaseConnection& dbc
 )
 {
-	DatabaseConnection::SQLStatement statement
+	SQLStatement statement
 	(	dbc,
 		"select from commodities abbreviation, name, description, precision, "
 		"multiplier_to_base_intval, multiplier_to_base_places from "
@@ -71,7 +72,7 @@ void StorageManager<Commodity>::setup_tables
 (	DatabaseConnection& dbc
 )
 {
-	DatabaseConnection::SQLStatement statement
+	SQLStatement statement
 	(	dbc,
 		"create table commodities"
 		"("

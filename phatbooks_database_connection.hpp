@@ -17,6 +17,7 @@
 #include "account_storage_manager.hpp"
 #include "commodity_storage_manager.hpp"
 #include "database_connection.hpp"
+#include "sql_statement.hpp"
 #include <boost/bimap.hpp>
 #include <string>
 

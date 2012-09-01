@@ -38,6 +38,7 @@
 
 
 #include "sqloxx_exceptions.hpp"
+#include "sql_statement.hpp"
 #include "storage_manager.hpp"
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/debug_log.hpp>
@@ -63,22 +64,9 @@
  * that the C++ API of Sqloxx will largely mirror the C API of
  * SQLite, so that Sqloxx could be used easily by anyone who is
  * familiar with SQLite (and with C++).
- *
- * In any project that intends to use Sqloxx, the class
- * \c sqloxx::DatabaseConnection should be extended by a
- * project-specific class representing a connection to a database
- * that is tailored to that class. That class then manages the
- * execution of all SQL statements, and manages all other
- * interaction with the database itself. The complexity of
- * managing the database is thus encapsulated within the
- * database connection class. This is reflected in the fact
- * that the \c sqloxx::SQLStatement class is nested within the
- * protected section of \c sqloxx::DatabaseConnection, so that
- * other classes cannot directly access \c SQLStatement.
  */
 namespace sqloxx
 {
-
 
 
 /**
@@ -91,6 +79,7 @@ namespace sqloxx
 class DatabaseConnection:
 	private boost::noncopyable
 {
+	friend class SQLStatement;
 public:
 
 
@@ -193,19 +182,6 @@ public:
 	 */
 	template <typename T>
 	T load(typename T::Key const& key);
-
-	/**
-	 * Wrapper class for sqlite_stmt*.
-	 *
-	 * @todo This used to be protected but now it's public... What's the point
-	 * even nesting it now?
-	 *
-	 * @todo The constructor to create a SQLStatement should reject strings
-	 * containing semicolons, since compound statements are not handled by
-	 * step() properly. There should be some other class SQLMultiStatement or
-	 * something, which can then executed using a wrapper around sqlite3_exec.
-	 */
-	class SQLStatement;
 
 
 protected:
@@ -338,135 +314,6 @@ private:
 
 
 
-// DEFINITIONS OF NESTED CLASSES
-
-
-class DatabaseConnection::SQLStatement:
-	private boost::noncopyable
-{
-public:
-
-	/**
-	 * Creates an object encapsulating a SQL statement.
-	 *
-	 * @throws InvalidConnection if the database connection passed to
-	 * \c dbconn is invalid.
-	 *
-	 * @throws SQLiteException or an exception derived therefrom, if
-	 * the database connection is valid, but the statement could not
-	 * be properly prepared by SQLite.
-	 */
-	SQLStatement(DatabaseConnection& dbconn, std::string const& str);
-
-	~SQLStatement();
-
-	/**
-	 * Wrappers around SQLite bind functions.
-	 *
-	 * These throw \c SQLiteException, or an exception derived therefrom,
-	 * if SQLite could not properly bind the statement.
-	 */
-	void bind(std::string const& parameter_name, double value);
-	void bind(std::string const& parameter_name, int value);
-	void bind(std::string const& parameter_name, boost::int64_t value);
-	void bind(std::string const& parameter_name, std::string const& str);
-
-	/**
-	 * Where a SQLStatement has a result set available,
-	 * this function (template) can be used to extract the value at
-	 * the \c indexth column of the current row (where \c index starts
-	 * counting at 0).
-	 *
-	 * Currently the following types for T are supported:\n
-	 *	\c boost::int64_t\n
-	 *	int\n
-	 *	double\n
-	 *	std::string\n
-	 * 
-	 * @param index is the column number (starting at 0) from which to
-	 * read the value.
-	 * 
-	 * @throws ResultIndexOutOfRange if \c index is out of range.
-	 *
-	 * @throws ValueTypeException if the requested column contains a type that
-	 * is incompatible with T.
-	 */
-	template <typename T>
-	T extract(int index);
-
-	/**
-	 * Wraps sqlite3_step
-	 * Returns true as long as there are further steps to go (i.e. result
-	 * rows to examine).
-	 *
-	 * @throws SQLiteException or some exception deriving therefrom, if an
-	 * error occurs. This function should almost never throw, but it is
-	 * possible something will fail as the statement is being executed, in
-	 * which the resulting SQLite error condition will trigger the
-	 * corresponding exception class.
-	 */
-	bool step();
-
-	/**
-	 * For executing statements which are not expected to return a result
-	 * set.
-	 *
-	 * @throws UnexpectedResultSet if a result set is returned.
-	 * 
-	 * @throws SQLiteException or an exception derived therefrom if there
-	 * is any other error in executing the statement.
-	*/
-	void quick_step();
-
-
-private:
-	sqlite3_stmt* m_statement;
-	DatabaseConnection& m_database_connection;
-
-	/**
-	 * @parameter_name is the name of a column in the result set.
-	 * 
-	 * @throws NoMatchingColumnException if \c parameter_name does not
-	 * name a column in the result set.
-	 */
-	int parameter_index(std::string const& column_name) const;
-
-	/**
-	 * Checks whether a column is available for extraction at
-	 * index \c index, of type \c value_type, and throws an
-	 * exception if not.
-	 *
-	 * @param index Position of column (starts from zero) in result
-	 * row.
-	 * 
-	 * @param value_type Should be a SQLite value type code, i.e. one of:\n
-	 * 	SQLITE_INTEGER, SQLITE_FLOAT, SQLITE_TEXT, SQLITE_BLOB, SQLITE_NULL.
-	 *
-	 * @throws NoResultRowException if there are no results available for
-	 * extraction.
-	 *
-	 * @throws ResultIndexOutOfRange if \c index is negative or is otherwise
-	 * out of range.
-	 *
-	 * @throws ValueTypeException if the value at position \c index is not of
-	 * value type \c value_type.
-	 */
-	void check_column(int index, int value_type);
-
-	/**
-	 * Check code is SQLITE_OK and if not finalize statement and
-	 * throw SQLiteException or derivative corresponding to the SQLite
-	 * error code.
-	 *
-	 * @throw If error code is SQLITE_DONE or SQLITE_ROWS then this
-	 * throws SQLiteUnknownErrorCode. Improve this behaviour.
-	 */
-	void check_ok();
-
-
-};
-
-
 // FUNCTION TEMPLATE DEFINITIONS
 
 template <typename T>
@@ -493,46 +340,6 @@ DatabaseConnection::setup_tables()
 {
 	StorageManager<T>::setup_tables(*this);
 	return;
-}
-
-
-template <>
-inline
-int
-DatabaseConnection::SQLStatement::extract<int>(int index)
-{
-	check_column(index, SQLITE_INTEGER);
-	return sqlite3_column_int(m_statement, index);
-}
-
-template <>
-inline
-boost::int64_t
-DatabaseConnection::SQLStatement::extract<boost::int64_t>(int index)
-{
-	check_column(index, SQLITE_INTEGER);
-	return sqlite3_column_int64(m_statement, index);
-}
-
-template <>
-inline
-double
-DatabaseConnection::SQLStatement::extract<double>(int index)
-{
-	check_column(index, SQLITE_FLOAT);
-	return sqlite3_column_double(m_statement, index);
-}
-
-template <>
-inline
-std::string
-DatabaseConnection::SQLStatement::extract<std::string>(int index)
-{
-	check_column(index, SQLITE_TEXT);
-	const unsigned char* begin = sqlite3_column_text(m_statement, index);
-	const unsigned char* end = begin;
-	while (*end != '\0') ++end;
-	return std::string(begin, end);
 }
 
 

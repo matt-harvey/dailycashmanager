@@ -40,6 +40,7 @@ using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::Decimal;
 using sqloxx::DatabaseConnection;
+using sqloxx::SQLStatement;
 using sqloxx::SQLiteException;
 using std::endl;
 using std::list;

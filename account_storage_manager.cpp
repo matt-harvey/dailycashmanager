@@ -1,6 +1,7 @@
 #include "account_storage_manager.hpp"
 #include "general_typedefs.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "sql_statement.hpp"
 #include <string>
 #include <vector>
 
@@ -20,7 +21,7 @@ void StorageManager<Account>::save
 	DatabaseConnection& db
 )
 {
-	DatabaseConnection::SQLStatement commodity_finder
+	SQLStatement commodity_finder
 	(	db,
 		"select commodity_id from commodities where "
 		"commodities.abbreviation = :p"
@@ -42,7 +43,7 @@ void StorageManager<Account>::save
 			"contains multiple rows with the same commodity abbreviation."
 		);
 	}
-	DatabaseConnection::SQLStatement statement
+	SQLStatement statement
 	(	db,
 		"insert into accounts(account_type_id, name, description, "
 		"commodity_id) values(:account_type_id, :name, :description, "
@@ -65,7 +66,7 @@ void StorageManager<Account>::setup_tables
 (	DatabaseConnection& dbc
 )
 {
-	typedef DatabaseConnection::SQLStatement Statement;
+	typedef SQLStatement Statement;
 	Statement account_types_table_stmt
 	(	dbc,
 		"create table account_types(account_type_id integer primary key "
@@ -116,7 +117,7 @@ Account StorageManager<Account>::load
 	DatabaseConnection& dbc
 )
 {
-	DatabaseConnection::SQLStatement statement
+	SQLStatement statement
 	(	dbc,
 		"select accounts.name, "
 		"commodities.abbreviation, "

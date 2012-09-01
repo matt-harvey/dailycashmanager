@@ -57,7 +57,7 @@ JEWEL_DERIVED_EXCEPTION(MultipleConnectionException, DatabaseException);
 
 /**
  * Exception to be thrown when attempt is made to execute a \c SQLStatement
- * in one step, via \c DatabaseConnection::SQLStatement::quick_step, but there
+ * in one step, via \c SQLStatement::quick_step, but there
  * is at least one result row, meaning that \c quick_step is an inappropriate
  * means of execution.
  */

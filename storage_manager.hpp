@@ -29,6 +29,10 @@ class DatabaseConnection;
  * This class should be specialized for T where you want objects of
  * type T to be managed in this way.
  *
+ * None of the members of StorageManager are actually implemented, except
+ * in full specializations of the class. The purpose of actually declaring
+ * the members in the general template is really just one of documentation.
+ *
  * @todo Implement this for all the phatbooks business object classes.
  * This will also enable a simplification of a lot of the code in
  * PhatbooksDatabaseConnection.
