@@ -42,6 +42,12 @@ public:
 
 	/**
 	 * @todo This needs to throw if there is no Journal with this key.
+	 *
+	 * @todo I don't like the way the implementation of this
+	 * uses the accounts_extended table - which is buried
+	 * in StorageManager<Account>::setup_tables. It is relying, therefore,
+	 * on the innards of another class. But it's also much more efficient
+	 * to use this.
 	 */
 	static phatbooks::Journal
 	load(Key const& id, DatabaseConnection& dbc);

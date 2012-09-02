@@ -171,9 +171,7 @@ PhatbooksDatabaseConnection::setup()
 	execute_sql("insert into booleans(representation) values(1)");
 
 	setup_tables<Commodity>();
-
 	setup_tables<Account>();	
-
 	setup_tables<Journal>();
 
 	execute_sql
