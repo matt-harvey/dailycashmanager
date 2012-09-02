@@ -36,9 +36,7 @@ class Journal
 {
 public:
 
-	friend IdType PhatbooksDatabaseConnection::store
-	(	Journal const& p_journal
-	);
+	friend class sqloxx::StorageManager<Journal>;
 
 	/**
 	 * This constructor initializes journal date

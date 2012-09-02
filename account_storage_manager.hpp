@@ -14,10 +14,10 @@
 
 
 #include "account.hpp"
-#include "commodity.hpp"
 #include "database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "storage_manager.hpp"
+
 
 namespace sqloxx
 {
@@ -32,14 +32,21 @@ template <>
 class StorageManager<phatbooks::Account>
 {
 public:
+
 	typedef std::string Key;
-	static void save(phatbooks::Account const& account, DatabaseConnection& db);
+
+	static void
+	save(phatbooks::Account const& account, DatabaseConnection& dbc);
+
 	/**
 	 * @todo This needs to throw if there is no Account
 	 * with this key.
 	 */
-	static phatbooks::Account load(Key const& name, DatabaseConnection& db);
-	static void setup_tables(DatabaseConnection& db);
+	static phatbooks::Account
+	load(Key const& name, DatabaseConnection& dbc);
+	
+	static void
+	setup_tables(DatabaseConnection& dbc);
 };
 
 

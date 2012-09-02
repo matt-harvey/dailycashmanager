@@ -11,6 +11,7 @@ add_executable (main
 				date.cpp
 				entry.cpp
 				journal.cpp
+				journal_storage_manager.cpp
                 main.cpp
 				database_connection.cpp
 				phatbooks_database_connection.cpp

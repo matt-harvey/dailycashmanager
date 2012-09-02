@@ -184,7 +184,6 @@ public:
 	T load(typename T::Key const& key);
 
 
-protected:
 
 	/**
 	 * Executes a string on the database connection.
@@ -197,6 +196,7 @@ protected:
 	 * there is any kind of error executing the statement.
 	 */
 	void execute_sql(std::string const& str);
+
 
 
 	/**

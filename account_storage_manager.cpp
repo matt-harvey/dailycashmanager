@@ -1,4 +1,6 @@
 #include "account_storage_manager.hpp"
+#include "account.hpp"
+#include "database_connection.hpp"
 #include "general_typedefs.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "sql_statement.hpp"
@@ -18,11 +20,11 @@ namespace sqloxx
 
 void StorageManager<Account>::save
 (	Account const& account,
-	DatabaseConnection& db
+	DatabaseConnection& dbc
 )
 {
 	SQLStatement commodity_finder
-	(	db,
+	(	dbc,
 		"select commodity_id from commodities where "
 		"commodities.abbreviation = :p"
 	);
@@ -44,7 +46,7 @@ void StorageManager<Account>::save
 		);
 	}
 	SQLStatement statement
-	(	db,
+	(	dbc,
 		"insert into accounts(account_type_id, name, description, "
 		"commodity_id) values(:account_type_id, :name, :description, "
 		":commodity_id)"

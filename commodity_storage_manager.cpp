@@ -2,10 +2,12 @@
 #include "commodity_storage_manager.hpp"
 #include "sql_statement.hpp"
 #include <jewel/decimal.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <string>
 
 using phatbooks::Commodity;
 using jewel::Decimal;
+using boost::numeric_cast;
 using std::string;
 
 
@@ -61,7 +63,7 @@ Commodity StorageManager<Commodity>::load
 		statement.extract<int>(3),
 		Decimal
 		(	statement.extract<Decimal::int_type>(4),
-			boost::numeric_cast<Decimal::places_type>
+			numeric_cast<Decimal::places_type>
 			(	statement.extract<boost::int64_t>(5)
 			)
 		)

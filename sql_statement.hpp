@@ -125,7 +125,6 @@ public:
 	*/
 	void quick_step();
 
-
 private:
 	sqlite3_stmt* m_statement;
 	DatabaseConnection& m_database_connection;

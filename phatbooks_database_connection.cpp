@@ -59,6 +59,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 }
 
 
+/*
 IdType
 PhatbooksDatabaseConnection::store(Journal const& p_journal)
 {
@@ -111,7 +112,7 @@ PhatbooksDatabaseConnection::store(Journal const& p_journal)
 	JEWEL_DEBUG_LOG << "Journal object has been successfully stored." << endl;
 	return ret;
 }
-
+*/
 
 bool
 PhatbooksDatabaseConnection::has_account_named(string const& p_name)

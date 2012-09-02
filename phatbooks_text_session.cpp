@@ -608,7 +608,7 @@ void PhatbooksTextSession::elicit_journal()
 	// WARNING
 	// Don't forget to get the date!
 
-	m_database_connection->store(journal);
+	m_database_connection->save(journal);
 	return;
 }
 
