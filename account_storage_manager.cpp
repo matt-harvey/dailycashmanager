@@ -122,11 +122,11 @@ Account StorageManager<Account>::load
 {
 	SQLStatement statement
 	(	dbc,
-		"select accounts.name, "
-		"commodities.abbreviation, "
-		"accounts.account_type_id, "
-		"accounts.description from "
-		"accounts_extended where accounts.name = :p"
+		"select name, "
+		"abbreviation, "
+		"account_type_id, "
+		"description from "
+		"accounts_extended where name = :p"
 	);
 	statement.bind(":p", name);
 	statement.step();

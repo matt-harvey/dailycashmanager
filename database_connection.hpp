@@ -181,7 +181,7 @@ public:
 	 * @todo Determine and document throwing behaviour.
 	 */
 	template <typename T>
-	T load(typename T::Key const& key);
+	T load(typename StorageManager<T>::Key const& key);
 
 
 
@@ -328,7 +328,7 @@ DatabaseConnection::save(T const& obj)
 template <typename T>
 inline
 T
-DatabaseConnection::load(typename T::Key const& key)
+DatabaseConnection::load(typename StorageManager<T>::Key const& key)
 {
 	return StorageManager<T>::load(key, *this);
 }

@@ -18,6 +18,7 @@
 #include "date.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
+#include "database_connection.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <jewel/decimal.hpp>
@@ -39,6 +40,7 @@ using consolixx::get_decimal_from_user;
 using consolixx::TextSession;
 using jewel::Decimal;
 using jewel::DecimalRangeException;
+using sqloxx::DatabaseConnection;
 using sqloxx::InvalidFilename;
 using sqloxx::SQLiteException;
 using boost::bimap;
@@ -51,6 +53,8 @@ using std::cout;
 using std::endl;
 using std::map;
 using std::string;
+
+
 
 namespace phatbooks
 {
@@ -508,9 +512,11 @@ void PhatbooksTextSession::elicit_journal()
 	string primary_entry_account_name = elicit_existing_account_name();
 
 	// Get primary entry amount
-	Commodity primary_commodity =
-		m_database_connection->commodity_for_account_named
-		(	primary_entry_account_name
+	Account const primary_entry_account =
+		m_database_connection->load<Account>(primary_entry_account_name);
+	Commodity const primary_commodity =
+		m_database_connection->load<Commodity>
+		(	primary_entry_account.commodity_abbreviation()
 		);
 	Decimal primary_entry_amount;
 	for (bool input_is_valid = false; !input_is_valid; )
@@ -566,10 +572,12 @@ void PhatbooksTextSession::elicit_journal()
 	cout << "Enter name of " << secondary_account_prompt << ": ";
 	string secondary_entry_account_name = elicit_existing_account_name();
 	// WARNING if secondary account is in a different currency then we
-	// need to respond appropriately.
-	Commodity secondary_commodity =
-		m_database_connection->
-			commodity_for_account_named(secondary_entry_account_name);
+	Account const secondary_entry_account =
+		m_database_connection->load<Account>(secondary_entry_account_name);
+	Commodity const secondary_commodity =
+		m_database_connection->load<Commodity>
+		(	secondary_entry_account.commodity_abbreviation()
+		);
 	if
 	(	secondary_commodity.abbreviation() != primary_commodity.abbreviation()
 	)

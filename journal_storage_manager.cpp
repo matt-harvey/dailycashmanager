@@ -55,8 +55,8 @@ void StorageManager<Journal>::save
 	typedef list< shared_ptr<Entry> > EntryCntnr;
 	typedef EntryCntnr::const_iterator Iter;
 	for
-	(	Iter it = journal.m_entries.begin();
-		it != journal.m_entries.end();
+	(	Iter it = journal.entries().begin();
+		it != journal.entries().end();
 		++it
 	)
 	{
@@ -114,7 +114,7 @@ StorageManager<Journal>::load(Key const& id, DatabaseConnection& dbc)
 	{	
 		SQLStatement account_finder
 		(	dbc,
-			"select accounts.name, commodities.precision from "
+			"select name, precision from "
 			"accounts_extended where account_id = :aid"
 		);
 		account_finder.bind(":aid", entry_finder.extract<IdType>(2));

@@ -50,7 +50,7 @@ Commodity StorageManager<Commodity>::load
 {
 	SQLStatement statement
 	(	dbc,
-		"select from commodities abbreviation, name, description, precision, "
+		"select abbreviation, name, description, precision, "
 		"multiplier_to_base_intval, multiplier_to_base_places from "
 		"commodities where abbreviation = :p"
 	);

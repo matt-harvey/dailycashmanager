@@ -16,6 +16,7 @@
 #include "commodity.hpp"
 #include "account_storage_manager.hpp"
 #include "commodity_storage_manager.hpp"
+#include "journal_storage_manager.hpp"
 #include "database_connection.hpp"
 #include "sql_statement.hpp"
 #include <boost/bimap.hpp>
@@ -145,14 +146,6 @@ public:
 	 * stored in the database.
 	 */
 	bool has_commodity_named(std::string const& p_name);
-
-	/**
-	 * @returns the Commodity of an Account given the name of that Account.
-	 *
-	 * @todo HIGH PRIORITY Make it exception safe and determine and document
-	 * throwing behaviour.
-	 */
-	Commodity commodity_for_account_named(std::string const& account_name);
 
 	/**
 	 * Creates tables required for Phatbooks, and inserts rows

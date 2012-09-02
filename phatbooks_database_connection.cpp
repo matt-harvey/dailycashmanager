@@ -118,37 +118,6 @@ PhatbooksDatabaseConnection::has_commodity_named(string const& p_name)
 	return statement.step();
 }
 
-Commodity
-PhatbooksDatabaseConnection::commodity_for_account_named
-(	string const& account_name
-)
-{
-	SQLStatement statement
-	(	*this,
-		"select commodities.abbreviation, commodities.name, "
-		"commodities.description, commodities.precision, "
-		"commodities.multiplier_to_base_intval, "
-		"commodities.multiplier_to_base_places "
-		"from commodities join accounts using(commodity_id) "
-		"where accounts.name = :p"
-	);
-	statement.bind(":p", account_name);
-	statement.step();
-	return Commodity
-	(	statement.extract<string>(0),
-		statement.extract<string>(1),
-		statement.extract<string>(2),
-		statement.extract<int>(3),
-		Decimal
-		(	statement.extract<Decimal::int_type>(4),
-			numeric_cast<Decimal::places_type>
-			(	statement.extract<boost::int64_t>(5)
-			)
-		)
-	);
-}
-
-
 
 void
 PhatbooksDatabaseConnection::setup()

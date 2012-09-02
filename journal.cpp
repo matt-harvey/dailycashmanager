@@ -54,9 +54,9 @@ Journal::set_comment(string const& p_comment)
 }
 
 void
-Journal::set_date(DateType date)
+Journal::set_date(DateType p_date)
 {
-	m_date = date;
+	m_date = p_date;
 	return;
 }
 
@@ -99,6 +99,11 @@ Journal::comment() const
 }
 
 
+list< shared_ptr<Entry> > const&
+Journal::entries() const
+{
+	return m_entries;
+}
 
 
 

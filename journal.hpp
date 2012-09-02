@@ -13,7 +13,6 @@
 
 
 #include "date.hpp"
-#include "phatbooks_database_connection.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/shared_ptr.hpp>
 #include <list>
@@ -26,7 +25,6 @@ namespace phatbooks
 class Entry;
 class Repeater;
 
-
 /**
  * Class to represent accounting journals. An accounting journal will
  * typically comprise two or more accounting entries, plus some
@@ -38,8 +36,6 @@ class Repeater;
 class Journal
 {
 public:
-
-	friend class sqloxx::StorageManager<Journal>;
 
 	/**
 	 * This constructor initializes journal date
@@ -75,7 +71,7 @@ public:
 	 *
 	 * Does not throw.
 	 */
-	void set_date(DateType date);
+	void set_date(DateType p_date);
 
 	/**
 	 * Add an Entry to the Journal.
@@ -133,6 +129,11 @@ public:
 	 * in different currencies. An entry must have its value frozen in time.
 	 */
 	bool is_balanced() const;
+
+	/**
+	 * @returns a constant reference to the list of entries in the journal.
+	 */
+	std::list< boost::shared_ptr<Entry> > const& entries() const;
 
 private:
 	bool m_is_actual;
