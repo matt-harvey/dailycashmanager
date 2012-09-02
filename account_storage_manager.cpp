@@ -106,7 +106,8 @@ void StorageManager<Account>::setup_tables
 		"accounts.description, commodities.abbreviation, "
 		"commodity_id, "
 		"commodities.multiplier_to_base_intval, "
-		"commodities.multiplier_to_base_places from "
+		"commodities.multiplier_to_base_places, "
+		"commodities.precision from "
 		"accounts join commodities using(commodity_id)"
 	);
 	account_view_stmt.quick_step();

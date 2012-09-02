@@ -25,9 +25,14 @@ namespace sqloxx
 /**
  * Specializes the StorageManager class template for
  * phatbooks::Account.
+ *
+ * @todo This currently doesn't store any repeaters.
+ *
+ * @todo This currently assumes the Journal is not a draft journal.
  */
 template <>
-class StorageManager<phatbooks::Journal> {
+class StorageManager<phatbooks::Journal>
+{
 public:
 	
 	typedef phatbooks::IdType Key;
@@ -45,7 +50,6 @@ public:
 	setup_tables(DatabaseConnection& dbc);
 
 };
-
 
 }  // namespace sqloxx
 

@@ -31,6 +31,9 @@ class Repeater;
  * Class to represent accounting journals. An accounting journal will
  * typically comprise two or more accounting entries, plus some
  * "journal level" data such as the date.
+ *
+ * @todo The design is currently confused about whether a Journal is a
+ * necessarily posted or just a draft.
  */
 class Journal
 {
@@ -66,6 +69,13 @@ public:
 	 * circumstances.
 	 */
 	void set_comment(std::string const& p_comment);
+
+	/**
+	 * Set date of journal.
+	 *
+	 * Does not throw.
+	 */
+	void set_date(DateType date);
 
 	/**
 	 * Add an Entry to the Journal.

@@ -54,6 +54,13 @@ Journal::set_comment(string const& p_comment)
 }
 
 void
+Journal::set_date(DateType date)
+{
+	m_date = date;
+	return;
+}
+
+void
 Journal::add_entry(shared_ptr<Entry> entry)
 {
 	m_entries.push_back(entry);

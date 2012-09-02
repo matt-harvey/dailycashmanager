@@ -19,6 +19,7 @@
 #include "commodity_storage_manager.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
+#include "journal_storage_manager.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "database_connection.hpp"
@@ -58,61 +59,6 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 {
 }
 
-
-/*
-IdType
-PhatbooksDatabaseConnection::store(Journal const& p_journal)
-{
-	JEWEL_DEBUG_LOG << "Storing Journal object in database..." << endl;
-	IdType const ret = next_auto_key<IdType>("journals");
-	execute_sql("begin transaction;");
-	SQLStatement statement
-	(	*this,
-		"insert into journals(is_actual, date, comment) "
-		"values(:is_actual, :date, :comment)"
-	);
-	statement.bind(":is_actual", static_cast<int>(p_journal.is_actual()));
-	statement.bind(":date", p_journal.date());
-	statement.bind(":comment", p_journal.comment());
-	statement.quick_step();
-
-	// WARNING I should make this more efficient by setting up the 
-	// account_id_finder and entry_storer outside the loop, and then
-	// just resetting within the loop. Better, there could be a view with
-	// some of this this stuff already worked out in the view, and I
-	// could just query that view.
-
-	typedef list< shared_ptr<Entry> > EntryCntnr;
-	typedef EntryCntnr::const_iterator Iter;
-	for
-	(	Iter it = p_journal.m_entries.begin();
-		it != p_journal.m_entries.end();
-		++it
-	)
-	{
-		SQLStatement account_id_finder
-		(	*this,
-			"select account_id from accounts where name = :aname"
-		);
-		account_id_finder.bind(":aname", (*it)->account_name());
-		account_id_finder.step();
-		IdType acct_id = account_id_finder.extract<IdType>(0);
-		SQLStatement entry_storer
-		(	*this,
-			"insert into entries(journal_id, comment, account_id, "
-			"amount) values(:journal_id, :comment, :account_id, :amount)"
-		);
-		entry_storer.bind(":journal_id", ret);
-		entry_storer.bind(":comment", (*it)->comment());
-		entry_storer.bind(":account_id", acct_id);
-		entry_storer.bind(":amount", (*it)->amount().intval());
-		entry_storer.quick_step();
-	}
-	execute_sql("end transaction;");
-	JEWEL_DEBUG_LOG << "Journal object has been successfully stored." << endl;
-	return ret;
-}
-*/
 
 bool
 PhatbooksDatabaseConnection::has_account_named(string const& p_name)
@@ -228,6 +174,8 @@ PhatbooksDatabaseConnection::setup()
 
 	setup_tables<Account>();	
 
+	setup_tables<Journal>();
+
 	execute_sql
 	(
 		"create table interval_types"
@@ -264,23 +212,6 @@ PhatbooksDatabaseConnection::setup()
 		"("
 			"draft_entry_id integer primary key autoincrement, "
 			"draft_journal_id not null references draft_journals, "
-			"comment text, "
-			"account_id not null references accounts, "
-			"amount integer not null "
-		"); "
-
-		"create table journals"
-		"("
-			"journal_id integer primary key autoincrement, "
-			"is_actual integer not null references booleans, "
-			"date text not null, "
-			"comment text"
-		"); "
-
-		"create table entries"
-		"("
-			"entry_id integer primary key autoincrement, "
-			"journal_id not null references journals, "
 			"comment text, "
 			"account_id not null references accounts, "
 			"amount integer not null "
