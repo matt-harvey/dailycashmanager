@@ -297,18 +297,6 @@ public:
 	 */
 	std::vector<std::string> primary_key(std::string const& table_name);
 
-	
-private:
-
-	/**
-	 * A connection to a SQLite3 database file.
-	 *
-	 * (Note this is a raw pointer not a smart pointer
-	 * to facilitate more straightforward interaction with the SQLite
-	 * C API.)
-	 */
-	sqlite3* m_connection;
-
 	/**
 	 * Creates table containing integers representing boolean values.
 	 * This might be used to provide foreign key constraints for other
@@ -321,6 +309,18 @@ private:
 	 * \e false, and the other with 1, representing \e true.
 	 */
 	void setup_boolean_table();
+
+	
+private:
+
+	/**
+	 * A connection to a SQLite3 database file.
+	 *
+	 * (Note this is a raw pointer not a smart pointer
+	 * to facilitate more straightforward interaction with the SQLite
+	 * C API.)
+	 */
+	sqlite3* m_connection;
 
 
 };

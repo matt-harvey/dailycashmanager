@@ -23,7 +23,6 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "database_connection.hpp"
-#include "repeater_storage_manager.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <sqlite3.h>
 #include <stdexcept>
