@@ -417,8 +417,6 @@ void PhatbooksTextSession::elicit_journal()
 
 	// Find out what kind of journal this is going to be
 	// Do we want to have them all be general journals?
-	// Note all P&L entries should be done on the basis of
-	// envelope effect...
 	
 	Menu transaction_menu;
 
@@ -571,7 +569,9 @@ void PhatbooksTextSession::elicit_journal()
 	// Get other account and comment
 	cout << "Enter name of " << secondary_account_prompt << ": ";
 	string secondary_entry_account_name = elicit_existing_account_name();
-	// WARNING if secondary account is in a different currency then we
+	// WARNING if secondary account is in a different currency then we need to
+	// deal with this here somehow.
+ 
 	Account const secondary_entry_account =
 		m_database_connection->load<Account>(secondary_entry_account_name);
 	Commodity const secondary_commodity =

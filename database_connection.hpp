@@ -309,6 +309,20 @@ private:
 	 */
 	sqlite3* m_connection;
 
+	/**
+	 * Creates table containing integers representing boolean values.
+	 * This might be used to provide foreign key constraints for other
+	 * tables where we wish a particular column to have boolean values
+	 * only.
+	 *
+	 * The table is called "booleans" and has one column, an integer
+	 * primary key field with the heading "representation". There are
+	 * two rows, one with 0 in the "representation" column, representing
+	 * \e false, and the other with 1, representing \e true.
+	 */
+	void setup_boolean_table();
+
+
 };
 
 

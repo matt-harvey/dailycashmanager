@@ -16,6 +16,7 @@
 #include "database_connection.hpp"
 #include "storage_manager.hpp"
 #include <jewel/decimal.hpp>
+#include <string>
 
 namespace sqloxx
 {

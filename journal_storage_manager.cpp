@@ -66,7 +66,6 @@ void StorageManager<Journal>::save
 		);
 		account_id_finder.bind(":aname", (*it)->account_name());
 		account_id_finder.step();
-		IdType acct_id = account_id_finder.extract<IdType>(0);
 		SQLStatement entry_storer
 		(	dbc,	
 			"insert into entries(journal_id, comment, account_id, "
@@ -74,7 +73,10 @@ void StorageManager<Journal>::save
 		);
 		entry_storer.bind(":journal_id", journal_id);
 		entry_storer.bind(":comment", (*it)->comment());
-		entry_storer.bind(":account_id", acct_id);
+		entry_storer.bind
+		(	":account_id",
+			account_id_finder.extract<IdType>(0)
+		);
 		entry_storer.bind(":amount", (*it)->amount().intval());
 		entry_storer.quick_step();
 	}

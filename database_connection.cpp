@@ -256,6 +256,12 @@ DatabaseConnection::primary_key(string const& table_name)
 	return ret;
 }
 
-
+void
+DatabaseConnection::setup_boolean_table()
+{
+	execute_sql("create table booleans(representation integer primary key)");
+	execute_sql("insert into booleans(representation) values(0)");
+	execute_sql("insert into booleans(representation) values(1)");
+}
 
 }  // namespace sqloxx

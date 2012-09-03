@@ -23,6 +23,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "database_connection.hpp"
+#include "repeater_storage_manager.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <sqlite3.h>
 #include <stdexcept>
@@ -134,11 +135,7 @@ PhatbooksDatabaseConnection::setup()
 
 
 	execute_sql("begin transaction");
-
-	execute_sql("create table booleans(representation integer primary key)");
-	execute_sql("insert into booleans(representation) values(0)");
-	execute_sql("insert into booleans(representation) values(1)");
-
+	setup_boolean_table();
 	setup_tables<Commodity>();
 	setup_tables<Account>();	
 	setup_tables<Journal>();
@@ -166,15 +163,6 @@ PhatbooksDatabaseConnection::setup()
 			"comment text"
 		"); "
 
-		"create table repeaters"
-		"("
-			"repeater_id integer primary key autoincrement, "
-			"draft_journal_id not null references draft_journals, "
-			"next_date text not null, "
-			"interval_type_id references interval_types, "
-			"interval_units integer not null"
-		"); "
-
 		"create table draft_entries"
 		"("
 			"draft_entry_id integer primary key autoincrement, "
@@ -183,9 +171,11 @@ PhatbooksDatabaseConnection::setup()
 			"account_id not null references accounts, "
 			"amount integer not null "
 		"); "
+	);
 
-		"create table " + s_setup_flag + "(dummy_column);"
 
+	execute_sql
+	(	"create table " + s_setup_flag + "(dummy_column);"
 		"end transaction;"
 	);
 	return;
