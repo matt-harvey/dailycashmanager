@@ -44,19 +44,23 @@ public:
 	// Default assignment is fine.
 	// Default destructor is fine.
 
-	/** Returns name of account.
+	/**
+	 * Returns name of account.
 	 */
 	std::string name() const;
 
-	/** Returns abbreviation of native commodity of this account.
+	/**
+	 * Returns abbreviation of native commodity of this account.
 	 */
 	std::string commodity_abbreviation() const;
 
-	/** Returns AccountType of account.
+	/**
+	 * Returns AccountType of account.
 	 */
 	AccountType account_type() const;
 
-	/** Returns description of account.
+	/**
+	 * Returns description of account.
 	 */
 	std::string description() const;
 

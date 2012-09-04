@@ -12,6 +12,7 @@
  */
 
 
+#include "journal_base.hpp"
 #include "date.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/shared_ptr.hpp>
@@ -26,14 +27,15 @@ class Entry;
 class Repeater;
 
 /**
- * Class to represent accounting journals. An accounting journal will
+ * Class to represent accounting journals that are "live" in memory, as
+ * opposed to living in a database. An accounting journal will
  * typically comprise two or more accounting entries, plus some
  * "journal level" data such as the date.
  *
  * @todo The design is currently confused about whether a Journal is a
  * necessarily posted or just a draft.
  */
-class Journal
+class Journal: public JournalBase
 {
 public:
 
