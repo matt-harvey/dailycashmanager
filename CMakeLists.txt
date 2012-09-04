@@ -4,6 +4,7 @@ include_directories (/home/matthew/lib)
 link_directories (/home/matthew/lib/jewel)
 add_executable (main
 				account.cpp
+				account_base.cpp
 				account_storage_manager.cpp
 				commodity.cpp
 				commodity_storage_manager.cpp

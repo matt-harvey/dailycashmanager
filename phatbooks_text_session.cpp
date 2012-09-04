@@ -574,6 +574,7 @@ void PhatbooksTextSession::elicit_journal()
  
 	Account const secondary_entry_account =
 		m_database_connection->load<Account>(secondary_entry_account_name);
+
 	Commodity const secondary_commodity =
 		m_database_connection->load<Commodity>
 		(	secondary_entry_account.commodity_abbreviation()
