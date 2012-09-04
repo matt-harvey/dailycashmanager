@@ -22,8 +22,8 @@
 #include "journal_storage_manager.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
-#include "database_connection.hpp"
-#include "sqloxx_exceptions.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/sqloxx_exceptions.hpp"
 #include <sqlite3.h>
 #include <stdexcept>
 #include <boost/bimap.hpp>

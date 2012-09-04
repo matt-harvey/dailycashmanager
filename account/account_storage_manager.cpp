@@ -1,9 +1,9 @@
 #include "account_storage_manager.hpp"
 #include "account.hpp"
-#include "database_connection.hpp"
 #include "general_typedefs.hpp"
 #include "phatbooks_exceptions.hpp"
-#include "sql_statement.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <string>
 #include <vector>
 

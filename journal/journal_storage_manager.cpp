@@ -3,11 +3,11 @@
 #include "account_storage_manager.hpp"
 #include "commodity.hpp"
 #include "commodity_storage_manager.hpp"
-#include "database_connection.hpp"
 #include "date.hpp"
 #include "entry.hpp"
 #include "general_typedefs.hpp"
-#include "sql_statement.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>

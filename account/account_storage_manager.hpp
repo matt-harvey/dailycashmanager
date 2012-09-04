@@ -14,9 +14,9 @@
 
 
 #include "account.hpp"
-#include "database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
-#include "storage_manager.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/storage_manager.hpp"
 
 
 namespace sqloxx

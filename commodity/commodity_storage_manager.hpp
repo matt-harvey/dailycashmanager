@@ -13,8 +13,8 @@
  */
 
 #include "commodity.hpp"
-#include "database_connection.hpp"
-#include "storage_manager.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/storage_manager.hpp"
 #include <jewel/decimal.hpp>
 #include <string>
 

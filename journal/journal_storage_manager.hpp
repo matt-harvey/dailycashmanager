@@ -15,8 +15,8 @@
 
 #include "journal.hpp"
 #include "general_typedefs.hpp"
-#include "database_connection.hpp"
-#include "storage_manager.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/storage_manager.hpp"
 #include <jewel/decimal.hpp>
 
 namespace sqloxx

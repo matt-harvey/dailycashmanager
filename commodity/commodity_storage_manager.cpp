@@ -1,6 +1,6 @@
 #include "commodity.hpp"
 #include "commodity_storage_manager.hpp"
-#include "sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <string>

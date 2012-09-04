@@ -17,8 +17,8 @@
 #include "account_storage_manager.hpp"
 #include "commodity_storage_manager.hpp"
 #include "journal_storage_manager.hpp"
-#include "database_connection.hpp"
-#include "sql_statement.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <boost/bimap.hpp>
 #include <string>
 
