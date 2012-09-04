@@ -20,6 +20,10 @@
 namespace phatbooks
 {
 
+/**
+ * Represents an Account object that is "live" in memory, rather than
+ * stored in a database.
+ */
 class Account: public AccountBase
 {
 public:

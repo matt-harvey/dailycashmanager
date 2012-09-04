@@ -12,6 +12,7 @@
  */
 
 
+#include "commodity_base.hpp"
 #include "general_typedefs.hpp"
 #include <jewel/decimal.hpp>
 #include <string>
@@ -20,13 +21,10 @@ namespace phatbooks
 {
 
 /**
- * Class representing commodities, where a commodity is anything of
- * value that can be counted in undifferentiated units, e.g. a particular
- * currency, units in a particular fund, shares in a particular trust, and
- * so forth. A single unique asset, such as a car, might also be regarded as a
- * commodity, of which there is only one unit in existence.
+ * Class representing Commodity objects that are "live" in memory,
+ * rather than stored in a database.
  */
-class Commodity
+class Commodity: public CommodityBase
 {
 
 public:
