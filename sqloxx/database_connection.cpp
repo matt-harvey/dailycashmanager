@@ -19,7 +19,6 @@
 #include "sql_statement.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/filesystem.hpp>
-#include <jewel/debug_log.hpp>
 #include <sqlite3.h>
 #include <cassert>
 #include <cstdlib>
@@ -43,15 +42,13 @@ namespace sqloxx
 DatabaseConnection::DatabaseConnection():
 	m_connection(0)
 {
-	JEWEL_DEBUG_LOG << "Creating DatabaseConnection..." << endl;
-
+	
 	// Initialize SQLite3
 	if (sqlite3_initialize() != SQLITE_OK)
 	{
 		throw SQLiteInitializationError("SQLite could not be initialized.");
 	}
 
-	JEWEL_DEBUG_LOG << "SQLite3 has been initialized." << endl;
 }
 
 void
@@ -62,21 +59,15 @@ DatabaseConnection::open(boost::filesystem::path const& filepath)
 		throw InvalidFilename("Cannot open file with empty filename.");
 	}
 	// Check if file already exists
+	// Note this conditional doesn't do anything, but retained here
+	// for convenience in case logging or other message required.
 	if (boost::filesystem::exists(boost::filesystem::status(filepath)))
 	{
-		JEWEL_DEBUG_LOG << "Preexisting file \""
-		                << filepath.string()
-						<< "\" detected."
-		                << endl;
-		JEWEL_DEBUG_LOG << "Attempting to connect to this file."
-		                << endl;
+		// Preexisting filepath detected... 
 	}
 	else
 	{
-		JEWEL_DEBUG_LOG << "Creating file \""
-		                << filepath.string()
-						<< "\"."
-						<< endl;
+		// New file created...
 	}
 	// Throw if already connected or if filename is empty
 	if (m_connection)
@@ -91,13 +82,7 @@ DatabaseConnection::open(boost::filesystem::path const& filepath)
 		0
 	);
 	check_ok();
-	JEWEL_DEBUG_LOG << "Database connection to file \""
-	                << filepath.string()
-	                << "\" has been opened "
-	                << "and m_connection has been set to point there."
-					<< endl;
 	execute_sql("pragma foreign_keys = on;");
-	JEWEL_DEBUG_LOG << "Foreign key constraints enabled." << endl;
 	return;
 
 }
@@ -107,7 +92,6 @@ DatabaseConnection::open(boost::filesystem::path const& filepath)
 // Remember - don't call virtual functions from destructors!
 DatabaseConnection::~DatabaseConnection()
 {
-	JEWEL_DEBUG_LOG << "Destroying database connection..." << endl;
 	if (m_connection)
 	{
 		if (sqlite3_close(m_connection) != SQLITE_OK)
@@ -124,7 +108,6 @@ DatabaseConnection::~DatabaseConnection()
 		     << endl;
 		std::abort();
 	}
-	JEWEL_DEBUG_LOG << "SQLite3 has been shut down." << endl;
 }
 
 bool

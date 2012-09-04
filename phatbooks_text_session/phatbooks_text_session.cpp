@@ -21,6 +21,7 @@
 #include "consolixx/consolixx.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
+#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
 #include <boost/bimap.hpp>

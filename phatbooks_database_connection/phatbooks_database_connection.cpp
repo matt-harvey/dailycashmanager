@@ -29,7 +29,6 @@
 #include <boost/bimap.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
-#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <iostream>
 #include <list>
@@ -130,8 +129,6 @@ PhatbooksDatabaseConnection::setup()
 	assert (!setup_has_occurred());
 
 	// Create the tables
-	JEWEL_DEBUG_LOG << "Setting up Phatbooks tables." << endl;
-
 
 	execute_sql("begin transaction");
 	setup_boolean_table();

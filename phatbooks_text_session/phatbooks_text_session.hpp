@@ -205,3 +205,4 @@ private:
 
 
 #endif  // GUARD_phatbooks_text_session_hpp
+
