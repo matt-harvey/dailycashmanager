@@ -13,14 +13,14 @@
 
 
 #include "account.hpp"
-#include "consolixx.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
-#include "database_connection.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx_exceptions.hpp"
+#include "consolixx/consolixx.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/sqloxx_exceptions.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
 #include <boost/bimap.hpp>
