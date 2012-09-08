@@ -15,7 +15,6 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "account_storage_manager.hpp"
-#include "commodity_storage_manager.hpp"
 #include "journal_storage_manager.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/sql_statement.hpp"

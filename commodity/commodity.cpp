@@ -1,5 +1,8 @@
 #include "commodity.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <jewel/decimal.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <string>
 
 /** \file commodity.cpp
@@ -13,60 +16,120 @@
  */
 
 
+using sqloxx::DatabaseConnection;
+using sqloxx::SQLStatement;
 using jewel::Decimal;
+using boost::numeric_cast;
 using std::string;
 
 namespace phatbooks
 {
 
-Commodity::Commodity
-(	std::string p_abbreviation,
-	std::string p_name,
-	std::string p_description,
-	int p_precision,
-	jewel::Decimal p_multiplier_to_base
-):
-	m_abbreviation(p_abbreviation),
-	m_name(p_name),
-	m_description(p_description),
-	m_precision(p_precision),
-	m_multiplier_to_base(p_multiplier_to_base)
+void Commodity::setup_tables
+(	DatabaseConnection& dbc
+)
 {
-}
-
-string
-Commodity::abbreviation() const
-{
-	return m_abbreviation;
-}
-
-
-string
-Commodity::name() const
-{
-	return m_name;
+	SQLStatement statement
+	(	dbc,
+		"create table commodities"
+		"("
+			"commodity_id integer primary key autoincrement, "
+			"abbreviation text not null unique, "
+			"name text unique, "
+			"description text, "
+			"precision integer default 2 not null, "
+			"multiplier_to_base_intval integer not null, "
+			"multiplier_to_base_places integer not null"
+		")"
+	);
+	statement.quick_step();
+	return;
 }
 
 
-string
-Commodity::description() const
+
+void Commodity::load_id_knowing_abbreviation()
 {
-	return m_description;
+	SQLStatement statement
+	(	*database_connection(),
+		"select commodity_id from commodities where "
+		"abbreviation = :p"
+	);
+	statement.bind(":p", m_abbreviation);
+	set_id(statement.extract<Id>(0));
+	return;
+}
+	
+
+void Commodity::load_abbreviation_knowing_id()
+{
+	SQLStatement statement
+	(	*database_connection(),
+		"select abbreviation from commodities where commodity_id = :p"
+	);
+	statement.bind(":p", id());
+	statement.step();
+	m_abbreviation = statement.extract<string>(0);
+	return;
 }
 
 
-int
-Commodity::precision() const
+
+void Commodity::do_load_all()
 {
-	return m_precision;
+	SQLStatement statement
+	(	*database_connection(),
+		"select abbreviation, name, description, precision, "
+		"multiplier_to_base_intval, multiplier_to_base_places from "
+		"commodities where commodity_id = :p"
+	);
+	statement.bind(":p", id());
+	statement.step();
+	string const abb = statement.extract<string>(0);
+	string const n = statement.extract<string>(1);
+	string const desc = statement.extract<string>(2);
+	int const prec = statement.extract<int>(3);
+	Decimal const mult = Decimal
+	(	statement.extract<Decimal::int_type>(4),
+		numeric_cast<Decimal::places_type>
+		(	statement.extract<int>(5)
+		)
+	);
+	m_abbreviation = abb;
+	m_name = n;
+	m_description = desc;
+	m_precision = prec;
+	m_multiplier_to_base = mult;
+	return;
 }
 
 
-Decimal
-Commodity::multiplier_to_base() const
+void Commodity::do_save_new_all()
 {
-	return m_multiplier_to_base;
+	SQLStatement statement
+	(	*database_connection(),
+		"insert into commodities(abbreviation, name, description, precision, "
+		"multiplier_to_base_intval, multiplier_to_base_places) "
+		"values(:abbreviation, :name, :description, :precision, "
+		":multiplier_to_base_intval, :multiplier_to_base_places)"
+	);
+	statement.bind(":abbreviation", m_abbreviation);
+	statement.bind(":name", *m_name);
+	statement.bind(":description", *m_description);
+	statement.bind(":precision", *m_precision);
+	statement.bind
+	(	":multiplier_to_base_intval",
+		m_multiplier_to_base->intval()
+	);
+	statement.bind
+	(	":multiplier_to_base_places",
+		m_multiplier_to_base->places()
+	);
+	statement.quick_step();	
+	return;
 }
 
+
+	
 
 }  // namespace phatbooks

@@ -16,7 +16,6 @@
 #include "account.hpp"
 #include "account_storage_manager.hpp"
 #include "commodity.hpp"
-#include "commodity_storage_manager.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
 #include "journal_storage_manager.hpp"
@@ -132,7 +131,7 @@ PhatbooksDatabaseConnection::setup()
 
 	execute_sql("begin transaction");
 	setup_boolean_table();
-	setup_tables<Commodity>();
+	Commodity::setup_tables(*this);
 	setup_tables<Account>();	
 	setup_tables<Journal>();
 

@@ -16,7 +16,6 @@ add_executable (main
 				account/account_base.cpp
 				account/account_storage_manager.cpp
 				commodity/commodity.cpp
-				commodity/commodity_storage_manager.cpp
 				consolixx/consolixx.cpp
 				date/date.cpp
 				entry/entry.cpp

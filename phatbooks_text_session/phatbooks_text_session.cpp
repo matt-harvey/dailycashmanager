@@ -170,12 +170,7 @@ int PhatbooksTextSession::run(string const& filename)
 
 void PhatbooksTextSession::elicit_commodity()
 {
-	// We need the user's input to populate all these variables
-	string commodity_abbreviation;
-	string commodity_name;
-	string commodity_description;
-	int commodity_precision;
-	Decimal commodity_multiplier_to_base("0");
+	Commodity commodity(m_database_connection);
 
 	// Get abbreviation
 	cout << "Enter abbreviation for new commodity: ";
@@ -196,7 +191,7 @@ void PhatbooksTextSession::elicit_commodity()
 		else
 		{
 			input_is_valid = true;
-			commodity_abbreviation = input;
+			commodity.set_abbreviation(input);
 		}
 	}
 
@@ -219,14 +214,14 @@ void PhatbooksTextSession::elicit_commodity()
 				cout << "Commodity will be nameless." << endl;
 				assert (input == "");
 			}
-			commodity_name = input;
+			commodity.set_name(input);
 		}
 	}
 		
 	// Get description 
 	cout << "Enter description for new commodity (or hit enter for no "
 	        "description): ";
-	commodity_description = get_user_input();
+	commodity.set_description(get_user_input());
 
 	// Get precision 
 	cout << "Enter precision required for this commodity "
@@ -241,25 +236,25 @@ void PhatbooksTextSession::elicit_commodity()
 		}
 		else
 		{
-			commodity_precision = lexical_cast<int>(input);
+			commodity.set_precision(lexical_cast<int>(input));
 			input_is_valid = true;
 		}
 	}
-	assert (commodity_precision >= 0 && commodity_precision <= 6);
+	assert (commodity.precision() >= 0 && commodity.precision() <= 6);
 
 	// Get multiplier to base
 	cout << "Enter rate by which this commodity should be multiplied in order"
 	     << " to convert it to the base commodity for this entity: ";
-	commodity_multiplier_to_base = get_decimal_from_user();
+	commodity.set_multiplier_to_base(get_decimal_from_user());
 
 	// Confirm with user before creating commodity
 	cout << endl << "You have proposed to create the following commodity: "
 	     << endl << endl
-	     << "Abbreviation: " << commodity_abbreviation << endl
-		 << "Name: " << commodity_name << endl
-		 << "Description: " << commodity_description << endl
-		 << "Precision: " << commodity_precision << endl
-		 << "Conversion rate to base: " << commodity_multiplier_to_base
+	     << "Abbreviation: " << commodity.abbreviation() << endl
+		 << "Name: " << commodity.name() << endl
+		 << "Description: " << commodity.description() << endl
+		 << "Precision: " << commodity.precision() << endl
+		 << "Conversion rate to base: " << commodity.multiplier_to_base()
 		 << endl << endl;
 	cout << "Proceed with creating this commodity? (y/n) ";
 	string const confirmation = get_constrained_user_input
@@ -275,14 +270,7 @@ void PhatbooksTextSession::elicit_commodity()
 	else
 	{
 		assert (confirmation == "y");
-		Commodity comm
-		(	commodity_abbreviation,
-			commodity_name,
-			commodity_description,
-			commodity_precision,
-			commodity_multiplier_to_base
-		);
-		m_database_connection->save(comm);
+		commodity.save_new();
 		cout << "Commodity created." << endl;
 	}
 	return;
@@ -512,10 +500,10 @@ void PhatbooksTextSession::elicit_journal()
 	// Get primary entry amount
 	Account const primary_entry_account =
 		m_database_connection->load<Account>(primary_entry_account_name);
-	Commodity const primary_commodity =
-		m_database_connection->load<Commodity>
-		(	primary_entry_account.commodity_abbreviation()
-		);
+	Commodity primary_commodity
+	(	m_database_connection,
+		primary_entry_account.commodity_abbreviation()
+	);
 	Decimal primary_entry_amount;
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
@@ -575,10 +563,10 @@ void PhatbooksTextSession::elicit_journal()
 	Account const secondary_entry_account =
 		m_database_connection->load<Account>(secondary_entry_account_name);
 
-	Commodity const secondary_commodity =
-		m_database_connection->load<Commodity>
-		(	secondary_entry_account.commodity_abbreviation()
-		);
+	Commodity secondary_commodity
+	(	m_database_connection,
+		secondary_entry_account.commodity_abbreviation()
+	);
 	if
 	(	secondary_commodity.abbreviation() != primary_commodity.abbreviation()
 	)
