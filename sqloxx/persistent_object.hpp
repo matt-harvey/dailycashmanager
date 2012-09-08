@@ -69,11 +69,11 @@ public:
 	 */
 	void save_new();
 
+	Id id();
+
 protected:
 
 	boost::shared_ptr<DatabaseConnection> database_connection();
-
-	Id id();
 
 	void mark_as_persisted();
 
@@ -91,7 +91,7 @@ private:
 
 	enum LoadingStatus
 	{
-		ghost,
+		ghost = 0,
 		loading,
 		loaded
 	};
@@ -101,7 +101,6 @@ private:
 
 	boost::shared_ptr<DatabaseConnection> m_database_connection;
 	boost::optional<Id> m_id;
-	
 	LoadingStatus m_loading_status;
 	boost::optional<bool> m_has_been_persisted;
 
@@ -128,6 +127,7 @@ PersistentObject<Id>::PersistentObject
 (	boost::shared_ptr<DatabaseConnection> p_database_connection
 ):
 	m_database_connection(p_database_connection),
+	m_loading_status(ghost),
 	m_has_been_persisted(false)
 {
 }
@@ -145,7 +145,7 @@ inline
 void
 PersistentObject<Id>::load()
 {
-	if (m_loading_status == ghost)
+	if (m_loading_status == ghost && *m_has_been_persisted == true)
 	{
 		m_loading_status = loading;
 		do_load_all();

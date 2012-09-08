@@ -56,6 +56,7 @@ void Commodity::load_id_knowing_abbreviation()
 		"abbreviation = :p"
 	);
 	statement.bind(":p", m_abbreviation);
+	statement.step();
 	set_id(statement.extract<Id>(0));
 	return;
 }

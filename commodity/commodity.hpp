@@ -13,6 +13,7 @@
 
 
 #include "general_typedefs.hpp"
+#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>

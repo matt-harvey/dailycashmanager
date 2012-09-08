@@ -13,7 +13,6 @@ include_directories (/home/matthew/lib
 link_directories (/home/matthew/lib/jewel)
 add_executable (main
 				account/account.cpp
-				account/account_base.cpp
 				account/account_storage_manager.cpp
 				commodity/commodity.cpp
 				consolixx/consolixx.cpp
