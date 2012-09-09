@@ -111,7 +111,7 @@ public:
 
 	void set_precision(int p_precision);
 
-	void set_multiplier_to_base(jewel::Decimal const& p_muliplier_to_base);
+	void set_multiplier_to_base(jewel::Decimal const& p_multiplier_to_base);
 
 private:
 
