@@ -35,7 +35,7 @@ void Commodity::setup_tables
 		"("
 			"commodity_id integer primary key autoincrement, "
 			"abbreviation text not null unique, "
-			"name text unique, "
+			"name text not null unique, "
 			"description text, "
 			"precision integer default 2 not null, "
 			"multiplier_to_base_intval integer not null, "

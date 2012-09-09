@@ -200,20 +200,18 @@ void PhatbooksTextSession::elicit_commodity()
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
 		string input = get_user_input();
-		if (m_database_connection->has_commodity_named(input))
+		if (input.empty())
+		{
+			cout << "Name cannot be blank. Please try again: ";
+		}
+		else if (m_database_connection->has_commodity_named(input))
 		{
 			cout << "A commodity with this name already exists. "
-			     << "Please try a different name, or hit Enter for "
-				 << "no name: ";
+			     << "Please try a different name: ";
 		}
 		else
 		{
 			input_is_valid = true;
-			if (input.empty())
-			{
-				cout << "Commodity will be nameless." << endl;
-				assert (input == "");
-			}
 			commodity.set_name(input);
 		}
 	}
@@ -272,6 +270,8 @@ void PhatbooksTextSession::elicit_commodity()
 		assert (confirmation == "y");
 		commodity.save_new();
 		cout << "Commodity created." << endl;
+		commodity.set_description("Testing...");
+		commodity.save_existing();
 	}
 	return;
 }

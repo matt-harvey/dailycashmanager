@@ -130,7 +130,9 @@ private:
 
 
 	void do_save_new_all();
-	
+
+	std::string do_get_table_name();
+
 	// Other functions
 	void load_abbreviation_knowing_id();
 	void load_id_knowing_abbreviation();
@@ -251,7 +253,11 @@ void Commodity::set_multiplier_to_base
 	return;
 }
 
-
+inline
+std::string Commodity::do_get_table_name()
+{
+	return "commodities";
+}
 
 
 
