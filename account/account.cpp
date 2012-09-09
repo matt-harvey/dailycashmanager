@@ -52,24 +52,56 @@ Account::account_type_names()
 
 
 Account::AccountType
-Account::account_type() const
+Account::account_type()
 {
-	return m_account_type;
+	load();
+	return *m_account_type;
 }
 
-string Account::name() const
+string Account::name()
 {
-	return m_name;
+	load();
+	return *m_name;
 }
 
-string Account::commodity_abbreviation() const
+string Account::commodity_abbreviation()
 {
-	return m_commodity_abbreviation;
+	load();
+	return *m_commodity_abbreviation;
 }
 
-string Account::description() const
+string Account::description()
 {
-	return m_description;
+	load();
+	return *m_description;
+}
+
+void
+Account::set_account_type(AccountType p_account_type)
+{
+	m_account_type = p_account_type;
+	return;
+}
+
+void
+Account::set_name(string const& p_name)
+{
+	m_name = p_name;
+	return;
+}
+
+void
+Account::set_commodity_abbreviation(string const& p_commodity_abbreviation)
+{
+	m_commodity_abbreviation = p_commodity_abbreviation;
+	return;
+}
+
+void
+Account::set_description(string const& p_description)
+{
+	m_description = p_description;
+	return;
 }
 
 

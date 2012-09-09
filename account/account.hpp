@@ -13,6 +13,8 @@
 
 
 #include "general_typedefs.hpp"
+#include "sqloxx/persistent_object.hpp"
+#include <boost/optional.hpp>
 #include <string>
 #include <vector>
 
@@ -23,7 +25,7 @@ namespace phatbooks
  * Represents an Account object that is "live" in memory, rather than
  * stored in a database.
  */
-class Account
+class Account: public PersistentObject<int>
 {
 public:
 
@@ -47,17 +49,6 @@ public:
 	static std::vector<std::string> account_type_names();
 
 
-	/**
-	 * Constructor
-	 * Does not throw
-	 */
-	Account
-	(	std::string p_name,
-		std::string p_commodity_abbreviation,
-		AccountType p_account_type = asset,
-		std::string p_description = ""
-	);
-
 	// Default copy contructor is fine.
 	// Default assignment is fine.
 	// Default destructor is fine.
@@ -65,34 +56,42 @@ public:
 	/**
 	 * Returns name of account.
 	 */
-	std::string name() const;
+	std::string name();
 
 	/**
 	 * Returns abbreviation of native commodity of this account.
 	 */
-	std::string commodity_abbreviation() const;
+	std::string commodity_abbreviation();
 
 	/**
 	 * Returns AccountType of account.
 	 */
-	AccountType account_type() const;
+	AccountType account_type();
 
 	/**
 	 * Returns description of account.
 	 */
-	std::string description() const;
+	std::string description();
+
+	void set_account_type();
+
+	void set_name();
+
+	void set_commodity_abbreviation();
+
+	void set_description();
 
 	
 private:
 
-	std::string m_name;
+	boost::optional<std::string> m_name;
 
 	// native commodity or currency of Account
-	std::string m_commodity_abbreviation;
+	boost::optional<std::string> m_commodity_abbreviation;
 
-	AccountType m_account_type;
+	boost::optional<AccountType> m_account_type;
 
-	std::string m_description;
+	boost::optional<std::string> m_description;
 
 };
 

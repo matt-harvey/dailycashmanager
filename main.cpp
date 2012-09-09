@@ -1,7 +1,7 @@
 
 /** \file main.cpp
  *
- * \brief Contains main.cpp function, and possibly some small amount
+ * \brief Contains main function, and possibly some small amount
  * of other code, relating to Phatbooks application.
  *
  * \author Matthew Harvey
