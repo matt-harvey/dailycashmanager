@@ -289,12 +289,7 @@ namespace
 
 void PhatbooksTextSession::elicit_account()
 {
-	// We need the user's input to populate all these variables
-	string account_name;
-	string commodity_abbreviation;
-	string account_type_name;
-	Account::AccountType account_type;
-	string account_description;
+	Account account(m_database_connection);
 
 	// Get account name
 	cout << "Enter a name for the account: ";
@@ -313,7 +308,7 @@ void PhatbooksTextSession::elicit_account()
 		else
 		{
 			input_is_valid = true;
-			account_name = input;
+			account.set_name(input);
 		}
 	}
 
@@ -331,7 +326,7 @@ void PhatbooksTextSession::elicit_account()
 		else
 		{
 			input_is_valid = true;
-			commodity_abbreviation = input;
+			account.set_commodity_abbreviation(input);
 		}
 	}
 
@@ -352,21 +347,23 @@ void PhatbooksTextSession::elicit_account()
 	};
 	cout << "What kind of account do you wish to create?" << endl;
 	account_type_menu.present_to_user();
-	account_type_name = account_type_menu.last_choice()->banner();
-	account_type = account_type_info.right.at(account_type_name);
+	string const account_type_name =
+		account_type_menu.last_choice()->banner();
+	account.set_account_type(account_type_info.right.at(account_type_name));
+
 
 	// Get description 
 	cout << "Enter description for new account (or hit enter for no "
 	        "description): ";
-	account_description = get_user_input();
+	account.set_description(get_user_input());
 	
 	// Confirm with user before creating account
 	cout << endl << "You have proposed to create the following account: "
 	     << endl << endl
-	     << "Name: " << account_name << endl
-		 << "Commodity: " << commodity_abbreviation << endl
+	     << "Name: " << account.name() << endl
+		 << "Commodity: " << account.commodity_abbreviation() << endl
 		 << "Type: " << account_type_name << endl
-		 << "Description: " << account_description << endl
+		 << "Description: " << account.description() << endl
 		 << endl;
 	cout << "Proceed with creating this account? (y/n) ";
 	string const confirmation = get_constrained_user_input
@@ -382,13 +379,7 @@ void PhatbooksTextSession::elicit_account()
 	else
 	{
 		assert (confirmation == "y");
-		Account acc
-		(	account_name,
-			commodity_abbreviation,
-			account_type,
-			account_description
-		);
-		m_database_connection->save(acc);
+		account.save_new();
 		cout << "Account created." << endl;
 	}
 	return;
@@ -498,8 +489,10 @@ void PhatbooksTextSession::elicit_journal()
 	string primary_entry_account_name = elicit_existing_account_name();
 
 	// Get primary entry amount
-	Account const primary_entry_account =
-		m_database_connection->load<Account>(primary_entry_account_name);
+	Account primary_entry_account
+	(	m_database_connection,
+		primary_entry_account_name
+	);
 	Commodity primary_commodity
 	(	m_database_connection,
 		primary_entry_account.commodity_abbreviation()
@@ -560,9 +553,10 @@ void PhatbooksTextSession::elicit_journal()
 	// WARNING if secondary account is in a different currency then we need to
 	// deal with this here somehow.
  
-	Account const secondary_entry_account =
-		m_database_connection->load<Account>(secondary_entry_account_name);
-
+	Account secondary_entry_account
+	(	m_database_connection,
+		secondary_entry_account_name
+	);
 	Commodity secondary_commodity
 	(	m_database_connection,
 		secondary_entry_account.commodity_abbreviation()

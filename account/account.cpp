@@ -1,4 +1,5 @@
 #include "account.hpp"
+#include "commodity.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include <cassert>
@@ -23,19 +24,6 @@ using std::vector;
 
 namespace phatbooks
 {
-
-Account::Account
-(	string p_name,
-	string p_commodity_abbreviation,
-	AccountType p_account_type,
-	string p_description
-):
-	m_name(p_name),
-	m_commodity_abbreviation(p_commodity_abbreviation),
-	m_account_type(p_account_type),
-	m_description(p_description)
-{
-}
 
 vector<string>
 Account::account_type_names()
@@ -98,8 +86,7 @@ Account::account_type()
 
 string Account::name()
 {
-	load();
-	return *m_name;
+	return m_name;
 }
 
 string Account::commodity_abbreviation()
@@ -147,19 +134,17 @@ Account::do_load_all()
 {
 	SQLStatement statement
 	(	*database_connection(),
-		"select name, abbreviation, account_type_id, description from "
-		"accounts_extended where name = :p"
+		"select commodities.abbreviation, account_type, accounts.description "
+		"from accounts_extended where account_id = :p"
 	);
-	statement.bind(":p", name);
+	statement.bind(":p", id());
 	statement.step();
-	string const n = statement.extract<string>(0);
-	string const comm_abb = statement.extract<string>(1);
-	int const atid =
-		static_cast<Account::AccountType>(statement.extract<int>(2));
-	string const d = statement.extract<string>(3);
-	set_name(n);
+	string const comm_abb = statement.extract<string>(0);
+	AccountType const at =
+		static_cast<AccountType>(statement.extract<int>(1));
+	string const d = statement.extract<string>(2);
 	set_commodity_abbreviation(comm_abb);
-	set_account_type(atid);
+	set_account_type(at);
 	set_description(d);
 	return;
 }
@@ -188,6 +173,7 @@ Account::do_save_new_all()
 		":commodity_id)"
 	);
 	statement.bind(":account_type_id", static_cast<int>(*m_account_type));
+	statement.bind(":name", m_name);
 	statement.bind(":description", *m_description);
 	statement.bind(":commodity_id", comm.id());
 	statement.quick_step();
@@ -195,11 +181,35 @@ Account::do_save_new_all()
 }
 
 std::string
-do_get_table_name()
+Account::do_get_table_name()
 {
 	return "accounts";
 }
 
-	
+void
+Account::load_name_knowing_id()
+{
+	SQLStatement statement
+	(	*database_connection(),
+		"select name from accounts where account_id = :p"
+	);
+	statement.bind(":p", id());
+	statement.step();
+	set_name(statement.extract<string>(0));
+	return;
+}
+
+void
+Account::load_id_knowing_name()
+{
+	SQLStatement statement
+	(	*database_connection(),
+		"select account_id from accounts where name = :p"
+	);
+	statement.bind(":p", m_name);
+	statement.step();
+	set_id(statement.extract<Id>(0));
+	return;
+}
 
 }  // namespace phatbooks

@@ -38,7 +38,7 @@ class Commodity:
 
 public:
 
-	typedef int Id;
+	typedef IdType Id;
 	typedef sqloxx::PersistentObject<Id> PersistentObject;
 
 	/**

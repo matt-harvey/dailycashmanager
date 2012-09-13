@@ -48,6 +48,19 @@ void Commodity::setup_tables
 
 
 
+void Commodity::load_abbreviation_knowing_id()
+{
+	SQLStatement statement
+	(	*database_connection(),
+		"select abbreviation from commodities where commodity_id = :p"
+	);
+	statement.bind(":p", id());
+	statement.step();
+	set_abbreviation(statement.extract<string>(0));
+	return;
+}
+
+
 void Commodity::load_id_knowing_abbreviation()
 {
 	SQLStatement statement
@@ -61,19 +74,6 @@ void Commodity::load_id_knowing_abbreviation()
 	return;
 }
 	
-
-void Commodity::load_abbreviation_knowing_id()
-{
-	SQLStatement statement
-	(	*database_connection(),
-		"select abbreviation from commodities where commodity_id = :p"
-	);
-	statement.bind(":p", id());
-	statement.step();
-	m_abbreviation = statement.extract<string>(0);
-	return;
-}
-
 
 
 void Commodity::do_load_all()
@@ -96,11 +96,11 @@ void Commodity::do_load_all()
 		(	statement.extract<int>(5)
 		)
 	);
-	m_abbreviation = abb;
-	m_name = n;
-	m_description = desc;
-	m_precision = prec;
-	m_multiplier_to_base = mult;
+	set_abbreviation(abb);
+	set_name(n);
+	set_description(desc);
+	set_precision(prec);
+	set_multiplier_to_base(mult);
 	return;
 }
 

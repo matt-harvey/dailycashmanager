@@ -1,6 +1,5 @@
 #include "journal_storage_manager.hpp"
 #include "account.hpp"
-#include "account_storage_manager.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
 #include "entry.hpp"
