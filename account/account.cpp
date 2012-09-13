@@ -1,4 +1,6 @@
 #include "account.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <cassert>
 #include <string>
 #include <vector>
@@ -14,6 +16,8 @@
  */
 
 
+using sqloxx::DatabaseConnection;
+using sqloxx::SQLStatement;
 using std::string;
 using std::vector;
 
@@ -50,6 +54,40 @@ Account::account_type_names()
 	return ret;
 }
 
+void
+Account::setup_tables(DatabaseConnection& dbc)
+{
+	dbc.execute_sql
+	(	"create table account_types(account_type_id integer primary key "
+		"autoincrement, name text not null unique);"
+	);
+	vector<string> const names = account_type_names();
+	for (vector<string>::size_type i = 0; i != names.size(); ++i)
+	{
+		dbc.execute_sql
+		(	"insert into account_types(name) values('" + names[i] + "');"
+		);
+	}
+	dbc.execute_sql
+	(	"create table accounts "
+		"("
+			"account_id integer primary key autoincrement, "
+			"account_type_id not null references account_types, "
+			"name text not null unique, "
+			"description text, "
+			"commodity_id references commodities"
+		"); "
+		"create view accounts_extended as "
+		"select account_id, account_type_id, accounts.name, "
+		"accounts.description, commodities.abbreviation, "
+		"commodity_id, "
+		"commodities.multiplier_to_base_intval, "
+		"commodities.multiplier_to_base_places, "
+		"commodities.precision from "
+		"accounts join commodities using(commodity_id);"
+	);
+	return;
+}
 
 Account::AccountType
 Account::account_type()
@@ -104,5 +142,64 @@ Account::set_description(string const& p_description)
 	return;
 }
 
+void
+Account::do_load_all()
+{
+	SQLStatement statement
+	(	*database_connection(),
+		"select name, abbreviation, account_type_id, description from "
+		"accounts_extended where name = :p"
+	);
+	statement.bind(":p", name);
+	statement.step();
+	string const n = statement.extract<string>(0);
+	string const comm_abb = statement.extract<string>(1);
+	int const atid =
+		static_cast<Account::AccountType>(statement.extract<int>(2));
+	string const d = statement.extract<string>(3);
+	set_name(n);
+	set_commodity_abbreviation(comm_abb);
+	set_account_type(atid);
+	set_description(d);
+	return;
+}
+
+/*
+ * These need implementing
+void
+Account::do_save_existing_all()
+{
+}
+
+void
+Account::do_save_existing_partial()
+{
+}
+*/
+
+void
+Account::do_save_new_all()
+{
+	Commodity comm(database_connection(), *m_commodity_abbreviation);
+	SQLStatement statement
+	(	*database_connection(),
+		"insert into accounts(account_type_id, name, description, "
+		"commodity_id) values(:account_type_id, :name, :description, "
+		":commodity_id)"
+	);
+	statement.bind(":account_type_id", static_cast<int>(*m_account_type));
+	statement.bind(":description", *m_description);
+	statement.bind(":commodity_id", comm.id());
+	statement.quick_step();
+	return;
+}
+
+std::string
+do_get_table_name()
+{
+	return "accounts";
+}
+
+	
 
 }  // namespace phatbooks

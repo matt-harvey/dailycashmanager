@@ -13,10 +13,12 @@
 
 
 #include "general_typedefs.hpp"
+#include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/optional.hpp>
 #include <string>
 #include <vector>
+
 
 namespace phatbooks
 {
@@ -48,6 +50,11 @@ public:
 	 */
 	static std::vector<std::string> account_type_names();
 
+	/**
+	 * Sets up tables in the database required for the persistence of
+	 * Account objects.
+	 */
+	static void setup_tables(sqloxx::DatabaseConnection& dbc);
 
 	// Default copy contructor is fine.
 	// Default assignment is fine.
@@ -83,6 +90,16 @@ public:
 
 	
 private:
+
+	virtual void do_load_all();
+
+	virtual void do_save_existing_all();
+
+	virtual void do_save_existing_partial();
+
+	virtual void do_save_new_all();
+
+	virtual std::string do_get_table_name();
 
 	boost::optional<std::string> m_name;
 

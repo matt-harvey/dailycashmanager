@@ -132,7 +132,7 @@ PhatbooksDatabaseConnection::setup()
 	execute_sql("begin transaction");
 	setup_boolean_table();
 	Commodity::setup_tables(*this);
-	setup_tables<Account>();	
+	Account::setup_tables(*this);
 	setup_tables<Journal>();
 
 	execute_sql

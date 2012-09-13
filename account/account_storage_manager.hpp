@@ -37,16 +37,6 @@ public:
 
 	static void
 	save(phatbooks::Account const& account, DatabaseConnection& dbc);
-
-	/**
-	 * @todo This needs to throw if there is no Account
-	 * with this key.
-	 */
-	static phatbooks::Account
-	load(Key const& name, DatabaseConnection& dbc);
-	
-	static void
-	setup_tables(DatabaseConnection& dbc);
 };
 
 
