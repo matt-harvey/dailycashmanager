@@ -134,16 +134,21 @@ Account::do_load_all()
 {
 	SQLStatement statement
 	(	*database_connection(),
-		"select commodities.abbreviation, account_type, accounts.description "
-		"from accounts_extended where account_id = :p"
+		"select commodity_id, account_type_id, description "
+		"from accounts where account_id = :p"
 	);
 	statement.bind(":p", id());
 	statement.step();
-	string const comm_abb = statement.extract<string>(0);
+
+	Commodity commodity
+	(	database_connection(),
+		statement.extract<Commodity::Id>(0)
+	);
 	AccountType const at =
 		static_cast<AccountType>(statement.extract<int>(1));
 	string const d = statement.extract<string>(2);
-	set_commodity_abbreviation(comm_abb);
+
+	set_commodity_abbreviation(commodity.abbreviation());
 	set_account_type(at);
 	set_description(d);
 	return;
