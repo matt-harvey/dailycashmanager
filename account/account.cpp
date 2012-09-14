@@ -170,7 +170,10 @@ Account::do_save_existing_partial()
 void
 Account::do_save_new_all()
 {
-	Commodity comm(database_connection(), *m_commodity_abbreviation);
+	Commodity commodity
+	(	database_connection(),
+		*m_commodity_abbreviation
+	);
 	SQLStatement statement
 	(	*database_connection(),
 		"insert into accounts(account_type_id, name, description, "
@@ -180,7 +183,7 @@ Account::do_save_new_all()
 	statement.bind(":account_type_id", static_cast<int>(*m_account_type));
 	statement.bind(":name", m_name);
 	statement.bind(":description", *m_description);
-	statement.bind(":commodity_id", comm.id());
+	statement.bind(":commodity_id", commodity.id());
 	statement.quick_step();
 	return;
 }

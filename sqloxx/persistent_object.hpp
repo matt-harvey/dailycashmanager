@@ -24,6 +24,23 @@ public:
 	 *
 	 * @todo If the object doesn't exist, should this throw
 	 * in the constructor?
+	 *
+	 * @todo HIGH PRIORITY I have got inconsistent behaviour in regards to
+	 * marking a PersistentObject as persisted. When a Commodity or Account is
+	 * constructed from only a DatabaseConnection and a string (abbreviation
+	 * or name), the object is being marked as persisted. However when an
+	 * object is constructed from a DatabaseConnection and an Id, it is not
+	 * being marked as persisted (rather, that is left indeterminate).
+	 * Perhaps there should in fact be three persistence states:
+	 * not_persisted, claimed_persisted (but not confirmed as existent in
+	 * the database), and confirmed_persisted. Regardless of which scheme I
+	 * choose, it needs to be reflected consistently all the classes derived
+	 * from PersistentObject. It should also be standardised and captured in
+	 * PersistentObject as far as is practicable. It probably should not be
+	 * the case that mark_as_persisted is protected - I should be able to make
+	 * it private, and handle all "persistence marking" within the base
+	 * PersistentObject class itself.
+	 * 
 	 */
 	PersistentObject
 	(	boost::shared_ptr<DatabaseConnection> p_database_connection,
