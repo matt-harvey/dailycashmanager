@@ -12,9 +12,12 @@
  */
 
 
-#include "journal_base.hpp"
+#include "general_typedefs.hpp"
 #include "date.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/persistent_object.hpp"
 #include <jewel/decimal.hpp>
+#include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <list>
 #include <string>
@@ -27,31 +30,47 @@ class Entry;
 class Repeater;
 
 /**
- * Class to represent accounting journals that are "live" in memory, as
- * opposed to living in a database. An accounting journal will
+ * Class to represent accounting journals.
+ * An accounting journal will
  * typically comprise two or more accounting entries, plus some
  * "journal level" data such as the date.
  *
  * @todo The design is currently confused about whether a Journal is a
- * necessarily posted or just a draft.
+ * necessarily posted or just a draft/recurring journal.
  */
-class Journal: public JournalBase
+class Journal: public sqloxx::PersistentObject<IdType>
 {
 public:
 
+	typedef IdType Id;
+	typedef sqloxx::PersistentObject<Id> PersistentObject;
+
 	/**
-	 * This constructor initializes journal date
-	 * to null date and journal comment to empty string.
-	 * The journal starts out with an empty list of entries
-	 * and an empty list of repeaters, and is marked as
-	 * non-posted.
-	 * 
-	 * @param p_is_actual determines whether this will be
-	 * an "actuals" journal (as opposed to a budget journal).
-	 *
-	 * Does not throw.
+	 * Sets up tables in the database required for the persistence of
+	 * Journal objects.
 	 */
-	Journal(bool p_is_actual = true, std::string p_comment = "");
+	static void setup_tables(sqloxx::DatabaseConnection& dbc);
+
+	/**
+	 * Initialize a "draft" journal, that will not correspond to any
+	 * particular object in the database ("draft" here means not-yet-persisted,
+	 * as opposed to not-yet-posted).
+	 *
+	 * @todo Make this documentation clearer.
+	 */
+	explicit
+	Journal
+	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+	);
+
+	/**
+	 * Get a Journal by id from the database.
+	 */
+	Journal
+	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+		Id p_id
+	);
+
 
 	/**
 	 * Change whether Journal is actual or budget
@@ -96,7 +115,7 @@ public:
 	 *
 	 * Does not throw.
 	 */
-	bool is_posted() const;
+	bool is_posted();
 
 	/**
 	 * @returns true if and only if journal contains actual (as opposed to
@@ -104,14 +123,14 @@ public:
 	 *
 	 * Does not throw.
 	 */
-	bool is_actual() const;
+	bool is_actual();
 
 	/**
 	 * @returns journal date.
 	 *
 	 * @todo Verify throwing behaviour and determine dependence on DateType.
 	 */
-	DateType date() const;
+	DateType date();
 
 	/**
 	 * @returns journal comment.
@@ -119,7 +138,7 @@ public:
 	 * Does not throw, except perhaps \c std::bad_alloc in
 	 * extreme circumstances.
 	 */
-	std::string comment() const;
+	std::string comment();
 
 	/**
 	 * @returns true if and only if the journal balances, i.e. the total
@@ -130,19 +149,40 @@ public:
 	 * It doesn't make sense to think of entries in a single journal as being
 	 * in different currencies. An entry must have its value frozen in time.
 	 */
-	bool is_balanced() const;
+	bool is_balanced();
 
 	/**
 	 * @returns a constant reference to the list of entries in the journal.
 	 */
-	std::list< boost::shared_ptr<Entry> > const& entries() const;
+	std::list< boost::shared_ptr<Entry> > const& entries();
 
 private:
-	bool m_is_actual;
+
+	virtual void do_load_all();
+
+	/* WARNING Needs proper definition.
+	 */
+	virtual void do_save_existing_all()
+	{
+	}
+
+	/* WARNING Needs proper definition
+	 */
+	virtual void do_save_existing_partial()
+	{
+	}
+
+	virtual void do_save_new_all();
+
+	virtual std::string do_get_table_name();
+
+
+
+	boost::optional<bool> m_is_actual;
 	// if m_date == null_date(), this means it's not posted, but is a
 	// draft journal (possibly autoposting).
-	DateType m_date;
-	std::string m_comment;
+	boost::optional<DateType> m_date;
+	boost::optional<std::string> m_comment;
 	std::list< boost::shared_ptr<Entry> > m_entries;
 	std::list< boost::shared_ptr<Repeater> > m_repeaters;
 };

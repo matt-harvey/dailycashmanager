@@ -17,7 +17,6 @@
 #include "commodity.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
-#include "journal_storage_manager.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "sqloxx/database_connection.hpp"
@@ -132,7 +131,7 @@ PhatbooksDatabaseConnection::setup()
 	setup_boolean_table();
 	Commodity::setup_tables(*this);
 	Account::setup_tables(*this);
-	setup_tables<Journal>();
+	Journal::setup_tables(*this);
 
 	execute_sql
 	(

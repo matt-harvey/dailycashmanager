@@ -33,7 +33,7 @@ namespace phatbooks
  * existence.
  */
 class Commodity:
-	public sqloxx::PersistentObject<int>
+	public sqloxx::PersistentObject<IdType>
 {
 
 public:

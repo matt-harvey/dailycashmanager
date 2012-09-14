@@ -18,7 +18,6 @@ add_executable (main
 				date/date.cpp
 				entry/entry.cpp
 				journal/journal.cpp
-				journal/journal_storage_manager.cpp
                 main.cpp
 				sqloxx/database_connection.cpp
 				phatbooks_database_connection/phatbooks_database_connection.cpp

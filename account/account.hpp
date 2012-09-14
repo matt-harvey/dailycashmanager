@@ -33,7 +33,7 @@ namespace phatbooks
  * in Entry objects. At the moment I have got m_name as one of the lazy
  * attributes.
  */
-class Account: public sqloxx::PersistentObject<int>
+class Account: public sqloxx::PersistentObject<IdType>
 {
 public:
 

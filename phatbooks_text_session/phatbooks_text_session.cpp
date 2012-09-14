@@ -388,11 +388,7 @@ void PhatbooksTextSession::elicit_account()
 
 void PhatbooksTextSession::elicit_journal()
 {
-	// We need the user's input to populate all these variables
-	bool journal_is_actual;
-	string journal_comment;
-	DateType journal_date;
-	Journal journal;
+	Journal journal(m_database_connection);
 
 	// Find out what kind of journal this is going to be
 	// Do we want to have them all be general journals?
@@ -599,7 +595,7 @@ void PhatbooksTextSession::elicit_journal()
 	// WARNING
 	// Don't forget to get the date!
 
-	m_database_connection->save(journal);
+	journal.save_new();
 	return;
 }
 

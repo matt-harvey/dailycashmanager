@@ -55,7 +55,7 @@ public:
 	 * for this id. This is done by calling
 	 * do_save_existing_partial (in the event the object is not
 	 * fully loaded) or do_save_existing_all (in the event the object
-	 * is fully loaded). The save_... functions should be defined in
+	 * is fully loaded). The do_save_... functions should be defined in
 	 * the derived class.
 	 */
 	void save_existing();
@@ -76,8 +76,8 @@ public:
 	void save_new();
 
 	/**
-	 * Returns the id of the object. This will throw an exception if
-	 * the object doesn't have an id.
+	 * Returns the id of the object. If the object doesn't have an id,
+	 * this will CRASH via an assertion failure - rather than throw.
 	 */
 	Id id();
 
@@ -92,9 +92,9 @@ protected:
 	 */
 	void set_id(Id p_id);
 
-private:
-
 	Id prospective_key();
+
+private:
 
 	virtual Id do_calculate_prospective_key();
 
