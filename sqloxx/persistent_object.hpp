@@ -17,7 +17,6 @@ class PersistentObject
 {
 public:
 
-
 	/**
 	 * Create a PersistentObject that correponds to one that
 	 * already exists in the database.
@@ -44,7 +43,8 @@ public:
 	/**
 	 * Calls the derived class's implementation
 	 * of do_load_all, if the object is not already
-	 * fully loaded.
+	 * fully loaded. If the object does not have an id,
+	 * then this function does nothing.
 	 */
 	void load();
 
@@ -75,17 +75,24 @@ public:
 	 */
 	void save_new();
 
+	/**
+	 * Returns the id of the object. This will throw an exception if
+	 * the object doesn't have an id.
+	 */
 	Id id();
 
 protected:
 
 	boost::shared_ptr<DatabaseConnection> database_connection();
 
+	/**
+	 * Note an object that is created anew, that does not already exist
+	 * in the database, should not have an id. By having an id, an object
+	 * is saying "I exist in the database".
+	 */
 	void set_id(Id p_id);
 
 private:
-
-	void mark_as_persisted();
 
 	Id prospective_key();
 
@@ -108,7 +115,7 @@ private:
 		loaded
 	};
 
-	bool has_been_persisted();
+	bool has_id();
 
 	// Data members
 
@@ -116,7 +123,7 @@ private:
 	boost::shared_ptr<DatabaseConnection> m_database_connection;
 	boost::optional<Id> m_id;
 	LoadingStatus m_loading_status;
-	boost::optional<bool> m_has_been_persisted;
+	boost::optional<bool> m_has_id;
 
 };
 
@@ -132,7 +139,8 @@ PersistentObject<Id>::PersistentObject
 ):
 	m_database_connection(p_database_connection),
 	m_id(p_id),
-	m_loading_status(ghost)
+	m_loading_status(ghost),
+	m_has_id(true)
 {
 }
 
@@ -144,7 +152,7 @@ PersistentObject<Id>::PersistentObject
 ):
 	m_database_connection(p_database_connection),
 	m_loading_status(ghost),
-	m_has_been_persisted(false)
+	m_has_id(false)
 {
 }
 
@@ -161,7 +169,7 @@ inline
 void
 PersistentObject<Id>::load()
 {
-	if (m_loading_status == ghost && has_been_persisted())
+	if (m_loading_status == ghost && has_id())
 	{
 		m_loading_status = loading;
 		do_load_all();
@@ -200,10 +208,10 @@ inline
 Id
 PersistentObject<Id>::prospective_key()
 {
-	if (has_been_persisted())
+	if (has_id())
 	{
 		throw std::logic_error
-		(	"Object has been persisted so prospective_key does not apply."
+		(	"Object already has id so prospective_key does not apply."
 		);
 	}
 	return do_calculate_prospective_key();
@@ -222,21 +230,11 @@ PersistentObject<Id>::do_calculate_prospective_key()
 template <typename Id>
 inline
 void
-PersistentObject<Id>::mark_as_persisted()
-{
-	m_has_been_persisted = true;
-}
-
-
-template <typename Id>
-inline
-void
 PersistentObject<Id>::save_new()
 {
 	Id const key = prospective_key();
 	do_save_new_all();
 	set_id(key);
-	mark_as_persisted();
 	return;
 }
 
@@ -264,6 +262,7 @@ void
 PersistentObject<Id>::set_id(Id p_id)
 {
 	m_id = p_id;
+	m_has_id = true;
 	return;
 }
 
@@ -271,9 +270,9 @@ PersistentObject<Id>::set_id(Id p_id)
 template <typename Id>
 inline
 bool
-PersistentObject<Id>::has_been_persisted()
+PersistentObject<Id>::has_id()
 {
-	return *m_has_been_persisted;
+	return *m_has_id;
 }
 
 
