@@ -123,8 +123,6 @@ private:
 	boost::shared_ptr<DatabaseConnection> m_database_connection;
 	boost::optional<Id> m_id;
 	LoadingStatus m_loading_status;
-	boost::optional<bool> m_has_id;
-
 };
 
 
@@ -139,8 +137,7 @@ PersistentObject<Id>::PersistentObject
 ):
 	m_database_connection(p_database_connection),
 	m_id(p_id),
-	m_loading_status(ghost),
-	m_has_id(true)
+	m_loading_status(ghost)
 {
 }
 
@@ -151,8 +148,7 @@ PersistentObject<Id>::PersistentObject
 (	boost::shared_ptr<DatabaseConnection> p_database_connection
 ):
 	m_database_connection(p_database_connection),
-	m_loading_status(ghost),
-	m_has_id(false)
+	m_loading_status(ghost)
 {
 }
 
@@ -262,7 +258,6 @@ void
 PersistentObject<Id>::set_id(Id p_id)
 {
 	m_id = p_id;
-	m_has_id = true;
 	return;
 }
 
@@ -272,7 +267,9 @@ inline
 bool
 PersistentObject<Id>::has_id()
 {
-	return *m_has_id;
+	// Relies on the fact that m_id is a boost::optional<Id>, and
+	// will convert to true if and only if it has been initialized.
+	return m_id;
 }
 
 
