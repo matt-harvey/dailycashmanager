@@ -189,7 +189,6 @@ Account::Account
 	m_name(p_name)
 {
 	load_id_knowing_name();
-	mark_as_persisted();
 }
 
 

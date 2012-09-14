@@ -178,7 +178,6 @@ Commodity::Commodity
 	m_abbreviation(p_abbreviation)
 {
 	load_id_knowing_abbreviation();
-	mark_as_persisted();
 }
 	
 inline
