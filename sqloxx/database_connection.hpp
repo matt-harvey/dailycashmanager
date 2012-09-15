@@ -39,7 +39,6 @@
 
 #include "sqloxx_exceptions.hpp"
 #include "sql_statement.hpp"
-#include "storage_manager.hpp"
 #include <jewel/checked_arithmetic.hpp>
 #include <sqlite3.h>
 #include <boost/cstdint.hpp>
@@ -140,49 +139,6 @@ public:
 	 * connection cannot be opened.
 	 */
 	void open(boost::filesystem::path const& filepath);	
-
-	/**
-	 * If StorageManager<T> has been specialised for T, then
-	 * this template causes a table to be created for the storage
-	 * of objects of type T, and possibly some other code executed according
-	 * to what is provided for in the StorageManager<T> setup_tables() method.
-	 *
-	 * @todo Determine and document throwing behavior.
-	 */
-	template <typename T>
-	void setup_tables();
-
-
-	/**
-	 * If StorageManager<T> has been specialised for T, then
-	 * this template provides a function for an instance \c obj of
-	 * \c T to be stored in the database.
-	 * 
-	 * See documentation for StorageManager class template for more
-	 * information on what is required to be implemented by the class
-	 * template specialisation.
-	 *
-	 * @todo Determine and document throwing behaviour.
-	 */
-	template <typename T>
-	void save(T const& obj);
-
-	/**
-	 * If StorageManager<T> has been specialised for T, then
-	 * this template provides a function for an instance of \c T to be loaded
-	 * and returned by the function by looking into the database using \c key
-	 * as a key.
-	 *
-	 * See documentation for StorageManager class template for more
-	 * information on what is required to be implemented by the class template
-	 * specialisation.
-	 *
-	 * @todo Determine and document throwing behaviour.
-	 */
-	template <typename T>
-	T load(typename StorageManager<T>::Key const& key);
-
-
 
 	/**
 	 * Executes a string on the database connection.
@@ -328,32 +284,6 @@ private:
 
 
 // FUNCTION TEMPLATE DEFINITIONS
-
-template <typename T>
-inline
-void
-DatabaseConnection::save(T const& obj)
-{
-	StorageManager<T>::save(obj, *this);
-	return;
-}
-
-template <typename T>
-inline
-T
-DatabaseConnection::load(typename StorageManager<T>::Key const& key)
-{
-	return StorageManager<T>::load(key, *this);
-}
-
-template <typename T>
-inline
-void
-DatabaseConnection::setup_tables()
-{
-	StorageManager<T>::setup_tables(*this);
-	return;
-}
 
 
 template<typename KeyType>

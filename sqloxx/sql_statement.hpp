@@ -19,7 +19,6 @@
 
 
 #include "sqloxx_exceptions.hpp"
-#include "storage_manager.hpp"
 #include <jewel/checked_arithmetic.hpp>
 #include <sqlite3.h>
 #include <boost/cstdint.hpp>
