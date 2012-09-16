@@ -71,7 +71,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> elicit_commodity_item
 	(	new MenuItem
 		(	"New commodity",
-			bind(&PhatbooksTextSession::elicit_commodity, this)
+			bind(&PhatbooksTextSession::elicit_commodity, this),
+			true
 		)
 	);
 	m_main_menu->add_item(elicit_commodity_item);
@@ -79,7 +80,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> elicit_account_item
 	(	new MenuItem
 		(	"New account",
-			bind(&PhatbooksTextSession::elicit_account, this)
+			bind(&PhatbooksTextSession::elicit_account, this),
+			true
 		)
 	);
 	m_main_menu->add_item(elicit_account_item);
@@ -87,7 +89,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> elicit_journal_item
 	(	new MenuItem
 		(	"New transaction",
-			bind(&PhatbooksTextSession::elicit_journal, this)
+			bind(&PhatbooksTextSession::elicit_journal, this),
+			true
 		)
 	);
 	m_main_menu->add_item(elicit_journal_item);
@@ -277,15 +280,6 @@ void PhatbooksTextSession::elicit_commodity()
 }
 
 
-// Bleugh! Needed below.
-namespace
-{
-	void do_nothing()
-	{
-		return;
-	}
-}
-
 
 void PhatbooksTextSession::elicit_account()
 {
@@ -340,9 +334,7 @@ void PhatbooksTextSession::elicit_account()
 		++it
 	)
 	{
-		shared_ptr<MenuItem> item
-		(	new MenuItem(it->right, do_nothing, false)
-		);
+		shared_ptr<MenuItem> item(new MenuItem(it->right));
 		account_type_menu.add_item(item);
 	};
 	cout << "What kind of account do you wish to create?" << endl;
@@ -391,46 +383,23 @@ void PhatbooksTextSession::elicit_journal()
 	Journal journal(m_database_connection);
 
 	// Find out what kind of journal this is going to be
-	// Do we want to have them all be general journals?
-	
 	Menu transaction_menu;
-
 	shared_ptr<MenuItem> expenditure_selection
-	(	new MenuItem
-		(	"Expenditure transaction",
-			do_nothing,
-			false
-		)
+	(	new MenuItem("Expenditure transaction")
 	);
 	transaction_menu.add_item(expenditure_selection);
-	
 	shared_ptr<MenuItem> revenue_selection
-	(	new MenuItem
-		(	"Revenue transaction",
-			do_nothing,
-			false
-		)
+	(	new MenuItem("Revenue transaction")
 	);
 	transaction_menu.add_item(revenue_selection);
-
 	shared_ptr<MenuItem> balance_sheet_transfer_selection
-	(	new MenuItem
-		(	"Transfer between assets or liabilities",
-			do_nothing,
-			false
-		)
+	(	new MenuItem("Transfer between assets or liabilities")
 	);
 	transaction_menu.add_item(balance_sheet_transfer_selection);
-	
 	shared_ptr<MenuItem> envelope_transaction_selection
-	(	new MenuItem
-		(	"Transfer between budgeting envelopes",
-			do_nothing,
-			false
-		)
+	(	new MenuItem("Transfer between budgeting envelopes")
 	);
 	transaction_menu.add_item(envelope_transaction_selection);
-
 	transaction_menu.present_to_user();
 	shared_ptr<MenuItem const> const transaction_type =
 		transaction_menu.last_choice();
@@ -568,8 +537,6 @@ void PhatbooksTextSession::elicit_journal()
 	cout << "Line specific comment (or Enter for no comment): ";
 	string secondary_entry_comment = get_user_input();
 
-	
-
 	shared_ptr<Entry> secondary_entry
 	(	new Entry
 		(	secondary_entry_account_name,
@@ -578,8 +545,6 @@ void PhatbooksTextSession::elicit_journal()
 		)
 	);
 	journal.add_entry(secondary_entry);
-
-		
 
 	// WARNING
 	// We need to implement split transactions

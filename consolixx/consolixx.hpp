@@ -222,8 +222,6 @@ private:
 };
 
 
-
-
 /**
  * Class representing an item in a menu of user options.
  * This class is not designed to be extended.
@@ -239,6 +237,10 @@ public:
 
 	 // Default destructor, copy constructor and assignment operator should
 	 // be OK.
+	 
+	 // This function literally does nothing. It is provided as a default
+	 // callback function - see MenuItem constructor.
+	 static void do_nothing();
 
 	/**
 	 * @param p_banner non-empty string describing option to the user
@@ -259,7 +261,6 @@ public:
 	 * has finished executing. \c true indicates that the same menu in which
 	 * the item appeared, should again be presented to the user. \c false
 	 * indicates that execution should continue past this point.
-	 * This parameter is \c true by default.
 	 *
 	 * @throws consolixx::MenuItemBannerException if \c p_banner is empty
 	 *
@@ -268,8 +269,8 @@ public:
 	 */
 	MenuItem
 	(	std::string const& p_banner,
-		CallbackType p_callback,
-		bool p_repeats_menu = true,
+		CallbackType p_callback = do_nothing,
+		bool p_repeats_menu = false,
 		std::string const& p_special_label = ""
 	);
 
@@ -317,8 +318,14 @@ private:
 	std::string m_special_label;
 };
 
+// Inline functions
 
-
+inline
+void
+TextSession::MenuItem::do_nothing()
+{
+	return;
+}
 
 }  // namespace consolixx
 
