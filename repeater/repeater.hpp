@@ -13,6 +13,7 @@
 
 
 #include "date.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 
 namespace phatbooks
@@ -81,13 +82,13 @@ public:
 	Repeater
 	(	IntervalType p_interval_type,
 		int p_interval_units,
-		DateType p_next_date
+		boost::gregorian::date p_next_date
 	);
 
 private:
 	IntervalType m_interval_type;
 	int m_interval_units;
-	DateType m_next_date;
+	DateRep m_next_date;
 };
 
 

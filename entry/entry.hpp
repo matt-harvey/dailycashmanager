@@ -12,7 +12,6 @@
  */
 
 
-#include "date.hpp"
 #include "journal.hpp"
 #include "general_typedefs.hpp"
 #include <boost/shared_ptr.hpp>

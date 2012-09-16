@@ -23,6 +23,7 @@
 #include "sqloxx/persistent_object.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include <jewel/decimal.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <list>
@@ -99,9 +100,9 @@ Journal::set_comment(string const& p_comment)
 }
 
 void
-Journal::set_date(DateType p_date)
+Journal::set_date(boost::gregorian::date p_date)
 {
-	m_date = p_date;
+	m_date = julian_int(p_date);
 	return;
 }
 
@@ -139,11 +140,11 @@ Journal::is_actual()
 	return *m_is_actual;
 }
 
-DateType
+boost::gregorian::date
 Journal::date()
 {
 	load();
-	return *m_date;
+	return boost_date_from_julian_int(*m_date);
 }
 
 string
@@ -179,8 +180,8 @@ Journal::do_load_all()
 	statement.step();
 
 	bool const is_act = static_cast<bool>(statement.extract<int>(1));
-	DateType const d =
-		numeric_cast<DateType>(statement.extract<boost::int64_t>(2));
+	DateRep const d =
+		numeric_cast<DateRep>(statement.extract<boost::int64_t>(2));
 	string const cmt = statement.extract<string>(3);
 
 	SQLStatement entry_finder
@@ -206,7 +207,7 @@ Journal::do_load_all()
 		add_entry(entry);
 	}
 	set_whether_actual(is_act);
-	set_date(d);
+	m_date = d;
 	set_comment(cmt);
 
 	return;

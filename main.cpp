@@ -24,7 +24,6 @@ using std::string;
 
 #include <boost/filesystem.hpp>
 
-
 int main(int argc, char** argv)
 {
 	if (argc != 2)

@@ -17,6 +17,7 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <jewel/decimal.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <list>
@@ -92,7 +93,7 @@ public:
 	 *
 	 * Does not throw.
 	 */
-	void set_date(DateType p_date);
+	void set_date(boost::gregorian::date p_date);
 
 	/**
 	 * Add an Entry to the Journal.
@@ -128,9 +129,9 @@ public:
 	/**
 	 * @returns journal date.
 	 *
-	 * @todo Verify throwing behaviour and determine dependence on DateType.
+	 * @todo Verify throwing behaviour and determine dependence on DateRep.
 	 */
-	DateType date();
+	boost::gregorian::date date();
 
 	/**
 	 * @returns journal comment.
@@ -181,7 +182,7 @@ private:
 	boost::optional<bool> m_is_actual;
 	// if m_date == null_date(), this means it's not posted, but is a
 	// draft journal (possibly autoposting).
-	boost::optional<DateType> m_date;
+	boost::optional<DateRep> m_date;
 	boost::optional<std::string> m_comment;
 	std::list< boost::shared_ptr<Entry> > m_entries;
 	std::list< boost::shared_ptr<Repeater> > m_repeaters;

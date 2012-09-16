@@ -14,6 +14,7 @@
 
 #include "repeater.hpp"
 #include "date.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 namespace phatbooks
 {
@@ -21,11 +22,11 @@ namespace phatbooks
 Repeater::Repeater
 (	IntervalType p_interval_type,
 	int p_interval_units,
-	DateType p_next_date
+	boost::gregorian::date p_next_date
 ):
 	m_interval_type(p_interval_type),
 	m_interval_units(p_interval_units),
-	m_next_date(p_next_date)
+	m_next_date(julian_int(p_next_date))
 {
 }
 
