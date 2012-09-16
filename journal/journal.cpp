@@ -149,7 +149,7 @@ Journal::is_posted()
 	}
 	else
 	{
-		return m_date != null_date();
+		return m_date != null_date_rep();
 	}
 }
 
@@ -245,7 +245,7 @@ Journal::do_save_new_all()
 		"values(:is_actual, :date, :comment)"
 	);
 	statement.bind(":is_actual", static_cast<int>(*m_is_actual));
-	statement.bind(":date", (m_date? *m_date: null_date()));
+	statement.bind(":date", (m_date? *m_date: null_date_rep()));
 	statement.bind(":comment", *m_comment);
 	statement.quick_step();
 	typedef list< shared_ptr<Entry> > EntryCntnr;

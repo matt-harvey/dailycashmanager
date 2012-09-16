@@ -35,6 +35,11 @@ JEWEL_DERIVED_EXCEPTION(PhatbooksException, jewel::Exception);
  */
 JEWEL_DERIVED_EXCEPTION(StoragePreconditionsException, PhatbooksException);
 
+/**
+ * Exception to be thrown when an invalid conversion is attempted between
+ * one date format and another.
+ */
+JEWEL_DERIVED_EXCEPTION(DateConversionException, PhatbooksException);
 
 
 

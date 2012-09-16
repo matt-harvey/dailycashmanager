@@ -14,6 +14,7 @@
 
 
 #include "general_typedefs.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 
 namespace phatbooks
@@ -30,31 +31,42 @@ typedef int DateRep;
 
 /**
  * Returns \c true iff \c date is a valid
- * value for a date.
+ * value for a date. The earliest date that can be represented
+ * is 1 Jan. 1 CE, represented by \c DateRep(1721426). Thus this
+ * function will return false for numbers lower than that.
  */
 bool
 is_valid_date(DateRep date);
 
 /**
  * Returns a DateType instance that is "null" in value, meaning that
- * it doesn't represent any particular date.
+ * it doesn't represent any particular date. This is equivalent
+ * to \c DateRep(0).
  */
 DateRep
-null_date();
+null_date_rep();
 
 /**
- * Returns an integer representing the Julian Day representing of a
+ * Returns an integer representing the Julian Day representation of a
  * boost::gregorian::date.
  *
- * @throws std::runtime_error if boost_date is earlier than AD 1582,
- * as the function does not convert such dates accurately.
+ * Returns DateRep(0) if p_date is not a valid date.
+ *
+ * @throws DateConversionException if p_date is earlier than year 1 CE,
+ * but is otherwise a valid date.
  */
 DateRep
 julian_int(boost::gregorian::date p_date);
 
 /**
- * Returns the boost::gregorian::date representation of an integral
+ * @returns the boost::gregorian::date representation of an integral
  * Julian Day number.
+ *
+ * Returns boost::gregorian::date(boost::date_time::not_a_date_time)
+ * if julian_int is equal to the value returned by null_date().
+ *
+ * @throws DateConversionException if the returned date would be earlier
+ * than 1 Jan. CE. This avoids certain complications.
  */
 boost::gregorian::date
 boost_date_from_julian_int(DateRep julian_int);
