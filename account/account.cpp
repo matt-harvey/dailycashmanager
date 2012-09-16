@@ -65,14 +65,6 @@ Account::setup_tables(DatabaseConnection& dbc)
 			"description text, "
 			"commodity_id references commodities"
 		"); "
-		"create view accounts_extended as "
-		"select account_id, account_type_id, accounts.name, "
-		"accounts.description, commodities.abbreviation, "
-		"commodity_id, "
-		"commodities.multiplier_to_base_intval, "
-		"commodities.multiplier_to_base_places, "
-		"commodities.precision from "
-		"accounts join commodities using(commodity_id);"
 	);
 	return;
 }
