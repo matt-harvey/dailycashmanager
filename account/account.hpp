@@ -43,12 +43,13 @@ public:
 	enum AccountType
 	{
 		// enum order is significant, as the database contains
-		// a table with primary keys in this order - see
-		// account_storage_manager.hpp
-		revenue = 1,
-		expense,
-		asset,
+		// a table with primary keys in this order. See setup_tables
+		// method
+		asset = 1,
 		liability,
+		equity,
+		revenue,
+		expense,
 		pure_envelope
 	};
 

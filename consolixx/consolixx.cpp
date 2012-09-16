@@ -16,7 +16,10 @@
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
 #include <boost/bind.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/function.hpp>
+#include <boost/exception/all.hpp>
+#include <boost/regex.hpp>
 #include <boost/shared_ptr.hpp>
 #include <algorithm>
 #include <cassert>
@@ -33,6 +36,8 @@ using jewel::DecimalFromStringException;
 using jewel::DecimalRangeException;
 using boost::bind;
 using boost::function;
+using boost::regex;
+using boost::regex_match;
 using boost::shared_ptr;
 using std::cin;
 using std::cout;
@@ -129,6 +134,39 @@ Decimal get_decimal_from_user()
 	}
 	return ret;
 }
+
+boost::gregorian::date
+get_date_from_user(string const& error_prompt)
+{
+	boost::gregorian::date ret = boost::gregorian::day_clock::local_day();
+	regex const validation_pattern
+	(	"^[0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]$"
+	);
+	while (true)
+	{
+		string input = get_user_input();
+		if (input.empty())
+		{
+			break;
+		}
+		if (regex_match(input, validation_pattern))
+		{
+			try
+			{
+				ret = boost::gregorian::date_from_iso_string(input);
+				break;
+			}
+			catch (boost::exception&)
+			{
+			}
+		}
+		cout << error_prompt;
+	}
+	return ret;
+}
+		
+			
+
 
 TextSession::~TextSession()
 {

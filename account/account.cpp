@@ -34,6 +34,7 @@ Account::account_type_names()
 	{
 		ret.push_back("Asset");
 		ret.push_back("Liability");
+		ret.push_back("Equity");
 		ret.push_back("Revenue category");
 		ret.push_back("Expense category");
 		ret.push_back("Pure envelope");

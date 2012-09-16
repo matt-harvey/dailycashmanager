@@ -21,6 +21,7 @@
 #include <string>
 #include <boost/bind.hpp>
 #include <boost/circular_buffer.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -121,6 +122,20 @@ std::string get_constrained_user_input
  * Does not throw (except possibly std::bad_alloc in extreme conditions).
  */
 jewel::Decimal get_decimal_from_user();
+
+/**
+ * @returns a boost::gregorian::date from user's input. User is
+ * reprompted until a valid date is entered. The date must be entered
+ * in six-digit ISO format of the form "YYYYDDMM". The initial prompt
+ * is \e not displayed within this function, and should be output
+ * prior to calling this function.
+ *
+ * @todo Determine and document throwing behaviour.
+ */
+boost::gregorian::date get_date_from_user
+(	std::string const& error_prompt =
+		"Try again, entering a six-digit date in the form YYYYMMDD: "
+);
 
 // CLASS DEFINITIONS
 
