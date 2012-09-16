@@ -159,7 +159,7 @@ public:
 private:
 
 	bool setup_has_occurred();
-	static std::string const s_setup_flag;
+	void mark_setup_as_having_occurred();
 
 };  // PhatbooksDatabaseConnection
 

@@ -122,55 +122,27 @@ PhatbooksDatabaseConnection::setup()
 	{
 		return;
 	}
-	
 	assert (!setup_has_occurred());
-
-	// Create the tables
-
 	execute_sql("begin transaction");
 	setup_boolean_table();
 	Commodity::setup_tables(*this);
 	Account::setup_tables(*this);
 	Journal::setup_tables(*this);
+	mark_setup_as_having_occurred();
+	execute_sql("end transaction");
+	assert (setup_has_occurred());
+	return;
+}
 
-	execute_sql
-	(
-		"create table interval_types"
-		"("
-			"interval_type_id integer primary key autoincrement, "
-			"name text unique not null"
-		"); "
-		
-		// Values inserted into interval_types must correspond with
-		// IntervalType enum defined in Repeater class.
-		"insert into interval_types(name) values('days'); "
-		"insert into interval_types(name) values('weeks'); "
-		"insert into interval_types(name) values('months'); "
-		"insert into interval_types(name) values('month ends'); "
+namespace
+{
+	string const setup_flag = "setup_flag_996149162";
+}
 
-		"create table draft_journals"
-		"("
-			"draft_journal_id integer primary key autoincrement, "
-			"is_actual integer not null references booleans, "
-			"name text unique not null, "
-			"comment text"
-		"); "
-
-		"create table draft_entries"
-		"("
-			"draft_entry_id integer primary key autoincrement, "
-			"draft_journal_id not null references draft_journals, "
-			"comment text, "
-			"account_id not null references accounts, "
-			"amount integer not null "
-		"); "
-	);
-
-
-	execute_sql
-	(	"create table " + s_setup_flag + "(dummy_column);"
-		"end transaction;"
-	);
+void
+PhatbooksDatabaseConnection::mark_setup_as_having_occurred()
+{
+	execute_sql("create table " + setup_flag + "(dummy_column);");
 	return;
 }
 
@@ -181,7 +153,7 @@ PhatbooksDatabaseConnection::setup_has_occurred()
 {
 	try
 	{
-		execute_sql("select * from " + s_setup_flag);
+		execute_sql("select * from " + setup_flag);
 		return true;
 	}
 	catch (SQLiteException&)
@@ -191,9 +163,5 @@ PhatbooksDatabaseConnection::setup_has_occurred()
 }
 
 
-
-
-string const
-PhatbooksDatabaseConnection::s_setup_flag = "setup_flag_99879871986";
 
 }  // namespace phatbooks

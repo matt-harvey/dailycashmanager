@@ -60,7 +60,27 @@ Journal::setup_tables(DatabaseConnection& dbc)
 			"journal_id not null references journals, "
 			"comment text, "
 			"account_id not null references accounts, "
-			"amount integer not null "
+			"amount integer not null"
+		");"
+	);
+	dbc.execute_sql
+	(	"create table interval_types"
+		"("
+			"interval_type_id integer primary key autoincrement, "
+			"name text not null unique"
+		");"
+		"insert into interval_types(name) values('days'); "
+		"insert into interval_types(name) values('weeks'); "
+		"insert into interval_types(name) values('months'); "
+		"insert into interval_types(name) values('month ends'); "
+	);
+	dbc.execute_sql
+	(	"create table repeaters"
+		"("
+			"repeater_id integer primary key autoincrement, "
+			"interval_type_id integer not null references interval_types, "
+			"next_date integer not null, "
+			"journal_id integer not null references journals"
 		");"
 	);
 	return;
@@ -100,7 +120,7 @@ Journal::set_comment(string const& p_comment)
 }
 
 void
-Journal::set_date(boost::gregorian::date p_date)
+Journal::set_date(boost::gregorian::date const& p_date)
 {
 	m_date = julian_int(p_date);
 	return;

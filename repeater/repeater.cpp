@@ -22,7 +22,7 @@ namespace phatbooks
 Repeater::Repeater
 (	IntervalType p_interval_type,
 	int p_interval_units,
-	boost::gregorian::date p_next_date
+	boost::gregorian::date const& p_next_date
 ):
 	m_interval_type(p_interval_type),
 	m_interval_units(p_interval_units),

@@ -36,8 +36,25 @@ class Repeater;
  * typically comprise two or more accounting entries, plus some
  * "journal level" data such as the date.
  *
- * @todo The design is currently confused about whether a Journal is a
- * necessarily posted or just a draft/recurring journal.
+ * A journal can be either \e posted or \e draft. A posted journal
+ * has been reflected in the entity's financial state. A draft journal
+ * has not, but has simply been saved for possible future reuse. Some
+ * draft journals have got Repeater instances associated with them. A
+ * draft journal with Repeater instances constitutes a recurring transaction.
+ *
+ * As well the posted/draft distinction, there is also a distinction between
+ * \c actual and \c budget journals. An actual journal reflects an actual
+ * change in the entity's wealth, whether the physical form of the wealth
+ * (for example, by transferring between asset classes), or a dimimution
+ * or augmentation in wealth (by spending or earning money). In contrast
+ * a budget journal is a "conceptual" allocation or reallocation of wealth
+ * in regards to the \e planned purpose to which the wealth will be put. Thus,
+ * allocating $100.00 of one's earnings to planned expenditure on food
+ * represents a budget transaction.
+ *
+ * @todo The do_save... methods of Journal do not currently store the contents
+ * of the Repeater list anywhere. The contents should be stored in the
+ * repeaters table in the database.
  */
 class Journal: public sqloxx::PersistentObject<IdType>
 {
@@ -93,7 +110,7 @@ public:
 	 *
 	 * Does not throw.
 	 */
-	void set_date(boost::gregorian::date p_date);
+	void set_date(boost::gregorian::date const& p_date);
 
 	/**
 	 * Add an Entry to the Journal.
