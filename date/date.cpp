@@ -27,11 +27,14 @@ namespace phatbooks
 // Start anonymous namespace
 namespace
 {
-	// Integreal Julian representation of 01 Jan. 1 (12:01am) (CE 1)
-	static int const ce_1_int = 1721426;
+	// Integral Julian representation of 1 Jan 1400 CE (12:01am)
+	static int const min_valid_date_rep = 1721426;
+	
+	// boost::gregorian representation of 1 Jan 1400 CE (12:01am)
+	boost::gregorian::date const min_valid_gregorian(1400, 1, 1);
 
-	// Integral Julian representation of 01 Jan. 1970 (12:01am) (POSIX epoch)
-	static int const epoch_int = 2440588;
+	// Integral Julian representation of 1 Jan 1970 CE (12:01am) (POSIX epoch)
+	static int const epoch_date_rep = 2440588;
 	
 	// boost::gregorian representation of POSIX epoch
 	static boost::gregorian::date const epoch_grg(1970, 1, 1);
@@ -42,7 +45,7 @@ namespace
 bool
 is_valid_date(DateRep date)
 {
-	return (date <= ce_1_int);
+	return (date >= min_valid_date_rep);
 }
 
 DateRep
@@ -59,15 +62,12 @@ julian_int(boost::gregorian::date p_date)
 	{
 		return null_date_rep();
 	}
-	if (p_date < boost::gregorian::date(1, 1, 1))
-	{
-		throw DateConversionException
-		(	"julian_int is not designed to handle dates "
-			"earlier than year 1 CE."
-		);
-	}
+
+	// boost::date_time::gregorian is never earlier than min_valid_gregorian.
+	assert (p_date >= min_valid_gregorian);
+
 	boost::gregorian::date_duration const interval = p_date - epoch_grg;
-	DateRep const ret = epoch_int + interval.days();
+	DateRep const ret = epoch_date_rep + interval.days();
 	assert (is_valid_date(ret));
 	return ret;
 }
@@ -88,9 +88,10 @@ boost_date_from_julian_int(DateRep julian_int)
 			"earlier than year 1 CE."
 		);
 	}
-	boost::gregorian::date_duration const interval(julian_int - epoch_int);
+	boost::gregorian::date_duration const
+		interval(julian_int - epoch_date_rep);
 	boost::gregorian::date const ret = epoch_grg + interval;
-	assert (ret > boost::gregorian::date(1, 1, 1));
+	assert (ret >= min_valid_gregorian);
 	assert (!ret.is_not_a_date());
 	return ret;
 }

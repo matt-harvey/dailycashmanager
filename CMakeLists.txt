@@ -25,6 +25,7 @@ add_executable (main
 				repeater/repeater.cpp
 				sqloxx/sql_statement.cpp)
 target_link_libraries (main
+					   boost_date_time
 					   boost_filesystem
 					   boost_regex
 					   boost_system

@@ -26,6 +26,7 @@
 #include <jewel/decimal_exceptions.hpp>
 #include <boost/bimap.hpp>
 #include <boost/bind.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/filesystem.hpp>
@@ -35,6 +36,7 @@
 #include <map>
 #include <string>
 
+using consolixx::get_date_from_user;
 using consolixx::get_user_input;
 using consolixx::get_constrained_user_input;
 using consolixx::get_decimal_from_user;
@@ -549,18 +551,55 @@ void PhatbooksTextSession::elicit_journal()
 	// WARNING
 	// We need to implement split transactions
 
+	// Find out whether the user wants to post the journal, abandon it,
+	// or save it as a draft.
+	shared_ptr<MenuItem> post(new MenuItem("Post the journal"));
+	shared_ptr<MenuItem> save_draft(new MenuItem("Save as a draft journal"));
+	shared_ptr<MenuItem> abandon(new MenuItem("Abandon the journal"));
+	Menu journal_action_menu;
+	journal_action_menu.add_item(post);
+	journal_action_menu.add_item(save_draft);
+	journal_action_menu.add_item(abandon);
+	journal_action_menu.present_to_user();
+	shared_ptr<MenuItem const> journal_action = journal_action_menu.last_choice();
+	if (journal_action == post)
+	{
+		boost::gregorian::date const d =
+			boost::gregorian::day_clock::local_day();
+		cout << "Enter transaction date as an eight-digit number of the "
+		     << "form YYYYMMDD, or just hit enter for today's date ("
+			 << boost::gregorian::to_iso_string(d)
+			 << "): ";
+		boost::gregorian::date const e = get_date_from_user();
+		journal.set_date(e);
+		journal.save_new();
+		cout << "\nJournal posted." << endl;
+	}
+	else if (journal_action == save_draft)
+	{
+		// WARNING Not implemented yet.
+		cout << "\nAaagghhhh!!!" << endl;
+	}
+	else if (journal_action == abandon)
+	{
+		cout << "\nJournal has not been posted or saved." << endl;
+	}
+	else
+	{
+		// Execution should not reach here.
+		assert (false);
+	}
+
 	// WARNING
-	// We also need to insert Entry objects, and ensure the journal either
+	// We also need to ensure the journal either
 	// balances or is to be a draft journal. If it's draft, we need to create
 	// Repeater objects if required. Before posting, we need to ensure
 	// the entries will not overflow the account balances.
+	// If the journal is a draft, it should also be given a unique name by the
+	// user.
 	// Note there are complications when a single Journal involves multiple
 	// commodities.
-	
-	// WARNING
-	// Don't forget to get the date!
 
-	journal.save_new();
 	return;
 }
 

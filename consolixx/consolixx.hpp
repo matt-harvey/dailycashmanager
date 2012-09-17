@@ -131,6 +131,11 @@ jewel::Decimal get_decimal_from_user();
  * prior to calling this function.
  *
  * @todo Determine and document throwing behaviour.
+ *
+ * @todo This function does not currently provide any help to the user
+ * as to why their input failed, in the case that the failure
+ * is due to a date prior to 1400 CE being rejected by the contructor
+ * of boost::gregorian::date.
  */
 boost::gregorian::date get_date_from_user
 (	std::string const& error_prompt =

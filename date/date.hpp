@@ -32,8 +32,9 @@ typedef int DateRep;
 /**
  * Returns \c true iff \c date is a valid
  * value for a date. The earliest date that can be represented
- * is 1 Jan. 1 CE, represented by \c DateRep(1721426). Thus this
- * function will return false for numbers lower than that.
+ * is 1 Jan. 1400 CE, represented by DateRep(2232400). Thus
+ * numbers lower than this will return false when passed to this
+ * function.
  */
 bool
 is_valid_date(DateRep date);
@@ -51,9 +52,6 @@ null_date_rep();
  * boost::gregorian::date.
  *
  * Returns DateRep(0) if p_date is not a valid date.
- *
- * @throws DateConversionException if p_date is earlier than year 1 CE,
- * but is otherwise a valid date.
  */
 DateRep
 julian_int(boost::gregorian::date p_date);
