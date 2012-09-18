@@ -55,6 +55,11 @@ class Repeater;
  * @todo The do_save... methods of Journal do not currently store the contents
  * of the Repeater list anywhere. The contents should be stored in the
  * repeaters table in the database.
+ *
+ * @todo The Entry and Repeater classes are currently being saved and loaded
+ * as part of the code in Journal. But what will happen when we want to modify
+ * them? How will we know where to save them? They should probably be
+ * PersistentObject instances in their own right.
  */
 class Journal: public sqloxx::PersistentObject<IdType>
 {

@@ -204,6 +204,7 @@ Journal::do_load_all()
 		numeric_cast<DateRep>(statement.extract<boost::int64_t>(2));
 	string const cmt = statement.extract<string>(3);
 
+	// WARNING entry_id is not being extracted to anything!
 	SQLStatement entry_finder
 	(	*database_connection(),
 		"select entry_id, comment, account_id, amount from entries where "
@@ -229,6 +230,32 @@ Journal::do_load_all()
 	set_whether_actual(is_act);
 	m_date = d;
 	set_comment(cmt);
+	
+	if (!is_posted())  // Only draft journals have repeaters.
+	{
+		// WARNING repeater_id is not being extracted to anything!
+		SQLStatement repeater_finder
+		(	*database_connection(),
+			"select repeater_id, interval_type_id, interval_units, "
+			"next_date from repeaters where journal_id = :journal_id"
+		);
+		repeater_finder.bind(":journal_id", id());
+		while (repeater_finder.step())
+		{
+			shared_ptr<Repeater> repeater
+			(	new Repeater
+				(	static_cast<Repeater::IntervalType>
+					(	repeater_finder.extract<int>(1)
+					),
+					repeater_finder.extract<int>(2),
+					boost_date_from_julian_int
+					(	repeater_finder.extract<DateRep>(3)
+					)
+				)
+			);
+			add_repeater(repeater);
+		}
+	}
 
 	return;
 }
@@ -248,9 +275,8 @@ Journal::do_save_new_all()
 	statement.bind(":date", (m_date? *m_date: null_date_rep()));
 	statement.bind(":comment", *m_comment);
 	statement.quick_step();
-	typedef list< shared_ptr<Entry> > EntryCntnr;
-	typedef EntryCntnr::const_iterator Iter;
-	for (Iter it = m_entries.begin(); it != m_entries.end(); ++it)
+	typedef list< shared_ptr<Entry> >::const_iterator EntryIter;
+	for (EntryIter it = m_entries.begin(); it != m_entries.end(); ++it)
 	{
 		Account acct(database_connection(), (*it)->account_name());
 		SQLStatement entry_storer
@@ -263,6 +289,24 @@ Journal::do_save_new_all()
 		entry_storer.bind(":account_id", acct.id());
 		entry_storer.bind(":amount", (*it)->amount().intval());
 		entry_storer.quick_step();
+	}
+	typedef list< shared_ptr<Repeater> >::const_iterator RepIter;
+	for (RepIter it = m_repeaters.begin(); it != m_repeaters.end(); ++it)
+	{
+		SQLStatement repeater_storer
+		(	*database_connection(),
+			"insert into repeaters(interval_type_id, interval_units, "
+			"next_date, journal_id) "
+			"values(:interval_type_id, :next_date, :journal_id)"
+		);
+		repeater_storer.bind
+		(	":interval_type_id",
+			static_cast<int>((*it)->interval_type())
+		);
+		repeater_storer.bind(":interval_units", (*it)->interval_units());
+		repeater_storer.bind(":next_date", julian_int((*it)->next_date()));
+		repeater_storer.bind(":journal_id", journal_id);
+		repeater_storer.quick_step();
 	}
 	database_connection()->execute_sql("end transaction;");
 	return;

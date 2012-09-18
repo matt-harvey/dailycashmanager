@@ -30,6 +30,23 @@ Repeater::Repeater
 {
 }
 
+Repeater::IntervalType
+Repeater::interval_type() const
+{
+	return m_interval_type;
+}
+
+int
+Repeater::interval_units() const
+{
+	return m_interval_units;
+}
+
+boost::gregorian::date
+Repeater::next_date() const
+{
+	return boost_date_from_julian_int(m_next_date);
+}
 
 
 

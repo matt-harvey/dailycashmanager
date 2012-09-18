@@ -84,12 +84,20 @@ public:
 		int p_interval_units,
 		boost::gregorian::date const& p_next_date
 	);
+	
+	IntervalType interval_type() const;
+
+	int interval_units() const;
+
+	boost::gregorian::date next_date() const;
 
 private:
 	IntervalType m_interval_type;
 	int m_interval_units;
 	DateRep m_next_date;
 };
+
+
 
 
 
