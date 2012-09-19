@@ -68,6 +68,7 @@ PhatbooksDatabaseConnection::has_account_named(string const& p_name)
 	return statement.step();
 }
 
+
 bimap<Account::AccountType, string>
 PhatbooksDatabaseConnection::account_types()
 {

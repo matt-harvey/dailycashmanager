@@ -53,6 +53,13 @@ Journal::setup_tables(DatabaseConnection& dbc)
 			"comment text"
 		");"
 	);
+	dbc.execute_sql
+	(	"create table draft_journal_detail "
+		"("
+			"journal_id primary key not null references journals, "
+			"name text not null "
+		"); "
+	);
 	return;
 }
 

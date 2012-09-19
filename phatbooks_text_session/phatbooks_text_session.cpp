@@ -233,7 +233,7 @@ void PhatbooksTextSession::elicit_commodity()
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
 		string input = get_user_input();
-		if (!regex_match(input, regex("[0123456]")))
+		if (!regex_match(input, regex("^[0123456]$")))
 		{
 			cout << "Please try again, entering a number from 0 to 6: ";
 		}
@@ -542,19 +542,27 @@ void PhatbooksTextSession::elicit_journal()
 	journal.add_entry(secondary_entry);
 
 	// WARNING
-	// We need to implement split transactions
-
+	// We need to implement split transactions 
 	// Find out whether the user wants to post the journal, abandon it,
 	// or save it as a draft.
-	shared_ptr<MenuItem> post(new MenuItem("Post the journal"));
-	shared_ptr<MenuItem> save_draft(new MenuItem("Save as a draft journal"));
-	shared_ptr<MenuItem> abandon(new MenuItem("Abandon the journal"));
+	shared_ptr<MenuItem> post(new MenuItem("Record transaction"));
+	shared_ptr<MenuItem> save_draft
+	(	new MenuItem("Save as a draft to return and complete later")
+	);
+	shared_ptr<MenuItem> save_recurring
+	(	new MenuItem("Save as a recurring transaction")
+	);
+	shared_ptr<MenuItem> abandon
+	(	new MenuItem("Abandon transaction without saving")
+	);
 	Menu journal_action_menu;
 	journal_action_menu.add_item(post);
 	journal_action_menu.add_item(save_draft);
+	journal_action_menu.add_item(save_recurring);
 	journal_action_menu.add_item(abandon);
 	journal_action_menu.present_to_user();
-	shared_ptr<MenuItem const> journal_action = journal_action_menu.last_choice();
+	shared_ptr<MenuItem const> journal_action =
+		journal_action_menu.last_choice();
 	if (journal_action == post)
 	{
 		boost::gregorian::date const d =
@@ -568,9 +576,125 @@ void PhatbooksTextSession::elicit_journal()
 		journal.save_new();
 		cout << "\nJournal posted." << endl;
 	}
-	else if (journal_action == save_draft)
+	else if (journal_action == save_draft || journal_action == save_recurring)
 	{
-		// WARNING Not implemented yet.
+		// Ask for a name for the journal
+		string prompt =
+		(	journal_action == save_draft?
+			"Enter a name for the draft transaction: ":
+			"Enter a name for the recurring transaction: "
+		);
+		cout << prompt;
+		for (bool is_valid = false; is_valid != true; )
+		{
+			string name = get_user_input();
+			if (name.empty())
+			{
+				cout << "Name cannot be blank. Please try again: ";
+			}
+			else
+			{
+				is_valid = true;
+			}
+		}
+		// Ask for any repeaters.
+		if (journal_action == save_recurring)
+		{
+			cout << "\nHow often do you want this transaction to be posted? "
+				 << endl;
+			Menu frequency_menu;
+			shared_ptr<MenuItem> monthly_day_x
+			(	new MenuItem
+				(	"Every month, on a given day of the month (except the "
+					"29th, 30th or 31st)"
+				)
+			);
+			frequency_menu.add_item(monthly_day_x);
+			shared_ptr<MenuItem> monthly_day_last
+			(	new MenuItem("Every month, on the last day of the month")
+			);
+			frequency_menu.add_item(monthly_day_last);
+			shared_ptr<MenuItem> N_monthly_day_x
+			(	new MenuItem
+				(	"Every N months, on a given day of the month (except the "
+					"29th, 30th or 31st)"
+				)
+			);
+			frequency_menu.add_item(N_monthly_day_x);
+			shared_ptr<MenuItem> N_monthly_day_last
+			(	new MenuItem("Every N months, on the last day of the month")
+			);
+			frequency_menu.add_item(N_monthly_day_last);
+			shared_ptr<MenuItem> weekly(new MenuItem("Every week"));
+			frequency_menu.add_item(weekly);
+			shared_ptr<MenuItem> N_weekly(new MenuItem("Every N weeks"));
+			frequency_menu.add_item(N_weekly);
+			shared_ptr<MenuItem> daily(new MenuItem("Every day"));
+			frequency_menu.add_item(daily);
+			shared_ptr<MenuItem> N_daily(new MenuItem("Every N days"));
+			frequency_menu.add_item(N_daily);
+			frequency_menu.present_to_user();
+			shared_ptr<MenuItem const> const choice =
+				frequency_menu.last_choice();
+			int units = 0;
+			if
+			(	choice == monthly_day_x ||
+				choice == monthly_day_last ||
+				choice == weekly ||
+				choice == daily
+			)
+			{
+				units = 1;
+			}
+			else
+			{
+				string unit_description;
+				if (choice == N_weekly) unit_description = "week";
+				else if (choice == N_daily) unit_description = "day";
+				else unit_description = "month";
+				cout << "Enter the number of "
+				     << unit_description
+					 << "s between each occurrence of the transaction: ";
+				for (bool is_valid = false; !is_valid; )
+				{
+					string const input = get_user_input();
+					if (!regex_match(input, regex("^[0-9]+$")))
+					{
+					}
+					else if (input == "0")
+					{
+					}
+					else
+					{
+						try
+						{
+							units = lexical_cast<int>(input);
+							is_valid = true;
+						}
+						catch (boost::bad_lexical_cast&)
+						{
+						}
+					}
+					if (!is_valid)
+					{
+						cout << "Try again, entering a number greater "
+						        "than 0: ";
+					}
+				}
+				// WARNING incomplete implementation
+			}	
+						
+		}
+				
+
+		// Get rid of this
+		// WARNING We need a BaseJournal class, and Journal and DraftJournal
+		// need to inherit from BaseJournal. DraftJournal needs to have a
+		// name and repeater_list, but Journal should have neither of these.
+		// Possibly DraftJournal could be further split into
+		// RecurringDraftJournal and NonRecurringDraftJournal. The
+		// draft_journal_detail table will need to appropriately populated on
+		// posting.
 		cout << "\nAaagghhhh!!!" << endl;
 	}
 	else if (journal_action == abandon)
