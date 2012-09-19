@@ -24,9 +24,6 @@ namespace phatbooks
 
 /**
  * Class representing an accounting entry, i.e. a single line in an account.
- *
- * @todo We need a mechanism for associating an Entry with a particular
- * Journal.
  */
 class Entry: public sqloxx::PersistentObject<IdType>
 {
