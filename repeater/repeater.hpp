@@ -41,11 +41,6 @@ namespace phatbooks
  *
  * @todo Write firing method.
  *
- * @todo The Repeater currently has not mechanism for associating itself
- * with a journal. It should be associated using a journal_id, rather than
- * having a link with the object. The journal_id in question will only ever
- * refer to a journal stored in the draft_journals table.
- *
  * @todo Write a method somewhere in either the session-level code, or in
  * PhatbooksDatabaseConnection, that loads Repeater objects from the database,
  * and inspects them all and fires those that are due.
