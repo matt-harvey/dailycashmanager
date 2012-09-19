@@ -10,18 +10,18 @@
  */
 
 
-
-
 #include "repeater.hpp"
 #include "date.hpp"
 #include "journal.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
 
 using sqloxx::DatabaseConnection;
 using sqloxx::SQLStatement;
+using boost::numeric_cast;
 using boost::shared_ptr;
 using std::string;
 
@@ -142,9 +142,11 @@ Repeater::do_load_all()
 		"from repeaters where repeater_id = :p"
 	);
 	statement.step();
-	IntervalType const itp = static_cast<IntervalType>(statement.extract<int>(0));
+	IntervalType const itp =
+		static_cast<IntervalType>(statement.extract<int>(0));
 	int const units = statement.extract<int>(1);
-	DateRep const nd = statement.extract<DateRep>(2);
+	DateRep const nd =
+		numeric_cast<DateRep>(statement.extract<boost::int64_t>(2));
 	Journal::Id const jid = statement.extract<Journal::Id>(3);
 	set_interval_type(itp);
 	set_interval_units(units);
