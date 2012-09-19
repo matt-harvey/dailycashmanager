@@ -54,16 +54,6 @@ Journal::setup_tables(DatabaseConnection& dbc)
 		");"
 	);
 	dbc.execute_sql
-	(	"create table entries"
-		"("
-			"entry_id integer primary key autoincrement, "
-			"journal_id not null references journals, "
-			"comment text, "
-			"account_id not null references accounts, "
-			"amount integer not null"
-		");"
-	);
-	dbc.execute_sql
 	(	"create table interval_types"
 		"("
 			"interval_type_id integer primary key autoincrement, "
@@ -129,6 +119,10 @@ Journal::set_date(boost::gregorian::date const& p_date)
 void
 Journal::add_entry(shared_ptr<Entry> entry)
 {
+	if (has_id())
+	{
+		entry->set_journal_id((id()));
+	}
 	m_entries.push_back(entry);
 	return;
 }
@@ -194,9 +188,9 @@ Journal::do_load_all()
 	SQLStatement statement
 	(	*database_connection(),
 		"select journal_id, is_actual, date, comment from "
-		"journals where journal_id = :key"
+		"journals where journal_id = :p"
 	);
-	statement.bind(":key", id());
+	statement.bind(":p", id());
 	statement.step();
 
 	bool const is_act = static_cast<bool>(statement.extract<int>(1));
@@ -204,26 +198,16 @@ Journal::do_load_all()
 		numeric_cast<DateRep>(statement.extract<boost::int64_t>(2));
 	string const cmt = statement.extract<string>(3);
 
-	// WARNING entry_id is not being extracted to anything!
 	SQLStatement entry_finder
 	(	*database_connection(),
-		"select entry_id, comment, account_id, amount from entries where "
-		"journal_id = :jid"
+		"select entry_id from entries where journal_id = :jid"
 	);
 	entry_finder.bind(":jid", id());
 	while (entry_finder.step())
 	{
-		Account acct(database_connection(), entry_finder.extract<IdType>(2));
-		Commodity comm(database_connection(), acct.commodity_abbreviation());
+		Entry::Id const entr_id = entry_finder.extract<Entry::Id>(0);
 		shared_ptr<Entry> entry
-		(	new Entry
-			(	acct.name(),
-				entry_finder.extract<string>(1),
-				Decimal
-				(	entry_finder.extract<boost::int64_t>(3),
-					comm.precision()
-				)
-			)
+		(	new Entry(database_connection(), entr_id)
 		);
 		add_entry(entry);
 	}
@@ -309,6 +293,12 @@ Journal::do_save_new_all()
 		repeater_storer.quick_step();
 	}
 	database_connection()->execute_sql("end transaction;");
+	
+	// Don't do this in previous loop lest SQL transaction doesn't succeed.
+	for (EntryIter it = m_entries.begin(); it != m_entries.end(); ++it)
+	{
+		(*it)->set_journal_id(journal_id);
+	}
 	return;
 }
 

@@ -128,6 +128,7 @@ PhatbooksDatabaseConnection::setup()
 	Commodity::setup_tables(*this);
 	Account::setup_tables(*this);
 	Journal::setup_tables(*this);
+	Entry::setup_tables(*this);
 	mark_setup_as_having_occurred();
 	execute_sql("end transaction");
 	assert (setup_has_occurred());

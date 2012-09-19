@@ -75,11 +75,8 @@ public:
 	static void setup_tables(sqloxx::DatabaseConnection& dbc);
 
 	/**
-	 * Initialize a "draft" journal, that will not correspond to any
-	 * particular object in the database ("draft" here means not-yet-persisted,
-	 * as opposed to not-yet-posted).
-	 *
-	 * @todo Make this documentation clearer.
+	 * Initialize a "raw" journal, that will not yet correspond to any
+	 * particular object in the database.
 	 */
 	explicit
 	Journal
@@ -181,9 +178,21 @@ public:
 
 private:
 
+	/**
+	 * WARNING There is inspection of the entries
+	 * table within this method. I should redesign provide
+	 * appropriate methods in the Entry class so that consultation
+	 * of the entries table can be delegated entirely to the entries
+	 * class.
+	 */
 	virtual void do_load_all();
 
 	/* WARNING Needs proper definition.
+	 * This method will need to be implemented carefully
+	 * (and so will do_save_existing_partial). If Entry and Repeater
+	 * instances have been removed from m_entry_list and m_repeater_list
+	 * since the journal was last saved, this means the corresponding
+	 * entry and repeater rows will need to be deleted from the database.
 	 */
 	virtual void do_save_existing_all()
 	{

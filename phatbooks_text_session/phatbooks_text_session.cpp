@@ -451,14 +451,17 @@ void PhatbooksTextSession::elicit_journal()
 		primary_sign_needs_changing = false;
 	}
 	
+	// Primary entry
+	shared_ptr<Entry> primary_entry(new Entry(m_database_connection));
+
 	// Get primary entry account
 	cout << "Enter name of " << account_prompt << ": ";
-	string primary_entry_account_name = elicit_existing_account_name();
+	primary_entry->set_account_name((elicit_existing_account_name()));
 
 	// Get primary entry amount
 	Account primary_entry_account
 	(	m_database_connection,
-		primary_entry_account_name
+		primary_entry->account_name()
 	);
 	Commodity primary_commodity
 	(	m_database_connection,
@@ -495,34 +498,31 @@ void PhatbooksTextSession::elicit_journal()
 	}
 	// Primary entry amount must be changed to the appropriate sign
 	// WARNING In theory this might throw.
-	Decimal normalized_primary_entry_amount =
-		primary_sign_needs_changing?
-		primary_entry_amount * Decimal("-1"):
-		primary_entry_amount;
+	primary_entry->set_amount
+	(	primary_sign_needs_changing?
+		-primary_entry_amount:
+		primary_entry_amount
+	);
 
 	// Get primary entry comment
 	cout << "Line specific comment (or Enter for no comment): ";
-	string primary_entry_comment = get_user_input();
+	primary_entry->set_comment((get_user_input()));
 
-	// Create entry and add to journal
-	shared_ptr<Entry> primary_entry
-	(	new Entry
-		(	primary_entry_account_name,
-			primary_entry_comment,
-			normalized_primary_entry_amount
-		)
-	);
+	// Add primary entry to journal
 	journal.add_entry(primary_entry);
+
+	// Secondary entry
+	shared_ptr<Entry> secondary_entry(new Entry(m_database_connection));
 
 	// Get other account and comment
 	cout << "Enter name of " << secondary_account_prompt << ": ";
-	string secondary_entry_account_name = elicit_existing_account_name();
+	secondary_entry->set_account_name((elicit_existing_account_name()));
 	// WARNING if secondary account is in a different currency then we need to
 	// deal with this here somehow.
  
 	Account secondary_entry_account
 	(	m_database_connection,
-		secondary_entry_account_name
+		secondary_entry->account_name()
 	);
 	Commodity secondary_commodity
 	(	m_database_connection,
@@ -537,15 +537,8 @@ void PhatbooksTextSession::elicit_journal()
 	}
 
 	cout << "Line specific comment (or Enter for no comment): ";
-	string secondary_entry_comment = get_user_input();
-
-	shared_ptr<Entry> secondary_entry
-	(	new Entry
-		(	secondary_entry_account_name,
-			secondary_entry_comment,
-			-normalized_primary_entry_amount
-		)
-	);
+	secondary_entry->set_comment((get_user_input()));
+	secondary_entry->set_amount(-(primary_entry->amount()));
 	journal.add_entry(secondary_entry);
 
 	// WARNING

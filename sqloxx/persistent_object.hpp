@@ -94,6 +94,8 @@ protected:
 
 	Id prospective_key();
 
+	bool has_id();
+
 private:
 
 	virtual Id do_calculate_prospective_key();
@@ -115,7 +117,6 @@ private:
 		loaded
 	};
 
-	bool has_id();
 
 	// Data members
 
