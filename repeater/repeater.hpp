@@ -116,31 +116,7 @@ public:
 	 * be identified from its id.)
 	 */
 	void set_journal_id(Journal::Id p_journal_id);
-	
-
-	/** 
-	 * @param p_journal The journal the posting of which is triggered
-	 * by the firing of this \c Repeater.
-	 *
-	 * @param p_interval_type The \c IntervalType such that the \c Repeater
-	 * "fires" after every \c p_interval_units intervals of
-	 * \c p_interval_type.
-	 *
-	 * @param p_interval_units The number of intervals of \c p_interval_type
-	 * such that duration between firings of the \c Repeater is this many
-	 * intervals of that type.
-	 *
-	 * @param p_next_date The date on which the \c Repeater is due to fire
-	 * next.
-	 *
-	 * This constructor does not throw.
-	 */
-	Repeater
-	(	IntervalType p_interval_type,
-		int p_interval_units,
-		boost::gregorian::date const& p_next_date
-	);
-	
+		
 	IntervalType interval_type();
 
 	int interval_units();
