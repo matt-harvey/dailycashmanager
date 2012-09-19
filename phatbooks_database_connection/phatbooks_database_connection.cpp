@@ -19,6 +19,7 @@
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "repeater.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include <sqlite3.h>
@@ -128,6 +129,7 @@ PhatbooksDatabaseConnection::setup()
 	Commodity::setup_tables(*this);
 	Account::setup_tables(*this);
 	Journal::setup_tables(*this);
+	Repeater::setup_tables(*this);
 	Entry::setup_tables(*this);
 	mark_setup_as_having_occurred();
 	execute_sql("end transaction");

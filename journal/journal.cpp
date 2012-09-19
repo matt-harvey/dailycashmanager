@@ -53,31 +53,8 @@ Journal::setup_tables(DatabaseConnection& dbc)
 			"comment text"
 		");"
 	);
-	dbc.execute_sql
-	(	"create table interval_types"
-		"("
-			"interval_type_id integer primary key autoincrement, "
-			"name text not null unique"
-		");"
-		"insert into interval_types(name) values('days'); "
-		"insert into interval_types(name) values('weeks'); "
-		"insert into interval_types(name) values('months'); "
-		"insert into interval_types(name) values('month ends'); "
-	);
-	dbc.execute_sql
-	(	"create table repeaters"
-		"("
-			"repeater_id integer primary key autoincrement, "
-			"interval_type_id integer not null references interval_types, "
-			"next_date integer not null, "
-			"journal_id integer not null references journals"
-		");"
-	);
 	return;
 }
-
-
-	
 
 
 Journal::Journal(shared_ptr<DatabaseConnection> p_database_connection):
@@ -121,7 +98,7 @@ Journal::add_entry(shared_ptr<Entry> entry)
 {
 	if (has_id())
 	{
-		entry->set_journal_id((id()));
+		entry->set_journal_id(id());
 	}
 	m_entries.push_back(entry);
 	return;
@@ -130,6 +107,10 @@ Journal::add_entry(shared_ptr<Entry> entry)
 void
 Journal::add_repeater(shared_ptr<Repeater> repeater)
 {
+	if (has_id())
+	{
+		repeater->set_journal_id(id());
+	}
 	m_repeaters.push_back(repeater);
 	return;
 }
@@ -217,25 +198,17 @@ Journal::do_load_all()
 	
 	if (!is_posted())  // Only draft journals have repeaters.
 	{
-		// WARNING repeater_id is not being extracted to anything!
 		SQLStatement repeater_finder
 		(	*database_connection(),
-			"select repeater_id, interval_type_id, interval_units, "
-			"next_date from repeaters where journal_id = :journal_id"
+			"select repeater_id from repeaters where journal_id = :journal_id"
 		);
 		repeater_finder.bind(":journal_id", id());
 		while (repeater_finder.step())
 		{
+			Repeater::Id const rep_id =
+				repeater_finder.extract<Repeater::Id>(0);
 			shared_ptr<Repeater> repeater
-			(	new Repeater
-				(	static_cast<Repeater::IntervalType>
-					(	repeater_finder.extract<int>(1)
-					),
-					repeater_finder.extract<int>(2),
-					boost_date_from_julian_int
-					(	repeater_finder.extract<DateRep>(3)
-					)
-				)
+			(	new Repeater(database_connection(), rep_id)
 			);
 			add_repeater(repeater);
 		}
@@ -259,46 +232,19 @@ Journal::do_save_new_all()
 	statement.bind(":date", (m_date? *m_date: null_date_rep()));
 	statement.bind(":comment", *m_comment);
 	statement.quick_step();
-	typedef list< shared_ptr<Entry> >::const_iterator EntryIter;
+	typedef list< shared_ptr<Entry> >::iterator EntryIter;
 	for (EntryIter it = m_entries.begin(); it != m_entries.end(); ++it)
 	{
-		Account acct(database_connection(), (*it)->account_name());
-		SQLStatement entry_storer
-		(	*database_connection(),
-			"insert into entries(journal_id, comment, account_id, "
-			"amount) values(:journal_id, :comment, :account_id, :amount)"
-		);
-		entry_storer.bind(":journal_id", journal_id);
-		entry_storer.bind(":comment", (*it)->comment());
-		entry_storer.bind(":account_id", acct.id());
-		entry_storer.bind(":amount", (*it)->amount().intval());
-		entry_storer.quick_step();
+		(*it)->set_journal_id(journal_id);
+		(*it)->save_new();
 	}
 	typedef list< shared_ptr<Repeater> >::const_iterator RepIter;
 	for (RepIter it = m_repeaters.begin(); it != m_repeaters.end(); ++it)
 	{
-		SQLStatement repeater_storer
-		(	*database_connection(),
-			"insert into repeaters(interval_type_id, interval_units, "
-			"next_date, journal_id) "
-			"values(:interval_type_id, :next_date, :journal_id)"
-		);
-		repeater_storer.bind
-		(	":interval_type_id",
-			static_cast<int>((*it)->interval_type())
-		);
-		repeater_storer.bind(":interval_units", (*it)->interval_units());
-		repeater_storer.bind(":next_date", julian_int((*it)->next_date()));
-		repeater_storer.bind(":journal_id", journal_id);
-		repeater_storer.quick_step();
+		(*it)->set_journal_id(journal_id);
+		(*it)->save_new();
 	}
 	database_connection()->execute_sql("end transaction;");
-	
-	// Don't do this in previous loop lest SQL transaction doesn't succeed.
-	for (EntryIter it = m_entries.begin(); it != m_entries.end(); ++it)
-	{
-		(*it)->set_journal_id(journal_id);
-	}
 	return;
 }
 

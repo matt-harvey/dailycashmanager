@@ -75,7 +75,7 @@ public:
 	static void setup_tables(sqloxx::DatabaseConnection& dbc);
 
 	/**
-	 * Initialize a "raw" journal, that will not yet correspond to any
+	 * Initialize a "raw" Journal, that will not yet correspond to any
 	 * particular object in the database.
 	 */
 	explicit

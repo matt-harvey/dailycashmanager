@@ -18,7 +18,7 @@ class PersistentObject
 public:
 
 	/**
-	 * Create a PersistentObject that correponds to one that
+	 * Create a PersistentObject that corresponds to one that
 	 * already exists in the database.
 	 *
 	 * @todo If the object doesn't exist, should this throw
