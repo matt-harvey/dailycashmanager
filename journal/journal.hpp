@@ -60,6 +60,12 @@ class Repeater;
  * as part of the code in Journal. But what will happen when we want to modify
  * them? How will we know where to save them? They should probably be
  * PersistentObject instances in their own right.
+ *
+ * @todo The class hierarchy here probably needs to be elaborated to allow for
+ * the difference between draft/recurring journals, which have names, and
+ * ordinary journals, which do not. Possibly a further extension is warranted
+ * to distinguish between recurring draft journals and non-recurring draft
+ * journals.
  */
 class Journal: public sqloxx::PersistentObject<IdType>
 {

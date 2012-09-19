@@ -48,7 +48,7 @@ Repeater::setup_tables(DatabaseConnection& dbc)
 			"repeater_id integer primary key autoincrement, "
 			"interval_type_id integer not null references interval_types, "
 			"next_date integer not null, "
-			"journal_id integer not null references journals"
+			"journal_id integer not null references draft_journal_detail "
 		");"
 	);
 	return;
