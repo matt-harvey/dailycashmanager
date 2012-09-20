@@ -30,6 +30,7 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <cassert>
+#include <fstream>  // for import_from_nap
 #include <iostream>
 #include <list>
 #include <stdexcept>
@@ -185,16 +186,23 @@ PhatbooksDatabaseConnection::import_from_nap
 			"files."
 		);
 	}
+
+	string const account_csv_name = "accountshelf.csv";
+	string const draft_entry_csv_name = "draftentryshelf.csv";
+	string const draft_journal_csv_name = "draftjournalshelf.csv";
+	string const entry_csv_name = "entryshelf.csv";
+	string const journal_csv_name = "journalshelf.csv";
+
 	boost::filesystem::directory_iterator it(directory);
 	int check = 0;
 	while (it != boost::filesystem::directory_iterator())
 	{
 		string const s = it->filename();
-		if (s == "accountshelf.csv") check += 1;
-		else if (s == "draftentryshelf.csv") check += 10;
-		else if (s == "draftjournalshelf.csv") check += 100;
-		else if (s == "entryshelf.csv") check += 1000;
-		else if (s == "journalshelf.csv") check += 10000;
+		if (s == account_csv_name) check += 1;
+		else if (s == draft_entry_csv_name) check += 10;
+		else if (s == draft_journal_csv_name) check += 100;
+		else if (s == entry_csv_name) check += 1000;
+		else if (s == journal_csv_name) check += 10000;
 	}
 	if (check != 11111)
 	{
@@ -202,7 +210,45 @@ PhatbooksDatabaseConnection::import_from_nap
 		(	"The csv files required by import_from_nap  are not all present."
 		);
 	}
-	// WARNING implementation incomplete		
+	string const file_sep = "/";
+
+	// Read accounts
+	std::ifstream account_csv
+	(	(directory.string() + file_sep + account_csv_name).c_str()
+	);
+	// ...
+	// WARNING implementation incomplete
+	
+	// Read draft entries
+	std::ifstream draft_entry_csv
+	(	(directory.string() + file_sep + draft_entry_csv_name).c_str()
+	);
+	// ...
+	// WARNING implementation incomplete
+	
+	// Read draft journals
+	std::ifstream draft_journal_csv
+	(	(directory.string() + file_sep + draft_journal_csv_name).c_str()
+	);
+	// ...
+	// WARNING implementation incomplete
+
+	// Read entries
+	std::ifstream entry_csv
+	(	(directory.string() + file_sep + entry_csv_name).c_str()
+	);
+	// ...
+	// WARNING implementation incomplete
+	
+	// Read journals
+	std::ifstream journal_csv
+	(	(directory.string() + file_sep + journal_csv_name).c_str()
+	);
+	// ...
+	// WARNING implementation incomplete
+
+	// ...
+	// WARNING implementation incomplete
 	
 	return;
 }
