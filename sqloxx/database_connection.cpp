@@ -59,7 +59,7 @@ DatabaseConnection::open(boost::filesystem::path const& filepath)
 		throw InvalidFilename("Cannot open file with empty filename.");
 	}
 	// Check if file already exists
-	// Note this conditional doesn't do anything, but retained here
+	// While this conditional doesn't do anything, it is retained here
 	// for convenience in case logging or other message required.
 	if (boost::filesystem::exists(boost::filesystem::status(filepath)))
 	{

@@ -25,11 +25,14 @@
 #include <sqlite3.h>
 #include <stdexcept>
 #include <boost/bimap.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
+#include <cassert>
 #include <iostream>
 #include <list>
+#include <stdexcept>
 #include <string>
 
 
@@ -166,6 +169,46 @@ PhatbooksDatabaseConnection::setup_has_occurred()
 	}
 }
 
+
+void
+PhatbooksDatabaseConnection::import_from_nap
+(	boost::filesystem::path const& directory
+)
+{
+	if
+	(	!boost::filesystem::is_directory(boost::filesystem::status(directory))
+	)
+	{
+		throw std::logic_error
+		(	"Non-directory passed to import_from_nap; import_from_nap should "
+			"be passed the name of the directory containing the required csv "
+			"files."
+		);
+	}
+	boost::filesystem::directory_iterator it(directory);
+	int check = 0;
+	while (it != boost::filesystem::directory_iterator())
+	{
+		string const s = it->filename();
+		if (s == "accountshelf.csv") check += 1;
+		else if (s == "draftentryshelf.csv") check += 10;
+		else if (s == "draftjournalshelf.csv") check += 100;
+		else if (s == "entryshelf.csv") check += 1000;
+		else if (s == "journalshelf.csv") check += 10000;
+	}
+	if (check != 11111)
+	{
+		throw std::runtime_error
+		(	"The csv files required by import_from_nap  are not all present."
+		);
+	}
+	// WARNING implementation incomplete		
+	
+	return;
+}
+			
+
+	
 
 
 }  // namespace phatbooks

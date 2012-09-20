@@ -184,7 +184,7 @@ void PhatbooksTextSession::elicit_commodity()
 		string input = get_user_input();
 		if (input.empty())
 		{
-			cout << "Abbreviation cannot be empty string. Please try again: ";
+			cout << "Abbreviation cannot be blank. Please try again: ";
 		}
 		else if
 		(	m_database_connection->has_commodity_with_abbreviation(input)
@@ -294,7 +294,7 @@ void PhatbooksTextSession::elicit_account()
 		string input = get_user_input();
 		if (input.empty())
 		{
-			cout << "Name cannot be empty string. Please try again: ";
+			cout << "Name cannot be blank. Please try again: ";
 		}
 		else if (m_database_connection->has_account_named(input))
 		{
@@ -516,7 +516,7 @@ void PhatbooksTextSession::elicit_journal()
 
 	// Get other account and comment
 	cout << "Enter name of " << secondary_account_prompt << ": ";
-	secondary_entry->set_account_name((elicit_existing_account_name()));
+	secondary_entry->set_account_name(elicit_existing_account_name());
 	// WARNING if secondary account is in a different currency then we need to
 	// deal with this here somehow.
  
@@ -541,8 +541,7 @@ void PhatbooksTextSession::elicit_journal()
 	secondary_entry->set_amount(-(primary_entry->amount()));
 	journal.add_entry(secondary_entry);
 
-	// WARNING
-	// We need to implement split transactions 
+	// WARNING We need to implement split transactions.
 	// Find out whether the user wants to post the journal, abandon it,
 	// or save it as a draft.
 	shared_ptr<MenuItem> post(new MenuItem("Record transaction"));

@@ -119,7 +119,7 @@ public:
 	 * @todo It appears that boost::filesystem::path::string() produces
 	 * a GENERIC string (safely passable to SQLite database connection
 	 * opening function) in Boost Version 1.42; but that in Version 1.46
-	 * this produced a NATIVE string! Currently this relies on the
+	 * this produces a NATIVE string! Currently this function relies on the
 	 * behaviour in version 1.42. I should use a macro or something to
 	 * make it portable between versions of Boost.
 	 *

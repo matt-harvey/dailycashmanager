@@ -174,6 +174,9 @@ private:
 	 *
 	 * @todo This function is enormous. It needs to be tidied and broken
 	 * into sensible chunks.
+	 *
+	 * @todo The part that elicits Repeater instances does not allow for the
+	 * user the specify which day of the month the Repeater should fire on.
 	 */
 	void elicit_journal();
 
