@@ -6,6 +6,7 @@ include_directories (/home/matthew/lib
 					 /home/matthew/Workbench/versioned/phatbooks/commodity
 					 /home/matthew/Workbench/versioned/phatbooks/date
 					 /home/matthew/Workbench/versioned/phatbooks/entry
+					 /home/matthew/Workbench/versioned/phatbooks/import_from_nap
 					 /home/matthew/Workbench/versioned/phatbooks/journal
 					 /home/matthew/Workbench/versioned/phatbooks/phatbooks_database_connection
 					 /home/matthew/Workbench/versioned/phatbooks/phatbooks_text_session
@@ -17,6 +18,7 @@ add_executable (main
 				consolixx/consolixx.cpp
 				date/date.cpp
 				entry/entry.cpp
+				import_from_nap/import_from_nap.cpp
 				journal/journal.cpp
                 main.cpp
 				sqloxx/database_connection.cpp

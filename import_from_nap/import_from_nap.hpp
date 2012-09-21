@@ -14,6 +14,10 @@
  */
 
 
+#include "phatbooks_database_connection.hpp"
+#include <boost/shared_ptr.hpp>
+#include <boost/filesystem.hpp>
+
 
 namespace phatbooks
 {
@@ -40,7 +44,7 @@ namespace phatbooks
  * file documentation for import_from_nap.hpp.
  */
 void import_from_nap
-(	boost::shared_ptr<phatbooks::DatabaseConnection> p_database_connection,
+(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	boost::filesystem::path const& directory
 );
 
