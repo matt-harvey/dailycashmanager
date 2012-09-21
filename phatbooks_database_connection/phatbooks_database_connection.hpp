@@ -17,7 +17,6 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include <boost/bimap.hpp>
-#include <boost/filesystem.hpp>
 #include <string>
 
 namespace phatbooks
@@ -89,32 +88,6 @@ public:
 	 * unsuccessful.
 	 */
 	void setup();
-
-	/**
-	 * Import data from a N. A. P. csv set.
-	 * 
-	 * @todo This method is solely for the purpose of
-	 * migrating the developer's (Matthew Harvey's) personal accounting data
-	 * from his previous, prototype Python application to Phatbooks.
-	 * This method should be removed from Phatbooks in due course.
-	 *
-	 * @todo Implement this method.
-	 *
-	 * @throws std::logic_error if \c directory is not directory
-	 *
-	 * @throws std::runtime_error if \c directory does not contain the
-	 * following csv files (exported from nap):\n
-	 * 		"accountshelf.csv";\n
-	 * 		"draftentryshelf.csv";\n
-	 * 		"draftjournalshelf.csv";\n
-	 * 		"entryshelf";\n
-	 * 		"journalshelf";\n
-	 *
-	 * May throw various other exceptions, or crash wildly. This is not
-	 * a polished function but intended as a quick hack only! See
-	 * explanation above.
-	 */
-	void import_from_nap(boost::filesystem::path const& directory);
 
 private:
 
