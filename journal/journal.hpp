@@ -52,15 +52,6 @@ class Repeater;
  * allocating $100.00 of one's earnings to planned expenditure on food
  * represents a budget transaction.
  *
- * @todo The do_save... methods of Journal do not currently store the contents
- * of the Repeater list anywhere. The contents should be stored in the
- * repeaters table in the database.
- *
- * @todo The Entry and Repeater classes are currently being saved and loaded
- * as part of the code in Journal. But what will happen when we want to modify
- * them? How will we know where to save them? They should probably be
- * PersistentObject instances in their own right.
- *
  * @todo The class hierarchy here probably needs to be elaborated to allow for
  * the difference between draft/recurring journals, which have names, and
  * ordinary journals, which do not. Possibly a further extension is warranted
