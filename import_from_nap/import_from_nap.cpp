@@ -33,22 +33,20 @@ namespace phatbooks
 // in import_from_nap
 namespace
 {
-	bool is_dagger(char c)
+	
+	template <char target>
+	bool is_char(char tested_char)
 	{
-		return c == '|';
-	}
-
-	bool is_colon(char c)
-	{
-		return c == ':';
+		return tested_char == target;
 	}
 
 	// Takes a string and returns a vector of strings split by
-	// the dagger character.
+	// the character passed as template parameter.
+	template <char separator>
 	vector<string> cells(string const& row_str)
 	{
 		vector<string> ret;
-		return boost::algorithm::split(ret, row_str, is_dagger);
+		return boost::algorithm::split(ret, row_str, is_char<separator>);
 	}
 
 }  // End anonymous namespace
@@ -95,7 +93,6 @@ void import_from_nap
 		(	"The csv files required by import_from_nap  are not all present."
 		);
 	}
-	string const file_sep = "/";
 	
 	// Insert the sole commodity
 	Commodity aud(database_connection);
@@ -107,14 +104,18 @@ void import_from_nap
 	aud.save_new();
 
 	// Read accounts
+	string const file_sep = "/";
 	std::ifstream account_csv
 	(	(directory.string() + file_sep + account_csv_name).c_str()
 	);
 	string account_row;
 	while (getline(account_csv, account_row))
 	{
-		vector<string> const account_cells = cells(account_row);
+		vector<string> const account_cells = cells<'|'>(account_row);
 		Account account(database_connection);
+
+		// The second character of the first field contains a number
+		// from 1 to 7, that is sufficient to identify the account type.
 		switch (lexical_cast<int>(account_cells[0][1]))
 		{
 		case 1:  // ready asset or...
@@ -152,8 +153,9 @@ void import_from_nap
 
 	typedef vector< shared_ptr<Journal> > JournalVec;
 
-	// We need a map to tell us the meaning of each string representation
-	// of a repeater interval type.
+	// We make a map to tell us the meaning of each string representation
+	// (in the csv) of a repeater interval type, in terms of the enumerations
+	// in Repeater::IntervalType.
 	map<string, Repeater::IntervalType> interval_type_map;
 	interval_type_map["day"] = Repeater::days;
 	interval_type_map["week"] = Repeater::weeks;
@@ -161,7 +163,9 @@ void import_from_nap
 	interval_type_map["end_of_month"] = Repeater::month_ends;
 
 	// We will store Journal instances in this vector temporarily, and
-	// run through later to ensure order preserved
+	// run through later to ensure order is preserved. (The order they are
+	// inserted into the database will thereby correspond with predicted
+	// id.)
 	JournalVec draft_journal_vec;
 
 	// We will store a map from the draft journal names in the csv, to
@@ -170,7 +174,7 @@ void import_from_nap
 	map< string, shared_ptr<Journal> > draft_journal_map;
 
 	// We will store a map from the draft journal names in the csv, to
-	// Journal::Id values. This will enable us to remember to PROSPECTIVE id
+	// Journal::Id values. This will enable us to remember the PROSPECTIVE id
 	// of each Journal, so we can associate each draft entry with the correct
 	// journal based on its name.
 	map< string, Journal::Id> draft_journal_id_map;
@@ -182,7 +186,8 @@ void import_from_nap
 		++draft_journal_id;
 
 		// Split the csv row into cells
-		vector<string> const draft_journal_cells = cells(draft_journal_row);
+		vector<string> const draft_journal_cells =
+			cells<'|'>(draft_journal_row);
 		shared_ptr<Journal> draft_journal(new Journal(database_connection));
 		draft_journal->set_date(boost::gregorian::date());
 		draft_journal->set_comment("");
@@ -195,8 +200,7 @@ void import_from_nap
 		// split. (The N. A. P. csv design is no normalized database. It
 		// was a quick and dirty hack.)
 		string const raw_rep_str = draft_journal_cells[1];
-		vector<string> rep_str_vec;
-		boost::algorithm::split(rep_str_vec, raw_rep_str, is_colon);
+		vector<string> rep_str_vec = cells<':'>(raw_rep_str);
 
 		// Now we examine each repeater in the repeater list, create a
 		// Repeater instance, and add that to the Journal instance
@@ -204,12 +208,7 @@ void import_from_nap
 		for (vector<string>::size_type i = 0; i != rep_str_vec.size(); ++i)
 		{
 			string const repeater_str = rep_str_vec[i];
-			vector<string> repeater_fields;
-			boost::algorithm::split
-			(	repeater_fields,
-				repeater_str,
-				boost::algorithm::is_space()
-			);
+			vector<string> repeater_fields = cells<' '>(repeater_str);
 			string const next_date_str = repeater_fields[0];
 			string const interval_type_str = repeater_fields[1];
 			string const units_str = repeater_fields[2];
@@ -233,14 +232,32 @@ void import_from_nap
 	string draft_entry_row;
 	while (getline(draft_entry_csv, draft_entry_row))
 	{
-		vector<string> const draft_entry_cells = cells(draft_entry_row);
+		vector<string> const draft_entry_cells = cells<'|'>(draft_entry_row);
 		shared_ptr<Entry> draft_entry(new Entry(database_connection));
 		string const draft_journal_name = draft_entry_cells[0];
 		string const comment = draft_entry_cells[2];
 		string const account_name = draft_entry_cells[3];
 		Decimal act_impact(draft_entry_cells[4]);
 		Decimal bud_impact(draft_entry_cells[5]);
-		bool const is_actual = (bud_impact == Decimal("0")? true: false);
+		// WARNING We need to handle the case where a single Entry has both
+		// a non-zero bud_impact and a non-zero act_impact. Given this is
+		// just a one-off hack, it may be easier just to manipulate the
+		// csv before importing it.
+		bool is_actual = true;
+		if (bud_impact != Decimal("0"))
+		{
+			if (act_impact != Decimal("0"))
+			{
+				throw std::runtime_error
+				(	"Import cannot handle entries that have both actual and "
+					"budget impacts."
+				);
+			}
+			else
+			{
+				is_actual = false;
+			}
+		}
 		draft_entry->set_journal_id(draft_journal_id_map[draft_journal_name]);
 		draft_entry->set_account_name(account_name);
 		draft_entry->set_comment(comment);
@@ -262,7 +279,7 @@ void import_from_nap
 		++jvit
 	)
 	{
-		// REMEMBER Verify that the journal_id is as anticipated in
+		// WARNING Verify that the journal_id is as anticipated in
 		// draft_journal_id_map.
 		(*jvit)->save_new();
 	}
