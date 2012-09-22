@@ -29,6 +29,9 @@ namespace phatbooks
  *
  * @todo Implement this method.
  *
+ * @todo Adjust existing implementation to use new DraftJournal and
+ * OrdinaryJournal derived classes as appropriate.
+ *
  * @throws std::logic_error if \c directory is not directory
  *
  * @throws std::runtime_error if \c directory does not contain the

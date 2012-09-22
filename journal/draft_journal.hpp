@@ -53,7 +53,7 @@ public:
 	void set_name(std::string const& p_name);
 	
 	/**
-	 * Add a Repeater to the Journal.
+	 * Add a Repeater to the DraftJournal.
 	 */
 	void add_repeater(boost::shared_ptr<Repeater> repeater);
 	
