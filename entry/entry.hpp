@@ -133,15 +133,7 @@ private:
 	{
 	}
 
-	/**
-	 * WARNING This needs to be implemented properly.
-	 * Currently, the saving of Entry objects
-	 * is done within the Journal class. It would be
-	 * better to do it within the Entry class.
-	 */
-	virtual void do_save_new_all()
-	{
-	}
+	virtual void do_save_new_all();
 
 	virtual std::string do_get_table_name();
 

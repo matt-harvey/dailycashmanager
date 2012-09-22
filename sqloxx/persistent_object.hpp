@@ -10,6 +10,7 @@
 #include <string>
 
 
+
 namespace sqloxx
 {
 
@@ -60,10 +61,6 @@ public:
 	 * of do_load_all, if the object is not already
 	 * fully loaded. If the object does not have an id,
 	 * then this function does nothing.
-	 * 
-	 * Note the PersistentObject base class function bookends
-	 * the execution with SQL "begin transaction" and
-	 * "end transaction" commands.
 	 */
 	void load();
 
@@ -76,10 +73,6 @@ public:
 	 * fully loaded) or do_save_existing_all (in the event the object
 	 * is fully loaded). The do_save_... functions should be defined in
 	 * the derived class.
-	 *
-	 * Note the PersistentObject base class function bookends
-	 * the execution with SQL "begin transaction" and
-	 * "end transaction" commands.
 	 */
 	void save_existing();
 
@@ -194,14 +187,12 @@ inline
 void
 PersistentObject<Id>::load()
 {
-	begin_transaction();
 	if (m_loading_status == ghost && has_id())
 	{
 		m_loading_status = loading;
 		do_load_all();
 		m_loading_status = loaded;
 	}
-	end_transaction();
 	return;
 }
 
@@ -211,7 +202,6 @@ inline
 void
 PersistentObject<Id>::save_existing()
 {
-	begin_transaction();
 	start:
 	switch (m_loading_status)
 	{
@@ -227,7 +217,6 @@ PersistentObject<Id>::save_existing()
 	default:
 		throw std::logic_error("Loading status not recognized.");
 	}
-	end_transaction();
 	return;
 }
 

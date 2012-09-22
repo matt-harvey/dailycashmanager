@@ -137,6 +137,24 @@ Entry::do_load_all()
 }
 
 
+void
+Entry::do_save_new_all()
+{
+	SQLStatement statement
+	(	*database_connection(),
+		"insert into entries(journal_id, comment, account_id, amount) "
+		"values(:journal_id, :comment, :account_id, :amount)"
+	);
+	Account account(database_connection(), account_name());
+	statement.bind(":journal_id", *m_journal_id);
+	statement.bind(":comment", comment());
+	statement.bind(":account_id", account.id());
+	statement.bind(":amount", amount().intval());
+	statement.quick_step();
+	return;
+}
+
+
 std::string
 Entry::do_get_table_name()
 {
