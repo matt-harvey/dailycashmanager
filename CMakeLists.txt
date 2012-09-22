@@ -18,7 +18,7 @@ add_executable (main
 				consolixx/consolixx.cpp
 				date/date.cpp
 				entry/entry.cpp
-				# import_from_nap/import_from_nap.cpp
+				import_from_nap/import_from_nap.cpp
 				journal/draft_journal.cpp
 				journal/journal.cpp
 				journal/ordinary_journal.cpp

@@ -17,6 +17,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/debug_log.hpp>
 #include <string>
 
 using sqloxx::DatabaseConnection;
@@ -24,6 +25,10 @@ using sqloxx::SQLStatement;
 using boost::numeric_cast;
 using boost::shared_ptr;
 using std::string;
+
+// for debug logging
+using std::endl;
+
 
 namespace phatbooks
 {
@@ -47,6 +52,7 @@ Repeater::setup_tables(DatabaseConnection& dbc)
 		"("
 			"repeater_id integer primary key autoincrement, "
 			"interval_type_id integer not null references interval_types, "
+			"interval_units integer not null, "
 			"next_date integer not null, "
 			"journal_id integer not null references draft_journal_detail "
 		");"
@@ -159,6 +165,9 @@ Repeater::do_load_all()
 void
 Repeater::do_save_new_all()
 {
+	JEWEL_DEBUG_LOG << "Saving Repeater for journal_id "
+	                << journal_id() << endl;
+	JEWEL_DEBUG_LOG << "...which should be equal to " << *m_journal_id << endl;
 	SQLStatement statement
 	(	*database_connection(),
 		"insert into repeaters(interval_type_id, interval_units, "

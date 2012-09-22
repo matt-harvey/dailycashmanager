@@ -26,7 +26,7 @@ OrdinaryJournal::setup_tables(DatabaseConnection& dbc)
 	dbc.execute_sql
 	(	"create table ordinary_journal_detail"
 		"("
-			"journal_id integer not null unique references journals, "
+			"journal_id integer primary key references journals, "
 			"date integer not null"
 		")"
 	);

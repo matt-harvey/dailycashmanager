@@ -2,16 +2,20 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
+#include "draft_journal.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <stdexcept>
 #include <vector>
@@ -19,6 +23,8 @@
 using boost::lexical_cast;
 using boost::shared_ptr;
 using jewel::Decimal;
+using std::cout;
+using std::endl;
 using std::map;
 using std::string;
 using std::vector;
@@ -59,6 +65,7 @@ void import_from_nap
 	boost::filesystem::path const& directory
 )
 {
+	JEWEL_DEBUG_LOG << "\tChecking filepath is a directory..." << endl;
 	if
 	(	!boost::filesystem::is_directory(boost::filesystem::status(directory))
 	)
@@ -76,9 +83,13 @@ void import_from_nap
 	string const entry_csv_name = "entryshelf.csv";
 	string const journal_csv_name = "journalshelf.csv";
 
-	boost::filesystem::directory_iterator it(directory);
 	int check = 0;
-	while (it != boost::filesystem::directory_iterator())
+	JEWEL_DEBUG_LOG << "\tChecking that CSV files are present..." << endl;
+	for
+	(	boost::filesystem::directory_iterator it(directory);
+		it != boost::filesystem::directory_iterator();
+		++it
+	)
 	{
 		string const s = it->filename();
 		if (s == account_csv_name) check += 1;
@@ -93,8 +104,10 @@ void import_from_nap
 		(	"The csv files required by import_from_nap  are not all present."
 		);
 	}
+	JEWEL_DEBUG_LOG << "\tCSV files confirmed present." << endl;
 	
 	// Insert the sole commodity
+	JEWEL_DEBUG_LOG << "\tInserting AUD into commodities table..." << endl;
 	Commodity aud(database_connection);
 	aud.set_abbreviation("AUD");
 	aud.set_name("Australian dollars");
@@ -102,8 +115,10 @@ void import_from_nap
 	aud.set_precision(2);
 	aud.set_multiplier_to_base(Decimal("1"));
 	aud.save_new();
+	JEWEL_DEBUG_LOG << "\tAUD inserted." << endl;
 
 	// Read accounts
+	JEWEL_DEBUG_LOG << "\tReading accounts from CSV..." << endl;
 	string const file_sep = "/";
 	std::ifstream account_csv
 	(	(directory.string() + file_sep + account_csv_name).c_str()
@@ -141,17 +156,21 @@ void import_from_nap
 		account.set_name(account_cells[1]);
 		account.set_commodity_abbreviation(aud.abbreviation());
 		account.set_description(account_cells[2]);
+		JEWEL_DEBUG_LOG << "Inserting account to database..." << endl;
 		account.save_new();
+		JEWEL_DEBUG_LOG << "Account " << account.name()
+		                << " inserted." << endl;
 	}
 		
 	// Read draft journals ************************************
 	
+	JEWEL_DEBUG_LOG << "Reading draft journals from CSV..." << endl;
 	std::ifstream draft_journal_csv
 	(	(directory.string() + file_sep + draft_journal_csv_name).c_str()
 	);
 	string draft_journal_row;
 
-	typedef vector< shared_ptr<Journal> > JournalVec;
+	typedef vector< shared_ptr<DraftJournal> > JournalVec;
 
 	// We make a map to tell us the meaning of each string representation
 	// (in the csv) of a repeater interval type, in terms of the enumerations
@@ -171,7 +190,7 @@ void import_from_nap
 	// We will store a map from the draft journal names in the csv, to
 	// Journal instances in memory. Shortly this will enable us to associate
 	// draft entries with Journal instances.
-	map< string, shared_ptr<Journal> > draft_journal_map;
+	map< string, shared_ptr<DraftJournal> > draft_journal_map;
 
 	// We will store a map from the draft journal names in the csv, to
 	// Journal::Id values. This will enable us to remember the PROSPECTIVE id
@@ -188,10 +207,10 @@ void import_from_nap
 		// Split the csv row into cells
 		vector<string> const draft_journal_cells =
 			cells<'|'>(draft_journal_row);
-		shared_ptr<Journal> draft_journal(new Journal(database_connection));
-		draft_journal->set_date(boost::gregorian::date());
+		shared_ptr<DraftJournal> draft_journal(new DraftJournal(database_connection));
 		draft_journal->set_comment("");
 		string const draft_journal_name = draft_journal_cells[0];
+		draft_journal->set_name(draft_journal_name);
 		draft_journal_map[draft_journal_name] = draft_journal;
 		draft_journal_id_map[draft_journal_name] = draft_journal_id;
 		draft_journal_vec.push_back(draft_journal);
@@ -203,7 +222,7 @@ void import_from_nap
 		vector<string> rep_str_vec = cells<':'>(raw_rep_str);
 
 		// Now we examine each repeater in the repeater list, create a
-		// Repeater instance, and add that to the Journal instance
+		// Repeater instance, and add that to the DraftJournal instance
 		// representing the current draft journal.
 		for (vector<string>::size_type i = 0; i != rep_str_vec.size(); ++i)
 		{
@@ -219,7 +238,6 @@ void import_from_nap
 			repeater->set_next_date
 			(	boost::gregorian::date_from_iso_string(next_date_str)
 			);
-			repeater->set_journal_id(draft_journal_id);
 			draft_journal->add_repeater(repeater);
 		}
 	}
@@ -258,19 +276,13 @@ void import_from_nap
 				is_actual = false;
 			}
 		}
-		draft_entry->set_journal_id(draft_journal_id_map[draft_journal_name]);
 		draft_entry->set_account_name(account_name);
 		draft_entry->set_comment(comment);
 		draft_entry->set_amount(is_actual? act_impact: -bud_impact);	
 		draft_journal_map[draft_journal_name]->set_whether_actual(is_actual);
 		draft_journal_map[draft_journal_name]->add_entry(draft_entry);
-
-		// WARNING We do need to store the draft journal name in the
-		// draft journal - just as soon as Journal class or a related
-		// class provides this facility...
 	}
 	
-
 	// Save the Journal instances corresponding to draft journals into the
 	// database.
 	for
@@ -284,6 +296,7 @@ void import_from_nap
 		(*jvit)->save_new();
 	}
 
+	/*
 	// ...
 	// WARNING implementation incomplete
 
@@ -303,6 +316,7 @@ void import_from_nap
 
 	// ...
 	// WARNING implementation incomplete
+	**/
 	
 	return;
 }

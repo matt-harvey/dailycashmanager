@@ -17,6 +17,7 @@
 #include "date.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
+#include "import_from_nap/import_from_nap.hpp"  // WARNING temp hack
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -99,6 +100,16 @@ PhatbooksTextSession::PhatbooksTextSession():
 	);
 	m_main_menu->add_item(elicit_journal_item);
 
+	// WARNING This should be removed from any release version
+	shared_ptr<MenuItem> import_from_nap_item
+	(	new MenuItem
+		(	"Import data from csv files",
+			bind(&PhatbooksTextSession::import_from_nap, this),
+			true
+		)
+	);
+	m_main_menu->add_item(import_from_nap_item);
+
 	shared_ptr<MenuItem> quit_item
 	(	new MenuItem
 		(	"Quit",
@@ -107,6 +118,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"x"
 		)
 	);
+
 	m_main_menu->add_item(quit_item);
 }
 
@@ -714,6 +726,26 @@ void PhatbooksTextSession::elicit_journal()
 	// Note there are complications when a single Journal involves multiple
 	// commodities.
 
+	return;
+}
+
+
+void PhatbooksTextSession::import_from_nap()
+{
+	cout << "Directory containing csv files: ";
+	boost::filesystem::path directory(get_user_input());
+	if (!boost::filesystem::exists(boost::filesystem::status(directory)))
+	{
+		cout << "There is no directory with this filepath." << endl;
+	}
+	else
+	{
+		phatbooks::import_from_nap
+		(	m_database_connection,
+			directory
+		);
+		cout << "Import complete." << endl;
+	}
 	return;
 }
 

@@ -4,6 +4,8 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
+#include <iostream>  // for debug logging
+#include <jewel/debug_log.hpp>
 #include <list>
 #include <string>
 
@@ -12,6 +14,9 @@ using sqloxx::SQLStatement;
 using boost::shared_ptr;
 using std::list;
 using std::string;
+
+// For debug logging:
+using std::endl;
 
 namespace phatbooks
 {
@@ -22,7 +27,7 @@ DraftJournal::setup_tables(DatabaseConnection& dbc)
 	dbc.execute_sql
 	(	"create table draft_journal_detail"
 		"("
-			"journal_id integer not null unique references journals, "
+			"journal_id integer primary key references journals, "
 			"name text not null unique"
 		")"
 	);
@@ -126,23 +131,28 @@ DraftJournal::do_load_all()
 void
 DraftJournal::do_save_new_all()
 {
+	JEWEL_DEBUG_LOG << "Saving DraftJournal..." << endl;
+
 	// Save the Journal (base) part of the object
-	Id const journal_id = do_save_new_all_journal_base();
+	JEWEL_DEBUG_LOG << "Saving base part of DraftJournal..." << endl;
+	Id const j_id = do_save_new_all_journal_base();
 
 	// Save the derived, DraftJournal part of the object
+	JEWEL_DEBUG_LOG << "Saving derived, DraftJournal part..." << endl;
 	SQLStatement statement
 	(	*database_connection(),
-		"insert into draft_journal_details (journal_id, name) "
+		"insert into draft_journal_detail(journal_id, name) "
 		"values(:journal_id, :name)"
 	);
-	statement.bind(":journal_id", journal_id);
+	statement.bind(":journal_id", j_id);
 	statement.bind(":name", *m_name);
 	statement.quick_step();
 	
+	JEWEL_DEBUG_LOG << "Saving Repeater list..." << endl;
 	typedef list< shared_ptr<Repeater> >::iterator RepIter;
 	for (RepIter it = m_repeaters.begin(); it != m_repeaters.end(); ++it)
 	{
-		(*it)->set_journal_id(journal_id);
+		(*it)->set_journal_id(j_id);
 		(*it)->save_new();
 	}
 	return;
