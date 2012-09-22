@@ -14,7 +14,6 @@
 #include "journal.hpp"
 #include "account.hpp"
 #include "commodity.hpp"
-#include "date.hpp"
 #include "entry.hpp"
 #include "general_typedefs.hpp"
 #include "entry.hpp"
@@ -23,7 +22,6 @@
 #include "sqloxx/persistent_object.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include <jewel/decimal.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <list>
@@ -49,16 +47,8 @@ Journal::setup_tables(DatabaseConnection& dbc)
 		"("
 			"journal_id integer primary key autoincrement, "
 			"is_actual integer not null references booleans, "
-			"date integer not null, "
 			"comment text"
 		");"
-	);
-	dbc.execute_sql
-	(	"create table draft_journal_detail "
-		"("
-			"journal_id primary key not null references journals, "
-			"name text not null "
-		"); "
 	);
 	return;
 }
@@ -93,6 +83,7 @@ Journal::set_comment(string const& p_comment)
 	return;
 }
 
+// WARNING needs moving to OrdinaryJournal
 void
 Journal::set_date(boost::gregorian::date const& p_date)
 {
@@ -111,17 +102,7 @@ Journal::add_entry(shared_ptr<Entry> entry)
 	return;
 }
 
-void
-Journal::add_repeater(shared_ptr<Repeater> repeater)
-{
-	if (has_id())
-	{
-		repeater->set_journal_id(id());
-	}
-	m_repeaters.push_back(repeater);
-	return;
-}
-
+// WARNING needs changing given inheritance
 bool
 Journal::is_posted()
 {
@@ -142,6 +123,7 @@ Journal::is_actual()
 	return *m_is_actual;
 }
 
+// WARNING needs moving to OrdinaryJournal
 boost::gregorian::date
 Journal::date()
 {
@@ -175,7 +157,7 @@ Journal::do_load_all()
 {
 	SQLStatement statement
 	(	*database_connection(),
-		"select journal_id, is_actual, date, comment from "
+		"select journal_id, is_actual, comment from "
 		"journals where journal_id = :p"
 	);
 	statement.bind(":p", id());
@@ -200,27 +182,8 @@ Journal::do_load_all()
 		add_entry(entry);
 	}
 	set_whether_actual(is_act);
-	m_date = d;
 	set_comment(cmt);
 	
-	if (!is_posted())  // Only draft journals have repeaters.
-	{
-		SQLStatement repeater_finder
-		(	*database_connection(),
-			"select repeater_id from repeaters where journal_id = :journal_id"
-		);
-		repeater_finder.bind(":journal_id", id());
-		while (repeater_finder.step())
-		{
-			Repeater::Id const rep_id =
-				repeater_finder.extract<Repeater::Id>(0);
-			shared_ptr<Repeater> repeater
-			(	new Repeater(database_connection(), rep_id)
-			);
-			add_repeater(repeater);
-		}
-	}
-
 	return;
 }
 
@@ -229,14 +192,12 @@ void
 Journal::do_save_new_all()
 {
 	IdType const journal_id = prospective_key();
-	database_connection()->execute_sql("begin transaction;");
 	SQLStatement statement
 	(	*database_connection(),
-		"insert into journals(is_actual, date, comment) "
-		"values(:is_actual, :date, :comment)"
+		"insert into journals(is_actual, comment) "
+		"values(:is_actual, :comment)"
 	);
 	statement.bind(":is_actual", static_cast<int>(*m_is_actual));
-	statement.bind(":date", (m_date? *m_date: null_date_rep()));
 	statement.bind(":comment", *m_comment);
 	statement.quick_step();
 	typedef list< shared_ptr<Entry> >::iterator EntryIter;
@@ -246,12 +207,7 @@ Journal::do_save_new_all()
 		(*it)->save_new();
 	}
 	typedef list< shared_ptr<Repeater> >::const_iterator RepIter;
-	for (RepIter it = m_repeaters.begin(); it != m_repeaters.end(); ++it)
-	{
-		(*it)->set_journal_id(journal_id);
-		(*it)->save_new();
-	}
-	database_connection()->execute_sql("end transaction;");
+	
 	return;
 }
 

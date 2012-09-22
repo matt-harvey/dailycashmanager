@@ -28,7 +28,6 @@ namespace phatbooks
 {
 
 class Entry;
-class Repeater;
 
 /**
  * Class to represent accounting journals.
@@ -119,12 +118,6 @@ public:
 	 */
 	void add_entry(boost::shared_ptr<Entry> entry);
 
-	/**
-	 * Add a Repeater to the Journal.
-	 *
-	 * @todo figure out throwing behaviour.
-	 */
-	void add_repeater(boost::shared_ptr<Repeater> repeater);
 
 	/**
 	 * @returns \t true if and only if the journal is a posted journal, as
@@ -173,14 +166,12 @@ public:
 	 */
 	std::list< boost::shared_ptr<Entry> > const& entries();
 
-private:
+protected:
 
 	/**
-	 * WARNING There is inspection of the entries
-	 * table within this method. I should redesign provide
-	 * appropriate methods in the Entry class so that consultation
-	 * of the entries table can be delegated entirely to the entries
-	 * class.
+	 * WARNING There should be a way of stopping a Journal that is not
+	 * specifically either a DraftJournal or an OrdinaryJournal from
+	 * being loaded from the database.
 	 */
 	virtual void do_load_all();
 
@@ -201,11 +192,15 @@ private:
 	{
 	}
 
+	/* WARNING There should be a way of stopping a Journal that is not
+	 * specifically either a DraftJournal or an OrdinaryJournal from
+	 * being saved to the database.
+	 */
 	virtual void do_save_new_all();
 
 	virtual std::string do_get_table_name();
 
-
+private:
 
 	boost::optional<bool> m_is_actual;
 	// if m_date == null_date(), this means it's not posted, but is a
@@ -213,7 +208,6 @@ private:
 	boost::optional<DateRep> m_date;
 	boost::optional<std::string> m_comment;
 	std::list< boost::shared_ptr<Entry> > m_entries;
-	std::list< boost::shared_ptr<Repeater> > m_repeaters;
 };
 
 

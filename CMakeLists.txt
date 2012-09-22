@@ -19,6 +19,7 @@ add_executable (main
 				date/date.cpp
 				entry/entry.cpp
 				import_from_nap/import_from_nap.cpp
+				journal/draft_journal.cpp
 				journal/journal.cpp
                 main.cpp
 				sqloxx/database_connection.cpp
