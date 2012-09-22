@@ -23,7 +23,21 @@ namespace sqloxx
  * the implementation of a given save or load method (for a particular
  * class derived from PersistentObject) invokes (probably indirectly)
  * the save or load methods of other such derived classes. SQLite doesn't
- * handle such nesting.
+ * handle such nesting. Currently I have removed the begin and end
+ * transaction bookmarks from the save and load methods as this was
+ * causing problems. I should reinstate them once I have implemented
+ * nested transactions though - as follows. First, add a data member
+ * to DatabaseConnection, an int m_transaction_level. Add a
+ * begin_transaction and end_transaction method to DatabaseConnection.
+ * When begin_transaction is called, the SQL "begin transaction" command
+ * is executed only if m_transaction_level equals 0. In any event, the
+ * m_transaction_level is incremented by 1. When end_transaction is
+ * called, m_transaction_level is decremented by 1. Then if and only
+ * if m_transaction_level then equals 0, the SQL "end transaction"
+ * command is executed. An exception is thrown if m_transaction_level
+ * drops below zero. With this mechanism, transactions be nested at
+ * whim, and, providing they are all executed on the same database
+ * connection, will be handled properly by SQLite.
  * 
  * @todo Provide for atomicity of loading and saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
