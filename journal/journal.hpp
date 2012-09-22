@@ -13,11 +13,9 @@
 
 
 #include "general_typedefs.hpp"
-#include "date.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <jewel/decimal.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <list>
@@ -35,13 +33,14 @@ class Entry;
  * typically comprise two or more accounting entries, plus some
  * "journal level" data such as the date.
  *
- * A journal can be either \e posted or \e draft. A posted journal
- * has been reflected in the entity's financial state. A draft journal
+ * A journal can be either an OrdinaryJournal or a DraftJournal.
+ * A ordinay journal
+ * has been reflected in the entity's financial state. A DraftJournal
  * has not, but has simply been saved for possible future reuse. Some
- * draft journals have got Repeater instances associated with them. A
- * draft journal with Repeater instances constitutes a recurring transaction.
+ * DraftJournal instances have got Repeater instances associated with them. A
+ * DraftJournal with Repeater instances represents a recurring transaction.
  *
- * As well the posted/draft distinction, there is also a distinction between
+ * As well the ordinary/draft distinction, there is also a distinction between
  * \c actual and \c budget journals. An actual journal reflects an actual
  * change in the entity's wealth, whether the physical form of the wealth
  * (for example, by transferring between asset classes), or a dimimution
@@ -50,12 +49,6 @@ class Entry;
  * in regards to the \e planned purpose to which the wealth will be put. Thus,
  * allocating $100.00 of one's earnings to planned expenditure on food
  * represents a budget transaction.
- *
- * @todo The class hierarchy here probably needs to be elaborated to allow for
- * the difference between draft/recurring journals, which have names, and
- * ordinary journals, which do not. Possibly a further extension is warranted
- * to distinguish between recurring draft journals and non-recurring draft
- * journals.
  */
 class Journal: public sqloxx::PersistentObject<IdType>
 {
@@ -87,6 +80,8 @@ public:
 		Id p_id
 	);
 
+	virtual ~Journal();
+
 
 	/**
 	 * Change whether Journal is actual or budget
@@ -104,28 +99,12 @@ public:
 	void set_comment(std::string const& p_comment);
 
 	/**
-	 * Set date of journal.
-	 *
-	 * Does not throw.
-	 */
-	void set_date(boost::gregorian::date const& p_date);
-
-	/**
 	 * Add an Entry to the Journal.
 	 *
 	 * @todo Figure out throwing behaviour. Should it check that
 	 * the account exists? Etc. Etc.
 	 */
 	void add_entry(boost::shared_ptr<Entry> entry);
-
-
-	/**
-	 * @returns \t true if and only if the journal is a posted journal, as
-	 * opposed to a draft journal.
-	 *
-	 * Does not throw.
-	 */
-	bool is_posted();
 
 	/**
 	 * @returns true if and only if journal contains actual (as opposed to
@@ -134,13 +113,6 @@ public:
 	 * Does not throw.
 	 */
 	bool is_actual();
-
-	/**
-	 * @returns journal date.
-	 *
-	 * @todo Verify throwing behaviour and determine dependence on DateRep.
-	 */
-	boost::gregorian::date date();
 
 	/**
 	 * @returns journal comment.
@@ -169,6 +141,19 @@ public:
 protected:
 
 	/**
+	 * Call this function from derived classes to save a new
+	 * Journal to the database, before saving the
+	 * derived parts.
+	 *
+	 * @returns the
+	 * id that will be assigned to the being-saved Journal by
+	 * PersistentObject::save_new, at the end of the saving
+	 * process. This avoids having to duplicate the search for
+	 * the prospective id, within the derived class saving functions.
+	 */
+	Id do_save_new_all_journal_base();
+
+	/**
 	 * WARNING There should be a way of stopping a Journal that is not
 	 * specifically either a DraftJournal or an OrdinaryJournal from
 	 * being loaded from the database.
@@ -192,6 +177,9 @@ protected:
 	{
 	}
 
+
+private:
+
 	/* WARNING There should be a way of stopping a Journal that is not
 	 * specifically either a DraftJournal or an OrdinaryJournal from
 	 * being saved to the database.
@@ -200,12 +188,7 @@ protected:
 
 	virtual std::string do_get_table_name();
 
-private:
-
 	boost::optional<bool> m_is_actual;
-	// if m_date == null_date(), this means it's not posted, but is a
-	// draft journal (possibly autoposting).
-	boost::optional<DateRep> m_date;
 	boost::optional<std::string> m_comment;
 	std::list< boost::shared_ptr<Entry> > m_entries;
 };

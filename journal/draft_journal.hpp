@@ -16,9 +16,36 @@ public:
 
 	/**
 	 * Create the tables required for the persistence
-	 * of DraftJournal instances in a relational database.
+	 * of DraftJournal instances in a SQLite database.
 	 */
 	static void setup_tables(sqloxx::DatabaseConnection& dbc);
+
+	/**
+	 * Initialize a "raw" DraftJournal, that will not yet
+	 * correspond to any particular object in the database
+	 */
+	explicit
+	DraftJournal
+	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+	);
+
+	/**
+	 * Get a DraftJournal by id from the database.
+	 */
+	DraftJournal
+	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+		Id p_id
+	);
+
+	/**
+	 * Create a DraftJournal from a Journal. Note the data members
+	 * specific to DraftJournal will be uninitialized. All other
+	 * members will be ***shallow-copied*** from p_journal.
+	 */
+	DraftJournal(Journal const& p_journal);
+
+	virtual ~DraftJournal();
+
 
 	/**
 	 * Set name of DraftJournal.
@@ -70,6 +97,7 @@ private:
 	boost::optional<std::string> m_name;
 	std::list< boost::shared_ptr<Repeater> > m_repeaters;
 
+};
 
 }  // namespace phatbooks
 

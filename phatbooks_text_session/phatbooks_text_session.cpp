@@ -15,8 +15,10 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
+#include "draft_journal.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "consolixx/consolixx.hpp"
 #include "sqloxx/database_connection.hpp"
@@ -562,8 +564,11 @@ void PhatbooksTextSession::elicit_journal()
 	journal_action_menu.present_to_user();
 	shared_ptr<MenuItem const> journal_action =
 		journal_action_menu.last_choice();
+
 	if (journal_action == post)
 	{
+		OrdinaryJournal ordinary_journal(journal);
+
 		boost::gregorian::date const d =
 			boost::gregorian::day_clock::local_day();
 		cout << "Enter transaction date as an eight-digit number of the "
@@ -571,13 +576,15 @@ void PhatbooksTextSession::elicit_journal()
 			 << boost::gregorian::to_iso_string(d)
 			 << "): ";
 		boost::gregorian::date const e = get_date_from_user();
-		journal.set_date(e);
-		journal.save_new();
+		ordinary_journal.set_date(e);
+		ordinary_journal.save_new();
 		cout << "\nJournal posted." << endl;
 	}
 	else if (journal_action == save_draft || journal_action == save_recurring)
 	{
-		// Ask for a name for the journal
+		DraftJournal draft_journal(journal);
+
+		// Ask for a name for the draft journal
 		string prompt =
 		(	journal_action == save_draft?
 			"Enter a name for the draft transaction: ":
@@ -685,15 +692,6 @@ void PhatbooksTextSession::elicit_journal()
 						
 		}
 				
-
-		// Get rid of this
-		// WARNING We need a BaseJournal class, and Journal and DraftJournal
-		// need to inherit from BaseJournal. DraftJournal needs to have a
-		// name and repeater_list, but Journal should have neither of these.
-		// Possibly DraftJournal could be further split into
-		// RecurringDraftJournal and NonRecurringDraftJournal. The
-		// draft_journal_detail table will need to appropriately populated on
-		// posting.
 		cout << "\nAaagghhhh!!!" << endl;
 	}
 	else if (journal_action == abandon)

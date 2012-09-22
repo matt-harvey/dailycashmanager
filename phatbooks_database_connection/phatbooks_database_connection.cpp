@@ -15,6 +15,7 @@
 #include "entry.hpp"
 #include "draft_journal.hpp"
 #include "journal.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "repeater.hpp"
@@ -132,6 +133,7 @@ PhatbooksDatabaseConnection::setup()
 	Account::setup_tables(*this);
 	Journal::setup_tables(*this);
 	DraftJournal::setup_tables(*this);
+	OrdinaryJournal::setup_tables(*this);
 	Repeater::setup_tables(*this);
 	Entry::setup_tables(*this);
 	mark_setup_as_having_occurred();

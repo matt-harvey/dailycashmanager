@@ -17,7 +17,6 @@
 #include "entry.hpp"
 #include "general_typedefs.hpp"
 #include "entry.hpp"
-#include "repeater.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include "sqloxx/sql_statement.hpp"
@@ -56,8 +55,7 @@ Journal::setup_tables(DatabaseConnection& dbc)
 
 Journal::Journal(shared_ptr<DatabaseConnection> p_database_connection):
 	PersistentObject(p_database_connection),
-	m_entries(list< shared_ptr<Entry> >()),
-	m_repeaters(list< shared_ptr<Repeater> >())
+	m_entries(list< shared_ptr<Entry> >())
 {
 }
 
@@ -68,6 +66,11 @@ Journal::Journal
 	PersistentObject(p_database_connection, p_id)
 {
 }
+
+Journal::~Journal()
+{
+}
+
 
 void
 Journal::set_whether_actual(bool p_is_actual)
@@ -83,14 +86,6 @@ Journal::set_comment(string const& p_comment)
 	return;
 }
 
-// WARNING needs moving to OrdinaryJournal
-void
-Journal::set_date(boost::gregorian::date const& p_date)
-{
-	m_date = julian_int(p_date);
-	return;
-}
-
 void
 Journal::add_entry(shared_ptr<Entry> entry)
 {
@@ -102,33 +97,11 @@ Journal::add_entry(shared_ptr<Entry> entry)
 	return;
 }
 
-// WARNING needs changing given inheritance
-bool
-Journal::is_posted()
-{
-	if (!m_date)
-	{
-		return false;
-	}
-	else
-	{
-		return m_date != null_date_rep();
-	}
-}
-
 bool
 Journal::is_actual()
 {
 	load();
 	return *m_is_actual;
-}
-
-// WARNING needs moving to OrdinaryJournal
-boost::gregorian::date
-Journal::date()
-{
-	load();
-	return boost_date_from_julian_int(*m_date);
 }
 
 string
@@ -157,16 +130,13 @@ Journal::do_load_all()
 {
 	SQLStatement statement
 	(	*database_connection(),
-		"select journal_id, is_actual, comment from "
-		"journals where journal_id = :p"
+		"select is_actual, comment from journals where journal_id = :p"
 	);
 	statement.bind(":p", id());
 	statement.step();
 
-	bool const is_act = static_cast<bool>(statement.extract<int>(1));
-	DateRep const d =
-		numeric_cast<DateRep>(statement.extract<boost::int64_t>(2));
-	string const cmt = statement.extract<string>(3);
+	bool const is_act = static_cast<bool>(statement.extract<int>(0));
+	string const cmt = statement.extract<string>(1);
 
 	SQLStatement entry_finder
 	(	*database_connection(),
@@ -188,8 +158,8 @@ Journal::do_load_all()
 }
 
 
-void
-Journal::do_save_new_all()
+Journal::Id
+Journal::do_save_new_all_journal_base()
 {
 	IdType const journal_id = prospective_key();
 	SQLStatement statement
@@ -206,10 +176,17 @@ Journal::do_save_new_all()
 		(*it)->set_journal_id(journal_id);
 		(*it)->save_new();
 	}
-	typedef list< shared_ptr<Repeater> >::const_iterator RepIter;
-	
+	return journal_id;
+}
+
+
+void
+Journal::do_save_new_all()
+{
+	do_save_new_all_journal_base();
 	return;
 }
+	
 
 
 string
