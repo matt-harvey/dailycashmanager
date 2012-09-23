@@ -38,9 +38,9 @@ namespace sqloxx
 {
 
 
-// Remember - don't call virtual functions from constructors!
 DatabaseConnection::DatabaseConnection():
-	m_connection(0)
+	m_connection(0),
+	m_transaction_nesting_level(0)
 {
 	
 	// Initialize SQLite3
@@ -101,6 +101,12 @@ DatabaseConnection::~DatabaseConnection()
 			             "closed in DatabaseConnection destructor. " << endl;
 			std::abort();
 		}
+	}
+	if (m_transaction_nesting_level > 0)
+	{
+		clog << "Transaction(s) remained incomplete on closure of "
+		     << "DatabaseConnection."
+			 << endl;
 	}
 	if (sqlite3_shutdown() != SQLITE_OK)
 	{
@@ -246,5 +252,40 @@ DatabaseConnection::setup_boolean_table()
 	execute_sql("insert into booleans(representation) values(0)");
 	execute_sql("insert into booleans(representation) values(1)");
 }
+
+void
+DatabaseConnection::begin_transaction()
+{
+	if (m_transaction_nesting_level == 0)
+	{
+		execute_sql("begin transaction");
+	}
+	++m_transaction_nesting_level;
+	return;
+}
+
+void
+DatabaseConnection::end_transaction()
+{
+	switch (m_transaction_nesting_level)
+	{
+	case 1:
+		execute_sql("end transaction");
+		break;
+	case 0:
+		throw TransactionNestingException
+		(	"Number of transactions ended on this database connection "
+			"exceeds the number of transactions begun."
+		);
+		assert (false);  // execution never reaches here
+	default:
+		;  // Do nothing
+	}
+	assert (m_transaction_nesting_level > 0);
+	--m_transaction_nesting_level;
+	return;
+}
+
+
 
 }  // namespace sqloxx

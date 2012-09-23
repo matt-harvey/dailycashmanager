@@ -265,6 +265,24 @@ public:
 	 */
 	void setup_boolean_table();
 
+	/**
+	 * Begins a transaction. Transactions may be nested. Only the
+	 * outermost call to begin_transaction causes the "begin transaction"
+	 * SQL command to be executed.
+	 */
+	void begin_transaction();
+
+	/**
+	 * Ends a transaction. Transactions may be nested. Only the outermost
+	 * call to end_transaction causes the "end transaction" SQL command
+	 * to be executed.
+	 *
+	 * @throws TransactionNestingException in the event that there are
+	 * more calls to end_transaction than there have been to
+	 * begin_transaction.
+	 */
+	void end_transaction();
+
 	
 private:
 
@@ -276,6 +294,12 @@ private:
 	 * C API.)
 	 */
 	sqlite3* m_connection;
+
+	/**
+	 * Counts the level of transaction nestings. See begin_transaction
+	 * and end_transaction commands for details.
+	 */
+	int m_transaction_nesting_level;
 
 
 };

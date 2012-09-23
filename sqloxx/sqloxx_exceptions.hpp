@@ -101,6 +101,11 @@ JEWEL_DERIVED_EXCEPTION(ResultIndexOutOfRange, DatabaseException);
 JEWEL_DERIVED_EXCEPTION(ValueTypeException, DatabaseException);
 
 /**
+ * Exception to be thrown when there is an error in transaction nesting.
+ */
+JEWEL_DERIVED_EXCEPTION(TransactionNestingException, DatabaseException);
+
+/**
  * Exception to be thrown when SQLite (the library itself, not a database
  * connection) has not been successfully initialized.
  */
