@@ -106,9 +106,12 @@ public:
 	void set_next_date(boost::gregorian::date const& p_next_date);
 
 	/**
-	 * Associate the Repeater with a particular journal, by passing
-	 * the id of the Journal. (As a PersistentObject, a Journal can
-	 * be identified from its id.)
+	 * Associate the Repeater with a particular DraftJournal, by passing
+	 * the id of the DraftJournal. (As a PersistentObject, a DraftJournal can
+	 * be identified from its id.) Note this function should normally
+	 * NOT be used. The usual way to associate a Repeater with a
+	 * DraftJournal is to pass a shared_ptr to the Repeater to
+	 * DraftJournal::add_repeater.
 	 */
 	void set_journal_id(Journal::Id p_journal_id);
 		

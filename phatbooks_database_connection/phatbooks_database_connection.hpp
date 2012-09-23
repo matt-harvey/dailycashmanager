@@ -58,6 +58,15 @@ public:
 	bool has_account_named(std::string const& p_name);
 
 	/**
+	 * @returns \c true if and only if \c p_name is the name of a
+	 * DraftJournal stored in the database.
+	 *
+	 * @todo Document throwing behaviour.
+	 */
+	bool has_draft_journal_named(std::string const& p_name);
+	
+
+	/**
 	 * @returns a boost::bimap from AccountType to string, giving the
 	 * string name for each AccountType.
 	 *

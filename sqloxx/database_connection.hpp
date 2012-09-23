@@ -220,6 +220,9 @@ public:
 	 *
 	 * @throws sqloxx::DatabaseException if there is some other error finding
 	 * the next primary key value.
+	 *
+	 * @todo Speed this up by having it consult the sqlite_sequence table
+	 * where possible, rather than taking the maximum.
 	 */
 	template<typename KeyType>
 	KeyType next_auto_key(std::string const& table_name);	
@@ -232,12 +235,9 @@ public:
 	 * an untrusted string.
 	 *
 	 * @todo To speed execution, assuming the return value for a given
-	 * \c table_name never changes (is this a safe assumption?), the
-	 * return values could be cached either in a
-	 * map< string, vector<string> >, or by way of templatizing this
-	 * function with \c table_name as a (non-type) template parameter,
-	 * and the return value stored as a static variable inside the
-	 * function.
+	 * \c table_name never changes, the return values could be cached in a
+	 * map< string, vector<string> > inside the DatabaseConnection
+	 * instance.
 	 *
 	 * @returns a vector of the names of all the columns making up the
 	 * primary key of the table named \c table_name. An empty vector

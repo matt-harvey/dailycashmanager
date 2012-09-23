@@ -70,6 +70,16 @@ PhatbooksDatabaseConnection::has_account_named(string const& p_name)
 	return statement.step();
 }
 
+bool
+PhatbooksDatabaseConnection::has_draft_journal_named(string const& p_name)
+{
+	SQLStatement statement
+	(	*this,
+		"select name from draft_journal_detail where name = :p"
+	);
+	statement.bind(":p", p_name);
+	return statement.step();
+}
 
 bimap<Account::AccountType, string>
 PhatbooksDatabaseConnection::account_types()

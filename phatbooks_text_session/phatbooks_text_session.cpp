@@ -21,6 +21,7 @@
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "repeater.hpp"
 #include "consolixx/consolixx.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
@@ -610,14 +611,24 @@ void PhatbooksTextSession::elicit_journal()
 			{
 				cout << "Name cannot be blank. Please try again: ";
 			}
+			if (m_database_connection->has_draft_journal_named(name))
+			{
+				cout << "A draft or recurring transaction has already "
+				     << "been saved under this name. Please enter a "
+					 << "another name: ";
+			}
 			else
 			{
+				draft_journal.set_name(name);
 				is_valid = true;
 			}
 		}
 		// Ask for any repeaters.
 		if (journal_action == save_recurring)
 		{
+			shared_ptr<Repeater> repeater
+			(	new Repeater(m_database_connection)
+			);
 			cout << "\nHow often do you want this transaction to be posted? "
 				 << endl;
 			Menu frequency_menu;
@@ -654,7 +665,29 @@ void PhatbooksTextSession::elicit_journal()
 			frequency_menu.present_to_user();
 			shared_ptr<MenuItem const> const choice =
 				frequency_menu.last_choice();
-			int units = 0;
+		
+			// Determine interval type
+			if (choice == monthly_day_x || choice == N_monthly_day_x)
+			{
+				repeater->set_interval_type(Repeater::months);
+			}
+			else if
+			(	choice == monthly_day_last ||
+				choice == N_monthly_day_last
+			)
+			{
+				repeater->set_interval_type(Repeater::month_ends);
+			}
+			else if (choice == weekly || choice == N_weekly)
+			{
+				repeater->set_interval_type(Repeater::weeks);
+			}
+			else if (choice == daily || choice == N_daily)
+			{
+				repeater->set_interval_type(Repeater::days);
+			}
+
+			// Determine interval units
 			if
 			(	choice == monthly_day_x ||
 				choice == monthly_day_last ||
@@ -662,7 +695,7 @@ void PhatbooksTextSession::elicit_journal()
 				choice == daily
 			)
 			{
-				units = 1;
+				repeater->set_interval_units(1);
 			}
 			else
 			{
@@ -686,7 +719,8 @@ void PhatbooksTextSession::elicit_journal()
 					{
 						try
 						{
-							units = lexical_cast<int>(input);
+							int const units = lexical_cast<int>(input);
+							repeater->set_interval_units(units);
 							is_valid = true;
 						}
 						catch (boost::bad_lexical_cast&)
@@ -699,12 +733,18 @@ void PhatbooksTextSession::elicit_journal()
 						        "than 0: ";
 					}
 				}
-				// WARNING incomplete implementation
 			}	
-						
+			// Determine next posting date
+			cout << "Enter the first date on which the transaction will occur"
+			     << ", as an eight-digit number of the form YYYYMMDD (or just"
+				 << " hit enter for today's date): ";
+			repeater->set_next_date(get_date_from_user());
+
+			// Add repeater to draft_journal
+			draft_journal.add_repeater(repeater);	
 		}
-				
-		cout << "\nAaagghhhh!!!" << endl;
+		draft_journal.save_new();
+		cout << "Draft journal has been saved" << endl;
 	}
 	else if (journal_action == abandon)
 	{
