@@ -45,6 +45,10 @@ namespace phatbooks
  * May throw various other exceptions, or crash wildly. This is not
  * a polished function but intended as a quick hack only! See
  * file documentation for import_from_nap.hpp.
+ *
+ * @todo The implementation of this function is hideously messy, slow,
+ * bulky, inefficient and repetitive. It doesn't need to be perfect as
+ * it's only a hack for my own use... but really...
  */
 void import_from_nap
 (	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,

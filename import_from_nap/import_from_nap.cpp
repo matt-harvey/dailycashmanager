@@ -18,6 +18,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <set>
 #include <stdexcept>
 #include <vector>
 
@@ -27,6 +28,7 @@ using jewel::Decimal;
 using std::cout;
 using std::endl;
 using std::map;
+using std::set;
 using std::string;
 using std::vector;
 
@@ -165,6 +167,19 @@ void import_from_nap
 		
 	typedef vector< shared_ptr<Journal> > JournalVec;
 
+	// Map to record, if we determine that a particular Journal
+	// (whether ordinary or draft) is actual (true) or budget (false).
+	// This will enable us to track which ones have mixed budget and
+	// actuals entries (which must be handled separately).
+	map< shared_ptr<Journal>, bool> actual_v_budget_determinations;
+
+	// Set to hold Journal instances which are problematic for Phatbooks
+	set< shared_ptr<Journal> > problematic_journals;
+	// Map from problematic ordinary journals to old ordinary journal ids
+	map< shared_ptr<Journal>, int > problematic_ordinary_journal_map;
+	// Map from problematic draft journals to old draft journal names
+	map< shared_ptr<Journal>, string > problematic_draft_journal_map;
+
 	// Read draft journals ************************************
 	
 	JEWEL_DEBUG_LOG << "Reading draft journals from CSV..." << endl;
@@ -189,14 +204,14 @@ void import_from_nap
 	JournalVec draft_journal_vec;
 
 	// We will store a map from the draft journal names in the csv, to
-	// DraftJournal instances in memory. Shortly this will enable us to associate
-	// draft entries with DraftJournal instances.
+	// DraftJournal instances in memory. Shortly this will enable us to
+	// associate draft entries with DraftJournal instances.
 	map< string, shared_ptr<DraftJournal> > draft_journal_map;
 
 	// We will store a map from the draft journal names in the csv, to
 	// Journal::Id values. This will enable us to remember the PROSPECTIVE id
-	// of each DraftJournal, so we can associate each draft entry with the correct
-	// journal based on its name.
+	// of each DraftJournal, so we can associate each draft entry with the
+	// correct journal based on its name.
 	map< string, Journal::Id> draft_journal_id_map;
 
 	// Now to actually read the draft journals.
@@ -208,7 +223,9 @@ void import_from_nap
 		// Split the csv row into cells
 		vector<string> const draft_journal_cells =
 			cells<'|'>(draft_journal_row);
-		shared_ptr<DraftJournal> draft_journal(new DraftJournal(database_connection));
+		shared_ptr<DraftJournal> draft_journal
+		(	new DraftJournal(database_connection)
+		);
 		draft_journal->set_comment("");
 		string const draft_journal_name = draft_journal_cells[0];
 		draft_journal->set_name(draft_journal_name);
@@ -266,21 +283,65 @@ void import_from_nap
 		draft_entry->set_account_name(account_name);
 		draft_entry->set_comment(comment);
 		draft_entry->set_amount(is_actual? act_impact: -bud_impact);	
-		draft_journal_map[draft_journal_name]->set_whether_actual(is_actual);
-		draft_journal_map[draft_journal_name]->add_entry(draft_entry);
+		shared_ptr<DraftJournal> draft_journal =
+			draft_journal_map[draft_journal_name];
+		draft_journal->add_entry(draft_entry);
+		if
+		(	actual_v_budget_determinations.find(draft_journal) ==
+			actual_v_budget_determinations.end()
+		)
+		{
+			// This journal has yet to be determined as to whether
+			// actual (true) or budget (false)
+			draft_journal->set_whether_actual(is_actual);
+			actual_v_budget_determinations[draft_journal] =
+				(is_actual? true: false);
+		}
+		else
+		{
+			if (draft_journal->is_actual() != is_actual)
+			{
+				if (bud_impact == Decimal("0") && act_impact == Decimal("0"))
+				{
+					// Then it's OK - the journal just defaults to the
+					// exising determination about whethet it's actual, as
+					// it makes no difference
+				}
+				else
+				{
+					// We have a problem, and record this journal as
+					// problematic
+					problematic_journals.insert(draft_journal);
+					problematic_draft_journal_map[draft_journal] =
+						draft_journal_name;
+				}
+			}
+			else
+			{
+				assert
+				(	actual_v_budget_determinations[draft_journal] ==
+					is_actual
+				);
+			}
+		}
 	}
 	
-	// Save the DraftJournal instances corresponding to draft journals into the
-	// database.
+	// Save the DraftJournal instances corresponding to draft journals into
+	// the database.
 	for
 	(	JournalVec::iterator jvit = draft_journal_vec.begin();
 		jvit != draft_journal_vec.end();
 		++jvit
 	)
 	{
-		// WARNING Verify that the journal_id is as anticipated in
-		// draft_journal_id_map.
-		(*jvit)->save_new();
+		if (problematic_journals.find(*jvit) != problematic_journals.end())
+		{
+			// Any handling?
+		}
+		else
+		{
+			(*jvit)->save_new();
+		}
 	}
 
 	// Read OrdinaryJournals*************
@@ -351,16 +412,48 @@ void import_from_nap
 		string const account_name = ordinary_entry_cells[4];
 		Decimal act_impact(ordinary_entry_cells[5]);
 		Decimal bud_impact(ordinary_entry_cells[6]);
-		// WARNING We need to handle the case where a single
-		// Journals contains both budget and actual impacts
-		// (and in fact some single entries may contain both). Given this is
-		// just a one-off hack, it may be easier just to manipulate the
-		// csv before importing it.
 		bool is_actual = (bud_impact == Decimal("0"));
 		ordinary_entry->set_account_name(account_name);
 		ordinary_entry->set_comment(comment);
 		ordinary_entry->set_amount(is_actual? act_impact: -bud_impact);
-		ordinary_journal_map[old_journal_id]->set_whether_actual(is_actual);
+		shared_ptr<OrdinaryJournal> ordinary_journal =
+			ordinary_journal_map[old_journal_id];
+		if
+		(	actual_v_budget_determinations.find(ordinary_journal) ==
+			actual_v_budget_determinations.end()
+		)
+		{
+			// This journal has yet to be determined as to whether
+			// actual (true) or budget (false)
+			ordinary_journal->set_whether_actual(is_actual);
+			actual_v_budget_determinations[ordinary_journal] =
+				(is_actual? true: false);
+		}
+		else
+		{
+			if (ordinary_journal->is_actual() != is_actual)
+			{
+				if (bud_impact == Decimal("0") && act_impact == Decimal("0"))
+				{
+					// Then it's OK
+				}
+				else
+				{
+					// We record the journal as problematic
+					problematic_journals.insert(ordinary_journal);
+					problematic_ordinary_journal_map[ordinary_journal] =
+						old_journal_id;
+				}
+			}
+			else
+			{
+				assert
+				(	actual_v_budget_determinations[ordinary_journal] ==
+					is_actual
+				);
+			}
+		}
+
 		if
 		(	ordinary_journal_map[old_journal_id]->date() !=
 			boost::gregorian::date_from_iso_string(iso_date_string)
@@ -375,7 +468,7 @@ void import_from_nap
 				<< endl;
 			std::abort();
 		}
-		ordinary_journal_map[old_journal_id]->add_entry(ordinary_entry);
+		ordinary_journal->add_entry(ordinary_entry);
 	}
 
 	// Save the OrdinaryJournal instances corresponding to ordinary journals
@@ -386,11 +479,37 @@ void import_from_nap
 		++jvit
 	)
 	{
-		// WARNING Verify that the journal_id is as anticipated in
-		// ordinary_journal_id_map
-		(*jvit)->save_new();
+		if (problematic_journals.find(*jvit) != problematic_journals.end())
+		{
+			// Any handling?
+		}
+		else
+		{
+			(*jvit)->save_new();
+		}
 	}
-	
+
+	cout << "The following journals (by N. A. P. identifier) could not "
+	     << "be imported automatically, and will need to be entered "
+		 << "manually into Phatbooks:" << endl;
+	for
+	(	set< shared_ptr<Journal> >::const_iterator it = problematic_journals.begin();
+		it != problematic_journals.end();
+		++it
+	)
+	{
+		if
+		(	problematic_draft_journal_map.find(*it) !=
+			problematic_draft_journal_map.end()
+		)
+		{
+			cout << problematic_draft_journal_map[*it] << endl;
+		}
+		else
+		{
+			cout << problematic_ordinary_journal_map[*it] << endl;
+		}
+	}
 	
 	return;
 }
