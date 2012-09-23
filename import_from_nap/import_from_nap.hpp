@@ -49,6 +49,9 @@ namespace phatbooks
  * @todo The implementation of this function is hideously messy, slow,
  * bulky, inefficient and repetitive. It doesn't need to be perfect as
  * it's only a hack for my own use... but really...
+ *
+ * @todo I don't think the function currently reacts properly to
+ * entries where a SINGLE ENTRY has both actual and budget impacts.
  */
 void import_from_nap
 (	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
