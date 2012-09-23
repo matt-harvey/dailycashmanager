@@ -14,6 +14,7 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
+#include <cassert>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -80,8 +81,8 @@ void import_from_nap
 	string const account_csv_name = "accountshelf.csv";
 	string const draft_entry_csv_name = "draftentryshelf.csv";
 	string const draft_journal_csv_name = "draftjournalshelf.csv";
-	string const entry_csv_name = "entryshelf.csv";
-	string const journal_csv_name = "journalshelf.csv";
+	string const ordinary_entry_csv_name = "entryshelf.csv";
+	string const ordinary_journal_csv_name = "journalshelf.csv";
 
 	int check = 0;
 	JEWEL_DEBUG_LOG << "\tChecking that CSV files are present..." << endl;
@@ -95,8 +96,8 @@ void import_from_nap
 		if (s == account_csv_name) check += 1;
 		else if (s == draft_entry_csv_name) check += 10;
 		else if (s == draft_journal_csv_name) check += 100;
-		else if (s == entry_csv_name) check += 1000;
-		else if (s == journal_csv_name) check += 10000;
+		else if (s == ordinary_entry_csv_name) check += 1000;
+		else if (s == ordinary_journal_csv_name) check += 10000;
 	}
 	if (check != 11111)
 	{
@@ -162,6 +163,8 @@ void import_from_nap
 		                << " inserted." << endl;
 	}
 		
+	typedef vector< shared_ptr<Journal> > JournalVec;
+
 	// Read draft journals ************************************
 	
 	JEWEL_DEBUG_LOG << "Reading draft journals from CSV..." << endl;
@@ -169,8 +172,6 @@ void import_from_nap
 	(	(directory.string() + file_sep + draft_journal_csv_name).c_str()
 	);
 	string draft_journal_row;
-
-	typedef vector< shared_ptr<DraftJournal> > JournalVec;
 
 	// We make a map to tell us the meaning of each string representation
 	// (in the csv) of a repeater interval type, in terms of the enumerations
@@ -181,20 +182,20 @@ void import_from_nap
 	interval_type_map["month"] = Repeater::months;
 	interval_type_map["end_of_month"] = Repeater::month_ends;
 
-	// We will store Journal instances in this vector temporarily, and
+	// We will store DraftJournal instances in this vector temporarily, and
 	// run through later to ensure order is preserved. (The order they are
 	// inserted into the database will thereby correspond with predicted
 	// id.)
 	JournalVec draft_journal_vec;
 
 	// We will store a map from the draft journal names in the csv, to
-	// Journal instances in memory. Shortly this will enable us to associate
-	// draft entries with Journal instances.
+	// DraftJournal instances in memory. Shortly this will enable us to associate
+	// draft entries with DraftJournal instances.
 	map< string, shared_ptr<DraftJournal> > draft_journal_map;
 
 	// We will store a map from the draft journal names in the csv, to
 	// Journal::Id values. This will enable us to remember the PROSPECTIVE id
-	// of each Journal, so we can associate each draft entry with the correct
+	// of each DraftJournal, so we can associate each draft entry with the correct
 	// journal based on its name.
 	map< string, Journal::Id> draft_journal_id_map;
 
@@ -261,21 +262,7 @@ void import_from_nap
 		// a non-zero bud_impact and a non-zero act_impact. Given this is
 		// just a one-off hack, it may be easier just to manipulate the
 		// csv before importing it.
-		bool is_actual = true;
-		if (bud_impact != Decimal("0"))
-		{
-			if (act_impact != Decimal("0"))
-			{
-				throw std::runtime_error
-				(	"Import cannot handle entries that have both actual and "
-					"budget impacts."
-				);
-			}
-			else
-			{
-				is_actual = false;
-			}
-		}
+		bool is_actual = (bud_impact == Decimal("0"));
 		draft_entry->set_account_name(account_name);
 		draft_entry->set_comment(comment);
 		draft_entry->set_amount(is_actual? act_impact: -bud_impact);	
@@ -283,7 +270,7 @@ void import_from_nap
 		draft_journal_map[draft_journal_name]->add_entry(draft_entry);
 	}
 	
-	// Save the Journal instances corresponding to draft journals into the
+	// Save the DraftJournal instances corresponding to draft journals into the
 	// database.
 	for
 	(	JournalVec::iterator jvit = draft_journal_vec.begin();
@@ -296,27 +283,114 @@ void import_from_nap
 		(*jvit)->save_new();
 	}
 
-	/*
-	// ...
-	// WARNING implementation incomplete
-
-	// Read entries
-	std::ifstream entry_csv
-	(	(directory.string() + file_sep + entry_csv_name).c_str()
-	);
-	// ...
-	// WARNING implementation incomplete
+	// Read OrdinaryJournals*************
 	
-	// Read journals
-	std::ifstream journal_csv
-	(	(directory.string() + file_sep + journal_csv_name).c_str()
+	JEWEL_DEBUG_LOG << "Reading (non-draft) journals from CSV..." << endl;
+	std::ifstream ordinary_journal_csv
+	(	(directory.string() + file_sep + ordinary_journal_csv_name).c_str()
 	);
-	// ...
-	// WARNING implementation incomplete
+	string ordinary_journal_row;
+	
+	// We will store the OrdnaryJournal instances in this vector temporarily,
+	// and run through later to ensure order is preserved. (The order they are
+	// inserted into the database will thereby correspond with predicted id.)
+	JournalVec ordinary_journal_vec;
 
-	// ...
-	// WARNING implementation incomplete
-	**/
+	// We will store a map from the ordinary journal ids stored in the csv,
+	// (which are the old ones that were assigned by N. A. P.) to
+	// OrdinaryJournal instances in memory. Shortly this will enable us to
+	// associate entries with OrdinaryJournal instances.
+	map< int, shared_ptr<OrdinaryJournal> > ordinary_journal_map;
+
+	// We will store a map from the old ordinary journal ids stored in the
+	// csv, to Journal::Id values. This will enable us to remember the
+	// PROSPECTIVE id of each OrdinaryJournal, so we can associate each
+	// entry with the correct journal based on its N. A. P. journal id.
+	map< int, Journal::Id> ordinary_journal_id_map;
+	
+	// Now to actually read the (non-draft, i.e. "ordinary") journals
+	Journal::Id ordinary_journal_id = draft_journal_vec.size();
+	while (getline(ordinary_journal_csv, ordinary_journal_row))
+	{
+		++ordinary_journal_id;
+
+		// Split the csv row into cells
+		vector<string> const ordinary_journal_cells =
+			cells<'|'>(ordinary_journal_row);
+		shared_ptr<OrdinaryJournal> ordinary_journal
+		(	new OrdinaryJournal(database_connection)
+		);
+		ordinary_journal->set_comment("");
+		string const iso_date_string = ordinary_journal_cells[1];
+		ordinary_journal->set_date
+		(	boost::gregorian::date_from_iso_string(iso_date_string)
+		);
+		int const ordinary_journal_nap_id =
+			lexical_cast<int>(ordinary_journal_cells[0]);
+		ordinary_journal_map[ordinary_journal_nap_id] = ordinary_journal;
+		ordinary_journal_id_map[ordinary_journal_nap_id] =
+			ordinary_journal_id;
+		ordinary_journal_vec.push_back(ordinary_journal);
+	}
+
+	// Read ordinary entries ****************************************
+	
+	std::ifstream ordinary_entry_csv
+	(	(directory.string() + file_sep + ordinary_entry_csv_name).c_str()
+	);
+	string ordinary_entry_row;
+	while (getline(ordinary_entry_csv, ordinary_entry_row))
+	{
+		vector<string> const ordinary_entry_cells =
+			cells<'|'>(ordinary_entry_row);
+		shared_ptr<Entry> ordinary_entry(new Entry(database_connection));
+		string const iso_date_string = ordinary_entry_cells[0];
+		int const old_journal_id =
+			lexical_cast<int>(ordinary_entry_cells[1]);
+		string const comment = ordinary_entry_cells[3];
+		string const account_name = ordinary_entry_cells[4];
+		Decimal act_impact(ordinary_entry_cells[5]);
+		Decimal bud_impact(ordinary_entry_cells[6]);
+		// WARNING We need to handle the case where a single
+		// Journals contains both budget and actual impacts
+		// (and in fact some single entries may contain both). Given this is
+		// just a one-off hack, it may be easier just to manipulate the
+		// csv before importing it.
+		bool is_actual = (bud_impact == Decimal("0"));
+		ordinary_entry->set_account_name(account_name);
+		ordinary_entry->set_comment(comment);
+		ordinary_entry->set_amount(is_actual? act_impact: -bud_impact);
+		ordinary_journal_map[old_journal_id]->set_whether_actual(is_actual);
+		if
+		(	ordinary_journal_map[old_journal_id]->date() !=
+			boost::gregorian::date_from_iso_string(iso_date_string)
+		)
+		{
+			JEWEL_DEBUG_LOG
+				<< "ordinary_journal_map[old_journal_id]->date(): "
+			    << ordinary_journal_map[old_journal_id]->date()
+				<< endl
+				<< "boost::gregorian::date_from_iso_string(iso_date_string): "
+				<< boost::gregorian::date_from_iso_string(iso_date_string)
+				<< endl;
+			std::abort();
+		}
+		ordinary_journal_map[old_journal_id]->add_entry(ordinary_entry);
+	}
+
+	// Save the OrdinaryJournal instances corresponding to ordinary journals
+	// into the database
+	for
+	(	JournalVec::iterator jvit = ordinary_journal_vec.begin();
+		jvit != ordinary_journal_vec.end();
+		++jvit
+	)
+	{
+		// WARNING Verify that the journal_id is as anticipated in
+		// ordinary_journal_id_map
+		(*jvit)->save_new();
+	}
+	
 	
 	return;
 }
