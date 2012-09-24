@@ -123,6 +123,14 @@ public:
 	*/
 	void quick_step();
 
+	/**
+	 * Resets the statement, freeing bound parameters ready for
+	 * subsequent re-binding and re-execution.
+	 *
+	 * Does not throw.
+	 */
+	void reset();
+
 private:
 	sqlite3_stmt* m_statement;
 	DatabaseConnection& m_database_connection;

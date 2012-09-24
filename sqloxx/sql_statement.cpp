@@ -162,7 +162,13 @@ SQLStatement::quick_step()
 	return;
 }
 
-	
+
+void
+SQLStatement::reset()
+{
+	sqlite3_reset(m_statement);
+	return;
+}
 
 
 int

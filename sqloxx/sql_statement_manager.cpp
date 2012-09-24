@@ -2,46 +2,59 @@
 #include "sql_statement.hpp"
 #include <boost/circular_buffer.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/debug_log.hpp>
+#include <cassert>
+#include <iostream>  // For debug logging
 #include <map>
 #include <string>
 
 using boost::shared_ptr;
+using std::endl;  // For debug logging
+using std::string;
 
 namespace sqloxx
 {
 
 
 SQLStatementManager::SQLStatementManager
-(	boost::shared_ptr<DatabaseConnection> p_database_connection,
-	History::size_type p_cache_capacity
+(	shared_ptr<DatabaseConnection> p_database_connection,
+	StatementCache::size_type p_capacity
 ):
 	m_database_connection(p_database_connection),
-	m_statement_history(p_cache_capacity)
+	m_capacity(p_capacity)
 {
 }
 
 
-void
-SQLStatementManager::add_statement(shared_ptr<SQLStatement> p_statement)
+shared_ptr<SQLStatement>
+SQLStatementManager::provide_sql_statement(string const& statement_text)
 {
-	// WARNING Incomplete
-	
-	// Add p_statement to m_statement_history
-	// If the m_statement_history overflowed, then we must remove
-	// the jettisoned statement from m_statement_cache also.
-	// Add p_statement to m_statement_cache, indexed by the text of the
-	// statement. (How do we know what that is?)
-
+	StatementCache::const_iterator const it =
+		m_statement_cache.find(statement_text);
+	if (it != m_statement_cache.end())
+	{
+		it->second->reset();  // Ensure statement is ready for use.
+		JEWEL_DEBUG_LOG << "Returning cached SQLStatement." << endl;
+		return it->second;
+	}
+	assert (it == m_statement_cache.end());
+	shared_ptr<SQLStatement> statement
+	(	new SQLStatement(*m_database_connection, statement_text)
+	);
+	if (m_statement_cache.size() != m_capacity)
+	{
+		assert (m_statement_cache.size() < m_capacity);
+		JEWEL_DEBUG_LOG << "Storing new SQLStatement in cache." << endl;
+		m_statement_cache[statement_text] = statement;
+	}
+	else
+	{
+		JEWEL_DEBUG_LOG << "SQLStatement cache has reached capacity, "
+		                << "and caching has been discontinued."
+						<< endl;
+	}
+	return statement;
 }
-
-
-	
-
-
-
-
-
-
 
 
 
