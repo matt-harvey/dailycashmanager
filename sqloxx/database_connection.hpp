@@ -31,6 +31,9 @@ class SQLStatementManager;
  * inner workings need to be documented too, but with an eye
  * to clarifying the internals workings of sqloxx, rather than
  * providing an interface to clients.
+ *
+ * @todo Have begin_transaction and end_transaction use SharedSQLStatement
+ * instead of execute_sql. This is likely to speed execution.
  */
 class DatabaseConnection:
 	private boost::noncopyable
