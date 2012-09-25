@@ -1,7 +1,7 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include "sqloxx/shared_sql_statement.hpp"
 #include <cassert>
 #include <string>
 #include <vector>
@@ -18,7 +18,7 @@
 
 
 using sqloxx::DatabaseConnection;
-using sqloxx::SQLStatement;
+using sqloxx::SharedSQLStatement;
 using std::string;
 using std::vector;
 
@@ -125,7 +125,7 @@ Account::set_description(string const& p_description)
 void
 Account::do_load_all()
 {
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"select commodity_id, account_type_id, description "
 		"from accounts where account_id = :p"
@@ -167,7 +167,7 @@ Account::do_save_new_all()
 	(	database_connection(),
 		*m_commodity_abbreviation
 	);
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"insert into accounts(account_type_id, name, description, "
 		"commodity_id) values(:account_type_id, :name, :description, "
@@ -190,7 +190,7 @@ Account::do_get_table_name()
 void
 Account::load_name_knowing_id()
 {
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"select name from accounts where account_id = :p"
 	);
@@ -203,7 +203,7 @@ Account::load_name_knowing_id()
 void
 Account::load_id_knowing_name()
 {
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"select account_id from accounts where name = :p"
 	);

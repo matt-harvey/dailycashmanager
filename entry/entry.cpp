@@ -15,13 +15,13 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
 
 using sqloxx::DatabaseConnection;
-using sqloxx::SQLStatement;
+using sqloxx::SharedSQLStatement;
 using boost::shared_ptr;
 using jewel::Decimal;
 using std::string;
@@ -116,7 +116,7 @@ Entry::amount()
 void
 Entry::do_load_all()
 {
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"select account_id, comment, amount, journal_id from entries where "
 		"entry_id = :p"
@@ -140,7 +140,7 @@ Entry::do_load_all()
 void
 Entry::do_save_new_all()
 {
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"insert into entries(journal_id, comment, account_id, amount) "
 		"values(:journal_id, :comment, :account_id, :amount)"

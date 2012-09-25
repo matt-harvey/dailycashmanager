@@ -1,6 +1,7 @@
 #ifndef sql_statement_manager_hpp
 #define sql_statement_manager_hpp
 
+#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include <string>
@@ -26,9 +27,9 @@ class SQLStatement;
  * can have a constructor that accepts a reference
  * to the DatabaseConnection class.
  */
-class SQLStatementManager
+class SQLStatementManager:
+	private boost::noncopyable
 {
-
 public:
 
 	typedef

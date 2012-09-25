@@ -19,7 +19,7 @@
 #include "entry.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include "sqloxx/shared_sql_statement.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
@@ -28,7 +28,7 @@
 
 using sqloxx::DatabaseConnection;
 using sqloxx::PersistentObject;
-using sqloxx::SQLStatement;
+using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::Decimal;
@@ -128,7 +128,7 @@ Journal::entries()
 void
 Journal::do_load_all()
 {
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"select is_actual, comment from journals where journal_id = :p"
 	);
@@ -138,7 +138,7 @@ Journal::do_load_all()
 	bool const is_act = static_cast<bool>(statement.extract<int>(0));
 	string const cmt = statement.extract<string>(1);
 
-	SQLStatement entry_finder
+	SharedSQLStatement entry_finder
 	(	*database_connection(),
 		"select entry_id from entries where journal_id = :jid"
 	);
@@ -162,7 +162,7 @@ Journal::Id
 Journal::do_save_new_all_journal_base()
 {
 	IdType const journal_id = prospective_key();
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"insert into journals(is_actual, comment) "
 		"values(:is_actual, :comment)"

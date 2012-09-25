@@ -1,5 +1,5 @@
 #include "sql_statement.hpp"
-#include "database_connection.hpp"
+#include "sqlite_dbconn.hpp"
 
 #include <string>
 
@@ -11,11 +11,11 @@ namespace sqloxx
 
 
 SQLStatement::SQLStatement
-(	DatabaseConnection& dbconn,
+(	SQLiteDBConn& dbconn,
 	string const& str
 ):
 	m_statement(0),
-	m_database_connection(dbconn)
+	m_sqlite_dbconn(dbconn)
 {
 	if (!dbconn.is_valid())
 	{
@@ -25,7 +25,7 @@ SQLStatement::SQLStatement
 		);
 	}
 	sqlite3_prepare_v2
-	(	m_database_connection.m_connection,
+	(	m_sqlite_dbconn.m_connection,
 		str.c_str(),
 		-1,
 		&m_statement,
@@ -77,7 +77,7 @@ SQLStatement::check_ok()
 {
 	try
 	{
-		m_database_connection.check_ok();
+		m_sqlite_dbconn.check_ok();
 	}
 	catch (SQLiteException&)
 	{

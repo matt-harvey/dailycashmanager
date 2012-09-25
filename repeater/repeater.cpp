@@ -13,7 +13,7 @@
 #include "repeater.hpp"
 #include "date.hpp"
 #include "journal.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include "sqloxx/shared_sql_statement.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
@@ -21,7 +21,7 @@
 #include <string>
 
 using sqloxx::DatabaseConnection;
-using sqloxx::SQLStatement;
+using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
 using boost::shared_ptr;
 using std::string;
@@ -142,7 +142,7 @@ Repeater::journal_id()
 void
 Repeater::do_load_all()
 {
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"select interval_type_id, interval_units, next_date, journal_id "
 		"from repeaters where repeater_id = :p"
@@ -168,7 +168,7 @@ Repeater::do_save_new_all()
 	JEWEL_DEBUG_LOG << "Saving Repeater for journal_id "
 	                << journal_id() << endl;
 	JEWEL_DEBUG_LOG << "...which should be equal to " << *m_journal_id << endl;
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"insert into repeaters(interval_type_id, interval_units, "
 		"next_date, journal_id) values(:interval_type_id, :interval_units, "

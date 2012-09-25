@@ -1,6 +1,6 @@
 #include "commodity.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include "sqloxx/shared_sql_statement.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <string>
@@ -17,7 +17,7 @@
 
 
 using sqloxx::DatabaseConnection;
-using sqloxx::SQLStatement;
+using sqloxx::SharedSQLStatement;
 using jewel::Decimal;
 using boost::numeric_cast;
 using std::string;
@@ -29,7 +29,7 @@ void Commodity::setup_tables
 (	DatabaseConnection& dbc
 )
 {
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	dbc,
 		"create table commodities"
 		"("
@@ -50,7 +50,7 @@ void Commodity::setup_tables
 
 void Commodity::load_abbreviation_knowing_id()
 {
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"select abbreviation from commodities where commodity_id = :p"
 	);
@@ -63,7 +63,7 @@ void Commodity::load_abbreviation_knowing_id()
 
 void Commodity::load_id_knowing_abbreviation()
 {
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"select commodity_id from commodities where "
 		"abbreviation = :p"
@@ -78,7 +78,7 @@ void Commodity::load_id_knowing_abbreviation()
 
 void Commodity::do_load_all()
 {
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"select abbreviation, name, description, precision, "
 		"multiplier_to_base_intval, multiplier_to_base_places from "
@@ -107,7 +107,7 @@ void Commodity::do_load_all()
 
 void Commodity::do_save_new_all()
 {
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"insert into commodities(abbreviation, name, description, precision, "
 		"multiplier_to_base_intval, multiplier_to_base_places) "

@@ -3,7 +3,7 @@
 #include "general_typedefs.hpp"
 #include "date.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include "sqloxx/shared_sql_statement.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
@@ -13,7 +13,7 @@
 using boost::numeric_cast;
 using boost::shared_ptr;
 using sqloxx::DatabaseConnection;
-using sqloxx::SQLStatement;
+using sqloxx::SharedSQLStatement;
 
 
 namespace phatbooks
@@ -85,7 +85,7 @@ OrdinaryJournal::do_load_all()
 	Journal::do_load_all();
 
 	// Load the derived, OrdinaryJournal part of the object
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"select date from ordinary_journal_detail where journal_id = :p"
 	);
@@ -103,7 +103,7 @@ OrdinaryJournal::do_save_new_all()
 	Id const journal_id = do_save_new_all_journal_base();
 
 	// Save the derived, OrdinaryJournal part of the object
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"insert into ordinary_journal_detail (journal_id, date) "
 		"values(:journal_id, :date)"

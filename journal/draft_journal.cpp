@@ -2,7 +2,7 @@
 #include "general_typedefs.hpp"
 #include "repeater.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <iostream>  // for debug logging
 #include <jewel/debug_log.hpp>
@@ -10,7 +10,7 @@
 #include <string>
 
 using sqloxx::DatabaseConnection;
-using sqloxx::SQLStatement;
+using sqloxx::SharedSQLStatement;
 using boost::shared_ptr;
 using std::list;
 using std::string;
@@ -101,7 +101,7 @@ DraftJournal::do_load_all()
 	Journal::do_load_all();
 
 	// Load the derived, DraftJournal part of the object.
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"select name from draft_journal_detail where journal_id = :p"
 	);
@@ -110,7 +110,7 @@ DraftJournal::do_load_all()
 	set_name(statement.extract<string>(0));
 	
 	// Load repeaters
-	SQLStatement repeater_finder
+	SharedSQLStatement repeater_finder
 	(	*database_connection(),
 		"select repeater_id from repeaters where journal_id = :p"
 	);
@@ -139,7 +139,7 @@ DraftJournal::do_save_new_all()
 
 	// Save the derived, DraftJournal part of the object
 	JEWEL_DEBUG_LOG << "Saving derived, DraftJournal part..." << endl;
-	SQLStatement statement
+	SharedSQLStatement statement
 	(	*database_connection(),
 		"insert into draft_journal_detail(journal_id, name) "
 		"values(:journal_id, :name)"

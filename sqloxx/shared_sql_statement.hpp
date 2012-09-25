@@ -1,9 +1,10 @@
 #ifndef shared_sql_statement_hpp
 #define shared_sql_statement_hpp
 
+#include "sqloxx/sql_statement.hpp"
+#include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
-#include "sqloxx/sql_statement.hpp"
 
 
 namespace sqloxx
@@ -39,23 +40,28 @@ public:
 
 	~SharedSQLStatement();
 
-	template <typename T>
-	void bind(std::string const& parameter_name, T value);
+	/**
+	 * Wrappers around SQLite bind functions.
+	 *
+	 * These throw \c SQLiteException, or an exception derived therefrom,
+	 * if SQLite could not properly bind the statement.
+	 */
+	void bind(std::string const& parameter_name, int value);
+	void bind(std::string const& parameter_name, boost::int64_t value);
+	void bind(std::string const& parameter_name, std::string const& str);
+
 
 	template <typename T>
 	T extract(int index);
 
 	bool step();
 
-	bool quick_step();
+	void quick_step();
 
 private:
 
 	boost::shared_ptr<SQLStatement> m_sql_statement;
 };
-
-
-}  // namespace sqloxx
 
 
 // Member function templates and inline functions
@@ -67,14 +73,33 @@ SharedSQLStatement::~SharedSQLStatement()
 }
 
 
-template <typename T>
 inline
 void
-SharedSQLStatement::bind(std::string const& parameter_name, T value)
+SharedSQLStatement::bind(std::string const& parameter_name, int value)
 {
 	m_sql_statement->bind(parameter_name, value);
 	return;
 }
+
+
+inline
+void
+SharedSQLStatement::bind(std::string const& parameter_name, boost::int64_t value)
+{
+	m_sql_statement->bind(parameter_name, value);
+	return;
+}
+
+
+inline
+void
+SharedSQLStatement::bind(std::string const& parameter_name, std::string const& value)
+{
+	m_sql_statement->bind(parameter_name, value);
+	return;
+}
+
+
 
 
 template <typename T>
@@ -82,7 +107,7 @@ inline
 T
 SharedSQLStatement::extract(int index)
 {
-	return m_sql_statement.extract(index);
+	return m_sql_statement->template extract<T>(index);
 }
 
 
@@ -95,12 +120,15 @@ SharedSQLStatement::step()
 
 
 inline
-bool
+void
 SharedSQLStatement::quick_step()
 {
-	return m_sql_statement->quick_step();
+	m_sql_statement->quick_step();
+	return;
 }
 
+
+}  // namespace sqloxx
 
 
 

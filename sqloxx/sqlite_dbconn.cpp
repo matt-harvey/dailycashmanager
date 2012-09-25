@@ -1,7 +1,7 @@
 
-/** \file database_connection.cpp
+/** \file sqlite_dbconn.cpp
  *
- * \brief Source file pertaining to DatabaseConnection class.
+ * \brief Source file pertaining to SQLiteDBConn class.
  *
  * \author Matthew Harvey
  * \date 04 July 2012.
@@ -38,7 +38,7 @@ namespace sqloxx
 {
 
 
-DatabaseConnection::DatabaseConnection():
+SQLiteDBConn::SQLiteDBConn():
 	m_connection(0),
 	m_transaction_nesting_level(0)
 {
@@ -52,7 +52,7 @@ DatabaseConnection::DatabaseConnection():
 }
 
 void
-DatabaseConnection::open(boost::filesystem::path const& filepath)
+SQLiteDBConn::open(boost::filesystem::path const& filepath)
 {
 	if (filepath.string().empty())
 	{
@@ -90,7 +90,7 @@ DatabaseConnection::open(boost::filesystem::path const& filepath)
 
 // Remember - don't throw exceptions from destructors!
 // Remember - don't call virtual functions from destructors!
-DatabaseConnection::~DatabaseConnection()
+SQLiteDBConn::~SQLiteDBConn()
 {
 	if (m_connection)
 	{
@@ -98,32 +98,32 @@ DatabaseConnection::~DatabaseConnection()
 		{
 			clog << "SQLite3 database connection could not be "
 			             "successfully "
-			             "closed in DatabaseConnection destructor. " << endl;
+			             "closed in SQLiteDBConn destructor. " << endl;
 			std::abort();
 		}
 	}
 	if (m_transaction_nesting_level > 0)
 	{
 		clog << "Transaction(s) remained incomplete on closure of "
-		     << "DatabaseConnection."
+		     << "SQLiteDBConn."
 			 << endl;
 	}
 	if (sqlite3_shutdown() != SQLITE_OK)
 	{
-		clog << "SQLite3 shutdown failed in DatabaseConnection destructor."
+		clog << "SQLite3 shutdown failed in SQLiteDBConn destructor."
 		     << endl;
 		std::abort();
 	}
 }
 
 bool
-DatabaseConnection::is_valid() const
+SQLiteDBConn::is_valid() const
 {
 	return m_connection != 0;
 }
 
 void
-DatabaseConnection::check_ok()
+SQLiteDBConn::check_ok()
 {
 	if (sqlite3_errcode(m_connection) == SQLITE_OK)
 	{
@@ -213,7 +213,7 @@ DatabaseConnection::check_ok()
 }
 
 void
-DatabaseConnection::execute_sql(string const& str)
+SQLiteDBConn::execute_sql(string const& str)
 {
 	sqlite3_exec(m_connection, str.c_str(), 0, 0, 0);
 	check_ok();
@@ -222,31 +222,9 @@ DatabaseConnection::execute_sql(string const& str)
 
 
 
-vector<string>
-DatabaseConnection::primary_key(string const& table_name)
-{
-	static int const pk_info_field = 5;
-	static int const column_name_field = 1;
-	vector<string> ret;
-	SQLStatement statement
-	(	*this,
-		"pragma table_info(" + table_name + ")"
-	);
-	bool steps_remain = true;
-	// Assignment operator is deliberate here
-	while ((steps_remain = statement.step()))
-	{
-		if (statement.extract<int>(pk_info_field) == 1)
-		{
-			ret.push_back(statement.extract<string>(column_name_field));
-		}
-	}
-	assert (!steps_remain);
-	return ret;
-}
 
 void
-DatabaseConnection::setup_boolean_table()
+SQLiteDBConn::setup_boolean_table()
 {
 	execute_sql("create table booleans(representation integer primary key)");
 	execute_sql("insert into booleans(representation) values(0)");
@@ -254,7 +232,7 @@ DatabaseConnection::setup_boolean_table()
 }
 
 void
-DatabaseConnection::begin_transaction()
+SQLiteDBConn::begin_transaction()
 {
 	if (m_transaction_nesting_level == 0)
 	{
@@ -265,7 +243,7 @@ DatabaseConnection::begin_transaction()
 }
 
 void
-DatabaseConnection::end_transaction()
+SQLiteDBConn::end_transaction()
 {
 	switch (m_transaction_nesting_level)
 	{

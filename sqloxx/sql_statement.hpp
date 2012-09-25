@@ -36,7 +36,7 @@ namespace sqloxx
 
 
 // Forward declaration
-class DatabaseConnection;
+class SQLiteDBConn;
 
 /**
  * Wrapper class for sqlite_stmt*.
@@ -61,7 +61,7 @@ public:
 	 * the database connection is valid, but the statement could not
 	 * be properly prepared by SQLite.
 	 */
-	SQLStatement(DatabaseConnection& dbconn, std::string const& str);
+	SQLStatement(SQLiteDBConn& dbconn, std::string const& str);
 
 	~SQLStatement();
 
@@ -71,7 +71,6 @@ public:
 	 * These throw \c SQLiteException, or an exception derived therefrom,
 	 * if SQLite could not properly bind the statement.
 	 */
-	void bind(std::string const& parameter_name, double value);
 	void bind(std::string const& parameter_name, int value);
 	void bind(std::string const& parameter_name, boost::int64_t value);
 	void bind(std::string const& parameter_name, std::string const& str);
@@ -133,7 +132,7 @@ public:
 
 private:
 	sqlite3_stmt* m_statement;
-	DatabaseConnection& m_database_connection;
+	SQLiteDBConn& m_sqlite_dbconn;
 
 	/**
 	 * @parameter_name is the name of a column in the result set.
