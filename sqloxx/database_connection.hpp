@@ -18,12 +18,30 @@ class SQLStatement;
 class SQLStatementManager;
 
 
+/**
+ * @todo HIGH PRIORITY The new architecture, for enabling the caching and
+ * reuse of SQLiteStatement instances, needs some house-keeping. In
+ * particular, there are classes (like SQLiteDBConn, SQLStatement and
+ * SQLStatementManager) that are not intended for use outside of sqloxx.
+ * Access to these should be restricted accordingly (though perhaps
+ * there is a case for making SQLStatement potentially publically
+ * accessible, as there may be cases where clients don't need the
+ * overhead associated with caching). Furthermore, the public-facing
+ * API of sqloxx needs to be thoroughly documented; while the
+ * inner workings need to be documented too, but with an eye
+ * to clarifying the internals workings of sqloxx, rather than
+ * providing an interface to clients.
+ */
 class DatabaseConnection:
 	private boost::noncopyable
 {
 	friend class SharedSQLStatement;
 public:
 	
+	/**
+	 * @todo Provide a way for cache capacity to be set from
+	 * contructor.
+	 */
 	DatabaseConnection();
 
 	virtual ~DatabaseConnection();
