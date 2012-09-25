@@ -23,7 +23,7 @@ add_executable (main
 				journal/journal.cpp
 				journal/ordinary_journal.cpp
                 main.cpp
-				sqloxx/cached_sql_statement.cpp
+				sqloxx/shared_sql_statement.cpp
 				sqloxx/database_connection.cpp
 				sqloxx/sql_statement_manager.cpp
 				phatbooks_database_connection/phatbooks_database_connection.cpp

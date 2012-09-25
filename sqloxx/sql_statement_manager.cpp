@@ -34,7 +34,7 @@ SQLStatementManager::provide_sql_statement(string const& statement_text)
 	if (it != m_statement_cache.end())
 	{
 		it->second->reset();  // Ensure statement is ready for use.
-		JEWEL_DEBUG_LOG << "Returning cached SQLStatement." << endl;
+		JEWEL_DEBUG_LOG << "Returning shared SQLStatement." << endl;
 		return it->second;
 	}
 	assert (it == m_statement_cache.end());

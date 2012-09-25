@@ -15,9 +15,16 @@ class SQLStatement;
 /**
  * @todo Document, test, etc...
  *
- * @todo HIGH PRIORITY Change the SQLStatement class to actually
- * make use of this by enabling resets etc.. Change client code
- * in Phatbooks if required.
+ * @todo Make an instance of SQLStatementManager
+ * be a member of DatabaseConnection - or possibly
+ * of a wrapper around DatabaseConnection. We have
+ * to watch out for circular references here. Then
+ * the clients will only have to manage a single
+ * DatabaseConnection class, rather than having to
+ * separately manage the SQLStatementManager as well.
+ * Then SharedSQLStatement, just like SQLStatement,
+ * can have a constructor that accepts a reference
+ * to the DatabaseConnection class.
  */
 class SQLStatementManager
 {
