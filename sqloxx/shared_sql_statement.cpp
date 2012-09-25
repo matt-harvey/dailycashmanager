@@ -13,11 +13,11 @@ namespace sqloxx
 
 
 SharedSQLStatement::SharedSQLStatement
-(	SQLStatementManager& p_sql_statement_manager,
+(	DatabaseConnection& p_database_connection,
 	string const& p_statement_text
 ):
 	m_sql_statement
-	(	p_sql_statement_manager.provide_sql_statement(p_statement_text)
+	(	p_database_connection.provide_sql_statement(p_statement_text)
 	)
 {
 }

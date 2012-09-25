@@ -9,7 +9,7 @@
 namespace sqloxx
 {
 
-class SQLStatement;
+class DatabaseConnection;
 class SQLStatementManager;
 
 
@@ -33,7 +33,7 @@ class SharedSQLStatement
 public:
 	
 	SharedSQLStatement
-	(	SQLStatementManager& p_sql_statement_manager,
+	(	DatabaseConnection& p_database_connection,	
 		std::string const& p_statement_text
 	);
 

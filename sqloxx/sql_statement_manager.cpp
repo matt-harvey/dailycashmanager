@@ -17,10 +17,10 @@ namespace sqloxx
 
 
 SQLStatementManager::SQLStatementManager
-(	shared_ptr<DatabaseConnection> p_database_connection,
+(	shared_ptr<SQLiteDBConn> p_sqlite_dbconn,
 	StatementCache::size_type p_capacity
 ):
-	m_database_connection(p_database_connection),
+	m_sqlite_dbconn(p_sqlite_dbconn),
 	m_capacity(p_capacity)
 {
 }
@@ -39,7 +39,7 @@ SQLStatementManager::provide_sql_statement(string const& statement_text)
 	}
 	assert (it == m_statement_cache.end());
 	shared_ptr<SQLStatement> statement
-	(	new SQLStatement(*m_database_connection, statement_text)
+	(	new SQLStatement(*m_sqlite_dbconn, statement_text)
 	);
 	if (m_statement_cache.size() != m_capacity)
 	{

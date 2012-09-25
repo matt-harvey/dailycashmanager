@@ -9,7 +9,7 @@
 namespace sqloxx
 {
 
-class DatabaseConnection;
+class SQLiteDBConn;
 class SQLStatement;
 
 /**
@@ -37,7 +37,7 @@ public:
 
 	explicit
 	SQLStatementManager
-	(	boost::shared_ptr<DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<SQLiteDBConn> p_sqlite_dbconn,
 		StatementCache::size_type p_capacity
 	);
 	
@@ -59,7 +59,7 @@ public:
 
 private:
 	
-	boost::shared_ptr<DatabaseConnection> m_database_connection;
+	boost::shared_ptr<SQLiteDBConn> m_sqlite_dbconn;
 	StatementCache m_statement_cache;
 	StatementCache::size_type m_capacity;
 	

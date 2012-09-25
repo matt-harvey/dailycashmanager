@@ -1,9 +1,9 @@
-#ifndef GUARD_database_connection_hpp
-#define GUARD_database_connection_hpp
+#ifndef GUARD_sqlite_dbconn_hpp
+#define GUARD_sqlite_dbconn_hpp
 
-/** \file database_connection.hpp
+/** \file sqlite_dbconn.hpp
  *
- * \brief Header file pertaining to DatabaseConnection class.
+ * \brief Header file pertaining to SQLiteDBConn class.
  *
  * \author Matthew Harvey
  * \date 04 July 2012.
@@ -12,10 +12,10 @@
  *
  * @todo Move sqloxx code to a separate library.
  * 
- * @todo Make the DatabaseConnection class provide for a means
+ * @todo Make the SQLiteDBConn class provide for a means
  * to check whether the particular file being connected to is
  * the right kind of file for the application that is using
- * the DatabaseConnection class. At the moment it just checks whether
+ * the SQLiteDBConn class. At the moment it just checks whether
  * the file exists. This could involve overriding some method or other.
  *
  * @todo There should probably be a close method. Even though the
@@ -27,7 +27,7 @@
  * database connections and shut down SQLite3. Current this is done
  * in the destructor, but this can't throw.
  *
- * @todo DatabaseConnection::is_valid should probably do more than
+ * @todo SQLiteDBConn::is_valid should probably do more than
  * just check whether m_connection exists. It should probably also
  * at least check SQLite error status.
  *
@@ -44,6 +44,8 @@
 #include <boost/cstdint.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <cassert>
 #include <limits>
 #include <string>
@@ -74,10 +76,12 @@ namespace sqloxx
  * This class can be derived from and certain member functions
  * overridden to create application-specific database code.
  */
-class DatabaseConnection:
+class SQLiteDBConn:
 	private boost::noncopyable
 {
 	friend class SQLStatement;
+	friend class SharedSQLStatement;
+
 public:
 
 
@@ -88,7 +92,7 @@ public:
 	 * @throws SQLiteInitializationError if initialization fails
 	 * for any reason.
 	 */
-	DatabaseConnection();
+	SQLiteDBConn();
 
 	/**
 	 * Closes any open SQLite3 database connection, and also
@@ -98,10 +102,10 @@ public:
 	 * the application is aborted with a diagnostic message written to
 	 * std::clog.
 	 */
-	virtual ~DatabaseConnection();
+	virtual ~SQLiteDBConn();
 
 	/**
-	 * Returns \c true iff the DatabaseConnection is connected to a 
+	 * Returns \c true iff the SQLiteDBConn is connected to a 
 	 * database. Does not throw.
 	 */
 	virtual bool is_valid() const;
@@ -236,7 +240,7 @@ public:
 	 *
 	 * @todo To speed execution, assuming the return value for a given
 	 * \c table_name never changes, the return values could be cached in a
-	 * map< string, vector<string> > inside the DatabaseConnection
+	 * map< string, vector<string> > inside the SQLiteDBConn
 	 * instance.
 	 *
 	 * @returns a vector of the names of all the columns making up the
@@ -283,9 +287,25 @@ public:
 	 */
 	void end_transaction();
 
-	
+
 private:
 
+	/**
+	 * @returns a shared pointer to a SQLStatement. This will	
+	 * either point to an existing SQLStatement that is cached within
+	 * the SQLiteDBConn (if a SQLStatement with \c
+	 * statement_text has already been created on this SQLiteDBConn), or
+	 * will be a pointer to a newly created and new cached SQLStatement (if a 
+	 * SQLStatement with \c statement_text has not yet been created on this
+	 * SQLiteDBConn).
+	 *
+	 * This function is only intended to be called by the
+	 * constructor of SharedSQLStatement. It should not be called elsewhere.
+	boost::shared_ptr<SQLStatement> provide_sql_statement
+	(	std::string const& statement_text
+	);
+	 */
+	
 	/**
 	 * A connection to a SQLite3 database file.
 	 *
@@ -302,7 +322,9 @@ private:
 	int m_transaction_nesting_level;
 
 
+
 };
+
 
 
 
@@ -313,7 +335,7 @@ private:
 template<typename KeyType>
 inline
 KeyType
-DatabaseConnection::next_auto_key(std::string const& table_name)
+SQLiteDBConn::next_auto_key(std::string const& table_name)
 {
 	std::vector<std::string> const pk = primary_key(table_name);
 	switch (pk.size())
@@ -385,4 +407,4 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 
 }  // namespace sqloxx
 
-#endif  // GUARD_database_connection_hpp
+#endif  // GUARD_sqlite_dbconn_hpp
