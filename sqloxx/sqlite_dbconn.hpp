@@ -68,6 +68,7 @@ namespace sqloxx
 {
 
 
+
 /**
  * Class to manage connection to SQLite3 database and execute
  * SQL on that database. 

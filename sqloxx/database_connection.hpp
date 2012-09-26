@@ -169,6 +169,8 @@ private:
 	boost::shared_ptr<SQLiteDBConn> m_sqlite_dbconn;
 
 	boost::shared_ptr<SQLStatementManager> m_sql_statement_manager;
+
+
 	
 };
 

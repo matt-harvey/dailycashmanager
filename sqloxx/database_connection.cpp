@@ -1,5 +1,6 @@
 #include "database_connection.hpp"
 #include "sqlite_dbconn.hpp"
+#include "sql_statement.hpp"
 #include "sql_statement_manager.hpp"
 #include <string>
 #include <vector>

@@ -44,14 +44,6 @@ public:
 	
 	/**
 	 * @returns a smart pointer to a SQLStatement allocated on the free store.
-	 *
-	 * @todo This should return some kind of handler than manages the
-	 * resetting of the statement. This avoids the current situation, in which
-	 * the client must remember to reset the statement when they are done with
-	 * it, or else the statement hangs around in a non-reset state,
-	 * potentially hogging resources (which probably doesn't matter, but
-	 * is unnecessary and avoidable, and recommended against by Kreibich
-	 * in "Using SQLite".
 	 */
 	boost::shared_ptr<SQLStatement> provide_sql_statement
 	(	std::string const& statement_text

@@ -16,7 +16,6 @@
 
 #include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
-#include "sql_statement.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/filesystem.hpp>
 #include <sqlite3.h>
@@ -42,7 +41,8 @@ SQLiteDBConn::SQLiteDBConn():
 	m_connection(0),
 	m_transaction_nesting_level(0)
 {
-	
+
+
 	// Initialize SQLite3
 	if (sqlite3_initialize() != SQLITE_OK)
 	{
@@ -92,6 +92,7 @@ SQLiteDBConn::open(boost::filesystem::path const& filepath)
 // Remember - don't call virtual functions from destructors!
 SQLiteDBConn::~SQLiteDBConn()
 {
+
 	if (m_connection)
 	{
 		if (sqlite3_close(m_connection) != SQLITE_OK)
