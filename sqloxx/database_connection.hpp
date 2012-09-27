@@ -93,10 +93,12 @@ public:
 	 * for an ordinary insertion into the table (assuming the default
 	 * behaviour of SQLite in this regard has not been altered in some way).
 	 * This function does NOT check whether the primary
-	 * key is in fact autoincrementing. However, it DOES check whether the
-	 * table has a single-column primary key, and will throw an exception if
-	 * it doesn't. In addition, it will throw an exception if the next highest
-	 * key would exceed the maximum value for KeyType.
+	 * key is in fact autoincrementing, or even whether there is a primary
+	 * key. In the event the next primary key can't be found, a
+	 * value of \c KeyType(1) is simply returned. In other words, it is
+	 * the caller's responsibility to make sure that table_name does in
+	 * fact correspond to a table with an autoincrementing integer
+	 * primary key.
 	 *
 	 * Assumes keys start from 1.
 	 *
@@ -112,7 +114,7 @@ public:
 	 * This function should not be used if \c table_name is an untrusted
 	 * string.
 	 *
-	 * @todo Make this more efficient.
+	 * Note if 
 	 *
 	 * @param table_name The name of the table. 
 	 *
@@ -121,25 +123,12 @@ public:
 	 * these are ignored. The returned value is always one greater than the
 	 * currently greatest value for the key (but see exceptions).
 	 * 
-	 * @todo LOW PRIORITY Find a way either to make the body of this function
-	 * template briefer, or to get it out of the header file.
-	 *
-	 * @throws sqloxx::NoPrimaryKeyException if the table does not have a
-	 * primary key.
-	 *
-	 * @throws sqloxx::CompoundPrimaryKeyException if the table has a
-	 * compound primary
-	 * key.
-	 *
 	 * @throws sqloxx::TableSizeException if the greatest primary key value 
 	 * already in the table is the maximum value for \c KeyType, so that
 	 * another row could not be inserted without overflow.
 	 *
-	 * @throws sqloxx::DatabaseException if there is some other error finding
-	 * the next primary key value.
-	 *
-	 * @todo Speed this up by having it consult the sqlite_sequence table
-	 * where possible, rather than taking the maximum.
+	 * @throws sqloxx::DatabaseException may be thrown if there is some other
+	 * error finding the next primary key value.
 	 */
 	template <typename KeyType>
 	KeyType next_auto_key(std::string const& table_name);	
@@ -203,63 +192,17 @@ inline
 KeyType
 DatabaseConnection::next_auto_key(std::string const& table_name)
 {
-	std::vector<std::string> const pk = primary_key(table_name);
-	switch (pk.size())
-	{
-	case 0:
-		throw NoPrimaryKeyException("Table has no primary key.");
-		assert (false);  // Never executes
-	case 1:
-		break;
-	default:
-		assert (pk.size() > 1);
-		throw CompoundPrimaryKeyException
-		(	"Table has a multi-column primary key."
-		);
-		assert (false);  // Never executes;
-	}
-	assert (pk.size() == 1);
-	std::string const key_name = pk[0];
-	
-	// Note we can't use binding to put key_name into statement here as this
-	// will result in binding a string into the max function when we need
-	// an integer. At least we know that if table_name is safe, so is
-	// key_name (since it must be a valid column name).
-	
-	// First count rows to see if there are any
-	SharedSQLStatement row_counter
+	SharedSQLStatement statement
 	(	*this,
-		"select count(" + key_name + ") from " + table_name
+		"select seq from sqlite_sequence where name = :p"
 	);
-	bool check = row_counter.step();
-	assert (check);
-	KeyType const row_count = row_counter.extract<KeyType>(0);
-	check = row_counter.step();
-	assert (!check);
-	if (row_count == 0)
-	{
-		return 1;
-	}
-
-	assert (row_count > 0);
-	
-	// Then find the max - we do this separately as there might
-	// be gaps in the numbering.
-	SharedSQLStatement max_finder
-	(	*this, 
-		"select max(" + key_name + ") from " + table_name
-	);
-	check = max_finder.step();
+	statement.bind(":p", table_name);
+	bool check = statement.step();
 	if (!check)
 	{
-		throw DatabaseException("Error finding max of primary key.");
+		return 1;	
 	}
-	assert (check);
-	KeyType const max_key = max_finder.extract<KeyType>(0);		
-	check = max_finder.step();
-	// By the nature of the SQL max function, there must have been no more
-	// than one result row.
-	assert (!check);
+	KeyType const max_key = statement.extract<KeyType>(0);
 	if (max_key == std::numeric_limits<KeyType>::max())
 	{
 		throw TableSizeException
@@ -267,7 +210,6 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 		);
 	}
 	return max_key + 1;
-	
 }
 
 inline

@@ -71,6 +71,12 @@ JEWEL_DERIVED_EXCEPTION(NoPrimaryKeyException, DatabaseException);
 
 /**
  * Exception to be thrown when a function expects a database table to have
+ * an autoincrementing primary key, but it is found not to have one.
+ */
+JEWEL_DERIVED_EXCEPTION(NoAutoKeyException, DatabaseException);
+
+/**
+ * Exception to be thrown when a function expects a database table to have
  * a single-column primary key, but instead finds it has a compound primary
  * key.
  */
