@@ -1,10 +1,14 @@
 #include "database_connection.hpp"
 #include "sqlite_dbconn.hpp"
+#include "sqloxx_exceptions.hpp"
 #include "sql_statement.hpp"
 #include "sql_statement_manager.hpp"
+#include <iostream>
 #include <string>
 #include <vector>
 
+using std::clog;
+using std::endl;
 using std::string;
 using std::vector;
 
@@ -22,13 +26,20 @@ DatabaseConnection::DatabaseConnection():
 	m_sqlite_dbconn(new SQLiteDBConn),
 	m_sql_statement_manager
 	(	new SQLStatementManager(m_sqlite_dbconn, cache_capacity)
-	)
+	),
+	m_transaction_nesting_level(0)
 {
 }
 
 
 DatabaseConnection::~DatabaseConnection()
 {
+	if (m_transaction_nesting_level > 0)
+	{
+		clog << "Transaction(s) remained incomplete on closure of "
+		     << "DatabaseConnection."
+			 << endl;
+	}
 }
 
 
@@ -74,7 +85,16 @@ DatabaseConnection::setup_boolean_table()
 void
 DatabaseConnection::begin_transaction()
 {
-	m_sqlite_dbconn->begin_transaction();
+	if (!m_transaction_nesting_level)
+	{
+		assert (m_transaction_nesting_level == 0);
+		SharedSQLStatement statement
+		(	*this,
+			"begin"
+		);
+		statement.step();
+	}
+	++m_transaction_nesting_level;
 	return;
 }
 
@@ -82,7 +102,23 @@ DatabaseConnection::begin_transaction()
 void
 DatabaseConnection::end_transaction()
 {
-	m_sqlite_dbconn->end_transaction();
+	switch (m_transaction_nesting_level)
+	{
+	case 1:
+		unchecked_end_transaction();
+		break;
+	case 0:
+		throw TransactionNestingException
+		(	"Number of transactions ended on this database connection "
+			"exceeds the number of transactions begun."
+		);
+		assert (false);  // Execution never reaches here
+	default:
+		;
+		// Do nothing
+	}
+	assert (m_transaction_nesting_level > 0);
+	--m_transaction_nesting_level;
 	return;
 }
 

@@ -59,10 +59,7 @@ public:
 
 	void setup_boolean_table();
 
-	void begin_transaction();
-
-	void end_transaction();
-	
+		
 	/**
 	 * To find primary key of a table.
 	 *
@@ -147,6 +144,27 @@ public:
 	template <typename KeyType>
 	KeyType next_auto_key(std::string const& table_name);	
 
+	/**
+	 * Begins a transaction. Transactions may be nested. Only the
+	 * outermost call to begin_transaction causes the "begin transaction"
+	 * SQL command to be executed.
+	 *
+	 * Note this may fail silently in the unlikely event that the number of
+	 * nested transactions exceeds MAX_INT.
+	 */
+	void begin_transaction();
+
+	/**
+	 * Ends a transaction. Transactions may be nested. Only the outermost
+	 * call to end_transaction causes the "end transaction" SQL command
+	 * to be executed.
+	 *
+	 * @throws TransactionNestingException in the event that there are
+	 * more calls to end_transaction than there have been to
+	 * begin_transaction.
+	 */
+	void end_transaction();
+
 
 private:
 
@@ -170,7 +188,9 @@ private:
 
 	boost::shared_ptr<SQLStatementManager> m_sql_statement_manager;
 
+	void unchecked_end_transaction();
 
+	int m_transaction_nesting_level;
 	
 };
 
@@ -248,6 +268,18 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 	}
 	return max_key + 1;
 	
+}
+
+inline
+void
+DatabaseConnection::unchecked_end_transaction()
+{
+	SharedSQLStatement statement
+	(	*this,
+		"end"
+	);
+	statement.step();
+	return;
 }
 
 

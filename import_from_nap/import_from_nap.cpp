@@ -32,6 +32,9 @@ using std::set;
 using std::string;
 using std::vector;
 
+// TEMP for speed testing
+#include <boost/date_time/posix_time/posix_time.hpp>
+// END TEMP
 
 namespace phatbooks
 {
@@ -68,6 +71,12 @@ void import_from_nap
 	boost::filesystem::path const& directory
 )
 {
+	
+	boost::posix_time::ptime const start_time =
+		boost::posix_time::second_clock::local_time();
+	cout << "Import commences at: " << start_time << endl;
+
+
 	JEWEL_DEBUG_LOG << "\tChecking filepath is a directory..." << endl;
 	if
 	(	!boost::filesystem::is_directory(boost::filesystem::status(directory))
@@ -510,7 +519,14 @@ void import_from_nap
 			cout << problematic_ordinary_journal_map[*it] << endl;
 		}
 	}
-	
+		
+	boost::posix_time::ptime const end_time =
+		boost::posix_time::second_clock::local_time();
+	cout << "Import ends at: " << end_time << endl;
+	cout << "Import duration in seconds: "
+	     << (end_time - start_time).total_seconds()
+		 << endl;
+
 	return;
 }
 			

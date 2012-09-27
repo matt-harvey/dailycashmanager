@@ -28,8 +28,8 @@
 
 using boost::int64_t;
 using std::clog;
-using std::runtime_error;
 using std::endl;
+using std::runtime_error;
 using std::string;
 using std::vector;
 
@@ -38,8 +38,7 @@ namespace sqloxx
 
 
 SQLiteDBConn::SQLiteDBConn():
-	m_connection(0),
-	m_transaction_nesting_level(0)
+	m_connection(0)
 {
 
 
@@ -102,12 +101,6 @@ SQLiteDBConn::~SQLiteDBConn()
 			             "closed in SQLiteDBConn destructor. " << endl;
 			std::abort();
 		}
-	}
-	if (m_transaction_nesting_level > 0)
-	{
-		clog << "Transaction(s) remained incomplete on closure of "
-		     << "SQLiteDBConn."
-			 << endl;
 	}
 	if (sqlite3_shutdown() != SQLITE_OK)
 	{
@@ -231,40 +224,6 @@ SQLiteDBConn::setup_boolean_table()
 	execute_sql("insert into booleans(representation) values(0)");
 	execute_sql("insert into booleans(representation) values(1)");
 }
-
-void
-SQLiteDBConn::begin_transaction()
-{
-	if (m_transaction_nesting_level == 0)
-	{
-		execute_sql("begin transaction");
-	}
-	++m_transaction_nesting_level;
-	return;
-}
-
-void
-SQLiteDBConn::end_transaction()
-{
-	switch (m_transaction_nesting_level)
-	{
-	case 1:
-		execute_sql("end transaction");
-		break;
-	case 0:
-		throw TransactionNestingException
-		(	"Number of transactions ended on this database connection "
-			"exceeds the number of transactions begun."
-		);
-		assert (false);  // execution never reaches here
-	default:
-		;  // Do nothing
-	}
-	assert (m_transaction_nesting_level > 0);
-	--m_transaction_nesting_level;
-	return;
-}
-
 
 
 }  // namespace sqloxx
