@@ -261,6 +261,8 @@ public:
 	(	std::string const& statement_text
 	);
 
+private:
+
 	void unchecked_end_transaction();
 
 	/**
