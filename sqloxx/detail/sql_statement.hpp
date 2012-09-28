@@ -18,7 +18,7 @@
  */
 
 
-#include "sqloxx_exceptions.hpp"
+#include "sqloxx/sqloxx_exceptions.hpp"
 #include <jewel/checked_arithmetic.hpp>
 #include <sqlite3.h>
 #include <boost/cstdint.hpp>
@@ -33,13 +33,16 @@
 
 namespace sqloxx
 {
-
+namespace detail
+{
 
 // Forward declaration
 class SQLiteDBConn;
 
 /**
- * Wrapper class for sqlite_stmt*.
+ * Wrapper class for sqlite_stmt*. This class is not intended to be
+ * used except internally by the Sqloxx library. SQLStatement instances
+ * are themselves encapsulated by SharedSQLStatement instances.
  *
  * @todo The constructor to create a SQLStatement should reject strings
  * containing semicolons, since compound statements are not handled by
@@ -61,7 +64,7 @@ public:
 	 * the database connection is valid, but the statement could not
 	 * be properly prepared by SQLite.
 	 */
-	SQLStatement(SQLiteDBConn& dbconn, std::string const& str);
+	SQLStatement(SQLiteDBConn& p_sqlite_dbconn, std::string const& str);
 
 	~SQLStatement();
 
@@ -221,6 +224,7 @@ SQLStatement::extract<std::string>(int index)
 
 
 
+}  // namespace detail
 }  // namespace sqloxx
 
 #endif  // GUARD_sql_statement.hpp

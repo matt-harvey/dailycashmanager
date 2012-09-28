@@ -1,6 +1,7 @@
 #include "sql_statement.hpp"
 #include "sqlite_dbconn.hpp"
 
+#include <sqlite3.h>
 #include <string>
 
 using std::string;
@@ -8,17 +9,19 @@ using std::string;
 
 namespace sqloxx
 {
+namespace detail
+{
 
 
 
 SQLStatement::SQLStatement
-(	SQLiteDBConn& dbconn,
+(	SQLiteDBConn& p_sqlite_dbconn,
 	string const& str
 ):
 	m_statement(0),
-	m_sqlite_dbconn(dbconn)
+	m_sqlite_dbconn(p_sqlite_dbconn)
 {
-	if (!dbconn.is_valid())
+	if (!p_sqlite_dbconn.is_valid())
 	{
 		throw InvalidConnection
 		(	"Attempt to initialize SQLStatement with invalid "
@@ -194,4 +197,5 @@ const
 
 
 
+}  // namespace detail
 }  // namespace sqloxx

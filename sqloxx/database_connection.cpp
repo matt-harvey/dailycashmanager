@@ -1,12 +1,13 @@
 #include "database_connection.hpp"
-#include "sqlite_dbconn.hpp"
+#include "detail/sqlite_dbconn.hpp"
 #include "sqloxx_exceptions.hpp"
-#include "sql_statement.hpp"
+#include "detail/sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
+
 
 using boost::shared_ptr;
 using boost::unordered_map;
@@ -18,12 +19,10 @@ using std::vector;
 namespace sqloxx
 {
 
-
-
 DatabaseConnection::DatabaseConnection
 (	StatementCache::size_type p_cache_capacity
 ):
-	m_sqlite_dbconn(new SQLiteDBConn),
+	m_sqlite_dbconn(new detail::SQLiteDBConn),
 	m_transaction_nesting_level(0),
 	m_cache_capacity(p_cache_capacity)
 {
@@ -41,41 +40,12 @@ DatabaseConnection::~DatabaseConnection()
 }
 
 
-bool
-DatabaseConnection::is_valid() const
-{
-	return m_sqlite_dbconn->is_valid();
-}
-
-
-void
-DatabaseConnection::open(boost::filesystem::path const& filepath)
-{
-	m_sqlite_dbconn->open(filepath);
-	return;
-}
-
-
-void
-DatabaseConnection::execute_sql(string const& str)
-{
-	m_sqlite_dbconn->execute_sql(str);
-	return;
-}
-
-
-void
-DatabaseConnection::check_ok()
-{
-	m_sqlite_dbconn->check_ok();
-	return;
-}
-
-
 void
 DatabaseConnection::setup_boolean_table()
 {
-	m_sqlite_dbconn->setup_boolean_table();
+	execute_sql("create table booleans(representation integer primary key)");
+	execute_sql("insert into booleans(representation) values(0)");
+	execute_sql("insert into booleans(representation) values(1)");
 	return;
 }
 
@@ -146,7 +116,7 @@ DatabaseConnection::primary_key(string const& table_name)
 }
 
 
-shared_ptr<SQLStatement>
+shared_ptr<detail::SQLStatement>
 DatabaseConnection::provide_sql_statement(string const& statement_text)
 {
 	StatementCache::const_iterator const it =
@@ -156,8 +126,8 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 		return it->second;
 	}
 	assert (it == m_statement_cache.end());
-	shared_ptr<SQLStatement> statement
-	(	new SQLStatement(*m_sqlite_dbconn, statement_text)
+	shared_ptr<detail::SQLStatement> statement
+	(	new detail::SQLStatement(*m_sqlite_dbconn, statement_text)
 	);
 	if (m_statement_cache.size() != m_cache_capacity)
 	{

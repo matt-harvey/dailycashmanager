@@ -25,11 +25,11 @@ add_executable (main
                 main.cpp
 				sqloxx/shared_sql_statement.cpp
 				sqloxx/database_connection.cpp
-				sqloxx/sqlite_dbconn.cpp
+				sqloxx/detail/sqlite_dbconn.cpp
+				sqloxx/detail/sql_statement.cpp
 				phatbooks_database_connection/phatbooks_database_connection.cpp
 				phatbooks_text_session/phatbooks_text_session.cpp
-				repeater/repeater.cpp
-				sqloxx/sql_statement.cpp)
+				repeater/repeater.cpp)
 target_link_libraries (main
 					   boost_date_time
 					   boost_filesystem

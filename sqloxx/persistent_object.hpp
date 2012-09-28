@@ -2,7 +2,6 @@
 #define GUARD_persistent_object_hpp
 
 #include "database_connection.hpp"
-#include "sqloxx/sql_statement.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>

@@ -14,8 +14,8 @@
 
 
 
-#include "database_connection.hpp"
-#include "sqloxx_exceptions.hpp"
+#include "sqlite_dbconn.hpp"
+#include "sqloxx/sqloxx_exceptions.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/filesystem.hpp>
 #include <sqlite3.h>
@@ -35,13 +35,13 @@ using std::vector;
 
 namespace sqloxx
 {
+namespace detail
+{
 
 
 SQLiteDBConn::SQLiteDBConn():
 	m_connection(0)
 {
-
-
 	// Initialize SQLite3
 	if (sqlite3_initialize() != SQLITE_OK)
 	{
@@ -216,14 +216,5 @@ SQLiteDBConn::execute_sql(string const& str)
 
 
 
-
-void
-SQLiteDBConn::setup_boolean_table()
-{
-	execute_sql("create table booleans(representation integer primary key)");
-	execute_sql("insert into booleans(representation) values(0)");
-	execute_sql("insert into booleans(representation) values(1)");
-}
-
-
+}  // namespace detail
 }  // namespace sqloxx
