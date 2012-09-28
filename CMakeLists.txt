@@ -26,7 +26,6 @@ add_executable (main
 				sqloxx/shared_sql_statement.cpp
 				sqloxx/database_connection.cpp
 				sqloxx/sqlite_dbconn.cpp
-				sqloxx/sql_statement_manager.cpp
 				phatbooks_database_connection/phatbooks_database_connection.cpp
 				phatbooks_text_session/phatbooks_text_session.cpp
 				repeater/repeater.cpp

@@ -1,7 +1,6 @@
 #include "shared_sql_statement.hpp"
 #include "database_connection.hpp"
 #include "sql_statement.hpp"
-#include "sql_statement_manager.hpp"
 #include <boost/shared_ptr.hpp>
 #include <string>
 

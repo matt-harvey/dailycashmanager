@@ -2,11 +2,14 @@
 #include "sqlite_dbconn.hpp"
 #include "sqloxx_exceptions.hpp"
 #include "sql_statement.hpp"
-#include "sql_statement_manager.hpp"
+#include <boost/shared_ptr.hpp>
+#include <boost/unordered_map.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
 
+using boost::shared_ptr;
+using boost::unordered_map;
 using std::clog;
 using std::endl;
 using std::string;
@@ -16,18 +19,13 @@ namespace sqloxx
 {
 
 
-namespace
-{
-	int const cache_capacity = 200;
-}
 
-
-DatabaseConnection::DatabaseConnection():
+DatabaseConnection::DatabaseConnection
+(	StatementCache::size_type p_cache_capacity
+):
 	m_sqlite_dbconn(new SQLiteDBConn),
-	m_sql_statement_manager
-	(	new SQLStatementManager(m_sqlite_dbconn, cache_capacity)
-	),
-	m_transaction_nesting_level(0)
+	m_transaction_nesting_level(0),
+	m_cache_capacity(p_cache_capacity)
 {
 }
 
@@ -123,14 +121,6 @@ DatabaseConnection::end_transaction()
 }
 
 
-boost::shared_ptr<SQLStatement>
-DatabaseConnection::provide_sql_statement(string const& statement_text)
-{
-	return m_sql_statement_manager->provide_sql_statement
-	(	statement_text
-	);
-}
-
 
 vector<string>
 DatabaseConnection::primary_key(string const& table_name)
@@ -155,5 +145,31 @@ DatabaseConnection::primary_key(string const& table_name)
 	return ret;
 }
 
+
+shared_ptr<SQLStatement>
+DatabaseConnection::provide_sql_statement(string const& statement_text)
+{
+	StatementCache::const_iterator const it =
+		m_statement_cache.find(statement_text);
+	if (it != m_statement_cache.end())
+	{
+		return it->second;
+	}
+	assert (it == m_statement_cache.end());
+	shared_ptr<SQLStatement> statement
+	(	new SQLStatement(*m_sqlite_dbconn, statement_text)
+	);
+	if (m_statement_cache.size() != m_cache_capacity)
+	{
+		assert (m_statement_cache.size() < m_cache_capacity);
+		m_statement_cache[statement_text] = statement;
+	}
+	else
+	{
+		// Cache has reached capacity and caching has been
+		// discontinued.
+	}
+	return statement;
+}
 
 }  // namespace sqloxx

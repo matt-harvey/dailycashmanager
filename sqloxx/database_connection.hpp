@@ -6,6 +6,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/unordered_map.hpp>
 #include <string>
 #include <vector>
 #include "shared_sql_statement.hpp"
@@ -38,14 +39,19 @@ class SQLStatementManager;
 class DatabaseConnection:
 	private boost::noncopyable
 {
-	friend class SharedSQLStatement;
 public:
+
+	typedef
+		boost::unordered_map< std::string, boost::shared_ptr<SQLStatement> >
+		StatementCache;
 	
 	/**
-	 * @todo Provide a way for cache capacity to be set from
-	 * contructor.
+	 * @param p_cache_capacity indicates the number of SQLStatements to
+	 * be stored in a cache for reuse (via the class SharedSQLStatement)
+	 * by the DatabaseConnection instance.
 	 */
-	DatabaseConnection();
+	explicit
+	DatabaseConnection(StatementCache::size_type p_cache_capacity = 300);
 
 	virtual ~DatabaseConnection();
 
@@ -154,9 +160,6 @@ public:
 	 */
 	void end_transaction();
 
-
-private:
-
 	/**
 	 * @returns a shared pointer to a SQLStatement. This will	
 	 * either point to an existing SQLStatement that is cached within
@@ -173,14 +176,13 @@ private:
 	(	std::string const& statement_text
 	);
 
-	boost::shared_ptr<SQLiteDBConn> m_sqlite_dbconn;
-
-	boost::shared_ptr<SQLStatementManager> m_sql_statement_manager;
-
 	void unchecked_end_transaction();
 
+	boost::shared_ptr<SQLiteDBConn> m_sqlite_dbconn;
+	boost::shared_ptr<SQLStatementManager> m_sql_statement_manager;
 	int m_transaction_nesting_level;
-	
+	StatementCache m_statement_cache;
+	StatementCache::size_type m_cache_capacity;
 };
 
 
