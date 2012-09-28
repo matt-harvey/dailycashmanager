@@ -4,6 +4,7 @@
 #include "journal.hpp"
 #include <boost/optional.hpp>
 #include <string>
+#include <vector>
 
 namespace phatbooks
 {
@@ -69,7 +70,7 @@ private:
 	/* WARNING Needs proper definition.
 	 * This method will need to be implemented carefully
 	 * (and so will do_save_existing_partial). If Entry and Repeater
-	 * instances have been removed from m_entry_list and m_repeater_list
+	 * instances have been removed from m_entries and m_repeaters
 	 * since the journal was last saved, this means the corresponding
 	 * entry and repeater rows will need to be deleted from the database.
 	 */
@@ -95,7 +96,7 @@ private:
 
 
 	boost::optional<std::string> m_name;
-	std::list< boost::shared_ptr<Repeater> > m_repeaters;
+	std::vector< boost::shared_ptr<Repeater> > m_repeaters;
 
 };
 

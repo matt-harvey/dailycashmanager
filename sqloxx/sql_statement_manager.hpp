@@ -3,7 +3,7 @@
 
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
-#include <map>
+#include <boost/unordered_map.hpp>
 #include <string>
 
 
@@ -33,7 +33,7 @@ class SQLStatementManager:
 public:
 
 	typedef
-		std::map< std::string, boost::shared_ptr<SQLStatement> >
+		boost::unordered_map< std::string, boost::shared_ptr<SQLStatement> >
 		StatementCache;
 
 	explicit

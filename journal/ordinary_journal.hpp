@@ -70,7 +70,7 @@ private:
 	/* WARNING Needs proper definition.
 	 * This method will need to be implemented carefully
 	 * (and so will do_save_existing_partial). If Entry
-	 * instances have been removed from m_entry_list
+	 * instances have been removed from m_entries
 	 * since the journal was last saved, this means the corresponding
 	 * entry rows will need to be deleted from the database.
 	 */

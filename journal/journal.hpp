@@ -18,8 +18,8 @@
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
-#include <list>
 #include <string>
+#include <vector>
 
 
 namespace phatbooks
@@ -134,9 +134,9 @@ public:
 	bool is_balanced();
 
 	/**
-	 * @returns a constant reference to the list of entries in the journal.
+	 * @returns a constant reference to the entries in the journal.
 	 */
-	std::list< boost::shared_ptr<Entry> > const& entries();
+	std::vector< boost::shared_ptr<Entry> > const& entries();
 
 protected:
 
@@ -163,7 +163,7 @@ protected:
 	/* WARNING Needs proper definition.
 	 * This method will need to be implemented carefully
 	 * (and so will do_save_existing_partial). If Entry and Repeater
-	 * instances have been removed from m_entry_list and m_repeater_list
+	 * instances have been removed from m_entries and m_repeaters
 	 * since the journal was last saved, this means the corresponding
 	 * entry and repeater rows will need to be deleted from the database.
 	 */
@@ -190,7 +190,7 @@ private:
 
 	boost::optional<bool> m_is_actual;
 	boost::optional<std::string> m_comment;
-	std::list< boost::shared_ptr<Entry> > m_entries;
+	std::vector< boost::shared_ptr<Entry> > m_entries;
 };
 
 

@@ -17,17 +17,17 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <set>
 #include <stdexcept>
 #include <vector>
+#include <boost/unordered_map.hpp>
 
 using boost::lexical_cast;
+using boost::unordered_map;
 using boost::shared_ptr;
 using jewel::Decimal;
 using std::cout;
 using std::endl;
-using std::map;
 using std::set;
 using std::string;
 using std::vector;
@@ -180,14 +180,14 @@ void import_from_nap
 	// (whether ordinary or draft) is actual (true) or budget (false).
 	// This will enable us to track which ones have mixed budget and
 	// actuals entries (which must be handled separately).
-	map< shared_ptr<Journal>, bool> actual_v_budget_determinations;
+	unordered_map< shared_ptr<Journal>, bool> actual_v_budget_determinations;
 
 	// Set to hold Journal instances which are problematic for Phatbooks
 	set< shared_ptr<Journal> > problematic_journals;
 	// Map from problematic ordinary journals to old ordinary journal ids
-	map< shared_ptr<Journal>, int > problematic_ordinary_journal_map;
+	unordered_map< shared_ptr<Journal>, int > problematic_ordinary_journal_map;
 	// Map from problematic draft journals to old draft journal names
-	map< shared_ptr<Journal>, string > problematic_draft_journal_map;
+	unordered_map< shared_ptr<Journal>, string > problematic_draft_journal_map;
 
 	// Read draft journals ************************************
 	
@@ -200,7 +200,7 @@ void import_from_nap
 	// We make a map to tell us the meaning of each string representation
 	// (in the csv) of a repeater interval type, in terms of the enumerations
 	// in Repeater::IntervalType.
-	map<string, Repeater::IntervalType> interval_type_map;
+	unordered_map<string, Repeater::IntervalType> interval_type_map;
 	interval_type_map["day"] = Repeater::days;
 	interval_type_map["week"] = Repeater::weeks;
 	interval_type_map["month"] = Repeater::months;
@@ -215,13 +215,13 @@ void import_from_nap
 	// We will store a map from the draft journal names in the csv, to
 	// DraftJournal instances in memory. Shortly this will enable us to
 	// associate draft entries with DraftJournal instances.
-	map< string, shared_ptr<DraftJournal> > draft_journal_map;
+	unordered_map< string, shared_ptr<DraftJournal> > draft_journal_map;
 
 	// We will store a map from the draft journal names in the csv, to
 	// Journal::Id values. This will enable us to remember the PROSPECTIVE id
 	// of each DraftJournal, so we can associate each draft entry with the
 	// correct journal based on its name.
-	map< string, Journal::Id> draft_journal_id_map;
+	unordered_map< string, Journal::Id> draft_journal_id_map;
 
 	// Now to actually read the draft journals.
 	Journal::Id draft_journal_id = 0;
@@ -370,13 +370,13 @@ void import_from_nap
 	// (which are the old ones that were assigned by N. A. P.) to
 	// OrdinaryJournal instances in memory. Shortly this will enable us to
 	// associate entries with OrdinaryJournal instances.
-	map< int, shared_ptr<OrdinaryJournal> > ordinary_journal_map;
+	unordered_map< int, shared_ptr<OrdinaryJournal> > ordinary_journal_map;
 
 	// We will store a map from the old ordinary journal ids stored in the
 	// csv, to Journal::Id values. This will enable us to remember the
 	// PROSPECTIVE id of each OrdinaryJournal, so we can associate each
 	// entry with the correct journal based on its N. A. P. journal id.
-	map< int, Journal::Id> ordinary_journal_id_map;
+	unordered_map< int, Journal::Id> ordinary_journal_id_map;
 	
 	// Now to actually read the (non-draft, i.e. "ordinary") journals
 	Journal::Id ordinary_journal_id = draft_journal_vec.size();

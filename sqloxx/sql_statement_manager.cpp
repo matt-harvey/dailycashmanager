@@ -2,13 +2,14 @@
 #include "sql_statement.hpp"
 #include <boost/circular_buffer.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/unordered_map.hpp>
 #include <jewel/debug_log.hpp>
 #include <cassert>
 #include <iostream>  // For debug logging
-#include <map>
 #include <string>
 
 using boost::shared_ptr;
+using boost::unordered_map;
 using std::endl;  // For debug logging
 using std::string;
 

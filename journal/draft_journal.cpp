@@ -6,13 +6,13 @@
 #include <boost/shared_ptr.hpp>
 #include <iostream>  // for debug logging
 #include <jewel/debug_log.hpp>
-#include <list>
 #include <string>
+#include <vector>
 
 using sqloxx::DatabaseConnection;
 using sqloxx::SharedSQLStatement;
 using boost::shared_ptr;
-using std::list;
+using std::vector;
 using std::string;
 
 // For debug logging:
@@ -39,7 +39,7 @@ DraftJournal::DraftJournal
 (	shared_ptr<sqloxx::DatabaseConnection> p_database_connection
 ):
 	Journal(p_database_connection),
-	m_repeaters(list< shared_ptr<Repeater> >())
+	m_repeaters(vector< shared_ptr<Repeater> >())
 {
 }
 
@@ -49,7 +49,7 @@ DraftJournal::DraftJournal
 	Id p_id
 ):
 	Journal(p_database_connection, p_id),
-	m_repeaters(list< shared_ptr<Repeater> >())
+	m_repeaters(vector< shared_ptr<Repeater> >())
 {
 }
 
@@ -148,8 +148,8 @@ DraftJournal::do_save_new_all()
 	statement.bind(":name", *m_name);
 	statement.quick_step();
 	
-	JEWEL_DEBUG_LOG << "Saving Repeater list..." << endl;
-	typedef list< shared_ptr<Repeater> >::iterator RepIter;
+	JEWEL_DEBUG_LOG << "Saving Repeaters..." << endl;
+	typedef vector< shared_ptr<Repeater> >::iterator RepIter;
 	for (RepIter it = m_repeaters.begin(); it != m_repeaters.end(); ++it)
 	{
 		(*it)->set_journal_id(j_id);

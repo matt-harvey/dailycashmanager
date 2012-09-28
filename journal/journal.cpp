@@ -23,8 +23,8 @@
 #include <jewel/decimal.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
-#include <list>
 #include <string>
+#include <vector>
 
 using sqloxx::DatabaseConnection;
 using sqloxx::PersistentObject;
@@ -32,8 +32,8 @@ using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::Decimal;
-using std::list;
 using std::string;
+using std::vector;
 
 namespace phatbooks
 {
@@ -55,7 +55,7 @@ Journal::setup_tables(DatabaseConnection& dbc)
 
 Journal::Journal(shared_ptr<DatabaseConnection> p_database_connection):
 	PersistentObject(p_database_connection),
-	m_entries(list< shared_ptr<Entry> >())
+	m_entries(vector< shared_ptr<Entry> >())
 {
 }
 
@@ -112,7 +112,7 @@ Journal::comment()
 }
 
 
-list< shared_ptr<Entry> > const&
+vector< shared_ptr<Entry> > const&
 Journal::entries()
 {
 	load();
@@ -170,7 +170,7 @@ Journal::do_save_new_all_journal_base()
 	statement.bind(":is_actual", static_cast<int>(*m_is_actual));
 	statement.bind(":comment", *m_comment);
 	statement.quick_step();
-	typedef list< shared_ptr<Entry> >::iterator EntryIter;
+	typedef vector< shared_ptr<Entry> >::iterator EntryIter;
 	for (EntryIter it = m_entries.begin(); it != m_entries.end(); ++it)
 	{
 		(*it)->set_journal_id(journal_id);

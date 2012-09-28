@@ -133,16 +133,18 @@ SQLStatement::bind
 bool
 SQLStatement::step()
 {
-	int const return_code = sqlite3_step(m_statement);
-	if (return_code == SQLITE_DONE)
+	switch (sqlite3_step(m_statement))
 	{
+	case SQLITE_DONE:
 		return false;
-	}
-	if (return_code == SQLITE_ROW)
-	{
+		assert (false);  // Execution never reaches here
+	case SQLITE_ROW:
 		return true;
+		assert (false);  // Execution never reaches here
+	default:
+		;
+		// Do nothing
 	}
-	assert ( (return_code != SQLITE_DONE) && (return_code != SQLITE_ROW) );
 	check_ok();
 	assert (false);  // Execution should never reach here.
 	return false;  // Silence compiler re. return from non-void function. 
