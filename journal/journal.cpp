@@ -169,7 +169,7 @@ Journal::do_save_new_all_journal_base()
 	);
 	statement.bind(":is_actual", static_cast<int>(*m_is_actual));
 	statement.bind(":comment", *m_comment);
-	statement.step_last();
+	statement.step_final();
 	typedef vector< shared_ptr<Entry> >::iterator EntryIter;
 	for (EntryIter it = m_entries.begin(); it != m_entries.end(); ++it)
 	{

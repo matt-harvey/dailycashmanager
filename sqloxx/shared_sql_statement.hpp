@@ -100,7 +100,7 @@ public:
 	 * @throws SQLiteException or an exception derived therefrom if there
 	 * is any other error in executing the statement.
 	*/
-	void step_last();
+	void step_final();
 
 private:
 
@@ -165,9 +165,9 @@ SharedSQLStatement::step()
 
 inline
 void
-SharedSQLStatement::step_last()
+SharedSQLStatement::step_final()
 {
-	m_sql_statement->step_last();
+	m_sql_statement->step_final();
 	return;
 }
 

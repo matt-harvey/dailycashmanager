@@ -125,7 +125,7 @@ public:
 	 * @throws SQLiteException or an exception derived therefrom if there
 	 * is any other error in executing the statement.
 	*/
-	void step_last();
+	void step_final();
 
 	/**
 	 * Resets the statement, freeing bound parameters ready for

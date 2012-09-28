@@ -156,7 +156,7 @@ SQLStatement::step()
 
 
 void
-SQLStatement::step_last()
+SQLStatement::step_final()
 {
 	if (step())
 	{

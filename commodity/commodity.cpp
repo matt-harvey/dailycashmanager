@@ -42,7 +42,7 @@ void Commodity::setup_tables
 			"multiplier_to_base_places integer not null"
 		")"
 	);
-	statement.step_last();
+	statement.step_final();
 	return;
 }
 
@@ -126,7 +126,7 @@ void Commodity::do_save_new_all()
 	(	":multiplier_to_base_places",
 		m_multiplier_to_base->places()
 	);
-	statement.step_last();	
+	statement.step_final();	
 	return;
 }
 
