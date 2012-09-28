@@ -110,7 +110,7 @@ OrdinaryJournal::do_save_new_all()
 	);
 	statement.bind(":journal_id", journal_id);
 	statement.bind(":date", *m_date);
-	statement.quick_step();
+	statement.step_last();
 	return;
 }
 

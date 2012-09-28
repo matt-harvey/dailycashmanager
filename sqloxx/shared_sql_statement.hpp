@@ -77,7 +77,7 @@ public:
 	T extract(int index);
 
 	/**
-	 * Wraps sqlite3_step
+	 * Wraps sqlite3_step.
 	 * Returns true as long as there are further steps to go (i.e. result
 	 * rows to examine).
 	 *
@@ -90,15 +90,17 @@ public:
 	bool step();
 
 	/**
-	 * For executing statements which are not expected to return a result
-	 * set.
+	 * Wraps sqlite3_step. Similar to \c step except that it throws an
+	 * exception if a result row still remains after calling. That is,
+	 * it is equivalent to calling:\n
+	 * \c if (step()) throw UnexpectedResultRow("...");\n
 	 *
-	 * @throws UnexpectedResultSet if a result set is returned.
+	 * @throws UnexpectedResultRow if a result set is returned.
 	 * 
 	 * @throws SQLiteException or an exception derived therefrom if there
 	 * is any other error in executing the statement.
 	*/
-	void quick_step();
+	void step_last();
 
 private:
 
@@ -163,9 +165,9 @@ SharedSQLStatement::step()
 
 inline
 void
-SharedSQLStatement::quick_step()
+SharedSQLStatement::step_last()
 {
-	m_sql_statement->quick_step();
+	m_sql_statement->step_last();
 	return;
 }
 

@@ -115,15 +115,17 @@ public:
 	bool step();
 
 	/**
-	 * For executing statements which are not expected to return a result
-	 * set.
+	 * Wraps sqlite3_step. Similar to \c step except that it throws an
+	 * exception if a result row still remains after calling. That is,
+	 * it is equivalent to calling:\n
+	 * \c if (step()) throw UnexpectedResultRow("...");\n
 	 *
-	 * @throws UnexpectedResultSet if a result set is returned.
+	 * @throws UnexpectedResultRow if a result set is returned.
 	 * 
 	 * @throws SQLiteException or an exception derived therefrom if there
 	 * is any other error in executing the statement.
 	*/
-	void quick_step();
+	void step_last();
 
 	/**
 	 * Resets the statement, freeing bound parameters ready for

@@ -56,12 +56,11 @@ JEWEL_DERIVED_EXCEPTION(InvalidFilename, DatabaseException);
 JEWEL_DERIVED_EXCEPTION(MultipleConnectionException, DatabaseException);
 
 /**
- * Exception to be thrown when attempt is made to execute a \c SQLStatement
- * in one step, via \c SQLStatement::quick_step, but there
- * is at least one result row, meaning that \c quick_step is an inappropriate
- * means of execution.
+ * Exception to be thrown when no result row is expected to remain
+ * after stepping through a SQL statement, but nevertheless (at least)
+ * one result row remains.
  */
-JEWEL_DERIVED_EXCEPTION(UnexpectedResultSet, DatabaseException);
+JEWEL_DERIVED_EXCEPTION(UnexpectedResultRow, DatabaseException);
 
 /**
  * Exception to be thrown when a function expects a database table to have

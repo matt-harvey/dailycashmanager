@@ -150,7 +150,7 @@ Entry::do_save_new_all()
 	statement.bind(":comment", comment());
 	statement.bind(":account_id", account.id());
 	statement.bind(":amount", amount().intval());
-	statement.quick_step();
+	statement.step_last();
 	return;
 }
 

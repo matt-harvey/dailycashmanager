@@ -178,7 +178,7 @@ Repeater::do_save_new_all()
 	statement.bind(":interval_units", *m_interval_units);
 	statement.bind(":next_date", *m_next_date);
 	statement.bind(":journal_id", *m_journal_id);
-	statement.quick_step();
+	statement.step_last();
 	return;
 }
 

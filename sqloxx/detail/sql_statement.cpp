@@ -156,12 +156,12 @@ SQLStatement::step()
 
 
 void
-SQLStatement::quick_step()
+SQLStatement::step_last()
 {
 	if (step())
 	{
 		sqlite3_finalize(m_statement);
-		throw UnexpectedResultSet
+		throw UnexpectedResultRow
 		(	"Statement yielded a result set when none was expected."
 		);
 	}

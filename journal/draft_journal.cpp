@@ -146,7 +146,7 @@ DraftJournal::do_save_new_all()
 	);
 	statement.bind(":journal_id", j_id);
 	statement.bind(":name", *m_name);
-	statement.quick_step();
+	statement.step_last();
 	
 	JEWEL_DEBUG_LOG << "Saving Repeaters..." << endl;
 	typedef vector< shared_ptr<Repeater> >::iterator RepIter;

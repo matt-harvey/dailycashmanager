@@ -177,7 +177,7 @@ Account::do_save_new_all()
 	statement.bind(":name", m_name);
 	statement.bind(":description", *m_description);
 	statement.bind(":commodity_id", commodity.id());
-	statement.quick_step();
+	statement.step_last();
 	return;
 }
 

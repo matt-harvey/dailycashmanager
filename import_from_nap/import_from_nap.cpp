@@ -63,6 +63,7 @@ namespace
 
 	Decimal const decimal_zero("0");
 
+
 }  // End anonymous namespace
 
 
