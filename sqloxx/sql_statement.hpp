@@ -131,9 +131,7 @@ public:
 	void reset();
 
 private:
-	sqlite3_stmt* m_statement;
-	SQLiteDBConn& m_sqlite_dbconn;
-
+	
 	/**
 	 * @parameter_name is the name of a column in the result set.
 	 * 
@@ -174,6 +172,8 @@ private:
 	 */
 	void check_ok();
 
+	sqlite3_stmt* m_statement;
+	SQLiteDBConn& m_sqlite_dbconn;
 
 };
 

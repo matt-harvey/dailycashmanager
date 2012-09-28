@@ -10,6 +10,7 @@ namespace sqloxx
 {
 
 
+
 SQLStatement::SQLStatement
 (	SQLiteDBConn& dbconn,
 	string const& str

@@ -16,7 +16,6 @@ namespace sqloxx
 {
 
 class SQLStatement;
-class SQLStatementManager;
 
 
 /**
@@ -179,7 +178,6 @@ public:
 	void unchecked_end_transaction();
 
 	boost::shared_ptr<SQLiteDBConn> m_sqlite_dbconn;
-	boost::shared_ptr<SQLStatementManager> m_sql_statement_manager;
 	int m_transaction_nesting_level;
 	StatementCache m_statement_cache;
 	StatementCache::size_type m_cache_capacity;
