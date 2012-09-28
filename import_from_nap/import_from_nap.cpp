@@ -17,18 +17,18 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
-#include <set>
 #include <stdexcept>
 #include <vector>
 #include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 
 using boost::lexical_cast;
 using boost::unordered_map;
 using boost::shared_ptr;
+using boost::unordered_set;
 using jewel::Decimal;
 using std::cout;
 using std::endl;
-using std::set;
 using std::string;
 using std::vector;
 
@@ -60,6 +60,8 @@ namespace
 		vector<string> ret;
 		return boost::algorithm::split(ret, row_str, is_char<separator>);
 	}
+
+	Decimal const decimal_zero("0");
 
 }  // End anonymous namespace
 
@@ -143,23 +145,23 @@ void import_from_nap
 
 		// The second character of the first field contains a number
 		// from 1 to 7, that is sufficient to identify the account type.
-		switch (lexical_cast<int>(account_cells[0][1]))
+		switch (account_cells[0][1])
 		{
-		case 1:  // ready asset or...
-		case 3:  // investment asset
+		case '1':  // ready asset or...
+		case '3':  // investment asset
 			account.set_account_type(Account::asset);
 			break;
-		case 2:  // ready liability or... 
-		case 4:  // investment liability
+		case '2':  // ready liability or... 
+		case '4':  // investment liability
 			account.set_account_type(Account::liability);
 			break;
-		case 5:
+		case '5':
 			account.set_account_type(Account::equity);
 			break;
-		case 6:
+		case '6':
 			account.set_account_type(Account::revenue);
 			break;
-		case 7:
+		case '7':
 			account.set_account_type(Account::expense);
 			break;
 		default:
@@ -183,7 +185,7 @@ void import_from_nap
 	unordered_map< shared_ptr<Journal>, bool> actual_v_budget_determinations;
 
 	// Set to hold Journal instances which are problematic for Phatbooks
-	set< shared_ptr<Journal> > problematic_journals;
+	unordered_set< shared_ptr<Journal> > problematic_journals;
 	// Map from problematic ordinary journals to old ordinary journal ids
 	unordered_map< shared_ptr<Journal>, int > problematic_ordinary_journal_map;
 	// Map from problematic draft journals to old draft journal names
@@ -288,7 +290,7 @@ void import_from_nap
 		// a non-zero bud_impact and a non-zero act_impact. Given this is
 		// just a one-off hack, it may be easier just to manipulate the
 		// csv before importing it.
-		bool is_actual = (bud_impact == Decimal("0"));
+		bool is_actual = (bud_impact == decimal_zero);
 		draft_entry->set_account_name(account_name);
 		draft_entry->set_comment(comment);
 		draft_entry->set_amount(is_actual? act_impact: -bud_impact);	
@@ -310,7 +312,7 @@ void import_from_nap
 		{
 			if (draft_journal->is_actual() != is_actual)
 			{
-				if (bud_impact == Decimal("0") && act_impact == Decimal("0"))
+				if (bud_impact == decimal_zero && act_impact == decimal_zero)
 				{
 					// Then it's OK - the journal just defaults to the
 					// exising determination about whethet it's actual, as
@@ -376,7 +378,7 @@ void import_from_nap
 	// csv, to Journal::Id values. This will enable us to remember the
 	// PROSPECTIVE id of each OrdinaryJournal, so we can associate each
 	// entry with the correct journal based on its N. A. P. journal id.
-	unordered_map< int, Journal::Id> ordinary_journal_id_map;
+	unordered_map<int, Journal::Id> ordinary_journal_id_map;
 	
 	// Now to actually read the (non-draft, i.e. "ordinary") journals
 	Journal::Id ordinary_journal_id = draft_journal_vec.size();
@@ -421,7 +423,7 @@ void import_from_nap
 		string const account_name = ordinary_entry_cells[4];
 		Decimal act_impact(ordinary_entry_cells[5]);
 		Decimal bud_impact(ordinary_entry_cells[6]);
-		bool is_actual = (bud_impact == Decimal("0"));
+		bool is_actual = (bud_impact == decimal_zero);
 		ordinary_entry->set_account_name(account_name);
 		ordinary_entry->set_comment(comment);
 		ordinary_entry->set_amount(is_actual? act_impact: -bud_impact);
@@ -442,7 +444,7 @@ void import_from_nap
 		{
 			if (ordinary_journal->is_actual() != is_actual)
 			{
-				if (bud_impact == Decimal("0") && act_impact == Decimal("0"))
+				if (bud_impact == decimal_zero && act_impact == decimal_zero)
 				{
 					// Then it's OK
 				}
@@ -502,7 +504,7 @@ void import_from_nap
 	     << "be imported automatically, and will need to be entered "
 		 << "manually into Phatbooks:" << endl;
 	for
-	(	set< shared_ptr<Journal> >::const_iterator it = problematic_journals.begin();
+	(	unordered_set< shared_ptr<Journal> >::const_iterator it = problematic_journals.begin();
 		it != problematic_journals.end();
 		++it
 	)

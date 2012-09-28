@@ -170,7 +170,7 @@ public:
 	 */
 	void check_ok();
 
-	/*
+	/**
 	 * Creates table containing integers representing boolean values.
 	 * This might be used to provide foreign key constraints for other
 	 * tables where we wish a particular column to have boolean values
