@@ -219,7 +219,7 @@ TextSession::Menu::last_choice() const
 		);
 	}
 	assert (!m_selection_record.empty());
-	// Do this rather than going straight to begin(), to that this
+	// Do this rather than going straight to begin(), so that this
 	// won't rely on m_last_choice_ctr having a capacity of 1.
 	History::const_iterator it = m_selection_record.end();
 	return *(--it);
@@ -272,7 +272,7 @@ TextSession::Menu::present_to_user()
 		// Receive and process user input
 		for (bool successful = false; !successful; )
 		{
-			cout << endl << "Enter an option from the above menu: ";
+			cout << "\nEnter an option from the above menu: ";
 			string input = get_user_input();
 
 			// See whether input corresponds to any of the item labels,

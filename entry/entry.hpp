@@ -64,7 +64,7 @@ public:
 	/**
 	 * Set the Account name for the Entry.
 	 *
-	 * @todo Would it be better to store the Entry id here?
+	 * @todo Would it be better to store the Account id here?
 	 *
 	 * @todo Should this method throw if there is no Account with this name?
 	 */

@@ -67,6 +67,9 @@ Account::setup_tables(DatabaseConnection& dbc)
 			"commodity_id references commodities"
 		"); "
 	);
+	dbc.execute_sql
+	(	"create unique index account_name_index on accounts(name);"
+	);
 	return;
 }
 

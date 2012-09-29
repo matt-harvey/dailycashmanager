@@ -10,11 +10,11 @@
 #include "repeater.hpp"
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <cassert>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -22,11 +22,11 @@
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
-using boost::lexical_cast;
 using boost::unordered_map;
 using boost::shared_ptr;
 using boost::unordered_set;
 using jewel::Decimal;
+using std::atoi;
 using std::cout;
 using std::endl;
 using std::string;
@@ -55,10 +55,10 @@ namespace
 	// Takes a string and returns a vector of strings split by
 	// the character passed as template parameter.
 	template <char separator>
-	vector<string> cells(string const& row_str)
+	void easy_split(string const& row_str, vector<string>& vec)
 	{
-		vector<string> ret;
-		return boost::algorithm::split(ret, row_str, is_char<separator>);
+		boost::algorithm::split(vec, row_str, is_char<separator>);
+		return;
 	}
 
 	Decimal const decimal_zero("0");
@@ -74,7 +74,8 @@ void import_from_nap
 	boost::filesystem::path const& directory
 )
 {
-	
+	database_connection->begin_transaction();
+
 	boost::posix_time::ptime const start_time =
 		boost::posix_time::second_clock::local_time();
 	cout << "Import commences at: " << start_time << endl;
@@ -139,9 +140,10 @@ void import_from_nap
 	(	(directory.string() + file_sep + account_csv_name).c_str()
 	);
 	string account_row;
+	vector<string> account_cells;
 	while (getline(account_csv, account_row))
 	{
-		vector<string> const account_cells = cells<'|'>(account_row);
+		easy_split<'|'>(account_row, account_cells);
 		Account account(database_connection);
 
 		// The second character of the first field contains a number
@@ -228,13 +230,14 @@ void import_from_nap
 
 	// Now to actually read the draft journals.
 	Journal::Id draft_journal_id = 0;
+	vector<string> draft_journal_cells;
+	draft_journal_cells.reserve(3);
 	while (getline(draft_journal_csv, draft_journal_row))
 	{
 		++draft_journal_id;
 
 		// Split the csv row into cells
-		vector<string> const draft_journal_cells =
-			cells<'|'>(draft_journal_row);
+		easy_split<'|'>(draft_journal_row, draft_journal_cells);
 		shared_ptr<DraftJournal> draft_journal
 		(	new DraftJournal(database_connection)
 		);
@@ -249,22 +252,24 @@ void import_from_nap
 		// split. (The N. A. P. csv design is no normalized database. It
 		// was a quick and dirty hack.)
 		string const raw_rep_str = draft_journal_cells[1];
-		vector<string> rep_str_vec = cells<':'>(raw_rep_str);
+		vector<string> rep_str_vec;
+		easy_split<':'>(raw_rep_str, rep_str_vec);
 
 		// Now we examine each repeater in the repeater list, create a
 		// Repeater instance, and add that to the DraftJournal instance
 		// representing the current draft journal.
+		vector<string> repeater_fields;
 		for (vector<string>::size_type i = 0; i != rep_str_vec.size(); ++i)
 		{
 			string const repeater_str = rep_str_vec[i];
-			vector<string> repeater_fields = cells<' '>(repeater_str);
+			easy_split<' '>(repeater_str, repeater_fields);
 			string const next_date_str = repeater_fields[0];
 			string const interval_type_str = repeater_fields[1];
 			string const units_str = repeater_fields[2];
 
 			shared_ptr<Repeater> repeater(new Repeater(database_connection));
 			repeater->set_interval_type(interval_type_map[interval_type_str]);
-			repeater->set_interval_units(lexical_cast<int>(units_str));
+			repeater->set_interval_units(atoi(units_str.c_str()));
 			repeater->set_next_date
 			(	boost::gregorian::date_from_iso_string(next_date_str)
 			);
@@ -278,9 +283,11 @@ void import_from_nap
 	(	(directory.string() + file_sep + draft_entry_csv_name).c_str()
 	);
 	string draft_entry_row;
+	vector<string> draft_entry_cells;
+	draft_entry_cells.reserve(6);
 	while (getline(draft_entry_csv, draft_entry_row))
 	{
-		vector<string> const draft_entry_cells = cells<'|'>(draft_entry_row);
+		easy_split<'|'>(draft_entry_row, draft_entry_cells);
 		shared_ptr<Entry> draft_entry(new Entry(database_connection));
 		string const draft_journal_name = draft_entry_cells[0];
 		string const comment = draft_entry_cells[2];
@@ -383,13 +390,14 @@ void import_from_nap
 	
 	// Now to actually read the (non-draft, i.e. "ordinary") journals
 	Journal::Id ordinary_journal_id = draft_journal_vec.size();
+	vector<string> ordinary_journal_cells;
+	ordinary_journal_cells.reserve(2);
 	while (getline(ordinary_journal_csv, ordinary_journal_row))
 	{
 		++ordinary_journal_id;
 
 		// Split the csv row into cells
-		vector<string> const ordinary_journal_cells =
-			cells<'|'>(ordinary_journal_row);
+		easy_split<'|'>(ordinary_journal_row, ordinary_journal_cells);
 		shared_ptr<OrdinaryJournal> ordinary_journal
 		(	new OrdinaryJournal(database_connection)
 		);
@@ -398,8 +406,7 @@ void import_from_nap
 		ordinary_journal->set_date
 		(	boost::gregorian::date_from_iso_string(iso_date_string)
 		);
-		int const ordinary_journal_nap_id =
-			lexical_cast<int>(ordinary_journal_cells[0]);
+		int const ordinary_journal_nap_id = atoi(ordinary_journal_cells[0].c_str());
 		ordinary_journal_map[ordinary_journal_nap_id] = ordinary_journal;
 		ordinary_journal_id_map[ordinary_journal_nap_id] =
 			ordinary_journal_id;
@@ -412,14 +419,14 @@ void import_from_nap
 	(	(directory.string() + file_sep + ordinary_entry_csv_name).c_str()
 	);
 	string ordinary_entry_row;
+	vector<string> ordinary_entry_cells;
+	ordinary_entry_cells.reserve(7);
 	while (getline(ordinary_entry_csv, ordinary_entry_row))
 	{
-		vector<string> const ordinary_entry_cells =
-			cells<'|'>(ordinary_entry_row);
+		easy_split<'|'>(ordinary_entry_row, ordinary_entry_cells);
 		shared_ptr<Entry> ordinary_entry(new Entry(database_connection));
 		string const iso_date_string = ordinary_entry_cells[0];
-		int const old_journal_id =
-			lexical_cast<int>(ordinary_entry_cells[1]);
+		int const old_journal_id = atoi(ordinary_entry_cells[1].c_str());
 		string const comment = ordinary_entry_cells[3];
 		string const account_name = ordinary_entry_cells[4];
 		Decimal act_impact(ordinary_entry_cells[5]);
@@ -529,6 +536,8 @@ void import_from_nap
 	cout << "Import duration in seconds: "
 	     << (end_time - start_time).total_seconds()
 		 << endl;
+
+	database_connection->end_transaction();
 
 	return;
 }

@@ -52,6 +52,7 @@ namespace
 			     << "exists. Test aborted." << endl;
 			std::abort();
 		}
+		return;
 	}
 			    
 }  // End anonymous namespace
