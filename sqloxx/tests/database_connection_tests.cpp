@@ -14,7 +14,8 @@ using std::ofstream;
 using std::string;
 
 
-using namespace sqloxx;
+namespace sqloxx
+{
 
 // Anonymous namespace
 namespace
@@ -155,4 +156,4 @@ struct DatabaseConnectionFixture
 
 		
 
-
+}  // namespace sqloxx
