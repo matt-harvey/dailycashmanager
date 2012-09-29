@@ -216,7 +216,7 @@ void PhatbooksTextSession::elicit_commodity()
 	}
 
 	// Get commodity name
-	cout << "Enter name for new commodity (or enter for no name): ";
+	cout << "Enter name for new commodity (cannot be blank): ";
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
 		string input = get_user_input();
