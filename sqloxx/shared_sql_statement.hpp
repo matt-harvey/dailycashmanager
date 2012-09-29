@@ -114,6 +114,7 @@ inline
 SharedSQLStatement::~SharedSQLStatement()
 {
 	m_sql_statement->reset();
+	m_sql_statement->unlock();
 }
 
 

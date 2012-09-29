@@ -123,23 +123,29 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 		m_statement_cache.find(statement_text);
 	if (it != m_statement_cache.end())
 	{
-		return it->second;
+		shared_ptr<detail::SQLStatement> existing_statement = it->second;
+		if (!(existing_statement->is_locked()))
+		{
+			existing_statement->lock();
+			return existing_statement;
+		}
 	}
-	assert (it == m_statement_cache.end());
-	shared_ptr<detail::SQLStatement> statement
+	assert (it == m_statement_cache.end() || it->second->is_locked());
+	shared_ptr<detail::SQLStatement> new_statement
 	(	new detail::SQLStatement(*m_sqlite_dbconn, statement_text)
 	);
+	new_statement->lock();
 	if (m_statement_cache.size() != m_cache_capacity)
 	{
 		assert (m_statement_cache.size() < m_cache_capacity);
-		m_statement_cache[statement_text] = statement;
+		m_statement_cache[statement_text] = new_statement;
 	}
 	else
 	{
 		// Cache has reached capacity and caching has been
 		// discontinued.
 	}
-	return statement;
+	return new_statement;
 }
 
 }  // namespace sqloxx

@@ -135,6 +135,24 @@ public:
 	 */
 	void reset();
 
+	/**
+	 * @returns true if and only if the statement is currently
+	 * in use by way of a SharedSQLStatement. Does not throw.
+	 */
+	bool is_locked() const;
+
+	/**
+	 * Locks the statement, indicating that is currently in
+	 * use. Does not throw.
+	 */
+	void lock();
+
+	/**
+	 * Unlocks the statement, indicating that it is now available
+	 * for use. Does not throw.
+	 */
+	void unlock();
+
 private:
 	
 	/**
@@ -179,11 +197,11 @@ private:
 
 	sqlite3_stmt* m_statement;
 	SQLiteDBConn& m_sqlite_dbconn;
-
+	bool m_is_locked;
 };
 
 
-// FUNCTION TEMPLATE DEFINITIONS
+// FUNCTION TEMPLATE DEFINITIONS AND INLINE FUNCTIONS
 
 template <>
 inline
@@ -224,6 +242,28 @@ SQLStatement::extract<std::string>(int index)
 	return std::string(begin, end);
 }
 
+inline
+bool
+SQLStatement::is_locked() const
+{
+	return m_is_locked;
+}
+
+inline
+void
+SQLStatement::lock()
+{
+	m_is_locked = true;
+	return;
+}
+
+inline
+void
+SQLStatement::unlock()
+{
+	m_is_locked = false;
+	return;
+}
 
 
 }  // namespace detail

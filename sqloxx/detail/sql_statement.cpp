@@ -19,7 +19,8 @@ SQLStatement::SQLStatement
 	string const& str
 ):
 	m_statement(0),
-	m_sqlite_dbconn(p_sqlite_dbconn)
+	m_sqlite_dbconn(p_sqlite_dbconn),
+	m_is_locked(false)
 {
 	if (!p_sqlite_dbconn.is_valid())
 	{
