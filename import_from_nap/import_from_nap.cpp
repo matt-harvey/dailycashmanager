@@ -19,14 +19,15 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+#include <boost/lexical_cast.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
 using boost::unordered_map;
+using boost::lexical_cast;
 using boost::shared_ptr;
 using boost::unordered_set;
 using jewel::Decimal;
-using std::atoi;
 using std::cout;
 using std::endl;
 using std::string;
@@ -47,6 +48,7 @@ namespace
 {
 	
 	template <char target>
+	inline
 	bool is_char(char tested_char)
 	{
 		return tested_char == target;
@@ -55,6 +57,7 @@ namespace
 	// Takes a string and returns a vector of strings split by
 	// the character passed as template parameter.
 	template <char separator>
+	inline
 	void easy_split(string const& row_str, vector<string>& vec)
 	{
 		boost::algorithm::split(vec, row_str, is_char<separator>);
@@ -231,7 +234,6 @@ void import_from_nap
 	// Now to actually read the draft journals.
 	Journal::Id draft_journal_id = 0;
 	vector<string> draft_journal_cells;
-	draft_journal_cells.reserve(3);
 	while (getline(draft_journal_csv, draft_journal_row))
 	{
 		++draft_journal_id;
@@ -269,7 +271,9 @@ void import_from_nap
 
 			shared_ptr<Repeater> repeater(new Repeater(database_connection));
 			repeater->set_interval_type(interval_type_map[interval_type_str]);
-			repeater->set_interval_units(atoi(units_str.c_str()));
+			repeater->set_interval_units
+			(	lexical_cast<int>(units_str.c_str())
+			);
 			repeater->set_next_date
 			(	boost::gregorian::date_from_iso_string(next_date_str)
 			);
@@ -284,7 +288,6 @@ void import_from_nap
 	);
 	string draft_entry_row;
 	vector<string> draft_entry_cells;
-	draft_entry_cells.reserve(6);
 	while (getline(draft_entry_csv, draft_entry_row))
 	{
 		easy_split<'|'>(draft_entry_row, draft_entry_cells);
@@ -391,7 +394,6 @@ void import_from_nap
 	// Now to actually read the (non-draft, i.e. "ordinary") journals
 	Journal::Id ordinary_journal_id = draft_journal_vec.size();
 	vector<string> ordinary_journal_cells;
-	ordinary_journal_cells.reserve(2);
 	while (getline(ordinary_journal_csv, ordinary_journal_row))
 	{
 		++ordinary_journal_id;
@@ -406,7 +408,8 @@ void import_from_nap
 		ordinary_journal->set_date
 		(	boost::gregorian::date_from_iso_string(iso_date_string)
 		);
-		int const ordinary_journal_nap_id = atoi(ordinary_journal_cells[0].c_str());
+		int const ordinary_journal_nap_id =
+			lexical_cast<int>(ordinary_journal_cells[0].c_str());
 		ordinary_journal_map[ordinary_journal_nap_id] = ordinary_journal;
 		ordinary_journal_id_map[ordinary_journal_nap_id] =
 			ordinary_journal_id;
@@ -420,13 +423,13 @@ void import_from_nap
 	);
 	string ordinary_entry_row;
 	vector<string> ordinary_entry_cells;
-	ordinary_entry_cells.reserve(7);
 	while (getline(ordinary_entry_csv, ordinary_entry_row))
 	{
 		easy_split<'|'>(ordinary_entry_row, ordinary_entry_cells);
 		shared_ptr<Entry> ordinary_entry(new Entry(database_connection));
 		string const iso_date_string = ordinary_entry_cells[0];
-		int const old_journal_id = atoi(ordinary_entry_cells[1].c_str());
+		int const old_journal_id =
+			lexical_cast<int>(ordinary_entry_cells[1].c_str());
 		string const comment = ordinary_entry_cells[3];
 		string const account_name = ordinary_entry_cells[4];
 		Decimal act_impact(ordinary_entry_cells[5]);

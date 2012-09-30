@@ -46,9 +46,6 @@ namespace phatbooks
  * a polished function but intended as a quick hack only! See
  * file documentation for import_from_nap.hpp.
  *
- * May fail silently in case there are entries representing a number
- * of cents that exceeds MAX_INT.
- *
  * @todo The implementation of this function is hideously messy, slow,
  * bulky, inefficient and repetitive. It doesn't need to be perfect as
  * it's only a hack for my own use... but really...
