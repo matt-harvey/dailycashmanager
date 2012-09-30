@@ -29,7 +29,7 @@ namespace sqloxx
 
 
 // Forward declaration
-namespace datail
+namespace detail
 {
 	class SQLStatement;
 }  // namespace detail
@@ -48,7 +48,9 @@ class DatabaseConnection:
 public:
 
 	typedef
-		boost::unordered_map< std::string, boost::shared_ptr<detail::SQLStatement> >
+		boost::unordered_map
+		<	std::string, boost::shared_ptr<detail::SQLStatement>
+		>
 		StatementCache;
 	
 	/**
@@ -153,7 +155,7 @@ public:
 	 * primary key of the table named \c table_name. An empty vector
 	 * is returned if there is no primary key.
 	 *
-	 * @todo Determine and document throwing behaviour.
+	 * @todo Determine, document and test throwing behaviour.
 	 *
 	 * @throws InvalidConnection if database connection does not exist or
 	 * is otherwise invalid.
@@ -176,7 +178,16 @@ public:
 	 * value of \c KeyType(1) is simply returned. In other words, it is
 	 * the caller's responsibility to make sure that table_name does in
 	 * fact correspond to a table with an autoincrementing integer
-	 * primary key.
+	 * primary key. Note however that if the database contains \e no
+	 * tables with autoincrementing primary keys, then instead of 1
+	 * being returned, SQLiteException (or a derivative therefrom)
+	 * will be thrown.
+	 * 
+	 * @todo Determine what derivative of SQLiteException is thrown in the
+	 * case just described.
+	 * 
+	 * @todo Make the behaviour of this function in edge cases more
+	 * consistent than what is described above.
 	 *
 	 * Assumes keys start from 1.
 	 *
@@ -192,9 +203,7 @@ public:
 	 * This function should not be used if \c table_name is an untrusted
 	 * string.
 	 *
-	 * Note if 
-	 *
-	 * @param table_name The name of the table. 
+	 * @param table_name The name of the table
 	 *
 	 * @returns the next highest primary key for the table, assuming it has
 	 * a single-column primary key. Note if there are gaps in the numbering
@@ -205,11 +214,15 @@ public:
 	 * already in the table is the maximum value for \c KeyType, so that
 	 * another row could not be inserted without overflow.
 	 *
+	 * @throws sqloxx::SQLiteException if the there are \e no tables
+	 * in the database with an autoincrementing primary key.
+	 *
 	 * @throws sqloxx::DatabaseException may be thrown if there is some other
 	 * error finding the next primary key value.
 	 */
 	template <typename KeyType>
 	KeyType next_auto_key(std::string const& table_name);	
+
 
 	/**
 	 * Creates table containing integers representing boolean values.
@@ -347,6 +360,8 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 	}
 	return max_key + 1;
 }
+
+
 
 inline
 void
