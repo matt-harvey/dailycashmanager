@@ -103,7 +103,8 @@ DatabaseConnection::primary_key(string const& table_name)
 		"pragma table_info(" + table_name + ")"
 	);
 	bool steps_remain = true;
-	// Assignment operator is deliberate here
+	// Assignment operator is deliberate here.
+	// Double parentheses silence a compiler warning.
 	while ((steps_remain = statement.step()))
 	{
 		if (statement.extract<int>(pk_info_field) == 1)
@@ -119,11 +120,12 @@ DatabaseConnection::primary_key(string const& table_name)
 shared_ptr<detail::SQLStatement>
 DatabaseConnection::provide_sql_statement(string const& statement_text)
 {
-	StatementCache::const_iterator const it =
-		m_statement_cache.find(statement_text);
+	StatementCache::const_iterator const it
+	(	m_statement_cache.find(statement_text)
+	);
 	if (it != m_statement_cache.end())
 	{
-		shared_ptr<detail::SQLStatement> existing_statement = it->second;
+		shared_ptr<detail::SQLStatement> existing_statement(it->second);
 		if (!(existing_statement->is_locked()))
 		{
 			existing_statement->lock();

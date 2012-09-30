@@ -102,6 +102,23 @@ public:
 	*/
 	void step_final();
 
+	/**
+	 * Resets the statement, freeing bound parameters ready for
+	 * subsequent re-binding and re-execution.
+	 *
+	 * Does not throw.
+	 */
+	void reset();
+
+	/**
+	 * Clears the parameter bindings from the statement, setting all
+	 * to NULL. This is a wrapper for sqlite3_clear_bindings.
+	 *
+	 * Does not throw.
+	 */
+	void clear_bindings();
+
+
 private:
 
 	boost::shared_ptr<detail::SQLStatement> m_sql_statement;
@@ -109,14 +126,6 @@ private:
 
 
 // Member function templates and inline functions
-
-inline
-SharedSQLStatement::~SharedSQLStatement()
-{
-	m_sql_statement->reset();
-	m_sql_statement->unlock();
-}
-
 
 inline
 void
@@ -129,7 +138,9 @@ SharedSQLStatement::bind(std::string const& parameter_name, int value)
 
 inline
 void
-SharedSQLStatement::bind(std::string const& parameter_name, boost::int64_t value)
+SharedSQLStatement::bind
+(	std::string const& parameter_name, boost::int64_t value
+)
 {
 	m_sql_statement->bind(parameter_name, value);
 	return;
@@ -138,7 +149,9 @@ SharedSQLStatement::bind(std::string const& parameter_name, boost::int64_t value
 
 inline
 void
-SharedSQLStatement::bind(std::string const& parameter_name, std::string const& value)
+SharedSQLStatement::bind
+(	std::string const& parameter_name, std::string const& value
+)
 {
 	m_sql_statement->bind(parameter_name, value);
 	return;
@@ -169,6 +182,24 @@ void
 SharedSQLStatement::step_final()
 {
 	m_sql_statement->step_final();
+	return;
+}
+
+
+inline
+void
+SharedSQLStatement::reset()
+{
+	m_sql_statement->reset();
+	return;
+}
+
+
+inline
+void
+SharedSQLStatement::clear_bindings()
+{
+	m_sql_statement->clear_bindings();
 	return;
 }
 

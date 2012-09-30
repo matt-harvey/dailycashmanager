@@ -27,11 +27,13 @@
 #include <vector>
 
 using boost::int64_t;
+using std::abort;
 using std::clog;
 using std::endl;
 using std::runtime_error;
 using std::string;
 using std::vector;
+
 
 namespace sqloxx
 {
@@ -99,14 +101,14 @@ SQLiteDBConn::~SQLiteDBConn()
 			clog << "SQLite3 database connection could not be "
 			             "successfully "
 			             "closed in SQLiteDBConn destructor. " << endl;
-			std::abort();
+			abort();
 		}
 	}
 	if (sqlite3_shutdown() != SQLITE_OK)
 	{
 		clog << "SQLite3 shutdown failed in SQLiteDBConn destructor."
 		     << endl;
-		std::abort();
+		abort();
 	}
 }
 

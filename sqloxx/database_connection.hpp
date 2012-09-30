@@ -262,10 +262,12 @@ public:
 	 * @returns a shared pointer to a SQLStatement. This will	
 	 * either point to an existing SQLStatement that is cached within
 	 * the DatabaseConnection (if a SQLStatement with \c
-	 * statement_text has already been created on this DatabaseConnection), or
+	 * statement_text has already been created on this DatabaseConnection and
+	 * is not being used elsewhere), or
 	 * will be a pointer to a newly created and new cached SQLStatement (if a 
 	 * SQLStatement with \c statement_text has not yet been created on this
-	 * DatabaseConnection).
+	 * DatabaseConnection, or it has been created but is being used
+	 * elsewhere).
 	 *
 	 * This function is only intended to be called by the
 	 * constructor of SharedSQLStatement. It should not be called elsewhere.

@@ -22,6 +22,13 @@ SharedSQLStatement::SharedSQLStatement
 {
 }
 
+SharedSQLStatement::~SharedSQLStatement()
+{
+	m_sql_statement->reset();
+	m_sql_statement->clear_bindings();
+	m_sql_statement->unlock();
+}
+
 
 
 }  // namespace sqloxx

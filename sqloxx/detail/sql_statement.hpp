@@ -136,6 +136,13 @@ public:
 	void reset();
 
 	/**
+	 * Clears the parameter bindings from the statement, setting all
+	 * to NULL. This is a wrapper for sqlite3_clear_bindings.
+	 * Does not throw.
+	 */
+	void clear_bindings();
+
+	/**
 	 * @returns true if and only if the statement is currently
 	 * in use by way of a SharedSQLStatement. Does not throw.
 	 */
@@ -241,6 +248,25 @@ SQLStatement::extract<std::string>(int index)
 	while (*end != '\0') ++end;
 	return std::string(begin, end);
 }
+
+
+inline
+void
+SQLStatement::reset()
+{
+	sqlite3_reset(m_statement);
+	return;
+}
+
+
+inline
+void
+SQLStatement::clear_bindings()
+{
+	sqlite3_clear_bindings(m_statement);
+	return;
+}
+
 
 inline
 bool

@@ -170,14 +170,6 @@ SQLStatement::step_final()
 }
 
 
-void
-SQLStatement::reset()
-{
-	sqlite3_reset(m_statement);
-	return;
-}
-
-
 int
 SQLStatement::parameter_index
 (	string const& parameter_name
