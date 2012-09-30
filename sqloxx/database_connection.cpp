@@ -5,16 +5,16 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <iostream>
+#include <set>
 #include <string>
-#include <vector>
 
 
 using boost::shared_ptr;
 using boost::unordered_map;
 using std::clog;
 using std::endl;
+using std::set;
 using std::string;
-using std::vector;
 
 namespace sqloxx
 {
@@ -92,12 +92,14 @@ DatabaseConnection::end_transaction()
 
 
 
-vector<string>
-DatabaseConnection::primary_key(string const& table_name)
+void
+DatabaseConnection::find_primary_key
+(	set<string>& result,
+	string const& table_name
+)
 {
 	static int const pk_info_field = 5;
 	static int const column_name_field = 1;
-	vector<string> ret;
 	SharedSQLStatement statement
 	(	*this,
 		"pragma table_info(" + table_name + ")"
@@ -109,11 +111,11 @@ DatabaseConnection::primary_key(string const& table_name)
 	{
 		if (statement.extract<int>(pk_info_field) == 1)
 		{
-			ret.push_back(statement.extract<string>(column_name_field));
+			result.insert(statement.extract<string>(column_name_field));
 		}
 	}
 	assert (!steps_remain);
-	return ret;
+	return;
 }
 
 

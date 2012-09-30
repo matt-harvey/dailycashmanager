@@ -8,15 +8,17 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <set>
 #include <string>
-#include <vector>
 
 using std::cerr;
 using std::endl;
+using std::multiset;
 using std::numeric_limits;
 using std::ofstream;
+using std::multiset;
+using std::set;
 using std::string;
-using std::vector;
 
 
 namespace sqloxx
@@ -233,10 +235,11 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_primary_key)
 			"primary key(column_A, column_C)  "
 		");"
 	);
-	vector<string> vec = dbc.primary_key("dummy");
-	CHECK_EQUAL(vec.size(), 2);
-	CHECK_EQUAL(vec[0], "column_A");
-	CHECK_EQUAL(vec[1], "column_C");
+	set<string> pk;
+	dbc.find_primary_key(pk, "dummy");
+	CHECK_EQUAL(pk.size(), 2);
+	CHECK(pk.find("column_A") != pk.end());
+	CHECK(pk.find("column_C") != pk.end());
 	dbc.execute_sql
 	(	"create table dummyB"
 		"("
@@ -244,9 +247,10 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_primary_key)
 			"column_BB integer primary key autoincrement"
 		");"
 	);
-	vector<string> vecB = dbc.primary_key("dummyB");
-	CHECK_EQUAL(vecB.size(), 1);
-	CHECK_EQUAL(vecB[0], "column_BB");
+	set<string> pkB;
+	dbc.find_primary_key(pkB, "dummyB");
+	CHECK_EQUAL(pkB.size(), 1);
+	CHECK(pkB.find("column_BB") != pk.end());
 	dbc.execute_sql
 	(	"create table dummyC"
 		"("
@@ -255,13 +259,15 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_primary_key)
 			"column_CC text unique"
 		");"
 	);
-	vector<string> vecC = dbc.primary_key("dummyC");
-	CHECK_EQUAL(vecC.size(), 0);
+	set<string> pkC;
+	dbc.find_primary_key(pkC, "dummyC");
+	CHECK_EQUAL(pkC.size(), 0);
 	dbc.execute_sql
 	(	"drop table dummy; drop table dummyB; drop table dummyC;"
 	);
 	dbc.check_ok();
 }
+
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key)
 {
@@ -336,8 +342,20 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key)
 }
 
 
-
-
+TEST_FIXTURE(DatabaseConnectionFixture, test_setup_boolean_table)
+{
+	dbc.setup_boolean_table();
+	SharedSQLStatement statement(dbc, "select representation from booleans");
+	multiset<int> result;
+	while (statement.step())
+	{
+		result.insert(statement.extract<int>(0));
+	}
+	CHECK(result.find(0) != result.end());
+	CHECK(result.find(1) != result.end());
+	CHECK_EQUAL(result.size(), 2);
+	dbc.execute_sql("drop table booleans");
+}
 		
 
 }  // namespace sqloxx
