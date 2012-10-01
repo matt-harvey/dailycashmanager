@@ -254,6 +254,11 @@ public:
 	 * outermost call to begin_transaction causes the "begin transaction"
 	 * SQL command to be executed.
 	 *
+	 * SQL transactions should be controlled either solely through the
+	 * methods begin_transaction and end_transaction, \e or solely through
+	 * the direct execution of SQL statement strings "begin transaction" and
+	 * "end transaction". Mixing the two will result in undefined behaviour.
+	 *  
 	 * Note this may fail silently in the unlikely event that the number of
 	 * nested transactions exceeds MAX_INT.
 	 */
@@ -263,6 +268,8 @@ public:
 	 * Ends a transaction. Transactions may be nested. Only the outermost
 	 * call to end_transaction causes the "end transaction" SQL command
 	 * to be executed.
+	 *
+	 * See documentation of begin_transaction also.
 	 *
 	 * @throws TransactionNestingException in the event that there are
 	 * more calls to end_transaction than there have been to

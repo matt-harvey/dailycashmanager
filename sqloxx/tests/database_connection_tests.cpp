@@ -1,8 +1,10 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
+#include "sqloxx/detail/sql_statement.hpp"
 #include <unittest++/UnitTest++.h>
 #include <boost/filesystem.hpp>
+#include <boost/shared_ptr.hpp>
 #include <cassert>
 #include <limits>
 #include <cstdlib>
@@ -11,6 +13,7 @@
 #include <set>
 #include <string>
 
+using boost::shared_ptr;
 using std::cerr;
 using std::endl;
 using std::multiset;
@@ -131,8 +134,7 @@ TEST(test_default_constructor_and_open)
 struct DatabaseConnectionFixture
 {
 	// setup
-	DatabaseConnectionFixture():
-		filepath("Testfile_01")
+	DatabaseConnectionFixture(): filepath("Testfile_01")
 	{
 		if (boost::filesystem::exists(boost::filesystem::status(filepath)))
 		{
@@ -356,6 +358,121 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_setup_boolean_table)
 	CHECK_EQUAL(result.size(), 2);
 	dbc.execute_sql("drop table booleans");
 }
-		
+
+
+TEST_FIXTURE(DatabaseConnectionFixture, test_transaction_nesting_exception_01)
+{
+	CHECK_THROW(dbc.end_transaction(), TransactionNestingException);
+}
+
+TEST_FIXTURE(DatabaseConnectionFixture, test_transaction_nesting_exception_02)
+{
+	dbc.begin_transaction();
+	dbc.execute_sql("create table dummy(col_A text, col_B text)");
+	dbc.execute_sql
+	(	"insert into dummy(col_A, col_B) values('Hello', 'Goodbye')"
+	);
+	dbc.execute_sql
+	(	"insert into dummy(col_A, col_B) values('Yeah!', 'What!')"
+	);
+	dbc.begin_transaction();
+	SharedSQLStatement statement
+	(	dbc,
+		"select col_A from dummy where col_B = 'Goodbye'"
+	);
+	statement.step();
+	statement.step_final();
+	dbc.end_transaction();
+	dbc.end_transaction();
+	CHECK_THROW(dbc.end_transaction(), TransactionNestingException);
+}
+
+/**
+ * I can't seem to get a SQL transaction to fail and roll back, without
+ * crashing the test driver program itself. This is due to SQLite itself,
+ * and has nothing to do with the wrapper code I am trying to test.
+ * This test therefore currently fails. I need to test it "externally" with
+ * some other tool, where I can crash Phatbooks then re-run it and
+ * inspect the database.
+ */
+TEST_FIXTURE(DatabaseConnectionFixture, test_transaction_nesting_general)
+{
+	dbc.execute_sql
+	(	"create table dummy"
+		"("
+			"col_A integer primary key autoincrement, "
+			"col_B text not null, "
+			"col_C text"
+		")"
+	);
+	dbc.execute_sql
+	(	"insert into dummy(col_B) values('Hello!!!')"
+	);
+	
+	// Test failing transaction
+	dbc.begin_transaction();
+	dbc.execute_sql
+	(	"insert into dummy(col_B) values('Bye!')"
+	);
+	// WARNING We need to put something here that causes the transaction
+	// to fail.
+	dbc.end_transaction();
+	// End failing transaction
+
+	SharedSQLStatement statement_01
+	(	dbc,
+		"select col_B from dummy where col_A = 1"
+	);
+	bool const first_step_01 = statement_01.step();
+	CHECK(first_step_01);
+	bool const second_step_01 = statement_01.step();
+	CHECK(!second_step_01);  // Because we only expect one row of results here
+	SharedSQLStatement statement_02
+	(	dbc,
+		"select col_B from dummy where col_B = 'Bye!'"
+	);
+	bool const first_step_02 = statement_02.step();
+	CHECK(!first_step_02);  // Because we don't expect any result rows here
+	SharedSQLStatement statement_03
+	(	dbc,
+		"select * from dummy where col_B = 'Bye!'"
+	);
+	bool const first_step_03 = statement_03.step();
+	CHECK(!first_step_03);
+	SharedSQLStatement statement_04
+	(	dbc,
+		"select col_A, col_B from dummy where col_B = 'Hello!!!'"
+	);
+	bool const first_step_04 = statement_04.step();
+	CHECK(first_step_04);
+	CHECK_EQUAL(statement_04.extract<string>(1), "Hello!!!");
+	bool const second_step_04 = statement_04.step();
+	CHECK(!second_step_04);
+}
+
+
+TEST_FIXTURE(DatabaseConnectionFixture, test_provide_sql_statement)
+{
+	dbc.execute_sql("create table dummy(col_A int, col_B int)");
+	shared_ptr<detail::SQLStatement> statement_pointer =
+		dbc.provide_sql_statement
+		(	"insert into dummy(col_A, col_B) values(300, 10)"
+		);
+	SharedSQLStatement selector_01
+	(	dbc,
+		"select col_A from dummy where col_B = 10"
+	);
+	bool const first_go = selector_01.step();
+	CHECK_EQUAL(first_go, false);
+	bool const inserting = statement_pointer->step();
+	CHECK_EQUAL(inserting, false);
+	selector_01.reset();
+	bool const second_go = selector_01.step();
+	CHECK_EQUAL(second_go, true);
+	CHECK_EQUAL(selector_01.extract<int>(0), 300);
+	selector_01.step_final();
+}
+
+
 
 }  // namespace sqloxx
