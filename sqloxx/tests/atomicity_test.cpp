@@ -53,6 +53,8 @@ do_atomicity_test()
 		// database journal
 		boost::filesystem::remove(db_filename);
 		boost::filesystem::remove(db_filename + "-journal");
+		// WARNING I don't know why I have to remove the journal file here.
+		// Shouldn't it remove itself? I should figure out why it doesn't.
 	}
 	return test_result;
 }
