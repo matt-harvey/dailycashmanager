@@ -9,6 +9,14 @@
 load /usr/lib/tcltk/sqlite3/libtclsqlite3.so
 package require sqlite3
 
-exec ./test
+catch { exec ./test } test_output_A
+
+puts "Test output:\n\n $test_output_A \n\n"
+
+catch { exec ./test } test_output_B
+
+puts "More test output:\n\n $test_output_B \n\n"
+
+
 
 

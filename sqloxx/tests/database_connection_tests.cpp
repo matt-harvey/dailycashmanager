@@ -26,6 +26,8 @@ using std::string;
 
 namespace sqloxx
 {
+namespace tests
+{
 
 // Anonymous namespace
 namespace
@@ -387,68 +389,12 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_transaction_nesting_exception_02)
 	CHECK_THROW(dbc.end_transaction(), TransactionNestingException);
 }
 
-/**
- * I can't seem to get a SQL transaction to fail and roll back, without
- * crashing the test driver program itself. This is due to SQLite itself,
- * and has nothing to do with the wrapper code I am trying to test.
- * This test therefore currently fails. I need to test it "externally" with
- * some other tool, where I can crash Phatbooks then re-run it and
- * inspect the database.
+/*
+ * For test of whether DatabaseConnection::begin_transaction and
+ * DatabaseConnection::end_transaction actually do enable access to
+ * the atomicity of their underlying SQL commands, see
+ * transaction_crasher.hpp, test.cpp and test.tcl.
  */
-TEST_FIXTURE(DatabaseConnectionFixture, test_transaction_nesting_general)
-{
-	dbc.execute_sql
-	(	"create table dummy"
-		"("
-			"col_A integer primary key autoincrement, "
-			"col_B text not null, "
-			"col_C text"
-		")"
-	);
-	dbc.execute_sql
-	(	"insert into dummy(col_B) values('Hello!!!')"
-	);
-	
-	// Test failing transaction
-	dbc.begin_transaction();
-	dbc.execute_sql
-	(	"insert into dummy(col_B) values('Bye!')"
-	);
-	// WARNING We need to put something here that causes the transaction
-	// to fail.
-	dbc.end_transaction();
-	// End failing transaction
-
-	SharedSQLStatement statement_01
-	(	dbc,
-		"select col_B from dummy where col_A = 1"
-	);
-	bool const first_step_01 = statement_01.step();
-	CHECK(first_step_01);
-	bool const second_step_01 = statement_01.step();
-	CHECK(!second_step_01);  // Because we only expect one row of results here
-	SharedSQLStatement statement_02
-	(	dbc,
-		"select col_B from dummy where col_B = 'Bye!'"
-	);
-	bool const first_step_02 = statement_02.step();
-	CHECK(!first_step_02);  // Because we don't expect any result rows here
-	SharedSQLStatement statement_03
-	(	dbc,
-		"select * from dummy where col_B = 'Bye!'"
-	);
-	bool const first_step_03 = statement_03.step();
-	CHECK(!first_step_03);
-	SharedSQLStatement statement_04
-	(	dbc,
-		"select col_A, col_B from dummy where col_B = 'Hello!!!'"
-	);
-	bool const first_step_04 = statement_04.step();
-	CHECK(first_step_04);
-	CHECK_EQUAL(statement_04.extract<string>(1), "Hello!!!");
-	bool const second_step_04 = statement_04.step();
-	CHECK(!second_step_04);
-}
 
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_provide_sql_statement)
@@ -475,4 +421,5 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_provide_sql_statement)
 
 
 
+}  // namespace tests
 }  // namespace sqloxx

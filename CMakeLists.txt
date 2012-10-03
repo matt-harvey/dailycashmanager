@@ -42,7 +42,8 @@ set (test_files
      test.cpp
      sqloxx/tests/database_connection_tests.cpp
 	 sqloxx/tests/persistent_object_tests.cpp
-	 sqloxx/tests/shared_sql_statement_tests.cpp)
+	 sqloxx/tests/shared_sql_statement_tests.cpp
+	 sqloxx/tests/transaction_crasher.cpp)
 
 add_executable (test ${main_files} ${test_files})
 
