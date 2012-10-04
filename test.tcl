@@ -11,9 +11,11 @@
 # is as expected given the crash, output the result of this check to
 # standard output, and then run the remaining unit tests.
 
-# This one crashes, but we recover
-catch { exec ./test } test_output_A
-# And in this second execution we perform the test
+# This execution crashes, but we recover
+catch { exec ./test }
+
+# And in this second execution we inspect the database to see that it
+# reacted as expected; and then we perform the other unit tests.
 catch { exec ./test } test_output_B
 puts "Test output:\n\n $test_output_B \n\n"
 

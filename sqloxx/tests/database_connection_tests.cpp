@@ -1,3 +1,4 @@
+#include "sqloxx_tests_common.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
@@ -28,47 +29,6 @@ namespace sqloxx
 {
 namespace tests
 {
-
-// Anonymous namespace
-namespace
-{
-	void catch_check_ok(DatabaseConnection& dbc)
-	{
-		try
-		{
-			dbc.check_ok();
-		}
-		catch (SQLiteException& e)
-		{
-			cerr << "Exception caught by DatabaseConnection::check_ok()."
-			     << endl;
-			cerr << "Error message: " << e.what() << endl;
-			cerr << "Failing test." << endl;
-			CHECK(false);
-		}
-		return;
-	}
-
-	bool file_exists(boost::filesystem::path const& filepath)
-	{
-		return boost::filesystem::exists
-		(	boost::filesystem::status(filepath)
-		);
-	}
-
-	void abort_if_exists(boost::filesystem::path const& filepath)
-	{
-		if (file_exists(filepath))
-		{
-			cerr << "File named \"" << filepath.string() << "\" already "
-			     << "exists. Test aborted." << endl;
-			std::abort();
-		}
-		return;
-	}
-			    
-}  // End anonymous namespace
-
 
 
 // Test DatabaseConnection default constructor, and open function. A one-off
@@ -126,44 +86,8 @@ TEST(test_default_constructor_and_open)
 	// Cleanup
 	boost::filesystem::remove(filepath);
 	assert (!boost::filesystem::exists(boost::filesystem::status(filepath)));
-	assert (!file_exists(filepath));
 }	
 
-
-
-// Fixture that creates a DatabaseConnection and database file for
-// reuse in tests.
-struct DatabaseConnectionFixture
-{
-	// setup
-	DatabaseConnectionFixture(): filepath("Testfile_01")
-	{
-		if (boost::filesystem::exists(boost::filesystem::status(filepath)))
-		{
-			cerr << "File named \"" << filepath.string()
-			     << "\" already exists. Test aborted."
-				 << endl;
-			std::abort();
-		}
-		dbc.open(filepath);
-		assert (dbc.is_valid());
-	}
-
-	// teardown
-	~DatabaseConnectionFixture()
-	{
-		assert (dbc.is_valid());
-		boost::filesystem::remove(filepath);
-		assert
-		(	!boost::filesystem::exists(boost::filesystem::status(filepath))
-		);
-		// assert (!dbc.is_valid());
-	}
-
-	// path to database file
-	boost::filesystem::path filepath;
-	DatabaseConnection dbc;
-};
 
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_is_valid)

@@ -15,6 +15,11 @@ using std::string;
  * before being able to complete the transaction. The idea
  * is that an external script will then examine the database
  * after the crash, to ensure transaction atomicity was upheld.
+ *
+ * @todo Incorporate into setup_atomicity_test a check to make sure
+ * that a file by the same name as the test file doesn't already exist
+ * in the directory. This is vanishingly unlikely, but we might as well
+ * rule it out.
  */
 
 namespace sqloxx

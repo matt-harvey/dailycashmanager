@@ -43,6 +43,7 @@ set (test_files
      sqloxx/tests/database_connection_tests.cpp
 	 sqloxx/tests/persistent_object_tests.cpp
 	 sqloxx/tests/shared_sql_statement_tests.cpp
+	 sqloxx/tests/sqloxx_tests_common.cpp
 	 sqloxx/tests/atomicity_test.cpp)
 
 add_executable (test ${main_files} ${test_files})
