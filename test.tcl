@@ -11,6 +11,8 @@
 # is as expected given the crash, output the result of this check to
 # standard output, and then run the remaining unit tests.
 
+puts "Running unit tests. This may take a little while.\n"
+
 # This execution crashes, but we recover
 catch { exec ./test }
 

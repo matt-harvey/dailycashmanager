@@ -317,7 +317,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_transaction_nesting_exception_02)
  * For test of whether DatabaseConnection::begin_transaction and
  * DatabaseConnection::end_transaction actually do enable access to
  * the atomicity of their underlying SQL commands, see
- * transaction_crasher.hpp, test.cpp and test.tcl.
+ * atomicity_test.hpp, test.cpp and test.tcl.
  */
 
 
