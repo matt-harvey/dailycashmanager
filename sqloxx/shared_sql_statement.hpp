@@ -22,6 +22,17 @@ class SQLStatementManager;
  * the cache ready for deployment (unless the cache is full).
  * The details of caching are handled within the DatabaseConnection
  * class. The client just calls the constructor and uses the statement.
+ *
+ * @todo HIGH PRIORITY In functions that delegate to the underlying
+ * SQLStatement, there
+ * are circumstances in which the underlying SQLStatement method may
+ * throw. If this happens, the state of the SharedSQLStatement - and, for
+ * that matter, the underlying SQLStatement - needs to
+ * be valid afterwards, not left in some intermediate state that might
+ * cause trouble if reused later. This is particularly important given
+ * the opportunities for reuse afforded by the cached nature of the
+ * SharedSQLStatement implementation. On determining this reaction of
+ * state to exceptions, the reaction needs to be documented and tested.
  */
 class SharedSQLStatement
 {
@@ -103,16 +114,18 @@ public:
 	 * it is equivalent to calling:\n
 	 * \c if (step()) throw UnexpectedResultRow("...");\n
 	 *
-	 * @throws UnexpectedResultRow if a result set is returned.
+	 * @throws UnexpectedResultRow if a result set is returned. If this
+	 * occurs, the statement is reset (but bindings are not cleared).
 	 * 
 	 * @throws SQLiteException or an exception derived therefrom if there
 	 * is any other error in executing the statement.
-	*/
+	 */
 	void step_final();
 
 	/**
-	 * Resets the statement, freeing bound parameters ready for
-	 * subsequent re-binding and re-execution.
+	 * Resets the statement ready for subsequent
+	 * re-execution - but does not clear the bound parameters.
+	 * This is a wrapper for sqlite3_reset.
 	 *
 	 * Does not throw.
 	 */
@@ -182,15 +195,6 @@ bool
 SharedSQLStatement::step()
 {
 	return m_sql_statement->step();
-}
-
-
-inline
-void
-SharedSQLStatement::step_final()
-{
-	m_sql_statement->step_final();
-	return;
 }
 
 

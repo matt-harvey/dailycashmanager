@@ -160,6 +160,16 @@ public:
 	 */
 	void unlock();
 
+	/**
+	 * Check code is SQLITE_OK and if not finalize statement and
+	 * throw SQLiteException or derivative corresponding to the SQLite
+	 * error code.
+	 *
+	 * @throw If error code is SQLITE_DONE or SQLITE_ROWS then this
+	 * throws SQLiteUnknownErrorCode. Improve this behaviour.
+	 */
+	void check_ok();
+
 private:
 	
 	/**
@@ -192,15 +202,6 @@ private:
 	 */
 	void check_column(int index, int value_type);
 
-	/**
-	 * Check code is SQLITE_OK and if not finalize statement and
-	 * throw SQLiteException or derivative corresponding to the SQLite
-	 * error code.
-	 *
-	 * @throw If error code is SQLITE_DONE or SQLITE_ROWS then this
-	 * throws SQLiteUnknownErrorCode. Improve this behaviour.
-	 */
-	void check_ok();
 
 	sqlite3_stmt* m_statement;
 	SQLiteDBConn& m_sqlite_dbconn;
@@ -254,7 +255,10 @@ inline
 void
 SQLStatement::reset()
 {
-	sqlite3_reset(m_statement);
+	if (m_statement)
+	{
+		sqlite3_reset(m_statement);
+	}
 	return;
 }
 
@@ -263,7 +267,10 @@ inline
 void
 SQLStatement::clear_bindings()
 {
-	sqlite3_clear_bindings(m_statement);
+	if (m_statement)
+	{
+		sqlite3_clear_bindings(m_statement);
+	}
 	return;
 }
 

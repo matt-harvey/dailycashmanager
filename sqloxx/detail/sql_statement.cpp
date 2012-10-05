@@ -43,8 +43,10 @@ SQLStatement::SQLStatement
 
 SQLStatement::~SQLStatement()
 {
-	if (m_statement != 0)
+	if (m_statement)
 	{
+		// WARNING This can cause segfault in certain circumstances when
+		// called from destructor of SharedSQLStatement.
 		sqlite3_finalize(m_statement);
 		m_statement = 0;
 	}
@@ -161,7 +163,7 @@ SQLStatement::step_final()
 {
 	if (step())
 	{
-		sqlite3_finalize(m_statement);
+		reset();
 		throw UnexpectedResultRow
 		(	"Statement yielded a result set when none was expected."
 		);

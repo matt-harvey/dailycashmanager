@@ -108,7 +108,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_value_type_exception)
 	);
 }
 
-TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception)
+TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_high)
 {
 	dbc.execute_sql("create table dummy(Col_A integer, Col_B integer)");
 	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(3, 10);");
@@ -124,11 +124,187 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception)
 	);
 }
 
+TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_low)
+{
+	dbc.execute_sql("create table dummy(Col_A text, Col_B integer)");
+	dbc.execute_sql("insert into dummy(Col_A, Col_B) values('Hello', 9)");
+	SharedSQLStatement selection_statement
+	(	dbc,
+		"select Col_A, Col_B from dummy"
+	);
+	selection_statement.step();
+	string s;
+	CHECK_THROW
+	(	s = selection_statement.extract<string>(-1),
+		ResultIndexOutOfRange
+	);
+}
 
+TEST_FIXTURE(DatabaseConnectionFixture, test_step)
+{
+	// Create table
+	dbc.execute_sql
+	(	"create table planets(name text not null unique, size text)"
+	);
 
-// WARNING STILL NEED TO TEST REST OF API
+	// Populate table
+	SharedSQLStatement insertion_statement_01
+	(	dbc,
+		"insert into planets(name, size) values('Mercury', 'small')"
+	);
+	bool const insertion_step_01 = insertion_statement_01.step();
+	CHECK_EQUAL(insertion_step_01, false);
+	SharedSQLStatement insertion_statement_02
+	(	dbc,
+		"insert into planets(name, size) values('Venus', 'medium')"
+	);
+	bool const insertion_step_02 = insertion_statement_02.step();
+	CHECK_EQUAL(insertion_step_02, false);
+	SharedSQLStatement insertion_statement_03
+	(	dbc,
+		"insert into planets(name, size) values('Earth', 'medium')"
+	);
+	bool const insertion_step_03 = insertion_statement_03.step();
+	CHECK(!insertion_step_03);
+	
+	// Extract from table
+	SharedSQLStatement selection_statement_01
+	(	dbc,
+		"select name, size from planets where size = 'medium'"
+	);
+	bool const first_step = selection_statement_01.step();
+	CHECK(first_step);
+	bool const second_step = selection_statement_01.step();
+	CHECK_EQUAL(second_step, true);
+	bool const third_step = selection_statement_01.step();
+	CHECK(!third_step);
+}
 
+TEST_FIXTURE(DatabaseConnectionFixture, test_step_final)
+{
+	// Create table
+	dbc.execute_sql
+	(	"create table planets(name text not null unique, size text)"
+	);
 
+	// Populate table
+	SharedSQLStatement insertion_statement_01
+	(	dbc,
+		"insert into planets(name, size) values('Jupiter', 'large')"
+	);
+	insertion_statement_01.step_final();  // Shouldn't throw
+	SharedSQLStatement insertion_statement_02
+	(	dbc,
+		"insert into planets(name, size) values('Saturn', 'large')"
+	);
+	insertion_statement_02.step_final();
+
+	// Extract from table
+	SharedSQLStatement selection_statement_01
+	(	dbc,
+		"select name, size from planets where size = 'large' order by name"
+	);
+	selection_statement_01.step();
+	CHECK_THROW(selection_statement_01.step_final(), UnexpectedResultRow);
+	selection_statement_01.step();
+	CHECK_EQUAL(selection_statement_01.extract<string>(0), "Jupiter");
+}
+
+TEST_FIXTURE(DatabaseConnectionFixture, test_reset)
+{
+	// Create table
+	dbc.execute_sql
+	(	"create table planets(name text not null unique, visited integer)"
+	);
+
+	// Populate table
+	dbc.execute_sql("insert into planets(name, visited) values('Earth', 1)");
+	dbc.execute_sql
+	(	"insert into planets(name, visited) values('Neptune', 0)"
+	);
+	dbc.execute_sql("insert into planets(name, visited) values('Uranus', 0)");
+
+	// Extract from table
+	SharedSQLStatement selection_statement
+	(	dbc,
+		"select name from planets where visited = :visited order by name"
+	);
+	selection_statement.bind(":visited", 1);
+	selection_statement.step();
+	CHECK_EQUAL(selection_statement.extract<string>(0), "Earth");
+	selection_statement.reset();
+	selection_statement.bind(":visited", 0);
+	selection_statement.step();
+	CHECK_EQUAL(selection_statement.extract<string>(0), "Neptune");
+	selection_statement.step();
+	CHECK_EQUAL(selection_statement.extract<string>(0), "Uranus");
+	bool const final_step = selection_statement.step();
+	CHECK_EQUAL(final_step, false);
+	selection_statement.reset();
+	selection_statement.step();
+	CHECK_EQUAL(selection_statement.extract<string>(0), "Neptune");
+	selection_statement.step();
+	CHECK_EQUAL(selection_statement.extract<string>(0), "Uranus");
+	bool const final_step_again = selection_statement.step();
+	CHECK(!final_step_again);
+}
+
+TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_01)
+{
+	// Create table
+	dbc.execute_sql
+	(	"create table planets(name text not null, visited integer)"
+	);
+	// Populate the table
+	SharedSQLStatement insertion_statement_01
+	(	dbc,
+		"insert into planets(name, visited) values(:planet, :visited)"
+	);
+	insertion_statement_01.bind(":planet", "Earth");
+	insertion_statement_01.bind(":visited", 1);
+	bool const step_01 = insertion_statement_01.step();
+	CHECK(!step_01);
+	insertion_statement_01.reset();
+	bool const step_02 = insertion_statement_01.step();  // Should be fine
+	CHECK(!step_02);
+	insertion_statement_01.reset();
+	insertion_statement_01.clear_bindings();
+	CHECK_THROW(insertion_statement_01.step(), SQLiteConstraint);
+}
+	
+
+TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_02)
+{
+	// Create table
+	dbc.execute_sql
+	(	"create table planets(name text, size text)"
+	);
+	// Populate the table
+	SharedSQLStatement insertion_statement_01
+	(	dbc,
+		"insert into planets(name, size) values(:planet, :size)"
+	);
+	insertion_statement_01.bind(":planet", "Earth");
+	insertion_statement_01.bind(":size", "medium");
+	bool const step_01 = insertion_statement_01.step();
+	CHECK(!step_01);
+	insertion_statement_01.reset();
+	bool const step_02 = insertion_statement_01.step();  // Should be fine
+	CHECK(!step_02);
+	insertion_statement_01.reset();
+	insertion_statement_01.clear_bindings();
+	// Should be OK to insert with nulls, as no constraints here
+	bool const step_03 = insertion_statement_01.step();
+	CHECK(!step_03);
+	
+	// Inspect the table
+	SharedSQLStatement selection_statement_01(dbc, "select * from planets");
+	selection_statement_01.step();  // Earth
+	selection_statement_01.step();  // Earth again
+	selection_statement_01.step();  // Nulls
+	selection_statement_01.step_final();
+}
+	
 
 }  // namespace sqloxx
 }  // namespace tests
