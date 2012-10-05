@@ -15,6 +15,8 @@ namespace tests
 {
 
 
+
+
 TEST_FIXTURE(DatabaseConnectionFixture, test_shared_sql_statement_constructor)
 {
 	// Check behaviour with SQL syntax error
@@ -77,8 +79,52 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 	selector.step_final();
 }
 
+TEST_FIXTURE(DatabaseConnectionFixture, test_bind_exception)
+{
+	dbc.execute_sql("create table dummy(Col_A integer, Col_B text);");
+	SharedSQLStatement insertion_statement
+	(	dbc,
+		"insert into dummy(Col_A, Col_B) values(:A, :B)"
+	);
+	CHECK_THROW
+	(	insertion_statement.bind(":a", 10),
+		SQLiteException
+	);
+}
 
-// WARNING STILL NEED TO TEST BIND AND EXTRACT EXCEPTIONS
+TEST_FIXTURE(DatabaseConnectionFixture, test_extract_value_type_exception)
+{
+	dbc.execute_sql("create table dummy(Col_A integer, Col_B text)");
+	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(3, 'hey');");
+	SharedSQLStatement selection_statement
+	(	dbc,
+		"select Col_A, Col_B from dummy where Col_A = 3"
+	);
+	selection_statement.step();
+	string s;
+	CHECK_THROW
+	(	s = selection_statement.extract<string>(0),
+		ValueTypeException
+	);
+}
+
+TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception)
+{
+	dbc.execute_sql("create table dummy(Col_A integer, Col_B integer)");
+	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(3, 10);");
+	SharedSQLStatement selection_statement
+	(	dbc,
+		"select Col_A, Col_B from dummy where Col_A = 3"
+	);
+	selection_statement.step();
+	int x;
+	CHECK_THROW
+	(	x = selection_statement.extract<int>(2),
+		ResultIndexOutOfRange
+	);
+}
+
+
 
 // WARNING STILL NEED TO TEST REST OF API
 

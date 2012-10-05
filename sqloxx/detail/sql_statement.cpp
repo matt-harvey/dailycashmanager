@@ -59,7 +59,7 @@ SQLStatement::check_column(int index, int value_type)
 	{
 		throw NoResultRowException("Result row not available.");
 	}
-	if (index > num_columns)
+	if (index >= num_columns)
 	{
 		throw ResultIndexOutOfRange("Index is out of range.");
 	}
