@@ -68,7 +68,7 @@ void
 do_speed_test()
 {
 	string const filename("aaksjh237nsal");
-	int const loops = 5000;
+	int const loops = 50000;
 	
 	vector<string> statements;
 	statements.push_back

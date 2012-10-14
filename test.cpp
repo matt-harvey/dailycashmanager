@@ -40,8 +40,9 @@ int main()
 		cout << "Compiled in release mode (NDEBUG is defined)." << endl;
 	#endif
 
-	// do_speed_test();
+	do_speed_test();
 
+	/*
 	int atomicity_test_result = do_atomicity_test();
 
 	
@@ -50,4 +51,5 @@ int main()
 		 << endl;
 
 	return atomicity_test_result + UnitTest::RunAllTests();
+	*/
 }
