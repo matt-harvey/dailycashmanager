@@ -152,4 +152,5 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 	return new_statement;
 }
 
+
 }  // namespace sqloxx

@@ -20,9 +20,13 @@
 #include <unittest++/UnitTest++.h>
 #include <iostream>
 
+// Should pull in a better way.
+#include "sqloxx/tests/sqloxx_tests_common.hpp"
+
 using sqloxx::DatabaseConnection;
 using sqloxx::SharedSQLStatement;
 using sqloxx::tests::do_atomicity_test;
+using sqloxx::tests::do_speed_test;
 using std::cout;
 using std::endl;
 using std::string;
@@ -36,7 +40,11 @@ int main()
 		cout << "Compiled in release mode (NDEBUG is defined)." << endl;
 	#endif
 
+	// do_speed_test();
+
 	int atomicity_test_result = do_atomicity_test();
+
+	
 
 	cout << "\nNow running various unit tests using UnitTest++..."
 		 << endl;
