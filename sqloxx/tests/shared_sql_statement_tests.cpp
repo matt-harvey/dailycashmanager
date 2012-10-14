@@ -277,7 +277,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_02)
 {
 	// Create table
 	dbc.execute_sql
-	(	"create table planets(name text, size text)"
+	(	"create table planets(name text unique, size text)"
 	);
 	// Populate the table
 	SharedSQLStatement insertion_statement_01
@@ -305,6 +305,30 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_02)
 	selection_statement_01.step_final();
 }
 	
+
+TEST_FIXTURE(DatabaseConnectionFixture, test_locking_mechanism)
+{
+	// Test that locking prevents two SharedSQLStatements from
+	// sharing the same underlying SQLStatement when they are in
+	// the same scope.
+	dbc.execute_sql
+	(	"create table planets(name text unique, size text)"
+	);
+	// Populate the table
+	dbc.execute_sql
+	(	"insert into planets(name, size) values('Earth', 'Medium')"
+	);
+	// Now the SharedSQLStatements
+	string const text("select size from planets where name = 'Earth'");
+	SharedSQLStatement s0(dbc, text);
+	SharedSQLStatement s1(dbc, text);
+	CHECK_EQUAL(s0.step(), true);
+	CHECK_EQUAL(s0.step(), false);
+	CHECK_EQUAL(s1.step(), true);
+	CHECK_EQUAL(s1.step(), false);
+}
+
+
 
 }  // namespace sqloxx
 }  // namespace tests
