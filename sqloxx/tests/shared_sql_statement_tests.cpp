@@ -308,9 +308,9 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_02)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_locking_mechanism)
 {
-	// Test that locking prevents two SharedSQLStatements from
-	// sharing the same underlying SQLStatement when they are in
-	// the same scope.
+	// Test that locking prevents two SharedSQLStatements with the
+	// same text from sharing the same underlying SQLStatement when
+	// they are in the same scope.
 	dbc.execute_sql
 	(	"create table planets(name text unique, size text)"
 	);

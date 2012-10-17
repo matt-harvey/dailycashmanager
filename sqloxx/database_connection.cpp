@@ -144,11 +144,13 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 		assert (m_statement_cache.size() < m_cache_capacity);
 		m_statement_cache[statement_text] = new_statement;
 	}
+	/*
 	else
 	{
 		// Cache has reached capacity and caching has been
 		// discontinued.
 	}
+	*/
 	return new_statement;
 }
 

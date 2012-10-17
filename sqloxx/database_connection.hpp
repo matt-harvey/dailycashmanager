@@ -77,6 +77,11 @@ public:
 	 * database AND detail_id_valid() also returns true. By
 	 * default, detail_is_valid() always returns true; however it may
 	 * be redefined in derived classes to provide additional checks.
+	 *
+	 * Exception safety: the base class function
+	 * DatabaseConnection::is_valid offers the <em>nothrow guarantee</em>,
+	 * however if detail_is_valid is redefined in derived classes, exception
+	 * safety will depend on how it is redefined.
 	 */
 	virtual bool is_valid() const;
 
