@@ -116,6 +116,11 @@ SQLiteDBConn::check_ok()
 	}
 	assert (sqlite3_errcode(m_connection) != SQLITE_OK);
 	char const* msg = sqlite3_errmsg(m_connection);
+	if (!msg)
+	{
+		throw SQLiteException("");  // Keep it minimal in this case.
+	}
+	assert (msg != 0);
 	switch (sqlite3_errcode(m_connection))
 	{
 	case SQLITE_ERROR:

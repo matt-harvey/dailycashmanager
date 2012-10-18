@@ -66,10 +66,16 @@ public:
 	 *
 	 * @throws SQLiteInitializationError if initialization fails
 	 * for any reason.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	explicit
 	DatabaseConnection(StatementCache::size_type p_cache_capacity = 300);
 
+	/**
+	 * Exception safety: <em>nothrow guarantee<em>. (Of course, the exception
+	 * safety of derived classes will depend on their own destructors.)
+	 */
 	virtual ~DatabaseConnection();
 
 	/**
@@ -147,6 +153,8 @@ public:
 	 *
 	 * @todo If error code is SQLITE_DONE or SQLITE_ROWS, this throws
 	 * SQLiteUnknownErrorCode. Improve this behaviour.
+	 *
+	 * Exception safety: <em>basic guarantee</em>.
 	 */
 	void check_ok();
 
@@ -180,7 +188,7 @@ public:
 	 * @throws InvalidConnection if database connection does not exist or
 	 * is otherwise invalid.
 	 *
-	 * @param table_name name of table
+	 * @param table_name name of table.
 	 */
 	void find_primary_key
 	(	std::set<std::string>& result,
