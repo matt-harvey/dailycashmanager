@@ -158,51 +158,6 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_check_ok)
 	CHECK_THROW(temp.check_ok(), SQLiteException);
 }
 
-TEST_FIXTURE(DatabaseConnectionFixture, test_primary_key)
-{
-	dbc.execute_sql
-	(	"create table dummy"
-		"("
-			"column_A integer not null, "
-			"column_B text, "
-			"column_C text not null, "
-			"column_D float not null unique, "
-			"primary key(column_A, column_C)  "
-		");"
-	);
-	set<string> pk;
-	dbc.find_primary_key(pk, "dummy");
-	CHECK_EQUAL(pk.size(), 2);
-	CHECK(pk.find("column_A") != pk.end());
-	CHECK(pk.find("column_C") != pk.end());
-	dbc.execute_sql
-	(	"create table dummyB"
-		"("
-			"column_BA text, "
-			"column_BB integer primary key autoincrement"
-		");"
-	);
-	set<string> pkB;
-	dbc.find_primary_key(pkB, "dummyB");
-	CHECK_EQUAL(pkB.size(), 1);
-	CHECK(pkB.find("column_BB") != pk.end());
-	dbc.execute_sql
-	(	"create table dummyC"
-		"("
-			"column_CA integer not null unique, "
-			"column_CB float not null unique, "
-			"column_CC text unique"
-		");"
-	);
-	set<string> pkC;
-	dbc.find_primary_key(pkC, "dummyC");
-	CHECK_EQUAL(pkC.size(), 0);
-	dbc.execute_sql
-	(	"drop table dummy; drop table dummyB; drop table dummyC;"
-	);
-	dbc.check_ok();
-}
-
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key)
 {

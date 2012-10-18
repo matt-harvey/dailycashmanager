@@ -91,34 +91,6 @@ DatabaseConnection::end_transaction()
 }
 
 
-
-void
-DatabaseConnection::find_primary_key
-(	set<string>& result,
-	string const& table_name
-)
-{
-	static int const pk_info_field = 5;
-	static int const column_name_field = 1;
-	SharedSQLStatement statement
-	(	*this,
-		"pragma table_info(" + table_name + ")"
-	);
-	bool steps_remain = true;
-	// Assignment operator is deliberate here.
-	// Double parentheses silence a compiler warning.
-	while ((steps_remain = statement.step()))
-	{
-		if (statement.extract<int>(pk_info_field) == 1)
-		{
-			result.insert(statement.extract<string>(column_name_field));
-		}
-	}
-	assert (!steps_remain);
-	return;
-}
-
-
 shared_ptr<detail::SQLStatement>
 DatabaseConnection::provide_sql_statement(string const& statement_text)
 {

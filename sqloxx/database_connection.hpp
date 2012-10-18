@@ -158,43 +158,7 @@ public:
 	 */
 	void check_ok();
 
-		
-	/**
-	 * To find primary key of a table.
-	 *
-	 * Note, this function should not be used where \c table_name is
-	 * an untrusted string.
-	 *
-	 * @todo To speed execution, assuming the return value for a given
-	 * \c table_name never changes, the return values could be cached in a
-	 * map< string, set<string> > inside the detail::SQLiteDBConn
-	 * instance.
-	 *
-	 * Populates \e result with the names of all the columns making up the
-	 * primary key of the table named \c table_name. Note the names are
-	 * simply inserted into the set. If there is no primary key then no
-	 * names will be inserted. If \e result contains one or more elements
-	 * prior to being passed to the function, these will \e not be deleted
-	 * from \e result by this function, but the primary key names will simply
-	 * be inserted alongside the existing elements.
-	 *
-	 * Note that as the result is stored inside a std::set, the elements of
-	 * the set will be ordered according to the ordering behaviour of the set
-	 * (which by default will be alphabetical order), rather than according to
-	 * their order in the table schema.
-	 *
-	 * @todo Determine, document and test throwing behaviour.
-	 *
-	 * @throws InvalidConnection if database connection does not exist or
-	 * is otherwise invalid.
-	 *
-	 * @param table_name name of table.
-	 */
-	void find_primary_key
-	(	std::set<std::string>& result,
-		std::string const& table_name
-	);
-
+	
 	/**
 	 * Given the name of a table in the connected database, assuming that
 	 * table has a single-column primary key, and assuming that column is
