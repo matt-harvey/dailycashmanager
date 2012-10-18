@@ -59,17 +59,6 @@ SQLiteDBConn::open(boost::filesystem::path const& filepath)
 	{
 		throw InvalidFilename("Cannot open file with empty filename.");
 	}
-	// Check if file already exists
-	// While this conditional doesn't do anything, it is retained here
-	// for convenience in case logging or other message required.
-	if (boost::filesystem::exists(boost::filesystem::status(filepath)))
-	{
-		// Preexisting filepath detected... 
-	}
-	else
-	{
-		// New file created...
-	}
 	// Throw if already connected or if filename is empty
 	if (m_connection)
 	{

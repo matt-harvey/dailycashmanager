@@ -97,8 +97,15 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_is_valid)
 	CHECK(!dbc2.is_valid());
 }
 
+TEST(test_execute_sql_01)
+{
+	// Test on unopened DatabaseConnection
+	string const command("create table test_table(column_A integer)");
+	DatabaseConnection d;
+	CHECK_THROW(d.execute_sql(command), SQLiteNoMem);
+}
 
-TEST_FIXTURE(DatabaseConnectionFixture, test_execute_sql)
+TEST_FIXTURE(DatabaseConnectionFixture, test_execute_sql_02)
 {
 	dbc.execute_sql
 	(	"create table test_table(column_A integer, column_B text not null)"

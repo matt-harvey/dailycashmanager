@@ -116,11 +116,14 @@ public:
 	 * @throws SQLiteException or an exception derived therefrom (likely, but
 	 * not guaranteed, to be SQLiteCantOpen) if for some other reason the
 	 * connection cannot be opened.
+	 *
+	 * Exception safety: appears to offer the <em>basic guarantee</em>,
+	 * <em>however</em> this has not been properly tested.
 	 */
 	void open(boost::filesystem::path const& filepath);
 
 	/**
-	 * Executes a string on the database connection.
+	 * Executes a string as an SQL command on the database connection.
 	 * This should be used only where the developer has complete
 	 * control of the string being passed, to prevent SQL injection
 	 * attacks. Generally, the functions provided by SQLStatement should
@@ -128,6 +131,9 @@ public:
 	 *
 	 * @throws SQLiteException or some exception inheriting thereof, whenever
 	 * there is any kind of error executing the statement.
+	 * 
+	 * Exception safety: <em>basic guarantee</em>. (Possibly also offers
+	 * strong guarantee, but not certain.)
 	 */
 	void execute_sql(std::string const& str);
 
