@@ -29,14 +29,34 @@ SQLStatement::SQLStatement
 			"DatabaseConnection."
 		);
 	}
+	char const* cstr = str.c_str();
+	char const** tail = &cstr;
 	sqlite3_prepare_v2
 	(	m_sqlite_dbconn.m_connection,
-		str.c_str(),
-		-1,
+		cstr,
+		str.length() + 1,
 		&m_statement,
-		0
+		tail
 	);
 	check_ok();
+	for (char const* it = *tail; *it != '\0'; ++it)
+	{
+		switch (*it)
+		{
+		case ';':
+		case ' ':
+			// The character is harmless.
+			break;
+		default:
+			// But character is bad.
+			sqlite3_finalize(m_statement);
+			m_statement = 0;
+			throw TooManyStatements
+			(	"Compound SQL statement passed to constructor of "
+				"SQLStatement - which can handle only single statements."
+			);
+		}
+	}
 	return;
 }
 

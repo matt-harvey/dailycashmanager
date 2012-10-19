@@ -117,6 +117,12 @@ JEWEL_DERIVED_EXCEPTION(TransactionNestingException, DatabaseException);
 JEWEL_DERIVED_EXCEPTION(SQLiteInitializationError, SQLiteException);
 
 
+/**
+ * Exception to be thrown when SQL statements are passed to function that
+ * expects only one.
+ */
+JEWEL_DERIVED_EXCEPTION(TooManyStatements, DatabaseException);
+
 /* NOT DOXYGEN AS DOXYGEN DOESN'T HANDLE
  * The following exceptions correspond to particular SQLite standard error
  * codes. See the SQLite standard documentation for description of what the

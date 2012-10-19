@@ -44,7 +44,9 @@ public:
 	 * @param p_database_connection is the DatabaseConnection
 	 * on which the statement will be executed.
 	 *
-	 * @param p_statement_text is text of the statement.
+	 * @param str is the text of a single SQL statement. It can be terminated
+	 * with any mixture of semicolons and/or spaces (but not other forms
+	 * of whitespace).
 	 *
 	 * @throws InvalidConnection if an p_database_connection is an
 	 * invalid database connection (i.e. if p_database_connection.is_valid()
@@ -53,6 +55,13 @@ public:
 	 * @throws SQLiteException, or an exception derived therefore, if there
 	 * is some other problem in preparing the statement, which results in a
 	 * SQLite error code (that is not SQLITE_OK) being returned.
+	 * 
+	 * @throws TooManyStatements if the first purported SQL statement
+	 * in str is syntactically acceptable to SQLite, <em>but</em> there
+	 * are characters in str after this statement, other than ';' and ' '.
+	 * This includes the case where there are further syntactically
+	 * acceptable SQL statements after the first one - as each SQLStatement
+	 * can encapsulate only one statement.
 	 */
 	SharedSQLStatement
 	(	DatabaseConnection& p_database_connection,	

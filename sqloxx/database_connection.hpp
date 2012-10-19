@@ -214,6 +214,8 @@ public:
 	 *
 	 * @throws sqloxx::DatabaseException may be thrown if there is some other
 	 * error finding the next primary key value.
+	 *
+	 * Exception safety: <em>basic guarantee</em>.
 	 */
 	template <typename KeyType>
 	KeyType next_auto_key(std::string const& table_name);	
@@ -229,8 +231,18 @@ public:
 	 * primary key field with the heading "representation". There are
 	 * two rows, one with 0 in the "representation" column, representing
 	 * \e false, and the other with 1, representing \e true.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	void setup_boolean_table();
+
+	/**
+	 * Returns the maximum level of transaction nesting that can be handled
+	 * by the DatabaseConnection class.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	static int max_nesting();
 
 	/**
 	 * Begins a transaction. Transactions may be nested. Only the
@@ -242,8 +254,9 @@ public:
 	 * the direct execution of SQL statement strings "begin transaction" and
 	 * "end transaction". Mixing the two will result in undefined behaviour.
 	 *  
-	 * Note this may fail silently in the unlikely event that the number of
-	 * nested transactions exceeds MAX_INT.
+	 * @throws TransactionNestingException in the event that the maximum
+	 * level of nesting has been reached. The maximum level of nesting is
+	 * equal to the value returned by max_nesting().
 	 */
 	void begin_transaction();
 
@@ -292,6 +305,7 @@ private:
 	int m_transaction_nesting_level;
 	StatementCache m_statement_cache;
 	StatementCache::size_type m_cache_capacity;
+	static int const s_max_nesting;
 };
 
 
@@ -365,6 +379,13 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 	return max_key + 1;
 }
 
+
+inline
+int
+DatabaseConnection::max_nesting()
+{
+	return s_max_nesting;
+}
 
 
 inline

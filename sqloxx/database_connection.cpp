@@ -5,6 +5,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <iostream>
+#include <limits>
 #include <set>
 #include <string>
 
@@ -13,11 +14,17 @@ using boost::shared_ptr;
 using boost::unordered_map;
 using std::clog;
 using std::endl;
+using std::numeric_limits;
 using std::set;
 using std::string;
 
 namespace sqloxx
 {
+
+
+int const
+DatabaseConnection::s_max_nesting = numeric_limits<int>::max();
+
 
 DatabaseConnection::DatabaseConnection
 (	StatementCache::size_type p_cache_capacity
@@ -53,6 +60,10 @@ DatabaseConnection::setup_boolean_table()
 void
 DatabaseConnection::begin_transaction()
 {
+	if (m_transaction_nesting_level == s_max_nesting)
+	{
+		throw TransactionNestingException("Maximum nesting level reached.");
+	}
 	if (!m_transaction_nesting_level)
 	{
 		assert (m_transaction_nesting_level == 0);

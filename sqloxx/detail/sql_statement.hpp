@@ -43,11 +43,6 @@ class SQLiteDBConn;
  * Wrapper class for sqlite_stmt*. This class is not intended to be
  * used except internally by the Sqloxx library. SQLStatement instances
  * are themselves encapsulated by SharedSQLStatement instances.
- *
- * @todo The constructor to create a SQLStatement should reject strings
- * containing semicolons, since compound statements are not handled by
- * step() properly. There should be some other class SQLMultiStatement or
- * something, which can then executed using a wrapper around sqlite3_exec.
  */
 class SQLStatement:
 	private boost::noncopyable
@@ -57,12 +52,23 @@ public:
 	/**
 	 * Creates an object encapsulating a SQL statement.
 	 *
+	 * @param str is the text of a single SQL statement. It can be terminated
+	 * with any mixture of semicolons and/or spaces (but not other forms
+	 * of whitespace).
+	 *
 	 * @throws InvalidConnection if the database connection passed to
 	 * \c dbconn is invalid.
 	 *
 	 * @throws SQLiteException or an exception derived therefrom, if
 	 * the database connection is valid, but the statement could not
 	 * be properly prepared by SQLite.
+	 *
+	 * @throws TooManyStatements if the first purported SQL statement
+	 * in str is syntactically acceptable to SQLite, <em>but</em> there
+	 * are characters in str after this statement, other than ';' and ' '.
+	 * This includes the case where there are further syntactically
+	 * acceptable SQL statements after the first one - as each SQLStatement
+	 * can encapsulate only one statement.
 	 */
 	SQLStatement(SQLiteDBConn& p_sqlite_dbconn, std::string const& str);
 
