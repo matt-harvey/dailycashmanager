@@ -26,18 +26,9 @@ SharedSQLStatement::SharedSQLStatement
 
 SharedSQLStatement::~SharedSQLStatement()
 {
-	try
-	{
-		m_sql_statement->reset();
-		m_sql_statement->clear_bindings();
-		m_sql_statement->unlock();
-	}
-	catch (SQLiteException&)
-	{
-		JEWEL_DEBUG_LOG << "Exception caught in destructor of "
-		                << "SharedSQLStatement."
-						<< endl;
-	}
+	m_sql_statement->reset();
+	m_sql_statement->clear_bindings();
+	m_sql_statement->unlock();
 }
 
 void

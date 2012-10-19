@@ -23,6 +23,12 @@
  * that the C++ API of Sqloxx will largely mirror the C API of
  * SQLite, so that Sqloxx could be used easily by anyone who is
  * familiar with SQLite (and with C++).
+ *
+ * @todo HIGH PRIORITY I have seriously misunderstood
+ * the nature of sqlite3_errcode. This function is <em>undefined</em> in case
+ * the most recent SQLite API call <em>succeeded</em>. It is only defined if
+ * the most recent API call <em>failed</em>. I need to fix things to take this
+ * into account!
  */
 namespace sqloxx
 {
@@ -150,9 +156,6 @@ public:
 	 * corresponds to the current SQLite error code for the connection. Any
 	 * thrown exception will be an instance of class that is, or extends,
 	 * \c SQLiteException.
-	 *
-	 * @todo If error code is SQLITE_DONE or SQLITE_ROWS, this throws
-	 * SQLiteUnknownErrorCode. Improve this behaviour.
 	 *
 	 * Exception safety: <em>basic guarantee</em>.
 	 */

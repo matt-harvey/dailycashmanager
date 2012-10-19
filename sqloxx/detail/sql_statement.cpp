@@ -67,8 +67,6 @@ SQLStatement::~SQLStatement()
 {
 	if (m_statement)
 	{
-		// WARNING This can cause segfault in certain circumstances when
-		// called from destructor of SharedSQLStatement.
 		sqlite3_finalize(m_statement);
 		m_statement = 0;
 	}

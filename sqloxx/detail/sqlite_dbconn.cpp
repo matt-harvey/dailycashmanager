@@ -114,7 +114,6 @@ SQLiteDBConn::check_ok()
 	{
 		return;
 	}
-	assert (sqlite3_errcode(m_connection) != SQLITE_OK);
 	char const* msg = sqlite3_errmsg(m_connection);
 	if (!msg)
 	{
@@ -195,6 +194,13 @@ SQLiteDBConn::check_ok()
 	case SQLITE_NOTADB:
 		throw SQLiteNotADB(msg);
 		break;
+
+	#ifndef NDEBUG
+		case SQLITE_ROW:
+		case SQLITE_DONE:
+			assert (false);  // Should never reach here
+	#endif
+
 	default:
 		throw SQLiteUnknownErrorCode(msg);
 	}
