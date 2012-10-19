@@ -48,9 +48,11 @@ SQLStatement::SQLStatement
 			// The character is harmless.
 			break;
 		default:
-			// But character is bad.
+			// The character is bad.
 			sqlite3_finalize(m_statement);
 			m_statement = 0;
+			// Note this will have thrown already if first statement is
+			// ungrammatical.
 			throw TooManyStatements
 			(	"Compound SQL statement passed to constructor of "
 				"SQLStatement - which can handle only single statements."
