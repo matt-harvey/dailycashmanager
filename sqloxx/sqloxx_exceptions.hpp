@@ -18,6 +18,7 @@
 namespace sqloxx
 {
 
+
 /**
  * Exception to be thrown in response to exceptions
  * originating in database-related code. See

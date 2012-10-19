@@ -30,6 +30,7 @@ using boost::int64_t;
 using std::abort;
 using std::clog;
 using std::endl;
+using std::logic_error;
 using std::runtime_error;
 using std::string;
 using std::vector;
@@ -65,13 +66,14 @@ SQLiteDBConn::open(boost::filesystem::path const& filepath)
 		throw MultipleConnectionException("Database already connected.");
 	}
 	// Open the connection
-	sqlite3_open_v2
-	(	filepath.string().c_str(),
-		&m_connection,
-		SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
-		0
+	throw_on_failure	
+	(	sqlite3_open_v2
+		(	filepath.string().c_str(),
+			&m_connection,
+			SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
+			0
+		)
 	);
-	check_ok();
 	execute_sql("pragma foreign_keys = on;");
 	return;
 
@@ -108,20 +110,41 @@ SQLiteDBConn::is_valid() const
 }
 
 void
-SQLiteDBConn::check_ok()
+SQLiteDBConn::throw_on_failure(int errcode)
 {
-	if (sqlite3_errcode(m_connection) == SQLITE_OK)
+	if (!is_valid())
 	{
-		return;
+		throw InvalidConnection("Database connection is invalid.");
 	}
+	switch (errcode)
+	{
+	case SQLITE_OK:
+	case SQLITE_DONE:
+	case SQLITE_ROW:
+		return;
+	default:
+		break;
+	}
+	if (errcode != sqlite3_errcode(m_connection))
+	{
+		throw logic_error
+		(	"Parameter errcode passed to throw_on_failure does not correspond"
+			" to error code produced by latest call to SQLite API on this "
+			"database connection."
+		);
+	}
+	assert (errcode != SQLITE_OK);
+	assert (sqlite3_errcode(m_connection) != SQLITE_OK);
 	char const* msg = sqlite3_errmsg(m_connection);
 	if (!msg)
 	{
 		throw SQLiteException("");  // Keep it minimal in this case.
 	}
 	assert (msg != 0);
-	switch (sqlite3_errcode(m_connection))
+	assert (errcode == sqlite3_errcode(m_connection));
+	switch (errcode)
 	{
+	// Redundant "breaks" here are retained deliberately out of "respect".
 	case SQLITE_ERROR:
 		throw SQLiteError(msg);
 		break;
@@ -196,6 +219,7 @@ SQLiteDBConn::check_ok()
 		break;
 
 	#ifndef NDEBUG
+		case SQLITE_OK:
 		case SQLITE_ROW:
 		case SQLITE_DONE:
 			assert (false);  // Should never reach here
@@ -211,8 +235,7 @@ SQLiteDBConn::check_ok()
 void
 SQLiteDBConn::execute_sql(string const& str)
 {
-	sqlite3_exec(m_connection, str.c_str(), 0, 0, 0);
-	check_ok();
+	throw_on_failure(sqlite3_exec(m_connection, str.c_str(), 0, 0, 0));
 	return;
 }
 

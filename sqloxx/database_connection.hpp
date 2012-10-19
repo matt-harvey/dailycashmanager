@@ -24,11 +24,9 @@
  * SQLite, so that Sqloxx could be used easily by anyone who is
  * familiar with SQLite (and with C++).
  *
- * @todo HIGH PRIORITY I have seriously misunderstood
- * the nature of sqlite3_errcode. This function is <em>undefined</em> in case
- * the most recent SQLite API call <em>succeeded</em>. It is only defined if
- * the most recent API call <em>failed</em>. I need to fix things to take this
- * into account!
+ * @todo HIGH PRIORITY The API docs sometimes assume throw_on_failure will
+ * only ever throw a derivative of SQLiteException; however InvalidConnection
+ * is not a derivative of SQLiteException. Fix this.
  */
 namespace sqloxx
 {
@@ -141,7 +139,8 @@ public:
 	 * attacks. Generally, the functions provided by SQLStatement should
 	 * be the preferred means for building and executing SQL statements.
 	 *
-	 * @throws SQLiteException or some exception inheriting thereof, whenever
+	 * @throws DatabaseException or some exception inheriting thereof,
+	 * whenever
 	 * there is any kind of error executing the statement.
 	 * 
 	 * Exception safety: <em>basic guarantee</em>. (Possibly also offers
@@ -149,19 +148,6 @@ public:
 	 */
 	void execute_sql(std::string const& str);
 
-	/**
-	 * If the database connection is in an error state recognized by SQLite,
-	 * this throws a \c SQLiteException with the current sqlite3_errmsg passed
-	 * to the constructor of the exception. The exact exception thrown
-	 * corresponds to the current SQLite error code for the connection. Any
-	 * thrown exception will be an instance of class that is, or extends,
-	 * \c SQLiteException.
-	 *
-	 * Exception safety: <em>basic guarantee</em>.
-	 */
-	void check_ok();
-
-	
 	/**
 	 * Given the name of a table in the connected database, assuming that
 	 * table has a single-column primary key, and assuming that column is
@@ -336,15 +322,6 @@ void
 DatabaseConnection::execute_sql(std::string const& str)
 {
 	m_sqlite_dbconn->execute_sql(str);
-	return;
-}
-
-
-inline
-void
-DatabaseConnection::check_ok()
-{
-	m_sqlite_dbconn->check_ok();
 	return;
 }
 

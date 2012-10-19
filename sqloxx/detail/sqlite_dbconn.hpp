@@ -120,9 +120,44 @@ public:
 	void execute_sql(std::string const& str);
 
 	/**
-	 * Implements DatabaseConnection::check_ok
+	 * At this point this function does not fully support SQLite extended
+	 * error codes; only the basic error codes. If errcode is an extended
+	 * error code that is not also a basic error code, and is not
+	 * SQLITE_OK, SQLITE_DONE or SQLITE_ROW, then the function will
+	 * throw SQLiteUnknownErrorCode. If errcode is a basic error code that
+	 * is not SQLITE_OK, SQLITE_DONE or SQLITE_ROW, then it will throw an
+	 * exception derived from
+	 * SQLiteException, with the exception thrown corresponding to the
+	 * error code (see sqloxx_exceptions.hpp) and the error message returned
+	 * by called what() on the exception corresponding to the error message
+	 * produced by SQLite.
+	 *
+	 * If the database connection is invalid (in particular, if the connection
+	 * is not open), then InvalidConnection will always be thrown, regardless
+	 * of the value of errcode.
+	 *
+	 * errcode should be the return value of an operation just executed on
+	 * the SQLite API on this database connection. The function assumes that
+	 * no other operation has been executed on the API since the operation
+	 * that produced errcode.
+	 *
+	 * @throws InvalidConnection if the database connection is invalid. This
+	 * takes precedence over other exceptions that might be thrown.
+	 *
+	 * @throws an exception derived from SQLiteException if and only if
+	 * errcode is something other than SQLITE_OK, BUT
+	 *
+	 * @throws std::logic_error if errcode is not the latest error code
+	 * produced by a call to the SQLite API on this database connection.
+	 *
+	 * @todo Test the behaviour wrt std::logic_error.
+	 *
+	 * @param a SQLite error code.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
 	 */
-	void check_ok();
+	void throw_on_failure(int errcode);
+
 
 
 private:

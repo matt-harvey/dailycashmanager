@@ -35,24 +35,6 @@ bool file_exists(boost::filesystem::path const& filepath)
 }
 
 
-void catch_check_ok(DatabaseConnection& dbc)
-{
-	try
-	{
-		dbc.check_ok();
-	}
-	catch (SQLiteException& e)
-	{
-		cerr << "Exception caught by DatabaseConnection::check_ok()."
-			 << endl;
-		cerr << "Error message: " << e.what() << endl;
-		cerr << "Failing test." << endl;
-		CHECK(false);
-	}
-	return;
-}
-
-
 void abort_if_exists(boost::filesystem::path const& filepath)
 {
 	if (file_exists(filepath))

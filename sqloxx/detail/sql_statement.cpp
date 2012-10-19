@@ -31,14 +31,15 @@ SQLStatement::SQLStatement
 	}
 	char const* cstr = str.c_str();
 	char const** tail = &cstr;
-	sqlite3_prepare_v2
-	(	m_sqlite_dbconn.m_connection,
-		cstr,
-		str.length() + 1,
-		&m_statement,
-		tail
+	throw_on_failure
+	(	sqlite3_prepare_v2
+		(	m_sqlite_dbconn.m_connection,
+			cstr,
+			str.length() + 1,
+			&m_statement,
+			tail
+		)
 	);
-	check_ok();
 	for (char const* it = *tail; *it != '\0'; ++it)
 	{
 		switch (*it)
@@ -49,7 +50,7 @@ SQLStatement::SQLStatement
 			break;
 		default:
 			// The character is bad.
-			sqlite3_finalize(m_statement);
+			sqlite3_finalize(m_statement);  // Always succeeds.
 			m_statement = 0;
 			// Note this will have thrown already if first statement is
 			// ungrammatical.
@@ -100,11 +101,11 @@ SQLStatement::check_column(int index, int value_type)
 
 
 void
-SQLStatement::check_ok()
+SQLStatement::throw_on_failure(int errcode)
 {
 	try
 	{
-		m_sqlite_dbconn.check_ok();
+		m_sqlite_dbconn.throw_on_failure(errcode);
 	}
 	catch (SQLiteException&)
 	{
@@ -121,8 +122,9 @@ SQLStatement::bind
 	int value
 )
 {
-	sqlite3_bind_int(m_statement, parameter_index(parameter_name), value);
-	check_ok();
+	throw_on_failure
+	(	sqlite3_bind_int(m_statement, parameter_index(parameter_name), value)
+	);
 	return;
 }
 
@@ -133,8 +135,13 @@ SQLStatement::bind
 	int64_t value
 )
 {
-	sqlite3_bind_int64(m_statement, parameter_index(parameter_name), value);
-	check_ok();
+	throw_on_failure
+	(	sqlite3_bind_int64
+		(	m_statement,
+			parameter_index(parameter_name),
+			value
+		)
+	);
 	return;
 }
 
@@ -145,14 +152,15 @@ SQLStatement::bind
 	string const& str
 )
 {
-	sqlite3_bind_text
-	(	m_statement,
-		parameter_index(parameter_name),
-		str.c_str(),
-		-1,
-		0
+	throw_on_failure
+	(	sqlite3_bind_text
+		(	m_statement,
+			parameter_index(parameter_name),
+			str.c_str(),
+			-1,
+			0
+		)
 	);
-	check_ok();
 	return;
 }
 		
@@ -160,7 +168,9 @@ SQLStatement::bind
 bool
 SQLStatement::step()
 {
-	switch (sqlite3_step(m_statement))
+	int code = SQLITE_OK;
+	throw_on_failure(code = sqlite3_step(m_statement));
+	switch (code)
 	{
 	case SQLITE_DONE:
 		return false;
@@ -172,7 +182,6 @@ SQLStatement::step()
 		;
 		// Do nothing
 	}
-	check_ok();
 	assert (false);  // Execution should never reach here.
 	return false;  // Silence compiler re. return from non-void function. 
 }

@@ -51,19 +51,16 @@ TEST(test_default_constructor_and_open)
 	dbc.open(filepath);  // Note passing filename would also have worked
 	CHECK(dbc.is_valid());
 	CHECK(file_exists(filepath));
-	catch_check_ok(dbc);
 
 	// Test behaviour when calling open on an existing connection
 	CHECK_THROW(dbc.open(filepath), MultipleConnectionException);
 	CHECK(file_exists(filepath));
-	catch_check_ok(dbc);
 
 	// Test behaviour when calling open with some other filename corresponding
 	// to a file that does not exist.
 	CHECK_THROW(dbc.open(dummy_filepath), MultipleConnectionException);
 	CHECK(!file_exists(dummy_filepath));
 	CHECK(file_exists(filepath));
-	catch_check_ok(dbc);
 
 	// Test behaviour when calling open with some other filename corresponding
 	// to a file that does exist, but is not connected to with any database
@@ -75,7 +72,6 @@ TEST(test_default_constructor_and_open)
 	(	dbc.open(another_filepath), MultipleConnectionException
 	);
 	boost::filesystem::remove(another_filepath);
-	catch_check_ok(dbc);
 
 	// Test opening with an empty string
 	DatabaseConnection dbc2;
@@ -102,7 +98,7 @@ TEST(test_execute_sql_01)
 	// Test on unopened DatabaseConnection
 	string const command("create table test_table(column_A integer)");
 	DatabaseConnection d;
-	CHECK_THROW(d.execute_sql(command), SQLiteNoMem);
+	CHECK_THROW(d.execute_sql(command), InvalidConnection);
 }
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_execute_sql_02)
@@ -138,24 +134,6 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_execute_sql_02)
 	(	dbc.execute_sql("select * from test_table"),
 		SQLiteException
 	);
-}
-
-TEST_FIXTURE(DatabaseConnectionFixture, test_check_ok)
-{
-	dbc.check_ok();  // Should not throw
-	try
-	{
-		dbc.execute_sql
-		(	"create mumbo jumbo"
-		);
-	}
-	catch (SQLiteException&)
-	{
-		// Do nothing
-	}
-	CHECK_THROW(dbc.check_ok(), SQLiteException);
-	DatabaseConnection temp;
-	CHECK_THROW(temp.check_ok(), SQLiteException);
 }
 
 

@@ -167,14 +167,15 @@ public:
 	void unlock();
 
 	/**
-	 * Check code is SQLITE_OK and if not finalize statement and
-	 * throw SQLiteException or derivative corresponding to the SQLite
-	 * error code.
+	 * Mirrors sqloxx::detail::SQLiteDBConn::throw_on_failure, and
+	 * throws the same exceptions under the same circumstances.
+	 * However, if it throws an exception other than std::logic_error,
+	 * it will call sqlite3_finalize on the underlying sqlite3_stmt*,
+	 * which releases the memory allocated to the statement.
 	 *
-	 * @throw If error code is SQLITE_DONE or SQLITE_ROWS then this
-	 * throws SQLiteUnknownErrorCode. Improve this behaviour.
+	 * Exception safety<em>basic guarantee</em>.
 	 */
-	void check_ok();
+	void throw_on_failure(int errcode);
 
 private:
 	
