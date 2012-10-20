@@ -18,6 +18,7 @@
 
 #include "sqloxx/tests/atomicity_test.hpp"
 #include <unittest++/UnitTest++.h>
+#include <stdexcept>
 #include <iostream>
 
 // Should pull in a better way.
@@ -30,21 +31,19 @@ using sqloxx::tests::do_speed_test;
 using std::cout;
 using std::endl;
 using std::string;
+using std::terminate;
 
 
-int main()
+int main(int argc, char** argv)
 {
-	#ifndef NDEBUG
-		cout << "Compiled in debugging mode (NDEBUG not defined)." << endl;
-	#else
-		cout << "Compiled in release mode (NDEBUG is defined)." << endl;
-	#endif
-
 	// do_speed_test();
 
-	int const atomicity_test_result = do_atomicity_test();
-
-	
+	if (argc != 2)
+	{
+		std::cout << "Incorrect number of arguments passed to main in "
+		          << "test.cpp." << endl;
+	}
+	int const atomicity_test_result = do_atomicity_test(argv[1]);
 
 	cout << "\nNow running various unit tests using UnitTest++..."
 		 << endl;

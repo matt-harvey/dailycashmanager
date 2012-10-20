@@ -20,7 +20,7 @@ namespace tests
 
 
 int
-do_atomicity_test()
+do_atomicity_test(string const& db_filename)
 {
 	// To test SQL transaction handling, we do something here
 	// here that will set up a transaction and then crash the program
@@ -29,8 +29,6 @@ do_atomicity_test()
 	// detected, and execution instead proceeds to checking the contents
 	// of the database and verifying that it handled the crash by enrolling
 	// the in-progress transaction as expected.
-
-	string const db_filename = "testfile2983746261.db";
 
 	int test_result = 0;
 	if

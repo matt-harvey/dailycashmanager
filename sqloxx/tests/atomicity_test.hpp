@@ -12,14 +12,11 @@ using std::string;
  * This file declares a function that is designed to create a database
  * file, start a transaction by calling
  * DatabaseConnection::begin_transaction, and then crash
- * before being able to complete the transaction. The idea
- * is that an external script will then examine the database
+ * before being able to complete the transaction. The intention
+ * is that an external script will catch the failure, and relaunch
+ * the test, but this time, a different execution path will
+ * be taken, which examines the database
  * after the crash, to ensure transaction atomicity was upheld.
- *
- * @todo Incorporate into setup_atomicity_test a check to make sure
- * that a file by the same name as the test file doesn't already exist
- * in the directory. This is vanishingly unlikely, but we might as well
- * rule it out.
  */
 
 namespace sqloxx
@@ -35,7 +32,7 @@ namespace tests
 
 
 int
-do_atomicity_test();
+do_atomicity_test(std::string const& db_filename);
 
 void
 setup_atomicity_test(DatabaseConnection& dbc);

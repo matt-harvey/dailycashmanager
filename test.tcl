@@ -10,16 +10,31 @@
 # existence of the crashed database file, check that the database state
 # is as expected given the crash, output the result of this check to
 # standard output, and then run the remaining unit tests.
+#
+# As a convenience, this script will also execute "make test" before
+# running the tests.
 
-puts "Running unit tests. This may take a little while.\n"
+puts "Building unit tests...\n"
+
+set make_result [catch { exec make test 2>@ stderr >@ stdout } ]
+if { $make_result != 0 } {
+	exit $make_result
+}
+puts "\nRunning unit tests..."
+
+set filename testfile9182734123.db
+
+if {[file exists $filename]} {
+	puts "File named $filename already exists. Unsafe to proceed with test." 
+	exit 1
+}
 
 # This execution crashes, but we recover
-catch { exec ./test }
+catch { exec ./test $filename 2>@ stderr >@ stdout }
 
 # And in this second execution we inspect the database to see that it
 # reacted as expected; and then we perform the other unit tests.
-catch { exec ./test } test_output_B
-puts "Test output:\n\n $test_output_B \n\n"
+exec ./test $filename 2>@ stderr >@ stdout
 
 
 
