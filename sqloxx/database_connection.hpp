@@ -158,20 +158,12 @@ public:
 	 * behaviour of SQLite in this regard has not been altered in some way).
 	 * This function does NOT check whether the primary
 	 * key is in fact autoincrementing, or even whether there is a primary
-	 * key. In the event the next primary key can't be found, a
+	 * key, or even whether the table with this name exists. In the event
+	 * the next primary key can't be found, a
 	 * value of \c KeyType(1) is simply returned. In other words, it is
 	 * the caller's responsibility to make sure that table_name does in
 	 * fact correspond to a table with an autoincrementing integer
-	 * primary key. Note however that if the database contains \e no
-	 * tables with autoincrementing primary keys, then instead of 1
-	 * being returned, SQLiteException (or a derivative therefrom)
-	 * will be thrown.
-	 * 
-	 * @todo Determine what derivative of SQLiteException is thrown in the
-	 * case just described.
-	 * 
-	 * @todo Make the behaviour of this function in edge cases more
-	 * consistent than what is described above.
+	 * primary key.
 	 *
 	 * Assumes keys start from 1.
 	 *
@@ -198,13 +190,12 @@ public:
 	 * already in the table is the maximum value for \c KeyType, so that
 	 * another row could not be inserted without overflow.
 	 *
-	 * @throws sqloxx::SQLiteException if the there are \e no tables
-	 * in the database with an autoincrementing primary key.
-	 *
-	 * @throws sqloxx::DatabaseException may be thrown if there is some other
-	 * error finding the next primary key value.
-	 *
-	 * Exception safety: <em>basic guarantee</em>.
+	 * @throws sqloxx::DatabaseException, or a derivative therefrom, may
+	 * be thrown if there is some other
+	 * error finding the next primary key value. This should not occur except
+	 * in the case of a corrupt database, or a memory allocation error
+	 * (extremely unlikely), or the database connection being invalid
+	 * (including because not yet connected to a database file).
 	 */
 	template <typename KeyType>
 	KeyType next_auto_key(std::string const& table_name);	
@@ -339,24 +330,41 @@ inline
 KeyType
 DatabaseConnection::next_auto_key(std::string const& table_name)
 {
-	SharedSQLStatement statement
-	(	*this,
-		"select seq from sqlite_sequence where name = :p"
-	);
-	statement.bind(":p", table_name);
-	bool check = statement.step();
-	if (!check)
+	
+	try
 	{
-		return 1;	
-	}
-	KeyType const max_key = statement.extract<KeyType>(0);
-	if (max_key == std::numeric_limits<KeyType>::max())
-	{
-		throw TableSizeException
-		(	"Key cannot be safely incremented with given type."
+		SharedSQLStatement statement
+		(	*this,
+			"select seq from sqlite_sequence where name = :p"
 		);
+		statement.bind(":p", table_name);
+		if (!statement.step())
+		{
+			return 1;
+		}
+		KeyType const max_key = statement.extract<KeyType>(0);
+		if (max_key == std::numeric_limits<KeyType>::max())
+		{
+			throw TableSizeException
+			(	"Key cannot be safely incremented with given type."
+			);
+		}
+		return max_key + 1;
 	}
-	return max_key + 1;
+	catch (SQLiteError&)
+	{
+		// Catches case where there is no sqlite_sequence table
+		SharedSQLStatement sequence_finder
+		(	*this,
+			"select name from sqlite_master where type = 'table' and "
+			"name = 'sqlite_sequence';"
+		);
+		if (!sequence_finder.step())
+		{
+			return 1;
+		}
+		throw;
+	}
 }
 
 

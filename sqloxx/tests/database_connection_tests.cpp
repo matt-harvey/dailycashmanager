@@ -136,14 +136,21 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_execute_sql_02)
 	);
 }
 
-
-TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key)
+TEST(test_next_auto_key_invalid_connection)
 {
+	DatabaseConnection db0;
+	CHECK_THROW(db0.next_auto_key<int>("dummy_table"), DatabaseException);
+}
+	
+
+TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
+{
+	CHECK_EQUAL(dbc.next_auto_key<int>("dummy_table"), 1);
 	dbc.execute_sql
 	(	"create table dummy_table(column_A text)"
 	);
-	CHECK_THROW(dbc.next_auto_key<int>("dummy_table"), SQLiteException);
-	CHECK_THROW(dbc.next_auto_key<int>("test_table"), SQLiteException);
+	CHECK_EQUAL(dbc.next_auto_key<int>("dummy_table"), 1);
+	CHECK_EQUAL(dbc.next_auto_key<int>("test_table"), 1);
 	dbc.execute_sql
 	(	"create table test_table"
 		"("

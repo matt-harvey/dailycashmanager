@@ -515,7 +515,8 @@ void import_from_nap
 	     << "be imported automatically, and will need to be entered "
 		 << "manually into Phatbooks:" << endl;
 	for
-	(	unordered_set< shared_ptr<Journal> >::const_iterator it = problematic_journals.begin();
+	(	unordered_set< shared_ptr<Journal> >::const_iterator it =
+			problematic_journals.begin();
 		it != problematic_journals.end();
 		++it
 	)
