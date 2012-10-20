@@ -150,8 +150,6 @@ public:
 	 * @throws std::logic_error if errcode is not the latest error code
 	 * produced by a call to the SQLite API on this database connection.
 	 *
-	 * @todo Test the behaviour wrt std::logic_error.
-	 *
 	 * @param a SQLite error code.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
