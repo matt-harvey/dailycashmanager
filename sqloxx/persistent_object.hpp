@@ -25,11 +25,13 @@ class PersistentObject
 public:
 
 	/**
-	 * Create a PersistentObject that corresponds to one that
-	 * already exists in the database.
+	 * Create a PersistentObject that corresponds (or purports to correspond)
+	 * to one that already exists in the database.
 	 *
-	 * @todo If the object doesn't exist, should this throw
-	 * in the constructor?
+	 * Note that even if there is no corresponding object in the database for
+	 * the given value p_id, this constructor will still proceed without
+	 * complaint. The constructor does not actually perform any checks on the
+	 * validity either of p_database_connection or of p_id.
 	 */
 	PersistentObject
 	(	boost::shared_ptr<DatabaseConnection> p_database_connection,
