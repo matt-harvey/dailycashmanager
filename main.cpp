@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 		cout << "Usage: " << argv[0] << " FILENAME" << endl;
 		return 1;
 	}
-	string filename(argv[1]);
+	string const filename(argv[1]);
 	if (filename.empty())
 	{
 		cout << "FILENAME cannot be empty." << endl;
