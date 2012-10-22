@@ -27,11 +27,6 @@ namespace phatbooks
 /**
  * Import data from a N. A. P. csv set.
  *
- * @todo Implement this method.
- *
- * @todo Adjust existing implementation to use new DraftJournal and
- * OrdinaryJournal derived classes as appropriate.
- *
  * @throws std::logic_error if \c directory is not directory
  *
  * @throws std::runtime_error if \c directory does not contain the
@@ -57,15 +52,6 @@ void import_from_nap
 (	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	boost::filesystem::path const& directory
 );
-
-
-
-
-
-
-
-
-
 
 
 }  // namespace phatbooks
