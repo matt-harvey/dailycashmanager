@@ -37,6 +37,10 @@ catch { exec ./test $filename 2>@ stderr >@ stdout }
 # reacted as expected; and then we perform the other unit tests.
 exec ./test $filename 2>@ stderr >@ stdout
 
+# And clean up left over files
+file delete $filename
+file delete ${filename}-journal
+
 
 
 

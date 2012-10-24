@@ -47,15 +47,11 @@ do_atomicity_test(string const& db_filename)
 		// database file to check that it reacted as expected..
 		dbc.open(db_filename);
 		test_result = inspect_database_for_atomicity(dbc);
-
-		// Now clean up after ourselves by removing the database file and
-		// database journal
-		boost::filesystem::remove(db_filename);
-		boost::filesystem::remove(db_filename + "-journal");
-		// WARNING I don't know why I have to remove the journal file here.
-		// Shouldn't it remove itself? I should figure out why it doesn't.
 	}
 	return test_result;
+
+	// WARNING Figure out why the journal file does not delete itself
+	// here - currently test.tcl is deleting this manually.
 }
 	
 

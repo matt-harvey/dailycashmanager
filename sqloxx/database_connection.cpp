@@ -44,6 +44,7 @@ DatabaseConnection::~DatabaseConnection()
 		     << "DatabaseConnection."
 			 << endl;
 	}
+	m_statement_cache.clear();
 }
 
 
