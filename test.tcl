@@ -1,4 +1,4 @@
-#!/usr/bin/tclsh8.5
+#!/usr/bin/env tclsh
 
 # Execute this script to run the unit tests.
 
