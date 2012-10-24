@@ -29,15 +29,15 @@ do_atomicity_test(string const& db_filename)
 	// detected, and execution instead proceeds to checking the contents
 	// of the database and verifying that it handled the crash by enrolling
 	// the in-progress transaction as expected.
-
+	
 	int test_result = 0;
+	DatabaseConnection dbc;
 	if
 	(	!boost::filesystem::exists(boost::filesystem::status(db_filename))
 	)
 	{
 		// Then we have to set up the database, and set up the conditions
 		// for the test.
-		DatabaseConnection dbc;
 		dbc.open(db_filename);  // create the database file
 		setup_atomicity_test(dbc);
 	}
@@ -45,8 +45,9 @@ do_atomicity_test(string const& db_filename)
 	{
 		// Then we know we have crashed already, and now have to inspect the
 		// database file to check that it reacted as expected..
-		test_result = inspect_database_for_atomicity(db_filename);
-		
+		dbc.open(db_filename);
+		test_result = inspect_database_for_atomicity(dbc);
+
 		// Now clean up after ourselves by removing the database file and
 		// database journal
 		boost::filesystem::remove(db_filename);
@@ -90,13 +91,9 @@ setup_atomicity_test(DatabaseConnection& dbc)
 
 
 int
-inspect_database_for_atomicity(string const& db_filename)
+inspect_database_for_atomicity(DatabaseConnection& dbc)
 {
 	int ret = 0;
-
-	assert (boost::filesystem::exists(db_filename));	
-	DatabaseConnection dbc;
-	dbc.open(db_filename);
 	SharedSQLStatement statement
 	(	dbc,
 		"select * from dummy"

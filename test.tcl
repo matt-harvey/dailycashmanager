@@ -24,8 +24,9 @@ puts "\nRunning unit tests..."
 
 set filename testfile9182734123.db
 
-if {[file exists $filename]} {
-	puts "File named $filename already exists. Unsafe to proceed with test." 
+if {[file exists $filename] || [file exists ${filename}-journal]} {
+	puts "File named $filename and/or ${filename}-journal already exists. "
+	puts "Test aborted as unsafe to proceed."
 	exit 1
 }
 

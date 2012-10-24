@@ -38,7 +38,7 @@ void
 setup_atomicity_test(DatabaseConnection& dbc);
 
 int
-inspect_database_for_atomicity(std::string const& db_filename);
+inspect_database_for_atomicity(DatabaseConnection& dbc);
 
 
 }  // namespace tests
