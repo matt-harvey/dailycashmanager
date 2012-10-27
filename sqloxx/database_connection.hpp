@@ -261,7 +261,7 @@ public:
 	 * @throws InvalidConnection if the database connection is invalid.
 	 *
 	 * Exception safety: the <em>strong guarantee</em> is provided, on the
-	 * condition that the "begin transaction" SQL command is never executed
+	 * condition that the "end transaction" SQL command is never executed
 	 * directly, but only via this method.
 	 */
 	void end_transaction();
