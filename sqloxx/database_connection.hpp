@@ -219,8 +219,7 @@ public:
 	void setup_boolean_table();
 
 	/**
-	 * Returns the maximum level of transaction nesting that can be handled
-	 * by the DatabaseConnection class.
+	 * @returns maximum level of transaction nesting.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
@@ -238,9 +237,13 @@ public:
 	 *  
 	 * @throws TransactionNestingException in the event that the maximum
 	 * level of nesting has been reached. The maximum level of nesting is
-	 * equal to the value returned by max_nesting().
+	 * equal to the value returned by max_nesting();
 	 *
 	 * @throws InvalidConnection if the database connection is invalid.
+	 *
+	 * Exception safety: the <em>strong guarantee</em> is provided, on the
+	 * condition that the "begin transaction" SQL command is never executed
+	 * directly, but only via this method.
 	 */
 	void begin_transaction();
 
@@ -256,6 +259,10 @@ public:
 	 * begin_transaction.
 	 *
 	 * @throws InvalidConnection if the database connection is invalid.
+	 *
+	 * Exception safety: the <em>strong guarantee</em> is provided, on the
+	 * condition that the "begin transaction" SQL command is never executed
+	 * directly, but only via this method.
 	 */
 	void end_transaction();
 
@@ -293,13 +300,17 @@ public:
 
 private:
 
+	void unchecked_begin_transaction();
 	void unchecked_end_transaction();
 
 	boost::shared_ptr<detail::SQLiteDBConn> m_sqlite_dbconn;
+
+	// s_max_nesting relies on m_transaction_nesting_level being an int
 	int m_transaction_nesting_level;
+	static int const s_max_nesting;
+
 	StatementCache m_statement_cache;
 	StatementCache::size_type m_cache_capacity;
-	static int const s_max_nesting;
 };
 
 
@@ -383,12 +394,19 @@ DatabaseConnection::max_nesting()
 
 inline
 void
+DatabaseConnection::unchecked_begin_transaction()
+{
+	SharedSQLStatement statement(*this, "begin");
+	statement.step();
+	return;
+}
+
+
+inline
+void
 DatabaseConnection::unchecked_end_transaction()
 {
-	SharedSQLStatement statement
-	(	*this,
-		"end"
-	);
+	SharedSQLStatement statement(*this, "end");
 	statement.step();
 	return;
 }

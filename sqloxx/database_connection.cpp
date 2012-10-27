@@ -5,6 +5,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <iostream>
+#include <climits>
 #include <limits>
 #include <set>
 #include <string>
@@ -23,8 +24,10 @@ namespace sqloxx
 {
 
 
+// Switch statement later relies on this being INT_MAX, and
+// won't compile if it's changed to std::numeric_limits<int>::max().
 int const
-DatabaseConnection::s_max_nesting = numeric_limits<int>::max();
+DatabaseConnection::s_max_nesting = INT_MAX;
 
 
 DatabaseConnection::DatabaseConnection
@@ -62,18 +65,17 @@ DatabaseConnection::setup_boolean_table()
 void
 DatabaseConnection::begin_transaction()
 {
-	if (m_transaction_nesting_level == s_max_nesting)
+	switch (m_transaction_nesting_level)
 	{
+	case 0:
+		unchecked_begin_transaction();
+		break;
+	case s_max_nesting:
 		throw TransactionNestingException("Maximum nesting level reached.");
-	}
-	if (!m_transaction_nesting_level)
-	{
-		assert (m_transaction_nesting_level == 0);
-		SharedSQLStatement statement
-		(	*this,
-			"begin"
-		);
-		statement.step();
+		assert (false);  // Execution never reaches here
+	default:
+		;
+		// Do nothing
 	}
 	++m_transaction_nesting_level;
 	return;
@@ -131,7 +133,15 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 	if (m_statement_cache.size() != m_cache_capacity)
 	{
 		assert (m_statement_cache.size() < m_cache_capacity);
-		m_statement_cache[statement_text] = new_statement;
+		try
+		{
+			m_statement_cache[statement_text] = new_statement;
+		}
+		catch (std::bad_alloc&)
+		{
+			m_statement_cache.clear();
+			assert (new_statement != 0);
+		}
 	}
 	/*
 	else
