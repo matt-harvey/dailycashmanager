@@ -84,14 +84,9 @@ public:
 
 	/**
 	 * @returns true if and only if there is a connection to a valid
-	 * database AND detail_id_valid() also returns true. By
-	 * default, detail_is_valid() always returns true; however it may
-	 * be redefined in derived classes to provide additional checks.
+	 * database.
 	 *
-	 * Exception safety: the base class function
-	 * DatabaseConnection::is_valid offers the <em>nothrow guarantee</em>,
-	 * however if detail_is_valid is redefined in derived classes, exception
-	 * safety will depend on how it is redefined.
+	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	virtual bool is_valid() const;
 
@@ -142,6 +137,8 @@ public:
 	 * @throws DatabaseException or some exception inheriting thereof,
 	 * whenever
 	 * there is any kind of error executing the statement.
+	 * 
+	 * @throws InvalidConnection if the database connection is invalid.
 	 * 
 	 * Exception safety: <em>basic guarantee</em>. (Possibly also offers
 	 * strong guarantee, but not certain.)
@@ -275,12 +272,6 @@ private:
 
 	void unchecked_end_transaction();
 
-	/**
-	 * By default this always returns true. However it may be overriden
-	 * in derived classes as required.
-	 */
-	virtual bool detail_is_valid() const;
-
 	boost::shared_ptr<detail::SQLiteDBConn> m_sqlite_dbconn;
 	int m_transaction_nesting_level;
 	StatementCache m_statement_cache;
@@ -295,7 +286,7 @@ inline
 bool
 DatabaseConnection::is_valid() const
 {
-	return m_sqlite_dbconn->is_valid() && detail_is_valid();
+	return m_sqlite_dbconn->is_valid();
 }
 
 
@@ -314,14 +305,6 @@ DatabaseConnection::execute_sql(std::string const& str)
 {
 	m_sqlite_dbconn->execute_sql(str);
 	return;
-}
-
-
-inline
-bool
-DatabaseConnection::detail_is_valid() const
-{
-	return true;
 }
 
 
