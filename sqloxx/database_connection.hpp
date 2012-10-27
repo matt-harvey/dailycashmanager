@@ -272,8 +272,20 @@ public:
 	 *
 	 * This function is only intended to be called by the
 	 * constructor of SharedSQLStatement. It should not be called elsewhere.
+	 * 
+	 * @throws InvalidConnection if p_database_connection is an invalid
+	 * connection.
 	 *
-	 * @todo Document exceptions.
+	 * @throws SQLiteException, or an exception derived therefrom, if there
+	 * is some other problem in preparing the statement, which results in a
+	 * SQLite error code (that is not SQLITE_OK) being returned.
+	 *
+	 * @throws TooManyStatements if the first purported SQL statement
+	 * in str is syntactically acceptable to SQLite, <em>but</em> there
+	 * are characters in str after this statement, other than ';' and ' '.
+	 * This includes the case where there are further syntactically
+	 * acceptable SQL statements after the first one - as each SQLStatement
+	 * can encapsulate only one statement.
 	 */
 	boost::shared_ptr<detail::SQLStatement> provide_sql_statement
 	(	std::string const& statement_text

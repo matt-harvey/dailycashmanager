@@ -48,11 +48,11 @@ public:
 	 * with any mixture of semicolons and/or spaces (but not other forms
 	 * of whitespace).
 	 *
-	 * @throws InvalidConnection if an p_database_connection is an
+	 * @throws InvalidConnection if p_database_connection is an
 	 * invalid database connection (i.e. if p_database_connection.is_valid()
 	 * returns false).
 	 *
-	 * @throws SQLiteException, or an exception derived therefore, if there
+	 * @throws SQLiteException, or an exception derived therefrom, if there
 	 * is some other problem in preparing the statement, which results in a
 	 * SQLite error code (that is not SQLITE_OK) being returned.
 	 * 
