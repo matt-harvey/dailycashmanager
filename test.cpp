@@ -36,17 +36,24 @@ using std::terminate;
 
 int main(int argc, char** argv)
 {
-	// do_speed_test();
-
-	if (argc != 2)
+	try
 	{
-		std::cout << "Incorrect number of arguments passed to main in "
-		          << "test.cpp." << endl;
+		// do_speed_test();
+		if (argc != 2)
+		{
+			std::cout << "Incorrect number of arguments passed to main in "
+					  << "test.cpp." << endl;
+			terminate();
+		}
+		int const atomicity_test_result = do_atomicity_test(argv[1]);
+		cout << "\nNow running various unit tests using UnitTest++..."
+			 << endl;
+		return atomicity_test_result + UnitTest::RunAllTests();
 	}
-	int const atomicity_test_result = do_atomicity_test(argv[1]);
-
-	cout << "\nNow running various unit tests using UnitTest++..."
-		 << endl;
-
-	return atomicity_test_result + UnitTest::RunAllTests();
+	// This seems pointless but is necessary to guarantee the stack is
+	// fully unwound if an exception is thrown.
+	catch (...)
+	{
+		throw;
+	}
 }

@@ -25,20 +25,29 @@ using std::string;
 
 int main(int argc, char** argv)
 {
-	if (argc != 2)
+	try
 	{
-		cout << "Usage: " << argv[0] << " FILENAME" << endl;
-		return 1;
-	}
-	string const filename(argv[1]);
-	if (filename.empty())
-	{
-		cout << "FILENAME cannot be empty." << endl;
-		return 1;
-	}
+		if (argc != 2)
+		{
+			cout << "Usage: " << argv[0] << " FILENAME" << endl;
+			return 1;
+		}
+		string const filename(argv[1]);
+		if (filename.empty())
+		{
+			cout << "FILENAME cannot be empty." << endl;
+			return 1;
+		}
 
-	// The following assumes a text based session.
-	assert (argc == 2 && !filename.empty());
-	PhatbooksTextSession session;
-	return session.run(filename);
+		// The following assumes a text based session.
+		assert (argc == 2 && !filename.empty());
+		PhatbooksTextSession session;
+		return session.run(filename);
+	}
+	// This seems pointless but is necessary to guarantee the stack is fully
+	// unwound if an exception is thrown.
+	catch (...)
+	{
+		throw;
+	}
 }
