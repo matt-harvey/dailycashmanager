@@ -23,6 +23,9 @@ class SQLStatementManager;
  * The details of caching are handled within the DatabaseConnection
  * class. The client just calls the constructor and uses the statement.
  *
+ * Clients of Sqloxx should not use the underlying SQLStatement class
+ * directly, but only ever via SharedSQLStatement.
+ *
  * If an exception is thrown by an method of SharedSQLStatement, the
  * caller should in general no longer rely on the state of SharedSQLStatement
  * being valid. However, when the SharedSQLStatement goes out of scope or

@@ -9,8 +9,6 @@
  * \date 04 July 2012.
  *
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
- *
- * @todo Move sqloxx code to a separate library.
  * 
  * @todo Make the SQLiteDBConn class provide for a means
  * to check whether the particular file being connected to is

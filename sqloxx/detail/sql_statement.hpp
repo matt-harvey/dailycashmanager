@@ -3,7 +3,7 @@
 
 /** \file sql_statement.hpp
  *
- * \brief Header file pertaining to DatabaseConnection class.
+ * \brief Header file pertaining to SQLStatement class.
  *
  * \author Matthew Harvey
  * \date 04 July 2012.
@@ -40,7 +40,7 @@ namespace detail
 class SQLiteDBConn;
 
 /**
- * Wrapper class for sqlite_stmt*. This class is not intended to be
+ * Wrapper class for sqlite_stmt*. This class is should not be
  * used except internally by the Sqloxx library. SQLStatement instances
  * are themselves encapsulated by SharedSQLStatement instances.
  */
