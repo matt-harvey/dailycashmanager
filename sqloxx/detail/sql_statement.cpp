@@ -2,8 +2,10 @@
 #include "sqlite_dbconn.hpp"
 
 #include <sqlite3.h>
+#include <iostream>
 #include <string>
 
+using std::cerr;
 using std::string;
 
 
@@ -31,15 +33,18 @@ SQLStatement::SQLStatement
 	}
 	char const* cstr = str.c_str();
 	char const** tail = &cstr;
-	throw_on_failure
-	(	sqlite3_prepare_v2
-		(	m_sqlite_dbconn.m_connection,
-			cstr,
-			str.length() + 1,
-			&m_statement,
-			tail
-		)
-	);
+	try
+	{
+		throw_on_failure
+		(	sqlite3_prepare_v2
+			(	m_sqlite_dbconn.m_connection,
+				cstr,
+				str.length() + 1,
+				&m_statement,
+				tail
+			)
+		);
+	}
 	for (char const* it = *tail; *it != '\0'; ++it)
 	{
 		switch (*it)

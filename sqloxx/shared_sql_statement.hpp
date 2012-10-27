@@ -23,16 +23,14 @@ class SQLStatementManager;
  * The details of caching are handled within the DatabaseConnection
  * class. The client just calls the constructor and uses the statement.
  *
- * @todo HIGH PRIORITY In functions that delegate to the underlying
- * SQLStatement, there
- * are circumstances in which the underlying SQLStatement method may
- * throw. If this happens, the state of the SharedSQLStatement - and, for
- * that matter, the underlying SQLStatement - needs to
- * be valid afterwards, not left in some intermediate state that might
- * cause trouble if reused later. This is particularly important given
- * the opportunities for reuse afforded by the cached nature of the
- * SharedSQLStatement implementation. On determining this reaction of
- * state to exceptions, the reaction needs to be documented and tested.
+ * If an exception is thrown by an method of SharedSQLStatement, the
+ * caller should in general no longer rely on the state of SharedSQLStatement
+ * being valid. However, when the SharedSQLStatement goes out of scope or
+ * is otherwise destroyed, the underlying SQLStatement will be reset to a
+ * valid state. Furthermore, a locking mechanism ensures that two
+ * SharedSQLStatements cannot share the same underlying SQLStatement. This
+ * prevent SQLStatements in an invalid state from being used, unless used
+ * via the very same SharedSQLStatement that triggered the invalid state.
  */
 class SharedSQLStatement
 {
