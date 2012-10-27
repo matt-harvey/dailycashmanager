@@ -11,10 +11,6 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  *
  * @todo Move sqloxx code to a separate library.
- *
- * @todo I am often calling sqlite3_finalize() before throwing
- * SQLiteException(). Is this necessary? Is this desirable? What
- * about if reset() is preferred by the caller?
  */
 
 
