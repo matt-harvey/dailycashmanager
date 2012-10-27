@@ -169,11 +169,6 @@ public:
 	/**
 	 * Mirrors sqloxx::detail::SQLiteDBConn::throw_on_failure, and
 	 * throws the same exceptions under the same circumstances.
-	 * However, if it throws an exception other than std::logic_error,
-	 * it will call sqlite3_finalize on the underlying sqlite3_stmt*,
-	 * which releases the memory allocated to the statement.
-	 *
-	 * Exception safety<em>basic guarantee</em>.
 	 */
 	void throw_on_failure(int errcode);
 

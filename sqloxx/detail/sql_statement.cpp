@@ -33,18 +33,16 @@ SQLStatement::SQLStatement
 	}
 	char const* cstr = str.c_str();
 	char const** tail = &cstr;
-	try
-	{
-		throw_on_failure
-		(	sqlite3_prepare_v2
-			(	m_sqlite_dbconn.m_connection,
-				cstr,
-				str.length() + 1,
-				&m_statement,
-				tail
-			)
-		);
-	}
+	assert (p_sqlite_dbconn.is_valid());
+	throw_on_failure
+	(	sqlite3_prepare_v2
+		(	m_sqlite_dbconn.m_connection,
+			cstr,
+			str.length() + 1,
+			&m_statement,
+			tail
+		)
+	);
 	for (char const* it = *tail; *it != '\0'; ++it)
 	{
 		switch (*it)
@@ -108,16 +106,7 @@ SQLStatement::check_column(int index, int value_type)
 void
 SQLStatement::throw_on_failure(int errcode)
 {
-	try
-	{
-		m_sqlite_dbconn.throw_on_failure(errcode);
-	}
-	catch (SQLiteException&)
-	{
-		sqlite3_finalize(m_statement);
-		m_statement = 0;
-		throw;
-	}
+	m_sqlite_dbconn.throw_on_failure(errcode);
 	return;
 }
 

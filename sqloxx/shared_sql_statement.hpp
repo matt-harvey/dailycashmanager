@@ -38,7 +38,7 @@ class SQLStatementManager;
 class SharedSQLStatement
 {
 public:
-	
+
 	/**
 	 * Creates an object encapsulating a SQL statement.
 	 * 

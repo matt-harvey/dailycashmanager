@@ -5,8 +5,11 @@
 
 #include <unittest++/UnitTest++.h>
 #include <boost/cstdint.hpp>
+#include <iostream>
 #include <string>
 
+using std::cout;
+using std::endl;
 using std::string;
 
 namespace sqloxx
@@ -390,6 +393,118 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_multi_statements_rejected)
 		),
 		SQLiteException
 	);
+}
+
+
+TEST_FIXTURE(DatabaseConnectionFixture, ReuseSQLStatementAfterError1)
+{
+	// Setting up
+	dbc.execute_sql
+	(	"create table planets(name text primary key not null, size text); "
+		"create table satellites(name text unique, "
+		"planet_name text references planets);"
+	);
+	SharedSQLStatement s0
+	(	dbc,
+		"select name from planets where name = 'Mars';"
+	);
+	s0.step_final();
+	SharedSQLStatement s1
+	(	dbc,
+		"insert into planets(name, size) values('Mars', 'small');"
+	);
+	s1.step_final();
+	SharedSQLStatement s2
+	(	dbc,
+		"insert into planets(name, size) values('Earth', 'medium');"
+	);
+	s2.step_final();
+	SharedSQLStatement s3
+	(	dbc,
+		"insert into planets(name, size) values('Venus', 'medium');"
+	);
+	s3.step_final();
+
+	// Here's the statement we will stuff up the state of
+	string const selector_text =
+		"select name from planets where size = 'small';";
+	for (int i = 0; i != 1; ++i)
+	{
+		SharedSQLStatement selector0(dbc, selector_text);
+		selector0.step();
+		// Extract the wrong type
+		try
+		{
+			int x = selector0.extract<int>(0);
+			++x;  // Silence compiler re. unused variable;
+		}
+		catch (...)
+		{
+		}
+	}
+	// But this is still OK
+	for (int i = 0; i != 1; ++i)
+	{
+		SharedSQLStatement selector1(dbc, selector_text);
+		selector1.step();
+		string x = selector1.extract<string>(0);
+		CHECK_EQUAL(x, "Mars");
+	}
+}
+
+
+TEST_FIXTURE(DatabaseConnectionFixture, ReuseSQLStatementAfterError2)
+{
+	// Setting up
+	dbc.execute_sql
+	(	"create table planets(name text primary key not null, size text); "
+		"create table satellites(name text unique, "
+		"planet_name text references planets);"
+	);
+	SharedSQLStatement s0
+	(	dbc,
+		"select name from planets where name = 'Mars';"
+	);
+	s0.step_final();
+	SharedSQLStatement s1
+	(	dbc,
+		"insert into planets(name, size) values('Mars', 'small');"
+	);
+	s1.step_final();
+	SharedSQLStatement s2
+	(	dbc,
+		"insert into planets(name, size) values('Earth', 'medium');"
+	);
+	s2.step_final();
+	SharedSQLStatement s3
+	(	dbc,
+		"insert into planets(name, size) values('Venus', 'medium');"
+	);
+	s3.step_final();
+
+	// Here's the statement we will stuff up the state of
+	string const selector_text =
+		"select name from planets where size = :pr";
+	for (int i = 0; i != 1; ++i)
+	{
+		SharedSQLStatement selector0(dbc, selector_text);
+		CHECK_THROW
+		(	selector0.bind(":nonexistentparam", "small"),
+			SQLiteException
+		);
+		// selector0 is now in an invalid state and the underlying
+		// SQLStatement has an invalid null pointer as its sqlite3_stmt*
+		// member m_statement.
+	}
+	// But this is still OK
+	for (int i = 0; i != 1; ++i)
+	{
+		SharedSQLStatement selector1(dbc, selector_text);
+		selector1.bind(":pr", "small");
+		selector1.step();
+		string x = selector1.extract<string>(0);
+		CHECK_EQUAL(x, "Mars");
+	}
 }
 
 

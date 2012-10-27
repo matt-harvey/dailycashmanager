@@ -35,11 +35,11 @@ catch { exec ./test $filename 2>@ stderr >@ stdout }
 
 # And in this second execution we inspect the database to see that it
 # reacted as expected; and then we perform the other unit tests.
-exec ./test $filename 2>@ stderr >@ stdout
+catch { exec ./test $filename 2>@ stderr >@ stdout }
 
 # And clean up left over files
-file delete $filename
-file delete ${filename}-journal
+catch { file delete $filename }
+catch { file delete ${filename}-journal }
 
 
 

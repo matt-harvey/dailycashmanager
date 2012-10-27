@@ -12,6 +12,7 @@
 
 using boost::shared_ptr;
 using boost::unordered_map;
+using std::cerr;
 using std::clog;
 using std::endl;
 using std::numeric_limits;
