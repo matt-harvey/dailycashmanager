@@ -35,6 +35,15 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_shared_sql_statement_constructor)
 		InvalidConnection
 	);
 
+	// Check that InvalidConnection dominates SQLiteException (at least for
+	// syntax error...)
+	DatabaseConnection dbc2;
+	CHECK_THROW
+	(	SharedSQLStatement unsyntactic2(dbc2, "unsyntacticalsjkdf ghh"),
+		InvalidConnection
+	);
+	
+
 	// Now let's create an unproblematic SQLStatement. This shouldn't throw.
 	SharedSQLStatement normal(dbc, "create table dummy(Col_A text)");
 	

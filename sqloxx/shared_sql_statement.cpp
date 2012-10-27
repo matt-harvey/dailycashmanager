@@ -31,14 +31,6 @@ SharedSQLStatement::~SharedSQLStatement()
 	m_sql_statement->unlock();
 }
 
-void
-SharedSQLStatement::step_final()
-{
-	m_sql_statement->step_final();
-	return;
-}
-
-
 
 
 }  // namespace sqloxx

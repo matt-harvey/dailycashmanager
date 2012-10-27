@@ -23,10 +23,6 @@
  * that the C++ API of Sqloxx will largely mirror the C API of
  * SQLite, so that Sqloxx could be used easily by anyone who is
  * familiar with SQLite (and with C++).
- *
- * @todo HIGH PRIORITY The API docs sometimes assume throw_on_failure will
- * only ever throw a derivative of SQLiteException; however InvalidConnection
- * is not a derivative of SQLiteException. Fix this.
  */
 namespace sqloxx
 {
@@ -193,6 +189,8 @@ public:
 	 * in the case of a corrupt database, or a memory allocation error
 	 * (extremely unlikely), or the database connection being invalid
 	 * (including because not yet connected to a database file).
+	 *
+	 * @throws sqloxx::InvalidConnection if database connection is invalid.
 	 */
 	template <typename KeyType>
 	KeyType next_auto_key(std::string const& table_name);	
@@ -208,6 +206,13 @@ public:
 	 * primary key field with the heading "representation". There are
 	 * two rows, one with 0 in the "representation" column, representing
 	 * \e false, and the other with 1, representing \e true.
+	 * 
+	 * @throws InvalidConnection is the database connection is invalid (e.g.
+	 * not connected to a file).
+	 *
+	 * @throws SQLiteException, or an exception inherited therefrom, if there
+	 * is some other error setting up the table (should be rare). For example,
+	 * if the table has been set up already.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
@@ -234,6 +239,8 @@ public:
 	 * @throws TransactionNestingException in the event that the maximum
 	 * level of nesting has been reached. The maximum level of nesting is
 	 * equal to the value returned by max_nesting().
+	 *
+	 * @throws InvalidConnection if the database connection is invalid.
 	 */
 	void begin_transaction();
 
@@ -247,6 +254,8 @@ public:
 	 * @throws TransactionNestingException in the event that there are
 	 * more calls to end_transaction than there have been to
 	 * begin_transaction.
+	 *
+	 * @throws InvalidConnection if the database connection is invalid.
 	 */
 	void end_transaction();
 
@@ -263,6 +272,8 @@ public:
 	 *
 	 * This function is only intended to be called by the
 	 * constructor of SharedSQLStatement. It should not be called elsewhere.
+	 *
+	 * @todo Document exceptions.
 	 */
 	boost::shared_ptr<detail::SQLStatement> provide_sql_statement
 	(	std::string const& statement_text
@@ -313,7 +324,6 @@ inline
 KeyType
 DatabaseConnection::next_auto_key(std::string const& table_name)
 {
-	
 	try
 	{
 		SharedSQLStatement statement

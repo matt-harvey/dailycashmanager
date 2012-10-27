@@ -3,7 +3,7 @@
 # Execute this script to run the unit tests.
 
 # This Tcl script is intended to drive the unit tests. We drive them from here
-# rather than from directly from main, so that we can crash and then revive
+# rather than directly from main, so that we can crash and then revive
 # the main program, in the middle of a SQL transaction, and inspect the
 # database afterwards, to see if the failed transaction was handled as
 # expected. On reviving, the main function will run again, detect the

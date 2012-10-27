@@ -72,8 +72,10 @@ public:
 
 	/**
 	 * Wrappers around SQLite bind functions.
+	 * 
+	 * @throws InvalidConnection if the database connection is invalid.
 	 *
-	 * These throw \c SQLiteException, or an exception derived therefrom,
+	 * @throws SQLiteException, or an exception derived therefrom,
 	 * if SQLite could not properly bind the statement.
 	 */
 	void bind(std::string const& parameter_name, int value);
@@ -109,6 +111,8 @@ public:
 	 * Returns true as long as there are further steps to go (i.e. result
 	 * rows to examine).
 	 *
+	 * @throws InvalidConnection if the database connection is invalid.
+	 *
 	 * @throws SQLiteException or some exception deriving therefrom, if an
 	 * error occurs. This function should almost never throw, but it is
 	 * possible something will fail as the statement is being executed, in
@@ -126,6 +130,8 @@ public:
 	 * @throws UnexpectedResultRow if a result set is returned. If this
 	 * occurs, the statement is reset (but bindings are not cleared).
 	 * 
+	 * @throws InvalidConnection if the database connection is invalid.
+	 *
 	 * @throws SQLiteException or an exception derived therefrom if there
 	 * is any other error in executing the statement.
 	 */
@@ -204,6 +210,15 @@ bool
 SharedSQLStatement::step()
 {
 	return m_sql_statement->step();
+}
+
+
+inline
+void
+SharedSQLStatement::step_final()
+{
+	m_sql_statement->step_final();
+	return;
 }
 
 

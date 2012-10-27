@@ -139,7 +139,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_execute_sql_02)
 TEST(test_next_auto_key_invalid_connection)
 {
 	DatabaseConnection db0;
-	CHECK_THROW(db0.next_auto_key<int>("dummy_table"), DatabaseException);
+	CHECK_THROW(db0.next_auto_key<int>("dummy_table"), InvalidConnection);
 }
 	
 
@@ -229,7 +229,10 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_setup_boolean_table)
 	CHECK(result.find(0) != result.end());
 	CHECK(result.find(1) != result.end());
 	CHECK_EQUAL(result.size(), 2);
+	CHECK_THROW(dbc.setup_boolean_table(), SQLiteException);
 	dbc.execute_sql("drop table booleans");
+	DatabaseConnection invaliddb;
+	CHECK_THROW(invaliddb.setup_boolean_table(), InvalidConnection);
 }
 
 
@@ -258,6 +261,27 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_transaction_nesting_exception_02)
 	dbc.end_transaction();
 	dbc.end_transaction();
 	CHECK_THROW(dbc.end_transaction(), TransactionNestingException);
+}
+
+TEST_FIXTURE
+(	DatabaseConnectionFixture,
+	test_transaction_begin_and_end_response_to_invalid_connection
+)
+{
+	DatabaseConnection invaliddbc;
+	CHECK_THROW(invaliddbc.begin_transaction(), InvalidConnection);
+	DatabaseConnection invaliddbc2;
+	CHECK_THROW(invaliddbc2.end_transaction(), TransactionNestingException);
+	DatabaseConnection invaliddbc3;
+	try
+	{
+		invaliddbc3.begin_transaction();
+	}
+	catch (InvalidConnection&)
+	{
+	}
+	// Transaction begin should not have gone ahead, so...
+	CHECK_THROW(invaliddbc3.end_transaction(), TransactionNestingException);
 }
 
 /*

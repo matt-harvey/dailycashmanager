@@ -106,6 +106,10 @@ DatabaseConnection::end_transaction()
 shared_ptr<detail::SQLStatement>
 DatabaseConnection::provide_sql_statement(string const& statement_text)
 {
+	if (!is_valid())
+	{
+		throw InvalidConnection("Invalid database connection.");
+	}
 	StatementCache::const_iterator const it
 	(	m_statement_cache.find(statement_text)
 	);
