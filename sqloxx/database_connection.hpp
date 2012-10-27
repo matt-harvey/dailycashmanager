@@ -119,7 +119,8 @@ public:
 	 * connection cannot be opened.
 	 *
 	 * Exception safety: appears to offer the <em>basic guarantee</em>,
-	 * <em>however</em> this has not been properly tested.
+	 * <em>however</em> this has not been properly tested. This wraps
+	 * a SQLite function for which the error-safety is not clear.
 	 */
 	void open(boost::filesystem::path const& filepath);
 
@@ -191,10 +192,12 @@ public:
 	 * (including because not yet connected to a database file).
 	 *
 	 * @throws sqloxx::InvalidConnection if database connection is invalid.
+	 *
+	 * Exception safety: <em>strong guarantee</em>, provided client obeys
+	 * the restrictions described above.
 	 */
 	template <typename KeyType>
 	KeyType next_auto_key(std::string const& table_name);	
-
 
 	/**
 	 * Creates table containing integers representing boolean values.
@@ -293,6 +296,11 @@ public:
 	 * This includes the case where there are further syntactically
 	 * acceptable SQL statements after the first one - as each SQLStatement
 	 * can encapsulate only one statement.
+	 *
+	 * @throws std::bad_alloc in the extremely unlikely event of memory
+	 * allocation failure in execution.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	boost::shared_ptr<detail::SQLStatement> provide_sql_statement
 	(	std::string const& statement_text

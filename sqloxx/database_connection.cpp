@@ -8,11 +8,13 @@
 #include <climits>
 #include <limits>
 #include <set>
+#include <stdexcept>
 #include <string>
 
 
 using boost::shared_ptr;
 using boost::unordered_map;
+using std::bad_alloc;
 using std::cerr;
 using std::clog;
 using std::endl;
@@ -137,7 +139,7 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 		{
 			m_statement_cache[statement_text] = new_statement;
 		}
-		catch (std::bad_alloc&)
+		catch (bad_alloc&)
 		{
 			m_statement_cache.clear();
 			assert (new_statement != 0);

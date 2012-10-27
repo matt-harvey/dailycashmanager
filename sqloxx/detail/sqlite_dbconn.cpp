@@ -53,6 +53,7 @@ SQLiteDBConn::SQLiteDBConn():
 
 }
 
+
 void
 SQLiteDBConn::open(boost::filesystem::path const& filepath)
 {
