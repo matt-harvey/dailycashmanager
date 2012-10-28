@@ -55,6 +55,66 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_shared_sql_statement_constructor)
 }
 
 
+TEST_FIXTURE(DatabaseConnectionFixture, test_multi_statements_rejected)
+{
+	// These should be OK (note trailing whitespace and semicolons)
+	dbc.execute_sql
+	(	"create table planets(name text primary key not null, size text); "
+		"create table satellites(name text unique, "
+		"planet_name text references planets);"
+	);
+	SharedSQLStatement s0
+	(	dbc,
+		"insert into planets(name, size) values('Mars', 'medium'); ;;    "
+	);
+	SharedSQLStatement s0a
+	(	dbc,
+		"insert into planets(name, size) values('Saturn', 'large');"
+	);
+	SharedSQLStatement s0b
+	(	dbc,
+		"insert into planets(name, size) values('Mercury', 'small')    ;  "
+	);
+	s0.step_final();
+	// But these should throw
+	CHECK_THROW
+	(
+		SharedSQLStatement s1
+		(	dbc,
+			"insert into planets(name, size) values('Earth', 'medium'); "
+			"insert into planets(name, size) values('Jupiter', 'large')"
+		),
+		TooManyStatements
+	);
+	CHECK_THROW
+	(
+		SharedSQLStatement s2
+		(	dbc,
+			"insert into planets(name, size) values('Earth', 'medium'); "
+			"gooblalsdfkj(("
+		),
+		TooManyStatements
+	);
+	CHECK_THROW
+	(
+		SharedSQLStatement s2
+		(	dbc,
+			"insert into planets(name, size) values('Earth', 'medium'))); "
+			"Sasdf(("
+		),
+		SQLiteException
+	);
+	// But this should be OK and with database still in valid state even after
+	// the above
+	CHECK(dbc.is_valid());
+	SharedSQLStatement s3
+	(	dbc,
+		"insert into planets(name, size) values('Earth', 'medium');"
+	);
+	s3.step_final();
+}
+
+
 TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 {
 	dbc.execute_sql
@@ -341,58 +401,6 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_locking_mechanism)
 	CHECK_EQUAL(s0.step(), false);
 	CHECK_EQUAL(s1.step(), true);
 	CHECK_EQUAL(s1.step(), false);
-}
-
-
-TEST_FIXTURE(DatabaseConnectionFixture, test_multi_statements_rejected)
-{
-	// These should be OK (note trailing whitespace and semicolons)
-	dbc.execute_sql
-	(	"create table planets(name text primary key not null, size text); "
-		"create table satellites(name text unique, "
-		"planet_name text references planets);"
-	);
-	SharedSQLStatement s0
-	(	dbc,
-		"insert into planets(name, size) values('Mars', 'medium'); ;;    "
-	);
-	SharedSQLStatement s0a
-	(	dbc,
-		"insert into planets(name, size) values('Saturn', 'large');"
-	);
-	SharedSQLStatement s0b
-	(	dbc,
-		"insert into planets(name, size) values('Mercury', 'small')    ;  "
-	);
-	s0.step_final();
-	// But these should throw
-	CHECK_THROW
-	(
-		SharedSQLStatement s1
-		(	dbc,
-			"insert into planets(name, size) values('Earth', 'medium'); "
-			"insert into planets(name, size) values('Jupiter', 'large')"
-		),
-		TooManyStatements
-	);
-	CHECK_THROW
-	(
-		SharedSQLStatement s2
-		(	dbc,
-			"insert into planets(name, size) values('Earth', 'medium'); "
-			"gooblalsdfkj(("
-		),
-		TooManyStatements
-	);
-	CHECK_THROW
-	(
-		SharedSQLStatement s2
-		(	dbc,
-			"insert into planets(name, size) values('Earth', 'medium'))); "
-			"Sasdf(("
-		),
-		SQLiteException
-	);
 }
 
 

@@ -3,6 +3,7 @@
 
 #include "sqloxx/detail/sql_statement.hpp"
 #include <boost/cstdint.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
 
@@ -35,7 +36,8 @@ class SQLStatementManager;
  * prevent SQLStatements in an invalid state from being used, unless used
  * via the very same SharedSQLStatement that triggered the invalid state.
  */
-class SharedSQLStatement
+class SharedSQLStatement:
+	private boost::noncopyable
 {
 public:
 
@@ -61,14 +63,24 @@ public:
 	 * in str is syntactically acceptable to SQLite, <em>but</em> there
 	 * are characters in str after this statement, other than ';' and ' '.
 	 * This includes the case where there are further syntactically
-	 * acceptable SQL statements after the first one - as each SQLStatement
-	 * can encapsulate only one statement.
+	 * acceptable SQL statements after the first one - as each
+	 * SharedSQLStatement can encapsulate only one statement.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	SharedSQLStatement
 	(	DatabaseConnection& p_database_connection,	
 		std::string const& p_statement_text
 	);
 
+	/**
+	 * Destructor "clears" the state of the underlying cached
+	 * SQLStatement for re-use by a subsequent SharedSQLStatement with the
+	 * same statement text. (Client code does not need to concern itself
+	 * with the details of this.)
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
 	~SharedSQLStatement();
 
 	/**
@@ -143,7 +155,7 @@ public:
 	 * re-execution - but does not clear the bound parameters.
 	 * This is a wrapper for sqlite3_reset.
 	 *
-	 * Does not throw.
+	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	void reset();
 
@@ -151,7 +163,7 @@ public:
 	 * Clears the parameter bindings from the statement, setting all
 	 * to NULL. This is a wrapper for sqlite3_clear_bindings.
 	 *
-	 * Does not throw.
+	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	void clear_bindings();
 
@@ -159,6 +171,7 @@ public:
 private:
 
 	boost::shared_ptr<detail::SQLStatement> m_sql_statement;
+
 };
 
 
