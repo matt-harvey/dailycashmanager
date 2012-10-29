@@ -31,10 +31,10 @@ class Entry;
  * Class to represent accounting journals.
  * An accounting journal will
  * typically comprise two or more accounting entries, plus some
- * "journal level" data such as the date.
+ * "journal level" (as opposed to "entry level") data such as the date.
  *
  * A journal can be either an OrdinaryJournal or a DraftJournal.
- * A ordinay journal
+ * A ordinary journal
  * has been reflected in the entity's financial state. A DraftJournal
  * has not, but has simply been saved for possible future reuse. Some
  * DraftJournal instances have got Repeater instances associated with them. A
@@ -46,9 +46,9 @@ class Entry;
  * (for example, by transferring between asset classes), or a dimimution
  * or augmentation in wealth (by spending or earning money). In contrast
  * a budget journal is a "conceptual" allocation or reallocation of wealth
- * in regards to the \e planned purpose to which the wealth will be put. Thus,
- * allocating $100.00 of one's earnings to planned expenditure on food
- * represents a budget transaction.
+ * in regards to the \e planned purpose to which the wealth will be put. For
+ * example, allocating $100.00 of one's earnings to planned expenditure on
+ * food represents a budget transaction.
  */
 class Journal: public sqloxx::PersistentObject<IdType>
 {

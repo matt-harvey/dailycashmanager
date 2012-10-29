@@ -39,7 +39,7 @@ public:
 	);
 
 	/** 
-	 * Create a PersistentObject does not correspond to
+	 * Create a PersistentObject that does not correspond to
 	 * one that already exists in the database.
 	 */
 	explicit
@@ -116,8 +116,6 @@ protected:
 	Id prospective_key();
 
 	bool has_id();
-
-protected:
 
 	virtual Id do_calculate_prospective_key();
 
