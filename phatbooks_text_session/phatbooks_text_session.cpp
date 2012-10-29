@@ -83,6 +83,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 	);
 	m_main_menu->add_item(elicit_commodity_item);
 
+	// WARNING Until there is not yet at least one Commodity, this should
+	// not appear in the main menu.
 	shared_ptr<MenuItem> elicit_account_item
 	(	new MenuItem
 		(	"New account",
@@ -92,6 +94,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 	);
 	m_main_menu->add_item(elicit_account_item);
 
+	// WARNING Until there is at least one Account, this should not appear in
+	// the main menu.
 	shared_ptr<MenuItem> elicit_journal_item
 	(	new MenuItem
 		(	"New transaction",

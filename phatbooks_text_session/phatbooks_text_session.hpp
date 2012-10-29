@@ -158,9 +158,6 @@ private:
 	 *
 	 * @todo Verify throwing behaviour
 	 * 
-	 * @todo We need to stop users from entering this dialogue before
-	 * any accounts have been created.
-	 *
 	 * @todo We need to ask the user for an amount in the native currency of
 	 * the appropriate account.
 	 *
