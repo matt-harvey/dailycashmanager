@@ -19,6 +19,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/function.hpp>
 #include <boost/exception/all.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
 #include <boost/shared_ptr.hpp>
 #include <algorithm>
@@ -36,6 +37,7 @@ using jewel::DecimalFromStringException;
 using jewel::DecimalRangeException;
 using boost::bind;
 using boost::function;
+using boost::lexical_cast;
 using boost::regex;
 using boost::regex_match;
 using boost::shared_ptr;
@@ -250,9 +252,8 @@ TextSession::Menu::present_to_user()
 			}
 			else
 			{
-				ostringstream oss;
-				oss << item_num++;
-				label_vec.push_back(oss.str());
+				label_vec.push_back(lexical_cast<string>(item_num));
+				++item_num;
 			}
 			max_label_length = max(label_vec.back().size(), max_label_length);
 		}
