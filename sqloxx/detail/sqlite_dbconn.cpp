@@ -233,6 +233,7 @@ SQLiteDBConn::throw_on_failure(int errcode)
 	return;
 }
 
+
 void
 SQLiteDBConn::execute_sql(string const& str)
 {

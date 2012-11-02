@@ -71,14 +71,18 @@ public:
 	~SQLStatement();
 
 	/**
-	 * Wrappers around SQLite bind functions.
+	 * Wrapper around SQLite bind functions.
 	 *
 	 * These throw \c SQLiteException, or an exception derived therefrom,
 	 * if SQLite could not properly bind the statement.
+	 * 
+	 * Currently the following types for T are supported:\n
+	 * \c boost::int64_t\n
+	 * int\n
+	 * std::string\n
 	 */
-	void bind(std::string const& parameter_name, int value);
-	void bind(std::string const& parameter_name, boost::int64_t value);
-	void bind(std::string const& parameter_name, std::string const& str);
+	template <typename T>
+	void bind(std::string const& parameter_name, T const& value);
 
 	/**
 	 * Where a SQLStatement has a result set available,
@@ -200,6 +204,14 @@ private:
 	 */
 	void check_column(int index, int value_type);
 
+	void do_bind(std::string const& parameter_name, int value);
+	void do_bind(std::string const& parameter_name, boost::int64_t value);
+	void do_bind(std::string const& parameter_name, std::string const& value);
+	// Not implemented for other types, so capture here to prevent compilation
+	// if other types passed
+	template <typename T>
+	void do_bind(std::string const& parameter_name, T t);
+
 
 	sqlite3_stmt* m_statement;
 	SQLiteDBConn& m_sqlite_dbconn;
@@ -208,6 +220,26 @@ private:
 
 
 // FUNCTION TEMPLATE DEFINITIONS AND INLINE FUNCTIONS
+
+
+template <typename T>
+inline
+void
+SQLStatement::bind(std::string const& parameter_name, T const& value)
+{
+	try
+	{
+		do_bind(parameter_name, value);
+	}
+	catch (SQLiteException&)
+	{
+		reset();
+		clear_bindings();
+		throw;
+	}
+	return;
+}
+
 
 template <>
 inline

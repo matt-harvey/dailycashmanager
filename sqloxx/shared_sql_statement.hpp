@@ -82,14 +82,21 @@ public:
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	~SharedSQLStatement();
-
+	
 	/**
 	 * Wrappers around SQLite bind functions.
 	 * 
 	 * @throws InvalidConnection if the database connection is invalid.
+	 * If this occurs, the state of the SharedSQLStatement will be
+	 * the same as before the \e bind method was called.
 	 *
 	 * @throws SQLiteException, or an exception derived therefrom,
-	 * if SQLite could not properly bind the statement.
+	 * if SQLite could not properly bind the statement. If this occurs,
+	 * the statement will be reset and all bindings cleared.
+	 *
+	 * Exception safety: <em>basic guarantee</em>.
+	 *
+	 * @todo Test the exception safety assertions.
 	 */
 	void bind(std::string const& parameter_name, int value);
 	void bind(std::string const& parameter_name, boost::int64_t value);

@@ -110,8 +110,9 @@ SQLStatement::throw_on_failure(int errcode)
 	return;
 }
 
+
 void
-SQLStatement::bind
+SQLStatement::do_bind
 (	std::string const& parameter_name,
 	int value
 )
@@ -124,7 +125,7 @@ SQLStatement::bind
 
 
 void
-SQLStatement::bind
+SQLStatement::do_bind
 (	string const& parameter_name,
 	int64_t value
 )
@@ -141,7 +142,7 @@ SQLStatement::bind
 
 
 void
-SQLStatement::bind
+SQLStatement::do_bind
 (	string const& parameter_name,
 	string const& str
 )
