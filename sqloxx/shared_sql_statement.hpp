@@ -1,7 +1,6 @@
 #ifndef shared_sql_statement_hpp
 #define shared_sql_statement_hpp
 
-#include "sqloxx/detail/sql_statement.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -12,7 +11,11 @@ namespace sqloxx
 {
 
 class DatabaseConnection;
-class SQLStatementManager;
+
+namespace detail
+{
+	class SQLStatement;
+}  // namespace detail
 
 
 /**
@@ -112,7 +115,7 @@ public:
 	 * Currently the following types for T are supported:\n
 	 *	\c boost::int64_t\n
 	 *	int\n
-	 *	double\n
+	 *	double;\n
 	 *	std::string\n
 	 * 
 	 * @param index is the column number (starting at 0) from which to
@@ -182,89 +185,7 @@ private:
 };
 
 
-// Member function templates and inline functions
-
-inline
-void
-SharedSQLStatement::bind(std::string const& parameter_name, int value)
-{
-	m_sql_statement->bind(parameter_name, value);
-	return;
-}
-
-
-inline
-void
-SharedSQLStatement::bind
-(	std::string const& parameter_name, boost::int64_t value
-)
-{
-	m_sql_statement->bind(parameter_name, value);
-	return;
-}
-
-
-inline
-void
-SharedSQLStatement::bind
-(	std::string const& parameter_name, std::string const& value
-)
-{
-	m_sql_statement->bind(parameter_name, value);
-	return;
-}
-
-
-
-
-template <typename T>
-inline
-T
-SharedSQLStatement::extract(int index)
-{
-	return m_sql_statement->template extract<T>(index);
-}
-
-
-inline
-bool
-SharedSQLStatement::step()
-{
-	return m_sql_statement->step();
-}
-
-
-inline
-void
-SharedSQLStatement::step_final()
-{
-	m_sql_statement->step_final();
-	return;
-}
-
-
-inline
-void
-SharedSQLStatement::reset()
-{
-	m_sql_statement->reset();
-	return;
-}
-
-
-inline
-void
-SharedSQLStatement::clear_bindings()
-{
-	m_sql_statement->clear_bindings();
-	return;
-}
-
-
 }  // namespace sqloxx
-
-
-
 
 
 #endif  // shared_sql_statement_hpp
