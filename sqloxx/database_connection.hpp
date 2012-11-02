@@ -10,7 +10,7 @@
 #include <set>
 #include <string>
 #include "shared_sql_statement.hpp"
-#include "detail/sqlite_dbconn.hpp"
+#include "sqloxx_exceptions.hpp"
 
 
 /**
@@ -31,6 +31,7 @@ namespace sqloxx
 // Forward declaration
 namespace detail
 {
+	class SQLiteDBConn;
 	class SQLStatement;
 }  // namespace detail
 
@@ -323,32 +324,6 @@ private:
 
 
 // FUNCTION TEMPLATE DEFINITIONS AND INLINE FUNCTIONS
-
-inline
-bool
-DatabaseConnection::is_valid() const
-{
-	return m_sqlite_dbconn->is_valid();
-}
-
-
-inline
-void
-DatabaseConnection::open(boost::filesystem::path const& filepath)
-{
-	m_sqlite_dbconn->open(filepath);
-	return;
-}
-
-
-inline
-void
-DatabaseConnection::execute_sql(std::string const& str)
-{
-	m_sqlite_dbconn->execute_sql(str);
-	return;
-}
-
 
 template <typename KeyType>
 inline

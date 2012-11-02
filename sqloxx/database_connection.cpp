@@ -2,6 +2,7 @@
 #include "detail/sqlite_dbconn.hpp"
 #include "sqloxx_exceptions.hpp"
 #include "detail/sql_statement.hpp"
+#include <boost/filesystem/path.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <iostream>
@@ -51,6 +52,29 @@ DatabaseConnection::~DatabaseConnection()
 			 << endl;
 	}
 	m_statement_cache.clear();
+}
+
+
+bool
+DatabaseConnection::is_valid() const
+{
+	return m_sqlite_dbconn->is_valid();
+}
+
+
+void
+DatabaseConnection::open(boost::filesystem::path const& filepath)
+{
+	m_sqlite_dbconn->open(filepath);
+	return;
+}
+
+
+void
+DatabaseConnection::execute_sql(string const& str)
+{
+	m_sqlite_dbconn->execute_sql(str);
+	return;
 }
 
 
