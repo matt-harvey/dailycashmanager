@@ -138,7 +138,7 @@ public:
 	 * @throws SQLiteException or some exception deriving therefrom, if an
 	 * error occurs. This function should almost never throw, but it is
 	 * possible something will fail as the statement is being executed, in
-	 * which the resulting SQLite error condition will trigger the
+	 * which case the resulting SQLite error condition will trigger the
 	 * corresponding exception class.
 	 */
 	bool step();
