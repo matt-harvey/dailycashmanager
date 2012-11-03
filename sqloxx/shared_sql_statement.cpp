@@ -49,6 +49,10 @@ SharedSQLStatement::extract<boost::int64_t>(int index)
 }
 
 
+// All these total specialisations of SharedSQLStatement::extract
+// are to avoid having to put the call to SQLStatement::extract in the
+// header - which would introduce unwanted compilation dependencies.
+
 template <>
 double
 SharedSQLStatement::extract<double>(int index)

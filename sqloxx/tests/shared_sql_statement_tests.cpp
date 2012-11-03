@@ -214,6 +214,10 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_high)
 	(	x = selection_statement.extract<int>(2),
 		ResultIndexOutOfRange
 	);
+	// Statement unchanged and still good after exception thrown
+	CHECK_EQUAL(selection_statement.extract<int>(1), 10);
+	CHECK_EQUAL(selection_statement.extract<int>(0), 3);
+	CHECK_EQUAL(selection_statement.step(), false);
 }
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_low)
@@ -230,6 +234,10 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_low)
 	(	s = selection_statement.extract<string>(-1),
 		ResultIndexOutOfRange
 	);
+	// Statement unchanged and still good after exception thrown
+	CHECK_EQUAL(selection_statement.extract<string>(0), "Hello");
+	CHECK_EQUAL(selection_statement.extract<int>(1), 9);
+	CHECK_EQUAL(selection_statement.step(), false);
 }
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_step)

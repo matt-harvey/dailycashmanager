@@ -103,15 +103,14 @@ public:
 	void bind(std::string const& parameter_name, boost::int64_t value);
 	void bind(std::string const& parameter_name, std::string const& str);
 
-
 	/**
 	 * Where a SQLStatement has a result set available,
 	 * this function (template) can be used to extract the value at
-	 * the \c indexth column of the current row (where \c index starts
+	 * the \e indexth column of the current row (where \e index starts
 	 * counting at 0).
 	 *
 	 * Currently the following types for T are supported:\n
-	 *	\c boost::int64_t\n
+	 *	boost::int64_t\n
 	 *	int\n
 	 *	double;\n
 	 *	std::string\n
@@ -119,10 +118,12 @@ public:
 	 * @param index is the column number (starting at 0) from which to
 	 * read the value.
 	 * 
-	 * @throws ResultIndexOutOfRange if \c index is out of range.
+	 * @throws ResultIndexOutOfRange if \e index is out of range.
 	 *
 	 * @throws ValueTypeException if the requested column contains a type that
 	 * is incompatible with T.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	template <typename T>
 	T extract(int index);
