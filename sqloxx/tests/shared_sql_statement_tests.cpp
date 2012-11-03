@@ -165,6 +165,23 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_exception)
 	(	insertion_statement.bind(":a", 10),
 		SQLiteException
 	);
+	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(3, 'three')");
+	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(4, 'four')");
+	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(4, 'fourB')");
+	SharedSQLStatement selector
+	(	dbc,
+		"select Col_A, Col_B from dummy where Col_A = :A"
+	);
+	selector.bind(":A", 3);
+	selector.step();
+	CHECK_EQUAL(selector.extract<string>(1), "three");
+	selector.reset();
+	selector.clear_bindings();
+	selector.bind(":A", 3);
+	CHECK_THROW(selector.bind(":B", 3), SQLiteException);  // Wrong type
+	// Statement is now reset and bindings cleared
+	bool const check = selector.step();
+	CHECK_EQUAL(check, false);
 }
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_extract_value_type_exception)

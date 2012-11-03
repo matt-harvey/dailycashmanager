@@ -98,8 +98,6 @@ public:
 	 * the statement will be reset and all bindings cleared.
 	 *
 	 * Exception safety: <em>basic guarantee</em>.
-	 *
-	 * @todo Test the exception safety assertions.
 	 */
 	void bind(std::string const& parameter_name, int value);
 	void bind(std::string const& parameter_name, boost::int64_t value);
