@@ -112,46 +112,33 @@ SQLStatement::throw_on_failure(int errcode)
 
 
 void
-SQLStatement::do_bind
-(	std::string const& parameter_name,
-	int value
-)
+SQLStatement::do_bind(string const& parameter_name, int x)
 {
 	throw_on_failure
-	(	sqlite3_bind_int(m_statement, parameter_index(parameter_name), value)
+	(	sqlite3_bind_int(m_statement, parameter_index(parameter_name), x)
 	);
 	return;
 }
 
 
 void
-SQLStatement::do_bind
-(	string const& parameter_name,
-	int64_t value
-)
+SQLStatement::do_bind(string const& parameter_name, boost::int64_t x)
 {
 	throw_on_failure
-	(	sqlite3_bind_int64
-		(	m_statement,
-			parameter_index(parameter_name),
-			value
-		)
+	(	sqlite3_bind_int64(m_statement, parameter_index(parameter_name), x)
 	);
 	return;
 }
 
 
 void
-SQLStatement::do_bind
-(	string const& parameter_name,
-	string const& str
-)
+SQLStatement::do_bind(string const& parameter_name, string const& x)
 {
 	throw_on_failure
 	(	sqlite3_bind_text
 		(	m_statement,
 			parameter_index(parameter_name),
-			str.c_str(),
+			x.c_str(),
 			-1,
 			0
 		)

@@ -82,7 +82,7 @@ public:
 	 * std::string\n
 	 */
 	template <typename T>
-	void bind(std::string const& parameter_name, T const& value);
+	void bind(std::string const& parameter_name, T const& x);
 
 	/**
 	 * Where a SQLStatement has a result set available,
@@ -204,9 +204,9 @@ private:
 	 */
 	void check_column(int index, int value_type);
 
-	void do_bind(std::string const& parameter_name, int value);
-	void do_bind(std::string const& parameter_name, boost::int64_t value);
-	void do_bind(std::string const& parameter_name, std::string const& value);
+	void do_bind(std::string const& parameter_name, int x);
+	void do_bind(std::string const& parameter_name, boost::int64_t x);
+	void do_bind(std::string const& parameter_name, std::string const& x);
 	// Not implemented for other types, so capture here to prevent compilation
 	// if other types passed
 	template <typename T>
@@ -225,11 +225,11 @@ private:
 template <typename T>
 inline
 void
-SQLStatement::bind(std::string const& parameter_name, T const& value)
+SQLStatement::bind(std::string const& parameter_name, T const& x)
 {
 	try
 	{
-		do_bind(parameter_name, value);
+		do_bind(parameter_name, x);
 	}
 	catch (SQLiteException&)
 	{

@@ -97,11 +97,16 @@ public:
 	 * if SQLite could not properly bind the statement. If this occurs,
 	 * the statement will be reset and all bindings cleared.
 	 *
+	 * @param parameter_name named parameter embedded in
+	 * the SQL statement.
+	 *
+	 * @x value to be bound to the named parameter.
+	 *
 	 * Exception safety: <em>basic guarantee</em>.
 	 */
-	void bind(std::string const& parameter_name, int value);
-	void bind(std::string const& parameter_name, boost::int64_t value);
-	void bind(std::string const& parameter_name, std::string const& str);
+	void bind(std::string const& parameter_name, int x);
+	void bind(std::string const& parameter_name, boost::int64_t x);
+	void bind(std::string const& parameter_name, std::string const& x);
 
 	/**
 	 * Where a SQLStatement has a result set available,

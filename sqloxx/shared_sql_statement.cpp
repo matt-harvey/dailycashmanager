@@ -70,29 +70,25 @@ SharedSQLStatement::extract<std::string>(int index)
 
 
 void
-SharedSQLStatement::bind(std::string const& parameter_name, int value)
+SharedSQLStatement::bind(string const& parameter_name, int x)
 {
-	m_sql_statement->bind(parameter_name, value);
+	m_sql_statement->bind(parameter_name, x);
 	return;
 }
 
 
 void
-SharedSQLStatement::bind
-(	std::string const& parameter_name, boost::int64_t value
-)
+SharedSQLStatement::bind(string const& parameter_name, boost::int64_t x)
 {
-	m_sql_statement->bind(parameter_name, value);
+	m_sql_statement->bind(parameter_name, x);
 	return;
 }
 
 
 void
-SharedSQLStatement::bind
-(	std::string const& parameter_name, std::string const& value
-)
+SharedSQLStatement::bind(string const& parameter_name, string const& x)
 {
-	m_sql_statement->bind(parameter_name, value);
+	m_sql_statement->bind(parameter_name, x);
 	return;
 }
 
