@@ -150,8 +150,21 @@ SQLStatement::do_bind(string const& parameter_name, string const& x)
 bool
 SQLStatement::step()
 {
+	if (!m_sqlite_dbconn.is_valid())
+	{
+		throw InvalidConnection("Invalid database connection.");
+	}
 	int code = SQLITE_OK;
-	throw_on_failure(code = sqlite3_step(m_statement));
+	try
+	{
+		throw_on_failure(code = sqlite3_step(m_statement));
+	}
+	catch (SQLiteException&)
+	{
+		reset();
+		clear_bindings();
+		throw;
+	}
 	switch (code)
 	{
 	case SQLITE_DONE:

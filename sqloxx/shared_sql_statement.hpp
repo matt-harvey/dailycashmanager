@@ -138,13 +138,18 @@ public:
 	 * Returns true as long as there are further steps to go (i.e. result
 	 * rows to examine).
 	 *
-	 * @throws InvalidConnection if the database connection is invalid.
+	 * @throws InvalidConnection if the database connection is invalid. If
+	 * this occurs, the state of the SharedSQLStatement will be the same as
+	 * before the \e step method was called.
 	 *
 	 * @throws SQLiteException or some exception deriving therefrom, if an
 	 * error occurs. This function should almost never throw, but it is
 	 * possible something will fail as the statement is being executed, in
 	 * which case the resulting SQLite error condition will trigger the
-	 * corresponding exception class.
+	 * corresponding exception class. If this occurs, the SharedSQLStatement
+	 * will be reset and all bindings cleared.
+	 *
+	 * Exception safety: <em>basic guarantee</em>.
 	 */
 	bool step();
 
@@ -157,10 +162,15 @@ public:
 	 * @throws UnexpectedResultRow if a result set is returned. If this
 	 * occurs, the statement is reset (but bindings are not cleared).
 	 * 
-	 * @throws InvalidConnection if the database connection is invalid.
+	 * @throws InvalidConnection if the database connection is invalid. If
+	 * this occurs, the statement is left in the same state as it was before
+	 * the \e step_final method was called.
 	 *
 	 * @throws SQLiteException or an exception derived therefrom if there
-	 * is any other error in executing the statement.
+	 * is any other error in executing the statement. If this happens, the
+	 * statement will be reset and all bindings cleared.
+	 *
+	 * Exception safety: <em>basic guarantee</em>.
 	 */
 	void step_final();
 
