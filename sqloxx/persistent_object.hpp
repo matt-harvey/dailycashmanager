@@ -18,6 +18,8 @@ namespace sqloxx
  *
  * @todo Provide for atomicity of loading and saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
+ *
+ * @todo Unit tests.
  */
 template <typename Id>
 class PersistentObject
@@ -32,6 +34,9 @@ public:
 	 * the given value p_id, this constructor will still proceed without
 	 * complaint. The constructor does not actually perform any checks on the
 	 * validity either of p_database_connection or of p_id.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em> (though derived classes'
+	 * constructors might, of course, throw).
 	 */
 	PersistentObject
 	(	boost::shared_ptr<DatabaseConnection> p_database_connection,
@@ -41,12 +46,20 @@ public:
 	/** 
 	 * Create a PersistentObject that does not correspond to
 	 * one that already exists in the database.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em> (though derived classes'
+	 * constructors might, of course, throw).
 	 */
 	explicit
 	PersistentObject
 	(	boost::shared_ptr<DatabaseConnection> p_database_connection
 	);
 
+	/**
+	 * Exception safety: <em>nothrow guarantee</em> (though this destructor
+	 * cannot, of course, offer any guarantees about the exception safety
+	 * of derived classes' destructors).
+	 */
 	virtual ~PersistentObject();
 
 	/**
@@ -115,6 +128,9 @@ protected:
 
 	Id prospective_key();
 
+	/**
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
 	bool has_id();
 
 	virtual Id do_calculate_prospective_key();
