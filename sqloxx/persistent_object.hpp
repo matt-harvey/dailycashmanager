@@ -19,7 +19,9 @@ namespace sqloxx
  * @todo Provide for atomicity of loading and saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
  *
- * @todo Unit tests.
+ * @todo Unit testing.
+ *
+ * @todo Document protected function APIs.
  */
 template <typename Id>
 class PersistentObject
