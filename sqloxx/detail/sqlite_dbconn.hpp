@@ -28,10 +28,6 @@
  * @todo SQLiteDBConn::is_valid should probably do more than
  * just check whether m_connection exists. It should probably also
  * at least check SQLite error status.
- *
- * @todo I am often calling sqlite3_finalize() before throwing
- * SQLiteException(). Is this necessary? Is this desirable? What
- * about if reset() is preferred by the caller?
  */
 
 
