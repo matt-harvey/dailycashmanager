@@ -20,8 +20,6 @@ namespace sqloxx
  * SQL execution, but of the actual alteration of the in-memory objects).
  *
  * @todo Unit testing.
- *
- * @todo Document protected function APIs.
  */
 template <typename Id>
 class PersistentObject
@@ -31,6 +29,12 @@ public:
 	/**
 	 * Create a PersistentObject that corresponds (or purports to correspond)
 	 * to one that already exists in the database.
+	 *
+	 * @param p_database_connection database connection with
+	 * which the PersistentObject is associated.
+	 *
+	 * @param p_id the id of the object as it exists in the database. This
+	 * presumably will be, or correspond directly to, the primary key.
 	 *
 	 * Note that even if there is no corresponding object in the database for
 	 * the given value p_id, this constructor will still proceed without
@@ -46,8 +50,11 @@ public:
 	);
 
 	/** 
-	 * Create a PersistentObject that does not correspond to
+	 * Create a PersistentObject that does \e not correspond to
 	 * one that already exists in the database.
+	 *
+	 * @param p_database_connection database connection with which the
+	 * PersistentObject is to be associated.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em> (though derived classes'
 	 * constructors might, of course, throw).
@@ -73,6 +80,8 @@ public:
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to begin_transaction and end_transaction
 	 * methods of the DatabaseConnection.
+	 *
+	 * @todo Document exception safety.
 	 */
 	void load();
 
@@ -89,6 +98,8 @@ public:
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to begin_transaction and end_transaction
 	 * methods of the DatabaseConnection.
+	 *
+	 * @todo Document exception safety.
 	 */
 	void save_existing();
 
@@ -108,12 +119,21 @@ public:
 	 * Note the implementation is wrapped as a transaction by call to
 	 * begin_transaction and end_transaction methods of
 	 * DatabaseConnection.
+	 *
+	 * @todo Document exception safety.
 	 */
 	void save_new();
 
 	/**
-	 * Returns the id of the object. If the object doesn't have an id,
+	 * @returns the id of the object. If the object doesn't have an id,
 	 * this will CRASH via an assertion failure - rather than throw.
+	 *
+	 * @todo Change this so that if the object doesn't have an id, it
+	 * will throw an exception rather than crash. To do this, I should
+	 * create a value-retrieving function to wrap around the
+	 * boost::optional "dereferencing" operation.
+	 *
+	 * @todo Document exception safety.
 	 */
 	Id id() const;
 
@@ -129,9 +149,15 @@ protected:
 	boost::shared_ptr<DatabaseConnection> database_connection() const;
 
 	/**
+	 * Sets the id of this instance of PersistentObject to p_id.
+	 *
+	 * @param p_id the value to which you want to set the id of this object.
+	 *
 	 * Note an object that is created anew, that does not already exist
 	 * in the database, should not have an id. By having an id, an object
 	 * is saying "I exist in the database".
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	void set_id(Id p_id);
 
