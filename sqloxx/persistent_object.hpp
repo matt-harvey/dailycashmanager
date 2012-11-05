@@ -3,6 +3,7 @@
 
 #include "database_connection.hpp"
 #include <jewel/decimal.hpp>
+#include <jewel/optional.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <stdexcept>
@@ -125,15 +126,10 @@ public:
 	void save_new();
 
 	/**
-	 * @returns the id of the object. If the object doesn't have an id,
-	 * this will CRASH via an assertion failure - rather than throw.
+	 * @returns the id of the object, if it has one.
 	 *
-	 * @todo Change this so that if the object doesn't have an id, it
-	 * will throw an exception rather than crash. To do this, I should
-	 * create a value-retrieving function to wrap around the
-	 * boost::optional "dereferencing" operation.
-	 *
-	 * @todo Document exception safety.
+	 * @throws jewel::UninitializedOptionalException if the object doesn't
+	 * have an id.
 	 */
 	Id id() const;
 
@@ -405,7 +401,7 @@ inline
 Id
 PersistentObject<Id>::id() const
 {
-	return *m_id;
+	return jewel::value(m_id);
 }
 
 template <typename Id>
