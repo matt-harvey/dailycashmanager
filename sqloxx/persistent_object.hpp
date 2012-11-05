@@ -339,7 +339,6 @@ PersistentObject<Id>::~PersistentObject()
 
 
 template <typename Id>
-inline
 void
 PersistentObject<Id>::load()
 {
@@ -352,12 +351,12 @@ PersistentObject<Id>::load()
 		}
 		catch (TransactionNestingException&)
 		{
-			m_loading_status = ghost;
+			clear_loading_status();
 			throw;
 		}
 		catch (InvalidConnection&)
 		{
-			m_loading_status = ghost;
+			clear_loading_status();
 			throw;
 		}
 		do_load_all();
@@ -365,19 +364,19 @@ PersistentObject<Id>::load()
 		{
 			m_database_connection->end_transaction();
 			// Note this can't possibly throw TransactionNestingException
-			// here, unless do_load_all() did something very strange.
+			// here, unless do_load_all() has done something perverse.
 		}
 		catch (InvalidConnection&)
 		{
 			// As do_load_all has already completed, the object in
 			// memory should be non-corrupt and fully loaded. The fact that
-			// the database connection is now invalid only affect the
+			// the database connection is now invalid only affects the
 			// database, not the in-memory object. The invalidity of the
-			// database connection will no doubt be detected and dealt with
-			// the next time it is accessed.
+			// database connection will presumably be detected and dealt with
+			// the next time it is accessed. We therefore do \e not rethrow
+			// here.
 			//
 			// WARNING Am I really comfortable with this?
-			m_loading_status = loaded;
 		}
 		m_loading_status = loaded;
 	}
@@ -386,7 +385,6 @@ PersistentObject<Id>::load()
 
 
 template <typename Id>
-inline
 void
 PersistentObject<Id>::save_existing()
 {
@@ -414,7 +412,6 @@ PersistentObject<Id>::save_existing()
 
 
 template <typename Id>
-inline
 Id
 PersistentObject<Id>::prospective_key() const
 {
