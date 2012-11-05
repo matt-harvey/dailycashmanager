@@ -21,6 +21,11 @@ namespace sqloxx
  * SQL execution, but of the actual alteration of the in-memory objects).
  *
  * @todo Unit testing.
+ *
+ * @todo Go through all the client classes in phatbooks and ensure the
+ * do_load... and do_save... functions in each are atomic with respect to
+ * the in-memory objects, and conform to the restrictions detailed in the
+ * PersistentObject API documentation.
  */
 template <typename Id>
 class PersistentObject
@@ -78,11 +83,32 @@ public:
 	 * fully loaded. If the object does not have an id,
 	 * then this function does nothing.
 	 *
+	 * In defining \e do_load_all, the derived class should call
+	 * clear_loading_status in the event that the load fails. If this
+	 * is adhered to, and do_load_all is implemented with the strong
+	 * exception-safety guarantee, and do_load_all does not perform any
+	 * read operations on the database, then the \e load function will itself
+	 * provide the strong exception safety guarantee.
+	 *
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to begin_transaction and end_transaction
 	 * methods of the DatabaseConnection.
 	 *
-	 * @todo Document exception safety.
+	 * The following exceptions may be thrown regardless of how
+	 * do_load_all is defined:
+	 *
+	 * @throws TransactionNestingException in the event that the maximum
+	 * level of transaction nesting for the database connection has been
+	 * reached. (This is extremely unlikely.) If this occurs \e before
+	 * do_load_all is entered, the object will be as it was before the
+	 * function was called.
+	 * 
+	 * @throws InvalidConnection in the event that the database connection is
+	 * invalid at the point the \e load function is entered. If this occurs,
+	 * the object will be as it was before this function was called.
+	 *
+	 * Exception safety: depends on how the derived class defines \e
+	 * do_load_all. See above.
 	 */
 	void load();
 
@@ -251,6 +277,16 @@ protected:
 	 */
 	virtual std::string do_get_table_name() const = 0;
 
+	/**
+	 * Clears the loading status back to \e ghost.
+	 *
+	 * Should be called by do_load_all if the load fails.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	void clear_loading_status();
+
+
 private:
 
 	enum LoadingStatus
@@ -310,9 +346,39 @@ PersistentObject<Id>::load()
 	if (m_loading_status == ghost && has_id())
 	{
 		m_loading_status = loading;
-		m_database_connection->begin_transaction();
+		try
+		{
+			m_database_connection->begin_transaction();
+		}
+		catch (TransactionNestingException&)
+		{
+			m_loading_status = ghost;
+			throw;
+		}
+		catch (InvalidConnection&)
+		{
+			m_loading_status = ghost;
+			throw;
+		}
 		do_load_all();
-		m_database_connection->end_transaction();
+		try
+		{
+			m_database_connection->end_transaction();
+			// Note this can't possibly throw TransactionNestingException
+			// here, unless do_load_all() did something very strange.
+		}
+		catch (InvalidConnection&)
+		{
+			// As do_load_all has already completed, the object in
+			// memory should be non-corrupt and fully loaded. The fact that
+			// the database connection is now invalid only affect the
+			// database, not the in-memory object. The invalidity of the
+			// database connection will no doubt be detected and dealt with
+			// the next time it is accessed.
+			//
+			// WARNING Am I really comfortable with this?
+			m_loading_status = loaded;
+		}
 		m_loading_status = loaded;
 	}
 	return;
@@ -425,9 +491,17 @@ PersistentObject<Id>::has_id() const
 }
 
 
+template <typename Id>
+inline
+void
+PersistentObject<Id>::clear_loading_status()
+{
+	m_loading_status = ghost;
+	return;
+}
+
+
 }  // namespace sqloxx
-
-
 
 #endif  // GUARD_persistent_object
 
