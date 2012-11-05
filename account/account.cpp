@@ -185,7 +185,7 @@ Account::do_save_new_all()
 }
 
 std::string
-Account::do_get_table_name()
+Account::do_get_table_name() const
 {
 	return "accounts";
 }

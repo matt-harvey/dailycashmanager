@@ -184,7 +184,7 @@ Repeater::do_save_new_all()
 
 
 string
-Repeater::do_get_table_name()
+Repeater::do_get_table_name() const
 {
 	return "repeaters";
 }

@@ -142,7 +142,7 @@ private:
 
 	virtual void do_save_new_all();
 
-	virtual std::string do_get_table_name();
+	virtual std::string do_get_table_name() const;
 
 	void load_name_knowing_id();
 

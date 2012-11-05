@@ -92,7 +92,7 @@ private:
 	 * of the id to all Journal instances, regardless of derived
 	 * class.
 	 */
-	// virtual std::string do_get_table_name();
+	// virtual std::string do_get_table_name() const;
 
 	boost::optional<DateRep> m_date;
 };

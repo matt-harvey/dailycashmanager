@@ -115,11 +115,18 @@ public:
 	 * Returns the id of the object. If the object doesn't have an id,
 	 * this will CRASH via an assertion failure - rather than throw.
 	 */
-	Id id();
+	Id id() const;
 
 protected:
 
-	boost::shared_ptr<DatabaseConnection> database_connection();
+	/**
+	 * @returns a boost::shared_ptr to the database connection with which
+	 * this instance of PersistentObject is associated. This is where the
+	 * object will be loaded from or saved to, as the case may be.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>
+	 */
+	boost::shared_ptr<DatabaseConnection> database_connection() const;
 
 	/**
 	 * Note an object that is created anew, that does not already exist
@@ -136,24 +143,47 @@ protected:
 	 * default implementation but may be redefined.
 	 *
 	 * @throws std::logic_error in the event this instance already has
-	 * an id. (Note, this occurs regardless of how/whether
-	 * \e do_calculate_prospective_key is redefined.
+	 * an id. (This occurs regardless of how/whether
+	 * \e do_calculate_prospective_key is redefined.)
 	 *
-	 * @todo Document exception safety, paying attention to the question
-	 * of the default versus possible redefined versions of
-	 * do_calculate_prospective_key.
+	 * Apart from \e std::logic_error as just described, the exception
+	 * throwing behaviour and exception safety of this function depend on
+	 * those of the function PersistentObject::do_calculate_prospective_key.
 	 */
-	Id prospective_key();
+	Id prospective_key() const;
 
 	/**
+	 * @returns \e true if this instance of PersistentObject has
+	 * an valid id; otherwise returns \e false.
+	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	bool has_id();
+	bool has_id() const;
 
 	/**
-	 * @todo Document this.
+	 * <em>The documentation for this function refers only to the
+	 * default definition provided by PersistentObject.</em>
+	 *
+	 * Provides an implementation for the public function prospective_key.
+	 * Should not be called by any functions are than prospective_key.
+	 *
+	 * @throws sqloxx::TableSizeException if the greatest primary key value
+	 * already in the table (i.e. the table into which this instance of
+	 * PersistentObject would be persisted) is the maximum value for the
+	 * type \e Id, so that another row could not be inserted without overflow.
+	 *
+	 * @throws sqloxx::DatabaseException, or a derivative therefrom, may
+	 * be thrown if there is some other
+	 * error finding the next primary key value. This should not occur except
+	 * in the case of a corrupt database, or a memory allocation error
+	 * (extremely unlikely), or the database connection being invalid
+	 * (including because not yet connected to a database file).
+	 * @throws sqloxx::InvalidConnection if the database connection
+	 * associated with this instance of PersistentObject is invalid.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
 	 */
-	virtual Id do_calculate_prospective_key();
+	virtual Id do_calculate_prospective_key() const;
 
 	/**
 	 * See documentation for public \e load function.
@@ -197,7 +227,7 @@ protected:
 	 * Exception safety: <em>depends on function definition provided by
 	 * derived class</em>.
 	 */
-	virtual std::string do_get_table_name() = 0;
+	virtual std::string do_get_table_name() const = 0;
 
 private:
 
@@ -298,7 +328,7 @@ PersistentObject<Id>::save_existing()
 template <typename Id>
 inline
 Id
-PersistentObject<Id>::prospective_key()
+PersistentObject<Id>::prospective_key() const
 {
 	if (has_id())
 	{
@@ -313,7 +343,7 @@ PersistentObject<Id>::prospective_key()
 template <typename Id>
 inline
 Id
-PersistentObject<Id>::do_calculate_prospective_key()
+PersistentObject<Id>::do_calculate_prospective_key() const
 {	
 	return database_connection()->template next_auto_key<Id>
 	(	do_get_table_name()
@@ -338,7 +368,7 @@ PersistentObject<Id>::save_new()
 template <typename Id>
 inline
 boost::shared_ptr<DatabaseConnection>
-PersistentObject<Id>::database_connection()
+PersistentObject<Id>::database_connection() const
 {
 	return m_database_connection;
 }
@@ -347,7 +377,7 @@ PersistentObject<Id>::database_connection()
 template <typename Id>
 inline
 Id
-PersistentObject<Id>::id()
+PersistentObject<Id>::id() const
 {
 	return *m_id;
 }
@@ -365,7 +395,7 @@ PersistentObject<Id>::set_id(Id p_id)
 template <typename Id>
 inline
 bool
-PersistentObject<Id>::has_id()
+PersistentObject<Id>::has_id() const
 {
 	// Relies on the fact that m_id is a boost::optional<Id>, and
 	// will convert to true if and only if it has been initialized.

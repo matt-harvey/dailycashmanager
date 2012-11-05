@@ -135,7 +135,7 @@ private:
 
 	virtual void do_save_new_all();
 
-	virtual std::string do_get_table_name();
+	virtual std::string do_get_table_name() const;
 
 	// Data members
 	boost::optional<Journal::Id> m_journal_id;

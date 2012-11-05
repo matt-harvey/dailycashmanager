@@ -186,7 +186,7 @@ private:
 	 */
 	virtual void do_save_new_all();
 
-	virtual std::string do_get_table_name();
+	virtual std::string do_get_table_name() const;
 
 	boost::optional<bool> m_is_actual;
 	boost::optional<std::string> m_comment;

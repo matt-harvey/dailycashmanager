@@ -156,7 +156,7 @@ Entry::do_save_new_all()
 
 
 std::string
-Entry::do_get_table_name()
+Entry::do_get_table_name() const
 {
 	return "entries";
 }

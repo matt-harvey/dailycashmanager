@@ -190,7 +190,7 @@ Journal::do_save_new_all()
 
 
 string
-Journal::do_get_table_name()
+Journal::do_get_table_name() const
 {
 	return "journals";
 }

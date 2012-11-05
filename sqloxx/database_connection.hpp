@@ -162,10 +162,11 @@ public:
 	 *
 	 * Assumes keys start from 1.
 	 *
-	 * KeyType should be an integral type, and should also be a type
-	 * supported by SQLStatement::extract. If not, behaviour is \e undefined,
-	 * although it is expected that compilation will fail where a KeyType
-	 * that is not accepted by SQLStatement::extract is provided.
+	 * Important constraints: KeyType should be an integral type, and should
+	 * also be a type supported by SQLStatement::extract. If not, behaviour
+	 * is \e undefined, although it is expected that compilation will fail
+	 * where a KeyType that is not accepted by SQLStatement::extract is
+	 * provided.
 	 * 
 	 * It is the caller's responsibility to ensure that KeyType is large
 	 * enough to accommodate the values that are \e already in the
@@ -182,7 +183,7 @@ public:
 	 * currently greatest value for the key (but see exceptions).
 	 * 
 	 * @throws sqloxx::TableSizeException if the greatest primary key value 
-	 * already in the table is the maximum value for \c KeyType, so that
+	 * already in the table is the maximum value for \e KeyType, so that
 	 * another row could not be inserted without overflow.
 	 *
 	 * @throws sqloxx::DatabaseException, or a derivative therefrom, may
@@ -194,8 +195,8 @@ public:
 	 *
 	 * @throws sqloxx::InvalidConnection if database connection is invalid.
 	 *
-	 * Exception safety: <em>strong guarantee</em>, provided client obeys
-	 * the restrictions described above.
+	 * Exception safety: <em>strong guarantee</em>, provided client adheres to
+	 * the constraints described above.
 	 */
 	template <typename KeyType>
 	KeyType next_auto_key(std::string const& table_name);	
