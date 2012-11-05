@@ -128,6 +128,21 @@ protected:
 	 */
 	void set_id(Id p_id);
 
+	/**
+	 * @returns the id that would be assigned to the this instance of
+	 * PersistentObject when saved to the database.
+	 *
+	 * This function calls /e do_calculate_prospective_key, which has a
+	 * default implementation but may be redefined.
+	 *
+	 * @throws std::logic_error in the event this instance already has
+	 * an id. (Note, this occurs regardless of how/whether
+	 * \e do_calculate_prospective_key is redefined.
+	 *
+	 * @todo Document exception safety, paying attention to the question
+	 * of the default versus possible redefined versions of
+	 * do_calculate_prospective_key.
+	 */
 	Id prospective_key();
 
 	/**
@@ -135,16 +150,53 @@ protected:
 	 */
 	bool has_id();
 
+	/**
+	 * @todo Document this.
+	 */
 	virtual Id do_calculate_prospective_key();
 
+	/**
+	 * See documentation for public \e load function.
+	 *
+	 * Exception safety: <em>depends on function definition
+	 * provided by derived class</em>
+	 */
 	virtual void do_load_all() = 0;
 
+	/**
+	 * See documentation for public <em>save_existing</em> function.
+	 *
+	 * Exception safety: <em>depends on function definition provided by
+	 * derived class</em>.
+	 */
 	virtual void do_save_existing_all() = 0;
 
+	/**
+	 * See documentation for public <em>save_existing</em> function.
+	 *
+	 * Exception safety: <em>depends on function definition provided by
+	 * derived class</em>.
+	 */
 	virtual void do_save_existing_partial() = 0;
 
+	/**
+	 * See documentation for public <em>save_new</em> function.
+	 *
+	 * Exception safety: <em>depends on function definition provided by
+	 * derived class</em>.
+	 */
 	virtual void do_save_new_all() = 0;
 
+	/**
+	 * This function should be defined in the derived class to return the
+	 * name of the table in which instances of the derived class are stored
+	 * in the database. This function is in turn called by the default
+	 * implementation of \e do_calculate_prospective_key, which is in turn
+	 * called by \e save_new.
+	 *
+	 * Exception safety: <em>depends on function definition provided by
+	 * derived class</em>.
+	 */
 	virtual std::string do_get_table_name() = 0;
 
 private:
