@@ -20,6 +20,7 @@ link_directories (/home/matthew/lib/jewel)
 
 set (main_files
      account/account.cpp
+	 account/account_impl.cpp
 	 commodity/commodity.cpp
 	 consolixx/consolixx.cpp
 	 date/date.cpp

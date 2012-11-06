@@ -1,43 +1,47 @@
-#ifndef GUARD_account_hpp
-#define GUARD_account_hpp
+#ifndef GUARD_account_impl_hpp
+#define GUARD_account_impl_hpp
 
-/** \file account.hpp
+/** \file account_impl.hpp
  *
- * \brief Header file pertaining to Account class.
+ * \brief Header file pertaining to AccountImpl class.
  *
  * \author Matthew Harvey
- * \date 04 July 2012.
+ * \date 06 Nov 2012.
  *
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
 
+#include "account.hpp"
 #include "general_typedefs.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
+#include <boost/optional.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>
-
 
 
 namespace phatbooks
 {
 
 
-class AccountImpl;
-
 /**
- * Represents an Account object that is "live" in memory, rather than
+ * Represents an AccountImpl object that is "live" in memory, rather than
  * stored in a database.
  *
  * @todo I should probably load m_name immediately with the id, but then
  * lazy load everything else. Note the m_name is used as an identifier
  * in Entry objects. At the moment I have got m_name as one of the lazy
  * attributes.
+ *
+ * @todo This should inherit from a PersistentObjectImpl class, not
+ * from PersistentObject - I think. Currently it's duplicating
+ * the parent class component of Account class.
  */
-class Account:
+class AccountImpl:
 	public sqloxx::PersistentObject<IdType>,
 	private boost::noncopyable
 {
@@ -45,20 +49,7 @@ public:
 
 	typedef IdType Id;
 	typedef sqloxx::PersistentObject<Id> PersistentObject;
-
-	enum AccountType
-	{
-		// enum order is significant, as the database contains
-		// a table with primary keys in this order. See setup_tables
-		// method
-		asset = 1,
-		liability,
-		equity,
-		revenue,
-		expense,
-		pure_envelope
-	};
-
+	typedef Account::AccountType AccountType;
 
 	/**
 	 * Returns a vector of account type names, corresponding to the
@@ -68,7 +59,7 @@ public:
 
 	/**
 	 * Sets up tables in the database required for the persistence of
-	 * Account objects.
+	 * AccountImpl objects.
 	 */
 	static void setup_tables(sqloxx::DatabaseConnection& dbc);
 
@@ -77,22 +68,22 @@ public:
 	 * particular object in the database.
 	 */
 	explicit
-	Account
+	AccountImpl
 	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
 	);
 	
 	/**
-	 * Get an Account by id from database.
+	 * Get an AccountImpl by id from database.
 	 */
-	Account
+	AccountImpl
 	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
 		Id p_id
 	);
 
 	/**
-	 * Get an Account by name from the database.
+	 * Get an AccountImpl by name from the database.
 	 */
-	Account
+	AccountImpl
 	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
 		std::string const& p_name
 	);
@@ -125,12 +116,11 @@ public:
 
 	void set_name(std::string const& p_name);
 
-	void set_commodity_abbreviation(std::string const& p_commodity_abbreviation);
+	void set_commodity_abbreviation
+	(	std::string const& p_commodity_abbreviation
+	);
 
 	void set_description(std::string const& p_description);
-
-	
-private:
 
 	virtual void do_load_all();
 
@@ -154,11 +144,54 @@ private:
 
 	void load_id_knowing_name();
 
-	boost::scoped_ptr<AccountImpl> m_impl;
+private:
+
+	std::string m_name;
+
+	// native commodity or currency of Account
+	boost::optional<std::string> m_commodity_abbreviation;
+
+	boost::optional<AccountType> m_account_type;
+
+	boost::optional<std::string> m_description;
+
 };
+
+
+
+// Inline member functions
+
+
+inline
+AccountImpl::AccountImpl
+(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+):
+	PersistentObject(p_database_connection)
+{
+}
+
+inline
+AccountImpl::AccountImpl
+(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	Id p_id
+):
+	PersistentObject(p_database_connection, p_id)
+{
+	load_name_knowing_id();
+}
+
+inline
+AccountImpl::AccountImpl
+(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	std::string const& p_name
+):
+	PersistentObject(p_database_connection),
+	m_name(p_name)
+{
+	load_id_knowing_name();
+}
 
 
 }  // namespace phatbooks
 
-
-#endif  // GUARD_account_hpp
+#endif  // GUARD_account_impl_hpp

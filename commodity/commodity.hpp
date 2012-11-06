@@ -12,6 +12,7 @@
  */
 
 
+#include "account_impl.hpp"
 #include "general_typedefs.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
