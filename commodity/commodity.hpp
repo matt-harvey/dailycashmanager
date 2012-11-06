@@ -31,6 +31,8 @@ namespace phatbooks
  * and so forth. A single unique asset, such as a car, might also be
  * regarded as a commodity, of which there is only one unit in
  * existence.
+ *
+ * @todo Are copy constructor and assignment operator exception-safe?
  */
 class Commodity:
 	public sqloxx::PersistentObject<IdType>
@@ -71,6 +73,10 @@ public:
 	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
 		std::string const& p_abbreviation
 	);
+
+	/**
+	 * Use default copy constructor and assignment operator.
+	 */
 
 	/**
 	 * Get the abbreviation of the commodity. E.g "AUD" might be

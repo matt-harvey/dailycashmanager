@@ -19,13 +19,12 @@ namespace sqloxx
  *
  * @todo Provide for atomicity of loading and saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
- *
- * @todo Unit testing.
- *
- * @todo Go through all the client classes in phatbooks and ensure the
+ * Go through all the client classes in phatbooks and ensure the
  * do_load... and do_save... functions in each are atomic with respect to
  * the in-memory objects, and conform to the restrictions detailed in the
  * PersistentObject API documentation.
+ *
+ * @todo Unit testing.
  */
 template <typename Id>
 class PersistentObject
@@ -126,7 +125,10 @@ public:
 	 * by calls to begin_transaction and end_transaction
 	 * methods of the DatabaseConnection.
 	 *
-	 * @todo Document exception safety.
+	 * Exception safety: depends on the exception safety of
+	 * do_save_existing_all and do_save_existing_partial. If these
+	 * functions provide the strong guarantee, then so does
+	 * \e save_existing.
 	 */
 	void save_existing();
 
@@ -147,7 +149,11 @@ public:
 	 * begin_transaction and end_transaction methods of
 	 * DatabaseConnection.
 	 *
-	 * @todo Document exception safety.
+	 * Exception safety: depends on the exception safety of
+	 * \e do_save_new_all. Providing both (a) the \e Id type is
+	 * a built in type (the constructors of which can't throw) and
+	 * (b) do_save_new_all offers the strong guarantee, then \e
+	 * save_new also offers the strong guarantee.
 	 */
 	void save_new();
 
@@ -179,7 +185,9 @@ protected:
 	 * in the database, should not have an id. By having an id, an object
 	 * is saying "I exist in the database".
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * Exception safety: <em>nothrow guarantee</em>, <em>providing</em> Id is
+	 * a built-in type. If it's not, then no guarantee is offered, as
+	 * std::bad_alloc might be thrown.
 	 */
 	void set_id(Id p_id);
 

@@ -24,6 +24,10 @@ namespace phatbooks
 
 /**
  * Class representing an accounting entry, i.e. a single line in an account.
+ *
+ * @todo Given that each Entry refers to its corresponding Account by name,
+ * rather than by id, could there potentially be a problem if the name of an
+ * Account changes whilst there are "live" Entry objects in memory?
  */
 class Entry: public sqloxx::PersistentObject<IdType>
 {
