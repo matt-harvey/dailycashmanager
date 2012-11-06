@@ -16,6 +16,7 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/noncopyable.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>
@@ -24,9 +25,6 @@
 
 namespace phatbooks
 {
-
-
-class AccountImpl;
 
 /**
  * Represents an Account object that is "live" in memory, rather than
@@ -97,8 +95,6 @@ public:
 		std::string const& p_name
 	);
 
-	// Default copy contructor is fine.
-	// Default assignment is fine.
 	// Default destructor is fine.
 
 	/**
@@ -155,9 +151,49 @@ private:
 	void load_name_knowing_id();
 
 	void load_id_knowing_name();
+	
+	struct AccountData
+	{
+		std::string name;
+		boost::optional<std::string> commodity_abbreviation;
+		boost::optional<AccountType> account_type;
+		boost::optional<std::string> description;
+	};
 
-	boost::scoped_ptr<AccountImpl> m_impl;
+	boost::scoped_ptr<AccountData> m_data;
 };
+
+
+inline
+Account::Account
+(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+):
+	PersistentObject(p_database_connection),
+	m_data(new AccountData)
+{
+}
+
+inline
+Account::Account
+(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	Id p_id
+):
+	PersistentObject(p_database_connection, p_id),
+	m_data(new AccountData)
+{
+}
+
+inline
+Account::Account
+(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	std::string const& p_name
+):
+	PersistentObject(p_database_connection)
+{
+	m_data->name = p_name;
+	load_id_knowing_name();
+}
+
 
 
 }  // namespace phatbooks
