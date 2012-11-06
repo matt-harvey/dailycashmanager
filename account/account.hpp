@@ -181,6 +181,7 @@ Account::Account
 	PersistentObject(p_database_connection, p_id),
 	m_data(new AccountData)
 {
+	load_name_knowing_id();
 }
 
 inline
@@ -188,7 +189,8 @@ Account::Account
 (	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
 	std::string const& p_name
 ):
-	PersistentObject(p_database_connection)
+	PersistentObject(p_database_connection),
+	m_data(new AccountData)
 {
 	m_data->name = p_name;
 	load_id_knowing_name();
