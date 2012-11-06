@@ -39,7 +39,10 @@ namespace phatbooks
  *
  * @todo This should inherit from a PersistentObjectImpl class, not
  * from PersistentObject - I think. Currently it's duplicating
- * the parent class component of Account class.
+ * the parent class component of Account class. Or I could use a
+ * back-pointer...
+ *
+ * @todo AccountImpl should be declared privately within Account.
  */
 class AccountImpl:
 	public sqloxx::PersistentObject<IdType>,

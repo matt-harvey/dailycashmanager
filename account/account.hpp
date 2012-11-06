@@ -125,7 +125,9 @@ public:
 
 	void set_name(std::string const& p_name);
 
-	void set_commodity_abbreviation(std::string const& p_commodity_abbreviation);
+	void set_commodity_abbreviation
+	(	std::string const& p_commodity_abbreviation
+	);
 
 	void set_description(std::string const& p_description);
 
