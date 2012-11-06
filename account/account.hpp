@@ -16,6 +16,7 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/optional.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>
@@ -33,7 +34,9 @@ namespace phatbooks
  * in Entry objects. At the moment I have got m_name as one of the lazy
  * attributes.
  */
-class Account: public sqloxx::PersistentObject<IdType>
+class Account:
+	public sqloxx::PersistentObject<IdType>,
+	private boost::noncopyable
 {
 public:
 

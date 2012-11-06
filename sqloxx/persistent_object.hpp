@@ -22,7 +22,9 @@ namespace sqloxx
  * Go through all the client classes in phatbooks and ensure the
  * do_load... and do_save... functions in each are atomic with respect to
  * the in-memory objects, and conform to the restrictions detailed in the
- * PersistentObject API documentation.
+ * PersistentObject API documentation. To do this, I need a non-throwing
+ * swap for each of the derived classes. This requires at least some of the
+ * classes to adopt the pimpl idiom.
  *
  * @todo Unit testing.
  */

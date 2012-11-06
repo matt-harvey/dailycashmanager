@@ -18,6 +18,7 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -45,7 +46,9 @@ namespace phatbooks
  * PhatbooksDatabaseConnection, that loads Repeater objects from the database,
  * and inspects them all and fires those that are due.
  */
-class Repeater: public sqloxx::PersistentObject<IdType>
+class Repeater:
+	public sqloxx::PersistentObject<IdType>,
+	private boost::noncopyable
 {
 public:
 

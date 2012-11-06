@@ -50,7 +50,8 @@ class Entry;
  * example, allocating $100.00 of one's earnings to planned expenditure on
  * food represents a budget transaction.
  */
-class Journal: public sqloxx::PersistentObject<IdType>
+class Journal:
+	public sqloxx::PersistentObject<IdType>
 {
 public:
 

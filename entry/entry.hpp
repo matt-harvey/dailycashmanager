@@ -15,6 +15,7 @@
 #include "journal.hpp"
 #include "general_typedefs.hpp"
 #include "sqloxx/persistent_object.hpp"
+#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
@@ -29,7 +30,9 @@ namespace phatbooks
  * rather than by id, could there potentially be a problem if the name of an
  * Account changes whilst there are "live" Entry objects in memory?
  */
-class Entry: public sqloxx::PersistentObject<IdType>
+class Entry:
+	public sqloxx::PersistentObject<IdType>,
+	private boost::noncopyable
 {
 public:
 
