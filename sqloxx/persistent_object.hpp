@@ -84,12 +84,14 @@ public:
 	 * fully loaded. If the object does not have an id,
 	 * then this function does nothing.
 	 *
-	 * In defining \e do_load_all, the derived class should call
-	 * clear_loading_status in the event that the load fails. If this
+	 * In defining \e do_load_all, the derived class should throw an instance
+	 * of std::exception (may be an instance of an exception class derived
+	 * therefrom) in the event that the load fails. If this
 	 * is adhered to, and do_load_all is implemented with the strong
 	 * exception-safety guarantee, and do_load_all does not perform any
-	 * read operations on the database, then the \e load function will itself
-	 * provide the strong exception safety guarantee.
+	 * read operations on the database, or have other side-effects, then the
+	 * \e load function will itself provide the strong exception safety
+	 * guarantee.
 	 *
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to begin_transaction and end_transaction
@@ -369,7 +371,15 @@ PersistentObject<Id>::load()
 			clear_loading_status();
 			throw;
 		}
-		do_load_all();
+		try
+		{
+			do_load_all();
+		}
+		catch (std::exception&)
+		{
+			clear_loading_status();
+			throw;
+		}
 		try
 		{
 			m_database_connection->end_transaction();
