@@ -22,13 +22,13 @@ namespace sqloxx
  * definitions (or possibly redefinitions in the case of the non-pure
  * virtual functions).
  *
- * @todo Provide for atomicity of loading and saving (not just of
+ * @todo Provide for atomic saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
- * Go through all the client classes in phatbooks and ensure the
- * do_load... and do_save... functions in each are atomic with respect to
+ * Go through all the client classes in Phatbooks and ensure the
+ * do_save... functions in each are atomic with respect to
  * the in-memory objects, and conform to the restrictions detailed in the
- * PersistentObject API documentation. To do this, I need a non-throwing
- * swap for each of the derived classes.
+ * PersistentObject API documentation. (Note I have already done this
+ * for \e load functions.)
  *
  * @todo Unit testing.
  */
