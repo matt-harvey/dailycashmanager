@@ -198,7 +198,7 @@ protected:
 	 * Swap function. Does what you expect. This swaps the base part of
 	 * the object only.
 	 *
-	 * @todo Exception safety: <em>nothrow guarantee</em>
+	 * Exception safety: <em>nothrow guarantee</em>
 	 */
 	void swap_base_internals(PersistentObject& rhs);
 
