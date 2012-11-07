@@ -95,7 +95,7 @@ public:
 	 * therefrom) in the event that the load fails. If this
 	 * is adhered to, and do_load_all is implemented with the strong
 	 * exception-safety guarantee, and do_load_all does not perform any
-	 * read operations on the database, or have other side-effects, then the
+	 * write operations on the database, or have other side-effects, then the
 	 * \e load function will itself provide the strong exception safety
 	 * guarantee.
 	 *
@@ -145,9 +145,19 @@ public:
 	/**
 	 * Saves the state of the in-memory object to the database,
 	 * as an additional item, rather than overwriting existing
-	 * data. This is done by calling the pure virtual function
+	 * data. The id assigned to the just-saved object is then
+	 * recorded in the object in memory, and can be retrieved by
+	 * calling id().
+	 *
+	 * In the body of this function, a call is made to the pure virtual
+	 * function
 	 * do_save_new_all, which must be defined in the derived
-	 * class. Note the do_get_table_name function must also
+	 * class. (But note that the base class save_new takes care of assigning
+	 * the id and also wraps the save operation as a SQL transaction by
+	 * calling the begin_transaction and end_transaction methods of the
+	 * DatabaseConnection.)
+	 *
+	 * The do_get_table_name function must also
 	 * be defined in the derived class in order for this function
 	 * to find an automatically generated id to assign to the object
 	 * when saved. By default it is assumed that the id is an auto-
@@ -155,15 +165,9 @@ public:
 	 * behaviour can be overridden by redefining the
 	 * do_calculate_prospective_key function in the derived class.
 	 *
-	 * Note the implementation is wrapped as a transaction by call to
-	 * begin_transaction and end_transaction methods of
-	 * DatabaseConnection.
-	 *
 	 * Exception safety: depends on the exception safety of
-	 * \e do_save_new_all. Providing both (a) the \e Id type is
-	 * a built in type (the constructors of which can't throw) and
-	 * (b) do_save_new_all offers the strong guarantee, then \e
-	 * save_new also offers the strong guarantee.
+	 * \e do_save_new_all. Providing both do_save_new_all offers the strong
+	 * guarantee, then so does \e save_new.
 	 */
 	void save_new();
 
@@ -184,6 +188,9 @@ protected:
 	 * supposed to represent a \e unique object in the database, with a
 	 * unique id. However we provide it to derived classes, who may wish
 	 * to use it in, for example, copy-and-swap operations.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em> (though derived classes'
+	 * copy constructors might, of course, throw).
 	 */
 	PersistentObject(PersistentObject const& rhs);
 
@@ -213,9 +220,7 @@ protected:
 	 * in the database, should not have an id. By having an id, an object
 	 * is saying "I exist in the database".
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>, <em>providing</em> Id is
-	 * a built-in type. If it's not, then no guarantee is offered, as
-	 * std::bad_alloc might be thrown.
+	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	void set_id(Id p_id);
 
@@ -249,7 +254,7 @@ protected:
 	 * default definition provided by PersistentObject.</em>
 	 *
 	 * Provides an implementation for the public function prospective_key.
-	 * Should not be called by any functions are than prospective_key.
+	 * Should not be called by any functions other than prospective_key.
 	 *
 	 * @throws sqloxx::TableSizeException if the greatest primary key value
 	 * already in the table (i.e. the table into which this instance of
@@ -313,22 +318,19 @@ protected:
 	 */
 	virtual std::string do_get_table_name() const = 0;
 
+
+private:
+
 	/**
 	 * Clears the loading status back to \e ghost.
-	 *
-	 * Should be called by do_load_all if the load fails.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	void clear_loading_status();
-
-
-
-private:
-
-	// Deliberately unimplemented. It doesn't make much semantic
-	// sense to assing a PersistentObject that is supposed to
-	// represent a \e unique object in the database.
+	
+	// Deliberately unimplemented. Assignment doesn't make much semantic
+	// sense for a PersistentObject that is supposed to
+	// represent a \e unique object in the database with a unique id.
 	PersistentObject& operator=(PersistentObject const& rhs);
 
 	enum LoadingStatus
