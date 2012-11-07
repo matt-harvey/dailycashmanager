@@ -18,7 +18,9 @@ namespace sqloxx
 /**
  * Class for creating objects persisted to a database. This
  * should be inherited by a derived class and the pure virtual
- * functions (and possibly non-pure virtual functions) redefined - thus:
+ * functions (and possibly non-pure virtual functions) provided with
+ * definitions (or possibly redefinitions in the case of the non-pure
+ * virtual functions).
  *
  * @todo Provide for atomicity of loading and saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
@@ -29,8 +31,6 @@ namespace sqloxx
  * swap for each of the derived classes.
  *
  * @todo Unit testing.
- *
- * @todo This doesn't support operator=. Is this bad?
  */
 class PersistentObject
 {
@@ -77,8 +77,12 @@ public:
 	);
 
 	
-	// Use default copy constructor and destructor. These offer
-	// nothrow guarantee.
+	/**
+	 * Destructor.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	~PersistentObject();
 
 	/**
 	 * Calls the derived class's implementation
@@ -173,6 +177,15 @@ public:
 
 
 protected:
+
+	/**
+	 * Copy constructor is deliberately protected. Copy construction does
+	 * not make much semantic sense, as each instance of PersistentObject is
+	 * supposed to represent a \e unique object in the database, with a
+	 * unique id. However we provide it to derived classes, who may wish
+	 * to use it in, for example, copy-and-swap operations.
+	 */
+	PersistentObject(PersistentObject const& rhs);
 
 	/**
 	 * Swap function. Does what you expect. This swaps the base part of
@@ -313,8 +326,10 @@ protected:
 
 private:
 
-	// Undefined. Do not define in derived class!
-	bool operator=(PersistentObject const& rhs);
+	// Deliberately unimplemented. It doesn't make much semantic
+	// sense to assing a PersistentObject that is supposed to
+	// represent a \e unique object in the database.
+	PersistentObject& operator=(PersistentObject const& rhs);
 
 	enum LoadingStatus
 	{
