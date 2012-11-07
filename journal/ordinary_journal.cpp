@@ -57,6 +57,13 @@ OrdinaryJournal::OrdinaryJournal(Journal const& p_journal):
 }
 
 
+OrdinaryJournal::OrdinaryJournal(OrdinaryJournal const& rhs):
+	Journal(rhs),
+	m_date(rhs.m_date)
+{
+}
+
+
 OrdinaryJournal::~OrdinaryJournal()
 {
 }
@@ -79,19 +86,33 @@ OrdinaryJournal::date()
 
 
 void
+OrdinaryJournal::swap(OrdinaryJournal& rhs)
+{
+	Journal::swap(rhs);
+	using std::swap;
+	swap(m_date, rhs.m_date);
+	return;
+}
+
+
+void
 OrdinaryJournal::do_load_all()
 {
-	// Load the Journal (base) part of the object
-	Journal::do_load_all();
+	OrdinaryJournal temp(*this);
 
-	// Load the derived, OrdinaryJournal part of the object
+	// Load the Journal (base) part of temp.
+	temp.Journal::do_load_all();
+
+	// Load the derived, OrdinaryJournal part of temp.
 	SharedSQLStatement statement
 	(	*database_connection(),
 		"select date from ordinary_journal_detail where journal_id = :p"
 	);
 	statement.bind(":p", id());
 	statement.step();
-	m_date = numeric_cast<DateRep>(statement.extract<boost::int64_t>(0));
+	temp.m_date =
+		numeric_cast<DateRep>(statement.extract<boost::int64_t>(0));
+	swap(temp);
 	return;
 }
 

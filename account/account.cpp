@@ -123,6 +123,7 @@ Account::Account(Account const& rhs):
 Account::~Account()
 {
 	delete m_data;
+	m_data = 0;
 }
 
 Account::AccountType

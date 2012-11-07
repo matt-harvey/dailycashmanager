@@ -45,7 +45,10 @@ public:
 	 */
 	DraftJournal(Journal const& p_journal);
 
-	virtual ~DraftJournal();
+	/**
+	 * Destructor.
+	 */
+	~DraftJournal();
 
 
 	/**
@@ -63,9 +66,22 @@ public:
 	 */
 	std::string name();
 
+	/**
+	 * @todo Provide non-member swap and specialized std::swap per
+	 * "Effective C++".
+	 */
+	void swap(DraftJournal& rhs);
+
+
 private:
-	
-	virtual void do_load_all();
+
+	/**
+	 * Copy constructor - implemented, but deliberately private.
+	 */
+	DraftJournal(DraftJournal const& rhs);	
+
+
+	void do_load_all();
 
 	/* WARNING Needs proper definition.
 	 * This method will need to be implemented carefully
@@ -74,17 +90,17 @@ private:
 	 * since the journal was last saved, this means the corresponding
 	 * entry and repeater rows will need to be deleted from the database.
 	 */
-	virtual void do_save_existing_all()
+	void do_save_existing_all()
 	{
 	}
 
 	/* WARNING Needs proper definition
 	 */
-	virtual void do_save_existing_partial()
+	void do_save_existing_partial()
 	{
 	}
 
-	virtual void do_save_new_all();
+	void do_save_new_all();
 
 	/* Note this function is not redefined here as we want
 	 * it to call Journal::do_get_table_name, which returns
@@ -92,12 +108,15 @@ private:
 	 * of the id to all Journal instances, regardless of derived
 	 * class.
 	 */
-	// virtual std::string do_get_table_name() const;
+	// std::string do_get_table_name() const;
 
+	struct DraftJournalData
+	{
+		boost::optional<std::string> name;
+		std::vector< boost::shared_ptr<Repeater> > repeaters;
+	};
 
-	boost::optional<std::string> m_name;
-	std::vector< boost::shared_ptr<Repeater> > m_repeaters;
-
+	DraftJournalData* m_dj_data;
 };
 
 }  // namespace phatbooks

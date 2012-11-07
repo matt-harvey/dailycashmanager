@@ -139,6 +139,12 @@ public:
 	 */
 	std::vector< boost::shared_ptr<Entry> > const& entries();
 
+	/**
+	 * @todo Provide non-member swap and specialized std::swap per
+	 * "Effective C++".
+	 */
+	void swap(Journal& rhs);
+
 protected:
 
 	/**
@@ -178,6 +184,10 @@ protected:
 	{
 	}
 
+	/**
+	 * Copy constructor - deliberately protected.
+	 */
+	Journal(Journal const& rhs);
 
 private:
 
@@ -189,9 +199,14 @@ private:
 
 	virtual std::string do_get_table_name() const;
 
-	boost::optional<bool> m_is_actual;
-	boost::optional<std::string> m_comment;
-	std::vector< boost::shared_ptr<Entry> > m_entries;
+	struct JournalData
+	{
+		boost::optional<bool> is_actual;
+		boost::optional<std::string> comment;
+		std::vector< boost::shared_ptr<Entry> > entries;
+	};
+	
+	JournalData* m_data;
 };
 
 

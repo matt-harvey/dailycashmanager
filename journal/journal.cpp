@@ -55,34 +55,39 @@ Journal::setup_tables(DatabaseConnection& dbc)
 
 Journal::Journal(shared_ptr<DatabaseConnection> p_database_connection):
 	PersistentObject(p_database_connection),
-	m_entries(vector< shared_ptr<Entry> >())
+	m_data(0)
 {
+	m_data = new JournalData;
 }
 
 Journal::Journal
 (	shared_ptr<DatabaseConnection> p_database_connection,
 	Id p_id
 ):
-	PersistentObject(p_database_connection, p_id)
+	PersistentObject(p_database_connection, p_id),
+	m_data(0)
 {
+	m_data = new JournalData;
 }
 
 Journal::~Journal()
 {
+	delete m_data;
+	m_data = 0;
 }
 
 
 void
 Journal::set_whether_actual(bool p_is_actual)
 {
-	m_is_actual = p_is_actual;
+	m_data->is_actual = p_is_actual;
 	return;
 }
 
 void
 Journal::set_comment(string const& p_comment)
 {
-	m_comment = p_comment;
+	m_data->comment = p_comment;
 	return;
 }
 
@@ -93,7 +98,7 @@ Journal::add_entry(shared_ptr<Entry> entry)
 	{
 		entry->set_journal_id(id());
 	}
-	m_entries.push_back(entry);
+	m_data->entries.push_back(entry);
 	return;
 }
 
@@ -101,14 +106,14 @@ bool
 Journal::is_actual()
 {
 	load();
-	return *m_is_actual;
+	return *(m_data->is_actual);
 }
 
 string
 Journal::comment()
 {
 	load();
-	return *m_comment;
+	return *(m_data->comment);
 }
 
 
@@ -121,7 +126,17 @@ Journal::entries()
 	// truly consistent with the other optionals, it would fail
 	// by means of a failed assert (assuming I haven't wrapped the
 	// other optionals in some throwing construct...).
-	return m_entries;
+	return m_data->entries;
+}
+
+
+void
+Journal::swap(Journal& rhs)
+{
+	swap_base_internals(rhs);
+	using std::swap;
+	swap(m_data, rhs.m_data);
+	return;
 }
 
 
@@ -134,26 +149,23 @@ Journal::do_load_all()
 	);
 	statement.bind(":p", id());
 	statement.step();
-
-	bool const is_act = static_cast<bool>(statement.extract<int>(0));
-	string const cmt = statement.extract<string>(1);
-
 	SharedSQLStatement entry_finder
 	(	*database_connection(),
 		"select entry_id from entries where journal_id = :jid"
 	);
 	entry_finder.bind(":jid", id());
+	Journal temp(*this);
 	while (entry_finder.step())
 	{
 		Entry::Id const entr_id = entry_finder.extract<Entry::Id>(0);
 		shared_ptr<Entry> entry
 		(	new Entry(database_connection(), entr_id)
 		);
-		add_entry(entry);
+		temp.add_entry(entry);
 	}
-	set_whether_actual(is_act);
-	set_comment(cmt);
-	
+	temp.set_whether_actual(static_cast<bool>(statement.extract<int>(0)));
+	temp.set_comment(statement.extract<string>(1));
+	swap(temp);	
 	return;
 }
 
@@ -167,11 +179,12 @@ Journal::do_save_new_all_journal_base()
 		"insert into journals(is_actual, comment) "
 		"values(:is_actual, :comment)"
 	);
-	statement.bind(":is_actual", static_cast<int>(*m_is_actual));
-	statement.bind(":comment", *m_comment);
+	statement.bind(":is_actual", static_cast<int>(*(m_data->is_actual)));
+	statement.bind(":comment", *(m_data->comment));
 	statement.step_final();
 	typedef vector< shared_ptr<Entry> >::iterator EntryIter;
-	for (EntryIter it = m_entries.begin(); it != m_entries.end(); ++it)
+	EntryIter const endpoint = m_data->entries.end();
+	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
 	{
 		(*it)->set_journal_id(journal_id);
 		(*it)->save_new();
@@ -187,6 +200,13 @@ Journal::do_save_new_all()
 	return;
 }
 	
+
+Journal::Journal(Journal const& rhs):
+	PersistentObject(rhs),
+	m_data(0)
+{
+	m_data = new JournalData(*(rhs.m_data));
+}
 
 
 string

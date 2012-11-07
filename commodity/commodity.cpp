@@ -98,6 +98,7 @@ Commodity::Commodity
 Commodity::~Commodity()
 {
 	delete m_data;
+	m_data = 0;
 }
 
 

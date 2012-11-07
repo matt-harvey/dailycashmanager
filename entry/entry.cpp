@@ -64,6 +64,7 @@ Entry::Entry(shared_ptr<DatabaseConnection> p_database_connection, Id p_id):
 Entry::~Entry()
 {
 	delete m_data;
+	m_data = 0;
 }
 
 
