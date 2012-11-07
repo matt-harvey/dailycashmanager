@@ -46,21 +46,31 @@ void Entry::setup_tables(DatabaseConnection& dbc)
 
 
 Entry::Entry(shared_ptr<DatabaseConnection> p_database_connection):
-	PersistentObject(p_database_connection)
+	PersistentObject(p_database_connection),
+	m_data(0)
 {
+	m_data = new EntryData;
 }
 
 
 Entry::Entry(shared_ptr<DatabaseConnection> p_database_connection, Id p_id):
-	PersistentObject(p_database_connection, p_id)
+	PersistentObject(p_database_connection, p_id),
+	m_data(0)
 {
+	m_data = new EntryData;
+}
+
+
+Entry::~Entry()
+{
+	delete m_data;
 }
 
 
 void
 Entry::set_journal_id(Journal::Id p_journal_id)
 {
-	m_journal_id = p_journal_id;
+	m_data->journal_id = p_journal_id;
 	return;
 }
 
@@ -68,7 +78,7 @@ Entry::set_journal_id(Journal::Id p_journal_id)
 void
 Entry::set_account_name(string const& p_account_name)
 {
-	m_account_name = p_account_name;
+	m_data->account_name = p_account_name;
 	return;
 }
 
@@ -76,7 +86,7 @@ Entry::set_account_name(string const& p_account_name)
 void
 Entry::set_comment(string const& p_comment)
 {
-	m_comment = p_comment;
+	m_data->comment = p_comment;
 	return;
 }
 
@@ -84,7 +94,7 @@ Entry::set_comment(string const& p_comment)
 void
 Entry::set_amount(Decimal const& p_amount)
 {
-	m_amount = p_amount;
+	m_data->amount = p_amount;
 	return;
 }
 
@@ -93,7 +103,7 @@ std::string
 Entry::account_name()
 {
 	load();
-	return *m_account_name;
+	return *(m_data->account_name);
 }
 
 
@@ -101,7 +111,7 @@ string
 Entry::comment()
 {
 	load();
-	return *m_comment;
+	return *(m_data->comment);
 }
 
 
@@ -109,13 +119,32 @@ jewel::Decimal
 Entry::amount()
 {
 	load();
-	return *m_amount;
+	return *(m_data->amount);
 }
 
 
 void
+Entry::swap(Entry& rhs)
+{
+	swap_base_internals(rhs);
+	using std::swap;
+	swap(m_data, rhs.m_data);
+	return;
+}
+
+
+Entry::Entry(Entry const& rhs):
+	PersistentObject(rhs),
+	m_data(0)
+{
+	m_data = new EntryData(*(rhs.m_data));
+}
+	
+
+void
 Entry::do_load_all()
 {
+	Entry temp(*this);
 	SharedSQLStatement statement
 	(	*database_connection(),
 		"select account_id, comment, amount, journal_id from entries where "
@@ -124,15 +153,15 @@ Entry::do_load_all()
 	statement.bind(":p", id());
 	statement.step();
 	Account acct(database_connection(), statement.extract<Account::Id>(0));
-	string const acct_name = acct.name();
-	string const cmt = statement.extract<string>(1);
 	Commodity cmd(database_connection(), acct.commodity_abbreviation());
 	Decimal const amt(statement.extract<boost::int64_t>(2), cmd.precision());
-	Journal::Id const jid = statement.extract<Journal::Id>(3);
-	set_account_name(acct_name);
-	set_comment(cmt);
-	set_amount(amt);
-	set_journal_id(jid);
+
+	temp.set_account_name(acct.name());
+	temp.set_comment(statement.extract<string>(1));
+	temp.set_amount(amt);
+	temp.set_journal_id(statement.extract<Journal::Id>(3));
+	
+	swap(temp);
 	return;
 }
 
@@ -145,11 +174,11 @@ Entry::do_save_new_all()
 		"insert into entries(journal_id, comment, account_id, amount) "
 		"values(:journal_id, :comment, :account_id, :amount)"
 	);
-	Account account(database_connection(), account_name());
-	statement.bind(":journal_id", *m_journal_id);
-	statement.bind(":comment", comment());
+	Account account(database_connection(), *(m_data->account_name));
+	statement.bind(":journal_id", *(m_data->journal_id));
+	statement.bind(":comment", *(m_data->comment));
 	statement.bind(":account_id", account.id());
-	statement.bind(":amount", amount().intval());
+	statement.bind(":amount", m_data->amount->intval());
 	statement.step_final();
 	return;
 }

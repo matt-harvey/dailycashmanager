@@ -133,21 +133,21 @@ private:
 	Commodity(Commodity const& rhs);
 
 	// Defining pure virtual functions inherited from PersistentObject
-	virtual void do_load_all();
+	void do_load_all();
 
 	// WARNING I need to implement this properly
-	virtual void do_save_existing_all()
+	void do_save_existing_all()
 	{
 	}
 
 	// WARNING I need to implement this properly
-	virtual void do_save_existing_partial()
+	void do_save_existing_partial()
 	{
 	}
 
-	virtual void do_save_new_all();
+	void do_save_new_all();
 
-	virtual std::string do_get_table_name() const;
+	std::string do_get_table_name() const;
 
 	// Other functions
 	void load_abbreviation_knowing_id();

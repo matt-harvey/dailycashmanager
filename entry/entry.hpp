@@ -31,8 +31,7 @@ namespace phatbooks
  * Account changes whilst there are "live" Entry objects in memory?
  */
 class Entry:
-	public sqloxx::PersistentObject,
-	private boost::noncopyable
+	public sqloxx::PersistentObject
 {
 public:
 
@@ -62,6 +61,11 @@ public:
 	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
 		Id p_id
 	);
+
+	/**
+	 * Destructor
+	 */
+	~Entry();
 
 	/**
 	 * Sets the journal_id for the Entry
@@ -119,36 +123,52 @@ public:
 	 * extreme circumstances.
 	 */
 	std::string account_name();
-		
+	
+	/**
+	 * @todo Provide non-member swap and specialized std::swap per
+	 * "Effective C++".
+	 */
+	void swap(Entry& rhs);
+
 private:
+
+	/**
+	 * Copy constructor - implemented, but deliberately private
+	 */
+	Entry(Entry const& rhs);
+
 
 	// Inherited virtual methods
 	
-	virtual void do_load_all();
+	void do_load_all();
 	
 	/**
 	 * WARNING This needs to be implemented properly.
 	 */
-	virtual void do_save_existing_all()
+	void do_save_existing_all()
 	{
 	}
 
 	/**
 	 * WARNING This needs to be implemented properly.
 	 */
-	virtual void do_save_existing_partial()
+	void do_save_existing_partial()
 	{
 	}
 
-	virtual void do_save_new_all();
+	void do_save_new_all();
 
-	virtual std::string do_get_table_name() const;
+	std::string do_get_table_name() const;
 
-	// Data members
-	boost::optional<Journal::Id> m_journal_id;
-	boost::optional<std::string> m_account_name;
-	boost::optional<std::string> m_comment;
-	boost::optional<jewel::Decimal> m_amount;
+	struct EntryData
+	{
+		boost::optional<Journal::Id> journal_id;
+		boost::optional<std::string> account_name;
+		boost::optional<std::string> comment;
+		boost::optional<jewel::Decimal> amount;
+	};
+
+	EntryData* m_data;
 
 };
 
