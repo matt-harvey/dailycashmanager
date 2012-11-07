@@ -119,6 +119,10 @@ public:
 
 	void set_multiplier_to_base(jewel::Decimal const& p_multiplier_to_base);
 
+	/**
+	 * @todo Provide non-member swap and specialized std::swap per
+	 * "Effective C++".
+	 */
 	void swap(Commodity& rhs);
 
 private:

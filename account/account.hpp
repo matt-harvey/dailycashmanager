@@ -15,7 +15,6 @@
 #include "general_typedefs.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
-#include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <algorithm>
@@ -37,8 +36,7 @@ namespace phatbooks
  * attributes.
  */
 class Account:
-	public sqloxx::PersistentObject,
-	private boost::noncopyable
+	public sqloxx::PersistentObject
 {
 public:
 
@@ -78,7 +76,11 @@ public:
 	Account
 	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
 	);
-	
+
+	/**
+	 * Use default copy constructor and destructor.
+	 */
+
 	/**
 	 * Get an Account by id from database.
 	 */
@@ -127,7 +129,12 @@ public:
 
 	void set_description(std::string const& p_description);
 
-	
+	/**
+	 * @todo Provide non-member swap and specialized std::swap per
+	 * "Effective C++".
+	 */
+	void swap(Account& rhs);
+
 private:
 
 	virtual void do_load_all();
@@ -145,8 +152,6 @@ private:
 	}
 
 	virtual void do_save_new_all();
-
-	virtual void do_swap_derived_parts(Account& rhs);
 
 	virtual std::string do_get_table_name() const;
 

@@ -109,15 +109,6 @@ Account::Account
 }
 
 
-void
-Account::do_swap_derived_parts(Account& rhs)
-{
-	using std::swap;
-	swap(m_data, rhs.m_data);
-	return;
-}
-
-
 Account::AccountType
 Account::account_type()
 {
@@ -173,6 +164,14 @@ Account::set_description(string const& p_description)
 	return;
 }
 
+void
+Account::swap(Account& rhs)
+{
+	swap_base_internals(rhs);
+	using std::swap;
+	swap(m_data, rhs.m_data);
+	return;
+}
 
 void
 Account::do_load_all()
@@ -185,17 +184,20 @@ Account::do_load_all()
 	statement.bind(":p", id());
 	statement.step();
 
+	Account temp(*this);
+
 	Commodity commodity
 	(	database_connection(),
 		statement.extract<Commodity::Id>(0)
 	);
-	AccountType const at =
-		static_cast<AccountType>(statement.extract<int>(1));
-	string const d = statement.extract<string>(2);
 
-	set_commodity_abbreviation(commodity.abbreviation());
-	set_account_type(at);
-	set_description(d);
+	temp.set_account_type
+	(	static_cast<AccountType>(statement.extract<int>(1))
+	);
+	temp.set_description(statement.extract<string>(2));
+	temp.set_commodity_abbreviation(commodity.abbreviation());
+
+	swap(temp);
 	return;
 }
 

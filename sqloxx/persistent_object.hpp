@@ -26,8 +26,7 @@ namespace sqloxx
  * do_load... and do_save... functions in each are atomic with respect to
  * the in-memory objects, and conform to the restrictions detailed in the
  * PersistentObject API documentation. To do this, I need a non-throwing
- * swap for each of the derived classes. This requires at least some of the
- * classes to adopt the pimpl idiom.
+ * swap for each of the derived classes.
  *
  * @todo Unit testing.
  *
@@ -77,23 +76,10 @@ public:
 	(	boost::shared_ptr<DatabaseConnection> p_database_connection
 	);
 
-	/**
-	 * Exception safety: <em>nothrow guarantee</em> (though this destructor
-	 * cannot, of course, offer any guarantees about the exception safety
-	 * of derived classes' destructors).
-	 */
-	virtual ~PersistentObject();
-
-	/**
-	 * Copy constructor
-	 *
-	 * @todo Figure out whether I can do away with this.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	PersistentObject(PersistentObject const& rhs);
-
 	
+	// Use default copy constructor and destructor. These offer
+	// nothrow guarantee.
+
 	/**
 	 * Calls the derived class's implementation
 	 * of do_load_all, if the object is not already
@@ -194,7 +180,7 @@ protected:
 	 *
 	 * @todo Exception safety: <em>nothrow guarantee</em>
 	 */
-	void swap_internals(PersistentObject& rhs);
+	void swap_base_internals(PersistentObject& rhs);
 
 	/**
 	 * @returns a boost::shared_ptr to the database connection with which

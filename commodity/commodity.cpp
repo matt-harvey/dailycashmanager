@@ -88,7 +88,7 @@ Commodity::Commodity
 void
 Commodity::swap(Commodity& rhs)
 {
-	swap_internals(rhs);
+	swap_base_internals(rhs);
 	using std::swap;
 	swap(m_data, rhs.m_data);
 	return;
@@ -124,36 +124,28 @@ void Commodity::load_id_knowing_abbreviation()
 
 void Commodity::do_load_all()
 {
-	try
-	{
-		Commodity temp(*this);
-		SharedSQLStatement statement
-		(	*database_connection(),
-			"select abbreviation, name, description, precision, "
-			"multiplier_to_base_intval, multiplier_to_base_places from "
-			"commodities where commodity_id = :p"
-		);
-		statement.bind(":p", id());
-		statement.step();
-		temp.set_abbreviation(statement.extract<string>(0));
-		temp.set_name(statement.extract<string>(1));
-		temp.set_description(statement.extract<string>(2));
-		temp.set_precision(statement.extract<int>(3));
-		temp.set_multiplier_to_base
-		(	Decimal
-			(	statement.extract<Decimal::int_type>(4),
-				numeric_cast<Decimal::places_type>
-				(	statement.extract<int>(5)
-				)
+	Commodity temp(*this);
+	SharedSQLStatement statement
+	(	*database_connection(),
+		"select abbreviation, name, description, precision, "
+		"multiplier_to_base_intval, multiplier_to_base_places from "
+		"commodities where commodity_id = :p"
+	);
+	statement.bind(":p", id());
+	statement.step();
+	temp.set_abbreviation(statement.extract<string>(0));
+	temp.set_name(statement.extract<string>(1));
+	temp.set_description(statement.extract<string>(2));
+	temp.set_precision(statement.extract<int>(3));
+	temp.set_multiplier_to_base
+	(	Decimal
+		(	statement.extract<Decimal::int_type>(4),
+			numeric_cast<Decimal::places_type>
+			(	statement.extract<int>(5)
 			)
-		);
-		swap(temp);
-	}
-	catch (exception&)
-	{
-		clear_loading_status();
-		throw;
-	}
+		)
+	);
+	swap(temp);
 	return;
 }
 
