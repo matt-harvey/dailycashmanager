@@ -167,7 +167,8 @@ Repeater::do_save_new_all()
 {
 	JEWEL_DEBUG_LOG << "Saving Repeater for journal_id "
 	                << journal_id() << endl;
-	JEWEL_DEBUG_LOG << "...which should be equal to " << *m_journal_id << endl;
+	JEWEL_DEBUG_LOG << "...which should be equal to "
+	                << *m_journal_id << endl;
 	SharedSQLStatement statement
 	(	*database_connection(),
 		"insert into repeaters(interval_type_id, interval_units, "

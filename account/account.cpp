@@ -199,20 +199,16 @@ Account::do_load_all()
 	);
 	statement.bind(":p", id());
 	statement.step();
-
 	Account temp(*this);
-
 	Commodity commodity
 	(	database_connection(),
 		statement.extract<Commodity::Id>(0)
 	);
-
 	temp.set_account_type
 	(	static_cast<AccountType>(statement.extract<int>(1))
 	);
 	temp.set_description(statement.extract<string>(2));
 	temp.set_commodity_abbreviation(commodity.abbreviation());
-
 	swap(temp);
 	return;
 }

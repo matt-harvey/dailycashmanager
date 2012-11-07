@@ -76,6 +76,8 @@ public:
 		Id p_id
 	);
 
+	// Default destructor is fine.
+
 	/**
 	 * Enumerated type representing different
 	 * date interval.
@@ -125,6 +127,9 @@ public:
 	Journal::Id journal_id();
 
 private:
+
+	// Copy constructor is deliberately unimplemented.
+	Repeater(Repeater& rhs);
 
 	void do_load_all();
 
