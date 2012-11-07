@@ -54,7 +54,6 @@ set (libraries
 	 boost_filesystem
 	 boost_regex
 	 boost_system
-	 loki
 	 unittest++
 	 jewel
 	 sqlite3)
