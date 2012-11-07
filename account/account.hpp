@@ -15,6 +15,7 @@
 #include "general_typedefs.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
+#include <loki/SmallObj.h>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -27,6 +28,8 @@ namespace phatbooks
 /**
  * Represents an Account object that is "live" in memory, rather than
  * stored in a database.
+ *
+ * Derives from Loki::SmallValueObject<> for faster heap allocation.
  *
  * @todo I should probably load m_name immediately with the id, but then
  * lazy load everything else. Note the m_name is used as an identifier
@@ -161,7 +164,8 @@ private:
 
 	void load_id_knowing_name();
 	
-	struct AccountData
+	// Derives from Loki::SmallValueObject for faster heap allocation.
+	struct AccountData: public Loki::SmallValueObject<>
 	{
 		std::string name;
 		boost::optional<std::string> commodity_abbreviation;

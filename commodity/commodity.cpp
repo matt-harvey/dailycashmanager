@@ -56,12 +56,7 @@ Commodity::Commodity(Commodity const& rhs):
 	PersistentObject(rhs),
 	m_data(0)
 {
-	m_data = new CommodityData;
-	m_data->abbreviation = rhs.m_data->abbreviation;
-	m_data->name = rhs.m_data->name;
-	m_data->description = rhs.m_data->description;
-	m_data->precision = rhs.m_data->precision;
-	m_data->multiplier_to_base = rhs.m_data->multiplier_to_base;
+	m_data = new CommodityData(*(rhs.m_data));
 }
 
 
