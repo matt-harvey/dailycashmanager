@@ -81,8 +81,9 @@ Account::Account
 (	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
 ):
 	PersistentObject(p_database_connection),
-	m_data(new AccountData)
+	m_data(0)
 {
+	m_data = new AccountData;
 }
 
 
@@ -91,8 +92,9 @@ Account::Account
 	Id p_id
 ):
 	PersistentObject(p_database_connection, p_id),
-	m_data(new AccountData)
+	m_data(0)
 {
+	m_data = new AccountData;
 	load_name_knowing_id();
 }
 
@@ -102,8 +104,9 @@ Account::Account
 	std::string const& p_name
 ):
 	PersistentObject(p_database_connection),
-	m_data(new AccountData)
+	m_data(0)
 {
+	m_data = new AccountData;
 	m_data->name = p_name;
 	load_id_knowing_name();
 }
@@ -111,14 +114,20 @@ Account::Account
 
 Account::Account(Account const& rhs):
 	PersistentObject(rhs),
-	m_data(new AccountData)
+	m_data(0)
 {
+	m_data = new AccountData;
 	m_data->name = rhs.m_data->name;
 	m_data->commodity_abbreviation = rhs.m_data->commodity_abbreviation;
 	m_data->account_type = rhs.m_data->account_type;
 	m_data->description = rhs.m_data->description;
 }
 
+
+Account::~Account()
+{
+	delete m_data;
+}
 
 Account::AccountType
 Account::account_type()

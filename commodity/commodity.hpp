@@ -16,8 +16,6 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <string>
@@ -74,8 +72,10 @@ public:
 		std::string const& p_abbreviation
 	);
 
-	 // Use default destructor.
-
+	/**
+	 * Destructor
+	 */
+	~Commodity();
 	
 	/**
 	 * Get the abbreviation of the commodity. E.g "AUD" might be
@@ -164,7 +164,7 @@ private:
 		boost::optional<jewel::Decimal> multiplier_to_base;
 	};
 
-	boost::shared_ptr<CommodityData> m_data;
+	CommodityData* m_data;
 };
 
 

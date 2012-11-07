@@ -15,8 +15,6 @@
 #include "general_typedefs.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -77,8 +75,6 @@ public:
 	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
 	);
 
-	 // Use default destructor.
-
 	/**
 	 * Get an Account by id from database.
 	 */
@@ -95,7 +91,10 @@ public:
 		std::string const& p_name
 	);
 
-	// Default destructor is fine.
+	/**
+	 * Destuctor.
+	 */
+	~Account();
 
 	/**
 	 * Returns name of account.
@@ -170,9 +169,7 @@ private:
 		boost::optional<std::string> description;
 	};
 
-	// This needs to be a shared_ptr rather than scoped_ptr to
-	// facilitate copy-and-swap e.g. for exception-safe load.
-	boost::shared_ptr<AccountData> m_data;
+	AccountData* m_data;
 };
 
 }  // namespace phatbooks

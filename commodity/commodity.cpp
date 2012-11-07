@@ -54,8 +54,9 @@ void Commodity::setup_tables
 
 Commodity::Commodity(Commodity const& rhs):
 	PersistentObject(rhs),
-	m_data(new CommodityData)
+	m_data(0)
 {
+	m_data = new CommodityData;
 	m_data->abbreviation = rhs.m_data->abbreviation;
 	m_data->name = rhs.m_data->name;
 	m_data->description = rhs.m_data->description;
@@ -68,8 +69,9 @@ Commodity::Commodity
 (	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
 ):
 	PersistentObject(p_database_connection),
-	m_data(new CommodityData)
+	m_data(0)
 {
+	m_data = new CommodityData;
 }
 
 
@@ -78,8 +80,9 @@ Commodity::Commodity
 	Id p_id
 ):
 	PersistentObject(p_database_connection, p_id),
-	m_data(new CommodityData)
+	m_data(0)
 {
+	m_data = new CommodityData;
 	load_abbreviation_knowing_id();
 }
 
@@ -89,10 +92,17 @@ Commodity::Commodity
 	std::string const& p_abbreviation
 ):
 	PersistentObject(p_database_connection),
-	m_data(new CommodityData)
+	m_data(0)
 {
+	m_data = new CommodityData;
 	m_data->abbreviation = p_abbreviation;
 	load_id_knowing_abbreviation();
+}
+
+
+Commodity::~Commodity()
+{
+	delete m_data;
 }
 
 
