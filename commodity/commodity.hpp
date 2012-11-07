@@ -16,7 +16,6 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
-#include <loki/SmallObj.h>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <string>
@@ -154,8 +153,7 @@ private:
 	void load_abbreviation_knowing_id();
 	void load_id_knowing_abbreviation();
 
-	// Derives from Loki::SmallValueObject for faster heap allocation.
-	struct CommodityData: public Loki::SmallValueObject<>
+	struct CommodityData
 	{
 		// Data members. The non-optional ones are initialized
 		// by every constructor; and the optional ones are

@@ -15,7 +15,6 @@
 #include "general_typedefs.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
-#include <loki/SmallObj.h>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -164,8 +163,7 @@ private:
 
 	void load_id_knowing_name();
 	
-	// Derives from Loki::SmallValueObject for faster heap allocation.
-	struct AccountData: public Loki::SmallValueObject<>
+	struct AccountData
 	{
 		std::string name;
 		boost::optional<std::string> commodity_abbreviation;
