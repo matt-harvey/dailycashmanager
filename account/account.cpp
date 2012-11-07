@@ -109,6 +109,17 @@ Account::Account
 }
 
 
+Account::Account(Account const& rhs):
+	PersistentObject(rhs),
+	m_data(new AccountData)
+{
+	m_data->name = rhs.m_data->name;
+	m_data->commodity_abbreviation = rhs.m_data->commodity_abbreviation;
+	m_data->account_type = rhs.m_data->account_type;
+	m_data->description = rhs.m_data->description;
+}
+
+
 Account::AccountType
 Account::account_type()
 {

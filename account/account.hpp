@@ -77,9 +77,7 @@ public:
 	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
 	);
 
-	/**
-	 * Use default copy constructor and destructor.
-	 */
+	 // Use default destructor.
 
 	/**
 	 * Get an Account by id from database.
@@ -137,6 +135,11 @@ public:
 
 private:
 
+	/**
+	 * Copy constructor - implemented, but deliberately private.
+	 */
+	Account(Account const& rhs);
+
 	virtual void do_load_all();
 
 	/* WARNING I need to implement this properly
@@ -167,6 +170,8 @@ private:
 		boost::optional<std::string> description;
 	};
 
+	// This needs to be a shared_ptr rather than scoped_ptr to
+	// facilitate copy-and-swap e.g. for exception-safe load.
 	boost::shared_ptr<AccountData> m_data;
 };
 

@@ -74,10 +74,9 @@ public:
 		std::string const& p_abbreviation
 	);
 
-	/**
-	 * Use default copy constructor and assignment operator.
-	 */
+	 // Use default destructor.
 
+	
 	/**
 	 * Get the abbreviation of the commodity. E.g "AUD" might be
 	 * the abbreviation for Australian dollars, or "NAB.AX" might be
@@ -126,6 +125,11 @@ public:
 	void swap(Commodity& rhs);
 
 private:
+
+	/**
+	 * Copy constructor - implemented, but deliberately private.
+	 */
+	Commodity(Commodity const& rhs);
 
 	// Defining pure virtual functions inherited from PersistentObject
 	virtual void do_load_all();
