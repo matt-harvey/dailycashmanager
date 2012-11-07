@@ -12,19 +12,20 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
+#include "sqloxx/persistent_object.hpp"
 
 namespace phatbooks
 {
 
 /**
- * IdType is the type used for primary keys in the database, for
+ * Id is the type used for primary keys in the database, for
  * Phatbooks objects such as Entry and Commodity objects stored in
  * the database.
  *
- * It is a requirement that no rows in the database will have IdType(0)
+ * It is a requirement that no rows in the database will have Id(0)
  * in the primary key column.
  */
-typedef int IdType;
+typedef sqloxx::PersistentObject::Id Id;
 
 
 }  // namespace phatbooks

@@ -16,6 +16,7 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -34,14 +35,13 @@ namespace phatbooks
  *
  * @todo Are copy constructor and assignment operator exception-safe?
  */
-class Commodity:
-	public sqloxx::PersistentObject<IdType>
+class Commodity: public sqloxx::PersistentObject
 {
 
 public:
 
-	typedef IdType Id;
-	typedef sqloxx::PersistentObject<Id> PersistentObject;
+	typedef sqloxx::PersistentObject PersistentObject;
+	typedef PersistentObject::Id Id;
 
 	/**
 	 * Sets up tables required in the database for the persistence
@@ -119,157 +119,45 @@ public:
 
 	void set_multiplier_to_base(jewel::Decimal const& p_multiplier_to_base);
 
+	void swap(Commodity& rhs);
+
 private:
 
-	// Defining pure virtual functions inherited form PersistentObject
-	void do_load_all();
+	// Defining pure virtual functions inherited from PersistentObject
+	virtual void do_load_all();
 
 	// WARNING I need to implement this properly
-	void do_save_existing_all()
+	virtual void do_save_existing_all()
 	{
 	}
 
 	// WARNING I need to implement this properly
-	void do_save_existing_partial()
+	virtual void do_save_existing_partial()
 	{
 	}
 
+	virtual void do_save_new_all();
 
-	void do_save_new_all();
-
-	std::string do_get_table_name() const;
+	virtual std::string do_get_table_name() const;
 
 	// Other functions
 	void load_abbreviation_knowing_id();
 	void load_id_knowing_abbreviation();
 
-	// Data members. The non-optional ones are initialized
-	// by every constructor; and the optional ones are
-	// only initialized on full load.
-	std::string m_abbreviation;
-	boost::optional<std::string> m_name;
-	boost::optional<std::string> m_description;
-	boost::optional<int> m_precision;
-	boost::optional<jewel::Decimal> m_multiplier_to_base;
+	struct CommodityData
+	{
+		// Data members. The non-optional ones are initialized
+		// by every constructor; and the optional ones are
+		// only initialized on full load.
+		std::string abbreviation;
+		boost::optional<std::string> name;
+		boost::optional<std::string> description;
+		boost::optional<int> precision;
+		boost::optional<jewel::Decimal> multiplier_to_base;
+	};
+
+	boost::shared_ptr<CommodityData> m_data;
 };
-
-
-// Inline member functions
-
-
-inline
-Commodity::Commodity
-(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
-):
-	PersistentObject(p_database_connection)
-{
-}
-
-inline
-Commodity::Commodity
-(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
-	Id p_id
-):
-	PersistentObject(p_database_connection, p_id)
-{
-	load_abbreviation_knowing_id();
-}
-
-inline
-Commodity::Commodity
-(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
-	std::string const& p_abbreviation
-):
-	PersistentObject(p_database_connection),
-	m_abbreviation(p_abbreviation)
-{
-	load_id_knowing_abbreviation();
-}
-	
-inline
-std::string Commodity::abbreviation()
-{
-	// load not done as m_abbreviation is always initialized.
-	return m_abbreviation;
-}
-
-inline
-std::string Commodity::name()
-{
-	load();
-	return *m_name;
-}
-
-inline
-std::string Commodity::description()
-{
-	load();
-	return *m_description;
-}
-
-inline
-int Commodity::precision()
-{
-	load();
-	return *m_precision;
-}
-
-inline
-jewel::Decimal Commodity::multiplier_to_base()
-{
-	load();
-	return *m_multiplier_to_base;
-}
-
-inline
-void Commodity::set_abbreviation(std::string const& p_abbreviation)
-{
-	m_abbreviation = p_abbreviation;
-	return;
-}
-
-inline
-void Commodity::set_name(std::string const& p_name)
-{
-	m_name = p_name;
-	return;
-}
-
-inline
-void Commodity::set_description(std::string const& p_description)
-{
-	m_description = p_description;
-	return;
-}
-
-inline
-void Commodity::set_precision(int p_precision)
-{
-	m_precision = p_precision;
-	return;
-}
-
-inline
-void Commodity::set_multiplier_to_base
-(	jewel::Decimal const& p_multiplier_to_base
-)
-{
-	m_multiplier_to_base = p_multiplier_to_base;
-	return;
-}
-
-inline
-std::string Commodity::do_get_table_name() const
-{
-	return "commodities";
-}
-
-
-
-
-
-
-
 
 
 

@@ -31,13 +31,13 @@ namespace phatbooks
  * Account changes whilst there are "live" Entry objects in memory?
  */
 class Entry:
-	public sqloxx::PersistentObject<IdType>,
+	public sqloxx::PersistentObject,
 	private boost::noncopyable
 {
 public:
 
-	typedef IdType Id;
-	typedef sqloxx::PersistentObject<Id> PersistentObject;
+	typedef sqloxx::PersistentObject PersistentObject;
+	typedef PersistentObject::Id Id;
 
 	/**
 	 * Sets up tables in the database required for the persistence of

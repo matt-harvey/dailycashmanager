@@ -161,7 +161,7 @@ Journal::do_load_all()
 Journal::Id
 Journal::do_save_new_all_journal_base()
 {
-	IdType const journal_id = prospective_key();
+	Id const journal_id = prospective_key();
 	SharedSQLStatement statement
 	(	*database_connection(),
 		"insert into journals(is_actual, comment) "

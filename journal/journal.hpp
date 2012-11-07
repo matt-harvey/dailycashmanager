@@ -51,12 +51,12 @@ class Entry;
  * food represents a budget transaction.
  */
 class Journal:
-	public sqloxx::PersistentObject<IdType>
+	public sqloxx::PersistentObject
 {
 public:
 
-	typedef IdType Id;
-	typedef sqloxx::PersistentObject<Id> PersistentObject;
+	typedef sqloxx::PersistentObject PersistentObject;
+	typedef PersistentObject::Id Id;
 
 	/**
 	 * Sets up tables in the database required for the persistence of

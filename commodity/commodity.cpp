@@ -4,6 +4,7 @@
 #include "sqloxx/shared_sql_statement.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <algorithm>
 #include <stdexcept>
 #include <string>
 
@@ -52,6 +53,48 @@ void Commodity::setup_tables
 
 
 
+Commodity::Commodity
+(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+):
+	PersistentObject(p_database_connection),
+	m_data(new CommodityData)
+{
+}
+
+
+Commodity::Commodity
+(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	Id p_id
+):
+	PersistentObject(p_database_connection, p_id),
+	m_data(new CommodityData)
+{
+	load_abbreviation_knowing_id();
+}
+
+
+Commodity::Commodity
+(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	std::string const& p_abbreviation
+):
+	PersistentObject(p_database_connection),
+	m_data(new CommodityData)
+{
+	m_data->abbreviation = p_abbreviation;
+	load_id_knowing_abbreviation();
+}
+
+
+void
+Commodity::swap(Commodity& rhs)
+{
+	swap_internals(rhs);
+	using std::swap;
+	swap(m_data, rhs.m_data);
+	return;
+}
+
+
 void Commodity::load_abbreviation_knowing_id()
 {
 	SharedSQLStatement statement
@@ -72,13 +115,12 @@ void Commodity::load_id_knowing_abbreviation()
 		"select commodity_id from commodities where "
 		"abbreviation = :p"
 	);
-	statement.bind(":p", m_abbreviation);
+	statement.bind(":p", m_data->abbreviation);
 	statement.step();
 	set_id(statement.extract<Id>(0));
 	return;
 }
 	
-
 
 void Commodity::do_load_all()
 {
@@ -105,8 +147,7 @@ void Commodity::do_load_all()
 				)
 			)
 		);
-		// WARNING This could throw!
-		*this = temp;	
+		swap(temp);
 	}
 	catch (exception&)
 	{
@@ -126,20 +167,88 @@ void Commodity::do_save_new_all()
 		"values(:abbreviation, :name, :description, :precision, "
 		":multiplier_to_base_intval, :multiplier_to_base_places)"
 	);
-	statement.bind(":abbreviation", m_abbreviation);
-	statement.bind(":name", *m_name);
-	statement.bind(":description", *m_description);
-	statement.bind(":precision", *m_precision);
+	statement.bind(":abbreviation", m_data->abbreviation);
+	statement.bind(":name", *(m_data->name));
+	statement.bind(":description", *(m_data->description));
+	statement.bind(":precision", *(m_data->precision));
 	statement.bind
 	(	":multiplier_to_base_intval",
-		m_multiplier_to_base->intval()
+		m_data->multiplier_to_base->intval()
 	);
 	statement.bind
 	(	":multiplier_to_base_places",
-		m_multiplier_to_base->places()
+		m_data->multiplier_to_base->places()
 	);
 	statement.step_final();	
 	return;
+}
+
+
+std::string Commodity::abbreviation()
+{
+	// load not done as m_abbreviation is always initialized.
+	return m_data->abbreviation;
+}
+
+std::string Commodity::name()
+{
+	load();
+	return *(m_data->name);
+}
+
+std::string Commodity::description()
+{
+	load();
+	return *(m_data->description);
+}
+
+int Commodity::precision()
+{
+	load();
+	return *(m_data->precision);
+}
+
+jewel::Decimal Commodity::multiplier_to_base()
+{
+	load();
+	return *(m_data->multiplier_to_base);
+}
+
+void Commodity::set_abbreviation(std::string const& p_abbreviation)
+{
+	m_data->abbreviation = p_abbreviation;
+	return;
+}
+
+void Commodity::set_name(std::string const& p_name)
+{
+	m_data->name = p_name;
+	return;
+}
+
+void Commodity::set_description(std::string const& p_description)
+{
+	m_data->description = p_description;
+	return;
+}
+
+void Commodity::set_precision(int p_precision)
+{
+	m_data->precision = p_precision;
+	return;
+}
+
+void Commodity::set_multiplier_to_base
+(	jewel::Decimal const& p_multiplier_to_base
+)
+{
+	m_data->multiplier_to_base = p_multiplier_to_base;
+	return;
+}
+
+std::string Commodity::do_get_table_name() const
+{
+	return "commodities";
 }
 
 

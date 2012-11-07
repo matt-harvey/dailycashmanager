@@ -18,6 +18,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -36,13 +37,12 @@ namespace phatbooks
  * attributes.
  */
 class Account:
-	public sqloxx::PersistentObject<IdType>,
+	public sqloxx::PersistentObject,
 	private boost::noncopyable
 {
 public:
 
-	typedef IdType Id;
-	typedef sqloxx::PersistentObject<Id> PersistentObject;
+	typedef sqloxx::PersistentObject PersistentObject;
 
 	enum AccountType
 	{
@@ -146,6 +146,8 @@ private:
 
 	virtual void do_save_new_all();
 
+	virtual void do_swap_derived_parts(Account& rhs);
+
 	virtual std::string do_get_table_name() const;
 
 	void load_name_knowing_id();
@@ -160,43 +162,8 @@ private:
 		boost::optional<std::string> description;
 	};
 
-	boost::scoped_ptr<AccountData> m_data;
+	boost::shared_ptr<AccountData> m_data;
 };
-
-
-inline
-Account::Account
-(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
-):
-	PersistentObject(p_database_connection),
-	m_data(new AccountData)
-{
-}
-
-inline
-Account::Account
-(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
-	Id p_id
-):
-	PersistentObject(p_database_connection, p_id),
-	m_data(new AccountData)
-{
-	load_name_knowing_id();
-}
-
-inline
-Account::Account
-(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
-	std::string const& p_name
-):
-	PersistentObject(p_database_connection),
-	m_data(new AccountData)
-{
-	m_data->name = p_name;
-	load_id_knowing_name();
-}
-
-
 
 }  // namespace phatbooks
 

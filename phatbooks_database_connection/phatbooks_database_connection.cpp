@@ -95,7 +95,7 @@ PhatbooksDatabaseConnection::account_types()
 	while (statement.step())
 	{
 		Account::AccountType acctype = static_cast<Account::AccountType>
-		(	statement.extract<IdType>(0)
+		(	statement.extract<Id>(0)
 		);
 		string accname = statement.extract<string>(1);
 		ret.insert(return_type::value_type(acctype, accname));

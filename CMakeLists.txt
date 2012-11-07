@@ -28,8 +28,9 @@ set (main_files
 	 journal/draft_journal.cpp
 	 journal/journal.cpp
 	 journal/ordinary_journal.cpp
-	 sqloxx/shared_sql_statement.cpp
 	 sqloxx/database_connection.cpp
+	 sqloxx/persistent_object.cpp
+	 sqloxx/shared_sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
 	 sqloxx/detail/sql_statement.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp

@@ -6,6 +6,7 @@
 #include <jewel/optional.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <exception>
 #include <stdexcept>
 #include <string>
 
@@ -15,7 +16,9 @@ namespace sqloxx
 {
 
 /**
- * Class template for creating objects persisted to a database.
+ * Class for creating objects persisted to a database. This
+ * should be inherited by a derived class and the pure virtual
+ * functions (and possibly non-pure virtual functions) redefined - thus:
  *
  * @todo Provide for atomicity of loading and saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
@@ -27,11 +30,14 @@ namespace sqloxx
  * classes to adopt the pimpl idiom.
  *
  * @todo Unit testing.
+ *
+ * @todo This doesn't support operator=. Is this bad?
  */
-template <typename Id>
 class PersistentObject
 {
 public:
+
+	typedef int Id;
 
 	/**
 	 * Create a PersistentObject that corresponds (or purports to correspond)
@@ -78,6 +84,16 @@ public:
 	 */
 	virtual ~PersistentObject();
 
+	/**
+	 * Copy constructor
+	 *
+	 * @todo Figure out whether I can do away with this.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	PersistentObject(PersistentObject const& rhs);
+
+	
 	/**
 	 * Calls the derived class's implementation
 	 * of do_load_all, if the object is not already
@@ -169,7 +185,16 @@ public:
 	 */
 	Id id() const;
 
+
 protected:
+
+	/**
+	 * Swap function. Does what you expect. This swaps the base part of
+	 * the object only.
+	 *
+	 * @todo Exception safety: <em>nothrow guarantee</em>
+	 */
+	void swap_internals(PersistentObject& rhs);
 
 	/**
 	 * @returns a boost::shared_ptr to the database connection with which
@@ -299,7 +324,11 @@ protected:
 	void clear_loading_status();
 
 
+
 private:
+
+	// Undefined. Do not define in derived class!
+	bool operator=(PersistentObject const& rhs);
 
 	enum LoadingStatus
 	{
@@ -318,209 +347,11 @@ private:
 
 
 
-
-template <typename Id>
-inline
-PersistentObject<Id>::PersistentObject
-(	boost::shared_ptr<DatabaseConnection> p_database_connection,
-	Id p_id
-):
-	m_database_connection(p_database_connection),
-	m_id(p_id),
-	m_loading_status(ghost)
-{
-}
-
-
-template <typename Id>
-inline
-PersistentObject<Id>::PersistentObject
-(	boost::shared_ptr<DatabaseConnection> p_database_connection
-):
-	m_database_connection(p_database_connection),
-	m_loading_status(ghost)
-{
-}
-
-
-template <typename Id>
-inline
-PersistentObject<Id>::~PersistentObject()
-{
-}
-
-
-template <typename Id>
-void
-PersistentObject<Id>::load()
-{
-	if (m_loading_status == ghost && has_id())
-	{
-		m_loading_status = loading;
-		try
-		{
-			m_database_connection->begin_transaction();
-		}
-		catch (TransactionNestingException&)
-		{
-			clear_loading_status();
-			throw;
-		}
-		catch (InvalidConnection&)
-		{
-			clear_loading_status();
-			throw;
-		}
-		try
-		{
-			do_load_all();
-		}
-		catch (std::exception&)
-		{
-			clear_loading_status();
-			throw;
-		}
-		try
-		{
-			m_database_connection->end_transaction();
-			// Note this can't possibly throw TransactionNestingException
-			// here, unless do_load_all() has done something perverse.
-		}
-		catch (InvalidConnection&)
-		{
-			// As do_load_all has already completed, the object in
-			// memory should be non-corrupt and fully loaded. The fact that
-			// the database connection is now invalid only affects the
-			// database, not the in-memory object. The invalidity of the
-			// database connection will presumably be detected and dealt with
-			// the next time it is accessed. We therefore do \e not rethrow
-			// here.
-			//
-			// WARNING Am I really comfortable with this?
-		}
-		m_loading_status = loaded;
-	}
-	return;
-}
-
-
-template <typename Id>
-void
-PersistentObject<Id>::save_existing()
-{
-	start:
-	switch (m_loading_status)
-	{
-	case loaded:
-		m_database_connection->begin_transaction();
-		do_save_existing_all();
-		m_database_connection->end_transaction();
-		break;
-	case ghost:
-		m_database_connection->begin_transaction();
-		do_save_existing_partial();
-		m_database_connection->end_transaction();
-		break;
-	case loading:
-		goto start;
-		break;
-	default:
-		throw std::logic_error("Loading status not recognized.");
-	}
-	return;
-}
-
-
-template <typename Id>
-Id
-PersistentObject<Id>::prospective_key() const
-{
-	if (has_id())
-	{
-		throw std::logic_error
-		(	"Object already has id so prospective_key does not apply."
-		);
-	}
-	return do_calculate_prospective_key();
-}
-
-
-template <typename Id>
-inline
-Id
-PersistentObject<Id>::do_calculate_prospective_key() const
-{	
-	return database_connection()->template next_auto_key<Id>
-	(	do_get_table_name()
-	);
-}
-
-
-template <typename Id>
-inline
-void
-PersistentObject<Id>::save_new()
-{
-	m_database_connection->begin_transaction();
-	Id const key = prospective_key();
-	do_save_new_all();
-	m_database_connection->end_transaction();
-	set_id(key);
-	return;
-}
-
-
-template <typename Id>
-inline
-boost::shared_ptr<DatabaseConnection>
-PersistentObject<Id>::database_connection() const
-{
-	return m_database_connection;
-}
-
-
-template <typename Id>
-inline
-Id
-PersistentObject<Id>::id() const
-{
-	return jewel::value(m_id);
-}
-
-template <typename Id>
-inline
-void
-PersistentObject<Id>::set_id(Id p_id)
-{
-	m_id = p_id;
-	return;
-}
-
-
-template <typename Id>
-inline
-bool
-PersistentObject<Id>::has_id() const
-{
-	// Relies on the fact that m_id is a boost::optional<Id>, and
-	// will convert to true if and only if it has been initialized.
-	return m_id;
-}
-
-
-template <typename Id>
-inline
-void
-PersistentObject<Id>::clear_loading_status()
-{
-	m_loading_status = ghost;
-	return;
-}
-
-
 }  // namespace sqloxx
 
-#endif  // GUARD_persistent_object
+
+
+#endif  // GUARD_persistent_object_hpp
 
 
 

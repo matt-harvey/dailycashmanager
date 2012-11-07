@@ -77,6 +77,47 @@ Account::setup_tables(DatabaseConnection& dbc)
 }
 
 
+Account::Account
+(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+):
+	PersistentObject(p_database_connection),
+	m_data(new AccountData)
+{
+}
+
+
+Account::Account
+(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	Id p_id
+):
+	PersistentObject(p_database_connection, p_id),
+	m_data(new AccountData)
+{
+	load_name_knowing_id();
+}
+
+
+Account::Account
+(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	std::string const& p_name
+):
+	PersistentObject(p_database_connection),
+	m_data(new AccountData)
+{
+	m_data->name = p_name;
+	load_id_knowing_name();
+}
+
+
+void
+Account::do_swap_derived_parts(Account& rhs)
+{
+	using std::swap;
+	swap(m_data, rhs.m_data);
+	return;
+}
+
+
 Account::AccountType
 Account::account_type()
 {
