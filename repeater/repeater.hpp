@@ -18,7 +18,6 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -47,8 +46,7 @@ namespace phatbooks
  * and inspects them all and fires those that are due.
  */
 class Repeater:
-	public sqloxx::PersistentObject,
-	private boost::noncopyable
+	public sqloxx::PersistentObject
 {
 public:
 
@@ -128,15 +126,13 @@ public:
 
 private:
 
-	// Inherited virtual member functions
-
-	virtual void do_load_all();
+	void do_load_all();
 
 	/**
 	 * @todo Implement this properly.
 	 * WARNING This is not properly implemented.
 	 */
-	virtual void do_save_existing_all()
+	void do_save_existing_all()
 	{
 	}
 
@@ -144,13 +140,13 @@ private:
 	 * @todo Implement this properly.
 	 * WARNING This is not properly implemented.
 	 */
-	virtual void do_save_existing_partial()
+	void do_save_existing_partial()
 	{
 	}
 
-	virtual void do_save_new_all();
+	void do_save_new_all();
 
-	virtual std::string do_get_table_name() const;
+	std::string do_get_table_name() const;
 
 	// Data members
 	
