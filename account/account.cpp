@@ -13,11 +13,13 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
+#include <jewel/optional.hpp>
 #include <cassert>
 #include <string>
 #include <vector>
 
 using boost::shared_ptr;
+using jewel::value;
 using sqloxx::DatabaseConnection;
 using sqloxx::SharedSQLStatement;
 using std::string;
@@ -130,7 +132,7 @@ Account::AccountType
 Account::account_type()
 {
 	load();
-	return *(m_data->account_type);
+	return value(m_data->account_type);
 }
 
 string
@@ -143,14 +145,14 @@ string
 Account::commodity_abbreviation()
 {
 	load();
-	return *(m_data->commodity_abbreviation);
+	return value(m_data->commodity_abbreviation);
 }
 
 string
 Account::description()
 {
 	load();
-	return *(m_data->description);
+	return value(m_data->description);
 }
 
 void
@@ -226,10 +228,10 @@ Account::do_save_new_all()
 		":commodity_id)"
 	);
 	statement.bind
-	(	":account_type_id", static_cast<int>(*(m_data->account_type))
+	(	":account_type_id", static_cast<int>(value(m_data->account_type))
 	);
 	statement.bind(":name", m_data->name);
-	statement.bind(":description", *(m_data->description));
+	statement.bind(":description", value(m_data->description));
 	statement.bind(":commodity_id", commodity.id());
 	statement.step_final();
 	return;

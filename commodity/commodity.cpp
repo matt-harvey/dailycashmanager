@@ -3,6 +3,7 @@
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <jewel/decimal.hpp>
+#include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <algorithm>
 #include <stdexcept>
@@ -23,6 +24,7 @@ using sqloxx::DatabaseConnection;
 using sqloxx::DatabaseException;
 using sqloxx::SharedSQLStatement;
 using jewel::Decimal;
+using jewel::value;
 using boost::numeric_cast;
 using std::exception;
 using std::string;
@@ -177,9 +179,9 @@ void Commodity::do_save_new_all()
 		":multiplier_to_base_intval, :multiplier_to_base_places)"
 	);
 	statement.bind(":abbreviation", m_data->abbreviation);
-	statement.bind(":name", *(m_data->name));
-	statement.bind(":description", *(m_data->description));
-	statement.bind(":precision", *(m_data->precision));
+	statement.bind(":name", value(m_data->name));
+	statement.bind(":description", value(m_data->description));
+	statement.bind(":precision", value(m_data->precision));
 	statement.bind
 	(	":multiplier_to_base_intval",
 		m_data->multiplier_to_base->intval()
@@ -202,25 +204,25 @@ std::string Commodity::abbreviation()
 std::string Commodity::name()
 {
 	load();
-	return *(m_data->name);
+	return value(m_data->name);
 }
 
 std::string Commodity::description()
 {
 	load();
-	return *(m_data->description);
+	return value(m_data->description);
 }
 
 int Commodity::precision()
 {
 	load();
-	return *(m_data->precision);
+	return value(m_data->precision);
 }
 
 jewel::Decimal Commodity::multiplier_to_base()
 {
 	load();
-	return *(m_data->multiplier_to_base);
+	return value(m_data->multiplier_to_base);
 }
 
 void Commodity::set_abbreviation(std::string const& p_abbreviation)

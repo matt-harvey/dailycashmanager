@@ -18,12 +18,14 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/debug_log.hpp>
+#include <jewel/optional.hpp>
 #include <string>
 
 using sqloxx::DatabaseConnection;
 using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
 using boost::shared_ptr;
+using jewel::value;
 using std::string;
 
 // for debug logging
@@ -111,7 +113,7 @@ Repeater::IntervalType
 Repeater::interval_type()
 {
 	load();
-	return *m_interval_type;
+	return value(m_interval_type);
 }
 
 
@@ -119,7 +121,7 @@ int
 Repeater::interval_units()
 {
 	load();
-	return *m_interval_units;
+	return value(m_interval_units);
 }
 
 
@@ -127,7 +129,7 @@ boost::gregorian::date
 Repeater::next_date()
 {
 	load();
-	return boost_date_from_julian_int(*m_next_date);
+	return boost_date_from_julian_int(value(m_next_date));
 }
 
 
@@ -135,7 +137,7 @@ Journal::Id
 Repeater::journal_id()
 {
 	load();
-	return *m_journal_id;
+	return value(m_journal_id);
 }
 
 
@@ -168,17 +170,20 @@ Repeater::do_save_new_all()
 	JEWEL_DEBUG_LOG << "Saving Repeater for journal_id "
 	                << journal_id() << endl;
 	JEWEL_DEBUG_LOG << "...which should be equal to "
-	                << *m_journal_id << endl;
+	                << value(m_journal_id) << endl;
 	SharedSQLStatement statement
 	(	*database_connection(),
 		"insert into repeaters(interval_type_id, interval_units, "
 		"next_date, journal_id) values(:interval_type_id, :interval_units, "
 		":next_date, :journal_id)"
 	);
-	statement.bind(":interval_type_id", static_cast<int>(*m_interval_type));
-	statement.bind(":interval_units", *m_interval_units);
-	statement.bind(":next_date", *m_next_date);
-	statement.bind(":journal_id", *m_journal_id);
+	statement.bind
+	(	":interval_type_id",
+		static_cast<int>(value(m_interval_type))
+	);
+	statement.bind(":interval_units", value(m_interval_units));
+	statement.bind(":next_date", value(m_next_date));
+	statement.bind(":journal_id", value(m_journal_id));
 	statement.step_final();
 	return;
 }

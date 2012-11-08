@@ -165,6 +165,16 @@ private:
 	
 	struct AccountData
 	{
+		// The optionals here are a safety feature. They
+		// prevent uninitialized values from being
+		// silently returned. Unitialized values are a feature
+		// of the lazy loading pattern we are using here. They
+		// are also a feature of objects newly created at the
+		// presentation layer but not yet saved to the database
+		// (and not intended to correspond to any object in the
+		// database). Using optionals prevents helps guard against
+		// such an object being written to the database in an
+		// incomplete state.
 		std::string name;
 		boost::optional<std::string> commodity_abbreviation;
 		boost::optional<AccountType> account_type;

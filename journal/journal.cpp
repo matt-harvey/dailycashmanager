@@ -21,6 +21,7 @@
 #include "sqloxx/persistent_object.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <jewel/decimal.hpp>
+#include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -32,6 +33,7 @@ using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::Decimal;
+using jewel::value;
 using std::string;
 using std::vector;
 
@@ -106,14 +108,14 @@ bool
 Journal::is_actual()
 {
 	load();
-	return *(m_data->is_actual);
+	return value(m_data->is_actual);
 }
 
 string
 Journal::comment()
 {
 	load();
-	return *(m_data->comment);
+	return value(m_data->comment);
 }
 
 
@@ -179,8 +181,8 @@ Journal::do_save_new_all_journal_base()
 		"insert into journals(is_actual, comment) "
 		"values(:is_actual, :comment)"
 	);
-	statement.bind(":is_actual", static_cast<int>(*(m_data->is_actual)));
-	statement.bind(":comment", *(m_data->comment));
+	statement.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
+	statement.bind(":comment", value(m_data->comment));
 	statement.step_final();
 	typedef vector< shared_ptr<Entry> >::iterator EntryIter;
 	EntryIter const endpoint = m_data->entries.end();

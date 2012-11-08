@@ -8,10 +8,12 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/optional.hpp>
 
 
 using boost::numeric_cast;
 using boost::shared_ptr;
+using jewel::value;
 using sqloxx::DatabaseConnection;
 using sqloxx::SharedSQLStatement;
 
@@ -81,7 +83,7 @@ boost::gregorian::date
 OrdinaryJournal::date()
 {
 	load();
-	return boost_date_from_julian_int(*m_date);
+	return boost_date_from_julian_int(value(m_date));
 }
 
 
@@ -130,7 +132,7 @@ OrdinaryJournal::do_save_new_all()
 		"values(:journal_id, :date)"
 	);
 	statement.bind(":journal_id", journal_id);
-	statement.bind(":date", *m_date);
+	statement.bind(":date", value(m_date));
 	statement.step_final();
 	return;
 }

@@ -18,12 +18,14 @@
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/optional.hpp>
 #include <string>
 
 using sqloxx::DatabaseConnection;
 using sqloxx::SharedSQLStatement;
 using boost::shared_ptr;
 using jewel::Decimal;
+using jewel::value;
 using std::string;
 
 namespace phatbooks
@@ -104,7 +106,7 @@ std::string
 Entry::account_name()
 {
 	load();
-	return *(m_data->account_name);
+	return value(m_data->account_name);
 }
 
 
@@ -112,7 +114,7 @@ string
 Entry::comment()
 {
 	load();
-	return *(m_data->comment);
+	return value(m_data->comment);
 }
 
 
@@ -120,7 +122,7 @@ jewel::Decimal
 Entry::amount()
 {
 	load();
-	return *(m_data->amount);
+	return value(m_data->amount);
 }
 
 
@@ -175,9 +177,9 @@ Entry::do_save_new_all()
 		"insert into entries(journal_id, comment, account_id, amount) "
 		"values(:journal_id, :comment, :account_id, :amount)"
 	);
-	Account account(database_connection(), *(m_data->account_name));
-	statement.bind(":journal_id", *(m_data->journal_id));
-	statement.bind(":comment", *(m_data->comment));
+	Account account(database_connection(), value(m_data->account_name));
+	statement.bind(":journal_id", value(m_data->journal_id));
+	statement.bind(":comment", value(m_data->comment));
 	statement.bind(":account_id", account.id());
 	statement.bind(":amount", m_data->amount->intval());
 	statement.step_final();

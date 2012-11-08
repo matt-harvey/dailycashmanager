@@ -6,12 +6,14 @@
 #include <boost/shared_ptr.hpp>
 #include <iostream>  // for debug logging
 #include <jewel/debug_log.hpp>
+#include <jewel/optional.hpp>
 #include <string>
 #include <vector>
 
 using sqloxx::DatabaseConnection;
 using sqloxx::SharedSQLStatement;
 using boost::shared_ptr;
+using jewel::value;
 using std::vector;
 using std::string;
 
@@ -95,7 +97,7 @@ std::string
 DraftJournal::name()
 {
 	load();
-	return *(m_dj_data->name);
+	return value(m_dj_data->name);
 }
 
 
@@ -169,7 +171,7 @@ DraftJournal::do_save_new_all()
 		"values(:journal_id, :name)"
 	);
 	statement.bind(":journal_id", journal_id);
-	statement.bind(":name", *(m_dj_data->name));
+	statement.bind(":name", value(m_dj_data->name));
 	statement.step_final();
 	
 	JEWEL_DEBUG_LOG << "Saving Repeaters..." << endl;
