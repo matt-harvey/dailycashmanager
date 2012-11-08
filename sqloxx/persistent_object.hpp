@@ -20,7 +20,14 @@ namespace sqloxx
  * should be inherited by a derived class and the pure virtual
  * functions (and possibly non-pure virtual functions) provided with
  * definitions (or possibly redefinitions in the case of the non-pure
- * virtual functions). The class provides for lazy loading behaviour.
+ * virtual functions). The class provides for lazy loading behaviour,
+ * using the "ghost" pattern as described on p. 202 of Martin Fowler's
+ * "Patterns of Enterprise Application Architecture". The PersistentObject
+ * base class provides the bookkeeping associated with this pattern,
+ * keeping track of the loading status of each in-memory object
+ * ("loaded", "loading" or "ghost"). Derived classes are responsible for
+ * specifying their instances are loaded and saved.
+ *
  *
  * @todo Provide for atomic saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
