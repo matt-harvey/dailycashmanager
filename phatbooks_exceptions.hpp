@@ -14,6 +14,10 @@
  * the Jewel library. They all have \c jewel::Exception as a (direct or
  * indirect) base class.
  *
+ * @todo Find out how to catch all exceptions in main and then produce a core
+ * dump before aborting. This must be something that the user can then send
+ * to a developer to enable error diagnosis.
+ *
  * \author Matthew Harvey
  * \date 04 July 2012.
  *
