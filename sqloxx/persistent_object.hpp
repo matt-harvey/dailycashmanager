@@ -20,7 +20,7 @@ namespace sqloxx
  * should be inherited by a derived class and the pure virtual
  * functions (and possibly non-pure virtual functions) provided with
  * definitions (or possibly redefinitions in the case of the non-pure
- * virtual functions).
+ * virtual functions). The class provides for lazy loading behaviour.
  *
  * @todo Provide for atomic saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
@@ -29,6 +29,20 @@ namespace sqloxx
  * the in-memory objects, and conform to the restrictions detailed in the
  * PersistentObject API documentation. (Note I have already done this
  * for \e load functions.)
+ *
+ * @todo All the boost::optional<T> data members in the derived classes
+ * of PersistentObject in phatbooks, are not actually required to be
+ * boost::optional<T>. Given that load() is called before any of these
+ * are retrieved, the should never be accessed in an uninitialized state
+ * anyway; and when the object is first constructed, they can be initialized
+ * to any arbitrary value. The m_loading_status member of PersistentObject
+ * keeps track of whether loading is required. The only point of the wrapping
+ * in optional is to guard against a programming error whereby I forget to
+ * insert a call to load() in a getter. The use of boost::optional means
+ * that if this happens, the program will fail loudly rather than silently.
+ * On the other hand, the use of boost::optional adds overhead and complexity,
+ * and makes the code harder to read. Decide on a policy re. whether to use
+ * boost::optional, and stick to it.
  *
  * @todo Unit testing.
  */
@@ -82,7 +96,7 @@ public:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	~PersistentObject();
+	virtual ~PersistentObject();
 
 	/**
 	 * Calls the derived class's implementation
@@ -270,7 +284,7 @@ protected:
 	 * @throws sqloxx::InvalidConnection if the database connection
 	 * associated with this instance of PersistentObject is invalid.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * Exception safety: <em>strong guarantee</em>
 	 */
 	virtual Id do_calculate_prospective_key() const;
 

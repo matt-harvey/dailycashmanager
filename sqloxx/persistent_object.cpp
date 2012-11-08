@@ -34,9 +34,6 @@ PersistentObject::PersistentObject
 }
 
 
-// This is the same as the default version, but let's make it
-// explicit anyway. This way the destructor is straightforwardly visible
-// in the API documentation.
 PersistentObject::~PersistentObject()
 {
 }
@@ -112,6 +109,7 @@ PersistentObject::save_existing()
 		m_database_connection->end_transaction();
 		break;
 	case loading:
+		// WARNING This sucks.
 		goto start;
 		break;
 	default:
