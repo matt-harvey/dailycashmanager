@@ -548,7 +548,7 @@ void PhatbooksTextSession::elicit_journal()
 		secondary_entry_account.commodity_abbreviation()
 	);
 	if
-	(	secondary_commodity.abbreviation() != primary_commodity.abbreviation()
+	(	secondary_commodity.id() != primary_commodity.id()
 	)
 	{
 		JEWEL_DEBUG_LOG << "Here's where we're supposed to respond to "
