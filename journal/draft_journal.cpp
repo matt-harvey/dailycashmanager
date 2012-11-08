@@ -60,8 +60,10 @@ DraftJournal::DraftJournal
 
 
 DraftJournal::DraftJournal(Journal const& p_journal):
-	Journal(p_journal)
+	Journal(p_journal),
+	m_dj_data(0)
 {
+	m_dj_data = new DraftJournalData;
 }
 
 
