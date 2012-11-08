@@ -49,24 +49,24 @@ void Entry::setup_tables(DatabaseConnection& dbc)
 
 Entry::Entry(shared_ptr<DatabaseConnection> p_database_connection):
 	PersistentObject(p_database_connection),
-	m_data(0)
+	m_data(new EntryData)
 {
-	m_data = new EntryData;
 }
 
 
 Entry::Entry(shared_ptr<DatabaseConnection> p_database_connection, Id p_id):
 	PersistentObject(p_database_connection, p_id),
-	m_data(0)
+	m_data(new EntryData)
 {
-	m_data = new EntryData;
 }
 
 
 Entry::~Entry()
 {
+	/* If m_data is a smart pointer, this is not required.
 	delete m_data;
 	m_data = 0;
+	*/
 }
 
 
@@ -138,9 +138,8 @@ Entry::swap(Entry& rhs)
 
 Entry::Entry(Entry const& rhs):
 	PersistentObject(rhs),
-	m_data(0)
+	m_data(new EntryData(*(rhs.m_data)))
 {
-	m_data = new EntryData(*(rhs.m_data));
 }
 	
 

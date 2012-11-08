@@ -3,6 +3,7 @@
 
 #include "journal.hpp"
 #include <boost/optional.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <string>
 #include <vector>
 
@@ -116,7 +117,7 @@ private:
 		std::vector< boost::shared_ptr<Repeater> > repeaters;
 	};
 
-	DraftJournalData* m_dj_data;
+	boost::scoped_ptr<DraftJournalData> m_dj_data;
 };
 
 }  // namespace phatbooks

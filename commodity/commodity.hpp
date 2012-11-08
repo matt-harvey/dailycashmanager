@@ -15,6 +15,7 @@
 #include "general_typedefs.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/optional.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -165,7 +166,7 @@ private:
 		boost::optional<jewel::Decimal> multiplier_to_base;
 	};
 
-	CommodityData* m_data;
+	boost::scoped_ptr<CommodityData> m_data;
 };
 
 

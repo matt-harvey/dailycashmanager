@@ -41,9 +41,8 @@ DraftJournal::DraftJournal
 (	shared_ptr<sqloxx::DatabaseConnection> p_database_connection
 ):
 	Journal(p_database_connection),
-	m_dj_data(0)
+	m_dj_data(new DraftJournalData)
 {
-	m_dj_data = new DraftJournalData;
 }
 
 
@@ -52,25 +51,25 @@ DraftJournal::DraftJournal
 	Id p_id
 ):
 	Journal(p_database_connection, p_id),
-	m_dj_data(0)
+	m_dj_data(new DraftJournalData)
 {
-	m_dj_data = new DraftJournalData;
 }
 
 
 
 DraftJournal::DraftJournal(Journal const& p_journal):
 	Journal(p_journal),
-	m_dj_data(0)
+	m_dj_data(new DraftJournalData)
 {
-	m_dj_data = new DraftJournalData;
 }
 
 
 DraftJournal::~DraftJournal()
 {
+	/* If m_dj_data is a smart pointer, this is not required.
 	delete m_dj_data;
 	m_dj_data = 0;
+	*/
 }
 
 
@@ -105,9 +104,8 @@ DraftJournal::name()
 
 DraftJournal::DraftJournal(DraftJournal const& rhs):
 	Journal(rhs),
-	m_dj_data(0)
+	m_dj_data(new DraftJournalData(*(rhs.m_dj_data)))
 {
-	m_dj_data = new DraftJournalData(*(rhs.m_dj_data));
 }
 
 

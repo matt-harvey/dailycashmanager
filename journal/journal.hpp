@@ -17,6 +17,7 @@
 #include "sqloxx/persistent_object.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>
@@ -206,7 +207,7 @@ private:
 		std::vector< boost::shared_ptr<Entry> > entries;
 	};
 	
-	JournalData* m_data;
+	boost::scoped_ptr<JournalData> m_data;
 };
 
 

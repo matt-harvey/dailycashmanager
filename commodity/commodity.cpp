@@ -56,9 +56,8 @@ void Commodity::setup_tables
 
 Commodity::Commodity(Commodity const& rhs):
 	PersistentObject(rhs),
-	m_data(0)
+	m_data(new CommodityData(*(rhs.m_data)))
 {
-	m_data = new CommodityData(*(rhs.m_data));
 }
 
 
@@ -66,9 +65,8 @@ Commodity::Commodity
 (	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
 ):
 	PersistentObject(p_database_connection),
-	m_data(0)
+	m_data(new CommodityData)
 {
-	m_data = new CommodityData;
 }
 
 
@@ -77,9 +75,8 @@ Commodity::Commodity
 	Id p_id
 ):
 	PersistentObject(p_database_connection, p_id),
-	m_data(0)
+	m_data(new CommodityData)
 {
-	m_data = new CommodityData;
 	load_abbreviation_knowing_id();
 }
 
@@ -89,9 +86,8 @@ Commodity::Commodity
 	std::string const& p_abbreviation
 ):
 	PersistentObject(p_database_connection),
-	m_data(0)
+	m_data(new CommodityData)
 {
-	m_data = new CommodityData;
 	m_data->abbreviation = p_abbreviation;
 	load_id_knowing_abbreviation();
 }
@@ -99,8 +95,10 @@ Commodity::Commodity
 
 Commodity::~Commodity()
 {
+	/* If m_data is a smart pointer, this is not required.
 	delete m_data;
 	m_data = 0;
+	*/
 }
 
 

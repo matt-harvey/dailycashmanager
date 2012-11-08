@@ -15,6 +15,7 @@
 #include "general_typedefs.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
+#include <boost/scoped_ptr.hpp>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -181,7 +182,7 @@ private:
 		boost::optional<std::string> description;
 	};
 
-	AccountData* m_data;
+	boost::scoped_ptr<AccountData> m_data;
 };
 
 }  // namespace phatbooks

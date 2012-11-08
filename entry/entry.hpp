@@ -16,6 +16,7 @@
 #include "general_typedefs.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/noncopyable.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
@@ -168,7 +169,7 @@ private:
 		boost::optional<jewel::Decimal> amount;
 	};
 
-	EntryData* m_data;
+	boost::scoped_ptr<EntryData> m_data;
 
 };
 

@@ -57,9 +57,8 @@ Journal::setup_tables(DatabaseConnection& dbc)
 
 Journal::Journal(shared_ptr<DatabaseConnection> p_database_connection):
 	PersistentObject(p_database_connection),
-	m_data(0)
+	m_data(new JournalData)
 {
-	m_data = new JournalData;
 }
 
 Journal::Journal
@@ -67,15 +66,16 @@ Journal::Journal
 	Id p_id
 ):
 	PersistentObject(p_database_connection, p_id),
-	m_data(0)
+	m_data(new JournalData)
 {
-	m_data = new JournalData;
 }
 
 Journal::~Journal()
 {
+	/* If m_data is a smart pointer, this is not required.
 	delete m_data;
 	m_data = 0;
+	*/
 }
 
 
@@ -205,9 +205,8 @@ Journal::do_save_new_all()
 
 Journal::Journal(Journal const& rhs):
 	PersistentObject(rhs),
-	m_data(0)
+	m_data(new JournalData(*(rhs.m_data)))
 {
-	m_data = new JournalData(*(rhs.m_data));
 }
 
 
