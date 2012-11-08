@@ -157,14 +157,10 @@ DraftJournal::do_load_all()
 void
 DraftJournal::do_save_new_all()
 {
-	JEWEL_DEBUG_LOG << "Saving DraftJournal..." << endl;
-
 	// Save the Journal (base) part of the object
-	JEWEL_DEBUG_LOG << "Saving base part of DraftJournal..." << endl;
 	Id const journal_id = do_save_new_all_journal_base();
 
 	// Save the derived, DraftJournal part of the object
-	JEWEL_DEBUG_LOG << "Saving derived, DraftJournal part..." << endl;
 	SharedSQLStatement statement
 	(	*database_connection(),
 		"insert into draft_journal_detail(journal_id, name) "
@@ -174,7 +170,6 @@ DraftJournal::do_save_new_all()
 	statement.bind(":name", value(m_dj_data->name));
 	statement.step_final();
 	
-	JEWEL_DEBUG_LOG << "Saving Repeaters..." << endl;
 	typedef vector< shared_ptr<Repeater> >::iterator RepIter;
 	RepIter const endpoint = m_dj_data->repeaters.end();
 	for (RepIter it = m_dj_data->repeaters.begin(); it != endpoint; ++it)

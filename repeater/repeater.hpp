@@ -19,6 +19,7 @@
 #include "sqloxx/persistent_object.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
 
@@ -76,7 +77,7 @@ public:
 		Id p_id
 	);
 
-	// Default destructor is fine.
+	~Repeater();
 
 	/**
 	 * Enumerated type representing different
@@ -126,10 +127,11 @@ public:
 
 	Journal::Id journal_id();
 
+	void swap(Repeater& rhs);
+
 private:
 
-	// Copy constructor is deliberately unimplemented.
-	Repeater(Repeater& rhs);
+	Repeater(Repeater const& rhs);
 
 	void do_load_all();
 
@@ -153,13 +155,17 @@ private:
 
 	std::string do_get_table_name() const;
 
-	// Data members
-	
-	boost::optional<IntervalType> m_interval_type;
-	boost::optional<int> m_interval_units;
-	boost::optional<DateRep> m_next_date;
-	boost::optional<Journal::Id> m_journal_id;
+	struct RepeaterData
+	{
+		boost::optional<IntervalType> interval_type;
+		boost::optional<int> interval_units;
+		boost::optional<DateRep> next_date;
+		boost::optional<Journal::Id> journal_id;
+	};
+
+	boost::scoped_ptr<RepeaterData> m_data;
 };
+
 
 
 

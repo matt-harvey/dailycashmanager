@@ -19,6 +19,7 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/optional.hpp>
+#include <algorithm>
 #include <string>
 
 using sqloxx::DatabaseConnection;
@@ -63,7 +64,8 @@ Repeater::setup_tables(DatabaseConnection& dbc)
 }
 
 Repeater::Repeater(shared_ptr<DatabaseConnection> p_database_connection):
-	PersistentObject(p_database_connection)
+	PersistentObject(p_database_connection),
+	m_data(new RepeaterData)
 {
 }
 
@@ -72,15 +74,24 @@ Repeater::Repeater
 (	shared_ptr<DatabaseConnection> p_database_connection,
 	Id p_id
 ):
-	PersistentObject(p_database_connection, p_id)
+	PersistentObject(p_database_connection, p_id),
+	m_data(new RepeaterData)
 {
 }
 
 
+Repeater::~Repeater()
+{
+	/* If m_data is smart pointer, this is unnecessary.
+	delete m_data;
+	m_data = 0;
+	*/
+}
+
 void
 Repeater::set_interval_type(IntervalType p_interval_type)
 {
-	m_interval_type = p_interval_type;
+	m_data->interval_type = p_interval_type;
 	return;
 }
 
@@ -88,7 +99,7 @@ Repeater::set_interval_type(IntervalType p_interval_type)
 void
 Repeater::set_interval_units(int p_interval_units)
 {
-	m_interval_units = p_interval_units;
+	m_data->interval_units = p_interval_units;
 	return;
 }
 
@@ -96,7 +107,7 @@ Repeater::set_interval_units(int p_interval_units)
 void
 Repeater::set_next_date(boost::gregorian::date const& p_next_date)
 {
-	m_next_date = julian_int(p_next_date);
+	m_data->next_date = julian_int(p_next_date);
 	return;
 }
 
@@ -104,7 +115,7 @@ Repeater::set_next_date(boost::gregorian::date const& p_next_date)
 void
 Repeater::set_journal_id(Journal::Id p_journal_id)
 {
-	m_journal_id = p_journal_id;
+	m_data->journal_id = p_journal_id;
 	return;
 }
 
@@ -113,7 +124,7 @@ Repeater::IntervalType
 Repeater::interval_type()
 {
 	load();
-	return value(m_interval_type);
+	return value(m_data->interval_type);
 }
 
 
@@ -121,7 +132,7 @@ int
 Repeater::interval_units()
 {
 	load();
-	return value(m_interval_units);
+	return value(m_data->interval_units);
 }
 
 
@@ -129,7 +140,7 @@ boost::gregorian::date
 Repeater::next_date()
 {
 	load();
-	return boost_date_from_julian_int(value(m_next_date));
+	return boost_date_from_julian_int(value(m_data->next_date));
 }
 
 
@@ -137,7 +148,24 @@ Journal::Id
 Repeater::journal_id()
 {
 	load();
-	return value(m_journal_id);
+	return value(m_data->journal_id);
+}
+
+
+void
+Repeater::swap(Repeater& rhs)
+{
+	swap_base_internals(rhs);
+	using std::swap;
+	swap(m_data, rhs.m_data);
+	return;
+}
+
+
+Repeater::Repeater(Repeater const& rhs):
+	PersistentObject(rhs),
+	m_data(new RepeaterData(*(rhs.m_data)))
+{
 }
 
 
@@ -150,16 +178,15 @@ Repeater::do_load_all()
 		"from repeaters where repeater_id = :p"
 	);
 	statement.step();
-	IntervalType const itp =
-		static_cast<IntervalType>(statement.extract<int>(0));
-	int const units = statement.extract<int>(1);
-	DateRep const nd =
+	Repeater temp(*this);
+	temp.set_interval_type
+	(	static_cast<IntervalType>(statement.extract<int>(0))
+	);
+	temp.set_interval_units(statement.extract<int>(1));	
+	temp.m_data->next_date =
 		numeric_cast<DateRep>(statement.extract<boost::int64_t>(2));
-	Journal::Id const jid = statement.extract<Journal::Id>(3);
-	set_interval_type(itp);
-	set_interval_units(units);
-	m_next_date = nd;
-	set_journal_id(jid);
+	temp.set_journal_id(statement.extract<Journal::Id>(3));
+	swap(temp);
 	return;
 }
 
@@ -167,10 +194,6 @@ Repeater::do_load_all()
 void
 Repeater::do_save_new_all()
 {
-	JEWEL_DEBUG_LOG << "Saving Repeater for journal_id "
-	                << journal_id() << endl;
-	JEWEL_DEBUG_LOG << "...which should be equal to "
-	                << value(m_journal_id) << endl;
 	SharedSQLStatement statement
 	(	*database_connection(),
 		"insert into repeaters(interval_type_id, interval_units, "
@@ -179,11 +202,11 @@ Repeater::do_save_new_all()
 	);
 	statement.bind
 	(	":interval_type_id",
-		static_cast<int>(value(m_interval_type))
+		static_cast<int>(value(m_data->interval_type))
 	);
-	statement.bind(":interval_units", value(m_interval_units));
-	statement.bind(":next_date", value(m_next_date));
-	statement.bind(":journal_id", value(m_journal_id));
+	statement.bind(":interval_units", value(m_data->interval_units));
+	statement.bind(":next_date", value(m_data->next_date));
+	statement.bind(":journal_id", value(m_data->journal_id));
 	statement.step_final();
 	return;
 }

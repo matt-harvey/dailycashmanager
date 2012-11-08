@@ -14,6 +14,7 @@
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/optional.hpp>
+#include <algorithm>
 #include <cassert>
 #include <string>
 #include <vector>
