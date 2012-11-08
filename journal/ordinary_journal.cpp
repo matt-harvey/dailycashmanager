@@ -8,6 +8,8 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
 #include <jewel/optional.hpp>
 
 
@@ -112,6 +114,10 @@ OrdinaryJournal::do_load_all()
 	);
 	statement.bind(":p", id());
 	statement.step();
+	// If this assertion ever fails, it's a reminder that the exception-safety
+	// of loading here MAY depend on m_date being of a native, non-throwing
+	// type.
+	BOOST_STATIC_ASSERT((boost::is_same<DateRep, int>::value));
 	temp.m_date =
 		numeric_cast<DateRep>(statement.extract<boost::int64_t>(0));
 	swap(temp);

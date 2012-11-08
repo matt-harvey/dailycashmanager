@@ -26,6 +26,11 @@ namespace phatbooks
  * simplifies interaction with SQLite, and is compact and efficient.
  * For specialised date manipulations, the boost date library should
  * be preferred.
+ *
+ * IMPORTANT: This should be a native type. In the class
+ * OrdinaryJournal, exception-safe loading (and possibly other
+ * aspects of exception-safety) MAY rely on the non-throwing
+ * copying behaviour that comes with DateRep being a native type.
  */
 typedef int DateRep;
 
