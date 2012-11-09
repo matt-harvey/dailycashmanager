@@ -42,6 +42,7 @@ add_executable (main main.cpp ${main_files})
 set (test_files
      test.cpp
      sqloxx/tests/database_connection_tests.cpp
+	 sqloxx/tests/derived_po.cpp
 	 sqloxx/tests/persistent_object_tests.cpp
 	 sqloxx/tests/shared_sql_statement_tests.cpp
 	 sqloxx/tests/sqloxx_tests_common.cpp
