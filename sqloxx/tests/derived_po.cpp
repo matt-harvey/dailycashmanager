@@ -24,7 +24,7 @@ DerivedPO::setup_tables(DatabaseConnection& dbc)
 	return;
 }
 
-DerivedPO::DerivedPO(shared_ptr<DatabaseConnection> p_dbc, Id p_id);
+DerivedPO::DerivedPO(shared_ptr<DatabaseConnection> p_dbc, Id p_id):
 	PersistentObject(p_dbc, p_id),
 	m_x(0),
 	m_y(0)

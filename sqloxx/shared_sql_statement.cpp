@@ -86,6 +86,12 @@ SharedSQLStatement::bind(string const& parameter_name, boost::int64_t x)
 
 
 void
+SharedSQLStatement::bind(string const& parameter_name, double x)
+{
+	m_sql_statement->bind(parameter_name, x);
+}
+
+void
 SharedSQLStatement::bind(string const& parameter_name, string const& x)
 {
 	m_sql_statement->bind(parameter_name, x);

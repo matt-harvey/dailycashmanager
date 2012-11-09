@@ -77,8 +77,9 @@ public:
 	 * if SQLite could not properly bind the statement.
 	 * 
 	 * Currently the following types for T are supported:\n
-	 * \c boost::int64_t\n
 	 * int\n
+	 * boost::int64_t\n
+	 * double\n
 	 * std::string\n
 	 */
 	template <typename T>
@@ -206,6 +207,7 @@ private:
 
 	void do_bind(std::string const& parameter_name, int x);
 	void do_bind(std::string const& parameter_name, boost::int64_t x);
+	void do_bind(std::string const& parameter_name, double x);
 	void do_bind(std::string const& parameter_name, std::string const& x);
 	// Not implemented for other types, so capture here to prevent compilation
 	// if other types passed

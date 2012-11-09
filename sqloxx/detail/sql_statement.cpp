@@ -132,6 +132,16 @@ SQLStatement::do_bind(string const& parameter_name, boost::int64_t x)
 
 
 void
+SQLStatement::do_bind(string const& parameter_name, double x)
+{
+	throw_on_failure
+	(	sqlite3_bind_double(m_statement, parameter_index(parameter_name), x)
+	);
+	return;
+}
+
+
+void
 SQLStatement::do_bind(string const& parameter_name, string const& x)
 {
 	throw_on_failure

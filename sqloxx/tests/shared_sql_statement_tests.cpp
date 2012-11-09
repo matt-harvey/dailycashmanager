@@ -119,19 +119,22 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 {
 	dbc.execute_sql
 	(	"create table dummy(Col_A integer primary key autoincrement, "
-		"Col_B text not null, Col_C integer not null, Col_D integer)"
+		"Col_B text not null, Col_C integer not null, Col_D integer, "
+		"Col_E float)"
 	);
 
 	SharedSQLStatement statement_01
 	(	dbc,
-		"insert into dummy(Col_B, Col_C, Col_D) values(:B, :C, :D)"
+		"insert into dummy(Col_B, Col_C, Col_D, Col_E) values(:B, :C, :D, :E)"
 	);
 	string const hello_01("hello");
 	int const x_01(30);
 	boost::int64_t y_01(999999983);
+	double const z_01(-20987.9873);
 	statement_01.bind(":B", hello_01);
 	statement_01.bind(":C", x_01);
 	statement_01.bind(":D", y_01);
+	statement_01.bind(":E", z_01);
 	statement_01.step_final();
 
 	string const goodbye_02("goodbye");
@@ -143,15 +146,25 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 	statement_02.bind(":B", goodbye_02);
 	statement_02.bind(":C", x_02);
 	statement_02.step_final();
-
-	SharedSQLStatement selector
+	
+	SharedSQLStatement selector_01
 	(	dbc,
-		"select Col_B, Col_C, Col_D from dummy where Col_A = 2"
+		"select Col_B, Col_C, Col_D, Col_E from dummy where Col_A = 1"
 	);
-	selector.step();
-	CHECK_EQUAL(selector.extract<string>(0), goodbye_02);
-	CHECK_EQUAL(selector.extract<int>(1), x_02);
-	selector.step_final();
+	selector_01.step();
+	CHECK_EQUAL(selector_01.extract<boost::int64_t>(2), y_01);
+	CHECK_EQUAL(selector_01.extract<string>(0), hello_01);
+	CHECK_EQUAL(selector_01.extract<int>(1), x_01);
+	CHECK_EQUAL(selector_01.extract<double>(3), z_01);
+
+	SharedSQLStatement selector_02
+	(	dbc,
+		"select Col_B, Col_C, Col_D, Col_E from dummy where Col_A = 2"
+	);
+	selector_02.step();
+	CHECK_EQUAL(selector_02.extract<string>(0), goodbye_02);
+	CHECK_EQUAL(selector_02.extract<int>(1), x_02);
+	selector_02.step_final();
 }
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_bind_exception)
@@ -198,6 +211,18 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_value_type_exception)
 	(	s = selection_statement.extract<string>(0),
 		ValueTypeException
 	);
+
+	dbc.execute_sql("create table dummy2(Col_X double)");
+	dbc.execute_sql("insert into dummy2(Col_X) values(79610.9601)");
+	SharedSQLStatement selection_statement2
+	(	dbc,
+		"select * from dummy2"
+	);
+	int x;
+	CHECK_THROW
+	(	x = selection_statement.extract<double>(0),
+		ValueTypeException
+    );
 }
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_high)
