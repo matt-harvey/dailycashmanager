@@ -103,6 +103,8 @@ public:
 	 * @x value to be bound to the named parameter.
 	 *
 	 * Exception safety: <em>basic guarantee</em>.
+	 *
+	 * @todo There should be a bind function for doubles.
 	 */
 	void bind(std::string const& parameter_name, int x);
 	void bind(std::string const& parameter_name, boost::int64_t x);
