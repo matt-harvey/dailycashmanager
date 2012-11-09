@@ -5,6 +5,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <set>
@@ -313,7 +314,7 @@ private:
 	void unchecked_begin_transaction();
 	void unchecked_end_transaction();
 
-	boost::shared_ptr<detail::SQLiteDBConn> m_sqlite_dbconn;
+	boost::scoped_ptr<detail::SQLiteDBConn> m_sqlite_dbconn;
 
 	// s_max_nesting relies on m_transaction_nesting_level being an int
 	int m_transaction_nesting_level;
