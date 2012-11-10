@@ -10,14 +10,14 @@ using std::string;
 
 namespace sqloxx
 {
-namespace test
+namespace tests
 {
 
 void
 DerivedPO::setup_tables(DatabaseConnection& dbc)
 {
 	dbc.execute_sql
-	(	"create table derived pos"
+	(	"create table derived_pos"
 		"(derived_po_id integer primary key autoincrement, "
 		"x integer not null, y float not null)"
 	);
@@ -45,7 +45,7 @@ DerivedPO::x()
 	return m_x;
 }
 
-int
+double
 DerivedPO::y()
 {
 	load();
@@ -60,7 +60,7 @@ DerivedPO::set_x(int p_x)
 }
 
 void
-DerivedPO::set_y(int p_y)
+DerivedPO::set_y(double p_y)
 {
 	m_y = p_y;
 	return;
@@ -101,5 +101,5 @@ DerivedPO::do_get_table_name() const
 }
 
 
-}  // namespace test
+}  // namespace tests
 }  // namespace sqloxx

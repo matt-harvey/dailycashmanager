@@ -4,7 +4,7 @@
 
 namespace sqloxx
 {
-namespace test
+namespace tests
 {
 
 // Dummy class inheriting from PersistentObject, for the purpose
@@ -14,13 +14,13 @@ class DerivedPO: public PersistentObject
 
 public:
 	typedef PersistentObject::Id Id;
-	void setup_tables(DatabaseConnection& dbc);
-	DerivedPO(boost::shared_ptr<DatabaseConnection> p_dbc, Id p_id);
+	static void setup_tables(DatabaseConnection& dbc);
 	explicit DerivedPO(boost::shared_ptr<DatabaseConnection> p_dbc);
+	DerivedPO(boost::shared_ptr<DatabaseConnection> p_dbc, Id p_id);
 	int x();
-	int y();
+	double y();
 	void set_x(int p_x);
-	void set_y(int p_y);
+	void set_y(double p_y);
 	// Default destructor is OK.
 	
 private:
@@ -41,10 +41,10 @@ private:
 	void do_save_new_all();
 	std::string do_get_table_name() const;
 	int m_x;
-	int m_y;
+	double m_y;
 };
 
 
-}  // namespace test
+}  // namespace tests
 }  // namespace sqloxx
 
