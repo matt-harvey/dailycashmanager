@@ -299,6 +299,7 @@ protected:
 	 * in the case of a corrupt database, or a memory allocation error
 	 * (extremely unlikely), or the database connection being invalid
 	 * (including because not yet connected to a database file).
+	 *
 	 * @throws sqloxx::InvalidConnection if the database connection
 	 * associated with this instance of PersistentObject is invalid.
 	 *
