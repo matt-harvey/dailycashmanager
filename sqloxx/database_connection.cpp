@@ -88,6 +88,13 @@ DatabaseConnection::setup_boolean_table()
 }
 
 
+int
+DatabaseConnection::max_nesting()
+{
+	return s_max_nesting;
+}
+
+
 void
 DatabaseConnection::begin_transaction()
 {
@@ -178,6 +185,25 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 	*/
 	return new_statement;
 }
+
+
+void
+DatabaseConnection::unchecked_begin_transaction()
+{
+	SharedSQLStatement statement(*this, "begin");
+	statement.step();
+	return;
+}
+
+
+void
+DatabaseConnection::unchecked_end_transaction()
+{
+	SharedSQLStatement statement(*this, "end");
+	statement.step();
+	return;
+}
+
 
 
 }  // namespace sqloxx

@@ -325,10 +325,7 @@ private:
 };
 
 
-// FUNCTION TEMPLATE DEFINITIONS AND INLINE FUNCTIONS
-
 template <typename KeyType>
-inline
 KeyType
 DatabaseConnection::next_auto_key(std::string const& table_name)
 {
@@ -368,33 +365,6 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 	}
 }
 
-
-inline
-int
-DatabaseConnection::max_nesting()
-{
-	return s_max_nesting;
-}
-
-
-inline
-void
-DatabaseConnection::unchecked_begin_transaction()
-{
-	SharedSQLStatement statement(*this, "begin");
-	statement.step();
-	return;
-}
-
-
-inline
-void
-DatabaseConnection::unchecked_end_transaction()
-{
-	SharedSQLStatement statement(*this, "end");
-	statement.step();
-	return;
-}
 
 
 }  // namespace sqloxx
