@@ -54,11 +54,27 @@ struct DerivedPOFixture
 	boost::shared_ptr<DatabaseConnection> pdbc;
 };
 
-TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_A)
+TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_one_param)
 {
 	DerivedPO dpo(pdbc);
 	CHECK_THROW(dpo.id(), UninitializedOptionalException);
 	CHECK_EQUAL(dpo.x(), 0);
+	dpo.set_y(3.3);
+	CHECK_EQUAL(dpo.y(), 3.3);
+}
+
+TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_two_params)
+{
+	DerivedPO dpo(pdbc);
+	dpo.set_x(10);
+	dpo.set_y(3.23);
+	dpo.save_new();
+	CHECK_EQUAL(dpo.id(), 1);
+	CHECK_EQUAL(dpo.x(), 10);
+	CHECK_EQUAL(dpo.y(), 3.23);
+	DerivedPO e(pdbc, 1);
+	CHECK_EQUAL(e.x(), 10);
+	CHECK_EQUAL(e.y(), 3.23);
 }
 
 }  // namespace tests

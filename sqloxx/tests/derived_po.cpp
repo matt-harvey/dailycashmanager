@@ -76,10 +76,10 @@ DerivedPO::do_load_all()
 	selector.bind(":p", id());
 	selector.step();
 	int temp_x = selector.extract<int>(0);
-	int temp_y = selector.extract<int>(1);
+	double temp_y = selector.extract<double>(1);
 	selector.step_final();
-	m_x = temp_x;
-	m_y = temp_y;
+	set_x(temp_x);
+	set_y(temp_y);
 }
 
 void

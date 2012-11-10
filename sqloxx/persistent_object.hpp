@@ -142,6 +142,17 @@ public:
 	 * by calls to begin_transaction and end_transaction
 	 * methods of the DatabaseConnection.
 	 *
+	 * @throws TransactionNestingException if the maximum transaction
+	 * nesting level of the DatabaseConnection has been reached (very
+	 * unlikely).
+	 *
+	 * @throws InvalidConnection if the DatabaseConnection is
+	 * invalid.
+	 *
+	 * Other exceptions that may be thrown depend on the derived
+	 * class's implementation
+	 * of do_save_existing_all and do_save_existing_partial.
+	 *
 	 * Exception safety: depends on the exception safety of
 	 * do_save_existing_all and do_save_existing_partial. If these
 	 * functions provide the strong guarantee, then so does
@@ -172,9 +183,23 @@ public:
 	 * behaviour can be overridden by redefining the
 	 * do_calculate_prospective_key function in the derived class.
 	 *
+	 * @throws TransactionNestingException if the maximum level of transaction
+	 * nesting for the DatabaseConnection has been reached (very unlikely).
+	 *
+	 * @throws InvalidConnection if the DatabaseConnection is invalid.
+	 *
+	 * @throws std::logic_error if the object already has an id, i.e. has
+	 * already been saved to the database.
+	 *
+	 * May also throw exceptions from do_calculate_prospective_key, which
+	 * is invoked in the body of this function. See documentation
+	 * for do_calculate_prospective_key for exceptions that might be thrown
+	 * by the default version of that function.
+	 *
 	 * Exception safety: depends on the exception safety of
-	 * \e do_save_new_all. Providing both do_save_new_all offers the strong
-	 * guarantee, then so does \e save_new.
+	 * \e do_calculate_prospective_key and
+	 * \e do_save_new_all. Providing both of these virtual functions offer the
+	 * strong guarantee, then so does \e save_new.
 	 */
 	void save_new();
 
@@ -277,7 +302,13 @@ protected:
 	 * @throws sqloxx::InvalidConnection if the database connection
 	 * associated with this instance of PersistentObject is invalid.
 	 *
-	 * Exception safety: <em>strong guarantee</em>
+	 * @throws std::bad_alloc is the unlikely event that memory allocation
+	 * fails during execution.
+	 *
+	 * Exception safety: <em>strong guarantee</em>, (providing the virtual
+	 * function
+	 * do_get_table_name does nothing odd but simply returns a std::string
+	 * as would be expected).
 	 */
 	virtual Id do_calculate_prospective_key() const;
 
