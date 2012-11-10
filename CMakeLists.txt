@@ -31,7 +31,6 @@ set (main_files
 	 sqloxx/database_connection.cpp
 	 sqloxx/persistent_object.cpp
 	 sqloxx/shared_sql_statement.cpp
-	 sqloxx/sql_transaction.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
 	 sqloxx/detail/sql_statement.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp

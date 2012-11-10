@@ -1,5 +1,4 @@
 #include "persistent_object.hpp"
-#include "sql_transaction.hpp"
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <cassert>
@@ -101,7 +100,7 @@ PersistentObject::save_existing()
 	{
 		// WARNING This sucks
 	}
-	SQLTransaction transaction(*m_database_connection);
+	m_database_connection->begin_transaction();
 	switch (m_loading_status)
 	{
 	case loaded:
@@ -113,6 +112,7 @@ PersistentObject::save_existing()
 	default:
 		assert (false);  // Execution can't reach here.
 	}
+	m_database_connection->end_transaction();
 	return;
 }
 
@@ -142,10 +142,10 @@ PersistentObject::do_calculate_prospective_key() const
 void
 PersistentObject::save_new()
 {
-	SQLTransaction transaction(*m_database_connection);
+	m_database_connection->begin_transaction();
 	Id key = prospective_key();
 	do_save_new_all();
-	transaction.finish();
+	m_database_connection->end_transaction();
 	set_id(key);
 	return;
 }
