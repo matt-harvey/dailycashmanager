@@ -73,6 +73,8 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_two_params)
 	CHECK_EQUAL(dpo.x(), 10);
 	CHECK_EQUAL(dpo.y(), 3.23);
 	DerivedPO e(pdbc, 1);
+	CHECK_EQUAL(e.id(), dpo.id());
+	CHECK_EQUAL(e.id(), 1);
 	CHECK_EQUAL(e.x(), 10);
 	CHECK_EQUAL(e.y(), 3.23);
 }

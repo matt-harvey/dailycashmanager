@@ -92,43 +92,6 @@ public:
 	virtual ~PersistentObject();
 
 	/**
-	 * Calls the derived class's implementation
-	 * of do_load_all, if the object is not already
-	 * fully loaded. If the object does not have an id,
-	 * then this function does nothing.
-	 *
-	 * In defining \e do_load_all, the derived class should throw an instance
-	 * of std::exception (may be an instance of an exception class derived
-	 * therefrom) in the event that the load fails. If this
-	 * is adhered to, and do_load_all is implemented with the strong
-	 * exception-safety guarantee, and do_load_all does not perform any
-	 * write operations on the database, or have other side-effects, then the
-	 * \e load function will itself provide the strong exception safety
-	 * guarantee.
-	 *
-	 * Note the implementation is wrapped as a transaction
-	 * by calls to begin_transaction and end_transaction
-	 * methods of the DatabaseConnection.
-	 *
-	 * The following exceptions may be thrown regardless of how
-	 * do_load_all is defined:
-	 *
-	 * @throws TransactionNestingException in the event that the maximum
-	 * level of transaction nesting for the database connection has been
-	 * reached. (This is extremely unlikely.) If this occurs \e before
-	 * do_load_all is entered, the object will be as it was before the
-	 * function was called.
-	 * 
-	 * @throws InvalidConnection in the event that the database connection is
-	 * invalid at the point the \e load function is entered. If this occurs,
-	 * the object will be as it was before this function was called.
-	 *
-	 * Exception safety: depends on how the derived class defines \e
-	 * do_load_all. See above.
-	 */
-	void load();
-
-	/**
 	 * Saves the state of the in-memory object to the
 	 * database, overwriting the data in the database in the
 	 * event of any conflict with the existing persisted data
@@ -213,6 +176,43 @@ public:
 
 
 protected:
+
+	/**
+	 * Calls the derived class's implementation
+	 * of do_load_all, if the object is not already
+	 * fully loaded. If the object does not have an id,
+	 * then this function does nothing.
+	 *
+	 * In defining \e do_load_all, the derived class should throw an instance
+	 * of std::exception (may be an instance of an exception class derived
+	 * therefrom) in the event that the load fails. If this
+	 * is adhered to, and do_load_all is implemented with the strong
+	 * exception-safety guarantee, and do_load_all does not perform any
+	 * write operations on the database, or have other side-effects, then the
+	 * \e load function will itself provide the strong exception safety
+	 * guarantee.
+	 *
+	 * Note the implementation is wrapped as a transaction
+	 * by calls to begin_transaction and end_transaction
+	 * methods of the DatabaseConnection.
+	 *
+	 * The following exceptions may be thrown regardless of how
+	 * do_load_all is defined:
+	 *
+	 * @throws TransactionNestingException in the event that the maximum
+	 * level of transaction nesting for the database connection has been
+	 * reached. (This is extremely unlikely.) If this occurs \e before
+	 * do_load_all is entered, the object will be as it was before the
+	 * function was called.
+	 * 
+	 * @throws InvalidConnection in the event that the database connection is
+	 * invalid at the point the \e load function is entered. If this occurs,
+	 * the object will be as it was before this function was called.
+	 *
+	 * Exception safety: depends on how the derived class defines \e
+	 * do_load_all. See above.
+	 */
+	void load();
 
 	/**
 	 * Copy constructor is deliberately protected. Copy construction does
