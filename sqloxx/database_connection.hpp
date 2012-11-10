@@ -240,6 +240,10 @@ public:
 	 * methods begin_transaction and end_transaction, \e or solely through
 	 * the direct execution of SQL statement strings "begin transaction" and
 	 * "end transaction". Mixing the two will result in undefined behaviour.
+	 *
+	 * Note the class SQLTransaction can be used to help manage
+	 * calls to begin_transaction() and end_transaction(). See separate
+	 * documentation for that class.
 	 *  
 	 * @throws TransactionNestingException in the event that the maximum
 	 * level of nesting has been reached. The maximum level of nesting is
@@ -259,6 +263,10 @@ public:
 	 * to be executed.
 	 *
 	 * See documentation of begin_transaction also.
+	 *
+	 * Note the class SQLTransaction can be used to help manage calls to
+	 * begin_transaction() and end_transaction(). See separate documentation
+	 * for that class.
 	 *
 	 * @throws TransactionNestingException in the event that there are
 	 * more calls to end_transaction than there have been to

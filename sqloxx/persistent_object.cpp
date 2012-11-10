@@ -1,7 +1,9 @@
 #include "persistent_object.hpp"
-
+#include "sql_transaction.hpp"
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <cassert>
+#include <stdexcept>
 #include <string>
 
 using boost::optional;
@@ -95,25 +97,21 @@ PersistentObject::load()
 void
 PersistentObject::save_existing()
 {
-	start:
+	while (m_loading_status == loading)
+	{
+		// WARNING This sucks
+	}
+	SQLTransaction transaction(*m_database_connection);
 	switch (m_loading_status)
 	{
 	case loaded:
-		m_database_connection->begin_transaction();
 		do_save_existing_all();
-		m_database_connection->end_transaction();
 		break;
 	case ghost:
-		m_database_connection->begin_transaction();
 		do_save_existing_partial();
-		m_database_connection->end_transaction();
-		break;
-	case loading:
-		// WARNING This sucks.
-		goto start;
 		break;
 	default:
-		throw std::logic_error("Loading status not recognized.");
+		assert (false);  // Execution can't reach here.
 	}
 	return;
 }
@@ -144,10 +142,10 @@ PersistentObject::do_calculate_prospective_key() const
 void
 PersistentObject::save_new()
 {
-	m_database_connection->begin_transaction();
-	Id const key = prospective_key();
+	SQLTransaction transaction(*m_database_connection);
+	Id key = prospective_key();
 	do_save_new_all();
-	m_database_connection->end_transaction();
+	transaction.finish();
 	set_id(key);
 	return;
 }
