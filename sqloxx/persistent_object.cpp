@@ -7,6 +7,7 @@
 
 using boost::optional;
 using boost::shared_ptr;
+using std::logic_error;
 
 namespace sqloxx
 {
@@ -96,6 +97,13 @@ PersistentObject::load()
 void
 PersistentObject::save_existing()
 {
+	if (!has_id())
+	{
+		throw logic_error
+		(	"Method save_existing() called on an instance of PersistentObject"
+			" that does not correspond with an existing database record."
+		);
+	}
 	while (m_loading_status == loading)
 	{
 		// WARNING This sucks

@@ -88,8 +88,6 @@ DerivedPO::self_test()
 	if (dpo1.database_connection() != fixture.pdbc) ++num_failures;
 	if (dpo4.database_connection() != fixture.pdbc) ++num_failures;
 
-	// WARNING Four errors are above here.
-
 	// Check prospective_key() && do_calculate_prospective_key() (default)
 	DerivedPO dpo5(fixture.pdbc);
 	if (dpo5.prospective_key() != 3) ++num_failures;
@@ -165,6 +163,28 @@ DerivedPO::do_load_all()
 	selector.step_final();
 	set_x(temp_x);
 	set_y(temp_y);
+}
+
+void
+DerivedPO::do_save_existing_all()
+{
+	SharedSQLStatement updater
+	(	*database_connection(),
+		"update derived_pos set x = :x, y = :y where derived_po_id = :id"
+	);
+	updater.bind(":x", m_x);
+	updater.bind(":y", m_y);
+	updater.bind(":id", id());
+	updater.step_final();
+	return;
+}
+
+void
+DerivedPO::do_save_existing_partial()
+{
+	// Does nothing as there are no "non-lazy" data members in
+	// DerivedPO other than m_id, which is inherited from PersistentObject.
+	return;
 }
 
 void

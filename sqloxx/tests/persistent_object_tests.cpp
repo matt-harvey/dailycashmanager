@@ -53,7 +53,33 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_two_params)
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_existing)
 {
-	// WARNING Unimplemented test.
+	DerivedPO dpo1(pdbc);
+	dpo1.set_x(78);
+	dpo1.set_y(4.5);
+	CHECK_THROW(dpo1.save_existing(), logic_error);
+	dpo1.save_new();
+	DerivedPO dpo2(pdbc);
+	dpo2.set_x(234);
+	dpo2.set_y(29837.01);
+	dpo2.save_new();
+	CHECK_EQUAL(dpo2.id(), 2);
+	DerivedPO dpo2b(pdbc, 2);
+	CHECK_EQUAL(dpo2b.x(), 234);
+	CHECK_EQUAL(dpo2b.y(), 29837.01);
+	dpo2b.set_y(2.0);
+	dpo2b.save_existing();
+	DerivedPO dpo2c(pdbc, 2);
+	CHECK_EQUAL(dpo2c.id(), 2);
+	CHECK_EQUAL(dpo2c.x(), 234);
+	CHECK_EQUAL(dpo2c.y(), 2.0);
+	dpo2c.set_x(0);  // But don't call save_existing yet
+	DerivedPO dpo2d(pdbc, 2);
+	CHECK_EQUAL(dpo2d.x(), 234);
+	CHECK_EQUAL(dpo2d.y(), 2.0);
+	dpo2c.save_existing();  // Now the changed object is saved
+	DerivedPO dpo2e(pdbc, 2);
+	CHECK_EQUAL(dpo2e.x(), 0);
+	CHECK_EQUAL(dpo2e.y(), 2.0);
 }
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)

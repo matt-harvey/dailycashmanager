@@ -35,8 +35,6 @@ namespace sqloxx
  * the in-memory objects, and conform to the restrictions detailed in the
  * PersistentObject API documentation. (Note I have already done this
  * for \e load functions.)
- *
- * @todo Still need to test save_existing.
  */
 class PersistentObject
 {
@@ -102,6 +100,10 @@ public:
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to begin_transaction and end_transaction
 	 * methods of the DatabaseConnection.
+	 * 
+	 * @throws std::logic_error if this PersistentObject does not have
+	 * an id, i.e. does not correspond with any object persisting in the
+	 * the database.
 	 *
 	 * @throws TransactionNestingException if the maximum transaction
 	 * nesting level of the DatabaseConnection has been reached (very

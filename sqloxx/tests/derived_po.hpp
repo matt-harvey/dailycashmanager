@@ -28,24 +28,13 @@ public:
 	static int self_test();	
 
 protected:
-
 	DerivedPO(DerivedPO const& rhs);
 
 private:
 	void do_load_all();
-
 	// Uses default version of do_calculate_prospective_key
-
-	// WARNING Need to implement properly
-	void do_save_existing_all()
-	{
-	}
-
-	// WARNING Need to implement properly
-	void do_save_existing_partial()
-	{
-	}
-
+	void do_save_existing_all();
+	void do_save_existing_partial();
 	void do_save_new_all();
 	std::string do_get_table_name() const;
 	int m_x;
