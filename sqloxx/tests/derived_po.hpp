@@ -23,10 +23,18 @@ public:
 	void set_y(double p_y);
 	// Default destructor is OK.
 	
-private:
-	// Copy constructor is deliberately unimplemented.
+	// To test protected functions of PersistentObject. Returns number
+	// of failing checks in test.
+	static int self_test();	
+
+protected:
+
 	DerivedPO(DerivedPO const& rhs);
+
+private:
 	void do_load_all();
+
+	// Uses default version of do_calculate_prospective_key
 
 	// WARNING Need to implement properly
 	void do_save_existing_all()

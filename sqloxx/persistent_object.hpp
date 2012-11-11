@@ -28,7 +28,6 @@ namespace sqloxx
  * ("loaded", "loading" or "ghost"). Derived classes are responsible for
  * specifying their instances are loaded and saved.
  *
- *
  * @todo Provide for atomic saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
  * Go through all the client classes in Phatbooks and ensure the
@@ -37,7 +36,7 @@ namespace sqloxx
  * PersistentObject API documentation. (Note I have already done this
  * for \e load functions.)
  *
- * @todo Unit testing.
+ * @todo Still need to test save_existing.
  */
 class PersistentObject
 {
@@ -83,7 +82,6 @@ public:
 	(	boost::shared_ptr<DatabaseConnection> p_database_connection
 	);
 
-	
 	/**
 	 * Destructor.
 	 *

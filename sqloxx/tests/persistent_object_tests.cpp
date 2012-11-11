@@ -25,39 +25,6 @@ namespace tests
 
 namespace filesystem = boost::filesystem;
 
-struct DerivedPOFixture
-{
-	// setup
-	DerivedPOFixture():
-		filepath("Testfile_02"),
-		pdbc(new DatabaseConnection)
-	{
-		if (filesystem::exists(filesystem::status(filepath)))
-		{
-			cerr << "File named \"" << filepath.string()
-			     << "\" already exists. Test aborted."
-				 << endl;
-			abort();
-		}
-		pdbc->open(filepath);
-		assert (pdbc->is_valid());
-		DerivedPO::setup_tables(*pdbc);
-	}
-
-	// teardown
-	~DerivedPOFixture()
-	{
-		assert (pdbc->is_valid());
-		filesystem::remove(filepath);
-		assert (!file_exists(filepath));
-	}
-
-	// Database filepath
-	filesystem::path filepath;
-
-	// The connection to the database
-	boost::shared_ptr<DatabaseConnection> pdbc;
-};
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_one_param)
 {
@@ -95,9 +62,13 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 	dpo1.set_x(978);
 	dpo1.set_y(-.238);
 	dpo1.save_new();
-	// WARNING The next line causes "transactions remain
-	// incomplete on closing of DatabaseConnection". Does this matter?
+
 	CHECK_THROW(dpo1.save_new(), logic_error);
+	// Required to avoid incomplete transaction, which would be
+	// expected, but which causes an annoying and pointless error
+	// message to be printed when pdbc closed.
+	pdbc->end_transaction();
+
 	DerivedPO dpo2(pdbc);
 	dpo2.set_x(20);
 	dpo2.set_y(0.00030009);
@@ -124,7 +95,12 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 	DerivedPO dpo3(pdbc);
 	dpo3.set_x(100);
 	dpo3.set_y(3.2);
+
 	CHECK_THROW(dpo3.save_new(), TableSizeException);
+	// Required to avoid incomplete transaction, which would be
+	// expected, but which causes an annoying and pointless error
+	// message to be printed when pdbc closed.
+	pdbc->end_transaction();
 }
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
@@ -138,9 +114,13 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
 	CHECK_THROW(dpo2.id(), UninitializedOptionalException);
 	dpo2.save_new();
 	CHECK_EQUAL(dpo2.id(), 2);
-	// WARNING The next line causes transaction to be incomplete on closing
-	// of DatabaseConnection. Does this matter?
+
 	CHECK_THROW(dpo2.save_new(), logic_error);
+	// Required to avoid incomplete transaction, which would be
+	// expected, but which causes an annoying and pointless error
+	// message to be printed when pdbc closed.
+	pdbc->end_transaction();
+
 	CHECK_EQUAL(dpo2.id(), 2);
 }
 
@@ -163,9 +143,12 @@ TEST_FIXTURE(DerivedPOFixture, test_load_indirectly)
 	CHECK_EQUAL(dpo2.y(), b);  // and here
 }
 
-// todo Write remaining tests. Should test protected methods of
-// PersistentObject by writing special test methods in DerivedPO itself
-// that call those methods.
+TEST(test_derived_po_self_test)
+{
+	// Tests protected functions of PersistentObject
+	CHECK_EQUAL(DerivedPO::self_test(), 0);
+}
+
 
 }  // namespace tests
 }  // namespace sqloxx

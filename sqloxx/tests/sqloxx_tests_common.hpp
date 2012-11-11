@@ -46,6 +46,22 @@ struct DatabaseConnectionFixture
 	DatabaseConnection dbc;
 };
 
+struct DerivedPOFixture
+{
+	// setup
+	DerivedPOFixture();
+
+	// teardown
+	~DerivedPOFixture();
+
+	// Database filepath
+	boost::filesystem::path filepath;
+
+	// The connection to the database
+	boost::shared_ptr<DatabaseConnection> pdbc;
+};
+
+
 
 
 }  // namespace tests

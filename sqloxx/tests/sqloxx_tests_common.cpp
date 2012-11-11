@@ -1,4 +1,5 @@
 #include "sqloxx_tests_common.hpp"
+#include "derived_po.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/detail/sql_statement.hpp"
 #include "sqloxx/detail/sqlite_dbconn.hpp"
@@ -21,21 +22,24 @@ using std::vector;
 using sqloxx::detail::SQLStatement;
 using sqloxx::detail::SQLiteDBConn;
 
+namespace filesystem = boost::filesystem;
+
+
 namespace sqloxx
 {
 namespace tests
 {
 
 
-bool file_exists(boost::filesystem::path const& filepath)
+bool file_exists(filesystem::path const& filepath)
 {
-	return boost::filesystem::exists
-	(	boost::filesystem::status(filepath)
+	return filesystem::exists
+	(	filesystem::status(filepath)
 	);
 }
 
 
-void abort_if_exists(boost::filesystem::path const& filepath)
+void abort_if_exists(filesystem::path const& filepath)
 {
 	if (file_exists(filepath))
 	{
@@ -118,7 +122,7 @@ do_speed_test()
 DatabaseConnectionFixture::DatabaseConnectionFixture():
 	filepath("Testfile_01")
 {
-	if (boost::filesystem::exists(boost::filesystem::status(filepath)))
+	if (filesystem::exists(filesystem::status(filepath)))
 	{
 		cerr << "File named \"" << filepath.string()
 		     << "\" already exists. Test aborted."
@@ -133,10 +137,32 @@ DatabaseConnectionFixture::DatabaseConnectionFixture():
 DatabaseConnectionFixture::~DatabaseConnectionFixture()
 {
 	assert (dbc.is_valid());
-	boost::filesystem::remove(filepath);
+	filesystem::remove(filepath);
 	assert (!file_exists(filepath));
 }
 
+DerivedPOFixture::DerivedPOFixture():
+	filepath("Testfile_dpof"),
+	pdbc(new DatabaseConnection)
+{
+	if (filesystem::exists(filesystem::status(filepath)))
+	{
+		cerr << "File named \"" << filepath.string()
+		     << "\" already exists. Test aborted."
+			 << endl;
+		abort();
+	}
+	pdbc->open(filepath);
+	assert (pdbc->is_valid());
+	DerivedPO::setup_tables(*pdbc);
+}
+
+DerivedPOFixture::~DerivedPOFixture()
+{
+	assert (pdbc->is_valid());
+	filesystem::remove(filepath);
+	assert (!file_exists(filepath));
+}
 
 }  // namespace sqloxx
 }  // namespace tests
