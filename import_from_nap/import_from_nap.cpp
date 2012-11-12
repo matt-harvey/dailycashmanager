@@ -83,8 +83,6 @@ void import_from_nap
 		boost::posix_time::second_clock::local_time();
 	cout << "Import commences at: " << start_time << endl;
 
-
-	JEWEL_DEBUG_LOG << "\tChecking filepath is a directory..." << endl;
 	if
 	(	!boost::filesystem::is_directory(boost::filesystem::status(directory))
 	)
@@ -103,7 +101,6 @@ void import_from_nap
 	string const ordinary_journal_csv_name = "journalshelf.csv";
 
 	int check = 0;
-	JEWEL_DEBUG_LOG << "\tChecking that CSV files are present..." << endl;
 	for
 	(	boost::filesystem::directory_iterator it(directory);
 		it != boost::filesystem::directory_iterator();
@@ -123,10 +120,8 @@ void import_from_nap
 		(	"The csv files required by import_from_nap  are not all present."
 		);
 	}
-	JEWEL_DEBUG_LOG << "\tCSV files confirmed present." << endl;
 	
 	// Insert the sole commodity
-	JEWEL_DEBUG_LOG << "\tInserting AUD into commodities table..." << endl;
 	Commodity aud(database_connection);
 	aud.set_abbreviation("AUD");
 	aud.set_name("Australian dollars");
@@ -134,10 +129,8 @@ void import_from_nap
 	aud.set_precision(2);
 	aud.set_multiplier_to_base(Decimal("1"));
 	aud.save_new();
-	JEWEL_DEBUG_LOG << "\tAUD inserted." << endl;
 
 	// Read accounts
-	JEWEL_DEBUG_LOG << "\tReading accounts from CSV..." << endl;
 	string const file_sep = "/";
 	std::ifstream account_csv
 	(	(directory.string() + file_sep + account_csv_name).c_str()
@@ -176,10 +169,7 @@ void import_from_nap
 		account.set_name(account_cells[1]);
 		account.set_commodity_abbreviation(aud.abbreviation());
 		account.set_description(account_cells[2]);
-		JEWEL_DEBUG_LOG << "Inserting account to database..." << endl;
 		account.save_new();
-		JEWEL_DEBUG_LOG << "Account " << account.name()
-		                << " inserted." << endl;
 	}
 		
 	typedef vector< shared_ptr<Journal> > JournalVec;
@@ -199,7 +189,6 @@ void import_from_nap
 
 	// Read draft journals ************************************
 	
-	JEWEL_DEBUG_LOG << "Reading draft journals from CSV..." << endl;
 	std::ifstream draft_journal_csv
 	(	(directory.string() + file_sep + draft_journal_csv_name).c_str()
 	);
@@ -368,7 +357,6 @@ void import_from_nap
 
 	// Read OrdinaryJournals*************
 	
-	JEWEL_DEBUG_LOG << "Reading (non-draft) journals from CSV..." << endl;
 	std::ifstream ordinary_journal_csv
 	(	(directory.string() + file_sep + ordinary_journal_csv_name).c_str()
 	);
@@ -481,13 +469,8 @@ void import_from_nap
 			boost::gregorian::date_from_iso_string(iso_date_string)
 		)
 		{
-			JEWEL_DEBUG_LOG
-				<< "ordinary_journal_map[old_journal_id]->date(): "
-			    << ordinary_journal_map[old_journal_id]->date()
-				<< endl
-				<< "boost::gregorian::date_from_iso_string(iso_date_string): "
-				<< boost::gregorian::date_from_iso_string(iso_date_string)
-				<< endl;
+			cout << "Error processing date of journal imported from nap."
+			     << endl;
 			std::abort();
 		}
 		ordinary_journal->add_entry(ordinary_entry);
