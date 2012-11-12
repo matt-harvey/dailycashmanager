@@ -149,7 +149,6 @@ DraftJournal::do_load()
 		shared_ptr<Repeater> repeater
 		(	new Repeater(database_connection(), rep_id)
 		);
-		repeater->set_journal_id(id());
 		temp.m_dj_data->repeaters.push_back(repeater);
 	}
 	swap(temp);

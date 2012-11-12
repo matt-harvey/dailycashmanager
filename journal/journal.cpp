@@ -167,7 +167,6 @@ Journal::do_load()
 		(	new Entry(database_connection(), entr_id)
 		);
 		assert (has_id());
-		entry->set_journal_id(id());
 		temp.m_data->entries.push_back(entry);
 	}
 	temp.m_data->is_actual = static_cast<bool>(statement.extract<int>(0));
