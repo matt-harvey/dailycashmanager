@@ -44,6 +44,10 @@ PersistentObject::~PersistentObject()
 void
 PersistentObject::load()
 {
+	while (m_loading_status == loading)
+	{
+		// Wait
+	}
 	if (m_loading_status == ghost && has_id())
 	{
 		m_loading_status = loading;
@@ -90,6 +94,7 @@ PersistentObject::load()
 		}
 		m_loading_status = loaded;
 	}
+	assert (m_loading_status == loaded);
 	return;
 }
 
@@ -104,22 +109,11 @@ PersistentObject::save_existing()
 			" that does not correspond with an existing database record."
 		);
 	}
-	start:
-	switch (m_loading_status)
-	{
-	case loaded:
-		m_database_connection->begin_transaction();
-		do_save_existing();
-		m_database_connection->end_transaction();
-		break;
-	case ghost:
-		load();
-		// Deliberate fallthrough
-	case loading:
-		goto start;
-	default:
-		assert (false);  // Execution never reaches here.
-	}
+	load();
+	assert (m_loading_status == loaded);
+	m_database_connection->begin_transaction();
+	do_save_existing();
+	m_database_connection->end_transaction();
 	return;
 }
 

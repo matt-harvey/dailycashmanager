@@ -71,11 +71,12 @@ namespace sqloxx
  * also reduce the number of public methods by 1, and will remove a class
  * of exception (std::logic_error) from the interface.
  */
+template <typename Derived>
 class PersistentObject
 {
 public:
 
-	typedef int Id;
+	typedef Derived::Id Id;
 
 	/**
 	 * Create a PersistentObject that corresponds (or purports to correspond)
@@ -130,9 +131,20 @@ public:
 	 * do_save_existing, which must be defined in the derived class.
 	 *
 	 * Note the implementation is wrapped as a transaction
-	 * by calls to begin_transaction and end_transaction
+	 * by calls to the begin_transaction and end_transaction
 	 * methods of the DatabaseConnection. This wrapping is taken
-	 * care of by the base \e save_existing() method.
+	 * care of by the base save_existing() method.
+	 *
+	 * Note there is a call to load() within the base method, prior
+	 * to entering the save transaction, to ensure the object is
+	 * not saved in a partial state. This call to load will only have
+	 * effect if the object is in a partial or "ghost" state when it
+	 * is called. The upshot of this is that, in order to make sure that
+	 * changes to the in-memory object remain in the in-memory object and
+	 * are subsequently written to the database
+	 * when save_existing() is called, you should always call load() as
+	 * the first statement in the implementation of any setter method in
+	 * the derived class.
 	 *
 	 * @throws std::logic_error if this PersistentObject does not have
 	 * an id. 
@@ -148,7 +160,13 @@ public:
 	 * class's implementation
 	 * of do_save_existing.
 	 *
-	 * @todo Document and test exception safety.
+	 * Exception safety: depends on the derived class's implementation
+	 * of do_save_existing(). In implementing this method, the derived
+	 * class should not make any assumptions about whether the final call
+	 * to end_transaction() (made in the base method after do_save_existing()
+	 * has exited) succeeds or fails. If do_save_existing() is implemented
+	 * in this way, and also offers the basic guarantee, then save_existing()
+	 * will itself offer the <em>basic guarantee</em>.
 	 */
 	void save_existing();
 
@@ -187,16 +205,13 @@ public:
 	 * is invoked in the body of this function. See documentation
 	 * for do_calculate_prospective_key for exceptions that might be thrown
 	 * by the default version of that function.
-	 * 
-	 * May also throw exceptions from the load() method, which is invoked
-	 * in the event that the PersistentObject is in a "ghost" or unloaded
-	 * state when saved. See documentation for \e load for details on which
-	 * exceptions might be thrown.
 	 *
-	 * Exception safety: depends on the exception safety of
-	 * do_calculate_prospective_key(),
-	 * do_save_new() and load(). Providing each these functions
-	 * offers the strong guarantee, then so does save_new().
+	 * Exception safety: depends on how
+	 * do_calculate_prospective_key() and
+	 * do_save_new() are implemented. Providing that neither of these
+	 * functions
+	 * affects the state of the in-memory object,
+	 * then save_new() provides the <em>strong guarantee</em>.
 	 */
 	void save_new();
 
