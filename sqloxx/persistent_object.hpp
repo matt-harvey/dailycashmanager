@@ -103,7 +103,7 @@ public:
 	 * database, overwriting the data in the database in the
 	 * event of any conflict with the existing persisted data
 	 * for this id. This is done by calling pure virtual function
-	 * do_save_existing, which must be defined in the derived class.
+	 * do_save_existing_all, which must be defined in the derived class.
 	 *
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to begin_transaction and end_transaction
@@ -136,10 +136,10 @@ public:
 	 *
 	 * Other exceptions that may be thrown depend on the derived
 	 * class's implementation
-	 * of do_save_existing_all and do_save_existing_partial.
+	 * of do_save_existing_all.
 	 *
 	 * Exception safety: depends on the exception safety of
-	 * do_save_existing_all and do_save_existing_partial. If these
+	 * do_save_existing_all. If these
 	 * functions provide the strong guarantee, then so does
 	 * \e save_existing.
 	 *
@@ -360,14 +360,6 @@ protected:
 	 * derived class</em>.
 	 */
 	virtual void do_save_existing_all() = 0;
-
-	/**
-	 * See documentation for public <em>save_existing</em> function.
-	 *
-	 * Exception safety: <em>depends on function definition provided by
-	 * derived class</em>.
-	 */
-	virtual void do_save_existing_partial() = 0;
 
 	/**
 	 * See documentation for public <em>save_new</em> function.

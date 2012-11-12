@@ -193,14 +193,6 @@ DerivedPO::do_save_existing_all()
 }
 
 void
-DerivedPO::do_save_existing_partial()
-{
-	// Does nothing as there are no "non-lazy" data members in
-	// DerivedPO other than m_id, which is inherited from PersistentObject.
-	return;
-}
-
-void
 DerivedPO::do_save_new_all()
 {
 	SharedSQLStatement inserter

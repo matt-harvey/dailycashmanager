@@ -34,7 +34,6 @@ private:
 	void do_load_all();
 	// Uses default version of do_calculate_prospective_key
 	void do_save_existing_all();
-	void do_save_existing_partial();
 	void do_save_new_all();
 	std::string do_get_table_name() const;
 	int m_x;

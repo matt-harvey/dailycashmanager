@@ -143,14 +143,6 @@ private:
 	{
 	}
 
-	/**
-	 * @todo Implement this properly.
-	 * WARNING This is not properly implemented.
-	 */
-	void do_save_existing_partial()
-	{
-	}
-
 	void do_save_new_all();
 
 	std::string do_get_table_name() const;

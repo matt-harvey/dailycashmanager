@@ -169,19 +169,13 @@ protected:
 	virtual void do_load_all();
 
 	/* WARNING Needs proper definition.
-	 * This method will need to be implemented carefully
-	 * (and so will do_save_existing_partial). If Entry and Repeater
+	 * This method will need to be implemented carefully.
+	 * If Entry and Repeater
 	 * instances have been removed from m_entries and m_repeaters
 	 * since the journal was last saved, this means the corresponding
 	 * entry and repeater rows will need to be deleted from the database.
 	 */
 	virtual void do_save_existing_all()
-	{
-	}
-
-	/* WARNING Needs proper definition
-	 */
-	virtual void do_save_existing_partial()
 	{
 	}
 

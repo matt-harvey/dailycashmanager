@@ -141,11 +141,6 @@ private:
 	{
 	}
 
-	// WARNING I need to implement this properly
-	void do_save_existing_partial()
-	{
-	}
-
 	void do_save_new_all();
 
 	std::string do_get_table_name() const;

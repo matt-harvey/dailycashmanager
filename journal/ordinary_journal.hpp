@@ -79,19 +79,13 @@ private:
 	void do_load_all();
 
 	/* WARNING Needs proper definition.
-	 * This method will need to be implemented carefully
-	 * (and so will do_save_existing_partial). If Entry
+	 * This method will need to be implemented carefully.
+	 * If Entry
 	 * instances have been removed from m_entries
 	 * since the journal was last saved, this means the corresponding
 	 * entry rows will need to be deleted from the database.
 	 */
 	void do_save_existing_all()
-	{
-	}
-
-	/* WARNING Needs proper definition
-	 */
-	void do_save_existing_partial()
 	{
 	}
 
