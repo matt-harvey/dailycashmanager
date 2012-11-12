@@ -177,15 +177,20 @@ public:
 	 * @throws std::logic_error if the object already has an id, i.e. has
 	 * already been saved to the database.
 	 *
-	 * May also throw exceptions from do_calculate_prospective_key, which
+	 * May also throw exceptions from \e do_calculate_prospective_key(), which
 	 * is invoked in the body of this function. See documentation
 	 * for do_calculate_prospective_key for exceptions that might be thrown
 	 * by the default version of that function.
+	 * 
+	 * May also throw exceptions from \e load() method, which is invoked
+	 * in the event that the PersistentObject is in a "ghost" or unloaded
+	 * state when saved. See documentation for \e load for details on which
+	 * exceptions might be thrown.
 	 *
 	 * Exception safety: depends on the exception safety of
-	 * \e do_calculate_prospective_key and
-	 * \e do_save_new_all. Providing both of these virtual functions offer the
-	 * strong guarantee, then so does \e save_new.
+	 * \e do_calculate_prospective_key,
+	 * \e do_save_new_all and \e load. Providing each these functions
+	 * offers the strong guarantee, then so does \e save_new.
 	 */
 	void save_new();
 
