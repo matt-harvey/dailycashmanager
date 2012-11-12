@@ -71,12 +71,11 @@ namespace sqloxx
  * also reduce the number of public methods by 1, and will remove a class
  * of exception (std::logic_error) from the interface.
  */
-template <typename Derived>
 class PersistentObject
 {
 public:
 
-	typedef Derived::Id Id;
+	typedef int Id;
 
 	/**
 	 * Create a PersistentObject that corresponds (or purports to correspond)
