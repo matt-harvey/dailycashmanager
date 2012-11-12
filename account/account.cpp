@@ -218,19 +218,16 @@ Account::do_load()
 	return;
 }
 
-
 void
-Account::do_save_new()
+Account::process_saving_statement(SharedSQLStatement& statement)
 {
-	Commodity commodity(database_connection(), commodity_abbreviation());
-	SharedSQLStatement statement
-	(	*database_connection(),
-		"insert into accounts(account_type_id, name, description, "
-		"commodity_id) values(:account_type_id, :name, :description, "
-		":commodity_id)"
+	Commodity commodity
+	(	database_connection(),
+		value(m_data->commodity_abbreviation)
 	);
 	statement.bind
-	(	":account_type_id", static_cast<int>(value(m_data->account_type))
+	(	":account_type_id",
+		static_cast<int>(value(m_data->account_type))
 	);
 	statement.bind(":name", m_data->name);
 	statement.bind(":description", value(m_data->description));
@@ -239,6 +236,34 @@ Account::do_save_new()
 	return;
 }
 
+void
+Account::do_save_existing()
+{
+	SharedSQLStatement updater
+	(	*database_connection(),
+		"update accounts set "
+		"name = :name, "
+		"commodity_id = :commodity_id, "
+		"account_type_id = :account_type_id, "
+		"description = :description "
+		"where account_id = :account_id"
+	);
+	process_saving_statement(updater);
+	return;
+}
+
+void
+Account::do_save_new()
+{
+	SharedSQLStatement inserter
+	(	*database_connection(),
+		"insert into accounts(account_type_id, name, description, "
+		"commodity_id) values(:account_type_id, :name, :description, "
+		":commodity_id)"
+	);
+	process_saving_statement(inserter);
+	return;
+}
 
 string
 Account::do_get_table_name() const

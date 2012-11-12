@@ -21,6 +21,13 @@
 #include <sqloxx/persistent_object.hpp>
 #include <string>
 
+
+namespace sqloxx
+{
+	class SharedSQLStatement;
+}  // namespace sqloxx
+
+
 namespace phatbooks
 {
 
@@ -135,19 +142,14 @@ private:
 
 	// Defining pure virtual functions inherited from PersistentObject
 	void do_load();
-
-	// WARNING I need to implement this properly
-	void do_save_existing()
-	{
-	}
-
+	void do_save_existing();
 	void do_save_new();
-
 	std::string do_get_table_name() const;
 
 	// Other functions
 	void load_abbreviation_knowing_id();
 	void load_id_knowing_abbreviation();
+	void process_saving_statement(sqloxx::SharedSQLStatement& statement);
 
 	struct CommodityData
 	{

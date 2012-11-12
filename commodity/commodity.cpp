@@ -163,28 +163,49 @@ void Commodity::do_load()
 }
 
 
+void
+Commodity::process_saving_statement(SharedSQLStatement& statement)
+{
+	statement.bind(":abbreviation", m_data->abbreviation);
+	statement.bind(":name", value(m_data->name));
+	statement.bind(":description", value(m_data->description));
+	statement.bind(":precision", value(m_data->precision));
+	Decimal m = value(m_data->multiplier_to_base);
+	statement.bind(":multiplier_to_base_intval", m.intval());
+	statement.bind(":multiplier_to_base_places", m.places());
+	statement.step_final();	
+	return;
+}
+
+
+void Commodity::do_save_existing()
+{
+	SharedSQLStatement updater
+	(	*database_connection(),
+		"update commodities set "
+		"abbreviation = :abbreviation, "
+		"name = :name, "
+		"description = :description, "
+		"precision = :precision, "
+		"multiplier_to_base_intval = :multiplier_to_base_intval, "
+		"multiplier_to_base_places = :multiplier_to_base_places "
+		"where commodity_id = :commodity_id"
+	);
+	process_saving_statement(updater);
+	return;
+}
+	
+
 void Commodity::do_save_new()
 {
-	SharedSQLStatement statement
+	SharedSQLStatement inserter
 	(	*database_connection(),
 		"insert into commodities(abbreviation, name, description, precision, "
 		"multiplier_to_base_intval, multiplier_to_base_places) "
 		"values(:abbreviation, :name, :description, :precision, "
 		":multiplier_to_base_intval, :multiplier_to_base_places)"
 	);
-	statement.bind(":abbreviation", m_data->abbreviation);
-	statement.bind(":name", value(m_data->name));
-	statement.bind(":description", value(m_data->description));
-	statement.bind(":precision", value(m_data->precision));
-	statement.bind
-	(	":multiplier_to_base_intval",
-		m_data->multiplier_to_base->intval()
-	);
-	statement.bind
-	(	":multiplier_to_base_places",
-		m_data->multiplier_to_base->places()
-	);
-	statement.step_final();	
+	process_saving_statement(inserter);
 	return;
 }
 
@@ -255,6 +276,7 @@ void Commodity::set_multiplier_to_base
 	m_data->multiplier_to_base = p_multiplier_to_base;
 	return;
 }
+
 
 std::string Commodity::do_get_table_name() const
 {

@@ -139,10 +139,7 @@ public:
 	 * class's implementation
 	 * of do_save_existing.
 	 *
-	 * Exception safety: depends on the exception safety of
-	 * do_save_existing. If these
-	 * functions provide the strong guarantee, then so does
-	 * \e save_existing.
+	 * @todo Document and test exception safety.
 	 */
 	void save_existing();
 

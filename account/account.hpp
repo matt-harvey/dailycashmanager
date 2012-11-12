@@ -21,6 +21,11 @@
 #include <vector>
 
 
+namespace sqloxx
+{
+	class SharedSQLStatement;
+}  // namespace sqloxx
+
 
 namespace phatbooks
 {
@@ -143,21 +148,13 @@ private:
 	Account(Account const& rhs);
 
 	void do_load();
-
-	/* WARNING I need to implement this properly
-	 */
-	void do_save_existing()
-	{
-	}
-
+	void do_save_existing();
 	void do_save_new();
-
 	std::string do_get_table_name() const;
-
 	void load_name_knowing_id();
-
 	void load_id_knowing_name();
-	
+	void process_saving_statement(sqloxx::SharedSQLStatement& statement);
+
 	struct AccountData
 	{
 		// The optionals here are a safety feature. They
@@ -167,7 +164,7 @@ private:
 		// are also a feature of objects newly created at the
 		// presentation layer but not yet saved to the database
 		// (and not intended to correspond to any object in the
-		// database). Using optionals prevents helps guard against
+		// database). Using optionals helps guard against
 		// such an object being written to the database in an
 		// incomplete state.
 		std::string name;
