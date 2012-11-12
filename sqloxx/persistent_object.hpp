@@ -123,7 +123,8 @@ public:
 	 *
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to begin_transaction and end_transaction
-	 * methods of the DatabaseConnection.
+	 * methods of the DatabaseConnection. This wrapping is taken
+	 * care of by the base \e save_existing() method.
 	 *
 	 * @throws std::logic_error if this PersistentObject does not have
 	 * an id. 
@@ -204,8 +205,8 @@ protected:
 
 	/**
 	 * Calls the derived class's implementation
-	 * of do_load, if the object is not already
-	 * fully loaded. If the object does not have an id,
+	 * of do_load, if and only if the object is not already
+	 * loaded. If the object does not have an id,
 	 * then this function does nothing.
 	 *
 	 * In defining \e do_load, the derived class should throw an instance
@@ -219,7 +220,8 @@ protected:
 	 *
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to begin_transaction and end_transaction
-	 * methods of the DatabaseConnection.
+	 * methods of the DatabaseConnection. This is taken care of by the
+	 * base \e load method.
 	 *
 	 * The following exceptions may be thrown regardless of how
 	 * do_load is defined:
@@ -289,10 +291,10 @@ protected:
 	void set_id(Id p_id);
 
 	/**
-	 * @returns the id that would be assigned to the this instance of
+	 * @returns the id that would be assigned to this instance of
 	 * PersistentObject when saved to the database.
 	 *
-	 * This function calls /e do_calculate_prospective_key, which has a
+	 * This function calls \e do_calculate_prospective_key, which has a
 	 * default implementation but may be redefined.
 	 *
 	 * @throws std::logic_error in the event this instance already has
@@ -325,18 +327,18 @@ protected:
 	 * PersistentObject would be persisted) is the maximum value for the
 	 * type \e Id, so that another row could not be inserted without overflow.
 	 *
+	 * @throws std::bad_alloc is the unlikely event that memory allocation
+	 * fails during execution.
+	 *
 	 * @throws sqloxx::DatabaseException, or a derivative therefrom, may
 	 * be thrown if there is some other
 	 * error finding the next primary key value. This should not occur except
 	 * in the case of a corrupt database, or a memory allocation error
 	 * (extremely unlikely), or the database connection being invalid
 	 * (including because not yet connected to a database file).
-	 *
-	 * @throws sqloxx::InvalidConnection if the database connection
-	 * associated with this instance of PersistentObject is invalid.
-	 *
-	 * @throws std::bad_alloc is the unlikely event that memory allocation
-	 * fails during execution.
+	 * The particular child class of DatabaseException thrown will depend
+	 * on the type of error, e.g. InvalidConnection will be thrown
+	 * in the event of an invalid database connection.
 	 *
 	 * Exception safety: <em>strong guarantee</em>, (providing the virtual
 	 * function
@@ -346,7 +348,7 @@ protected:
 	virtual Id do_calculate_prospective_key() const;
 
 	/**
-	 * See documentation for public \e load function.
+	 * See documentation for \e load function.
 	 *
 	 * Exception safety: <em>depends on function definition
 	 * provided by derived class</em>

@@ -100,7 +100,7 @@ public:
 	 * @param parameter_name named parameter embedded in
 	 * the SQL statement.
 	 *
-	 * @x value to be bound to the named parameter.
+	 * @param x value to be bound to the named parameter.
 	 *
 	 * Exception safety: <em>basic guarantee</em>.
 	 */
