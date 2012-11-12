@@ -25,19 +25,32 @@ namespace sqloxx
  * "Patterns of Enterprise Application Architecture". The PersistentObject
  * base class provides the bookkeeping associated with this pattern,
  * keeping track of the loading status of each in-memory object
- * ("loaded", "loading" or "ghost"). Derived classes are responsible for
- * specifying their instances are loaded and saved.
+ * ("loaded", "loading" or "ghost").
  *
  * In the derived class, the intention is that some or all data members
  * declared in that class, can be "lazy". This means that they are not
  * initialized in the derived object's constructor, but are rather only
  * initialized at a later time via a call to load(), which in turn calls
- * the virtual do_load_all (which needs to be defined in the derived class).
- * In the derived class, implementations of getters and setters,
+ * the virtual method do_load_all (which needs to be defined in the
+ * derived class).
+ *
+ * In the derived class, implementations of getters
  * for attributes
- * other than those that are loaded immediately on constructrion, should
+ * other than those that are loaded immediately on construction, should
  * have \e load() as their first statement. (This means that getters cannot
- * be const.)
+ * be const.) In addition, implementations of \e all setters in the
+ * derived class should have \e load() as their first statement.
+ * Failure to adhere to these requirements will result in
+ * in undefined behaviour.
+ *
+ * It is advisable to store lazy attributes in a boost::optional<T>, which
+ * will result in loud, rather than silent, failure, in the event of an
+ * attempt to access such an attribute before it has been initialized.
+ *
+ * Derived classes are free to initialize all attributes on construction of
+ * an instance. This avoids the complications described above associated
+ * with lazy loading, while giving up the potential runtime efficiencies
+ * that lazy loading can provide.
  *
  * @todo Provide for atomic saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
@@ -46,6 +59,9 @@ namespace sqloxx
  * the in-memory objects, and conform to the restrictions detailed in the
  * PersistentObject API documentation. (Note I have already done this
  * for \e load functions.)
+ *
+ * @todo If Sqloxx is ever moved to a separate library, then the documentation
+ * for PersistentObject should include code for an exemplary derived class.
  */
 class PersistentObject
 {
@@ -109,21 +125,6 @@ public:
 	 * by calls to begin_transaction and end_transaction
 	 * methods of the DatabaseConnection.
 	 *
-	 * @throws IncompleteObjectException if this PersistentObject has
-	 * not been loaded before being saved.
-	 *
-	 * @todo Figure out whether I want to adopt the following solution.
-	 * In save_existing, if loading_status is ghost, a call to load
-	 * could be made. This will result in the object being loaded if
-	 * it hasn't already. This will result in "null-effect" save in case
-	 * the object is a ghost-with_id but has not been since construction -
-	 * which is correct behaviour, and better than throwing an exception
-	 * here. However, the disadvantage is that if the client (derived)
-	 * class forgets to call load() is one of its setters, then changes
-	 * made in memory will not be saved to the database, because load(),
-	 * when called by save_existing, will result in reversion to the old
-	 * value for that attribute.
-	 *
 	 * @throws std::logic_error if this PersistentObject does not have
 	 * an id. 
 	 *
@@ -142,9 +143,6 @@ public:
 	 * do_save_existing_all. If these
 	 * functions provide the strong guarantee, then so does
 	 * \e save_existing.
-	 *
-	 * @todo Define SavingException, and change implementation so that
-	 * this will be thrown as documented. Also test this.
 	 */
 	void save_existing();
 

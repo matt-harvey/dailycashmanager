@@ -112,15 +112,11 @@ PersistentObject::save_existing()
 		do_save_existing_all();
 		m_database_connection->end_transaction();
 		break;
-	case loading:
-		goto start;  // WARNING This sucks
-		assert (false);  // Execution never reaches here.
 	case ghost:
-		throw IncompleteObjectException
-		(	"Attempted to re-save already-persisted object in incomplete "
-			"state."
-		);
-		assert (false);  // Execution never reaches here.
+		load();
+		// Deliberate fallthrough
+	case loading:
+		goto start;
 	default:
 		assert (false);  // Execution never reaches here.
 	}
