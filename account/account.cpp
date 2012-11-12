@@ -248,6 +248,7 @@ Account::do_save_existing()
 		"description = :description "
 		"where account_id = :account_id"
 	);
+	updater.bind(":account_id", id());
 	process_saving_statement(updater);
 	return;
 }

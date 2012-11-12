@@ -21,6 +21,12 @@
 #include <jewel/decimal.hpp>
 #include <string>
 
+namespace sqloxx
+{
+	class SharedSQLStatement;
+}  // namespace sqloxx
+
+
 namespace phatbooks
 {
 
@@ -137,22 +143,12 @@ private:
 	 * Copy constructor - implemented, but deliberately private
 	 */
 	Entry(Entry const& rhs);
-
-
-	// Inherited virtual methods
 	
 	void do_load();
-	
-	/**
-	 * WARNING This needs to be implemented properly.
-	 */
-	void do_save_existing()
-	{
-	}
-
+	void do_save_existing();
 	void do_save_new();
-
 	std::string do_get_table_name() const;
+	void process_saving_statement(sqloxx::SharedSQLStatement& statement);
 
 	struct EntryData
 	{

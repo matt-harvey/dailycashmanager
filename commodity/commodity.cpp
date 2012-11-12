@@ -163,8 +163,7 @@ void Commodity::do_load()
 }
 
 
-void
-Commodity::process_saving_statement(SharedSQLStatement& statement)
+void Commodity::process_saving_statement(SharedSQLStatement& statement)
 {
 	statement.bind(":abbreviation", m_data->abbreviation);
 	statement.bind(":name", value(m_data->name));
@@ -191,6 +190,7 @@ void Commodity::do_save_existing()
 		"multiplier_to_base_places = :multiplier_to_base_places "
 		"where commodity_id = :commodity_id"
 	);
+	updater.bind(":commodity_id", id());
 	process_saving_statement(updater);
 	return;
 }

@@ -173,19 +173,45 @@ Entry::do_load()
 
 
 void
-Entry::do_save_new()
+Entry::process_saving_statement(SharedSQLStatement& statement)
 {
-	SharedSQLStatement statement
-	(	*database_connection(),
-		"insert into entries(journal_id, comment, account_id, amount) "
-		"values(:journal_id, :comment, :account_id, :amount)"
-	);
 	Account account(database_connection(), value(m_data->account_name));
 	statement.bind(":journal_id", value(m_data->journal_id));
 	statement.bind(":comment", value(m_data->comment));
 	statement.bind(":account_id", account.id());
 	statement.bind(":amount", m_data->amount->intval());
 	statement.step_final();
+	return;
+}
+
+
+void
+Entry::do_save_existing()
+{
+	SharedSQLStatement updater
+	(	*database_connection(),
+		"update entries set "
+		"journal_id = :journal_id, "
+		"comment = :comment, "
+		"account_id = :account_id, "
+		"amount = :amount "
+		"where entry_id = :entry_id"
+	);
+	updater.bind(":entry_id", id());
+	process_saving_statement(updater);
+	return;
+}
+
+
+void
+Entry::do_save_new()
+{
+	SharedSQLStatement inserter
+	(	*database_connection(),
+		"insert into entries(journal_id, comment, account_id, amount) "
+		"values(:journal_id, :comment, :account_id, :amount)"
+	);
+	process_saving_statement(inserter);
 	return;
 }
 

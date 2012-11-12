@@ -225,6 +225,7 @@ Repeater::do_save_existing()
 		"journal_id = :journal_id "
 		"where repeater_id = :repeater_id"
 	);
+	updater.bind(":repeater_id", id());
 	process_saving_statement(updater);
 	return;
 }
