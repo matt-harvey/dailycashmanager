@@ -82,7 +82,7 @@ private:
 	DraftJournal(DraftJournal const& rhs);	
 
 
-	void do_load_all();
+	void do_load();
 
 	/* WARNING Needs proper definition.
 	 * This method will need to be implemented carefully.
@@ -91,11 +91,11 @@ private:
 	 * since the journal was last saved, this means the corresponding
 	 * entry and repeater rows will need to be deleted from the database.
 	 */
-	void do_save_existing_all()
+	void do_save_existing()
 	{
 	}
 
-	void do_save_new_all();
+	void do_save_new();
 
 	/* Note this function is not redefined here as we want
 	 * it to call Journal::do_get_table_name, which returns

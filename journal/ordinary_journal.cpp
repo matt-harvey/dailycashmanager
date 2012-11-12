@@ -101,12 +101,12 @@ OrdinaryJournal::swap(OrdinaryJournal& rhs)
 
 
 void
-OrdinaryJournal::do_load_all()
+OrdinaryJournal::do_load()
 {
 	OrdinaryJournal temp(*this);
 
 	// Load the Journal (base) part of temp.
-	temp.Journal::do_load_all();
+	temp.Journal::do_load();
 
 	// Load the derived, OrdinaryJournal part of temp.
 	SharedSQLStatement statement
@@ -126,10 +126,10 @@ OrdinaryJournal::do_load_all()
 
 
 void
-OrdinaryJournal::do_save_new_all()
+OrdinaryJournal::do_save_new()
 {
 	// Save the Journal	(base) part of the object and record the id.
-	Id const journal_id = do_save_new_all_journal_base();
+	Id const journal_id = do_save_new_journal_base();
 
 	// Save the derived, OrdinaryJournal part of the object
 	SharedSQLStatement statement

@@ -146,7 +146,7 @@ Journal::swap(Journal& rhs)
 
 
 void
-Journal::do_load_all()
+Journal::do_load()
 {
 	SharedSQLStatement statement
 	(	*database_connection(),
@@ -178,7 +178,7 @@ Journal::do_load_all()
 
 
 Journal::Id
-Journal::do_save_new_all_journal_base()
+Journal::do_save_new_journal_base()
 {
 	Id const journal_id = prospective_key();
 	SharedSQLStatement statement
@@ -201,9 +201,9 @@ Journal::do_save_new_all_journal_base()
 
 
 void
-Journal::do_save_new_all()
+Journal::do_save_new()
 {
-	do_save_new_all_journal_base();
+	do_save_new_journal_base();
 	return;
 }
 	

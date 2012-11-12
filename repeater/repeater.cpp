@@ -174,7 +174,7 @@ Repeater::Repeater(Repeater const& rhs):
 
 
 void
-Repeater::do_load_all()
+Repeater::do_load()
 {
 	SharedSQLStatement statement
 	(	*database_connection(),
@@ -195,7 +195,7 @@ Repeater::do_load_all()
 
 
 void
-Repeater::do_save_new_all()
+Repeater::do_save_new()
 {
 	SharedSQLStatement statement
 	(	*database_connection(),

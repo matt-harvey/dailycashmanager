@@ -163,7 +163,7 @@ DerivedPO::DerivedPO(DerivedPO const& rhs):
 }
 
 void
-DerivedPO::do_load_all()
+DerivedPO::do_load()
 {
 	SharedSQLStatement selector
 	(	*database_connection(),
@@ -179,7 +179,7 @@ DerivedPO::do_load_all()
 }
 
 void
-DerivedPO::do_save_existing_all()
+DerivedPO::do_save_existing()
 {
 	SharedSQLStatement updater
 	(	*database_connection(),
@@ -193,7 +193,7 @@ DerivedPO::do_save_existing_all()
 }
 
 void
-DerivedPO::do_save_new_all()
+DerivedPO::do_save_new()
 {
 	SharedSQLStatement inserter
 	(	*database_connection(),

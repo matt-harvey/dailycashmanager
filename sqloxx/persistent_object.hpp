@@ -31,7 +31,7 @@ namespace sqloxx
  * declared in that class, can be "lazy". This means that they are not
  * initialized in the derived object's constructor, but are rather only
  * initialized at a later time via a call to load(), which in turn calls
- * the virtual method do_load_all (which needs to be defined in the
+ * the virtual method do_load (which needs to be defined in the
  * derived class).
  *
  * In the derived class, implementations of getters
@@ -119,7 +119,7 @@ public:
 	 * database, overwriting the data in the database in the
 	 * event of any conflict with the existing persisted data
 	 * for this id. This is done by calling pure virtual function
-	 * do_save_existing_all, which must be defined in the derived class.
+	 * do_save_existing, which must be defined in the derived class.
 	 *
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to begin_transaction and end_transaction
@@ -137,10 +137,10 @@ public:
 	 *
 	 * Other exceptions that may be thrown depend on the derived
 	 * class's implementation
-	 * of do_save_existing_all.
+	 * of do_save_existing.
 	 *
 	 * Exception safety: depends on the exception safety of
-	 * do_save_existing_all. If these
+	 * do_save_existing. If these
 	 * functions provide the strong guarantee, then so does
 	 * \e save_existing.
 	 */
@@ -155,7 +155,7 @@ public:
 	 *
 	 * In the body of this function, a call is made to the pure virtual
 	 * function
-	 * do_save_new_all, which must be defined in the derived
+	 * do_save_new, which must be defined in the derived
 	 * class. (But note that the base class save_new takes care of assigning
 	 * the id and also wraps the save operation as a SQL transaction by
 	 * calling the begin_transaction and end_transaction methods of the
@@ -189,7 +189,7 @@ public:
 	 *
 	 * Exception safety: depends on the exception safety of
 	 * \e do_calculate_prospective_key,
-	 * \e do_save_new_all and \e load. Providing each these functions
+	 * \e do_save_new and \e load. Providing each these functions
 	 * offers the strong guarantee, then so does \e save_new.
 	 */
 	void save_new();
@@ -207,15 +207,15 @@ protected:
 
 	/**
 	 * Calls the derived class's implementation
-	 * of do_load_all, if the object is not already
+	 * of do_load, if the object is not already
 	 * fully loaded. If the object does not have an id,
 	 * then this function does nothing.
 	 *
-	 * In defining \e do_load_all, the derived class should throw an instance
+	 * In defining \e do_load, the derived class should throw an instance
 	 * of std::exception (may be an instance of an exception class derived
 	 * therefrom) in the event that the load fails. If this
-	 * is adhered to, and do_load_all is implemented with the strong
-	 * exception-safety guarantee, and do_load_all does not perform any
+	 * is adhered to, and do_load is implemented with the strong
+	 * exception-safety guarantee, and do_load does not perform any
 	 * write operations on the database, or have other side-effects, then the
 	 * \e load function will itself provide the strong exception safety
 	 * guarantee.
@@ -225,12 +225,12 @@ protected:
 	 * methods of the DatabaseConnection.
 	 *
 	 * The following exceptions may be thrown regardless of how
-	 * do_load_all is defined:
+	 * do_load is defined:
 	 *
 	 * @throws TransactionNestingException in the event that the maximum
 	 * level of transaction nesting for the database connection has been
 	 * reached. (This is extremely unlikely.) If this occurs \e before
-	 * do_load_all is entered, the object will be as it was before the
+	 * do_load is entered, the object will be as it was before the
 	 * function was called.
 	 * 
 	 * @throws InvalidConnection in the event that the database connection is
@@ -238,7 +238,7 @@ protected:
 	 * the object will be as it was before this function was called.
 	 *
 	 * Exception safety: depends on how the derived class defines \e
-	 * do_load_all. See above.
+	 * do_load. See above.
 	 */
 	void load();
 
@@ -354,7 +354,7 @@ protected:
 	 * Exception safety: <em>depends on function definition
 	 * provided by derived class</em>
 	 */
-	virtual void do_load_all() = 0;
+	virtual void do_load() = 0;
 
 	/**
 	 * See documentation for public <em>save_existing</em> function.
@@ -362,7 +362,7 @@ protected:
 	 * Exception safety: <em>depends on function definition provided by
 	 * derived class</em>.
 	 */
-	virtual void do_save_existing_all() = 0;
+	virtual void do_save_existing() = 0;
 
 	/**
 	 * See documentation for public <em>save_new</em> function.
@@ -370,7 +370,7 @@ protected:
 	 * Exception safety: <em>depends on function definition provided by
 	 * derived class</em>.
 	 */
-	virtual void do_save_new_all() = 0;
+	virtual void do_save_new() = 0;
 
 	/**
 	 * This function should be defined in the derived class to return the

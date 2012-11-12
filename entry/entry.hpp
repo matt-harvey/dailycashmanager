@@ -141,16 +141,16 @@ private:
 
 	// Inherited virtual methods
 	
-	void do_load_all();
+	void do_load();
 	
 	/**
 	 * WARNING This needs to be implemented properly.
 	 */
-	void do_save_existing_all()
+	void do_save_existing()
 	{
 	}
 
-	void do_save_new_all();
+	void do_save_new();
 
 	std::string do_get_table_name() const;
 

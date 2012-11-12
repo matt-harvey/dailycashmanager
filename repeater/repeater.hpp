@@ -133,17 +133,17 @@ private:
 
 	Repeater(Repeater const& rhs);
 
-	void do_load_all();
+	void do_load();
 
 	/**
 	 * @todo Implement this properly.
 	 * WARNING This is not properly implemented.
 	 */
-	void do_save_existing_all()
+	void do_save_existing()
 	{
 	}
 
-	void do_save_new_all();
+	void do_save_new();
 
 	std::string do_get_table_name() const;
 

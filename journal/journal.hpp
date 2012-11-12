@@ -159,14 +159,14 @@ protected:
 	 * process. This avoids having to duplicate the search for
 	 * the prospective id, within the derived class saving functions.
 	 */
-	Id do_save_new_all_journal_base();
+	Id do_save_new_journal_base();
 
 	/**
 	 * WARNING There should be a way of stopping a Journal that is not
 	 * specifically either a DraftJournal or an OrdinaryJournal from
 	 * being loaded from the database.
 	 */
-	virtual void do_load_all();
+	virtual void do_load();
 
 	/* WARNING Needs proper definition.
 	 * This method will need to be implemented carefully.
@@ -175,7 +175,7 @@ protected:
 	 * since the journal was last saved, this means the corresponding
 	 * entry and repeater rows will need to be deleted from the database.
 	 */
-	virtual void do_save_existing_all()
+	virtual void do_save_existing()
 	{
 	}
 
@@ -190,7 +190,7 @@ private:
 	 * specifically either a DraftJournal or an OrdinaryJournal from
 	 * being saved to the database.
 	 */
-	virtual void do_save_new_all();
+	virtual void do_save_new();
 
 	virtual std::string do_get_table_name() const;
 

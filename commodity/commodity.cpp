@@ -139,7 +139,7 @@ void Commodity::load_id_knowing_abbreviation()
 }
 	
 
-void Commodity::do_load_all()
+void Commodity::do_load()
 {
 	Commodity temp(*this);
 	SharedSQLStatement statement
@@ -163,7 +163,7 @@ void Commodity::do_load_all()
 }
 
 
-void Commodity::do_save_new_all()
+void Commodity::do_save_new()
 {
 	SharedSQLStatement statement
 	(	*database_connection(),

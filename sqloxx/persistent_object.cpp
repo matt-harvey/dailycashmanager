@@ -63,7 +63,7 @@ PersistentObject::load()
 		}
 		try
 		{
-			do_load_all();
+			do_load();
 		}
 		catch (std::exception&)
 		{
@@ -74,11 +74,11 @@ PersistentObject::load()
 		{
 			m_database_connection->end_transaction();
 			// Note this can't possibly throw TransactionNestingException
-			// here, unless do_load_all() has done something perverse.
+			// here, unless do_load() has done something perverse.
 		}
 		catch (InvalidConnection&)
 		{
-			// As do_load_all has already completed, the object in
+			// As do_load has already completed, the object in
 			// memory should be non-corrupt and fully loaded. The fact that
 			// the database connection is now invalid only affects the
 			// database, not the in-memory object. The invalidity of the
@@ -109,7 +109,7 @@ PersistentObject::save_existing()
 	{
 	case loaded:
 		m_database_connection->begin_transaction();
-		do_save_existing_all();
+		do_save_existing();
 		m_database_connection->end_transaction();
 		break;
 	case ghost:
@@ -151,7 +151,7 @@ PersistentObject::save_new()
 {
 	m_database_connection->begin_transaction();
 	Id key = prospective_key();
-	do_save_new_all();
+	do_save_new();
 	m_database_connection->end_transaction();
 	set_id(key);
 	return;

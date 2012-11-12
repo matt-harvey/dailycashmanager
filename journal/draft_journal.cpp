@@ -122,12 +122,12 @@ DraftJournal::swap(DraftJournal& rhs)
 
 
 void
-DraftJournal::do_load_all()
+DraftJournal::do_load()
 {
 	DraftJournal temp(*this);
 	
 	// Load the base part of temp.
-	temp.Journal::do_load_all();
+	temp.Journal::do_load();
 
 	// Load the derived, DraftJournal part of the temp.
 	SharedSQLStatement statement
@@ -158,10 +158,10 @@ DraftJournal::do_load_all()
 
 
 void
-DraftJournal::do_save_new_all()
+DraftJournal::do_save_new()
 {
 	// Save the Journal (base) part of the object
-	Id const journal_id = do_save_new_all_journal_base();
+	Id const journal_id = do_save_new_journal_base();
 
 	// Save the derived, DraftJournal part of the object
 	SharedSQLStatement statement

@@ -148,7 +148,7 @@ Entry::Entry(Entry const& rhs):
 	
 
 void
-Entry::do_load_all()
+Entry::do_load()
 {
 	Entry temp(*this);
 	SharedSQLStatement statement
@@ -173,7 +173,7 @@ Entry::do_load_all()
 
 
 void
-Entry::do_save_new_all()
+Entry::do_save_new()
 {
 	SharedSQLStatement statement
 	(	*database_connection(),

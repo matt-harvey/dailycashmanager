@@ -196,7 +196,7 @@ Account::swap(Account& rhs)
 }
 
 void
-Account::do_load_all()
+Account::do_load()
 {
 	SharedSQLStatement statement
 	(	*database_connection(),
@@ -220,7 +220,7 @@ Account::do_load_all()
 
 
 void
-Account::do_save_new_all()
+Account::do_save_new()
 {
 	Commodity commodity(database_connection(), commodity_abbreviation());
 	SharedSQLStatement statement
