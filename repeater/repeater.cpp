@@ -195,13 +195,11 @@ Repeater::do_load()
 
 
 void
-Repeater::do_save_new()
+Repeater::process_saving_statement(SharedSQLStatement& statement)
 {
-	SharedSQLStatement statement
-	(	*database_connection(),
-		"insert into repeaters(interval_type_id, interval_units, "
-		"next_date, journal_id) values(:interval_type_id, :interval_units, "
-		":next_date, :journal_id)"
+	statement.bind
+	(	":interval_type_id",
+		static_cast<int>(value(m_data->interval_type))
 	);
 	statement.bind
 	(	":interval_type_id",
@@ -211,6 +209,37 @@ Repeater::do_save_new()
 	statement.bind(":next_date", value(m_data->next_date));
 	statement.bind(":journal_id", value(m_data->journal_id));
 	statement.step_final();
+	return;
+}
+
+
+void
+Repeater::do_save_existing()
+{
+	SharedSQLStatement updater
+	(	*database_connection(),
+		"update repeaters set "
+		"interval_type_id = :interval_type_id, "
+		"interval_units = :interval_units, "
+		"next_date = :next_date, "
+		"journal_id = :journal_id "
+		"where repeater_id = :repeater_id"
+	);
+	process_saving_statement(updater);
+	return;
+}
+
+
+void
+Repeater::do_save_new()
+{
+	SharedSQLStatement inserter
+	(	*database_connection(),
+		"insert into repeaters(interval_type_id, interval_units, "
+		"next_date, journal_id) values(:interval_type_id, :interval_units, "
+		":next_date, :journal_id)"
+	);
+	process_saving_statement(inserter);
 	return;
 }
 

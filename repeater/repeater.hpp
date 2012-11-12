@@ -24,6 +24,12 @@
 #include <string>
 
 
+namespace sqloxx
+{
+	class SharedSQLStatement;  // forward declaration
+}  // namespace sqloxx
+
+
 namespace phatbooks
 {
 
@@ -132,20 +138,11 @@ public:
 private:
 
 	Repeater(Repeater const& rhs);
-
 	void do_load();
-
-	/**
-	 * @todo Implement this properly.
-	 * WARNING This is not properly implemented.
-	 */
-	void do_save_existing()
-	{
-	}
-
+	void do_save_existing();
 	void do_save_new();
-
 	std::string do_get_table_name() const;
+	void process_saving_statement(sqloxx::SharedSQLStatement& statement);
 
 	struct RepeaterData
 	{
