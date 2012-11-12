@@ -73,6 +73,7 @@ Entry::~Entry()
 void
 Entry::set_journal_id(Journal::Id p_journal_id)
 {
+	load();
 	m_data->journal_id = p_journal_id;
 	return;
 }
@@ -81,6 +82,7 @@ Entry::set_journal_id(Journal::Id p_journal_id)
 void
 Entry::set_account_name(string const& p_account_name)
 {
+	load();
 	m_data->account_name = p_account_name;
 	return;
 }
@@ -89,6 +91,7 @@ Entry::set_account_name(string const& p_account_name)
 void
 Entry::set_comment(string const& p_comment)
 {
+	load();
 	m_data->comment = p_comment;
 	return;
 }
@@ -97,6 +100,7 @@ Entry::set_comment(string const& p_comment)
 void
 Entry::set_amount(Decimal const& p_amount)
 {
+	load();
 	m_data->amount = p_amount;
 	return;
 }
@@ -158,10 +162,10 @@ Entry::do_load_all()
 	Commodity cmd(database_connection(), acct.commodity_abbreviation());
 	Decimal const amt(statement.extract<boost::int64_t>(2), cmd.precision());
 
-	temp.set_account_name(acct.name());
-	temp.set_comment(statement.extract<string>(1));
-	temp.set_amount(amt);
-	temp.set_journal_id(statement.extract<Journal::Id>(3));
+	temp.m_data->account_name = acct.name();
+	temp.m_data->comment = statement.extract<string>(1);
+	temp.m_data->amount = amt;
+	temp.m_data->journal_id = statement.extract<Journal::Id>(3);
 	
 	swap(temp);
 	return;

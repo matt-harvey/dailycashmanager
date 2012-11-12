@@ -28,6 +28,17 @@ namespace sqloxx
  * ("loaded", "loading" or "ghost"). Derived classes are responsible for
  * specifying their instances are loaded and saved.
  *
+ * In the derived class, the intention is that some or all data members
+ * declared in that class, can be "lazy". This means that they are not
+ * initialized in the derived object's constructor, but are rather only
+ * initialized at a later time via a call to load(), which in turn calls
+ * the virtual do_load_all (which needs to be defined in the derived class).
+ * In the derived class, implementations of getters and setters,
+ * for attributes
+ * other than those that are loaded immediately on constructrion, should
+ * have \e load() as their first statement. (This means that getters cannot
+ * be const.)
+ *
  * @todo Provide for atomic saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
  * Go through all the client classes in Phatbooks and ensure the
@@ -91,19 +102,30 @@ public:
 	 * Saves the state of the in-memory object to the
 	 * database, overwriting the data in the database in the
 	 * event of any conflict with the existing persisted data
-	 * for this id. This is done by calling
-	 * do_save_existing_partial (in the event the object is not
-	 * fully loaded) or do_save_existing_all (in the event the object
-	 * is fully loaded). The do_save_... functions should be defined in
-	 * the derived class.
+	 * for this id. This is done by calling pure virtual function
+	 * do_save_existing, which must be defined in the derived class.
 	 *
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to begin_transaction and end_transaction
 	 * methods of the DatabaseConnection.
-	 * 
+	 *
+	 * @throws IncompleteObjectException if this PersistentObject has
+	 * not been loaded before being saved.
+	 *
+	 * @todo Figure out whether I want to adopt the following solution.
+	 * In save_existing, if loading_status is ghost, a call to load
+	 * could be made. This will result in the object being loaded if
+	 * it hasn't already. This will result in "null-effect" save in case
+	 * the object is a ghost-with_id but has not been since construction -
+	 * which is correct behaviour, and better than throwing an exception
+	 * here. However, the disadvantage is that if the client (derived)
+	 * class forgets to call load() is one of its setters, then changes
+	 * made in memory will not be saved to the database, because load(),
+	 * when called by save_existing, will result in reversion to the old
+	 * value for that attribute.
+	 *
 	 * @throws std::logic_error if this PersistentObject does not have
-	 * an id, i.e. does not correspond with any object persisting in the
-	 * the database.
+	 * an id. 
 	 *
 	 * @throws TransactionNestingException if the maximum transaction
 	 * nesting level of the DatabaseConnection has been reached (very
@@ -120,6 +142,9 @@ public:
 	 * do_save_existing_all and do_save_existing_partial. If these
 	 * functions provide the strong guarantee, then so does
 	 * \e save_existing.
+	 *
+	 * @todo Define SavingException, and change implementation so that
+	 * this will be thrown as documented. Also test this.
 	 */
 	void save_existing();
 
@@ -246,13 +271,20 @@ protected:
 	/**
 	 * Sets the id of this instance of PersistentObject to p_id.
 	 *
-	 * @param p_id the value to which you want to set the id of this object.
-	 *
 	 * Note an object that is created anew, that does not already exist
 	 * in the database, should not have an id. By having an id, an object
 	 * is saying "I exist in the database".
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * This method is protected and so it can be called by derived classes.
+	 * However it should not be called lightly. It is intended to be called
+	 * only in constructors, to assign an initial value to the id.
+	 *
+	 * @param p_id the value to which you want to set the id of this object.
+	 *
+	 * @throws std::logic_error if set_id is called on an object for which
+	 * its id has already been initialized.
+	 *
+	 * Exception safety: <em>strong_guarantee</em>.
 	 */
 	void set_id(Id p_id);
 

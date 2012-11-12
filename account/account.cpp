@@ -157,6 +157,7 @@ Account::description()
 void
 Account::set_account_type(AccountType p_account_type)
 {
+	load();
 	m_data->account_type = p_account_type;
 	return;
 }
@@ -164,6 +165,7 @@ Account::set_account_type(AccountType p_account_type)
 void
 Account::set_name(string const& p_name)
 {
+	load();
 	m_data->name = p_name;
 	return;
 }
@@ -171,6 +173,7 @@ Account::set_name(string const& p_name)
 void
 Account::set_commodity_abbreviation(string const& p_commodity_abbreviation)
 {
+	load();
 	m_data->commodity_abbreviation = p_commodity_abbreviation;
 	return;
 }
@@ -178,6 +181,7 @@ Account::set_commodity_abbreviation(string const& p_commodity_abbreviation)
 void
 Account::set_description(string const& p_description)
 {
+	load();
 	m_data->description = p_description;
 	return;
 }
@@ -206,11 +210,10 @@ Account::do_load_all()
 	(	database_connection(),
 		statement.extract<Commodity::Id>(0)
 	);
-	temp.set_account_type
-	(	static_cast<AccountType>(statement.extract<int>(1))
-	);
-	temp.set_description(statement.extract<string>(2));
-	temp.set_commodity_abbreviation(commodity.abbreviation());
+	temp.m_data->account_type =
+		static_cast<AccountType>(statement.extract<int>(1));
+	temp.m_data->description = statement.extract<string>(2);
+	temp.m_data->commodity_abbreviation = commodity.abbreviation();
 	swap(temp);
 	return;
 }
@@ -252,7 +255,7 @@ Account::load_name_knowing_id()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	set_name(statement.extract<string>(0));
+	m_data->name = statement.extract<string>(0);
 	return;
 }
 

@@ -82,6 +82,7 @@ Journal::~Journal()
 void
 Journal::set_whether_actual(bool p_is_actual)
 {
+	load();
 	m_data->is_actual = p_is_actual;
 	return;
 }
@@ -89,6 +90,7 @@ Journal::set_whether_actual(bool p_is_actual)
 void
 Journal::set_comment(string const& p_comment)
 {
+	load();
 	m_data->comment = p_comment;
 	return;
 }
@@ -96,6 +98,7 @@ Journal::set_comment(string const& p_comment)
 void
 Journal::add_entry(shared_ptr<Entry> entry)
 {
+	load();
 	if (has_id())
 	{
 		entry->set_journal_id(id());
@@ -151,22 +154,24 @@ Journal::do_load_all()
 	);
 	statement.bind(":p", id());
 	statement.step();
+	Journal temp(*this);
 	SharedSQLStatement entry_finder
 	(	*database_connection(),
 		"select entry_id from entries where journal_id = :jid"
 	);
 	entry_finder.bind(":jid", id());
-	Journal temp(*this);
 	while (entry_finder.step())
 	{
 		Entry::Id const entr_id = entry_finder.extract<Entry::Id>(0);
 		shared_ptr<Entry> entry
 		(	new Entry(database_connection(), entr_id)
 		);
-		temp.add_entry(entry);
+		assert (has_id());
+		entry->set_journal_id(id());
+		temp.m_data->entries.push_back(entry);
 	}
-	temp.set_whether_actual(static_cast<bool>(statement.extract<int>(0)));
-	temp.set_comment(statement.extract<string>(1));
+	temp.m_data->is_actual = static_cast<bool>(statement.extract<int>(0));
+	temp.m_data->comment = statement.extract<string>(1);
 	swap(temp);	
 	return;
 }

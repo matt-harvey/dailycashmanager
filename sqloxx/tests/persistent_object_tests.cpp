@@ -80,6 +80,14 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_existing)
 	DerivedPO dpo2e(pdbc, 2);
 	CHECK_EQUAL(dpo2e.x(), 0);
 	CHECK_EQUAL(dpo2e.y(), 2.0);
+	DerivedPO dpo2f(pdbc, 2);
+	dpo2f.set_x(5000);
+	dpo2f.save_existing();
+	DerivedPO dpo2g(pdbc, 2);
+	CHECK_EQUAL(dpo2g.x(), 5000);
+	CHECK_EQUAL(dpo2g.y(), 2.0);
+	DerivedPO dpo1b(pdbc, 1);
+	CHECK_THROW(dpo1b.save_existing(), IncompleteObjectException);
 }
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)

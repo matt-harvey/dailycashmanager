@@ -28,6 +28,12 @@ namespace sqloxx
 JEWEL_DERIVED_EXCEPTION(DatabaseException, jewel::Exception);
 
 /**
+ * Exception to be thrown when an attempt is made to save a PersistentObject
+ * to a database, when that object is in an unacceptably incomplete state.
+ */
+JEWEL_DERIVED_EXCEPTION(IncompleteObjectException, DatabaseException);
+
+/**
  * Exception to be thrown when expected database constraints are believed
  * to have been violated, indicating a possibly corrupted database.
  */

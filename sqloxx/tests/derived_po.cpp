@@ -110,8 +110,19 @@ DerivedPO::self_test()
 	DerivedPO dpo6(fixture.pdbc);
 	dpo6.save_new();
 	if (dpo6.id() != 3) ++num_failures;
-	dpo6.set_id(10);
-	if (dpo6.id() != 10) ++num_failures;
+	ok = false;
+	try
+	{
+		dpo6.set_id(10);
+	}
+	catch (logic_error&)
+	{
+		ok = true;
+	}
+	if (ok != true) ++num_failures;
+	DerivedPO dpo6b(fixture.pdbc);
+	dpo6b.set_id(12);
+	if (dpo6b.id() != 12) ++num_failures;
 	
 	// Check has_id()
 	if (!dpo1.has_id()) ++num_failures;
@@ -131,6 +142,7 @@ DerivedPO::y()
 void
 DerivedPO::set_x(int p_x)
 {
+	load();
 	m_x = p_x;
 	return;
 }
@@ -138,6 +150,7 @@ DerivedPO::set_x(int p_x)
 void
 DerivedPO::set_y(double p_y)
 {
+	load();
 	m_y = p_y;
 	return;
 }

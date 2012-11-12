@@ -104,23 +104,26 @@ PersistentObject::save_existing()
 			" that does not correspond with an existing database record."
 		);
 	}
-	while (m_loading_status == loading)
-	{
-		// WARNING This sucks
-	}
-	m_database_connection->begin_transaction();
+	start:
 	switch (m_loading_status)
 	{
 	case loaded:
+		m_database_connection->begin_transaction();
 		do_save_existing_all();
+		m_database_connection->end_transaction();
 		break;
+	case loading:
+		goto start;  // WARNING This sucks
+		assert (false);  // Execution never reaches here.
 	case ghost:
-		do_save_existing_partial();
-		break;
+		throw IncompleteObjectException
+		(	"Attempted to re-save already-persisted object in incomplete "
+			"state."
+		);
+		assert (false);  // Execution never reaches here.
 	default:
-		assert (false);  // Execution can't reach here.
+		assert (false);  // Execution never reaches here.
 	}
-	m_database_connection->end_transaction();
 	return;
 }
 
@@ -175,6 +178,11 @@ PersistentObject::id() const
 void
 PersistentObject::set_id(Id p_id)
 {
+	if (has_id())
+	{
+		throw logic_error("Object already has id.");
+	}
+	assert (!has_id());
 	m_id = p_id;
 	return;
 }

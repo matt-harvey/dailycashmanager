@@ -120,7 +120,7 @@ void Commodity::load_abbreviation_knowing_id()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	set_abbreviation(statement.extract<string>(0));
+	m_data->abbreviation = statement.extract<string>(0);
 	return;
 }
 
@@ -150,17 +150,13 @@ void Commodity::do_load_all()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	temp.set_abbreviation(statement.extract<string>(0));
-	temp.set_name(statement.extract<string>(1));
-	temp.set_description(statement.extract<string>(2));
-	temp.set_precision(statement.extract<int>(3));
-	temp.set_multiplier_to_base
-	(	Decimal
-		(	statement.extract<Decimal::int_type>(4),
-			numeric_cast<Decimal::places_type>
-			(	statement.extract<int>(5)
-			)
-		)
+	temp.m_data->abbreviation = statement.extract<string>(0);
+	temp.m_data->name = statement.extract<string>(1);
+	temp.m_data->description = statement.extract<string>(2);
+	temp.m_data->precision = statement.extract<int>(3);
+	temp.m_data->multiplier_to_base = Decimal
+	(	statement.extract<Decimal::int_type>(4),
+		numeric_cast<Decimal::places_type>(statement.extract<int>(5))
 	);
 	swap(temp);
 	return;
@@ -225,24 +221,28 @@ jewel::Decimal Commodity::multiplier_to_base()
 
 void Commodity::set_abbreviation(std::string const& p_abbreviation)
 {
+	load();
 	m_data->abbreviation = p_abbreviation;
 	return;
 }
 
 void Commodity::set_name(std::string const& p_name)
 {
+	load();
 	m_data->name = p_name;
 	return;
 }
 
 void Commodity::set_description(std::string const& p_description)
 {
+	load();
 	m_data->description = p_description;
 	return;
 }
 
 void Commodity::set_precision(int p_precision)
 {
+	load();
 	m_data->precision = p_precision;
 	return;
 }
@@ -251,6 +251,7 @@ void Commodity::set_multiplier_to_base
 (	jewel::Decimal const& p_multiplier_to_base
 )
 {
+	load();
 	m_data->multiplier_to_base = p_multiplier_to_base;
 	return;
 }

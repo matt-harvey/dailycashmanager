@@ -76,6 +76,7 @@ DraftJournal::~DraftJournal()
 void
 DraftJournal::set_name(string const& p_name)
 {
+	load();
 	m_dj_data->name = p_name;
 	return;
 }
@@ -84,6 +85,7 @@ DraftJournal::set_name(string const& p_name)
 void
 DraftJournal::add_repeater(shared_ptr<Repeater> repeater)
 {
+	load();
 	if (has_id())
 	{
 		repeater->set_journal_id(id());
@@ -134,7 +136,7 @@ DraftJournal::do_load_all()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	temp.set_name(statement.extract<string>(0));
+	temp.m_dj_data->name = statement.extract<string>(0);
 	SharedSQLStatement repeater_finder
 	(	*database_connection(),
 		"select repeater_id from repeaters where journal_id = :p"
@@ -147,7 +149,8 @@ DraftJournal::do_load_all()
 		shared_ptr<Repeater> repeater
 		(	new Repeater(database_connection(), rep_id)
 		);
-		temp.add_repeater(repeater);
+		repeater->set_journal_id(id());
+		temp.m_dj_data->repeaters.push_back(repeater);
 	}
 	swap(temp);
 	return;

@@ -76,6 +76,7 @@ OrdinaryJournal::~OrdinaryJournal()
 void
 OrdinaryJournal::set_date(boost::gregorian::date const& p_date)
 {
+	load();
 	m_date = julian_int(p_date);
 	return;
 }
@@ -118,8 +119,7 @@ OrdinaryJournal::do_load_all()
 	// of loading here MAY depend on m_date being of a native, non-throwing
 	// type.
 	BOOST_STATIC_ASSERT((boost::is_same<DateRep, int>::value));
-	temp.m_date =
-		numeric_cast<DateRep>(statement.extract<boost::int64_t>(0));
+	temp.m_date = numeric_cast<DateRep>(statement.extract<boost::int64_t>(0));
 	swap(temp);
 	return;
 }

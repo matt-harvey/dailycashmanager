@@ -91,6 +91,7 @@ Repeater::~Repeater()
 void
 Repeater::set_interval_type(IntervalType p_interval_type)
 {
+	load();
 	m_data->interval_type = p_interval_type;
 	return;
 }
@@ -99,6 +100,7 @@ Repeater::set_interval_type(IntervalType p_interval_type)
 void
 Repeater::set_interval_units(int p_interval_units)
 {
+	load();
 	m_data->interval_units = p_interval_units;
 	return;
 }
@@ -107,6 +109,7 @@ Repeater::set_interval_units(int p_interval_units)
 void
 Repeater::set_next_date(boost::gregorian::date const& p_next_date)
 {
+	load();
 	m_data->next_date = julian_int(p_next_date);
 	return;
 }
@@ -115,6 +118,7 @@ Repeater::set_next_date(boost::gregorian::date const& p_next_date)
 void
 Repeater::set_journal_id(Journal::Id p_journal_id)
 {
+	load();
 	m_data->journal_id = p_journal_id;
 	return;
 }
@@ -179,13 +183,12 @@ Repeater::do_load_all()
 	);
 	statement.step();
 	Repeater temp(*this);
-	temp.set_interval_type
-	(	static_cast<IntervalType>(statement.extract<int>(0))
-	);
-	temp.set_interval_units(statement.extract<int>(1));	
+	temp.m_data->interval_type =
+		static_cast<IntervalType>(statement.extract<int>(0));
+	temp.m_data->interval_units = statement.extract<int>(1);
 	temp.m_data->next_date =
 		numeric_cast<DateRep>(statement.extract<boost::int64_t>(2));
-	temp.set_journal_id(statement.extract<Journal::Id>(3));
+	temp.m_data->journal_id = statement.extract<Journal::Id>(3);
 	swap(temp);
 	return;
 }
