@@ -12,6 +12,7 @@
  */
 
 
+#include "account.hpp"
 #include "journal.hpp"
 #include "general_typedefs.hpp"
 #include "sqloxx/persistent_object.hpp"
@@ -82,11 +83,9 @@ public:
 	/**
 	 * Set the Account name for the Entry.
 	 *
-	 * @todo Would it be better to store the Account id here?
-	 *
-	 * @todo Should this method throw if there is no Account with this name?
+	 * @todo Should this method throw if there is no Account with this id?
 	 */
-	void set_account_name(std::string const& p_account_name);
+	void set_account_id(Account::Id p_account_id);
 
 	/**
 	 * Set the comment for the Entry
@@ -124,10 +123,18 @@ public:
 	jewel::Decimal amount();
 
 	/**
+	 * @returns id of the Account that this entry effects.
+	 *
+	 * Does not throw.
+	 */
+	Account::Id account_id();
+
+	/**
 	 * @returns name of the Account that this entry effects.
 	 *
-	 * Does not throw, except possibly \c std::bad_alloc in
-	 * extreme circumstances.
+	 * Note this is much less efficient than account_id().
+	 *
+	 * @todo Ascertain and document throwing behaviour.
 	 */
 	std::string account_name();
 	
@@ -153,7 +160,7 @@ private:
 	struct EntryData
 	{
 		boost::optional<Journal::Id> journal_id;
-		boost::optional<std::string> account_name;
+		boost::optional<Account::Id> account_id;
 		boost::optional<std::string> comment;
 		boost::optional<jewel::Decimal> amount;
 	};

@@ -36,11 +36,6 @@ namespace phatbooks
  * stored in a database.
  *
  * Derives from Loki::SmallValueObject<> for faster heap allocation.
- *
- * @todo I should probably load m_name immediately with the id, but then
- * lazy load everything else. Note the m_name is used as an identifier
- * in Entry objects. At the moment I have got m_name as one of the lazy
- * attributes.
  */
 class Account:
 	public sqloxx::PersistentObject
@@ -117,6 +112,8 @@ public:
 
 	/**
 	 * Returns abbreviation of native commodity of this account.
+	 *
+	 * Note this is much less efficient than commodity_id().
 	 */
 	std::string commodity_abbreviation();
 

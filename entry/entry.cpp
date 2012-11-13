@@ -79,10 +79,10 @@ Entry::set_journal_id(Journal::Id p_journal_id)
 
 
 void
-Entry::set_account_name(string const& p_account_name)
+Entry::set_account_id(Account::Id p_account_id)
 {
 	load();
-	m_data->account_name = p_account_name;
+	m_data->account_id = p_account_id;
 	return;
 }
 
@@ -104,12 +104,19 @@ Entry::set_amount(Decimal const& p_amount)
 	return;
 }
 
+Account::Id
+Entry::account_id()
+{
+	load();
+	return value(m_data->account_id);
+}
 
 std::string
 Entry::account_name()
 {
 	load();
-	return value(m_data->account_name);
+	Account account(database_connection(), value(m_data->account_id));
+	return account.name();
 }
 
 
@@ -158,10 +165,10 @@ Entry::do_load()
 	statement.bind(":p", id());
 	statement.step();
 	Account acct(database_connection(), statement.extract<Account::Id>(0));
-	Commodity cmd(database_connection(), acct.commodity_abbreviation());
+	Commodity cmd(database_connection(), acct.commodity_id());
 	Decimal const amt(statement.extract<boost::int64_t>(2), cmd.precision());
 
-	temp.m_data->account_name = acct.name();
+	temp.m_data->account_id = acct.id();
 	temp.m_data->comment = statement.extract<string>(1);
 	temp.m_data->amount = amt;
 	temp.m_data->journal_id = statement.extract<Journal::Id>(3);
@@ -174,10 +181,9 @@ Entry::do_load()
 void
 Entry::process_saving_statement(SharedSQLStatement& statement)
 {
-	Account account(database_connection(), value(m_data->account_name));
 	statement.bind(":journal_id", value(m_data->journal_id));
 	statement.bind(":comment", value(m_data->comment));
-	statement.bind(":account_id", account.id());
+	statement.bind(":account_id", value(m_data->account_id));
 	statement.bind(":amount", m_data->amount->intval());
 	statement.step_final();
 	return;

@@ -291,7 +291,9 @@ void import_from_nap
 		// just a one-off hack, it may be easier just to manipulate the
 		// csv before importing it.
 		bool is_actual = (bud_impact == decimal_zero);
-		draft_entry->set_account_name(account_name);
+		draft_entry->set_account_id
+		(	Account(database_connection, account_name).id()
+		);
 		draft_entry->set_comment(comment);
 		draft_entry->set_amount(is_actual? act_impact: -bud_impact);	
 		shared_ptr<DraftJournal> draft_journal =
@@ -423,7 +425,9 @@ void import_from_nap
 		Decimal act_impact(ordinary_entry_cells[5]);
 		Decimal bud_impact(ordinary_entry_cells[6]);
 		bool is_actual = (bud_impact == decimal_zero);
-		ordinary_entry->set_account_name(account_name);
+		ordinary_entry->set_account_id
+		(	Account(database_connection, account_name).id()
+		);
 		ordinary_entry->set_comment(comment);
 		ordinary_entry->set_amount(is_actual? act_impact: -bud_impact);
 		shared_ptr<OrdinaryJournal> ordinary_journal =

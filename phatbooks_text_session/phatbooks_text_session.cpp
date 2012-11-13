@@ -294,8 +294,6 @@ void PhatbooksTextSession::elicit_commodity()
 		assert (confirmation == "y");
 		commodity.save_new();
 		cout << "Commodity created." << endl;
-		commodity.set_description("Testing...");
-		commodity.save_existing();
 	}
 	return;
 }
@@ -476,16 +474,18 @@ void PhatbooksTextSession::elicit_journal()
 
 	// Get primary entry account
 	cout << "Enter name of " << account_prompt << ": ";
-	primary_entry->set_account_name((elicit_existing_account_name()));
+	primary_entry->set_account_id
+	(	Account(m_database_connection, elicit_existing_account_name()).id()
+	);
 
 	// Get primary entry amount
 	Account primary_entry_account
 	(	m_database_connection,
-		primary_entry->account_name()
+		primary_entry->account_id()
 	);
 	Commodity primary_commodity
 	(	m_database_connection,
-		primary_entry_account.commodity_abbreviation()
+		primary_entry_account.commodity_id()
 	);
 	Decimal primary_entry_amount;
 	for (bool input_is_valid = false; !input_is_valid; )
@@ -536,13 +536,15 @@ void PhatbooksTextSession::elicit_journal()
 
 	// Get other account and comment
 	cout << "Enter name of " << secondary_account_prompt << ": ";
-	secondary_entry->set_account_name(elicit_existing_account_name());
+	secondary_entry->set_account_id
+	(	Account(m_database_connection, elicit_existing_account_name()).id()
+	);
 	// WARNING if secondary account is in a different currency then we need to
 	// deal with this here somehow.
  
 	Account secondary_entry_account
 	(	m_database_connection,
-		secondary_entry->account_name()
+		secondary_entry->account_id()
 	);
 	Commodity secondary_commodity
 	(	m_database_connection,
