@@ -167,7 +167,7 @@ void import_from_nap
 			throw std::runtime_error("Unrecognised account type.");
 		}
 		account.set_name(account_cells[1]);
-		account.set_commodity_abbreviation(aud.abbreviation());
+		account.set_commodity_id(aud.id());
 		account.set_description(account_cells[2]);
 		account.save_new();
 	}

@@ -341,7 +341,8 @@ void PhatbooksTextSession::elicit_account()
 		else
 		{
 			input_is_valid = true;
-			account.set_commodity_abbreviation(input);
+			Commodity commodity(m_database_connection, input);
+			account.set_commodity_id(commodity.id());
 		}
 	}
 

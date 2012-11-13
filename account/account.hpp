@@ -13,6 +13,7 @@
 
 
 #include "general_typedefs.hpp"
+#include "commodity/commodity.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/scoped_ptr.hpp>
@@ -110,6 +111,11 @@ public:
 	std::string name();
 
 	/**
+	 * Returns id of native commodity of this account.
+	 */
+	Commodity::Id commodity_id();
+
+	/**
 	 * Returns abbreviation of native commodity of this account.
 	 */
 	std::string commodity_abbreviation();
@@ -128,9 +134,7 @@ public:
 
 	void set_name(std::string const& p_name);
 
-	void set_commodity_abbreviation
-	(	std::string const& p_commodity_abbreviation
-	);
+	void set_commodity_id(Commodity::Id p_commodity_id);
 
 	void set_description(std::string const& p_description);
 
@@ -168,7 +172,7 @@ private:
 		// such an object being written to the database in an
 		// incomplete state.
 		std::string name;
-		boost::optional<std::string> commodity_abbreviation;
+		boost::optional<Commodity::Id> commodity_id;
 		boost::optional<AccountType> account_type;
 		boost::optional<std::string> description;
 	};
