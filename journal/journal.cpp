@@ -221,7 +221,7 @@ Journal::do_save_existing_journal_base()
 			entry_deleter.bind(":entry_id", entry_id);
 			entry_deleter.step_final();
 			// Note it's OK even if the last entry is deleted. Another
-			// entry will never be reassigned its ID - SQLite makes sure
+			// entry will never be reassigned its id - SQLite makes sure
 			// of that - providing we let SQLite assign all the ids
 			// automatically.
 		}

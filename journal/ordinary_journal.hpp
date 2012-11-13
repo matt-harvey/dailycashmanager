@@ -10,6 +10,7 @@
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 
+
 namespace phatbooks
 {
 
@@ -78,17 +79,7 @@ private:
 
 	void do_load();
 
-	/* WARNING Needs proper definition.
-	 * This method will need to be implemented carefully.
-	 * If Entry
-	 * instances have been removed from m_entries
-	 * since the journal was last saved, this means the corresponding
-	 * entry rows will need to be deleted from the database.
-	 */
-	void do_save_existing()
-	{
-	}
-
+	void do_save_existing();
 	void do_save_new();
 
 	/* Note this function is not redefined here as we want

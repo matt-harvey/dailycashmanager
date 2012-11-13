@@ -81,23 +81,8 @@ private:
 	 */
 	DraftJournal(DraftJournal const& rhs);	
 
-
 	void do_load();
-
-	/* WARNING Needs proper definition.
-	 * This method will need to be implemented carefully.
-	 * If Entry and Repeater
-	 * instances have been removed from m_entries and m_repeaters
-	 * since the journal was last saved, this means the corresponding
-	 * entry and repeater rows will need to be deleted from the database.
-	 * If a removed entry or repeater has the maximum id so far in the
-	 * database for entries or repeaters resp., this could complicate
-	 * things further.
-	 */
-	void do_save_existing()
-	{
-	}
-
+	void do_save_existing();
 	void do_save_new();
 
 	/* Note this function is not redefined here as we want

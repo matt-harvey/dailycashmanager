@@ -143,6 +143,25 @@ OrdinaryJournal::do_save_new()
 	return;
 }
 
+void
+OrdinaryJournal::do_save_existing()
+{
+	// Save the Journal (base) part of the object
+	do_save_existing_journal_base();
+
+	// Save the derived, OrdinaryJournal part of the object
+	SharedSQLStatement updater
+	(	*database_connection(),	
+		"update ordinary_journal_detail set date = :date "
+		"where journal_id = :journal_id"
+	);
+	updater.bind(":date", value(m_date));
+	updater.bind(":journal_id", id());
+	updater.step_final();
+	return;
+}
+
+
 }  // namespace phatbooks
 
 
