@@ -205,5 +205,4 @@ DatabaseConnection::unchecked_end_transaction()
 }
 
 
-
 }  // namespace sqloxx

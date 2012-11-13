@@ -831,15 +831,15 @@ void PhatbooksTextSession::display_all_entry_account_names()
 	     << "without optimisations: " << endl;
 	SharedSQLStatement statement
 	(	*m_database_connection,
-		"select entry_id from entries order by entry_id"
+		"select account_id from entries order by entry_id"
 	);
 	while (statement.step())
 	{
-		Entry entry
+		Account account
 		(	m_database_connection,
-			statement.extract<Entry::Id>(0)
+			statement.extract<Account::Id>(0)
 		);
-		cout << entry.account_name() << endl;
+		cout << account.name() << endl;
 	}
 	cout << "Done!" << endl;
 	return;
