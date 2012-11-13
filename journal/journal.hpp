@@ -163,16 +163,16 @@ protected:
 
 	void do_load_journal_base();
 
-	/* WARNING Needs proper definition.
-	 * This method will need to be implemented carefully.
-	 * If Entry and Repeater
-	 * instances have been removed from m_entries and m_repeaters
-	 * since the journal was last saved, this means the corresponding
-	 * entry and repeater rows will need to be deleted from the database.
+	void do_save_existing_journal_base();
+
+	/**
+	 * @throws std::logic_error if ever called. It has a dummy
+	 * implementation in order to enable base instances of Journal to be
+	 * constructed (as it's a pure virtual method of
+	 * sqloxx::PersistentObject). However it is not intended ever to be
+	 * called.
 	 */
-	virtual void do_save_existing()
-	{
-	}
+	virtual void do_save_existing();
 
 	/**
 	 * Copy constructor - deliberately protected.

@@ -46,7 +46,6 @@ void Entry::setup_tables(DatabaseConnection& dbc)
 	return;
 }
 
-
 Entry::Entry(shared_ptr<DatabaseConnection> p_database_connection):
 	PersistentObject(p_database_connection),
 	m_data(new EntryData)

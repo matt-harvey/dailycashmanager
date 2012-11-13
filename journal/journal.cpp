@@ -24,6 +24,7 @@
 #include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/unordered_set.hpp>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -33,6 +34,7 @@ using sqloxx::PersistentObject;
 using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
 using boost::shared_ptr;
+using boost::unordered_set;
 using jewel::Decimal;
 using jewel::value;
 using std::logic_error;
@@ -153,6 +155,81 @@ Journal::do_load()
 	return;
 }
 
+
+Journal::Id
+Journal::do_save_new_journal_base()
+{
+	Id const journal_id = prospective_key();
+	SharedSQLStatement statement
+	(	*database_connection(),
+		"insert into journals(is_actual, comment) "
+		"values(:is_actual, :comment)"
+	);
+	statement.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
+	statement.bind(":comment", value(m_data->comment));
+	statement.step_final();
+	typedef vector< shared_ptr<Entry> >::iterator EntryIter;
+	EntryIter const endpoint = m_data->entries.end();
+	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
+	{
+		(*it)->set_journal_id(journal_id);
+		(*it)->save_new();
+	}
+	return journal_id;
+}
+
+void
+Journal::do_save_existing_journal_base()
+{
+	SharedSQLStatement updater
+	(	*database_connection(),
+		"update journals set is_actual = :is_actual, comment = :comment "
+		"where journal_id = :id"
+	);
+	updater.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
+	updater.bind(":comment", value(m_data->comment));
+	updater.bind(":id", id());
+	updater.step_final();
+	typedef vector< shared_ptr<Entry> >::iterator EntryIter;
+	EntryIter const endpoint = m_data->entries.end();
+	unordered_set<Entry::Id> saved_entry_ids;
+	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
+	{
+		(*it)->save();
+		saved_entry_ids.insert((*it)->id());
+	}
+	// Remove any entries in the database with this journal's journal_id, that
+	// no longer exist in the in-memory journal
+	SharedSQLStatement entry_finder
+	(	*database_connection(),
+		"select entry_id from entries where journal_id = :journal_id"
+	);
+	entry_finder.bind(":journal_id", id());
+	unordered_set<Entry::Id>::const_iterator const saved_entries_end =
+		saved_entry_ids.end();
+	while (entry_finder.step())
+	{
+		Entry::Id const entry_id = entry_finder.extract<Entry::Id>(0);
+		if (saved_entry_ids.find(entry_id) == saved_entries_end)
+		{
+			// This entry is in the database but no longer in the in-memory
+			// journal, so should be deleted.
+			SharedSQLStatement entry_deleter
+			(	*database_connection(),
+				"delete from entries where entry_id = :entry_id"
+			);
+			entry_deleter.bind(":entry_id", entry_id);
+			entry_deleter.step_final();
+			// Note it's OK even if the last entry is deleted. Another
+			// entry will never be reassigned its ID - SQLite makes sure
+			// of that - providing we let SQLite assign all the ids
+			// automatically.
+		}
+	}
+	return;
+}
+
+
 void
 Journal::do_load_journal_base()
 {
@@ -183,29 +260,12 @@ Journal::do_load_journal_base()
 	return;
 }
 
-
-Journal::Id
-Journal::do_save_new_journal_base()
+void
+Journal::do_save_existing()
 {
-	Id const journal_id = prospective_key();
-	SharedSQLStatement statement
-	(	*database_connection(),
-		"insert into journals(is_actual, comment) "
-		"values(:is_actual, :comment)"
-	);
-	statement.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
-	statement.bind(":comment", value(m_data->comment));
-	statement.step_final();
-	typedef vector< shared_ptr<Entry> >::iterator EntryIter;
-	EntryIter const endpoint = m_data->entries.end();
-	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
-	{
-		(*it)->set_journal_id(journal_id);
-		(*it)->save_new();
-	}
-	return journal_id;
+	throw logic_error("Journal::do_save_existing() should never be called.");
+	return;
 }
-
 
 void
 Journal::do_save_new()
