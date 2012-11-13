@@ -40,6 +40,13 @@
 #include <map>
 #include <string>
 
+// WARNING play code
+#include "sqloxx/shared_sql_statement.hpp"
+#include <vector>
+using sqloxx::SharedSQLStatement;
+using std::vector;
+// end play code
+
 using consolixx::get_date_from_user;
 using consolixx::get_user_input;
 using consolixx::get_constrained_user_input;
@@ -114,6 +121,25 @@ PhatbooksTextSession::PhatbooksTextSession():
 		)
 	);
 	m_main_menu->add_item(import_from_nap_item);
+
+	// WARNING play code
+	shared_ptr<MenuItem> display_entry_account_names_selection
+	(	new MenuItem
+		(	"Display the account name of each entry",
+			bind(&PhatbooksTextSession::display_all_entry_account_names, this),
+			true
+		)
+	);
+	m_main_menu->add_item(display_entry_account_names_selection);
+	shared_ptr<MenuItem> display_journal_summaries_selection
+	(	new MenuItem
+		(	"Display a summary of each journal",
+			bind(&PhatbooksTextSession::display_journal_summaries, this),
+			true
+		)
+	);
+	m_main_menu->add_item(display_journal_summaries_selection);
+	// WARNING end play code
 
 	shared_ptr<MenuItem> quit_item
 	(	new MenuItem
@@ -420,6 +446,8 @@ void PhatbooksTextSession::elicit_journal()
 	(	new MenuItem("Transfer between budgeting envelopes")
 	);
 	transaction_menu.add_item(envelope_transaction_selection);
+	
+	
 	transaction_menu.present_to_user();
 	shared_ptr<MenuItem const> const transaction_type =
 		transaction_menu.last_choice();
@@ -796,6 +824,59 @@ void PhatbooksTextSession::import_from_nap()
 	return;
 }
 
+// WARNING play code
+void PhatbooksTextSession::display_all_entry_account_names()
+{
+	cout << "For each entry, here's its account name, done crudely "
+	     << "without optimisations: " << endl;
+	SharedSQLStatement statement
+	(	*m_database_connection,
+		"select entry_id from entries order by entry_id"
+	);
+	while (statement.step())
+	{
+		Entry entry
+		(	m_database_connection,
+			statement.extract<Entry::Id>(0)
+		);
+		cout << entry.account_name() << endl;
+	}
+	cout << "Done!" << endl;
+	return;
+}
+
+void PhatbooksTextSession::display_journal_summaries()
+{
+	cout << "For each ORDINARY journal, here's a summary of what's in it, "
+	     << "loaded in a really crude and inefficient way."
+	     << endl;
+	SharedSQLStatement statement
+	(	*m_database_connection,
+		"select journal_id from ordinary_journal_detail join "
+		"journals using(journal_id) order by date"
+	);
+	while (statement.step())
+	{
+		OrdinaryJournal journal
+		(	m_database_connection,
+			statement.extract<Journal::Id>(0)
+		);
+		cout << endl << journal.date() << endl;
+		typedef vector< shared_ptr<Entry> > EntryVec;
+		EntryVec::const_iterator it = journal.entries().begin();
+		EntryVec::const_iterator endpoint = journal.entries().end();
+		for ( ; it != endpoint; ++it)
+		{
+			cout << (*it)->account_name() << "\t"
+			     << (*it)->comment() << "\t"
+			     << (*it)->amount() << endl;
+		}
+		cout << endl;
+	}
+	cout << "Done!" << endl;
+	return;
+}
+// WARNING end play code
 
 void PhatbooksTextSession::wrap_up()
 {

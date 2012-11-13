@@ -200,6 +200,9 @@ private:
 	void display_commodities_menu();
 	void display_accounts_menu();
 	void display_utilities_menu();
+
+	void display_all_entry_account_names();  // WARNING play code
+	void display_journal_summaries();  // WARNING play code
 	
 	void wrap_up();
 
