@@ -1,6 +1,9 @@
 #ifndef GUARD_sql_statement_hpp
 #define GUARD_sql_statement_hpp
 
+// Hide from Doxygen
+/// @cond
+
 /** \file sql_statement.hpp
  *
  * \brief Header file pertaining to SQLStatement class.
@@ -334,4 +337,9 @@ SQLStatement::unlock()
 }  // namespace detail
 }  // namespace sqloxx
 
+
+/// @endcond
+// End hiding from Doxygen
+
 #endif  // GUARD_sql_statement.hpp
+

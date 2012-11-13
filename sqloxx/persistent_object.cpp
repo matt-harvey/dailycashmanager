@@ -100,6 +100,21 @@ PersistentObject::load()
 
 
 void
+PersistentObject::save()
+{
+	if (has_id())
+	{
+		save_existing();
+	}
+	else
+	{
+		save_new();
+	}
+	return;
+}
+
+
+void
 PersistentObject::save_existing()
 {
 	if (!has_id())

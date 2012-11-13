@@ -1,6 +1,9 @@
 #ifndef GUARD_atomicity_test_hpp
 #define GUARD_atomicity_test_hpp
 
+// Hide from Doxygen
+/// @cond
+
 #include "sqloxx/shared_sql_statement.hpp"
 #include <string>
 
@@ -44,7 +47,7 @@ inspect_database_for_atomicity(DatabaseConnection& dbc);
 }  // namespace tests
 }  // namespace sqloxx
 
-
-
+/// @endcond
+// End hiding from Doxygen
 
 #endif  // GUARD_atomicity_test_hpp

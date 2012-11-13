@@ -62,14 +62,6 @@ namespace sqloxx
  *
  * @todo If Sqloxx is ever moved to a separate library, then the documentation
  * for PersistentObject should include code for an exemplary derived class.
- *
- * @todo Make save_new() and save_existing() private. Then provide a single
- * method called save() that calls save_existing() if has_id() == true,
- * otherwise calls save_new(). This will facilitate saving objects where
- * the client does not know whether the object in question has an id or
- * not (without having to expose has_id() as a public method). It will
- * also reduce the number of public methods by 1, and will remove a class
- * of exception (std::logic_error) from the interface.
  */
 class PersistentObject
 {
@@ -121,6 +113,16 @@ public:
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	virtual ~PersistentObject();
+
+	/**
+	 * If the object has an id, this calls save_existing(). Otherwise, it
+	 * calls save_new().
+	 *
+	 * For details of exceptions and exception safety, see the documentation
+	 * for save_existing() and save_new(). But note that unlike those two
+	 * functions, it is impossible for save() to throw std::logic_error.
+	 */
+	void save();
 
 	/**
 	 * Saves the state of the in-memory object to the

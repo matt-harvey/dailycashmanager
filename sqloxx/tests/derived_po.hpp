@@ -1,3 +1,9 @@
+#ifndef GUARD_derived_po_hpp
+#define GUARD_derived_po_hpp
+
+// Hide from Doxygen
+/// @cond
+
 #include "sqloxx/persistent_object.hpp"
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -44,3 +50,7 @@ private:
 }  // namespace tests
 }  // namespace sqloxx
 
+/// @endcond
+// End hiding from Doxygen
+
+#endif  // GUARD_derived_po_hpp

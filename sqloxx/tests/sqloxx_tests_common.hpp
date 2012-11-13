@@ -1,6 +1,10 @@
 #ifndef GUARD_sqloxx_tests_common_hpp
 #define GUARD_sqloxx_tests_common_hpp
 
+// Hide from Doxygen
+/// @cond
+
+
 /**
  * @file sqloxx_tests_common.hpp
  *
@@ -12,6 +16,7 @@
 #include <unittest++/UnitTest++.h>
 #include <boost/filesystem.hpp>
 #include <iostream>
+
 
 namespace sqloxx
 {
@@ -66,5 +71,8 @@ struct DerivedPOFixture
 
 }  // namespace tests
 }  // namespace sqloxx
+
+/// @endcond
+// End hiding from Doxygen
 
 #endif  // GUARD_sqloxx_tests_common_hpp

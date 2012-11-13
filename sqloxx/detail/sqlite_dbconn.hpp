@@ -1,6 +1,9 @@
 #ifndef GUARD_sqlite_dbconn_hpp
 #define GUARD_sqlite_dbconn_hpp
 
+// Hide from Doxygen
+/// @cond
+
 /** \file sqlite_dbconn.hpp
  *
  * \brief Header file pertaining to SQLiteDBConn class.
@@ -43,7 +46,6 @@
 #include <limits>
 #include <string>
 #include <vector>
-
 
 
 namespace sqloxx
@@ -172,5 +174,9 @@ private:
 
 }  // namespace detail
 }  // namespace sqloxx
+
+
+/// @endcond
+// End hiding from Doxygen
 
 #endif  // GUARD_sqlite_dbconn_hpp
