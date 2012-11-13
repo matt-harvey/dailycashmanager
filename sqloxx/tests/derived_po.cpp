@@ -173,8 +173,8 @@ DerivedPO::do_load()
 	int temp_x = selector.extract<int>(0);
 	double temp_y = selector.extract<double>(1);
 	selector.step_final();
-	set_x(temp_x);
-	set_y(temp_y);
+	m_x = temp_x;
+	m_y = temp_y;
 }
 
 void

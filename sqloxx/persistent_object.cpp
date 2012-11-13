@@ -1,12 +1,15 @@
 #include "persistent_object.hpp"
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/debug_log.hpp>
 #include <cassert>
+#include <iostream>  // For debug logging
 #include <stdexcept>
 #include <string>
 
 using boost::optional;
 using boost::shared_ptr;
+using std::endl;  // For debug logging
 using std::logic_error;
 
 namespace sqloxx
@@ -94,7 +97,6 @@ PersistentObject::load()
 		}
 		m_loading_status = loaded;
 	}
-	assert (m_loading_status == loaded);
 	return;
 }
 
@@ -125,7 +127,6 @@ PersistentObject::save_existing()
 		);
 	}
 	load();
-	assert (m_loading_status == loaded);
 	m_database_connection->begin_transaction();
 	do_save_existing();
 	m_database_connection->end_transaction();
