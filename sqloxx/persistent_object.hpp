@@ -31,7 +31,7 @@ namespace sqloxx
  * declared in that class, can be "lazy". This means that they are not
  * initialized in the derived object's constructor, but are rather only
  * initialized at a later time via a call to load(), which in turn calls
- * the virtual method do_load (which needs to be defined in the
+ * the virtual method do_load() (which needs to be defined in the
  * derived class).
  *
  * In the derived class, implementations of getters
@@ -51,6 +51,29 @@ namespace sqloxx
  * an instance. This avoids the complications described above associated
  * with lazy loading, while giving up the potential runtime efficiencies
  * that lazy loading can provide.
+ * 
+ * The following virtual functions are pure and so need definitions
+ * provided in the derived class:
+ *
+ * <b>virtual std::string do_get_table_name() const = 0;</b>\n
+ * Should return name of table in which instances of the derived class
+ * are persisted in the database.
+ *
+ * <b>virtual void do_load() = 0;</b>\n
+ * See documentation of load() function.
+ *
+ * <b>virtual void do_save_existing() = 0;</b>\n
+ * See documentation for save_existing() function.
+ *
+ * <b>virtual void do_save_new() = 0;</b>\n
+ * See documentation for save_new() function.
+ *
+ * In addition, the following function is provided with a default
+ * implementation by PersistentObject, but may be redefined in the
+ * derived class:
+ *
+ * <b>virtual Id do_calculate_prospecitve_key() const;</b>\n
+ * See documentation for prospective_key() function.
  *
  * @todo Provide for atomic saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
@@ -129,7 +152,7 @@ public:
 	 * database, overwriting the data in the database in the
 	 * event of any conflict with the existing persisted data
 	 * for this id. This is done by calling pure virtual function
-	 * do_save_existing, which must be defined in the derived class.
+	 * do_save_existing(), which must be defined in the derived class.
 	 *
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to the begin_transaction and end_transaction
@@ -159,7 +182,7 @@ public:
 	 *
 	 * Other exceptions that may be thrown depend on the derived
 	 * class's implementation
-	 * of do_save_existing.
+	 * of do_save_existing().
 	 *
 	 * Exception safety: depends on the derived class's implementation
 	 * of do_save_existing(). In implementing this method, the derived
@@ -180,7 +203,7 @@ public:
 	 *
 	 * In the body of this function, a call is made to the pure virtual
 	 * function
-	 * do_save_new, which must be defined in the derived
+	 * do_save_new(), which must be defined in the derived
 	 * class. (But note that the base class save_new takes care of assigning
 	 * the id and also wraps the save operation as a SQL transaction by
 	 * calling the begin_transaction and end_transaction methods of the
@@ -224,20 +247,21 @@ public:
 	 */
 	Id id() const;
 
-
 protected:
 
 	/**
 	 * Calls the derived class's implementation
-	 * of do_load, if and only if the object is not already
-	 * loaded. If the object does not have an id,
-	 * then this function does nothing.
+	 * of do_load(), if and only if the object is not already
+	 * loaded. If the object is already loaded, it does nothing.
+	 * Also if the object does not have an id,
+	 * then this function does nothing, since there would be nothing
+	 * to load.
 	 *
-	 * In defining \e do_load, the derived class should throw an instance
-	 * of std::exception (may be an instance of an exception class derived
-	 * therefrom) in the event that the load fails. If this
-	 * is adhered to, and do_load is implemented with the strong
-	 * exception-safety guarantee, and do_load does not perform any
+	 * In defining do_load(), the derived class should throw an instance
+	 * of std::exception (which may be an instance of any exception class
+	 * derived therefrom) in the event that the load fails. If this
+	 * is adhered to, and do_load() is implemented with the strong
+	 * exception-safety guarantee, and do_load() does not perform any
 	 * write operations on the database, or have other side-effects, then the
 	 * \e load function will itself provide the strong exception safety
 	 * guarantee.
@@ -248,12 +272,12 @@ protected:
 	 * base \e load method.
 	 *
 	 * The following exceptions may be thrown regardless of how
-	 * do_load is defined:
+	 * do_load() is defined:
 	 *
 	 * @throws TransactionNestingException in the event that the maximum
 	 * level of transaction nesting for the database connection has been
 	 * reached. (This is extremely unlikely.) If this occurs \e before
-	 * do_load is entered, the object will be as it was before the
+	 * do_load() is entered, the object will be as it was before the
 	 * function was called.
 	 * 
 	 * @throws InvalidConnection in the event that the database connection is
@@ -261,7 +285,7 @@ protected:
 	 * the object will be as it was before this function was called.
 	 *
 	 * Exception safety: depends on how the derived class defines \e
-	 * do_load. See above.
+	 * do_load(). See above.
 	 */
 	void load();
 
@@ -327,24 +351,11 @@ protected:
 	 *
 	 * Apart from \e std::logic_error as just described, the exception
 	 * throwing behaviour and exception safety of this function depend on
-	 * those of the function PersistentObject::do_calculate_prospective_key.
-	 */
-	Id prospective_key() const;
-
-	/**
-	 * @returns \e true if this instance of PersistentObject has
-	 * an valid id; otherwise returns \e false.
+	 * those of the function do_calculate_prospective_key().
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	bool has_id() const;
-
-	/**
-	 * <em>The documentation for this function refers only to the
-	 * default definition provided by PersistentObject.</em>
-	 *
-	 * Provides an implementation for the public function prospective_key.
-	 * Should not be called by any functions other than prospective_key.
+	 * <b>If the default implementation of do_calculate_prospective_key() is
+	 * retained, then the following exceptions may be thrown, in addition
+	 * to std::logic_error:</b>
 	 *
 	 * @throws sqloxx::TableSizeException if the greatest primary key value
 	 * already in the table (i.e. the table into which this instance of
@@ -364,10 +375,37 @@ protected:
 	 * on the type of error, e.g. InvalidConnection will be thrown
 	 * in the event of an invalid database connection.
 	 *
-	 * Exception safety: <em>strong guarantee</em>, (providing the virtual
-	 * function
-	 * do_get_table_name does nothing odd but simply returns a std::string
-	 * as would be expected).
+	 * Exception safety: the default implementation offers the
+	 * <em>strong guarantee</em> - providing the virtual
+	 * function do_get_table_name does nothing odd but simply returns a
+	 * std::string as would be expected.
+	 */
+	Id prospective_key() const;
+
+	/**
+	 * @returns \e true if this instance of PersistentObject has
+	 * an valid id; otherwise returns \e false.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	bool has_id() const;
+
+private:
+
+	/**
+	 * This function should be defined in the derived class to return the
+	 * name of the table in which instances of the derived class are stored
+	 * in the database. This function is in turn called by the default
+	 * implementation of \e do_calculate_prospective_key, which is in turn
+	 * called by \e save_new.
+	 *
+	 * Exception safety: <em>depends on function definition provided by
+	 * derived class</em>.
+	 */
+	virtual std::string do_get_table_name() const = 0;
+
+	/**
+	 * Provides implementation for the public function prospective_key.
 	 */
 	virtual Id do_calculate_prospective_key() const;
 
@@ -394,21 +432,6 @@ protected:
 	 * derived class</em>.
 	 */
 	virtual void do_save_new() = 0;
-
-	/**
-	 * This function should be defined in the derived class to return the
-	 * name of the table in which instances of the derived class are stored
-	 * in the database. This function is in turn called by the default
-	 * implementation of \e do_calculate_prospective_key, which is in turn
-	 * called by \e save_new.
-	 *
-	 * Exception safety: <em>depends on function definition provided by
-	 * derived class</em>.
-	 */
-	virtual std::string do_get_table_name() const = 0;
-
-
-private:
 
 	/**
 	 * Clears the loading status back to \e ghost.

@@ -127,7 +127,7 @@ DraftJournal::do_load()
 	DraftJournal temp(*this);
 	
 	// Load the base part of temp.
-	temp.Journal::do_load();
+	temp.do_load_journal_base();
 
 	// Load the derived, DraftJournal part of the temp.
 	SharedSQLStatement statement

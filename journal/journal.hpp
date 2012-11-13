@@ -161,12 +161,7 @@ protected:
 	 */
 	Id do_save_new_journal_base();
 
-	/**
-	 * WARNING There should be a way of stopping a Journal that is not
-	 * specifically either a DraftJournal or an OrdinaryJournal from
-	 * being loaded from the database.
-	 */
-	virtual void do_load();
+	void do_load_journal_base();
 
 	/* WARNING Needs proper definition.
 	 * This method will need to be implemented carefully.
@@ -186,9 +181,19 @@ protected:
 
 private:
 
-	/* WARNING There should be a way of stopping a Journal that is not
-	 * specifically either a DraftJournal or an OrdinaryJournal from
-	 * being saved to the database.
+	/**
+	 * @throws std::logic_error whenever called. This method
+	 * should never be called. It is provided with a dummy
+	 * implementation simply to allow Journal objects to be
+	 * instantiated.
+	 */
+	virtual void do_load();
+
+	/**
+	 * @throws std::logic_error whenever called. This method
+	 * should never be called. It is provided with a dummy
+	 * implementation simply to allow Journal objects to be
+	 * instantiated.
 	 */
 	virtual void do_save_new();
 

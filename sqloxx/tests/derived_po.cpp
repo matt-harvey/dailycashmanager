@@ -94,7 +94,6 @@ DerivedPO::self_test()
 	dpo5.set_x(-100);
 	dpo5.set_y(982734);
 	if (dpo5.prospective_key() != 3) ++num_failures;
-	if (dpo5.do_calculate_prospective_key() != 3) ++num_failures;
 	bool ok = false;
 	try
 	{

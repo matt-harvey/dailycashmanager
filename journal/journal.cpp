@@ -24,6 +24,7 @@
 #include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -34,6 +35,7 @@ using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::Decimal;
 using jewel::value;
+using std::logic_error;
 using std::string;
 using std::vector;
 
@@ -144,9 +146,15 @@ Journal::swap(Journal& rhs)
 	return;
 }
 
-
 void
 Journal::do_load()
+{
+	throw logic_error("Journal::do_load() should never be called!");
+	return;
+}
+
+void
+Journal::do_load_journal_base()
 {
 	SharedSQLStatement statement
 	(	*database_connection(),
@@ -202,7 +210,7 @@ Journal::do_save_new_journal_base()
 void
 Journal::do_save_new()
 {
-	do_save_new_journal_base();
+	throw logic_error("Journal::do_save_new() should never be called!");
 	return;
 }
 	
