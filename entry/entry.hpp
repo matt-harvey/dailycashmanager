@@ -30,6 +30,8 @@ namespace sqloxx
 namespace phatbooks
 {
 
+class PhatbooksDatabaseConnection;
+
 /**
  * Class representing an accounting entry, i.e. a single line in an account.
  *
@@ -38,18 +40,19 @@ namespace phatbooks
  * Account changes whilst there are "live" Entry objects in memory?
  */
 class Entry:
-	public sqloxx::PersistentObject<Entry>
+	public sqloxx::PersistentObject<Entry, PhatbooksDatabaseConnection>
 {
 public:
 
-	typedef sqloxx::PersistentObject<Entry> PersistentObject;
+	typedef sqloxx::PersistentObject<Entry, PhatbooksDatabaseConnection>
+		PersistentObject;
 	typedef sqloxx::Id Id;
 
 	/**
 	 * Sets up tables in the database required for the persistence of
 	 * Entry objects.
 	 */
-	static void setup_tables(sqloxx::DatabaseConnection& dbc);
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 	
 	/**
 	 * Initialize a "raw" entry, that will not yet correspond to any
@@ -58,14 +61,14 @@ public:
 	 */
 	explicit
 	Entry
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 	);
 
 	/**
 	 * Get an Entry by id from the database.
 	 */
 	Entry
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 		Id p_id
 	);
 

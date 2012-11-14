@@ -10,7 +10,7 @@
 
 #include "account.hpp"
 #include "commodity.hpp"
-#include "sqloxx/database_connection.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/optional.hpp>
@@ -21,7 +21,6 @@
 
 using boost::shared_ptr;
 using jewel::value;
-using sqloxx::DatabaseConnection;
 using sqloxx::SharedSQLStatement;
 using std::string;
 using std::vector;
@@ -50,7 +49,7 @@ Account::account_type_names()
 
 
 void
-Account::setup_tables(DatabaseConnection& dbc)
+Account::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table account_types(account_type_id integer primary key "
@@ -81,7 +80,7 @@ Account::setup_tables(DatabaseConnection& dbc)
 
 
 Account::Account
-(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 ):
 	PersistentObject(p_database_connection),
 	m_data(new AccountData)
@@ -90,7 +89,7 @@ Account::Account
 
 
 Account::Account
-(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	Id p_id
 ):
 	PersistentObject(p_database_connection, p_id),
@@ -101,7 +100,7 @@ Account::Account
 
 
 Account::Account
-(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	std::string const& p_name
 ):
 	PersistentObject(p_database_connection),

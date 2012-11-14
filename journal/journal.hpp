@@ -12,7 +12,7 @@
  */
 
 
-#include "sqloxx/database_connection.hpp"
+
 #include "sqloxx/persistent_object.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
@@ -26,6 +26,7 @@ namespace phatbooks
 {
 
 class Entry;
+class PhatbooksDatabaseConnection;
 
 /**
  * Class to represent accounting journals.
@@ -51,18 +52,19 @@ class Entry;
  * food represents a budget transaction.
  */
 class Journal:
-	public sqloxx::PersistentObject<Journal>
+	public sqloxx::PersistentObject<Journal, PhatbooksDatabaseConnection>
 {
 public:
 
-	typedef sqloxx::PersistentObject<Journal> PersistentObject;
+	typedef sqloxx::PersistentObject<Journal, PhatbooksDatabaseConnection>
+		PersistentObject;
 	typedef sqloxx::Id Id;
 
 	/**
 	 * Sets up tables in the database required for the persistence of
 	 * Journal objects.
 	 */
-	static void setup_tables(sqloxx::DatabaseConnection& dbc);
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
 	 * Initialize a "raw" Journal, that will not yet correspond to any
@@ -70,14 +72,14 @@ public:
 	 */
 	explicit
 	Journal
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 	);
 
 	/**
 	 * Get a Journal by id from the database.
 	 */
 	Journal
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 		Id p_id
 	);
 

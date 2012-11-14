@@ -52,18 +52,19 @@ namespace phatbooks
  * and inspects them all and fires those that are due.
  */
 class Repeater:
-	public sqloxx::PersistentObject<Repeater>
+	public sqloxx::PersistentObject<Repeater, PhatbooksDatabaseConnection>
 {
 public:
 
-	typedef sqloxx::PersistentObject<Repeater> PersistentObject;
+	typedef sqloxx::PersistentObject<Repeater, PhatbooksDatabaseConnection>
+		PersistentObject;
 	typedef sqloxx::Id Id;
 
 	/**
 	 * Sets up tables in the database required for the persistence
 	 * of Repeater objects.
 	 */
-	static void setup_tables(sqloxx::DatabaseConnection& dbc);
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
 	 * Initialize a "raw" Repeater, that will not yet correspond to any
@@ -71,14 +72,14 @@ public:
 	 */
 	explicit
 	Repeater
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 	);
 
 	/**
 	 * Get a Repeater by id from the database.
 	 */
 	Repeater
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 		Id p_id
 	);
 

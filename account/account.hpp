@@ -14,7 +14,6 @@
 
 #include "sqloxx/persistent_object.hpp"
 #include "commodity/commodity.hpp"
-#include "sqloxx/database_connection.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <algorithm>
 #include <string>
@@ -30,16 +29,19 @@ namespace sqloxx
 namespace phatbooks
 {
 
+class PhatbooksDatabaseConnection;
+
 /**
  * Represents an Account object that is "live" in memory, rather than
  * stored in a database.
  */
 class Account:
-	public sqloxx::PersistentObject<Account>
+	public sqloxx::PersistentObject<Account, PhatbooksDatabaseConnection>
 {
 public:
 
-	typedef sqloxx::PersistentObject<Account> PersistentObject;
+	typedef sqloxx::PersistentObject<Account, PhatbooksDatabaseConnection>
+		PersistentObject;
 	typedef sqloxx::Id Id;
 
 	enum AccountType
@@ -66,7 +68,7 @@ public:
 	 * Sets up tables in the database required for the persistence of
 	 * Account objects.
 	 */
-	static void setup_tables(sqloxx::DatabaseConnection& dbc);
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
 	 * Initialize a "draft" account, that will not correspond to any
@@ -74,14 +76,14 @@ public:
 	 */
 	explicit
 	Account
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 	);
 
 	/**
 	 * Get an Account by id from database.
 	 */
 	Account
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 		Id p_id
 	);
 
@@ -89,7 +91,7 @@ public:
 	 * Get an Account by name from the database.
 	 */
 	Account
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 		std::string const& p_name
 	);
 

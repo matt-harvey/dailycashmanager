@@ -16,7 +16,6 @@
 #include <jewel/decimal.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/optional.hpp>
-#include <sqloxx/database_connection.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <string>
 
@@ -30,6 +29,8 @@ namespace sqloxx
 namespace phatbooks
 {
 
+class PhatbooksDatabaseConnection;
+
 /**
  * Class representing commodities, where a commodity is anything of
  * value that can be counted in undifferentiated units, e.g. a particular
@@ -41,19 +42,20 @@ namespace phatbooks
  * @todo Are copy constructor and assignment operator exception-safe?
  */
 class Commodity:
-	public sqloxx::PersistentObject<Commodity>
+	public sqloxx::PersistentObject<Commodity, PhatbooksDatabaseConnection>
 {
 
 public:
 
-	typedef sqloxx::PersistentObject<Commodity> PersistentObject;
+	typedef sqloxx::PersistentObject<Commodity, PhatbooksDatabaseConnection>
+		PersistentObject;
 	typedef sqloxx::Id Id;
 
 	/**
 	 * Sets up tables required in the database for the persistence
 	 * of Commodity objects.
 	 */
-	static void setup_tables(sqloxx::DatabaseConnection& dbc);
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
 	 * Initialize a "draft" commodity, that will not correspond to
@@ -61,14 +63,14 @@ public:
 	 */
 	explicit
 	Commodity
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 	);
 
 	/**
 	 * Get a Commodity by id from database.
 	 */
 	Commodity
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	 	Id p_id
 	);
 
@@ -76,7 +78,7 @@ public:
 	 * Get a Commodity by abbreviation from database
 	 */
 	Commodity
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 		std::string const& p_abbreviation
 	);
 

@@ -1,6 +1,6 @@
 #include "draft_journal.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
-#include "sqloxx/database_connection.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
@@ -10,7 +10,6 @@
 #include <string>
 #include <vector>
 
-using sqloxx::DatabaseConnection;
 using sqloxx::SharedSQLStatement;
 using boost::shared_ptr;
 using boost::unordered_set;
@@ -25,7 +24,7 @@ namespace phatbooks
 {
 
 void
-DraftJournal::setup_tables(DatabaseConnection& dbc)
+DraftJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table draft_journal_detail"
@@ -39,7 +38,7 @@ DraftJournal::setup_tables(DatabaseConnection& dbc)
 
 
 DraftJournal::DraftJournal
-(	shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+(	shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 ):
 	Journal(p_database_connection),
 	m_dj_data(new DraftJournalData)
@@ -48,7 +47,7 @@ DraftJournal::DraftJournal
 
 
 DraftJournal::DraftJournal
-(	shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+(	shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	Id p_id
 ):
 	Journal(p_database_connection, p_id),

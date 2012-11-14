@@ -153,6 +153,47 @@ PhatbooksDatabaseConnection::setup()
 	return;
 }
 
+
+
+
+sqloxx::IdentityMap<Account>&
+PhatbooksDatabaseConnection::account_map()
+{
+	return m_account_map;
+}
+
+sqloxx::IdentityMap<Commodity>&
+PhatbooksDatabaseConnection::commodity_map()
+{
+	return m_commodity_map;
+}
+
+sqloxx::IdentityMap<Entry>&
+PhatbooksDatabaseConnection::entry_map()
+{
+	return m_entry_map;
+}
+
+sqloxx::IdentityMap<Journal>&
+PhatbooksDatabaseConnection::journal_map()
+{
+	return m_journal_map;
+}
+
+sqloxx::IdentityMap<Repeater>&
+PhatbooksDatabaseConnection::repeater_map()
+{
+	return m_repeater_map;
+}
+
+
+
+
+
+
+
+
+
 namespace
 {
 	string const setup_flag = "setup_flag_996149162";

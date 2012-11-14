@@ -143,7 +143,7 @@ DatabaseConnectionFixture::~DatabaseConnectionFixture()
 
 DerivedPOFixture::DerivedPOFixture():
 	filepath("Testfile_dpof"),
-	pdbc(new DatabaseConnection)
+	pdbc(new DerivedDatabaseConnection)
 {
 	if (filesystem::exists(filesystem::status(filepath)))
 	{

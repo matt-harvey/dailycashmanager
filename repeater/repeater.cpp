@@ -13,6 +13,7 @@
 #include "repeater.hpp"
 #include "date.hpp"
 #include "journal.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
@@ -22,7 +23,6 @@
 #include <algorithm>
 #include <string>
 
-using sqloxx::DatabaseConnection;
 using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
 using boost::shared_ptr;
@@ -37,7 +37,7 @@ namespace phatbooks
 {
 
 void
-Repeater::setup_tables(DatabaseConnection& dbc)
+Repeater::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table interval_types"
@@ -63,7 +63,7 @@ Repeater::setup_tables(DatabaseConnection& dbc)
 	return;
 }
 
-Repeater::Repeater(shared_ptr<DatabaseConnection> p_database_connection):
+Repeater::Repeater(shared_ptr<PhatbooksDatabaseConnection> p_database_connection):
 	PersistentObject(p_database_connection),
 	m_data(new RepeaterData)
 {
@@ -71,7 +71,7 @@ Repeater::Repeater(shared_ptr<DatabaseConnection> p_database_connection):
 
 
 Repeater::Repeater
-(	shared_ptr<DatabaseConnection> p_database_connection,
+(	shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	Id p_id
 ):
 	PersistentObject(p_database_connection, p_id),

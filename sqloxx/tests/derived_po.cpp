@@ -17,7 +17,7 @@ namespace tests
 {
 
 void
-DerivedPO::setup_tables(DatabaseConnection& dbc)
+DerivedPO::setup_tables(DerivedDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table derived_pos"
@@ -27,15 +27,15 @@ DerivedPO::setup_tables(DatabaseConnection& dbc)
 	return;
 }
 
-DerivedPO::DerivedPO(shared_ptr<DatabaseConnection> p_dbc, Id p_id):
-	PersistentObject<DerivedPO>(p_dbc, p_id),
+DerivedPO::DerivedPO(shared_ptr<DerivedDatabaseConnection> p_dbc, Id p_id):
+	PersistentObject<DerivedPO, DerivedDatabaseConnection>(p_dbc, p_id),
 	m_x(0),
 	m_y(0)
 {
 }
 
-DerivedPO::DerivedPO(shared_ptr<DatabaseConnection> p_dbc):
-	PersistentObject<DerivedPO>(p_dbc),
+DerivedPO::DerivedPO(shared_ptr<DerivedDatabaseConnection> p_dbc):
+	PersistentObject<DerivedPO, DerivedDatabaseConnection>(p_dbc),
 	m_x(0),
 	m_y(0)
 {
@@ -155,7 +155,7 @@ DerivedPO::set_y(double p_y)
 }
 
 DerivedPO::DerivedPO(DerivedPO const& rhs):
-	PersistentObject<DerivedPO>(rhs),
+	PersistentObject<DerivedPO, DerivedDatabaseConnection>(rhs),
 	m_x(rhs.m_x),
 	m_y(rhs.m_y)
 {

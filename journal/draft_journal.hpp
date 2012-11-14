@@ -10,6 +10,7 @@
 namespace phatbooks
 {
 
+class PhatbooksDatabaseConnection;
 class Repeater;
 
 class DraftJournal: public Journal
@@ -20,7 +21,7 @@ public:
 	 * Create the tables required for the persistence
 	 * of DraftJournal instances in a SQLite database.
 	 */
-	static void setup_tables(sqloxx::DatabaseConnection& dbc);
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
 	 * Initialize a "raw" DraftJournal, that will not yet
@@ -28,14 +29,14 @@ public:
 	 */
 	explicit
 	DraftJournal
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 	);
 
 	/**
 	 * Get a DraftJournal by id from the database.
 	 */
 	DraftJournal
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 		Id p_id
 	);
 

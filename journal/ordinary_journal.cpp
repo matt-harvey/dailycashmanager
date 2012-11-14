@@ -1,6 +1,7 @@
 #include "ordinary_journal.hpp"
 #include "journal.hpp"
 #include "date.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/cstdint.hpp>
@@ -15,7 +16,6 @@
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::value;
-using sqloxx::DatabaseConnection;
 using sqloxx::SharedSQLStatement;
 
 
@@ -24,7 +24,7 @@ namespace phatbooks
 
 
 void
-OrdinaryJournal::setup_tables(DatabaseConnection& dbc)
+OrdinaryJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table ordinary_journal_detail"
@@ -38,7 +38,7 @@ OrdinaryJournal::setup_tables(DatabaseConnection& dbc)
 
 
 OrdinaryJournal::OrdinaryJournal
-(	shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+(	shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 ):
 	Journal(p_database_connection)
 {
@@ -46,7 +46,7 @@ OrdinaryJournal::OrdinaryJournal
 
 
 OrdinaryJournal::OrdinaryJournal
-(	shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+(	shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	Id p_id
 ):
 	Journal(p_database_connection, p_id)

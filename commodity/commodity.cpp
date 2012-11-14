@@ -1,5 +1,5 @@
 #include "commodity.hpp"
-#include "sqloxx/database_connection.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
@@ -21,8 +21,6 @@
  */
 
 
-using sqloxx::DatabaseConnection;
-using sqloxx::DatabaseException;
 using sqloxx::SharedSQLStatement;
 using jewel::Decimal;
 using jewel::value;
@@ -35,7 +33,7 @@ namespace phatbooks
 {
 
 void Commodity::setup_tables
-(	DatabaseConnection& dbc
+(	PhatbooksDatabaseConnection& dbc
 )
 {
 	SharedSQLStatement statement
@@ -64,7 +62,7 @@ Commodity::Commodity(Commodity const& rhs):
 
 
 Commodity::Commodity
-(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 ):
 	PersistentObject(p_database_connection),
 	m_data(new CommodityData)
@@ -73,7 +71,7 @@ Commodity::Commodity
 
 
 Commodity::Commodity
-(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	Id p_id
 ):
 	PersistentObject(p_database_connection, p_id),
@@ -84,7 +82,7 @@ Commodity::Commodity
 
 
 Commodity::Commodity
-(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	std::string const& p_abbreviation
 ):
 	PersistentObject(p_database_connection),

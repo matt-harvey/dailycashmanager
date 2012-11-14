@@ -107,7 +107,12 @@ typedef int Id;
  * @todo If Sqloxx is ever moved to a separate library, then the documentation
  * for PersistentObject should include code for an exemplary derived class.
  */
-template <typename Derived, typename Id = sqloxx::Id, typename Counter = int>
+template
+<	typename Derived,     // subclass of PersistentObject
+	typename Connection,  // subclass of DatabaseConnection for this app.
+	typename Id = sqloxx::Id,  // type of primary key for Derived
+	typename Counter = int     // type with which we will be counting handles
+>
 class PersistentObject
 {
 public:
@@ -131,7 +136,7 @@ public:
 	 * constructors might, of course, throw).
 	 */
 	PersistentObject
-	(	boost::shared_ptr<DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<Connection> p_database_connection,
 		Id p_id
 	);
 
@@ -147,7 +152,7 @@ public:
 	 */
 	explicit
 	PersistentObject
-	(	boost::shared_ptr<DatabaseConnection> p_database_connection
+	(	boost::shared_ptr<Connection> p_database_connection
 	);
 
 	/**
@@ -350,7 +355,7 @@ protected:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>
 	 */
-	boost::shared_ptr<DatabaseConnection> database_connection() const;
+	boost::shared_ptr<Connection> database_connection() const;
 
 	/**
 	 * Sets the id of this instance of PersistentObject to p_id.
@@ -478,7 +483,7 @@ private:
 
 	// Data members
 
-	boost::shared_ptr<DatabaseConnection> m_database_connection;
+	boost::shared_ptr<Connection> m_database_connection;
 
 	// Represent primary key in database. If the object does not correspond to
 	// and does not purport to correspond to any record in the database, then
@@ -497,9 +502,9 @@ private:
 };
 
 
-template <typename Derived, typename Id, typename Counter>
-PersistentObject<Derived, Id, Counter>::PersistentObject
-(	boost::shared_ptr<DatabaseConnection> p_database_connection,
+template <typename Derived, typename Connection, typename Id, typename Counter>
+PersistentObject<Derived, Connection, Id, Counter>::PersistentObject
+(	boost::shared_ptr<Connection> p_database_connection,
 	Id p_id
 ):
 	m_database_connection(p_database_connection),
@@ -508,9 +513,9 @@ PersistentObject<Derived, Id, Counter>::PersistentObject
 {
 }
 
-template <typename Derived, typename Id, typename Counter>
-PersistentObject<Derived, Id, Counter>::PersistentObject
-(	boost::shared_ptr<DatabaseConnection> p_database_connection
+template <typename Derived, typename Connection, typename Id, typename Counter>
+PersistentObject<Derived, Connection, Id, Counter>::PersistentObject
+(	boost::shared_ptr<Connection> p_database_connection
 ):
 	m_database_connection(p_database_connection),
 	m_loading_status(ghost)
@@ -519,14 +524,14 @@ PersistentObject<Derived, Id, Counter>::PersistentObject
 	// IdentityMap<Derived> should provide it with a proxy key.
 }
 
-template <typename Derived, typename Id, typename Counter>
-PersistentObject<Derived, Id, Counter>::~PersistentObject()
+template <typename Derived, typename Connection, typename Id, typename Counter>
+PersistentObject<Derived, Connection, Id, Counter>::~PersistentObject()
 {
 }
 
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id, Counter>::load()
+PersistentObject<Derived, Connection, Id, Counter>::load()
 {
 	while (m_loading_status == loading)
 	{
@@ -581,9 +586,9 @@ PersistentObject<Derived, Id, Counter>::load()
 	return;
 }
 
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id, Counter>::save()
+PersistentObject<Derived, Connection, Id, Counter>::save()
 {
 	if (has_id())
 	{
@@ -597,9 +602,9 @@ PersistentObject<Derived, Id, Counter>::save()
 }
 
 
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id, Counter>::save_existing()
+PersistentObject<Derived, Connection, Id, Counter>::save_existing()
 {
 	if (!has_id())
 	{
@@ -615,9 +620,9 @@ PersistentObject<Derived, Id, Counter>::save_existing()
 	return;
 }
 
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 Id
-PersistentObject<Derived, Id, Counter>::prospective_key() const
+PersistentObject<Derived, Connection, Id, Counter>::prospective_key() const
 {
 	if (has_id())
 	{
@@ -629,34 +634,34 @@ PersistentObject<Derived, Id, Counter>::prospective_key() const
 }
 
 
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 Id
-PersistentObject<Derived, Id, Counter>::do_calculate_prospective_key() const
+PersistentObject<Derived, Connection, Id, Counter>::do_calculate_prospective_key() const
 {	
-	return database_connection()->template next_auto_key<Id>
+	return database_connection()->template next_auto_key<Id, SharedSQLStatement>
 	(	Derived::primary_table_name()
 	);
 }
 
 
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id, Counter>::save_new()
+PersistentObject<Derived, Connection, Id, Counter>::save_new()
 {
 	m_database_connection->begin_transaction();
 	Id const allocated_id = prospective_key();
 	do_save_new();
 	m_database_connection->end_transaction();
 	set_id(allocated_id);
-	// DatabaseConnection is notified of newly saved object. The
-	// The DatabaseConnection then passes this message to the
+	// Connection is notified of newly saved object. The
+	// The Connection then passes this message to the
 	// IdentityMap<Derived>, which in turn reallocates this object to
 	// a newly created slot at key new_id, in its internal map, and
 	// deallocates
 	// the old "dummy" position.
 	// WARNING I need to implement the "proxy key" concept. The proxy key
 	// is how the IdentityMap<Derived> (which we can communicate with via the
-	// DatabaseConnection) finds the shared_ptr corresponding to this instance
+	// Connection) finds the shared_ptr corresponding to this instance
 	// of Derived. It is stored via its proxy key until such time as it is
 	// saved to the database; and when that happens, we inform it, so that it
 	// can transfer its shared_ptr to that object into the appropriate slot
@@ -664,7 +669,11 @@ PersistentObject<Derived, Id, Counter>::save_new()
 	// When an non-identified "draft" instance of Derived is first created, it
 	// should be allocated a proxy_key by the IdentityManager.
 	m_proxy_key = boost::none;
-	m_database_connection->register_id<Derived>(m_proxy_key, allocated_id);
+	MapRegistrar<Derived, Connection>::register_id
+	(	*m_database_connection,
+		jewel::value(m_proxy_key),
+		allocated_id
+	);
 	return;
 	// WARNING Reconsider what exception safety guarantee can be offered
 	// in light of the dealings around proxy key that have now been
@@ -672,25 +681,25 @@ PersistentObject<Derived, Id, Counter>::save_new()
 }
 
 
-template <typename Derived, typename Id, typename Counter>
-boost::shared_ptr<DatabaseConnection>
-PersistentObject<Derived, Id, Counter>::database_connection() const
+template <typename Derived, typename Connection, typename Id, typename Counter>
+boost::shared_ptr<Connection>
+PersistentObject<Derived, Connection, Id, Counter>::database_connection() const
 {
 	return m_database_connection;
 }
 
 
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 Id
-PersistentObject<Derived, Id, Counter>::id() const
+PersistentObject<Derived, Connection, Id, Counter>::id() const
 {
 	return jewel::value(m_id);
 }
 
 
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id, Counter>::increment_counter()
+PersistentObject<Derived, Connection, Id, Counter>::increment_counter()
 {
 	if (m_counter == std::numeric_limits<Counter>::max())
 	{
@@ -704,9 +713,9 @@ PersistentObject<Derived, Id, Counter>::increment_counter()
 }
 
 
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id, Counter>::decrement_counter()
+PersistentObject<Derived, Connection, Id, Counter>::decrement_counter()
 {
 	if (m_counter == 0)
 	{
@@ -720,9 +729,9 @@ PersistentObject<Derived, Id, Counter>::decrement_counter()
 }
 
 
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id, Counter>::set_id(Id p_id)
+PersistentObject<Derived, Connection, Id, Counter>::set_id(Id p_id)
 {
 	if (has_id())
 	{
@@ -732,9 +741,9 @@ PersistentObject<Derived, Id, Counter>::set_id(Id p_id)
 	return;
 }
 
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 bool
-PersistentObject<Derived, Id, Counter>::has_id() const
+PersistentObject<Derived, Connection, Id, Counter>::has_id() const
 {
 	// Relies on the fact that m_id is a boost::optional<Id>, and
 	// will convert to true if and only if it has been initialized.
@@ -742,16 +751,16 @@ PersistentObject<Derived, Id, Counter>::has_id() const
 }
 
 
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id, Counter>::clear_loading_status()
+PersistentObject<Derived, Connection, Id, Counter>::clear_loading_status()
 {
 	m_loading_status = ghost;
 	return;
 }
 
-template <typename Derived, typename Id, typename Counter>
-PersistentObject<Derived, Id, Counter>::PersistentObject
+template <typename Derived, typename Connection, typename Id, typename Counter>
+PersistentObject<Derived, Connection, Id, Counter>::PersistentObject
 (	PersistentObject const& rhs
 ):
 	m_database_connection(rhs.m_database_connection),
@@ -761,13 +770,13 @@ PersistentObject<Derived, Id, Counter>::PersistentObject
 {
 }
 		
-template <typename Derived, typename Id, typename Counter>
+template <typename Derived, typename Connection, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id, Counter>::swap_base_internals
+PersistentObject<Derived, Connection, Id, Counter>::swap_base_internals
 (	PersistentObject& rhs
 )
 {
-	boost::shared_ptr<DatabaseConnection> temp_dbc =
+	boost::shared_ptr<Connection> temp_dbc =
 		rhs.m_database_connection;
 	boost::optional<Id> temp_id = rhs.m_id;
 	boost::optional<Id> temp_proxy_key = rhs.m_proxy_key;

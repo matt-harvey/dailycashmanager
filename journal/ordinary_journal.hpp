@@ -3,7 +3,6 @@
 
 #include "journal.hpp"
 #include "date.hpp"
-#include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -13,6 +12,9 @@
 namespace phatbooks
 {
 
+class PhatbooksDatabaseConnection;
+
+
 class OrdinaryJournal: public Journal
 {
 public:
@@ -21,7 +23,7 @@ public:
 	 * Create the tables required for the persistence of
 	 * OrdinaryJournal instances in a SQLite database.
 	 */
-	static void setup_tables(sqloxx::DatabaseConnection& dbc);
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
 	 * Initialize a "raw" OrdinaryJournal, that will not yet
@@ -29,14 +31,14 @@ public:
 	 */
 	explicit
 	OrdinaryJournal
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 	);
 
 	/**
 	 * Get an OrdinaryJournal by id from the database.
 	 */
 	OrdinaryJournal
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 		Id p_id
 	);
 

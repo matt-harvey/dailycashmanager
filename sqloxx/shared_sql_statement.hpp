@@ -1,6 +1,8 @@
 #ifndef shared_sql_statement_hpp
 #define shared_sql_statement_hpp
 
+#include "database_connection.hpp"
+#include "detail/sql_statement.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -10,12 +12,6 @@
 namespace sqloxx
 {
 
-class DatabaseConnection;
-
-namespace detail
-{
-	class SQLStatement;
-}  // namespace detail
 
 
 /**
@@ -48,7 +44,9 @@ public:
 	 * Creates an object encapsulating a SQL statement.
 	 * 
 	 * @param p_database_connection is the DatabaseConnection
-	 * on which the statement will be executed.
+	 * on which the statement will be executed. Template parameter \e
+	 * Connection can be any subclass of DatabaseConnection, or can be
+	 * DatabaseConnection itself.
 	 *
 	 * @param str is the text of a single SQL statement. It can be terminated
 	 * with any mixture of semicolons and/or spaces (but not other forms
@@ -71,8 +69,9 @@ public:
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
+	template <typename Connection>
 	SharedSQLStatement
-	(	DatabaseConnection& p_database_connection,	
+	(	Connection& p_database_connection,	
 		std::string const& p_statement_text
 	);
 
@@ -198,6 +197,17 @@ private:
 	boost::shared_ptr<detail::SQLStatement> m_sql_statement;
 
 };
+
+template <typename Connection>
+SharedSQLStatement::SharedSQLStatement
+(	Connection& p_database_connection,
+	std::string const& p_statement_text
+):
+	m_sql_statement
+	(	p_database_connection.template provide_sql_statement(p_statement_text)
+	)
+{
+}
 
 
 }  // namespace sqloxx

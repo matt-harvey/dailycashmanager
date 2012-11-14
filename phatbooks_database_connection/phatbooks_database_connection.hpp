@@ -14,7 +14,11 @@
 
 #include "account.hpp"
 #include "commodity.hpp"
+#include "entry.hpp"
+#include "journal.hpp"
+#include "repeater.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/identity_map.hpp"
 #include <boost/bimap.hpp>
 #include <string>
 
@@ -97,16 +101,104 @@ public:
 	 */
 	void setup();
 
+	sqloxx::IdentityMap<Account>& account_map();
+	sqloxx::IdentityMap<Commodity>& commodity_map();
+	sqloxx::IdentityMap<Entry>& entry_map();
+	sqloxx::IdentityMap<Journal>& journal_map();
+	sqloxx::IdentityMap<Repeater>& repeater_map();
+
 private:
 
 	bool setup_has_occurred();
 	void mark_setup_as_having_occurred();
 
+
+	sqloxx::IdentityMap<Account> m_account_map;
+	sqloxx::IdentityMap<Commodity> m_commodity_map;
+	sqloxx::IdentityMap<Entry> m_entry_map;
+	sqloxx::IdentityMap<Journal> m_journal_map;
+	sqloxx::IdentityMap<Repeater> m_repeater_map;
+
+
+
 };  // PhatbooksDatabaseConnection
 
 
-
 }  // namespace phatbooks
+
+
+
+namespace sqloxx
+{
+
+template <>
+inline
+IdentityMap<phatbooks::Account>&
+identity_map
+<	phatbooks::Account,
+	phatbooks::PhatbooksDatabaseConnection
+>
+(	phatbooks::PhatbooksDatabaseConnection& connection
+)
+{
+	return connection.account_map();
+}
+
+template <>
+inline
+IdentityMap<phatbooks::Entry>&
+identity_map
+<	phatbooks::Entry,
+	phatbooks::PhatbooksDatabaseConnection
+>
+(	phatbooks::PhatbooksDatabaseConnection& connection
+)
+{
+	return connection.entry_map();
+}
+
+template <>
+inline
+IdentityMap<phatbooks::Commodity>&
+identity_map
+<	phatbooks::Commodity,
+	phatbooks::PhatbooksDatabaseConnection
+>
+(	phatbooks::PhatbooksDatabaseConnection& connection
+)
+{
+	return connection.commodity_map();
+}
+
+template <>
+inline
+IdentityMap<phatbooks::Journal>&
+identity_map
+<	phatbooks::Journal,
+	phatbooks::PhatbooksDatabaseConnection
+>
+(	phatbooks::PhatbooksDatabaseConnection& connection
+)
+{
+	return connection.journal_map();
+}
+
+template <>
+inline
+IdentityMap<phatbooks::Repeater>&
+identity_map
+<	phatbooks::Repeater,
+	phatbooks::PhatbooksDatabaseConnection
+>
+(	phatbooks::PhatbooksDatabaseConnection& connection
+)
+{
+	return connection.repeater_map();
+}
+
+}  // namespace sqloxx
+
+
 
 
 #endif  // GUARD_phatbooks_database_connection_hpp

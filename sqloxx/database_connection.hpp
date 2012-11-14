@@ -10,8 +10,8 @@
 #include <boost/unordered_map.hpp>
 #include <set>
 #include <string>
-#include "identity_map.hpp"
 #include "shared_sql_statement.hpp"
+#include "identity_map.hpp"
 #include "sqloxx_exceptions.hpp"
 
 
@@ -200,7 +200,7 @@ public:
 	 * Exception safety: <em>strong guarantee</em>, provided client adheres to
 	 * the constraints described above.
 	 */
-	template <typename KeyType>
+	template <typename KeyType, typename Statement>  // WARNING Hideousness with Statement is undocumented.
 	KeyType next_auto_key(std::string const& table_name);	
 
 	/**
@@ -321,15 +321,7 @@ public:
 		typename T::Id allocated_id
 	);
 
-	/**
-	 * Should be specialized by
-	 * application-specific client code, so as to
-	 * return for each "business class" T a reference to the
-	 * IdentityMap<T> for a given instance of DatabaseManager.
-	 */
-	template <typename T>
-	IdentityMap<T>& identity_map();
-
+	
 private:
 
 	void unchecked_begin_transaction();
@@ -346,22 +338,22 @@ private:
 };
 
 
-template <typename KeyType>
+template <typename KeyType, typename Statement>
 KeyType
 DatabaseConnection::next_auto_key(std::string const& table_name)
 {
 	try
 	{
-		SharedSQLStatement statement
+		Statement statement
 		(	*this,
 			"select seq from sqlite_sequence where name = :p"
 		);
-		statement.bind(":p", table_name);
+		statement.template bind(":p", table_name);
 		if (!statement.step())
 		{
 			return 1;
 		}
-		KeyType const max_key = statement.extract<KeyType>(0);
+		KeyType const max_key = statement.template extract<KeyType>(0);
 		if (max_key == std::numeric_limits<KeyType>::max())
 		{
 			throw TableSizeException
@@ -373,7 +365,7 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 	catch (SQLiteError&)
 	{
 		// Catches case where there is no sqlite_sequence table
-		SharedSQLStatement sequence_finder
+		Statement sequence_finder
 		(	*this,
 			"select name from sqlite_master where type = 'table' and "
 			"name = 'sqlite_sequence';"
@@ -386,7 +378,25 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 	}
 }
 
-template <typename T>
+
+/**
+ * Standalone function template.
+ * Should be specialized by
+ * application-specific client code, so as to
+ * return for each "business class" T a reference to the
+ * IdentityMap<T> for a given instance of Connection, where
+ * Connection should be a subclass of DatabaseManager.
+ */
+template <typename T, typename Connection>
+inline
+IdentityMap<T>& identity_map(Connection& connection);
+
+
+/**
+ * T is the subclass of PersistentObject<T>, and Connnection is a subclass
+ * of DatabaseConnection.
+ */
+template <typename T, typename Connection>
 class MapRegistrar
 {
 public:
@@ -396,18 +406,19 @@ public:
 	 * database, and been allocated an id of \e allocated_id.
 	 */
 	static void register_id
-	(	DatabaseConnection const& dbc,
+	(	Connection& dbc,
 		typename T::Id proxy_key,
 		typename T::Id allocated_id
 	)
 	{
-		// DatabaseConnection subclass should specialize the
+		// Connection subclass should specialize the
 		// identity_map<T>() method for any T whose identity it
 		// wants to have managed via IdentityMap<T>.
 		// The specialization should return a reference to the instance
 		// of IdentityMap<T> through which this DatabaseConnection wants
 		// to manage instances of T.
-		dbc.identity_map<T>().register_id(proxy_key, allocated_id);
+
+		identity_map<T>(dbc).template register_id(proxy_key, allocated_id);
 		return;
 	}
 };

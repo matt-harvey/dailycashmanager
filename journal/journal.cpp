@@ -15,8 +15,7 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
-#include "entry.hpp"
-#include "sqloxx/database_connection.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <jewel/decimal.hpp>
@@ -28,7 +27,6 @@
 #include <string>
 #include <vector>
 
-using sqloxx::DatabaseConnection;
 using sqloxx::PersistentObject;
 using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
@@ -44,7 +42,7 @@ namespace phatbooks
 {
 
 void
-Journal::setup_tables(DatabaseConnection& dbc)
+Journal::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table journals"
@@ -58,14 +56,14 @@ Journal::setup_tables(DatabaseConnection& dbc)
 }
 
 
-Journal::Journal(shared_ptr<DatabaseConnection> p_database_connection):
+Journal::Journal(shared_ptr<PhatbooksDatabaseConnection> p_database_connection):
 	PersistentObject(p_database_connection),
 	m_data(new JournalData)
 {
 }
 
 Journal::Journal
-(	shared_ptr<DatabaseConnection> p_database_connection,
+(	shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	Id p_id
 ):
 	PersistentObject(p_database_connection, p_id),

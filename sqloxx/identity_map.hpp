@@ -1,6 +1,7 @@
 #ifndef GUARD_identity_map_hpp
 #define GUARD_identity_map_hpp
 
+#include "database_connection.hpp"
 #include "handle.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -9,7 +10,6 @@
 namespace sqloxx
 {
 
-class DatabaseConnection;  // forward declaration
 
 // When PersistentObject::save_new() is called, it needs
 // to let the IdentityManager know.
@@ -21,10 +21,23 @@ public:
 
 	typedef typename T::Id Id;
 
+	/**
+	 * Connection should be DatabaseConnection or a subclass of
+	 * DatabaseConnection.
+	 */
+	template <typename Connection>
 	Handle<T> provide_object
-	(	boost::shared_ptr<DatabaseConnection> dbc,
+	(	boost::shared_ptr<Connection> dbc,
 		Id p_id
 	);
+
+	/**
+	 * Register id of newly saved T.
+	 */
+	void register_id(typename T::Id proxy_key, typename T::Id allocated_id)
+	{
+		// WARNING Need proper implementation.
+	}
 
 private:
 
@@ -34,9 +47,10 @@ private:
 };
 
 template <typename T>
+template <typename Connection>
 Handle<T>
 IdentityMap<T>::provide_object
-(	boost::shared_ptr<DatabaseConnection> dbc,
+(	boost::shared_ptr<Connection> dbc,
 	Id p_id
 )
 {
