@@ -4,11 +4,9 @@
 #include "sqloxx/persistent_object.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
-#include <stdexcept>
 #include <string>
 
 using boost::shared_ptr;
-using std::logic_error;
 using std::string;
 
 namespace sqloxx
@@ -99,7 +97,7 @@ DerivedPO::self_test()
 	{
 		dpo1.prospective_key();
 	}
-	catch (logic_error&)
+	catch (LogicError&)
 	{
 		ok = true;
 	}
@@ -114,7 +112,7 @@ DerivedPO::self_test()
 	{
 		dpo6.set_id(10);
 	}
-	catch (logic_error&)
+	catch (LogicError&)
 	{
 		ok = true;
 	}

@@ -4,18 +4,18 @@
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/optional.hpp>
 #include <cassert>
 #include <iostream>
 #include <limits>
-#include <stdexcept>
 #include <unittest++/UnitTest++.h>
+#include <stdexcept>
 
 using boost::shared_ptr;
 using jewel::UninitializedOptionalException;
 using std::cerr;
 using std::endl;
-using std::logic_error;
 using std::numeric_limits;
 
 namespace sqloxx
@@ -56,7 +56,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_existing)
 	DerivedPO dpo1(pdbc);
 	dpo1.set_x(78);
 	dpo1.set_y(4.5);
-	CHECK_THROW(dpo1.save_existing(), logic_error);
+	CHECK_THROW(dpo1.save_existing(), LogicError);
 	dpo1.save_new();
 	DerivedPO dpo2(pdbc);
 	dpo2.set_x(234);
@@ -99,7 +99,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 	dpo1.set_y(-.238);
 	dpo1.save_new();
 
-	CHECK_THROW(dpo1.save_new(), logic_error);
+	CHECK_THROW(dpo1.save_new(), LogicError);
 	// Required to avoid incomplete transaction, which would be
 	// expected, but which causes an annoying and pointless error
 	// message to be printed when pdbc closed.
@@ -150,7 +150,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
 	dpo2.save_new();
 	CHECK_EQUAL(dpo2.id(), 2);
 
-	CHECK_THROW(dpo2.save_new(), logic_error);
+	CHECK_THROW(dpo2.save_new(), LogicError);
 	// Required to avoid incomplete transaction, which would be
 	// expected, but which causes an annoying and pointless error
 	// message to be printed when pdbc closed.

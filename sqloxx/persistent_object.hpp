@@ -10,7 +10,6 @@
 #include <exception>
 
 
-
 namespace sqloxx
 {
 
@@ -671,7 +670,7 @@ PersistentObject<Derived, Connection, Id, Counter>::save_new()
 	m_proxy_key = boost::none;
 	MapRegistrar<Derived, Connection>::register_id
 	(	*m_database_connection,
-		jewel::value(m_proxy_key),
+		0, // WARNING Should eventually be.. jewel::value(m_proxy_key),
 		allocated_id
 	);
 	return;

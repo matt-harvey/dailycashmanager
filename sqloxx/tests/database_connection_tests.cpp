@@ -190,7 +190,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 	(	"insert into test_table(column_A, column_C) "
 		"values(10, 'Gold')"
 	);
-	ok = (dbc.next_auto_key<int, SharedSQLStatement>("test_table") == 1);
+	ok = (dbc.next_auto_key<int, SharedSQLStatement>("test_table") == 4);
 	CHECK(ok);
 	ok = (dbc.next_auto_key<int, SharedSQLStatement>("dummy_table") == 1);
 	CHECK(ok);
