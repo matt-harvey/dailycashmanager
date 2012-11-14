@@ -40,6 +40,10 @@ add_executable (main main.cpp ${main_files})
 
 set (test_files
      test.cpp
+	 sqloxx/database_connection.cpp
+	 sqloxx/shared_sql_statement.cpp
+	 sqloxx/detail/sqlite_dbconn.cpp
+	 sqloxx/detail/sql_statement.cpp
      sqloxx/tests/database_connection_tests.cpp
 	 sqloxx/tests/derived_po.cpp
 	 sqloxx/tests/persistent_object_tests.cpp
@@ -47,7 +51,7 @@ set (test_files
 	 sqloxx/tests/sqloxx_tests_common.cpp
 	 sqloxx/tests/atomicity_test.cpp)
 
-add_executable (test ${main_files} ${test_files})
+add_executable (test ${test_files})
 
 set (libraries
      boost_date_time
