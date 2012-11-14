@@ -395,6 +395,13 @@ IdentityMap<T>& identity_map(Connection& connection);
 /**
  * T is the subclass of PersistentObject<T>, and Connnection is a subclass
  * of DatabaseConnection.
+ * 
+ * For types T that client code at the business layer does not want to manage
+ * through an IdentityMap, MapRegistrar should be specialized to have
+ * a do-nothing method register_id. By default, it is assumed client code
+ * will want to use the IdentityMap pattern.
+ * WARNING There may be other things that client code needs to do to avoid
+ * the IdentityMap pattern for a given T. These should be determined and documented.
  */
 template <typename T, typename Connection>
 class MapRegistrar
@@ -411,12 +418,14 @@ public:
 		typename T::Id allocated_id
 	)
 	{
-		// Connection subclass should specialize the
-		// identity_map<T>() method for any T whose identity it
+		// Client code should fully specialize the
+		// identity_map<T>(Connection&) function template for any T whose identity it
 		// wants to have managed via IdentityMap<T>.
 		// The specialization should return a reference to the instance
-		// of IdentityMap<T> through which this DatabaseConnection wants
+		// of IdentityMap<T> through which an arbitrary instance of Connection wants
 		// to manage instances of T.
+		// WARNING Why can't this identity_map be a method of Connection? That would
+		// simplify things at the client level.
 
 		identity_map<T>(dbc).template register_id(proxy_key, allocated_id);
 		return;
