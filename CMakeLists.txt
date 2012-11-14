@@ -29,6 +29,7 @@ set (main_files
 	 journal/journal.cpp
 	 journal/ordinary_journal.cpp
 	 sqloxx/database_connection.cpp
+	 sqloxx/identity_manager.cpp
 	 sqloxx/persistent_object.cpp
 	 sqloxx/shared_sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
