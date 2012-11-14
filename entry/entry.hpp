@@ -43,7 +43,7 @@ class Entry:
 public:
 
 	typedef sqloxx::PersistentObject<Entry> PersistentObject;
-	typedef int Id;
+	typedef sqloxx::Id Id;
 
 	/**
 	 * Sets up tables in the database required for the persistence of

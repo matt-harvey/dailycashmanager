@@ -56,7 +56,7 @@ class Journal:
 public:
 
 	typedef sqloxx::PersistentObject<Journal> PersistentObject;
-	typedef int Id;
+	typedef sqloxx::Id Id;
 
 	/**
 	 * Sets up tables in the database required for the persistence of

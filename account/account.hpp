@@ -40,7 +40,7 @@ class Account:
 public:
 
 	typedef sqloxx::PersistentObject<Account> PersistentObject;
-	typedef int Id;
+	typedef sqloxx::Id Id;
 
 	enum AccountType
 	{

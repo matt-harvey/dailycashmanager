@@ -13,6 +13,8 @@
 namespace sqloxx
 {
 
+typedef int Id;
+
 // WARNING The whole thing needs the documentation revised if I proceed with
 // the CRTP pattern
 
@@ -88,11 +90,10 @@ namespace sqloxx
  * @todo If Sqloxx is ever moved to a separate library, then the documentation
  * for PersistentObject should include code for an exemplary derived class.
  */
-template <typename Derived>
+template <typename Derived, typename Id = sqloxx::Id>
 class PersistentObject
 {
 public:
-
 
 	/**
 	 * Create a PersistentObject that corresponds (or purports to correspond)
@@ -114,7 +115,7 @@ public:
 	 */
 	PersistentObject
 	(	boost::shared_ptr<DatabaseConnection> p_database_connection,
-		int p_id
+		Id p_id
 	);
 
 	/** 
@@ -247,7 +248,7 @@ public:
 	 * @throws jewel::UninitializedOptionalException if the object doesn't
 	 * have an id.
 	 */
-	int id() const;
+	Id id() const;
 
 protected:
 
@@ -338,7 +339,7 @@ protected:
 	 *
 	 * Exception safety: <em>strong_guarantee</em>.
 	 */
-	void set_id(int p_id);
+	void set_id(Id p_id);
 
 	/**
 	 * @returns the id that would be assigned to this instance of
@@ -382,7 +383,7 @@ protected:
 	 * function do_get_table_name does nothing odd but simply returns a
 	 * std::string as would be expected.
 	 */
-	int prospective_key() const;
+	Id prospective_key() const;
 
 	/**
 	 * @returns \e true if this instance of PersistentObject has
@@ -397,7 +398,7 @@ private:
 	/**
 	 * Provides implementation for the public function prospective_key.
 	 */
-	virtual int do_calculate_prospective_key() const;
+	virtual Id do_calculate_prospective_key() const;
 
 	/**
 	 * See documentation for \e load function.
@@ -447,15 +448,15 @@ private:
 	// Data members
 
 	boost::shared_ptr<DatabaseConnection> m_database_connection;
-	boost::optional<int> m_id;
+	boost::optional<Id> m_id;
 	LoadingStatus m_loading_status;
 };
 
 
-template <typename Derived>
-PersistentObject<Derived>::PersistentObject
+template <typename Derived, typename Id>
+PersistentObject<Derived, Id>::PersistentObject
 (	boost::shared_ptr<DatabaseConnection> p_database_connection,
-	int p_id
+	Id p_id
 ):
 	m_database_connection(p_database_connection),
 	m_id(p_id),
@@ -463,8 +464,8 @@ PersistentObject<Derived>::PersistentObject
 {
 }
 
-template <typename Derived>
-PersistentObject<Derived>::PersistentObject
+template <typename Derived, typename Id>
+PersistentObject<Derived, Id>::PersistentObject
 (	boost::shared_ptr<DatabaseConnection> p_database_connection
 ):
 	m_database_connection(p_database_connection),
@@ -472,14 +473,14 @@ PersistentObject<Derived>::PersistentObject
 {
 }
 
-template <typename Derived>
-PersistentObject<Derived>::~PersistentObject()
+template <typename Derived, typename Id>
+PersistentObject<Derived, Id>::~PersistentObject()
 {
 }
 
-template <typename Derived>
+template <typename Derived, typename Id>
 void
-PersistentObject<Derived>::load()
+PersistentObject<Derived, Id>::load()
 {
 	while (m_loading_status == loading)
 	{
@@ -534,9 +535,9 @@ PersistentObject<Derived>::load()
 	return;
 }
 
-template <typename Derived>
+template <typename Derived, typename Id>
 void
-PersistentObject<Derived>::save()
+PersistentObject<Derived, Id>::save()
 {
 	if (has_id())
 	{
@@ -550,9 +551,9 @@ PersistentObject<Derived>::save()
 }
 
 
-template <typename Derived>
+template <typename Derived, typename Id>
 void
-PersistentObject<Derived>::save_existing()
+PersistentObject<Derived, Id>::save_existing()
 {
 	if (!has_id())
 	{
@@ -568,9 +569,9 @@ PersistentObject<Derived>::save_existing()
 	return;
 }
 
-template <typename Derived>
-int
-PersistentObject<Derived>::prospective_key() const
+template <typename Derived, typename Id>
+Id
+PersistentObject<Derived, Id>::prospective_key() const
 {
 	if (has_id())
 	{
@@ -582,22 +583,22 @@ PersistentObject<Derived>::prospective_key() const
 }
 
 
-template <typename Derived>
-int
-PersistentObject<Derived>::do_calculate_prospective_key() const
+template <typename Derived, typename Id>
+Id
+PersistentObject<Derived, Id>::do_calculate_prospective_key() const
 {	
-	return database_connection()->template next_auto_key<int>
+	return database_connection()->template next_auto_key<Id>
 	(	Derived::primary_table_name()
 	);
 }
 
 
-template <typename Derived>
+template <typename Derived, typename Id>
 void
-PersistentObject<Derived>::save_new()
+PersistentObject<Derived, Id>::save_new()
 {
 	m_database_connection->begin_transaction();
-	int key = prospective_key();
+	Id key = prospective_key();
 	do_save_new();
 	m_database_connection->end_transaction();
 	set_id(key);
@@ -605,24 +606,24 @@ PersistentObject<Derived>::save_new()
 }
 
 
-template <typename Derived>
+template <typename Derived, typename Id>
 boost::shared_ptr<DatabaseConnection>
-PersistentObject<Derived>::database_connection() const
+PersistentObject<Derived, Id>::database_connection() const
 {
 	return m_database_connection;
 }
 
 
-template <typename Derived>
-int
-PersistentObject<Derived>::id() const
+template <typename Derived, typename Id>
+Id
+PersistentObject<Derived, Id>::id() const
 {
 	return jewel::value(m_id);
 }
 
-template <typename Derived>
+template <typename Derived, typename Id>
 void
-PersistentObject<Derived>::set_id(int p_id)
+PersistentObject<Derived, Id>::set_id(Id p_id)
 {
 	if (has_id())
 	{
@@ -632,9 +633,9 @@ PersistentObject<Derived>::set_id(int p_id)
 	return;
 }
 
-template <typename Derived>
+template <typename Derived, typename Id>
 bool
-PersistentObject<Derived>::has_id() const
+PersistentObject<Derived, Id>::has_id() const
 {
 	// Relies on the fact that m_id is a boost::optional<Id>, and
 	// will convert to true if and only if it has been initialized.
@@ -642,29 +643,29 @@ PersistentObject<Derived>::has_id() const
 }
 
 
-template <typename Derived>
+template <typename Derived, typename Id>
 void
-PersistentObject<Derived>::clear_loading_status()
+PersistentObject<Derived, Id>::clear_loading_status()
 {
 	m_loading_status = ghost;
 	return;
 }
 
-template <typename Derived>
-PersistentObject<Derived>::PersistentObject(PersistentObject const& rhs):
+template <typename Derived, typename Id>
+PersistentObject<Derived, Id>::PersistentObject(PersistentObject const& rhs):
 	m_database_connection(rhs.m_database_connection),
 	m_id(rhs.m_id),
 	m_loading_status(rhs.m_loading_status)
 {
 }
 		
-template <typename Derived>
+template <typename Derived, typename Id>
 void
-PersistentObject<Derived>::swap_base_internals(PersistentObject& rhs)
+PersistentObject<Derived, Id>::swap_base_internals(PersistentObject& rhs)
 {
 	boost::shared_ptr<DatabaseConnection> temp_dbc =
 		rhs.m_database_connection;
-	boost::optional<int> temp_id = rhs.m_id;
+	boost::optional<Id> temp_id = rhs.m_id;
 	LoadingStatus temp_loading_status = rhs.m_loading_status;
 
 	rhs.m_database_connection = m_database_connection;

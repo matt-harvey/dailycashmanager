@@ -57,7 +57,7 @@ class Repeater:
 public:
 
 	typedef sqloxx::PersistentObject<Repeater> PersistentObject;
-	typedef int Id;
+	typedef sqloxx::Id Id;
 
 	/**
 	 * Sets up tables in the database required for the persistence

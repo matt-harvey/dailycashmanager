@@ -19,7 +19,7 @@ class DerivedPO: public PersistentObject<DerivedPO>
 {
 
 public:
-	typedef int Id;
+	typedef sqloxx::Id Id;
 	static void setup_tables(DatabaseConnection& dbc);
 	explicit DerivedPO(boost::shared_ptr<DatabaseConnection> p_dbc);
 	DerivedPO(boost::shared_ptr<DatabaseConnection> p_dbc, Id p_id);

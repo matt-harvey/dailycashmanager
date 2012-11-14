@@ -47,7 +47,7 @@ class Commodity:
 public:
 
 	typedef sqloxx::PersistentObject<Commodity> PersistentObject;
-	typedef int Id;
+	typedef sqloxx::Id Id;
 
 	/**
 	 * Sets up tables required in the database for the persistence
