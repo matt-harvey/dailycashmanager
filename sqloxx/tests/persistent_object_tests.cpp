@@ -116,8 +116,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 		"insert into derived_pos(derived_po_id, x, y) values"
 		"(:i, :x, :y)"
 	);
-	typedef PersistentObject::Id Id;
-	troublesome_statement.bind(":i", numeric_limits<Id>::max());
+	troublesome_statement.bind(":i", numeric_limits<int>::max());
 	troublesome_statement.bind(":x", 30);
 	troublesome_statement.bind(":y", 39.091);
 	troublesome_statement.step_final();
@@ -126,7 +125,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 		"select derived_po_id from derived_pos where x = 30"
 	);
 	check_troublesome.step();
-	CHECK_EQUAL(check_troublesome.extract<Id>(0), numeric_limits<Id>::max());
+	CHECK_EQUAL(check_troublesome.extract<int>(0), numeric_limits<int>::max());
 	check_troublesome.step_final();
 	DerivedPO dpo3(pdbc);
 	dpo3.set_x(100);

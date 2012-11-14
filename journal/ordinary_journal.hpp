@@ -1,7 +1,6 @@
 #ifndef GUARD_ordinary_journal_hpp
 #define GUARD_ordinary_journal_hpp
 
-#include "general_typedefs.hpp"
 #include "journal.hpp"
 #include "date.hpp"
 #include "sqloxx/database_connection.hpp"

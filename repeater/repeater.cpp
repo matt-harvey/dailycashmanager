@@ -246,7 +246,7 @@ Repeater::do_save_new()
 
 
 string
-Repeater::do_get_table_name() const
+Repeater::primary_table_name()
 {
 	return "repeaters";
 }

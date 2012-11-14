@@ -1,5 +1,4 @@
 #include "draft_journal.hpp"
-#include "general_typedefs.hpp"
 #include "repeater.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/shared_sql_statement.hpp"

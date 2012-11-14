@@ -15,11 +15,11 @@ namespace tests
 
 // Dummy class inheriting from PersistentObject, for the purpose
 // of testing PersistentObject class.
-class DerivedPO: public PersistentObject
+class DerivedPO: public PersistentObject<DerivedPO>
 {
 
 public:
-	typedef PersistentObject::Id Id;
+	typedef int Id;
 	static void setup_tables(DatabaseConnection& dbc);
 	explicit DerivedPO(boost::shared_ptr<DatabaseConnection> p_dbc);
 	DerivedPO(boost::shared_ptr<DatabaseConnection> p_dbc, Id p_id);
@@ -33,6 +33,7 @@ public:
 	// of failing checks in test.
 	static int self_test();	
 
+	static std::string primary_table_name();
 protected:
 	DerivedPO(DerivedPO const& rhs);
 
@@ -41,7 +42,6 @@ private:
 	// Uses default version of do_calculate_prospective_key
 	void do_save_existing();
 	void do_save_new();
-	std::string do_get_table_name() const;
 	int m_x;
 	double m_y;
 };

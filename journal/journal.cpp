@@ -15,7 +15,6 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
-#include "general_typedefs.hpp"
 #include "entry.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
@@ -283,7 +282,7 @@ Journal::Journal(Journal const& rhs):
 
 
 string
-Journal::do_get_table_name() const
+Journal::primary_table_name()
 {
 	return "journals";
 }

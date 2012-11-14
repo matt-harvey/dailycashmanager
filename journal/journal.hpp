@@ -12,7 +12,6 @@
  */
 
 
-#include "general_typedefs.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <jewel/decimal.hpp>
@@ -52,12 +51,12 @@ class Entry;
  * food represents a budget transaction.
  */
 class Journal:
-	public sqloxx::PersistentObject
+	public sqloxx::PersistentObject<Journal>
 {
 public:
 
-	typedef sqloxx::PersistentObject PersistentObject;
-	typedef PersistentObject::Id Id;
+	typedef sqloxx::PersistentObject<Journal> PersistentObject;
+	typedef int Id;
 
 	/**
 	 * Sets up tables in the database required for the persistence of
@@ -146,6 +145,7 @@ public:
 	 */
 	void swap(Journal& rhs);
 
+	static std::string primary_table_name();
 protected:
 
 	/**
@@ -179,6 +179,7 @@ protected:
 	 */
 	Journal(Journal const& rhs);
 
+
 private:
 
 	/**
@@ -196,8 +197,6 @@ private:
 	 * instantiated.
 	 */
 	virtual void do_save_new();
-
-	virtual std::string do_get_table_name() const;
 
 	struct JournalData
 	{

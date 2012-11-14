@@ -12,7 +12,6 @@
  */
 
 
-#include "general_typedefs.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -42,13 +41,13 @@ namespace phatbooks
  * @todo Are copy constructor and assignment operator exception-safe?
  */
 class Commodity:
-	public sqloxx::PersistentObject
+	public sqloxx::PersistentObject<Commodity>
 {
 
 public:
 
-	typedef sqloxx::PersistentObject PersistentObject;
-	typedef PersistentObject::Id Id;
+	typedef sqloxx::PersistentObject<Commodity> PersistentObject;
+	typedef int Id;
 
 	/**
 	 * Sets up tables required in the database for the persistence
@@ -133,6 +132,7 @@ public:
 	 */
 	void swap(Commodity& rhs);
 
+	static std::string primary_table_name();
 private:
 
 	/**
@@ -144,7 +144,6 @@ private:
 	void do_load();
 	void do_save_existing();
 	void do_save_new();
-	std::string do_get_table_name() const;
 
 	// Other functions
 	void load_abbreviation_knowing_id();

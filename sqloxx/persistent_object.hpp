@@ -2,18 +2,19 @@
 #define GUARD_persistent_object_hpp
 
 #include "database_connection.hpp"
-#include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <exception>
 #include <stdexcept>
-#include <string>
 
 
 
 namespace sqloxx
 {
+
+// WARNING The whole thing needs the documentation revised if I proceed with
+// the CRTP pattern
 
 /**
  * Class for creating objects persisted to a database. This
@@ -55,6 +56,7 @@ namespace sqloxx
  * The following virtual functions are pure and so need definitions
  * provided in the derived class:
  *
+ * // WARNING Now becomes a static function of class Derived.
  * <b>virtual std::string do_get_table_name() const = 0;</b>\n
  * Should return name of table in which instances of the derived class
  * are persisted in the database.
@@ -86,11 +88,11 @@ namespace sqloxx
  * @todo If Sqloxx is ever moved to a separate library, then the documentation
  * for PersistentObject should include code for an exemplary derived class.
  */
+template <typename Derived>
 class PersistentObject
 {
 public:
 
-	typedef int Id;
 
 	/**
 	 * Create a PersistentObject that corresponds (or purports to correspond)
@@ -112,7 +114,7 @@ public:
 	 */
 	PersistentObject
 	(	boost::shared_ptr<DatabaseConnection> p_database_connection,
-		Id p_id
+		int p_id
 	);
 
 	/** 
@@ -245,7 +247,7 @@ public:
 	 * @throws jewel::UninitializedOptionalException if the object doesn't
 	 * have an id.
 	 */
-	Id id() const;
+	int id() const;
 
 protected:
 
@@ -336,7 +338,7 @@ protected:
 	 *
 	 * Exception safety: <em>strong_guarantee</em>.
 	 */
-	void set_id(Id p_id);
+	void set_id(int p_id);
 
 	/**
 	 * @returns the id that would be assigned to this instance of
@@ -380,7 +382,7 @@ protected:
 	 * function do_get_table_name does nothing odd but simply returns a
 	 * std::string as would be expected.
 	 */
-	Id prospective_key() const;
+	int prospective_key() const;
 
 	/**
 	 * @returns \e true if this instance of PersistentObject has
@@ -393,21 +395,9 @@ protected:
 private:
 
 	/**
-	 * This function should be defined in the derived class to return the
-	 * name of the table in which instances of the derived class are stored
-	 * in the database. This function is in turn called by the default
-	 * implementation of \e do_calculate_prospective_key, which is in turn
-	 * called by \e save_new.
-	 *
-	 * Exception safety: <em>depends on function definition provided by
-	 * derived class</em>.
-	 */
-	virtual std::string do_get_table_name() const = 0;
-
-	/**
 	 * Provides implementation for the public function prospective_key.
 	 */
-	virtual Id do_calculate_prospective_key() const;
+	virtual int do_calculate_prospective_key() const;
 
 	/**
 	 * See documentation for \e load function.
@@ -457,10 +447,236 @@ private:
 	// Data members
 
 	boost::shared_ptr<DatabaseConnection> m_database_connection;
-	boost::optional<Id> m_id;
+	boost::optional<int> m_id;
 	LoadingStatus m_loading_status;
 };
 
+
+template <typename Derived>
+PersistentObject<Derived>::PersistentObject
+(	boost::shared_ptr<DatabaseConnection> p_database_connection,
+	int p_id
+):
+	m_database_connection(p_database_connection),
+	m_id(p_id),
+	m_loading_status(ghost)
+{
+}
+
+template <typename Derived>
+PersistentObject<Derived>::PersistentObject
+(	boost::shared_ptr<DatabaseConnection> p_database_connection
+):
+	m_database_connection(p_database_connection),
+	m_loading_status(ghost)
+{
+}
+
+template <typename Derived>
+PersistentObject<Derived>::~PersistentObject()
+{
+}
+
+template <typename Derived>
+void
+PersistentObject<Derived>::load()
+{
+	while (m_loading_status == loading)
+	{
+		// Wait
+	}
+	if (m_loading_status == ghost && has_id())
+	{
+		m_loading_status = loading;
+		try
+		{
+			m_database_connection->begin_transaction();
+		}
+		catch (TransactionNestingException&)
+		{
+			clear_loading_status();
+			throw;
+		}
+		catch (InvalidConnection&)
+		{
+			clear_loading_status();
+			throw;
+		}
+		try
+		{
+			do_load();
+		}
+		catch (std::exception&)
+		{
+			clear_loading_status();
+			throw;
+		}
+		try
+		{
+			m_database_connection->end_transaction();
+			// Note this can't possibly throw TransactionNestingException
+			// here, unless do_load() has done something perverse.
+		}
+		catch (InvalidConnection&)
+		{
+			// As do_load has already completed, the object in
+			// memory should be non-corrupt and fully loaded. The fact that
+			// the database connection is now invalid only affects the
+			// database, not the in-memory object. The invalidity of the
+			// database connection will presumably be detected and dealt with
+			// the next time it is accessed. We therefore do NOT rethrow
+			// here.
+			//
+			// WARNING Am I really comfortable with this?
+		}
+		m_loading_status = loaded;
+	}
+	return;
+}
+
+template <typename Derived>
+void
+PersistentObject<Derived>::save()
+{
+	if (has_id())
+	{
+		save_existing();
+	}
+	else
+	{
+		save_new();
+	}
+	return;
+}
+
+
+template <typename Derived>
+void
+PersistentObject<Derived>::save_existing()
+{
+	if (!has_id())
+	{
+		throw std::logic_error
+		(	"Method save_existing() called on an instance of PersistentObject"
+			" that does not correspond with an existing database record."
+		);
+	}
+	load();
+	m_database_connection->begin_transaction();
+	do_save_existing();
+	m_database_connection->end_transaction();
+	return;
+}
+
+template <typename Derived>
+int
+PersistentObject<Derived>::prospective_key() const
+{
+	if (has_id())
+	{
+		throw std::logic_error
+		(	"Object already has id so prospective_key does not apply."
+		);
+	}
+	return do_calculate_prospective_key();
+}
+
+
+template <typename Derived>
+int
+PersistentObject<Derived>::do_calculate_prospective_key() const
+{	
+	return database_connection()->template next_auto_key<int>
+	(	Derived::primary_table_name()
+	);
+}
+
+
+template <typename Derived>
+void
+PersistentObject<Derived>::save_new()
+{
+	m_database_connection->begin_transaction();
+	int key = prospective_key();
+	do_save_new();
+	m_database_connection->end_transaction();
+	set_id(key);
+	return;
+}
+
+
+template <typename Derived>
+boost::shared_ptr<DatabaseConnection>
+PersistentObject<Derived>::database_connection() const
+{
+	return m_database_connection;
+}
+
+
+template <typename Derived>
+int
+PersistentObject<Derived>::id() const
+{
+	return jewel::value(m_id);
+}
+
+template <typename Derived>
+void
+PersistentObject<Derived>::set_id(int p_id)
+{
+	if (has_id())
+	{
+		throw std::logic_error("Object already has id.");
+	}
+	m_id = p_id;
+	return;
+}
+
+template <typename Derived>
+bool
+PersistentObject<Derived>::has_id() const
+{
+	// Relies on the fact that m_id is a boost::optional<Id>, and
+	// will convert to true if and only if it has been initialized.
+	return m_id;
+}
+
+
+template <typename Derived>
+void
+PersistentObject<Derived>::clear_loading_status()
+{
+	m_loading_status = ghost;
+	return;
+}
+
+template <typename Derived>
+PersistentObject<Derived>::PersistentObject(PersistentObject const& rhs):
+	m_database_connection(rhs.m_database_connection),
+	m_id(rhs.m_id),
+	m_loading_status(rhs.m_loading_status)
+{
+}
+		
+template <typename Derived>
+void
+PersistentObject<Derived>::swap_base_internals(PersistentObject& rhs)
+{
+	boost::shared_ptr<DatabaseConnection> temp_dbc =
+		rhs.m_database_connection;
+	boost::optional<int> temp_id = rhs.m_id;
+	LoadingStatus temp_loading_status = rhs.m_loading_status;
+
+	rhs.m_database_connection = m_database_connection;
+	rhs.m_id = m_id;
+	rhs.m_loading_status = m_loading_status;
+
+	m_database_connection = temp_dbc;
+	m_id = temp_id;
+	m_loading_status = temp_loading_status;
+
+	return;
+}
 
 
 
@@ -469,6 +685,7 @@ private:
 
 
 #endif  // GUARD_persistent_object_hpp
+
 
 
 

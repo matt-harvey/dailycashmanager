@@ -267,7 +267,7 @@ Account::do_save_new()
 }
 
 string
-Account::do_get_table_name() const
+Account::primary_table_name()
 {
 	return "accounts";
 }

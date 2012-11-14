@@ -28,14 +28,14 @@ DerivedPO::setup_tables(DatabaseConnection& dbc)
 }
 
 DerivedPO::DerivedPO(shared_ptr<DatabaseConnection> p_dbc, Id p_id):
-	PersistentObject(p_dbc, p_id),
+	PersistentObject<DerivedPO>(p_dbc, p_id),
 	m_x(0),
 	m_y(0)
 {
 }
 
 DerivedPO::DerivedPO(shared_ptr<DatabaseConnection> p_dbc):
-	PersistentObject(p_dbc),
+	PersistentObject<DerivedPO>(p_dbc),
 	m_x(0),
 	m_y(0)
 {
@@ -155,7 +155,7 @@ DerivedPO::set_y(double p_y)
 }
 
 DerivedPO::DerivedPO(DerivedPO const& rhs):
-	PersistentObject(rhs),
+	PersistentObject<DerivedPO>(rhs),
 	m_x(rhs.m_x),
 	m_y(rhs.m_y)
 {
@@ -204,7 +204,7 @@ DerivedPO::do_save_new()
 }
 
 string
-DerivedPO::do_get_table_name() const
+DerivedPO::primary_table_name()
 {
 	return "derived_pos";
 }

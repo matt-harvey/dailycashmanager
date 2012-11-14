@@ -14,7 +14,6 @@
 
 #include "account.hpp"
 #include "journal.hpp"
-#include "general_typedefs.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -39,12 +38,12 @@ namespace phatbooks
  * Account changes whilst there are "live" Entry objects in memory?
  */
 class Entry:
-	public sqloxx::PersistentObject
+	public sqloxx::PersistentObject<Entry>
 {
 public:
 
-	typedef sqloxx::PersistentObject PersistentObject;
-	typedef PersistentObject::Id Id;
+	typedef sqloxx::PersistentObject<Entry> PersistentObject;
+	typedef int Id;
 
 	/**
 	 * Sets up tables in the database required for the persistence of
@@ -144,6 +143,7 @@ public:
 	 */
 	void swap(Entry& rhs);
 
+	static std::string primary_table_name();
 private:
 
 	/**
@@ -154,7 +154,6 @@ private:
 	void do_load();
 	void do_save_existing();
 	void do_save_new();
-	std::string do_get_table_name() const;
 	void process_saving_statement(sqloxx::SharedSQLStatement& statement);
 
 	struct EntryData

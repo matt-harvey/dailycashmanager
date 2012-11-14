@@ -5,22 +5,22 @@ project (main)
 project (test)
 
 include_directories (/home/matthew/lib
-					 /home/matthew/Workbench/versioned/phatbooks
-                     /home/matthew/Workbench/versioned/phatbooks/account
-					 /home/matthew/Workbench/versioned/phatbooks/commodity
-					 /home/matthew/Workbench/versioned/phatbooks/date
-					 /home/matthew/Workbench/versioned/phatbooks/entry
-					 /home/matthew/Workbench/versioned/phatbooks/import_from_nap
-					 /home/matthew/Workbench/versioned/phatbooks/journal
-					 /home/matthew/Workbench/versioned/phatbooks/phatbooks_database_connection
-					 /home/matthew/Workbench/versioned/phatbooks/phatbooks_text_session
-					 /home/matthew/Workbench/versioned/phatbooks/repeater)
+					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch
+                     /home/matthew/Workbench/versioned/phatbooks_id_map_branch/account
+					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/commodity
+					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/date
+					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/entry
+					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/import_from_nap
+					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/journal
+					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/phatbooks_database_connection
+					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/phatbooks_text_session
+					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/repeater)
 
 link_directories (/home/matthew/lib/jewel)
 
 set (main_files
-     account/account.cpp
 	 commodity/commodity.cpp
+     account/account.cpp
 	 consolixx/consolixx.cpp
 	 date/date.cpp
 	 entry/entry.cpp
@@ -29,8 +29,6 @@ set (main_files
 	 journal/journal.cpp
 	 journal/ordinary_journal.cpp
 	 sqloxx/database_connection.cpp
-	 sqloxx/identity_manager.cpp
-	 sqloxx/persistent_object.cpp
 	 sqloxx/shared_sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
 	 sqloxx/detail/sql_statement.cpp

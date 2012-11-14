@@ -1,5 +1,6 @@
 #include "commodity.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/persistent_object.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <jewel/decimal.hpp>
@@ -28,6 +29,7 @@ using jewel::value;
 using boost::numeric_cast;
 using std::exception;
 using std::string;
+
 
 namespace phatbooks
 {
@@ -278,7 +280,7 @@ void Commodity::set_multiplier_to_base
 }
 
 
-std::string Commodity::do_get_table_name() const
+std::string Commodity::primary_table_name()
 {
 	return "commodities";
 }

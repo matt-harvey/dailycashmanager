@@ -1,6 +1,5 @@
 #include "ordinary_journal.hpp"
 #include "journal.hpp"
-#include "general_typedefs.hpp"
 #include "date.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/shared_sql_statement.hpp"

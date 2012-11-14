@@ -222,7 +222,7 @@ Entry::do_save_new()
 
 
 std::string
-Entry::do_get_table_name() const
+Entry::primary_table_name()
 {
 	return "entries";
 }

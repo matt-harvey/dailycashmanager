@@ -12,10 +12,9 @@
  */
 
 
-#include "general_typedefs.hpp"
+#include "sqloxx/persistent_object.hpp"
 #include "commodity/commodity.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/persistent_object.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <algorithm>
 #include <string>
@@ -34,15 +33,14 @@ namespace phatbooks
 /**
  * Represents an Account object that is "live" in memory, rather than
  * stored in a database.
- *
- * Derives from Loki::SmallValueObject<> for faster heap allocation.
  */
 class Account:
-	public sqloxx::PersistentObject
+	public sqloxx::PersistentObject<Account>
 {
 public:
 
-	typedef sqloxx::PersistentObject PersistentObject;
+	typedef sqloxx::PersistentObject<Account> PersistentObject;
+	typedef int Id;
 
 	enum AccountType
 	{
@@ -141,7 +139,9 @@ public:
 	 */
 	void swap(Account& rhs);
 
+	static std::string primary_table_name();
 private:
+
 
 	/**
 	 * Copy constructor - implemented, but deliberately private.
@@ -151,7 +151,6 @@ private:
 	void do_load();
 	void do_save_existing();
 	void do_save_new();
-	std::string do_get_table_name() const;
 	void load_name_knowing_id();
 	void load_id_knowing_name();
 	void process_saving_statement(sqloxx::SharedSQLStatement& statement);

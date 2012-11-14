@@ -14,7 +14,6 @@
 
 #include "date.hpp"
 #include "journal.hpp"
-#include "general_typedefs.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -53,12 +52,12 @@ namespace phatbooks
  * and inspects them all and fires those that are due.
  */
 class Repeater:
-	public sqloxx::PersistentObject
+	public sqloxx::PersistentObject<Repeater>
 {
 public:
 
-	typedef sqloxx::PersistentObject PersistentObject;
-	typedef PersistentObject::Id Id;
+	typedef sqloxx::PersistentObject<Repeater> PersistentObject;
+	typedef int Id;
 
 	/**
 	 * Sets up tables in the database required for the persistence
@@ -135,13 +134,13 @@ public:
 
 	void swap(Repeater& rhs);
 
+	static std::string primary_table_name();
 private:
 
 	Repeater(Repeater const& rhs);
 	void do_load();
 	void do_save_existing();
 	void do_save_new();
-	std::string do_get_table_name() const;
 	void process_saving_statement(sqloxx::SharedSQLStatement& statement);
 
 	struct RepeaterData
