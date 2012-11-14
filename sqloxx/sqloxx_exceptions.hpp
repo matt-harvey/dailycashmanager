@@ -6,6 +6,12 @@
  * \brief Header file containing declarations and definitions
  * of exception classes specific to Sqloxx (a wrapper around SQLite).
  *
+ * See the Jewel library, in <jewel/exception.hpp> for
+ * API of jewel::Exception. All exceptions in sqloxx namespace are
+ * ultimately derived from jewel::Exception. The declaration and definition
+ * of each exception class derived here is facilitated by the macro
+ * JEWEL_DERIVED_EXCEPTION, also defined in <jewel/exception.hpp>.
+ *
  * \author Matthew Harvey
  * \date 04 July 2012.
  *
@@ -18,6 +24,16 @@
 namespace sqloxx
 {
 
+/**
+ * Exception to be thrown to avert arithmetic overflow.
+ */
+JEWEL_DERIVED_EXCEPTION(OverflowException, jewel::Exception);
+
+/**
+ * Exception to be thrown in lieu of std::logic_error (which
+ * may not be exception safe).
+ */
+JEWEL_DERIVED_EXCEPTION(LogicError, jewel::Exception);
 
 /**
  * Exception to be thrown in response to exceptions
@@ -35,7 +51,7 @@ JEWEL_DERIVED_EXCEPTION(ConstraintException, DatabaseException);
 
 /**
  * Exception to be thrown in response to database-related exceptions
- * originating in SQLite. See Jewel library, JEWEL_DERIVED_EXCEPTION for API.
+ * originating in SQLite.
  */
 JEWEL_DERIVED_EXCEPTION(SQLiteException, DatabaseException);
 

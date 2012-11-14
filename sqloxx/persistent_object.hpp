@@ -2,11 +2,12 @@
 #define GUARD_persistent_object_hpp
 
 #include "database_connection.hpp"
-#include <jewel/optional.hpp>
+#include "sqloxx_exceptions.hpp"
+#include <boost/none.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/optional.hpp>
 #include <exception>
-#include <stdexcept>
 
 
 
@@ -79,6 +80,22 @@ typedef int Id;
  * <b>virtual Id do_calculate_prospecitve_key() const;</b>\n
  * See documentation for prospective_key() function.
  *
+ * @param Derived The derived class. Derived should inherit publically
+ * from PersistentObject per the Curiously Recurring Template Pattern (CRTP),
+ * thus: <tt>class Derived: public PersistentObject<Derived...>, where "..."
+ * represents the other template parameters, which may be ommitted if
+ * the default values are accepted.
+ *
+ * @param Id The type of the identifier for this class in the database.
+ * Best if integral. Defaults to sqloxx::Id.
+ *
+ * @param Counter The type of the counter to count the number of "at large"
+ * "handles" to a given Derived object. Should be an integral type,
+ * and defaults to int. (The count of handles is used by IdentityMap class
+ * to help manage caching of in-memory objects.)
+ *
+ * @todo Ensure counter cannot overflow.
+ * 
  * @todo Provide for atomic saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
  * Go through all the client classes in Phatbooks and ensure the
@@ -90,7 +107,7 @@ typedef int Id;
  * @todo If Sqloxx is ever moved to a separate library, then the documentation
  * for PersistentObject should include code for an exemplary derived class.
  */
-template <typename Derived, typename Id = sqloxx::Id>
+template <typename Derived, typename Id = sqloxx::Id, typename Counter = int>
 class PersistentObject
 {
 public:
@@ -146,7 +163,7 @@ public:
 	 *
 	 * For details of exceptions and exception safety, see the documentation
 	 * for save_existing() and save_new(). But note that unlike those two
-	 * functions, it is impossible for save() to throw std::logic_error.
+	 * functions, it is impossible for save() to throw sqloxx::LogicError.
 	 */
 	void save();
 
@@ -173,7 +190,7 @@ public:
 	 * the first statement in the implementation of any setter method in
 	 * the derived class.
 	 *
-	 * @throws std::logic_error if this PersistentObject does not have
+	 * @throws sqloxx::LogicError if this PersistentObject does not have
 	 * an id. 
 	 *
 	 * @throws TransactionNestingException if the maximum transaction
@@ -225,7 +242,7 @@ public:
 	 *
 	 * @throws InvalidConnection if the DatabaseConnection is invalid.
 	 *
-	 * @throws std::logic_error if the object already has an id, i.e. has
+	 * @throws sqloxx::LogicError if the object already has an id, i.e. has
 	 * already been saved to the database.
 	 *
 	 * May also throw exceptions from do_calculate_prospective_key(), which
@@ -249,6 +266,20 @@ public:
 	 * have an id.
 	 */
 	Id id() const;
+
+	/**
+	 * Should only be called by IdentityMap<Derived>.
+	 *
+	 * @todo Document and test.
+	 */
+	void increment_counter();
+
+	/**
+	 * Should only be called by IdentityMap<Derived>.
+	 *
+	 * @todo Document and test.
+	 */
+	void decrement_counter();
 
 protected:
 
@@ -334,7 +365,7 @@ protected:
 	 *
 	 * @param p_id the value to which you want to set the id of this object.
 	 *
-	 * @throws std::logic_error if set_id is called on an object for which
+	 * @throws sqloxx::LogicError if set_id is called on an object for which
 	 * its id has already been initialized.
 	 *
 	 * Exception safety: <em>strong_guarantee</em>.
@@ -348,17 +379,17 @@ protected:
 	 * This function calls \e do_calculate_prospective_key, which has a
 	 * default implementation but may be redefined.
 	 *
-	 * @throws std::logic_error in the event this instance already has
+	 * @throws sqloxx::LogicError in the event this instance already has
 	 * an id. (This occurs regardless of how/whether
 	 * \e do_calculate_prospective_key is redefined.)
 	 *
-	 * Apart from \e std::logic_error as just described, the exception
+	 * Apart from \e sqloxx::LogicError as just described, the exception
 	 * throwing behaviour and exception safety of this function depend on
 	 * those of the function do_calculate_prospective_key().
 	 *
 	 * <b>If the default implementation of do_calculate_prospective_key() is
 	 * retained, then the following exceptions may be thrown, in addition
-	 * to std::logic_error:</b>
+	 * to sqloxx::LogicError.</b>
 	 *
 	 * @throws sqloxx::TableSizeException if the greatest primary key value
 	 * already in the table (i.e. the table into which this instance of
@@ -448,13 +479,26 @@ private:
 	// Data members
 
 	boost::shared_ptr<DatabaseConnection> m_database_connection;
+
+	// Represent primary key in database. If the object does not correspond to
+	// and does not purport to correspond to any record in the database, then
+	// m_id in unitialized.
 	boost::optional<Id> m_id;
+	
+	// Represents the identifier, in the IdentityMap<Derived> for
+	// m_database_connection, of an instance of Derived that does not
+	// correspond to, and does not purport to correspond to, any record in the
+	// database. Will assume an uninitialized state if and when the object is
+	// saved to the database.
+	boost::optional<Id> m_proxy_key;
+
 	LoadingStatus m_loading_status;
+	Counter m_counter;
 };
 
 
-template <typename Derived, typename Id>
-PersistentObject<Derived, Id>::PersistentObject
+template <typename Derived, typename Id, typename Counter>
+PersistentObject<Derived, Id, Counter>::PersistentObject
 (	boost::shared_ptr<DatabaseConnection> p_database_connection,
 	Id p_id
 ):
@@ -464,23 +508,25 @@ PersistentObject<Derived, Id>::PersistentObject
 {
 }
 
-template <typename Derived, typename Id>
-PersistentObject<Derived, Id>::PersistentObject
+template <typename Derived, typename Id, typename Counter>
+PersistentObject<Derived, Id, Counter>::PersistentObject
 (	boost::shared_ptr<DatabaseConnection> p_database_connection
 ):
 	m_database_connection(p_database_connection),
 	m_loading_status(ghost)
 {
+	// WARNING When the object is created, the
+	// IdentityMap<Derived> should provide it with a proxy key.
 }
 
-template <typename Derived, typename Id>
-PersistentObject<Derived, Id>::~PersistentObject()
+template <typename Derived, typename Id, typename Counter>
+PersistentObject<Derived, Id, Counter>::~PersistentObject()
 {
 }
 
-template <typename Derived, typename Id>
+template <typename Derived, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id>::load()
+PersistentObject<Derived, Id, Counter>::load()
 {
 	while (m_loading_status == loading)
 	{
@@ -535,9 +581,9 @@ PersistentObject<Derived, Id>::load()
 	return;
 }
 
-template <typename Derived, typename Id>
+template <typename Derived, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id>::save()
+PersistentObject<Derived, Id, Counter>::save()
 {
 	if (has_id())
 	{
@@ -551,13 +597,13 @@ PersistentObject<Derived, Id>::save()
 }
 
 
-template <typename Derived, typename Id>
+template <typename Derived, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id>::save_existing()
+PersistentObject<Derived, Id, Counter>::save_existing()
 {
 	if (!has_id())
 	{
-		throw std::logic_error
+		throw LogicError
 		(	"Method save_existing() called on an instance of PersistentObject"
 			" that does not correspond with an existing database record."
 		);
@@ -569,13 +615,13 @@ PersistentObject<Derived, Id>::save_existing()
 	return;
 }
 
-template <typename Derived, typename Id>
+template <typename Derived, typename Id, typename Counter>
 Id
-PersistentObject<Derived, Id>::prospective_key() const
+PersistentObject<Derived, Id, Counter>::prospective_key() const
 {
 	if (has_id())
 	{
-		throw std::logic_error
+		throw LogicError
 		(	"Object already has id so prospective_key does not apply."
 		);
 	}
@@ -583,9 +629,9 @@ PersistentObject<Derived, Id>::prospective_key() const
 }
 
 
-template <typename Derived, typename Id>
+template <typename Derived, typename Id, typename Counter>
 Id
-PersistentObject<Derived, Id>::do_calculate_prospective_key() const
+PersistentObject<Derived, Id, Counter>::do_calculate_prospective_key() const
 {	
 	return database_connection()->template next_auto_key<Id>
 	(	Derived::primary_table_name()
@@ -593,49 +639,102 @@ PersistentObject<Derived, Id>::do_calculate_prospective_key() const
 }
 
 
-template <typename Derived, typename Id>
+template <typename Derived, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id>::save_new()
+PersistentObject<Derived, Id, Counter>::save_new()
 {
 	m_database_connection->begin_transaction();
-	Id key = prospective_key();
+	Id const allocated_id = prospective_key();
 	do_save_new();
 	m_database_connection->end_transaction();
-	set_id(key);
+	set_id(allocated_id);
+	// DatabaseConnection is notified of newly saved object. The
+	// The DatabaseConnection then passes this message to the
+	// IdentityMap<Derived>, which in turn reallocates this object to
+	// a newly created slot at key new_id, in its internal map, and
+	// deallocates
+	// the old "dummy" position.
+	// WARNING I need to implement the "proxy key" concept. The proxy key
+	// is how the IdentityMap<Derived> (which we can communicate with via the
+	// DatabaseConnection) finds the shared_ptr corresponding to this instance
+	// of Derived. It is stored via its proxy key until such time as it is
+	// saved to the database; and when that happens, we inform it, so that it
+	// can transfer its shared_ptr to that object into the appropriate slot
+	// for that object in the main map.
+	// When an non-identified "draft" instance of Derived is first created, it
+	// should be allocated a proxy_key by the IdentityManager.
+	m_proxy_key = boost::none;
+	m_database_connection->register_id<Derived>(m_proxy_key, allocated_id);
 	return;
+	// WARNING Reconsider what exception safety guarantee can be offered
+	// in light of the dealings around proxy key that have now been
+	// incorporated into this function. Reflect in API documentation.
 }
 
 
-template <typename Derived, typename Id>
+template <typename Derived, typename Id, typename Counter>
 boost::shared_ptr<DatabaseConnection>
-PersistentObject<Derived, Id>::database_connection() const
+PersistentObject<Derived, Id, Counter>::database_connection() const
 {
 	return m_database_connection;
 }
 
 
-template <typename Derived, typename Id>
+template <typename Derived, typename Id, typename Counter>
 Id
-PersistentObject<Derived, Id>::id() const
+PersistentObject<Derived, Id, Counter>::id() const
 {
 	return jewel::value(m_id);
 }
 
-template <typename Derived, typename Id>
+
+template <typename Derived, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id>::set_id(Id p_id)
+PersistentObject<Derived, Id, Counter>::increment_counter()
+{
+	if (m_counter == std::numeric_limits<Counter>::max())
+	{
+		throw OverflowException
+		(	"Counter for PersistentObject instance has reached "
+			"maximum value and cannot be safely incremented."
+		);
+	}
+	++m_counter;
+	return;
+}
+
+
+template <typename Derived, typename Id, typename Counter>
+void
+PersistentObject<Derived, Id, Counter>::decrement_counter()
+{
+	if (m_counter == 0)
+	{
+		throw OverflowException 
+		(	"Counter for PersistentObject instance has reached "
+			"zero and cannot be safely decremented."
+		);
+	}
+	--m_counter;
+	return;
+}
+
+
+template <typename Derived, typename Id, typename Counter>
+void
+PersistentObject<Derived, Id, Counter>::set_id(Id p_id)
 {
 	if (has_id())
 	{
-		throw std::logic_error("Object already has id.");
+		throw LogicError("Object already has id.");
 	}
 	m_id = p_id;
 	return;
 }
 
-template <typename Derived, typename Id>
+template <typename Derived, typename Id, typename Counter>
 bool
-PersistentObject<Derived, Id>::has_id() const
+PersistentObject<Derived, Id, Counter>::has_id() const
 {
 	// Relies on the fact that m_id is a boost::optional<Id>, and
 	// will convert to true if and only if it has been initialized.
@@ -643,37 +742,45 @@ PersistentObject<Derived, Id>::has_id() const
 }
 
 
-template <typename Derived, typename Id>
+template <typename Derived, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id>::clear_loading_status()
+PersistentObject<Derived, Id, Counter>::clear_loading_status()
 {
 	m_loading_status = ghost;
 	return;
 }
 
-template <typename Derived, typename Id>
-PersistentObject<Derived, Id>::PersistentObject(PersistentObject const& rhs):
+template <typename Derived, typename Id, typename Counter>
+PersistentObject<Derived, Id, Counter>::PersistentObject
+(	PersistentObject const& rhs
+):
 	m_database_connection(rhs.m_database_connection),
 	m_id(rhs.m_id),
+	m_proxy_key(rhs.m_proxy_key),
 	m_loading_status(rhs.m_loading_status)
 {
 }
 		
-template <typename Derived, typename Id>
+template <typename Derived, typename Id, typename Counter>
 void
-PersistentObject<Derived, Id>::swap_base_internals(PersistentObject& rhs)
+PersistentObject<Derived, Id, Counter>::swap_base_internals
+(	PersistentObject& rhs
+)
 {
 	boost::shared_ptr<DatabaseConnection> temp_dbc =
 		rhs.m_database_connection;
 	boost::optional<Id> temp_id = rhs.m_id;
+	boost::optional<Id> temp_proxy_key = rhs.m_proxy_key;
 	LoadingStatus temp_loading_status = rhs.m_loading_status;
 
 	rhs.m_database_connection = m_database_connection;
 	rhs.m_id = m_id;
+	rhs.m_proxy_key = m_proxy_key;
 	rhs.m_loading_status = m_loading_status;
 
 	m_database_connection = temp_dbc;
 	m_id = temp_id;
+	m_proxy_key = temp_proxy_key;
 	m_loading_status = temp_loading_status;
 
 	return;

@@ -4,6 +4,11 @@
 #include <boost/shared_ptr.hpp>
 #include <stdexcept>
 
+// WARNING Replace std::runtime_error with a better exception class
+// here.
+
+
+
 namespace sqloxx
 {
 
@@ -11,7 +16,7 @@ template <typename T>
 class Handle
 {
 public:
-	Handle(boost::shared__ptr<T> p_pointer);
+	Handle(typename boost::shared_ptr<T> p_pointer);
 	~Handle();
 	Handle(Handle const& rhs);
 	operator bool() const;
@@ -27,23 +32,23 @@ private:
 
 template <typename T>
 Handle<T>::Handle
-(	boost::shared_ptr<T> ptr
+(	typename boost::shared_ptr<T> p_pointer
 ):
 	m_pointer(p_pointer)
 {
 }
 
 template <typename T>
-Handle<T>::Handle()
+Handle<T>::~Handle()
 {
-	m_pointer->decrement_handle_counter();
+	m_pointer->decrement_counter();
 }
 
 template <typename T>
 Handle<T>::Handle(Handle const& rhs)
 {
 	m_pointer = rhs.m_pointer;
-	m_pointer->increment_handle_counter();
+	m_pointer->increment_counter();
 }
 
 template <typename T>
@@ -59,7 +64,7 @@ T& Handle<T>::operator*() const
 	{
 		return *m_pointer;
 	}
-	throw (std::runtime_error("Unbound Handle."))
+	throw (std::runtime_error("Unbound Handle."));
 }
 
 template <typename T>

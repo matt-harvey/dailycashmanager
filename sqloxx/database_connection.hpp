@@ -10,6 +10,7 @@
 #include <boost/unordered_map.hpp>
 #include <set>
 #include <string>
+#include "identity_map.hpp"
 #include "shared_sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
 
@@ -309,6 +310,26 @@ public:
 	(	std::string const& statement_text
 	);
 
+	/**
+	 * This one should only be called by PersistentObject<T>.
+	 *
+	 * @todo Documentation and testing.
+	 */
+	template <typename T>
+	void register_id
+	(	typename T::Id proxy_key,
+		typename T::Id allocated_id
+	);
+
+	/**
+	 * Should be specialized by
+	 * application-specific client code, so as to
+	 * return for each "business class" T a reference to the
+	 * IdentityMap<T> for a given instance of DatabaseManager.
+	 */
+	template <typename T>
+	IdentityMap<T>& identity_map();
+
 private:
 
 	void unchecked_begin_transaction();
@@ -365,6 +386,31 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 	}
 }
 
+template <typename T>
+class MapRegistrar
+{
+public:
+	/**
+	 * Lets DatabaseConnection know that a newly created instance
+	 * of T, with proxy key of \e proxy_key, has just been saved to the
+	 * database, and been allocated an id of \e allocated_id.
+	 */
+	static void register_id
+	(	DatabaseConnection const& dbc,
+		typename T::Id proxy_key,
+		typename T::Id allocated_id
+	)
+	{
+		// DatabaseConnection subclass should specialize the
+		// identity_map<T>() method for any T whose identity it
+		// wants to have managed via IdentityMap<T>.
+		// The specialization should return a reference to the instance
+		// of IdentityMap<T> through which this DatabaseConnection wants
+		// to manage instances of T.
+		dbc.identity_map<T>().register_id(proxy_key, allocated_id);
+		return;
+	}
+};
 
 
 }  // namespace sqloxx
