@@ -30,6 +30,12 @@ namespace sqloxx
 JEWEL_DERIVED_EXCEPTION(OverflowException, jewel::Exception);
 
 /**
+ * Exception to be thrown when attempting to dereference an
+ * unbound Handle<T>
+ */
+JEWEL_DERIVED_EXCEPTION(UnboundHandleException, jewel::Exception);
+
+/**
  * Exception to be thrown in lieu of std::logic_error (which
  * may not be exception safe).
  */

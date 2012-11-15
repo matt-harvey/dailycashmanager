@@ -1,13 +1,8 @@
 #ifndef GUARD_handle_hpp
 #define GUARD_handle_hpp
 
+#include "sqloxx_exceptions.hpp"
 #include <boost/shared_ptr.hpp>
-#include <stdexcept>
-
-// WARNING Replace std::runtime_error with a better exception class
-// here.
-
-
 
 namespace sqloxx
 {
@@ -36,19 +31,20 @@ Handle<T>::Handle
 ):
 	m_pointer(p_pointer)
 {
+	p_pointer->notify_handle_construction();
 }
 
 template <typename T>
 Handle<T>::~Handle()
 {
-	m_pointer->decrement_counter();
+	m_pointer->notify_handle_destruction();
 }
 
 template <typename T>
 Handle<T>::Handle(Handle const& rhs)
 {
 	m_pointer = rhs.m_pointer;
-	m_pointer->increment_counter();
+	m_pointer->notify_handle_copy_construction();
 }
 
 template <typename T>
@@ -64,7 +60,7 @@ T& Handle<T>::operator*() const
 	{
 		return *m_pointer;
 	}
-	throw (std::runtime_error("Unbound Handle."));
+	throw (UnboundHandleException("Unbound Handle."));
 }
 
 template <typename T>
@@ -74,7 +70,7 @@ T* Handle<T>::operator->() const
 	{
 		return *m_pointer;
 	}
-	throw (std::runtime_error("Unbound Handle."));
+	throw (UnboundHandleException("Unbound Handle."));
 }
 
 
