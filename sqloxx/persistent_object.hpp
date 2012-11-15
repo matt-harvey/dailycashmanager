@@ -428,6 +428,21 @@ protected:
 	 */
 	bool has_id() const;
 
+	/**
+	 * Should only be called by IdentityMap<Derived>.
+	 *
+	 * WARNING This should be able to be specified in the constructor. But we
+	 * also don't want to confuse it with the other
+	 * two-paramatered constructor!
+	 *
+	 * WARNING Move implementation out of body of class.
+	 */
+	void set_proxy_key(Id p_proxy_key)
+	{
+		m_proxy_key = p_proxy_key;
+		return;
+	}
+
 private:
 
 	/**
@@ -508,7 +523,8 @@ PersistentObject<Derived, Connection, Id, Counter>::PersistentObject
 ):
 	m_database_connection(p_database_connection),
 	m_id(p_id),
-	m_loading_status(ghost)
+	m_loading_status(ghost),
+	m_counter(1)
 {
 }
 
@@ -517,7 +533,8 @@ PersistentObject<Derived, Connection, Id, Counter>::PersistentObject
 (	boost::shared_ptr<Connection> p_database_connection
 ):
 	m_database_connection(p_database_connection),
-	m_loading_status(ghost)
+	m_loading_status(ghost),
+	m_counter(1)
 {
 	// WARNING When the object is created, the
 	// IdentityMap<Derived> should provide it with a proxy key.
