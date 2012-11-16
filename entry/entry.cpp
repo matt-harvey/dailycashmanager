@@ -15,6 +15,8 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/handle.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -114,8 +116,17 @@ std::string
 Entry::account_name()
 {
 	load();
-	Account account(database_connection(), value(m_data->account_id));
-	return account.name();
+	// WARNING May uncomment revert to Account instead of Handle<Account> in
+	// due course.
+	using sqloxx::Handle;
+	using sqloxx::get_handle;
+	Handle<Account> account
+	(	get_handle<Account>
+		(	database_connection(),
+			value(m_data->account_id)
+		)
+	);
+	return account->name();
 }
 
 

@@ -12,6 +12,7 @@
  */
 
 
+#include "sqloxx/handle.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
@@ -76,7 +77,7 @@ public:
 	{
 		boost::optional<bool> is_actual;
 		boost::optional<std::string> comment;
-		std::vector< boost::shared_ptr<Entry> > entries;
+		std::vector< sqloxx::Handle<Entry> > entries;
 	};
 
 	// WARNING This is fucked.
@@ -92,7 +93,7 @@ public:
 	// classes. But if we don't redefine one, we land in trouble!
 
 
-	std::vector< boost::shared_ptr<Entry> > const& entries()
+	std::vector< sqloxx::Handle<Entry> > const& entries()
 	{
 		return m_data->entries;
 	}
@@ -109,7 +110,7 @@ public:
 		return;
 	}
 
-	void add_entry(boost::shared_ptr<Entry> entry)
+	void add_entry(sqloxx::Handle<Entry> entry)
 	{
 		m_data->entries.push_back(entry);
 		return;

@@ -2,6 +2,7 @@
 #define GUARD_draft_journal_hpp
 
 #include "journal.hpp"
+#include "sqloxx/handle.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -50,7 +51,7 @@ public:
 	 * @todo Figure out throwing behaviour. Should it check that
 	 * the account exists? Etc. Etc.
 	 */
-	void add_entry(boost::shared_ptr<Entry> entry);
+	void add_entry(sqloxx::Handle<Entry> entry);
 
 
 	bool is_actual();
@@ -74,7 +75,7 @@ public:
 	 */
 	bool is_balanced();
 
-	std::vector < boost::shared_ptr<Entry> > const& entries();
+	std::vector < sqloxx::Handle<Entry> > const& entries();
 
 
 	/**

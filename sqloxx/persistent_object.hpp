@@ -313,6 +313,28 @@ public:
 	}
 
 	/**
+	 * Should only be called by Handle<Derived>. To advise the
+	 * underlying object that a handle pointing to it has appeared
+	 * as the right-hand operand of an assignment operation.
+	 */
+	void notify_rhs_assignment_operation()
+	{
+		increment_handle_counter();
+		return;
+	}
+	
+	/**
+	 * Should only be called by Handle<Derived>. To advise the
+	 * underlying object that a handle pointing to it has appeared
+	 * as the right-hand operand of an assignment operation.
+	 */
+	void notify_lhs_assignment_operation()
+	{
+		decrement_handle_counter();
+		return;
+	}
+
+	/**
 	 * Should only be called by Handle<Derived>. To advise the underlying
 	 * object that a handle pointing to it has been destructed.
 	 *

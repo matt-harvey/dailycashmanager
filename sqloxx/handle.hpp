@@ -1,7 +1,6 @@
 #ifndef GUARD_handle_hpp
 #define GUARD_handle_hpp
 
-#include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <boost/shared_ptr.hpp>
 
@@ -23,12 +22,12 @@ public:
 	Handle(typename boost::shared_ptr<T> p_pointer);
 	~Handle();
 	Handle(Handle const& rhs);
+	Handle& operator=(Handle const& rhs);
 	operator bool() const;
 	T& operator*() const;
 	T* operator->() const;
 private:
 	boost::shared_ptr<T> m_pointer;
-	Handle& operator=(Handle const& rhs);  // Unimplemented
 
 };
 
@@ -57,13 +56,24 @@ Handle<T>::Handle(Handle const& rhs)
 }
 
 template <typename T>
+Handle<T>&
+Handle<T>::operator=(Handle const& rhs)
+{
+	rhs.m_pointer->notify_rhs_assignment_operation();
+	m_pointer->notify_lhs_assignment_operation();
+	m_pointer = rhs.m_pointer;
+	return *this;
+}
+
+template <typename T>
 Handle<T>::operator bool() const
 {
 	return static_cast<bool>(m_pointer);
 }
 
 template <typename T>
-T& Handle<T>::operator*() const
+T&
+Handle<T>::operator*() const
 {
 	if (static_cast<bool>(m_pointer))
 	{
@@ -73,7 +83,8 @@ T& Handle<T>::operator*() const
 }
 
 template <typename T>
-T* Handle<T>::operator->() const
+T*
+Handle<T>::operator->() const
 {
 	if (static_cast<bool>(m_pointer))
 	{

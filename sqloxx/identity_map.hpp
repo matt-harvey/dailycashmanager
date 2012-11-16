@@ -63,6 +63,9 @@ public:
 	 */
 	void notify_nil_handles(ProxyKey proxy_key)
 	{
+		// WARNING temp comment-out to check whether non-deletion
+		// will speed things up.
+		/*
 		Record const record = m_proxy_map.find(proxy_key)->second;
 		if (record->has_id())
 		{
@@ -71,6 +74,7 @@ public:
 			assert (m_id_map.find(record->id()) == m_id_map.end());
 		}
 		m_proxy_map.erase(proxy_key);
+		*/
 		return;
 	}
 

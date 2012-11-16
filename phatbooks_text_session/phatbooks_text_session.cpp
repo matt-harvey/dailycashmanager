@@ -834,17 +834,17 @@ void PhatbooksTextSession::display_all_entry_account_names()
 	     << "without optimisations: " << endl;
 	SharedSQLStatement statement
 	(	*m_database_connection,
-		"select account_id from entries order by entry_id"
+		"select entry_id from entries order by entry_id"
 	);
 	while (statement.step())
 	{
-		Handle<Account> account
-		(	get_handle<Account>
+		Handle<Entry> entry
+		(	get_handle<Entry>
 			(	m_database_connection,
-				statement.extract<Account::Id>(0)
+				statement.extract<Entry::Id>(0)
 			)
 		);
-		cout << account->name() << endl;
+		cout << entry->account_name() << endl;
 	}
 	cout << "Done!" << endl;
 	return;
@@ -869,7 +869,7 @@ void PhatbooksTextSession::display_journal_summaries()
 			)
 		);
 		cout << endl << journal->date() << endl;
-		typedef vector< shared_ptr<Entry> > EntryVec;
+		typedef vector< Handle<Entry> > EntryVec;
 		EntryVec::const_iterator it = journal->entries().begin();
 		EntryVec::const_iterator endpoint = journal->entries().end();
 		for ( ; it != endpoint; ++it)

@@ -16,6 +16,8 @@
 #include "commodity.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/handle.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -27,6 +29,8 @@
 #include <string>
 #include <vector>
 
+using sqloxx::get_handle;
+using sqloxx::Handle;
 using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
 using boost::scoped_ptr;
@@ -98,7 +102,7 @@ Journal::do_save_new_journal_base
 	statement.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
 	statement.bind(":comment", value(m_data->comment));
 	statement.step_final();
-	typedef vector< shared_ptr<Entry> >::iterator EntryIter;
+	typedef vector< Handle<Entry> >::iterator EntryIter;
 	EntryIter const endpoint = m_data->entries.end();
 	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
 	{
@@ -123,7 +127,7 @@ Journal::do_save_existing_journal_base
 	updater.bind(":comment", value(m_data->comment));
 	updater.bind(":id", id);
 	updater.step_final();
-	typedef vector< shared_ptr<Entry> >::iterator EntryIter;
+	typedef vector< Handle<Entry> >::iterator EntryIter;
 	EntryIter const endpoint = m_data->entries.end();
 	unordered_set<Entry::Id> saved_entry_ids;
 	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
@@ -184,9 +188,7 @@ Journal::do_load_journal_base
 	while (entry_finder.step())
 	{
 		Entry::Id const entr_id = entry_finder.extract<Entry::Id>(0);
-		shared_ptr<Entry> entry
-		(	new Entry(dbc, entr_id)
-		);
+		Handle<Entry> entry(get_handle<Entry>(dbc, entr_id));
 		temp.m_data->entries.push_back(entry);
 	}
 	temp.m_data->is_actual = static_cast<bool>(statement.extract<int>(0));

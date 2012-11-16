@@ -4,6 +4,7 @@
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/handle.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/cstdint.hpp>
@@ -19,6 +20,7 @@
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::value;
+using sqloxx::Handle;
 using sqloxx::SharedSQLStatement;
 using std::string;
 using std::vector;
@@ -44,7 +46,7 @@ OrdinaryJournal::set_comment(string const& p_comment)
 }
 
 void
-OrdinaryJournal::add_entry(shared_ptr<Entry> entry)
+OrdinaryJournal::add_entry(Handle<Entry> entry)
 {
 	load();
 	if (has_id())
@@ -70,7 +72,7 @@ OrdinaryJournal::comment()
 }
 
 
-vector< shared_ptr<Entry> > const&
+vector< Handle<Entry> > const&
 OrdinaryJournal::entries()
 {
 	load();
