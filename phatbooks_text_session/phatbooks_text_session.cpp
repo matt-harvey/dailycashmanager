@@ -429,7 +429,7 @@ void PhatbooksTextSession::elicit_account()
 
 void PhatbooksTextSession::elicit_journal()
 {
-	Journal journal(m_database_connection);
+	Journal journal;
 
 	// Find out what kind of journal this is going to be
 	Menu transaction_menu;
@@ -618,7 +618,7 @@ void PhatbooksTextSession::elicit_journal()
 
 	if (journal_action == post)
 	{
-		OrdinaryJournal ordinary_journal(journal);
+		OrdinaryJournal ordinary_journal(journal, m_database_connection);
 
 		boost::gregorian::date const d =
 			boost::gregorian::day_clock::local_day();
@@ -633,7 +633,7 @@ void PhatbooksTextSession::elicit_journal()
 	}
 	else if (journal_action == save_draft || journal_action == save_recurring)
 	{
-		DraftJournal draft_journal(journal);
+		DraftJournal draft_journal(journal, m_database_connection);
 
 		// Ask for a name for the draft journal
 		string prompt =

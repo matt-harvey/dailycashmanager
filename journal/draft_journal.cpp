@@ -1,4 +1,6 @@
 #include "draft_journal.hpp"
+#include "entry.hpp"
+#include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
@@ -24,6 +26,63 @@ namespace phatbooks
 {
 
 void
+DraftJournal::set_whether_actual(bool p_is_actual)
+{
+	load();
+	m_data->is_actual = p_is_actual;
+	return;
+}
+
+void
+DraftJournal::set_comment(string const& p_comment)
+{
+	load();
+	m_data->comment = p_comment;
+	return;
+}
+
+void
+DraftJournal::add_entry(shared_ptr<Entry> entry)
+{
+	load();
+	if (has_id())
+	{
+		entry->set_journal_id(id());
+	}
+	Journal::add_entry(entry);
+	return;
+}
+
+bool
+DraftJournal::is_actual()
+{
+	load();
+	return value(m_data->is_actual);
+}
+
+string
+DraftJournal::comment()
+{
+	load();
+	return value(m_data->comment);
+}
+
+
+vector< shared_ptr<Entry> > const&
+DraftJournal::entries()
+{
+	load();
+	// WARNING Should this fail if m_entries is empty? This would
+	// be the same behaviour then as the other "optionals". To be
+	// truly consistent with the other optionals, it would fail
+	// by means of a failed assert (assuming I haven't wrapped the
+	// other optionals in some throwing construct...).
+	return Journal::entries();
+}
+
+
+
+void
 DraftJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
@@ -40,7 +99,8 @@ DraftJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 DraftJournal::DraftJournal
 (	shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 ):
-	Journal(p_database_connection),
+	DraftJournal::PersistentObject(p_database_connection),
+	Journal(),
 	m_dj_data(new DraftJournalData)
 {
 }
@@ -50,15 +110,20 @@ DraftJournal::DraftJournal
 (	shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	Id p_id
 ):
-	Journal(p_database_connection, p_id),
+	DraftJournal::PersistentObject(p_database_connection, p_id),
+	Journal(),
 	m_dj_data(new DraftJournalData)
 {
 }
 
 
 
-DraftJournal::DraftJournal(Journal const& p_journal):
-	Journal(p_journal),
+DraftJournal::DraftJournal
+(	Journal const& p_journal,
+	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+):
+	DraftJournal::PersistentObject(p_database_connection),
+	Journal(p_journal.data()),
 	m_dj_data(new DraftJournalData)
 {
 }
@@ -105,7 +170,8 @@ DraftJournal::name()
 
 
 DraftJournal::DraftJournal(DraftJournal const& rhs):
-	Journal(rhs),
+	DraftJournal::PersistentObject(rhs),
+	Journal(rhs.data()),
 	m_dj_data(new DraftJournalData(*(rhs.m_dj_data)))
 {
 }
@@ -114,6 +180,7 @@ DraftJournal::DraftJournal(DraftJournal const& rhs):
 void
 DraftJournal::swap(DraftJournal& rhs)
 {
+	swap_base_internals(rhs);
 	Journal::swap(rhs);
 	using std::swap;
 	swap(m_dj_data, rhs.m_dj_data);
@@ -127,7 +194,7 @@ DraftJournal::do_load()
 	DraftJournal temp(*this);
 	
 	// Load the base part of temp.
-	temp.do_load_journal_base();
+	temp.do_load_journal_base(database_connection(), id());
 
 	// Load the derived, DraftJournal part of the temp.
 	SharedSQLStatement statement
@@ -160,7 +227,7 @@ void
 DraftJournal::do_save_new()
 {
 	// Save the Journal (base) part of the object
-	Id const journal_id = do_save_new_journal_base();
+	Id const journal_id = do_save_new_journal_base(database_connection());
 
 	// Save the derived, DraftJournal part of the object
 	SharedSQLStatement statement
@@ -185,7 +252,7 @@ DraftJournal::do_save_new()
 void
 DraftJournal::do_save_existing()
 {
-	do_save_existing_journal_base();
+	do_save_existing_journal_base(database_connection(), id());
 	SharedSQLStatement updater
 	(	*database_connection(),
 		"update draft_journal_detail set name = :name where "

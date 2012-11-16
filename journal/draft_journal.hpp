@@ -2,6 +2,7 @@
 #define GUARD_draft_journal_hpp
 
 #include "journal.hpp"
+#include "sqloxx/persistent_object.hpp"
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <string>
@@ -10,12 +11,71 @@
 namespace phatbooks
 {
 
+class Entry;
 class PhatbooksDatabaseConnection;
 class Repeater;
 
-class DraftJournal: public Journal
+class DraftJournal:
+	public sqloxx::PersistentObject
+	<	DraftJournal,
+		PhatbooksDatabaseConnection
+	>,
+	public Journal
 {
 public:
+
+	typedef
+		sqloxx::PersistentObject<DraftJournal, PhatbooksDatabaseConnection>
+		PersistentObject;
+	typedef sqloxx::Id Id;
+
+	/**
+	 * Change whether Journal is actual or budget
+	 * 
+	 * Does not throw.
+	 */
+	void set_whether_actual(bool p_is_actual);
+
+	/**
+	 * Set comment for journal
+	 *
+	 * Does not throw, except possibly \c std::bad_alloc in extreme
+	 * circumstances.
+	 */
+	void set_comment(std::string const& p_comment);
+
+	/**
+	 * Add an Entry to the Journal.
+	 *
+	 * @todo Figure out throwing behaviour. Should it check that
+	 * the account exists? Etc. Etc.
+	 */
+	void add_entry(boost::shared_ptr<Entry> entry);
+
+
+	bool is_actual();
+
+	/**
+	 * @returns journal comment.
+	 *
+	 * Does not throw, except perhaps \c std::bad_alloc in
+	 * extreme circumstances.
+	 */
+	std::string comment();
+
+	/**
+	 * @returns true if and only if the journal balances, i.e. the total
+	 * of the entries is equal to zero.
+	 *
+	 * @todo Implement it! Note, thinking a little about this function shows
+	 * that all entries in a journal must be expressed in a common currency.
+	 * It doesn't make sense to think of entries in a single journal as being
+	 * in different currencies. An entry must have its value frozen in time.
+	 */
+	bool is_balanced();
+
+	std::vector < boost::shared_ptr<Entry> > const& entries();
+
 
 	/**
 	 * Create the tables required for the persistence
@@ -43,9 +103,14 @@ public:
 	/**
 	 * Create a DraftJournal from a Journal. Note the data members
 	 * specific to DraftJournal will be uninitialized. All other
-	 * members will be ***shallow-copied*** from p_journal.
+	 * members will be ***shallow-copied*** from p_journal. You must
+	 * also pass a shared_ptr to the database connection, as the Journal
+	 * base object does not have a database connection associated with it.
 	 */
-	DraftJournal(Journal const& p_journal);
+	DraftJournal
+	(	Journal const& p_journal,
+		boost::shared_ptr<PhatbooksDatabaseConnection> const&
+	);
 
 	/**
 	 * Destructor.

@@ -1,8 +1,10 @@
 #include "ordinary_journal.hpp"
 #include "journal.hpp"
 #include "date.hpp"
+#include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/persistent_object.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -11,16 +13,75 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <jewel/optional.hpp>
-
+#include <string>
+#include <vector>
 
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::value;
 using sqloxx::SharedSQLStatement;
-
+using std::string;
+using std::vector;
 
 namespace phatbooks
 {
+
+
+void
+OrdinaryJournal::set_whether_actual(bool p_is_actual)
+{
+	load();
+	m_data->is_actual = p_is_actual;
+	return;
+}
+
+void
+OrdinaryJournal::set_comment(string const& p_comment)
+{
+	load();
+	m_data->comment = p_comment;
+	return;
+}
+
+void
+OrdinaryJournal::add_entry(shared_ptr<Entry> entry)
+{
+	load();
+	if (has_id())
+	{
+		entry->set_journal_id(id());
+	}
+	Journal::add_entry(entry);
+	return;
+}
+
+bool
+OrdinaryJournal::is_actual()
+{
+	load();
+	return value(m_data->is_actual);
+}
+
+string
+OrdinaryJournal::comment()
+{
+	load();
+	return value(m_data->comment);
+}
+
+
+vector< shared_ptr<Entry> > const&
+OrdinaryJournal::entries()
+{
+	load();
+	// WARNING Should this fail if m_entries is empty? This would
+	// be the same behaviour then as the other "optionals". To be
+	// truly consistent with the other optionals, it would fail
+	// by means of a failed assert (assuming I haven't wrapped the
+	// other optionals in some throwing construct...).
+	return Journal::entries();
+}
+
 
 
 void
@@ -40,7 +101,8 @@ OrdinaryJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 OrdinaryJournal::OrdinaryJournal
 (	shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 ):
-	Journal(p_database_connection)
+	OrdinaryJournal::PersistentObject(p_database_connection),
+	Journal()
 {
 }
 
@@ -49,19 +111,25 @@ OrdinaryJournal::OrdinaryJournal
 (	shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
 	Id p_id
 ):
-	Journal(p_database_connection, p_id)
+	OrdinaryJournal::PersistentObject(p_database_connection, p_id),
+	Journal()
 {
 }
 	
 
-OrdinaryJournal::OrdinaryJournal(Journal const& p_journal):
-	Journal(p_journal)
+OrdinaryJournal::OrdinaryJournal
+(	Journal const& p_journal,
+	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+):
+	OrdinaryJournal::PersistentObject(p_database_connection),
+	Journal(p_journal.data())
 {
 }
 
 
 OrdinaryJournal::OrdinaryJournal(OrdinaryJournal const& rhs):
-	Journal(rhs),
+	OrdinaryJournal::PersistentObject(rhs),
+	Journal(rhs.data()),
 	m_date(rhs.m_date)
 {
 }
@@ -92,6 +160,7 @@ OrdinaryJournal::date()
 void
 OrdinaryJournal::swap(OrdinaryJournal& rhs)
 {
+	swap_base_internals(rhs);
 	Journal::swap(rhs);
 	using std::swap;
 	swap(m_date, rhs.m_date);
@@ -105,7 +174,7 @@ OrdinaryJournal::do_load()
 	OrdinaryJournal temp(*this);
 
 	// Load the Journal (base) part of temp.
-	temp.do_load_journal_base();
+	temp.do_load_journal_base(database_connection(), id());
 
 	// Load the derived, OrdinaryJournal part of temp.
 	SharedSQLStatement statement
@@ -128,7 +197,7 @@ void
 OrdinaryJournal::do_save_new()
 {
 	// Save the Journal	(base) part of the object and record the id.
-	Id const journal_id = do_save_new_journal_base();
+	Id const journal_id = do_save_new_journal_base(database_connection());
 
 	// Save the derived, OrdinaryJournal part of the object
 	SharedSQLStatement statement
@@ -146,7 +215,7 @@ void
 OrdinaryJournal::do_save_existing()
 {
 	// Save the Journal (base) part of the object
-	do_save_existing_journal_base();
+	do_save_existing_journal_base(database_connection(), id());
 
 	// Save the derived, OrdinaryJournal part of the object
 	SharedSQLStatement updater
