@@ -34,8 +34,6 @@ namespace phatbooks
 /**
  * Represents an Account object that is "live" in memory, rather than
  * stored in a database.
- *
- * Derives from Loki::SmallValueObject<> for faster heap allocation.
  */
 class Account:
 	public sqloxx::PersistentObject
