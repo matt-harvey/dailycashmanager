@@ -9,6 +9,7 @@
 #include <cassert>
 #include <iostream>
 #include <limits>
+#include <typeinfo>
 #include <unittest++/UnitTest++.h>
 #include <stdexcept>
 
@@ -37,18 +38,27 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_one_param)
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_two_params)
 {
-	DerivedPO dpo(pdbc);
-	dpo.set_x(10);
-	dpo.set_y(3.23);
-	dpo.save_new();
-	CHECK_EQUAL(dpo.id(), 1);
-	CHECK_EQUAL(dpo.x(), 10);
-	CHECK_EQUAL(dpo.y(), 3.23);
-	DerivedPO e(pdbc, 1);
-	CHECK_EQUAL(e.id(), dpo.id());
-	CHECK_EQUAL(e.id(), 1);
-	CHECK_EQUAL(e.x(), 10);
-	CHECK_EQUAL(e.y(), 3.23);
+	try  // WARNING temp
+	{
+		DerivedPO dpo(pdbc);
+		dpo.set_x(10);
+		dpo.set_y(3.23);
+		dpo.save_new();
+		CHECK_EQUAL(dpo.id(), 1);
+		CHECK_EQUAL(dpo.x(), 10);
+		CHECK_EQUAL(dpo.y(), 3.23);
+		DerivedPO e(pdbc, 1);
+		CHECK_EQUAL(e.id(), dpo.id());
+		CHECK_EQUAL(e.id(), 1);
+		CHECK_EQUAL(e.x(), 10);
+		CHECK_EQUAL(e.y(), 3.23);
+	}
+	catch (jewel::Exception& e)
+	{
+		cerr << typeid(e).name() << endl;
+		cerr << e.what() << endl;
+		throw;
+	}
 }
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_existing)
