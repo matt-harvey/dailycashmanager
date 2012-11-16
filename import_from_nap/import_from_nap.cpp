@@ -172,20 +172,23 @@ void import_from_nap
 		account.save_new();
 	}
 		
-	typedef vector< shared_ptr<Journal> > JournalVec;
+	typedef vector< shared_ptr<OrdinaryJournal> > OrdinaryJournalVec;
+	typedef vector< shared_ptr<DraftJournal> > DraftJournalVec;
 
-	// Map to record, if we determine that a particular Journal
+	// Maps to record, if we determine that a particular Journal
 	// (whether ordinary or draft) is actual (true) or budget (false).
 	// This will enable us to track which ones have mixed budget and
 	// actuals entries (which must be handled separately).
-	unordered_map< shared_ptr<Journal>, bool> actual_v_budget_determinations;
+	unordered_map< shared_ptr<OrdinaryJournal>, bool> oj_actual_v_budget_determinations;
+	unordered_map< shared_ptr<DraftJournal>, bool> dj_actual_v_budget_determinations;
 
 	// Set to hold Journal instances which are problematic for Phatbooks
-	unordered_set< shared_ptr<Journal> > problematic_journals;
+	unordered_set< shared_ptr<OrdinaryJournal> > problematic_ordinary_journals;
+	unordered_set< shared_ptr<DraftJournal> > problematic_draft_journals;
 	// Map from problematic ordinary journals to old ordinary journal ids
-	unordered_map< shared_ptr<Journal>, int > problematic_ordinary_journal_map;
+	unordered_map< shared_ptr<OrdinaryJournal>, int > problematic_ordinary_journal_map;
 	// Map from problematic draft journals to old draft journal names
-	unordered_map< shared_ptr<Journal>, string > problematic_draft_journal_map;
+	unordered_map< shared_ptr<DraftJournal>, string > problematic_draft_journal_map;
 
 	// Read draft journals ************************************
 	
@@ -207,7 +210,7 @@ void import_from_nap
 	// run through later to ensure order is preserved. (The order they are
 	// inserted into the database will thereby correspond with predicted
 	// id.)
-	JournalVec draft_journal_vec;
+	DraftJournalVec draft_journal_vec;
 
 	// We will store a map from the draft journal names in the csv, to
 	// DraftJournal instances in memory. Shortly this will enable us to
@@ -300,14 +303,14 @@ void import_from_nap
 			draft_journal_map[draft_journal_name];
 		draft_journal->add_entry(draft_entry);
 		if
-		(	actual_v_budget_determinations.find(draft_journal) ==
-			actual_v_budget_determinations.end()
+		(	dj_actual_v_budget_determinations.find(draft_journal) ==
+			dj_actual_v_budget_determinations.end()
 		)
 		{
 			// This journal has yet to be determined as to whether
 			// actual (true) or budget (false)
 			draft_journal->set_whether_actual(is_actual);
-			actual_v_budget_determinations[draft_journal] =
+			dj_actual_v_budget_determinations[draft_journal] =
 				(is_actual? true: false);
 		}
 		else
@@ -324,7 +327,7 @@ void import_from_nap
 				{
 					// We have a problem, and record this journal as
 					// problematic
-					problematic_journals.insert(draft_journal);
+					problematic_draft_journals.insert(draft_journal);
 					problematic_draft_journal_map[draft_journal] =
 						draft_journal_name;
 				}
@@ -332,7 +335,7 @@ void import_from_nap
 			else
 			{
 				assert
-				(	actual_v_budget_determinations[draft_journal] ==
+				(	dj_actual_v_budget_determinations[draft_journal] ==
 					is_actual
 				);
 			}
@@ -342,12 +345,12 @@ void import_from_nap
 	// Save the DraftJournal instances corresponding to draft journals into
 	// the database.
 	for
-	(	JournalVec::iterator jvit = draft_journal_vec.begin();
+	(	DraftJournalVec::iterator jvit = draft_journal_vec.begin();
 		jvit != draft_journal_vec.end();
 		++jvit
 	)
 	{
-		if (problematic_journals.find(*jvit) != problematic_journals.end())
+		if (problematic_draft_journals.find(*jvit) != problematic_draft_journals.end())
 		{
 			// Any handling?
 		}
@@ -367,7 +370,7 @@ void import_from_nap
 	// We will store the OrdnaryJournal instances in this vector temporarily,
 	// and run through later to ensure order is preserved. (The order they are
 	// inserted into the database will thereby correspond with predicted id.)
-	JournalVec ordinary_journal_vec;
+	OrdinaryJournalVec ordinary_journal_vec;
 
 	// We will store a map from the ordinary journal ids stored in the csv,
 	// (which are the old ones that were assigned by N. A. P.) to
@@ -433,14 +436,14 @@ void import_from_nap
 		shared_ptr<OrdinaryJournal> ordinary_journal =
 			ordinary_journal_map[old_journal_id];
 		if
-		(	actual_v_budget_determinations.find(ordinary_journal) ==
-			actual_v_budget_determinations.end()
+		(	oj_actual_v_budget_determinations.find(ordinary_journal) ==
+			oj_actual_v_budget_determinations.end()
 		)
 		{
 			// This journal has yet to be determined as to whether
 			// actual (true) or budget (false)
 			ordinary_journal->set_whether_actual(is_actual);
-			actual_v_budget_determinations[ordinary_journal] =
+			oj_actual_v_budget_determinations[ordinary_journal] =
 				(is_actual? true: false);
 		}
 		else
@@ -454,7 +457,7 @@ void import_from_nap
 				else
 				{
 					// We record the journal as problematic
-					problematic_journals.insert(ordinary_journal);
+					problematic_ordinary_journals.insert(ordinary_journal);
 					problematic_ordinary_journal_map[ordinary_journal] =
 						old_journal_id;
 				}
@@ -462,7 +465,7 @@ void import_from_nap
 			else
 			{
 				assert
-				(	actual_v_budget_determinations[ordinary_journal] ==
+				(	oj_actual_v_budget_determinations[ordinary_journal] ==
 					is_actual
 				);
 			}
@@ -483,12 +486,12 @@ void import_from_nap
 	// Save the OrdinaryJournal instances corresponding to ordinary journals
 	// into the database
 	for
-	(	JournalVec::iterator jvit = ordinary_journal_vec.begin();
+	(	OrdinaryJournalVec::iterator jvit = ordinary_journal_vec.begin();
 		jvit != ordinary_journal_vec.end();
 		++jvit
 	)
 	{
-		if (problematic_journals.find(*jvit) != problematic_journals.end())
+		if (problematic_ordinary_journals.find(*jvit) != problematic_ordinary_journals.end())
 		{
 			// Any handling?
 		}
@@ -502,25 +505,23 @@ void import_from_nap
 	     << "be imported automatically, and will need to be entered "
 		 << "manually into Phatbooks:" << endl;
 	for
-	(	unordered_set< shared_ptr<Journal> >::const_iterator it =
-			problematic_journals.begin();
-		it != problematic_journals.end();
+	(	unordered_set< shared_ptr<OrdinaryJournal> >::const_iterator it =
+			problematic_ordinary_journals.begin();
+		it != problematic_ordinary_journals.end();
 		++it
 	)
 	{
-		if
-		(	problematic_draft_journal_map.find(*it) !=
-			problematic_draft_journal_map.end()
-		)
-		{
-			cout << problematic_draft_journal_map[*it] << endl;
-		}
-		else
-		{
-			cout << problematic_ordinary_journal_map[*it] << endl;
-		}
+		cout << problematic_ordinary_journal_map[*it] << endl;
 	}
-		
+	for
+	(	unordered_set< shared_ptr<DraftJournal> >::const_iterator it =
+		problematic_draft_journals.begin();
+		it != problematic_draft_journals.end();
+		++it
+	)
+	{
+		cout << problematic_draft_journal_map[*it] << endl;
+	}
 	boost::posix_time::ptime const end_time =
 		boost::posix_time::second_clock::local_time();
 	cout << "Import ends at: " << end_time << endl;

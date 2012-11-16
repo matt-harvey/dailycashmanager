@@ -14,8 +14,9 @@
 
 #include "account.hpp"
 #include "commodity.hpp"
+#include "draft_journal.hpp"
 #include "entry.hpp"
-#include "journal.hpp"
+#include "ordinary_journal.hpp"
 #include "repeater.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/identity_map.hpp"
@@ -104,7 +105,8 @@ public:
 	sqloxx::IdentityMap<Account>& account_map();
 	sqloxx::IdentityMap<Commodity>& commodity_map();
 	sqloxx::IdentityMap<Entry>& entry_map();
-	sqloxx::IdentityMap<Journal>& journal_map();
+	sqloxx::IdentityMap<OrdinaryJournal>& ordinary_journal_map();
+	sqloxx::IdentityMap<DraftJournal>& draft_journal_map();
 	sqloxx::IdentityMap<Repeater>& repeater_map();
 
 private:
@@ -116,7 +118,8 @@ private:
 	sqloxx::IdentityMap<Account> m_account_map;
 	sqloxx::IdentityMap<Commodity> m_commodity_map;
 	sqloxx::IdentityMap<Entry> m_entry_map;
-	sqloxx::IdentityMap<Journal> m_journal_map;
+	sqloxx::IdentityMap<OrdinaryJournal> m_ordinary_journal_map;
+	sqloxx::IdentityMap<DraftJournal> m_draft_journal_map;
 	sqloxx::IdentityMap<Repeater> m_repeater_map;
 
 
@@ -172,15 +175,28 @@ identity_map
 
 template <>
 inline
-IdentityMap<phatbooks::Journal>&
+IdentityMap<phatbooks::OrdinaryJournal>&
 identity_map
-<	phatbooks::Journal,
+<	phatbooks::OrdinaryJournal,
 	phatbooks::PhatbooksDatabaseConnection
 >
 (	phatbooks::PhatbooksDatabaseConnection& connection
 )
 {
-	return connection.journal_map();
+	return connection.ordinary_journal_map();
+}
+
+template <>
+inline
+IdentityMap<phatbooks::DraftJournal>&
+identity_map
+<	phatbooks::DraftJournal,
+	phatbooks::PhatbooksDatabaseConnection
+>
+(	phatbooks::PhatbooksDatabaseConnection& connection
+)
+{
+	return connection.draft_journal_map();
 }
 
 template <>

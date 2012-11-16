@@ -174,10 +174,16 @@ PhatbooksDatabaseConnection::entry_map()
 	return m_entry_map;
 }
 
-sqloxx::IdentityMap<Journal>&
-PhatbooksDatabaseConnection::journal_map()
+sqloxx::IdentityMap<OrdinaryJournal>&
+PhatbooksDatabaseConnection::ordinary_journal_map()
 {
-	return m_journal_map;
+	return m_ordinary_journal_map;
+}
+
+sqloxx::IdentityMap<DraftJournal>&
+PhatbooksDatabaseConnection::draft_journal_map()
+{
+	return m_draft_journal_map;
 }
 
 sqloxx::IdentityMap<Repeater>&

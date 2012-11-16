@@ -63,7 +63,7 @@ public:
 	 */
 	void notify_nil_handles(ProxyKey proxy_key)
 	{
-		Record const record = m_proxy_map.find(proxy_key);
+		Record const record = m_proxy_map.find(proxy_key)->second;
 		if (record->has_id())
 		{
 			assert (m_id_map.find(record->id()) != m_id_map.end());
@@ -133,7 +133,7 @@ IdentityMap<T>::next_proxy_key()
 	// with Id.
 	// Relies on this being a std::map, in which the first
 	// key is less than any other key.
-	ProxyKey const least = m_proxy_map.begin();
+	ProxyKey const least = m_proxy_map.begin()->first;
 	if (least == std::numeric_limits<ProxyKey>::min())
 	{
 		throw OverflowException("Proxy key has reached numeric limit.");

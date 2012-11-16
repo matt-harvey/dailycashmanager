@@ -331,6 +331,15 @@ public:
 		return;
 	}
 
+	/**
+	 * @returns \e true if this instance of PersistentObject has
+	 * an valid id; otherwise returns \e false.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	bool has_id() const;
+
+
 protected:
 
 	/**
@@ -465,14 +474,6 @@ protected:
 	 * std::string as would be expected.
 	 */
 	Id prospective_key() const;
-
-	/**
-	 * @returns \e true if this instance of PersistentObject has
-	 * an valid id; otherwise returns \e false.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	bool has_id() const;
 
 	
 private:

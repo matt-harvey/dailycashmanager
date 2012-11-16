@@ -77,7 +77,7 @@ T* Handle<T>::operator->() const
 {
 	if (static_cast<bool>(m_pointer))
 	{
-		return *m_pointer;
+		return m_pointer.get();
 	}
 	throw (UnboundHandleException("Unbound Handle."));
 }

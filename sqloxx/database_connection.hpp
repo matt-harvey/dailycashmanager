@@ -105,7 +105,7 @@ public:
  */
 template <typename T, typename Connection>
 Handle<T>
-get_handle(Connection dbc, typename T::Id id);
+get_handle(boost::shared_ptr<Connection> dbc, typename T::Id id);
 
 /**
  * Convenience function to return a Handle<T> to a new, id-less business
@@ -113,23 +113,23 @@ get_handle(Connection dbc, typename T::Id id);
  */
 template <typename T, typename Connection>
 Handle<T>
-get_handle(Connection dbc);
+get_handle(boost::shared_ptr<Connection> dbc);
 
 
 template <typename T, typename Connection>
 inline
 Handle<T>
-get_handle(Connection dbc, typename T::Id id)
+get_handle(boost::shared_ptr<Connection> dbc, typename T::Id id)
 {
-	return identity_map<T>(dbc).template provide_object(dbc, id);
+	return identity_map<T>(*dbc).template provide_object(dbc, id);
 }
 
 template <typename T, typename Connection>
 inline
 Handle<T>
-get_handle(Connection dbc)
+get_handle(boost::shared_ptr<Connection> dbc)
 {
-	return identity_map<T>(dbc).template provide_object(dbc);
+	return identity_map<T>(*dbc).template provide_object(dbc);
 }
 
 

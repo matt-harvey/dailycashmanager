@@ -24,6 +24,7 @@
 #include "repeater.hpp"
 #include "consolixx/consolixx.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/handle.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
@@ -63,6 +64,8 @@ using boost::lexical_cast;
 using boost::shared_ptr;
 using boost::regex;
 using boost::regex_match;
+using sqloxx::get_handle;
+using sqloxx::Handle;
 using std::cout;
 using std::endl;
 using std::map;
@@ -835,11 +838,13 @@ void PhatbooksTextSession::display_all_entry_account_names()
 	);
 	while (statement.step())
 	{
-		Account account
-		(	m_database_connection,
-			statement.extract<Account::Id>(0)
+		Handle<Account> account
+		(	get_handle<Account>
+			(	m_database_connection,
+				statement.extract<Account::Id>(0)
+			)
 		);
-		cout << account.name() << endl;
+		cout << account->name() << endl;
 	}
 	cout << "Done!" << endl;
 	return;
@@ -857,14 +862,16 @@ void PhatbooksTextSession::display_journal_summaries()
 	);
 	while (statement.step())
 	{
-		OrdinaryJournal journal
-		(	m_database_connection,
-			statement.extract<Journal::Id>(0)
+		Handle<OrdinaryJournal> journal
+		(	get_handle<OrdinaryJournal>
+			(	m_database_connection,
+				statement.extract<Journal::Id>(0)
+			)
 		);
-		cout << endl << journal.date() << endl;
+		cout << endl << journal->date() << endl;
 		typedef vector< shared_ptr<Entry> > EntryVec;
-		EntryVec::const_iterator it = journal.entries().begin();
-		EntryVec::const_iterator endpoint = journal.entries().end();
+		EntryVec::const_iterator it = journal->entries().begin();
+		EntryVec::const_iterator endpoint = journal->entries().end();
 		for ( ; it != endpoint; ++it)
 		{
 			cout << (*it)->account_name() << "\t"
