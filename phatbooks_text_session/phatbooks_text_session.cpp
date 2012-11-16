@@ -142,6 +142,14 @@ PhatbooksTextSession::PhatbooksTextSession():
 		)
 	);
 	m_main_menu->add_item(display_journal_summaries_selection);
+	shared_ptr<MenuItem> play_selection
+	(	new MenuItem
+		(	"Play",
+			bind(&PhatbooksTextSession::play, this),
+			true
+		)
+	);
+	m_main_menu->add_item(play_selection);
 	// WARNING end play code
 
 	shared_ptr<MenuItem> quit_item
@@ -883,6 +891,35 @@ void PhatbooksTextSession::display_journal_summaries()
 	cout << "Done!" << endl;
 	return;
 }
+
+void PhatbooksTextSession::play()
+{
+	cout << "Here's the result of the current play session!" << endl;
+	cout << "Getting Handle (10A) to Account with id = 10..." << endl;
+	Handle<Account>
+		account10A(get_handle<Account>(m_database_connection, 10));
+	cout << "Getting another (10B) Handle to Account with id = 10..." << endl;
+	Handle<Account>
+		account10B(get_handle<Account>(m_database_connection, 10));
+	cout << "Name of 10A: " << account10A->name() << endl;
+	cout << "Name of 10B: " << account10B->name() << endl;
+	cout << "Changing name of 10A to HYRAX...";
+	account10A->set_name("HYRAX");
+	cout << "Now..." << endl;
+	cout << "Name of 10A: " << account10A->name() << endl;
+	cout << "Name of 10B: " << account10B->name() << endl;
+	cout << "Now getting another Handle (10C) to Account 10..." << endl;
+	Handle<Account>
+		account10C(get_handle<Account>(m_database_connection, 10));
+	cout << "Name of 10C: " << account10C->name() << endl;
+	/*
+	cout << "Now saving 10C... " << endl;
+	account10C->save();
+	*/
+	cout << "Done!" << endl;
+	return;
+}
+
 // WARNING end play code
 
 void PhatbooksTextSession::wrap_up()

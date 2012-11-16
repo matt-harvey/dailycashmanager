@@ -63,9 +63,7 @@ public:
 	 */
 	void notify_nil_handles(ProxyKey proxy_key)
 	{
-		// WARNING temp comment-out to check whether non-deletion
-		// will speed things up.
-		/*
+		/* WARNING Temp comment-out to play
 		Record const record = m_proxy_map.find(proxy_key)->second;
 		if (record->has_id())
 		{
