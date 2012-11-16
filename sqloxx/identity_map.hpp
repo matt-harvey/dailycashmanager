@@ -1,7 +1,6 @@
 #ifndef GUARD_identity_map_hpp
 #define GUARD_identity_map_hpp
 
-#include "database_connection.hpp"
 #include "handle.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -13,8 +12,19 @@ namespace sqloxx
 {
 
 
-// When PersistentObject::save_new() is called, it needs
-// to let the IdentityManager know.
+
+/**
+ * Standalone function template.
+ * Should be specialized by
+ * application-specific client code, so as to
+ * return for each "business class" T a reference to the
+ * IdentityMap<T> for a given instance of Connection, where
+ * Connection should be a subclass of DatabaseManager.
+ */
+template <typename T, typename Connection>
+inline
+IdentityMap<T>& identity_map(Connection& connection);
+
 
 template <typename T>
 class IdentityMap: public boost::noncopyable
