@@ -2,7 +2,6 @@
 #define GUARD_persistent_object_hpp
 
 #include "database_connection.hpp"
-#include "map_registrar.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <boost/none.hpp>
 #include <boost/optional.hpp>

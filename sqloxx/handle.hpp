@@ -1,12 +1,21 @@
 #ifndef GUARD_handle_hpp
 #define GUARD_handle_hpp
 
+#include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <boost/shared_ptr.hpp>
 
 namespace sqloxx
 {
 
+
+// Class template
+
+/**
+ * Handle for handling business objects of type T where T is generally
+ * managed via IdentityMap<T> to ensure only one instance of T exists in
+ * memory at any one time, in relation to any given record in the database.
+ */
 template <typename T>
 class Handle
 {
