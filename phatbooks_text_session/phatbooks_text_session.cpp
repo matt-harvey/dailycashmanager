@@ -46,6 +46,7 @@
 #include <boost/unordered_map.hpp>
 #include <vector>
 using boost::unordered_map;
+using sqloxx::CacheSentry;
 using sqloxx::SharedSQLStatement;
 using std::vector;
 // end play code
@@ -232,6 +233,17 @@ int PhatbooksTextSession::run(string const& filename)
 	}
 
 	cout << "Welcome to " << s_application_name << "!" << endl;
+
+	// WARNING play
+	CacheSentry<Account, PhatbooksDatabaseConnection>
+		account_sentry(m_database_connection);
+	CacheSentry<Commodity, PhatbooksDatabaseConnection>
+		commodity_sentry(m_database_connection);
+	CacheSentry<Entry, PhatbooksDatabaseConnection>
+		entry_sentry(m_database_connection);
+	CacheSentry<OrdinaryJournal, PhatbooksDatabaseConnection>
+		ordinary_journal_sentry(m_database_connection);
+	// WARNING end temp
 
 	m_database_connection->setup();
 	m_main_menu->present_to_user();	
@@ -904,6 +916,7 @@ void PhatbooksTextSession::display_journal_summaries()
 
 void PhatbooksTextSession::display_balances()
 {
+
 	cout << "Here is the balance of each envelope and balance sheet account."
 	     << endl;
 	typedef unordered_map< Account::Id, Decimal> BalanceMap;

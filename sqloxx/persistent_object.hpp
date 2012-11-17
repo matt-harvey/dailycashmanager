@@ -360,7 +360,14 @@ public:
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	bool has_id() const;
-
+	
+	/**
+	 * Should only be called by IdentityMap<Derived>.
+	 */
+	bool is_orphaned() const
+	{
+		return m_handle_counter == 0;
+	}
 
 protected:
 

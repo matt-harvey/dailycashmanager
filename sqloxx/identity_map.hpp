@@ -12,7 +12,6 @@ namespace sqloxx
 {
 
 
-
 template <typename T>
 class IdentityMap: public boost::noncopyable
 {
@@ -55,6 +54,19 @@ public:
 		return;
 	}
 
+	void erase_object_proxied(ProxyKey proxy_key)
+	{
+		Record const record = m_proxy_map.find(proxy_key)->second;
+		if (record->has_id())
+		{
+			assert (m_id_map.find(record->id()) != m_id_map.end());
+			m_id_map.erase(record->id());
+		}
+		m_proxy_map.erase(proxy_key);
+		return;
+	}
+
+
 	/**
 	 * Notify the IdentityMap that there are no handles left that are
 	 * pointing to this object.
@@ -63,18 +75,21 @@ public:
 	 */
 	void notify_nil_handles(ProxyKey proxy_key)
 	{
-		/* WARNING Temp comment-out to play
-		Record const record = m_proxy_map.find(proxy_key)->second;
-		if (record->has_id())
+		if (!m_caching)
 		{
-			assert (m_id_map.find(record->id()) != m_id_map.end());
-			m_id_map.erase(record->id());
-			assert (m_id_map.find(record->id()) == m_id_map.end());
+			erase_object_proxied(proxy_key);
 		}
-		m_proxy_map.erase(proxy_key);
-		*/
 		return;
 	}
+
+
+	void enable_caching()
+	{
+		m_caching = true;
+	}
+
+	void disable_caching();
+
 
 private:
 
@@ -84,8 +99,15 @@ private:
 	typedef typename boost::shared_ptr<T> Record;
 	typedef boost::unordered_map<Id, Record> IdMap;
 	typedef std::map<ProxyKey, Record> ProxyKeyMap;
-	IdMap m_id_map;        // For objects that exist in the database.
 	ProxyKeyMap m_proxy_map;  // For all objects.
+	IdMap m_id_map;        // For objects that exist in the database.
+	// Indicates whether the IdentityMap is currently
+	// holding objects indefinitely in the cache (m_caching == true),
+	// or whether it is
+	// clearing each object out when there are no longer handles
+	// pointing to it (m_caching == false).
+	bool m_caching; 
+	         
 };
 
 
@@ -126,11 +148,34 @@ IdentityMap<T>::provide_object
 	return Handle<T>(it->second);
 }
 
-
+template <typename T>
+void
+IdentityMap<T>::disable_caching()
+{
+	for
+	(	typename ProxyKeyMap::iterator it = m_proxy_map.begin();
+		it != m_proxy_map.end();
+		++it
+	)
+	{
+		if (it->second->is_orphaned())
+		{
+			erase_object_proxied(it->first);
+		}
+	}
+	m_caching = false;
+	return;
+}
+	
 template <typename T>
 typename IdentityMap<T>::ProxyKey
 IdentityMap<T>::next_proxy_key()
 {
+	// TODO Change this so that vacated slots are filled, rather
+	// than just always taking least - 1. Currently there is
+	// a danger that we will just forever move towards min, until
+	// we overflow.
+
 	// Using negative numbers to avoid any possible confusion
 	// with Id.
 	// Relies on this being a std::map, in which the first
