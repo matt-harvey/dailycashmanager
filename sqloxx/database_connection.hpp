@@ -105,6 +105,9 @@ public:
  * connection from caching in its IdentityMap<T>. Then the destructor
  * of the sentry causes caching to resume, and the cache to be cleared
  * of orphaned objects.
+ *
+ * TODO This class template is flawed becuase I THINK the destructor might
+ * throw. But need to confirm.
  */
 template <typename T, typename Connection>
 class CacheSentry: public boost::noncopyable
