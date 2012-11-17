@@ -116,6 +116,9 @@ Handle<T>
 get_handle(boost::shared_ptr<Connection> dbc);
 
 
+// TODO Move in-header template implementations to a separate file to keep the
+// header tidy.
+
 template <typename T, typename Connection>
 inline
 Handle<T>

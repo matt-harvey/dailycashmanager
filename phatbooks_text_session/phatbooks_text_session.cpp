@@ -43,7 +43,9 @@
 
 // WARNING play code
 #include "sqloxx/shared_sql_statement.hpp"
+#include <boost/unordered_map.hpp>
 #include <vector>
+using boost::unordered_map;
 using sqloxx::SharedSQLStatement;
 using std::vector;
 // end play code
@@ -142,6 +144,14 @@ PhatbooksTextSession::PhatbooksTextSession():
 		)
 	);
 	m_main_menu->add_item(display_journal_summaries_selection);
+	shared_ptr<MenuItem> display_balances_selection
+	(	new MenuItem
+		(	"Display the balance of each envelope and balance sheet account",
+			bind(&PhatbooksTextSession::display_balances, this),
+			true
+		)
+	);
+	m_main_menu->add_item(display_balances_selection);
 	shared_ptr<MenuItem> play_selection
 	(	new MenuItem
 		(	"Play",
@@ -860,20 +870,19 @@ void PhatbooksTextSession::display_all_entry_account_names()
 
 void PhatbooksTextSession::display_journal_summaries()
 {
-	cout << "For each ORDINARY journal, here's a summary of what's in it, "
-	     << "loaded in a really crude and inefficient way."
+	cout << "For each ORDINARY journal, here's what's in it. "
 	     << endl;
-	SharedSQLStatement statement
+	SharedSQLStatement journal_statement
 	(	*m_database_connection,
-		"select journal_id from ordinary_journal_detail join "
-		"journals using(journal_id) order by date"
+		"select journal_id from ordinary_journal_detail order by "
+		"date"
 	);
-	while (statement.step())
+	while (journal_statement.step())
 	{
 		Handle<OrdinaryJournal> journal
 		(	get_handle<OrdinaryJournal>
 			(	m_database_connection,
-				statement.extract<Journal::Id>(0)
+				journal_statement.extract<Journal::Id>(0)
 			)
 		);
 		cout << endl << journal->date() << endl;
@@ -882,15 +891,67 @@ void PhatbooksTextSession::display_journal_summaries()
 		EntryVec::const_iterator endpoint = journal->entries().end();
 		for ( ; it != endpoint; ++it)
 		{
+			Decimal const amount = (*it)->amount();
 			cout << (*it)->account_name() << "\t"
 			     << (*it)->comment() << "\t"
-			     << (*it)->amount() << endl;
+			     << amount << endl;
 		}
 		cout << endl;
+	}
+	cout << "Done!" << endl << endl;
+	return;
+}
+
+void PhatbooksTextSession::display_balances()
+{
+	cout << "Here is the balance of each envelope and balance sheet account."
+	     << endl;
+	typedef unordered_map< Account::Id, Decimal> BalanceMap;
+	BalanceMap balance_map;
+	SharedSQLStatement account_statement
+	(
+		*m_database_connection,
+		"select account_id from accounts"
+	);
+	while (account_statement.step())
+	{
+		Handle<Account> account
+		(	get_handle<Account>
+			(	m_database_connection,
+				account_statement.extract<Account::Id>(0)
+			)
+		);
+		balance_map[account->id()] = Decimal(0, 0);
+	}
+	SharedSQLStatement entry_statement
+	(	*m_database_connection,
+		"select entry_id from entries inner join ordinary_journal_detail "
+		"using(journal_id)"
+	);
+	while (entry_statement.step())
+	{
+		Handle<Entry> entry
+		(	get_handle<Entry>
+			(	m_database_connection,
+				entry_statement.extract<Entry::Id>(0)
+			)
+		);
+		balance_map[entry->account_id()] += entry->amount();
+	}
+	for
+	(	BalanceMap::const_iterator it = balance_map.begin();
+		it != balance_map.end();
+		++it
+	)
+	{
+		Handle<Account>
+			account(get_handle<Account>(m_database_connection, it->first));
+		cout << account->name() << "\t" << it->second << endl;
 	}
 	cout << "Done!" << endl;
 	return;
 }
+
 
 void PhatbooksTextSession::play()
 {
