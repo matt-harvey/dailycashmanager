@@ -12,7 +12,7 @@
  */
 
 
-#include "sqloxx/handle.hpp"
+
 #include "sqloxx/persistent_object.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
@@ -51,12 +51,13 @@ class PhatbooksDatabaseConnection;
  * example, allocating $100.00 of one's earnings to planned expenditure on
  * food represents a budget transaction.
  */
-class Journal
+class Journal:
+	public sqloxx::PersistentObject<Journal, PhatbooksDatabaseConnection>
 {
 public:
 
-	Journal();
-
+	typedef sqloxx::PersistentObject<Journal, PhatbooksDatabaseConnection>
+		PersistentObject;
 	typedef sqloxx::Id Id;
 
 	/**
@@ -65,91 +66,152 @@ public:
 	 */
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
+	/**
+	 * Initialize a "raw" Journal, that will not yet correspond to any
+	 * particular object in the database.
+	 */
+	explicit
+	Journal
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
+	);
+
+	/**
+	 * Get a Journal by id from the database.
+	 */
+	Journal
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+		Id p_id
+	);
+
 	virtual ~Journal();
+
+
+	/**
+	 * Change whether Journal is actual or budget
+	 * 
+	 * Does not throw.
+	 */
+	void set_whether_actual(bool p_is_actual);
+
+	/**
+	 * Set comment for journal
+	 *
+	 * Does not throw, except possibly \c std::bad_alloc in extreme
+	 * circumstances.
+	 */
+	void set_comment(std::string const& p_comment);
+
+	/**
+	 * Add an Entry to the Journal.
+	 *
+	 * @todo Figure out throwing behaviour. Should it check that
+	 * the account exists? Etc. Etc.
+	 */
+	void add_entry(boost::shared_ptr<Entry> entry);
+
+	/**
+	 * @returns true if and only if journal contains actual (as opposed to
+	 * budget) transaction(s).
+	 *
+	 * Does not throw.
+	 */
+	bool is_actual();
+
+	/**
+	 * @returns journal comment.
+	 *
+	 * Does not throw, except perhaps \c std::bad_alloc in
+	 * extreme circumstances.
+	 */
+	std::string comment();
+
+	/**
+	 * Set date of journal.
+	 *
+	 * TODO This should throw if the journal is a draft journal.
+	 */
+	void set_date(boost::gregorian::date const& p_date);
+
+	/**
+	 * @returns journal date.
+	 *
+	 * @todo Verify throwing behaviour and determine dependence on DateRep.
+	 */
+	boost::gregorian::date date();
+
+	/**
+	 * @returns true if and only if the journal balances, i.e. the total
+	 * of the entries is equal to zero.
+	 *
+	 * @todo Implement it! Note, thinking a little about this function shows
+	 * that all entries in a journal must be expressed in a common currency.
+	 * It doesn't make sense to think of entries in a single journal as being
+	 * in different currencies. An entry must have its value frozen in time.
+	 */
+	bool is_balanced();
+
+	/**
+	 * @returns a constant reference to the entries in the journal.
+	 */
+	std::vector< boost::shared_ptr<Entry> > const& entries();
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
 	 * "Effective C++".
 	 */
 	void swap(Journal& rhs);
-	
-	struct JournalData
-	{
-		boost::optional<bool> is_actual;
-		boost::optional<std::string> comment;
-		std::vector< sqloxx::Handle<Entry> > entries;
-	};
-
-	// WARNING This is fucked.
-	JournalData const& data() const
-	{
-		return *m_data;
-	}
 
 	static std::string primary_table_name();
 
-
-	// WARNING These getters and setters are problematic. They are redefined in derived
-	// classes. But if we don't redefine one, we land in trouble!
-
-
-	std::vector< sqloxx::Handle<Entry> > const& entries()
+	enum JournalType
 	{
-		return m_data->entries;
-	}
+		ordinary = 1,
+		draft
+	};
 
-	void set_whether_actual(bool p_is_actual)
-	{
-		m_data->is_actual = p_is_actual;
-		return;
-	}
-
-	void set_comment(std::string const& p_comment)
-	{
-		m_data->comment = p_comment;
-		return;
-	}
-
-	void add_entry(sqloxx::Handle<Entry> entry)
-	{
-		m_data->entries.push_back(entry);
-		return;
-	}
-
-		
-
-
-protected:
-
-
-	// WARNING This is fucked.
-	boost::scoped_ptr<JournalData> m_data;
-
-
-	void do_load_journal_base
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const& dbc,
-		Id id
-	);
-	void do_save_existing_journal_base
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const& dbc,
-		Id id
-	);
-	Id do_save_new_journal_base
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const& dbc
-	);
+	JournalType journal_type();
 
 	/**
-	 * Copy constructor - deliberately unimplemented.
-	 * WARNNG Get rid of this in due course.
+	 * Set name of DraftJournal.
 	 */
-	Journal(Journal const& rhs);
-
-	explicit Journal(JournalData const& p_data);
-
+	void set_name(std::string const& p_name);
 	
+	/**
+	 * Add a Repeater to the DraftJournal.
+	 */
+	void add_repeater(boost::shared_ptr<Repeater> repeater);
+	
+	/**
+	 * @returns name of DraftJournal.
+	 */
+	std::string name();
+
 private:
 
+	// Copy constructor - deliberately private
+	Journal(Journal const& rhs);
+
+	virtual void do_load();
+	void do_save_new();
+	virtual void do_save_existing();
+
+	struct JournalData
+	{
+		// for both draft and ordinary journals
+		boost::optional<JournalType> journal_type;
+		boost::optional<bool> is_actual;
+		boost::optional<std::string> comment;
+		std::vector< boost::shared_ptr<Entry> > entries;
+
+		// for ordinary journals only
+		boost::optional<DateRep> date; 
+
+		// for draft journals only 
+		boost::optional<std::string> name;
+		std::vector< boost::shared_ptr<Repeater> > repeaters; 
+	};
 	
+	boost::scoped_ptr<JournalData> m_data;
 };
 
 

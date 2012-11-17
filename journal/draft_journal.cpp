@@ -84,20 +84,6 @@ DraftJournal::entries()
 
 
 
-void
-DraftJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
-{
-	dbc.execute_sql
-	(	"create table draft_journal_detail"
-		"("
-			"journal_id integer primary key references journals, "
-			"name text not null unique"
-		")"
-	);
-	return;
-}
-
-
 DraftJournal::DraftJournal
 (	shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 ):
