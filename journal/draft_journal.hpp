@@ -21,9 +21,11 @@ class DraftJournal:
 	<	DraftJournal,
 		PhatbooksDatabaseConnection
 	>,
-	public Journal
+	private Journal
 {
 public:
+
+	static std::string primary_table_name();
 
 	typedef
 		sqloxx::PersistentObject<DraftJournal, PhatbooksDatabaseConnection>

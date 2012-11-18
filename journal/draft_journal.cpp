@@ -27,6 +27,12 @@ using std::endl;
 namespace phatbooks
 {
 
+string
+DraftJournal::primary_table_name()
+{
+	return Journal::primary_table_name();
+}
+
 void
 DraftJournal::set_whether_actual(bool p_is_actual)
 {

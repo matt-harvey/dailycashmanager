@@ -21,7 +21,7 @@ class OrdinaryJournal:
 	<	OrdinaryJournal,
 		PhatbooksDatabaseConnection
 	>,
-	public Journal
+	private Journal
 {
 public:
 
@@ -29,6 +29,8 @@ public:
 		sqloxx::PersistentObject<OrdinaryJournal, PhatbooksDatabaseConnection>
 		PersistentObject;
 	typedef sqloxx::Id Id;
+
+	static std::string primary_table_name();
 
 	/**
 	 * Change whether Journal is actual or budget

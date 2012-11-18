@@ -29,6 +29,12 @@ namespace phatbooks
 {
 
 
+string
+OrdinaryJournal::primary_table_name()
+{
+	return Journal::primary_table_name();
+}
+
 void
 OrdinaryJournal::set_whether_actual(bool p_is_actual)
 {
