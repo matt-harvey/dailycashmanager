@@ -86,6 +86,20 @@ OrdinaryJournal::entries()
 
 
 
+void
+OrdinaryJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
+{
+	dbc.execute_sql
+	(	"create table ordinary_journal_detail"
+		"("
+			"journal_id integer primary key references journals, "
+			"date integer not null"
+		")"
+	);
+	return;
+}
+
+
 OrdinaryJournal::OrdinaryJournal
 (	shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 ):
