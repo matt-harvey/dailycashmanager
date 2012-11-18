@@ -65,8 +65,8 @@ Journal::Journal():
 {
 }
 
-Journal::Journal(JournalData const& p_data):
-	m_data(new JournalData(p_data))
+Journal::Journal(Journal const& rhs):
+	m_data(new JournalData(*(rhs.m_data)))
 {
 }
 
@@ -77,6 +77,46 @@ Journal::~Journal()
 	m_data = 0;
 	*/
 }
+
+vector< Handle<Entry> > const& 
+Journal::entries()
+{
+	return m_data->entries;
+}
+
+void
+Journal::set_whether_actual(bool p_is_actual)
+{
+	m_data->is_actual = p_is_actual;
+	return;
+}
+
+void
+Journal::set_comment(string const& p_comment)
+{
+	m_data->comment = p_comment;
+	return;
+}
+
+void
+Journal::add_entry(Handle<Entry> entry)
+{
+	m_data->entries.push_back(entry);
+	return;
+}
+
+string
+Journal::comment()
+{
+	return value(m_data->comment);
+}
+
+bool
+Journal::is_actual()
+{
+	return value(m_data->is_actual);
+}
+
 
 void
 Journal::swap(Journal& rhs)
@@ -179,7 +219,7 @@ Journal::do_load_journal_base
 	);
 	statement.bind(":p", id);
 	statement.step();
-	Journal temp(*m_data);
+	Journal temp(*this);
 	SharedSQLStatement entry_finder
 	(	*dbc,	
 		"select entry_id from entries where journal_id = :jid"

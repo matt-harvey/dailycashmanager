@@ -33,7 +33,7 @@ void
 OrdinaryJournal::set_whether_actual(bool p_is_actual)
 {
 	load();
-	m_data->is_actual = p_is_actual;
+	Journal::set_whether_actual(p_is_actual);
 	return;
 }
 
@@ -41,7 +41,7 @@ void
 OrdinaryJournal::set_comment(string const& p_comment)
 {
 	load();
-	m_data->comment = p_comment;
+	Journal::set_comment(p_comment);
 	return;
 }
 
@@ -61,14 +61,14 @@ bool
 OrdinaryJournal::is_actual()
 {
 	load();
-	return value(m_data->is_actual);
+	return Journal::is_actual();
 }
 
 string
 OrdinaryJournal::comment()
 {
 	load();
-	return value(m_data->comment);
+	return Journal::comment();
 }
 
 
@@ -124,14 +124,14 @@ OrdinaryJournal::OrdinaryJournal
 	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
 ):
 	OrdinaryJournal::PersistentObject(p_database_connection),
-	Journal(p_journal.data())
+	Journal(p_journal)
 {
 }
 
 
 OrdinaryJournal::OrdinaryJournal(OrdinaryJournal const& rhs):
 	OrdinaryJournal::PersistentObject(rhs),
-	Journal(rhs.data()),
+	Journal(rhs),
 	m_date(rhs.m_date)
 {
 }

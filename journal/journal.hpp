@@ -55,76 +55,36 @@ class Journal
 {
 public:
 
-	Journal();
-
 	typedef sqloxx::Id Id;
 
-	/**
-	 * Sets up tables in the database required for the persistence of
-	 * Journal objects.
-	 */
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
-
+	Journal();
+	Journal(Journal const& rhs);
 	virtual ~Journal();
+
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	static std::string primary_table_name();
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
 	 * "Effective C++".
 	 */
-	void swap(Journal& rhs);
-	
-	struct JournalData
-	{
-		boost::optional<bool> is_actual;
-		boost::optional<std::string> comment;
-		std::vector< sqloxx::Handle<Entry> > entries;
-	};
+	virtual void swap(Journal& rhs);
 
-	// WARNING This is fucked.
-	JournalData const& data() const
-	{
-		return *m_data;
-	}
-
-	static std::string primary_table_name();
-
-
-	// WARNING These getters and setters are problematic. They are redefined in derived
+	// WARNING These getters and setters are a safety concern. They are
+	// redefined in derived
 	// classes. But if we don't redefine one, we land in trouble!
 
+	// WARNING This returns a reference to internals and so
+	// is a bit fucked. But client code uses it a lot...
+	virtual std::vector< sqloxx::Handle<Entry> > const& entries();
 
-	std::vector< sqloxx::Handle<Entry> > const& entries()
-	{
-		return m_data->entries;
-	}
-
-	void set_whether_actual(bool p_is_actual)
-	{
-		m_data->is_actual = p_is_actual;
-		return;
-	}
-
-	void set_comment(std::string const& p_comment)
-	{
-		m_data->comment = p_comment;
-		return;
-	}
-
-	void add_entry(sqloxx::Handle<Entry> entry)
-	{
-		m_data->entries.push_back(entry);
-		return;
-	}
-
-		
-
+	virtual void set_whether_actual(bool p_is_actual);
+	virtual void set_comment(std::string const& p_comment);
+	virtual void add_entry(sqloxx::Handle<Entry> entry);
+	virtual std::string comment();
+	virtual bool is_actual();
 
 protected:
-
-
-	// WARNING This is fucked.
-	boost::scoped_ptr<JournalData> m_data;
-
 
 	void do_load_journal_base
 	(	boost::shared_ptr<PhatbooksDatabaseConnection> const& dbc,
@@ -137,18 +97,17 @@ protected:
 	Id do_save_new_journal_base
 	(	boost::shared_ptr<PhatbooksDatabaseConnection> const& dbc
 	);
-
-	/**
-	 * Copy constructor - deliberately unimplemented.
-	 * WARNNG Get rid of this in due course.
-	 */
-	Journal(Journal const& rhs);
-
-	explicit Journal(JournalData const& p_data);
-
 	
 private:
 
+	struct JournalData
+	{
+		boost::optional<bool> is_actual;
+		boost::optional<std::string> comment;
+		std::vector< sqloxx::Handle<Entry> > entries;
+	};
+
+	boost::scoped_ptr<JournalData> m_data;
 	
 };
 
