@@ -13,7 +13,7 @@
 
 
 #include "account_type.hpp"
-#include "general_typedefs.hpp"
+#include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <algorithm>
@@ -40,6 +40,8 @@ class AccountImpl:
 	public sqloxx::PersistentObject<AccountImpl, PhatbooksDatabaseConnection>
 {
 public:
+	
+	typedef sqloxx::Id Id;
 
 	typedef sqloxx::PersistentObject<AccountImpl, PhatbooksDatabaseConnection>
 		PersistentObject;
@@ -59,6 +61,14 @@ public:
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
+	 * Returns the id of the account with name p_name.
+	 */
+	static Id id_for_name
+	(	PhatbooksDatabaseConnection& dbc,
+		std::string const& p_name
+	);
+
+	/**
 	 * Initialize a "draft" account, that will not correspond to any
 	 * particular object in the database.
 	 */
@@ -75,15 +85,6 @@ public:
 	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
 			p_database_connection,
 		Id p_id
-	);
-
-	/**
-	 * Get an AccountImpl by name from the database.
-	 */
-	AccountImpl
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection,
-		std::string const& p_name
 	);
 
 	/**

@@ -11,6 +11,7 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/optional.hpp>
@@ -79,6 +80,21 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 
+Account::Id
+AccountImpl::id_for_name(PhatbooksDatabaseConnection& dbc, string const& name)
+{
+	SharedSQLStatement statement
+	(	dbc,
+		"select account_id from accounts where name = :name"
+	);
+	statement.bind(":name", name);
+	statement.step();
+	Id const ret = statement.extract<Id>(0);
+	statement.step_final();
+	return ret;
+}
+
+
 AccountImpl::AccountImpl
 (	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
 ):
@@ -96,18 +112,6 @@ AccountImpl::AccountImpl
 	m_data(new AccountData)
 {
 	load_name_knowing_id();
-}
-
-
-AccountImpl::AccountImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
-	std::string const& p_name
-):
-	PersistentObject(p_database_connection),
-	m_data(new AccountData)
-{
-	m_data->name = p_name;
-	load_id_knowing_name();
 }
 
 
@@ -139,7 +143,7 @@ AccountImpl::name()
 	return m_data->name;
 }
 
-Id
+Commodity::Id
 AccountImpl::commodity_id()
 {
 	load();

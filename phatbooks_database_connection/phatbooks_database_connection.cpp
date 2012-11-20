@@ -156,7 +156,7 @@ PhatbooksDatabaseConnection::setup()
 
 
 
-sqloxx::IdentityMap<Account>&
+sqloxx::IdentityMap<AccountImpl>&
 PhatbooksDatabaseConnection::account_map()
 {
 	return m_account_map;

@@ -12,8 +12,8 @@
  */
 
 
-#include "commodity.hpp"
 #include "account_impl.hpp"
+#include "commodity.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "ordinary_journal.hpp"

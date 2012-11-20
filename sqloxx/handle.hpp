@@ -32,7 +32,6 @@ private:
 };
 
 
-
 template <typename T>
 Handle<T>::Handle
 (	typename boost::shared_ptr<T> const& p_pointer

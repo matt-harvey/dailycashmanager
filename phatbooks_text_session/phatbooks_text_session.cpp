@@ -235,7 +235,7 @@ int PhatbooksTextSession::run(string const& filename)
 	cout << "Welcome to " << s_application_name << "!" << endl;
 
 	// WARNING play
-	CacheSentry<Account, PhatbooksDatabaseConnection>
+	CacheSentry<AccountImpl, PhatbooksDatabaseConnection>
 		account_sentry(m_database_connection);
 	CacheSentry<Commodity, PhatbooksDatabaseConnection>
 		commodity_sentry(m_database_connection);
@@ -450,7 +450,7 @@ void PhatbooksTextSession::elicit_account()
 	else
 	{
 		assert (confirmation == "y");
-		account.save_new();
+		account.save();
 		cout << "Account created." << endl;
 	}
 	return;
@@ -535,18 +535,14 @@ void PhatbooksTextSession::elicit_journal()
 
 	// Get primary entry account
 	cout << "Enter name of " << account_prompt << ": ";
-	primary_entry->set_account_id
-	(	Account(m_database_connection, elicit_existing_account_name()).id()
+	primary_entry->set_account
+	(	Account(m_database_connection, elicit_existing_account_name())
 	);
 
 	// Get primary entry amount
-	Account primary_entry_account
-	(	m_database_connection,
-		primary_entry->account_id()
-	);
 	Commodity primary_commodity
 	(	m_database_connection,
-		primary_entry_account.commodity_id()
+		primary_entry->account().commodity_id()
 	);
 	Decimal primary_entry_amount;
 	for (bool input_is_valid = false; !input_is_valid; )
@@ -597,19 +593,15 @@ void PhatbooksTextSession::elicit_journal()
 
 	// Get other account and comment
 	cout << "Enter name of " << secondary_account_prompt << ": ";
-	secondary_entry->set_account_id
-	(	Account(m_database_connection, elicit_existing_account_name()).id()
+	secondary_entry->set_account
+	(	Account(m_database_connection, elicit_existing_account_name())
 	);
 	// WARNING if secondary account is in a different currency then we need to
 	// deal with this here somehow.
  
-	Account secondary_entry_account
-	(	m_database_connection,
-		secondary_entry->account_id()
-	);
 	Commodity secondary_commodity
 	(	m_database_connection,
-		secondary_entry_account.commodity_abbreviation()
+		secondary_entry->account().commodity_abbreviation()
 	);
 	if
 	(	secondary_commodity.id() != primary_commodity.id()
@@ -679,7 +671,7 @@ void PhatbooksTextSession::elicit_journal()
 			{
 				cout << "Name cannot be blank. Please try again: ";
 			}
-			if (m_database_connection->has_draft_journal_named(name))
+			else if (m_database_connection->has_draft_journal_named(name))
 			{
 				cout << "A draft or recurring transaction has already "
 				     << "been saved under this name. Please enter a "
@@ -928,13 +920,11 @@ void PhatbooksTextSession::display_balances()
 	);
 	while (account_statement.step())
 	{
-		Handle<Account> account
-		(	get_handle<Account>
-			(	m_database_connection,
-				account_statement.extract<Account::Id>(0)
-			)
+		Account account
+		(	m_database_connection,
+			account_statement.extract<Account::Id>(0)
 		);
-		balance_map[account->id()] = Decimal(0, 0);
+		balance_map[account.id()] = Decimal(0, 0);
 	}
 	SharedSQLStatement entry_statement
 	(	*m_database_connection,
@@ -949,7 +939,7 @@ void PhatbooksTextSession::display_balances()
 				entry_statement.extract<Entry::Id>(0)
 			)
 		);
-		balance_map[entry->account_id()] += entry->amount();
+		balance_map[entry->account().id()] += entry->amount();
 	}
 	for
 	(	BalanceMap::const_iterator it = balance_map.begin();
@@ -957,9 +947,8 @@ void PhatbooksTextSession::display_balances()
 		++it
 	)
 	{
-		Handle<Account>
-			account(get_handle<Account>(m_database_connection, it->first));
-		cout << account->name() << "\t" << it->second << endl;
+		Account account(m_database_connection, it->first);
+		cout << account.name() << "\t" << it->second << endl;
 	}
 	cout << "Done!" << endl;
 	return;
@@ -968,29 +957,7 @@ void PhatbooksTextSession::display_balances()
 
 void PhatbooksTextSession::play()
 {
-	cout << "Here's the result of the current play session!" << endl;
-	cout << "Getting Handle (10A) to Account with id = 10..." << endl;
-	Handle<Account>
-		account10A(get_handle<Account>(m_database_connection, 10));
-	cout << "Getting another (10B) Handle to Account with id = 10..." << endl;
-	Handle<Account>
-		account10B(get_handle<Account>(m_database_connection, 10));
-	cout << "Name of 10A: " << account10A->name() << endl;
-	cout << "Name of 10B: " << account10B->name() << endl;
-	cout << "Changing name of 10A to HYRAX...";
-	account10A->set_name("HYRAX");
-	cout << "Now..." << endl;
-	cout << "Name of 10A: " << account10A->name() << endl;
-	cout << "Name of 10B: " << account10B->name() << endl;
-	cout << "Now getting another Handle (10C) to Account 10..." << endl;
-	Handle<Account>
-		account10C(get_handle<Account>(m_database_connection, 10));
-	cout << "Name of 10C: " << account10C->name() << endl;
-	/*
-	cout << "Now saving 10C... " << endl;
-	account10C->save();
-	*/
-	cout << "Done!" << endl;
+	cout << "No play today :-(" << endl;
 	return;
 }
 
