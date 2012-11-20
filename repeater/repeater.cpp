@@ -63,7 +63,9 @@ Repeater::setup_tables(PhatbooksDatabaseConnection& dbc)
 	return;
 }
 
-Repeater::Repeater(shared_ptr<PhatbooksDatabaseConnection> p_database_connection):
+Repeater::Repeater
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+):
 	PersistentObject(p_database_connection),
 	m_data(new RepeaterData)
 {
@@ -71,7 +73,7 @@ Repeater::Repeater(shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 
 
 Repeater::Repeater
-(	shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
 	Id p_id
 ):
 	PersistentObject(p_database_connection, p_id),

@@ -28,7 +28,7 @@ public:
 	 * database connection of the client application.
 	 */
 	template <typename Connection>
-	Handle<T> provide_object(boost::shared_ptr<Connection> dbc);
+	Handle<T> provide_object(boost::shared_ptr<Connection> const& dbc);
 
 	/**
 	 * Provide handle to object of type T, representing an object
@@ -39,7 +39,7 @@ public:
 	 */
 	template <typename Connection>
 	Handle<T> provide_object
-	(	boost::shared_ptr<Connection> dbc,
+	(	boost::shared_ptr<Connection> const& dbc,
 		Id p_id
 	);
 	
@@ -114,7 +114,7 @@ private:
 template <typename T>
 template <typename Connection>
 Handle<T>
-IdentityMap<T>::provide_object(boost::shared_ptr<Connection> dbc)
+IdentityMap<T>::provide_object(boost::shared_ptr<Connection> const& dbc)
 {
 	
 	Record obj_ptr((new T(dbc)));
@@ -129,7 +129,7 @@ template <typename T>
 template <typename Connection>
 Handle<T>
 IdentityMap<T>::provide_object
-(	boost::shared_ptr<Connection> dbc,
+(	boost::shared_ptr<Connection> const& dbc,
 	Id p_id
 )
 {

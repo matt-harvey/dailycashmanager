@@ -25,6 +25,7 @@ using sqloxx::SharedSQLStatement;
 using jewel::Decimal;
 using jewel::value;
 using boost::numeric_cast;
+using boost::shared_ptr;
 using std::exception;
 using std::string;
 
@@ -62,7 +63,7 @@ Commodity::Commodity(Commodity const& rhs):
 
 
 Commodity::Commodity
-(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
 ):
 	PersistentObject(p_database_connection),
 	m_data(new CommodityData)
@@ -71,7 +72,7 @@ Commodity::Commodity
 
 
 Commodity::Commodity
-(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
 	Id p_id
 ):
 	PersistentObject(p_database_connection, p_id),
@@ -82,7 +83,7 @@ Commodity::Commodity
 
 
 Commodity::Commodity
-(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
 	std::string const& p_abbreviation
 ):
 	PersistentObject(p_database_connection),

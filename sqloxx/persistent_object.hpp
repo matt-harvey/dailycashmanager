@@ -136,7 +136,7 @@ public:
 	 * constructors might, of course, throw).
 	 */
 	PersistentObject
-	(	boost::shared_ptr<Connection> p_database_connection,
+	(	boost::shared_ptr<Connection> const& p_database_connection,
 		Id p_id
 	);
 
@@ -152,7 +152,7 @@ public:
 	 */
 	explicit
 	PersistentObject
-	(	boost::shared_ptr<Connection> p_database_connection
+	(	boost::shared_ptr<Connection> const& p_database_connection
 	);
 
 	/**
@@ -589,7 +589,7 @@ private:
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>
 PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
-(	boost::shared_ptr<Connection> p_database_connection,
+(	boost::shared_ptr<Connection> const& p_database_connection,
 	Id p_id
 ):
 	m_database_connection(p_database_connection),
@@ -602,7 +602,7 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>
 PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
-(	boost::shared_ptr<Connection> p_database_connection
+(	boost::shared_ptr<Connection> const& p_database_connection
 ):
 	m_database_connection(p_database_connection),
 	m_loading_status(ghost),

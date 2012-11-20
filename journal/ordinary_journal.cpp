@@ -107,7 +107,7 @@ OrdinaryJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 
 OrdinaryJournal::OrdinaryJournal
-(	shared_ptr<PhatbooksDatabaseConnection> p_database_connection
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
 ):
 	OrdinaryJournal::PersistentObject(p_database_connection),
 	Journal()
@@ -116,7 +116,7 @@ OrdinaryJournal::OrdinaryJournal
 
 
 OrdinaryJournal::OrdinaryJournal
-(	shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
 	Id p_id
 ):
 	OrdinaryJournal::PersistentObject(p_database_connection, p_id),

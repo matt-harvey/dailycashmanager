@@ -113,7 +113,7 @@ template <typename T, typename Connection>
 class CacheSentry: public boost::noncopyable
 {
 public:
-	CacheSentry(boost::shared_ptr<Connection> dbc):
+	CacheSentry(boost::shared_ptr<Connection> const& dbc):
 		m_identity_map(identity_map<T>(*dbc))
 	{
 		m_identity_map.enable_caching();
@@ -134,7 +134,7 @@ private:
  */
 template <typename T, typename Connection>
 Handle<T>
-get_handle(boost::shared_ptr<Connection> dbc, typename T::Id id);
+get_handle(boost::shared_ptr<Connection> const& dbc, typename T::Id id);
 
 /**
  * Convenience function to return a Handle<T> to a new, id-less business
@@ -142,7 +142,7 @@ get_handle(boost::shared_ptr<Connection> dbc, typename T::Id id);
  */
 template <typename T, typename Connection>
 Handle<T>
-get_handle(boost::shared_ptr<Connection> dbc);
+get_handle(boost::shared_ptr<Connection> const& dbc);
 
 
 // TODO Move in-header template implementations to a separate file to keep the
@@ -151,7 +151,7 @@ get_handle(boost::shared_ptr<Connection> dbc);
 template <typename T, typename Connection>
 inline
 Handle<T>
-get_handle(boost::shared_ptr<Connection> dbc, typename T::Id id)
+get_handle(boost::shared_ptr<Connection> const& dbc, typename T::Id id)
 {
 	return identity_map<T>(*dbc).template provide_object(dbc, id);
 }
@@ -159,7 +159,7 @@ get_handle(boost::shared_ptr<Connection> dbc, typename T::Id id)
 template <typename T, typename Connection>
 inline
 Handle<T>
-get_handle(boost::shared_ptr<Connection> dbc)
+get_handle(boost::shared_ptr<Connection> const& dbc)
 {
 	return identity_map<T>(*dbc).template provide_object(dbc);
 }

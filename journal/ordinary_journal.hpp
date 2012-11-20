@@ -92,14 +92,16 @@ public:
 	 */
 	explicit
 	OrdinaryJournal
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection
 	);
 
 	/**
 	 * Get an OrdinaryJournal by id from the database.
 	 */
 	OrdinaryJournal
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection,
 		Id p_id
 	);
 
@@ -113,6 +115,7 @@ public:
 	OrdinaryJournal
 	(	Journal const& p_journal,
 		boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection
 	);
 
 	~OrdinaryJournal();

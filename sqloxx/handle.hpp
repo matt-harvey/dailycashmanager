@@ -19,7 +19,7 @@ template <typename T>
 class Handle
 {
 public:
-	Handle(typename boost::shared_ptr<T> p_pointer);
+	Handle(typename boost::shared_ptr<T> const& p_pointer);
 	~Handle();
 	Handle(Handle const& rhs);
 	Handle& operator=(Handle const& rhs);
@@ -35,7 +35,7 @@ private:
 
 template <typename T>
 Handle<T>::Handle
-(	typename boost::shared_ptr<T> p_pointer
+(	typename boost::shared_ptr<T> const& p_pointer
 ):
 	m_pointer(p_pointer)
 {

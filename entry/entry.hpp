@@ -61,14 +61,16 @@ public:
 	 */
 	explicit
 	Entry
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection
 	);
 
 	/**
 	 * Get an Entry by id from the database.
 	 */
 	Entry
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection,
 		Id p_id
 	);
 

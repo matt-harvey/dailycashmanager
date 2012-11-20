@@ -72,14 +72,16 @@ public:
 	 */
 	explicit
 	Repeater
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection
 	);
 
 	/**
 	 * Get a Repeater by id from the database.
 	 */
 	Repeater
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection,
 		Id p_id
 	);
 

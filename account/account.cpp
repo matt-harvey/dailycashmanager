@@ -80,7 +80,7 @@ Account::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 
 Account::Account
-(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
 ):
 	PersistentObject(p_database_connection),
 	m_data(new AccountData)
@@ -89,7 +89,7 @@ Account::Account
 
 
 Account::Account
-(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
 	Id p_id
 ):
 	PersistentObject(p_database_connection, p_id),
@@ -100,7 +100,7 @@ Account::Account
 
 
 Account::Account
-(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
 	std::string const& p_name
 ):
 	PersistentObject(p_database_connection),

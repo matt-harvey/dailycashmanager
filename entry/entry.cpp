@@ -47,14 +47,19 @@ void Entry::setup_tables(PhatbooksDatabaseConnection& dbc)
 	return;
 }
 
-Entry::Entry(shared_ptr<PhatbooksDatabaseConnection> p_database_connection):
+Entry::Entry
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+):
 	PersistentObject(p_database_connection),
 	m_data(new EntryData)
 {
 }
 
 
-Entry::Entry(shared_ptr<PhatbooksDatabaseConnection> p_database_connection, Id p_id):
+Entry::Entry
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
+	Id p_id
+):
 	PersistentObject(p_database_connection, p_id),
 	m_data(new EntryData)
 {

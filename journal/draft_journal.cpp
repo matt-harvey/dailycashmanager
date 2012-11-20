@@ -105,7 +105,7 @@ DraftJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 
 DraftJournal::DraftJournal
-(	shared_ptr<PhatbooksDatabaseConnection> p_database_connection
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
 ):
 	DraftJournal::PersistentObject(p_database_connection),
 	Journal(),
@@ -115,7 +115,7 @@ DraftJournal::DraftJournal
 
 
 DraftJournal::DraftJournal
-(	shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
 	Id p_id
 ):
 	DraftJournal::PersistentObject(p_database_connection, p_id),
@@ -156,7 +156,7 @@ DraftJournal::set_name(string const& p_name)
 
 
 void
-DraftJournal::add_repeater(shared_ptr<Repeater> repeater)
+DraftJournal::add_repeater(shared_ptr<Repeater> const& repeater)
 {
 	load();
 	if (has_id())

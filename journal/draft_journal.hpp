@@ -92,14 +92,16 @@ public:
 	 */
 	explicit
 	DraftJournal
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection
 	);
 
 	/**
 	 * Get a DraftJournal by id from the database.
 	 */
 	DraftJournal
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection,
 		Id p_id
 	);
 
@@ -113,6 +115,7 @@ public:
 	DraftJournal
 	(	Journal const& p_journal,
 		boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection
 	);
 
 	/**
@@ -129,7 +132,7 @@ public:
 	/**
 	 * Add a Repeater to the DraftJournal.
 	 */
-	void add_repeater(boost::shared_ptr<Repeater> repeater);
+	void add_repeater(boost::shared_ptr<Repeater> const& repeater);
 	
 	/**
 	 * @returns name of DraftJournal.
