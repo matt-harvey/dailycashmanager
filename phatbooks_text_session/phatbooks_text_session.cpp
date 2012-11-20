@@ -13,7 +13,9 @@
 
 
 #include "account.hpp"
+#include "account_impl.hpp"
 #include "commodity.hpp"
+#include "commodity_impl.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
@@ -237,7 +239,7 @@ int PhatbooksTextSession::run(string const& filename)
 	// WARNING play
 	CacheSentry<AccountImpl, PhatbooksDatabaseConnection>
 		account_sentry(m_database_connection);
-	CacheSentry<Commodity, PhatbooksDatabaseConnection>
+	CacheSentry<CommodityImpl, PhatbooksDatabaseConnection>
 		commodity_sentry(m_database_connection);
 	CacheSentry<Entry, PhatbooksDatabaseConnection>
 		entry_sentry(m_database_connection);
@@ -351,7 +353,7 @@ void PhatbooksTextSession::elicit_commodity()
 	else
 	{
 		assert (confirmation == "y");
-		commodity.save_new();
+		commodity.save();
 		cout << "Commodity created." << endl;
 	}
 	return;

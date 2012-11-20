@@ -129,7 +129,7 @@ void import_from_nap
 	aud.set_description("");
 	aud.set_precision(2);
 	aud.set_multiplier_to_base(Decimal("1"));
-	aud.save_new();
+	aud.save();
 
 	// Read accounts
 	string const file_sep = "/";

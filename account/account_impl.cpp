@@ -289,20 +289,6 @@ AccountImpl::load_name_knowing_id()
 }
 
 
-void
-AccountImpl::load_id_knowing_name()
-{
-	SharedSQLStatement statement
-	(	*database_connection(),
-		"select account_id from accounts where name = :p"
-	);
-	statement.bind(":p", m_data->name);
-	statement.step();
-	set_id(statement.extract<Id>(0));
-	return;
-}
-
-
 
 
 }  // namespace phatbooks

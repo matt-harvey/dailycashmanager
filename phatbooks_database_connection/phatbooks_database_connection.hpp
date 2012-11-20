@@ -13,7 +13,7 @@
 
 
 #include "account_impl.hpp"
-#include "commodity.hpp"
+#include "commodity_impl.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
@@ -103,7 +103,7 @@ public:
 	void setup();
 
 	sqloxx::IdentityMap<AccountImpl>& account_map();
-	sqloxx::IdentityMap<Commodity>& commodity_map();
+	sqloxx::IdentityMap<CommodityImpl>& commodity_map();
 	sqloxx::IdentityMap<Entry>& entry_map();
 	sqloxx::IdentityMap<OrdinaryJournal>& ordinary_journal_map();
 	sqloxx::IdentityMap<DraftJournal>& draft_journal_map();
@@ -116,7 +116,7 @@ private:
 
 
 	sqloxx::IdentityMap<AccountImpl> m_account_map;
-	sqloxx::IdentityMap<Commodity> m_commodity_map;
+	sqloxx::IdentityMap<CommodityImpl> m_commodity_map;
 	sqloxx::IdentityMap<Entry> m_entry_map;
 	sqloxx::IdentityMap<OrdinaryJournal> m_ordinary_journal_map;
 	sqloxx::IdentityMap<DraftJournal> m_draft_journal_map;
@@ -162,9 +162,9 @@ identity_map
 
 template <>
 inline
-IdentityMap<phatbooks::Commodity>&
+IdentityMap<phatbooks::CommodityImpl>&
 identity_map
-<	phatbooks::Commodity,
+<	phatbooks::CommodityImpl,
 	phatbooks::PhatbooksDatabaseConnection
 >
 (	phatbooks::PhatbooksDatabaseConnection& connection

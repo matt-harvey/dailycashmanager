@@ -162,7 +162,7 @@ PhatbooksDatabaseConnection::account_map()
 	return m_account_map;
 }
 
-sqloxx::IdentityMap<Commodity>&
+sqloxx::IdentityMap<CommodityImpl>&
 PhatbooksDatabaseConnection::commodity_map()
 {
 	return m_commodity_map;

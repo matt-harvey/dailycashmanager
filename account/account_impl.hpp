@@ -146,7 +146,6 @@ private:
 	void do_save_existing();
 	void do_save_new();
 	void load_name_knowing_id();
-	void load_id_knowing_name();
 	void process_saving_statement(sqloxx::SharedSQLStatement& statement);
 
 	struct AccountData
