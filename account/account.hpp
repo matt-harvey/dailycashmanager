@@ -11,6 +11,7 @@ namespace phatbooks
 {
 
 class AccountImpl;
+class Commodity;
 class PhatbooksDatabaseConnection;
 
 
@@ -84,16 +85,9 @@ public:
 	std::string name() const;
 
 	/**
-	 * Returns id of native commodity of this account.
+	 * Returns native commodity of this account.
 	 */
-	Id commodity_id() const;
-
-	/**
-	 * Returns abbreviation of native commodity of this account.
-	 *
-	 * Note this is much less efficient than commodity_id().
-	 */
-	std::string commodity_abbreviation() const;
+	Commodity commodity() const;
 
 	/**
 	 * Returns AccountType of account.
@@ -109,7 +103,7 @@ public:
 
 	void set_name(std::string const& p_name);
 
-	void set_commodity_id(Id p_commodity_id);
+	void set_commodity(Commodity const& p_commodity);
 
 	void set_description(std::string const& p_description);
 

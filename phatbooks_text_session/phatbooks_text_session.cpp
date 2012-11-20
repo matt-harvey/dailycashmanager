@@ -400,8 +400,7 @@ void PhatbooksTextSession::elicit_account()
 		else
 		{
 			input_is_valid = true;
-			Commodity commodity(m_database_connection, input);
-			account.set_commodity_id(commodity.id());
+			account.set_commodity(Commodity(m_database_connection, input));
 		}
 	}
 
@@ -434,7 +433,7 @@ void PhatbooksTextSession::elicit_account()
 	cout << endl << "You have proposed to create the following account: "
 	     << endl << endl
 	     << "Name: " << account.name() << endl
-		 << "Commodity: " << account.commodity_abbreviation() << endl
+		 << "Commodity: " << account.commodity().abbreviation() << endl
 		 << "Type: " << account_type_name << endl
 		 << "Description: " << account.description() << endl
 		 << endl;
@@ -542,10 +541,7 @@ void PhatbooksTextSession::elicit_journal()
 	);
 
 	// Get primary entry amount
-	Commodity primary_commodity
-	(	m_database_connection,
-		primary_entry->account().commodity_id()
-	);
+	Commodity const primary_commodity = primary_entry->account().commodity();
 	Decimal primary_entry_amount;
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
@@ -601,10 +597,7 @@ void PhatbooksTextSession::elicit_journal()
 	// WARNING if secondary account is in a different currency then we need to
 	// deal with this here somehow.
  
-	Commodity secondary_commodity
-	(	m_database_connection,
-		secondary_entry->account().commodity_abbreviation()
-	);
+	Commodity secondary_commodity = secondary_entry->account().commodity();
 	if
 	(	secondary_commodity.id() != primary_commodity.id()
 	)

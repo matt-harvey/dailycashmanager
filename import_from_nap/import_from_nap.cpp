@@ -169,7 +169,9 @@ void import_from_nap
 		}
 		string const name = account_cells[1];
 		account.set_name(name);
-		account.set_commodity_id(aud.id());
+		account.set_commodity
+		(	Commodity(database_connection,aud.id())
+		);
 		account.set_description(account_cells[2]);
 		account.save();
 	}

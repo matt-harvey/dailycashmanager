@@ -143,19 +143,11 @@ AccountImpl::name()
 	return m_data->name;
 }
 
-Commodity::Id
-AccountImpl::commodity_id()
+Commodity
+AccountImpl::commodity()
 {
 	load();
-	return value(m_data->commodity_id);
-}
-
-string
-AccountImpl::commodity_abbreviation()
-{
-	load();
-	Commodity commodity(database_connection(), value(m_data->commodity_id));
-	return commodity.abbreviation();
+	return value(m_data->commodity);
 }
 
 string
@@ -182,10 +174,10 @@ AccountImpl::set_name(string const& p_name)
 }
 
 void
-AccountImpl::set_commodity_id(Id p_commodity_id)
+AccountImpl::set_commodity(Commodity const& p_commodity)
 {
 	load();
-	m_data->commodity_id = p_commodity_id;
+	m_data->commodity = p_commodity;
 	return;
 }
 
@@ -217,7 +209,10 @@ AccountImpl::do_load()
 	statement.bind(":p", id());
 	statement.step();
 	AccountImpl temp(*this);
-	temp.m_data->commodity_id = statement.extract<Id>(0);
+	temp.m_data->commodity = Commodity
+	(	database_connection(),
+		statement.extract<Id>(0)
+	);
 	temp.m_data->account_type =
 		static_cast<AccountType>(statement.extract<int>(1));
 	temp.m_data->description = statement.extract<string>(2);
@@ -234,7 +229,7 @@ AccountImpl::process_saving_statement(SharedSQLStatement& statement)
 	);
 	statement.bind(":name", m_data->name);
 	statement.bind(":description", value(m_data->description));
-	statement.bind(":commodity_id", value(m_data->commodity_id));
+	statement.bind(":commodity_id", value(m_data->commodity).id());
 	statement.step_final();
 	return;
 }

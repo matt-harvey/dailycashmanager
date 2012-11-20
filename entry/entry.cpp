@@ -173,8 +173,10 @@ Entry::do_load()
 	(	database_connection(),
 		statement.extract<Account::Id>(0)
 	);
-	Commodity cmd(database_connection(), acct.commodity_id());
-	Decimal const amt(statement.extract<boost::int64_t>(2), cmd.precision());
+	Decimal const amt
+	(	statement.extract<boost::int64_t>(2),
+		acct.commodity().precision()
+	);
 
 	temp.m_data->account = acct;
 	temp.m_data->comment = statement.extract<string>(1);

@@ -91,16 +91,10 @@ Account::name() const
 	return m_impl->name();
 }
 
-Commodity::Id
-Account::commodity_id() const
+Commodity
+Account::commodity() const
 {
-	return m_impl->commodity_id();
-}
-
-std::string
-Account::commodity_abbreviation() const
-{
-	return m_impl->commodity_abbreviation();
+	return m_impl->commodity();
 }
 
 AccountType
@@ -130,9 +124,9 @@ Account::set_name(string const& p_name)
 }
 
 void
-Account::set_commodity_id(Id p_commodity_id)
+Account::set_commodity(Commodity const& p_commodity)
 {
-	m_impl->set_commodity_id(p_commodity_id);
+	m_impl->set_commodity(p_commodity);
 	return;
 }
 
