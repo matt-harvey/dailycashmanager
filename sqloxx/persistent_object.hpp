@@ -343,13 +343,6 @@ public:
 	void notify_handle_destruction()
 	{
 		decrement_handle_counter();
-		if (m_handle_counter == 0 && static_cast<bool>(m_proxy_key))  // the "&& m_proxy_key" is a temp hack
-		{
-			MapRegistrar<Derived, Connection>::notify_nil_handles
-			(	*m_database_connection,
-				jewel::value(m_proxy_key)
-			);
-		}
 		return;
 	}
 
@@ -829,10 +822,17 @@ decrement_handle_counter()
 	{
 		throw OverflowException 
 		(	"Handle counter for PersistentObject instance has reached "
-			"zero and cannot be safely decremented."
+			"zero and cannot be further decremented."
 		);
 	}
 	--m_handle_counter;
+	if (m_handle_counter == 0 && static_cast<bool>(m_proxy_key))  // the "&& m_proxy_key" is a temp hack
+	{
+		MapRegistrar<Derived, Connection>::notify_nil_handles
+		(	*m_database_connection,
+			jewel::value(m_proxy_key)
+		);
+	}
 	return;
 }
 
