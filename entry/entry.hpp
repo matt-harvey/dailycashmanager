@@ -12,6 +12,7 @@
  */
 
 
+
 #include "account.hpp"
 #include "journal.hpp"
 #include "sqloxx/persistent_object.hpp"
@@ -34,10 +35,6 @@ class PhatbooksDatabaseConnection;
 
 /**
  * Class representing an accounting entry, i.e. a single line in an account.
- *
- * @todo Given that each Entry refers to its corresponding Account by name,
- * rather than by id, could there potentially be a problem if the name of an
- * Account changes whilst there are "live" Entry objects in memory?
  */
 class Entry:
 	public sqloxx::PersistentObject<Entry, PhatbooksDatabaseConnection>
@@ -85,11 +82,9 @@ public:
 	void set_journal_id(Journal::Id p_journal_id);
 
 	/**
-	 * Set the Account name for the Entry.
-	 *
-	 * @todo Should this method throw if there is no Account with this id?
+	 * Set the Account for the Entry.
 	 */
-	void set_account_id(Account::Id p_account_id);
+	void set_account(Account const& p_account_id);
 
 	/**
 	 * Set the comment for the Entry
@@ -131,7 +126,7 @@ public:
 	 *
 	 * Does not throw.
 	 */
-	Account::Id account_id();
+	Account account();
 
 	/**
 	 * @returns name of the Account that this entry effects.
@@ -164,7 +159,7 @@ private:
 	struct EntryData
 	{
 		boost::optional<Journal::Id> journal_id;
-		boost::optional<Account::Id> account_id;
+		boost::optional<Account> account;
 		boost::optional<std::string> comment;
 		boost::optional<jewel::Decimal> amount;
 	};

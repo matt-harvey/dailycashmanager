@@ -1,6 +1,6 @@
-/** \file account.cpp
+/** \file account_impl.cpp
  *
- * \brief Source file for code pertaining to Account class.
+ * \brief Source file for code pertaining to AccountImpl class.
  *
  * \author Matthew Harvey
  * \date 04 July 2012.
@@ -30,7 +30,7 @@ namespace phatbooks
 
 
 vector<string>
-Account::account_type_names()
+AccountImpl::account_type_names()
 {
 	static bool calculated_already = false;
 	static vector<string> ret;
@@ -49,7 +49,7 @@ Account::account_type_names()
 
 
 void
-Account::setup_tables(PhatbooksDatabaseConnection& dbc)
+AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table account_types(account_type_id integer primary key "
@@ -79,7 +79,7 @@ Account::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 
-Account::Account
+AccountImpl::AccountImpl
 (	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
 ):
 	PersistentObject(p_database_connection),
@@ -88,7 +88,7 @@ Account::Account
 }
 
 
-Account::Account
+AccountImpl::AccountImpl
 (	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
 	Id p_id
 ):
@@ -99,7 +99,7 @@ Account::Account
 }
 
 
-Account::Account
+AccountImpl::AccountImpl
 (	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
 	std::string const& p_name
 ):
@@ -111,14 +111,14 @@ Account::Account
 }
 
 
-Account::Account(Account const& rhs):
+AccountImpl::AccountImpl(AccountImpl const& rhs):
 	PersistentObject(rhs),
 	m_data(new AccountData(*(rhs.m_data)))
 {
 }
 
 
-Account::~Account()
+AccountImpl::~AccountImpl()
 {
 	/* Not necessary if m_data is a smart pointer
 	delete m_data;
@@ -126,28 +126,28 @@ Account::~Account()
 	*/
 }
 
-Account::AccountType
-Account::account_type()
+AccountImpl::AccountType
+AccountImpl::account_type()
 {
 	load();
 	return value(m_data->account_type);
 }
 
 string
-Account::name()
+AccountImpl::name()
 {
 	return m_data->name;
 }
 
-Commodity::Id
-Account::commodity_id()
+Id
+AccountImpl::commodity_id()
 {
 	load();
 	return value(m_data->commodity_id);
 }
 
 string
-Account::commodity_abbreviation()
+AccountImpl::commodity_abbreviation()
 {
 	load();
 	Commodity commodity(database_connection(), value(m_data->commodity_id));
@@ -155,14 +155,14 @@ Account::commodity_abbreviation()
 }
 
 string
-Account::description()
+AccountImpl::description()
 {
 	load();
 	return value(m_data->description);
 }
 
 void
-Account::set_account_type(AccountType p_account_type)
+AccountImpl::set_account_type(AccountType p_account_type)
 {
 	load();
 	m_data->account_type = p_account_type;
@@ -170,7 +170,7 @@ Account::set_account_type(AccountType p_account_type)
 }
 
 void
-Account::set_name(string const& p_name)
+AccountImpl::set_name(string const& p_name)
 {
 	load();
 	m_data->name = p_name;
@@ -178,7 +178,7 @@ Account::set_name(string const& p_name)
 }
 
 void
-Account::set_commodity_id(Commodity::Id p_commodity_id)
+AccountImpl::set_commodity_id(Id p_commodity_id)
 {
 	load();
 	m_data->commodity_id = p_commodity_id;
@@ -186,7 +186,7 @@ Account::set_commodity_id(Commodity::Id p_commodity_id)
 }
 
 void
-Account::set_description(string const& p_description)
+AccountImpl::set_description(string const& p_description)
 {
 	load();
 	m_data->description = p_description;
@@ -194,7 +194,7 @@ Account::set_description(string const& p_description)
 }
 
 void
-Account::swap(Account& rhs)
+AccountImpl::swap(AccountImpl& rhs)
 {
 	swap_base_internals(rhs);
 	using std::swap;
@@ -203,7 +203,7 @@ Account::swap(Account& rhs)
 }
 
 void
-Account::do_load()
+AccountImpl::do_load()
 {
 	SharedSQLStatement statement
 	(	*database_connection(),
@@ -212,8 +212,8 @@ Account::do_load()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	Account temp(*this);
-	temp.m_data->commodity_id = statement.extract<Commodity::Id>(0);
+	AccountImpl temp(*this);
+	temp.m_data->commodity_id = statement.extract<Id>(0);
 	temp.m_data->account_type =
 		static_cast<AccountType>(statement.extract<int>(1));
 	temp.m_data->description = statement.extract<string>(2);
@@ -222,7 +222,7 @@ Account::do_load()
 }
 
 void
-Account::process_saving_statement(SharedSQLStatement& statement)
+AccountImpl::process_saving_statement(SharedSQLStatement& statement)
 {
 	statement.bind
 	(	":account_type_id",
@@ -236,7 +236,7 @@ Account::process_saving_statement(SharedSQLStatement& statement)
 }
 
 void
-Account::do_save_existing()
+AccountImpl::do_save_existing()
 {
 	SharedSQLStatement updater
 	(	*database_connection(),
@@ -253,7 +253,7 @@ Account::do_save_existing()
 }
 
 void
-Account::do_save_new()
+AccountImpl::do_save_new()
 {
 	SharedSQLStatement inserter
 	(	*database_connection(),
@@ -266,13 +266,13 @@ Account::do_save_new()
 }
 
 string
-Account::primary_table_name()
+AccountImpl::primary_table_name()
 {
 	return "accounts";
 }
 
 void
-Account::load_name_knowing_id()
+AccountImpl::load_name_knowing_id()
 {
 	SharedSQLStatement statement
 	(	*database_connection(),
@@ -286,7 +286,7 @@ Account::load_name_knowing_id()
 
 
 void
-Account::load_id_knowing_name()
+AccountImpl::load_id_knowing_name()
 {
 	SharedSQLStatement statement
 	(	*database_connection(),

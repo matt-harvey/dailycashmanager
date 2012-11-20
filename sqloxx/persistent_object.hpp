@@ -3,6 +3,7 @@
 
 #include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
+#include "general_typedefs.hpp"
 #include <boost/none.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
@@ -13,7 +14,6 @@
 namespace sqloxx
 {
 
-typedef int Id;
 
 // WARNING The whole thing needs the documentation revised if I proceed with
 // the CRTP pattern

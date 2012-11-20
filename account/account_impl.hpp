@@ -1,9 +1,9 @@
-#ifndef GUARD_account_hpp
-#define GUARD_account_hpp
+#ifndef GUARD_account_impl_hpp
+#define GUARD_account_impl_hpp
 
 /** \file account.hpp
  *
- * \brief Header file pertaining to Account class.
+ * \brief Header file pertaining to AccountImpl class.
  *
  * \author Matthew Harvey
  * \date 04 July 2012.
@@ -12,8 +12,9 @@
  */
 
 
+#include "account_type.hpp"
+#include "general_typedefs.hpp"
 #include "sqloxx/persistent_object.hpp"
-#include "commodity/commodity.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <algorithm>
 #include <string>
@@ -32,31 +33,18 @@ namespace phatbooks
 class PhatbooksDatabaseConnection;
 
 /**
- * Represents an Account object that is "live" in memory, rather than
+ * Represents an AccountImpl object that is "live" in memory, rather than
  * stored in a database.
  */
-class Account:
-	public sqloxx::PersistentObject<Account, PhatbooksDatabaseConnection>
+class AccountImpl:
+	public sqloxx::PersistentObject<AccountImpl, PhatbooksDatabaseConnection>
 {
 public:
 
-	typedef sqloxx::PersistentObject<Account, PhatbooksDatabaseConnection>
+	typedef sqloxx::PersistentObject<AccountImpl, PhatbooksDatabaseConnection>
 		PersistentObject;
-	typedef sqloxx::Id Id;
 
-	enum AccountType
-	{
-		// enum order is significant, as the database contains
-		// a table with primary keys in this order. See setup_tables
-		// method
-		asset = 1,
-		liability,
-		equity,
-		revenue,
-		expense,
-		pure_envelope
-	};
-
+	typedef account_type::AccountType AccountType;
 
 	/**
 	 * Returns a vector of account type names, corresponding to the
@@ -66,7 +54,7 @@ public:
 
 	/**
 	 * Sets up tables in the database required for the persistence of
-	 * Account objects.
+	 * AccountImpl objects.
 	 */
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
@@ -75,24 +63,24 @@ public:
 	 * particular object in the database.
 	 */
 	explicit
-	Account
+	AccountImpl
 	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
 			p_database_connection
 	);
 
 	/**
-	 * Get an Account by id from database.
+	 * Get an AccountImpl by id from database.
 	 */
-	Account
+	AccountImpl
 	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
 			p_database_connection,
 		Id p_id
 	);
 
 	/**
-	 * Get an Account by name from the database.
+	 * Get an AccountImpl by name from the database.
 	 */
-	Account
+	AccountImpl
 	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
 			p_database_connection,
 		std::string const& p_name
@@ -101,7 +89,7 @@ public:
 	/**
 	 * Destuctor.
 	 */
-	~Account();
+	~AccountImpl();
 
 	/**
 	 * Returns name of account.
@@ -111,7 +99,7 @@ public:
 	/**
 	 * Returns id of native commodity of this account.
 	 */
-	Commodity::Id commodity_id();
+	Id commodity_id();
 
 	/**
 	 * Returns abbreviation of native commodity of this account.
@@ -121,7 +109,7 @@ public:
 	std::string commodity_abbreviation();
 
 	/**
-	 * Returns AccountType of account.
+	 * Returns AccountImpl of account.
 	 */
 	AccountType account_type();
 
@@ -134,7 +122,7 @@ public:
 
 	void set_name(std::string const& p_name);
 
-	void set_commodity_id(Commodity::Id p_commodity_id);
+	void set_commodity_id(Id p_commodity_id);
 
 	void set_description(std::string const& p_description);
 
@@ -142,7 +130,7 @@ public:
 	 * @todo Provide non-member swap and specialized std::swap per
 	 * "Effective C++".
 	 */
-	void swap(Account& rhs);
+	void swap(AccountImpl& rhs);
 
 	static std::string primary_table_name();
 private:
@@ -151,7 +139,7 @@ private:
 	/**
 	 * Copy constructor - implemented, but deliberately private.
 	 */
-	Account(Account const& rhs);
+	AccountImpl(AccountImpl const& rhs);
 
 	void do_load();
 	void do_save_existing();
@@ -173,7 +161,7 @@ private:
 		// such an object being written to the database in an
 		// incomplete state.
 		std::string name;
-		boost::optional<Commodity::Id> commodity_id;
+		boost::optional<Id> commodity_id;
 		boost::optional<AccountType> account_type;
 		boost::optional<std::string> description;
 	};
@@ -184,4 +172,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_account_hpp
+#endif  // GUARD_account_impl_hpp

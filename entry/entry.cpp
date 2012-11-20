@@ -85,10 +85,10 @@ Entry::set_journal_id(Journal::Id p_journal_id)
 
 
 void
-Entry::set_account_id(Account::Id p_account_id)
+Entry::set_account(Account const& p_account)
 {
 	load();
-	m_data->account_id = p_account_id;
+	m_data->account = p_account;
 	return;
 }
 
@@ -110,28 +110,18 @@ Entry::set_amount(Decimal const& p_amount)
 	return;
 }
 
-Account::Id
-Entry::account_id()
+Account
+Entry::account()
 {
 	load();
-	return value(m_data->account_id);
+	return value(m_data->account);
 }
 
 std::string
 Entry::account_name()
 {
 	load();
-	// WARNING May uncomment revert to Account instead of Handle<Account> in
-	// due course.
-	using sqloxx::Handle;
-	using sqloxx::get_handle;
-	Handle<Account> account
-	(	get_handle<Account>
-		(	database_connection(),
-			value(m_data->account_id)
-		)
-	);
-	return account->name();
+	return value(m_data->account).name();
 }
 
 
@@ -179,11 +169,14 @@ Entry::do_load()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	Account acct(database_connection(), statement.extract<Account::Id>(0));
+	Account const acct
+	(	database_connection(),
+		statement.extract<Account::Id>(0)
+	);
 	Commodity cmd(database_connection(), acct.commodity_id());
 	Decimal const amt(statement.extract<boost::int64_t>(2), cmd.precision());
 
-	temp.m_data->account_id = acct.id();
+	temp.m_data->account = acct;
 	temp.m_data->comment = statement.extract<string>(1);
 	temp.m_data->amount = amt;
 	temp.m_data->journal_id = statement.extract<Journal::Id>(3);
@@ -198,7 +191,7 @@ Entry::process_saving_statement(SharedSQLStatement& statement)
 {
 	statement.bind(":journal_id", value(m_data->journal_id));
 	statement.bind(":comment", value(m_data->comment));
-	statement.bind(":account_id", value(m_data->account_id));
+	statement.bind(":account_id", value(m_data->account).id());
 	statement.bind(":amount", m_data->amount->intval());
 	statement.step_final();
 	return;

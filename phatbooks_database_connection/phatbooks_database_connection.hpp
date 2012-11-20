@@ -12,8 +12,8 @@
  */
 
 
-#include "account.hpp"
 #include "commodity.hpp"
+#include "account_impl.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
@@ -76,7 +76,7 @@ public:
 	 *
 	 * @todo Determine and document throwing behaviour.
 	 */
-	boost::bimap<Account::AccountType, std::string> account_types();
+	boost::bimap<account_type::AccountType, std::string> account_types();
 
 	/**
 	 * @returns \c true if and only if \c p_abbreviation is the abbreviation
@@ -102,7 +102,7 @@ public:
 	 */
 	void setup();
 
-	sqloxx::IdentityMap<Account>& account_map();
+	sqloxx::IdentityMap<AccountImpl>& account_map();
 	sqloxx::IdentityMap<Commodity>& commodity_map();
 	sqloxx::IdentityMap<Entry>& entry_map();
 	sqloxx::IdentityMap<OrdinaryJournal>& ordinary_journal_map();
@@ -115,7 +115,7 @@ private:
 	void mark_setup_as_having_occurred();
 
 
-	sqloxx::IdentityMap<Account> m_account_map;
+	sqloxx::IdentityMap<AccountImpl> m_account_map;
 	sqloxx::IdentityMap<Commodity> m_commodity_map;
 	sqloxx::IdentityMap<Entry> m_entry_map;
 	sqloxx::IdentityMap<OrdinaryJournal> m_ordinary_journal_map;
@@ -136,9 +136,9 @@ namespace sqloxx
 
 template <>
 inline
-IdentityMap<phatbooks::Account>&
+IdentityMap<phatbooks::AccountImpl>&
 identity_map
-<	phatbooks::Account,
+<	phatbooks::AccountImpl,
 	phatbooks::PhatbooksDatabaseConnection
 >
 (	phatbooks::PhatbooksDatabaseConnection& connection

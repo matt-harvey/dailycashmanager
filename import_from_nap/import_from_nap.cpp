@@ -1,5 +1,6 @@
 #include "import_from_nap.hpp"
 #include "account.hpp"
+#include "account_type.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
@@ -148,20 +149,20 @@ void import_from_nap
 		{
 		case '1':  // ready asset or...
 		case '3':  // investment asset
-			account.set_account_type(Account::asset);
+			account.set_account_type(account_type::asset);
 			break;
 		case '2':  // ready liability or... 
 		case '4':  // investment liability
-			account.set_account_type(Account::liability);
+			account.set_account_type(account_type::liability);
 			break;
 		case '5':
-			account.set_account_type(Account::equity);
+			account.set_account_type(account_type::equity);
 			break;
 		case '6':
-			account.set_account_type(Account::revenue);
+			account.set_account_type(account_type::revenue);
 			break;
 		case '7':
-			account.set_account_type(Account::expense);
+			account.set_account_type(account_type::expense);
 			break;
 		default:
 			throw std::runtime_error("Unrecognised account type.");
@@ -169,7 +170,7 @@ void import_from_nap
 		account.set_name(account_cells[1]);
 		account.set_commodity_id(aud.id());
 		account.set_description(account_cells[2]);
-		account.save_new();
+		account.save();
 	}
 		
 	typedef vector< shared_ptr<OrdinaryJournal> > OrdinaryJournalVec;
