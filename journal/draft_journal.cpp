@@ -3,7 +3,6 @@
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
-#include "sqloxx/handle.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
@@ -13,7 +12,6 @@
 #include <string>
 #include <vector>
 
-using sqloxx::Handle;
 using sqloxx::SharedSQLStatement;
 using boost::shared_ptr;
 using boost::unordered_set;
@@ -50,12 +48,12 @@ DraftJournal::set_comment(string const& p_comment)
 }
 
 void
-DraftJournal::add_entry(Handle<Entry> entry)
+DraftJournal::add_entry(Entry& entry)
 {
 	load();
 	if (has_id())
 	{
-		entry->set_journal_id(id());
+		entry.set_journal_id(id());
 	}
 	Journal::add_entry(entry);
 	return;
@@ -76,7 +74,7 @@ DraftJournal::comment()
 }
 
 
-vector< Handle<Entry> > const&
+vector<Entry> const&
 DraftJournal::entries()
 {
 	load();

@@ -1,5 +1,5 @@
 
-/** \file entry.cpp
+/** \file entry_impl.cpp
  *
  * \brief Source file pertaining to EntryImpl class.
  *
@@ -116,14 +116,6 @@ EntryImpl::account()
 	load();
 	return value(m_data->account);
 }
-
-std::string
-EntryImpl::account_name()
-{
-	load();
-	return value(m_data->account).name();
-}
-
 
 string
 EntryImpl::comment()

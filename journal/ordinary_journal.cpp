@@ -20,7 +20,6 @@
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::value;
-using sqloxx::Handle;
 using sqloxx::SharedSQLStatement;
 using std::string;
 using std::vector;
@@ -52,12 +51,12 @@ OrdinaryJournal::set_comment(string const& p_comment)
 }
 
 void
-OrdinaryJournal::add_entry(Handle<Entry> entry)
+OrdinaryJournal::add_entry(Entry& entry)
 {
 	load();
 	if (has_id())
 	{
-		entry->set_journal_id(id());
+		entry.set_journal_id(id());
 	}
 	Journal::add_entry(entry);
 	return;
@@ -78,7 +77,7 @@ OrdinaryJournal::comment()
 }
 
 
-vector< Handle<Entry> > const&
+vector<Entry> const&
 OrdinaryJournal::entries()
 {
 	load();

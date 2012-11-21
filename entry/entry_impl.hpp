@@ -1,5 +1,5 @@
-#ifndef GUARD_entry_hpp
-#define GUARD_entry_hpp
+#ifndef GUARD_entry_impl_hpp
+#define GUARD_entry_impl_hpp
 
 /** \file entry.hpp
  *
@@ -84,7 +84,7 @@ public:
 	/**
 	 * Set the Account for the EntryImpl.
 	 */
-	void set_account(Account const& p_account_id);
+	void set_account(Account const& p_account);
 
 	/**
 	 * Set the comment for the EntryImpl
@@ -129,15 +129,6 @@ public:
 	Account account();
 
 	/**
-	 * @returns name of the Account that this entry effects.
-	 *
-	 * Note this is much less efficient than account_id().
-	 *
-	 * @todo Ascertain and document throwing behaviour.
-	 */
-	std::string account_name();
-	
-	/**
 	 * @todo Provide non-member swap and specialized std::swap per
 	 * "Effective C++".
 	 */
@@ -172,4 +163,4 @@ private:
 
 }  // namespace phatbooks
 
-#endif  // GUARD_entry_hpp
+#endif  // GUARD_entry_impl_hpp

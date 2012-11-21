@@ -533,16 +533,16 @@ void PhatbooksTextSession::elicit_journal()
 	}
 	
 	// Primary entry
-	shared_ptr<Entry> primary_entry(new Entry(m_database_connection));
+	Entry primary_entry(m_database_connection);
 
 	// Get primary entry account
 	cout << "Enter name of " << account_prompt << ": ";
-	primary_entry->set_account
+	primary_entry.set_account
 	(	Account(m_database_connection, elicit_existing_account_name())
 	);
 
 	// Get primary entry amount
-	Commodity const primary_commodity = primary_entry->account().commodity();
+	Commodity const primary_commodity = primary_entry.account().commodity();
 	Decimal primary_entry_amount;
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
@@ -574,7 +574,7 @@ void PhatbooksTextSession::elicit_journal()
 	}
 	// Primary entry amount must be changed to the appropriate sign
 	// WARNING In theory this might throw.
-	primary_entry->set_amount
+	primary_entry.set_amount
 	(	primary_sign_needs_changing?
 		-primary_entry_amount:
 		primary_entry_amount
@@ -582,23 +582,23 @@ void PhatbooksTextSession::elicit_journal()
 
 	// Get primary entry comment
 	cout << "Line specific comment (or Enter for no comment): ";
-	primary_entry->set_comment((get_user_input()));
+	primary_entry.set_comment((get_user_input()));
 
 	// Add primary entry to journal
 	journal.add_entry(primary_entry);
 
 	// Secondary entry
-	shared_ptr<Entry> secondary_entry(new Entry(m_database_connection));
+	Entry secondary_entry(m_database_connection);
 
 	// Get other account and comment
 	cout << "Enter name of " << secondary_account_prompt << ": ";
-	secondary_entry->set_account
+	secondary_entry.set_account
 	(	Account(m_database_connection, elicit_existing_account_name())
 	);
 	// WARNING if secondary account is in a different currency then we need to
 	// deal with this here somehow.
  
-	Commodity secondary_commodity = secondary_entry->account().commodity();
+	Commodity secondary_commodity = secondary_entry.account().commodity();
 	if
 	(	secondary_commodity.id() != primary_commodity.id()
 	)
@@ -608,8 +608,8 @@ void PhatbooksTextSession::elicit_journal()
 	}
 
 	cout << "Line specific comment (or Enter for no comment): ";
-	secondary_entry->set_comment((get_user_input()));
-	secondary_entry->set_amount(-(primary_entry->amount()));
+	secondary_entry.set_comment((get_user_input()));
+	secondary_entry.set_amount(-(primary_entry.amount()));
 	journal.add_entry(secondary_entry);
 
 	// WARNING We need to implement split transactions.
@@ -856,13 +856,8 @@ void PhatbooksTextSession::display_all_entry_account_names()
 	);
 	while (statement.step())
 	{
-		Handle<Entry> entry
-		(	get_handle<Entry>
-			(	m_database_connection,
-				statement.extract<Entry::Id>(0)
-			)
-		);
-		cout << entry->account_name() << endl;
+		Entry entry(m_database_connection, statement.extract<Entry::Id>(0));
+		cout << entry.account().name() << endl;
 	}
 	cout << "Done!" << endl;
 	return;
@@ -886,14 +881,14 @@ void PhatbooksTextSession::display_journal_summaries()
 			)
 		);
 		cout << endl << journal->date() << endl;
-		typedef vector< Handle<Entry> > EntryVec;
+		typedef vector<Entry> EntryVec;
 		EntryVec::const_iterator it = journal->entries().begin();
 		EntryVec::const_iterator endpoint = journal->entries().end();
 		for ( ; it != endpoint; ++it)
 		{
-			Decimal const amount = (*it)->amount();
-			cout << (*it)->account_name() << "\t"
-			     << (*it)->comment() << "\t"
+			Decimal const amount = it->amount();
+			cout << it->account().name() << "\t"
+			     << it->comment() << "\t"
 			     << amount << endl;
 		}
 		cout << endl;
@@ -929,13 +924,11 @@ void PhatbooksTextSession::display_balances()
 	);
 	while (entry_statement.step())
 	{
-		Handle<Entry> entry
-		(	get_handle<Entry>
-			(	m_database_connection,
-				entry_statement.extract<Entry::Id>(0)
-			)
+		Entry entry
+		(	m_database_connection,
+			entry_statement.extract<Entry::Id>(0)
 		);
-		balance_map[entry->account().id()] += entry->amount();
+		balance_map[entry.account().id()] += entry.amount();
 	}
 	for
 	(	BalanceMap::const_iterator it = balance_map.begin();

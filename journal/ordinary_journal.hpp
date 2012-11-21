@@ -3,7 +3,6 @@
 
 #include "journal.hpp"
 #include "date.hpp"
-#include "sqloxx/handle.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -50,10 +49,9 @@ public:
 	/**
 	 * Add an Entry to the Journal.
 	 *
-	 * @todo Figure out throwing behaviour. Should it check that
-	 * the account exists? Etc. Etc.
+	 * @todo Figure out throwing behaviour.
 	 */
-	void add_entry(sqloxx::Handle<Entry> entry);
+	void add_entry(Entry& entry);
 
 	bool is_actual();
 
@@ -77,7 +75,7 @@ public:
 	bool is_balanced();
 
 
-	std::vector< sqloxx::Handle<Entry> > const& entries();
+	std::vector<Entry> const& entries();
 
 
 	/**

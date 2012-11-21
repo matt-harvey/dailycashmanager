@@ -1,7 +1,7 @@
 #ifndef GUARD_commodity_impl_hpp
 #define GUARD_commodity_impl_hpp
 
-/** \file commodity_impl.hpp"
+/** \file commodity_impl.hpp
  *
  * \brief Header file pertaining to CommodityImpl class.
  *

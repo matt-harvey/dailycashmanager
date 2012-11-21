@@ -287,7 +287,7 @@ void import_from_nap
 	while (getline(draft_entry_csv, draft_entry_row))
 	{
 		easy_split<'|'>(draft_entry_row, draft_entry_cells);
-		shared_ptr<Entry> draft_entry(new Entry(database_connection));
+		Entry draft_entry(database_connection);
 		string const draft_journal_name = draft_entry_cells[0];
 		string const comment = draft_entry_cells[2];
 		string const account_name = draft_entry_cells[3];
@@ -298,9 +298,9 @@ void import_from_nap
 		// just a one-off hack, it may be easier just to manipulate the
 		// csv before importing it.
 		bool is_actual = (bud_impact == decimal_zero);
-		draft_entry->set_account(Account(database_connection, account_name));
-		draft_entry->set_comment(comment);
-		draft_entry->set_amount(is_actual? act_impact: -bud_impact);	
+		draft_entry.set_account(Account(database_connection, account_name));
+		draft_entry.set_comment(comment);
+		draft_entry.set_amount(is_actual? act_impact: -bud_impact);	
 		shared_ptr<DraftJournal> draft_journal =
 			draft_journal_map[draft_journal_name];
 		draft_journal->add_entry(draft_entry);
@@ -421,7 +421,7 @@ void import_from_nap
 	while (getline(ordinary_entry_csv, ordinary_entry_row))
 	{
 		easy_split<'|'>(ordinary_entry_row, ordinary_entry_cells);
-		shared_ptr<Entry> ordinary_entry(new Entry(database_connection));
+		Entry ordinary_entry(database_connection);
 		string const iso_date_string = ordinary_entry_cells[0];
 		int const old_journal_id =
 			lexical_cast<int>(ordinary_entry_cells[1].c_str());
@@ -430,11 +430,11 @@ void import_from_nap
 		Decimal act_impact(ordinary_entry_cells[5]);
 		Decimal bud_impact(ordinary_entry_cells[6]);
 		bool is_actual = (bud_impact == decimal_zero);
-		ordinary_entry->set_account
+		ordinary_entry.set_account
 		(	Account(database_connection, account_name)
 		);
-		ordinary_entry->set_comment(comment);
-		ordinary_entry->set_amount(is_actual? act_impact: -bud_impact);
+		ordinary_entry.set_comment(comment);
+		ordinary_entry.set_amount(is_actual? act_impact: -bud_impact);
 		shared_ptr<OrdinaryJournal> ordinary_journal =
 			ordinary_journal_map[old_journal_id];
 		if

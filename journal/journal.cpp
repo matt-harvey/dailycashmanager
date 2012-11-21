@@ -17,7 +17,6 @@
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/handle.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -30,7 +29,6 @@
 #include <vector>
 
 using sqloxx::get_handle;
-using sqloxx::Handle;
 using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
 using boost::scoped_ptr;
@@ -78,7 +76,7 @@ Journal::~Journal()
 	*/
 }
 
-vector< Handle<Entry> > const& 
+vector<Entry> const& 
 Journal::entries()
 {
 	return m_data->entries;
@@ -99,7 +97,7 @@ Journal::set_comment(string const& p_comment)
 }
 
 void
-Journal::add_entry(Handle<Entry> entry)
+Journal::add_entry(Entry& entry)
 {
 	m_data->entries.push_back(entry);
 	return;
@@ -142,12 +140,12 @@ Journal::do_save_new_journal_base
 	statement.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
 	statement.bind(":comment", value(m_data->comment));
 	statement.step_final();
-	typedef vector< Handle<Entry> >::iterator EntryIter;
+	typedef vector<Entry>::iterator EntryIter;
 	EntryIter const endpoint = m_data->entries.end();
 	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
 	{
-		(*it)->set_journal_id(journal_id);
-		(*it)->save_new();
+		it->set_journal_id(journal_id);
+		it->save();
 	}
 	return journal_id;
 }
@@ -167,13 +165,13 @@ Journal::do_save_existing_journal_base
 	updater.bind(":comment", value(m_data->comment));
 	updater.bind(":id", id);
 	updater.step_final();
-	typedef vector< Handle<Entry> >::iterator EntryIter;
+	typedef vector<Entry>::iterator EntryIter;
 	EntryIter const endpoint = m_data->entries.end();
 	unordered_set<Entry::Id> saved_entry_ids;
 	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
 	{
-		(*it)->save();
-		saved_entry_ids.insert((*it)->id());
+		it->save();
+		saved_entry_ids.insert(it->id());
 	}
 	// Remove any entries in the database with this journal's journal_id, that
 	// no longer exist in the in-memory journal
@@ -228,7 +226,7 @@ Journal::do_load_journal_base
 	while (entry_finder.step())
 	{
 		Entry::Id const entr_id = entry_finder.extract<Entry::Id>(0);
-		Handle<Entry> entry(get_handle<Entry>(dbc, entr_id));
+		Entry entry(dbc, entr_id);
 		temp.m_data->entries.push_back(entry);
 	}
 	temp.m_data->is_actual = static_cast<bool>(statement.extract<int>(0));

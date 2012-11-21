@@ -14,8 +14,8 @@
 
 #include "account_impl.hpp"
 #include "commodity_impl.hpp"
+#include "entry_impl.hpp"
 #include "draft_journal.hpp"
-#include "entry.hpp"
 #include "ordinary_journal.hpp"
 #include "repeater.hpp"
 #include "sqloxx/database_connection.hpp"

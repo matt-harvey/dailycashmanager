@@ -12,7 +12,6 @@
  */
 
 
-#include "sqloxx/handle.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
@@ -76,11 +75,11 @@ public:
 
 	// WARNING This returns a reference to internals and so
 	// is a bit fucked. But client code uses it a lot...
-	virtual std::vector< sqloxx::Handle<Entry> > const& entries();
+	virtual std::vector<Entry> const& entries();
 
 	virtual void set_whether_actual(bool p_is_actual);
 	virtual void set_comment(std::string const& p_comment);
-	virtual void add_entry(sqloxx::Handle<Entry> entry);
+	virtual void add_entry(Entry& entry);
 	virtual std::string comment();
 	virtual bool is_actual();
 
@@ -104,7 +103,7 @@ private:
 	{
 		boost::optional<bool> is_actual;
 		boost::optional<std::string> comment;
-		std::vector< sqloxx::Handle<Entry> > entries;
+		std::vector<Entry> entries;
 	};
 
 	boost::scoped_ptr<JournalData> m_data;
