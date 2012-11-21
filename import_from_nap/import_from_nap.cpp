@@ -266,12 +266,12 @@ void import_from_nap
 			string const interval_type_str = repeater_fields[1];
 			string const units_str = repeater_fields[2];
 
-			shared_ptr<Repeater> repeater(new Repeater(database_connection));
-			repeater->set_interval_type(interval_type_map[interval_type_str]);
-			repeater->set_interval_units
+			Repeater repeater(database_connection);
+			repeater.set_interval_type(interval_type_map[interval_type_str]);
+			repeater.set_interval_units
 			(	lexical_cast<int>(units_str.c_str())
 			);
-			repeater->set_next_date
+			repeater.set_next_date
 			(	boost::gregorian::date_from_iso_string(next_date_str)
 			);
 			draft_journal->add_repeater(repeater);

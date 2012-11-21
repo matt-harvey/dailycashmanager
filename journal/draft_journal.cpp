@@ -154,12 +154,12 @@ DraftJournal::set_name(string const& p_name)
 
 
 void
-DraftJournal::add_repeater(shared_ptr<Repeater> const& repeater)
+DraftJournal::add_repeater(Repeater& repeater)
 {
 	load();
 	if (has_id())
 	{
-		repeater->set_journal_id(id());
+		repeater.set_journal_id(id());
 	}
 	m_dj_data->repeaters.push_back(repeater);
 	return;
@@ -219,9 +219,7 @@ DraftJournal::do_load()
 	{
 		Repeater::Id const rep_id =
 			repeater_finder.extract<Repeater::Id>(0);
-		shared_ptr<Repeater> repeater
-		(	new Repeater(database_connection(), rep_id)
-		);
+		Repeater repeater(database_connection(), rep_id);
 		temp.m_dj_data->repeaters.push_back(repeater);
 	}
 	swap(temp);
@@ -245,12 +243,12 @@ DraftJournal::do_save_new()
 	statement.bind(":name", value(m_dj_data->name));
 	statement.step_final();
 	
-	typedef vector< shared_ptr<Repeater> >::iterator RepIter;
+	typedef vector<Repeater>::iterator RepIter;
 	RepIter const endpoint = m_dj_data->repeaters.end();
 	for (RepIter it = m_dj_data->repeaters.begin(); it != endpoint; ++it)
 	{
-		(*it)->set_journal_id(journal_id);
-		(*it)->save();
+		it->set_journal_id(journal_id);
+		it->save();
 	}
 	return;
 }
@@ -268,13 +266,13 @@ DraftJournal::do_save_existing()
 	updater.bind(":name", value(m_dj_data->name));
 	updater.step_final();
 
-	typedef vector< shared_ptr<Repeater> >::const_iterator RepIter;
+	typedef vector<Repeater>::iterator RepIter;
 	RepIter const endpoint = m_dj_data->repeaters.end();
 	unordered_set<Repeater::Id> saved_repeater_ids;
 	for (RepIter it = m_dj_data->repeaters.begin(); it != endpoint; ++it)
 	{
-		(*it)->save();
-		saved_repeater_ids.insert((*it)->id());
+		it->save();
+		saved_repeater_ids.insert(it->id());
 	}
 	// Now remove any repeaters in the database with this DraftJournal's
 	// journal_id, that no longer exist in the in-memory DraftJournal

@@ -131,7 +131,7 @@ public:
 	/**
 	 * Add a Repeater to the DraftJournal.
 	 */
-	void add_repeater(boost::shared_ptr<Repeater> const& repeater);
+	void add_repeater(Repeater& repeater);
 	
 	/**
 	 * @returns name of DraftJournal.
@@ -167,7 +167,7 @@ private:
 	struct DraftJournalData
 	{
 		boost::optional<std::string> name;
-		std::vector< boost::shared_ptr<Repeater> > repeaters;
+		std::vector<Repeater> repeaters;
 	};
 
 	boost::scoped_ptr<DraftJournalData> m_dj_data;

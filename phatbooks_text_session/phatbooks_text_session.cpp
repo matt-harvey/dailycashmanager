@@ -682,9 +682,7 @@ void PhatbooksTextSession::elicit_journal()
 		// Ask for any repeaters.
 		if (journal_action == save_recurring)
 		{
-			shared_ptr<Repeater> repeater
-			(	new Repeater(m_database_connection)
-			);
+			Repeater repeater(m_database_connection);
 			cout << "\nHow often do you want this transaction to be posted? "
 				 << endl;
 			Menu frequency_menu;
@@ -725,22 +723,22 @@ void PhatbooksTextSession::elicit_journal()
 			// Determine interval type
 			if (choice == monthly_day_x || choice == N_monthly_day_x)
 			{
-				repeater->set_interval_type(interval_type::months);
+				repeater.set_interval_type(interval_type::months);
 			}
 			else if
 			(	choice == monthly_day_last ||
 				choice == N_monthly_day_last
 			)
 			{
-				repeater->set_interval_type(interval_type::month_ends);
+				repeater.set_interval_type(interval_type::month_ends);
 			}
 			else if (choice == weekly || choice == N_weekly)
 			{
-				repeater->set_interval_type(interval_type::weeks);
+				repeater.set_interval_type(interval_type::weeks);
 			}
 			else if (choice == daily || choice == N_daily)
 			{
-				repeater->set_interval_type(interval_type::days);
+				repeater.set_interval_type(interval_type::days);
 			}
 
 			// Determine interval units
@@ -751,7 +749,7 @@ void PhatbooksTextSession::elicit_journal()
 				choice == daily
 			)
 			{
-				repeater->set_interval_units(1);
+				repeater.set_interval_units(1);
 			}
 			else
 			{
@@ -776,7 +774,7 @@ void PhatbooksTextSession::elicit_journal()
 						try
 						{
 							int const units = lexical_cast<int>(input);
-							repeater->set_interval_units(units);
+							repeater.set_interval_units(units);
 							is_valid = true;
 						}
 						catch (boost::bad_lexical_cast&)
@@ -794,7 +792,7 @@ void PhatbooksTextSession::elicit_journal()
 			cout << "Enter the first date on which the transaction will occur"
 			     << ", as an eight-digit number of the form YYYYMMDD (or just"
 				 << " hit enter for today's date): ";
-			repeater->set_next_date(get_date_from_user());
+			repeater.set_next_date(get_date_from_user());
 
 			// Add repeater to draft_journal
 			draft_journal.add_repeater(repeater);	
