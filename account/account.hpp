@@ -18,8 +18,8 @@ class PhatbooksDatabaseConnection;
 class Account
 {
 public:
-	typedef sqloxx::Id Id;
 	typedef account_type::AccountType AccountType;
+	typedef sqloxx::Id Id;
 
 	/**
 	 * Returns a vector of account type names, corresponding to the

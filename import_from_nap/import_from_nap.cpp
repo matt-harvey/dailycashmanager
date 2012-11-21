@@ -5,6 +5,7 @@
 #include "date.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
+#include "interval_type.hpp"
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -205,10 +206,10 @@ void import_from_nap
 	// (in the csv) of a repeater interval type, in terms of the enumerations
 	// in Repeater::IntervalType.
 	unordered_map<string, Repeater::IntervalType> interval_type_map;
-	interval_type_map["day"] = Repeater::days;
-	interval_type_map["week"] = Repeater::weeks;
-	interval_type_map["month"] = Repeater::months;
-	interval_type_map["end_of_month"] = Repeater::month_ends;
+	interval_type_map["day"] = interval_type::days;
+	interval_type_map["week"] = interval_type::weeks;
+	interval_type_map["month"] = interval_type::months;
+	interval_type_map["end_of_month"] = interval_type::month_ends;
 
 	// We will store DraftJournal instances in this vector temporarily, and
 	// run through later to ensure order is preserved. (The order they are

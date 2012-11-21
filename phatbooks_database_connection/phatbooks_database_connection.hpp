@@ -17,7 +17,7 @@
 #include "entry_impl.hpp"
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
-#include "repeater.hpp"
+#include "repeater_impl.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/identity_map.hpp"
 #include <boost/bimap.hpp>
@@ -107,7 +107,7 @@ public:
 	sqloxx::IdentityMap<EntryImpl>& entry_map();
 	sqloxx::IdentityMap<OrdinaryJournal>& ordinary_journal_map();
 	sqloxx::IdentityMap<DraftJournal>& draft_journal_map();
-	sqloxx::IdentityMap<Repeater>& repeater_map();
+	sqloxx::IdentityMap<RepeaterImpl>& repeater_map();
 
 private:
 
@@ -120,7 +120,7 @@ private:
 	sqloxx::IdentityMap<EntryImpl> m_entry_map;
 	sqloxx::IdentityMap<OrdinaryJournal> m_ordinary_journal_map;
 	sqloxx::IdentityMap<DraftJournal> m_draft_journal_map;
-	sqloxx::IdentityMap<Repeater> m_repeater_map;
+	sqloxx::IdentityMap<RepeaterImpl> m_repeater_map;
 
 
 
@@ -201,9 +201,9 @@ identity_map
 
 template <>
 inline
-IdentityMap<phatbooks::Repeater>&
+IdentityMap<phatbooks::RepeaterImpl>&
 identity_map
-<	phatbooks::Repeater,
+<	phatbooks::RepeaterImpl,
 	phatbooks::PhatbooksDatabaseConnection
 >
 (	phatbooks::PhatbooksDatabaseConnection& connection

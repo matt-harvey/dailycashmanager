@@ -250,7 +250,7 @@ DraftJournal::do_save_new()
 	for (RepIter it = m_dj_data->repeaters.begin(); it != endpoint; ++it)
 	{
 		(*it)->set_journal_id(journal_id);
-		(*it)->save_new();
+		(*it)->save();
 	}
 	return;
 }

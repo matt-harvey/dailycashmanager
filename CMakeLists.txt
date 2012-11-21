@@ -37,7 +37,8 @@ set (main_files
 	 sqloxx/detail/sql_statement.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
 	 phatbooks_text_session/phatbooks_text_session.cpp
-	 repeater/repeater.cpp)
+	 repeater/repeater.cpp
+	 repeater/repeater_impl.cpp)
 
 add_executable (main main.cpp ${main_files})
 

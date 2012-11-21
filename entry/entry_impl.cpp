@@ -11,7 +11,7 @@
 
 
 
-#include "entry.hpp"
+#include "entry_impl.hpp"
 #include "account.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"

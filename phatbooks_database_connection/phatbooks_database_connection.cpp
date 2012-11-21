@@ -186,7 +186,7 @@ PhatbooksDatabaseConnection::draft_journal_map()
 	return m_draft_journal_map;
 }
 
-sqloxx::IdentityMap<Repeater>&
+sqloxx::IdentityMap<RepeaterImpl>&
 PhatbooksDatabaseConnection::repeater_map()
 {
 	return m_repeater_map;

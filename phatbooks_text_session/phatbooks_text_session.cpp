@@ -725,22 +725,22 @@ void PhatbooksTextSession::elicit_journal()
 			// Determine interval type
 			if (choice == monthly_day_x || choice == N_monthly_day_x)
 			{
-				repeater->set_interval_type(Repeater::months);
+				repeater->set_interval_type(interval_type::months);
 			}
 			else if
 			(	choice == monthly_day_last ||
 				choice == N_monthly_day_last
 			)
 			{
-				repeater->set_interval_type(Repeater::month_ends);
+				repeater->set_interval_type(interval_type::month_ends);
 			}
 			else if (choice == weekly || choice == N_weekly)
 			{
-				repeater->set_interval_type(Repeater::weeks);
+				repeater->set_interval_type(interval_type::weeks);
 			}
 			else if (choice == daily || choice == N_daily)
 			{
-				repeater->set_interval_type(Repeater::days);
+				repeater->set_interval_type(interval_type::days);
 			}
 
 			// Determine interval units
