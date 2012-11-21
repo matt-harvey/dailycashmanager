@@ -138,8 +138,5 @@ Account::set_description(std::string const& p_description)
 }
 
 
-static std::string primary_table_name();
-
-
 
 }   // namespace phatbooks

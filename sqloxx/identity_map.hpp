@@ -8,6 +8,7 @@
 #include <map>
 #include <stdexcept>
 
+
 namespace sqloxx
 {
 

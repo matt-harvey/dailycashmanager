@@ -26,6 +26,7 @@ set (main_files
 	 consolixx/consolixx.cpp
 	 date/date.cpp
 	 entry/entry.cpp
+	 entry/entry_impl.cpp
 	 import_from_nap/import_from_nap.cpp
 	 journal/draft_journal.cpp
 	 journal/journal.cpp

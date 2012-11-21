@@ -138,7 +138,7 @@ PhatbooksDatabaseConnection::setup()
 		return;
 	}
 	assert (!setup_has_occurred());
-	execute_sql("begin transaction");
+	begin_transaction();
 	setup_boolean_table();
 	Commodity::setup_tables(*this);
 	Account::setup_tables(*this);
@@ -148,7 +148,7 @@ PhatbooksDatabaseConnection::setup()
 	Repeater::setup_tables(*this);
 	Entry::setup_tables(*this);
 	mark_setup_as_having_occurred();
-	execute_sql("end transaction");
+	end_transaction();
 	assert (setup_has_occurred());
 	return;
 }
@@ -168,7 +168,7 @@ PhatbooksDatabaseConnection::commodity_map()
 	return m_commodity_map;
 }
 
-sqloxx::IdentityMap<Entry>&
+sqloxx::IdentityMap<EntryImpl>&
 PhatbooksDatabaseConnection::entry_map()
 {
 	return m_entry_map;
@@ -194,12 +194,6 @@ PhatbooksDatabaseConnection::repeater_map()
 
 
 
-
-
-
-
-
-
 namespace
 {
 	string const setup_flag = "setup_flag_996149162";
@@ -211,7 +205,6 @@ PhatbooksDatabaseConnection::mark_setup_as_having_occurred()
 	execute_sql("create table " + setup_flag + "(dummy_column);");
 	return;
 }
-
 
 
 bool

@@ -19,6 +19,7 @@
 #include "date.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
+#include "entry_impl.hpp"
 #include "import_from_nap/import_from_nap.hpp"  // WARNING temp hack
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
@@ -241,11 +242,11 @@ int PhatbooksTextSession::run(string const& filename)
 		account_sentry(m_database_connection);
 	CacheSentry<CommodityImpl, PhatbooksDatabaseConnection>
 		commodity_sentry(m_database_connection);
-	CacheSentry<Entry, PhatbooksDatabaseConnection>
+	CacheSentry<EntryImpl, PhatbooksDatabaseConnection>
 		entry_sentry(m_database_connection);
 	CacheSentry<OrdinaryJournal, PhatbooksDatabaseConnection>
 		ordinary_journal_sentry(m_database_connection);
-	// WARNING end temp
+	// WARNING end play
 
 	m_database_connection->setup();
 	m_main_menu->present_to_user();	

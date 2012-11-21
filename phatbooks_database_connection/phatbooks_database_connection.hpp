@@ -104,7 +104,7 @@ public:
 
 	sqloxx::IdentityMap<AccountImpl>& account_map();
 	sqloxx::IdentityMap<CommodityImpl>& commodity_map();
-	sqloxx::IdentityMap<Entry>& entry_map();
+	sqloxx::IdentityMap<EntryImpl>& entry_map();
 	sqloxx::IdentityMap<OrdinaryJournal>& ordinary_journal_map();
 	sqloxx::IdentityMap<DraftJournal>& draft_journal_map();
 	sqloxx::IdentityMap<Repeater>& repeater_map();
@@ -117,7 +117,7 @@ private:
 
 	sqloxx::IdentityMap<AccountImpl> m_account_map;
 	sqloxx::IdentityMap<CommodityImpl> m_commodity_map;
-	sqloxx::IdentityMap<Entry> m_entry_map;
+	sqloxx::IdentityMap<EntryImpl> m_entry_map;
 	sqloxx::IdentityMap<OrdinaryJournal> m_ordinary_journal_map;
 	sqloxx::IdentityMap<DraftJournal> m_draft_journal_map;
 	sqloxx::IdentityMap<Repeater> m_repeater_map;
@@ -149,9 +149,9 @@ identity_map
 
 template <>
 inline
-IdentityMap<phatbooks::Entry>&
+IdentityMap<phatbooks::EntryImpl>&
 identity_map
-<	phatbooks::Entry,
+<	phatbooks::EntryImpl,
 	phatbooks::PhatbooksDatabaseConnection
 >
 (	phatbooks::PhatbooksDatabaseConnection& connection
