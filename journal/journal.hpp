@@ -41,7 +41,7 @@ class PhatbooksDatabaseConnection;
  * DraftJournal with Repeater instances represents a recurring transaction.
  *
  * As well the ordinary/draft distinction, there is also a distinction between
- * \c actual and \c budget journals. An actual journal reflects an actual
+ * \e actual and \e budget journals. An actual journal reflects an actual
  * change in the entity's wealth, whether the physical form of the wealth
  * (for example, by transferring between asset classes), or a dimimution
  * or augmentation in wealth (by spending or earning money). In contrast
@@ -49,6 +49,20 @@ class PhatbooksDatabaseConnection;
  * in regards to the \e planned purpose to which the wealth will be put. For
  * example, allocating $100.00 of one's earnings to planned expenditure on
  * food represents a budget transaction.
+ *
+ * A Journal cannot be saved to the database as \e simply a Journal. It must
+ * be either specifically an OrdinaryJournal, or specifically a DraftJournal.
+ * This is why Journal does not derive from PersistentObject. It does not have
+ * an id() attribute. Neither does it have a database_connection() attribute.
+ * The only time an object will be \e just a Journal, without being also
+ * an OrdinaryJournal or a DraftJournal, will be when it is in the state
+ * of being initialized (presumably by user-interfacing code) before it has
+ * been saved. Prior to saving, we must convert it into either a DraftJournal
+ * or an OrdinaryJournal. Despite this, the Journal class has protected
+ * methods to load and save its data to a database connection that is passed
+ * to the method. These are intended to be called by derived classes
+ * OrdinaryJournal and DraftJournal to save or load the common base parts of
+ * the object.
  */
 class Journal
 {
