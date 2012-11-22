@@ -29,6 +29,7 @@ set (main_files
 	 entry/entry_impl.cpp
 	 import_from_nap/import_from_nap.cpp
 	 journal/draft_journal.cpp
+	 journal/draft_journal_impl.cpp
 	 journal/journal.cpp
 	 journal/ordinary_journal.cpp
 	 journal/ordinary_journal_impl.cpp

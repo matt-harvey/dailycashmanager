@@ -12,10 +12,14 @@
  */
 
 
+// TODO All the includes here thwart the compiler firewall
+// that was one benefit of PIMPLing the business object classes.
+// Think of a way around having to include the ..._impl classes.
+
 #include "account_impl.hpp"
 #include "commodity_impl.hpp"
 #include "entry_impl.hpp"
-#include "draft_journal.hpp"
+#include "draft_journal_impl.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "repeater_impl.hpp"
 #include "sqloxx/database_connection.hpp"
@@ -63,7 +67,7 @@ public:
 
 	/**
 	 * @returns \c true if and only if \c p_name is the name of a
-	 * DraftJournal stored in the database.
+	 * DraftJournalImpl stored in the database.
 	 *
 	 * @todo Document throwing behaviour.
 	 */
@@ -106,7 +110,7 @@ public:
 	sqloxx::IdentityMap<CommodityImpl>& commodity_map();
 	sqloxx::IdentityMap<EntryImpl>& entry_map();
 	sqloxx::IdentityMap<OrdinaryJournalImpl>& ordinary_journal_map();
-	sqloxx::IdentityMap<DraftJournal>& draft_journal_map();
+	sqloxx::IdentityMap<DraftJournalImpl>& draft_journal_map();
 	sqloxx::IdentityMap<RepeaterImpl>& repeater_map();
 
 private:
@@ -119,7 +123,7 @@ private:
 	sqloxx::IdentityMap<CommodityImpl> m_commodity_map;
 	sqloxx::IdentityMap<EntryImpl> m_entry_map;
 	sqloxx::IdentityMap<OrdinaryJournalImpl> m_ordinary_journal_map;
-	sqloxx::IdentityMap<DraftJournal> m_draft_journal_map;
+	sqloxx::IdentityMap<DraftJournalImpl> m_draft_journal_map;
 	sqloxx::IdentityMap<RepeaterImpl> m_repeater_map;
 
 
@@ -188,9 +192,9 @@ identity_map
 
 template <>
 inline
-IdentityMap<phatbooks::DraftJournal>&
+IdentityMap<phatbooks::DraftJournalImpl>&
 identity_map
-<	phatbooks::DraftJournal,
+<	phatbooks::DraftJournalImpl,
 	phatbooks::PhatbooksDatabaseConnection
 >
 (	phatbooks::PhatbooksDatabaseConnection& connection

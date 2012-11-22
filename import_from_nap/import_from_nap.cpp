@@ -359,7 +359,7 @@ void import_from_nap
 		}
 		else
 		{
-			(*jvit)->save_new();
+			(*jvit)->save();
 		}
 	}
 

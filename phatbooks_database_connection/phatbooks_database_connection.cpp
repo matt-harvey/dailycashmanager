@@ -180,7 +180,7 @@ PhatbooksDatabaseConnection::ordinary_journal_map()
 	return m_ordinary_journal_map;
 }
 
-sqloxx::IdentityMap<DraftJournal>&
+sqloxx::IdentityMap<DraftJournalImpl>&
 PhatbooksDatabaseConnection::draft_journal_map()
 {
 	return m_draft_journal_map;

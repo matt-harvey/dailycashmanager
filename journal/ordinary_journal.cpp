@@ -47,6 +47,8 @@ OrdinaryJournal::OrdinaryJournal
 {
 }
 
+// TODO There is similar code in DraftJournal for this constructor.
+// Factor out.
 OrdinaryJournal::OrdinaryJournal
 (	Journal& p_journal,
 	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection

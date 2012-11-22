@@ -12,12 +12,17 @@
  */
 
 
+// TODO All the includes here thwart the compiler firewall
+// that was one benefit of PIMPLing the business object classes.
+// Think of a way around having to include the ..._impl classes.
+
 #include "account.hpp"
 #include "account_impl.hpp"
 #include "commodity.hpp"
 #include "commodity_impl.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
+#include "draft_journal_impl.hpp"
 #include "entry.hpp"
 #include "entry_impl.hpp"
 #include "import_from_nap/import_from_nap.hpp"  // WARNING temp hack
@@ -71,7 +76,6 @@ using boost::shared_ptr;
 using boost::regex;
 using boost::regex_match;
 using sqloxx::get_handle;
-using sqloxx::Handle;
 using std::cout;
 using std::endl;
 using std::map;
@@ -246,6 +250,8 @@ int PhatbooksTextSession::run(string const& filename)
 		entry_sentry(m_database_connection);
 	CacheSentry<OrdinaryJournalImpl, PhatbooksDatabaseConnection>
 		ordinary_journal_sentry(m_database_connection);
+	CacheSentry<DraftJournalImpl, PhatbooksDatabaseConnection>
+		draft_journal_sentry(m_database_connection);
 	// WARNING end play
 
 	m_database_connection->setup();
@@ -797,7 +803,7 @@ void PhatbooksTextSession::elicit_journal()
 			// Add repeater to draft_journal
 			draft_journal.add_repeater(repeater);	
 		}
-		draft_journal.save_new();
+		draft_journal.save();
 		cout << "Draft journal has been saved" << endl;
 	}
 	else if (journal_action == abandon)
@@ -882,15 +888,11 @@ void PhatbooksTextSession::display_journal_summaries()
 		EntryVec::const_iterator endpoint = journal.entries().end();
 		for ( ; it != endpoint; ++it)
 		{
-			JEWEL_DEBUG_LOG << "Entry id: " << it->id() << endl;
 			Decimal const amount = it->amount();
 			cout << it->account().name() << "\t"
 			     << it->comment() << "\t"
 			     << amount << endl;
 		}
-		JEWEL_DEBUG_LOG << "Number of entries in journal: "
-		     << journal.entries().size()
-		     << endl;
 		cout << endl;
 	}
 	cout << "Done!" << endl << endl;
