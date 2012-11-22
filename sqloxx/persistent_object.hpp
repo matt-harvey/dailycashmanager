@@ -234,6 +234,11 @@ public:
 	 * calling the begin_transaction and end_transaction methods of the
 	 * DatabaseConnection.)
 	 *
+	 * It is presumed that the do_save_new function will result in the
+	 * saving of the complete state of a complete object. After do_save_new
+	 * is called, the body of the save_new function will mark the object
+	 * as being in a loaded, i.e. complete state.
+	 *
 	 * The do_get_table_name function must also
 	 * be defined in the derived class in order for this function
 	 * to find an automatically generated id to assign to the object
@@ -753,7 +758,11 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::save_new()
 			allocated_id
 		);
 	}
+
+	// The next line fixed a bug 2012-11-22 that in resulted in objects being
+	// re-loaded from database when they were already complete.
 	m_loading_status = loaded;
+
 	return;
 	// WARNING Reconsider what exception safety guarantee can be offered
 	// in light of the dealings around proxy key that have now been
