@@ -244,7 +244,7 @@ int PhatbooksTextSession::run(string const& filename)
 		commodity_sentry(m_database_connection);
 	CacheSentry<EntryImpl, PhatbooksDatabaseConnection>
 		entry_sentry(m_database_connection);
-	CacheSentry<OrdinaryJournal, PhatbooksDatabaseConnection>
+	CacheSentry<OrdinaryJournalImpl, PhatbooksDatabaseConnection>
 		ordinary_journal_sentry(m_database_connection);
 	// WARNING end play
 
@@ -646,7 +646,7 @@ void PhatbooksTextSession::elicit_journal()
 			 << "): ";
 		boost::gregorian::date const e = get_date_from_user();
 		ordinary_journal.set_date(e);
-		ordinary_journal.save_new();
+		ordinary_journal.save();
 		cout << "\nJournal posted." << endl;
 	}
 	else if (journal_action == save_draft || journal_action == save_recurring)
@@ -872,23 +872,25 @@ void PhatbooksTextSession::display_journal_summaries()
 	);
 	while (journal_statement.step())
 	{
-		Handle<OrdinaryJournal> journal
-		(	get_handle<OrdinaryJournal>
-			(	m_database_connection,
-				journal_statement.extract<Journal::Id>(0)
-			)
+		OrdinaryJournal journal
+		(	m_database_connection,
+			journal_statement.extract<OrdinaryJournal::Id>(0)
 		);
-		cout << endl << journal->date() << endl;
+		cout << endl << journal.date() << endl;
 		typedef vector<Entry> EntryVec;
-		EntryVec::const_iterator it = journal->entries().begin();
-		EntryVec::const_iterator endpoint = journal->entries().end();
+		EntryVec::const_iterator it = journal.entries().begin();
+		EntryVec::const_iterator endpoint = journal.entries().end();
 		for ( ; it != endpoint; ++it)
 		{
+			JEWEL_DEBUG_LOG << "Entry id: " << it->id() << endl;
 			Decimal const amount = it->amount();
 			cout << it->account().name() << "\t"
 			     << it->comment() << "\t"
 			     << amount << endl;
 		}
+		JEWEL_DEBUG_LOG << "Number of entries in journal: "
+		     << journal.entries().size()
+		     << endl;
 		cout << endl;
 	}
 	cout << "Done!" << endl << endl;

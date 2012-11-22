@@ -28,6 +28,8 @@
 #include <string>
 #include <vector>
 
+
+
 using sqloxx::get_handle;
 using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
@@ -39,6 +41,11 @@ using jewel::value;
 using std::logic_error;
 using std::string;
 using std::vector;
+
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
+
 
 namespace phatbooks
 {
@@ -99,6 +106,9 @@ Journal::set_comment(string const& p_comment)
 void
 Journal::add_entry(Entry& entry)
 {
+	/*
+	JEWEL_DEBUG_LOG << "Calling Journal::add_entry " << endl;
+	*/
 	m_data->entries.push_back(entry);
 	return;
 }

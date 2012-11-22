@@ -500,7 +500,9 @@ void import_from_nap
 		}
 		else
 		{
-			(*jvit)->save_new();
+			(*jvit)->save();
+			JEWEL_DEBUG_LOG << "Entries saved with this OrdinaryJournal: "
+			                << (*jvit)->entries().size() << endl;
 		}
 	}
 

@@ -31,6 +31,7 @@ set (main_files
 	 journal/draft_journal.cpp
 	 journal/journal.cpp
 	 journal/ordinary_journal.cpp
+	 journal/ordinary_journal_impl.cpp
 	 sqloxx/database_connection.cpp
 	 sqloxx/shared_sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp

@@ -174,7 +174,7 @@ PhatbooksDatabaseConnection::entry_map()
 	return m_entry_map;
 }
 
-sqloxx::IdentityMap<OrdinaryJournal>&
+sqloxx::IdentityMap<OrdinaryJournalImpl>&
 PhatbooksDatabaseConnection::ordinary_journal_map()
 {
 	return m_ordinary_journal_map;

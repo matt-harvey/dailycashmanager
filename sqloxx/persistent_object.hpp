@@ -744,21 +744,6 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::save_new()
 	do_save_new();
 	m_database_connection->end_transaction();
 	set_id(allocated_id);
-	// Connection is notified of newly saved object. The
-	// The Connection then passes this message to the
-	// IdentityMap<Derived>, which in turn reallocates this object to
-	// a newly created slot at key new_id, in its internal map, and
-	// deallocates
-	// the old "dummy" position.
-	// WARNING I need to implement the "proxy key" concept. The proxy key
-	// is how the IdentityMap<Derived> (which we can communicate with via the
-	// Connection) finds the shared_ptr corresponding to this instance
-	// of Derived. It is stored via its proxy key until such time as it is
-	// saved to the database; and when that happens, we inform it, so that it
-	// can transfer its shared_ptr to that object into the appropriate slot
-	// for that object in the main map.
-	// When an non-identified "draft" instance of Derived is first created, it
-	// should be allocated a proxy_key by the IdentityManager.
 	// WARNING The "if (m_proxy_key)" is a hack.
 	if (m_proxy_key)
 	{
@@ -768,6 +753,7 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::save_new()
 			allocated_id
 		);
 	}
+	m_loading_status = loaded;
 	return;
 	// WARNING Reconsider what exception safety guarantee can be offered
 	// in light of the dealings around proxy key that have now been

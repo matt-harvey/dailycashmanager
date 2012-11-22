@@ -8,6 +8,11 @@
 #include <map>
 #include <stdexcept>
 
+// For debugging
+	#include <jewel/debug_log.hpp>
+	#include <iostream>
+	#include <typeinfo>
+	using std::endl;
 
 namespace sqloxx
 {
@@ -52,6 +57,11 @@ public:
 	void register_id(ProxyKey proxy_key, Id allocated_id)
 	{
 		m_id_map[allocated_id] = m_proxy_map[proxy_key];
+		/*
+		JEWEL_DEBUG_LOG << "Id registered for id = " << allocated_id
+		                << " with object type = "
+						<< typeid(m_id_map[allocated_id]).name() << endl;
+		*/
 		return;
 	}
 
