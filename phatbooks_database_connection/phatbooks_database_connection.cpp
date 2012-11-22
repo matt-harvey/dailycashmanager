@@ -9,6 +9,13 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
+#include "account_impl.hpp"
+#include "commodity_impl.hpp"
+#include "entry_impl.hpp"
+#include "draft_journal_impl.hpp"
+#include "ordinary_journal_impl.hpp"
+#include "repeater_impl.hpp"
+
 
 #include "account.hpp"
 #include "commodity.hpp"
@@ -20,6 +27,7 @@
 #include "phatbooks_exceptions.hpp"
 #include "repeater.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/identity_map.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <sqlite3.h>
@@ -222,6 +230,84 @@ PhatbooksDatabaseConnection::setup_has_occurred()
 }
 
 
-
-
 }  // namespace phatbooks
+
+namespace sqloxx
+{
+
+template <>
+IdentityMap<phatbooks::AccountImpl>&
+identity_map
+<	phatbooks::AccountImpl,
+	phatbooks::PhatbooksDatabaseConnection
+>
+(	phatbooks::PhatbooksDatabaseConnection& connection
+)
+{
+	return connection.account_map();
+}
+
+template <>
+IdentityMap<phatbooks::EntryImpl>&
+identity_map
+<	phatbooks::EntryImpl,
+	phatbooks::PhatbooksDatabaseConnection
+>
+(	phatbooks::PhatbooksDatabaseConnection& connection
+)
+{
+	return connection.entry_map();
+}
+
+template <>
+IdentityMap<phatbooks::CommodityImpl>&
+identity_map
+<	phatbooks::CommodityImpl,
+	phatbooks::PhatbooksDatabaseConnection
+>
+(	phatbooks::PhatbooksDatabaseConnection& connection
+)
+{
+	return connection.commodity_map();
+}
+
+template <>
+IdentityMap<phatbooks::OrdinaryJournalImpl>&
+identity_map
+<	phatbooks::OrdinaryJournalImpl,
+	phatbooks::PhatbooksDatabaseConnection
+>
+(	phatbooks::PhatbooksDatabaseConnection& connection
+)
+{
+	return connection.ordinary_journal_map();
+}
+
+template <>
+IdentityMap<phatbooks::DraftJournalImpl>&
+identity_map
+<	phatbooks::DraftJournalImpl,
+	phatbooks::PhatbooksDatabaseConnection
+>
+(	phatbooks::PhatbooksDatabaseConnection& connection
+)
+{
+	return connection.draft_journal_map();
+}
+
+template <>
+IdentityMap<phatbooks::RepeaterImpl>&
+identity_map
+<	phatbooks::RepeaterImpl,
+	phatbooks::PhatbooksDatabaseConnection
+>
+(	phatbooks::PhatbooksDatabaseConnection& connection
+)
+{
+	return connection.repeater_map();
+}
+
+}  // namespace sqloxx
+
+
+
