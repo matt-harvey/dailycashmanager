@@ -28,13 +28,15 @@ namespace sqloxx
  * "Patterns of Enterprise Application Architecture". The PersistentObject
  * base class provides the bookkeeping associated with this pattern,
  * keeping track of the loading status of each in-memory object
- * ("loaded", "loading" or "ghost"). In addition, the class is intended
+ * ("loaded", "loading" or "ghost").
+ *
+ * In addition, PersistentObject is intended
  * to be used in conjunction with the Identity Map pattern (again, see
  * Fowler). Thus sqloxx::PersistentObject is intended to work in conjunction
  * with sqloxx::IdentityMap and sqloxx::Handle.
  *
- * The client should derived from PersistentObject. Let's call the derived
- * class Derived. Instances of Derived should then be stored in
+ * The client should derive from PersistentObject. Let's call the derived
+ * class Derived. Instances of Derived should then be handled only via
  * instances of Handle<Derived>. To initialize a Handle<Derived>, call
  * the free-standing function sqloxx::get_handle (see documentation
  * in database_connection.hpp). This returns a shared_ptr<Derived>, which
@@ -48,8 +50,8 @@ namespace sqloxx
  *
  * See sqloxx::IdentityMap and sqloxx::Handle for further documentation.
  *
- * As for the "ghost" pattern...
- * In the Derived class, the intention is that some or all data members
+ * As for the "ghost" pattern:
+ * in the Derived class, the intention is that some or all data members
  * declared in that class, can be "lazy". This means that they are not
  * initialized in the derived object's constructor, but are rather only
  * initialized at a later time via a call to load(), which in turn calls
@@ -112,8 +114,6 @@ namespace sqloxx
  * "handles" to a given Derived object. Should be an integral type,
  * and defaults to int. (The count of handles is used by IdentityMap class
  * to help manage caching of in-memory objects.)
- *
- * @todo Ensure counter cannot overflow.
  * 
  * @todo Provide for atomic saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
