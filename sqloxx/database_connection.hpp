@@ -97,37 +97,6 @@ public:
 };
 
 
-
-/**
- * Class template CacheSentry which you instantiate
- * by passing it a template parameter T for a given class and a
- * parameter for a database connection. On creation it stops the database
- * connection from caching in its IdentityMap<T>. Then the destructor
- * of the sentry causes caching to resume, and the cache to be cleared
- * of orphaned objects.
- *
- * TODO This class template is flawed becuase I THINK the destructor might
- * throw. But need to confirm.
- */
-template <typename T, typename Connection>
-class CacheSentry: public boost::noncopyable
-{
-public:
-	CacheSentry(boost::shared_ptr<Connection> const& dbc):
-		m_identity_map(identity_map<T>(*dbc))
-	{
-		m_identity_map.enable_caching();
-	}
-	~CacheSentry()
-	{
-		m_identity_map.disable_caching();
-	}
-private:
-	IdentityMap<T>& m_identity_map;
-};
-
-
-
 /**
  * Convenience function to return a Handle<T> given a database connection
  * of type Connection and an id of type T::Id.

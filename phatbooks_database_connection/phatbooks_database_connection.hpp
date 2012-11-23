@@ -17,6 +17,7 @@
 // Think of a way around having to include the ..._impl classes.
 
 #include "account_impl.hpp"
+#include "account_type.hpp"
 #include "commodity_impl.hpp"
 #include "entry_impl.hpp"
 #include "draft_journal_impl.hpp"
@@ -105,6 +106,31 @@ public:
 	 * unsuccessful.
 	 */
 	void setup();
+
+	/**
+	 * Set degree of caching of objects loaded from database.
+	 *
+	 * Level 0 entails nil caching (except temporary caching required to
+	 * avoid
+	 * loading of duplicate objects).
+	 *
+	 * Level 5 entails some caching of objects of which there are only a few
+	 * instances expected to exist in the database.
+	 *
+	 * Level 10 entails maximum caching.
+	 *
+	 * If \e level is not one of the specific levels listed above, the effect
+	 * will be the same as the next lowest level that is listed above.
+	 *
+	 * When the caching level is changed from one significant level to another
+	 * significant level that is lower than the first, any objects of classes
+	 * that are not cached under the new level, that were cached under the old
+	 * level, that are cached at the time the level changes, are emptied from
+	 * the cache.
+	 *
+	 * @todo Determinate and document throwing behaviour.
+	 */
+	void set_caching_level(unsigned int level);
 
 	sqloxx::IdentityMap<AccountImpl>& account_map();
 	sqloxx::IdentityMap<CommodityImpl>& commodity_map();

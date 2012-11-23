@@ -163,18 +163,21 @@ template <typename T>
 void
 IdentityMap<T>::disable_caching()
 {
-	for
-	(	typename ProxyKeyMap::iterator it = m_proxy_map.begin();
-		it != m_proxy_map.end();
-		++it
-	)
+	if (m_caching)
 	{
-		if (it->second->is_orphaned())
+		for
+		(	typename ProxyKeyMap::iterator it = m_proxy_map.begin();
+			it != m_proxy_map.end();
+			++it
+		)
 		{
-			erase_object_proxied(it->first);
+			if (it->second->is_orphaned())
+			{
+				erase_object_proxied(it->first);
+			}
 		}
+		m_caching = false;
 	}
-	m_caching = false;
 	return;
 }
 	

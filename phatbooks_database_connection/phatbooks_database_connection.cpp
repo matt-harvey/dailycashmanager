@@ -161,8 +161,39 @@ PhatbooksDatabaseConnection::setup()
 	return;
 }
 
-
-
+void
+PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
+{
+	switch (level)
+	{
+	case 0: case 1: case 2: case 3: case 4:
+		commodity_map().disable_caching();
+		account_map().disable_caching();
+		repeater_map().disable_caching();
+		draft_journal_map().disable_caching();
+		ordinary_journal_map().disable_caching();
+		entry_map().disable_caching();
+		break;
+	case 5: case 6: case 7: case 8: case 9:
+		commodity_map().enable_caching();
+		account_map().enable_caching();
+		repeater_map().disable_caching();
+		draft_journal_map().disable_caching();
+		ordinary_journal_map().disable_caching();
+		entry_map().disable_caching();
+		break;	
+	case 10: default:
+		assert (level > 0);
+		commodity_map().enable_caching();
+		account_map().enable_caching();
+		repeater_map().enable_caching();
+		draft_journal_map().enable_caching();
+		ordinary_journal_map().enable_caching();
+		entry_map().enable_caching();
+		break;
+	}
+	return;
+}
 
 sqloxx::IdentityMap<AccountImpl>&
 PhatbooksDatabaseConnection::account_map()

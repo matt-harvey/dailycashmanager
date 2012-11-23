@@ -12,19 +12,11 @@
  */
 
 
-// TODO All the includes here thwart the compiler firewall
-// that was one benefit of PIMPLing the business object classes.
-// Think of a way around having to include the ..._impl classes.
-
 #include "account.hpp"
-#include "account_impl.hpp"
 #include "commodity.hpp"
-#include "commodity_impl.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
-#include "draft_journal_impl.hpp"
 #include "entry.hpp"
-#include "entry_impl.hpp"
 #include "import_from_nap/import_from_nap.hpp"  // WARNING temp hack
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
@@ -54,7 +46,6 @@
 #include <boost/unordered_map.hpp>
 #include <vector>
 using boost::unordered_map;
-using sqloxx::CacheSentry;
 using sqloxx::SharedSQLStatement;
 using std::vector;
 // end play code
@@ -92,6 +83,10 @@ PhatbooksTextSession::PhatbooksTextSession():
 	m_main_menu(new Menu),
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
+	
+	m_database_connection->set_caching_level(10);
+
+
 	// Set up all the Menu objects.
 
 	shared_ptr<MenuItem> elicit_commodity_item
@@ -240,19 +235,6 @@ int PhatbooksTextSession::run(string const& filename)
 	}
 
 	cout << "Welcome to " << s_application_name << "!" << endl;
-
-	// WARNING play
-	CacheSentry<AccountImpl, PhatbooksDatabaseConnection>
-		account_sentry(m_database_connection);
-	CacheSentry<CommodityImpl, PhatbooksDatabaseConnection>
-		commodity_sentry(m_database_connection);
-	CacheSentry<EntryImpl, PhatbooksDatabaseConnection>
-		entry_sentry(m_database_connection);
-	CacheSentry<OrdinaryJournalImpl, PhatbooksDatabaseConnection>
-		ordinary_journal_sentry(m_database_connection);
-	CacheSentry<DraftJournalImpl, PhatbooksDatabaseConnection>
-		draft_journal_sentry(m_database_connection);
-	// WARNING end play
 
 	m_database_connection->setup();
 	m_main_menu->present_to_user();	
