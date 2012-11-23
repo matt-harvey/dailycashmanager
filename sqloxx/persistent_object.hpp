@@ -106,6 +106,9 @@ namespace sqloxx
  *
  * @todo If Sqloxx is ever moved to a separate library, then the documentation
  * for PersistentObject should include code for an exemplary derived class.
+ *
+ * @todo I need a better way of conveying the Id type to derived classes.
+ * Currently this information is "multiply located".
  */
 template
 <	typename Derived,     // subclass of PersistentObject
