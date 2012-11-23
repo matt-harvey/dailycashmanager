@@ -109,7 +109,7 @@ void import_from_nap
 		++it
 	)
 	{
-		string const s = it->filename();
+		string const s = it->path().filename().string();
 		if (s == account_csv_name) check += 1;
 		else if (s == draft_entry_csv_name) check += 10;
 		else if (s == draft_journal_csv_name) check += 100;
