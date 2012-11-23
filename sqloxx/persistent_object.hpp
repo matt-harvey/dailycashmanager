@@ -19,7 +19,7 @@ namespace sqloxx
 // the CRTP pattern
 
 /**
- * Class for creating objects persisted to a database. This
+ * Class template for creating objects persisted to a database. This
  * should be inherited by a derived class and the pure virtual
  * functions (and possibly non-pure virtual functions) provided with
  * definitions (or possibly redefinitions in the case of the non-pure
@@ -28,9 +28,28 @@ namespace sqloxx
  * "Patterns of Enterprise Application Architecture". The PersistentObject
  * base class provides the bookkeeping associated with this pattern,
  * keeping track of the loading status of each in-memory object
- * ("loaded", "loading" or "ghost").
+ * ("loaded", "loading" or "ghost"). In addition, the class is intended
+ * to be used in conjunction with the Identity Map pattern (again, see
+ * Fowler). Thus sqloxx::PersistentObject is intended to work in conjunction
+ * with sqloxx::IdentityMap and sqloxx::Handle.
  *
- * In the derived class, the intention is that some or all data members
+ * The client should derived from PersistentObject. Let's call the derived
+ * class Derived. Instances of Derived should then be stored in
+ * instances of Handle<Derived>. To initialize a Handle<Derived>, call
+ * the free-standing function sqloxx::get_handle (see documentation
+ * in database_connection.hpp). This returns a shared_ptr<Derived>, which
+ * is then passed to the constructor for Handle<Derived>. The Derived
+ * instance, in virtue of being derived from PersistentObject, will
+ * keep track of the number of Handles pointing to it at any time. This
+ * enables the IdentityMap to be updated as required. If all instances
+ * of Derived are managed via Handle<Derived>, the IdentityMap will store
+ * the underlying Derived instances, ensuring the same object is not
+ * loaded multiple times from the database.
+ *
+ * See sqloxx::IdentityMap and sqloxx::Handle for further documentation.
+ *
+ * As for the "ghost" pattern...
+ * In the Derived class, the intention is that some or all data members
  * declared in that class, can be "lazy". This means that they are not
  * initialized in the derived object's constructor, but are rather only
  * initialized at a later time via a call to load(), which in turn calls
