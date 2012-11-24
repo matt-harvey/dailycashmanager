@@ -167,70 +167,33 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 	switch (level)
 	{
 	case 0: case 1: case 2: case 3: case 4:
-		commodity_map().disable_caching();
-		account_map().disable_caching();
-		repeater_map().disable_caching();
-		draft_journal_map().disable_caching();
-		ordinary_journal_map().disable_caching();
-		entry_map().disable_caching();
+		m_commodity_map.disable_caching();
+		m_account_map.disable_caching();
+		m_repeater_map.disable_caching();
+		m_draft_journal_map.disable_caching();
+		m_ordinary_journal_map.disable_caching();
+		m_entry_map.disable_caching();
 		break;
 	case 5: case 6: case 7: case 8: case 9:
-		commodity_map().enable_caching();
-		account_map().enable_caching();
-		repeater_map().disable_caching();
-		draft_journal_map().disable_caching();
-		ordinary_journal_map().disable_caching();
-		entry_map().disable_caching();
+		m_commodity_map.enable_caching();
+		m_account_map.enable_caching();
+		m_repeater_map.disable_caching();
+		m_draft_journal_map.disable_caching();
+		m_ordinary_journal_map.disable_caching();
+		m_entry_map.disable_caching();
 		break;	
 	case 10: default:
 		assert (level > 0);
-		commodity_map().enable_caching();
-		account_map().enable_caching();
-		repeater_map().enable_caching();
-		draft_journal_map().enable_caching();
-		ordinary_journal_map().enable_caching();
-		entry_map().enable_caching();
+		m_commodity_map.enable_caching();
+		m_account_map.enable_caching();
+		m_repeater_map.enable_caching();
+		m_draft_journal_map.enable_caching();
+		m_ordinary_journal_map.enable_caching();
+		m_entry_map.enable_caching();
 		break;
 	}
 	return;
 }
-
-sqloxx::IdentityMap<AccountImpl>&
-PhatbooksDatabaseConnection::account_map()
-{
-	return m_account_map;
-}
-
-sqloxx::IdentityMap<CommodityImpl>&
-PhatbooksDatabaseConnection::commodity_map()
-{
-	return m_commodity_map;
-}
-
-sqloxx::IdentityMap<EntryImpl>&
-PhatbooksDatabaseConnection::entry_map()
-{
-	return m_entry_map;
-}
-
-sqloxx::IdentityMap<OrdinaryJournalImpl>&
-PhatbooksDatabaseConnection::ordinary_journal_map()
-{
-	return m_ordinary_journal_map;
-}
-
-sqloxx::IdentityMap<DraftJournalImpl>&
-PhatbooksDatabaseConnection::draft_journal_map()
-{
-	return m_draft_journal_map;
-}
-
-sqloxx::IdentityMap<RepeaterImpl>&
-PhatbooksDatabaseConnection::repeater_map()
-{
-	return m_repeater_map;
-}
-
 
 
 namespace
@@ -263,82 +226,6 @@ PhatbooksDatabaseConnection::setup_has_occurred()
 
 }  // namespace phatbooks
 
-namespace sqloxx
-{
-
-template <>
-IdentityMap<phatbooks::AccountImpl>&
-identity_map
-<	phatbooks::AccountImpl,
-	phatbooks::PhatbooksDatabaseConnection
->
-(	phatbooks::PhatbooksDatabaseConnection& connection
-)
-{
-	return connection.account_map();
-}
-
-template <>
-IdentityMap<phatbooks::EntryImpl>&
-identity_map
-<	phatbooks::EntryImpl,
-	phatbooks::PhatbooksDatabaseConnection
->
-(	phatbooks::PhatbooksDatabaseConnection& connection
-)
-{
-	return connection.entry_map();
-}
-
-template <>
-IdentityMap<phatbooks::CommodityImpl>&
-identity_map
-<	phatbooks::CommodityImpl,
-	phatbooks::PhatbooksDatabaseConnection
->
-(	phatbooks::PhatbooksDatabaseConnection& connection
-)
-{
-	return connection.commodity_map();
-}
-
-template <>
-IdentityMap<phatbooks::OrdinaryJournalImpl>&
-identity_map
-<	phatbooks::OrdinaryJournalImpl,
-	phatbooks::PhatbooksDatabaseConnection
->
-(	phatbooks::PhatbooksDatabaseConnection& connection
-)
-{
-	return connection.ordinary_journal_map();
-}
-
-template <>
-IdentityMap<phatbooks::DraftJournalImpl>&
-identity_map
-<	phatbooks::DraftJournalImpl,
-	phatbooks::PhatbooksDatabaseConnection
->
-(	phatbooks::PhatbooksDatabaseConnection& connection
-)
-{
-	return connection.draft_journal_map();
-}
-
-template <>
-IdentityMap<phatbooks::RepeaterImpl>&
-identity_map
-<	phatbooks::RepeaterImpl,
-	phatbooks::PhatbooksDatabaseConnection
->
-(	phatbooks::PhatbooksDatabaseConnection& connection
-)
-{
-	return connection.repeater_map();
-}
-
-}  // namespace sqloxx
 
 
 

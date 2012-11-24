@@ -805,10 +805,12 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::save_new()
 	set_id(allocated_id);
 	if (m_proxy_key)
 	{
-		identity_map<Derived>(*m_database_connection).template register_id
-		(	*m_proxy_key,
-			allocated_id
-		);
+		m_database_connection->template
+			identity_map<Derived>().template
+			register_id
+			(	*m_proxy_key,
+				allocated_id
+			);
 	}
 
 	// The next line fixed a bug 2012-11-22 that in resulted in objects being
@@ -875,7 +877,8 @@ decrement_handle_counter()
 	--m_handle_counter;
 	if (m_handle_counter == 0 && static_cast<bool>(m_proxy_key))
 	{
-		identity_map<Derived>(*m_database_connection).template
+		m_database_connection->template
+			identity_map<Derived>().template
 			notify_nil_handles(*m_proxy_key);
 	}
 	return;

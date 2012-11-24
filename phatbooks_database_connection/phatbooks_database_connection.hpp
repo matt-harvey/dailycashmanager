@@ -132,12 +132,8 @@ public:
 	 */
 	void set_caching_level(unsigned int level);
 
-	sqloxx::IdentityMap<AccountImpl>& account_map();
-	sqloxx::IdentityMap<CommodityImpl>& commodity_map();
-	sqloxx::IdentityMap<EntryImpl>& entry_map();
-	sqloxx::IdentityMap<OrdinaryJournalImpl>& ordinary_journal_map();
-	sqloxx::IdentityMap<DraftJournalImpl>& draft_journal_map();
-	sqloxx::IdentityMap<RepeaterImpl>& repeater_map();
+	template<typename T>
+	sqloxx::IdentityMap<T>& identity_map();
 
 private:
 
@@ -155,6 +151,57 @@ private:
 
 
 };  // PhatbooksDatabaseConnection
+
+
+template <>
+inline
+sqloxx::IdentityMap<AccountImpl>&
+PhatbooksDatabaseConnection::identity_map<AccountImpl>()
+{
+	return m_account_map;
+}
+
+template <>
+inline
+sqloxx::IdentityMap<EntryImpl>&
+PhatbooksDatabaseConnection::identity_map<EntryImpl>()
+{
+	return m_entry_map;
+}
+
+template <>
+inline
+sqloxx::IdentityMap<CommodityImpl>&
+PhatbooksDatabaseConnection::identity_map<CommodityImpl>()
+{
+	return m_commodity_map;
+}
+
+template <>
+inline
+sqloxx::IdentityMap<OrdinaryJournalImpl>&
+PhatbooksDatabaseConnection::identity_map<OrdinaryJournalImpl>()
+{
+	return m_ordinary_journal_map;
+}
+
+template <>
+inline
+sqloxx::IdentityMap<phatbooks::DraftJournalImpl>&
+PhatbooksDatabaseConnection::identity_map<DraftJournalImpl>()
+{
+	return m_draft_journal_map;
+}
+
+template <>
+inline
+sqloxx::IdentityMap<phatbooks::RepeaterImpl>&
+PhatbooksDatabaseConnection::identity_map<RepeaterImpl>()
+{
+	return m_repeater_map;
+}
+
+
 
 
 }  // namespace phatbooks

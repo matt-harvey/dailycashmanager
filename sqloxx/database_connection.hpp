@@ -67,7 +67,9 @@ inline
 Handle<T>
 get_handle(boost::shared_ptr<Connection> const& dbc, typename T::Id id)
 {
-	return identity_map<T>(*dbc).template provide_object(dbc, id);
+	return dbc->template
+		identity_map<T>().template
+		provide_object(dbc, id);
 }
 
 template <typename T, typename Connection>
@@ -75,7 +77,9 @@ inline
 Handle<T>
 get_handle(boost::shared_ptr<Connection> const& dbc)
 {
-	return identity_map<T>(*dbc).template provide_object(dbc);
+	return dbc->template
+		identity_map<T>().template
+		provide_object(dbc);
 }
 
 
