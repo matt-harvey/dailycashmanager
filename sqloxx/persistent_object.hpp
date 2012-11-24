@@ -1,7 +1,6 @@
 #ifndef GUARD_persistent_object_hpp
 #define GUARD_persistent_object_hpp
 
-#include "database_connection.hpp"
 #include "general_typedefs.hpp"
 #include "next_auto_key.hpp"
 #include "sqloxx_exceptions.hpp"
