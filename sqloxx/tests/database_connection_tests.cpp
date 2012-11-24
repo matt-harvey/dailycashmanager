@@ -1,5 +1,6 @@
 #include "sqloxx_tests_common.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/next_auto_key.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include "sqloxx/detail/sql_statement.hpp"
@@ -143,7 +144,10 @@ TEST(test_next_auto_key_invalid_connection)
 	bool ok = false;
 	try
 	{
-		db0.next_auto_key<int, SharedSQLStatement>("dummy_table");
+		next_auto_key
+		<	DatabaseConnection,
+			int
+		>	(db0, "dummy_table");
 	}
 	catch (InvalidConnection&)
 	{
@@ -156,14 +160,15 @@ TEST(test_next_auto_key_invalid_connection)
 TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 {
 	// Note CHECK_EQUAL and CHECK get confused by multiple template args
-	bool ok = (dbc.next_auto_key<int, SharedSQLStatement>("dummy_table") == 1);
+	bool ok =
+		(next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
 	CHECK(ok);
 	dbc.execute_sql
 	(	"create table dummy_table(column_A text)"
 	);
-	ok = (dbc.next_auto_key<int, SharedSQLStatement>("dummy_table") == 1);
+	ok = (next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
 	CHECK(ok);
-	ok = (dbc.next_auto_key<int, SharedSQLStatement>("test_table") == 1);
+	ok = (next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
 	CHECK(ok);
 	dbc.execute_sql
 	(	"create table test_table"
@@ -173,10 +178,10 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 			"column_C text not null"
 		")"
 	);
-	ok = (dbc.next_auto_key<int, SharedSQLStatement>("test_table") == 1);
+	ok = (next_auto_key<DatabaseConnection, int>(dbc, "test_table") == 1);
 	CHECK(ok);
 	// This behaviour is strange but expected - see API docs.
-	ok = (dbc.next_auto_key<int, SharedSQLStatement>("dummy_table") == 1);
+	ok = (next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
 	CHECK(ok);
 	dbc.execute_sql
 	(	"insert into test_table(column_A, column_C) "
@@ -190,20 +195,21 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 	(	"insert into test_table(column_A, column_C) "
 		"values(10, 'Gold')"
 	);
-	ok = (dbc.next_auto_key<int, SharedSQLStatement>("test_table") == 4);
+	ok = (next_auto_key<DatabaseConnection, int>(dbc, "test_table") == 4);
 	CHECK(ok);
-	ok = (dbc.next_auto_key<int, SharedSQLStatement>("dummy_table") == 1);
+	ok = (next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
 	CHECK(ok);
 	
 	// Test behaviour with gaps in numbering
 	dbc.execute_sql("delete from test_table where column_B = 2");
-	ok = (dbc.next_auto_key<int, SharedSQLStatement>("test_table") == 4);
+	ok = (next_auto_key<DatabaseConnection, int>(dbc, "test_table") == 4);
 	
 	// Key is not predicted to be reused once deleted
 	dbc.execute_sql("delete from test_table where column_B = 3");
-	ok = (dbc.next_auto_key<int, SharedSQLStatement>("test_table") == 4);
+	ok = (next_auto_key<DatabaseConnection, int>(dbc, "test_table") == 4);
 	CHECK(ok);
-	int const predicted_key = dbc.next_auto_key<int, SharedSQLStatement>("test_table");
+	int const predicted_key =
+		next_auto_key<DatabaseConnection, int>(dbc, "test_table");
 
 	// Check key is not actually reused once deleted
 	dbc.execute_sql
@@ -233,7 +239,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 	// Have to do this as CHECK_THROW gets confused by multiple template args
 	try
 	{
-		dbc.next_auto_key<int, SharedSQLStatement>("test_table");
+		next_auto_key<DatabaseConnection, int>(dbc, "test_table");
 	}
 	catch (TableSizeException&)
 	{

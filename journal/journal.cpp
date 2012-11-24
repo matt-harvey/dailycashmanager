@@ -17,6 +17,7 @@
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/next_auto_key.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -31,6 +32,7 @@
 
 
 using sqloxx::get_handle;
+using sqloxx::next_auto_key;
 using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
 using boost::scoped_ptr;
@@ -139,9 +141,10 @@ Journal::do_save_new_journal_base
 (	shared_ptr<PhatbooksDatabaseConnection> const& dbc
 )
 {
-	Id const journal_id = dbc->next_auto_key<Id, SharedSQLStatement>
-	(	"journals"
-	);
+	Id const journal_id = next_auto_key
+	<	PhatbooksDatabaseConnection,
+		Id
+	>	(*dbc, "journals");
 	SharedSQLStatement statement
 	(	*dbc,
 		"insert into journals(is_actual, comment) "

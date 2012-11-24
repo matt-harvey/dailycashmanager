@@ -2,8 +2,9 @@
 #define GUARD_persistent_object_hpp
 
 #include "database_connection.hpp"
-#include "sqloxx_exceptions.hpp"
 #include "general_typedefs.hpp"
+#include "next_auto_key.hpp"
+#include "sqloxx_exceptions.hpp"
 #include <boost/none.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
@@ -786,10 +787,10 @@ Id
 PersistentObject<Derived, Connection, Id, HandleCounter>::
 do_calculate_prospective_key() const
 {	
-	return database_connection()->template
-		next_auto_key<Id, SharedSQLStatement>
-		(	Derived::primary_table_name()
-		);
+	return next_auto_key<Connection, Id>
+	(	*database_connection(),
+		Derived::primary_table_name()
+	);
 }
 
 
