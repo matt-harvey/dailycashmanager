@@ -105,6 +105,12 @@ public:
 	void set_amount(jewel::Decimal const& p_amount);
 	
 	/**
+	 * Set whether the EntryImpl has been reconciled (e.g. for
+	 * reconciling to a bank or credit card statement).
+	 */
+	void set_whether_reconciled(bool p_is_reconciled);
+
+	/**
 	 * @returns EntryImpl comment.
 	 * 
 	 * Does not throw except possibly \c std::bad_alloc in
@@ -122,11 +128,16 @@ public:
 	jewel::Decimal amount();
 
 	/**
-	 * @returns id of the Account that this entry effects.
+	 * @returns the Account that this entry effects.
 	 *
 	 * Does not throw.
 	 */
 	Account account();
+
+	/**
+	 * @returns true if the Entry is reconciled, else false.
+	 */
+	bool is_reconciled();
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
@@ -149,10 +160,12 @@ private:
 
 	struct EntryData
 	{
+		
 		boost::optional<Journal::Id> journal_id;
 		boost::optional<Account> account;
 		boost::optional<std::string> comment;
 		boost::optional<jewel::Decimal> amount;
+		boost::optional<bool> is_reconciled;
 	};
 
 	boost::scoped_ptr<EntryData> m_data;

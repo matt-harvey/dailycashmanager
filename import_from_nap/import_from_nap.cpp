@@ -304,6 +304,7 @@ void import_from_nap
 		draft_entry.set_amount(is_actual? act_impact: -bud_impact);	
 		shared_ptr<DraftJournal> draft_journal =
 			draft_journal_map[draft_journal_name];
+		draft_entry.set_whether_reconciled(false);
 		draft_journal->add_entry(draft_entry);
 		if
 		(	dj_actual_v_budget_determinations.find(draft_journal) ==
@@ -483,6 +484,7 @@ void import_from_nap
 			     << endl;
 			std::abort();
 		}
+		ordinary_entry.set_whether_reconciled(false);
 		ordinary_journal->add_entry(ordinary_entry);
 	}
 

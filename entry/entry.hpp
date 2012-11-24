@@ -32,9 +32,11 @@ public:
 	void set_account(Account const& p_account);
 	void set_comment(std::string const& p_comment);
 	void set_amount(jewel::Decimal const& p_amount);
+	void set_whether_reconciled(bool p_is_reconciled);
 	std::string comment() const;
 	jewel::Decimal amount() const;
 	Account account() const;
+	bool is_reconciled() const;
 
 	/**
 	 * TODO This should eventually be shifted into a base

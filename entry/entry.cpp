@@ -68,6 +68,13 @@ Entry::set_amount(jewel::Decimal const& p_amount)
 	return;
 }
 
+void
+Entry::set_whether_reconciled(bool p_is_reconciled)
+{
+	m_impl->set_whether_reconciled(p_is_reconciled);
+	return;
+}
+
 string
 Entry::comment() const
 {
@@ -84,6 +91,12 @@ Account
 Entry::account() const
 {
 	return m_impl->account();
+}
+
+bool
+Entry::is_reconciled() const
+{
+	return m_impl->is_reconciled();
 }
 
 Account::Id

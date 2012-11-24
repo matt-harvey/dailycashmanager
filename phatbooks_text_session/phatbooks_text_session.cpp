@@ -572,6 +572,9 @@ void PhatbooksTextSession::elicit_journal()
 	cout << "Line specific comment (or Enter for no comment): ";
 	primary_entry.set_comment((get_user_input()));
 
+	// Mark entry as unreconciled
+	primary_entry.set_whether_reconciled(false);
+
 	// Add primary entry to journal
 	journal.add_entry(primary_entry);
 
@@ -598,6 +601,7 @@ void PhatbooksTextSession::elicit_journal()
 	cout << "Line specific comment (or Enter for no comment): ";
 	secondary_entry.set_comment((get_user_input()));
 	secondary_entry.set_amount(-(primary_entry.amount()));
+	secondary_entry.set_whether_reconciled(false);
 	journal.add_entry(secondary_entry);
 
 	// WARNING We need to implement split transactions.
