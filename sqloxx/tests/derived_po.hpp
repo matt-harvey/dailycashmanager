@@ -55,28 +55,31 @@ private:
 class DerivedDatabaseConnection: public DatabaseConnection
 {
 public:
+
 	IdentityMap<DerivedPO>& derived_po_map()
 	{
 		return m_derived_po_map;
 	}
+
+	template <typename T>
+	IdentityMap<T>& identity_map();
+
 private:
+
 	IdentityMap<DerivedPO> m_derived_po_map;
 };
 
 
-}  // namespace tests
-
-
-// Dummy specialization of identity_map()
 template <>
 inline
-IdentityMap<tests::DerivedPO>&
-identity_map<tests::DerivedPO, tests::DerivedDatabaseConnection>
-(	tests::DerivedDatabaseConnection& connection
-)
+IdentityMap<DerivedPO>&
+DerivedDatabaseConnection::identity_map<DerivedPO>()
 {
-	return connection.derived_po_map();
+	return m_derived_po_map;
 }
+
+
+}  // namespace tests
 
 
 }  // namespace sqloxx
