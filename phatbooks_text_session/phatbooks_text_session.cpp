@@ -24,6 +24,7 @@
 #include "repeater.hpp"
 #include "consolixx/consolixx.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/handle.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
@@ -42,7 +43,9 @@
 
 // WARNING play code
 #include "sqloxx/shared_sql_statement.hpp"
+#include <boost/unordered_map.hpp>
 #include <vector>
+using boost::unordered_map;
 using sqloxx::SharedSQLStatement;
 using std::vector;
 // end play code
@@ -63,6 +66,7 @@ using boost::lexical_cast;
 using boost::shared_ptr;
 using boost::regex;
 using boost::regex_match;
+using sqloxx::get_handle;
 using std::cout;
 using std::endl;
 using std::map;
@@ -79,6 +83,10 @@ PhatbooksTextSession::PhatbooksTextSession():
 	m_main_menu(new Menu),
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
+	
+	m_database_connection->set_caching_level(10);
+
+
 	// Set up all the Menu objects.
 
 	shared_ptr<MenuItem> elicit_commodity_item
@@ -139,6 +147,22 @@ PhatbooksTextSession::PhatbooksTextSession():
 		)
 	);
 	m_main_menu->add_item(display_journal_summaries_selection);
+	shared_ptr<MenuItem> display_balances_selection
+	(	new MenuItem
+		(	"Display the balance of each envelope and balance sheet account",
+			bind(&PhatbooksTextSession::display_balances, this),
+			true
+		)
+	);
+	m_main_menu->add_item(display_balances_selection);
+	shared_ptr<MenuItem> play_selection
+	(	new MenuItem
+		(	"Play",
+			bind(&PhatbooksTextSession::play, this),
+			true
+		)
+	);
+	m_main_menu->add_item(play_selection);
 	// WARNING end play code
 
 	shared_ptr<MenuItem> quit_item
@@ -318,7 +342,7 @@ void PhatbooksTextSession::elicit_commodity()
 	else
 	{
 		assert (confirmation == "y");
-		commodity.save_new();
+		commodity.save();
 		cout << "Commodity created." << endl;
 	}
 	return;
@@ -365,8 +389,7 @@ void PhatbooksTextSession::elicit_account()
 		else
 		{
 			input_is_valid = true;
-			Commodity commodity(m_database_connection, input);
-			account.set_commodity_id(commodity.id());
+			account.set_commodity(Commodity(m_database_connection, input));
 		}
 	}
 
@@ -399,7 +422,7 @@ void PhatbooksTextSession::elicit_account()
 	cout << endl << "You have proposed to create the following account: "
 	     << endl << endl
 	     << "Name: " << account.name() << endl
-		 << "Commodity: " << account.commodity_abbreviation() << endl
+		 << "Commodity: " << account.commodity().abbreviation() << endl
 		 << "Type: " << account_type_name << endl
 		 << "Description: " << account.description() << endl
 		 << endl;
@@ -417,7 +440,7 @@ void PhatbooksTextSession::elicit_account()
 	else
 	{
 		assert (confirmation == "y");
-		account.save_new();
+		account.save();
 		cout << "Account created." << endl;
 	}
 	return;
@@ -426,7 +449,7 @@ void PhatbooksTextSession::elicit_account()
 
 void PhatbooksTextSession::elicit_journal()
 {
-	Journal journal(m_database_connection);
+	Journal journal;
 
 	// Find out what kind of journal this is going to be
 	Menu transaction_menu;
@@ -498,23 +521,16 @@ void PhatbooksTextSession::elicit_journal()
 	}
 	
 	// Primary entry
-	shared_ptr<Entry> primary_entry(new Entry(m_database_connection));
+	Entry primary_entry(m_database_connection);
 
 	// Get primary entry account
 	cout << "Enter name of " << account_prompt << ": ";
-	primary_entry->set_account_id
-	(	Account(m_database_connection, elicit_existing_account_name()).id()
+	primary_entry.set_account
+	(	Account(m_database_connection, elicit_existing_account_name())
 	);
 
 	// Get primary entry amount
-	Account primary_entry_account
-	(	m_database_connection,
-		primary_entry->account_id()
-	);
-	Commodity primary_commodity
-	(	m_database_connection,
-		primary_entry_account.commodity_id()
-	);
+	Commodity const primary_commodity = primary_entry.account().commodity();
 	Decimal primary_entry_amount;
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
@@ -546,7 +562,7 @@ void PhatbooksTextSession::elicit_journal()
 	}
 	// Primary entry amount must be changed to the appropriate sign
 	// WARNING In theory this might throw.
-	primary_entry->set_amount
+	primary_entry.set_amount
 	(	primary_sign_needs_changing?
 		-primary_entry_amount:
 		primary_entry_amount
@@ -554,30 +570,26 @@ void PhatbooksTextSession::elicit_journal()
 
 	// Get primary entry comment
 	cout << "Line specific comment (or Enter for no comment): ";
-	primary_entry->set_comment((get_user_input()));
+	primary_entry.set_comment((get_user_input()));
+
+	// Mark entry as unreconciled
+	primary_entry.set_whether_reconciled(false);
 
 	// Add primary entry to journal
 	journal.add_entry(primary_entry);
 
 	// Secondary entry
-	shared_ptr<Entry> secondary_entry(new Entry(m_database_connection));
+	Entry secondary_entry(m_database_connection);
 
 	// Get other account and comment
 	cout << "Enter name of " << secondary_account_prompt << ": ";
-	secondary_entry->set_account_id
-	(	Account(m_database_connection, elicit_existing_account_name()).id()
+	secondary_entry.set_account
+	(	Account(m_database_connection, elicit_existing_account_name())
 	);
 	// WARNING if secondary account is in a different currency then we need to
 	// deal with this here somehow.
  
-	Account secondary_entry_account
-	(	m_database_connection,
-		secondary_entry->account_id()
-	);
-	Commodity secondary_commodity
-	(	m_database_connection,
-		secondary_entry_account.commodity_abbreviation()
-	);
+	Commodity secondary_commodity = secondary_entry.account().commodity();
 	if
 	(	secondary_commodity.id() != primary_commodity.id()
 	)
@@ -587,8 +599,9 @@ void PhatbooksTextSession::elicit_journal()
 	}
 
 	cout << "Line specific comment (or Enter for no comment): ";
-	secondary_entry->set_comment((get_user_input()));
-	secondary_entry->set_amount(-(primary_entry->amount()));
+	secondary_entry.set_comment((get_user_input()));
+	secondary_entry.set_amount(-(primary_entry.amount()));
+	secondary_entry.set_whether_reconciled(false);
 	journal.add_entry(secondary_entry);
 
 	// WARNING We need to implement split transactions.
@@ -615,7 +628,7 @@ void PhatbooksTextSession::elicit_journal()
 
 	if (journal_action == post)
 	{
-		OrdinaryJournal ordinary_journal(journal);
+		OrdinaryJournal ordinary_journal(journal, m_database_connection);
 
 		boost::gregorian::date const d =
 			boost::gregorian::day_clock::local_day();
@@ -625,12 +638,12 @@ void PhatbooksTextSession::elicit_journal()
 			 << "): ";
 		boost::gregorian::date const e = get_date_from_user();
 		ordinary_journal.set_date(e);
-		ordinary_journal.save_new();
+		ordinary_journal.save();
 		cout << "\nJournal posted." << endl;
 	}
 	else if (journal_action == save_draft || journal_action == save_recurring)
 	{
-		DraftJournal draft_journal(journal);
+		DraftJournal draft_journal(journal, m_database_connection);
 
 		// Ask for a name for the draft journal
 		string prompt =
@@ -646,7 +659,7 @@ void PhatbooksTextSession::elicit_journal()
 			{
 				cout << "Name cannot be blank. Please try again: ";
 			}
-			if (m_database_connection->has_draft_journal_named(name))
+			else if (m_database_connection->has_draft_journal_named(name))
 			{
 				cout << "A draft or recurring transaction has already "
 				     << "been saved under this name. Please enter a "
@@ -661,9 +674,7 @@ void PhatbooksTextSession::elicit_journal()
 		// Ask for any repeaters.
 		if (journal_action == save_recurring)
 		{
-			shared_ptr<Repeater> repeater
-			(	new Repeater(m_database_connection)
-			);
+			Repeater repeater(m_database_connection);
 			cout << "\nHow often do you want this transaction to be posted? "
 				 << endl;
 			Menu frequency_menu;
@@ -704,22 +715,22 @@ void PhatbooksTextSession::elicit_journal()
 			// Determine interval type
 			if (choice == monthly_day_x || choice == N_monthly_day_x)
 			{
-				repeater->set_interval_type(Repeater::months);
+				repeater.set_interval_type(interval_type::months);
 			}
 			else if
 			(	choice == monthly_day_last ||
 				choice == N_monthly_day_last
 			)
 			{
-				repeater->set_interval_type(Repeater::month_ends);
+				repeater.set_interval_type(interval_type::month_ends);
 			}
 			else if (choice == weekly || choice == N_weekly)
 			{
-				repeater->set_interval_type(Repeater::weeks);
+				repeater.set_interval_type(interval_type::weeks);
 			}
 			else if (choice == daily || choice == N_daily)
 			{
-				repeater->set_interval_type(Repeater::days);
+				repeater.set_interval_type(interval_type::days);
 			}
 
 			// Determine interval units
@@ -730,7 +741,7 @@ void PhatbooksTextSession::elicit_journal()
 				choice == daily
 			)
 			{
-				repeater->set_interval_units(1);
+				repeater.set_interval_units(1);
 			}
 			else
 			{
@@ -755,7 +766,7 @@ void PhatbooksTextSession::elicit_journal()
 						try
 						{
 							int const units = lexical_cast<int>(input);
-							repeater->set_interval_units(units);
+							repeater.set_interval_units(units);
 							is_valid = true;
 						}
 						catch (boost::bad_lexical_cast&)
@@ -773,12 +784,12 @@ void PhatbooksTextSession::elicit_journal()
 			cout << "Enter the first date on which the transaction will occur"
 			     << ", as an eight-digit number of the form YYYYMMDD (or just"
 				 << " hit enter for today's date): ";
-			repeater->set_next_date(get_date_from_user());
+			repeater.set_next_date(get_date_from_user());
 
 			// Add repeater to draft_journal
 			draft_journal.add_repeater(repeater);	
 		}
-		draft_journal.save_new();
+		draft_journal.save();
 		cout << "Draft journal has been saved" << endl;
 	}
 	else if (journal_action == abandon)
@@ -831,15 +842,12 @@ void PhatbooksTextSession::display_all_entry_account_names()
 	     << "without optimisations: " << endl;
 	SharedSQLStatement statement
 	(	*m_database_connection,
-		"select account_id from entries order by entry_id"
+		"select entry_id from entries order by entry_id"
 	);
 	while (statement.step())
 	{
-		Account account
-		(	m_database_connection,
-			statement.extract<Account::Id>(0)
-		);
-		cout << account.name() << endl;
+		Entry entry(m_database_connection, statement.extract<Entry::Id>(0));
+		cout << entry.account().name() << endl;
 	}
 	cout << "Done!" << endl;
 	return;
@@ -847,35 +855,89 @@ void PhatbooksTextSession::display_all_entry_account_names()
 
 void PhatbooksTextSession::display_journal_summaries()
 {
-	cout << "For each ORDINARY journal, here's a summary of what's in it, "
-	     << "loaded in a really crude and inefficient way."
+	cout << "For each ORDINARY journal, here's what's in it. "
 	     << endl;
-	SharedSQLStatement statement
+	SharedSQLStatement journal_statement
 	(	*m_database_connection,
-		"select journal_id from ordinary_journal_detail join "
-		"journals using(journal_id) order by date"
+		"select journal_id from ordinary_journal_detail order by "
+		"date"
 	);
-	while (statement.step())
+	while (journal_statement.step())
 	{
 		OrdinaryJournal journal
 		(	m_database_connection,
-			statement.extract<Journal::Id>(0)
+			journal_statement.extract<OrdinaryJournal::Id>(0)
 		);
 		cout << endl << journal.date() << endl;
-		typedef vector< shared_ptr<Entry> > EntryVec;
+		typedef vector<Entry> EntryVec;
 		EntryVec::const_iterator it = journal.entries().begin();
 		EntryVec::const_iterator endpoint = journal.entries().end();
 		for ( ; it != endpoint; ++it)
 		{
-			cout << (*it)->account_name() << "\t"
-			     << (*it)->comment() << "\t"
-			     << (*it)->amount() << endl;
+			Decimal const amount = it->amount();
+			cout << it->account().name() << "\t"
+			     << it->comment() << "\t"
+			     << amount << endl;
 		}
 		cout << endl;
+	}
+	cout << "Done!" << endl << endl;
+	return;
+}
+
+void PhatbooksTextSession::display_balances()
+{
+
+	cout << "Here is the balance of each envelope and balance sheet account."
+	     << endl;
+	typedef unordered_map< Account::Id, Decimal> BalanceMap;
+	BalanceMap balance_map;
+	SharedSQLStatement account_statement
+	(
+		*m_database_connection,
+		"select account_id from accounts"
+	);
+	while (account_statement.step())
+	{
+		Account account
+		(	m_database_connection,
+			account_statement.extract<Account::Id>(0)
+		);
+		balance_map[account.id()] = Decimal(0, 0);
+	}
+	SharedSQLStatement entry_statement
+	(	*m_database_connection,
+		"select entry_id from entries inner join ordinary_journal_detail "
+		"using(journal_id)"
+	);
+	while (entry_statement.step())
+	{
+		Entry entry
+		(	m_database_connection,
+			entry_statement.extract<Entry::Id>(0)
+		);
+		balance_map[entry.account().id()] += entry.amount();
+	}
+	for
+	(	BalanceMap::const_iterator it = balance_map.begin();
+		it != balance_map.end();
+		++it
+	)
+	{
+		Account account(m_database_connection, it->first);
+		cout << account.name() << "\t" << it->second << endl;
 	}
 	cout << "Done!" << endl;
 	return;
 }
+
+
+void PhatbooksTextSession::play()
+{
+	cout << "No play today :-(" << endl;
+	return;
+}
+
 // WARNING end play code
 
 void PhatbooksTextSession::wrap_up()

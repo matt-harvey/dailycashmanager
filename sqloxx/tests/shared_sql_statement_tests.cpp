@@ -5,8 +5,11 @@
 
 #include <unittest++/UnitTest++.h>
 #include <boost/cstdint.hpp>
+#include <jewel/debug_log.hpp>
+#include <jewel/exception.hpp>
 #include <iostream>
 #include <string>
+#include <typeinfo>
 
 using std::cout;
 using std::endl;
@@ -402,7 +405,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_02)
 {
 	// Create table
 	dbc.execute_sql
-	(	"create table planets(name text unique, size text)"
+	(	"create table planets(name text, size text)"
 	);
 	// Populate the table
 	SharedSQLStatement insertion_statement_01

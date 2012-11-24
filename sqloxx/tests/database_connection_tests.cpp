@@ -139,18 +139,32 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_execute_sql_02)
 TEST(test_next_auto_key_invalid_connection)
 {
 	DatabaseConnection db0;
-	CHECK_THROW(db0.next_auto_key<int>("dummy_table"), InvalidConnection);
+	// Have to do this as CHECK_THROW gets confused by multiple template args
+	bool ok = false;
+	try
+	{
+		db0.next_auto_key<int, SharedSQLStatement>("dummy_table");
+	}
+	catch (InvalidConnection&)
+	{
+		ok = true;
+	}
+	CHECK(ok);
 }
 	
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 {
-	CHECK_EQUAL(dbc.next_auto_key<int>("dummy_table"), 1);
+	// Note CHECK_EQUAL and CHECK get confused by multiple template args
+	bool ok = (dbc.next_auto_key<int, SharedSQLStatement>("dummy_table") == 1);
+	CHECK(ok);
 	dbc.execute_sql
 	(	"create table dummy_table(column_A text)"
 	);
-	CHECK_EQUAL(dbc.next_auto_key<int>("dummy_table"), 1);
-	CHECK_EQUAL(dbc.next_auto_key<int>("test_table"), 1);
+	ok = (dbc.next_auto_key<int, SharedSQLStatement>("dummy_table") == 1);
+	CHECK(ok);
+	ok = (dbc.next_auto_key<int, SharedSQLStatement>("test_table") == 1);
+	CHECK(ok);
 	dbc.execute_sql
 	(	"create table test_table"
 		"("
@@ -159,9 +173,11 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 			"column_C text not null"
 		")"
 	);
-	CHECK_EQUAL(dbc.next_auto_key<int>("test_table"), 1);
+	ok = (dbc.next_auto_key<int, SharedSQLStatement>("test_table") == 1);
+	CHECK(ok);
 	// This behaviour is strange but expected - see API docs.
-	CHECK_EQUAL(dbc.next_auto_key<int>("dummy_table"), 1);
+	ok = (dbc.next_auto_key<int, SharedSQLStatement>("dummy_table") == 1);
+	CHECK(ok);
 	dbc.execute_sql
 	(	"insert into test_table(column_A, column_C) "
 		"values(3, 'Hello')"
@@ -174,17 +190,20 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 	(	"insert into test_table(column_A, column_C) "
 		"values(10, 'Gold')"
 	);
-	CHECK_EQUAL(dbc.next_auto_key<int>("test_table"), 4);
-	CHECK_EQUAL(dbc.next_auto_key<int>("dummy_table"), 1);
+	ok = (dbc.next_auto_key<int, SharedSQLStatement>("test_table") == 4);
+	CHECK(ok);
+	ok = (dbc.next_auto_key<int, SharedSQLStatement>("dummy_table") == 1);
+	CHECK(ok);
 	
 	// Test behaviour with gaps in numbering
 	dbc.execute_sql("delete from test_table where column_B = 2");
-	CHECK_EQUAL(dbc.next_auto_key<int>("test_table"), 4);
+	ok = (dbc.next_auto_key<int, SharedSQLStatement>("test_table") == 4);
 	
 	// Key is not predicted to be reused once deleted
 	dbc.execute_sql("delete from test_table where column_B = 3");
-	CHECK_EQUAL(dbc.next_auto_key<int>("test_table"), 4);
-	int const predicted_key = dbc.next_auto_key<int>("test_table");
+	ok = (dbc.next_auto_key<int, SharedSQLStatement>("test_table") == 4);
+	CHECK(ok);
+	int const predicted_key = dbc.next_auto_key<int, SharedSQLStatement>("test_table");
 
 	// Check key is not actually reused once deleted
 	dbc.execute_sql
@@ -196,7 +215,8 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 		"select column_B from test_table where column_A = 110"
 	);
 	statement2.step();
-	CHECK_EQUAL(statement2.extract<int>(0), predicted_key);
+	ok = (statement2.extract<int>(0) == predicted_key);
+	CHECK(ok);
 	statement2.step_final();
 
 	// Test behaviour in protecting against overflow
@@ -209,9 +229,17 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 	statement.bind(":B", numeric_limits<int>::max());
 	statement.bind(":C", "Hello");
 	statement.step_final();
-	CHECK_THROW
-	(	dbc.next_auto_key<int>("test_table"), TableSizeException
-	);
+
+	// Have to do this as CHECK_THROW gets confused by multiple template args
+	try
+	{
+		dbc.next_auto_key<int, SharedSQLStatement>("test_table");
+	}
+	catch (TableSizeException&)
+	{
+		ok = true;
+	}
+	CHECK(ok);
 	dbc.execute_sql("drop table dummy_table");
 	dbc.execute_sql("drop table test_table");
 }

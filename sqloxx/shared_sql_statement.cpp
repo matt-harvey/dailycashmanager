@@ -14,15 +14,6 @@ namespace sqloxx
 {
 
 
-SharedSQLStatement::SharedSQLStatement
-(	DatabaseConnection& p_database_connection,
-	string const& p_statement_text
-):
-	m_sql_statement
-	(	p_database_connection.provide_sql_statement(p_statement_text)
-	)
-{
-}
 
 SharedSQLStatement::~SharedSQLStatement()
 {

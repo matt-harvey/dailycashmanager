@@ -12,9 +12,19 @@
  */
 
 
-#include "account.hpp"
-#include "commodity.hpp"
+// TODO All the includes here thwart the compiler firewall
+// that was one benefit of PIMPLing the business object classes.
+// Think of a way around having to include the ..._impl classes.
+
+#include "account_impl.hpp"
+#include "account_type.hpp"
+#include "commodity_impl.hpp"
+#include "entry_impl.hpp"
+#include "draft_journal_impl.hpp"
+#include "ordinary_journal_impl.hpp"
+#include "repeater_impl.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/identity_map.hpp"
 #include <boost/bimap.hpp>
 #include <string>
 
@@ -58,7 +68,7 @@ public:
 
 	/**
 	 * @returns \c true if and only if \c p_name is the name of a
-	 * DraftJournal stored in the database.
+	 * DraftJournalImpl stored in the database.
 	 *
 	 * @todo Document throwing behaviour.
 	 */
@@ -71,7 +81,7 @@ public:
 	 *
 	 * @todo Determine and document throwing behaviour.
 	 */
-	boost::bimap<Account::AccountType, std::string> account_types();
+	boost::bimap<account_type::AccountType, std::string> account_types();
 
 	/**
 	 * @returns \c true if and only if \c p_abbreviation is the abbreviation
@@ -97,16 +107,60 @@ public:
 	 */
 	void setup();
 
+	/**
+	 * Set degree of caching of objects loaded from database.
+	 *
+	 * Level 0 entails nil caching (except temporary caching required to
+	 * avoid
+	 * loading of duplicate objects).
+	 *
+	 * Level 5 entails some caching of objects of which there are only a few
+	 * instances expected to exist in the database.
+	 *
+	 * Level 10 entails maximum caching.
+	 *
+	 * If \e level is not one of the specific levels listed above, the effect
+	 * will be the same as the next lowest level that is listed above.
+	 *
+	 * When the caching level is changed from one significant level to another
+	 * significant level that is lower than the first, any objects of classes
+	 * that are not cached under the new level, that were cached under the old
+	 * level, that are cached at the time the level changes, are emptied from
+	 * the cache.
+	 *
+	 * @todo Determinate and document throwing behaviour.
+	 */
+	void set_caching_level(unsigned int level);
+
+	sqloxx::IdentityMap<AccountImpl>& account_map();
+	sqloxx::IdentityMap<CommodityImpl>& commodity_map();
+	sqloxx::IdentityMap<EntryImpl>& entry_map();
+	sqloxx::IdentityMap<OrdinaryJournalImpl>& ordinary_journal_map();
+	sqloxx::IdentityMap<DraftJournalImpl>& draft_journal_map();
+	sqloxx::IdentityMap<RepeaterImpl>& repeater_map();
+
 private:
 
 	bool setup_has_occurred();
 	void mark_setup_as_having_occurred();
 
+
+	sqloxx::IdentityMap<AccountImpl> m_account_map;
+	sqloxx::IdentityMap<CommodityImpl> m_commodity_map;
+	sqloxx::IdentityMap<EntryImpl> m_entry_map;
+	sqloxx::IdentityMap<OrdinaryJournalImpl> m_ordinary_journal_map;
+	sqloxx::IdentityMap<DraftJournalImpl> m_draft_journal_map;
+	sqloxx::IdentityMap<RepeaterImpl> m_repeater_map;
+
+
+
 };  // PhatbooksDatabaseConnection
 
 
-
 }  // namespace phatbooks
+
+
+
 
 
 #endif  // GUARD_phatbooks_database_connection_hpp

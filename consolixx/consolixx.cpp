@@ -176,7 +176,7 @@ TextSession::~TextSession()
 
 
 void
-TextSession::Menu::add_item(shared_ptr<MenuItem const> item)
+TextSession::Menu::add_item(shared_ptr<MenuItem const> const& item)
 {
 	for
 	(	ItemContainer::const_iterator it = m_items.begin();

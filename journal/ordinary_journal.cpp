@@ -1,167 +1,144 @@
 #include "ordinary_journal.hpp"
+#include "ordinary_journal_impl.hpp"
+#include "entry.hpp"
 #include "journal.hpp"
-#include "general_typedefs.hpp"
-#include "date.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
-#include <boost/cstdint.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/static_assert.hpp>
-#include <boost/type_traits.hpp>
-#include <jewel/optional.hpp>
+#include <vector>
 
-
-using boost::numeric_cast;
 using boost::shared_ptr;
-using jewel::value;
-using sqloxx::DatabaseConnection;
-using sqloxx::SharedSQLStatement;
+using sqloxx::get_handle;
+using std::string;
+using std::vector;
 
+// For debugging
+	#include <jewel/debug_log.hpp>
+	#include <iostream>
+	using std::endl;
 
 namespace phatbooks
 {
 
-
 void
-OrdinaryJournal::setup_tables(DatabaseConnection& dbc)
+OrdinaryJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
-	dbc.execute_sql
-	(	"create table ordinary_journal_detail"
-		"("
-			"journal_id integer primary key references journals, "
-			"date integer not null"
-		")"
-	);
+	OrdinaryJournalImpl::setup_tables(dbc);
 	return;
 }
 
-
 OrdinaryJournal::OrdinaryJournal
-(	shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
 ):
-	Journal(p_database_connection)
+	m_impl
+	(	get_handle<OrdinaryJournalImpl>(p_database_connection)
+	)
 {
 }
 
-
 OrdinaryJournal::OrdinaryJournal
-(	shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
 	Id p_id
 ):
-	Journal(p_database_connection, p_id)
-{
-}
-	
-
-OrdinaryJournal::OrdinaryJournal(Journal const& p_journal):
-	Journal(p_journal)
+	m_impl
+	(	get_handle<OrdinaryJournalImpl>(p_database_connection, p_id)
+	)
 {
 }
 
-
-OrdinaryJournal::OrdinaryJournal(OrdinaryJournal const& rhs):
-	Journal(rhs),
-	m_date(rhs.m_date)
+// TODO There is similar code in DraftJournal for this constructor.
+// Factor out.
+OrdinaryJournal::OrdinaryJournal
+(	Journal& p_journal,
+	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+):
+	m_impl(get_handle<OrdinaryJournalImpl>(p_database_connection))
 {
+	m_impl->set_whether_actual(p_journal.is_actual());
+	m_impl->set_comment(p_journal.comment());
+	for
+	(	vector<Entry>::const_iterator it = p_journal.entries().begin();
+		it != p_journal.entries().end();
+		++it
+	)
+	{
+		/*
+		#ifdef DEBUG
+			static int times_called = 0;
+			                << "been called " << ++times_called << " times."
+							<< endl;
+		#endif
+		*/
+		Entry entry(*it);
+		m_impl->add_entry(entry);
+	}
 }
 
 
-OrdinaryJournal::~OrdinaryJournal()
+void
+OrdinaryJournal::set_whether_actual(bool p_is_actual)
 {
+	m_impl->set_whether_actual(p_is_actual);
+	return;
 }
 
+void
+OrdinaryJournal::set_comment(string const& p_comment)
+{
+	m_impl->set_comment(p_comment);
+	return;
+}
 
 void
 OrdinaryJournal::set_date(boost::gregorian::date const& p_date)
 {
-	load();
-	m_date = julian_int(p_date);
+	m_impl->set_date(p_date);
 	return;
 }
 
+void
+OrdinaryJournal::add_entry(Entry& entry)
+{
+	m_impl->add_entry(entry);
+	return;
+}
+
+bool
+OrdinaryJournal::is_actual() const
+{
+	return m_impl->is_actual();
+}
 
 boost::gregorian::date
-OrdinaryJournal::date()
+OrdinaryJournal::date() const
 {
-	load();
-	return boost_date_from_julian_int(value(m_date));
+	return m_impl->date();
 }
 
-
-void
-OrdinaryJournal::swap(OrdinaryJournal& rhs)
+string
+OrdinaryJournal::comment() const
 {
-	Journal::swap(rhs);
-	using std::swap;
-	swap(m_date, rhs.m_date);
-	return;
+	return m_impl->comment();
 }
 
-
-void
-OrdinaryJournal::do_load()
+vector<Entry> const&
+OrdinaryJournal::entries() const
 {
-	OrdinaryJournal temp(*this);
-
-	// Load the Journal (base) part of temp.
-	temp.do_load_journal_base();
-
-	// Load the derived, OrdinaryJournal part of temp.
-	SharedSQLStatement statement
-	(	*database_connection(),
-		"select date from ordinary_journal_detail where journal_id = :p"
-	);
-	statement.bind(":p", id());
-	statement.step();
-	// If this assertion ever fails, it's a reminder that the exception-safety
-	// of loading here MAY depend on m_date being of a native, non-throwing
-	// type.
-	BOOST_STATIC_ASSERT((boost::is_same<DateRep, int>::value));
-	temp.m_date = numeric_cast<DateRep>(statement.extract<boost::int64_t>(0));
-	swap(temp);
-	return;
+	return m_impl->entries();
 }
 
-
-void
-OrdinaryJournal::do_save_new()
+OrdinaryJournal::Id
+OrdinaryJournal::id() const
 {
-	// Save the Journal	(base) part of the object and record the id.
-	Id const journal_id = do_save_new_journal_base();
-
-	// Save the derived, OrdinaryJournal part of the object
-	SharedSQLStatement statement
-	(	*database_connection(),
-		"insert into ordinary_journal_detail (journal_id, date) "
-		"values(:journal_id, :date)"
-	);
-	statement.bind(":journal_id", journal_id);
-	statement.bind(":date", value(m_date));
-	statement.step_final();
-	return;
+	return m_impl->id();
 }
 
 void
-OrdinaryJournal::do_save_existing()
+OrdinaryJournal::save()
 {
-	// Save the Journal (base) part of the object
-	do_save_existing_journal_base();
-
-	// Save the derived, OrdinaryJournal part of the object
-	SharedSQLStatement updater
-	(	*database_connection(),	
-		"update ordinary_journal_detail set date = :date "
-		"where journal_id = :journal_id"
-	);
-	updater.bind(":date", value(m_date));
-	updater.bind(":journal_id", id());
-	updater.step_final();
+	m_impl->save();
 	return;
 }
-
 
 }  // namespace phatbooks
-
-

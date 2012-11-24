@@ -120,16 +120,16 @@ do_speed_test()
 	
 
 DatabaseConnectionFixture::DatabaseConnectionFixture():
-	filepath("Testfile_01")
+	db_filepath("Testfile_01")
 {
-	if (filesystem::exists(filesystem::status(filepath)))
+	if (filesystem::exists(filesystem::status(db_filepath)))
 	{
-		cerr << "File named \"" << filepath.string()
+		cerr << "File named \"" << db_filepath.string()
 		     << "\" already exists. Test aborted."
 			 << endl;
 		abort();
 	}
-	dbc.open(filepath);
+	dbc.open(db_filepath);
 	assert (dbc.is_valid());
 }
 
@@ -137,22 +137,22 @@ DatabaseConnectionFixture::DatabaseConnectionFixture():
 DatabaseConnectionFixture::~DatabaseConnectionFixture()
 {
 	assert (dbc.is_valid());
-	filesystem::remove(filepath);
-	assert (!file_exists(filepath));
+	filesystem::remove(db_filepath);
+	assert (!file_exists(db_filepath));
 }
 
 DerivedPOFixture::DerivedPOFixture():
-	filepath("Testfile_dpof"),
-	pdbc(new DatabaseConnection)
+	db_filepath("Testfile_dpof"),
+	pdbc(new DerivedDatabaseConnection)
 {
-	if (filesystem::exists(filesystem::status(filepath)))
+	if (filesystem::exists(filesystem::status(db_filepath)))
 	{
-		cerr << "File named \"" << filepath.string()
+		cerr << "File named \"" << db_filepath.string()
 		     << "\" already exists. Test aborted."
 			 << endl;
 		abort();
 	}
-	pdbc->open(filepath);
+	pdbc->open(db_filepath);
 	assert (pdbc->is_valid());
 	DerivedPO::setup_tables(*pdbc);
 }
@@ -160,8 +160,8 @@ DerivedPOFixture::DerivedPOFixture():
 DerivedPOFixture::~DerivedPOFixture()
 {
 	assert (pdbc->is_valid());
-	filesystem::remove(filepath);
-	assert (!file_exists(filepath));
+	filesystem::remove(db_filepath);
+	assert (!file_exists(db_filepath));
 }
 
 }  // namespace sqloxx

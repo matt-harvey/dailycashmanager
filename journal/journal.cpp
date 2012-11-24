@@ -15,24 +15,25 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
-#include "general_typedefs.hpp"
-#include "entry.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/persistent_object.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
-using sqloxx::DatabaseConnection;
-using sqloxx::PersistentObject;
+
+
+using sqloxx::get_handle;
 using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
+using boost::scoped_ptr;
 using boost::shared_ptr;
 using boost::unordered_set;
 using jewel::Decimal;
@@ -41,11 +42,16 @@ using std::logic_error;
 using std::string;
 using std::vector;
 
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
+
+
 namespace phatbooks
 {
 
 void
-Journal::setup_tables(DatabaseConnection& dbc)
+Journal::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table journals"
@@ -59,18 +65,13 @@ Journal::setup_tables(DatabaseConnection& dbc)
 }
 
 
-Journal::Journal(shared_ptr<DatabaseConnection> p_database_connection):
-	PersistentObject(p_database_connection),
+Journal::Journal():
 	m_data(new JournalData)
 {
 }
 
-Journal::Journal
-(	shared_ptr<DatabaseConnection> p_database_connection,
-	Id p_id
-):
-	PersistentObject(p_database_connection, p_id),
-	m_data(new JournalData)
+Journal::Journal(Journal const& rhs):
+	m_data(new JournalData(*(rhs.m_data)))
 {
 }
 
@@ -82,11 +83,15 @@ Journal::~Journal()
 	*/
 }
 
+vector<Entry> const& 
+Journal::entries()
+{
+	return m_data->entries;
+}
 
 void
 Journal::set_whether_actual(bool p_is_actual)
 {
-	load();
 	m_data->is_actual = p_is_actual;
 	return;
 }
@@ -94,117 +99,97 @@ Journal::set_whether_actual(bool p_is_actual)
 void
 Journal::set_comment(string const& p_comment)
 {
-	load();
 	m_data->comment = p_comment;
 	return;
 }
 
 void
-Journal::add_entry(shared_ptr<Entry> entry)
+Journal::add_entry(Entry& entry)
 {
-	load();
-	if (has_id())
-	{
-		entry->set_journal_id(id());
-	}
+	/*
+	JEWEL_DEBUG_LOG << "Calling Journal::add_entry " << endl;
+	*/
 	m_data->entries.push_back(entry);
 	return;
-}
-
-bool
-Journal::is_actual()
-{
-	load();
-	return value(m_data->is_actual);
 }
 
 string
 Journal::comment()
 {
-	load();
 	return value(m_data->comment);
 }
 
-
-vector< shared_ptr<Entry> > const&
-Journal::entries()
+bool
+Journal::is_actual()
 {
-	load();
-	// WARNING Should this fail if m_entries is empty? This would
-	// be the same behaviour then as the other "optionals". To be
-	// truly consistent with the other optionals, it would fail
-	// by means of a failed assert (assuming I haven't wrapped the
-	// other optionals in some throwing construct...).
-	return m_data->entries;
+	return value(m_data->is_actual);
 }
 
 
 void
 Journal::swap(Journal& rhs)
 {
-	swap_base_internals(rhs);
 	using std::swap;
 	swap(m_data, rhs.m_data);
 	return;
 }
 
-void
-Journal::do_load()
-{
-	throw logic_error("Journal::do_load() should never be called!");
-	return;
-}
-
-
 Journal::Id
-Journal::do_save_new_journal_base()
+Journal::do_save_new_journal_base
+(	shared_ptr<PhatbooksDatabaseConnection> const& dbc
+)
 {
-	Id const journal_id = prospective_key();
+	Id const journal_id = dbc->next_auto_key<Id, SharedSQLStatement>
+	(	"journals"
+	);
 	SharedSQLStatement statement
-	(	*database_connection(),
+	(	*dbc,
 		"insert into journals(is_actual, comment) "
 		"values(:is_actual, :comment)"
 	);
 	statement.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
 	statement.bind(":comment", value(m_data->comment));
 	statement.step_final();
-	typedef vector< shared_ptr<Entry> >::iterator EntryIter;
+	typedef vector<Entry>::iterator EntryIter;
 	EntryIter const endpoint = m_data->entries.end();
 	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
 	{
-		(*it)->set_journal_id(journal_id);
-		(*it)->save_new();
+		it->set_journal_id(journal_id);
+		it->save();
 	}
 	return journal_id;
 }
 
 void
-Journal::do_save_existing_journal_base()
+Journal::do_save_existing_journal_base
+(	shared_ptr<PhatbooksDatabaseConnection> const& dbc,
+	Journal::Id id
+)
 {
 	SharedSQLStatement updater
-	(	*database_connection(),
+	(	*dbc,
 		"update journals set is_actual = :is_actual, comment = :comment "
 		"where journal_id = :id"
 	);
 	updater.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
 	updater.bind(":comment", value(m_data->comment));
-	updater.bind(":id", id());
+	updater.bind(":id", id);
 	updater.step_final();
-	typedef vector< shared_ptr<Entry> >::iterator EntryIter;
+	typedef vector<Entry>::iterator EntryIter;
 	EntryIter const endpoint = m_data->entries.end();
 	unordered_set<Entry::Id> saved_entry_ids;
 	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
 	{
-		(*it)->save();
-		saved_entry_ids.insert((*it)->id());
+		it->save();
+		saved_entry_ids.insert(it->id());
 	}
 	// Remove any entries in the database with this journal's journal_id, that
 	// no longer exist in the in-memory journal
 	SharedSQLStatement entry_finder
-	(	*database_connection(),
+	(	*dbc,	
 		"select entry_id from entries where journal_id = :journal_id"
 	);
-	entry_finder.bind(":journal_id", id());
+	entry_finder.bind(":journal_id", id);
 	unordered_set<Entry::Id>::const_iterator const saved_entries_end =
 		saved_entry_ids.end();
 	while (entry_finder.step())
@@ -215,7 +200,7 @@ Journal::do_save_existing_journal_base()
 			// This entry is in the database but no longer in the in-memory
 			// journal, so should be deleted.
 			SharedSQLStatement entry_deleter
-			(	*database_connection(),
+			(	*dbc,
 				"delete from entries where entry_id = :entry_id"
 			);
 			entry_deleter.bind(":entry_id", entry_id);
@@ -231,27 +216,27 @@ Journal::do_save_existing_journal_base()
 
 
 void
-Journal::do_load_journal_base()
+Journal::do_load_journal_base
+(	shared_ptr<PhatbooksDatabaseConnection> const& dbc,
+	Journal::Id id
+)
 {
 	SharedSQLStatement statement
-	(	*database_connection(),
+	(	*dbc,
 		"select is_actual, comment from journals where journal_id = :p"
 	);
-	statement.bind(":p", id());
+	statement.bind(":p", id);
 	statement.step();
 	Journal temp(*this);
 	SharedSQLStatement entry_finder
-	(	*database_connection(),
+	(	*dbc,	
 		"select entry_id from entries where journal_id = :jid"
 	);
-	entry_finder.bind(":jid", id());
+	entry_finder.bind(":jid", id);
 	while (entry_finder.step())
 	{
 		Entry::Id const entr_id = entry_finder.extract<Entry::Id>(0);
-		shared_ptr<Entry> entry
-		(	new Entry(database_connection(), entr_id)
-		);
-		assert (has_id());
+		Entry entry(dbc, entr_id);
 		temp.m_data->entries.push_back(entry);
 	}
 	temp.m_data->is_actual = static_cast<bool>(statement.extract<int>(0));
@@ -260,30 +245,8 @@ Journal::do_load_journal_base()
 	return;
 }
 
-void
-Journal::do_save_existing()
-{
-	throw logic_error("Journal::do_save_existing() should never be called.");
-	return;
-}
-
-void
-Journal::do_save_new()
-{
-	throw logic_error("Journal::do_save_new() should never be called!");
-	return;
-}
-	
-
-Journal::Journal(Journal const& rhs):
-	PersistentObject(rhs),
-	m_data(new JournalData(*(rhs.m_data)))
-{
-}
-
-
 string
-Journal::do_get_table_name() const
+Journal::primary_table_name()
 {
 	return "journals";
 }

@@ -4,11 +4,9 @@
 #include "sqloxx/persistent_object.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
-#include <stdexcept>
 #include <string>
 
 using boost::shared_ptr;
-using std::logic_error;
 using std::string;
 
 namespace sqloxx
@@ -17,7 +15,7 @@ namespace tests
 {
 
 void
-DerivedPO::setup_tables(DatabaseConnection& dbc)
+DerivedPO::setup_tables(DerivedDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table derived_pos"
@@ -27,15 +25,15 @@ DerivedPO::setup_tables(DatabaseConnection& dbc)
 	return;
 }
 
-DerivedPO::DerivedPO(shared_ptr<DatabaseConnection> p_dbc, Id p_id):
-	PersistentObject(p_dbc, p_id),
+DerivedPO::DerivedPO(shared_ptr<DerivedDatabaseConnection> p_dbc, Id p_id):
+	PersistentObject<DerivedPO, DerivedDatabaseConnection>(p_dbc, p_id),
 	m_x(0),
 	m_y(0)
 {
 }
 
-DerivedPO::DerivedPO(shared_ptr<DatabaseConnection> p_dbc):
-	PersistentObject(p_dbc),
+DerivedPO::DerivedPO(shared_ptr<DerivedDatabaseConnection> p_dbc):
+	PersistentObject<DerivedPO, DerivedDatabaseConnection>(p_dbc),
 	m_x(0),
 	m_y(0)
 {
@@ -99,7 +97,7 @@ DerivedPO::self_test()
 	{
 		dpo1.prospective_key();
 	}
-	catch (logic_error&)
+	catch (LogicError&)
 	{
 		ok = true;
 	}
@@ -114,7 +112,7 @@ DerivedPO::self_test()
 	{
 		dpo6.set_id(10);
 	}
-	catch (logic_error&)
+	catch (LogicError&)
 	{
 		ok = true;
 	}
@@ -155,7 +153,7 @@ DerivedPO::set_y(double p_y)
 }
 
 DerivedPO::DerivedPO(DerivedPO const& rhs):
-	PersistentObject(rhs),
+	PersistentObject<DerivedPO, DerivedDatabaseConnection>(rhs),
 	m_x(rhs.m_x),
 	m_y(rhs.m_y)
 {
@@ -204,7 +202,7 @@ DerivedPO::do_save_new()
 }
 
 string
-DerivedPO::do_get_table_name() const
+DerivedPO::primary_table_name()
 {
 	return "derived_pos";
 }

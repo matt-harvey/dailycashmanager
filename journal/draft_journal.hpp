@@ -1,106 +1,74 @@
 #ifndef GUARD_draft_journal_hpp
 #define GUARD_draft_journal_hpp
 
-#include "journal.hpp"
-#include <boost/optional.hpp>
-#include <boost/scoped_ptr.hpp>
+#include "sqloxx/general_typedefs.hpp"
+#include "sqloxx/handle.hpp"
+#include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>
 
 namespace phatbooks
 {
 
+class DraftJournalImpl;
+class Entry;
+class Journal;
+class PhatbooksDatabaseConnection;
 class Repeater;
 
-class DraftJournal: public Journal
+class DraftJournal
 {
 public:
+	typedef sqloxx::Id Id;
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
-	/**
-	 * Create the tables required for the persistence
-	 * of DraftJournal instances in a SQLite database.
-	 */
-	static void setup_tables(sqloxx::DatabaseConnection& dbc);
-
-	/**
-	 * Initialize a "raw" DraftJournal, that will not yet
-	 * correspond to any particular object in the database
-	 */
-	explicit
-	DraftJournal
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
+	explicit DraftJournal
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection
 	);
 
-	/**
-	 * Get a DraftJournal by id from the database.
-	 */
 	DraftJournal
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection,
 		Id p_id
 	);
 
-	/**
-	 * Create a DraftJournal from a Journal. Note the data members
-	 * specific to DraftJournal will be uninitialized. All other
-	 * members will be ***shallow-copied*** from p_journal.
-	 */
-	DraftJournal(Journal const& p_journal);
+	DraftJournal
+	(	Journal& p_journal,   // TODO This should be Journal const&
+		boost::shared_ptr<PhatbooksDatabaseConnection> const&
+			p_database_connection
+	);
 
-	/**
-	 * Destructor.
-	 */
-	~DraftJournal();
-
-
-	/**
-	 * Set name of DraftJournal.
-	 */
+	void set_whether_actual(bool p_is_actual);
+	void set_comment(std::string const& p_comment);
 	void set_name(std::string const& p_name);
+	void add_entry(Entry& entry);
+	void add_repeater(Repeater& repeater);
+	bool is_actual() const;
+	std::string comment() const;
+	std::string name() const;
+	bool is_balanced() const;  // TODO Implement via m_impl in due course.
+	std::vector<Entry> const& entries() const;
 	
 	/**
-	 * Add a Repeater to the DraftJournal.
-	 */
-	void add_repeater(boost::shared_ptr<Repeater> repeater);
-	
-	/**
-	 * @returns name of DraftJournal.
-	 */
-	std::string name();
-
-	/**
-	 * @todo Provide non-member swap and specialized std::swap per
-	 * "Effective C++".
-	 */
-	void swap(DraftJournal& rhs);
-
-
-private:
-
-	/**
-	 * Copy constructor - implemented, but deliberately private.
-	 */
-	DraftJournal(DraftJournal const& rhs);	
-
-	void do_load();
-	void do_save_existing();
-	void do_save_new();
-
-	/* Note this function is not redefined here as we want
-	 * it to call Journal::do_get_table_name, which returns
-	 * "journal", the name of the table that controls assignment
-	 * of the id to all Journal instances, regardless of derived
+	 * TODO This should eventually be shifted into a base
 	 * class.
 	 */
-	// std::string do_get_table_name() const;
+	Id id() const;
 
-	struct DraftJournalData
-	{
-		boost::optional<std::string> name;
-		std::vector< boost::shared_ptr<Repeater> > repeaters;
-	};
+	/**
+	 * TODO This should eventually be shifted into a base
+	 * class.
+	 */
+	void save();
 
-	boost::scoped_ptr<DraftJournalData> m_dj_data;
+private:
+	sqloxx::Handle<DraftJournalImpl> m_impl;
+
+
 };
+
+
 
 }  // namespace phatbooks
 

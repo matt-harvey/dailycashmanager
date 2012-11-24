@@ -45,11 +45,14 @@ struct DatabaseConnectionFixture
 	~DatabaseConnectionFixture();
 
 	// Database filepath
-	boost::filesystem::path filepath;
+	boost::filesystem::path db_filepath;
 
 	// The connection to the database
 	DatabaseConnection dbc;
 };
+
+
+class DerivedDatabaseConnection;  // fwd decl
 
 struct DerivedPOFixture
 {
@@ -60,10 +63,10 @@ struct DerivedPOFixture
 	~DerivedPOFixture();
 
 	// Database filepath
-	boost::filesystem::path filepath;
+	boost::filesystem::path db_filepath;
 
 	// The connection to the database
-	boost::shared_ptr<DatabaseConnection> pdbc;
+	boost::shared_ptr<DerivedDatabaseConnection> pdbc;
 };
 
 

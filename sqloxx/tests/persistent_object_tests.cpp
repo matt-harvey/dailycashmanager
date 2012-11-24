@@ -4,18 +4,19 @@
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/optional.hpp>
 #include <cassert>
 #include <iostream>
 #include <limits>
-#include <stdexcept>
+#include <typeinfo>
 #include <unittest++/UnitTest++.h>
+#include <stdexcept>
 
 using boost::shared_ptr;
 using jewel::UninitializedOptionalException;
 using std::cerr;
 using std::endl;
-using std::logic_error;
 using std::numeric_limits;
 
 namespace sqloxx
@@ -37,18 +38,27 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_one_param)
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_two_params)
 {
-	DerivedPO dpo(pdbc);
-	dpo.set_x(10);
-	dpo.set_y(3.23);
-	dpo.save_new();
-	CHECK_EQUAL(dpo.id(), 1);
-	CHECK_EQUAL(dpo.x(), 10);
-	CHECK_EQUAL(dpo.y(), 3.23);
-	DerivedPO e(pdbc, 1);
-	CHECK_EQUAL(e.id(), dpo.id());
-	CHECK_EQUAL(e.id(), 1);
-	CHECK_EQUAL(e.x(), 10);
-	CHECK_EQUAL(e.y(), 3.23);
+	try  // WARNING temp
+	{
+		DerivedPO dpo(pdbc);
+		dpo.set_x(10);
+		dpo.set_y(3.23);
+		dpo.save_new();
+		CHECK_EQUAL(dpo.id(), 1);
+		CHECK_EQUAL(dpo.x(), 10);
+		CHECK_EQUAL(dpo.y(), 3.23);
+		DerivedPO e(pdbc, 1);
+		CHECK_EQUAL(e.id(), dpo.id());
+		CHECK_EQUAL(e.id(), 1);
+		CHECK_EQUAL(e.x(), 10);
+		CHECK_EQUAL(e.y(), 3.23);
+	}
+	catch (jewel::Exception& e)
+	{
+		cerr << typeid(e).name() << endl;
+		cerr << e.what() << endl;
+		throw;
+	}
 }
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_existing)
@@ -56,7 +66,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_existing)
 	DerivedPO dpo1(pdbc);
 	dpo1.set_x(78);
 	dpo1.set_y(4.5);
-	CHECK_THROW(dpo1.save_existing(), logic_error);
+	CHECK_THROW(dpo1.save_existing(), LogicError);
 	dpo1.save_new();
 	DerivedPO dpo2(pdbc);
 	dpo2.set_x(234);
@@ -99,7 +109,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 	dpo1.set_y(-.238);
 	dpo1.save_new();
 
-	CHECK_THROW(dpo1.save_new(), logic_error);
+	CHECK_THROW(dpo1.save_new(), LogicError);
 	// Required to avoid incomplete transaction, which would be
 	// expected, but which causes an annoying and pointless error
 	// message to be printed when pdbc closed.
@@ -116,8 +126,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 		"insert into derived_pos(derived_po_id, x, y) values"
 		"(:i, :x, :y)"
 	);
-	typedef PersistentObject::Id Id;
-	troublesome_statement.bind(":i", numeric_limits<Id>::max());
+	troublesome_statement.bind(":i", numeric_limits<int>::max());
 	troublesome_statement.bind(":x", 30);
 	troublesome_statement.bind(":y", 39.091);
 	troublesome_statement.step_final();
@@ -126,7 +135,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 		"select derived_po_id from derived_pos where x = 30"
 	);
 	check_troublesome.step();
-	CHECK_EQUAL(check_troublesome.extract<Id>(0), numeric_limits<Id>::max());
+	CHECK_EQUAL(check_troublesome.extract<int>(0), numeric_limits<int>::max());
 	check_troublesome.step_final();
 	DerivedPO dpo3(pdbc);
 	dpo3.set_x(100);
@@ -151,7 +160,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
 	dpo2.save_new();
 	CHECK_EQUAL(dpo2.id(), 2);
 
-	CHECK_THROW(dpo2.save_new(), logic_error);
+	CHECK_THROW(dpo2.save_new(), LogicError);
 	// Required to avoid incomplete transaction, which would be
 	// expected, but which causes an annoying and pointless error
 	// message to be printed when pdbc closed.

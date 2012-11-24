@@ -12,8 +12,6 @@
  */
 
 
-#include "general_typedefs.hpp"
-#include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
@@ -27,6 +25,7 @@ namespace phatbooks
 {
 
 class Entry;
+class PhatbooksDatabaseConnection;
 
 /**
  * Class to represent accounting journals.
@@ -42,7 +41,7 @@ class Entry;
  * DraftJournal with Repeater instances represents a recurring transaction.
  *
  * As well the ordinary/draft distinction, there is also a distinction between
- * \c actual and \c budget journals. An actual journal reflects an actual
+ * \e actual and \e budget journals. An actual journal reflects an actual
  * change in the entity's wealth, whether the physical form of the wealth
  * (for example, by transferring between asset classes), or a dimimution
  * or augmentation in wealth (by spending or earning money). In contrast
@@ -50,163 +49,79 @@ class Entry;
  * in regards to the \e planned purpose to which the wealth will be put. For
  * example, allocating $100.00 of one's earnings to planned expenditure on
  * food represents a budget transaction.
+ *
+ * A Journal cannot be saved to the database as \e simply a Journal. It must
+ * be either specifically an OrdinaryJournal, or specifically a DraftJournal.
+ * This is why Journal does not derive from PersistentObject. It does not have
+ * an id() attribute. Neither does it have a database_connection() attribute.
+ * The only time an object will be \e just a Journal, without being also
+ * an OrdinaryJournal or a DraftJournal, will be when it is in the state
+ * of being initialized (presumably by user-interfacing code) before it has
+ * been saved. Prior to saving, we must convert it into either a DraftJournal
+ * or an OrdinaryJournal. Despite this, the Journal class has protected
+ * methods to load and save its data to a database connection that is passed
+ * to the method. These are intended to be called by derived classes
+ * OrdinaryJournal and DraftJournal to save or load the common base parts of
+ * the object.
  */
-class Journal:
-	public sqloxx::PersistentObject
+class Journal
 {
 public:
 
-	typedef sqloxx::PersistentObject PersistentObject;
-	typedef PersistentObject::Id Id;
+	typedef sqloxx::Id Id;
 
-	/**
-	 * Sets up tables in the database required for the persistence of
-	 * Journal objects.
-	 */
-	static void setup_tables(sqloxx::DatabaseConnection& dbc);
-
-	/**
-	 * Initialize a "raw" Journal, that will not yet correspond to any
-	 * particular object in the database.
-	 */
-	explicit
-	Journal
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection
-	);
-
-	/**
-	 * Get a Journal by id from the database.
-	 */
-	Journal
-	(	boost::shared_ptr<sqloxx::DatabaseConnection> p_database_connection,
-		Id p_id
-	);
-
+	Journal();
+	Journal(Journal const& rhs);
 	virtual ~Journal();
 
-
-	/**
-	 * Change whether Journal is actual or budget
-	 * 
-	 * Does not throw.
-	 */
-	void set_whether_actual(bool p_is_actual);
-
-	/**
-	 * Set comment for journal
-	 *
-	 * Does not throw, except possibly \c std::bad_alloc in extreme
-	 * circumstances.
-	 */
-	void set_comment(std::string const& p_comment);
-
-	/**
-	 * Add an Entry to the Journal.
-	 *
-	 * @todo Figure out throwing behaviour. Should it check that
-	 * the account exists? Etc. Etc.
-	 */
-	void add_entry(boost::shared_ptr<Entry> entry);
-
-	/**
-	 * @returns true if and only if journal contains actual (as opposed to
-	 * budget) transaction(s).
-	 *
-	 * Does not throw.
-	 */
-	bool is_actual();
-
-	/**
-	 * @returns journal comment.
-	 *
-	 * Does not throw, except perhaps \c std::bad_alloc in
-	 * extreme circumstances.
-	 */
-	std::string comment();
-
-	/**
-	 * @returns true if and only if the journal balances, i.e. the total
-	 * of the entries is equal to zero.
-	 *
-	 * @todo Implement it! Note, thinking a little about this function shows
-	 * that all entries in a journal must be expressed in a common currency.
-	 * It doesn't make sense to think of entries in a single journal as being
-	 * in different currencies. An entry must have its value frozen in time.
-	 */
-	bool is_balanced();
-
-	/**
-	 * @returns a constant reference to the entries in the journal.
-	 */
-	std::vector< boost::shared_ptr<Entry> > const& entries();
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	static std::string primary_table_name();
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
 	 * "Effective C++".
 	 */
-	void swap(Journal& rhs);
+	virtual void swap(Journal& rhs);
+
+	// WARNING These getters and setters are a safety concern. They are
+	// redefined in derived
+	// classes. But if we don't redefine one, we land in trouble!
+
+	// WARNING This returns a reference to internals and so
+	// is a bit fucked. But client code uses it a lot...
+	virtual std::vector<Entry> const& entries();
+
+	virtual void set_whether_actual(bool p_is_actual);
+	virtual void set_comment(std::string const& p_comment);
+	virtual void add_entry(Entry& entry);
+	virtual std::string comment();
+	virtual bool is_actual();
 
 protected:
 
-	/**
-	 * Call this function from derived classes to save a new
-	 * Journal to the database, before saving the
-	 * derived parts.
-	 *
-	 * @returns the
-	 * id that will be assigned to the being-saved Journal by
-	 * PersistentObject::save_new, at the end of the saving
-	 * process. This avoids having to duplicate the search for
-	 * the prospective id, within the derived class saving functions.
-	 */
-	Id do_save_new_journal_base();
-
-	void do_load_journal_base();
-
-	void do_save_existing_journal_base();
-
-	/**
-	 * @throws std::logic_error if ever called. It has a dummy
-	 * implementation in order to enable base instances of Journal to be
-	 * constructed (as it's a pure virtual method of
-	 * sqloxx::PersistentObject). However it is not intended ever to be
-	 * called.
-	 */
-	virtual void do_save_existing();
-
-	/**
-	 * Copy constructor - deliberately protected.
-	 */
-	Journal(Journal const& rhs);
-
+	void do_load_journal_base
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const& dbc,
+		Id id
+	);
+	void do_save_existing_journal_base
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const& dbc,
+		Id id
+	);
+	Id do_save_new_journal_base
+	(	boost::shared_ptr<PhatbooksDatabaseConnection> const& dbc
+	);
+	
 private:
-
-	/**
-	 * @throws std::logic_error whenever called. This method
-	 * should never be called. It is provided with a dummy
-	 * implementation simply to allow Journal objects to be
-	 * instantiated.
-	 */
-	virtual void do_load();
-
-	/**
-	 * @throws std::logic_error whenever called. This method
-	 * should never be called. It is provided with a dummy
-	 * implementation simply to allow Journal objects to be
-	 * instantiated.
-	 */
-	virtual void do_save_new();
-
-	virtual std::string do_get_table_name() const;
 
 	struct JournalData
 	{
 		boost::optional<bool> is_actual;
 		boost::optional<std::string> comment;
-		std::vector< boost::shared_ptr<Entry> > entries;
+		std::vector<Entry> entries;
 	};
-	
+
 	boost::scoped_ptr<JournalData> m_data;
+	
 };
 
 

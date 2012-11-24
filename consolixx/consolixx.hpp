@@ -192,7 +192,7 @@ public:
 	 * @throws consolixx::MenuItemLabelException if an item with the same
 	 * special label is already present in this menu.
 	 */
-	void add_item(boost::shared_ptr<MenuItem const> item);
+	void add_item(boost::shared_ptr<MenuItem const> const& item);
 
 	/**
 	 * Present menu to user, request user input, and respond accordingly

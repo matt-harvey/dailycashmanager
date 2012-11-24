@@ -11,6 +11,8 @@
 #include <set>
 #include <string>
 #include "shared_sql_statement.hpp"
+#include "handle.hpp"
+#include "identity_map.hpp"
 #include "sqloxx_exceptions.hpp"
 
 
@@ -27,6 +29,111 @@
  */
 namespace sqloxx
 {
+
+
+/**
+ * Standalone function template.
+ * Should be specialized by
+ * application-specific client code, so as to
+ * return for each "business class" T a reference to the
+ * IdentityMap<T> for a given instance of Connection, where
+ * Connection should be a subclass of DatabaseManager.
+ */
+template <typename T, typename Connection>
+IdentityMap<T>& identity_map(Connection& connection);
+
+/**
+ * T is the subclass of PersistentObject<T>, and Connnection is a subclass
+ * of DatabaseConnection.
+ * 
+ * For types T that client code at the business layer does not want to manage
+ * through an IdentityMap, MapRegistrar should be specialized to have
+ * a do-nothing method register_id. By default, it is assumed client code
+ * will want to use the IdentityMap pattern.
+ * WARNING There may be other things that client code needs to do to avoid
+ * the IdentityMap pattern for a given T. These should be determined and
+ * documented.
+ */
+template <typename T, typename Connection>
+class MapRegistrar
+{
+public:
+	/**
+	 * Lets DatabaseConnection know that a newly created instance
+	 * of T, with proxy key of \e proxy_key, has just been saved to the
+	 * database, and been allocated an id of \e allocated_id.
+	 */
+	static void notify_id
+	(	Connection& dbc,
+		typename T::Id proxy_key,
+		typename T::Id allocated_id
+	)
+	{
+		// Client code should fully specialize the
+		// identity_map<T>(Connection&) function template for any T whose
+		// identity it
+		// wants to have managed via IdentityMap<T>.
+		// The specialization should return a reference to the instance
+		// of IdentityMap<T> through which an arbitrary instance of Connection
+		// wants
+		// to manage instances of T.
+		// WARNING Why can't this identity_map be a method of Connection? That
+		// would
+		// simplify things at the client level.
+
+		identity_map<T>(dbc).template register_id(proxy_key, allocated_id);
+		return;
+	}
+
+	/**
+	 * Lets DatabaseConnection know that an instance of T no longer has any
+	 * handles pointing to it.
+	 */
+	static void notify_nil_handles(Connection& dbc, typename T::Id proxy_key)
+	{
+		identity_map<T>(dbc).template notify_nil_handles(proxy_key);
+		return;
+	}
+};
+
+
+/**
+ * Convenience function to return a Handle<T> given a database connection
+ * of type Connection and an id of type T::Id.
+ */
+template <typename T, typename Connection>
+Handle<T>
+get_handle(boost::shared_ptr<Connection> const& dbc, typename T::Id id);
+
+/**
+ * Convenience function to return a Handle<T> to a new, id-less business
+ * object of type T, given a database connection of type Connection.
+ */
+template <typename T, typename Connection>
+Handle<T>
+get_handle(boost::shared_ptr<Connection> const& dbc);
+
+
+// TODO Move in-header template implementations to a separate file to keep the
+// header tidy.
+
+template <typename T, typename Connection>
+inline
+Handle<T>
+get_handle(boost::shared_ptr<Connection> const& dbc, typename T::Id id)
+{
+	return identity_map<T>(*dbc).template provide_object(dbc, id);
+}
+
+template <typename T, typename Connection>
+inline
+Handle<T>
+get_handle(boost::shared_ptr<Connection> const& dbc)
+{
+	return identity_map<T>(*dbc).template provide_object(dbc);
+}
+
+
 
 
 // Forward declaration
@@ -199,7 +306,7 @@ public:
 	 * Exception safety: <em>strong guarantee</em>, provided client adheres to
 	 * the constraints described above.
 	 */
-	template <typename KeyType>
+	template <typename KeyType, typename Statement>  // WARNING Hideousness with Statement is undocumented.
 	KeyType next_auto_key(std::string const& table_name);	
 
 	/**
@@ -309,6 +416,18 @@ public:
 	(	std::string const& statement_text
 	);
 
+	/**
+	 * This one should only be called by PersistentObject<T>.
+	 *
+	 * @todo Documentation and testing.
+	 */
+	template <typename T>
+	void register_id
+	(	typename T::Id proxy_key,
+		typename T::Id allocated_id
+	);
+
+	
 private:
 
 	void unchecked_begin_transaction();
@@ -325,22 +444,22 @@ private:
 };
 
 
-template <typename KeyType>
+template <typename KeyType, typename Statement>
 KeyType
 DatabaseConnection::next_auto_key(std::string const& table_name)
 {
 	try
 	{
-		SharedSQLStatement statement
+		Statement statement
 		(	*this,
 			"select seq from sqlite_sequence where name = :p"
 		);
-		statement.bind(":p", table_name);
+		statement.template bind(":p", table_name);
 		if (!statement.step())
 		{
 			return 1;
 		}
-		KeyType const max_key = statement.extract<KeyType>(0);
+		KeyType const max_key = statement.template extract<KeyType>(0);
 		if (max_key == std::numeric_limits<KeyType>::max())
 		{
 			throw TableSizeException
@@ -352,7 +471,7 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 	catch (SQLiteError&)
 	{
 		// Catches case where there is no sqlite_sequence table
-		SharedSQLStatement sequence_finder
+		Statement sequence_finder
 		(	*this,
 			"select name from sqlite_master where type = 'table' and "
 			"name = 'sqlite_sequence';"
@@ -364,6 +483,8 @@ DatabaseConnection::next_auto_key(std::string const& table_name)
 		throw;
 	}
 }
+
+
 
 
 

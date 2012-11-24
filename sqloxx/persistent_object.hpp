@@ -2,21 +2,24 @@
 #define GUARD_persistent_object_hpp
 
 #include "database_connection.hpp"
-#include <jewel/decimal.hpp>
-#include <jewel/optional.hpp>
+#include "sqloxx_exceptions.hpp"
+#include "general_typedefs.hpp"
+#include <boost/none.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/optional.hpp>
 #include <exception>
-#include <stdexcept>
-#include <string>
-
 
 
 namespace sqloxx
 {
 
+
+// WARNING The whole thing needs the documentation revised if I proceed with
+// the CRTP pattern
+
 /**
- * Class for creating objects persisted to a database. This
+ * Class template for creating objects persisted to a database. This
  * should be inherited by a derived class and the pure virtual
  * functions (and possibly non-pure virtual functions) provided with
  * definitions (or possibly redefinitions in the case of the non-pure
@@ -27,7 +30,28 @@ namespace sqloxx
  * keeping track of the loading status of each in-memory object
  * ("loaded", "loading" or "ghost").
  *
- * In the derived class, the intention is that some or all data members
+ * In addition, PersistentObject is intended
+ * to be used in conjunction with the Identity Map pattern (again, see
+ * Fowler). Thus sqloxx::PersistentObject is intended to work in conjunction
+ * with sqloxx::IdentityMap and sqloxx::Handle.
+ *
+ * The client should derive from PersistentObject. Let's call the derived
+ * class Derived. Instances of Derived should then be handled only via
+ * instances of Handle<Derived>. To initialize a Handle<Derived>, call
+ * the free-standing function sqloxx::get_handle (see documentation
+ * in database_connection.hpp). This returns a shared_ptr<Derived>, which
+ * is then passed to the constructor for Handle<Derived>. The Derived
+ * instance, in virtue of being derived from PersistentObject, will
+ * keep track of the number of Handles pointing to it at any time. This
+ * enables the IdentityMap to be updated as required. If all instances
+ * of Derived are managed via Handle<Derived>, the IdentityMap will store
+ * the underlying Derived instances, ensuring the same object is not
+ * loaded multiple times from the database.
+ *
+ * See sqloxx::IdentityMap and sqloxx::Handle for further documentation.
+ *
+ * As for the "ghost" pattern:
+ * in the Derived class, the intention is that some or all data members
  * declared in that class, can be "lazy". This means that they are not
  * initialized in the derived object's constructor, but are rather only
  * initialized at a later time via a call to load(), which in turn calls
@@ -55,6 +79,7 @@ namespace sqloxx
  * The following virtual functions are pure and so need definitions
  * provided in the derived class:
  *
+ * // WARNING Now becomes a static function of class Derived.
  * <b>virtual std::string do_get_table_name() const = 0;</b>\n
  * Should return name of table in which instances of the derived class
  * are persisted in the database.
@@ -75,6 +100,21 @@ namespace sqloxx
  * <b>virtual Id do_calculate_prospecitve_key() const;</b>\n
  * See documentation for prospective_key() function.
  *
+ * @param Derived The derived class. Derived should inherit publically
+ * from PersistentObject per the Curiously Recurring Template Pattern (CRTP),
+ * thus: <tt>class Derived: public PersistentObject<Derived...>, where "..."
+ * represents the other template parameters, which may be ommitted if
+ * the default values are accepted.
+ *
+ * @param Id The type of the identifier for this class in the database.
+ * Best if integral. Defaults to sqloxx::Id.
+ *
+ * @param HandleCounter The type of the counter to count the number of
+ * "at large"
+ * "handles" to a given Derived object. Should be an integral type,
+ * and defaults to int. (The count of handles is used by IdentityMap class
+ * to help manage caching of in-memory objects.)
+ * 
  * @todo Provide for atomic saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
  * Go through all the client classes in Phatbooks and ensure the
@@ -85,12 +125,19 @@ namespace sqloxx
  *
  * @todo If Sqloxx is ever moved to a separate library, then the documentation
  * for PersistentObject should include code for an exemplary derived class.
+ *
+ * @todo I need a better way of conveying the Id type to derived classes.
+ * Currently this information is "multiply located".
  */
+template
+<	typename Derived,     // subclass of PersistentObject
+	typename Connection,  // subclass of DatabaseConnection for this app.
+	typename Id = sqloxx::Id,  // type of primary key for Derived
+	typename HandleCounter = int     // type with which we will be counting handles
+>
 class PersistentObject
 {
 public:
-
-	typedef int Id;
 
 	/**
 	 * Create a PersistentObject that corresponds (or purports to correspond)
@@ -111,7 +158,7 @@ public:
 	 * constructors might, of course, throw).
 	 */
 	PersistentObject
-	(	boost::shared_ptr<DatabaseConnection> p_database_connection,
+	(	boost::shared_ptr<Connection> const& p_database_connection,
 		Id p_id
 	);
 
@@ -127,7 +174,7 @@ public:
 	 */
 	explicit
 	PersistentObject
-	(	boost::shared_ptr<DatabaseConnection> p_database_connection
+	(	boost::shared_ptr<Connection> const& p_database_connection
 	);
 
 	/**
@@ -143,7 +190,7 @@ public:
 	 *
 	 * For details of exceptions and exception safety, see the documentation
 	 * for save_existing() and save_new(). But note that unlike those two
-	 * functions, it is impossible for save() to throw std::logic_error.
+	 * functions, it is impossible for save() to throw sqloxx::LogicError.
 	 */
 	void save();
 
@@ -170,7 +217,7 @@ public:
 	 * the first statement in the implementation of any setter method in
 	 * the derived class.
 	 *
-	 * @throws std::logic_error if this PersistentObject does not have
+	 * @throws sqloxx::LogicError if this PersistentObject does not have
 	 * an id. 
 	 *
 	 * @throws TransactionNestingException if the maximum transaction
@@ -209,6 +256,11 @@ public:
 	 * calling the begin_transaction and end_transaction methods of the
 	 * DatabaseConnection.)
 	 *
+	 * It is presumed that the do_save_new function will result in the
+	 * saving of the complete state of a complete object. After do_save_new
+	 * is called, the body of the save_new function will mark the object
+	 * as being in a loaded, i.e. complete state.
+	 *
 	 * The do_get_table_name function must also
 	 * be defined in the derived class in order for this function
 	 * to find an automatically generated id to assign to the object
@@ -222,7 +274,7 @@ public:
 	 *
 	 * @throws InvalidConnection if the DatabaseConnection is invalid.
 	 *
-	 * @throws std::logic_error if the object already has an id, i.e. has
+	 * @throws sqloxx::LogicError if the object already has an id, i.e. has
 	 * already been saved to the database.
 	 *
 	 * May also throw exceptions from do_calculate_prospective_key(), which
@@ -246,6 +298,96 @@ public:
 	 * have an id.
 	 */
 	Id id() const;
+	
+	/**
+	 * Should only be called by IdentityMap<Derived>.
+	 *
+	 * WARNING This should be able to be specified in the constructor. But we
+	 * also don't want to confuse it with the other
+	 * two-paramatered constructor!
+	 *
+	 * @todo Document, test, and move implementation out of body of class.
+	 */
+	void set_proxy_key(Id p_proxy_key)
+	{
+		m_proxy_key = p_proxy_key;
+		return;
+	}
+
+	/**
+	 * Should only be called by Handle<Derived>. To advise the underlying
+	 * object that a handle pointing to it has been constructed (not copy
+	 * constructed, but ordinary-constructed.
+	 * 
+	 * @todo Document, test, and move implementation out of body of class.
+	 */
+	void notify_handle_construction()
+	{
+		increment_handle_counter();
+		return;
+	}
+
+	/**
+	 * Should only be called by Handle<Derived>. To advise the underlying
+	 * object that a handle pointing to it has been copy-constructed.
+	 * 
+	 * @todo Document, test, and move implementation out of body of class.
+	 */
+	void notify_handle_copy_construction()
+	{
+		increment_handle_counter();
+		return;
+	}
+
+	/**
+	 * Should only be called by Handle<Derived>. To advise the
+	 * underlying object that a handle pointing to it has appeared
+	 * as the right-hand operand of an assignment operation.
+	 */
+	void notify_rhs_assignment_operation()
+	{
+		increment_handle_counter();
+		return;
+	}
+	
+	/**
+	 * Should only be called by Handle<Derived>. To advise the
+	 * underlying object that a handle pointing to it has appeared
+	 * as the right-hand operand of an assignment operation.
+	 */
+	void notify_lhs_assignment_operation()
+	{
+		decrement_handle_counter();
+		return;
+	}
+
+	/**
+	 * Should only be called by Handle<Derived>. To advise the underlying
+	 * object that a handle pointing to it has been destructed.
+	 *
+	 * @todo Document, test, and move implementation out of body of class.
+	 */
+	void notify_handle_destruction()
+	{
+		decrement_handle_counter();
+		return;
+	}
+
+	/**
+	 * @returns \e true if this instance of PersistentObject has
+	 * an valid id; otherwise returns \e false.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	bool has_id() const;
+	
+	/**
+	 * Should only be called by IdentityMap<Derived>.
+	 */
+	bool is_orphaned() const
+	{
+		return m_handle_counter == 0;
+	}
 
 protected:
 
@@ -316,7 +458,7 @@ protected:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>
 	 */
-	boost::shared_ptr<DatabaseConnection> database_connection() const;
+	boost::shared_ptr<Connection> database_connection() const;
 
 	/**
 	 * Sets the id of this instance of PersistentObject to p_id.
@@ -331,7 +473,7 @@ protected:
 	 *
 	 * @param p_id the value to which you want to set the id of this object.
 	 *
-	 * @throws std::logic_error if set_id is called on an object for which
+	 * @throws sqloxx::LogicError if set_id is called on an object for which
 	 * its id has already been initialized.
 	 *
 	 * Exception safety: <em>strong_guarantee</em>.
@@ -345,17 +487,17 @@ protected:
 	 * This function calls \e do_calculate_prospective_key, which has a
 	 * default implementation but may be redefined.
 	 *
-	 * @throws std::logic_error in the event this instance already has
+	 * @throws sqloxx::LogicError in the event this instance already has
 	 * an id. (This occurs regardless of how/whether
 	 * \e do_calculate_prospective_key is redefined.)
 	 *
-	 * Apart from \e std::logic_error as just described, the exception
+	 * Apart from \e sqloxx::LogicError as just described, the exception
 	 * throwing behaviour and exception safety of this function depend on
 	 * those of the function do_calculate_prospective_key().
 	 *
 	 * <b>If the default implementation of do_calculate_prospective_key() is
 	 * retained, then the following exceptions may be thrown, in addition
-	 * to std::logic_error:</b>
+	 * to sqloxx::LogicError.</b>
 	 *
 	 * @throws sqloxx::TableSizeException if the greatest primary key value
 	 * already in the table (i.e. the table into which this instance of
@@ -382,27 +524,8 @@ protected:
 	 */
 	Id prospective_key() const;
 
-	/**
-	 * @returns \e true if this instance of PersistentObject has
-	 * an valid id; otherwise returns \e false.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	bool has_id() const;
-
+	
 private:
-
-	/**
-	 * This function should be defined in the derived class to return the
-	 * name of the table in which instances of the derived class are stored
-	 * in the database. This function is in turn called by the default
-	 * implementation of \e do_calculate_prospective_key, which is in turn
-	 * called by \e save_new.
-	 *
-	 * Exception safety: <em>depends on function definition provided by
-	 * derived class</em>.
-	 */
-	virtual std::string do_get_table_name() const = 0;
 
 	/**
 	 * Provides implementation for the public function prospective_key.
@@ -446,6 +569,9 @@ private:
 	 * represent a \e unique object in the database with a unique id.
 	 */
 	PersistentObject& operator=(PersistentObject const& rhs);
+	
+	void increment_handle_counter();
+	void decrement_handle_counter();
 
 	enum LoadingStatus
 	{
@@ -454,13 +580,351 @@ private:
 		loaded
 	};
 
+	
 	// Data members
 
-	boost::shared_ptr<DatabaseConnection> m_database_connection;
+	boost::shared_ptr<Connection> m_database_connection;
+
+	// Represent primary key in database. If the object does not correspond to
+	// and does not purport to correspond to any record in the database, then
+	// m_id in unitialized.
 	boost::optional<Id> m_id;
+	
+	// Represents the identifier, in the IdentityMap<Derived> for
+	// m_database_connection, of an instance of Derived. The
+	// IdentityMap<Derived> can look up a PersistentObject either via its Id
+	// (which corresponds to its primary key in the database), or via
+	// it proxy_key. PersistentObject instances that are newly created and
+	// have not yet been saved to the database will not have an id (i.e. m_id
+	// will be in an uninitialized state), however these may still be managed
+	// by the IdentityMap, and so still need a means for the IdentityMap to
+	// identify them in their internal cache.
+	boost::optional<Id> m_proxy_key;
+
 	LoadingStatus m_loading_status;
+	HandleCounter m_handle_counter;
 };
 
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
+(	boost::shared_ptr<Connection> const& p_database_connection,
+	Id p_id
+):
+	m_database_connection(p_database_connection),
+	m_id(p_id),
+	m_loading_status(ghost),
+	m_handle_counter(0)
+{
+}
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
+(	boost::shared_ptr<Connection> const& p_database_connection
+):
+	m_database_connection(p_database_connection),
+	m_loading_status(ghost),
+	m_handle_counter(0)
+{
+	// WARNING When the object is created, the
+	// IdentityMap<Derived> should provide it with a proxy key.
+}
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+PersistentObject<Derived, Connection, Id, HandleCounter>::~PersistentObject()
+{
+}
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::load()
+{
+	while (m_loading_status == loading)
+	{
+		// Wait
+	}
+	if (m_loading_status == ghost && has_id())
+	{
+		m_loading_status = loading;
+		try
+		{
+			m_database_connection->begin_transaction();
+		}
+		catch (TransactionNestingException&)
+		{
+			clear_loading_status();
+			throw;
+		}
+		catch (InvalidConnection&)
+		{
+			clear_loading_status();
+			throw;
+		}
+		try
+		{
+			do_load();
+		}
+		catch (std::exception&)
+		{
+			clear_loading_status();
+			throw;
+		}
+		try
+		{
+			m_database_connection->end_transaction();
+			// Note this can't possibly throw TransactionNestingException
+			// here, unless do_load() has done something perverse.
+		}
+		catch (InvalidConnection&)
+		{
+			// As do_load has already completed, the object in
+			// memory should be non-corrupt and fully loaded. The fact that
+			// the database connection is now invalid only affects the
+			// database, not the in-memory object. The invalidity of the
+			// database connection will presumably be detected and dealt with
+			// the next time it is accessed. We therefore do NOT rethrow
+			// here.
+			//
+			// WARNING Am I really comfortable with this?
+		}
+		m_loading_status = loaded;
+	}
+	return;
+}
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::save()
+{
+	if (has_id())
+	{
+		save_existing();
+	}
+	else
+	{
+		save_new();
+	}
+	return;
+}
+
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::save_existing()
+{
+	if (!has_id())
+	{
+		throw LogicError
+		(	"Method save_existing() called on an instance of PersistentObject"
+			" that does not correspond with an existing database record."
+		);
+	}
+	load();
+	m_database_connection->begin_transaction();
+	do_save_existing();
+	m_database_connection->end_transaction();
+	return;
+}
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+Id
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+prospective_key() const
+{
+	if (has_id())
+	{
+		throw LogicError
+		(	"Object already has id so prospective_key does not apply."
+		);
+	}
+	return do_calculate_prospective_key();
+}
+
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+Id
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+do_calculate_prospective_key() const
+{	
+	return database_connection()->template
+		next_auto_key<Id, SharedSQLStatement>
+		(	Derived::primary_table_name()
+		);
+}
+
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::save_new()
+{
+	m_database_connection->begin_transaction();
+	Id const allocated_id = prospective_key();
+	do_save_new();
+	m_database_connection->end_transaction();
+	set_id(allocated_id);
+	// WARNING The "if (m_proxy_key)" is a hack.
+	if (m_proxy_key)
+	{
+		MapRegistrar<Derived, Connection>::notify_id
+		(	*m_database_connection,
+			jewel::value(m_proxy_key),
+			allocated_id
+		);
+	}
+
+	// The next line fixed a bug 2012-11-22 that in resulted in objects being
+	// re-loaded from database when they were already complete.
+	m_loading_status = loaded;
+
+	return;
+	// WARNING Reconsider what exception safety guarantee can be offered
+	// in light of the dealings around proxy key that have now been
+	// incorporated into this function. Reflect in API documentation.
+}
+
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+boost::shared_ptr<Connection>
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+database_connection() const
+{
+	return m_database_connection;
+}
+
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+Id
+PersistentObject<Derived, Connection, Id, HandleCounter>::id() const
+{
+	return jewel::value(m_id);
+}
+
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+increment_handle_counter()
+{
+	if (m_handle_counter == std::numeric_limits<HandleCounter>::max())
+	{
+		throw OverflowException
+		(	"Handle counter for PersistentObject instance has reached "
+			"maximum value and cannot be safely incremented."
+		);
+	}
+	++m_handle_counter;
+	return;
+}
+
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+decrement_handle_counter()
+{
+	if (m_handle_counter == 0)
+	{
+		throw OverflowException 
+		(	"Handle counter for PersistentObject instance has reached "
+			"zero and cannot be further decremented."
+		);
+	}
+	--m_handle_counter;
+	if (m_handle_counter == 0 && static_cast<bool>(m_proxy_key))  // the "&& m_proxy_key" is a temp hack
+	{
+		MapRegistrar<Derived, Connection>::notify_nil_handles
+		(	*m_database_connection,
+			jewel::value(m_proxy_key)
+		);
+	}
+	return;
+}
+
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::set_id(Id p_id)
+{
+	if (has_id())
+	{
+		throw LogicError("Object already has id.");
+	}
+	m_id = p_id;
+	return;
+}
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+bool
+PersistentObject<Derived, Connection, Id, HandleCounter>::has_id() const
+{
+	// Relies on the fact that m_id is a boost::optional<Id>, and
+	// will convert to true if and only if it has been initialized.
+	return m_id;
+}
+
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+clear_loading_status()
+{
+	m_loading_status = ghost;
+	return;
+}
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
+(	PersistentObject const& rhs
+):
+	m_database_connection(rhs.m_database_connection),
+	m_id(rhs.m_id),
+	m_proxy_key(rhs.m_proxy_key),
+	m_loading_status(rhs.m_loading_status)
+{
+}
+		
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::swap_base_internals
+(	PersistentObject& rhs
+)
+{
+	boost::shared_ptr<Connection> temp_dbc =
+		rhs.m_database_connection;
+	boost::optional<Id> temp_id = rhs.m_id;
+	boost::optional<Id> temp_proxy_key = rhs.m_proxy_key;
+	LoadingStatus temp_loading_status = rhs.m_loading_status;
+
+	rhs.m_database_connection = m_database_connection;
+	rhs.m_id = m_id;
+	rhs.m_proxy_key = m_proxy_key;
+	rhs.m_loading_status = m_loading_status;
+
+	m_database_connection = temp_dbc;
+	m_id = temp_id;
+	m_proxy_key = temp_proxy_key;
+	m_loading_status = temp_loading_status;
+
+	return;
+}
 
 
 
@@ -469,6 +933,7 @@ private:
 
 
 #endif  // GUARD_persistent_object_hpp
+
 
 
 

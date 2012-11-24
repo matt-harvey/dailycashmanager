@@ -13,7 +13,6 @@
  */
 
 
-#include "general_typedefs.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 
