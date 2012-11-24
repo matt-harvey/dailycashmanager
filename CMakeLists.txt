@@ -5,16 +5,16 @@ project (main)
 project (test)
 
 include_directories (/home/matthew/lib
-					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch
-                     /home/matthew/Workbench/versioned/phatbooks_id_map_branch/account
-					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/commodity
-					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/date
-					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/entry
-					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/import_from_nap
-					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/journal
-					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/phatbooks_database_connection
-					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/phatbooks_text_session
-					 /home/matthew/Workbench/versioned/phatbooks_id_map_branch/repeater)
+					 /home/matthew/Workbench/versioned/phatbooks
+                     /home/matthew/Workbench/versioned/phatbooks/account
+					 /home/matthew/Workbench/versioned/phatbooks/commodity
+					 /home/matthew/Workbench/versioned/phatbooks/date
+					 /home/matthew/Workbench/versioned/phatbooks/entry
+					 /home/matthew/Workbench/versioned/phatbooks/import_from_nap
+					 /home/matthew/Workbench/versioned/phatbooks/journal
+					 /home/matthew/Workbench/versioned/phatbooks/phatbooks_database_connection
+					 /home/matthew/Workbench/versioned/phatbooks/phatbooks_text_session
+					 /home/matthew/Workbench/versioned/phatbooks/repeater)
 
 link_directories (/home/matthew/lib/jewel)
 

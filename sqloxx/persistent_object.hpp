@@ -23,34 +23,53 @@ namespace sqloxx
  * should be inherited by a derived class and the pure virtual
  * functions (and possibly non-pure virtual functions) provided with
  * definitions (or possibly redefinitions in the case of the non-pure
- * virtual functions). The class provides for lazy loading behaviour,
+ * virtual functions).
+ *
+ * An instance of (a class deriving from an instantiation of)
+ * PersistentObject represents a "business object" for which the
+ * data will be stored in a relational database (currently only
+ * SQLite is supported) under a single primary key.
+ *
+ * USE OF IDENTITY MAP PATTERN
+ *
+ * PersistentObject is intended
+ * to be used in conjunction with the Identity Map pattern (as
+ * detailed in Martin Fowler's book "Patterns of Enterprise
+ * Architecture"). To enable this, sqloxx::PersistentObject is intended to
+ * work in conjunction with sqloxx::IdentityMap and sqloxx::Handle.
+ *
+ * Say we have a client class derived from PersistentObject. Call this
+ * class Derived. To obtain an instance of Derived, we call the
+ * free-standing function sqloxx::get_handle<Derived>, declared in
+ * database_connection.hpp. (See documentation therein for more details.)
+ * This will return a Handle<Derived> to the underlying Derived
+ * instance, the instance itself being cached in the IdentityMap<Derived>
+ * that is associated with the DatabaseConnection passed to get_handle.
+ * Instances of Derived should only ever be handled via a Handle<Derived>.
+ * Handles can be copied around, dereferenced, and otherwise treated
+ * similarly to a shared_ptr. The PersistentObject part of the Derived
+ * instance, together
+ * with Handle and IdentityMap, will work behind the scenes to ensure
+ * that, for each record in the database, at most one object is loaded
+ * into memory (i.e. cached in the IdentityMap). This prevents problems
+ * with objects being edited across multiple instances.
+ *	
+ * There is nothing to prevent client code from using a further
+ * wrapper class around Handle<Derived>. This then becomes a
+ * special case of the "pimpl" pattern.
+ *
+ * See sqloxx::IdentityMap and sqloxx::Handle for further documentation
+ * here.
+ *
+ * LAZY LOADING VIA GHOST PATTERN
+ *
+ * PersistentObject provides for lazy loading behaviour,
  * using the "ghost" pattern as described on p. 202 of Martin Fowler's
  * "Patterns of Enterprise Application Architecture". The PersistentObject
  * base class provides the bookkeeping associated with this pattern,
  * keeping track of the loading status of each in-memory object
  * ("loaded", "loading" or "ghost").
  *
- * In addition, PersistentObject is intended
- * to be used in conjunction with the Identity Map pattern (again, see
- * Fowler). Thus sqloxx::PersistentObject is intended to work in conjunction
- * with sqloxx::IdentityMap and sqloxx::Handle.
- *
- * The client should derive from PersistentObject. Let's call the derived
- * class Derived. Instances of Derived should then be handled only via
- * instances of Handle<Derived>. To initialize a Handle<Derived>, call
- * the free-standing function sqloxx::get_handle (see documentation
- * in database_connection.hpp). This returns a shared_ptr<Derived>, which
- * is then passed to the constructor for Handle<Derived>. The Derived
- * instance, in virtue of being derived from PersistentObject, will
- * keep track of the number of Handles pointing to it at any time. This
- * enables the IdentityMap to be updated as required. If all instances
- * of Derived are managed via Handle<Derived>, the IdentityMap will store
- * the underlying Derived instances, ensuring the same object is not
- * loaded multiple times from the database.
- *
- * See sqloxx::IdentityMap and sqloxx::Handle for further documentation.
- *
- * As for the "ghost" pattern:
  * in the Derived class, the intention is that some or all data members
  * declared in that class, can be "lazy". This means that they are not
  * initialized in the derived object's constructor, but are rather only
@@ -61,8 +80,11 @@ namespace sqloxx
  * In the derived class, implementations of getters
  * for attributes
  * other than those that are loaded immediately on construction, should
- * have \e load() as their first statement. (This means that getters cannot
- * be const.) In addition, implementations of \e all setters in the
+ * have \e load() as their first statement. (This means that getters in
+ * Derived cannot
+ * be const.) (See documentation for \e load().)
+ *
+ * In addition, implementations of \e all setters in the
  * derived class should have \e load() as their first statement.
  * Failure to adhere to these requirements will result in
  * in undefined behaviour.
@@ -76,13 +98,15 @@ namespace sqloxx
  * with lazy loading, while giving up the potential runtime efficiencies
  * that lazy loading can provide.
  * 
- * The following virtual functions are pure and so need definitions
+ * The following functions need to be provided with definitions
  * provided in the derived class:
  *
- * // WARNING Now becomes a static function of class Derived.
- * <b>virtual std::string do_get_table_name() const = 0;</b>\n
+ * <b>static std::string primary_table_name();</b>\n
  * Should return name of table in which instances of the derived class
- * are persisted in the database.
+ * are persisted in the database. If instance are persisted across
+ * multiple tables, this function should return the "primary table",
+ * i.e. a table containing the primary key for this class, such that
+ * every persisted instance of this class has a row in this table.
  *
  * <b>virtual void do_load() = 0;</b>\n
  * See documentation of load() function.
@@ -100,11 +124,17 @@ namespace sqloxx
  * <b>virtual Id do_calculate_prospecitve_key() const;</b>\n
  * See documentation for prospective_key() function.
  *
- * @param Derived The derived class. Derived should inherit publically
+ * TEMPLATE PARAMETERS
+ *
+ * @param Derived The derived class. Derived should inherit publicly
  * from PersistentObject per the Curiously Recurring Template Pattern (CRTP),
  * thus: <tt>class Derived: public PersistentObject<Derived...>, where "..."
  * represents the other template parameters, which may be ommitted if
  * the default values are accepted.
+ *
+ * @param Connection The type of the database connection through which
+ * instances of Derived will be persisted to the database. Connection
+ * should be a class derived from sqloxx::DatabaseConnection.
  *
  * @param Id The type of the identifier for this class in the database.
  * Best if integral. Defaults to sqloxx::Id.
@@ -154,8 +184,7 @@ public:
 	 * complaint. The constructor does not actually perform any checks on the
 	 * validity either of p_database_connection or of p_id.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em> (though derived classes'
-	 * constructors might, of course, throw).
+	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	PersistentObject
 	(	boost::shared_ptr<Connection> const& p_database_connection,
@@ -169,8 +198,7 @@ public:
 	 * @param p_database_connection database connection with which the
 	 * PersistentObject is to be associated.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em> (though derived classes'
-	 * constructors might, of course, throw).
+	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	explicit
 	PersistentObject
@@ -214,7 +242,7 @@ public:
 	 * changes to the in-memory object remain in the in-memory object and
 	 * are subsequently written to the database
 	 * when save_existing() is called, you should always call load() as
-	 * the first statement in the implementation of any setter method in
+	 * the \e first statement in the implementation of any \e setter method in
 	 * the derived class.
 	 *
 	 * @throws sqloxx::LogicError if this PersistentObject does not have
@@ -241,6 +269,9 @@ public:
 	 */
 	void save_existing();
 
+	// WARNING Up to here is reassessing exception safety, documentation
+	// and testing in light of IdentityMap pattern.
+
 	/**
 	 * Saves the state of the in-memory object to the database,
 	 * as an additional item, rather than overwriting existing
@@ -256,12 +287,12 @@ public:
 	 * calling the begin_transaction and end_transaction methods of the
 	 * DatabaseConnection.)
 	 *
-	 * It is presumed that the do_save_new function will result in the
+	 * The do_save_new function should result in the
 	 * saving of the complete state of a complete object. After do_save_new
-	 * is called, the body of the save_new function will mark the object
+	 * is called, the body of the base save_new function will mark the object
 	 * as being in a loaded, i.e. complete state.
 	 *
-	 * The do_get_table_name function must also
+	 * The primary_table_name() function must also
 	 * be defined in the derived class in order for this function
 	 * to find an automatically generated id to assign to the object
 	 * when saved. By default it is assumed that the id is an auto-
@@ -627,9 +658,10 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
 	m_database_connection(p_database_connection),
 	m_loading_status(ghost),
 	m_handle_counter(0)
+	// Note m_proxy_key is left unitialized. It is the responsibility
+	// of IdentityMap<Derived> to call set_proxy_key after construction,
+	// before providing a Handle to a newly created Derived instance.
 {
-	// WARNING When the object is created, the
-	// IdentityMap<Derived> should provide it with a proxy key.
 }
 
 template
@@ -771,12 +803,11 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::save_new()
 	do_save_new();
 	m_database_connection->end_transaction();
 	set_id(allocated_id);
-	// WARNING The "if (m_proxy_key)" is a hack.
 	if (m_proxy_key)
 	{
 		MapRegistrar<Derived, Connection>::notify_id
 		(	*m_database_connection,
-			jewel::value(m_proxy_key),
+			*m_proxy_key,
 			allocated_id
 		);
 	}
