@@ -805,9 +805,8 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::save_new()
 	set_id(allocated_id);
 	if (m_proxy_key)
 	{
-		MapRegistrar<Derived, Connection>::notify_id
-		(	*m_database_connection,
-			*m_proxy_key,
+		identity_map<Derived>(*m_database_connection).template register_id
+		(	*m_proxy_key,
 			allocated_id
 		);
 	}
@@ -874,12 +873,10 @@ decrement_handle_counter()
 		);
 	}
 	--m_handle_counter;
-	if (m_handle_counter == 0 && static_cast<bool>(m_proxy_key))  // the "&& m_proxy_key" is a temp hack
+	if (m_handle_counter == 0 && static_cast<bool>(m_proxy_key))
 	{
-		MapRegistrar<Derived, Connection>::notify_nil_handles
-		(	*m_database_connection,
-			jewel::value(m_proxy_key)
-		);
+		identity_map<Derived>(*m_database_connection).template
+			notify_nil_handles(*m_proxy_key);
 	}
 	return;
 }
