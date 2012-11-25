@@ -19,14 +19,19 @@ class DerivedDatabaseConnection;
 
 // Dummy class inheriting from PersistentObject, for the purpose
 // of testing PersistentObject class.
-class DerivedPO: public PersistentObject<DerivedPO, DerivedDatabaseConnection>
+class DerivedPO:
+	public PersistentObject<DerivedPO, DerivedDatabaseConnection>
 {
 
 public:
 	typedef sqloxx::Id Id;
+	typedef PersistentObject<DerivedPO, DerivedDatabaseConnection>
+		PersistentObject;
+	typedef sqloxx::IdentityMap<DerivedPO, DerivedDatabaseConnection>
+		IdentityMap;
 	static void setup_tables(DerivedDatabaseConnection& dbc);
-	explicit DerivedPO(boost::shared_ptr<DerivedDatabaseConnection> p_dbc);
-	DerivedPO(boost::shared_ptr<DerivedDatabaseConnection> p_dbc, Id p_id);
+	explicit DerivedPO(IdentityMap& p_identity_map);
+	DerivedPO(IdentityMap& p_identity_map, Id p_id);
 	int x();
 	double y();
 	void set_x(int p_x);
@@ -56,23 +61,27 @@ class DerivedDatabaseConnection: public DatabaseConnection
 {
 public:
 
-	IdentityMap<DerivedPO>& derived_po_map()
+	DerivedDatabaseConnection();
+
+	typedef sqloxx::IdentityMap<DerivedPO, DerivedDatabaseConnection>
+		IdentityMap;
+	IdentityMap& derived_po_map()
 	{
 		return m_derived_po_map;
 	}
 
 	template <typename T>
-	IdentityMap<T>& identity_map();
+	IdentityMap& identity_map();
 
 private:
 
-	IdentityMap<DerivedPO> m_derived_po_map;
+	IdentityMap& m_derived_po_map;
 };
 
 
 template <>
 inline
-IdentityMap<DerivedPO>&
+IdentityMap<DerivedPO, DerivedDatabaseConnection>&
 DerivedDatabaseConnection::identity_map<DerivedPO>()
 {
 	return m_derived_po_map;

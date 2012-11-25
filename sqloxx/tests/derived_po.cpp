@@ -25,15 +25,23 @@ DerivedPO::setup_tables(DerivedDatabaseConnection& dbc)
 	return;
 }
 
-DerivedPO::DerivedPO(shared_ptr<DerivedDatabaseConnection> p_dbc, Id p_id):
-	PersistentObject<DerivedPO, DerivedDatabaseConnection>(p_dbc, p_id),
+DerivedPO::DerivedPO
+(	IdentityMap& p_identity_map,
+	Id p_id
+):
+	PersistentObject
+	(	p_identity_map,
+		p_id
+	),
 	m_x(0),
 	m_y(0)
 {
 }
 
-DerivedPO::DerivedPO(shared_ptr<DerivedDatabaseConnection> p_dbc):
-	PersistentObject<DerivedPO, DerivedDatabaseConnection>(p_dbc),
+DerivedPO::DerivedPO
+(	IdentityMap& p_identity_map
+):
+	PersistentObject(p_identity_map),
 	m_x(0),
 	m_y(0)
 {
@@ -51,14 +59,14 @@ DerivedPO::self_test()
 {
 	int num_failures = 0;
 	DerivedPOFixture fixture;
-	DerivedPO dpo1(fixture.pdbc);
+	DerivedPO dpo1(*fixture.pdbc);
 	dpo1.set_x(3);
 	dpo1.set_y(4.08);
 	dpo1.save_new();
 	if (dpo1.id() != 1) ++num_failures;
 	if (dpo1.x() != 3) ++num_failures;
 	if (dpo1.y() != 4.08) ++num_failures;
-	DerivedPO dpo2(fixture.pdbc, 1);
+	DerivedPO dpo2(*fixture.pdbc, 1);
 	if (dpo2.id() != 1) ++num_failures;
 	if (dpo2.x() != 3) ++num_failures;
 	if (dpo2.y() != 4.08) ++num_failures;
@@ -70,7 +78,7 @@ DerivedPO::self_test()
 	if (dpo3.y() != dpo2.y()) ++num_failures;
 
 	// Check swap_base_internals
-	DerivedPO dpo4(fixture.pdbc);
+	DerivedPO dpo4(*fixture.pdbc);
 	dpo4.set_x(-30);
 	dpo4.set_y(-0.01887);
 	dpo4.save_new();
@@ -83,11 +91,11 @@ DerivedPO::self_test()
 	if (dpo4.y() != -0.01887) ++num_failures;
 
 	// Check database_connection_getter
-	if (dpo1.database_connection() != fixture.pdbc) ++num_failures;
-	if (dpo4.database_connection() != fixture.pdbc) ++num_failures;
+	if (dpo1.database_connection() != *fixture.pdbc) ++num_failures;
+	if (dpo4.database_connection() != *fixture.pdbc) ++num_failures;
 
 	// Check prospective_key() && do_calculate_prospective_key() (default)
-	DerivedPO dpo5(fixture.pdbc);
+	DerivedPO dpo5(*fixture.pdbc);
 	if (dpo5.prospective_key() != 3) ++num_failures;
 	dpo5.set_x(-100);
 	dpo5.set_y(982734);
@@ -104,7 +112,7 @@ DerivedPO::self_test()
 	if (!ok) ++num_failures;	
 
 	// Check set_id()
-	DerivedPO dpo6(fixture.pdbc);
+	DerivedPO dpo6(*fixture.pdbc);
 	dpo6.save_new();
 	if (dpo6.id() != 3) ++num_failures;
 	ok = false;
@@ -117,13 +125,13 @@ DerivedPO::self_test()
 		ok = true;
 	}
 	if (ok != true) ++num_failures;
-	DerivedPO dpo6b(fixture.pdbc);
+	DerivedPO dpo6b(*fixture.pdbc);
 	dpo6b.set_id(12);
 	if (dpo6b.id() != 12) ++num_failures;
 	
 	// Check has_id()
 	if (!dpo1.has_id()) ++num_failures;
-	DerivedPO dpo7(fixture.pdbc);
+	DerivedPO dpo7(*fixture.pdbc);
 	if (dpo7.has_id()) ++num_failures;
 
 	return num_failures;
@@ -153,7 +161,7 @@ DerivedPO::set_y(double p_y)
 }
 
 DerivedPO::DerivedPO(DerivedPO const& rhs):
-	PersistentObject<DerivedPO, DerivedDatabaseConnection>(rhs),
+	PersistentObject(rhs),
 	m_x(rhs.m_x),
 	m_y(rhs.m_y)
 {
@@ -207,6 +215,11 @@ DerivedPO::primary_table_name()
 	return "derived_pos";
 }
 
+DerivedDatabaseConnection::DerivedDatabaseConnection():
+	sqloxx::DatabaseConnection(),
+	m_derived_po_map(*this)
+{
+}
 
 }  // namespace tests
 }  // namespace sqloxx
