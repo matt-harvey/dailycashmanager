@@ -2,7 +2,6 @@
 #define GUARD_handle_hpp
 
 #include "sqloxx_exceptions.hpp"
-#include <boost/shared_ptr.hpp>
 
 namespace sqloxx
 {
@@ -19,7 +18,7 @@ template <typename T>
 class Handle
 {
 public:
-	Handle(typename boost::shared_ptr<T> const& p_pointer);
+	Handle(T* p_pointer);
 	~Handle();
 	Handle(Handle const& rhs);
 	Handle& operator=(Handle const& rhs);
@@ -27,15 +26,13 @@ public:
 	T& operator*() const;
 	T* operator->() const;
 private:
-	boost::shared_ptr<T> m_pointer;
+	T* m_pointer;
 
 };
 
 
 template <typename T>
-Handle<T>::Handle
-(	typename boost::shared_ptr<T> const& p_pointer
-):
+Handle<T>::Handle(T* p_pointer):
 	m_pointer(p_pointer)
 {
 	p_pointer->notify_handle_construction();
@@ -87,7 +84,7 @@ Handle<T>::operator->() const
 {
 	if (static_cast<bool>(m_pointer))
 	{
-		return m_pointer.get();
+		return m_pointer;
 	}
 	throw (UnboundHandleException("Unbound Handle."));
 }

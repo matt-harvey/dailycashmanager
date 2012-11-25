@@ -124,7 +124,7 @@ IdentityMap<T, Connection>::provide_object()
 	ProxyKey const proxy_key = next_proxy_key();
 	obj_ptr->set_proxy_key(proxy_key);
 	proxy_map()[proxy_key] = obj_ptr;
-	return Handle<T>(obj_ptr);
+	return Handle<T>(obj_ptr.get());
 }
 
 
@@ -141,10 +141,10 @@ IdentityMap<T, Connection>::provide_object(Id p_id)
 		ProxyKey proxy_key = next_proxy_key();
 		proxy_map()[proxy_key] = obj_ptr;
 		obj_ptr->set_proxy_key(proxy_key);
-		return Handle<T>(obj_ptr); 
+		return Handle<T>(obj_ptr.get()); 
 	}
 	assert (it != id_map().end());
-	return Handle<T>(it->second);
+	return Handle<T>(it->second.get());
 }
 
 template <typename T, typename Connection>
