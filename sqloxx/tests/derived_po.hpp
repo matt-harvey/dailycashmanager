@@ -75,7 +75,7 @@ public:
 
 private:
 
-	IdentityMap& m_derived_po_map;
+	IdentityMap m_derived_po_map;
 };
 
 

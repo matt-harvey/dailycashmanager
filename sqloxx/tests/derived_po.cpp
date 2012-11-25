@@ -59,14 +59,15 @@ DerivedPO::self_test()
 {
 	int num_failures = 0;
 	DerivedPOFixture fixture;
-	DerivedPO dpo1(*fixture.pdbc);
+	IdentityMap& idm = fixture.pdbc->derived_po_map();
+	DerivedPO dpo1(idm);
 	dpo1.set_x(3);
 	dpo1.set_y(4.08);
 	dpo1.save_new();
 	if (dpo1.id() != 1) ++num_failures;
 	if (dpo1.x() != 3) ++num_failures;
 	if (dpo1.y() != 4.08) ++num_failures;
-	DerivedPO dpo2(*fixture.pdbc, 1);
+	DerivedPO dpo2(idm, 1);
 	if (dpo2.id() != 1) ++num_failures;
 	if (dpo2.x() != 3) ++num_failures;
 	if (dpo2.y() != 4.08) ++num_failures;
@@ -78,7 +79,7 @@ DerivedPO::self_test()
 	if (dpo3.y() != dpo2.y()) ++num_failures;
 
 	// Check swap_base_internals
-	DerivedPO dpo4(*fixture.pdbc);
+	DerivedPO dpo4(idm);
 	dpo4.set_x(-30);
 	dpo4.set_y(-0.01887);
 	dpo4.save_new();
@@ -90,12 +91,8 @@ DerivedPO::self_test()
 	if (dpo4.x() != -30) ++num_failures;
 	if (dpo4.y() != -0.01887) ++num_failures;
 
-	// Check database_connection_getter
-	if (dpo1.database_connection() != *fixture.pdbc) ++num_failures;
-	if (dpo4.database_connection() != *fixture.pdbc) ++num_failures;
-
 	// Check prospective_key() && do_calculate_prospective_key() (default)
-	DerivedPO dpo5(*fixture.pdbc);
+	DerivedPO dpo5(idm);
 	if (dpo5.prospective_key() != 3) ++num_failures;
 	dpo5.set_x(-100);
 	dpo5.set_y(982734);
@@ -112,7 +109,7 @@ DerivedPO::self_test()
 	if (!ok) ++num_failures;	
 
 	// Check set_id()
-	DerivedPO dpo6(*fixture.pdbc);
+	DerivedPO dpo6(idm);
 	dpo6.save_new();
 	if (dpo6.id() != 3) ++num_failures;
 	ok = false;
@@ -125,13 +122,13 @@ DerivedPO::self_test()
 		ok = true;
 	}
 	if (ok != true) ++num_failures;
-	DerivedPO dpo6b(*fixture.pdbc);
+	DerivedPO dpo6b(idm);
 	dpo6b.set_id(12);
 	if (dpo6b.id() != 12) ++num_failures;
 	
 	// Check has_id()
 	if (!dpo1.has_id()) ++num_failures;
-	DerivedPO dpo7(*fixture.pdbc);
+	DerivedPO dpo7(idm);
 	if (dpo7.has_id()) ++num_failures;
 
 	return num_failures;
@@ -171,7 +168,7 @@ void
 DerivedPO::do_load()
 {
 	SharedSQLStatement selector
-	(	*database_connection(),
+	(	database_connection(),
 		"select x, y from derived_pos where derived_po_id = :p"
 	);
 	selector.bind(":p", id());
@@ -187,7 +184,7 @@ void
 DerivedPO::do_save_existing()
 {
 	SharedSQLStatement updater
-	(	*database_connection(),
+	(	database_connection(),
 		"update derived_pos set x = :x, y = :y where derived_po_id = :id"
 	);
 	updater.bind(":x", m_x);
@@ -201,7 +198,7 @@ void
 DerivedPO::do_save_new()
 {
 	SharedSQLStatement inserter
-	(	*database_connection(),
+	(	database_connection(),
 		"insert into derived_pos(x, y) values(:x, :y)"
 	);
 	inserter.bind(":x", m_x);
@@ -216,7 +213,7 @@ DerivedPO::primary_table_name()
 }
 
 DerivedDatabaseConnection::DerivedDatabaseConnection():
-	sqloxx::DatabaseConnection(),
+	DatabaseConnection(),
 	m_derived_po_map(*this)
 {
 }

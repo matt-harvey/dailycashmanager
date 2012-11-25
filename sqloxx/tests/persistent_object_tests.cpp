@@ -29,7 +29,7 @@ namespace filesystem = boost::filesystem;
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_one_param)
 {
-	DerivedPO dpo(pdbc);
+	DerivedPO dpo(pdbc->derived_po_map());
 	CHECK_THROW(dpo.id(), UninitializedOptionalException);
 	CHECK_EQUAL(dpo.x(), 0);
 	dpo.set_y(3.3);
@@ -40,14 +40,14 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_two_params)
 {
 	try  // WARNING temp
 	{
-		DerivedPO dpo(pdbc);
+		DerivedPO dpo(pdbc->derived_po_map());
 		dpo.set_x(10);
 		dpo.set_y(3.23);
 		dpo.save_new();
 		CHECK_EQUAL(dpo.id(), 1);
 		CHECK_EQUAL(dpo.x(), 10);
 		CHECK_EQUAL(dpo.y(), 3.23);
-		DerivedPO e(pdbc, 1);
+		DerivedPO e(pdbc->derived_po_map(), 1);
 		CHECK_EQUAL(e.id(), dpo.id());
 		CHECK_EQUAL(e.id(), 1);
 		CHECK_EQUAL(e.x(), 10);
@@ -63,40 +63,40 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_two_params)
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_existing)
 {
-	DerivedPO dpo1(pdbc);
+	DerivedPO dpo1(pdbc->derived_po_map());
 	dpo1.set_x(78);
 	dpo1.set_y(4.5);
 	CHECK_THROW(dpo1.save_existing(), LogicError);
 	dpo1.save_new();
-	DerivedPO dpo2(pdbc);
+	DerivedPO dpo2(pdbc->derived_po_map());
 	dpo2.set_x(234);
 	dpo2.set_y(29837.01);
 	dpo2.save_new();
 	CHECK_EQUAL(dpo2.id(), 2);
-	DerivedPO dpo2b(pdbc, 2);
+	DerivedPO dpo2b(pdbc->derived_po_map(), 2);
 	CHECK_EQUAL(dpo2b.x(), 234);
 	CHECK_EQUAL(dpo2b.y(), 29837.01);
 	dpo2b.set_y(2.0);
 	dpo2b.save_existing();
-	DerivedPO dpo2c(pdbc, 2);
+	DerivedPO dpo2c(pdbc->derived_po_map(), 2);
 	CHECK_EQUAL(dpo2c.id(), 2);
 	CHECK_EQUAL(dpo2c.x(), 234);
 	CHECK_EQUAL(dpo2c.y(), 2.0);
 	dpo2c.set_x(0);  // But don't call save_existing yet
-	DerivedPO dpo2d(pdbc, 2);
+	DerivedPO dpo2d(pdbc->derived_po_map(), 2);
 	CHECK_EQUAL(dpo2d.x(), 234);
 	CHECK_EQUAL(dpo2d.y(), 2.0);
 	dpo2c.save_existing();  // Now the changed object is saved
-	DerivedPO dpo2e(pdbc, 2);
+	DerivedPO dpo2e(pdbc->derived_po_map(), 2);
 	CHECK_EQUAL(dpo2e.x(), 0);
 	CHECK_EQUAL(dpo2e.y(), 2.0);
-	DerivedPO dpo2f(pdbc, 2);
+	DerivedPO dpo2f(pdbc->derived_po_map(), 2);
 	dpo2f.set_x(5000);
 	dpo2f.save_existing();
-	DerivedPO dpo2g(pdbc, 2);
+	DerivedPO dpo2g(pdbc->derived_po_map(), 2);
 	CHECK_EQUAL(dpo2g.x(), 5000);
 	CHECK_EQUAL(dpo2g.y(), 2.0);
-	DerivedPO dpo1b(pdbc, 1);
+	DerivedPO dpo1b(pdbc->derived_po_map(), 1);
 	dpo1b.save_existing();
 	CHECK_EQUAL(dpo1b.x(), 78);
 	CHECK_EQUAL(dpo1b.y(), 4.5);
@@ -104,7 +104,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_existing)
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 {
-	DerivedPO dpo1(pdbc);
+	DerivedPO dpo1(pdbc->derived_po_map());
 	dpo1.set_x(978);
 	dpo1.set_y(-.238);
 	dpo1.save_new();
@@ -115,7 +115,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 	// message to be printed when pdbc closed.
 	pdbc->end_transaction();
 
-	DerivedPO dpo2(pdbc);
+	DerivedPO dpo2(pdbc->derived_po_map());
 	dpo2.set_x(20);
 	dpo2.set_y(0.00030009);
 	dpo2.save_new();
@@ -137,7 +137,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 	check_troublesome.step();
 	CHECK_EQUAL(check_troublesome.extract<int>(0), numeric_limits<int>::max());
 	check_troublesome.step_final();
-	DerivedPO dpo3(pdbc);
+	DerivedPO dpo3(pdbc->derived_po_map());
 	dpo3.set_x(100);
 	dpo3.set_y(3.2);
 
@@ -150,11 +150,11 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
 {
-	DerivedPO dpo1(pdbc);
+	DerivedPO dpo1(pdbc->derived_po_map());
 	CHECK_THROW(dpo1.id(), UninitializedOptionalException);
 	dpo1.save_new();
 	CHECK_EQUAL(dpo1.id(), 1);
-	DerivedPO dpo2(pdbc);
+	DerivedPO dpo2(pdbc->derived_po_map());
 	CHECK_THROW(dpo2.id(), UninitializedOptionalException);
 	CHECK_THROW(dpo2.id(), UninitializedOptionalException);
 	dpo2.save_new();
@@ -173,7 +173,7 @@ TEST_FIXTURE(DerivedPOFixture, test_load_indirectly)
 {
 	// load is protected method but we here we test it indirectly
 	// via getting functions we know call it
-	DerivedPO dpo1(pdbc);
+	DerivedPO dpo1(pdbc->derived_po_map());
 	int const a = 2097601234;
 	double const b = 72973.2987300;
 	dpo1.set_x(a);
@@ -182,7 +182,7 @@ TEST_FIXTURE(DerivedPOFixture, test_load_indirectly)
 	assert (dpo1.y() == b);
 	dpo1.save_new();
 
-	DerivedPO dpo2(pdbc, 1);
+	DerivedPO dpo2(pdbc->derived_po_map(), 1);
 	CHECK_EQUAL(dpo2.id(), 1);
 	CHECK_EQUAL(dpo2.x(), a);  // load called here
 	CHECK_EQUAL(dpo2.y(), b);  // and here
