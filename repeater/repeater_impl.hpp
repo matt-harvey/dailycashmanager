@@ -62,6 +62,8 @@ public:
 	typedef sqloxx::PersistentObject<RepeaterImpl, PhatbooksDatabaseConnection>
 		PersistentObject;
 	typedef sqloxx::Id Id;
+	typedef sqloxx::IdentityMap<RepeaterImpl, PhatbooksDatabaseConnection>
+		IdentityMap;
 
 	/**
 	 * Sets up tables in the database required for the persistence
@@ -75,16 +77,14 @@ public:
 	 */
 	explicit
 	RepeaterImpl
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection
+	(	IdentityMap& p_identity_map
 	);
 
 	/**
 	 * Get a RepeaterImpl by id from the database.
 	 */
 	RepeaterImpl
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection,
+	(	IdentityMap& p_identity_map,	
 		Id p_id
 	);
 

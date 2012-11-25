@@ -27,6 +27,9 @@ public:
 		sqloxx::PersistentObject<DraftJournalImpl, PhatbooksDatabaseConnection>
 		PersistentObject;
 	typedef sqloxx::Id Id;
+	typedef
+		sqloxx::IdentityMap<DraftJournalImpl, PhatbooksDatabaseConnection>
+		IdentityMap;
 
 	static std::string primary_table_name();
 
@@ -41,17 +44,13 @@ public:
 	 * correspond to any particular object in the database
 	 */
 	explicit
-	DraftJournalImpl
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection
-	);
+	DraftJournalImpl(IdentityMap& p_identity_map);
 
 	/**
 	 * Get a DraftJournalImpl by id from the database.
 	 */
 	DraftJournalImpl
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection,
+	(	IdentityMap& p_identity_map,
 		Id p_id
 	);
 
@@ -64,8 +63,7 @@ public:
 	 */
 	DraftJournalImpl
 	(	Journal const& p_journal,
-		boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection
+		IdentityMap& p_identity_map
 	);
 
 	/**

@@ -63,7 +63,13 @@ namespace phatbooks
 
 
 PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
-  DatabaseConnection()
+	DatabaseConnection(),
+	m_account_map(*this),
+	m_commodity_map(*this),
+	m_entry_map(*this),
+	m_ordinary_journal_map(*this),
+	m_draft_journal_map(*this),
+	m_repeater_map(*this)
 {
 }
 

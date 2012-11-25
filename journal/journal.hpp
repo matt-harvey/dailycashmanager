@@ -100,15 +100,15 @@ public:
 protected:
 
 	void do_load_journal_base
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const& dbc,
+	(	PhatbooksDatabaseConnection& dbc,
 		Id id
 	);
 	void do_save_existing_journal_base
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const& dbc,
+	(	PhatbooksDatabaseConnection& dbc,
 		Id id
 	);
 	Id do_save_new_journal_base
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const& dbc
+	(	PhatbooksDatabaseConnection& dbc
 	);
 	
 private:

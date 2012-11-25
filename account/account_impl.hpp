@@ -15,6 +15,7 @@
 #include "account_type.hpp"
 #include "commodity.hpp"
 #include "sqloxx/general_typedefs.hpp"
+#include "sqloxx/identity_map.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <algorithm>
@@ -48,6 +49,8 @@ public:
 		PersistentObject;
 
 	typedef account_type::AccountType AccountType;
+	typedef sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>
+		IdentityMap;
 
 	/**
 	 * Returns a vector of account type names, corresponding to the
@@ -74,19 +77,12 @@ public:
 	 * particular object in the database.
 	 */
 	explicit
-	AccountImpl
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection
-	);
+	AccountImpl(IdentityMap& p_identity_map);
 
 	/**
 	 * Get an AccountImpl by id from database.
 	 */
-	AccountImpl
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection,
-		Id p_id
-	);
+	AccountImpl(IdentityMap& p_identity_map, Id p_id);
 
 	/**
 	 * Destuctor.

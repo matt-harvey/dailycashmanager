@@ -2,6 +2,7 @@
 #define GUARD_persistent_object_hpp
 
 #include "general_typedefs.hpp"
+#include "identity_map.hpp"
 #include "next_auto_key.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <boost/none.hpp>
@@ -169,6 +170,8 @@ class PersistentObject
 {
 public:
 
+	typedef sqloxx::IdentityMap<Derived, Connection> IdentityMap;
+
 	/**
 	 * Create a PersistentObject that corresponds (or purports to correspond)
 	 * to one that already exists in the database.
@@ -187,7 +190,7 @@ public:
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	PersistentObject
-	(	boost::shared_ptr<Connection> const& p_database_connection,
+	(	IdentityMap& p_identity_map,
 		Id p_id
 	);
 
@@ -202,7 +205,7 @@ public:
 	 */
 	explicit
 	PersistentObject
-	(	boost::shared_ptr<Connection> const& p_database_connection
+	(	IdentityMap& p_identity_map
 	);
 
 	/**
@@ -489,7 +492,10 @@ protected:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>
 	 */
-	boost::shared_ptr<Connection> database_connection() const;
+	Connection& database_connection() const
+	{
+		return m_identity_map.connection();
+	}
 
 	/**
 	 * Sets the id of this instance of PersistentObject to p_id.
@@ -614,7 +620,8 @@ private:
 	
 	// Data members
 
-	boost::shared_ptr<Connection> m_database_connection;
+
+	IdentityMap& m_identity_map;
 
 	// Represent primary key in database. If the object does not correspond to
 	// and does not purport to correspond to any record in the database, then
@@ -640,10 +647,10 @@ private:
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>
 PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
-(	boost::shared_ptr<Connection> const& p_database_connection,
+(	IdentityMap& p_identity_map,
 	Id p_id
 ):
-	m_database_connection(p_database_connection),
+	m_identity_map(p_identity_map),
 	m_id(p_id),
 	m_loading_status(ghost),
 	m_handle_counter(0)
@@ -653,9 +660,9 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>
 PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
-(	boost::shared_ptr<Connection> const& p_database_connection
+(	IdentityMap& p_identity_map	
 ):
-	m_database_connection(p_database_connection),
+	m_identity_map(p_identity_map),
 	m_loading_status(ghost),
 	m_handle_counter(0)
 	// Note m_proxy_key is left unitialized. It is the responsibility
@@ -684,7 +691,7 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::load()
 		m_loading_status = loading;
 		try
 		{
-			m_database_connection->begin_transaction();
+			database_connection().begin_transaction();
 		}
 		catch (TransactionNestingException&)
 		{
@@ -707,7 +714,7 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::load()
 		}
 		try
 		{
-			m_database_connection->end_transaction();
+			database_connection().end_transaction();
 			// Note this can't possibly throw TransactionNestingException
 			// here, unless do_load() has done something perverse.
 		}
@@ -758,9 +765,9 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::save_existing()
 		);
 	}
 	load();
-	m_database_connection->begin_transaction();
+	database_connection().begin_transaction();
 	do_save_existing();
-	m_database_connection->end_transaction();
+	database_connection().end_transaction();
 	return;
 }
 
@@ -787,7 +794,7 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::
 do_calculate_prospective_key() const
 {	
 	return next_auto_key<Connection, Id>
-	(	*database_connection(),
+	(	database_connection(),
 		Derived::primary_table_name()
 	);
 }
@@ -798,19 +805,14 @@ template
 void
 PersistentObject<Derived, Connection, Id, HandleCounter>::save_new()
 {
-	m_database_connection->begin_transaction();
+	database_connection().begin_transaction();
 	Id const allocated_id = prospective_key();
 	do_save_new();
-	m_database_connection->end_transaction();
+	database_connection().end_transaction();
 	set_id(allocated_id);
 	if (m_proxy_key)
 	{
-		m_database_connection->template
-			identity_map<Derived>().template
-			register_id
-			(	*m_proxy_key,
-				allocated_id
-			);
+		m_identity_map.register_id(*m_proxy_key, allocated_id);
 	}
 
 	// The next line fixed a bug 2012-11-22 that in resulted in objects being
@@ -821,16 +823,6 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::save_new()
 	// WARNING Reconsider what exception safety guarantee can be offered
 	// in light of the dealings around proxy key that have now been
 	// incorporated into this function. Reflect in API documentation.
-}
-
-
-template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
-boost::shared_ptr<Connection>
-PersistentObject<Derived, Connection, Id, HandleCounter>::
-database_connection() const
-{
-	return m_database_connection;
 }
 
 
@@ -877,9 +869,7 @@ decrement_handle_counter()
 	--m_handle_counter;
 	if (m_handle_counter == 0 && static_cast<bool>(m_proxy_key))
 	{
-		m_database_connection->template
-			identity_map<Derived>().template
-			notify_nil_handles(*m_proxy_key);
+		m_identity_map.notify_nil_handles(*m_proxy_key);
 	}
 	return;
 }
@@ -924,7 +914,7 @@ template
 PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
 (	PersistentObject const& rhs
 ):
-	m_database_connection(rhs.m_database_connection),
+	m_identity_map(rhs.m_identity_map),
 	m_id(rhs.m_id),
 	m_proxy_key(rhs.m_proxy_key),
 	m_loading_status(rhs.m_loading_status)
@@ -938,18 +928,17 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::swap_base_internals
 (	PersistentObject& rhs
 )
 {
-	boost::shared_ptr<Connection> temp_dbc =
-		rhs.m_database_connection;
+	IdentityMap temp_id_map = rhs.m_identity_map;
 	boost::optional<Id> temp_id = rhs.m_id;
 	boost::optional<Id> temp_proxy_key = rhs.m_proxy_key;
 	LoadingStatus temp_loading_status = rhs.m_loading_status;
 
-	rhs.m_database_connection = m_database_connection;
+	rhs.m_identity_map = m_identity_map;
 	rhs.m_id = m_id;
 	rhs.m_proxy_key = m_proxy_key;
 	rhs.m_loading_status = m_loading_status;
 
-	m_database_connection = temp_dbc;
+	m_identity_map = temp_id_map;
 	m_id = temp_id;
 	m_proxy_key = temp_proxy_key;
 	m_loading_status = temp_loading_status;

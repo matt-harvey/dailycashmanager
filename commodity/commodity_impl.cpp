@@ -1,5 +1,6 @@
 #include "commodity_impl.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "sqloxx/identity_map.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
@@ -82,19 +83,19 @@ CommodityImpl::CommodityImpl(CommodityImpl const& rhs):
 
 
 CommodityImpl::CommodityImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+(	IdentityMap& p_identity_map
 ):
-	PersistentObject(p_database_connection),
+	PersistentObject(p_identity_map),
 	m_data(new CommodityData)
 {
 }
 
 
 CommodityImpl::CommodityImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
+(	IdentityMap& p_identity_map,	
 	Id p_id
 ):
-	PersistentObject(p_database_connection, p_id),
+	PersistentObject(p_identity_map, p_id),
 	m_data(new CommodityData)
 {
 	load_abbreviation_knowing_id();
@@ -123,7 +124,7 @@ CommodityImpl::swap(CommodityImpl& rhs)
 void CommodityImpl::load_abbreviation_knowing_id()
 {
 	SharedSQLStatement statement
-	(	*database_connection(),
+	(	database_connection(),
 		"select abbreviation from commodities where commodity_id = :p"
 	);
 	statement.bind(":p", id());
@@ -138,7 +139,7 @@ void CommodityImpl::do_load()
 {
 	CommodityImpl temp(*this);
 	SharedSQLStatement statement
-	(	*database_connection(),
+	(	database_connection(),
 		"select abbreviation, name, description, precision, "
 		"multiplier_to_base_intval, multiplier_to_base_places from "
 		"commodities where commodity_id = :p"
@@ -175,7 +176,7 @@ void CommodityImpl::process_saving_statement(SharedSQLStatement& statement)
 void CommodityImpl::do_save_existing()
 {
 	SharedSQLStatement updater
-	(	*database_connection(),
+	(	database_connection(),
 		"update commodities set "
 		"abbreviation = :abbreviation, "
 		"name = :name, "
@@ -194,7 +195,7 @@ void CommodityImpl::do_save_existing()
 void CommodityImpl::do_save_new()
 {
 	SharedSQLStatement inserter
-	(	*database_connection(),
+	(	database_connection(),
 		"insert into commodities(abbreviation, name, description, precision, "
 		"multiplier_to_base_intval, multiplier_to_base_places) "
 		"values(:abbreviation, :name, :description, :precision, "

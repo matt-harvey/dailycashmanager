@@ -12,6 +12,7 @@
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/general_typedefs.hpp"
+#include "sqloxx/identity_map.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/optional.hpp>
@@ -96,19 +97,19 @@ AccountImpl::id_for_name(PhatbooksDatabaseConnection& dbc, string const& name)
 
 
 AccountImpl::AccountImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+(	IdentityMap& p_identity_map	
 ):
-	PersistentObject(p_database_connection),
+	PersistentObject(p_identity_map),
 	m_data(new AccountData)
 {
 }
 
 
 AccountImpl::AccountImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
+(	IdentityMap& p_identity_map,	
 	Id p_id
 ):
-	PersistentObject(p_database_connection, p_id),
+	PersistentObject(p_identity_map, p_id),
 	m_data(new AccountData)
 {
 	load_name_knowing_id();
@@ -202,7 +203,7 @@ void
 AccountImpl::do_load()
 {
 	SharedSQLStatement statement
-	(	*database_connection(),
+	(	database_connection(),
 		"select commodity_id, account_type_id, description "
 		"from accounts where account_id = :p"
 	);
@@ -238,7 +239,7 @@ void
 AccountImpl::do_save_existing()
 {
 	SharedSQLStatement updater
-	(	*database_connection(),
+	(	database_connection(),
 		"update accounts set "
 		"name = :name, "
 		"commodity_id = :commodity_id, "
@@ -255,7 +256,7 @@ void
 AccountImpl::do_save_new()
 {
 	SharedSQLStatement inserter
-	(	*database_connection(),
+	(	database_connection(),
 		"insert into accounts(account_type_id, name, description, "
 		"commodity_id) values(:account_type_id, :name, :description, "
 		":commodity_id)"
@@ -274,7 +275,7 @@ void
 AccountImpl::load_name_knowing_id()
 {
 	SharedSQLStatement statement
-	(	*database_connection(),
+	(	database_connection(),
 		"select name from accounts where account_id = :p"
 	);
 	statement.bind(":p", id());

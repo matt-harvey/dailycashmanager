@@ -23,19 +23,16 @@ public:
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	explicit Commodity
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection
+	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
 	Commodity
-	(	boost::shared_ptr<PhatbooksDatabaseConnection>
-			const& p_database_connection,
+	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
 
 	Commodity
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection,
+	(	PhatbooksDatabaseConnection& p_database_connection,
 		std::string const& p_abbreviation
 	);
 

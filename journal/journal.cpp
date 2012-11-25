@@ -138,15 +138,15 @@ Journal::swap(Journal& rhs)
 
 Journal::Id
 Journal::do_save_new_journal_base
-(	shared_ptr<PhatbooksDatabaseConnection> const& dbc
+(	PhatbooksDatabaseConnection& dbc
 )
 {
 	Id const journal_id = next_auto_key
 	<	PhatbooksDatabaseConnection,
 		Id
-	>	(*dbc, "journals");
+	>	(dbc, "journals");
 	SharedSQLStatement statement
-	(	*dbc,
+	(	dbc,
 		"insert into journals(is_actual, comment) "
 		"values(:is_actual, :comment)"
 	);
@@ -165,12 +165,12 @@ Journal::do_save_new_journal_base
 
 void
 Journal::do_save_existing_journal_base
-(	shared_ptr<PhatbooksDatabaseConnection> const& dbc,
+(	PhatbooksDatabaseConnection& dbc,
 	Journal::Id id
 )
 {
 	SharedSQLStatement updater
-	(	*dbc,
+	(	dbc,
 		"update journals set is_actual = :is_actual, comment = :comment "
 		"where journal_id = :id"
 	);
@@ -189,7 +189,7 @@ Journal::do_save_existing_journal_base
 	// Remove any entries in the database with this journal's journal_id, that
 	// no longer exist in the in-memory journal
 	SharedSQLStatement entry_finder
-	(	*dbc,	
+	(	dbc,	
 		"select entry_id from entries where journal_id = :journal_id"
 	);
 	entry_finder.bind(":journal_id", id);
@@ -203,7 +203,7 @@ Journal::do_save_existing_journal_base
 			// This entry is in the database but no longer in the in-memory
 			// journal, so should be deleted.
 			SharedSQLStatement entry_deleter
-			(	*dbc,
+			(	dbc,
 				"delete from entries where entry_id = :entry_id"
 			);
 			entry_deleter.bind(":entry_id", entry_id);
@@ -220,19 +220,19 @@ Journal::do_save_existing_journal_base
 
 void
 Journal::do_load_journal_base
-(	shared_ptr<PhatbooksDatabaseConnection> const& dbc,
+(	PhatbooksDatabaseConnection& dbc,
 	Journal::Id id
 )
 {
 	SharedSQLStatement statement
-	(	*dbc,
+	(	dbc,
 		"select is_actual, comment from journals where journal_id = :p"
 	);
 	statement.bind(":p", id);
 	statement.step();
 	Journal temp(*this);
 	SharedSQLStatement entry_finder
-	(	*dbc,	
+	(	dbc,	
 		"select entry_id from entries where journal_id = :jid"
 	);
 	entry_finder.bind(":jid", id);

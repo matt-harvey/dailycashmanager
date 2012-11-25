@@ -5,16 +5,16 @@ project (main)
 project (test)
 
 include_directories (/home/matthew/lib
-					 /home/matthew/Workbench/versioned/phatbooks
-                     /home/matthew/Workbench/versioned/phatbooks/account
-					 /home/matthew/Workbench/versioned/phatbooks/commodity
-					 /home/matthew/Workbench/versioned/phatbooks/date
-					 /home/matthew/Workbench/versioned/phatbooks/entry
-					 /home/matthew/Workbench/versioned/phatbooks/import_from_nap
-					 /home/matthew/Workbench/versioned/phatbooks/journal
-					 /home/matthew/Workbench/versioned/phatbooks/phatbooks_database_connection
-					 /home/matthew/Workbench/versioned/phatbooks/phatbooks_text_session
-					 /home/matthew/Workbench/versioned/phatbooks/repeater)
+					 /home/matthew/Workbench/versioned/phatbooks_simplified_id_map/simplified_id_map
+                     /home/matthew/Workbench/versioned/phatbooks_simplified_id_map/simplified_id_map/account
+                     /home/matthew/Workbench/versioned/phatbooks_simplified_id_map/simplified_id_map/commodity
+                     /home/matthew/Workbench/versioned/phatbooks_simplified_id_map/simplified_id_map/date
+                     /home/matthew/Workbench/versioned/phatbooks_simplified_id_map/simplified_id_map/entry
+                     /home/matthew/Workbench/versioned/phatbooks_simplified_id_map/simplified_id_map/import_from_nap
+                     /home/matthew/Workbench/versioned/phatbooks_simplified_id_map/simplified_id_map/journal
+                     /home/matthew/Workbench/versioned/phatbooks_simplified_id_map/simplified_id_map/phatbooks_database_connection
+                     /home/matthew/Workbench/versioned/phatbooks_simplified_id_map/simplified_id_map/phatbooks_text_session
+                     /home/matthew/Workbench/versioned/phatbooks_simplified_id_map/simplified_id_map/repeater)
 
 link_directories (/home/matthew/lib/jewel)
 

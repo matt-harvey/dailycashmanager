@@ -44,6 +44,8 @@ public:
 	typedef sqloxx::PersistentObject<EntryImpl, PhatbooksDatabaseConnection>
 		PersistentObject;
 	typedef sqloxx::Id Id;
+	typedef sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>
+		IdentityMap;
 
 	/**
 	 * Sets up tables in the database required for the persistence of
@@ -57,17 +59,13 @@ public:
 	 * with any particular Journal.
 	 */
 	explicit
-	EntryImpl
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection
-	);
+	EntryImpl(IdentityMap& p_identity_map);
 
 	/**
 	 * Get an EntryImpl by id from the database.
 	 */
 	EntryImpl
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection,
+	(	IdentityMap& p_identity_map,	
 		Id p_id
 	);
 

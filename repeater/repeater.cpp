@@ -20,8 +20,7 @@ Repeater::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 Repeater::Repeater
-(	shared_ptr<PhatbooksDatabaseConnection> const&
-		p_database_connection
+(	PhatbooksDatabaseConnection& p_database_connection
 ):
 	m_impl
 	(	get_handle<RepeaterImpl>(p_database_connection)
@@ -30,8 +29,7 @@ Repeater::Repeater
 }
 
 Repeater::Repeater
-(	shared_ptr<PhatbooksDatabaseConnection> const&
-		p_database_connection,
+(	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
 	m_impl
