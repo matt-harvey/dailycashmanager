@@ -118,19 +118,19 @@ OrdinaryJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 
 OrdinaryJournalImpl::OrdinaryJournalImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+(	IdentityMap& p_identity_map
 ):
-	OrdinaryJournalImpl::PersistentObject(p_database_connection),
+	OrdinaryJournalImpl::PersistentObject(p_identity_map),
 	Journal()
 {
 }
 
 
 OrdinaryJournalImpl::OrdinaryJournalImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
+(	IdentityMap& p_identity_map,
 	Id p_id
 ):
-	OrdinaryJournalImpl::PersistentObject(p_database_connection, p_id),
+	OrdinaryJournalImpl::PersistentObject(p_identity_map, p_id),
 	Journal()
 {
 }
@@ -138,9 +138,9 @@ OrdinaryJournalImpl::OrdinaryJournalImpl
 
 OrdinaryJournalImpl::OrdinaryJournalImpl
 (	Journal const& p_journal,
-	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+	IdentityMap& p_identity_map
 ):
-	OrdinaryJournalImpl::PersistentObject(p_database_connection),
+	OrdinaryJournalImpl::PersistentObject(p_identity_map),
 	Journal(p_journal)
 {
 }
@@ -197,7 +197,7 @@ OrdinaryJournalImpl::do_load()
 
 	// Load the derived, OrdinaryJournalImpl part of temp.
 	SharedSQLStatement statement
-	(	*database_connection(),
+	(	database_connection(),
 		"select date from ordinary_journal_detail where journal_id = :p"
 	);
 	statement.bind(":p", id());
@@ -220,7 +220,7 @@ OrdinaryJournalImpl::do_save_new()
 
 	// Save the derived, OrdinaryJournalImpl part of the object
 	SharedSQLStatement statement
-	(	*database_connection(),
+	(	database_connection(),
 		"insert into ordinary_journal_detail (journal_id, date) "
 		"values(:journal_id, :date)"
 	);
@@ -238,7 +238,7 @@ OrdinaryJournalImpl::do_save_existing()
 
 	// Save the derived, OrdinaryJournalImpl part of the object
 	SharedSQLStatement updater
-	(	*database_connection(),	
+	(	database_connection(),	
 		"update ordinary_journal_detail set date = :date "
 		"where journal_id = :journal_id"
 	);

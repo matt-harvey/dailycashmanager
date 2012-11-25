@@ -24,16 +24,14 @@ Entry::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 
 Entry::Entry
-(	shared_ptr<PhatbooksDatabaseConnection> const&
-		 p_database_connection
+(	PhatbooksDatabaseConnection& p_database_connection
 ):
 	m_impl(get_handle<EntryImpl>(p_database_connection))
 {
 }
 
 Entry::Entry
-(	shared_ptr<PhatbooksDatabaseConnection> const&
-		p_database_connection,
+(	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
 	m_impl(get_handle<EntryImpl>(p_database_connection, p_id))

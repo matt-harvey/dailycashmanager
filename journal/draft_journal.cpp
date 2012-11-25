@@ -24,14 +24,14 @@ DraftJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 DraftJournal::DraftJournal
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+(	PhatbooksDatabaseConnection& p_database_connection
 ):
 	m_impl(get_handle<DraftJournalImpl>(p_database_connection))
 {
 }
 
 DraftJournal::DraftJournal
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
+(	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
 	m_impl(get_handle<DraftJournalImpl>(p_database_connection, p_id))
@@ -42,7 +42,7 @@ DraftJournal::DraftJournal
 // Factor out.
 DraftJournal::DraftJournal
 (	Journal& p_journal,
-	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+	PhatbooksDatabaseConnection& p_database_connection
 ):
 	m_impl(get_handle<DraftJournalImpl>(p_database_connection))
 {

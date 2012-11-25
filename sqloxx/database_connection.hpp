@@ -37,7 +37,7 @@ namespace sqloxx
  */
 template <typename T, typename Connection>
 Handle<T>
-get_handle(boost::shared_ptr<Connection> const& dbc, typename T::Id id);
+get_handle(Connection& dbc, typename T::Id id);
 
 /**
  * Convenience function to return a Handle<T> to a new, id-less business
@@ -45,7 +45,7 @@ get_handle(boost::shared_ptr<Connection> const& dbc, typename T::Id id);
  */
 template <typename T, typename Connection>
 Handle<T>
-get_handle(boost::shared_ptr<Connection> const& dbc);
+get_handle(Connection& dbc);
 
 
 // TODO Move in-header template implementations to a separate file to keep the
@@ -54,21 +54,21 @@ get_handle(boost::shared_ptr<Connection> const& dbc);
 template <typename T, typename Connection>
 inline
 Handle<T>
-get_handle(boost::shared_ptr<Connection> const& dbc, typename T::Id id)
+get_handle(Connection& dbc, typename T::Id id)
 {
-	return dbc->template
+	return dbc.template
 		identity_map<T>().template
-		provide_object(dbc, id);
+		provide_object(id);
 }
 
 template <typename T, typename Connection>
 inline
 Handle<T>
-get_handle(boost::shared_ptr<Connection> const& dbc)
+get_handle(Connection& dbc)
 {
-	return dbc->template
+	return dbc.template
 		identity_map<T>().template
-		provide_object(dbc);
+		provide_object();
 }
 
 

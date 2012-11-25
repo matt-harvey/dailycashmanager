@@ -49,19 +49,19 @@ void EntryImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 EntryImpl::EntryImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+(	IdentityMap& p_identity_map
 ):
-	PersistentObject(p_database_connection),
+	PersistentObject(p_identity_map),
 	m_data(new EntryData)
 {
 }
 
 
 EntryImpl::EntryImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
+(	IdentityMap& p_identity_map,
 	Id p_id
 ):
-	PersistentObject(p_database_connection, p_id),
+	PersistentObject(p_identity_map, p_id),
 	m_data(new EntryData)
 {
 }
@@ -170,7 +170,7 @@ EntryImpl::do_load()
 {
 	EntryImpl temp(*this);
 	SharedSQLStatement statement
-	(	*database_connection(),
+	(	database_connection(),
 		"select account_id, comment, amount, journal_id, is_reconciled "
 		" from entries where "
 		"entry_id = :p"
@@ -218,7 +218,7 @@ void
 EntryImpl::do_save_existing()
 {
 	SharedSQLStatement updater
-	(	*database_connection(),
+	(	database_connection(),
 		"update entries set "
 		"journal_id = :journal_id, "
 		"comment = :comment, "
@@ -237,7 +237,7 @@ void
 EntryImpl::do_save_new()
 {
 	SharedSQLStatement inserter
-	(	*database_connection(),
+	(	database_connection(),
 		"insert into entries"
 		"("
 			"journal_id, "

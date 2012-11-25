@@ -24,20 +24,17 @@ public:
 
 	explicit
 	OrdinaryJournal
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection
+	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
 	OrdinaryJournal
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection,
+	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
 
 	OrdinaryJournal
 	(	Journal& p_journal,  // TODO This should be Journal const&
-		boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection
+		PhatbooksDatabaseConnection& p_database_connection
 	);
 
 	void set_whether_actual(bool p_is_actual);

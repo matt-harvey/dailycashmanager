@@ -29,7 +29,7 @@ OrdinaryJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 OrdinaryJournal::OrdinaryJournal
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+(	PhatbooksDatabaseConnection& p_database_connection
 ):
 	m_impl
 	(	get_handle<OrdinaryJournalImpl>(p_database_connection)
@@ -38,7 +38,7 @@ OrdinaryJournal::OrdinaryJournal
 }
 
 OrdinaryJournal::OrdinaryJournal
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
+(	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
 	m_impl
@@ -51,7 +51,7 @@ OrdinaryJournal::OrdinaryJournal
 // Factor out.
 OrdinaryJournal::OrdinaryJournal
 (	Journal& p_journal,
-	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+	PhatbooksDatabaseConnection& p_database_connection
 ):
 	m_impl(get_handle<OrdinaryJournalImpl>(p_database_connection))
 {

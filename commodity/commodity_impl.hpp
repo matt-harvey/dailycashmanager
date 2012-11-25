@@ -16,6 +16,7 @@
 #include <jewel/decimal.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/optional.hpp>
+#include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <string>
 
@@ -47,9 +48,14 @@ class CommodityImpl:
 
 public:
 
-	typedef sqloxx::PersistentObject<CommodityImpl, PhatbooksDatabaseConnection>
+	typedef sqloxx::PersistentObject
+		<	CommodityImpl,
+			PhatbooksDatabaseConnection
+		>
 		PersistentObject;
 	typedef sqloxx::Id Id;
+	typedef sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>
+		IdentityMap;
 
 	/**
 	 * Sets up tables required in the database for the persistence
@@ -70,17 +76,13 @@ public:
 	 * any particular object in the database.
 	 */
 	explicit
-	CommodityImpl
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection
-	);
+	CommodityImpl(IdentityMap& p_identity_map);
 
 	/**
 	 * Get a CommodityImpl by id from database.
 	 */
 	CommodityImpl
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection,
+	(	IdentityMap& p_identity_map,	
 	 	Id p_id
 	);
 

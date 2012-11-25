@@ -124,7 +124,7 @@ void import_from_nap
 	}
 	
 	// Insert the sole commodity
-	Commodity aud(database_connection);
+	Commodity aud(*database_connection);
 	aud.set_abbreviation("AUD");
 	aud.set_name("Australian dollars");
 	aud.set_description("");
@@ -142,7 +142,7 @@ void import_from_nap
 	while (getline(account_csv, account_row))
 	{
 		easy_split<'|'>(account_row, account_cells);
-		Account account(database_connection);
+		Account account(*database_connection);
 
 		// The second character of the first field contains a number
 		// from 1 to 7, that is sufficient to identify the account type.
@@ -171,7 +171,7 @@ void import_from_nap
 		string const name = account_cells[1];
 		account.set_name(name);
 		account.set_commodity
-		(	Commodity(database_connection,aud.id())
+		(	Commodity(*database_connection,aud.id())
 		);
 		account.set_description(account_cells[2]);
 		account.save();
@@ -238,7 +238,7 @@ void import_from_nap
 		// Split the csv row into cells
 		easy_split<'|'>(draft_journal_row, draft_journal_cells);
 		shared_ptr<DraftJournal> draft_journal
-		(	new DraftJournal(database_connection)
+		(	new DraftJournal(*database_connection)
 		);
 		draft_journal->set_comment("");
 		string const draft_journal_name = draft_journal_cells[0];
@@ -266,7 +266,7 @@ void import_from_nap
 			string const interval_type_str = repeater_fields[1];
 			string const units_str = repeater_fields[2];
 
-			Repeater repeater(database_connection);
+			Repeater repeater(*database_connection);
 			repeater.set_interval_type(interval_type_map[interval_type_str]);
 			repeater.set_interval_units
 			(	lexical_cast<int>(units_str.c_str())
@@ -288,7 +288,7 @@ void import_from_nap
 	while (getline(draft_entry_csv, draft_entry_row))
 	{
 		easy_split<'|'>(draft_entry_row, draft_entry_cells);
-		Entry draft_entry(database_connection);
+		Entry draft_entry(*database_connection);
 		string const draft_journal_name = draft_entry_cells[0];
 		string const comment = draft_entry_cells[2];
 		string const account_name = draft_entry_cells[3];
@@ -299,7 +299,7 @@ void import_from_nap
 		// just a one-off hack, it may be easier just to manipulate the
 		// csv before importing it.
 		bool is_actual = (bud_impact == decimal_zero);
-		draft_entry.set_account(Account(database_connection, account_name));
+		draft_entry.set_account(Account(*database_connection, account_name));
 		draft_entry.set_comment(comment);
 		draft_entry.set_amount(is_actual? act_impact: -bud_impact);	
 		shared_ptr<DraftJournal> draft_journal =
@@ -398,7 +398,7 @@ void import_from_nap
 		// Split the csv row into cells
 		easy_split<'|'>(ordinary_journal_row, ordinary_journal_cells);
 		shared_ptr<OrdinaryJournal> ordinary_journal
-		(	new OrdinaryJournal(database_connection)
+		(	new OrdinaryJournal(*database_connection)
 		);
 		ordinary_journal->set_comment("");
 		string const iso_date_string = ordinary_journal_cells[1];
@@ -423,7 +423,7 @@ void import_from_nap
 	while (getline(ordinary_entry_csv, ordinary_entry_row))
 	{
 		easy_split<'|'>(ordinary_entry_row, ordinary_entry_cells);
-		Entry ordinary_entry(database_connection);
+		Entry ordinary_entry(*database_connection);
 		string const iso_date_string = ordinary_entry_cells[0];
 		int const old_journal_id =
 			lexical_cast<int>(ordinary_entry_cells[1].c_str());
@@ -433,7 +433,7 @@ void import_from_nap
 		Decimal bud_impact(ordinary_entry_cells[6]);
 		bool is_actual = (bud_impact == decimal_zero);
 		ordinary_entry.set_account
-		(	Account(database_connection, account_name)
+		(	Account(*database_connection, account_name)
 		);
 		ordinary_entry.set_comment(comment);
 		ordinary_entry.set_amount(is_actual? act_impact: -bud_impact);

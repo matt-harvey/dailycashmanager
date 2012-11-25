@@ -65,19 +65,19 @@ RepeaterImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 RepeaterImpl::RepeaterImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+(	IdentityMap& p_identity_map
 ):
-	PersistentObject(p_database_connection),
+	PersistentObject(p_identity_map),
 	m_data(new RepeaterData)
 {
 }
 
 
 RepeaterImpl::RepeaterImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
+(	IdentityMap& p_identity_map,	
 	Id p_id
 ):
-	PersistentObject(p_database_connection, p_id),
+	PersistentObject(p_identity_map, p_id),
 	m_data(new RepeaterData)
 {
 }
@@ -180,7 +180,7 @@ void
 RepeaterImpl::do_load()
 {
 	SharedSQLStatement statement
-	(	*database_connection(),
+	(	database_connection(),
 		"select interval_type_id, interval_units, next_date, journal_id "
 		"from repeaters where repeater_id = :p"
 	);
@@ -220,7 +220,7 @@ void
 RepeaterImpl::do_save_existing()
 {
 	SharedSQLStatement updater
-	(	*database_connection(),
+	(	database_connection(),
 		"update repeaters set "
 		"interval_type_id = :interval_type_id, "
 		"interval_units = :interval_units, "
@@ -238,7 +238,7 @@ void
 RepeaterImpl::do_save_new()
 {
 	SharedSQLStatement inserter
-	(	*database_connection(),
+	(	database_connection(),
 		"insert into repeaters(interval_type_id, interval_units, "
 		"next_date, journal_id) values(:interval_type_id, :interval_units, "
 		":next_date, :journal_id)"

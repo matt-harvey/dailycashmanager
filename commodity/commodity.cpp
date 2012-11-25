@@ -23,14 +23,14 @@ Commodity::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 Commodity::Commodity
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+(	PhatbooksDatabaseConnection& p_database_connection
 ):
 	m_impl(get_handle<CommodityImpl>(p_database_connection))
 {
 }
 
 Commodity::Commodity
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
+(	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
 	m_impl(get_handle<CommodityImpl>(p_database_connection, p_id))
@@ -38,14 +38,14 @@ Commodity::Commodity
 }
 
 Commodity::Commodity
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
+(	PhatbooksDatabaseConnection& p_database_connection,
 	string const& p_abbreviation
 ):
 	m_impl
 	(	get_handle<CommodityImpl>
 		(	p_database_connection,
 			CommodityImpl::id_for_abbreviation
-			(	*p_database_connection,
+			(	p_database_connection,
 				p_abbreviation
 			)
 		)

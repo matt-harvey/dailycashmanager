@@ -24,13 +24,11 @@ public:
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 	
 	explicit Repeater
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection
+	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
 	Repeater
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection,
+	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
 

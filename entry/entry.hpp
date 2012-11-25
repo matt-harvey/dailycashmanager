@@ -20,12 +20,10 @@ public:
 	typedef sqloxx::Id Id;
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 	explicit Entry
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			 p_database_connection
+	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 	Entry
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection,
+	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
 	void set_journal_id(Journal::Id p_journal_id);

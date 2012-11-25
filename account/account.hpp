@@ -39,16 +39,14 @@ public:
 	 */
 	explicit
 	Account
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection
+	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
 	/**
 	 * Get an Account by id from database.
 	 */
 	Account
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection,
+	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
 
@@ -56,8 +54,7 @@ public:
 	 * Get an Account by name from the database.
 	 */
 	Account
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-			p_database_connection,
+	(	PhatbooksDatabaseConnection& p_database_connection,
 		std::string const& p_name
 	);
 

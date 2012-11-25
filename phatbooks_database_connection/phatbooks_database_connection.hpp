@@ -133,7 +133,7 @@ public:
 	void set_caching_level(unsigned int level);
 
 	template<typename T>
-	sqloxx::IdentityMap<T>& identity_map();
+	sqloxx::IdentityMap<T, PhatbooksDatabaseConnection>& identity_map();
 
 private:
 
@@ -141,12 +141,12 @@ private:
 	void mark_setup_as_having_occurred();
 
 
-	sqloxx::IdentityMap<AccountImpl> m_account_map;
-	sqloxx::IdentityMap<CommodityImpl> m_commodity_map;
-	sqloxx::IdentityMap<EntryImpl> m_entry_map;
-	sqloxx::IdentityMap<OrdinaryJournalImpl> m_ordinary_journal_map;
-	sqloxx::IdentityMap<DraftJournalImpl> m_draft_journal_map;
-	sqloxx::IdentityMap<RepeaterImpl> m_repeater_map;
+	sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection> m_account_map;
+	sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection> m_commodity_map;
+	sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection> m_entry_map;
+	sqloxx::IdentityMap<OrdinaryJournalImpl, PhatbooksDatabaseConnection> m_ordinary_journal_map;
+	sqloxx::IdentityMap<DraftJournalImpl, PhatbooksDatabaseConnection> m_draft_journal_map;
+	sqloxx::IdentityMap<RepeaterImpl, PhatbooksDatabaseConnection> m_repeater_map;
 
 
 
@@ -155,7 +155,7 @@ private:
 
 template <>
 inline
-sqloxx::IdentityMap<AccountImpl>&
+sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>&
 PhatbooksDatabaseConnection::identity_map<AccountImpl>()
 {
 	return m_account_map;
@@ -163,7 +163,7 @@ PhatbooksDatabaseConnection::identity_map<AccountImpl>()
 
 template <>
 inline
-sqloxx::IdentityMap<EntryImpl>&
+sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>&
 PhatbooksDatabaseConnection::identity_map<EntryImpl>()
 {
 	return m_entry_map;
@@ -171,7 +171,7 @@ PhatbooksDatabaseConnection::identity_map<EntryImpl>()
 
 template <>
 inline
-sqloxx::IdentityMap<CommodityImpl>&
+sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>&
 PhatbooksDatabaseConnection::identity_map<CommodityImpl>()
 {
 	return m_commodity_map;
@@ -179,7 +179,7 @@ PhatbooksDatabaseConnection::identity_map<CommodityImpl>()
 
 template <>
 inline
-sqloxx::IdentityMap<OrdinaryJournalImpl>&
+sqloxx::IdentityMap<OrdinaryJournalImpl, PhatbooksDatabaseConnection>&
 PhatbooksDatabaseConnection::identity_map<OrdinaryJournalImpl>()
 {
 	return m_ordinary_journal_map;
@@ -187,7 +187,7 @@ PhatbooksDatabaseConnection::identity_map<OrdinaryJournalImpl>()
 
 template <>
 inline
-sqloxx::IdentityMap<phatbooks::DraftJournalImpl>&
+sqloxx::IdentityMap<phatbooks::DraftJournalImpl, PhatbooksDatabaseConnection>&
 PhatbooksDatabaseConnection::identity_map<DraftJournalImpl>()
 {
 	return m_draft_journal_map;
@@ -195,7 +195,7 @@ PhatbooksDatabaseConnection::identity_map<DraftJournalImpl>()
 
 template <>
 inline
-sqloxx::IdentityMap<phatbooks::RepeaterImpl>&
+sqloxx::IdentityMap<phatbooks::RepeaterImpl, PhatbooksDatabaseConnection>&
 PhatbooksDatabaseConnection::identity_map<RepeaterImpl>()
 {
 	return m_repeater_map;

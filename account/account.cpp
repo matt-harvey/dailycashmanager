@@ -31,8 +31,7 @@ Account::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 
 Account::Account
-(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-		p_database_connection
+(	PhatbooksDatabaseConnection& p_database_connection
 ):
 	m_impl(get_handle<AccountImpl>(p_database_connection))
 {
@@ -40,8 +39,7 @@ Account::Account
 
 
 Account::Account
-(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-		p_database_connection,
+(	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
 	m_impl
@@ -52,14 +50,13 @@ Account::Account
 
 
 Account::Account
-(	boost::shared_ptr<PhatbooksDatabaseConnection> const&
-		p_database_connection,
+(	PhatbooksDatabaseConnection& p_database_connection,
 	string const& p_name
 ):
 	m_impl
 	(	get_handle<AccountImpl>
 		(	p_database_connection,
-			AccountImpl::id_for_name(*p_database_connection, p_name)
+			AccountImpl::id_for_name(p_database_connection, p_name)
 		)
 	)
 {

@@ -103,9 +103,9 @@ DraftJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 
 DraftJournalImpl::DraftJournalImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+(	IdentityMap& p_identity_map
 ):
-	DraftJournalImpl::PersistentObject(p_database_connection),
+	DraftJournalImpl::PersistentObject(p_identity_map),
 	Journal(),
 	m_dj_data(new DraftJournalData)
 {
@@ -113,10 +113,10 @@ DraftJournalImpl::DraftJournalImpl
 
 
 DraftJournalImpl::DraftJournalImpl
-(	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection,
+(	IdentityMap& p_identity_map,	
 	Id p_id
 ):
-	DraftJournalImpl::PersistentObject(p_database_connection, p_id),
+	DraftJournalImpl::PersistentObject(p_identity_map, p_id),
 	Journal(),
 	m_dj_data(new DraftJournalData)
 {
@@ -126,9 +126,9 @@ DraftJournalImpl::DraftJournalImpl
 
 DraftJournalImpl::DraftJournalImpl
 (	Journal const& p_journal,
-	shared_ptr<PhatbooksDatabaseConnection> const& p_database_connection
+	IdentityMap& p_identity_map
 ):
-	DraftJournalImpl::PersistentObject(p_database_connection),
+	DraftJournalImpl::PersistentObject(p_identity_map),
 	Journal(p_journal),
 	m_dj_data(new DraftJournalData)
 {
@@ -204,14 +204,14 @@ DraftJournalImpl::do_load()
 
 	// Load the derived, DraftJournalImpl part of the temp.
 	SharedSQLStatement statement
-	(	*database_connection(),
+	(	database_connection(),
 		"select name from draft_journal_detail where journal_id = :p"
 	);
 	statement.bind(":p", id());
 	statement.step();
 	temp.m_dj_data->name = statement.extract<string>(0);
 	SharedSQLStatement repeater_finder
-	(	*database_connection(),
+	(	database_connection(),
 		"select repeater_id from repeaters where journal_id = :p"
 	);
 	repeater_finder.bind(":journal_id", id());
@@ -235,7 +235,7 @@ DraftJournalImpl::do_save_new()
 
 	// Save the derived, DraftJournalImpl part of the object
 	SharedSQLStatement statement
-	(	*database_connection(),
+	(	database_connection(),
 		"insert into draft_journal_detail(journal_id, name) "
 		"values(:journal_id, :name)"
 	);
@@ -258,7 +258,7 @@ DraftJournalImpl::do_save_existing()
 {
 	do_save_existing_journal_base(database_connection(), id());
 	SharedSQLStatement updater
-	(	*database_connection(),
+	(	database_connection(),
 		"update draft_journal_detail set name = :name where "
 		"journal_id = :journal_id"
 	);
@@ -277,7 +277,7 @@ DraftJournalImpl::do_save_existing()
 	// Now remove any repeaters in the database with this DraftJournalImpl's
 	// journal_id, that no longer exist in the in-memory DraftJournalImpl
 	SharedSQLStatement repeater_finder
-	(	*database_connection(),
+	(	database_connection(),
 		"select repeater_id from repeaters where journal_id = :journal_id"
 	);
 	repeater_finder.bind(":journal_id", id());
@@ -292,7 +292,7 @@ DraftJournalImpl::do_save_existing()
 			// This repeater is in the database but no longer in the in-memory
 			// DraftJournalImpl, and so should be deleted from the database.
 			SharedSQLStatement repeater_deleter
-			(	*database_connection(),
+			(	database_connection(),
 				"delete from repeaters where repeater_id = :repeater_id"
 			);
 			repeater_deleter.bind(":repeater_id", repeater_id);
