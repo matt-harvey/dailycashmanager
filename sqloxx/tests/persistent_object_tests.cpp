@@ -110,10 +110,6 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 	dpo1.save_new();
 
 	CHECK_THROW(dpo1.save_new(), LogicError);
-	// Required to avoid incomplete transaction, which would be
-	// expected, but which causes an annoying and pointless error
-	// message to be printed when pdbc closed.
-	pdbc->end_transaction();
 
 	DerivedPO dpo2(pdbc->derived_po_map());
 	dpo2.set_x(20);
@@ -142,10 +138,6 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 	dpo3.set_y(3.2);
 
 	CHECK_THROW(dpo3.save_new(), TableSizeException);
-	// Required to avoid incomplete transaction, which would be
-	// expected, but which causes an annoying and pointless error
-	// message to be printed when pdbc closed.
-	pdbc->end_transaction();
 }
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
@@ -159,13 +151,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
 	CHECK_THROW(dpo2.id(), UninitializedOptionalException);
 	dpo2.save_new();
 	CHECK_EQUAL(dpo2.id(), 2);
-
 	CHECK_THROW(dpo2.save_new(), LogicError);
-	// Required to avoid incomplete transaction, which would be
-	// expected, but which causes an annoying and pointless error
-	// message to be printed when pdbc closed.
-	pdbc->end_transaction();
-
 	CHECK_EQUAL(dpo2.id(), 2);
 }
 

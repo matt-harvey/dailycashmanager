@@ -286,9 +286,9 @@ public:
 	 * function
 	 * do_save_new(), which must be defined in the derived
 	 * class. (But note that the base class save_new takes care of assigning
-	 * the id and also wraps the save operation as a SQL transaction by
+	 * the id and also wraps the call to do_save_new as a SQL transaction by
 	 * calling the begin_transaction and end_transaction methods of the
-	 * DatabaseConnection.)
+	 * Connection.)
 	 *
 	 * The do_save_new function should result in the
 	 * saving of the complete state of a complete object. After do_save_new
@@ -340,72 +340,52 @@ public:
 	 * also don't want to confuse it with the other
 	 * two-paramatered constructor!
 	 *
-	 * @todo Document, test, and move implementation out of body of class.
+	 * @todo Document and test.
 	 */
-	void set_proxy_key(Id p_proxy_key)
-	{
-		m_proxy_key = p_proxy_key;
-		return;
-	}
+	void set_proxy_key(Id p_proxy_key);
 
 	/**
 	 * Should only be called by Handle<Derived>. To advise the underlying
-	 * object that a handle pointing to it has been constructed (not copy
-	 * constructed, but ordinary-constructed.
+	 * object that a handle pointing to it has been constructed (not copy-
+	 * constructed, but ordinarily constructed).
 	 * 
-	 * @todo Document, test, and move implementation out of body of class.
+	 * @todo Document and test.
 	 */
-	void notify_handle_construction()
-	{
-		increment_handle_counter();
-		return;
-	}
+	void notify_handle_construction();
 
 	/**
 	 * Should only be called by Handle<Derived>. To advise the underlying
 	 * object that a handle pointing to it has been copy-constructed.
 	 * 
-	 * @todo Document, test, and move implementation out of body of class.
+	 * @todo Document and test.
 	 */
-	void notify_handle_copy_construction()
-	{
-		increment_handle_counter();
-		return;
-	}
+	void notify_handle_copy_construction();
 
 	/**
 	 * Should only be called by Handle<Derived>. To advise the
 	 * underlying object that a handle pointing to it has appeared
 	 * as the right-hand operand of an assignment operation.
+	 *
+	 * @todo Document and test.
 	 */
-	void notify_rhs_assignment_operation()
-	{
-		increment_handle_counter();
-		return;
-	}
+	void notify_rhs_assignment_operation();
 	
 	/**
 	 * Should only be called by Handle<Derived>. To advise the
 	 * underlying object that a handle pointing to it has appeared
 	 * as the right-hand operand of an assignment operation.
+	 *
+	 * @todo Document and test.
 	 */
-	void notify_lhs_assignment_operation()
-	{
-		decrement_handle_counter();
-		return;
-	}
+	void notify_lhs_assignment_operation();
 
 	/**
 	 * Should only be called by Handle<Derived>. To advise the underlying
 	 * object that a handle pointing to it has been destructed.
 	 *
-	 * @todo Document, test, and move implementation out of body of class.
+	 * @todo Document and test.
 	 */
-	void notify_handle_destruction()
-	{
-		decrement_handle_counter();
-		return;
-	}
+	void notify_handle_destruction();
 
 	/**
 	 * @returns \e true if this instance of PersistentObject has
@@ -418,10 +398,7 @@ public:
 	/**
 	 * Should only be called by IdentityMap<Derived>.
 	 */
-	bool is_orphaned() const
-	{
-		return m_handle_counter == 0;
-	}
+	bool is_orphaned() const;
 
 protected:
 
@@ -486,36 +463,14 @@ protected:
 	void swap_base_internals(PersistentObject& rhs);
 
 	/**
-	 * @returns a boost::shared_ptr to the database connection with which
+	 * @returns a reference to the database connection with which
 	 * this instance of PersistentObject is associated. This is where the
 	 * object will be loaded from or saved to, as the case may be.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>
+	 * @todo Determine exception safety.
 	 */
-	Connection& database_connection() const
-	{
-		return m_identity_map.connection();
-	}
+	Connection& database_connection() const;
 
-	/**
-	 * Sets the id of this instance of PersistentObject to p_id.
-	 *
-	 * Note an object that is created anew, that does not already exist
-	 * in the database, should not have an id. By having an id, an object
-	 * is saying "I exist in the database".
-	 *
-	 * This method is protected and so it can be called by derived classes.
-	 * However it should not be called lightly. It is intended to be called
-	 * only in constructors, to assign an initial value to the id.
-	 *
-	 * @param p_id the value to which you want to set the id of this object.
-	 *
-	 * @throws sqloxx::LogicError if set_id is called on an object for which
-	 * its id has already been initialized.
-	 *
-	 * Exception safety: <em>strong_guarantee</em>.
-	 */
-	void set_id(Id p_id);
 
 	/**
 	 * @returns the id that would be assigned to this instance of
@@ -805,11 +760,11 @@ template
 void
 PersistentObject<Derived, Connection, Id, HandleCounter>::save_new()
 {
-	database_connection().begin_transaction();
 	Id const allocated_id = prospective_key();
+	database_connection().begin_transaction();
 	do_save_new();
 	database_connection().end_transaction();
-	set_id(allocated_id);
+	m_id = allocated_id;
 	if (m_proxy_key)
 	{
 		m_identity_map.register_id(*m_proxy_key, allocated_id);
@@ -834,6 +789,71 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::id() const
 	return jewel::value(m_id);
 }
 
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+inline
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+set_proxy_key(Id p_proxy_key)
+{
+	m_proxy_key = p_proxy_key;
+	return;
+}
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+inline
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+notify_handle_construction()
+{
+	increment_handle_counter();
+	return;
+}
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+inline
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+notify_handle_copy_construction()
+{
+	increment_handle_counter();
+	return;
+}
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+inline
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+notify_rhs_assignment_operation()
+{
+	increment_handle_counter();
+	return;
+}
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+inline
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+notify_lhs_assignment_operation()
+{
+	decrement_handle_counter();
+	return;
+}
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+inline
+void
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+notify_handle_destruction()
+{
+	decrement_handle_counter();
+	return;
+}
 
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>
@@ -851,7 +871,6 @@ increment_handle_counter()
 	++m_handle_counter;
 	return;
 }
-
 
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>
@@ -874,22 +893,19 @@ decrement_handle_counter()
 	return;
 }
 
-
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>
-void
-PersistentObject<Derived, Connection, Id, HandleCounter>::set_id(Id p_id)
+inline
+Connection&
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+database_connection() const
 {
-	if (has_id())
-	{
-		throw LogicError("Object already has id.");
-	}
-	m_id = p_id;
-	return;
+	return m_identity_map.connection();
 }
 
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>
+inline
 bool
 PersistentObject<Derived, Connection, Id, HandleCounter>::has_id() const
 {
@@ -898,6 +914,14 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::has_id() const
 	return m_id;
 }
 
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+inline
+bool
+PersistentObject<Derived, Connection, Id, HandleCounter>::is_orphaned() const
+{
+	return m_handle_counter == 0;
+}
 
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>

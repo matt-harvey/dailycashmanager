@@ -108,6 +108,7 @@ DerivedPO::self_test()
 	}
 	if (!ok) ++num_failures;	
 
+	/*
 	// Check set_id()
 	DerivedPO dpo6(idm);
 	dpo6.save_new();
@@ -125,6 +126,7 @@ DerivedPO::self_test()
 	DerivedPO dpo6b(idm);
 	dpo6b.set_id(12);
 	if (dpo6b.id() != 12) ++num_failures;
+	*/
 	
 	// Check has_id()
 	if (!dpo1.has_id()) ++num_failures;
