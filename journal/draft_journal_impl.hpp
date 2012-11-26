@@ -151,14 +151,6 @@ private:
 	void do_save_existing();
 	void do_save_new();
 
-	/* Note this function is not redefined here as we want
-	 * it to call Journal::do_get_table_name, which returns
-	 * "journal", the name of the table that controls assignment
-	 * of the id to all Journal instances, regardless of derived
-	 * class.
-	 */
-	// std::string do_get_table_name() const;
-
 	struct DraftJournalData
 	{
 		boost::optional<std::string> name;
