@@ -511,7 +511,7 @@ protected:
 	 *
 	 * Exception safety: the default implementation offers the
 	 * <em>strong guarantee</em> - providing the virtual
-	 * function do_get_table_name does nothing odd but simply returns a
+	 * function primary_table_name does nothing odd but simply returns a
 	 * std::string as would be expected.
 	 */
 	Id prospective_key() const;
