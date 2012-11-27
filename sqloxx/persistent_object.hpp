@@ -8,6 +8,7 @@
 #include <boost/none.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <cassert>
 #include <jewel/optional.hpp>
 #include <exception>
 
@@ -760,7 +761,8 @@ template
 void
 PersistentObject<Derived, Connection, Id, HandleCounter>::save_new()
 {
-	Id const allocated_id = prospective_key();
+	Id const allocated_id = prospective_key();  // throws if has_id()
+	assert (!has_id());
 	database_connection().begin_transaction();
 	do_save_new();
 	database_connection().end_transaction();
