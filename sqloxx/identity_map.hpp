@@ -58,6 +58,14 @@ public:
 
 	void disable_caching();
 
+	/**
+	 * @returns a reference to the database connection with which
+	 * this IdentityMap is associated.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo Testing.
+	 */
 	Connection& connection();
 
 	IdentityMap& operator=(IdentityMap const& rhs);

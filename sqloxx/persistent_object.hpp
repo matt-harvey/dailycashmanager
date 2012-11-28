@@ -209,9 +209,6 @@ public:
 	 */
 	virtual ~PersistentObject();
 
-	// WARNING Up to here is reassessing exception safety, documentation
-	// and testing in light of IdentityMap pattern.
-
 	/**
 	 * The result of calling this function depends on whether the in-memory
 	 * object has an id.
@@ -300,7 +297,7 @@ public:
 	 * @todo Figure out what other exceptions may be thrown, particularly
 	 * in light of the call to IdentityMap<...>::register_id(...).
 	 *
-	 * @todo Testing
+	 * @todo Testing, and reassessment of exceptions and exceptions safety.
 	 */
 	void save();
 
@@ -328,17 +325,28 @@ public:
 	 *
 	 * @throws jewel::UninitializedOptionalException if the object doesn't
 	 * have an id.
+	 * 
+	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	Id id() const;
 	
 	/**
-	 * Should only be called by IdentityMap<Derived>.
+	 * Should only be called by IdentityMap<Derived>. This assigns a "proxy
+	 * key" to the object. The proxy key is used by IdentityMap<Derived> to
+	 * identify the object in its internal cache. Every object created by
+	 * the IdentityMap will have proxy key, even if it doesn't have an id.
 	 *
-	 * WARNING This should be able to be specified in the constructor. But we
+	 * @todo The proxy key should be able to be specified
+	 * in the constructor. But we
 	 * also don't want to confuse it with the other
-	 * two-paramatered constructor!
+	 * two-paramatered constructor! So that's why it's we have a
+	 * separate function to set the proxy key. But the context in
+	 * which this is used is always going to be just post construction.
+	 * So this feels a bit crappy. Is there a better way?
 	 *
-	 * @todo Document and test.
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo Test.
 	 */
 	void set_proxy_key(Id p_proxy_key);
 
@@ -347,7 +355,14 @@ public:
 	 * object that a handle pointing to it has been constructed (not copy-
 	 * constructed, but ordinarily constructed).
 	 * 
-	 * @todo Document and test.
+	 * @throws sqloxx::OverflowException if the maximum value
+	 * for type HandleCounter has been reached, such that additional Handle<T>
+	 * cannot be safely counted. On the default type for HandleCounter,
+	 * this should be extremely unlikely.
+	 *
+	 * Exception safety: <em>strong guarantee</em>
+	 *
+	 * @todo Testing.
 	 */
 	void notify_handle_construction();
 
@@ -357,8 +372,8 @@ public:
 	 * 
 	 * @throws sqloxx::OverflowException if the maximum value of
 	 * HandleCounter has been reached such that additional handles
-	 * cannot be safely counted. On the default typedef for HandleCounter,
-	 * this should be extremely rare.
+	 * cannot be safely counted. On the default type for HandleCounter,
+	 * this should be extremely unlikely.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 *  
@@ -371,7 +386,14 @@ public:
 	 * underlying object that a handle pointing to it has appeared
 	 * as the right-hand operand of an assignment operation.
 	 *
-	 * @todo Document and test.
+	 * @throws sqloxx::OverflowException if the maximum value of
+	 * HandleCounter has been reached such that additional handles
+	 * cannot be safely counted. On the default type for HandleCounter,
+	 * this should be extremely unlikely.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 *
+	 * @todo Test.
 	 */
 	void notify_rhs_assignment_operation();
 	
@@ -402,6 +424,13 @@ public:
 	
 	/**
 	 * Should only be called by IdentityMap<Derived>.
+	 *
+	 * @returns true if and only if there are no Handle<Derived>
+	 * instances pointing to this object.
+	 *
+	 * @todo Testing.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	bool is_orphaned() const;
 
@@ -472,10 +501,11 @@ protected:
 	 * this instance of PersistentObject is associated. This is where the
 	 * object will be loaded from or saved to, as the case may be.
 	 *
-	 * @todo Determine exception safety.
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo Testing.
 	 */
 	Connection& database_connection() const;
-
 
 	/**
 	 * @returns the id that would be assigned to this instance of
@@ -514,43 +544,16 @@ protected:
 private:
 
 	/**
-	 * See documentation for \e load function.
-	 *
-	 * Exception safety: <em>depends on function definition
-	 * provided by derived class</em>
-	 */
-	virtual void do_load() = 0;
-
-	/**
-	 * See documentation for public <em>save_existing</em> function.
-	 *
-	 * Exception safety: <em>depends on function definition provided by
-	 * derived class</em>.
-	 */
-	virtual void do_save_existing() = 0;
-
-	/**
-	 * See documentation for public <em>save_new</em> function.
-	 *
-	 * Exception safety: <em>depends on function definition provided by
-	 * derived class</em>.
-	 */
-	virtual void do_save_new() = 0;
-
-	/**
-	 * Clears the loading status back to \e ghost.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	void clear_loading_status();
-	
-	/**
 	 * Deliberately unimplemented. Assignment doesn't make much semantic
 	 * sense for a PersistentObject that is supposed to
 	 * represent a \e unique object in the database with a unique id.
 	 */
 	PersistentObject& operator=(PersistentObject const& rhs);
-	
+
+	virtual void do_load() = 0;
+	virtual void do_save_existing() = 0;
+	virtual void do_save_new() = 0;
+	void clear_loading_status();
 	void increment_handle_counter();
 	void decrement_handle_counter();
 
@@ -563,7 +566,6 @@ private:
 
 	
 	// Data members
-
 
 	IdentityMap& m_identity_map;
 
@@ -709,25 +711,6 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::save()
 	return;
 }
 
-
-template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
-Id
-PersistentObject<Derived, Connection, Id, HandleCounter>::
-prospective_key() const
-{
-	if (has_id())
-	{
-		throw LogicError
-		(	"Object already has id so prospective_key does not apply."
-		);
-	}
-	return next_auto_key<Connection, Id>
-	(	database_connection(),
-		Derived::primary_table_name()
-	);
-}
-
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>
 Id
@@ -849,6 +832,25 @@ database_connection() const
 {
 	return m_identity_map.connection();
 }
+
+template
+<typename Derived, typename Connection, typename Id, typename HandleCounter>
+Id
+PersistentObject<Derived, Connection, Id, HandleCounter>::
+prospective_key() const
+{
+	if (has_id())
+	{
+		throw LogicError
+		(	"Object already has id so prospective_key does not apply."
+		);
+	}
+	return next_auto_key<Connection, Id>
+	(	database_connection(),
+		Derived::primary_table_name()
+	);
+}
+
 
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>
