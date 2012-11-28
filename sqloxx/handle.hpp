@@ -6,19 +6,32 @@
 namespace sqloxx
 {
 
-
-// Class template
-
 /**
- * Handle for handling business objects of type T where T is generally
+ * Handle for handling business objects of type T where T is a class
+ * derived from PersistentObject and is
  * managed via IdentityMap<T> to ensure only one instance of T exists in
- * memory at any one time, in relation to any given record in the database.
+ * memory at any one time, in relation to any given record in a given
+ * database.
+ *
+ * @todo Testing and documentation.
  */
 template <typename T>
 class Handle
 {
 public:
+
+	/** Construct a Handle<T> from a T*.
+	 * 
+	 * @throws sqloxx::OverflowException if the maximum number
+	 * of handles for this underlying instance of T has been reached.
+	 * The circumstances under which this occurs depend on the
+	 * implementation of T::notify_handle_construction(), but should
+	 * be extremely rare.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 */
 	Handle(T* p_pointer);
+
 	~Handle();
 	Handle(Handle const& rhs);
 	Handle& operator=(Handle const& rhs);

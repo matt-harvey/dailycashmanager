@@ -355,7 +355,14 @@ public:
 	 * Should only be called by Handle<Derived>. To advise the underlying
 	 * object that a handle pointing to it has been copy-constructed.
 	 * 
-	 * @todo Document and test.
+	 * @throws sqloxx::OverflowException if the maximum value of
+	 * HandleCounter has been reached such that additional handles
+	 * cannot be safely counted. On the default typedef for HandleCounter,
+	 * this should be extremely rare.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 *  
+	 * @todo Testing.
 	 */
 	void notify_handle_copy_construction();
 
