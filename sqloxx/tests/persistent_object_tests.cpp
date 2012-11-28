@@ -43,7 +43,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_two_params)
 		DerivedPO dpo(pdbc->derived_po_map());
 		dpo.set_x(10);
 		dpo.set_y(3.23);
-		dpo.save_new();
+		dpo.save();
 		CHECK_EQUAL(dpo.id(), 1);
 		CHECK_EQUAL(dpo.x(), 10);
 		CHECK_EQUAL(dpo.y(), 3.23);
@@ -61,6 +61,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_two_params)
 	}
 }
 
+/*
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_existing)
 {
 	DerivedPO dpo1(pdbc->derived_po_map());
@@ -139,19 +140,20 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 
 	CHECK_THROW(dpo3.save_new(), TableSizeException);
 }
+*/
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
 {
 	DerivedPO dpo1(pdbc->derived_po_map());
 	CHECK_THROW(dpo1.id(), UninitializedOptionalException);
-	dpo1.save_new();
+	dpo1.save();
 	CHECK_EQUAL(dpo1.id(), 1);
 	DerivedPO dpo2(pdbc->derived_po_map());
 	CHECK_THROW(dpo2.id(), UninitializedOptionalException);
 	CHECK_THROW(dpo2.id(), UninitializedOptionalException);
-	dpo2.save_new();
+	dpo2.save();
 	CHECK_EQUAL(dpo2.id(), 2);
-	CHECK_THROW(dpo2.save_new(), LogicError);
+	dpo2.save();
 	CHECK_EQUAL(dpo2.id(), 2);
 }
 
@@ -166,7 +168,7 @@ TEST_FIXTURE(DerivedPOFixture, test_load_indirectly)
 	dpo1.set_y(b);
 	assert (dpo1.x() == a);
 	assert (dpo1.y() == b);
-	dpo1.save_new();
+	dpo1.save();
 
 	DerivedPO dpo2(pdbc->derived_po_map(), 1);
 	CHECK_EQUAL(dpo2.id(), 1);

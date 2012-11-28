@@ -63,7 +63,7 @@ DerivedPO::self_test()
 	DerivedPO dpo1(idm);
 	dpo1.set_x(3);
 	dpo1.set_y(4.08);
-	dpo1.save_new();
+	dpo1.save();
 	if (dpo1.id() != 1) ++num_failures;
 	if (dpo1.x() != 3) ++num_failures;
 	if (dpo1.y() != 4.08) ++num_failures;
@@ -82,7 +82,7 @@ DerivedPO::self_test()
 	DerivedPO dpo4(idm);
 	dpo4.set_x(-30);
 	dpo4.set_y(-0.01887);
-	dpo4.save_new();
+	dpo4.save();
 	if (dpo4.id() != 2) ++num_failures;
 	if (dpo3.id() != 1) ++num_failures;
 	dpo4.swap_base_internals(dpo3);
