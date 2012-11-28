@@ -22,15 +22,14 @@ namespace sqloxx
 
 /**
  * Class template for creating objects persisted to a database. This
- * should be inherited by a derived class and the pure virtual
- * functions (and possibly non-pure virtual functions) provided with
- * definitions (or possibly redefinitions in the case of the non-pure
- * virtual functions).
+ * should be inherited by a derived class that defines certain
+ * functions as detailed below.
  *
  * An instance of (a class deriving from an instantiation of)
  * PersistentObject represents a "business object" for which the
  * data will be stored in a relational database (currently only
- * SQLite is supported) under a single primary key.
+ * SQLite is supported) under a single primary key, that shall be
+ * an auto-incrementing integer primary key.
  *
  * USE OF IDENTITY MAP PATTERN
  *
@@ -119,12 +118,6 @@ namespace sqloxx
  * <b>virtual void do_save_new() = 0;</b>\n
  * See documentation for save_new() function.
  *
- * In addition, the following function is provided with a default
- * implementation by PersistentObject, but may be redefined in the
- * derived class:
- *
- * <b>virtual Id do_calculate_prospecitve_key() const;</b>\n
- * See documentation for prospective_key() function.
  *
  * TEMPLATE PARAMETERS
  *
@@ -227,21 +220,23 @@ public:
 	 *
 	 * If the object has an id - i.e. if it corresponds, or purports to
 	 * correspond, to an object already existent in the database - then
-	 * calling save() will result in the object in the database being updated with
+	 * calling save() will result in the object in the database being updated
+	 * with
 	 * the state of the current in-memory object. This is done by a call
 	 * to virtual function do_save_existing(), which much be defined
 	 * in the class Derived. The base method save() takes care of wrapping
 	 * the call to do_save_existing() as a single SQL transaction by calling
-	 * begin_transaction() and end_transaction on the database connection. Note
-	 * that before calling do_save_existing(), and before beginning the SQL
-	 * transaction, the base save() method first calls load(). This ensures the object
+	 * begin_transaction() and end_transaction on the database connection.
+	 * Note that before calling do_save_existing(), and before beginning the
+	 * SQL transaction, the base save() method first calls load().
+	 * This ensures the object
 	 * is not saved in a partial state. This call to load() only has
 	 * effect if the object is in a partial ("ghost") state when it
 	 * is called. If it is already in a fully loaded state, the call to
-	 * load() will have no effect on the state of the in-memory object. However
-	 * if it is in a "ghost" state when load() is called, then the entire
-	 * state of the in-memory object will be overridden with the state of
-	 * the in-database object.
+	 * load() will have no effect on the state of the in-memory object.
+	 * However if it is in a "ghost" state when load() is called, then the
+	 * entire state of the in-memory object will be overridden with the state
+	 * of the in-database object.
 	 * The upshot of this is that, in order to make sure that
 	 * changes to the in-memory object remain in the in-memory object and
 	 * are subsequently written to the database
@@ -252,17 +247,18 @@ public:
 	 * (2) <b>Object does not have id</b>
 	 *
 	 * If the object does not have an id - i.e. if it does not correspond or
-	 * purport to correspond to an object already saved to the database - then calling
-	 * save() will result in the in-memory object being saved to the database
-	 * as an additional item, rather than overwriting existing data. This is done
+	 * purport to correspond to an object already saved to the database - then
+	 * calling save() will result in the in-memory object being saved to the
+	 * database as an additional item, rather than overwriting existing data.
+	 * This is done
 	 * via a call to virtual function do_save_new(), which must be defined in
 	 * the class Derived. The base save() function takes care of wrapping
 	 * this call as a SQL transaction. The base function also takes care of:
-	 * assigning an id to the newly saved object in the database; recording this
-	 * id in the in-memory object; and notifying the IdentityMap<Derived>
-	 * (i.e. the "cache") for this object, that it has been saved and assigned its
-	 * id. Finally, the base function marks the newly saved object as being in
-	 * a "loaded", i.e. complete state.
+	 * assigning an id to the newly saved object in the database; recording
+	 * this id in the in-memory object; and notifying the IdentityMap<Derived>
+	 * (i.e. the "cache") for this object, that it has been saved and assigned
+	 * its id. Finally, the base function marks the newly saved object as
+	 * being in a "loaded", i.e. complete state.
 	 *
 	 * In defining do_save_new(), the class Derived should ensure that a call
 	 * to do_save_new() results in a \e complete object of its type being
@@ -272,11 +268,18 @@ public:
 	 * The primary_table_name() static function must also
 	 * be defined in the Derived class in order for this function
 	 * to find an automatically generated id to assign to the object
-	 * when saved. By default it is assumed that the id is an auto-
-	 * incrementing integer primary key generated by SQLite. However this
-	 * behaviour can be overridden by redefining the
-	 * do_calculate_prospective_key() function in the derived class (see
-	 * documentation of that function for more details).
+	 * when saved. This should return a std::string being the name of
+	 * the table housing the primary key for objects of this class stored
+	 * in the database.
+	 *
+	 * @throws TableSizeException if the object does not have an id, but
+	 * the greatest primary key value already in the primary table for the
+	 * type Derived is
+	 * the maximum possible value for the type Id, so that another row
+	 * could not be inserted without overflow.
+	 * 
+	 * @throws std::bad_alloc in the unlikely event of memory allocation
+	 * failure during execution.
 	 *
 	 * @throws TransactionNestingException if the maximum transaction
 	 * nesting level of the DatabaseConnection has been reached (very
@@ -285,10 +288,11 @@ public:
 	 * @throws InvalidConnection if the DatabaseConnection is
 	 * invalid. (May be thrown under either (1) or (2).)
 	 *
-	 * May also throw exceptions from do_calculate_prospective_key(), which
-	 * is invoked in the body of this function. See documentation
-	 * for do_calculate_prospective_key for exceptions that might be thrown
-	 * by the default version of that function.
+	 * May also throw other derivative os DatabaseException if there is
+	 * a failure finding the next primary key value for the object in case
+	 * it doesn't already have an id. This should not occur except in the
+	 * case of a corrupt database, or a memory allocation error (very
+	 * unlikely).
 	 *
 	 * May also throw exceptions from do_save_new() and/or do_save_exising(),
 	 * depending on how those functions are defined in the derived class.
@@ -313,10 +317,8 @@ public:
 	void save_existing();
 	 *
 	 * Exception safety: depends on how
-	 * do_calculate_prospective_key() and
-	 * do_save_new() are implemented. Providing that neither of these
-	 * functions
-	 * affects the state of the in-memory object,
+	 * do_save_new() is implemented. Providing this function does not
+	 * affect the state of the in-memory object,
 	 * then save_new() provides the <em>strong guarantee</em>.
 	void save_new();
 	 */
@@ -470,22 +472,11 @@ protected:
 
 	/**
 	 * @returns the id that would be assigned to this instance of
-	 * PersistentObject when saved to the database.
-	 *
-	 * This function calls \e do_calculate_prospective_key, which has a
-	 * default implementation but may be redefined.
+	 * PersistentObject when saved to the database. This uses SQLite's
+	 * built-in auto-incrementing primary key.
 	 *
 	 * @throws sqloxx::LogicError in the event this instance already has
-	 * an id. (This occurs regardless of how/whether
-	 * \e do_calculate_prospective_key is redefined.)
-	 *
-	 * Apart from \e sqloxx::LogicError as just described, the exception
-	 * throwing behaviour and exception safety of this function depend on
-	 * those of the function do_calculate_prospective_key().
-	 *
-	 * <b>If the default implementation of do_calculate_prospective_key() is
-	 * retained, then the following exceptions may be thrown, in addition
-	 * to sqloxx::LogicError.</b>
+	 * an id.
 	 *
 	 * @throws sqloxx::TableSizeException if the greatest primary key value
 	 * already in the table (i.e. the table into which this instance of
@@ -514,11 +505,6 @@ protected:
 
 	
 private:
-
-	/**
-	 * Provides implementation for the public function prospective_key.
-	 */
-	virtual Id do_calculate_prospective_key() const;
 
 	/**
 	 * See documentation for \e load function.
@@ -717,27 +703,6 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::save()
 }
 
 
-/*
-template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
-void
-PersistentObject<Derived, Connection, Id, HandleCounter>::save_existing()
-{
-	if (!has_id())
-	{
-		throw LogicError
-		(	"Method save_existing() called on an instance of PersistentObject"
-			" that does not correspond with an existing database record."
-		);
-	}
-	load();
-	database_connection().begin_transaction();
-	do_save_existing();
-	database_connection().end_transaction();
-	return;
-}
-*/
-
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>
 Id
@@ -750,51 +715,11 @@ prospective_key() const
 		(	"Object already has id so prospective_key does not apply."
 		);
 	}
-	return do_calculate_prospective_key();
-}
-
-
-template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
-Id
-PersistentObject<Derived, Connection, Id, HandleCounter>::
-do_calculate_prospective_key() const
-{	
 	return next_auto_key<Connection, Id>
 	(	database_connection(),
 		Derived::primary_table_name()
 	);
 }
-
-
-/*
-template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
-void
-PersistentObject<Derived, Connection, Id, HandleCounter>::save_new()
-{
-	Id const allocated_id = prospective_key();  // throws if has_id()
-	assert (!has_id());
-	database_connection().begin_transaction();
-	do_save_new();
-	database_connection().end_transaction();
-	m_id = allocated_id;
-	if (m_proxy_key)
-	{
-		m_identity_map.register_id(*m_proxy_key, allocated_id);
-	}
-
-	// The next line fixed a bug 2012-11-22 that in resulted in objects being
-	// re-loaded from database when they were already complete.
-	m_loading_status = loaded;
-
-	return;
-	// WARNING Reconsider what exception safety guarantee can be offered
-	// in light of the dealings around proxy key that have now been
-	// incorporated into this function. Reflect in API documentation.
-}
-*/
-
 
 template
 <typename Derived, typename Connection, typename Id, typename HandleCounter>
