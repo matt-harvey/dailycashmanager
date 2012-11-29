@@ -19,6 +19,36 @@ namespace sqloxx
 {
 
 
+/**
+ * Provides an in-memory cache for objects of type T, where such
+ * objects are persisted to a database via a database connection of
+ * type Connection. T and Connection are passed as template parameters
+ * to the class template. It is expected that T is a subclass of
+ * sqloxx::PersistentObject<T, Connection>, and Connection is a
+ * subclass of sqloxx::DatabaseConnection.
+ *
+ * Each instance of IdentityMap has a particular Connection associated
+ * with it. The IdentityMap caches objects loaded from the database,
+ * and provides clients - in particular the sqloxx::Handle<T> class -
+ * pointers to these objects. My using IdentityMap to cache objects,
+ * application code can be sure that each single record of type T
+ * that is stored in the database, has at most a single in-memory
+ * object of type T associated with that record, loaded in memory
+ * at any one time. IdentityMap thus implements the "Identity Map"
+ * pattern detailed in Martin Fowler's book, "Patterns of Enterprise
+ * Application Architecture". By having at most a single in-memory
+ * object per in-database record, we guard against the possibility
+ * of the same object being edited inconsistently in different
+ * locations. By keeping objects in a cache, we speed execution of
+ * read and write operations, by avoiding a trip to the disk when an
+ * object has already been loaded.
+ *
+ * IdentityMap is intended to work in conjunction with sqloxx::Handle<T>
+ * and sqloxx::PersistentObject<T, Connection>. See also the documentation
+ * for those classes.
+ *
+ * @todo Documentation and testing.
+ */
 template <typename T, typename Connection>
 class IdentityMap
 {
@@ -27,10 +57,55 @@ public:
 	typedef typename T::Id Id;
 	typedef typename T::Id ProxyKey;
 
+	/**
+	 * Construct an IdentityMap associated with the database
+	 * connection Connection. Connection should be a subclass
+	 * of sqloxx::DatabaseConnection.
+	 *
+	 * @throws std::bad_alloc in the case of memory allocation
+	 * failure. (This is very unlikely.)
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 *
+	 * @todo Testing.
+	 */
 	IdentityMap(Connection& p_connection);
+
+	/**
+	 * Copy constructor. Performs a shallow copy. The underlying
+	 * structures (e.g. database connection and cache) employed
+	 * by the new IdentitMap will be the very same as those employed
+	 * by rhs.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
 	IdentityMap(IdentityMap const& rhs);
+	
+	/**
+	 * Destructor. The underlying cache is automatically emptied
+	 * of all objects (i.e. instances of T) on destruction of
+	 * the IdentityMap, by the calling the destructor of each
+	 * object in the cache. The cache is then itself destructed.
+	 * However the database connection (Connection instance) referenced
+	 * by the IdentityMap is \e not destructed merely by virtue
+	 * of the destruction of the IdentityMap.
+	 *
+	 * Exception safety: the <em>nothrow guarantee</em> is provided,
+	 * providing the destructor of T does not throw.
+	 *
+	 * @todo Testing.
+	 */
 	~IdentityMap();
+
+	/**
+	 * Assignment is shallow, and behaves as per the copy constructor
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo Testing.
+	 */
 	IdentityMap& operator=(IdentityMap const& rhs);
+
 	/**
 	 * Provide handle to object of T, representing a newly created object
 	 * that has not yet been persisted to the database
