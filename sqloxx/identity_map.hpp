@@ -151,7 +151,7 @@ private:
 
 	// Find the next available proxy key
 	// WARNING Move the implementation out of the class body.
-	ProxyKey next_proxy_key();
+	ProxyKey provide_proxy_key();
 	typedef typename boost::shared_ptr<T> Record;
 	typedef boost::unordered_map<Id, Record> IdMap;
 	typedef std::map<ProxyKey, Record> ProxyKeyMap;
@@ -166,6 +166,11 @@ private:
 		return m_map_data->id_map;
 	}
 
+	ProxyKey& last_assigned_proxy_key() const
+	{
+		return m_map_data->last_assigned_proxy_key;
+	}
+
 	bool& is_caching() const
 	{
 		return m_map_data->is_caching;
@@ -173,11 +178,12 @@ private:
 
 	// Data members
 
-	// Hold in a struct to facilitate safe, shallow copying.
+	// Hold data in a pimpl struct merely to facilitate safe, shallow copying.
 	struct MapData
 	{
 		MapData(Connection& p_connection):
 			connection(p_connection),
+			last_assigned_proxy_key(0),
 			is_caching(false)
 		{
 		}
@@ -189,6 +195,7 @@ private:
 		// clearing each object out when there are no longer handles
 		// pointing to it (m_caching == false).
 		Connection& connection;     
+		ProxyKey last_assigned_proxy_key;
 		bool is_caching; 
 	};
 	boost::shared_ptr<MapData> m_map_data;
@@ -229,7 +236,7 @@ Handle<T>
 IdentityMap<T, Connection>::provide_object()
 {
 	Record obj_ptr((new T(*this)));
-	ProxyKey const proxy_key = next_proxy_key();
+	ProxyKey const proxy_key = provide_proxy_key();
 	obj_ptr->set_proxy_key(proxy_key);
 	proxy_map()[proxy_key] = obj_ptr;
 	return Handle<T>(obj_ptr.get());
@@ -246,7 +253,7 @@ IdentityMap<T, Connection>::provide_object(Id p_id)
 		// Then we need to create this object.
 		Record obj_ptr(new T(*this, p_id));
 		id_map()[p_id] = obj_ptr;
-		ProxyKey proxy_key = next_proxy_key();
+		ProxyKey proxy_key = provide_proxy_key();
 		proxy_map()[proxy_key] = obj_ptr;
 		obj_ptr->set_proxy_key(proxy_key);
 		return Handle<T>(obj_ptr.get()); 
@@ -330,57 +337,59 @@ IdentityMap<T, Connection>::connection()
 
 template <typename T, typename Connection>
 typename IdentityMap<T, Connection>::ProxyKey
-IdentityMap<T, Connection>::next_proxy_key()
+IdentityMap<T, Connection>::provide_proxy_key()
 {
-	// Using negative numbers to avoid any possible confusion
-	// with Id.
-	// Relies on this being a std::map, in which the first
-	// key is less than any other key.
-	static ProxyKey const minimum = std::numeric_limits<ProxyKey>::min();
-	ProxyKey const least = proxy_map().begin()->first;
-	if (least == minimum)
+	if (last_assigned_proxy_key() == 0)
 	{
-		typedef typename ProxyKeyMap::size_type sz;
-		if (proxy_map().size() == boost::numeric_cast<sz>(minimum))
+		assert (proxy_map().empty());
+		assert (proxy_map().find(1) == proxy_map().end());
+		last_assigned_proxy_key() = 1;
+		return last_assigned_proxy_key();
+	}
+	static ProxyKey const maximum = std::numeric_limits<ProxyKey>::max();
+	if
+	(	proxy_map().size() ==
+		boost::numeric_cast<typename ProxyKeyMap::size_type>(maximum)
+	)
+	{
+		// There are no more available positive numbers to serve
+		// as proxy keys. This is extremely unlikely ever to occur.
+		// We could possibly avoid throwing here by instead calling
+		// disable_caching(), which would trigger an emptying of the cache
+		// of any orphaned objects. But the emptying might take a long, long
+		// time. So we just throw.
+		// Avoid complication by not even considering negative numbers.
+		throw OverflowException
+		(	"No more proxy keys are available for identifying objects "
+			"in the IdentityMap."
+		);
+	}
+	// Relies on this being a std::map, in which the elements are kept in
+	// key order.
+	// todo Figure out whether this is correct.
+	typedef typename ProxyKeyMap::const_iterator Iterator;
+	ProxyKey current_key = last_assigned_proxy_key();
+	Iterator it = proxy_map().find(current_key);
+	while (true)
+	{
+		if (it == proxy_map().end() || current_key == maximum)
 		{
-			// There are no more available negative keys to serve
-			// as proxy keys. This is EXTREMELY unlikely ever to occur.
-			// We could possibly avoid throwing here by instead calling
-			// disable_caching(), which would trigger an emptying of the cache
-			// of any orphaned objects. But the emptying might take too long!
-			// So we just throw.
-			throw OverflowException
-			(	"No more proxy keys are available for identifying objects "
-				"in the IdentityMap."
-			);
+			it = proxy_map().begin();
+			current_key = 1;
 		}
 		else
 		{
-			// There is a gap somewhere.
-			typename ProxyKeyMap::const_iterator it = proxy_map().begin();
-			assert (it->first == minimum);
-			assert (it->first == least);
-			ProxyKey current_key = it->first;
-			bool const trimming = is_caching();
-			while (it->first == current_key)
-			{
-				++it;
-				assert (it != proxy_map().end());
-				++current_key;
-				assert (current_key < 0);
-				// Trim the cache a bit while we're at it.
-				assert (trimming == is_caching());
-				if (trimming && it->second->is_orphaned())
-				{
-					erase_object_proxied(it->first);
-				}
-			}
-			// We've found a gap.
+			++current_key;
+			++it;
+		}
+		if (it->first != current_key)
+		{
 			assert (proxy_map().find(current_key) == proxy_map().end());
-			return current_key;
+			last_assigned_proxy_key() = current_key;
+			break;
 		}
 	}
-	return least - 1;
+	return last_assigned_proxy_key();
 }
 
 }  // namespace sqloxx
