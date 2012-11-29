@@ -325,24 +325,24 @@ public:
 	Id id() const;
 	
 	/**
-	 * Should only be called by IdentityMap<Derived>. This assigns a "proxy
-	 * key" to the object. The proxy key is used by IdentityMap<Derived> to
+	 * Should only be called by IdentityMap<Derived>. This assigns a "cache
+	 * key" to the object. The cache key is used by IdentityMap<Derived> to
 	 * identify the object in its internal cache. Every object created by
-	 * the IdentityMap will have proxy key, even if it doesn't have an id.
+	 * the IdentityMap will have a cache key, even if it doesn't have an id.
 	 *
-	 * @todo The proxy key should be able to be specified
+	 * @todo The cache key should be able to be specified
 	 * in the constructor. But we
 	 * also don't want to confuse it with the other
 	 * two-paramatered constructor! So that's why it's we have a
-	 * separate function to set the proxy key. But the context in
-	 * which this is used is always going to be just post construction.
+	 * separate function to set the cache key. But the context in
+	 * which this is used is always going to be just after construction.
 	 * So this feels a bit crappy. Is there a better way?
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 *
 	 * @todo Test.
 	 */
-	void set_proxy_key(Id p_proxy_key);
+	void set_cache_key(Id p_cache_key);
 
 	/**
 	 * Should only be called by Handle<Derived>. To advise the underlying
@@ -570,14 +570,15 @@ private:
 	
 	// Represents the identifier, in the IdentityMap<Derived> for
 	// m_database_connection, of an instance of Derived. The
-	// IdentityMap<Derived> can look up a PersistentObject either via its Id
+	// IdentityMap<Derived> can look up a PersistentObject either via its id
 	// (which corresponds to its primary key in the database), or via
-	// it proxy_key. PersistentObject instances that are newly created and
+	// its cache_key. PersistentObject instances that are newly created and
 	// have not yet been saved to the database will not have an id (i.e. m_id
 	// will be in an uninitialized state), however these may still be managed
 	// by the IdentityMap, and so still need a means for the IdentityMap to
-	// identify them in their internal cache.
-	boost::optional<Id> m_proxy_key;
+	// identify them in their internal cache. Hence the need for a cache_key
+	// distinct from the id.
+	boost::optional<Id> m_cache_key;
 
 	LoadingStatus m_loading_status;
 	HandleCounter m_handle_counter;
@@ -605,8 +606,8 @@ PersistentObject<Derived, Connection>::PersistentObject
 	m_identity_map(p_identity_map),
 	m_loading_status(ghost),
 	m_handle_counter(0)
-	// Note m_proxy_key is left unitialized. It is the responsibility
-	// of IdentityMap<Derived> to call set_proxy_key after construction,
+	// Note m_cache_key is left unitialized. It is the responsibility
+	// of IdentityMap<Derived> to call set_cache_key after construction,
 	// before providing a Handle to a newly created Derived instance.
 {
 }
@@ -694,9 +695,9 @@ PersistentObject<Derived, Connection>::save()
 		do_save_new();
 		database_connection().end_transaction();
 		m_id = allocated_id;
-		if (m_proxy_key)
+		if (m_cache_key)
 		{
-			m_identity_map.register_id(*m_proxy_key, allocated_id);
+			m_identity_map.register_id(*m_cache_key, allocated_id);
 		}
 		// The next line fixed a bug 2012-11-22 that in resulted in objects
 		// being re-loaded from database when they were already complete.
@@ -718,9 +719,9 @@ template
 inline
 void
 PersistentObject<Derived, Connection>::
-set_proxy_key(Id p_proxy_key)
+set_cache_key(Id p_cache_key)
 {
-	m_proxy_key = p_proxy_key;
+	m_cache_key = p_cache_key;
 	return;
 }
 
@@ -810,9 +811,9 @@ decrement_handle_counter()
 		);
 	}
 	--m_handle_counter;
-	if (m_handle_counter == 0 && static_cast<bool>(m_proxy_key))
+	if (m_handle_counter == 0 && static_cast<bool>(m_cache_key))
 	{
-		m_identity_map.notify_nil_handles(*m_proxy_key);
+		m_identity_map.notify_nil_handles(*m_cache_key);
 	}
 	return;
 }
@@ -883,7 +884,7 @@ PersistentObject<Derived, Connection>::PersistentObject
 ):
 	m_identity_map(rhs.m_identity_map),
 	m_id(rhs.m_id),
-	m_proxy_key(rhs.m_proxy_key),
+	m_cache_key(rhs.m_cache_key),
 	m_loading_status(rhs.m_loading_status)
 {
 }
@@ -897,17 +898,17 @@ PersistentObject<Derived, Connection>::swap_base_internals
 {
 	IdentityMap temp_id_map = rhs.m_identity_map;
 	boost::optional<Id> temp_id = rhs.m_id;
-	boost::optional<Id> temp_proxy_key = rhs.m_proxy_key;
+	boost::optional<Id> temp_cache_key = rhs.m_cache_key;
 	LoadingStatus temp_loading_status = rhs.m_loading_status;
 
 	rhs.m_identity_map = m_identity_map;
 	rhs.m_id = m_id;
-	rhs.m_proxy_key = m_proxy_key;
+	rhs.m_cache_key = m_cache_key;
 	rhs.m_loading_status = m_loading_status;
 
 	m_identity_map = temp_id_map;
 	m_id = temp_id;
-	m_proxy_key = temp_proxy_key;
+	m_cache_key = temp_cache_key;
 	m_loading_status = temp_loading_status;
 
 	return;

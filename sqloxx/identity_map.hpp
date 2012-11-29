@@ -31,7 +31,7 @@ namespace sqloxx
  * Each instance of IdentityMap has a particular Connection associated
  * with it. The IdentityMap caches objects loaded from the database,
  * and provides clients - in particular the sqloxx::Handle<T> class -
- * pointers to these objects. My using IdentityMap to cache objects,
+ * pointers to these objects. By using IdentityMap to cache objects,
  * application code can be sure that each single record of type T
  * that is stored in the database, has at most a single in-memory
  * object of type T associated with that record, loaded in memory
@@ -56,7 +56,7 @@ class IdentityMap
 public:
 
 	typedef typename T::Id Id;
-	typedef typename T::Id ProxyKey;
+	typedef typename T::Id CacheKey;
 
 	/**
 	 * Construct an IdentityMap associated with the database
@@ -123,15 +123,15 @@ public:
 	/**
 	 * Register id of newly saved T.
 	 */
-	void register_id(ProxyKey proxy_key, Id allocated_id);
+	void register_id(CacheKey cache_key, Id allocated_id);
 
-	void erase_object_proxied(ProxyKey proxy_key);
+	void erase_object_proxied(CacheKey cache_key);
 
 	/**
 	 * Notify the IdentityMap that there are no handles left that are
 	 * pointing to this object.
 	 */
-	void notify_nil_handles(ProxyKey proxy_key);
+	void notify_nil_handles(CacheKey cache_key);
 
 	void enable_caching();
 
@@ -149,16 +149,16 @@ public:
 
 private:
 
-	// Find the next available proxy key
+	// Find the next available cache key
 	// WARNING Move the implementation out of the class body.
-	ProxyKey provide_proxy_key();
+	CacheKey provide_cache_key();
 	typedef typename boost::shared_ptr<T> Record;
 	typedef boost::unordered_map<Id, Record> IdMap;
-	typedef std::map<ProxyKey, Record> ProxyKeyMap;
+	typedef std::map<CacheKey, Record> CacheKeyMap;
 
-	ProxyKeyMap& proxy_map() const
+	CacheKeyMap& cache_key_map() const
 	{
-		return m_map_data->proxy_map;
+		return m_map_data->cache_key_map;
 	}
 
 	IdMap& id_map() const
@@ -166,9 +166,9 @@ private:
 		return m_map_data->id_map;
 	}
 
-	ProxyKey& last_assigned_proxy_key() const
+	CacheKey& next_cache_key() const
 	{
-		return m_map_data->last_assigned_proxy_key;
+		return m_map_data->next_cache_key;
 	}
 
 	bool& is_caching() const
@@ -183,19 +183,30 @@ private:
 	{
 		MapData(Connection& p_connection):
 			connection(p_connection),
-			last_assigned_proxy_key(0),
+			next_cache_key(1),
 			is_caching(false)
 		{
 		}
-		ProxyKeyMap proxy_map;  // For all objects.
-		IdMap id_map;        // For objects that exist in the database.
+		
+		// Provides index to all cached objects, including those not as yet
+		// saved to the database.
+		CacheKeyMap cache_key_map;
+
+		// Provides index to objects that have been persisted to the database,
+		// indexed by their primary key in the database.
+		IdMap id_map;
+
+		// The database connection with which this IdentityMap is associated.
+		Connection& connection; 
+
+		// The next key to be assigned as in index into cache_key_map.
+		CacheKey next_cache_key;
+
 		// Indicates whether the IdentityMap is currently
 		// holding objects indefinitely in the cache (m_caching == true),
 		// or whether it is
 		// clearing each object out when there are no longer handles
 		// pointing to it (m_caching == false).
-		Connection& connection;     
-		ProxyKey last_assigned_proxy_key;
 		bool is_caching; 
 	};
 	boost::shared_ptr<MapData> m_map_data;
@@ -236,9 +247,9 @@ Handle<T>
 IdentityMap<T, Connection>::provide_object()
 {
 	Record obj_ptr((new T(*this)));
-	ProxyKey const proxy_key = provide_proxy_key();
-	obj_ptr->set_proxy_key(proxy_key);
-	proxy_map()[proxy_key] = obj_ptr;
+	CacheKey const cache_key = provide_cache_key();
+	obj_ptr->set_cache_key(cache_key);
+	cache_key_map()[cache_key] = obj_ptr;
 	return Handle<T>(obj_ptr.get());
 }
 
@@ -253,9 +264,9 @@ IdentityMap<T, Connection>::provide_object(Id p_id)
 		// Then we need to create this object.
 		Record obj_ptr(new T(*this, p_id));
 		id_map()[p_id] = obj_ptr;
-		ProxyKey proxy_key = provide_proxy_key();
-		proxy_map()[proxy_key] = obj_ptr;
-		obj_ptr->set_proxy_key(proxy_key);
+		CacheKey cache_key = provide_cache_key();
+		cache_key_map()[cache_key] = obj_ptr;
+		obj_ptr->set_cache_key(cache_key);
 		return Handle<T>(obj_ptr.get()); 
 	}
 	assert (it != id_map().end());
@@ -264,34 +275,34 @@ IdentityMap<T, Connection>::provide_object(Id p_id)
 
 template <typename T, typename Connection>
 void
-IdentityMap<T, Connection>::register_id(ProxyKey proxy_key, Id allocated_id)
+IdentityMap<T, Connection>::register_id(CacheKey cache_key, Id allocated_id)
 {
-	id_map()[allocated_id] = proxy_map()[proxy_key];
+	id_map()[allocated_id] = cache_key_map()[cache_key];
 	return;
 }
 
 
 template <typename T, typename Connection>
 void
-IdentityMap<T, Connection>::erase_object_proxied(ProxyKey proxy_key)
+IdentityMap<T, Connection>::erase_object_proxied(CacheKey cache_key)
 {
-	Record const record = proxy_map().find(proxy_key)->second;
+	Record const record = cache_key_map().find(cache_key)->second;
 	if (record->has_id())
 	{
 		assert (id_map().find(record->id()) != id_map().end());
 		id_map().erase(record->id());
 	}
-	proxy_map().erase(proxy_key);
+	cache_key_map().erase(cache_key);
 	return;
 }
 
 template <typename T, typename Connection>
 void
-IdentityMap<T, Connection>::notify_nil_handles(ProxyKey proxy_key)
+IdentityMap<T, Connection>::notify_nil_handles(CacheKey cache_key)
 {
 	if (!is_caching())
 	{
-		erase_object_proxied(proxy_key);
+		erase_object_proxied(cache_key);
 	}
 	return;
 }
@@ -309,9 +320,9 @@ IdentityMap<T, Connection>::disable_caching()
 {
 	if (is_caching())
 	{
-		typename ProxyKeyMap::iterator const endpoint = proxy_map().end();
+		typename CacheKeyMap::iterator const endpoint = cache_key_map().end();
 		for
-		(	typename ProxyKeyMap::iterator it = proxy_map().begin();
+		(	typename CacheKeyMap::iterator it = cache_key_map().begin();
 			it != endpoint;
 			++it
 		)
@@ -336,60 +347,46 @@ IdentityMap<T, Connection>::connection()
 
 
 template <typename T, typename Connection>
-typename IdentityMap<T, Connection>::ProxyKey
-IdentityMap<T, Connection>::provide_proxy_key()
+typename IdentityMap<T, Connection>::CacheKey
+IdentityMap<T, Connection>::provide_cache_key()
 {
-	if (last_assigned_proxy_key() == 0)
-	{
-		assert (proxy_map().empty());
-		assert (proxy_map().find(1) == proxy_map().end());
-		last_assigned_proxy_key() = 1;
-		return last_assigned_proxy_key();
-	}
-	static ProxyKey const maximum = std::numeric_limits<ProxyKey>::max();
+	static CacheKey const maximum = std::numeric_limits<CacheKey>::max();
 	if
-	(	proxy_map().size() ==
-		boost::numeric_cast<typename ProxyKeyMap::size_type>(maximum)
+	(	cache_key_map().size() ==
+		boost::numeric_cast<typename CacheKeyMap::size_type>(maximum)
 	)
 	{
 		// There are no more available positive numbers to serve
-		// as proxy keys. This is extremely unlikely ever to occur.
+		// as cache keys. This is extremely unlikely ever to occur.
 		// We could possibly avoid throwing here by instead calling
 		// disable_caching(), which would trigger an emptying of the cache
 		// of any orphaned objects. But the emptying might take a long, long
 		// time. So we just throw.
 		// Avoid complication by not even considering negative numbers.
 		throw OverflowException
-		(	"No more proxy keys are available for identifying objects "
+		(	"No more cache keys are available for identifying objects "
 			"in the IdentityMap."
 		);
 	}
-	// Relies on this being a std::map, in which the elements are kept in
-	// key order.
-	// todo Figure out whether this is correct.
-	typedef typename ProxyKeyMap::const_iterator Iterator;
-	ProxyKey current_key = last_assigned_proxy_key();
-	Iterator it = proxy_map().find(current_key);
-	while (true)
+	CacheKey const ret = next_cache_key();
+	typedef typename CacheKeyMap::const_iterator Iterator;
+	Iterator it = cache_key_map().find(ret);
+	Iterator const endpoint = cache_key_map().end();
+	CacheKey current_key = ret;
+
+	// Look for the first available unused key to assign to next_cache_key()
+	// ready for the next call to provide_cache_key(). This relies on
+	// CacheKeyMap being, or behaving like, std::map, in that it keeps its
+	// elements ordered by key.
+	while (current_key == it->first)
 	{
-		if (it == proxy_map().end() || current_key == maximum)
-		{
-			it = proxy_map().begin();
-			current_key = 1;
-		}
-		else
-		{
-			++current_key;
-			++it;
-		}
-		if (it->first != current_key)
-		{
-			assert (proxy_map().find(current_key) == proxy_map().end());
-			last_assigned_proxy_key() = current_key;
-			break;
-		}
+		if (current_key == maximum) current_key = 0;
+		else ++current_key;
+		if (++it == endpoint) it = cache_key_map().begin();
 	}
-	return last_assigned_proxy_key();
+	assert (cache_key_map().find(current_key) == cache_key_map().end());
+	next_cache_key() = current_key;
+	return ret;
 }
 
 }  // namespace sqloxx
