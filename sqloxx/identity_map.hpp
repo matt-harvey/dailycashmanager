@@ -3,6 +3,7 @@
 
 #include "handle.hpp"
 #include <boost/noncopyable.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <cassert>
@@ -74,7 +75,7 @@ public:
 	/**
 	 * Copy constructor. Performs a shallow copy. The underlying
 	 * structures (e.g. database connection and cache) employed
-	 * by the new IdentitMap will be the very same as those employed
+	 * by the new IdentityMap will be the very same as those employed
 	 * by rhs.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
@@ -98,7 +99,8 @@ public:
 	~IdentityMap();
 
 	/**
-	 * Assignment is shallow, and behaves as per the copy constructor
+	 * Assignment is shallow, and with semantics like those of the
+	 * copy constructor.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 *
@@ -108,7 +110,7 @@ public:
 
 	/**
 	 * Provide handle to object of T, representing a newly created object
-	 * that has not yet been persisted to the database
+	 * that has not yet been persisted to the database.
 	 */
 	Handle<T> provide_object();
 
@@ -164,9 +166,9 @@ private:
 		return m_map_data->id_map;
 	}
 
-	bool& caching() const
+	bool& is_caching() const
 	{
-		return m_map_data->caching;
+		return m_map_data->is_caching;
 	}
 
 	// Data members
@@ -176,7 +178,7 @@ private:
 	{
 		MapData(Connection& p_connection):
 			connection(p_connection),
-			caching(false)
+			is_caching(false)
 		{
 		}
 		ProxyKeyMap proxy_map;  // For all objects.
@@ -187,7 +189,7 @@ private:
 		// clearing each object out when there are no longer handles
 		// pointing to it (m_caching == false).
 		Connection& connection;     
-		bool caching; 
+		bool is_caching; 
 	};
 	boost::shared_ptr<MapData> m_map_data;
 };
@@ -226,7 +228,6 @@ template <typename T, typename Connection>
 Handle<T>
 IdentityMap<T, Connection>::provide_object()
 {
-	
 	Record obj_ptr((new T(*this)));
 	ProxyKey const proxy_key = next_proxy_key();
 	obj_ptr->set_proxy_key(proxy_key);
@@ -281,7 +282,7 @@ template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::notify_nil_handles(ProxyKey proxy_key)
 {
-	if (!caching())
+	if (!is_caching())
 	{
 		erase_object_proxied(proxy_key);
 	}
@@ -292,14 +293,14 @@ template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::enable_caching()
 {
-	caching() = true;
+	is_caching() = true;
 }
 
 template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::disable_caching()
 {
-	if (caching())
+	if (is_caching())
 	{
 		typename ProxyKeyMap::iterator const endpoint = proxy_map().end();
 		for
@@ -313,7 +314,7 @@ IdentityMap<T, Connection>::disable_caching()
 				erase_object_proxied(it->first);
 			}
 		}
-		caching() = false;
+		is_caching() = false;
 	}
 	return;
 }
@@ -331,19 +332,54 @@ template <typename T, typename Connection>
 typename IdentityMap<T, Connection>::ProxyKey
 IdentityMap<T, Connection>::next_proxy_key()
 {
-	// TODO Change this so that vacated slots are filled, rather
-	// than just always taking least - 1. Currently there is
-	// a danger that we will just forever move towards min, until
-	// we overflow.
-
 	// Using negative numbers to avoid any possible confusion
 	// with Id.
 	// Relies on this being a std::map, in which the first
 	// key is less than any other key.
+	static ProxyKey const minimum = std::numeric_limits<ProxyKey>::min();
 	ProxyKey const least = proxy_map().begin()->first;
-	if (least == std::numeric_limits<ProxyKey>::min())
+	if (least == minimum)
 	{
-		throw OverflowException("Proxy key has reached numeric limit.");
+		typedef typename ProxyKeyMap::size_type sz;
+		if (proxy_map().size() == boost::numeric_cast<sz>(minimum))
+		{
+			// There are no more available negative keys to serve
+			// as proxy keys. This is extremely unlikely ever to occur.
+			// We could possibly avoid throwing here by instead calling
+			// disable_caching(), which would trigger an emptying of the cache
+			// of any orphaned objects. But the emptying might take too long!
+			// So we just throw.
+			throw OverflowException
+			(	"No more proxy keys are available for identifying objects "
+				"in the IdentityMap."
+			);
+		}
+		else
+		{
+			typename ProxyKeyMap::iterator const endpoint = proxy_map().end();
+			// There is a gap somewhere.
+			// TODO Assess the likelihood that this branch will
+			// ever be executed "in real life". If it is to be executed,
+			// could it take an unacceptable time to find the gap and/or
+			// call disable_caching()?
+			// In that case, should I throw instead of taking too long?
+			// Or should I use a vector
+			// or the like to record gaps as they arise? (But then
+			// notify_nil_handles() might throw.)
+			if (is_caching())
+			{
+				disable_caching(); // Empties the cache of "orphans".
+				enable_caching();
+			}
+			for (ProxyKey i = -1; i != minimum; --i)
+			{
+				if (proxy_map().find(i) != endpoint)
+				{
+					return i;
+				}
+			}
+			assert (false);  // Execution should never reach here.
+		}
 	}
 	return least - 1;
 }
