@@ -344,7 +344,7 @@ IdentityMap<T, Connection>::next_proxy_key()
 		if (proxy_map().size() == boost::numeric_cast<sz>(minimum))
 		{
 			// There are no more available negative keys to serve
-			// as proxy keys. This is extremely unlikely ever to occur.
+			// as proxy keys. This is EXTREMELY unlikely ever to occur.
 			// We could possibly avoid throwing here by instead calling
 			// disable_caching(), which would trigger an emptying of the cache
 			// of any orphaned objects. But the emptying might take too long!
@@ -356,29 +356,28 @@ IdentityMap<T, Connection>::next_proxy_key()
 		}
 		else
 		{
-			typename ProxyKeyMap::iterator const endpoint = proxy_map().end();
 			// There is a gap somewhere.
-			// TODO Assess the likelihood that this branch will
-			// ever be executed "in real life". If it is to be executed,
-			// could it take an unacceptable time to find the gap and/or
-			// call disable_caching()?
-			// In that case, should I throw instead of taking too long?
-			// Or should I use a vector
-			// or the like to record gaps as they arise? (But then
-			// notify_nil_handles() might throw.)
-			if (is_caching())
+			typename ProxyKeyMap::const_iterator it = proxy_map().begin();
+			assert (it->first == minimum);
+			assert (it->first == least);
+			ProxyKey current_key = it->first;
+			bool const trimming = is_caching();
+			while (it->first == current_key)
 			{
-				disable_caching(); // Empties the cache of "orphans".
-				enable_caching();
-			}
-			for (ProxyKey i = -1; i != minimum; --i)
-			{
-				if (proxy_map().find(i) != endpoint)
+				++it;
+				assert (it != proxy_map().end());
+				++current_key;
+				assert (current_key < 0);
+				// Trim the cache a bit while we're at it.
+				assert (trimming == is_caching());
+				if (trimming && it->second->is_orphaned())
 				{
-					return i;
+					erase_object_proxied(it->first);
 				}
 			}
-			assert (false);  // Execution should never reach here.
+			// We've found a gap.
+			assert (proxy_map().find(current_key) == proxy_map().end());
+			return current_key;
 		}
 	}
 	return least - 1;
