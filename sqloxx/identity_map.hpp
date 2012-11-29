@@ -29,7 +29,7 @@ public:
 
 	IdentityMap(Connection& p_connection);
 	IdentityMap(IdentityMap const& rhs);
-	~IdentityMap;
+	~IdentityMap();
 	IdentityMap& operator=(IdentityMap const& rhs);
 	/**
 	 * Provide handle to object of T, representing a newly created object
@@ -69,8 +69,6 @@ public:
 	 * @todo Testing.
 	 */
 	Connection& connection();
-
-	IdentityMap& operator=(IdentityMap const& rhs);
 
 private:
 
