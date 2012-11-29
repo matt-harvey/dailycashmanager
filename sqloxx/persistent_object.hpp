@@ -130,16 +130,7 @@ namespace sqloxx
  * @param Connection The type of the database connection through which
  * instances of Derived will be persisted to the database. Connection
  * should be a class derived from sqloxx::DatabaseConnection.
- *
- * @param Id The type of the identifier for this class in the database.
- * Best if integral. Defaults to sqloxx::Id.
- *
- * @param HandleCounter The type of the counter to count the number of
- * "at large"
- * "handles" to a given Derived object. Should be an integral type,
- * and defaults to int. (The count of handles is used by IdentityMap class
- * to help manage caching of in-memory objects.)
- * 
+  * 
  * @todo Provide for atomic saving (not just of
  * SQL execution, but of the actual alteration of the in-memory objects).
  * Go through all the client classes in Phatbooks and ensure the
@@ -156,14 +147,14 @@ namespace sqloxx
  */
 template
 <	typename Derived,     // subclass of PersistentObject
-	typename Connection,  // subclass of DatabaseConnection for this app.
-	typename Id = sqloxx::Id,  // type of primary key for Derived
-	typename HandleCounter = int     // type with which we will be counting handles
+	typename Connection  // subclass of DatabaseConnection for this app.
 >
 class PersistentObject
 {
 public:
 
+	typedef sqloxx::Id Id;
+	typedef sqloxx::HandleCounter HandleCounter;
 	typedef sqloxx::IdentityMap<Derived, Connection> IdentityMap;
 
 	/**
@@ -591,8 +582,8 @@ private:
 
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
-PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
+<typename Derived, typename Connection>
+PersistentObject<Derived, Connection>::PersistentObject
 (	IdentityMap& p_identity_map,
 	Id p_id
 ):
@@ -604,8 +595,8 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
-PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
+<typename Derived, typename Connection>
+PersistentObject<Derived, Connection>::PersistentObject
 (	IdentityMap& p_identity_map	
 ):
 	m_identity_map(p_identity_map),
@@ -618,15 +609,15 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
-PersistentObject<Derived, Connection, Id, HandleCounter>::~PersistentObject()
+<typename Derived, typename Connection>
+PersistentObject<Derived, Connection>::~PersistentObject()
 {
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 void
-PersistentObject<Derived, Connection, Id, HandleCounter>::load()
+PersistentObject<Derived, Connection>::load()
 {
 	while (m_loading_status == loading)
 	{
@@ -682,9 +673,9 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::load()
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 void
-PersistentObject<Derived, Connection, Id, HandleCounter>::save()
+PersistentObject<Derived, Connection>::save()
 {
 	if (has_id())
 	{
@@ -712,18 +703,18 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::save()
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 Id
-PersistentObject<Derived, Connection, Id, HandleCounter>::id() const
+PersistentObject<Derived, Connection>::id() const
 {
 	return jewel::value(m_id);
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 inline
 void
-PersistentObject<Derived, Connection, Id, HandleCounter>::
+PersistentObject<Derived, Connection>::
 set_proxy_key(Id p_proxy_key)
 {
 	m_proxy_key = p_proxy_key;
@@ -731,10 +722,10 @@ set_proxy_key(Id p_proxy_key)
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 inline
 void
-PersistentObject<Derived, Connection, Id, HandleCounter>::
+PersistentObject<Derived, Connection>::
 notify_handle_construction()
 {
 	increment_handle_counter();
@@ -742,10 +733,10 @@ notify_handle_construction()
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 inline
 void
-PersistentObject<Derived, Connection, Id, HandleCounter>::
+PersistentObject<Derived, Connection>::
 notify_handle_copy_construction()
 {
 	increment_handle_counter();
@@ -753,10 +744,10 @@ notify_handle_copy_construction()
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 inline
 void
-PersistentObject<Derived, Connection, Id, HandleCounter>::
+PersistentObject<Derived, Connection>::
 notify_rhs_assignment_operation()
 {
 	increment_handle_counter();
@@ -764,10 +755,10 @@ notify_rhs_assignment_operation()
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 inline
 void
-PersistentObject<Derived, Connection, Id, HandleCounter>::
+PersistentObject<Derived, Connection>::
 notify_lhs_assignment_operation()
 {
 	decrement_handle_counter();
@@ -775,10 +766,10 @@ notify_lhs_assignment_operation()
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 inline
 void
-PersistentObject<Derived, Connection, Id, HandleCounter>::
+PersistentObject<Derived, Connection>::
 notify_handle_destruction()
 {
 	decrement_handle_counter();
@@ -786,9 +777,9 @@ notify_handle_destruction()
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 void
-PersistentObject<Derived, Connection, Id, HandleCounter>::
+PersistentObject<Derived, Connection>::
 increment_handle_counter()
 {
 	if (m_handle_counter == std::numeric_limits<HandleCounter>::max())
@@ -803,9 +794,9 @@ increment_handle_counter()
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 void
-PersistentObject<Derived, Connection, Id, HandleCounter>::
+PersistentObject<Derived, Connection>::
 decrement_handle_counter()
 {
 	if (m_handle_counter == 0)
@@ -824,19 +815,19 @@ decrement_handle_counter()
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 inline
 Connection&
-PersistentObject<Derived, Connection, Id, HandleCounter>::
+PersistentObject<Derived, Connection>::
 database_connection() const
 {
 	return m_identity_map.connection();
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 Id
-PersistentObject<Derived, Connection, Id, HandleCounter>::
+PersistentObject<Derived, Connection>::
 prospective_key() const
 {
 	if (has_id())
@@ -853,10 +844,10 @@ prospective_key() const
 
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 inline
 bool
-PersistentObject<Derived, Connection, Id, HandleCounter>::has_id() const
+PersistentObject<Derived, Connection>::has_id() const
 {
 	// Relies on the fact that m_id is a boost::optional<Id>, and
 	// will convert to true if and only if it has been initialized.
@@ -864,18 +855,18 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::has_id() const
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 inline
 bool
-PersistentObject<Derived, Connection, Id, HandleCounter>::is_orphaned() const
+PersistentObject<Derived, Connection>::is_orphaned() const
 {
 	return m_handle_counter == 0;
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 void
-PersistentObject<Derived, Connection, Id, HandleCounter>::
+PersistentObject<Derived, Connection>::
 clear_loading_status()
 {
 	m_loading_status = ghost;
@@ -883,8 +874,8 @@ clear_loading_status()
 }
 
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
-PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
+<typename Derived, typename Connection>
+PersistentObject<Derived, Connection>::PersistentObject
 (	PersistentObject const& rhs
 ):
 	m_identity_map(rhs.m_identity_map),
@@ -895,9 +886,9 @@ PersistentObject<Derived, Connection, Id, HandleCounter>::PersistentObject
 }
 		
 template
-<typename Derived, typename Connection, typename Id, typename HandleCounter>
+<typename Derived, typename Connection>
 void
-PersistentObject<Derived, Connection, Id, HandleCounter>::swap_base_internals
+PersistentObject<Derived, Connection>::swap_base_internals
 (	PersistentObject& rhs
 )
 {

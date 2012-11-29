@@ -5,6 +5,7 @@ namespace sqloxx
 {
 
 typedef int Id;
+typedef int HandleCounter;
 
 }  // namespace sqloxx
 
