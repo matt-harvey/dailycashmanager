@@ -10,11 +10,11 @@
 #include <map>
 #include <stdexcept>
 
-// For debugging
+#ifndef DEBUG
 	#include <jewel/debug_log.hpp>
 	#include <iostream>
 	#include <typeinfo>
-	using std::endl;
+#endif
 
 namespace sqloxx
 {
@@ -109,23 +109,22 @@ public:
 	IdentityMap& operator=(IdentityMap const& rhs);
 
 	/**
-	 * Provide handle to object of T, representing a newly created object
+	 * Provide handle to object of type T, representing a newly created object
 	 * that has not yet been persisted to the database.
 	 */
 	Handle<T> provide_object();
 
 	/**
 	 * Provide handle to object of type T, representing an object
-	 * already stored in the database, with id p_id.
+	 * already stored in the database, with primary key (id) p_id.
 	 */
 	Handle<T> provide_object(Id p_id);
 	
 	/**
-	 * Register id of newly saved T.
+	 * Register id of newly saved instance of T. This function is
+	 * intended only to be called from PersistentObject<T, Connection>.
 	 */
 	void register_id(CacheKey cache_key, Id allocated_id);
-
-	void erase_object_proxied(CacheKey cache_key);
 
 	/**
 	 * Notify the IdentityMap that there are no handles left that are
@@ -148,6 +147,8 @@ public:
 	Connection& connection();
 
 private:
+
+	void uncache_object_proxied(CacheKey cache_key);
 
 	// Find the next available cache key
 	// WARNING Move the implementation out of the class body.
@@ -246,7 +247,7 @@ template <typename T, typename Connection>
 Handle<T>
 IdentityMap<T, Connection>::provide_object()
 {
-	Record obj_ptr((new T(*this)));
+	Record obj_ptr(new T(*this));
 	CacheKey const cache_key = provide_cache_key();
 	obj_ptr->set_cache_key(cache_key);
 	cache_key_map()[cache_key] = obj_ptr;
@@ -284,7 +285,7 @@ IdentityMap<T, Connection>::register_id(CacheKey cache_key, Id allocated_id)
 
 template <typename T, typename Connection>
 void
-IdentityMap<T, Connection>::erase_object_proxied(CacheKey cache_key)
+IdentityMap<T, Connection>::uncache_object_proxied(CacheKey cache_key)
 {
 	Record const record = cache_key_map().find(cache_key)->second;
 	if (record->has_id())
@@ -302,7 +303,7 @@ IdentityMap<T, Connection>::notify_nil_handles(CacheKey cache_key)
 {
 	if (!is_caching())
 	{
-		erase_object_proxied(cache_key);
+		uncache_object_proxied(cache_key);
 	}
 	return;
 }
@@ -329,7 +330,7 @@ IdentityMap<T, Connection>::disable_caching()
 		{
 			if (it->second->is_orphaned())
 			{
-				erase_object_proxied(it->first);
+				uncache_object_proxied(it->first);
 			}
 		}
 		is_caching() = false;
