@@ -28,7 +28,9 @@ public:
 	typedef typename T::Id ProxyKey;
 
 	IdentityMap(Connection& p_connection);
-
+	IdentityMap(IdentityMap const& rhs);
+	~IdentityMap;
+	IdentityMap& operator=(IdentityMap const& rhs);
 	/**
 	 * Provide handle to object of T, representing a newly created object
 	 * that has not yet been persisted to the database
@@ -96,6 +98,7 @@ private:
 
 	// Data members
 
+	// Hold in a struct to facilitate safe, shallow copying.
 	struct MapData
 	{
 		MapData(Connection& p_connection):
@@ -118,9 +121,32 @@ private:
 
 
 template <typename T, typename Connection>
+inline
 IdentityMap<T, Connection>::IdentityMap(Connection& p_connection):
 	m_map_data(new MapData(p_connection))
 {
+}
+
+template <typename T, typename Connection>
+inline
+IdentityMap<T, Connection>::IdentityMap(IdentityMap const& rhs):
+	m_map_data(rhs.m_map_data)
+{
+}
+
+template <typename T, typename Connection>
+inline
+IdentityMap<T, Connection>::~IdentityMap()
+{
+}
+
+template <typename T, typename Connection>
+inline
+IdentityMap<T, Connection>&
+IdentityMap<T, Connection>::operator=(IdentityMap const& rhs)
+{
+	m_map_data = rhs.m_map_data;
+	return *this;
 }
 
 template <typename T, typename Connection>
@@ -220,19 +246,13 @@ IdentityMap<T, Connection>::disable_caching()
 }
 
 template <typename T, typename Connection>
+inline
 Connection&
 IdentityMap<T, Connection>::connection()
 {
 	return m_map_data->connection;
 }
 
-template <typename T, typename Connection>
-IdentityMap<T, Connection>&
-IdentityMap<T, Connection>::operator=(IdentityMap const& rhs)
-{
-	m_map_data = rhs.m_map_data;
-	return *this;
-}
 
 template <typename T, typename Connection>
 typename IdentityMap<T, Connection>::ProxyKey
