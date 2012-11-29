@@ -16,10 +16,6 @@
 namespace sqloxx
 {
 
-
-// WARNING The whole thing needs the documentation revised if I proceed with
-// the CRTP pattern
-
 /**
  * Class template for creating objects persisted to a database. This
  * should be inherited by a derived class that defines certain
@@ -122,10 +118,8 @@ namespace sqloxx
  * TEMPLATE PARAMETERS
  *
  * @param Derived The derived class. Derived should inherit publicly
- * from PersistentObject per the Curiously Recurring Template Pattern (CRTP),
- * thus: <tt>class Derived: public PersistentObject<Derived...>, where "..."
- * represents the other template parameters, which may be ommitted if
- * the default values are accepted.
+ * from PersistentObject<Derived, Connection> per the Curiously Recurring
+ * Template Pattern (CRTP).
  *
  * @param Connection The type of the database connection through which
  * instances of Derived will be persisted to the database. Connection
@@ -150,10 +144,7 @@ namespace sqloxx
  * informing the IdentityMap so that it erase the object
  * from the cache. We don't want zombies in the cache!
  */
-template
-<	typename Derived,     // subclass of PersistentObject
-	typename Connection  // subclass of DatabaseConnection for this app.
->
+template<typename Derived, typename Connection>
 class PersistentObject
 {
 public:
@@ -537,11 +528,9 @@ protected:
 	
 private:
 
-	/**
-	 * Deliberately unimplemented. Assignment doesn't make much semantic
-	 * sense for a PersistentObject that is supposed to
-	 * represent a \e unique object in the database with a unique id.
-	 */
+	 // Deliberately unimplemented. Assignment doesn't make much semantic
+	 // sense for a PersistentObject that is supposed to
+	 // represent a \e unique object in the database with a unique id.
 	PersistentObject& operator=(PersistentObject const& rhs);
 
 	virtual void do_load() = 0;
@@ -718,8 +707,7 @@ template
 <typename Derived, typename Connection>
 inline
 void
-PersistentObject<Derived, Connection>::
-set_cache_key(Id p_cache_key)
+PersistentObject<Derived, Connection>::set_cache_key(Id p_cache_key)
 {
 	m_cache_key = p_cache_key;
 	return;
@@ -729,8 +717,7 @@ template
 <typename Derived, typename Connection>
 inline
 void
-PersistentObject<Derived, Connection>::
-notify_handle_construction()
+PersistentObject<Derived, Connection>::notify_handle_construction()
 {
 	increment_handle_counter();
 	return;
@@ -740,8 +727,7 @@ template
 <typename Derived, typename Connection>
 inline
 void
-PersistentObject<Derived, Connection>::
-notify_handle_copy_construction()
+PersistentObject<Derived, Connection>::notify_handle_copy_construction()
 {
 	increment_handle_counter();
 	return;
@@ -751,8 +737,7 @@ template
 <typename Derived, typename Connection>
 inline
 void
-PersistentObject<Derived, Connection>::
-notify_rhs_assignment_operation()
+PersistentObject<Derived, Connection>::notify_rhs_assignment_operation()
 {
 	increment_handle_counter();
 	return;
@@ -762,8 +747,7 @@ template
 <typename Derived, typename Connection>
 inline
 void
-PersistentObject<Derived, Connection>::
-notify_lhs_assignment_operation()
+PersistentObject<Derived, Connection>::notify_lhs_assignment_operation()
 {
 	decrement_handle_counter();
 	return;
@@ -773,8 +757,7 @@ template
 <typename Derived, typename Connection>
 inline
 void
-PersistentObject<Derived, Connection>::
-notify_handle_destruction()
+PersistentObject<Derived, Connection>::notify_handle_destruction()
 {
 	decrement_handle_counter();
 	return;
@@ -783,8 +766,7 @@ notify_handle_destruction()
 template
 <typename Derived, typename Connection>
 void
-PersistentObject<Derived, Connection>::
-increment_handle_counter()
+PersistentObject<Derived, Connection>::increment_handle_counter()
 {
 	if (m_handle_counter == std::numeric_limits<HandleCounter>::max())
 	{
@@ -800,8 +782,7 @@ increment_handle_counter()
 template
 <typename Derived, typename Connection>
 void
-PersistentObject<Derived, Connection>::
-decrement_handle_counter()
+PersistentObject<Derived, Connection>::decrement_handle_counter()
 {
 	if (m_handle_counter == 0)
 	{
@@ -822,8 +803,7 @@ template
 <typename Derived, typename Connection>
 inline
 Connection&
-PersistentObject<Derived, Connection>::
-database_connection() const
+PersistentObject<Derived, Connection>::database_connection() const
 {
 	return m_identity_map.connection();
 }
@@ -831,8 +811,7 @@ database_connection() const
 template
 <typename Derived, typename Connection>
 Id
-PersistentObject<Derived, Connection>::
-prospective_key() const
+PersistentObject<Derived, Connection>::prospective_key() const
 {
 	if (has_id())
 	{
