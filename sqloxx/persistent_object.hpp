@@ -144,6 +144,11 @@ namespace sqloxx
  *
  * @todo I need a better way of conveying the Id type to derived classes.
  * Currently this information is "multiply located".
+ *
+ * @todo PersistentObject should have an erase() method. This should
+ * delete the corresponding object from the database, while also
+ * informing the IdentityMap so that it erase the object
+ * from the cache. We don't want zombies in the cache!
  */
 template
 <	typename Derived,     // subclass of PersistentObject
@@ -291,8 +296,6 @@ public:
 	 * @todo Testing, and reassessment of exceptions and exceptions safety.
 	 */
 	void save();
-
-
 
 	/*
 	 * Exception safety: depends on the derived class's implementation
