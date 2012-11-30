@@ -366,7 +366,7 @@ IdentityMap<T, Connection>::provide_object(Id p_id)
 		try
 		{
 			cache_key_map().insert
-			(	typename IdMap::value_type(p_id, obj_ptr)
+			(	typename IdMap::value_type(cache_key, obj_ptr)
 			);
 		}
 		catch (std::bad_alloc&)
@@ -403,25 +403,26 @@ IdentityMap<T, Connection>::register_id(CacheKey cache_key, Id allocated_id)
 
 template <typename T, typename Connection>
 void
-IdentityMap<T, Connection>::uncache_object_proxied(CacheKey cache_key)
+IdentityMap<T, Connection>::uncache_object_proxied(CacheKey p_cache_key)
 {
-	Record const record = cache_key_map().find(cache_key)->second;
+	assert (cache_key_map().find(p_cache_key) != cache_key_map().end());
+	Record const record = cache_key_map().find(p_cache_key)->second;
 	if (record->has_id())
 	{
 		assert (id_map().find(record->id()) != id_map().end());
 		id_map().erase(record->id());
 	}
-	cache_key_map().erase(cache_key);
+	cache_key_map().erase(p_cache_key);
 	return;
 }
 
 template <typename T, typename Connection>
 void
-IdentityMap<T, Connection>::notify_nil_handles(CacheKey cache_key)
+IdentityMap<T, Connection>::notify_nil_handles(CacheKey p_cache_key)
 {
 	if (!is_caching())
 	{
-		uncache_object_proxied(cache_key);
+		uncache_object_proxied(p_cache_key);
 	}
 	return;
 }

@@ -84,7 +84,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
 	
-	m_database_connection->set_caching_level(10);
+	m_database_connection->set_caching_level(0);
 
 
 	// Set up all the Menu objects.
@@ -847,7 +847,7 @@ void PhatbooksTextSession::display_all_entry_account_names()
 	while (statement.step())
 	{
 		Entry entry(*m_database_connection, statement.extract<Entry::Id>(0));
-		cout << entry.account().name() << endl;
+		// cout << entry.account().name() << endl;  // WARNING temp comment-out
 	}
 	cout << "Done!" << endl;
 	return;
