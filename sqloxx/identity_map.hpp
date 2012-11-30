@@ -111,6 +111,7 @@ public:
 	/**
 	 * Provide handle to object of type T, representing a newly created object
 	 * that has not yet been persisted to the database.
+	 *
 	 */
 	Handle<T> provide_object();
 
@@ -152,16 +153,37 @@ private:
 
 	// Find the next available cache key
 	// WARNING Move the implementation out of the class body.
+	/**
+	 * @throws sqloxx::OverflowException if the cache has reached
+	 * its maximum size (extremely unlikely). In this event, state
+	 * is unaltered from pre-call.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 */
 	CacheKey provide_cache_key();
+
 	typedef typename boost::shared_ptr<T> Record;
 	typedef boost::unordered_map<Id, Record> IdMap;
 	typedef std::map<CacheKey, Record> CacheKeyMap;
 
+	/**
+	 * Returns a reference to the underlying cache in which objects
+	 * are indexed by CacheKey (as opposed to Id, which does not apply
+	 * to objects not yet persisted to the database.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
 	CacheKeyMap& cache_key_map() const
 	{
 		return m_map_data->cache_key_map;
 	}
 
+	/**
+	 * Returns a reference to the underlying cache in which objectsa
+	 * are indexed Id (ass opposed to CacheKey.
+	 *
+	 * ExceptioSafety: <nothrow guarantee</em>
+	 */
 	IdMap& id_map() const
 	{
 		return m_map_data->id_map;
