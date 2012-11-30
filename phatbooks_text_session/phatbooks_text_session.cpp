@@ -84,7 +84,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
 	
-	m_database_connection->set_caching_level(0);
+	m_database_connection->set_caching_level(10);
 
 
 	// Set up all the Menu objects.

@@ -30,6 +30,13 @@ namespace sqloxx
 JEWEL_DERIVED_EXCEPTION(OverflowException, jewel::Exception);
 
 /**
+ * Exception to be thrown when searching for a key in a map
+ * or other container, and the key is not found, when it is
+ * expected to be.
+ */
+JEWEL_DERIVED_EXCEPTION(KeyNotFoundException, jewel::Exception);
+
+/**
  * Exception to be thrown when attempting to dereference an
  * unbound Handle<T>
  */

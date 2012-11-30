@@ -813,7 +813,6 @@ PersistentObject<Derived, Connection>::decrement_handle_counter()
 	--m_handle_counter;
 	if (m_handle_counter == 0 && static_cast<bool>(m_cache_key))
 	{
-		JEWEL_DEBUG_LOG << "Notifying nil handles." << std::endl;
 		m_identity_map.notify_nil_handles(*m_cache_key);
 	}
 	return;

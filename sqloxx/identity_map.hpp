@@ -174,8 +174,25 @@ public:
 	/**
 	 * Register id of newly saved instance of T. This function is
 	 * intended only to be called from PersistentObject<T, Connection>.
+	 * This tells the cache the id of the object so that in future, it
+	 * can be looked up by its id as well as by its cache key.
+	 *
+	 * @param p_cache_key the cache key of the newly saved object
+	 *
+	 * @param p_id the id of the newly saved object, which corresponds
+	 * to its primary key in the database
+	 *
+	 * @throws KeyNotFoundException in the event that there is no object
+	 * cached with p_cache_key
+	 *
+	 * @throws std::bad_alloc in the very unlikely event of memory allocation
+	 * failure while registering the object's id in the cache.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 *
+	 * @todo Testing.
 	 */
-	void register_id(CacheKey cache_key, Id allocated_id);
+	void register_id(CacheKey p_cache_key, Id p_id);
 
 	/**
 	 * Notify the IdentityMap that there are no handles left that are
@@ -183,6 +200,14 @@ public:
 	 */
 	void notify_nil_handles(CacheKey cache_key);
 
+	/**
+	 * Turn on caching. When caching is on, objects loaded from the
+	 * database are cached indefinitely in the IdentityMap. When
+	 * caching is off, each object is only cached as long as there
+	 * as at least one Handle referring to it.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
 	void enable_caching();
 
 	void disable_caching();
@@ -231,7 +256,7 @@ private:
 	 * Returns a reference to the underlying cache in which objectsa
 	 * are indexed Id (ass opposed to CacheKey.
 	 *
-	 * ExceptioSafety: <nothrow guarantee</em>
+	 * Exception safety: <nothrow guarantee</em>
 	 */
 	IdMap& id_map() const
 	{
@@ -396,9 +421,15 @@ IdentityMap<T, Connection>::provide_object(Id p_id)
 
 template <typename T, typename Connection>
 void
-IdentityMap<T, Connection>::register_id(CacheKey cache_key, Id allocated_id)
+IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 {
-	id_map()[allocated_id] = cache_key_map()[cache_key];
+	typename CacheKeyMap::const_iterator const finder =
+		cache_key_map().find(p_cache_key);
+	if (finder == cache_key_map().end())
+	{
+		throw KeyNotFoundException("p_cache_key not found.");
+	}
+	id_map().insert(typename IdMap::value_type(p_id, finder->second));
 	return;
 }
 
