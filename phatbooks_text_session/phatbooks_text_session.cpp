@@ -847,7 +847,7 @@ void PhatbooksTextSession::display_all_entry_account_names()
 	while (statement.step())
 	{
 		Entry entry(*m_database_connection, statement.extract<Entry::Id>(0));
-		// cout << entry.account().name() << endl;  // WARNING temp comment-out
+		cout << entry.account().name() << endl;  // WARNING temp comment-out
 	}
 	cout << "Done!" << endl;
 	return;

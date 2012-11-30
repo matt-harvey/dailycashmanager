@@ -48,7 +48,7 @@ namespace sqloxx
  * and sqloxx::PersistentObject<T, Connection>. See also the documentation
  * for those classes.
  *
- * @todo Documentation and testing.
+ * @todo Testing.
  */
 template <typename T, typename Connection>
 class IdentityMap
@@ -177,39 +177,66 @@ public:
 	 * This tells the cache the id of the object so that in future, it
 	 * can be looked up by its id as well as by its cache key.
 	 *
+	 * Precondition: there must be an object cached in the IdentityMap
+	 * with this p_cache_key.
+	 *
 	 * @param p_cache_key the cache key of the newly saved object
 	 *
 	 * @param p_id the id of the newly saved object, which corresponds
 	 * to its primary key in the database
 	 *
-	 * @throws KeyNotFoundException in the event that there is no object
-	 * cached with p_cache_key
-	 *
 	 * @throws std::bad_alloc in the very unlikely event of memory allocation
 	 * failure while registering the object's id in the cache.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * Exception safety: <em>strong guarantee</em>, providing the precondition
+	 * is met.
 	 *
 	 * @todo Testing.
 	 */
 	void register_id(CacheKey p_cache_key, Id p_id);
 
 	/**
+	 * This should only be called from PersistentObject<T, Connection>.
+	 *
 	 * Notify the IdentityMap that there are no handles left that are
 	 * pointing to this object.
+	 * 
+	 * Preconditions: (a) there must be an object cached in this
+	 * IdentityMap with this cache_key; and (b) the destructor of T must
+	 * never throw.
+	 * 
+	 * Exception safety: <em>nothrow guarantee</em>, provided the
+	 * preconditions are met.
+	 *
+	 * @todo Testing.
 	 */
-	void notify_nil_handles(CacheKey cache_key);
+	void notify_nil_handles(CacheKey p_cache_key);
 
 	/**
 	 * Turn on caching. When caching is on, objects loaded from the
 	 * database are cached indefinitely in the IdentityMap. When
 	 * caching is off, each object is only cached as long as there
-	 * as at least one Handle referring to it.
+	 * as at least one Handle referring to it. If enable_caching() is
+	 * called when caching is already on, it has no effect.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	void enable_caching();
 
+	/**
+	 * Turn caching off. When caching is off, each object is only
+	 * cached as long as there is at least one Handle referring to
+	 * it. If disable_caching() is called when caching is already
+	 * off, it has no effect. If caching is on when disable_caching()
+	 * is called, then the function will remove from the cache any
+	 * object that currently has no sqloxx::Handle<T> instances
+	 * pointing to it.
+	 * 
+	 * Exception safety: <em>nothrow guarantee</em>, providing the
+	 * destructor of T does not throw.
+	 *
+	 * @todo Testing.
+	 */
 	void disable_caching();
 
 	/**
@@ -224,7 +251,15 @@ public:
 
 private:
 
-	void uncache_object_proxied(CacheKey cache_key);
+	/**
+	 * Preconditions:\n
+	 * The destructor of T must be nothrow; and\n
+	 * There is an object cached under p_cache_key in the cache_key_map.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>, provided
+	 * preconditions are met.
+	 */
+	void uncache_object(CacheKey p_cache_key);
 
 	// Find the next available cache key
 	// WARNING Move the implementation out of the class body.
@@ -425,10 +460,10 @@ IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 {
 	typename CacheKeyMap::const_iterator const finder =
 		cache_key_map().find(p_cache_key);
-	if (finder == cache_key_map().end())
-	{
-		throw KeyNotFoundException("p_cache_key not found.");
-	}
+	
+	// todo This should be a require not an assert
+	assert (finder != cache_key_map().end());
+
 	id_map().insert(typename IdMap::value_type(p_id, finder->second));
 	return;
 }
@@ -436,8 +471,9 @@ IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 
 template <typename T, typename Connection>
 void
-IdentityMap<T, Connection>::uncache_object_proxied(CacheKey p_cache_key)
+IdentityMap<T, Connection>::uncache_object(CacheKey p_cache_key)
 {
+	// todo This should be a require not an assert
 	assert (cache_key_map().find(p_cache_key) != cache_key_map().end());
 	Record const record = cache_key_map().find(p_cache_key)->second;
 	if (record->has_id())
@@ -453,9 +489,11 @@ template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::notify_nil_handles(CacheKey p_cache_key)
 {
+	// todo This should be a require not an assert	
+	assert (cache_key_map().find(p_cache_key) != cache_key_map().end());
 	if (!is_caching())
 	{
-		uncache_object_proxied(p_cache_key);
+		uncache_object(p_cache_key);
 	}
 	return;
 }
@@ -482,7 +520,7 @@ IdentityMap<T, Connection>::disable_caching()
 		{
 			if (it->second->is_orphaned())
 			{
-				uncache_object_proxied(it->first);
+				uncache_object(it->first);
 			}
 		}
 		is_caching() = false;
