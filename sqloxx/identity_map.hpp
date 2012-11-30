@@ -296,19 +296,19 @@ IdentityMap<T, Connection>::provide_object()
 	// throws std::bad_alloc. If it throws, then obj_ptr
 	// will be deleted on exit (as it's a shared_ptr) - which amounts to
 	// rollback of provide_object().
-	/* Except it caused a segfault...
 	cache_key_map().insert
 	(	typename CacheKeyMap::value_type(cache_key, obj_ptr)
 	);
-	*/
-	cache_key_map()[cache_key] = obj_ptr;
+	// We could have done the following, but the above is more efficient and
+	// less "magical".
+	// cache_key_map()[cache_key] = obj_ptr; 
 
-	// get() is nothrow. The Handle<T> constructor and copy constructor
-	// can throw in some (very unlikely) circumstances, namely when there
-	// are too many Handle<T> instances pointing to this T; but that's not
-	// the case here, as we have only just constructed this object and
-	// are returning the only Handle so far pointing to it. So returning
-	// the return value is nothrow.
+	// In the below, get() is nothrow. The Handle<T> constructor and copy
+	// constructor can throw in some (very unlikely) circumstances,
+	// namely when there are too many Handle<T> instances pointing to
+	// this T; but that's not the case here, as we have only just
+	// constructed this object and are returning the only Handle so
+	// far pointing to it. So returning the return value is nothrow.
 	return Handle<T>(obj_ptr.get());
 }
 
@@ -445,19 +445,9 @@ IdentityMap<T, Connection>::provide_cache_key()
 	assert (cache_key_map().size() > 0);
 	while (ret == it->first)
 	{
-		if (ret == maximum)
-		{
-			ret = 1;
-		}
-		else
-		{
-			++ret;
-		}
-		++it;
-		if (it == endpoint)
-		{
-			it = cache_key_map().begin();
-		}
+		if (ret == maximum) ret = 1;
+		else ++ret;
+		if (++it == endpoint) it = cache_key_map().begin();
 	}
 	assert (cache_key_map().find(ret) == cache_key_map().end());
 	return last_cache_key() = ret;  // Intentional assignment
