@@ -286,9 +286,8 @@ Handle<T>
 IdentityMap<T, Connection>::provide_object()
 {
 	// Comments here are to help ascertain exception-safety.
-	Record obj_ptr(new T(*this));  // T-dependent exception safety
+	Record obj_ptr(new T(*this));  // T-dependant exception safety
 	CacheKey const cache_key = provide_cache_key(); // strong guarantee
-	obj_ptr->set_cache_key(cache_key);  // nothrow
 
 	// In the next statement:
 	// constructing the pair of CacheKeyMap::value_type is nothrow; and
@@ -302,6 +301,8 @@ IdentityMap<T, Connection>::provide_object()
 	// We could have done the following, but the above is more efficient and
 	// less "magical".
 	// cache_key_map()[cache_key] = obj_ptr; 
+
+	obj_ptr->set_cache_key(cache_key);  // nothrow
 
 	// In the below, get() is nothrow. The Handle<T> constructor and copy
 	// constructor can throw in some (very unlikely) circumstances,
@@ -321,11 +322,31 @@ IdentityMap<T, Connection>::provide_object(Id p_id)
 	if (it == id_map().end())
 	{
 		// Then we need to create this object.
+
+		// T-dependant exception safety
 		Record obj_ptr(new T(*this, p_id));
-		id_map()[p_id] = obj_ptr;
-		CacheKey cache_key = provide_cache_key();
-		cache_key_map()[cache_key] = obj_ptr;
-		obj_ptr->set_cache_key(cache_key);
+
+		// atomic, possible sqloxx::OverflowException
+		CacheKey const cache_key = provide_cache_key();
+
+		// atomic, possible std::bad_alloc
+		id_map().insert(typename IdMap::value_type(p_id, obj_ptr));
+		try
+		{
+			cache_key_map().insert
+			(	typename IdMap::value_type(p_id, obj_ptr)
+			);
+		}
+		catch (std::bad_alloc&)
+		{
+			id_map().erase(p_id);
+			throw;
+		}
+
+		obj_ptr->set_cache_key(cache_key);  // Nothrow
+		// WARNING - Here's the difficult part to make exception-
+		// safe. We need to check this will be safe before we even
+		// get here.
 		return Handle<T>(obj_ptr.get()); 
 	}
 	assert (it != id_map().end());
