@@ -418,6 +418,23 @@ public:
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	bool is_orphaned() const;
+	
+	/**
+	 * Should only be called from IdentityMap<Derived, Connection>.
+	 *
+	 * @returns the number of instance of Handle<Derived> currently
+	 * "handling" i.e. pointing to this object.
+	 *
+	 * @todo Testing.
+	 *
+	 * @todo Do we need this?
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	HandleCounter handle_count()
+	{
+		return m_handle_counter;
+	}
+	 */
 
 protected:
 

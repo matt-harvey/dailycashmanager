@@ -112,6 +112,22 @@ public:
 	 * Provide handle to object of type T, representing a newly created object
 	 * that has not yet been persisted to the database.
 	 *
+	 * @returns a Handle<T> pointing to a newly constructed instance of T,
+	 * that is cached in this instance of IdentityMap<T, Connection>.
+	 *
+	 * @throws std::bad_alloc in the unlikely event of memory allocation
+	 * failure during the creating and caching of the instance of T.
+	 *
+	 * <em>In addition</em>, any exceptions thrown from the T constructor
+	 * of the form T(IdentityMap<T, Connection>&) may also be thrown
+	 * from provide_object().
+	 *
+	 * Exception safety depends on the constructor of T of the form
+	 * T(IdentityMap<T, Connection>&). Provided this constructor offers at
+	 * least the <em>strong guarantee</em>, then provide_object() offers the
+	 * <em>strong guarantee</em>.
+	 *
+	 * @todo Testing.
 	 */
 	Handle<T> provide_object();
 
@@ -155,8 +171,7 @@ private:
 	// WARNING Move the implementation out of the class body.
 	/**
 	 * @throws sqloxx::OverflowException if the cache has reached
-	 * its maximum size (extremely unlikely). In this event, state
-	 * is unaltered from pre-call.
+	 * its maximum size (extremely unlikely).
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
@@ -189,9 +204,9 @@ private:
 		return m_map_data->id_map;
 	}
 
-	CacheKey& next_cache_key() const
+	CacheKey& last_cache_key() const
 	{
-		return m_map_data->next_cache_key;
+		return m_map_data->last_cache_key;
 	}
 
 	bool& is_caching() const
@@ -206,7 +221,7 @@ private:
 	{
 		MapData(Connection& p_connection):
 			connection(p_connection),
-			next_cache_key(1),
+			last_cache_key(0),
 			is_caching(false)
 		{
 		}
@@ -222,8 +237,9 @@ private:
 		// The database connection with which this IdentityMap is associated.
 		Connection& connection; 
 
-		// The next key to be assigned as in index into cache_key_map.
-		CacheKey next_cache_key;
+		// The last key to be assigned as in index into cache_key_map - or
+		// 0 if none have been assigned.
+		CacheKey last_cache_key;
 
 		// Indicates whether the IdentityMap is currently
 		// holding objects indefinitely in the cache (m_caching == true),
@@ -269,10 +285,30 @@ template <typename T, typename Connection>
 Handle<T>
 IdentityMap<T, Connection>::provide_object()
 {
-	Record obj_ptr(new T(*this));
-	CacheKey const cache_key = provide_cache_key();
-	obj_ptr->set_cache_key(cache_key);
+	// Comments here are to help ascertain exception-safety.
+	Record obj_ptr(new T(*this));  // T-dependent exception safety
+	CacheKey const cache_key = provide_cache_key(); // strong guarantee
+	obj_ptr->set_cache_key(cache_key);  // nothrow
+
+	// In the next statement:
+	// constructing the pair of CacheKeyMap::value_type is nothrow; and
+	// calling insert either (a) succeeds, or (b) fails completely and
+	// throws std::bad_alloc. If it throws, then obj_ptr
+	// will be deleted on exit (as it's a shared_ptr) - which amounts to
+	// rollback of provide_object().
+	/* Except it caused a segfault...
+	cache_key_map().insert
+	(	typename CacheKeyMap::value_type(cache_key, obj_ptr)
+	);
+	*/
 	cache_key_map()[cache_key] = obj_ptr;
+
+	// get() is nothrow. The Handle<T> constructor and copy constructor
+	// can throw in some (very unlikely) circumstances, namely when there
+	// are too many Handle<T> instances pointing to this T; but that's not
+	// the case here, as we have only just constructed this object and
+	// are returning the only Handle so far pointing to it. So returning
+	// the return value is nothrow.
 	return Handle<T>(obj_ptr.get());
 }
 
@@ -374,10 +410,12 @@ typename IdentityMap<T, Connection>::CacheKey
 IdentityMap<T, Connection>::provide_cache_key()
 {
 	static CacheKey const maximum = std::numeric_limits<CacheKey>::max();
-	if
-	(	cache_key_map().size() ==
-		boost::numeric_cast<typename CacheKeyMap::size_type>(maximum)
-	)
+	typename CacheKeyMap::size_type const sz = cache_key_map().size();
+	if (sz == 0)
+	{
+		return last_cache_key() = 1;  // Intentional assignment
+	}
+	if (sz == boost::numeric_cast<typename CacheKeyMap::size_type>(maximum))
 	{
 		// There are no more available positive numbers to serve
 		// as cache keys. This is extremely unlikely ever to occur.
@@ -391,25 +429,38 @@ IdentityMap<T, Connection>::provide_cache_key()
 			"in the IdentityMap."
 		);
 	}
-	CacheKey const ret = next_cache_key();
+	CacheKey ret = last_cache_key();
 	typedef typename CacheKeyMap::const_iterator Iterator;
 	Iterator it = cache_key_map().find(ret);
 	Iterator const endpoint = cache_key_map().end();
-	CacheKey current_key = ret;
+	if (it == endpoint)
+	{
+		return last_cache_key();
+	}
 
 	// Look for the first available unused key to assign to next_cache_key()
 	// ready for the next call to provide_cache_key(). This relies on
 	// CacheKeyMap being, or behaving like, std::map, in that it keeps its
 	// elements ordered by key.
-	while (current_key == it->first)
+	assert (cache_key_map().size() > 0);
+	while (ret == it->first)
 	{
-		if (current_key == maximum) current_key = 0;
-		else ++current_key;
-		if (++it == endpoint) it = cache_key_map().begin();
+		if (ret == maximum)
+		{
+			ret = 1;
+		}
+		else
+		{
+			++ret;
+		}
+		++it;
+		if (it == endpoint)
+		{
+			it = cache_key_map().begin();
+		}
 	}
-	assert (cache_key_map().find(current_key) == cache_key_map().end());
-	next_cache_key() = current_key;
-	return ret;
+	assert (cache_key_map().find(ret) == cache_key_map().end());
+	return last_cache_key() = ret;  // Intentional assignment
 }
 
 }  // namespace sqloxx
