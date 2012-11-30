@@ -422,19 +422,23 @@ public:
 	/**
 	 * Should only be called from IdentityMap<Derived, Connection>.
 	 *
-	 * @returns the number of instance of Handle<Derived> currently
-	 * "handling" i.e. pointing to this object.
+	 * @returns true if and only if we are dangerously close to reaching
+	 * the maximum value of HandleCountl.
 	 *
 	 * @todo Testing.
 	 *
-	 * @todo Do we need this?
+	 * @todo Do we need this? (Note IdentityMap calls it and presently
+	 * no-one else does.
+	 *
+	 * @todo Move implementation out of class body.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
-	HandleCounter handle_count()
-	{
-		return m_handle_counter;
-	}
 	 */
+	bool has_high_handle_count() const
+	{
+		return
+			m_handle_counter >= std::numeric_limits<HandleCounter>::max() - 2;
+	}
 
 protected:
 

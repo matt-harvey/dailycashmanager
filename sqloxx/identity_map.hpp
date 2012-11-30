@@ -115,6 +115,11 @@ public:
 	 * @returns a Handle<T> pointing to a newly constructed instance of T,
 	 * that is cached in this instance of IdentityMap<T, Connection>.
 	 *
+	 * @throws sqloxx::OverflowException in the extremely unlikely
+	 * event that the in-memory cache already has so many objects loaded that an
+	 * additional object could not be cached without causing
+	 * arithmetic overflow in the process of assigning it a key.
+	 *
 	 * @throws std::bad_alloc in the unlikely event of memory allocation
 	 * failure during the creating and caching of the instance of T.
 	 *
@@ -125,7 +130,8 @@ public:
 	 * Exception safety depends on the constructor of T of the form
 	 * T(IdentityMap<T, Connection>&). Provided this constructor offers at
 	 * least the <em>strong guarantee</em>, then provide_object() offers the
-	 * <em>strong guarantee</em>.
+	 * <em>strong guarantee</em> (although there may be some internal cache
+	 * state that is not rolled back but which does not affect client code).
 	 *
 	 * @todo Testing.
 	 */
@@ -134,6 +140,32 @@ public:
 	/**
 	 * Provide handle to object of type T, representing an object
 	 * already stored in the database, with primary key (id) p_id.
+	 *
+	 * @returns a Handle<T> pointing to an instance of T corresponding
+	 * to a record of the corresponding type already persisted in the database,
+	 * with p_id as its primary key.
+	 *
+	 * @throws std::bad_alloc if the object is not already loaded in the cache,
+	 * and there is a memory allocation failure in the process of loading and
+	 * caching the object.
+	 *
+	 * @throws sqloxx::OverflowException in the extremely unlikely
+	 * event that the in-memory cache already has so many objects loaded that an
+	 * additional object could not be cached without causing
+	 * arithmetic overflow in the process of assigning it a key.
+	 *
+	 * <em>In addition</em>, any exceptions thrown from the T constructor
+	 * of the form T(IdentityMap<T, Connection>&, typename T::Id) may
+	 * also be thrown from provide_object().
+	 *
+	 * Exception safety depends on the constructor of T of the form
+	 * T(IdentityMap<T, Connection>&, typename T::Id). Provided this
+	 * constructor offers at
+	 * least the <em>strong guarantee</em>, then provide_object() offers the
+	 * <em>strong guarantee</em> (although there may be some internal cache
+	 * state that is not rolled back but which does not affect client code).
+	 *
+	 * @todo Testing.
 	 */
 	Handle<T> provide_object(Id p_id);
 	
@@ -323,7 +355,7 @@ IdentityMap<T, Connection>::provide_object(Id p_id)
 	{
 		// Then we need to create this object.
 
-		// T-dependant exception safety
+		// Exception safety here depends on T.
 		Record obj_ptr(new T(*this, p_id));
 
 		// atomic, possible sqloxx::OverflowException
@@ -343,13 +375,20 @@ IdentityMap<T, Connection>::provide_object(Id p_id)
 			throw;
 		}
 
-		obj_ptr->set_cache_key(cache_key);  // Nothrow
-		// WARNING - Here's the difficult part to make exception-
-		// safe. We need to check this will be safe before we even
-		// get here.
+		// Nothrow
+		obj_ptr->set_cache_key(cache_key);
+
+		// We know this won't throw sqloxx::OverflowError, as it's a
+		// newly loaded object.
 		return Handle<T>(obj_ptr.get()); 
 	}
 	assert (it != id_map().end());
+	if (it->second->has_high_handle_count())
+	{
+		throw sqloxx::OverflowException
+		(	"Handle count for has reached dangerous level. "
+		);
+	}
 	return Handle<T>(it->second.get());
 }
 
