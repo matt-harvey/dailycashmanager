@@ -142,16 +142,16 @@ public:
 	 * already stored in the database, with primary key (id) p_id.
 	 *
 	 * @returns a Handle<T> pointing to an instance of T corresponding
-	 * to a record of the corresponding type already persisted in the database,
-	 * with p_id as its primary key.
+	 * to a record of the corresponding type already persisted in the
+	 * database, with p_id as its primary key.
 	 *
-	 * @throws std::bad_alloc if the object is not already loaded in the cache,
-	 * and there is a memory allocation failure in the process of loading and
-	 * caching the object.
+	 * @throws std::bad_alloc if the object is not already loaded in the
+	 * cache, and there is a memory allocation failure in the process of
+	 * loading and caching the object.
 	 *
 	 * @throws sqloxx::OverflowException in the extremely unlikely
-	 * event that the in-memory cache already has so many objects loaded that an
-	 * additional object could not be cached without causing
+	 * event that the in-memory cache already has so many objects loaded that
+	 * an additional object could not be cached without causing
 	 * arithmetic overflow in the process of assigning it a key.
 	 *
 	 * <em>In addition</em>, any exceptions thrown from the T constructor
@@ -164,6 +164,8 @@ public:
 	 * least the <em>strong guarantee</em>, then provide_object() offers the
 	 * <em>strong guarantee</em> (although there may be some internal cache
 	 * state that is not rolled back but which does not affect client code).
+	 * For this guarantee to hold, it is also required that the destructor
+	 * of T not throw.
 	 *
 	 * @todo Testing.
 	 */

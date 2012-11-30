@@ -434,15 +434,9 @@ public:
 	 * @todo Do we need this? (Note IdentityMap calls it and presently
 	 * no-one else does.
 	 *
-	 * @todo Move implementation out of class body.
-	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	bool has_high_handle_count() const
-	{
-		return
-			m_handle_counter >= std::numeric_limits<HandleCounter>::max() - 2;
-	}
+	bool has_high_handle_count() const;
 
 protected:
 
@@ -870,6 +864,17 @@ bool
 PersistentObject<Derived, Connection>::is_orphaned() const
 {
 	return m_handle_counter == 0;
+}
+
+template
+<typename Derived, typename Connection>
+inline
+bool
+PersistentObject<Derived, Connection>::has_high_handle_count() const
+{
+	static HandleCounter const safe_limit =
+		std::numeric_limits<HandleCounter>::max() - 2;
+	return m_handle_counter >= safe_limit;
 }
 
 template
