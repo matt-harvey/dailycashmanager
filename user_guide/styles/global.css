@@ -1,32 +1,50 @@
 body {
 	padding: 0px;
 	margin: 0px;
-	min-width: 700px;
+	min-width: 800px;
 }
 
-div#d1 {
+.container {
+	height: 3000px;
+	padding: 0px;
+	margin: 0px;
+}
+
+
+div#left {
 	float: left;
 	color: black;
-	height: 100%; 
+	width: 200px;
+	margin: 0px;
+	padding: 2px 20px;
+	height: 100%;
 	background: #106060; 
 }
 
-div#d2 {
+div#centre {
 	font-size: 11pt;
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	color: black;
 	background-color: #F1EBE3;
 	line-height: 14pt;
-	margin: 0% 25%;
-	padding-left: 20pt;
-	padding-right: 20pt;
-	padding-top: 5pt;
-	height: 3000px;
+	margin: 0px 240px;
+	padding: 2px 20px;
+	height: 100%;
 }
 
-div#d3 {
-	padding-left: 25px;
+div#centre_top {
+	padding: 2px 20px 0px 20px;
 	margin: 0px;
+}
+
+div#right {
+	float: right;
+	color: black;
+	width: 200px;
+	margin: 0px;
+	padding: 2px 20px;
+	height: 100%;
+	background: #106060; 
 }
 
 h1 {
