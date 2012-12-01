@@ -391,15 +391,33 @@ public:
 	 * underlying object that a handle pointing to it has appeared
 	 * as the right-hand operand of an assignment operation.
 	 *
-	 * @todo Document and test.
+	 * Preconditions:\n
+	 * This function should only be called from Handle<Derived> to
+	 * notify that a Handle pointing to this instance of Derived
+	 * appears on the left side of an assignment operation;\n
+	 * This instance of Derived must have been handled throughout
+	 * its life only via instances of Handle<Derived>, that have been obtained
+	 * from a single instance of IdentityMap<Derived, Connection>
+	 * via calls to the IdentityMap API, or else have been copied from other
+	 * instances of Handle<Derived>; and\n
+	 * The destructor of derived must be non-throwing.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em> is offered, providing
+	 * the preconditions are met.
+	 *
+	 * @todo Test.
 	 */
 	void notify_lhs_assignment_operation();
 
 	/**
-	 * Should only be called by Handle<Derived>. To advise the underlying
+	 * Should only be called by Handle<Derived>, to advise the underlying
 	 * object that a handle pointing to it has been destructed.
 	 *
-	 * @todo Document and test.
+	 * Preconditions: as for notify_lhs_assignment_operation().
+	 *
+	 * Exception safety: as for notify_lhs_assignment_operation().
+	 *
+	 * @todo Test.
 	 */
 	void notify_handle_destruction();
 
@@ -417,9 +435,9 @@ public:
 	 * @returns true if and only if there are no Handle<Derived>
 	 * instances pointing to this object.
 	 *
-	 * @todo Testing.
-	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo Testing.
 	 */
 	bool is_orphaned() const;
 	
@@ -557,6 +575,28 @@ private:
 	virtual void do_save_new() = 0;
 	void clear_loading_status();
 	void increment_handle_counter();
+
+	/**
+	 * Decrements handle counter and notifies the IdentityMap if it
+	 * reaches 0.
+	 *
+	 * @throws sqloxx::OverflowException if m_handle_counter is less
+	 * than 1 when this function is called.
+	 *
+	 * Precondition: we must know that the object cached is in the IdentityMap
+	 * under m_cache_key. If the object has been managed throughout its
+	 * life by (a single instance of) IdentityMap, and has only ever been
+	 * accessed via instances of Handle<Derived>, then we know this is
+	 * the case. Also, the destructor of Derived must be non-throwing.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>, providing the
+	 * object is cached in the IdentityMap under m_cache_key,
+	 * the destructor of Derived is non-throwing, and m_handle_counter is
+	 * greater than 0. If we don't know whether the last condition is
+	 * fulfilled, i.e. if m_handle_counter could be less than 1, then
+	 * the <strong guarantee</em> is offered, provided the first two
+	 * conditions are still met.
+	 */
 	void decrement_handle_counter();
 
 	enum LoadingStatus
@@ -689,9 +729,9 @@ template
 void
 PersistentObject<Derived, Connection>::save()
 {
-	if (has_id())
+	if (has_id())  // nothrow
 	{
-		load();
+		load();  // strong guarantee, under certain conditions
 		database_connection().begin_transaction();
 		do_save_existing();
 		database_connection().end_transaction();
@@ -811,6 +851,9 @@ PersistentObject<Derived, Connection>::decrement_handle_counter()
 		);
 	}
 	--m_handle_counter;
+
+	// Will not thwow, provided the destructor of Derived is non-throwing,
+	// and the object is saved in the cache under m_cache_key.
 	if (m_handle_counter == 0 && static_cast<bool>(m_cache_key))
 	{
 		m_identity_map.notify_nil_handles(*m_cache_key);

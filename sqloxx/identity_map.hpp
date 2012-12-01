@@ -10,7 +10,7 @@
 #include <map>
 #include <stdexcept>
 
-#ifndef DEBUG
+#ifdef DEBUG
 	#include <jewel/debug_log.hpp>
 	#include <iostream>
 	#include <typeinfo>
@@ -116,8 +116,8 @@ public:
 	 * that is cached in this instance of IdentityMap<T, Connection>.
 	 *
 	 * @throws sqloxx::OverflowException in the extremely unlikely
-	 * event that the in-memory cache already has so many objects loaded that an
-	 * additional object could not be cached without causing
+	 * event that the in-memory cache already has so many objects loaded that
+	 * an additional object could not be cached without causing
 	 * arithmetic overflow in the process of assigning it a key.
 	 *
 	 * @throws std::bad_alloc in the unlikely event of memory allocation

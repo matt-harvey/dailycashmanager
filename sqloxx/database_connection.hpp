@@ -256,6 +256,11 @@ public:
 	 * Exception safety: the <em>strong guarantee</em> is provided, on the
 	 * condition that the "end transaction" SQL command is never executed
 	 * directly, but only via this method.
+	 *
+	 * @todo Do we need a method for rolling back a transaction as well
+	 * as just ending it? Or... what we want is to be able to CANCEL
+	 * a transaction so that it's as if we never called "begin transaction".
+	 * Is there a way to do this?
 	 */
 	void end_transaction();
 
