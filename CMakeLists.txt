@@ -34,6 +34,7 @@ set (main_files
 	 journal/ordinary_journal.cpp
 	 journal/ordinary_journal_impl.cpp
 	 sqloxx/database_connection.cpp
+	 sqloxx/database_transaction.cpp
 	 sqloxx/shared_sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
 	 sqloxx/detail/sql_statement.cpp
@@ -47,6 +48,7 @@ add_executable (main main.cpp ${main_files})
 set (test_files
      test.cpp
 	 sqloxx/database_connection.cpp
+	 sqloxx/database_transaction.cpp
 	 sqloxx/shared_sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
 	 sqloxx/detail/sql_statement.cpp

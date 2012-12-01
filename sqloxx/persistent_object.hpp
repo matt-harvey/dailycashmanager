@@ -137,6 +137,9 @@ namespace sqloxx
  * PersistentObject API documentation. (Note I have already done this
  * for \e load functions.)
  *
+ * @todo Make use of DatabaseConnection::cancel_transaction() to facilitate
+ * strong exception safety where applicable.
+ *
  * @todo If Sqloxx is ever moved to a separate library, then the documentation
  * for PersistentObject should include code for an exemplary derived class.
  *
@@ -699,6 +702,13 @@ PersistentObject<Derived, Connection>::load()
 		catch (std::exception&)
 		{
 			clear_loading_status();
+			try
+			{
+				database_connection().cancel_transaction();
+			}
+			catch (InvalidConnection&)
+			{
+			}
 			throw;
 		}
 		try
@@ -733,14 +743,30 @@ PersistentObject<Derived, Connection>::save()
 	{
 		load();  // strong guarantee, under certain conditions
 		database_connection().begin_transaction();
-		do_save_existing();
+		try
+		{
+			do_save_existing();
+		}
+		catch (std::exception&)
+		{
+			database_connection().cancel_transaction();
+			throw;
+		}
 		database_connection().end_transaction();
 	}
 	else
 	{
 		Id const allocated_id = prospective_key();
 		database_connection().begin_transaction();
-		do_save_new();
+		try
+		{
+			do_save_new();
+		}
+		catch (std::exception&)
+		{
+			database_connection().cancel_transaction();
+			throw;
+		}
 		database_connection().end_transaction();
 		m_id = allocated_id;
 		if (m_cache_key)
