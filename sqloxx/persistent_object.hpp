@@ -681,40 +681,21 @@ PersistentObject<Derived, Connection>::load()
 	}
 	if (m_loading_status == ghost && has_id())
 	{
+		DatabaseTransaction transaction(database_connection());
 		m_loading_status = loading;
 		try
 		{
-			database_connection().begin_transaction();
-		}
-		catch (TransactionNestingException&)
-		{
-			clear_loading_status();
-			throw;
-		}
-		catch (InvalidConnection&)
-		{
-			clear_loading_status();
-			throw;
-		}
-		try
-		{
-			do_load();
+			do_load();	
 		}
 		catch (std::exception&)
 		{
 			clear_loading_status();
-			try
-			{
-				database_connection().cancel_transaction();
-			}
-			catch (InvalidConnection&)
-			{
-			}
+			transaction.cancel();
 			throw;
 		}
 		try
 		{
-			database_connection().end_transaction();
+			transaction.commit();
 			// Note this can't possibly throw TransactionNestingException
 			// here, unless do_load() has done something perverse.
 		}
@@ -734,6 +715,7 @@ PersistentObject<Derived, Connection>::load()
 	}
 	return;
 }
+
 
 template
 <typename Derived, typename Connection>

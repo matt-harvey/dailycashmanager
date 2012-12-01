@@ -204,10 +204,6 @@ RepeaterImpl::process_saving_statement(SharedSQLStatement& statement)
 	(	":interval_type_id",
 		static_cast<int>(value(m_data->interval_type))
 	);
-	statement.bind
-	(	":interval_type_id",
-		static_cast<int>(value(m_data->interval_type))
-	);
 	statement.bind(":interval_units", value(m_data->interval_units));
 	statement.bind(":next_date", value(m_data->next_date));
 	statement.bind(":journal_id", value(m_data->journal_id));
