@@ -68,6 +68,11 @@ public:
 	 * SharedSQLStatement can encapsulate only one statement.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
+	 *
+	 * @todo This can throw bad_alloc. But I haven't documented it. I
+	 * also may not have documented it in other functions that call
+	 * this function; especially in DatabaseConnection::begin_transaction(),
+	 * end_transaction() and cancel_transaction().
 	 */
 	template <typename Connection>
 	SharedSQLStatement

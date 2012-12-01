@@ -1,6 +1,7 @@
 #ifndef GUARD_persistent_object_hpp
 #define GUARD_persistent_object_hpp
 
+#include "database_transaction.hpp"
 #include "general_typedefs.hpp"
 #include "identity_map.hpp"
 #include "next_auto_key.hpp"
@@ -279,7 +280,7 @@ public:
 	 * @throws InvalidConnection if the DatabaseConnection is
 	 * invalid. (May be thrown under either (1) or (2).)
 	 *
-	 * May also throw other derivative os DatabaseException if there is
+	 * May also throw other derivatives of DatabaseException if there is
 	 * a failure finding the next primary key value for the object in case
 	 * it doesn't already have an id. This should not occur except in the
 	 * case of a corrupt database, or a memory allocation error (very
@@ -742,32 +743,16 @@ PersistentObject<Derived, Connection>::save()
 	if (has_id())  // nothrow
 	{
 		load();  // strong guarantee, under certain conditions
-		database_connection().begin_transaction();
-		try
-		{
-			do_save_existing();
-		}
-		catch (std::exception&)
-		{
-			database_connection().cancel_transaction();
-			throw;
-		}
-		database_connection().end_transaction();
+		DatabaseTransaction transaction(database_connection());
+		do_save_existing();
+		transaction.commit();
 	}
 	else
 	{
 		Id const allocated_id = prospective_key();
-		database_connection().begin_transaction();
-		try
-		{
-			do_save_new();
-		}
-		catch (std::exception&)
-		{
-			database_connection().cancel_transaction();
-			throw;
-		}
-		database_connection().end_transaction();
+		DatabaseTransaction transaction(database_connection());
+		do_save_new();
+		transaction.commit();
 		m_id = allocated_id;
 		if (m_cache_key)
 		{
