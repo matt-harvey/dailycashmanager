@@ -12,11 +12,11 @@
 #include <stdexcept>
 #include <string>
 
+#include <jewel/debug_log.hpp>
 
 using boost::shared_ptr;
 using boost::unordered_map;
 using std::bad_alloc;
-using std::cerr;
 using std::clog;
 using std::endl;
 using std::numeric_limits;
@@ -107,8 +107,9 @@ DatabaseConnection::begin_transaction()
 		throw TransactionNestingException("Maximum nesting level reached.");
 		assert (false);  // Execution never reaches here
 	default:
-		;
-		// Do nothing
+		assert (m_transaction_nesting_level > 0);
+		unchecked_set_savepoint();
+		break;
 	}
 	++m_transaction_nesting_level;
 	return;
@@ -125,19 +126,41 @@ DatabaseConnection::end_transaction()
 		break;
 	case 0:
 		throw TransactionNestingException
-		(	"Number of transactions ended on this database connection "
-			"exceeds the number of transactions begun."
+		(	"Cannot end SQL transaction when there in none open."
 		);
 		assert (false);  // Execution never reaches here
 	default:
-		;
-		// Do nothing
+		assert (m_transaction_nesting_level > 1);
+		unchecked_release_savepoint();
+		break;
 	}
 	assert (m_transaction_nesting_level > 0);
 	--m_transaction_nesting_level;
 	return;
 }
 
+void
+DatabaseConnection::cancel_transaction()
+{
+	switch (m_transaction_nesting_level)
+	{
+	case 1:
+		unchecked_rollback_transaction();
+		break;
+	case 0:
+		throw TransactionNestingException
+		(	"Cannot cancel SQL transaction when there is none open."
+		);
+		assert (false);  // Execution never reaches here
+	default:
+		assert (m_transaction_nesting_level > 1);
+		unchecked_rollback_to_savepoint();
+		unchecked_release_savepoint();
+		break;
+	}
+	--m_transaction_nesting_level;
+	return;
+}
 
 shared_ptr<detail::SQLStatement>
 DatabaseConnection::provide_sql_statement(string const& statement_text)
@@ -186,23 +209,58 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 	return new_statement;
 }
 
-
 void
 DatabaseConnection::unchecked_begin_transaction()
 {
+	JEWEL_DEBUG_LOG << "Beginning SQL transaction." << endl;
 	SharedSQLStatement statement(*this, "begin");
 	statement.step();
 	return;
 }
 
-
 void
 DatabaseConnection::unchecked_end_transaction()
 {
+	JEWEL_DEBUG_LOG << "Ending SQL transaction." << endl;
 	SharedSQLStatement statement(*this, "end");
 	statement.step();
 	return;
 }
 
+void
+DatabaseConnection::unchecked_set_savepoint()
+{
+	JEWEL_DEBUG_LOG << "Setting SQL savepoint." << endl;
+	SharedSQLStatement statement(*this, "savepoint sp");
+	statement.step();
+	return;
+}
+
+void
+DatabaseConnection::unchecked_release_savepoint()
+{
+	JEWEL_DEBUG_LOG << "Releasing SQL savepoint." << endl;
+	SharedSQLStatement statement(*this, "release sp");
+	statement.step();
+	return;
+}
+
+void
+DatabaseConnection::unchecked_rollback_transaction()
+{
+	JEWEL_DEBUG_LOG << "Rolling back entire SQL transaction." << endl;
+	SharedSQLStatement statement(*this, "rollback");
+	statement.step();
+	return;
+}
+
+void
+DatabaseConnection::unchecked_rollback_to_savepoint()
+{
+	JEWEL_DEBUG_LOG << "Rolling back to SQL savepoint." << endl;
+	SharedSQLStatement statement(*this, "rollback to savepoint sp");
+	statement.step();
+	return;
+}
 
 }  // namespace sqloxx

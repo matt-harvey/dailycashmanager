@@ -219,9 +219,11 @@ public:
 	static int max_nesting();
 
 	/**
-	 * Begins a transaction. Transactions may be nested. Only the
+	 * Begins a SQL transaction. Transactions may be nested. Only the
 	 * outermost call to begin_transaction causes the "begin transaction"
-	 * SQL command to be executed.
+	 * SQL command to be executed. Inner calls instead cause a
+	 * transaction savepoint to be set (see SQLite documentation
+	 * re. savepoints).
 	 *
 	 * SQL transactions should be controlled either solely through the
 	 * methods begin_transaction and end_transaction, \e or solely through
@@ -235,34 +237,46 @@ public:
 	 * @throws InvalidConnection if the database connection is invalid.
 	 *
 	 * Exception safety: the <em>strong guarantee</em> is provided, on the
-	 * condition that the "begin transaction" SQL command is never executed
-	 * directly, but only via this method.
+	 * condition that the control of SQL transactions is managed
+	 * entirely by calls to begin_transaction(), end_transaction() and
+	 * canced_transaction(), rather than by executing the corresponding
+	 * SQL commands directly.
 	 */
 	void begin_transaction();
 
 	/**
-	 * Ends a transaction. Transactions may be nested. Only the outermost
+	 * Ends a SQL transaction. Transactions may be nested. Only the outermost
 	 * call to end_transaction causes the "end transaction" SQL command
-	 * to be executed.
-	 *
-	 * See documentation of begin_transaction also.
+	 * to be executed. Inner calls cause the previous savepoint to be
+	 * released (see SQLite documentation re. savepoints).
 	 *
 	 * @throws TransactionNestingException in the event that there are
 	 * more calls to end_transaction than there have been to
-	 * begin_transaction.
+	 * begin_transaction - in other words, there are no active
+	 * transactions.
 	 *
 	 * @throws InvalidConnection if the database connection is invalid.
 	 *
-	 * Exception safety: the <em>strong guarantee</em> is provided, on the
-	 * condition that the "end transaction" SQL command is never executed
-	 * directly, but only via this method.
-	 *
-	 * @todo Do we need a method for rolling back a transaction as well
-	 * as just ending it? Or... what we want is to be able to CANCEL
-	 * a transaction so that it's as if we never called "begin transaction".
-	 * Is there a way to do this?
+	 * Exception safety: as per begin_transaction().
 	 */
 	void end_transaction();
+
+	/**
+	 * Cancels a SQL transaction. If the active transaction is an
+	 * outermost transaction, i.e. there is no nesting in the current
+	 * transaction, then this causes the entire transaction to be rolled
+	 * back. Otherwise, it causes a rollback to the last savepoint, AND
+	 * the release of that savepoint. (See SQLite documentation for
+	 * explanation of rollbacks, savepoints and releases of savepoints.)
+	 *
+	 * @throws TransactionNestingException if there is no open active
+	 * transaction.
+	 *
+	 * @throws InvalidConnection if the database connection is invalid.
+	 *
+	 * Exception safety: as per begin_transaction().
+	 */
+	void cancel_transaction();
 
 	/**
 	 * @returns a shared pointer to a SQLStatement. This will	
@@ -317,6 +331,10 @@ private:
 
 	void unchecked_begin_transaction();
 	void unchecked_end_transaction();
+	void unchecked_set_savepoint();
+	void unchecked_release_savepoint();
+	void unchecked_rollback_transaction();
+	void unchecked_rollback_to_savepoint();
 
 	boost::scoped_ptr<detail::SQLiteDBConn> m_sqlite_dbconn;
 

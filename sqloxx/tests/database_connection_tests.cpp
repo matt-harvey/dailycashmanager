@@ -85,29 +85,6 @@ TEST(test_default_constructor_and_open)
 	assert (!boost::filesystem::exists(boost::filesystem::status(filepath)));
 }	
 
-TEST_FIXTURE(DatabaseConnectionFixture, test_sqlite_rollback)
-{
-	// This is not actually aimed at testing anything in sqloxx, but is more
-	// aimed at verifying that certain SQLite SQL commands do what we expect.
-	dbc.execute_sql("create table dummy(col_A integer)");
-	dbc.execute_sql("begin transaction");
-	dbc.execute_sql("insert into dummy(col_A) values(3)");
-	dbc.execute_sql("savepoint sp");
-	dbc.execute_sql("insert into dummy(col_A) values(4)");
-	dbc.execute_sql("rollback to savepoint sp");
-	dbc.execute_sql("release sp");
-	dbc.execute_sql("end transaction");
-	SharedSQLStatement s1(dbc, "select col_A from dummy where col_A = 3");
-	s1.step();
-	CHECK_EQUAL(s1.extract<int>(0), 3);
-	s1.step_final();
-	SharedSQLStatement s2(dbc, "select col_A from dummy where col_A = 4");
-	CHECK_EQUAL(s2.step(), false);
-	SharedSQLStatement s3(dbc, "select * from dummy");
-	s3.step();
-	s3.step_final();  // As only one record.
-}
-
 TEST_FIXTURE(DatabaseConnectionFixture, test_is_valid)
 {
 	CHECK(dbc.is_valid());
@@ -348,6 +325,59 @@ TEST_FIXTURE
  * atomicity_test.hpp, test.cpp and test.tcl.
  */
 
+TEST_FIXTURE(DatabaseConnectionFixture, test_sqlite_rollback)
+{
+	// This is not actually aimed at testing anything in sqloxx, but is more
+	// aimed at verifying that certain SQLite SQL commands do what we expect.
+	dbc.execute_sql("create table dummy(col_A integer)");
+	dbc.execute_sql("begin transaction");
+	dbc.execute_sql("insert into dummy(col_A) values(3)");
+	dbc.execute_sql("savepoint sp");
+	dbc.execute_sql("insert into dummy(col_A) values(4)");
+	dbc.execute_sql("rollback to savepoint sp");
+	dbc.execute_sql("release sp");
+	dbc.execute_sql("end transaction");
+	SharedSQLStatement s1(dbc, "select col_A from dummy where col_A = 3");
+	s1.step();
+	CHECK_EQUAL(s1.extract<int>(0), 3);
+	s1.step_final();
+	SharedSQLStatement s2(dbc, "select col_A from dummy where col_A = 4");
+	CHECK_EQUAL(s2.step(), false);
+	SharedSQLStatement s3(dbc, "select * from dummy");
+	s3.step();
+	s3.step_final();  // As only one record.
+}
+
+TEST_FIXTURE(DatabaseConnectionFixture, test_cancel_transaction)
+{
+	dbc.execute_sql("create table dummy(col_A)");
+	dbc.begin_transaction();
+	dbc.execute_sql("insert into dummy(col_A) values(3)");
+	dbc.begin_transaction();
+	dbc.execute_sql("insert into dummy(col_A) values(4)");
+	dbc.cancel_transaction();
+	dbc.end_transaction();
+	SharedSQLStatement s1(dbc, "select * from dummy");
+	CHECK_EQUAL(s1.step(), true);
+	CHECK_EQUAL(s1.extract<int>(0), 3);
+	CHECK_EQUAL(s1.step(), false);
+
+	dbc.begin_transaction();
+	dbc.execute_sql("insert into dummy(col_A) values(100)");
+	dbc.cancel_transaction();
+	CHECK_THROW(dbc.end_transaction(), TransactionNestingException);
+	SharedSQLStatement s2(dbc, "select * from dummy where col_A = 100");
+	CHECK_EQUAL(s2.step(), false);
+
+	dbc.begin_transaction();
+	dbc.execute_sql("insert into dummy(col_A) values(200)");
+	dbc.begin_transaction();
+	dbc.end_transaction();
+	dbc.cancel_transaction();
+	CHECK_THROW(dbc.cancel_transaction(), TransactionNestingException);
+	SharedSQLStatement s3(dbc, "select * from dummy where col_A = 200");
+	CHECK_EQUAL(s3.step(), false);
+}
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_provide_sql_statement)
 {
