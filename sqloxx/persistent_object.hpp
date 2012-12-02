@@ -787,13 +787,11 @@ PersistentObject<Derived, Connection>::remove()
 	{
 		DatabaseTransaction transaction(database_connection());
 		do_remove();
-		ghostify();  // todo Should we call this?
+		ghostify();
 		transaction.commit();
+		m_identity_map.uncache_object(*m_cache_key);	
 		jewel::clear(m_id);  // Return id() to uninitialized state
 	}
-	// todo We should mark the entry as tainted such that any attempt to
-	// call load() now that it is deleted results in an exception being
-	// thrown. We should also delete it from the IdentityMap.
 	return;
 }
 
@@ -982,7 +980,6 @@ PersistentObject<Derived, Connection>::do_remove()
 	SharedSQLStatement statement(database_connection(), statement_text);
 	statement.bind(":p", id());
 	statement.step_final();
-	m_identity_map.deregister_id(*m_cache_key);	
 	return;
 }
 
