@@ -467,6 +467,13 @@ public:
 	 */
 	bool has_high_handle_count() const;
 
+	/**
+	 * @todo Documentation and testing.
+	 *
+	 * @todo Determine if this really needs to be public.
+	 */
+	void ghostify();
+
 protected:
 
 	/**
@@ -586,8 +593,8 @@ private:
 	virtual void do_load() = 0;
 	virtual void do_save_existing() = 0;
 	virtual void do_save_new() = 0;
+	virtual void do_ghostify() = 0;
 	virtual void do_remove();
-	void clear_loading_status();
 	void increment_handle_counter();
 
 	/**
@@ -699,7 +706,7 @@ PersistentObject<Derived, Connection>::load()
 		}
 		catch (std::exception&)
 		{
-			clear_loading_status();
+			ghostify();
 			transaction.cancel();
 			throw;
 		}
@@ -750,10 +757,8 @@ PersistentObject<Derived, Connection>::save()
 		{
 			m_identity_map.register_id(*m_cache_key, allocated_id);
 		}
-		// The next line fixed a bug 2012-11-22 that in resulted in objects
-		// being re-loaded from database when they were already complete.
-		m_loading_status = loaded;
 	}
+	ghostify();
 	return;
 }
 
@@ -766,12 +771,13 @@ PersistentObject<Derived, Connection>::remove()
 	{
 		DatabaseTransaction transaction(database_connection());
 		do_remove();
+		ghostify();  // todo Should we call this?
 		transaction.commit();
-		m_id = boost::optional<Id>();  // Return id() to uninitialized state
+		jewel::clear(m_id);  // Return id() to uninitialized state
 	}
 	// todo We should mark the entry as tainted such that any attempt to
 	// call load() now that it is deleted results in an exception being
-	// thrown. We should also delete it from the cache.
+	// thrown. We should also delete it from the IdentityMap.
 	return;
 }
 
@@ -960,6 +966,7 @@ PersistentObject<Derived, Connection>::do_remove()
 	SharedSQLStatement statement(database_connection(), statement_text);
 	statement.bind(":p", id());
 	statement.step_final();
+	m_identity_map.deregister_id(*m_cache_key);	
 	return;
 }
 
@@ -999,8 +1006,9 @@ template
 <typename Derived, typename Connection>
 void
 PersistentObject<Derived, Connection>::
-clear_loading_status()
+ghostify()
 {
+	do_ghostify();
 	m_loading_status = ghost;
 	return;
 }

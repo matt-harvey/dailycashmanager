@@ -118,7 +118,9 @@ protected:
 	Id do_save_new_journal_base
 	(	PhatbooksDatabaseConnection& dbc
 	);
-	
+	void do_ghostify_journal_base();
+
+
 private:
 
 	struct JournalData

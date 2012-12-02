@@ -57,6 +57,11 @@ public:
 	 * TODO This should eventually be shifted into a base class.
 	 */
 	void remove();
+	
+	/**
+	 * TODO This should eventually be shifted into a base class.
+	 */
+	void ghostify();
 
 private:
 	sqloxx::Handle<RepeaterImpl> m_impl;

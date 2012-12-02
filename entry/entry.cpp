@@ -117,4 +117,12 @@ Entry::remove()
 	return;
 }
 
+void
+Entry::ghostify()
+{
+	m_impl->ghostify();
+	return;
+}
+
 }  // namespace phatbooks
+

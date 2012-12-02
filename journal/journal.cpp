@@ -38,6 +38,7 @@ using boost::numeric_cast;
 using boost::scoped_ptr;
 using boost::shared_ptr;
 using boost::unordered_set;
+using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
 using std::logic_error;
@@ -244,6 +245,21 @@ Journal::do_load_journal_base
 	return;
 }
 
+void
+Journal::do_ghostify_journal_base()
+{
+	clear(m_data->is_actual);
+	clear(m_data->comment);
+	typedef vector<Entry>::iterator EntryIter;
+	EntryIter endpoint = m_data->entries.end();
+	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
+	{
+		it->ghostify();
+	}
+	m_data->entries.clear();
+	return;
+}
+
 string
 Journal::primary_table_name()
 {
@@ -256,7 +272,7 @@ Journal::primary_table_name()
 void
 Journal::remove_first_entry()
 {
-	(m_data->entries)[0].remove();
+	(m_data->entries).erase(m_data->entries.begin());
 	return;
 }
 

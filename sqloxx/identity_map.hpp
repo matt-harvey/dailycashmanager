@@ -198,8 +198,18 @@ public:
 	/**
 	 * This should only be called from PersistentObject<T, Connection>.
 	 *
+	 * Notify the IdentityMap that the object with p_cache_key as its
+	 * cache key has been removed from the database.
+	 *
+	 * @todo Documentation, especially re. exception safety, and testing.
+	 */
+	void deregister_id(CacheKey p_cache_key);
+
+	/**
+	 * This should only be called from PersistentObject<T, Connection>.
+	 *
 	 * Notify the IdentityMap that there are no handles left that are
-	 * pointing to this object.
+	 * pointing to the object with p_cache_key.
 	 * 
 	 * Preconditions: (a) there must be an object cached in this
 	 * IdentityMap with this cache_key; and (b) the destructor of T must
@@ -468,6 +478,20 @@ IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 	return;
 }
 
+template <typename T, typename Connection>
+void
+IdentityMap<T, Connection>::deregister_id(CacheKey p_cache_key)
+{
+	typename CacheKeyMap::const_iterator const finder =
+		cache_key_map().find(p_cache_key);
+
+	// todo This should be a require not an assert
+	assert (finder != cache_key_map().end());
+
+	Id const doomed_id = finder->second->id();
+	id_map().erase(doomed_id);
+	return;
+}
 
 template <typename T, typename Connection>
 void

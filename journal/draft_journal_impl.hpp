@@ -150,6 +150,7 @@ private:
 	void do_load();
 	void do_save_existing();
 	void do_save_new();
+	void do_ghostify();
 
 	struct DraftJournalData
 	{

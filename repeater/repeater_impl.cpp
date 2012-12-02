@@ -27,6 +27,7 @@
 using sqloxx::SharedSQLStatement;
 using boost::numeric_cast;
 using boost::shared_ptr;
+using jewel::clear;
 using jewel::value;
 using std::string;
 
@@ -240,6 +241,17 @@ RepeaterImpl::do_save_new()
 		":next_date, :journal_id)"
 	);
 	process_saving_statement(inserter);
+	return;
+}
+
+
+void
+RepeaterImpl::do_ghostify()
+{
+	clear(m_data->interval_type);
+	clear(m_data->interval_units);
+	clear(m_data->next_date);
+	clear(m_data->journal_id);
 	return;
 }
 

@@ -22,6 +22,7 @@
 #include <vector>
 
 using boost::shared_ptr;
+using jewel::clear;
 using jewel::value;
 using sqloxx::SharedSQLStatement;
 using std::string;
@@ -264,6 +265,16 @@ AccountImpl::do_save_new()
 	process_saving_statement(inserter);
 	return;
 }
+
+void
+AccountImpl::do_ghostify()
+{
+	clear(m_data->commodity);
+	clear(m_data->account_type);
+	clear(m_data->description);
+	return;
+}
+
 
 string
 AccountImpl::primary_table_name()

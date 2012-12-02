@@ -19,6 +19,7 @@
 
 using boost::numeric_cast;
 using boost::shared_ptr;
+using jewel::clear;
 using jewel::value;
 using sqloxx::SharedSQLStatement;
 using std::string;
@@ -247,6 +248,16 @@ OrdinaryJournalImpl::do_save_existing()
 	updater.step_final();
 	return;
 }
+
+
+void
+OrdinaryJournalImpl::do_ghostify()
+{
+	do_ghostify_journal_base();
+	clear(m_date);
+	return;
+}
+
 
 // WARNING temp play
 void

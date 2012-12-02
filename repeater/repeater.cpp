@@ -111,5 +111,11 @@ Repeater::remove()
 	return;
 }
 
+void
+Repeater::ghostify()
+{
+	m_impl->ghostify();
+	return;
+}
 
 }  // namespace phatbooks

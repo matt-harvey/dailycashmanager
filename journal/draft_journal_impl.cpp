@@ -15,6 +15,7 @@
 using sqloxx::SharedSQLStatement;
 using boost::shared_ptr;
 using boost::unordered_set;
+using jewel::clear;
 using jewel::value;
 using std::vector;
 using std::string;
@@ -303,6 +304,25 @@ DraftJournalImpl::do_save_existing()
 }
 
 
+void
+DraftJournalImpl::do_ghostify()
+{
+	do_ghostify_journal_base();
+	clear(m_dj_data->name);
+	typedef vector<Repeater>::iterator RepIter;
+	RepIter endpoint = m_dj_data->repeaters.end();
+	for (RepIter it = m_dj_data->repeaters.begin(); it != endpoint; ++it)
+	{
+		it->ghostify();
+	}
+	m_dj_data->repeaters.clear();
+	return;
+}
+
+
+
+
 }  // namespace phatbooks
+
 
 

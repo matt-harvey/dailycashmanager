@@ -154,9 +154,9 @@ private:
 	OrdinaryJournalImpl(OrdinaryJournalImpl const& rhs);
 
 	void do_load();
-
 	void do_save_existing();
 	void do_save_new();
+	void do_ghostify();
 
 
 	// Sole non-inherited data member. Note this is of a type where copying

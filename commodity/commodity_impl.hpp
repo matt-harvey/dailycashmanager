@@ -151,6 +151,7 @@ private:
 	void do_load();
 	void do_save_existing();
 	void do_save_new();
+	void do_ghostify();
 
 	// Other functions
 	void load_abbreviation_knowing_id();
@@ -161,7 +162,7 @@ private:
 		// Data members. The non-optional ones are initialized
 		// by every constructor; and the optional ones are
 		// only initialized on full load.
-		std::string abbreviation;
+		std::string abbreviation;  // todo abbreviation should be optional and lazy too
 		boost::optional<std::string> name;
 		boost::optional<std::string> description;
 		boost::optional<int> precision;

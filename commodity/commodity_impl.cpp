@@ -23,6 +23,7 @@
 
 
 using sqloxx::SharedSQLStatement;
+using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
 using boost::numeric_cast;
@@ -205,6 +206,14 @@ void CommodityImpl::do_save_new()
 	return;
 }
 
+void CommodityImpl::do_ghostify()
+{
+	clear(m_data->name);
+	clear(m_data->description);
+	clear(m_data->precision);
+	clear(m_data->multiplier_to_base);
+	return;
+}
 
 std::string CommodityImpl::abbreviation()
 {

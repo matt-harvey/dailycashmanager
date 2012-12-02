@@ -84,7 +84,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
 	
-	m_database_connection->set_caching_level(0);
+	m_database_connection->set_caching_level(10);
 
 
 	// Set up all the Menu objects.
@@ -950,6 +950,7 @@ void PhatbooksTextSession::play()
 		cout << endl;
 		cout << "Now let's delete an entry..." << endl;
 		journal.remove_first_entry();
+		journal.save();
 		if (i == 0)
 		{
 			cout << "Now here is the journal:" << endl;

@@ -25,6 +25,7 @@
 
 using sqloxx::SharedSQLStatement;
 using boost::shared_ptr;
+using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
 using std::string;
@@ -223,7 +224,7 @@ EntryImpl::do_save_existing()
 		"journal_id = :journal_id, "
 		"comment = :comment, "
 		"account_id = :account_id, "
-		"amount = :amount "
+		"amount = :amount, "
 		"is_reconciled = :is_reconciled "
 		"where entry_id = :entry_id"
 	);
@@ -258,6 +259,19 @@ EntryImpl::do_save_new()
 	process_saving_statement(inserter);
 	return;
 }
+
+void
+EntryImpl::do_ghostify()
+{
+	clear(m_data->journal_id);
+	clear(m_data->account);
+	clear(m_data->comment);
+	clear(m_data->amount);
+	clear(m_data->is_reconciled);
+	return;
+}
+
+
 
 
 std::string
