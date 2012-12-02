@@ -140,19 +140,8 @@ namespace sqloxx
  * PersistentObject API documentation. (Note I have already done this
  * for \e load functions.)
  *
- * @todo Make use of DatabaseConnection::cancel_transaction() to facilitate
- * strong exception safety where applicable.
- *
  * @todo If Sqloxx is ever moved to a separate library, then the documentation
  * for PersistentObject should include code for an exemplary derived class.
- *
- * @todo I need a better way of conveying the Id type to derived classes.
- * Currently this information is "multiply located".
- *
- * @todo PersistentObject should have an erase() method. This should
- * delete the corresponding object from the database, while also
- * informing the IdentityMap so that it erase the object
- * from the cache. We don't want zombies in the cache!
  */
 template<typename Derived, typename Connection>
 class PersistentObject
@@ -164,6 +153,8 @@ public:
 	typedef sqloxx::IdentityMap<Derived, Connection> IdentityMap;
 
 	/**
+	 * This should only be called from IdentityMap<Derived, Connection>.
+	 *
 	 * Create a PersistentObject that corresponds (or purports to correspond)
 	 * to one that already exists in the database.
 	 *
@@ -186,6 +177,8 @@ public:
 	);
 
 	/** 
+	 * This should only be called from IdentityMap<Derived, Connection>.
+	 *
 	 * Create a PersistentObject that does \e not correspond to
 	 * one that already exists in the database.
 	 *
@@ -297,6 +290,10 @@ public:
 	 * May also throw exceptions from do_save_new() and/or do_save_exising(),
 	 * depending on how those functions are defined in the derived class.
 	 *
+	 * Preconditions for exception-safety guarantee to be met:\n
+	 * Derived::do_ghostify() must be non-throwing; and\n
+	 * Derived::do_load() must be strongly exception-safe.
+	 *
 	 * @todo Figure out what other exceptions may be thrown, particularly
 	 * in light of the call to IdentityMap<...>::register_id(...).
 	 *
@@ -308,23 +305,6 @@ public:
 	 * @todo Documentation and testing.
 	 */
 	void remove();
-
-	/*
-	 * Exception safety: depends on the derived class's implementation
-	 * of do_save_existing(). In implementing this method, the derived
-	 * class should not make any assumptions about whether the final call
-	 * to end_transaction() (made in the base method after do_save_existing()
-	 * has exited) succeeds or fails. If do_save_existing() is implemented
-	 * in this way, and also offers the basic guarantee, then save_existing()
-	 * will itself offer the <em>basic guarantee</em>.
-	void save_existing();
-	 *
-	 * Exception safety: depends on how
-	 * do_save_new() is implemented. Providing this function does not
-	 * affect the state of the in-memory object,
-	 * then save_new() provides the <em>strong guarantee</em>.
-	void save_new();
-	 */
 
 	/**
 	 * @returns the id of the object, if it has one.
@@ -474,9 +454,34 @@ public:
 	bool has_high_handle_count() const;
 
 	/**
-	 * @todo Documentation and testing.
+	 * Reverts the object to a "ghost state". This is a state in
+	 * which only certain member variables (typically, only the id)
+	 * are initialized. This is done by calling the private virtual
+	 * function do_ghostify(). This must be defined by class Derived.
+	 * Then, the base ghostify() method marks the object as being in a
+	 * "ghost" state.
+	 *
+	 * Derived::do_ghostify() should be defined in such a way that,
+	 * when executed, the object is put into such a state that, the
+	 * next time load() is called, the object can be fully reloaded to
+	 * a valid loaded state without any issues of duplication or etc.
+	 * For example, if one of the member variables of Derived is a
+	 * vector, and if loading the object involves pushing elements
+	 * onto the vector, then do_ghostify() should ensure that the
+	 * vector is emptied, so that after load() is called next, the
+	 * object contains only one "lot" of elements.
+	 *
+	 * <em>It is strongly recommended that do_ghostify() be defined
+	 * such as to provide the nothrow guarantee. This makes it
+	 * easier for certain other functions to maintain exception-safety.
+	 * </em>
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>, provided the
+	 * Derived::do_ghostify() method is non-throwing.
 	 *
 	 * @todo Determine if this really needs to be public.
+	 *
+	 * @todo Testing.
 	 */
 	void ghostify();
 
@@ -748,39 +753,40 @@ PersistentObject<Derived, Connection>::save()
 	if (has_id())  // nothrow
 	{
 		load();  // strong guarantee, under certain conditions
-		DatabaseTransaction transaction(database_connection());
+		DatabaseTransaction transaction(database_connection()); // strong guarantee
 		try
 		{
-			do_save_existing();
-			transaction.commit();
+			do_save_existing();  // Depends on Derived
+			transaction.commit();  // Strong guarantee
 		}
 		catch (std::exception&)
 		{
-			ghostify();
+			ghostify();  // nothrow (assuming preconditions met)
 			throw;
 		}
 	}
 	else
 	{
-		Id const allocated_id = prospective_key();
-		DatabaseTransaction transaction(database_connection());
+		Id const allocated_id = prospective_key();  // strong guarantee
+		DatabaseTransaction transaction(database_connection());  // strong guarantee
 		try
 		{
-			do_save_new();
-			transaction.commit();
+			do_save_new();  // Depends on Derived
+			transaction.commit();  // Strong guarantee
 		}
 		catch (std::exception&)
 		{
-			ghostify();
+			ghostify();  // nothrow (assuming preconditions met)
 			throw;
 		}
-		m_id = allocated_id;
+		m_id = allocated_id; // nothrow
 		if (m_cache_key)
 		{
+			// strong guarantee
 			m_identity_map.register_id(*m_cache_key, allocated_id);
 		}
 	}
-	m_loading_status = loaded;
+	m_loading_status = loaded;  // nothrow
 	return;
 }
 
@@ -946,7 +952,7 @@ PersistentObject<Derived, Connection>::primary_key_name()
 	{
 		return ret;
 	}
-	int const pk_info_field = 5;
+	int const primary_key_info_field = 5;
 	int const column_name_field = 1;
 	SharedSQLStatement statement
 	(	database_connection(),
@@ -955,7 +961,7 @@ PersistentObject<Derived, Connection>::primary_key_name()
 	int primary_keys_found = 0;
 	while (statement.step())
 	{	
-		if (statement.extract<int>(pk_info_field) == 1)
+		if (statement.extract<int>(primary_key_info_field) == 1)
 		{
 			if (primary_keys_found != 0)
 			{
@@ -968,7 +974,6 @@ PersistentObject<Derived, Connection>::primary_key_name()
 		}
 	}
 	calculated_already = true;
-	JEWEL_DEBUG_LOG << "Primary key name: " << ret << std::endl;
 	return ret;
 }
 
