@@ -468,6 +468,8 @@ IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 	return;
 }
 
+template 
+
 template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::uncache_object(CacheKey p_cache_key)

@@ -291,8 +291,10 @@ public:
 	 * depending on how those functions are defined in the derived class.
 	 *
 	 * Preconditions for exception-safety guarantee to be met:\n
-	 * Derived::do_ghostify() must be non-throwing; and\n
-	 * Derived::do_load() must be strongly exception-safe.
+	 * Derived::do_ghostify() must be non-throwing;\n
+	 * Derived::do_load() must be strongly exception-safe;\n
+	 * Object cache_key must be initialized;\n
+	 * @todo Figure out other preconditions...
 	 *
 	 * @todo Figure out what other exceptions may be thrown, particularly
 	 * in light of the call to IdentityMap<...>::register_id(...).
@@ -750,6 +752,15 @@ template
 void
 PersistentObject<Derived, Connection>::save()
 {
+	// Precondition
+	assert (m_cache_key);
+
+	// Possible outcomes, provided preconditions met:
+	// Complete success;
+	// Fails with no effect;
+	// Fails and object left in ghost state (client requires no additional
+	// recovery effort);
+	// Fails 
 	if (has_id())  // nothrow
 	{
 		load();  // strong guarantee, under certain conditions
@@ -772,19 +783,26 @@ PersistentObject<Derived, Connection>::save()
 		try
 		{
 			do_save_new();  // Depends on Derived
-			transaction.commit();  // Strong guarantee
+			m_identity_map.register_id(*m_cache_key, allocated_id);  // strong guarantee
+			try
+			{
+				transaction.commit();  // Strong guarantee
+			}
+			catch (std::exception&)
+			{
+				// todo declare and define IdentityMap<...>::deregister_id(...),
+				// and make it non-throwing.
+				m_identity_map.deregister_id(m_cache_key);
+				throw;
+			}
 		}
 		catch (std::exception&)
 		{
 			ghostify();  // nothrow (assuming preconditions met)
+			jewel::clear(m_id);
 			throw;
 		}
 		m_id = allocated_id; // nothrow
-		if (m_cache_key)
-		{
-			// strong guarantee
-			m_identity_map.register_id(*m_cache_key, allocated_id);
-		}
 	}
 	m_loading_status = loaded;  // nothrow
 	return;
