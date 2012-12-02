@@ -99,7 +99,6 @@ CommodityImpl::CommodityImpl
 	PersistentObject(p_identity_map, p_id),
 	m_data(new CommodityData)
 {
-	load_abbreviation_knowing_id();
 }
 
 
@@ -121,20 +120,6 @@ CommodityImpl::swap(CommodityImpl& rhs)
 	return;
 }
 
-
-void CommodityImpl::load_abbreviation_knowing_id()
-{
-	SharedSQLStatement statement
-	(	database_connection(),
-		"select abbreviation from commodities where commodity_id = :p"
-	);
-	statement.bind(":p", id());
-	statement.step();
-	m_data->abbreviation = statement.extract<string>(0);
-	return;
-}
-
-	
 
 void CommodityImpl::do_load()
 {
@@ -162,7 +147,7 @@ void CommodityImpl::do_load()
 
 void CommodityImpl::process_saving_statement(SharedSQLStatement& statement)
 {
-	statement.bind(":abbreviation", m_data->abbreviation);
+	statement.bind(":abbreviation", value(m_data->abbreviation));
 	statement.bind(":name", value(m_data->name));
 	statement.bind(":description", value(m_data->description));
 	statement.bind(":precision", value(m_data->precision));
@@ -208,6 +193,7 @@ void CommodityImpl::do_save_new()
 
 void CommodityImpl::do_ghostify()
 {
+	clear(m_data->abbreviation);
 	clear(m_data->name);
 	clear(m_data->description);
 	clear(m_data->precision);
@@ -217,8 +203,8 @@ void CommodityImpl::do_ghostify()
 
 std::string CommodityImpl::abbreviation()
 {
-	// load not done as m_abbreviation is always initialized.
-	return m_data->abbreviation;
+	load();
+	return value(m_data->abbreviation);
 }
 
 std::string CommodityImpl::name()

@@ -154,15 +154,11 @@ private:
 	void do_ghostify();
 
 	// Other functions
-	void load_abbreviation_knowing_id();
 	void process_saving_statement(sqloxx::SharedSQLStatement& statement);
 
 	struct CommodityData
 	{
-		// Data members. The non-optional ones are initialized
-		// by every constructor; and the optional ones are
-		// only initialized on full load.
-		std::string abbreviation;  // todo abbreviation should be optional and lazy too
+		boost::optional<std::string> abbreviation;
 		boost::optional<std::string> name;
 		boost::optional<std::string> description;
 		boost::optional<int> precision;

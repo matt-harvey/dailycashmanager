@@ -136,7 +136,6 @@ private:
 	void do_save_existing();
 	void do_save_new();
 	void do_ghostify();
-	void load_name_knowing_id();
 	void process_saving_statement(sqloxx::SharedSQLStatement& statement);
 
 	struct AccountData
@@ -151,7 +150,7 @@ private:
 		// database). Using optionals helps guard against
 		// such an object being written to the database in an
 		// incomplete state.
-		std::string name;  // todo name should be optional and lazy too
+		boost::optional<std::string> name;
 		boost::optional<Commodity> commodity;
 		boost::optional<AccountType> account_type;
 		boost::optional<std::string> description;

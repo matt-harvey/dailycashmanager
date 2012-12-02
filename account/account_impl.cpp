@@ -113,7 +113,6 @@ AccountImpl::AccountImpl
 	PersistentObject(p_identity_map, p_id),
 	m_data(new AccountData)
 {
-	load_name_knowing_id();
 }
 
 
@@ -142,7 +141,8 @@ AccountImpl::account_type()
 string
 AccountImpl::name()
 {
-	return m_data->name;
+	load();
+	return value(m_data->name);
 }
 
 Commodity
@@ -205,19 +205,20 @@ AccountImpl::do_load()
 {
 	SharedSQLStatement statement
 	(	database_connection(),
-		"select commodity_id, account_type_id, description "
+		"select name, commodity_id, account_type_id, description "
 		"from accounts where account_id = :p"
 	);
 	statement.bind(":p", id());
 	statement.step();
 	AccountImpl temp(*this);
+	temp.m_data->name = statement.extract<string>(0);
 	temp.m_data->commodity = Commodity
 	(	database_connection(),
-		statement.extract<Id>(0)
+		statement.extract<Id>(1)
 	);
 	temp.m_data->account_type =
-		static_cast<AccountType>(statement.extract<int>(1));
-	temp.m_data->description = statement.extract<string>(2);
+		static_cast<AccountType>(statement.extract<int>(2));
+	temp.m_data->description = statement.extract<string>(3);
 	swap(temp);
 	return;
 }
@@ -229,7 +230,7 @@ AccountImpl::process_saving_statement(SharedSQLStatement& statement)
 	(	":account_type_id",
 		static_cast<int>(value(m_data->account_type))
 	);
-	statement.bind(":name", m_data->name);
+	statement.bind(":name", value(m_data->name));
 	statement.bind(":description", value(m_data->description));
 	statement.bind(":commodity_id", value(m_data->commodity).id());
 	statement.step_final();
@@ -269,6 +270,7 @@ AccountImpl::do_save_new()
 void
 AccountImpl::do_ghostify()
 {
+	clear(m_data->name);
 	clear(m_data->commodity);
 	clear(m_data->account_type);
 	clear(m_data->description);
@@ -280,19 +282,6 @@ string
 AccountImpl::primary_table_name()
 {
 	return "accounts";
-}
-
-void
-AccountImpl::load_name_knowing_id()
-{
-	SharedSQLStatement statement
-	(	database_connection(),
-		"select name from accounts where account_id = :p"
-	);
-	statement.bind(":p", id());
-	statement.step();
-	m_data->name = statement.extract<string>(0);
-	return;
 }
 
 
