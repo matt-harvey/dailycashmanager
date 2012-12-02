@@ -743,15 +743,31 @@ PersistentObject<Derived, Connection>::save()
 	{
 		load();  // strong guarantee, under certain conditions
 		DatabaseTransaction transaction(database_connection());
-		do_save_existing();
-		transaction.commit();
+		try
+		{
+			do_save_existing();
+			transaction.commit();
+		}
+		catch (std::exception&)
+		{
+			ghostify();
+			throw;
+		}
 	}
 	else
 	{
 		Id const allocated_id = prospective_key();
 		DatabaseTransaction transaction(database_connection());
-		do_save_new();
-		transaction.commit();
+		try
+		{
+			do_save_new();
+			transaction.commit();
+		}
+		catch (std::exception&)
+		{
+			ghostify();
+			throw;
+		}
 		m_id = allocated_id;
 		if (m_cache_key)
 		{
