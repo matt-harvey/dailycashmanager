@@ -935,10 +935,10 @@ void PhatbooksTextSession::display_balances()
 void PhatbooksTextSession::play()
 {
 	cout << endl;
-	cout << "Here is journal number 100:" << endl;
+	cout << "Here is journal number 1035:" << endl;
 	for (int i = 0; i != 2; ++i)
 	{
-		OrdinaryJournal journal(*m_database_connection, 100);
+		OrdinaryJournal journal(*m_database_connection, 1035);
 		for
 		(	vector<Entry>::const_iterator it = journal.entries().begin();
 			it != journal.entries().end();
@@ -948,12 +948,15 @@ void PhatbooksTextSession::play()
 			cout << it->account().name() << "\t" << it->amount() << endl;
 		}
 		cout << endl;
-		cout << "Now let's delete an entry..." << endl;
-		journal.remove_first_entry();
-		journal.save();
 		if (i == 0)
 		{
-			cout << "Now here is the journal:" << endl;
+			cout << "Now let's delete an entry..." << endl;
+			journal.remove_first_entry();
+			journal.save();
+			if (i == 0)
+			{
+				cout << "Now here is the journal:" << endl;
+			}
 		}
 	}
 	return;

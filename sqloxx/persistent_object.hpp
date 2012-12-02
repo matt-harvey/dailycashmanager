@@ -236,7 +236,9 @@ public:
 	 * are subsequently written to the database
 	 * when save() is called, you should always call load() as
 	 * the \e first statement in the implementation of any \e setter method in
-	 * the derived class.
+	 * the derived class. This ensures ensures the in-memory object is in
+	 * sync with the in-database object, prior to any changes being made to
+	 * the in-memory object.
 	 * 
 	 * (2) <b>Object does not have id</b>
 	 *
@@ -251,8 +253,12 @@ public:
 	 * assigning an id to the newly saved object in the database; recording
 	 * this id in the in-memory object; and notifying the IdentityMap<Derived>
 	 * (i.e. the "cache") for this object, that it has been saved and assigned
-	 * its id. Finally, the base function marks the newly saved object as
-	 * being in a "loaded", i.e. complete state.
+	 * its id.
+	 *
+	 * After saving the object as above, whether via (1) or (2), the in-memory
+	 * object is marked as being in a loaded state. That is to say, the
+	 * in-memory model of the object is marked internally as being in a
+	 * complete and up-to-date state.
 	 *
 	 * In defining do_save_new(), the class Derived should ensure that a call
 	 * to do_save_new() results in a \e complete object of its type being
@@ -774,7 +780,7 @@ PersistentObject<Derived, Connection>::save()
 			m_identity_map.register_id(*m_cache_key, allocated_id);
 		}
 	}
-	ghostify();
+	m_loading_status = loaded;
 	return;
 }
 
