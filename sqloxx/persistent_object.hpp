@@ -5,6 +5,7 @@
 #include "general_typedefs.hpp"
 #include "identity_map.hpp"
 #include "next_auto_key.hpp"
+#include "shared_sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <boost/none.hpp>
 #include <boost/optional.hpp>
@@ -12,6 +13,7 @@
 #include <cassert>
 #include <jewel/optional.hpp>
 #include <exception>
+#include <string>
 
 #ifdef DEBUG
 	#include <jewel/debug_log.hpp>
@@ -296,6 +298,11 @@ public:
 	 */
 	void save();
 
+	/**
+	 * @todo Documentation and testing.
+	 */
+	void remove();
+
 	/*
 	 * Exception safety: depends on the derived class's implementation
 	 * of do_save_existing(). In implementing this method, the derived
@@ -574,9 +581,12 @@ private:
 	 // represent a \e unique object in the database with a unique id.
 	PersistentObject& operator=(PersistentObject const& rhs);
 
+	std::string primary_key_name();
+
 	virtual void do_load() = 0;
 	virtual void do_save_existing() = 0;
 	virtual void do_save_new() = 0;
+	virtual void do_remove();
 	void clear_loading_status();
 	void increment_handle_counter();
 
@@ -749,6 +759,25 @@ PersistentObject<Derived, Connection>::save()
 
 template
 <typename Derived, typename Connection>
+void
+PersistentObject<Derived, Connection>::remove()
+{
+	if (has_id())
+	{
+		DatabaseTransaction transaction(database_connection());
+		do_remove();
+		transaction.commit();
+		m_id = boost::optional<Id>();  // Return id() to uninitialized state
+	}
+	// todo We should mark the entry as tainted such that any attempt to
+	// call load() now that it is deleted results in an exception being
+	// thrown. We should also delete it from the cache.
+	return;
+}
+
+
+template
+<typename Derived, typename Connection>
 Id
 PersistentObject<Derived, Connection>::id() const
 {
@@ -878,6 +907,60 @@ PersistentObject<Derived, Connection>::prospective_key() const
 	(	database_connection(),
 		Derived::primary_table_name()
 	);
+}
+
+template
+<typename Derived, typename Connection>
+std::string
+PersistentObject<Derived, Connection>::primary_key_name()
+{
+	static bool calculated_already = false;
+	static std::string ret;
+	if (calculated_already)
+	{
+		return ret;
+	}
+	int const pk_info_field = 5;
+	int const column_name_field = 1;
+	SharedSQLStatement statement
+	(	database_connection(),
+		"pragma table_info(" + Derived::primary_table_name() + ")"
+	);
+	int primary_keys_found = 0;
+	while (statement.step())
+	{	
+		if (statement.extract<int>(pk_info_field) == 1)
+		{
+			if (primary_keys_found != 0)
+			{
+				throw DatabaseException
+				(	"Multiple primary keys found when 1 expected."
+				);
+			}
+			ret = statement.extract<std::string>(column_name_field);
+			++primary_keys_found;
+		}
+	}
+	calculated_already = true;
+	JEWEL_DEBUG_LOG << "Primary key name: " << ret << std::endl;
+	return ret;
+}
+
+
+
+
+template
+<typename Derived, typename Connection>
+void
+PersistentObject<Derived, Connection>::do_remove()
+{
+	std::string const statement_text =
+		"delete from " + Derived::primary_table_name() + " where " +
+		primary_key_name() + " = :p";
+	SharedSQLStatement statement(database_connection(), statement_text);
+	statement.bind(":p", id());
+	statement.step_final();
+	return;
 }
 
 

@@ -58,6 +58,9 @@ public:
 	 * class.
 	 */
 	void save();
+	
+	// WARNING temp play
+	void remove_first_entry();
 
 private:
 	sqloxx::Handle<OrdinaryJournalImpl> m_impl;

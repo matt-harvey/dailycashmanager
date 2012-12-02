@@ -143,6 +143,9 @@ public:
 	 */
 	void swap(OrdinaryJournalImpl& rhs);
 
+	// WARNING temp play
+	void remove_first_entry();
+
 private:
 	
 	/**
@@ -154,6 +157,7 @@ private:
 
 	void do_save_existing();
 	void do_save_new();
+
 
 	// Sole non-inherited data member. Note this is of a type where copying
 	// does not throw. If we ever add more data members here and/or change

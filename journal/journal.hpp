@@ -63,6 +63,10 @@ class PhatbooksDatabaseConnection;
  * to the method. These are intended to be called by derived classes
  * OrdinaryJournal and DraftJournal to save or load the common base parts of
  * the object.
+ *
+ * @todo OrdinaryJournalImpl and DraftJournalImpl need to have remove()
+ * redefined, to ensure it deletes the contained entries and repeaters
+ * as well as just the journal.
  */
 class Journal
 {
@@ -90,6 +94,10 @@ public:
 	// WARNING This returns a reference to internals and so
 	// is a bit fucked. But client code uses it a lot...
 	virtual std::vector<Entry> const& entries();
+
+	// WARNING temp play
+	void remove_first_entry();
+
 
 	virtual void set_whether_actual(bool p_is_actual);
 	virtual void set_comment(std::string const& p_comment);

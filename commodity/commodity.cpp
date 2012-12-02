@@ -132,4 +132,5 @@ Commodity::id() const
 	return m_impl->id();
 }
 
+
 }  // namespace phatbooks

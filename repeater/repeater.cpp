@@ -104,7 +104,12 @@ Repeater::save()
 	return;
 }
 
-
+void
+Repeater::remove()
+{
+	m_impl->remove();
+	return;
+}
 
 
 }  // namespace phatbooks

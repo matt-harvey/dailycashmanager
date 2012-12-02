@@ -48,6 +48,12 @@ public:
 	 */
 	void save();
 
+	/**
+	 * TODO This should eventually be shifted into a base
+	 * class.
+	 */
+	void remove();
+
 
 
 private:

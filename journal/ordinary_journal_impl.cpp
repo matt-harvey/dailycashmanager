@@ -248,6 +248,14 @@ OrdinaryJournalImpl::do_save_existing()
 	return;
 }
 
+// WARNING temp play
+void
+OrdinaryJournalImpl::remove_first_entry()
+{
+	Journal::remove_first_entry();
+	return;
+}
+
 
 }  // namespace phatbooks
 

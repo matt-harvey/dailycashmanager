@@ -200,14 +200,10 @@ Journal::do_save_existing_journal_base
 		Entry::Id const entry_id = entry_finder.extract<Entry::Id>(0);
 		if (saved_entry_ids.find(entry_id) == saved_entries_end)
 		{
+			Entry doomed_entry(dbc, entry_id);
 			// This entry is in the database but no longer in the in-memory
 			// journal, so should be deleted.
-			SharedSQLStatement entry_deleter
-			(	dbc,
-				"delete from entries where entry_id = :entry_id"
-			);
-			entry_deleter.bind(":entry_id", entry_id);
-			entry_deleter.step_final();
+			doomed_entry.remove();
 			// Note it's OK even if the last entry is deleted. Another
 			// entry will never be reassigned its id - SQLite makes sure
 			// of that - providing we let SQLite assign all the ids
@@ -253,5 +249,16 @@ Journal::primary_table_name()
 {
 	return "journals";
 }
+
+
+
+// WARNING temp play
+void
+Journal::remove_first_entry()
+{
+	(m_data->entries)[0].remove();
+	return;
+}
+
 
 }  // namespace phatbooks

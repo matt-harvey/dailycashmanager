@@ -212,7 +212,7 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 void
 DatabaseConnection::unchecked_begin_transaction()
 {
-	JEWEL_DEBUG_LOG << "Beginning SQL transaction." << endl;
+	// JEWEL_DEBUG_LOG << "Beginning SQL transaction." << endl;
 	SharedSQLStatement statement(*this, "begin");
 	statement.step();
 	return;
@@ -221,7 +221,7 @@ DatabaseConnection::unchecked_begin_transaction()
 void
 DatabaseConnection::unchecked_end_transaction()
 {
-	JEWEL_DEBUG_LOG << "Ending SQL transaction." << endl;
+	// JEWEL_DEBUG_LOG << "Ending SQL transaction." << endl;
 	SharedSQLStatement statement(*this, "end");
 	statement.step();
 	return;
@@ -230,7 +230,7 @@ DatabaseConnection::unchecked_end_transaction()
 void
 DatabaseConnection::unchecked_set_savepoint()
 {
-	JEWEL_DEBUG_LOG << "Setting SQL savepoint." << endl;
+	// JEWEL_DEBUG_LOG << "Setting SQL savepoint." << endl;
 	SharedSQLStatement statement(*this, "savepoint sp");
 	statement.step();
 	return;
@@ -239,7 +239,7 @@ DatabaseConnection::unchecked_set_savepoint()
 void
 DatabaseConnection::unchecked_release_savepoint()
 {
-	JEWEL_DEBUG_LOG << "Releasing SQL savepoint." << endl;
+	// JEWEL_DEBUG_LOG << "Releasing SQL savepoint." << endl;
 	SharedSQLStatement statement(*this, "release sp");
 	statement.step();
 	return;
@@ -248,7 +248,7 @@ DatabaseConnection::unchecked_release_savepoint()
 void
 DatabaseConnection::unchecked_rollback_transaction()
 {
-	JEWEL_DEBUG_LOG << "Rolling back entire SQL transaction." << endl;
+	// JEWEL_DEBUG_LOG << "Rolling back entire SQL transaction." << endl;
 	SharedSQLStatement statement(*this, "rollback");
 	statement.step();
 	return;
@@ -257,7 +257,7 @@ DatabaseConnection::unchecked_rollback_transaction()
 void
 DatabaseConnection::unchecked_rollback_to_savepoint()
 {
-	JEWEL_DEBUG_LOG << "Rolling back to SQL savepoint." << endl;
+	// JEWEL_DEBUG_LOG << "Rolling back to SQL savepoint." << endl;
 	SharedSQLStatement statement(*this, "rollback to savepoint sp");
 	statement.step();
 	return;

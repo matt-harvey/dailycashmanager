@@ -291,12 +291,8 @@ DraftJournalImpl::do_save_existing()
 		{
 			// This repeater is in the database but no longer in the in-memory
 			// DraftJournalImpl, and so should be deleted from the database.
-			SharedSQLStatement repeater_deleter
-			(	database_connection(),
-				"delete from repeaters where repeater_id = :repeater_id"
-			);
-			repeater_deleter.bind(":repeater_id", repeater_id);
-			repeater_deleter.step_final();
+			Repeater doomed_repeater(database_connection(), repeater_id);
+			doomed_repeater.remove();
 			// Note it's OK even if the last repeater is deleted. Another
 			// repeater will never be reassigned its id - SQLite makes sure
 			// of that - providing we let SQLite assign all the ids

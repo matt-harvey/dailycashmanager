@@ -84,7 +84,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
 	
-	m_database_connection->set_caching_level(10);
+	m_database_connection->set_caching_level(0);
 
 
 	// Set up all the Menu objects.
@@ -934,7 +934,27 @@ void PhatbooksTextSession::display_balances()
 
 void PhatbooksTextSession::play()
 {
-	cout << "No play today :-(" << endl;
+	cout << endl;
+	cout << "Here is journal number 100:" << endl;
+	for (int i = 0; i != 2; ++i)
+	{
+		OrdinaryJournal journal(*m_database_connection, 100);
+		for
+		(	vector<Entry>::const_iterator it = journal.entries().begin();
+			it != journal.entries().end();
+			++it
+		)
+		{
+			cout << it->account().name() << "\t" << it->amount() << endl;
+		}
+		cout << endl;
+		cout << "Now let's delete an entry..." << endl;
+		journal.remove_first_entry();
+		if (i == 0)
+		{
+			cout << "Now here is the journal:" << endl;
+		}
+	}
 	return;
 }
 

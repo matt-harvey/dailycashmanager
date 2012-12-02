@@ -110,5 +110,11 @@ Entry::save()
 	return;
 }
 
+void
+Entry::remove()
+{
+	m_impl->remove();
+	return;
+}
 
 }  // namespace phatbooks
