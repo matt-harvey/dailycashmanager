@@ -16,11 +16,14 @@ namespace sqloxx
  * (a) We call the DatabaseTransaction's commit() method, causing
  * the transaction to be committed;
  * (b) We call the DatabaseTransaction's cancel() method, causing
- * the tranaction to be cancelled i.e. rolled back; or
+ * the tranaction to be cancelled i.e. rolled back, or
  * (c) The DatabaseTransaction is destruced without commit() or
  * cancel() having been called - in which case the SQL transaction
- * is cancelled i.e.
- * rolled back.
+ * is cancelled i.e. rolled back.
+ *
+ * (c) is intended as a balwark against programmer error, rather
+ * than a way to avoid calling cancel() manually. See further
+ * documentation of each for why.
  *
  * @todo Documentation and testing.
  */

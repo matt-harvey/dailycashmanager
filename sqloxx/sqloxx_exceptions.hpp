@@ -63,10 +63,10 @@ JEWEL_DERIVED_EXCEPTION(DatabaseException, jewel::Exception);
 JEWEL_DERIVED_EXCEPTION(ConstraintException, DatabaseException);
 
 /**
- * Exception to be thrown in response to database-related exceptions
- * originating in SQLite.
+ * Exception to be thrown when a database transaction cannot be
+ * cleanly finalized.
  */
-JEWEL_DERIVED_EXCEPTION(SQLiteException, DatabaseException);
+JEWEL_DERIVED_EXCEPTION(UnresolvedTransactionException, DatabaseException);
 
 /**
  * Exception to be thrown when trying to do something with an invalid database
@@ -141,17 +141,23 @@ JEWEL_DERIVED_EXCEPTION(ValueTypeException, DatabaseException);
 JEWEL_DERIVED_EXCEPTION(TransactionNestingException, DatabaseException);
 
 /**
+ * Exception to be thrown when SQL statements are passed to function that
+ * expects only one.
+ */
+JEWEL_DERIVED_EXCEPTION(TooManyStatements, DatabaseException);
+
+/**
+ * Exception to be thrown in response to database-related exceptions
+ * originating in SQLite.
+ */
+JEWEL_DERIVED_EXCEPTION(SQLiteException, DatabaseException);
+
+/**
  * Exception to be thrown when SQLite (the library itself, not a database
  * connection) has not been successfully initialized.
  */
 JEWEL_DERIVED_EXCEPTION(SQLiteInitializationError, SQLiteException);
 
-
-/**
- * Exception to be thrown when SQL statements are passed to function that
- * expects only one.
- */
-JEWEL_DERIVED_EXCEPTION(TooManyStatements, DatabaseException);
 
 /* NOT DOXYGEN AS DOXYGEN DOESN'T HANDLE
  * The following exceptions correspond to particular SQLite standard error

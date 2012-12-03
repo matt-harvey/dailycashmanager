@@ -44,8 +44,10 @@
 // WARNING play code
 #include "sqloxx/shared_sql_statement.hpp"
 #include <boost/unordered_map.hpp>
+#include <jewel/stopwatch.hpp>
 #include <vector>
 using boost::unordered_map;
+using jewel::Stopwatch;
 using sqloxx::SharedSQLStatement;
 using std::vector;
 // end play code
@@ -890,13 +892,16 @@ void PhatbooksTextSession::display_balances()
 
 	cout << "Here is the balance of each envelope and balance sheet account."
 	     << endl;
-	typedef unordered_map< Account::Id, Decimal> BalanceMap;
+	typedef unordered_map<Account::Id, Decimal> BalanceMap;
 	BalanceMap balance_map;
 	SharedSQLStatement account_statement
 	(
 		*m_database_connection,
 		"select account_id from accounts"
 	);
+
+	// START TIMING
+	Stopwatch sw;
 	while (account_statement.step())
 	{
 		Account account
@@ -905,6 +910,26 @@ void PhatbooksTextSession::display_balances()
 		);
 		balance_map[account.id()] = Decimal(0, 0);
 	}
+
+	// "SQL METHOD"
+	/*
+	SharedSQLStatement sum_selector
+	(	*m_database_connection,
+		"select account_id, sum(amount) from entries inner "
+		"join ordinary_journal_detail using(journal_id) "
+		"group by account_id "
+	);
+	while (sum_selector.step())
+	{
+		Account::Id const a_id = sum_selector.extract<Account::Id>(0);
+		balance_map[a_id] = Decimal
+		(	sum_selector.extract<Decimal::int_type>(1),
+			Account(*m_database_connection, a_id).commodity().precision()
+		);
+	}
+	*/
+
+	// "ACCUMULATION METHOD"
 	SharedSQLStatement entry_statement
 	(	*m_database_connection,
 		"select entry_id from entries inner join ordinary_journal_detail "
@@ -918,6 +943,10 @@ void PhatbooksTextSession::display_balances()
 		);
 		balance_map[entry.account().id()] += entry.amount();
 	}
+
+	sw.log();
+	// STOP TIMING
+
 	for
 	(	BalanceMap::const_iterator it = balance_map.begin();
 		it != balance_map.end();

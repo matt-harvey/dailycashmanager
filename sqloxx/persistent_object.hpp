@@ -200,38 +200,71 @@ public:
 	virtual ~PersistentObject();
 
 	/**
-	 * The result of calling this function depends on whether the in-memory
+	 * Preconditions:\n
+	 * The destructor of Derived must be non-throwing;\n
+	 * We have handled this object only via a Handle<Derived>, with
+	 * the Handle<Derived> having been copied or assigned from another
+	 * Handle<Derived>, or obtained by a call to
+	 * IdentityMap<Derived, Connection>::provide_handle(...);\n
+	 * If the object has an id, the id corresponds to the primary
+	 * key of an object of this type that exists in the database;\n
+	 * do_save_existing() and do_save_new() must be defined in such
+	 * a way that they do not change the logical state of the object being
+	 * saved, or of any other objects, but have side-effects only
+	 * in respect of the database;\n
+	 * do_save_existing() and do_save_new() must be been defined so that
+	 * if they fail, they throw std::exception or an exception derived
+	 * therefrom;\n
+	 * Every setter and getter method defined in the Derived class must have
+	 * a call to load() as its first statement (see below for
+	 * explanation);\n
+	 * The primary_table_name() static function must be defined in the
+	 * class Derived, and must simply return a std::string, being the
+	 * name of the table in which instances of Derived are stored
+	 * using an autoincrementing integer primary key (using the
+	 * built-in SQLite "autoincrement" qualifier);\n
+	 * Derived::do_ghostify() must be defined so as to be non-throwing;\n
+	 * Derived::do_load() preconditions must be met (see documentation
+	 * for load());
+	 * 
+	 * The result of calling save() depends on whether the in-memory
 	 * object has an id.
-	 *
+
 	 * (1) <b>Object has id</b>
 	 *
-	 * If the object has an id - i.e. if it corresponds, or purports to
-	 * correspond, to an object already existent in the database - then
+	 * If the object has an id - i.e. if it corresponds to an object already
+	 * existent in the database - then
 	 * calling save() will result in the object in the database being updated
 	 * with
-	 * the state of the current in-memory object. This is done by a call
+	 * the state of the current in-memory object.
+	 * This is done by a call
 	 * to virtual function do_save_existing(), which much be defined
 	 * in the class Derived. The base method save() takes care of wrapping
 	 * the call to do_save_existing() as a single SQL transaction by calling
-	 * begin_transaction() and end_transaction on the database connection.
-	 * Note that before calling do_save_existing(), and before beginning the
-	 * SQL transaction, the base save() method first calls load().
-	 * This ensures the object
-	 * is not saved in a partial state. This call to load() only has
-	 * effect if the object is in a partial ("ghost") state when it
-	 * is called. If it is already in a fully loaded state, the call to
-	 * load() will have no effect on the state of the in-memory object.
-	 * However if it is in a "ghost" state when load() is called, then the
-	 * entire state of the in-memory object will be overridden with the state
-	 * of the in-database object.
-	 * The upshot of this is that, in order to make sure that
+	 * begin_transaction() and end_transaction() on the database connection.
+	 * 
+	 * <em>Important:</em> Before calling do_save_existing(), and before
+	 * beginning the
+	 * SQL transaction, the base save() method first ensures that the object
+	 * is in a fully loaded state (as we don't want to save a partial
+	 * object to the database). This is done via a call to load().
+	 * If the object is <em>in a ghost state and has an id</em> at this point,
+	 * then the entire
+	 * state of the in-memory object will be overwritten by the state of
+	 * the in-database object, and \e then the in-memory object will be
+	 * saved - with the net result being that any changes to the in-memory
+	 * object are lost, and the in-database object remains unchanged!
+	 * If, on the other, hand, the object is in a fully loaded state at
+	 * the point save() is called, then the call to load() has no effect.
+	 * (The call to load() also has no effect if the object doesn't yet have
+	 * an id; but that's not relevant here as we're considering the case
+	 * where the object has an id.)
+	 * The upshot of all this is that, in order to make sure that
 	 * changes to the in-memory object remain in the in-memory object and
 	 * are subsequently written to the database
 	 * when save() is called, you should always call load() as
 	 * the \e first statement in the implementation of any \e setter method in
-	 * the derived class. This ensures ensures the in-memory object is in
-	 * sync with the in-database object, prior to any changes being made to
-	 * the in-memory object.
+	 * the Derived class.
 	 * 
 	 * (2) <b>Object does not have id</b>
 	 *
@@ -239,6 +272,7 @@ public:
 	 * purport to correspond to an object already saved to the database - then
 	 * calling save() will result in the in-memory object being saved to the
 	 * database as an additional item, rather than overwriting existing data.
+	 * In other words, a new record will be created in the database.
 	 * This is done
 	 * via a call to virtual function do_save_new(), which must be defined in
 	 * the class Derived. The base save() function takes care of wrapping
@@ -249,21 +283,14 @@ public:
 	 * its id.
 	 *
 	 * After saving the object as above, whether via (1) or (2), the in-memory
-	 * object is marked as being in a loaded state. That is to say, the
-	 * in-memory model of the object is marked internally as being in a
-	 * complete and up-to-date state.
+	 * object is marked internally as being in a fully loaded, i.e.
+	 * "complete" state.
 	 *
 	 * In defining do_save_new(), the class Derived should ensure that a call
 	 * to do_save_new() results in a \e complete object of its type being
 	 * inserted into the database. The semantics of save() here only make
-	 * sense if this is the case.
-	 *
-	 * The primary_table_name() static function must also
-	 * be defined in the Derived class in order for this function
-	 * to find an automatically generated id to assign to the object
-	 * when saved. This should return a std::string being the name of
-	 * the table housing the primary key for objects of this class stored
-	 * in the database.
+	 * sense if this is the case. The Sqloxx framework does not provide for
+	 * the saving of objects "a bit at a time".
 	 *
 	 * @throws TableSizeException if the object does not have an id, but
 	 * the greatest primary key value already in the primary table for the
@@ -275,11 +302,20 @@ public:
 	 * failure during execution.
 	 *
 	 * @throws TransactionNestingException if the maximum transaction
-	 * nesting level of the DatabaseConnection has been reached (very
+	 * nesting level of the DatabaseConnection has been reached (extremely
 	 * unlikely). (May be thrown under either (1) or (2).)
 	 *
 	 * @throws InvalidConnection if the DatabaseConnection is
 	 * invalid. (May be thrown under either (1) or (2).)
+	 *
+	 * @throws UnresolvedTransactionException if there is failure in
+	 * the process of committing the database transaction, or if there is
+	 * some other failure, followed by a failure in the process of
+	 * \e formally cancelling the database transaction. If this is
+	 * thrown (which is extremely unlikely), it is recommended that the
+	 * application be gracefully terminated. The database transaction
+	 * \e will be fully rolled back, but further transaction during the
+	 * same application session may jeopardize that situation.
 	 *
 	 * May also throw other derivatives of DatabaseException if there is
 	 * a failure finding the next primary key value for the object in case
@@ -290,21 +326,55 @@ public:
 	 * May also throw exceptions from do_save_new() and/or do_save_exising(),
 	 * depending on how those functions are defined in the derived class.
 	 *
-	 * Preconditions for exception-safety guarantee to be met:\n
-	 * Derived::do_ghostify() must be non-throwing;\n
-	 * Derived::do_load() must be strongly exception-safe;\n
-	 * Object cache_key must be initialized;\n
-	 * @todo Figure out other preconditions...
+	 * Exception safety: <em>basic guarantee</em>. Possible outcomes
+	 * from calling save() are as follows -\n
+	 *  (a) Complete success;\n
+	 *  (b) Failure with exception thrown and no effect on program
+	 *  state;\n
+	 *  (c) If the object has an id, save() may fail and throw an
+	 *  exception but with the object left in a
+	 * ghost state.
+	 * In either (b) or (c), it is possible that failure may occur
+	 * with UnresolvedTransactionException being thrown. If this occurs,
+	 * it is recommended that the application session be gracefully
+	 * terminated.
+	 * Note that (b) and (c) are functionally equivalent to one another
+	 * as far as client
+	 * code is concerned, providing the preconditions are met, and in
+	 * particular, providing client Derived class always calls load() as
+	 * the first statement of any getter.
 	 *
-	 * @todo Figure out what other exceptions may be thrown, particularly
-	 * in light of the call to IdentityMap<...>::register_id(...).
-	 *
-	 * @todo Testing, and reassessment of exceptions and exceptions safety.
+	 * @todo Testing.
 	 */
 	void save();
 
 	/**
-	 * @todo Documentation and testing.
+	 * Delete an object of type Derived<T> from the database.
+	 *
+	 * @throws std::bad_alloc in the unlikely event of mememory allocation
+	 * failure during execution.
+	 *
+	 * @throws InvalidConnection if the database connection is invalid.
+	 *
+	 * @throws TransactionNestingException if the maximum transaction
+	 * nesting level of the DatabaseConnection has been reached (extremely
+	 * unlikely).
+	 *
+	 * @throws UnresolvedTransactionException if there is failure in
+	 * the process of committing the database transaction, or if there is
+	 * some other failure, followed by a failure in the process of
+	 * \e formally cancelling the database transaction. If this is
+	 * thrown (which is extremely unlikely), it is recommended that the
+	 * application be gracefully terminated. The database transaction
+	 * \e will be fully rolled back, but further transaction during the
+	 * same application session may jeopardize that situation.
+	 * 
+	 * @todo Any other exceptions?
+	 *
+	 * @todo Also what does do_remove throw? Remember, I have provided a
+	 * default implementation.
+	 *
+	 * @todo Finish documenentation and test.
 	 */
 	void remove();
 
@@ -497,11 +567,14 @@ protected:
 	 * then this function does nothing, since there would be nothing
 	 * to load.
 	 *
+	 * Preconditions:\n
 	 * In defining do_load(), the derived class should throw an instance
 	 * of std::exception (which may be an instance of any exception class
 	 * derived therefrom) in the event that the load fails. If this
 	 * is adhered to, and do_load() is implemented with the strong
-	 * exception-safety guarantee, and do_load() does not perform any
+	 * exception-safety guarantee in respect of the
+	 * in-memory objects (the base load() method will take care of atomicity
+	 * in respect of the database), and do_load() does not perform any
 	 * write operations on the database, or have other side-effects, then the
 	 * \e load function will itself provide the strong exception safety
 	 * guarantee.
@@ -752,53 +825,51 @@ template
 void
 PersistentObject<Derived, Connection>::save()
 {
-	// Precondition
-	assert (m_cache_key);
-
-	// Possible outcomes, provided preconditions met:
-	// Complete success;
-	// Fails with no effect;
-	// Fails and object left in ghost state (client requires no additional
-	// recovery effort);
-	// Fails 
+	assert (m_cache_key);  // precondition
 	if (has_id())  // nothrow
 	{
-		load();  // strong guarantee, under certain conditions
-		DatabaseTransaction transaction(database_connection()); // strong guarantee
+		// strong guarantee, under preconditions of do_load (see load())
+		load(); 
+
+		// strong guarantee
+		DatabaseTransaction transaction(database_connection());
 		try
 		{
-			do_save_existing();  // Depends on Derived
+			do_save_existing();  // Safety depends on Derived
 			transaction.commit();  // Strong guarantee
 		}
 		catch (std::exception&)
 		{
 			ghostify();  // nothrow (assuming preconditions met)
+			transaction.cancel();
 			throw;
 		}
 	}
 	else
 	{
 		Id const allocated_id = prospective_key();  // strong guarantee
-		DatabaseTransaction transaction(database_connection());  // strong guarantee
+		DatabaseTransaction transaction(database_connection());// strong guar.
 		try
 		{
-			do_save_new();  // Depends on Derived
-			m_identity_map.register_id(*m_cache_key, allocated_id);  // strong guarantee
+			do_save_new();  // Safety depends on Derived
+
+			// strong guarantee
+			m_identity_map.register_id(*m_cache_key, allocated_id);
 			try
 			{
-				transaction.commit();  // Strong guarantee
+				transaction.commit(); // strong guarantee
 			}
 			catch (std::exception&)
 			{
-				// nothrow, providing conditions are met
+				// nothrow (assuming preconditions met)
 				m_identity_map.deregister_id(allocated_id);
 				throw;
 			}
 		}
 		catch (std::exception&)
 		{
-			ghostify();  // nothrow (assuming preconditions met)
-			jewel::clear(m_id);
+			jewel::clear(m_id);  // nothrow
+			transaction.cancel();
 			throw;
 		}
 		m_id = allocated_id; // nothrow
@@ -814,12 +885,21 @@ PersistentObject<Derived, Connection>::remove()
 {
 	if (has_id())
 	{
-		DatabaseTransaction transaction(database_connection());
-		do_remove();
-		ghostify();
-		transaction.commit();
-		m_identity_map.uncache_object(*m_cache_key);	
-		jewel::clear(m_id);  // Return id() to uninitialized state
+		DatabaseTransaction transaction(database_connection());// strong guar.
+		try
+		{
+			do_remove();  // safety depends on derived
+			transaction.commit();  // strong guarantee
+		}
+		catch (std::exception&)
+		{
+			ghostify();
+			transaction.cancel();
+			throw;
+		}
+		ghostify();  // nothrow (providing preconditions met)
+		m_identity_map.uncache_object(*m_cache_key);  // nothrow (conditional)
+		jewel::clear(m_id);  // nothrow
 	}
 	return;
 }
