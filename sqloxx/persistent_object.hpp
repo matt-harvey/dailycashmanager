@@ -790,9 +790,8 @@ PersistentObject<Derived, Connection>::save()
 			}
 			catch (std::exception&)
 			{
-				// todo declare and define IdentityMap<...>::deregister_id(...),
-				// and make it non-throwing.
-				m_identity_map.deregister_id(m_cache_key);
+				// nothrow, providing conditions are met
+				m_identity_map.deregister_id(allocated_id);
 				throw;
 			}
 		}

@@ -196,6 +196,25 @@ public:
 	void register_id(CacheKey p_cache_key, Id p_id);
 
 	/**
+	 * Notify IdentityMap that an instance of T that previously had
+	 * an id p_id, no longer has any id. This function is
+	 * intended only to be called from PersistentObject<T, Connection>.
+	 *
+	 * @param p_id the id of the instance of T, corresponding to its
+	 * primary key in the database.
+	 *
+	 * Preconditions:\n
+	 * It must be known of the instance of T in
+	 * question, that it is cached in the IdentityMap under p_id
+	 * (not as its cache key, but as its id); and\n
+	 * The destructor of T must be non-throwing.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>, providing the
+	 * preconditions are met.
+	 */
+	void deregister_id(Id p_id);
+
+	/**
 	 * This should only be called from PersistentObject<T, Connection>.
 	 *
 	 * Notify the IdentityMap that there are no handles left that are
@@ -468,7 +487,17 @@ IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 	return;
 }
 
-template 
+template <typename T, typename Connection>
+void
+IdentityMap<T, Connection>::deregister_id(Id p_id)
+{
+	// todo This should be a require not an assert
+	assert (id_map().find(p_id) != id_map().end());
+	
+	id_map().erase(p_id);
+	return;
+}
+
 
 template <typename T, typename Connection>
 void
