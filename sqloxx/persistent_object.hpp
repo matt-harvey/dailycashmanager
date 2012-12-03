@@ -568,16 +568,15 @@ protected:
 	 * to load.
 	 *
 	 * Preconditions:\n
-	 * In defining do_load(), the derived class should throw an instance
+	 * In defining do_load(), the Derived class should throw an instance
 	 * of std::exception (which may be an instance of any exception class
-	 * derived therefrom) in the event that the load fails. If this
-	 * is adhered to, and do_load() is implemented with the strong
-	 * exception-safety guarantee in respect of the
-	 * in-memory objects (the base load() method will take care of atomicity
-	 * in respect of the database), and do_load() does not perform any
-	 * write operations on the database, or have other side-effects, then the
-	 * \e load function will itself provide the strong exception safety
-	 * guarantee.
+	 * derived therefrom) in the event that the load fails;\n
+	 * do_load() should not perform any write operations on the database,
+	 * and should provide 
+	 * the strong exception-safety guarantee;\n
+	 * The Derived class should define do_ghostify() according to the
+	 * preconditions specified in the documentaton of ghostify(); and\n
+	 * The destructor of Derived must be non-throwing.
 	 *
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to begin_transaction and end_transaction
@@ -597,8 +596,25 @@ protected:
 	 * invalid at the point the \e load function is entered. If this occurs,
 	 * the object will be as it was before this function was called.
 	 *
-	 * Exception safety: depends on how the derived class defines \e
-	 * do_load(). See above.
+	 * @throws std::bad_alloc in the event of memory allocation failure
+	 * during execution.
+	 *
+	 * @throws UnresolvedTransactionException if there is failure in
+	 * the process of committing the database transaction, or if there is
+	 * some other failure, followed by a failure in the process of
+	 * \e formally cancelling the database transaction. If this is
+	 * thrown (which is extremely unlikely), it is recommended that the
+	 * application be gracefully terminated. The database transaction
+	 * \e will be fully rolled back, but attempting further transactions
+	 * during the same application session may jeopardize that situation.
+	 *
+	 * Exception safety: <em>basic guarantee</em>, provided the
+	 * preconditions are met. Either there will be complete success,
+	 * or the object will be left in a ghost state, functionally
+	 * equivalent, as far as client code is concerned, to the state
+	 * it was in prior to load() being called. The possibility of
+	 * UnresolvedTransactionException means the strong guarantee cannot
+	 * be provided, however (see above).
 	 */
 	void load();
 
@@ -789,30 +805,13 @@ PersistentObject<Derived, Connection>::load()
 		try
 		{
 			do_load();	
+			transaction.commit();
 		}
 		catch (std::exception&)
 		{
 			ghostify();
 			transaction.cancel();
 			throw;
-		}
-		try
-		{
-			transaction.commit();
-			// Note this can't possibly throw TransactionNestingException
-			// here, unless do_load() has done something perverse.
-		}
-		catch (InvalidConnection&)
-		{
-			// As do_load has already completed, the object in
-			// memory should be non-corrupt and fully loaded. The fact that
-			// the database connection is now invalid only affects the
-			// database, not the in-memory object. The invalidity of the
-			// database connection will presumably be detected and dealt with
-			// the next time it is accessed. We therefore do NOT rethrow
-			// here.
-			//
-			// WARNING Am I really comfortable with this?
 		}
 		m_loading_status = loaded;
 	}
