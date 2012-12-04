@@ -1127,8 +1127,6 @@ PersistentObject<Derived, Connection>::primary_key_name()
 }
 
 
-
-
 template
 <typename Derived, typename Connection>
 void
