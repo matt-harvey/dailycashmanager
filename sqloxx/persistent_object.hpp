@@ -475,8 +475,8 @@ public:
 	void notify_rhs_assignment_operation();
 	
 	/**
-	 * Should only be called by Handle<Derived>. To advise the
-	 * underlying object that a handle pointing to it has appeared
+	 * Should only be called by Handle<Derived> to advise the
+	 * underlying object that a Handle pointing to it has appeared
 	 * as the right-hand operand of an assignment operation.
 	 *
 	 * Preconditions:\n
@@ -755,9 +755,10 @@ private:
 	 * @throws sqloxx::OverflowException if m_handle_counter is less
 	 * than 1 when this function is called.
 	 *
-	 * Precondition: we must know that the object cached is in the IdentityMap
-	 * under m_cache_key. If the object has been managed throughout its
-	 * life by (a single instance of) IdentityMap, and has only ever been
+	 * Preconditions: we must know that the object cached is in the
+	 * IdentityMap under m_cache_key. If the object has been managed
+	 * throughout its life by (a single instance of) IdentityMap,
+	 * and has only ever been
 	 * accessed via instances of Handle<Derived>, then we know this is
 	 * the case. Also, the destructor of Derived must be non-throwing.
 	 *
