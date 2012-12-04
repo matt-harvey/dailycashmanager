@@ -236,6 +236,9 @@ public:
 	 *
 	 * @throws InvalidConnection if the database connection is invalid.
 	 *
+	 * @throws std::bad_alloc in the very unlikely event of a memory
+	 * allocation error in execution.
+	 *
 	 * Exception safety: the <em>strong guarantee</em> is provided, on the
 	 * condition that the control of SQL transactions is managed
 	 * entirely by calls to begin_transaction(), end_transaction() and
@@ -257,6 +260,9 @@ public:
 	 *
 	 * @throws InvalidConnection if the database connection is invalid.
 	 *
+	 * @throws std::bad_alloc in the very unlikely event of a memory
+	 * allocation error in execution.
+	 *
 	 * Exception safety: as per begin_transaction().
 	 */
 	void end_transaction();
@@ -273,6 +279,9 @@ public:
 	 * transaction.
 	 *
 	 * @throws InvalidConnection if the database connection is invalid.
+	 *
+	 * @throws std::bad_alloc in the very unlikely event of a memory
+	 * allocation failure in execution.
 	 *
 	 * Exception safety: as per begin_transaction().
 	 */

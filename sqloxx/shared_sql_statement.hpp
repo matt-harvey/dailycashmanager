@@ -67,12 +67,10 @@ public:
 	 * acceptable SQL statements after the first one - as each
 	 * SharedSQLStatement can encapsulate only one statement.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * @throws std::bad_alloc in the very unlikely event of a memory
+	 * allocation error in execution.
 	 *
-	 * @todo This can throw bad_alloc. But I haven't documented it. I
-	 * also may not have documented it in other functions that call
-	 * this function; especially in DatabaseConnection::begin_transaction(),
-	 * end_transaction() and cancel_transaction().
+	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	template <typename Connection>
 	SharedSQLStatement
