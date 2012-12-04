@@ -10,7 +10,7 @@ namespace sqloxx
 /**
  * Class for managing database transactions using RAII.
  * An instance of DatabaseTransaction, when created, causes
- * an SQL transaction to commenced on the DatabaseConnection with
+ * an SQL transaction to be commenced on the DatabaseConnection with
  * which it is initialized. The SQL transaction can then
  * be finalized in one of three ways:\n
  * (a) We call the DatabaseTransaction's commit() method, causing
