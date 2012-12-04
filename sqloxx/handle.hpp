@@ -62,12 +62,24 @@ public:
 	Handle(Handle const& rhs);
 	
 	/**
-	 * @todo Testing and documentation.
+	 * @throws sqloxx::OverflowException in the extremely unlikely
+	 * event that the number of Handle instances pointing to the
+	 * underlying instance of T is too large to be safely counted
+	 * by the type PersistentObject<T, Connection>::HandleCounter.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 *
+	 * @todo Testing.
 	 */
 	Handle& operator=(Handle const& rhs);
 
 	/**
-	 * @todo Testing and documentation.
+	 * @return \e true if this Handle<T> is bound to some instance
+	 * of T; otherwise returns \e false.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo Testing.
 	 */
 	operator bool() const;
 
@@ -90,29 +102,19 @@ template <typename T>
 Handle<T>::Handle(T* p_pointer):
 	m_pointer(p_pointer)
 {
-	// Strong guarantee. Might throw OverflowException, though this
-	// is extremely unlikely.
 	p_pointer->notify_handle_construction();
 }
 
 template <typename T>
 Handle<T>::~Handle()
 {
-	// Nothrow provided preconditions met, viz. object must have
-	// been handled throughout its life via Handle<T>, with the
-	// Handle having been copied from another Handle<T>, or else
-	// provided by IdentityMap via a call to provide_handle(...).
-	// Also, the destructor of T must never throw.
 	m_pointer->notify_handle_destruction();
 }
 
 template <typename T>
 Handle<T>::Handle(Handle const& rhs)
 {
-	m_pointer = rhs.m_pointer;  // nothrow
-
-	// Strong guarantee. Might throw OverflowException, though this
-	// is extremely unlikely.
+	m_pointer = rhs.m_pointer;
 	m_pointer->notify_handle_copy_construction();
 }
 
