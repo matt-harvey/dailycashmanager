@@ -131,10 +131,8 @@ namespace sqloxx
  * @param Connection The type of the database connection through which
  * instances of Derived will be persisted to the database. Connection
  * should be a class derived from sqloxx::DatabaseConnection.
-  * 
- * @todo Provide for atomic saving (not just of
- * SQL execution, but of the actual alteration of the in-memory objects).
- * Go through all the client classes in Phatbooks and ensure the
+ * 
+ * @todo Go through all the client classes in Phatbooks and ensure the
  * do_save... functions in each are atomic with respect to
  * the in-memory objects, and conform to the restrictions detailed in the
  * PersistentObject API documentation. (Note I have already done this
@@ -351,6 +349,21 @@ public:
 	/**
 	 * Delete an object of type Derived<T> from the database.
 	 *
+	 * Preconditions:\n
+	 * If the default implementation of do_remove() is not redefined
+	 * by the class Derived, then the preconditions of do_remove()
+	 * must be satisfied (see separate documentation for do_remove());\n
+	 * If do_remove() is redefined by Derived, then it should offer the
+	 * strong guarantee, i.e. be atomic, in respect of the state of
+	 * the in-memory objects (but note, the base remove() method takes
+	 * care of wrapping the implementation as a SQL transaction, so
+	 * in general, do_removed() doesn't need to worry about atomicity
+	 * in regards to the database);\n
+	 * Derived::do_ghostify() should be defined so as to adhere to the
+	 * preconditions detailed in the documentation for ghostify();\n and
+	 * Getters and setters in Derived should always call load() as their
+	 * first statement.
+	 *
 	 * @throws std::bad_alloc in the unlikely event of mememory allocation
 	 * failure during execution.
 	 *
@@ -368,13 +381,19 @@ public:
 	 * application be gracefully terminated. The database transaction
 	 * \e will be fully rolled back, but further transaction during the
 	 * same application session may jeopardize that situation.
-	 * 
-	 * @todo Any other exceptions?
 	 *
-	 * @todo Also what does do_remove throw? Remember, I have provided a
-	 * default implementation.
+	 * Exception safety:<em>basic guarantee</em>. If an exception other
+	 * than UnresolvedTransactionException is thrown, then the
+	 * application state will be effectively rolled back, and although the
+	 * object may be left in a ghost state, this should require no
+	 * special handling by the client code provided the preconditions are
+	 * met. If UnresolvedTransactionException is thrown, then, provided
+	 * the application exits the current session without executing any
+	 * further database transactions, the application and database state
+	 * will be in a state of having been effectively rolled back, when the
+	 * next session commences.
 	 *
-	 * @todo Finish documenentation and test.
+	 * @todo testing
 	 */
 	void remove();
 
@@ -683,6 +702,35 @@ protected:
 	Id prospective_key() const;
 
 	
+	/**
+	 * This function is called by remove(). For that function, and the
+	 * role of do_remove() within that function, see the separate
+	 * documentation for remove().
+	 *
+	 * The following relates the default implementation of do_remove()
+	 * provided by PersistentObject<Derived, Connection>.
+	 *
+	 * The default implementation of this function will simply delete
+	 * the row with the primary key returned by id(), in the table
+	 * named by Derived::primary_table_name().
+	 *
+	 * Preconditions:\n
+	 * Derived::primary_table_name() must be defined by Derived so as
+	 * to return the name of the table in which all instances of Derived
+	 * are stored with their primary key, as a std::string; and\n
+	 * The primary key must be a single column primary key.
+	 *
+	 * @throws InvalidConnection if the database connection is invalid.
+	 *
+	 * @throws std::bad_alloc in the unlikely event of a memory
+	 * allocation failure in execution.
+	 *
+	 * Exception safety:<em>strong guarantee<em>.
+	 *
+	 * @todo testing
+	 */
+	virtual void do_remove();
+
 private:
 
 	 // Deliberately unimplemented. Assignment doesn't make much semantic
@@ -690,13 +738,14 @@ private:
 	 // represent a \e unique object in the database with a unique id.
 	PersistentObject& operator=(PersistentObject const& rhs);
 
+	// Might throw InvalidConnection or std::bad_alloc.
+	// Provides strong guarantee.
 	std::string primary_key_name();
 
 	virtual void do_load() = 0;
 	virtual void do_save_existing() = 0;
 	virtual void do_save_new() = 0;
 	virtual void do_ghostify() = 0;
-	virtual void do_remove();
 	void increment_handle_counter();
 
 	/**
@@ -887,12 +936,12 @@ PersistentObject<Derived, Connection>::remove()
 		DatabaseTransaction transaction(database_connection());// strong guar.
 		try
 		{
-			do_remove();  // safety depends on derived
+			do_remove();  // safety depends on derived. by default strong guar.
 			transaction.commit();  // strong guarantee
 		}
 		catch (std::exception&)
 		{
-			ghostify();
+			ghostify();  // nothrow, providing preconditions met
 			transaction.cancel();
 			throw;
 		}
@@ -1050,6 +1099,8 @@ PersistentObject<Derived, Connection>::primary_key_name()
 	}
 	int const primary_key_info_field = 5;
 	int const column_name_field = 1;
+
+	// Might throw InvalidConnection or std::bad_alloc
 	SharedSQLStatement statement
 	(	database_connection(),
 		"pragma table_info(" + Derived::primary_table_name() + ")"
@@ -1065,6 +1116,7 @@ PersistentObject<Derived, Connection>::primary_key_name()
 				(	"Multiple primary keys found when 1 expected."
 				);
 			}
+			// Might throw InvalidConnection or std::bad_alloc
 			ret = statement.extract<std::string>(column_name_field);
 			++primary_keys_found;
 		}
@@ -1081,12 +1133,20 @@ template
 void
 PersistentObject<Derived, Connection>::do_remove()
 {
+	// primary_table_name() might throw std::bad_alloc (strong guar.).
+	// primary_key_name() might throw might throw InvalidConnection or
+	// std::bad_alloc.
+	//
 	std::string const statement_text =
 		"delete from " + Derived::primary_table_name() + " where " +
 		primary_key_name() + " = :p";
+	
+	// Might throw InvalidConnection or std::bad_alloc
 	SharedSQLStatement statement(database_connection(), statement_text);
-	statement.bind(":p", id());
-	statement.step_final();
+	statement.bind(":p", id());  // Might throw InvalidConnection
+	// throwing above this point will have no effect
+
+	statement.step_final();  // Might throw InvalidConnection
 	return;
 }
 
