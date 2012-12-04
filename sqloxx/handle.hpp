@@ -13,7 +13,7 @@ namespace sqloxx
  * memory at any one time, in relation to any given record in a given
  * database.
  *
- * @todo Testing and documentation.
+ * @todo Testing.
  */
 template <typename T>
 class Handle
@@ -74,7 +74,7 @@ public:
 	Handle& operator=(Handle const& rhs);
 
 	/**
-	 * @return \e true if this Handle<T> is bound to some instance
+	 * @returns \e true if this Handle<T> is bound to some instance
 	 * of T; otherwise returns \e false.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
@@ -84,12 +84,27 @@ public:
 	operator bool() const;
 
 	/**
-	 * @todo Testing and documentation.
+	 * @returns the instance of T that is handled by this Handle<T>.
+	 *
+	 * @throws UnboundHandleException if there is no instance of
+	 * T bound to this Handle.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 *
+	 * @todo Testing.
 	 */
 	T& operator*() const;
 
 	/**
-	 * @todo Testing and documentation.
+	 * Indirection operator analagous to operator*(), for
+	 * accessing members of T via the underlying pointer.
+	 *
+	 * @throws UnboundHandleException if there is no instance
+	 * of T bound to this Handle.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 *
+	 * @todo Testing.
 	 */
 	T* operator->() const;
 
