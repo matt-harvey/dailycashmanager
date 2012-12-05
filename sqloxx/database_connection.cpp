@@ -7,6 +7,7 @@
 #include <boost/unordered_map.hpp>
 #include <iostream>
 #include <climits>
+#include <cstdio>
 #include <limits>
 #include <set>
 #include <stdexcept>
@@ -19,6 +20,7 @@ using boost::unordered_map;
 using std::bad_alloc;
 using std::clog;
 using std::endl;
+using std::fprintf;
 using std::numeric_limits;
 using std::set;
 using std::string;
@@ -47,15 +49,12 @@ DatabaseConnection::~DatabaseConnection()
 {
 	if (m_transaction_nesting_level > 0)
 	{
-		try
-		{
-			clog << "Transaction(s) remained incomplete on closure of "
-				 << "DatabaseConnection."
-				 << endl;
-		}
-		catch (std::bad_alloc&)
-		{
-		}
+		// We avoid streams here, because they might throw.
+		fprintf
+		(	stderr,
+			"Transaction(s) remained incomplete on closure of "
+			"DatabaseConnection."
+		);
 	}
 	m_statement_cache.clear();
 }
