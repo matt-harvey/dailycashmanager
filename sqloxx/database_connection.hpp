@@ -10,7 +10,6 @@
 #include <boost/unordered_map.hpp>
 #include <set>
 #include <string>
-#include "shared_sql_statement.hpp"
 #include "handle.hpp"
 #include "identity_map.hpp"
 #include "sqloxx_exceptions.hpp"
@@ -83,7 +82,8 @@ namespace detail
 }  // namespace detail
 
 
-class DatabaseTransaction;
+// class DatabaseTransaction;
+// class SharedSQLStatement;
 
 
 
@@ -223,6 +223,49 @@ public:
 	static int max_nesting();
 
 	/**
+	 * Controls access to DatabaseConnection::provide_sql_statement,
+	 * deliberately limiting this access to the class SharedSQLStatement.
+	 */
+	class StatementAttorney
+	{
+	public:
+		friend class SharedSQLStatement;
+	private:
+		static boost::shared_ptr<detail::SQLStatement>
+			provide_sql_statement
+			(	DatabaseConnection& p_database_connection,
+				std::string const& p_statement_text
+			);
+	};
+
+	friend class StatementAttorney;
+
+	/**
+	 * Controls access to the database transaction control facilities
+	 * of DatabaseConnection, deliberately
+	 * limiting this access to the class DatabaseTransaction.
+	 */
+	class TransactionAttorney
+	{
+	public:
+		friend class DatabaseTransaction;
+	private:
+		static void begin_transaction
+		(	DatabaseConnection& p_database_connection
+		);
+		static void end_transaction
+		(	DatabaseConnection& p_database_connection
+		);
+		static void cancel_transaction
+		(	DatabaseConnection& p_database_connection
+		);
+	};
+
+	friend class TransactionAttorney;
+
+private:
+
+	/**
 	 * @returns a shared pointer to a SQLStatement. This will	
 	 * either point to an existing SQLStatement that is cached within
 	 * the DatabaseConnection (if a SQLStatement with \c
@@ -258,30 +301,6 @@ public:
 	boost::shared_ptr<detail::SQLStatement> provide_sql_statement
 	(	std::string const& statement_text
 	);
-
-	/**
-	 * Controls access to database transaction facilities, deliberately
-	 * limiting this access to the class DatabaseTransaction.
-	 */
-	class TransactionAttorney
-	{
-	public:
-		friend class DatabaseTransaction;
-	private:
-		static void begin_transaction
-		(	DatabaseConnection& p_database_connection
-		);
-		static void end_transaction
-		(	DatabaseConnection& p_database_connection
-		);
-		static void cancel_transaction
-		(	DatabaseConnection& p_database_connection
-		);
-	};
-
-	friend class TransactionAttorney;
-
-private:
 
 	/**
 	 * Begins a SQL transaction. Transactions may be nested. Only the
@@ -373,6 +392,17 @@ private:
 };
 
 
+inline
+boost::shared_ptr<detail::SQLStatement>
+DatabaseConnection::StatementAttorney::provide_sql_statement
+(	DatabaseConnection& p_database_connection,
+	std::string const& p_statement_text
+)
+{
+	return p_database_connection.provide_sql_statement
+	(	p_statement_text
+	);
+}
 
 
 inline

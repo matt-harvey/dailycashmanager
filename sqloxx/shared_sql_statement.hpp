@@ -44,9 +44,7 @@ public:
 	 * Creates an object encapsulating a SQL statement.
 	 * 
 	 * @param p_database_connection is the DatabaseConnection
-	 * on which the statement will be executed. Template parameter \e
-	 * Connection can be any subclass of DatabaseConnection, or can be
-	 * DatabaseConnection itself.
+	 * on which the statement will be executed.
 	 *
 	 * @param str is the text of a single SQL statement. It can be terminated
 	 * with any mixture of semicolons and/or spaces (but not other forms
@@ -72,9 +70,8 @@ public:
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
-	template <typename Connection>
 	SharedSQLStatement
-	(	Connection& p_database_connection,	
+	(	DatabaseConnection& p_database_connection,	
 		std::string const& p_statement_text
 	);
 
@@ -201,13 +198,16 @@ private:
 
 };
 
-template <typename Connection>
+inline
 SharedSQLStatement::SharedSQLStatement
-(	Connection& p_database_connection,
+(	DatabaseConnection& p_database_connection,
 	std::string const& p_statement_text
 ):
 	m_sql_statement
-	(	p_database_connection.template provide_sql_statement(p_statement_text)
+	(	DatabaseConnection::StatementAttorney::provide_sql_statement
+		(	p_database_connection,
+			p_statement_text
+		)
 	)
 {
 }

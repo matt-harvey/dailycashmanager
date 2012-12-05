@@ -1,5 +1,6 @@
 #include "database_connection.hpp"
 #include "detail/sqlite_dbconn.hpp"
+#include "shared_sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
 #include "detail/sql_statement.hpp"
 #include <boost/filesystem/path.hpp>
