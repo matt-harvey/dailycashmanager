@@ -30,49 +30,6 @@ namespace sqloxx
 {
 
 
-/**
- * Convenience function to return a Handle<T> given a database connection
- * of type Connection and an id of type T::Id.
- */
-template <typename T, typename Connection>
-Handle<T>
-get_handle(Connection& dbc, typename T::Id id);
-
-/**
- * Convenience function to return a Handle<T> to a new, id-less business
- * object of type T, given a database connection of type Connection.
- */
-template <typename T, typename Connection>
-Handle<T>
-get_handle(Connection& dbc);
-
-
-// TODO Move in-header template implementations to a separate file to keep the
-// header tidy.
-
-template <typename T, typename Connection>
-inline
-Handle<T>
-get_handle(Connection& dbc, typename T::Id id)
-{
-	return dbc.template
-		identity_map<T>().template
-		provide_object(id);
-}
-
-template <typename T, typename Connection>
-inline
-Handle<T>
-get_handle(Connection& dbc)
-{
-	return dbc.template
-		identity_map<T>().template
-		provide_object();
-}
-
-
-
-
 // Forward declarations
 
 namespace detail
@@ -82,8 +39,26 @@ namespace detail
 }  // namespace detail
 
 
-// class DatabaseTransaction;
-// class SharedSQLStatement;
+/**
+ * Convenience function to return a Handle<T> given a database connection
+ * of type Connection and an id of type T::Id.
+ *
+ * @todo Document and test.
+ */
+template <typename T, typename Connection>
+Handle<T>
+get_handle(Connection& dbc, typename T::Id id);
+
+/**
+ * Convenience function to return a Handle<T> to a new, id-less business
+ * object of type T, given a database connection of type Connection.
+ *
+ * @todo Document and test.
+ */
+template <typename T, typename Connection>
+Handle<T>
+get_handle(Connection& dbc);
+
 
 
 
@@ -390,6 +365,30 @@ private:
 	StatementCache m_statement_cache;
 	StatementCache::size_type m_cache_capacity;
 };
+
+
+
+
+template <typename T, typename Connection>
+inline
+Handle<T>
+get_handle(Connection& dbc, typename T::Id id)
+{
+	return dbc.template
+		identity_map<T>().template
+		provide_object(id);
+}
+
+template <typename T, typename Connection>
+inline
+Handle<T>
+get_handle(Connection& dbc)
+{
+	return dbc.template
+		identity_map<T>().template
+		provide_object();
+}
+
 
 
 inline

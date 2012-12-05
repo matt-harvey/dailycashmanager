@@ -20,6 +20,11 @@ namespace sqloxx
 {
 
 
+// Forward decl.
+
+template <typename Derived, typename Connection>
+class PersistentObject;
+
 /**
  * Provides an in-memory cache for objects of type T, where such
  * objects are persisted to a database via a database connection of
@@ -170,7 +175,100 @@ public:
 	 * @todo Testing.
 	 */
 	Handle<T> provide_object(Id p_id);
-	
+
+	/**
+	 * Turn on caching. When caching is on, objects loaded from the
+	 * database are cached indefinitely in the IdentityMap. When
+	 * caching is off, each object is only cached as long as there
+	 * as at least one Handle referring to it. If enable_caching() is
+	 * called when caching is already on, it has no effect.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	void enable_caching();
+
+	/**
+	 * Turn caching off. When caching is off, each object is only
+	 * cached as long as there is at least one Handle referring to
+	 * it. If disable_caching() is called when caching is already
+	 * off, it has no effect. If caching is on when disable_caching()
+	 * is called, then the function will remove from the cache any
+	 * object that currently has no sqloxx::Handle<T> instances
+	 * pointing to it.
+	 * 
+	 * Exception safety: <em>nothrow guarantee</em>, providing the
+	 * destructor of T does not throw.
+	 *
+	 * @todo Testing.
+	 */
+	void disable_caching();
+
+	/**
+	 * @returns a reference to the database connection with which
+	 * this IdentityMap is associated.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo Testing.
+	 */
+	Connection& connection();
+
+	/**
+	 * Control access to the various functions of the class
+	 * IdentityMap<T, Connection>, deliberately
+	 * limiting this access to the class PersistentObject<T, Connection>.
+	 */
+	class Attorney
+	{
+	public:
+
+		friend class PersistentObject<T, Connection>;
+
+	private:
+
+		static void register_id
+		(	IdentityMap& p_identity_map,
+			CacheKey p_cache_key,
+			Id p_id
+		)
+		{
+			p_identity_map.register_id(p_cache_key, p_id);
+			return;
+		}
+
+		static void deregister_id
+		(	IdentityMap& p_identity_map,
+			Id p_id
+		)
+		{
+			p_identity_map.deregister_id(p_id);
+			return;
+		}
+
+		static void notify_nil_handles
+		(	IdentityMap& p_identity_map,
+			CacheKey p_cache_key
+		)
+		{
+			p_identity_map.notify_nil_handles(p_cache_key);
+			return;
+		}
+
+		static void uncache_object
+		(	IdentityMap& p_identity_map,	
+			CacheKey p_cache_key
+		)
+
+		{
+			p_identity_map.uncache_object(p_cache_key);
+			return;
+		}
+	};
+
+	friend class Attorney;
+
+private:
+
 	/**
 	 * Register id of newly saved instance of T. This function is
 	 * intended only to be called from PersistentObject<T, Connection>.
@@ -232,43 +330,8 @@ public:
 	void notify_nil_handles(CacheKey p_cache_key);
 
 	/**
-	 * Turn on caching. When caching is on, objects loaded from the
-	 * database are cached indefinitely in the IdentityMap. When
-	 * caching is off, each object is only cached as long as there
-	 * as at least one Handle referring to it. If enable_caching() is
-	 * called when caching is already on, it has no effect.
+	 * This should only be called by PersistentObject<T, Connection>.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	void enable_caching();
-
-	/**
-	 * Turn caching off. When caching is off, each object is only
-	 * cached as long as there is at least one Handle referring to
-	 * it. If disable_caching() is called when caching is already
-	 * off, it has no effect. If caching is on when disable_caching()
-	 * is called, then the function will remove from the cache any
-	 * object that currently has no sqloxx::Handle<T> instances
-	 * pointing to it.
-	 * 
-	 * Exception safety: <em>nothrow guarantee</em>, providing the
-	 * destructor of T does not throw.
-	 *
-	 * @todo Testing.
-	 */
-	void disable_caching();
-
-	/**
-	 * @returns a reference to the database connection with which
-	 * this IdentityMap is associated.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo Testing.
-	 */
-	Connection& connection();
-
-	/**
 	 * Preconditions:\n
 	 * The destructor of T must be nothrow; and\n
 	 * There is an object cached under p_cache_key in the cache_key_map.
@@ -278,7 +341,6 @@ public:
 	 */
 	void uncache_object(CacheKey p_cache_key);
 
-private:
 
 	// Find the next available cache key
 	// WARNING Move the implementation out of the class body.
@@ -614,6 +676,63 @@ IdentityMap<T, Connection>::provide_cache_key()
 	assert (cache_key_map().find(ret) == cache_key_map().end());
 	return last_cache_key() = ret;  // Intentional assignment
 }
+
+
+
+/*
+template <typename T, typename Connection>
+inline
+void
+IdentityMap<T, Connection>::Attorney::register_id
+(	IdentityMap& p_identity_map,
+	IdentityMap::CacheKey p_cache_key,
+	IdentityMap::Id p_id
+)
+{
+	p_identity_map.register_id(p_cache_key, p_id);
+	return;
+}
+
+
+template <typename T, typename Connection>
+inline
+void
+IdentityMap<T, Connection>::Attorney::deregister_id
+(	IdentityMap& p_identity_map,
+	IdentityMap::Id p_id
+)
+{
+	p_identity_map.deregister_id(p_id);
+	return;
+}
+
+
+template <typename T, typename Connection>
+inline
+void
+IdentityMap<T, Connection>::Attorney::notify_nil_handles
+(	IdentityMap& p_identity_map,
+	IdentityMap::CacheKey p_cache_key
+)
+{
+	p_identity_map.notify_nil_handles(p_cache_key);
+	return;
+}
+
+
+template <typename T, typename Connection>
+inline
+void
+IdentityMap<T, Connection>::Attorney::uncache_object
+(	IdentityMap& p_identity_map,
+	IdentityMap::CacheKey p_cache_key
+)
+{
+	p_identity_map.uncache_object(p_cache_key);
+	return;
+}
+*/
+
 
 }  // namespace sqloxx
 

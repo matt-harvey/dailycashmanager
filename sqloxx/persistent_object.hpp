@@ -907,7 +907,11 @@ PersistentObject<Derived, Connection>::save()
 			do_save_new();  // Safety depends on Derived
 
 			// strong guarantee
-			m_identity_map.register_id(*m_cache_key, allocated_id);
+			IdentityMap::Attorney::register_id
+			(	m_identity_map,
+				*m_cache_key,
+				allocated_id
+			);
 			try
 			{
 				transaction.commit(); // strong guarantee
@@ -915,7 +919,10 @@ PersistentObject<Derived, Connection>::save()
 			catch (std::exception&)
 			{
 				// nothrow (assuming preconditions met)
-				m_identity_map.deregister_id(allocated_id);
+				IdentityMap::Attorney::deregister_id
+				(	m_identity_map,
+					allocated_id
+				);
 				throw;
 			}
 		}
@@ -951,7 +958,13 @@ PersistentObject<Derived, Connection>::remove()
 			throw;
 		}
 		ghostify();  // nothrow (providing preconditions met)
-		m_identity_map.uncache_object(*m_cache_key);  // nothrow (conditional)
+		
+		// nothrow (conditional)
+		IdentityMap::Attorney::uncache_object
+		(	m_identity_map,
+			*m_cache_key
+		);
+
 		jewel::clear(m_id);  // nothrow
 	}
 	return;
@@ -1060,7 +1073,10 @@ PersistentObject<Derived, Connection>::decrement_handle_counter()
 	// and the object is saved in the cache under m_cache_key.
 	if (m_handle_counter == 0 && static_cast<bool>(m_cache_key))
 	{
-		m_identity_map.notify_nil_handles(*m_cache_key);
+		IdentityMap::Attorney::notify_nil_handles
+		(	m_identity_map,
+			*m_cache_key
+		);
 	}
 	return;
 }

@@ -198,6 +198,7 @@ private:
 
 };
 
+
 inline
 SharedSQLStatement::SharedSQLStatement
 (	DatabaseConnection& p_database_connection,
