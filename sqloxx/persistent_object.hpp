@@ -23,6 +23,51 @@
 namespace sqloxx
 {
 
+// Forward declaration
+template <typename T>
+class Handle;
+
+
+/**
+ * Controls access to functions used
+ * by Handle<T> to notify the underlying object of
+ * various events for "bookkeeping" purposes.
+ */
+template <typename T>
+class HandleAttorney
+{
+public:
+	friend class Handle<T>;
+private:
+	static void notify_handle_construction(T& p_obj)
+	{
+		p_obj.notify_handle_construction();
+		return;
+	}
+	static void notify_handle_copy_construction(T& p_obj)
+	{
+		p_obj.notify_handle_copy_construction();
+		return;
+	}
+	static void notify_lhs_assignment_operation(T& p_obj)
+	{
+		p_obj.notify_lhs_assignment_operation();
+		return;
+	}
+	static void notify_rhs_assignment_operation(T& p_obj)
+	{
+		p_obj.notify_rhs_assignment_operation();
+		return;
+	}
+	static void notify_handle_destruction(T& p_obj)
+	{
+		p_obj.notify_handle_destruction();
+		return;
+	}
+};		
+
+
+
 /**
  * Class template for creating objects persisted to a database. This
  * should be inherited by a derived class that defines certain
@@ -150,10 +195,13 @@ class PersistentObject
 {
 public:
 
+	friend class HandleAttorney<Derived>;
 
 	typedef sqloxx::Id Id;
 	typedef sqloxx::HandleCounter HandleCounter;
 	typedef sqloxx::IdentityMap<Derived, Connection> IdentityMap;
+
+
 	/**
 	 * Destructor.
 	 *
@@ -370,120 +418,8 @@ public:
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	Id id() const;
-	
-	/**
-	 * Should only be called by IdentityMap<Derived>. This assigns a "cache
-	 * key" to the object. The cache key is used by IdentityMap<Derived> to
-	 * identify the object in its internal cache. Every object created by
-	 * the IdentityMap will have a cache key, even if it doesn't have an id.
-	 *
-	 * @todo The cache key should be able to be specified
-	 * in the constructor. But we
-	 * also don't want to confuse it with the other
-	 * two-paramatered constructor! So that's why it's we have a
-	 * separate function to set the cache key. But the context in
-	 * which this is used is always going to be just after construction.
-	 * So this feels a bit crappy. Is there a better way?
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo Test.
-	 */
-	void set_cache_key(Id p_cache_key);
 
 	/**
-	 * Should only be called by Handle<Derived>. To advise the underlying
-	 * object that a handle pointing to it has been constructed (not copy-
-	 * constructed, but ordinarily constructed).
-	 * 
-	 * @throws sqloxx::OverflowException if the maximum value
-	 * for type HandleCounter has been reached, such that additional Handle<T>
-	 * cannot be safely counted. On the default type for HandleCounter,
-	 * this should be extremely unlikely.
-	 *
-	 * Exception safety: <em>strong guarantee</em>
-	 *
-	 * @todo Testing.
-	 */
-	void notify_handle_construction();
-
-	/**
-	 * Should only be called by Handle<Derived>. To advise the underlying
-	 * object that a handle pointing to it has been copy-constructed.
-	 * 
-	 * @throws sqloxx::OverflowException if the maximum value of
-	 * HandleCounter has been reached such that additional handles
-	 * cannot be safely counted. On the default type for HandleCounter,
-	 * this should be extremely unlikely.
-	 *
-	 * Exception safety: <em>strong guarantee</em>.
-	 *  
-	 * @todo Testing.
-	 */
-	void notify_handle_copy_construction();
-
-	/**
-	 * Should only be called by Handle<Derived>. To advise the
-	 * underlying object that a handle pointing to it has appeared
-	 * as the right-hand operand of an assignment operation.
-	 *
-	 * @throws sqloxx::OverflowException if the maximum value of
-	 * HandleCounter has been reached such that additional handles
-	 * cannot be safely counted. On the default type for HandleCounter,
-	 * this should be extremely unlikely.
-	 *
-	 * Exception safety: <em>strong guarantee</em>.
-	 *
-	 * @todo Test.
-	 */
-	void notify_rhs_assignment_operation();
-	
-	/**
-	 * Should only be called by Handle<Derived> to advise the
-	 * underlying object that a Handle pointing to it has appeared
-	 * as the right-hand operand of an assignment operation.
-	 *
-	 * Preconditions:\n
-	 * This function should only be called from Handle<Derived> to
-	 * notify that a Handle pointing to this instance of Derived
-	 * appears on the left side of an assignment operation;\n
-	 * This instance of Derived must have been handled throughout
-	 * its life only via instances of Handle<Derived>, that have been obtained
-	 * from a single instance of IdentityMap<Derived, Connection>
-	 * via calls to the IdentityMap API, or else have been copied from other
-	 * instances of Handle<Derived>; and\n
-	 * The destructor of derived must be non-throwing.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em> is offered, providing
-	 * the preconditions are met.
-	 *
-	 * @todo Test.
-	 */
-	void notify_lhs_assignment_operation();
-
-	/**
-	 * Should only be called by Handle<Derived>, to advise the underlying
-	 * object that a handle pointing to it has been destructed.
-	 *
-	 * Preconditions: as for notify_lhs_assignment_operation().
-	 *
-	 * Exception safety: as for notify_lhs_assignment_operation().
-	 *
-	 * @todo Test.
-	 */
-	void notify_handle_destruction();
-
-	/**
-	 * @returns \e true if this instance of PersistentObject has
-	 * an valid id; otherwise returns \e false.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	bool has_id() const;
-	
-	/**
-	 * Should only be called by IdentityMap<Derived>.
-	 *
 	 * @returns true if and only if there are no Handle<Derived>
 	 * instances pointing to this object.
 	 *
@@ -494,19 +430,21 @@ public:
 	bool is_orphaned() const;
 	
 	/**
-	 * Should only be called from IdentityMap<Derived, Connection>.
-	 *
 	 * @returns true if and only if we are dangerously close to reaching
-	 * the maximum value of HandleCountl.
+	 * the maximum value of HandleCounter.
 	 *
 	 * @todo Testing.
-	 *
-	 * @todo Do we need this? (Note IdentityMap calls it and presently
-	 * no-one else does.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	bool has_high_handle_count() const;
+	/**
+	 * @returns \e true if this instance of PersistentObject has
+	 * an valid id; otherwise returns \e false.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	bool has_id() const;
 
 	/**
 	 * Reverts the object to a "ghost state". This is a state in
@@ -540,6 +478,24 @@ public:
 	 */
 	void ghostify();
 
+	/**
+	 * Controls access to set_cache_key function, deliberately
+	 * restricting access to IdentityMap<Derived, Connection>.
+	 */
+	class CacheKeyAttorney
+	{
+	public:
+		friend class sqloxx::IdentityMap<Derived, Connection>;
+	private:
+		static void set_cache_key(Derived& p_obj, Id p_cache_key)
+		{
+			p_obj.set_cache_key(p_cache_key);
+			return;
+		}
+	};
+	
+	friend class CacheKeyAttorney;
+	
 protected:
 
 	/**
@@ -708,7 +664,6 @@ protected:
 	 */
 	Id prospective_key() const;
 
-	
 	/**
 	 * This function is called by remove(). For that function, and the
 	 * role of do_remove() within that function, see the separate
@@ -754,6 +709,101 @@ private:
 	virtual void do_save_new() = 0;
 	virtual void do_ghostify() = 0;
 	void increment_handle_counter();
+
+	/**
+	 * Called by Handle<Derived> via HandleAttorney to advise the underlying
+	 * object that a handle pointing to it has been constructed (not copy-
+	 * constructed, but ordinarily constructed).
+	 * 
+	 * @throws sqloxx::OverflowException if the maximum value
+	 * for type HandleCounter has been reached, such that additional Handle<T>
+	 * cannot be safely counted. On the default type for HandleCounter,
+	 * this should be extremely unlikely.
+	 *
+	 * Exception safety: <em>strong guarantee</em>
+	 *
+	 * @todo Testing.
+	 */
+	void notify_handle_construction();
+
+	/**
+	 * Called by Handle<Derived> via HandleAttorney to advise the underlying
+	 * object that a handle pointing to it has been copy-constructed.
+	 * 
+	 * @throws sqloxx::OverflowException if the maximum value of
+	 * HandleCounter has been reached such that additional handles
+	 * cannot be safely counted. On the default type for HandleCounter,
+	 * this should be extremely unlikely.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 *  
+	 * @todo Testing.
+	 */
+	void notify_handle_copy_construction();
+
+	/**
+	 * Called by Handle<Derived> via HandleAttorney to advise the
+	 * underlying object that a handle pointing to it has appeared
+	 * as the right-hand operand of an assignment operation.
+	 *
+	 * @throws sqloxx::OverflowException if the maximum value of
+	 * HandleCounter has been reached such that additional handles
+	 * cannot be safely counted. On the default type for HandleCounter,
+	 * this should be extremely unlikely.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 *
+	 * @todo Test.
+	 */
+	void notify_rhs_assignment_operation();
+	
+	/**
+	 * Called by Handle<Derived> via HandleAttorney to advise the
+	 * underlying object that a Handle pointing to it has appeared
+	 * as the right-hand operand of an assignment operation.
+	 *
+	 * Preconditions:\n
+	 * This function should only be called from Handle<Derived> to
+	 * notify that a Handle pointing to this instance of Derived
+	 * appears on the left side of an assignment operation;\n
+	 * This instance of Derived must have been handled throughout
+	 * its life only via instances of Handle<Derived>, that have been obtained
+	 * from a single instance of IdentityMap<Derived, Connection>
+	 * via calls to the IdentityMap API, or else have been copied from other
+	 * instances of Handle<Derived>; and\n
+	 * The destructor of derived must be non-throwing.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em> is offered, providing
+	 * the preconditions are met.
+	 *
+	 * @todo Test.
+	 */
+	void notify_lhs_assignment_operation();
+
+	/**
+	 * Called by Handle<Derived> via HandleAttorney, to advise the underlying
+	 * object that a handle pointing to it has been destructed.
+	 *
+	 * Preconditions: as for notify_lhs_assignment_operation().
+	 *
+	 * Exception safety: as for notify_lhs_assignment_operation().
+	 *
+	 * @todo Test.
+	 */
+	void notify_handle_destruction();
+
+	/**
+	 * Called by IdentityMap<Derived, Connection> via CacheKeyAttorney to
+	 * provide a "cache
+	 * key" to the object. The cache key is used by IdentityMap to
+	 * identify the object in its internal cache. Every object created by
+	 * the IdentityMap will have a cache key, even if it doesn't have an id.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo Test.
+	 */
+	void set_cache_key(Id p_cache_key);
 
 	/**
 	 * Decrements handle counter and notifies the IdentityMap if it
@@ -951,7 +1001,7 @@ PersistentObject<Derived, Connection>::remove()
 		DatabaseTransaction transaction(database_connection());// strong guar.
 		try
 		{
-			do_remove();  // safety depends on derived. by default strong guar.
+			do_remove(); // safety depends on derived. by default strong guar.
 			transaction.commit();  // strong guarantee
 		}
 		catch (std::exception&)

@@ -20,10 +20,10 @@ namespace sqloxx
 {
 
 
-// Forward decl.
-
+// Forward declaration
 template <typename Derived, typename Connection>
 class PersistentObject;
+
 
 /**
  * Provides an in-memory cache for objects of type T, where such
@@ -477,7 +477,11 @@ IdentityMap<T, Connection>::provide_object()
 	// less "magical".
 	// cache_key_map()[cache_key] = obj_ptr; 
 
-	obj_ptr->set_cache_key(cache_key);  // nothrow
+	// Nothrow
+	PersistentObject<T, Connection>::CacheKeyAttorney::set_cache_key
+	(	*obj_ptr,
+		cache_key
+	);	
 
 	// In the below, get() is nothrow. The Handle<T> constructor and copy
 	// constructor can throw in some (very unlikely) circumstances,
@@ -519,7 +523,10 @@ IdentityMap<T, Connection>::provide_object(Id p_id)
 		}
 
 		// Nothrow
-		obj_ptr->set_cache_key(cache_key);
+		PersistentObject<T, Connection>::CacheKeyAttorney::set_cache_key
+		(	*obj_ptr,
+			cache_key
+		);
 
 		// We know this won't throw sqloxx::OverflowError, as it's a
 		// newly loaded object.

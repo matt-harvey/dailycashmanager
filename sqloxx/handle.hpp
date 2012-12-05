@@ -6,6 +6,11 @@
 namespace sqloxx
 {
 
+// Forward declaration
+template <typename T>
+class HandleAttorney;
+
+
 /**
  * Handle for handling business objects of type T where T is a class
  * derived from PersistentObject and is
@@ -117,20 +122,20 @@ template <typename T>
 Handle<T>::Handle(T* p_pointer):
 	m_pointer(p_pointer)
 {
-	p_pointer->notify_handle_construction();
+	HandleAttorney<T>::notify_handle_construction(*p_pointer);
 }
 
 template <typename T>
 Handle<T>::~Handle()
 {
-	m_pointer->notify_handle_destruction();
+	HandleAttorney<T>::notify_handle_destruction(*m_pointer);
 }
 
 template <typename T>
 Handle<T>::Handle(Handle const& rhs)
 {
 	m_pointer = rhs.m_pointer;
-	m_pointer->notify_handle_copy_construction();
+	HandleAttorney<T>::notify_handle_copy_construction(*m_pointer);
 }
 
 template <typename T>
@@ -138,14 +143,13 @@ Handle<T>&
 Handle<T>::operator=(Handle const& rhs)
 {
 	// Strong guarantee, provided rhs has a valid pointer...
-	rhs.m_pointer->notify_rhs_assignment_operation();
+	HandleAttorney<T>::notify_rhs_assignment_operation(*(rhs.m_pointer));
 
 	// Nothrow guarantee, provided preconditions met, and
 	// provided rhs has a valid pointer.
-	m_pointer->notify_lhs_assignment_operation();
+	HandleAttorney<T>::notify_lhs_assignment_operation(*m_pointer);
 
 	m_pointer = rhs.m_pointer;  // nothrow
-
 	return *this;  // throw, provided we have a valid pointer
 }
 
