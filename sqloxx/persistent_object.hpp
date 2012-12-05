@@ -150,50 +150,10 @@ class PersistentObject
 {
 public:
 
+
 	typedef sqloxx::Id Id;
 	typedef sqloxx::HandleCounter HandleCounter;
 	typedef sqloxx::IdentityMap<Derived, Connection> IdentityMap;
-
-	/**
-	 * This should only be called from IdentityMap<Derived, Connection>.
-	 *
-	 * Create a PersistentObject that corresponds (or purports to correspond)
-	 * to one that already exists in the database.
-	 *
-	 * @param p_database_connection database connection with
-	 * which the PersistentObject is associated.
-	 *
-	 * @param p_id the id of the object as it exists in the database. This
-	 * presumably will be, or correspond directly to, the primary key.
-	 *
-	 * Note that even if there is no corresponding object in the database for
-	 * the given value p_id, this constructor will still proceed without
-	 * complaint. The constructor does not actually perform any checks on the
-	 * validity either of p_database_connection or of p_id.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	PersistentObject
-	(	IdentityMap& p_identity_map,
-		Id p_id
-	);
-
-	/** 
-	 * This should only be called from IdentityMap<Derived, Connection>.
-	 *
-	 * Create a PersistentObject that does \e not correspond to
-	 * one that already exists in the database.
-	 *
-	 * @param p_database_connection database connection with which the
-	 * PersistentObject is to be associated.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	explicit
-	PersistentObject
-	(	IdentityMap& p_identity_map
-	);
-
 	/**
 	 * Destructor.
 	 *
@@ -581,6 +541,49 @@ public:
 	void ghostify();
 
 protected:
+
+	/**
+	 * This should only be called from IdentityMap<Derived, Connection>, or by
+	 * Derived.
+	 *
+	 * Create a PersistentObject that corresponds (or purports to correspond)
+	 * to one that already exists in the database.
+	 *
+	 * @param p_identity_map IdentityMap with
+	 * which the PersistentObject is associated.
+	 *
+	 * @param p_id the id of the object as it exists in the database. This
+	 * presumably will be, or correspond directly to, the primary key.
+	 *
+	 * Note that even if there is no corresponding object in the database for
+	 * the given value p_id, this constructor will still proceed without
+	 * complaint. The constructor does not actually perform any checks on the
+	 * validity either of p_database_connection or of p_id.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	PersistentObject
+	(	IdentityMap& p_identity_map,
+		Id p_id
+	);
+
+	/** 
+	 * This should only be called from IdentityMap<Derived, Connection>, or
+	 * by Derived.
+	 *
+	 * Create a PersistentObject that does \e not correspond to
+	 * one that already exists in the database.
+	 *
+	 * @param p_identity_map IdentityMap with which the
+	 * PersistentObject is to be associated.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	explicit
+	PersistentObject
+	(	IdentityMap& p_identity_map
+	);
+
 
 	/**
 	 * Calls the derived class's implementation
