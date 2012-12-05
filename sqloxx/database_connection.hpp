@@ -74,12 +74,16 @@ get_handle(Connection& dbc)
 
 
 
-// Forward declaration
+// Forward declarations
+
 namespace detail
 {
 	class SQLiteDBConn;
 	class SQLStatement;
 }  // namespace detail
+
+
+class DatabaseTransaction;
 
 
 
@@ -219,6 +223,78 @@ public:
 	static int max_nesting();
 
 	/**
+	 * @returns a shared pointer to a SQLStatement. This will	
+	 * either point to an existing SQLStatement that is cached within
+	 * the DatabaseConnection (if a SQLStatement with \c
+	 * statement_text has already been created on this DatabaseConnection and
+	 * is not being used elsewhere), or
+	 * will be a pointer to a newly created and new cached SQLStatement (if a 
+	 * SQLStatement with \c statement_text has not yet been created on this
+	 * DatabaseConnection, or it has been created but is being used
+	 * elsewhere).
+	 *
+	 * This function is only intended to be called by the
+	 * constructor of SharedSQLStatement. It should not be called elsewhere.
+	 * 
+	 * @throws InvalidConnection if p_database_connection is an invalid
+	 * connection.
+	 *
+	 * @throws SQLiteException, or an exception derived therefrom, if there
+	 * is some other problem in preparing the statement, which results in a
+	 * SQLite error code (that is not SQLITE_OK) being returned.
+	 *
+	 * @throws TooManyStatements if the first purported SQL statement
+	 * in str is syntactically acceptable to SQLite, <em>but</em> there
+	 * are characters in str after this statement, other than ';' and ' '.
+	 * This includes the case where there are further syntactically
+	 * acceptable SQL statements after the first one - as each SQLStatement
+	 * can encapsulate only one statement.
+	 *
+	 * @throws std::bad_alloc in the extremely unlikely event of memory
+	 * allocation failure in execution.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 */
+	boost::shared_ptr<detail::SQLStatement> provide_sql_statement
+	(	std::string const& statement_text
+	);
+
+	/**
+	 * This one should only be called by PersistentObject<T>.
+	 *
+	 * @todo Documentation and testing.
+	 */
+	template <typename T>
+	void register_id
+	(	typename T::Id proxy_key,
+		typename T::Id allocated_id
+	);
+
+	/**
+	 * Controls access to database transaction facilities, deliberately
+	 * limiting this access to the class DatabaseTransaction.
+	 */
+	class TransactionAttorney
+	{
+	public:
+		friend class DatabaseTransaction;
+	private:
+		static void begin_transaction
+		(	DatabaseConnection& p_database_connection
+		);
+		static void end_transaction
+		(	DatabaseConnection& p_database_connection
+		);
+		static void cancel_transaction
+		(	DatabaseConnection& p_database_connection
+		);
+	};
+
+	friend class TransactionAttorney;
+
+private:
+
+	/**
 	 * Begins a SQL transaction. Transactions may be nested. Only the
 	 * outermost call to begin_transaction causes the "begin transaction"
 	 * SQL command to be executed. Inner calls instead cause a
@@ -290,57 +366,6 @@ public:
 	 */
 	void cancel_transaction();
 
-	/**
-	 * @returns a shared pointer to a SQLStatement. This will	
-	 * either point to an existing SQLStatement that is cached within
-	 * the DatabaseConnection (if a SQLStatement with \c
-	 * statement_text has already been created on this DatabaseConnection and
-	 * is not being used elsewhere), or
-	 * will be a pointer to a newly created and new cached SQLStatement (if a 
-	 * SQLStatement with \c statement_text has not yet been created on this
-	 * DatabaseConnection, or it has been created but is being used
-	 * elsewhere).
-	 *
-	 * This function is only intended to be called by the
-	 * constructor of SharedSQLStatement. It should not be called elsewhere.
-	 * 
-	 * @throws InvalidConnection if p_database_connection is an invalid
-	 * connection.
-	 *
-	 * @throws SQLiteException, or an exception derived therefrom, if there
-	 * is some other problem in preparing the statement, which results in a
-	 * SQLite error code (that is not SQLITE_OK) being returned.
-	 *
-	 * @throws TooManyStatements if the first purported SQL statement
-	 * in str is syntactically acceptable to SQLite, <em>but</em> there
-	 * are characters in str after this statement, other than ';' and ' '.
-	 * This includes the case where there are further syntactically
-	 * acceptable SQL statements after the first one - as each SQLStatement
-	 * can encapsulate only one statement.
-	 *
-	 * @throws std::bad_alloc in the extremely unlikely event of memory
-	 * allocation failure in execution.
-	 *
-	 * Exception safety: <em>strong guarantee</em>.
-	 */
-	boost::shared_ptr<detail::SQLStatement> provide_sql_statement
-	(	std::string const& statement_text
-	);
-
-	/**
-	 * This one should only be called by PersistentObject<T>.
-	 *
-	 * @todo Documentation and testing.
-	 */
-	template <typename T>
-	void register_id
-	(	typename T::Id proxy_key,
-		typename T::Id allocated_id
-	);
-
-	
-private:
-
 	void unchecked_begin_transaction();
 	void unchecked_end_transaction();
 	void unchecked_set_savepoint();
@@ -359,6 +384,37 @@ private:
 };
 
 
+
+
+inline
+void
+DatabaseConnection::TransactionAttorney::begin_transaction
+(	DatabaseConnection& p_database_connection
+)
+{
+	p_database_connection.begin_transaction();
+	return;
+}
+
+inline
+void
+DatabaseConnection::TransactionAttorney::end_transaction
+(	DatabaseConnection& p_database_connection
+)
+{
+	p_database_connection.end_transaction();
+	return;
+}
+
+inline
+void
+DatabaseConnection::TransactionAttorney::cancel_transaction
+(	DatabaseConnection& p_database_connection
+)
+{
+	p_database_connection.cancel_transaction();
+	return;
+}
 
 
 

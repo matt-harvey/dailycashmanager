@@ -10,6 +10,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
+#include "sqloxx/database_transaction.hpp"
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
@@ -30,6 +31,7 @@ using boost::lexical_cast;
 using boost::shared_ptr;
 using boost::unordered_set;
 using jewel::Decimal;
+using sqloxx::DatabaseTransaction;
 using std::cout;
 using std::endl;
 using std::string;
@@ -79,7 +81,7 @@ void import_from_nap
 	boost::filesystem::path const& directory
 )
 {
-	database_connection->begin_transaction();
+	DatabaseTransaction transaction(*database_connection);
 
 	boost::posix_time::ptime const start_time =
 		boost::posix_time::second_clock::local_time();
@@ -496,7 +498,10 @@ void import_from_nap
 		++jvit
 	)
 	{
-		if (problematic_ordinary_journals.find(*jvit) != problematic_ordinary_journals.end())
+		if
+		(	problematic_ordinary_journals.find(*jvit) !=
+			problematic_ordinary_journals.end()
+		)
 		{
 			// Any handling?
 		}
@@ -534,8 +539,7 @@ void import_from_nap
 	     << (end_time - start_time).total_seconds()
 		 << endl;
 
-	database_connection->end_transaction();
-
+	transaction.commit();
 	return;
 }
 			

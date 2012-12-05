@@ -21,7 +21,9 @@ DatabaseTransaction::DatabaseTransaction
 	m_is_active(true),
 	m_database_connection(p_database_connection)
 {
-	m_database_connection.begin_transaction();
+	DatabaseConnection::TransactionAttorney::begin_transaction
+	(	m_database_connection
+	);
 }
 
 DatabaseTransaction::~DatabaseTransaction()
@@ -30,7 +32,9 @@ DatabaseTransaction::~DatabaseTransaction()
 	{
 		try
 		{
-			m_database_connection.cancel_transaction();
+			DatabaseConnection::TransactionAttorney::cancel_transaction
+			(	m_database_connection
+			);
 			m_is_active = false;
 		}
 		catch (exception& e)
@@ -45,10 +49,11 @@ DatabaseTransaction::~DatabaseTransaction()
 			catch (bad_alloc&)
 			{
 				fprintf
-				(	"Exception caught in destructor of DatabaseTransaction. "
+				(	stderr,
+					"Exception caught in destructor of DatabaseTransaction. "
 					"Unable to retrieve error message, due to memory "
 					"allocation failure. Calling std::terminate().\n"
-				)
+				);
 			}
 			terminate();
 		}
@@ -62,7 +67,9 @@ DatabaseTransaction::commit()
 	{
 		try
 		{
-			m_database_connection.end_transaction();
+			DatabaseConnection::TransactionAttorney::end_transaction
+			(	m_database_connection
+			);
 			m_is_active = false;
 		}
 		catch (exception&)
@@ -91,7 +98,9 @@ DatabaseTransaction::cancel()
 	{
 		try
 		{
-			m_database_connection.cancel_transaction();
+			DatabaseConnection::TransactionAttorney::cancel_transaction
+			(	m_database_connection
+			);
 			m_is_active = false;
 		}
 		catch (exception&)

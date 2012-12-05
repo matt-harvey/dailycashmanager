@@ -27,6 +27,7 @@
 #include "phatbooks_exceptions.hpp"
 #include "repeater.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/database_transaction.hpp"
 #include "sqloxx/identity_map.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include "sqloxx/shared_sql_statement.hpp"
@@ -49,6 +50,7 @@ using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::Decimal;
 using sqloxx::DatabaseConnection;
+using sqloxx::DatabaseTransaction;
 using sqloxx::SharedSQLStatement;
 using sqloxx::SQLiteException;
 using std::endl;
@@ -152,7 +154,7 @@ PhatbooksDatabaseConnection::setup()
 		return;
 	}
 	assert (!setup_has_occurred());
-	begin_transaction();
+	DatabaseTransaction transaction(*this);
 	setup_boolean_table();
 	Commodity::setup_tables(*this);
 	Account::setup_tables(*this);
@@ -162,7 +164,7 @@ PhatbooksDatabaseConnection::setup()
 	Repeater::setup_tables(*this);
 	Entry::setup_tables(*this);
 	mark_setup_as_having_occurred();
-	end_transaction();
+	transaction.commit();
 	assert (setup_has_occurred());
 	return;
 }
