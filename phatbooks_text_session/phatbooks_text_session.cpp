@@ -912,7 +912,6 @@ void PhatbooksTextSession::display_balances()
 	}
 
 	// "SQL METHOD"
-	/*
 	SharedSQLStatement sum_selector
 	(	*m_database_connection,
 		"select account_id, sum(amount) from entries inner "
@@ -927,9 +926,9 @@ void PhatbooksTextSession::display_balances()
 			Account(*m_database_connection, a_id).commodity().precision()
 		);
 	}
-	*/
 
 	// "ACCUMULATION METHOD"
+	/*
 	SharedSQLStatement entry_statement
 	(	*m_database_connection,
 		"select entry_id from entries inner join ordinary_journal_detail "
@@ -943,6 +942,7 @@ void PhatbooksTextSession::display_balances()
 		);
 		balance_map[entry.account().id()] += entry.amount();
 	}
+	*/
 
 	sw.log();
 	// STOP TIMING

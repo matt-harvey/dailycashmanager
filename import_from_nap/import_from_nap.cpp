@@ -168,6 +168,7 @@ void import_from_nap
 			account.set_account_type(account_type::expense);
 			break;
 		default:
+			cout << account_cells[0][1] << endl; // WARNING temp
 			throw std::runtime_error("Unrecognised account type.");
 		}
 		string const name = account_cells[1];

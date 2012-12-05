@@ -34,8 +34,11 @@ class Handle;
  * various events for "bookkeeping" purposes.
  */
 template <typename T>
-class HandleAttorney
+class PersistentObjectHandleAttorney
 {
+// This class would have been better nested in PersistentObject,
+// were it not for the presence of the template parameter Connection
+// of PersistentObject, which makes this problematic.
 public:
 	friend class Handle<T>;
 private:
@@ -195,7 +198,7 @@ class PersistentObject
 {
 public:
 
-	friend class HandleAttorney<Derived>;
+	friend class PersistentObjectHandleAttorney<Derived>;
 
 	typedef sqloxx::Id Id;
 	typedef sqloxx::HandleCounter HandleCounter;
@@ -420,25 +423,6 @@ public:
 	Id id() const;
 
 	/**
-	 * @returns true if and only if there are no Handle<Derived>
-	 * instances pointing to this object.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo Testing.
-	 */
-	bool is_orphaned() const;
-	
-	/**
-	 * @returns true if and only if we are dangerously close to reaching
-	 * the maximum value of HandleCounter.
-	 *
-	 * @todo Testing.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	bool has_high_handle_count() const;
-	/**
 	 * @returns \e true if this instance of PersistentObject has
 	 * an valid id; otherwise returns \e false.
 	 *
@@ -495,7 +479,31 @@ public:
 	};
 	
 	friend class CacheKeyAttorney;
-	
+
+	/**
+	 * Controls access to functions that monitor the number of
+	 * Handle<T> instances pointing to a given instance of
+	 * PersistentObject<T, Connection>, deliberately restricting
+	 * this access to IdentityMap<Derived, Connection>
+	 */
+	class HandleMonitorAttorney
+	{
+	public:
+		friend class sqloxx::IdentityMap<Derived, Connection>;
+	private:
+		static bool is_orphaned(Derived const& p_obj)
+		{
+			return p_obj.is_orphaned();
+		}
+		static bool has_high_handle_count(Derived const& p_obj)
+		{
+			return p_obj.has_high_handle_count();
+		}
+	};
+
+	friend class HandleMonitorAttorney;
+
+
 protected:
 
 	/**
@@ -711,7 +719,28 @@ private:
 	void increment_handle_counter();
 
 	/**
-	 * Called by Handle<Derived> via HandleAttorney to advise the underlying
+	 * @returns true if and only if there are no Handle<Derived>
+	 * instances pointing to this object.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo Testing.
+	 */
+	bool is_orphaned() const;
+	
+	/**
+	 * @returns true if and only if we are dangerously close to reaching
+	 * the maximum value of HandleCounter.
+	 *
+	 * @todo Testing.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	bool has_high_handle_count() const;
+
+	/**
+	 * Called by Handle<Derived> via PersistentObjectHandleAttorney
+	 * to advise the underlying
 	 * object that a handle pointing to it has been constructed (not copy-
 	 * constructed, but ordinarily constructed).
 	 * 
@@ -727,7 +756,8 @@ private:
 	void notify_handle_construction();
 
 	/**
-	 * Called by Handle<Derived> via HandleAttorney to advise the underlying
+	 * Called by Handle<Derived> via PersistentObjectHandleAttorney to
+	 * advise the underlying
 	 * object that a handle pointing to it has been copy-constructed.
 	 * 
 	 * @throws sqloxx::OverflowException if the maximum value of
@@ -742,7 +772,8 @@ private:
 	void notify_handle_copy_construction();
 
 	/**
-	 * Called by Handle<Derived> via HandleAttorney to advise the
+	 * Called by Handle<Derived> via PersistentObjectHandleAttorney
+	 * to advise the
 	 * underlying object that a handle pointing to it has appeared
 	 * as the right-hand operand of an assignment operation.
 	 *
@@ -758,7 +789,8 @@ private:
 	void notify_rhs_assignment_operation();
 	
 	/**
-	 * Called by Handle<Derived> via HandleAttorney to advise the
+	 * Called by Handle<Derived> via PersistentObjectHandleAttorney
+	 * to advise the
 	 * underlying object that a Handle pointing to it has appeared
 	 * as the right-hand operand of an assignment operation.
 	 *
@@ -781,7 +813,8 @@ private:
 	void notify_lhs_assignment_operation();
 
 	/**
-	 * Called by Handle<Derived> via HandleAttorney, to advise the underlying
+	 * Called by Handle<Derived> via PersistentObjectHandleAttorney,
+	 * to advise the underlying
 	 * object that a handle pointing to it has been destructed.
 	 *
 	 * Preconditions: as for notify_lhs_assignment_operation().

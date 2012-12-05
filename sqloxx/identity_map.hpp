@@ -533,7 +533,12 @@ IdentityMap<T, Connection>::provide_object(Id p_id)
 		return Handle<T>(obj_ptr.get()); 
 	}
 	assert (it != id_map().end());
-	if (it->second->has_high_handle_count())
+	if
+	(	PersistentObject
+		<	T,
+			Connection
+		>::HandleMonitorAttorney::has_high_handle_count(*(it->second))
+	)
 	{
 		throw sqloxx::OverflowException
 		(	"Handle count for has reached dangerous level. "
@@ -617,7 +622,12 @@ IdentityMap<T, Connection>::disable_caching()
 			++it
 		)
 		{
-			if (it->second->is_orphaned())
+			if
+			(	PersistentObject
+				<	T,
+					Connection
+				>::HandleMonitorAttorney::is_orphaned(*(it->second))
+			)
 			{
 				uncache_object(it->first);
 			}
