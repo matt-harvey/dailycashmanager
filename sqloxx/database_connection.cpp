@@ -53,7 +53,7 @@ DatabaseConnection::~DatabaseConnection()
 		fprintf
 		(	stderr,
 			"Transaction(s) remained incomplete on closure of "
-			"DatabaseConnection."
+			"DatabaseConnection.\n"
 		);
 	}
 	m_statement_cache.clear();

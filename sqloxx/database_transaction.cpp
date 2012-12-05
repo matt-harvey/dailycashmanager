@@ -1,12 +1,14 @@
 #include "database_transaction.hpp"
 #include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"
+#include <cstdio>
 #include <iostream>
 #include <stdexcept>
 
 using std::terminate;
 using std::cerr;
 using std::endl;
+using std::fprintf;
 using std::bad_alloc;
 using std::exception;
 
@@ -35,13 +37,18 @@ DatabaseTransaction::~DatabaseTransaction()
 		{
 			try
 			{
-				cerr << "Exception swallowed in destructor of "
+				cerr << "Exception caught in destructor of "
 				     << "DatabaseTransaction, with error message: "
 				     << e.what() << endl
 					 << "Calling std::terminate()." << endl;
 			}
 			catch (bad_alloc&)
 			{
+				fprintf
+				(	"Exception caught in destructor of DatabaseTransaction. "
+					"Unable to retrieve error message, due to memory "
+					"allocation failure. Calling std::terminate().\n"
+				)
 			}
 			terminate();
 		}
@@ -56,6 +63,7 @@ DatabaseTransaction::commit()
 		try
 		{
 			m_database_connection.end_transaction();
+			m_is_active = false;
 		}
 		catch (exception&)
 		{
@@ -66,7 +74,6 @@ DatabaseTransaction::commit()
 				"session may jeopardize data integrity."
 			);
 		}
-		m_is_active = false;
 	}
 	else
 	{
@@ -85,6 +92,7 @@ DatabaseTransaction::cancel()
 		try
 		{
 			m_database_connection.cancel_transaction();
+			m_is_active = false;
 		}
 		catch (exception&)
 		{
@@ -96,7 +104,6 @@ DatabaseTransaction::cancel()
 				"this situation."
 			);
 		}
-		m_is_active = false;
 	}
 	else
 	{

@@ -34,6 +34,14 @@ namespace sqloxx
  * might fail to cancel the transaction - in which case std::terminate() is
  * called rather than throw an exception from the destructor.
  *
+ * Preconditions:\n
+ * The management of database transactions must be managed entirely using
+ * instances of the DatabaseTransaction class, rather than by executing
+ * SQL commands "begin transaction", "savepoint" etc. directly.
+ * The behaviour documented
+ * in the member function documentation for this class depends on this
+ * being the case.
+ *
  * @todo Documentation and testing.
  */
 class DatabaseTransaction:
@@ -42,9 +50,12 @@ class DatabaseTransaction:
 public:
 
 	/**
+	 * Preconditions: see documentation for class.
+	 *
 	 * Creates an object serving as a sentry for a database transaction.
 	 * The constructor causes a transaction to be commenced - or, if there
-	 * is already an active transaction, a savepoint to be set.
+	 * is already an active transaction, a savepoint to be set. (See SQLite
+	 * documentation regarding the effect of setting a savepoint.)
 	 *
 	 * @throws TransactionNestingException in the extremely unlikely
 	 * event that the maximum
@@ -67,9 +78,116 @@ public:
 	 */
 	explicit DatabaseTransaction(DatabaseConnection& p_database_connection);
 
+	/**
+	 * Preconditions: see documentation for class.
+	 *
+	 * Under normal circumstances, the destructor will cause the database
+	 * transaction to be cancelled, if it is still active, via a
+	 * call to cancel(). (See separate documentation to cancel() for more
+	 * detail.) If it has already
+	 * been cancelled or committed, the destructor will simply destroy
+	 * the DatabaseTransaction object with no other effects.
+	 *
+	 * Note however, that the destructor, unlike cancel(), will never throw.
+	 * If the internal call to cancel() throws, then the destructor will
+	 * print an error message, and call std::terminate. For this reason,
+	 * client code should not rely on the destructor, but should call
+	 * cancel() explicitly. The destructor is rather a balwark against
+	 * the programmer forgetting to call cancel() manually.
+	 *
+	 * Exception safety: <em>nothrow guarantee, but might call
+	 * std::terminate()</em>.
+	 */
 	~DatabaseTransaction();
+
+	/**
+	 * Preconditions: see documentation for class. In addition, if
+	 * UnresolvedTransactionException is thrown, the application must
+	 * exit without further commands being executed on the database
+	 * connection.
+	 *
+	 * Causes the <em>innermost currently active</em>
+	 * DatabaseTransaction's transaction to be committed to the
+	 * database.
+	 * <em>In theory, this may not be the same DatabaseTransaction as
+	 * the instance on which we are calling commit().</em> In practice,
+	 * we would have to write some pretty perverse code in order for it not
+	 * to be the same DatabaseTransaction.
+	 *
+	 * If the innermost currently active DatabaseTransaction is an outer
+	 * transaction, i.e. is not nested within any other DatabaseTransaction,
+	 * then the call commit() causes the entire underlying database
+	 * transaction to be committed to the database.
+	 *
+	 * If the innermost currently active DatabaseTransacton is nested
+	 * within one or more other DatabaseTransactions, then the call to
+	 * commit() causes the most recent savepoint to be released.
+	 * (See SQLite documentation in relation
+	 * to the effect of releasing a savepoint.)
+	 *
+	 * @throws TransactionNestingException if called on an inactive
+	 * DatabaseTransaction (i.e. one on which cancel() or commit() has
+	 * already been called).
+	 *
+	 * @throws UnresolvedTransactionException if the DatabaseConnection
+	 * (on which this DatabaseTransaction was initialized) is invalid, or
+	 * if there has been a memory allocation failure in attempting to wind
+	 * up the transaction. If this happens, then the transaction will not
+	 * be committed to the database; rollback is assured, on condition that
+	 * the program exits without further SQL being executed on the
+	 * database connection.
+	 *
+	 * Exception safety: <em>strong guarantee</em>, provided the preconditions
+	 * are met.
+	 *
+	 * @todo Testing.
+	 */
 	void commit();
+
+	/**
+	 * Preconditions: see documentation for class. In addition, if
+	 * UnresolvedTransactionException is thrown, the application must
+	 * exit without further commands being executed on the database
+	 * connection.
+	 *
+	 * Causes the <em>innermost currently active</em>
+	 * DatabaseTransaction's transaction to be cancelled. 
+	 * <em>In theory, this may not be the same DatabaseTransaction as
+	 * the instance on which we are calling commit().</em> In practice,
+	 * we would have to write some pretty perverse code in order for it not
+	 * to be the same DatabaseTransaction.
+	 *
+	 * If the innermost currently active DatabaseTransaction is an outer
+	 * transaction, i.e. is not nested within any other DatabaseTransaction,
+	 * then the call to cancel() causes the entire underlying database
+	 * transaction to be cancelled.
+	 *
+	 * If the innermost currently active DatabaseTransacton is nested
+	 * within one or more other DatabaseTransactions, then the call to
+	 * cancel() causes a rollback to the most recent savepoint, followed
+	 * by the release of that savepoint.
+	 * (See SQLite documentation in relation
+	 * to the effect of releasing a savepoint.)
+	 *
+	 * @throws TransactionNestingException if called on an inactive
+	 * DatabaseTransaction (i.e. one on which cancel() or commit() has
+	 * already been called).
+	 *
+	 * @throws UnresolvedTransactionException if the DatabaseConnection
+	 * (on which this DatabaseTransaction was initialized) is invalid, or
+	 * if there has been a memory allocation failure in attempting to wind
+	 * up the transaction. If this happens, then the transaction will not
+	 * be committed to the database; rollback is assured, on condition that
+	 * the program exits without further SQL being executed on the
+	 * database connection.
+	 *
+	 * Exception safety: <em>strong guarantee</em>, provided the preconditions
+	 * are met.
+	 *
+	 * @todo Testing.
+	 */
 	void cancel();
+
 private:
 	bool m_is_active;
 	DatabaseConnection& m_database_connection;
