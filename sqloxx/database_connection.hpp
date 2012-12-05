@@ -260,17 +260,6 @@ public:
 	);
 
 	/**
-	 * This one should only be called by PersistentObject<T>.
-	 *
-	 * @todo Documentation and testing.
-	 */
-	template <typename T>
-	void register_id
-	(	typename T::Id proxy_key,
-		typename T::Id allocated_id
-	);
-
-	/**
 	 * Controls access to database transaction facilities, deliberately
 	 * limiting this access to the class DatabaseTransaction.
 	 */

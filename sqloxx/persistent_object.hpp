@@ -140,6 +140,10 @@ namespace sqloxx
  *
  * @todo If Sqloxx is ever moved to a separate library, then the documentation
  * for PersistentObject should include code for an exemplary derived class.
+ *
+ * @todo Centralize list of preconditions in a single location.
+ *
+ * @todo Have a single location for documenting use of Sqloxx holistically.
  */
 template<typename Derived, typename Connection>
 class PersistentObject
