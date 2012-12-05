@@ -47,9 +47,15 @@ DatabaseConnection::~DatabaseConnection()
 {
 	if (m_transaction_nesting_level > 0)
 	{
-		clog << "Transaction(s) remained incomplete on closure of "
-		     << "DatabaseConnection."
-			 << endl;
+		try
+		{
+			clog << "Transaction(s) remained incomplete on closure of "
+				 << "DatabaseConnection."
+				 << endl;
+		}
+		catch (std::bad_alloc&)
+		{
+		}
 	}
 	m_statement_cache.clear();
 }
