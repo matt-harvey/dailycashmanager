@@ -82,7 +82,8 @@ private:
  * SQLite is supported) under a single primary key, that shall be
  * an auto-incrementing integer primary key.
  *
- * USE OF IDENTITY MAP PATTERN
+ * 
+ * <b>Identity Map Pattern</b>
  *
  * PersistentObject is intended
  * to be used in conjunction with the Identity Map pattern (as
@@ -113,7 +114,8 @@ private:
  * See sqloxx::IdentityMap and sqloxx::Handle for further documentation
  * here.
  *
- * LAZY LOADING VIA GHOST PATTERN
+ *
+ * <b>Lazy Loading</b>
  *
  * PersistentObject provides for lazy loading behaviour,
  * using the "ghost" pattern as described on p. 202 of Martin Fowler's
@@ -150,27 +152,40 @@ private:
  * with lazy loading, while giving up the potential runtime efficiencies
  * that lazy loading can provide.
  * 
- * The following functions need to be provided with definitions
- * provided in the derived class:
  *
- * <b>static std::string primary_table_name();</b>\n
+ * <b>Virtual functions</b>
+ *
+ * The following functions need to be provided with definitions
+ * provided in the Derived class:
+ *
+ * <em>static std::string primary_table_name();</em>\n
  * Should return name of table in which instances of the derived class
  * are persisted in the database. If instance are persisted across
  * multiple tables, this function should return the "primary table",
  * i.e. a table containing the primary key for this class, such that
  * every persisted instance of this class has a row in this table.
  *
- * <b>virtual void do_load() = 0;</b>\n
+ * <em>virtual void do_load() = 0;</em>\n
  * See documentation of load() function.
  *
- * <b>virtual void do_save_existing() = 0;</b>\n
+ * <em>virtual void do_save_existing() = 0;</em>\n
  * See documentation for save_existing() function.
  *
- * <b>virtual void do_save_new() = 0;</b>\n
+ * <em>virtual void do_save_new() = 0;</em>\n
  * See documentation for save_new() function.
  *
+ * <em>virtual void do_ghostify() = 0;\n
+ * See documentation for ghostify() function.
  *
- * TEMPLATE PARAMETERS
+ * In addition the following function \e may be provided with a definition
+ * in the Derived class, although the PersistentObject base class provides
+ * a default implementation which is suitable in many cases:
+ *
+ * <em>virtual void do_remove();\n
+ * See documentation for remove() function.
+ *
+ *
+ * <b>Template parameters</b>
  *
  * @param Derived The derived class. Derived should inherit publicly
  * from PersistentObject<Derived, Connection> per the Curiously Recurring
@@ -667,7 +682,7 @@ protected:
 	 *
 	 * Exception safety: the default implementation offers the
 	 * <em>strong guarantee</em> - providing the virtual
-	 * function primary_table_name does nothing odd but simply returns a
+	 * function primary_table_name() does nothing odd but simply returns a
 	 * std::string as would be expected.
 	 */
 	Id prospective_key() const;
