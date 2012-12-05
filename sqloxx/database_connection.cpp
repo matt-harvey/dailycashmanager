@@ -49,7 +49,9 @@ DatabaseConnection::~DatabaseConnection()
 {
 	if (m_transaction_nesting_level > 0)
 	{
-		// We avoid streams here, because they might throw.
+		// We avoid streams here, because they might throw
+		// (in theory, if exceptions have been enabled for the
+		// stream).
 		fprintf
 		(	stderr,
 			"Transaction(s) remained incomplete on closure of "

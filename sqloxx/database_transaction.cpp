@@ -39,22 +39,16 @@ DatabaseTransaction::~DatabaseTransaction()
 		}
 		catch (exception& e)
 		{
-			try
-			{
-				cerr << "Exception caught in destructor of "
-				     << "DatabaseTransaction, with error message: "
-				     << e.what() << endl
-					 << "Calling std::terminate()." << endl;
-			}
-			catch (bad_alloc&)
-			{
-				fprintf
-				(	stderr,
-					"Exception caught in destructor of DatabaseTransaction. "
-					"Unable to retrieve error message, due to memory "
-					"allocation failure. Calling std::terminate().\n"
-				);
-			}
+			// We avoid streams here, as, at least in theory, exceptions
+			// might be thrown writing to a stream (if exceptions have
+			// been enabled for the stream).
+			fprintf
+			(	stderr,
+				"Exception caught in destructor of DatabaseTransaction, "
+				"with the error message: %s\n",
+				e.what()
+			);
+			fprintf(stderr, "Program terminated.\n");
 			terminate();
 		}
 	}
