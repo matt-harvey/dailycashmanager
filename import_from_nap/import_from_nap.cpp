@@ -75,7 +75,6 @@ namespace
 
 
 
-
 void import_from_nap
 (	shared_ptr<PhatbooksDatabaseConnection> database_connection,
 	boost::filesystem::path const& directory
@@ -134,8 +133,9 @@ void import_from_nap
 	aud.set_multiplier_to_base(Decimal("1"));
 	aud.save();
 
-	// Read accounts
 	string const file_sep = "/";
+
+	// Read accounts
 	std::ifstream account_csv
 	(	(directory.string() + file_sep + account_csv_name).c_str()
 	);
@@ -168,18 +168,17 @@ void import_from_nap
 			account.set_account_type(account_type::expense);
 			break;
 		default:
-			cout << account_cells[0][1] << endl; // WARNING temp
 			throw std::runtime_error("Unrecognised account type.");
 		}
 		string const name = account_cells[1];
 		account.set_name(name);
-		account.set_commodity
-		(	Commodity(*database_connection,aud.id())
-		);
+		account.set_commodity(aud);
 		account.set_description(account_cells[2]);
 		account.save();
 	}
-		
+	
+
+
 	typedef vector< shared_ptr<OrdinaryJournal> > OrdinaryJournalVec;
 	typedef vector< shared_ptr<DraftJournal> > DraftJournalVec;
 
@@ -297,10 +296,6 @@ void import_from_nap
 		string const account_name = draft_entry_cells[3];
 		Decimal act_impact(draft_entry_cells[4]);
 		Decimal bud_impact(draft_entry_cells[5]);
-		// WARNING We need to handle the case where a single Entry has both
-		// a non-zero bud_impact and a non-zero act_impact. Given this is
-		// just a one-off hack, it may be easier just to manipulate the
-		// csv before importing it.
 		bool is_actual = (bud_impact == decimal_zero);
 		draft_entry.set_account(Account(*database_connection, account_name));
 		draft_entry.set_comment(comment);
@@ -322,7 +317,8 @@ void import_from_nap
 		}
 		else
 		{
-			if (draft_journal->is_actual() != is_actual)
+			// Bleugh!
+			if (draft_journal->is_actual() != is_actual || (act_impact != decimal_zero && bud_impact != decimal_zero))
 			{
 				if (bud_impact == decimal_zero && act_impact == decimal_zero)
 				{
@@ -455,7 +451,8 @@ void import_from_nap
 		}
 		else
 		{
-			if (ordinary_journal->is_actual() != is_actual)
+			// Bleugh!
+			if (ordinary_journal->is_actual() != is_actual || (act_impact != decimal_zero && bud_impact != decimal_zero))
 			{
 				if (bud_impact == decimal_zero && act_impact == decimal_zero)
 				{
@@ -539,6 +536,8 @@ void import_from_nap
 	cout << "Import duration in seconds: "
 	     << (end_time - start_time).total_seconds()
 		 << endl;
+
+
 
 	transaction.commit();
 	return;

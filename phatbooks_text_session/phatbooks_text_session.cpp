@@ -954,7 +954,7 @@ void PhatbooksTextSession::display_balances()
 	)
 	{
 		Account account(*m_database_connection, it->first);
-		cout << account.name() << "\t" << it->second << endl;
+		cout << account.name() << "|" << it->second << endl;
 	}
 	cout << "Done!" << endl;
 	return;
