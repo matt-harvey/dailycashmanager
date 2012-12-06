@@ -41,6 +41,15 @@ using std::vector;
 #include <boost/date_time/posix_time/posix_time.hpp>
 // END TEMP
 
+
+
+
+
+
+
+
+
+
 namespace phatbooks
 {
 
@@ -197,6 +206,10 @@ void import_from_nap
 	// Map from problematic draft journals to old draft journal names
 	unordered_map< shared_ptr<DraftJournal>, string > problematic_draft_journal_map;
 
+
+
+
+
 	// Read draft journals ************************************
 	
 	std::ifstream draft_journal_csv
@@ -281,6 +294,8 @@ void import_from_nap
 	}
 
 	// Read draft entries *******************************************
+	
+	
 
 	std::ifstream draft_entry_csv
 	(	(directory.string() + file_sep + draft_entry_csv_name).c_str()
@@ -365,6 +380,13 @@ void import_from_nap
 
 	// Read OrdinaryJournals*************
 	
+	// To hold specially constructed entry vectors into which
+	// "mixed budget and actual" ordinary entries will be split
+	// Use Nap draft journal name as key.
+	unordered_map<int, vector<Entry> > special_actual_ordinary_vectors;
+	unordered_map<int, vector<Entry> > special_budget_ordinary_vectors;
+
+
 	std::ifstream ordinary_journal_csv
 	(	(directory.string() + file_sep + ordinary_journal_csv_name).c_str()
 	);
@@ -410,10 +432,16 @@ void import_from_nap
 		ordinary_journal_id_map[ordinary_journal_nap_id] =
 			ordinary_journal_id;
 		ordinary_journal_vec.push_back(ordinary_journal);
+
+		special_actual_ordinary_vectors[ordinary_journal_nap_id]
+			= vector<Entry>();
+		special_budget_ordinary_vectors[ordinary_journal_nap_id]
+			= vector<Entry>();
 	}
 
 	// Read ordinary entries ****************************************
-	
+
+
 	std::ifstream ordinary_entry_csv
 	(	(directory.string() + file_sep + ordinary_entry_csv_name).c_str()
 	);
@@ -428,8 +456,8 @@ void import_from_nap
 			lexical_cast<int>(ordinary_entry_cells[1].c_str());
 		string const comment = ordinary_entry_cells[3];
 		string const account_name = ordinary_entry_cells[4];
-		Decimal act_impact(ordinary_entry_cells[5]);
-		Decimal bud_impact(ordinary_entry_cells[6]);
+		Decimal const act_impact(ordinary_entry_cells[5]);
+		Decimal const bud_impact(ordinary_entry_cells[6]);
 		bool is_actual = (bud_impact == decimal_zero);
 		ordinary_entry.set_account
 		(	Account(*database_connection, account_name)
@@ -438,6 +466,7 @@ void import_from_nap
 		ordinary_entry.set_amount(is_actual? act_impact: -bud_impact);
 		shared_ptr<OrdinaryJournal> ordinary_journal =
 			ordinary_journal_map[old_journal_id];
+		bool is_problematic = false;
 		if
 		(	oj_actual_v_budget_determinations.find(ordinary_journal) ==
 			oj_actual_v_budget_determinations.end()
@@ -449,30 +478,72 @@ void import_from_nap
 			oj_actual_v_budget_determinations[ordinary_journal] =
 				(is_actual? true: false);
 		}
-		else
+		// Bleugh!
+		if ((ordinary_journal->is_actual() != is_actual) || ((act_impact != decimal_zero) && (bud_impact != decimal_zero)))
 		{
-			// Bleugh!
-			if (ordinary_journal->is_actual() != is_actual || (act_impact != decimal_zero && bud_impact != decimal_zero))
+			if ((bud_impact == decimal_zero) && (act_impact == decimal_zero))
 			{
-				if (bud_impact == decimal_zero && act_impact == decimal_zero)
-				{
-					// Then it's OK
-				}
-				else
-				{
-					// We record the journal as problematic
-					problematic_ordinary_journals.insert(ordinary_journal);
-					problematic_ordinary_journal_map[ordinary_journal] =
-						old_journal_id;
-				}
+				// Then it's OK
 			}
 			else
 			{
-				assert
-				(	oj_actual_v_budget_determinations[ordinary_journal] ==
-					is_actual
+				// We record the journal as problematic
+				is_problematic = true;
+				problematic_ordinary_journals.insert(ordinary_journal);
+				problematic_ordinary_journal_map[ordinary_journal] =
+					old_journal_id;
+				
+				// Split the problematic entry into an actual and a budget
+				// part, as two distinct entries
+
+				Entry special_actual_entry(*database_connection);
+				special_actual_entry.set_account(ordinary_entry.account());
+				special_actual_entry.set_comment(ordinary_entry.comment());
+				special_actual_entry.set_amount(act_impact);
+				special_actual_entry.set_whether_reconciled(false);
+				
+				Entry special_budget_entry(*database_connection);
+				special_budget_entry.set_account(ordinary_entry.account());
+				special_budget_entry.set_comment(ordinary_entry.comment());
+				special_budget_entry.set_amount(-bud_impact);
+				special_budget_entry.set_whether_reconciled(false);
+				
+				special_actual_ordinary_vectors[old_journal_id].push_back
+				(	special_actual_entry
 				);
+				special_budget_ordinary_vectors[old_journal_id].push_back
+				(	special_budget_entry
+				);
+
+				// Deal with any entries previously added to the journal
+				if (!(ordinary_journal->entries().empty()))
+				{
+					JEWEL_DEBUG_LOG << "... " << ordinary_journal->entries().size() << endl;
+					for
+					(	vector<Entry>::const_iterator it = ordinary_journal->entries().begin();
+						it != ordinary_journal->entries().end();
+						++it
+					)
+					{	
+						if (ordinary_journal->is_actual())
+						{
+							special_actual_ordinary_vectors[old_journal_id].push_back(*it);
+						}
+						else
+						{
+							special_budget_ordinary_vectors[old_journal_id].push_back(*it);
+						}
+					}
+				}
+							
 			}
+		}
+		else
+		{
+			assert
+			(	oj_actual_v_budget_determinations[ordinary_journal] ==
+				is_actual
+			);
 		}
 
 		if
@@ -484,8 +555,17 @@ void import_from_nap
 			     << endl;
 			std::abort();
 		}
-		ordinary_entry.set_whether_reconciled(false);
-		ordinary_journal->add_entry(ordinary_entry);
+
+		if (!is_problematic)
+		{
+			ordinary_entry.set_whether_reconciled(false);
+			ordinary_journal->add_entry(ordinary_entry);
+		}
+		else
+		{
+			JEWEL_DEBUG_LOG << "Entry recognised as problematic: " << endl;
+			JEWEL_DEBUG_LOG << ordinary_entry.account().name() << "\t" << ordinary_entry.amount() << "\t" << endl;
+		}
 	}
 
 	// Save the OrdinaryJournal instances corresponding to ordinary journals
@@ -501,7 +581,85 @@ void import_from_nap
 			problematic_ordinary_journals.end()
 		)
 		{
-			// Any handling?
+			// We have a problematic journal. We need to find all the
+			// entries that belong with this journal. We need to create
+			// two replacement journals to house these entries:
+			// an actual one, and a draft one.
+			
+			// Process actual replacement journal
+			OrdinaryJournal actual_replacement_oj(*database_connection);
+			actual_replacement_oj.set_whether_actual(true);
+			unordered_map<int, vector<Entry> >::iterator const act_it =
+				special_actual_ordinary_vectors.find
+				(	problematic_ordinary_journal_map[*jvit]
+				);
+			assert (act_it != special_actual_ordinary_vectors.end());
+			cout << act_it->second.size() << endl;  // WARNING temp
+			int test_ctr = 0; // WARNING temp
+			for
+			(	vector<Entry>::iterator e_it = act_it->second.begin();
+				e_it != act_it->second.end();
+				++e_it
+			)
+			{
+				actual_replacement_oj.add_entry(*e_it);
+				JEWEL_DEBUG_LOG << "Ctr: " << test_ctr++ << endl;
+			}
+			actual_replacement_oj.set_date((*jvit)->date());
+			actual_replacement_oj.set_comment
+			(	"Actual entries from former N. A. P. journal no. " +
+				lexical_cast<string>(problematic_ordinary_journal_map[*jvit])
+			);
+			actual_replacement_oj.save();
+			
+			JEWEL_DEBUG_LOG << "Saved actual_replacement_oj: " << endl;
+			for
+			(	vector<Entry>::const_iterator it = actual_replacement_oj.entries().begin();
+				it != actual_replacement_oj.entries().end();
+				++it
+			)
+			{
+				JEWEL_DEBUG_LOG << it->account().name() << "\t" << it->amount() << endl;
+			}
+
+
+
+			// Process budget replacement journal
+			OrdinaryJournal budget_replacement_oj(*database_connection);
+			budget_replacement_oj.set_whether_actual(false);
+			unordered_map<int, vector<Entry> >::iterator const bud_it =
+				special_budget_ordinary_vectors.find
+				(	problematic_ordinary_journal_map[*jvit]
+				);
+			assert (bud_it != special_budget_ordinary_vectors.end());
+			cout << bud_it->second.size() << endl;  // WARNING temp
+			int test_ctrb = 0; // WARNING temp
+			for
+			(	vector<Entry>::iterator e_it = bud_it->second.begin();
+				e_it != bud_it->second.end();
+				++e_it
+			)
+			{
+				budget_replacement_oj.add_entry(*e_it);
+				JEWEL_DEBUG_LOG << "Ctr: " << test_ctrb++ << endl;
+			}
+			budget_replacement_oj.set_date((*jvit)->date());
+			budget_replacement_oj.set_comment
+			(	"Budget entries from former N. A. P. journal no. " +
+				lexical_cast<string>(problematic_ordinary_journal_map[*jvit])
+			);
+			budget_replacement_oj.save();
+
+			JEWEL_DEBUG_LOG << "Saved budget_replacement_oj: " << endl;
+			for
+			(	vector<Entry>::const_iterator it = budget_replacement_oj.entries().begin();
+				it != budget_replacement_oj.entries().end();
+				++it
+			)
+			{
+				JEWEL_DEBUG_LOG << it->account().name() << "\t" << it->amount() << endl;
+			}
+
 		}
 		else
 		{
@@ -512,6 +670,7 @@ void import_from_nap
 	cout << "The following journals (by N. A. P. identifier) could not "
 	     << "be imported automatically, and will need to be entered "
 		 << "manually into Phatbooks:" << endl;
+	/* The problematic _ordinary_ journals should have been captured now.
 	for
 	(	unordered_set< shared_ptr<OrdinaryJournal> >::const_iterator it =
 			problematic_ordinary_journals.begin();
@@ -521,6 +680,8 @@ void import_from_nap
 	{
 		cout << problematic_ordinary_journal_map[*it] << endl;
 	}
+	*/
+	// There might still be problematic draft journals though...
 	for
 	(	unordered_set< shared_ptr<DraftJournal> >::const_iterator it =
 		problematic_draft_journals.begin();
