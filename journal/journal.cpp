@@ -266,6 +266,11 @@ Journal::primary_table_name()
 	return "journals";
 }
 
+string
+Journal::primary_key_name()
+{
+	return "journal_id";
+}
 
 
 // WARNING temp play

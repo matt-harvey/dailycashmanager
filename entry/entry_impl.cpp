@@ -280,6 +280,11 @@ EntryImpl::primary_table_name()
 	return "entries";
 }
 
+std::string
+EntryImpl::primary_key_name()
+{
+	return "entry_id";
+}
 
 
 }  // namespace phatbooks

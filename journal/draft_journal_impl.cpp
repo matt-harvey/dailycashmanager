@@ -32,6 +32,12 @@ DraftJournalImpl::primary_table_name()
 	return Journal::primary_table_name();
 }
 
+string
+DraftJournalImpl::primary_key_name()
+{
+	return Journal::primary_key_name();
+}
+
 void
 DraftJournalImpl::set_whether_actual(bool p_is_actual)
 {

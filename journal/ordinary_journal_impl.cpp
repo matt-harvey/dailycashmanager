@@ -43,6 +43,12 @@ OrdinaryJournalImpl::primary_table_name()
 	return Journal::primary_table_name();
 }
 
+string
+OrdinaryJournalImpl::primary_key_name()
+{
+	return Journal::primary_key_name();
+}
+
 void
 OrdinaryJournalImpl::set_whether_actual(bool p_is_actual)
 {

@@ -124,6 +124,7 @@ public:
 	void swap(AccountImpl& rhs);
 
 	static std::string primary_table_name();
+	static std::string primary_key_name();
 private:
 
 

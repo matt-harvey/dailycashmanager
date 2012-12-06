@@ -262,4 +262,10 @@ RepeaterImpl::primary_table_name()
 	return "repeaters";
 }
 
+string
+RepeaterImpl::primary_key_name()
+{
+	return "repeater_id";
+}
+
 }  // namespace phatbooks

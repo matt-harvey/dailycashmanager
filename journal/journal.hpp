@@ -80,6 +80,7 @@ public:
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 	static std::string primary_table_name();
+	static std::string primary_key_name();
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per

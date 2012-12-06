@@ -284,6 +284,12 @@ AccountImpl::primary_table_name()
 	return "accounts";
 }
 
+string
+AccountImpl::primary_key_name()
+{
+	return "account_id";
+}
+
 
 
 

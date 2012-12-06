@@ -32,6 +32,7 @@ public:
 		IdentityMap;
 
 	static std::string primary_table_name();
+	static std::string primary_key_name();
 
 	/**
 	 * Create the tables required for the persistence

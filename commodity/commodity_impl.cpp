@@ -274,6 +274,11 @@ std::string CommodityImpl::primary_table_name()
 	return "commodities";
 }
 
+std::string CommodityImpl::primary_key_name()
+{
+	return "commodity_id";
+}
+
 
 	
 

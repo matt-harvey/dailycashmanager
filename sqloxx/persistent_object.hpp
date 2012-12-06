@@ -185,6 +185,21 @@ private:
  * See documentation for remove() function.
  *
  *
+ * <b>Derived class static functions</b>
+ *
+ * The folliwng functions need to be defined by the Derived class:
+ *
+ * static std::string Derived::primary_table_name();\n
+ * Should return the name of the database table in which all the
+ * primary keys of records for storing instances of Derived appear
+ * in the database. Should have no side effects.
+ *
+ * static std::string Derived::primary_key_name();\n
+ * Should return the name of the primary key column of the table
+ * named by primary_table_name(). Should have no side effects.
+ * (Note the primary key must be an autoincrementing primary key.)
+ *
+ *
  * <b>Template parameters</b>
  *
  * @param Derived The derived class. Derived should inherit publicly
@@ -723,10 +738,6 @@ private:
 	 // represent a \e unique object in the database with a unique id.
 	PersistentObject& operator=(PersistentObject const& rhs);
 
-	// Might throw InvalidConnection or std::bad_alloc.
-	// Provides strong guarantee.
-	std::string primary_key_name();
-
 	virtual void do_load() = 0;
 	virtual void do_save_existing() = 0;
 	virtual void do_save_new() = 0;
@@ -1208,45 +1219,6 @@ PersistentObject<Derived, Connection>::prospective_key() const
 	);
 }
 
-template
-<typename Derived, typename Connection>
-std::string
-PersistentObject<Derived, Connection>::primary_key_name()
-{
-	static bool calculated_already = false;
-	static std::string ret;
-	if (calculated_already)
-	{
-		return ret;
-	}
-	int const primary_key_info_field = 5;
-	int const column_name_field = 1;
-
-	// Might throw InvalidConnection or std::bad_alloc
-	SharedSQLStatement statement
-	(	database_connection(),
-		"pragma table_info(" + Derived::primary_table_name() + ")"
-	);
-	int primary_keys_found = 0;
-	while (statement.step())
-	{	
-		if (statement.extract<int>(primary_key_info_field) == 1)
-		{
-			if (primary_keys_found != 0)
-			{
-				throw DatabaseException
-				(	"Multiple primary keys found when 1 expected."
-				);
-			}
-			// Might throw InvalidConnection or std::bad_alloc
-			ret = statement.extract<std::string>(column_name_field);
-			++primary_keys_found;
-		}
-	}
-	calculated_already = true;
-	return ret;
-}
-
 
 template
 <typename Derived, typename Connection>
@@ -1259,7 +1231,7 @@ PersistentObject<Derived, Connection>::do_remove()
 	//
 	std::string const statement_text =
 		"delete from " + Derived::primary_table_name() + " where " +
-		primary_key_name() + " = :p";
+		Derived::primary_key_name() + " = :p";
 	
 	// Might throw InvalidConnection or std::bad_alloc
 	SharedSQLStatement statement(database_connection(), statement_text);
