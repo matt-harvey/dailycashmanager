@@ -1,5 +1,7 @@
 #include "derived_po.hpp"
 #include "sqloxx_tests_common.hpp"
+#include "sqloxx/database_connection.hpp"
+#include "sqloxx/handle.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include <boost/filesystem.hpp>
@@ -29,93 +31,79 @@ namespace filesystem = boost::filesystem;
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_one_param)
 {
-	DerivedPO dpo(pdbc->derived_po_map());
-	CHECK_THROW(dpo.id(), UninitializedOptionalException);
-	CHECK_EQUAL(dpo.x(), 0);
-	dpo.set_y(3.3);
-	CHECK_EQUAL(dpo.y(), 3.3);
+	Handle<DerivedPO> dpo(get_handle<DerivedPO>(*pdbc));
+	CHECK_THROW(dpo->id(), UninitializedOptionalException);
+	CHECK_EQUAL(dpo->x(), 0);
+	dpo->set_y(3.3);
+	CHECK_EQUAL(dpo->y(), 3.3);
 }
+
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_two_params)
 {
-	try  // WARNING temp
-	{
-		DerivedPO dpo(pdbc->derived_po_map());
-		dpo.set_x(10);
-		dpo.set_y(3.23);
-		dpo.save();
-		CHECK_EQUAL(dpo.id(), 1);
-		CHECK_EQUAL(dpo.x(), 10);
-		CHECK_EQUAL(dpo.y(), 3.23);
-		DerivedPO e(pdbc->derived_po_map(), 1);
-		CHECK_EQUAL(e.id(), dpo.id());
-		CHECK_EQUAL(e.id(), 1);
-		CHECK_EQUAL(e.x(), 10);
-		CHECK_EQUAL(e.y(), 3.23);
-	}
-	catch (jewel::Exception& e)
-	{
-		cerr << typeid(e).name() << endl;
-		cerr << e.what() << endl;
-		throw;
-	}
+	Handle<DerivedPO> dpo(get_handle<DerivedPO>(*pdbc));
+	dpo->set_x(10);
+	dpo->set_y(3.23);
+	dpo->save();
+	CHECK_EQUAL(dpo->id(), 1);
+	CHECK_EQUAL(dpo->x(), 10);
+	CHECK_EQUAL(dpo->y(), 3.23);
+	Handle<DerivedPO> e(get_handle<DerivedPO>(*pdbc, 1));
+	CHECK_EQUAL(e->id(), dpo->id());
+	CHECK_EQUAL(e->id(), 1);
+	CHECK_EQUAL(e->x(), 10);
+	CHECK_EQUAL(e->y(), 3.23);
 }
 
-/*
-TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_existing)
+TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_1)
 {
-	DerivedPO dpo1(pdbc->derived_po_map());
-	dpo1.set_x(78);
-	dpo1.set_y(4.5);
-	CHECK_THROW(dpo1.save_existing(), LogicError);
-	dpo1.save_new();
-	DerivedPO dpo2(pdbc->derived_po_map());
-	dpo2.set_x(234);
-	dpo2.set_y(29837.01);
-	dpo2.save_new();
-	CHECK_EQUAL(dpo2.id(), 2);
-	DerivedPO dpo2b(pdbc->derived_po_map(), 2);
-	CHECK_EQUAL(dpo2b.x(), 234);
-	CHECK_EQUAL(dpo2b.y(), 29837.01);
-	dpo2b.set_y(2.0);
-	dpo2b.save_existing();
-	DerivedPO dpo2c(pdbc->derived_po_map(), 2);
-	CHECK_EQUAL(dpo2c.id(), 2);
-	CHECK_EQUAL(dpo2c.x(), 234);
-	CHECK_EQUAL(dpo2c.y(), 2.0);
-	dpo2c.set_x(0);  // But don't call save_existing yet
-	DerivedPO dpo2d(pdbc->derived_po_map(), 2);
-	CHECK_EQUAL(dpo2d.x(), 234);
-	CHECK_EQUAL(dpo2d.y(), 2.0);
-	dpo2c.save_existing();  // Now the changed object is saved
-	DerivedPO dpo2e(pdbc->derived_po_map(), 2);
-	CHECK_EQUAL(dpo2e.x(), 0);
-	CHECK_EQUAL(dpo2e.y(), 2.0);
-	DerivedPO dpo2f(pdbc->derived_po_map(), 2);
-	dpo2f.set_x(5000);
-	dpo2f.save_existing();
-	DerivedPO dpo2g(pdbc->derived_po_map(), 2);
-	CHECK_EQUAL(dpo2g.x(), 5000);
-	CHECK_EQUAL(dpo2g.y(), 2.0);
-	DerivedPO dpo1b(pdbc->derived_po_map(), 1);
-	dpo1b.save_existing();
-	CHECK_EQUAL(dpo1b.x(), 78);
-	CHECK_EQUAL(dpo1b.y(), 4.5);
+	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(*pdbc));
+	dpo1->set_x(78);
+	dpo1->set_y(4.5);
+	dpo1->save();
+	Handle<DerivedPO> dpo2(get_handle<DerivedPO>(*pdbc));
+	dpo2->set_x(234);
+	dpo2->set_y(29837.01);
+	dpo2->save();
+	CHECK_EQUAL(dpo2->id(), 2);
+	Handle<DerivedPO> dpo2b(get_handle<DerivedPO>(*pdbc, 2));
+	CHECK_EQUAL(dpo2b->x(), 234);
+	CHECK_EQUAL(dpo2b->y(), 29837.01);
+	dpo2b->set_y(2.0);
+	dpo2b->save();
+	Handle<DerivedPO> dpo2c(get_handle<DerivedPO>(*pdbc, 2));
+	CHECK_EQUAL(dpo2c->id(), 2);
+	CHECK_EQUAL(dpo2c->x(), 234);
+	CHECK_EQUAL(dpo2c->y(), 2.0);
+	dpo2c->set_x(-10);  // But don't call save yet
+	Handle<DerivedPO> dpo2d(get_handle<DerivedPO>(*pdbc, 2));
+	CHECK_EQUAL(dpo2d->x(), -10); // Reflected before save, due to IdentityMap
+	CHECK_EQUAL(dpo2d->y(), 2.0);
+	dpo2c->save();  // Now the changed object is saved
+	Handle<DerivedPO> dpo2e(get_handle<DerivedPO>(*pdbc, 2));
+	CHECK_EQUAL(dpo2e->x(), -10);  // Still reflected after save.
+	CHECK_EQUAL(dpo2e->y(), 2.0);
+	Handle<DerivedPO> dpo1b(get_handle<DerivedPO>(*pdbc, 1));
+	dpo1b->save();
+	CHECK_EQUAL(dpo1b->x(), 78);
+	CHECK_EQUAL(dpo1b->y(), 4.5);
+	dpo1b->set_x(1000);
+	// All handles to this object reflect the change
+	CHECK_EQUAL(dpo1->x(), 1000);
 }
 
-TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
+// todo Tests need updating below here.
+TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_2)
 {
 	DerivedPO dpo1(pdbc->derived_po_map());
 	dpo1.set_x(978);
 	dpo1.set_y(-.238);
-	dpo1.save_new();
-
-	CHECK_THROW(dpo1.save_new(), LogicError);
+	dpo1.save();
 
 	DerivedPO dpo2(pdbc->derived_po_map());
 	dpo2.set_x(20);
 	dpo2.set_y(0.00030009);
-	dpo2.save_new();
+	dpo2.save();
 	CHECK_EQUAL(dpo1.id(), 1);
 	CHECK_EQUAL(dpo2.id(), 2);
 	SQLStatement troublesome_statement
@@ -138,9 +126,8 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 	dpo3.set_x(100);
 	dpo3.set_y(3.2);
 
-	CHECK_THROW(dpo3.save_new(), TableSizeException);
+	CHECK_THROW(dpo3.save(), TableSizeException);
 }
-*/
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
 {
@@ -181,7 +168,6 @@ TEST(test_derived_po_self_test)
 	// Tests protected functions of PersistentObject
 	CHECK_EQUAL(DerivedPO::self_test(), 0);
 }
-
 
 }  // namespace tests
 }  // namespace sqloxx

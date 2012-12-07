@@ -59,7 +59,7 @@ DerivedPO::self_test()
 {
 	int num_failures = 0;
 	DerivedPOFixture fixture;
-	IdentityMap& idm = fixture.pdbc->derived_po_map();
+	IdentityMap& idm = fixture.pdbc->identity_map<DerivedPO>();
 	DerivedPO dpo1(idm);
 	dpo1.set_x(3);
 	dpo1.set_y(4.08);

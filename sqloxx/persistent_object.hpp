@@ -82,6 +82,10 @@ private:
  * SQLite is supported) under a single primary key, that shall be
  * an auto-incrementing integer primary key.
  *
+ * <b>IMPORTANT</b>: Only handle a PersistentObject instances via Handle
+ * instances;\n
+ * and always obtain Handle instances either by copying / assigning other
+ * Handle instances, or by calling get_handle. See below.
  * 
  * <b>Identity Map Pattern</b>
  *
@@ -95,7 +99,8 @@ private:
  * class Derived. To obtain an instance of Derived, we call the
  * free-standing function sqloxx::get_handle<Derived>, declared in
  * database_connection.hpp. (See documentation therein for more details.)
- * This will return a Handle<Derived> to the underlying Derived
+ * 
+  * This will return a Handle<Derived> to the underlying Derived
  * instance, the instance itself being cached in the IdentityMap<Derived>
  * that is associated with the DatabaseConnection passed to get_handle.
  * Instances of Derived should only ever be handled via a Handle<Derived>.
@@ -222,6 +227,9 @@ private:
  * @todo Centralize list of preconditions in a single location.
  *
  * @todo Have a single location for documenting use of Sqloxx holistically.
+ *
+ * @todo Document requirement for Connection to have an identity_map<Derived>
+ * method - which is required by get_handle.
  */
 template<typename Derived, typename Connection>
 class PersistentObject

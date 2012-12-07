@@ -67,10 +67,6 @@ public:
 
 	typedef sqloxx::IdentityMap<DerivedPO, DerivedDatabaseConnection>
 		IdentityMap;
-	IdentityMap& derived_po_map()
-	{
-		return m_derived_po_map;
-	}
 
 	template <typename T>
 	IdentityMap& identity_map();
