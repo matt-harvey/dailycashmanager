@@ -3,7 +3,7 @@
 #include "sqloxx/next_auto_key.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
-#include "sqloxx/detail/sql_statement.hpp"
+#include "sqloxx/detail/sql_statement_impl.hpp"
 #include <unittest++/UnitTest++.h>
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
@@ -271,6 +271,8 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_setup_boolean_table)
 
 
 
+/*
+ * DatabaseConnection::provide_sql_statement(...) is now private.
 TEST_FIXTURE(DatabaseConnectionFixture, test_provide_sql_statement)
 {
 	dbc.execute_sql("create table dummy(col_A int, col_B int)");
@@ -292,6 +294,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_provide_sql_statement)
 	CHECK_EQUAL(selector_01.extract<int>(0), 300);
 	selector_01.step_final();
 }
+*/
 
 
 

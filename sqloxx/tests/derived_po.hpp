@@ -43,6 +43,7 @@ public:
 	static int self_test();	
 
 	static std::string primary_table_name();
+	static std::string primary_key_name();
 protected:
 	DerivedPO(DerivedPO const& rhs);
 
@@ -51,6 +52,7 @@ private:
 	// Uses default version of do_calculate_prospective_key
 	void do_save_existing();
 	void do_save_new();
+	void do_ghostify();
 	int m_x;
 	double m_y;
 };

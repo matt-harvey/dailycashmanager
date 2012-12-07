@@ -1,5 +1,7 @@
-#include "sqloxx_exceptions.hpp"
 #include "sqloxx_tests_common.hpp"
+#include "sqloxx/database_transaction.hpp"
+#include "sqloxx/sqloxx_exceptions.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <unittest++/UnitTest++.h>
 
 namespace sqloxx
@@ -62,7 +64,7 @@ TEST_FIXTURE
 )
 {
 	DatabaseConnection invaliddbc;
-	CHECK_THROW(Transaction transaction(dbc), InvalidConnection);
+	CHECK_THROW(DatabaseTransaction transaction(dbc), InvalidConnection);
 }
 
 
@@ -125,7 +127,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_cancel_transaction)
 	dbc.execute_sql("insert into dummy(col_A) values(100)");
 	transaction3.cancel();
 
-	CHECK_THROW(dbc.end_transaction(), TransactionNestingException);
+	CHECK_THROW(transaction3.commit(), TransactionNestingException);
 	SQLStatement s2(dbc, "select * from dummy where col_A = 100");
 	CHECK_EQUAL(s2.step(), false);
 
@@ -143,7 +145,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_cancel_transaction)
 	transaction4.cancel();
 
 	CHECK_THROW
-	(	transaction4.cancel_transaction(),
+	(	transaction4.cancel(),
 		TransactionNestingException
 	);
 	SQLStatement s3(dbc, "select * from dummy where col_A = 200");

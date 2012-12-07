@@ -55,7 +55,7 @@ set (test_files
      sqloxx/tests/database_connection_tests.cpp
 	 sqloxx/tests/derived_po.cpp
 	 sqloxx/tests/persistent_object_tests.cpp
-	 sqloxx/tests/shared_sql_statement_tests.cpp
+	 sqloxx/tests/sql_statement_tests.cpp
 	 sqloxx/tests/sqloxx_tests_common.cpp
 	 sqloxx/tests/atomicity_test.cpp
 	 sqloxx/tests/get_handle_tests.cpp

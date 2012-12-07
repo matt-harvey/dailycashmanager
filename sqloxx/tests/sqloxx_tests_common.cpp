@@ -1,7 +1,7 @@
 #include "sqloxx_tests_common.hpp"
 #include "derived_po.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/detail/sql_statement.hpp"
+#include "sqloxx/detail/sql_statement_impl.hpp"
 #include "sqloxx/detail/sqlite_dbconn.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include <boost/filesystem.hpp>

@@ -208,10 +208,26 @@ DerivedPO::do_save_new()
 	inserter.step_final();
 }
 
+void
+DerivedPO::do_ghostify()
+{
+	// No point doing anything here really, but in any
+	// case let's set m_x and m_y to values that look
+	// suspicious, to suggest ghostness.
+	m_x = -999999999;
+	m_y = -9.99999999;
+}
+
 string
 DerivedPO::primary_table_name()
 {
 	return "derived_pos";
+}
+
+string
+DerivedPO::primary_key_name()
+{
+	return "derived_po_id";
 }
 
 DerivedDatabaseConnection::DerivedDatabaseConnection():
