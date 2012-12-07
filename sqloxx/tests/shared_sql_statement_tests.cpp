@@ -50,7 +50,8 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_shared_sql_statement_constructor)
 	);
 	
 
-	// Now let's create an unproblematic SQLStatement. This shouldn't throw.
+	// Now let's create an unproblematic SharedSQLStatement.
+	// This shouldn't throw.
 	SharedSQLStatement normal(dbc, "create table dummy(Col_A text)");
 	
 	// Doesn't compile - no default constructor.

@@ -31,9 +31,9 @@ namespace sqloxx
  * Assumes keys start from 1.
  *
  * Important constraints: KeyType should be an integral type, and should
- * also be a type supported by SQLStatement::extract. If not, behaviour
+ * also be a type supported by SharedSQLStatement::extract. If not, behaviour
  * is \e undefined, although it is expected that compilation will fail
- * where a KeyType that is not accepted by SQLStatement::extract is
+ * where a KeyType that is not accepted by SharedSQLStatement::extract is
  * provided.
  * 
  * It is the caller's responsibility to ensure that KeyType is large

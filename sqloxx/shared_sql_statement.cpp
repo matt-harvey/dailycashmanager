@@ -1,6 +1,6 @@
 #include "shared_sql_statement.hpp"
 #include "database_connection.hpp"
-#include "detail/sql_statement.hpp"
+#include "detail/sql_statement_impl.hpp"
 #include <jewel/debug_log.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -41,7 +41,7 @@ SharedSQLStatement::extract<boost::int64_t>(int index)
 
 
 // All these total specialisations of SharedSQLStatement::extract
-// are to avoid having to put the call to SQLStatement::extract in the
+// are to avoid having to put the call to SQLStatementImpl::extract in the
 // header - which would introduce unwanted compilation dependencies.
 
 template <>

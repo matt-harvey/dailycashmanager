@@ -30,7 +30,7 @@ void catch_check_ok(DatabaseConnection& dbc);
 
 void abort_if_exists(boost::filesystem::path const& filepath);
 
-// To compare speed of SQLStatement with SharedSQLStatement, to
+// To compare speed of SQLStatementImpl with SharedSQLStatement, to
 // evaluate effectiveness of caching in latter.
 void do_speed_test();
 

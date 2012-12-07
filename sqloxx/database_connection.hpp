@@ -35,7 +35,7 @@ namespace sqloxx
 namespace detail
 {
 	class SQLiteDBConn;
-	class SQLStatement;
+	class SQLStatementImpl;
 }  // namespace detail
 
 
@@ -75,7 +75,7 @@ public:
 
 	typedef
 		boost::unordered_map
-		<	std::string, boost::shared_ptr<detail::SQLStatement>
+		<	std::string, boost::shared_ptr<detail::SQLStatementImpl>
 		>
 		StatementCache;
 	
@@ -83,7 +83,8 @@ public:
 	 * Initializes SQLite3 and creates a database connection initially
 	 * set to null, i.e. not connected to any file.
 	 *
-	 * @param p_cache_capacity indicates the number of SQLStatements to
+	 * @param p_cache_capacity indicates the number of SQLStatementImpl
+	 * instances to
 	 * be stored in a cache for reuse (via the class SharedSQLStatement)
 	 * by the DatabaseConnection instance.
 	 *
@@ -154,7 +155,7 @@ public:
 	 * Executes a string as an SQL command on the database connection.
 	 * This should be used only where the developer has complete
 	 * control of the string being passed, to prevent SQL injection
-	 * attacks. Generally, the functions provided by SQLStatement should
+	 * attacks. Generally, the functions provided by SQLStatementImpl should
 	 * be the preferred means for building and executing SQL statements.
 	 *
 	 * @throws DatabaseException or some exception inheriting thereof,
@@ -206,7 +207,7 @@ public:
 	public:
 		friend class SharedSQLStatement;
 	private:
-		static boost::shared_ptr<detail::SQLStatement>
+		static boost::shared_ptr<detail::SQLStatementImpl>
 			provide_sql_statement
 			(	DatabaseConnection& p_database_connection,
 				std::string const& p_statement_text
@@ -241,13 +242,14 @@ public:
 private:
 
 	/**
-	 * @returns a shared pointer to a SQLStatement. This will	
-	 * either point to an existing SQLStatement that is cached within
-	 * the DatabaseConnection (if a SQLStatement with \c
+	 * @returns a shared pointer to a SQLStatementImpl. This will	
+	 * either point to an existing SQLStatementImpl that is cached within
+	 * the DatabaseConnection (if a SQLStatementImpl with \c
 	 * statement_text has already been created on this DatabaseConnection and
 	 * is not being used elsewhere), or
-	 * will be a pointer to a newly created and new cached SQLStatement (if a 
-	 * SQLStatement with \c statement_text has not yet been created on this
+	 * will be a pointer to a newly created and new cached SQLStatementImpl
+	 * (if a 
+	 * SQLStatementImpl with \c statement_text has not yet been created on this
 	 * DatabaseConnection, or it has been created but is being used
 	 * elsewhere).
 	 *
@@ -265,15 +267,15 @@ private:
 	 * in str is syntactically acceptable to SQLite, <em>but</em> there
 	 * are characters in str after this statement, other than ';' and ' '.
 	 * This includes the case where there are further syntactically
-	 * acceptable SQL statements after the first one - as each SQLStatement
-	 * can encapsulate only one statement.
+	 * acceptable SQL statements after the first one - as each
+	 * SQLStatementImpl can encapsulate only one statement.
 	 *
 	 * @throws std::bad_alloc in the extremely unlikely event of memory
 	 * allocation failure in execution.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
-	boost::shared_ptr<detail::SQLStatement> provide_sql_statement
+	boost::shared_ptr<detail::SQLStatementImpl> provide_sql_statement
 	(	std::string const& statement_text
 	);
 
@@ -392,7 +394,7 @@ get_handle(Connection& dbc)
 
 
 inline
-boost::shared_ptr<detail::SQLStatement>
+boost::shared_ptr<detail::SQLStatementImpl>
 DatabaseConnection::StatementAttorney::provide_sql_statement
 (	DatabaseConnection& p_database_connection,
 	std::string const& p_statement_text

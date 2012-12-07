@@ -1,12 +1,12 @@
-#ifndef GUARD_sql_statement_hpp
-#define GUARD_sql_statement_hpp
+#ifndef GUARD_sql_statement_impl_hpp
+#define GUARD_sql_statement_impl_hpp
 
 // Hide from Doxygen
 /// @cond
 
-/** \file sql_statement.hpp
+/** \file sql_statement_impl.hpp
  *
- * \brief Header file pertaining to SQLStatement class.
+ * \brief Header file pertaining to SQLStatementImpl class.
  *
  * \author Matthew Harvey
  * \date 04 July 2012.
@@ -40,10 +40,10 @@ class SQLiteDBConn;
 
 /**
  * Wrapper class for sqlite_stmt*. This class is should not be
- * used except internally by the Sqloxx library. SQLStatement instances
+ * used except internally by the Sqloxx library. SQLStatementImpl instances
  * are themselves encapsulated by SharedSQLStatement instances.
  */
-class SQLStatement:
+class SQLStatementImpl:
 	private boost::noncopyable
 {
 public:
@@ -66,12 +66,12 @@ public:
 	 * in str is syntactically acceptable to SQLite, <em>but</em> there
 	 * are characters in str after this statement, other than ';' and ' '.
 	 * This includes the case where there are further syntactically
-	 * acceptable SQL statements after the first one - as each SQLStatement
+	 * acceptable SQL statements after the first one - as each SQLStatementImpl
 	 * can encapsulate only one statement.
 	 */
-	SQLStatement(SQLiteDBConn& p_sqlite_dbconn, std::string const& str);
+	SQLStatementImpl(SQLiteDBConn& p_sqlite_dbconn, std::string const& str);
 
-	~SQLStatement();
+	~SQLStatementImpl();
 
 	/**
 	 * Wrapper around SQLite bind functions.
@@ -89,7 +89,7 @@ public:
 	void bind(std::string const& parameter_name, T const& x);
 
 	/**
-	 * Where a SQLStatement has a result set available,
+	 * Where a SQLStatementImpl has a result set available,
 	 * this function (template) can be used to extract the value at
 	 * the \c indexth column of the current row (where \c index starts
 	 * counting at 0).
@@ -230,7 +230,7 @@ private:
 template <typename T>
 inline
 void
-SQLStatement::bind(std::string const& parameter_name, T const& x)
+SQLStatementImpl::bind(std::string const& parameter_name, T const& x)
 {
 	try
 	{
@@ -249,7 +249,7 @@ SQLStatement::bind(std::string const& parameter_name, T const& x)
 template <>
 inline
 int
-SQLStatement::extract<int>(int index)
+SQLStatementImpl::extract<int>(int index)
 {
 	check_column(index, SQLITE_INTEGER);
 	return sqlite3_column_int(m_statement, index);
@@ -258,7 +258,7 @@ SQLStatement::extract<int>(int index)
 template <>
 inline
 boost::int64_t
-SQLStatement::extract<boost::int64_t>(int index)
+SQLStatementImpl::extract<boost::int64_t>(int index)
 {
 	check_column(index, SQLITE_INTEGER);
 	return sqlite3_column_int64(m_statement, index);
@@ -267,7 +267,7 @@ SQLStatement::extract<boost::int64_t>(int index)
 template <>
 inline
 double
-SQLStatement::extract<double>(int index)
+SQLStatementImpl::extract<double>(int index)
 {
 	check_column(index, SQLITE_FLOAT);
 	return sqlite3_column_double(m_statement, index);
@@ -276,7 +276,7 @@ SQLStatement::extract<double>(int index)
 template <>
 inline
 std::string
-SQLStatement::extract<std::string>(int index)
+SQLStatementImpl::extract<std::string>(int index)
 {
 	check_column(index, SQLITE_TEXT);
 	const unsigned char* begin = sqlite3_column_text(m_statement, index);
@@ -288,7 +288,7 @@ SQLStatement::extract<std::string>(int index)
 
 inline
 void
-SQLStatement::reset()
+SQLStatementImpl::reset()
 {
 	if (m_statement)
 	{
@@ -300,7 +300,7 @@ SQLStatement::reset()
 
 inline
 void
-SQLStatement::clear_bindings()
+SQLStatementImpl::clear_bindings()
 {
 	if (m_statement)
 	{
@@ -312,14 +312,14 @@ SQLStatement::clear_bindings()
 
 inline
 bool
-SQLStatement::is_locked() const
+SQLStatementImpl::is_locked() const
 {
 	return m_is_locked;
 }
 
 inline
 void
-SQLStatement::lock()
+SQLStatementImpl::lock()
 {
 	m_is_locked = true;
 	return;
@@ -327,7 +327,7 @@ SQLStatement::lock()
 
 inline
 void
-SQLStatement::unlock()
+SQLStatementImpl::unlock()
 {
 	m_is_locked = false;
 	return;
@@ -341,5 +341,5 @@ SQLStatement::unlock()
 /// @endcond
 // End hiding from Doxygen
 
-#endif  // GUARD_sql_statement.hpp
+#endif  // GUARD_sql_statement_impl.hpp
 

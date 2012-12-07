@@ -37,7 +37,7 @@ set (main_files
 	 sqloxx/database_transaction.cpp
 	 sqloxx/shared_sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
-	 sqloxx/detail/sql_statement.cpp
+	 sqloxx/detail/sql_statement_impl.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
 	 phatbooks_text_session/phatbooks_text_session.cpp
 	 repeater/repeater.cpp
@@ -51,7 +51,7 @@ set (test_files
 	 sqloxx/database_transaction.cpp
 	 sqloxx/shared_sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
-	 sqloxx/detail/sql_statement.cpp
+	 sqloxx/detail/sql_statement_impl.cpp
      sqloxx/tests/database_connection_tests.cpp
 	 sqloxx/tests/derived_po.cpp
 	 sqloxx/tests/persistent_object_tests.cpp

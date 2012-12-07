@@ -382,7 +382,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_cancel_transaction)
 TEST_FIXTURE(DatabaseConnectionFixture, test_provide_sql_statement)
 {
 	dbc.execute_sql("create table dummy(col_A int, col_B int)");
-	shared_ptr<detail::SQLStatement> statement_pointer =
+	shared_ptr<detail::SQLStatementImpl> statement_pointer =
 		dbc.provide_sql_statement
 		(	"insert into dummy(col_A, col_B) values(300, 10)"
 		);

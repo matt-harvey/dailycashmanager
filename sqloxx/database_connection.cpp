@@ -2,7 +2,7 @@
 #include "detail/sqlite_dbconn.hpp"
 #include "shared_sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
-#include "detail/sql_statement.hpp"
+#include "detail/sql_statement_impl.hpp"
 #include <boost/filesystem/path.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
@@ -170,7 +170,7 @@ DatabaseConnection::cancel_transaction()
 	return;
 }
 
-shared_ptr<detail::SQLStatement>
+shared_ptr<detail::SQLStatementImpl>
 DatabaseConnection::provide_sql_statement(string const& statement_text)
 {
 	if (!is_valid())
@@ -182,7 +182,7 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 	);
 	if (it != m_statement_cache.end())
 	{
-		shared_ptr<detail::SQLStatement> existing_statement(it->second);
+		shared_ptr<detail::SQLStatementImpl> existing_statement(it->second);
 		if (!(existing_statement->is_locked()))
 		{
 			existing_statement->lock();
@@ -190,8 +190,8 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 		}
 	}
 	assert (it == m_statement_cache.end() || it->second->is_locked());
-	shared_ptr<detail::SQLStatement> new_statement
-	(	new detail::SQLStatement(*m_sqlite_dbconn, statement_text)
+	shared_ptr<detail::SQLStatementImpl> new_statement
+	(	new detail::SQLStatementImpl(*m_sqlite_dbconn, statement_text)
 	);
 	new_statement->lock();
 	if (m_statement_cache.size() != m_cache_capacity)

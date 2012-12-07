@@ -1,4 +1,4 @@
-#include "sql_statement.hpp"
+#include "sql_statement_impl.hpp"
 #include "sqlite_dbconn.hpp"
 
 #include <sqlite3.h>
@@ -16,7 +16,7 @@ namespace detail
 
 
 
-SQLStatement::SQLStatement
+SQLStatementImpl::SQLStatementImpl
 (	SQLiteDBConn& p_sqlite_dbconn,
 	string const& str
 ):
@@ -27,7 +27,7 @@ SQLStatement::SQLStatement
 	if (!p_sqlite_dbconn.is_valid())
 	{
 		throw InvalidConnection
-		(	"Attempt to initialize SQLStatement with invalid "
+		(	"Attempt to initialize SQLStatementImpl with invalid "
 			"DatabaseConnection."
 		);
 	}
@@ -59,7 +59,7 @@ SQLStatement::SQLStatement
 			// ungrammatical.
 			throw TooManyStatements
 			(	"Compound SQL statement passed to constructor of "
-				"SQLStatement - which can handle only single statements."
+				"SQLStatementImpl - which can handle only single statements."
 			);
 		}
 	}
@@ -67,7 +67,7 @@ SQLStatement::SQLStatement
 }
 
 
-SQLStatement::~SQLStatement()
+SQLStatementImpl::~SQLStatementImpl()
 {
 	if (m_statement)
 	{
@@ -78,7 +78,7 @@ SQLStatement::~SQLStatement()
 
 
 void
-SQLStatement::check_column(int index, int value_type)
+SQLStatementImpl::check_column(int index, int value_type)
 {
 	int const num_columns = sqlite3_column_count(m_statement);
 	if (num_columns == 0)
@@ -104,7 +104,7 @@ SQLStatement::check_column(int index, int value_type)
 
 
 void
-SQLStatement::throw_on_failure(int errcode)
+SQLStatementImpl::throw_on_failure(int errcode)
 {
 	m_sqlite_dbconn.throw_on_failure(errcode);
 	return;
@@ -112,7 +112,7 @@ SQLStatement::throw_on_failure(int errcode)
 
 
 void
-SQLStatement::do_bind(string const& parameter_name, int x)
+SQLStatementImpl::do_bind(string const& parameter_name, int x)
 {
 	throw_on_failure
 	(	sqlite3_bind_int(m_statement, parameter_index(parameter_name), x)
@@ -122,7 +122,7 @@ SQLStatement::do_bind(string const& parameter_name, int x)
 
 
 void
-SQLStatement::do_bind(string const& parameter_name, boost::int64_t x)
+SQLStatementImpl::do_bind(string const& parameter_name, boost::int64_t x)
 {
 	throw_on_failure
 	(	sqlite3_bind_int64(m_statement, parameter_index(parameter_name), x)
@@ -132,7 +132,7 @@ SQLStatement::do_bind(string const& parameter_name, boost::int64_t x)
 
 
 void
-SQLStatement::do_bind(string const& parameter_name, double x)
+SQLStatementImpl::do_bind(string const& parameter_name, double x)
 {
 	throw_on_failure
 	(	sqlite3_bind_double(m_statement, parameter_index(parameter_name), x)
@@ -142,7 +142,7 @@ SQLStatement::do_bind(string const& parameter_name, double x)
 
 
 void
-SQLStatement::do_bind(string const& parameter_name, string const& x)
+SQLStatementImpl::do_bind(string const& parameter_name, string const& x)
 {
 	throw_on_failure
 	(	sqlite3_bind_text
@@ -158,7 +158,7 @@ SQLStatement::do_bind(string const& parameter_name, string const& x)
 		
 
 bool
-SQLStatement::step()
+SQLStatementImpl::step()
 {
 	if (!m_sqlite_dbconn.is_valid())
 	{
@@ -193,7 +193,7 @@ SQLStatement::step()
 
 
 void
-SQLStatement::step_final()
+SQLStatementImpl::step_final()
 {
 	if (step())
 	{
@@ -207,7 +207,7 @@ SQLStatement::step_final()
 
 
 int
-SQLStatement::parameter_index
+SQLStatementImpl::parameter_index
 (	string const& parameter_name
 )
 const

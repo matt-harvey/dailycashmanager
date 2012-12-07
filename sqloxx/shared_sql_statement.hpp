@@ -2,7 +2,7 @@
 #define shared_sql_statement_hpp
 
 #include "database_connection.hpp"
-#include "detail/sql_statement.hpp"
+#include "detail/sql_statement_impl.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -23,16 +23,17 @@ namespace sqloxx
  * The details of caching are handled within the DatabaseConnection
  * class. The client just calls the constructor and uses the statement.
  *
- * Clients of Sqloxx should not use the underlying SQLStatement class
+ * Clients of Sqloxx should not use the underlying SQLStatementImpl class
  * directly, but only ever via SharedSQLStatement.
  *
  * If an exception is thrown by an method of SharedSQLStatement, the
  * caller should in general no longer rely on the state of SharedSQLStatement
  * being valid. However, when the SharedSQLStatement goes out of scope or
- * is otherwise destroyed, the underlying SQLStatement will be reset to a
+ * is otherwise destroyed, the underlying SQLStatementImpl will be reset to a
  * valid state. Furthermore, a locking mechanism ensures that two
- * SharedSQLStatements cannot share the same underlying SQLStatement. This
- * prevent SQLStatements in an invalid state from being used, unless used
+ * SharedSQLStatements cannot share the same underlying SQLStatementImpl. This
+ * prevents SQLStatementImpl instance that are in an invalid state
+ * from being used unless used
  * via the very same SharedSQLStatement that triggered the invalid state.
  */
 class SharedSQLStatement:
@@ -77,7 +78,7 @@ public:
 
 	/**
 	 * Destructor "clears" the state of the underlying cached
-	 * SQLStatement for re-use by a subsequent SharedSQLStatement with the
+	 * SQLStatementImpl for re-use by a subsequent SharedSQLStatement with the
 	 * same statement text. (Client code does not need to concern itself
 	 * with the details of this.)
 	 *
@@ -109,7 +110,7 @@ public:
 	void bind(std::string const& parameter_name, std::string const& x);
 
 	/**
-	 * Where a SQLStatement has a result set available,
+	 * Where a statement has a result set available,
 	 * this function (template) can be used to extract the value at
 	 * the \e indexth column of the current row (where \e index starts
 	 * counting at 0).
@@ -194,7 +195,7 @@ public:
 
 private:
 
-	boost::shared_ptr<detail::SQLStatement> m_sql_statement;
+	boost::shared_ptr<detail::SQLStatementImpl> m_sql_statement;
 
 };
 

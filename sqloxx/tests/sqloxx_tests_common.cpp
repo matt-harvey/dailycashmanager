@@ -19,7 +19,7 @@ using std::cerr;
 using std::endl;
 using std::string;
 using std::vector;
-using sqloxx::detail::SQLStatement;
+using sqloxx::detail::SQLStatementImpl;
 using sqloxx::detail::SQLiteDBConn;
 
 namespace filesystem = boost::filesystem;
@@ -97,17 +97,17 @@ do_speed_test()
 	boost::filesystem::remove(filename);
 
 
-	// With SQLStatement
+	// With SQLStatementImpl
 	SQLiteDBConn sdbc;
 	sdbc.open(filename);
 	sdbc.execute_sql(table_creation_string);
 
-	cout << "Timing with SQLStatement." << endl;
+	cout << "Timing with SQLStatementImpl." << endl;
 	sdbc.execute_sql("begin");
 	Stopwatch sw0;
 	for (int i = 0; i != loops; ++i)
 	{
-		SQLStatement s(sdbc, statements[i % num_statements]);
+		SQLStatementImpl s(sdbc, statements[i % num_statements]);
 		// s.step_final();
 	}
 	sw0.log();
