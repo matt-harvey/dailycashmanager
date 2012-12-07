@@ -28,7 +28,6 @@ namespace tests
 
 namespace filesystem = boost::filesystem;
 
-
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_one_param)
 {
 	Handle<DerivedPO> dpo(get_handle<DerivedPO>(*pdbc));
@@ -95,17 +94,17 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_1)
 // todo Tests need updating below here.
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_2)
 {
-	DerivedPO dpo1(pdbc->derived_po_map());
-	dpo1.set_x(978);
-	dpo1.set_y(-.238);
-	dpo1.save();
+	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(*pdbc));
+	dpo1->set_x(978);
+	dpo1->set_y(-.238);
+	dpo1->save();
 
-	DerivedPO dpo2(pdbc->derived_po_map());
-	dpo2.set_x(20);
-	dpo2.set_y(0.00030009);
-	dpo2.save();
-	CHECK_EQUAL(dpo1.id(), 1);
-	CHECK_EQUAL(dpo2.id(), 2);
+	Handle<DerivedPO> dpo2(get_handle<DerivedPO>(*pdbc));
+	dpo2->set_x(20);
+	dpo2->set_y(0.00030009);
+	dpo2->save();
+	CHECK_EQUAL(dpo1->id(), 1);
+	CHECK_EQUAL(dpo2->id(), 2);
 	SQLStatement troublesome_statement
 	(	*pdbc,
 		"insert into derived_pos(derived_po_id, x, y) values"
@@ -120,52 +119,61 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_2)
 		"select derived_po_id from derived_pos where x = 30"
 	);
 	check_troublesome.step();
-	CHECK_EQUAL(check_troublesome.extract<int>(0), numeric_limits<int>::max());
+	CHECK_EQUAL
+	(	check_troublesome.extract<int>(0),
+		numeric_limits<int>::max()
+	);
 	check_troublesome.step_final();
-	DerivedPO dpo3(pdbc->derived_po_map());
-	dpo3.set_x(100);
-	dpo3.set_y(3.2);
 
-	CHECK_THROW(dpo3.save(), TableSizeException);
+	Handle<DerivedPO> dpo3(get_handle<DerivedPO>(*pdbc));
+	dpo3->set_x(100);
+	dpo3->set_y(3.2);
+
+	CHECK_THROW(dpo3->save(), TableSizeException);
+	
+	// But these are still OK
+	dpo1->save();
+	dpo1->save();
+	dpo1->save();
 }
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
 {
-	DerivedPO dpo1(pdbc->derived_po_map());
-	CHECK_THROW(dpo1.id(), UninitializedOptionalException);
-	dpo1.save();
-	CHECK_EQUAL(dpo1.id(), 1);
-	DerivedPO dpo2(pdbc->derived_po_map());
-	CHECK_THROW(dpo2.id(), UninitializedOptionalException);
-	CHECK_THROW(dpo2.id(), UninitializedOptionalException);
-	dpo2.save();
-	CHECK_EQUAL(dpo2.id(), 2);
-	dpo2.save();
-	CHECK_EQUAL(dpo2.id(), 2);
+	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(*pdbc));
+	CHECK_THROW(dpo1->id(), UninitializedOptionalException);
+	dpo1->save();
+	CHECK_EQUAL(dpo1->id(), 1);
+	Handle<DerivedPO> dpo2(get_handle<DerivedPO>(*pdbc));
+	CHECK_THROW(dpo2->id(), UninitializedOptionalException);
+	CHECK_THROW(dpo2->id(), UninitializedOptionalException);
+	dpo2->save();
+	CHECK_EQUAL(dpo2->id(), 2);
+	dpo2->save();
+	CHECK_EQUAL(dpo2->id(), 2);
 }
 
 TEST_FIXTURE(DerivedPOFixture, test_load_indirectly)
 {
 	// load is protected method but we here we test it indirectly
 	// via getting functions we know call it
-	DerivedPO dpo1(pdbc->derived_po_map());
+	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(*pdbc));
 	int const a = 2097601234;
 	double const b = 72973.2987300;
-	dpo1.set_x(a);
-	dpo1.set_y(b);
-	assert (dpo1.x() == a);
-	assert (dpo1.y() == b);
-	dpo1.save();
+	dpo1->set_x(a);
+	dpo1->set_y(b);
+	assert (dpo1->x() == a);
+	assert (dpo1->y() == b);
+	dpo1->save();
 
-	DerivedPO dpo2(pdbc->derived_po_map(), 1);
-	CHECK_EQUAL(dpo2.id(), 1);
-	CHECK_EQUAL(dpo2.x(), a);  // load called here
-	CHECK_EQUAL(dpo2.y(), b);  // and here
+	Handle<DerivedPO> dpo2(get_handle<DerivedPO>(*pdbc, 1));
+	CHECK_EQUAL(dpo2->id(), 1);
+	CHECK_EQUAL(dpo2->x(), a);  // load called here
+	CHECK_EQUAL(dpo2->y(), b);  // and here
 }
 
 TEST(test_derived_po_self_test)
 {
-	// Tests protected functions of PersistentObject
+	// Tests certain protected functions of PersistentObject
 	CHECK_EQUAL(DerivedPO::self_test(), 0);
 }
 

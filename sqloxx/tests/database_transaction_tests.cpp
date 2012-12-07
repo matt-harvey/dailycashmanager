@@ -11,21 +11,21 @@ namespace tests
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_transaction_nesting_exception_01)
 {
-	DatabaseTransaction transaction(dbc);
-	transaction.cancel();
-	CHECK_THROW(transaction.cancel(), TransactionNestingException);
+	DatabaseTransaction transaction1(dbc);
+	transaction1.cancel();
+	CHECK_THROW(transaction1.cancel(), TransactionNestingException);
 
 	DatabaseTransaction transaction2(dbc);
-	transaction.cancel();
-	CHECK_THROW(transaction.commit(), TransactionNestingException);
+	transaction2.cancel();
+	CHECK_THROW(transaction2.commit(), TransactionNestingException);
 
 	DatabaseTransaction transaction3(dbc);
-	transaction.commit();
-	CHECK_THROW(transaction.cancel(), TransactionNestingException);
+	transaction3.commit();
+	CHECK_THROW(transaction3.cancel(), TransactionNestingException);
 
 	DatabaseTransaction transaction4(dbc);
-	transaction.commit();
-	CHECK_THROW(transaction.commit(), TransactionNestingException);
+	transaction4.commit();
+	CHECK_THROW(transaction4.commit(), TransactionNestingException);
 }
 
 
@@ -58,13 +58,13 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_transaction_nesting_exception_02)
 }
 
 
-TEST_FIXTURE
-(	DatabaseConnectionFixture,
-	test_transaction_response_to_invalid_connection
-)
+TEST(test_transaction_response_to_invalid_connection)
 {
 	DatabaseConnection invaliddbc;
-	CHECK_THROW(DatabaseTransaction transaction(dbc), InvalidConnection);
+	CHECK_THROW
+	(	DatabaseTransaction transaction(invaliddbc),
+		InvalidConnection
+	);
 }
 
 
