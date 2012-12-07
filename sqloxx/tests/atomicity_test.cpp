@@ -1,5 +1,6 @@
 #include "atomicity_test.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/database_transaction.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include <boost/filesystem.hpp>
 #include <cassert>
@@ -71,7 +72,7 @@ setup_atomicity_test(DatabaseConnection& dbc)
 	);
 	
 	// Test failing transaction
-	dbc.begin_transaction();
+	DatabaseTransaction transaction(dbc);
 	dbc.execute_sql
 	(	"insert into dummy(col_B, col_C) values('Bye!', 'Y');"
 	);
@@ -81,7 +82,7 @@ setup_atomicity_test(DatabaseConnection& dbc)
 	
 	// Execution never reaches here - transaction does not complete
 	assert (false);
-	dbc.end_transaction();
+	transaction.commit();
 	return;
 }
 
