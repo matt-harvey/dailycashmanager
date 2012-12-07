@@ -1,6 +1,6 @@
 #include "derived_po.hpp"
 #include "sqloxx_tests_common.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
@@ -118,7 +118,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 	dpo2.save_new();
 	CHECK_EQUAL(dpo1.id(), 1);
 	CHECK_EQUAL(dpo2.id(), 2);
-	SharedSQLStatement troublesome_statement
+	SQLStatement troublesome_statement
 	(	*pdbc,
 		"insert into derived_pos(derived_po_id, x, y) values"
 		"(:i, :x, :y)"
@@ -127,7 +127,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_new)
 	troublesome_statement.bind(":x", 30);
 	troublesome_statement.bind(":y", 39.091);
 	troublesome_statement.step_final();
-	SharedSQLStatement check_troublesome
+	SQLStatement check_troublesome
 	(	*pdbc,
 		"select derived_po_id from derived_pos where x = 30"
 	);

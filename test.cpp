@@ -25,7 +25,7 @@
 #include "sqloxx/tests/sqloxx_tests_common.hpp"
 
 using sqloxx::DatabaseConnection;
-using sqloxx::SharedSQLStatement;
+using sqloxx::SQLStatement;
 using sqloxx::tests::do_atomicity_test;
 using sqloxx::tests::do_speed_test;
 using std::cout;

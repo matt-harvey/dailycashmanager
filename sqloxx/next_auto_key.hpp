@@ -1,7 +1,7 @@
 #ifndef GUARD_next_auto_key
 #define GUARD_next_auto_key
 
-#include "shared_sql_statement.hpp"
+#include "sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <limits>
 #include <string>
@@ -31,9 +31,9 @@ namespace sqloxx
  * Assumes keys start from 1.
  *
  * Important constraints: KeyType should be an integral type, and should
- * also be a type supported by SharedSQLStatement::extract. If not, behaviour
+ * also be a type supported by SQLStatement::extract. If not, behaviour
  * is \e undefined, although it is expected that compilation will fail
- * where a KeyType that is not accepted by SharedSQLStatement::extract is
+ * where a KeyType that is not accepted by SQLStatement::extract is
  * provided.
  * 
  * It is the caller's responsibility to ensure that KeyType is large
@@ -77,7 +77,7 @@ next_auto_key(Connection& dbc, std::string const& table_name)
 {
 	try
 	{
-		SharedSQLStatement statement
+		SQLStatement statement
 		(	dbc,
 			"select seq from sqlite_sequence where name = :p"
 		);
@@ -98,7 +98,7 @@ next_auto_key(Connection& dbc, std::string const& table_name)
 	catch (SQLiteError&)
 	{
 		// Catches case where there is no sqlite_sequence table
-		SharedSQLStatement sequence_finder
+		SQLStatement sequence_finder
 		(	dbc,
 			"select name from sqlite_master where type = 'table' and "
 			"name = 'sqlite_sequence';"

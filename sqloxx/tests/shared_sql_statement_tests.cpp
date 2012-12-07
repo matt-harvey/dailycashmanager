@@ -1,5 +1,5 @@
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include "sqloxx/tests/sqloxx_tests_common.hpp"
 
@@ -27,14 +27,14 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_shared_sql_statement_constructor)
 {
 	// Check behaviour with SQL syntax error
 	CHECK_THROW
-	(	SharedSQLStatement unsyntactic(dbc, "unsyntactical gobbledigook"),
+	(	SQLStatement unsyntactic(dbc, "unsyntactical gobbledigook"),
 		SQLiteException
 	);
 	
 	// Check behaviour with invalid database connection
 	DatabaseConnection temp_dbc;
 	CHECK_THROW
-	(	SharedSQLStatement unconnected_to_file
+	(	SQLStatement unconnected_to_file
 		(	temp_dbc,
 			"create table dummy(Col_A text);"
 		),
@@ -45,17 +45,17 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_shared_sql_statement_constructor)
 	// syntax error...)
 	DatabaseConnection dbc2;
 	CHECK_THROW
-	(	SharedSQLStatement unsyntactic2(dbc2, "unsyntacticalsjkdf ghh"),
+	(	SQLStatement unsyntactic2(dbc2, "unsyntacticalsjkdf ghh"),
 		InvalidConnection
 	);
 	
 
-	// Now let's create an unproblematic SharedSQLStatement.
+	// Now let's create an unproblematic SQLStatement.
 	// This shouldn't throw.
-	SharedSQLStatement normal(dbc, "create table dummy(Col_A text)");
+	SQLStatement normal(dbc, "create table dummy(Col_A text)");
 	
 	// Doesn't compile - no default constructor.
-	// SharedSQLStatement s00;
+	// SQLStatement s00;
 }
 
 
@@ -67,15 +67,15 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_multi_statements_rejected)
 		"create table satellites(name text unique, "
 		"planet_name text references planets);"
 	);
-	SharedSQLStatement s0
+	SQLStatement s0
 	(	dbc,
 		"insert into planets(name, size) values('Mars', 'medium'); ;;    "
 	);
-	SharedSQLStatement s0a
+	SQLStatement s0a
 	(	dbc,
 		"insert into planets(name, size) values('Saturn', 'large');"
 	);
-	SharedSQLStatement s0b
+	SQLStatement s0b
 	(	dbc,
 		"insert into planets(name, size) values('Mercury', 'small')    ;  "
 	);
@@ -83,7 +83,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_multi_statements_rejected)
 	// But these should throw
 	CHECK_THROW
 	(
-		SharedSQLStatement s1
+		SQLStatement s1
 		(	dbc,
 			"insert into planets(name, size) values('Earth', 'medium'); "
 			"insert into planets(name, size) values('Jupiter', 'large')"
@@ -92,7 +92,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_multi_statements_rejected)
 	);
 	CHECK_THROW
 	(
-		SharedSQLStatement s2
+		SQLStatement s2
 		(	dbc,
 			"insert into planets(name, size) values('Earth', 'medium'); "
 			"gooblalsdfkj(("
@@ -101,7 +101,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_multi_statements_rejected)
 	);
 	CHECK_THROW
 	(
-		SharedSQLStatement s2
+		SQLStatement s2
 		(	dbc,
 			"insert into planets(name, size) values('Earth', 'medium'))); "
 			"Sasdf(("
@@ -111,7 +111,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_multi_statements_rejected)
 	// But this should be OK and with database still in valid state even after
 	// the above
 	CHECK(dbc.is_valid());
-	SharedSQLStatement s3
+	SQLStatement s3
 	(	dbc,
 		"insert into planets(name, size) values('Earth', 'medium');"
 	);
@@ -127,7 +127,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 		"Col_E float)"
 	);
 
-	SharedSQLStatement statement_01
+	SQLStatement statement_01
 	(	dbc,
 		"insert into dummy(Col_B, Col_C, Col_D, Col_E) values(:B, :C, :D, :E)"
 	);
@@ -143,7 +143,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 
 	string const goodbye_02("goodbye");
 	int const x_02(293874);
-	SharedSQLStatement statement_02
+	SQLStatement statement_02
 	(	dbc,
 		"insert into dummy(Col_B, Col_C) values(:B, :C)"
 	);
@@ -151,7 +151,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 	statement_02.bind(":C", x_02);
 	statement_02.step_final();
 	
-	SharedSQLStatement selector_01
+	SQLStatement selector_01
 	(	dbc,
 		"select Col_B, Col_C, Col_D, Col_E from dummy where Col_A = 1"
 	);
@@ -161,7 +161,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 	CHECK_EQUAL(selector_01.extract<int>(1), x_01);
 	CHECK_EQUAL(selector_01.extract<double>(3), z_01);
 
-	SharedSQLStatement selector_02
+	SQLStatement selector_02
 	(	dbc,
 		"select Col_B, Col_C, Col_D, Col_E from dummy where Col_A = 2"
 	);
@@ -174,7 +174,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 TEST_FIXTURE(DatabaseConnectionFixture, test_bind_exception)
 {
 	dbc.execute_sql("create table dummy(Col_A integer, Col_B text);");
-	SharedSQLStatement insertion_statement
+	SQLStatement insertion_statement
 	(	dbc,
 		"insert into dummy(Col_A, Col_B) values(:A, :B)"
 	);
@@ -185,7 +185,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_exception)
 	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(3, 'three')");
 	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(4, 'four')");
 	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(4, 'fourB')");
-	SharedSQLStatement selector
+	SQLStatement selector
 	(	dbc,
 		"select Col_A, Col_B from dummy where Col_A = :A"
 	);
@@ -205,7 +205,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_value_type_exception)
 {
 	dbc.execute_sql("create table dummy(Col_A integer, Col_B text)");
 	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(3, 'hey');");
-	SharedSQLStatement selection_statement
+	SQLStatement selection_statement
 	(	dbc,
 		"select Col_A, Col_B from dummy where Col_A = 3"
 	);
@@ -218,7 +218,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_value_type_exception)
 
 	dbc.execute_sql("create table dummy2(Col_X double)");
 	dbc.execute_sql("insert into dummy2(Col_X) values(79610.9601)");
-	SharedSQLStatement selection_statement2
+	SQLStatement selection_statement2
 	(	dbc,
 		"select * from dummy2"
 	);
@@ -232,7 +232,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_high)
 {
 	dbc.execute_sql("create table dummy(Col_A integer, Col_B integer)");
 	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(3, 10);");
-	SharedSQLStatement selection_statement
+	SQLStatement selection_statement
 	(	dbc,
 		"select Col_A, Col_B from dummy where Col_A = 3"
 	);
@@ -251,7 +251,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_low)
 {
 	dbc.execute_sql("create table dummy(Col_A text, Col_B integer)");
 	dbc.execute_sql("insert into dummy(Col_A, Col_B) values('Hello', 9)");
-	SharedSQLStatement selection_statement
+	SQLStatement selection_statement
 	(	dbc,
 		"select Col_A, Col_B from dummy"
 	);
@@ -275,19 +275,19 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_step)
 	);
 
 	// Populate table
-	SharedSQLStatement insertion_statement_01
+	SQLStatement insertion_statement_01
 	(	dbc,
 		"insert into planets(name, size) values('Mercury', 'small')"
 	);
 	bool const insertion_step_01 = insertion_statement_01.step();
 	CHECK_EQUAL(insertion_step_01, false);
-	SharedSQLStatement insertion_statement_02
+	SQLStatement insertion_statement_02
 	(	dbc,
 		"insert into planets(name, size) values('Venus', 'medium')"
 	);
 	bool const insertion_step_02 = insertion_statement_02.step();
 	CHECK_EQUAL(insertion_step_02, false);
-	SharedSQLStatement insertion_statement_03
+	SQLStatement insertion_statement_03
 	(	dbc,
 		"insert into planets(name, size) values('Earth', 'medium')"
 	);
@@ -295,7 +295,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_step)
 	CHECK(!insertion_step_03);
 	
 	// Extract from table
-	SharedSQLStatement selection_statement_01
+	SQLStatement selection_statement_01
 	(	dbc,
 		"select name, size from planets where size = 'medium'"
 	);
@@ -315,19 +315,19 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_step_final)
 	);
 
 	// Populate table
-	SharedSQLStatement insertion_statement_01
+	SQLStatement insertion_statement_01
 	(	dbc,
 		"insert into planets(name, size) values('Jupiter', 'large')"
 	);
 	insertion_statement_01.step_final();  // Shouldn't throw
-	SharedSQLStatement insertion_statement_02
+	SQLStatement insertion_statement_02
 	(	dbc,
 		"insert into planets(name, size) values('Saturn', 'large')"
 	);
 	insertion_statement_02.step_final();
 
 	// Extract from table
-	SharedSQLStatement selection_statement_01
+	SQLStatement selection_statement_01
 	(	dbc,
 		"select name, size from planets where size = 'large' order by name"
 	);
@@ -352,7 +352,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_reset)
 	dbc.execute_sql("insert into planets(name, visited) values('Uranus', 0)");
 
 	// Extract from table
-	SharedSQLStatement selection_statement
+	SQLStatement selection_statement
 	(	dbc,
 		"select name from planets where visited = :visited order by name"
 	);
@@ -383,7 +383,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_01)
 	(	"create table planets(name text not null, visited integer)"
 	);
 	// Populate the table
-	SharedSQLStatement insertion_statement_01
+	SQLStatement insertion_statement_01
 	(	dbc,
 		"insert into planets(name, visited) values(:planet, :visited)"
 	);
@@ -407,7 +407,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_02)
 	(	"create table planets(name text, size text)"
 	);
 	// Populate the table
-	SharedSQLStatement insertion_statement_01
+	SQLStatement insertion_statement_01
 	(	dbc,
 		"insert into planets(name, size) values(:planet, :size)"
 	);
@@ -425,7 +425,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_02)
 	CHECK(!step_03);
 	
 	// Inspect the table
-	SharedSQLStatement selection_statement_01(dbc, "select * from planets");
+	SQLStatement selection_statement_01(dbc, "select * from planets");
 	selection_statement_01.step();  // Earth
 	selection_statement_01.step();  // Earth again
 	selection_statement_01.step();  // Nulls
@@ -435,7 +435,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_02)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_locking_mechanism)
 {
-	// Test that locking prevents two SharedSQLStatements with the
+	// Test that locking prevents two SQLStatements with the
 	// same text from sharing the same underlying SQLStatement when
 	// they are in the same scope.
 	dbc.execute_sql
@@ -445,10 +445,10 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_locking_mechanism)
 	dbc.execute_sql
 	(	"insert into planets(name, size) values('Earth', 'Medium')"
 	);
-	// Now the SharedSQLStatements
+	// Now the SQLStatements
 	string const text("select size from planets where name = 'Earth'");
-	SharedSQLStatement s0(dbc, text);
-	SharedSQLStatement s1(dbc, text);
+	SQLStatement s0(dbc, text);
+	SQLStatement s1(dbc, text);
 	CHECK_EQUAL(s0.step(), true);
 	CHECK_EQUAL(s0.step(), false);
 	CHECK_EQUAL(s1.step(), true);
@@ -464,22 +464,22 @@ TEST_FIXTURE(DatabaseConnectionFixture, ReuseSQLStatementAfterError1)
 		"create table satellites(name text unique, "
 		"planet_name text references planets);"
 	);
-	SharedSQLStatement s0
+	SQLStatement s0
 	(	dbc,
 		"select name from planets where name = 'Mars';"
 	);
 	s0.step_final();
-	SharedSQLStatement s1
+	SQLStatement s1
 	(	dbc,
 		"insert into planets(name, size) values('Mars', 'small');"
 	);
 	s1.step_final();
-	SharedSQLStatement s2
+	SQLStatement s2
 	(	dbc,
 		"insert into planets(name, size) values('Earth', 'medium');"
 	);
 	s2.step_final();
-	SharedSQLStatement s3
+	SQLStatement s3
 	(	dbc,
 		"insert into planets(name, size) values('Venus', 'medium');"
 	);
@@ -490,7 +490,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, ReuseSQLStatementAfterError1)
 		"select name from planets where size = 'small';";
 	for (int i = 0; i != 1; ++i)
 	{
-		SharedSQLStatement selector0(dbc, selector_text);
+		SQLStatement selector0(dbc, selector_text);
 		selector0.step();
 		// Extract the wrong type
 		try
@@ -505,7 +505,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, ReuseSQLStatementAfterError1)
 	// But this is still OK
 	for (int i = 0; i != 1; ++i)
 	{
-		SharedSQLStatement selector1(dbc, selector_text);
+		SQLStatement selector1(dbc, selector_text);
 		selector1.step();
 		string x = selector1.extract<string>(0);
 		CHECK_EQUAL(x, "Mars");
@@ -521,22 +521,22 @@ TEST_FIXTURE(DatabaseConnectionFixture, ReuseSQLStatementAfterError2)
 		"create table satellites(name text unique, "
 		"planet_name text references planets);"
 	);
-	SharedSQLStatement s0
+	SQLStatement s0
 	(	dbc,
 		"select name from planets where name = 'Mars';"
 	);
 	s0.step_final();
-	SharedSQLStatement s1
+	SQLStatement s1
 	(	dbc,
 		"insert into planets(name, size) values('Mars', 'small');"
 	);
 	s1.step_final();
-	SharedSQLStatement s2
+	SQLStatement s2
 	(	dbc,
 		"insert into planets(name, size) values('Earth', 'medium');"
 	);
 	s2.step_final();
-	SharedSQLStatement s3
+	SQLStatement s3
 	(	dbc,
 		"insert into planets(name, size) values('Venus', 'medium');"
 	);
@@ -547,7 +547,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, ReuseSQLStatementAfterError2)
 		"select name from planets where size = :pr";
 	for (int i = 0; i != 1; ++i)
 	{
-		SharedSQLStatement selector0(dbc, selector_text);
+		SQLStatement selector0(dbc, selector_text);
 		CHECK_THROW
 		(	selector0.bind(":nonexistentparam", "small"),
 			SQLiteException
@@ -559,7 +559,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, ReuseSQLStatementAfterError2)
 	// But this is still OK
 	for (int i = 0; i != 1; ++i)
 	{
-		SharedSQLStatement selector1(dbc, selector_text);
+		SQLStatement selector1(dbc, selector_text);
 		selector1.bind(":pr", "small");
 		selector1.step();
 		string x = selector1.extract<string>(0);

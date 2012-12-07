@@ -1,7 +1,7 @@
 #include "sqloxx_tests_common.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/next_auto_key.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include "sqloxx/detail/sql_statement.hpp"
 #include <unittest++/UnitTest++.h>
@@ -107,7 +107,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_execute_sql_02)
 	dbc.execute_sql
 	(	"create table test_table(column_A integer, column_B text not null)"
 	);
-	SharedSQLStatement statement_0
+	SQLStatement statement_0
 	(	dbc,
 		"select column_A, column_B from test_table"
 	);
@@ -116,7 +116,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_execute_sql_02)
 	(	"insert into test_table(column_A, column_B) "
 		"values(30, 'Hello')"
 	);
-	SharedSQLStatement statement_1
+	SQLStatement statement_1
 	(	dbc,
 		"select column_A, column_B from test_table"
 	);
@@ -216,7 +216,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 	(	"insert into test_table(column_A, column_C) "
 		"values(110, 'Red')"
 	);
-	SharedSQLStatement statement2
+	SQLStatement statement2
 	(	dbc,
 		"select column_B from test_table where column_A = 110"
 	);
@@ -226,7 +226,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 	statement2.step_final();
 
 	// Test behaviour in protecting against overflow
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	dbc,
 		"insert into test_table(column_A, column_B, column_C) "
 		"values(:A, :B, :C)"
@@ -254,7 +254,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 TEST_FIXTURE(DatabaseConnectionFixture, test_setup_boolean_table)
 {
 	dbc.setup_boolean_table();
-	SharedSQLStatement statement(dbc, "select representation from booleans");
+	SQLStatement statement(dbc, "select representation from booleans");
 	multiset<int> result;
 	while (statement.step())
 	{
@@ -286,7 +286,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_transaction_nesting_exception_02)
 	(	"insert into dummy(col_A, col_B) values('Yeah!', 'What!')"
 	);
 	dbc.begin_transaction();
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	dbc,
 		"select col_A from dummy where col_B = 'Goodbye'"
 	);
@@ -337,13 +337,13 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_sqlite_rollback)
 	dbc.execute_sql("rollback to savepoint sp");
 	dbc.execute_sql("release sp");
 	dbc.execute_sql("end transaction");
-	SharedSQLStatement s1(dbc, "select col_A from dummy where col_A = 3");
+	SQLStatement s1(dbc, "select col_A from dummy where col_A = 3");
 	s1.step();
 	CHECK_EQUAL(s1.extract<int>(0), 3);
 	s1.step_final();
-	SharedSQLStatement s2(dbc, "select col_A from dummy where col_A = 4");
+	SQLStatement s2(dbc, "select col_A from dummy where col_A = 4");
 	CHECK_EQUAL(s2.step(), false);
-	SharedSQLStatement s3(dbc, "select * from dummy");
+	SQLStatement s3(dbc, "select * from dummy");
 	s3.step();
 	s3.step_final();  // As only one record.
 }
@@ -357,7 +357,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_cancel_transaction)
 	dbc.execute_sql("insert into dummy(col_A) values(4)");
 	dbc.cancel_transaction();
 	dbc.end_transaction();
-	SharedSQLStatement s1(dbc, "select * from dummy");
+	SQLStatement s1(dbc, "select * from dummy");
 	CHECK_EQUAL(s1.step(), true);
 	CHECK_EQUAL(s1.extract<int>(0), 3);
 	CHECK_EQUAL(s1.step(), false);
@@ -366,7 +366,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_cancel_transaction)
 	dbc.execute_sql("insert into dummy(col_A) values(100)");
 	dbc.cancel_transaction();
 	CHECK_THROW(dbc.end_transaction(), TransactionNestingException);
-	SharedSQLStatement s2(dbc, "select * from dummy where col_A = 100");
+	SQLStatement s2(dbc, "select * from dummy where col_A = 100");
 	CHECK_EQUAL(s2.step(), false);
 
 	dbc.begin_transaction();
@@ -375,7 +375,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_cancel_transaction)
 	dbc.end_transaction();
 	dbc.cancel_transaction();
 	CHECK_THROW(dbc.cancel_transaction(), TransactionNestingException);
-	SharedSQLStatement s3(dbc, "select * from dummy where col_A = 200");
+	SQLStatement s3(dbc, "select * from dummy where col_A = 200");
 	CHECK_EQUAL(s3.step(), false);
 }
 
@@ -386,7 +386,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_provide_sql_statement)
 		dbc.provide_sql_statement
 		(	"insert into dummy(col_A, col_B) values(300, 10)"
 		);
-	SharedSQLStatement selector_01
+	SQLStatement selector_01
 	(	dbc,
 		"select col_A from dummy where col_B = 10"
 	);

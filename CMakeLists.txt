@@ -35,7 +35,7 @@ set (main_files
 	 journal/ordinary_journal_impl.cpp
 	 sqloxx/database_connection.cpp
 	 sqloxx/database_transaction.cpp
-	 sqloxx/shared_sql_statement.cpp
+	 sqloxx/sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
 	 sqloxx/detail/sql_statement_impl.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
@@ -49,7 +49,7 @@ set (test_files
      test.cpp
 	 sqloxx/database_connection.cpp
 	 sqloxx/database_transaction.cpp
-	 sqloxx/shared_sql_statement.cpp
+	 sqloxx/sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
 	 sqloxx/detail/sql_statement_impl.cpp
      sqloxx/tests/database_connection_tests.cpp

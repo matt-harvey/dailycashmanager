@@ -1,6 +1,6 @@
 #include "atomicity_test.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <boost/filesystem.hpp>
 #include <cassert>
 #include <fstream>
@@ -90,7 +90,7 @@ int
 inspect_database_for_atomicity(DatabaseConnection& dbc)
 {
 	int ret = 0;
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	dbc,
 		"select * from dummy"
 	);

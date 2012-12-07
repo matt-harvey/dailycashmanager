@@ -3,7 +3,7 @@
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
 #include <iostream>  // for debug logging
@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-using sqloxx::SharedSQLStatement;
+using sqloxx::SQLStatement;
 using boost::shared_ptr;
 using boost::unordered_set;
 using jewel::clear;
@@ -210,14 +210,14 @@ DraftJournalImpl::do_load()
 	temp.do_load_journal_base(database_connection(), id());
 
 	// Load the derived, DraftJournalImpl part of the temp.
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	database_connection(),
 		"select name from draft_journal_detail where journal_id = :p"
 	);
 	statement.bind(":p", id());
 	statement.step();
 	temp.m_dj_data->name = statement.extract<string>(0);
-	SharedSQLStatement repeater_finder
+	SQLStatement repeater_finder
 	(	database_connection(),
 		"select repeater_id from repeaters where journal_id = :p"
 	);
@@ -241,7 +241,7 @@ DraftJournalImpl::do_save_new()
 	Id const journal_id = do_save_new_journal_base(database_connection());
 
 	// Save the derived, DraftJournalImpl part of the object
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	database_connection(),
 		"insert into draft_journal_detail(journal_id, name) "
 		"values(:journal_id, :name)"
@@ -264,7 +264,7 @@ void
 DraftJournalImpl::do_save_existing()
 {
 	do_save_existing_journal_base(database_connection(), id());
-	SharedSQLStatement updater
+	SQLStatement updater
 	(	database_connection(),
 		"update draft_journal_detail set name = :name where "
 		"journal_id = :journal_id"
@@ -283,7 +283,7 @@ DraftJournalImpl::do_save_existing()
 	}
 	// Now remove any repeaters in the database with this DraftJournalImpl's
 	// journal_id, that no longer exist in the in-memory DraftJournalImpl
-	SharedSQLStatement repeater_finder
+	SQLStatement repeater_finder
 	(	database_connection(),
 		"select repeater_id from repeaters where journal_id = :journal_id"
 	);

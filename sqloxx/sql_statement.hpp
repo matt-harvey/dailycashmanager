@@ -1,5 +1,5 @@
-#ifndef shared_sql_statement_hpp
-#define shared_sql_statement_hpp
+#ifndef sql_statement_hpp
+#define sql_statement_hpp
 
 #include "database_connection.hpp"
 #include "detail/sql_statement_impl.hpp"
@@ -17,26 +17,26 @@ namespace sqloxx
 /**
  * Class to handle SQL statements that may be shared instances
  * of such statements in a cache. When a
- * SharedSQLStatement is destructed, it is automatically
+ * SQLStatement is destructed, it is automatically
  * reset. However the underlying statement remains in
  * the cache ready for deployment (unless the cache is full).
  * The details of caching are handled within the DatabaseConnection
  * class. The client just calls the constructor and uses the statement.
  *
  * Clients of Sqloxx should not use the underlying SQLStatementImpl class
- * directly, but only ever via SharedSQLStatement.
+ * directly, but only ever via SQLStatement.
  *
- * If an exception is thrown by an method of SharedSQLStatement, the
- * caller should in general no longer rely on the state of SharedSQLStatement
- * being valid. However, when the SharedSQLStatement goes out of scope or
+ * If an exception is thrown by an method of SQLStatement, the
+ * caller should in general no longer rely on the state of SQLStatement
+ * being valid. However, when the SQLStatement goes out of scope or
  * is otherwise destroyed, the underlying SQLStatementImpl will be reset to a
  * valid state. Furthermore, a locking mechanism ensures that two
- * SharedSQLStatements cannot share the same underlying SQLStatementImpl. This
- * prevents SQLStatementImpl instance that are in an invalid state
+ * SQLStatements cannot share the same underlying SQLStatementImpl. This
+ * prevents SQLStatementImpl instances that are in an invalid state
  * from being used unless used
- * via the very same SharedSQLStatement that triggered the invalid state.
+ * via the very same SQLStatement that triggered the invalid state.
  */
-class SharedSQLStatement:
+class SQLStatement:
 	private boost::noncopyable
 {
 public:
@@ -64,33 +64,33 @@ public:
 	 * are characters in str after this statement, other than ';' and ' '.
 	 * This includes the case where there are further syntactically
 	 * acceptable SQL statements after the first one - as each
-	 * SharedSQLStatement can encapsulate only one statement.
+	 * SQLStatement can encapsulate only one statement.
 	 *
 	 * @throws std::bad_alloc in the very unlikely event of a memory
 	 * allocation error in execution.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
-	SharedSQLStatement
+	SQLStatement
 	(	DatabaseConnection& p_database_connection,	
 		std::string const& p_statement_text
 	);
 
 	/**
 	 * Destructor "clears" the state of the underlying cached
-	 * SQLStatementImpl for re-use by a subsequent SharedSQLStatement with the
+	 * SQLStatementImpl for re-use by a subsequent SQLStatement with the
 	 * same statement text. (Client code does not need to concern itself
 	 * with the details of this.)
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	~SharedSQLStatement();
+	~SQLStatement();
 	
 	/**
 	 * Wrappers around SQLite bind functions.
 	 * 
 	 * @throws InvalidConnection if the database connection is invalid.
-	 * If this occurs, the state of the SharedSQLStatement will be
+	 * If this occurs, the state of the SQLStatement will be
 	 * the same as before the \e bind method was called.
 	 *
 	 * @throws SQLiteException, or an exception derived therefrom,
@@ -140,14 +140,14 @@ public:
 	 * rows to examine).
 	 *
 	 * @throws InvalidConnection if the database connection is invalid. If
-	 * this occurs, the state of the SharedSQLStatement will be the same as
+	 * this occurs, the state of the SQLStatement will be the same as
 	 * before the \e step method was called.
 	 *
 	 * @throws SQLiteException or some exception deriving therefrom, if an
 	 * error occurs. This function should almost never throw, but it is
 	 * possible something will fail as the statement is being executed, in
 	 * which case the resulting SQLite error condition will trigger the
-	 * corresponding exception class. If this occurs, the SharedSQLStatement
+	 * corresponding exception class. If this occurs, the SQLStatement
 	 * will be reset and all bindings cleared.
 	 *
 	 * Exception safety: <em>basic guarantee</em>.
@@ -201,7 +201,7 @@ private:
 
 
 inline
-SharedSQLStatement::SharedSQLStatement
+SQLStatement::SQLStatement
 (	DatabaseConnection& p_database_connection,
 	std::string const& p_statement_text
 ):
@@ -218,4 +218,4 @@ SharedSQLStatement::SharedSQLStatement
 }  // namespace sqloxx
 
 
-#endif  // shared_sql_statement_hpp
+#endif  // sql_statement_hpp

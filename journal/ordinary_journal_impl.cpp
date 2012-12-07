@@ -6,7 +6,7 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/handle.hpp"
 #include "sqloxx/persistent_object.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
@@ -21,7 +21,7 @@ using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::clear;
 using jewel::value;
-using sqloxx::SharedSQLStatement;
+using sqloxx::SQLStatement;
 using std::string;
 using std::vector;
 
@@ -203,7 +203,7 @@ OrdinaryJournalImpl::do_load()
 	temp.do_load_journal_base(database_connection(), id());
 
 	// Load the derived, OrdinaryJournalImpl part of temp.
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	database_connection(),
 		"select date from ordinary_journal_detail where journal_id = :p"
 	);
@@ -226,7 +226,7 @@ OrdinaryJournalImpl::do_save_new()
 	Id const journal_id = do_save_new_journal_base(database_connection());
 
 	// Save the derived, OrdinaryJournalImpl part of the object
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	database_connection(),
 		"insert into ordinary_journal_detail (journal_id, date) "
 		"values(:journal_id, :date)"
@@ -244,7 +244,7 @@ OrdinaryJournalImpl::do_save_existing()
 	do_save_existing_journal_base(database_connection(), id());
 
 	// Save the derived, OrdinaryJournalImpl part of the object
-	SharedSQLStatement updater
+	SQLStatement updater
 	(	database_connection(),	
 		"update ordinary_journal_detail set date = :date "
 		"where journal_id = :journal_id"

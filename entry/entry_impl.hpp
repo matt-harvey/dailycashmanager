@@ -156,7 +156,7 @@ private:
 	void do_save_existing();
 	void do_save_new();
 	void do_ghostify();
-	void process_saving_statement(sqloxx::SharedSQLStatement& statement);
+	void process_saving_statement(sqloxx::SQLStatement& statement);
 
 	struct EntryData
 	{

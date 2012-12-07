@@ -15,7 +15,7 @@
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <string>
 
-using sqloxx::SharedSQLStatement;
+using sqloxx::SQLStatement;
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::clear;
@@ -180,7 +180,7 @@ RepeaterImpl::RepeaterImpl(RepeaterImpl const& rhs):
 void
 RepeaterImpl::do_load()
 {
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	database_connection(),
 		"select interval_type_id, interval_units, next_date, journal_id "
 		"from repeaters where repeater_id = :p"
@@ -199,7 +199,7 @@ RepeaterImpl::do_load()
 
 
 void
-RepeaterImpl::process_saving_statement(SharedSQLStatement& statement)
+RepeaterImpl::process_saving_statement(SQLStatement& statement)
 {
 	statement.bind
 	(	":interval_type_id",
@@ -216,7 +216,7 @@ RepeaterImpl::process_saving_statement(SharedSQLStatement& statement)
 void
 RepeaterImpl::do_save_existing()
 {
-	SharedSQLStatement updater
+	SQLStatement updater
 	(	database_connection(),
 		"update repeaters set "
 		"interval_type_id = :interval_type_id, "
@@ -234,7 +234,7 @@ RepeaterImpl::do_save_existing()
 void
 RepeaterImpl::do_save_new()
 {
-	SharedSQLStatement inserter
+	SQLStatement inserter
 	(	database_connection(),
 		"insert into repeaters(interval_type_id, interval_units, "
 		"next_date, journal_id) values(:interval_type_id, :interval_units, "

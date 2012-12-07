@@ -41,7 +41,7 @@ class SQLiteDBConn;
 /**
  * Wrapper class for sqlite_stmt*. This class is should not be
  * used except internally by the Sqloxx library. SQLStatementImpl instances
- * are themselves encapsulated by SharedSQLStatement instances.
+ * are themselves encapsulated by SQLStatement instances.
  */
 class SQLStatementImpl:
 	private boost::noncopyable
@@ -154,7 +154,7 @@ public:
 
 	/**
 	 * @returns true if and only if the statement is currently
-	 * in use by way of a SharedSQLStatement. Does not throw.
+	 * in use by way of a SQLStatement. Does not throw.
 	 */
 	bool is_locked() const;
 

@@ -1,4 +1,4 @@
-#include "shared_sql_statement.hpp"
+#include "sql_statement.hpp"
 #include "database_connection.hpp"
 #include "detail/sql_statement_impl.hpp"
 #include <jewel/debug_log.hpp>
@@ -15,7 +15,7 @@ namespace sqloxx
 
 
 
-SharedSQLStatement::~SharedSQLStatement()
+SQLStatement::~SQLStatement()
 {
 	m_sql_statement->reset();
 	m_sql_statement->clear_bindings();
@@ -26,7 +26,7 @@ SharedSQLStatement::~SharedSQLStatement()
 
 template <>
 int
-SharedSQLStatement::extract<int>(int index)
+SQLStatement::extract<int>(int index)
 {
 	return m_sql_statement->extract<int>(index);
 }
@@ -34,19 +34,19 @@ SharedSQLStatement::extract<int>(int index)
 
 template <>
 boost::int64_t
-SharedSQLStatement::extract<boost::int64_t>(int index)
+SQLStatement::extract<boost::int64_t>(int index)
 {
 	return m_sql_statement->extract<boost::int64_t>(index);
 }
 
 
-// All these total specialisations of SharedSQLStatement::extract
+// All these total specialisations of SQLStatement::extract
 // are to avoid having to put the call to SQLStatementImpl::extract in the
 // header - which would introduce unwanted compilation dependencies.
 
 template <>
 double
-SharedSQLStatement::extract<double>(int index)
+SQLStatement::extract<double>(int index)
 {
 	return m_sql_statement->extract<double>(index);
 }
@@ -54,14 +54,14 @@ SharedSQLStatement::extract<double>(int index)
 
 template <>
 std::string
-SharedSQLStatement::extract<std::string>(int index)
+SQLStatement::extract<std::string>(int index)
 {
 	return m_sql_statement->extract<std::string>(index);
 }
 
 
 void
-SharedSQLStatement::bind(string const& parameter_name, int x)
+SQLStatement::bind(string const& parameter_name, int x)
 {
 	m_sql_statement->bind(parameter_name, x);
 	return;
@@ -69,7 +69,7 @@ SharedSQLStatement::bind(string const& parameter_name, int x)
 
 
 void
-SharedSQLStatement::bind(string const& parameter_name, boost::int64_t x)
+SQLStatement::bind(string const& parameter_name, boost::int64_t x)
 {
 	m_sql_statement->bind(parameter_name, x);
 	return;
@@ -77,13 +77,13 @@ SharedSQLStatement::bind(string const& parameter_name, boost::int64_t x)
 
 
 void
-SharedSQLStatement::bind(string const& parameter_name, double x)
+SQLStatement::bind(string const& parameter_name, double x)
 {
 	m_sql_statement->bind(parameter_name, x);
 }
 
 void
-SharedSQLStatement::bind(string const& parameter_name, string const& x)
+SQLStatement::bind(string const& parameter_name, string const& x)
 {
 	m_sql_statement->bind(parameter_name, x);
 	return;
@@ -91,14 +91,14 @@ SharedSQLStatement::bind(string const& parameter_name, string const& x)
 
 
 bool
-SharedSQLStatement::step()
+SQLStatement::step()
 {
 	return m_sql_statement->step();
 }
 
 
 void
-SharedSQLStatement::step_final()
+SQLStatement::step_final()
 {
 	m_sql_statement->step_final();
 	return;
@@ -106,7 +106,7 @@ SharedSQLStatement::step_final()
 
 
 void
-SharedSQLStatement::reset()
+SQLStatement::reset()
 {
 	m_sql_statement->reset();
 	return;
@@ -114,7 +114,7 @@ SharedSQLStatement::reset()
 
 
 void
-SharedSQLStatement::clear_bindings()
+SQLStatement::clear_bindings()
 {
 	m_sql_statement->clear_bindings();
 	return;

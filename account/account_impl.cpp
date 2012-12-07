@@ -13,7 +13,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/identity_map.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/optional.hpp>
 #include <algorithm>
@@ -24,7 +24,7 @@
 using boost::shared_ptr;
 using jewel::clear;
 using jewel::value;
-using sqloxx::SharedSQLStatement;
+using sqloxx::SQLStatement;
 using std::string;
 using std::vector;
 
@@ -85,7 +85,7 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 Account::Id
 AccountImpl::id_for_name(PhatbooksDatabaseConnection& dbc, string const& name)
 {
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	dbc,
 		"select account_id from accounts where name = :name"
 	);
@@ -203,7 +203,7 @@ AccountImpl::swap(AccountImpl& rhs)
 void
 AccountImpl::do_load()
 {
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	database_connection(),
 		"select name, commodity_id, account_type_id, description "
 		"from accounts where account_id = :p"
@@ -224,7 +224,7 @@ AccountImpl::do_load()
 }
 
 void
-AccountImpl::process_saving_statement(SharedSQLStatement& statement)
+AccountImpl::process_saving_statement(SQLStatement& statement)
 {
 	statement.bind
 	(	":account_type_id",
@@ -240,7 +240,7 @@ AccountImpl::process_saving_statement(SharedSQLStatement& statement)
 void
 AccountImpl::do_save_existing()
 {
-	SharedSQLStatement updater
+	SQLStatement updater
 	(	database_connection(),
 		"update accounts set "
 		"name = :name, "
@@ -257,7 +257,7 @@ AccountImpl::do_save_existing()
 void
 AccountImpl::do_save_new()
 {
-	SharedSQLStatement inserter
+	SQLStatement inserter
 	(	database_connection(),
 		"insert into accounts(account_type_id, name, description, "
 		"commodity_id) values(:account_type_id, :name, :description, "

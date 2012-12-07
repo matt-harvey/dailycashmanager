@@ -17,13 +17,13 @@
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/handle.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <string>
 
-using sqloxx::SharedSQLStatement;
+using sqloxx::SQLStatement;
 using boost::shared_ptr;
 using jewel::clear;
 using jewel::Decimal;
@@ -170,7 +170,7 @@ void
 EntryImpl::do_load()
 {
 	EntryImpl temp(*this);
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	database_connection(),
 		"select account_id, comment, amount, journal_id, is_reconciled "
 		" from entries where "
@@ -200,7 +200,7 @@ EntryImpl::do_load()
 
 
 void
-EntryImpl::process_saving_statement(SharedSQLStatement& statement)
+EntryImpl::process_saving_statement(SQLStatement& statement)
 {
 	statement.bind(":journal_id", value(m_data->journal_id));
 	statement.bind(":comment", value(m_data->comment));
@@ -218,7 +218,7 @@ EntryImpl::process_saving_statement(SharedSQLStatement& statement)
 void
 EntryImpl::do_save_existing()
 {
-	SharedSQLStatement updater
+	SQLStatement updater
 	(	database_connection(),
 		"update entries set "
 		"journal_id = :journal_id, "
@@ -237,7 +237,7 @@ EntryImpl::do_save_existing()
 void
 EntryImpl::do_save_new()
 {
-	SharedSQLStatement inserter
+	SQLStatement inserter
 	(	database_connection(),
 		"insert into entries"
 		"("

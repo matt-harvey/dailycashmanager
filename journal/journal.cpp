@@ -18,7 +18,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/next_auto_key.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>
@@ -33,7 +33,7 @@
 
 using sqloxx::get_handle;
 using sqloxx::next_auto_key;
-using sqloxx::SharedSQLStatement;
+using sqloxx::SQLStatement;
 using boost::numeric_cast;
 using boost::scoped_ptr;
 using boost::shared_ptr;
@@ -146,7 +146,7 @@ Journal::do_save_new_journal_base
 	<	PhatbooksDatabaseConnection,
 		Id
 	>	(dbc, "journals");
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	dbc,
 		"insert into journals(is_actual, comment) "
 		"values(:is_actual, :comment)"
@@ -170,7 +170,7 @@ Journal::do_save_existing_journal_base
 	Journal::Id id
 )
 {
-	SharedSQLStatement updater
+	SQLStatement updater
 	(	dbc,
 		"update journals set is_actual = :is_actual, comment = :comment "
 		"where journal_id = :id"
@@ -189,7 +189,7 @@ Journal::do_save_existing_journal_base
 	}
 	// Remove any entries in the database with this journal's journal_id, that
 	// no longer exist in the in-memory journal
-	SharedSQLStatement entry_finder
+	SQLStatement entry_finder
 	(	dbc,	
 		"select entry_id from entries where journal_id = :journal_id"
 	);
@@ -221,14 +221,14 @@ Journal::do_load_journal_base
 	Journal::Id id
 )
 {
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	dbc,
 		"select is_actual, comment from journals where journal_id = :p"
 	);
 	statement.bind(":p", id);
 	statement.step();
 	Journal temp(*this);
-	SharedSQLStatement entry_finder
+	SQLStatement entry_finder
 	(	dbc,	
 		"select entry_id from entries where journal_id = :jid"
 	);

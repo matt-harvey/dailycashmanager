@@ -2,7 +2,7 @@
 #include "sqloxx_tests_common.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <string>
 
@@ -169,7 +169,7 @@ DerivedPO::DerivedPO(DerivedPO const& rhs):
 void
 DerivedPO::do_load()
 {
-	SharedSQLStatement selector
+	SQLStatement selector
 	(	database_connection(),
 		"select x, y from derived_pos where derived_po_id = :p"
 	);
@@ -185,7 +185,7 @@ DerivedPO::do_load()
 void
 DerivedPO::do_save_existing()
 {
-	SharedSQLStatement updater
+	SQLStatement updater
 	(	database_connection(),
 		"update derived_pos set x = :x, y = :y where derived_po_id = :id"
 	);
@@ -199,7 +199,7 @@ DerivedPO::do_save_existing()
 void
 DerivedPO::do_save_new()
 {
-	SharedSQLStatement inserter
+	SQLStatement inserter
 	(	database_connection(),
 		"insert into derived_pos(x, y) values(:x, :y)"
 	);

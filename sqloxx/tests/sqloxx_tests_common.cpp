@@ -3,7 +3,7 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/detail/sql_statement.hpp"
 #include "sqloxx/detail/sqlite_dbconn.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <boost/filesystem.hpp>
 #include <jewel/stopwatch.hpp>
 #include <cassert>
@@ -79,17 +79,17 @@ do_speed_test()
 	);
 	
 
-	// With SharedSQLStatement
+	// With SQLStatement
 	DatabaseConnection db;
 	db.open(filename);
 	db.execute_sql(table_creation_string);
 
-	cout << "Timing with SharedSQLStatement." << endl;
+	cout << "Timing with SQLStatement." << endl;
 	db.execute_sql("begin");
 	Stopwatch sw1;
 	for (int i = 0; i != loops; ++i)
 	{
-		SharedSQLStatement s(db, statements[i % num_statements]);
+		SQLStatement s(db, statements[i % num_statements]);
 		// s.step_final();
 	}
 	sw1.log();

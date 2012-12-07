@@ -30,7 +30,7 @@
 #include "sqloxx/database_transaction.hpp"
 #include "sqloxx/identity_map.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <sqlite3.h>
 #include <stdexcept>
 #include <boost/bimap.hpp>
@@ -51,7 +51,7 @@ using boost::shared_ptr;
 using jewel::Decimal;
 using sqloxx::DatabaseConnection;
 using sqloxx::DatabaseTransaction;
-using sqloxx::SharedSQLStatement;
+using sqloxx::SQLStatement;
 using sqloxx::SQLiteException;
 using std::endl;
 using std::list;
@@ -79,7 +79,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 bool
 PhatbooksDatabaseConnection::has_account_named(string const& p_name)
 {
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	*this,
 		"select name from accounts where name = :p"
 	);
@@ -90,7 +90,7 @@ PhatbooksDatabaseConnection::has_account_named(string const& p_name)
 bool
 PhatbooksDatabaseConnection::has_draft_journal_named(string const& p_name)
 {
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	*this,
 		"select name from draft_journal_detail where name = :p"
 	);
@@ -103,7 +103,7 @@ PhatbooksDatabaseConnection::account_types()
 {
 	typedef bimap<Account::AccountType, string> return_type;
 	return_type ret;
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	*this,
 		"select account_type_id, name from account_types order "
 		"by account_type_id"
@@ -126,7 +126,7 @@ PhatbooksDatabaseConnection::has_commodity_with_abbreviation
 (	string const& p_abbreviation
 )
 {
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	*this,
 		"select abbreviation from commodities where abbreviation = :p"
 	);
@@ -137,7 +137,7 @@ PhatbooksDatabaseConnection::has_commodity_with_abbreviation
 bool
 PhatbooksDatabaseConnection::has_commodity_named(string const& p_name)
 {
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	*this,
 		"select name from commodities where name = :p"
 	);

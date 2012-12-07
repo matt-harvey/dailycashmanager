@@ -1,6 +1,6 @@
 #include "database_connection.hpp"
 #include "detail/sqlite_dbconn.hpp"
-#include "shared_sql_statement.hpp"
+#include "sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
 #include "detail/sql_statement_impl.hpp"
 #include <boost/filesystem/path.hpp>
@@ -221,7 +221,7 @@ void
 DatabaseConnection::unchecked_begin_transaction()
 {
 	// JEWEL_DEBUG_LOG << "Beginning SQL transaction." << endl;
-	SharedSQLStatement statement(*this, "begin");
+	SQLStatement statement(*this, "begin");
 	statement.step();
 	return;
 }
@@ -230,7 +230,7 @@ void
 DatabaseConnection::unchecked_end_transaction()
 {
 	// JEWEL_DEBUG_LOG << "Ending SQL transaction." << endl;
-	SharedSQLStatement statement(*this, "end");
+	SQLStatement statement(*this, "end");
 	statement.step();
 	return;
 }
@@ -239,7 +239,7 @@ void
 DatabaseConnection::unchecked_set_savepoint()
 {
 	// JEWEL_DEBUG_LOG << "Setting SQL savepoint." << endl;
-	SharedSQLStatement statement(*this, "savepoint sp");
+	SQLStatement statement(*this, "savepoint sp");
 	statement.step();
 	return;
 }
@@ -248,7 +248,7 @@ void
 DatabaseConnection::unchecked_release_savepoint()
 {
 	// JEWEL_DEBUG_LOG << "Releasing SQL savepoint." << endl;
-	SharedSQLStatement statement(*this, "release sp");
+	SQLStatement statement(*this, "release sp");
 	statement.step();
 	return;
 }
@@ -257,7 +257,7 @@ void
 DatabaseConnection::unchecked_rollback_transaction()
 {
 	// JEWEL_DEBUG_LOG << "Rolling back entire SQL transaction." << endl;
-	SharedSQLStatement statement(*this, "rollback");
+	SQLStatement statement(*this, "rollback");
 	statement.step();
 	return;
 }
@@ -266,7 +266,7 @@ void
 DatabaseConnection::unchecked_rollback_to_savepoint()
 {
 	// JEWEL_DEBUG_LOG << "Rolling back to SQL savepoint." << endl;
-	SharedSQLStatement statement(*this, "rollback to savepoint sp");
+	SQLStatement statement(*this, "rollback to savepoint sp");
 	statement.step();
 	return;
 }

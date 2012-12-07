@@ -85,7 +85,7 @@ public:
 	 *
 	 * @param p_cache_capacity indicates the number of SQLStatementImpl
 	 * instances to
-	 * be stored in a cache for reuse (via the class SharedSQLStatement)
+	 * be stored in a cache for reuse (via the class SQLStatement)
 	 * by the DatabaseConnection instance.
 	 *
 	 * Initializes SQLite3 and creates a database connection initially
@@ -200,12 +200,12 @@ public:
 
 	/**
 	 * Controls access to DatabaseConnection::provide_sql_statement,
-	 * deliberately limiting this access to the class SharedSQLStatement.
+	 * deliberately limiting this access to the class SQLStatement.
 	 */
 	class StatementAttorney
 	{
 	public:
-		friend class SharedSQLStatement;
+		friend class SQLStatement;
 	private:
 		static boost::shared_ptr<detail::SQLStatementImpl>
 			provide_sql_statement
@@ -254,7 +254,7 @@ private:
 	 * elsewhere).
 	 *
 	 * This function is only intended to be called by the
-	 * constructor of SharedSQLStatement. It should not be called elsewhere.
+	 * constructor of SQLStatement. It should not be called elsewhere.
 	 * 
 	 * @throws InvalidConnection if p_database_connection is an invalid
 	 * connection.

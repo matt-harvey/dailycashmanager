@@ -3,7 +3,7 @@
 #include "sqloxx/identity_map.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>
@@ -22,7 +22,7 @@
  */
 
 
-using sqloxx::SharedSQLStatement;
+using sqloxx::SQLStatement;
 using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
@@ -39,7 +39,7 @@ void CommodityImpl::setup_tables
 (	PhatbooksDatabaseConnection& dbc
 )
 {
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	dbc,
 		"create table commodities"
 		"("
@@ -63,7 +63,7 @@ CommodityImpl::id_for_abbreviation
 	std::string const& p_abbreviation
 )
 {
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	dbc,
 		"select commodity_id from commodities where abbreviation = :p"
 	);
@@ -124,7 +124,7 @@ CommodityImpl::swap(CommodityImpl& rhs)
 void CommodityImpl::do_load()
 {
 	CommodityImpl temp(*this);
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	database_connection(),
 		"select abbreviation, name, description, precision, "
 		"multiplier_to_base_intval, multiplier_to_base_places from "
@@ -145,7 +145,7 @@ void CommodityImpl::do_load()
 }
 
 
-void CommodityImpl::process_saving_statement(SharedSQLStatement& statement)
+void CommodityImpl::process_saving_statement(SQLStatement& statement)
 {
 	statement.bind(":abbreviation", value(m_data->abbreviation));
 	statement.bind(":name", value(m_data->name));
@@ -161,7 +161,7 @@ void CommodityImpl::process_saving_statement(SharedSQLStatement& statement)
 
 void CommodityImpl::do_save_existing()
 {
-	SharedSQLStatement updater
+	SQLStatement updater
 	(	database_connection(),
 		"update commodities set "
 		"abbreviation = :abbreviation, "
@@ -180,7 +180,7 @@ void CommodityImpl::do_save_existing()
 
 void CommodityImpl::do_save_new()
 {
-	SharedSQLStatement inserter
+	SQLStatement inserter
 	(	database_connection(),
 		"insert into commodities(abbreviation, name, description, precision, "
 		"multiplier_to_base_intval, multiplier_to_base_places) "

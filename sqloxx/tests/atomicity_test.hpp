@@ -4,7 +4,7 @@
 // Hide from Doxygen
 /// @cond
 
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <string>
 
 using std::string;

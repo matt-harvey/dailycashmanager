@@ -23,7 +23,7 @@
 
 namespace sqloxx
 {
-	class SharedSQLStatement;
+	class SQLStatement;
 }  // namespace sqloxx
 
 
@@ -155,7 +155,7 @@ private:
 	void do_ghostify();
 
 	// Other functions
-	void process_saving_statement(sqloxx::SharedSQLStatement& statement);
+	void process_saving_statement(sqloxx::SQLStatement& statement);
 
 	struct CommodityData
 	{

@@ -42,13 +42,13 @@
 #include <string>
 
 // WARNING play code
-#include "sqloxx/shared_sql_statement.hpp"
+#include "sqloxx/sql_statement.hpp"
 #include <boost/unordered_map.hpp>
 #include <jewel/stopwatch.hpp>
 #include <vector>
 using boost::unordered_map;
 using jewel::Stopwatch;
-using sqloxx::SharedSQLStatement;
+using sqloxx::SQLStatement;
 using std::vector;
 // end play code
 
@@ -842,7 +842,7 @@ void PhatbooksTextSession::display_all_entry_account_names()
 {
 	cout << "For each entry, here's its account name, done crudely "
 	     << "without optimisations: " << endl;
-	SharedSQLStatement statement
+	SQLStatement statement
 	(	*m_database_connection,
 		"select entry_id from entries order by entry_id"
 	);
@@ -859,7 +859,7 @@ void PhatbooksTextSession::display_journal_summaries()
 {
 	cout << "For each ORDINARY journal, here's what's in it. "
 	     << endl;
-	SharedSQLStatement journal_statement
+	SQLStatement journal_statement
 	(	*m_database_connection,
 		"select journal_id from ordinary_journal_detail order by "
 		"date"
@@ -894,7 +894,7 @@ void PhatbooksTextSession::display_balances()
 	     << endl;
 	typedef unordered_map<Account::Id, Decimal> BalanceMap;
 	BalanceMap balance_map;
-	SharedSQLStatement account_statement
+	SQLStatement account_statement
 	(
 		*m_database_connection,
 		"select account_id from accounts"
@@ -912,7 +912,7 @@ void PhatbooksTextSession::display_balances()
 	}
 
 	// "SQL METHOD"
-	SharedSQLStatement sum_selector
+	SQLStatement sum_selector
 	(	*m_database_connection,
 		"select account_id, sum(amount) from entries inner "
 		"join ordinary_journal_detail using(journal_id) "
@@ -929,7 +929,7 @@ void PhatbooksTextSession::display_balances()
 
 	// "ACCUMULATION METHOD"
 	/*
-	SharedSQLStatement entry_statement
+	SQLStatement entry_statement
 	(	*m_database_connection,
 		"select entry_id from entries inner join ordinary_journal_detail "
 		"using(journal_id)"

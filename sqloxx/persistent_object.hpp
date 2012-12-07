@@ -5,7 +5,7 @@
 #include "general_typedefs.hpp"
 #include "identity_map.hpp"
 #include "next_auto_key.hpp"
-#include "shared_sql_statement.hpp"
+#include "sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <boost/none.hpp>
 #include <boost/optional.hpp>
@@ -1234,7 +1234,7 @@ PersistentObject<Derived, Connection>::do_remove()
 		Derived::primary_key_name() + " = :p";
 	
 	// Might throw InvalidConnection or std::bad_alloc
-	SharedSQLStatement statement(database_connection(), statement_text);
+	SQLStatement statement(database_connection(), statement_text);
 	statement.bind(":p", id());  // Might throw InvalidConnection
 	// throwing above this point will have no effect
 
