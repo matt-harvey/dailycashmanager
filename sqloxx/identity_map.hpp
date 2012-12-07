@@ -31,7 +31,12 @@ class PersistentObject;
  * type Connection. T and Connection are passed as template parameters
  * to the class template. It is expected that T is a subclass of
  * sqloxx::PersistentObject<T, Connection>, and Connection is a
- * subclass of sqloxx::DatabaseConnection.
+ * subclass of sqloxx::DatabaseConnection. T should define
+ * constuctors of the form:\n
+ * T(Connection&); and\n
+ * T(Connection&, T::Id)\n
+ * These pass their arguments to the corresponding constructors of
+ * PersistentObject<T, Connection>.
  *
  * Each instance of IdentityMap has a particular Connection associated
  * with it. The IdentityMap caches objects loaded from the database,
@@ -51,8 +56,7 @@ class PersistentObject;
  *
  * IdentityMap is intended to work in conjunction with sqloxx::Handle<T>
  * and sqloxx::PersistentObject<T, Connection>. See also the documentation
- * for those classes.
- *
+
  * @todo Testing.
  */
 template <typename T, typename Connection>

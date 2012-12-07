@@ -57,7 +57,12 @@ set (test_files
 	 sqloxx/tests/persistent_object_tests.cpp
 	 sqloxx/tests/shared_sql_statement_tests.cpp
 	 sqloxx/tests/sqloxx_tests_common.cpp
-	 sqloxx/tests/atomicity_test.cpp)
+	 sqloxx/tests/atomicity_test.cpp
+	 sqloxx/tests/get_handle_tests.cpp
+	 sqloxx/tests/database_transaction_tests.cpp
+	 sqloxx/tests/handle_tests.cpp
+	 sqloxx/tests/identity_map_tests.cpp
+	 sqloxx/tests/next_auto_key_tests.cpp)
 
 add_executable (test ${test_files})
 
