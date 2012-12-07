@@ -22,10 +22,6 @@
 #include <jewel/decimal.hpp>
 #include <string>
 
-namespace sqloxx
-{
-	class SharedSQLStatement;
-}  // namespace sqloxx
 
 
 namespace phatbooks

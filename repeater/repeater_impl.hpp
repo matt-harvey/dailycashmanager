@@ -24,12 +24,6 @@
 #include <string>
 
 
-namespace sqloxx
-{
-	class SharedSQLStatement;  // forward declaration
-}  // namespace sqloxx
-
-
 namespace phatbooks
 {
 
