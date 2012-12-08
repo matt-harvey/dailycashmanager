@@ -1,6 +1,5 @@
 #include "sqloxx_tests_common.hpp"
 #include "sqloxx/database_connection.hpp"
-#include "sqloxx/next_auto_key.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include "sqloxx/detail/sql_statement_impl.hpp"
@@ -8,7 +7,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 #include <cassert>
-#include <limits>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -19,7 +17,6 @@ using boost::shared_ptr;
 using std::cerr;
 using std::endl;
 using std::multiset;
-using std::numeric_limits;
 using std::ofstream;
 using std::multiset;
 using std::set;
@@ -137,120 +134,6 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_execute_sql_02)
 	);
 }
 
-TEST(test_next_auto_key_invalid_connection)
-{
-	DatabaseConnection db0;
-	// Have to do this as CHECK_THROW gets confused by multiple template args
-	bool ok = false;
-	try
-	{
-		next_auto_key
-		<	DatabaseConnection,
-			int
-		>	(db0, "dummy_table");
-	}
-	catch (InvalidConnection&)
-	{
-		ok = true;
-	}
-	CHECK(ok);
-}
-	
-
-TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
-{
-	// Note CHECK_EQUAL and CHECK get confused by multiple template args
-	bool ok =
-		(next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
-	CHECK(ok);
-	dbc.execute_sql
-	(	"create table dummy_table(column_A text)"
-	);
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
-	CHECK(ok);
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
-	CHECK(ok);
-	dbc.execute_sql
-	(	"create table test_table"
-		"("
-			"column_A integer not null unique, "
-			"column_B integer primary key autoincrement, "
-			"column_C text not null"
-		")"
-	);
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "test_table") == 1);
-	CHECK(ok);
-	// This behaviour is strange but expected - see API docs.
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
-	CHECK(ok);
-	dbc.execute_sql
-	(	"insert into test_table(column_A, column_C) "
-		"values(3, 'Hello')"
-	);
-	dbc.execute_sql
-	(	"insert into test_table(column_A, column_C) "
-		"values(4, 'Red')"
-	);
-	dbc.execute_sql
-	(	"insert into test_table(column_A, column_C) "
-		"values(10, 'Gold')"
-	);
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "test_table") == 4);
-	CHECK(ok);
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
-	CHECK(ok);
-	
-	// Test behaviour with gaps in numbering
-	dbc.execute_sql("delete from test_table where column_B = 2");
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "test_table") == 4);
-	
-	// Key is not predicted to be reused once deleted
-	dbc.execute_sql("delete from test_table where column_B = 3");
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "test_table") == 4);
-	CHECK(ok);
-	int const predicted_key =
-		next_auto_key<DatabaseConnection, int>(dbc, "test_table");
-
-	// Check key is not actually reused once deleted
-	dbc.execute_sql
-	(	"insert into test_table(column_A, column_C) "
-		"values(110, 'Red')"
-	);
-	SQLStatement statement2
-	(	dbc,
-		"select column_B from test_table where column_A = 110"
-	);
-	statement2.step();
-	ok = (statement2.extract<int>(0) == predicted_key);
-	CHECK(ok);
-	statement2.step_final();
-
-	// Test behaviour in protecting against overflow
-	SQLStatement statement
-	(	dbc,
-		"insert into test_table(column_A, column_B, column_C) "
-		"values(:A, :B, :C)"
-	);
-	statement.bind(":A", 30);
-	statement.bind(":B", numeric_limits<int>::max());
-	statement.bind(":C", "Hello");
-	statement.step_final();
-
-	// Have to do this as CHECK_THROW gets confused by multiple template args
-	try
-	{
-		next_auto_key<DatabaseConnection, int>(dbc, "test_table");
-	}
-	catch (TableSizeException&)
-	{
-		ok = true;
-	}
-	CHECK(ok);
-	dbc.execute_sql("drop table dummy_table");
-	dbc.execute_sql("drop table test_table");
-}
-
-
 TEST_FIXTURE(DatabaseConnectionFixture, test_setup_boolean_table)
 {
 	dbc.setup_boolean_table();
@@ -269,32 +152,6 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_setup_boolean_table)
 	CHECK_THROW(invaliddb.setup_boolean_table(), InvalidConnection);
 }
 
-
-
-/*
- * DatabaseConnection::provide_sql_statement(...) is now private.
-TEST_FIXTURE(DatabaseConnectionFixture, test_provide_sql_statement)
-{
-	dbc.execute_sql("create table dummy(col_A int, col_B int)");
-	shared_ptr<detail::SQLStatementImpl> statement_pointer =
-		dbc.provide_sql_statement
-		(	"insert into dummy(col_A, col_B) values(300, 10)"
-		);
-	SQLStatement selector_01
-	(	dbc,
-		"select col_A from dummy where col_B = 10"
-	);
-	bool const first_go = selector_01.step();
-	CHECK_EQUAL(first_go, false);
-	bool const inserting = statement_pointer->step();
-	CHECK_EQUAL(inserting, false);
-	selector_01.reset();
-	bool const second_go = selector_01.step();
-	CHECK_EQUAL(second_go, true);
-	CHECK_EQUAL(selector_01.extract<int>(0), 300);
-	selector_01.step_final();
-}
-*/
 
 
 

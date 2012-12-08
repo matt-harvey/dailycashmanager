@@ -1,3 +1,4 @@
+#include "sqloxx_tests_common.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
