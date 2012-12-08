@@ -40,20 +40,49 @@ namespace detail
 
 
 /**
- * Convenience function to return a Handle<T> given a database connection
- * of type Connection and an id of type T::Id.
+ * @param dbc An instance of Connection for which an IdentityMap exists for
+ * type T.
  *
- * @todo Document and test.
+ * @param The id (primary key) of the desired instance of T, to which
+ * we want a Handle. It is the caller's responsibility to ensure
+ * that there is in fact a record in the database with this id.
+ *
+ * @returns a Handle<T> to the instance of T with Id id.
+ *
+ * Preconditions:\n
+ * The type Connection must define a method
+ * identity_map<T>(), that returns a non-constant reference to an instance
+ * of IdentityMap<T, Connection>, where this instance has been initialised
+ * with Connection dbc.
+ * A sensible place to locate this IdentityMap
+ * instance is as a data member of Connection.
+ *
+ * This function is simply a convenient wrapper around the method
+ * IdentityMap<T, Connection>::provide_handle(T::Id), and
+ * its behaviour in respect of exceptions is identical to that method.
+ *
+ * @todo test.
  */
 template <typename T, typename Connection>
 Handle<T>
 get_handle(Connection& dbc, typename T::Id id);
 
 /**
- * Convenience function to return a Handle<T> to a new, id-less business
- * object of type T, given a database connection of type Connection.
+ * @param An instance of Connection for which an IdentityMap exists for
+ * type T.
  *
- * @todo Document and test.
+ * Preconditions:\n
+ * The type Connection must define a method
+ * identity_map<T>(), that returns a non-constant reference to an instance
+ * of IdentityMap<T, Connection>, where this instance has been initialized
+ * with Connection dbc. A sensible place to store this IdentityMap
+ * instance is as a member of the Connection.
+ *
+ * This function is simply a convenient wrapper around the method
+ * IdentityMap<T, Connection>::provide_handle(), and
+ * its behaviour in respect of exceptions is identical to that method.
+ *
+ * @todo test
  */
 template <typename T, typename Connection>
 Handle<T>
@@ -378,7 +407,7 @@ get_handle(Connection& dbc, typename T::Id id)
 {
 	return dbc.template
 		identity_map<T>().template
-		provide_object(id);
+		provide_handle(id);
 }
 
 template <typename T, typename Connection>
@@ -388,7 +417,7 @@ get_handle(Connection& dbc)
 {
 	return dbc.template
 		identity_map<T>().template
-		provide_object();
+		provide_handle();
 }
 
 

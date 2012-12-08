@@ -134,17 +134,17 @@ public:
 	 *
 	 * <em>In addition</em>, any exceptions thrown from the T constructor
 	 * of the form T(IdentityMap<T, Connection>&) may also be thrown
-	 * from provide_object().
+	 * from provide_handle().
 	 *
 	 * Exception safety depends on the constructor of T of the form
 	 * T(IdentityMap<T, Connection>&). Provided this constructor offers at
-	 * least the <em>strong guarantee</em>, then provide_object() offers the
+	 * least the <em>strong guarantee</em>, then provide_handle() offers the
 	 * <em>strong guarantee</em> (although there may be some internal cache
 	 * state that is not rolled back but which does not affect client code).
 	 *
 	 * @todo Testing.
 	 */
-	Handle<T> provide_object();
+	Handle<T> provide_handle();
 
 	/**
 	 * Provide handle to object of type T, representing an object
@@ -165,12 +165,12 @@ public:
 	 *
 	 * <em>In addition</em>, any exceptions thrown from the T constructor
 	 * of the form T(IdentityMap<T, Connection>&, typename T::Id) may
-	 * also be thrown from provide_object().
+	 * also be thrown from provide_handle().
 	 *
 	 * Exception safety depends on the constructor of T of the form
 	 * T(IdentityMap<T, Connection>&, typename T::Id). Provided this
 	 * constructor offers at
-	 * least the <em>strong guarantee</em>, then provide_object() offers the
+	 * least the <em>strong guarantee</em>, then provide_handle() offers the
 	 * <em>strong guarantee</em> (although there may be some internal cache
 	 * state that is not rolled back but which does not affect client code).
 	 * For this guarantee to hold, it is also required that the destructor
@@ -178,7 +178,7 @@ public:
 	 *
 	 * @todo Testing.
 	 */
-	Handle<T> provide_object(Id p_id);
+	Handle<T> provide_handle(Id p_id);
 
 	/**
 	 * Turn on caching. When caching is on, objects loaded from the
@@ -462,7 +462,7 @@ IdentityMap<T, Connection>::operator=(IdentityMap const& rhs)
 
 template <typename T, typename Connection>
 Handle<T>
-IdentityMap<T, Connection>::provide_object()
+IdentityMap<T, Connection>::provide_handle()
 {
 	// Comments here are to help ascertain exception-safety.
 	Record obj_ptr(new T(*this));  // T-dependant exception safety
@@ -473,7 +473,7 @@ IdentityMap<T, Connection>::provide_object()
 	// calling insert either (a) succeeds, or (b) fails completely and
 	// throws std::bad_alloc. If it throws, then obj_ptr
 	// will be deleted on exit (as it's a shared_ptr) - which amounts to
-	// rollback of provide_object().
+	// rollback of provide_handle().
 	cache_key_map().insert
 	(	typename CacheKeyMap::value_type(cache_key, obj_ptr)
 	);
@@ -499,7 +499,7 @@ IdentityMap<T, Connection>::provide_object()
 
 template <typename T, typename Connection>
 Handle<T>
-IdentityMap<T, Connection>::provide_object(Id p_id)
+IdentityMap<T, Connection>::provide_handle(Id p_id)
 {
 	typename IdMap::iterator it = id_map().find(p_id);
 	if (it == id_map().end())

@@ -84,9 +84,12 @@ private:
  *
  * <b>IMPORTANT</b>: Only handle a PersistentObject instances via Handle
  * instances;\n
- * and always obtain Handle instances either by copying / assigning other
- * Handle instances, or by calling get_handle. See below.
- * 
+ * and always obtain Handle instances either: by copying or assigning existing
+ * Handle instances; by calling
+ * IdentityMap<Derived, Connection>::provide_handle(...); or
+ * by calling get_handle<Derived>(...) (which in turn calls
+ * IdentityMap<...>::provide_handle(...).
+ *
  * <b>Identity Map Pattern</b>
  *
  * PersistentObject is intended
