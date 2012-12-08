@@ -152,6 +152,13 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_setup_boolean_table)
 	CHECK_THROW(invaliddb.setup_boolean_table(), InvalidConnection);
 }
 
+TEST_FIXTURE(DatabaseConnectionFixture, self_test)
+{
+	// Tests max_nesting()
+	CHECK_EQUAL(dbc.self_test(), 0);
+}
+
+
 
 
 

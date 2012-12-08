@@ -1,4 +1,5 @@
 #include "database_connection.hpp"
+#include "database_transaction.hpp"
 #include "detail/sqlite_dbconn.hpp"
 #include "sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
@@ -270,5 +271,30 @@ DatabaseConnection::unchecked_rollback_to_savepoint()
 	statement.step();
 	return;
 }
+
+int
+DatabaseConnection::self_test()
+{
+	int ret = 0;
+	assert (m_transaction_nesting_level == 0);
+	int const original_nesting = m_transaction_nesting_level;
+	m_transaction_nesting_level = max_nesting() - 1;
+	DatabaseTransaction transaction1(*this);  // Should be ok.
+	++ret;
+	try
+	{
+		DatabaseTransaction transaction2(*this);  // Should throw
+	}
+	catch (TransactionNestingException&)
+	{
+		--ret;
+	}
+	transaction1.cancel();
+	m_transaction_nesting_level = original_nesting;
+	return ret;
+
+}
+
+
 
 }  // namespace sqloxx

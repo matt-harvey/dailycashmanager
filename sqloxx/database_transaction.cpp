@@ -18,12 +18,13 @@ namespace sqloxx
 DatabaseTransaction::DatabaseTransaction
 (	DatabaseConnection& p_database_connection
 ):
-	m_is_active(true),
+	m_is_active(false),
 	m_database_connection(p_database_connection)
 {
 	DatabaseConnection::TransactionAttorney::begin_transaction
 	(	m_database_connection
 	);
+	m_is_active = true;
 }
 
 DatabaseTransaction::~DatabaseTransaction()

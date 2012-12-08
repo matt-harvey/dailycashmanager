@@ -100,7 +100,60 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_sqlite_rollback)
 }
 
 
-TEST_FIXTURE(DatabaseConnectionFixture, test_cancel_transaction)
+TEST_FIXTURE(DatabaseConnectionFixture, transaction_constructor_destructor)
+{
+	DatabaseConnection invalid_dbc;
+	CHECK_THROW(DatabaseTransaction t1(invalid_dbc), InvalidConnection);
+
+	dbc.execute_sql("create table dummy(Col_A)");
+	dbc.execute_sql("insert into dummy(Col_A) values(12)");
+	SQLStatement selector(dbc, "select Col_A from dummy");
+	for (int i = 0; i != 5; ++i)
+	{
+		DatabaseTransaction t2(dbc);
+		dbc.execute_sql("delete from dummy where Col_A = 12");
+		bool const check_inner = selector.step();
+		CHECK(!check_inner);
+		selector.reset();
+		// Destructor of t2 called when scope left, cancelling transaction
+	}
+	bool const check_outer = selector.step();
+	CHECK(check_outer);
+
+	selector.reset();
+	for (int i = 0; i != 5; ++i)
+	{
+		DatabaseTransaction t2_b(dbc);
+		dbc.execute_sql("delete from dummy where Col_A = 12");
+		bool const check_inner_b = selector.step();
+		CHECK(!check_inner_b);
+		selector.reset();
+		t2_b.commit();
+		// Destructor of t2 called when scope left, but as transaction has
+		// now been committed, it is not cancelled.
+	}
+	bool const check_outer_b = selector.step();
+	CHECK(!check_outer_b);
+}
+
+
+TEST_FIXTURE(DatabaseConnectionFixture, test_commit_and_cancel_transaction_A)
+{
+	dbc.execute_sql("create table dummy(Col_A)");
+	DatabaseTransaction transaction1(dbc);
+	dbc.execute_sql("insert into dummy(Col_A) values(20)");
+	DatabaseTransaction transaction2(dbc);
+	transaction2.commit();
+	SQLStatement selector(dbc, "select Col_A from dummy");
+	selector.step();
+	CHECK_EQUAL(selector.extract<int>(0), 20);
+	transaction1.cancel();
+	selector.reset();
+	bool quick_check = selector.step();
+	CHECK(!quick_check);
+}
+
+TEST_FIXTURE(DatabaseConnectionFixture, test_cancel_transaction_B)
 {
 	dbc.execute_sql("create table dummy(col_A)");
 

@@ -41,8 +41,6 @@ namespace sqloxx
  * The behaviour documented
  * in the member function documentation for this class depends on this
  * being the case.
- *
- * @todo Documentation and testing.
  */
 class DatabaseTransaction:
 	public boost::noncopyable
@@ -73,8 +71,6 @@ public:
 	 * entirely via the DatabaseTransaction class, rather than by
 	 * executing the SQL commands ("begin transaction", "end transaction"
 	 * etc.) directly.
-	 * 
-	 * @todo Testing.
 	 */
 	explicit DatabaseTransaction(DatabaseConnection& p_database_connection);
 
@@ -139,8 +135,6 @@ public:
 	 *
 	 * Exception safety: <em>strong guarantee</em>, provided the preconditions
 	 * are met.
-	 *
-	 * @todo Testing.
 	 */
 	void commit();
 
@@ -183,8 +177,6 @@ public:
 	 *
 	 * Exception safety: <em>strong guarantee</em>, provided the preconditions
 	 * are met.
-	 *
-	 * @todo Testing.
 	 */
 	void cancel();
 

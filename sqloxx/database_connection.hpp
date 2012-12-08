@@ -60,8 +60,6 @@ namespace detail
  * This function is simply a convenient wrapper around the method
  * IdentityMap<T, Connection>::provide_handle(T::Id), and
  * its behaviour in respect of exceptions is identical to that method.
- *
- * @todo test.
  */
 template <typename T, typename Connection>
 Handle<T>
@@ -81,8 +79,6 @@ get_handle(Connection& dbc, typename T::Id id);
  * This function is simply a convenient wrapper around the method
  * IdentityMap<T, Connection>::provide_handle(), and
  * its behaviour in respect of exceptions is identical to that method.
- *
- * @todo test
  */
 template <typename T, typename Connection>
 Handle<T>
@@ -268,6 +264,15 @@ public:
 
 	friend class TransactionAttorney;
 
+	///@cond
+	// Self-test function, returns a number indicating the number of
+	// test failures. 0 means all pass. This is not intended to test
+	// all functions - conventional unit tests take care of that - but
+	// only to test aspects of DatabaseConnection that are difficult
+	// to test without accessing private functions and data.
+	int self_test();
+	///@endcond
+
 private:
 
 	/**
@@ -278,7 +283,8 @@ private:
 	 * is not being used elsewhere), or
 	 * will be a pointer to a newly created and new cached SQLStatementImpl
 	 * (if a 
-	 * SQLStatementImpl with \c statement_text has not yet been created on this
+	 * SQLStatementImpl with \c statement_text has not yet been created
+	 * on this
 	 * DatabaseConnection, or it has been created but is being used
 	 * elsewhere).
 	 *
