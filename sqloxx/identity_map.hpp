@@ -2,7 +2,6 @@
 #define GUARD_identity_map_hpp
 
 #include "handle.hpp"
-#include <boost/noncopyable.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
@@ -76,8 +75,6 @@ public:
 	 * failure. (This is very unlikely.)
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
-	 *
-	 * @todo Testing.
 	 */
 	IdentityMap(Connection& p_connection);
 
@@ -112,8 +109,6 @@ public:
 	 * copy constructor.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo Testing.
 	 */
 	IdentityMap& operator=(IdentityMap const& rhs);
 
@@ -141,8 +136,6 @@ public:
 	 * least the <em>strong guarantee</em>, then provide_handle() offers the
 	 * <em>strong guarantee</em> (although there may be some internal cache
 	 * state that is not rolled back but which does not affect client code).
-	 *
-	 * @todo Testing.
 	 */
 	Handle<T> provide_handle();
 
@@ -175,8 +168,6 @@ public:
 	 * state that is not rolled back but which does not affect client code).
 	 * For this guarantee to hold, it is also required that the destructor
 	 * of T not throw.
-	 *
-	 * @todo Testing.
 	 */
 	Handle<T> provide_handle(Id p_id);
 
@@ -212,8 +203,6 @@ public:
 	 * this IdentityMap is associated.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo Testing.
 	 */
 	Connection& connection();
 

@@ -15,7 +15,7 @@ namespace tests
 {
 
 void
-DerivedPO::setup_tables(DerivedDatabaseConnection& dbc)
+DerivedPO::setup_tables(DatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table derived_pos"

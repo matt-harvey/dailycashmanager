@@ -63,6 +63,14 @@ JEWEL_DERIVED_EXCEPTION(DatabaseException, jewel::Exception);
 JEWEL_DERIVED_EXCEPTION(ConstraintException, DatabaseException);
 
 /**
+ * Exception to be thrown when, for a given type T, and a given
+ * database connection, there is an attempt
+ * to create multiple instances of IdentityMap<T, Connection> for
+ * that database connection.
+ */
+JEWEL_DERIVED_EXCEPTION(MultipleMapsException, DatabaseException);
+
+/**
  * Exception to be thrown when a database transaction cannot be
  * cleanly finalized.
  */

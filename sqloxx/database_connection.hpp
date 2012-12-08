@@ -264,6 +264,7 @@ public:
 
 	friend class TransactionAttorney;
 
+
 	///@cond
 	// Self-test function, returns a number indicating the number of
 	// test failures. 0 means all pass. This is not intended to test

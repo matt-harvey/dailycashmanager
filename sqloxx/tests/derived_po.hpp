@@ -29,7 +29,7 @@ public:
 		PersistentObject;
 	typedef sqloxx::IdentityMap<DerivedPO, DerivedDatabaseConnection>
 		IdentityMap;
-	static void setup_tables(DerivedDatabaseConnection& dbc);
+	static void setup_tables(DatabaseConnection& dbc);
 	explicit DerivedPO(IdentityMap& p_identity_map);
 	DerivedPO(IdentityMap& p_identity_map, Id p_id);
 	int x();
