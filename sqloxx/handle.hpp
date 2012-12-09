@@ -1,6 +1,7 @@
 #ifndef GUARD_handle_hpp
 #define GUARD_handle_hpp
 
+#include "general_typedefs.hpp"
 #include "sqloxx_exceptions.hpp"
 
 namespace sqloxx
@@ -12,6 +13,7 @@ class PersistentObjectHandleAttorney;
 
 template <typename T, typename Connection>
 class IdentityMap;
+
 
 /**
  * Handle for handling business objects of type T where T is a class
@@ -32,11 +34,12 @@ public:
 	Handle<T>
 	sqloxx::IdentityMap<T, Connection>::provide_handle();
 
+	template <typename IdType>
 	template <typename Connection>
 	friend
 	Handle<T>
 	sqloxx::IdentityMap<T, Connection>::provide_handle
-	(	int p_id  // WARNING To compile this can't be ...::Id, must be int - which sucks!
+	(	Id p_id  // This won't compile if it's T::Id
 	);
 
 	/**

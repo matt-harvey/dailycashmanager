@@ -223,10 +223,12 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_value_type_exception)
 	(	dbc,
 		"select * from dummy2"
 	);
+	int x = 0;
 	CHECK_THROW
-	(	int x = selection_statement.extract<double>(0),
+	(	x = selection_statement.extract<double>(0),
 		ValueTypeException
     );
+	++x;  // To silence compiler warning
 }
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_high)
@@ -238,10 +240,12 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_high)
 		"select Col_A, Col_B from dummy where Col_A = 3"
 	);
 	selection_statement.step();
+	int x;
 	CHECK_THROW
-	(	int x = selection_statement.extract<int>(2),
+	(	x = selection_statement.extract<int>(2),
 		ResultIndexOutOfRange
 	);
+	++x;  // To silence compiler warning
 	// Statement unchanged and still good after exception thrown
 	CHECK_EQUAL(selection_statement.extract<int>(1), 10);
 	CHECK_EQUAL(selection_statement.extract<int>(0), 3);
