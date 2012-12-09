@@ -10,6 +10,8 @@ namespace sqloxx
 template <typename T>
 class PersistentObjectHandleAttorney;
 
+template <typename T, typename Connection>
+class IdentityMap;
 
 /**
  * Handle for handling business objects of type T where T is a class
@@ -25,19 +27,17 @@ class Handle
 {
 public:
 
-	/** Construct a Handle<T> from a T*.
-	 * 
-	 * @throws sqloxx::OverflowException if the maximum number
-	 * of handles for this underlying instance of T has been reached.
-	 * The circumstances under which this occurs depend on the
-	 * implementation of T::notify_handle_construction(), but should
-	 * be extremely rare.
-	 *
-	 * Exception safety: <em>strong guarantee</em>.
-	 *
-	 * @todo Testing.
-	 */
-	Handle(T* p_pointer);
+	template <typename Connection>
+	friend
+	Handle<T>
+	sqloxx::IdentityMap<T, Connection>::provide_handle();
+
+	template <typename Connection>
+	friend
+	Handle<T>
+	sqloxx::IdentityMap<T, Connection>::provide_handle
+	(	int p_id  // WARNING To compile this can't be ...::Id, must be int - which sucks!
+	);
 
 	/**
 	 * Preconditions:\n
@@ -114,6 +114,19 @@ public:
 	T* operator->() const;
 
 private:
+
+	/** Construct a Handle<T> from a T*.
+	 * 
+	 * @throws sqloxx::OverflowException if the maximum number
+	 * of handles for this underlying instance of T has been reached.
+	 * The circumstances under which this occurs depend on the
+	 * implementation of T::notify_handle_construction(), but should
+	 * be extremely rare.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 */
+	Handle(T* p_pointer);
+
 	T* m_pointer;
 };
 
