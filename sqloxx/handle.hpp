@@ -52,8 +52,6 @@ public:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>, provided the
 	 * preconditions are met.
-	 *
-	 * @todo Testing.
 	 */
 	~Handle();
 
@@ -64,8 +62,6 @@ public:
 	 * by the type PersistentObject<T, Connection>::HandleCounter.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
-	 *
-	 * @todo Testing.
 	 */
 	Handle(Handle const& rhs);
 	
@@ -76,8 +72,6 @@ public:
 	 * by the type PersistentObject<T, Connection>::HandleCounter.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
-	 *
-	 * @todo Testing.
 	 */
 	Handle& operator=(Handle const& rhs);
 
@@ -98,8 +92,6 @@ public:
 	 * T bound to this Handle.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
-	 *
-	 * @todo Testing.
 	 */
 	T& operator*() const;
 
@@ -111,8 +103,6 @@ public:
 	 * of T bound to this Handle.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
-	 *
-	 * @todo Testing.
 	 */
 	T* operator->() const;
 

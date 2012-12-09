@@ -403,7 +403,13 @@ public:
 	void save();
 
 	/**
-	 * Delete an object of type Derived<T> from the database.
+	 * Delete an object of type Derived from the database. The
+	 * function will also inform the IdentityMap in which this
+	 * object is cached, and the cache will update itself accordingly.
+	 * After calling remove(), the object will no longer have an id;
+	 * however its other attributes will be unaltered (assuming the
+	 * Derived class doesn't define do_remove() in such a way as to
+	 * alter them - see below).
 	 *
 	 * Preconditions:\n
 	 * If the default implementation of do_remove() is not redefined
@@ -729,7 +735,8 @@ protected:
 	 * Derived::primary_table_name() must be defined by Derived so as
 	 * to return the name of the table in which all instances of Derived
 	 * are stored with their primary key, as a std::string; and\n
-	 * The primary key must be a single column primary key.
+	 * The primary key must be a single column primary key, the name
+	 * of which is returned by Derived::primary_key_name().
 	 *
 	 * @throws InvalidConnection if the database connection is invalid.
 	 *
@@ -1080,8 +1087,7 @@ PersistentObject<Derived, Connection>::remove()
 			transaction.cancel();
 			throw;
 		}
-		ghostify();  // nothrow (providing preconditions met)
-		
+
 		// nothrow (conditional)
 		IdentityMap::Attorney::uncache_object
 		(	m_identity_map,
