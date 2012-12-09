@@ -178,6 +178,8 @@ public:
 	 * as at least one Handle referring to it. If enable_caching() is
 	 * called when caching is already on, it has no effect.
 	 *
+	 * Caching is off by default.
+	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	void enable_caching();
@@ -190,11 +192,11 @@ public:
 	 * is called, then the function will remove from the cache any
 	 * object that currently has no sqloxx::Handle<T> instances
 	 * pointing to it.
+	 *
+	 * Caching is off by default.
 	 * 
 	 * Exception safety: <em>nothrow guarantee</em>, providing the
 	 * destructor of T does not throw.
-	 *
-	 * @todo Testing.
 	 */
 	void disable_caching();
 
