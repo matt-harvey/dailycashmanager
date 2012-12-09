@@ -554,8 +554,7 @@ public:
 protected:
 
 	/**
-	 * This should only be called from IdentityMap<Derived, Connection>, or by
-	 * Derived.
+	 * This should only be called by Derived.
 	 *
 	 * Create a PersistentObject that corresponds (or purports to correspond)
 	 * to one that already exists in the database.
@@ -579,8 +578,7 @@ protected:
 	);
 
 	/** 
-	 * This should only be called from IdentityMap<Derived, Connection>, or
-	 * by Derived.
+	 * This should only be called by Derived.
 	 *
 	 * Create a PersistentObject that does \e not correspond to
 	 * one that already exists in the database.
