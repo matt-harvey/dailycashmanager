@@ -10,6 +10,7 @@
 
 using boost::shared_ptr;
 using sqloxx::get_handle;
+using sqloxx::unchecked_get_handle;
 using std::string;
 using std::vector;
 
@@ -43,6 +44,17 @@ OrdinaryJournal::OrdinaryJournal
 ):
 	m_impl
 	(	get_handle<OrdinaryJournalImpl>(p_database_connection, p_id)
+	)
+{
+}
+
+OrdinaryJournal::OrdinaryJournal
+(	PhatbooksDatabaseConnection& p_database_connection,
+	Id p_id,
+	int p_dummy
+):
+	m_impl
+	(	unchecked_get_handle<OrdinaryJournalImpl>(p_database_connection, p_id)
 	)
 {
 }

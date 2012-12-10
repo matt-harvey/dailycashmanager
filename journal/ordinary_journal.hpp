@@ -27,9 +27,17 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
+	// Slow, checked version
 	OrdinaryJournal
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
+	);
+
+	// Fast, unchecked version
+	OrdinaryJournal
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		Id p_id,
+		int p_dummy
 	);
 
 	OrdinaryJournal

@@ -22,9 +22,14 @@ public:
 	explicit Entry
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
-	Entry
+	Entry  // slow, checked version
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
+	);
+	Entry  // fast, unchecked version
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		Id p_id,
+		int p_dummy
 	);
 	void set_journal_id(Journal::Id p_journal_id);
 	void set_account(Account const& p_account);

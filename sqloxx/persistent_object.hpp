@@ -254,6 +254,15 @@ public:
 	virtual ~PersistentObject();
 
 	/**
+	 * @returns true if and only if an object with this id exists in
+	 * the database. Note the database is always checked, not the
+	 * cache.
+	 *
+	 * @todo Document exceptions and test. 
+	 */
+	static bool exists(Connection& p_database_connection, Id p_id);
+
+	/**
 	 * Preconditions:\n
 	 * The destructor of Derived must be non-throwing;\n
 	 * We have handled this object only via a Handle<Derived>, with
@@ -569,10 +578,16 @@ protected:
 	 * @param p_id the id of the object as it exists in the database. This
 	 * presumably will be, or correspond directly to, the primary key.
 	 *
+	 * Preconditions:\n
 	 * Note that even if there is no corresponding object in the database for
 	 * the given value p_id, this constructor will still proceed without
 	 * complaint. The constructor does not actually perform any checks on the
-	 * validity either of p_database_connection or of p_id.
+	 * validity either of p_database_connection or of p_id. The caller should
+	 * be sure, before calling this function, that there exists in the
+	 * database a row representing an instance of the Derived type, with p_id
+	 * as it primary key. If no such row exists, then UNDEFINED BEHAVIOUR will
+	 * result, including the possibility of silent or delayed corruption of
+	 * data.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
@@ -970,6 +985,26 @@ template
 PersistentObject<Derived, Connection>::~PersistentObject()
 {
 }
+
+template
+<typename Derived, typename Connection>
+bool
+PersistentObject<Derived, Connection>::exists
+(	Connection& p_database_connection,
+	Id p_id
+)
+{
+	static std::string const text =
+		"select * from " +
+		Derived::primary_table_name() +
+		" where " +
+		Derived::primary_key_name() +
+		" = :p";
+	SQLStatement statement(p_database_connection, text);
+	statement.bind(":p", p_id);
+	return statement.step();
+}
+
 
 template
 <typename Derived, typename Connection>

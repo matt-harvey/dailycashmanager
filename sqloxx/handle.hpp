@@ -32,13 +32,12 @@ public:
 	template <typename Connection>
 	friend
 	Handle<T>
-	sqloxx::IdentityMap<T, Connection>::provide_handle();
+	IdentityMap<T, Connection>::provide_handle();
 
-	template <typename IdType>
 	template <typename Connection>
 	friend
 	Handle<T>
-	sqloxx::IdentityMap<T, Connection>::provide_handle
+	IdentityMap<T, Connection>::unchecked_provide_handle
 	(	Id p_id  // This won't compile if it's T::Id
 	);
 

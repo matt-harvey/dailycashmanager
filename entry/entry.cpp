@@ -7,6 +7,7 @@
 
 using boost::shared_ptr;
 using sqloxx::get_handle;
+using sqloxx::unchecked_get_handle;
 using std::string;
 
 
@@ -37,6 +38,18 @@ Entry::Entry
 	m_impl(get_handle<EntryImpl>(p_database_connection, p_id))
 {
 }
+
+Entry::Entry
+(	PhatbooksDatabaseConnection& p_database_connection,
+	Id p_id,
+	int p_dummy
+):
+	m_impl
+	(	unchecked_get_handle<EntryImpl>(p_database_connection, p_id)
+	)
+{
+}
+
 
 void
 Entry::set_journal_id(Journal::Id p_journal_id)

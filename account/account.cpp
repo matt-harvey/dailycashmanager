@@ -10,6 +10,7 @@
 using phatbooks::account_type::AccountType;
 using boost::shared_ptr;
 using sqloxx::get_handle;
+using sqloxx::unchecked_get_handle;
 using std::string;
 
 
@@ -44,6 +45,18 @@ Account::Account
 ):
 	m_impl
 	(	get_handle<AccountImpl>(p_database_connection, p_id)
+	)
+{
+}
+
+
+Account::Account
+(	PhatbooksDatabaseConnection& p_database_connection,
+	Id p_id,
+	int p_dummy
+):
+	m_impl
+	(	unchecked_get_handle<AccountImpl>(p_database_connection, p_id)
 	)
 {
 }

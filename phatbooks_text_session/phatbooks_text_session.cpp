@@ -848,7 +848,11 @@ void PhatbooksTextSession::display_all_entry_account_names()
 	);
 	while (statement.step())
 	{
-		Entry entry(*m_database_connection, statement.extract<Entry::Id>(0));
+		Entry entry
+		(	*m_database_connection,
+			statement.extract<Entry::Id>(0),
+			0
+		);
 		cout << entry.account().name() << endl;  // WARNING temp comment-out
 	}
 	cout << "Done!" << endl;
@@ -868,7 +872,8 @@ void PhatbooksTextSession::display_journal_summaries()
 	{
 		OrdinaryJournal journal
 		(	*m_database_connection,
-			journal_statement.extract<OrdinaryJournal::Id>(0)
+			journal_statement.extract<OrdinaryJournal::Id>(0),
+			0
 		);
 		cout << endl << journal.date() << endl;
 		typedef vector<Entry> EntryVec;
@@ -906,12 +911,14 @@ void PhatbooksTextSession::display_balances()
 	{
 		Account account
 		(	*m_database_connection,
-			account_statement.extract<Account::Id>(0)
+			account_statement.extract<Account::Id>(0),
+			0
 		);
 		balance_map[account.id()] = Decimal(0, 0);
 	}
 
 	// "SQL METHOD"
+	/*
 	SQLStatement sum_selector
 	(	*m_database_connection,
 		"select account_id, sum(amount) from entries inner "
@@ -926,9 +933,9 @@ void PhatbooksTextSession::display_balances()
 			Account(*m_database_connection, a_id).commodity().precision()
 		);
 	}
+	*/
 
 	// "ACCUMULATION METHOD"
-	/*
 	SQLStatement entry_statement
 	(	*m_database_connection,
 		"select entry_id from entries inner join ordinary_journal_detail "
@@ -938,11 +945,11 @@ void PhatbooksTextSession::display_balances()
 	{
 		Entry entry
 		(	*m_database_connection,
-			entry_statement.extract<Entry::Id>(0)
+			entry_statement.extract<Entry::Id>(0),
+			0
 		);
 		balance_map[entry.account().id()] += entry.amount();
 	}
-	*/
 
 	sw.log();
 	// STOP TIMING

@@ -51,6 +51,17 @@ public:
 	);
 
 	/**
+	 * Get an Account by id from database, without
+	 * the safety feature of throwing if an
+	 * Account with this id does not exist.
+	 */
+	Account
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		Id p_id,
+		int p_dummy  // Dummy parameter - does nothing
+	);
+
+	/**
 	 * Get an Account by name from the database.
 	 */
 	Account

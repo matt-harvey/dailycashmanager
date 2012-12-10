@@ -27,9 +27,17 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
+	// Slow, checked version
 	Repeater
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
+	);
+
+	// Fast, unchecked version
+	Repeater
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		Id p_id,
+		int p_dummy
 	);
 
 	void set_interval_type(IntervalType p_interval_type);

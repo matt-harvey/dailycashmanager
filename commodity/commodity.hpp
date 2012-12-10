@@ -31,9 +31,23 @@ public:
 		Id p_id
 	);
 
+	/**
+	 * Get a Commodity by id from the database.
+	 */
 	Commodity
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		std::string const& p_abbreviation
+	);
+
+	/**
+	 * Get a Commodity by id from the database, without
+	 * the safety feature of throwing if an
+	 * Account with this id does not exist.
+	 */
+	Commodity
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		std::string const& p_abbreviation,
+		int p_dummy
 	);
 
 	std::string abbreviation() const;

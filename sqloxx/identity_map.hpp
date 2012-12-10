@@ -147,6 +147,13 @@ public:
 	 * to a record of the corresponding type already persisted in the
 	 * database, with p_id as its primary key.
 	 *
+	 * @throws sqloxx::BadIdentifier if there is not record in the
+	 * database of type T that has p_id as its primary key. Note the
+	 * validity of p_id is always checked in the physical database
+	 * by this function, regardless of whether object yet has
+	 * yet be cached in the IdentityMap. For a faster, unchecked
+	 * version of this function, see unchecked_provide_handle(Id p_id).
+	 *
 	 * @throws std::bad_alloc if the object is not already loaded in the
 	 * cache, and there is a memory allocation failure in the process of
 	 * loading and caching the object.
@@ -168,9 +175,23 @@ public:
 	 * state that is not rolled back but which does not affect client code).
 	 * For this guarantee to hold, it is also required that the destructor
 	 * of T not throw.
+	 *
+	 * @todo Revise tests to reflect checked nature. Test
+	 * unchecked_provide_handle separately as well.
 	 */
 	Handle<T> provide_handle(Id p_id);
 
+	/**
+	 * Behaviour is exactly the same as provide_handle(Id p_id), with the
+	 * sole difference that (a) the unchecked version is faster, and
+	 * (b) if a record of type T, with p_id as its primary key,
+	 * does not exist in the database, then, rather than an exception
+	 * being thrown, behaviour is undefined. This function should \e never be
+	 * called unless you are \e sure p_id is an existing primary key.
+	 */
+	Handle<T> unchecked_provide_handle(Id p_id);
+
+	
 	/**
 	 * Turn on caching. When caching is on, objects loaded from the
 	 * database are cached indefinitely in the IdentityMap. When
@@ -493,6 +514,21 @@ IdentityMap<T, Connection>::provide_handle()
 template <typename T, typename Connection>
 Handle<T>
 IdentityMap<T, Connection>::provide_handle(Id p_id)
+{
+	if (!PersistentObject<T, Connection>::exists(connection(), p_id))
+	{
+		throw BadIdentifier
+		(	"The database does not contain a record of the "
+			"requested type with the requested id."
+		);
+	}
+	return unchecked_provide_handle(p_id);
+}
+
+
+template <typename T, typename Connection>
+Handle<T>
+IdentityMap<T, Connection>::unchecked_provide_handle(Id p_id)
 {
 	typename IdMap::iterator it = id_map().find(p_id);
 	if (it == id_map().end())
