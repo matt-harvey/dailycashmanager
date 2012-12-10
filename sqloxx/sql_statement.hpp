@@ -13,7 +13,6 @@ namespace sqloxx
 {
 
 
-
 /**
  * Class to handle SQL statements that may be shared instances
  * of such statements in a cache. When a
