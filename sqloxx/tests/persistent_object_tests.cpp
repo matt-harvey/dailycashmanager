@@ -142,8 +142,6 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_2)
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 {
 	// Test interaction of save() with DatabaseTransaction
-	// todo Figure out whether I am happy with the behaviour
-	// exhibited here.
 
 	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(*pdbc));
 	dpo1->set_x(4000);
@@ -186,14 +184,21 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 	while (statement.step()) ++rows;
 	CHECK_EQUAL(rows, 1);
 
-	// WARNING This sucks!
-	// The cache is not aware that the save was cancelled...
-	Handle<DerivedPO> dpo2c(get_handle<DerivedPO>(*pdbc, 2));
+	// The cache is not aware in itself that the save was cancelled...
+	Handle<DerivedPO> dpo2c(unchecked_get_handle<DerivedPO>(*pdbc, 2));
 	CHECK_EQUAL(dpo2c->id(), 2);
 	CHECK_EQUAL(dpo2c->x(), -17);
 	CHECK_EQUAL(dpo2c->y(), 64.29382);
 
-	// But at least this will save over the top of the old
+	// ... That's why we should not use unchecked_get_handle unless
+	// we're sure we've got a valid id. The "normal" get_handle
+	// throws here.
+	CHECK_THROW
+	(	Handle<DerivedPO> dpo2c_checked(get_handle<DerivedPO>(*pdbc, 2)),
+		BadIdentifier
+	);
+
+	// At least this will save over the top of the old
 	// one...
 	Handle<DerivedPO> dpo5(get_handle<DerivedPO>(*pdbc));
 	dpo5->set_x(12);
@@ -204,6 +209,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 	CHECK_EQUAL(dpo5->x(), 12);
 	CHECK_EQUAL(dpo5->y(), 19);
 	
+	// The objects still have attributes that we can retrieve
 	CHECK_EQUAL(dpo2b->x(), -17);
 	CHECK_EQUAL(dpo2->y(), 64.29382);
 
@@ -211,31 +217,27 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 	CHECK_EQUAL(dpo2d->x(), 12);
 	CHECK_EQUAL(dpo2d->y(), 19);
 
-	// todo This sucks. It gives us a handle even if there is no
-	// object with this id in the cache OR the database.
-	Handle<DerivedPO> dpo7(get_handle<DerivedPO>(*pdbc, 7));
-	CHECK_EQUAL(dpo7->id(), 7);
-	/*
-	dpo7->set_x(109);  // Throws ValueTypeException - obscure! WARNING
-	Handle<DerivedPO> dpo7b(get_handle<DerivedPO>(*pdbc, 7));
-	CHECK_EQUAL(dpo7b->x(), 109);
-	*/
+	CHECK_THROW
+	(	Handle<DerivedPO> dpo7(get_handle<DerivedPO>(*pdbc, 7)),
+		BadIdentifier
+	);
 	
 	CHECK_EQUAL(dpo4->id(), 4);
 	CHECK_EQUAL(dpo4->x(), 321);
 	CHECK_EQUAL(dpo4->y(), 1324.6);
-	Handle<DerivedPO> dpo4b(get_handle<DerivedPO>(*pdbc, 4));
-	CHECK_EQUAL(dpo4b->y(), 1324.6);
-	CHECK_EQUAL(dpo4b->id(), 4);
+	CHECK_THROW
+	(	Handle<DerivedPO> dpo4b(get_handle<DerivedPO>(*pdbc, 4)),
+		BadIdentifier
+	);
 
+	// We can remove it dpo4 the cache like this - even though
+	// it has already been removed from the database
 	dpo4->remove();
-
-	// WARNING Unresolved problems!
-	Handle<DerivedPO> dpo4c(get_handle<DerivedPO>(*pdbc, 4));
-	CHECK_THROW(dpo4c->y(), std::exception);
-	CHECK_EQUAL(dpo4c->id(), 4);
+	CHECK_THROW(dpo4->id(), UninitializedOptionalException);
+	// But it still exists in memory with its attributes. That's OK.
+	CHECK_EQUAL(dpo4->x(), 321);
+	CHECK_EQUAL(dpo4->y(), 1324.6);
 }
-
 // WARNING Reworking of tests is up to here.
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)

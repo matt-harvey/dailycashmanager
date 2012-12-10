@@ -151,7 +151,11 @@ public:
 	 * database of type T that has p_id as its primary key. Note the
 	 * validity of p_id is always checked in the physical database
 	 * by this function, regardless of whether object yet has
-	 * yet be cached in the IdentityMap. For a faster, unchecked
+	 * yet be cached in the IdentityMap. (It is possibly in certain
+	 * situations for objects to be left in the cache with ids when they
+	 * no longer exist in the database. This doesn't do any harm as long
+	 * as we don't subsequently use Handles with these invalid
+	 * ids.) For a faster, unchecked
 	 * version of this function, see unchecked_provide_handle(Id p_id).
 	 *
 	 * @throws std::bad_alloc if the object is not already loaded in the

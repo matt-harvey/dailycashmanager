@@ -34,6 +34,49 @@ namespace sqloxx
  * might fail to cancel the transaction - in which case std::terminate() is
  * called rather than throw an exception from the destructor.
  *
+ * Note the facilities provided by DatabaseTransaction are importantly
+ * limited. They provide transactionality/atomicity in respect of interactions
+ * with a database. However, they do not magically provide such atomicity
+ * in respect of client operations on in-memory objects - even if these
+ * in-memory
+ * objects are objects that \e represent records in a database.
+ * So, suppose some client code commences a DatabaseTransaction; then saves
+ * five new PersistentObject instances (via their handles)
+ * to the database; and then calls
+ * cancel() on the DatabaseTransaction. The database state will indeed be
+ * rolled back. However the five in-memory objects and their handles
+ * will continue having
+ * the same state as if they had been successfully saved to the database
+ * (including
+ * having an id retrievable by calling their id() method). In particular,
+ * a call to unchecked_provide_handle(Id) or unchecked_get_handle(dbc, Id)
+ * passing one of these "lingering" ids to the Id parameter,
+ * may even silently return a handle
+ * to one of these objects if it is still "lingering" in the IdentityMap
+ * (cache).
+ * To erase all trace of the lingering objects from the cache,
+ * the client can call remove() on the lingering objects, but this can only
+ * be done manually - the DatabaseTransaction cancellation does not
+ * achieve this automatically.
+ * Having said this, even if the client leaves the objects lingering
+ * in the cache, this is \e not a problem for the integrity of the
+ * cache. It's only a problem if the lingering objects are referred to
+ * or otherwise used after their saving has been cancelled. The client
+ * should in any case not call unchecked_provide_handle(...) or
+ * unchecked_get_handle(...) unless they know they have a valid id.
+ *
+ * Despite the above warning, note that many functions in Sqloxx \e do
+ * offer the
+ * strong guarantee - i.e. atomicity - in respect of both in-memory objects
+ * and the physical database; and many of these functions happen to use
+ * DatabaseTransaction internally to help achieve this.
+ * The point is not
+ * that Sqloxx operations are never atomic in regards to in-memory
+ * objects; rather, the point is that wrapping arbitrary code in a
+ * DatabaseTransaction will not make it atomic in and of itself - even
+ * if that code consists solely of a series of Sqloxx API calls such
+ * as save(), remove() etc..
+ *
  * Preconditions:\n
  * The management of database transactions must be managed entirely using
  * instances of the DatabaseTransaction class, rather than by executing
