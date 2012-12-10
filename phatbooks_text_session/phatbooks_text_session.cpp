@@ -19,6 +19,7 @@
 #include "entry.hpp"
 #include "import_from_nap/import_from_nap.hpp"  // WARNING temp hack
 #include "journal.hpp"
+#include "ordinary_entry_reader.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"

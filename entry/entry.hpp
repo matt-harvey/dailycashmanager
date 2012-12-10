@@ -1,8 +1,6 @@
 #ifndef GUARD_entry_hpp
 #define GUARD_entry_hpp
 
-#include "entry_impl.hpp" // todo Delete when I move OrdinaryEntryReader
-#include "sqloxx/reader.hpp"  // todo Delete this when I move OrdinaryEntryReader
 #include "journal.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
@@ -83,27 +81,6 @@ private:
 
 };
 
-
-// todo Move the below code to a better location
-
-class OrdinaryEntryReader:
-	public sqloxx::Reader<EntryImpl, PhatbooksDatabaseConnection>
-{
-public:
-
-	typedef
-		sqloxx::Reader<EntryImpl, PhatbooksDatabaseConnection>
-		EntryReader;
-		
-	OrdinaryEntryReader(PhatbooksDatabaseConnection& m_database_connection):
-		EntryReader
-		(	m_database_connection,
-			"select entry_id from entries inner join ordinary_journal_detail "
-			"using(journal_id)"
-		)
-	{
-	}
-};  // OrdinaryEntryReader
 
 
 

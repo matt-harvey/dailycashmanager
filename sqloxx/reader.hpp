@@ -36,7 +36,7 @@ class Reader:
 {
 public:
 
-	Reader
+	explicit Reader
 	(	Connection& p_database_connection,
 		std::string const& p_selector =
 		(	"select " + T::primary_key_name() +
