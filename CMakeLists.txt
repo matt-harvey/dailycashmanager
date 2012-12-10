@@ -35,7 +35,6 @@ set (main_files
 	 journal/ordinary_journal_impl.cpp
 	 sqloxx/database_connection.cpp
 	 sqloxx/database_transaction.cpp
-	 sqloxx/reader.cpp
 	 sqloxx/sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
 	 sqloxx/detail/sql_statement_impl.cpp
@@ -50,7 +49,6 @@ set (test_files
      test.cpp
 	 sqloxx/database_connection.cpp
 	 sqloxx/database_transaction.cpp
-	 sqloxx/reader.cpp
 	 sqloxx/sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
 	 sqloxx/detail/sql_statement_impl.cpp

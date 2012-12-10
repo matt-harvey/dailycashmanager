@@ -63,7 +63,7 @@ Reader<T, Connection>::Reader
 ):
 	m_database_connection(p_database_connection),
 	m_statement(p_database_connection, p_selector),
-	m_is_valid(true)
+	m_is_valid(false)
 {
 }
 
