@@ -36,14 +36,19 @@ class Reader:
 {
 public:
 
-	Reader(Connection& p_database_connection);
+	Reader
+	(	Connection& p_database_connection,
+		std::string const& p_selector =
+		(	"select " + T::primary_key_name() +
+			" from " + T::primary_table_name()
+		)
+	);
 	
 	bool read();
 	
 	Handle<T> value() const;
 
 private:
-	virtual std::string selector() const;
 	Connection& m_database_connection;
 	SQLStatement mutable m_statement;
 	bool m_is_valid;
@@ -52,9 +57,12 @@ private:
 
 
 template <typename T, typename Connection>
-Reader<T, Connection>::Reader(Connection& p_database_connection):
+Reader<T, Connection>::Reader
+(	Connection& p_database_connection,
+	std::string const& p_selector
+):
 	m_database_connection(p_database_connection),
-	m_statement(p_database_connection, selector()),
+	m_statement(p_database_connection, p_selector),
 	m_is_valid(true)
 {
 }
@@ -83,21 +91,10 @@ Reader<T, Connection>::value() const
 	}
 	assert (!m_is_valid);
 	throw InvalidReader
-	(	"Reader is at the end of the road."
+	(	"Reader is beyond the final result row."
 	);
 }
 
-template <typename T, typename Connection>
-std::string
-Reader<T, Connection>::selector() const
-{
-	static std::string const ret =
-		"select " +
-		T::primary_key_name() +
-		" from " +
-		T::primary_table_name();
-	return ret;
-}
 	
 
 }  // namespace sqloxx

@@ -2,6 +2,7 @@
 #include "entry_impl.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/reader.hpp"
 #include <boost/shared_ptr.hpp>
 #include <string>
 
@@ -35,6 +36,14 @@ Entry::Entry
 	Id p_id
 ):
 	m_impl(get_handle<EntryImpl>(p_database_connection, p_id))
+{
+}
+
+Entry::Entry
+(	sqloxx::Reader<EntryImpl, PhatbooksDatabaseConnection>
+		const& p_reader
+):
+	m_impl(p_reader.value())
 {
 }
 

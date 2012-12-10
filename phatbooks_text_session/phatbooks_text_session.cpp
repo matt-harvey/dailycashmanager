@@ -133,14 +133,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	m_main_menu->add_item(import_from_nap_item);
 
 	// WARNING play code
-	shared_ptr<MenuItem> display_entry_account_names_selection
-	(	new MenuItem
-		(	"Display the account name of each entry",
-			bind(&PhatbooksTextSession::display_all_entry_account_names, this),
-			true
-		)
-	);
-	m_main_menu->add_item(display_entry_account_names_selection);
+
 	shared_ptr<MenuItem> display_journal_summaries_selection
 	(	new MenuItem
 		(	"Display a summary of each journal",
@@ -837,27 +830,6 @@ void PhatbooksTextSession::import_from_nap()
 	return;
 }
 
-// WARNING play code
-void PhatbooksTextSession::display_all_entry_account_names()
-{
-	cout << "For each entry, here's its account name, done crudely "
-	     << "without optimisations: " << endl;
-	SQLStatement statement
-	(	*m_database_connection,
-		"select entry_id from entries order by entry_id"
-	);
-	while (statement.step())
-	{
-		Entry entry
-		(	*m_database_connection,
-			statement.extract<Entry::Id>(0)
-		);
-		cout << entry.account().name() << endl;  // WARNING temp comment-out
-	}
-	cout << "Done!" << endl;
-	return;
-}
-
 void PhatbooksTextSession::display_journal_summaries()
 {
 	cout << "For each ORDINARY journal, here's what's in it. "
@@ -933,20 +905,13 @@ void PhatbooksTextSession::display_balances()
 	*/
 
 	// "ACCUMULATION METHOD"
-	SQLStatement entry_statement
-	(	*m_database_connection,
-		"select entry_id from entries inner join ordinary_journal_detail "
-		"using(journal_id)"
-	);
-	while (entry_statement.step())
+	OrdinaryEntryReader reader(*m_database_connection);
+	while (reader.read())
 	{
-		Entry entry
-		(	*m_database_connection,
-			entry_statement.extract<Entry::Id>(0)
-		);
+		Entry const entry(reader);
 		balance_map[entry.account().id()] += entry.amount();
 	}
-
+	
 	sw.log();
 	// STOP TIMING
 

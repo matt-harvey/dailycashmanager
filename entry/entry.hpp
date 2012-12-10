@@ -1,12 +1,25 @@
 #ifndef GUARD_entry_hpp
 #define GUARD_entry_hpp
 
+#include "entry_impl.hpp" // todo Delete when I move OrdinaryEntryReader
+#include "sqloxx/reader.hpp"  // todo Delete this when I move OrdinaryEntryReader
 #include "journal.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
+
+namespace sqloxx
+{
+	// Forward declaration
+	template <typename T, typename Connection>
+	class Reader;
+
+}  // namespace sqloxx
+
+
+
 
 namespace phatbooks
 {
@@ -25,6 +38,10 @@ public:
 	Entry
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
+	);
+	Entry
+	(	sqloxx::Reader<EntryImpl, PhatbooksDatabaseConnection>
+			const& p_reader
 	);
 	void set_journal_id(Journal::Id p_journal_id);
 	void set_account(Account const& p_account);
@@ -65,6 +82,29 @@ private:
 	sqloxx::Handle<EntryImpl> m_impl;
 
 };
+
+
+// todo Move the below code to a better location
+
+class OrdinaryEntryReader:
+	public sqloxx::Reader<EntryImpl, PhatbooksDatabaseConnection>
+{
+public:
+
+	typedef
+		sqloxx::Reader<EntryImpl, PhatbooksDatabaseConnection>
+		EntryReader;
+		
+	OrdinaryEntryReader(PhatbooksDatabaseConnection& m_database_connection):
+		EntryReader
+		(	m_database_connection,
+			"select entry_id from entries inner join ordinary_journal_detail "
+			"using(journal_id)"
+		)
+	{
+	}
+};  // OrdinaryEntryReader
+
 
 
 }  // namespace phatbooks
