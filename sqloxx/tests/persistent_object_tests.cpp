@@ -238,7 +238,65 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 	CHECK_EQUAL(dpo4->x(), 321);
 	CHECK_EQUAL(dpo4->y(), 1324.6);
 }
-// WARNING Reworking of tests is up to here.
+
+TEST_FIXTURE(DerivedPOFixture, test_derived_po_exists_and_remove)
+{
+	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(*pdbc));
+	dpo1->set_x(7);
+	dpo1->set_y(5.8);
+	dpo1->save();
+	SQLStatement selector
+	(	*pdbc,
+		"select derived_po_id from derived_pos"
+	);
+	bool check = selector.step();
+	CHECK(check);
+	bool exists =
+		PersistentObject<DerivedPO, DerivedDatabaseConnection>::exists
+		(	*pdbc,
+			1
+		);
+	CHECK(exists);
+	Handle<DerivedPO> dpo1b = dpo1;
+	dpo1->remove();
+	selector.reset();
+	check = selector.step();
+	CHECK(!check);
+	exists =
+		PersistentObject<DerivedPO, DerivedDatabaseConnection>::exists
+		(	*pdbc,
+			1
+		);
+	CHECK(!exists);
+	CHECK_THROW(dpo1b->id(), UninitializedOptionalException);
+	CHECK_THROW(dpo1->id(), UninitializedOptionalException);
+
+	// Now let's mix with DatabaseTransaction
+	Handle<DerivedPO> dpo2(get_handle<DerivedPO>(*pdbc));
+	dpo2->set_x(10);
+	dpo2->set_y(50.78);
+	dpo2->save();
+	selector.reset();
+	check = selector.step();
+	CHECK(check);
+	DatabaseTransaction transaction(*pdbc);
+	CHECK_EQUAL(dpo2->id(), 2);
+	dpo2->remove();
+	CHECK_THROW
+	(	Handle<DerivedPO> dpo2b(get_handle<DerivedPO>(*pdbc, 2)),
+		BadIdentifier
+	);
+	selector.reset();
+	check = selector.step();
+	CHECK(!check);
+	transaction.cancel();  // This should cause the object to go back in
+	selector.reset(); 
+	check = selector.step();
+	CHECK(check);
+	Handle<DerivedPO> dpo2c(get_handle<DerivedPO>(*pdbc, 2));
+	CHECK_EQUAL(dpo2c->y(), 50.78);
+	CHECK_EQUAL(dpo2c->x(), 10);
+}
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
 {
@@ -253,6 +311,8 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
 	CHECK_EQUAL(dpo2->id(), 2);
 	dpo2->save();
 	CHECK_EQUAL(dpo2->id(), 2);
+	dpo2->remove();
+	CHECK_THROW(dpo2->id(), UninitializedOptionalException);
 }
 
 TEST_FIXTURE(DerivedPOFixture, test_load_indirectly)
@@ -272,6 +332,28 @@ TEST_FIXTURE(DerivedPOFixture, test_load_indirectly)
 	CHECK_EQUAL(dpo2->id(), 1);
 	CHECK_EQUAL(dpo2->x(), a);  // load called here
 	CHECK_EQUAL(dpo2->y(), b);  // and here
+}
+
+TEST_FIXTURE(DerivedPOFixture, test_ghostify)
+{
+	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(*pdbc));
+	dpo1->set_x(1290387);
+	dpo1->set_y(127);
+	dpo1->save();
+	Handle<DerivedPO> dpo2(get_handle<DerivedPO>(*pdbc));
+	dpo2->set_x(273);
+	dpo2->set_y(-19.986);
+	dpo2->save();
+	CHECK_EQUAL(dpo1->id(), 1);
+	CHECK_EQUAL(dpo1->x(), 1290387);
+	CHECK_EQUAL(dpo2->y(), -19.986);
+	CHECK_EQUAL(dpo2->id(), 2);
+	
+	// We ghostify - which should have no visible effect
+	dpo2->ghostify();
+	CHECK_EQUAL(dpo2->x(), 273);
+	CHECK_EQUAL(dpo2->y(), -19.986);
+	CHECK_EQUAL(dpo2->id(), 2);
 }
 
 TEST(test_derived_po_self_test)

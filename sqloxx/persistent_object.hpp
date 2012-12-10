@@ -230,9 +230,6 @@ private:
  * @todo Centralize list of preconditions in a single location.
  *
  * @todo Have a single location for documenting use of Sqloxx holistically.
- *
- * @todo Document requirement for Connection to have an identity_map<Derived>
- * method - which is required by get_handle.
  */
 template<typename Derived, typename Connection>
 class PersistentObject
@@ -254,11 +251,33 @@ public:
 	virtual ~PersistentObject();
 
 	/**
-	 * @returns true if and only if an object with this id exists in
-	 * the database. Note the database is always checked, not the
+	 * Preconditions:\n
+	 * Derived::primary_key_name() and Derived::primary_table_name()
+	 * must be defined as static functions that, without side-effects,
+	 * return a std::string being, respectively, the name of the
+	 * primary key column
+	 * for type Derived as it is stored in the database, and the name
+	 * of the database table in which instances of Derived are stored
+	 * by primary key.
+	 *
+	 * @returns true if and only if an object with p_id as its
+	 * primary key exists in
+	 * the database to which p_database_connection is connected.
+	 * Note the database is always checked, not the
 	 * cache.
 	 *
-	 * @todo Document exceptions and test. 
+	 * @throws InvalidConnection if the database connecton is
+	 * invalid.
+	 *
+	 * @throws std::bad_alloc in case of memory allocation failure
+	 * (very unlikely)
+	 *
+	 * @throws SQLiteException (or derivative thereof) in case of a
+	 * SQLite error during
+	 * execution. (This is extremely unlikely, but cannot be entirely
+	 * ruled out.)
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	static bool exists(Connection& p_database_connection, Id p_id);
 
@@ -406,8 +425,6 @@ public:
 	 * code is concerned, providing the preconditions are met, and in
 	 * particular, providing client Derived class always calls load() as
 	 * the first statement of any getter.
-	 *
-	 * @todo Testing.
 	 */
 	void save();
 
@@ -463,8 +480,6 @@ public:
 	 * further database transactions, the application and database state
 	 * will be in a state of having been effectively rolled back, when the
 	 * next session commences.
-	 *
-	 * @todo testing
 	 */
 	void remove();
 
@@ -502,7 +517,7 @@ public:
 	 * vector, and if loading the object involves pushing elements
 	 * onto the vector, then do_ghostify() should ensure that the
 	 * vector is emptied, so that after load() is called next, the
-	 * object contains only one "lot" of elements.
+	 * object contains only one lot of elements.
 	 *
 	 * <em>It is strongly recommended that do_ghostify() be defined
 	 * such as to provide the nothrow guarantee. This makes it
@@ -513,8 +528,6 @@ public:
 	 * Derived::do_ghostify() method is non-throwing.
 	 *
 	 * @todo Determine if this really needs to be public.
-	 *
-	 * @todo Testing.
 	 */
 	void ghostify();
 
@@ -698,8 +711,6 @@ protected:
 	 * object will be loaded from or saved to, as the case may be.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo Testing.
 	 */
 	Connection& database_connection() const;
 
@@ -761,8 +772,6 @@ protected:
 	 * allocation failure in execution.
 	 *
 	 * Exception safety:<em>strong guarantee<em>.
-	 *
-	 * @todo testing
 	 */
 	virtual void do_remove();
 
@@ -784,16 +793,12 @@ private:
 	 * instances pointing to this object.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo Testing.
 	 */
 	bool is_orphaned() const;
 	
 	/**
 	 * @returns true if and only if we are dangerously close to reaching
 	 * the maximum value of HandleCounter.
-	 *
-	 * @todo Testing.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
@@ -811,8 +816,6 @@ private:
 	 * this should be extremely unlikely.
 	 *
 	 * Exception safety: <em>strong guarantee</em>
-	 *
-	 * @todo Testing.
 	 */
 	void notify_handle_construction();
 
@@ -827,8 +830,6 @@ private:
 	 * this should be extremely unlikely.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
-	 *  
-	 * @todo Testing.
 	 */
 	void notify_handle_copy_construction();
 
@@ -844,8 +845,6 @@ private:
 	 * this should be extremely unlikely.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
-	 *
-	 * @todo Test.
 	 */
 	void notify_rhs_assignment_operation();
 	
@@ -868,8 +867,6 @@ private:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em> is offered, providing
 	 * the preconditions are met.
-	 *
-	 * @todo Test.
 	 */
 	void notify_lhs_assignment_operation();
 
@@ -881,8 +878,6 @@ private:
 	 * Preconditions: as for notify_lhs_assignment_operation().
 	 *
 	 * Exception safety: as for notify_lhs_assignment_operation().
-	 *
-	 * @todo Test.
 	 */
 	void notify_handle_destruction();
 
@@ -894,8 +889,6 @@ private:
 	 * the IdentityMap will have a cache key, even if it doesn't have an id.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo Test.
 	 */
 	void set_cache_key(Id p_cache_key);
 
@@ -994,14 +987,18 @@ PersistentObject<Derived, Connection>::exists
 	Id p_id
 )
 {
+	// Could throw std::bad_alloc
 	static std::string const text =
 		"select * from " +
 		Derived::primary_table_name() +
 		" where " +
 		Derived::primary_key_name() +
 		" = :p";
+	// Could throw InvalidConnection or SQLiteException
 	SQLStatement statement(p_database_connection, text);
+	// Could throw InvalidConnection or SQLiteException
 	statement.bind(":p", p_id);
+	// Could throw InvalidConnection or SQLiteException
 	return statement.step();
 }
 

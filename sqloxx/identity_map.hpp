@@ -167,6 +167,12 @@ public:
 	 * an additional object could not be cached without causing
 	 * arithmetic overflow in the process of assigning it a key.
 	 *
+	 * @throws InvalidConnection in case the database connection is invalid.
+	 *
+	 * @throws SQLiteException, or a derivative thereof, in the extremely
+	 * unlikely event of an error during execution thrown up by the underlying
+	 * SQLite API.
+	 *
 	 * <em>In addition</em>, any exceptions thrown from the T constructor
 	 * of the form T(IdentityMap<T, Connection>&, typename T::Id) may
 	 * also be thrown from provide_handle().
