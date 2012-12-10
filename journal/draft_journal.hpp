@@ -26,17 +26,9 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
-	// Slow, checked version
 	DraftJournal
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
-	);
-
-	// Fast, unchecked version
-	DraftJournal
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id,
-		int p_dummy
 	);
 
 	DraftJournal   // TODO This should be Journal const&

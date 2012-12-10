@@ -12,7 +12,6 @@ using boost::shared_ptr;
 using std::string;
 using std::vector;
 using sqloxx::get_handle;
-using sqloxx::unchecked_get_handle;
 
 namespace phatbooks
 {
@@ -39,16 +38,6 @@ DraftJournal::DraftJournal
 {
 }
 
-DraftJournal::DraftJournal
-(	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id,
-	int p_dummy
-):
-	m_impl
-	(	unchecked_get_handle<DraftJournalImpl>(p_database_connection, p_id)
-	)
-{
-}
 
 // TODO There is similar code in OrdinaryJournal for this constructor.
 // Factor out.

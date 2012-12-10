@@ -8,7 +8,6 @@
 
 using boost::shared_ptr;
 using sqloxx::get_handle;
-using sqloxx::unchecked_get_handle;
 
 namespace phatbooks
 {
@@ -39,16 +38,6 @@ Repeater::Repeater
 {
 }
 
-Repeater::Repeater
-(	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id,
-	int p_dummy
-):
-	m_impl
-	(	unchecked_get_handle<RepeaterImpl>(p_database_connection, p_id)
-	)
-{
-}
 
 
 void

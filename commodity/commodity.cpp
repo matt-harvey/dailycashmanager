@@ -9,7 +9,6 @@
 using boost::shared_ptr;
 using jewel::Decimal;
 using sqloxx::get_handle;
-using sqloxx::unchecked_get_handle;
 using std::string;
 
 namespace phatbooks
@@ -54,23 +53,6 @@ Commodity::Commodity
 {
 }
 
-
-Commodity::Commodity
-(	PhatbooksDatabaseConnection& p_database_connection,
-	string const& p_abbreviation,
-	int p_dummy
-):
-	m_impl
-	(	unchecked_get_handle<CommodityImpl>
-		(	p_database_connection,
-			CommodityImpl::id_for_abbreviation
-			(	p_database_connection,
-				p_abbreviation
-			)
-		)
-	)
-{
-}
 
 string
 Commodity::abbreviation() const

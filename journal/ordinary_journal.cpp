@@ -10,7 +10,6 @@
 
 using boost::shared_ptr;
 using sqloxx::get_handle;
-using sqloxx::unchecked_get_handle;
 using std::string;
 using std::vector;
 
@@ -48,16 +47,6 @@ OrdinaryJournal::OrdinaryJournal
 {
 }
 
-OrdinaryJournal::OrdinaryJournal
-(	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id,
-	int p_dummy
-):
-	m_impl
-	(	unchecked_get_handle<OrdinaryJournalImpl>(p_database_connection, p_id)
-	)
-{
-}
 
 // TODO There is similar code in DraftJournal for this constructor.
 // Factor out.
