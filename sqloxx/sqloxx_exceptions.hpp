@@ -94,6 +94,13 @@ JEWEL_DERIVED_EXCEPTION(InvalidConnection, DatabaseException);
 JEWEL_DERIVED_EXCEPTION(InvalidFilename, DatabaseException);
 
 /**
+ * Exception to be thrown when an operation to be performed on a Reader
+ * object cannot be validly performed because the Reader is in some
+ * invalid state.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidReader, DatabaseException);
+
+/**
  * Exception to be thrown when trying to open connection to one file when
  * already connected to another file
  */

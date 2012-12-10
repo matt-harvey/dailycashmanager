@@ -35,6 +35,7 @@ set (main_files
 	 journal/ordinary_journal_impl.cpp
 	 sqloxx/database_connection.cpp
 	 sqloxx/database_transaction.cpp
+	 sqloxx/reader.cpp
 	 sqloxx/sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
 	 sqloxx/detail/sql_statement_impl.cpp
@@ -49,6 +50,7 @@ set (test_files
      test.cpp
 	 sqloxx/database_connection.cpp
 	 sqloxx/database_transaction.cpp
+	 sqloxx/reader.cpp
 	 sqloxx/sql_statement.cpp
 	 sqloxx/detail/sqlite_dbconn.cpp
 	 sqloxx/detail/sql_statement_impl.cpp
@@ -62,7 +64,8 @@ set (test_files
 	 sqloxx/tests/database_transaction_tests.cpp
 	 sqloxx/tests/handle_tests.cpp
 	 sqloxx/tests/identity_map_tests.cpp
-	 sqloxx/tests/next_auto_key_tests.cpp)
+	 sqloxx/tests/next_auto_key_tests.cpp
+	 sqloxx/tests/reader_tests.cpp)
 
 add_executable (test ${test_files})
 
