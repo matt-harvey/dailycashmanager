@@ -2,12 +2,14 @@
 #define GUARD_identity_map_hpp
 
 #include "handle.hpp"
+#include "sqloxx_exceptions.hpp"
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <cassert>
 #include <map>
 #include <stdexcept>
+#include <utility>
 
 #ifdef DEBUG
 	#include <jewel/debug_log.hpp>
@@ -55,8 +57,6 @@ class PersistentObject;
  *
  * IdentityMap is intended to work in conjunction with sqloxx::Handle<T>
  * and sqloxx::PersistentObject<T, Connection>. See also the documentation
-
- * @todo Testing.
  */
 template <typename T, typename Connection>
 class IdentityMap
@@ -264,6 +264,14 @@ public:
 
 private:
 
+	typedef
+		typename PersistentObject<T, Connection>::HandleMonitorAttorney
+		HandleMonitorAttorney;
+	
+	typedef
+		typename PersistentObject<T, Connection>::CacheKeyAttorney
+		CacheKeyAttorney;
+
 	/**
 	 * Register id of newly saved instance of T. This function is
 	 * intended only to be called from PersistentObject<T, Connection>.
@@ -271,7 +279,8 @@ private:
 	 * can be looked up by its id as well as by its cache key.
 	 *
 	 * Precondition: there must be an object cached in the IdentityMap
-	 * with this p_cache_key.
+	 * with this p_cache_key;\and
+	 * The destructor of T must not throw.
 	 *
 	 * @param p_cache_key the cache key of the newly saved object
 	 *
@@ -283,8 +292,6 @@ private:
 	 *
 	 * Exception safety: <em>strong guarantee</em>, providing the precondition
 	 * is met.
-	 *
-	 * @todo Testing.
 	 */
 	void register_id(CacheKey p_cache_key, Id p_id);
 
@@ -319,8 +326,6 @@ private:
 	 * 
 	 * Exception safety: <em>nothrow guarantee</em>, provided the
 	 * preconditions are met.
-	 *
-	 * @todo Testing.
 	 */
 	void notify_nil_handles(CacheKey p_cache_key);
 
@@ -473,10 +478,7 @@ IdentityMap<T, Connection>::provide_handle()
 	// cache_key_map()[cache_key] = obj_ptr; 
 
 	// Nothrow
-	PersistentObject<T, Connection>::CacheKeyAttorney::set_cache_key
-	(	*obj_ptr,
-		cache_key
-	);	
+	CacheKeyAttorney::set_cache_key(*obj_ptr, cache_key);
 
 	// In the below, get() is nothrow. The Handle<T> constructor and copy
 	// constructor can throw in some (very unlikely) circumstances,
@@ -518,22 +520,14 @@ IdentityMap<T, Connection>::provide_handle(Id p_id)
 		}
 
 		// Nothrow
-		PersistentObject<T, Connection>::CacheKeyAttorney::set_cache_key
-		(	*obj_ptr,
-			cache_key
-		);
+		CacheKeyAttorney::set_cache_key(*obj_ptr, cache_key);
 
 		// We know this won't throw sqloxx::OverflowError, as it's a
 		// newly loaded object.
 		return Handle<T>(obj_ptr.get()); 
 	}
 	assert (it != id_map().end());
-	if
-	(	PersistentObject
-		<	T,
-			Connection
-		>::HandleMonitorAttorney::has_high_handle_count(*(it->second))
-	)
+	if (HandleMonitorAttorney::has_high_handle_count(*(it->second)))
 	{
 		throw sqloxx::OverflowException
 		(	"Handle count for has reached dangerous level. "
@@ -548,11 +542,23 @@ IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 {
 	typename CacheKeyMap::const_iterator const finder =
 		cache_key_map().find(p_cache_key);
-	
-	// todo This should be a require not an assert
-	assert (finder != cache_key_map().end());
-
-	id_map().insert(typename IdMap::value_type(p_id, finder->second));
+	assert (finder != cache_key_map().end());  // Precondition
+	typedef typename std::pair<typename IdMap::const_iterator, bool>
+		InsertionResult;
+	typedef typename IdMap::value_type Elem;
+	InsertionResult res = id_map().insert(Elem(p_id, finder->second));
+	if (!res.second)
+	{
+		// There was already an object with this id. This could occur
+		// from a previous save that was cancelled at database
+		// transaction level after already cached in the database. We
+		// want the new object to overwrite the old one in the cache.
+		uncache_object
+		(	CacheKeyAttorney::cache_key(*(res.first->second))
+		);
+		res = id_map().insert(Elem(p_id, finder->second));
+		assert (res.second);
+	}
 	return;
 }
 
@@ -560,7 +566,7 @@ template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::deregister_id(Id p_id)
 {
-	// todo This should be a require not an assert
+	// Precondition
 	assert (id_map().find(p_id) != id_map().end());
 	
 	id_map().erase(p_id);
@@ -572,7 +578,7 @@ template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::uncache_object(CacheKey p_cache_key)
 {
-	// todo This should be a require not an assert
+	// Precondition
 	assert (cache_key_map().find(p_cache_key) != cache_key_map().end());
 	Record const record = cache_key_map().find(p_cache_key)->second;
 	if (record->has_id())
@@ -617,12 +623,7 @@ IdentityMap<T, Connection>::disable_caching()
 			++it
 		)
 		{
-			if
-			(	PersistentObject
-				<	T,
-					Connection
-				>::HandleMonitorAttorney::is_orphaned(*(it->second))
-			)
+			if (HandleMonitorAttorney::is_orphaned(*(it->second)))
 			{
 				uncache_object(it->first);
 			}

@@ -510,8 +510,8 @@ public:
 	void ghostify();
 
 	/**
-	 * Controls access to set_cache_key function, deliberately
-	 * restricting access to IdentityMap<Derived, Connection>.
+	 * Provides access to get and set m_cache_key, to
+	 * to IdentityMap<Derived, Connection>.
 	 */
 	class CacheKeyAttorney
 	{
@@ -522,6 +522,10 @@ public:
 		{
 			p_obj.set_cache_key(p_cache_key);
 			return;
+		}
+		static Id cache_key(Derived& p_obj)
+		{
+			return jewel::value(p_obj.m_cache_key);
 		}
 	};
 	
@@ -895,12 +899,8 @@ private:
 	 * the case. Also, the destructor of Derived must be non-throwing.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>, providing the
-	 * object is cached in the IdentityMap under m_cache_key,
-	 * the destructor of Derived is non-throwing, and m_handle_counter is
-	 * greater than 0. If we don't know whether the last condition is
-	 * fulfilled, i.e. if m_handle_counter could be less than 1, then
-	 * the <strong guarantee</em> is offered, provided the first two
-	 * conditions are still met.
+	 * object is cached in the IdentityMap under m_cache_key, and
+	 * the destructor of Derived is non-throwing.
 	 */
 	void decrement_handle_counter();
 
@@ -1187,23 +1187,27 @@ template
 void
 PersistentObject<Derived, Connection>::decrement_handle_counter()
 {
-	if (m_handle_counter == 0)
+	switch (m_handle_counter)
 	{
-		throw OverflowException 
-		(	"Handle counter for PersistentObject instance has reached "
-			"zero and cannot be further decremented."
-		);
-	}
-	--m_handle_counter;
-
-	// Will not thwow, provided the destructor of Derived is non-throwing,
-	// and the object is saved in the cache under m_cache_key.
-	if (m_handle_counter == 0 && static_cast<bool>(m_cache_key))
-	{
-		IdentityMap::Attorney::notify_nil_handles
-		(	m_identity_map,
-			*m_cache_key
-		);
+	case 1:
+		--m_handle_counter;
+		// Will not throw, provided the destructor of Derived
+		// is non-throwing, and the object is saved in the cache
+		// under m_cache_key.
+		if (m_cache_key)
+		{
+			IdentityMap::Attorney::notify_nil_handles
+			(	m_identity_map,
+				*m_cache_key
+			);
+		}
+		break;
+	case 0:
+		// Do nothing
+		break;
+	default:
+		assert (m_handle_counter > 1);
+		--m_handle_counter;
 	}
 	return;
 }

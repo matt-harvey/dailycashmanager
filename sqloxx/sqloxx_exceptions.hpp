@@ -57,6 +57,12 @@ JEWEL_DERIVED_EXCEPTION(LogicError, jewel::Exception);
 JEWEL_DERIVED_EXCEPTION(DatabaseException, jewel::Exception);
 
 /**
+ * Exception to be thrown when the identifier of some
+ * database-persisted object is invalid or in some way unusable.
+ */
+JEWEL_DERIVED_EXCEPTION(BadIdentifier, DatabaseException);
+
+/**
  * Exception to be thrown when expected database constraints are believed
  * to have been violated, indicating a possibly corrupted database.
  */

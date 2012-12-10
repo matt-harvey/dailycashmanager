@@ -91,7 +91,6 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_1)
 	CHECK_EQUAL(dpo1->x(), 1000);
 }
 
-// todo Tests need updating below here.
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_2)
 {
 	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(*pdbc));
@@ -105,6 +104,8 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_2)
 	dpo2->save();
 	CHECK_EQUAL(dpo1->id(), 1);
 	CHECK_EQUAL(dpo2->id(), 2);
+
+	// Test TransactionNestingException
 	SQLStatement troublesome_statement
 	(	*pdbc,
 		"insert into derived_pos(derived_po_id, x, y) values"
@@ -136,6 +137,106 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_2)
 	dpo1->save();
 	dpo1->save();
 }
+
+
+TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
+{
+	// Test interaction of save() with DatabaseTransaction
+	// todo Figure out whether I am happy with the behaviour
+	// exhibited here.
+
+	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(*pdbc));
+	dpo1->set_x(4000);
+	dpo1->set_y(0.13);
+	dpo1->save();
+
+	DatabaseTransaction transaction1(*pdbc);
+
+	Handle<DerivedPO> dpo2(get_handle<DerivedPO>(*pdbc));
+	dpo2->set_x(-17);
+	dpo2->set_y(64.29382);
+	dpo2->save();
+	
+	Handle<DerivedPO> dpo2b(get_handle<DerivedPO>(*pdbc, 2));
+	CHECK_EQUAL(dpo2b->x(), -17);
+	CHECK_EQUAL(dpo2b->y(), 64.29382);
+	dpo2b->save();
+
+	CHECK_EQUAL(dpo1->id(), 1);
+	CHECK_EQUAL(dpo2->id(), 2);
+	CHECK_EQUAL(dpo2b->id(), 2);
+
+	Handle<DerivedPO> dpo3(get_handle<DerivedPO>(*pdbc));
+	dpo3->set_x(7834);
+	dpo3->set_y(521.520);
+	CHECK(!dpo3->has_id());
+	dpo3->save();
+	CHECK_EQUAL(dpo3->id(), 3);
+
+	Handle<DerivedPO> dpo4(get_handle<DerivedPO>(*pdbc));
+	dpo4->set_y(1324.6);
+	dpo4->set_x(321);
+	dpo4->save();
+	CHECK_EQUAL(dpo4->id(), 4);
+
+	transaction1.cancel();
+
+	SQLStatement statement(*pdbc, "select * from derived_pos");
+	int rows = 0;
+	while (statement.step()) ++rows;
+	CHECK_EQUAL(rows, 1);
+
+	// WARNING This sucks!
+	// The cache is not aware that the save was cancelled...
+	Handle<DerivedPO> dpo2c(get_handle<DerivedPO>(*pdbc, 2));
+	CHECK_EQUAL(dpo2c->id(), 2);
+	CHECK_EQUAL(dpo2c->x(), -17);
+	CHECK_EQUAL(dpo2c->y(), 64.29382);
+
+	// But at least this will save over the top of the old
+	// one...
+	Handle<DerivedPO> dpo5(get_handle<DerivedPO>(*pdbc));
+	dpo5->set_x(12);
+	dpo5->set_y(19);
+	dpo5->save();
+
+	CHECK_EQUAL(dpo5->id(), 2);
+	CHECK_EQUAL(dpo5->x(), 12);
+	CHECK_EQUAL(dpo5->y(), 19);
+	
+	CHECK_EQUAL(dpo2b->x(), -17);
+	CHECK_EQUAL(dpo2->y(), 64.29382);
+
+	Handle<DerivedPO> dpo2d(get_handle<DerivedPO>(*pdbc, 2));
+	CHECK_EQUAL(dpo2d->x(), 12);
+	CHECK_EQUAL(dpo2d->y(), 19);
+
+	// todo This sucks. It gives us a handle even if there is no
+	// object with this id in the cache OR the database.
+	Handle<DerivedPO> dpo7(get_handle<DerivedPO>(*pdbc, 7));
+	CHECK_EQUAL(dpo7->id(), 7);
+	/*
+	dpo7->set_x(109);  // Throws ValueTypeException - obscure! WARNING
+	Handle<DerivedPO> dpo7b(get_handle<DerivedPO>(*pdbc, 7));
+	CHECK_EQUAL(dpo7b->x(), 109);
+	*/
+	
+	CHECK_EQUAL(dpo4->id(), 4);
+	CHECK_EQUAL(dpo4->x(), 321);
+	CHECK_EQUAL(dpo4->y(), 1324.6);
+	Handle<DerivedPO> dpo4b(get_handle<DerivedPO>(*pdbc, 4));
+	CHECK_EQUAL(dpo4b->y(), 1324.6);
+	CHECK_EQUAL(dpo4b->id(), 4);
+
+	dpo4->remove();
+
+	// WARNING Unresolved problems!
+	Handle<DerivedPO> dpo4c(get_handle<DerivedPO>(*pdbc, 4));
+	CHECK_THROW(dpo4c->y(), std::exception);
+	CHECK_EQUAL(dpo4c->id(), 4);
+}
+
+// WARNING Reworking of tests is up to here.
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
 {
