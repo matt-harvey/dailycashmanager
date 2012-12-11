@@ -27,6 +27,7 @@
 namespace phatbooks
 {
 
+class Account;
 class PhatbooksDatabaseConnection;
 
 /**

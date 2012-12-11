@@ -1,5 +1,5 @@
-#ifndef GUARD_ordinary_entry_reader_hpp
-#define GUARD_ordinary_entry_reader_hpp
+#ifndef GUARD_entry_reader_hpp
+#define GUARD_entry_reader_hpp
 
 #include "sqloxx/reader.hpp"
 
@@ -10,8 +10,13 @@ class EntryImpl;
 class PhatbooksDatabaseConnection;
 
 
+typedef
+	sqloxx::Reader<EntryImpl, PhatbooksDatabaseConnection>
+	EntryReader;
+
+
 class OrdinaryEntryReader:
-	public sqloxx::Reader<EntryImpl, PhatbooksDatabaseConnection>
+	public EntryReader
 {
 public:
 	explicit OrdinaryEntryReader
@@ -25,4 +30,4 @@ public:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_ordinary_entry_reader_hpp
+#endif  // GUARD_entry_reader_hpp

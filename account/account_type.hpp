@@ -11,7 +11,7 @@ namespace account_type
 	{
 		// enum order is significant, as the database contains
 		// a table with primary keys in this order. See setup_tables
-		// method
+		// method.
 		asset = 1,
 		liability,
 		equity,

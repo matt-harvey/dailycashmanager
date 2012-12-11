@@ -1,22 +1,13 @@
 #ifndef GUARD_entry_hpp
 #define GUARD_entry_hpp
 
+#include "entry_reader.hpp"
 #include "journal.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
-
-namespace sqloxx
-{
-	// Forward declaration
-	template <typename T, typename Connection>
-	class Reader;
-
-}  // namespace sqloxx
-
-
 
 
 namespace phatbooks
@@ -37,10 +28,7 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
-	Entry
-	(	sqloxx::Reader<EntryImpl, PhatbooksDatabaseConnection>
-			const& p_reader
-	);
+	explicit Entry(EntryReader const& p_reader);
 	void set_journal_id(Journal::Id p_journal_id);
 	void set_account(Account const& p_account);
 	void set_comment(std::string const& p_comment);

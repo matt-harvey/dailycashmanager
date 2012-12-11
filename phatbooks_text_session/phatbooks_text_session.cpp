@@ -13,13 +13,14 @@
 
 
 #include "account.hpp"
+#include "account_reader.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
+#include "entry_reader.hpp"
 #include "import_from_nap/import_from_nap.hpp"  // WARNING temp hack
 #include "journal.hpp"
-#include "ordinary_entry_reader.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
@@ -79,6 +80,14 @@ using std::string;
 
 namespace phatbooks
 {
+
+
+
+
+
+
+
+
 
 string const PhatbooksTextSession::s_application_name = "Phatbooks";
 
@@ -870,21 +879,13 @@ void PhatbooksTextSession::display_balances()
 	     << endl;
 	typedef unordered_map<Account::Id, Decimal> BalanceMap;
 	BalanceMap balance_map;
-	SQLStatement account_statement
-	(
-		*m_database_connection,
-		"select account_id from accounts"
-	);
 
 	// START TIMING
 	Stopwatch sw;
-	while (account_statement.step())
+	AccountReader account_reader(*m_database_connection);
+	while (account_reader.read())
 	{
-		Account account
-		(	*m_database_connection,
-			account_statement.extract<Account::Id>(0)
-		);
-		balance_map[account.id()] = Decimal(0, 0);
+		balance_map[Account(account_reader).id()] = Decimal(0, 0);
 	}
 
 	// "SQL METHOD"
@@ -906,10 +907,10 @@ void PhatbooksTextSession::display_balances()
 	*/
 
 	// "ACCUMULATION METHOD"
-	OrdinaryEntryReader reader(*m_database_connection);
-	while (reader.read())
+	OrdinaryEntryReader entry_reader(*m_database_connection);
+	while (entry_reader.read())
 	{
-		Entry const entry(reader);
+		Entry const entry(entry_reader);
 		balance_map[entry.account().id()] += entry.amount();
 	}
 	

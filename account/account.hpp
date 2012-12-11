@@ -2,6 +2,7 @@
 #define GUARD_account_hpp
 
 #include "account_type.hpp"
+#include "account_reader.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
 #include <string>
@@ -50,7 +51,6 @@ public:
 		Id p_id
 	);
 
-	
 	/**
 	 * Get an Account by name from the database.
 	 */
@@ -59,6 +59,11 @@ public:
 		std::string const& p_name
 	);
 
+	/**
+	 * Get an Account from an AccountReader
+	 */
+	explicit
+	Account(AccountReader const& p_reader);
 	
 	/**
 	 * Destuctor.

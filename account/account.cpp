@@ -1,9 +1,11 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "account_impl.hpp"
+#include "account_reader.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/reader.hpp"
 #include <boost/shared_ptr.hpp>
 #include <string>
 
@@ -48,6 +50,13 @@ Account::Account
 {
 }
 
+Account::Account
+(	AccountReader const& p_reader
+):
+	m_impl(p_reader.value())
+{
+}
+	
 
 Account::Account
 (	PhatbooksDatabaseConnection& p_database_connection,

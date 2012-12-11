@@ -27,7 +27,7 @@ set (main_files
 	 date/date.cpp
 	 entry/entry.cpp
 	 entry/entry_impl.cpp
-	 entry/ordinary_entry_reader.cpp
+	 entry/entry_reader.cpp
 	 import_from_nap/import_from_nap.cpp
 	 journal/draft_journal.cpp
 	 journal/draft_journal_impl.cpp

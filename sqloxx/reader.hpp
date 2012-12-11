@@ -1,7 +1,6 @@
 #ifndef GUARD_reader_hpp
 #define GUARD_reader_hpp
 
-#include "database_connection.hpp"
 #include "general_typedefs.hpp"
 #include "handle.hpp"
 #include "sqloxx_exceptions.hpp"
