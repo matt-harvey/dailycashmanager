@@ -16,7 +16,7 @@ namespace sqloxx
  * Class template each instantiation of which represents a class
  * of iterator-like "reader" objects that wrap an SQL "select" statement,
  * where the field being selected is the primary key field for type T as
- * it is stored in the database. By calling the value() method of
+ * it is stored in the database. By calling the handle() method of
  * a Reader, a Handle<T> instance is returned. Because the Reader selects
  * from a table that is physically in the database, the implementation
  * of Reader can use the fast, unchecked_get_handle(...) function to
@@ -164,7 +164,7 @@ public:
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
-	Handle<T> value() const;
+	Handle<T> handle() const;
 
 private:
 	Connection& m_database_connection;
@@ -204,7 +204,7 @@ Reader<T, Connection>::read()
 
 template <typename T, typename Connection>
 Handle<T>
-Reader<T, Connection>::value() const
+Reader<T, Connection>::handle() const
 {
 	if (m_is_valid)
 	{

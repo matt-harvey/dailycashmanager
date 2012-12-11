@@ -78,7 +78,7 @@ OrdinaryJournal::OrdinaryJournal
 }
 
 OrdinaryJournal::OrdinaryJournal(OrdinaryJournalReader const& p_reader):
-	m_impl(p_reader.value())
+	m_impl(p_reader.handle())
 {
 }
 

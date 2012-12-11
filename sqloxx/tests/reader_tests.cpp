@@ -75,8 +75,8 @@ TEST_FIXTURE
 	while (reader2.read())
 	{
 		max =
-		(	reader2.value()->x() > max?
-			reader2.value()->x():
+		(	reader2.handle()->x() > max?
+			reader2.handle()->x():
 			max
 		);
 	}
@@ -182,7 +182,7 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_read)
 	CHECK(reader1.read());
 }
 
-TEST_FIXTURE(DerivedPOFixture, test_reader_value)
+TEST_FIXTURE(DerivedPOFixture, test_reader_handle)
 {
 	setup_reader_test(*pdbc);
 	DerivedPOReader reader1
@@ -191,14 +191,14 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_value)
 	);
 	for (int i = 1; reader1.read(); ++i)
 	{
-		CHECK_EQUAL(reader1.value()->id(), i);
+		CHECK_EQUAL(reader1.handle()->id(), i);
 	}
-	CHECK_THROW(reader1.value(), InvalidReader);
+	CHECK_THROW(reader1.handle(), InvalidReader);
 
 	DerivedPOReader reader2(*pdbc);
 	while (reader2.read())
 	{
-		Handle<DerivedPO> dpo2(reader2.value());
+		Handle<DerivedPO> dpo2(reader2.handle());
 		int const id = dpo2->id();
 		switch (id)
 		{
@@ -228,7 +228,7 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_value)
 		}
 	}
 	
-	CHECK_THROW(reader2.value(), InvalidReader);
+	CHECK_THROW(reader2.handle(), InvalidReader);
 }
 
 

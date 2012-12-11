@@ -55,7 +55,7 @@ Commodity::Commodity
 }
 
 Commodity::Commodity(CommodityReader const& p_reader):
-	m_impl(p_reader.value())
+	m_impl(p_reader.handle())
 {
 }
 
