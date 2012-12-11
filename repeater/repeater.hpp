@@ -3,6 +3,7 @@
 
 #include "interval_type.hpp"
 #include "journal.hpp"
+#include "repeater_reader.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -31,6 +32,8 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
+
+	explicit Repeater(RepeaterReader const& p_reader);
 
 	void set_interval_type(IntervalType p_interval_type);
 	void set_interval_units(int p_interval_units);

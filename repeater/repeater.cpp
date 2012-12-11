@@ -1,6 +1,7 @@
 #include "journal.hpp"
 #include "repeater.hpp"
 #include "repeater_impl.hpp"
+#include "repeater_reader.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -38,7 +39,10 @@ Repeater::Repeater
 {
 }
 
-
+Repeater::Repeater(RepeaterReader const& p_reader):
+	m_impl(p_reader.value())
+{
+}
 
 void
 Repeater::set_interval_type(IntervalType p_interval_type)

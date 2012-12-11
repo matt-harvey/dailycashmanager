@@ -1,6 +1,7 @@
 #ifndef GUARD_commodity_hpp
 #define GUARD_commodity_hpp
 
+#include "commodity_reader.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
 #include <boost/shared_ptr.hpp>
@@ -38,7 +39,8 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		std::string const& p_abbreviation
 	);
-
+	
+	Commodity(CommodityReader const& p_reader);
 	
 	std::string abbreviation() const;
 	std::string name() const;

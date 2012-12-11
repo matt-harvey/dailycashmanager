@@ -1,5 +1,6 @@
 #include "commodity.hpp"
 #include "commodity_impl.hpp"
+#include "commodity_reader.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
 #include <boost/shared_ptr.hpp>
@@ -53,6 +54,10 @@ Commodity::Commodity
 {
 }
 
+Commodity::Commodity(CommodityReader const& p_reader):
+	m_impl(p_reader.value())
+{
+}
 
 string
 Commodity::abbreviation() const
