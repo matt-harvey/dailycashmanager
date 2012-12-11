@@ -2,7 +2,6 @@
 #include "sqloxx_tests_common.hpp"
 #include <unittest++/UnitTest++.h>
 
-// todo Write these tests.
 namespace sqloxx
 {
 namespace test

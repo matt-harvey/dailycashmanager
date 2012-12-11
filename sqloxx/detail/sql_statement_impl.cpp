@@ -167,6 +167,7 @@ SQLStatementImpl::step()
 	int code = SQLITE_OK;
 	try
 	{
+		// Intentional assignment
 		throw_on_failure(code = sqlite3_step(m_statement));
 	}
 	catch (SQLiteException&)

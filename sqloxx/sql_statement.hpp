@@ -143,7 +143,8 @@ public:
 	 * before the \e step method was called.
 	 *
 	 * @throws SQLiteException or some exception deriving therefrom, if an
-	 * error occurs. This function should almost never throw, but it is
+	 * error occurs that results in a SQLite error code.
+	 * This function should almost never occur, but it is
 	 * possible something will fail as the statement is being executed, in
 	 * which case the resulting SQLite error condition will trigger the
 	 * corresponding exception class. If this occurs, the SQLStatement
