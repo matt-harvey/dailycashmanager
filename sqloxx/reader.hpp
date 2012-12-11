@@ -89,9 +89,7 @@ Reader<T, Connection>::value() const
 		);
 	}
 	assert (!m_is_valid);
-	throw InvalidReader
-	(	"Reader is beyond the final result row."
-	);
+	throw InvalidReader("Reader is not a result row.");
 }
 
 	
