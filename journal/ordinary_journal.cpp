@@ -1,5 +1,6 @@
 #include "ordinary_journal.hpp"
 #include "ordinary_journal_impl.hpp"
+#include "ordinary_journal_reader.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -76,6 +77,10 @@ OrdinaryJournal::OrdinaryJournal
 	}
 }
 
+OrdinaryJournal::OrdinaryJournal(OrdinaryJournalReader const& p_reader):
+	m_impl(p_reader.value())
+{
+}
 
 void
 OrdinaryJournal::set_whether_actual(bool p_is_actual)

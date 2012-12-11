@@ -1,6 +1,7 @@
 #ifndef GUARD_draft_journal_hpp
 #define GUARD_draft_journal_hpp
 
+#include "draft_journal_reader.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
 #include <boost/shared_ptr.hpp>
@@ -35,6 +36,8 @@ public:
 	(	Journal& p_journal,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
+
+	explicit DraftJournal(DraftJournalReader const& p_reader);
 
 	void set_whether_actual(bool p_is_actual);
 	void set_comment(std::string const& p_comment);

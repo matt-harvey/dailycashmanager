@@ -1,5 +1,6 @@
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
+#include "draft_journal_reader.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -58,6 +59,11 @@ DraftJournal::DraftJournal
 		Entry entry(*it);
 		m_impl->add_entry(entry);
 	}
+}
+
+DraftJournal::DraftJournal(DraftJournalReader const& p_reader):
+	m_impl(p_reader.value())
+{
 }
 
 void

@@ -31,9 +31,11 @@ set (main_files
 	 import_from_nap/import_from_nap.cpp
 	 journal/draft_journal.cpp
 	 journal/draft_journal_impl.cpp
+	 journal/draft_journal_reader.cpp
 	 journal/journal.cpp
 	 journal/ordinary_journal.cpp
 	 journal/ordinary_journal_impl.cpp
+	 journal/ordinary_journal_reader.cpp
 	 sqloxx/database_connection.cpp
 	 sqloxx/database_transaction.cpp
 	 sqloxx/sql_statement.cpp

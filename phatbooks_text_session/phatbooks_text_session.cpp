@@ -22,6 +22,7 @@
 #include "import_from_nap/import_from_nap.hpp"  // WARNING temp hack
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
+#include "ordinary_journal_reader.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include "consolixx/consolixx.hpp"
@@ -844,17 +845,10 @@ void PhatbooksTextSession::display_journal_summaries()
 {
 	cout << "For each ORDINARY journal, here's what's in it. "
 	     << endl;
-	SQLStatement journal_statement
-	(	*m_database_connection,
-		"select journal_id from ordinary_journal_detail order by "
-		"date"
-	);
-	while (journal_statement.step())
+	OrdinaryJournalReader oj_reader(*m_database_connection);
+	while (oj_reader.read())
 	{
-		OrdinaryJournal journal
-		(	*m_database_connection,
-			journal_statement.extract<OrdinaryJournal::Id>(0)
-		);
+		OrdinaryJournal journal(oj_reader);
 		cout << endl << journal.date() << endl;
 		typedef vector<Entry> EntryVec;
 		EntryVec::const_iterator it = journal.entries().begin();
