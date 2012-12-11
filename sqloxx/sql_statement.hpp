@@ -135,8 +135,12 @@ public:
 
 	/**
 	 * Wraps sqlite3_step.
-	 * Returns true as long as there are further steps to go (i.e. result
+	 * Returns true only as long as there are further steps to go (i.e. result
 	 * rows to examine).
+	 *
+	 * On stepping beyond the last result row, step() will return false.
+	 * The statement will then be automatically reset (see reset()).
+
 	 *
 	 * @throws InvalidConnection if the database connection is invalid. If
 	 * this occurs, the state of the SQLStatement will be the same as

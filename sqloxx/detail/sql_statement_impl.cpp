@@ -2,11 +2,17 @@
 #include "sqlite_dbconn.hpp"
 
 #include <sqlite3.h>
-#include <iostream>
 #include <string>
 
-using std::cerr;
 using std::string;
+
+
+// For debug logging
+#ifdef DEBUG
+	#include <jewel/debug_log.hpp>
+	#include <iostream>
+	using std::endl;
+#endif
 
 
 namespace sqloxx
@@ -179,6 +185,13 @@ SQLStatementImpl::step()
 	switch (code)
 	{
 	case SQLITE_DONE:
+
+		// After SQLite version 3.6.23.1, the statement is
+		// reset automatically.
+		#if SQLITE_VERSION_NUMBER < 3007000
+			sqlite3_reset(m_statement);
+		#endif
+
 		return false;
 		assert (false);  // Execution never reaches here
 	case SQLITE_ROW:

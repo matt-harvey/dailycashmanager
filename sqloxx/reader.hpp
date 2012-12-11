@@ -6,6 +6,7 @@
 #include "sqloxx_exceptions.hpp"
 #include "sql_statement.hpp"
 #include <boost/noncopyable.hpp>
+#include <cassert>
 #include <string>
 
 namespace sqloxx
@@ -86,8 +87,6 @@ public:
 	 * acceptable SQL statements after the first one.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
-	 *
-	 * @todo Test.
 	 */
 	explicit Reader
 	(	Connection& p_database_connection,
@@ -98,12 +97,17 @@ public:
 	);
 	
 	/**
-	 * Advances the Reader one row into the result set. When the Reader
+	 * Advances the Reader to the next row into the result set.
+	 * When the Reader
 	 * is first constructed, it is notionally positioned just \e before
 	 * the first result row. The first call to read() moves it "onto" the
-	 * first result row. Etc. When it is on the final result row, calling
-	 * read() will result in it moving notionally beyond the result row.
-	 * Further calls to read will then have no effect.
+	 * first result row (if there is one). Etc. Once it is on the final
+	 * result row, calling
+	 * read() again will result in it moving notionally one beyond the result
+	 * row, and false will be returned.
+	 * Calling read yet again will then result in the reader
+	 * cycling back to the
+	 * first row, and returning true again (assuming there is a first row).
 	 *
 	 * @returns true if, on calling read(), the Reader moves onto a result
 	 * row; otherwise, returns false.
@@ -120,12 +124,6 @@ public:
 	 * construction - i.e. just before it read the first result row.
 	 *
 	 * Exception safety: <em>basic guarantee</em>.
-	 *
-	 * @todo Test.
-	 *
-	 * @todo Remember in particular to test what happens when read()
-	 * is called multiple times beyond the final result row. Does it
-	 * continue returning false? Is behaviour well defined?
 	 */
 	bool read();
 	
@@ -165,8 +163,6 @@ public:
 	 * a valid SQL statement string, this should almost never occur.
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
-	 *
-	 * @todo Test.
 	 */
 	Handle<T> value() const;
 
@@ -194,16 +190,16 @@ inline
 bool
 Reader<T, Connection>::read()
 {
-	try
-	{
-		// Assignment is intentional
-		return m_is_valid = m_statement.step();
-	}
-	catch (SQLiteException&)
-	{
-		m_is_valid = false;
-		throw;
-	}
+		try
+		{
+			// Assignment is intentional
+			return m_is_valid = m_statement.step();
+		}
+		catch (SQLiteException&)
+		{
+			m_is_valid = false;
+			throw;
+		}
 }
 
 template <typename T, typename Connection>

@@ -113,8 +113,11 @@ public:
 
 	/**
 	 * Wraps sqlite3_step
-	 * Returns true as long as there are further steps to go (i.e. result
+	 * Returns true as only long as there are further steps to go (i.e. result
 	 * rows to examine).
+	 *
+	 * On stepping beyond the last result row, step() will return false.
+	 * The statement will then be automatically reset (see reset()).
 	 *
 	 * @throws SQLiteException or some exception deriving therefrom, if an
 	 * error occurs. This function should almost never throw, but it is

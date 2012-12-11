@@ -310,6 +310,12 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_step)
 	CHECK_EQUAL(second_step, true);
 	bool const third_step = selection_statement_01.step();
 	CHECK(!third_step);
+	// One more step takes us back to the beginning
+	bool const fourth_step = selection_statement_01.step();
+	CHECK(fourth_step);
+	CHECK(selection_statement_01.step());
+	CHECK(!selection_statement_01.step());  // At end again
+	CHECK(selection_statement_01.step());   // Back to beginning...
 }
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_step_final)
