@@ -218,6 +218,10 @@ EntryImpl::process_saving_statement(SQLStatement& statement)
 void
 EntryImpl::do_save_existing()
 {
+	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
+	(	database_connection(),
+		account().id()
+	);
 	SQLStatement updater
 	(	database_connection(),
 		"update entries set "
@@ -237,6 +241,10 @@ EntryImpl::do_save_existing()
 void
 EntryImpl::do_save_new()
 {
+	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
+	(	database_connection(),
+		account().id()
+	);
 	SQLStatement inserter
 	(	database_connection(),
 		"insert into entries"
@@ -269,6 +277,21 @@ EntryImpl::do_ghostify()
 	clear(m_data->amount);
 	clear(m_data->is_reconciled);
 	return;
+}
+
+void
+EntryImpl::do_remove()
+{
+	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
+	(	database_connection(),
+		account().id()
+	);
+	std::string const statement_text =
+		"delete from " + primary_table_name() + " where " +
+		primary_key_name() + " = :p";
+	SQLStatement statement(database_connection(), statement_text);
+	statement.bind(":p", id());
+	statement.step_final();
 }
 
 

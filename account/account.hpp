@@ -5,6 +5,7 @@
 #include "account_reader.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
+#include <jewel/decimal.hpp>
 #include <string>
 #include <vector>
 
@@ -101,6 +102,11 @@ public:
 	 * Returns description of account.
 	 */
 	std::string description() const;
+
+	/**
+	 * Returns account balance.
+	 */
+	jewel::Decimal balance() const;
 
 	void set_account_type(AccountType p_account_type);
 

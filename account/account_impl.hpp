@@ -109,6 +109,11 @@ public:
 	 */
 	std::string description();
 
+	/**
+	 * Returns the balance of account.
+	 */
+	jewel::Decimal balance();
+
 	void set_account_type(AccountType p_account_type);
 
 	void set_name(std::string const& p_name);
@@ -137,6 +142,7 @@ private:
 	void do_save_existing();
 	void do_save_new();
 	void do_ghostify();
+	void do_remove();
 	void process_saving_statement(sqloxx::SQLStatement& statement);
 
 	struct AccountData

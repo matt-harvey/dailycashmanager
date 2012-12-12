@@ -18,6 +18,7 @@
 
 
 #include "account.hpp"
+#include "balance_cache.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
 #include "draft_journal.hpp"
@@ -66,6 +67,7 @@ namespace phatbooks
 
 PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	DatabaseConnection(),
+	m_balance_cache(0),
 	m_account_map(*this),
 	m_commodity_map(*this),
 	m_entry_map(*this),
@@ -73,7 +75,14 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	m_draft_journal_map(*this),
 	m_repeater_map(*this)
 {
+	m_balance_cache = new BalanceCache(*this);
 }
+
+PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
+{
+	delete m_balance_cache;
+}
+
 
 
 bool
@@ -230,6 +239,51 @@ PhatbooksDatabaseConnection::setup_has_occurred()
 		return false;
 	}
 }
+
+
+
+// BalanceCacheAttorney
+
+typedef
+	PhatbooksDatabaseConnection::BalanceCacheAttorney
+	BalanceCacheAttorney;
+
+
+void
+BalanceCacheAttorney::mark_as_stale
+(	PhatbooksDatabaseConnection const& p_database_connection
+)
+{
+	p_database_connection.m_balance_cache->mark_as_stale();
+	return;
+}
+
+
+void
+BalanceCacheAttorney::mark_as_stale
+(	PhatbooksDatabaseConnection const& p_database_connection,
+	AccountImpl::Id p_account_id
+)
+{
+	p_database_connection.m_balance_cache->mark_as_stale
+	(	p_account_id
+	);
+	return;
+}
+
+
+Decimal
+BalanceCacheAttorney::balance
+(	PhatbooksDatabaseConnection const& p_database_connection,
+	AccountImpl::Id p_account_id
+)
+{
+	return p_database_connection.m_balance_cache->balance
+	(	p_account_id
+	);
+}
+
+
 
 
 }  // namespace phatbooks

@@ -871,55 +871,11 @@ void PhatbooksTextSession::display_balances()
 
 	cout << "Here is the balance of each envelope and balance sheet account."
 	     << endl;
-	typedef unordered_map<Account::Id, Decimal> BalanceMap;
-	BalanceMap balance_map;
-
-	// START TIMING
-	Stopwatch sw;
 	AccountReader account_reader(*m_database_connection);
 	while (account_reader.read())
 	{
-		balance_map[Account(account_reader).id()] = Decimal(0, 0);
-	}
-
-	// "SQL METHOD"
-	/*
-	SQLStatement sum_selector
-	(	*m_database_connection,
-		"select account_id, sum(amount) from entries inner "
-		"join ordinary_journal_detail using(journal_id) "
-		"group by account_id "
-	);
-	while (sum_selector.step())
-	{
-		Account::Id const a_id = sum_selector.extract<Account::Id>(0);
-		balance_map[a_id] = Decimal
-		(	sum_selector.extract<Decimal::int_type>(1),
-			Account(*m_database_connection, a_id).commodity().precision()
-		);
-	}
-	*/
-
-	// "ACCUMULATION METHOD"
-	OrdinaryEntryReader entry_reader(*m_database_connection);
-	while (entry_reader.read())
-	{
-		Entry const entry(entry_reader);
-		balance_map[entry.account().id()] += entry.amount();
-	}
-
-
-	sw.log();
-	// STOP TIMING
-
-	for
-	(	BalanceMap::const_iterator it = balance_map.begin();
-		it != balance_map.end();
-		++it
-	)
-	{
-		Account account(*m_database_connection, it->first);
-		cout << account.name() << "|" << it->second << endl;
+		Account const account(account_reader);
+		cout << account.name() << "|" << account.balance() << endl;
 	}
 	cout << "Done!" << endl;
 	return;

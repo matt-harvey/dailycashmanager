@@ -1,3 +1,5 @@
+#include "account.hpp"
+#include "account_impl.hpp"
 #include "account_reader.hpp"
 #include "entry.hpp"
 #include "balance_cache.hpp"
@@ -29,9 +31,9 @@ BalanceCache::BalanceCache
 
 
 Decimal
-BalanceCache::balance(Account const& p_account)
+BalanceCache::balance(AccountImpl::Id p_account_id)
 {
-	Account::Id const id = p_account.id();
+	AccountImpl::Id const id = p_account_id;
 	if (m_map_is_stale)
 	{
 		refresh();
@@ -40,16 +42,16 @@ BalanceCache::balance(Account const& p_account)
 	{
 		Map::iterator const it = m_map->find(id);
 
-		// If a new Account has been added, then the Account
+		// If a new AccountImpl has been added, then the AccountImpl
 		// class should have marked the map as a whole as stale,
 		// and the earlier call to refresh() should have
-		// inserted a cache entry for that Account. Thus at this
-		// point there must be a cache entry for p_account.
+		// inserted a cache entry for that AccountImpl. Thus at this
+		// point there must be a cache entry for p_account_id.
 		assert (it != m_map->end());
 
 		if ( !(it->second) )
 		{
-			// Cache entry for p_account is stale
+			// Cache entry for p_account_id is stale
 			refresh();
 		}
 	}
@@ -65,9 +67,9 @@ BalanceCache::mark_as_stale()
 
 
 void
-BalanceCache::mark_as_stale(Account const& p_account)
+BalanceCache::mark_as_stale(AccountImpl::Id p_account_id)
 {
-	Map::iterator const it = m_map->find(p_account.id());
+	Map::iterator const it = m_map->find(p_account_id);
 	if (it == m_map->end())
 	{
 		m_map_is_stale = true;

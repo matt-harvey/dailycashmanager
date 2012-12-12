@@ -7,10 +7,12 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/reader.hpp"
 #include <boost/shared_ptr.hpp>
+#include <jewel/decimal.hpp>
 #include <string>
 
 using phatbooks::account_type::AccountType;
 using boost::shared_ptr;
+using jewel::Decimal;
 using sqloxx::get_handle;
 using std::string;
 
@@ -113,6 +115,12 @@ std::string
 Account::description() const
 {
 	return m_impl->description();
+}
+
+Decimal
+Account::balance() const
+{
+	return m_impl->balance();
 }
 
 void

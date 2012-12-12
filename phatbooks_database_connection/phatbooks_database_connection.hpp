@@ -26,6 +26,8 @@
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/identity_map.hpp"
 #include <boost/bimap.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <jewel/decimal.hpp>
 #include <string>
 
 namespace phatbooks
@@ -33,6 +35,7 @@ namespace phatbooks
 
 // Forward declarations
 class Journal;
+class BalanceCache;
 
 
 /** Phatbooks-specific database connection class.
@@ -48,6 +51,8 @@ public:
 	 * default constructor for sqloxx::DatabaseConnection.
 	 */
 	PhatbooksDatabaseConnection();
+	
+	~PhatbooksDatabaseConnection();
 
 	/**
 	 * @returns \c true if and only if \c p_name is the name of an Account
@@ -132,6 +137,36 @@ public:
 	 */
 	void set_caching_level(unsigned int level);
 
+	/**
+	 * Class to provide restricted access to cache holding
+	 * Account balances.
+	 */
+	class BalanceCacheAttorney
+	{
+	public:
+		friend class AccountImpl;
+		friend class CommodityImpl;
+		friend class EntryImpl;
+	private:
+		// Mark whole balance cache as stale
+		static void mark_as_stale
+		(	PhatbooksDatabaseConnection const& p_database_connection
+		);
+		// Mark a particular Account in the balance cache as stale
+		static void mark_as_stale
+		(	PhatbooksDatabaseConnection const& p_database_connection,
+			AccountImpl::Id p_account_id
+		);
+		// Retrieve the balance of an Account
+		static jewel::Decimal balance
+		(	PhatbooksDatabaseConnection const& p_database_connection,
+			AccountImpl::Id p_account_id
+		);
+	};
+		 
+
+	friend class BalanceCacheAttorney;
+
 	template<typename T>
 	sqloxx::IdentityMap<T, PhatbooksDatabaseConnection>& identity_map();
 
@@ -140,13 +175,20 @@ private:
 	bool setup_has_occurred();
 	void mark_setup_as_having_occurred();
 
+	BalanceCache* m_balance_cache;
 
-	sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection> m_account_map;
-	sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection> m_commodity_map;
-	sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection> m_entry_map;
-	sqloxx::IdentityMap<OrdinaryJournalImpl, PhatbooksDatabaseConnection> m_ordinary_journal_map;
-	sqloxx::IdentityMap<DraftJournalImpl, PhatbooksDatabaseConnection> m_draft_journal_map;
-	sqloxx::IdentityMap<RepeaterImpl, PhatbooksDatabaseConnection> m_repeater_map;
+	sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>
+		m_account_map;
+	sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>
+		m_commodity_map;
+	sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>
+		m_entry_map;
+	sqloxx::IdentityMap<OrdinaryJournalImpl, PhatbooksDatabaseConnection>
+		m_ordinary_journal_map;
+	sqloxx::IdentityMap<DraftJournalImpl, PhatbooksDatabaseConnection>
+		m_draft_journal_map;
+	sqloxx::IdentityMap<RepeaterImpl, PhatbooksDatabaseConnection>
+		m_repeater_map;
 
 
 

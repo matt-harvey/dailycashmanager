@@ -1,7 +1,7 @@
 #ifndef GUARD_balance_cache_hpp
 #define GUARD_balance_cache_hpp
 
-#include "account.hpp"
+#include "account_impl.hpp"
 #include <boost/optional.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -16,23 +16,25 @@ namespace jewel
 namespace phatbooks
 {
 
-class Account;
 class PhatbooksDatabaseConnection;
 // End forward declarations
 
 // WARNING
 // Class-by-class summary of what triggers staleness:
-// Account - any operations on any Account should make the whole map
-// stale (to keep things simple, as in any case Account operations would
+// AccountImpl - any database-affecting operations on any
+// AccountImpl should make the whole map
+// stale (to keep things simple, as in any case AccountImpl operations would
 // be relatively rare).
-// Commodity - any operations on any Commodity should make the whole
-// map stale (to keep things simple, as in any case Commodity operations
+// CommodityImpl - any database-affecting operations on any CommodityImpl
+// should make the whole
+// map stale (to keep things simple, as in any case CommodityImpl operations
 // would be relatively rare).
-// Entry - whenever an Entry is operated on that has a particular Account
-// as its Account, the cache entry for that Account should be marked as
-// stale.
+// EntryImpl - whenever an EntryImpl is operated on that has a particular
+// AccountImpl
+// as its AccountImpl, the cache entry for that AccountImpl should be
+// marked as stale (if the operation affects the database).
 // Journal, DraftJournal and OrdinaryJournal - Any operations on these
-// that affect Account balances will do so only insofar as they involve
+// that affect AccountImpl balances will do so only insofar as they involve
 // operations on Entries. Therefore, Draft/Ordinary/Journal operations
 // as such do not need to trigger BalanceCache staleness.
 // Repeater. These contain only draft Entries so do not need to trigger
@@ -40,7 +42,7 @@ class PhatbooksDatabaseConnection;
 
 
 /**
- * Provides a cache for holding Account balances.
+ * Provides a cache for holding AccountImpl balances.
  */
 class BalanceCache:
 	public boost::noncopyable
@@ -49,21 +51,21 @@ public:
 
 	BalanceCache(PhatbooksDatabaseConnection& p_database_connection);
 
-	// Retrieve the balance for a particular Account. The cache will
+	// Retrieve the balance for a particular AccountImpl. The cache will
 	// refresh itself if required.
-	jewel::Decimal balance(Account const& p_account);
+	jewel::Decimal balance(AccountImpl::Id p_account_id);
 
 	// Mark the cache as a whole as stale
 	void mark_as_stale();
 	
-	// Mark a particular Account's cache entry as stale
-	void mark_as_stale(Account const& p_account); 
+	// Mark a particular AccountImpl's cache entry as stale
+	void mark_as_stale(AccountImpl::Id p_account_id); 
 
 private:
 
 	typedef
 		boost::unordered_map
-		<	Account::Id,
+		<	AccountImpl::Id,
 			boost::optional<jewel::Decimal>
 		>
 		Map;

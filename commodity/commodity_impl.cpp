@@ -1,3 +1,4 @@
+#include "balance_cache.hpp"
 #include "commodity_impl.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/identity_map.hpp"
@@ -161,6 +162,9 @@ void CommodityImpl::process_saving_statement(SQLStatement& statement)
 
 void CommodityImpl::do_save_existing()
 {
+	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
+	(	database_connection()
+	);
 	SQLStatement updater
 	(	database_connection(),
 		"update commodities set "
@@ -180,6 +184,9 @@ void CommodityImpl::do_save_existing()
 
 void CommodityImpl::do_save_new()
 {
+	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
+	(	database_connection()
+	);
 	SQLStatement inserter
 	(	database_connection(),
 		"insert into commodities(abbreviation, name, description, precision, "

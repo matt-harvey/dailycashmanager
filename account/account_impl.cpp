@@ -15,6 +15,7 @@
 #include "sqloxx/identity_map.hpp"
 #include "sqloxx/sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
+#include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <algorithm>
 #include <cassert>
@@ -23,6 +24,7 @@
 
 using boost::shared_ptr;
 using jewel::clear;
+using jewel::Decimal;
 using jewel::value;
 using sqloxx::SQLStatement;
 using std::string;
@@ -30,6 +32,10 @@ using std::vector;
 
 namespace phatbooks
 {
+
+typedef
+	PhatbooksDatabaseConnection::BalanceCacheAttorney
+	BalanceCacheAttorney;
 
 
 vector<string>
@@ -159,6 +165,16 @@ AccountImpl::description()
 	return value(m_data->description);
 }
 
+Decimal
+AccountImpl::balance()
+{
+	load();  // This may be unnecessary but there's no harm in it.
+	return BalanceCacheAttorney::balance
+	(	database_connection(),
+		id()
+	);
+}
+
 void
 AccountImpl::set_account_type(AccountType p_account_type)
 {
@@ -240,6 +256,7 @@ AccountImpl::process_saving_statement(SQLStatement& statement)
 void
 AccountImpl::do_save_existing()
 {
+	BalanceCacheAttorney::mark_as_stale(database_connection());
 	SQLStatement updater
 	(	database_connection(),
 		"update accounts set "
@@ -257,6 +274,7 @@ AccountImpl::do_save_existing()
 void
 AccountImpl::do_save_new()
 {
+	BalanceCacheAttorney::mark_as_stale(database_connection());
 	SQLStatement inserter
 	(	database_connection(),
 		"insert into accounts(account_type_id, name, description, "
@@ -268,8 +286,29 @@ AccountImpl::do_save_new()
 }
 
 void
+AccountImpl::do_remove()
+{
+	BalanceCacheAttorney::mark_as_stale(database_connection());
+	std::string const statement_text =
+		"delete from " + primary_table_name() + " where " +
+		primary_key_name() + " = :p";
+	SQLStatement statement(database_connection(), statement_text);
+	statement.bind(":p", id());
+	statement.step_final();
+	return;
+}
+
+
+void
 AccountImpl::do_ghostify()
 {
+	// WARNING Is there any situation in which this should
+	// mark the balance cache as stale?
+	// I don't think so, but if there is,
+	// note that marking the balance cache
+	// as stale here might perhaps throw an exception (which is contrary
+	// to the Sqloxx API which requires do_ghostify() to be
+	// non-throwing.
 	clear(m_data->name);
 	clear(m_data->commodity);
 	clear(m_data->account_type);
