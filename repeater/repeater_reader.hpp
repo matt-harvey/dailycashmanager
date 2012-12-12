@@ -9,12 +9,15 @@ namespace phatbooks
 class RepeaterImpl;
 class PhatbooksDatabaseConnection;
 
-typedef
-	sqloxx::Reader<RepeaterImpl, PhatbooksDatabaseConnection>
-	RepeaterReader;
+
+class RepeaterReader:
+	public sqloxx::Reader<RepeaterImpl, PhatbooksDatabaseConnection>
+{
+public:
+	RepeaterReader(PhatbooksDatabaseConnection& p_database_connection);
+};
 
 
-}
-
+}  // namespace phatbooks
 
 #endif  // GUARD_repeater_reader_hpp

@@ -16,11 +16,11 @@ using jewel::Decimal;
 using jewel::clear;
 using jewel::value;
 
-#ifdef DEBUG
-	#include <jewel/debug_log.hpp>
-	#include <iostream>
-	using std::endl;
-#endif
+// For debugging only
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
+// End debugging stuff
 
 namespace phatbooks
 {

@@ -46,7 +46,8 @@ set (main_files
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
 	 phatbooks_text_session/phatbooks_text_session.cpp
 	 repeater/repeater.cpp
-	 repeater/repeater_impl.cpp)
+	 repeater/repeater_impl.cpp
+	 repeater/repeater_reader.cpp)
 
 add_executable (main main.cpp ${main_files})
 
