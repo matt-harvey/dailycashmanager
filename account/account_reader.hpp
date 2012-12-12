@@ -9,12 +9,14 @@ namespace phatbooks
 class AccountImpl;
 class PhatbooksDatabaseConnection;
 
-typedef
-	sqloxx::Reader<AccountImpl, PhatbooksDatabaseConnection>
-	AccountReader;
-
-
-
+class AccountReader:
+	public sqloxx::Reader<AccountImpl, PhatbooksDatabaseConnection>
+{
+public:
+	explicit AccountReader
+	(	PhatbooksDatabaseConnection& p_database_connection
+	);
+};
 
 }  // namespace phatbooks
 

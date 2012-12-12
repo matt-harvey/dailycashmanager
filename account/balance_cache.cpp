@@ -16,6 +16,12 @@ using jewel::Decimal;
 using jewel::clear;
 using jewel::value;
 
+#ifdef DEBUG
+	#include <jewel/debug_log.hpp>
+	#include <iostream>
+	using std::endl;
+#endif
+
 namespace phatbooks
 {
 
@@ -84,12 +90,15 @@ BalanceCache::mark_as_stale(AccountImpl::Id p_account_id)
 void
 BalanceCache::refresh()
 {
+	JEWEL_DEBUG_LOG << "Refreshing balance cache..." << endl;
 	scoped_ptr<Map> map_elect_ptr(new Map);	
 	Map& map_elect = *map_elect_ptr;
 	AccountReader account_reader(m_database_connection);
 	while (account_reader.read())
 	{
-		map_elect[Account(account_reader).id()] = Decimal(0, 0);
+		Account const account(account_reader);
+		map_elect[account.id()] =
+			Decimal(0, account.commodity().precision());
 	}
 	OrdinaryEntryReader entry_reader(m_database_connection);
 	while (entry_reader.read())
