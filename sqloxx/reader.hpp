@@ -21,12 +21,35 @@ namespace sqloxx
  * from a table that is physically in the database, the implementation
  * of Reader can use the fast, unchecked_get_handle(...) function to
  * get the Handle, in the knowledge that the Id is valid as it has
- * just been read from the physical database.
+ * just been read from the physical database. Note, however, that
+ * if an object is deleted while still being referred to by a Reader,
+ * undefined behaviour may result.
+ *
  * Reader classes also provide a higher-level, cleaner interface for
  * client code wishing to traverse a database table without having to
  * use SQL directly.
  * Each instantiation of Reader represents wraps a particular "select"
  * statement that is used to traverse a table or view in the database.
+ * 
+ * Reader deliberately does \e not conform to STL-like iterator conventions.
+ * While this has the disadvantages that come with eschewing convention,
+ * it does provide
+ * a syntactically simple way of traversing all the persisted objects of
+ * a given type, without having first to declare any kind of container
+ * object.
+ *
+ * Thus, with a Reader, we can generally traverse all the T instances in
+ * the database by doing this:
+ *
+ * <tt>
+ * Reader<T, Connection> reader(database_connection);\n
+ * while (reader.read())\n
+ * {\n
+ * 		reader.handle()->some_method_of_T();\n
+ * }\n
+ * </tt>
+ *
+ * There is no need to first declare a "Table<T>" or the like.
  *
  * Client code may use the Reader class in one of two ways:\n
  * (1) Use the Reader class as is, instantiating for a particular
@@ -42,10 +65,11 @@ namespace sqloxx
  *
  * Parameter templates:\n
  * T should be a class derived from PersistentObject<T, Connection>
- * (see separate documentation for PersistentObject);\n
+ * (see separate documentation for PersistentObject), for which
+ * its primary key is of type sqloxx::Id; and\n
  * Connection should be a class inheriting from DatabaseConnection,
  * for which identity_map<T, Connection>() is defined (see documentation
- * for sqloxx::unchecked_get_handle<T>(Connection&, T::Id)).
+ * for sqloxx::unchecked_get_handle<T>(Connection&, Id)).
  */
 template <typename T, typename Connection>
 class Reader:
@@ -208,8 +232,6 @@ Reader<T, Connection>::handle() const
 {
 	if (m_is_valid)
 	{
-		// Warning Id used here not T::Id. Can we
-		// compile with the latter?
 		return unchecked_get_handle<T>
 		(	m_database_connection,
 			m_statement.extract<Id>(0)

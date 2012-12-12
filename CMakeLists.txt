@@ -19,10 +19,11 @@ include_directories (/home/matthew/lib
 link_directories (/home/matthew/lib/jewel)
 
 set (main_files
-	 commodity/commodity.cpp
-	 commodity/commodity_impl.cpp
 	 account/account.cpp
 	 account/account_impl.cpp
+	 account/balance_cache.cpp
+	 commodity/commodity.cpp
+	 commodity/commodity_impl.cpp
 	 consolixx/consolixx.cpp
 	 date/date.cpp
 	 entry/entry.cpp

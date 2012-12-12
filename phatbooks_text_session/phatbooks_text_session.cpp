@@ -907,7 +907,8 @@ void PhatbooksTextSession::display_balances()
 		Entry const entry(entry_reader);
 		balance_map[entry.account().id()] += entry.amount();
 	}
-	
+
+
 	sw.log();
 	// STOP TIMING
 
