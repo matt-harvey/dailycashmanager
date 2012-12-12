@@ -594,8 +594,6 @@ void import_from_nap
 				(	problematic_ordinary_journal_map[*jvit]
 				);
 			assert (act_it != special_actual_ordinary_vectors.end());
-			cout << act_it->second.size() << endl;  // WARNING temp
-			int test_ctr = 0; // WARNING temp
 			for
 			(	vector<Entry>::iterator e_it = act_it->second.begin();
 				e_it != act_it->second.end();
@@ -612,18 +610,6 @@ void import_from_nap
 			);
 			actual_replacement_oj.save();
 			
-			JEWEL_DEBUG_LOG << "Saved actual_replacement_oj: " << endl;
-			for
-			(	vector<Entry>::const_iterator it = actual_replacement_oj.entries().begin();
-				it != actual_replacement_oj.entries().end();
-				++it
-			)
-			{
-				JEWEL_DEBUG_LOG << it->account().name() << "\t" << it->amount() << endl;
-			}
-
-
-
 			// Process budget replacement journal
 			OrdinaryJournal budget_replacement_oj(*database_connection);
 			budget_replacement_oj.set_whether_actual(false);
@@ -632,8 +618,6 @@ void import_from_nap
 				(	problematic_ordinary_journal_map[*jvit]
 				);
 			assert (bud_it != special_budget_ordinary_vectors.end());
-			cout << bud_it->second.size() << endl;  // WARNING temp
-			int test_ctrb = 0; // WARNING temp
 			for
 			(	vector<Entry>::iterator e_it = bud_it->second.begin();
 				e_it != bud_it->second.end();
@@ -641,7 +625,6 @@ void import_from_nap
 			)
 			{
 				budget_replacement_oj.add_entry(*e_it);
-				JEWEL_DEBUG_LOG << "Ctr: " << test_ctrb++ << endl;
 			}
 			budget_replacement_oj.set_date((*jvit)->date());
 			budget_replacement_oj.set_comment
@@ -649,17 +632,6 @@ void import_from_nap
 				lexical_cast<string>(problematic_ordinary_journal_map[*jvit])
 			);
 			budget_replacement_oj.save();
-
-			JEWEL_DEBUG_LOG << "Saved budget_replacement_oj: " << endl;
-			for
-			(	vector<Entry>::const_iterator it = budget_replacement_oj.entries().begin();
-				it != budget_replacement_oj.entries().end();
-				++it
-			)
-			{
-				JEWEL_DEBUG_LOG << it->account().name() << "\t" << it->amount() << endl;
-			}
-
 		}
 		else
 		{
@@ -697,8 +669,6 @@ void import_from_nap
 	cout << "Import duration in seconds: "
 	     << (end_time - start_time).total_seconds()
 		 << endl;
-
-
 
 	transaction.commit();
 	return;

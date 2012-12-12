@@ -12,7 +12,8 @@ AccountReader::AccountReader
 ):
 	sqloxx::Reader<AccountImpl, PhatbooksDatabaseConnection>
 	(	p_database_connection,
-		"select account_id from accounts order by name"
+		"select account_id from accounts order by account_type_id, "
+		"name"
 	)
 {
 }
