@@ -64,7 +64,7 @@ public:
 	 * Get an Account from an AccountReader
 	 */
 	explicit
-	Account(AccountReader const& p_reader);
+	Account(AccountReaderBase const& p_reader);
 	
 	/**
 	 * Destuctor.

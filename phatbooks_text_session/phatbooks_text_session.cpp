@@ -866,18 +866,39 @@ void PhatbooksTextSession::display_journal_summaries()
 	return;
 }
 
+namespace
+{
+	template <typename AccountReaderT>
+	void print_account_reader(AccountReaderT& p_reader)
+	{
+		while (p_reader.read())
+		{
+			Account const account(p_reader);
+			cout << account.name() << "   " << account.balance() << endl;
+		}
+	}
+}  // End anonymous namespace
+
+
 void PhatbooksTextSession::display_balances()
 {
-
-	cout << "Here is the balance of each envelope and balance sheet account."
-	     << endl;
-	AccountReader account_reader(*m_database_connection);
-	while (account_reader.read())
+	BalanceSheetAccountReader bs_reader(*m_database_connection);
+	PLAccountReader pl_reader(*m_database_connection);
+	for (int i = 0; i != 2; ++i)
 	{
-		Account const account(account_reader);
-		cout << account.name() << "|" << account.balance() << endl;
+		cout << endl << endl;;
+		if (i == 0)
+		{
+			cout << "BALANCE SHEET: " << endl << endl;
+			print_account_reader(bs_reader);
+		}
+		else
+		{
+			assert (i == 1);
+			cout << "P&L: " << endl << endl;
+			print_account_reader(pl_reader);
+		}
 	}
-	cout << "Done!" << endl;
 	return;
 }
 

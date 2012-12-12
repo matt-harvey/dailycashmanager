@@ -53,7 +53,7 @@ Account::Account
 }
 
 Account::Account
-(	AccountReader const& p_reader
+(	AccountReaderBase const& p_reader
 ):
 	m_impl(p_reader.handle())
 {

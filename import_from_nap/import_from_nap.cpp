@@ -601,7 +601,6 @@ void import_from_nap
 			)
 			{
 				actual_replacement_oj.add_entry(*e_it);
-				JEWEL_DEBUG_LOG << "Ctr: " << test_ctr++ << endl;
 			}
 			actual_replacement_oj.set_date((*jvit)->date());
 			actual_replacement_oj.set_comment
