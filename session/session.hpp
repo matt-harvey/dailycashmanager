@@ -15,10 +15,7 @@ class Session
 public:
 	Session();
 	virtual ~Session();
-	int run(std::string const& p_filename)
-	{
-		return do_run(p_filename);
-	}
+	int run(std::string const& p_filename);
 protected:
 	static std::string application_name();
 	PhatbooksDatabaseConnection& database_connection();

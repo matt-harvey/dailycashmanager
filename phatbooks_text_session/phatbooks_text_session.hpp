@@ -49,6 +49,9 @@ public:
 private:
 
 	/**
+	 * Implements virtual function do_run, inherited from
+	 * phatbooks::Session.
+	 *
 	 * Runs the user session, i.e. executes the chain of events such as
 	 * displaying menus, reacting to user input, etc. that constitutes
 	 * a Phatbooks text session.
@@ -63,8 +66,6 @@ private:
 	 * @returns \c 1 if there is some kind of error condition that is not
 	 * manifested as an exception; or \c 0 on successful
 	 * completion.
-	 *
-	 * @throw sqloxx::InvalidFilename if \c filename is an empty string.
 	 *
 	 * @param filename Is the name of a file to which a database connection
 	 * should be opened for the session.

@@ -64,7 +64,6 @@ using consolixx::TextSession;
 using jewel::Decimal;
 using jewel::DecimalRangeException;
 using sqloxx::DatabaseConnection;
-using sqloxx::InvalidFilename;
 using sqloxx::SQLiteException;
 using boost::bimap;
 using boost::bind;
@@ -199,10 +198,6 @@ PhatbooksTextSession::~PhatbooksTextSession()
 
 int PhatbooksTextSession::do_run(string const& filename)
 {
-	if (filename.empty())
-	{
-		throw InvalidFilename("Filename is empty string.");
-	}
 	boost::filesystem::path filepath(filename);
 	if (!boost::filesystem::exists(boost::filesystem::status(filepath)))
 	{
