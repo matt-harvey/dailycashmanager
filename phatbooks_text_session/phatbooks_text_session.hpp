@@ -37,8 +37,8 @@ class PhatbooksDatabaseConnection;
  * with creating a database connection to that file.
  */
 class PhatbooksTextSession:
-	public Session,  // Phatbooks Session class
-	public consolixx::TextSession  // todo Can this inherit privately?
+	public Session,  // Phatbooks Session
+	private consolixx::TextSession
 {
 public:
 
