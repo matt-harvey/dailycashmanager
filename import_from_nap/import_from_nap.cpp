@@ -85,11 +85,11 @@ namespace
 
 
 void import_from_nap
-(	shared_ptr<PhatbooksDatabaseConnection> database_connection,
+(	PhatbooksDatabaseConnection& database_connection,
 	boost::filesystem::path const& directory
 )
 {
-	DatabaseTransaction transaction(*database_connection);
+	DatabaseTransaction transaction(database_connection);
 
 	boost::posix_time::ptime const start_time =
 		boost::posix_time::second_clock::local_time();
@@ -134,7 +134,7 @@ void import_from_nap
 	}
 	
 	// Insert the sole commodity
-	Commodity aud(*database_connection);
+	Commodity aud(database_connection);
 	aud.set_abbreviation("AUD");
 	aud.set_name("Australian dollars");
 	aud.set_description("");
@@ -153,7 +153,7 @@ void import_from_nap
 	while (getline(account_csv, account_row))
 	{
 		easy_split<'|'>(account_row, account_cells);
-		Account account(*database_connection);
+		Account account(database_connection);
 
 		// The second character of the first field contains a number
 		// from 1 to 7, that is sufficient to identify the account type.
@@ -253,7 +253,7 @@ void import_from_nap
 		// Split the csv row into cells
 		easy_split<'|'>(draft_journal_row, draft_journal_cells);
 		shared_ptr<DraftJournal> draft_journal
-		(	new DraftJournal(*database_connection)
+		(	new DraftJournal(database_connection)
 		);
 		draft_journal->set_comment("");
 		string const draft_journal_name = draft_journal_cells[0];
@@ -281,7 +281,7 @@ void import_from_nap
 			string const interval_type_str = repeater_fields[1];
 			string const units_str = repeater_fields[2];
 
-			Repeater repeater(*database_connection);
+			Repeater repeater(database_connection);
 			repeater.set_interval_type(interval_type_map[interval_type_str]);
 			repeater.set_interval_units
 			(	lexical_cast<int>(units_str.c_str())
@@ -305,14 +305,14 @@ void import_from_nap
 	while (getline(draft_entry_csv, draft_entry_row))
 	{
 		easy_split<'|'>(draft_entry_row, draft_entry_cells);
-		Entry draft_entry(*database_connection);
+		Entry draft_entry(database_connection);
 		string const draft_journal_name = draft_entry_cells[0];
 		string const comment = draft_entry_cells[2];
 		string const account_name = draft_entry_cells[3];
 		Decimal act_impact(draft_entry_cells[4]);
 		Decimal bud_impact(draft_entry_cells[5]);
 		bool is_actual = (bud_impact == decimal_zero);
-		draft_entry.set_account(Account(*database_connection, account_name));
+		draft_entry.set_account(Account(database_connection, account_name));
 		draft_entry.set_comment(comment);
 		draft_entry.set_amount(is_actual? act_impact: -bud_impact);	
 		shared_ptr<DraftJournal> draft_journal =
@@ -419,7 +419,7 @@ void import_from_nap
 		// Split the csv row into cells
 		easy_split<'|'>(ordinary_journal_row, ordinary_journal_cells);
 		shared_ptr<OrdinaryJournal> ordinary_journal
-		(	new OrdinaryJournal(*database_connection)
+		(	new OrdinaryJournal(database_connection)
 		);
 		ordinary_journal->set_comment("");
 		string const iso_date_string = ordinary_journal_cells[1];
@@ -450,7 +450,7 @@ void import_from_nap
 	while (getline(ordinary_entry_csv, ordinary_entry_row))
 	{
 		easy_split<'|'>(ordinary_entry_row, ordinary_entry_cells);
-		Entry ordinary_entry(*database_connection);
+		Entry ordinary_entry(database_connection);
 		string const iso_date_string = ordinary_entry_cells[0];
 		int const old_journal_id =
 			lexical_cast<int>(ordinary_entry_cells[1].c_str());
@@ -460,10 +460,11 @@ void import_from_nap
 		Decimal const bud_impact(ordinary_entry_cells[6]);
 		bool is_actual = (bud_impact == decimal_zero);
 		ordinary_entry.set_account
-		(	Account(*database_connection, account_name)
+		(	Account(database_connection, account_name)
 		);
 		ordinary_entry.set_comment(comment);
 		ordinary_entry.set_amount(is_actual? act_impact: -bud_impact);
+		ordinary_entry.set_whether_reconciled(false);
 		shared_ptr<OrdinaryJournal> ordinary_journal =
 			ordinary_journal_map[old_journal_id];
 		bool is_problematic = false;
@@ -496,13 +497,13 @@ void import_from_nap
 				// Split the problematic entry into an actual and a budget
 				// part, as two distinct entries
 
-				Entry special_actual_entry(*database_connection);
+				Entry special_actual_entry(database_connection);
 				special_actual_entry.set_account(ordinary_entry.account());
 				special_actual_entry.set_comment(ordinary_entry.comment());
 				special_actual_entry.set_amount(act_impact);
 				special_actual_entry.set_whether_reconciled(false);
 				
-				Entry special_budget_entry(*database_connection);
+				Entry special_budget_entry(database_connection);
 				special_budget_entry.set_account(ordinary_entry.account());
 				special_budget_entry.set_comment(ordinary_entry.comment());
 				special_budget_entry.set_amount(-bud_impact);
@@ -518,7 +519,6 @@ void import_from_nap
 				// Deal with any entries previously added to the journal
 				if (!(ordinary_journal->entries().empty()))
 				{
-					JEWEL_DEBUG_LOG << "... " << ordinary_journal->entries().size() << endl;
 					for
 					(	vector<Entry>::const_iterator it = ordinary_journal->entries().begin();
 						it != ordinary_journal->entries().end();
@@ -558,13 +558,11 @@ void import_from_nap
 
 		if (!is_problematic)
 		{
-			ordinary_entry.set_whether_reconciled(false);
 			ordinary_journal->add_entry(ordinary_entry);
 		}
 		else
 		{
-			JEWEL_DEBUG_LOG << "Entry recognised as problematic: " << endl;
-			JEWEL_DEBUG_LOG << ordinary_entry.account().name() << "\t" << ordinary_entry.amount() << "\t" << endl;
+			// Nothing to do here. (Could log maybe.)
 		}
 	}
 
@@ -587,7 +585,7 @@ void import_from_nap
 			// an actual one, and a draft one.
 			
 			// Process actual replacement journal
-			OrdinaryJournal actual_replacement_oj(*database_connection);
+			OrdinaryJournal actual_replacement_oj(database_connection);
 			actual_replacement_oj.set_whether_actual(true);
 			unordered_map<int, vector<Entry> >::iterator const act_it =
 				special_actual_ordinary_vectors.find
@@ -610,7 +608,7 @@ void import_from_nap
 			actual_replacement_oj.save();
 			
 			// Process budget replacement journal
-			OrdinaryJournal budget_replacement_oj(*database_connection);
+			OrdinaryJournal budget_replacement_oj(database_connection);
 			budget_replacement_oj.set_whether_actual(false);
 			unordered_map<int, vector<Entry> >::iterator const bud_it =
 				special_budget_ordinary_vectors.find
@@ -638,29 +636,22 @@ void import_from_nap
 		}
 	}
 
-	cout << "The following journals (by N. A. P. identifier) could not "
-	     << "be imported automatically, and will need to be entered "
-		 << "manually into Phatbooks:" << endl;
-	/* The problematic _ordinary_ journals should have been captured now.
-	for
-	(	unordered_set< shared_ptr<OrdinaryJournal> >::const_iterator it =
-			problematic_ordinary_journals.begin();
-		it != problematic_ordinary_journals.end();
-		++it
-	)
-	{
-		cout << problematic_ordinary_journal_map[*it] << endl;
-	}
-	*/
+	// The problematic _ordinary_ journals should have been captured now.
 	// There might still be problematic draft journals though...
-	for
-	(	unordered_set< shared_ptr<DraftJournal> >::const_iterator it =
-		problematic_draft_journals.begin();
-		it != problematic_draft_journals.end();
-		++it
-	)
+	if (!problematic_draft_journals.empty())
 	{
-		cout << problematic_draft_journal_map[*it] << endl;
+		cout << "The following journals (by N. A. P. identifier) could not "
+	         << "be imported automatically, and will need to be entered "
+		     << "manually into Phatbooks:" << endl;
+		for
+		(	unordered_set< shared_ptr<DraftJournal> >::const_iterator it =
+				problematic_draft_journals.begin();
+			it != problematic_draft_journals.end();
+			++it
+		)
+		{
+			cout << problematic_draft_journal_map[*it] << endl;
+		}
 	}
 	boost::posix_time::ptime const end_time =
 		boost::posix_time::second_clock::local_time();

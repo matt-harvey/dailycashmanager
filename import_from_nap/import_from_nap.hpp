@@ -49,7 +49,7 @@ namespace phatbooks
  * entries where a SINGLE ENTRY has both actual and budget impacts.
  */
 void import_from_nap
-(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection,
+(	PhatbooksDatabaseConnection& p_database_connection,
 	boost::filesystem::path const& directory
 );
 

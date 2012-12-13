@@ -25,6 +25,7 @@
 #include "ordinary_journal_reader.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
+#include "session.hpp"
 #include "consolixx/consolixx.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/handle.hpp"
@@ -85,19 +86,10 @@ namespace phatbooks
 
 
 
-
-
-
-
-
-string const PhatbooksTextSession::s_application_name = "Phatbooks";
-
 PhatbooksTextSession::PhatbooksTextSession():
-	m_main_menu(new Menu),
-	m_database_connection(new PhatbooksDatabaseConnection)
+	m_main_menu(new Menu)
 {
 	
-	m_database_connection->set_caching_level(10);
 
 
 	// Set up all the Menu objects.
@@ -190,7 +182,7 @@ PhatbooksTextSession::elicit_existing_account_name()
 	 while (true)
 	 {
 		string input = get_user_input();
-	 	if (m_database_connection->has_account_named(input))
+	 	if (database_connection().has_account_named(input))
 		{
 			return input;
 		}
@@ -202,11 +194,10 @@ PhatbooksTextSession::elicit_existing_account_name()
 
 PhatbooksTextSession::~PhatbooksTextSession()
 {
-	wrap_up();
 }
 
 
-int PhatbooksTextSession::run(string const& filename)
+int PhatbooksTextSession::do_run(string const& filename)
 {
 	if (filename.empty())
 	{
@@ -232,7 +223,7 @@ int PhatbooksTextSession::run(string const& filename)
 	}
 	try
 	{
-		m_database_connection->open(filepath);
+		database_connection().open(filepath);
 	}
 	catch (SQLiteException&)
 	{
@@ -240,9 +231,9 @@ int PhatbooksTextSession::run(string const& filename)
 		return 1;
 	}
 
-	cout << "Welcome to " << s_application_name << "!" << endl;
+	cout << "Welcome to " << application_name() << "!" << endl;
 
-	m_database_connection->setup();
+	database_connection().setup();
 	m_main_menu->present_to_user();	
 	return 0;
 }
@@ -250,7 +241,7 @@ int PhatbooksTextSession::run(string const& filename)
 
 void PhatbooksTextSession::elicit_commodity()
 {
-	Commodity commodity(*m_database_connection);
+	Commodity commodity(database_connection());
 
 	// Get abbreviation
 	cout << "Enter abbreviation for new commodity: ";
@@ -262,7 +253,7 @@ void PhatbooksTextSession::elicit_commodity()
 			cout << "Abbreviation cannot be blank. Please try again: ";
 		}
 		else if
-		(	m_database_connection->has_commodity_with_abbreviation(input)
+		(	database_connection().has_commodity_with_abbreviation(input)
 		)
 		{
 			cout << "A commodity with this abbreviation already exists. "
@@ -284,7 +275,7 @@ void PhatbooksTextSession::elicit_commodity()
 		{
 			cout << "Name cannot be blank. Please try again: ";
 		}
-		else if (m_database_connection->has_commodity_named(input))
+		else if (database_connection().has_commodity_named(input))
 		{
 			cout << "A commodity with this name already exists. "
 			     << "Please try a different name: ";
@@ -358,7 +349,7 @@ void PhatbooksTextSession::elicit_commodity()
 
 void PhatbooksTextSession::elicit_account()
 {
-	Account account(*m_database_connection);
+	Account account(database_connection());
 
 	// Get account name
 	cout << "Enter a name for the account: ";
@@ -369,7 +360,7 @@ void PhatbooksTextSession::elicit_account()
 		{
 			cout << "Name cannot be blank. Please try again: ";
 		}
-		else if (m_database_connection->has_account_named(input))
+		else if (database_connection().has_account_named(input))
 		{
 			cout << "An account with this name already exists. "
 			     << "Please try again: ";
@@ -387,7 +378,7 @@ void PhatbooksTextSession::elicit_account()
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
 		string input = get_user_input();
-		if (!m_database_connection->has_commodity_with_abbreviation(input))
+		if (!database_connection().has_commodity_with_abbreviation(input))
 		{
 			cout << "There is no commodity with this abbreviation. Please "
 			     << "try again: ";
@@ -395,14 +386,14 @@ void PhatbooksTextSession::elicit_account()
 		else
 		{
 			input_is_valid = true;
-			account.set_commodity(Commodity(*m_database_connection, input));
+			account.set_commodity(Commodity(database_connection(), input));
 		}
 	}
 
 	// Get account type
 	Menu account_type_menu;
 	typedef bimap<Account::AccountType, string> bimap_type;
-	bimap_type account_type_info = m_database_connection->account_types();
+	bimap_type account_type_info = database_connection().account_types();
 	for
 	(	bimap_type::iterator it = account_type_info.begin();
 		it != account_type_info.end();
@@ -527,12 +518,12 @@ void PhatbooksTextSession::elicit_journal()
 	}
 	
 	// Primary entry
-	Entry primary_entry(*m_database_connection);
+	Entry primary_entry(database_connection());
 
 	// Get primary entry account
 	cout << "Enter name of " << account_prompt << ": ";
 	primary_entry.set_account
-	(	Account(*m_database_connection, elicit_existing_account_name())
+	(	Account(database_connection(), elicit_existing_account_name())
 	);
 
 	// Get primary entry amount
@@ -585,12 +576,12 @@ void PhatbooksTextSession::elicit_journal()
 	journal.add_entry(primary_entry);
 
 	// Secondary entry
-	Entry secondary_entry(*m_database_connection);
+	Entry secondary_entry(database_connection());
 
 	// Get other account and comment
 	cout << "Enter name of " << secondary_account_prompt << ": ";
 	secondary_entry.set_account
-	(	Account(*m_database_connection, elicit_existing_account_name())
+	(	Account(database_connection(), elicit_existing_account_name())
 	);
 	// WARNING if secondary account is in a different currency then we need to
 	// deal with this here somehow.
@@ -634,7 +625,7 @@ void PhatbooksTextSession::elicit_journal()
 
 	if (journal_action == post)
 	{
-		OrdinaryJournal ordinary_journal(journal, *m_database_connection);
+		OrdinaryJournal ordinary_journal(journal, database_connection());
 
 		boost::gregorian::date const d =
 			boost::gregorian::day_clock::local_day();
@@ -649,7 +640,7 @@ void PhatbooksTextSession::elicit_journal()
 	}
 	else if (journal_action == save_draft || journal_action == save_recurring)
 	{
-		DraftJournal draft_journal(journal, *m_database_connection);
+		DraftJournal draft_journal(journal, database_connection());
 
 		// Ask for a name for the draft journal
 		string prompt =
@@ -665,7 +656,7 @@ void PhatbooksTextSession::elicit_journal()
 			{
 				cout << "Name cannot be blank. Please try again: ";
 			}
-			else if (m_database_connection->has_draft_journal_named(name))
+			else if (database_connection().has_draft_journal_named(name))
 			{
 				cout << "A draft or recurring transaction has already "
 				     << "been saved under this name. Please enter a "
@@ -680,7 +671,7 @@ void PhatbooksTextSession::elicit_journal()
 		// Ask for any repeaters.
 		if (journal_action == save_recurring)
 		{
-			Repeater repeater(*m_database_connection);
+			Repeater repeater(database_connection());
 			cout << "\nHow often do you want this transaction to be posted? "
 				 << endl;
 			Menu frequency_menu;
@@ -833,7 +824,7 @@ void PhatbooksTextSession::import_from_nap()
 	else
 	{
 		phatbooks::import_from_nap
-		(	m_database_connection,
+		(	database_connection(),
 			directory
 		);
 		cout << "Import complete." << endl;
@@ -845,7 +836,7 @@ void PhatbooksTextSession::display_journal_summaries()
 {
 	cout << "For each ORDINARY journal, here's what's in it. "
 	     << endl;
-	OrdinaryJournalReader oj_reader(*m_database_connection);
+	OrdinaryJournalReader oj_reader(database_connection());
 	while (oj_reader.read())
 	{
 		OrdinaryJournal journal(oj_reader);
@@ -882,8 +873,8 @@ namespace
 
 void PhatbooksTextSession::display_balances()
 {
-	BalanceSheetAccountReader bs_reader(*m_database_connection);
-	PLAccountReader pl_reader(*m_database_connection);
+	BalanceSheetAccountReader bs_reader(database_connection());
+	PLAccountReader pl_reader(database_connection());
 	for (int i = 0; i != 2; ++i)
 	{
 		cout << endl << endl;;
@@ -909,7 +900,7 @@ void PhatbooksTextSession::play()
 	cout << "Here is journal number 1035:" << endl;
 	for (int i = 0; i != 2; ++i)
 	{
-		OrdinaryJournal journal(*m_database_connection, 1035);
+		OrdinaryJournal journal(database_connection(), 1035);
 		for
 		(	vector<Entry>::const_iterator it = journal.entries().begin();
 			it != journal.entries().end();

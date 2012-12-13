@@ -14,7 +14,8 @@ include_directories (/home/matthew/lib
                      /home/matthew/Workbench/versioned/phatbooks/journal
                      /home/matthew/Workbench/versioned/phatbooks/phatbooks_database_connection
                      /home/matthew/Workbench/versioned/phatbooks/phatbooks_text_session
-                     /home/matthew/Workbench/versioned/phatbooks/repeater)
+                     /home/matthew/Workbench/versioned/phatbooks/repeater
+					 /home/matthew/Workbench/versioned/phatbooks/session)
 
 link_directories (/home/matthew/lib/jewel)
 
@@ -38,6 +39,7 @@ set (main_files
 	 journal/ordinary_journal.cpp
 	 journal/ordinary_journal_impl.cpp
 	 journal/ordinary_journal_reader.cpp
+	 session/session.cpp
 	 sqloxx/database_connection.cpp
 	 sqloxx/database_transaction.cpp
 	 sqloxx/sql_statement.cpp

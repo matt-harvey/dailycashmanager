@@ -2,6 +2,7 @@
 #define GUARD_phatbooks_text_session_hpp
 
 #include "consolixx/consolixx.hpp"
+#include "session.hpp"
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -36,12 +37,16 @@ class PhatbooksDatabaseConnection;
  * with creating a database connection to that file.
  */
 class PhatbooksTextSession:
-	public consolixx::TextSession
+	public Session,  // Phatbooks Session class
+	public consolixx::TextSession  // todo Can this inherit privately?
 {
 public:
 
 	PhatbooksTextSession();
 	virtual ~PhatbooksTextSession();	
+
+
+private:
 
 	/**
 	 * Runs the user session, i.e. executes the chain of events such as
@@ -59,18 +64,16 @@ public:
 	 * manifested as an exception; or \c 0 on successful
 	 * completion.
 	 *
-	 * @throw sqloxx::InvalidFilename is \c filename is an empty string.
+	 * @throw sqloxx::InvalidFilename if \c filename is an empty string.
 	 *
 	 * @param filename Is the name of a file to which a database connection
 	 * should be opened for the session.
 	 */
-	int run(std::string const& filename);
-
-private:
+	int do_run(std::string const& filename);
 
 	boost::shared_ptr<Menu> m_main_menu;
-	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
-	static std::string const s_application_name;
+	// boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
+	// static std::string const s_application_name;
 
 	/**
 	 * Enter a dialogue with the user for creating a new Commodity, which on
