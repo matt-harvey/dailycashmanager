@@ -42,6 +42,7 @@
 #include <boost/regex.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
+#include <locale>
 #include <map>
 #include <string>
 
@@ -74,6 +75,7 @@ using boost::regex_match;
 using sqloxx::get_handle;
 using std::cout;
 using std::endl;
+using std::locale;
 using std::map;
 using std::string;
 
@@ -198,6 +200,7 @@ PhatbooksTextSession::~PhatbooksTextSession()
 
 int PhatbooksTextSession::do_run(string const& filename)
 {
+	cout.imbue(locale(""));
 	boost::filesystem::path filepath(filename);
 	if (!boost::filesystem::exists(boost::filesystem::status(filepath)))
 	{

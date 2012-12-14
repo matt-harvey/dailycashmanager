@@ -22,6 +22,7 @@ using std::cout;
 using std::endl;
 using std::string;
 
+	
 
 int main(int argc, char** argv)
 {
@@ -39,8 +40,9 @@ int main(int argc, char** argv)
 			return 1;
 		}
 
-		// The following assumes a text based session.
 		assert (argc == 2 && !filename.empty());
+
+		// The following assumes a text based session.
 		PhatbooksTextSession session;
 		return session.run(filename);
 	}
