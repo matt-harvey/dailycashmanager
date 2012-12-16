@@ -1,7 +1,7 @@
 #ifndef GUARD_identity_map_hpp
 #define GUARD_identity_map_hpp
 
-#include "handle.hpp"
+#include "general_typedefs.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
@@ -21,9 +21,15 @@ namespace sqloxx
 {
 
 
-// Forward declaration
+// Forward declarations
+
 template <typename Derived, typename Connection>
 class PersistentObject;
+
+template <typename T>
+class Handle;
+
+
 
 
 /**
@@ -57,14 +63,31 @@ class PersistentObject;
  *
  * IdentityMap is intended to work in conjunction with sqloxx::Handle<T>
  * and sqloxx::PersistentObject<T, Connection>. See also the documentation
+ *
+ * @todo HIGH PRIORITY
+ * Tighten up the architecture of SQLoxx as follows.
+ * provide_handle should be renamed provide_pointer.
+ * It should return a std::auto_ptr, not a handle.
+ * It should be
+ * accessible only from Handle. Handle should use it to grab a
+ * raw pointer with which to initialize its internal pointer on
+ * construction. The constructor of Handle should take a Connection&
+ * and an id. Then internally this constructor should called the
+ * identity_map() function of the Connection&. Then there is
+ * not need for get_handle.
+ * Having done all this, we can then construct Handle<T> instances
+ * easily, without the cumbersome use of get_handle.
+ * We can then provide a Table<T> class, that wraps an
+ * SQLStatement selecting an id column that can initialize a
+ * particular type; and a Table<T>::iterator which can iterate
+ * that table.
  */
 template <typename T, typename Connection>
 class IdentityMap
 {
 public:
 
-	typedef typename T::Id Id;
-	typedef typename T::Id CacheKey;
+	typedef sqloxx::Id CacheKey;
 
 	/**
 	 * Construct an IdentityMap associated with the database
@@ -113,96 +136,6 @@ public:
 	IdentityMap& operator=(IdentityMap const& rhs);
 
 	/**
-	 * Provide handle to object of type T, representing a newly created object
-	 * that has not yet been persisted to the database.
-	 *
-	 * @returns a Handle<T> pointing to a newly constructed instance of T,
-	 * that is cached in this instance of IdentityMap<T, Connection>.
-	 *
-	 * @throws sqloxx::OverflowException in the extremely unlikely
-	 * event that the in-memory cache already has so many objects loaded that
-	 * an additional object could not be cached without causing
-	 * arithmetic overflow in the process of assigning it a key.
-	 *
-	 * @throws std::bad_alloc in the unlikely event of memory allocation
-	 * failure during the creating and caching of the instance of T.
-	 *
-	 * <em>In addition</em>, any exceptions thrown from the T constructor
-	 * of the form T(IdentityMap<T, Connection>&) may also be thrown
-	 * from provide_handle().
-	 *
-	 * Exception safety depends on the constructor of T of the form
-	 * T(IdentityMap<T, Connection>&). Provided this constructor offers at
-	 * least the <em>strong guarantee</em>, then provide_handle() offers the
-	 * <em>strong guarantee</em> (although there may be some internal cache
-	 * state that is not rolled back but which does not affect client code).
-	 */
-	Handle<T> provide_handle();
-
-	/**
-	 * Provide handle to object of type T, representing an object
-	 * already stored in the database, with primary key (id) p_id.
-	 *
-	 * @returns a Handle<T> pointing to an instance of T corresponding
-	 * to a record of the corresponding type already persisted in the
-	 * database, with p_id as its primary key.
-	 *
-	 * @throws sqloxx::BadIdentifier if there is not record in the
-	 * database of type T that has p_id as its primary key. Note the
-	 * validity of p_id is always checked in the physical database
-	 * by this function, regardless of whether object yet has
-	 * yet be cached in the IdentityMap. (It is possibly in certain
-	 * situations for objects to be left in the cache with ids when they
-	 * no longer exist in the database. This doesn't do any harm as long
-	 * as we don't subsequently use Handles with these invalid
-	 * ids.) For a faster, unchecked
-	 * version of this function, see unchecked_provide_handle(Id p_id).
-	 *
-	 * @throws std::bad_alloc if the object is not already loaded in the
-	 * cache, and there is a memory allocation failure in the process of
-	 * loading and caching the object.
-	 *
-	 * @throws sqloxx::OverflowException in the extremely unlikely
-	 * event that the in-memory cache already has so many objects loaded that
-	 * an additional object could not be cached without causing
-	 * arithmetic overflow in the process of assigning it a key.
-	 *
-	 * @throws InvalidConnection in case the database connection is invalid.
-	 *
-	 * @throws SQLiteException, or a derivative thereof, in the extremely
-	 * unlikely event of an error during execution thrown up by the underlying
-	 * SQLite API.
-	 *
-	 * <em>In addition</em>, any exceptions thrown from the T constructor
-	 * of the form T(IdentityMap<T, Connection>&, typename T::Id) may
-	 * also be thrown from provide_handle().
-	 *
-	 * Exception safety depends on the constructor of T of the form
-	 * T(IdentityMap<T, Connection>&, typename T::Id). Provided this
-	 * constructor offers at
-	 * least the <em>strong guarantee</em>, then provide_handle() offers the
-	 * <em>strong guarantee</em> (although there may be some internal cache
-	 * state that is not rolled back but which does not affect client code).
-	 * For this guarantee to hold, it is also required that the destructor
-	 * of T not throw.
-	 *
-	 * @todo Revise tests to reflect checked nature. Test
-	 * unchecked_provide_handle separately as well.
-	 */
-	Handle<T> provide_handle(Id p_id);
-
-	/**
-	 * Behaviour is exactly the same as provide_handle(Id p_id), with the
-	 * sole difference that (a) the unchecked version is faster, and
-	 * (b) if a record of type T, with p_id as its primary key,
-	 * does not exist in the database, then, rather than an exception
-	 * being thrown, behaviour is undefined. This function should \e never be
-	 * called unless you are \e sure p_id is an existing primary key.
-	 */
-	Handle<T> unchecked_provide_handle(Id p_id);
-
-	
-	/**
 	 * Turn on caching. When caching is on, objects loaded from the
 	 * database are cached indefinitely in the IdentityMap. When
 	 * caching is off, each object is only cached as long as there
@@ -239,12 +172,41 @@ public:
 	 */
 	Connection& connection();
 
+
+	/**
+	 * Control access to the provide_pointer functions, deliberately
+	 * limiting this access to the Handle<T> class.
+	 */
+	class HandleAttorney
+	{
+	public:
+		friend class Handle<T>;
+	private:
+		static T* get_pointer(IdentityMap& p_identity_map)
+		{
+			return p_identity_map.provide_pointer();
+		}
+		static T* get_pointer(IdentityMap& p_identity_map, Id p_id)
+		{
+			return p_identity_map.provide_pointer(p_id);
+		}
+		static T* unchecked_get_pointer
+		(	IdentityMap& p_identity_map, Id p_id
+		)
+		{
+			return p_identity_map.unchecked_provide_pointer(p_id);
+		}
+	};
+	
+	friend class HandleAttorney;
+
+
 	/**
 	 * Control access to the various functions of the class
 	 * IdentityMap<T, Connection>, deliberately
 	 * limiting this access to the class PersistentObject<T, Connection>.
 	 */
-	class Attorney
+	class PersistentObjectAttorney
 	{
 	public:
 
@@ -291,17 +253,101 @@ public:
 		}
 	};
 
-	friend class Attorney;
+	friend class PersistentObjectAttorney;
 
 private:
 
-	typedef
-		typename PersistentObject<T, Connection>::HandleMonitorAttorney
-		HandleMonitorAttorney;
-	
-	typedef
-		typename PersistentObject<T, Connection>::CacheKeyAttorney
-		CacheKeyAttorney;
+	/**
+	 * Provide pointer to object of type T, representing a newly created object
+	 * that has not yet been persisted to the database.
+	 *
+	 * @returns a T* pointing to a newly constructed instance of T,
+	 * that is cached in this instance of IdentityMap<T, Connection>.
+	 *
+	 * @throws sqloxx::OverflowException in the extremely unlikely
+	 * event that the in-memory cache already has so many objects loaded that
+	 * an additional object could not be cached without causing
+	 * arithmetic overflow in the process of assigning it a key.
+	 *
+	 * @throws std::bad_alloc in the unlikely event of memory allocation
+	 * failure during the creating and caching of the instance of T.
+	 *
+	 * <em>In addition</em>, any exceptions thrown from the T constructor
+	 * of the form T(IdentityMap<T, Connection>&) may also be thrown
+	 * from provide_pointer().
+	 *
+	 * This function should only be called by the constructor of
+	 * Handle<T>.
+	 *
+	 * Exception safety depends on the constructor of T of the form
+	 * T(IdentityMap<T, Connection>&). Provided this constructor offers at
+	 * least the <em>strong guarantee</em>, then provide_pointer() offers the
+	 * <em>strong guarantee</em> (although there may be some internal cache
+	 * state that is not rolled back but which does not affect client code).
+	 */
+	T* provide_pointer();
+
+	/**
+	 * Provide pointer to object of type T, representing an object
+	 * already stored in the database, with primary key (id) p_id.
+	 *
+	 * @returns a pointer<T> pointing to an instance of T corresponding
+	 * to a record of the corresponding type already persisted in the
+	 * database, with p_id as its primary key.
+	 *
+	 * @throws sqloxx::BadIdentifier if there is not record in the
+	 * database of type T that has p_id as its primary key. Note the
+	 * validity of p_id is always checked in the physical database
+	 * by this function, regardless of whether object yet has
+	 * yet be cached in the IdentityMap. (It is possibly in certain
+	 * situations for objects to be left in the cache with ids when they
+	 * no longer exist in the database. This doesn't do any harm as long
+	 * as we don't subsequently use Handles with these invalid
+	 * ids.) For a faster, unchecked
+	 * version of this function, see unchecked_provide_pointer(Id p_id).
+	 *
+	 * @throws std::bad_alloc if the object is not already loaded in the
+	 * cache, and there is a memory allocation failure in the process of
+	 * loading and caching the object.
+	 *
+	 * @throws sqloxx::OverflowException in the extremely unlikely
+	 * event that the in-memory cache already has so many objects loaded that
+	 * an additional object could not be cached without causing
+	 * arithmetic overflow in the process of assigning it a key.
+	 *
+	 * @throws InvalidConnection in case the database connection is invalid.
+	 *
+	 * @throws SQLiteException, or a derivative thereof, in the extremely
+	 * unlikely event of an error during execution thrown up by the underlying
+	 * SQLite API.
+	 *
+	 * <em>In addition</em>, any exceptions thrown from the T constructor
+	 * of the form T(IdentityMap<T, Connection>&, typename T::Id) may
+	 * also be thrown from provide_pointer().
+	 *
+	 * Exception safety depends on the constructor of T of the form
+	 * T(IdentityMap<T, Connection>&, typename T::Id). Provided this
+	 * constructor offers at
+	 * least the <em>strong guarantee</em>, then provide_pointer() offers the
+	 * <em>strong guarantee</em> (although there may be some internal cache
+	 * state that is not rolled back but which does not affect client code).
+	 * For this guarantee to hold, it is also required that the destructor
+	 * of T not throw.
+	 *
+	 * @todo Revise tests to reflect checked nature. Test
+	 * unchecked_provide_pointer separately as well.
+	 */
+	T* provide_pointer(Id p_id);
+
+	/**
+	 * Behaviour is exactly the same as provide_pointer(Id p_id), with the
+	 * sole difference that (a) the unchecked version is faster, and
+	 * (b) if a record of type T, with p_id as its primary key,
+	 * does not exist in the database, then, rather than an exception
+	 * being thrown, behaviour is undefined. This function should \e never be
+	 * called unless you are \e sure p_id is an existing primary key.
+	 */
+	T* unchecked_provide_pointer(Id p_id);
 
 	/**
 	 * Register id of newly saved instance of T. This function is
@@ -488,8 +534,8 @@ IdentityMap<T, Connection>::operator=(IdentityMap const& rhs)
 }
 
 template <typename T, typename Connection>
-Handle<T>
-IdentityMap<T, Connection>::provide_handle()
+T*
+IdentityMap<T, Connection>::provide_pointer()
 {
 	// Comments here are to help ascertain exception-safety.
 	Record obj_ptr(new T(*this));  // T-dependant exception safety
@@ -500,7 +546,7 @@ IdentityMap<T, Connection>::provide_handle()
 	// calling insert either (a) succeeds, or (b) fails completely and
 	// throws std::bad_alloc. If it throws, then obj_ptr
 	// will be deleted on exit (as it's a shared_ptr) - which amounts to
-	// rollback of provide_handle().
+	// rollback of provide_pointer().
 	cache_key_map().insert
 	(	typename CacheKeyMap::value_type(cache_key, obj_ptr)
 	);
@@ -509,21 +555,17 @@ IdentityMap<T, Connection>::provide_handle()
 	// cache_key_map()[cache_key] = obj_ptr; 
 
 	// Nothrow
-	CacheKeyAttorney::set_cache_key(*obj_ptr, cache_key);
+	PersistentObject<T, Connection>::
+		CacheKeyAttorney::set_cache_key(*obj_ptr, cache_key);
 
-	// In the below, get() is nothrow. The Handle<T> constructor and copy
-	// constructor can throw in some (very unlikely) circumstances,
-	// namely when there are too many Handle<T> instances pointing to
-	// this T; but that's not the case here, as we have only just
-	// constructed this object and are returning the only Handle so
-	// far pointing to it. So returning the return value is nothrow.
-	return Handle<T>(obj_ptr.get());
+	// In the below, get() is nothrow.
+	return obj_ptr.get();
 }
 
 
 template <typename T, typename Connection>
-Handle<T>
-IdentityMap<T, Connection>::provide_handle(Id p_id)
+T*
+IdentityMap<T, Connection>::provide_pointer(Id p_id)
 {
 	if (!PersistentObject<T, Connection>::exists(connection(), p_id))
 	{
@@ -532,13 +574,13 @@ IdentityMap<T, Connection>::provide_handle(Id p_id)
 			"requested type with the requested id."
 		);
 	}
-	return unchecked_provide_handle(p_id);
+	return unchecked_provide_pointer(p_id);
 }
 
 
 template <typename T, typename Connection>
-Handle<T>
-IdentityMap<T, Connection>::unchecked_provide_handle(Id p_id)
+T*
+IdentityMap<T, Connection>::unchecked_provide_pointer(Id p_id)
 {
 	typename IdMap::iterator it = id_map().find(p_id);
 	if (it == id_map().end())
@@ -566,20 +608,24 @@ IdentityMap<T, Connection>::unchecked_provide_handle(Id p_id)
 		}
 
 		// Nothrow
-		CacheKeyAttorney::set_cache_key(*obj_ptr, cache_key);
+		PersistentObject<T, Connection>::
+			CacheKeyAttorney::set_cache_key(*obj_ptr, cache_key);
 
 		// We know this won't throw sqloxx::OverflowError, as it's a
 		// newly loaded object.
-		return Handle<T>(obj_ptr.get()); 
+		return obj_ptr.get();
 	}
 	assert (it != id_map().end());
-	if (HandleMonitorAttorney::has_high_handle_count(*(it->second)))
+	if
+	(	PersistentObject<T, Connection>::HandleMonitorAttorney::
+			has_high_handle_count(*(it->second))
+	)
 	{
 		throw sqloxx::OverflowException
 		(	"Handle count for has reached dangerous level. "
 		);
 	}
-	return Handle<T>(it->second.get());
+	return it->second.get();
 }
 
 template <typename T, typename Connection>
@@ -600,7 +646,8 @@ IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 		// transaction level after already cached in the database. We
 		// want the new object to overwrite the old one in the cache.
 		uncache_object
-		(	CacheKeyAttorney::cache_key(*(res.first->second))
+		(	PersistentObject<T, Connection>::
+				CacheKeyAttorney::cache_key(*(res.first->second))
 		);
 		res = id_map().insert(Elem(p_id, finder->second));
 		assert (res.second);
@@ -669,7 +716,10 @@ IdentityMap<T, Connection>::disable_caching()
 			++it
 		)
 		{
-			if (HandleMonitorAttorney::is_orphaned(*(it->second)))
+			if
+			(	PersistentObject<T, Connection>::HandleMonitorAttorney::
+					is_orphaned(*(it->second))
+			)
 			{
 				uncache_object(it->first);
 			}

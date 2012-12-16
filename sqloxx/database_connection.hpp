@@ -39,80 +39,6 @@ namespace detail
 }  // namespace detail
 
 
-/**
- * @param dbc An instance of Connection for which an IdentityMap exists for
- * type T.
- *
- * @param The id (primary key) of the desired instance of T, to which
- * we want a Handle.
- *
- * @returns a Handle<T> to the instance of T with Id id.
- *
- * Preconditions:\n
- * The type Connection must define a method
- * identity_map<T>(), that returns a non-constant reference to an instance
- * of IdentityMap<T, Connection>, where this instance has been initialised
- * with Connection dbc.
- * A sensible place to locate this IdentityMap
- * instance is as a data member of Connection.
- *
- * This function is simply a convenient wrapper around the method
- * IdentityMap<T, Connection>::provide_handle(T::Id), and
- * its behaviour in respect of exceptions is identical to that method.
- */
-template <typename T, typename Connection>
-Handle<T>
-get_handle(Connection& dbc, typename T::Id id);
-
-/**
- * @param dbc An instance of Connection for which an IdentityMap exists for
- * type T.
- *
- * @param The id (primary key) of the desired instance of T, to which
- * we want a Handle.
- *
- * @returns a Handle<T> to the instance of T with Id id.
- *
- * Preconditions:\n
- * The type Connection must define a method
- * identity_map<T>(), that returns a non-constant reference to an instance
- * of IdentityMap<T, Connection>, where this instance has been initialised
- * with Connection dbc.
- * A sensible place to locate this IdentityMap
- * instance is as a data member of Connection.\n
- * In addition, it is the caller's responsibility to ensure
- * that a record of type T with p_id as its primary key exists in the
- * database, prior to calling this function. If it does not then
- * <em>undefined behaviour will result</em>.
- *
- * This function is simply a convenient wrapper around the method
- * IdentityMap<T, Connection>::unchecked_provide_handle(T::Id), and
- * its behaviour in respect of exceptions is identical to that method.
- */
-template <typename T, typename Connection>
-Handle<T>
-unchecked_get_handle(Connection& dbc, typename T::Id id);
-
-/**
- * @param An instance of Connection for which an IdentityMap exists for
- * type T.
- *
- * Preconditions:\n
- * The type Connection must define a method
- * identity_map<T>(), that returns a non-constant reference to an instance
- * of IdentityMap<T, Connection>, where this instance has been initialized
- * with Connection dbc. A sensible place to store this IdentityMap
- * instance is as a member of the Connection.
- *
- * This function is simply a convenient wrapper around the method
- * IdentityMap<T, Connection>::provide_handle(), and
- * its behaviour in respect of exceptions is identical to that method.
- */
-template <typename T, typename Connection>
-Handle<T>
-get_handle(Connection& dbc);
-
-
 
 
 /**
@@ -431,40 +357,6 @@ private:
 	StatementCache m_statement_cache;
 	StatementCache::size_type m_cache_capacity;
 };
-
-
-
-
-template <typename T, typename Connection>
-inline
-Handle<T>
-get_handle(Connection& dbc, typename T::Id id)
-{
-	return dbc.template
-		identity_map<T>().template
-		provide_handle(id);
-}
-
-template <typename T, typename Connection>
-inline
-Handle<T>
-unchecked_get_handle(Connection& dbc, typename T::Id id)
-{
-	return dbc.template
-		identity_map<T>().template
-		unchecked_provide_handle(id);
-}
-
-template <typename T, typename Connection>
-inline
-Handle<T>
-get_handle(Connection& dbc)
-{
-	return dbc.template
-		identity_map<T>().template
-		provide_handle();
-}
-
 
 
 inline

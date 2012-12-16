@@ -2,6 +2,7 @@
 #define GUARD_handle_hpp
 
 #include "general_typedefs.hpp"
+#include "identity_map.hpp"
 #include "sqloxx_exceptions.hpp"
 
 namespace sqloxx
@@ -10,9 +11,6 @@ namespace sqloxx
 // Forward declaration
 template <typename T>
 class PersistentObjectHandleAttorney;
-
-template <typename T, typename Connection>
-class IdentityMap;
 
 
 /**
@@ -29,18 +27,6 @@ class Handle
 {
 public:
 
-	template <typename Connection>
-	friend
-	Handle<T>
-	IdentityMap<T, Connection>::provide_handle();
-
-	template <typename Connection>
-	friend
-	Handle<T>
-	IdentityMap<T, Connection>::unchecked_provide_handle
-	(	Id p_id  // This won't compile if it's T::Id
-	);
-
 	/**
 	 * Preconditions:\n
 	 * the object must have been managed
@@ -53,6 +39,24 @@ public:
 	 * preconditions are met.
 	 */
 	~Handle();
+
+	/**
+	 * @todo Documentation and testing.
+	 */
+	template <typename Connection>
+	Handle(Connection& p_connection);
+
+	/**
+	 * @todo Documentation and testing.
+	 */
+	template <typename Connection>
+	Handle(Connection& p_connection, Id p_id);
+
+	/**
+	 * @todo Documentation and testing.
+	 */
+	template <typename Connection>
+	Handle(Connection& p_connection, Id p_id, char p_no_check_flag);
 
 	/**
 	 * @throws sqloxx::OverflowException in the extremely unlikely
@@ -107,28 +111,10 @@ public:
 
 private:
 
-	/** Construct a Handle<T> from a T*.
-	 * 
-	 * @throws sqloxx::OverflowException if the maximum number
-	 * of handles for this underlying instance of T has been reached.
-	 * The circumstances under which this occurs depend on the
-	 * implementation of T::notify_handle_construction(), but should
-	 * be extremely rare.
-	 *
-	 * Exception safety: <em>strong guarantee</em>.
-	 */
-	Handle(T* p_pointer);
 
 	T* m_pointer;
 };
 
-
-template <typename T>
-Handle<T>::Handle(T* p_pointer):
-	m_pointer(p_pointer)
-{
-	PersistentObjectHandleAttorney<T>::notify_handle_construction(*p_pointer);
-}
 
 template <typename T>
 Handle<T>::~Handle()
@@ -143,6 +129,48 @@ Handle<T>::Handle(Handle const& rhs)
 	PersistentObjectHandleAttorney<T>::notify_handle_copy_construction
 	(	*m_pointer
 	);
+}
+
+
+template <typename T>
+template <typename Connection>
+Handle<T>::Handle(Connection& p_connection):
+	m_pointer
+	(	IdentityMap<T, Connection>::HandleAttorney::get_pointer
+		(	p_connection.template identity_map<T>()
+		)
+	)
+{
+	PersistentObjectHandleAttorney<T>::notify_handle_construction(*m_pointer);
+}
+
+
+template <typename T>
+template <typename Connection>
+Handle<T>::Handle(Connection& p_connection, Id p_id):
+	m_pointer
+	(	IdentityMap<T, Connection>::HandleAttorney::get_pointer
+		(	p_connection.template identity_map<T>(),
+			p_id
+		)
+	)
+{
+	PersistentObjectHandleAttorney<T>::notify_handle_construction(*m_pointer);
+}
+
+
+template <typename T>
+template <typename Connection>
+Handle<T>::Handle(Connection& p_connection, Id p_id, char p_no_check_flag):
+	m_pointer
+	(	IdentityMap<T, Connection>::HandleAttorney::unchecked_get_pointer
+		(	p_connection.template identity_map<T>(),
+			p_id
+		)
+	)
+{
+	p_no_check_flag;  // Silence compiler re. unused variable
+	PersistentObjectHandleAttorney<T>::notify_handle_construction(*m_pointer);
 }
 
 template <typename T>

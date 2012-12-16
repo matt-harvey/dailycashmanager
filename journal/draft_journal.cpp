@@ -12,7 +12,7 @@
 using boost::shared_ptr;
 using std::string;
 using std::vector;
-using sqloxx::get_handle;
+using sqloxx::Handle;
 
 namespace phatbooks
 {
@@ -27,7 +27,7 @@ DraftJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 DraftJournal::DraftJournal
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	m_impl(get_handle<DraftJournalImpl>(p_database_connection))
+	m_impl(Handle<DraftJournalImpl>(p_database_connection))
 {
 }
 
@@ -35,7 +35,7 @@ DraftJournal::DraftJournal
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	m_impl(get_handle<DraftJournalImpl>(p_database_connection, p_id))
+	m_impl(Handle<DraftJournalImpl>(p_database_connection, p_id))
 {
 }
 
@@ -46,7 +46,7 @@ DraftJournal::DraftJournal
 (	Journal& p_journal,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
-	m_impl(get_handle<DraftJournalImpl>(p_database_connection))
+	m_impl(Handle<DraftJournalImpl>(p_database_connection))
 {
 	m_impl->set_whether_actual(p_journal.is_actual());
 	m_impl->set_comment(p_journal.comment());

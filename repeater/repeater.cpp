@@ -4,11 +4,12 @@
 #include "repeater_reader.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/handle.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 
 using boost::shared_ptr;
-using sqloxx::get_handle;
+using sqloxx::Handle;
 
 namespace phatbooks
 {
@@ -24,7 +25,7 @@ Repeater::Repeater
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
 	m_impl
-	(	get_handle<RepeaterImpl>(p_database_connection)
+	(	Handle<RepeaterImpl>(p_database_connection)
 	)
 {
 }
@@ -34,7 +35,7 @@ Repeater::Repeater
 	Id p_id
 ):
 	m_impl
-	(	get_handle<RepeaterImpl>(p_database_connection, p_id)
+	(	Handle<RepeaterImpl>(p_database_connection, p_id)
 	)
 {
 }

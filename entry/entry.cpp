@@ -2,12 +2,13 @@
 #include "entry_impl.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/handle.hpp"
 #include "sqloxx/reader.hpp"
 #include <boost/shared_ptr.hpp>
 #include <string>
 
 using boost::shared_ptr;
-using sqloxx::get_handle;
+using sqloxx::Handle;
 using std::string;
 
 
@@ -27,7 +28,7 @@ Entry::setup_tables(PhatbooksDatabaseConnection& dbc)
 Entry::Entry
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	m_impl(get_handle<EntryImpl>(p_database_connection))
+	m_impl(Handle<EntryImpl>(p_database_connection))
 {
 }
 
@@ -35,7 +36,7 @@ Entry::Entry
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	m_impl(get_handle<EntryImpl>(p_database_connection, p_id))
+	m_impl(Handle<EntryImpl>(p_database_connection, p_id))
 {
 }
 

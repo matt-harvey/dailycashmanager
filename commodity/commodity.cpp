@@ -3,13 +3,14 @@
 #include "commodity_reader.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/handle.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
 
 using boost::shared_ptr;
 using jewel::Decimal;
-using sqloxx::get_handle;
+using sqloxx::Handle;
 using std::string;
 
 namespace phatbooks
@@ -26,7 +27,7 @@ Commodity::setup_tables(PhatbooksDatabaseConnection& dbc)
 Commodity::Commodity
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	m_impl(get_handle<CommodityImpl>(p_database_connection))
+	m_impl(Handle<CommodityImpl>(p_database_connection))
 {
 }
 
@@ -34,7 +35,7 @@ Commodity::Commodity
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	m_impl(get_handle<CommodityImpl>(p_database_connection, p_id))
+	m_impl(Handle<CommodityImpl>(p_database_connection, p_id))
 {
 }
 
@@ -43,7 +44,7 @@ Commodity::Commodity
 	string const& p_abbreviation
 ):
 	m_impl
-	(	get_handle<CommodityImpl>
+	(	Handle<CommodityImpl>
 		(	p_database_connection,
 			CommodityImpl::id_for_abbreviation
 			(	p_database_connection,

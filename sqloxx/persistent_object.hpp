@@ -1067,7 +1067,7 @@ PersistentObject<Derived, Connection>::save()
 			do_save_new();  // Safety depends on Derived
 
 			// strong guarantee
-			IdentityMap::Attorney::register_id
+			IdentityMap::PersistentObjectAttorney::register_id
 			(	m_identity_map,
 				*m_cache_key,
 				allocated_id
@@ -1079,7 +1079,7 @@ PersistentObject<Derived, Connection>::save()
 			catch (std::exception&)
 			{
 				// nothrow (assuming preconditions met)
-				IdentityMap::Attorney::deregister_id
+				IdentityMap::PersistentObjectAttorney::deregister_id
 				(	m_identity_map,
 					allocated_id
 				);
@@ -1119,7 +1119,7 @@ PersistentObject<Derived, Connection>::remove()
 		}
 
 		// nothrow (conditional)
-		IdentityMap::Attorney::uncache_object
+		IdentityMap::PersistentObjectAttorney::uncache_object
 		(	m_identity_map,
 			*m_cache_key
 		);
@@ -1228,7 +1228,7 @@ PersistentObject<Derived, Connection>::decrement_handle_counter()
 		// under m_cache_key.
 		if (m_cache_key)
 		{
-			IdentityMap::Attorney::notify_nil_handles
+			IdentityMap::PersistentObjectAttorney::notify_nil_handles
 			(	m_identity_map,
 				*m_cache_key
 			);

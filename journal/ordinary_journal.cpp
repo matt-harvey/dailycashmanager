@@ -5,12 +5,13 @@
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/handle.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
 using boost::shared_ptr;
-using sqloxx::get_handle;
+using sqloxx::Handle;
 using std::string;
 using std::vector;
 
@@ -33,7 +34,7 @@ OrdinaryJournal::OrdinaryJournal
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
 	m_impl
-	(	get_handle<OrdinaryJournalImpl>(p_database_connection)
+	(	Handle<OrdinaryJournalImpl>(p_database_connection)
 	)
 {
 }
@@ -43,7 +44,7 @@ OrdinaryJournal::OrdinaryJournal
 	Id p_id
 ):
 	m_impl
-	(	get_handle<OrdinaryJournalImpl>(p_database_connection, p_id)
+	(	Handle<OrdinaryJournalImpl>(p_database_connection, p_id)
 	)
 {
 }
@@ -55,7 +56,7 @@ OrdinaryJournal::OrdinaryJournal
 (	Journal& p_journal,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
-	m_impl(get_handle<OrdinaryJournalImpl>(p_database_connection))
+	m_impl(Handle<OrdinaryJournalImpl>(p_database_connection))
 {
 	m_impl->set_whether_actual(p_journal.is_actual());
 	m_impl->set_comment(p_journal.comment());

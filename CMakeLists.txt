@@ -78,6 +78,7 @@ add_executable (test ${test_files})
 set (libraries
      boost_date_time
 	 boost_filesystem
+	 boost_locale-mt
 	 boost_regex
 	 boost_system
 	 unittest++

@@ -5,15 +5,16 @@
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/handle.hpp"
 #include "sqloxx/reader.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
 
 using phatbooks::account_type::AccountType;
+using sqloxx::Handle;
 using boost::shared_ptr;
 using jewel::Decimal;
-using sqloxx::get_handle;
 using std::string;
 
 
@@ -37,7 +38,7 @@ Account::setup_tables(PhatbooksDatabaseConnection& dbc)
 Account::Account
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	m_impl(get_handle<AccountImpl>(p_database_connection))
+	m_impl(Handle<AccountImpl>(p_database_connection))
 {
 }
 
@@ -47,7 +48,7 @@ Account::Account
 	Id p_id
 ):
 	m_impl
-	(	get_handle<AccountImpl>(p_database_connection, p_id)
+	(	Handle<AccountImpl>(p_database_connection, p_id)
 	)
 {
 }
@@ -65,7 +66,7 @@ Account::Account
 	string const& p_name
 ):
 	m_impl
-	(	get_handle<AccountImpl>
+	(	Handle<AccountImpl>
 		(	p_database_connection,
 			AccountImpl::id_for_name(p_database_connection, p_name)
 		)

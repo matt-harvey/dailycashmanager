@@ -24,7 +24,9 @@
 #include "ordinary_journal_impl.hpp"
 #include "repeater_impl.hpp"
 #include "sqloxx/database_connection.hpp"
+#include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/identity_map.hpp"
+#include "sqloxx/persistent_object.hpp"
 #include <boost/bimap.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -36,6 +38,7 @@ namespace phatbooks
 // Forward declarations
 class Journal;
 class BalanceCache;
+
 
 
 /** Phatbooks-specific database connection class.
@@ -155,12 +158,12 @@ public:
 		// Mark a particular Account in the balance cache as stale
 		static void mark_as_stale
 		(	PhatbooksDatabaseConnection const& p_database_connection,
-			AccountImpl::Id p_account_id
+			sqloxx::Id p_account_id
 		);
 		// Retrieve the balance of an Account
 		static jewel::Decimal balance
 		(	PhatbooksDatabaseConnection const& p_database_connection,
-			AccountImpl::Id p_account_id
+			sqloxx::Id p_account_id
 		);
 	};
 		 

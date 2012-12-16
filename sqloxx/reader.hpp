@@ -232,7 +232,7 @@ Reader<T, Connection>::handle() const
 {
 	if (m_is_valid)
 	{
-		return unchecked_get_handle<T>
+		return Handle<T>
 		(	m_database_connection,
 			m_statement.extract<Id>(0)
 		);

@@ -30,8 +30,6 @@
 #include <vector>
 
 
-
-using sqloxx::get_handle;
 using sqloxx::next_auto_key;
 using sqloxx::SQLStatement;
 using boost::numeric_cast;
