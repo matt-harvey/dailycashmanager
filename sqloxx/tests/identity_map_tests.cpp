@@ -10,6 +10,13 @@ namespace sqloxx
 namespace tests
 {
 
+// Note many of the functions of IdentityMap can only be tested
+// indirectly via the database connection, as they are
+// private.
+
+// TODO Uncomment the commented-out tests and adjust them to
+// reflect that those functions are now private.
+
 TEST_FIXTURE(DatabaseConnectionFixture, identity_map_constructors)
 {
 	// There's not a lot to test here
@@ -28,6 +35,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, identity_map_constructors)
 	CHECK_EQUAL(&(idm3.connection()), &(idm.connection()));
 }
 
+/*
 TEST_FIXTURE(DerivedPOFixture, identity_map_provide_handle_with_caching)
 {	
 	// (We mix provide_handle and unchecked_provide_handle willy-nilly
@@ -153,21 +161,27 @@ TEST_FIXTURE(DerivedPOFixture, identity_map_switch_caching)
 	// But this doesn't throw
 	Handle<DerivedPO> dpo101(idm.unchecked_provide_handle(20));
 }
+*/
 
 TEST_FIXTURE(DerivedPOFixture, identity_map_after_object_removal)
 {
 	DerivedDatabaseConnection& dbc = *pdbc;
-	IdentityMap<DerivedPO, DerivedDatabaseConnection> idm(dbc);
-	Handle<DerivedPO> dpo1(idm.provide_handle());
+	Handle<DerivedPO> dpo1(*pdbc);
 	dpo1->set_x(10);
 	dpo1->set_y(-1298);
 	dpo1->save();
-	Handle<DerivedPO> dpo1b(idm.provide_handle(1));  // OK
+	Handle<DerivedPO> dpo1b(*pdbc, 1);  // OK
 	dpo1->remove();
-	CHECK_THROW
-	(	Handle<DerivedPO> dpo1c(idm.provide_handle(1)),
-		BadIdentifier
-	);
+	bool ok = false;
+	try
+	{
+		Handle<DerivedPO> dpo1c(*pdbc, 1);
+	}
+	catch (BadIdentifier&)
+	{
+		ok = true;
+	}
+	CHECK(ok);
 	// But this doesn't throw
 	Handle<DerivedPO> dpo1d(idm.unchecked_provide_handle(1));
 }

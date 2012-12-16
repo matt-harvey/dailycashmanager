@@ -13,7 +13,7 @@ namespace tests
 TEST_FIXTURE(DerivedPOFixture, handle_copy_constructor_and_indirection)
 {
 	DerivedDatabaseConnection& dbc = *pdbc;
-	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(dbc));
+	Handle<DerivedPO> dpo1(dbc);
 	dpo1->set_x(-9);
 	Handle<DerivedPO> dpo2(dpo1);
 	dpo2->set_y(102928);
@@ -31,8 +31,8 @@ TEST_FIXTURE(DerivedPOFixture, handle_copy_constructor_and_indirection)
 TEST_FIXTURE(DerivedPOFixture, handle_assignment_and_indirection)
 {
 	DerivedDatabaseConnection& dbc = *pdbc;
-	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(dbc));
-	Handle<DerivedPO> dpo2(get_handle<DerivedPO>(dbc));
+	Handle<DerivedPO> dpo1(dbc);
+	Handle<DerivedPO> dpo2(dbc);
 	dpo2->set_x(100);
 	dpo2->set_y(0.0112);
 	dpo2->save();
@@ -43,7 +43,7 @@ TEST_FIXTURE(DerivedPOFixture, handle_assignment_and_indirection)
 	CHECK_EQUAL(dpo2->y(), 30978);
 	dpo1->save();
 	CHECK_EQUAL(dpo2->id(), 2);
-	Handle<DerivedPO> dpo3(get_handle<DerivedPO>(dbc, 1));
+	Handle<DerivedPO> dpo3(dbc, 1);
 	CHECK_EQUAL(dpo3->id(), 1);
 	dpo3->set_x(-188342392);
 	dpo1 = dpo3;
@@ -57,7 +57,7 @@ TEST_FIXTURE(DerivedPOFixture, handle_assignment_and_indirection)
 TEST_FIXTURE(DerivedPOFixture, handle_dereferencing)
 {
 	DerivedDatabaseConnection& dbc = *pdbc;
-	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(dbc));
+	Handle<DerivedPO> dpo1(dbc);
 	dpo1->set_x(10);
 	dpo1->set_y(1278.90172);
 	dpo1->save();
@@ -68,7 +68,7 @@ TEST_FIXTURE(DerivedPOFixture, handle_dereferencing)
 	CHECK_EQUAL(dpo1_dereferenced.x(), 10);
 	dpo1_dereferenced.set_y(.504);
 	CHECK_EQUAL(dpo1->y(), 0.504);
-	Handle<DerivedPO> dpo2(get_handle<DerivedPO>(dbc));
+	Handle<DerivedPO> dpo2(dbc);
 	DerivedPO& dpo2_dereferenced = *dpo2;
 	dpo2_dereferenced.set_x(8000);
 	dpo2_dereferenced.set_y(140);
@@ -79,8 +79,7 @@ TEST_FIXTURE(DerivedPOFixture, handle_dereferencing)
 
 TEST_FIXTURE(DerivedPOFixture, handle_conversion_to_bool)
 {
-	IdentityMap<DerivedPO, DerivedDatabaseConnection> idm(*pdbc);
-	Handle<DerivedPO> dpo1(idm.provide_handle());
+	Handle<DerivedPO> dpo1(*pdbc);
 	CHECK(dpo1);
 	CHECK_EQUAL(static_cast<bool>(dpo1), true);
 	dpo1->set_y(139000000);

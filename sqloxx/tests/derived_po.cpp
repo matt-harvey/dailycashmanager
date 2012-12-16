@@ -60,20 +60,20 @@ DerivedPO::self_test()
 	int num_failures = 0;
 	DerivedPOFixture fixture;
 	DerivedDatabaseConnection& dbc = *fixture.pdbc;
-	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(dbc));
+	Handle<DerivedPO> dpo1(dbc);
 	dpo1->set_x(3);
 	dpo1->set_y(4.08);
 	dpo1->save();
 	if (dpo1->id() != 1) ++num_failures;
 	if (dpo1->x() != 3) ++num_failures;
 	if (dpo1->y() != 4.08) ++num_failures;
-	Handle<DerivedPO> dpo2(get_handle<DerivedPO>(dbc, 1));
+	Handle<DerivedPO> dpo2(dbc, 1);
 	if (dpo2->id() != 1) ++num_failures;
 	if (dpo2->x() != 3) ++num_failures;
 	if (dpo2->y() != 4.08) ++num_failures;
 
 	// Check prospective_key() && do_calculate_prospective_key() (default)
-	Handle<DerivedPO> dpo5(get_handle<DerivedPO>(dbc));
+	Handle<DerivedPO> dpo5(dbc);
 	if (dpo5->prospective_key() != 2) ++num_failures;
 	dpo5->set_x(-100);
 	dpo5->set_y(982734);
@@ -91,7 +91,7 @@ DerivedPO::self_test()
 	
 	// Check has_id()
 	if (!dpo1->has_id()) ++num_failures;
-	Handle<DerivedPO> dpo7(get_handle<DerivedPO>(dbc));
+	Handle<DerivedPO> dpo7(dbc);
 	if (dpo7->has_id()) ++num_failures;
 
 	return num_failures;

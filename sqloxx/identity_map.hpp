@@ -93,7 +93,7 @@ public:
 	 * Construct an IdentityMap associated with the database
 	 * connection Connection. Connection should be a subclass
 	 * of sqloxx::DatabaseConnection.
-	 *
+
 	 * @throws std::bad_alloc in the case of memory allocation
 	 * failure. (This is very unlikely.)
 	 *
