@@ -37,7 +37,6 @@
 #include <boost/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lambda/lambda.hpp>
-#include <boost/locale.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/regex.hpp>
@@ -75,6 +74,7 @@ using boost::regex;
 using boost::regex_match;
 using std::cout;
 using std::endl;
+using std::locale;
 using std::map;
 using std::string;
 
@@ -199,8 +199,6 @@ PhatbooksTextSession::~PhatbooksTextSession()
 
 int PhatbooksTextSession::do_run(string const& filename)
 {
-	boost::locale::generator gen;
-	cout.imbue(gen(""));
 	boost::filesystem::path filepath(filename);
 	if (!boost::filesystem::exists(boost::filesystem::status(filepath)))
 	{
@@ -860,16 +858,8 @@ namespace
 	template <typename AccountReaderT>
 	void print_account_reader(AccountReaderT& p_reader)
 	{
-		cout << boost::locale::as::number;  //  temp play
 		while (p_reader.read())
 		{
-			/*
-			Account const account(p_reader);
-			cout << account.name() << "   " 
-			     << boost::locale::as::number
-				 << account.balance() << endl;
-			*/
-			// temp play
 			Account const account(p_reader.item());
 			cout << account.name() << "   "
 				 << account.balance()
@@ -884,8 +874,7 @@ void PhatbooksTextSession::display_balances()
 {
 	BalanceSheetAccountReader bs_reader(database_connection());
 	PLAccountReader pl_reader(database_connection());
-	boost::locale::generator gen;
-	cout.imbue(gen(""));
+	cout.imbue(locale(""));
 	for (int i = 0; i != 2; ++i)
 	{
 		cout << endl << endl;;
