@@ -12,10 +12,6 @@
  */
 
 
-// TODO All the includes here thwart the compiler firewall
-// that was one benefit of PIMPLing the business object classes.
-// Think of a way around having to include the ..._impl classes.
-
 #include "account_type.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/general_typedefs.hpp"
