@@ -1,4 +1,3 @@
-#include "account_impl.hpp"
 #include "account_reader.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/reader.hpp"

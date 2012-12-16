@@ -1,10 +1,8 @@
 #include "ordinary_journal.hpp"
 #include "ordinary_journal_impl.hpp"
-#include "ordinary_journal_reader.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/database_connection.hpp"
 #include "sqloxx/handle.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
@@ -49,6 +47,18 @@ OrdinaryJournal::OrdinaryJournal
 {
 }
 
+OrdinaryJournal::OrdinaryJournal
+(	PhatbooksDatabaseConnection& p_database_connection,
+	Id p_id,
+	char p_dummy
+):
+	m_impl
+	(	Handle<OrdinaryJournalImpl>(p_database_connection, p_id, '\0')
+	)
+{
+	p_dummy;  // Silence compiler warning re unused parameter.
+}
+
 
 // TODO There is similar code in DraftJournal for this constructor.
 // Factor out.
@@ -78,10 +88,6 @@ OrdinaryJournal::OrdinaryJournal
 	}
 }
 
-OrdinaryJournal::OrdinaryJournal(OrdinaryJournalReader const& p_reader):
-	m_impl(p_reader.handle())
-{
-}
 
 void
 OrdinaryJournal::set_whether_actual(bool p_is_actual)

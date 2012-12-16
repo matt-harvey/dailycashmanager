@@ -18,7 +18,6 @@
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/identity_map.hpp"
 #include "sqloxx/persistent_object.hpp"
-#include <boost/scoped_ptr.hpp>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -27,12 +26,18 @@
 namespace sqloxx
 {
 	class SQLStatement;
-}  // namespace sqloxx
+}
 
 
 namespace phatbooks
 {
 
+
+
+namespace detail
+{
+	class AccountData;
+}
 
 /**
  * Represents an AccountImpl object that is "live" in memory, rather than
@@ -147,24 +152,18 @@ private:
 
 	struct AccountData
 	{
-		// The optionals here are a safety feature. They
-		// prevent uninitialized values from being
-		// silently returned. Unitialized values are a feature
-		// of the lazy loading pattern we are using here. They
-		// are also a feature of objects newly created at the
-		// presentation layer but not yet saved to the database
-		// (and not intended to correspond to any object in the
-		// database). Using optionals helps guard against
-		// such an object being written to the database in an
-		// incomplete state.
 		boost::optional<std::string> name;
 		boost::optional<Commodity> commodity;
-		boost::optional<AccountType> account_type;
+		boost::optional<account_type::AccountType> account_type;
 		boost::optional<std::string> description;
 	};
 
-	boost::scoped_ptr<AccountData> m_data;
+	AccountData* m_data;
 };
+
+
+
+
 
 }  // namespace phatbooks
 

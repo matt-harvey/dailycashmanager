@@ -837,7 +837,7 @@ void PhatbooksTextSession::display_journal_summaries()
 	OrdinaryJournalReader oj_reader(database_connection());
 	while (oj_reader.read())
 	{
-		OrdinaryJournal journal(oj_reader);
+		OrdinaryJournal journal(oj_reader.item());
 		cout << endl << journal.date() << endl;
 		typedef vector<Entry> EntryVec;
 		EntryVec::const_iterator it = journal.entries().begin();
@@ -870,7 +870,7 @@ namespace
 				 << account.balance() << endl;
 			*/
 			// temp play
-			Account const account(p_reader);
+			Account const account(p_reader.item());
 			cout << account.name() << "   "
 				 << account.balance()
 			     // << account.balance().intval()

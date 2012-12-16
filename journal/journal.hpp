@@ -124,15 +124,17 @@ protected:
 
 private:
 
-	struct JournalData
-	{
-		boost::optional<bool> is_actual;
-		boost::optional<std::string> comment;
-		std::vector<Entry> entries;
-	};
-
+	struct JournalData;
+	
 	boost::scoped_ptr<JournalData> m_data;
 	
+};
+
+struct Journal::JournalData
+{
+	boost::optional<bool> is_actual;
+	boost::optional<std::string> comment;
+	std::vector<Entry> entries;
 };
 
 

@@ -27,48 +27,8 @@ namespace sqloxx
 template <typename T>
 class Handle;
 
-
-/**
- * Controls access to functions used
- * by Handle<T> to notify the underlying object of
- * various events for "bookkeeping" purposes.
- */
 template <typename T>
-class PersistentObjectHandleAttorney
-{
-// This class would have been better nested in PersistentObject,
-// were it not for the presence of the template parameter Connection
-// of PersistentObject, which makes this problematic.
-public:
-	friend class Handle<T>;
-private:
-	static void notify_handle_construction(T& p_obj)
-	{
-		p_obj.notify_handle_construction();
-		return;
-	}
-	static void notify_handle_copy_construction(T& p_obj)
-	{
-		p_obj.notify_handle_copy_construction();
-		return;
-	}
-	static void notify_lhs_assignment_operation(T& p_obj)
-	{
-		p_obj.notify_lhs_assignment_operation();
-		return;
-	}
-	static void notify_rhs_assignment_operation(T& p_obj)
-	{
-		p_obj.notify_rhs_assignment_operation();
-		return;
-	}
-	static void notify_handle_destruction(T& p_obj)
-	{
-		p_obj.notify_handle_destruction();
-		return;
-	}
-};		
-
+class PersistentObjectHandleAttorney;
 
 
 /**
@@ -236,7 +196,7 @@ class PersistentObject
 {
 public:
 
-	friend class PersistentObjectHandleAttorney<Derived>;
+	friend class Handle<Derived>;
 
 	typedef sqloxx::Id Id;
 	typedef sqloxx::HandleCounter HandleCounter;
@@ -946,6 +906,49 @@ private:
 };
 
 
+/**
+ * Controls access to functions used
+ * by Handle<T> to notify the underlying object of
+ * various events for "bookkeeping" purposes.
+template <typename T>
+class PersistentObjectHandleAttorney
+{
+// This class would have been better nested in PersistentObject,
+// were it not for the presence of the template parameter Connection
+// of PersistentObject, which makes this problematic.
+public:
+	friend class Handle<T>;
+private:
+	static void notify_handle_construction(T& p_obj)
+	{
+		p_obj.notify_handle_construction();
+		return;
+	}
+	static void notify_handle_copy_construction(T& p_obj)
+	{
+		p_obj.notify_handle_copy_construction();
+		return;
+	}
+	static void notify_lhs_assignment_operation(T& p_obj)
+	{
+		p_obj.notify_lhs_assignment_operation();
+		return;
+	}
+	static void notify_rhs_assignment_operation(T& p_obj)
+	{
+		p_obj.notify_rhs_assignment_operation();
+		return;
+	}
+	static void notify_handle_destruction(T& p_obj)
+	{
+		p_obj.notify_handle_destruction();
+		return;
+	}
+};  // PersistentObjectAttorney
+*/
+
+
+
 template
 <typename Derived, typename Connection>
 PersistentObject<Derived, Connection>::PersistentObject
@@ -1140,7 +1143,6 @@ PersistentObject<Derived, Connection>::id() const
 
 template
 <typename Derived, typename Connection>
-inline
 void
 PersistentObject<Derived, Connection>::set_cache_key(Id p_cache_key)
 {
@@ -1150,7 +1152,6 @@ PersistentObject<Derived, Connection>::set_cache_key(Id p_cache_key)
 
 template
 <typename Derived, typename Connection>
-inline
 void
 PersistentObject<Derived, Connection>::notify_handle_construction()
 {
@@ -1160,7 +1161,6 @@ PersistentObject<Derived, Connection>::notify_handle_construction()
 
 template
 <typename Derived, typename Connection>
-inline
 void
 PersistentObject<Derived, Connection>::notify_handle_copy_construction()
 {
@@ -1170,7 +1170,6 @@ PersistentObject<Derived, Connection>::notify_handle_copy_construction()
 
 template
 <typename Derived, typename Connection>
-inline
 void
 PersistentObject<Derived, Connection>::notify_rhs_assignment_operation()
 {
@@ -1180,7 +1179,6 @@ PersistentObject<Derived, Connection>::notify_rhs_assignment_operation()
 
 template
 <typename Derived, typename Connection>
-inline
 void
 PersistentObject<Derived, Connection>::notify_lhs_assignment_operation()
 {
@@ -1190,7 +1188,6 @@ PersistentObject<Derived, Connection>::notify_lhs_assignment_operation()
 
 template
 <typename Derived, typename Connection>
-inline
 void
 PersistentObject<Derived, Connection>::notify_handle_destruction()
 {
@@ -1246,7 +1243,6 @@ PersistentObject<Derived, Connection>::decrement_handle_counter()
 
 template
 <typename Derived, typename Connection>
-inline
 Connection&
 PersistentObject<Derived, Connection>::database_connection() const
 {
@@ -1296,7 +1292,6 @@ PersistentObject<Derived, Connection>::do_remove()
 
 template
 <typename Derived, typename Connection>
-inline
 bool
 PersistentObject<Derived, Connection>::has_id() const
 {
@@ -1307,7 +1302,6 @@ PersistentObject<Derived, Connection>::has_id() const
 
 template
 <typename Derived, typename Connection>
-inline
 bool
 PersistentObject<Derived, Connection>::is_orphaned() const
 {
@@ -1316,7 +1310,6 @@ PersistentObject<Derived, Connection>::is_orphaned() const
 
 template
 <typename Derived, typename Connection>
-inline
 bool
 PersistentObject<Derived, Connection>::has_high_handle_count() const
 {

@@ -16,18 +16,9 @@
 // that was one benefit of PIMPLing the business object classes.
 // Think of a way around having to include the ..._impl classes.
 
-// #include "account_impl.hpp"
 #include "account_type.hpp"
-/*
-#include "commodity_impl.hpp"
-#include "entry_impl.hpp"
-#include "draft_journal_impl.hpp"
-#include "ordinary_journal_impl.hpp"
-#include "repeater_impl.hpp"
-*/
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/general_typedefs.hpp"
-#include "sqloxx/persistent_object.hpp"
 #include <boost/bimap.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -47,7 +38,6 @@ namespace phatbooks
 {
 
 // Forward declarations
-class Journal;
 class BalanceCache;
 class AccountImpl;
 class CommodityImpl;
@@ -196,71 +186,22 @@ private:
 
 	BalanceCache* m_balance_cache;
 
-	sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>
+	sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>*
 		m_account_map;
-	sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>
+	sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>*
 		m_commodity_map;
-	sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>
+	sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>*
 		m_entry_map;
-	sqloxx::IdentityMap<OrdinaryJournalImpl, PhatbooksDatabaseConnection>
+	sqloxx::IdentityMap<OrdinaryJournalImpl, PhatbooksDatabaseConnection>*
 		m_ordinary_journal_map;
-	sqloxx::IdentityMap<DraftJournalImpl, PhatbooksDatabaseConnection>
+	sqloxx::IdentityMap<DraftJournalImpl, PhatbooksDatabaseConnection>*
 		m_draft_journal_map;
-	sqloxx::IdentityMap<RepeaterImpl, PhatbooksDatabaseConnection>
+	sqloxx::IdentityMap<RepeaterImpl, PhatbooksDatabaseConnection>*
 		m_repeater_map;
 
 
 
 };  // PhatbooksDatabaseConnection
-
-
-template <>
-inline
-sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<AccountImpl>()
-{
-	return m_account_map;
-}
-
-template <>
-inline
-sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<EntryImpl>()
-{
-	return m_entry_map;
-}
-
-template <>
-inline
-sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<CommodityImpl>()
-{
-	return m_commodity_map;
-}
-
-template <>
-inline
-sqloxx::IdentityMap<OrdinaryJournalImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<OrdinaryJournalImpl>()
-{
-	return m_ordinary_journal_map;
-}
-
-template <>
-inline
-sqloxx::IdentityMap<phatbooks::DraftJournalImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<DraftJournalImpl>()
-{
-	return m_draft_journal_map;
-}
-
-template <>
-inline
-sqloxx::IdentityMap<phatbooks::RepeaterImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<RepeaterImpl>()
-{
-	return m_repeater_map;
-}
 
 
 

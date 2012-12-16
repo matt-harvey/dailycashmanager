@@ -4,7 +4,6 @@
 #include "general_typedefs.hpp"
 #include "identity_map.hpp"
 #include "sqloxx_exceptions.hpp"
-#include "persistent_object.hpp"
 
 namespace sqloxx
 {
@@ -114,19 +113,19 @@ private:
 };
 
 
+
 template <typename T>
 Handle<T>::~Handle()
 {
-	PersistentObjectHandleAttorney<T>::notify_handle_destruction(*m_pointer);
+	m_pointer->notify_handle_destruction();
 }
+
 
 template <typename T>
 Handle<T>::Handle(Handle const& rhs)
 {
 	m_pointer = rhs.m_pointer;
-	PersistentObjectHandleAttorney<T>::notify_handle_copy_construction
-	(	*m_pointer
-	);
+	m_pointer->notify_handle_copy_construction();
 }
 
 
@@ -139,7 +138,7 @@ Handle<T>::Handle(Connection& p_connection):
 		)
 	)
 {
-	PersistentObjectHandleAttorney<T>::notify_handle_construction(*m_pointer);
+	m_pointer->notify_handle_construction();
 }
 
 
@@ -153,7 +152,7 @@ Handle<T>::Handle(Connection& p_connection, Id p_id):
 		)
 	)
 {
-	PersistentObjectHandleAttorney<T>::notify_handle_construction(*m_pointer);
+	m_pointer->notify_handle_construction();
 }
 
 
@@ -167,34 +166,32 @@ Handle<T>::Handle(Connection& p_connection, Id p_id, char p_no_check_flag):
 		)
 	)
 {
-	p_no_check_flag;  // Silence compiler re. unused variable
-	PersistentObjectHandleAttorney<T>::notify_handle_construction(*m_pointer);
+	m_pointer->notify_handle_construction();
 }
+
 
 template <typename T>
 Handle<T>&
 Handle<T>::operator=(Handle const& rhs)
 {
 	// Strong guarantee, provided rhs has a valid pointer...
-	PersistentObjectHandleAttorney<T>::notify_rhs_assignment_operation
-	(	*(rhs.m_pointer)
-	);
+	rhs.m_pointer->notify_rhs_assignment_operation();
 
 	// Nothrow guarantee, provided preconditions met, and
 	// provided rhs has a valid pointer.
-	PersistentObjectHandleAttorney<T>::notify_lhs_assignment_operation
-	(	*m_pointer
-	);
+	m_pointer->notify_lhs_assignment_operation();
 
 	m_pointer = rhs.m_pointer;  // nothrow
 	return *this;  // throw, provided we have a valid pointer
 }
+
 
 template <typename T>
 Handle<T>::operator bool() const
 {
 	return static_cast<bool>(m_pointer);  // nothrow
 }
+
 
 template <typename T>
 T&
@@ -206,6 +203,7 @@ Handle<T>::operator*() const
 	}
 	throw (UnboundHandleException("Unbound Handle."));
 }
+
 
 template <typename T>
 T*

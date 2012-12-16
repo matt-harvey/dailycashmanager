@@ -4,9 +4,7 @@
 #include "account_reader.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/database_connection.hpp"
 #include "sqloxx/handle.hpp"
-#include "sqloxx/reader.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
@@ -54,9 +52,13 @@ Account::Account
 }
 
 Account::Account
-(	AccountReaderBase const& p_reader
+(	PhatbooksDatabaseConnection& p_database_connection,
+	Id p_id,
+	char p_dummy
 ):
-	m_impl(p_reader.handle())
+	m_impl
+	(	Handle<AccountImpl>(p_database_connection, p_id, '\0')
+	)
 {
 }
 	

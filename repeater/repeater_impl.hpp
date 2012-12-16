@@ -27,6 +27,9 @@
 namespace phatbooks
 {
 
+
+
+
 /**
  * Instances of this class serve as "alarms" that "fire" at regular intervals.
  * On firing, a \c RepeaterImpl triggers an automatic journal posting, and updates
@@ -51,13 +54,12 @@ class RepeaterImpl:
 {
 public:
 	
-	typedef interval_type::IntervalType IntervalType;
-
 	typedef sqloxx::PersistentObject<RepeaterImpl, PhatbooksDatabaseConnection>
 		PersistentObject;
 	typedef sqloxx::Id Id;
 	typedef sqloxx::IdentityMap<RepeaterImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
+	typedef interval_type::IntervalType IntervalType;
 
 	/**
 	 * Sets up tables in the database required for the persistence
@@ -121,18 +123,19 @@ private:
 	void do_ghostify();
 	void process_saving_statement(sqloxx::SQLStatement& statement);
 
-	struct RepeaterData
-	{
-		boost::optional<IntervalType> interval_type;
-		boost::optional<int> interval_units;
-		boost::optional<DateRep> next_date;
-		boost::optional<Journal::Id> journal_id;
-	};
+	struct RepeaterData;
 
 	boost::scoped_ptr<RepeaterData> m_data;
 };
 
 
+struct RepeaterImpl::RepeaterData
+{
+	boost::optional<RepeaterImpl::IntervalType> interval_type;
+	boost::optional<int> interval_units;
+	boost::optional<DateRep> next_date;
+	boost::optional<Journal::Id> journal_id;
+};
 
 
 

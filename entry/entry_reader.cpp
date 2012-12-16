@@ -1,5 +1,4 @@
 #include "entry_reader.hpp"
-#include "entry_impl.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/reader.hpp"
 

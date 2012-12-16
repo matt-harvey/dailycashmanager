@@ -1,8 +1,6 @@
 #include "commodity.hpp"
 #include "commodity_impl.hpp"
-#include "commodity_reader.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/database_connection.hpp"
 #include "sqloxx/handle.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -39,6 +37,17 @@ Commodity::Commodity
 {
 }
 
+
+Commodity::Commodity
+(	PhatbooksDatabaseConnection& p_database_connection,
+	Id p_id,
+	char p_dummy
+):
+	m_impl(Handle<CommodityImpl>(p_database_connection, p_id, '\0'))
+{
+}
+
+
 Commodity::Commodity
 (	PhatbooksDatabaseConnection& p_database_connection,
 	string const& p_abbreviation
@@ -54,12 +63,6 @@ Commodity::Commodity
 	)
 {
 }
-
-Commodity::Commodity(CommodityReader const& p_reader):
-	m_impl(p_reader.handle())
-{
-}
-
 string
 Commodity::abbreviation() const
 {

@@ -2,7 +2,6 @@
 #define GUARD_reader_hpp
 
 #include "general_typedefs.hpp"
-#include "handle.hpp"
 #include "sqloxx_exceptions.hpp"
 #include "sql_statement.hpp"
 #include <boost/noncopyable.hpp>
@@ -16,11 +15,12 @@ namespace sqloxx
  * Class template each instantiation of which represents a class
  * of iterator-like "reader" objects that wrap an SQL "select" statement,
  * where the field being selected is the primary key field for type T as
- * it is stored in the database. By calling the handle() method of
- * a Reader, a Handle<T> instance is returned. Because the Reader selects
+ * it is stored in the database. By calling the item() method of
+ * a Reader, with suitable parameters, an instance of T is returned.
+ * Because the Reader selects
  * from a table that is physically in the database, the implementation
- * of Reader can use the fast, unchecked_get_handle(...) function to
- * get the Handle, in the knowledge that the Id is valid as it has
+ * of Reader can use a fast, unchecked function to
+ * get the instance, in the knowledge that the Id is valid as it has
  * just been read from the physical database. Note, however, that
  * if an object is deleted while still being referred to by a Reader,
  * undefined behaviour may result.
@@ -45,7 +45,7 @@ namespace sqloxx
  * Reader<T, Connection> reader(database_connection);\n
  * while (reader.read())\n
  * {\n
- * 		reader.handle()->some_method_of_T();\n
+ * 		reader.item().some_method_of_T();\n
  * }\n
  * </tt>
  *
@@ -66,10 +66,16 @@ namespace sqloxx
  * Parameter templates:\n
  * T should be a class derived from PersistentObject<T, Connection>
  * (see separate documentation for PersistentObject), for which
- * its primary key is of type sqloxx::Id; and\n
+ * its primary key is of type sqloxx::Id, and which has a
+ * constructor that takes a Connection& parameter,
+ * an Id parameter and a char parameter (for example, an
+ * instantiation of the sqloxx::Handle
+ * template would meet this requirement) (see constructor
+ * documentation for more details); and\n
  * Connection should be a class inheriting from DatabaseConnection,
- * for which identity_map<T, Connection>() is defined (see documentation
- * for sqloxx::unchecked_get_handle<T>(Connection&, Id)).
+ * for which identity_map<T, Connection>() is defined to return
+ * a reference to the IdentityMap for that type T for that
+ * Connection.
  */
 template <typename T, typename Connection>
 class Reader:
@@ -154,10 +160,24 @@ public:
 	/**
 	 * Preconditions:\n
 	 * The constructor of T should offer the strong guarantee; and\n
-	 * The destructor of T should never throw.
+	 * The destructor of T should never throw; and\n
+	 * T should have a constructor of the form
+	 * T(Connection&, Id, char).
+	 * Typically, T will be
+	 * an instantiation of sqloxx::Handle - but it need not
+	 * be. sqloxx::Handle uses char as a dummy parameter merely
+	 * to distinguish the fast, unchecked constructor from the
+	 * slow, checked constructor.
 	 *
-	 * @returns a Handle<T> to the T object corresponding to the
-	 * current result row.
+	 * @todo Do I need to document the char thing better?
+	 *
+	 * @returns an instance of T initialized with the constructor
+	 * T(Connection&, Id, char), where the Connection passed to
+	 * the Reader's constructor is passed to the Connection&
+	 * parameter, and the single field being read by the
+	 * Reader from the database (which should be the primary
+	 * key field for type T) is passed to the Id parameter.
+	 * The char field is passed the value '\0'.
 	 *
 	 * @throws ResultIndexOutOfRange if there is an error extracting
 	 * the result of the underlying SQL statement. This would
@@ -188,7 +208,7 @@ public:
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
-	Handle<T> handle() const;
+	T item() const;
 
 private:
 	Connection& m_database_connection;
@@ -227,15 +247,12 @@ Reader<T, Connection>::read()
 }
 
 template <typename T, typename Connection>
-Handle<T>
-Reader<T, Connection>::handle() const
+T
+Reader<T, Connection>::item() const
 {
 	if (m_is_valid)
 	{
-		return Handle<T>
-		(	m_database_connection,
-			m_statement.extract<Id>(0)
-		);
+		return T(m_database_connection, m_statement.extract<Id>(0), '\0');
 	}
 	assert (!m_is_valid);
 	throw InvalidReader("Reader is not a result row.");

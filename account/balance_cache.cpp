@@ -96,14 +96,14 @@ BalanceCache::refresh()
 	AccountReader account_reader(m_database_connection);
 	while (account_reader.read())
 	{
-		Account const account(account_reader);
+		Account const account(account_reader.item());
 		map_elect[account.id()] =
 			Decimal(0, account.commodity().precision());
 	}
 	OrdinaryEntryReader entry_reader(m_database_connection);
 	while (entry_reader.read())
 	{
-		Entry const entry(entry_reader);
+		Entry const entry(entry_reader.item());
 		*(map_elect[entry.account().id()]) += entry.amount();
 	}
 	using std::swap;

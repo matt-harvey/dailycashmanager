@@ -1,7 +1,7 @@
 #ifndef GUARD_entry_reader_hpp
 #define GUARD_entry_reader_hpp
 
-#include "entry_impl.hpp"
+#include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/reader.hpp"
 
@@ -11,7 +11,7 @@ namespace phatbooks
 
 
 typedef
-	sqloxx::Reader<EntryImpl, PhatbooksDatabaseConnection>
+	sqloxx::Reader<Entry, PhatbooksDatabaseConnection>
 	EntryReader;
 
 

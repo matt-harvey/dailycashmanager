@@ -52,6 +52,7 @@ using boost::shared_ptr;
 using jewel::Decimal;
 using sqloxx::DatabaseConnection;
 using sqloxx::DatabaseTransaction;
+using sqloxx::IdentityMap;
 using sqloxx::SQLStatement;
 using sqloxx::SQLiteException;
 using std::endl;
@@ -68,19 +69,32 @@ namespace phatbooks
 PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	DatabaseConnection(),
 	m_balance_cache(0),
-	m_account_map(*this),
-	m_commodity_map(*this),
-	m_entry_map(*this),
-	m_ordinary_journal_map(*this),
-	m_draft_journal_map(*this),
-	m_repeater_map(*this)
+	m_account_map(0),
+	m_commodity_map(0),
+	m_entry_map(0),
+	m_ordinary_journal_map(0),
+	m_draft_journal_map(0),
+	m_repeater_map(0)
 {
+	typedef PhatbooksDatabaseConnection PDC;
 	m_balance_cache = new BalanceCache(*this);
+	m_account_map = new IdentityMap<AccountImpl, PDC>(*this);
+	m_commodity_map = new IdentityMap<CommodityImpl, PDC>(*this);
+	m_entry_map = new IdentityMap<EntryImpl, PDC>(*this);
+	m_ordinary_journal_map = new IdentityMap<OrdinaryJournalImpl, PDC>(*this);
+	m_draft_journal_map = new IdentityMap<DraftJournalImpl, PDC>(*this);
+	m_repeater_map = new IdentityMap<RepeaterImpl, PDC>(*this);
 }
 
 PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 {
 	delete m_balance_cache;
+	delete m_account_map;
+	delete m_commodity_map;
+	delete m_entry_map;
+	delete m_ordinary_journal_map;
+	delete m_draft_journal_map;
+	delete m_repeater_map;
 }
 
 
@@ -184,29 +198,29 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 	switch (level)
 	{
 	case 0: case 1: case 2: case 3: case 4:
-		m_commodity_map.disable_caching();
-		m_account_map.disable_caching();
-		m_repeater_map.disable_caching();
-		m_draft_journal_map.disable_caching();
-		m_ordinary_journal_map.disable_caching();
-		m_entry_map.disable_caching();
+		m_commodity_map->disable_caching();
+		m_account_map->disable_caching();
+		m_repeater_map->disable_caching();
+		m_draft_journal_map->disable_caching();
+		m_ordinary_journal_map->disable_caching();
+		m_entry_map->disable_caching();
 		break;
 	case 5: case 6: case 7: case 8: case 9:
-		m_commodity_map.enable_caching();
-		m_account_map.enable_caching();
-		m_repeater_map.disable_caching();
-		m_draft_journal_map.disable_caching();
-		m_ordinary_journal_map.disable_caching();
-		m_entry_map.disable_caching();
+		m_commodity_map->enable_caching();
+		m_account_map->enable_caching();
+		m_repeater_map->disable_caching();
+		m_draft_journal_map->disable_caching();
+		m_ordinary_journal_map->disable_caching();
+		m_entry_map->disable_caching();
 		break;	
 	case 10: default:
 		assert (level > 0);
-		m_commodity_map.enable_caching();
-		m_account_map.enable_caching();
-		m_repeater_map.enable_caching();
-		m_draft_journal_map.enable_caching();
-		m_ordinary_journal_map.enable_caching();
-		m_entry_map.enable_caching();
+		m_commodity_map->enable_caching();
+		m_account_map->enable_caching();
+		m_repeater_map->enable_caching();
+		m_draft_journal_map->enable_caching();
+		m_ordinary_journal_map->enable_caching();
+		m_entry_map->enable_caching();
 		break;
 	}
 	return;
@@ -281,6 +295,49 @@ BalanceCacheAttorney::balance
 	return p_database_connection.m_balance_cache->balance
 	(	p_account_id
 	);
+}
+
+
+template <>
+sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<AccountImpl>()
+{
+	return *m_account_map;
+}
+
+template <>
+sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<EntryImpl>()
+{
+	return *m_entry_map;
+}
+
+template <>
+sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<CommodityImpl>()
+{
+	return *m_commodity_map;
+}
+
+template <>
+sqloxx::IdentityMap<OrdinaryJournalImpl, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<OrdinaryJournalImpl>()
+{
+	return *m_ordinary_journal_map;
+}
+
+template <>
+sqloxx::IdentityMap<phatbooks::DraftJournalImpl, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<DraftJournalImpl>()
+{
+	return *m_draft_journal_map;
+}
+
+template <>
+sqloxx::IdentityMap<phatbooks::RepeaterImpl, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<RepeaterImpl>()
+{
+	return *m_repeater_map;
 }
 
 

@@ -38,11 +38,11 @@ public:
 // Setup
 void setup_reader_test(DerivedDatabaseConnection& dbc)
 {
-	Handle<DerivedPO> dpo1(get_handle<DerivedPO>(dbc));
-	Handle<DerivedPO> dpo2(get_handle<DerivedPO>(dbc));
-	Handle<DerivedPO> dpo3(get_handle<DerivedPO>(dbc));
-	Handle<DerivedPO> dpo4(get_handle<DerivedPO>(dbc));
-	Handle<DerivedPO> dpo5(get_handle<DerivedPO>(dbc));
+	Handle<DerivedPO> dpo1(dbc);
+	Handle<DerivedPO> dpo2(dbc);
+	Handle<DerivedPO> dpo3(dbc);
+	Handle<DerivedPO> dpo4(dbc);
+	Handle<DerivedPO> dpo5(dbc);
 	dpo1->set_x(0);
 	dpo1->set_y(14.1);
 	dpo2->set_x(5);
@@ -75,8 +75,8 @@ TEST_FIXTURE
 	while (reader2.read())
 	{
 		max =
-		(	reader2.handle()->x() > max?
-			reader2.handle()->x():
+		(	reader2.item()->x() > max?
+			reader2.item()->x():
 			max
 		);
 	}
@@ -182,7 +182,7 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_read)
 	CHECK(reader1.read());
 }
 
-TEST_FIXTURE(DerivedPOFixture, test_reader_handle)
+TEST_FIXTURE(DerivedPOFixture, test_reader_item)
 {
 	setup_reader_test(*pdbc);
 	DerivedPOReader reader1
@@ -191,14 +191,14 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_handle)
 	);
 	for (int i = 1; reader1.read(); ++i)
 	{
-		CHECK_EQUAL(reader1.handle()->id(), i);
+		CHECK_EQUAL(reader1.item()->id(), i);
 	}
-	CHECK_THROW(reader1.handle(), InvalidReader);
+	CHECK_THROW(reader1.item(), InvalidReader);
 
 	DerivedPOReader reader2(*pdbc);
 	while (reader2.read())
 	{
-		Handle<DerivedPO> dpo2(reader2.handle());
+		Handle<DerivedPO> dpo2(reader2.item());
 		int const id = dpo2->id();
 		switch (id)
 		{
@@ -228,7 +228,7 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_handle)
 		}
 	}
 	
-	CHECK_THROW(reader2.handle(), InvalidReader);
+	CHECK_THROW(reader2.item(), InvalidReader);
 }
 
 

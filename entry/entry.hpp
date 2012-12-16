@@ -1,8 +1,7 @@
 #ifndef GUARD_entry_hpp
 #define GUARD_entry_hpp
 
-#include "entry_reader.hpp"
-#include "journal.hpp"
+#include "entry_impl.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
 #include <boost/shared_ptr.hpp>
@@ -14,7 +13,7 @@ namespace phatbooks
 {
 
 class Account;
-class EntryImpl;
+class PhatbooksDatabaseConnection;
 
 class Entry
 {
@@ -28,8 +27,12 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
-	explicit Entry(EntryReader const& p_reader);
-	void set_journal_id(Journal::Id p_journal_id);
+	Entry
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		Id p_id,
+		char p_dummy  // To flag as fast, unchecked constructor
+	);
+	void set_journal_id(sqloxx::Id p_journal_id);
 	void set_account(Account const& p_account);
 	void set_comment(std::string const& p_comment);
 	void set_amount(jewel::Decimal const& p_amount);

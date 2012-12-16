@@ -4,7 +4,6 @@
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/database_connection.hpp"
 #include "sqloxx/handle.hpp"
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -40,6 +39,16 @@ DraftJournal::DraftJournal
 }
 
 
+DraftJournal::DraftJournal
+(	PhatbooksDatabaseConnection& p_database_connection,
+	Id p_id,
+	char p_dummy
+):
+	m_impl(Handle<DraftJournalImpl>(p_database_connection, p_id, '\0'))
+{
+}
+
+
 // TODO There is similar code in OrdinaryJournal for this constructor.
 // Factor out.
 DraftJournal::DraftJournal
@@ -61,10 +70,6 @@ DraftJournal::DraftJournal
 	}
 }
 
-DraftJournal::DraftJournal(DraftJournalReader const& p_reader):
-	m_impl(p_reader.handle())
-{
-}
 
 void
 DraftJournal::set_whether_actual(bool p_is_actual)

@@ -1,8 +1,9 @@
 #ifndef GUARD_account_hpp
 #define GUARD_account_hpp
 
+#include "account_impl.hpp"
 #include "account_type.hpp"
-#include "account_reader.hpp"
+#include "commodity.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
 #include <jewel/decimal.hpp>
@@ -12,8 +13,6 @@
 namespace phatbooks
 {
 
-class AccountImpl;
-class Commodity;
 class PhatbooksDatabaseConnection;
 
 
@@ -45,11 +44,22 @@ public:
 	);
 
 	/**
-	 * Get an Account by id from database.
+	 * Get an Account by id from database. Throws if no
+	 * such id.
 	 */
 	Account
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
+	);
+
+	/**
+	 * Get an Account by id from the database (fast,
+	 * unchecked form).
+	 */
+	Account
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		Id p_id,
+		char p_dummy  // Can be any char
 	);
 
 	/**
@@ -60,12 +70,6 @@ public:
 		std::string const& p_name
 	);
 
-	/**
-	 * Get an Account from an AccountReaderBase
-	 */
-	explicit
-	Account(AccountReaderBase const& p_reader);
-	
 	/**
 	 * Destuctor.
 	 */

@@ -30,8 +30,10 @@ using sqloxx::SQLStatement;
 using std::string;
 using std::vector;
 
+
 namespace phatbooks
 {
+
 
 typedef
 	PhatbooksDatabaseConnection::BalanceCacheAttorney
@@ -131,10 +133,7 @@ AccountImpl::AccountImpl(AccountImpl const& rhs):
 
 AccountImpl::~AccountImpl()
 {
-	/* Not necessary if m_data is a smart pointer
 	delete m_data;
-	m_data = 0;
-	*/
 }
 
 AccountImpl::AccountType

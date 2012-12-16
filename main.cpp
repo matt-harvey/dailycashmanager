@@ -10,7 +10,13 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
-
+// TODO It looks like I can get around the issue of typedefs not working
+// within templates by using the typename keyword. This will
+// enable proper encapsulation of Id type within each business
+// class. The direct use of sqloxx::Id within templates that
+// are supposed to be instantiated across different business
+// classes, can then be abolished, in favour of a locution of the form
+// as T::template Id.
 
 #include "phatbooks_text_session.hpp"
 #include <cassert>

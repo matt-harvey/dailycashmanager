@@ -14,8 +14,9 @@
 
 
 #include "account.hpp"
-#include "journal.hpp"
+#include "entry_impl.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -28,7 +29,7 @@
 namespace phatbooks
 {
 
-class Account;
+
 
 /**
  * Class representing an accounting entry, i.e. a single line in an account.
@@ -74,7 +75,7 @@ public:
 	/**
 	 * Sets the journal_id for the EntryImpl
 	 */
-	void set_journal_id(Journal::Id p_journal_id);
+	void set_journal_id(sqloxx::Id p_journal_id);
 
 	/**
 	 * Set the Account for the EntryImpl.
@@ -156,18 +157,20 @@ private:
 	void do_remove();
 	void process_saving_statement(sqloxx::SQLStatement& statement);
 
-	struct EntryData
-	{
-		
-		boost::optional<Journal::Id> journal_id;
-		boost::optional<Account> account;
-		boost::optional<std::string> comment;
-		boost::optional<jewel::Decimal> amount;
-		boost::optional<bool> is_reconciled;
-	};
+	struct EntryData;
 
 	boost::scoped_ptr<EntryData> m_data;
 
+};
+
+
+struct EntryImpl::EntryData
+{
+	boost::optional<sqloxx::Id> journal_id;
+	boost::optional<Account> account;
+	boost::optional<std::string> comment;
+	boost::optional<jewel::Decimal> amount;
+	boost::optional<bool> is_reconciled;
 };
 
 

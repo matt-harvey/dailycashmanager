@@ -1,18 +1,16 @@
 #ifndef GUARD_draft_journal_reader_hpp
 #define GUARD_draft_journal_reader_hpp
 
-#include "draft_journal_impl.hpp"
+#include "draft_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/reader.hpp"
 
 namespace phatbooks
 {
 
-class DraftJournalImpl;
-class PhatbooksDatabaseConnection;
 
 class DraftJournalReader:
-	public sqloxx::Reader<DraftJournalImpl, PhatbooksDatabaseConnection>
+	public sqloxx::Reader<DraftJournal, PhatbooksDatabaseConnection>
 {
 public:
 	explicit DraftJournalReader

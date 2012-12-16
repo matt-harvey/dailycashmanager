@@ -13,12 +13,12 @@
 
 
 #include "phatbooks_database_connection.hpp"
+#include "sqloxx/identity_map.hpp"
+#include "sqloxx/persistent_object.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/optional.hpp>
-#include <sqloxx/identity_map.hpp>
-#include <sqloxx/persistent_object.hpp>
 #include <string>
 
 
@@ -157,18 +157,18 @@ private:
 	// Other functions
 	void process_saving_statement(sqloxx::SQLStatement& statement);
 
-	struct CommodityData
-	{
-		boost::optional<std::string> abbreviation;
-		boost::optional<std::string> name;
-		boost::optional<std::string> description;
-		boost::optional<int> precision;
-		boost::optional<jewel::Decimal> multiplier_to_base;
-	};
-
+	struct CommodityData;
 	boost::scoped_ptr<CommodityData> m_data;
 };
 
+struct CommodityImpl::CommodityData
+{
+	boost::optional<std::string> abbreviation;
+	boost::optional<std::string> name;
+	boost::optional<std::string> description;
+	boost::optional<int> precision;
+	boost::optional<jewel::Decimal> multiplier_to_base;
+};
 
 
 

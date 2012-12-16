@@ -1,7 +1,7 @@
 #ifndef GUARD_draft_journal_hpp
 #define GUARD_draft_journal_hpp
 
-#include "draft_journal_reader.hpp"
+#include "draft_journal_impl.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
 #include <boost/shared_ptr.hpp>
@@ -11,7 +11,6 @@
 namespace phatbooks
 {
 
-class DraftJournalImpl;
 class Entry;
 class Journal;
 class PhatbooksDatabaseConnection;
@@ -32,12 +31,17 @@ public:
 		Id p_id
 	);
 
-	DraftJournal   // TODO This should be Journal const&
-	(	Journal& p_journal,
+	DraftJournal
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		Id p_id,
+		char p_dummy
+	);
+
+	DraftJournal  
+	(	Journal& p_journal, // TODO This should be Journal const&
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
-	explicit DraftJournal(DraftJournalReader const& p_reader);
 
 	void set_whether_actual(bool p_is_actual);
 	void set_comment(std::string const& p_comment);

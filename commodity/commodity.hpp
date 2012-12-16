@@ -1,7 +1,7 @@
 #ifndef GUARD_commodity_hpp
 #define GUARD_commodity_hpp
 
-#include "commodity_reader.hpp"
+#include "commodity_impl.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
 #include <boost/shared_ptr.hpp>
@@ -12,7 +12,6 @@
 namespace phatbooks
 {
 
-class CommodityImpl;
 class PhatbooksDatabaseConnection;
 
 
@@ -27,20 +26,24 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
+	// Throws if no such id.
 	Commodity
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
 
-	/**
-	 * Get a Commodity by id from the database.
-	 */
+	// Fast, unchecked form
+	Commodity
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		Id p_id,
+		char p_dummy
+	);
+
 	Commodity
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		std::string const& p_abbreviation
 	);
 	
-	Commodity(CommodityReader const& p_reader);
 	
 	std::string abbreviation() const;
 	std::string name() const;

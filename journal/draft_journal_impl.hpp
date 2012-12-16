@@ -153,14 +153,18 @@ private:
 	void do_save_new();
 	void do_ghostify();
 
-	struct DraftJournalData
-	{
-		boost::optional<std::string> name;
-		std::vector<Repeater> repeaters;
-	};
+	struct DraftJournalData;
 
 	boost::scoped_ptr<DraftJournalData> m_dj_data;
 };
+
+
+struct DraftJournalImpl::DraftJournalData
+{
+	boost::optional<std::string> name;
+	std::vector<Repeater> repeaters;
+};
+
 
 }  // namespace phatbooks
 

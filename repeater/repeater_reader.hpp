@@ -2,7 +2,7 @@
 #define GUARD_repeater_reader_hpp
 
 #include "phatbooks_database_connection.hpp"
-#include "repeater_impl.hpp"
+#include "repeater.hpp"
 #include "sqloxx/reader.hpp"
 
 namespace phatbooks
@@ -10,7 +10,7 @@ namespace phatbooks
 
 
 class RepeaterReader:
-	public sqloxx::Reader<RepeaterImpl, PhatbooksDatabaseConnection>
+	public sqloxx::Reader<Repeater, PhatbooksDatabaseConnection>
 {
 public:
 	RepeaterReader(PhatbooksDatabaseConnection& p_database_connection);

@@ -1,7 +1,7 @@
 #ifndef GUARD_account_reader_hpp
 #define GUARD_account_reader_hpp
 
-#include "account_impl.hpp"
+#include "account.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/reader.hpp"
 
@@ -10,7 +10,7 @@ namespace phatbooks
 
 
 typedef
-	sqloxx::Reader<AccountImpl, PhatbooksDatabaseConnection>
+	sqloxx::Reader<Account, PhatbooksDatabaseConnection>
 	AccountReaderBase;
 
 
