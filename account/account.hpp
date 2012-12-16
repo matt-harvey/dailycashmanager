@@ -61,7 +61,7 @@ public:
 	);
 
 	/**
-	 * Get an Account from an AccountReader
+	 * Get an Account from an AccountReaderBase
 	 */
 	explicit
 	Account(AccountReaderBase const& p_reader);

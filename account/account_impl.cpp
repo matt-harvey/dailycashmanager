@@ -8,7 +8,7 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
-#include "account.hpp"
+#include "account_impl.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sqloxx/general_typedefs.hpp"
@@ -88,7 +88,7 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 
-Account::Id
+AccountImpl::Id
 AccountImpl::id_for_name(PhatbooksDatabaseConnection& dbc, string const& name)
 {
 	SQLStatement statement

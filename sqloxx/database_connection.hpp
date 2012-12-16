@@ -10,8 +10,6 @@
 #include <boost/unordered_map.hpp>
 #include <set>
 #include <string>
-#include "handle.hpp"
-#include "identity_map.hpp"
 #include "sqloxx_exceptions.hpp"
 
 

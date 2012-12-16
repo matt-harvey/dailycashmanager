@@ -15,7 +15,7 @@
 #include "date.hpp"
 #include "interval_type.hpp"
 #include "journal.hpp"
-#include "sqloxx/database_connection.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>

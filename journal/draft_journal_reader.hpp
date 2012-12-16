@@ -1,6 +1,8 @@
 #ifndef GUARD_draft_journal_reader_hpp
 #define GUARD_draft_journal_reader_hpp
 
+#include "draft_journal_impl.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "sqloxx/reader.hpp"
 
 namespace phatbooks

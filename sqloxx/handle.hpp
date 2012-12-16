@@ -4,13 +4,11 @@
 #include "general_typedefs.hpp"
 #include "identity_map.hpp"
 #include "sqloxx_exceptions.hpp"
+#include "persistent_object.hpp"
 
 namespace sqloxx
 {
 
-// Forward declaration
-template <typename T>
-class PersistentObjectHandleAttorney;
 
 
 /**

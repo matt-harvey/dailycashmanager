@@ -1,11 +1,15 @@
 #ifndef GUARD_database_transaction_hpp
 #define GUARD_database_transaction_hpp
 
-#include "database_connection.hpp"
 #include <boost/noncopyable.hpp>
 
 namespace sqloxx
 {
+
+
+// Forward declaration
+class DatabaseConnection;
+
 
 /**
  * Class for managing database transactions using RAII.

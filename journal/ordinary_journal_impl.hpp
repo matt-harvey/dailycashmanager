@@ -3,6 +3,8 @@
 
 #include "journal.hpp"
 #include "date.hpp"
+#include "phatbooks_database_connection.hpp"
+#include "sqloxx/identity_map.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -12,7 +14,6 @@
 namespace phatbooks
 {
 
-class PhatbooksDatabaseConnection;
 class Entry;
 
 class OrdinaryJournalImpl:

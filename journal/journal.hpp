@@ -12,7 +12,7 @@
  */
 
 
-#include "sqloxx/persistent_object.hpp"
+#include "sqloxx/general_typedefs.hpp"
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>

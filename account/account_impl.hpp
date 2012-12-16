@@ -14,6 +14,7 @@
 
 #include "account_type.hpp"
 #include "commodity.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/identity_map.hpp"
 #include "sqloxx/persistent_object.hpp"
@@ -32,7 +33,6 @@ namespace sqloxx
 namespace phatbooks
 {
 
-class PhatbooksDatabaseConnection;
 
 /**
  * Represents an AccountImpl object that is "live" in memory, rather than

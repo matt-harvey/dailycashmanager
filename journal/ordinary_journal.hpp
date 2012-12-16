@@ -1,7 +1,6 @@
 #ifndef GUARD_ordinary_journal_hpp
 #define GUARD_ordinary_journal_hpp
 
-#include "ordinary_journal_reader.hpp"
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/handle.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -13,6 +12,7 @@ namespace phatbooks
 class Entry;
 class Journal;
 class OrdinaryJournalImpl;
+class OrdinaryJournalReader;
 class PhatbooksDatabaseConnection;
 
 class OrdinaryJournal

@@ -12,6 +12,7 @@
  */
 
 
+#include "phatbooks_database_connection.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -30,7 +31,6 @@ namespace sqloxx
 namespace phatbooks
 {
 
-class PhatbooksDatabaseConnection;
 
 /**
  * Class representing commodities, where a commodity is anything of

@@ -15,6 +15,7 @@
 
 #include "account.hpp"
 #include "journal.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -28,7 +29,6 @@ namespace phatbooks
 {
 
 class Account;
-class PhatbooksDatabaseConnection;
 
 /**
  * Class representing an accounting entry, i.e. a single line in an account.

@@ -12,9 +12,6 @@
 namespace phatbooks
 {
 
-class PhatbooksDatabaseConnection;
-class RepeaterImpl;
-
 
 class Repeater
 {

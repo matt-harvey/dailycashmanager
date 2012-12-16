@@ -2,6 +2,7 @@
 #define GUARD_draft_journal_impl_hpp
 
 #include "journal.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -12,7 +13,6 @@ namespace phatbooks
 {
 
 class Entry;
-class PhatbooksDatabaseConnection;
 class Repeater;
 
 class DraftJournalImpl:

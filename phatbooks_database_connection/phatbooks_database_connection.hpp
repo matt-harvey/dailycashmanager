@@ -16,21 +16,32 @@
 // that was one benefit of PIMPLing the business object classes.
 // Think of a way around having to include the ..._impl classes.
 
-#include "account_impl.hpp"
+// #include "account_impl.hpp"
 #include "account_type.hpp"
+/*
 #include "commodity_impl.hpp"
 #include "entry_impl.hpp"
 #include "draft_journal_impl.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "repeater_impl.hpp"
+*/
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/general_typedefs.hpp"
-#include "sqloxx/identity_map.hpp"
 #include "sqloxx/persistent_object.hpp"
 #include <boost/bimap.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
+
+
+
+namespace sqloxx
+{
+	// Forward declaration
+	template <typename T, typename Connection>
+	class IdentityMap;
+}
+
 
 namespace phatbooks
 {
@@ -38,7 +49,12 @@ namespace phatbooks
 // Forward declarations
 class Journal;
 class BalanceCache;
-
+class AccountImpl;
+class CommodityImpl;
+class EntryImpl;
+class DraftJournalImpl;
+class OrdinaryJournalImpl;
+class RepeaterImpl;
 
 
 /** Phatbooks-specific database connection class.

@@ -1,13 +1,12 @@
 #ifndef GUARD_repeater_reader_hpp
 #define GUARD_repeater_reader_hpp
 
+#include "phatbooks_database_connection.hpp"
+#include "repeater_impl.hpp"
 #include "sqloxx/reader.hpp"
 
 namespace phatbooks
 {
-
-class RepeaterImpl;
-class PhatbooksDatabaseConnection;
 
 
 class RepeaterReader:
