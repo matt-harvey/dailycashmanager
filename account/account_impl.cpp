@@ -133,7 +133,6 @@ AccountImpl::AccountImpl(AccountImpl const& rhs):
 
 AccountImpl::~AccountImpl()
 {
-	delete m_data;
 }
 
 AccountImpl::AccountType

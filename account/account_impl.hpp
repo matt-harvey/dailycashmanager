@@ -18,6 +18,7 @@
 #include "sqloxx/general_typedefs.hpp"
 #include "sqloxx/identity_map.hpp"
 #include "sqloxx/persistent_object.hpp"
+#include <boost/scoped_ptr.hpp>	
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -158,7 +159,7 @@ private:
 		boost::optional<std::string> description;
 	};
 
-	AccountData* m_data;
+	boost::scoped_ptr<AccountData> m_data;
 };
 
 
