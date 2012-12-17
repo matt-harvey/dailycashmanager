@@ -5,11 +5,109 @@
 #include "sqloxx_exceptions.hpp"
 #include "sql_statement.hpp"
 #include <boost/noncopyable.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <cassert>
+#include <list>
+#include <memory>
 #include <string>
+#include <vector>
 
 namespace sqloxx
 {
+
+
+// TABLE
+// TODO Should this be in Consolixx rather than Sqloxx?
+// Should I change Reader into a "ResultTable + ResultTable::iterator" type
+// construct?
+template <typename T, typename Connection>
+class Table:
+	private boost::noncopyable
+{
+public:
+	typedef std::auto_ptr<Row> (MakeRow*)(T const& p_item);
+
+	Table(RowList* p_row_list)
+		m_data(p_row_list)
+	{
+	}
+	Table(Reader<T, Connection>& p_reader, MakeRow p_make_row)
+		m_data(new RowList)
+	{
+		// TODO Throw if rows are a different size.
+		while (p_reader.read())
+		{
+			m_data.push_back(p_make_row(p_reader.item()));
+		}
+	}
+
+	/**
+	 * Determine width of columns for padding purposes, and place these in a
+	 * vector passed as reference parameter.
+	 */
+	void measure_columns(std::vector<String::size_type>& p_size_vec) const
+	{
+		typedef String::size_type StrSz;
+		typedef std::vector<StrSz> SizeVec;
+		RowList::const_iterator it = m_data->begin();
+		RowList::const_iterator const end = m_data->end();
+		Row::size_type const columns = it->size();
+		p_size_vec.resize(columns);
+		for (SizeVec::size_type k = 0; k != p_size_vec.size(); ++k)
+		{
+			p_size_vec[k] = 0;
+		}
+		SizeVec size_vec(columns, 0);
+		for ( ; it != end; ++it)
+		{
+			// assert precondition
+			assert (it->size() == columns);
+			for (Row::size_type j = 0; j != columns; ++j)
+			{
+				StrSz const benchmark = size_vec[j];
+				StrSz const size_here = (*it)[j].size();
+				size_vec[j] = (size_here > benchmark? size_here: benchmark);
+			}
+		}
+		return;
+	}
+
+
+
+
+private:
+	typedef std::string String;
+	typedef std::vector<String> Row;
+	typedef boost::shared_ptr<Row> RowPtr;
+	typedef std::list<RowPtr> RowList;
+	boost::scoped_ptr<RowList> m_data;
+	
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// READER
 
 /**
  * Class template each instantiation of which represents a class
