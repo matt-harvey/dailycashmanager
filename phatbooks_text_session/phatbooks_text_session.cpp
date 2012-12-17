@@ -19,6 +19,7 @@
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "entry_reader.hpp"
+#include "finformat.hpp"
 #include "import_from_nap/import_from_nap.hpp"  // WARNING temp hack
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
@@ -845,7 +846,7 @@ void PhatbooksTextSession::display_journal_summaries()
 			Decimal const amount = it->amount();
 			cout << it->account().name() << "\t"
 			     << it->comment() << "\t"
-			     << amount << endl;
+			     << finformat(amount) << endl;
 		}
 		cout << endl;
 	}
@@ -862,7 +863,7 @@ namespace
 		{
 			Account const account(p_reader.item());
 			cout << account.name() << "   "
-				 << account.balance()
+				 << finformat(account.balance())
 			     // << account.balance().intval()
 				 << endl;
 		}
@@ -907,7 +908,8 @@ void PhatbooksTextSession::play()
 			++it
 		)
 		{
-			cout << it->account().name() << "\t" << it->amount() << endl;
+			cout << it->account().name() << "\t" << finformat(it->amount())
+			     << endl;
 		}
 		cout << endl;
 		if (i == 0)

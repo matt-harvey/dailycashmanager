@@ -10,6 +10,7 @@ include_directories (/home/matthew/lib
                      /home/matthew/Workbench/versioned/phatbooks/commodity
                      /home/matthew/Workbench/versioned/phatbooks/date
                      /home/matthew/Workbench/versioned/phatbooks/entry
+                     /home/matthew/Workbench/versioned/phatbooks/finformat
                      /home/matthew/Workbench/versioned/phatbooks/import_from_nap
                      /home/matthew/Workbench/versioned/phatbooks/journal
                      /home/matthew/Workbench/versioned/phatbooks/phatbooks_database_connection
@@ -31,6 +32,7 @@ set (main_files
 	 entry/entry.cpp
 	 entry/entry_impl.cpp
 	 entry/entry_reader.cpp
+	 finformat/finformat.cpp
 	 import_from_nap/import_from_nap.cpp
 	 journal/draft_journal.cpp
 	 journal/draft_journal_impl.cpp

@@ -16,7 +16,7 @@
 namespace sqloxx
 {
 
-
+/*
 // TABLE
 // TODO Should this be in Consolixx rather than Sqloxx?
 // Should I change Reader into a "ResultTable + ResultTable::iterator" type
@@ -42,10 +42,8 @@ public:
 		}
 	}
 
-	/**
-	 * Determine width of columns for padding purposes, and place these in a
-	 * vector passed as reference parameter.
-	 */
+	 // Determine width of columns for padding purposes, and place these in a
+	 // vector passed as reference parameter.
 	void measure_columns(std::vector<String::size_type>& p_size_vec) const
 	{
 		typedef String::size_type StrSz;
@@ -84,25 +82,7 @@ private:
 	boost::scoped_ptr<RowList> m_data;
 	
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*/
 
 
 
