@@ -33,6 +33,9 @@ namespace phatbooks
 
 /**
  * Class representing an accounting entry, i.e. a single line in an account.
+ *
+ * @todo Should the amount of an entry have the sign reversed when displayed
+ * to the user in certain circumstances?
  */
 class EntryImpl:
 	public sqloxx::PersistentObject<EntryImpl, PhatbooksDatabaseConnection>

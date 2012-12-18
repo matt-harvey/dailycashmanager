@@ -10,6 +10,11 @@ namespace phatbooks
 // Forward declaration
 class PhatbooksDatabaseConnection;
 
+/**
+ * Phatbooks user session base class.
+ * May be inherited by a class representing a more specific kind
+ * of session, e.g. a console session or a GUI session.
+ */
 class Session
 {
 public:
