@@ -166,11 +166,11 @@ TEST_FIXTURE(DerivedPOFixture, identity_map_switch_caching)
 TEST_FIXTURE(DerivedPOFixture, identity_map_after_object_removal)
 {
 	DerivedDatabaseConnection& dbc = *pdbc;
-	Handle<DerivedPO> dpo1(*pdbc);
+	Handle<DerivedPO> dpo1(dbc);
 	dpo1->set_x(10);
 	dpo1->set_y(-1298);
 	dpo1->save();
-	Handle<DerivedPO> dpo1b(*pdbc, 1);  // OK
+	Handle<DerivedPO> dpo1b(dbc, 1);  // OK
 	dpo1->remove();
 	bool ok = false;
 	try
@@ -183,7 +183,9 @@ TEST_FIXTURE(DerivedPOFixture, identity_map_after_object_removal)
 	}
 	CHECK(ok);
 	// But this doesn't throw
-	Handle<DerivedPO> dpo1d(idm.unchecked_provide_handle(1));
+	Handle<DerivedPO> dpo1d
+	(	Handle<DerivedPO>::create_unchecked(dbc, 1)
+	);
 }
 
 
