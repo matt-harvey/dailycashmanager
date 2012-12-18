@@ -512,7 +512,7 @@ void PhatbooksTextSession::elicit_journal()
 		account_prompt = "envelope you wish to top up";
 		amount_prompt = "to transfer";
 		secondary_account_prompt = "envelope from which to source funds";
-		primary_sign_needs_changing = false;
+		primary_sign_needs_changing = true;
 	}
 	
 	// Primary entry
@@ -869,7 +869,7 @@ namespace
 	{
 		shared_ptr<vector<string> > ret(new vector<string>);
 		ret->push_back(account.name());
-		ret->push_back(finformat(account.balance()));
+		ret->push_back(finformat(account.friendly_balance()));
 		return ret;
 	}
 

@@ -162,8 +162,8 @@ public:
 		(	PhatbooksDatabaseConnection const& p_database_connection,
 			sqloxx::Id p_account_id
 		);
-		// Retrieve the balance of an Account
-		static jewel::Decimal balance
+		// Retrieve the technical_balance of an Account
+		static jewel::Decimal technical_balance
 		(	PhatbooksDatabaseConnection const& p_database_connection,
 			sqloxx::Id p_account_id
 		);

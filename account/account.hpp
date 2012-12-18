@@ -107,10 +107,9 @@ public:
 	 */
 	std::string description() const;
 
-	/**
-	 * Returns account balance.
-	 */
-	jewel::Decimal balance() const;
+	jewel::Decimal technical_balance() const;
+
+	jewel::Decimal friendly_balance() const;
 
 	void set_account_type(AccountType p_account_type);
 

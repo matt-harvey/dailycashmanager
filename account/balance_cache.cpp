@@ -5,12 +5,14 @@
 #include "balance_cache.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "entry/entry_reader.hpp"
+#include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <algorithm>
 #include <cassert>
 
+using boost::optional;
 using boost::scoped_ptr;
 using jewel::Decimal;
 using jewel::clear;
@@ -37,7 +39,7 @@ BalanceCache::BalanceCache
 
 
 Decimal
-BalanceCache::balance(AccountImpl::Id p_account_id)
+BalanceCache::technical_balance(AccountImpl::Id p_account_id)
 {
 	AccountImpl::Id const id = p_account_id;
 	if (m_map_is_stale)
@@ -54,10 +56,14 @@ BalanceCache::balance(AccountImpl::Id p_account_id)
 		// inserted a cache entry for that AccountImpl. Thus at this
 		// point there must be a cache entry for p_account_id.
 		assert (it != m_map->end());
-
-		if ( !(it->second) )
+		optional<Decimal> const cache_entry(it->second);	
+		if (cache_entry)
 		{
-			// Cache entry for p_account_id is stale
+			return *cache_entry;
+		}
+		else
+		{
+			// cache entry is stale	
 			refresh();
 		}
 	}

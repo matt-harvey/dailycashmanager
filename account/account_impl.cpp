@@ -164,14 +164,46 @@ AccountImpl::description()
 }
 
 Decimal
-AccountImpl::balance()
+AccountImpl::technical_balance()
 {
 	load();  // This may be unnecessary but there's no harm in it.
-	return BalanceCacheAttorney::balance
+	return BalanceCacheAttorney::technical_balance
 	(	database_connection(),
 		id()
 	);
 }
+
+Decimal
+AccountImpl::friendly_balance()
+{
+	load();
+	Decimal const tecbal = technical_balance();
+	switch (value(m_data->account_type))
+	{
+	// todo Should equity have sign switched? Will we ever
+	// display equity accounts anyway?
+	// todo Deal with remote possibility of exception
+	// on sign change? Or is this
+	// ruled out by higher level code?
+
+	case account_type::asset:  // Fall through
+	case account_type::liability:  // Fall through
+	case account_type::equity:
+		return tecbal;
+		assert (false);  // Execution never reaches here.
+
+	case account_type::revenue:  // Fall through
+	case account_type::expense:  // Fall through
+	case account_type::pure_envelope:
+		return round(tecbal * Decimal(-1, 0), tecbal.places());
+		assert (false);  // Execution never reaches here.
+
+	default:
+		assert (false);  // Execution never reaches here.
+	}
+}
+	
+	
 
 void
 AccountImpl::set_account_type(AccountType p_account_type)

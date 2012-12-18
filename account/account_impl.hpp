@@ -116,9 +116,23 @@ public:
 	std::string description();
 
 	/**
-	 * Returns the balance of account.
+	 * Returns "technical" account balance, which is
+	 * positive for debit balances and negative for
+	 * credit balances. For P&L accounts this
+	 * corresponds to the unspent funds in the envelope,
+	 * where a negative balance indicates that funds
+	 * remain unspent, and a positive balance indicates
+	 * that more funds have been spend than were
+	 * available.
 	 */
-	jewel::Decimal balance();
+	jewel::Decimal technical_balance();
+
+	/**
+	 * Returns "user friendly" account balance, which, for
+	 * P&L accounts, has the signs reversed relative to
+	 * technical_balance().
+	 */
+	jewel::Decimal friendly_balance();
 
 	void set_account_type(AccountType p_account_type);
 

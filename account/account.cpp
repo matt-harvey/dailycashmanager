@@ -121,9 +121,15 @@ Account::description() const
 }
 
 Decimal
-Account::balance() const
+Account::technical_balance() const
 {
-	return m_impl->balance();
+	return m_impl->technical_balance();
+}
+
+Decimal
+Account::friendly_balance() const
+{
+	return m_impl->friendly_balance();
 }
 
 void

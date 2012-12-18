@@ -51,9 +51,12 @@ public:
 
 	BalanceCache(PhatbooksDatabaseConnection& p_database_connection);
 
-	// Retrieve the balance for a particular AccountImpl. The cache will
+	// Retrieve the technical_balance for a particular AccountImpl.
+	// The cache will
 	// refresh itself if required.
-	jewel::Decimal balance(AccountImpl::Id p_account_id);
+	// See Account/AccountImpl documentation for semantics of
+	// technical_balance.
+	jewel::Decimal technical_balance(AccountImpl::Id p_account_id);
 
 	// Mark the cache as a whole as stale
 	void mark_as_stale();

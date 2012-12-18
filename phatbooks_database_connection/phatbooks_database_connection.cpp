@@ -287,12 +287,12 @@ BalanceCacheAttorney::mark_as_stale
 
 
 Decimal
-BalanceCacheAttorney::balance
+BalanceCacheAttorney::technical_balance
 (	PhatbooksDatabaseConnection const& p_database_connection,
 	AccountImpl::Id p_account_id
 )
 {
-	return p_database_connection.m_balance_cache->balance
+	return p_database_connection.m_balance_cache->technical_balance
 	(	p_account_id
 	);
 }
