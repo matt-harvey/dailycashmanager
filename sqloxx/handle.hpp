@@ -41,7 +41,7 @@ public:
 	 * @todo Documentation and testing.
 	 */
 	template <typename Connection>
-	Handle(Connection& p_connection);
+	explicit Handle(Connection& p_connection);
 
 	/**
 	 * @todo Documentation and testing.
@@ -136,11 +136,8 @@ template <typename Connection>
 Handle<T>::Handle(Connection& p_connection):
 	m_pointer(0)
 {
-	IdentityMap<T, Connection>& id_map
-	(	p_connection.template identity_map<T>()
-	);
 	m_pointer = IdentityMap<T, Connection>::HandleAttorney::get_pointer
-	(	id_map
+	(	p_connection.template identity_map<T>()
 	);
 	m_pointer->notify_handle_construction();
 }
@@ -151,11 +148,8 @@ template <typename Connection>
 Handle<T>::Handle(Connection& p_connection, Id p_id):
 	m_pointer(0)
 {
-	IdentityMap<T, Connection>& id_map
-	(	p_connection.template identity_map<T>()
-	);
 	m_pointer = IdentityMap<T, Connection>::HandleAttorney::get_pointer
-	(	id_map,
+	(	p_connection.template identity_map<T>(),
 		p_id
 	);
 	m_pointer->notify_handle_construction();
@@ -167,12 +161,9 @@ template <typename Connection>
 Handle<T>
 Handle<T>::create_unchecked(Connection& p_connection, Id p_id)
 {
-	IdentityMap<T, Connection>& id_map
-	(	p_connection.template identity_map<T>()
-	);
 	return Handle<T>
 	(	IdentityMap<T, Connection>::HandleAttorney::unchecked_get_pointer
-		(	id_map,
+		(	p_connection.template identity_map<T>(),
 			p_id
 		)
 	);

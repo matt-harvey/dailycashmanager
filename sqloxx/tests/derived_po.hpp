@@ -4,6 +4,7 @@
 // Hide from Doxygen
 /// @cond
 
+#include "sqloxx_tests_common.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/identity_map.hpp"
 #include "sqloxx/persistent_object.hpp"
@@ -15,7 +16,6 @@ namespace sqloxx
 namespace tests
 {
 
-class DerivedDatabaseConnection;
 
 // Dummy class inheriting from PersistentObject, for the purpose
 // of testing PersistentObject class.
@@ -58,7 +58,8 @@ private:
 };
 
 
-// Dummy class derived from DatabaseConnection, to provide IdentityMap<DerivedPO>
+// Dummy class derived from DatabaseConnection, to provide
+// IdentityMap<DerivedPO>
 class DerivedDatabaseConnection: public DatabaseConnection
 {
 public:

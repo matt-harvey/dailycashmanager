@@ -1,3 +1,4 @@
+#include "sqloxx/handle.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
 #include "sqloxx/identity_map.hpp"
 #include "derived_po.hpp"

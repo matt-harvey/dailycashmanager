@@ -1,5 +1,6 @@
 #include "derived_po.hpp"
 #include "sqloxx_tests_common.hpp"
+#include "sqloxx/handle.hpp"
 #include "jewel/optional.hpp"
 #include <unittest++/UnitTest++.h>
 
@@ -12,17 +13,18 @@ namespace tests
 
 TEST_FIXTURE(DerivedPOFixture, handle_copy_constructor_and_indirection)
 {
-	DerivedDatabaseConnection& dbc = *pdbc;
-	Handle<DerivedPO> dpo1(dbc);
+	Handle<DerivedPO> dpo1(*pdbc);
 	dpo1->set_x(-9);
-	Handle<DerivedPO> dpo2(dpo1);
+	// TODO Figure out why in the next line if I use the copy constructor
+	// it won't compile.
+	Handle<DerivedPO> dpo2 = dpo1;
 	dpo2->set_y(102928);
 	CHECK_EQUAL(dpo2->x(), -9);
 	dpo2->save();
 	CHECK_EQUAL(dpo1->id(), 1);
 	CHECK_EQUAL(dpo2->id(), dpo1->id());
 	CHECK_EQUAL(dpo1->y(), 102928);
-	Handle<DerivedPO> dpo3(dpo1);
+	Handle<DerivedPO> dpo3 = dpo1;
 	CHECK_EQUAL(dpo3->id(), 1);
 	CHECK_EQUAL(dpo3->y(), 102928);
 	CHECK_EQUAL(dpo3->x(), dpo1->x());
@@ -30,9 +32,8 @@ TEST_FIXTURE(DerivedPOFixture, handle_copy_constructor_and_indirection)
 
 TEST_FIXTURE(DerivedPOFixture, handle_assignment_and_indirection)
 {
-	DerivedDatabaseConnection& dbc = *pdbc;
-	Handle<DerivedPO> dpo1(dbc);
-	Handle<DerivedPO> dpo2(dbc);
+	Handle<DerivedPO> dpo1(*pdbc);
+	Handle<DerivedPO> dpo2(*pdbc);
 	dpo2->set_x(100);
 	dpo2->set_y(0.0112);
 	dpo2->save();
@@ -43,7 +44,7 @@ TEST_FIXTURE(DerivedPOFixture, handle_assignment_and_indirection)
 	CHECK_EQUAL(dpo2->y(), 30978);
 	dpo1->save();
 	CHECK_EQUAL(dpo2->id(), 2);
-	Handle<DerivedPO> dpo3(dbc, 1);
+	Handle<DerivedPO> dpo3(*pdbc, 1);
 	CHECK_EQUAL(dpo3->id(), 1);
 	dpo3->set_x(-188342392);
 	dpo1 = dpo3;
@@ -56,8 +57,7 @@ TEST_FIXTURE(DerivedPOFixture, handle_assignment_and_indirection)
 
 TEST_FIXTURE(DerivedPOFixture, handle_dereferencing)
 {
-	DerivedDatabaseConnection& dbc = *pdbc;
-	Handle<DerivedPO> dpo1(dbc);
+	Handle<DerivedPO> dpo1(*pdbc);
 	dpo1->set_x(10);
 	dpo1->set_y(1278.90172);
 	dpo1->save();
@@ -68,7 +68,7 @@ TEST_FIXTURE(DerivedPOFixture, handle_dereferencing)
 	CHECK_EQUAL(dpo1_dereferenced.x(), 10);
 	dpo1_dereferenced.set_y(.504);
 	CHECK_EQUAL(dpo1->y(), 0.504);
-	Handle<DerivedPO> dpo2(dbc);
+	Handle<DerivedPO> dpo2(*pdbc);
 	DerivedPO& dpo2_dereferenced = *dpo2;
 	dpo2_dereferenced.set_x(8000);
 	dpo2_dereferenced.set_y(140);

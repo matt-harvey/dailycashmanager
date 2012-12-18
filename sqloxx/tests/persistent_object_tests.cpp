@@ -47,7 +47,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_constructor_two_params)
 	CHECK_EQUAL(dpo->id(), 1);
 	CHECK_EQUAL(dpo->x(), 10);
 	CHECK_EQUAL(dpo->y(), 3.23);
-	Handle<DerivedPO> e(*pdbc);
+	Handle<DerivedPO> e(*pdbc, 1);
 	CHECK_EQUAL(e->id(), dpo->id());
 	CHECK_EQUAL(e->id(), 1);
 	CHECK_EQUAL(e->x(), 10);
@@ -70,19 +70,19 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_1)
 	CHECK_EQUAL(dpo2b->y(), 29837.01);
 	dpo2b->set_y(2.0);
 	dpo2b->save();
-	Handle<DerivedPO> dpo2c(pdbc, 2);
+	Handle<DerivedPO> dpo2c(*pdbc, 2);
 	CHECK_EQUAL(dpo2c->id(), 2);
 	CHECK_EQUAL(dpo2c->x(), 234);
 	CHECK_EQUAL(dpo2c->y(), 2.0);
 	dpo2c->set_x(-10);  // But don't call save yet
-	Handle<DerivedPO> dpo2d(pdbc, 2);
+	Handle<DerivedPO> dpo2d(*pdbc, 2);
 	CHECK_EQUAL(dpo2d->x(), -10); // Reflected before save, due to IdentityMap
 	CHECK_EQUAL(dpo2d->y(), 2.0);
 	dpo2c->save();  // Now the changed object is saved
-	Handle<DerivedPO> dpo2e(pdbc, 2);
+	Handle<DerivedPO> dpo2e(*pdbc, 2);
 	CHECK_EQUAL(dpo2e->x(), -10);  // Still reflected after save.
 	CHECK_EQUAL(dpo2e->y(), 2.0);
-	Handle<DerivedPO> dpo1b(pdbc, 1);
+	Handle<DerivedPO> dpo1b(*pdbc, 1);
 	dpo1b->save();
 	CHECK_EQUAL(dpo1b->x(), 78);
 	CHECK_EQUAL(dpo1b->y(), 4.5);
@@ -93,12 +93,12 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_1)
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_2)
 {
-	Handle<DerivedPO> dpo1(pdbc);
+	Handle<DerivedPO> dpo1(*pdbc);
 	dpo1->set_x(978);
 	dpo1->set_y(-.238);
 	dpo1->save();
 
-	Handle<DerivedPO> dpo2(pdbc);
+	Handle<DerivedPO> dpo2(*pdbc);
 	dpo2->set_x(20);
 	dpo2->set_y(0.00030009);
 	dpo2->save();
@@ -126,7 +126,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_2)
 	);
 	check_troublesome.step_final();
 
-	Handle<DerivedPO> dpo3(pdbc);
+	Handle<DerivedPO> dpo3(*pdbc);
 	dpo3->set_x(100);
 	dpo3->set_y(3.2);
 
@@ -143,19 +143,19 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 {
 	// Test interaction of save() with DatabaseTransaction
 
-	Handle<DerivedPO> dpo1(pdbc);
+	Handle<DerivedPO> dpo1(*pdbc);
 	dpo1->set_x(4000);
 	dpo1->set_y(0.13);
 	dpo1->save();
 
 	DatabaseTransaction transaction1(*pdbc);
 
-	Handle<DerivedPO> dpo2(pdbc);
+	Handle<DerivedPO> dpo2(*pdbc);
 	dpo2->set_x(-17);
 	dpo2->set_y(64.29382);
 	dpo2->save();
 	
-	Handle<DerivedPO> dpo2b(pdbc, 2);
+	Handle<DerivedPO> dpo2b(*pdbc, 2);
 	CHECK_EQUAL(dpo2b->x(), -17);
 	CHECK_EQUAL(dpo2b->y(), 64.29382);
 	dpo2b->save();
@@ -164,14 +164,14 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 	CHECK_EQUAL(dpo2->id(), 2);
 	CHECK_EQUAL(dpo2b->id(), 2);
 
-	Handle<DerivedPO> dpo3(pdbc);
+	Handle<DerivedPO> dpo3(*pdbc);
 	dpo3->set_x(7834);
 	dpo3->set_y(521.520);
 	CHECK(!dpo3->has_id());
 	dpo3->save();
 	CHECK_EQUAL(dpo3->id(), 3);
 
-	Handle<DerivedPO> dpo4(pdbc);
+	Handle<DerivedPO> dpo4(*pdbc);
 	dpo4->set_y(1324.6);
 	dpo4->set_x(321);
 	dpo4->save();
@@ -185,7 +185,9 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 	CHECK_EQUAL(rows, 1);
 
 	// The cache is not aware in itself that the save was cancelled...
-	Handle<DerivedPO> dpo2c(*pdbc, 2, '\0');
+	Handle<DerivedPO> dpo2c
+	(	Handle<DerivedPO>::create_unchecked(*pdbc, 2)
+	);
 	CHECK_EQUAL(dpo2c->id(), 2);
 	CHECK_EQUAL(dpo2c->x(), -17);
 	CHECK_EQUAL(dpo2c->y(), 64.29382);
@@ -196,7 +198,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 	bool ok = false;
 	try
 	{
-		Handle<DerivedPO> dpo2c_checked(pdbc, 2);
+		Handle<DerivedPO> dpo2c_checked(*pdbc, 2);
 	}
 	catch (BadIdentifier&)
 	{
@@ -206,7 +208,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 
 	// At least this will save over the top of the old
 	// one...
-	Handle<DerivedPO> dpo5(pdbc);
+	Handle<DerivedPO> dpo5(*pdbc);
 	dpo5->set_x(12);
 	dpo5->set_y(19);
 	dpo5->save();
@@ -219,14 +221,14 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 	CHECK_EQUAL(dpo2b->x(), -17);
 	CHECK_EQUAL(dpo2->y(), 64.29382);
 
-	Handle<DerivedPO> dpo2d(pdbc, 2);
+	Handle<DerivedPO> dpo2d(*pdbc, 2);
 	CHECK_EQUAL(dpo2d->x(), 12);
 	CHECK_EQUAL(dpo2d->y(), 19);
 
 	bool ok2 = false;
 	try
 	{
-		Handle<DerivedPO> dpo7(pdbc, 7);
+		Handle<DerivedPO> dpo7(*pdbc, 7);
 	}
 	catch (BadIdentifier&)
 	{
@@ -241,7 +243,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 	bool ok3 = false;
 	try
 	{
-		Handle<DerivedPO> dpo4b(pdbc, 4);
+		Handle<DerivedPO> dpo4b(*pdbc, 4);
 	}
 	catch (BadIdentifier&)
 	{
@@ -260,7 +262,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_exists_and_remove)
 {
-	Handle<DerivedPO> dpo1(pdbc);
+	Handle<DerivedPO> dpo1(*pdbc);
 	dpo1->set_x(7);
 	dpo1->set_y(5.8);
 	dpo1->save();
@@ -291,7 +293,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_exists_and_remove)
 	CHECK_THROW(dpo1->id(), UninitializedOptionalException);
 
 	// Now let's mix with DatabaseTransaction
-	Handle<DerivedPO> dpo2(pdbc);
+	Handle<DerivedPO> dpo2(*pdbc);
 	dpo2->set_x(10);
 	dpo2->set_y(50.78);
 	dpo2->save();
@@ -304,7 +306,7 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_exists_and_remove)
 	bool ok = false;
 	try
 	{
-		Handle<DerivedPO> dpo2b(pdbc, 2);
+		Handle<DerivedPO> dpo2b(*pdbc, 2);
 	}
 	catch (BadIdentifier&)
 	{
@@ -318,18 +320,18 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_exists_and_remove)
 	selector.reset(); 
 	check = selector.step();
 	CHECK(check);
-	Handle<DerivedPO> dpo2c(pdbc, 2);
+	Handle<DerivedPO> dpo2c(*pdbc, 2);
 	CHECK_EQUAL(dpo2c->y(), 50.78);
 	CHECK_EQUAL(dpo2c->x(), 10);
 }
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)
 {
-	Handle<DerivedPO> dpo1(pdbc);
+	Handle<DerivedPO> dpo1(*pdbc);
 	CHECK_THROW(dpo1->id(), UninitializedOptionalException);
 	dpo1->save();
 	CHECK_EQUAL(dpo1->id(), 1);
-	Handle<DerivedPO> dpo2(pdbc);
+	Handle<DerivedPO> dpo2(*pdbc);
 	CHECK_THROW(dpo2->id(), UninitializedOptionalException);
 	CHECK_THROW(dpo2->id(), UninitializedOptionalException);
 	dpo2->save();
@@ -344,7 +346,7 @@ TEST_FIXTURE(DerivedPOFixture, test_load_indirectly)
 {
 	// load is protected method but we here we test it indirectly
 	// via getting functions we know call it
-	Handle<DerivedPO> dpo1(pdbc);
+	Handle<DerivedPO> dpo1(*pdbc);
 	int const a = 2097601234;
 	double const b = 72973.2987300;
 	dpo1->set_x(a);
@@ -353,7 +355,7 @@ TEST_FIXTURE(DerivedPOFixture, test_load_indirectly)
 	assert (dpo1->y() == b);
 	dpo1->save();
 
-	Handle<DerivedPO> dpo2(pdbc, 1);
+	Handle<DerivedPO> dpo2(*pdbc, 1);
 	CHECK_EQUAL(dpo2->id(), 1);
 	CHECK_EQUAL(dpo2->x(), a);  // load called here
 	CHECK_EQUAL(dpo2->y(), b);  // and here
@@ -361,11 +363,11 @@ TEST_FIXTURE(DerivedPOFixture, test_load_indirectly)
 
 TEST_FIXTURE(DerivedPOFixture, test_ghostify)
 {
-	Handle<DerivedPO> dpo1(pdbc);
+	Handle<DerivedPO> dpo1(*pdbc);
 	dpo1->set_x(1290387);
 	dpo1->set_y(127);
 	dpo1->save();
-	Handle<DerivedPO> dpo2(pdbc);
+	Handle<DerivedPO> dpo2(*pdbc);
 	dpo2->set_x(273);
 	dpo2->set_y(-19.986);
 	dpo2->save();
