@@ -27,7 +27,9 @@ set (main_files
 	 account/balance_cache.cpp
 	 commodity/commodity.cpp
 	 commodity/commodity_impl.cpp
-	 consolixx/consolixx.cpp
+	 consolixx/get_input.cpp
+	 consolixx/table.cpp
+	 consolixx/text_session.cpp
 	 date/date.cpp
 	 entry/entry.cpp
 	 entry/entry_impl.cpp
