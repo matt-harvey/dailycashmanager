@@ -40,13 +40,18 @@ Entry::Entry
 }
 
 
-Entry::Entry
+Entry
+Entry::create_unchecked
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id,
-	char p_dummy
-):
-	m_impl(Handle<EntryImpl>(p_database_connection, p_id, '\0'))
+	Id p_id
+)
 {
+	return Entry
+	(	Handle<EntryImpl>::create_unchecked
+		(	p_database_connection,
+			p_id
+		)
+	);
 }
 
 
@@ -136,6 +141,12 @@ Entry::ghostify()
 	m_impl->ghostify();
 	return;
 }
+
+Entry::Entry(sqloxx::Handle<EntryImpl> const& p_handle):
+	m_impl(p_handle)
+{
+}
+
 
 }  // namespace phatbooks
 

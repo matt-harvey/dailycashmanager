@@ -39,16 +39,18 @@ Repeater::Repeater
 }
 
 
-Repeater::Repeater
+Repeater
+Repeater::create_unchecked
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id,
-	char p_dummy
-):
-	m_impl
-	(	Handle<RepeaterImpl>(p_database_connection, p_id, '\0')
-	)
+	Id p_id
+)
 {
-	p_dummy;  // Silence compiler warning re unused parameter.
+	return Repeater
+	(	Handle<RepeaterImpl>::create_unchecked
+		(	p_database_connection,
+			p_id
+		)
+	);
 }
 
 
@@ -131,5 +133,11 @@ Repeater::ghostify()
 	m_impl->ghostify();
 	return;
 }
+
+Repeater::Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle):
+	m_impl(p_handle)
+{
+}
+
 
 }  // namespace phatbooks

@@ -30,10 +30,9 @@ public:
 		Id p_id
 	);
 
-	Repeater
+	static Repeater create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id,
-		char p_dummy  // Flags as fast, unchecked version
+		Id p_id
 	);
 
 
@@ -69,6 +68,7 @@ public:
 	void ghostify();
 
 private:
+	Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle);
 	sqloxx::Handle<RepeaterImpl> m_impl;
 };
 

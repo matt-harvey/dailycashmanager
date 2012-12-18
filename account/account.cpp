@@ -51,15 +51,18 @@ Account::Account
 {
 }
 
-Account::Account
+Account
+Account::create_unchecked
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id,
-	char p_dummy
-):
-	m_impl
-	(	Handle<AccountImpl>(p_database_connection, p_id, '\0')
-	)
+	Id p_id
+)
 {
+	return Account
+	(	Handle<AccountImpl>::create_unchecked
+		(	p_database_connection,
+			p_id
+		)
+	);
 }
 	
 
@@ -159,6 +162,12 @@ Account::set_description(std::string const& p_description)
 	m_impl->set_description(p_description);
 	return;
 }
+
+Account::Account(sqloxx::Handle<AccountImpl> const& p_handle):
+	m_impl(p_handle)
+{
+}
+
 
 
 

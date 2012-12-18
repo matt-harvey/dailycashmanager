@@ -39,13 +39,18 @@ DraftJournal::DraftJournal
 }
 
 
-DraftJournal::DraftJournal
+DraftJournal
+DraftJournal::create_unchecked
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id,
-	char p_dummy
-):
-	m_impl(Handle<DraftJournalImpl>(p_database_connection, p_id, '\0'))
+	Id p_id
+)
 {
+	return DraftJournal
+	(	Handle<DraftJournalImpl>::create_unchecked
+		(	p_database_connection,
+			p_id
+		)
+	);
 }
 
 
@@ -141,6 +146,14 @@ DraftJournal::Id
 DraftJournal::id() const
 {
 	return m_impl->id();
+}
+
+
+DraftJournal::DraftJournal
+(	sqloxx::Handle<DraftJournalImpl> const& p_handle
+):
+	m_impl(p_handle)
+{
 }
 
 

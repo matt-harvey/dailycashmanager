@@ -53,7 +53,8 @@ public:
 	 * @todo Documentation and testing.
 	 */
 	template <typename Connection>
-	Handle(Connection& p_connection, Id p_id, char p_no_check_flag);
+	Handle
+	static create_unchecked(Connection& p_connection, Id p_id);
 
 	/**
 	 * @throws sqloxx::OverflowException in the extremely unlikely
@@ -107,7 +108,8 @@ public:
 	T* operator->() const;
 
 private:
-
+	
+	Handle(T* p_pointer);
 
 	T* m_pointer;
 };
@@ -132,12 +134,14 @@ Handle<T>::Handle(Handle const& rhs)
 template <typename T>
 template <typename Connection>
 Handle<T>::Handle(Connection& p_connection):
-	m_pointer
-	(	IdentityMap<T, Connection>::HandleAttorney::get_pointer
-		(	p_connection.template identity_map<T>()
-		)
-	)
+	m_pointer(0)
 {
+	IdentityMap<T, Connection>& id_map
+	(	p_connection.template identity_map<T>()
+	);
+	m_pointer = IdentityMap<T, Connection>::HandleAttorney::get_pointer
+	(	id_map
+	);
 	m_pointer->notify_handle_construction();
 }
 
@@ -145,28 +149,33 @@ Handle<T>::Handle(Connection& p_connection):
 template <typename T>
 template <typename Connection>
 Handle<T>::Handle(Connection& p_connection, Id p_id):
-	m_pointer
-	(	IdentityMap<T, Connection>::HandleAttorney::get_pointer
-		(	p_connection.template identity_map<T>(),
-			p_id
-		)
-	)
+	m_pointer(0)
 {
+	IdentityMap<T, Connection>& id_map
+	(	p_connection.template identity_map<T>()
+	);
+	m_pointer = IdentityMap<T, Connection>::HandleAttorney::get_pointer
+	(	id_map,
+		p_id
+	);
 	m_pointer->notify_handle_construction();
 }
 
 
 template <typename T>
 template <typename Connection>
-Handle<T>::Handle(Connection& p_connection, Id p_id, char p_no_check_flag):
-	m_pointer
+Handle<T>
+Handle<T>::create_unchecked(Connection& p_connection, Id p_id)
+{
+	IdentityMap<T, Connection>& id_map
+	(	p_connection.template identity_map<T>()
+	);
+	return Handle<T>
 	(	IdentityMap<T, Connection>::HandleAttorney::unchecked_get_pointer
-		(	p_connection.template identity_map<T>(),
+		(	id_map,
 			p_id
 		)
-	)
-{
-	m_pointer->notify_handle_construction();
+	);
 }
 
 
@@ -216,7 +225,12 @@ Handle<T>::operator->() const
 	throw (UnboundHandleException("Unbound Handle."));
 }
 
-
+template <typename T>
+Handle<T>::Handle(T* p_pointer):
+	m_pointer(p_pointer)
+{
+	m_pointer->notify_handle_construction();
+}
 
 		
 

@@ -32,11 +32,10 @@ public:
 		Id p_id
 	);
 
-	// Fast, unchecked form
-	Commodity
+	// Fast, unchecked
+	static Commodity create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id,
-		char p_dummy
+		Id p_id
 	);
 
 	Commodity
@@ -61,6 +60,7 @@ public:
 	Id id() const;
 
 private:
+	Commodity(sqloxx::Handle<CommodityImpl> const& p_handle);
 	sqloxx::Handle<CommodityImpl> m_impl;
 
 };

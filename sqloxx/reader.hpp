@@ -196,23 +196,18 @@ private:
 	 * Preconditions:\n
 	 * The constructor of T should offer the strong guarantee; and\n
 	 * The destructor of T should never throw; and\n
-	 * T should have a constructor of the form
-	 * T(Connection&, Id, char).
+	 * T should have a static method of the form
+	 * T create_unchecked(Connection&, Id, char).
 	 * Typically, T will be
 	 * an instantiation of sqloxx::Handle - but it need not
-	 * be. sqloxx::Handle uses char as a dummy parameter merely
-	 * to distinguish the fast, unchecked constructor from the
-	 * slow, checked constructor.
+	 * be.
 	 *
-	 * @todo Do I need to document the char thing better?
-	 *
-	 * @returns an instance of T initialized with the constructor
-	 * T(Connection&, Id, char), where the Connection passed to
+	 * @returns an instance of T created by calling static method
+	 * T::create_unchecked(Connection&, Id), where the Connection passed to
 	 * the Reader's constructor is passed to the Connection&
 	 * parameter, and the single field being read by the
 	 * Reader from the database (which should be the primary
 	 * key field for type T) is passed to the Id parameter.
-	 * The char field is passed the value '\0'.
 	 *
 	 * @throws ResultIndexOutOfRange if there is an error extracting
 	 * the result of the underlying SQL statement. This would
@@ -325,7 +320,9 @@ Reader<T, Connection>::item() const
 {
 	if (m_is_valid)
 	{
-		return T(m_database_connection, m_statement.extract<Id>(0), '\0');
+		return T::create_unchecked
+		(	m_database_connection, m_statement.extract<Id>(0)
+		);
 	}
 	assert (!m_is_valid);
 	throw InvalidReader("Reader is not at a result row.");

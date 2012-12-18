@@ -31,10 +31,9 @@ public:
 		Id p_id
 	);
 
-	DraftJournal
+	static DraftJournal create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id,
-		char p_dummy
+		Id p_id
 	);
 
 	DraftJournal  
@@ -67,6 +66,7 @@ public:
 	void save();
 
 private:
+	DraftJournal(sqloxx::Handle<DraftJournalImpl> const& p_handle);
 	sqloxx::Handle<DraftJournalImpl> m_impl;
 
 

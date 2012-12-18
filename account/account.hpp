@@ -56,10 +56,9 @@ public:
 	 * Get an Account by id from the database (fast,
 	 * unchecked form).
 	 */
-	Account
+	static Account create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id,
-		char p_dummy  // Can be any char
+		Id p_id
 	);
 
 	/**
@@ -120,10 +119,11 @@ public:
 	void set_description(std::string const& p_description);
 
 private:
-
+	Account(sqloxx::Handle<AccountImpl> const& p_handle);
 	sqloxx::Handle<AccountImpl> m_impl;
 
 };
+
 
 
 

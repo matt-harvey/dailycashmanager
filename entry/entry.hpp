@@ -27,10 +27,9 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
-	Entry
+	static Entry create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id,
-		char p_dummy  // To flag as fast, unchecked constructor
+		Id p_id
 	);
 	void set_journal_id(sqloxx::Id p_journal_id);
 	void set_account(Account const& p_account);
@@ -68,10 +67,10 @@ public:
 
 
 private:
+	Entry(sqloxx::Handle<EntryImpl> const& p_handle);
 	sqloxx::Handle<EntryImpl> m_impl;
 
 };
-
 
 
 

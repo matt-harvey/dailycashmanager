@@ -37,10 +37,9 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
-	OrdinaryJournal
+	static OrdinaryJournal create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection, 
-		Id p_id,
-		char p_dummy  // Flags as fast, unchecked version
+		Id p_id
 	);
 
 	void set_whether_actual(bool p_is_actual);
@@ -69,12 +68,10 @@ public:
 	void remove_first_entry();
 
 private:
+	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);
 	sqloxx::Handle<OrdinaryJournalImpl> m_impl;
-
-
-
-
 };
+
 
 
 }  // namespace phatbooks

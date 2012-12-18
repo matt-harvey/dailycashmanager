@@ -47,16 +47,18 @@ OrdinaryJournal::OrdinaryJournal
 {
 }
 
-OrdinaryJournal::OrdinaryJournal
+OrdinaryJournal
+OrdinaryJournal::create_unchecked
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id,
-	char p_dummy
-):
-	m_impl
-	(	Handle<OrdinaryJournalImpl>(p_database_connection, p_id, '\0')
-	)
+	Id p_id
+)
 {
-	p_dummy;  // Silence compiler warning re unused parameter.
+	return OrdinaryJournal
+	(	Handle<OrdinaryJournalImpl>::create_unchecked
+		(	p_database_connection,
+			p_id
+		)
+	);
 }
 
 
@@ -161,5 +163,14 @@ OrdinaryJournal::remove_first_entry()
 	m_impl->remove_first_entry();
 	return;
 }
+
+
+OrdinaryJournal::OrdinaryJournal
+(	sqloxx::Handle<OrdinaryJournalImpl> const& p_handle
+):
+	m_impl(p_handle)
+{
+}
+
 
 }  // namespace phatbooks

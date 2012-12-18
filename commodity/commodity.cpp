@@ -38,13 +38,18 @@ Commodity::Commodity
 }
 
 
-Commodity::Commodity
+Commodity
+Commodity::create_unchecked
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id,
-	char p_dummy
-):
-	m_impl(Handle<CommodityImpl>(p_database_connection, p_id, '\0'))
+	Id p_id
+)
 {
+	return Commodity
+	(	Handle<CommodityImpl>::create_unchecked
+		(	p_database_connection,
+			p_id
+		)
+	);
 }
 
 
@@ -140,6 +145,13 @@ Commodity::id() const
 {
 	return m_impl->id();
 }
+
+
+Commodity::Commodity(sqloxx::Handle<CommodityImpl> const& p_handle):
+	m_impl(p_handle)
+{
+}
+
 
 
 }  // namespace phatbooks
