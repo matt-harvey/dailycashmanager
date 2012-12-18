@@ -20,6 +20,12 @@ namespace sqloxx
 // READER
 
 /**
+ * @todo Update documentation and tests given new container-like
+ * interface. Note the increased opportunities for undefined behaviour
+ * now that the internal list is wholly created on construction - stuff
+ * may be deleted, added or modified between when we create the Reader
+ * and when we iterate over it.
+ *
  * Class template each instantiation of which represents a class
  * of iterator-like "reader" objects that wrap an SQL "select" statement,
  * where the field being selected is the primary key field for type T as
@@ -91,6 +97,21 @@ class Reader:
 {
 public:
 
+
+	typedef typename std::list<T> Container;
+	typedef typename Container::const_iterator const_iterator;
+	typedef typename Container::iterator iterator;
+	typedef typename Container::size_type size_type;
+	typedef typename Container::difference_type difference_type;
+	typedef T value_type;
+	typedef typename Container::const_reverse_iterator const_reverse_iterator;
+	typedef typename Container::reverse_iterator reverse_iterator;
+	
+	// TODO Figure out whether the these typedefs are necessary
+	typedef typename Container::allocator_type allocator_type;
+	typedef typename Container::const_pointer const_pointer;
+	typedef typename Container::pointer pointer;
+
 	/**
 	 * Construct a Reader from a database connection of type
 	 * Connection.
@@ -134,6 +155,12 @@ public:
 		)
 	);
 	
+	const_iterator begin() const;
+	iterator begin();
+	const_iterator end() const;
+	iterator end();
+
+private:	
 	/**
 	 * Advances the Reader to the next row into the result set.
 	 * When the Reader
@@ -218,7 +245,7 @@ public:
 	 */
 	T item() const;
 
-private:
+	Container m_container;
 	Connection& m_database_connection;
 	SQLStatement mutable m_statement;
 	bool m_is_valid;
@@ -235,7 +262,45 @@ Reader<T, Connection>::Reader
 	m_statement(p_database_connection, p_selector),
 	m_is_valid(false)
 {
+	assert (m_container.empty());
+	while (this->read())
+	{
+		m_container.push_back(this->item());
+	}
 }
+
+
+template <typename T, typename Connection>
+typename Reader<T, Connection>::const_iterator
+Reader<T, Connection>::begin() const
+{
+	return m_container.begin();
+}
+
+
+template <typename T, typename Connection>
+typename Reader<T, Connection>::iterator
+Reader<T, Connection>::begin()
+{
+	return m_container.begin();
+}
+
+
+template <typename T, typename Connection>
+typename Reader<T, Connection>::const_iterator
+Reader<T, Connection>::end() const
+{
+	return m_container.end();
+}
+
+template <typename T, typename Connection>
+typename Reader<T, Connection>::iterator
+Reader<T, Connection>::end()
+{
+	return m_container.end();
+}
+
+
 
 template <typename T, typename Connection>
 inline
@@ -263,7 +328,7 @@ Reader<T, Connection>::item() const
 		return T(m_database_connection, m_statement.extract<Id>(0), '\0');
 	}
 	assert (!m_is_valid);
-	throw InvalidReader("Reader is not a result row.");
+	throw InvalidReader("Reader is not at a result row.");
 }
 
 	

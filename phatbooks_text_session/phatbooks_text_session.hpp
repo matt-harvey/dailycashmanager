@@ -207,7 +207,6 @@ private:
 
 	void display_journal_summaries();  // WARNING play code
 	void display_balances();  // WARNING play code
-	void play();  // WARNING play code
 	
 	void wrap_up();
 

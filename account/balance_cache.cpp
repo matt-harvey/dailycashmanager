@@ -94,16 +94,26 @@ BalanceCache::refresh()
 	scoped_ptr<Map> map_elect_ptr(new Map);	
 	Map& map_elect = *map_elect_ptr;
 	AccountReader account_reader(m_database_connection);
-	while (account_reader.read())
+	for
+	(	AccountReader::const_iterator it = account_reader.begin(),
+			end = account_reader.end();
+		it != end;
+		++it
+	)
 	{
-		Account const account(account_reader.item());
+		Account const account(*it);
 		map_elect[account.id()] =
 			Decimal(0, account.commodity().precision());
 	}
 	OrdinaryEntryReader entry_reader(m_database_connection);
-	while (entry_reader.read())
+	for
+	(	OrdinaryEntryReader::const_iterator it = entry_reader.begin(),
+			end = entry_reader.end();
+		it != end;
+		++it
+	)
 	{
-		Entry const entry(entry_reader.item());
+		Entry const entry(*it);
 		*(map_elect[entry.account().id()]) += entry.amount();
 	}
 	using std::swap;

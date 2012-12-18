@@ -163,14 +163,6 @@ PhatbooksTextSession::PhatbooksTextSession():
 		)
 	);
 	m_main_menu->add_item(display_balances_selection);
-	shared_ptr<MenuItem> play_selection
-	(	new MenuItem
-		(	"Play",
-			bind(&PhatbooksTextSession::play, this),
-			true
-		)
-	);
-	m_main_menu->add_item(play_selection);
 	// WARNING end play code
 
 	shared_ptr<MenuItem> quit_item
@@ -843,18 +835,24 @@ void PhatbooksTextSession::display_journal_summaries()
 	cout << "For each ORDINARY journal, here's what's in it. "
 	     << endl;
 	OrdinaryJournalReader oj_reader(database_connection());
-	while (oj_reader.read())
+	for
+	(	OrdinaryJournalReader::const_iterator it =
+			oj_reader.begin(),
+			end = oj_reader.end();
+		it != end;
+		++it
+	)
 	{
-		OrdinaryJournal journal(oj_reader.item());
+		OrdinaryJournal const journal = *it;
 		cout << endl << journal.date() << endl;
 		typedef vector<Entry> EntryVec;
-		EntryVec::const_iterator it = journal.entries().begin();
+		EntryVec::const_iterator jt = journal.entries().begin();
 		EntryVec::const_iterator endpoint = journal.entries().end();
-		for ( ; it != endpoint; ++it)
+		for ( ; jt != endpoint; ++jt)
 		{
-			Decimal const amount = it->amount();
-			cout << it->account().name() << "\t"
-			     << it->comment() << "\t"
+			Decimal const amount = jt->amount();
+			cout << jt->account().name() << "\t"
+			     << jt->comment() << "\t"
 			     << finformat(amount) << endl;
 		}
 		cout << endl;
@@ -878,18 +876,13 @@ namespace
 	template <typename AccountReaderT>
 	void print_account_reader(AccountReaderT& p_reader)
 	{
-		list<Account> accounts;
-		while (p_reader.read())
-		{
-			accounts.push_back(p_reader.item());
-		}
 		vector<string> headings(2, "");
 		vector<alignment::Flag> alignments;
 		alignments.push_back(alignment::left);
 		alignments.push_back(alignment::right);
 		Table<Account> const table
-		(	accounts.begin(),
-			accounts.end(),
+		(	p_reader.begin(),
+			p_reader.end(),
 			make_account_row,
 			headings,
 			alignments
@@ -924,36 +917,6 @@ void PhatbooksTextSession::display_balances()
 }
 
 
-void PhatbooksTextSession::play()
-{
-	cout << endl;
-	cout << "Here is journal number 1035:" << endl;
-	for (int i = 0; i != 2; ++i)
-	{
-		OrdinaryJournal journal(database_connection(), 1035);
-		for
-		(	vector<Entry>::const_iterator it = journal.entries().begin();
-			it != journal.entries().end();
-			++it
-		)
-		{
-			cout << it->account().name() << "\t" << finformat(it->amount())
-			     << endl;
-		}
-		cout << endl;
-		if (i == 0)
-		{
-			cout << "Now let's delete an entry..." << endl;
-			journal.remove_first_entry();
-			journal.save();
-			if (i == 0)
-			{
-				cout << "Now here is the journal:" << endl;
-			}
-		}
-	}
-	return;
-}
 
 // WARNING end play code
 
