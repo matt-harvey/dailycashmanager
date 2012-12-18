@@ -4,9 +4,21 @@
 #include <boost/exception/all.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/regex.hpp>
+#include <iostream>
+#include <istream>
+#include <ostream>
+#include <string>
 
+using boost::function;
 using boost::regex;
 using boost::regex_match;
+using jewel::Decimal;
+using jewel::DecimalFromStringException;
+using jewel::DecimalRangeException;
+using std::cout;
+using std::istream;
+using std::ostream;
+using std::string;
 
 namespace consolixx
 {

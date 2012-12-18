@@ -1,7 +1,7 @@
 #ifndef GUARD_phatbooks_text_session_hpp
 #define GUARD_phatbooks_text_session_hpp
 
-#include "consolixx/consolixx.hpp"
+#include "consolixx/text_session.hpp"
 #include "session.hpp"
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
@@ -212,11 +212,6 @@ private:
 	void wrap_up();
 
 };
-
-
-
-
-
 
 
 }  // namespace phatbooks

@@ -1,6 +1,19 @@
 #ifndef GUARD_table_hpp
 #define GUARD_table_hpp
 
+#include <boost/function.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
+#include <cassert>
+#include <iostream>
+#include <ostream>
+#include <sstream>
+#include <list>
+#include <string>
+#include <vector>
+
+namespace consolixx
+{
 
 namespace alignment
 {
@@ -15,6 +28,7 @@ namespace alignment
  * Class representing a printable table showing data for items of
  * type T.
  */
+template <typename T>
 class Table
 {
 public:
@@ -41,17 +55,17 @@ public:
 	 * the number of elements in p_alignments; or undefined behaviour will
 	 * result.
 	 */
-	template <typename T, typename Iter>
+	template <typename Iter>
 	Table
 	(	Iter p_beg,
 		Iter p_end,
-		boost::function< RowPtr(T const&) > p_make_row,
+		MakeRow p_make_row,
 		Row const& p_headings,
-		std::vector<alignment::Flag> p_alignments,
+		std::vector<alignment::Flag> const& p_alignments,
 		Row::size_type p_padding = 1
 	);
 
-	std::ostream& print_aux(std::ostream& os);
+	void output_aux(std::ostream& os) const;
 
 private:
 	boost::scoped_ptr<RowList> m_data;
@@ -59,44 +73,50 @@ private:
 	std::vector<alignment::Flag> m_alignments;
 	std::vector<std::string::size_type> m_widths;
 	Row::size_type m_padding;
+	Row::size_type m_columns;
 };
 
 
+template <typename T>
+std::ostream&
+operator<<(std::ostream& os, Table<T> const& table);
 
-template <typename T, typename Iter>
-Table::Table
+
+
+template <typename T>
+template <typename Iter>
+Table<T>::Table
 (	Iter p_beg,
 	Iter p_end,
 	MakeRow p_make_row,
 	Row const& p_headings,
-	std::vector<alignment::Flag> const& p_alignments;
+	std::vector<alignment::Flag> const& p_alignments,
 	Row::size_type p_padding
 ):
 	m_data(new RowList),
 	m_headings(p_headings),
 	m_alignments(p_alignments),
-	m_padding(p_padding)
+	m_padding(p_padding),
+	m_columns(p_headings.size())
 {
-	Row::size_type const columns = m_headings.size();
-	m_widths = std::vector(columns, 0);
-	for (Row::size_type i = 0; i != columns; ++i)
+	m_widths = std::vector<std::string::size_type>(m_columns, 0);
+	for (Row::size_type i = 0; i != m_columns; ++i)
 	{
 		m_widths[i] = m_headings[i].size();
 	}
 	for (Iter it = p_beg; it != p_end; ++it)
 	{
 		RowPtr row_ptr = p_make_row(*it);
-		Row::const_iterator row_end = row_ptr->end();
+		std::vector<std::string::size_type>::iterator
+			width_iter = m_widths.begin();
 		for
 		(	Row::const_iterator jt = row_ptr->begin(),
-				Row::const_iterator row_end = row_ptr->end(),
-				std::vector<std::string::size_type>::const_iterator
-					width_iter = m_widths.begin();
+				row_end = row_ptr->end();
 			jt != row_end;
-			++jt
+			++jt, ++width_iter
 		)
 		{
-			*width_iter = (jt->size() > width_iter? jt->size(): width_iter);
+			*width_iter = (jt->size() > *width_iter? jt->size(): *width_iter);
 		}
 		m_data->push_back(row_ptr);
 	}
@@ -104,17 +124,75 @@ Table::Table
 
 
 template <typename T>
+void
+Table<T>::output_aux(std::ostream& os) const
+{
+	using std::string;
+	for (Row::size_type i = 0; i != m_columns; ++i)
+	{
+		os << m_headings[i]
+		   << string(m_widths[i] - m_headings[i].size() + m_padding, ' ');
+	}
+	os << std::endl;
+	for
+	(	RowList::const_iterator it = m_data->begin(),
+			end = m_data->end();
+		it != end;
+		++it
+	)
+	{
+		Row const& row = **it;
+		for (Row::size_type j = 0; j != m_columns; ++j)
+		{
+			string const padder(m_widths[j] + m_padding - row[j].size(), ' ');
+			switch (m_alignments[j])
+			{
+			case alignment::left:
+				os << row[j] << padder;
+				break;		
+			case alignment::right:
+				os << padder << row[j];
+				break;
+			default:
+				assert (false);  // Execution should never reach here
+			}
+		}
+		os << std::endl;
+	}
+	return;
+}
+
+template <typename T>
+std::ostream&
+operator<<(std::ostream& os, Table<T> const& table)
+{
+	if (!os)
+	{
+		return os;
+	}
+	try
+	{
+		std::ostringstream ss;
+		ss.exceptions(os.exceptions());
+		ss.imbue(os.getloc());
+		table.output_aux(ss);
+		if (!ss)
+		{
+			os.setstate(ss.rdstate());
+			return os;
+		}
+		assert (ss);
+		os << ss.str();
+	}
+	catch (std::exception&)
+	{
+		os.setstate(std::ios_base::badbit);
+	}
+	return os;
+}
 
 
-
-
-			
-			
-
-
-
-	
-
+}  // namespace consolixx		
 
 
 

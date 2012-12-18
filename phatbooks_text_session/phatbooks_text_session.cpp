@@ -27,7 +27,9 @@
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include "session.hpp"
-#include "consolixx/consolixx.hpp"
+#include "consolixx/get_input.hpp"
+#include "consolixx/table.hpp"
+#include "consolixx/text_session.hpp"
 #include "sqloxx/database_connection.hpp"
 #include "sqloxx/handle.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
@@ -43,9 +45,11 @@
 #include <boost/regex.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
+#include <list>
 #include <locale>
 #include <map>
 #include <string>
+#include <vector>
 
 // WARNING play code
 #include "sqloxx/sql_statement.hpp"
@@ -62,6 +66,7 @@ using consolixx::get_date_from_user;
 using consolixx::get_user_input;
 using consolixx::get_constrained_user_input;
 using consolixx::get_decimal_from_user;
+using consolixx::Table;
 using consolixx::TextSession;
 using jewel::Decimal;
 using jewel::DecimalRangeException;
@@ -75,9 +80,13 @@ using boost::regex;
 using boost::regex_match;
 using std::cout;
 using std::endl;
+using std::list;
 using std::locale;
 using std::map;
 using std::string;
+using std::vector;
+
+namespace alignment = consolixx::alignment;
 
 
 
@@ -856,17 +865,37 @@ void PhatbooksTextSession::display_journal_summaries()
 
 namespace
 {
+	shared_ptr<vector<string> > make_account_row
+	(	Account const& account
+	)
+	{
+		shared_ptr<vector<string> > ret(new vector<string>);
+		ret->push_back(account.name());
+		ret->push_back(finformat(account.balance()));
+		return ret;
+	}
+
 	template <typename AccountReaderT>
 	void print_account_reader(AccountReaderT& p_reader)
 	{
+		list<Account> accounts;
 		while (p_reader.read())
 		{
-			Account const account(p_reader.item());
-			cout << account.name() << "   "
-				 << finformat(account.balance())
-			     // << account.balance().intval()
-				 << endl;
+			accounts.push_back(p_reader.item());
 		}
+		vector<string> headings(2, "");
+		vector<alignment::Flag> alignments;
+		alignments.push_back(alignment::left);
+		alignments.push_back(alignment::right);
+		Table<Account> const table
+		(	accounts.begin(),
+			accounts.end(),
+			make_account_row,
+			headings,
+			alignments
+		);
+		cout << table;
+		return;
 	}
 }  // End anonymous namespace
 

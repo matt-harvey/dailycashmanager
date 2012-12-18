@@ -1,6 +1,7 @@
 #ifndef GUARD_get_input_hpp
 #define GUARD_get_input_hpp
 
+#include <boost/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/decimal.hpp>
 #include <string>

@@ -6,11 +6,4 @@ namespace consolixx
 
 
 
-
-
-
-
-
-
-
 }  // namespace consolixx
