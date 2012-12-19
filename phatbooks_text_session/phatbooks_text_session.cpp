@@ -48,6 +48,7 @@
 #include <list>
 #include <locale>
 #include <map>
+#include <sstream>  // for ostringstream
 #include <string>
 #include <vector>
 
@@ -83,6 +84,7 @@ using std::endl;
 using std::list;
 using std::locale;
 using std::map;
+using std::ostringstream;
 using std::string;
 using std::vector;
 
@@ -232,6 +234,22 @@ int PhatbooksTextSession::do_run(string const& filename)
 	cout << "Welcome to " << application_name() << "!" << endl;
 
 	database_connection().setup();
+
+	/*
+	// WARNING Hack
+	// This causes entries to be loaded.
+	OrdinaryEntryReader oe_reader(database_connection());
+	ostringstream dummy_stream;
+	for
+	(	OrdinaryEntryReader::const_iterator it = oe_reader.begin();
+		it != oe_reader.end();
+		++it
+	)
+	{
+		dummy_stream << it->amount();
+	}
+	*/
+	
 	m_main_menu->present_to_user();	
 	return 0;
 }
@@ -876,7 +894,9 @@ namespace
 	template <typename AccountReaderT>
 	void print_account_reader(AccountReaderT& p_reader)
 	{
-		vector<string> headings(2, "");
+		vector<string> headings;
+		headings.push_back("ACCOUNT");
+		headings.push_back("BALANCE ");
 		vector<alignment::Flag> alignments;
 		alignments.push_back(alignment::left);
 		alignments.push_back(alignment::right);

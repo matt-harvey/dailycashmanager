@@ -1,4 +1,5 @@
 #include "phatbooks_database_connection.hpp"
+#include "entry_reader.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "session.hpp"
 #include "sqloxx/sqloxx_exceptions.hpp"
@@ -30,6 +31,7 @@ Session::run(std::string const& p_filename)
 	{
 		throw InvalidFilename("Filename is empty string.");
 	}
+	// Load ordinary entries by constructing a reader
 	return do_run(p_filename);
 }
 

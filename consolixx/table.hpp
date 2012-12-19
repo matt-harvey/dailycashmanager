@@ -69,7 +69,7 @@ public:
 
 private:
 	boost::scoped_ptr<RowList> m_data;
-	Row m_headings;
+	bool m_has_headings;
 	std::vector<alignment::Flag> m_alignments;
 	std::vector<std::string::size_type> m_widths;
 	Row::size_type m_padding;
@@ -94,7 +94,7 @@ Table<T>::Table
 	Row::size_type p_padding
 ):
 	m_data(new RowList),
-	m_headings(p_headings),
+	m_has_headings(false),
 	m_alignments(p_alignments),
 	m_padding(p_padding),
 	m_columns(p_headings.size())
@@ -102,7 +102,21 @@ Table<T>::Table
 	m_widths = std::vector<std::string::size_type>(m_columns, 0);
 	for (Row::size_type i = 0; i != m_columns; ++i)
 	{
-		m_widths[i] = m_headings[i].size();
+		std::string::size_type const heading_size =
+			p_headings[i].size();
+		if (heading_size != 0)
+		{
+			assert (heading_size > 0);
+			m_has_headings = true;
+		}
+		m_widths[i] = heading_size;
+	}
+	if (m_has_headings)
+	{
+		RowPtr headings_ptr(new Row(p_headings));
+		m_data->push_back(headings_ptr);
+		RowPtr blank_row_ptr(new Row(m_columns, ""));
+		m_data->push_back(blank_row_ptr);
 	}
 	for (Iter it = p_beg; it != p_end; ++it)
 	{
@@ -127,16 +141,10 @@ template <typename T>
 void
 Table<T>::output_aux(std::ostream& os) const
 {
+	// TODO Factor out the repeated code here
 	using std::string;
-	for (Row::size_type i = 0; i != m_columns; ++i)
-	{
-		os << m_headings[i]
-		   << string(m_widths[i] - m_headings[i].size() + m_padding, ' ');
-	}
-	os << std::endl;
 	for
-	(	RowList::const_iterator it = m_data->begin(),
-			end = m_data->end();
+	(	RowList::const_iterator it = m_data->begin(), end = m_data->end();
 		it != end;
 		++it
 	)
