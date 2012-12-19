@@ -24,6 +24,9 @@ class Handle
 {
 public:
 
+	static std::string primary_key_name();
+	static std::string primary_table_name();
+
 	/**
 	 * Preconditions:\n
 	 * the object must have been managed
@@ -115,6 +118,19 @@ private:
 };
 
 
+template <typename T>
+std::string
+Handle<T>::primary_key_name()
+{
+	return T::primary_key_name();
+}
+
+template <typename T>
+std::string
+Handle<T>::primary_table_name()
+{
+	return T::primary_table_name();
+}
 
 template <typename T>
 Handle<T>::~Handle()

@@ -15,21 +15,19 @@ namespace sqloxx
 namespace tests
 {
 
-// TODO Uncomment and get these tests to work
 
-/*
 // Our base Reader class for reading DerivedPO
 typedef
-	Reader<DerivedPO, DerivedDatabaseConnection>
-	DerivedPOReader;
+	Reader< Handle<DerivedPO> , DerivedDatabaseConnection >
+	DerivedPOHandleReader;
 
 // A derived Reader class
 class FiveReader:
-	public DerivedPOReader
+	public DerivedPOHandleReader
 {
 public:
 	FiveReader(DerivedDatabaseConnection& p_database_connection):
-		DerivedPOReader
+		DerivedPOHandleReader
 		(	p_database_connection,
 			"select derived_po_id from derived_pos where x = 5"
 		)
@@ -69,24 +67,36 @@ TEST_FIXTURE
 )
 {
 	setup_reader_test(*pdbc);
-	DerivedPOReader reader1(*pdbc);
+	DerivedPOHandleReader reader1(*pdbc);
+	CHECK_EQUAL(reader1.size(), 5);
 	int i = 0;
-	while (reader1.read()) ++i;
+	for
+	(	DerivedPOHandleReader::const_iterator it = reader1.begin();
+		it != reader1.end();
+		++it, ++i
+	)
+	{
+	}
 	CHECK_EQUAL(i, 5);
-	DerivedPOReader reader2(*pdbc);
+	DerivedPOHandleReader reader2(*pdbc);
 	int max = 0;
-	while (reader2.read())
+	for
+	(	DerivedPOHandleReader::iterator it = reader2.begin();
+		it != reader2.end();
+		++it
+	)
 	{
 		max =
-		(	reader2.item()->x() > max?
-			reader2.item()->x():
+		(	(*it)->x() > max?
+			(*it)->x():
 			max
 		);
 	}
 	CHECK_EQUAL(max, 10);
 }
 
-
+#if 0
+// TODO Uncomment and get these tests to work
 TEST_FIXTURE
 (	DerivedPOFixture,
 	test_reader_constructor_and_basic_functioning_2
@@ -106,7 +116,7 @@ TEST_FIXTURE
 )
 {
 	setup_reader_test(*pdbc);
-	DerivedPOReader reader1
+	DerivedPOHandleReader reader1
 	(	*pdbc,
 		"select derived_po_id from derived_pos where y > 14.2"
 	);
@@ -119,34 +129,34 @@ TEST_FIXTURE
 TEST_FIXTURE(DerivedPOFixture, test_reader_constructor_exceptions)
 {
 	DerivedDatabaseConnection invalid_dbc;
-	CHECK_THROW(DerivedPOReader reader1(invalid_dbc), InvalidConnection);
+	CHECK_THROW(DerivedPOHandleReader reader1(invalid_dbc), InvalidConnection);
 	CHECK_THROW(FiveReader reader2(invalid_dbc), InvalidConnection);
 
 	setup_reader_test(*pdbc);
 
 	CHECK_THROW
-	(	DerivedPOReader reader3
+	(	DerivedPOHandleReader reader3
 		(	*pdbc,
 			"qselect unsyntactical gobbledigook from jbooble"
 		),
 		SQLiteException
 	);
 	CHECK_THROW
-	(	DerivedPOReader reader4
+	(	DerivedPOHandleReader reader4
 		(	*pdbc,
 			"select nonexistent_column from derived_pos"
 		),
 		SQLiteException
 	);
 	CHECK_THROW
-	(	DerivedPOReader reader5
+	(	DerivedPOHandleReader reader5
 		(	*pdbc,
 			"select derived_po_id from nonexistent_table"
 		),
 		SQLiteException
 	);
 	CHECK_THROW
-	(	DerivedPOReader reader6
+	(	DerivedPOHandleReader reader6
 		(	*pdbc,
 			"select derived_po_id from derived_pos; "
 			"select derived_po_id_from derived_pos where x = 5"
@@ -154,7 +164,7 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_constructor_exceptions)
 		TooManyStatements
 	);
 	CHECK_THROW
-	(	DerivedPOReader reader7
+	(	DerivedPOHandleReader reader7
 		(	*pdbc,
 			"select derived_po_id from derived_pos; um"
 		),
@@ -167,7 +177,7 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_read)
 {
 	// Basic functioning
 	setup_reader_test(*pdbc);
-	DerivedPOReader reader1(*pdbc);
+	DerivedPOHandleReader reader1(*pdbc);
 
 	int i = 0;
 	while (reader1.read()) ++i;
@@ -188,7 +198,7 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_read)
 TEST_FIXTURE(DerivedPOFixture, test_reader_item)
 {
 	setup_reader_test(*pdbc);
-	DerivedPOReader reader1
+	DerivedPOHandleReader reader1
 	(	*pdbc,
 		"select derived_po_id from derived_pos order by derived_po_id"
 	);
@@ -198,7 +208,7 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_item)
 	}
 	CHECK_THROW(reader1.item(), InvalidReader);
 
-	DerivedPOReader reader2(*pdbc);
+	DerivedPOHandleReader reader2(*pdbc);
 	while (reader2.read())
 	{
 		Handle<DerivedPO> dpo2(reader2.item());
@@ -233,8 +243,9 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_item)
 	
 	CHECK_THROW(reader2.item(), InvalidReader);
 }
-*/
+#endif // if 0
 
 
 }  // namespace tests
 }  // namespace sqloxx
+

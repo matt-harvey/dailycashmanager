@@ -26,45 +26,17 @@ namespace sqloxx
  * may be deleted, added or modified between when we create the Reader
  * and when we iterate over it.
  *
- * Class template each instantiation of which represents a class
- * of iterator-like "reader" objects that wrap an SQL "select" statement,
+ * Class template each instantiation of which represents a container of
+ * objects loaded from a database by an SQL "select" statement,
  * where the field being selected is the primary key field for type T as
- * it is stored in the database. By calling the item() method of
- * a Reader, with suitable parameters, an instance of T is returned.
- * Because the Reader selects
- * from a table that is physically in the database, the implementation
- * of Reader can use a fast, unchecked function to
- * get the instance, in the knowledge that the Id is valid as it has
- * just been read from the physical database. Note, however, that
- * if an object is deleted while still being referred to by a Reader,
- * undefined behaviour may result.
+ * it is stored in the database.
  *
- * Reader classes also provide a higher-level, cleaner interface for
+ * Reader classes provide a higher-level, cleaner interface for
  * client code wishing to traverse a database table without having to
  * use SQL directly.
  * Each instantiation of Reader represents wraps a particular "select"
  * statement that is used to traverse a table or view in the database.
  * 
- * Reader deliberately does \e not conform to STL-like iterator conventions.
- * While this has the disadvantages that come with eschewing convention,
- * it does provide
- * a syntactically simple way of traversing all the persisted objects of
- * a given type, without having first to declare any kind of container
- * object.
- *
- * Thus, with a Reader, we can generally traverse all the T instances in
- * the database by doing this:
- *
- * <tt>
- * Reader<T, Connection> reader(database_connection);\n
- * while (reader.read())\n
- * {\n
- * 		reader.item().some_method_of_T();\n
- * }\n
- * </tt>
- *
- * There is no need to first declare a "Table<T>" or the like.
- *
  * Client code may use the Reader class in one of two ways:\n
  * (1) Use the Reader class as is, instantiating for a particular
  * type T and database connection type Connection. A Reader can be
@@ -78,14 +50,11 @@ namespace sqloxx
  * that class.
  *
  * Parameter templates:\n
- * T should be a class derived from PersistentObject<T, Connection>
- * (see separate documentation for PersistentObject), for which
- * its primary key is of type sqloxx::Id, and which has a
- * constructor that takes a Connection& parameter,
- * an Id parameter and a char parameter (for example, an
- * instantiation of the sqloxx::Handle
- * template would meet this requirement) (see constructor
- * documentation for more details); and\n
+ * T should be a class
+ * which is persisted in the database with a 
+ * primary key is of type sqloxx::Id, and which has a
+ * static function of the form:\n
+ * T create_unchecked(Connection, sqloxx::Id).
  * Connection should be a class inheriting from DatabaseConnection,
  * for which identity_map<T, Connection>() is defined to return
  * a reference to the IdentityMap for that type T for that
@@ -119,7 +88,7 @@ public:
 	 * @param p_selector SQL statement string that will select records
 	 * representing instances of type T, from the database.
 	 * The default string can be seen in the function signature. If a
-	 * different string is provided, ti should be such that it selects
+	 * different string is provided, it should be such that it selects
 	 * only a single column, such that that column is the primary
 	 * key for class T, from which instances of Handle<T> can be
 	 * constructed.
@@ -154,10 +123,30 @@ public:
 			" from " + T::primary_table_name()
 		)
 	);
-	
+
+	/**
+	 * @todo Document and test.
+	 */
+	size_type size() const;
+
+	/**
+	 * @todo Document and test.
+	 */
 	const_iterator begin() const;
+
+	/**
+	 * @todo Document and test.
+	 */
 	iterator begin();
+
+	/**
+	 * @todo Document and test.
+	 */
 	const_iterator end() const;
+
+	/**
+	 * @todo Document and test.
+	 */
 	iterator end();
 
 private:	
@@ -266,6 +255,15 @@ Reader<T, Connection>::Reader
 
 
 template <typename T, typename Connection>
+inline
+typename Reader<T, Connection>::size_type
+Reader<T, Connection>::size() const
+{
+	return m_container.size();
+}
+
+
+template <typename T, typename Connection>
 typename Reader<T, Connection>::const_iterator
 Reader<T, Connection>::begin() const
 {
@@ -274,6 +272,7 @@ Reader<T, Connection>::begin() const
 
 
 template <typename T, typename Connection>
+inline
 typename Reader<T, Connection>::iterator
 Reader<T, Connection>::begin()
 {
@@ -282,6 +281,7 @@ Reader<T, Connection>::begin()
 
 
 template <typename T, typename Connection>
+inline
 typename Reader<T, Connection>::const_iterator
 Reader<T, Connection>::end() const
 {
@@ -289,6 +289,7 @@ Reader<T, Connection>::end() const
 }
 
 template <typename T, typename Connection>
+inline
 typename Reader<T, Connection>::iterator
 Reader<T, Connection>::end()
 {
@@ -296,9 +297,7 @@ Reader<T, Connection>::end()
 }
 
 
-
 template <typename T, typename Connection>
-inline
 bool
 Reader<T, Connection>::read()
 {

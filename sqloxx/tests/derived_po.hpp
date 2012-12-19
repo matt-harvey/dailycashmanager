@@ -88,8 +88,6 @@ DerivedDatabaseConnection::identity_map<DerivedPO>()
 
 
 }  // namespace tests
-
-
 }  // namespace sqloxx
 
 /// @endcond
