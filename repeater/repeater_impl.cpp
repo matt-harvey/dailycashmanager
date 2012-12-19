@@ -151,6 +151,35 @@ RepeaterImpl::next_date()
 	return boost_date_from_julian_int(value(m_data->next_date));
 }
 
+boost::gregorian::date
+RepeaterImpl::next_date(unsigned short n)
+{
+	load();
+	namespace gregorian = boost::gregorian;
+	using gregorian::date;
+	int const units = value(m_data->interval_units);
+	date ret = boost_date_from_julian_int(value(m_data->next_date));
+	switch (value(m_data->interval_type))
+	{
+	case interval_type::days:
+		for ( ; n != 0; --n) ret += gregorian::date_duration(units);
+		break;
+	case interval_type::weeks:
+		for ( ; n != 0; --n) ret += gregorian::weeks(units);
+		break;
+	case interval_type::months:
+		for ( ; n != 0; --n) ret += gregorian::months(units);
+		break;
+	case interval_type::month_ends:
+		assert ( (next_date() + gregorian::date_duration(1)).day() == 1 );
+		for ( ; n != 0; --n) ret += gregorian::months(units);
+		break;
+	default:
+		assert (false);
+	}
+	return ret;
+}
+
 
 Journal::Id
 RepeaterImpl::journal_id()

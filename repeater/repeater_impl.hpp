@@ -45,6 +45,11 @@ namespace phatbooks
  *
  * @todo Write firing method.
  *
+ * @todo Prevent next_date from being set to anything other than the last
+ * day of the month in the event that the interval type is month_ends; and
+ * prevent next_date from being set later than the 27th in the event the
+ * interval_type is months (as opposed to month_ends).
+ *
  * @todo Write a method somewhere in either the session-level code, or in
  * PhatbooksDatabaseConnection, that loads RepeaterImpl objects from the database,
  * and inspects them all and fires those that are due.
@@ -107,6 +112,16 @@ public:
 	int interval_units();
 
 	boost::gregorian::date next_date();
+
+	/**
+	 * @param n the number of leaps into the future beyond the the next date,
+	 * leaping by interval_units() intervals each time, where each interval
+	 * is given by interval_type().
+	 * If n is 0 this is equivalent to calling next_date()
+	 *
+	 * @todo Test
+	 */
+	boost::gregorian::date next_date(unsigned short n);
 
 	Journal::Id journal_id();
 
