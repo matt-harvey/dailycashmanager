@@ -65,10 +65,18 @@ public:
 	 * underlying instance of T is too large to be safely counted
 	 * by the type PersistentObject<T, Connection>::HandleCounter.
 	 *
+	 * Note it is necessary for both const& and non-const& forms
+	 * to be defined here, otherwise the compiler confuses it
+	 * with the templated single-parameter constructor. (OK,
+	 * possibly the const& form is never getting called. But
+	 * we want to make certain the compiler doesn't create
+	 * an undesirable version for us...)
+	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	Handle(Handle const& rhs);
-	
+	Handle(Handle& rhs);
+
 	/**
 	 * @throws sqloxx::OverflowException in the extremely unlikely
 	 * event that the number of Handle instances pointing to the
@@ -140,14 +148,6 @@ Handle<T>::~Handle()
 
 
 template <typename T>
-Handle<T>::Handle(Handle const& rhs)
-{
-	m_pointer = rhs.m_pointer;
-	m_pointer->notify_handle_copy_construction();
-}
-
-
-template <typename T>
 template <typename Connection>
 Handle<T>::Handle(Connection& p_connection):
 	m_pointer(0)
@@ -157,7 +157,6 @@ Handle<T>::Handle(Connection& p_connection):
 	);
 	m_pointer->notify_handle_construction();
 }
-
 
 template <typename T>
 template <typename Connection>
@@ -183,6 +182,22 @@ Handle<T>::create_unchecked(Connection& p_connection, Id p_id)
 			p_id
 		)
 	);
+}
+
+
+template <typename T>
+Handle<T>::Handle(Handle const& rhs):
+	m_pointer(rhs.m_pointer)
+{
+	m_pointer->notify_handle_copy_construction();
+}
+
+
+template <typename T>
+Handle<T>::Handle(Handle& rhs):
+	m_pointer(rhs.m_pointer)
+{
+	m_pointer->notify_handle_copy_construction();
 }
 
 

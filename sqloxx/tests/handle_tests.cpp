@@ -11,20 +11,19 @@ namespace sqloxx
 namespace tests
 {
 
+
 TEST_FIXTURE(DerivedPOFixture, handle_copy_constructor_and_indirection)
 {
 	Handle<DerivedPO> dpo1(*pdbc);
 	dpo1->set_x(-9);
-	// TODO Figure out why in the next line if I use the copy constructor
-	// it won't compile.
-	Handle<DerivedPO> dpo2 = dpo1;
+	Handle<DerivedPO> dpo2(dpo1);
 	dpo2->set_y(102928);
 	CHECK_EQUAL(dpo2->x(), -9);
 	dpo2->save();
 	CHECK_EQUAL(dpo1->id(), 1);
 	CHECK_EQUAL(dpo2->id(), dpo1->id());
 	CHECK_EQUAL(dpo1->y(), 102928);
-	Handle<DerivedPO> dpo3 = dpo1;
+	Handle<DerivedPO> dpo3(dpo1);
 	CHECK_EQUAL(dpo3->id(), 1);
 	CHECK_EQUAL(dpo3->y(), 102928);
 	CHECK_EQUAL(dpo3->x(), dpo1->x());
