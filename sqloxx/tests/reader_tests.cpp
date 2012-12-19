@@ -94,9 +94,6 @@ TEST_FIXTURE
 	}
 	CHECK_EQUAL(max, 10);
 }
-
-#if 0
-// TODO Uncomment and get these tests to work
 TEST_FIXTURE
 (	DerivedPOFixture,
 	test_reader_constructor_and_basic_functioning_2
@@ -104,11 +101,8 @@ TEST_FIXTURE
 {
 	setup_reader_test(*pdbc);
 	FiveReader reader1(*pdbc);
-	int i = 0;
-	while (reader1.read()) ++i;
-	CHECK_EQUAL(i, 2);
+	CHECK_EQUAL(reader1.size(), 2);
 }
-
 
 TEST_FIXTURE
 (	DerivedPOFixture,
@@ -120,10 +114,10 @@ TEST_FIXTURE
 	(	*pdbc,
 		"select derived_po_id from derived_pos where y > 14.2"
 	);
-	int i = 0;
-	while (reader1.read()) ++i;
-	CHECK_EQUAL(i, 3);
+	CHECK_EQUAL(reader1.size(), 3);
 }
+
+
 
 
 TEST_FIXTURE(DerivedPOFixture, test_reader_constructor_exceptions)
@@ -173,45 +167,31 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_constructor_exceptions)
 }
 
 
-TEST_FIXTURE(DerivedPOFixture, test_reader_read)
-{
-	// Basic functioning
-	setup_reader_test(*pdbc);
-	DerivedPOHandleReader reader1(*pdbc);
-
-	int i = 0;
-	while (reader1.read()) ++i;
-	CHECK_EQUAL(i, 5);
-	
-	// If we keep reading it goes back to the beginning and just
-	// keeps cycling round.
-	CHECK(reader1.read());
-	CHECK(reader1.read());
-	CHECK(reader1.read());
-	CHECK(reader1.read());
-	CHECK(reader1.read());
-	CHECK(!reader1.read()); // At end
-	CHECK(reader1.read());  // Back at beginning
-	CHECK(reader1.read());
-}
-
-TEST_FIXTURE(DerivedPOFixture, test_reader_item)
+TEST_FIXTURE(DerivedPOFixture, test_reader_deref)
 {
 	setup_reader_test(*pdbc);
 	DerivedPOHandleReader reader1
 	(	*pdbc,
 		"select derived_po_id from derived_pos order by derived_po_id"
 	);
-	for (int i = 1; reader1.read(); ++i)
+	int i = 1;
+	for
+	(	DerivedPOHandleReader::iterator it = reader1.begin();
+		it != reader1.end();
+		++it, ++i	
+	)
 	{
-		CHECK_EQUAL(reader1.item()->id(), i);
+		CHECK_EQUAL((*it)->id(), i);
 	}
-	CHECK_THROW(reader1.item(), InvalidReader);
 
 	DerivedPOHandleReader reader2(*pdbc);
-	while (reader2.read())
+	for
+	(	DerivedPOHandleReader::iterator it = reader2.begin();
+		it != reader2.end();
+		++it
+	)
 	{
-		Handle<DerivedPO> dpo2(reader2.item());
+		Handle<DerivedPO> dpo2 = *it;  // TODO Why can't I use copy constructor here?
 		int const id = dpo2->id();
 		switch (id)
 		{
@@ -240,10 +220,7 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_item)
 			break;
 		}
 	}
-	
-	CHECK_THROW(reader2.item(), InvalidReader);
 }
-#endif // if 0
 
 
 }  // namespace tests
