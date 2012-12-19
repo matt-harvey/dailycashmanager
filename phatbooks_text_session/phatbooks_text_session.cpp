@@ -498,6 +498,8 @@ void PhatbooksTextSession::elicit_journal()
 	        "leave blank): ";
 	journal.set_comment(get_user_input());
 
+	cout << endl;
+
 	// Set certain "prompt words"
 	string account_prompt;
 	string amount_prompt;
@@ -590,6 +592,8 @@ void PhatbooksTextSession::elicit_journal()
 
 	// Add primary entry to journal
 	journal.add_entry(primary_entry);
+
+	cout << endl;
 
 	// Secondary entry
 	Entry secondary_entry(database_connection());

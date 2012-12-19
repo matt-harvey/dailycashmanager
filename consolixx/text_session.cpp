@@ -148,6 +148,7 @@ TextSession::Menu::present_to_user()
 		{
 			cout << "\nEnter an option from the above menu: ";
 			string input = get_user_input();
+			cout << endl;
 
 			// See whether input corresponds to any of the item labels,
 			// and invoke the item if it does.
