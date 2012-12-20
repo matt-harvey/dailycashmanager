@@ -145,20 +145,17 @@ RepeaterImpl::interval_units()
 
 
 boost::gregorian::date
-RepeaterImpl::next_date()
-{
-	load();
-	return boost_date_from_julian_int(value(m_data->next_date));
-}
-
-boost::gregorian::date
 RepeaterImpl::next_date(unsigned short n)
 {
 	load();
 	namespace gregorian = boost::gregorian;
 	using gregorian::date;
-	int const units = value(m_data->interval_units);
 	date ret = boost_date_from_julian_int(value(m_data->next_date));
+	if (n == 0)
+	{
+		return ret;
+	}
+	int const units = value(m_data->interval_units);
 	switch (value(m_data->interval_type))
 	{
 	case interval_type::days:

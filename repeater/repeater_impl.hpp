@@ -111,17 +111,15 @@ public:
 
 	int interval_units();
 
-	boost::gregorian::date next_date();
-
 	/**
 	 * @param n the number of leaps into the future beyond the the next date,
 	 * leaping by interval_units() intervals each time, where each interval
-	 * is given by interval_type().
-	 * If n is 0 this is equivalent to calling next_date()
+	 * is given by interval_type(). If n is 0 then it is simply the next
+	 * firing date that is returned.
 	 *
 	 * @todo Test
 	 */
-	boost::gregorian::date next_date(unsigned short n);
+	boost::gregorian::date next_date(unsigned short n = 0);
 
 	Journal::Id journal_id();
 
