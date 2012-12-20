@@ -3,7 +3,7 @@
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include <sqloxx/sql_statement.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
 #include <iostream>  // for debug logging

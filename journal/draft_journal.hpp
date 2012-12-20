@@ -2,8 +2,8 @@
 #define GUARD_draft_journal_hpp
 
 #include "draft_journal_impl.hpp"
-#include "sqloxx/general_typedefs.hpp"
-#include "sqloxx/handle.hpp"
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>

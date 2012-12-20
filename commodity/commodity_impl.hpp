@@ -13,8 +13,8 @@
 
 
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/identity_map.hpp"
-#include "sqloxx/persistent_object.hpp"
+#include <sqloxx/identity_map.hpp>
+#include <sqloxx/persistent_object.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/scoped_ptr.hpp>

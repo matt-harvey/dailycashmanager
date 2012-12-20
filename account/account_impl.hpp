@@ -15,9 +15,9 @@
 #include "account_type.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/general_typedefs.hpp"
-#include "sqloxx/identity_map.hpp"
-#include "sqloxx/persistent_object.hpp"
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/identity_map.hpp>
+#include <sqloxx/persistent_object.hpp>
 #include <boost/scoped_ptr.hpp>	
 #include <algorithm>
 #include <string>

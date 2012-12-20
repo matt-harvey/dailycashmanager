@@ -1,7 +1,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include "repeater_reader.hpp"
-#include "sqloxx/reader.hpp"
+#include <sqloxx/reader.hpp>
 
 namespace phatbooks
 {

@@ -15,10 +15,10 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/database_connection.hpp"
-#include "sqloxx/general_typedefs.hpp"
-#include "sqloxx/handle.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include <sqloxx/database_connection.hpp>
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>

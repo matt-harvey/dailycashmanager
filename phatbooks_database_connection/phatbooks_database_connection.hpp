@@ -13,8 +13,8 @@
 
 
 #include "account_type.hpp"
-#include "sqloxx/database_connection.hpp"
-#include "sqloxx/general_typedefs.hpp"
+#include <sqloxx/database_connection.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <boost/bimap.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>

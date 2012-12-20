@@ -2,8 +2,8 @@
 #define GUARD_entry_hpp
 
 #include "entry_impl.hpp"
-#include "sqloxx/general_typedefs.hpp"
-#include "sqloxx/handle.hpp"
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>

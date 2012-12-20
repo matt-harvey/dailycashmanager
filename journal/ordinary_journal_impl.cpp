@@ -3,10 +3,10 @@
 #include "date.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/database_connection.hpp"
-#include "sqloxx/handle.hpp"
-#include "sqloxx/persistent_object.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include <sqloxx/database_connection.hpp>
+#include <sqloxx/handle.hpp>
+#include <sqloxx/persistent_object.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>

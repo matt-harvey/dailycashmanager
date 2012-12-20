@@ -16,8 +16,8 @@
 #include "commodity.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/next_auto_key.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include <sqloxx/next_auto_key.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>

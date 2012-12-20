@@ -1,10 +1,10 @@
 #include "balance_cache.hpp"
 #include "commodity_impl.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/identity_map.hpp"
-#include "sqloxx/persistent_object.hpp"
-#include "sqloxx/sqloxx_exceptions.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include <sqloxx/identity_map.hpp>
+#include <sqloxx/persistent_object.hpp>
+#include <sqloxx/sqloxx_exceptions.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>

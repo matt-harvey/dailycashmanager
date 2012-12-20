@@ -11,9 +11,9 @@
 #include "account_impl.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/general_typedefs.hpp"
-#include "sqloxx/identity_map.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/identity_map.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>

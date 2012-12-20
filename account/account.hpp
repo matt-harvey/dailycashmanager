@@ -4,8 +4,8 @@
 #include "account_impl.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
-#include "sqloxx/general_typedefs.hpp"
-#include "sqloxx/handle.hpp"
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
 #include <vector>

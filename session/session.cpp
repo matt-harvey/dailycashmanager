@@ -2,7 +2,7 @@
 #include "entry_reader.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "session.hpp"
-#include "sqloxx/sqloxx_exceptions.hpp"
+#include <sqloxx/sqloxx_exceptions.hpp>
 #include <string>
 
 using sqloxx::InvalidFilename;

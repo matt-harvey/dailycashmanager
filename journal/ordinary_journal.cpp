@@ -3,7 +3,7 @@
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/handle.hpp"
+#include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 #include <vector>

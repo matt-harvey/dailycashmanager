@@ -1,6 +1,6 @@
 #include "entry_reader.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/reader.hpp"
+#include <sqloxx/reader.hpp>
 
 
 namespace phatbooks

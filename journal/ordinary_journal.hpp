@@ -2,8 +2,8 @@
 #define GUARD_ordinary_journal_hpp
 
 #include "ordinary_journal_impl.hpp"
-#include "sqloxx/general_typedefs.hpp"
-#include "sqloxx/handle.hpp"
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <string>
 

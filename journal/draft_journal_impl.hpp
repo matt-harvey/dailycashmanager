@@ -3,7 +3,7 @@
 
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/persistent_object.hpp"
+#include <sqloxx/persistent_object.hpp>
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <string>

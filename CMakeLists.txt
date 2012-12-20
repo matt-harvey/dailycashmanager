@@ -2,8 +2,6 @@ cmake_minimum_required (VERSION 2.6)
 
 project (main)
 
-project (test)
-
 include_directories (/home/matthew/lib
 					 /home/matthew/Workbench/versioned/phatbooks
                      /home/matthew/Workbench/versioned/phatbooks/account
@@ -18,7 +16,8 @@ include_directories (/home/matthew/lib
                      /home/matthew/Workbench/versioned/phatbooks/repeater
 					 /home/matthew/Workbench/versioned/phatbooks/session)
 
-link_directories (/home/matthew/lib/jewel)
+link_directories (/home/matthew/lib/jewel
+                  /home/matthew/lib/sqloxx)
 
 set (main_files
 	 account/account.cpp
@@ -44,11 +43,6 @@ set (main_files
 	 journal/ordinary_journal_impl.cpp
 	 journal/ordinary_journal_reader.cpp
 	 session/session.cpp
-	 sqloxx/database_connection.cpp
-	 sqloxx/database_transaction.cpp
-	 sqloxx/sql_statement.cpp
-	 sqloxx/detail/sqlite_dbconn.cpp
-	 sqloxx/detail/sql_statement_impl.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
 	 phatbooks_text_session/phatbooks_text_session.cpp
 	 repeater/repeater.cpp
@@ -56,27 +50,6 @@ set (main_files
 	 repeater/repeater_reader.cpp)
 
 add_executable (main main.cpp ${main_files})
-
-set (test_files
-     test.cpp
-	 sqloxx/database_connection.cpp
-	 sqloxx/database_transaction.cpp
-	 sqloxx/sql_statement.cpp
-	 sqloxx/detail/sqlite_dbconn.cpp
-	 sqloxx/detail/sql_statement_impl.cpp
-     sqloxx/tests/database_connection_tests.cpp
-	 sqloxx/tests/derived_po.cpp
-	 sqloxx/tests/persistent_object_tests.cpp
-	 sqloxx/tests/sql_statement_tests.cpp
-	 sqloxx/tests/sqloxx_tests_common.cpp
-	 sqloxx/tests/atomicity_test.cpp
-	 sqloxx/tests/database_transaction_tests.cpp
-	 sqloxx/tests/handle_tests.cpp
-	 sqloxx/tests/identity_map_tests.cpp
-	 sqloxx/tests/next_auto_key_tests.cpp
-	 sqloxx/tests/reader_tests.cpp)
-
-add_executable (test ${test_files})
 
 set (libraries
      boost_date_time
@@ -86,11 +59,10 @@ set (libraries
 	 boost_system
 	 unittest++
 	 jewel
-	 sqlite3)
+	 sqlite3
+	 sqloxx)
 
 target_link_libraries (main ${libraries})
-
-target_link_libraries (test ${libraries})
 					
 
 

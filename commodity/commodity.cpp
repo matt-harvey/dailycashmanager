@@ -1,7 +1,7 @@
 #include "commodity.hpp"
 #include "commodity_impl.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/handle.hpp"
+#include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>

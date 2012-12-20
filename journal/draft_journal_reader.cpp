@@ -1,7 +1,7 @@
 #include "draft_journal_reader.hpp"
 #include "draft_journal.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "sqloxx/reader.hpp"
+#include <sqloxx/reader.hpp>
 
 
 namespace phatbooks

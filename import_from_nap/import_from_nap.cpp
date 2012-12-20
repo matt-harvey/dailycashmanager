@@ -10,7 +10,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
-#include "sqloxx/database_transaction.hpp"
+#include <sqloxx/database_transaction.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>

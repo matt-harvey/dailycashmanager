@@ -27,11 +27,11 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "repeater.hpp"
-#include "sqloxx/database_connection.hpp"
-#include "sqloxx/database_transaction.hpp"
-#include "sqloxx/identity_map.hpp"
-#include "sqloxx/sqloxx_exceptions.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include <sqloxx/database_connection.hpp>
+#include <sqloxx/database_transaction.hpp>
+#include <sqloxx/identity_map.hpp>
+#include <sqloxx/sqloxx_exceptions.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <sqlite3.h>
 #include <stdexcept>
 #include <boost/bimap.hpp>

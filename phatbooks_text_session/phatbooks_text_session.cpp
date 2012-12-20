@@ -30,9 +30,9 @@
 #include "consolixx/get_input.hpp"
 #include "consolixx/table.hpp"
 #include "consolixx/text_session.hpp"
-#include "sqloxx/database_connection.hpp"
-#include "sqloxx/handle.hpp"
-#include "sqloxx/sqloxx_exceptions.hpp"
+#include <sqloxx/database_connection.hpp>
+#include <sqloxx/handle.hpp>
+#include <sqloxx/sqloxx_exceptions.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
