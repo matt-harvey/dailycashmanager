@@ -22,6 +22,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
+#include <vector>
 
 
 namespace phatbooks
@@ -118,6 +119,19 @@ public:
 	 * firing date that is returned.
 	 */
 	boost::gregorian::date next_date(unsigned short n);
+
+	/**
+	 * Find the list of firings that are due to occur for this RepeaterImpl
+	 * up till and including \e limit.
+	 *
+	 * @param output a vector into which the list of firings will be
+	 * placed in chronological order from soonest to latest. The
+	 * vector will be emptied if it isn't already.
+	 */
+	void firings_till
+	(	boost::gregorian::date const& limit,
+		std::vector<boost::gregorian::date>& output
+	);
 
 	Journal::Id journal_id();
 

@@ -23,6 +23,9 @@
 #include <jewel/optional.hpp>
 #include <algorithm>
 #include <string>
+#include <vector>
+
+namespace gregorian = boost::gregorian;
 
 using sqloxx::SQLStatement;
 using boost::numeric_cast;
@@ -30,6 +33,7 @@ using boost::shared_ptr;
 using jewel::clear;
 using jewel::value;
 using std::string;
+using std::vector;
 
 // for debug logging
 using std::endl;
@@ -144,11 +148,10 @@ RepeaterImpl::interval_units()
 }
 
 
-boost::gregorian::date
+gregorian::date
 RepeaterImpl::next_date(unsigned short n)
 {
 	load();
-	namespace gregorian = boost::gregorian;
 	using gregorian::date;
 	date ret = boost_date_from_julian_int(value(m_data->next_date));
 	if (n == 0)
@@ -177,7 +180,24 @@ RepeaterImpl::next_date(unsigned short n)
 	return ret;
 }
 
+void
+RepeaterImpl::firings_till
+(	gregorian::date const& limit,
+	vector<gregorian::date>& output
+)
+{
+	load();
+	using gregorian::date;
+	// WARNING Unfinished.
+	return;
+}
 
+
+
+
+
+
+	
 Journal::Id
 RepeaterImpl::journal_id()
 {
