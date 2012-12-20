@@ -48,11 +48,8 @@ public:
 
 	void set_next_date(boost::gregorian::date const& p_next_date);
 
-	void firings_till
-	(	boost::gregorian::date const& limit,
-		std::vector<boost::gregorian::date>& output
-	);
-
+	boost::shared_ptr<std::vector<boost::gregorian::date> >
+	firings_till(boost::gregorian::date const& limit);
 
 	IntervalType interval_type() const;
 	int interval_units() const;

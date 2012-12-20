@@ -117,6 +117,9 @@ public:
 	 * leaping by interval_units() intervals each time, where each interval
 	 * is given by interval_type(). If n is 0 then it is simply the next
 	 * firing date that is returned.
+	 *
+	 * @throws UnsafeArithmeticException in the extremely unlikely event of
+	 * arithmetic overflow during execution.
 	 */
 	boost::gregorian::date next_date
 	(	std::vector<boost::gregorian::date>::size_type n
@@ -126,14 +129,15 @@ public:
 	 * Find the list of firings that are due to occur for this RepeaterImpl
 	 * up till and including \e limit.
 	 *
-	 * @param output a vector into which the list of firings will be
-	 * placed in chronological order from soonest to latest. The
-	 * vector will be emptied if it isn't already.
+	 * @throws UnsafeArithmeticException in the extremely unlikely event of
+	 * arithmetic overflow during calculation.
+	 *
+	 * @returns a smart pointer to a vector into which the
+	 * list of firings occur in chronological order from
+	 * soonest to latest.
 	 */
-	void firings_till
-	(	boost::gregorian::date const& limit,
-		std::vector<boost::gregorian::date>& output
-	);
+	boost::shared_ptr<std::vector<boost::gregorian::date> >
+	firings_till(boost::gregorian::date const& limit);
 
 	Journal::Id journal_id();
 

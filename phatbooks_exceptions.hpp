@@ -45,6 +45,12 @@ JEWEL_DERIVED_EXCEPTION(StoragePreconditionsException, PhatbooksException);
  */
 JEWEL_DERIVED_EXCEPTION(DateConversionException, PhatbooksException);
 
+/**
+ * Exception to be thrown when an unsafe arithmetic operation (addition,
+ * subtraction etc.) would be performed.
+ */
+JEWEL_DERIVED_EXCEPTION(UnsafeArithmeticException, PhatbooksException);
+
 
 
 }  // namespace phatbooks

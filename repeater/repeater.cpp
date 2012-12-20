@@ -106,14 +106,10 @@ Repeater::next_date(vector<gregorian::date>::size_type n) const
 }
 
 
-void
-Repeater::firings_till
-(	gregorian::date const& limit,
-	vector<gregorian::date>& output
-)
+shared_ptr<vector<gregorian::date> >
+Repeater::firings_till(gregorian::date const& limit)
 {
-	m_impl->firings_till(limit, output);
-	return;
+	return m_impl->firings_till(limit);
 }
 
 

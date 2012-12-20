@@ -166,7 +166,7 @@ RepeaterImpl::next_date(vector<gregorian::date>::size_type n)
 	Size const units = value(m_data->interval_units);
 	if (multiplication_is_unsafe(units, n))
 	{
-		throw "Unsafe multiplication!";
+		throw UnsafeArithmeticException("Unsafe multiplication.");
 	}
 	assert (!multiplication_is_unsafe(units, n));
 	Size const steps = units * n;
@@ -190,23 +190,20 @@ RepeaterImpl::next_date(vector<gregorian::date>::size_type n)
 	return ret;
 }
 
-void
-RepeaterImpl::firings_till
-(	gregorian::date const& limit,
-	vector<gregorian::date>& output
-)
+shared_ptr<vector<gregorian::date> >
+RepeaterImpl::firings_till(gregorian::date const& limit)
 {
 	load();
 	using gregorian::date;
-	output.clear();
-	assert (output.empty());
+	boost::shared_ptr<vector<date> > ret(new vector<date>);
+	assert (ret->empty());
 	date d = next_date(0);
 	typedef vector<gregorian::date>::size_type Size;
 	for (Size i = 0; d <= limit; d = next_date(++i))
 	{
-		output.push_back(d);
+		ret->push_back(d);
 	}
-	return;
+	return ret;
 }
 	
 Journal::Id
