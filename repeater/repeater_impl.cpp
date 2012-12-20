@@ -168,7 +168,7 @@ RepeaterImpl::next_date(unsigned short n)
 		for ( ; n != 0; --n) ret += gregorian::months(units);
 		break;
 	case interval_type::month_ends:
-		assert ( (next_date() + gregorian::date_duration(1)).day() == 1 );
+		assert ( (next_date(0) + gregorian::date_duration(1)).day() == 1 );
 		for ( ; n != 0; --n) ret += gregorian::months(units);
 		break;
 	default:

@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 
 project (main)
+project (test)
 
 include_directories (/home/matthew/lib
 					 /home/matthew/Workbench/versioned/phatbooks
@@ -49,7 +50,13 @@ set (main_files
 	 repeater/repeater_impl.cpp
 	 repeater/repeater_reader.cpp)
 
+set (test_files
+	 ${main_files}
+	 tests/test.cpp
+	 tests/phatbooks_tests_common.cpp)
+
 add_executable (main main.cpp ${main_files})
+add_executable (test ${test_files})
 
 set (libraries
      boost_date_time
@@ -63,6 +70,7 @@ set (libraries
 	 sqloxx)
 
 target_link_libraries (main ${libraries})
+target_link_libraries (test ${libraries})
 					
 
 

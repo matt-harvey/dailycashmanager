@@ -96,9 +96,9 @@ Repeater::interval_units() const
 }
 
 boost::gregorian::date
-Repeater::next_date() const
+Repeater::next_date(unsigned short n) const
 {
-	return m_impl->next_date();
+	return m_impl->next_date(n);
 }
 
 Journal::Id

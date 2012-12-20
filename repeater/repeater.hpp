@@ -42,7 +42,7 @@ public:
 	void set_next_date(boost::gregorian::date const& p_next_date);
 	IntervalType interval_type() const;
 	int interval_units() const;
-	boost::gregorian::date next_date() const;
+	boost::gregorian::date next_date(unsigned short n = 0) const;
 	Journal::Id journal_id() const;
 
 	/**

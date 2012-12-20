@@ -119,7 +119,7 @@ public:
 	 *
 	 * @todo Test
 	 */
-	boost::gregorian::date next_date(unsigned short n = 0);
+	boost::gregorian::date next_date(unsigned short n);
 
 	Journal::Id journal_id();
 
