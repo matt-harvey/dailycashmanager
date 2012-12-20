@@ -118,7 +118,9 @@ public:
 	 * is given by interval_type(). If n is 0 then it is simply the next
 	 * firing date that is returned.
 	 */
-	boost::gregorian::date next_date(unsigned short n);
+	boost::gregorian::date next_date
+	(	std::vector<boost::gregorian::date>::size_type n
+	);
 
 	/**
 	 * Find the list of firings that are due to occur for this RepeaterImpl

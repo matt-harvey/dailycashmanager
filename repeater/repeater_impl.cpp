@@ -19,9 +19,11 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/checked_arithmetic.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/optional.hpp>
 #include <algorithm>
+#include <cassert>
 #include <string>
 #include <vector>
 
@@ -31,6 +33,7 @@ using sqloxx::SQLStatement;
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::clear;
+using jewel::multiplication_is_unsafe;
 using jewel::value;
 using std::string;
 using std::vector;
@@ -149,30 +152,37 @@ RepeaterImpl::interval_units()
 
 
 gregorian::date
-RepeaterImpl::next_date(unsigned short n)
+RepeaterImpl::next_date(vector<gregorian::date>::size_type n)
 {
 	load();
+	typedef vector<gregorian::date>::size_type Size;
 	using gregorian::date;
+	using gregorian::date_duration;
 	date ret = boost_date_from_julian_int(value(m_data->next_date));
 	if (n == 0)
 	{
 		return ret;
 	}
-	int const units = value(m_data->interval_units);
+	Size const units = value(m_data->interval_units);
+	if (multiplication_is_unsafe(units, n))
+	{
+		throw "Unsafe multiplication!";
+	}
+	assert (!multiplication_is_unsafe(units, n));
+	Size const steps = units * n;
 	switch (value(m_data->interval_type))
 	{
 	case interval_type::days:
-		for ( ; n != 0; --n) ret += gregorian::date_duration(units);
+		ret += gregorian::date_duration(steps);
 		break;
 	case interval_type::weeks:
-		for ( ; n != 0; --n) ret += gregorian::weeks(units);
-		break;
-	case interval_type::months:
-		for ( ; n != 0; --n) ret += gregorian::months(units);
+		ret += gregorian::weeks(steps);
 		break;
 	case interval_type::month_ends:
-		assert ( (next_date(0) + gregorian::date_duration(1)).day() == 1 );
-		for ( ; n != 0; --n) ret += gregorian::months(units);
+		assert ( (next_date(0) + date_duration(1)).day() == 1);
+		// FALL THROUGH
+	case interval_type::months:
+		ret += gregorian::months(steps);
 		break;
 	default:
 		assert (false);
@@ -188,15 +198,16 @@ RepeaterImpl::firings_till
 {
 	load();
 	using gregorian::date;
-	// WARNING Unfinished.
+	output.clear();
+	assert (output.empty());
+	date d = next_date(0);
+	typedef vector<gregorian::date>::size_type Size;
+	for (Size i = 0; d <= limit; d = next_date(++i))
+	{
+		output.push_back(d);
+	}
 	return;
 }
-
-
-
-
-
-
 	
 Journal::Id
 RepeaterImpl::journal_id()

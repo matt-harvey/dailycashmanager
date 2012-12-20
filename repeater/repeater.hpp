@@ -8,6 +8,7 @@
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
+#include <vector>
 
 namespace phatbooks
 {
@@ -46,9 +47,19 @@ public:
 	void set_journal_id(Journal::Id p_journal_id);
 
 	void set_next_date(boost::gregorian::date const& p_next_date);
+
+	void firings_till
+	(	boost::gregorian::date const& limit,
+		std::vector<boost::gregorian::date>& output
+	);
+
+
 	IntervalType interval_type() const;
 	int interval_units() const;
-	boost::gregorian::date next_date(unsigned short n = 0) const;
+	boost::gregorian::date next_date
+	(	std::vector<boost::gregorian::date>::size_type n = 0
+	) const;
+
 	Journal::Id journal_id() const;
 
 	/**

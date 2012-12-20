@@ -5,9 +5,13 @@
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
+#include <vector>
+
+namespace gregorian = boost::gregorian;
 
 using boost::shared_ptr;
 using sqloxx::Handle;
+using std::vector;
 
 namespace phatbooks
 {
@@ -76,7 +80,7 @@ Repeater::set_journal_id(Journal::Id p_journal_id)
 }
 
 void
-Repeater::set_next_date(boost::gregorian::date const& p_next_date)
+Repeater::set_next_date(gregorian::date const& p_next_date)
 {
 	m_impl->set_next_date(p_next_date);
 	return;
@@ -95,11 +99,23 @@ Repeater::interval_units() const
 	return m_impl->interval_units();
 }
 
-boost::gregorian::date
-Repeater::next_date(unsigned short n) const
+gregorian::date
+Repeater::next_date(vector<gregorian::date>::size_type n) const
 {
 	return m_impl->next_date(n);
 }
+
+
+void
+Repeater::firings_till
+(	gregorian::date const& limit,
+	vector<gregorian::date>& output
+)
+{
+	m_impl->firings_till(limit, output);
+	return;
+}
+
 
 Journal::Id
 Repeater::journal_id() const
