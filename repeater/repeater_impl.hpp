@@ -116,8 +116,6 @@ public:
 	 * leaping by interval_units() intervals each time, where each interval
 	 * is given by interval_type(). If n is 0 then it is simply the next
 	 * firing date that is returned.
-	 *
-	 * @todo Test
 	 */
 	boost::gregorian::date next_date(unsigned short n);
 

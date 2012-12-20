@@ -38,7 +38,13 @@ public:
 
 	void set_interval_type(IntervalType p_interval_type);
 	void set_interval_units(int p_interval_units);
+
+	// This should not normally be set by client code as the
+	// DraftJournal::add_repeater(...) and save() methods take
+	// care of assigning the correct journal_id to the
+	// repeater.
 	void set_journal_id(Journal::Id p_journal_id);
+
 	void set_next_date(boost::gregorian::date const& p_next_date);
 	IntervalType interval_type() const;
 	int interval_units() const;

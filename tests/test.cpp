@@ -20,7 +20,6 @@ int main()
 {
 	try
 	{
-		TestFixture test_fixture;
 		return UnitTest::RunAllTests();
 	}
 	// This seems pointless but is necessary to guarantee the stack is

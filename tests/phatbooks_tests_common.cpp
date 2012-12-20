@@ -85,12 +85,8 @@ void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
 }
 
 
-
-
-void setup_test_accounts(PhatbooksDatabaseConnection& dbc);
-
 TestFixture::TestFixture():
-	db_filepath("Testfile_8287293.db")
+	db_filepath("Testfile_827787293.db")
 {
 	abort_if_exists(db_filepath);
 	dbc.open(db_filepath);

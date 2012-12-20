@@ -76,7 +76,10 @@ public:
 	~EntryImpl();
 
 	/**
-	 * Sets the journal_id for the EntryImpl
+	 * Sets the journal_id for the EntryImpl. Note this should NOT
+	 * normally be called. The usual way to associate an EntryImpl with a
+	 * Journal (or DraftJournal or OrdinaryJournal) is for the EntryImpl
+	 * to be added to the Journal via its add_entry(...) method.
 	 */
 	void set_journal_id(sqloxx::Id p_journal_id);
 

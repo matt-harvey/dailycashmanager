@@ -53,7 +53,8 @@ set (main_files
 set (test_files
 	 ${main_files}
 	 tests/test.cpp
-	 tests/phatbooks_tests_common.cpp)
+	 tests/phatbooks_tests_common.cpp
+	 tests/repeater_tests.cpp)
 
 add_executable (main main.cpp ${main_files})
 add_executable (test ${test_files})
