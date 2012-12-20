@@ -13,6 +13,8 @@ namespace test
 
 bool file_exists(boost::filesystem::path const& filepath);
 void abort_if_exists(boost::filesystem::path const& dbc);
+void setup_test_commodities(PhatbooksDatabaseConnection& dbc);
+void setup_test_accounts(PhatbooksDatabaseConnection& dbc);
 
 struct TestFixture
 {

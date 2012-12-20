@@ -30,7 +30,7 @@ Session::run(std::string const& p_filename)
 	if (p_filename.empty())
 	{
 		throw InvalidFilename("Filename is empty string.");
-	}
+	}	
 	// Load ordinary entries by constructing a reader
 	return do_run(p_filename);
 }
