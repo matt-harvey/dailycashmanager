@@ -3,6 +3,7 @@
 
 #include "journal.hpp"
 #include "date.hpp"
+#include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -14,7 +15,7 @@
 namespace phatbooks
 {
 
-class Entry;
+class DraftJournal;
 
 class OrdinaryJournalImpl:
 	public sqloxx::PersistentObject
@@ -145,15 +146,41 @@ public:
 	 */
 	void swap(OrdinaryJournalImpl& rhs);
 
-	// WARNING temp play
-	void remove_first_entry();
+	/**
+	 * Take on the attributes from \e rhs, where these exist and are
+	 * applicable to OrdinaryJournalImpl; but do \e not take on the \e id
+	 * attribute of \e rhs.
+	 *
+	 * TODO I seem to be stuck with the Journal& one being const, for
+	 * perverse reasons. Can this be fixed?
+	 */
+	void mimic(Journal& rhs);
+	void mimic(DraftJournal const& rhs);
+	void mimic(OrdinaryJournalImpl& rhs);
+
+	void clear_entries();
 
 private:
-	
+
+	/**
+	 * Where J is Journal, DraftJournalImpl or OrdinaryJournalImpl,
+	 * cause *this to take on the attributes of rhs that would be common
+	 * to all three kinds of
+	 * journal. Thus, for example, where J is OrdinaryJournal, *this does
+	 * \e not take on the \e date attribute of rhs, since Journal and
+	 * DraftJournal do not have a \e date attribute.
+	 * Note however that the \e id attribute is \e never taken from the
+	 * rhs.
+	 * This does \e not offer the strong guarantee by itself.
+	 */
+	template <typename J>
+	void mimic_core(J& rhs);
+
 	/**
 	 * Copy constructor - implemented, but deliberately private.
 	 */
 	OrdinaryJournalImpl(OrdinaryJournalImpl const& rhs);
+
 
 	void do_load();
 	void do_save_existing();
@@ -168,6 +195,31 @@ private:
 	boost::optional<DateRep> m_date;
 };
 
+
+template <typename J>
+void
+OrdinaryJournalImpl::mimic_core(J& rhs)
+{
+	set_whether_actual(rhs.is_actual());
+	set_comment(rhs.comment());
+	clear_entries();
+	for 
+	(	std::vector<Entry>::const_iterator it = rhs.entries().begin(),
+			end = rhs.entries().end();
+		it != end;
+		++it
+	)
+	{
+		Entry entry(database_connection());
+		entry.mimic(*it);
+		add_entry(entry);
+	}
+	return;
+}
+
+
+			
+				
 
 }  // namespace phatbooks
 

@@ -1,7 +1,9 @@
 #include "ordinary_journal.hpp"
-#include "ordinary_journal_impl.hpp"
+#include "draft_journal.hpp"
+#include "draft_journal_impl.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
+#include "ordinary_journal_impl.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -156,14 +158,36 @@ OrdinaryJournal::save()
 	return;
 }
 
-// WARNING temp play
+
 void
-OrdinaryJournal::remove_first_entry()
+OrdinaryJournal::mimic(Journal& rhs)
 {
-	m_impl->remove_first_entry();
+	// TODO Now this is written, I can do away
+	// with the constructor that takes a Journal const&.
+	m_impl->mimic(rhs);
 	return;
 }
 
+void
+OrdinaryJournal::mimic(DraftJournal const& rhs)
+{
+	m_impl->mimic(rhs);
+	return;
+}
+
+void
+OrdinaryJournal::mimic(OrdinaryJournal const& rhs)
+{
+	m_impl->mimic(*(rhs.m_impl));
+	return;
+}
+
+void
+OrdinaryJournal::clear_entries()
+{
+	m_impl->clear_entries();
+	return;
+}
 
 OrdinaryJournal::OrdinaryJournal
 (	sqloxx::Handle<OrdinaryJournalImpl> const& p_handle
@@ -171,6 +195,5 @@ OrdinaryJournal::OrdinaryJournal
 	m_impl(p_handle)
 {
 }
-
 
 }  // namespace phatbooks

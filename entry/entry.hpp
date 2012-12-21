@@ -44,6 +44,7 @@ public:
 	void set_comment(std::string const& p_comment);
 	void set_amount(jewel::Decimal const& p_amount);
 	void set_whether_reconciled(bool p_is_reconciled);
+
 	std::string comment() const;
 	jewel::Decimal amount() const;
 	Account account() const;
@@ -73,6 +74,13 @@ public:
 	 */
 	void ghostify();
 
+	/**
+	 * Copy attributes of rhs to *this, but do \e not copy:\n
+	 * \e id,\n
+	 * \e database_connection, or\n
+	 * \e journal_id.
+	 */
+	void mimic(Entry const& rhs);
 
 private:
 	Entry(sqloxx::Handle<EntryImpl> const& p_handle);

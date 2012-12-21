@@ -55,7 +55,6 @@ Entry::create_unchecked
 }
 
 
-
 void
 Entry::set_journal_id(Journal::Id p_journal_id)
 {
@@ -134,6 +133,15 @@ Entry::remove()
 	m_impl->remove();
 	return;
 }
+
+void
+Entry::mimic(Entry const& rhs)
+{
+	m_impl->mimic(*(rhs.m_impl));
+	return;
+}
+
+
 
 void
 Entry::ghostify()

@@ -269,12 +269,10 @@ Journal::primary_key_name()
 	return "journal_id";
 }
 
-
-// WARNING temp play
 void
-Journal::remove_first_entry()
+Journal::clear_entries()
 {
-	(m_data->entries).erase(m_data->entries.begin());
+	(m_data->entries).clear();
 	return;
 }
 

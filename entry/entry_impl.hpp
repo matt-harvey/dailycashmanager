@@ -149,6 +149,16 @@ public:
 
 	static std::string primary_table_name();
 	static std::string primary_key_name();
+
+	/**
+	 * Copy attributes of rhs to *this, but do \e not copy:\n
+	 * \e id,\n
+	 * \e database_connection,\n
+	 * \e journal_id, or\n
+	 * \e is_reconciled.
+	 */
+	void mimic(EntryImpl& rhs);
+
 private:
 
 	/**

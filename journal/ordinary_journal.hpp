@@ -1,16 +1,18 @@
 #ifndef GUARD_ordinary_journal_hpp
 #define GUARD_ordinary_journal_hpp
 
+#include "entry.hpp"
 #include "ordinary_journal_impl.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <string>
+#include <vector>
 
 namespace phatbooks
 {
 
-class Entry;
+class DraftJournal;
 class Journal;
 class PhatbooksDatabaseConnection;
 
@@ -63,11 +65,24 @@ public:
 	 * class.
 	 */
 	void save();
-	
-	// WARNING temp play
-	void remove_first_entry();
+
+	/**
+	 * Take on the attributes from \e rhs, where these exist and are
+	 * applicable to OrdinaryJournal; but do \e not take on the \e id
+	 * attribute of \e rhs.
+	 *
+	 * TODO See corresponding task in OrdinaryJournalImpl.
+	 */
+	void mimic(Journal& rhs);
+	void mimic(DraftJournal const& rhs);
+	void mimic(OrdinaryJournal const& rhs);
 
 private:
+
+	// TODO Is this even used anywhere?
+	void clear_entries();
+
+
 	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);
 	sqloxx::Handle<OrdinaryJournalImpl> m_impl;
 };

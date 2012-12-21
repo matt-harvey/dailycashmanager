@@ -1,4 +1,5 @@
 #include "ordinary_journal_impl.hpp"
+#include "draft_journal.hpp"
 #include "journal.hpp"
 #include "date.hpp"
 #include "entry.hpp"
@@ -193,6 +194,14 @@ OrdinaryJournalImpl::swap(OrdinaryJournalImpl& rhs)
 	return;
 }
 
+void
+OrdinaryJournalImpl::clear_entries()
+{
+	load();
+	Journal::clear_entries();
+	return;
+}
+
 
 void
 OrdinaryJournalImpl::do_load()
@@ -265,15 +274,36 @@ OrdinaryJournalImpl::do_ghostify()
 }
 
 
-// WARNING temp play
 void
-OrdinaryJournalImpl::remove_first_entry()
+OrdinaryJournalImpl::mimic(Journal& rhs)
 {
-	Journal::remove_first_entry();
+	load();
+	OrdinaryJournalImpl temp(*this);
+	temp.mimic_core(rhs);
+	swap(temp);
 	return;
 }
 
+void
+OrdinaryJournalImpl::mimic(DraftJournal const& rhs)
+{
+	load();
+	OrdinaryJournalImpl temp(*this);
+	temp.mimic_core(rhs);
+	swap(temp);
+	return;
+}
 
+void
+OrdinaryJournalImpl::mimic(OrdinaryJournalImpl& rhs)
+{
+	load();
+	OrdinaryJournalImpl temp(*this);
+	temp.mimic_core(rhs);
+	temp.set_date(rhs.date());
+	swap(temp);
+	return;
+}
 }  // namespace phatbooks
 
 

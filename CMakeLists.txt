@@ -53,6 +53,7 @@ set (main_files
 set (test_files
 	 ${main_files}
 	 tests/test.cpp
+	 tests/ordinary_journal_tests.cpp
 	 tests/phatbooks_tests_common.cpp
 	 tests/repeater_tests.cpp)
 

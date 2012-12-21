@@ -310,5 +310,20 @@ EntryImpl::primary_key_name()
 	return "entry_id";
 }
 
+void
+EntryImpl::mimic(EntryImpl& rhs)
+{
+	load();
+	EntryImpl temp(*this);
+	temp.set_account(rhs.account());
+	temp.set_comment(rhs.comment());
+	temp.set_amount(rhs.amount());
+	temp.set_whether_reconciled(rhs.is_reconciled());
+	swap(temp);
+	return;
+}
+	
+	
+
 
 }  // namespace phatbooks

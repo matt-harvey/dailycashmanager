@@ -103,6 +103,9 @@ public:
 	virtual void set_whether_actual(bool p_is_actual);
 	virtual void set_comment(std::string const& p_comment);
 	virtual void add_entry(Entry& entry);
+
+	// WARNING If I mark these as const, there may be problems
+	// in derived ...Impl classes.
 	virtual std::string comment();
 	virtual bool is_actual();
 
@@ -120,6 +123,7 @@ protected:
 	(	PhatbooksDatabaseConnection& dbc
 	);
 	void do_ghostify_journal_base();
+	void clear_entries();
 
 
 private:
