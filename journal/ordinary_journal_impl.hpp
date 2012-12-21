@@ -203,16 +203,23 @@ OrdinaryJournalImpl::mimic_core(J& rhs)
 	set_whether_actual(rhs.is_actual());
 	set_comment(rhs.comment());
 	clear_entries();
-	for 
-	(	std::vector<Entry>::const_iterator it = rhs.entries().begin(),
-			end = rhs.entries().end();
-		it != end;
-		++it
-	)
+	if (!rhs.entries().empty())
 	{
-		Entry entry(database_connection());
-		entry.mimic(*it);
-		add_entry(entry);
+		for 
+		(	std::vector<Entry>::const_iterator it = rhs.entries().begin(),
+				end = rhs.entries().end();
+			it != end;
+			++it
+		)
+		{
+			Entry entry(database_connection());
+			entry.mimic(*it);
+			if (has_id())
+			{
+				entry.set_journal_id(id());
+			}
+			Journal::add_entry(entry);
+		}
 	}
 	return;
 }

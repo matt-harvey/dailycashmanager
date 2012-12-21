@@ -49,9 +49,13 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	CHECK_EQUAL(oj1.comment(), "igloo");
 	CHECK_EQUAL(oj1.entries().size(), 2);
 	oj1.save();
-	vector<Entry>::const_iterator it1 =
-		oj1.entries().begin();
-	while (it1++ != oj1.entries().end())
+	CHECK(!oj1.entries().empty());
+	for
+	(	vector<Entry>::const_iterator it1 = oj1.entries().begin(),
+		  end = oj1.entries().end();
+		it1 != end;
+		++it1
+	)
 	{
 		CHECK( (it1->id() == 1) || (it1->id() == 2) );
 		if (it1->id() == 1)
@@ -90,14 +94,13 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	oj1.save();
 	vector<Entry>::const_iterator it2 =
 		oj1.entries().begin();
-	while (it2 != oj1.entries().end())
+	for ( ; it2 != oj1.entries().end(); ++it2)
 	{
 		CHECK(it2->id() == 3);
 		CHECK_EQUAL(it2->account().id(), Account(dbc, "food").id());
 		CHECK_EQUAL(it2->comment(), "steam");
 		CHECK_EQUAL(it2->is_reconciled(), false);
 	}
-
 }
 
 
