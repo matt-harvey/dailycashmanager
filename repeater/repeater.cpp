@@ -1,4 +1,5 @@
 #include "journal.hpp"
+#include "ordinary_journal.hpp"
 #include "repeater.hpp"
 #include "repeater_impl.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -112,6 +113,11 @@ Repeater::firings_till(gregorian::date const& limit)
 	return m_impl->firings_till(limit);
 }
 
+OrdinaryJournal
+Repeater::fire_next()
+{
+	return m_impl->fire_next();
+}
 
 Journal::Id
 Repeater::journal_id() const

@@ -3,6 +3,7 @@
 
 #include "interval_type.hpp"
 #include "journal.hpp"
+#include "ordinary_journal.hpp"
 #include "repeater_impl.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -12,7 +13,6 @@
 
 namespace phatbooks
 {
-
 
 class Repeater
 {
@@ -38,6 +38,7 @@ public:
 
 
 	void set_interval_type(IntervalType p_interval_type);
+
 	void set_interval_units(int p_interval_units);
 
 	// This should not normally be set by client code as the
@@ -51,13 +52,18 @@ public:
 	boost::shared_ptr<std::vector<boost::gregorian::date> >
 	firings_till(boost::gregorian::date const& limit);
 
+	OrdinaryJournal fire_next();
+
 	IntervalType interval_type() const;
+
 	int interval_units() const;
+
 	boost::gregorian::date next_date
 	(	std::vector<boost::gregorian::date>::size_type n = 0
 	) const;
 
 	Journal::Id journal_id() const;
+
 
 	/**
 	 * TODO This should eventually be shifted into a base
@@ -82,9 +88,13 @@ public:
 	void ghostify();
 
 private:
+
 	Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle);
+
 	sqloxx::Handle<RepeaterImpl> m_impl;
 };
+
+
 
 
 }  // namespace phatbooks

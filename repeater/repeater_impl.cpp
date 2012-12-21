@@ -12,9 +12,10 @@
 
 #include "repeater_impl.hpp"
 #include "date.hpp"
+#include "draft_journal.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
-#include <sqloxx/database_connection.hpp>
+#include <sqloxx/database_transaction.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
@@ -29,6 +30,7 @@
 
 namespace gregorian = boost::gregorian;
 
+using sqloxx::DatabaseTransaction;
 using sqloxx::SQLStatement;
 using boost::numeric_cast;
 using boost::shared_ptr;
@@ -205,7 +207,37 @@ RepeaterImpl::firings_till(gregorian::date const& limit)
 	}
 	return ret;
 }
+
+
+OrdinaryJournal
+RepeaterImpl::fire_next()
+{
+	load();
+	OrdinaryJournal oj(database_connection());
+	oj.mimic(DraftJournal(database_connection(), journal_id()));
+	boost::gregorian::date const old_next_date = next_date(0);
+	oj.set_date(old_next_date);
+	boost::gregorian::date const next_date_elect = next_date(1);
 	
+	DatabaseTransaction transaction(database_connection());
+	try
+	{
+		oj.save();
+		set_next_date(next_date_elect);
+		save();
+		transaction.commit();
+	}
+	catch (std::exception&)
+	{
+		set_next_date(old_next_date);
+		transaction.cancel();
+		throw;
+	}
+	return oj;
+}
+
+
+
 Journal::Id
 RepeaterImpl::journal_id()
 {

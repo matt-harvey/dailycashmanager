@@ -15,6 +15,7 @@
 #include "date.hpp"
 #include "interval_type.hpp"
 #include "journal.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/persistent_object.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -138,6 +139,21 @@ public:
 	 */
 	boost::shared_ptr<std::vector<boost::gregorian::date> >
 	firings_till(boost::gregorian::date const& limit);
+
+	/**
+	 * Post an OrdinaryJournal - based on this Repeater's DraftJournal -
+	 * with the date of the OrdinaryJournal being next_date(0). Then
+	 * update next_date internally to (what was) next_date(1).
+	 *
+	 * @returns The just-posted OrdinaryJournal.
+	 *
+	 * @todo Determine exceptions and exception-safety. These are important
+	 * here.
+	 *
+	 * @todo Testing
+	 */
+	OrdinaryJournal fire_next();
+	
 
 	Journal::Id journal_id();
 
