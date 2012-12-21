@@ -101,6 +101,8 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		CHECK_EQUAL(it2->comment(), "steam");
 		CHECK_EQUAL(it2->is_reconciled(), false);
 	}
+
+	// TODO Test mimicking another OrdinaryJournal.
 }
 
 
