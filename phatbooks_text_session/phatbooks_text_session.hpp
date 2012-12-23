@@ -192,6 +192,10 @@ private:
 	 */
 	void import_from_nap();
 
+	void notify_autoposts
+	(	boost::shared_ptr<std::list<OrdinaryJournal> > journal
+	) const;
+
 	void display_balance_sheet();
 	void display_envelopes();
 	void display_profit_and_loss();

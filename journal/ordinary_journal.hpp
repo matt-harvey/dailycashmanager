@@ -6,6 +6,8 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <iostream>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -77,6 +79,7 @@ public:
 	void mimic(DraftJournal const& rhs);
 	void mimic(OrdinaryJournal const& rhs);
 
+	
 private:
 
 	// TODO Is this even used anywhere?
@@ -86,6 +89,25 @@ private:
 	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);
 	sqloxx::Handle<OrdinaryJournalImpl> m_impl;
 };
+
+
+// TODO Do this properly. Factor out common code to Journal base class
+// and provide similar method for DraftJournal. Make use of consolixx::Table
+// to prettify output.
+std::ostream&
+operator<<(std::ostream& os, OrdinaryJournal const& oj);
+
+
+inline
+std::ostream&
+operator<<(std::ostream& os, OrdinaryJournal const& oj)
+{
+	// WARNING Quick hack.
+	os << "Journal id: " << oj.id() << std::endl;
+	os << "Journal date: " << oj.date() << std::endl;
+	os << std::endl;
+	return os;
+}
 
 
 

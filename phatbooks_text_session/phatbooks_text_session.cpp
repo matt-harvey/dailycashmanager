@@ -89,6 +89,7 @@ using std::string;
 using std::vector;
 
 namespace alignment = consolixx::alignment;
+namespace gregorian = boost::gregorian;
 
 
 
@@ -234,22 +235,10 @@ int PhatbooksTextSession::do_run(string const& filename)
 	cout << "Welcome to " << application_name() << "!" << endl;
 
 	database_connection().setup();
-
-	/*
-	// WARNING Hack
-	// This causes entries to be loaded.
-	OrdinaryEntryReader oe_reader(database_connection());
-	ostringstream dummy_stream;
-	for
-	(	OrdinaryEntryReader::const_iterator it = oe_reader.begin();
-		it != oe_reader.end();
-		++it
-	)
-	{
-		dummy_stream << it->amount();
-	}
-	*/
-	
+	gregorian::date const today = gregorian::day_clock::local_day();
+	shared_ptr<list<OrdinaryJournal> > auto_posted_journals =
+		update_repeaters_till(today);
+	notify_autoposts(auto_posted_journals);
 	m_main_menu->present_to_user();	
 	return 0;
 }
@@ -647,13 +636,12 @@ void PhatbooksTextSession::elicit_journal()
 	{
 		OrdinaryJournal ordinary_journal(journal, database_connection());
 
-		boost::gregorian::date const d =
-			boost::gregorian::day_clock::local_day();
+		gregorian::date const d = gregorian::day_clock::local_day();
 		cout << "Enter transaction date as an eight-digit number of the "
 		     << "form YYYYMMDD, or just hit enter for today's date ("
-			 << boost::gregorian::to_iso_string(d)
+			 << gregorian::to_iso_string(d)
 			 << "): ";
-		boost::gregorian::date const e = get_date_from_user();
+		gregorian::date const e = get_date_from_user();
 		ordinary_journal.set_date(e);
 		ordinary_journal.save();
 		cout << "\nJournal posted." << endl;
@@ -851,6 +839,27 @@ void PhatbooksTextSession::import_from_nap()
 	}
 	return;
 }
+
+
+void PhatbooksTextSession::notify_autoposts
+(	shared_ptr<list<OrdinaryJournal> > journals
+) const
+{
+	cout << "The following journals have been posted automatically since "
+	     << "the last session:"
+		 << endl;
+	for
+	(	list<OrdinaryJournal>::const_iterator it = journals->begin(),
+			end = journals->end();
+		it != end;
+		++it
+	)
+	{
+		cout << *it << endl;
+	}
+	return;
+}
+
 
 void PhatbooksTextSession::display_journal_summaries()
 {

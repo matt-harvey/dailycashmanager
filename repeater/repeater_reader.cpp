@@ -11,7 +11,7 @@ RepeaterReader::RepeaterReader
 ):
 	sqloxx::Reader<Repeater, PhatbooksDatabaseConnection>
 	(	p_database_connection,
-		"select repeater_id from repeaters order by date"
+		"select repeater_id from repeaters"
 	)
 {
 }

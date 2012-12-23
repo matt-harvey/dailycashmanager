@@ -221,7 +221,7 @@ DraftJournalImpl::do_load()
 	(	database_connection(),
 		"select repeater_id from repeaters where journal_id = :p"
 	);
-	repeater_finder.bind(":journal_id", id());
+	repeater_finder.bind(":p", id());
 	while (repeater_finder.step())
 	{
 		Repeater::Id const rep_id =

@@ -28,6 +28,8 @@
 #include <string>
 #include <vector>
 
+#include <jewel/debug_log.hpp>
+
 namespace gregorian = boost::gregorian;
 
 using sqloxx::DatabaseTransaction;
@@ -271,6 +273,7 @@ RepeaterImpl::do_load()
 		"select interval_type_id, interval_units, next_date, journal_id "
 		"from repeaters where repeater_id = :p"
 	);
+	statement.bind(":p", id());
 	statement.step();
 	RepeaterImpl temp(*this);
 	temp.m_data->interval_type =
