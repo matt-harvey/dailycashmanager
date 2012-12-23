@@ -91,6 +91,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	CHECK_EQUAL(oj1.is_actual(), false);
 	CHECK_EQUAL(oj1.comment(), "steam engine");
 	CHECK_EQUAL(oj1.entries().size(), 1);
+	CHECK_EQUAL(oj1.date(), date(2000, 1, 5));
 	oj1.save();
 	vector<Entry>::const_iterator it2 =
 		oj1.entries().begin();
@@ -102,7 +103,34 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		CHECK_EQUAL(it2->is_reconciled(), false);
 	}
 
-	// TODO Test mimicking another OrdinaryJournal.
+	OrdinaryJournal oj2(dbc);
+	oj2.set_whether_actual(true);
+	oj2.set_comment("random");
+	oj2.set_date(date(2010, 11, 30));
+	
+	Entry entry2b(dbc);
+	entry2b.set_account(Account(dbc, "cash"));
+	entry2b.set_comment("random entry");
+	entry2b.set_amount(Decimal("2055.90"));
+	entry2b.set_whether_reconciled(false);
+	oj2.add_entry(entry2b);
+	Entry entry2c(entry2b);
+	entry2c.mimic(entry2b);
+	entry2c.set_amount(Decimal("-2055.90"));
+	oj2.add_entry(entry2c); 
+	
+	oj2.save();
+	
+	oj2.mimic(oj1);
+	oj2.save();
+
+	OrdinaryJournal oj2b(dbc, 2);
+	CHECK_EQUAL(oj2b.id(), 2);
+	CHECK_EQUAL(oj2b.comment(), "steam engine");
+	CHECK_EQUAL(oj2b.entries().size(), 1);
+	CHECK_EQUAL(oj2b.date(), date(2000, 1, 5));
+	vector<Entry>::const_iterator it2b = oj2b.entries().begin();
+	CHECK_EQUAL(it2b->amount(), Decimal("-1000.95"));
 }
 
 
