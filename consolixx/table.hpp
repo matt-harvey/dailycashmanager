@@ -38,11 +38,12 @@ public:
 	typedef std::list<RowPtr> RowList;
 
 	/**
-	 * Iter must be such that when dereferenced it produces an instance of T.
+	 * Iter must be such that when dereferenced it produces an instance of T
+	 * (or a reference to such an instance).
 	 *
 	 * Construct a table from instances of T delimited by \e p_beg and \e
 	 * p_end,
-	 * use applying \e p_make_row to each to construct each Row
+	 * applying \e p_make_row to each instance to construct each Row
 	 * with p_headings being the headings for each column, and with
 	 * a minimum of \e p_padding spaces between adjacent columns when printed.
 	 *
