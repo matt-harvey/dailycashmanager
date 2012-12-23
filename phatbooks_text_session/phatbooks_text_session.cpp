@@ -841,13 +841,66 @@ void PhatbooksTextSession::import_from_nap()
 }
 
 
+namespace
+{
+	// WARNING Quick hack
+	template <typename JournalType>
+	shared_ptr<vector<string> > make_entry_row(Entry const& entry)
+	{
+		shared_ptr<vector<string> > ret(new vector<string>);
+		ret->push_back(entry.account().name());
+		ret->push_back(entry.comment());
+		ret->push_back(entry.account().commodity().abbreviation());
+		
+		// TODO Factor out "friendly amount" (as
+		// per Account::friendly_balance())?
+		Decimal amount =
+			entry.amount() *
+			(	entry.journal<JournalType>().is_actual()?
+				Decimal(1, 0):
+				Decimal(-1, 0)
+			);
+		amount = round(amount, entry.amount().places());
+
+		ret->push_back(finformat(amount));
+		return ret;
+	}
+
+	void print_ordinary_journal(OrdinaryJournal const& oj)
+	{
+		cout << oj.date() << "  ";
+		if (oj.is_actual()) cout << "Actual transaction";
+		else cout << "Envelope transaction";
+		cout << "  " << oj.comment() << "  ID " << oj.id() << endl;
+		cout << endl;
+		vector<string> headings(4, "");
+		vector<alignment::Flag> alignments;
+		alignments.push_back(alignment::left);
+		alignments.push_back(alignment::left);
+		alignments.push_back(alignment::left);
+		alignments.push_back(alignment::right);
+		Table<Entry> const table
+		(	oj.entries().begin(),
+			oj.entries().end(),
+			make_entry_row<OrdinaryJournal>,
+			headings,
+			alignments
+		);
+		cout << table;
+		return;
+	}
+
+}  // End anonymous namespace
+
+
+
 void PhatbooksTextSession::notify_autoposts
 (	shared_ptr<list<OrdinaryJournal> > journals
 ) const
 {
 	cout << "The following journals have been posted automatically since "
 	     << "the last session:"
-		 << endl;
+		 << endl << endl;
 	for
 	(	list<OrdinaryJournal>::const_iterator it = journals->begin(),
 			end = journals->end();
@@ -855,7 +908,8 @@ void PhatbooksTextSession::notify_autoposts
 		++it
 	)
 	{
-		cout << *it << endl;
+		print_ordinary_journal(*it);
+		cout << endl << endl;
 	}
 	return;
 }
@@ -894,6 +948,8 @@ void PhatbooksTextSession::display_journal_summaries()
 
 namespace
 {
+	// WARNING Quick hack
+
 	shared_ptr<vector<string> > make_account_row
 	(	Account const& account
 	)

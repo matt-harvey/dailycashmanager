@@ -49,6 +49,14 @@ public:
 	jewel::Decimal amount() const;
 	Account account() const;
 	bool is_reconciled() const;
+	
+	// WARNING Quick hack
+	template <typename JournalType>
+	JournalType journal() const
+	{
+		return m_impl->journal<JournalType>();
+	}
+	
 
 	/**
 	 * TODO This should eventually be shifted into a base

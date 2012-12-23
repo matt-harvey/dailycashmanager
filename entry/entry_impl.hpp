@@ -22,6 +22,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/optional.hpp>
 #include <string>
 
 
@@ -158,6 +159,9 @@ public:
 	 */
 	void mimic(EntryImpl& rhs);
 
+	template <typename JournalType>
+	JournalType journal();
+
 private:
 
 	/**
@@ -188,6 +192,14 @@ struct EntryImpl::EntryData
 	boost::optional<bool> is_reconciled;
 };
 
+
+template <typename JournalType>
+JournalType
+EntryImpl::journal()
+{
+	load();
+	return JournalType(database_connection(), jewel::value(m_data->journal_id));
+}
 
 
 }  // namespace phatbooks
