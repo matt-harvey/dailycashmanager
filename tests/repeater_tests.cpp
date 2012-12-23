@@ -141,7 +141,61 @@ TEST_FIXTURE(TestFixture, test_repeater_firings_till)
 	CHECK_EQUAL((*firings2)[0], date(2012, 12, 31));
 }
 
+TEST_FIXTURE(TestFixture, test_repeater_fire_next)
+{
+	DraftJournal dj1(dbc);
+	dj1.set_whether_actual(true);
+	dj1.set_comment("journal to test repeater");
+	dj1.set_name("Test");
+	
+	Entry entry1a(dbc);
+	entry1a.set_account(Account(dbc, "cash"));
+	entry1a.set_comment("Test entry");
+	entry1a.set_amount(Decimal("-1090.95"));
+	entry1a.set_whether_reconciled(false);
+	dj1.add_entry(entry1a);
+	
+	Entry entry1b(dbc);
+	entry1b.set_account(Account(dbc, "food"));
+	entry1b.set_comment("Test entry");
+	entry1b.set_amount(Decimal("1090.95"));
+	entry1b.set_whether_reconciled(false);
+	dj1.add_entry(entry1b);
 
+	Repeater repeater1(dbc);
+	repeater1.set_interval_type(interval_type::weeks);
+	repeater1.set_interval_units(2);
+	repeater1.set_next_date(date(2012, 7, 30));
+	dj1.add_repeater(repeater1);
+
+	dj1.save();
+
+	Repeater repeater1b(dbc, 1);
+	OrdinaryJournal oj1b = repeater1b.fire_next();
+	CHECK_EQUAL(oj1b.comment(), "journal to test repeater");
+	CHECK_EQUAL(oj1b.date(), date(2012, 7, 30));
+	CHECK_EQUAL(repeater1.next_date(), date(2012, 8, 13));
+
+	OrdinaryJournal oj1c(dbc, 2);
+	CHECK_EQUAL(oj1c.date(), date(2012, 7, 30));
+	CHECK_EQUAL(oj1c.comment(), "journal to test repeater");
+	CHECK_EQUAL(oj1c.entries().size(), 2);
+
+	repeater1b.fire_next();
+	repeater1b.fire_next();
+
+	OrdinaryJournal oj3(dbc, 3);
+	OrdinaryJournal oj4(dbc, 4);
+
+	CHECK_EQUAL(oj3.date(), date(2012, 8, 13));
+	CHECK_EQUAL(oj4.date(), date(2012, 8, 27));
+	CHECK_EQUAL(oj4.id(), 4);
+	CHECK_EQUAL(oj3.comment(), oj4.comment());
+	vector<Entry>::const_iterator it3 = ++oj3.entries().begin();
+	vector<Entry>::const_iterator it4 = ++oj4.entries().begin();
+	CHECK_EQUAL(it3->amount(), it4->amount());
+
+}
 
 
 
