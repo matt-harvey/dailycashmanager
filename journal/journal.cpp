@@ -16,6 +16,7 @@
 #include "commodity.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "consolixx/table.hpp"
 #include <sqloxx/next_auto_key.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <jewel/decimal.hpp>
@@ -24,10 +25,13 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
+#include <ostream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
+namespace alignment = consolixx::alignment;
 
 using sqloxx::next_auto_key;
 using sqloxx::SQLStatement;
@@ -35,10 +39,14 @@ using boost::numeric_cast;
 using boost::scoped_ptr;
 using boost::shared_ptr;
 using boost::unordered_set;
+using consolixx::Table;
 using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
+using std::ios_base;
 using std::logic_error;
+using std::ostream;
+using std::ostringstream;
 using std::string;
 using std::vector;
 
@@ -289,6 +297,65 @@ Journal::clear_entries()
 {
 	(m_data->entries).clear();
 	return;
+}
+
+ostream&
+Journal::do_output(ostream& os) const
+{
+	if (is_actual()) os << "ACTUAL";
+	else os << "BUDGET";
+	os << endl;
+	if (!comment().empty()) os << comment() << endl;
+	os << endl;
+	vector<string> headings;
+	headings.push_back("ENTRY ID");
+	headings.push_back("ACCOUNT");
+	headings.push_back("COMMENT");
+	headings.push_back("COMMODITY");
+	headings.push_back("AMOUNT");
+	vector<alignment::Flag> alignments(5, alignment::left);
+	alignments[4] = alignment::right;
+	bool const change_signs = !is_actual();
+	Table<Entry> const table
+	(	entries().begin(),
+		entries().end(),
+		change_signs? make_reversed_entry_row: make_entry_row,
+		headings,
+		alignments,
+		2
+	);
+	os << table;
+	return os;
+}
+
+
+
+
+ostream&
+operator<<(ostream& os, Journal const& journal)
+{
+	if (!os)
+	{
+		return os;
+	}
+	try
+	{
+		ostringstream ss;
+		ss.exceptions(os.exceptions());
+		ss.imbue(os.getloc());
+		journal.do_output(ss);
+		if (!ss)
+		{
+			os.setstate(ss.rdstate());
+			return os;
+		}
+		os << ss.str();
+	}
+	catch (std::exception&)
+	{
+		os.setstate(ios_base::badbit);
+	}
+	return os;
 }
 
 

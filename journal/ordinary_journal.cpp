@@ -5,26 +5,20 @@
 #include "journal.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "consolixx/table.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <ostream>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
-namespace alignment = consolixx::alignment;
-
 using boost::lexical_cast;
 using boost::shared_ptr;
-using consolixx::Table;
 using sqloxx::Handle;
 using std::ios_base;
 using std::ostream;
-using std::ostringstream;
 using std::string;
 using std::vector;
 
@@ -216,63 +210,14 @@ OrdinaryJournal::OrdinaryJournal
 }
 
 ostream&
-OrdinaryJournal::output_aux(ostream& os) const
+OrdinaryJournal::do_output(ostream& os) const
 {
 	os << date();
-	if (is_actual()) os << " ACTUAL";
-	else os << " BUDGET";
 	// lexical_cast here avoids unwanted formatting
-	os << " JOURNAL ID: " << lexical_cast<string>(id()) << endl;
-	if (!comment().empty()) os << comment() << endl;
-	os << endl;
-	vector<string> headings;
-	headings.push_back("ENTRY ID");
-	headings.push_back("ACCOUNT");
-	headings.push_back("COMMENT");
-	headings.push_back("COMMODITY");
-	headings.push_back("AMOUNT");
-	vector<alignment::Flag> alignments(5, alignment::left);
-	alignments[4] = alignment::right;
-	bool const change_signs = !is_actual();
-	Table<Entry> const table
-	(	entries().begin(),
-		entries().end(),
-		change_signs? make_reversed_entry_row: make_entry_row,
-		headings,
-		alignments,
-		2
-	);
-	os << table;
-	return os;
+	os << " JOURNAL ID " << lexical_cast<string>(id()) << " ";
+	return Journal::do_output(os);
 }
 
 
-ostream&
-operator<<(ostream& os, OrdinaryJournal const& oj)
-{
-	if (!os)
-	{
-		return os;
-	}
-	try
-	{
-		ostringstream ss;
-		ss.exceptions(os.exceptions());
-		ss.imbue(os.getloc());
-		oj.output_aux(ss);
-		if (!ss)
-		{
-			os.setstate(ss.rdstate());
-			return os;
-		}
-		os << ss.str();
-	}
-	catch (std::exception&)
-	{
-		os.setstate(ios_base::badbit);
-	}
-	return os;
-}
-	
 
 }  // namespace phatbooks

@@ -17,6 +17,7 @@
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -128,6 +129,11 @@ protected:
 	void do_ghostify_journal_base();
 	void clear_entries();
 
+	virtual std::ostream& do_output(std::ostream& os) const;
+
+	friend
+	std::ostream&
+	operator<<(std::ostream& os, Journal const& oj);
 
 private:
 
@@ -144,6 +150,8 @@ struct Journal::JournalData
 	std::vector<Entry> entries;
 };
 
+std::ostream&
+operator<<(std::ostream& os, Journal const& oj);
 
 
 }  // namespace phatbooks

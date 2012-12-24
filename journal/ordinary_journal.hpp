@@ -79,14 +79,9 @@ public:
 	void mimic(DraftJournal const& rhs);
 	void mimic(OrdinaryJournal const& rhs);
 
-	friend
-	std::ostream& operator<<(std::ostream& os, OrdinaryJournal const& oj);
-
-
-
 private:
 
-	std::ostream& output_aux(std::ostream& os) const;
+	std::ostream& do_output(std::ostream& os) const;
 	
 
 	// TODO Is this even used anywhere?
@@ -98,10 +93,6 @@ private:
 	sqloxx::Handle<OrdinaryJournalImpl> m_impl;
 };
 
-// TODO Factor out common code to Journal base class
-// and provide similar method for DraftJournal.
-std::ostream&
-operator<<(std::ostream& os, OrdinaryJournal const& oj);
 
 	
 
