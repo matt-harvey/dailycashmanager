@@ -653,7 +653,8 @@ void PhatbooksTextSession::elicit_journal()
 		gregorian::date const e = get_date_from_user();
 		ordinary_journal.set_date(e);
 		ordinary_journal.save();
-		cout << "\nJournal posted." << endl;
+		cout << "\nJournal posted:" << endl << endl
+		     << ordinary_journal << endl;
 	}
 	else if (journal_action == save_draft || journal_action == save_recurring)
 	{
@@ -804,7 +805,9 @@ void PhatbooksTextSession::elicit_journal()
 			draft_journal.add_repeater(repeater);	
 		}
 		draft_journal.save();
-		cout << "Draft journal has been saved" << endl;
+		// TODO Here I should print the DraftJournal once print method has
+		// been written.
+		cout << "Draft journal has been saved." << endl;
 	}
 	else if (journal_action == abandon)
 	{
