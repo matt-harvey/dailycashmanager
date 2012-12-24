@@ -3,6 +3,7 @@
 #include "entry.hpp"
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/decimal.hpp>
 #include <unittest++/UnitTest++.h>
@@ -39,7 +40,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	entry1b.set_account(Account(dbc, "food"));
 	entry1b.set_comment("igloo entry b");
 	entry1b.set_whether_reconciled(false);
-	entry1b.set_amount(Decimal("50.09"));
+	entry1b.set_amount(Decimal("-0.99"));
 	journal1.add_entry(entry1b);
 	OrdinaryJournal oj1(dbc);
 	oj1.set_date(date(2000, 1, 5));
@@ -69,7 +70,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		{
 			CHECK_EQUAL(it1->id(), 2);
 			CHECK_EQUAL(it1->is_reconciled(), false);
-			CHECK_EQUAL(it1->amount(), Decimal("50.09"));
+			CHECK_EQUAL(it1->amount(), Decimal("-0.99"));
 			CHECK_EQUAL(it1->comment(), "igloo entry b");
 			CHECK_EQUAL(it1->account().id(), Account(dbc, "food").id());
 		}
@@ -82,7 +83,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	Entry entry2a(dbc);
 	entry2a.set_account(Account(dbc, "food"));
 	entry2a.set_comment("steam");
-	entry2a.set_amount(Decimal("-1000.95"));
+	entry2a.set_amount(Decimal("0"));
 	entry2a.set_whether_reconciled(false);
 	dj2.add_entry(entry2a);
 	
@@ -114,7 +115,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	entry2b.set_amount(Decimal("2055.90"));
 	entry2b.set_whether_reconciled(false);
 	oj2.add_entry(entry2b);
-	Entry entry2c(entry2b);
+	Entry entry2c(dbc);
 	entry2c.mimic(entry2b);
 	entry2c.set_amount(Decimal("-2055.90"));
 	oj2.add_entry(entry2c); 
@@ -130,7 +131,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	CHECK_EQUAL(oj2b.entries().size(), 1);
 	CHECK_EQUAL(oj2b.date(), date(2000, 1, 5));
 	vector<Entry>::const_iterator it2b = oj2b.entries().begin();
-	CHECK_EQUAL(it2b->amount(), Decimal("-1000.95"));
+	CHECK_EQUAL(it2b->amount(), Decimal("0"));
 }
 
 
@@ -146,6 +147,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	entry1a.set_whether_reconciled(true);
 	entry1a.set_amount(Decimal("-10.99"));
 	journal1.add_entry(entry1a);
+	CHECK_THROW(journal1.save(), UnbalancedJournalException);
 
 	Entry entry1b(dbc);
 	entry1b.set_account(Account(dbc, "food"));
@@ -156,6 +158,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	journal1.set_date(date(2000, 1, 5));
 
 	CHECK(!journal1.is_balanced());
+	CHECK_THROW(journal1.save(), UnbalancedJournalException);
 	entry1b.set_amount(Decimal("10.99"));
 	CHECK(journal1.is_balanced());
 

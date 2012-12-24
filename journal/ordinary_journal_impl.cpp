@@ -4,6 +4,7 @@
 #include "date.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/handle.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -250,6 +251,16 @@ OrdinaryJournalImpl::do_load()
 void
 OrdinaryJournalImpl::do_save_new()
 {
+	// TODO I am going to need to deal with this possibility when
+	// the journal is an autoposted journal that has somehow become
+	// unbalanced due to an edit or etc..
+	if (!is_balanced())
+	{
+		throw UnbalancedJournalException
+		(	"Cannot save OrdinaryJournalImpl in unbalanced state."
+		);
+	}
+
 	// Save the Journal	(base) part of the object and record the id.
 	Id const journal_id = do_save_new_journal_base(database_connection());
 
@@ -268,6 +279,13 @@ OrdinaryJournalImpl::do_save_new()
 void
 OrdinaryJournalImpl::do_save_existing()
 {
+	if (!is_balanced())
+	{
+		throw UnbalancedJournalException
+		(	"Cannot save OrdinaryJournalImpl in unbalanced state."
+		);
+	}
+	
 	// Save the Journal (base) part of the object
 	do_save_existing_journal_base(database_connection(), id());
 
