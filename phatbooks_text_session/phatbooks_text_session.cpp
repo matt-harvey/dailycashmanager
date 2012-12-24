@@ -148,8 +148,6 @@ PhatbooksTextSession::PhatbooksTextSession():
 	);
 	m_main_menu->add_item(import_from_nap_item);
 
-	// WARNING play code
-
 	shared_ptr<MenuItem> display_journal_summaries_selection
 	(	new MenuItem
 		(	"Display a summary of each journal",
@@ -158,16 +156,27 @@ PhatbooksTextSession::PhatbooksTextSession():
 		)
 	);
 	m_main_menu->add_item(display_journal_summaries_selection);
-	shared_ptr<MenuItem> display_balances_selection
+
+	// TODO Should this also display equity accounts? Do we even have
+	// any equity accounts?
+	shared_ptr<MenuItem> display_balance_sheet_selection
 	(	new MenuItem
-		(	"Display the balance of each envelope and balance sheet account",
-			bind(&PhatbooksTextSession::display_balances, this),
+		(	"Display the balances of asset and liability accounts",
+			bind(&PhatbooksTextSession::display_balance_sheet, this),
 			true
 		)
 	);
-	m_main_menu->add_item(display_balances_selection);
-	// WARNING end play code
+	m_main_menu->add_item(display_balance_sheet_selection);
 
+	shared_ptr<MenuItem> display_envelopes_selection
+	(	new MenuItem
+		(	"Display envelope balances",
+			bind(&PhatbooksTextSession::display_envelopes, this),
+			true
+		)
+	);
+	m_main_menu->add_item(display_envelopes_selection);
+	
 	shared_ptr<MenuItem> quit_item
 	(	new MenuItem
 		(	"Quit",
@@ -898,18 +907,21 @@ void PhatbooksTextSession::notify_autoposts
 (	shared_ptr<list<OrdinaryJournal> > journals
 ) const
 {
-	cout << "The following journals have been posted automatically since "
-	     << "the last session:"
-		 << endl << endl;
-	for
-	(	list<OrdinaryJournal>::const_iterator it = journals->begin(),
-			end = journals->end();
-		it != end;
-		++it
-	)
+	if (!journals->empty())
 	{
-		print_ordinary_journal(*it);
-		cout << endl << endl;
+		cout << "The following journals have been posted automatically since "
+			 << "the last session:"
+			 << endl << endl;
+		for
+		(	list<OrdinaryJournal>::const_iterator it = journals->begin(),
+				end = journals->end();
+			it != end;
+			++it
+		)
+		{
+			print_ordinary_journal(*it);
+			cout << endl << endl;
+		}
 	}
 	return;
 }
@@ -982,29 +994,25 @@ namespace
 }  // End anonymous namespace
 
 
-void PhatbooksTextSession::display_balances()
+void PhatbooksTextSession::display_balance_sheet()
 {
 	BalanceSheetAccountReader bs_reader(database_connection());
-	PLAccountReader pl_reader(database_connection());
 	cout.imbue(locale(""));
-	for (int i = 0; i != 2; ++i)
-	{
-		cout << endl << endl;;
-		if (i == 0)
-		{
-			cout << "BALANCE SHEET: " << endl << endl;
-			print_account_reader(bs_reader);
-		}
-		else
-		{
-			assert (i == 1);
-			cout << "P&L: " << endl << endl;
-			print_account_reader(pl_reader);
-		}
-	}
+	cout << endl << endl;
+	cout << "BALANCE SHEET: " << endl << endl;
+	print_account_reader(bs_reader);
 	return;
 }
 
+void PhatbooksTextSession::display_envelopes()
+{
+	PLAccountReader pl_reader(database_connection());
+	cout.imbue(locale(""));
+	cout << endl << endl;
+	cout << "ENVELOPES: " << endl << endl;
+	print_account_reader(pl_reader);
+	return;
+}
 
 
 // WARNING end play code

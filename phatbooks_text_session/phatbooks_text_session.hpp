@@ -198,7 +198,6 @@ private:
 
 	void display_balance_sheet();
 	void display_envelopes();
-	void display_profit_and_loss();
 	void display_transaction_listing();
 	void elicit_actuals_journal();
 	void elicit_budget_journal();
@@ -208,9 +207,7 @@ private:
 	void display_commodities_menu();
 	void display_accounts_menu();
 	void display_utilities_menu();
-
 	void display_journal_summaries();  // WARNING play code
-	void display_balances();  // WARNING play code
 	
 	void wrap_up();
 
