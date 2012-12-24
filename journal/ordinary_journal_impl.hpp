@@ -80,7 +80,7 @@ public:
 	 * @returns true if and only if the journal balances, i.e. the total
 	 * of the entries is equal to zero.
 	 *
-	 * @todo Implement it! Note, thinking a little about this function shows
+	 * @todo Note, thinking a little about this function shows
 	 * that all entries in a journal must be expressed in a common currency.
 	 * It doesn't make sense to think of entries in a single journal as being
 	 * in different currencies. An entry must have its value frozen in time.

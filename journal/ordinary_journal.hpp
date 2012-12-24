@@ -53,7 +53,7 @@ public:
 	bool is_actual() const;
 	boost::gregorian::date date() const;
 	std::string comment() const;
-	bool is_balanced() const;  // TODO Implement (by delegating to m_impl)
+	bool is_balanced() const;
 	std::vector<Entry> const& entries() const;
 
 	/**

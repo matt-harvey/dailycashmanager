@@ -134,6 +134,49 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 }
 
 
+TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
+{
+	OrdinaryJournal journal1(dbc);
+	journal1.set_whether_actual(true);
+	journal1.set_comment("igloo");
+
+	Entry entry1a(dbc);
+	entry1a.set_account(Account(dbc, "cash"));
+	entry1a.set_comment("igloo entry a");
+	entry1a.set_whether_reconciled(true);
+	entry1a.set_amount(Decimal("-10.99"));
+	journal1.add_entry(entry1a);
+
+	Entry entry1b(dbc);
+	entry1b.set_account(Account(dbc, "food"));
+	entry1b.set_comment("igloo entry b");
+	entry1b.set_whether_reconciled(false);
+	entry1b.set_amount(Decimal("50.09"));
+	journal1.add_entry(entry1b);
+	journal1.set_date(date(2000, 1, 5));
+
+	CHECK(!journal1.is_balanced());
+	entry1b.set_amount(Decimal("10.99"));
+	CHECK(journal1.is_balanced());
+
+	journal1.save();
+
+	OrdinaryJournal journal1b(dbc, 1);
+	CHECK(journal1b.is_balanced());
+	Entry entry1c(dbc);
+	entry1c.set_account(Account(dbc, "food"));
+	entry1c.set_comment("Ummm");
+	entry1c.set_whether_reconciled(true);
+	entry1c.set_amount(Decimal(0, 0));
+	journal1b.add_entry(entry1c);
+	CHECK(journal1b.is_balanced());
+	CHECK(journal1.is_balanced());
+	journal1b.save();
+	
+	entry1c.set_amount(Decimal("0.0000001"));
+	CHECK_EQUAL(journal1.is_balanced(), false);
+	CHECK(!journal1b.is_balanced());
+}
 
 
 

@@ -139,6 +139,12 @@ OrdinaryJournal::comment() const
 	return m_impl->comment();
 }
 
+bool
+OrdinaryJournal::is_balanced() const
+{
+	return m_impl->is_balanced();
+}
+
 vector<Entry> const&
 OrdinaryJournal::entries() const
 {

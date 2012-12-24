@@ -14,6 +14,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <string>
 #include <vector>
@@ -21,6 +22,7 @@
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::clear;
+using jewel::Decimal;
 using jewel::value;
 using sqloxx::SQLStatement;
 using std::string;
@@ -183,6 +185,23 @@ OrdinaryJournalImpl::date()
 	return boost_date_from_julian_int(value(m_date));
 }
 
+
+bool
+OrdinaryJournalImpl::is_balanced()
+{
+	load();
+	Decimal balance(0, 0);
+	for
+	(	vector<Entry>::const_iterator it = entries().begin(),
+			end = entries().end();
+		it != end;
+		++it
+	)
+	{
+		balance += it->amount();
+	}
+	return balance == Decimal(0, 0);
+}
 
 void
 OrdinaryJournalImpl::swap(OrdinaryJournalImpl& rhs)
