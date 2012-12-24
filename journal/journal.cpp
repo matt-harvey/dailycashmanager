@@ -84,7 +84,7 @@ Journal::~Journal()
 }
 
 vector<Entry> const& 
-Journal::entries()
+Journal::entries() const
 {
 	return m_data->entries;
 }
@@ -114,17 +114,32 @@ Journal::add_entry(Entry& entry)
 }
 
 string
-Journal::comment()
+Journal::comment() const
 {
 	return value(m_data->comment);
 }
 
 bool
-Journal::is_actual()
+Journal::is_actual() const
 {
 	return value(m_data->is_actual);
 }
 
+bool
+Journal::is_balanced() const
+{
+	Decimal balance(0, 0);
+	for
+	(	vector<Entry>::const_iterator it = entries().begin(),
+			end = entries().end();
+		it != end;
+		++it
+	)
+	{
+		balance += it->amount();
+	}
+	return balance == Decimal(0, 0);
+}
 
 void
 Journal::swap(Journal& rhs)

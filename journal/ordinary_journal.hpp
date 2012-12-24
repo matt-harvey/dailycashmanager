@@ -2,6 +2,7 @@
 #define GUARD_ordinary_journal_hpp
 
 #include "entry.hpp"
+#include "journal.hpp"
 #include "ordinary_journal_impl.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -15,10 +16,11 @@ namespace phatbooks
 {
 
 class DraftJournal;
-class Journal;
+// class Journal;
 class PhatbooksDatabaseConnection;
 
-class OrdinaryJournal
+class OrdinaryJournal:
+	public Journal
 {
 public:
 
@@ -51,9 +53,9 @@ public:
 	void set_date(boost::gregorian::date const& p_date);
 	void add_entry(Entry& entry);
 	bool is_actual() const;
+	bool is_balanced() const;
 	boost::gregorian::date date() const;
 	std::string comment() const;
-	bool is_balanced() const;
 	std::vector<Entry> const& entries() const;
 
 	/**
@@ -72,10 +74,8 @@ public:
 	 * Take on the attributes from \e rhs, where these exist and are
 	 * applicable to OrdinaryJournal; but do \e not take on the \e id
 	 * attribute of \e rhs.
-	 *
-	 * TODO See corresponding task in OrdinaryJournalImpl.
 	 */
-	void mimic(Journal& rhs);
+	void mimic(Journal const& rhs);
 	void mimic(DraftJournal const& rhs);
 	void mimic(OrdinaryJournal const& rhs);
 
@@ -97,7 +97,6 @@ private:
 	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);
 	sqloxx::Handle<OrdinaryJournalImpl> m_impl;
 };
-
 
 // TODO Do this properly. Factor out common code to Journal base class
 // and provide similar method for DraftJournal. Make use of consolixx::Table

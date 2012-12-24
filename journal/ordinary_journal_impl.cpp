@@ -191,17 +191,7 @@ bool
 OrdinaryJournalImpl::is_balanced()
 {
 	load();
-	Decimal balance(0, 0);
-	for
-	(	vector<Entry>::const_iterator it = entries().begin(),
-			end = entries().end();
-		it != end;
-		++it
-	)
-	{
-		balance += it->amount();
-	}
-	return balance == Decimal(0, 0);
+	return Journal::is_balanced();
 }
 
 void
@@ -312,7 +302,7 @@ OrdinaryJournalImpl::do_ghostify()
 
 
 void
-OrdinaryJournalImpl::mimic(Journal& rhs)
+OrdinaryJournalImpl::mimic(Journal const& rhs)
 {
 	load();
 	OrdinaryJournalImpl temp(*this);

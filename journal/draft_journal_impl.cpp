@@ -182,6 +182,13 @@ DraftJournalImpl::name()
 }
 
 
+bool
+DraftJournalImpl::is_balanced()
+{
+	load();
+	return Journal::is_balanced();
+}
+
 DraftJournalImpl::DraftJournalImpl(DraftJournalImpl const& rhs):
 	DraftJournalImpl::PersistentObject(rhs),
 	Journal(rhs),

@@ -94,20 +94,23 @@ public:
 
 	// WARNING This returns a reference to internals and so
 	// is a bit fucked. But client code uses it a lot...
-	virtual std::vector<Entry> const& entries();
-
-	// WARNING temp play
-	void remove_first_entry();
-
-
+	virtual std::vector<Entry> const& entries() const;
 	virtual void set_whether_actual(bool p_is_actual);
 	virtual void set_comment(std::string const& p_comment);
 	virtual void add_entry(Entry& entry);
+	virtual std::string comment() const;
+	virtual bool is_actual() const;
 
-	// WARNING If I mark these as const, there may be problems
-	// in derived ...Impl classes.
-	virtual std::string comment();
-	virtual bool is_actual();
+	/**
+	 * @returns true if and only if the journal balances, i.e. the total
+	 * of the entries is equal to zero.
+	 *
+	 * @todo Note, thinking a little about this function shows
+	 * that all entries in a journal must be expressed in a common currency.
+	 * It doesn't make sense to think of entries in a single journal as being
+	 * in different currencies. An entry must have its value frozen in time.
+	 */
+	bool is_balanced() const;
 
 protected:
 

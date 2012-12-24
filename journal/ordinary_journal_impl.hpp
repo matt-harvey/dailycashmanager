@@ -76,15 +76,6 @@ public:
 	 */
 	std::string comment();
 
-	/**
-	 * @returns true if and only if the journal balances, i.e. the total
-	 * of the entries is equal to zero.
-	 *
-	 * @todo Note, thinking a little about this function shows
-	 * that all entries in a journal must be expressed in a common currency.
-	 * It doesn't make sense to think of entries in a single journal as being
-	 * in different currencies. An entry must have its value frozen in time.
-	 */
 	bool is_balanced();
 
 	std::vector<Entry> const& entries();
@@ -150,11 +141,8 @@ public:
 	 * Take on the attributes from \e rhs, where these exist and are
 	 * applicable to OrdinaryJournalImpl; but do \e not take on the \e id
 	 * attribute of \e rhs.
-	 *
-	 * TODO I seem to be stuck with the Journal& one being const, for
-	 * perverse reasons. Can this be fixed?
 	 */
-	void mimic(Journal& rhs);
+	void mimic(Journal const& rhs);
 	void mimic(DraftJournal const& rhs);
 	void mimic(OrdinaryJournalImpl& rhs);
 

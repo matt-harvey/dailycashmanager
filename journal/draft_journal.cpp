@@ -123,6 +123,12 @@ DraftJournal::comment() const
 	return m_impl->comment();
 }
 
+bool
+DraftJournal::is_balanced() const
+{
+	return m_impl->is_balanced();
+}
+	
 string
 DraftJournal::name() const
 {

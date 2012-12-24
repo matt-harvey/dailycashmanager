@@ -177,7 +177,7 @@ OrdinaryJournal::save()
 
 
 void
-OrdinaryJournal::mimic(Journal& rhs)
+OrdinaryJournal::mimic(Journal const& rhs)
 {
 	// TODO Now this is written, I can do away
 	// with the constructor that takes a Journal const&.

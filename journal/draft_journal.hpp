@@ -2,6 +2,7 @@
 #define GUARD_draft_journal_hpp
 
 #include "draft_journal_impl.hpp"
+#include "journal.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
@@ -12,11 +13,12 @@ namespace phatbooks
 {
 
 class Entry;
-class Journal;
+// class Journal;
 class PhatbooksDatabaseConnection;
 class Repeater;
 
-class DraftJournal
+class DraftJournal:
+	public Journal
 {
 public:
 	typedef sqloxx::Id Id;
@@ -48,9 +50,9 @@ public:
 	void add_entry(Entry& entry);
 	void add_repeater(Repeater& repeater);
 	bool is_actual() const;
+	bool is_balanced() const;
 	std::string comment() const;
 	std::string name() const;
-	bool is_balanced() const;  // TODO Implement via m_impl in due course.
 	std::vector<Entry> const& entries() const;
 	
 	/**
