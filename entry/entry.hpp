@@ -97,30 +97,13 @@ private:
 
 };
 
-template <typename JournalType>
-boost::shared_ptr<std::vector<std::string> >
-make_entry_row(Entry const& entry)
-{
-	using std::string;
-	using std::vector;
-	using boost::shared_ptr;
-	using jewel::Decimal;
-	shared_ptr<vector<string> > ret(new vector<string>);
-	ret->push_back(entry.account().name());
-	ret->push_back(entry.comment());
-	ret->push_back(entry.account().commodity().abbreviation());
 
-	// TODO Factor out "friendly amount" (as
-	// per Account::friendly_balance())?
-	Decimal amount = entry.amount();
-	if (!entry.journal<JournalType>().is_actual())
-	{
-		Decimal::places_type const places = amount.places();
-		amount = round(-amount, places);
-	}
-	ret->push_back(finformat(amount));
-	return ret;
-}
+boost::shared_ptr<std::vector<std::string> >
+make_entry_row(Entry const& entry);
+
+boost::shared_ptr<std::vector<std::string> >
+make_reversed_entry_row(Entry const& entry);
+
 
 
 }  // namespace phatbooks

@@ -98,9 +98,8 @@ private:
 	sqloxx::Handle<OrdinaryJournalImpl> m_impl;
 };
 
-// TODO Do this properly. Factor out common code to Journal base class
-// and provide similar method for DraftJournal. Make use of consolixx::Table
-// to prettify output.
+// TODO Factor out common code to Journal base class
+// and provide similar method for DraftJournal.
 std::ostream&
 operator<<(std::ostream& os, OrdinaryJournal const& oj);
 

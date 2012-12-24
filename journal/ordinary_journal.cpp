@@ -8,6 +8,7 @@
 #include "consolixx/table.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <ostream>
 #include <sstream>
@@ -17,6 +18,7 @@
 
 namespace alignment = consolixx::alignment;
 
+using boost::lexical_cast;
 using boost::shared_ptr;
 using consolixx::Table;
 using sqloxx::Handle;
@@ -217,18 +219,25 @@ ostream&
 OrdinaryJournal::output_aux(ostream& os) const
 {
 	os << date();
-	if (is_actual()) os << " Actual journal";
-	else os << " Budget journal";
-	os << " ID " << id() << endl;
+	if (is_actual()) os << " ACTUAL";
+	else os << " BUDGET";
+	// lexical_cast here avoids unwanted formatting
+	os << " JOURNAL ID: " << lexical_cast<string>(id()) << endl;
 	if (!comment().empty()) os << comment() << endl;
 	os << endl;
-	vector<string> const headings(4, "");
-	vector<alignment::Flag> alignments(4, alignment::left);
-	alignments[3] = alignment::right;
+	vector<string> headings;
+	headings.push_back("ENTRY ID");
+	headings.push_back("ACCOUNT");
+	headings.push_back("COMMENT");
+	headings.push_back("COMMODITY");
+	headings.push_back("AMOUNT");
+	vector<alignment::Flag> alignments(5, alignment::left);
+	alignments[4] = alignment::right;
+	bool const change_signs = !is_actual();
 	Table<Entry> const table
 	(	entries().begin(),
 		entries().end(),
-		make_entry_row<OrdinaryJournal>,
+		change_signs? make_reversed_entry_row: make_entry_row,
 		headings,
 		alignments,
 		2

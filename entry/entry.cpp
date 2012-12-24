@@ -1,14 +1,21 @@
 #include "entry.hpp"
 #include "entry_impl.hpp"
+#include "finformat.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
+#include <vector>
 
+using boost::lexical_cast;
 using boost::shared_ptr;
+using jewel::Decimal;
 using sqloxx::Handle;
 using std::string;
+using std::vector;
 
 
 namespace phatbooks
@@ -154,6 +161,46 @@ Entry::Entry(sqloxx::Handle<EntryImpl> const& p_handle):
 	m_impl(p_handle)
 {
 }
+
+
+namespace
+{
+	shared_ptr<vector<string> > make_entry_row_aux
+	(	Entry const& entry,
+		bool reverse
+	)
+	{
+		shared_ptr<vector<string> > ret(new vector<string>);
+		ret->push_back(lexical_cast<string>(entry.id()));
+		ret->push_back(entry.account().name());
+		ret->push_back(entry.comment());
+		ret->push_back(entry.account().commodity().abbreviation());
+		Decimal amount = entry.amount();
+		if (reverse)
+		{
+			Decimal::places_type const places = amount.places();
+			amount = round(-amount, places);
+		}
+		ret->push_back(finformat(amount));
+		return ret;
+	}
+}  // End anonymous namespace
+
+
+shared_ptr<vector<string> >
+make_entry_row(Entry const& entry)
+{
+	return make_entry_row_aux(entry, false);
+}
+
+
+shared_ptr<vector<string> >
+make_reversed_entry_row(Entry const& entry)
+{
+	return make_entry_row_aux(entry, true);
+}
+
+
 
 
 }  // namespace phatbooks
