@@ -726,7 +726,10 @@ void PhatbooksTextSession::elicit_journal()
 			frequency_menu.present_to_user();
 			shared_ptr<MenuItem const> const choice =
 				frequency_menu.last_choice();
-		
+	
+			// TODO Change the below where applicable to make use
+			// of phrase(...) function.
+
 			// Determine interval type
 			if (choice == monthly_day_x || choice == N_monthly_day_x)
 			{

@@ -55,13 +55,20 @@ RepeaterImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 	dbc.execute_sql
 	(	"create table interval_types"
 		"("
-			"interval_type_id integer primary key autoincrement, "
-			"name text not null unique"
+			"interval_type_id integer primary key autoincrement"
 		");"
+		// WARNING The interval_types names are stored in two
+		// different places - in the database and in the phrase(...)
+		// function in interval_types.hpp. Somewhere a foreign key
+		// seems to depend on the former, but not sure where or
+		// why. I should try to get rid of the former then get
+		// rid of the superfluous db column.
+		/*
 		"insert into interval_types(name) values('days'); "
 		"insert into interval_types(name) values('weeks'); "
 		"insert into interval_types(name) values('months'); "
 		"insert into interval_types(name) values('month ends'); "
+		*/
 	);
 	dbc.execute_sql
 	(	"create table repeaters"

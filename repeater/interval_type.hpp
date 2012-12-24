@@ -1,6 +1,8 @@
 #ifndef GUARD_interval_type_hpp
 #define GUARD_interval_type_hpp
 
+#include <string>
+
 namespace phatbooks
 {
 namespace interval_type
@@ -29,8 +31,17 @@ enum IntervalType
 	month_ends
 };
 
-
 }  // namespace interval_type
+
+
+/**
+ * @returns a short phrase describing the interval.
+ * E.g. "days", "month", etc.. The phrase is plural if and
+ * only if \e is_plural is true.
+ */
+std::string phrase(interval_type::IntervalType x, bool is_plural);
+
+
 }  // namespace phatbooks
 
 
