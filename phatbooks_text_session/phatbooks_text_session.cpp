@@ -850,58 +850,6 @@ void PhatbooksTextSession::import_from_nap()
 }
 
 
-namespace
-{
-	// WARNING Quick hack
-	template <typename JournalType>
-	shared_ptr<vector<string> > make_entry_row(Entry const& entry)
-	{
-		shared_ptr<vector<string> > ret(new vector<string>);
-		ret->push_back(entry.account().name());
-		ret->push_back(entry.comment());
-		ret->push_back(entry.account().commodity().abbreviation());
-		
-		// TODO Factor out "friendly amount" (as
-		// per Account::friendly_balance())?
-		Decimal amount =
-			entry.amount() *
-			(	entry.journal<JournalType>().is_actual()?
-				Decimal(1, 0):
-				Decimal(-1, 0)
-			);
-		amount = round(amount, entry.amount().places());
-
-		ret->push_back(finformat(amount));
-		return ret;
-	}
-
-	void print_ordinary_journal(OrdinaryJournal const& oj)
-	{
-		cout << oj.date() << "  ";
-		if (oj.is_actual()) cout << "Actual transaction";
-		else cout << "Envelope transaction";
-		cout << "  " << oj.comment() << "  ID " << oj.id() << endl;
-		cout << endl;
-		vector<string> headings(4, "");
-		vector<alignment::Flag> alignments;
-		alignments.push_back(alignment::left);
-		alignments.push_back(alignment::left);
-		alignments.push_back(alignment::left);
-		alignments.push_back(alignment::right);
-		Table<Entry> const table
-		(	oj.entries().begin(),
-			oj.entries().end(),
-			make_entry_row<OrdinaryJournal>,
-			headings,
-			alignments
-		);
-		cout << table;
-		return;
-	}
-
-}  // End anonymous namespace
-
-
 
 void PhatbooksTextSession::notify_autoposts
 (	shared_ptr<list<OrdinaryJournal> > journals
@@ -919,8 +867,7 @@ void PhatbooksTextSession::notify_autoposts
 			++it
 		)
 		{
-			print_ordinary_journal(*it);
-			cout << endl << endl;
+			cout << *it << endl << endl;
 		}
 	}
 	return;
@@ -930,7 +877,7 @@ void PhatbooksTextSession::notify_autoposts
 void PhatbooksTextSession::display_journal_summaries()
 {
 	cout << "For each ORDINARY journal, here's what's in it. "
-	     << endl;
+	     << endl << endl;
 	OrdinaryJournalReader oj_reader(database_connection());
 	for
 	(	OrdinaryJournalReader::const_iterator it =
@@ -940,19 +887,8 @@ void PhatbooksTextSession::display_journal_summaries()
 		++it
 	)
 	{
-		OrdinaryJournal const journal = *it;
-		cout << endl << journal.date() << endl;
-		typedef vector<Entry> EntryVec;
-		EntryVec::const_iterator jt = journal.entries().begin();
-		EntryVec::const_iterator endpoint = journal.entries().end();
-		for ( ; jt != endpoint; ++jt)
-		{
-			Decimal const amount = jt->amount();
-			cout << jt->account().name() << "\t"
-			     << jt->comment() << "\t"
-			     << finformat(amount) << endl;
-		}
-		cout << endl;
+		cout << *it;
+		cout << endl << endl;
 	}
 	cout << "Done!" << endl << endl;
 	return;

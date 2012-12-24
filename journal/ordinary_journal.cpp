@@ -5,13 +5,24 @@
 #include "journal.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "consolixx/table.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
+#include <ostream>
+#include <sstream>
+#include <stdexcept>
+#include <string>
 #include <vector>
 
+namespace alignment = consolixx::alignment;
+
 using boost::shared_ptr;
+using consolixx::Table;
 using sqloxx::Handle;
+using std::ios_base;
+using std::ostream;
+using std::ostringstream;
 using std::string;
 using std::vector;
 
@@ -201,5 +212,58 @@ OrdinaryJournal::OrdinaryJournal
 	m_impl(p_handle)
 {
 }
+
+ostream&
+OrdinaryJournal::output_aux(ostream& os) const
+{
+	os << date();
+	if (is_actual()) os << " Actual journal";
+	else os << " Budget journal";
+	os << " ID " << id() << endl;
+	if (!comment().empty()) os << comment() << endl;
+	os << endl;
+	vector<string> const headings(4, "");
+	vector<alignment::Flag> alignments(4, alignment::left);
+	alignments[3] = alignment::right;
+	Table<Entry> const table
+	(	entries().begin(),
+		entries().end(),
+		make_entry_row<OrdinaryJournal>,
+		headings,
+		alignments,
+		2
+	);
+	os << table;
+	return os;
+}
+
+
+ostream&
+operator<<(ostream& os, OrdinaryJournal const& oj)
+{
+	if (!os)
+	{
+		return os;
+	}
+	try
+	{
+		ostringstream ss;
+		ss.exceptions(os.exceptions());
+		ss.imbue(os.getloc());
+		oj.output_aux(ss);
+		if (!ss)
+		{
+			os.setstate(ss.rdstate());
+			return os;
+		}
+		os << ss.str();
+	}
+	catch (std::exception&)
+	{
+		os.setstate(ios_base::badbit);
+	}
+	return os;
+}
+	
 
 }  // namespace phatbooks

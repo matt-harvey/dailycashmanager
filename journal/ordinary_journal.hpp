@@ -79,11 +79,19 @@ public:
 	void mimic(DraftJournal const& rhs);
 	void mimic(OrdinaryJournal const& rhs);
 
-	
+	friend
+	std::ostream& operator<<(std::ostream& os, OrdinaryJournal const& oj);
+
+
+
 private:
+
+	std::ostream& output_aux(std::ostream& os) const;
+	
 
 	// TODO Is this even used anywhere?
 	void clear_entries();
+
 
 
 	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);
@@ -97,17 +105,7 @@ private:
 std::ostream&
 operator<<(std::ostream& os, OrdinaryJournal const& oj);
 
-
-inline
-std::ostream&
-operator<<(std::ostream& os, OrdinaryJournal const& oj)
-{
-	// WARNING Quick hack.
-	os << "Journal id: " << oj.id() << std::endl;
-	os << "Journal date: " << oj.date() << std::endl;
-	os << std::endl;
-	return os;
-}
+	
 
 
 
