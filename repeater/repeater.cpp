@@ -5,13 +5,17 @@
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <string>
 #include <vector>
 
 namespace gregorian = boost::gregorian;
 
+using boost::lexical_cast;
 using boost::shared_ptr;
 using sqloxx::Handle;
+using std::string;
 using std::vector;
 
 namespace phatbooks
@@ -156,6 +160,26 @@ Repeater::Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle):
 	m_impl(p_handle)
 {
 }
+
+
+string
+frequency_description(Repeater const& repeater)
+{
+	string ret = "every ";
+	int const units = repeater.interval_units();	
+	if (units > 1)
+	{
+		ret += lexical_cast<string>(units);
+		ret += " ";
+		ret += phrase(repeater.interval_type(), true);
+	}
+	else
+	{
+		ret += phrase(repeater.interval_type(), false);
+	}
+	return ret;
+}
+
 
 
 }  // namespace phatbooks

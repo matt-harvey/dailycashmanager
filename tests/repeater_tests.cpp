@@ -198,9 +198,59 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 }
 
 
+TEST_FIXTURE(TestFixture, test_repeater_frequency_phrase)
+{
+	Repeater repeater1(dbc);
+	repeater1.set_interval_type(interval_type::days);
+	repeater1.set_interval_units(1);
+	CHECK_EQUAL(frequency_description(repeater1), "every day");
 
+	Repeater repeater2(dbc);
+	repeater2.set_interval_type(interval_type::days);
+	repeater2.set_interval_units(12);
+	CHECK_EQUAL(frequency_description(repeater2), "every 12 days");
 
+	Repeater repeater3(dbc);
+	repeater3.set_interval_type(interval_type::weeks);
+	repeater3.set_interval_units(1);
+	CHECK_EQUAL(frequency_description(repeater3), "every week");
+	
+	Repeater repeater4(dbc);
+	repeater4.set_interval_type(interval_type::weeks);
+	repeater4.set_interval_units(2);
+	CHECK_EQUAL(frequency_description(repeater4), "every 2 weeks");
 
+	Repeater repeater5(dbc);
+	repeater5.set_interval_type(interval_type::months);
+	repeater5.set_interval_units(3);
+	CHECK_EQUAL(frequency_description(repeater5), "every 3 months");
+
+	Repeater repeater6(dbc);
+	repeater6.set_interval_type(interval_type::months);
+	repeater6.set_interval_units(1);
+	CHECK_EQUAL(frequency_description(repeater6), "every month");
+
+	Repeater repeater7(dbc);
+	repeater7.set_interval_type(interval_type::months);
+	repeater7.set_interval_units(12);
+	CHECK_EQUAL(frequency_description(repeater7), "every 12 months");
+
+	Repeater repeater8(dbc);
+	repeater8.set_interval_type(interval_type::month_ends);
+	repeater8.set_interval_units(1);
+	CHECK_EQUAL
+	(	frequency_description(repeater8),
+		"every month, on the last day of the month"
+	);
+
+	Repeater repeater9(dbc);
+	repeater9.set_interval_type(interval_type::month_ends);
+	repeater9.set_interval_units(10);
+	CHECK_EQUAL
+	(	frequency_description(repeater9),
+		"every 10 months, on the last day of the month"
+	);
+}
 
 
 

@@ -9,6 +9,7 @@
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
+#include <string>
 #include <vector>
 
 namespace phatbooks
@@ -95,6 +96,12 @@ private:
 };
 
 
+
+/**
+ * @returns an English phrase describing the frequency of the
+ * Repeater.
+ */
+std::string frequency_description(Repeater const& repeater);
 
 
 }  // namespace phatbooks
