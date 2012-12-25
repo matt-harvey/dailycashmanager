@@ -188,6 +188,7 @@ void import_from_nap
 	
 
 
+
 	typedef vector< shared_ptr<OrdinaryJournal> > OrdinaryJournalVec;
 	typedef vector< shared_ptr<DraftJournal> > DraftJournalVec;
 
@@ -205,9 +206,6 @@ void import_from_nap
 	unordered_map< shared_ptr<OrdinaryJournal>, int > problematic_ordinary_journal_map;
 	// Map from problematic draft journals to old draft journal names
 	unordered_map< shared_ptr<DraftJournal>, string > problematic_draft_journal_map;
-
-
-
 
 
 	// Read draft journals ************************************
@@ -661,6 +659,7 @@ void import_from_nap
 		 << endl;
 
 	transaction.commit();
+
 	return;
 }
 			

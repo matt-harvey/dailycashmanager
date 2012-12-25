@@ -55,20 +55,12 @@ RepeaterImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 	dbc.execute_sql
 	(	"create table interval_types"
 		"("
-			"interval_type_id integer primary key autoincrement"
+			"interval_type_id integer primary key"
 		");"
-		// WARNING The interval_types names are stored in two
-		// different places - in the database and in the phrase(...)
-		// function in interval_types.hpp. Somewhere a foreign key
-		// seems to depend on the former, but not sure where or
-		// why. I should try to get rid of the former then get
-		// rid of the superfluous db column.
-		/*
-		"insert into interval_types(name) values('days'); "
-		"insert into interval_types(name) values('weeks'); "
-		"insert into interval_types(name) values('months'); "
-		"insert into interval_types(name) values('month ends'); "
-		*/
+		"insert into interval_types(interval_type_id) values(1); "
+		"insert into interval_types(interval_type_id) values(2); "
+		"insert into interval_types(interval_type_id) values(3); "
+		"insert into interval_types(interval_type_id) values(4);"
 	);
 	dbc.execute_sql
 	(	"create table repeaters"
@@ -330,13 +322,22 @@ RepeaterImpl::do_save_existing()
 void
 RepeaterImpl::do_save_new()
 {
-	SQLStatement inserter
-	(	database_connection(),
-		"insert into repeaters(interval_type_id, interval_units, "
-		"next_date, journal_id) values(:interval_type_id, :interval_units, "
-		":next_date, :journal_id)"
-	);
-	process_saving_statement(inserter);
+	// WARNING temp try catch
+	try
+	{
+		SQLStatement inserter
+		(	database_connection(),
+			"insert into repeaters(interval_type_id, interval_units, "
+			"next_date, journal_id) values(:interval_type_id, :interval_units, "
+			":next_date, :journal_id)"
+		);
+		process_saving_statement(inserter);
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		std::cerr << id() << " " << interval_units() << " " << interval_type() << std::endl;
+	}
 	return;
 }
 
