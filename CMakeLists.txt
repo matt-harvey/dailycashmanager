@@ -46,6 +46,7 @@ set (main_files
 	 session/session.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
 	 phatbooks_text_session/phatbooks_text_session.cpp
+	 repeater/interval_type.cpp
 	 repeater/repeater.cpp
 	 repeater/repeater_impl.cpp
 	 repeater/repeater_reader.cpp)
@@ -53,6 +54,7 @@ set (main_files
 set (test_files
 	 ${main_files}
 	 tests/test.cpp
+	 tests/interval_type_tests.cpp
 	 tests/ordinary_journal_tests.cpp
 	 tests/phatbooks_tests_common.cpp
 	 tests/repeater_tests.cpp)
