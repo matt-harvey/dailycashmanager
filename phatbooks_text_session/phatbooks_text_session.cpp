@@ -265,7 +265,7 @@ int PhatbooksTextSession::do_run(string const& filename)
 void PhatbooksTextSession::display_draft_journals()
 {
 	cout << endl;	
-	Menu menu;
+	Menu menu("Select a transaction to view from the above menu: ");
 	DraftJournalReader const dj_reader(database_connection());
 	map< shared_ptr<MenuItem const>, shared_ptr<DraftJournal> > dj_map;
 	for

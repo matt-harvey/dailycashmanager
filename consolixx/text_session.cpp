@@ -78,8 +78,9 @@ TextSession::Menu::add_item(shared_ptr<MenuItem const> const& item)
 }
 
 
-TextSession::Menu::Menu():
-	m_selection_record(1)
+TextSession::Menu::Menu(string const& p_prompt):
+	m_selection_record(1),
+	m_prompt(p_prompt)
 {
 }
 
@@ -146,7 +147,7 @@ TextSession::Menu::present_to_user()
 		// Receive and process user input
 		for (bool successful = false; !successful; )
 		{
-			cout << "\nEnter an option from the above menu: ";
+			cout << "\n" << m_prompt;
 			string input = get_user_input();
 			cout << endl;
 

@@ -1,16 +1,16 @@
 #ifndef GUARD_text_session_hpp
 #define GUARD_text_session_hpp
 
-#include <istream>
-#include <iostream>
-#include <ostream>
-#include <vector>
-#include <string>
 #include <boost/bind.hpp>
 #include <boost/circular_buffer.hpp>
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
+#include <istream>
+#include <iostream>
+#include <ostream>
+#include <vector>
+#include <string>
 
 
 /**
@@ -55,8 +55,12 @@ class TextSession::Menu:
 	private boost::noncopyable
 {
 public:
-
-   Menu();
+	
+	explicit Menu
+	(	std::string const& p_prompt =
+			"Enter an option from the above menu: "
+	);
+	
    
 	/**
 	 * Add an "item" to the menu.
@@ -101,6 +105,7 @@ private:
 		History;
 
 	History m_selection_record;
+	std::string m_prompt;
 
 };
 
