@@ -271,7 +271,10 @@ void PhatbooksTextSession::display_draft_journals()
 	while (!exiting_menu)
 	{
 		cout << endl;	
-		Menu menu("Select a transaction to view from the above menu: ");
+		Menu menu
+		(	"Select a transaction to view from the above menu, "
+			"or 'x' to exit: "
+		);
 		DraftJournalReader const dj_reader(database_connection());
 		map< shared_ptr<MenuItem const>, shared_ptr<DraftJournal> > dj_map;
 		for
