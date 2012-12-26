@@ -4,6 +4,7 @@
 #include <boost/function.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/output_aux.hpp>
 #include <cassert>
 #include <iostream>
 #include <ostream>
@@ -11,6 +12,7 @@
 #include <list>
 #include <string>
 #include <vector>
+
 
 namespace consolixx
 {
@@ -66,7 +68,9 @@ public:
 		Row::size_type p_padding = 1
 	);
 
-	void output_aux(std::ostream& os) const;
+	template <typename S>
+	friend
+	void output_table_aux(std::ostream& os, Table<S> const& table);
 
 private:
 	boost::scoped_ptr<RowList> m_data;
@@ -138,23 +142,30 @@ Table<T>::Table
 }
 
 
-template <typename T>
+template <typename S>
 void
-Table<T>::output_aux(std::ostream& os) const
+output_table_aux(std::ostream& os, Table<S> const& table)
 {
 	// TODO Factor out the repeated code here
+	typedef Table<S> Table;
+	typedef typename Table::Row Row;
+	typedef typename Table::RowList RowList;
 	using std::string;
 	for
-	(	RowList::const_iterator it = m_data->begin(), end = m_data->end();
+	(	typename RowList::const_iterator it = table.m_data->begin(),
+			end = table.m_data->end();
 		it != end;
 		++it
 	)
 	{
 		Row const& row = **it;
-		for (Row::size_type j = 0; j != m_columns; ++j)
+		for (typename Row::size_type j = 0; j != table.m_columns; ++j)
 		{
-			string const padder(m_widths[j] + m_padding - row[j].size(), ' ');
-			switch (m_alignments[j])
+			string const padder
+			(	table.m_widths[j] + table.m_padding - row[j].size(),
+				' '
+			);
+			switch (table.m_alignments[j])
 			{
 			case alignment::left:
 				os << row[j] << padder;
@@ -171,33 +182,11 @@ Table<T>::output_aux(std::ostream& os) const
 	return;
 }
 
-// TODO Make use of output_aux here.
-template <typename T>
+template <typename S>
 std::ostream&
-operator<<(std::ostream& os, Table<T> const& table)
+operator<<(std::ostream& os, Table<S> const& table)
 {
-	if (!os)
-	{
-		return os;
-	}
-	try
-	{
-		std::ostringstream ss;
-		ss.exceptions(os.exceptions());
-		ss.imbue(os.getloc());
-		table.output_aux(ss);
-		if (!ss)
-		{
-			os.setstate(ss.rdstate());
-			return os;
-		}
-		assert (ss);
-		os << ss.str();
-	}
-	catch (std::exception&)
-	{
-		os.setstate(std::ios_base::badbit);
-	}
+	jewel::output_aux(os, table, output_table_aux);
 	return os;
 }
 
