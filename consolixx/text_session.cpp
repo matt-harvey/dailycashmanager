@@ -209,6 +209,21 @@ TextSession::MenuItem::MenuItem
 }
 
 
+shared_ptr<TextSession::MenuItem>
+TextSession::MenuItem::provide_menu_exit(string const& message)
+{
+	shared_ptr<MenuItem> const ret
+	(	new MenuItem
+		(	message,
+			do_nothing,
+			false,
+			"x"
+		)
+	);
+	return ret;
+}
+		
+
 string
 TextSession::MenuItem::banner() const
 {

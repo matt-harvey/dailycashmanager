@@ -163,6 +163,14 @@ public:
 	);
 
 	/**
+	 * Provide a MenuItem that does nothing, but revert to the
+	 * previous menu, and has "x" as its symbol.
+	 */
+	static boost::shared_ptr<MenuItem> provide_menu_exit
+	(	std::string const& message = "Return to previous menu"
+	);
+
+	/**
 	 * @returns string describing MenuItem to user
 	 */
 	std::string banner() const;

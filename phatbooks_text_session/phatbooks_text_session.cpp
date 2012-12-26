@@ -262,34 +262,54 @@ int PhatbooksTextSession::do_run(string const& filename)
 	return 0;
 }
 
+
+
+
 void PhatbooksTextSession::display_draft_journals()
 {
-	cout << endl;	
-	Menu menu("Select a transaction to view from the above menu: ");
-	DraftJournalReader const dj_reader(database_connection());
-	map< shared_ptr<MenuItem const>, shared_ptr<DraftJournal> > dj_map;
-	for
-	(	DraftJournalReader::const_iterator it = dj_reader.begin(),
-			end = dj_reader.end();
-		it != end;
-		++it
-	)
+	bool exiting_menu = false;
+	while (!exiting_menu)
 	{
-		shared_ptr<MenuItem const> const menu_item(new MenuItem(it->name()));
-		shared_ptr<DraftJournal> const dj(new DraftJournal(*it));
-		menu.add_item(menu_item);
-		dj_map[menu_item] = dj;
+		cout << endl;	
+		Menu menu("Select a transaction to view from the above menu: ");
+		DraftJournalReader const dj_reader(database_connection());
+		map< shared_ptr<MenuItem const>, shared_ptr<DraftJournal> > dj_map;
+		for
+		(	DraftJournalReader::const_iterator it = dj_reader.begin(),
+				end = dj_reader.end();
+			it != end;
+			++it
+		)
+		{
+			shared_ptr<MenuItem const> const menu_item
+			(	new MenuItem
+				(	it->name()
+				)
+			);
+			shared_ptr<DraftJournal> const dj(new DraftJournal(*it));
+			menu.add_item(menu_item);
+			dj_map[menu_item] = dj;
+		}
+		// TODO The mechanism for exiting to the previous menu is
+		// really clunky. This should be taken care of by the Menu
+		// class itself. Then we wouldn't need all this mess here. This
+		// is bound to come up again.
+		shared_ptr<MenuItem> exit_item(MenuItem::provide_menu_exit());
+		menu.add_item(exit_item);
+		menu.present_to_user();
+		shared_ptr<MenuItem const> const choice = menu.last_choice();
+		if (choice == exit_item)
+		{
+			exiting_menu = true;
+		}
+		else
+		{
+			DraftJournal const active_journal = *(dj_map[menu.last_choice()]);
+			cout << active_journal << endl;
+			// TODO Finishing implementing this.
+		}
 	}
-	menu.present_to_user();
-	DraftJournal const active_journal = *(dj_map[menu.last_choice()]);
-	cout << active_journal << endl;
 
-
-
-
-
-
-	// TODO Finish implementing this function.
 	return;
 }
 
