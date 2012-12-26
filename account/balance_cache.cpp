@@ -96,6 +96,13 @@ BalanceCache::mark_as_stale(AccountImpl::Id p_account_id)
 void
 BalanceCache::refresh()
 {
+	// Note, if I end up turning off the sqloxx::IdentityMap's
+	// caching (which is totally separate to this balance caching), I may wish
+	// to speed up the below by using SQL sum function etc.. 
+	// This would be very fast, and avoid having to load Entry
+	// objects. However, with IdentityMap's caching enabled, it is
+	// simpler and more maintainable for the below to be implemented
+	// as shown here.
 	JEWEL_DEBUG_LOG << "Refreshing balance cache..." << endl;
 	scoped_ptr<Map> map_elect_ptr(new Map);	
 	Map& map_elect = *map_elect_ptr;
