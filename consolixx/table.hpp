@@ -171,6 +171,7 @@ Table<T>::output_aux(std::ostream& os) const
 	return;
 }
 
+// TODO Make use of output_aux here.
 template <typename T>
 std::ostream&
 operator<<(std::ostream& os, Table<T> const& table)

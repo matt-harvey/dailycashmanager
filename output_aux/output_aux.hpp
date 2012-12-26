@@ -7,6 +7,11 @@
 namespace phatbooks
 {
 
+/**
+ * @todo HIGH PRIORITY This could be used by consolixx::Table
+ * as well. It should be moved out of phatbooks and into either
+ * consolixx or jewel.
+ */
 template <typename charT, typename traits, typename T>
 void output_aux
 (	std::basic_ostream<charT, traits>& os,
