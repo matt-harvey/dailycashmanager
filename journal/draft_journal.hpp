@@ -70,6 +70,8 @@ public:
 	/**
 	 * @returns a verbal description of the automatic postings associated
 	 * with the DraftJournal (or an empty string if there are none).
+	 *
+	 * @todo Test.
 	 */
 	std::string repeater_description() const;
 

@@ -1,7 +1,8 @@
-#include "phatbooks_tests_common.hpp"
+#include "account.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "interval_type.hpp"
+#include "phatbooks_tests_common.hpp"
 #include "repeater.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>

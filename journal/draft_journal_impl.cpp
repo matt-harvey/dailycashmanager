@@ -357,17 +357,19 @@ DraftJournalImpl::repeater_description()
 	ret += ".";
 	if (m_dj_data->repeaters.size() > 1)
 	{
+		++it;
 		for ( ; it != m_dj_data->repeaters.end(); ++it)
 		{
 			ret +=
 				"\nIn addition, this transaction is automatically recorded ";
 			ret += frequency_description(*it);
 			ret += ", with the next recording due on ";
-			gregorian::date const candidate_next_date = it->next_date();
-			ret += lexical_cast<string>(next_date);
-			if (candidate_next_date < next_date)
+			gregorian::date const next_date_this_cycle = it->next_date();
+			ret += lexical_cast<string>(next_date_this_cycle);
+			ret += ".";
+			if (next_date_this_cycle < next_date)
 			{
-				next_date = candidate_next_date;
+				next_date = next_date_this_cycle;
 			}
 		}
 		ret += "\nThis transaction will next be recorded on ";
