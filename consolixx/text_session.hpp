@@ -165,6 +165,9 @@ public:
 	/**
 	 * Provide a MenuItem that does nothing, but revert to the
 	 * previous menu, and has "x" as its symbol.
+	 *
+	 * @todo This sort of sucks. This should probably be taken care
+	 * of by the Menu class.
 	 */
 	static boost::shared_ptr<MenuItem> provide_menu_exit
 	(	std::string const& message = "Return to previous menu"
