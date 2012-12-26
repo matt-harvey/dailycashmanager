@@ -15,9 +15,9 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
-#include "output_aux.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "consolixx/table.hpp"
+#include <jewel/output_aux.hpp>
 #include <sqloxx/next_auto_key.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <jewel/decimal.hpp>
@@ -43,6 +43,7 @@ using boost::unordered_set;
 using consolixx::Table;
 using jewel::clear;
 using jewel::Decimal;
+using jewel::output_aux;
 using jewel::value;
 using std::ios_base;
 using std::logic_error;

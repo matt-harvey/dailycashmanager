@@ -3,8 +3,8 @@
 #include "draft_journal_reader.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
-#include "output_aux.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <jewel/output_aux.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
@@ -12,6 +12,7 @@
 #include <string>
 
 using boost::shared_ptr;
+using jewel::output_aux;
 using std::endl;
 using std::ostream;
 using std::string;

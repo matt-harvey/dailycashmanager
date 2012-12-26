@@ -4,8 +4,8 @@
 #include "entry.hpp"
 #include "journal.hpp"
 #include "ordinary_journal_impl.hpp"
-#include "output_aux.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <jewel/output_aux.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
@@ -18,6 +18,7 @@
 
 using boost::lexical_cast;
 using boost::shared_ptr;
+using jewel::output_aux;
 using sqloxx::Handle;
 using std::ios_base;
 using std::ostream;
