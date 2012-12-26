@@ -4,15 +4,21 @@
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include <sqloxx/sql_statement.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
+#include <cassert>
 #include <iostream>  // for debug logging
 #include <jewel/debug_log.hpp>
 #include <jewel/optional.hpp>
 #include <string>
 #include <vector>
 
+namespace gregorian = boost::gregorian;
+
 using sqloxx::SQLStatement;
+using boost::lexical_cast;
 using boost::shared_ptr;
 using boost::unordered_set;
 using jewel::clear;
@@ -332,6 +338,45 @@ DraftJournalImpl::do_ghostify()
 	return;
 }
 
+
+string
+DraftJournalImpl::repeater_description()
+{
+	load();
+	if (m_dj_data->repeaters.empty())
+	{
+		return "";
+	}
+	assert (!m_dj_data->repeaters.empty());
+	string ret = "This transaction is automatically recorded ";
+	vector<Repeater>::const_iterator it = m_dj_data->repeaters.begin();
+	ret += frequency_description(*it);
+	ret += ", with the next recording due on ";
+	gregorian::date next_date = it->next_date();
+	ret += lexical_cast<string>(next_date);
+	ret += ".";
+	if (m_dj_data->repeaters.size() > 1)
+	{
+		for ( ; it != m_dj_data->repeaters.end(); ++it)
+		{
+			ret +=
+				"\nIn addition, this transaction is automatically recorded ";
+			ret += frequency_description(*it);
+			ret += ", with the next recording due on ";
+			gregorian::date const candidate_next_date = it->next_date();
+			ret += lexical_cast<string>(next_date);
+			if (candidate_next_date < next_date)
+			{
+				next_date = candidate_next_date;
+			}
+		}
+		ret += "\nThis transaction will next be recorded on ";
+		ret += lexical_cast<string>(next_date);
+		ret += ".";
+	}
+	return ret;
+}	
+			
 
 
 

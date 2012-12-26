@@ -154,6 +154,11 @@ DraftJournal::id() const
 	return m_impl->id();
 }
 
+string
+DraftJournal::repeater_description() const
+{
+	return m_impl->repeater_description();
+}
 
 DraftJournal::DraftJournal
 (	sqloxx::Handle<DraftJournalImpl> const& p_handle

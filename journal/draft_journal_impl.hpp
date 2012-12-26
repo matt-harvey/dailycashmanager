@@ -140,6 +140,8 @@ public:
 	 */
 	void swap(DraftJournalImpl& rhs);
 
+	std::string repeater_description();
+
 
 private:
 

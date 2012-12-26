@@ -67,12 +67,18 @@ public:
 	 */
 	void save();
 
+	/**
+	 * @returns a verbal description of the automatic postings associated
+	 * with the DraftJournal (or an empty string if there are none).
+	 */
+	std::string repeater_description() const;
+
 private:
 	DraftJournal(sqloxx::Handle<DraftJournalImpl> const& p_handle);
 	sqloxx::Handle<DraftJournalImpl> m_impl;
 
-
 };
+
 
 
 
