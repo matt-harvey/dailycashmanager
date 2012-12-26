@@ -12,6 +12,7 @@ include_directories (/home/matthew/lib
                      /home/matthew/Workbench/versioned/phatbooks/finformat
                      /home/matthew/Workbench/versioned/phatbooks/import_from_nap
                      /home/matthew/Workbench/versioned/phatbooks/journal
+					 /home/matthew/Workbench/versioned/phatbooks/output_aux
                      /home/matthew/Workbench/versioned/phatbooks/phatbooks_database_connection
                      /home/matthew/Workbench/versioned/phatbooks/phatbooks_text_session
                      /home/matthew/Workbench/versioned/phatbooks/repeater

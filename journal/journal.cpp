@@ -15,6 +15,7 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
+#include "output_aux.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "consolixx/table.hpp"
 #include <sqloxx/next_auto_key.hpp>
@@ -300,47 +301,13 @@ Journal::clear_entries()
 }
 
 
-// TODO There is a lot of code repetition between this and the
-// output functions for DraftJournal and OrdinaryJournal. I can't
-// avoid this by having the latter two inherit from Journal, or
-// it creates excessive complexity and danger, and moreover, causes
-// DraftJournal and OrdinaryJournal inherit data members they shouldn't.
-// The better way to avoid this code repetition would be to go even "higher".
-// Place a single class "StreamPuttable" or such, in the Jewel library, and
-// have that contain the generic wrapping code constituting operator<<.
-// This can then called a "do_output_aux" virtual method within it.
 ostream&
 operator<<(ostream& os, Journal const& journal)
 {
-	if (!os)
-	{
-		return os;
-	}
-	try
-	{
-		ostringstream ss;
-		ss.exceptions(os.exceptions());
-		ss.imbue(os.getloc());
-
-		// This should be a protected virtual method of StreamPuttable.
-		output_journal_aux(ss, journal);
-
-		if (!ss)
-		{
-			os.setstate(ss.rdstate());
-			return os;
-		}
-		os << ss.str();
-	}
-	catch (std::exception&)
-	{
-		os.setstate(ios_base::badbit);
-	}
+	output_aux(os, journal, output_journal_aux);
 	return os;
 }
-
-
-
+		
 
 
 }  // namespace phatbooks

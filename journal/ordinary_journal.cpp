@@ -4,6 +4,7 @@
 #include "entry.hpp"
 #include "journal.hpp"
 #include "ordinary_journal_impl.hpp"
+#include "output_aux.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -214,13 +215,14 @@ OrdinaryJournal::OrdinaryJournal
 
 namespace
 {
-	ostream&
+	void
 	output_ordinary_journal_aux(ostream& os, OrdinaryJournal const& oj)
 	{
 		os << oj.date();
 		// lexical_cast here avoids unwanted formatting
 		os << " JOURNAL ID " << lexical_cast<string>(oj.id()) << " ";
-		return output_journal_aux(os, oj);
+		output_journal_aux(os, oj);
+		return;
 	}
 }  // End anonymous namespace
 
@@ -229,30 +231,9 @@ namespace
 ostream&
 operator<<(ostream& os, OrdinaryJournal const& ordinary_journal)
 {
-	if (!os)
-	{
-		return os;
-	}
-	try
-	{
-		ostringstream ss;
-		ss.exceptions(os.exceptions());
-		ss.imbue(os.getloc());
-		output_ordinary_journal_aux(ss, ordinary_journal);
-		if (!ss)
-		{
-			os.setstate(ss.rdstate());
-			return os;
-		}
-		os << ss.str();
-	}
-	catch (std::exception&)
-	{
-		os.setstate(ios_base::badbit);
-	}
+	output_aux(os, ordinary_journal, output_ordinary_journal_aux);
 	return os;
 }
-		
 
 
 }  // namespace phatbooks

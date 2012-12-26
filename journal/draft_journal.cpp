@@ -3,19 +3,17 @@
 #include "draft_journal_reader.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
+#include "output_aux.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
 #include <ostream>
-#include <sstream>
 #include <string>
 
 using boost::shared_ptr;
 using std::endl;
-using std::ios_base;
 using std::ostream;
-using std::ostringstream;
 using std::string;
 using std::vector;
 using sqloxx::Handle;
@@ -177,42 +175,24 @@ DraftJournal::DraftJournal
 
 namespace
 {
-	ostream&
-	output_draft_journal_aux(ostream& os, DraftJournal const& dj)
+	void output_draft_journal_aux(ostream& os, DraftJournal const& dj)
 	{
 		os << "JOURNAL NAME " << dj.name() << " ";
 		output_journal_aux(os, dj);
 		os << endl << dj.repeater_description() << endl;
-		return os;
+		return;
 	}
 }  // End anonymous namespace
+
+
 
 
 ostream&
 operator<<(ostream& os, DraftJournal const& draft_journal)
 {
-	if (!os)
-	{
-		return os;
-	}
-	try
-	{
-		ostringstream ss;
-		ss.exceptions(os.exceptions());
-		ss.imbue(os.getloc());
-		output_draft_journal_aux(os, draft_journal);
-		if (!ss)
-		{
-			os.setstate(ss.rdstate());
-			return os;
-		}
-		os << ss.str();
-	}
-	catch (std::exception&)
-	{
-		os.setstate(ios_base::badbit);
-	}
+	output_aux(os, draft_journal, output_draft_journal_aux);
 	return os;
 }
+
 
 }  // namespace phatbooks

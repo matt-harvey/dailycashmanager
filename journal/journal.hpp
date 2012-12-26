@@ -155,13 +155,13 @@ operator<<(std::ostream& os, Journal const& journal);
  * J should be a Journal type (Journal, DraftJournal or OrdinaryJournal).
  */
 template <typename J>
-std::ostream&
+void
 output_journal_aux(std::ostream& os, Journal const& journal);
 
 
 
 template <typename J>
-std::ostream&
+void
 output_journal_aux(std::ostream& os, J const& journal)
 {
 	namespace alignment = consolixx::alignment;
@@ -192,7 +192,7 @@ output_journal_aux(std::ostream& os, J const& journal)
 		2
 	);
 	os << table;
-	return os;
+	return;
 }
 
 
