@@ -17,7 +17,6 @@
 using boost::lexical_cast;
 using boost::shared_ptr;
 using sqloxx::Handle;
-using std::ios_base;
 using std::ostream;
 using std::string;
 using std::vector;

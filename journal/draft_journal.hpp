@@ -6,6 +6,7 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -17,6 +18,12 @@ class Entry;
 class PhatbooksDatabaseConnection;
 class Repeater;
 
+/**
+ * @todo HIGH PRIORITY If the DraftJournal does not balance, we need to
+ * avoid posting with autoposts. Furthermore, we need to include wording
+ * in the DraftJournal description alerting the user to the fact that it
+ * will not be posted for this reason.
+ */
 class DraftJournal:
 	public Journal
 {
@@ -76,6 +83,9 @@ public:
 	std::string repeater_description() const;
 
 private:
+	
+	std::ostream& do_output(std::ostream& os) const;
+	
 	DraftJournal(sqloxx::Handle<DraftJournalImpl> const& p_handle);
 	sqloxx::Handle<DraftJournalImpl> m_impl;
 

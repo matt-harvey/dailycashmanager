@@ -6,9 +6,13 @@
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
+#include <iostream>
+#include <ostream>
 #include <string>
 
 using boost::shared_ptr;
+using std::endl;
+using std::ostream;
 using std::string;
 using std::vector;
 using sqloxx::Handle;
@@ -167,6 +171,14 @@ DraftJournal::DraftJournal
 {
 }
 
+ostream&
+DraftJournal::do_output(ostream& os) const
+{
+	os << "JOURNAL NAME " << name() << " ";
+	Journal::do_output(os);
+	os << endl << repeater_description() << endl;
+	return os;
+}
 
 
 }  // namespace phatbooks

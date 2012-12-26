@@ -808,9 +808,8 @@ void PhatbooksTextSession::elicit_journal()
 			draft_journal.add_repeater(repeater);	
 		}
 		draft_journal.save();
-		// TODO Here I should print the DraftJournal once print method has
-		// been written.
-		cout << "Draft journal has been saved." << endl;
+		cout << "Draft journal has been saved:" << endl << endl
+		     << draft_journal << endl;
 	}
 	else if (journal_action == abandon)
 	{
