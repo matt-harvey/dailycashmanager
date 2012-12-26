@@ -24,8 +24,7 @@ class Repeater;
  * in the DraftJournal description alerting the user to the fact that it
  * will not be posted for this reason.
  */
-class DraftJournal:
-	public Journal
+class DraftJournal
 {
 public:
 	typedef sqloxx::Id Id;
@@ -84,13 +83,13 @@ public:
 
 private:
 	
-	std::ostream& do_output(std::ostream& os) const;
-	
 	DraftJournal(sqloxx::Handle<DraftJournalImpl> const& p_handle);
 	sqloxx::Handle<DraftJournalImpl> m_impl;
 
 };
 
+std::ostream&
+operator<<(std::ostream& os, DraftJournal const& dj);
 
 
 

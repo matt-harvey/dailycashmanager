@@ -10,6 +10,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <ostream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -17,7 +18,9 @@
 using boost::lexical_cast;
 using boost::shared_ptr;
 using sqloxx::Handle;
+using std::ios_base;
 using std::ostream;
+using std::ostringstream;
 using std::string;
 using std::vector;
 
@@ -208,15 +211,48 @@ OrdinaryJournal::OrdinaryJournal
 {
 }
 
-ostream&
-OrdinaryJournal::do_output(ostream& os) const
-{
-	os << date();
-	// lexical_cast here avoids unwanted formatting
-	os << " JOURNAL ID " << lexical_cast<string>(id()) << " ";
-	return Journal::do_output(os);
-}
 
+namespace
+{
+	ostream&
+	output_ordinary_journal_aux(ostream& os, OrdinaryJournal const& oj)
+	{
+		os << oj.date();
+		// lexical_cast here avoids unwanted formatting
+		os << " JOURNAL ID " << lexical_cast<string>(oj.id()) << " ";
+		return output_journal_aux(os, oj);
+	}
+}  // End anonymous namespace
+
+
+
+ostream&
+operator<<(ostream& os, OrdinaryJournal const& ordinary_journal)
+{
+	if (!os)
+	{
+		return os;
+	}
+	try
+	{
+		ostringstream ss;
+		ss.exceptions(os.exceptions());
+		ss.imbue(os.getloc());
+		output_ordinary_journal_aux(ss, ordinary_journal);
+		if (!ss)
+		{
+			os.setstate(ss.rdstate());
+			return os;
+		}
+		os << ss.str();
+	}
+	catch (std::exception&)
+	{
+		os.setstate(ios_base::badbit);
+	}
+	return os;
+}
+		
 
 
 }  // namespace phatbooks

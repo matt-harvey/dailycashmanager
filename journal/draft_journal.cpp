@@ -8,11 +8,14 @@
 #include <boost/shared_ptr.hpp>
 #include <iostream>
 #include <ostream>
+#include <sstream>
 #include <string>
 
 using boost::shared_ptr;
 using std::endl;
+using std::ios_base;
 using std::ostream;
+using std::ostringstream;
 using std::string;
 using std::vector;
 using sqloxx::Handle;
@@ -171,14 +174,45 @@ DraftJournal::DraftJournal
 {
 }
 
-ostream&
-DraftJournal::do_output(ostream& os) const
+
+namespace
 {
-	os << "JOURNAL NAME " << name() << " ";
-	Journal::do_output(os);
-	os << endl << repeater_description() << endl;
+	ostream&
+	output_draft_journal_aux(ostream& os, DraftJournal const& dj)
+	{
+		os << "JOURNAL NAME " << dj.name() << " ";
+		output_journal_aux(os, dj);
+		os << endl << dj.repeater_description() << endl;
+		return os;
+	}
+}  // End anonymous namespace
+
+
+ostream&
+operator<<(ostream& os, DraftJournal const& draft_journal)
+{
+	if (!os)
+	{
+		return os;
+	}
+	try
+	{
+		ostringstream ss;
+		ss.exceptions(os.exceptions());
+		ss.imbue(os.getloc());
+		output_draft_journal_aux(os, draft_journal);
+		if (!ss)
+		{
+			os.setstate(ss.rdstate());
+			return os;
+		}
+		os << ss.str();
+	}
+	catch (std::exception&)
+	{
+		os.setstate(ios_base::badbit);
+	}
 	return os;
 }
-
 
 }  // namespace phatbooks

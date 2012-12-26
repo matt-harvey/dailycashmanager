@@ -17,6 +17,7 @@
 #include "commodity.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
+#include "draft_journal_reader.hpp"
 #include "entry.hpp"
 #include "entry_reader.hpp"
 #include "finformat.hpp"
@@ -138,6 +139,15 @@ PhatbooksTextSession::PhatbooksTextSession():
 	);
 	m_main_menu->add_item(elicit_journal_item);
 
+	shared_ptr<MenuItem> display_draft_journals_item
+	(	new MenuItem
+		(	"Display draft and recurring transactions",
+			bind(&PhatbooksTextSession::display_draft_journals, this),
+			true
+		)
+	);
+	m_main_menu->add_item(display_draft_journals_item);
+
 	// WARNING This should be removed from any release version
 	shared_ptr<MenuItem> import_from_nap_item
 	(	new MenuItem
@@ -250,6 +260,37 @@ int PhatbooksTextSession::do_run(string const& filename)
 	notify_autoposts(auto_posted_journals);
 	m_main_menu->present_to_user();	
 	return 0;
+}
+
+void PhatbooksTextSession::display_draft_journals()
+{
+	cout << endl;	
+	Menu menu;
+	DraftJournalReader const dj_reader(database_connection());
+	map< shared_ptr<MenuItem const>, shared_ptr<DraftJournal> > dj_map;
+	for
+	(	DraftJournalReader::const_iterator it = dj_reader.begin(),
+			end = dj_reader.end();
+		it != end;
+		++it
+	)
+	{
+		shared_ptr<MenuItem const> const menu_item(new MenuItem(it->name()));
+		shared_ptr<DraftJournal> const dj(new DraftJournal(*it));
+		menu.add_item(menu_item);
+		dj_map[menu_item] = dj;
+	}
+	menu.present_to_user();
+	DraftJournal const active_journal = *(dj_map[menu.last_choice()]);
+	cout << active_journal << endl;
+
+
+
+
+
+
+	// TODO Finish implementing this function.
+	return;
 }
 
 

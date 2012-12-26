@@ -197,11 +197,11 @@ private:
 	) const;
 
 	void display_balance_sheet();
+	void display_draft_journals();
 	void display_envelopes();
 	void display_transaction_listing();
 	void elicit_actuals_journal();
 	void elicit_budget_journal();
-	void display_draft_journals();
 	void display_posted_journals();
 	void display_impending_autoposts();
 	void display_commodities_menu();

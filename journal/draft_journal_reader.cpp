@@ -13,7 +13,7 @@ DraftJournalReader::DraftJournalReader
 ):
 	sqloxx::Reader<DraftJournal, PhatbooksDatabaseConnection>
 	(	p_database_connection,
-		"select journal_id from draft_journal_detail"
+		"select journal_id from draft_journal_detail order by name"
 	)
 {
 }

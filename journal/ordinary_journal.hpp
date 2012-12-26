@@ -19,8 +19,7 @@ class DraftJournal;
 // class Journal;
 class PhatbooksDatabaseConnection;
 
-class OrdinaryJournal:
-	public Journal
+class OrdinaryJournal
 {
 public:
 
@@ -81,18 +80,16 @@ public:
 
 private:
 
-	std::ostream& do_output(std::ostream& os) const;
-	
-
 	// TODO Is this even used anywhere?
 	void clear_entries();
-
-
 
 	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);
 	sqloxx::Handle<OrdinaryJournalImpl> m_impl;
 };
 
+
+std::ostream&
+operator<<(std::ostream& os, OrdinaryJournal const& oj);
 
 	
 

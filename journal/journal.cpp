@@ -299,38 +299,16 @@ Journal::clear_entries()
 	return;
 }
 
-ostream&
-Journal::do_output(ostream& os) const
-{
-	if (is_actual()) os << "ACTUAL";
-	else os << "BUDGET";
-	os << endl;
-	if (!comment().empty()) os << comment() << endl;
-	os << endl;
-	vector<string> headings;
-	headings.push_back("ENTRY ID");
-	headings.push_back("ACCOUNT");
-	headings.push_back("COMMENT");
-	headings.push_back("COMMODITY");
-	headings.push_back("AMOUNT");
-	vector<alignment::Flag> alignments(5, alignment::left);
-	alignments[4] = alignment::right;
-	bool const change_signs = !is_actual();
-	Table<Entry> const table
-	(	entries().begin(),
-		entries().end(),
-		change_signs? make_reversed_entry_row: make_entry_row,
-		headings,
-		alignments,
-		2
-	);
-	os << table;
-	return os;
-}
 
-
-
-
+// TODO There is a lot of code repetition between this and the
+// output functions for DraftJournal and OrdinaryJournal. I can't
+// avoid this by having the latter two inherit from Journal, or
+// it creates excessive complexity and danger, and moreover, causes
+// DraftJournal and OrdinaryJournal inherit data members they shouldn't.
+// The better way to avoid this code repetition would be to go even "higher".
+// Place a single class "StreamPuttable" or such, in the Jewel library, and
+// have that contain the generic wrapping code constituting operator<<.
+// This can then called a "do_output_aux" virtual method within it.
 ostream&
 operator<<(ostream& os, Journal const& journal)
 {
@@ -343,7 +321,10 @@ operator<<(ostream& os, Journal const& journal)
 		ostringstream ss;
 		ss.exceptions(os.exceptions());
 		ss.imbue(os.getloc());
-		journal.do_output(ss);
+
+		// This should be a protected virtual method of StreamPuttable.
+		output_journal_aux(ss, journal);
+
 		if (!ss)
 		{
 			os.setstate(ss.rdstate());
@@ -357,6 +338,9 @@ operator<<(ostream& os, Journal const& journal)
 	}
 	return os;
 }
+
+
+
 
 
 }  // namespace phatbooks

@@ -12,12 +12,14 @@
  */
 
 
+#include "entry.hpp"
+#include "consolixx/table.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <iosfwd>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -129,12 +131,6 @@ protected:
 	void do_ghostify_journal_base();
 	void clear_entries();
 
-	virtual std::ostream& do_output(std::ostream& os) const;
-
-	friend
-	std::ostream&
-	operator<<(std::ostream& os, Journal const& oj);
-
 private:
 
 	struct JournalData;
@@ -150,8 +146,55 @@ struct Journal::JournalData
 	std::vector<Entry> entries;
 };
 
+
 std::ostream&
-operator<<(std::ostream& os, Journal const& oj);
+operator<<(std::ostream& os, Journal const& journal);
+
+
+/**
+ * J should be a Journal type (Journal, DraftJournal or OrdinaryJournal).
+ */
+template <typename J>
+std::ostream&
+output_journal_aux(std::ostream& os, Journal const& journal);
+
+
+
+template <typename J>
+std::ostream&
+output_journal_aux(std::ostream& os, J const& journal)
+{
+	namespace alignment = consolixx::alignment;
+	using consolixx::Table;
+	using std::endl;
+	using std::string;
+	using std::vector;
+	if (journal.is_actual()) os << "ACTUAL";
+	else os << "BUDGET";
+	os << endl;
+	if (!journal.comment().empty()) os << journal.comment() << endl;
+	os << endl;
+	vector<string> headings;
+	headings.push_back("ENTRY ID");
+	headings.push_back("ACCOUNT");
+	headings.push_back("COMMENT");
+	headings.push_back("COMMODITY");
+	headings.push_back("AMOUNT");
+	vector<alignment::Flag> alignments(5, alignment::left);
+	alignments[4] = alignment::right;
+	bool const change_signs = !journal.is_actual();
+	Table<Entry> const table
+	(	journal.entries().begin(),
+		journal.entries().end(),
+		change_signs? make_reversed_entry_row: make_entry_row,
+		headings,
+		alignments,
+		2
+	);
+	os << table;
+	return os;
+}
+
 
 
 }  // namespace phatbooks
