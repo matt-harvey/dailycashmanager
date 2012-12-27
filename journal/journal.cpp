@@ -49,6 +49,7 @@ using std::ios_base;
 using std::logic_error;
 using std::ostream;
 using std::ostringstream;
+using std::runtime_error;
 using std::string;
 using std::vector;
 
@@ -301,6 +302,50 @@ Journal::clear_entries()
 	return;
 }
 
+
+Journal::Id
+max_journal_id(PhatbooksDatabaseConnection& dbc)
+{
+	SQLStatement s(dbc, "select max(journal_id) from journals");
+	s.step();
+	return s.extract<Journal::Id>(0);
+}
+
+Journal::Id
+min_journal_id(PhatbooksDatabaseConnection& dbc)
+{
+	SQLStatement s(dbc, "select min(journal_id) from journals");
+	s.step();
+	return s.extract<Journal::Id>(0);
+}
+
+bool
+journal_id_exists(PhatbooksDatabaseConnection& dbc, Journal::Id id)
+{
+	SQLStatement s
+	(	dbc,
+		"select journal_id from journals where journal_id = :p"
+	);
+	s.bind(":p", id);
+	return s.step();
+}
+
+bool
+journal_id_is_draft(PhatbooksDatabaseConnection& dbc, Journal::Id id)
+{
+	if (!journal_id_exists(dbc, id))
+	{
+		throw std::runtime_error("Journal with id does not exist.");
+	}
+	SQLStatement s
+	(	dbc,
+		"select journal_id from draft_journal_detail where "
+		"journal_id = :p"
+	);
+	s.bind(":p", id);
+	return s.step();
+}
+	
 
 ostream&
 operator<<(ostream& os, Journal const& journal)

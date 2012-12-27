@@ -74,6 +74,7 @@ using jewel::Decimal;
 using jewel::DecimalRangeException;
 using sqloxx::DatabaseConnection;
 using sqloxx::SQLiteException;
+using boost::bad_lexical_cast;
 using boost::bimap;
 using boost::bind;
 using boost::lexical_cast;
@@ -147,6 +148,15 @@ PhatbooksTextSession::PhatbooksTextSession():
 		)
 	);
 	m_main_menu->add_item(display_draft_journals_item);
+
+	shared_ptr<MenuItem> display_journal_from_id_item
+	(	new MenuItem
+		(	"Select a transaction by ID",
+			bind(&PhatbooksTextSession::display_journal_from_id, this),
+			true
+		)
+	);
+	m_main_menu->add_item(display_journal_from_id_item);
 
 	// WARNING This should be removed from any release version
 	shared_ptr<MenuItem> import_from_nap_item
@@ -316,6 +326,57 @@ void PhatbooksTextSession::display_draft_journals()
 	return;
 }
 
+
+namespace
+{
+	bool identifies_existent_journal
+	(	PhatbooksDatabaseConnection* dbc,
+		string const& s
+	)
+	{
+		try
+		{
+			Journal::Id const id = lexical_cast<Journal::Id>(s);
+			return journal_id_exists(*dbc, id);
+		}
+		catch (bad_lexical_cast&)
+		{
+			return false;
+		}
+	}
+}  // End anonymous namespace
+
+
+void PhatbooksTextSession::display_journal_from_id()
+{
+	cout << "Enter the ID of the transaction you want to view ("
+	     << min_journal_id(database_connection())
+		 << "-"
+		 << max_journal_id(database_connection())
+		 << "): ";
+	std::string const input = get_constrained_user_input
+	(	boost::bind(identifies_existent_journal, &database_connection(), _1),
+		"There is no journal with this id. Try again: "
+	);
+	if (input.empty())
+	{
+		return;
+	}
+	// We know this will work
+	Journal::Id const id = lexical_cast<Journal::Id>(input);
+	if (journal_id_is_draft(database_connection(), id))
+	{
+		DraftJournal dj(database_connection(), id);
+		cout << endl << dj << endl << endl;
+	}
+	else
+	{
+		OrdinaryJournal oj(database_connection(), id);
+		cout << endl << oj << endl << endl;
+	}
+	// TODO Enable further user actions from here.
+	return;
+}
 
 void PhatbooksTextSession::elicit_commodity()
 {
@@ -851,7 +912,7 @@ void PhatbooksTextSession::elicit_journal()
 							repeater.set_interval_units(units);
 							is_valid = true;
 						}
-						catch (boost::bad_lexical_cast&)
+						catch (bad_lexical_cast&)
 						{
 						}
 					}

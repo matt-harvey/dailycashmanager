@@ -12,8 +12,8 @@
  */
 
 
-#include "entry.hpp"
 #include "consolixx/table.hpp"
+#include "entry.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
@@ -27,7 +27,6 @@
 namespace phatbooks
 {
 
-class Entry;
 class PhatbooksDatabaseConnection;
 
 /**
@@ -158,6 +157,17 @@ template <typename J>
 void
 output_journal_aux(std::ostream& os, Journal const& journal);
 
+Journal::Id
+max_journal_id(PhatbooksDatabaseConnection& dbc);
+
+Journal::Id
+min_journal_id(PhatbooksDatabaseConnection& dbc);
+
+bool
+journal_id_exists(PhatbooksDatabaseConnection& dbc, Journal::Id);
+
+bool
+journal_id_is_draft(PhatbooksDatabaseConnection& dbc, Journal::Id);
 
 
 template <typename J>
