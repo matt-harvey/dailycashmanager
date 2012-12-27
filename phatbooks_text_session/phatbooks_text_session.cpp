@@ -349,10 +349,12 @@ namespace
 
 void PhatbooksTextSession::display_journal_from_id()
 {
+	// The lexical casts are to prevent the insertion of thousands
+	// separators in the id numbers
 	cout << "Enter the ID of the transaction you want to view ("
-	     << min_journal_id(database_connection())
+	     << lexical_cast<string>(min_journal_id(database_connection()))
 		 << "-"
-		 << max_journal_id(database_connection())
+		 << lexical_cast<string>(max_journal_id(database_connection()))
 		 << "): ";
 	std::string const input = get_constrained_user_input
 	(	boost::bind(identifies_existent_journal, &database_connection(), _1),
