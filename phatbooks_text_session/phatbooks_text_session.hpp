@@ -149,9 +149,13 @@ private:
 	 * This function does not throw, except possibly \c std::bad_alloc in
 	 * extreme conditions.
 	 *
+	 * @param accept_empty should be passed true if we want the user to
+	 * be able to "escape" from having to select an account by hitting
+	 * enter without entering an account name.
+	 *
 	 * @todo Verify throwing behaviour.
 	 */
-	std::string elicit_existing_account_name();
+	std::string elicit_existing_account_name(bool accept_empty = false);
 
 	/**
 	 * Enter a dialogue with the user for creating a new Journal, which on

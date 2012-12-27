@@ -211,12 +211,15 @@ PhatbooksTextSession::PhatbooksTextSession():
 
 
 string
-PhatbooksTextSession::elicit_existing_account_name()
+PhatbooksTextSession::elicit_existing_account_name(bool accept_empty)
 {
 	 while (true)
 	 {
 		string input = get_user_input();
-	 	if (database_connection().has_account_named(input))
+	 	if
+		(	database_connection().has_account_named(input) ||
+			(accept_empty && input.empty())
+		)
 		{
 			return input;
 		}
@@ -626,30 +629,43 @@ void PhatbooksTextSession::elicit_journal()
 	cout << endl;
 
 	// Set certain "prompt words"
+	// TODO Make this more concise using a map or something.
 	string account_prompt;
 	string amount_prompt;
 	string secondary_account_prompt;
+	string secondary_account_prompt_simple;
+	string secondary_account_prompt_plural;
 	bool primary_sign_needs_changing;
+	bool secondary_signs_need_changing;
 	if (transaction_type == expenditure_selection)
 	{
 		account_prompt = "account from which money was spent";
 		amount_prompt = "spent";
 		secondary_account_prompt = "expenditure category";
+		secondary_account_prompt_simple = "expenditure category";
+		secondary_account_prompt_plural = "categories";
 		primary_sign_needs_changing = true;
+		secondary_signs_need_changing = false;
 	}
 	else if (transaction_type == revenue_selection)
 	{
 		account_prompt = "account into which funds were deposited";
 		amount_prompt = "earned";
 		secondary_account_prompt = "revenue category";
+		secondary_account_prompt_simple = "revenue category";
+		secondary_account_prompt_plural = "categories";
 		primary_sign_needs_changing = false;
+		secondary_signs_need_changing = true;
 	}
 	else if (transaction_type == balance_sheet_transfer_selection)
 	{
 		account_prompt = "destination account";
 		amount_prompt = "transferred";
 		secondary_account_prompt = "source account";
+		secondary_account_prompt_simple = "source account";
+		secondary_account_prompt_plural = "source accounts";
 		primary_sign_needs_changing = false;
+		secondary_signs_need_changing = true;
 	}
 	else
 	{
@@ -657,7 +673,10 @@ void PhatbooksTextSession::elicit_journal()
 		account_prompt = "envelope you wish to top up";
 		amount_prompt = "to transfer";
 		secondary_account_prompt = "envelope from which to source funds";
+		secondary_account_prompt_simple = "source envelope";
+		secondary_account_prompt_plural = "source envelopes";
 		primary_sign_needs_changing = true;
+		secondary_signs_need_changing = false;
 	}
 	
 	// Primary entry
@@ -724,29 +743,122 @@ void PhatbooksTextSession::elicit_journal()
 	Entry secondary_entry(database_connection());
 
 	// Get other account and comment
-	cout << "Enter name of " << secondary_account_prompt << ": ";
-	secondary_entry.set_account
-	(	Account(database_connection(), elicit_existing_account_name())
-	);
-	// WARNING if secondary account is in a different currency then we need to
-	// deal with this here somehow.
- 
-	Commodity secondary_commodity = secondary_entry.account().commodity();
-	if
-	(	secondary_commodity.id() != primary_commodity.id()
-	)
+	cout << "Enter name of "
+	     << secondary_account_prompt
+	     << ", or leave blank to split between multiple "
+		 << secondary_account_prompt_plural
+		 << ": ";
+	string const account_response = elicit_existing_account_name(true);
+	if (account_response.empty())
 	{
-		JEWEL_DEBUG_LOG << "Here's where we're supposed to respond to "
-		                << "diverse commodities..." << endl;
+		// We have a split transaction to contend with
+		Decimal unmatched_amount = primary_entry_amount;
+		Decimal const zero(0, 0);
+		for (int i = 1; unmatched_amount != zero; ++i)
+		{
+			Entry current_entry(database_connection());
+			cout << "Enter name of "
+			     << secondary_account_prompt_simple
+				 << " no. " << i << ": ";
+			Account const account
+			(	database_connection(),
+				elicit_existing_account_name()
+			);
+			current_entry.set_account(account);
+			Commodity const current_commodity = account.commodity();
+			if (current_commodity.id() != primary_commodity.id())
+			{
+				// TODO Deal with this.
+				JEWEL_DEBUG_LOG << "Here's where we're supposed to deal with "
+				                << "diverse commodities..." << endl;
+			}
+			// TODO Remove code duplication between here and what was done
+			// above.
+			Decimal current_entry_amount;
+			for (bool input_is_valid = false; !input_is_valid; )
+			{
+				cout << "Amount remaining to split: "
+				     << current_commodity.abbreviation()
+					 << " " << unmatched_amount << endl;
+				cout << "Enter amount for this line: ";
+				current_entry_amount = get_decimal_from_user();
+				Decimal::places_type const entered_precision =
+					current_entry_amount.places();
+				try
+				{
+					current_entry_amount = jewel::round
+					(	current_entry_amount, current_commodity.precision()
+					);
+					if (current_entry_amount.places() < entered_precision)
+					{
+						cout << "Amount rounded to " << current_entry_amount
+						     << ". " << endl;
+					}
+					if (current_entry_amount > unmatched_amount)
+					{
+						cout << "You have entered an amount greater than "
+						     << "what remains to be split. Please try again."
+							 << endl;
+					}
+					else
+					{
+						unmatched_amount -= current_entry_amount;
+						input_is_valid = true;
+					}
+				}
+				catch (DecimalRangeException&)
+				{
+					cout << "The number you entered cannot be safely"
+					     << " rounded to the precision required for "
+						 << current_commodity.abbreviation()
+						 << ". Please try again."
+						 << endl;
+					assert (!input_is_valid);
+				}
+			}
+			current_entry.set_amount
+			(	secondary_signs_need_changing?
+				-current_entry_amount:
+				current_entry_amount
+			);
+
+			cout << "Line specific comment (or Entry for no comment): ";
+			current_entry.set_comment((get_user_input()));
+
+			current_entry.set_whether_reconciled(false);
+
+			journal.add_entry(current_entry);
+			
+			cout << endl;
+		}
 	}
+	else
+	{
+		assert (!account_response.empty());					
+		secondary_entry.set_account
+		(	Account(database_connection(), account_response)
+		);
+		// WARNING if secondary account is in a different currency then we need to
+		// deal with this here somehow.
+	 
+		Commodity secondary_commodity = secondary_entry.account().commodity();
+		if
+		(	secondary_commodity.id() != primary_commodity.id()
+		)
+		{
+			// TODO Deal with this.
+			JEWEL_DEBUG_LOG << "Here's where we're supposed to respond to "
+							<< "diverse commodities..." << endl;
+		}
 
-	cout << "Line specific comment (or Enter for no comment): ";
-	secondary_entry.set_comment((get_user_input()));
-	secondary_entry.set_amount(-(primary_entry.amount()));
-	secondary_entry.set_whether_reconciled(false);
-	journal.add_entry(secondary_entry);
+		cout << "Line specific comment (or Enter for no comment): ";
+		secondary_entry.set_comment((get_user_input()));
+		secondary_entry.set_amount(-(primary_entry.amount()));
+		secondary_entry.set_whether_reconciled(false);
+		journal.add_entry(secondary_entry);
+	}
+	cout << "Transaction complete." << endl;
 
-	// WARNING We need to implement split transactions.
 	// Find out whether the user wants to post the journal, abandon it,
 	// or save it as a draft.
 	shared_ptr<MenuItem> post(new MenuItem("Record transaction"));
