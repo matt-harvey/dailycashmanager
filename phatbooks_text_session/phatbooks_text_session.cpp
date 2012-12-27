@@ -752,6 +752,8 @@ void PhatbooksTextSession::elicit_journal()
 	if (account_response.empty())
 	{
 		// We have a split transaction to contend with
+		// TODO We need to be able to split in the other
+		// direction too!
 		Decimal unmatched_amount = primary_entry_amount;
 		Decimal const zero(0, 0);
 		for (int i = 1; unmatched_amount != zero; ++i)
