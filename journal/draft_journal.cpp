@@ -178,7 +178,8 @@ namespace
 {
 	void output_draft_journal_aux(ostream& os, DraftJournal const& dj)
 	{
-		os << "JOURNAL NAME " << dj.name() << " ";
+		os << "DRAFT JOURNAL ID " << dj.id() << " "
+		   << " NAME " << dj.name() << " ";
 		output_journal_aux(os, dj);
 		os << endl << dj.repeater_description() << endl;
 		return;

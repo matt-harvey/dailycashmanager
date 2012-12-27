@@ -219,9 +219,9 @@ namespace
 	void
 	output_ordinary_journal_aux(ostream& os, OrdinaryJournal const& oj)
 	{
-		os << oj.date();
+		os << oj.date() << " ";
 		// lexical_cast here avoids unwanted formatting
-		os << " JOURNAL ID " << lexical_cast<string>(oj.id()) << " ";
+		os << "ORDINARY JOURNAL ID " << lexical_cast<string>(oj.id()) << " ";
 		output_journal_aux(os, oj);
 		return;
 	}
