@@ -1130,6 +1130,10 @@ PhatbooksTextSession::finalize_journal(ProtoJournal& journal)
 void
 PhatbooksTextSession::elicit_journal()
 {
+	// TODO The user should be prevented from entering a non-balance-sheet
+	// account where a balance sheet is expected; prevented from entering
+	// a pure envelope account where a P&L account is expected; etc..
+	// Make this so.
 	ProtoJournal journal;
 	TransactionType const transaction_type = elicit_transaction_type();
 	journal.set_whether_actual(transaction_type != envelope_transaction);
