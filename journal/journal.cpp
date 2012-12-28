@@ -136,10 +136,10 @@ Journal::is_actual() const
 	return value(m_data->is_actual);
 }
 
-bool
-Journal::is_balanced() const
+Decimal
+Journal::balance() const
 {
-	Decimal balance(0, 0);
+	Decimal ret(0, 0);
 	for
 	(	vector<Entry>::const_iterator it = entries().begin(),
 			end = entries().end();
@@ -147,9 +147,15 @@ Journal::is_balanced() const
 		++it
 	)
 	{
-		balance += it->amount();
+		ret += it->amount();
 	}
-	return balance == Decimal(0, 0);
+	return ret;
+}
+
+bool
+Journal::is_balanced() const
+{
+	return balance() == Decimal(0, 0);
 }
 
 void

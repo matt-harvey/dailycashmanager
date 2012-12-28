@@ -26,6 +26,8 @@ namespace phatbooks
 // FORWARD DECLARATIONS
 
 class DraftJournal;
+class Entry;
+class Journal;
 class PhatbooksDatabaseConnection;
 class Repeater;
 
@@ -49,6 +51,7 @@ public:
 
 
 private:
+		
 
 	/**
 	 * Implements virtual function do_run, inherited from
@@ -74,7 +77,52 @@ private:
 	 */
 	int do_run(std::string const& filename);
 
-	boost::shared_ptr<Menu> m_main_menu;
+
+	// This effects only the presentation to the user when
+	// constructing the journal and is not stored as an aspect of
+	// the eventual journal object.
+	enum TransactionType
+	{
+		expenditure_transaction = 0,
+		revenue_transaction,
+		balance_sheet_transaction,
+		envelope_transaction
+	};
+
+	// Various phrases used in interacting with the user. The wording
+	// used for each phrase may vary with TransactionType
+	enum PhraseType
+	{
+		account_prompt = 0,
+		amount_prompt,
+		secondary_account_prompt,
+		secondary_account_prompt_simple,
+		secondary_account_prompt_plural
+	};
+
+	// Retrieve the user-facing string appropriate for a given
+	// TransactionType and PhraseType
+	std::string dialogue_phrase
+	(	TransactionType transaction_type,
+		PhraseType dialogue_phrase
+	);
+	
+	TransactionType elicit_transaction_type();
+
+	void elicit_primary_entries
+	(	Journal& journal,
+		TransactionType transaction_type
+	);
+
+	void elicit_secondary_entries
+	(	Journal& journal,
+		TransactionType transaction_type
+	);
+
+
+
+
+
 	// boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	// static std::string const s_application_name;
 
@@ -187,6 +235,19 @@ private:
 	 */
 	void elicit_journal();
 
+	
+
+
+
+
+	Repeater elicit_repeater();
+
+	
+
+
+
+
+
 	/**
 	 * WARNING This should be removed from any release version.
 	 *
@@ -207,8 +268,9 @@ private:
 	void display_journal_from_id();
 	void display_envelopes();
 	void display_transaction_listing();
+
 	void conduct_editing(DraftJournal& journal);
-	Repeater elicit_repeater();
+
 	void display_posted_journals();
 	void display_impending_autoposts();
 	void display_commodities_menu();
@@ -218,6 +280,7 @@ private:
 	
 	void wrap_up();
 
+	boost::shared_ptr<Menu> m_main_menu;
 };
 
 

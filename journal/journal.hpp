@@ -103,6 +103,8 @@ public:
 	virtual std::string comment() const;
 	virtual bool is_actual() const;
 
+	jewel::Decimal balance() const;
+
 	/**
 	 * @returns true if and only if the journal balances, i.e. the total
 	 * of the entries is equal to zero.

@@ -752,181 +752,172 @@ PhatbooksTextSession::elicit_repeater()
 }
 
 
-namespace
+string
+PhatbooksTextSession::dialogue_phrase
+(	TransactionType transaction_type,
+	PhraseType phrase_type
+)
 {
-	namespace vocab
-	{
-		typedef string Vocab[5];
-		typedef Vocab VocabMap[4];
-		typedef int VocabSelector;
-		typedef int PromptSelector;
-		VocabMap const vocab_map =
-		{	{	"account from which money was spent",
-				"spent",
-				"expenditure category",
-				"expenditure category",
-				"categories"
-			},
-			{	"account into which funds were deposited",
-				"earned",
-				"revenue category",
-				"revenue category",
-				"categories"
-			},
-			{	"destination account",
-				"transferred",
-				"source account",
-				"source account",
-				"source accounts"
-			},
-			{	"envelope you wish to top up",
-				"to transfer",
-				"envelope from which to source funds",
-				"source envelope",
-				"source envelopes"
-			}
-		};
-		VocabSelector const
-			expenditure_index = 0,
-			revenue_index = 1,
-			balance_sheet_index = 2,
-			envelope_index = 3,
-			invalid_index = 4;
-		PromptSelector const
-			account_prompt = 0,
-			amount_prompt = 1,
-			secondary_account_prompt = 2,
-			secondary_account_prompt_simple = 3,
-			secondary_account_prompt_plural = 4;
-	}  // namespace vocab
-}  // End anonymous namespace
+	typedef string Vocab[5];
+	typedef Vocab VocabMap[4];
+	static VocabMap const dictionary =
+	{	{	"account from which money was spent",
+			"spent",
+			"expenditure category",
+			"expenditure category",
+			"categories"
+		},
+		{	"account into which funds were deposited",
+			"earned",
+			"revenue category",
+			"revenue category",
+			"categories"
+		},
+		{	"destination account",
+			"transferred",
+			"source account",
+			"source account",
+			"source accounts"
+		},
+		{	"envelope you wish to top up",
+			"to transfer",
+			"envelope from which to source funds",
+			"source envelope",
+			"source envelopes"
+		}
+	};
+	int const transaction_index = static_cast<int>(transaction_type);
+	int const phrase_index = static_cast<int>(phrase_type);
+	return dictionary[transaction_index][phrase_index];
+}
 
 
-
-void PhatbooksTextSession::elicit_journal()
+PhatbooksTextSession::TransactionType
+PhatbooksTextSession::elicit_transaction_type()
 {
-	Journal journal;
-
-	// Find out what kind of journal this is going to be
-	Menu transaction_menu;
+	Menu menu;
 	shared_ptr<MenuItem> expenditure_selection
 	(	new MenuItem("Expenditure transaction")
 	);
-	transaction_menu.add_item(expenditure_selection);
+	menu.add_item(expenditure_selection);
 	shared_ptr<MenuItem> revenue_selection
 	(	new MenuItem("Revenue transaction")
 	);
-	transaction_menu.add_item(revenue_selection);
+	menu.add_item(revenue_selection);
 	shared_ptr<MenuItem> balance_sheet_selection
 	(	new MenuItem("Transfer between assets or liabilities")
 	);
-	transaction_menu.add_item(balance_sheet_selection);
+	menu.add_item(balance_sheet_selection);
 	shared_ptr<MenuItem> envelope_selection
 	(	new MenuItem("Transfer between budgeting envelopes")
 	);
-	transaction_menu.add_item(envelope_selection);
-	transaction_menu.present_to_user();
-	shared_ptr<MenuItem const> const transaction_type =
-		transaction_menu.last_choice();
-
-	// Determine whether journal is actual
-	journal.set_whether_actual(transaction_type != envelope_selection);
-
-	// Get journal comment
-	cout << "Enter a comment describing the transaction (or Enter to "
-	        "leave blank): ";
-	journal.set_comment(get_user_input());
-
-	cout << endl;
-
-	// Set certain "prompt words"
-	using namespace vocab;  // See in anonymous namespace above
-	VocabSelector const vocab_selector =
-	(	transaction_type == expenditure_selection? expenditure_index:
-		transaction_type == revenue_selection? revenue_index:
-		transaction_type == balance_sheet_selection? balance_sheet_index:
-		transaction_type == envelope_selection? envelope_index:
-		invalid_index
+	menu.add_item(envelope_selection);
+	menu.present_to_user();
+	shared_ptr<MenuItem const> const selection = menu.last_choice();
+	TransactionType const ret =
+	(	selection == expenditure_selection? expenditure_transaction:
+		selection == revenue_selection? revenue_transaction:
+		selection == balance_sheet_selection? balance_sheet_transaction:
+		envelope_transaction
 	);
-	assert (vocab_selector != invalid_index);
-	Vocab const& words = vocab_map[vocab_selector];
+	return ret;
+}
 
-	bool const primary_sign_needs_changing =
-	(	transaction_type == expenditure_selection ||
-		transaction_type == envelope_selection
-	);
-	bool const secondary_signs_need_changing = !primary_sign_needs_changing;
-
-	// Primary entry
-	Entry primary_entry(database_connection());
-	cout << "Enter name of " << words[account_prompt] << ": ";
-	primary_entry.set_account
+void
+PhatbooksTextSession::elicit_primary_entries
+(	Journal& journal,
+	TransactionType transaction_type
+)
+{
+	// TODO Enable multiple (split) primary entries
+	Entry entry(database_connection());
+	cout << "Enter name of "
+	     << dialogue_phrase(transaction_type, account_prompt)
+		 << ": ";
+	entry.set_account
 	(	Account(database_connection(), elicit_existing_account_name())
 	);
-	Commodity const primary_commodity = primary_entry.account().commodity();
-	Decimal primary_entry_amount;
+	Commodity const commodity = entry.account().commodity();
+	Decimal amount;
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
-		cout << "Enter amount " << words[amount_prompt] << " (in units of "
-			 << primary_commodity.abbreviation() << "): ";
-		primary_entry_amount = get_decimal_from_user();
-		Decimal::places_type const initial_precision =
-			primary_entry_amount.places();
+		cout << "Enter amount "
+		     << dialogue_phrase(transaction_type, amount_prompt)
+			 << " (in units of "
+			 << commodity.abbreviation()
+			 << "): ";
+		amount = get_decimal_from_user();
+		Decimal::places_type const initial_precision = amount.places();
 		try
 		{
-			primary_entry_amount = jewel::round
-			(	primary_entry_amount, primary_commodity.precision()
-			);
+			amount = jewel::round(amount, commodity.precision());
 			input_is_valid = true;
-			if (primary_entry_amount.places() < initial_precision)
+			if (amount.places() < initial_precision)
 			{
-				cout << "Amount rounded to " << primary_entry_amount
-				     << "." << endl;
+				cout << "Amount rounded to " << amount << "." << endl;
 			}
 		}
 		catch (DecimalRangeException&)
 		{
-			cout << "The number you entered cannot be safely"
-				 << " rounded to the precision required for "
-				 << primary_commodity.abbreviation() << ". Please try again."
+			cout << "The number you entered cannot be safely "
+			     << "rounded to the precision required for "
+				 << commodity.abbreviation()
+				 << ". Please try again."
 				 << endl;
 			assert (!input_is_valid);
 		}
 	}
-	// Primary entry amount must be changed to the appropriate sign
-	// WARNING In theory this might throw.
-	primary_entry.set_amount
-	(	primary_sign_needs_changing?
-		-primary_entry_amount:
-		primary_entry_amount
+	bool const sign_needs_changing =
+	(	transaction_type == expenditure_transaction ||
+		transaction_type == envelope_transaction
 	);
-	cout << "Line specific comment (or Enter for no comment): ";
-	primary_entry.set_comment((get_user_input()));
-	primary_entry.set_whether_reconciled(false);
-	journal.add_entry(primary_entry);
-	cout << endl;
+	entry.set_amount(sign_needs_changing? -amount: amount);
+	cout << "Comment for this line (or Enter for no comment): ";
+	entry.set_comment(get_user_input());
+	entry.set_whether_reconciled(false);
+	journal.add_entry(entry);
+	return;
+}
 
-	// Secondary entry/entries
+
+void
+PhatbooksTextSession::elicit_secondary_entries
+(	Journal& journal,
+	TransactionType transaction_type
+)
+{
 	Entry secondary_entry(database_connection());
+	bool const sign_needs_changing =
+	(	transaction_type != expenditure_transaction &&
+		transaction_type != envelope_transaction
+	);
+	Decimal const initial_friendly_balance =
+	(	sign_needs_changing?
+		journal.balance():
+		-journal.balance()
+	);
 	cout << "Enter name of "
-	     << words[secondary_account_prompt]
-	     << ", or leave blank to split between multiple "
-		 << words[secondary_account_prompt_plural]
+	     << dialogue_phrase(transaction_type, secondary_account_prompt)
+		 << ", or leave blank to split between multiple "
+		 << dialogue_phrase(transaction_type, secondary_account_prompt_plural)
 		 << ": ";
 	string const account_response = elicit_existing_account_name(true);
+	Commodity const primary_commodity =
+		journal.entries().begin()->account().commodity();
 	if (account_response.empty())
 	{
-		// We have a split transaction to contend with
-		// TODO We need to be able to split in the other
-		// direction too!
-		Decimal unmatched_amount = primary_entry_amount;
+		// We have multiple secondary entries (split transaction)
+		Decimal unmatched_amount = initial_friendly_balance;
 		Decimal const zero(0, 0);
 		for (int i = 1; unmatched_amount != zero; ++i)
 		{
 			Entry current_entry(database_connection());
 			cout << "Enter name of "
-			     << words[secondary_account_prompt_simple]
-				 << " no. " << i << ": ";
+			     << dialogue_phrase
+				 	(	transaction_type,
+						secondary_account_prompt_simple
+					)
+				<< " no. " << i << ": ";
 			Account const account
 			(	database_connection(),
 				elicit_existing_account_name()
@@ -935,13 +926,13 @@ void PhatbooksTextSession::elicit_journal()
 			Commodity const current_commodity = account.commodity();
 			if (current_commodity.id() != primary_commodity.id())
 			{
-				// TODO Deal with this.
-				JEWEL_DEBUG_LOG << "Here's where we're supposed to deal with "
-				                << "diverse commodities..." << endl;
+				// TODO Deal with this!
+				JEWEL_DEBUG_LOG << "Here's where we're supposed to deal with"
+				                << " diverse commodities..." << endl;
 			}
-			// TODO Remove code duplication between here and what was done
-			// above.
-			Decimal current_entry_amount;
+			// TODO Remove code duplication between here and
+			// elicit_primary_entry
+			Decimal current_entry_amount(0, 0);
 			for (bool input_is_valid = false; !input_is_valid; )
 			{
 				cout << "Amount remaining to split: "
@@ -984,18 +975,14 @@ void PhatbooksTextSession::elicit_journal()
 				}
 			}
 			current_entry.set_amount
-			(	secondary_signs_need_changing?
+			(	sign_needs_changing?
 				-current_entry_amount:
 				current_entry_amount
 			);
-
-			cout << "Line specific comment (or Entry for no comment): ";
+			cout << "Comment for this line (or Enter for no comment): ";
 			current_entry.set_comment((get_user_input()));
-
 			current_entry.set_whether_reconciled(false);
-
 			journal.add_entry(current_entry);
-			
 			cout << endl;
 		}
 	}
@@ -1007,8 +994,7 @@ void PhatbooksTextSession::elicit_journal()
 		);
 		// WARNING if secondary account is in a different currency then we need to
 		// deal with this here somehow.
-	 
-		Commodity secondary_commodity = secondary_entry.account().commodity();
+		Commodity const secondary_commodity = secondary_entry.account().commodity();
 		if
 		(	secondary_commodity.id() != primary_commodity.id()
 		)
@@ -1017,17 +1003,38 @@ void PhatbooksTextSession::elicit_journal()
 			JEWEL_DEBUG_LOG << "Here's where we're supposed to respond to "
 							<< "diverse commodities..." << endl;
 		}
-
 		cout << "Line specific comment (or Enter for no comment): ";
 		secondary_entry.set_comment((get_user_input()));
-		secondary_entry.set_amount(-(primary_entry.amount()));
+		secondary_entry.set_amount(-journal.balance());
 		secondary_entry.set_whether_reconciled(false);
 		journal.add_entry(secondary_entry);
 	}
+	return;
+}
+
+
+	
+
+void
+PhatbooksTextSession::elicit_journal()
+{
+	Journal journal;
+	TransactionType const transaction_type = elicit_transaction_type();
+	journal.set_whether_actual(transaction_type != envelope_transaction);
+	cout << "Enter a comment describing the transaction (or Enter to "
+	        "leave blank): ";
+	journal.set_comment(get_user_input());
+	cout << endl;
+	elicit_primary_entries(journal, transaction_type);
+	cout << endl;
+	elicit_secondary_entries(journal, transaction_type);
 	cout << "Transaction complete." << endl;
 
+	// TODO Factor the below out to separate functions like I did to
+	// the above.
 	// Find out whether the user wants to post the journal, abandon it,
 	// or save it as a draft.
+	// elicit_journal_outcome(journal, ttype);
 	shared_ptr<MenuItem> post(new MenuItem("Record transaction"));
 	shared_ptr<MenuItem> save_draft
 	(	new MenuItem("Save as a draft to return and complete later")
