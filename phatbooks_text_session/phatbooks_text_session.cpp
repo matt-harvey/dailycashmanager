@@ -280,8 +280,7 @@ int PhatbooksTextSession::do_run(string const& filename)
 
 void PhatbooksTextSession::display_draft_journals()
 {
-	bool exiting_menu = false;
-	while (!exiting_menu)
+	for (bool exiting_menu = false; !exiting_menu; )
 	{
 		cout << endl;	
 		Menu menu
@@ -298,9 +297,7 @@ void PhatbooksTextSession::display_draft_journals()
 		)
 		{
 			shared_ptr<MenuItem const> const menu_item
-			(	new MenuItem
-				(	it->name()
-				)
+			(	new MenuItem(it->name())
 			);
 			shared_ptr<DraftJournal> const dj(new DraftJournal(*it));
 			menu.add_item(menu_item);
@@ -314,20 +311,58 @@ void PhatbooksTextSession::display_draft_journals()
 		menu.add_item(exit_item);
 		menu.present_to_user();
 		shared_ptr<MenuItem const> const choice = menu.last_choice();
-		if (choice == exit_item)
+		if (choice != exit_item)
 		{
-			exiting_menu = true;
+			DraftJournal active_journal = *(dj_map[menu.last_choice()]);
+			conduct_editing(active_journal);
 		}
-		else
-		{
-			DraftJournal const active_journal = *(dj_map[menu.last_choice()]);
-			cout << active_journal << endl;
-			// TODO Finishing implementing this.
-		}
+		else exiting_menu = true;
 	}
-
 	return;
 }
+
+
+void
+PhatbooksTextSession::conduct_editing(DraftJournal& journal)
+{
+	for (bool exiting_menu = false; !exiting_menu; )
+	{
+		typedef shared_ptr<MenuItem const> ItemPtr;
+		cout << journal << endl;
+		Menu menu("Select an action to perform, or 'x' to exit: ");
+		ItemPtr add_entry_item(new MenuItem("Add a line"));
+		menu.add_item(add_entry_item);
+		ItemPtr delete_entry_item(new MenuItem("Delete a line"));
+		menu.add_item(delete_entry_item);
+		ItemPtr amend_entry_item(new MenuItem("Amend a line"));
+		menu.add_item(amend_entry_item);
+		ItemPtr delete_journal_item(new MenuItem("Delete transaction"));
+		menu.add_item(delete_journal_item);
+		ItemPtr add_repeater_item
+		(	new MenuItem("Add automatic recording cycle")
+		);
+		menu.add_item(add_repeater_item);
+		ItemPtr delete_repeaters_item
+		(	new MenuItem("Disable automatic recording")
+		);
+		menu.add_item(delete_repeaters_item);
+		ItemPtr exit_item(MenuItem::provide_menu_exit());
+		menu.add_item(exit_item);
+		menu.present_to_user();
+		ItemPtr const choice = menu.last_choice();
+		if (choice != exit_item)
+		{	
+			// TODO Finish this.
+		}
+		else exiting_menu = true;
+	}
+	return;
+}
+
+
+
+
+
 
 
 namespace

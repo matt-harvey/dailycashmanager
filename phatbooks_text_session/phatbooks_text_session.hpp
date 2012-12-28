@@ -25,6 +25,7 @@ namespace phatbooks
 
 // FORWARD DECLARATIONS
 
+class DraftJournal;
 class PhatbooksDatabaseConnection;
 
 // CLASSES
@@ -205,6 +206,7 @@ private:
 	void display_journal_from_id();
 	void display_envelopes();
 	void display_transaction_listing();
+	void conduct_editing(DraftJournal& journal);
 	void elicit_actuals_journal();
 	void elicit_budget_journal();
 	void display_posted_journals();
