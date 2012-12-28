@@ -623,6 +623,135 @@ void PhatbooksTextSession::elicit_account()
 }
 
 
+namespace
+{
+
+
+
+
+}  // End anonymous namespace
+
+
+Repeater
+PhatbooksTextSession::elicit_repeater()
+{
+	Repeater repeater(database_connection());
+	cout << "\nHow often do you want this transaction to be recorded?"
+		 << endl;
+	Menu frequency_menu;
+	shared_ptr<MenuItem> monthly_day_x
+	(	new MenuItem
+		(	"Every month, on a given day of the month (except the "
+			"29th, 30th or 31st)"
+		)
+	);
+	frequency_menu.add_item(monthly_day_x);
+	shared_ptr<MenuItem> monthly_day_last
+	(	new MenuItem("Every month, on the last day of the month")
+	);
+	frequency_menu.add_item(monthly_day_last);
+	shared_ptr<MenuItem> N_monthly_day_x
+	(	new MenuItem
+		(	"Every N months, on a given day of the month (except the "
+			"29th, 30th or 31st)"
+		)
+	);
+	frequency_menu.add_item(N_monthly_day_x);
+	shared_ptr<MenuItem> N_monthly_day_last
+	(	new MenuItem("Every N months, on the last day of the month")
+	);
+	frequency_menu.add_item(N_monthly_day_last);
+	shared_ptr<MenuItem> weekly(new MenuItem("Every week"));
+	frequency_menu.add_item(weekly);
+	shared_ptr<MenuItem> N_weekly(new MenuItem("Every N weeks"));
+	frequency_menu.add_item(N_weekly);
+	shared_ptr<MenuItem> daily(new MenuItem("Every day"));
+	frequency_menu.add_item(daily);
+	shared_ptr<MenuItem> N_daily(new MenuItem("Every N days"));
+	frequency_menu.add_item(N_daily);
+	frequency_menu.present_to_user();
+	shared_ptr<MenuItem const> const choice =
+		frequency_menu.last_choice();
+
+	// Determine interval type
+	if (choice == monthly_day_x || choice == N_monthly_day_x)
+	{
+		repeater.set_interval_type(interval_type::months);
+	}
+	else if
+	(	choice == monthly_day_last ||
+		choice == N_monthly_day_last
+	)
+	{
+		repeater.set_interval_type(interval_type::month_ends);
+	}
+	else if (choice == weekly || choice == N_weekly)
+	{
+		repeater.set_interval_type(interval_type::weeks);
+	}
+	else if (choice == daily || choice == N_daily)
+	{
+		repeater.set_interval_type(interval_type::days);
+	}
+
+	// Determine interval units
+	if
+	(	choice == monthly_day_x ||
+		choice == monthly_day_last ||
+		choice == weekly ||
+		choice == daily
+	)
+	{
+		repeater.set_interval_units(1);
+	}
+	else
+	{
+		string unit_description;
+		if (choice == N_weekly) unit_description = "week";
+		else if (choice == N_daily) unit_description = "day";
+		else unit_description = "month";
+		cout << "Enter the number of "
+			 << unit_description
+			 << "s between each occurrence of the transaction: ";
+		for (bool is_valid = false; !is_valid; )
+		{
+			string const input = get_user_input();
+			if (!regex_match(input, regex("^[0-9]+$")))
+			{
+			}
+			else if (input == "0")
+			{
+			}
+			else
+			{
+				try
+				{
+					int const units = lexical_cast<int>(input);
+					repeater.set_interval_units(units);
+					is_valid = true;
+				}
+				catch (bad_lexical_cast&)
+				{
+				}
+			}
+			if (!is_valid)
+			{
+				cout << "Try again, entering a number greater "
+						"than 0: ";
+			}
+		}
+	}	
+	// Determine next posting date
+	cout << "Enter the first date on which the transaction will occur"
+		 << ", as an eight-digit number of the form YYYYMMDD (or just"
+		 << " hit enter for today's date): ";
+	repeater.set_next_date(get_date_from_user());
+	return repeater;
+}
+
+
+
+
 void PhatbooksTextSession::elicit_journal()
 {
 	Journal journal;
@@ -716,14 +845,10 @@ void PhatbooksTextSession::elicit_journal()
 	
 	// Primary entry
 	Entry primary_entry(database_connection());
-
-	// Get primary entry account
 	cout << "Enter name of " << account_prompt << ": ";
 	primary_entry.set_account
 	(	Account(database_connection(), elicit_existing_account_name())
 	);
-
-	// Get primary entry amount
 	Commodity const primary_commodity = primary_entry.account().commodity();
 	Decimal primary_entry_amount;
 	for (bool input_is_valid = false; !input_is_valid; )
@@ -761,23 +886,14 @@ void PhatbooksTextSession::elicit_journal()
 		-primary_entry_amount:
 		primary_entry_amount
 	);
-
-	// Get primary entry comment
 	cout << "Line specific comment (or Enter for no comment): ";
 	primary_entry.set_comment((get_user_input()));
-
-	// Mark entry as unreconciled
 	primary_entry.set_whether_reconciled(false);
-
-	// Add primary entry to journal
 	journal.add_entry(primary_entry);
-
 	cout << endl;
 
-	// Secondary entry
+	// Secondary entry/entries
 	Entry secondary_entry(database_connection());
-
-	// Get other account and comment
 	cout << "Enter name of "
 	     << secondary_account_prompt
 	     << ", or leave blank to split between multiple "
@@ -965,122 +1081,8 @@ void PhatbooksTextSession::elicit_journal()
 		// Ask for any repeaters.
 		if (journal_action == save_recurring)
 		{
-			Repeater repeater(database_connection());
-			cout << "\nHow often do you want this transaction to be posted? "
-				 << endl;
-			Menu frequency_menu;
-			shared_ptr<MenuItem> monthly_day_x
-			(	new MenuItem
-				(	"Every month, on a given day of the month (except the "
-					"29th, 30th or 31st)"
-				)
-			);
-			frequency_menu.add_item(monthly_day_x);
-			shared_ptr<MenuItem> monthly_day_last
-			(	new MenuItem("Every month, on the last day of the month")
-			);
-			frequency_menu.add_item(monthly_day_last);
-			shared_ptr<MenuItem> N_monthly_day_x
-			(	new MenuItem
-				(	"Every N months, on a given day of the month (except the "
-					"29th, 30th or 31st)"
-				)
-			);
-			frequency_menu.add_item(N_monthly_day_x);
-			shared_ptr<MenuItem> N_monthly_day_last
-			(	new MenuItem("Every N months, on the last day of the month")
-			);
-			frequency_menu.add_item(N_monthly_day_last);
-			shared_ptr<MenuItem> weekly(new MenuItem("Every week"));
-			frequency_menu.add_item(weekly);
-			shared_ptr<MenuItem> N_weekly(new MenuItem("Every N weeks"));
-			frequency_menu.add_item(N_weekly);
-			shared_ptr<MenuItem> daily(new MenuItem("Every day"));
-			frequency_menu.add_item(daily);
-			shared_ptr<MenuItem> N_daily(new MenuItem("Every N days"));
-			frequency_menu.add_item(N_daily);
-			frequency_menu.present_to_user();
-			shared_ptr<MenuItem const> const choice =
-				frequency_menu.last_choice();
-	
-			// TODO Change the below where applicable to make use
-			// of phrase(...) function.
-
-			// Determine interval type
-			if (choice == monthly_day_x || choice == N_monthly_day_x)
-			{
-				repeater.set_interval_type(interval_type::months);
-			}
-			else if
-			(	choice == monthly_day_last ||
-				choice == N_monthly_day_last
-			)
-			{
-				repeater.set_interval_type(interval_type::month_ends);
-			}
-			else if (choice == weekly || choice == N_weekly)
-			{
-				repeater.set_interval_type(interval_type::weeks);
-			}
-			else if (choice == daily || choice == N_daily)
-			{
-				repeater.set_interval_type(interval_type::days);
-			}
-
-			// Determine interval units
-			if
-			(	choice == monthly_day_x ||
-				choice == monthly_day_last ||
-				choice == weekly ||
-				choice == daily
-			)
-			{
-				repeater.set_interval_units(1);
-			}
-			else
-			{
-				string unit_description;
-				if (choice == N_weekly) unit_description = "week";
-				else if (choice == N_daily) unit_description = "day";
-				else unit_description = "month";
-				cout << "Enter the number of "
-				     << unit_description
-					 << "s between each occurrence of the transaction: ";
-				for (bool is_valid = false; !is_valid; )
-				{
-					string const input = get_user_input();
-					if (!regex_match(input, regex("^[0-9]+$")))
-					{
-					}
-					else if (input == "0")
-					{
-					}
-					else
-					{
-						try
-						{
-							int const units = lexical_cast<int>(input);
-							repeater.set_interval_units(units);
-							is_valid = true;
-						}
-						catch (bad_lexical_cast&)
-						{
-						}
-					}
-					if (!is_valid)
-					{
-						cout << "Try again, entering a number greater "
-						        "than 0: ";
-					}
-				}
-			}	
-			// Determine next posting date
-			cout << "Enter the first date on which the transaction will occur"
-			     << ", as an eight-digit number of the form YYYYMMDD (or just"
-				 << " hit enter for today's date): ";
-			repeater.set_next_date(get_date_from_user());
-
 			// Add repeater to draft_journal
+			Repeater repeater = elicit_repeater();
 			draft_journal.add_repeater(repeater);	
 		}
 		draft_journal.save();

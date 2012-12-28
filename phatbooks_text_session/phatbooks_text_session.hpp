@@ -27,6 +27,7 @@ namespace phatbooks
 
 class DraftJournal;
 class PhatbooksDatabaseConnection;
+class Repeater;
 
 // CLASSES
 
@@ -207,8 +208,7 @@ private:
 	void display_envelopes();
 	void display_transaction_listing();
 	void conduct_editing(DraftJournal& journal);
-	void elicit_actuals_journal();
-	void elicit_budget_journal();
+	Repeater elicit_repeater();
 	void display_posted_journals();
 	void display_impending_autoposts();
 	void display_commodities_menu();
