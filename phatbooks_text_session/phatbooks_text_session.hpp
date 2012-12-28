@@ -119,6 +119,9 @@ private:
 		TransactionType transaction_type
 	);
 
+	void finalize_journal(Journal& journal);
+	void finalize_ordinary_journal(OrdinaryJournal& journal);
+	void finalize_draft_journal(DraftJournal& journal, bool autopost);
 
 
 

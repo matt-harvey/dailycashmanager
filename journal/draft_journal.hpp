@@ -44,12 +44,6 @@ public:
 		Id p_id
 	);
 
-	DraftJournal  
-	(	Journal& p_journal, // TODO This should be Journal const&
-		PhatbooksDatabaseConnection& p_database_connection
-	);
-
-
 	void set_whether_actual(bool p_is_actual);
 	void set_comment(std::string const& p_comment);
 	void set_name(std::string const& p_name);
@@ -80,6 +74,12 @@ public:
 	 * @todo Test.
 	 */
 	std::string repeater_description() const;
+
+	/**
+	 * Take on the attributes of \e rhs, where these exist and are
+	 * applicable to DraftJournal.
+	 */
+	void mimic(Journal const& rhs);
 
 private:
 	

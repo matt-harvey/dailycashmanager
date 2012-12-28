@@ -60,26 +60,6 @@ DraftJournal::create_unchecked
 }
 
 
-// TODO There is similar code in OrdinaryJournal for this constructor.
-// Factor out.
-DraftJournal::DraftJournal
-(	Journal& p_journal,
-	PhatbooksDatabaseConnection& p_database_connection
-):
-	m_impl(Handle<DraftJournalImpl>(p_database_connection))
-{
-	m_impl->set_whether_actual(p_journal.is_actual());
-	m_impl->set_comment(p_journal.comment());
-	for
-	(	vector<Entry>::const_iterator it = p_journal.entries().begin();
-		it != p_journal.entries().end();
-		++it
-	)
-	{
-		Entry entry(*it);
-		m_impl->add_entry(entry);
-	}
-}
 
 
 void
@@ -172,6 +152,14 @@ DraftJournal::DraftJournal
 	m_impl(p_handle)
 {
 }
+
+void
+DraftJournal::mimic(Journal const& rhs)
+{
+	m_impl->mimic(rhs);
+	return;
+}
+
 
 
 namespace

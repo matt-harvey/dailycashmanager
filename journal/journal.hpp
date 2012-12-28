@@ -14,6 +14,7 @@
 
 #include "consolixx/table.hpp"
 #include "entry.hpp"
+#include "phatbooks_database_connection.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
@@ -27,7 +28,6 @@
 namespace phatbooks
 {
 
-class PhatbooksDatabaseConnection;
 
 /**
  * Class to represent accounting journals.
@@ -90,7 +90,7 @@ public:
 	 */
 	virtual void swap(Journal& rhs);
 
-	// WARNING These getters and setters are a safety concern. They are
+	// WARNING These getters and setters are a safety concern. They are:
 	// redefined in derived
 	// classes. But if we don't redefine one, we land in trouble!
 
@@ -132,11 +132,34 @@ protected:
 	void do_ghostify_journal_base();
 	void clear_entries();
 
+	/**
+	 * Where J is Journal, DraftJournalImpl or OrdinaryJournalImpl,
+	 * cause *this to take on the attributes of rhs that would be common
+	 * to all three kinds of
+	 * journal. Thus, for example, where J is OrdinaryJournal, *this does
+	 * \e not take on the \e date attribute of rhs, since Journal and
+	 * DraftJournal do not have a \e date attribute.
+	 * Note however that the \e id attribute is \e never taken from the
+	 * rhs.
+	 * This does \e not offer the strong guarantee by itself.
+	 *
+	 * @todo This is messy. The proper solution is probably as follows.
+	 * Journal should be renamed to ProtoJournal.
+	 * There should be a new Journal class from which ProtoJournal,
+	 * DraftJournal and OrdinaryJournal inherit publically.
+	 * Journal should be just an interface class with no data members.
+	 * Journal should provide mimic function that takes another Journal.
+	 * Common stream output code should also be factored up to Journal.
+	 */
+	template <typename J>
+	void mimic_core(J& rhs, PhatbooksDatabaseConnection& dbc, boost::optional<Id> id);
+
 private:
 
 	struct JournalData;
 	
 	boost::scoped_ptr<JournalData> m_data;
+
 	
 };
 
@@ -204,6 +227,32 @@ output_journal_aux(std::ostream& os, J const& journal)
 		2
 	);
 	os << table;
+	return;
+}
+
+
+template <typename J>
+void
+Journal::mimic_core(J& rhs, PhatbooksDatabaseConnection& dbc, boost::optional<Id> id)
+{
+	set_whether_actual(rhs.is_actual());
+	set_comment(rhs.comment());
+	clear_entries();
+	if (!rhs.entries().empty())
+	{
+		for 
+		(	std::vector<Entry>::const_iterator it = rhs.entries().begin(),
+				end = rhs.entries().end();
+			it != end;
+			++it
+		)
+		{
+			Entry entry(dbc);
+			entry.mimic(*it);
+			if (id) entry.set_journal_id(*id);
+			add_entry(entry);
+		}
+	}
 	return;
 }
 

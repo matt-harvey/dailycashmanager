@@ -142,6 +142,11 @@ public:
 
 	std::string repeater_description();
 
+	/**
+	 * Take on the attributes of \e rhs, where these exist and are
+	 * applicable to DraftJournalImpl.
+	 */
+	void mimic(Journal const& rhs);
 
 private:
 

@@ -6,6 +6,7 @@
 #include <sqloxx/sql_statement.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
 #include <cassert>
@@ -19,6 +20,7 @@ namespace gregorian = boost::gregorian;
 
 using sqloxx::SQLStatement;
 using boost::lexical_cast;
+using boost::optional;
 using boost::shared_ptr;
 using boost::unordered_set;
 using jewel::clear;
@@ -380,7 +382,17 @@ DraftJournalImpl::repeater_description()
 }	
 			
 
-
+void
+DraftJournalImpl::mimic(Journal const& rhs)
+{
+	load();
+	DraftJournalImpl temp(*this);
+	optional<Id> t_id;
+	if (has_id()) t_id = id();
+	temp.mimic_core(rhs, database_connection(), t_id);
+	swap(temp);
+	return;
+}
 
 }  // namespace phatbooks
 

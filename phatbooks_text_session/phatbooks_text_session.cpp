@@ -1013,28 +1013,67 @@ PhatbooksTextSession::elicit_secondary_entries
 }
 
 
-	
+void
+PhatbooksTextSession::finalize_ordinary_journal(OrdinaryJournal& journal)
+{
+	gregorian::date const d = gregorian::day_clock::local_day();
+	cout << "Enter transaction date as an eight-digit number of the "
+		 << "form YYYYMMDD, or just hit enter for today's date ("
+		 << gregorian::to_iso_string(d)
+		 << "): ";
+	gregorian::date const e = get_date_from_user();
+	journal.set_date(e);
+	journal.save();
+	cout << "\nJournal posted:" << endl << endl
+		 << journal << endl;
+	return;
+}
+
 
 void
-PhatbooksTextSession::elicit_journal()
+PhatbooksTextSession::finalize_draft_journal
+(	DraftJournal& journal,
+	bool autopost
+)
 {
-	Journal journal;
-	TransactionType const transaction_type = elicit_transaction_type();
-	journal.set_whether_actual(transaction_type != envelope_transaction);
-	cout << "Enter a comment describing the transaction (or Enter to "
-	        "leave blank): ";
-	journal.set_comment(get_user_input());
-	cout << endl;
-	elicit_primary_entries(journal, transaction_type);
-	cout << endl;
-	elicit_secondary_entries(journal, transaction_type);
-	cout << "Transaction complete." << endl;
+	cout << "Enter a name for the "
+	     << (autopost? "recurring": "draft")
+		 << " transaction: ";
+	for (bool is_valid = false; is_valid != true; )
+	{
+		string name = get_user_input();
+		if (name.empty())
+		{
+			cout << "Name cannot be blank. Please try again: ";
+		}
+		else if (database_connection().has_draft_journal_named(name))
+		{
+			cout << "A draft or recurring transaction has already "
+				 << "been saved under this name. Please enter a "
+				 << "another name: ";
+		}
+		else
+		{
+			journal.set_name(name);
+			is_valid = true;
+		}
+	}
+	// TODO Allow for multiple repeaters
+	if (autopost)
+	{
+		Repeater repeater = elicit_repeater();
+		journal.add_repeater(repeater);
+	}
+	journal.save();
+	cout << "Draft journal has been saved:" << endl << endl
+		 << journal << endl;
+	return;
+}
 
-	// TODO Factor the below out to separate functions like I did to
-	// the above.
-	// Find out whether the user wants to post the journal, abandon it,
-	// or save it as a draft.
-	// elicit_journal_outcome(journal, ttype);
+
+void
+PhatbooksTextSession::finalize_journal(Journal& journal)
+{
 	shared_ptr<MenuItem> post(new MenuItem("Record transaction"));
 	shared_ptr<MenuItem> save_draft
 	(	new MenuItem("Save as a draft to return and complete later")
@@ -1056,59 +1095,21 @@ PhatbooksTextSession::elicit_journal()
 
 	if (journal_action == post)
 	{
-		OrdinaryJournal ordinary_journal(journal, database_connection());
-
-		gregorian::date const d = gregorian::day_clock::local_day();
-		cout << "Enter transaction date as an eight-digit number of the "
-		     << "form YYYYMMDD, or just hit enter for today's date ("
-			 << gregorian::to_iso_string(d)
-			 << "): ";
-		gregorian::date const e = get_date_from_user();
-		ordinary_journal.set_date(e);
-		ordinary_journal.save();
-		cout << "\nJournal posted:" << endl << endl
-		     << ordinary_journal << endl;
+		OrdinaryJournal oj(database_connection());
+		oj.mimic(journal);
+		finalize_ordinary_journal(oj);
 	}
-	else if (journal_action == save_draft || journal_action == save_recurring)
+	else if (journal_action == save_draft)
 	{
-		DraftJournal draft_journal(journal, database_connection());
-
-		// Ask for a name for the draft journal
-		string prompt =
-		(	journal_action == save_draft?
-			"Enter a name for the draft transaction: ":
-			"Enter a name for the recurring transaction: "
-		);
-		cout << prompt;
-		for (bool is_valid = false; is_valid != true; )
-		{
-			string name = get_user_input();
-			if (name.empty())
-			{
-				cout << "Name cannot be blank. Please try again: ";
-			}
-			else if (database_connection().has_draft_journal_named(name))
-			{
-				cout << "A draft or recurring transaction has already "
-				     << "been saved under this name. Please enter a "
-					 << "another name: ";
-			}
-			else
-			{
-				draft_journal.set_name(name);
-				is_valid = true;
-			}
-		}
-		// Ask for any repeaters.
-		if (journal_action == save_recurring)
-		{
-			// Add repeater to draft_journal
-			Repeater repeater = elicit_repeater();
-			draft_journal.add_repeater(repeater);	
-		}
-		draft_journal.save();
-		cout << "Draft journal has been saved:" << endl << endl
-		     << draft_journal << endl;
+		DraftJournal dj(database_connection());
+		dj.mimic(journal);
+		finalize_draft_journal(dj, false);
+	}
+	else if (journal_action == save_recurring)
+	{
+		DraftJournal dj(database_connection());
+		dj.mimic(journal);
+		finalize_draft_journal(dj, true);
 	}
 	else if (journal_action == abandon)
 	{
@@ -1119,6 +1120,7 @@ PhatbooksTextSession::elicit_journal()
 		// Execution should not reach here.
 		assert (false);
 	}
+	return;
 
 	// WARNING
 	// We also need to ensure the journal either
@@ -1129,7 +1131,25 @@ PhatbooksTextSession::elicit_journal()
 	// user.
 	// Note there are complications when a single Journal involves multiple
 	// commodities.
+}
 
+
+
+void
+PhatbooksTextSession::elicit_journal()
+{
+	Journal journal;
+	TransactionType const transaction_type = elicit_transaction_type();
+	journal.set_whether_actual(transaction_type != envelope_transaction);
+	cout << "Enter a comment describing the transaction (or Enter to "
+	        "leave blank): ";
+	journal.set_comment(get_user_input());
+	cout << endl;
+	elicit_primary_entries(journal, transaction_type);
+	cout << endl;
+	elicit_secondary_entries(journal, transaction_type);
+	cout << "Transaction complete." << endl;
+	finalize_journal(journal);
 	return;
 }
 

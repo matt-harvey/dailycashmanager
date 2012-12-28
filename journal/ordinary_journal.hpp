@@ -37,11 +37,6 @@ public:
 		Id p_id
 	);
 
-	OrdinaryJournal
-	(	Journal& p_journal,  // TODO This should be Journal const&
-		PhatbooksDatabaseConnection& p_database_connection
-	);
-
 	static OrdinaryJournal create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection, 
 		Id p_id
@@ -70,7 +65,7 @@ public:
 	void save();
 
 	/**
-	 * Take on the attributes from \e rhs, where these exist and are
+	 * Take on the attributes of \e rhs, where these exist and are
 	 * applicable to OrdinaryJournal; but do \e not take on the \e id
 	 * attribute of \e rhs.
 	 */

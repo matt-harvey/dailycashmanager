@@ -75,35 +75,6 @@ OrdinaryJournal::create_unchecked
 }
 
 
-// TODO There is similar code in DraftJournal for this constructor.
-// Factor out.
-OrdinaryJournal::OrdinaryJournal
-(	Journal& p_journal,
-	PhatbooksDatabaseConnection& p_database_connection
-):
-	m_impl(Handle<OrdinaryJournalImpl>(p_database_connection))
-{
-	m_impl->set_whether_actual(p_journal.is_actual());
-	m_impl->set_comment(p_journal.comment());
-	for
-	(	vector<Entry>::const_iterator it = p_journal.entries().begin();
-		it != p_journal.entries().end();
-		++it
-	)
-	{
-		/*
-		#ifdef DEBUG
-			static int times_called = 0;
-			                << "been called " << ++times_called << " times."
-							<< endl;
-		#endif
-		*/
-		Entry entry(*it);
-		m_impl->add_entry(entry);
-	}
-}
-
-
 void
 OrdinaryJournal::set_whether_actual(bool p_is_actual)
 {
@@ -179,8 +150,6 @@ OrdinaryJournal::save()
 void
 OrdinaryJournal::mimic(Journal const& rhs)
 {
-	// TODO Now this is written, I can do away
-	// with the constructor that takes a Journal const&.
 	m_impl->mimic(rhs);
 	return;
 }

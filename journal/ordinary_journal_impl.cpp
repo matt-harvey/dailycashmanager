@@ -12,6 +12,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
@@ -21,6 +22,7 @@
 #include <vector>
 
 using boost::numeric_cast;
+using boost::optional;
 using boost::shared_ptr;
 using jewel::clear;
 using jewel::Decimal;
@@ -306,7 +308,9 @@ OrdinaryJournalImpl::mimic(Journal const& rhs)
 {
 	load();
 	OrdinaryJournalImpl temp(*this);
-	temp.mimic_core(rhs);
+	optional<Id> t_id;
+	if (has_id()) t_id = id();
+	temp.mimic_core(rhs, database_connection(), t_id);
 	swap(temp);
 	return;
 }
@@ -316,7 +320,9 @@ OrdinaryJournalImpl::mimic(DraftJournal const& rhs)
 {
 	load();
 	OrdinaryJournalImpl temp(*this);
-	temp.mimic_core(rhs);
+	optional<Id> t_id;
+	if (has_id()) t_id = id();
+	temp.mimic_core(rhs, database_connection(), t_id);
 	swap(temp);
 	return;
 }
@@ -326,7 +332,9 @@ OrdinaryJournalImpl::mimic(OrdinaryJournalImpl& rhs)
 {
 	load();
 	OrdinaryJournalImpl temp(*this);
-	temp.mimic_core(rhs);
+	optional<Id> t_id;
+	if (has_id()) t_id = id();
+	temp.mimic_core(rhs, database_connection(), t_id);
 	temp.set_date(rhs.date());
 	swap(temp);
 	return;

@@ -138,7 +138,7 @@ public:
 	void swap(OrdinaryJournalImpl& rhs);
 
 	/**
-	 * Take on the attributes from \e rhs, where these exist and are
+	 * Take on the attributes \e rhs, where these exist and are
 	 * applicable to OrdinaryJournalImpl; but do \e not take on the \e id
 	 * attribute of \e rhs.
 	 */
@@ -149,20 +149,6 @@ public:
 	void clear_entries();
 
 private:
-
-	/**
-	 * Where J is Journal, DraftJournalImpl or OrdinaryJournalImpl,
-	 * cause *this to take on the attributes of rhs that would be common
-	 * to all three kinds of
-	 * journal. Thus, for example, where J is OrdinaryJournal, *this does
-	 * \e not take on the \e date attribute of rhs, since Journal and
-	 * DraftJournal do not have a \e date attribute.
-	 * Note however that the \e id attribute is \e never taken from the
-	 * rhs.
-	 * This does \e not offer the strong guarantee by itself.
-	 */
-	template <typename J>
-	void mimic_core(J& rhs);
 
 	/**
 	 * Copy constructor - implemented, but deliberately private.
@@ -182,35 +168,6 @@ private:
 	// to preserve exception-safe laoding via copy-and-swap.
 	boost::optional<DateRep> m_date;
 };
-
-
-template <typename J>
-void
-OrdinaryJournalImpl::mimic_core(J& rhs)
-{
-	set_whether_actual(rhs.is_actual());
-	set_comment(rhs.comment());
-	clear_entries();
-	if (!rhs.entries().empty())
-	{
-		for 
-		(	std::vector<Entry>::const_iterator it = rhs.entries().begin(),
-				end = rhs.entries().end();
-			it != end;
-			++it
-		)
-		{
-			Entry entry(database_connection());
-			entry.mimic(*it);
-			if (has_id())
-			{
-				entry.set_journal_id(id());
-			}
-			Journal::add_entry(entry);
-		}
-	}
-	return;
-}
 
 
 			
