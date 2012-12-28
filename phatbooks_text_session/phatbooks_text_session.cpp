@@ -625,14 +625,6 @@ void PhatbooksTextSession::elicit_account()
 }
 
 
-namespace
-{
-
-
-
-
-}  // End anonymous namespace
-
 
 Repeater
 PhatbooksTextSession::elicit_repeater()
