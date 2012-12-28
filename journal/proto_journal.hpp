@@ -72,7 +72,7 @@ protected:
 	(	PhatbooksDatabaseConnection& dbc
 	);
 	void do_ghostify_journal_core();
-	void clear_entries();
+	
 
 	/**
 	 * Cause *this to take on the attributes of rhs that would be common
@@ -103,6 +103,8 @@ private:
 	virtual void do_add_entry(Entry& entry);
 	virtual std::string do_get_comment() const;
 	virtual bool do_get_whether_actual() const;
+
+	void clear_entries();
 
 	struct ProtoJournalData
 	{

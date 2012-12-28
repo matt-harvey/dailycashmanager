@@ -71,9 +71,6 @@ private:
 
 private:
 
-	// TODO Is this even used anywhere?
-	void clear_entries();
-
 	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);
 	sqloxx::Handle<OrdinaryJournalImpl> m_impl;
 };

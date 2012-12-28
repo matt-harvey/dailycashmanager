@@ -22,6 +22,8 @@ namespace phatbooks
 class Journal
 {
 public:
+	// TODO Use this rather than ProtoJournal::Id in various
+	// places throughout Phatbooks code base, where applicable.
 	typedef sqloxx::Id Id;
 	
 	virtual ~Journal();

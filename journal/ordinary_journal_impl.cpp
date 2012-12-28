@@ -189,14 +189,6 @@ OrdinaryJournalImpl::swap(OrdinaryJournalImpl& rhs)
 	return;
 }
 
-void
-OrdinaryJournalImpl::clear_entries()
-{
-	load();
-	ProtoJournal::clear_entries();
-	return;
-}
-
 
 void
 OrdinaryJournalImpl::do_load()
