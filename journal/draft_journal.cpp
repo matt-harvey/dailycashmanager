@@ -4,7 +4,6 @@
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
-#include <jewel/output_aux.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
@@ -12,7 +11,6 @@
 #include <string>
 
 using boost::shared_ptr;
-using jewel::output_aux;
 using std::endl;
 using std::ostream;
 using std::string;
@@ -156,27 +154,19 @@ DraftJournal::mimic(ProtoJournal const& rhs)
 
 
 
-namespace
+void
+DraftJournal::do_output(ostream& os) const
 {
-	void output_draft_journal_aux(ostream& os, DraftJournal const& dj)
-	{
-		os << "DRAFT JOURNAL ID " << dj.id() << " "
-		   << " NAME " << dj.name() << " ";
-		output_journal_aux(os, dj);
-		os << endl << dj.repeater_description() << endl;
-		return;
-	}
-}  // End anonymous namespace
-
-
-
-
-ostream&
-operator<<(ostream& os, DraftJournal const& draft_journal)
-{
-	output_aux(os, draft_journal, output_draft_journal_aux);
-	return os;
+	os << "DRAFT JOURNAL ID " << id() << " "
+	   << " NAME " << name() << " ";
+	Journal::do_output(os);
+	os << endl << repeater_description() << endl;
+	return;
 }
+
+
+
+
 
 
 }  // namespace phatbooks

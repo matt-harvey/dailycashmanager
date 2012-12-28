@@ -60,7 +60,7 @@ public:
 
 private:
 
-	// Virtual functions inherited from Journal
+	// Define pure virtual functions inherited from Journal
 	void do_set_whether_actual(bool p_is_actual);
 	void do_set_comment(std::string const& p_comment);
 	void do_add_entry(Entry& entry);
@@ -68,16 +68,13 @@ private:
 	std::string do_get_comment() const;
 	std::vector<Entry> const& do_get_entries() const;
 
-
-private:
+	// Redefine impure virtual function inherited from Journal
+	void do_output(std::ostream& os) const;
 
 	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);
 	sqloxx::Handle<OrdinaryJournalImpl> m_impl;
 };
 
-
-std::ostream&
-operator<<(std::ostream& os, OrdinaryJournal const& oj);
 
 	
 

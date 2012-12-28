@@ -12,7 +12,6 @@
  */
 
 
-#include "consolixx/table.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -21,7 +20,6 @@
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -77,14 +75,27 @@ protected:
 	/**
 	 * Cause *this to take on the attributes of rhs that would be common
 	 * to all types of Journal.
+	 *
 	 * Thus, for example, where rhs is an OrdinaryJournal, *this does
 	 * \e not take on the \e date attribute of rhs, since ProtoJournal and
 	 * DraftJournal do not have a \e date attribute.
 	 * Note however that the \e id attribute is \e never taken from the
 	 * rhs.
-	 * This does \e not offer the strong guarantee by itself.
 	 *
-	 * @todo This is sucky. Make it better.
+	 * The \e lhs should pass its id and database connection to the
+	 * appropriate parameters in the function. The id should be wrapped
+	 * in a boost::optional (uninitialized if has_id returns false).
+	 *
+	 * The dbc and id parameters are required in order to initialize
+	 * the Entries as they are added to the lhs.
+	 *
+	 * Yes this is a bit messy.
+	 *
+	 * Note a \e deep, rather than shallow copy of the rhs Entries is made.
+	 *
+	 * Note this does \e not offer the strong guarantee by itself, but is
+	 * designed to be called from derived classes which can implement swap
+	 * etc.. to enable the strong guarantee.
 	 */
 	void mimic_core
 	(	Journal const& rhs,
@@ -115,16 +126,6 @@ private:
 	boost::scoped_ptr<ProtoJournalData> m_data;
 };
 
-std::ostream&
-operator<<(std::ostream& os, ProtoJournal const& journal);
-
-
-/**
- * J should be a Journal type (ProtoJournal, DraftJournal or OrdinaryJournal).
- */
-template <typename J>
-void
-output_journal_aux(std::ostream& os, J const& journal);
 
 ProtoJournal::Id
 max_journal_id(PhatbooksDatabaseConnection& dbc);
@@ -137,42 +138,6 @@ journal_id_exists(PhatbooksDatabaseConnection& dbc, ProtoJournal::Id);
 
 bool
 journal_id_is_draft(PhatbooksDatabaseConnection& dbc, ProtoJournal::Id);
-
-
-template <typename J>
-void
-output_journal_aux(std::ostream& os, J const& journal)
-{
-	namespace alignment = consolixx::alignment;
-	using consolixx::Table;
-	using std::endl;
-	using std::string;
-	using std::vector;
-	if (journal.is_actual()) os << "ACTUAL";
-	else os << "BUDGET";
-	os << endl;
-	if (!journal.comment().empty()) os << journal.comment() << endl;
-	os << endl;
-	vector<string> headings;
-	headings.push_back("ENTRY ID");
-	headings.push_back("ACCOUNT");
-	headings.push_back("COMMENT");
-	headings.push_back("COMMODITY");
-	headings.push_back("AMOUNT");
-	vector<alignment::Flag> alignments(5, alignment::left);
-	alignments[4] = alignment::right;
-	bool const change_signs = !journal.is_actual();
-	Table<Entry> const table
-	(	journal.entries().begin(),
-		journal.entries().end(),
-		change_signs? make_reversed_entry_row: make_entry_row,
-		headings,
-		alignments,
-		2
-	);
-	os << table;
-	return;
-}
 
 
 

@@ -359,12 +359,7 @@ ProtoJournal::mimic_core
 }
 
 
-ostream&
-operator<<(ostream& os, ProtoJournal const& journal)
-{
-	output_aux(os, journal, output_journal_aux);
-	return os;
-}
+
 		
 
 

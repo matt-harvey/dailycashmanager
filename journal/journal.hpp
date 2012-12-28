@@ -2,6 +2,7 @@
 #define GUARD_journal_hpp
 
 #include "entry.hpp"
+#include <ostream>
 #include <sqloxx/general_typedefs.hpp>
 #include <vector>
 #include <string>
@@ -53,6 +54,9 @@ public:
 	 */
 	bool is_balanced() const;
 
+protected:
+	virtual void do_output(std::ostream& os) const;
+
 private:
 	virtual std::vector<Entry> const& do_get_entries() const = 0;
 	virtual void do_set_whether_actual(bool p_is_actual) = 0;
@@ -60,8 +64,19 @@ private:
 	virtual void do_add_entry(Entry& entry) = 0;
 	virtual std::string do_get_comment() const = 0;
 	virtual bool do_get_whether_actual() const = 0;
+
+	static void output_journal_aux(std::ostream& os, Journal const& oj);
+	
+	friend
+	std::ostream& operator<<(std::ostream& os, Journal const& oj);
 };
 	
+
+
+std::ostream&
+operator<<(std::ostream& os, Journal const& oj);
+
+
 
 }  // namespace phatbooks
 

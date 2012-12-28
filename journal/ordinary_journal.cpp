@@ -166,27 +166,18 @@ OrdinaryJournal::OrdinaryJournal
 }
 
 
-namespace
+void
+OrdinaryJournal::do_output(ostream& os) const
 {
-	void
-	output_ordinary_journal_aux(ostream& os, OrdinaryJournal const& oj)
-	{
-		os << oj.date() << " ";
-		// lexical_cast here avoids unwanted formatting
-		os << "ORDINARY JOURNAL ID " << lexical_cast<string>(oj.id()) << " ";
-		output_journal_aux(os, oj);
-		return;
-	}
-}  // End anonymous namespace
-
-
-
-ostream&
-operator<<(ostream& os, OrdinaryJournal const& ordinary_journal)
-{
-	output_aux(os, ordinary_journal, output_ordinary_journal_aux);
-	return os;
+	os << date() << " ";
+	// lexical_cast here avoids unwanted formatting
+	os << "ORDINARY JOURNAL ID " << lexical_cast<string>(id()) << " ";
+	Journal::do_output(os);
+	return;
 }
+
+
+
 
 
 }  // namespace phatbooks
