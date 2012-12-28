@@ -2,6 +2,7 @@
 #define GUARD_draft_journal_hpp
 
 #include "draft_journal_impl.hpp"
+#include "journal.hpp"
 #include "proto_journal.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -23,7 +24,7 @@ class Repeater;
  * in the DraftJournal description alerting the user to the fact that it
  * will not be posted for this reason.
  */
-class DraftJournal
+class DraftJournal: public Journal
 {
 public:
 	typedef sqloxx::Id Id;
@@ -43,27 +44,11 @@ public:
 		Id p_id
 	);
 
-	void set_whether_actual(bool p_is_actual);
-	void set_comment(std::string const& p_comment);
 	void set_name(std::string const& p_name);
-	void add_entry(Entry& entry);
 	void add_repeater(Repeater& repeater);
-	bool is_actual() const;
-	bool is_balanced() const;
-	std::string comment() const;
 	std::string name() const;
-	std::vector<Entry> const& entries() const;
-	
-	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
-	Id id() const;
 
-	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
+	Id id() const;
 	void save();
 
 	/**
@@ -80,7 +65,17 @@ public:
 	 */
 	void mimic(ProtoJournal const& rhs);
 
+
 private:
+
+	// Define virtual functions inherited from Journal
+	std::vector<Entry> const& do_get_entries() const;
+	void do_set_whether_actual(bool p_is_actual);
+	void do_set_comment(std::string const& p_comment);
+	void do_add_entry(Entry& entry);
+	std::string do_get_comment() const;
+	bool do_get_whether_actual() const;
+		
 	
 	DraftJournal(sqloxx::Handle<DraftJournalImpl> const& p_handle);
 	sqloxx::Handle<DraftJournalImpl> m_impl;

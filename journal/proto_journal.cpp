@@ -23,6 +23,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
@@ -37,6 +38,7 @@ namespace alignment = consolixx::alignment;
 using sqloxx::next_auto_key;
 using sqloxx::SQLStatement;
 using boost::numeric_cast;
+using boost::optional;
 using boost::scoped_ptr;
 using boost::shared_ptr;
 using boost::unordered_set;
@@ -95,27 +97,27 @@ ProtoJournal::~ProtoJournal()
 }
 
 vector<Entry> const& 
-ProtoJournal::entries() const
+ProtoJournal::do_get_entries() const
 {
 	return m_data->entries;
 }
 
 void
-ProtoJournal::set_whether_actual(bool p_is_actual)
+ProtoJournal::do_set_whether_actual(bool p_is_actual)
 {
 	m_data->is_actual = p_is_actual;
 	return;
 }
 
 void
-ProtoJournal::set_comment(string const& p_comment)
+ProtoJournal::do_set_comment(string const& p_comment)
 {
 	m_data->comment = p_comment;
 	return;
 }
 
 void
-ProtoJournal::add_entry(Entry& entry)
+ProtoJournal::do_add_entry(Entry& entry)
 {
 	/*
 	JEWEL_DEBUG_LOG << "Calling ProtoJournal::add_entry " << endl;
@@ -125,37 +127,15 @@ ProtoJournal::add_entry(Entry& entry)
 }
 
 string
-ProtoJournal::comment() const
+ProtoJournal::do_get_comment() const
 {
 	return value(m_data->comment);
 }
 
 bool
-ProtoJournal::is_actual() const
+ProtoJournal::do_get_whether_actual() const
 {
 	return value(m_data->is_actual);
-}
-
-Decimal
-ProtoJournal::balance() const
-{
-	Decimal ret(0, 0);
-	for
-	(	vector<Entry>::const_iterator it = entries().begin(),
-			end = entries().end();
-		it != end;
-		++it
-	)
-	{
-		ret += it->amount();
-	}
-	return ret;
-}
-
-bool
-ProtoJournal::is_balanced() const
-{
-	return balance() == Decimal(0, 0);
 }
 
 void
@@ -352,6 +332,32 @@ journal_id_is_draft(PhatbooksDatabaseConnection& dbc, ProtoJournal::Id id)
 	return s.step();
 }
 	
+
+void
+ProtoJournal::mimic_core
+(	Journal const& rhs,
+	PhatbooksDatabaseConnection& dbc,
+	optional<Id> id
+)
+{
+	set_whether_actual(rhs.is_actual());
+	set_comment(rhs.comment());
+	clear_entries();
+	typedef vector<Entry>::const_iterator It;
+	vector<Entry> const& rentries = rhs.entries();
+	if (!rhs.entries().empty())
+	{
+		for (It it = rentries.begin(), end = rentries.end(); it != end; ++it)
+		{
+			Entry entry(dbc);
+			entry.mimic(*it);
+			if (id) entry.set_journal_id(value(id));
+			add_entry(entry);
+		}
+	}
+	return;
+}
+
 
 ostream&
 operator<<(ostream& os, ProtoJournal const& journal)

@@ -179,13 +179,6 @@ OrdinaryJournalImpl::date()
 }
 
 
-bool
-OrdinaryJournalImpl::is_balanced()
-{
-	load();
-	return ProtoJournal::is_balanced();
-}
-
 void
 OrdinaryJournalImpl::swap(OrdinaryJournalImpl& rhs)
 {
@@ -294,7 +287,7 @@ OrdinaryJournalImpl::do_ghostify()
 
 
 void
-OrdinaryJournalImpl::mimic(ProtoJournal const& rhs)
+OrdinaryJournalImpl::mimic(Journal const& rhs)
 {
 	load();
 	OrdinaryJournalImpl temp(*this);
@@ -305,30 +298,7 @@ OrdinaryJournalImpl::mimic(ProtoJournal const& rhs)
 	return;
 }
 
-void
-OrdinaryJournalImpl::mimic(DraftJournal const& rhs)
-{
-	load();
-	OrdinaryJournalImpl temp(*this);
-	optional<Id> t_id;
-	if (has_id()) t_id = id();
-	temp.mimic_core(rhs, database_connection(), t_id);
-	swap(temp);
-	return;
-}
 
-void
-OrdinaryJournalImpl::mimic(OrdinaryJournalImpl& rhs)
-{
-	load();
-	OrdinaryJournalImpl temp(*this);
-	optional<Id> t_id;
-	if (has_id()) t_id = id();
-	temp.mimic_core(rhs, database_connection(), t_id);
-	temp.set_date(rhs.date());
-	swap(temp);
-	return;
-}
 }  // namespace phatbooks
 
 

@@ -45,23 +45,17 @@ public:
 	static std::string primary_key_name();
 
 	/**
-	 * Change whether Journal is actual or budget
-	 * 
 	 * Does not throw.
 	 */
 	void set_whether_actual(bool p_is_actual);
 
 	/**
-	 * Set comment for journal
-	 *
 	 * Does not throw, except possibly \c std::bad_alloc in extreme
 	 * circumstances.
 	 */
 	void set_comment(std::string const& p_comment);
 
 	/**
-	 * Add an Entry to the Journal.
-	 *
 	 * @todo Figure out throwing behaviour.
 	 */
 	void add_entry(Entry& entry);
@@ -69,14 +63,10 @@ public:
 	bool is_actual();
 
 	/**
-	 * @returns journal comment.
-	 *
 	 * Does not throw, except perhaps \c std::bad_alloc in
 	 * extreme circumstances.
 	 */
 	std::string comment();
-
-	bool is_balanced();
 
 	std::vector<Entry> const& entries();
 
@@ -106,8 +96,6 @@ public:
 	~OrdinaryJournalImpl();
 
 	/**
-	 * Set date of journal.
-	 *
 	 * Does not throw.
 	 */
 	void set_date(boost::gregorian::date const& p_date);
@@ -128,11 +116,9 @@ public:
 	/**
 	 * Take on the attributes \e rhs, where these exist and are
 	 * applicable to OrdinaryJournalImpl; but do \e not take on the \e id
-	 * attribute of \e rhs.
+	 * attribute of \e rhs, or the date.
 	 */
-	void mimic(ProtoJournal const& rhs);
-	void mimic(DraftJournal const& rhs);
-	void mimic(OrdinaryJournalImpl& rhs);
+	void mimic(Journal const& rhs);
 
 	void clear_entries();
 

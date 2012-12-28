@@ -60,22 +60,6 @@ DraftJournal::create_unchecked
 }
 
 
-
-
-void
-DraftJournal::set_whether_actual(bool p_is_actual)
-{
-	m_impl->set_whether_actual(p_is_actual);
-	return;
-}
-
-void
-DraftJournal::set_comment(string const& p_comment)
-{
-	m_impl->set_comment(p_comment);
-	return;
-}
-
 void
 DraftJournal::set_name(string const& p_name)
 {
@@ -83,12 +67,6 @@ DraftJournal::set_name(string const& p_name)
 	return;
 }
 
-void
-DraftJournal::add_entry(Entry& entry)
-{
-	m_impl->add_entry(entry);
-	return;
-}
 
 void
 DraftJournal::add_repeater(Repeater& repeater)
@@ -97,22 +75,38 @@ DraftJournal::add_repeater(Repeater& repeater)
 	return;
 }
 
+
+void
+DraftJournal::do_set_whether_actual(bool p_is_actual)
+{
+	m_impl->set_whether_actual(p_is_actual);
+	return;
+}
+
+void
+DraftJournal::do_set_comment(string const& p_comment)
+{
+	m_impl->set_comment(p_comment);
+	return;
+}
+
+void
+DraftJournal::do_add_entry(Entry& entry)
+{
+	m_impl->add_entry(entry);
+	return;
+}
+
 bool
-DraftJournal::is_actual() const
+DraftJournal::do_get_whether_actual() const
 {
 	return m_impl->is_actual();
 }
 
 string
-DraftJournal::comment() const
+DraftJournal::do_get_comment() const
 {
 	return m_impl->comment();
-}
-
-bool
-DraftJournal::is_balanced() const
-{
-	return m_impl->is_balanced();
 }
 	
 string
@@ -122,7 +116,7 @@ DraftJournal::name() const
 }
 
 vector<Entry> const&
-DraftJournal::entries() const
+DraftJournal::do_get_entries() const
 {
 	return m_impl->entries();
 }

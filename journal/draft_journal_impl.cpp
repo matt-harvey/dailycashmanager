@@ -179,13 +179,6 @@ DraftJournalImpl::name()
 }
 
 
-bool
-DraftJournalImpl::is_balanced()
-{
-	load();
-	return ProtoJournal::is_balanced();
-}
-
 DraftJournalImpl::DraftJournalImpl(DraftJournalImpl const& rhs):
 	DraftJournalImpl::PersistentObject(rhs),
 	ProtoJournal(rhs),

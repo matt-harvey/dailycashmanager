@@ -2,6 +2,7 @@
 #define GUARD_ordinary_journal_hpp
 
 #include "entry.hpp"
+#include "journal.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "proto_journal.hpp"
 #include <sqloxx/general_typedefs.hpp>
@@ -19,7 +20,8 @@ class DraftJournal;
 // class Journal;
 class PhatbooksDatabaseConnection;
 
-class OrdinaryJournal
+
+class OrdinaryJournal: public Journal
 {
 public:
 
@@ -42,36 +44,30 @@ public:
 		Id p_id
 	);
 
-	void set_whether_actual(bool p_is_actual);
-	void set_comment(std::string const& p_comment);
 	void set_date(boost::gregorian::date const& p_date);
-	void add_entry(Entry& entry);
-	bool is_actual() const;
-	bool is_balanced() const;
 	boost::gregorian::date date() const;
-	std::string comment() const;
-	std::vector<Entry> const& entries() const;
 
-	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
 	Id id() const;
-
-	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
 	void save();
 
 	/**
 	 * Take on the attributes of \e rhs, where these exist and are
-	 * applicable to OrdinaryJournal; but do \e not take on the \e id
-	 * attribute of \e rhs.
+	 * applicable to OrdinaryJournal; but do \e not take on the \e id of
+	 * rhs (and ignore \e next_date() in the case of DraftJournal).
 	 */
 	void mimic(ProtoJournal const& rhs);
 	void mimic(DraftJournal const& rhs);
-	void mimic(OrdinaryJournal const& rhs);
+
+private:
+
+	// Virtual functions inherited from Journal
+	void do_set_whether_actual(bool p_is_actual);
+	void do_set_comment(std::string const& p_comment);
+	void do_add_entry(Entry& entry);
+	bool do_get_whether_actual() const;
+	std::string do_get_comment() const;
+	std::vector<Entry> const& do_get_entries() const;
+
 
 private:
 

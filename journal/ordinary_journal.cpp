@@ -75,15 +75,23 @@ OrdinaryJournal::create_unchecked
 }
 
 
+boost::gregorian::date
+OrdinaryJournal::date() const
+{
+	return m_impl->date();
+}
+
+
+
 void
-OrdinaryJournal::set_whether_actual(bool p_is_actual)
+OrdinaryJournal::do_set_whether_actual(bool p_is_actual)
 {
 	m_impl->set_whether_actual(p_is_actual);
 	return;
 }
 
 void
-OrdinaryJournal::set_comment(string const& p_comment)
+OrdinaryJournal::do_set_comment(string const& p_comment)
 {
 	m_impl->set_comment(p_comment);
 	return;
@@ -97,38 +105,26 @@ OrdinaryJournal::set_date(boost::gregorian::date const& p_date)
 }
 
 void
-OrdinaryJournal::add_entry(Entry& entry)
+OrdinaryJournal::do_add_entry(Entry& entry)
 {
 	m_impl->add_entry(entry);
 	return;
 }
 
 bool
-OrdinaryJournal::is_actual() const
+OrdinaryJournal::do_get_whether_actual() const
 {
 	return m_impl->is_actual();
 }
 
-boost::gregorian::date
-OrdinaryJournal::date() const
-{
-	return m_impl->date();
-}
-
 string
-OrdinaryJournal::comment() const
+OrdinaryJournal::do_get_comment() const
 {
 	return m_impl->comment();
 }
 
-bool
-OrdinaryJournal::is_balanced() const
-{
-	return m_impl->is_balanced();
-}
-
 vector<Entry> const&
-OrdinaryJournal::entries() const
+OrdinaryJournal::do_get_entries() const
 {
 	return m_impl->entries();
 }
@@ -161,12 +157,6 @@ OrdinaryJournal::mimic(DraftJournal const& rhs)
 	return;
 }
 
-void
-OrdinaryJournal::mimic(OrdinaryJournal const& rhs)
-{
-	m_impl->mimic(*(rhs.m_impl));
-	return;
-}
 
 void
 OrdinaryJournal::clear_entries()

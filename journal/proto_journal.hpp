@@ -14,6 +14,7 @@
 
 #include "consolixx/table.hpp"
 #include "entry.hpp"
+#include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <jewel/decimal.hpp>
@@ -35,7 +36,7 @@ namespace phatbooks
  * be a Journal that is in the process of being "constructed" by the
  * user.
  */
-class ProtoJournal
+class ProtoJournal: public Journal
 {
 public:
 
@@ -43,46 +44,22 @@ public:
 
 	ProtoJournal();
 	ProtoJournal(ProtoJournal const& rhs);
+	// TODO Do we need a virtual destructor here? I don't think we do,
+	// but confirm.
 	virtual ~ProtoJournal();
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 	static std::string primary_table_name();
 	static std::string primary_key_name();
-
+	
+protected:
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
 	 * "Effective C++".
 	 */
 	virtual void swap(ProtoJournal& rhs);
 
-	// WARNING These getters and setters are a safety concern. They are:
-	// redefined in derived
-	// classes. But if we don't redefine one, we land in trouble!
-
-	// WARNING This returns a reference to internals and so
-	// is a bit fucked. But client code uses it a lot...
-	virtual std::vector<Entry> const& entries() const;
-	virtual void set_whether_actual(bool p_is_actual);
-	virtual void set_comment(std::string const& p_comment);
-	virtual void add_entry(Entry& entry);
-	virtual std::string comment() const;
-	virtual bool is_actual() const;
-
-	jewel::Decimal balance() const;
-
-	/**
-	 * @returns true if and only if the journal balances, i.e. the total
-	 * of the entries is equal to zero.
-	 *
-	 * @todo Note, thinking a little about this function shows
-	 * that all entries in a journal must be expressed in a common currency.
-	 * It doesn't make sense to think of entries in a single journal as being
-	 * in different currencies. An entry must have its value frozen in time.
-	 */
-	bool is_balanced() const;
-
-protected:
-
+	// Other
 	void do_load_journal_core
 	(	PhatbooksDatabaseConnection& dbc,
 		Id id
@@ -98,46 +75,43 @@ protected:
 	void clear_entries();
 
 	/**
-	 * Where J is ProtoJournal, DraftJournalImpl or OrdinaryJournalImpl,
-	 * cause *this to take on the attributes of rhs that would be common
-	 * to all three kinds of
-	 * journal. Thus, for example, where J is OrdinaryJournal, *this does
+	 * Cause *this to take on the attributes of rhs that would be common
+	 * to all types of Journal.
+	 * Thus, for example, where rhs is an OrdinaryJournal, *this does
 	 * \e not take on the \e date attribute of rhs, since ProtoJournal and
 	 * DraftJournal do not have a \e date attribute.
 	 * Note however that the \e id attribute is \e never taken from the
 	 * rhs.
 	 * This does \e not offer the strong guarantee by itself.
 	 *
-	 * @todo
-	 * // WARNING As things are in a state of flux this todo is
-	 * becoming out-of-date.
-	 * This is messy. The proper solution is probably as follows.
-	 * Journal should be renamed to ProtoJournal.
-	 * There should be a new Journal class from which ProtoJournal,
-	 * DraftJournal and OrdinaryJournal inherit publically.
-	 * Journal should be just an interface class with no data members.
-	 * Journal should provide mimic function that takes another Journal.
-	 * Common stream output code should also be factored up to Journal.
+	 * @todo This is sucky. Make it better.
 	 */
-	template <typename J>
-	void mimic_core(J& rhs, PhatbooksDatabaseConnection& dbc, boost::optional<Id> id);
+	void mimic_core
+	(	Journal const& rhs,
+		PhatbooksDatabaseConnection& dbc,
+		boost::optional<Id> id
+	);
 
 private:
 
-	struct ProtoJournalData;
-	
+	// Implement virtual functions inherited from Journal
+	// todo Figure out whether these need to be virtual here.
+	// I'm pretty sure they \e don't.
+	virtual std::vector<Entry> const& do_get_entries() const;
+	virtual void do_set_whether_actual(bool p_is_actual);
+	virtual void do_set_comment(std::string const& p_comment);
+	virtual void do_add_entry(Entry& entry);
+	virtual std::string do_get_comment() const;
+	virtual bool do_get_whether_actual() const;
+
+	struct ProtoJournalData
+	{
+		boost::optional<bool> is_actual;
+		boost::optional<std::string> comment;
+		std::vector<Entry> entries;
+	};
 	boost::scoped_ptr<ProtoJournalData> m_data;
-
-	
 };
-
-struct ProtoJournal::ProtoJournalData
-{
-	boost::optional<bool> is_actual;
-	boost::optional<std::string> comment;
-	std::vector<Entry> entries;
-};
-
 
 std::ostream&
 operator<<(std::ostream& os, ProtoJournal const& journal);
@@ -195,32 +169,6 @@ output_journal_aux(std::ostream& os, J const& journal)
 		2
 	);
 	os << table;
-	return;
-}
-
-
-template <typename J>
-void
-ProtoJournal::mimic_core(J& rhs, PhatbooksDatabaseConnection& dbc, boost::optional<Id> id)
-{
-	set_whether_actual(rhs.is_actual());
-	set_comment(rhs.comment());
-	clear_entries();
-	if (!rhs.entries().empty())
-	{
-		for 
-		(	std::vector<Entry>::const_iterator it = rhs.entries().begin(),
-				end = rhs.entries().end();
-			it != end;
-			++it
-		)
-		{
-			Entry entry(dbc);
-			entry.mimic(*it);
-			if (id) entry.set_journal_id(*id);
-			add_entry(entry);
-		}
-	}
 	return;
 }
 

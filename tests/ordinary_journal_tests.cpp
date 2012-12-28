@@ -104,6 +104,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		CHECK_EQUAL(it2->is_reconciled(), false);
 	}
 
+	/* No longer providing mimic of OrdinaryJournal, so test commented out.
 	OrdinaryJournal oj2(dbc);
 	oj2.set_whether_actual(true);
 	oj2.set_comment("random");
@@ -132,6 +133,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	CHECK_EQUAL(oj2b.date(), date(2000, 1, 5));
 	vector<Entry>::const_iterator it2b = oj2b.entries().begin();
 	CHECK_EQUAL(it2b->amount(), Decimal("0"));
+	*/
 }
 
 
