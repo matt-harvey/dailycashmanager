@@ -121,6 +121,10 @@ PhatbooksDatabaseConnection::has_draft_journal_named(string const& p_name)
 	return statement.step();
 }
 
+// TODO This is clunky. The account type names should be stored in
+// memory from the outset, as part of the application code, and not
+// stored in the database at all. They should be dealt with in the
+// same way as IntervalType.
 bimap<Account::AccountType, string>
 PhatbooksDatabaseConnection::account_types()
 {
