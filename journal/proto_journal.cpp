@@ -1,7 +1,7 @@
 
-/** \file journal.cpp
+/** \file proto_journal.cpp
  *
- * \brief Source file relating to Journal class.
+ * \brief Source file relating to ProtoJournal class.
  *
  * \author Matthew Harvey
  * \date 04 July 2012.
@@ -11,7 +11,7 @@
 
 
 
-#include "journal.hpp"
+#include "proto_journal.hpp"
 #include "account.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
@@ -62,7 +62,7 @@ namespace phatbooks
 {
 
 void
-Journal::setup_tables(PhatbooksDatabaseConnection& dbc)
+ProtoJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table journals"
@@ -76,17 +76,17 @@ Journal::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 
-Journal::Journal():
-	m_data(new JournalData)
+ProtoJournal::ProtoJournal():
+	m_data(new ProtoJournalData)
 {
 }
 
-Journal::Journal(Journal const& rhs):
-	m_data(new JournalData(*(rhs.m_data)))
+ProtoJournal::ProtoJournal(ProtoJournal const& rhs):
+	m_data(new ProtoJournalData(*(rhs.m_data)))
 {
 }
 
-Journal::~Journal()
+ProtoJournal::~ProtoJournal()
 {
 	/* If m_data is a smart pointer, this is not required.
 	delete m_data;
@@ -95,49 +95,49 @@ Journal::~Journal()
 }
 
 vector<Entry> const& 
-Journal::entries() const
+ProtoJournal::entries() const
 {
 	return m_data->entries;
 }
 
 void
-Journal::set_whether_actual(bool p_is_actual)
+ProtoJournal::set_whether_actual(bool p_is_actual)
 {
 	m_data->is_actual = p_is_actual;
 	return;
 }
 
 void
-Journal::set_comment(string const& p_comment)
+ProtoJournal::set_comment(string const& p_comment)
 {
 	m_data->comment = p_comment;
 	return;
 }
 
 void
-Journal::add_entry(Entry& entry)
+ProtoJournal::add_entry(Entry& entry)
 {
 	/*
-	JEWEL_DEBUG_LOG << "Calling Journal::add_entry " << endl;
+	JEWEL_DEBUG_LOG << "Calling ProtoJournal::add_entry " << endl;
 	*/
 	m_data->entries.push_back(entry);
 	return;
 }
 
 string
-Journal::comment() const
+ProtoJournal::comment() const
 {
 	return value(m_data->comment);
 }
 
 bool
-Journal::is_actual() const
+ProtoJournal::is_actual() const
 {
 	return value(m_data->is_actual);
 }
 
 Decimal
-Journal::balance() const
+ProtoJournal::balance() const
 {
 	Decimal ret(0, 0);
 	for
@@ -153,21 +153,21 @@ Journal::balance() const
 }
 
 bool
-Journal::is_balanced() const
+ProtoJournal::is_balanced() const
 {
 	return balance() == Decimal(0, 0);
 }
 
 void
-Journal::swap(Journal& rhs)
+ProtoJournal::swap(ProtoJournal& rhs)
 {
 	using std::swap;
 	swap(m_data, rhs.m_data);
 	return;
 }
 
-Journal::Id
-Journal::do_save_new_journal_base
+ProtoJournal::Id
+ProtoJournal::do_save_new_journal_core
 (	PhatbooksDatabaseConnection& dbc
 )
 {
@@ -194,9 +194,9 @@ Journal::do_save_new_journal_base
 }
 
 void
-Journal::do_save_existing_journal_base
+ProtoJournal::do_save_existing_journal_core
 (	PhatbooksDatabaseConnection& dbc,
-	Journal::Id id
+	ProtoJournal::Id id
 )
 {
 	SQLStatement updater
@@ -245,9 +245,9 @@ Journal::do_save_existing_journal_base
 
 
 void
-Journal::do_load_journal_base
+ProtoJournal::do_load_journal_core
 (	PhatbooksDatabaseConnection& dbc,
-	Journal::Id id
+	ProtoJournal::Id id
 )
 {
 	SQLStatement statement
@@ -256,7 +256,7 @@ Journal::do_load_journal_base
 	);
 	statement.bind(":p", id);
 	statement.step();
-	Journal temp(*this);
+	ProtoJournal temp(*this);
 	SQLStatement entry_finder
 	(	dbc,	
 		"select entry_id from entries where journal_id = :jid"
@@ -275,7 +275,7 @@ Journal::do_load_journal_base
 }
 
 void
-Journal::do_ghostify_journal_base()
+ProtoJournal::do_ghostify_journal_core()
 {
 	clear(m_data->is_actual);
 	clear(m_data->comment);
@@ -290,43 +290,43 @@ Journal::do_ghostify_journal_base()
 }
 
 string
-Journal::primary_table_name()
+ProtoJournal::primary_table_name()
 {
 	return "journals";
 }
 
 string
-Journal::primary_key_name()
+ProtoJournal::primary_key_name()
 {
 	return "journal_id";
 }
 
 void
-Journal::clear_entries()
+ProtoJournal::clear_entries()
 {
 	(m_data->entries).clear();
 	return;
 }
 
 
-Journal::Id
+ProtoJournal::Id
 max_journal_id(PhatbooksDatabaseConnection& dbc)
 {
 	SQLStatement s(dbc, "select max(journal_id) from journals");
 	s.step();
-	return s.extract<Journal::Id>(0);
+	return s.extract<ProtoJournal::Id>(0);
 }
 
-Journal::Id
+ProtoJournal::Id
 min_journal_id(PhatbooksDatabaseConnection& dbc)
 {
 	SQLStatement s(dbc, "select min(journal_id) from journals");
 	s.step();
-	return s.extract<Journal::Id>(0);
+	return s.extract<ProtoJournal::Id>(0);
 }
 
 bool
-journal_id_exists(PhatbooksDatabaseConnection& dbc, Journal::Id id)
+journal_id_exists(PhatbooksDatabaseConnection& dbc, ProtoJournal::Id id)
 {
 	SQLStatement s
 	(	dbc,
@@ -337,7 +337,7 @@ journal_id_exists(PhatbooksDatabaseConnection& dbc, Journal::Id id)
 }
 
 bool
-journal_id_is_draft(PhatbooksDatabaseConnection& dbc, Journal::Id id)
+journal_id_is_draft(PhatbooksDatabaseConnection& dbc, ProtoJournal::Id id)
 {
 	if (!journal_id_exists(dbc, id))
 	{
@@ -354,7 +354,7 @@ journal_id_is_draft(PhatbooksDatabaseConnection& dbc, Journal::Id id)
 	
 
 ostream&
-operator<<(ostream& os, Journal const& journal)
+operator<<(ostream& os, ProtoJournal const& journal)
 {
 	output_aux(os, journal, output_journal_aux);
 	return os;

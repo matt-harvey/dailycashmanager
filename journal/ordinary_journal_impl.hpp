@@ -1,10 +1,10 @@
 #ifndef GUARD_ordinary_journal_impl_hpp
 #define GUARD_ordinary_journal_impl_hpp
 
-#include "journal.hpp"
 #include "date.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "proto_journal.hpp"
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -22,7 +22,7 @@ class OrdinaryJournalImpl:
 	<	OrdinaryJournalImpl,
 		PhatbooksDatabaseConnection
 	>,
-	private Journal
+	private ProtoJournal
 {
 public:
 
@@ -103,18 +103,6 @@ public:
 		Id p_id
 	);
 
-	/**
-	 * Create an OrdinaryJournalImpl from a Journal. Note the data members
-	 * specific to OrdinaryJournalImpl will be uninitialized. All other
-	 * members will be ***shallow-copied*** from p_journal. You must also
-	 * pass a shared_ptr to the database connection, as the Journal base
-	 * object does not have a database connection associated with it.
-	 */
-	OrdinaryJournalImpl
-	(	Journal const& p_journal,
-		IdentityMap& p_identity_map
-	);
-
 	~OrdinaryJournalImpl();
 
 	/**
@@ -142,7 +130,7 @@ public:
 	 * applicable to OrdinaryJournalImpl; but do \e not take on the \e id
 	 * attribute of \e rhs.
 	 */
-	void mimic(Journal const& rhs);
+	void mimic(ProtoJournal const& rhs);
 	void mimic(DraftJournal const& rhs);
 	void mimic(OrdinaryJournalImpl& rhs);
 

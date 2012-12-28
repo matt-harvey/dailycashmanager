@@ -1,8 +1,8 @@
 #include "phatbooks_tests_common.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
-#include "journal.hpp"
 #include "ordinary_journal.hpp"
+#include "proto_journal.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/decimal.hpp>
@@ -25,7 +25,7 @@ namespace test
 
 TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 {
-	Journal journal1;
+	ProtoJournal journal1;
 	journal1.set_whether_actual(true);
 	journal1.set_comment("igloo");
 

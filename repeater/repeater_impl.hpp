@@ -14,9 +14,9 @@
 
 #include "date.hpp"
 #include "interval_type.hpp"
-#include "journal.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "proto_journal.hpp"
 #include <sqloxx/persistent_object.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -107,7 +107,7 @@ public:
 	 * DraftJournal is to pass a shared_ptr to the RepeaterImpl to
 	 * DraftJournal::add_repeater.
 	 */
-	void set_journal_id(Journal::Id p_journal_id);
+	void set_journal_id(ProtoJournal::Id p_journal_id);
 		
 	IntervalType interval_type();
 
@@ -155,7 +155,7 @@ public:
 	OrdinaryJournal fire_next();
 	
 
-	Journal::Id journal_id();
+	ProtoJournal::Id journal_id();
 
 	void swap(RepeaterImpl& rhs);
 
@@ -181,7 +181,7 @@ struct RepeaterImpl::RepeaterData
 	boost::optional<RepeaterImpl::IntervalType> interval_type;
 	boost::optional<int> interval_units;
 	boost::optional<DateRep> next_date;
-	boost::optional<Journal::Id> journal_id;
+	boost::optional<ProtoJournal::Id> journal_id;
 };
 
 

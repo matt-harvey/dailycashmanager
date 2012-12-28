@@ -13,8 +13,8 @@
 #include "repeater_impl.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
-#include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "proto_journal.hpp"
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -130,7 +130,7 @@ RepeaterImpl::set_next_date(boost::gregorian::date const& p_next_date)
 
 
 void
-RepeaterImpl::set_journal_id(Journal::Id p_journal_id)
+RepeaterImpl::set_journal_id(ProtoJournal::Id p_journal_id)
 {
 	load();
 	m_data->journal_id = p_journal_id;
@@ -239,7 +239,7 @@ RepeaterImpl::fire_next()
 
 
 
-Journal::Id
+ProtoJournal::Id
 RepeaterImpl::journal_id()
 {
 	load();
@@ -280,7 +280,7 @@ RepeaterImpl::do_load()
 	temp.m_data->interval_units = statement.extract<int>(1);
 	temp.m_data->next_date =
 		numeric_cast<DateRep>(statement.extract<boost::int64_t>(2));
-	temp.m_data->journal_id = statement.extract<Journal::Id>(3);
+	temp.m_data->journal_id = statement.extract<ProtoJournal::Id>(3);
 	swap(temp);
 	return;
 }

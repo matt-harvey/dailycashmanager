@@ -1,10 +1,10 @@
 #include "ordinary_journal_impl.hpp"
 #include "draft_journal.hpp"
-#include "journal.hpp"
 #include "date.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "proto_journal.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/handle.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -46,20 +46,20 @@ namespace phatbooks
 string
 OrdinaryJournalImpl::primary_table_name()
 {
-	return Journal::primary_table_name();
+	return ProtoJournal::primary_table_name();
 }
 
 string
 OrdinaryJournalImpl::primary_key_name()
 {
-	return Journal::primary_key_name();
+	return ProtoJournal::primary_key_name();
 }
 
 void
 OrdinaryJournalImpl::set_whether_actual(bool p_is_actual)
 {
 	load();
-	Journal::set_whether_actual(p_is_actual);
+	ProtoJournal::set_whether_actual(p_is_actual);
 	return;
 }
 
@@ -67,7 +67,7 @@ void
 OrdinaryJournalImpl::set_comment(string const& p_comment)
 {
 	load();
-	Journal::set_comment(p_comment);
+	ProtoJournal::set_comment(p_comment);
 	return;
 }
 
@@ -83,7 +83,7 @@ OrdinaryJournalImpl::add_entry(Entry& entry)
 	{
 		entry.set_journal_id(id());
 	}
-	Journal::add_entry(entry);
+	ProtoJournal::add_entry(entry);
 	return;
 }
 
@@ -91,14 +91,14 @@ bool
 OrdinaryJournalImpl::is_actual()
 {
 	load();
-	return Journal::is_actual();
+	return ProtoJournal::is_actual();
 }
 
 string
 OrdinaryJournalImpl::comment()
 {
 	load();
-	return Journal::comment();
+	return ProtoJournal::comment();
 }
 
 
@@ -111,7 +111,7 @@ OrdinaryJournalImpl::entries()
 	// truly consistent with the other optionals, it would fail
 	// by means of a failed assert (assuming I haven't wrapped the
 	// other optionals in some throwing construct...).
-	return Journal::entries();
+	return ProtoJournal::entries();
 }
 
 
@@ -134,7 +134,7 @@ OrdinaryJournalImpl::OrdinaryJournalImpl
 (	IdentityMap& p_identity_map
 ):
 	OrdinaryJournalImpl::PersistentObject(p_identity_map),
-	Journal()
+	ProtoJournal()
 {
 }
 
@@ -144,24 +144,14 @@ OrdinaryJournalImpl::OrdinaryJournalImpl
 	Id p_id
 ):
 	OrdinaryJournalImpl::PersistentObject(p_identity_map, p_id),
-	Journal()
+	ProtoJournal()
 {
 }
 	
 
-OrdinaryJournalImpl::OrdinaryJournalImpl
-(	Journal const& p_journal,
-	IdentityMap& p_identity_map
-):
-	OrdinaryJournalImpl::PersistentObject(p_identity_map),
-	Journal(p_journal)
-{
-}
-
-
 OrdinaryJournalImpl::OrdinaryJournalImpl(OrdinaryJournalImpl const& rhs):
 	OrdinaryJournalImpl::PersistentObject(rhs),
-	Journal(rhs),
+	ProtoJournal(rhs),
 	m_date(rhs.m_date)
 {
 }
@@ -193,14 +183,14 @@ bool
 OrdinaryJournalImpl::is_balanced()
 {
 	load();
-	return Journal::is_balanced();
+	return ProtoJournal::is_balanced();
 }
 
 void
 OrdinaryJournalImpl::swap(OrdinaryJournalImpl& rhs)
 {
 	swap_base_internals(rhs);
-	Journal::swap(rhs);
+	ProtoJournal::swap(rhs);
 	using std::swap;
 	swap(m_date, rhs.m_date);
 	return;
@@ -210,7 +200,7 @@ void
 OrdinaryJournalImpl::clear_entries()
 {
 	load();
-	Journal::clear_entries();
+	ProtoJournal::clear_entries();
 	return;
 }
 
@@ -221,7 +211,7 @@ OrdinaryJournalImpl::do_load()
 	OrdinaryJournalImpl temp(*this);
 
 	// Load the Journal (base) part of temp.
-	temp.do_load_journal_base(database_connection(), id());
+	temp.do_load_journal_core(database_connection(), id());
 
 	// Load the derived, OrdinaryJournalImpl part of temp.
 	SQLStatement statement
@@ -254,7 +244,7 @@ OrdinaryJournalImpl::do_save_new()
 	}
 
 	// Save the Journal	(base) part of the object and record the id.
-	Id const journal_id = do_save_new_journal_base(database_connection());
+	Id const journal_id = do_save_new_journal_core(database_connection());
 
 	// Save the derived, OrdinaryJournalImpl part of the object
 	SQLStatement statement
@@ -279,7 +269,7 @@ OrdinaryJournalImpl::do_save_existing()
 	}
 	
 	// Save the Journal (base) part of the object
-	do_save_existing_journal_base(database_connection(), id());
+	do_save_existing_journal_core(database_connection(), id());
 
 	// Save the derived, OrdinaryJournalImpl part of the object
 	SQLStatement updater
@@ -297,14 +287,14 @@ OrdinaryJournalImpl::do_save_existing()
 void
 OrdinaryJournalImpl::do_ghostify()
 {
-	do_ghostify_journal_base();
+	do_ghostify_journal_core();
 	clear(m_date);
 	return;
 }
 
 
 void
-OrdinaryJournalImpl::mimic(Journal const& rhs)
+OrdinaryJournalImpl::mimic(ProtoJournal const& rhs)
 {
 	load();
 	OrdinaryJournalImpl temp(*this);

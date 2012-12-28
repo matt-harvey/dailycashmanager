@@ -27,7 +27,7 @@ namespace phatbooks
 
 class DraftJournal;
 class Entry;
-class Journal;
+class ProtoJournal;
 class PhatbooksDatabaseConnection;
 class Repeater;
 
@@ -110,16 +110,16 @@ private:
 	TransactionType elicit_transaction_type();
 
 	void elicit_primary_entries
-	(	Journal& journal,
+	(	ProtoJournal& journal,
 		TransactionType transaction_type
 	);
 
 	void elicit_secondary_entries
-	(	Journal& journal,
+	(	ProtoJournal& journal,
 		TransactionType transaction_type
 	);
 
-	void finalize_journal(Journal& journal);
+	void finalize_journal(ProtoJournal& journal);
 	void finalize_ordinary_journal(OrdinaryJournal& journal);
 	void finalize_draft_journal(DraftJournal& journal, bool autopost);
 
@@ -211,8 +211,7 @@ private:
 	std::string elicit_existing_account_name(bool accept_empty = false);
 
 	/**
-	 * Enter a dialogue with the user for creating a new Journal, which on
-	 * creation will be persisted to the database.
+	 * Enter a dialogue with the user for creating a new Journal.
 	 *
 	 * This function does not throw, except possibly \c std::bad_alloc in
 	 * extreme conditions.

@@ -1,5 +1,5 @@
-#include "journal.hpp"
 #include "ordinary_journal.hpp"
+#include "proto_journal.hpp"
 #include "repeater.hpp"
 #include "repeater_impl.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -78,7 +78,7 @@ Repeater::set_interval_units(int p_interval_units)
 }
 
 void
-Repeater::set_journal_id(Journal::Id p_journal_id)
+Repeater::set_journal_id(ProtoJournal::Id p_journal_id)
 {
 	m_impl->set_journal_id(p_journal_id);
 	return;
@@ -123,7 +123,7 @@ Repeater::fire_next()
 	return m_impl->fire_next();
 }
 
-Journal::Id
+ProtoJournal::Id
 Repeater::journal_id() const
 {
 	return m_impl->journal_id();

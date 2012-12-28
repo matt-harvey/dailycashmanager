@@ -40,7 +40,7 @@ set (main_files
 	 journal/draft_journal.cpp
 	 journal/draft_journal_impl.cpp
 	 journal/draft_journal_reader.cpp
-	 journal/journal.cpp
+	 journal/proto_journal.cpp
 	 journal/ordinary_journal.cpp
 	 journal/ordinary_journal_impl.cpp
 	 journal/ordinary_journal_reader.cpp

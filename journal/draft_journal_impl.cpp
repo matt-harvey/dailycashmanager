@@ -1,7 +1,7 @@
 #include "draft_journal_impl.hpp"
 #include "entry.hpp"
-#include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "proto_journal.hpp"
 #include "repeater.hpp"
 #include <sqloxx/sql_statement.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -37,20 +37,20 @@ namespace phatbooks
 string
 DraftJournalImpl::primary_table_name()
 {
-	return Journal::primary_table_name();
+	return ProtoJournal::primary_table_name();
 }
 
 string
 DraftJournalImpl::primary_key_name()
 {
-	return Journal::primary_key_name();
+	return ProtoJournal::primary_key_name();
 }
 
 void
 DraftJournalImpl::set_whether_actual(bool p_is_actual)
 {
 	load();
-	Journal::set_whether_actual(p_is_actual);
+	ProtoJournal::set_whether_actual(p_is_actual);
 	return;
 }
 
@@ -58,7 +58,7 @@ void
 DraftJournalImpl::set_comment(string const& p_comment)
 {
 	load();
-	Journal::set_comment(p_comment);
+	ProtoJournal::set_comment(p_comment);
 	return;
 }
 
@@ -70,7 +70,7 @@ DraftJournalImpl::add_entry(Entry& entry)
 	{
 		entry.set_journal_id(id());
 	}
-	Journal::add_entry(entry);
+	ProtoJournal::add_entry(entry);
 	return;
 }
 
@@ -78,14 +78,14 @@ bool
 DraftJournalImpl::is_actual()
 {
 	load();
-	return Journal::is_actual();
+	return ProtoJournal::is_actual();
 }
 
 string
 DraftJournalImpl::comment()
 {
 	load();
-	return Journal::comment();
+	return ProtoJournal::comment();
 }
 
 
@@ -98,7 +98,7 @@ DraftJournalImpl::entries()
 	// truly consistent with the other optionals, it would fail
 	// by means of a failed assert (assuming I haven't wrapped the
 	// other optionals in some throwing construct...).
-	return Journal::entries();
+	return ProtoJournal::entries();
 }
 
 
@@ -121,7 +121,7 @@ DraftJournalImpl::DraftJournalImpl
 (	IdentityMap& p_identity_map
 ):
 	DraftJournalImpl::PersistentObject(p_identity_map),
-	Journal(),
+	ProtoJournal(),
 	m_dj_data(new DraftJournalData)
 {
 }
@@ -132,22 +132,11 @@ DraftJournalImpl::DraftJournalImpl
 	Id p_id
 ):
 	DraftJournalImpl::PersistentObject(p_identity_map, p_id),
-	Journal(),
+	ProtoJournal(),
 	m_dj_data(new DraftJournalData)
 {
 }
 
-
-
-DraftJournalImpl::DraftJournalImpl
-(	Journal const& p_journal,
-	IdentityMap& p_identity_map
-):
-	DraftJournalImpl::PersistentObject(p_identity_map),
-	Journal(p_journal),
-	m_dj_data(new DraftJournalData)
-{
-}
 
 
 DraftJournalImpl::~DraftJournalImpl()
@@ -194,12 +183,12 @@ bool
 DraftJournalImpl::is_balanced()
 {
 	load();
-	return Journal::is_balanced();
+	return ProtoJournal::is_balanced();
 }
 
 DraftJournalImpl::DraftJournalImpl(DraftJournalImpl const& rhs):
 	DraftJournalImpl::PersistentObject(rhs),
-	Journal(rhs),
+	ProtoJournal(rhs),
 	m_dj_data(new DraftJournalData(*(rhs.m_dj_data)))
 {
 }
@@ -209,7 +198,7 @@ void
 DraftJournalImpl::swap(DraftJournalImpl& rhs)
 {
 	swap_base_internals(rhs);
-	Journal::swap(rhs);
+	ProtoJournal::swap(rhs);
 	using std::swap;
 	swap(m_dj_data, rhs.m_dj_data);
 	return;
@@ -222,7 +211,7 @@ DraftJournalImpl::do_load()
 	DraftJournalImpl temp(*this);
 	
 	// Load the base part of temp.
-	temp.do_load_journal_base(database_connection(), id());
+	temp.do_load_journal_core(database_connection(), id());
 
 	// Load the derived, DraftJournalImpl part of the temp.
 	SQLStatement statement
@@ -252,8 +241,8 @@ DraftJournalImpl::do_load()
 void
 DraftJournalImpl::do_save_new()
 {
-	// Save the Journal (base) part of the object
-	Id const journal_id = do_save_new_journal_base(database_connection());
+	// Save the ProtoJournal part of the object
+	Id const journal_id = do_save_new_journal_core(database_connection());
 
 	// Save the derived, DraftJournalImpl part of the object
 	SQLStatement statement
@@ -278,7 +267,7 @@ DraftJournalImpl::do_save_new()
 void
 DraftJournalImpl::do_save_existing()
 {
-	do_save_existing_journal_base(database_connection(), id());
+	do_save_existing_journal_core(database_connection(), id());
 	SQLStatement updater
 	(	database_connection(),
 		"update draft_journal_detail set name = :name where "
@@ -328,7 +317,7 @@ DraftJournalImpl::do_save_existing()
 void
 DraftJournalImpl::do_ghostify()
 {
-	do_ghostify_journal_base();
+	do_ghostify_journal_core();
 	clear(m_dj_data->name);
 	typedef vector<Repeater>::iterator RepIter;
 	RepIter endpoint = m_dj_data->repeaters.end();
@@ -383,7 +372,7 @@ DraftJournalImpl::repeater_description()
 			
 
 void
-DraftJournalImpl::mimic(Journal const& rhs)
+DraftJournalImpl::mimic(ProtoJournal const& rhs)
 {
 	load();
 	DraftJournalImpl temp(*this);

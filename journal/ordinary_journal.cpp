@@ -2,9 +2,9 @@
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
 #include "entry.hpp"
-#include "journal.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "proto_journal.hpp"
 #include <jewel/output_aux.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -148,7 +148,7 @@ OrdinaryJournal::save()
 
 
 void
-OrdinaryJournal::mimic(Journal const& rhs)
+OrdinaryJournal::mimic(ProtoJournal const& rhs)
 {
 	m_impl->mimic(rhs);
 	return;

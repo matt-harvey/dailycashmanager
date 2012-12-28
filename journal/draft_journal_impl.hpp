@@ -1,8 +1,8 @@
 #ifndef GUARD_draft_journal_impl_hpp
 #define GUARD_draft_journal_impl_hpp
 
-#include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "proto_journal.hpp"
 #include <sqloxx/persistent_object.hpp>
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -20,7 +20,7 @@ class DraftJournalImpl:
 	<	DraftJournalImpl,
 		PhatbooksDatabaseConnection
 	>,
-	private Journal
+	private ProtoJournal
 {
 public:
 	typedef
@@ -53,18 +53,6 @@ public:
 	DraftJournalImpl
 	(	IdentityMap& p_identity_map,
 		Id p_id
-	);
-
-	/**
-	 * Create a DraftJournalImpl from a Journal. Note the data members
-	 * specific to DraftJournalImpl will be uninitialized. All other
-	 * members will be ***shallow-copied*** from p_journal. You must
-	 * also pass a shared_ptr to the database connection, as the Journal
-	 * base object does not have a database connection associated with it.
-	 */
-	DraftJournalImpl
-	(	Journal const& p_journal,
-		IdentityMap& p_identity_map
 	);
 
 	/**
@@ -146,7 +134,7 @@ public:
 	 * Take on the attributes of \e rhs, where these exist and are
 	 * applicable to DraftJournalImpl.
 	 */
-	void mimic(Journal const& rhs);
+	void mimic(ProtoJournal const& rhs);
 
 private:
 

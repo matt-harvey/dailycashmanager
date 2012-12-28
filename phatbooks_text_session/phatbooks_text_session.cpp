@@ -22,9 +22,9 @@
 #include "entry_reader.hpp"
 #include "finformat.hpp"
 #include "import_from_nap/import_from_nap.hpp"  // WARNING temp hack
-#include "journal.hpp"
 #include "ordinary_journal.hpp"
 #include "ordinary_journal_reader.hpp"
+#include "proto_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include "session.hpp"
@@ -376,7 +376,7 @@ namespace
 	{
 		try
 		{
-			Journal::Id const id = lexical_cast<Journal::Id>(s);
+			ProtoJournal::Id const id = lexical_cast<ProtoJournal::Id>(s);
 			return journal_id_exists(*dbc, id);
 		}
 		catch (bad_lexical_cast&)
@@ -405,7 +405,7 @@ void PhatbooksTextSession::display_journal_from_id()
 		return;
 	}
 	// We know this will work
-	Journal::Id const id = lexical_cast<Journal::Id>(input);
+	ProtoJournal::Id const id = lexical_cast<ProtoJournal::Id>(input);
 	if (journal_id_is_draft(database_connection(), id))
 	{
 		DraftJournal dj(database_connection(), id);
@@ -825,7 +825,7 @@ PhatbooksTextSession::elicit_transaction_type()
 
 void
 PhatbooksTextSession::elicit_primary_entries
-(	Journal& journal,
+(	ProtoJournal& journal,
 	TransactionType transaction_type
 )
 {
@@ -882,7 +882,7 @@ PhatbooksTextSession::elicit_primary_entries
 
 void
 PhatbooksTextSession::elicit_secondary_entries
-(	Journal& journal,
+(	ProtoJournal& journal,
 	TransactionType transaction_type
 )
 {
@@ -1024,7 +1024,7 @@ PhatbooksTextSession::finalize_ordinary_journal(OrdinaryJournal& journal)
 	gregorian::date const e = get_date_from_user();
 	journal.set_date(e);
 	journal.save();
-	cout << "\nJournal posted:" << endl << endl
+	cout << "\nTransaction recorded:" << endl << endl
 		 << journal << endl;
 	return;
 }
@@ -1072,7 +1072,7 @@ PhatbooksTextSession::finalize_draft_journal
 
 
 void
-PhatbooksTextSession::finalize_journal(Journal& journal)
+PhatbooksTextSession::finalize_journal(ProtoJournal& journal)
 {
 	shared_ptr<MenuItem> post(new MenuItem("Record transaction"));
 	shared_ptr<MenuItem> save_draft
@@ -1113,7 +1113,7 @@ PhatbooksTextSession::finalize_journal(Journal& journal)
 	}
 	else if (journal_action == abandon)
 	{
-		cout << "\nJournal has not been posted or saved." << endl;
+		cout << "\nTransaction has not been posted or saved." << endl;
 	}
 	else
 	{
@@ -1138,7 +1138,7 @@ PhatbooksTextSession::finalize_journal(Journal& journal)
 void
 PhatbooksTextSession::elicit_journal()
 {
-	Journal journal;
+	ProtoJournal journal;
 	TransactionType const transaction_type = elicit_transaction_type();
 	journal.set_whether_actual(transaction_type != envelope_transaction);
 	cout << "Enter a comment describing the transaction (or Enter to "

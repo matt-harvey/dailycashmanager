@@ -2,8 +2,8 @@
 #include "draft_journal_impl.hpp"
 #include "draft_journal_reader.hpp"
 #include "entry.hpp"
-#include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "proto_journal.hpp"
 #include <jewel/output_aux.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
@@ -154,7 +154,7 @@ DraftJournal::DraftJournal
 }
 
 void
-DraftJournal::mimic(Journal const& rhs)
+DraftJournal::mimic(ProtoJournal const& rhs)
 {
 	m_impl->mimic(rhs);
 	return;

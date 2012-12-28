@@ -1,8 +1,8 @@
 #include "entry.hpp"
 #include "entry_impl.hpp"
 #include "finformat.hpp"
-#include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "proto_journal.hpp"
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/lexical_cast.hpp>
@@ -63,7 +63,7 @@ Entry::create_unchecked
 
 
 void
-Entry::set_journal_id(Journal::Id p_journal_id)
+Entry::set_journal_id(ProtoJournal::Id p_journal_id)
 {
 	m_impl->set_journal_id(p_journal_id);
 	return;

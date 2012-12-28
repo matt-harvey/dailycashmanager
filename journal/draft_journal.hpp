@@ -2,7 +2,7 @@
 #define GUARD_draft_journal_hpp
 
 #include "draft_journal_impl.hpp"
-#include "journal.hpp"
+#include "proto_journal.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
@@ -14,7 +14,6 @@ namespace phatbooks
 {
 
 class Entry;
-// class Journal;
 class PhatbooksDatabaseConnection;
 class Repeater;
 
@@ -79,7 +78,7 @@ public:
 	 * Take on the attributes of \e rhs, where these exist and are
 	 * applicable to DraftJournal.
 	 */
-	void mimic(Journal const& rhs);
+	void mimic(ProtoJournal const& rhs);
 
 private:
 	

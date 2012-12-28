@@ -6,8 +6,8 @@
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "interval_type.hpp"
-#include "journal.hpp"
 #include "ordinary_journal.hpp"
+#include "proto_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include <sqloxx/database_transaction.hpp>
@@ -239,10 +239,10 @@ void import_from_nap
 	// Journal::Id values. This will enable us to remember the PROSPECTIVE id
 	// of each DraftJournal, so we can associate each draft entry with the
 	// correct journal based on its name.
-	unordered_map< string, Journal::Id> draft_journal_id_map;
+	unordered_map< string, ProtoJournal::Id> draft_journal_id_map;
 
 	// Now to actually read the draft journals.
-	Journal::Id draft_journal_id = 0;
+	ProtoJournal::Id draft_journal_id = 0;
 	vector<string> draft_journal_cells;
 	while (getline(draft_journal_csv, draft_journal_row))
 	{
@@ -405,10 +405,10 @@ void import_from_nap
 	// csv, to Journal::Id values. This will enable us to remember the
 	// PROSPECTIVE id of each OrdinaryJournal, so we can associate each
 	// entry with the correct journal based on its N. A. P. journal id.
-	unordered_map<int, Journal::Id> ordinary_journal_id_map;
+	unordered_map<int, ProtoJournal::Id> ordinary_journal_id_map;
 	
 	// Now to actually read the (non-draft, i.e. "ordinary") journals
-	Journal::Id ordinary_journal_id = draft_journal_vec.size();
+	ProtoJournal::Id ordinary_journal_id = draft_journal_vec.size();
 	vector<string> ordinary_journal_cells;
 	while (getline(ordinary_journal_csv, ordinary_journal_row))
 	{

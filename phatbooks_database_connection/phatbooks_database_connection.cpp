@@ -22,10 +22,10 @@
 #include "commodity.hpp"
 #include "entry.hpp"
 #include "draft_journal.hpp"
-#include "journal.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "proto_journal.hpp"
 #include "repeater.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/database_transaction.hpp>
@@ -185,7 +185,7 @@ PhatbooksDatabaseConnection::setup()
 	setup_boolean_table();
 	Commodity::setup_tables(*this);
 	Account::setup_tables(*this);
-	Journal::setup_tables(*this);
+	ProtoJournal::setup_tables(*this);
 	DraftJournal::setup_tables(*this);
 	OrdinaryJournal::setup_tables(*this);
 	Repeater::setup_tables(*this);

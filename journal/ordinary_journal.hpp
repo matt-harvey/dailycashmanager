@@ -2,8 +2,8 @@
 #define GUARD_ordinary_journal_hpp
 
 #include "entry.hpp"
-#include "journal.hpp"
 #include "ordinary_journal_impl.hpp"
+#include "proto_journal.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -69,7 +69,7 @@ public:
 	 * applicable to OrdinaryJournal; but do \e not take on the \e id
 	 * attribute of \e rhs.
 	 */
-	void mimic(Journal const& rhs);
+	void mimic(ProtoJournal const& rhs);
 	void mimic(DraftJournal const& rhs);
 	void mimic(OrdinaryJournal const& rhs);
 

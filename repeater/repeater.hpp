@@ -2,8 +2,8 @@
 #define GUARD_repeater_hpp
 
 #include "interval_type.hpp"
-#include "journal.hpp"
 #include "ordinary_journal.hpp"
+#include "proto_journal.hpp"
 #include "repeater_impl.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -46,7 +46,7 @@ public:
 	// DraftJournal::add_repeater(...) and save() methods take
 	// care of assigning the correct journal_id to the
 	// repeater.
-	void set_journal_id(Journal::Id p_journal_id);
+	void set_journal_id(ProtoJournal::Id p_journal_id);
 
 	void set_next_date(boost::gregorian::date const& p_next_date);
 
@@ -63,7 +63,7 @@ public:
 	(	std::vector<boost::gregorian::date>::size_type n = 0
 	) const;
 
-	Journal::Id journal_id() const;
+	ProtoJournal::Id journal_id() const;
 
 
 	/**
