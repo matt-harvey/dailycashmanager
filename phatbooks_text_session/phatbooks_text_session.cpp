@@ -37,6 +37,7 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
+#include <boost/array.hpp>
 #include <boost/bimap.hpp>
 #include <boost/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -74,6 +75,7 @@ using jewel::Decimal;
 using jewel::DecimalRangeException;
 using sqloxx::DatabaseConnection;
 using sqloxx::SQLiteException;
+using boost::array;
 using boost::bad_lexical_cast;
 using boost::bimap;
 using boost::bind;
@@ -750,6 +752,55 @@ PhatbooksTextSession::elicit_repeater()
 }
 
 
+namespace
+{
+	namespace vocab
+	{
+		typedef string Vocab[5];
+		typedef Vocab VocabMap[4];
+		typedef int VocabSelector;
+		typedef int PromptSelector;
+		VocabMap const vocab_map =
+		{	{	"account from which money was spent",
+				"spent",
+				"expenditure category",
+				"expenditure category",
+				"categories"
+			},
+			{	"account into which funds were deposited",
+				"earned",
+				"revenue category",
+				"revenue category",
+				"categories"
+			},
+			{	"destination account",
+				"transferred",
+				"source account",
+				"source account",
+				"source accounts"
+			},
+			{	"envelope you wish to top up",
+				"to transfer",
+				"envelope from which to source funds",
+				"source envelope",
+				"source envelopes"
+			}
+		};
+		VocabSelector const
+			expenditure_index = 0,
+			revenue_index = 1,
+			balance_sheet_index = 2,
+			envelope_index = 3,
+			invalid_index = 4;
+		PromptSelector const
+			account_prompt = 0,
+			amount_prompt = 1,
+			secondary_account_prompt = 2,
+			secondary_account_prompt_simple = 3,
+			secondary_account_prompt_plural = 4;
+	}  // namespace vocab
+}  // End anonymous namespace
+
 
 
 void PhatbooksTextSession::elicit_journal()
@@ -766,24 +817,20 @@ void PhatbooksTextSession::elicit_journal()
 	(	new MenuItem("Revenue transaction")
 	);
 	transaction_menu.add_item(revenue_selection);
-	shared_ptr<MenuItem> balance_sheet_transfer_selection
+	shared_ptr<MenuItem> balance_sheet_selection
 	(	new MenuItem("Transfer between assets or liabilities")
 	);
-	transaction_menu.add_item(balance_sheet_transfer_selection);
-	shared_ptr<MenuItem> envelope_transaction_selection
+	transaction_menu.add_item(balance_sheet_selection);
+	shared_ptr<MenuItem> envelope_selection
 	(	new MenuItem("Transfer between budgeting envelopes")
 	);
-	transaction_menu.add_item(envelope_transaction_selection);
-	
-	
+	transaction_menu.add_item(envelope_selection);
 	transaction_menu.present_to_user();
 	shared_ptr<MenuItem const> const transaction_type =
 		transaction_menu.last_choice();
 
 	// Determine whether journal is actual
-	journal.set_whether_actual
-	(	transaction_type != envelope_transaction_selection
-	);
+	journal.set_whether_actual(transaction_type != envelope_selection);
 
 	// Get journal comment
 	cout << "Enter a comment describing the transaction (or Enter to "
@@ -793,59 +840,26 @@ void PhatbooksTextSession::elicit_journal()
 	cout << endl;
 
 	// Set certain "prompt words"
-	// TODO Make this more concise using a map or something.
-	string account_prompt;
-	string amount_prompt;
-	string secondary_account_prompt;
-	string secondary_account_prompt_simple;
-	string secondary_account_prompt_plural;
-	bool primary_sign_needs_changing;
-	bool secondary_signs_need_changing;
-	if (transaction_type == expenditure_selection)
-	{
-		account_prompt = "account from which money was spent";
-		amount_prompt = "spent";
-		secondary_account_prompt = "expenditure category";
-		secondary_account_prompt_simple = "expenditure category";
-		secondary_account_prompt_plural = "categories";
-		primary_sign_needs_changing = true;
-		secondary_signs_need_changing = false;
-	}
-	else if (transaction_type == revenue_selection)
-	{
-		account_prompt = "account into which funds were deposited";
-		amount_prompt = "earned";
-		secondary_account_prompt = "revenue category";
-		secondary_account_prompt_simple = "revenue category";
-		secondary_account_prompt_plural = "categories";
-		primary_sign_needs_changing = false;
-		secondary_signs_need_changing = true;
-	}
-	else if (transaction_type == balance_sheet_transfer_selection)
-	{
-		account_prompt = "destination account";
-		amount_prompt = "transferred";
-		secondary_account_prompt = "source account";
-		secondary_account_prompt_simple = "source account";
-		secondary_account_prompt_plural = "source accounts";
-		primary_sign_needs_changing = false;
-		secondary_signs_need_changing = true;
-	}
-	else
-	{
-		assert (transaction_type == envelope_transaction_selection);
-		account_prompt = "envelope you wish to top up";
-		amount_prompt = "to transfer";
-		secondary_account_prompt = "envelope from which to source funds";
-		secondary_account_prompt_simple = "source envelope";
-		secondary_account_prompt_plural = "source envelopes";
-		primary_sign_needs_changing = true;
-		secondary_signs_need_changing = false;
-	}
-	
+	using namespace vocab;  // See in anonymous namespace above
+	VocabSelector const vocab_selector =
+	(	transaction_type == expenditure_selection? expenditure_index:
+		transaction_type == revenue_selection? revenue_index:
+		transaction_type == balance_sheet_selection? balance_sheet_index:
+		transaction_type == envelope_selection? envelope_index:
+		invalid_index
+	);
+	assert (vocab_selector != invalid_index);
+	Vocab const& words = vocab_map[vocab_selector];
+
+	bool const primary_sign_needs_changing =
+	(	transaction_type == expenditure_selection ||
+		transaction_type == envelope_selection
+	);
+	bool const secondary_signs_need_changing = !primary_sign_needs_changing;
+
 	// Primary entry
 	Entry primary_entry(database_connection());
-	cout << "Enter name of " << account_prompt << ": ";
+	cout << "Enter name of " << words[account_prompt] << ": ";
 	primary_entry.set_account
 	(	Account(database_connection(), elicit_existing_account_name())
 	);
@@ -853,7 +867,7 @@ void PhatbooksTextSession::elicit_journal()
 	Decimal primary_entry_amount;
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
-		cout << "Enter amount " << amount_prompt << " (in units of "
+		cout << "Enter amount " << words[amount_prompt] << " (in units of "
 			 << primary_commodity.abbreviation() << "): ";
 		primary_entry_amount = get_decimal_from_user();
 		Decimal::places_type const initial_precision =
@@ -895,9 +909,9 @@ void PhatbooksTextSession::elicit_journal()
 	// Secondary entry/entries
 	Entry secondary_entry(database_connection());
 	cout << "Enter name of "
-	     << secondary_account_prompt
+	     << words[secondary_account_prompt]
 	     << ", or leave blank to split between multiple "
-		 << secondary_account_prompt_plural
+		 << words[secondary_account_prompt_plural]
 		 << ": ";
 	string const account_response = elicit_existing_account_name(true);
 	if (account_response.empty())
@@ -911,7 +925,7 @@ void PhatbooksTextSession::elicit_journal()
 		{
 			Entry current_entry(database_connection());
 			cout << "Enter name of "
-			     << secondary_account_prompt_simple
+			     << words[secondary_account_prompt_simple]
 				 << " no. " << i << ": ";
 			Account const account
 			(	database_connection(),
