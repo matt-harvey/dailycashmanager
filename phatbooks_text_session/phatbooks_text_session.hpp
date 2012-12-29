@@ -4,6 +4,7 @@
 #include "consolixx/text_session.hpp"
 #include "session.hpp"
 #include <boost/function.hpp>
+#include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
 
@@ -131,9 +132,17 @@ private:
 		std::string& validity_description
 	);
 
-	Account elicit_valid_account
+	// Elicit an Account of a type that is valid for
+	// the given transaction_type and transaction_phase.
+	// If allow_empty_to_throw, the function will return
+	// an uninitialized optional if the user enters an empty
+	// string. Otherwise, it will re-prompt the user until
+	// a valid account is entered, and an initialized optional
+	// will always be returned.
+	boost::optional<Account> elicit_valid_account
 	(	TransactionType transaction_type,
-		TransactionPhase transaction_phase
+		TransactionPhase transaction_phase,
+		bool allow_empty_to_throw = false
 	);
 		
 	TransactionType elicit_transaction_type();

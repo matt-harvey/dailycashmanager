@@ -38,12 +38,13 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
-#include <boost/array.hpp>
+#include <jewel/optional.hpp>
 #include <boost/bimap.hpp>
 #include <boost/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/regex.hpp>
 #include <boost/shared_ptr.hpp>
@@ -74,13 +75,14 @@ using consolixx::Table;
 using consolixx::TextSession;
 using jewel::Decimal;
 using jewel::DecimalRangeException;
+using jewel::value;
 using sqloxx::DatabaseConnection;
 using sqloxx::SQLiteException;
-using boost::array;
 using boost::bad_lexical_cast;
 using boost::bimap;
 using boost::bind;
 using boost::lexical_cast;
+using boost::optional;
 using boost::shared_ptr;
 using boost::regex;
 using boost::regex_match;
@@ -884,25 +886,39 @@ PhatbooksTextSession::account_is_valid
 }
 
 
-Account
+optional<Account>
 PhatbooksTextSession::elicit_valid_account
 (	TransactionType transaction_type,
-	TransactionPhase transaction_phase
+	TransactionPhase transaction_phase,
+	bool allow_empty_to_escape
 )
 {
 	while (true)
 	{
-		string const account_name = elicit_existing_account_name();
+		optional<Account> ret;
+		string const account_name = elicit_existing_account_name(true);
+		if (allow_empty_to_escape && account_name.empty())
+		{
+			return ret;
+		}
+		else if (account_name.empty())
+		{
+			assert (!allow_empty_to_escape);
+			cout << "There is no account with this name. Please try again: ";
+			continue;
+		}
+		assert (!account_name.empty());
 		Account const account(database_connection(), account_name);
 		string guide;
 		if (!account_is_valid(transaction_type, transaction_phase, account, guide))
 		{
 			cout << account.name() << " is not a valid " << guide << ". ";
-			cout << "Please try again." << endl;
+			cout << "Please try again: ";
 		}
 		else
 		{
-			return account;
+			ret = account;
+			return ret;
 		}
 	}
 }
@@ -951,7 +967,9 @@ PhatbooksTextSession::elicit_primary_entries
 	cout << "Enter name of "
 	     << dialogue_phrase(transaction_type, account_prompt)
 		 << ": ";
-	entry.set_account(elicit_valid_account(transaction_type, primary_phase));
+	entry.set_account
+	(	value(elicit_valid_account(transaction_type, primary_phase))
+	);
 	Commodity const commodity = entry.account().commodity();
 	Decimal amount;
 	for (bool input_is_valid = false; !input_is_valid; )
@@ -1016,12 +1034,11 @@ PhatbooksTextSession::elicit_secondary_entries
 		 << ", or leave blank to split between multiple "
 		 << dialogue_phrase(transaction_type, secondary_account_prompt_plural)
 		 << ": ";
-	// TODO High priority This stuffs up with the new account validation
-	// stuff
-	string const account_response = elicit_existing_account_name(true);
 	Commodity const primary_commodity =
 		journal.entries().begin()->account().commodity();
-	if (account_response.empty())
+	optional<Account> const account_opt =
+		elicit_valid_account(transaction_type, secondary_phase, true);
+	if (!account_opt)
 	{
 		// We have multiple secondary entries (split transaction)
 		Decimal unmatched_amount = initial_friendly_balance;
@@ -1036,7 +1053,7 @@ PhatbooksTextSession::elicit_secondary_entries
 					)
 				<< " no. " << i << ": ";
 			current_entry.set_account
-			(	elicit_valid_account(transaction_type, secondary_phase)
+			(	value(elicit_valid_account(transaction_type, secondary_phase))
 			);
 			Commodity const current_commodity
 				= current_entry.account().commodity();
@@ -1104,13 +1121,12 @@ PhatbooksTextSession::elicit_secondary_entries
 	}
 	else
 	{
-		assert (!account_response.empty());					
-		secondary_entry.set_account
-		(	elicit_valid_account(transaction_type, secondary_phase)
-		);
-		// WARNING if secondary account is in a different currency then we need to
-		// deal with this here somehow.
-		Commodity const secondary_commodity = secondary_entry.account().commodity();
+		assert (account_opt);
+		secondary_entry.set_account(value(account_opt));
+		// WARNING if secondary account is in a different currency then we
+		// need to deal with this here somehow.
+		Commodity const secondary_commodity =
+			secondary_entry.account().commodity();
 		if
 		(	secondary_commodity.id() != primary_commodity.id()
 		)
