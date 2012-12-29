@@ -85,13 +85,13 @@ void
 Journal::do_output(ostream& os) const
 {
 	namespace alignment	= consolixx::alignment;
-	if (is_actual()) os << "ACTUAL";
-	else os << "BUDGET";
+	if (is_actual()) os << "ACTUAL TRANSACTION";
+	else os << "BUDGET TRANSACTION";
 	os << endl;
-	if (!comment().empty()) os << comment() <<endl;
+	if (!comment().empty()) os << comment() << endl;
 	os << endl;
 	vector<string> headings;
-	headings.push_back("ENTRY_ID");
+	headings.push_back("ENTRY ID");
 	headings.push_back("ACCOUNT");
 	headings.push_back("COMMENT");
 	headings.push_back("COMMODITY");
