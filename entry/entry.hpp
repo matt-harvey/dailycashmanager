@@ -69,6 +69,12 @@ public:
 	 * TODO This should eventually be shifted into a base
 	 * class.
 	 */
+	bool has_id() const;
+
+	/**
+	 * TODO This should eventually be shifted into a base
+	 * class.
+	 */
 	void save();
 
 	/**

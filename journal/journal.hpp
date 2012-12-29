@@ -19,6 +19,35 @@ namespace phatbooks
 
 /**
  * Abstract base Journal class.
+ *
+ * Class to represent accounting journals.
+ * An accounting journal will
+ * typically comprise two or more accounting entries, plus some
+ * "journal level" (as opposed to "entry level") data such as the date.
+ *
+ * A journal can be ProtoJournal, an OrdinaryJournal or a DraftJournal
+ * A ordinary journal
+ * has been reflected in the entity's financial state. A DraftJournal
+ * has not, but has been saved for possible future reuse. Some
+ * DraftJournal instances have got Repeater instances associated with them. A
+ * DraftJournal with Repeater instances represents a recurring transaction.
+ * A ProtoJournal is a journal in the process of being constructed by the
+ * user. It might serve as a "seed" for either an OrdinaryJournal or a
+ * DraftJournal.
+ *
+ * As well the ordinary/draft distinction, there is also a distinction between
+ * \e actual and \e budget journals. An actual journal reflects an actual
+ * change in the entity's wealth, whether the physical form of the wealth
+ * (for example, by transferring between asset classes), or a dimimution
+ * or augmentation in wealth (by spending or earning money). In contrast
+ * a budget journal is a "conceptual" allocation or reallocation of wealth
+ * in regards to the \e planned purpose to which the wealth will be put. For
+ * example, allocating $100.00 of one's earnings to planned expenditure on
+ * food represents a budget transaction.
+ *
+ * @todo OrdinaryJournalImpl and DraftJournalImpl need to have remove()
+ * redefined, to ensure it deletes the contained entries and repeaters
+ * as well as just the journal.
  */
 class Journal
 {

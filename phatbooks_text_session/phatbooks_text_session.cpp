@@ -1041,6 +1041,7 @@ PhatbooksTextSession::elicit_secondary_entries
 	if (!account_opt)
 	{
 		// We have multiple secondary entries (split transaction)
+		cout << endl;
 		Decimal unmatched_amount = initial_friendly_balance;
 		Decimal const zero(0, 0);
 		for (int i = 1; unmatched_amount != zero; ++i)
@@ -1206,6 +1207,7 @@ PhatbooksTextSession::finalize_draft_journal
 void
 PhatbooksTextSession::finalize_journal(ProtoJournal& journal)
 {
+	cout << endl << journal << endl << endl;
 	shared_ptr<MenuItem> post(new MenuItem("Record transaction"));
 	shared_ptr<MenuItem> save_draft
 	(	new MenuItem("Save as a draft to return and complete later")
@@ -1284,7 +1286,7 @@ PhatbooksTextSession::elicit_journal()
 	elicit_primary_entries(journal, transaction_type);
 	cout << endl;
 	elicit_secondary_entries(journal, transaction_type);
-	cout << "Transaction complete." << endl;
+	cout << endl << "Completed transaction is as follows:" << endl;
 	finalize_journal(journal);
 	return;
 }

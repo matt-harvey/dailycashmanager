@@ -127,6 +127,12 @@ Entry::id() const
 	return m_impl->id();
 }
 
+bool
+Entry::has_id() const
+{
+	return m_impl->has_id();
+}
+
 void
 Entry::save()
 {
@@ -171,7 +177,14 @@ namespace
 	)
 	{
 		shared_ptr<vector<string> > ret(new vector<string>);
-		ret->push_back(lexical_cast<string>(entry.id()));
+		if (entry.has_id())
+		{
+			ret->push_back(lexical_cast<string>(entry.id()));
+		}
+		else
+		{
+			ret->push_back("N/A");
+		}
 		ret->push_back(entry.account().name());
 		ret->push_back(entry.comment());
 		ret->push_back(entry.account().commodity().abbreviation());

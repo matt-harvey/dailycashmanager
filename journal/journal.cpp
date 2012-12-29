@@ -1,6 +1,7 @@
 #include "journal.hpp"
 #include "entry.hpp"
 #include "consolixx/table.hpp"
+#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/output_aux.hpp>
 #include <iostream>
