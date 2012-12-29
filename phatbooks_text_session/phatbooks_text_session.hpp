@@ -25,6 +25,7 @@ namespace phatbooks
 
 // FORWARD DECLARATIONS
 
+class Account;
 class DraftJournal;
 class Entry;
 class ProtoJournal;
@@ -88,6 +89,7 @@ private:
 		balance_sheet_transaction,
 		envelope_transaction
 	};
+	static int const num_transaction_types = 4;
 
 	// Various phrases used in interacting with the user. The wording
 	// used for each phrase may vary with TransactionType
@@ -99,6 +101,17 @@ private:
 		secondary_account_prompt_simple,
 		secondary_account_prompt_plural
 	};
+	static int const num_phrase_types = 5;
+
+	// As the user adds Entries to an Account, they are in a particular
+	// "phase". The phase determines various aspects of the user-facing
+	// dialogue.
+	enum TransactionPhase
+	{
+		primary_phase,
+		secondary_phase
+	};
+	static int const num_transaction_phases = 2;
 
 	// Retrieve the user-facing string appropriate for a given
 	// TransactionType and PhraseType
@@ -106,7 +119,23 @@ private:
 	(	TransactionType transaction_type,
 		PhraseType dialogue_phrase
 	);
-	
+
+	// Returns whether a given Account is a valid selection by the
+	// user for a given TransactionType and TransactionPhase.
+	// Places a user-friendly description of what \e would be valid
+	// in validity_description (e.g. "asset or liability account").
+	bool account_is_valid
+	(	TransactionType transaction_type,
+		TransactionPhase transaction_phase,
+		Account const& account,
+		std::string& validity_description
+	);
+
+	Account elicit_valid_account
+	(	TransactionType transaction_type,
+		TransactionPhase transaction_phase
+	);
+		
 	TransactionType elicit_transaction_type();
 
 	void elicit_primary_entries

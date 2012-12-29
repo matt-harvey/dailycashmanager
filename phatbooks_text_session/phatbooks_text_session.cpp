@@ -14,6 +14,7 @@
 
 #include "account.hpp"
 #include "account_reader.hpp"
+#include "account_type.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
@@ -750,8 +751,8 @@ PhatbooksTextSession::dialogue_phrase
 	PhraseType phrase_type
 )
 {
-	typedef string Vocab[5];
-	typedef Vocab VocabMap[4];
+	typedef string Vocab[num_phrase_types];
+	typedef Vocab VocabMap[num_transaction_types];
 	static VocabMap const dictionary =
 	{	{	"account from which money was spent",
 			"spent",
@@ -784,6 +785,130 @@ PhatbooksTextSession::dialogue_phrase
 }
 
 
+namespace
+{
+	typedef bool (*AccountValidator)(Account const& account);
+
+	// TODO Move this stuff to account.hpp or account_type.hpp
+	// (but keep as free-standing functions).
+
+	bool is_asset_or_liability(Account const& account)
+	{
+		bool ret;
+		switch (account.account_type())
+		{
+		case account_type::asset:
+		case account_type::liability:
+			ret = true;
+			break;
+		default:
+			ret = false;
+			break;
+		}
+		return ret;
+	}
+
+	bool is_expense(Account const& account)
+	{
+		return account.account_type() == account_type::expense;
+	}
+
+	bool is_revenue(Account const& account)
+	{
+		return account.account_type() == account_type::revenue;
+	}
+
+	bool is_envelope(Account const& account)
+	{
+		bool ret;
+		switch (account.account_type())
+		{
+		case account_type::asset:
+		case account_type::liability:
+			ret = false;
+			break;
+		case account_type::equity:
+		case account_type::revenue:
+		case account_type::expense:
+		case account_type::pure_envelope:
+			ret = true;
+			break;
+		default:
+			assert (false);	
+		}
+		return ret;
+	}
+
+	string validator_description(AccountValidator validator)
+	{
+		string const ret =
+		(	validator == is_asset_or_liability?
+			"asset or liability account":
+			validator == is_expense?
+			"expense category":
+			validator == is_revenue?
+			"revenue category":
+			validator == is_envelope?
+			"envelope (revenue, expense or pure envelope)":  // TODO This description sucks
+			"ERROR"
+		);
+		assert (ret != "ERROR");
+		return ret;
+	}
+
+}  // End anonymous namespace
+
+
+bool
+PhatbooksTextSession::account_is_valid
+(	TransactionType transaction_type,
+	TransactionPhase transaction_phase,
+	Account const& account,
+	string& validity_description
+)
+{
+	int const transaction_type_index = static_cast<int>(transaction_type);
+	int const transaction_phase_index = static_cast<int>(transaction_phase);
+	typedef AccountValidator ValidatorArray[num_transaction_phases];
+	typedef ValidatorArray ValidatorMatrix[num_transaction_types];
+	ValidatorMatrix const validator_matrix =
+	{	{ is_asset_or_liability, is_expense },
+		{ is_asset_or_liability, is_revenue },
+		{ is_asset_or_liability, is_asset_or_liability },
+		{ is_envelope, is_envelope }
+	};
+	AccountValidator const validate =
+		validator_matrix[transaction_type_index][transaction_phase_index];
+	validity_description = validator_description(validate);
+	return validate(account);
+}
+
+
+Account
+PhatbooksTextSession::elicit_valid_account
+(	TransactionType transaction_type,
+	TransactionPhase transaction_phase
+)
+{
+	while (true)
+	{
+		string const account_name = elicit_existing_account_name();
+		Account const account(database_connection(), account_name);
+		string guide;
+		if (!account_is_valid(transaction_type, transaction_phase, account, guide))
+		{
+			cout << account.name() << " is not a valid " << guide << ". ";
+			cout << "Please try again." << endl;
+		}
+		else
+		{
+			return account;
+		}
+	}
+}
+
+	
+	
 PhatbooksTextSession::TransactionType
 PhatbooksTextSession::elicit_transaction_type()
 {
@@ -826,9 +951,7 @@ PhatbooksTextSession::elicit_primary_entries
 	cout << "Enter name of "
 	     << dialogue_phrase(transaction_type, account_prompt)
 		 << ": ";
-	entry.set_account
-	(	Account(database_connection(), elicit_existing_account_name())
-	);
+	entry.set_account(elicit_valid_account(transaction_type, primary_phase));
 	Commodity const commodity = entry.account().commodity();
 	Decimal amount;
 	for (bool input_is_valid = false; !input_is_valid; )
@@ -893,6 +1016,8 @@ PhatbooksTextSession::elicit_secondary_entries
 		 << ", or leave blank to split between multiple "
 		 << dialogue_phrase(transaction_type, secondary_account_prompt_plural)
 		 << ": ";
+	// TODO High priority This stuffs up with the new account validation
+	// stuff
 	string const account_response = elicit_existing_account_name(true);
 	Commodity const primary_commodity =
 		journal.entries().begin()->account().commodity();
@@ -910,12 +1035,11 @@ PhatbooksTextSession::elicit_secondary_entries
 						secondary_account_prompt_simple
 					)
 				<< " no. " << i << ": ";
-			Account const account
-			(	database_connection(),
-				elicit_existing_account_name()
+			current_entry.set_account
+			(	elicit_valid_account(transaction_type, secondary_phase)
 			);
-			current_entry.set_account(account);
-			Commodity const current_commodity = account.commodity();
+			Commodity const current_commodity
+				= current_entry.account().commodity();
 			if (current_commodity.id() != primary_commodity.id())
 			{
 				// TODO Deal with this!
@@ -982,7 +1106,7 @@ PhatbooksTextSession::elicit_secondary_entries
 	{
 		assert (!account_response.empty());					
 		secondary_entry.set_account
-		(	Account(database_connection(), account_response)
+		(	elicit_valid_account(transaction_type, secondary_phase)
 		);
 		// WARNING if secondary account is in a different currency then we need to
 		// deal with this here somehow.
