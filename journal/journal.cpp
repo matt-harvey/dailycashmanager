@@ -91,12 +91,13 @@ Journal::do_output(ostream& os) const
 	if (!comment().empty()) os << comment() << endl;
 	os << endl;
 	vector<string> headings;
-	headings.push_back("ENTRY ID");
-	headings.push_back("ACCOUNT");
-	headings.push_back("COMMENT");
-	headings.push_back("COMMODITY");
-	headings.push_back("AMOUNT");
-	vector<alignment::Flag> alignments(5, alignment::left);
+	headings.push_back("Entry id");
+	headings.push_back("Account");
+	headings.push_back("Comment");
+	headings.push_back("Commodity");
+	headings.push_back("Amount");
+	headings.push_back("Reconciled?");
+	vector<alignment::Flag> alignments(6, alignment::left);
 	alignments[4] = alignment::right;
 	bool const change_signs = !is_actual();
 	Table<Entry> const table

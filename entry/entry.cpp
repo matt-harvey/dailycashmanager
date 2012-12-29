@@ -177,6 +177,9 @@ namespace
 	)
 	{
 		shared_ptr<vector<string> > ret(new vector<string>);
+		// TODO Here and in the journal printing method, I
+		// should add journal_id as either the first or second
+		// column.
 		if (entry.has_id())
 		{
 			ret->push_back(lexical_cast<string>(entry.id()));
@@ -195,6 +198,7 @@ namespace
 			amount = round(-amount, places);
 		}
 		ret->push_back(finformat(amount));
+		ret->push_back(entry.is_reconciled()? "y": "n");
 		return ret;
 	}
 }  // End anonymous namespace

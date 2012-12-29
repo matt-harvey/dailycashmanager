@@ -162,7 +162,7 @@ output_table_aux(std::ostream& os, Table<S> const& table)
 		for (typename Row::size_type j = 0; j != table.m_columns; ++j)
 		{
 			string const padder
-			(	table.m_widths[j] + table.m_padding - row[j].size(),
+			(	table.m_widths[j] - row[j].size(),
 				' '
 			);
 			switch (table.m_alignments[j])
@@ -176,6 +176,7 @@ output_table_aux(std::ostream& os, Table<S> const& table)
 			default:
 				assert (false);  // Execution should never reach here
 			}
+			os << string(table.m_padding, ' ');
 		}
 		os << std::endl;
 	}
