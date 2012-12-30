@@ -520,45 +520,33 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		}
 	}
 
-	OrdinaryEntryReader reader(database_connection());
-	OrdinaryEntryReader::const_iterator it = reader.begin();
-	OrdinaryEntryReader::const_iterator const end = reader.end();
-
 	Decimal opening_balance(0, 0);
-
-	bool filtering_for_account = false;
-	Account::Id account_id = 0;
-	if (maybe_account)
-	{
-		filtering_for_account = true;
-		account_id = value(maybe_account).id();
-	}
-	bool accumulating_pre_start_date_entries =
+	bool const filtering_for_account = (maybe_account? true: false);
+	Account::Id const account_id = (maybe_account? maybe_account->id(): 0);
+	bool const accumulating_pre_start_date_entries =
 		filtering_for_account &&
-		(value(maybe_account).account_type() != account_type::revenue) &&
-		(value(maybe_account).account_type() != account_type::expense);
+		(maybe_account->account_type() != account_type::revenue) &&
+		(maybe_account->account_type() != account_type::expense);
+
+	ActualOrdinaryEntryReader reader(database_connection());
+	ActualOrdinaryEntryReader::const_iterator it = reader.begin();
+	ActualOrdinaryEntryReader::const_iterator const end = reader.end();
 
 	// Examine pre-start-date entries
 	if (maybe_earliest_date)
 	{
-		gregorian::date const earliest_date = value(maybe_earliest_date);
-		for ( ; it != end; ++it)
+		for
+		(	gregorian::date const earliest = *maybe_earliest_date;
+			(it != end) && (it->journal<OrdinaryJournal>().date() < earliest);
+			++it
+		)
 		{
-			// WARNING This sucks balls!
-			OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
-			if (journal.is_actual())
+			if
+			(	accumulating_pre_start_date_entries &&
+				(it->account().id() == account_id)
+			)
 			{
-				if (journal.date() >= earliest_date)
-				{
-					break;
-				}
-				if 
-				(	accumulating_pre_start_date_entries &&
-					(it->account().id() == account_id)
-				)
-				{
-					opening_balance += it->amount();
-				}
+				opening_balance += it->amount();
 			}
 		}
 	}
@@ -569,18 +557,17 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	Decimal closing_balance = opening_balance;
 	for ( ; it != end; ++it)
 	{
-		OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
-		if (journal.is_actual()) 
+		table_vec.push_back(*it);
+		if 
+		(	maybe_latest_date &&
+			(it->journal<OrdinaryJournal>().date() > *maybe_latest_date)
+		)
 		{
-			table_vec.push_back(*it);
-			if (maybe_latest_date && (journal.date() > *maybe_latest_date))
-			{
-				break;
-			}
-			if (filtering_for_account && (it->account().id() == account_id))
-			{
-				closing_balance += it->amount();
-			}
+			break;
+		}
+		if (filtering_for_account && (it->account().id() == account_id))
+		{
+			closing_balance += it->amount();
 		}
 	}
 

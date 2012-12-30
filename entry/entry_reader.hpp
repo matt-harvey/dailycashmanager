@@ -25,6 +25,13 @@ public:
 	);
 };
 
+class ActualOrdinaryEntryReader: public EntryReader
+{
+public:
+	explicit ActualOrdinaryEntryReader
+	(	PhatbooksDatabaseConnection& p_database_connection
+	);
+};
 
 
 
