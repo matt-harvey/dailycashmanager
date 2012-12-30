@@ -47,6 +47,9 @@ void EntryImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"is_reconciled not null references booleans"
 		");"
 	);
+	dbc.execute_sql
+	(	"create index entry_journal_index on entries(journal_id); "
+	);
 	return;
 }
 
