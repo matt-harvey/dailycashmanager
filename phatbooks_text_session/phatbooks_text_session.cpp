@@ -443,25 +443,8 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	
 	// TODO Test this.
 
-
-	// Set up a parameters which will be used to make Table which we will
-	// print later.
 	// TODO There is probably factor-out-able code between this and the
 	// Draft/Ordinary/Journal printing methods.
-	vector<string> headings;
-	headings.push_back("Date");
-	headings.push_back("Journal id");
-	headings.push_back("Entry id");
-	headings.push_back("Account");
-	headings.push_back("Comment");
-	headings.push_back("Commodity");
-	headings.push_back("Amount");
-	headings.push_back("Reconciled?");
-	vector<alignment::Flag> alignments(8, alignment::left);
-	alignments[1] = alignment::right;
-	alignments[2] = alignment::right;
-	alignments[6] = alignment::right;
-	vector<Entry> table_vec;
 
 	// TODO Could the following procedure result in overflow as it may
 	// add all and only the ACTUAL entries for a P&L account? How should we
@@ -518,11 +501,11 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		cout << "Enter end date as an 8-digit number of the form YYYYMMDD, "
 				"or leave blank for no end date: ";
 		maybe_latest_date = get_date_from_user(true);
-		if (!maybe_earliest_date || !maybe_latest_date)
-		{
-			input_is_valid = true;
-		}
-		else if (value(maybe_latest_date) >= value(maybe_earliest_date))
+		if 
+		(	!maybe_earliest_date ||
+			!maybe_latest_date || 
+			(value(maybe_latest_date) >= value(maybe_earliest_date))
+		)
 		{
 			input_is_valid = true;
 		}
@@ -555,10 +538,6 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		(value(maybe_account).account_type() != account_type::revenue) &&
 		(value(maybe_account).account_type() != account_type::expense);
 
-	// TODO I have to go through these iterations and insert the code
-	// to actually construct the Table<Entry> which we are going to
-	// print to the console!
-
 	// Examine pre-start-date entries
 	if (maybe_earliest_date)
 	{
@@ -567,14 +546,16 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		{
 			// WARNING This sucks balls!
 			OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
-			gregorian::date const entry_date = journal.date();
-			if (entry_date >= earliest_date)
+			if (journal.is_actual())
 			{
-				break;
-			}
-			if (accumulating_pre_start_date_entries)
-			{
-				if (journal.is_actual() && (it->account().id() == account_id))
+				if (journal.date() >= earliest_date)
+				{
+					break;
+				}
+				if 
+				(	accumulating_pre_start_date_entries &&
+					(it->account().id() == account_id)
+				)
 				{
 					opening_balance += it->amount();
 				}
@@ -582,80 +563,53 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		}
 	}
 
+	vector<Entry> table_vec;
+
 	// Examine entries later than or equal to the start date
 	Decimal closing_balance = opening_balance;
-	if (filtering_for_account && maybe_latest_date)
+	for ( ; it != end; ++it)
 	{
-		gregorian::date const latest_date = value(maybe_latest_date);
-		for ( ; it != end; ++it)
+		OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
+		if (journal.is_actual()) 
 		{
-			// WARNING This sucks balls!
-			OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
-			gregorian::date const entry_date = journal.date();
-			if (entry_date > latest_date)
+			table_vec.push_back(*it);
+			if (maybe_latest_date && (journal.date() > *maybe_latest_date))
 			{
 				break;
 			}
-			if (journal.is_actual() && (it->account().id() == account_id))
+			if (filtering_for_account && (it->account().id() == account_id))
 			{
-				table_vec.push_back(*it);
 				closing_balance += it->amount();
-			}
-		}
-	}
-	else if (filtering_for_account)
-	{
-		assert (!maybe_latest_date);
-		for ( ; it != end; ++it)
-		{
-			// WARNING This sucks balls!
-			OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
-			if (journal.is_actual() && (it->account().id() == account_id))
-			{
-				table_vec.push_back(*it);
-				closing_balance += it->amount();
-			}
-		}
-	}
-	else if (maybe_latest_date)
-	{
-		assert (!filtering_for_account);
-		gregorian::date const latest_date = value(maybe_latest_date);
-		for ( ; it != end ; ++it)
-		{
-			// WARNING This sucks balls!
-			OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
-			gregorian::date const entry_date = journal.date();
-			if (entry_date > latest_date)
-			{
-				break;
-			}
-			if (journal.is_actual())
-			{
-				table_vec.push_back(*it);
-			}
-		}
-	}
-	else
-	{
-		assert (!filtering_for_account && !maybe_latest_date);
-		for ( ; it != end; ++it)
-		{
-			// WARNING This sucks balls!
-			OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
-			if (journal.is_actual())
-			{
-				table_vec.push_back(*it);
 			}
 		}
 	}
 
+	string const headings[] =
+	{ 	"Date",
+		"Journal id",
+		"Entry id",
+		"Account",
+		"Comment",
+		"Commodity",
+		"Amount",
+		"Reconciled"
+	};
+	using alignment::left;
+	using alignment::right;
+	alignment::Flag const alignments[] =
+		{ left, right, right, left, left, left, right, left };
 	Table<Entry> const table
 	(	table_vec.begin(),
 		table_vec.end(),
 		make_augmented_ordinary_entry_row,
-		headings,
-		alignments,
+		vector<string>
+		(	headings,
+			headings + sizeof(headings) / sizeof(headings[0])
+		),
+		vector<alignment::Flag>
+		(	alignments,
+			alignments + sizeof(alignments) / sizeof(alignments[0])
+		),
 		2
 	);
 	cout << table << endl;
