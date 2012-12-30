@@ -15,6 +15,7 @@ namespace phatbooks
 
 class Account;
 
+
 typedef
 	sqloxx::Reader<Entry, PhatbooksDatabaseConnection>
 	EntryReader;
