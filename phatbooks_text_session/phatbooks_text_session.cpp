@@ -163,6 +163,18 @@ PhatbooksTextSession::PhatbooksTextSession():
 	);
 	m_main_menu->add_item(display_journal_from_id_item);
 
+	shared_ptr<MenuItem> display_ordinary_actual_entries_item
+	(	new MenuItem
+		(	"List actual transactions",
+			bind
+			(	&PhatbooksTextSession::display_ordinary_actual_entries,
+				this
+			),
+			true
+		)
+	);
+	m_main_menu->add_item(display_ordinary_actual_entries_item);
+
 	// WARNING This should be removed from any release version
 	shared_ptr<MenuItem> import_from_nap_item
 	(	new MenuItem
@@ -390,7 +402,8 @@ namespace
 }  // End anonymous namespace
 
 
-void PhatbooksTextSession::display_journal_from_id()
+void
+PhatbooksTextSession::display_journal_from_id()
 {
 	// The lexical casts are to prevent the insertion of thousands
 	// separators in the id numbers
@@ -423,7 +436,170 @@ void PhatbooksTextSession::display_journal_from_id()
 	return;
 }
 
-void PhatbooksTextSession::elicit_commodity()
+
+void
+PhatbooksTextSession::display_ordinary_actual_entries()
+{
+	// TODO Could the following procedure result in overflow as it may
+	// add all and only the ACTUAL entries for a P&L account? How should we
+	// deal with this possibility?
+
+	optional<Account> maybe_account;
+	cout << "Enter account name (or leave blank to show all accounts): ";
+	string const account_name = elicit_existing_account_name(true);
+	if (!account_name.empty())
+	{
+		maybe_account = Account(database_connection(), account_name);
+	}
+
+	// TODO Factor out process of "getting date range from user" into a
+	// separate function.
+	cout << "Enter start date as an 8-digit number of the form YYYYMMDD, "
+	        "or leave blank for no start date: ";
+	optional<gregorian::date> const maybe_earliest_date =
+		get_date_from_user(true);
+
+	optional<gregorian::date> maybe_latest_date;
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		cout << "Enter end date as an 8-digit number of the form YYYYMMDD, "
+				"or leave blank for no end date: ";
+		maybe_latest_date = get_date_from_user(true);
+		if (!maybe_earliest_date || !maybe_latest_date)
+		{
+			input_is_valid = true;
+		}
+		else if (value(maybe_latest_date) >= value(maybe_earliest_date))
+		{
+			input_is_valid = true;
+		}
+		else
+		{
+			assert (maybe_earliest_date);
+			assert (maybe_latest_date);
+			assert (value(maybe_latest_date) < value(maybe_latest_date));
+			cout << "End date cannot be earlier than start date. Please try again: ";
+			assert (!input_is_valid);
+		}
+	}
+
+	OrdinaryEntryReader reader(database_connection());
+	OrdinaryEntryReader::const_iterator it = reader.begin();
+	OrdinaryEntryReader::const_iterator const end = reader.end();
+
+	Decimal opening_balance(0, 0);
+
+	bool filtering_for_account = false;
+	Account::Id account_id = 0;
+	if (maybe_account)
+	{
+		filtering_for_account = true;
+		account_id = value(maybe_account).id();
+	}
+
+	// TODO I have to go through these iterations and insert the code
+	// to actually construct the Table<Entry> which we are going to
+	// print to the console!
+
+	// Examine pre-start-date entries
+	if (maybe_earliest_date)
+	{
+		gregorian::date const earliest_date = value(maybe_earliest_date);
+		for ( ; it != end; ++it)
+		{
+			// WARNING This sucks balls!
+			OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
+			gregorian::date const entry_date = journal.date();
+			if (entry_date >= earliest_date)
+			{
+				break;
+			}
+			if (filtering_for_account)
+			{
+				if (journal.is_actual() && (it->account().id() == account_id))
+				{
+					opening_balance += it->amount();
+				}
+			}
+		}
+	}
+
+	// Examine entries later than or equal to the start date
+	Decimal closing_balance = opening_balance;
+	if (filtering_for_account && maybe_latest_date)
+	{
+		gregorian::date const latest_date = value(maybe_latest_date);
+		for ( ; it != end; ++it)
+		{
+			// WARNING This sucks balls!
+			OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
+			gregorian::date const entry_date = journal.date();
+			if (entry_date > latest_date)
+			{
+				break;
+			}
+			if (journal.is_actual() && (it->account().id() == account_id))
+			{
+				closing_balance += it->amount();
+			}
+		}
+	}
+	else if (filtering_for_account)
+	{
+		assert (!maybe_latest_date);
+		for ( ; it != end; ++it)
+		{
+			// WARNING This sucks balls!
+			OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
+			if (journal.is_actual() && (it->account().id() == account_id))
+			{
+				closing_balance += it->amount();
+			}
+		}
+	}
+	else if (maybe_latest_date)
+	{
+		assert (!filtering_for_account);
+		gregorian::date const latest_date = value(maybe_latest_date);
+		for ( ; it != end ; ++it)
+		{
+			// WARNING This sucks balls!
+			OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
+			gregorian::date const entry_date = journal.date();
+			if (entry_date > latest_date)
+			{
+				break;
+			}
+		}
+	}
+	else
+	{
+		assert (!filtering_for_account && !maybe_latest_date);
+		for ( ; it != end; ++it)
+		{
+			 // Nothing to do
+		}
+	}
+
+	if (filtering_for_account)
+	{
+		// TODO Are these expressed in terms of the "friendly balances"?
+		// Should they be?
+		cout << "Opening balance for " << value(maybe_account).name() << ": "
+		     << opening_balance << endl;
+		cout << "Movement in balance during date range: "
+		     << (closing_balance - opening_balance) << endl;
+		cout << "Closing balance: " << closing_balance << endl;
+		// TODO Fill in the rest of this	
+	}	
+
+
+
+}
+
+
+void
+PhatbooksTextSession::elicit_commodity()
 {
 	Commodity commodity(database_connection());
 
@@ -742,7 +918,7 @@ PhatbooksTextSession::elicit_repeater()
 	cout << "Enter the first date on which the transaction will occur"
 		 << ", as an eight-digit number of the form YYYYMMDD (or just"
 		 << " hit enter for today's date): ";
-	repeater.set_next_date(get_date_from_user());
+	repeater.set_next_date(value(get_date_from_user()));
 	return repeater;
 }
 
@@ -1161,7 +1337,7 @@ PhatbooksTextSession::finalize_ordinary_journal(OrdinaryJournal& journal)
 		 << "form YYYYMMDD, or just hit enter for today's date ("
 		 << gregorian::to_iso_string(d)
 		 << "): ";
-	gregorian::date const e = get_date_from_user();
+	gregorian::date const e = value(get_date_from_user());
 	journal.set_date(e);
 	journal.save();
 	cout << "\nTransaction recorded:" << endl << endl

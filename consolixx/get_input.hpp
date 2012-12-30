@@ -4,6 +4,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
 #include <iosfwd>
 #include <string>
@@ -96,8 +97,13 @@ std::string get_constrained_user_input
 jewel::Decimal get_decimal_from_user();
 
 /**
- * @returns a boost::gregorian::date from user's input. User is
- * reprompted until a valid date is entered. The date must be entered
+ * @returns a boost::optional<boost::gregorian::date> from user's input.
+ * User is
+ * reprompted until a valid date is entered; except that
+ * if \e allow_empty_to_escape is set to true, and the user
+ * enters an empty string, then the function will return an
+ * uninitialized boost::optional.
+ * The date must be entered
  * in six-digit ISO format of the form "YYYYDDMM". The initial prompt
  * is \e not displayed within this function, and should be output
  * prior to calling this function.
@@ -108,9 +114,16 @@ jewel::Decimal get_decimal_from_user();
  * as to why their input failed, in the case that the failure
  * is due to a date prior to 1400 CE being rejected by the contructor
  * of boost::gregorian::date.
+ *
+ * @param allow_empty_to_escape should be set to true if and only if
+ * the user's entering an empty string should allow them to escape from
+ * the dialogue rather than being reprompted again and again till they
+ * enter a valid date.
  */
-boost::gregorian::date get_date_from_user
-(	std::string const& error_prompt =
+boost::optional<boost::gregorian::date>
+get_date_from_user
+(	bool allow_empty_to_escape = false,
+	std::string const& error_prompt =
 		"Try again, entering a six-digit date in the form YYYYMMDD: "
 );
 

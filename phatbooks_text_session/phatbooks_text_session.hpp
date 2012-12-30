@@ -275,18 +275,8 @@ private:
 	 */
 	void elicit_journal();
 
-	
-
-
-
 
 	Repeater elicit_repeater();
-
-	
-
-
-
-
 
 	/**
 	 * WARNING This should be removed from any release version.
@@ -306,9 +296,8 @@ private:
 	void display_balance_sheet();
 	void display_draft_journals();
 	void display_journal_from_id();
+	void display_ordinary_actual_entries();
 	void display_envelopes();
-	void display_transaction_listing();
-
 	void conduct_editing(DraftJournal& journal);
 
 	void display_posted_journals();

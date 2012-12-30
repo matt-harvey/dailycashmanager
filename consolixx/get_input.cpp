@@ -3,6 +3,7 @@
 #include <jewel/decimal_exceptions.hpp>
 #include <boost/exception/all.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
 #include <boost/regex.hpp>
 #include <iostream>
 #include <istream>
@@ -10,6 +11,7 @@
 #include <string>
 
 using boost::function;
+using boost::optional;
 using boost::regex;
 using boost::regex_match;
 using jewel::Decimal;
@@ -104,10 +106,10 @@ Decimal get_decimal_from_user()
 	return ret;
 }
 
-boost::gregorian::date
-get_date_from_user(string const& error_prompt)
+boost::optional<boost::gregorian::date>
+get_date_from_user(bool allow_empty_to_escape, string const& error_prompt)
 {
-	boost::gregorian::date ret = boost::gregorian::day_clock::local_day();
+	optional<boost::gregorian::date> ret;
 	regex const validation_pattern
 	(	"^[0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]$"
 	);
@@ -116,6 +118,11 @@ get_date_from_user(string const& error_prompt)
 		string input = get_user_input();
 		if (input.empty())
 		{
+			if (allow_empty_to_escape)
+			{
+				return ret;
+			}
+			assert (!allow_empty_to_escape);
 			break;
 		}
 		if (regex_match(input, validation_pattern))
