@@ -6,7 +6,9 @@
 #include "phatbooks_database_connection.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <boost/shared_ptr.hpp>
 #include <sqloxx/reader.hpp>
+#include <sqloxx/sql_statement.hpp>
 
 namespace phatbooks
 {
@@ -21,16 +23,13 @@ typedef
 class OrdinaryEntryReader: public EntryReader
 {
 public:
+
 	explicit OrdinaryEntryReader
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
-};
 
-
-class FilteredOrdinaryEntryReader: public EntryReader
-{
-public:	
-	FilteredOrdinaryEntryReader
+	static boost::shared_ptr<OrdinaryEntryReader>
+	provide_date_filtered_reader_for_account
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Account const& account,
 		boost::optional<boost::gregorian::date> earliest =
@@ -38,20 +37,23 @@ public:
 		boost::optional<boost::gregorian::date> latest =
 			boost::optional<boost::gregorian::date>()
 	);
-	explicit FilteredOrdinaryEntryReader
+
+	static boost::shared_ptr<OrdinaryEntryReader>
+	provide_date_filtered_reader
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		boost::optional<boost::gregorian::date> earliest =
 			boost::optional<boost::gregorian::date>(),
 		boost::optional<boost::gregorian::date> latest =
 			boost::optional<boost::gregorian::date>()
 	);
-private:
-	void bind_dates
-	(	boost::optional<boost::gregorian::date> earliest,
-		boost::optional<boost::gregorian::date> latest
-	);
 
+private:
+	OrdinaryEntryReader
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		sqloxx::SQLStatement& p_statement
+	);
 };
+
 
 
 
