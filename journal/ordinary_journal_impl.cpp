@@ -124,7 +124,10 @@ OrdinaryJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 		"("
 			"journal_id integer primary key references journals, "
 			"date integer not null"
-		")"
+		"); "
+	);
+	dbc.execute_sql
+	(	"create index journal_date_index on ordinary_journal_detail(date); "
 	);
 	return;
 }

@@ -480,14 +480,21 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	// Yeah but I want to minimize my use of SQL-based solutions.)
 	//
 	// (2) Make date and is_actual fields of Entry as well as of
-	// Journal. This feels like it would solve a lot of problems
-	// at the cost of some extra complexity inside the EntryImpl and
+	// Journal. This would solve a lot of problems but
+	// at the cost of horrible extra complexity inside the EntryImpl and
 	// ProtoJournal classes - to make sure the Entry attributes are
 	// synched with the corresponding Journal attributes (date and
 	// is_actual).
 	//
 	// (3) A related issue: is there a way to make a non-template
-	// version of Entry<...>::journal()?
+	// version of Entry<...>::journal()? This feels like it might also
+	// solve some problems -- it might make the code to retrieve the date
+	// and is_actual attributes of an Entry clean enough that we don't
+	// need to worry about the other stuff... and see below.
+	//
+	// (4) Could we do something to bulk-load journals fast at the
+	// start of the session. The loading method for journals is
+	// really inefficient...
 
 	optional<Account> maybe_account;
 	cout << "Enter account name (or leave blank to show all accounts): ";
