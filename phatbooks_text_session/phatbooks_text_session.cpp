@@ -641,7 +641,12 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		assert (!filtering_for_account && !maybe_latest_date);
 		for ( ; it != end; ++it)
 		{
-			 table_vec.push_back(*it);
+			// WARNING This sucks balls!
+			OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
+			if (journal.is_actual())
+			{
+				table_vec.push_back(*it);
+			}
 		}
 	}
 
