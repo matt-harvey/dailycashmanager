@@ -17,8 +17,9 @@
 #include "date.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <cassert>
+#include <limits>
 
-using std::runtime_error;
+using std::numeric_limits;
 
 namespace phatbooks
 {
@@ -54,6 +55,18 @@ null_date_rep()
 	return DateRep(0);
 }
 
+
+DateRep
+earliest_date_rep()
+{
+	return numeric_limits<DateRep>::min();
+}
+
+DateRep
+latest_date_rep()
+{
+	return numeric_limits<DateRep>::max();
+}
 
 DateRep
 julian_int(boost::gregorian::date p_date)

@@ -910,7 +910,14 @@ PhatbooksTextSession::elicit_valid_account
 		assert (!account_name.empty());
 		Account const account(database_connection(), account_name);
 		string guide;
-		if (!account_is_valid(transaction_type, transaction_phase, account, guide))
+		if
+		(	!account_is_valid
+			(	transaction_type,
+				transaction_phase,
+				account,
+				guide
+			)
+		)
 		{
 			cout << account.name() << " is not a valid " << guide << ". ";
 			cout << "Please try again: ";

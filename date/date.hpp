@@ -52,6 +52,18 @@ DateRep
 null_date_rep();
 
 /**
+ * Returns the earliest possible DateRep.
+ */
+DateRep
+earliest_date_rep();
+
+/**
+ * Returns the latest possible DateRep.
+ */
+DateRep
+latest_date_rep();
+
+/**
  * Returns an integer representing the Julian Day representation of a
  * boost::gregorian::date.
  *
