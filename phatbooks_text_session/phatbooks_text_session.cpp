@@ -440,6 +440,10 @@ PhatbooksTextSession::display_journal_from_id()
 void
 PhatbooksTextSession::display_ordinary_actual_entries()
 {
+	
+	// TODO Test this.
+
+
 	// Set up a parameters which will be used to make Table which we will
 	// print later.
 	// TODO There is probably factor-out-able code between this and the
