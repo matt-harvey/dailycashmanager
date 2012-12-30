@@ -440,9 +440,50 @@ PhatbooksTextSession::display_journal_from_id()
 void
 PhatbooksTextSession::display_ordinary_actual_entries()
 {
+	// Set up a parameters which will be used to make Table which we will
+	// print later.
+	// TODO There is probably factor-out-able code between this and the
+	// Draft/Ordinary/Journal printing methods.
+	vector<string> headings;
+	// TODO The user will want to see the journal_id here too! And they
+	// will want to see the date! But date isn't a property of the
+	// Entry and isn't catered for by make_entry_row!
+	headings.push_back("Entry id");
+	headings.push_back("Account");
+	headings.push_back("Comment");
+	headings.push_back("Commodity");
+	headings.push_back("Amount");
+	headings.push_back("Reconciled?");
+	vector<alignment::Flag> alignments(6, alignment::left);
+	alignments[4] = alignment::right;
+	vector<Entry> table_vec;
+
 	// TODO Could the following procedure result in overflow as it may
 	// add all and only the ACTUAL entries for a P&L account? How should we
 	// deal with this possibility?
+	
+	// TODO The implementation here is both clumsy and slow (especially the
+	// first time the user runs it before the entries and journals have been
+	// loaded into the cache). Even after the below has been given a
+	// tidy-up, the slowness and messiness will still remain.
+	// There are two possible solutions to this problem:
+	//
+	// (1) Go and rescue the abandoned "filtering Reader" from svn, and
+	// use that. That would probably take care of the speed issue; however,
+	// I would then need another mechanism for calculating the opening
+	// balance of account - which depends on inspecting every entry up
+	// to the start date. (Would another Reader-like thing work here?
+	// Yeah but I want to minimize my use of SQL-based solutions.)
+	//
+	// (2) Make date and is_actual fields of Entry as well as of
+	// Journal. This feels like it would solve a lot of problems
+	// at the cost of some extra complexity inside the EntryImpl and
+	// ProtoJournal classes - to make sure the Entry attributes are
+	// synched with the corresponding Journal attributes (date and
+	// is_actual).
+	//
+	// (3) A related issue: is there a way to make a non-template
+	// version of Entry<...>::journal()?
 
 	optional<Account> maybe_account;
 	cout << "Enter account name (or leave blank to show all accounts): ";
@@ -540,6 +581,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 			}
 			if (journal.is_actual() && (it->account().id() == account_id))
 			{
+				table_vec.push_back(*it);
 				closing_balance += it->amount();
 			}
 		}
@@ -553,6 +595,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 			OrdinaryJournal const journal(it->journal<OrdinaryJournal>());
 			if (journal.is_actual() && (it->account().id() == account_id))
 			{
+				table_vec.push_back(*it);
 				closing_balance += it->amount();
 			}
 		}
@@ -570,6 +613,10 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 			{
 				break;
 			}
+			if (journal.is_actual())
+			{
+				table_vec.push_back(*it);
+			}
 		}
 	}
 	else
@@ -577,24 +624,56 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		assert (!filtering_for_account && !maybe_latest_date);
 		for ( ; it != end; ++it)
 		{
-			 // Nothing to do
+			 table_vec.push_back(*it);
 		}
 	}
 
+	Table<Entry> const table
+	(	table_vec.begin(),
+		table_vec.end(),
+		make_entry_row,
+		headings,
+		alignments,
+		2
+	);
+	cout << table << endl;
+
+
 	if (filtering_for_account)
 	{
+		locale const orig_loc = cout.getloc();
 		// TODO Are these expressed in terms of the "friendly balances"?
 		// Should they be?
-		cout << "Opening balance for " << value(maybe_account).name() << ": "
-		     << opening_balance << endl;
-		cout << "Movement in balance during date range: "
-		     << (closing_balance - opening_balance) << endl;
-		cout << "Closing balance: " << closing_balance << endl;
-		// TODO Fill in the rest of this	
+		Account const account = value(maybe_account);	
+		if 
+		(	account.account_type() == account_type::asset ||
+			account.account_type() == account_type::liability ||
+			account.account_type() == account_type::equity
+		)
+		{
+			cout << "Opening balance for "
+			     << account.name() << ": "
+				 << finformat(opening_balance) << endl;
+			cout << "Movement in balance during date range: "
+				 << finformat(closing_balance - opening_balance) << endl;
+			cout << "Closing balance: " << finformat(closing_balance) << endl;
+		}
+		else if (account.account_type() == account_type::expense)
+		{
+			cout << "Amount spent in period on " << account.name()
+			     << ": " << finformat(closing_balance - opening_balance)
+				 << endl;
+		}
+		else if (account.account_type() == account_type::revenue)
+		{
+			cout << "Amount earned in period in " << account.name()
+			     << ": " << finformat(closing_balance - opening_balance)
+				 << endl;
+		}
 	}	
 
 
-
+	return;
 }
 
 
@@ -1577,21 +1656,27 @@ namespace
 
 void PhatbooksTextSession::display_balance_sheet()
 {
+	// TODO Locale reversion is not exception-safe here.
 	BalanceSheetAccountReader bs_reader(database_connection());
+	locale const orig_loc = cout.getloc();
 	cout.imbue(locale(""));
 	cout << endl << endl;
 	cout << "BALANCE SHEET: " << endl << endl;
 	print_account_reader(bs_reader);
+	cout.imbue(orig_loc);
 	return;
 }
 
 void PhatbooksTextSession::display_envelopes()
 {
+	// TODO Locale reversion is not exception-safe here.
 	PLAccountReader pl_reader(database_connection());
+	locale const orig_loc = cout.getloc();
 	cout.imbue(locale(""));
 	cout << endl << endl;
 	cout << "ENVELOPES: " << endl << endl;
 	print_account_reader(pl_reader);
+	cout.imbue(orig_loc);
 	return;
 }
 
