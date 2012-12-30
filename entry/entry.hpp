@@ -110,7 +110,13 @@ make_entry_row(Entry const& entry);
 boost::shared_ptr<std::vector<std::string> >
 make_reversed_entry_row(Entry const& entry);
 
-
+// Like above but should only be used with ordinary entries (i.e.
+// entries of which the Journal is an OrdinaryJournal.
+// Includes journal id and date in the entry row produced.
+// If the OrdinaryJournal for the Entry does not have an id then
+// this will fail.
+boost::shared_ptr<std::vector<std::string> >
+make_augmented_ordinary_entry_row(Entry const& entry);
 
 }  // namespace phatbooks
 

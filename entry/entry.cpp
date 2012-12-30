@@ -1,6 +1,7 @@
 #include "entry.hpp"
 #include "entry_impl.hpp"
 #include "finformat.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include <jewel/decimal.hpp>
@@ -173,13 +174,20 @@ namespace
 {
 	shared_ptr<vector<string> > make_entry_row_aux
 	(	Entry const& entry,
-		bool reverse
+		bool reverse,
+		bool make_augmented_ordinary
 	)
 	{
 		shared_ptr<vector<string> > ret(new vector<string>);
 		// TODO Here and in the journal printing method, I
 		// should add journal_id as either the first or second
 		// column.
+		if (make_augmented_ordinary)
+		{
+			OrdinaryJournal journal(entry.journal<OrdinaryJournal>());
+			ret->push_back(lexical_cast<string>(journal.date()));
+			ret->push_back(lexical_cast<string>(journal.id()));
+		}
 		if (entry.has_id())
 		{
 			ret->push_back(lexical_cast<string>(entry.id()));
@@ -201,23 +209,30 @@ namespace
 		ret->push_back(entry.is_reconciled()? "y": "n");
 		return ret;
 	}
+
+
 }  // End anonymous namespace
 
 
 shared_ptr<vector<string> >
 make_entry_row(Entry const& entry)
 {
-	return make_entry_row_aux(entry, false);
+	return make_entry_row_aux(entry, false, false);
 }
 
 
 shared_ptr<vector<string> >
 make_reversed_entry_row(Entry const& entry)
 {
-	return make_entry_row_aux(entry, true);
+	return make_entry_row_aux(entry, true, false);
 }
 
 
+shared_ptr<vector<string> >
+make_augmented_ordinary_entry_row(Entry const& entry)
+{
+	return make_entry_row_aux(entry, false, true);
+}
 
 
 }  // namespace phatbooks

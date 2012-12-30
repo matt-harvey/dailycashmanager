@@ -449,17 +449,18 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	// TODO There is probably factor-out-able code between this and the
 	// Draft/Ordinary/Journal printing methods.
 	vector<string> headings;
-	// TODO The user will want to see the journal_id here too! And they
-	// will want to see the date! But date isn't a property of the
-	// Entry and isn't catered for by make_entry_row!
+	headings.push_back("Date");
+	headings.push_back("Journal id");
 	headings.push_back("Entry id");
 	headings.push_back("Account");
 	headings.push_back("Comment");
 	headings.push_back("Commodity");
 	headings.push_back("Amount");
 	headings.push_back("Reconciled?");
-	vector<alignment::Flag> alignments(6, alignment::left);
-	alignments[4] = alignment::right;
+	vector<alignment::Flag> alignments(8, alignment::left);
+	alignments[1] = alignment::right;
+	alignments[2] = alignment::right;
+	alignments[6] = alignment::right;
 	vector<Entry> table_vec;
 
 	// TODO Could the following procedure result in overflow as it may
@@ -530,7 +531,8 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 			assert (maybe_earliest_date);
 			assert (maybe_latest_date);
 			assert (value(maybe_latest_date) < value(maybe_latest_date));
-			cout << "End date cannot be earlier than start date. Please try again: ";
+			cout << "End date cannot be earlier than start date. "
+			        "Please try again: ";
 			assert (!input_is_valid);
 		}
 	}
@@ -548,6 +550,10 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		filtering_for_account = true;
 		account_id = value(maybe_account).id();
 	}
+	bool accumulating_pre_start_date_entries =
+		filtering_for_account &&
+		(value(maybe_account).account_type() != account_type::revenue) &&
+		(value(maybe_account).account_type() != account_type::expense);
 
 	// TODO I have to go through these iterations and insert the code
 	// to actually construct the Table<Entry> which we are going to
@@ -566,7 +572,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 			{
 				break;
 			}
-			if (filtering_for_account)
+			if (accumulating_pre_start_date_entries)
 			{
 				if (journal.is_actual() && (it->account().id() == account_id))
 				{
@@ -642,7 +648,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	Table<Entry> const table
 	(	table_vec.begin(),
 		table_vec.end(),
-		make_entry_row,
+		make_augmented_ordinary_entry_row,
 		headings,
 		alignments,
 		2
