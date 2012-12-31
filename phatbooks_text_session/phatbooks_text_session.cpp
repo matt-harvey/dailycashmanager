@@ -437,24 +437,63 @@ PhatbooksTextSession::display_journal_from_id()
 }
 
 
+namespace
+{
+	void summarise_balance_movement
+	(	Account const& account,
+		Decimal const& opening_balance,
+		Decimal const& closing_balance
+	)
+	{
+		locale const orig_loc = cout.getloc();
+		// TODO Are these expressed in terms of the "friendly balances"?
+		// Should they be?
+		switch (account.account_type())
+		{
+		case account_type::asset:
+		case account_type::liability:
+		case account_type::equity:
+		case account_type::pure_envelope:
+			cout << "Opening balance for "
+			     << account.name() << ": "
+				 << finformat(opening_balance) << endl;
+			cout << "Movement in balance during date range: "
+				 << finformat(closing_balance - opening_balance) << endl;
+			cout << "Closing balance: " << finformat(closing_balance) << endl;
+			break;
+		case account_type::expense:
+			cout << "Amount spent in period on " << account.name()
+			     << ": " << finformat(closing_balance - opening_balance)
+				 << endl;
+			break;
+		case account_type::revenue:
+			cout << "Amount earned in period in " << account.name()
+			     << ": " << finformat(closing_balance - opening_balance)
+				 << endl;
+			break;
+		default:
+			assert (false);
+		}
+		return;
+	}	
+}  // End anonymous namespace
+
+
 void
 PhatbooksTextSession::display_ordinary_actual_entries()
 {
-	
-	// TODO Test this.
-
 	// TODO There is probably factor-out-able code between this and the
 	// Draft/Ordinary/Journal printing methods.
+	
+	// TODO I don't think this will work well with
+	// account_type::pure_envelope. The user would be surprised by the result.
 
 	// TODO Could the following procedure result in overflow as it may
 	// add all and only the ACTUAL entries for a P&L account? How should we
 	// deal with this possibility?
 	
-	// TODO The implementation here is both clumsy and slow (especially the
-	// first time the user runs it before the entries and journals have been
-	// loaded into the cache). Even after the below has been given a
-	// tidy-up, the slowness and messiness will still remain.
-	// There are two possible solutions to this problem:
+	// TODO The implementation here is a bit clumsy and slow.
+	// Some possible ways of improving it are as follows.
 	//
 	// (1) Go and rescue the abandoned "filtering Reader" from svn, and
 	// use that. That would probably take care of the speed issue; however,
@@ -463,7 +502,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	// to the start date. (Would another Reader-like thing work here?
 	// Yeah but I want to minimize my use of SQL-based solutions.)
 	//
-	// (2) Make date and is_actual fields of Entry as well as of
+	// (2) Make date a field of Entry as well as of
 	// Journal. This would solve a lot of problems but
 	// at the cost of horrible extra complexity inside the EntryImpl and
 	// ProtoJournal classes - to make sure the Entry attributes are
@@ -473,12 +512,13 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	// (3) A related issue: is there a way to make a non-template
 	// version of Entry<...>::journal()? This feels like it might also
 	// solve some problems -- it might make the code to retrieve the date
-	// and is_actual attributes of an Entry clean enough that we don't
+	// and is_actual attributes of an Entry cleanly enough that we don't
 	// need to worry about the other stuff... and see below.
 	//
 	// (4) Could we do something to bulk-load journals fast at the
 	// start of the session. The loading method for journals is
-	// really inefficient...
+	// really inefficient... NOTE But this seems to have been largely
+	// solved by the creation of an index over entry(journal_id).
 
 	optional<Account> maybe_account;
 	cout << "Enter account name (or leave blank to show all accounts): ";
@@ -486,6 +526,10 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	if (!account_name.empty())
 	{
 		maybe_account = Account(database_connection(), account_name);
+	}
+	else
+	{
+		assert (!maybe_account);
 	}
 
 	// TODO Factor out process of "getting date range from user" into a
@@ -522,6 +566,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 
 	Decimal opening_balance(0, 0);
 	bool const filtering_for_account = (maybe_account? true: false);
+	if (account_name.empty()) assert (!filtering_for_account);
 	Account::Id const account_id = (maybe_account? maybe_account->id(): 0);
 	bool const accumulating_pre_start_date_entries =
 		filtering_for_account &&
@@ -557,7 +602,6 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	Decimal closing_balance = opening_balance;
 	for ( ; it != end; ++it)
 	{
-		table_vec.push_back(*it);
 		if 
 		(	maybe_latest_date &&
 			(it->journal<OrdinaryJournal>().date() > *maybe_latest_date)
@@ -565,9 +609,18 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		{
 			break;
 		}
-		if (filtering_for_account && (it->account().id() == account_id))
+		if (filtering_for_account)
 		{
-			closing_balance += it->amount();
+			if (it->account().id() == account_id)
+			{
+				table_vec.push_back(*it);
+				closing_balance += it->amount();
+			}
+		}
+		else
+		{
+			assert (!filtering_for_account);
+			table_vec.push_back(*it);
 		}
 	}
 
@@ -601,40 +654,15 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	);
 	cout << table << endl;
 
-
 	if (filtering_for_account)
 	{
-		locale const orig_loc = cout.getloc();
-		// TODO Are these expressed in terms of the "friendly balances"?
-		// Should they be?
-		Account const account = value(maybe_account);	
-		if 
-		(	account.account_type() == account_type::asset ||
-			account.account_type() == account_type::liability ||
-			account.account_type() == account_type::equity
-		)
-		{
-			cout << "Opening balance for "
-			     << account.name() << ": "
-				 << finformat(opening_balance) << endl;
-			cout << "Movement in balance during date range: "
-				 << finformat(closing_balance - opening_balance) << endl;
-			cout << "Closing balance: " << finformat(closing_balance) << endl;
-		}
-		else if (account.account_type() == account_type::expense)
-		{
-			cout << "Amount spent in period on " << account.name()
-			     << ": " << finformat(closing_balance - opening_balance)
-				 << endl;
-		}
-		else if (account.account_type() == account_type::revenue)
-		{
-			cout << "Amount earned in period in " << account.name()
-			     << ": " << finformat(closing_balance - opening_balance)
-				 << endl;
-		}
-	}	
-
+		assert (maybe_account);
+		summarise_balance_movement
+		(	*maybe_account,
+			opening_balance,
+			closing_balance
+		);
+	}
 
 	return;
 }
