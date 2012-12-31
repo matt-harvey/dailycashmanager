@@ -130,6 +130,12 @@ boost::shared_ptr<std::vector<std::string> >
 make_account_row(Account const& account);
 
 
+// Free-standing functions
+bool is_asset_or_liability(Account const& account);
+bool is_expense(Account const& account);
+bool is_revenue(Account const& account);
+bool is_envelope(Account const& account);
+
 
 
 }  // namespace phatbooks

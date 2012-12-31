@@ -183,4 +183,54 @@ make_account_row(Account const& account)
 
 
 
+// Free-standing functions
+
+bool is_asset_or_liability(Account const& account)
+{
+	bool ret;
+	switch (account.account_type())
+	{
+	case account_type::asset:
+	case account_type::liability:
+		ret = true;
+		break;
+	default:
+		ret = false;
+		break;
+	}
+	return ret;
+}
+
+bool is_expense(Account const& account)
+{
+	return account.account_type() == account_type::expense;
+}
+
+bool is_revenue(Account const& account)
+{
+	return account.account_type() == account_type::revenue;
+}
+
+bool is_envelope(Account const& account)
+{
+	bool ret;
+	switch (account.account_type())
+	{
+	case account_type::asset:
+	case account_type::liability:
+		ret = false;
+		break;
+	case account_type::equity:
+	case account_type::revenue:
+	case account_type::expense:
+	case account_type::pure_envelope:
+		ret = true;
+		break;
+	default:
+		assert (false);	
+	}
+	return ret;
+}
+
+
 }   // namespace phatbooks
