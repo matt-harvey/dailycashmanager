@@ -23,6 +23,7 @@
 #include "entry_reader.hpp"
 #include "finformat.hpp"
 #include "import_from_nap/import_from_nap.hpp"  // WARNING temp hack
+#include "journal.hpp"
 #include "ordinary_journal.hpp"
 #include "ordinary_journal_reader.hpp"
 #include "proto_journal.hpp"
@@ -327,39 +328,159 @@ void PhatbooksTextSession::display_draft_journals()
 
 
 void
+PhatbooksTextSession::elicit_entry_insertion(Journal& journal)
+{
+	// TODO Implement this
+	cout << endl << "We're now inside elicit_entry_insertion." << endl;
+	return;
+}
+
+void
+PhatbooksTextSession::elicit_entry_deletion(Journal& journal)	
+{
+	// TODO Implement this
+	return;
+}
+
+void
+PhatbooksTextSession::elicit_entry_amendment(Journal& journal)
+{
+ 	// TODO Implement this
+	return;
+}
+
+void
+PhatbooksTextSession::elicit_journal_deletion(Journal& journal)
+{
+	// TODO Implement this
+	return;
+}
+
+void
+PhatbooksTextSession::elicit_comment_amendment(Journal& journal)
+{
+	// TODO Implement this
+	return;
+}
+
+void
+PhatbooksTextSession::elicit_repeater_insertion(DraftJournal& journal)
+{
+	// TODO Implement this
+	return;
+}
+
+void
+PhatbooksTextSession::elicit_repeater_deletion(DraftJournal& journal)
+{
+	// TODO Implement this
+	return;
+}
+
+
+void
 PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 {
-	for (bool exiting_menu = false; !exiting_menu; )
-	{
-		typedef shared_ptr<MenuItem const> ItemPtr;
-		cout << journal << endl;
-		Menu menu("Select an action to perform, or 'x' to exit: ");
-		ItemPtr add_entry_item(new MenuItem("Add a line"));
-		menu.add_item(add_entry_item);
-		ItemPtr delete_entry_item(new MenuItem("Delete a line"));
-		menu.add_item(delete_entry_item);
-		ItemPtr amend_entry_item(new MenuItem("Amend a line"));
-		menu.add_item(amend_entry_item);
-		ItemPtr delete_journal_item(new MenuItem("Delete transaction"));
-		menu.add_item(delete_journal_item);
-		ItemPtr add_repeater_item
-		(	new MenuItem("Add automatic recording cycle")
-		);
-		menu.add_item(add_repeater_item);
-		ItemPtr delete_repeaters_item
-		(	new MenuItem("Disable automatic recording")
-		);
-		menu.add_item(delete_repeaters_item);
-		ItemPtr exit_item(MenuItem::provide_menu_exit());
-		menu.add_item(exit_item);
-		menu.present_to_user();
-		ItemPtr const choice = menu.last_choice();
-		if (choice != exit_item)
-		{	
-			// TODO Finish this.
-		}
-		else exiting_menu = true;
-	}
+	// The below is ugly. There are two alternatives to this approach.
+	// (1) Make the elicit... functions free-standing functions in an
+	// anonymous namespace, that take as parameters
+	// a PhatbooksDatabaseConnection& and a Journal&. This would
+	// make the binding syntax a bit neater, at the cost of having
+	// tonnes of functions in an anonymous namespace, which seems a bit
+	// crappy somehow. I would prefer that functions of such seeming
+	// importance be "catalogued" in the header, as (private) member
+	// functions of PhatbooksTextSession. I'm not sure if this is a very
+	// good reason, but it just feels nicer and more maintainable.
+	// (2) Have a bunch of crude procedural code by comparing
+	// menu.last_choice() to each of the menu items in turn and executing one
+	// of the elicit... functions accordingly. This feels clunky and verbose,
+	// and sidesteps the Menu class's facility that already implements
+	// the general procedure where the user to selects a menu item and the
+	// appropriate function is called.
+	// (3) Have a comment explaining what's going on.
+	// I like (3) best, so here goes.
+	
+	// What's going on is that where you see this...
+	// bind(bind(&PTS::elicit_yadda_yadda, this, _1), journal)
+	// ... it just means that if the user selects this menu item,
+	// then we will call PhatbooksTextSession::elicit_yadda_yadda(journal).
+
+	typedef shared_ptr<MenuItem const> ItemPtr;
+	typedef boost::function<void (Journal&)> JournalElicit;
+	typedef boost::function<void (DraftJournal&)> DraftJournalElicit;
+	typedef PhatbooksTextSession PTS;  // For brevity below.
+
+	cout << journal << endl;
+	Menu menu("Select an action to perform, or 'x' to exit: ");
+
+	ItemPtr add_entry_item
+	(	new MenuItem
+		(	"Add a line",
+			bind(bind(&PTS::elicit_entry_insertion, this, _1), journal),
+			true
+		)
+	);
+	menu.add_item(add_entry_item);
+
+	ItemPtr delete_entry_item
+	(	new MenuItem
+		(	"Delete a line",
+			bind(bind(&PTS::elicit_entry_deletion, this, _1), journal),
+			true
+		)
+	);
+	menu.add_item(delete_entry_item);
+
+	ItemPtr amend_entry_item
+	(	new MenuItem
+		(	"Amend a line",
+			bind(bind(&PTS::elicit_entry_amendment, this, _1), journal),
+			true
+		)
+	);
+	menu.add_item(amend_entry_item);
+
+	ItemPtr delete_journal_item
+	(	new MenuItem
+		(	"Delete transaction",
+			bind(bind(&PTS::elicit_journal_deletion, this, _1), journal),
+			true
+		)
+	);
+	menu.add_item(delete_journal_item);
+
+	ItemPtr add_repeater_item
+	(	new MenuItem
+		(	"Add automatic recording cycle",
+			bind(bind(&PTS::elicit_repeater_insertion, this, _1), journal),
+			true
+		)
+	);
+	menu.add_item(add_repeater_item);
+
+	ItemPtr delete_repeaters_item
+	(	new MenuItem
+		(	"Disable automatic recording",
+			bind(bind(&PTS::elicit_repeater_deletion, this, _1), journal),
+			true
+		)
+	);
+	menu.add_item(delete_repeaters_item);
+
+	ItemPtr amend_comment_item
+	(	new MenuItem
+		(	"Amend transaction comment",
+			bind(bind(&PTS::elicit_comment_amendment, this, _1), journal),
+			true
+		)
+	);
+	menu.add_item(amend_comment_item);
+
+	ItemPtr exit_item(MenuItem::provide_menu_exit());
+	menu.add_item(exit_item);
+
+	menu.present_to_user();
+
 	return;
 }
 
@@ -396,7 +517,7 @@ PhatbooksTextSession::display_journal_from_id()
 		 << lexical_cast<string>(max_journal_id(database_connection()))
 		 << "): ";
 	std::string const input = get_constrained_user_input
-	(	boost::bind(identifies_existent_journal, &database_connection(), _1),
+	(	bind(identifies_existent_journal, &database_connection(), _1),
 		"There is no journal with this id. Try again: "
 	);
 	if (input.empty())

@@ -29,6 +29,7 @@ namespace phatbooks
 class Account;
 class DraftJournal;
 class Entry;
+class Journal;
 class ProtoJournal;
 class PhatbooksDatabaseConnection;
 class Repeater;
@@ -247,6 +248,18 @@ private:
 	 * @todo Verify throwing behaviour.
 	 */
 	std::string elicit_existing_account_name(bool accept_empty = false);
+
+	void elicit_entry_insertion(Journal& journal);
+	void elicit_entry_deletion(Journal& journal);
+	void elicit_entry_amendment(Journal& journal);
+	void elicit_journal_deletion(Journal& journal);
+	void elicit_comment_amendment(Journal& journal);
+	void elicit_repeater_insertion(DraftJournal& journal);
+	void elicit_repeater_deletion(DraftJournal& journal);
+
+	// TODO Implement this and enable user to access it.
+	void elicit_date_amendment(OrdinaryJournal& journal);
+
 
 	/**
 	 * Enter a dialogue with the user for creating a new Journal.
