@@ -16,6 +16,7 @@
 #include "commodity.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "consolixx/table.hpp"
 #include <jewel/output_aux.hpp>
 #include <sqloxx/next_auto_key.hpp>
@@ -151,6 +152,12 @@ ProtoJournal::do_save_new_journal_core
 (	PhatbooksDatabaseConnection& dbc
 )
 {
+	if (!is_balanced())
+	{
+		throw UnbalancedJournalException
+		(	"Cannot save journal core in unbalanced state."
+		);
+	}
 	Id const journal_id = next_auto_key
 	<	PhatbooksDatabaseConnection,
 		Id
@@ -179,6 +186,12 @@ ProtoJournal::do_save_existing_journal_core
 	ProtoJournal::Id id
 )
 {
+	if (!is_balanced())
+	{
+		throw UnbalancedJournalException
+		(	"Cannot save journal core in unbalanced state."
+		);
+	}
 	SQLStatement updater
 	(	dbc,
 		"update journals set is_actual = :is_actual, comment = :comment "
