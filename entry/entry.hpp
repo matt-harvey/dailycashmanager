@@ -5,10 +5,10 @@
 #include "finformat.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
-
 
 namespace phatbooks
 {
@@ -57,7 +57,15 @@ public:
 	{
 		return m_impl->journal<JournalType>();
 	}
-	
+
+	/**
+	 * @returns the posting date of the Entry, assuming it is associated
+	 * with an OrdinaryJournal. If it is associated with another kind of
+	 * Journal, then behaviour is undefined.
+	 *
+	 * Note this function is a bit slow.
+	 */
+	boost::gregorian::date date() const;
 
 	/**
 	 * TODO This should eventually be shifted into a base

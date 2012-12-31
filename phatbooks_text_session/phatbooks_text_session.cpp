@@ -565,7 +565,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	{
 		for
 		(	gregorian::date const earliest = *maybe_earliest_date;
-			(it != end) && (it->journal<OrdinaryJournal>().date() < earliest);
+			(it != end) && (it->date() < earliest);
 			++it
 		)
 		{
@@ -587,7 +587,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	{
 		if 
 		(	maybe_latest_date &&
-			(it->journal<OrdinaryJournal>().date() > *maybe_latest_date)
+			(it->date() > *maybe_latest_date)
 		)
 		{
 			break;

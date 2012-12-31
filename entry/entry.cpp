@@ -6,6 +6,7 @@
 #include "proto_journal.hpp"
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -18,6 +19,7 @@ using sqloxx::Handle;
 using std::string;
 using std::vector;
 
+namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
@@ -120,6 +122,12 @@ bool
 Entry::is_reconciled() const
 {
 	return m_impl->is_reconciled();
+}
+
+gregorian::date
+Entry::date() const
+{
+	return journal<OrdinaryJournal>().date();
 }
 
 Account::Id
