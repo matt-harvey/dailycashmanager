@@ -88,6 +88,7 @@ using boost::shared_ptr;
 using boost::regex;
 using boost::regex_match;
 using std::cout;
+using std::clog;
 using std::endl;
 using std::list;
 using std::locale;
@@ -215,6 +216,11 @@ PhatbooksTextSession::PhatbooksTextSession():
 }
 
 
+PhatbooksTextSession::~PhatbooksTextSession()
+{
+}
+
+
 string
 PhatbooksTextSession::elicit_existing_account_name(bool accept_empty)
 {
@@ -233,10 +239,6 @@ PhatbooksTextSession::elicit_existing_account_name(bool accept_empty)
 	}
 }
 
-
-PhatbooksTextSession::~PhatbooksTextSession()
-{
-}
 	
 
 int PhatbooksTextSession::do_run(string const& filename)
@@ -330,8 +332,9 @@ void PhatbooksTextSession::display_draft_journals()
 void
 PhatbooksTextSession::elicit_entry_insertion(Journal& journal)
 {
+	
 	// TODO Implement this
-	cout << endl << "We're now inside elicit_entry_insertion." << endl;
+	clog << endl << "We're now inside elicit_entry_insertion." << endl;
 	return;
 }
 
@@ -339,6 +342,7 @@ void
 PhatbooksTextSession::elicit_entry_deletion(Journal& journal)	
 {
 	// TODO Implement this
+	clog << endl << "We're now inside elicit_entry_deletion." << endl;
 	return;
 }
 
@@ -346,6 +350,7 @@ void
 PhatbooksTextSession::elicit_entry_amendment(Journal& journal)
 {
  	// TODO Implement this
+	clog << endl << "We're now inside elicit_entry_amendment." << endl;	
 	return;
 }
 
@@ -353,6 +358,7 @@ void
 PhatbooksTextSession::elicit_journal_deletion(Journal& journal)
 {
 	// TODO Implement this
+	clog << endl << "We're now inside elicit_journal_deletion." << endl;
 	return;
 }
 
@@ -360,6 +366,7 @@ void
 PhatbooksTextSession::elicit_comment_amendment(Journal& journal)
 {
 	// TODO Implement this
+	clog << endl << "We're now inside elicit_comment_amendment." << endl;
 	return;
 }
 
@@ -367,6 +374,7 @@ void
 PhatbooksTextSession::elicit_repeater_insertion(DraftJournal& journal)
 {
 	// TODO Implement this
+	clog << endl << "We're now inside elicit_repeater_insertion." << endl;
 	return;
 }
 
@@ -374,6 +382,7 @@ void
 PhatbooksTextSession::elicit_repeater_deletion(DraftJournal& journal)
 {
 	// TODO Implement this
+	clog << endl << "We're now inside elicit_repeater_deletion." << endl;
 	return;
 }
 
@@ -381,7 +390,7 @@ PhatbooksTextSession::elicit_repeater_deletion(DraftJournal& journal)
 void
 PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 {
-	// The below is ugly. There are two alternatives to this approach.
+	// The below is a bit ugly. There are two alternatives to this approach.
 	// (1) Make the elicit... functions free-standing functions in an
 	// anonymous namespace, that take as parameters
 	// a PhatbooksDatabaseConnection& and a Journal&. This would
@@ -401,13 +410,13 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 	// I like (3) best, so here goes.
 	
 	// What's going on is that where you see this...
+	//
 	// bind(bind(&PTS::elicit_yadda_yadda, this, _1), journal)
+	//
 	// ... it just means that if the user selects this menu item,
 	// then we will call PhatbooksTextSession::elicit_yadda_yadda(journal).
 
 	typedef shared_ptr<MenuItem const> ItemPtr;
-	typedef boost::function<void (Journal&)> JournalElicit;
-	typedef boost::function<void (DraftJournal&)> DraftJournalElicit;
 	typedef PhatbooksTextSession PTS;  // For brevity below.
 
 	cout << journal << endl;
@@ -487,7 +496,8 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 
 namespace
 {
-	// TODO This function is weird and misleading in what it does.
+	// TODO This function is weird and misleading in what it does, and
+	// it doesn't really belong here.
 	bool identifies_existent_journal
 	(	PhatbooksDatabaseConnection* dbc,
 		string const& s
