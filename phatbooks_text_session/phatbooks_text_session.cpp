@@ -109,10 +109,7 @@ namespace phatbooks
 PhatbooksTextSession::PhatbooksTextSession():
 	m_main_menu(new Menu)
 {
-	
-
-
-	// Set up all the Menu objects.
+	// Set up main menu.
 
 	shared_ptr<MenuItem> elicit_commodity_item
 	(	new MenuItem
@@ -175,25 +172,6 @@ PhatbooksTextSession::PhatbooksTextSession():
 	);
 	m_main_menu->add_item(display_ordinary_actual_entries_item);
 
-	// WARNING This should be removed from any release version
-	shared_ptr<MenuItem> import_from_nap_item
-	(	new MenuItem
-		(	"Import data from csv files",
-			bind(&PhatbooksTextSession::import_from_nap, this),
-			true
-		)
-	);
-	m_main_menu->add_item(import_from_nap_item);
-
-	shared_ptr<MenuItem> display_journal_summaries_selection
-	(	new MenuItem
-		(	"Display a summary of each journal",
-			bind(&PhatbooksTextSession::display_journal_summaries, this),
-			true
-		)
-	);
-	m_main_menu->add_item(display_journal_summaries_selection);
-
 	// TODO Should this also display equity accounts? Do we even have
 	// any equity accounts?
 	shared_ptr<MenuItem> display_balance_sheet_selection
@@ -214,6 +192,16 @@ PhatbooksTextSession::PhatbooksTextSession():
 	);
 	m_main_menu->add_item(display_envelopes_selection);
 	
+	// WARNING This should be removed from any release version
+	shared_ptr<MenuItem> import_from_nap_item
+	(	new MenuItem
+		(	"Import data from csv files",
+			bind(&PhatbooksTextSession::import_from_nap, this),
+			true
+		)
+	);
+	m_main_menu->add_item(import_from_nap_item);
+
 	shared_ptr<MenuItem> quit_item
 	(	new MenuItem
 		(	"Quit",
@@ -222,7 +210,6 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"x"
 		)
 	);
-
 	m_main_menu->add_item(quit_item);
 }
 
@@ -377,13 +364,9 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 }
 
 
-
-
-
-
-
 namespace
 {
+	// TODO This function is weird and misleading in what it does.
 	bool identifies_existent_journal
 	(	PhatbooksDatabaseConnection* dbc,
 		string const& s
@@ -779,6 +762,7 @@ PhatbooksTextSession::elicit_commodity()
 
 void PhatbooksTextSession::elicit_account()
 {
+
 	Account account(database_connection());
 
 	// Get account name
@@ -1589,26 +1573,6 @@ void PhatbooksTextSession::notify_autoposts
 }
 
 
-void PhatbooksTextSession::display_journal_summaries()
-{
-	cout << "For each ORDINARY journal, here's what's in it. "
-	     << endl << endl;
-	OrdinaryJournalReader oj_reader(database_connection());
-	for
-	(	OrdinaryJournalReader::const_iterator it =
-			oj_reader.begin(),
-			end = oj_reader.end();
-		it != end;
-		++it
-	)
-	{
-		cout << *it;
-		cout << endl << endl;
-	}
-	cout << "Done!" << endl << endl;
-	return;
-}
-
 namespace
 {
 	// WARNING Quick hack
@@ -1672,7 +1636,6 @@ void PhatbooksTextSession::display_envelopes()
 }
 
 
-// WARNING end play code
 
 void PhatbooksTextSession::wrap_up()
 {
