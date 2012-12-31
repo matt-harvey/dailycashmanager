@@ -972,7 +972,9 @@ PhatbooksTextSession::elicit_repeater()
 	cout << "Enter the first date on which the transaction will occur"
 		 << ", as an eight-digit number of the form YYYYMMDD (or just"
 		 << " hit enter for today's date): ";
-	repeater.set_next_date(value(get_date_from_user()));
+	optional<gregorian::date> const d = get_date_from_user(true);
+	if (d) repeater.set_next_date(*d);
+	else repeater.set_next_date(gregorian::day_clock::local_day());
 	return repeater;
 }
 
@@ -1386,13 +1388,15 @@ PhatbooksTextSession::elicit_secondary_entries
 void
 PhatbooksTextSession::finalize_ordinary_journal(OrdinaryJournal& journal)
 {
-	gregorian::date const d = gregorian::day_clock::local_day();
+	gregorian::date d = gregorian::day_clock::local_day();
 	cout << "Enter transaction date as an eight-digit number of the "
 		 << "form YYYYMMDD, or just hit enter for today's date ("
 		 << gregorian::to_iso_string(d)
 		 << "): ";
-	gregorian::date const e = value(get_date_from_user());
-	journal.set_date(e);
+
+	optional<gregorian::date> const date_input = get_date_from_user(true);
+	if (date_input) d = *date_input;
+	journal.set_date(d);
 	journal.save();
 	cout << "\nTransaction recorded:" << endl << endl
 		 << journal << endl;

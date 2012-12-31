@@ -123,7 +123,6 @@ get_date_from_user(bool allow_empty_to_escape, string const& error_prompt)
 				return ret;
 			}
 			assert (!allow_empty_to_escape);
-			break;
 		}
 		if (regex_match(input, validation_pattern))
 		{
