@@ -4,6 +4,7 @@
 #include "account_impl.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
+#include <boost/shared_ptr.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <jewel/decimal.hpp>
@@ -123,6 +124,10 @@ private:
 	sqloxx::Handle<AccountImpl> m_impl;
 
 };
+
+
+boost::shared_ptr<std::vector<std::string> >
+make_account_row(Account const& account);
 
 
 

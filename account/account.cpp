@@ -3,17 +3,20 @@
 #include "account_impl.hpp"
 #include "account_reader.hpp"
 #include "commodity.hpp"
+#include "finformat.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
+#include <vector>
 
 using phatbooks::account_type::AccountType;
 using sqloxx::Handle;
 using boost::shared_ptr;
 using jewel::Decimal;
 using std::string;
+using std::vector;
 
 
 namespace phatbooks
@@ -168,6 +171,15 @@ Account::Account(sqloxx::Handle<AccountImpl> const& p_handle):
 {
 }
 
+
+shared_ptr<vector<string> >
+make_account_row(Account const& account)
+{
+	shared_ptr<vector<string> > ret(new vector<string>);
+	ret->push_back(account.name());
+	ret->push_back(finformat(account.friendly_balance()));
+	return ret;
+}
 
 
 

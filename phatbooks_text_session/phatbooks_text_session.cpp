@@ -1575,18 +1575,6 @@ void PhatbooksTextSession::notify_autoposts
 
 namespace
 {
-	// WARNING Quick hack
-
-	shared_ptr<vector<string> > make_account_row
-	(	Account const& account
-	)
-	{
-		shared_ptr<vector<string> > ret(new vector<string>);
-		ret->push_back(account.name());
-		ret->push_back(finformat(account.friendly_balance()));
-		return ret;
-	}
-
 	template <typename AccountReaderT>
 	void print_account_reader(AccountReaderT& p_reader)
 	{
