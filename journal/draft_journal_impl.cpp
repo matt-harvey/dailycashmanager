@@ -325,6 +325,8 @@ DraftJournalImpl::do_ghostify()
 void
 DraftJournalImpl::do_remove()
 {
+	// TODO Confirm exception-safety of whole remove() function, once
+	// the below is taken into account.
 	SQLStatement journal_detail_deleter
 	(	database_connection(),
 		"delete from draft_journal_detail where journal_id = :p"
