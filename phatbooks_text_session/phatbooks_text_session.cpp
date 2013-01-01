@@ -289,31 +289,39 @@ PhatbooksTextSession::elicit_existing_account_name(bool accept_empty)
 void PhatbooksTextSession::display_draft_journals()
 {
 	typedef PhatbooksTextSession PTS;  // For brevity in the below
-	cout << endl;	
-	Menu menu
-	(	"Select a transaction to view from the above menu, "
-		"or 'x' to exit: "
-	);
-	DraftJournalReader const dj_reader(database_connection());
-	for
-	(	DraftJournalReader::const_iterator it = dj_reader.begin(),
-			end = dj_reader.end();
-		it != end;
-		++it
-	)
+
+	// We need this loop here so the menu will update itself
+	// if a journal is deleted.
+	for (bool exiting = false; !exiting; )
 	{
-		shared_ptr<MenuItem const> const menu_item
-		(	new MenuItem
-			(	it->name(),
-				bind(bind(&PTS::conduct_editing, this, _1), *it),
-				true
-			)
+		cout << endl;	
+		Menu menu
+		(	"Select a transaction to view from the above menu, "
+			"or 'x' to exit: "
 		);
-		menu.add_item(menu_item);
+		DraftJournalReader const dj_reader(database_connection());
+		for
+		(	DraftJournalReader::const_iterator it = dj_reader.begin();
+			it != dj_reader.end();
+			++it
+		)
+		{
+			shared_ptr<MenuItem const> const menu_item
+			(	new MenuItem
+				(	it->name(),
+					bind(bind(&PTS::conduct_editing, this, _1), *it)
+				)
+			);
+			menu.add_item(menu_item);
+		}
+		shared_ptr<MenuItem> exit_item(MenuItem::provide_menu_exit());
+		menu.add_item(exit_item);
+		menu.present_to_user();
+		if (menu.last_choice() == exit_item)
+		{
+			exiting = true;
+		}
 	}
-	shared_ptr<MenuItem> exit_item(MenuItem::provide_menu_exit());
-	menu.add_item(exit_item);
-	menu.present_to_user();
 	return;
 }
 
