@@ -256,8 +256,8 @@ private:
 	// TODO If we had a common base class below Journal, but above
 	// DraftJournal and OrdinaryJournal, then function templates wouldn't be
 	// required.
+	// Note these are explicitly instantiated in the .cpp file.
 	template <typename J> void elicit_journal_deletion(J& journal);
-
 	template <typename J> void elicit_journal_comment_amendment(J& journal);
 
 

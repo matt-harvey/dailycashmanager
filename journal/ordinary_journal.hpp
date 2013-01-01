@@ -2,7 +2,7 @@
 #define GUARD_ordinary_journal_hpp
 
 #include "entry.hpp"
-#include "journal.hpp"
+#include "persistent_journal.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "proto_journal.hpp"
 #include <sqloxx/general_typedefs.hpp>
@@ -17,11 +17,10 @@ namespace phatbooks
 {
 
 class DraftJournal;
-// class Journal;
 class PhatbooksDatabaseConnection;
 
 
-class OrdinaryJournal: public Journal
+class OrdinaryJournal: public PersistentJournal
 {
 public:
 

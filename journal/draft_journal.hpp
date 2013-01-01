@@ -2,7 +2,7 @@
 #define GUARD_draft_journal_hpp
 
 #include "draft_journal_impl.hpp"
-#include "journal.hpp"
+#include "persistent_journal.hpp"
 #include "proto_journal.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -24,7 +24,7 @@ class Repeater;
  * in the DraftJournal description alerting the user to the fact that it
  * will not be posted for this reason.
  */
-class DraftJournal: public Journal
+class DraftJournal: public PersistentJournal
 {
 public:
 	typedef sqloxx::Id Id;

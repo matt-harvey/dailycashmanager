@@ -45,6 +45,7 @@ set (main_files
 	 journal/ordinary_journal.cpp
 	 journal/ordinary_journal_impl.cpp
 	 journal/ordinary_journal_reader.cpp
+	 journal/persistent_journal.cpp
 	 session/session.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
 	 phatbooks_text_session/phatbooks_text_session.cpp
