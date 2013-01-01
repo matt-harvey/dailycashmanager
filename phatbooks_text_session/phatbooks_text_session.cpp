@@ -288,44 +288,32 @@ PhatbooksTextSession::elicit_existing_account_name(bool accept_empty)
 
 void PhatbooksTextSession::display_draft_journals()
 {
-	for (bool exiting_menu = false; !exiting_menu; )
+	typedef PhatbooksTextSession PTS;  // For brevity in the below
+	cout << endl;	
+	Menu menu
+	(	"Select a transaction to view from the above menu, "
+		"or 'x' to exit: "
+	);
+	DraftJournalReader const dj_reader(database_connection());
+	for
+	(	DraftJournalReader::const_iterator it = dj_reader.begin(),
+			end = dj_reader.end();
+		it != end;
+		++it
+	)
 	{
-		cout << endl;	
-		Menu menu
-		(	"Select a transaction to view from the above menu, "
-			"or 'x' to exit: "
+		shared_ptr<MenuItem const> const menu_item
+		(	new MenuItem
+			(	it->name(),
+				bind(bind(&PTS::conduct_editing, this, _1), *it),
+				true
+			)
 		);
-		DraftJournalReader const dj_reader(database_connection());
-		map< shared_ptr<MenuItem const>, shared_ptr<DraftJournal> > dj_map;
-		for
-		(	DraftJournalReader::const_iterator it = dj_reader.begin(),
-				end = dj_reader.end();
-			it != end;
-			++it
-		)
-		{
-			shared_ptr<MenuItem const> const menu_item
-			(	new MenuItem(it->name())
-			);
-			shared_ptr<DraftJournal> const dj(new DraftJournal(*it));
-			menu.add_item(menu_item);
-			dj_map[menu_item] = dj;
-		}
-		// TODO The mechanism for exiting to the previous menu is
-		// really clunky. This should be taken care of by the Menu
-		// class itself. Then we wouldn't need all this mess here. This
-		// is bound to come up again.
-		shared_ptr<MenuItem> exit_item(MenuItem::provide_menu_exit());
-		menu.add_item(exit_item);
-		menu.present_to_user();
-		shared_ptr<MenuItem const> const choice = menu.last_choice();
-		if (choice != exit_item)
-		{
-			DraftJournal active_journal = *(dj_map[menu.last_choice()]);
-			conduct_editing(active_journal);
-		}
-		else exiting_menu = true;
+		menu.add_item(menu_item);
 	}
+	shared_ptr<MenuItem> exit_item(MenuItem::provide_menu_exit());
+	menu.add_item(exit_item);
+	menu.present_to_user();
 	return;
 }
 
