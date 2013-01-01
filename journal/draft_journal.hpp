@@ -50,6 +50,7 @@ public:
 
 	Id id() const;
 	void save();
+	void remove();
 
 	/**
 	 * @returns a verbal description of the automatic postings associated

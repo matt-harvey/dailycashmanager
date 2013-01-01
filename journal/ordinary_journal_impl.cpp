@@ -264,6 +264,31 @@ OrdinaryJournalImpl::do_ghostify()
 
 
 void
+OrdinaryJournalImpl::do_remove()
+{
+	// TODO Confirm exception safety of total remove() function
+	// taking into account the below.
+	SQLStatement journal_detail_deleter
+	(	database_connection(),
+		"delete from ordinary_journal_detail where "
+		"journal_id = :p"
+	);
+	journal_detail_deleter.bind(":p", id());
+	SQLStatement journal_master_deleter
+	(	database_connection(),
+		"delete from journals were journal_id = :p"
+	);
+	journal_master_deleter.bind(":p", id());
+	clear_entries();
+	save();
+	journal_detail_deleter.step_final();
+	journal_master_deleter.step_final();
+	return;
+}
+
+
+
+void
 OrdinaryJournalImpl::mimic(Journal const& rhs)
 {
 	load();

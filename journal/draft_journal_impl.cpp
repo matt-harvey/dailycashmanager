@@ -322,6 +322,33 @@ DraftJournalImpl::do_ghostify()
 	return;
 }
 
+void
+DraftJournalImpl::do_remove()
+{
+	SQLStatement journal_detail_deleter
+	(	database_connection(),
+		"delete from draft_journal_detail where journal_id = :p"
+	);
+	journal_detail_deleter.bind(":p", id());
+	SQLStatement journal_master_deleter
+	(	database_connection(),
+		"delete from journals where journal_id = :p"
+	);
+	journal_master_deleter.bind(":p", id());
+	clear_entries();
+	clear_repeaters();
+	save();
+	journal_detail_deleter.step_final();
+	journal_master_deleter.step_final();
+	return;
+}
+
+void
+DraftJournalImpl::clear_repeaters()
+{
+	(m_dj_data->repeaters).clear();
+	return;
+}
 
 string
 DraftJournalImpl::repeater_description()

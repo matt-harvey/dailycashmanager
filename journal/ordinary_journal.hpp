@@ -49,6 +49,7 @@ public:
 
 	Id id() const;
 	void save();
+	void remove();
 
 	/**
 	 * Take on the attributes of \e rhs, where these exist and are

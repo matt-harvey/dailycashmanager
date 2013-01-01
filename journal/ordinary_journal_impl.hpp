@@ -132,6 +132,7 @@ private:
 	void do_save_existing();
 	void do_save_new();
 	void do_ghostify();
+	void do_remove();
 
 
 	// Sole non-inherited data member. Note this is of a type where copying

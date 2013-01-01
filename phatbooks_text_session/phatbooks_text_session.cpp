@@ -220,25 +220,6 @@ PhatbooksTextSession::~PhatbooksTextSession()
 {
 }
 
-
-string
-PhatbooksTextSession::elicit_existing_account_name(bool accept_empty)
-{
-	 while (true)
-	 {
-		string input = get_user_input();
-	 	if
-		(	database_connection().has_account_named(input) ||
-			(accept_empty && input.empty())
-		)
-		{
-			return input;
-		}
-		cout << "There is no account named " << input
-		     << ". Please try again: ";
-	}
-}
-
 	
 
 int PhatbooksTextSession::do_run(string const& filename)
@@ -282,6 +263,25 @@ int PhatbooksTextSession::do_run(string const& filename)
 	return 0;
 }
 
+
+
+string
+PhatbooksTextSession::elicit_existing_account_name(bool accept_empty)
+{
+	 while (true)
+	 {
+		string input = get_user_input();
+	 	if
+		(	database_connection().has_account_named(input) ||
+			(accept_empty && input.empty())
+		)
+		{
+			return input;
+		}
+		cout << "There is no account named " << input
+		     << ". Please try again: ";
+	}
+}
 
 
 
@@ -332,7 +332,6 @@ void PhatbooksTextSession::display_draft_journals()
 void
 PhatbooksTextSession::elicit_entry_insertion(Journal& journal)
 {
-	
 	// TODO Implement this
 	clog << endl << "We're now inside elicit_entry_insertion." << endl;
 	return;
@@ -354,21 +353,98 @@ PhatbooksTextSession::elicit_entry_amendment(Journal& journal)
 	return;
 }
 
-void
-PhatbooksTextSession::elicit_journal_deletion(Journal& journal)
+/******************************* Journal deletion ****************/
+namespace
 {
-	// TODO Implement this
-	clog << endl << "We're now inside elicit_journal_deletion." << endl;
+	// TODO This sucks
+	template <typename J>
+	void t_elicit_journal_deletion(J& journal);
+
+	template <typename J>
+	void t_elicit_journal_deletion(J& journal)
+	{
+		cout << "Are you sure you want to delete this entire transaction? (y/n) ";
+		string const confirmation = get_constrained_user_input
+		(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
+			"Try again, entering \"y\" to delete or \"n\" to keep: ",
+			false
+		);
+		if (confirmation == "y")
+		{
+			journal.remove();
+			cout << "\nTransaction deleted." << endl << endl;
+		}
+		else
+		{
+			assert (confirmation == "n");
+			cout << "\nTransaction has not been deleted." << endl << endl;
+		}
+		return;
+	}
+}  // End anonynmous namespace
+
+template void t_elicit_journal_deletion<DraftJournal>(DraftJournal&);
+template void t_elicit_journal_deletion<OrdinaryJournal>(OrdinaryJournal&);
+
+void
+PhatbooksTextSession::
+elicit_draft_journal_deletion(DraftJournal& journal)
+{
+	t_elicit_journal_deletion(journal);
 	return;
 }
 
 void
-PhatbooksTextSession::elicit_comment_amendment(Journal& journal)
+PhatbooksTextSession::
+elicit_ordinary_journal_deletion(OrdinaryJournal& journal)
 {
-	// TODO Implement this
-	clog << endl << "We're now inside elicit_comment_amendment." << endl;
+	t_elicit_journal_deletion(journal);
 	return;
 }
+/****************************************************************/
+
+
+
+/***************** Journal comment amendment ********************/
+
+namespace
+{
+	// TODO This sucks
+	template <typename J>
+	void t_elicit_comment_amendment(J& journal);
+
+	template <typename J>
+	void t_elicit_comment_amendment(J& journal)
+	{
+		cout << "Enter new comment for this transaction: ";
+		journal.set_comment(get_user_input());
+		journal.save();
+		cout << "\nTransaction has been amended to: " << journal << endl;
+		return;
+	}
+}  // End anonymous namespace
+
+
+template void t_elicit_comment_amendment<DraftJournal>(DraftJournal&);
+template void t_elicit_comment_amendment<OrdinaryJournal>(OrdinaryJournal&);
+
+void
+PhatbooksTextSession::
+elicit_draft_journal_comment_amendment(DraftJournal& journal)
+{
+	t_elicit_comment_amendment(journal);
+	return;
+}
+
+void
+PhatbooksTextSession::
+elicit_ordinary_journal_comment_amendment(OrdinaryJournal& journal)
+{
+	t_elicit_comment_amendment(journal);
+	return;
+}
+/****************************************************************/
+
 
 void
 PhatbooksTextSession::elicit_repeater_insertion(DraftJournal& journal)
@@ -452,7 +528,7 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 	ItemPtr delete_journal_item
 	(	new MenuItem
 		(	"Delete transaction",
-			bind(bind(&PTS::elicit_journal_deletion, this, _1), journal),
+			bind(bind(&PTS::elicit_draft_journal_deletion, this, _1), journal),
 			true
 		)
 	);
@@ -479,7 +555,7 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 	ItemPtr amend_comment_item
 	(	new MenuItem
 		(	"Amend transaction comment",
-			bind(bind(&PTS::elicit_comment_amendment, this, _1), journal),
+			bind(bind(&PTS::elicit_draft_journal_comment_amendment, this, _1), journal),
 			true
 		)
 	);

@@ -137,6 +137,9 @@ private:
 	void do_save_existing();
 	void do_save_new();
 	void do_ghostify();
+	void do_remove();
+
+	void clear_repeaters();
 
 	struct DraftJournalData;
 

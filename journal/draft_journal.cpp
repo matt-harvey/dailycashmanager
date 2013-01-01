@@ -126,6 +126,13 @@ DraftJournal::save()
 	return;
 }
 
+void
+DraftJournal::remove()
+{
+	m_impl->remove();
+}
+
+
 DraftJournal::Id
 DraftJournal::id() const
 {

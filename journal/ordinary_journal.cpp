@@ -142,6 +142,12 @@ OrdinaryJournal::save()
 	return;
 }
 
+void
+OrdinaryJournal::remove()
+{
+	m_impl->remove();
+	return;
+}
 
 void
 OrdinaryJournal::mimic(ProtoJournal const& rhs)
