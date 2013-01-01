@@ -27,11 +27,11 @@ class Repeater;
  */
 class DraftJournal:
 	virtual public PersistentJournal,
-	private PhatbooksPersistentObjectDetail<DraftJournal, DraftJournalImpl>
+	private PhatbooksPersistentObjectDetail<DraftJournalImpl>
 {
 public:
 	typedef
-		PhatbooksPersistentObjectDetail<DraftJournal, DraftJournalImpl>
+		PhatbooksPersistentObjectDetail<DraftJournalImpl>
 		PhatbooksPersistentObjectDetail;
 	typedef PhatbooksPersistentObjectBase::Id Id;
 

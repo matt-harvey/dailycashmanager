@@ -3,6 +3,7 @@
 
 #include "entry_impl.hpp"
 #include "finformat.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -16,10 +17,20 @@ namespace phatbooks
 class Account;
 class PhatbooksDatabaseConnection;
 
-class Entry
+class Entry:
+	virtual public PhatbooksPersistentObjectBase,
+	private PhatbooksPersistentObjectDetail<EntryImpl>
 {
 public:
-	typedef sqloxx::Id Id;
+	
+	typedef
+		PhatbooksPersistentObjectDetail<EntryImpl>
+		PhatbooksPersistentObjectDetail;
+	
+	typedef
+		PhatbooksPersistentObjectBase::Id Id;
+
+
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 	explicit Entry
 	(	PhatbooksDatabaseConnection& p_database_connection
@@ -55,7 +66,7 @@ public:
 	template <typename JournalType>
 	JournalType journal() const
 	{
-		return m_impl->journal<JournalType>();
+		return impl().journal<JournalType>();
 	}
 
 	/**
@@ -71,19 +82,7 @@ public:
 	 * TODO This should eventually be shifted into a base
 	 * class.
 	 */
-	Id id() const;
-
-	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
 	bool has_id() const;
-
-	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
-	void save();
 
 	/**
 	 * TODO This should eventually be shifted into a base
@@ -107,8 +106,6 @@ public:
 
 private:
 	Entry(sqloxx::Handle<EntryImpl> const& p_handle);
-	sqloxx::Handle<EntryImpl> m_impl;
-
 };
 
 

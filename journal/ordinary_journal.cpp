@@ -4,6 +4,7 @@
 #include "entry.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include <jewel/output_aux.hpp>
 #include <sqloxx/handle.hpp>

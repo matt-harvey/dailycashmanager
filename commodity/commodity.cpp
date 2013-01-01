@@ -1,6 +1,7 @@
 #include "commodity.hpp"
 #include "commodity_impl.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -25,7 +26,7 @@ Commodity::setup_tables(PhatbooksDatabaseConnection& dbc)
 Commodity::Commodity
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	m_impl(Handle<CommodityImpl>(p_database_connection))
+	PhatbooksPersistentObjectDetail(p_database_connection)
 {
 }
 
@@ -33,7 +34,7 @@ Commodity::Commodity
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	m_impl(Handle<CommodityImpl>(p_database_connection, p_id))
+	PhatbooksPersistentObjectDetail(p_database_connection, p_id)
 {
 }
 
@@ -57,13 +58,11 @@ Commodity::Commodity
 (	PhatbooksDatabaseConnection& p_database_connection,
 	string const& p_abbreviation
 ):
-	m_impl
-	(	Handle<CommodityImpl>
+	PhatbooksPersistentObjectDetail
+	(	p_database_connection,
+		CommodityImpl::id_for_abbreviation
 		(	p_database_connection,
-			CommodityImpl::id_for_abbreviation
-			(	p_database_connection,
-				p_abbreviation
-			)
+			p_abbreviation
 		)
 	)
 {
@@ -71,84 +70,70 @@ Commodity::Commodity
 string
 Commodity::abbreviation() const
 {
-	return m_impl->abbreviation();
+	return impl().abbreviation();
 }
 
 string
 Commodity::name() const
 {
-	return m_impl->name();
+	return impl().name();
 }
 
 std::string
 Commodity::description() const
 {
-	return m_impl->description();
+	return impl().description();
 }
 
 int
 Commodity::precision() const
 {
-	return m_impl->precision();
+	return impl().precision();
 }
 
 Decimal
 Commodity::multiplier_to_base() const
 {
-	return m_impl->multiplier_to_base();
+	return impl().multiplier_to_base();
 }
 
 void
 Commodity::set_abbreviation(string const& p_abbreviation)
 {
-	m_impl->set_abbreviation(p_abbreviation);
+	impl().set_abbreviation(p_abbreviation);
 	return;
 }
 
 void
 Commodity::set_name(std::string const& p_name)
 {
-	m_impl->set_name(p_name);
+	impl().set_name(p_name);
 	return;
 }
 
 void
 Commodity::set_description(std::string const& p_description)
 {
-	m_impl->set_description(p_description);
+	impl().set_description(p_description);
 	return;
 }
 
 void
 Commodity::set_precision(int p_precision)
 {
-	m_impl->set_precision(p_precision);
+	impl().set_precision(p_precision);
 	return;
 }
 
 void
 Commodity::set_multiplier_to_base(Decimal const& p_multiplier_to_base)
 {
-	m_impl->set_multiplier_to_base(p_multiplier_to_base);
+	impl().set_multiplier_to_base(p_multiplier_to_base);
 	return;
 }
-
-void
-Commodity::save()
-{
-	m_impl->save();
-	return;
-}
-
-Commodity::Id
-Commodity::id() const
-{
-	return m_impl->id();
-}
-
 
 Commodity::Commodity(sqloxx::Handle<CommodityImpl> const& p_handle):
-	m_impl(p_handle)
+	PhatbooksPersistentObjectDetail(p_handle)
 {
 }
 

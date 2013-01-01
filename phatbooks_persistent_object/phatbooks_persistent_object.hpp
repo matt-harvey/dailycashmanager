@@ -24,6 +24,11 @@
  * implementation class for Impl,
  * which should in turn inherit from
  * sqloxx::PersistentObject<PhatbooksDatabaseConnection, Impl>.
+ *
+ * Note there is a reason these are two separate classes, namely,
+ * to support the PersistentJournal class as an abstract class
+ * between Journal and DraftJournal/OrdinaryJournal in the hierarchy.
+ * This architecture makes this possible.
  */
 
 namespace phatbooks
@@ -54,7 +59,7 @@ private:
 
 
 
-template <typename Derived, typename Impl>
+template <typename Impl>
 class PhatbooksPersistentObjectDetail:
 	virtual private PhatbooksPersistentObjectBase
 {
@@ -93,18 +98,16 @@ private:
 };
 
 
-template <typename Derived, typename Impl>
-PhatbooksPersistentObjectDetail<Derived, Impl>::
-PhatbooksPersistentObjectDetail
+template <typename Impl>
+PhatbooksPersistentObjectDetail<Impl>::PhatbooksPersistentObjectDetail
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
 	m_impl(sqloxx::Handle<Impl>(p_database_connection))
 {
 }
 
-template <typename Derived, typename Impl>
-PhatbooksPersistentObjectDetail<Derived, Impl>::
-PhatbooksPersistentObjectDetail
+template <typename Impl>
+PhatbooksPersistentObjectDetail<Impl>::PhatbooksPersistentObjectDetail
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
@@ -114,24 +117,24 @@ PhatbooksPersistentObjectDetail
 
 
 
-template <typename Derived, typename Impl>
+template <typename Impl>
 void
-PhatbooksPersistentObjectDetail<Derived, Impl>::do_save()
+PhatbooksPersistentObjectDetail<Impl>::do_save()
 {
 	m_impl->save();
 	return;
 }
 
-template <typename Derived, typename Impl>
+template <typename Impl>
 typename sqloxx::Id
-PhatbooksPersistentObjectDetail<Derived, Impl>::do_get_id() const
+PhatbooksPersistentObjectDetail<Impl>::do_get_id() const
 {
 	return m_impl->id();
 }
 
-template <typename Derived, typename Impl>
+template <typename Impl>
 PhatbooksDatabaseConnection&
-PhatbooksPersistentObjectDetail<Derived, Impl>::do_get_database_connection() const
+PhatbooksPersistentObjectDetail<Impl>::do_get_database_connection() const
 {
 	return m_impl->database_connection();
 }

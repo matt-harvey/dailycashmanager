@@ -1,4 +1,5 @@
 #include "ordinary_journal.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
 #include "repeater_impl.hpp"
@@ -31,9 +32,7 @@ Repeater::setup_tables(PhatbooksDatabaseConnection& dbc)
 Repeater::Repeater
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	m_impl
-	(	Handle<RepeaterImpl>(p_database_connection)
-	)
+	PhatbooksPersistentObjectDetail(p_database_connection)
 {
 }
 
@@ -41,9 +40,7 @@ Repeater::Repeater
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	m_impl
-	(	Handle<RepeaterImpl>(p_database_connection, p_id)
-	)
+	PhatbooksPersistentObjectDetail(p_database_connection, p_id)
 {
 }
 
@@ -66,28 +63,28 @@ Repeater::create_unchecked
 void
 Repeater::set_interval_type(IntervalType p_interval_type)
 {
-	m_impl->set_interval_type(p_interval_type);
+	impl().set_interval_type(p_interval_type);
 	return;
 }
 
 void
 Repeater::set_interval_units(int p_interval_units)
 {
-	m_impl->set_interval_units(p_interval_units);
+	impl().set_interval_units(p_interval_units);
 	return;
 }
 
 void
 Repeater::set_journal_id(ProtoJournal::Id p_journal_id)
 {
-	m_impl->set_journal_id(p_journal_id);
+	impl().set_journal_id(p_journal_id);
 	return;
 }
 
 void
 Repeater::set_next_date(gregorian::date const& p_next_date)
 {
-	m_impl->set_next_date(p_next_date);
+	impl().set_next_date(p_next_date);
 	return;
 }
 
@@ -95,69 +92,57 @@ Repeater::set_next_date(gregorian::date const& p_next_date)
 Repeater::IntervalType
 Repeater::interval_type() const
 {
-	return m_impl->interval_type();
+	return impl().interval_type();
 }
 
 int
 Repeater::interval_units() const
 {
-	return m_impl->interval_units();
+	return impl().interval_units();
 }
 
 gregorian::date
 Repeater::next_date(vector<gregorian::date>::size_type n) const
 {
-	return m_impl->next_date(n);
+	return impl().next_date(n);
 }
 
 
 shared_ptr<vector<gregorian::date> >
 Repeater::firings_till(gregorian::date const& limit)
 {
-	return m_impl->firings_till(limit);
+	return impl().firings_till(limit);
 }
 
 OrdinaryJournal
 Repeater::fire_next()
 {
-	return m_impl->fire_next();
+	return impl().fire_next();
 }
 
-ProtoJournal::Id
+DraftJournal::Id
 Repeater::journal_id() const
 {
-	return m_impl->journal_id();
+	return impl().journal_id();
 }
 
-Repeater::Id
-Repeater::id() const
-{
-	return m_impl->id();
-}
-
-void
-Repeater::save()
-{
-	m_impl->save();
-	return;
-}
 
 void
 Repeater::remove()
 {
-	m_impl->remove();
+	impl().remove();
 	return;
 }
 
 void
 Repeater::ghostify()
 {
-	m_impl->ghostify();
+	impl().ghostify();
 	return;
 }
 
 Repeater::Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle):
-	m_impl(p_handle)
+	PhatbooksPersistentObjectDetail(p_handle)
 {
 }
 

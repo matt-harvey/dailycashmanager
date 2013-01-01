@@ -2,6 +2,7 @@
 #define GUARD_commodity_hpp
 
 #include "commodity_impl.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
@@ -16,10 +17,18 @@ class PhatbooksDatabaseConnection;
 
 
 
-class Commodity
+class Commodity:
+	virtual public PhatbooksPersistentObjectBase,
+	private PhatbooksPersistentObjectDetail<CommodityImpl>
 {
 public:
-	typedef sqloxx::Id Id;
+
+	typedef
+		PhatbooksPersistentObjectDetail<CommodityImpl>
+		PhatbooksPersistentObjectDetail;
+	
+	typedef PhatbooksPersistentObjectDetail::Id Id;
+
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	explicit Commodity
@@ -55,13 +64,8 @@ public:
 	void set_precision(int p_precision);
 	void set_multiplier_to_base(jewel::Decimal const& p_multiplier_to_base);
 
-	// TODO These should be moved into a base class in due course
-	void save();
-	Id id() const;
-
 private:
 	Commodity(sqloxx::Handle<CommodityImpl> const& p_handle);
-	sqloxx::Handle<CommodityImpl> m_impl;
 
 };
 

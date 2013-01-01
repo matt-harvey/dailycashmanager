@@ -2,7 +2,9 @@
 #define GUARD_repeater_hpp
 
 #include "interval_type.hpp"
+#include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include "repeater_impl.hpp"
 #include <sqloxx/general_typedefs.hpp>
@@ -15,11 +17,17 @@
 namespace phatbooks
 {
 
-class Repeater
+class Repeater:
+	virtual public PhatbooksPersistentObjectBase,
+	private PhatbooksPersistentObjectDetail<RepeaterImpl>
 {
 public:
+	typedef
+		PhatbooksPersistentObjectDetail<RepeaterImpl>
+		PhatbooksPersistentObjectDetail;
+	typedef PhatbooksPersistentObjectBase::Id Id;
+
 	typedef interval_type::IntervalType IntervalType;
-	typedef sqloxx::Id Id;
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 	
@@ -63,20 +71,7 @@ public:
 	(	std::vector<boost::gregorian::date>::size_type n = 0
 	) const;
 
-	ProtoJournal::Id journal_id() const;
-
-
-	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
-	Id id() const;
-
-	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
-	void save();
+	DraftJournal::Id journal_id() const;
 
 	/**
 	 * TODO This should eventually be shifted into a base class.
@@ -89,10 +84,7 @@ public:
 	void ghostify();
 
 private:
-
 	Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle);
-
-	sqloxx::Handle<RepeaterImpl> m_impl;
 };
 
 

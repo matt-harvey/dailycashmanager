@@ -23,14 +23,15 @@ class PhatbooksDatabaseConnection;
 
 class OrdinaryJournal:
 	virtual public PersistentJournal,
-	private PhatbooksPersistentObjectDetail
-	<	OrdinaryJournal,
-		OrdinaryJournalImpl
-	>
+	private PhatbooksPersistentObjectDetail<OrdinaryJournalImpl>
 {
 public:
 
-	typedef sqloxx::Id Id;
+	typedef
+		PhatbooksPersistentObjectDetail<OrdinaryJournalImpl>
+		PhatbooksPersistentObjectDetail;
+	
+	typedef PhatbooksPersistentObjectDetail::Id Id;
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 

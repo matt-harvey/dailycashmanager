@@ -20,12 +20,12 @@ class PhatbooksDatabaseConnection;
 
 class Account:
 	virtual public PhatbooksPersistentObjectBase,
-	private PhatbooksPersistentObjectDetail<Account, AccountImpl>
+	private PhatbooksPersistentObjectDetail<AccountImpl>
 {
 public:
 	typedef account_type::AccountType AccountType;
 	typedef
-		PhatbooksPersistentObjectDetail<Account, AccountImpl>
+		PhatbooksPersistentObjectDetail<AccountImpl>
 		PhatbooksPersistentObjectDetail;
 	typedef PhatbooksPersistentObjectBase::Id Id;
 
