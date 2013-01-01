@@ -353,12 +353,10 @@ PhatbooksTextSession::elicit_entry_amendment(Journal& journal)
 	return;
 }
 
-/******************************* Journal deletion ****************/
-// TODO This sucks
 
 template <typename J>
 void
-PhatbooksTextSession::elicit_journal_deletion_aux(J& journal)
+PhatbooksTextSession::elicit_journal_deletion(J& journal)
 {
 	cout << "Are you sure you want to delete this entire transaction? (y/n) ";
 	string const confirmation = get_constrained_user_input
@@ -379,43 +377,25 @@ PhatbooksTextSession::elicit_journal_deletion_aux(J& journal)
 	return;
 }
 
+
+// Explicit instantiations
 template
 void
-PhatbooksTextSession::elicit_journal_deletion_aux<DraftJournal>
+PhatbooksTextSession::elicit_journal_deletion<DraftJournal>
 (	DraftJournal&
 );
-
 template
 void
-PhatbooksTextSession::elicit_journal_deletion_aux<OrdinaryJournal>
+PhatbooksTextSession::elicit_journal_deletion<OrdinaryJournal>
 (	OrdinaryJournal&
 );
 
-void
-PhatbooksTextSession::
-elicit_draft_journal_deletion(DraftJournal& journal)
-{
-	elicit_journal_deletion_aux(journal);
-	return;
-}
 
-void
-PhatbooksTextSession::
-elicit_ordinary_journal_deletion(OrdinaryJournal& journal)
-{
-	elicit_journal_deletion_aux(journal);
-	return;
-}
-/****************************************************************/
-
-
-
-/***************** Journal comment amendment ********************/
 
 	
 template <typename J>
 void
-PhatbooksTextSession::elicit_journal_comment_amendment_aux(J& journal)
+PhatbooksTextSession::elicit_journal_comment_amendment(J& journal)
 {
 	cout << "Enter new comment for this transaction: ";
 	journal.set_comment(get_user_input());
@@ -424,35 +404,18 @@ PhatbooksTextSession::elicit_journal_comment_amendment_aux(J& journal)
 	return;
 }
 
-
+// Explicit instantiations
 template
 void
-PhatbooksTextSession::elicit_journal_comment_amendment_aux<DraftJournal>
+PhatbooksTextSession::elicit_journal_comment_amendment<DraftJournal>
 (	DraftJournal&
 );
-
 template
 void
-PhatbooksTextSession::elicit_journal_comment_amendment_aux<OrdinaryJournal>
+PhatbooksTextSession::elicit_journal_comment_amendment<OrdinaryJournal>
 (	OrdinaryJournal&
 );
 
-void
-PhatbooksTextSession::
-elicit_draft_journal_comment_amendment(DraftJournal& journal)
-{
-	elicit_journal_comment_amendment_aux(journal);
-	return;
-}
-
-void
-PhatbooksTextSession::
-elicit_ordinary_journal_comment_amendment(OrdinaryJournal& journal)
-{
-	elicit_journal_comment_amendment_aux(journal);
-	return;
-}
-/****************************************************************/
 
 
 void
@@ -537,7 +500,10 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 	ItemPtr delete_journal_item
 	(	new MenuItem
 		(	"Delete transaction",
-			bind(bind(&PTS::elicit_draft_journal_deletion, this, _1), journal),
+			bind
+			(	bind(&PTS::elicit_journal_deletion<DraftJournal>, this, _1),
+				journal
+			),
 			true
 		)
 	);
@@ -564,7 +530,14 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 	ItemPtr amend_comment_item
 	(	new MenuItem
 		(	"Amend transaction comment",
-			bind(bind(&PTS::elicit_draft_journal_comment_amendment, this, _1), journal),
+			bind
+			(	bind
+				(	&PTS::elicit_journal_comment_amendment<DraftJournal>,
+					this,
+					_1
+				),
+				journal
+			),
 			true
 		)
 	);

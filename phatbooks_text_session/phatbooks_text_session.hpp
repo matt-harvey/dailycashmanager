@@ -254,18 +254,11 @@ private:
 	void elicit_entry_amendment(Journal& journal);
 
 	// TODO If we had a common base class below Journal, but above
-	// DraftJournal and OrdinaryJournal, then these double-ups wouldn't be
+	// DraftJournal and OrdinaryJournal, then function templates wouldn't be
 	// required.
-	void elicit_draft_journal_deletion(DraftJournal& journal);
-	void elicit_ordinary_journal_deletion(OrdinaryJournal& journal);
-	// Explicitly instantiated in the .cpp source file
-	template <typename J> void elicit_journal_deletion_aux(J& journal);
+	template <typename J> void elicit_journal_deletion(J& journal);
 
-	void elicit_draft_journal_comment_amendment(DraftJournal& journal);
-	void elicit_ordinary_journal_comment_amendment(OrdinaryJournal& journal);
-	// Explicitly instantiated in the .cpp source file
-	template <typename J> void
-	elicit_journal_comment_amendment_aux(J& journal);
+	template <typename J> void elicit_journal_comment_amendment(J& journal);
 
 
 	void elicit_repeater_insertion(DraftJournal& journal);
