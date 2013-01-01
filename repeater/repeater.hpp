@@ -73,16 +73,6 @@ public:
 
 	DraftJournal::Id journal_id() const;
 
-	/**
-	 * TODO This should eventually be shifted into a base class.
-	 */
-	void remove();
-	
-	/**
-	 * TODO This should eventually be shifted into a base class.
-	 */
-	void ghostify();
-
 private:
 	Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle);
 };

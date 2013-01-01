@@ -18,7 +18,6 @@ class PersistentJournal:
 {
 public:
 	virtual ~PersistentJournal();
-	virtual void remove() = 0;
 };
 
 }  // namespace phatbooks

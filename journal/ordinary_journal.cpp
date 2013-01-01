@@ -127,13 +127,6 @@ OrdinaryJournal::do_get_entries() const
 }
 
 void
-OrdinaryJournal::remove()
-{
-	impl().remove();
-	return;
-}
-
-void
 OrdinaryJournal::mimic(ProtoJournal const& rhs)
 {
 	impl().mimic(rhs);

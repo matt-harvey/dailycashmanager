@@ -79,24 +79,6 @@ public:
 	boost::gregorian::date date() const;
 
 	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
-	bool has_id() const;
-
-	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
-	void remove();
-
-	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
-	void ghostify();
-
-	/**
 	 * Copy attributes of rhs to *this, but do \e not copy:\n
 	 * \e id,\n
 	 * \e database_connection, or\n

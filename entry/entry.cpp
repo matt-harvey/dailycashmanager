@@ -131,18 +131,6 @@ Entry::date() const
 	return journal<OrdinaryJournal>().date();
 }
 
-bool
-Entry::has_id() const
-{
-	return impl().has_id();
-}
-
-void
-Entry::remove()
-{
-	impl().remove();
-	return;
-}
 
 void
 Entry::mimic(Entry const& rhs)
@@ -151,14 +139,6 @@ Entry::mimic(Entry const& rhs)
 	return;
 }
 
-
-
-void
-Entry::ghostify()
-{
-	impl().ghostify();
-	return;
-}
 
 Entry::Entry(sqloxx::Handle<EntryImpl> const& p_handle):
 	PhatbooksPersistentObjectDetail(p_handle)

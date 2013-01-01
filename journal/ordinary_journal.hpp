@@ -53,8 +53,6 @@ public:
 	void set_date(boost::gregorian::date const& p_date);
 	boost::gregorian::date date() const;
 
-	void remove();
-
 	/**
 	 * Take on the attributes of \e rhs, where these exist and are
 	 * applicable to OrdinaryJournal; but do \e not take on the \e id of

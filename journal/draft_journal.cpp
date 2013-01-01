@@ -120,13 +120,6 @@ DraftJournal::do_get_entries() const
 	return impl().entries();
 }
 
-void
-DraftJournal::remove()
-{
-	impl().remove();
-}
-
-
 
 string
 DraftJournal::repeater_description() const

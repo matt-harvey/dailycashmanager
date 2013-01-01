@@ -127,20 +127,6 @@ Repeater::journal_id() const
 }
 
 
-void
-Repeater::remove()
-{
-	impl().remove();
-	return;
-}
-
-void
-Repeater::ghostify()
-{
-	impl().ghostify();
-	return;
-}
-
 Repeater::Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle):
 	PhatbooksPersistentObjectDetail(p_handle)
 {

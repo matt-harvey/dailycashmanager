@@ -42,6 +42,9 @@ public:
 	void save();
 	Id id() const;
 	PhatbooksDatabaseConnection& database_connection() const;
+	bool has_id() const;
+	void remove();
+	void ghostify();
 
 private:
 	// Note the implementations for these are provided by
@@ -55,6 +58,15 @@ private:
 
 	virtual
 	PhatbooksDatabaseConnection& do_get_database_connection() const = 0;
+
+	virtual
+	bool does_have_id() const = 0;
+
+	virtual
+	void do_remove() = 0;
+	
+	virtual
+	void do_ghostify() = 0;
 };
 
 
@@ -94,6 +106,9 @@ private:
 	void do_save();
 	Id do_get_id() const;
 	PhatbooksDatabaseConnection& do_get_database_connection() const;
+	bool does_have_id() const;
+	void do_remove();
+	void do_ghostify();
 	sqloxx::Handle<Impl> m_impl;
 };
 
@@ -115,8 +130,6 @@ PhatbooksPersistentObjectDetail<Impl>::PhatbooksPersistentObjectDetail
 {
 }
 
-
-
 template <typename Impl>
 void
 PhatbooksPersistentObjectDetail<Impl>::do_save()
@@ -137,6 +150,29 @@ PhatbooksDatabaseConnection&
 PhatbooksPersistentObjectDetail<Impl>::do_get_database_connection() const
 {
 	return m_impl->database_connection();
+}
+
+template <typename Impl>
+bool
+PhatbooksPersistentObjectDetail<Impl>::does_have_id() const
+{
+	return m_impl->has_id();
+}
+
+template <typename Impl>
+void
+PhatbooksPersistentObjectDetail<Impl>::do_remove()
+{
+	m_impl->remove();
+	return;
+}
+
+template <typename Impl>
+void
+PhatbooksPersistentObjectDetail<Impl>::do_ghostify()
+{
+	m_impl->ghostify();
+	return;
 }
 
 

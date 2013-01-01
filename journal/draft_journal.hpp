@@ -54,8 +54,6 @@ public:
 	void add_repeater(Repeater& repeater);
 	std::string name() const;
 
-	void remove();
-
 	/**
 	 * @returns a verbal description of the automatic postings associated
 	 * with the DraftJournal (or an empty string if there are none).
