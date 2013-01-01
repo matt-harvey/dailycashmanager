@@ -354,43 +354,48 @@ PhatbooksTextSession::elicit_entry_amendment(Journal& journal)
 }
 
 /******************************* Journal deletion ****************/
-namespace
+// TODO This sucks
+
+template <typename J>
+void
+PhatbooksTextSession::elicit_journal_deletion_aux(J& journal)
 {
-	// TODO This sucks
-	template <typename J>
-	void t_elicit_journal_deletion(J& journal);
-
-	template <typename J>
-	void t_elicit_journal_deletion(J& journal)
+	cout << "Are you sure you want to delete this entire transaction? (y/n) ";
+	string const confirmation = get_constrained_user_input
+	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
+		"Try again, entering \"y\" to delete or \"n\" to keep: ",
+		false
+	);
+	if (confirmation == "y")
 	{
-		cout << "Are you sure you want to delete this entire transaction? (y/n) ";
-		string const confirmation = get_constrained_user_input
-		(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
-			"Try again, entering \"y\" to delete or \"n\" to keep: ",
-			false
-		);
-		if (confirmation == "y")
-		{
-			journal.remove();
-			cout << "\nTransaction deleted." << endl << endl;
-		}
-		else
-		{
-			assert (confirmation == "n");
-			cout << "\nTransaction has not been deleted." << endl << endl;
-		}
-		return;
+		journal.remove();
+		cout << "\nTransaction deleted." << endl << endl;
 	}
-}  // End anonynmous namespace
+	else
+	{
+		assert (confirmation == "n");
+		cout << "\nTransaction has not been deleted." << endl << endl;
+	}
+	return;
+}
 
-template void t_elicit_journal_deletion<DraftJournal>(DraftJournal&);
-template void t_elicit_journal_deletion<OrdinaryJournal>(OrdinaryJournal&);
+template
+void
+PhatbooksTextSession::elicit_journal_deletion_aux<DraftJournal>
+(	DraftJournal&
+);
+
+template
+void
+PhatbooksTextSession::elicit_journal_deletion_aux<OrdinaryJournal>
+(	OrdinaryJournal&
+);
 
 void
 PhatbooksTextSession::
 elicit_draft_journal_deletion(DraftJournal& journal)
 {
-	t_elicit_journal_deletion(journal);
+	elicit_journal_deletion_aux(journal);
 	return;
 }
 
@@ -398,7 +403,7 @@ void
 PhatbooksTextSession::
 elicit_ordinary_journal_deletion(OrdinaryJournal& journal)
 {
-	t_elicit_journal_deletion(journal);
+	elicit_journal_deletion_aux(journal);
 	return;
 }
 /****************************************************************/
@@ -407,32 +412,36 @@ elicit_ordinary_journal_deletion(OrdinaryJournal& journal)
 
 /***************** Journal comment amendment ********************/
 
-namespace
+	
+template <typename J>
+void
+PhatbooksTextSession::elicit_journal_comment_amendment_aux(J& journal)
 {
-	// TODO This sucks
-	template <typename J>
-	void t_elicit_comment_amendment(J& journal);
-
-	template <typename J>
-	void t_elicit_comment_amendment(J& journal)
-	{
-		cout << "Enter new comment for this transaction: ";
-		journal.set_comment(get_user_input());
-		journal.save();
-		cout << "\nTransaction has been amended to: " << journal << endl;
-		return;
-	}
-}  // End anonymous namespace
+	cout << "Enter new comment for this transaction: ";
+	journal.set_comment(get_user_input());
+	journal.save();
+	cout << "\nTransaction has been amended to: " << journal << endl;
+	return;
+}
 
 
-template void t_elicit_comment_amendment<DraftJournal>(DraftJournal&);
-template void t_elicit_comment_amendment<OrdinaryJournal>(OrdinaryJournal&);
+template
+void
+PhatbooksTextSession::elicit_journal_comment_amendment_aux<DraftJournal>
+(	DraftJournal&
+);
+
+template
+void
+PhatbooksTextSession::elicit_journal_comment_amendment_aux<OrdinaryJournal>
+(	OrdinaryJournal&
+);
 
 void
 PhatbooksTextSession::
 elicit_draft_journal_comment_amendment(DraftJournal& journal)
 {
-	t_elicit_comment_amendment(journal);
+	elicit_journal_comment_amendment_aux(journal);
 	return;
 }
 
@@ -440,7 +449,7 @@ void
 PhatbooksTextSession::
 elicit_ordinary_journal_comment_amendment(OrdinaryJournal& journal)
 {
-	t_elicit_comment_amendment(journal);
+	elicit_journal_comment_amendment_aux(journal);
 	return;
 }
 /****************************************************************/

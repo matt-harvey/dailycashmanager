@@ -258,8 +258,14 @@ private:
 	// required.
 	void elicit_draft_journal_deletion(DraftJournal& journal);
 	void elicit_ordinary_journal_deletion(OrdinaryJournal& journal);
+	// Explicitly instantiated in the .cpp source file
+	template <typename J> void elicit_journal_deletion_aux(J& journal);
+
 	void elicit_draft_journal_comment_amendment(DraftJournal& journal);
 	void elicit_ordinary_journal_comment_amendment(OrdinaryJournal& journal);
+	// Explicitly instantiated in the .cpp source file
+	template <typename J> void
+	elicit_journal_comment_amendment_aux(J& journal);
 
 
 	void elicit_repeater_insertion(DraftJournal& journal);
