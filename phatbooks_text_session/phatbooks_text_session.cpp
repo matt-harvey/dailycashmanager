@@ -26,6 +26,7 @@
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
 #include "ordinary_journal_reader.hpp"
+#include "persistent_journal.hpp"
 #include "proto_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
@@ -330,7 +331,7 @@ void PhatbooksTextSession::display_draft_journals()
 
 
 void
-PhatbooksTextSession::elicit_entry_insertion(Journal& journal)
+PhatbooksTextSession::elicit_entry_insertion(PersistentJournal& journal)
 {
 	// TODO Implement this
 	clog << endl << "We're now inside elicit_entry_insertion." << endl;
@@ -338,7 +339,7 @@ PhatbooksTextSession::elicit_entry_insertion(Journal& journal)
 }
 
 void
-PhatbooksTextSession::elicit_entry_deletion(Journal& journal)	
+PhatbooksTextSession::elicit_entry_deletion(PersistentJournal& journal)	
 {
 	// TODO Implement this
 	clog << endl << "We're now inside elicit_entry_deletion." << endl;
@@ -346,7 +347,7 @@ PhatbooksTextSession::elicit_entry_deletion(Journal& journal)
 }
 
 void
-PhatbooksTextSession::elicit_entry_amendment(Journal& journal)
+PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 {
  	// TODO Implement this
 	clog << endl << "We're now inside elicit_entry_amendment." << endl;	
@@ -354,9 +355,8 @@ PhatbooksTextSession::elicit_entry_amendment(Journal& journal)
 }
 
 
-template <typename J>
 void
-PhatbooksTextSession::elicit_journal_deletion(J& journal)
+PhatbooksTextSession::elicit_journal_deletion(PersistentJournal& journal)
 {
 	cout << "Are you sure you want to delete this entire transaction? (y/n) ";
 	string const confirmation = get_constrained_user_input
@@ -378,24 +378,12 @@ PhatbooksTextSession::elicit_journal_deletion(J& journal)
 }
 
 
-// Explicit instantiations
-template
-void
-PhatbooksTextSession::elicit_journal_deletion<DraftJournal>
-(	DraftJournal&
-);
-template
-void
-PhatbooksTextSession::elicit_journal_deletion<OrdinaryJournal>
-(	OrdinaryJournal&
-);
-
-
 
 	
-template <typename J>
 void
-PhatbooksTextSession::elicit_journal_comment_amendment(J& journal)
+PhatbooksTextSession::elicit_comment_amendment
+(	PersistentJournal& journal
+)
 {
 	cout << "Enter new comment for this transaction: ";
 	journal.set_comment(get_user_input());
@@ -403,19 +391,6 @@ PhatbooksTextSession::elicit_journal_comment_amendment(J& journal)
 	cout << "\nTransaction has been amended to: " << journal << endl;
 	return;
 }
-
-// Explicit instantiations
-template
-void
-PhatbooksTextSession::elicit_journal_comment_amendment<DraftJournal>
-(	DraftJournal&
-);
-template
-void
-PhatbooksTextSession::elicit_journal_comment_amendment<OrdinaryJournal>
-(	OrdinaryJournal&
-);
-
 
 
 void
@@ -501,7 +476,7 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 	(	new MenuItem
 		(	"Delete transaction",
 			bind
-			(	bind(&PTS::elicit_journal_deletion<DraftJournal>, this, _1),
+			(	bind(&PTS::elicit_journal_deletion, this, _1),
 				journal
 			),
 			true
@@ -530,14 +505,7 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 	ItemPtr amend_comment_item
 	(	new MenuItem
 		(	"Amend transaction comment",
-			bind
-			(	bind
-				(	&PTS::elicit_journal_comment_amendment<DraftJournal>,
-					this,
-					_1
-				),
-				journal
-			),
+			bind(bind(&PTS::elicit_comment_amendment, this, _1), journal),
 			true
 		)
 	);

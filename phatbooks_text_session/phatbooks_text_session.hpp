@@ -30,6 +30,7 @@ class Account;
 class DraftJournal;
 class Entry;
 class Journal;
+class PersistentJournal;
 class ProtoJournal;
 class PhatbooksDatabaseConnection;
 class Repeater;
@@ -249,18 +250,11 @@ private:
 	 */
 	std::string elicit_existing_account_name(bool accept_empty = false);
 
-	void elicit_entry_insertion(Journal& journal);
-	void elicit_entry_deletion(Journal& journal);
-	void elicit_entry_amendment(Journal& journal);
-
-	// TODO If we had a common base class below Journal, but above
-	// DraftJournal and OrdinaryJournal, then function templates wouldn't be
-	// required.
-	// Note these are explicitly instantiated in the .cpp file.
-	template <typename J> void elicit_journal_deletion(J& journal);
-	template <typename J> void elicit_journal_comment_amendment(J& journal);
-
-
+	void elicit_entry_insertion(PersistentJournal& journal);
+	void elicit_entry_deletion(PersistentJournal& journal);
+	void elicit_entry_amendment(PersistentJournal& journal);
+	void elicit_journal_deletion(PersistentJournal& journal);
+	void elicit_comment_amendment(PersistentJournal& journal);
 	void elicit_repeater_insertion(DraftJournal& journal);
 	void elicit_repeater_deletion(DraftJournal& journal);
 
