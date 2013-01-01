@@ -3,6 +3,7 @@
 #include "draft_journal_reader.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
@@ -30,7 +31,7 @@ DraftJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 DraftJournal::DraftJournal
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	m_impl(Handle<DraftJournalImpl>(p_database_connection))
+	PhatbooksPersistentObjectDetail(p_database_connection)
 {
 }
 
@@ -38,7 +39,7 @@ DraftJournal::DraftJournal
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	m_impl(Handle<DraftJournalImpl>(p_database_connection, p_id))
+	PhatbooksPersistentObjectDetail(p_database_connection, p_id)
 {
 }
 
@@ -61,7 +62,7 @@ DraftJournal::create_unchecked
 void
 DraftJournal::set_name(string const& p_name)
 {
-	m_impl->set_name(p_name);
+	impl().set_name(p_name);
 	return;
 }
 
@@ -69,7 +70,7 @@ DraftJournal::set_name(string const& p_name)
 void
 DraftJournal::add_repeater(Repeater& repeater)
 {
-	m_impl->add_repeater(repeater);
+	impl().add_repeater(repeater);
 	return;
 }
 
@@ -77,85 +78,73 @@ DraftJournal::add_repeater(Repeater& repeater)
 void
 DraftJournal::do_set_whether_actual(bool p_is_actual)
 {
-	m_impl->set_whether_actual(p_is_actual);
+	impl().set_whether_actual(p_is_actual);
 	return;
 }
 
 void
 DraftJournal::do_set_comment(string const& p_comment)
 {
-	m_impl->set_comment(p_comment);
+	impl().set_comment(p_comment);
 	return;
 }
 
 void
 DraftJournal::do_add_entry(Entry& entry)
 {
-	m_impl->add_entry(entry);
+	impl().add_entry(entry);
 	return;
 }
 
 bool
 DraftJournal::do_get_whether_actual() const
 {
-	return m_impl->is_actual();
+	return impl().is_actual();
 }
 
 string
 DraftJournal::do_get_comment() const
 {
-	return m_impl->comment();
+	return impl().comment();
 }
 	
 string
 DraftJournal::name() const
 {
-	return m_impl->name();
+	return impl().name();
 }
 
 vector<Entry> const&
 DraftJournal::do_get_entries() const
 {
-	return m_impl->entries();
-}
-
-void
-DraftJournal::save()
-{
-	m_impl->save();
-	return;
+	return impl().entries();
 }
 
 void
 DraftJournal::remove()
 {
-	m_impl->remove();
+	impl().remove();
 }
 
 
-DraftJournal::Id
-DraftJournal::id() const
-{
-	return m_impl->id();
-}
 
 string
 DraftJournal::repeater_description() const
 {
-	return m_impl->repeater_description();
+	return impl().repeater_description();
 }
 
 DraftJournal::DraftJournal
 (	sqloxx::Handle<DraftJournalImpl> const& p_handle
 ):
-	m_impl(p_handle)
+	PhatbooksPersistentObjectDetail(p_handle)
 {
 }
 
 void
 DraftJournal::mimic(ProtoJournal const& rhs)
 {
-	m_impl->mimic(rhs);
+	impl().mimic(rhs);
 	return;
 }
 

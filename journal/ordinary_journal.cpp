@@ -44,9 +44,7 @@ OrdinaryJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 OrdinaryJournal::OrdinaryJournal
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	m_impl
-	(	Handle<OrdinaryJournalImpl>(p_database_connection)
-	)
+	PhatbooksPersistentObjectDetail(p_database_connection)
 {
 }
 
@@ -54,9 +52,7 @@ OrdinaryJournal::OrdinaryJournal
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	m_impl
-	(	Handle<OrdinaryJournalImpl>(p_database_connection, p_id)
-	)
+	PhatbooksPersistentObjectDetail(p_database_connection, p_id)
 {
 }
 
@@ -78,7 +74,7 @@ OrdinaryJournal::create_unchecked
 boost::gregorian::date
 OrdinaryJournal::date() const
 {
-	return m_impl->date();
+	return impl().date();
 }
 
 
@@ -86,80 +82,67 @@ OrdinaryJournal::date() const
 void
 OrdinaryJournal::do_set_whether_actual(bool p_is_actual)
 {
-	m_impl->set_whether_actual(p_is_actual);
+	impl().set_whether_actual(p_is_actual);
 	return;
 }
 
 void
 OrdinaryJournal::do_set_comment(string const& p_comment)
 {
-	m_impl->set_comment(p_comment);
+	impl().set_comment(p_comment);
 	return;
 }
 
 void
 OrdinaryJournal::set_date(boost::gregorian::date const& p_date)
 {
-	m_impl->set_date(p_date);
+	impl().set_date(p_date);
 	return;
 }
 
 void
 OrdinaryJournal::do_add_entry(Entry& entry)
 {
-	m_impl->add_entry(entry);
+	impl().add_entry(entry);
 	return;
 }
 
 bool
 OrdinaryJournal::do_get_whether_actual() const
 {
-	return m_impl->is_actual();
+	return impl().is_actual();
 }
 
 string
 OrdinaryJournal::do_get_comment() const
 {
-	return m_impl->comment();
+	return impl().comment();
 }
 
 vector<Entry> const&
 OrdinaryJournal::do_get_entries() const
 {
-	return m_impl->entries();
-}
-
-OrdinaryJournal::Id
-OrdinaryJournal::id() const
-{
-	return m_impl->id();
-}
-
-void
-OrdinaryJournal::save()
-{
-	m_impl->save();
-	return;
+	return impl().entries();
 }
 
 void
 OrdinaryJournal::remove()
 {
-	m_impl->remove();
+	impl().remove();
 	return;
 }
 
 void
 OrdinaryJournal::mimic(ProtoJournal const& rhs)
 {
-	m_impl->mimic(rhs);
+	impl().mimic(rhs);
 	return;
 }
 
 void
 OrdinaryJournal::mimic(DraftJournal const& rhs)
 {
-	m_impl->mimic(rhs);
+	impl().mimic(rhs);
 	return;
 }
 
@@ -167,7 +150,7 @@ OrdinaryJournal::mimic(DraftJournal const& rhs)
 OrdinaryJournal::OrdinaryJournal
 (	sqloxx::Handle<OrdinaryJournalImpl> const& p_handle
 ):
-	m_impl(p_handle)
+	PhatbooksPersistentObjectDetail(p_handle)
 {
 }
 

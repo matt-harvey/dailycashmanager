@@ -2,6 +2,7 @@
 #define GUARD_persistent_journal_hpp
 
 #include "journal.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include "sqloxx/general_typedefs.hpp"
 
 namespace phatbooks
@@ -11,14 +12,12 @@ namespace phatbooks
  * Common abstract base class for subclasses of Journal that
  * can be persisted to a database.
  */
-class PersistentJournal: public Journal
+class PersistentJournal:
+	public Journal,
+	virtual public PhatbooksPersistentObjectBase
 {
 public:
-	typedef sqloxx::Id Id;
-
 	virtual ~PersistentJournal();
-	virtual Id id() const = 0;
-	virtual void save() = 0;
 	virtual void remove() = 0;
 };
 

@@ -4,6 +4,7 @@
 #include "account_impl.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include <boost/shared_ptr.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -17,11 +18,16 @@ namespace phatbooks
 class PhatbooksDatabaseConnection;
 
 
-class Account
+class Account:
+	virtual public PhatbooksPersistentObjectBase,
+	private PhatbooksPersistentObjectDetail<Account, AccountImpl>
 {
 public:
 	typedef account_type::AccountType AccountType;
-	typedef sqloxx::Id Id;
+	typedef
+		PhatbooksPersistentObjectDetail<Account, AccountImpl>
+		PhatbooksPersistentObjectDetail;
+	typedef PhatbooksPersistentObjectBase::Id Id;
 
 	/**
 	 * Returns a vector of account type names, corresponding to the
@@ -70,22 +76,12 @@ public:
 		std::string const& p_name
 	);
 
+	static void setup_tables();
+
 	/**
 	 * Destuctor.
 	 */
 	~Account();
-
-	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
-	Id id() const;
-
-	/**
-	 * TODO This should eventually be shifted into a base
-	 * class.
-	 */
-	void save();
 
 	/**
 	 * Returns name of account.
@@ -121,8 +117,6 @@ public:
 
 private:
 	Account(sqloxx::Handle<AccountImpl> const& p_handle);
-	sqloxx::Handle<AccountImpl> m_impl;
-
 };
 
 

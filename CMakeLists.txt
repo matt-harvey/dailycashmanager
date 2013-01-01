@@ -14,6 +14,7 @@ include_directories (/home/matthew/lib
                      /home/matthew/Workbench/versioned/phatbooks/journal
 					 /home/matthew/Workbench/versioned/phatbooks/output_aux
                      /home/matthew/Workbench/versioned/phatbooks/phatbooks_database_connection
+                     /home/matthew/Workbench/versioned/phatbooks/phatbooks_persistent_object
                      /home/matthew/Workbench/versioned/phatbooks/phatbooks_text_session
                      /home/matthew/Workbench/versioned/phatbooks/repeater
 					 /home/matthew/Workbench/versioned/phatbooks/session)
@@ -48,6 +49,7 @@ set (main_files
 	 journal/persistent_journal.cpp
 	 session/session.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
+	 phatbooks_persistent_object/phatbooks_persistent_object.cpp
 	 phatbooks_text_session/phatbooks_text_session.cpp
 	 repeater/interval_type.cpp
 	 repeater/repeater.cpp

@@ -3,6 +3,7 @@
 
 #include "draft_journal_impl.hpp"
 #include "persistent_journal.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -24,12 +25,17 @@ class Repeater;
  * in the DraftJournal description alerting the user to the fact that it
  * will not be posted for this reason.
  */
-class DraftJournal: public PersistentJournal
+class DraftJournal:
+	virtual public PersistentJournal,
+	private PhatbooksPersistentObjectDetail<DraftJournal, DraftJournalImpl>
 {
 public:
-	typedef sqloxx::Id Id;
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	typedef
+		PhatbooksPersistentObjectDetail<DraftJournal, DraftJournalImpl>
+		PhatbooksPersistentObjectDetail;
+	typedef PhatbooksPersistentObjectBase::Id Id;
 
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 	explicit DraftJournal
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
@@ -48,8 +54,6 @@ public:
 	void add_repeater(Repeater& repeater);
 	std::string name() const;
 
-	Id id() const;
-	void save();
 	void remove();
 
 	/**
@@ -81,7 +85,6 @@ private:
 	void do_output(std::ostream& os) const;
 
 	DraftJournal(sqloxx::Handle<DraftJournalImpl> const& p_handle);
-	sqloxx::Handle<DraftJournalImpl> m_impl;
 
 };
 

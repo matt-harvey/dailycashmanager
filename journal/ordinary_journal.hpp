@@ -3,6 +3,7 @@
 
 #include "entry.hpp"
 #include "persistent_journal.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "proto_journal.hpp"
 #include <sqloxx/general_typedefs.hpp>
@@ -20,7 +21,12 @@ class DraftJournal;
 class PhatbooksDatabaseConnection;
 
 
-class OrdinaryJournal: public PersistentJournal
+class OrdinaryJournal:
+	virtual public PersistentJournal,
+	private PhatbooksPersistentObjectDetail
+	<	OrdinaryJournal,
+		OrdinaryJournalImpl
+	>
 {
 public:
 
@@ -46,8 +52,6 @@ public:
 	void set_date(boost::gregorian::date const& p_date);
 	boost::gregorian::date date() const;
 
-	Id id() const;
-	void save();
 	void remove();
 
 	/**
@@ -72,7 +76,6 @@ private:
 	void do_output(std::ostream& os) const;
 
 	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);
-	sqloxx::Handle<OrdinaryJournalImpl> m_impl;
 };
 
 
