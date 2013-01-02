@@ -38,7 +38,7 @@ Entry::setup_tables(PhatbooksDatabaseConnection& dbc)
 Entry::Entry
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	PhatbooksPersistentObjectDetail(p_database_connection)
+	PhatbooksPersistentObject(p_database_connection)
 {
 }
 
@@ -46,7 +46,7 @@ Entry::Entry
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	PhatbooksPersistentObjectDetail(p_database_connection, p_id)
+	PhatbooksPersistentObject(p_database_connection, p_id)
 {
 }
 
@@ -141,7 +141,7 @@ Entry::mimic(Entry const& rhs)
 
 
 Entry::Entry(sqloxx::Handle<EntryImpl> const& p_handle):
-	PhatbooksPersistentObjectDetail(p_handle)
+	PhatbooksPersistentObject(p_handle)
 {
 }
 

@@ -15,20 +15,22 @@
  * around implementation classes inherited from
  * sqloxx::PersistentObject<PhatbooksDatabaseConnection, ...>.
  *
- * Each business class B should inherit \e virtually and publically from
- * PhatbooksPersistentObjectBase (for the interface),
- * and \e privately from PhatbooksPersistentObjectDetail<B, Impl>
- * (for the implementation).
- * The PhatbooksPersistentObjectDetail template should be instantiated with
+ * Each business class B should inherit publically from
+ * from PhatbooksPersistentObject<B, Impl>.
+ * The PhatbooksPersistentObject template should be instantiated with
  * a specific
  * implementation class for Impl,
  * which should in turn inherit from
  * sqloxx::PersistentObject<PhatbooksDatabaseConnection, Impl>.
  *
- * Note there is a reason these are two separate classes, namely,
+ * Note there is a reason why PhatbooksPersistentObjectBase and
+ * PhatbooksPersistentObject are two separate classes, namely,
  * to support the PersistentJournal class as an abstract class
  * between Journal and DraftJournal/OrdinaryJournal in the hierarchy.
- * This architecture makes this possible.
+ * This architecture makes this possible. In this case, PersistentJournal
+ * inherits from PhatbooksPersistentObjectBase, but not from
+ * PhatbooksPersistentObject<...>, as there is no instantiation of
+ * the latteer from which it could inherit.
  */
 
 namespace phatbooks
@@ -48,7 +50,7 @@ public:
 
 private:
 	// Note the implementations for these are provided by
-	// PhatbooksPersistentObjectDetail<...> and should \e not be redefined
+	// PhatbooksPersistentObject<...> and should \e not be redefined
 	// by the business classes.
 	virtual
 	void do_save() = 0;
@@ -72,17 +74,17 @@ private:
 
 
 template <typename Impl>
-class PhatbooksPersistentObjectDetail:
-	virtual private PhatbooksPersistentObjectBase
+class PhatbooksPersistentObject:
+	virtual public PhatbooksPersistentObjectBase
 {
 protected:
 
 	typedef sqloxx::Id Id;
-	PhatbooksPersistentObjectDetail
+	PhatbooksPersistentObject
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
-	PhatbooksPersistentObjectDetail
+	PhatbooksPersistentObject
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
@@ -96,7 +98,7 @@ protected:
 	{
 		return *m_impl;
 	}
-	PhatbooksPersistentObjectDetail(sqloxx::Handle<Impl> const& p_handle):
+	PhatbooksPersistentObject(sqloxx::Handle<Impl> const& p_handle):
 		m_impl(p_handle)
 	{
 	}
@@ -114,7 +116,7 @@ private:
 
 
 template <typename Impl>
-PhatbooksPersistentObjectDetail<Impl>::PhatbooksPersistentObjectDetail
+PhatbooksPersistentObject<Impl>::PhatbooksPersistentObject
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
 	m_impl(sqloxx::Handle<Impl>(p_database_connection))
@@ -122,7 +124,7 @@ PhatbooksPersistentObjectDetail<Impl>::PhatbooksPersistentObjectDetail
 }
 
 template <typename Impl>
-PhatbooksPersistentObjectDetail<Impl>::PhatbooksPersistentObjectDetail
+PhatbooksPersistentObject<Impl>::PhatbooksPersistentObject
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
@@ -132,7 +134,7 @@ PhatbooksPersistentObjectDetail<Impl>::PhatbooksPersistentObjectDetail
 
 template <typename Impl>
 void
-PhatbooksPersistentObjectDetail<Impl>::do_save()
+PhatbooksPersistentObject<Impl>::do_save()
 {
 	m_impl->save();
 	return;
@@ -140,28 +142,28 @@ PhatbooksPersistentObjectDetail<Impl>::do_save()
 
 template <typename Impl>
 typename sqloxx::Id
-PhatbooksPersistentObjectDetail<Impl>::do_get_id() const
+PhatbooksPersistentObject<Impl>::do_get_id() const
 {
 	return m_impl->id();
 }
 
 template <typename Impl>
 PhatbooksDatabaseConnection&
-PhatbooksPersistentObjectDetail<Impl>::do_get_database_connection() const
+PhatbooksPersistentObject<Impl>::do_get_database_connection() const
 {
 	return m_impl->database_connection();
 }
 
 template <typename Impl>
 bool
-PhatbooksPersistentObjectDetail<Impl>::does_have_id() const
+PhatbooksPersistentObject<Impl>::does_have_id() const
 {
 	return m_impl->has_id();
 }
 
 template <typename Impl>
 void
-PhatbooksPersistentObjectDetail<Impl>::do_remove()
+PhatbooksPersistentObject<Impl>::do_remove()
 {
 	m_impl->remove();
 	return;
@@ -169,7 +171,7 @@ PhatbooksPersistentObjectDetail<Impl>::do_remove()
 
 template <typename Impl>
 void
-PhatbooksPersistentObjectDetail<Impl>::do_ghostify()
+PhatbooksPersistentObject<Impl>::do_ghostify()
 {
 	m_impl->ghostify();
 	return;

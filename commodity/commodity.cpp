@@ -26,7 +26,7 @@ Commodity::setup_tables(PhatbooksDatabaseConnection& dbc)
 Commodity::Commodity
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	PhatbooksPersistentObjectDetail(p_database_connection)
+	PhatbooksPersistentObject(p_database_connection)
 {
 }
 
@@ -34,7 +34,7 @@ Commodity::Commodity
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	PhatbooksPersistentObjectDetail(p_database_connection, p_id)
+	PhatbooksPersistentObject(p_database_connection, p_id)
 {
 }
 
@@ -58,7 +58,7 @@ Commodity::Commodity
 (	PhatbooksDatabaseConnection& p_database_connection,
 	string const& p_abbreviation
 ):
-	PhatbooksPersistentObjectDetail
+	PhatbooksPersistentObject
 	(	p_database_connection,
 		CommodityImpl::id_for_abbreviation
 		(	p_database_connection,
@@ -133,7 +133,7 @@ Commodity::set_multiplier_to_base(Decimal const& p_multiplier_to_base)
 }
 
 Commodity::Commodity(sqloxx::Handle<CommodityImpl> const& p_handle):
-	PhatbooksPersistentObjectDetail(p_handle)
+	PhatbooksPersistentObject(p_handle)
 {
 }
 

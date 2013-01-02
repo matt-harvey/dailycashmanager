@@ -23,15 +23,15 @@ class PhatbooksDatabaseConnection;
 
 class OrdinaryJournal:
 	virtual public PersistentJournal,
-	private PhatbooksPersistentObjectDetail<OrdinaryJournalImpl>
+	private PhatbooksPersistentObject<OrdinaryJournalImpl>
 {
 public:
 
 	typedef
-		PhatbooksPersistentObjectDetail<OrdinaryJournalImpl>
-		PhatbooksPersistentObjectDetail;
+		PhatbooksPersistentObject<OrdinaryJournalImpl>
+		PhatbooksPersistentObject;
 	
-	typedef PhatbooksPersistentObjectDetail::Id Id;
+	typedef PhatbooksPersistentObject::Id Id;
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 

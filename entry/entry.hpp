@@ -18,14 +18,13 @@ class Account;
 class PhatbooksDatabaseConnection;
 
 class Entry:
-	virtual public PhatbooksPersistentObjectBase,
-	private PhatbooksPersistentObjectDetail<EntryImpl>
+	public PhatbooksPersistentObject<EntryImpl>
 {
 public:
 	
 	typedef
-		PhatbooksPersistentObjectDetail<EntryImpl>
-		PhatbooksPersistentObjectDetail;
+		PhatbooksPersistentObject<EntryImpl>
+		PhatbooksPersistentObject;
 	
 	typedef
 		PhatbooksPersistentObjectBase::Id Id;

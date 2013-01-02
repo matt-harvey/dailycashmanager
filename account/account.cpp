@@ -40,7 +40,7 @@ Account::setup_tables(PhatbooksDatabaseConnection& dbc)
 Account::Account
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	PhatbooksPersistentObjectDetail(p_database_connection)
+	PhatbooksPersistentObject(p_database_connection)
 {
 }
 
@@ -49,7 +49,7 @@ Account::Account
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	PhatbooksPersistentObjectDetail(p_database_connection, p_id)
+	PhatbooksPersistentObject(p_database_connection, p_id)
 {
 }
 
@@ -57,7 +57,7 @@ Account::Account
 (	PhatbooksDatabaseConnection& p_database_connection,
 	string const& p_name
 ):
-	PhatbooksPersistentObjectDetail
+	PhatbooksPersistentObject
 	(	p_database_connection,
 		AccountImpl::id_for_name(p_database_connection, p_name)
 	)
@@ -65,7 +65,7 @@ Account::Account
 }
 
 Account::Account(sqloxx::Handle<AccountImpl> const& p_handle):
-	PhatbooksPersistentObjectDetail(p_handle)
+	PhatbooksPersistentObject(p_handle)
 {
 }
 

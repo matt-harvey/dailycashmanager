@@ -32,7 +32,7 @@ Repeater::setup_tables(PhatbooksDatabaseConnection& dbc)
 Repeater::Repeater
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	PhatbooksPersistentObjectDetail(p_database_connection)
+	PhatbooksPersistentObject(p_database_connection)
 {
 }
 
@@ -40,7 +40,7 @@ Repeater::Repeater
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	PhatbooksPersistentObjectDetail(p_database_connection, p_id)
+	PhatbooksPersistentObject(p_database_connection, p_id)
 {
 }
 
@@ -128,7 +128,7 @@ Repeater::journal_id() const
 
 
 Repeater::Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle):
-	PhatbooksPersistentObjectDetail(p_handle)
+	PhatbooksPersistentObject(p_handle)
 {
 }
 

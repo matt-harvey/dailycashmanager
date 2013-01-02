@@ -18,13 +18,12 @@ namespace phatbooks
 {
 
 class Repeater:
-	virtual public PhatbooksPersistentObjectBase,
-	private PhatbooksPersistentObjectDetail<RepeaterImpl>
+	public PhatbooksPersistentObject<RepeaterImpl>
 {
 public:
 	typedef
-		PhatbooksPersistentObjectDetail<RepeaterImpl>
-		PhatbooksPersistentObjectDetail;
+		PhatbooksPersistentObject<RepeaterImpl>
+		PhatbooksPersistentObject;
 	typedef PhatbooksPersistentObjectBase::Id Id;
 
 	typedef interval_type::IntervalType IntervalType;

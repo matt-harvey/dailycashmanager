@@ -31,7 +31,7 @@ DraftJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 DraftJournal::DraftJournal
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	PhatbooksPersistentObjectDetail(p_database_connection)
+	PhatbooksPersistentObject(p_database_connection)
 {
 }
 
@@ -39,7 +39,7 @@ DraftJournal::DraftJournal
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	PhatbooksPersistentObjectDetail(p_database_connection, p_id)
+	PhatbooksPersistentObject(p_database_connection, p_id)
 {
 }
 
@@ -130,7 +130,7 @@ DraftJournal::repeater_description() const
 DraftJournal::DraftJournal
 (	sqloxx::Handle<DraftJournalImpl> const& p_handle
 ):
-	PhatbooksPersistentObjectDetail(p_handle)
+	PhatbooksPersistentObject(p_handle)
 {
 }
 

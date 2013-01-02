@@ -18,16 +18,15 @@ class PhatbooksDatabaseConnection;
 
 
 class Commodity:
-	virtual public PhatbooksPersistentObjectBase,
-	private PhatbooksPersistentObjectDetail<CommodityImpl>
+	public PhatbooksPersistentObject<CommodityImpl>
 {
 public:
 
 	typedef
-		PhatbooksPersistentObjectDetail<CommodityImpl>
-		PhatbooksPersistentObjectDetail;
+		PhatbooksPersistentObject<CommodityImpl>
+		PhatbooksPersistentObject;
 	
-	typedef PhatbooksPersistentObjectDetail::Id Id;
+	typedef PhatbooksPersistentObject::Id Id;
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 

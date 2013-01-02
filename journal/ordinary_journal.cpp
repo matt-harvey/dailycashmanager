@@ -45,7 +45,7 @@ OrdinaryJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 OrdinaryJournal::OrdinaryJournal
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	PhatbooksPersistentObjectDetail(p_database_connection)
+	PhatbooksPersistentObject(p_database_connection)
 {
 }
 
@@ -53,7 +53,7 @@ OrdinaryJournal::OrdinaryJournal
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
 ):
-	PhatbooksPersistentObjectDetail(p_database_connection, p_id)
+	PhatbooksPersistentObject(p_database_connection, p_id)
 {
 }
 
@@ -144,7 +144,7 @@ OrdinaryJournal::mimic(DraftJournal const& rhs)
 OrdinaryJournal::OrdinaryJournal
 (	sqloxx::Handle<OrdinaryJournalImpl> const& p_handle
 ):
-	PhatbooksPersistentObjectDetail(p_handle)
+	PhatbooksPersistentObject(p_handle)
 {
 }
 
