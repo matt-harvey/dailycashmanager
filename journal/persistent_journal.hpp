@@ -1,6 +1,7 @@
 #ifndef GUARD_persistent_journal_hpp
 #define GUARD_persistent_journal_hpp
 
+#include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "sqloxx/general_typedefs.hpp"
@@ -19,6 +20,10 @@ class PersistentJournal:
 public:
 	virtual ~PersistentJournal();
 };
+
+
+bool has_entry_with_id(PersistentJournal const& journal, Entry::Id entry_id);
+
 
 }  // namespace phatbooks
 

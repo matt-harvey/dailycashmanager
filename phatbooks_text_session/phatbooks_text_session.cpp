@@ -48,8 +48,10 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/ref.hpp>
 #include <boost/regex.hpp>
 #include <boost/shared_ptr.hpp>
+#include <algorithm>
 #include <iostream>
 #include <list>
 #include <locale>
@@ -83,6 +85,7 @@ using sqloxx::SQLiteException;
 using boost::bad_lexical_cast;
 using boost::bimap;
 using boost::bind;
+using boost::cref;
 using boost::lexical_cast;
 using boost::optional;
 using boost::shared_ptr;
@@ -91,6 +94,7 @@ using boost::regex_match;
 using std::cout;
 using std::clog;
 using std::endl;
+using std::find;
 using std::list;
 using std::locale;
 using std::map;
@@ -334,6 +338,62 @@ PhatbooksTextSession::elicit_entry_insertion(PersistentJournal& journal)
 	return;
 }
 
+
+
+namespace
+{
+	bool
+	has_entry_with_id_string
+	(	PersistentJournal const& journal,
+		string const& str
+	)
+	{
+		try
+		{
+			Entry::Id const id = lexical_cast<Entry::Id>(str);
+			return has_entry_with_id(journal, id);
+		}
+		catch (bad_lexical_cast&)
+		{
+			return false;
+		}
+	}
+
+
+	optional<Entry> elicit_entry(PersistentJournal const& journal)
+	{
+		string id_string;
+		for
+		(	vector<Entry>::const_iterator it = journal.entries().begin(),	
+				end = journal.entries().end();
+			it != end;
+			++it
+		)
+		{
+			Entry::Id const current_id = it->id();
+			id_string += lexical_cast<string>(current_id);
+			id_string += " ";
+		}
+		string input = get_constrained_user_input
+		(	bind(has_entry_with_id_string, cref(journal), _1),
+			"Transaction does not contain an entry with this id. "
+			"Try again, entering one of the following ids:\n" +
+			id_string +
+			"\nor hit Enter to abort: "
+		);
+		if (input.empty())
+		{
+			return optional<Entry>();
+		}
+		return Entry
+		(	journal.database_connection(),
+			lexical_cast<Entry::Id>(input)
+		);
+	}
+
+}  // End anonymous namespace
+
+
 void
 PhatbooksTextSession::elicit_entry_deletion(PersistentJournal& journal)	
 {
@@ -342,11 +402,19 @@ PhatbooksTextSession::elicit_entry_deletion(PersistentJournal& journal)
 	return;
 }
 
+
+
 void
 PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 {
+	cout << "Enter the ID of the entry you wish to amend: ";
+	optional<Entry> maybe_entry = elicit_entry(journal);
+	if (!maybe_entry)
+	{
+		return;
+	}
+	assert (maybe_entry);
  	// TODO Implement this
-	clog << endl << "We're now inside elicit_entry_amendment." << endl;	
 	return;
 }
 

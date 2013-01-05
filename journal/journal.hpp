@@ -108,6 +108,7 @@ operator<<(std::ostream& os, Journal const& oj);
 
 
 
+
 }  // namespace phatbooks
 
 
