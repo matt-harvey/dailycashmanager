@@ -94,7 +94,8 @@ std::string get_constrained_user_input
  *
  * Does not throw (except possibly std::bad_alloc in extreme conditions).
  */
-jewel::Decimal get_decimal_from_user();
+boost::optional<jewel::Decimal>
+get_decimal_from_user(bool allow_enter_to_escape = false);
 
 /**
  * @returns a boost::optional<boost::gregorian::date> from user's input.

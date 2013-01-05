@@ -376,10 +376,10 @@ namespace
 		}
 		string input = get_constrained_user_input
 		(	bind(has_entry_with_id_string, cref(journal), _1),
-			"Transaction does not contain an entry with this id. "
-			"Try again, entering one of the following ids:\n" +
-			id_string +
-			"\nor hit Enter to abort: "
+			"Transaction does not contain a line with this entry id. "
+				"Try again, entering one of the following ids:\n" +
+				id_string +
+				"\nor hit Enter to abort: "
 		);
 		if (input.empty())
 		{
@@ -399,6 +399,7 @@ PhatbooksTextSession::elicit_entry_deletion(PersistentJournal& journal)
 {
 	// TODO Implement this
 	clog << endl << "We're now inside elicit_entry_deletion." << endl;
+	cout << endl << "Transaction is now as follows: " << journal << endl;
 	return;
 }
 
@@ -407,14 +408,70 @@ PhatbooksTextSession::elicit_entry_deletion(PersistentJournal& journal)
 void
 PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 {
-	cout << "Enter the ID of the entry you wish to amend: ";
+	cout << "Enter the entry id of the transaction line you wish to amend: ";
 	optional<Entry> maybe_entry = elicit_entry(journal);
 	if (!maybe_entry)
 	{
 		return;
 	}
 	assert (maybe_entry);
- 	// TODO Implement this
+	Entry entry = value(maybe_entry);
+
+	// Edit account
+	cout << "Enter name of new account (or Enter to leave unchanged): ";
+	string const new_account_name = elicit_existing_account_name(true);
+	if (!new_account_name.empty())
+	{
+		Account const account(database_connection(), new_account_name);
+		entry.set_account(account);
+	}
+
+	// Edit comment
+ 	cout << "Enter new comment for this line (or Enter to leave unchanged: ";
+	string const new_comment = get_user_input();
+	if (!new_comment.empty()) entry.set_comment(new_comment);
+
+	// Edit amount
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		cout << "Enter new amount for this line (or Enter to leave unchanged): ";
+		optional<Decimal> maybe_new_amount = get_decimal_from_user(true);
+		if (!maybe_new_amount)
+		{
+			input_is_valid = true;
+		}
+		else
+		{
+			assert (maybe_new_amount);
+			// TODO The below is virtually identical as used elsewhere. Factor out
+			// repeated code to separate function.
+			Decimal new_amount = value(maybe_new_amount);
+			Decimal::places_type const initial_precision = new_amount.places();
+			Commodity const commodity = entry.account().commodity();
+			try
+			{
+				new_amount = jewel::round(new_amount, commodity.precision());
+				entry.set_amount(new_amount);
+				input_is_valid = true;
+				if (new_amount.places() < initial_precision)
+				{
+					cout << "Amount rounded to " << new_amount << "." << endl;
+				}
+			}
+			catch (DecimalRangeException&)
+			{
+				cout << "The number you entered cannot be safely "
+					 << "rounded to the precision required for "
+					 << commodity.abbreviation()
+					 << ". Please try again."
+					 << endl;
+				assert (!input_is_valid);
+			}
+		}
+	}
+
+	cout << endl << "Transaction is now as follows: " << journal << endl;
+
 	return;
 }
 
@@ -451,8 +508,7 @@ PhatbooksTextSession::elicit_comment_amendment
 {
 	cout << "Enter new comment for this transaction: ";
 	journal.set_comment(get_user_input());
-	journal.save();
-	cout << "\nTransaction has been amended to: " << journal << endl;
+	cout << "\nTransaction is now as follows: " << journal << endl;
 	return;
 }
 
@@ -536,6 +592,7 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 	);
 	menu.add_item(amend_entry_item);
 
+	// TODO Deleting journal causes crash
 	ItemPtr delete_journal_item
 	(	new MenuItem
 		(	"Delete transaction",
@@ -575,10 +632,49 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 	);
 	menu.add_item(amend_comment_item);
 
+	// TODO Does exiting need to alert the user that changes will be abandoned
+	// or etc.?
 	ItemPtr exit_item(MenuItem::provide_menu_exit());
 	menu.add_item(exit_item);
 
 	menu.present_to_user();
+
+	if (menu.last_choice() != delete_journal_item)
+	{
+		cout << "Transaction is now as follows: " << endl << journal << endl;
+		if (journal.is_balanced())
+		{
+			cout << "Save changes (y/n)? ";
+			string const confirmation = get_constrained_user_input
+			(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
+				"Try again, entering \"y\" to save or \"n\" to "
+					"cancel changes: ",
+				false
+			);
+			if (confirmation == "y")
+			{
+				journal.save();
+				cout << "\nChanges saved." << endl << endl;
+			}
+			else
+			{
+				assert (confirmation == "n");
+				cout << "\nChanges have not been saved. Transaction remains "
+				     << "as follows: \n" << endl << journal << endl << endl;
+			}
+		}
+		else
+		{
+			assert (!journal.is_balanced());
+			{
+				cout << "This transaction is not balanced. "
+				     << "The changes cannot be saved until further changes are "
+					 << "made so that transaction lines add to zero."
+					 << endl;
+			}
+		}
+	}
+
 
 	return;
 }
@@ -948,7 +1044,7 @@ PhatbooksTextSession::elicit_commodity()
 	// Get multiplier to base
 	cout << "Enter rate by which this commodity should be multiplied in order"
 	     << " to convert it to the base commodity for this entity: ";
-	commodity.set_multiplier_to_base(get_decimal_from_user());
+	commodity.set_multiplier_to_base(value(get_decimal_from_user()));
 
 	// Confirm with user before creating commodity
 	cout << endl << "You have proposed to create the following commodity: "
@@ -1389,7 +1485,7 @@ PhatbooksTextSession::elicit_primary_entries
 			 << " (in units of "
 			 << commodity.abbreviation()
 			 << "): ";
-		amount = get_decimal_from_user();
+		amount = value(get_decimal_from_user());
 		Decimal::places_type const initial_precision = amount.places();
 		try
 		{
@@ -1483,7 +1579,7 @@ PhatbooksTextSession::elicit_secondary_entries
 				     << current_commodity.abbreviation()
 					 << " " << unmatched_amount << endl;
 				cout << "Enter amount for this line: ";
-				current_entry_amount = get_decimal_from_user();
+				current_entry_amount = value(get_decimal_from_user());
 				Decimal::places_type const entered_precision =
 					current_entry_amount.places();
 				try

@@ -10,6 +10,8 @@
 #include <ostream>
 #include <string>
 
+namespace gregorian = boost::gregorian;
+
 using boost::function;
 using boost::optional;
 using boost::regex;
@@ -80,14 +82,19 @@ get_constrained_user_input
 }
 
 
-Decimal get_decimal_from_user()
+optional<Decimal> get_decimal_from_user(bool allow_enter_to_escape)
 {
-	Decimal ret("0");
+	optional<Decimal> ret;
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
+		string const input = get_user_input();
 		try
 		{
-			ret = Decimal(get_user_input());
+			if (allow_enter_to_escape && input.empty())
+			{
+				return ret;
+			}
+			ret = Decimal(input);
 			input_is_valid = true;
 		}
 		catch (DecimalFromStringException&)
@@ -106,10 +113,10 @@ Decimal get_decimal_from_user()
 	return ret;
 }
 
-boost::optional<boost::gregorian::date>
+optional<gregorian::date>
 get_date_from_user(bool allow_empty_to_escape, string const& error_prompt)
 {
-	optional<boost::gregorian::date> ret;
+	optional<gregorian::date> ret;
 	regex const validation_pattern
 	(	"^[0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]$"
 	);
@@ -128,7 +135,7 @@ get_date_from_user(bool allow_empty_to_escape, string const& error_prompt)
 		{
 			try
 			{
-				ret = boost::gregorian::date_from_iso_string(input);
+				ret = gregorian::date_from_iso_string(input);
 				break;
 			}
 			catch (boost::exception&)
