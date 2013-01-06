@@ -113,6 +113,7 @@ private:
 	virtual void do_set_whether_actual(bool p_is_actual);
 	virtual void do_set_comment(std::string const& p_comment);
 	virtual void do_add_entry(Entry& entry);
+	virtual void do_remove_entry(Entry& entry);
 	virtual std::string do_get_comment() const;
 	virtual bool do_get_whether_actual() const;
 

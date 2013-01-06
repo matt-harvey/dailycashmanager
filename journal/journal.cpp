@@ -44,6 +44,13 @@ Journal::add_entry(Entry& entry)
 	return;
 }
 
+void
+Journal::remove_entry(Entry& entry)
+{
+	do_remove_entry(entry);
+	return;
+}
+
 std::vector<Entry> const&
 Journal::entries() const
 {

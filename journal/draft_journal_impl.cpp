@@ -74,6 +74,14 @@ DraftJournalImpl::add_entry(Entry& entry)
 	return;
 }
 
+void
+DraftJournalImpl::remove_entry(Entry& entry)
+{
+	load();
+	ProtoJournal::remove_entry(entry);
+	return;
+}
+
 bool
 DraftJournalImpl::is_actual()
 {

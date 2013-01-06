@@ -60,6 +60,8 @@ public:
 	 */
 	void add_entry(Entry& entry);
 
+	void remove_entry(Entry& entry);
+
 	bool is_actual();
 
 	/**

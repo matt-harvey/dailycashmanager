@@ -397,8 +397,18 @@ namespace
 void
 PhatbooksTextSession::elicit_entry_deletion(PersistentJournal& journal)	
 {
-	// TODO Implement this
-	clog << endl << "We're now inside elicit_entry_deletion." << endl;
+	cout << "Enter the entry id of the transaction line you wish to delete, "
+	     << "or just hit Enter to abort: ";
+	optional<Entry> maybe_entry = elicit_entry(journal);
+	if (!maybe_entry)
+	{
+		cout << "Entry deletion aborted" << endl;
+		return;
+	}
+	assert (maybe_entry);
+	Entry entry(value(maybe_entry));
+	journal.remove_entry(entry);
+	cout << "Entry deleted.\n" << endl;
 	return;
 }
 
@@ -407,10 +417,12 @@ PhatbooksTextSession::elicit_entry_deletion(PersistentJournal& journal)
 void
 PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 {
-	cout << "Enter the entry id of the transaction line you wish to amend: ";
+	cout << "Enter the entry id of the transaction line you wish to amend, "
+	     << "or just hit Enter to abort: ";
 	optional<Entry> maybe_entry = elicit_entry(journal);
 	if (!maybe_entry)
 	{
+		cout << "Entry amendment aborted.\n" << endl;
 		return;
 	}
 	assert (maybe_entry);
@@ -431,6 +443,9 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 	if (!new_comment.empty()) entry.set_comment(new_comment);
 
 	// Edit amount
+	// TODO This is in at least some circumstances flipping the sign of
+	// the amount entered by the user. Maybe we want this, but probably
+	// not. Make it right.
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
 		cout << "Enter new amount for this line "
@@ -470,7 +485,6 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 			}
 		}
 	}
-
 	return;
 }
 
@@ -535,26 +549,6 @@ PhatbooksTextSession::exit_journal_edit_without_saving
 	journal.ghostify();
 	cout << "Changes have been cancelled. Transaction remains as follows: "
 	     << endl << endl << journal << endl << endl;
-	/*
-	if (typeid(journal) == typeid(DraftJournal))
-	{
-		DraftJournal const journal_as_saved
-		(	database_connection(),
-			journal.id()
-		);
-		cout << journal_as_saved;
-	}
-	else
-	{
-		assert (typeid(journal) == typeid(OrdinaryJournal));
-		OrdinaryJournal const journal_as_saved
-		(	database_connection(),
-			journal.id()
-		);
-	    cout << journal_as_saved;
-	}
-	cout << endl << endl;
-	*/
 	return;
 }
 
@@ -597,6 +591,8 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 	//
 	// ... it just means that if the user selects this menu item,
 	// then we will call PhatbooksTextSession::elicit_yadda_yadda(journal).
+
+
 
 	typedef shared_ptr<MenuItem const> ItemPtr;
 	typedef PhatbooksTextSession PTS;  // For brevity below.

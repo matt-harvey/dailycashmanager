@@ -66,6 +66,7 @@ public:
 	void set_whether_actual(bool p_is_actual);
 	void set_comment(std::string const& p_comment);
 	void add_entry(Entry& entry);
+	void remove_entry(Entry& entry);
 
 	std::vector<Entry> const& entries() const;
 	std::string comment() const;
@@ -92,6 +93,7 @@ private:
 	virtual void do_set_whether_actual(bool p_is_actual) = 0;
 	virtual void do_set_comment(std::string const& p_comment) = 0;
 	virtual void do_add_entry(Entry& entry) = 0;
+	virtual void do_remove_entry(Entry& entry) = 0;
 	virtual std::string do_get_comment() const = 0;
 	virtual bool do_get_whether_actual() const = 0;
 

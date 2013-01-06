@@ -108,6 +108,13 @@ OrdinaryJournal::do_add_entry(Entry& entry)
 	return;
 }
 
+void
+OrdinaryJournal::do_remove_entry(Entry& entry)
+{
+	impl().remove_entry(entry);
+	return;
+}
+
 bool
 OrdinaryJournal::do_get_whether_actual() const
 {

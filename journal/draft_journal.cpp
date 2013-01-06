@@ -96,6 +96,13 @@ DraftJournal::do_add_entry(Entry& entry)
 	return;
 }
 
+void
+DraftJournal::do_remove_entry(Entry& entry)
+{
+	impl().remove_entry(entry);
+	return;
+}
+
 bool
 DraftJournal::do_get_whether_actual() const
 {

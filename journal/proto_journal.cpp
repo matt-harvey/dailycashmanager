@@ -127,6 +127,27 @@ ProtoJournal::do_add_entry(Entry& entry)
 	return;
 }
 
+void
+ProtoJournal::do_remove_entry(Entry& entry)
+{
+	// TODO I could probably do this more elegantly using some STL function.
+	vector<Entry> new_entry_vec = m_data->entries;
+	m_data->entries.clear();
+	for
+	(	vector<Entry>::iterator it = new_entry_vec.begin();
+		it != new_entry_vec.end();
+		++it
+	)
+	{
+		if (it->id() != entry.id())
+		{
+			m_data->entries.push_back(*it);
+		}
+	}
+	return;
+}
+		
+
 string
 ProtoJournal::do_get_comment() const
 {

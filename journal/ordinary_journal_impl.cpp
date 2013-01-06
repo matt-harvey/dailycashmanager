@@ -86,6 +86,15 @@ OrdinaryJournalImpl::add_entry(Entry& entry)
 	return;
 }
 
+
+void
+OrdinaryJournalImpl::remove_entry(Entry& entry)
+{
+	load();
+	ProtoJournal::remove_entry(entry);
+	return;
+}
+
 bool
 OrdinaryJournalImpl::is_actual()
 {
