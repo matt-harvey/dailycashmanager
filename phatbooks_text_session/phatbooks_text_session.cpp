@@ -475,11 +475,18 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 
 	// Edit account
 	cout << "Enter name of new account (or Enter to leave unchanged): ";
-	string const new_account_name = elicit_existing_account_name(true);
-	if (!new_account_name.empty())
+	TransactionType const transaction_type =
+		journal.is_actual()?
+		generic_transaction:
+		envelope_transaction;
+	optional<Account> maybe_new_account = elicit_valid_account
+	(	transaction_type,
+		primary_phase,
+		true
+	);
+	if (maybe_new_account)
 	{
-		Account const account(database_connection(), new_account_name);
-		entry.set_account(account);
+		entry.set_account(value(maybe_new_account));
 	}
 
 	// Edit comment
