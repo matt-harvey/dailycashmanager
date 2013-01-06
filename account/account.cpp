@@ -213,4 +213,11 @@ bool is_envelope(Account const& account)
 }
 
 
+bool is_not_pure_envelope(Account const& account)
+{
+	return account.account_type() != account_type::pure_envelope;
+}
+
+
+
 }   // namespace phatbooks

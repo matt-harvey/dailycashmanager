@@ -128,6 +128,7 @@ bool is_asset_or_liability(Account const& account);
 bool is_expense(Account const& account);
 bool is_revenue(Account const& account);
 bool is_envelope(Account const& account);
+bool is_not_pure_envelope(Account const& account);
 
 
 

@@ -333,10 +333,55 @@ void PhatbooksTextSession::display_draft_journals()
 void
 PhatbooksTextSession::elicit_entry_insertion(PersistentJournal& journal)
 {
-	// TODO Implement this
-	clog << endl << "We're now inside elicit_entry_insertion." << endl;
+	Entry entry(database_connection());
+	cout << "Enter name of account or category for new transaction line: ";
+	TransactionType const transaction_type =
+		journal.is_actual()?
+		generic_transaction:
+		envelope_transaction;
+	entry.set_account
+	(	value(elicit_valid_account(transaction_type, primary_phase))
+	);
+	Commodity const commodity = entry.account().commodity();
+	Decimal amount;
+	// TODO This duplicates code also used in elicit_primary_entries etc.
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		cout << "Enter amount "
+		     << dialogue_phrase(generic_transaction, amount_prompt)
+			 << " (int units of "
+			 << commodity.abbreviation()
+			 << "): ";
+		amount = value(get_decimal_from_user());
+		Decimal::places_type const initial_precision = amount.places();
+		try
+		{
+			amount = jewel::round(amount, commodity.precision());
+			input_is_valid = true;
+			if (amount.places() < initial_precision)
+			{
+				cout << "Amount rounded to " << amount << "." << endl;
+			}
+		}
+		catch (DecimalRangeException&)
+		{
+			cout << "The number you entered cannot be safely "
+				 << "rounded to the precision required for "
+				 << commodity.abbreviation()
+				 << ". Please try again."
+				 << endl;
+			assert (!input_is_valid);
+		}
+	}
+	bool const sign_needs_changing = !journal.is_actual();
+	entry.set_amount(sign_needs_changing? -amount: amount);
+	cout << "Comment for this line (or Enter for no comment): ";
+	entry.set_comment(get_user_input());
+	entry.set_whether_reconciled(false);
+	journal.add_entry(entry);
 	return;
 }
+
 
 
 
@@ -360,7 +405,7 @@ namespace
 	}
 
 
-	optional<Entry> elicit_entry(PersistentJournal const& journal)
+	optional<Entry> elicit_existing_entry(PersistentJournal const& journal)
 	{
 		string id_string;
 		for
@@ -399,7 +444,7 @@ PhatbooksTextSession::elicit_entry_deletion(PersistentJournal& journal)
 {
 	cout << "Enter the entry id of the transaction line you wish to delete, "
 	     << "or just hit Enter to abort: ";
-	optional<Entry> maybe_entry = elicit_entry(journal);
+	optional<Entry> maybe_entry = elicit_existing_entry(journal);
 	if (!maybe_entry)
 	{
 		cout << "Entry deletion aborted" << endl;
@@ -419,7 +464,7 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 {
 	cout << "Enter the entry id of the transaction line you wish to amend, "
 	     << "or just hit Enter to abort: ";
-	optional<Entry> maybe_entry = elicit_entry(journal);
+	optional<Entry> maybe_entry = elicit_existing_entry(journal);
 	if (!maybe_entry)
 	{
 		cout << "Entry amendment aborted.\n" << endl;
@@ -467,7 +512,8 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 			try
 			{
 				new_amount = jewel::round(new_amount, commodity.precision());
-				entry.set_amount(new_amount);
+				bool const sign_needs_changing = !journal.is_actual();
+				entry.set_amount(sign_needs_changing? -new_amount: new_amount);
 				input_is_valid = true;
 				if (new_amount.places() < initial_precision)
 				{
@@ -1356,6 +1402,12 @@ PhatbooksTextSession::dialogue_phrase
 			"envelope from which to source funds",
 			"source envelope",
 			"source envelopes"
+		},
+		{	"account or category",
+			"amount",
+			"account or category",
+			"account or category",
+			"accounts / categories"
 		}
 	};
 	int const transaction_index = static_cast<int>(transaction_type);
@@ -1379,6 +1431,8 @@ namespace
 			"revenue category":
 			validator == is_envelope?
 			"envelope (revenue, expense or pure envelope)":  // TODO This description sucks
+			validator == is_not_pure_envelope?
+			"account or category for this transaction":  // TODO This description sucks
 			"ERROR"
 		);
 		assert (ret != "ERROR");
@@ -1404,7 +1458,8 @@ PhatbooksTextSession::account_is_valid
 	{	{ is_asset_or_liability, is_expense },
 		{ is_asset_or_liability, is_revenue },
 		{ is_asset_or_liability, is_asset_or_liability },
-		{ is_envelope, is_envelope }
+		{ is_envelope, is_envelope },
+		{ is_not_pure_envelope, is_not_pure_envelope }
 	};
 	AccountValidator const validate =
 		validator_matrix[transaction_type_index][transaction_phase_index];

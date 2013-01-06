@@ -90,9 +90,10 @@ private:
 		expenditure_transaction = 0,
 		revenue_transaction,
 		balance_sheet_transaction,
-		envelope_transaction
+		envelope_transaction,
+		generic_transaction
 	};
-	static int const num_transaction_types = 4;
+	static int const num_transaction_types = 5;
 
 	// Various phrases used in interacting with the user. The wording
 	// used for each phrase may vary with TransactionType
