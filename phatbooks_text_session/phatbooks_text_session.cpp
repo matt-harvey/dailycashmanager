@@ -600,7 +600,7 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 			(	bind(&PTS::elicit_journal_deletion, this, _1),
 				journal
 			),
-			true
+			false
 		)
 	);
 	menu.add_item(delete_journal_item);
