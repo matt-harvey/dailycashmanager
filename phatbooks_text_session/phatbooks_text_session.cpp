@@ -399,7 +399,6 @@ PhatbooksTextSession::elicit_entry_deletion(PersistentJournal& journal)
 {
 	// TODO Implement this
 	clog << endl << "We're now inside elicit_entry_deletion." << endl;
-	cout << endl << "Transaction is now as follows: " << journal << endl;
 	return;
 }
 
@@ -427,14 +426,15 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 	}
 
 	// Edit comment
- 	cout << "Enter new comment for this line (or Enter to leave unchanged: ";
+ 	cout << "Enter new comment for this line (or Enter to leave unchanged): ";
 	string const new_comment = get_user_input();
 	if (!new_comment.empty()) entry.set_comment(new_comment);
 
 	// Edit amount
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
-		cout << "Enter new amount for this line (or Enter to leave unchanged): ";
+		cout << "Enter new amount for this line "
+		     << "(or Enter to leave unchanged): ";
 		optional<Decimal> maybe_new_amount = get_decimal_from_user(true);
 		if (!maybe_new_amount)
 		{
@@ -443,10 +443,11 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 		else
 		{
 			assert (maybe_new_amount);
-			// TODO The below is virtually identical as used elsewhere. Factor out
-			// repeated code to separate function.
+			// TODO The below is virtually identical as used elsewhere.
+			// Factor out repeated code to separate function.
 			Decimal new_amount = value(maybe_new_amount);
-			Decimal::places_type const initial_precision = new_amount.places();
+			Decimal::places_type const initial_precision =
+				new_amount.places();
 			Commodity const commodity = entry.account().commodity();
 			try
 			{
@@ -469,8 +470,6 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 			}
 		}
 	}
-
-	cout << endl << "Transaction is now as follows: " << journal << endl;
 
 	return;
 }
@@ -508,7 +507,6 @@ PhatbooksTextSession::elicit_comment_amendment
 {
 	cout << "Enter new comment for this transaction: ";
 	journal.set_comment(get_user_input());
-	cout << "\nTransaction is now as follows: " << journal << endl;
 	return;
 }
 
@@ -529,6 +527,47 @@ PhatbooksTextSession::elicit_repeater_deletion(DraftJournal& journal)
 	return;
 }
 
+void
+PhatbooksTextSession::exit_journal_edit_without_saving
+(	PersistentJournal& journal
+)
+{
+	journal.ghostify();
+	cout << "Changes have been cancelled. Transaction remains as follows: "
+	     << endl << endl << journal << endl << endl;
+	/*
+	if (typeid(journal) == typeid(DraftJournal))
+	{
+		DraftJournal const journal_as_saved
+		(	database_connection(),
+			journal.id()
+		);
+		cout << journal_as_saved;
+	}
+	else
+	{
+		assert (typeid(journal) == typeid(OrdinaryJournal));
+		OrdinaryJournal const journal_as_saved
+		(	database_connection(),
+			journal.id()
+		);
+	    cout << journal_as_saved;
+	}
+	cout << endl << endl;
+	*/
+	return;
+}
+
+void
+PhatbooksTextSession::exit_journal_edit_saving_changes
+(	PersistentJournal& journal
+)
+{
+	journal.save();
+	cout << "Changes have been saved. Saved transaction is as follows: "
+	     << endl << endl << journal << endl << endl;
+	return;
+}
 
 void
 PhatbooksTextSession::conduct_editing(DraftJournal& journal)
@@ -562,117 +601,110 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 	typedef shared_ptr<MenuItem const> ItemPtr;
 	typedef PhatbooksTextSession PTS;  // For brevity below.
 
-	cout << journal << endl;
-	Menu menu("Select an action to perform, or 'x' to exit: ");
-
-	ItemPtr add_entry_item
-	(	new MenuItem
-		(	"Add a line",
-			bind(bind(&PTS::elicit_entry_insertion, this, _1), journal),
-			true
-		)
-	);
-	menu.add_item(add_entry_item);
-
-	ItemPtr delete_entry_item
-	(	new MenuItem
-		(	"Delete a line",
-			bind(bind(&PTS::elicit_entry_deletion, this, _1), journal),
-			true
-		)
-	);
-	menu.add_item(delete_entry_item);
-
-	ItemPtr amend_entry_item
-	(	new MenuItem
-		(	"Amend a line",
-			bind(bind(&PTS::elicit_entry_amendment, this, _1), journal),
-			true
-		)
-	);
-	menu.add_item(amend_entry_item);
-
-	// TODO Deleting journal causes crash
-	ItemPtr delete_journal_item
-	(	new MenuItem
-		(	"Delete transaction",
-			bind
-			(	bind(&PTS::elicit_journal_deletion, this, _1),
-				journal
-			),
-			false
-		)
-	);
-	menu.add_item(delete_journal_item);
-
-	ItemPtr add_repeater_item
-	(	new MenuItem
-		(	"Add automatic recording cycle",
-			bind(bind(&PTS::elicit_repeater_insertion, this, _1), journal),
-			true
-		)
-	);
-	menu.add_item(add_repeater_item);
-
-	ItemPtr delete_repeaters_item
-	(	new MenuItem
-		(	"Disable automatic recording",
-			bind(bind(&PTS::elicit_repeater_deletion, this, _1), journal),
-			true
-		)
-	);
-	menu.add_item(delete_repeaters_item);
-
-	ItemPtr amend_comment_item
-	(	new MenuItem
-		(	"Amend transaction comment",
-			bind(bind(&PTS::elicit_comment_amendment, this, _1), journal),
-			true
-		)
-	);
-	menu.add_item(amend_comment_item);
-
-	// TODO Does exiting need to alert the user that changes will be abandoned
-	// or etc.?
-	ItemPtr exit_item(MenuItem::provide_menu_exit());
-	menu.add_item(exit_item);
-
-	menu.present_to_user();
-
-	if (menu.last_choice() != delete_journal_item)
+	for (bool exiting = false; !exiting; )
 	{
-		cout << "Transaction is now as follows: " << endl << journal << endl;
+		cout << journal << endl;
+		Menu menu("Select an action from the above menu: ");
+
+		ItemPtr add_entry_item
+		(	new MenuItem
+			(	"Add a line",
+				bind(bind(&PTS::elicit_entry_insertion, this, _1), journal)
+			)
+		);
+		menu.add_item(add_entry_item);
+
+		ItemPtr delete_entry_item
+		(	new MenuItem
+			(	"Delete a line",
+				bind(bind(&PTS::elicit_entry_deletion, this, _1), journal)
+			)
+		);
+		menu.add_item(delete_entry_item);
+
+		ItemPtr amend_entry_item
+		(	new MenuItem
+			(	"Amend a line",
+				bind(bind(&PTS::elicit_entry_amendment, this, _1), journal)
+			)
+		);
+		menu.add_item(amend_entry_item);
+
+		ItemPtr delete_journal_item
+		(	new MenuItem
+			(	"Delete transaction",
+				bind
+				(	bind(&PTS::elicit_journal_deletion, this, _1),
+					journal
+				)
+			)
+		);
+		menu.add_item(delete_journal_item);
+
+		ItemPtr add_repeater_item
+		(	new MenuItem
+			(	"Add automatic recording cycle",
+				bind(bind(&PTS::elicit_repeater_insertion, this, _1), journal)
+			)
+		);
+		menu.add_item(add_repeater_item);
+
+		ItemPtr delete_repeaters_item
+		(	new MenuItem
+			(	"Disable automatic recording",
+				bind(bind(&PTS::elicit_repeater_deletion, this, _1), journal)
+			)
+		);
+		menu.add_item(delete_repeaters_item);
+
+		ItemPtr amend_comment_item
+		(	new MenuItem
+			(	"Amend transaction comment",
+				bind(bind(&PTS::elicit_comment_amendment, this, _1), journal)
+			)
+		);
+		menu.add_item(amend_comment_item);
+
+		ItemPtr exit_without_saving_item
+		(	new MenuItem
+			(	"Exit without saving changes",
+				bind
+				(	bind(&PTS::exit_journal_edit_without_saving, this, _1),
+					journal
+				)
+			)
+		);
+		menu.add_item(exit_without_saving_item);
+
+		ItemPtr exit_with_saving_item
+		(	new MenuItem
+			(	"Save changes and exit",
+				bind
+				(	bind(&PTS::exit_journal_edit_saving_changes, this, _1),
+					journal
+				)
+			)
+		);
 		if (journal.is_balanced())
 		{
-			cout << "Save changes (y/n)? ";
-			string const confirmation = get_constrained_user_input
-			(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
-				"Try again, entering \"y\" to save or \"n\" to "
-					"cancel changes: ",
-				false
-			);
-			if (confirmation == "y")
-			{
-				journal.save();
-				cout << "\nChanges saved." << endl << endl;
-			}
-			else
-			{
-				assert (confirmation == "n");
-				cout << "\nChanges have not been saved. Transaction remains "
-				     << "as follows: \n" << endl << journal << endl << endl;
-			}
+			menu.add_item(exit_with_saving_item);
 		}
 		else
 		{
 			assert (!journal.is_balanced());
-			{
-				cout << "This transaction is not balanced. "
-				     << "The changes cannot be saved until further changes are "
-					 << "made so that transaction lines add to zero."
-					 << endl;
-			}
+			cout << "Note transaction is unbalanced. Entries must sum to nil "
+				 << "before changes can be saved." << endl << endl;
 		}
+		menu.present_to_user();	
+		if 
+		(	(menu.last_choice() == exit_without_saving_item) ||
+			(menu.last_choice() == exit_with_saving_item) ||
+			(menu.last_choice() == delete_journal_item)
+		)
+		{
+			exiting = true;
+		}
+		else assert (!exiting);
 	}
 
 

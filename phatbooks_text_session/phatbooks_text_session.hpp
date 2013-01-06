@@ -257,6 +257,8 @@ private:
 	void elicit_comment_amendment(PersistentJournal& journal);
 	void elicit_repeater_insertion(DraftJournal& journal);
 	void elicit_repeater_deletion(DraftJournal& journal);
+	void exit_journal_edit_without_saving(PersistentJournal& journal);
+	void exit_journal_edit_saving_changes(PersistentJournal& journal);
 
 	// TODO Implement this and enable user to access it.
 	void elicit_date_amendment(OrdinaryJournal& journal);
