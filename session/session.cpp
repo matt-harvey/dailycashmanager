@@ -24,7 +24,7 @@ namespace phatbooks
 Session::Session():
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
-	database_connection().set_caching_level(0);
+	database_connection().set_caching_level(10);
 }
 
 

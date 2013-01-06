@@ -495,9 +495,6 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 	if (!new_comment.empty()) entry.set_comment(new_comment);
 
 	// Edit amount
-	// TODO This is in at least some circumstances flipping the sign of
-	// the amount entered by the user. Maybe we want this, but probably
-	// not. Make it right.
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
 		cout << "Enter new amount for this line "
@@ -510,7 +507,8 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 		else
 		{
 			assert (maybe_new_amount);
-			// TODO The below is virtually identical as used elsewhere.
+			// TODO The below is virtually identical to code used elsewhere
+			// in this file.
 			// Factor out repeated code to separate function.
 			Decimal new_amount = value(maybe_new_amount);
 			Decimal::places_type const initial_precision =
@@ -950,9 +948,10 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	if (account_name.empty()) assert (!filtering_for_account);
 	Account::Id const account_id = (maybe_account? maybe_account->id(): 0);
 	bool const accumulating_pre_start_date_entries =
-		filtering_for_account &&
+	(	filtering_for_account &&
 		(maybe_account->account_type() != account_type::revenue) &&
-		(maybe_account->account_type() != account_type::expense);
+		(maybe_account->account_type() != account_type::expense)
+	);
 
 	ActualOrdinaryEntryReader reader(database_connection());
 	ActualOrdinaryEntryReader::const_iterator it = reader.begin();
