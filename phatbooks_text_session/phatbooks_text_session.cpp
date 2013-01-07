@@ -349,7 +349,7 @@ PhatbooksTextSession::elicit_entry_insertion(PersistentJournal& journal)
 	{
 		cout << "Enter amount "
 		     << dialogue_phrase(generic_transaction, amount_prompt)
-			 << " (int units of "
+			 << " (in units of "
 			 << commodity.abbreviation()
 			 << "): ";
 		amount = value(get_decimal_from_user());
@@ -1536,7 +1536,7 @@ PhatbooksTextSession::dialogue_phrase
 			"source envelopes"
 		},
 		{	"account or category",
-			"amount",
+			"",
 			"account or category",
 			"account or category",
 			"accounts / categories"
