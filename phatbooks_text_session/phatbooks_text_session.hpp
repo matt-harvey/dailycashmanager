@@ -313,6 +313,8 @@ private:
 	void display_journal_from_id();
 	void display_ordinary_actual_entries();
 	void display_envelopes();
+
+	// TODO Refactor in terms of PersistentJournalDialogue
 	void conduct_dj_editing(DraftJournal& journal);
 	void conduct_oj_editing(OrdinaryJournal& journal);
 
