@@ -722,11 +722,13 @@ PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal)
 
 		ItemPtr exit_without_saving_item
 		(	new MenuItem
-			(	"Exit without saving changes",
+			(	"Undo changes and exit",
 				bind
 				(	bind(&PTS::exit_journal_edit_without_saving, this, _1),
 					journal
-				)
+				),
+				false,
+				"u"
 			)
 		);
 		menu.add_item(exit_without_saving_item);
@@ -737,7 +739,9 @@ PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal)
 				bind
 				(	bind(&PTS::exit_journal_edit_saving_changes, this, _1),
 					journal
-				)
+				),
+				false,
+				"s"
 			)
 		);
 		if (journal.is_balanced())
@@ -831,11 +835,13 @@ PhatbooksTextSession::conduct_oj_editing(OrdinaryJournal& journal)
 
 		ItemPtr exit_without_saving_item
 		(	new MenuItem
-			(	"Exit without saving changes",
+			(	"Undo changes and exit",
 				bind
 				(	bind(&PTS::exit_journal_edit_without_saving, this, _1),
 					journal
-				)
+				),
+				false,
+				"u"
 			)
 		);
 		menu.add_item(exit_without_saving_item);
@@ -846,7 +852,9 @@ PhatbooksTextSession::conduct_oj_editing(OrdinaryJournal& journal)
 				bind
 				(	bind(&PTS::exit_journal_edit_saving_changes, this, _1),
 					journal
-				)
+				),
+				false,
+				"s"
 			)
 		);
 		if (journal.is_balanced())
