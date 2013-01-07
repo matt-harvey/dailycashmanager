@@ -68,6 +68,8 @@ public:
 	 */
 	void mimic(ProtoJournal const& rhs);
 
+	void clear_repeaters();
+
 
 private:
 

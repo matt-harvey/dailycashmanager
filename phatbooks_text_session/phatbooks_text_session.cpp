@@ -579,16 +579,17 @@ PhatbooksTextSession::elicit_comment_amendment
 void
 PhatbooksTextSession::elicit_repeater_insertion(DraftJournal& journal)
 {
-	// TODO Implement this
-	clog << endl << "We're now inside elicit_repeater_insertion." << endl;
+	Repeater repeater = elicit_repeater();
+	journal.add_repeater(repeater);
 	return;
 }
 
 void
 PhatbooksTextSession::elicit_repeater_deletion(DraftJournal& journal)
 {
-	// TODO Implement this
-	clog << endl << "We're now inside elicit_repeater_deletion." << endl;
+	journal.clear_repeaters();
+	cout << endl << "Automatic recording has been disabled for this transaction.\n"
+	     << endl;
 	return;
 }
 

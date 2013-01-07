@@ -127,6 +127,8 @@ public:
 	 */
 	void mimic(ProtoJournal const& rhs);
 
+	void clear_repeaters();
+
 private:
 
 	/**
@@ -140,7 +142,6 @@ private:
 	void do_ghostify();
 	void do_remove();
 
-	void clear_repeaters();
 
 	struct DraftJournalData;
 

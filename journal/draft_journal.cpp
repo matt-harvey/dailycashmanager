@@ -76,6 +76,13 @@ DraftJournal::add_repeater(Repeater& repeater)
 
 
 void
+DraftJournal::clear_repeaters()
+{
+	impl().clear_repeaters();
+	return;
+}
+
+void
 DraftJournal::do_set_whether_actual(bool p_is_actual)
 {
 	impl().set_whether_actual(p_is_actual);
