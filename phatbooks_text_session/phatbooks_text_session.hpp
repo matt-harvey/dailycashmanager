@@ -260,8 +260,6 @@ private:
 	void elicit_repeater_deletion(DraftJournal& journal);
 	void exit_journal_edit_without_saving(PersistentJournal& journal);
 	void exit_journal_edit_saving_changes(PersistentJournal& journal);
-
-	// TODO Implement this and enable user to access it.
 	void elicit_date_amendment(OrdinaryJournal& journal);
 
 
@@ -315,7 +313,8 @@ private:
 	void display_journal_from_id();
 	void display_ordinary_actual_entries();
 	void display_envelopes();
-	void conduct_editing(DraftJournal& journal);
+	void conduct_dj_editing(DraftJournal& journal);
+	void conduct_oj_editing(OrdinaryJournal& journal);
 
 	void display_posted_journals();
 	void display_impending_autoposts();

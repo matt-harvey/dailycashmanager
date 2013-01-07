@@ -313,7 +313,7 @@ void PhatbooksTextSession::display_draft_journals()
 			shared_ptr<MenuItem const> const menu_item
 			(	new MenuItem
 				(	it->name(),
-					bind(bind(&PTS::conduct_editing, this, _1), *it)
+					bind(bind(&PTS::conduct_dj_editing, this, _1), *it)
 				)
 			);
 			menu.add_item(menu_item);
@@ -615,7 +615,17 @@ PhatbooksTextSession::exit_journal_edit_saving_changes
 }
 
 void
-PhatbooksTextSession::conduct_editing(DraftJournal& journal)
+PhatbooksTextSession::elicit_date_amendment
+(	OrdinaryJournal& journal
+)
+{
+	// TODO Implement this	
+	clog << endl << "We're now inside elicit_date_amendment." << endl;
+	return;
+}
+
+void
+PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal)
 {
 	// The below is a bit ugly. There are two alternatives to this approach.
 	// (1) Make the elicit... functions free-standing functions in an
@@ -642,8 +652,6 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 	//
 	// ... it just means that if the user selects this menu item,
 	// then we will call PhatbooksTextSession::elicit_yadda_yadda(journal).
-
-
 
 	typedef shared_ptr<MenuItem const> ItemPtr;
 	typedef PhatbooksTextSession PTS;  // For brevity below.
@@ -677,6 +685,14 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 		);
 		menu.add_item(amend_entry_item);
 
+		ItemPtr amend_comment_item
+		(	new MenuItem
+			(	"Amend transaction comment",
+				bind(bind(&PTS::elicit_comment_amendment, this, _1), journal)
+			)
+		);
+		menu.add_item(amend_comment_item);
+
 		ItemPtr delete_journal_item
 		(	new MenuItem
 			(	"Delete transaction",
@@ -703,14 +719,6 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 			)
 		);
 		menu.add_item(delete_repeaters_item);
-
-		ItemPtr amend_comment_item
-		(	new MenuItem
-			(	"Amend transaction comment",
-				bind(bind(&PTS::elicit_comment_amendment, this, _1), journal)
-			)
-		);
-		menu.add_item(amend_comment_item);
 
 		ItemPtr exit_without_saving_item
 		(	new MenuItem
@@ -753,8 +761,115 @@ PhatbooksTextSession::conduct_editing(DraftJournal& journal)
 		}
 		else assert (!exiting);
 	}
+	return;
+}
 
+void
+PhatbooksTextSession::conduct_oj_editing(OrdinaryJournal& journal)
+{
+	// TODO
+	// There is much code here that is duplicated with
+	// PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal).
+	// Factor it out somehow.
+	typedef shared_ptr<MenuItem const> ItemPtr;
+	typedef PhatbooksTextSession PTS;
+	for (bool exiting = false; !exiting; )
+	{
+		cout << journal << endl;
+		Menu menu("Select an action from the above menu: ");
 
+		ItemPtr add_entry_item
+		(	new MenuItem
+			(	"Add a line",
+				bind(bind(&PTS::elicit_entry_insertion, this, _1), journal)
+			)
+		);
+		menu.add_item(add_entry_item);
+
+		ItemPtr delete_entry_item
+		(	new MenuItem
+			(	"Delete a line",
+				bind(bind(&PTS::elicit_entry_deletion, this, _1), journal)
+			)
+		);
+		menu.add_item(delete_entry_item);
+
+		ItemPtr amend_entry_item
+		(	new MenuItem
+			(	"Amend a line",
+				bind(bind(&PTS::elicit_entry_amendment, this, _1), journal)
+			)
+		);
+		menu.add_item(amend_entry_item);
+
+		ItemPtr amend_comment_item
+		(	new MenuItem
+			(	"Amend transaction comment",
+				bind(bind(&PTS::elicit_comment_amendment, this, _1), journal)
+			)
+		);
+		menu.add_item(amend_comment_item);
+
+		ItemPtr amend_date_item
+		(	new MenuItem
+			(	"Amend journal date",
+				bind(bind(&PTS::elicit_date_amendment, this, _1), journal)
+			)
+		);
+		menu.add_item(amend_date_item);
+
+		ItemPtr delete_journal_item
+		(	new MenuItem
+			(	"Delete transaction",
+				bind
+				(	bind(&PTS::elicit_journal_deletion, this, _1),
+					journal
+				)
+			)
+		);
+		menu.add_item(delete_journal_item);
+
+		ItemPtr exit_without_saving_item
+		(	new MenuItem
+			(	"Exit without saving changes",
+				bind
+				(	bind(&PTS::exit_journal_edit_without_saving, this, _1),
+					journal
+				)
+			)
+		);
+		menu.add_item(exit_without_saving_item);
+
+		ItemPtr exit_with_saving_item
+		(	new MenuItem
+			(	"Save changes and exit",
+				bind
+				(	bind(&PTS::exit_journal_edit_saving_changes, this, _1),
+					journal
+				)
+			)
+		);
+		if (journal.is_balanced())
+		{
+			menu.add_item(exit_with_saving_item);
+		}
+		else
+		{
+			assert (!journal.is_balanced());
+			cout << "Note transaction is unbalanced. Entries must sum to nil "
+				 << "before changes can be saved." << endl << endl;
+		}
+		menu.present_to_user();	
+		if 
+		(	(menu.last_choice() == exit_without_saving_item) ||
+			(menu.last_choice() == exit_with_saving_item) ||
+			(menu.last_choice() == delete_journal_item)
+		)
+		{
+			exiting = true;
+		}
+		else assert (!exiting);
+	}
 	return;
 }
 
@@ -804,14 +919,17 @@ PhatbooksTextSession::display_journal_from_id()
 	if (journal_id_is_draft(database_connection(), id))
 	{
 		DraftJournal dj(database_connection(), id);
-		cout << endl << dj << endl << endl;
+		conduct_dj_editing(dj);
 	}
 	else
 	{
 		OrdinaryJournal oj(database_connection(), id);
-		cout << endl << oj << endl << endl;
+		conduct_oj_editing(oj);
 	}
-	// TODO Enable further user actions from here.
+	// TODO In both conduct_..._editing functions,
+	// the "save changes" and "exit without saving changes" options are
+	// displayed even if the user has not made any changes to the journal.
+	// This is potentially confusing for the user.
 	return;
 }
 

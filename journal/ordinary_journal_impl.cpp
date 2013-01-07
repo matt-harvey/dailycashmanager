@@ -285,7 +285,7 @@ OrdinaryJournalImpl::do_remove()
 	journal_detail_deleter.bind(":p", id());
 	SQLStatement journal_master_deleter
 	(	database_connection(),
-		"delete from journals were journal_id = :p"
+		"delete from journals where journal_id = :p"
 	);
 	journal_master_deleter.bind(":p", id());
 	clear_entries();
