@@ -52,7 +52,7 @@ Session::application_name()
 }
 
 PhatbooksDatabaseConnection&
-Session::database_connection()
+Session::database_connection() const
 {
 	return *m_database_connection;
 }
