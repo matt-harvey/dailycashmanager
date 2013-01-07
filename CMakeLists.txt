@@ -51,6 +51,7 @@ set (main_files
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
 	 phatbooks_persistent_object/phatbooks_persistent_object.cpp
 	 phatbooks_text_session/dialogue.cpp
+	 phatbooks_text_session/persistent_journal_dialogue.cpp
 	 phatbooks_text_session/phatbooks_text_session.cpp
 	 repeater/interval_type.cpp
 	 repeater/repeater.cpp
