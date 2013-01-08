@@ -314,6 +314,11 @@ private:
 	void display_ordinary_actual_entries();
 	void display_envelopes();
 
+	void populate_journal_editing_menu_core
+	(	Menu& menu,
+		PersistentJournal& journal
+	);
+
 	// TODO Refactor in terms of PersistentJournalDialogue
 	void conduct_dj_editing(DraftJournal& journal);
 	void conduct_oj_editing(OrdinaryJournal& journal);

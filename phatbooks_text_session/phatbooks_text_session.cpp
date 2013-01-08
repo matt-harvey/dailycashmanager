@@ -89,6 +89,7 @@ using boost::cref;
 using boost::lexical_cast;
 using boost::optional;
 using boost::shared_ptr;
+using boost::ref;
 using boost::regex;
 using boost::regex_match;
 using std::cout;
@@ -634,84 +635,60 @@ PhatbooksTextSession::elicit_date_amendment
 }
 
 void
-PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal)
+PhatbooksTextSession::populate_journal_editing_menu_core
+(	Menu& menu,
+	PersistentJournal& journal
+)
 {
-	// The below is a bit ugly. There are two alternatives to this approach.
-	// (1) Make the elicit... functions free-standing functions in an
-	// anonymous namespace, that take as parameters
-	// a PhatbooksDatabaseConnection& and a Journal&. This would
-	// make the binding syntax a bit neater, at the cost of having
-	// tonnes of functions in an anonymous namespace, which seems a bit
-	// crappy somehow. I would prefer that functions of such seeming
-	// importance be "catalogued" in the header, as (private) member
-	// functions of PhatbooksTextSession. I'm not sure if this is a very
-	// good reason, but it just feels nicer and more maintainable.
-	// (2) Have a bunch of crude procedural code by comparing
-	// menu.last_choice() to each of the menu items in turn and executing one
-	// of the elicit... functions accordingly. This feels clunky and verbose,
-	// and sidesteps the Menu class's facility that already implements
-	// the general procedure where the user to selects a menu item and the
-	// appropriate function is called.
-	// (3) Have a comment explaining what's going on.
-	// I like (3) best, so here goes.
-	
-	// What's going on is that where you see this...
-	//
-	// bind(bind(&PTS::elicit_yadda_yadda, this, _1), journal)
-	//
-	// ... it just means that if the user selects this menu item,
-	// then we will call PhatbooksTextSession::elicit_yadda_yadda(journal).
-
 	typedef shared_ptr<MenuItem const> ItemPtr;
 	typedef PhatbooksTextSession PTS;  // For brevity below.
 
-	for (bool exiting = false; !exiting; )
+	ItemPtr add_entry_item
+	(	new MenuItem
+		(	"Add a line",
+			bind(bind(&PTS::elicit_entry_insertion, this, _1), ref(journal))
+		)
+	);
+	menu.add_item(add_entry_item);
+
+	ItemPtr delete_entry_item
+	(	new MenuItem
+		(	"Delete a line",
+			bind(bind(&PTS::elicit_entry_deletion, this, _1), ref(journal))
+		)
+	);
+	menu.add_item(delete_entry_item);
+
+	ItemPtr amend_entry_item
+	(	new MenuItem
+		(	"Amend a line",
+			bind(bind(&PTS::elicit_entry_amendment, this, _1), ref(journal))
+		)
+	);
+	menu.add_item(amend_entry_item);
+
+	ItemPtr amend_comment_item
+	(	new MenuItem
+		(	"Amend transaction comment",
+			bind(bind(&PTS::elicit_comment_amendment, this, _1), ref(journal))
+		)
+	);
+	menu.add_item(amend_comment_item);
+	return;
+}
+
+
+void
+PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal)
+{
+	typedef shared_ptr<MenuItem const> ItemPtr;
+	typedef PhatbooksTextSession PTS;  // For brevity below.
+
+	for (bool exiting = false, first_time = true; !exiting; first_time = false)
 	{
-		cout << journal << endl;
+		cout << endl << journal << endl;
 		Menu menu("Select an action from the above menu: ");
-
-		ItemPtr add_entry_item
-		(	new MenuItem
-			(	"Add a line",
-				bind(bind(&PTS::elicit_entry_insertion, this, _1), journal)
-			)
-		);
-		menu.add_item(add_entry_item);
-
-		ItemPtr delete_entry_item
-		(	new MenuItem
-			(	"Delete a line",
-				bind(bind(&PTS::elicit_entry_deletion, this, _1), journal)
-			)
-		);
-		menu.add_item(delete_entry_item);
-
-		ItemPtr amend_entry_item
-		(	new MenuItem
-			(	"Amend a line",
-				bind(bind(&PTS::elicit_entry_amendment, this, _1), journal)
-			)
-		);
-		menu.add_item(amend_entry_item);
-
-		ItemPtr amend_comment_item
-		(	new MenuItem
-			(	"Amend transaction comment",
-				bind(bind(&PTS::elicit_comment_amendment, this, _1), journal)
-			)
-		);
-		menu.add_item(amend_comment_item);
-
-		ItemPtr delete_journal_item
-		(	new MenuItem
-			(	"Delete transaction",
-				bind
-				(	bind(&PTS::elicit_journal_deletion, this, _1),
-					journal
-				)
-			)
-		);
-		menu.add_item(delete_journal_item);
+		populate_journal_editing_menu_core(menu, journal);
 
 		ItemPtr add_repeater_item
 		(	new MenuItem
@@ -729,6 +706,21 @@ PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal)
 		);
 		menu.add_item(delete_repeaters_item);
 
+		ItemPtr delete_journal_item
+		(	new MenuItem
+			(	"Delete transaction",
+				bind
+				(	bind(&PTS::elicit_journal_deletion, this, _1),
+					journal
+				),
+				false,
+				"d"
+			)
+		);
+		menu.add_item(delete_journal_item);
+
+		ItemPtr simple_exit_item = MenuItem::provide_menu_exit();
+
 		ItemPtr exit_without_saving_item
 		(	new MenuItem
 			(	"Undo changes and exit",
@@ -740,7 +732,6 @@ PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal)
 				"u"
 			)
 		);
-		menu.add_item(exit_without_saving_item);
 
 		ItemPtr exit_with_saving_item
 		(	new MenuItem
@@ -753,21 +744,31 @@ PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal)
 				"s"
 			)
 		);
-		if (journal.is_balanced())
+		if (!first_time)
 		{
-			menu.add_item(exit_with_saving_item);
+			menu.add_item(exit_without_saving_item);
+			if (journal.is_balanced())
+			{
+				menu.add_item(exit_with_saving_item);
+			}
+			else
+			{
+				cout << "Note transaction is unbalanced. Entries must sum to "
+				     << "nil before changes can be saved.\n" << endl;
+			}
 		}
 		else
 		{
-			assert (!journal.is_balanced());
-			cout << "Note transaction is unbalanced. Entries must sum to nil "
-				 << "before changes can be saved." << endl << endl;
+			assert (journal.is_balanced());
+			menu.add_item(simple_exit_item);
 		}
 		menu.present_to_user();	
+		ItemPtr const last_choice = menu.last_choice();
 		if 
-		(	(menu.last_choice() == exit_without_saving_item) ||
-			(menu.last_choice() == exit_with_saving_item) ||
-			(menu.last_choice() == delete_journal_item)
+		(	(last_choice == exit_without_saving_item) ||
+			(last_choice == exit_with_saving_item) ||
+			(last_choice == simple_exit_item) ||
+			(last_choice == delete_journal_item)
 		)
 		{
 			exiting = true;
@@ -781,47 +782,16 @@ void
 PhatbooksTextSession::conduct_oj_editing(OrdinaryJournal& journal)
 {
 	// TODO
-	// There is much code here that is duplicated with
+	// There is still code here that is duplicated with
 	// PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal).
 	// Factor it out somehow.
 	typedef shared_ptr<MenuItem const> ItemPtr;
 	typedef PhatbooksTextSession PTS;
-	for (bool exiting = false; !exiting; )
+	for (bool exiting = false, first_time = true; !exiting; first_time = false)
 	{
-		cout << journal << endl;
+		cout << endl << journal << endl;
 		Menu menu("Select an action from the above menu: ");
-
-		ItemPtr add_entry_item
-		(	new MenuItem
-			(	"Add a line",
-				bind(bind(&PTS::elicit_entry_insertion, this, _1), journal)
-			)
-		);
-		menu.add_item(add_entry_item);
-
-		ItemPtr delete_entry_item
-		(	new MenuItem
-			(	"Delete a line",
-				bind(bind(&PTS::elicit_entry_deletion, this, _1), journal)
-			)
-		);
-		menu.add_item(delete_entry_item);
-
-		ItemPtr amend_entry_item
-		(	new MenuItem
-			(	"Amend a line",
-				bind(bind(&PTS::elicit_entry_amendment, this, _1), journal)
-			)
-		);
-		menu.add_item(amend_entry_item);
-
-		ItemPtr amend_comment_item
-		(	new MenuItem
-			(	"Amend transaction comment",
-				bind(bind(&PTS::elicit_comment_amendment, this, _1), journal)
-			)
-		);
-		menu.add_item(amend_comment_item);
+		populate_journal_editing_menu_core(menu, journal);
 
 		ItemPtr amend_date_item
 		(	new MenuItem
@@ -837,7 +807,9 @@ PhatbooksTextSession::conduct_oj_editing(OrdinaryJournal& journal)
 				bind
 				(	bind(&PTS::elicit_journal_deletion, this, _1),
 					journal
-				)
+				),
+				false,
+				"d"
 			)
 		);
 		menu.add_item(delete_journal_item);
@@ -853,7 +825,8 @@ PhatbooksTextSession::conduct_oj_editing(OrdinaryJournal& journal)
 				"u"
 			)
 		);
-		menu.add_item(exit_without_saving_item);
+
+		ItemPtr simple_exit_item = MenuItem::provide_menu_exit();
 
 		ItemPtr exit_with_saving_item
 		(	new MenuItem
@@ -866,21 +839,32 @@ PhatbooksTextSession::conduct_oj_editing(OrdinaryJournal& journal)
 				"s"
 			)
 		);
-		if (journal.is_balanced())
+
+		if (!first_time)
 		{
-			menu.add_item(exit_with_saving_item);
+			menu.add_item(exit_without_saving_item);
+			if (journal.is_balanced())
+			{
+				menu.add_item(exit_with_saving_item);
+			}
+			else
+			{
+				cout << "Note transaction is unbalanced. Entries must sum to "
+				     << "nil before changes can be saved.\n" << endl;
+			}
 		}
 		else
 		{
-			assert (!journal.is_balanced());
-			cout << "Note transaction is unbalanced. Entries must sum to nil "
-				 << "before changes can be saved." << endl << endl;
+			assert (journal.is_balanced());
+			menu.add_item(simple_exit_item);
 		}
 		menu.present_to_user();	
+		ItemPtr const last_choice = menu.last_choice();
 		if 
-		(	(menu.last_choice() == exit_without_saving_item) ||
-			(menu.last_choice() == exit_with_saving_item) ||
-			(menu.last_choice() == delete_journal_item)
+		(	(last_choice == exit_without_saving_item) ||
+			(last_choice == exit_with_saving_item) ||
+			(last_choice == simple_exit_item) ||
+			(last_choice == delete_journal_item)
 		)
 		{
 			exiting = true;
