@@ -34,9 +34,9 @@ public:
 
 	virtual ~TextSession();
 
-protected:
 	class Menu;
 	class MenuItem;
+protected:
 };
 
 

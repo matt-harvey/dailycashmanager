@@ -22,12 +22,10 @@ class Dialogue
 {
 public:
 	Dialogue(PhatbooksTextSession const& p_session);
-	void run();
 	
 
 private:
 	PhatbooksDatabaseConnection& m_database_connection;
-	virtual void do_run() = 0;
 
 
 

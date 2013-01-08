@@ -11,13 +11,4 @@ Dialogue::Dialogue(PhatbooksTextSession const& p_session):
 {
 }
 
-void
-Dialogue::run()
-{
-	do_run();
-	return;
-}
-
-
-
 }  // namespace phatbooks
