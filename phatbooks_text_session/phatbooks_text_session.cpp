@@ -588,7 +588,7 @@ void
 PhatbooksTextSession::elicit_repeater_deletion(DraftJournal& journal)
 {
 	journal.clear_repeaters();
-	cout << endl << "Automatic recording has been disabled for this transaction.\n"
+	cout << "\nAutomatic recording has been disabled for this transaction.\n"
 	     << endl;
 	return;
 }
@@ -620,8 +620,16 @@ PhatbooksTextSession::elicit_date_amendment
 (	OrdinaryJournal& journal
 )
 {
-	// TODO Implement this	
-	clog << endl << "We're now inside elicit_date_amendment." << endl;
+	cout << "\nEnter new transaction date in the form YYYYMMDDD "
+	     << "(or Enter to abort): ";
+	optional<gregorian::date> const maybe_date = get_date_from_user(true);	
+	if (!maybe_date)
+	{
+		cout << "Date left unchanged." << endl;
+		return;
+	}
+	assert (maybe_date);
+	journal.set_date(value(maybe_date));
 	return;
 }
 

@@ -12,7 +12,7 @@ class PhatbooksTextSession;
 class PersistentJournal;
 
 
-class PersistentJournalDialogue
+class PersistentJournalDialogue: public Dialogue
 {
 public:
 	PersistentJournalDialogue
