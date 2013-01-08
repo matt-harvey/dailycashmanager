@@ -314,14 +314,35 @@ private:
 	void display_ordinary_actual_entries();
 	void display_envelopes();
 
+	// To factor out some code common to \e conduct_ordinary_journal_editing
+	// and \e conduct_draft_journal_editing. This is called to populate
+	// the "top" MenuItems in the the journal editing Menu, which items
+	// are common to both functions.
 	void populate_journal_editing_menu_core
 	(	Menu& menu,
 		PersistentJournal& journal
 	);
 
-	// TODO Refactor in terms of PersistentJournalDialogue
-	void conduct_dj_editing(DraftJournal& journal);
-	void conduct_oj_editing(OrdinaryJournal& journal);
+	// To factor out some code common to \e conduct_ordinary_journal_editing
+	// and \e conduct_draft_journal_editing. This is called after the rest
+	// of the journal editing Menu has been constructed.
+	// This function adds some "bottom" MenuItems to \e menu, and
+	// then presents the menu to the user. The \e exiting parameter
+	// deterimes whether the main journal editing menu will exited
+	// or not given the user's menu selection. The \e first_time parameter
+	// should be set to true if and only if this is the user's initial entry
+	// into the journal editing menu, i.e. they have not already done some
+	// editing during this sojourn into the journal editing menu. This
+	// determines whether certain MenuItems are made available.
+	void finalize_journal_editing_cycle
+	(	PersistentJournal& journal,
+		Menu& menu,
+		bool& exiting,
+		bool first_time
+	);
+
+	void conduct_draft_journal_editing(DraftJournal& journal);
+	void conduct_ordinary_journal_editing(OrdinaryJournal& journal);
 
 	void display_posted_journals();
 	void display_impending_autoposts();

@@ -314,7 +314,10 @@ void PhatbooksTextSession::display_draft_journals()
 			shared_ptr<MenuItem const> const menu_item
 			(	new MenuItem
 				(	it->name(),
-					bind(bind(&PTS::conduct_dj_editing, this, _1), *it)
+					bind
+					(	bind(&PTS::conduct_draft_journal_editing, this, _1),
+						*it
+					)
 				)
 			);
 			menu.add_item(menu_item);
@@ -679,12 +682,97 @@ PhatbooksTextSession::populate_journal_editing_menu_core
 
 
 void
-PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal)
+PhatbooksTextSession::finalize_journal_editing_cycle
+(	PersistentJournal& journal,
+	Menu& menu,
+	bool& exiting,
+	bool first_time
+)
+{
+	typedef shared_ptr<MenuItem const> ItemPtr;
+	typedef PhatbooksTextSession PTS;  // For brevity below
+	ItemPtr delete_journal_item
+	(	new MenuItem
+		(	"Delete transaction",
+			bind
+			(	bind(&PTS::elicit_journal_deletion, this, _1),
+				ref(journal)
+			),
+			false,
+			"d"
+		)
+	);
+	menu.add_item(delete_journal_item);
+	ItemPtr simple_exit_item = MenuItem::provide_menu_exit();
+	ItemPtr exit_without_saving_item
+	(	new MenuItem
+		(	"Undo changes and exit",
+			bind
+			(	bind(&PTS::exit_journal_edit_without_saving, this, _1),
+				ref(journal)
+			),
+			false,
+			"u"
+		)
+	);
+	ItemPtr exit_with_saving_item
+	(	new MenuItem
+		(	"Save changes and exit",
+			bind
+			(	bind(&PTS::exit_journal_edit_saving_changes, this, _1),
+				ref(journal)
+			),
+			false,
+			"s"
+		)
+	);
+	if (!first_time)
+	{
+		menu.add_item(exit_without_saving_item);
+		if (journal.is_balanced())
+		{
+			menu.add_item(exit_with_saving_item);
+		}
+		else
+		{
+			cout << "Note transaction is unbalanced. Entries must sum to "
+				 << "nil before changes can be saved.\n" << endl;
+		}
+	}
+	else
+	{
+		assert (journal.is_balanced());
+		menu.add_item(simple_exit_item);
+	}
+	menu.present_to_user();	
+	ItemPtr const last_choice = menu.last_choice();
+	if 
+	(	(last_choice == exit_without_saving_item) ||
+		(last_choice == exit_with_saving_item) ||
+		(last_choice == simple_exit_item) ||
+		(last_choice == delete_journal_item)
+	)
+	{
+		exiting = true;
+	}
+	else assert (!exiting);
+	return;
+}
+
+	
+
+
+void
+PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
 {
 	typedef shared_ptr<MenuItem const> ItemPtr;
 	typedef PhatbooksTextSession PTS;  // For brevity below.
 
-	for (bool exiting = false, first_time = true; !exiting; first_time = false)
+	for 
+	(	bool exiting = false, first_time = true;
+		!exiting;
+		first_time = false
+	)
 	{
 		cout << endl << journal << endl;
 		Menu menu("Select an action from the above menu: ");
@@ -705,89 +793,22 @@ PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal)
 			)
 		);
 		menu.add_item(delete_repeaters_item);
-
-		ItemPtr delete_journal_item
-		(	new MenuItem
-			(	"Delete transaction",
-				bind
-				(	bind(&PTS::elicit_journal_deletion, this, _1),
-					journal
-				),
-				false,
-				"d"
-			)
-		);
-		menu.add_item(delete_journal_item);
-
-		ItemPtr simple_exit_item = MenuItem::provide_menu_exit();
-
-		ItemPtr exit_without_saving_item
-		(	new MenuItem
-			(	"Undo changes and exit",
-				bind
-				(	bind(&PTS::exit_journal_edit_without_saving, this, _1),
-					journal
-				),
-				false,
-				"u"
-			)
-		);
-
-		ItemPtr exit_with_saving_item
-		(	new MenuItem
-			(	"Save changes and exit",
-				bind
-				(	bind(&PTS::exit_journal_edit_saving_changes, this, _1),
-					journal
-				),
-				false,
-				"s"
-			)
-		);
-		if (!first_time)
-		{
-			menu.add_item(exit_without_saving_item);
-			if (journal.is_balanced())
-			{
-				menu.add_item(exit_with_saving_item);
-			}
-			else
-			{
-				cout << "Note transaction is unbalanced. Entries must sum to "
-				     << "nil before changes can be saved.\n" << endl;
-			}
-		}
-		else
-		{
-			assert (journal.is_balanced());
-			menu.add_item(simple_exit_item);
-		}
-		menu.present_to_user();	
-		ItemPtr const last_choice = menu.last_choice();
-		if 
-		(	(last_choice == exit_without_saving_item) ||
-			(last_choice == exit_with_saving_item) ||
-			(last_choice == simple_exit_item) ||
-			(last_choice == delete_journal_item)
-		)
-		{
-			exiting = true;
-		}
-		else assert (!exiting);
+		
+		finalize_journal_editing_cycle(journal, menu, exiting, first_time);
 	}
 	return;
 }
 
 void
-PhatbooksTextSession::conduct_oj_editing(OrdinaryJournal& journal)
+PhatbooksTextSession::conduct_ordinary_journal_editing(OrdinaryJournal& journal)
 {
-	// TODO
-	// There is still code here that is duplicated with
-	// PhatbooksTextSession::conduct_dj_editing(DraftJournal& journal).
-	// Factor it out somehow.
 	typedef shared_ptr<MenuItem const> ItemPtr;
 	typedef PhatbooksTextSession PTS;
-	for (bool exiting = false, first_time = true; !exiting; first_time = false)
+	for
+	(	bool exiting = false, first_time = true;
+		!exiting;
+		first_time = false
+	)
 	{
 		cout << endl << journal << endl;
 		Menu menu("Select an action from the above menu: ");
@@ -801,75 +822,7 @@ PhatbooksTextSession::conduct_oj_editing(OrdinaryJournal& journal)
 		);
 		menu.add_item(amend_date_item);
 
-		ItemPtr delete_journal_item
-		(	new MenuItem
-			(	"Delete transaction",
-				bind
-				(	bind(&PTS::elicit_journal_deletion, this, _1),
-					journal
-				),
-				false,
-				"d"
-			)
-		);
-		menu.add_item(delete_journal_item);
-
-		ItemPtr exit_without_saving_item
-		(	new MenuItem
-			(	"Undo changes and exit",
-				bind
-				(	bind(&PTS::exit_journal_edit_without_saving, this, _1),
-					journal
-				),
-				false,
-				"u"
-			)
-		);
-
-		ItemPtr simple_exit_item = MenuItem::provide_menu_exit();
-
-		ItemPtr exit_with_saving_item
-		(	new MenuItem
-			(	"Save changes and exit",
-				bind
-				(	bind(&PTS::exit_journal_edit_saving_changes, this, _1),
-					journal
-				),
-				false,
-				"s"
-			)
-		);
-
-		if (!first_time)
-		{
-			menu.add_item(exit_without_saving_item);
-			if (journal.is_balanced())
-			{
-				menu.add_item(exit_with_saving_item);
-			}
-			else
-			{
-				cout << "Note transaction is unbalanced. Entries must sum to "
-				     << "nil before changes can be saved.\n" << endl;
-			}
-		}
-		else
-		{
-			assert (journal.is_balanced());
-			menu.add_item(simple_exit_item);
-		}
-		menu.present_to_user();	
-		ItemPtr const last_choice = menu.last_choice();
-		if 
-		(	(last_choice == exit_without_saving_item) ||
-			(last_choice == exit_with_saving_item) ||
-			(last_choice == simple_exit_item) ||
-			(last_choice == delete_journal_item)
-		)
-		{
-			exiting = true;
-		}
-		else assert (!exiting);
+		finalize_journal_editing_cycle(journal, menu, exiting, first_time);
 	}
 	return;
 }
@@ -920,12 +873,12 @@ PhatbooksTextSession::display_journal_from_id()
 	if (journal_id_is_draft(database_connection(), id))
 	{
 		DraftJournal dj(database_connection(), id);
-		conduct_dj_editing(dj);
+		conduct_draft_journal_editing(dj);
 	}
 	else
 	{
 		OrdinaryJournal oj(database_connection(), id);
-		conduct_oj_editing(oj);
+		conduct_ordinary_journal_editing(oj);
 	}
 	// TODO In both conduct_..._editing functions,
 	// the "save changes" and "exit without saving changes" options are
