@@ -898,7 +898,8 @@ namespace
 	void summarise_balance_movement
 	(	Account const& account,
 		Decimal const& opening_balance,
-		Decimal const& closing_balance
+		Decimal const& closing_balance,
+		Decimal const& reconciled_balance
 	)
 	{
 		locale const orig_loc = cout.getloc();
@@ -908,14 +909,14 @@ namespace
 		{
 		case account_type::asset:
 		case account_type::liability:
-		case account_type::equity:
-		case account_type::pure_envelope:
 			cout << "Opening balance for "
 			     << account.name() << ": "
 				 << finformat(opening_balance) << endl;
 			cout << "Movement in balance during date range: "
 				 << finformat(closing_balance - opening_balance) << endl;
 			cout << "Closing balance: " << finformat(closing_balance) << endl;
+			cout << "Reconciled balance: " 
+			     << finformat(reconciled_balance) << endl;
 			break;
 		case account_type::expense:
 			cout << "Amount spent in period on " << account.name()
@@ -927,6 +928,8 @@ namespace
 			     << ": " << finformat(closing_balance - opening_balance)
 				 << endl;
 			break;
+		case account_type::pure_envelope:  // TODO Should this be here?
+		case account_type::equity:  // TODO Should this be here?
 		default:
 			assert (false);
 		}
@@ -941,9 +944,6 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	// TODO There is probably factor-out-able code between this and the
 	// Draft/Ordinary/Journal printing methods.
 	
-	// TODO I don't think this will work well with
-	// account_type::pure_envelope. The user would be surprised by the result.
-
 	// TODO Could the following procedure result in overflow as it may
 	// add all and only the ACTUAL entries for a P&L account? How should we
 	// deal with this possibility?
@@ -991,7 +991,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	// TODO Factor out process of "getting date range from user" into a
 	// separate function.
 	cout << "Enter start date as an 8-digit number of the form YYYYMMDD, "
-	        "or leave blank for no start date: ";
+			"or leave blank for no start date: ";
 	optional<gregorian::date> const maybe_earliest_date =
 		get_date_from_user(true);
 
@@ -1013,21 +1013,26 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		{
 			assert (maybe_earliest_date);
 			assert (maybe_latest_date);
-			assert (value(maybe_latest_date) < value(maybe_latest_date));
+			assert (value(maybe_latest_date) < value(maybe_earliest_date));
 			cout << "End date cannot be earlier than start date. "
-			        "Please try again: ";
+					"Please try again: ";
 			assert (!input_is_valid);
 		}
 	}
 
 	Decimal opening_balance(0, 0);
+	Decimal reconciled_balance(0, 0);
 	bool const filtering_for_account = (maybe_account? true: false);
 	if (account_name.empty()) assert (!filtering_for_account);
 	Account::Id const account_id = (maybe_account? maybe_account->id(): 0);
+	bool const is_asset_or_liab =
+	(	maybe_account?
+		is_asset_or_liability(value(maybe_account)):
+		false
+	);
 	bool const accumulating_pre_start_date_entries =
 	(	filtering_for_account &&
-		(maybe_account->account_type() != account_type::revenue) &&
-		(maybe_account->account_type() != account_type::expense)
+		is_asset_or_liab
 	);
 
 	ActualOrdinaryEntryReader reader(database_connection());
@@ -1048,7 +1053,10 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 				(it->account().id() == account_id)
 			)
 			{
-				opening_balance += it->amount();
+				Decimal const amount = it->amount();
+				opening_balance += amount;
+				assert (is_asset_or_liab);
+				if (it->is_reconciled()) reconciled_balance += amount;
 			}
 		}
 	}
@@ -1071,7 +1079,15 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 			if (it->account().id() == account_id)
 			{
 				table_vec.push_back(*it);
-				closing_balance += it->amount();
+				Decimal const amount = it->amount();
+				closing_balance += amount;
+				if
+				(	is_asset_or_liab &&
+					it->is_reconciled()
+				)
+				{
+					reconciled_balance += amount;
+				}
 			}
 		}
 		else
@@ -1109,7 +1125,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		),
 		2
 	);
-	cout << table << endl;
+	cout << endl << table << endl;
 
 	if (filtering_for_account)
 	{
@@ -1117,7 +1133,8 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		summarise_balance_movement
 		(	*maybe_account,
 			opening_balance,
-			closing_balance
+			closing_balance,
+			reconciled_balance
 		);
 	}
 
