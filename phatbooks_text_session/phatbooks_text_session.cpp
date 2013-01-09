@@ -204,6 +204,15 @@ PhatbooksTextSession::PhatbooksTextSession():
 		)
 	);
 	m_main_menu->add_item(display_envelopes_selection);
+
+	shared_ptr<MenuItem> perform_reconciliation_selection
+	(	new MenuItem
+		(	"Perform account reconciliation",
+			bind(&PhatbooksTextSession::conduct_reconciliation, this),
+			true
+		)
+	);
+	m_main_menu->add_item(perform_reconciliation_selection);
 	
 	// WARNING This should be removed from any release version
 	shared_ptr<MenuItem> import_from_nap_item
@@ -833,6 +842,74 @@ PhatbooksTextSession::conduct_ordinary_journal_editing(OrdinaryJournal& journal)
 }
 
 
+void
+PhatbooksTextSession::conduct_reconciliation()
+{
+	Account account(database_connection());
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		cout << "Enter name of asset or liability account "
+		     << "(or leave blank to abort): ";
+		string const account_name = elicit_existing_account_name(true);
+		if (account_name.empty())
+		{
+			cout << "Reconciliation aborted.\n" << endl;
+			return;
+		}
+		assert (!account_name.empty());
+		account = Account(database_connection(), account_name);
+		if (!is_asset_or_liability(account))
+		{
+			// TODO Despite the below message, we display the "is reconciled"
+			// property even for Entries of which the account is not an asset
+			// or liability account. Is this misleading for the user?
+			cout << "Only asset or liability accounts can be reconciled. "
+			     << "Please try again."
+				 << endl;
+			assert (!input_is_valid);
+		}
+		else
+		{
+			input_is_valid = true;
+		}
+	}
+	assert (is_asset_or_liability(account));
+	cout << "Enter statement date as an 8-digit number of the form YYYYMMDD "
+	        "(leave blank for today's date): ";
+	optional<gregorian::date> const d = get_date_from_user(true);
+	gregorian::date balance_date =
+		(d? value(d): gregorian::day_clock::local_day());
+	Decimal total_balance(0, 0);
+	Decimal reconciled_balance(0, 0);
+	Account::Id const account_id = account.id();
+	ActualOrdinaryEntryReader reader(database_connection());
+	for
+	(	ActualOrdinaryEntryReader::const_iterator it = reader.begin(),
+			end = reader.end();
+		(it != end) && (it->date() < balance_date);
+		++it
+	)
+	{
+		if (it->account().id() == account_id)
+		{
+			Decimal const amount = it->amount();
+			total_balance += amount;
+			if (it->is_reconciled()) reconciled_balance += amount;
+		}
+	}
+	cout << "\nTotal balance at "
+	     << balance_date << ": "
+		 << finformat(total_balance) << endl;
+	cout << "\nReconciled balance at "
+	     << balance_date << ": "
+		 << finformat(reconciled_balance) << endl;
+
+
+	// TODO Implement the rest of this.
+	return;
+}
+
+
 namespace
 {
 	// TODO This function is weird and misleading in what it does, and
@@ -898,11 +975,9 @@ namespace
 	void summarise_balance_movement
 	(	Account const& account,
 		Decimal const& opening_balance,
-		Decimal const& closing_balance,
-		Decimal const& reconciled_balance
+		Decimal const& closing_balance
 	)
 	{
-		locale const orig_loc = cout.getloc();
 		// TODO Are these expressed in terms of the "friendly balances"?
 		// Should they be?
 		switch (account.account_type())
@@ -915,8 +990,6 @@ namespace
 			cout << "Movement in balance during date range: "
 				 << finformat(closing_balance - opening_balance) << endl;
 			cout << "Closing balance: " << finformat(closing_balance) << endl;
-			cout << "Reconciled balance: " 
-			     << finformat(reconciled_balance) << endl;
 			break;
 		case account_type::expense:
 			cout << "Amount spent in period on " << account.name()
@@ -1021,7 +1094,6 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	}
 
 	Decimal opening_balance(0, 0);
-	Decimal reconciled_balance(0, 0);
 	bool const filtering_for_account = (maybe_account? true: false);
 	if (account_name.empty()) assert (!filtering_for_account);
 	Account::Id const account_id = (maybe_account? maybe_account->id(): 0);
@@ -1053,10 +1125,8 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 				(it->account().id() == account_id)
 			)
 			{
-				Decimal const amount = it->amount();
-				opening_balance += amount;
+				opening_balance += it->amount();
 				assert (is_asset_or_liab);
-				if (it->is_reconciled()) reconciled_balance += amount;
 			}
 		}
 	}
@@ -1081,13 +1151,6 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 				table_vec.push_back(*it);
 				Decimal const amount = it->amount();
 				closing_balance += amount;
-				if
-				(	is_asset_or_liab &&
-					it->is_reconciled()
-				)
-				{
-					reconciled_balance += amount;
-				}
 			}
 		}
 		else
@@ -1133,8 +1196,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		summarise_balance_movement
 		(	*maybe_account,
 			opening_balance,
-			closing_balance,
-			reconciled_balance
+			closing_balance
 		);
 	}
 

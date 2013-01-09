@@ -344,6 +344,8 @@ private:
 	void conduct_draft_journal_editing(DraftJournal& journal);
 	void conduct_ordinary_journal_editing(OrdinaryJournal& journal);
 
+	void conduct_reconciliation();
+
 	void display_posted_journals();
 	void display_impending_autoposts();
 	void display_commodities_menu();
