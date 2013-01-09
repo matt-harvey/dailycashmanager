@@ -845,6 +845,8 @@ PhatbooksTextSession::conduct_ordinary_journal_editing(OrdinaryJournal& journal)
 void
 PhatbooksTextSession::conduct_reconciliation()
 {
+	// TODO Factor out common code shared between here and
+	// display_ordinary_actual_entries().
 	Account account(database_connection());
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
@@ -874,34 +876,97 @@ PhatbooksTextSession::conduct_reconciliation()
 		}
 	}
 	assert (is_asset_or_liability(account));
-	cout << "Enter statement date as an 8-digit number of the form YYYYMMDD "
-	        "(leave blank for today's date): ";
-	optional<gregorian::date> const d = get_date_from_user(true);
-	gregorian::date balance_date =
-		(d? value(d): gregorian::day_clock::local_day());
+	cout << "Enter statement opening date as an 8-digit number of the form"
+		 << " YYYYMMDD: ";
+	gregorian::date const opening_date = value(get_date_from_user());
+	gregorian::date closing_date;	
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		cout << "Enter statement closing date as an 8-digit number of the form "
+		     << "YYYYMMDD: ";
+		closing_date = value(get_date_from_user());
+		if (closing_date >= opening_date)
+		{
+			input_is_valid = true;
+		}
+		else
+		{
+			assert (closing_date < opening_date);
+			cout << "Closing date cannot be earlier than opening date. "
+			     << "Please try again: ";
+			assert (input_is_valid = false);
+		}
+	}
 	Decimal total_balance(0, 0);
 	Decimal reconciled_balance(0, 0);
 	Account::Id const account_id = account.id();
 	ActualOrdinaryEntryReader reader(database_connection());
-	for
-	(	ActualOrdinaryEntryReader::const_iterator it = reader.begin(),
-			end = reader.end();
-		(it != end) && (it->date() < balance_date);
-		++it
-	)
+	vector<Entry> table_vec;
+	typedef ActualOrdinaryEntryReader::const_iterator ReaderIt;
+	ReaderIt const end = reader.end();
+	ReaderIt it = reader.begin();
+	// Examine entries prior to the statement opening date
+	for ( ; (it != end) && (it->date() < opening_date); ++it)
 	{
 		if (it->account().id() == account_id)
 		{
 			Decimal const amount = it->amount();
 			total_balance += amount;
 			if (it->is_reconciled()) reconciled_balance += amount;
+			else table_vec.push_back(*it);
 		}
 	}
+
+	// Examine entries between the opening and closing dates
+	for ( ; (it != end) && (it->date() <= closing_date); ++it)
+	{
+		if (it->account().id() == account_id)
+		{
+			table_vec.push_back(*it);
+			Decimal const amount = it->amount();
+			total_balance += amount;
+			if (it->is_reconciled()) reconciled_balance += amount;
+		}
+	}
+	
+	// TODO Headings should somehow be provided as part of the "create_row"
+	// function - they depend on that function and so that's where they
+	// belong. This would require changing the interface of consolixx::Table.
+	string const headings[] =
+	{	"Date",
+		"Journal id",
+		"Entry id",
+		"Account",
+		"Comment",
+		"Commodity",
+		"Amount",
+		"Reconciled"
+	};
+	using alignment::left;
+	using alignment::right;
+	alignment::Flag const alignments[] =
+		{ left, right, right, left, left, left, right, left };
+	Table<Entry> const table
+	(	table_vec.begin(),
+		table_vec.end(),
+		make_augmented_ordinary_entry_row,
+		vector<string>
+		(	headings,
+			headings + sizeof(headings) / sizeof(headings[0])
+		),
+		vector<alignment::Flag>
+		(	alignments,
+			alignments + sizeof(alignments) / sizeof(alignments[0])
+		),
+		2
+	);
+	cout << endl << table << endl;
+
 	cout << "\nTotal balance at "
-	     << balance_date << ": "
+	     << closing_date << ": "
 		 << finformat(total_balance) << endl;
 	cout << "\nReconciled balance at "
-	     << balance_date << ": "
+	     << closing_date << ": "
 		 << finformat(reconciled_balance) << endl;
 
 
