@@ -159,6 +159,11 @@ PhatbooksTextSession::PhatbooksTextSession():
 	);
 	m_main_menu->add_item(display_draft_journals_item);
 
+	// TODO The wording "Select a transaction by ID" is not clear for
+	// the user as to whether we are referring to a PersistentJournal id,
+	// or to an Entry id. We a need a user-facing vocabulary that is going
+	// to distinguish between these two, while also not sounding too
+	// technical or confusing.
 	shared_ptr<MenuItem> display_journal_from_id_item
 	(	new MenuItem
 		(	"Select a transaction by ID",
