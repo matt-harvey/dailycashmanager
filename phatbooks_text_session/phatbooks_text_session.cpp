@@ -35,12 +35,14 @@
 #include "consolixx/table.hpp"
 #include "consolixx/text_session.hpp"
 #include <sqloxx/database_connection.hpp>
+#include <sqloxx/database_transaction.hpp>
 #include <sqloxx/handle.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
 #include <jewel/optional.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/bimap.hpp>
 #include <boost/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -51,6 +53,7 @@
 #include <boost/ref.hpp>
 #include <boost/regex.hpp>
 #include <boost/shared_ptr.hpp>
+#include <sqloxx/sqloxx_exceptions.hpp>
 #include <algorithm>
 #include <iostream>
 #include <list>
@@ -82,6 +85,7 @@ using jewel::DecimalRangeException;
 using jewel::value;
 using sqloxx::DatabaseConnection;
 using sqloxx::SQLiteException;
+using boost::algorithm::split;
 using boost::bad_lexical_cast;
 using boost::bimap;
 using boost::bind;
@@ -92,6 +96,8 @@ using boost::shared_ptr;
 using boost::ref;
 using boost::regex;
 using boost::regex_match;
+using sqloxx::BadIdentifier;
+using sqloxx::DatabaseTransaction;
 using std::cout;
 using std::clog;
 using std::endl;
@@ -845,13 +851,12 @@ PhatbooksTextSession::conduct_ordinary_journal_editing(OrdinaryJournal& journal)
 void
 PhatbooksTextSession::conduct_reconciliation()
 {
-	// TODO Factor out common code shared between here and
-	// display_ordinary_actual_entries().
+	// TODO This is a giant mess and needs refactoring
 	Account account(database_connection());
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
 		cout << "Enter name of asset or liability account "
-		     << "(or leave blank to abort): ";
+			 << "(or leave blank to abort): ";
 		string const account_name = elicit_existing_account_name(true);
 		if (account_name.empty())
 		{
@@ -866,7 +871,7 @@ PhatbooksTextSession::conduct_reconciliation()
 			// property even for Entries of which the account is not an asset
 			// or liability account. Is this misleading for the user?
 			cout << "Only asset or liability accounts can be reconciled. "
-			     << "Please try again."
+				 << "Please try again."
 				 << endl;
 			assert (!input_is_valid);
 		}
@@ -883,7 +888,7 @@ PhatbooksTextSession::conduct_reconciliation()
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
 		cout << "Enter statement closing date as an 8-digit number of the form "
-		     << "YYYYMMDD: ";
+			 << "YYYYMMDD: ";
 		closing_date = value(get_date_from_user());
 		if (closing_date >= opening_date)
 		{
@@ -893,84 +898,220 @@ PhatbooksTextSession::conduct_reconciliation()
 		{
 			assert (closing_date < opening_date);
 			cout << "Closing date cannot be earlier than opening date. "
-			     << "Please try again: ";
+				 << "Please try again: ";
 			assert (input_is_valid = false);
 		}
 	}
-	Decimal total_balance(0, 0);
-	Decimal reconciled_balance(0, 0);
-	Account::Id const account_id = account.id();
-	ActualOrdinaryEntryReader reader(database_connection());
-	vector<Entry> table_vec;
-	typedef ActualOrdinaryEntryReader::const_iterator ReaderIt;
-	ReaderIt const end = reader.end();
-	ReaderIt it = reader.begin();
-	// Examine entries prior to the statement opening date
-	for ( ; (it != end) && (it->date() < opening_date); ++it)
+
+
+	for (bool exiting = false; !exiting; )
 	{
-		if (it->account().id() == account_id)
+		// TODO Factor out common code shared between here and
+		// display_ordinary_actual_entries().
+		
+		Decimal total_balance(0, 0);
+		Decimal reconciled_balance(0, 0);
+		Account::Id const account_id = account.id();
+		ActualOrdinaryEntryReader reader(database_connection());
+		vector<Entry> table_vec;
+		typedef ActualOrdinaryEntryReader::const_iterator ReaderIt;
+		ReaderIt const end = reader.end();
+		ReaderIt it = reader.begin();
+		// Examine entries prior to the statement opening date
+		for ( ; (it != end) && (it->date() < opening_date); ++it)
 		{
-			Decimal const amount = it->amount();
-			total_balance += amount;
-			if (it->is_reconciled()) reconciled_balance += amount;
-			else table_vec.push_back(*it);
+			if (it->account().id() == account_id)
+			{
+				Decimal const amount = it->amount();
+				total_balance += amount;
+				if (it->is_reconciled()) reconciled_balance += amount;
+				else table_vec.push_back(*it);
+			}
+		}
+
+		// Examine entries between the opening and closing dates
+		for ( ; (it != end) && (it->date() <= closing_date); ++it)
+		{
+			if (it->account().id() == account_id)
+			{
+				table_vec.push_back(*it);
+				Decimal const amount = it->amount();
+				total_balance += amount;
+				if (it->is_reconciled()) reconciled_balance += amount;
+			}
+		}
+		
+		// TODO Headings should somehow be provided as part, or else "near the
+		// source of", the "create_row"
+		// function - they depend on that function and so that's where they
+		// belong. This would require changing the interface of consolixx::Table.
+		string const headings[] =
+		{	"Date",
+			"Journal id",
+			"Entry id",
+			"Account",
+			"Comment",
+			"Commodity",
+			"Amount",
+			"Reconciled"
+		};
+		using alignment::left;
+		using alignment::right;
+		alignment::Flag const alignments[] =
+			{ left, right, right, left, left, left, right, left };
+		Table<Entry> const table
+		(	table_vec.begin(),
+			table_vec.end(),
+			make_augmented_ordinary_entry_row,
+			vector<string>
+			(	headings,
+				headings + sizeof(headings) / sizeof(headings[0])
+			),
+			vector<alignment::Flag>
+			(	alignments,
+				alignments + sizeof(alignments) / sizeof(alignments[0])
+			),
+			2
+		);
+		cout << endl << table << endl;
+
+		cout << "\nTotal balance at "
+			 << closing_date << ": "
+			 << finformat(total_balance) << endl;
+		cout << "\nReconciled balance at "
+			 << closing_date << ": "
+			 << finformat(reconciled_balance) << endl;
+		cout << endl;
+
+		// Get user input on which to reconcile
+		cout << "Enter \"a\" to mark all entries as reconciled, "
+		     << "\"u\" to unmark all, or"
+		     << " a series of entry ids - separated by spaces - to toggle "
+			 << "the reconciliation status of selected entries (or just hit "
+			 << "Enter to return to the previous menu) :"
+			 << endl;
+		for (bool input_is_valid = false; !input_is_valid; )
+		{
+			typedef vector<Entry>::iterator EntryIt;
+			string const input = get_user_input();
+			// TODO I should use for_each algorithm here.
+			if (input == "a")
+			{
+				DatabaseTransaction transaction(database_connection());	
+				for
+				(	EntryIt tvit = table_vec.begin(), tvend = table_vec.end();
+					tvit != tvend;
+					++tvit
+				)
+				{
+					tvit->set_whether_reconciled(true);
+					tvit->save();
+				}
+				input_is_valid = true;
+				transaction.commit();
+			}
+			else if (input == "u")
+			{
+				DatabaseTransaction transaction(database_connection());	
+				for
+				(	EntryIt tvit = table_vec.begin(), tvend = table_vec.end();
+					tvit != tvend;
+					++tvit
+				)
+				{
+					tvit->set_whether_reconciled(false);
+					tvit->save();
+				}
+				input_is_valid = true;
+				transaction.commit();
+			}
+			else if (input.empty())
+			{
+				input_is_valid = true;
+				exiting = true;
+			}
+			else
+			{
+				regex const target_regex("^([123456789][0123456789]*[ ]?)+$");
+				if (!regex_match(input, target_regex))
+				{
+					cout << "Please try again, entering \"a\", \"u\", or a "
+					     << "series of numbers, being entry ids from the table"
+						 << " above, separated by spaces:" << endl;
+					assert (input_is_valid == false);
+				}
+				else
+				{
+					using boost::algorithm::is_space;
+					vector<string> id_strings;
+					split(id_strings, input, is_space());
+					vector<string> invalid_ids;
+					DatabaseTransaction transaction(database_connection());	
+					for
+					(	vector<string>::const_iterator isit = id_strings.begin(),
+							isend = id_strings.end();
+						isit != isend;
+						++isit
+					)
+					{
+						try
+						{
+							Entry::Id const id = lexical_cast<Entry::Id>(*isit);
+							Entry entry(database_connection(), id);
+							vector<Entry>::const_iterator eit = table_vec.begin();
+							vector<Entry>::const_iterator eend = table_vec.end();
+							for ( ; (eit != eend) && (eit->id() != id); ++eit)
+							{
+							}
+							if (eit == eend)
+							{
+								invalid_ids.push_back(*isit);
+							}
+							else
+							{
+								if (entry.is_reconciled())
+								{
+									entry.set_whether_reconciled(false);
+								}
+								else
+								{
+									entry.set_whether_reconciled(true);
+								}
+								entry.save();
+							}
+						}
+						catch (bad_lexical_cast&)
+						{
+						}
+						catch (BadIdentifier&)
+						{
+							invalid_ids.push_back(*isit);	
+						}
+					}
+					transaction.commit();
+					if (!invalid_ids.empty())
+					{
+						cout << "The following ids did not correspond to "
+						     << "entries in the above table, and were "
+							 << "ignored:"
+							 << endl;
+						for
+						(	vector<string>::const_iterator invit =
+									invalid_ids.begin(),
+								invend = invalid_ids.end();
+							invit != invend;
+							++invit
+						)
+						{
+							cout << *invit << " ";
+						}
+						cout << endl << endl;
+					}
+					input_is_valid = true;
+				}
+			}
 		}
 	}
-
-	// Examine entries between the opening and closing dates
-	for ( ; (it != end) && (it->date() <= closing_date); ++it)
-	{
-		if (it->account().id() == account_id)
-		{
-			table_vec.push_back(*it);
-			Decimal const amount = it->amount();
-			total_balance += amount;
-			if (it->is_reconciled()) reconciled_balance += amount;
-		}
-	}
-	
-	// TODO Headings should somehow be provided as part of the "create_row"
-	// function - they depend on that function and so that's where they
-	// belong. This would require changing the interface of consolixx::Table.
-	string const headings[] =
-	{	"Date",
-		"Journal id",
-		"Entry id",
-		"Account",
-		"Comment",
-		"Commodity",
-		"Amount",
-		"Reconciled"
-	};
-	using alignment::left;
-	using alignment::right;
-	alignment::Flag const alignments[] =
-		{ left, right, right, left, left, left, right, left };
-	Table<Entry> const table
-	(	table_vec.begin(),
-		table_vec.end(),
-		make_augmented_ordinary_entry_row,
-		vector<string>
-		(	headings,
-			headings + sizeof(headings) / sizeof(headings[0])
-		),
-		vector<alignment::Flag>
-		(	alignments,
-			alignments + sizeof(alignments) / sizeof(alignments[0])
-		),
-		2
-	);
-	cout << endl << table << endl;
-
-	cout << "\nTotal balance at "
-	     << closing_date << ": "
-		 << finformat(total_balance) << endl;
-	cout << "\nReconciled balance at "
-	     << closing_date << ": "
-		 << finformat(reconciled_balance) << endl;
-
-
-	// TODO Implement the rest of this.
 	return;
 }
 
