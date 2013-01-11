@@ -117,9 +117,6 @@ namespace gregorian = boost::gregorian;
 namespace phatbooks
 {
 
-// TODO HIGH PRIORITY - PersistentJournal editing dialogue crashes if the user
-// first adds an Entry, and then selects "edit entry". It crashes with
-// Jewel::UninitializedOptionalException.
 
 
 PhatbooksTextSession::PhatbooksTextSession():
@@ -441,9 +438,12 @@ namespace
 			++it
 		)
 		{
-			Entry::Id const current_id = it->id();
-			id_string += lexical_cast<string>(current_id);
-			id_string += " ";
+			if (it->has_id())
+			{
+				Entry::Id const current_id = it->id();
+				id_string += lexical_cast<string>(current_id);
+				id_string += " ";
+			}
 		}
 		string input = get_constrained_user_input
 		(	bind(has_entry_with_id_string, cref(journal), _1),

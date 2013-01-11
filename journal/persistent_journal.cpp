@@ -21,7 +21,7 @@ has_entry_with_id(PersistentJournal const& journal, Entry::Id entry_id)
 		++it
 	)
 	{
-		if (it->id() == entry_id)
+		if (it->has_id() && (it->id() == entry_id))
 		{
 			return true;
 		}
