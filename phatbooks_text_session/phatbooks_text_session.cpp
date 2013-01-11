@@ -117,7 +117,9 @@ namespace gregorian = boost::gregorian;
 namespace phatbooks
 {
 
-
+// TODO HIGH PRIORITY - PersistentJournal editing dialogue crashes if the user
+// first adds an Entry, and then selects "edit entry". It crashes with
+// Jewel::UninitializedOptionalException.
 
 
 PhatbooksTextSession::PhatbooksTextSession():
