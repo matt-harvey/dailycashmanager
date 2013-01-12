@@ -114,8 +114,6 @@ namespace gregorian = boost::gregorian;
 // TODO Enable editing of Account description and Account name -
 // use create_detailed_account_row function in account.hpp
 
-// TODO Enable DraftJournal to be posted from the DraftJournal menu.
-
 
 namespace phatbooks
 {
@@ -628,8 +626,8 @@ PhatbooksTextSession::exit_journal_edit_without_saving
 )
 {
 	journal.ghostify();
-	cout << "Changes have been cancelled. Transaction remains as follows: "
-	     << endl << endl << journal << endl << endl;
+	cout << "Saved transaction remains as follows: "
+	     << endl << endl << journal << endl;
 	return;
 }
 
@@ -639,8 +637,8 @@ PhatbooksTextSession::exit_journal_edit_saving_changes
 )
 {
 	journal.save();
-	cout << "Changes have been saved. Saved transaction is as follows: "
-	     << endl << endl << journal << endl << endl;
+	cout << "Saved transaction is now as follows: "
+	     << endl << endl << journal << endl;
 	return;
 }
 
@@ -711,9 +709,16 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 (	PersistentJournal& journal,
 	Menu& menu,
 	bool& exiting,
-	bool first_time
+	bool simple_exit
 )
 {
+	// TODO
+	// Note messages to user are possibly confusing in the event that the
+	// user converts a draft to an ordinary transaction. To
+	// exit they must choose either to retain or abandon changes made,
+	// but is confusing as to whether the "changes" include the posting
+	// of the OrdinaryJournal (they don't).
+
 	typedef shared_ptr<MenuItem const> ItemPtr;
 	typedef PhatbooksTextSession PTS;  // For brevity below
 	ItemPtr delete_journal_item
@@ -731,7 +736,7 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 	ItemPtr simple_exit_item = MenuItem::provide_menu_exit();
 	ItemPtr exit_without_saving_item
 	(	new MenuItem
-		(	"Undo changes and exit",
+		(	"Undo any changes to draft transaction, and exit",
 			bind
 			(	bind(&PTS::exit_journal_edit_without_saving, this, _1),
 				ref(journal)
@@ -742,7 +747,7 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 	);
 	ItemPtr exit_with_saving_item
 	(	new MenuItem
-		(	"Save changes and exit",
+		(	"Save any changes to draft transaction, and exit",
 			bind
 			(	bind(&PTS::exit_journal_edit_saving_changes, this, _1),
 				ref(journal)
@@ -751,7 +756,7 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 			"s"
 		)
 	);
-	if (!first_time)
+	if (!simple_exit)
 	{
 		menu.add_item(exit_without_saving_item);
 		if (journal.is_balanced())
@@ -785,7 +790,57 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 }
 
 	
+void
+PhatbooksTextSession::elicit_ordinary_journal_from_draft
+(	DraftJournal& draft_journal
+)
+{
+	typedef shared_ptr<MenuItem const> ItemPtr;
 
+	OrdinaryJournal ordinary_journal(database_connection());
+	ordinary_journal.mimic(draft_journal);
+
+	// TODO There is duplicated code between here and
+	// finalize_ordinary_journal
+	gregorian::date d = gregorian::day_clock::local_day();
+	cout << "Enter transaction date as an eight-digit number of the "
+		 << "form YYYYMMDD, or just hit enter for today's date ("
+		 << gregorian::to_iso_string(d)
+		 << "): ";
+	optional<gregorian::date> const date_input = get_date_from_user(true);
+	if (date_input) d = value(date_input);
+	ordinary_journal.set_date(d);
+	
+	cout << "Ordinary transaction will be recorded dated "
+	     << d
+		 << ". Draft transaction will be retained in list. Proceed? (y/n) ";
+	string const confirmation = get_constrained_user_input
+	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
+		"Try again, entering \"y\" to create commodity "
+		"or \"n\" to abort: ",
+		false
+	);
+	if (confirmation == "y")
+	{
+		ordinary_journal.save();
+		cout << "\nOrdinary transaction recorded:\n" << endl
+		     << ordinary_journal << endl;
+		cout << "\nDraft transaction also remains saved:" << endl;
+	}
+	else
+	{
+		assert (confirmation == "n");
+		cout << "\nTransaction has not been recorded. "
+		     << "However draft transaction remains saved: "
+			 << endl;
+	}
+
+	return;
+}
+
+	
+
+	
 
 void
 PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
@@ -800,7 +855,7 @@ PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
 	)
 	{
 		cout << endl << journal << endl;
-		Menu menu("Select an action from the above menu: ");
+		Menu menu;
 		populate_journal_editing_menu_core(menu, journal);
 
 		ItemPtr add_repeater_item
@@ -817,15 +872,33 @@ PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
 				bind(bind(&PTS::elicit_repeater_deletion, this, _1), journal)
 			)
 		);
-		menu.add_item(delete_repeaters_item);
-		
+		ItemPtr convert_to_ordinary_journal_item
+		(	new MenuItem
+			(	"Record as ordinary transaction",
+				bind
+				(	bind(&PTS::elicit_ordinary_journal_from_draft, this, _1),
+					journal
+				)
+			)
+		);
+		if (journal.has_repeaters())
+		{
+			menu.add_item(delete_repeaters_item);
+		}
+		else
+		{
+			menu.add_item(convert_to_ordinary_journal_item);
+		}
+			
 		finalize_journal_editing_cycle(journal, menu, exiting, first_time);
 	}
 	return;
 }
 
 void
-PhatbooksTextSession::conduct_ordinary_journal_editing(OrdinaryJournal& journal)
+PhatbooksTextSession::conduct_ordinary_journal_editing
+(	OrdinaryJournal& journal
+)
 {
 	typedef shared_ptr<MenuItem const> ItemPtr;
 	typedef PhatbooksTextSession PTS;
@@ -836,7 +909,7 @@ PhatbooksTextSession::conduct_ordinary_journal_editing(OrdinaryJournal& journal)
 	)
 	{
 		cout << endl << journal << endl;
-		Menu menu("Select an action from the above menu: ");
+		Menu menu;
 		populate_journal_editing_menu_core(menu, journal);
 
 		ItemPtr amend_date_item
@@ -2110,7 +2183,7 @@ PhatbooksTextSession::finalize_ordinary_journal(OrdinaryJournal& journal)
 		 << "): ";
 
 	optional<gregorian::date> const date_input = get_date_from_user(true);
-	if (date_input) d = *date_input;
+	if (date_input) d = value(date_input);
 	journal.set_date(d);
 	journal.save();
 	cout << "\nTransaction recorded:" << endl << endl

@@ -57,8 +57,7 @@ class TextSession::Menu:
 public:
 	
 	explicit Menu
-	(	std::string const& p_prompt =
-			"Enter an option from the above menu: "
+	(	std::string const& p_prompt = "Enter an option from the above menu: "
 	);
 	
    

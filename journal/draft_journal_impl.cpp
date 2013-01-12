@@ -353,9 +353,17 @@ DraftJournalImpl::do_remove()
 	return;
 }
 
+bool
+DraftJournalImpl::has_repeaters()
+{
+	load();
+	return !(m_dj_data->repeaters.empty());
+}
+
 void
 DraftJournalImpl::clear_repeaters()
 {
+	load();
 	(m_dj_data->repeaters).clear();
 	return;
 }

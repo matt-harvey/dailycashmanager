@@ -74,6 +74,11 @@ DraftJournal::add_repeater(Repeater& repeater)
 	return;
 }
 
+bool
+DraftJournal::has_repeaters() const
+{
+	return impl().has_repeaters();
+}
 
 void
 DraftJournal::clear_repeaters()

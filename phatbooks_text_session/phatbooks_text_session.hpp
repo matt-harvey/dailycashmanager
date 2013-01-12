@@ -256,6 +256,7 @@ private:
 	void elicit_entry_amendment(PersistentJournal& journal);
 	void elicit_journal_deletion(PersistentJournal& journal);
 	void elicit_comment_amendment(PersistentJournal& journal);
+	void elicit_ordinary_journal_from_draft(DraftJournal& journal);
 	void elicit_repeater_insertion(DraftJournal& journal);
 	void elicit_repeater_deletion(DraftJournal& journal);
 	void exit_journal_edit_without_saving(PersistentJournal& journal);
@@ -329,16 +330,22 @@ private:
 	// This function adds some "bottom" MenuItems to \e menu, and
 	// then presents the menu to the user. The \e exiting parameter
 	// deterimes whether the main journal editing menu will exited
-	// or not given the user's menu selection. The \e first_time parameter
-	// should be set to true if and only if this is the user's initial entry
-	// into the journal editing menu, i.e. they have not already done some
+	// or not given the user's menu selection. The \e simple_exit parameter
+	// should be set to true if and only if the user
+	// they has not already done some
 	// editing during this sojourn into the journal editing menu. This
-	// determines whether certain MenuItems are made available.
+	// determines whether certain MenuItems are made available. If
+	// \e simple_exit is set to \e true, then the user will be
+	// given an option to return to the
+	// previous menu (without mentioning whether or not to save changes, since
+	// there are no changes to save). If \e simple_exit is set to \e false,
+	// then two exiting options will be presented: to save changes and exit;
+	// and to exit without saving changes.
 	void finalize_journal_editing_cycle
 	(	PersistentJournal& journal,
 		Menu& menu,
 		bool& exiting,
-		bool first_time
+		bool simple_exit
 	);
 
 	void conduct_draft_journal_editing(DraftJournal& journal);

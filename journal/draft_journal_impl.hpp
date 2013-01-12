@@ -127,6 +127,8 @@ public:
 	 */
 	void mimic(ProtoJournal const& rhs);
 
+	bool has_repeaters();
+
 	void clear_repeaters();
 
 private:
