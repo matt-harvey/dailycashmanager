@@ -43,7 +43,6 @@
 #include <jewel/decimal_exceptions.hpp>
 #include <jewel/optional.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/bimap.hpp>
 #include <boost/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -87,7 +86,6 @@ using sqloxx::DatabaseConnection;
 using sqloxx::SQLiteException;
 using boost::algorithm::split;
 using boost::bad_lexical_cast;
-using boost::bimap;
 using boost::bind;
 using boost::cref;
 using boost::lexical_cast;
@@ -1368,16 +1366,16 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		}
 	}
 
-	string const headings[] =
-	{ 	"Date",
-		"Journal id",
-		"Entry id",
-		"Account",
-		"Comment",
-		"Commodity",
-		"Amount",
-		"Reconciled"
-	};
+	vector<string> headings;
+	headings.push_back("Date");
+	headings.push_back("Journal id");
+	headings.push_back("Entry id");
+	headings.push_back("Account");
+	headings.push_back("Comment");
+	headings.push_back("Commodity");
+	headings.push_back("Amount");
+	headings.push_back("Reconciled");
+
 	using alignment::left;
 	using alignment::right;
 	alignment::Flag const alignments[] =
@@ -1386,10 +1384,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	(	table_vec.begin(),
 		table_vec.end(),
 		make_augmented_ordinary_entry_row,
-		vector<string>
-		(	headings,
-			headings + sizeof(headings) / sizeof(headings[0])
-		),
+		headings,
 		vector<alignment::Flag>
 		(	alignments,
 			alignments + sizeof(alignments) / sizeof(alignments[0])
@@ -1567,22 +1562,17 @@ void PhatbooksTextSession::elicit_account()
 
 	// Get account type
 	Menu account_type_menu;
-	typedef bimap<Account::AccountType, string> bimap_type;
-	bimap_type account_type_info = database_connection().account_types();
-	for
-	(	bimap_type::iterator it = account_type_info.begin();
-		it != account_type_info.end();
-		++it
-	)
+	vector<string> const names = account_type_names();
+	for (vector<string>::size_type i = 0; i != names.size(); ++i)
 	{
-		shared_ptr<MenuItem> item(new MenuItem(it->right));
+		shared_ptr<MenuItem> item(new MenuItem(names[i]));
 		account_type_menu.add_item(item);
-	};
+	}
 	cout << "What kind of account do you wish to create?" << endl;
 	account_type_menu.present_to_user();
 	string const account_type_name =
 		account_type_menu.last_choice()->banner();
-	account.set_account_type(account_type_info.right.at(account_type_name));
+	account.set_account_type(string_to_account_type(account_type_name));
 
 
 	// Get description 

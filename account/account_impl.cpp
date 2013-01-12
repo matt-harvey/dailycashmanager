@@ -9,11 +9,13 @@
  */
 
 #include "account_impl.hpp"
+#include "account_type.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sql_statement.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -22,6 +24,7 @@
 #include <string>
 #include <vector>
 
+using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::clear;
 using jewel::Decimal;
@@ -40,39 +43,36 @@ typedef
 	BalanceCacheAttorney;
 
 
-vector<string>
-AccountImpl::account_type_names()
-{
-	static bool calculated_already = false;
-	static vector<string> ret;
-	while (!calculated_already)
-	{
-		ret.push_back("Asset");
-		ret.push_back("Liability");
-		ret.push_back("Equity");
-		ret.push_back("Revenue category");
-		ret.push_back("Expense category");
-		ret.push_back("Pure envelope");
-		calculated_already = true;
-	}
-	return ret;
-}
-
 
 void
 AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
-	(	"create table account_types(account_type_id integer primary key "
-		"autoincrement, name text not null unique);"
+	(	"create table account_types(account_type_id integer primary key)"
 	);
-	vector<string> const names = account_type_names();
-	for (vector<string>::size_type i = 0; i != names.size(); ++i)
+	vector<string>::size_type const num_account_types =
+		account_type_names().size();
+	for (vector<string>::size_type i = 1; i <= num_account_types; ++i)
 	{
-		dbc.execute_sql
-		(	"insert into account_types(name) values('" + names[i] + "');"
+		SQLStatement statement
+		(	dbc,	
+			"insert into account_types(account_type_id) values(:p)"
 		);
+		statement.bind(":p", numeric_cast<sqloxx::Id>(i));
+		statement.step_final();
 	}
+
+	#ifndef DEBUG
+		SQLStatement checker
+		(	dbc,
+			"select max(account_type_id) from account_types"
+		);
+		checker.step();
+		sqloxx::Id const maxi = checker.extract<sqloxx::Id>(0);
+		assert (maxi == 6);
+		checker.step_final();
+	#endif
+
 	dbc.execute_sql
 	(	"create table accounts "
 		"("

@@ -15,7 +15,6 @@
 #include "account_type.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
-#include <boost/bimap.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
@@ -85,14 +84,7 @@ public:
 	bool has_draft_journal_named(std::string const& p_name);
 	
 
-	/**
-	 * @returns a boost::bimap from AccountType to string, giving the
-	 * string name for each AccountType.
-	 *
-	 * @todo Determine and document throwing behaviour.
-	 */
-	boost::bimap<account_type::AccountType, std::string> account_types();
-
+	
 	/**
 	 * @returns \c true if and only if \c p_abbreviation is the abbreviation
 	 * of a Commodity stored in the database.

@@ -26,6 +26,7 @@ set (main_files
 	 account/account.cpp
 	 account/account_impl.cpp
 	 account/account_reader.cpp
+	 account/account_type.cpp
 	 account/balance_cache.cpp
 	 commodity/commodity.cpp
 	 commodity/commodity_impl.cpp

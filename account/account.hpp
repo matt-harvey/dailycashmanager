@@ -28,11 +28,6 @@ public:
 		PhatbooksPersistentObject;
 	typedef PhatbooksPersistentObjectBase::Id Id;
 
-	/**
-	 * Returns a vector of account type names, corresponding to the
-	 * AccountType enumerations, and in the same order.
-	 */
-	static std::vector<std::string> account_type_names();
 
 	/**
 	 * Sets up tables in the database required for the persistence of
@@ -121,6 +116,9 @@ private:
 
 boost::shared_ptr<std::vector<std::string> >
 make_account_row(Account const& account);
+
+boost::shared_ptr<std::vector<std::string> >
+make_detailed_account_row(Account const& account);
 
 
 // Free-standing functions

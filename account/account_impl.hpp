@@ -58,11 +58,6 @@ public:
 	typedef sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
 
-	/**
-	 * Returns a vector of account type names, corresponding to the
-	 * AccountType enumerations, and in the same order.
-	 */
-	static std::vector<std::string> account_type_names();
 
 	/**
 	 * Sets up tables in the database required for the persistence of

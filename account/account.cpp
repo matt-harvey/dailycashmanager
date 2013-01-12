@@ -23,12 +23,6 @@ using std::vector;
 namespace phatbooks
 {
 
-std::vector<std::string>
-Account::account_type_names()
-{
-	return AccountImpl::account_type_names();
-}
-
 void
 Account::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
@@ -160,6 +154,18 @@ make_account_row(Account const& account)
 	ret->push_back(finformat(account.friendly_balance()));
 	return ret;
 }
+
+shared_ptr<vector<string> >
+make_detailed_account_row(Account const& account)
+{
+	shared_ptr<vector<string> > ret(new vector<string>);
+	ret->push_back(account.name());
+	ret->push_back(account_type_to_string(account.account_type()));
+	ret->push_back(account.description());
+	ret->push_back(finformat(account.friendly_balance()));
+	return ret;
+}
+
 
 
 

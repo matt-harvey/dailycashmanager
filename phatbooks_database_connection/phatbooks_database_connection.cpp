@@ -34,7 +34,6 @@
 #include <sqloxx/sql_statement.hpp>
 #include <sqlite3.h>
 #include <stdexcept>
-#include <boost/bimap.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
@@ -46,7 +45,6 @@
 #include <string>
 
 
-using boost::bimap;
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::Decimal;
@@ -119,31 +117,6 @@ PhatbooksDatabaseConnection::has_draft_journal_named(string const& p_name)
 	);
 	statement.bind(":p", p_name);
 	return statement.step();
-}
-
-// TODO This is clunky. The account type names should be stored in
-// memory from the outset, as part of the application code, and not
-// stored in the database at all. They should be dealt with in the
-// same way as IntervalType.
-bimap<Account::AccountType, string>
-PhatbooksDatabaseConnection::account_types()
-{
-	typedef bimap<Account::AccountType, string> return_type;
-	return_type ret;
-	SQLStatement statement
-	(	*this,
-		"select account_type_id, name from account_types order "
-		"by account_type_id"
-	);
-	while (statement.step())
-	{
-		Account::AccountType acctype = static_cast<Account::AccountType>
-		(	statement.extract<Account::Id>(0)
-		);
-		string accname = statement.extract<string>(1);
-		ret.insert(return_type::value_type(acctype, accname));
-	}
-	return ret;
 }
 
 
