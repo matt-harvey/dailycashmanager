@@ -111,9 +111,6 @@ namespace alignment = consolixx::alignment;
 namespace gregorian = boost::gregorian;
 
 
-// TODO Enable editing of Account description and Account name -
-// use create_detailed_account_row function in account.hpp
-
 // TODO Enable display of account and envelope balances at a given
 // date
 
