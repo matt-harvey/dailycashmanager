@@ -196,6 +196,10 @@ private:
 	 */
 	void elicit_commodity();
 
+	std::string elicit_unused_account_name
+	(	bool allow_empty_to_escape = false
+	);
+
 	/**
 	 * Enter a dialogue with the user for creating a new Account, which on
 	 * creation will be persisted to the database.
@@ -353,6 +357,7 @@ private:
 
 	void conduct_reconciliation();
 	void display_account_detail();
+	void conduct_account_editing();
 	
 	void wrap_up();
 

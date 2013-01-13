@@ -226,15 +226,24 @@ PhatbooksTextSession::PhatbooksTextSession():
 	);
 	m_main_menu->add_item(perform_reconciliation_selection);
 
-	shared_ptr<MenuItem> account_detail_item
+	shared_ptr<MenuItem> display_account_detail_item
 	(	new MenuItem
 		(	"Account and category detail",
 			bind(&PhatbooksTextSession::display_account_detail, this),
 			true
 		)
 	);
-	m_main_menu->add_item(account_detail_item);
-	
+	m_main_menu->add_item(display_account_detail_item);
+
+	shared_ptr<MenuItem> edit_account_detail_item
+	(	new MenuItem
+		(	"Edit account detail",
+			bind(&PhatbooksTextSession::conduct_account_editing, this),
+			true
+		)
+	);
+	m_main_menu->add_item(edit_account_detail_item);
+
 	// WARNING This should be removed from any release version
 	shared_ptr<MenuItem> import_from_nap_item
 	(	new MenuItem
@@ -964,6 +973,42 @@ PhatbooksTextSession::display_account_detail()
 }
 
 
+void
+PhatbooksTextSession::conduct_account_editing()
+{
+	cout << "\nEnter name of account or category to "
+	     << "edit (or just hit Enter to abort): ";
+	string const account_name = elicit_existing_account_name(true);
+	if (account_name.empty())
+	{
+		cout << "Procedure aborted.\n" << endl;
+		return;
+	}
+	assert (!account_name.empty());
+	Account account(database_connection(), account_name);
+
+	cout << "Enter new name (or Enter to leave unchanged): ";
+	string const new_name = elicit_unused_account_name(true);
+	if (!new_name.empty()) account.set_name(new_name);
+
+	cout << "Enter new description (or Enter to leave unchanged): ";
+	string const new_description = get_user_input();
+	if (!new_description.empty()) account.set_description(new_description);
+
+	account.save();
+	cout << "Changes have been saved:" << endl;
+	if (!new_name.empty())
+	{
+		cout << "New name: " << new_name << endl;
+	}
+	if (!new_description.empty())
+	{
+		cout << "New description: " << new_description << endl;
+	}
+	cout << endl;
+	return;
+}
+
 
 void
 PhatbooksTextSession::conduct_reconciliation()
@@ -1628,20 +1673,23 @@ PhatbooksTextSession::elicit_commodity()
 }
 
 
-
-void PhatbooksTextSession::elicit_account()
+string
+PhatbooksTextSession::elicit_unused_account_name(bool allow_empty_to_escape)
 {
-
-	Account account(database_connection());
-
-	// Get account name
-	cout << "Enter a name for the account: ";
+	string input;
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
-		string input = get_user_input();
+		input = get_user_input();
 		if (input.empty())
 		{
-			cout << "Name cannot be blank. Please try again: ";
+			if (allow_empty_to_escape)
+			{
+				return input;
+			}
+			else
+			{
+				cout << "Name cannot be blank. Please try again: ";
+			}
 		}
 		else if (database_connection().has_account_named(input))
 		{
@@ -1651,9 +1699,24 @@ void PhatbooksTextSession::elicit_account()
 		else
 		{
 			input_is_valid = true;
-			account.set_name(input);
 		}
 	}
+	return input;
+}
+
+		
+
+
+
+void
+PhatbooksTextSession::elicit_account()
+{
+
+	Account account(database_connection());
+
+	// Get account name
+	cout << "Enter a name for the account: ";
+	account.set_name(elicit_unused_account_name());
 
 	// Get commodity abbreviation
 	cout << "Enter the abbreviation of the commodity that will be the "
