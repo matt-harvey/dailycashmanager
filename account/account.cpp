@@ -162,8 +162,7 @@ make_detailed_account_row(Account const& account)
 	ret->push_back(account.name());
 	ret->push_back(account_type_to_string(account.account_type()));
 	ret->push_back(account.description());
-	ret->push_back(finformat(account.friendly_balance()));
-	return ret;
+	;return ret;
 }
 
 

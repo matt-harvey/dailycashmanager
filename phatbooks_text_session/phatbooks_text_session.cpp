@@ -114,6 +114,12 @@ namespace gregorian = boost::gregorian;
 // TODO Enable editing of Account description and Account name -
 // use create_detailed_account_row function in account.hpp
 
+// TODO Enable display of account and envelope balances at a given
+// date
+
+// TODO Enable display of account movements for all accounts (esp. P&L)
+// in a given date range.
+
 
 namespace phatbooks
 {
@@ -219,6 +225,15 @@ PhatbooksTextSession::PhatbooksTextSession():
 		)
 	);
 	m_main_menu->add_item(perform_reconciliation_selection);
+
+	shared_ptr<MenuItem> account_detail_item
+	(	new MenuItem
+		(	"Account and category detail",
+			bind(&PhatbooksTextSession::display_account_detail, this),
+			true
+		)
+	);
+	m_main_menu->add_item(account_detail_item);
 	
 	// WARNING This should be removed from any release version
 	shared_ptr<MenuItem> import_from_nap_item
@@ -927,6 +942,30 @@ PhatbooksTextSession::conduct_ordinary_journal_editing
 
 
 void
+PhatbooksTextSession::display_account_detail()
+{
+	cout << endl;
+	vector<string> headings;
+	headings.push_back("Name");
+	headings.push_back("Type");
+	headings.push_back("Description");
+	vector<alignment::Flag> alignments(3, alignment::left);
+	AccountReader reader(database_connection());
+	Table<Account> const table
+	(	reader.begin(),
+		reader.end(),
+		make_detailed_account_row,
+		headings,
+		alignments,
+		2
+	);
+	cout << endl << table << endl;
+	return;
+}
+
+
+
+void
 PhatbooksTextSession::conduct_reconciliation()
 {
 	// TODO This is a giant mess and needs refactoring
@@ -1023,16 +1062,15 @@ PhatbooksTextSession::conduct_reconciliation()
 		// source of", the "create_row"
 		// function - they depend on that function and so that's where they
 		// belong. This would require changing the interface of consolixx::Table.
-		string const headings[] =
-		{	"Date",
-			"Journal id",
-			"Entry id",
-			"Account",
-			"Comment",
-			"Commodity",
-			"Amount",
-			"Reconciled"
-		};
+		vector<string> headings;
+		headings.push_back("Date");
+		headings.push_back("Journal id");
+		headings.push_back("Entry id");
+		headings.push_back("Account");
+		headings.push_back("Comment");
+		headings.push_back("Commodity");
+		headings.push_back("Amount");
+		headings.push_back("Reconciled?");
 		using alignment::left;
 		using alignment::right;
 		alignment::Flag const alignments[] =
@@ -1041,10 +1079,7 @@ PhatbooksTextSession::conduct_reconciliation()
 		(	table_vec.begin(),
 			table_vec.end(),
 			make_augmented_ordinary_entry_row,
-			vector<string>
-			(	headings,
-				headings + sizeof(headings) / sizeof(headings[0])
-			),
+			headings,
 			vector<alignment::Flag>
 			(	alignments,
 				alignments + sizeof(alignments) / sizeof(alignments[0])
