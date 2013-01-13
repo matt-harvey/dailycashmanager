@@ -353,14 +353,6 @@ private:
 
 	void conduct_reconciliation();
 	void display_account_detail();
-
-	/*
-	void display_posted_journals();
-	void display_impending_autoposts();
-	void display_commodities_menu();
-	void display_accounts_menu();
-	void display_utilities_menu();
-	*/
 	
 	void wrap_up();
 
