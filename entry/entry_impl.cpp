@@ -187,7 +187,7 @@ EntryImpl::do_load()
 		statement.extract<Account::Id>(0)
 	);
 	Decimal const amt
-	(	statement.extract<boost::int64_t>(2),
+	(	statement.extract<Decimal::int_type>(2),
 		acct.commodity().precision()
 	);
 

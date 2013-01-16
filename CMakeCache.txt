@@ -31,7 +31,7 @@ CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++
 CMAKE_CXX_FLAGS:STRING=
 
 //Flags used by the compiler during debug builds.
-CMAKE_CXX_FLAGS_DEBUG:STRING=-g -DDEBUG -Wall -Wextra -std=c++98 -pedantic
+CMAKE_CXX_FLAGS_DEBUG:STRING=-g -DDEBUG -Wall -Wextra -std=c++98
 
 //Flags used by the compiler during release minsize builds.
 CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG

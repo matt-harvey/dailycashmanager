@@ -279,7 +279,7 @@ RepeaterImpl::do_load()
 		static_cast<IntervalType>(statement.extract<int>(0));
 	temp.m_data->interval_units = statement.extract<int>(1);
 	temp.m_data->next_date =
-		numeric_cast<DateRep>(statement.extract<boost::int64_t>(2));
+		numeric_cast<DateRep>(statement.extract<long long>(2));
 	temp.m_data->journal_id = statement.extract<ProtoJournal::Id>(3);
 	swap(temp);
 	return;

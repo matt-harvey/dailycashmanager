@@ -8,7 +8,6 @@
 #include <sqloxx/handle.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement.hpp>
-#include <boost/cstdint.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/optional.hpp>
@@ -220,7 +219,7 @@ OrdinaryJournalImpl::do_load()
 	// of loading here MAY depend on m_date being of a native, non-throwing
 	// type.
 	BOOST_STATIC_ASSERT((boost::is_same<DateRep, int>::value));
-	temp.m_date = numeric_cast<DateRep>(statement.extract<boost::int64_t>(0));
+	temp.m_date = numeric_cast<DateRep>(statement.extract<long long>(0));
 	swap(temp);
 	return;
 }
