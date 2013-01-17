@@ -19,8 +19,7 @@ include_directories (/home/matthew/lib
                      /home/matthew/Workbench/versioned/phatbooks/repeater
 					 /home/matthew/Workbench/versioned/phatbooks/session)
 
-link_directories (/home/matthew/lib/jewel
-                  /home/matthew/lib/sqloxx)
+link_directories (/home/matthew/lib/sqloxx)
 
 set (main_files
 	 account/account.cpp
