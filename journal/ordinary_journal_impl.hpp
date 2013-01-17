@@ -79,7 +79,7 @@ public:
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
-	 * Initialize a "raw" OrdinaryJournalImpl, that will not yet
+	 * Construct a "raw" OrdinaryJournalImpl, that will not yet
 	 * correspond to any particular object in the database
 	 */
 	explicit
@@ -103,8 +103,6 @@ public:
 	void set_date(boost::gregorian::date const& p_date);
 
 	/**
-	 * @returns journal date.
-	 *
 	 * @todo Verify throwing behaviour and determine dependence on DateRep.
 	 */
 	boost::gregorian::date date();

@@ -15,6 +15,10 @@ namespace phatbooks
 class Entry;
 class Repeater;
 
+/**
+ * Implementation class for DraftJournal. Note multiple DraftJournal instances
+ * may share the same underlying DraftJournalImpl instance.
+ */
 class DraftJournalImpl:
 	public sqloxx::PersistentObject
 	<	DraftJournalImpl,
@@ -24,7 +28,10 @@ class DraftJournalImpl:
 {
 public:
 	typedef
-		sqloxx::PersistentObject<DraftJournalImpl, PhatbooksDatabaseConnection>
+		sqloxx::PersistentObject
+		<	DraftJournalImpl,
+			PhatbooksDatabaseConnection
+		>
 		PersistentObject;
 	typedef sqloxx::Id Id;
 	typedef
@@ -34,35 +41,19 @@ public:
 	static std::string primary_table_name();
 	static std::string primary_key_name();
 
-	/**
-	 * Create the tables required for the persistence
-	 * of DraftJournalImpl instances in a SQLite database.
-	 */
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
-	/**
-	 * Initialize a "raw" DraftJournalImpl, that will not yet
-	 * correspond to any particular object in the database
-	 */
 	explicit
 	DraftJournalImpl(IdentityMap& p_identity_map);
 
-	/**
-	 * Get a DraftJournalImpl by id from the database.
-	 */
 	DraftJournalImpl
 	(	IdentityMap& p_identity_map,
 		Id p_id
 	);
 
-	/**
-	 * Destructor.
-	 */
 	~DraftJournalImpl();
 
 	/**
-	 * Change whether Journal is actual or budget
-	 * 
 	 * Does not throw.
 	 */
 	void set_whether_actual(bool p_is_actual);
@@ -95,22 +86,12 @@ public:
 	 */
 	std::string comment();
 
-
 	std::vector<Entry> const& entries();
 
-	/**
-	 * Set name of DraftJournalImpl.
-	 */
 	void set_name(std::string const& p_name);
 	
-	/**
-	 * Add a Repeater to the DraftJournalImpl.
-	 */
 	void add_repeater(Repeater& repeater);
 	
-	/**
-	 * @returns name of DraftJournalImpl.
-	 */
 	std::string name();
 
 	/**

@@ -21,6 +21,12 @@ class DraftJournal;
 class PhatbooksDatabaseConnection;
 
 
+/**
+ * Represents an accounting journal that is, or will be, posted and
+ * thereby reflected as a change in the economic state of the accounting
+ * entity. The posting occurs when the \e save() method is called on the
+ * OrdinaryJournal.
+ */
 class OrdinaryJournal:
 	virtual public PersistentJournal,
 	private PhatbooksPersistentObject<OrdinaryJournalImpl>
@@ -35,22 +41,43 @@ public:
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
+	/**
+	 * Construct a "raw" OrdinaryJournal, that will not yet correspond to
+	 * any particular object in the database.
+	 */
 	explicit
 	OrdinaryJournal
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
+	/**
+	 * Retrieve an OrdinaryJournal from the database by id.
+	 * Throws if there is no OrdinaryJournal with this id.
+	 */
 	OrdinaryJournal
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
 
+	/**
+	 * @returns an OrdinaryJournal theoretically corresponding to one that
+	 * has been saved to the database with id \e p_id. However, this
+	 * function does not check whether there actually is an OrdinaryJournal
+	 * with this id in the database. It is the caller's responsibility to
+	 * be sure there is such an OrdinaryJournal, before calling this function.
+	 * This function is a faster way to get an instance of OrdinaryJournal,
+	 * than by calling the (normal) constructor that takes an id.
+	 */
 	static OrdinaryJournal create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection, 
 		Id p_id
 	);
 
 	void set_date(boost::gregorian::date const& p_date);
+
+	/**
+	 * @returns posting date.
+	 */
 	boost::gregorian::date date() const;
 
 	/**
