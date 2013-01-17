@@ -1,10 +1,9 @@
 cmake_minimum_required (VERSION 2.6)
 
-project (main)
-project (test)
+project (phatbooks)
+project (phatbooks_test)
 
-include_directories (/home/matthew/lib
-					 /home/matthew/Workbench/versioned/phatbooks
+include_directories (/home/matthew/Workbench/versioned/phatbooks
                      /home/matthew/Workbench/versioned/phatbooks/account
                      /home/matthew/Workbench/versioned/phatbooks/commodity
                      /home/matthew/Workbench/versioned/phatbooks/date
@@ -19,7 +18,7 @@ include_directories (/home/matthew/lib
                      /home/matthew/Workbench/versioned/phatbooks/repeater
 					 /home/matthew/Workbench/versioned/phatbooks/session)
 
-link_directories (/home/matthew/lib/sqloxx)
+link_directories (/usr/local/lib)
 
 set (main_files
 	 account/account.cpp
@@ -65,8 +64,8 @@ set (test_files
 	 tests/phatbooks_tests_common.cpp
 	 tests/repeater_tests.cpp)
 
-add_executable (main main.cpp ${main_files})
-add_executable (test ${test_files})
+add_executable (phatbooks main.cpp ${main_files})
+add_executable (phatbooks_test ${test_files})
 
 set (libraries
      boost_date_time
@@ -74,13 +73,15 @@ set (libraries
 	 boost_locale-mt
 	 boost_regex
 	 boost_system
+	 jewel 
 	 unittest++
-	 jewel
 	 sqlite3
 	 sqloxx)
 
-target_link_libraries (main ${libraries})
-target_link_libraries (test ${libraries})
+target_link_libraries (phatbooks ${libraries})
+target_link_libraries (phatbooks_test ${libraries})
+
+install(TARGETS phatbooks DESTINATION bin)
 					
 
 

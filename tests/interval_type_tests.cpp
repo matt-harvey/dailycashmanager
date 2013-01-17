@@ -1,5 +1,5 @@
 #include "interval_type.hpp"
-#include <unittest++/UnitTest++.h>
+#include <UnitTest++/UnitTest++.h>
 
 
 namespace phatbooks

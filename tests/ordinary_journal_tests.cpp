@@ -6,7 +6,7 @@
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/decimal.hpp>
-#include <unittest++/UnitTest++.h>
+#include <UnitTest++/UnitTest++.h>
 #include <vector>
 
 using boost::gregorian::date;

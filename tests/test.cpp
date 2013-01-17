@@ -10,7 +10,7 @@
 
 
 #include "tests/phatbooks_tests_common.hpp"
-#include <unittest++/UnitTest++.h>
+#include <UnitTest++/UnitTest++.h>
 #include <stdexcept>
 #include <iostream>
 
