@@ -33,10 +33,9 @@ namespace phatbooks
 
 
 /**
- * Class representing an accounting entry, i.e. a single line in an account.
- *
- * @todo Should the amount of an entry have the sign reversed when displayed
- * to the user in certain circumstances?
+ * Provides implementation for Entry. Multiple Entry instances may share the
+ * same EntryImpl, i.e. when they are referring to the same underlying
+ * persistent object i.e. record or would-be-record in the database.
  */
 class EntryImpl:
 	public sqloxx::PersistentObject<EntryImpl, PhatbooksDatabaseConnection>
@@ -49,73 +48,29 @@ public:
 	typedef sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
 
-	/**
-	 * Sets up tables in the database required for the persistence of
-	 * EntryImpl objects.
-	 */
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 	
-	/**
-	 * Initialize a "raw" entry, that will not yet correspond to any
-	 * particular object in the database, and will not yet be associated
-	 * with any particular Journal.
-	 */
 	explicit
 	EntryImpl(IdentityMap& p_identity_map);
 
-	/**
-	 * Get an EntryImpl by id from the database.
-	 */
 	EntryImpl
 	(	IdentityMap& p_identity_map,	
 		Id p_id
 	);
 
-	/**
-	 * Destructor
-	 */
 	~EntryImpl();
 
-	/**
-	 * Sets the journal_id for the EntryImpl. Note this should NOT
-	 * normally be called. The usual way to associate an EntryImpl with a
-	 * Journal (or DraftJournal or OrdinaryJournal) is for the EntryImpl
-	 * to be added to the Journal via its add_entry(...) method.
-	 */
 	void set_journal_id(sqloxx::Id p_journal_id);
 
-	/**
-	 * Set the Account for the EntryImpl.
-	 */
 	void set_account(Account const& p_account);
 
-	/**
-	 * Set the comment for the EntryImpl
-	 */
 	void set_comment(std::string const& p_comment);
 
-	/**
-	 * Set the amount of the EntryImpl. The amount should be: a positive number
-	 * for an actual debit; a negative number for an actual credit; a
-	 * negative number for a budget entry that increases the available
-	 * funds in an expenditure envelope; and a positive number for a budget
-	 * entry that decreases the available funds in an expenditure envelope.
-	 *
-	 * @todo Should this method perform rounding to the number
-	 * of decimal places required for the precision of the Account's
-	 * native Commodity?
-	 */
 	void set_amount(jewel::Decimal const& p_amount);
 	
-	/**
-	 * Set whether the EntryImpl has been reconciled (e.g. for
-	 * reconciling to a bank or credit card statement).
-	 */
 	void set_whether_reconciled(bool p_is_reconciled);
 
 	/**
-	 * @returns EntryImpl comment.
-	 * 
 	 * Does not throw except possibly \c std::bad_alloc in
 	 * extreme circumstances.
 	 */
@@ -125,21 +80,11 @@ public:
 	 * @returns EntryImpl amount (+ve for debits, -ve for credits).
 	 *
 	 * @todo Verify throwing behaviour.
-	 *
-	 * Does not throw.
 	 */
 	jewel::Decimal amount();
 
-	/**
-	 * @returns the Account that this entry effects.
-	 *
-	 * Does not throw.
-	 */
 	Account account();
 
-	/**
-	 * @returns true if the Entry is reconciled, else false.
-	 */
 	bool is_reconciled();
 
 	/**

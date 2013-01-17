@@ -18,6 +18,10 @@ namespace phatbooks
 class PhatbooksDatabaseConnection;
 
 
+/**
+ * Represents an account - which could be either a balance sheet
+ * or a P&L account.
+ */
 class Account:
 	public PhatbooksPersistentObject<AccountImpl>
 {
@@ -72,33 +76,45 @@ public:
 
 	static void setup_tables();
 
-	/**
-	 * Destuctor.
-	 */
 	~Account();
 
 	/**
-	 * Returns name of account.
+	 * @ returns name of account
 	 */
 	std::string name() const;
 
 	/**
-	 * Returns native commodity of this account.
+	 * @ returns native Commodity of this account
 	 */
 	Commodity commodity() const;
 
 	/**
-	 * Returns AccountType of account.
+	 * @ returns AccountType of account.
 	 */
 	AccountType account_type() const;
 
 	/**
-	 * Returns description of account.
+	 * @ returns description of account.
 	 */
 	std::string description() const;
 
+	/**
+	 * Returns "technical" account balance, which is
+	 * positive for debit balances and negative for
+	 * credit balances. For P&L accounts this
+	 * corresponds to the unspent funds in the envelope,
+	 * where a negative balance indicates that funds
+	 * remain unspent, and a positive balance indicates
+	 * that more funds have been spend than were
+	 * available.
+	 */
 	jewel::Decimal technical_balance() const;
 
+	/**
+	 * Returns "user friendly" account balance, which, for
+	 * P&L accounts, has the signs reversed relative to
+	 * technical_balance().
+	 */
 	jewel::Decimal friendly_balance() const;
 
 	void set_account_type(AccountType p_account_type);

@@ -41,8 +41,8 @@ namespace detail
 }
 
 /**
- * Represents an AccountImpl object that is "live" in memory, rather than
- * stored in a database.
+ * Implements Account.
+ * Note multiple Account instances may share the same underlying AccountImpl.
  */
 class AccountImpl:
 	public sqloxx::PersistentObject<AccountImpl, PhatbooksDatabaseConnection>
@@ -66,7 +66,7 @@ public:
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
-	 * Returns the id of the account with name p_name.
+	 * Returns the id of the AccountImpl with name p_name.
 	 */
 	static Id id_for_name
 	(	PhatbooksDatabaseConnection& dbc,
@@ -85,48 +85,18 @@ public:
 	 */
 	AccountImpl(IdentityMap& p_identity_map, Id p_id);
 
-	/**
-	 * Destuctor.
-	 */
 	~AccountImpl();
 
-	/**
-	 * Returns name of account.
-	 */
 	std::string name();
 
-	/**
-	 * Returns the native commodity of this account.
-	 */
 	Commodity commodity();
 
-	/**
-	 * Returns AccountImpl of account.
-	 */
 	AccountType account_type();
 
-	/**
-	 * Returns description of account.
-	 */
 	std::string description();
 
-	/**
-	 * Returns "technical" account balance, which is
-	 * positive for debit balances and negative for
-	 * credit balances. For P&L accounts this
-	 * corresponds to the unspent funds in the envelope,
-	 * where a negative balance indicates that funds
-	 * remain unspent, and a positive balance indicates
-	 * that more funds have been spend than were
-	 * available.
-	 */
 	jewel::Decimal technical_balance();
 
-	/**
-	 * Returns "user friendly" account balance, which, for
-	 * P&L accounts, has the signs reversed relative to
-	 * technical_balance().
-	 */
 	jewel::Decimal friendly_balance();
 
 	void set_account_type(AccountType p_account_type);
