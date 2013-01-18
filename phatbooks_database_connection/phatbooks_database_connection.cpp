@@ -32,7 +32,6 @@
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <sqloxx/sql_statement.hpp>
-#include <sqlite3.h>
 #include <stdexcept>
 #include <boost/filesystem.hpp>
 #include <boost/numeric/conversion/cast.hpp>

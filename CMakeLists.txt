@@ -1,7 +1,6 @@
 cmake_minimum_required (VERSION 2.6)
 
-project (phatbooks)
-project (phatbooks_test)
+project (phatbooks_project)
 
 set (immediate_directories
      .
@@ -22,9 +21,11 @@ set (immediate_directories
 if (MSYS)
 	include_directories(${immediate_directories} C:/MSYS/1.0/local/include)
 	link_directories(C:/MSYS/1.0/lib C:/MSYS/1.0/local/lib)
+	set (boost_locale_library boost_locale)
 else ()
 	include_directories(${immediate_directories})
 	link_directories(/usr/local/lib)
+	set (boost_locale_library boost_locale-mt)
 endif ()
 
 
@@ -72,21 +73,25 @@ set (test_files
 	 tests/phatbooks_tests_common.cpp
 	 tests/repeater_tests.cpp)
 
-add_executable (phatbooks main.cpp ${main_files})
-add_executable (phatbooks_test ${test_files})
 
 set (libraries
      boost_date_time
 	 boost_filesystem
-	 boost_locale-mt
+	 ${boost_locale_library}
+	 c
+	 dl
 	 boost_regex
 	 boost_system
 	 jewel 
+	 m
+	 pthread
 	 unittest++
-	 sqlite3
 	 sqloxx)
 
+add_executable (phatbooks main.cpp ${main_files})
 target_link_libraries (phatbooks ${libraries})
+
+add_executable (phatbooks_test ${test_files})
 target_link_libraries (phatbooks_test ${libraries})
 
 if (MSYS)
