@@ -3,22 +3,30 @@ cmake_minimum_required (VERSION 2.6)
 project (phatbooks)
 project (phatbooks_test)
 
-include_directories (/home/matthew/Workbench/versioned/phatbooks
-                     /home/matthew/Workbench/versioned/phatbooks/account
-                     /home/matthew/Workbench/versioned/phatbooks/commodity
-                     /home/matthew/Workbench/versioned/phatbooks/date
-                     /home/matthew/Workbench/versioned/phatbooks/entry
-                     /home/matthew/Workbench/versioned/phatbooks/finformat
-                     /home/matthew/Workbench/versioned/phatbooks/import_from_nap
-                     /home/matthew/Workbench/versioned/phatbooks/journal
-					 /home/matthew/Workbench/versioned/phatbooks/output_aux
-                     /home/matthew/Workbench/versioned/phatbooks/phatbooks_database_connection
-                     /home/matthew/Workbench/versioned/phatbooks/phatbooks_persistent_object
-                     /home/matthew/Workbench/versioned/phatbooks/phatbooks_text_session
-                     /home/matthew/Workbench/versioned/phatbooks/repeater
-					 /home/matthew/Workbench/versioned/phatbooks/session)
+set (immediate_directories
+     .
+	 account
+	 commodity
+	 date
+	 entry
+	 finformat
+	 import_from_nap
+	 journal
+	 output_aux
+	 phatbooks_database_connection
+	 phatbooks_persistent_object
+	 phatbooks_text_session
+	 repeater
+	 session)
 
-link_directories (/usr/local/lib)
+if (MSYS)
+	include_directories(${immediate_directories} C:/MSYS/1.0/local/include)
+	link_directories(C:/MSYS/1.0/lib C:/MSYS/1.0/local/lib)
+else ()
+	include_directories(${immediate_directories})
+	link_directories(/usr/local/lib)
+endif ()
+
 
 set (main_files
 	 account/account.cpp
@@ -81,7 +89,13 @@ set (libraries
 target_link_libraries (phatbooks ${libraries})
 target_link_libraries (phatbooks_test ${libraries})
 
-install(TARGETS phatbooks DESTINATION bin)
+if (MSYS)
+	set (binary_installation_dir C:/MSYS/1.0/local/bin)
+else ()
+	set (binary_installation_dir bin)
+endif ()
+
+install(TARGETS phatbooks DESTINATION ${binary_installation_dir})
 					
 
 
