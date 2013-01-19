@@ -432,8 +432,7 @@ PhatbooksTextSession::elicit_entry_insertion(PersistentJournal& journal)
 
 namespace
 {
-	bool
-	has_entry_with_id_string
+	bool has_entry_with_id_string
 	(	PersistentJournal const& journal,
 		string const& str
 	)
@@ -478,6 +477,7 @@ namespace
 		{
 			return optional<Entry>();
 		}
+		assert (!input.empty());
 		return Entry
 		(	journal.database_connection(),
 			lexical_cast<Entry::Id>(input)
@@ -512,13 +512,12 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 {
 	cout << "Enter the entry id of the transaction line you wish to amend, "
 	     << "or just hit Enter to abort: ";
-	optional<Entry> maybe_entry = elicit_existing_entry(journal);
+	optional<Entry> const maybe_entry = elicit_existing_entry(journal);
 	if (!maybe_entry)
 	{
 		cout << "Entry amendment aborted.\n" << endl;
 		return;
 	}
-	assert (maybe_entry);
 	Entry entry = value(maybe_entry);
 
 	// Edit account
@@ -547,14 +546,14 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 	{
 		cout << "Enter new amount for this line "
 		     << "(or Enter to leave unchanged): ";
-		optional<Decimal> maybe_new_amount = get_decimal_from_user(true);
+		optional<Decimal> const maybe_new_amount =
+			get_decimal_from_user(true);
 		if (!maybe_new_amount)
 		{
 			input_is_valid = true;
 		}
 		else
 		{
-			assert (maybe_new_amount);
 			// TODO The below is virtually identical to code used elsewhere
 			// in this file.
 			// Factor out repeated code to separate function.
@@ -566,7 +565,9 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 			{
 				new_amount = jewel::round(new_amount, commodity.precision());
 				bool const sign_needs_changing = !journal.is_actual();
-				entry.set_amount(sign_needs_changing? -new_amount: new_amount);
+				entry.set_amount
+				(	sign_needs_changing? -new_amount: new_amount
+				);
 				input_is_valid = true;
 				if (new_amount.places() < initial_precision)
 				{
@@ -2483,7 +2484,7 @@ namespace
 void PhatbooksTextSession::display_balance_sheet()
 {
 	// TODO Locale reversion is not exception-safe here.
-	BalanceSheetAccountReader bs_reader(database_connection());
+	BalanceSheetAccountReader const bs_reader(database_connection());
 	locale const orig_loc = cout.getloc();
 	cout.imbue(locale(""));
 	cout << endl << endl;
