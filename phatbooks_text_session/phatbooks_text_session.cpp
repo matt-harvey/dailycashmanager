@@ -200,7 +200,7 @@ namespace
 		);
 	}
 
-	Decimal get_constrained_amount
+	Decimal elicit_constrained_amount
 	(	Commodity const& commodity,
 		string const& transaction_description
 	)
@@ -583,7 +583,7 @@ PhatbooksTextSession::elicit_entry_insertion(PersistentJournal& journal)
 	(	value(elicit_valid_account(transaction_type, primary_phase))
 	);
 	Commodity const commodity = entry.account().commodity();
-	Decimal const amount = get_constrained_amount
+	Decimal const amount = elicit_constrained_amount
 	(	commodity,
 		dialogue_phrase(generic_transaction, amount_prompt)
 	);
@@ -665,9 +665,9 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 		}
 		else
 		{
-			// TODO The below is virtually identical to code used elsewhere
-			// in this file.
-			// Factor out repeated code to separate function.
+			// TODO The below is very similar to code the
+			// function elicit_constrained_amount. Can I factor
+			// this out?
 			Decimal new_amount = value(maybe_new_amount);
 			Decimal::places_type const initial_precision =
 				new_amount.places();
@@ -2124,7 +2124,7 @@ PhatbooksTextSession::elicit_primary_entries
 	(	value(elicit_valid_account(transaction_type, primary_phase))
 	);
 	Commodity const commodity = entry.account().commodity();
-	Decimal const amount = get_constrained_amount
+	Decimal const amount = elicit_constrained_amount
 	(	commodity,
 		dialogue_phrase(transaction_type, amount_prompt)
 	);
@@ -2467,6 +2467,7 @@ void PhatbooksTextSession::notify_autoposts
 void PhatbooksTextSession::display_balance_sheet()
 {
 	// TODO Locale reversion is not exception-safe here.
+	// TODO Code is duplicated between here and display_envelopes().
 	BalanceSheetAccountReader const bs_reader(database_connection());
 	locale const orig_loc = cout.getloc();
 	cout.imbue(locale(""));
