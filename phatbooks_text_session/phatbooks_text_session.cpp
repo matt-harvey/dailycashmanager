@@ -123,6 +123,201 @@ namespace phatbooks
 
 
 
+
+/********* ANONYMOUS INNER NAMESPACE *****************/
+
+namespace
+{
+	bool has_entry_with_id_string
+	(	PersistentJournal const& journal,
+		string const& str
+	)
+	{
+		try
+		{
+			Entry::Id const id = lexical_cast<Entry::Id>(str);
+			return has_entry_with_id(journal, id);
+		}
+		catch (bad_lexical_cast&)
+		{
+			return false;
+		}
+	}
+
+	typedef bool (*AccountValidator)(Account const& account);
+
+	string validator_description(AccountValidator validator)
+	{
+		string const ret =
+		(	validator == is_asset_or_liability?
+			"asset or liability account":
+			validator == is_expense?
+			"expense category":
+			validator == is_revenue?
+			"revenue category":
+			validator == is_envelope?
+			"envelope (revenue, expense or pure envelope)":  // TODO This description sucks
+			validator == is_not_pure_envelope?
+			"account or category for this transaction":  // TODO This description sucks
+			"ERROR"
+		);
+		assert (ret != "ERROR");
+		return ret;
+	}
+
+	optional<Entry> elicit_existing_entry(PersistentJournal const& journal)
+	{
+		string id_string;
+		for
+		(	vector<Entry>::const_iterator it = journal.entries().begin(),	
+				end = journal.entries().end();
+			it != end;
+			++it
+		)
+		{
+			if (it->has_id())
+			{
+				Entry::Id const current_id = it->id();
+				id_string += lexical_cast<string>(current_id);
+				id_string += " ";
+			}
+		}
+		string input = get_constrained_user_input
+		(	bind(has_entry_with_id_string, cref(journal), _1),
+			"Transaction does not contain a line with this entry id. "
+				"Try again, entering one of the following ids:\n" +
+				id_string +
+				"\nor hit Enter to abort: "
+		);
+		if (input.empty())
+		{
+			return optional<Entry>();
+		}
+		assert (!input.empty());
+		return Entry
+		(	journal.database_connection(),
+			lexical_cast<Entry::Id>(input)
+		);
+	}
+
+	Decimal get_constrained_amount
+	(	Commodity const& commodity,
+		string const& transaction_description
+	)
+	{
+		Decimal amount;
+		for (bool input_is_valid = false; !input_is_valid; )
+		{
+			cout << "Enter amount " << transaction_description
+			     << " (in units of " << commodity.abbreviation()
+				 << "): ";
+			amount = value(get_decimal_from_user());
+			Decimal::places_type const initial_precision = amount.places();
+			try
+			{
+				amount = jewel::round(amount, commodity.precision());
+				input_is_valid = true;
+				if (amount.places() < initial_precision)
+				{
+					cout << "Amount rounded to " << amount << "." << endl;
+				}
+			}
+			catch (DecimalRangeException&)
+			{
+				cout << "The number you entered cannot be safely rounded to"
+				     << " the precision required for "
+					 << commodity.abbreviation()
+					 << ". Please try again."
+					 << endl;
+				assert (!input_is_valid);
+			}
+		}
+		return amount;
+	}
+
+	// TODO This function is weird and misleading in what it does, and
+	// it doesn't really belong here.
+	bool identifies_existent_journal
+	(	PhatbooksDatabaseConnection* dbc,
+		string const& s
+	)
+	{
+		try
+		{
+			ProtoJournal::Id const id = lexical_cast<ProtoJournal::Id>(s);
+			return journal_id_exists(*dbc, id);
+		}
+		catch (bad_lexical_cast&)
+		{
+			return false;
+		}
+	}
+
+	template <typename AccountReaderT>
+	void print_account_reader(AccountReaderT& p_reader)
+	{
+		vector<string> headings;
+		headings.push_back("ACCOUNT");
+		headings.push_back("BALANCE ");
+		vector<alignment::Flag> alignments;
+		alignments.push_back(alignment::left);
+		alignments.push_back(alignment::right);
+		Table<Account> const table
+		(	p_reader.begin(),
+			p_reader.end(),
+			make_account_row,
+			headings,
+			alignments
+		);
+		cout << table;
+		return;
+	}
+
+	void summarise_balance_movement
+	(	Account const& account,
+		Decimal const& opening_balance,
+		Decimal const& closing_balance
+	)
+	{
+		// TODO Are these expressed in terms of the "friendly balances"?
+		// Should they be?
+		switch (account.account_type())
+		{
+		case account_type::asset:
+		case account_type::liability:
+			cout << "Opening balance for "
+			     << account.name() << ": "
+				 << finformat(opening_balance) << endl;
+			cout << "Movement in balance during date range: "
+				 << finformat(closing_balance - opening_balance) << endl;
+			cout << "Closing balance: " << finformat(closing_balance) << endl;
+			break;
+		case account_type::expense:
+			cout << "Amount spent in period on " << account.name()
+			     << ": " << finformat(closing_balance - opening_balance)
+				 << endl;
+			break;
+		case account_type::revenue:
+			cout << "Amount earned in period in " << account.name()
+			     << ": " << finformat(closing_balance - opening_balance)
+				 << endl;
+			break;
+		case account_type::pure_envelope:  // TODO Should this be here?
+		case account_type::equity:  // TODO Should this be here?
+		default:
+			assert (false);
+		}
+		return;
+	}	
+
+}  
+
+/********* END ANONYMOUS INNER NAMESPACE *************/
+
+
+
+
+
 PhatbooksTextSession::PhatbooksTextSession():
 	m_main_menu(new Menu)
 {
@@ -388,36 +583,10 @@ PhatbooksTextSession::elicit_entry_insertion(PersistentJournal& journal)
 	(	value(elicit_valid_account(transaction_type, primary_phase))
 	);
 	Commodity const commodity = entry.account().commodity();
-	Decimal amount;
-	// TODO This duplicates code also used in elicit_primary_entries etc.
-	for (bool input_is_valid = false; !input_is_valid; )
-	{
-		cout << "Enter amount "
-		     << dialogue_phrase(generic_transaction, amount_prompt)
-			 << " (in units of "
-			 << commodity.abbreviation()
-			 << "): ";
-		amount = value(get_decimal_from_user());
-		Decimal::places_type const initial_precision = amount.places();
-		try
-		{
-			amount = jewel::round(amount, commodity.precision());
-			input_is_valid = true;
-			if (amount.places() < initial_precision)
-			{
-				cout << "Amount rounded to " << amount << "." << endl;
-			}
-		}
-		catch (DecimalRangeException&)
-		{
-			cout << "The number you entered cannot be safely "
-				 << "rounded to the precision required for "
-				 << commodity.abbreviation()
-				 << ". Please try again."
-				 << endl;
-			assert (!input_is_valid);
-		}
-	}
+	Decimal const amount = get_constrained_amount
+	(	commodity,
+		dialogue_phrase(generic_transaction, amount_prompt)
+	);
 	bool const sign_needs_changing = !journal.is_actual();
 	entry.set_amount(sign_needs_changing? -amount: amount);
 	cout << "Comment for this line (or Enter for no comment): ";
@@ -427,64 +596,6 @@ PhatbooksTextSession::elicit_entry_insertion(PersistentJournal& journal)
 	return;
 }
 
-
-
-
-namespace
-{
-	bool has_entry_with_id_string
-	(	PersistentJournal const& journal,
-		string const& str
-	)
-	{
-		try
-		{
-			Entry::Id const id = lexical_cast<Entry::Id>(str);
-			return has_entry_with_id(journal, id);
-		}
-		catch (bad_lexical_cast&)
-		{
-			return false;
-		}
-	}
-
-
-	optional<Entry> elicit_existing_entry(PersistentJournal const& journal)
-	{
-		string id_string;
-		for
-		(	vector<Entry>::const_iterator it = journal.entries().begin(),	
-				end = journal.entries().end();
-			it != end;
-			++it
-		)
-		{
-			if (it->has_id())
-			{
-				Entry::Id const current_id = it->id();
-				id_string += lexical_cast<string>(current_id);
-				id_string += " ";
-			}
-		}
-		string input = get_constrained_user_input
-		(	bind(has_entry_with_id_string, cref(journal), _1),
-			"Transaction does not contain a line with this entry id. "
-				"Try again, entering one of the following ids:\n" +
-				id_string +
-				"\nor hit Enter to abort: "
-		);
-		if (input.empty())
-		{
-			return optional<Entry>();
-		}
-		assert (!input.empty());
-		return Entry
-		(	journal.database_connection(),
-			lexical_cast<Entry::Id>(input)
-		);
-	}
-
-}  // End anonymous namespace
 
 
 void
@@ -1272,27 +1383,6 @@ PhatbooksTextSession::conduct_reconciliation()
 }
 
 
-namespace
-{
-	// TODO This function is weird and misleading in what it does, and
-	// it doesn't really belong here.
-	bool identifies_existent_journal
-	(	PhatbooksDatabaseConnection* dbc,
-		string const& s
-	)
-	{
-		try
-		{
-			ProtoJournal::Id const id = lexical_cast<ProtoJournal::Id>(s);
-			return journal_id_exists(*dbc, id);
-		}
-		catch (bad_lexical_cast&)
-		{
-			return false;
-		}
-	}
-}  // End anonymous namespace
-
 
 void
 PhatbooksTextSession::display_journal_from_id()
@@ -1332,45 +1422,6 @@ PhatbooksTextSession::display_journal_from_id()
 }
 
 
-namespace
-{
-	void summarise_balance_movement
-	(	Account const& account,
-		Decimal const& opening_balance,
-		Decimal const& closing_balance
-	)
-	{
-		// TODO Are these expressed in terms of the "friendly balances"?
-		// Should they be?
-		switch (account.account_type())
-		{
-		case account_type::asset:
-		case account_type::liability:
-			cout << "Opening balance for "
-			     << account.name() << ": "
-				 << finformat(opening_balance) << endl;
-			cout << "Movement in balance during date range: "
-				 << finformat(closing_balance - opening_balance) << endl;
-			cout << "Closing balance: " << finformat(closing_balance) << endl;
-			break;
-		case account_type::expense:
-			cout << "Amount spent in period on " << account.name()
-			     << ": " << finformat(closing_balance - opening_balance)
-				 << endl;
-			break;
-		case account_type::revenue:
-			cout << "Amount earned in period in " << account.name()
-			     << ": " << finformat(closing_balance - opening_balance)
-				 << endl;
-			break;
-		case account_type::pure_envelope:  // TODO Should this be here?
-		case account_type::equity:  // TODO Should this be here?
-		default:
-			assert (false);
-		}
-		return;
-	}	
-}  // End anonymous namespace
 
 
 void
@@ -1950,30 +2001,6 @@ PhatbooksTextSession::dialogue_phrase
 }
 
 
-namespace
-{
-	typedef bool (*AccountValidator)(Account const& account);
-
-	string validator_description(AccountValidator validator)
-	{
-		string const ret =
-		(	validator == is_asset_or_liability?
-			"asset or liability account":
-			validator == is_expense?
-			"expense category":
-			validator == is_revenue?
-			"revenue category":
-			validator == is_envelope?
-			"envelope (revenue, expense or pure envelope)":  // TODO This description sucks
-			validator == is_not_pure_envelope?
-			"account or category for this transaction":  // TODO This description sucks
-			"ERROR"
-		);
-		assert (ret != "ERROR");
-		return ret;
-	}
-
-}  // End anonymous namespace
 
 
 bool
@@ -2079,6 +2106,9 @@ PhatbooksTextSession::elicit_transaction_type()
 	return ret;
 }
 
+
+
+
 void
 PhatbooksTextSession::elicit_primary_entries
 (	ProtoJournal& journal,
@@ -2094,35 +2124,10 @@ PhatbooksTextSession::elicit_primary_entries
 	(	value(elicit_valid_account(transaction_type, primary_phase))
 	);
 	Commodity const commodity = entry.account().commodity();
-	Decimal amount;
-	for (bool input_is_valid = false; !input_is_valid; )
-	{
-		cout << "Enter amount "
-		     << dialogue_phrase(transaction_type, amount_prompt)
-			 << " (in units of "
-			 << commodity.abbreviation()
-			 << "): ";
-		amount = value(get_decimal_from_user());
-		Decimal::places_type const initial_precision = amount.places();
-		try
-		{
-			amount = jewel::round(amount, commodity.precision());
-			input_is_valid = true;
-			if (amount.places() < initial_precision)
-			{
-				cout << "Amount rounded to " << amount << "." << endl;
-			}
-		}
-		catch (DecimalRangeException&)
-		{
-			cout << "The number you entered cannot be safely "
-			     << "rounded to the precision required for "
-				 << commodity.abbreviation()
-				 << ". Please try again."
-				 << endl;
-			assert (!input_is_valid);
-		}
-	}
+	Decimal const amount = get_constrained_amount
+	(	commodity,
+		dialogue_phrase(transaction_type, amount_prompt)
+	);
 	bool const sign_needs_changing =
 	(	transaction_type == expenditure_transaction ||
 		transaction_type == envelope_transaction
@@ -2457,28 +2462,6 @@ void PhatbooksTextSession::notify_autoposts
 }
 
 
-namespace
-{
-	template <typename AccountReaderT>
-	void print_account_reader(AccountReaderT& p_reader)
-	{
-		vector<string> headings;
-		headings.push_back("ACCOUNT");
-		headings.push_back("BALANCE ");
-		vector<alignment::Flag> alignments;
-		alignments.push_back(alignment::left);
-		alignments.push_back(alignment::right);
-		Table<Account> const table
-		(	p_reader.begin(),
-			p_reader.end(),
-			make_account_row,
-			headings,
-			alignments
-		);
-		cout << table;
-		return;
-	}
-}  // End anonymous namespace
 
 
 void PhatbooksTextSession::display_balance_sheet()
