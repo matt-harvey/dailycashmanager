@@ -39,8 +39,8 @@ class Repeater;
  * will not be posted for this reason.
  */
 class DraftJournal:
-	virtual public PersistentJournal,
-	private PhatbooksPersistentObject<DraftJournalImpl>
+	public PersistentJournal,
+	virtual private PhatbooksPersistentObject<DraftJournalImpl>
 {
 public:
 	typedef
