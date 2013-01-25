@@ -35,6 +35,12 @@ class ProtoJournal;
 class PhatbooksDatabaseConnection;
 class Repeater;
 
+/**
+ * Namespace specific to the text user interface for Phatbooks.
+ */
+namespace tui
+{
+
 // CLASSES
 
 /**
@@ -365,6 +371,7 @@ private:
 };
 
 
+}  // namespace tui
 }  // namespace phatbooks
 
 

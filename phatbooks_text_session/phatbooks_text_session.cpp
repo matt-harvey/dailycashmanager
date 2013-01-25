@@ -120,6 +120,8 @@ namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
+namespace tui
+{
 
 
 
@@ -2499,4 +2501,5 @@ void PhatbooksTextSession::wrap_up()
 }
 
 
+}  // namespace tui
 }  // namespace phatbooks

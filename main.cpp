@@ -23,7 +23,7 @@
 #include <iostream>
 #include <string>
 
-using phatbooks::PhatbooksTextSession;
+using phatbooks::tui::PhatbooksTextSession;
 using std::cout;
 using std::endl;
 using std::string;
