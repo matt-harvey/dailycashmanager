@@ -111,11 +111,6 @@ namespace alignment = consolixx::alignment;
 namespace gregorian = boost::gregorian;
 
 // TODO HIGH PRIORITY
-// It is possible to select "Record as ordinary transaction" from the 
-// draft journal menu (while viewing a particular draft journal) even when the
-// draft journal is unbalanced. Proceeding then causes Phatbooks to crash.
-
-// TODO HIGH PRIORITY
 // The confirmation dialogue to post a draft journal as ordinary journal,
 // wrongly refers to "new commodity".
 
@@ -1029,11 +1024,11 @@ PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
 		{
 			menu.add_item(delete_repeaters_item);
 		}
-		else
+		else if (journal.is_balanced())
 		{
+			assert (!journal.has_repeaters());
 			menu.add_item(convert_to_ordinary_journal_item);
 		}
-			
 		finalize_journal_editing_cycle(journal, menu, exiting, first_time);
 	}
 	return;
