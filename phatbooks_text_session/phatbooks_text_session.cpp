@@ -110,6 +110,15 @@ using std::vector;
 namespace alignment = consolixx::alignment;
 namespace gregorian = boost::gregorian;
 
+// TODO HIGH PRIORITY
+// It is possible to select "Record as ordinary transaction" from the 
+// draft journal menu (while viewing a particular draft journal) even when the
+// draft journal is unbalanced. Proceeding then causes Phatbooks to crash.
+
+// TODO HIGH PRIORITY
+// The confirmation dialogue to post a draft journal as ordinary journal,
+// wrongly refers to "new commodity".
+
 
 // TODO Enable display of account and envelope balances at a given
 // date
