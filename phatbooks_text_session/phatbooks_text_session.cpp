@@ -110,10 +110,6 @@ using std::vector;
 namespace alignment = consolixx::alignment;
 namespace gregorian = boost::gregorian;
 
-// TODO HIGH PRIORITY
-// The confirmation dialogue to post a draft journal as ordinary journal,
-// wrongly refers to "new commodity".
-
 
 // TODO Enable display of account and envelope balances at a given
 // date
@@ -955,7 +951,7 @@ PhatbooksTextSession::elicit_ordinary_journal_from_draft
 		 << ". Draft transaction will be retained in list. Proceed? (y/n) ";
 	string const confirmation = get_constrained_user_input
 	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
-		"Try again, entering \"y\" to create commodity "
+		"Try again, entering \"y\" to record transaction "
 		"or \"n\" to abort: ",
 		false
 	);
