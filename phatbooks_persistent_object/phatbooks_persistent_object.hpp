@@ -52,23 +52,12 @@ private:
 	// Note the implementations for these are provided by
 	// PhatbooksPersistentObject<...> and should \e not be redefined
 	// by the business classes.
-	virtual
-	void do_save() = 0;
-
-	virtual
-	Id do_get_id() const = 0;
-
-	virtual
-	PhatbooksDatabaseConnection& do_get_database_connection() const = 0;
-
-	virtual
-	bool does_have_id() const = 0;
-
-	virtual
-	void do_remove() = 0;
-	
-	virtual
-	void do_ghostify() = 0;
+	virtual void do_save() = 0;
+	virtual Id do_get_id() const = 0;
+	virtual PhatbooksDatabaseConnection& do_get_database_connection() const=0;
+	virtual bool does_have_id() const = 0;
+	virtual void do_remove() = 0;
+	virtual void do_ghostify() = 0;
 };
 
 
@@ -78,33 +67,19 @@ class PhatbooksPersistentObject:
 	virtual public PhatbooksPersistentObjectBase
 {
 protected:
-
 	typedef sqloxx::Id Id;
 	PhatbooksPersistentObject
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
-
 	PhatbooksPersistentObject
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
-
-
-	Impl& impl()
-	{
-		return *m_impl;
-	}
-	Impl& impl() const
-	{
-		return *m_impl;
-	}
-	PhatbooksPersistentObject(sqloxx::Handle<Impl> const& p_handle):
-		m_impl(p_handle)
-	{
-	}
+	PhatbooksPersistentObject(sqloxx::Handle<Impl> const& p_handle);
+	Impl& impl();
+	Impl& impl() const;
 
 private:
-
 	void do_save();
 	Id do_get_id() const;
 	PhatbooksDatabaseConnection& do_get_database_connection() const;
@@ -130,6 +105,31 @@ PhatbooksPersistentObject<Impl>::PhatbooksPersistentObject
 ):
 	m_impl(sqloxx::Handle<Impl>(p_database_connection, p_id))
 {
+}
+
+template <typename Impl>
+inline
+PhatbooksPersistentObject<Impl>::PhatbooksPersistentObject
+(	sqloxx::Handle<Impl> const& p_handle
+):
+	m_impl(p_handle)
+{
+}
+
+template <typename Impl>
+inline
+Impl&
+PhatbooksPersistentObject<Impl>::impl()
+{
+	return *m_impl;
+}
+
+template <typename Impl>
+inline
+Impl&
+PhatbooksPersistentObject<Impl>::impl() const
+{
+	return *m_impl;
 }
 
 template <typename Impl>
