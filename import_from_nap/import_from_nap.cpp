@@ -17,7 +17,7 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <cassert>
-#include <cstdlib>
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -35,6 +35,7 @@ using sqloxx::DatabaseTransaction;
 using std::cout;
 using std::endl;
 using std::string;
+using std::terminate;
 using std::vector;
 
 // TEMP for speed testing
@@ -551,7 +552,7 @@ void import_from_nap
 		{
 			cout << "Error processing date of journal imported from nap."
 			     << endl;
-			std::abort();
+			terminate();	
 		}
 
 		if (!is_problematic)
