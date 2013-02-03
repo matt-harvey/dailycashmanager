@@ -24,7 +24,10 @@ namespace phatbooks
 Session::Session():
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
-	database_connection().set_caching_level(10);
+	// WARNING This would normally be set to 10 on a desktop
+	// environment, but I am experimenting with setting it to
+	// 0 for the time being, to see how slow it makes things.
+	database_connection().set_caching_level(0);
 }
 
 
