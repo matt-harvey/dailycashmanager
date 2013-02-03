@@ -143,7 +143,7 @@ private:
 
 	// Elicit an Account of a type that is valid for
 	// the given transaction_type and transaction_phase.
-	// If allow_empty_to_throw, the function will return
+	// If allow_empty_to_escape, the function will return
 	// an uninitialized optional if the user enters an empty
 	// string. Otherwise, it will re-prompt the user until
 	// a valid account is entered, and an initialized optional
@@ -151,7 +151,7 @@ private:
 	boost::optional<Account> elicit_valid_account
 	(	TransactionType transaction_type,
 		TransactionPhase transaction_phase,
-		bool allow_empty_to_throw = false
+		bool allow_empty_to_escape = false
 	);
 		
 	TransactionType elicit_transaction_type();
