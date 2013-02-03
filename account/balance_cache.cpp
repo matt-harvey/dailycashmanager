@@ -103,7 +103,6 @@ BalanceCache::refresh()
 	// objects. However, with IdentityMap's caching enabled, it is
 	// simpler and more maintainable for the below to be implemented
 	// as shown here.
-	JEWEL_DEBUG_LOG << "Refreshing balance cache..." << endl;
 	scoped_ptr<Map> map_elect_ptr(new Map);	
 	Map& map_elect = *map_elect_ptr;
 	AccountReader account_reader(m_database_connection);
