@@ -9,7 +9,6 @@ set (immediate_directories
 	 date
 	 entry
 	 finformat
-	 import_from_nap
 	 journal
 	 output_aux
 	 phatbooks_database_connection
@@ -45,7 +44,6 @@ set (main_files
 	 entry/entry_impl.cpp
 	 entry/entry_reader.cpp
 	 finformat/finformat.cpp
-	 import_from_nap/import_from_nap.cpp
 	 journal/draft_journal.cpp
 	 journal/draft_journal_impl.cpp
 	 journal/draft_journal_reader.cpp

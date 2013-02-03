@@ -304,17 +304,6 @@ private:
 
 	Repeater elicit_repeater();
 
-	/**
-	 * WARNING This should be removed from any release version.
-	 *
-	 * Prompts user for a directory name then imports csv files from that
-	 * directory.
-	 *
-	 * This is a quick hack to enable the developer of Phatbooks to migrate
-	 * data from a previous application used only by him.
-	 */
-	void import_from_nap();
-
 	void notify_autoposts
 	(	boost::shared_ptr<std::list<OrdinaryJournal> > journal
 	) const;

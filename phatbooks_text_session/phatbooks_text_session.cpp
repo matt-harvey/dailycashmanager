@@ -22,7 +22,6 @@
 #include "entry.hpp"
 #include "entry_reader.hpp"
 #include "finformat.hpp"
-#include "import_from_nap/import_from_nap.hpp"  // WARNING temp hack
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
 #include "ordinary_journal_reader.hpp"
@@ -437,16 +436,6 @@ PhatbooksTextSession::PhatbooksTextSession():
 		)
 	);
 	m_main_menu->add_item(edit_account_detail_item);
-
-	// WARNING This should be removed from any release version
-	shared_ptr<MenuItem> import_from_nap_item
-	(	new MenuItem
-		(	"Import data from csv files",
-			bind(&PhatbooksTextSession::import_from_nap, this),
-			true
-		)
-	);
-	m_main_menu->add_item(import_from_nap_item);
 
 	shared_ptr<MenuItem> quit_item
 	(	new MenuItem
@@ -2416,26 +2405,6 @@ PhatbooksTextSession::elicit_journal()
 	elicit_secondary_entries(journal, transaction_type);
 	cout << endl << "Completed transaction is as follows:" << endl;
 	finalize_journal(journal);
-	return;
-}
-
-
-void PhatbooksTextSession::import_from_nap()
-{
-	cout << "Directory containing csv files: ";
-	boost::filesystem::path directory(get_user_input());
-	if (!boost::filesystem::exists(boost::filesystem::status(directory)))
-	{
-		cout << "There is no directory with this filepath." << endl;
-	}
-	else
-	{
-		phatbooks::import_from_nap
-		(	database_connection(),
-			directory
-		);
-		cout << "Import complete." << endl;
-	}
 	return;
 }
 
