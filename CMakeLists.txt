@@ -48,7 +48,7 @@ else ()
 		 jewel 
 		 m
 		 pthread
-		 unittest++
+		 UnitTest++
 		 sqloxx)
 endif ()
 
