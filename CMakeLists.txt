@@ -17,14 +17,39 @@ set (immediate_directories
 	 repeater
 	 session)
 
-if (MSYS)
-	include_directories(${immediate_directories} C:/MSYS/1.0/local/include)
-	link_directories(C:/MSYS/1.0/lib C:/MSYS/1.0/local/lib)
-	set (boost_locale_library boost_locale)
+if (WIN32)
+	include_directories (${immediate_directories}
+	                     C:/Dev-Cpp
+						 C:/Dev-Cpp/include/common
+						 C:/include)
+	link_directories(C:/Dev-Cpp/lib
+	                 C:/Dev-Cpp/MinGW/lib
+					 C:/lib)
+	set (libraries
+	     boost_date_time-mgw46-mt-1_53
+		 boost_filesystem-mgw46-mt-1_53
+		 boost_locale-mgw46-mt-1_53
+		 boost_regex-mgw46-mt-1_53
+		 boost_system-mgw46-mt-1_53
+		 jewel
+		 UnitTest++
+		 sqloxx)
 else ()
 	include_directories(${immediate_directories})
 	link_directories(/usr/local/lib)
-	set (boost_locale_library boost_locale-mt)
+	set (libraries
+		 boost_date_time
+		 boost_filesystem
+		 boost_locale-mt
+		 c
+		 dl
+		 boost_regex
+		 boost_system
+		 jewel 
+		 m
+		 pthread
+		 unittest++
+		 sqloxx)
 endif ()
 
 
@@ -72,19 +97,6 @@ set (test_files
 	 tests/repeater_tests.cpp)
 
 
-set (libraries
-     boost_date_time
-	 boost_filesystem
-	 ${boost_locale_library}
-	 c
-	 dl
-	 boost_regex
-	 boost_system
-	 jewel 
-	 m
-	 pthread
-	 unittest++
-	 sqloxx)
 
 add_executable (phatbooks main.cpp ${main_files})
 target_link_libraries (phatbooks ${libraries})
@@ -92,8 +104,8 @@ target_link_libraries (phatbooks ${libraries})
 add_executable (phatbooks_test ${test_files})
 target_link_libraries (phatbooks_test ${libraries})
 
-if (MSYS)
-	set (binary_installation_dir C:/MSYS/1.0/local/bin)
+if (WIN32)
+	set (binary_installation_dir C:/bin)
 else ()
 	set (binary_installation_dir bin)
 endif ()

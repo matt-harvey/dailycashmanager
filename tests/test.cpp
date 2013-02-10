@@ -16,6 +16,8 @@
 
 using phatbooks::test::TestFixture;
 
+// TODO The tests don't run on Windows. Fix this.
+
 int main()
 {
 	try
