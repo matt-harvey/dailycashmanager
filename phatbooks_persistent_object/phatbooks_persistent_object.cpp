@@ -47,6 +47,4 @@ PhatbooksPersistentObjectBase::ghostify()
 
 
 
-
-
 }  // namespace phatbooks

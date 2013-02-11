@@ -139,7 +139,7 @@ ProtoJournal::do_remove_entry(Entry& entry)
 		++it
 	)
 	{
-		if (it->id() != entry.id())
+		if (*it != entry)
 		{
 			m_data->entries.push_back(*it);
 		}

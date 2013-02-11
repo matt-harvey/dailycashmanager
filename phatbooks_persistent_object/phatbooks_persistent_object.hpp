@@ -22,7 +22,7 @@
  * implementation class for Impl,
  * which should in turn inherit from
  * sqloxx::PersistentObject<PhatbooksDatabaseConnection, Impl>.
- *
+ * 
  * Note there is a reason why PhatbooksPersistentObjectBase and
  * PhatbooksPersistentObject are two separate classes, namely,
  * to support the PersistentJournal class as an abstract class
@@ -66,6 +66,10 @@ template <typename Impl>
 class PhatbooksPersistentObject:
 	virtual public PhatbooksPersistentObjectBase
 {
+public:
+	bool operator==(PhatbooksPersistentObject const& rhs) const;
+	bool operator!=(PhatbooksPersistentObject const& rhs) const;
+
 protected:
 	typedef sqloxx::Id Id;
 	PhatbooksPersistentObject
@@ -130,6 +134,26 @@ Impl&
 PhatbooksPersistentObject<Impl>::impl() const
 {
 	return *m_impl;
+}
+
+template <typename Impl>
+inline
+bool
+PhatbooksPersistentObject<Impl>::operator==
+(	PhatbooksPersistentObject<Impl> const& rhs
+) const
+{
+	return m_impl == rhs.m_impl;
+}
+
+template <typename Impl>
+inline
+bool
+PhatbooksPersistentObject<Impl>::operator!=
+(	PhatbooksPersistentObject<Impl> const& rhs
+) const
+{
+	return m_impl != rhs.m_impl;
 }
 
 template <typename Impl>
