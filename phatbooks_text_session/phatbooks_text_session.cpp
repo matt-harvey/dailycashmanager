@@ -1173,7 +1173,6 @@ PhatbooksTextSession::conduct_reconciliation()
 		
 		Decimal total_balance(0, 0);
 		Decimal reconciled_balance(0, 0);
-		Account::Id const account_id = account.id();
 		ActualOrdinaryEntryReader reader(database_connection());
 		vector<Entry> table_vec;
 		typedef ActualOrdinaryEntryReader::const_iterator ReaderIt;
@@ -1182,7 +1181,7 @@ PhatbooksTextSession::conduct_reconciliation()
 		// Examine entries prior to the statement opening date
 		for ( ; (it != end) && (it->date() < opening_date); ++it)
 		{
-			if (it->account().id() == account_id)
+			if (it->account() == account)
 			{
 				Decimal const amount = it->amount();
 				total_balance += amount;
@@ -1194,7 +1193,7 @@ PhatbooksTextSession::conduct_reconciliation()
 		// Examine entries between the opening and closing dates
 		for ( ; (it != end) && (it->date() <= closing_date); ++it)
 		{
-			if (it->account().id() == account_id)
+			if (it->account() == account)
 			{
 				table_vec.push_back(*it);
 				Decimal const amount = it->amount();
@@ -1290,7 +1289,7 @@ PhatbooksTextSession::conduct_reconciliation()
 			}
 			else
 			{
-				regex const target_regex("^([123456789][0123456789]*[ ]?)+$");
+				regex const target_regex("^([1-9][0-9]*[ ]?)+$");
 				if (!regex_match(input, target_regex))
 				{
 					cout << "Please try again, entering \"a\", \"u\", or a "
@@ -1500,7 +1499,8 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	Decimal opening_balance(0, 0);
 	bool const filtering_for_account = (maybe_account? true: false);
 	if (account_name.empty()) assert (!filtering_for_account);
-	Account::Id const account_id = (maybe_account? maybe_account->id(): 0);
+	Account account(database_connection());
+	if (maybe_account) account = value(maybe_account);
 	bool const is_asset_or_liab =
 	(	maybe_account?
 		is_asset_or_liability(value(maybe_account)):
@@ -1526,7 +1526,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		{
 			if
 			(	accumulating_pre_start_date_entries &&
-				(it->account().id() == account_id)
+				(it->account() == account)
 			)
 			{
 				opening_balance += it->amount();
@@ -1550,7 +1550,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		}
 		if (filtering_for_account)
 		{
-			if (it->account().id() == account_id)
+			if (it->account() == account)
 			{
 				table_vec.push_back(*it);
 				Decimal const amount = it->amount();
@@ -2177,7 +2177,7 @@ PhatbooksTextSession::elicit_secondary_entries
 			);
 			Commodity const current_commodity
 				= current_entry.account().commodity();
-			if (current_commodity.id() != primary_commodity.id())
+			if (current_commodity != primary_commodity)
 			{
 				// TODO Deal with this!
 				JEWEL_DEBUG_LOG << "Here's where we're supposed to deal with"
@@ -2248,7 +2248,7 @@ PhatbooksTextSession::elicit_secondary_entries
 		Commodity const secondary_commodity =
 			secondary_entry.account().commodity();
 		if
-		(	secondary_commodity.id() != primary_commodity.id()
+		(	secondary_commodity != primary_commodity
 		)
 		{
 			// TODO Deal with this.
