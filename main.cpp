@@ -19,37 +19,60 @@
 // as T::template Id.
 
 #include "phatbooks_text_session.hpp"
+#include <tclap/CmdLine.h>
 #include <cassert>
 #include <iostream>
 #include <string>
 
 using phatbooks::tui::PhatbooksTextSession;
+using std::cerr;
 using std::cout;
 using std::endl;
 using std::string;
+using TCLAP::ArgException;
+using TCLAP::CmdLine;
+using TCLAP::SwitchArg;
+using TCLAP::UnlabeledValueArg;
 
 
 int main(int argc, char** argv)
 {
+	// TODO Place the application name and version number in a
+	// separate header to be reused across the code base.
+	std::string const application_name("phatbooks");
+
 	try
 	{
-		if (argc != 2)
+		// Process command line arguments
+		CmdLine cmd(application_name);
+		SwitchArg gui_switch("g", "gui", "Run in graphical mode", cmd);
+		UnlabeledValueArg<string> filepath_arg
+		(	"FILE",
+			"File to open or create",
+			true,
+			"",
+			"string"
+		);
+		cmd.add(filepath_arg);
+		cmd.parse(argc, argv);
+		bool const is_gui = gui_switch.getValue();
+		string const filename = filepath_arg.getValue();
+		if (is_gui)
 		{
-			cout << "Usage: " << argv[0] << " FILENAME" << endl;
-			return 1;
+			cout << "GUI option not currently supported. "
+			     << "Suggest running " << application_name
+				 << " in console mode.\n" << endl;
+			return 0;
 		}
-		string const filename(argv[1]);
-		if (filename.empty())
-		{
-			cout << "FILENAME cannot be empty." << endl;
-			return 1;
-		}
-
-		assert (argc == 2 && !filename.empty());
 
 		// The following assumes a text based session.
 		PhatbooksTextSession session;
 		return session.run(filename);
+	}
+	catch (ArgException& e)
+	{
+		cerr << "error: " << e.error() << " for arg " << e.argId() << endl;
+		return 1;
 	}
 	// This seems pointless but is necessary to guarantee the stack is fully
 	// unwound if an exception is thrown.
