@@ -51,7 +51,7 @@ namespace tui
  * with creating a database connection to that file.
  */
 class PhatbooksTextSession:
-	public Session,  // Phatbooks Session
+	public Session,  // phatbooks::Session
 	private consolixx::TextSession
 {
 public:
@@ -169,12 +169,6 @@ private:
 	void finalize_journal(ProtoJournal& journal);
 	void finalize_ordinary_journal(OrdinaryJournal& journal);
 	void finalize_draft_journal(DraftJournal& journal, bool autopost);
-
-
-
-
-	// boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
-	// static std::string const s_application_name;
 
 	/**
 	 * Enter a dialogue with the user for creating a new Commodity, which on

@@ -18,12 +18,14 @@
 // classes, can then be abolished, in favour of a locution of the form
 // as T::template Id.
 
+#include "application.hpp"
 #include "phatbooks_text_session.hpp"
 #include <tclap/CmdLine.h>
 #include <cassert>
 #include <iostream>
 #include <string>
 
+using phatbooks::Application;
 using phatbooks::tui::PhatbooksTextSession;
 using std::cerr;
 using std::cout;
@@ -37,10 +39,7 @@ using TCLAP::UnlabeledValueArg;
 
 int main(int argc, char** argv)
 {
-	// TODO Place the application name and version number in a
-	// separate header to be reused across the code base.
-	std::string const application_name("phatbooks");
-
+	std::string const application_name = Application::application_name();
 	try
 	{
 		// Process command line arguments

@@ -15,6 +15,7 @@
 #include "account.hpp"
 #include "account_reader.hpp"
 #include "account_type.hpp"
+#include "application.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
@@ -29,7 +30,6 @@
 #include "proto_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
-#include "session.hpp"
 #include "consolixx/get_input.hpp"
 #include "consolixx/table.hpp"
 #include "consolixx/text_session.hpp"
@@ -485,7 +485,7 @@ int PhatbooksTextSession::do_run(string const& filename)
 		return 1;
 	}
 
-	cout << "Welcome to " << application_name() << "!" << endl;
+	cout << "Welcome to " << Application::application_name() << "!" << endl;
 
 	database_connection().setup();
 	gregorian::date const today = gregorian::day_clock::local_day();

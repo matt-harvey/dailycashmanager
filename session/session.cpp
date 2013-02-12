@@ -44,13 +44,6 @@ Session::run(std::string const& p_filename)
 }
 
 
-string
-Session::application_name()
-{
-	static string const ret = "Phatbooks";
-	return ret;
-}
-
 PhatbooksDatabaseConnection&
 Session::database_connection() const
 {

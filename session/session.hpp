@@ -26,7 +26,6 @@ public:
 	int run(std::string const& p_filename);
 	PhatbooksDatabaseConnection& database_connection() const;
 protected:
-	static std::string application_name();
 	boost::shared_ptr<std::list<OrdinaryJournal> > update_repeaters_till
 	(	boost::gregorian::date d
 	);
