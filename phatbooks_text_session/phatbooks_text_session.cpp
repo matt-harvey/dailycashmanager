@@ -455,7 +455,8 @@ PhatbooksTextSession::~PhatbooksTextSession()
 
 	
 
-int PhatbooksTextSession::do_run(string const& filename)
+int
+PhatbooksTextSession::do_run(string const& filename)
 {
 	boost::filesystem::path filepath(filename);
 	if (!boost::filesystem::exists(boost::filesystem::status(filepath)))

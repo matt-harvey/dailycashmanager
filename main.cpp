@@ -19,6 +19,7 @@
 // as T::template Id.
 
 #include "application.hpp"
+#include "graphical_session.hpp"
 #include "phatbooks_text_session.hpp"
 #include <tclap/CmdLine.h>
 #include <cassert>
@@ -26,6 +27,7 @@
 #include <string>
 
 using phatbooks::Application;
+using phatbooks::gui::GraphicalSession;
 using phatbooks::tui::PhatbooksTextSession;
 using std::cerr;
 using std::cout;
@@ -58,15 +60,12 @@ int main(int argc, char** argv)
 		string const filename = filepath_arg.getValue();
 		if (is_gui)
 		{
-			cout << "GUI option not currently supported. "
-			     << "Suggest running " << application_name
-				 << " in console mode.\n" << endl;
-			return 0;
+			GraphicalSession graphical_session;
+			return graphical_session.run(filename);
 		}
-
-		// The following assumes a text based session.
-		PhatbooksTextSession session;
-		return session.run(filename);
+		assert (!is_gui);
+		PhatbooksTextSession text_session;
+		return text_session.run(filename);
 	}
 	catch (ArgException& e)
 	{
