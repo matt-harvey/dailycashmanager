@@ -76,7 +76,7 @@ Session::update_repeaters_till(gregorian::date d)
 		++it
 	)
 	{
-		while (it->next_date() <= d)  // WARNING This line causes ValueTypeException
+		while (it->next_date() <= d)
 		{
 			auto_posted_journals->push_back(it->fire_next());
 		}

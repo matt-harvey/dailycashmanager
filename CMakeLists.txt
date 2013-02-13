@@ -36,8 +36,14 @@ if (WIN32)
 		 jewel
 		 UnitTest++
 		 sqloxx)
+		 # NEED to add wxWidgets libraries here
+		 # NEED to add definitions required by wxWidgets here?
 else ()
-	include_directories(${immediate_directories})
+	include_directories(${immediate_directories}
+	                    /usr/lib64/wx/include/gtk2-unicode-release-2.8
+						/usr/include/wx-2.8
+						/usr/lib/wx/include/gtk2-unicode-release-2.8
+						/usr/include/wx-2.8)
 	link_directories(/usr/local/lib)
 	set (libraries
 		 boost_date_time
@@ -51,7 +57,18 @@ else ()
 		 m
 		 pthread
 		 UnitTest++
-		 sqloxx)
+		 sqloxx
+		 wx_gtk2u_richtext-2.8
+		 wx_gtk2u_aui-2.8
+		 wx_gtk2u_xrc-2.8
+		 wx_gtk2u_qa-2.8
+		 wx_gtk2u_core-2.8
+		 wx_baseu_xml-2.8
+		 wx_baseu_net-2.8
+		 wx_baseu-2.8)
+	add_definitions(-D_FILE_OFFSET_BITS=64
+	                -D_LARGE_FILES
+					-D__WXGTK__)
 endif ()
 
 
@@ -72,7 +89,6 @@ set (main_files
 	 entry/entry_impl.cpp
 	 entry/entry_reader.cpp
 	 finformat/finformat.cpp
-	 graphical_session/graphical_session.cpp
 	 journal/draft_journal.cpp
 	 journal/draft_journal_impl.cpp
 	 journal/draft_journal_reader.cpp
@@ -91,6 +107,11 @@ set (main_files
 	 repeater/repeater_impl.cpp
 	 repeater/repeater_reader.cpp)
 
+set (gui_files
+	 graphical_session/graphical_session.cpp
+	 graphical_session/wx/my_app.cpp
+	 graphical_session/wx/my_frame.cpp)
+
 set (test_files
 	 ${main_files}
 	 tests/test.cpp
@@ -102,7 +123,7 @@ set (test_files
 
 
 
-add_executable (phatbooks main.cpp ${main_files})
+add_executable (phatbooks main.cpp ${main_files} ${gui_files})
 target_link_libraries (phatbooks ${libraries})
 
 add_executable (phatbooks_test ${test_files})
