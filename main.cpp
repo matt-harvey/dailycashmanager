@@ -40,6 +40,33 @@ using TCLAP::SwitchArg;
 using TCLAP::UnlabeledValueArg;
 
 
+// TODO High priority. I need to make Unicode supportable on both
+// Linux and Windows builds.
+// Typedef String as either std::string or std::wstring,
+// depending on the platform. String could be defined in phatbooks,
+// but then the same problem would occur in jewel::Decimal. So the typedef
+// might as well be done in jewel. So we would have jewel::String. We would
+// also want analogous classes... jewel::Cout, jewel::Cerr, jewel::Clog,
+// jewel::Char. We would also want a macro to wrap string literals and chars
+// become either "L" or "", depending on the platform. We could use
+// JEWEL_TEXT. It's a bit grotesque but conventional, and clearly
+// distinguished from _T(), _() and wxT(), which are used by wxWidgets.
+// Which raises the question: why not just use wxString and brethren,
+// including in jewel, to solve this problem? We have to use them eventually
+// in the GUI code anyway. Or what about wxUString, and have 32-bit chars
+// everywhere? Well, I would rather stick with standard library types
+// in jewel I think. Hmm..
+// What about sqloxx? This should NOT be 32-bit chars, as there does not
+// appear to be anything in SQLite to support this in the database. It
+// would be best to use either wxString etc. there, or jewel::String.
+// (Note we will also have to have wide versions of SQLoxx text binding
+// functions etc too.)
+// For uniformity, we should avoid 32-bit strings elsewhere too, then.
+// The question then becomes, do we (a) use wxString and co. everywhere, or
+// or (b) use jewel::String everywhere but then wxString in
+// the GUI code?
+
+
 int main(int argc, char** argv)
 {
 	try
