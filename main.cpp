@@ -33,6 +33,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 using std::string;
+using std::wstring;
 using TCLAP::ArgException;
 using TCLAP::CmdLine;
 using TCLAP::SwitchArg;
@@ -41,11 +42,10 @@ using TCLAP::UnlabeledValueArg;
 
 int main(int argc, char** argv)
 {
-	std::string const application_name = Application::application_name();
 	try
 	{
 		// Process command line arguments
-		CmdLine cmd(application_name);
+		CmdLine cmd("Phatbooks"); // WARNING TEMP - should use Application::application_name()
 		SwitchArg gui_switch("g", "gui", "Run in graphical mode", cmd);
 		UnlabeledValueArg<string> filepath_arg
 		(	"FILE",

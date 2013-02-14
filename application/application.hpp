@@ -13,7 +13,7 @@ namespace phatbooks
 class Application
 {
 public:
-	static std::string application_name();
+	static std::wstring application_name();
 };
 
 }  // namespace phatbooks

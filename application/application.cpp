@@ -1,16 +1,17 @@
 #include "application.hpp"
 #include <string>
 
-using std::string;
+using std::wstring;
 
 
 namespace phatbooks
 {
 
-string
+// TEMP
+wstring
 Application::application_name()
 {
-	return "Phatbooks";
+	return L"Phatbooks";
 }
 
 

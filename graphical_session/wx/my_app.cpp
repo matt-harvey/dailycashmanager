@@ -19,8 +19,8 @@ it you get into all kinds of problems.
 
 bool MyApp::OnInit()
 {
-	char const* app_name_c = Application::application_name().c_str();
-	wxString const app_name(wxString::FromAscii(app_name_c));
+	wchar_t const* app_name_c = Application::application_name().c_str();
+	wxString const app_name(app_name_c);
 
 	// Note it breaks if we use scoped_ptr here. We don't need to
 	// memory-manage this explicitly anyway, as Destroy() will be called

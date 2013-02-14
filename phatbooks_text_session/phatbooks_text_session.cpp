@@ -486,7 +486,10 @@ PhatbooksTextSession::do_run(string const& filename)
 		return 1;
 	}
 
-	cout << "Welcome to " << Application::application_name() << "!" << endl;
+	// WARNING - temp hack - need to go back to application_name() here
+	// instead of the literal - just as soon as string type mess is sorted
+	// out.
+	cout << "Welcome to " << "Phatbooks" << "!" << endl;
 
 	database_connection().setup();
 	gregorian::date const today = gregorian::day_clock::local_day();

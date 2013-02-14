@@ -30,7 +30,10 @@ if (WIN32)
 					 C:/lib)
 	add_definitions(-D__WXMSW__
 	                -D__GNUWIN32
-					-D__UNICODE)
+					-D__UNICODE
+					-D_UNICODE
+					-DUNICODE
+					)
 	set (libraries
 	     boost_date_time-mgw46-mt-1_53
 		 boost_filesystem-mgw46-mt-1_53
