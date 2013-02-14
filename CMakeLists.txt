@@ -24,9 +24,13 @@ if (WIN32)
 	                     C:/Dev-Cpp
 						 C:/Dev-Cpp/include/common
 						 C:/include)
-	link_directories(C:/Dev-Cpp/lib
+	link_directories(C:/Dev-Cpp/lib/wx/gcc_lib
+					 C:/Dev-Cpp/lib
 	                 C:/Dev-Cpp/MinGW/lib
 					 C:/lib)
+	add_definitions(-D__WXMSW__
+	                -D__GNUWIN32
+					-D__UNICODE)
 	set (libraries
 	     boost_date_time-mgw46-mt-1_53
 		 boost_filesystem-mgw46-mt-1_53
@@ -35,9 +39,23 @@ if (WIN32)
 		 boost_system-mgw46-mt-1_53
 		 jewel
 		 UnitTest++
-		 sqloxx)
-		 # NEED to add wxWidgets libraries here
-		 # NEED to add definitions required by wxWidgets here?
+		 sqloxx
+	     wxmsw29u
+	     wxmsw29u_gl
+	     wxscintilla
+	     wxtiff
+         wxjpeg
+		 wxpng
+		 wxzlib
+		 wxregexu
+		 wxexpat
+		 winmm
+		 shell32
+		 comctl32
+		 rpcrt4
+		 wsock32
+		 odbc32
+		 opengl32)
 else ()
 	include_directories(${immediate_directories}
 	                    /usr/lib64/wx/include/gtk2-unicode-release-2.8
@@ -68,7 +86,8 @@ else ()
 		 wx_baseu-2.8)
 	add_definitions(-D_FILE_OFFSET_BITS=64
 	                -D_LARGE_FILES
-					-D__WXGTK__)
+					-D__WXGTK__
+					-D__UNICODE)
 endif ()
 
 
@@ -131,6 +150,7 @@ target_link_libraries (phatbooks_test ${libraries})
 
 if (WIN32)
 	set (binary_installation_dir C:/bin)
+	set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -mwindows")
 else ()
 	set (binary_installation_dir /usr/local/bin)
 endif ()
