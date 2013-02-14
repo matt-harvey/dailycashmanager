@@ -132,7 +132,7 @@ target_link_libraries (phatbooks_test ${libraries})
 if (WIN32)
 	set (binary_installation_dir C:/bin)
 else ()
-	set (binary_installation_dir bin)
+	set (binary_installation_dir /usr/local/bin)
 endif ()
 
 install(TARGETS phatbooks DESTINATION ${binary_installation_dir})

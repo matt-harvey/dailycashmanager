@@ -43,6 +43,7 @@ MyFrame::MyFrame(wxString const& title):
 void
 MyFrame::OnAbout(wxCommandEvent& event)
 {
+	// TODO Put proper messages here
 	wxString msg;
 	msg.Printf(wxT("Hello and welcome to %s"), wxVERSION_STRING);
 	wxMessageBox(msg, wxT("About Minimal"), wxOK | wxICON_INFORMATION, this);
