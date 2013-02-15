@@ -42,23 +42,29 @@ using TCLAP::UnlabeledValueArg;
 
 // TODO High priority. I need to make Unicode supportable on both
 // Linux and Windows builds.
-// Typedef String as either std::string or std::wstring,
-// depending on the platform. String could be defined in phatbooks.
-// In the Jewel library, I have now provided for both std::string and
-// std::wstring, wide streams etc.. So Jewel is all good.
-// I should also do the same for sqloxx.
-// Then in phatbooks either I could typedef a phatbooks::String class and
-// use that, but then convert to wxString where required in the GUI
-// layer. Or I could just use wxString throughout phatbooks.
-// We also want a macro to wrap string literals and chars
-// become either "L" or "", depending on the platform. We could use
-// _T(), _() and/or wxT(), which are used by wxWidgets.
-// Note we cannot use 32-bit chars as SQLite does not appear to support these.
-// For uniformity, we should avoid 32-bit strings elsewhere too, then.
-// The question then becomes, do we (a) use wxString and co. everywhere, or
-// or (b) use phatbooks::String everywhere but then wxString in
-// the GUI code?
-
+// I should do this as follows. Have wxString throughout the business
+// layer of Phatbooks, both in GUI and TUI code. In Linux, wxString
+// is a UTF-8 encoded string, and on Windows, it is a UTF-16 encoded
+// wide string.
+// At the lowest level just before the database - i.e. in the load() and save()
+// methods of the ...Impl classes - I convert from wxString to UTF-8 std::string just
+// before storing to the database, and convert from
+// UTF-8 std::string to wxString just after retrieving from the
+// database. This ensures that strings stored on one platform can be
+// read later on another platform and display properly: all strings
+// are stored with the same encoding in the database.
+//
+// This entails a major editing operation throughout the code base.
+//
+// Note that Jewel currently supports std::string and std::wstring, and
+// I don't think I should involve wxString in that. I may need to do
+// some conversion to and from wxString and std::string and std::wstring,
+// in code that involves jewel::Decimal at the presentation layer.
+// 
+// Sqloxx currently supports std::string only; and I don't think there's any
+// need for it to support anything else. All strings are ultimately going
+// to be stored in the database in UTF-8 form so this narrow interface
+// can be retained for Sqloxx.
 
 int main(int argc, char** argv)
 {
