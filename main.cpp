@@ -40,32 +40,6 @@ using TCLAP::SwitchArg;
 using TCLAP::UnlabeledValueArg;
 
 
-// TODO High priority. I need to make Unicode supportable on both
-// Linux and Windows builds.
-// I should do this as follows. Have wxString throughout the business
-// layer of Phatbooks, both in GUI and TUI code. In Linux, wxString
-// is a UTF-8 encoded string, and on Windows, it is a UTF-16 encoded
-// wide string.
-// At the lowest level just before the database - i.e. in the load() and save()
-// methods of the ...Impl classes - I convert from wxString to UTF-8 std::string just
-// before storing to the database, and convert from
-// UTF-8 std::string to wxString just after retrieving from the
-// database. This ensures that strings stored on one platform can be
-// read later on another platform and display properly: all strings
-// are stored with the same encoding in the database.
-//
-// This entails a major editing operation throughout the code base.
-//
-// Note that Jewel currently supports std::string and std::wstring, and
-// I don't think I should involve wxString in that. I may need to do
-// some conversion to and from wxString and std::string and std::wstring,
-// in code that involves jewel::Decimal at the presentation layer.
-// 
-// Sqloxx currently supports std::string only; and I don't think there's any
-// need for it to support anything else. All strings are ultimately going
-// to be stored in the database in UTF-8 form so this narrow interface
-// can be retained for Sqloxx.
-
 int main(int argc, char** argv)
 {
 	try
