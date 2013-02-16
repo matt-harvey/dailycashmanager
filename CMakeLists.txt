@@ -61,10 +61,8 @@ if (WIN32)
 		 opengl32)
 else ()
 	include_directories(${immediate_directories}
-	                    /usr/lib64/wx/include/gtk2-unicode-release-2.8
-						/usr/include/wx-2.8
-						/usr/lib/wx/include/gtk2-unicode-release-2.8
-						/usr/include/wx-2.8)
+						/usr/local/include/wx-2.9
+						/usr/local/lib/wx/include/gtk2-unicode-static-2.9)
 	link_directories(/usr/local/lib)
 	set (libraries
 		 boost_date_time
@@ -76,21 +74,45 @@ else ()
 		 boost_system
 		 jewel 
 		 m
+		 z
 		 pthread
 		 UnitTest++
 		 sqloxx
-		 wx_gtk2u_richtext-2.8
-		 wx_gtk2u_aui-2.8
-		 wx_gtk2u_xrc-2.8
-		 wx_gtk2u_qa-2.8
-		 wx_gtk2u_core-2.8
-		 wx_baseu_xml-2.8
-		 wx_baseu_net-2.8
-		 wx_baseu-2.8)
-	add_definitions(-D_FILE_OFFSET_BITS=64
-	                -D_LARGE_FILES
-					-D__WXGTK__
-					-D__UNICODE)
+		 wx_gtk2u_xrc-2.9
+		 wx_gtk2u_qa-2.9
+		 wx_baseu_net-2.9
+		 wx_gtk2u_html-2.9
+		 wx_gtk2u_adv-2.9
+		 wx_gtk2u_core-2.9
+		 wx_baseu_xml-2.9
+		 wx_baseu-2.9
+		 gtk-x11-2.0
+		 gdk-x11-2.0
+		 atk-1.0
+		 gio-2.0
+		 pangoft2-1.0
+		 pangocairo-1.0
+		 gdk_pixbuf-2.0
+		 cairo
+		 pango-1.0
+		 freetype 
+		 fontconfig 
+		 gobject-2.0
+		 gthread-2.0
+		 rt
+		 glib-2.0
+		 X11
+		 Xxf86vm
+		 png
+		 wxregexu-2.9
+		 wxexpat-2.9
+		 wxtiff-2.9
+		 wxjpeg-2.9)
+
+
+	add_definitions(#-D_FILE_OFFSET_BITS=64
+	                #-D_LARGE_FILES
+					-D__WXGTK__)
 endif ()
 
 
