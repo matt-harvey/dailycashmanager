@@ -17,6 +17,9 @@
 // are supposed to be instantiated across different business
 // classes, can then be abolished, in favour of a locution of the form
 // as T::template Id.
+//
+// TODO In due course, we need to reinstate the -mwindows flag
+// (see note in CMakeLists.txt).
 
 #include "application.hpp"
 #include "graphical_session.hpp"

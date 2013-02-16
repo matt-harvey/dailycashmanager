@@ -175,7 +175,13 @@ target_link_libraries (phatbooks_test ${libraries})
 
 if (WIN32)
 	set (binary_installation_dir C:/bin)
-	set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -mwindows")
+
+	# Note -mwindows prevents console output (so we don't want it during
+	# development) but it also stops a console window from popping up when
+	# a GUI app is opened by double-clicking its icon. So in due course we
+	# will want to reinstate this flag.
+	# set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -mwindows")
+
 else ()
 	set (binary_installation_dir /usr/local/bin)
 endif ()
