@@ -1,0 +1,145 @@
+***** Notes on string handling *****
+
+The need to make things work with Unicode, and across multiple platforms, and
+to be able to store data consistently in a database that might be opened by
+the same user on different operating systems, means that string handling requires some care.
+At the same time, we must be able to work with our chosen GUI framework, wxWidgets,
+which requires that strings be in a particular format.
+
+The application can be broken horizontally into three Layers, as follows.
+	-	The Database Layer. In Phatbooks, the functions at this layer are all and
+		only those in the sqloxx namespace. This is basically everything in the
+		Sqloxx library (which in turns is a wrapper around SQLite).
+	-	The Business Layer. In Phatbooks, the functions at this layer are all and
+		only those in the phatbooks namespace, that are NOT also in the tui or
+		gui namespace. Functions belonging to business classes such as
+		phatbooks::Account are typical examples of functions at the Business
+		Layer. We need to decide, for those of these functions that accept or
+		return strings, what sort of strings they should accept and return.
+	-	The Presentation Layer. In Phatbooks, the functions at this layer all ond
+		only those in either the phatbooks::gui or the phatbooks::tui namespace.
+		The presentation layer can be broken into two "Faces", as follows.
+			- The TUI Face - anything in the phatbooks::tui namespace, or the console
+					mode of the application. There are two "Subfaces":
+						- The Linux Subface.
+						- The Windows Subface.
+			- The GUI Face - anything in the phatbooks::gui namespace, or the GUI
+					mode of the application. There are two "Subfaces":
+						- The Linux Subface.
+						- The Windows Subface.
+
+OK, so that's the overall architecture of the application. What we need to ensure
+is that when we are handling strings at any given Layer, Face or Subface, that we
+are using an appropriate form of string, given the requirements we have outlined to
+be able to handle Unicode, to work across multiple platforms, and to work with the
+wxWidgets toolkit. Our reasoning about what form of string to use at each layer, is
+as follows.
+
+	-	The Database Layer. In this layer, strings must be stored in a consistent
+	    format regardless of the operating system in which they were originally
+		inserted into the database, and regardless of the operating system in which
+		they are eventually retrieved. Thus a string inserted into the database
+		during a Windows session must preserve its integrity when later retrieved
+		on Linux. Etc. This entails, among other things, that the string format for
+		database storage must avoid any possible issues with endianness. The string
+		format must also be storable by SQLite, without too much fuss.
+		The appropriate storage format to use here is going to be either a string
+		of char, or a string of wchar_t, since these are the string formats supported by
+		SQLite. However, wchar_t MIGHT have endianness issues. I think it probably
+		wouldn't as SQLite is probably designed so this doesn't arise; however, we
+		KNOW that with char these issues CAN'T arise. So we might as well store
+		things as strings of char. This entails UTF-8 format. At the SQLoxx level,
+		this entails passing std::string to the SQLoxx API - which, happily, is
+		already written to accept std::string and not std::wstring. Therefore, as
+		far as Phatbooks is concerned, it needs to pass UTF-8 encoded std::string
+		to the SQLoxx API, and it needs to be prepared to received UTF-8 encoded
+		std::string from the SQLoxx API. (Note, it is possible to configure SQLite
+		with ICU support, so that, for example, you might sort strings by
+		"alphabetical order" within SQLite select statements etc.., in a language
+		independent way. But I don't want to go down that route. It seems like
+		something I could achieve more easily at the Business Layer if I ever
+		needed to do that kind of processing.)
+
+	-	The Business Layer. This is the layer in which the business logic of the
+		application takes place. It is desirable that we be able to perform
+		Unicode-aware operations at this layer. It is also desirable, for efficiency
+		reasons, that data loaded into the cache - which lives at the business
+		later - be already encoded in the form that it will finally be presented in
+		at the GUI layer. This enables us to leverage the caching that we have already
+		put in place, to avoid having to convert between string formats more often
+		that necessary. This all strongly points to using wxString as our format
+		at the Business Layer. Some notes re. wxString in wxWidgets 2.9:
+			-	wxString in wxWidgets version 2.9 is different to 2.8. We have
+			    installed 2.9 on both Linux and Windows and are going to be building
+				our application with 2.9.
+			-	To initialize a wxString with string literals, you can use wide
+			    string literals directly (e.g. L"hello").
+			-	wxString::char_type and wxString::value_type are both wxUniChar.
+				Thus a wxString represents a string of Unicode codepoints. This is
+				good.
+			-	On Windows, a wxString embodies a UTF-16-encoded string. On Linux,
+			    it embodies either a UTF-32-encoded string, or a UTF-8-encoded string,
+				depending on the wxWidgets build configuration. We have chosen the
+				UTF-8 configuration, to minimize the size of the object cache.
+				For clients of wxString, however, this is all much of a muchness, since
+				regardless of what kind of encoding it uses internally, it is always
+				conceptually a "string of Unicode codepoints".
+			-	If we want to print a wxString to standard output, using a standard
+				library stream, we need to use std::wcout (but we don't want to do this,
+				however - see below).
+			-	If we print a wxString to std::wcout at the Linux console, then generally
+				speaking, codepoints outside the ASCII range will NOT be properly displayed.
+				If we want to print a wxString to the Linux console so as to display
+				non-ASCII characters properly, we need to first convert it to a
+				UTF-8-encoded std::string (or char const*) and then print it to
+				std::cout (or possibly use some wxWidgets-provided console stream
+				 - but see below, where I dismiss that.) This
+				applies regardless of whether we have built
+				wxWidgets in "Linux-UTF-8 mode" or "Linux-UTF-32 mode". (Fortunately
+				this conversion is a simple operation.)
+			-	If we want to print any non-ASCII characters to the WINDOWS console...
+				well let's just forget about that for now. It's hard. Printing
+				wxString straight to std::wcout does NOT preserve non-ASCII characters,
+				at any rate.
+	
+	-	The Presentation Layer. This is the layer at which console and GUI output is presented
+		to the user. We really need to consider each "Face" separately.
+			-	The TUI Face
+				-	In Linux, the only way (but see below) we can write the the console in
+					a Unicode friendly
+				    way is by writing a UTF-8 encoded string to std::cout. Since we can't
+					write a wxString to std::cout (only to std::wcout), we have to convert it
+					to a UTF-8 encoded std::string (or char const*) and then write it to
+					std::cout. Fortunately this is easy to do.
+				-	HAVING SAID THIS, wxWidgets does have a various facilities for constructing
+					console applications,
+					including command-line parsers etc., and maybe one of these facilities
+					would enable us to write wxString directly to some stream or other in a way
+					that prints non-ASCII characters properly. But I have already built my console
+					mode around the standard library (and TCLAP for the minimal command-line
+					parsing I've required) and I don't want to re-do it with some other framework.
+					In particular, I have already build jewel::Decimal to work with standard
+					library streams. I HAVE attempted to make console output work with
+					certain wxWidgets stream classes, and couldn't get it to work. I didn't try
+					very hard, but I tried hard enough to conclude that it wasn't a trivial
+					exercise (especially given that one of the classes the documentation says
+					to use apparently does not exist in my installation of wxWidgets).
+				-	In Windows, it's difficult to write non-ASCII characters to the console.
+					So difficult that, in fact, I don't think I could be bothered trying to make
+					it work at this point. (OK, I HAVE tried to make it work, using hints
+					from Stack Overflow, but failed. I didn't try very hard, but I tried...)
+					If and when I try to make it work properly, the way to do that
+					is (I think) by writing to std::wcout, NOT to std::cout. But in
+					the meantime, I can get away with writing to std::cout since I am resigning
+					myself to only dealing in ASCII when in Windows console mode anyway.
+				-	In conclusion, the string type to use for the TUI Face, both on Linux and
+					Windows, in std::string.
+			- The GUI Face
+				-	There is only one choice here, really, and that is wxString. The functions
+					for displaying strings in windows etc. generally take wxString, or at least,
+					that is their obvious, well-documented interface.
+					I have verified that if you just pass wxString to the
+					widget-related functions as stated in the wxWidgets documentation, then
+					non-ASCII characters are displayed properly, both in Linux and in Windows.
+						
+
