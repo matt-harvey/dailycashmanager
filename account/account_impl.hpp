@@ -19,9 +19,11 @@
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <boost/scoped_ptr.hpp>	
+#include <wx/string.h>
 #include <algorithm>
 #include <string>
 #include <vector>
+
 
 
 namespace sqloxx
@@ -55,6 +57,7 @@ public:
 		PersistentObject;
 
 	typedef account_type::AccountType AccountType;
+
 	typedef sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
 
@@ -70,7 +73,7 @@ public:
 	 */
 	static Id id_for_name
 	(	PhatbooksDatabaseConnection& dbc,
-		std::string const& p_name
+		wxString const& p_name
 	);
 
 	/**
@@ -87,13 +90,13 @@ public:
 
 	~AccountImpl();
 
-	std::string name();
+	wxString name();
 
 	Commodity commodity();
 
 	AccountType account_type();
 
-	std::string description();
+	wxString description();
 
 	jewel::Decimal technical_balance();
 
@@ -101,11 +104,11 @@ public:
 
 	void set_account_type(AccountType p_account_type);
 
-	void set_name(std::string const& p_name);
+	void set_name(wxString const& p_name);
 
 	void set_commodity(Commodity const& p_commodity);
 
-	void set_description(std::string const& p_description);
+	void set_description(wxString const& p_description);
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
@@ -113,8 +116,11 @@ public:
 	 */
 	void swap(AccountImpl& rhs);
 
+	// These are tied to SQLoxx API and must be std::string, not
+	// wxString.
 	static std::string primary_table_name();
 	static std::string primary_key_name();
+
 private:
 
 
@@ -132,7 +138,7 @@ private:
 
 	struct AccountData
 	{
-		boost::optional<std::string> name;
+		boost::optional<wxString> name;
 		boost::optional<Commodity> commodity;
 		boost::optional<account_type::AccountType> account_type;
 		boost::optional<std::string> description;

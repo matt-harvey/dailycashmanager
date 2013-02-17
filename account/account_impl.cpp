@@ -12,6 +12,7 @@
 #include "account_type.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "string_conv.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -22,6 +23,7 @@
 #include <wx/string.h>
 #include <algorithm>
 #include <cassert>
+#include <string>
 #include <vector>
 
 using boost::numeric_cast;
@@ -30,12 +32,18 @@ using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
 using sqloxx::SQLStatement;
+using std::string;
 using std::vector;
+
+
+
 
 
 namespace phatbooks
 {
 
+using string_conv::wx_to_std8;
+using string_conv::std8_to_wx;
 
 typedef
 	PhatbooksDatabaseConnection::BalanceCacheAttorney
@@ -82,6 +90,11 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"commodity_id references commodities"
 		"); "
 	);
+
+	// TODO This is not going to be much use for account
+	// names that are in languages and/or scripts with different
+	// alphabetical orderings to English. Figure out whether this
+	// matters much.
 	dbc.execute_sql
 	(	"create unique index account_name_index on accounts(name);"
 	);
@@ -90,13 +103,13 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 
 AccountImpl::Id
-AccountImpl::id_for_name(PhatbooksDatabaseConnection& dbc, string const& name)
+AccountImpl::id_for_name(PhatbooksDatabaseConnection& dbc, wxString const& name)
 {
 	SQLStatement statement
 	(	dbc,
 		"select account_id from accounts where name = :name"
 	);
-	statement.bind(":name", name);
+	statement.bind(":name", wx_to_std8(name));
 	statement.step();
 	Id const ret = statement.extract<Id>(0);
 	statement.step_final();
@@ -141,7 +154,7 @@ AccountImpl::account_type()
 	return value(m_data->account_type);
 }
 
-string
+wxString
 AccountImpl::name()
 {
 	load();
@@ -155,7 +168,7 @@ AccountImpl::commodity()
 	return value(m_data->commodity);
 }
 
-string
+wxString
 AccountImpl::description()
 {
 	load();
@@ -213,7 +226,7 @@ AccountImpl::set_account_type(AccountType p_account_type)
 }
 
 void
-AccountImpl::set_name(string const& p_name)
+AccountImpl::set_name(wxString const& p_name)
 {
 	load();
 	m_data->name = p_name;
@@ -229,7 +242,7 @@ AccountImpl::set_commodity(Commodity const& p_commodity)
 }
 
 void
-AccountImpl::set_description(string const& p_description)
+AccountImpl::set_description(wxString const& p_description)
 {
 	load();
 	m_data->description = p_description;
@@ -256,14 +269,14 @@ AccountImpl::do_load()
 	statement.bind(":p", id());
 	statement.step();
 	AccountImpl temp(*this);
-	temp.m_data->name = statement.extract<string>(0);
+	temp.m_data->name = std8_to_wx(statement.extract<string>(0));
 	temp.m_data->commodity = Commodity
 	(	database_connection(),
 		statement.extract<Id>(1)
 	);
 	temp.m_data->account_type =
 		static_cast<AccountType>(statement.extract<int>(2));
-	temp.m_data->description = statement.extract<string>(3);
+	temp.m_data->description = std8_to_wx(statement.extract<string>(3));
 	swap(temp);
 	return;
 }
@@ -275,8 +288,8 @@ AccountImpl::process_saving_statement(SQLStatement& statement)
 	(	":account_type_id",
 		static_cast<int>(value(m_data->account_type))
 	);
-	statement.bind(":name", value(m_data->name));
-	statement.bind(":description", value(m_data->description));
+	statement.bind(":name", wx_to_std8(value(m_data->name)));
+	statement.bind(":description", wx_to_std8(value(m_data->description)));
 	statement.bind(":commodity_id", value(m_data->commodity).id());
 	statement.step_final();
 	return;
@@ -318,7 +331,7 @@ void
 AccountImpl::do_remove()
 {
 	BalanceCacheAttorney::mark_as_stale(database_connection());
-	std::string const statement_text =
+	string const statement_text =
 		"delete from " + primary_table_name() + " where " +
 		primary_key_name() + " = :p";
 	SQLStatement statement(database_connection(), statement_text);
@@ -337,7 +350,7 @@ AccountImpl::do_ghostify()
 	// note that marking the balance cache
 	// as stale here might perhaps throw an exception (which is contrary
 	// to the Sqloxx API which requires do_ghostify() to be
-	// non-throwing.
+	// non-throwing).
 	clear(m_data->name);
 	clear(m_data->commodity);
 	clear(m_data->account_type);

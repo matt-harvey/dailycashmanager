@@ -16,6 +16,8 @@
 
 namespace phatbooks
 {
+namespace string_conv
+{
 
 // DECLARATIONS
 
@@ -40,7 +42,7 @@ std8_to_wx(std::string const& s)
 }
 
 
-
+}  // namespace string_conv
 }  // namespace phatbooks
 
 #endif  // GUARD_string_conv_hpp
