@@ -9,7 +9,7 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <jewel/decimal.hpp>
-#include <string>
+#include <wx/string.h>
 #include <vector>
 
 namespace phatbooks
@@ -71,7 +71,7 @@ public:
 	 */
 	Account
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		std::string const& p_name
+		wxString const& p_name
 	);
 
 	static void setup_tables();
@@ -81,7 +81,7 @@ public:
 	/**
 	 * @ returns name of account
 	 */
-	std::string name() const;
+	wxString name() const;
 
 	/**
 	 * @ returns native Commodity of this account
@@ -96,7 +96,7 @@ public:
 	/**
 	 * @ returns description of account.
 	 */
-	std::string description() const;
+	wxString description() const;
 
 	/**
 	 * Returns "technical" account balance, which is
@@ -119,21 +119,21 @@ public:
 
 	void set_account_type(AccountType p_account_type);
 
-	void set_name(std::string const& p_name);
+	void set_name(wxString const& p_name);
 
 	void set_commodity(Commodity const& p_commodity);
 
-	void set_description(std::string const& p_description);
+	void set_description(wxString const& p_description);
 
 private:
 	Account(sqloxx::Handle<AccountImpl> const& p_handle);
 };
 
 
-boost::shared_ptr<std::vector<std::string> >
+boost::shared_ptr<std::vector<wxString> >
 make_account_row(Account const& account);
 
-boost::shared_ptr<std::vector<std::string> >
+boost::shared_ptr<std::vector<wxString> >
 make_detailed_account_row(Account const& account);
 
 

@@ -19,9 +19,9 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <wx/string.h>
 #include <algorithm>
 #include <cassert>
-#include <string>
 #include <vector>
 
 using boost::numeric_cast;
@@ -30,7 +30,6 @@ using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
 using sqloxx::SQLStatement;
-using std::string;
 using std::vector;
 
 
@@ -50,9 +49,9 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 	dbc.execute_sql
 	(	"create table account_types(account_type_id integer primary key)"
 	);
-	vector<string>::size_type const num_account_types =
+	vector<wxString>::size_type const num_account_types =
 		account_type_names().size();
-	for (vector<string>::size_type i = 1; i <= num_account_types; ++i)
+	for (vector<wxString>::size_type i = 1; i <= num_account_types; ++i)
 	{
 		SQLStatement statement
 		(	dbc,	

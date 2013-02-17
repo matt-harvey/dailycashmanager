@@ -9,14 +9,13 @@
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
-#include <string>
+#include <wx/string.h>
 #include <vector>
 
 using phatbooks::account_type::AccountType;
 using sqloxx::Handle;
 using boost::shared_ptr;
 using jewel::Decimal;
-using std::string;
 using std::vector;
 
 
@@ -49,7 +48,7 @@ Account::Account
 
 Account::Account
 (	PhatbooksDatabaseConnection& p_database_connection,
-	string const& p_name
+	wxString const& p_name
 ):
 	PhatbooksPersistentObject
 	(	p_database_connection,
@@ -82,7 +81,7 @@ Account::~Account()
 }
 
 
-std::string
+wxString
 Account::name() const
 {
 	return impl().name();
@@ -100,7 +99,7 @@ Account::account_type() const
 	return impl().account_type();
 }
 
-std::string
+wxString
 Account::description() const
 {
 	return impl().description();
@@ -126,7 +125,7 @@ Account::set_account_type(AccountType p_account_type)
 }
 
 void
-Account::set_name(string const& p_name)
+Account::set_name(wxString const& p_name)
 {
 	impl().set_name(p_name);
 	return;
@@ -140,25 +139,25 @@ Account::set_commodity(Commodity const& p_commodity)
 }
 
 void
-Account::set_description(std::string const& p_description)
+Account::set_description(wxString const& p_description)
 {
 	impl().set_description(p_description);
 	return;
 }
 
-shared_ptr<vector<string> >
+shared_ptr<vector<wxString> >
 make_account_row(Account const& account)
 {
-	shared_ptr<vector<string> > ret(new vector<string>);
+	shared_ptr<vector<wxString> > ret(new vector<wxString>);
 	ret->push_back(account.name());
 	ret->push_back(finformat(account.friendly_balance()));
 	return ret;
 }
 
-shared_ptr<vector<string> >
+shared_ptr<vector<wxString> >
 make_detailed_account_row(Account const& account)
 {
-	shared_ptr<vector<string> > ret(new vector<string>);
+	shared_ptr<vector<wxString> > ret(new vector<wxString>);
 	ret->push_back(account.name());
 	ret->push_back(account_type_to_string(account.account_type()));
 	ret->push_back(account.description());
