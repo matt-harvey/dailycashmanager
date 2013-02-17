@@ -4,6 +4,7 @@
 #include "entry.hpp"
 #include <ostream>
 #include <sqloxx/general_typedefs.hpp>
+#include <wx/string.h>
 #include <vector>
 #include <string>
 
@@ -58,18 +59,13 @@ public:
 	
 	virtual ~Journal();
 
-	/*
-	static std::string primary_table_name();
-	static std::string primary_key_name();
-	*/
-	
 	void set_whether_actual(bool p_is_actual);
-	void set_comment(std::string const& p_comment);
+	void set_comment(wxString const& p_comment);
 	void add_entry(Entry& entry);
 	void remove_entry(Entry& entry);
 
 	std::vector<Entry> const& entries() const;
-	std::string comment() const;
+	wxString comment() const;
 	bool is_actual() const;
 	jewel::Decimal balance() const;
 
@@ -91,10 +87,10 @@ protected:
 private:
 	virtual std::vector<Entry> const& do_get_entries() const = 0;
 	virtual void do_set_whether_actual(bool p_is_actual) = 0;
-	virtual void do_set_comment(std::string const& p_comment) = 0;
+	virtual void do_set_comment(wxString const& p_comment) = 0;
 	virtual void do_add_entry(Entry& entry) = 0;
 	virtual void do_remove_entry(Entry& entry) = 0;
-	virtual std::string do_get_comment() const = 0;
+	virtual wxString do_get_comment() const = 0;
 	virtual bool do_get_whether_actual() const = 0;
 
 	static void output_journal_aux(std::ostream& os, Journal const& oj);

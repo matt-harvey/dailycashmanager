@@ -7,14 +7,13 @@
 #include "proto_journal.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
+#include <wx/string.h>
 #include <iostream>
 #include <ostream>
-#include <string>
 
 using boost::shared_ptr;
 using std::endl;
 using std::ostream;
-using std::string;
 using std::vector;
 using sqloxx::Handle;
 
@@ -60,7 +59,7 @@ DraftJournal::create_unchecked
 
 
 void
-DraftJournal::set_name(string const& p_name)
+DraftJournal::set_name(wxString const& p_name)
 {
 	impl().set_name(p_name);
 	return;
@@ -95,7 +94,7 @@ DraftJournal::do_set_whether_actual(bool p_is_actual)
 }
 
 void
-DraftJournal::do_set_comment(string const& p_comment)
+DraftJournal::do_set_comment(wxString const& p_comment)
 {
 	impl().set_comment(p_comment);
 	return;
@@ -121,13 +120,13 @@ DraftJournal::do_get_whether_actual() const
 	return impl().is_actual();
 }
 
-string
+wxString
 DraftJournal::do_get_comment() const
 {
 	return impl().comment();
 }
 	
-string
+wxString
 DraftJournal::name() const
 {
 	return impl().name();
@@ -140,7 +139,7 @@ DraftJournal::do_get_entries() const
 }
 
 
-string
+wxString
 DraftJournal::repeater_description() const
 {
 	return impl().repeater_description();

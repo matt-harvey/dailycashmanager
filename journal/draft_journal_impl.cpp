@@ -3,6 +3,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
+#include "string_conv.hpp"
 #include <sqloxx/sql_statement.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
@@ -13,6 +14,7 @@
 #include <iostream>  // for debug logging
 #include <jewel/debug_log.hpp>
 #include <jewel/optional.hpp>
+#include <wx/string.h>
 #include <string>
 #include <vector>
 
@@ -33,6 +35,11 @@ using std::endl;
 
 namespace phatbooks
 {
+
+
+using string_conv::std8_to_wx;
+using string_conv::wx_to_std8;
+
 
 string
 DraftJournalImpl::primary_table_name()
@@ -55,7 +62,7 @@ DraftJournalImpl::set_whether_actual(bool p_is_actual)
 }
 
 void
-DraftJournalImpl::set_comment(string const& p_comment)
+DraftJournalImpl::set_comment(wxString const& p_comment)
 {
 	load();
 	ProtoJournal::set_comment(p_comment);
@@ -89,7 +96,7 @@ DraftJournalImpl::is_actual()
 	return ProtoJournal::is_actual();
 }
 
-string
+wxString
 DraftJournalImpl::comment()
 {
 	load();
@@ -157,7 +164,7 @@ DraftJournalImpl::~DraftJournalImpl()
 
 
 void
-DraftJournalImpl::set_name(string const& p_name)
+DraftJournalImpl::set_name(wxString const& p_name)
 {
 	load();
 	m_dj_data->name = p_name;
@@ -178,8 +185,7 @@ DraftJournalImpl::add_repeater(Repeater& repeater)
 }
 
 
-
-std::string
+wxString
 DraftJournalImpl::name()
 {
 	load();
@@ -221,7 +227,7 @@ DraftJournalImpl::do_load()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	temp.m_dj_data->name = statement.extract<string>(0);
+	temp.m_dj_data->name = std8_to_wx(statement.extract<string>(0));
 	SQLStatement repeater_finder
 	(	database_connection(),
 		"select repeater_id from repeaters where journal_id = :p"
@@ -252,7 +258,7 @@ DraftJournalImpl::do_save_new()
 		"values(:journal_id, :name)"
 	);
 	statement.bind(":journal_id", journal_id);
-	statement.bind(":name", value(m_dj_data->name));
+	statement.bind(":name", wx_to_std8(value(m_dj_data->name)));
 	statement.step_final();
 	
 	typedef vector<Repeater>::iterator RepIter;
@@ -275,7 +281,7 @@ DraftJournalImpl::do_save_existing()
 		"journal_id = :journal_id"
 	);
 	updater.bind(":journal_id", id());
-	updater.bind(":name", value(m_dj_data->name));
+	updater.bind(":name", wx_to_std8(value(m_dj_data->name)));
 	updater.step_final();
 
 	typedef vector<Repeater>::iterator RepIter;
@@ -368,42 +374,55 @@ DraftJournalImpl::clear_repeaters()
 	return;
 }
 
-string
+wxString
 DraftJournalImpl::repeater_description()
 {
 	load();
 	if (m_dj_data->repeaters.empty())
 	{
-		return "";
+		return wxString("");
 	}
 	assert (!m_dj_data->repeaters.empty());
-	string ret = "This transaction is automatically recorded ";
+	wxString ret("This transaction is automatically recorded ");
 	vector<Repeater>::const_iterator it = m_dj_data->repeaters.begin();
 	ret += frequency_description(*it);
-	ret += ", with the next recording due on ";
+	ret += wxString(", with the next recording due on ");
 	gregorian::date next_date = it->next_date();
-	ret += lexical_cast<string>(next_date);
-	ret += ".";
+
+	// TODO Make this locale-sensitive (obviously I have to make the
+	// messages locale-sensitive as well in due course, but the
+	// date may be harder to spot than all the English strings, so
+	// flagging it explicitly with this comment).
+	ret += std8_to_wx(lexical_cast<string>(next_date));
+
+	ret += wxString(".");
 	if (m_dj_data->repeaters.size() > 1)
 	{
 		++it;
 		for ( ; it != m_dj_data->repeaters.end(); ++it)
 		{
-			ret +=
-				"\nIn addition, this transaction is automatically recorded ";
+			ret += wxString
+			(	"\nIn addition, this transaction is automatically recorded "
+			);
 			ret += frequency_description(*it);
-			ret += ", with the next recording due on ";
+			ret += wxString(", with the next recording due on ");
 			gregorian::date const next_date_this_cycle = it->next_date();
-			ret += lexical_cast<string>(next_date_this_cycle);
-			ret += ".";
+			
+			// TODO See previous comment re. internationalization.
+			ret += std8_to_wx(lexical_cast<string>(next_date_this_cycle));
+
+			ret += wxString(".");
 			if (next_date_this_cycle < next_date)
 			{
 				next_date = next_date_this_cycle;
 			}
 		}
-		ret += "\nThis transaction will next be recorded on ";
-		ret += lexical_cast<string>(next_date);
-		ret += ".";
+		ret += wxString("\nThis transaction will next be recorded on ");
+
+		// TODO See previous comment re. internationalization
+		ret += wxString(lexical_cast<string>(next_date));
+
+		ret += wxString(".");
 	}
 	return ret;
 }	

@@ -17,6 +17,7 @@
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "string_conv.hpp"
 #include "consolixx/table.hpp"
 #include <jewel/output_aux.hpp>
 #include <sqloxx/next_auto_key.hpp>
@@ -28,6 +29,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
+#include <wx/string.h>
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
@@ -63,6 +65,10 @@ using std::endl;
 
 namespace phatbooks
 {
+
+
+using string_conv::std8_to_wx;
+using string_conv::wx_to_std8;
 
 void
 ProtoJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -111,7 +117,7 @@ ProtoJournal::do_set_whether_actual(bool p_is_actual)
 }
 
 void
-ProtoJournal::do_set_comment(string const& p_comment)
+ProtoJournal::do_set_comment(wxString const& p_comment)
 {
 	m_data->comment = p_comment;
 	return;
@@ -148,7 +154,7 @@ ProtoJournal::do_remove_entry(Entry& entry)
 }
 		
 
-string
+wxString
 ProtoJournal::do_get_comment() const
 {
 	return value(m_data->comment);
@@ -189,7 +195,7 @@ ProtoJournal::do_save_new_journal_core
 		"values(:is_actual, :comment)"
 	);
 	statement.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
-	statement.bind(":comment", value(m_data->comment));
+	statement.bind(":comment", wx_to_std8(value(m_data->comment)));
 	statement.step_final();
 	typedef vector<Entry>::iterator EntryIter;
 	EntryIter const endpoint = m_data->entries.end();
@@ -219,7 +225,7 @@ ProtoJournal::do_save_existing_journal_core
 		"where journal_id = :id"
 	);
 	updater.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
-	updater.bind(":comment", value(m_data->comment));
+	updater.bind(":comment", wx_to_std8(value(m_data->comment)));
 	updater.bind(":id", id);
 	updater.step_final();
 	typedef vector<Entry>::iterator EntryIter;
@@ -283,7 +289,7 @@ ProtoJournal::do_load_journal_core
 		temp.m_data->entries.push_back(entry);
 	}
 	temp.m_data->is_actual = static_cast<bool>(statement.extract<int>(0));
-	temp.m_data->comment = statement.extract<string>(1);
+	temp.m_data->comment = std8_to_wx(statement.extract<string>(1));
 	swap(temp);	
 	return;
 }

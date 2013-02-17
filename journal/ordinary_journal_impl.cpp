@@ -16,6 +16,7 @@
 #include <boost/type_traits.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <wx/string.h>
 #include <string>
 #include <vector>
 
@@ -62,7 +63,7 @@ OrdinaryJournalImpl::set_whether_actual(bool p_is_actual)
 }
 
 void
-OrdinaryJournalImpl::set_comment(string const& p_comment)
+OrdinaryJournalImpl::set_comment(wxString const& p_comment)
 {
 	load();
 	ProtoJournal::set_comment(p_comment);
@@ -72,10 +73,6 @@ OrdinaryJournalImpl::set_comment(string const& p_comment)
 void
 OrdinaryJournalImpl::add_entry(Entry& entry)
 {
-	/*
-	JEWEL_DEBUG_LOG << "Calling OrdinaryJournalImpl::add_entry."
-	                << endl;
-	*/
 	load();
 	if (has_id())
 	{
@@ -101,7 +98,7 @@ OrdinaryJournalImpl::is_actual()
 	return ProtoJournal::is_actual();
 }
 
-string
+wxString
 OrdinaryJournalImpl::comment()
 {
 	load();

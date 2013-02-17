@@ -27,6 +27,7 @@
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
+#include "string_conv.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/identity_map.hpp>
@@ -37,6 +38,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
+#include <wxString>
 #include <cassert>
 #include <iostream>
 #include <list>
@@ -61,6 +63,10 @@ using std::string;
 
 namespace phatbooks
 {
+
+
+using string_conv::wx_to_std8;
+
 
 
 PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
@@ -97,24 +103,24 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 
 
 bool
-PhatbooksDatabaseConnection::has_account_named(string const& p_name)
+PhatbooksDatabaseConnection::has_account_named(wxString const& p_name)
 {
 	SQLStatement statement
 	(	*this,
 		"select name from accounts where name = :p"
 	);
-	statement.bind(":p", p_name);
+	statement.bind(":p", wx_to_std8(p_name));
 	return statement.step();
 }
 
 bool
-PhatbooksDatabaseConnection::has_draft_journal_named(string const& p_name)
+PhatbooksDatabaseConnection::has_draft_journal_named(wxString const& p_name)
 {
 	SQLStatement statement
 	(	*this,
 		"select name from draft_journal_detail where name = :p"
 	);
-	statement.bind(":p", p_name);
+	statement.bind(":p", wx_to_std8(p_name));
 	return statement.step();
 }
 
@@ -122,25 +128,25 @@ PhatbooksDatabaseConnection::has_draft_journal_named(string const& p_name)
 
 bool
 PhatbooksDatabaseConnection::has_commodity_with_abbreviation
-(	string const& p_abbreviation
+(	wxString const& p_abbreviation
 )
 {
 	SQLStatement statement
 	(	*this,
 		"select abbreviation from commodities where abbreviation = :p"
 	);
-	statement.bind(":p", p_abbreviation);
+	statement.bind(":p", wx_to_std8(p_abbreviation));
 	return statement.step();
 }
 
 bool
-PhatbooksDatabaseConnection::has_commodity_named(string const& p_name)
+PhatbooksDatabaseConnection::has_commodity_named(wxString const& p_name)
 {
 	SQLStatement statement
 	(	*this,
 		"select name from commodities where name = :p"
 	);
-	statement.bind(":p", p_name);
+	statement.bind(":p", wx_to_std8(p_name));
 	return statement.step();
 }
 
@@ -219,6 +225,7 @@ PhatbooksDatabaseConnection::mark_setup_as_having_occurred()
 bool
 PhatbooksDatabaseConnection::setup_has_occurred()
 {
+	// TODO Make this nicer. 
 	try
 	{
 		execute_sql("select * from " + setup_flag);

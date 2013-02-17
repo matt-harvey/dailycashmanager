@@ -6,6 +6,7 @@
 #include <sqloxx/persistent_object.hpp>
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <wx/string.h>
 #include <string>
 #include <vector>
 
@@ -64,7 +65,7 @@ public:
 	 * Does not throw, except possibly \c std::bad_alloc in extreme
 	 * circumstances.
 	 */
-	void set_comment(std::string const& p_comment);
+	void set_comment(wxString const& p_comment);
 
 	/**
 	 * Add an Entry to the Journal.
@@ -84,15 +85,15 @@ public:
 	 * Does not throw, except perhaps \c std::bad_alloc in
 	 * extreme circumstances.
 	 */
-	std::string comment();
+	wxString comment();
 
 	std::vector<Entry> const& entries();
 
-	void set_name(std::string const& p_name);
+	void set_name(wxString const& p_name);
 	
 	void add_repeater(Repeater& repeater);
 	
-	std::string name();
+	wxString name();
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
@@ -100,7 +101,7 @@ public:
 	 */
 	void swap(DraftJournalImpl& rhs);
 
-	std::string repeater_description();
+	wxString repeater_description();
 
 	/**
 	 * Take on the attributes of \e rhs, where these exist and are
@@ -125,7 +126,6 @@ private:
 	void do_ghostify();
 	void do_remove();
 
-
 	struct DraftJournalData;
 
 	boost::scoped_ptr<DraftJournalData> m_dj_data;
@@ -134,7 +134,7 @@ private:
 
 struct DraftJournalImpl::DraftJournalData
 {
-	boost::optional<std::string> name;
+	boost::optional<wxString> name;
 	std::vector<Repeater> repeaters;
 };
 

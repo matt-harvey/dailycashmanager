@@ -10,6 +10,8 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <wx/string.hpp>
+#include <string>
 #include <vector>
 
 namespace phatbooks
@@ -53,7 +55,7 @@ public:
 	 * Does not throw, except possibly \c std::bad_alloc in extreme
 	 * circumstances.
 	 */
-	void set_comment(std::string const& p_comment);
+	void set_comment(wxString const& p_comment);
 
 	/**
 	 * @todo Figure out throwing behaviour.
@@ -68,7 +70,7 @@ public:
 	 * Does not throw, except perhaps \c std::bad_alloc in
 	 * extreme circumstances.
 	 */
-	std::string comment();
+	wxString comment();
 
 	std::vector<Entry> const& entries();
 

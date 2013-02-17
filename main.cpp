@@ -24,31 +24,40 @@
 #include "application.hpp"
 #include "graphical_session.hpp"
 #include "phatbooks_text_session.hpp"
+#include "string_conv.hpp"
 #include <tclap/CmdLine.h>
+#include <wx/string.h>
 #include <cassert>
 #include <iostream>
 #include <string>
 
 using phatbooks::Application;
 using phatbooks::gui::GraphicalSession;
+using phatbooks::string_conv::std8_to_wx;
+using phatbooks::string_conv::wx_to_std8;
 using phatbooks::tui::PhatbooksTextSession;
 using std::cerr;
 using std::cout;
 using std::endl;
 using std::string;
-using std::wstring;
 using TCLAP::ArgException;
 using TCLAP::CmdLine;
 using TCLAP::SwitchArg;
 using TCLAP::UnlabeledValueArg;
 
 
+// TO DO "wx" is an unfortunate name for a subdirectory
+// of my project directory, when it is also the name of the
+// main subdirectory in which wxWidgets' own headers are installed.
+// Change it.
+
 int main(int argc, char** argv)
 {
 	try
 	{
 		// Process command line arguments
-		CmdLine cmd("Phatbooks"); // WARNING TEMP - should use Application::application_name()
+		wxString const application_name = Application::application_name();
+		CmdLine cmd(wx_to_std8(application_name));
 		SwitchArg gui_switch("g", "gui", "Run in graphical mode", cmd);
 		UnlabeledValueArg<string> filepath_arg
 		(	"FILE",
@@ -64,6 +73,12 @@ int main(int argc, char** argv)
 		if (is_gui)
 		{
 			GraphicalSession graphical_session;
+	
+			// Note phatbooks::Session currently requires a std::string to
+			// be passed here.
+			// TODO This may require a wstring or wxString if we want to
+			// support non-ASCII filenames on Windows. We would need to
+			// change the interface with phatbooks::Session.
 			return graphical_session.run(filename);
 		}
 		assert (!is_gui);

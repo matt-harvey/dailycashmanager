@@ -8,8 +8,8 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
+#include <wx/string.h>
 #include <ostream>
-#include <string>
 #include <vector>
 
 namespace phatbooks
@@ -83,9 +83,9 @@ public:
 		Id p_id
 	);
 
-	void set_name(std::string const& p_name);
+	void set_name(wxString const& p_name);
 	void add_repeater(Repeater& repeater);
-	std::string name() const;
+	wxString name() const;
 
 	/**
 	 * @returns a verbal description of the automatic postings associated
@@ -93,7 +93,7 @@ public:
 	 *
 	 * @todo Test.
 	 */
-	std::string repeater_description() const;
+	wxString repeater_description() const;
 
 	/**
 	 * Take on the attributes of \e rhs, where these exist and are
@@ -111,10 +111,10 @@ private:
 	// Define pure virtual functions inherited from Journal
 	std::vector<Entry> const& do_get_entries() const;
 	void do_set_whether_actual(bool p_is_actual);
-	void do_set_comment(std::string const& p_comment);
+	void do_set_comment(wxString const& p_comment);
 	void do_add_entry(Entry& entry);
 	void do_remove_entry(Entry& entry);
-	std::string do_get_comment() const;
+	wxString do_get_comment() const;
 	bool do_get_whether_actual() const;
 	
 	// Redefine impure virtual function inherited from Journal
