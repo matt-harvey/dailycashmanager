@@ -7,7 +7,7 @@
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
-#include <string>
+#include <wx/string.h>
 
 
 namespace phatbooks
@@ -68,7 +68,7 @@ public:
 
 	Commodity
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		std::string const& p_abbreviation
+		wxString const& p_abbreviation
 	);
 	
 	/**
@@ -77,17 +77,17 @@ public:
 	 * the abbreviation for ordinary stock in National Australia Bank
 	 * Limited.
 	 */
-	std::string abbreviation() const;
+	wxString abbreviation() const;
 
 	/**
 	 * Get the full name of the commodity. E.g. "Australian dollars".
 	 */
-	std::string name() const;
+	wxString name() const;
 
 	/**
 	 * Get the description of the commodity, e.g. "notes and coins".
 	 */
-	std::string description() const;
+	wxString description() const;
 
 	/**
 	 * Get the number of decimal places of precision for the commodity
@@ -102,9 +102,9 @@ public:
 	 */
 	jewel::Decimal multiplier_to_base() const;
 
-	void set_abbreviation(std::string const& p_abbreviation);
-	void set_name(std::string const& p_name);
-	void set_description(std::string const& p_description);
+	void set_abbreviation(wxString const& p_abbreviation);
+	void set_name(wxString const& p_name);
+	void set_description(wxString const& p_description);
 	void set_precision(int p_precision);
 	void set_multiplier_to_base(jewel::Decimal const& p_multiplier_to_base);
 

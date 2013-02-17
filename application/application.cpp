@@ -1,14 +1,12 @@
 #include "application.hpp"
-#include <string>
+#include <wx/string.h>
 
-using std::wstring;
 
 
 namespace phatbooks
 {
 
-// TEMP
-wstring
+wxString
 Application::application_name()
 {
 	return L"Phatbooks";

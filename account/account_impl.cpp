@@ -91,13 +91,6 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 		"); "
 	);
 
-	// TODO This is not going to be much use for account
-	// names that are in languages and/or scripts with different
-	// alphabetical orderings to English. Figure out whether this
-	// matters much.
-	dbc.execute_sql
-	(	"create unique index account_name_index on accounts(name);"
-	);
 	return;
 }
 

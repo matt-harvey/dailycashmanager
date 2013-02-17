@@ -5,12 +5,11 @@
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
-#include <string>
+#include <wx/string.h>
 
 using boost::shared_ptr;
 using jewel::Decimal;
 using sqloxx::Handle;
-using std::string;
 
 namespace phatbooks
 {
@@ -56,7 +55,7 @@ Commodity::create_unchecked
 
 Commodity::Commodity
 (	PhatbooksDatabaseConnection& p_database_connection,
-	string const& p_abbreviation
+	wxString const& p_abbreviation
 ):
 	PhatbooksPersistentObject
 	(	p_database_connection,
@@ -67,19 +66,19 @@ Commodity::Commodity
 	)
 {
 }
-string
+wxString
 Commodity::abbreviation() const
 {
 	return impl().abbreviation();
 }
 
-string
+wxString
 Commodity::name() const
 {
 	return impl().name();
 }
 
-std::string
+wxString
 Commodity::description() const
 {
 	return impl().description();
@@ -98,21 +97,21 @@ Commodity::multiplier_to_base() const
 }
 
 void
-Commodity::set_abbreviation(string const& p_abbreviation)
+Commodity::set_abbreviation(wxString const& p_abbreviation)
 {
 	impl().set_abbreviation(p_abbreviation);
 	return;
 }
 
 void
-Commodity::set_name(std::string const& p_name)
+Commodity::set_name(wxString const& p_name)
 {
 	impl().set_name(p_name);
 	return;
 }
 
 void
-Commodity::set_description(std::string const& p_description)
+Commodity::set_description(wxString const& p_description)
 {
 	impl().set_description(p_description);
 	return;

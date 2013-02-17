@@ -1,10 +1,9 @@
 #include "account_type.hpp"
+#include <wx/string.h>
 #include <map>
-#include <string>
 #include <vector>
 
 using std::map;
-using std::string;
 using std::vector;
 
 namespace phatbooks
@@ -13,26 +12,26 @@ namespace phatbooks
 
 
 
-vector<string>
+vector<wxString>
 account_type_names()
 {
 	static bool calculated_already = false;
-	static vector<string> ret;
+	static vector<wxString> ret;
 	while (!calculated_already)
 	{
-		ret.push_back("Asset");
-		ret.push_back("Liability");
-		ret.push_back("Equity");
-		ret.push_back("Revenue");
-		ret.push_back("Expense");
-		ret.push_back("Pure envelope");
+		ret.push_back(L"Asset");
+		ret.push_back(L"Liability");
+		ret.push_back(L"Equity");
+		ret.push_back(L"Revenue");
+		ret.push_back(L"Expense");
+		ret.push_back(L"Pure envelope");
 		calculated_already = true;
 	}
 	return ret;
 }
 
 
-string
+wxString
 account_type_to_string(account_type::AccountType p_account_type)
 {
 	size_t const index = static_cast<size_t>(p_account_type) - 1;
@@ -41,16 +40,16 @@ account_type_to_string(account_type::AccountType p_account_type)
 
 
 account_type::AccountType
-string_to_account_type(std::string const& p_string)
+string_to_account_type(wxString const& p_string)
 {
 	static bool calculated_already = false;
-	static map<string, account_type::AccountType> dict;
+	static map<wxString, account_type::AccountType> dict;
 	if (!calculated_already)
 	{
-		vector<string> const names = account_type_names();
+		vector<wxString> const names = account_type_names();
 		int i = 1;
 		for
-		(	vector<string>::const_iterator it = names.begin();
+		(	vector<wxString>::const_iterator it = names.begin();
 			it != names.end();
 			++it, ++i
 		)

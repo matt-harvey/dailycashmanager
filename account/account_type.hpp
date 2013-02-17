@@ -1,7 +1,7 @@
 #ifndef GUARD_account_type_hpp
 #define GUARD_account_type_hpp
 
-#include <string>
+#include <wx/string.h>
 #include <vector>
 
 namespace phatbooks
@@ -29,14 +29,14 @@ namespace account_type
 }  // namespace account_type
 
 
-std::vector<std::string>
+std::vector<wxString>
 account_type_names();
 
-std::string
+wxString
 account_type_to_string(account_type::AccountType p_account_type);
 
 account_type::AccountType
-string_to_account_type(std::string const& p_string);
+string_to_account_type(wxString const& p_string);
 
 
 }  // namespace phatbooks

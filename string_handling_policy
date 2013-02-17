@@ -55,10 +55,16 @@ as follows.
 		to the SQLoxx API, and it needs to be prepared to received UTF-8 encoded
 		std::string from the SQLoxx API. (Note, it is possible to configure SQLite
 		with ICU support, so that, for example, you might sort strings by
-		"alphabetical order" within SQLite select statements etc.., in a language
-		independent way. But I don't want to go down that route. It seems like
+		"alphabetical order" within SQLite select statements etc.., in a locale-aware
+		way. But I don't want to go down that route at this stage. It seems like
 		something I could achieve more easily at the Business Layer if I ever
-		needed to do that kind of processing.)
+		needed to do that kind of processing. The SQLite book makes it sound like
+		the integration of ICU support into SQLite is potentially complicated. In any
+		case, my impression from the SQLite documentation is that even if you
+		do build it with the ICU extension, this has nothing to do with the format in
+		which strings are stored in the database. It might affect what indexes
+		you create in the database, but it doesn't seem to impinge on the storage
+		format of the text itself.)
 
 	-	The Business Layer. This is the layer in which the business logic of the
 		application takes place. It is desirable that we be able to perform
