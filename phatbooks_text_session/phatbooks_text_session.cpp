@@ -837,7 +837,8 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 (	PersistentJournal& journal,
 	Menu& menu,
 	bool& exiting,
-	bool simple_exit
+	bool simple_exit,
+	bool journal_type_is_draft
 )
 {
 	// TODO
@@ -846,7 +847,8 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 	// exit they must choose either to retain or abandon changes made,
 	// but is confusing as to whether the "changes" include the posting
 	// of the OrdinaryJournal (they don't).
-
+	string const jnl_type_descr =
+		journal_type_is_draft? " draft" : "";
 	typedef shared_ptr<MenuItem const> ItemPtr;
 	typedef PhatbooksTextSession PTS;  // For brevity below
 	ItemPtr delete_journal_item
@@ -864,7 +866,7 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 	ItemPtr simple_exit_item = MenuItem::provide_menu_exit();
 	ItemPtr exit_without_saving_item
 	(	new MenuItem
-		(	"Undo any changes to draft transaction, and exit",
+		(	"Undo any changes to" + jnl_type_descr + " transaction, and exit",
 			bind
 			(	bind(&PTS::exit_journal_edit_without_saving, this, _1),
 				ref(journal)
@@ -875,7 +877,7 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 	);
 	ItemPtr exit_with_saving_item
 	(	new MenuItem
-		(	"Save any changes to draft transaction, and exit",
+		(	"Save any changes to" + jnl_type_descr + " transaction, and exit",
 			bind
 			(	bind(&PTS::exit_journal_edit_saving_changes, this, _1),
 				ref(journal)
@@ -1018,7 +1020,13 @@ PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
 			assert (!journal.has_repeaters());
 			menu.add_item(convert_to_ordinary_journal_item);
 		}
-		finalize_journal_editing_cycle(journal, menu, exiting, first_time);
+		finalize_journal_editing_cycle
+		(	journal,
+			menu,
+			exiting,
+			first_time,
+			true
+		);
 	}
 	return;
 }
@@ -1048,7 +1056,13 @@ PhatbooksTextSession::conduct_ordinary_journal_editing
 		);
 		menu.add_item(amend_date_item);
 
-		finalize_journal_editing_cycle(journal, menu, exiting, first_time);
+		finalize_journal_editing_cycle
+		(	journal,
+			menu,
+			exiting,
+			first_time,
+			false
+		);
 	}
 	return;
 }

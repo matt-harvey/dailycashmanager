@@ -334,11 +334,14 @@ private:
 	// there are no changes to save). If \e simple_exit is set to \e false,
 	// then two exiting options will be presented: to save changes and exit;
 	// and to exit without saving changes.
+	// journal_type_is_draft is true if the journal is a DraftJournal and
+	// false if it it's an OrdinaryJournal.
 	void finalize_journal_editing_cycle
 	(	PersistentJournal& journal,
 		Menu& menu,
 		bool& exiting,
-		bool simple_exit
+		bool simple_exit,
+		bool journal_type_is_draft
 	);
 
 	void conduct_draft_journal_editing(DraftJournal& journal);
