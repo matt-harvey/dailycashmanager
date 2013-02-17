@@ -6,16 +6,14 @@
 #include <boost/filesystem.hpp>
 #include <jewel/decimal.hpp>
 #include <cassert>
-#include <exception>
+#include <cstdlib>
 #include <iostream>
-#include <string>
 
 using jewel::Decimal;
+using std::abort;
 using std::cout;
 using std::cerr;
 using std::endl;
-using std::string;
-using std::terminate;
 
 namespace filesystem = boost::filesystem;
 
@@ -39,7 +37,7 @@ void abort_if_exists(filesystem::path const& filepath)
 	{
 		cerr << "File named \"" << filepath.string() << "\" already "
 			 << "exists. Test aborted." << endl;
-		terminate();
+		abort();
 	}
 	return;
 }

@@ -34,7 +34,7 @@ Session::~Session()
 
 
 int
-Session::run(std::string const& p_filename)
+Session::run(string const& p_filename)
 {
 	if (p_filename.empty())
 	{

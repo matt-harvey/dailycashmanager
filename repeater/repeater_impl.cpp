@@ -328,15 +328,16 @@ RepeaterImpl::do_save_new()
 		SQLStatement inserter
 		(	database_connection(),
 			"insert into repeaters(interval_type_id, interval_units, "
-			"next_date, journal_id) values(:interval_type_id, :interval_units, "
-			":next_date, :journal_id)"
+			"next_date, journal_id) values(:interval_type_id, "
+			":interval_units, :next_date, :journal_id)"
 		);
 		process_saving_statement(inserter);
 	}
 	catch (std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-		std::cerr << id() << " " << interval_units() << " " << interval_type() << std::endl;
+		std::cerr << id() << " " << interval_units()
+		          << " " << interval_type() << std::endl;
 	}
 	return;
 }

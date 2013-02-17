@@ -6,6 +6,7 @@
 #include "finformat.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include "string_conv.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -23,6 +24,9 @@ using std::vector;
 
 namespace phatbooks
 {
+
+using string_conv::wx_to_std8;
+
 
 void
 Account::setup_tables(PhatbooksDatabaseConnection& dbc)

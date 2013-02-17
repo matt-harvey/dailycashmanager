@@ -9,6 +9,7 @@
 #include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <vector>
+#include <wx/string.h>
 
 namespace gregorian = boost::gregorian;
 
@@ -147,11 +148,11 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	DraftJournal dj1(dbc);
 	dj1.set_whether_actual(true);
 	dj1.set_comment("journal to test repeater");
-	dj1.set_name("Test");
+	dj1.set_name(wxString("Test"));  // wxString is optional
 	
 	Entry entry1a(dbc);
 	entry1a.set_account(Account(dbc, "cash"));
-	entry1a.set_comment("Test entry");
+	entry1a.set_comment(wxString("Test entry")); // wxString is optional
 	entry1a.set_amount(Decimal("-1090.95"));
 	entry1a.set_whether_reconciled(false);
 	dj1.add_entry(entry1a);
@@ -174,6 +175,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	Repeater repeater1b(dbc, 1);
 	OrdinaryJournal oj1b = repeater1b.fire_next();
 	CHECK_EQUAL(oj1b.comment(), "journal to test repeater");
+	CHECK_EQUAL(oj1b.comment(), wxString("journal to test repeater"));
 	CHECK_EQUAL(oj1b.date(), date(2012, 7, 30));
 	CHECK_EQUAL(repeater1.next_date(), date(2012, 8, 13));
 
@@ -205,6 +207,8 @@ TEST_FIXTURE(TestFixture, test_repeater_frequency_phrase)
 	repeater1.set_interval_type(interval_type::days);
 	repeater1.set_interval_units(1);
 	CHECK_EQUAL(frequency_description(repeater1), "every day");
+	CHECK(typeid(frequency_description(repeater1)) == typeid(wxString));
+	CHECK_EQUAL(frequency_description(repeater1), wxString("every day"));
 
 	Repeater repeater2(dbc);
 	repeater2.set_interval_type(interval_type::days);
@@ -250,6 +254,10 @@ TEST_FIXTURE(TestFixture, test_repeater_frequency_phrase)
 	CHECK_EQUAL
 	(	frequency_description(repeater9),
 		"every 10 months, on the last day of the month"
+	);
+	CHECK_EQUAL
+	(	frequency_description(repeater9),
+		wxString("every 10 months, on the last day of the month")
 	);
 }
 

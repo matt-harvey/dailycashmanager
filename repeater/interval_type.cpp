@@ -1,25 +1,28 @@
 #include "interval_type.hpp"
 #include <cassert>
-#include <string>
+#include <wx/string.h>
 
-using std::string;
 
 namespace phatbooks
 {
 
-string phrase(interval_type::IntervalType x, bool is_plural)
+wxString
+phrase(interval_type::IntervalType x, bool is_plural)
 {
-	string const number_marker = is_plural? "s": "";
+	wxString const number_marker = is_plural? wxString("s"): wxString("");
 	switch (x)
 	{
 	case interval_type::days:
-		return "day" + number_marker;
+		return wxString("day") + number_marker;
 	case interval_type::weeks:
-		return "week" + number_marker;
+		return wxString("week") + number_marker;
 	case interval_type::months:
-		return "month" + number_marker;
+		return wxString("month") + number_marker;
 	case interval_type::month_ends:
-		return "month" + number_marker + ", on the last day of the month";
+		return
+			wxString("month") +
+			number_marker +
+			wxString(", on the last day of the month");
 	default:
 		assert (false);		
 	}

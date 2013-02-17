@@ -6,6 +6,8 @@
 
 using std::cerr;
 using std::endl;
+using std::string;
+using std::wstring;
 
 namespace phatbooks
 {
@@ -33,8 +35,11 @@ GraphicalSession::do_run(string const& filename)
 	wxApp* pApp = new MyApp();
 	wxApp::SetInstance(pApp);
 	int dummy = 0;
-	wxChar* argv_proxy[] = { std8_to_wx(filename).wc_str() };
-	wxEntryStart(dummy, argv_proxy);
+	wstring const argv1(filename.begin(), filename.end());
+
+	// WARNING This sucks.
+	wchar_t* argv1wc = const_cast<wchar_t*>(argv1.c_str());
+	wxEntryStart(dummy, &argv1wc);
 	wxTheApp->OnInit();
 	wxTheApp->OnRun();
 	wxTheApp->OnExit();

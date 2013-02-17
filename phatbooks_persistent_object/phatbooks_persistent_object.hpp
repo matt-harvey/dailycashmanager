@@ -204,12 +204,6 @@ PhatbooksPersistentObject<Impl>::do_ghostify()
 
 
 
-
-
-
-
-
-
 }  // namespace phatbooks
 
 #endif  // GUARD_phatbooks_persistent_object_hpp

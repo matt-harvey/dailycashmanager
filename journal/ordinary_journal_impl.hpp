@@ -10,7 +10,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
-#include <wx/string.hpp>
+#include <wx/string.h>
 #include <string>
 #include <vector>
 

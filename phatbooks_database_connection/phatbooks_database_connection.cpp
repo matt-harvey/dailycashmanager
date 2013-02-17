@@ -38,7 +38,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
-#include <wxString>
+#include <wx/string.h>
 #include <cassert>
 #include <iostream>
 #include <list>

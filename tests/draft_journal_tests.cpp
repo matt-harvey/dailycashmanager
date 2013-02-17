@@ -7,13 +7,12 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
-#include <string>
+#include <wx/string.h>
 
 namespace gregorian = boost::gregorian;
 
 using jewel::Decimal;
 using gregorian::date;
-using std::string;
 
 namespace phatbooks
 {
@@ -29,12 +28,13 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 
 	Entry entry1(dbc);
 	entry1.set_account(Account(dbc, "cash"));
-	entry1.set_comment("test");
+	wxString const test_comment("test");
+	entry1.set_comment(test_comment);
 	entry1.set_amount(Decimal("0.00"));
 	entry1.set_whether_reconciled(false);
 	dj1.add_entry(entry1);
 
-	string target = "";
+	wxString target = wxString("");
 	CHECK_EQUAL(dj1.repeater_description(), "");
 
 	Repeater repeater1a(dbc);
@@ -43,9 +43,10 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	repeater1a.set_next_date(date(2012, 9, 15));
 	dj1.add_repeater(repeater1a);
 
-	target =
-		"This transaction is automatically recorded every month, "
-		"with the next recording due on 2012-Sep-15.";
+	target = wxString
+	(	"This transaction is automatically recorded every month, "
+		"with the next recording due on 2012-Sep-15."
+	);
 	CHECK_EQUAL(dj1.repeater_description(), target);
 
 	Repeater repeater1b(dbc);
@@ -54,12 +55,13 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	repeater1b.set_next_date(date(2012, 9, 12));
 	dj1.add_repeater(repeater1b);
 
-	target =
-		"This transaction is automatically recorded every month, "
+	target = wxString
+	(	"This transaction is automatically recorded every month, "
 		"with the next recording due on 2012-Sep-15.\n"
 		"In addition, this transaction is automatically recorded every "
 		"3 days, with the next recording due on 2012-Sep-12.\n"
-		"This transaction will next be recorded on 2012-Sep-12.";
+		"This transaction will next be recorded on 2012-Sep-12."
+	);
 	CHECK_EQUAL(dj1.repeater_description(), target);
 }
 
