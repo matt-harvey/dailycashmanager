@@ -14,10 +14,15 @@ namespace phatbooks
 {
 
 
-string finformat(Decimal const& decimal)
+// Keep this as std::string. If we want to format to wxString too, do
+// it as a separate function.
+string finformat_std8(Decimal const& decimal)
 {
 	static Decimal const zero = Decimal(0, 0);
 	ostringstream oss;
+
+	// WARNING This doesn't format properly on Windows. It just ignores
+	// the thousands separators.
 	oss.imbue(locale(""));
 	oss << decimal;
 	string ret(oss.str());

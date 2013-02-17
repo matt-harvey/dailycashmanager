@@ -10,12 +10,14 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/string.h>
+#include <string>
 #include <vector>
 
 using phatbooks::account_type::AccountType;
 using sqloxx::Handle;
 using boost::shared_ptr;
 using jewel::Decimal;
+using std::string;
 using std::vector;
 
 
@@ -145,22 +147,22 @@ Account::set_description(wxString const& p_description)
 	return;
 }
 
-shared_ptr<vector<wxString> >
+shared_ptr<vector<string> >
 make_account_row(Account const& account)
 {
-	shared_ptr<vector<wxString> > ret(new vector<wxString>);
-	ret->push_back(account.name());
-	ret->push_back(finformat(account.friendly_balance()));
+	shared_ptr<vector<string> > ret(new vector<string>);
+	ret->push_back(wx_to_std8(account.name()));
+	ret->push_back(finformat_std8(account.friendly_balance()));
 	return ret;
 }
 
-shared_ptr<vector<wxString> >
+shared_ptr<vector<string> >
 make_detailed_account_row(Account const& account)
 {
-	shared_ptr<vector<wxString> > ret(new vector<wxString>);
-	ret->push_back(account.name());
-	ret->push_back(account_type_to_string(account.account_type()));
-	ret->push_back(account.description());
+	shared_ptr<vector<string> > ret(new vector<string>);
+	ret->push_back(wx_to_std8(account.name()));
+	ret->push_back(wx_to_std8(account_type_to_string(account.account_type())));
+	ret->push_back(wx_to_std8(account.description()));
 	;return ret;
 }
 

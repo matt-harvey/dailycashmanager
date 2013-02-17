@@ -1,6 +1,7 @@
 #include "balance_cache.hpp"
 #include "commodity_impl.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "string_conv.hpp"
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
@@ -8,6 +9,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <wx/string.h>
 #include <algorithm>
 #include <stdexcept>
 #include <string>
@@ -36,6 +38,11 @@ using std::string;
 namespace phatbooks
 {
 
+
+using string_conv::std8_to_wx;
+using string_conv::wx_to_std8;
+
+
 void CommodityImpl::setup_tables
 (	PhatbooksDatabaseConnection& dbc
 )
@@ -61,14 +68,14 @@ void CommodityImpl::setup_tables
 CommodityImpl::Id
 CommodityImpl::id_for_abbreviation
 (	PhatbooksDatabaseConnection& dbc,
-	std::string const& p_abbreviation
+	wxString const& p_abbreviation
 )
 {
 	SQLStatement statement
 	(	dbc,
 		"select commodity_id from commodities where abbreviation = :p"
 	);
-	statement.bind(":p", p_abbreviation);
+	statement.bind(":p", wx_to_std8(p_abbreviation));
 	statement.step();
 	Id const ret = statement.extract<Id>(0);
 	statement.step_final();
@@ -133,9 +140,9 @@ void CommodityImpl::do_load()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	temp.m_data->abbreviation = statement.extract<string>(0);
-	temp.m_data->name = statement.extract<string>(1);
-	temp.m_data->description = statement.extract<string>(2);
+	temp.m_data->abbreviation = std8_to_wx(statement.extract<string>(0));
+	temp.m_data->name = std8_to_wx(statement.extract<string>(1));
+	temp.m_data->description = std8_to_wx(statement.extract<string>(2));
 	temp.m_data->precision = statement.extract<int>(3);
 	temp.m_data->multiplier_to_base = Decimal
 	(	statement.extract<Decimal::int_type>(4),
@@ -148,9 +155,9 @@ void CommodityImpl::do_load()
 
 void CommodityImpl::process_saving_statement(SQLStatement& statement)
 {
-	statement.bind(":abbreviation", value(m_data->abbreviation));
-	statement.bind(":name", value(m_data->name));
-	statement.bind(":description", value(m_data->description));
+	statement.bind(":abbreviation", wx_to_std8(value(m_data->abbreviation)));
+	statement.bind(":name", wx_to_std8(value(m_data->name)));
+	statement.bind(":description", wx_to_std8(value(m_data->description)));
 	statement.bind(":precision", value(m_data->precision));
 	Decimal m = value(m_data->multiplier_to_base);
 	statement.bind(":multiplier_to_base_intval", m.intval());
@@ -208,19 +215,19 @@ void CommodityImpl::do_ghostify()
 	return;
 }
 
-std::string CommodityImpl::abbreviation()
+wxString CommodityImpl::abbreviation()
 {
 	load();
 	return value(m_data->abbreviation);
 }
 
-std::string CommodityImpl::name()
+wxString CommodityImpl::name()
 {
 	load();
 	return value(m_data->name);
 }
 
-std::string CommodityImpl::description()
+wxString CommodityImpl::description()
 {
 	load();
 	return value(m_data->description);
@@ -238,21 +245,21 @@ jewel::Decimal CommodityImpl::multiplier_to_base()
 	return value(m_data->multiplier_to_base);
 }
 
-void CommodityImpl::set_abbreviation(std::string const& p_abbreviation)
+void CommodityImpl::set_abbreviation(wxString const& p_abbreviation)
 {
 	load();
 	m_data->abbreviation = p_abbreviation;
 	return;
 }
 
-void CommodityImpl::set_name(std::string const& p_name)
+void CommodityImpl::set_name(wxString const& p_name)
 {
 	load();
 	m_data->name = p_name;
 	return;
 }
 
-void CommodityImpl::set_description(std::string const& p_description)
+void CommodityImpl::set_description(wxString const& p_description)
 {
 	load();
 	m_data->description = p_description;

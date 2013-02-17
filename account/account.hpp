@@ -10,6 +10,7 @@
 #include <sqloxx/handle.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/string.h>
+#include <string>
 #include <vector>
 
 namespace phatbooks
@@ -130,10 +131,14 @@ private:
 };
 
 
-boost::shared_ptr<std::vector<wxString> >
+// This has to be std::string as it interfaces with Consolixx
+// which requires it to be std::string
+boost::shared_ptr<std::vector<std::string> >
 make_account_row(Account const& account);
 
-boost::shared_ptr<std::vector<wxString> >
+// This has to be std::string as it interfaces with Consolixx
+// which requires it to be std::string
+boost::shared_ptr<std::vector<std::string> >
 make_detailed_account_row(Account const& account);
 
 

@@ -19,6 +19,7 @@
 #include <jewel/decimal.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/optional.hpp>
+#include <wx/string.h>
 #include <string>
 
 
@@ -60,7 +61,7 @@ public:
 	 */
 	static Id id_for_abbreviation
 	(	PhatbooksDatabaseConnection& dbc,
-		std::string const& p_abbreviation
+		wxString const& p_abbreviation
 	);
 
 	explicit
@@ -73,21 +74,21 @@ public:
 
 	~CommodityImpl();
 	
-	std::string abbreviation();
+	wxString abbreviation();
 
-	std::string name();
+	wxString name();
 
-	std::string description();
+	wxString description();
 
 	int precision();
 
 	jewel::Decimal multiplier_to_base();
 
-	void set_abbreviation(std::string const& p_abbreviation);
+	void set_abbreviation(wxString const& p_abbreviation);
 
-	void set_name(std::string const& p_name);
+	void set_name(wxString const& p_name);
 
-	void set_description(std::string const& p_description);
+	void set_description(wxString const& p_description);
 
 	void set_precision(int p_precision);
 
@@ -99,6 +100,7 @@ public:
 	 */
 	void swap(CommodityImpl& rhs);
 
+	// These need to return std::string as they involve the SQLoxx API
 	static std::string primary_table_name();
 	static std::string primary_key_name();
 private:
@@ -123,9 +125,9 @@ private:
 
 struct CommodityImpl::CommodityData
 {
-	boost::optional<std::string> abbreviation;
-	boost::optional<std::string> name;
-	boost::optional<std::string> description;
+	boost::optional<wxString> abbreviation;
+	boost::optional<wxString> name;
+	boost::optional<wxString> description;
 	boost::optional<int> precision;
 	boost::optional<jewel::Decimal> multiplier_to_base;
 };
