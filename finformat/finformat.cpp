@@ -14,8 +14,7 @@ namespace phatbooks
 {
 
 
-// Keep this as std::string. If we want to format to wxString too, do
-// it as a separate function.
+
 string finformat_std8(Decimal const& decimal)
 {
 	static Decimal const zero = Decimal(0, 0);

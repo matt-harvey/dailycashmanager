@@ -23,6 +23,7 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <wx/string.h>
 #include <string>
 
 
@@ -64,7 +65,7 @@ public:
 
 	void set_account(Account const& p_account);
 
-	void set_comment(std::string const& p_comment);
+	void set_comment(wxString const& p_comment);
 
 	void set_amount(jewel::Decimal const& p_amount);
 	
@@ -74,7 +75,7 @@ public:
 	 * Does not throw except possibly \c std::bad_alloc in
 	 * extreme circumstances.
 	 */
-	std::string comment();
+	wxString comment();
 
 	/**
 	 * @returns EntryImpl amount (+ve for debits, -ve for credits).
@@ -93,6 +94,7 @@ public:
 	 */
 	void swap(EntryImpl& rhs);
 
+	// Keep as std::string, for consistency with sqloxx
 	static std::string primary_table_name();
 	static std::string primary_key_name();
 
@@ -132,7 +134,7 @@ struct EntryImpl::EntryData
 {
 	boost::optional<sqloxx::Id> journal_id;
 	boost::optional<Account> account;
-	boost::optional<std::string> comment;
+	boost::optional<wxString> comment;
 	boost::optional<jewel::Decimal> amount;
 	boost::optional<bool> is_reconciled;
 };
@@ -143,7 +145,10 @@ JournalType
 EntryImpl::journal()
 {
 	load();
-	return JournalType(database_connection(), jewel::value(m_data->journal_id));
+	return JournalType
+	(	database_connection(),
+		jewel::value(m_data->journal_id)
+	);
 }
 
 

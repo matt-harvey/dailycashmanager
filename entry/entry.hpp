@@ -9,6 +9,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
+#include <wx/string.h>
 #include <string>
 
 namespace phatbooks
@@ -81,7 +82,7 @@ public:
 	 * Set the Account with which this Entry is associated.
 	 */
 	void set_account(Account const& p_account);
-	void set_comment(std::string const& p_comment);
+	void set_comment(wxString const& p_comment);
 	
 	/**
 	 * Set the amount of the EntryImpl. The amount should be: a positive number
@@ -106,7 +107,7 @@ public:
 	 * @returns Entry comment, i.e. descriptive text generally entered by
 	 * the user.
 	 */
-	std::string comment() const;
+	wxString comment() const;
 
 	/**
 	 * @returns amount of Entry (+ve for debits, -ve for credits).
@@ -155,6 +156,8 @@ private:
 	Entry(sqloxx::Handle<EntryImpl> const& p_handle);
 };
 
+
+// Keep these as std::string, to work with consolixx::Table.
 
 boost::shared_ptr<std::vector<std::string> >
 make_entry_row(Entry const& entry);

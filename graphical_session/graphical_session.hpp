@@ -2,6 +2,8 @@
 #define GUARD_graphical_session_hpp
 
 #include "session.hpp"
+#include <wx/string.h>
+
 
 namespace phatbooks
 {
@@ -31,7 +33,7 @@ private:
 	 * @returns \c 1 if there is some kind of error condition that is
 	 * not manifested as an exception; or \c 0 on successful completion.
 	 */
-	int do_run(std::string const& filename);
+	int do_run(wxString const& filename);
 
 };
 

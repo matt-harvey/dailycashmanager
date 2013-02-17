@@ -15,6 +15,7 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "string_conv.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -22,6 +23,7 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <wx/string.h>
 #include <string>
 
 using sqloxx::SQLStatement;
@@ -33,6 +35,9 @@ using std::string;
 
 namespace phatbooks
 {
+
+using string_conv::std8_to_wx;
+using string_conv::wx_to_std8;
 
 void EntryImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
@@ -100,7 +105,7 @@ EntryImpl::set_account(Account const& p_account)
 
 
 void
-EntryImpl::set_comment(string const& p_comment)
+EntryImpl::set_comment(wxString const& p_comment)
 {
 	load();
 	m_data->comment = p_comment;
@@ -131,7 +136,7 @@ EntryImpl::account()
 	return value(m_data->account);
 }
 
-string
+wxString
 EntryImpl::comment()
 {
 	load();
@@ -192,7 +197,7 @@ EntryImpl::do_load()
 	);
 
 	temp.m_data->account = acct;
-	temp.m_data->comment = statement.extract<string>(1);
+	temp.m_data->comment = std8_to_wx(statement.extract<string>(1));
 	temp.m_data->amount = amt;
 	temp.m_data->journal_id = statement.extract<sqloxx::Id>(3);
 	temp.m_data->is_reconciled =
@@ -207,7 +212,7 @@ void
 EntryImpl::process_saving_statement(SQLStatement& statement)
 {
 	statement.bind(":journal_id", value(m_data->journal_id));
-	statement.bind(":comment", value(m_data->comment));
+	statement.bind(":comment", wx_to_std8(value(m_data->comment)));
 	statement.bind(":account_id", value(m_data->account).id());
 	statement.bind(":amount", m_data->amount->intval());
 	statement.bind

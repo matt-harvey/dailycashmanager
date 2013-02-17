@@ -13,7 +13,6 @@ namespace phatbooks
 {
 
 
-
 /**
  * @returns decimal formatted as a std::string with parentheses to
  * indicate negative, if it's negative.
@@ -25,6 +24,9 @@ namespace phatbooks
  *
  * DO NOT change this to return a wxString. If we want a Decimal
  * formatted as a wxString, create a separate function to do this.
+ *
+ * @todo Write another function, like finformat_std8, but which returns
+ * a wxString.
  */
 std::string finformat_std8(jewel::Decimal const& decimal);
 

@@ -5,11 +5,13 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
+#include "string_conv.hpp"
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <wx/string.h>
 #include <string>
 #include <vector>
 
@@ -24,6 +26,10 @@ namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
+
+using string_conv::std8_to_wx;
+using string_conv::wx_to_std8;
+
 
 class Account;
 
@@ -81,7 +87,7 @@ Entry::set_account(Account const& p_account)
 }
 
 void
-Entry::set_comment(string const& p_comment)
+Entry::set_comment(wxString const& p_comment)
 {
 	impl().set_comment(p_comment);
 	return;
@@ -101,7 +107,7 @@ Entry::set_whether_reconciled(bool p_is_reconciled)
 	return;
 }
 
-string
+wxString
 Entry::comment() const
 {
 	return impl().comment();
@@ -172,16 +178,18 @@ namespace
 		{
 			ret->push_back("N/A");
 		}
-		ret->push_back(entry.account().name());
-		ret->push_back(entry.comment());
-		ret->push_back(entry.account().commodity().abbreviation());
+		ret->push_back(wx_to_std8(entry.account().name()));
+		ret->push_back(wx_to_std8(entry.comment()));
+		ret->push_back
+		(	wx_to_std8(entry.account().commodity().abbreviation())
+		);
 		Decimal amount = entry.amount();
 		if (reverse)
 		{
 			Decimal::places_type const places = amount.places();
 			amount = round(-amount, places);
 		}
-		ret->push_back(finformat(amount));
+		ret->push_back(finformat_std8(amount));
 		ret->push_back(entry.is_reconciled()? "y": "n");
 		return ret;
 	}
