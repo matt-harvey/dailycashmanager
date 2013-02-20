@@ -19,6 +19,7 @@
 #include <sqloxx/sql_statement.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <algorithm>
@@ -35,6 +36,10 @@ using sqloxx::SQLStatement;
 using std::string;
 using std::vector;
 
+#ifdef DEBUG
+	#include <iomanip>
+	#include <iostream>
+#endif
 
 
 

@@ -11,6 +11,11 @@
 #include <list>
 #include <string>
 
+#ifdef DEBUG
+#	include <jewel/debug_log.hpp>
+#	include <iostream>
+#endif
+
 using boost::shared_ptr;
 using sqloxx::InvalidFilename;
 using std::list;
@@ -30,6 +35,9 @@ Session::Session():
 
 Session::~Session()
 {
+#	ifdef DEBUG
+		JEWEL_DEBUG_LOG << "Destroying phatbooks::Session" << std::endl;
+#	endif
 }
 
 

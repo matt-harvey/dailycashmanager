@@ -22,6 +22,7 @@
 #include <sqloxx/handle.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <string>
@@ -33,11 +34,14 @@ using jewel::Decimal;
 using jewel::value;
 using std::string;
 
+#ifdef DEBUG
+	#include <iomanip>
+	#include <iostream>
+#endif
+
 namespace phatbooks
 {
 
-;
-;
 
 void EntryImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 {

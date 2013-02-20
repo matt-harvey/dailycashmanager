@@ -36,6 +36,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <cassert>
 #include <iostream>
@@ -43,6 +44,10 @@
 #include <stdexcept>
 #include <string>
 
+#ifdef DEBUG
+	#include <iostream>
+	using std::endl;
+#endif
 
 using boost::numeric_cast;
 using boost::shared_ptr;
@@ -89,13 +94,40 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 
 PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 {
+	std::cout << "Destroying PhatbooksDatabaseConnection" << std::endl;
+	// TODO This integrity of the objects in the cache - and the
+	// avoidance of invalid reads and writes (and thus of undefined
+	// behaviour) is crucially dependent on the order in which
+	// the IdentityMaps are destroyed (because objects in the
+	// cache contains Handles to other objects in other caches).
+	// This is horribly brittle! Find a way of guarding against error here.
+	// Basically, where instances of class Referor container handles to instances
+	// of class Referee, then the IdentityMap for Referor should be
+	// destroyed before the IdentityMap for Referee.
+	// If I can't find a way of ensuring this automatically, then add
+	// documentation to SQLoxx advising of the importance of the
+	// order of deletion of the IdentityMaps.
+
 	delete m_balance_cache;
-	delete m_account_map;
-	delete m_commodity_map;
-	delete m_entry_map;
-	delete m_ordinary_journal_map;
-	delete m_draft_journal_map;
+	m_balance_cache = 0;
+
 	delete m_repeater_map;
+	m_repeater_map = 0;
+
+	delete m_draft_journal_map;  // Must be deleted before m_entry_map
+	m_draft_journal_map = 0;
+
+	delete m_ordinary_journal_map;  // Must be deleted before m_entry_map
+	m_ordinary_journal_map = 0;
+
+	delete m_entry_map;  // Must be deleted before m_account_map
+	m_entry_map = 0;
+
+	delete m_account_map;  // Must be deleted before m_commodity_map
+	m_account_map = 0;
+
+	delete m_commodity_map;
+	m_commodity_map = 0;
 }
 
 

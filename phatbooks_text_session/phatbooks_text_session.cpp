@@ -118,12 +118,12 @@ namespace gregorian = boost::gregorian;
 // in a given date range.
 
 
+#define LOG_POSITION cout << "Executing " << __FILE__ << " line " << __LINE__ << endl
+
 namespace phatbooks
 {
 
 
-;
-;
 
 
 namespace tui
@@ -459,6 +459,9 @@ PhatbooksTextSession::PhatbooksTextSession():
 
 PhatbooksTextSession::~PhatbooksTextSession()
 {
+#	ifdef DEBUG
+		JEWEL_DEBUG_LOG << "Destroying PhatbooksTextSession" << std::endl;
+#	endif
 }
 
 	
@@ -1523,29 +1526,42 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 			assert (!input_is_valid);
 		}
 	}
-
+	
+	LOG_POSITION;
 	Decimal opening_balance(0, 0);
+	LOG_POSITION;
 	bool const filtering_for_account = (maybe_account? true: false);
+	LOG_POSITION;
 	if (account_name.empty()) assert (!filtering_for_account);
+	LOG_POSITION;
 	Account account(database_connection());
+	LOG_POSITION;  // WARNING Got up to here before going weird when built in Debug mode.
 	if (maybe_account) account = value(maybe_account);
+	LOG_POSITION;
 	bool const is_asset_or_liab =
 	(	maybe_account?
 		is_asset_or_liability(value(maybe_account)):
 		false
 	);
+	LOG_POSITION;
 	bool const accumulating_pre_start_date_entries =
 	(	filtering_for_account &&
 		is_asset_or_liab
 	);
+	LOG_POSITION;
 
 	ActualOrdinaryEntryReader reader(database_connection());
+	LOG_POSITION;
 	ActualOrdinaryEntryReader::const_iterator it = reader.begin();
+	LOG_POSITION;
 	ActualOrdinaryEntryReader::const_iterator const end = reader.end();
+	LOG_POSITION;
 
 	// Examine pre-start-date entries
+	LOG_POSITION;
 	if (maybe_earliest_date)
 	{
+		LOG_POSITION;
 		for
 		(	gregorian::date const earliest = *maybe_earliest_date;
 			(it != end) && (it->date() < earliest);
@@ -1562,11 +1578,14 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 			}
 		}
 	}
-
+	LOG_POSITION;
 	vector<Entry> table_vec;
+	LOG_POSITION;
+
 
 	// Examine entries later than or equal to the start date
 	Decimal closing_balance = opening_balance;
+	LOG_POSITION;
 	for ( ; it != end; ++it)
 	{
 		if 
@@ -1591,6 +1610,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 			table_vec.push_back(*it);
 		}
 	}
+	LOG_POSITION;
 
 	vector<string> headings;
 	headings.push_back("Date");
@@ -1602,10 +1622,12 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	headings.push_back("Amount");
 	headings.push_back("Reconciled");
 
+	LOG_POSITION;
 	using alignment::left;
 	using alignment::right;
 	alignment::Flag const alignments[] =
 		{ left, right, right, left, left, left, right, left };
+	LOG_POSITION;
 	Table<Entry> const table
 	(	table_vec.begin(),
 		table_vec.end(),
@@ -1618,6 +1640,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		2
 	);
 	cout << endl << table << endl;
+	LOG_POSITION;
 
 	if (filtering_for_account)
 	{
@@ -1628,6 +1651,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 			closing_balance
 		);
 	}
+	LOG_POSITION;
 
 	return;
 }
