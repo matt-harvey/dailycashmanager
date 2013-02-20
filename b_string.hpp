@@ -60,7 +60,7 @@ bstring_to_wx(BString const& bs)
 
 inline
 BString
-wx_to_BString(wxString const& wxs)
+wx_to_bstring(wxString const& wxs)
 {
 	return std::string(wxs.utf8_str());
 }
