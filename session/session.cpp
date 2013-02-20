@@ -35,9 +35,6 @@ Session::Session():
 
 Session::~Session()
 {
-#	ifdef DEBUG
-		JEWEL_DEBUG_LOG << "Destroying phatbooks::Session" << std::endl;
-#	endif
 }
 
 

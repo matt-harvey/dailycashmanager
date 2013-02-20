@@ -459,9 +459,6 @@ PhatbooksTextSession::PhatbooksTextSession():
 
 PhatbooksTextSession::~PhatbooksTextSession()
 {
-#	ifdef DEBUG
-		JEWEL_DEBUG_LOG << "Destroying PhatbooksTextSession" << std::endl;
-#	endif
 }
 
 	

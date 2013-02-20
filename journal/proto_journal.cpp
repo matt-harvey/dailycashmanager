@@ -126,9 +126,6 @@ ProtoJournal::do_set_comment(BString const& p_comment)
 void
 ProtoJournal::do_add_entry(Entry& entry)
 {
-	/*
-	JEWEL_DEBUG_LOG << "Calling ProtoJournal::add_entry " << endl;
-	*/
 	m_data->entries.push_back(entry);
 	return;
 }

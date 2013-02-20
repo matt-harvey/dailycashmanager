@@ -163,16 +163,19 @@ void CommodityImpl::process_saving_statement(SQLStatement& statement)
 	BString const abbreviationw = value(m_data->abbreviation);
 	BString const abbreviationw_b = *(m_data->abbreviation);
 	assert (abbreviationw == abbreviationw_b);
-	JEWEL_DEBUG_LOG << "abbreviation as BString: " << abbreviationw << endl;
-
 	std::string const abbreviations = bstring_to_std8(abbreviationw);
-	JEWEL_DEBUG_LOG << "abbreviation as std::string: " << abbreviations << endl;
 
 
 	// WARNING end temp play
-	statement.bind(":abbreviation", bstring_to_std8(value(m_data->abbreviation)));
+	statement.bind
+	(	":abbreviation",
+		bstring_to_std8(value(m_data->abbreviation))
+	);
 	statement.bind(":name", bstring_to_std8(value(m_data->name)));
-	statement.bind(":description", bstring_to_std8(value(m_data->description)));
+	statement.bind
+	(	":description",
+		bstring_to_std8(value(m_data->description))
+	);
 	statement.bind(":precision", value(m_data->precision));
 	Decimal m = value(m_data->multiplier_to_base);
 	statement.bind(":multiplier_to_base_intval", m.intval());
