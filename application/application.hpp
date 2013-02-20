@@ -1,7 +1,7 @@
 #ifndef GUARD_application_hpp
 #define GUARD_application_hpp
 
-#include <wx/string.h>
+#include "b_string.hpp"
 
 namespace phatbooks
 {
@@ -13,7 +13,7 @@ namespace phatbooks
 class Application
 {
 public:
-	static wxString application_name();
+	static BString application_name();
 };
 
 }  // namespace phatbooks

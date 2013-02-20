@@ -12,6 +12,7 @@
  */
 
 
+#include "b_string.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -20,7 +21,6 @@
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <wx/string.h>
 #include <string>
 #include <vector>
 
@@ -112,16 +112,16 @@ private:
 	// I'm pretty sure they \e don't.
 	virtual std::vector<Entry> const& do_get_entries() const;
 	virtual void do_set_whether_actual(bool p_is_actual);
-	virtual void do_set_comment(wxString const& p_comment);
+	virtual void do_set_comment(BString const& p_comment);
 	virtual void do_add_entry(Entry& entry);
 	virtual void do_remove_entry(Entry& entry);
-	virtual wxString do_get_comment() const;
+	virtual BString do_get_comment() const;
 	virtual bool do_get_whether_actual() const;
 
 	struct ProtoJournalData
 	{
 		boost::optional<bool> is_actual;
-		boost::optional<wxString> comment;
+		boost::optional<BString> comment;
 		std::vector<Entry> entries;
 	};
 	boost::scoped_ptr<ProtoJournalData> m_data;

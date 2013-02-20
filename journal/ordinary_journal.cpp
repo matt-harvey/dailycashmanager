@@ -1,4 +1,5 @@
 #include "ordinary_journal.hpp"
+#include "b_string.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
 #include "entry.hpp"
@@ -11,7 +12,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
-#include <wx/string.h>
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
@@ -89,7 +89,7 @@ OrdinaryJournal::do_set_whether_actual(bool p_is_actual)
 }
 
 void
-OrdinaryJournal::do_set_comment(wxString const& p_comment)
+OrdinaryJournal::do_set_comment(BString const& p_comment)
 {
 	impl().set_comment(p_comment);
 	return;
@@ -122,7 +122,7 @@ OrdinaryJournal::do_get_whether_actual() const
 	return impl().is_actual();
 }
 
-wxString
+BString
 OrdinaryJournal::do_get_comment() const
 {
 	return impl().comment();

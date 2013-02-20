@@ -1,12 +1,12 @@
 #ifndef GUARD_draft_journal_impl_hpp
 #define GUARD_draft_journal_impl_hpp
 
+#include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include <sqloxx/persistent_object.hpp>
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <wx/string.h>
 #include <string>
 #include <vector>
 
@@ -65,7 +65,7 @@ public:
 	 * Does not throw, except possibly \c std::bad_alloc in extreme
 	 * circumstances.
 	 */
-	void set_comment(wxString const& p_comment);
+	void set_comment(BString const& p_comment);
 
 	/**
 	 * Add an Entry to the Journal.
@@ -85,15 +85,15 @@ public:
 	 * Does not throw, except perhaps \c std::bad_alloc in
 	 * extreme circumstances.
 	 */
-	wxString comment();
+	BString comment();
 
 	std::vector<Entry> const& entries();
 
-	void set_name(wxString const& p_name);
+	void set_name(BString const& p_name);
 	
 	void add_repeater(Repeater& repeater);
 	
-	wxString name();
+	BString name();
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
@@ -101,7 +101,7 @@ public:
 	 */
 	void swap(DraftJournalImpl& rhs);
 
-	wxString repeater_description();
+	BString repeater_description();
 
 	/**
 	 * Take on the attributes of \e rhs, where these exist and are
@@ -134,7 +134,7 @@ private:
 
 struct DraftJournalImpl::DraftJournalData
 {
-	boost::optional<wxString> name;
+	boost::optional<BString> name;
 	std::vector<Repeater> repeaters;
 };
 

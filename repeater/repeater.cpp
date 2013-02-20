@@ -4,6 +4,7 @@
 #include "repeater.hpp"
 #include "repeater_impl.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "b_string.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
@@ -21,6 +22,8 @@ using std::vector;
 
 namespace phatbooks
 {
+
+;
 
 void
 Repeater::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -139,14 +142,14 @@ frequency_description(Repeater const& repeater)
 	string ret = "every ";
 	int const units = repeater.interval_units();	
 	if (units > 1)
-	{
+    {
 		ret += lexical_cast<string>(units);
 		ret += " ";
-		ret += phrase(repeater.interval_type(), true);
+		ret += bstring_to_std8(phrase(repeater.interval_type(), true));
 	}
 	else
 	{
-		ret += phrase(repeater.interval_type(), false);
+		ret += bstring_to_std8(phrase(repeater.interval_type(), false));
 	}
 	return ret;
 }

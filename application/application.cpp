@@ -1,15 +1,14 @@
 #include "application.hpp"
-#include <wx/string.h>
-
+#include "b_string.hpp"
 
 
 namespace phatbooks
 {
 
-wxString
+BString
 Application::application_name()
 {
-	return L"Phatbooks";
+	return "Phatbooks";
 }
 
 

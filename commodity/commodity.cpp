@@ -5,7 +5,6 @@
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
-#include <wx/string.h>
 
 using boost::shared_ptr;
 using jewel::Decimal;
@@ -55,7 +54,7 @@ Commodity::create_unchecked
 
 Commodity::Commodity
 (	PhatbooksDatabaseConnection& p_database_connection,
-	wxString const& p_abbreviation
+	BString const& p_abbreviation
 ):
 	PhatbooksPersistentObject
 	(	p_database_connection,
@@ -66,19 +65,19 @@ Commodity::Commodity
 	)
 {
 }
-wxString
+BString
 Commodity::abbreviation() const
 {
 	return impl().abbreviation();
 }
 
-wxString
+BString
 Commodity::name() const
 {
 	return impl().name();
 }
 
-wxString
+BString
 Commodity::description() const
 {
 	return impl().description();
@@ -97,21 +96,21 @@ Commodity::multiplier_to_base() const
 }
 
 void
-Commodity::set_abbreviation(wxString const& p_abbreviation)
+Commodity::set_abbreviation(BString const& p_abbreviation)
 {
 	impl().set_abbreviation(p_abbreviation);
 	return;
 }
 
 void
-Commodity::set_name(wxString const& p_name)
+Commodity::set_name(BString const& p_name)
 {
 	impl().set_name(p_name);
 	return;
 }
 
 void
-Commodity::set_description(wxString const& p_description)
+Commodity::set_description(BString const& p_description)
 {
 	impl().set_description(p_description);
 	return;

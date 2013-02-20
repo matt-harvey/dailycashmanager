@@ -1,5 +1,5 @@
 #include "graphical_session.hpp"
-#include "string_conv.hpp"
+#include "b_string.hpp"
 #include "wx/my_app.hpp"
 #include <iostream>
 #include <string>
@@ -12,7 +12,7 @@ using std::wstring;
 namespace phatbooks
 {
 
-using string_conv::std8_to_wx;
+;
 
 namespace gui
 {

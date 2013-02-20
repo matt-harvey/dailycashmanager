@@ -17,7 +17,7 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
-#include <wx/string.h>
+#include "b_string.hpp"
 #include <string>
 
 
@@ -74,7 +74,7 @@ public:
 	 * or the database corrupt. It is not guaranteed that these are the only
 	 * circumstances in which an exception might be thrown.
 	 */
-	bool has_account_named(wxString const& p_name);
+	bool has_account_named(BString const& p_name);
 
 	/**
 	 * @returns \c true if and only if \c p_name is the name of a
@@ -82,7 +82,7 @@ public:
 	 *
 	 * @todo Document throwing behaviour.
 	 */
-	bool has_draft_journal_named(wxString const& p_name);
+	bool has_draft_journal_named(BString const& p_name);
 	
 
 	
@@ -90,13 +90,13 @@ public:
 	 * @returns \c true if and only if \c p_abbreviation is the abbreviation
 	 * of a Commodity stored in the database.
 	 */
-	bool has_commodity_with_abbreviation(wxString const& p_abbreviation);
+	bool has_commodity_with_abbreviation(BString const& p_abbreviation);
 
 	/**
 	 * @returns \c true if and only if \c p_name is the name of a Commodity
 	 * stored in the database.
 	 */
-	bool has_commodity_named(wxString const& p_name);
+	bool has_commodity_named(BString const& p_name);
 
 	/**
 	 * Creates tables required for Phatbooks, and inserts rows

@@ -88,6 +88,7 @@ TestFixture::TestFixture():
 {
 	abort_if_exists(db_filepath);
 	dbc.open(db_filepath);
+	dbc.set_caching_level(10);
 	dbc.setup();
 	setup_test_commodities(dbc);
 	setup_test_accounts(dbc);

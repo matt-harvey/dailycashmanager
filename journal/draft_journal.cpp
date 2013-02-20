@@ -1,3 +1,4 @@
+#include "b_string.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
 #include "draft_journal_reader.hpp"
@@ -7,7 +8,6 @@
 #include "proto_journal.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
-#include <wx/string.h>
 #include <iostream>
 #include <ostream>
 
@@ -59,7 +59,7 @@ DraftJournal::create_unchecked
 
 
 void
-DraftJournal::set_name(wxString const& p_name)
+DraftJournal::set_name(BString const& p_name)
 {
 	impl().set_name(p_name);
 	return;
@@ -94,7 +94,7 @@ DraftJournal::do_set_whether_actual(bool p_is_actual)
 }
 
 void
-DraftJournal::do_set_comment(wxString const& p_comment)
+DraftJournal::do_set_comment(BString const& p_comment)
 {
 	impl().set_comment(p_comment);
 	return;
@@ -120,13 +120,13 @@ DraftJournal::do_get_whether_actual() const
 	return impl().is_actual();
 }
 
-wxString
+BString
 DraftJournal::do_get_comment() const
 {
 	return impl().comment();
 }
 	
-wxString
+BString
 DraftJournal::name() const
 {
 	return impl().name();
@@ -139,7 +139,7 @@ DraftJournal::do_get_entries() const
 }
 
 
-wxString
+BString
 DraftJournal::repeater_description() const
 {
 	return impl().repeater_description();

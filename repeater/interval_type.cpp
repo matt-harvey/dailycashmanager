@@ -1,28 +1,28 @@
+#include "b_string.hpp"
 #include "interval_type.hpp"
 #include <cassert>
-#include <wx/string.h>
 
 
 namespace phatbooks
 {
 
-wxString
+BString
 phrase(interval_type::IntervalType x, bool is_plural)
 {
-	wxString const number_marker = is_plural? wxString("s"): wxString("");
+	BString const number_marker = is_plural? BString("s"): BString("");
 	switch (x)
 	{
 	case interval_type::days:
-		return wxString("day") + number_marker;
+		return BString("day") + number_marker;
 	case interval_type::weeks:
-		return wxString("week") + number_marker;
+		return BString("week") + number_marker;
 	case interval_type::months:
-		return wxString("month") + number_marker;
+		return BString("month") + number_marker;
 	case interval_type::month_ends:
 		return
-			wxString("month") +
+			BString("month") +
 			number_marker +
-			wxString(", on the last day of the month");
+			BString(", on the last day of the month");
 	default:
 		assert (false);		
 	}

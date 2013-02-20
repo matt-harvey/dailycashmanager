@@ -1,10 +1,10 @@
+#include "b_string.hpp"
 #include "journal.hpp"
 #include "entry.hpp"
 #include "consolixx/table.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/output_aux.hpp>
-#include <wx/string.h>
 #include <iostream>
 #include <ostream>
 #include <string>
@@ -32,7 +32,7 @@ Journal::set_whether_actual(bool p_is_actual)
 }
 
 void
-Journal::set_comment(wxString const& p_comment)
+Journal::set_comment(BString const& p_comment)
 {
 	do_set_comment(p_comment);
 	return;
@@ -58,7 +58,7 @@ Journal::entries() const
 	return do_get_entries();
 }
 
-wxString
+BString
 Journal::comment() const
 {
 	return do_get_comment();

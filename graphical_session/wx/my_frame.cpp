@@ -1,4 +1,5 @@
 #include "my_frame.hpp"
+#include <wx/string.h>
 #include <wx/wx.h>
 
 namespace phatbooks

@@ -1,6 +1,7 @@
 #ifndef GUARD_entry_hpp
 #define GUARD_entry_hpp
 
+#include "b_string.hpp"
 #include "entry_impl.hpp"
 #include "finformat.hpp"
 #include "phatbooks_persistent_object.hpp"
@@ -9,7 +10,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
-#include <wx/string.h>
 #include <string>
 
 namespace phatbooks
@@ -82,7 +82,7 @@ public:
 	 * Set the Account with which this Entry is associated.
 	 */
 	void set_account(Account const& p_account);
-	void set_comment(wxString const& p_comment);
+	void set_comment(BString const& p_comment);
 	
 	/**
 	 * Set the amount of the EntryImpl. The amount should be: a positive number
@@ -107,7 +107,7 @@ public:
 	 * @returns Entry comment, i.e. descriptive text generally entered by
 	 * the user.
 	 */
-	wxString comment() const;
+	BString comment() const;
 
 	/**
 	 * @returns amount of Entry (+ve for debits, -ve for credits).

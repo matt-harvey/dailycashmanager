@@ -1,6 +1,7 @@
 #include "my_app.hpp"
 #include "application.hpp"
 
+#include "b_string.hpp"
 #include <wx/wx.h>
 
 namespace phatbooks
@@ -21,7 +22,7 @@ it you get into all kinds of problems.
 
 bool MyApp::OnInit()
 {
-	wxString const app_name = Application::application_name();
+	wxString const app_name = bstring_to_wx(Application::application_name());
 
 	// Note it breaks if we use scoped_ptr here. We don't need to
 	// memory-manage this explicitly anyway, as Destroy() will be called

@@ -1,3 +1,4 @@
+#include "b_string.hpp"
 #include "entry.hpp"
 #include "entry_impl.hpp"
 #include "finformat.hpp"
@@ -5,13 +6,12 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
-#include "string_conv.hpp"
+#include "b_string.hpp"
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
-#include <wx/string.h>
 #include <string>
 #include <vector>
 
@@ -27,8 +27,8 @@ namespace gregorian = boost::gregorian;
 namespace phatbooks
 {
 
-using string_conv::std8_to_wx;
-using string_conv::wx_to_std8;
+;
+;
 
 
 class Account;
@@ -87,7 +87,7 @@ Entry::set_account(Account const& p_account)
 }
 
 void
-Entry::set_comment(wxString const& p_comment)
+Entry::set_comment(BString const& p_comment)
 {
 	impl().set_comment(p_comment);
 	return;
@@ -107,7 +107,7 @@ Entry::set_whether_reconciled(bool p_is_reconciled)
 	return;
 }
 
-wxString
+BString
 Entry::comment() const
 {
 	return impl().comment();
@@ -178,10 +178,10 @@ namespace
 		{
 			ret->push_back("N/A");
 		}
-		ret->push_back(wx_to_std8(entry.account().name()));
-		ret->push_back(wx_to_std8(entry.comment()));
+		ret->push_back(bstring_to_std8(entry.account().name()));
+		ret->push_back(bstring_to_std8(entry.comment()));
 		ret->push_back
-		(	wx_to_std8(entry.account().commodity().abbreviation())
+		(	bstring_to_std8(entry.account().commodity().abbreviation())
 		);
 		Decimal amount = entry.amount();
 		if (reverse)

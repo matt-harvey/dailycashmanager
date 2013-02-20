@@ -1,7 +1,7 @@
 #ifndef GUARD_interval_type_hpp
 #define GUARD_interval_type_hpp
 
-#include <wx/string.h>
+#include "b_string.hpp"
 
 namespace phatbooks
 {
@@ -39,7 +39,7 @@ enum IntervalType
  * E.g. "days", "month", etc.. The phrase is plural if and
  * only if \e is_plural is true.
  */
-wxString phrase(interval_type::IntervalType x, bool is_plural);
+BString phrase(interval_type::IntervalType x, bool is_plural);
 
 
 }  // namespace phatbooks

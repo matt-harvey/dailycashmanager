@@ -2,15 +2,15 @@
 #include "account_type.hpp"
 #include "account_impl.hpp"
 #include "account_reader.hpp"
+#include "b_string.hpp"
 #include "commodity.hpp"
 #include "finformat.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
-#include "string_conv.hpp"
+#include "b_string.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
-#include <wx/string.h>
 #include <string>
 #include <vector>
 
@@ -25,7 +25,6 @@ using std::vector;
 namespace phatbooks
 {
 
-using string_conv::wx_to_std8;
 
 
 void
@@ -54,7 +53,7 @@ Account::Account
 
 Account::Account
 (	PhatbooksDatabaseConnection& p_database_connection,
-	wxString const& p_name
+	BString const& p_name
 ):
 	PhatbooksPersistentObject
 	(	p_database_connection,
@@ -87,7 +86,7 @@ Account::~Account()
 }
 
 
-wxString
+BString
 Account::name() const
 {
 	return impl().name();
@@ -105,7 +104,7 @@ Account::account_type() const
 	return impl().account_type();
 }
 
-wxString
+BString
 Account::description() const
 {
 	return impl().description();
@@ -131,7 +130,7 @@ Account::set_account_type(AccountType p_account_type)
 }
 
 void
-Account::set_name(wxString const& p_name)
+Account::set_name(BString const& p_name)
 {
 	impl().set_name(p_name);
 	return;
@@ -145,7 +144,7 @@ Account::set_commodity(Commodity const& p_commodity)
 }
 
 void
-Account::set_description(wxString const& p_description)
+Account::set_description(BString const& p_description)
 {
 	impl().set_description(p_description);
 	return;
@@ -155,7 +154,7 @@ shared_ptr<vector<string> >
 make_account_row(Account const& account)
 {
 	shared_ptr<vector<string> > ret(new vector<string>);
-	ret->push_back(wx_to_std8(account.name()));
+	ret->push_back(bstring_to_std8(account.name()));
 	ret->push_back(finformat_std8(account.friendly_balance()));
 	return ret;
 }
@@ -164,9 +163,9 @@ shared_ptr<vector<string> >
 make_detailed_account_row(Account const& account)
 {
 	shared_ptr<vector<string> > ret(new vector<string>);
-	ret->push_back(wx_to_std8(account.name()));
-	ret->push_back(wx_to_std8(account_type_to_string(account.account_type())));
-	ret->push_back(wx_to_std8(account.description()));
+	ret->push_back(bstring_to_std8(account.name()));
+	ret->push_back(bstring_to_std8(account_type_to_string(account.account_type())));
+	ret->push_back(bstring_to_std8(account.description()));
 	;return ret;
 }
 

@@ -1,6 +1,7 @@
 #ifndef GUARD_ordinary_journal_hpp
 #define GUARD_ordinary_journal_hpp
 
+#include "b_string.hpp"
 #include "entry.hpp"
 #include "persistent_journal.hpp"
 #include "phatbooks_persistent_object.hpp"
@@ -9,7 +10,6 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <wx/string.h>
 #include <iostream>
 #include <ostream>
 #include <vector>
@@ -92,11 +92,11 @@ private:
 
 	// Define pure virtual functions inherited from Journal
 	void do_set_whether_actual(bool p_is_actual);
-	void do_set_comment(wxString const& p_comment);
+	void do_set_comment(BString const& p_comment);
 	void do_add_entry(Entry& entry);
 	void do_remove_entry(Entry& entry);
 	bool do_get_whether_actual() const;
-	wxString do_get_comment() const;
+	BString do_get_comment() const;
 	std::vector<Entry> const& do_get_entries() const;
 
 	// Redefine impure virtual function inherited from Journal

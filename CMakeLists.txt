@@ -116,6 +116,12 @@ else ()
 endif ()
 
 
+set (tui_files
+	 consolixx/get_input.cpp
+	 consolixx/table.cpp
+	 consolixx/text_session.cpp
+	 phatbooks_text_session/phatbooks_text_session.cpp)
+
 set (main_files
 	 account/account.cpp
 	 account/account_impl.cpp
@@ -125,9 +131,6 @@ set (main_files
 	 application/application.cpp
 	 commodity/commodity.cpp
 	 commodity/commodity_impl.cpp
-	 consolixx/get_input.cpp
-	 consolixx/table.cpp
-	 consolixx/text_session.cpp
 	 date/date.cpp
 	 entry/entry.cpp
 	 entry/entry_impl.cpp
@@ -145,7 +148,6 @@ set (main_files
 	 session/session.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
 	 phatbooks_persistent_object/phatbooks_persistent_object.cpp
-	 phatbooks_text_session/phatbooks_text_session.cpp
 	 repeater/interval_type.cpp
 	 repeater/repeater.cpp
 	 repeater/repeater_impl.cpp
@@ -167,7 +169,7 @@ set (test_files
 
 
 
-add_executable (phatbooks main.cpp ${main_files} ${gui_files})
+add_executable (phatbooks main.cpp ${main_files} ${tui_files} ${gui_files})
 target_link_libraries (phatbooks ${libraries})
 
 add_executable (phatbooks_test ${test_files})

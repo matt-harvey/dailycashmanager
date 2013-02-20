@@ -3,13 +3,13 @@
 
 #include "account_impl.hpp"
 #include "account_type.hpp"
+#include "b_string.hpp"
 #include "commodity.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <boost/shared_ptr.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <jewel/decimal.hpp>
-#include <wx/string.h>
 #include <string>
 #include <vector>
 
@@ -72,7 +72,7 @@ public:
 	 */
 	Account
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		wxString const& p_name
+		BString const& p_name
 	);
 
 	static void setup_tables();
@@ -82,7 +82,7 @@ public:
 	/**
 	 * @ returns name of account
 	 */
-	wxString name() const;
+	BString name() const;
 
 	/**
 	 * @ returns native Commodity of this account
@@ -97,7 +97,7 @@ public:
 	/**
 	 * @ returns description of account.
 	 */
-	wxString description() const;
+	BString description() const;
 
 	/**
 	 * Returns "technical" account balance, which is
@@ -120,11 +120,11 @@ public:
 
 	void set_account_type(AccountType p_account_type);
 
-	void set_name(wxString const& p_name);
+	void set_name(BString const& p_name);
 
 	void set_commodity(Commodity const& p_commodity);
 
-	void set_description(wxString const& p_description);
+	void set_description(BString const& p_description);
 
 private:
 	Account(sqloxx::Handle<AccountImpl> const& p_handle);

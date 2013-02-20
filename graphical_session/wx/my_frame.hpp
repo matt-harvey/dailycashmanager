@@ -2,6 +2,7 @@
 #define GUARD_my_frame_hpp
 
 #include <wx/wx.h>
+#include <wx/string.h>
 
 namespace phatbooks
 {

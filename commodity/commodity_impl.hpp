@@ -19,7 +19,6 @@
 #include <jewel/decimal.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/optional.hpp>
-#include <wx/string.h>
 #include <string>
 
 
@@ -61,7 +60,7 @@ public:
 	 */
 	static Id id_for_abbreviation
 	(	PhatbooksDatabaseConnection& dbc,
-		wxString const& p_abbreviation
+		BString const& p_abbreviation
 	);
 
 	explicit
@@ -74,21 +73,21 @@ public:
 
 	~CommodityImpl();
 	
-	wxString abbreviation();
+	BString abbreviation();
 
-	wxString name();
+	BString name();
 
-	wxString description();
+	BString description();
 
 	int precision();
 
 	jewel::Decimal multiplier_to_base();
 
-	void set_abbreviation(wxString const& p_abbreviation);
+	void set_abbreviation(BString const& p_abbreviation);
 
-	void set_name(wxString const& p_name);
+	void set_name(BString const& p_name);
 
-	void set_description(wxString const& p_description);
+	void set_description(BString const& p_description);
 
 	void set_precision(int p_precision);
 
@@ -125,9 +124,9 @@ private:
 
 struct CommodityImpl::CommodityData
 {
-	boost::optional<wxString> abbreviation;
-	boost::optional<wxString> name;
-	boost::optional<wxString> description;
+	boost::optional<BString> abbreviation;
+	boost::optional<BString> name;
+	boost::optional<BString> description;
 	boost::optional<int> precision;
 	boost::optional<jewel::Decimal> multiplier_to_base;
 };

@@ -30,7 +30,7 @@
 #include "proto_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
-#include "string_conv.hpp"
+#include "b_string.hpp"
 #include "consolixx/get_input.hpp"
 #include "consolixx/table.hpp"
 #include "consolixx/text_session.hpp"
@@ -122,8 +122,8 @@ namespace phatbooks
 {
 
 
-using string_conv::std8_to_wx;
-using string_conv::wx_to_std8;
+;
+;
 
 
 namespace tui
@@ -517,7 +517,7 @@ PhatbooksTextSession::elicit_existing_account_name(bool accept_empty)
 	 {
 		string input = get_user_input();
 	 	if
-		(	database_connection().has_account_named(input) ||
+		(	database_connection().has_account_named(std8_to_bstring(input)) ||
 			(accept_empty && input.empty())
 		)
 		{
@@ -593,7 +593,7 @@ PhatbooksTextSession::elicit_entry_insertion(PersistentJournal& journal)
 	bool const sign_needs_changing = !journal.is_actual();
 	entry.set_amount(sign_needs_changing? -amount: amount);
 	cout << "Comment for this line (or Enter for no comment): ";
-	entry.set_comment(std8_to_wx(get_user_input()));
+	entry.set_comment(std8_to_bstring(get_user_input()));
 	entry.set_whether_reconciled(false);
 	journal.add_entry(entry);
 	return;
@@ -653,7 +653,7 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 	// Edit comment
  	cout << "Enter new comment for this line (or Enter to leave unchanged): ";
 	string const new_comment = get_user_input();
-	if (!new_comment.empty()) entry.set_comment(std8_to_wx(new_comment));
+	if (!new_comment.empty()) entry.set_comment(std8_to_bstring(new_comment));
 
 	// Edit amount
 	for (bool input_is_valid = false; !input_is_valid; )
@@ -734,7 +734,7 @@ PhatbooksTextSession::elicit_comment_amendment
 )
 {
 	cout << "Enter new comment for this transaction: ";
-	journal.set_comment(std8_to_wx(get_user_input()));
+	journal.set_comment(std8_to_bstring(get_user_input()));
 	return;
 }
 
@@ -1111,17 +1111,17 @@ PhatbooksTextSession::conduct_account_editing()
 		return;
 	}
 	assert (!account_name.empty());
-	Account account(database_connection(), account_name);
+	Account account(database_connection(), std8_to_bstring(account_name));
 
 	cout << "Enter new name (or Enter to leave unchanged): ";
 	string const new_name = elicit_unused_account_name(true);
-	if (!new_name.empty()) account.set_name(std8_to_wx(new_name));
+	if (!new_name.empty()) account.set_name(std8_to_bstring(new_name));
 
 	cout << "Enter new description (or Enter to leave unchanged): ";
 	string const new_description = get_user_input();
 	if (!new_description.empty())
 	{
-		account.set_description(std8_to_wx(new_description));
+		account.set_description(std8_to_bstring(new_description));
 	}
 	account.save();
 	cout << "Changes have been saved:" << endl;
@@ -1657,7 +1657,7 @@ PhatbooksTextSession::elicit_commodity()
 		else
 		{
 			input_is_valid = true;
-			commodity.set_abbreviation(std8_to_wx(input));
+			commodity.set_abbreviation(std8_to_bstring(input));
 		}
 	}
 
@@ -1678,14 +1678,14 @@ PhatbooksTextSession::elicit_commodity()
 		else
 		{
 			input_is_valid = true;
-			commodity.set_name(std8_to_wx(input));
+			commodity.set_name(std8_to_bstring(input));
 		}
 	}
 		
 	// Get description 
 	cout << "Enter description for new commodity (or hit enter for no "
 	        "description): ";
-	commodity.set_description(std8_to_wx(get_user_input()));
+	commodity.set_description(std8_to_bstring(get_user_input()));
 
 	// Get precision 
 	cout << "Enter precision required for this commodity "
@@ -1784,7 +1784,7 @@ PhatbooksTextSession::elicit_account()
 
 	// Get account name
 	cout << "Enter a name for the account: ";
-	account.set_name(std8_to_wx(elicit_unused_account_name()));
+	account.set_name(std8_to_bstring(elicit_unused_account_name()));
 
 	// Get commodity abbreviation
 	cout << "Enter the abbreviation of the commodity that will be the "
@@ -1806,10 +1806,10 @@ PhatbooksTextSession::elicit_account()
 
 	// Get account type
 	Menu account_type_menu;
-	vector<wxString> const names = account_type_names();
-	for (vector<wxString>::size_type i = 0; i != names.size(); ++i)
+	vector<BString> const names = account_type_names();
+	for (vector<BString>::size_type i = 0; i != names.size(); ++i)
 	{
-		shared_ptr<MenuItem> item(new MenuItem(wx_to_std8(names[i])));
+		shared_ptr<MenuItem> item(new MenuItem(bstring_to_std8(names[i])));
 		account_type_menu.add_item(item);
 	}
 	cout << "What kind of account do you wish to create?" << endl;
@@ -1822,7 +1822,7 @@ PhatbooksTextSession::elicit_account()
 	// Get description 
 	cout << "Enter description for new account (or hit enter for no "
 	        "description): ";
-	account.set_description(std8_to_wx(get_user_input()));
+	account.set_description(std8_to_bstring(get_user_input()));
 	
 	// Confirm with user before creating account
 	cout << endl << "You have proposed to create the following account: "
@@ -2153,7 +2153,7 @@ PhatbooksTextSession::elicit_primary_entries
 	);
 	entry.set_amount(sign_needs_changing? -amount: amount);
 	cout << "Comment for this line (or Enter for no comment): ";
-	entry.set_comment(std8_to_wx(get_user_input()));
+	entry.set_comment(std8_to_bstring(get_user_input()));
 	entry.set_whether_reconciled(false);
 	journal.add_entry(entry);
 	return;
@@ -2261,7 +2261,7 @@ PhatbooksTextSession::elicit_secondary_entries
 				current_entry_amount
 			);
 			cout << "Comment for this line (or Enter for no comment): ";
-			current_entry.set_comment(std8_to_wx(get_user_input()));
+			current_entry.set_comment(std8_to_bstring(get_user_input()));
 			current_entry.set_whether_reconciled(false);
 			journal.add_entry(current_entry);
 			cout << endl;
@@ -2284,7 +2284,7 @@ PhatbooksTextSession::elicit_secondary_entries
 							<< "diverse commodities..." << endl;
 		}
 		cout << "Line specific comment (or Enter for no comment): ";
-		secondary_entry.set_comment(std8_to_wx(get_user_input()));
+		secondary_entry.set_comment(std8_to_bstring(get_user_input()));
 		secondary_entry.set_amount(-journal.balance());
 		secondary_entry.set_whether_reconciled(false);
 		journal.add_entry(secondary_entry);
@@ -2336,7 +2336,7 @@ PhatbooksTextSession::finalize_draft_journal
 		}
 		else
 		{
-			journal.set_name(std8_to_wx(name));
+			journal.set_name(std8_to_bstring(name));
 			is_valid = true;
 		}
 	}
@@ -2426,7 +2426,7 @@ PhatbooksTextSession::elicit_journal()
 	journal.set_whether_actual(transaction_type != envelope_transaction);
 	cout << "Enter a comment describing the transaction (or Enter to "
 	        "leave blank): ";
-	journal.set_comment(std8_to_wx(get_user_input()));
+	journal.set_comment(std8_to_bstring(get_user_input()));
 	cout << endl;
 	elicit_primary_entries(journal, transaction_type);
 	cout << endl;

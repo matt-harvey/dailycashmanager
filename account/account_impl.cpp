@@ -10,9 +10,10 @@
 
 #include "account_impl.hpp"
 #include "account_type.hpp"
+#include "b_string.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "string_conv.hpp"
+#include "b_string.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -20,7 +21,6 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
-#include <wx/string.h>
 #include <algorithm>
 #include <cassert>
 #include <string>
@@ -42,8 +42,6 @@ using std::vector;
 namespace phatbooks
 {
 
-using string_conv::wx_to_std8;
-using string_conv::std8_to_wx;
 
 typedef
 	PhatbooksDatabaseConnection::BalanceCacheAttorney
@@ -57,9 +55,9 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 	dbc.execute_sql
 	(	"create table account_types(account_type_id integer primary key)"
 	);
-	vector<wxString>::size_type const num_account_types =
+	vector<BString>::size_type const num_account_types =
 		account_type_names().size();
-	for (vector<wxString>::size_type i = 1; i <= num_account_types; ++i)
+	for (vector<BString>::size_type i = 1; i <= num_account_types; ++i)
 	{
 		SQLStatement statement
 		(	dbc,	
@@ -96,13 +94,13 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 
 AccountImpl::Id
-AccountImpl::id_for_name(PhatbooksDatabaseConnection& dbc, wxString const& name)
+AccountImpl::id_for_name(PhatbooksDatabaseConnection& dbc, BString const& name)
 {
 	SQLStatement statement
 	(	dbc,
 		"select account_id from accounts where name = :name"
 	);
-	statement.bind(":name", wx_to_std8(name));
+	statement.bind(":name", bstring_to_std8(name));
 	statement.step();
 	Id const ret = statement.extract<Id>(0);
 	statement.step_final();
@@ -147,7 +145,7 @@ AccountImpl::account_type()
 	return value(m_data->account_type);
 }
 
-wxString
+BString
 AccountImpl::name()
 {
 	load();
@@ -161,7 +159,7 @@ AccountImpl::commodity()
 	return value(m_data->commodity);
 }
 
-wxString
+BString
 AccountImpl::description()
 {
 	load();
@@ -219,7 +217,7 @@ AccountImpl::set_account_type(AccountType p_account_type)
 }
 
 void
-AccountImpl::set_name(wxString const& p_name)
+AccountImpl::set_name(BString const& p_name)
 {
 	load();
 	m_data->name = p_name;
@@ -235,7 +233,7 @@ AccountImpl::set_commodity(Commodity const& p_commodity)
 }
 
 void
-AccountImpl::set_description(wxString const& p_description)
+AccountImpl::set_description(BString const& p_description)
 {
 	load();
 	m_data->description = p_description;
@@ -262,14 +260,14 @@ AccountImpl::do_load()
 	statement.bind(":p", id());
 	statement.step();
 	AccountImpl temp(*this);
-	temp.m_data->name = std8_to_wx(statement.extract<string>(0));
+	temp.m_data->name = std8_to_bstring(statement.extract<string>(0));
 	temp.m_data->commodity = Commodity
 	(	database_connection(),
 		statement.extract<Id>(1)
 	);
 	temp.m_data->account_type =
 		static_cast<AccountType>(statement.extract<int>(2));
-	temp.m_data->description = std8_to_wx(statement.extract<string>(3));
+	temp.m_data->description = std8_to_bstring(statement.extract<string>(3));
 	swap(temp);
 	return;
 }
@@ -281,8 +279,8 @@ AccountImpl::process_saving_statement(SQLStatement& statement)
 	(	":account_type_id",
 		static_cast<int>(value(m_data->account_type))
 	);
-	statement.bind(":name", wx_to_std8(value(m_data->name)));
-	statement.bind(":description", wx_to_std8(value(m_data->description)));
+	statement.bind(":name", bstring_to_std8(value(m_data->name)));
+	statement.bind(":description", bstring_to_std8(value(m_data->description)));
 	statement.bind(":commodity_id", value(m_data->commodity).id());
 	statement.step_final();
 	return;

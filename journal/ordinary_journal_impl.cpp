@@ -1,4 +1,5 @@
 #include "ordinary_journal_impl.hpp"
+#include "b_string.hpp"
 #include "draft_journal.hpp"
 #include "date.hpp"
 #include "entry.hpp"
@@ -16,7 +17,6 @@
 #include <boost/type_traits.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
-#include <wx/string.h>
 #include <string>
 #include <vector>
 
@@ -63,7 +63,7 @@ OrdinaryJournalImpl::set_whether_actual(bool p_is_actual)
 }
 
 void
-OrdinaryJournalImpl::set_comment(wxString const& p_comment)
+OrdinaryJournalImpl::set_comment(BString const& p_comment)
 {
 	load();
 	ProtoJournal::set_comment(p_comment);
@@ -98,7 +98,7 @@ OrdinaryJournalImpl::is_actual()
 	return ProtoJournal::is_actual();
 }
 
-wxString
+BString
 OrdinaryJournalImpl::comment()
 {
 	load();
