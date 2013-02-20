@@ -555,7 +555,7 @@ void PhatbooksTextSession::display_draft_journals()
 		{
 			shared_ptr<MenuItem const> const menu_item
 			(	new MenuItem
-				(	it->name(),
+				(	bstring_to_std8(it->name()),
 					bind
 					(	bind(&PTS::conduct_draft_journal_editing, this, _1),
 						*it

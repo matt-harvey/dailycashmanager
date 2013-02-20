@@ -23,7 +23,7 @@
 namespace phatbooks
 {
 
-#define PHATBOOKS_USING_WX_STRING_AS_B_STRING 0
+#define PHATBOOKS_USING_WX_STRING_AS_B_STRING 1
 
 #if PHATBOOKS_USING_WX_STRING_AS_B_STRING
 	typedef wxString BString;

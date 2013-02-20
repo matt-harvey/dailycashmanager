@@ -207,7 +207,7 @@ TEST_FIXTURE(TestFixture, test_repeater_frequency_phrase)
 	repeater1.set_interval_type(interval_type::days);
 	repeater1.set_interval_units(1);
 	CHECK_EQUAL(frequency_description(repeater1), "every day");
-	CHECK(typeid(frequency_description(repeater1)) == typeid(BString));
+	CHECK(typeid(frequency_description(repeater1)) == typeid(std::string));
 	CHECK_EQUAL(frequency_description(repeater1), BString("every day"));
 
 	Repeater repeater2(dbc);
