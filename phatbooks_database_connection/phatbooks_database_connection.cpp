@@ -94,15 +94,16 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 
 PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 {
-	std::cout << "Destroying PhatbooksDatabaseConnection" << std::endl;
 	// TODO This integrity of the objects in the cache - and the
 	// avoidance of invalid reads and writes (and thus of undefined
 	// behaviour) is crucially dependent on the order in which
 	// the IdentityMaps are destroyed (because objects in the
 	// cache contains Handles to other objects in other caches).
 	// This is horribly brittle! Find a way of guarding against error here.
-	// Basically, where instances of class Referor container handles to instances
-	// of class Referee, then the IdentityMap for Referor should be
+	// Basically, where instances of a class ("Referor") contain
+	// handles to instances
+	// of another class ("Referee"), then the IdentityMap for
+	// Referor should be
 	// destroyed before the IdentityMap for Referee.
 	// If I can't find a way of ensuring this automatically, then add
 	// documentation to SQLoxx advising of the importance of the
