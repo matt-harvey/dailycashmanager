@@ -39,9 +39,6 @@ int main()
 	{
 		// WARNING. This is all temp play. Need to revert.
 
-		// Valgrind failures only seem to happen when we have caching turned
-		// ON. With caching level set to 0, they don't seem to happen.
-
 		using namespace phatbooks;
 		using namespace phatbooks::test;
 		TestFixture fixture;

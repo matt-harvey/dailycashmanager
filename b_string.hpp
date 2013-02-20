@@ -23,10 +23,14 @@
 namespace phatbooks
 {
 
-// NOTE Changing this typedef entails changing the
-// implementations of the conversion functions contained
-// in this file.
-typedef std::string BString;
+#define PHATBOOKS_USING_WX_STRING_AS_B_STRING 0
+
+#if PHATBOOKS_USING_WX_STRING_AS_B_STRING
+	typedef wxString BString;
+#else
+	typedef std::string BString;
+#endif
+
 
 std::string bstring_to_std8(BString const& bs);
 BString std8_to_bstring(std::string const& s);
@@ -41,28 +45,44 @@ inline
 std::string
 bstring_to_std8(BString const& bs)
 {
-	return bs;
+#	if PHATBOOKS_USING_WX_STRING_AS_B_STRING
+		return std::string(bs.utf8_str());	
+#	else
+		return bs;
+#	endif
 }
 
 inline
 BString
 std8_to_bstring(std::string const& s)
 {
-	return s;
+#	if PHATBOOKS_USING_WX_STRING_AS_B_STRING
+		return wxString::FromUTF8(s.c_str());	
+#	else
+		return s;
+#	endif
 }
 
 inline
 wxString
 bstring_to_wx(BString const& bs)
 {
-	return wxString::FromUTF8(bs.c_str());
+#	if PHATBOOKS_USING_WX_STRING_AS_B_STRING
+		return bs;
+#	else
+		return wxString::FromUTF8(bs.c_str());
+#	endif
 }
 
 inline
 BString
 wx_to_bstring(wxString const& wxs)
 {
-	return std::string(wxs.utf8_str());
+#	if PHATBOOKS_USING_WX_STRING_AS_B_STRING
+		return wxs;
+#	else
+		return std::string(wxs.utf8_str());
+#	endif
 }
 
 
