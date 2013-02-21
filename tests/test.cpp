@@ -27,13 +27,6 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-
-// TODO The tests don't run on Windows. Fix this.
-
-// TODO The tests produce errors in Valgrind. It is probably because
-// of things being destroyed in the incorrect order in the test
-// fixture destructors.
-
 int main()
 {
 	try
