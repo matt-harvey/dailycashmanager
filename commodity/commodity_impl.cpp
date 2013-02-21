@@ -159,14 +159,6 @@ void CommodityImpl::do_load()
 
 void CommodityImpl::process_saving_statement(SQLStatement& statement)
 {
-	// WARNING temp play
-	BString const abbreviationw = value(m_data->abbreviation);
-	BString const abbreviationw_b = *(m_data->abbreviation);
-	assert (abbreviationw == abbreviationw_b);
-	std::string const abbreviations = bstring_to_std8(abbreviationw);
-
-
-	// WARNING end temp play
 	statement.bind
 	(	":abbreviation",
 		bstring_to_std8(value(m_data->abbreviation))
