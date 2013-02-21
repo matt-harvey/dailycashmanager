@@ -35,13 +35,13 @@ public:
 		>
 		PersistentObject;
 
+	typedef typename PersistentObject::Id Id;
+
 	typedef sqloxx::IdentityMap
 		<	OrdinaryJournalImpl,
 			PhatbooksDatabaseConnection
 		>
 		IdentityMap;
-
-	typedef sqloxx::Id Id;
 
 	static std::string primary_table_name();
 	static std::string primary_key_name();

@@ -13,6 +13,7 @@
 
 
 #include "date.hpp"
+#include "draft_journal.hpp"
 #include "interval_type.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -45,11 +46,13 @@ public:
 	typedef sqloxx::PersistentObject
 	<	RepeaterImpl,
 		PhatbooksDatabaseConnection
-	>
-		PersistentObject;
-	typedef sqloxx::Id Id;
+	>	PersistentObject;
+
+	typedef typename PersistentObject::Id Id;	
+
 	typedef sqloxx::IdentityMap<RepeaterImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
+
 	typedef interval_type::IntervalType IntervalType;
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
@@ -72,7 +75,7 @@ public:
 
 	void set_next_date(boost::gregorian::date const& p_next_date);
 
-	void set_journal_id(ProtoJournal::Id p_journal_id);
+	void set_journal_id(DraftJournal::Id p_journal_id);
 		
 	IntervalType interval_type();
 
@@ -110,7 +113,7 @@ public:
 	OrdinaryJournal fire_next();
 	
 
-	ProtoJournal::Id journal_id();
+	DraftJournal::Id journal_id();
 
 	void swap(RepeaterImpl& rhs);
 
@@ -136,7 +139,7 @@ struct RepeaterImpl::RepeaterData
 	boost::optional<RepeaterImpl::IntervalType> interval_type;
 	boost::optional<int> interval_units;
 	boost::optional<DateRep> next_date;
-	boost::optional<ProtoJournal::Id> journal_id;
+	boost::optional<DraftJournal::Id> journal_id;
 };
 
 

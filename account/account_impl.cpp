@@ -68,7 +68,7 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 		(	dbc,	
 			"insert into account_types(account_type_id) values(:p)"
 		);
-		statement.bind(":p", numeric_cast<sqloxx::Id>(i));
+		statement.bind(":p", numeric_cast<Id>(i));
 		statement.step_final();
 	}
 
@@ -78,7 +78,7 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"select max(account_type_id) from account_types"
 		);
 		checker.step();
-		sqloxx::Id const maxi = checker.extract<sqloxx::Id>(0);
+		Id const maxi = checker.extract<Id>(0);
 		assert (maxi == 6);
 		checker.step_final();
 	#endif
@@ -99,7 +99,10 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 
 AccountImpl::Id
-AccountImpl::id_for_name(PhatbooksDatabaseConnection& dbc, BString const& name)
+AccountImpl::id_for_name
+(	PhatbooksDatabaseConnection& dbc,
+	BString const& name
+)
 {
 	SQLStatement statement
 	(	dbc,
@@ -301,7 +304,10 @@ AccountImpl::process_saving_statement(SQLStatement& statement)
 		static_cast<int>(value(m_data->account_type))
 	);
 	statement.bind(":name", bstring_to_std8(value(m_data->name)));
-	statement.bind(":description", bstring_to_std8(value(m_data->description)));
+	statement.bind
+	(	":description",
+		bstring_to_std8(value(m_data->description))
+	);
 	statement.bind(":commodity_id", value(m_data->commodity).id());
 	statement.step_final();
 	return;

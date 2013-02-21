@@ -39,8 +39,6 @@ class ProtoJournal: public Journal
 {
 public:
 
-	typedef sqloxx::Id Id;
-
 	ProtoJournal();
 	ProtoJournal(ProtoJournal const& rhs);
 	// TODO Do we need a virtual destructor here? I don't think we do,

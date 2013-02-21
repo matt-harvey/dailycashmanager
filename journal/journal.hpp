@@ -3,6 +3,7 @@
 
 #include "b_string.hpp"
 #include "entry.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include <ostream>
 #include <sqloxx/general_typedefs.hpp>
 #include <vector>
@@ -53,10 +54,9 @@ namespace phatbooks
 class Journal
 {
 public:
-	// TODO Use this rather than ProtoJournal::Id in various
-	// places throughout Phatbooks code base, where applicable.
-	typedef sqloxx::Id Id;
-	
+
+	typedef PhatbooksPersistentObjectBase::Id Id;
+		
 	virtual ~Journal();
 
 	void set_whether_actual(bool p_is_actual);

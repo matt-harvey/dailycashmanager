@@ -16,6 +16,7 @@
 #include "b_string.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <boost/static_assert.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -51,10 +52,13 @@ class AccountImpl:
 {
 public:
 	
-	typedef sqloxx::Id Id;
-
 	typedef sqloxx::PersistentObject<AccountImpl, PhatbooksDatabaseConnection>
 		PersistentObject;
+	
+	typedef typename PersistentObject::Id Id;
+
+	// Other classes rely on the below static assertion being true.
+	BOOST_STATIC_ASSERT((boost::is_same<Id, sqloxx::Id>::value));
 
 	typedef account_type::AccountType AccountType;
 

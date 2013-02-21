@@ -45,7 +45,9 @@ public:
 
 	typedef sqloxx::PersistentObject<EntryImpl, PhatbooksDatabaseConnection>
 		PersistentObject;
-	typedef sqloxx::Id Id;
+
+	typedef typename PersistentObject::Id Id;
+
 	typedef sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
 
@@ -61,7 +63,7 @@ public:
 
 	~EntryImpl();
 
-	void set_journal_id(sqloxx::Id p_journal_id);
+	void set_journal_id(Id p_journal_id);
 
 	void set_account(Account const& p_account);
 
@@ -132,7 +134,7 @@ private:
 
 struct EntryImpl::EntryData
 {
-	boost::optional<sqloxx::Id> journal_id;
+	boost::optional<Id> journal_id;
 	boost::optional<Account> account;
 	boost::optional<BString> comment;
 	boost::optional<jewel::Decimal> amount;

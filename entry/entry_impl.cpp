@@ -91,7 +91,7 @@ EntryImpl::~EntryImpl()
 
 
 void
-EntryImpl::set_journal_id(sqloxx::Id p_journal_id)
+EntryImpl::set_journal_id(Id p_journal_id)
 {
 	load();
 	m_data->journal_id = p_journal_id;
@@ -203,7 +203,7 @@ EntryImpl::do_load()
 	temp.m_data->account = acct;
 	temp.m_data->comment = std8_to_bstring(statement.extract<string>(1));
 	temp.m_data->amount = amt;
-	temp.m_data->journal_id = statement.extract<sqloxx::Id>(3);
+	temp.m_data->journal_id = statement.extract<Id>(3);
 	temp.m_data->is_reconciled =
 		static_cast<bool>(statement.extract<int>(4));
 	

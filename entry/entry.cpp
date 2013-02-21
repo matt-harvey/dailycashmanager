@@ -73,7 +73,7 @@ Entry::create_unchecked
 
 
 void
-Entry::set_journal_id(ProtoJournal::Id p_journal_id)
+Entry::set_journal_id(Journal::Id p_journal_id)
 {
 	impl().set_journal_id(p_journal_id);
 	return;

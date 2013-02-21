@@ -76,7 +76,7 @@ public:
 	 * Journal (or DraftJournal or OrdinaryJournal) is for the EntryImpl
 	 * to be added to the Journal via its add_entry(...) method.
 	 */
-	void set_journal_id(sqloxx::Id p_journal_id);
+	void set_journal_id(Id p_journal_id);
 
 	/**
 	 * Set the Account with which this Entry is associated.

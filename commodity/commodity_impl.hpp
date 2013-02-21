@@ -39,7 +39,10 @@ namespace phatbooks
  * @todo Are copy constructor and assignment operator exception-safe?
  */
 class CommodityImpl:
-	public sqloxx::PersistentObject<CommodityImpl, PhatbooksDatabaseConnection>
+	public sqloxx::PersistentObject
+	<	CommodityImpl,
+		PhatbooksDatabaseConnection
+	>
 {
 
 public:
@@ -49,7 +52,9 @@ public:
 			PhatbooksDatabaseConnection
 		>
 		PersistentObject;
-	typedef sqloxx::Id Id;
+
+	typedef typename PersistentObject::Id Id;
+
 	typedef sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
 

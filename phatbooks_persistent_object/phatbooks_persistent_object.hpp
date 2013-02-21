@@ -71,7 +71,6 @@ public:
 	bool operator!=(PhatbooksPersistentObject const& rhs) const;
 
 protected:
-	typedef sqloxx::Id Id;
 	PhatbooksPersistentObject
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
@@ -181,7 +180,7 @@ PhatbooksPersistentObject<Impl>::do_save()
 }
 
 template <typename Impl>
-typename sqloxx::Id
+typename PhatbooksPersistentObject<Impl>::Id
 PhatbooksPersistentObject<Impl>::do_get_id() const
 {
 	return m_impl->id();

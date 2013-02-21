@@ -251,7 +251,7 @@ namespace
 	{
 		try
 		{
-			ProtoJournal::Id const id = lexical_cast<ProtoJournal::Id>(s);
+			Journal::Id const id = lexical_cast<Journal::Id>(s);
 			return journal_id_exists(*dbc, id);
 		}
 		catch (bad_lexical_cast&)
@@ -1420,7 +1420,7 @@ PhatbooksTextSession::display_journal_from_id()
 		return;
 	}
 	// We know this will work
-	ProtoJournal::Id const id = lexical_cast<ProtoJournal::Id>(input);
+	Journal::Id const id = lexical_cast<Journal::Id>(input);
 	if (journal_id_is_draft(database_connection(), id))
 	{
 		DraftJournal dj(database_connection(), id);

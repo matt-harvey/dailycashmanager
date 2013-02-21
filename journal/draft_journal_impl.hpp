@@ -34,7 +34,9 @@ public:
 			PhatbooksDatabaseConnection
 		>
 		PersistentObject;
-	typedef sqloxx::Id Id;
+
+	typedef typename PersistentObject::Id Id;
+
 	typedef
 		sqloxx::IdentityMap<DraftJournalImpl, PhatbooksDatabaseConnection>
 		IdentityMap;

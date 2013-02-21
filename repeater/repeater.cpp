@@ -78,7 +78,7 @@ Repeater::set_interval_units(int p_interval_units)
 }
 
 void
-Repeater::set_journal_id(ProtoJournal::Id p_journal_id)
+Repeater::set_journal_id(DraftJournal::Id p_journal_id)
 {
 	impl().set_journal_id(p_journal_id);
 	return;

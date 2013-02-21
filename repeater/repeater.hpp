@@ -100,7 +100,7 @@ public:
 	 * takes care of assigning the correct journal id to Repeaters,
 	 * without client code needing to do this directly.
 	 */
-	void set_journal_id(ProtoJournal::Id p_journal_id);
+	void set_journal_id(DraftJournal::Id p_journal_id);
 
 	void set_next_date(boost::gregorian::date const& p_next_date);
 
