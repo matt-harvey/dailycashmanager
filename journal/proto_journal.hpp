@@ -52,6 +52,7 @@ public:
 	static std::string primary_key_name();
 	
 protected:
+
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
 	 * "Effective C++".
@@ -126,20 +127,6 @@ private:
 	};
 	boost::scoped_ptr<ProtoJournalData> m_data;
 };
-
-
-ProtoJournal::Id
-max_journal_id(PhatbooksDatabaseConnection& dbc);
-
-ProtoJournal::Id
-min_journal_id(PhatbooksDatabaseConnection& dbc);
-
-bool
-journal_id_exists(PhatbooksDatabaseConnection& dbc, ProtoJournal::Id);
-
-bool
-journal_id_is_draft(PhatbooksDatabaseConnection& dbc, ProtoJournal::Id);
-
 
 
 }  // namespace phatbooks

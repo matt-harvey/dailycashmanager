@@ -86,6 +86,18 @@ Account::~Account()
 }
 
 
+bool
+Account::exists
+(	PhatbooksDatabaseConnection& p_database_connection,
+	BString const& p_name
+)
+{
+	return AccountImpl::exists
+	(	p_database_connection,
+		p_name
+	);
+}
+
 BString
 Account::name() const
 {
@@ -164,7 +176,9 @@ make_detailed_account_row(Account const& account)
 {
 	shared_ptr<vector<string> > ret(new vector<string>);
 	ret->push_back(bstring_to_std8(account.name()));
-	ret->push_back(bstring_to_std8(account_type_to_string(account.account_type())));
+	ret->push_back
+	(	bstring_to_std8(account_type_to_string(account.account_type()))
+	);
 	ret->push_back(bstring_to_std8(account.description()));
 	;return ret;
 }

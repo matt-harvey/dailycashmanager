@@ -72,7 +72,17 @@ public:
 	);
 
 	~CommodityImpl();
-	
+
+	static bool exists_with_abbreviation
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		BString const& p_abbreviation
+	);
+
+	static bool exists_with_name
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		BString const& p_name
+	);
+
 	BString abbreviation();
 
 	BString name();

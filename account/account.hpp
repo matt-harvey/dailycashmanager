@@ -75,6 +75,26 @@ public:
 		BString const& p_name
 	);
 
+	/**
+	 * @returns \c true if and only if \c p_name is the name of an Account
+	 * stored in the database.
+	 *
+	 * @param p_name name of Account.
+	 *
+	 * @throws SQLiteException or an exception derived therefrom, if
+	 * something goes wrong with the SQL involved in executing
+	 * the function. This might occur if \c p_name contains punctuation
+	 * marks, spaces or etc., or is a SQL keyword, so that it cannot validly
+	 * be a string parameter in a SQL statement. A SQLiteException or
+	 * derivative might also be thrown if the database connection is invalid
+	 * or the database corrupt. It is not guaranteed that these are the only
+	 * circumstances in which an exception might be thrown.
+	 */
+	static bool exists
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		BString const& p_name
+	);
+
 	static void setup_tables();
 
 	~Account();

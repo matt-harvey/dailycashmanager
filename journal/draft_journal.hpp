@@ -83,6 +83,17 @@ public:
 		Id p_id
 	);
 
+	/**
+	 * @returns \c true if and only if \c p_name is the name of a
+	 * DraftJournalImpl stored in the database.
+	 *
+	 * @todo Document throwing behaviour.
+	 */
+	static bool exists
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		BString const& p_name
+	);
+
 	void set_name(BString const& p_name);
 	void add_repeater(Repeater& repeater);
 	BString name() const;

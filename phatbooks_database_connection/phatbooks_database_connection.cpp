@@ -68,10 +68,6 @@ namespace phatbooks
 {
 
 
-;
-
-
-
 PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	DatabaseConnection(),
 	m_balance_cache(0),
@@ -133,56 +129,6 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 
 	delete m_commodity_map;
 	m_commodity_map = 0;
-}
-
-
-
-bool
-PhatbooksDatabaseConnection::has_account_named(BString const& p_name)
-{
-	SQLStatement statement
-	(	*this,
-		"select name from accounts where name = :p"
-	);
-	statement.bind(":p", bstring_to_std8(p_name));
-	return statement.step();
-}
-
-bool
-PhatbooksDatabaseConnection::has_draft_journal_named(BString const& p_name)
-{
-	SQLStatement statement
-	(	*this,
-		"select name from draft_journal_detail where name = :p"
-	);
-	statement.bind(":p", bstring_to_std8(p_name));
-	return statement.step();
-}
-
-
-
-bool
-PhatbooksDatabaseConnection::has_commodity_with_abbreviation
-(	BString const& p_abbreviation
-)
-{
-	SQLStatement statement
-	(	*this,
-		"select abbreviation from commodities where abbreviation = :p"
-	);
-	statement.bind(":p", bstring_to_std8(p_abbreviation));
-	return statement.step();
-}
-
-bool
-PhatbooksDatabaseConnection::has_commodity_named(BString const& p_name)
-{
-	SQLStatement statement
-	(	*this,
-		"select name from commodities where name = :p"
-	);
-	statement.bind(":p", bstring_to_std8(p_name));
-	return statement.step();
 }
 
 

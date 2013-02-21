@@ -60,45 +60,6 @@ public:
 	~PhatbooksDatabaseConnection();
 
 	/**
-	 * @returns \c true if and only if \c p_name is the name of an Account
-	 * stored in the database.
-	 *
-	 * @param p_name name of Account.
-	 *
-	 * @throws SQLiteException or an exception derived therefrom, if
-	 * something goes wrong with the SQL involved in executing
-	 * the function. This might occur if \c p_name contains punctuation
-	 * marks, spaces or etc., or is a SQL keyword, so that it cannot validly
-	 * be a string parameter in a SQL statement. A SQLiteException or
-	 * derivative might also be thrown if the database connection is invalid
-	 * or the database corrupt. It is not guaranteed that these are the only
-	 * circumstances in which an exception might be thrown.
-	 */
-	bool has_account_named(BString const& p_name);
-
-	/**
-	 * @returns \c true if and only if \c p_name is the name of a
-	 * DraftJournalImpl stored in the database.
-	 *
-	 * @todo Document throwing behaviour.
-	 */
-	bool has_draft_journal_named(BString const& p_name);
-	
-
-	
-	/**
-	 * @returns \c true if and only if \c p_abbreviation is the abbreviation
-	 * of a Commodity stored in the database.
-	 */
-	bool has_commodity_with_abbreviation(BString const& p_abbreviation);
-
-	/**
-	 * @returns \c true if and only if \c p_name is the name of a Commodity
-	 * stored in the database.
-	 */
-	bool has_commodity_named(BString const& p_name);
-
-	/**
 	 * Creates tables required for Phatbooks, and inserts rows
 	 * into certain tables to provide application-level data where
 	 * required. If the database already contains these tables,

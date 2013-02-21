@@ -43,10 +43,6 @@ namespace phatbooks
 {
 
 
-;
-;
-
-
 void CommodityImpl::setup_tables
 (	PhatbooksDatabaseConnection& dbc
 )
@@ -121,6 +117,38 @@ CommodityImpl::~CommodityImpl()
 	m_data = 0;
 	*/
 }
+
+
+
+bool
+CommodityImpl::exists_with_abbreviation
+(	PhatbooksDatabaseConnection& p_database_connection,
+	BString const& p_abbreviation
+)
+{
+	SQLStatement statement
+	(	p_database_connection,
+		"select abbreviation from commodities where abbreviation = :p"
+	);
+	statement.bind(":p", bstring_to_std8(p_abbreviation));
+	return statement.step();
+}
+
+
+bool
+CommodityImpl::exists_with_name
+(	PhatbooksDatabaseConnection& p_database_connection,
+	BString const& p_name
+)
+{
+	SQLStatement statement
+	(	p_database_connection,
+		"select name from commodities where name = :p"
+	);
+	statement.bind(":p", bstring_to_std8(p_name));
+	return statement.step();
+}
+
 
 
 void

@@ -54,6 +54,11 @@ public:
 
 	~DraftJournalImpl();
 
+	static bool exists
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		BString const& p_name
+	);
+
 	/**
 	 * Does not throw.
 	 */

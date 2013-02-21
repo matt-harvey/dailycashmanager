@@ -83,6 +83,11 @@ public:
 	explicit
 	AccountImpl(IdentityMap& p_identity_map);
 
+	static bool exists
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		BString const& p_name
+	);
+	
 	/**
 	 * Get an AccountImpl by id from database.
 	 */

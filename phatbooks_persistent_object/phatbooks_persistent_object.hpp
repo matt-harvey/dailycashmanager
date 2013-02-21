@@ -80,6 +80,10 @@ protected:
 		Id p_id
 	);
 	PhatbooksPersistentObject(sqloxx::Handle<Impl> const& p_handle);
+	static bool exists
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		Id p_id
+	);
 	Impl& impl();
 	Impl& impl() const;
 
@@ -118,6 +122,18 @@ PhatbooksPersistentObject<Impl>::PhatbooksPersistentObject
 ):
 	m_impl(p_handle)
 {
+}
+
+
+template <typename Impl>
+inline
+bool
+PhatbooksPersistentObject<Impl>::exists
+(	PhatbooksDatabaseConnection& p_database_connection,
+	Id p_id
+)
+{
+	return Impl::exists(p_database_connection, p_id);
 }
 
 template <typename Impl>

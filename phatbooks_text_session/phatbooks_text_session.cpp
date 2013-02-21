@@ -516,7 +516,7 @@ PhatbooksTextSession::elicit_existing_account_name(bool accept_empty)
 	 {
 		string input = get_user_input();
 	 	if
-		(	database_connection().has_account_named(std8_to_bstring(input)) ||
+		(	Account::exists(database_connection(), std8_to_bstring(input)) ||
 			(accept_empty && input.empty())
 		)
 		{
@@ -1647,7 +1647,10 @@ PhatbooksTextSession::elicit_commodity()
 			cout << "Abbreviation cannot be blank. Please try again: ";
 		}
 		else if
-		(	database_connection().has_commodity_with_abbreviation(input)
+		(	Commodity::exists_with_abbreviation
+			(	database_connection(),
+				std8_to_bstring(input)
+			)
 		)
 		{
 			cout << "A commodity with this abbreviation already exists. "
@@ -1669,7 +1672,12 @@ PhatbooksTextSession::elicit_commodity()
 		{
 			cout << "Name cannot be blank. Please try again: ";
 		}
-		else if (database_connection().has_commodity_named(input))
+		else if
+		(	Commodity::exists_with_name
+			(	database_connection(),
+				std8_to_bstring(input)
+			)
+		)
 		{
 			cout << "A commodity with this name already exists. "
 			     << "Please try a different name: ";
@@ -1758,7 +1766,9 @@ PhatbooksTextSession::elicit_unused_account_name(bool allow_empty_to_escape)
 				cout << "Name cannot be blank. Please try again: ";
 			}
 		}
-		else if (database_connection().has_account_named(input))
+		else if
+		(	Account::exists(database_connection(), std8_to_bstring(input))
+		)
 		{
 			cout << "An account with this name already exists. "
 			     << "Please try again: ";
@@ -1791,7 +1801,12 @@ PhatbooksTextSession::elicit_account()
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
 		string input = get_user_input();
-		if (!database_connection().has_commodity_with_abbreviation(input))
+		if 
+		(	!Commodity::exists_with_abbreviation
+			(	database_connection(),
+				std8_to_bstring(input)
+			)
+		)
 		{
 			cout << "There is no commodity with this abbreviation. Please "
 			     << "try again: ";
@@ -1799,7 +1814,9 @@ PhatbooksTextSession::elicit_account()
 		else
 		{
 			input_is_valid = true;
-			account.set_commodity(Commodity(database_connection(), input));
+			account.set_commodity
+			(	Commodity(database_connection(), std8_to_bstring(input))
+			);
 		}
 	}
 
@@ -2327,7 +2344,9 @@ PhatbooksTextSession::finalize_draft_journal
 		{
 			cout << "Name cannot be blank. Please try again: ";
 		}
-		else if (database_connection().has_draft_journal_named(name))
+		else if
+		(	DraftJournal::exists(database_connection(), std8_to_bstring(name))
+		)
 		{
 			cout << "A draft or recurring transaction has already "
 				 << "been saved under this name. Please enter a "

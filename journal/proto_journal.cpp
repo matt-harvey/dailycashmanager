@@ -32,7 +32,6 @@
 #include <boost/unordered_set.hpp>
 #include <ostream>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -54,7 +53,6 @@ using std::ios_base;
 using std::logic_error;
 using std::ostream;
 using std::ostringstream;
-using std::runtime_error;
 using std::string;
 using std::vector;
 
@@ -325,51 +323,6 @@ ProtoJournal::clear_entries()
 	return;
 }
 
-
-ProtoJournal::Id
-max_journal_id(PhatbooksDatabaseConnection& dbc)
-{
-	SQLStatement s(dbc, "select max(journal_id) from journals");
-	s.step();
-	return s.extract<ProtoJournal::Id>(0);
-}
-
-ProtoJournal::Id
-min_journal_id(PhatbooksDatabaseConnection& dbc)
-{
-	SQLStatement s(dbc, "select min(journal_id) from journals");
-	s.step();
-	return s.extract<ProtoJournal::Id>(0);
-}
-
-bool
-journal_id_exists(PhatbooksDatabaseConnection& dbc, ProtoJournal::Id id)
-{
-	SQLStatement s
-	(	dbc,
-		"select journal_id from journals where journal_id = :p"
-	);
-	s.bind(":p", id);
-	return s.step();
-}
-
-bool
-journal_id_is_draft(PhatbooksDatabaseConnection& dbc, ProtoJournal::Id id)
-{
-	if (!journal_id_exists(dbc, id))
-	{
-		throw std::runtime_error("Journal with id does not exist.");
-	}
-	SQLStatement s
-	(	dbc,
-		"select journal_id from draft_journal_detail where "
-		"journal_id = :p"
-	);
-	s.bind(":p", id);
-	return s.step();
-}
-	
-
 void
 ProtoJournal::mimic_core
 (	Journal const& rhs,
@@ -395,9 +348,6 @@ ProtoJournal::mimic_core
 	return;
 }
 
-
-
-		
 
 
 }  // namespace phatbooks

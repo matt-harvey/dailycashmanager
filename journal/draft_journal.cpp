@@ -57,6 +57,17 @@ DraftJournal::create_unchecked
 	);
 }
 
+bool
+DraftJournal::exists
+(	PhatbooksDatabaseConnection& p_database_connection,
+	BString const& p_name
+)
+{
+	return DraftJournalImpl::exists
+	(	p_database_connection,
+		p_name
+	);
+}
 
 void
 DraftJournal::set_name(BString const& p_name)

@@ -4,7 +4,6 @@
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_persistent_object.hpp"
-#include "sqloxx/general_typedefs.hpp"
 
 namespace phatbooks
 {
@@ -18,11 +17,29 @@ class PersistentJournal:
 	virtual public PhatbooksPersistentObjectBase
 {
 public:
+	typedef PhatbooksPersistentObjectBase::Id Id;
 	virtual ~PersistentJournal();
 };
 
 
-bool has_entry_with_id(PersistentJournal const& journal, Entry::Id entry_id);
+bool
+has_entry_with_id(PersistentJournal const& journal, Entry::Id entry_id);
+
+bool
+journal_id_exists(PhatbooksDatabaseConnection& dbc, PersistentJournal::Id);
+
+PersistentJournal::Id
+max_journal_id(PhatbooksDatabaseConnection& dbc);
+
+PersistentJournal::Id
+min_journal_id(PhatbooksDatabaseConnection& dbc);
+
+bool
+journal_id_is_draft(PhatbooksDatabaseConnection& dbc, PersistentJournal::Id);
+
+
+
+
 
 
 }  // namespace phatbooks

@@ -69,7 +69,25 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		BString const& p_abbreviation
 	);
-	
+
+	/**
+	 * @returns \c true if and only if \c p_abbreviation is the abbreviation
+	 * of a Commodity stored in the database.
+	 */
+	static bool exists_with_abbreviation
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		BString const& p_abbreviation
+	);
+
+	/**
+	 * @returns \c true if and only if \c p_name is the name of a Commodity
+	 * stored in the database.
+	 */
+	static bool exists_with_name
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		BString const& p_name
+	);
+
 	/**
 	 * Get the abbreviation of the commodity. E.g "AUD" might be
 	 * the abbreviation for Australian dollars, or "NAB.AX" might be

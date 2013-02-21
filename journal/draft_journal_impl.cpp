@@ -163,6 +163,21 @@ DraftJournalImpl::~DraftJournalImpl()
 }
 
 
+bool
+DraftJournalImpl::exists
+(	PhatbooksDatabaseConnection& p_database_connection,
+	BString const& p_name
+)
+{
+	SQLStatement statement
+	(	p_database_connection,
+		"select name from draft_journal_detail where name = :p"
+	);
+	statement.bind(":p", bstring_to_std8(p_name));
+	return statement.step();
+}
+
+
 void
 DraftJournalImpl::set_name(BString const& p_name)
 {

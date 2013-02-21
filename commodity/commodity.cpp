@@ -9,6 +9,7 @@
 using boost::shared_ptr;
 using jewel::Decimal;
 using sqloxx::Handle;
+using sqloxx::SQLStatement;
 
 namespace phatbooks
 {
@@ -65,6 +66,34 @@ Commodity::Commodity
 	)
 {
 }
+
+
+bool
+Commodity::exists_with_abbreviation
+(	PhatbooksDatabaseConnection& p_database_connection,
+	BString const& p_abbreviation
+)
+{
+	return CommodityImpl::exists_with_abbreviation
+	(	p_database_connection,
+		p_abbreviation
+	);
+}
+
+
+bool
+Commodity::exists_with_name
+(	PhatbooksDatabaseConnection& p_database_connection,
+	BString const& p_name
+)
+{
+	return CommodityImpl::exists_with_name
+	(	p_database_connection,
+		p_name
+	);
+}
+
+
 BString
 Commodity::abbreviation() const
 {

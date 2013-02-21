@@ -143,6 +143,22 @@ AccountImpl::~AccountImpl()
 {
 }
 
+bool
+AccountImpl::exists
+(	PhatbooksDatabaseConnection& p_database_connection,
+	BString const& p_name
+)
+{
+	SQLStatement statement
+	(	p_database_connection,
+		"select name from accounts where name = :p"
+	);
+	statement.bind(":p", bstring_to_std8(p_name));
+	return statement.step();
+}
+
+
+
 AccountImpl::AccountType
 AccountImpl::account_type()
 {
