@@ -1,6 +1,6 @@
 #include "graphical_session.hpp"
 #include "b_string.hpp"
-#include "wx/my_app.hpp"
+#include "wxs/my_app.hpp"
 #include <iostream>
 #include <string>
 
@@ -12,7 +12,6 @@ using std::wstring;
 namespace phatbooks
 {
 
-;
 
 namespace gui
 {

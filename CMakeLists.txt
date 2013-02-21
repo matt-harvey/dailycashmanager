@@ -155,8 +155,8 @@ set (main_files
 
 set (gui_files
 	 graphical_session/graphical_session.cpp
-	 graphical_session/wx/my_app.cpp
-	 graphical_session/wx/my_frame.cpp)
+	 graphical_session/wxs/my_app.cpp
+	 graphical_session/wxs/my_frame.cpp)
 
 set (test_files
 	 ${main_files}

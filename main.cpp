@@ -48,11 +48,6 @@ using TCLAP::UnlabeledValueArg;
 
 
 
-// TO DO "wx" is an unfortunate name for a subdirectory
-// of my project directory, when it is also the name of the
-// main subdirectory in which wxWidgets' own headers are installed.
-// Change it.
-
 int main(int argc, char** argv)
 {
 	try

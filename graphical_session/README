@@ -1,10 +1,9 @@
-The top level of this directory contains code for driving the GUI version
-of Phatbooks, that is NOT wxWidgets-dependent. The subdirectory "wx" contains
-that all of the codebase that depends on wxWidgets.
-
-We eschew wxWidgets' macro-created main function, and instead drive everything
-from our own main defined in main.cpp at the top-level project directory.
-
+The top level of this directory contains code for "driving" the GUI version
+of Phatbooks. We eschew wxWidgets' macro-created main function, and
+instead drive everything from our own main defined in main.cpp
+at the top-level project directory, via our GraphicalSession class
+(a subclass of phatbooks::Session).
 However we still need to go through the motions of creating a "MyApp" class in
 which to contain all our wxWidgets-using code. We contain this MyApp class in
-the "wx" subdirectory.
+the "wxs" subdirectory, along with other code that directly interfaces
+with the wxWidgets library.
