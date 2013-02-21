@@ -250,6 +250,7 @@ ProtoJournal::do_save_existing_journal_core
 			Entry doomed_entry(dbc, entry_id);
 			// This entry is in the database but no longer in the in-memory
 			// journal, so should be deleted.
+			JEWEL_DEBUG_LOG << "Removing entry with id " << entry_id << std::endl;
 			doomed_entry.remove();
 			// Note it's OK even if the last entry is deleted. Another
 			// entry will never be reassigned its id - SQLite makes sure

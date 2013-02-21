@@ -83,6 +83,10 @@ EntryImpl::EntryImpl
 
 EntryImpl::~EntryImpl()
 {
+#	ifdef DEBUG
+		JEWEL_DEBUG_LOG << "Deleting EntryImpl at address "
+	   		            << std::hex << this << std::dec << std::endl;
+#	endif
 	/* If m_data is a smart pointer, this is not required.
 	delete m_data;
 	m_data = 0;

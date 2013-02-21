@@ -21,6 +21,7 @@ namespace test
 
 TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 {
+	PhatbooksDatabaseConnection& dbc = *pdbc;
 	DraftJournal dj1(dbc);
 	dj1.set_whether_actual(true);
 	dj1.set_comment("draft journal to test repeater_description");

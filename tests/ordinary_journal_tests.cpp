@@ -25,6 +25,8 @@ namespace test
 
 TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 {
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+
 	ProtoJournal journal1;
 	journal1.set_whether_actual(true);
 	journal1.set_comment("igloo");
@@ -139,6 +141,8 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 
 TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 {
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+
 	OrdinaryJournal journal1(dbc);
 	journal1.set_whether_actual(true);
 	journal1.set_comment("igloo");

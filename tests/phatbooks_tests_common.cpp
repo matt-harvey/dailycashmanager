@@ -84,20 +84,23 @@ void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
 
 
 TestFixture::TestFixture():
-	db_filepath("Testfile_827787293.db")
+	db_filepath("Testfile_827787293.db"),
+	pdbc(0)
 {
+	pdbc = new PhatbooksDatabaseConnection;
 	abort_if_exists(db_filepath);
-	dbc.open(db_filepath);
-	dbc.set_caching_level(10);
-	dbc.setup();
-	setup_test_commodities(dbc);
-	setup_test_accounts(dbc);
-	assert (dbc.is_valid());
+	pdbc->open(db_filepath);
+	pdbc->set_caching_level(10);
+	pdbc->setup();
+	setup_test_commodities(*pdbc);
+	setup_test_accounts(*pdbc);
+	assert (pdbc->is_valid());
 }
 
 TestFixture::~TestFixture()
 {
-	assert (dbc.is_valid());
+	assert (pdbc->is_valid());
+	delete pdbc;
 	filesystem::remove(db_filepath);
 	assert (!file_exists(db_filepath));
 }

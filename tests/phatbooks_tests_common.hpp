@@ -28,7 +28,7 @@ struct TestFixture
 	boost::filesystem::path db_filepath;
 
 	// The connection to the database
-	PhatbooksDatabaseConnection dbc;
+	PhatbooksDatabaseConnection* pdbc;
 };
 
 

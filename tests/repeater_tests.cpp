@@ -25,6 +25,8 @@ namespace test
 
 TEST_FIXTURE(TestFixture, test_repeater_next_date)
 {
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+
 	DraftJournal dj(dbc);
 	dj.set_whether_actual(true);
 	dj.set_comment("draft journal to test repeater");
@@ -102,6 +104,8 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 
 TEST_FIXTURE(TestFixture, test_repeater_firings_till)
 {
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+
 	Repeater repeater1(dbc);
 	repeater1.set_interval_type(interval_type::days);
 	repeater1.set_interval_units(5);
@@ -145,6 +149,8 @@ TEST_FIXTURE(TestFixture, test_repeater_firings_till)
 
 TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 {
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+
 	DraftJournal dj1(dbc);
 	dj1.set_whether_actual(true);
 	dj1.set_comment("journal to test repeater");
@@ -203,6 +209,8 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 
 TEST_FIXTURE(TestFixture, test_repeater_frequency_phrase)
 {
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+
 	Repeater repeater1(dbc);
 	repeater1.set_interval_type(interval_type::days);
 	repeater1.set_interval_units(1);

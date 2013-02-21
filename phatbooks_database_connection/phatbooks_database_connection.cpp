@@ -112,19 +112,23 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 	delete m_balance_cache;
 	m_balance_cache = 0;
 
+	// Must be deleted before m_entry_map and before m_repeater_map
+	delete m_draft_journal_map;
+	m_draft_journal_map = 0;
+
+	// Must be deleted before m_entry_map
+	delete m_ordinary_journal_map;
+	m_ordinary_journal_map = 0;
+
 	delete m_repeater_map;
 	m_repeater_map = 0;
 
-	delete m_draft_journal_map;  // Must be deleted before m_entry_map
-	m_draft_journal_map = 0;
-
-	delete m_ordinary_journal_map;  // Must be deleted before m_entry_map
-	m_ordinary_journal_map = 0;
-
-	delete m_entry_map;  // Must be deleted before m_account_map
+	// Must be deleted before m_account_map
+	delete m_entry_map; 
 	m_entry_map = 0;
 
-	delete m_account_map;  // Must be deleted before m_commodity_map
+	// Must be deleted before m_commodity_map
+	delete m_account_map;
 	m_account_map = 0;
 
 	delete m_commodity_map;
