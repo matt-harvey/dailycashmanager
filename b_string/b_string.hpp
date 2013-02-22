@@ -32,58 +32,25 @@ namespace phatbooks
 #endif
 
 
+/**
+ * Convert from BString to std::string.
+ */
 std::string bstring_to_std8(BString const& bs);
+
+/**
+ * Convert from std::string to BString.
+ */
 BString std8_to_bstring(std::string const& s);
 
+/**
+ * Convert from BString to wxString.
+ */
 wxString bstring_to_wx(BString const& wxs);
+
+/**
+ * Convert from wxString to BString.
+ */
 BString wx_to_bstring(wxString const& wxs);
-
-
-// IMPLEMENTATIONS
-
-inline
-std::string
-bstring_to_std8(BString const& bs)
-{
-#	if PHATBOOKS_USING_WX_STRING_AS_B_STRING
-		return std::string(bs.utf8_str());	
-#	else
-		return bs;
-#	endif
-}
-
-inline
-BString
-std8_to_bstring(std::string const& s)
-{
-#	if PHATBOOKS_USING_WX_STRING_AS_B_STRING
-		return wxString::FromUTF8(s.c_str());	
-#	else
-		return s;
-#	endif
-}
-
-inline
-wxString
-bstring_to_wx(BString const& bs)
-{
-#	if PHATBOOKS_USING_WX_STRING_AS_B_STRING
-		return bs;
-#	else
-		return wxString::FromUTF8(bs.c_str());
-#	endif
-}
-
-inline
-BString
-wx_to_bstring(wxString const& wxs)
-{
-#	if PHATBOOKS_USING_WX_STRING_AS_B_STRING
-		return wxs;
-#	else
-		return std::string(wxs.utf8_str());
-#	endif
-}
 
 
 }  // namespace phatbooks

@@ -130,6 +130,7 @@ set (main_files
 	 account/account_type.cpp
 	 account/balance_cache.cpp
 	 application/application.cpp
+	 b_string/b_string.cpp
 	 commodity/commodity.cpp
 	 commodity/commodity_impl.cpp
 	 date/date.cpp
