@@ -8,6 +8,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
+#include <cassert>
 #include <list>
 #include <string>
 
@@ -25,16 +26,26 @@ namespace gregorian = boost::gregorian;
 namespace phatbooks
 {
 
+int Session::s_num_instances = 0;
 
 Session::Session():
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
-	database_connection().set_caching_level(10);
+	database_connection().set_caching_level(s_default_caching_level);
+	++s_num_instances;
+	if (s_num_instances > s_max_instances)
+	{
+		--s_num_instances;
+		throw TooManySessions
+		(	"Exceeded maximum number of instances of phatbooks::Session."
+		);
+	}
 }
 
 
 Session::~Session()
 {
+	--s_num_instances;
 }
 
 

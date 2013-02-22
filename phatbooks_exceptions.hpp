@@ -52,13 +52,18 @@ JEWEL_DERIVED_EXCEPTION(DateConversionException, PhatbooksException);
 JEWEL_DERIVED_EXCEPTION(UnsafeArithmeticException, PhatbooksException);
 
 /**
- * Exceptions to be thrown when an action is attempted on a Journal (or
+ * Exception to be thrown when an action is attempted on a Journal (or
  * OrdinaryJournal or DraftJournal) which requires that Journal to be
  * in a balanced state, and that Journal is not in a balanced state.
  */
 JEWEL_DERIVED_EXCEPTION(UnbalancedJournalException, PhatbooksException);
 
-
+/**
+ * Exception to be thrown when an attempt is made to create an additional
+ * instance of phatbooks::Session, after the maximum number of such
+ * instances has already been reached.
+ */
+JEWEL_DERIVED_EXCEPTION(TooManySessions, PhatbooksException);
 
 }  // namespace phatbooks
 

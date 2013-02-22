@@ -41,8 +41,9 @@ GraphicalSession::do_run(string const& filename)
 	wchar_t* argv1_wct = const_cast<wchar_t*>(argv1_w.c_str());
 
 	// We now construct the arguments required by wxEntryStart.
-	int argca = 2;
 	wchar_t* argvs[] = { argv0_wct, argv1_wct, 0 };
+	int argca = 0;
+	while (argvs[argca] != 0) ++argca;
 
 	// At last...
 	wxEntryStart(argca, argvs);
