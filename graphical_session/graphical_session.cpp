@@ -2,11 +2,8 @@
 #include "application.hpp"
 #include "b_string.hpp"
 #include "wxs/my_app.hpp"
-#include <iostream>
 #include <string>
 
-using std::cerr;
-using std::endl;
 using std::string;
 using std::wstring;
 
@@ -36,14 +33,18 @@ GraphicalSession::do_run(string const& filename)
 	wxApp::SetInstance(pApp);
 	BString const app_name = Application::application_name();	
 
+	// The argv array required by wxEntryStart must be an
+	// array of wchar_t*. We produce these as follows.
 	wstring const argv0_w(app_name.begin(), app_name.end());
 	wstring const argv1_w(filename.begin(), filename.end());
-	int argca = 2;
-
-	// WARNING This sucks.
 	wchar_t* argv0_wct = const_cast<wchar_t*>(argv0_w.c_str());
 	wchar_t* argv1_wct = const_cast<wchar_t*>(argv1_w.c_str());
-	wchar_t* argvs[] = { argv0_wct, argv1_wct };
+
+	// We now construct the arguments required by wxEntryStart.
+	int argca = 2;
+	wchar_t* argvs[] = { argv0_wct, argv1_wct, 0 };
+
+	// At last...
 	wxEntryStart(argca, argvs);
 	wxTheApp->OnInit();
 	wxTheApp->OnRun();
