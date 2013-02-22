@@ -41,9 +41,9 @@ GraphicalSession::do_run(string const& filename)
 	int argca = 2;
 
 	// WARNING This sucks.
-	wchar_t* argv0_wct = const_cast<wchar_t*>(app_name_w.c_str());
-	wchar_t* argv1_wct = const_cast<wchar_t*>(argv1.c_str());
-	wchar_t* argvs[2] = { argv0_wct, argv1_wct };
+	wchar_t* argv0_wct = const_cast<wchar_t*>(argv0_w.c_str());
+	wchar_t* argv1_wct = const_cast<wchar_t*>(argv1_w.c_str());
+	wchar_t* argvs[] = { argv0_wct, argv1_wct };
 	wxEntryStart(argca, argvs);
 	wxTheApp->OnInit();
 	wxTheApp->OnRun();
