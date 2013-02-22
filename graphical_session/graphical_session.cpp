@@ -1,4 +1,5 @@
 #include "graphical_session.hpp"
+#include "application.hpp"
 #include "b_string.hpp"
 #include "wxs/my_app.hpp"
 #include <iostream>
@@ -33,12 +34,17 @@ GraphicalSession::do_run(string const& filename)
 	// with a main function - we already have our own.
 	wxApp* pApp = new MyApp();
 	wxApp::SetInstance(pApp);
-	int dummy = 0;
-	wstring const argv1(filename.begin(), filename.end());
+	BString const app_name = Application::application_name();	
+
+	wstring const argv0_w(app_name.begin(), app_name.end());
+	wstring const argv1_w(filename.begin(), filename.end());
+	int argca = 2;
 
 	// WARNING This sucks.
-	wchar_t* argv1wc = const_cast<wchar_t*>(argv1.c_str());
-	wxEntryStart(dummy, &argv1wc);
+	wchar_t* argv0_wct = const_cast<wchar_t*>(app_name_w.c_str());
+	wchar_t* argv1_wct = const_cast<wchar_t*>(argv1.c_str());
+	wchar_t* argvs[2] = { argv0_wct, argv1_wct };
+	wxEntryStart(argca, argvs);
 	wxTheApp->OnInit();
 	wxTheApp->OnRun();
 	wxTheApp->OnExit();

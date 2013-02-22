@@ -2,6 +2,7 @@
 #define GUARD_session_hpp
 
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <list>
 #include <string>
@@ -18,7 +19,8 @@ class PhatbooksDatabaseConnection;
  * May be inherited by a class representing a more specific kind
  * of session, e.g. a console session or a GUI session.
  */
-class Session
+class Session:
+	boost::noncopyable
 {
 public:
 	Session();
