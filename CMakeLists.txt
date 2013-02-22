@@ -6,6 +6,7 @@ set (immediate_directories
      .
 	 account
 	 application
+	 b_string
 	 commodity
 	 date
 	 entry
