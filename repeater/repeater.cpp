@@ -23,7 +23,6 @@ using std::vector;
 namespace phatbooks
 {
 
-;
 
 void
 Repeater::setup_tables(PhatbooksDatabaseConnection& dbc)

@@ -65,9 +65,6 @@ namespace phatbooks
 {
 
 
-;
-;
-
 void
 ProtoJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 {

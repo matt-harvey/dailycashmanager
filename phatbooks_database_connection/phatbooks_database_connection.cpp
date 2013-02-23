@@ -94,7 +94,8 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 	// avoidance of invalid reads and writes (and thus of undefined
 	// behaviour) is crucially dependent on the order in which
 	// the IdentityMaps are destroyed (because objects in the
-	// cache contains Handles to other objects in other caches).
+	// cache contains Handles to other objects in other caches, and we
+	// don't want dangling Handles).
 	// This is horribly brittle! Find a way of guarding against error here.
 	// Basically, where instances of a class ("Referor") contain
 	// handles to instances

@@ -43,7 +43,8 @@ class OrdinaryJournalImpl;
 class RepeaterImpl;
 
 
-/** Phatbooks-specific database connection class.
+/**
+ * Phatbooks-specific database connection class.
  * See API documentation for sqloxx::DatabaseConnection,
  * for parts of API inherited from sqloxx::DatabaseConnection.
  */
@@ -161,9 +162,7 @@ private:
 };  // PhatbooksDatabaseConnection
 
 
-
 }  // namespace phatbooks
-
 
 
 #endif  // GUARD_phatbooks_database_connection_hpp

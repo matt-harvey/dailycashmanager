@@ -27,8 +27,6 @@ namespace gregorian = boost::gregorian;
 namespace phatbooks
 {
 
-;
-;
 
 
 class Account;

@@ -180,7 +180,7 @@ make_detailed_account_row(Account const& account)
 	(	bstring_to_std8(account_type_to_string(account.account_type()))
 	);
 	ret->push_back(bstring_to_std8(account.description()));
-	;return ret;
+	return ret;
 }
 
 
@@ -190,18 +190,14 @@ make_detailed_account_row(Account const& account)
 
 bool is_asset_or_liability(Account const& account)
 {
-	bool ret;
 	switch (account.account_type())
 	{
 	case account_type::asset:
 	case account_type::liability:
-		ret = true;
-		break;
+		return true;
 	default:
-		ret = false;
-		break;
+		return false;
 	}
-	return ret;
 }
 
 bool is_expense(Account const& account)
@@ -216,23 +212,19 @@ bool is_revenue(Account const& account)
 
 bool is_envelope(Account const& account)
 {
-	bool ret;
 	switch (account.account_type())
 	{
 	case account_type::asset:
 	case account_type::liability:
-		ret = false;
-		break;
+		return false;
 	case account_type::equity:
 	case account_type::revenue:
 	case account_type::expense:
 	case account_type::pure_envelope:
-		ret = true;
-		break;
+		return true;
 	default:
 		assert (false);	
 	}
-	return ret;
 }
 
 

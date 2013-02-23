@@ -37,9 +37,6 @@ namespace phatbooks
 {
 
 
-;
-;
-
 
 string
 DraftJournalImpl::primary_table_name()
