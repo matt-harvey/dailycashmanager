@@ -46,10 +46,6 @@ namespace phatbooks
  * in regards to the \e planned purpose to which the wealth will be put. For
  * example, allocating $100.00 of one's earnings to planned expenditure on
  * food represents a budget transaction.
- *
- * @todo OrdinaryJournalImpl and DraftJournalImpl need to have remove()
- * redefined, to ensure it deletes the contained entries and repeaters
- * as well as just the journal.
  */
 class Journal
 {
