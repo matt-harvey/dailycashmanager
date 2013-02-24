@@ -39,7 +39,6 @@ using TCLAP::SwitchArg;
 using TCLAP::UnlabeledValueArg;
 
 
-
 int main(int argc, char** argv)
 {
 	try

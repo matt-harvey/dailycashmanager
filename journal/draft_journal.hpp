@@ -32,11 +32,6 @@ class Repeater;
  * Alternatively, a DraftJournal may have Repeaters associated with it.
  * A DraftJournal with Repeaters corresponds to a recurring transaction,
  * that is automatically posted by the application at specified intervals.
- *
- * @todo HIGH PRIORITY If the DraftJournal does not balance, we need to
- * avoid posting with autoposts. Furthermore, we need to include wording
- * in the DraftJournal description alerting the user to the fact that it
- * will not be posted for this reason.
  */
 class DraftJournal:
 	public PersistentJournal,
