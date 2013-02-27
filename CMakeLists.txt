@@ -42,6 +42,7 @@ if (WIN32)
 		 boost_regex-mgw46-mt-1_53
 		 boost_system-mgw46-mt-1_53
 		 jewel
+		 consolixx
 		 UnitTest++
 		 sqloxx
 	     wxmsw29u
@@ -76,6 +77,7 @@ else ()
 		 jewel 
 		 m
 		 z
+		 consolixx
 		 pthread
 		 UnitTest++
 		 sqloxx
@@ -118,9 +120,6 @@ endif ()
 
 
 set (tui_files
-	 consolixx/get_input.cpp
-	 consolixx/table.cpp
-	 consolixx/text_session.cpp
 	 phatbooks_text_session/phatbooks_text_session.cpp)
 
 set (main_files

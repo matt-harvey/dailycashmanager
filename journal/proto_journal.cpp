@@ -19,7 +19,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "b_string.hpp"
-#include "consolixx/table.hpp"
+#include <consolixx/table.hpp>
 #include <jewel/output_aux.hpp>
 #include <sqloxx/next_auto_key.hpp>
 #include <sqloxx/sql_statement.hpp>

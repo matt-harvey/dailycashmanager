@@ -31,9 +31,9 @@
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include "b_string.hpp"
-#include "consolixx/get_input.hpp"
-#include "consolixx/table.hpp"
-#include "consolixx/text_session.hpp"
+#include <consolixx/get_input.hpp>
+#include <consolixx/table.hpp>
+#include <consolixx/text_session.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/handle.hpp>
