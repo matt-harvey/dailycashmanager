@@ -40,7 +40,7 @@ Session::Session():
 		(	"Exceeded maximum number of instances of phatbooks::Session."
 		);
 	}
-	assert (s_num_instances >= s_max_instances);
+	assert (s_num_instances <= s_max_instances);
 }
 
 
@@ -49,6 +49,13 @@ Session::~Session()
 	assert (s_num_instances > 0);
 	assert (s_num_instances <= s_max_instances);
 	--s_num_instances;
+}
+
+
+int
+Session::run()
+{
+	return do_run();
 }
 
 

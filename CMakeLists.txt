@@ -10,6 +10,7 @@ set (immediate_directories
 	 commodity
 	 date
 	 entry
+	 filepath_validator
 	 finformat
 	 graphical_session
 	 journal
@@ -136,6 +137,7 @@ set (main_files
 	 entry/entry.cpp
 	 entry/entry_impl.cpp
 	 entry/entry_reader.cpp
+	 filepath_validator/filepath_validator.cpp
 	 finformat/finformat.cpp
 	 journal/draft_journal.cpp
 	 journal/draft_journal_impl.cpp

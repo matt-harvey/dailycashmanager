@@ -22,6 +22,7 @@
 #include "draft_journal_reader.hpp"
 #include "entry.hpp"
 #include "entry_reader.hpp"
+#include "filepath_validator.hpp"
 #include "finformat.hpp"
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
@@ -460,7 +461,20 @@ PhatbooksTextSession::~PhatbooksTextSession()
 {
 }
 
-	
+int
+PhatbooksTextSession::do_run()
+{
+	cout << "Enter a file to open: ";
+	string filepath_str = get_constrained_user_input
+	(	is_valid_filepath,
+		"You have not entered a valid filepath. Please try again.",
+	);
+	if (filepath_str.empty())
+	{
+				
+
+
+}
 
 int
 PhatbooksTextSession::do_run(string const& filename)

@@ -61,7 +61,12 @@ public:
 
 
 private:
-		
+
+	/**
+	 * Similar to do_run(std::string const&), but does not take a filename
+	 * argument.
+	 */
+	int do_run();
 
 	/**
 	 * Implements virtual function do_run, inherited from
@@ -86,6 +91,8 @@ private:
 	 * should be opened for the session.
 	 */
 	int do_run(std::string const& filename);
+
+
 
 
 	// This effects only the presentation to the user when

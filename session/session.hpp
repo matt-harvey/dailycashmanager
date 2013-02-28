@@ -36,13 +36,25 @@ public:
 	 */
 	Session();
 	virtual ~Session();
+
+	/**
+	 * Run a session in which the user chooses a file to open from
+	 * within the session.
+	 */
+	int run();
+
+	/**
+	 * Run a session in which the file to open is given by p_filename.
+	 */
 	int run(std::string const& p_filename);
+
 protected:
 	PhatbooksDatabaseConnection& database_connection() const;
 	boost::shared_ptr<std::list<OrdinaryJournal> > update_repeaters_till
 	(	boost::gregorian::date d
 	);
 private:
+	virtual int do_run() = 0;
 	virtual int do_run(std::string const& p_filename) = 0;
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	static int const s_max_instances = 1;

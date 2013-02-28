@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 		UnlabeledValueArg<string> filepath_arg
 		(	"FILE",
 			"File to open or create",
-			true,
+			false,
 			"",
 			"string"
 		);
@@ -67,10 +67,20 @@ int main(int argc, char** argv)
 			// TODO This may require a wstring or BString if we want to
 			// support non-ASCII filenames on Windows. We would need to
 			// change the interface with phatbooks::Session.
+			if (filename.empty())
+			{
+				return graphical_session.run();
+			}
+			assert (!filename.empty());
 			return graphical_session.run(filename);
 		}
 		assert (!is_gui);
 		PhatbooksTextSession text_session;
+		if (filename.empty())
+		{
+			return text_session.run();
+		}
+		assert (!filename.empty());
 		return text_session.run(filename);
 	}
 	catch (ArgException& e)
