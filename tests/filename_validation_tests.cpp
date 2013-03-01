@@ -1,4 +1,4 @@
-#include "filename_validation.cpp"
+#include "filename_validation.hpp"
 #include <UnitTest++/UnitTest++.h>
 #include <cassert>
 #include <cstdlib>
