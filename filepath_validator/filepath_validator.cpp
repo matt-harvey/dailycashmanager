@@ -61,13 +61,18 @@ namespace
 	 */
 	bool is_generally_prohibited_filename(string const& s, string& message)
 	{
+		if (s.empty())
+		{
+			message = "Filename cannot be empty string.";
+			return true;
+		}
 		for (string::const_iterator it = s.begin(); it != s.end(); ++it)
 		{
 			if (is_prohibited_filename_character(*it))
 			{
 				if (*it == '\0')
 				{
-					message = "The NULL character "
+					message = "The NULL character ";
 				}
 				else
 				{
@@ -78,21 +83,22 @@ namespace
 				return true;
 			}
 		}
-		regex const windows_special_prohibited_filenames =
-			"\\b(?i:con|prn|aux|nul|com[1-9]|lpt[1-9])\\b";
+		regex const windows_special_prohibited_filenames
+		(	"\\b(?i:con|prn|aux|nul|com[1-9]|lpt[1-9])\\b"
+		);
 		if (regex_match(s, windows_special_prohibited_filenames))
 		{
-			message = "\"" + s + "\" cannot be used as a filename."
+			message = "\"" + s + "\" cannot be used as a filename.";
 			return true;
 		}
-		regex const two_dots_filename = ".*\.\..*";
+		regex const two_dots_filename(".*\\.\\..*");
 		if (regex_match(s, two_dots_filename))
 		{
-			message = "Cannot use two consecutive dots in a filename."
+			message = "Cannot use two consecutive dots in a filename.";
 			return true;
 		}
 		return false;
-	};
+	}
 
 	/**
 	 * @returns base of filename, i.e. filename not including
@@ -140,10 +146,10 @@ namespace
 	 * @return filename extension, \e including the dot. Can be empty
 	 * string.
 	 */
-	bool filename_extension(string const& s)
+	string filename_extension(string const& s)
 	{
 		typedef string::const_iterator Iter;
-		Iter it = s.end();
+		Iter rev = s.end();
 		while (rev != s.begin() && *rev != '.') --rev;
 		if (rev == s.begin())
 		{
@@ -178,8 +184,6 @@ namespace
 		}
 		return false;
 	}
-}
-
 
 }  // end anonymous namespace
 
