@@ -60,13 +60,13 @@ Session::run()
 
 
 int
-Session::run(string const& p_filename)
+Session::run(string const& filepath_str)
 {
-	if (p_filename.empty())
+	if (filepath_str.empty())
 	{
 		throw InvalidFilename("Filename is empty string.");
 	}	
-	return do_run(p_filename);
+	return do_run(filepath_str);
 }
 
 

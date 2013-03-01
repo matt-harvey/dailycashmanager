@@ -22,7 +22,7 @@
 #include "draft_journal_reader.hpp"
 #include "entry.hpp"
 #include "entry_reader.hpp"
-#include "filepath_validator.hpp"
+#include "filename_validation.hpp"
 #include "finformat.hpp"
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
@@ -464,26 +464,85 @@ PhatbooksTextSession::~PhatbooksTextSession()
 int
 PhatbooksTextSession::do_run()
 {
-	cout << "Enter a file to open: ";
-	string filepath_str = get_constrained_user_input
-	(	is_valid_filepath,
-		"You have not entered a valid filepath. Please try again.",
-	);
-	if (filepath_str.empty())
+	// TODO Allow for the omit the extension when on Windows?
+	string filepath_str;
+
+	// First make sure the just filename is OK.
+	for (bool have_valid_filename = false; !have_valid_filename; )
 	{
-				
-
-
+		cout << "Enter name of file to open: ";
+		filepath_str = get_user_input();
+		boost::filesystem::path const filepath(filepath_str);
+		string const filename = filepath.filename().string();
+		string error_message;
+		if (is_valid_filename(filename, error_message))
+		{
+			assert (error_message.empty());
+			have_valid_filename = true;
+		}
+		else
+		{
+			assert (!error_message.empty());
+			cout << "Cannot open file with this name. "
+			     << error_message << endl;
+			assert (!have_valid_filename);
+		}
+	}
+	boost::filesystem::path const final_filepath(filepath_str);
+	int const result = run_with_filepath(final_filepath);
+	if (result == 1)
+	{
+		// Couldn't open filepath
+		cout << "Could not open this file." << endl;
+		cout << "Try again with another file? (y/n): ";
+		string const response = get_constrained_user_input
+		(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
+			"Enter 'y' to try opening another file, or 'n' to abort: ",
+			false
+		);
+		if (response != "y")
+		{
+			cout << "Exiting program." << endl;
+			return 0;
+		}
+		assert (response == "y");
+		assert (!have_valid_filename);
+	}
+	else
+	{
+		assert (result == 0);
+		return result;
+	}
 }
 
 int
-PhatbooksTextSession::do_run(string const& filename)
+PhatbooksTextSession::do_run(string const& filepath_str)
 {
-	boost::filesystem::path filepath(filename);
+	boost::filesystem::path filepath(filepath_str);
+	string const filename = filepath.filename().string();
+	string error_message;
+	if (is_valid_filename(filename, error_message))
+	{
+		boost::filesystem::path const final_filepath(filepath_str);
+		return run_with_filepath(final_filepath);
+	}
+	assert (!is_valid_filename);
+	assert (!error_message.empty());
+	cout << "Cannot open file with this name. "
+	     << error_message << endl;
+	return 1;
+}
+
+
+int
+PhatbooksTextSession::run_with_filepath
+(	boost::filesystem::path const& filepath
+)
+{
 	if (!boost::filesystem::exists(boost::filesystem::status(filepath)))
 	{
 		cout << "File does not exist. "
-		     << "Create file \"" << filename << "\"? (y/n): ";
+		     << "Create file \"" << filepath.string() << "\"? (y/n): ";
 		string const response = get_constrained_user_input
 		(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
 			"Try again, entering 'y' to create file, or 'n' to abort: ",
@@ -503,7 +562,8 @@ PhatbooksTextSession::do_run(string const& filename)
 	}
 	catch (SQLiteException&)
 	{
-		cout << "Could not open file \"" << filename << "\"." << endl;
+		cout << "Could not open file \"" << filepath.string() << "\"."
+		     << endl;
 		return 1;
 	}
 
@@ -519,7 +579,6 @@ PhatbooksTextSession::do_run(string const& filename)
 	m_main_menu->present_to_user();	
 	return 0;
 }
-
 
 
 string

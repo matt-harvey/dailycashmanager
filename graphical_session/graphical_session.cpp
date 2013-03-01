@@ -41,7 +41,7 @@ GraphicalSession::do_run()
 	// We now construct the arguments required by wxEntryStart.
 	wchar_t* argvs[] = { argv0_wct, 0 };
 	int argca = 0;
-	while (argvs[argva] != 0) ++argvca;
+	while (argvs[argca] != 0) ++argca;
 
 	// At last...
 	// TODO We need to invoke a wizard to assist the user
@@ -58,9 +58,9 @@ GraphicalSession::do_run()
 
 
 int
-GraphicalSession::do_run(string const& filename)
+GraphicalSession::do_run(string const& filepath_str)
 {
-	// TODO Validate the filename here first - similar to what
+	// TODO Validate the filepath here first - similar to what
 	// we do in PhatbooksTextSession::do_run(...).
 	
 	// TODO There is code duplicated between here and the
@@ -73,7 +73,7 @@ GraphicalSession::do_run(string const& filename)
 	// The argv array required by wxEntryStart must be an
 	// array of wchar_t*. We produce these as follows.
 	wstring const argv0_w(app_name.begin(), app_name.end());
-	wstring const argv1_w(filename.begin(), filename.end());
+	wstring const argv1_w(filepath_str.begin(), filepath_str.end());
 	wchar_t* argv0_wct = const_cast<wchar_t*>(argv0_w.c_str());
 	wchar_t* argv1_wct = const_cast<wchar_t*>(argv1_w.c_str());
 

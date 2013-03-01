@@ -3,6 +3,7 @@
 
 #include "session.hpp"
 #include <consolixx/text_session.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/function.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
@@ -87,13 +88,23 @@ private:
 	 * manifested as an exception; or \c 0 on successful
 	 * completion.
 	 *
-	 * @param filename Is the name of a file to which a database connection
-	 * should be opened for the session.
+	 * @param filepath_str Is the name of a file(path) to which a
+	 * database connection should be opened for the session.
 	 */
-	int do_run(std::string const& filename);
+	int do_run(std::string const& filepath_str);
 
-
-
+	/**
+	 * Given a filepath string which we have already evaluated and found
+	 * acceptable "qua filepath string", we can call this function to
+	 * run a session with a database connection opened to this filepath.
+	 *
+	 * @returns \c 1 if filepath cannot be opened.
+	 *
+	 * @todo It would be better to use various exceptions to indicate
+	 * different failure sources here. Our response to the user might
+	 * also differ depending on the reason for failure.
+	 */
+	int run_with_filepath(boost::filesystem::path const& filepath);
 
 	// This effects only the presentation to the user when
 	// constructing the journal and is not stored as an aspect of

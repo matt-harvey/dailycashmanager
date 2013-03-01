@@ -24,10 +24,10 @@ public:
 private:
 
 	/**
-	 * Similar to do_run(std::string const&), but a filename is not
+	 * Similar to do_run(std::string const&), but a filepath is not
 	 * provided. The user may open a file from within the Session.
 	 */
-	int do_run()
+	int do_run();
 
 	/**
 	 * Implements virtual function do_run, inherited from
@@ -39,7 +39,7 @@ private:
 	 * @returns \c 1 if there is some kind of error condition that is
 	 * not manifested as an exception; or \c 0 on successful completion.
 	 */
-	int do_run(std::string const& filename);
+	int do_run(std::string const& filepath_str);
 
 };
 

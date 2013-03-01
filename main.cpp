@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 		cmd.add(filepath_arg);
 		cmd.parse(argc, argv);
 		bool const is_gui = gui_switch.getValue();
-		string const filename = filepath_arg.getValue();
+		string const filepath_str = filepath_arg.getValue();
 		if (is_gui)
 		{
 			GraphicalSession graphical_session;
@@ -67,21 +67,21 @@ int main(int argc, char** argv)
 			// TODO This may require a wstring or BString if we want to
 			// support non-ASCII filenames on Windows. We would need to
 			// change the interface with phatbooks::Session.
-			if (filename.empty())
+			if (filepath_str.empty())
 			{
 				return graphical_session.run();
 			}
-			assert (!filename.empty());
-			return graphical_session.run(filename);
+			assert (!filepath_str.empty());
+			return graphical_session.run(filepath_str);
 		}
 		assert (!is_gui);
 		PhatbooksTextSession text_session;
-		if (filename.empty())
+		if (filepath_str.empty())
 		{
 			return text_session.run();
 		}
-		assert (!filename.empty());
-		return text_session.run(filename);
+		assert (!filepath_str.empty());
+		return text_session.run(filepath_str);
 	}
 	catch (ArgException& e)
 	{

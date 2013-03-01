@@ -44,9 +44,9 @@ public:
 	int run();
 
 	/**
-	 * Run a session in which the file to open is given by p_filename.
+	 * Run a session in which the file to open is given by filepath_str.
 	 */
-	int run(std::string const& p_filename);
+	int run(std::string const& filepath_str);
 
 protected:
 	PhatbooksDatabaseConnection& database_connection() const;
@@ -55,7 +55,7 @@ protected:
 	);
 private:
 	virtual int do_run() = 0;
-	virtual int do_run(std::string const& p_filename) = 0;
+	virtual int do_run(std::string const& filepath_str) = 0;
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	static int const s_max_instances = 1;
 	static int const s_default_caching_level = 10;

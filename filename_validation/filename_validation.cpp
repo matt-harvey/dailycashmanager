@@ -174,7 +174,8 @@ namespace
 		{
 			message =
 				"Filename must have extension " +
-				Application::filename_extension();
+				Application::filename_extension() +
+				".";
 			return true;
 		}
 		if (is_generally_prohibited_filename(s, message))
@@ -194,6 +195,12 @@ is_valid_filename
 	bool extension_is_explicit
 )
 {
+	// Special case
+	if (s == Application::filename_extension())
+	{
+		message = "Filename cannot consist solely of extension.";
+		return false;
+	}
 	if (extension_is_explicit)
 	{
 		return !is_prohibited_phatbooks_filename(s, message);
