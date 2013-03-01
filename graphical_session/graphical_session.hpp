@@ -24,6 +24,12 @@ public:
 private:
 
 	/**
+	 * Similar to do_run(std::string const&), but a filename is not
+	 * provided. The user may open a file from within the Session.
+	 */
+	int do_run()
+
+	/**
 	 * Implements virtual function do_run, inherited from
 	 * phatbooks::Session.
 	 * 
