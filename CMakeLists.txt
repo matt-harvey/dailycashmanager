@@ -10,7 +10,7 @@ set (immediate_directories
 	 commodity
 	 date
 	 entry
-	 filepath_validator
+	 filename_validation
 	 finformat
 	 graphical_session
 	 journal
@@ -137,7 +137,7 @@ set (main_files
 	 entry/entry.cpp
 	 entry/entry_impl.cpp
 	 entry/entry_reader.cpp
-	 filepath_validator/filepath_validator.cpp
+	 filename_validation/filename_validation.cpp
 	 finformat/finformat.cpp
 	 journal/draft_journal.cpp
 	 journal/draft_journal_impl.cpp
@@ -165,7 +165,7 @@ set (test_files
 	 ${main_files}
 	 tests/test.cpp
 	 tests/draft_journal_tests.cpp
-	 tests/filepath_validator_tests.cpp
+	 tests/filename_validation_tests.cpp
 	 tests/interval_type_tests.cpp
 	 tests/ordinary_journal_tests.cpp
 	 tests/phatbooks_tests_common.cpp

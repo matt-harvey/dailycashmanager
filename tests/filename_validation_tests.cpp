@@ -1,4 +1,4 @@
-#include "filepath_validator.hpp"
+#include "filename_validation.cpp"
 #include <UnitTest++/UnitTest++.h>
 #include <cassert>
 #include <cstdlib>
@@ -17,7 +17,7 @@ namespace phatbooks
 namespace test
 {
 
-TEST(test_is_valid_filename)
+TEST(test_is_valid_filename_re_generally_bad_filenames)
 {
 	const char* const generally_bad_filenames[] =
 	{	"\\",
@@ -58,6 +58,8 @@ TEST(test_is_valid_filename)
 		CHECK(!is_valid_filename(bad_name, message, false));
 	}
 
+	// We have to test strings containing the null character separately, as
+	// we include the null character in a string literals as above.
 	string nul_containing_string;
 	nul_containing_string.push_back('\0');
 	string message;
@@ -73,7 +75,12 @@ TEST(test_is_valid_filename)
 	CHECK(!is_valid_filename(nul_containing_string_2, message));
 	CHECK(!is_valid_filename(nul_containing_string_2, message, true));
 	CHECK(!is_valid_filename(nul_containing_string_2, message, false));
-	
+}
+
+
+
+TEST(test_is_valid_filename_re_generally_good_filenames)
+{
 	// Note none of these have the right Phatbooks extension though.
 	// We test that they are good generally filenames but can't
 	// serve as Phatbooks database files.
@@ -111,7 +118,11 @@ TEST(test_is_valid_filename)
 		CHECK(!is_valid_filename(good_name, message, true));
 		CHECK(!is_valid_filename(good_name, message));
 	}
+}
 
+
+TEST(test_is_valid_filename_re_good_phatbooks_filenames)
+{
 	const char* const good_phatbooks_filenames[] =
 	{	"hello.phat",
 		"space are ok.phat",
@@ -135,7 +146,6 @@ TEST(test_is_valid_filename)
 		CHECK(is_valid_filename(good_name, message, true));
 		CHECK(is_valid_filename);
 	}
-
 }
 
 

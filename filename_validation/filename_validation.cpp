@@ -1,4 +1,4 @@
-#include "filepath_validator.hpp"
+#include "filename_validation.hpp"
 #include "application.hpp"
 #include <boost/regex.hpp>
 #include <jewel/on_windows.hpp>
@@ -12,7 +12,6 @@ using std::string;
 
 namespace phatbooks
 {
-
 
 namespace
 {
@@ -202,8 +201,6 @@ is_valid_filename
 	assert (!extension_is_explicit);
 	return !is_generally_prohibited_filename(s, message);
 }
-
-
 
 
 }  // namespace phatbooks

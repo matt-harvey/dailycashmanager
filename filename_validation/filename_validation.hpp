@@ -1,5 +1,5 @@
-#ifndef GUARD_filepath_validator_hpp
-#define GUARD_filepath_validator_hpp
+#ifndef GUARD_filename_validation_hpp
+#define GUARD_filename_validation_hpp
 
 #include <string>
 
@@ -48,8 +48,7 @@ bool is_valid_filepath
 );
 
 
-
 }  // namespace phatbooks
 
 
-#endif
+#endif  // GUARD_filename_validation_hpp
