@@ -90,7 +90,11 @@ TEST(test_is_valid_filename)
 		"HOW_ARE_CAPITALS_EVEN_AN_ISSUE",
 		"spaces are fine          even    stupidly many  ",
 		"does_not_really_have_a.phat.extension",
-		".phat"   // Must have non-empty base
+		".phat",   // Must have non-empty base
+		"nodotphat",
+		"badly_positioned_do.tphat",
+		"so_is_thisp.hat",
+		"and_this.phat."
 	};
 	std::size_t const num_generally_good_filenames =
 		sizeof(generally_good_filenames) /
