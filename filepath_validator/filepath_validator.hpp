@@ -29,12 +29,24 @@ namespace phatbooks
  * @returns \e true if and only if this filename may be used to identify
  * a Phatbooks database file. An error message is stored in \e message if
  * and only if \e false is returned.
+ *
+ * @todo HIGH PRIORITY Testing.
  */
 bool is_valid_filename
 (	std::string const& s,
 	std::string& message,
 	bool extension_is_explicit = true
 );
+
+/**
+ * @todo HIGH PRIORITY Implement this.
+ */
+bool is_valid_filepath
+(	std::string const& s,
+	std::string& message,
+	bool extension_is_explicit = true
+);
+
 
 
 }  // namespace phatbooks
