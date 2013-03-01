@@ -10,7 +10,16 @@ namespace gui
 
 
 MyFrame::MyFrame(wxString const& title):
-	wxFrame(NULL, wxID_ANY, title)
+	wxFrame
+	(	0,
+		wxID_ANY,
+		title,
+		wxDefaultPosition,
+		wxSize   // Make it full screen (this is a portable way).
+		(	wxSystemSettings::GetMetric(wxSYS_SCREEN_X),
+			wxSystemSettings::GetMetric(wxSYS_SCREEN_Y)
+		)
+	)
 {
 	// TODO The application icon, thus...
 	// Set the frame icon

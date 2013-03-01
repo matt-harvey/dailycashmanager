@@ -61,7 +61,6 @@ bool MyApp::OnInit()
 	top_sizer->Fit(top_panel);
 	top_sizer->SetSizeHints(top_panel);
 
-
 	// Show it
 	frame->Show(true);
 
