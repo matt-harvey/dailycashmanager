@@ -1,6 +1,6 @@
 #include "filepath_validator.hpp"
-#include "windows_macro.hpp"
 #include <boost/regex.hpp>
+#include <jewel/on_windows.hpp>
 #include <string>
 
 using boost::regex;
@@ -14,7 +14,7 @@ bool
 is_valid_filepath(string const& s)
 {
 	regex const target_regex;	
-#	if PHATBOOKS_ON_WINDOWS
+#	if JEWEL_ON_WINDOWS
 		target_regex = // TODO
 #	else
 		target_regex = // TODO
