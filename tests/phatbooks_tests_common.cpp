@@ -17,6 +17,7 @@ using std::endl;
 
 namespace filesystem = boost::filesystem;
 
+
 namespace phatbooks
 {
 namespace test
@@ -42,6 +43,7 @@ void abort_if_exists(filesystem::path const& filepath)
 	return;
 }
 
+
 void setup_test_commodities(PhatbooksDatabaseConnection& dbc)
 {
 	Commodity australian_dollars(dbc);
@@ -62,6 +64,7 @@ void setup_test_commodities(PhatbooksDatabaseConnection& dbc)
 
 	return;
 }
+
 
 void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
 {
@@ -97,6 +100,7 @@ TestFixture::TestFixture():
 	assert (pdbc->is_valid());
 }
 
+
 TestFixture::~TestFixture()
 {
 	assert (pdbc->is_valid());
@@ -104,10 +108,6 @@ TestFixture::~TestFixture()
 	filesystem::remove(db_filepath);
 	assert (!file_exists(db_filepath));
 }
-
-
-
-
 
 
 

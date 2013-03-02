@@ -195,14 +195,13 @@ is_valid_filename
 	bool extension_is_explicit
 )
 {
-	// Special case
-	if (s == Application::filename_extension())
-	{
-		message = "Filename cannot consist solely of extension.";
-		return false;
-	}
 	if (extension_is_explicit)
 	{
+		if (s == Application::filename_extension())
+		{
+			message = "Filename cannot consist solely of extension.";
+			return false;
+		}
 		return !is_prohibited_phatbooks_filename(s, message);
 	}
 	assert (!extension_is_explicit);

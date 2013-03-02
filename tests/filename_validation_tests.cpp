@@ -113,6 +113,10 @@ TEST(test_is_valid_filename_re_generally_good_filenames)
 
 		// Good generally
 		CHECK(is_valid_filename(good_name, message, false));
+		if (!is_valid_filename(good_name, message, false))
+		{
+			cout << good_name << endl;
+		}
 
 		// But doesn't have Phatbooks extension
 		CHECK(!is_valid_filename(good_name, message, true));
