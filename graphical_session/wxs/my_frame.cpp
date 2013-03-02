@@ -1,5 +1,6 @@
 #include "my_frame.hpp"
 #include "icon.xpm"
+#include <jewel/on_windows.hpp>
 #include <wx/string.h>
 #include <wx/icon.h>
 #include <wx/wx.h>
@@ -17,10 +18,14 @@ MyFrame::MyFrame(wxString const& title):
 		wxID_ANY,
 		title,
 		wxDefaultPosition,
-		wxSize   // Make it full screen (this is a portable way).
-		(	wxSystemSettings::GetMetric(wxSYS_SCREEN_X),
-			wxSystemSettings::GetMetric(wxSYS_SCREEN_Y)
-		)
+#		if JEWEL_ON_WINDOWS
+			wxDefaultSize
+#		else
+			wxSize
+			(	wxSystemSettings::GetMetric(wxSYS_SCREEN_X),
+				wxSystemSettings::GetMetric(wxSYS_SCREEN_Y)
+			)
+#		endif
 	)
 {
 	// Set the frame icon
@@ -45,6 +50,10 @@ MyFrame::MyFrame(wxString const& title):
 	wxMenuBar* menuBar = new wxMenuBar();
 	menuBar->Append(fileMenu, wxT("&File"));
 	menuBar->Append(helpMenu, wxT("&Help"));
+
+#	if JEWEL_ON_WINDOWS
+		Maximize();
+#	endif
 
 	// ... and attach this menu bar to the frame
 	SetMenuBar(menuBar);

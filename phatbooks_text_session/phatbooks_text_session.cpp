@@ -464,55 +464,56 @@ PhatbooksTextSession::~PhatbooksTextSession()
 int
 PhatbooksTextSession::do_run()
 {
-	// TODO Allow for the omit the extension when on Windows?
-	string filepath_str;
-
-	// First make sure the just filename is OK.
-	for (bool have_valid_filename = false; !have_valid_filename; )
-	{
-		cout << "Enter name of file to open: ";
-		filepath_str = get_user_input();
-		boost::filesystem::path const filepath(filepath_str);
-		string const filename = filepath.filename().string();
-		string error_message;
-		if (is_valid_filename(filename, error_message))
+	// TODO Tidy this ugly control flow.
+	start:
+		// TODO Allow for the omit the extension when on Windows?
+		string filepath_str;
+		for (bool have_valid_filename = false; !have_valid_filename; )
 		{
-			assert (error_message.empty());
-			have_valid_filename = true;
+			cout << "Enter name of file to open: ";
+			filepath_str = get_user_input();
+			boost::filesystem::path const filepath(filepath_str);
+			string const filename = filepath.filename().string();
+			string error_message;
+			if (is_valid_filename(filename, error_message))
+			{
+				assert (error_message.empty());
+				have_valid_filename = true;
+			}
+			else
+			{
+				assert (!error_message.empty());
+				cout << "Cannot open file with this name. "
+					 << error_message << endl;
+				assert (!have_valid_filename);
+			}
+		}
+		boost::filesystem::path const final_filepath(filepath_str);
+		int const result = run_with_filepath(final_filepath);
+		if (result == 1)
+		{
+			// Couldn't open filepath
+			cout << "Could not open this file." << endl;
+			cout << "Try again with another file? (y/n): ";
+			string const response = get_constrained_user_input
+			(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
+				"Enter 'y' to try opening another file, or 'n' to abort: ",
+				false
+			);
+			if (response != "y")
+			{
+				assert (response == "n");
+				cout << "Exiting program." << endl;
+				return 0;
+			}
+			assert (response == "y");
+			goto start;
 		}
 		else
 		{
-			assert (!error_message.empty());
-			cout << "Cannot open file with this name. "
-			     << error_message << endl;
-			assert (!have_valid_filename);
+			assert (result == 0);
+			return result;
 		}
-	}
-	boost::filesystem::path const final_filepath(filepath_str);
-	int const result = run_with_filepath(final_filepath);
-	if (result == 1)
-	{
-		// Couldn't open filepath
-		cout << "Could not open this file." << endl;
-		cout << "Try again with another file? (y/n): ";
-		string const response = get_constrained_user_input
-		(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
-			"Enter 'y' to try opening another file, or 'n' to abort: ",
-			false
-		);
-		if (response != "y")
-		{
-			cout << "Exiting program." << endl;
-			return 0;
-		}
-		assert (response == "y");
-		assert (!have_valid_filename);
-	}
-	else
-	{
-		assert (result == 0);
-		return result;
-	}
 }
 
 int
