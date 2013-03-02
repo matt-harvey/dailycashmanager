@@ -36,6 +36,8 @@ GraphicalSession::do_run()
 	// The argv array required by wxEntryStart must be an array
 	// of wchar_t*. We produce these as follows.
 	wstring const argv0_w(app_name.begin(), app_name.end());
+
+	// TODO Does this const_cast result in undefined behaviour?
 	wchar_t* argv0_wct = const_cast<wchar_t*>(argv0_w.c_str());
 
 	// We now construct the arguments required by wxEntryStart.
@@ -74,6 +76,8 @@ GraphicalSession::do_run(string const& filepath_str)
 	// array of wchar_t*. We produce these as follows.
 	wstring const argv0_w(app_name.begin(), app_name.end());
 	wstring const argv1_w(filepath_str.begin(), filepath_str.end());
+
+	// TODO Do these const_cast's result in undefined behaviour?
 	wchar_t* argv0_wct = const_cast<wchar_t*>(argv0_w.c_str());
 	wchar_t* argv1_wct = const_cast<wchar_t*>(argv1_w.c_str());
 
