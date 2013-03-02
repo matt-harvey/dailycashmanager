@@ -13,6 +13,7 @@ set (immediate_directories
 	 filename_validation
 	 finformat
 	 graphical_session
+	 icon
 	 journal
 	 output_aux
 	 phatbooks_database_connection

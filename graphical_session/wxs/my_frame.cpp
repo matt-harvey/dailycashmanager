@@ -1,5 +1,7 @@
 #include "my_frame.hpp"
+#include "icon.xpm"
 #include <wx/string.h>
+#include <wx/icon.h>
 #include <wx/wx.h>
 
 namespace phatbooks
@@ -21,9 +23,8 @@ MyFrame::MyFrame(wxString const& title):
 		)
 	)
 {
-	// TODO The application icon, thus...
 	// Set the frame icon
-	// SetIcon(wxIcon(my_icon_xpm));
+	SetIcon(wxIcon(icon_xpm));
 
 	// Create menus
 	wxMenu* helpMenu = new wxMenu;
