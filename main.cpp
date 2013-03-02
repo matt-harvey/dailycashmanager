@@ -15,7 +15,11 @@
 
 // TODO Create a decent icon for the application. We want this
 // in both .ico form (for Windows executable icon) and .xpm
-// form (for icon for MyFrame).
+// form (for icon for MyFrame). Note, when I exported my
+// "token icon" using GIMP to .ico format, and later used this
+// to create a double-clickable icon in Windows, only the text
+// on the icon appeared, and the background image became
+// transparent for some reason.
 
 #include "application.hpp"
 #include "b_string.hpp"
