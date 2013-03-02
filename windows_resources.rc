@@ -1,0 +1,2 @@
+phatbooks ICON "icon/icon.ico"
+#include <wx/msw/wx.rc>

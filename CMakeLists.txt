@@ -35,8 +35,8 @@ if (WIN32)
 	                -D__GNUWIN32
 					-D__UNICODE
 					-D_UNICODE
-					-DUNICODE
-					)
+					-DUNICODE)
+	set (windows_resources windows_resources.rc)
 	set (libraries
 	     boost_date_time-mgw46-mt-1_53
 		 boost_filesystem-mgw46-mt-1_53
@@ -113,7 +113,7 @@ else ()
 		 wxexpat-2.9
 		 wxtiff-2.9
 		 wxjpeg-2.9)
-
+	set(windows_resources)  # Left empty
 
 	add_definitions(#-D_FILE_OFFSET_BITS=64
 	                #-D_LARGE_FILES
@@ -174,7 +174,14 @@ set (test_files
 
 
 
-add_executable (phatbooks main.cpp ${main_files} ${tui_files} ${gui_files})
+add_executable(
+	phatbooks
+	main.cpp
+	${main_files}
+	${tui_files}
+	${gui_files}
+	${windows_resources}
+)
 target_link_libraries (phatbooks ${libraries})
 
 add_executable (phatbooks_test ${test_files})
