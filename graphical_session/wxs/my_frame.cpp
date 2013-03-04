@@ -29,6 +29,10 @@ MyFrame::MyFrame(wxString const& title):
 	)
 {
 	// Set the frame icon
+	// TODO I should use SetIcons to associate several icons of
+	// different sizes with the Window. This avoids possible ugliness from
+	// resizing of a single icon when different sizes are required in
+	// different situations.
 	SetIcon(wxIcon(icon_xpm));
 
 	// Create menus

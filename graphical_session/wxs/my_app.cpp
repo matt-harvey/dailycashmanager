@@ -53,10 +53,10 @@ bool MyApp::OnInit()
 
 	wxBoxSizer* top_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-	/*
-	 * Here's where we add widgets to top_sizer
-	 */
+	// Here's where we add widgets to top_sizer
+	//...
 
+	// Then we set this as frame's sizer.
 	top_panel->SetSizer(top_sizer);
 	top_sizer->Fit(top_panel);
 	top_sizer->SetSizeHints(top_panel);

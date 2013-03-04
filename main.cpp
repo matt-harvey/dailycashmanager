@@ -21,6 +21,12 @@
 // on the icon appeared, and the background image became
 // transparent for some reason.
 
+// TODO On Fedora, recompile and install wxWidgets with an additional
+// configure flag, viz. --with-gnomeprint (sp?).
+
+// TODO Find way to lock database so that multiple instances of
+// Phatbooks can't access it simultaneously.
+
 #include "application.hpp"
 #include "b_string.hpp"
 #include "graphical_session.hpp"

@@ -465,6 +465,7 @@ int
 PhatbooksTextSession::do_run()
 {
 	// TODO Tidy this ugly control flow.
+	// TODO Make sure this control flow actually works the way it should.
 	start:
 		// TODO Allow for the omit the extension when on Windows?
 		string filepath_str;
