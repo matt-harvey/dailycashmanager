@@ -331,6 +331,12 @@ PhatbooksTextSession::PhatbooksTextSession():
 	m_main_menu(new Menu)
 {
 	// Set up main menu.
+	// TODO Move setup of main menu to a separate function. In setting up
+	// the menu, this function should inspect the database to determine
+	// whether, for example, there are any Commodities saved. If, for
+	// example, there are no Commodities, then it does not make sense to
+	// allow the user to create any Accounts. Etc.. The main menu should
+	// not offer the user options that they cannot act upon.
 
 	shared_ptr<MenuItem> elicit_commodity_item
 	(	new MenuItem
