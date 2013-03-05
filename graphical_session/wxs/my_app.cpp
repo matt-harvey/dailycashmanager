@@ -1,8 +1,13 @@
 #include "my_app.hpp"
+#include "account_list.hpp"
 #include "application.hpp"
-
 #include "b_string.hpp"
+#include "phatbooks_database_connection.hpp"
+#include <boost/shared_ptr.hpp>
 #include <wx/wx.h>
+
+
+using boost::shared_ptr;
 
 namespace phatbooks
 {
@@ -53,8 +58,13 @@ bool MyApp::OnInit()
 
 	wxBoxSizer* top_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-	// Here's where we add widgets to top_sizer
-	//...
+	// Here's where we add widgets to frame
+	AccountList* account_list0 = create_account_list
+	(	frame,
+		database_connection()
+	);
+	// WARNING The sizer doesn't seem to be doing much here
+	top_sizer->Add(account_list0, 1, wxEXPAND, 0);
 
 	// Then we set this as frame's sizer.
 	top_panel->SetSizer(top_sizer);
@@ -69,6 +79,14 @@ bool MyApp::OnInit()
 }
 
 
+void
+MyApp::set_database_connection
+(	shared_ptr<PhatbooksDatabaseConnection> p_database_connection
+)
+{
+	m_database_connection = p_database_connection;
+	return;
+}
 
 }  // namespace gui
 }  // namespace phatbooks

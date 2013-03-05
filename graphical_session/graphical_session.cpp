@@ -2,8 +2,10 @@
 #include "application.hpp"
 #include "b_string.hpp"
 #include "wxs/my_app.hpp"
+#include <boost/shared_ptr.hpp>
 #include <string>
 
+using boost::shared_ptr;
 using std::string;
 using std::wstring;
 
@@ -50,6 +52,8 @@ GraphicalSession::do_run()
 	// to create a file - or to open an existing file from within
 	// the GUI. The invoking of the wizard should be done within
 	// wxApp, and could be triggered by something in argvs.
+	// Currently we get a crash in the attempt to populate the
+	// AccountList from a non-existent database.
 	wxEntryStart(argca, argvs);
 	wxTheApp->OnInit();
 	wxTheApp->OnRun();
@@ -68,7 +72,14 @@ GraphicalSession::do_run(string const& filepath_str)
 	// TODO There is code duplicated between here and the
 	// other form of do_run
 
-	wxApp* pApp = new MyApp;
+	// TODO Is this safe? We need to catch and handle if we can't open
+	shared_ptr<PhatbooksDatabaseConnection> dbc
+	(	new PhatbooksDatabaseConnection
+	);
+	dbc->open(filepath_str);
+
+	MyApp* pApp = new MyApp;
+	pApp->set_database_connection(dbc);
 	wxApp::SetInstance(pApp);
 	BString const app_name = Application::application_name();	
 
