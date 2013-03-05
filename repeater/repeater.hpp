@@ -38,6 +38,9 @@ namespace phatbooks
  * day of the month in the event that the interval type is month_ends; and
  * prevent next_date from being set later than the 27th in the event the
  * interval_type is months (as opposed to month_ends).
+ *
+ * @todo Should it be possible to have Repeaters that have reminders attached
+ * them, as well as just transactions?
  */
 class Repeater:
 	public PhatbooksPersistentObject<RepeaterImpl>

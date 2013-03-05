@@ -383,6 +383,9 @@ PhatbooksTextSession::PhatbooksTextSession():
 	// or to an Entry id. We a need a user-facing vocabulary that is going
 	// to distinguish between these two, while also not sounding too
 	// technical or confusing.
+	//
+	// WARNING This crashes if the menu item is even \e selected, before
+	// any journals have been posted.
 	shared_ptr<MenuItem> display_journal_from_id_item
 	(	new MenuItem
 		(	"Select a transaction by ID",

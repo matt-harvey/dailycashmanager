@@ -305,9 +305,6 @@ private:
 	 * should have only expense accounts allowed when an "expense category" is
 	 * called for.
 	 *
-	 * @todo This function is enormous. It needs to be tidied and broken
-	 * into sensible chunks.
-	 *
 	 * @todo Enable multiple Repeater instances to be associated with a
 	 * single DraftJournal.
 	 */
