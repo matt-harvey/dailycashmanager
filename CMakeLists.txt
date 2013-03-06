@@ -196,7 +196,7 @@ if (WIN32)
 	# development) but it also stops a console window from popping up when
 	# a GUI app is opened by double-clicking its icon. So in due course we
 	# will want to reinstate this flag.
-	# set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -mwindows")
+	set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -mwindows")
 
 else ()
 	set (binary_installation_dir /usr/local/bin)
