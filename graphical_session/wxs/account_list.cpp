@@ -1,16 +1,22 @@
 #include "account_list.hpp"
 #include "account_reader.hpp"
 #include "b_string.hpp"
+#include "finformat.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <vector>
 #include <wx/listctrl.h>
 #include <wx/string.h>
+
+using std::vector;
+
 
 namespace phatbooks
 {
 namespace gui
 {
 
-
+// TODO We really need two AccountLists - a balance sheet account list,
+// and a P&L account list.
 
 
 AccountList*
@@ -25,29 +31,36 @@ create_account_list(wxWindow* parent, PhatbooksDatabaseConnection& dbc)
 	);
 
 	// Insert name column
-	wxListItem name_column;
-	name_column.SetText("Name");
-	ret->InsertColumn(0, name_column);
+	ret->InsertColumn(0, "Name");
 	ret->SetColumnWidth(0, wxLIST_AUTOSIZE);
 
 	// Insert balance column
-	wxListItem balance_column;
-	balance_column.SetText("Balance");
-	ret->InsertColumn(1, balance_column);
-	ret->SetColumnWidth(1, wxLIST_AUTOSIZE);
+	ret->InsertColumn(1, "Balance", wxLIST_FORMAT_RIGHT);
 
-	BalanceSheetAccountReader bs_reader(dbc);
-	PLAccountReader pl_reader(dbc);
-	BalanceSheetAccountReader::size_type bi = 0;
+	AccountReader reader(dbc);
+	AccountReader::size_type i = 0;
 	for
-	(	BalanceSheetAccountReader::const_iterator blit = bs_reader.begin();
-		blit != bs_reader.end();
-		++blit, ++bi
+	(	AccountReader::const_iterator it = reader.begin(), end = reader.end();
+		it != end;
+		++it, ++i
 	)
 	{
-		ret->InsertItem(bi, bstring_to_wx(blit->name()));
-	}
+		// Insert item, with string for Column 0
+		ret->InsertItem(i, bstring_to_wx(it->name()));
+	
+		// The item may change position due to e.g. sorting, so store the
+		// original index in the item's data
+		ret->SetItemData(i, i);
 
+		// Insert the balance string
+		ret->SetItem
+		(	i,
+			1,
+			bstring_to_wx(finformat_bstring(it->friendly_balance()))
+		);
+	}
+	ret->SetColumnWidth(0, wxLIST_AUTOSIZE);
+	ret->SetColumnWidth(1, wxLIST_AUTOSIZE);
 
 	return ret;
 }

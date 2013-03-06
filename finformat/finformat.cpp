@@ -47,5 +47,11 @@ string finformat_std8(Decimal const& decimal)
 }
 
 
+BString finformat_bstring(jewel::Decimal const& decimal)
+{
+	return std8_to_bstring((finformat_std8(decimal)));
+}
+
+
 }  // namespace phatbooks
 
