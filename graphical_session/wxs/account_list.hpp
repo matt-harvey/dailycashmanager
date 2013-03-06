@@ -1,7 +1,6 @@
 #ifndef GUARD_account_list_hpp
 #define GUARD_account_list_hpp
 
-#include <boost/noncopyable.hpp>
 #include <wx/listctrl.h>
 
 namespace phatbooks
@@ -20,7 +19,7 @@ typedef wxListCtrl AccountList;
  * @returns a pointer to a heap-allocated AccountList, listing
  * all and only the balance sheet accounts stored in \e dbc.
  * The client does not need to take care of the memory - the memory
- * is taken care of by the parent class.
+ * is taken care of by the parent window.
  */
 AccountList* create_balance_sheet_account_list
 (	wxWindow* parent,
@@ -31,7 +30,7 @@ AccountList* create_balance_sheet_account_list
  * @returns a pointer to a heap-allocated AccountList, listing
  * all and only the profit-and-loss accounts stored in \e dbc.
  * The client does not need to take care of the memory - the memory
- * is taken care of by the parent class.
+ * is taken care of by the parent window.
  */
 AccountList* create_pl_account_list
 (	wxWindow* parent,

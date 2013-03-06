@@ -29,13 +29,12 @@ namespace
 		(	parent,
 			wxID_ANY,
 			wxDefaultPosition,
-			wxSize(parent->GetSize().GetX() / 3, parent->GetSize().GetY()),
+			wxSize(parent->GetSize().GetX() / 4, parent->GetSize().GetY()),
 			wxLC_REPORT
 		);
 
 		// Insert name column
-		ret->InsertColumn(0, "Name");
-		ret->SetColumnWidth(0, wxLIST_AUTOSIZE);
+		ret->InsertColumn(0, "Name", wxLIST_FORMAT_LEFT);
 
 		// Insert balance column
 		ret->InsertColumn(1, "Balance", wxLIST_FORMAT_RIGHT);

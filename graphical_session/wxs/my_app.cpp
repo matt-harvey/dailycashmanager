@@ -1,5 +1,6 @@
 #include "my_app.hpp"
 #include "account_list.hpp"
+#include "entry_list.hpp"
 #include "application.hpp"
 #include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -59,6 +60,8 @@ bool MyApp::OnInit()
 	wxBoxSizer* top_sizer = new wxBoxSizer(wxHORIZONTAL);
 
 	// Here's where we add widgets to frame
+	
+	// Add P&L account list
 	AccountList* pl_account_list = create_pl_account_list
 	(	frame,
 		database_connection()
@@ -66,6 +69,15 @@ bool MyApp::OnInit()
 	// WARNING The sizer doesn't seem to be doing much here
 	top_sizer->Add(pl_account_list, 1, wxEXPAND, 0);
 
+	// Add entry list
+	EntryList* act_ord_entry_list = create_actual_ordinary_entry_list
+	(	frame,
+		database_connection()
+	);
+	// WARNING The sizer doesn't seem to be doing much here
+	top_sizer->Add(act_ord_entry_list, 2, wxEXPAND, 0);
+
+	// Add balance sheet account list
 	AccountList* bs_account_list = create_balance_sheet_account_list
 	(	frame,
 		database_connection()
