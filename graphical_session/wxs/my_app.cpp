@@ -34,7 +34,6 @@ bool MyApp::OnInit()
 	// memory-manage this explicitly anyway, as Destroy() will be called
 	// when the user closes the window.
 	MyFrame* frame = new MyFrame(app_name);
-
 	frame->Connect
 	(	wxID_EXIT,
 		wxEVT_COMMAND_MENU_SELECTED,
@@ -53,7 +52,7 @@ bool MyApp::OnInit()
 			wxID_ANY,
 			wxDefaultPosition,
 			wxDefaultSize,
-			wxTAB_TRAVERSAL | wxNO_BORDER
+			wxBORDER_SIMPLE | wxFULL_REPAINT_ON_RESIZE
 		)
 	);
 
@@ -61,32 +60,27 @@ bool MyApp::OnInit()
 
 	// Here's where we add widgets to frame
 	
-	// Add P&L account list
 	AccountList* pl_account_list = create_pl_account_list
 	(	frame,
 		database_connection()
 	);
-	// WARNING The sizer doesn't seem to be doing much here
-	top_sizer->Add(pl_account_list, 1, wxEXPAND, 0);
-
-	// Add entry list
 	EntryList* act_ord_entry_list = create_actual_ordinary_entry_list
 	(	frame,
 		database_connection()
 	);
-	// WARNING The sizer doesn't seem to be doing much here
-	top_sizer->Add(act_ord_entry_list, 2, wxEXPAND, 0);
-
-	// Add balance sheet account list
 	AccountList* bs_account_list = create_balance_sheet_account_list
 	(	frame,
 		database_connection()
 	);
-	// WARNING The sizer doesn't seem to be doing much here
-	top_sizer->Add(bs_account_list, 1, wxEXPAND, 0);
 
-	// Then we set this as frame's sizer.
+	// WARNING The sizer doesn't seem to be doing much here
+	top_sizer->Add(pl_account_list, wxSizerFlags(1).Expand());
+	top_sizer->Add(act_ord_entry_list, wxSizerFlags(2).Expand());
+	top_sizer->Add(bs_account_list, wxSizerFlags(1).Expand());
+
+	// Then we set this as panel's sizer
 	top_panel->SetSizer(top_sizer);
+
 	top_sizer->Fit(top_panel);
 	top_sizer->SetSizeHints(top_panel);
 

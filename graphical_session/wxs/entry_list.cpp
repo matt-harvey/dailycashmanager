@@ -35,8 +35,8 @@ namespace
 		(	parent,
 			wxID_ANY,
 			wxDefaultPosition,
-			wxSize(parent->GetSize().GetX() / 2, parent->GetSize().GetY()),
-			wxLC_REPORT
+			wxSize(parent->GetClientSize().GetX() / 2, parent->GetClientSize().GetY()),
+			wxLC_REPORT | wxBORDER_SIMPLE | wxFULL_REPAINT_ON_RESIZE
 		);
 
 		// Insert columns
