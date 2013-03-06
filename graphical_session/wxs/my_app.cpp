@@ -59,12 +59,19 @@ bool MyApp::OnInit()
 	wxBoxSizer* top_sizer = new wxBoxSizer(wxHORIZONTAL);
 
 	// Here's where we add widgets to frame
-	AccountList* account_list0 = create_account_list
+	AccountList* pl_account_list = create_pl_account_list
 	(	frame,
 		database_connection()
 	);
 	// WARNING The sizer doesn't seem to be doing much here
-	top_sizer->Add(account_list0, 1, wxEXPAND, 0);
+	top_sizer->Add(pl_account_list, 1, wxEXPAND, 0);
+
+	AccountList* bs_account_list = create_balance_sheet_account_list
+	(	frame,
+		database_connection()
+	);
+	// WARNING The sizer doesn't seem to be doing much here
+	top_sizer->Add(bs_account_list, 1, wxEXPAND, 0);
 
 	// Then we set this as frame's sizer.
 	top_panel->SetSizer(top_sizer);
