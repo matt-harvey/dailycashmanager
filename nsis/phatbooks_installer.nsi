@@ -2,49 +2,56 @@
 # into same folder as this script. Then compile the script
 # using the NSIS compiler, makensisw.
 
-# name the installer
-Outfile "phatbooks_installer.exe"
 
-# set the install directory
-InstallDir $PROGRAMFILES64\Phatbooks
-
-#------------
-# default section start; every NSIS script has at least one section.
-section
-
-# define output path
-setOutPath $INSTDIR
-
-# specify file to go in output path
-File phatbooks.exe
-
-# define uninstaller name
-writeUninstaller $INSTDIR\uninstaller.exe
-
-sectionEnd
-# default section end
-#-----------
+# This script is adapted from one posted at stackoverflow.com/questions/10695674/simple-nsis-recipe-for-basic-installation
 
 
-#-----------
-# create a section to define what the uninstaller does;
-# the section will always be names "Uninstall"
-section "Uninstall"
+!define Name "Phatbooks"
+Name "${Name}"
+Outfile "${Name} setup.exe"
+RequestExecutionLevel admin ;Require admin rights on NT6+ (when UAC is turned on)
+InstallDir "$PROGRAMFILES64\${Name}"
 
-# always delete uninstaller first (not sure why)
-delete $INSTDIR\uninstaller.exe
+!include LogicLib.nsh
+!include MUI.nsh
 
-# now delete installed file
-delete $INSTDIR\phatbooks.exe
+Function .onInit
+	SetShellVarContext all
+	UserInfo::GetAccountType
+	pop $0
+	${If} $0 != "admin" ;Require admin rights on NT4+
+		MessageBox mb_iconstop "Administrator rights required!"
+		SetErrorLevel 740 ;ERROR_ELEVATION_REQUIRED
+		Quit
+	${EndIf}
+FunctionEnd
 
-# delete $INSTDIR only if empty (do NOT put /r option, or you risk
-# deleting the user's own files in case they set $INSTDIR to some
-# directory such as "Program Files", or put other of their own files
-# in $INSTDIR).
-rmdir $INSTDIR
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_LANGUAGE "English"
 
-sectionEnd
-# uninstall section end
-#---------
+Section
+	SetOutPath "$INSTDIR"
+	WriteUninstaller "$INSTDIR\Uninstall.exe"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Phatbooks By Matthew Harvey"  "DisplayName" "${Name}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Phatbooks By Matthew Harvey"  "UninstallString" "$INSTDIR\Uninstall.exe"
+	File "phatbooks.exe"
+	CreateShortCut "$SMPROGRAMS\${Name}.lnk" "$INSTDIR\phatbooks.exe"
+SectionEnd
+
+Section "Uninstall"
+	Delete "$SMPROGRAMS\${Name}.lnk"
+	Delete "$INSTDIR\phatbooks.exe"
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Phatbooks by Matthew Harvey"
+	Delete "$INSTDIR\Uninstall.exe"
+	RMDir "$INSTDIR"
+SectionEnd
+
+
+
 
 
