@@ -52,7 +52,7 @@ bool MyApp::OnInit()
 			wxID_ANY,
 			wxDefaultPosition,
 			wxDefaultSize,
-			wxBORDER_SIMPLE | wxFULL_REPAINT_ON_RESIZE
+			wxFULL_REPAINT_ON_RESIZE
 		)
 	);
 
@@ -61,15 +61,15 @@ bool MyApp::OnInit()
 	// Here's where we add widgets to frame
 	
 	AccountList* pl_account_list = create_pl_account_list
-	(	frame,
+	(	top_panel,
 		database_connection()
 	);
 	EntryList* act_ord_entry_list = create_actual_ordinary_entry_list
-	(	frame,
+	(	top_panel,
 		database_connection()
 	);
 	AccountList* bs_account_list = create_balance_sheet_account_list
-	(	frame,
+	(	top_panel,
 		database_connection()
 	);
 

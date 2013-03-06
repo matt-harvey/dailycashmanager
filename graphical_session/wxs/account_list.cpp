@@ -30,7 +30,7 @@ namespace
 			wxID_ANY,
 			wxDefaultPosition,
 			wxSize(parent->GetClientSize().GetX() / 4, parent->GetClientSize().GetY()),
-			wxLC_REPORT | wxBORDER_SIMPLE | wxFULL_REPAINT_ON_RESIZE
+			wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
 		);
 
 		// Insert name column
