@@ -26,6 +26,12 @@
 // TODO Make the installer icon a Phatbooks-specific icon, rather
 // than settling for the default NullSoft icon.
 
+// TODO Facilitate automatic checking for updates from user's
+// machine, as well as easy process for providing updates
+// via NSIS. Also be take into account that the user may have to
+// restart their computer in the event that they have files
+// open while the installer (or "updater") is running.
+
 // TODO Write the licence.
 
 // TODO In due course, we need to reinstate the -mwindows flag
