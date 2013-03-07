@@ -46,19 +46,21 @@ FunctionEnd
 !insertmacro MUI_LANGUAGE "English"
 
 Section
+	SetShellVarContext all  ;To ensure the shortcut is created in the All Users' folder (where Windows is prone to automatically moving it anyway)
 	SetOutPath "$INSTDIR"
 	WriteUninstaller "$INSTDIR\${UNINSTALLER_NAME}"
-	WriteRegStr "${REGHKEY}" "${REGPATH_WINUNINST}\${LONG_NAME}"  "DisplayName" "${SHORT_NAME}"
-	WriteRegStr "${REGHKEY}" "${REGPATH_WINUNINST}\${LONG_NAME}"  "UninstallString" "$INSTDIR\${UNINSTALLER_NAME}"
+	WriteRegStr "${REGHKEY}" "${REGPATH_WINUNINST}\${LONG_NAME}" "DisplayName" "${SHORT_NAME}"
+	WriteRegStr "${REGHKEY}" "${REGPATH_WINUNINST}\${LONG_NAME}" "UninstallString" "$INSTDIR\${UNINSTALLER_NAME}"
 	File "${EXECUTABLE_NAME}"
 	CreateShortCut "$SMPROGRAMS\${SHORT_NAME}.lnk" "$INSTDIR\${EXECUTABLE_NAME}"
 SectionEnd
 
 Section "Uninstall"
+	SetShellVarContext all  ;We want to uninstall it from the All Users' folder (see default Section above)
 	Delete "$INSTDIR\${UNINSTALLER_NAME}"
-	Delete "$SMPROGRAMS\${SHORT_NAME}.lnk"
 	Delete "$INSTDIR\${EXECUTABLE_NAME}"
 	DeleteRegKey "${REGHKEY}" "${REGPATH_WINUNINST}\${LONG_NAME}"
+	Delete "$SMPROGRAMS\${SHORT_NAME}.lnk"
 	RMDir "$INSTDIR"
 SectionEnd
 
