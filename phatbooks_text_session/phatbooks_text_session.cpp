@@ -217,8 +217,11 @@ namespace
 		for (bool input_is_valid = false; !input_is_valid; )
 		{
 			cout << "Enter amount " << transaction_description
+#			ifdef PHATBOOKS_EXPOSE_COMMODITY
 			     << " (in units of " << commodity.abbreviation()
-				 << "): ";
+				 << ")"
+#			endif
+				 << ": ";
 			amount = value(get_decimal_from_user());
 			Decimal::places_type const initial_precision = amount.places();
 			try
@@ -233,9 +236,9 @@ namespace
 			catch (DecimalRangeException&)
 			{
 				cout << "The number you entered cannot be safely rounded to"
-				     << " the precision required for "
-					 << commodity.abbreviation()
-					 << ". Please try again."
+					 << " the required precision of "
+					 << commodity.precision()
+					 << " decimal places. Please try again."
 					 << endl;
 				assert (!input_is_valid);
 			}
@@ -338,14 +341,16 @@ PhatbooksTextSession::PhatbooksTextSession():
 	// allow the user to create any Accounts. Etc.. The main menu should
 	// not offer the user options that they cannot act upon.
 
-	shared_ptr<MenuItem> elicit_commodity_item
-	(	new MenuItem
-		(	"New commodity",
-			bind(&PhatbooksTextSession::elicit_commodity, this),
-			true
-		)
-	);
-	m_main_menu->add_item(elicit_commodity_item);
+#	ifdef PHATBOOKS_EXPOSE_COMMODITY
+		shared_ptr<MenuItem> elicit_commodity_item
+		(	new MenuItem
+			(	"New commodity",
+				bind(&PhatbooksTextSession::elicit_commodity, this),
+				true
+			)
+		);
+		m_main_menu->add_item(elicit_commodity_item);
+#	endif
 
 	// WARNING Until there is not yet at least one Commodity, this should
 	// not appear in the main menu.
@@ -773,9 +778,9 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 			catch (DecimalRangeException&)
 			{
 				cout << "The number you entered cannot be safely "
-					 << "rounded to the precision required for "
-					 << commodity.abbreviation()
-					 << ". Please try again."
+					 << "rounded to the required precison of "
+					 << commodity.precision()
+					 << " decimal places. Please try again."
 					 << endl;
 				assert (!input_is_valid);
 			}
@@ -1322,13 +1327,25 @@ PhatbooksTextSession::conduct_reconciliation()
 		headings.push_back("Entry id");
 		headings.push_back("Account");
 		headings.push_back("Comment");
-		headings.push_back("Commodity");
+#		ifdef PHATBOOKS_EXPOSE_COMMODITY
+			headings.push_back("Commodity");
+#		endif
 		headings.push_back("Amount");
 		headings.push_back("Reconciled?");
 		using alignment::left;
 		using alignment::right;
 		alignment::Flag const alignments[] =
-			{ left, right, right, left, left, left, right, left };
+		{ 	left,
+			right,
+			right,
+			left,
+			left,
+#		ifdef PHATBOOKS_EXPOSE_COMMODITY
+				left,
+#		endif
+			right,
+			left
+		};
 		Table<Entry> const table
 		(	table_vec.begin(),
 			table_vec.end(),
@@ -1680,14 +1697,26 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	headings.push_back("Entry id");
 	headings.push_back("Account");
 	headings.push_back("Comment");
-	headings.push_back("Commodity");
+#	ifdef PHATBOOKS_EXPOSE_COMMODITY
+		headings.push_back("Commodity");
+#	endif
 	headings.push_back("Amount");
 	headings.push_back("Reconciled");
 
 	using alignment::left;
 	using alignment::right;
 	alignment::Flag const alignments[] =
-		{ left, right, right, left, left, left, right, left };
+	{ 	left,  // Date
+		right, // Journal id
+		right, // Entry id
+		left,  // Account
+		left,  // Comment
+#		ifdef PHATBOOKS_EXPOSE_COMMODITY
+			left,  // Commodity
+#		endif
+		right, // Amount
+		left   // Reconciled
+	};
 	Table<Entry> const table
 	(	table_vec.begin(),
 		table_vec.end(),
@@ -1714,121 +1743,122 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 	return;
 }
 
-
-void
-PhatbooksTextSession::elicit_commodity()
-{
-	Commodity commodity(database_connection());
-
-	// Get abbreviation
-	cout << "Enter abbreviation for new commodity: ";
-	for (bool input_is_valid = false; !input_is_valid; )
+#ifdef PHATBOOKS_EXPOSE_COMMODITY
+	void
+	PhatbooksTextSession::elicit_commodity()
 	{
-		string input = get_user_input();
-		if (input.empty())
+		Commodity commodity(database_connection());
+
+		// Get abbreviation
+		cout << "Enter abbreviation for new commodity: ";
+		for (bool input_is_valid = false; !input_is_valid; )
 		{
-			cout << "Abbreviation cannot be blank. Please try again: ";
-		}
-		else if
-		(	Commodity::exists_with_abbreviation
-			(	database_connection(),
-				std8_to_bstring(input)
+			string input = get_user_input();
+			if (input.empty())
+			{
+				cout << "Abbreviation cannot be blank. Please try again: ";
+			}
+			else if
+			(	Commodity::exists_with_abbreviation
+				(	database_connection(),
+					std8_to_bstring(input)
+				)
 			)
-		)
-		{
-			cout << "A commodity with this abbreviation already exists. "
-			     << "Please try again: ";
+			{
+				cout << "A commodity with this abbreviation already exists. "
+					 << "Please try again: ";
+			}
+			else
+			{
+				input_is_valid = true;
+				commodity.set_abbreviation(std8_to_bstring(input));
+			}
 		}
-		else
-		{
-			input_is_valid = true;
-			commodity.set_abbreviation(std8_to_bstring(input));
-		}
-	}
 
-	// Get commodity name
-	cout << "Enter name for new commodity (cannot be blank): ";
-	for (bool input_is_valid = false; !input_is_valid; )
-	{
-		string input = get_user_input();
-		if (input.empty())
+		// Get commodity name
+		cout << "Enter name for new commodity (cannot be blank): ";
+		for (bool input_is_valid = false; !input_is_valid; )
 		{
-			cout << "Name cannot be blank. Please try again: ";
-		}
-		else if
-		(	Commodity::exists_with_name
-			(	database_connection(),
-				std8_to_bstring(input)
+			string input = get_user_input();
+			if (input.empty())
+			{
+				cout << "Name cannot be blank. Please try again: ";
+			}
+			else if
+			(	Commodity::exists_with_name
+				(	database_connection(),
+					std8_to_bstring(input)
+				)
 			)
-		)
+			{
+				cout << "A commodity with this name already exists. "
+					 << "Please try a different name: ";
+			}
+			else
+			{
+				input_is_valid = true;
+				commodity.set_name(std8_to_bstring(input));
+			}
+		}
+			
+		// Get description 
+		cout << "Enter description for new commodity (or hit enter for no "
+				"description): ";
+		commodity.set_description(std8_to_bstring(get_user_input()));
+
+		// Get precision 
+		cout << "Enter precision required for this commodity "
+			 << "(a number from 0 to 6, representing the number of decimal "
+			 << "places of precision to the right of the decimal point): ";
+		for (bool input_is_valid = false; !input_is_valid; )
 		{
-			cout << "A commodity with this name already exists. "
-			     << "Please try a different name: ";
+			string input = get_user_input();
+			if (!regex_match(input, regex("^[0123456]$")))
+			{
+				cout << "Please try again, entering a number from 0 to 6: ";
+			}
+			else
+			{
+				commodity.set_precision(lexical_cast<int>(input));
+				input_is_valid = true;
+			}
+		}
+		assert (commodity.precision() >= 0 && commodity.precision() <= 6);
+
+		// Get multiplier to base
+		cout << "Enter rate by which this commodity should be multiplied in order"
+			 << " to convert it to the base commodity for this entity: ";
+		commodity.set_multiplier_to_base(value(get_decimal_from_user()));
+
+		// Confirm with user before creating commodity
+		cout << endl << "You have proposed to create the following commodity: "
+			 << endl << endl
+			 << "Abbreviation: " << commodity.abbreviation() << endl
+			 << "Name: " << commodity.name() << endl
+			 << "Description: " << commodity.description() << endl
+			 << "Precision: " << commodity.precision() << endl
+			 << "Conversion rate to base: " << commodity.multiplier_to_base()
+			 << endl << endl;
+		cout << "Proceed with creating this commodity? (y/n) ";
+		string const confirmation = get_constrained_user_input
+		(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
+			"Try again, entering \"y\" to create commodity "
+			"or \"n\" to abort: ",
+			false
+		);
+		if (confirmation == "n")
+		{
+			cout << "Commodity not created." << endl;
 		}
 		else
 		{
-			input_is_valid = true;
-			commodity.set_name(std8_to_bstring(input));
+			assert (confirmation == "y");
+			commodity.save();
+			cout << "Commodity created." << endl;
 		}
+		return;
 	}
-		
-	// Get description 
-	cout << "Enter description for new commodity (or hit enter for no "
-	        "description): ";
-	commodity.set_description(std8_to_bstring(get_user_input()));
-
-	// Get precision 
-	cout << "Enter precision required for this commodity "
-	     << "(a number from 0 to 6, representing the number of decimal "
-		 << "places of precision to the right of the decimal point): ";
-	for (bool input_is_valid = false; !input_is_valid; )
-	{
-		string input = get_user_input();
-		if (!regex_match(input, regex("^[0123456]$")))
-		{
-			cout << "Please try again, entering a number from 0 to 6: ";
-		}
-		else
-		{
-			commodity.set_precision(lexical_cast<int>(input));
-			input_is_valid = true;
-		}
-	}
-	assert (commodity.precision() >= 0 && commodity.precision() <= 6);
-
-	// Get multiplier to base
-	cout << "Enter rate by which this commodity should be multiplied in order"
-	     << " to convert it to the base commodity for this entity: ";
-	commodity.set_multiplier_to_base(value(get_decimal_from_user()));
-
-	// Confirm with user before creating commodity
-	cout << endl << "You have proposed to create the following commodity: "
-	     << endl << endl
-	     << "Abbreviation: " << commodity.abbreviation() << endl
-		 << "Name: " << commodity.name() << endl
-		 << "Description: " << commodity.description() << endl
-		 << "Precision: " << commodity.precision() << endl
-		 << "Conversion rate to base: " << commodity.multiplier_to_base()
-		 << endl << endl;
-	cout << "Proceed with creating this commodity? (y/n) ";
-	string const confirmation = get_constrained_user_input
-	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
-		"Try again, entering \"y\" to create commodity "
-		"or \"n\" to abort: ",
-		false
-	);
-	if (confirmation == "n")
-	{
-		cout << "Commodity not created." << endl;
-	}
-	else
-	{
-		assert (confirmation == "y");
-		commodity.save();
-		cout << "Commodity created." << endl;
-	}
-	return;
-}
+#endif  // PHATBOOKS_EXPOSE_COMMODITY
 
 
 string
@@ -1878,30 +1908,36 @@ PhatbooksTextSession::elicit_account()
 	cout << "Enter a name for the account: ";
 	account.set_name(std8_to_bstring(elicit_unused_account_name()));
 
-	// Get commodity abbreviation
-	cout << "Enter the abbreviation of the commodity that will be the "
-	     << "native commodity of this account: ";
-	for (bool input_is_valid = false; !input_is_valid; )
-	{
-		string input = get_user_input();
-		if 
-		(	!Commodity::exists_with_abbreviation
-			(	database_connection(),
-				std8_to_bstring(input)
+#	ifdef PHATBOOKS_EXPOSE_COMMODITY
+		// Get commodity abbreviation
+		cout << "Enter the abbreviation of the commodity that will be the "
+			 << "native commodity of this account: ";
+		for (bool input_is_valid = false; !input_is_valid; )
+		{
+			string input = get_user_input();
+			if 
+			(	!Commodity::exists_with_abbreviation
+				(	database_connection(),
+					std8_to_bstring(input)
+				)
 			)
-		)
-		{
-			cout << "There is no commodity with this abbreviation. Please "
-			     << "try again: ";
+			{
+				cout << "There is no commodity with this abbreviation. Please "
+					 << "try again: ";
+			}
+			else
+			{
+				input_is_valid = true;
+				account.set_commodity
+				(	Commodity(database_connection(), std8_to_bstring(input))
+				);
+			}
 		}
-		else
-		{
-			input_is_valid = true;
-			account.set_commodity
-			(	Commodity(database_connection(), std8_to_bstring(input))
-			);
-		}
-	}
+#	else
+		account.set_commodity
+		(	Commodity::default_commodity(database_connection())
+		);
+#	endif  // PHATBOOKS_EXPOSE_COMMODITY
 
 	// Get account type
 	Menu account_type_menu;
@@ -1927,7 +1963,9 @@ PhatbooksTextSession::elicit_account()
 	cout << endl << "You have proposed to create the following account: "
 	     << endl << endl
 	     << "Name: " << account.name() << endl
+#	ifdef PHATBOOKS_EXPOSE_COMMODITY
 		 << "Commodity: " << account.commodity().abbreviation() << endl
+#	endif
 		 << "Type: " << account_type_name << endl
 		 << "Description: " << account.description() << endl
 		 << endl;
@@ -2304,11 +2342,13 @@ PhatbooksTextSession::elicit_secondary_entries
 			);
 			Commodity const current_commodity
 				= current_entry.account().commodity();
+#			ifndef PHATBOOKS_EXPOSE_COMMODITY
+				assert (current_commodity == primary_commodity);
+#			endif
 			if (current_commodity != primary_commodity)
 			{
 				// TODO Deal with this!
-				JEWEL_DEBUG_LOG << "Here's where we're supposed to deal with"
-				                << " diverse commodities..." << endl;
+				throw std::logic_error("Mismatched commodities.");
 			}
 			// TODO Remove code duplication between here and
 			// elicit_primary_entry
@@ -2316,7 +2356,9 @@ PhatbooksTextSession::elicit_secondary_entries
 			for (bool input_is_valid = false; !input_is_valid; )
 			{
 				cout << "Amount remaining to split: "
-				     << current_commodity.abbreviation()
+#				ifdef PHATBOOKS_EXPOSE_COMMODITY
+				     << current_commodity.abbreviation() << " "
+#				endif
 					 << " " << unmatched_amount << endl;
 				cout << "Enter amount for this line: ";
 				current_entry_amount = value(get_decimal_from_user());
@@ -2347,9 +2389,9 @@ PhatbooksTextSession::elicit_secondary_entries
 				catch (DecimalRangeException&)
 				{
 					cout << "The number you entered cannot be safely"
-					     << " rounded to the precision required for "
-						 << current_commodity.abbreviation()
-						 << ". Please try again."
+					     << " rounded to the required precision of "
+						 << current_commodity.precision()
+						 << " decimal places. Please try again."
 						 << endl;
 					assert (!input_is_valid);
 				}
@@ -2374,13 +2416,15 @@ PhatbooksTextSession::elicit_secondary_entries
 		// need to deal with this here somehow.
 		Commodity const secondary_commodity =
 			secondary_entry.account().commodity();
+#		ifndef PHATBOOKS_EXPOSE_COMMODITY
+			assert (secondary_commodity == primary_commodity);
+#		endif
 		if
 		(	secondary_commodity != primary_commodity
 		)
 		{
 			// TODO Deal with this.
-			JEWEL_DEBUG_LOG << "Here's where we're supposed to respond to "
-							<< "diverse commodities..." << endl;
+			throw std::logic_error("Mismatched commodities.");
 		}
 		cout << "Line specific comment (or Enter for no comment): ";
 		secondary_entry.set_comment(std8_to_bstring(get_user_input()));

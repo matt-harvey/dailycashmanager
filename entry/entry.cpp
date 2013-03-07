@@ -178,9 +178,11 @@ namespace
 		}
 		ret->push_back(bstring_to_std8(entry.account().name()));
 		ret->push_back(bstring_to_std8(entry.comment()));
-		ret->push_back
-		(	bstring_to_std8(entry.account().commodity().abbreviation())
-		);
+#		ifdef PHATBOOKS_EXPOSE_COMMODITY
+			ret->push_back
+			(	bstring_to_std8(entry.account().commodity().abbreviation())
+			);
+#		endif
 		Decimal amount = entry.amount();
 		if (reverse)
 		{

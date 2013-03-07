@@ -102,11 +102,21 @@ Journal::do_output(ostream& os) const
 	headings.push_back("Entry id");
 	headings.push_back("Account");
 	headings.push_back("Comment");
-	headings.push_back("Commodity");
+
+#	ifdef PHATBOOKS_EXPOSE_COMMODITY
+		headings.push_back("Commodity");
+#	endif
+
 	headings.push_back("Amount");
 	headings.push_back("Reconciled?");
-	vector<alignment::Flag> alignments(6, alignment::left);
-	alignments[4] = alignment::right;
+	vector<alignment::Flag> alignments(headings.size(), alignment::left);
+
+#	ifdef PHATBOOKS_EXPOSE_COMMODITY
+		alignments[4] = alignment::right;
+#	else
+		alignments[3] = alignment::right;
+#	endif
+
 	bool const change_signs = !is_actual();
 	Table<Entry> const table
 	(	entries().begin(),

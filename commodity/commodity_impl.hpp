@@ -71,12 +71,17 @@ public:
 	explicit
 	CommodityImpl(IdentityMap& p_identity_map);
 
-		CommodityImpl
+	CommodityImpl
 	(	IdentityMap& p_identity_map,	
 	 	Id p_id
 	);
 
 	~CommodityImpl();
+
+#	ifndef PHATBOOKS_EXPOSE_COMMODITY
+		static BString default_commodity_abbreviation();		
+#	endif
+
 
 	static bool exists_with_abbreviation
 	(	PhatbooksDatabaseConnection& p_database_connection,
