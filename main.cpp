@@ -10,35 +10,24 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
-// TODO In Windows, in the Control Panel, there is a list
-// of programs from which you can select one to uninstall. When
-// installed on a user system, Phatbooks will appear in that menu,
-// but with a generic "console" icon, instead of with its own icon.
-// This is despite its icon appearing properly elsewhere, such as
-// in the Windows task bar and in the Start Menu. Fix this.
-
-// TODO I should probably use CPack to automate NSIS installer
-// compilation as part of the normal build, rather than having to
-// run NSIS separately. But now that I've got NSIS working OK
-// on its own I'm not sure that it's worth the effort of learning
-// CPack.
-
 // TODO Make the installer create an association on the user's system
 // between the Phatbooks file extension and the Phatbooks application.
-
-// TODO Make the installer icon a Phatbooks-specific icon, rather
-// than settling for the default NullSoft icon.
+// See CMake book, page. 162.
 
 // TODO Facilitate automatic checking for updates from user's
 // machine, as well as easy process for providing updates
-// via NSIS. Also be take into account that the user may have to
-// restart their computer in the event that they have files
-// open while the installer (or "updater") is running.
+// via NSIS. It appears that the default configuration of CPack/NSIS is
+// such that updates will not overwrite existing files. Some manual NSIS
+// scripting may be required to enable this. Also take into account that
+// the user may have to restart their computer in the event that they have
+// files open while the installer (or "updater") is running (although I
+// \e think that the default configuration under CPack does this
+// automatically).
 
 // TODO Write the licence.
 
-// TODO In due course, we need to reinstate the -mwindows flag
-// (see note in CMakeLists.txt).
+// TODO Ensure that option for the user to lauch directly from the
+// installer, works correctly.
 
 // TODO Create a decent icon for the application. We want this
 // in both .ico form (for Windows executable icon) and .xpm
@@ -46,13 +35,24 @@
 // "token icon" using GIMP to .ico format, and later used this
 // to create a double-clickable icon in Windows, only the text
 // on the icon appeared, and the background image became
-// transparent for some reason.
+// transparent for some reason. Furthermore, when set as the
+// large in-windows icon in the CPack/NSIS installer, the icon
+// wasn't showing at all.
 
 // TODO On Fedora, recompile and install wxWidgets with an additional
 // configure flag, viz. --with-gnomeprint (sp?).
 
 // TODO Find way to lock database so that multiple instances of
-// Phatbooks can't access it simultaneously.
+// Phatbooks can't access it simultaneously. In Windows, I think
+// this can be done via the CPack/NSIS installer configuration - see
+// NSIS documentation.
+
+// TODO Within the Windows Control Panel's list of programs, and possibly
+// elsewhere, the version of Phatbooks shows as v0.1.1. This looks
+// unprofessional. Set the version number explicitly in CMakeLists.txt,
+// (and in Tags in svn) and ensure this carries through consistently to
+// all places where it might be seen by users or potential users (e.g.
+// the website, the licence, the installer...).
 
 #include "application.hpp"
 #include "b_string.hpp"

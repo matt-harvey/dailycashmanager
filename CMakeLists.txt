@@ -190,19 +190,29 @@ add_executable (phatbooks_test ${test_files})
 target_link_libraries (phatbooks_test ${libraries})
 
 if (WIN32)
-	set (binary_installation_dir C:/bin)
-
+	
 	# Note -mwindows prevents console output (so we don't want it during
 	# development) but it also stops a console window from popping up when
 	# a GUI app is opened by double-clicking its icon. So in due course we
 	# will want to reinstate this flag.
 	set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -mwindows")
 
+	# On Windows we use CPack to create a graphical installer
+	set (CPACK_NSIS_PACKAGE_NAME "Phatbooks")
+	set (CPACK_PACKAGE_FILE_NAME "Phatbooks setup")
+	set (CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\icon\\\\icon.ico")
+	set (CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\icon\\\\icon.ico")
+	set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\icon\\\\icon.ico")
+	set (CPACK_NSIS_INSTALLED_ICON_NAME "phatbooks.exe")
+	set (CPACK_NSIS_MENU_LINKS "phatbooks.exe" "Phatbooks")  # Put a link to the application executable in the Shortcuts menu
+	set (CPACK_NSIS_MUI_FINISHPAGE_RUN "phatbooks.exe")  # Give user option to launch application immediately after installing
+	set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}\\\\licence.txt")
+	install(TARGETS phatbooks RUNTIME DESTINATION .)
+	include(CPack)
 else ()
-	set (binary_installation_dir /usr/local/bin)
+	install(TARGETS phatbooks RUNTIME DESTINATION /usr/local/bin)
 endif ()
 
-install(TARGETS phatbooks DESTINATION ${binary_installation_dir})
 					
 
 
