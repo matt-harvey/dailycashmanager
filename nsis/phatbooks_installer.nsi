@@ -6,11 +6,20 @@
 # This script is adapted from one posted at stackoverflow.com/questions/10695674/simple-nsis-recipe-for-basic-installation
 
 
-!define Name "Phatbooks"
-Name "${Name}"
-Outfile "${Name} setup.exe"
+!define SHORT_NAME "Phatbooks"
+!define LONG_NAME "${SHORT_NAME} by Matthew Harvey"
+!define REGPATH_WINUNINST "Software\Microsoft\Windows\CurrentVersion\Uninstall"
+!define EXECUTABLE_NAME "${SHORT_NAME}.exe"
+!define INSTALLER_NAME "${SHORT_NAME} setup.exe"
+!define UNINSTALLER_NAME "Uninstall.exe"
+
+Name "${SHORT_NAME}"
+Outfile "${INSTALLER_NAME}"
+
 RequestExecutionLevel admin ;Require admin rights on NT6+ (when UAC is turned on)
-InstallDir "$PROGRAMFILES64\${Name}"
+!define REGHKEY "HKLM"
+
+InstallDir "$PROGRAMFILES64\${SHORT_NAME}"
 
 !include LogicLib.nsh
 !include MUI.nsh
@@ -27,27 +36,29 @@ Function .onInit
 FunctionEnd
 
 !insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "licence.txt"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
 !insertmacro MUI_LANGUAGE "English"
 
 Section
 	SetOutPath "$INSTDIR"
-	WriteUninstaller "$INSTDIR\Uninstall.exe"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Phatbooks By Matthew Harvey"  "DisplayName" "${Name}"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Phatbooks By Matthew Harvey"  "UninstallString" "$INSTDIR\Uninstall.exe"
-	File "phatbooks.exe"
-	CreateShortCut "$SMPROGRAMS\${Name}.lnk" "$INSTDIR\phatbooks.exe"
+	WriteUninstaller "$INSTDIR\${UNINSTALLER_NAME}"
+	WriteRegStr "${REGHKEY}" "${REGPATH_WINUNINST}\${LONG_NAME}"  "DisplayName" "${SHORT_NAME}"
+	WriteRegStr "${REGHKEY}" "${REGPATH_WINUNINST}\${LONG_NAME}"  "UninstallString" "$INSTDIR\${UNINSTALLER_NAME}"
+	File "${EXECUTABLE_NAME}"
+	CreateShortCut "$SMPROGRAMS\${SHORT_NAME}.lnk" "$INSTDIR\${EXECUTABLE_NAME}"
 SectionEnd
 
 Section "Uninstall"
-	Delete "$SMPROGRAMS\${Name}.lnk"
-	Delete "$INSTDIR\phatbooks.exe"
-	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Phatbooks by Matthew Harvey"
-	Delete "$INSTDIR\Uninstall.exe"
+	Delete "$INSTDIR\${UNINSTALLER_NAME}"
+	Delete "$SMPROGRAMS\${SHORT_NAME}.lnk"
+	Delete "$INSTDIR\${EXECUTABLE_NAME}"
+	DeleteRegKey "${REGHKEY}" "${REGPATH_WINUNINST}\${LONG_NAME}"
 	RMDir "$INSTDIR"
 SectionEnd
 
