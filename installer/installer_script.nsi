@@ -52,7 +52,8 @@ Section
 	WriteRegStr "${REGHKEY}" "${REGPATH_WINUNINST}\${LONG_NAME}" "DisplayName" "${SHORT_NAME}"
 	WriteRegStr "${REGHKEY}" "${REGPATH_WINUNINST}\${LONG_NAME}" "UninstallString" "$INSTDIR\${UNINSTALLER_NAME}"
 	File "${EXECUTABLE_NAME}"
-	CreateShortCut "$SMPROGRAMS\${SHORT_NAME}.lnk" "$INSTDIR\${EXECUTABLE_NAME}"
+	CreateDirectory "$SMPROGRAMS\${SHORT_NAME}"
+	CreateShortCut "$SMPROGRAMS\${SHORT_NAME}\${SHORT_NAME}.lnk" "$INSTDIR\${EXECUTABLE_NAME}"
 SectionEnd
 
 Section "Uninstall"
@@ -60,7 +61,8 @@ Section "Uninstall"
 	Delete "$INSTDIR\${UNINSTALLER_NAME}"
 	Delete "$INSTDIR\${EXECUTABLE_NAME}"
 	DeleteRegKey "${REGHKEY}" "${REGPATH_WINUNINST}\${LONG_NAME}"
-	Delete "$SMPROGRAMS\${SHORT_NAME}.lnk"
+	Delete "$SMPROGRAMS\${SHORT_NAME}\${SHORT_NAME}.lnk"
+	RMDir "$SMPROGRAMS\${SHORT_NAME}"
 	RMDir "$INSTDIR"
 SectionEnd
 
