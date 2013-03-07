@@ -10,6 +10,13 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
+// TODO In Windows, in the Control Panel, there is a list
+// of programs from which you can select one to uninstall. When
+// installed on a user system, Phatbooks will appear in that menu,
+// but with a generic "console" icon, instead of with its own icon.
+// This is despite its icon appearing properly elsewhere, such as
+// in the Windows task bar and in the Start Menu. Fix this.
+//
 // TODO In due course, we need to reinstate the -mwindows flag
 // (see note in CMakeLists.txt).
 
