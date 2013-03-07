@@ -16,7 +16,18 @@
 // but with a generic "console" icon, instead of with its own icon.
 // This is despite its icon appearing properly elsewhere, such as
 // in the Windows task bar and in the Start Menu. Fix this.
-//
+
+// TODO I should probably use CPack to automate NSIS installer
+// compilation as part of the normal build, rather than having to
+// run NSIS separately. But now that I've got NSIS working OK
+// on its own I'm not sure that it's worth the effort of learning
+// CPack.
+
+// TODO Make the installer icon a Phatbooks-specific icon, rather
+// than settling for the default NullSoft icon.
+
+// TODO Write the licence.
+
 // TODO In due course, we need to reinstate the -mwindows flag
 // (see note in CMakeLists.txt).
 
