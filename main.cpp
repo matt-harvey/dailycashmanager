@@ -23,6 +23,9 @@
 // on its own I'm not sure that it's worth the effort of learning
 // CPack.
 
+// TODO Make the installer create an association on the user's system
+// between the Phatbooks file extension and the Phatbooks application.
+
 // TODO Make the installer icon a Phatbooks-specific icon, rather
 // than settling for the default NullSoft icon.
 
