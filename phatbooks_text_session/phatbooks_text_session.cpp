@@ -346,7 +346,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 		(	new MenuItem
 			(	"New commodity",
 				bind(&PhatbooksTextSession::elicit_commodity, this),
-				true
+				true,
+				"c"
 			)
 		);
 		m_main_menu->add_item(elicit_commodity_item);
@@ -358,7 +359,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 	(	new MenuItem
 		(	"New account",
 			bind(&PhatbooksTextSession::elicit_account, this),
-			true
+			true,
+			"a"
 		)
 	);
 	m_main_menu->add_item(elicit_account_item);
@@ -369,16 +371,18 @@ PhatbooksTextSession::PhatbooksTextSession():
 	(	new MenuItem
 		(	"New transaction",
 			bind(&PhatbooksTextSession::elicit_journal, this),
-			true
+			true,
+			"t"
 		)
 	);
 	m_main_menu->add_item(elicit_journal_item);
 
 	shared_ptr<MenuItem> display_draft_journals_item
 	(	new MenuItem
-		(	"Display draft and recurring transactions",
+		(	"View draft and recurring transactions",
 			bind(&PhatbooksTextSession::display_draft_journals, this),
-			true
+			true,
+			"v"
 		)
 	);
 	m_main_menu->add_item(display_draft_journals_item);
@@ -395,7 +399,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 	(	new MenuItem
 		(	"Select a transaction by ID",
 			bind(&PhatbooksTextSession::display_journal_from_id, this),
-			true
+			true,
+			"i"
 		)
 	);
 	m_main_menu->add_item(display_journal_from_id_item);
@@ -407,7 +412,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 			(	&PhatbooksTextSession::display_ordinary_actual_entries,
 				this
 			),
-			true
+			true,
+			"l"
 		)
 	);
 	m_main_menu->add_item(display_ordinary_actual_entries_item);
@@ -418,7 +424,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 	(	new MenuItem
 		(	"Display the balances of asset and liability accounts",
 			bind(&PhatbooksTextSession::display_balance_sheet, this),
-			true
+			true,
+			"b"
 		)
 	);
 	m_main_menu->add_item(display_balance_sheet_selection);
@@ -427,7 +434,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 	(	new MenuItem
 		(	"Display envelope balances",
 			bind(&PhatbooksTextSession::display_envelopes, this),
-			true
+			true,
+			"e"
 		)
 	);
 	m_main_menu->add_item(display_envelopes_selection);
@@ -436,7 +444,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 	(	new MenuItem
 		(	"Perform account reconciliation",
 			bind(&PhatbooksTextSession::conduct_reconciliation, this),
-			true
+			true,
+			"r"
 		)
 	);
 	m_main_menu->add_item(perform_reconciliation_selection);
@@ -445,7 +454,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 	(	new MenuItem
 		(	"Account and category detail",
 			bind(&PhatbooksTextSession::display_account_detail, this),
-			true
+			true,
+			"ad"
 		)
 	);
 	m_main_menu->add_item(display_account_detail_item);
@@ -454,7 +464,8 @@ PhatbooksTextSession::PhatbooksTextSession():
 	(	new MenuItem
 		(	"Edit account detail",
 			bind(&PhatbooksTextSession::conduct_account_editing, this),
-			true
+			true,
+			"ea"
 		)
 	);
 	m_main_menu->add_item(edit_account_detail_item);
@@ -895,7 +906,9 @@ PhatbooksTextSession::populate_journal_editing_menu_core
 	ItemPtr add_entry_item
 	(	new MenuItem
 		(	"Add a line",
-			bind(bind(&PTS::elicit_entry_insertion, this, _1), ref(journal))
+			bind(bind(&PTS::elicit_entry_insertion, this, _1), ref(journal)),
+			false,
+			"al"
 		)
 	);
 	menu.add_item(add_entry_item);
@@ -903,23 +916,31 @@ PhatbooksTextSession::populate_journal_editing_menu_core
 	ItemPtr delete_entry_item
 	(	new MenuItem
 		(	"Delete a line",
-			bind(bind(&PTS::elicit_entry_deletion, this, _1), ref(journal))
+			bind(bind(&PTS::elicit_entry_deletion, this, _1), ref(journal)),
+			false,
+			"dl"
 		)
 	);
 	menu.add_item(delete_entry_item);
 
 	ItemPtr amend_entry_item
 	(	new MenuItem
-		(	"Amend a line",
-			bind(bind(&PTS::elicit_entry_amendment, this, _1), ref(journal))
+		(	"Edit a line",
+			bind(bind(&PTS::elicit_entry_amendment, this, _1), ref(journal)),
+			false,
+			"el"
 		)
 	);
 	menu.add_item(amend_entry_item);
 
 	ItemPtr amend_comment_item
 	(	new MenuItem
-		(	"Amend transaction comment",
-			bind(bind(&PTS::elicit_comment_amendment, this, _1), ref(journal))
+		(	"Edit transaction comment",
+			bind
+			(	bind(&PTS::elicit_comment_amendment, this, _1), ref(journal)
+			),
+			false,
+			"et"
 		)
 	);
 	menu.add_item(amend_comment_item);
@@ -954,7 +975,7 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 				ref(journal)
 			),
 			false,
-			"d"
+			"dt"
 		)
 	);
 	menu.add_item(delete_journal_item);
@@ -1086,7 +1107,11 @@ PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
 		ItemPtr add_repeater_item
 		(	new MenuItem
 			(	"Add automatic recording cycle",
-				bind(bind(&PTS::elicit_repeater_insertion, this, _1), journal)
+				bind
+				(	bind(&PTS::elicit_repeater_insertion, this, _1), journal
+				),
+				false,
+				"ar"
 			)
 		);
 		menu.add_item(add_repeater_item);
@@ -1094,7 +1119,9 @@ PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
 		ItemPtr delete_repeaters_item
 		(	new MenuItem
 			(	"Disable automatic recording",
-				bind(bind(&PTS::elicit_repeater_deletion, this, _1), journal)
+				bind(bind(&PTS::elicit_repeater_deletion, this, _1), journal),
+				false,
+				"dr"
 			)
 		);
 		ItemPtr convert_to_ordinary_journal_item
@@ -1103,7 +1130,9 @@ PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
 				bind
 				(	bind(&PTS::elicit_ordinary_journal_from_draft, this, _1),
 					journal
-				)
+				),
+				false,
+				"ro"
 			)
 		);
 		if (journal.has_repeaters())
@@ -1145,8 +1174,10 @@ PhatbooksTextSession::conduct_ordinary_journal_editing
 
 		ItemPtr amend_date_item
 		(	new MenuItem
-			(	"Amend journal date",
-				bind(bind(&PTS::elicit_date_amendment, this, _1), journal)
+			(	"Edit journal date",
+				bind(bind(&PTS::elicit_date_amendment, this, _1), journal),
+				false,
+				"ed"
 			)
 		);
 		menu.add_item(amend_date_item);
@@ -2236,19 +2267,39 @@ PhatbooksTextSession::elicit_transaction_type()
 {
 	Menu menu;
 	shared_ptr<MenuItem> expenditure_selection
-	(	new MenuItem("Expenditure transaction")
+	(	new MenuItem
+		(	"Expenditure transaction",
+			MenuItem::do_nothing,
+			false,
+			"e"
+		)
 	);
 	menu.add_item(expenditure_selection);
 	shared_ptr<MenuItem> revenue_selection
-	(	new MenuItem("Revenue transaction")
+	(	new MenuItem
+		(	"Revenue transaction",
+			MenuItem::do_nothing,
+			false,
+			"r"
+		)
 	);
 	menu.add_item(revenue_selection);
 	shared_ptr<MenuItem> balance_sheet_selection
-	(	new MenuItem("Transfer between assets or liabilities")
+	(	new MenuItem
+		(	"Transfer between assets or liabilities",
+			MenuItem::do_nothing,
+			false,
+			"a"
+		)
 	);
 	menu.add_item(balance_sheet_selection);
 	shared_ptr<MenuItem> envelope_selection
-	(	new MenuItem("Transfer between budgeting envelopes")
+	(	new MenuItem
+		(	"Transfer between budgeting envelopes",
+			MenuItem::do_nothing,
+			false,
+			"b"
+		)
 	);
 	menu.add_item(envelope_selection);
 	menu.present_to_user();
@@ -2502,15 +2553,37 @@ void
 PhatbooksTextSession::finalize_journal(ProtoJournal& journal)
 {
 	cout << endl << journal << endl << endl;
-	shared_ptr<MenuItem> post(new MenuItem("Record transaction"));
+	shared_ptr<MenuItem> post
+	(	new MenuItem
+		(	"Record transaction",
+			MenuItem::do_nothing,
+			false,
+			"r"
+		)
+	);
 	shared_ptr<MenuItem> save_draft
-	(	new MenuItem("Save as a draft to return and complete later")
+	(	new MenuItem
+		(	"Save as a draft to return and complete later",
+			MenuItem::do_nothing,
+			false,
+			"sd"
+		)
 	);
 	shared_ptr<MenuItem> save_recurring
-	(	new MenuItem("Save as a recurring transaction")
+	(	new MenuItem
+		(	"Save as a recurring transaction",
+			MenuItem::do_nothing,
+			false,
+			"sr"
+		)
 	);
 	shared_ptr<MenuItem> abandon
-	(	new MenuItem("Abandon transaction without saving")
+	(	new MenuItem
+		(	"Abandon transaction without saving",
+			MenuItem::do_nothing,
+			false,
+			"a"
+		)
 	);
 	Menu journal_action_menu;
 	journal_action_menu.add_item(post);
