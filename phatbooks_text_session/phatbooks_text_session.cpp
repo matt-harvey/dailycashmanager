@@ -350,7 +350,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 				"c"
 			)
 		);
-		m_main_menu->add_item(elicit_commodity_item);
+		m_main_menu->push_item(elicit_commodity_item);
 #	endif
 
 	// WARNING Until there is not yet at least one Commodity, this should
@@ -363,7 +363,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"a"
 		)
 	);
-	m_main_menu->add_item(elicit_account_item);
+	m_main_menu->push_item(elicit_account_item);
 
 	// WARNING Until there is at least one Account, this should not appear in
 	// the main menu.
@@ -375,7 +375,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"t"
 		)
 	);
-	m_main_menu->add_item(elicit_journal_item);
+	m_main_menu->push_item(elicit_journal_item);
 
 	shared_ptr<MenuItem> display_draft_journals_item
 	(	new MenuItem
@@ -385,7 +385,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"v"
 		)
 	);
-	m_main_menu->add_item(display_draft_journals_item);
+	m_main_menu->push_item(display_draft_journals_item);
 
 	// TODO The wording "Select a transaction by ID" is not clear for
 	// the user as to whether we are referring to a PersistentJournal id,
@@ -403,7 +403,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"i"
 		)
 	);
-	m_main_menu->add_item(display_journal_from_id_item);
+	m_main_menu->push_item(display_journal_from_id_item);
 
 	shared_ptr<MenuItem> display_ordinary_actual_entries_item
 	(	new MenuItem
@@ -416,7 +416,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"l"
 		)
 	);
-	m_main_menu->add_item(display_ordinary_actual_entries_item);
+	m_main_menu->push_item(display_ordinary_actual_entries_item);
 
 	// TODO Should this also display equity accounts? Do we even have
 	// any equity accounts?
@@ -428,7 +428,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"b"
 		)
 	);
-	m_main_menu->add_item(display_balance_sheet_selection);
+	m_main_menu->push_item(display_balance_sheet_selection);
 
 	shared_ptr<MenuItem> display_envelopes_selection
 	(	new MenuItem
@@ -438,7 +438,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"e"
 		)
 	);
-	m_main_menu->add_item(display_envelopes_selection);
+	m_main_menu->push_item(display_envelopes_selection);
 
 	shared_ptr<MenuItem> perform_reconciliation_selection
 	(	new MenuItem
@@ -448,7 +448,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"r"
 		)
 	);
-	m_main_menu->add_item(perform_reconciliation_selection);
+	m_main_menu->push_item(perform_reconciliation_selection);
 
 	shared_ptr<MenuItem> display_account_detail_item
 	(	new MenuItem
@@ -458,7 +458,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"ad"
 		)
 	);
-	m_main_menu->add_item(display_account_detail_item);
+	m_main_menu->push_item(display_account_detail_item);
 
 	shared_ptr<MenuItem> edit_account_detail_item
 	(	new MenuItem
@@ -468,7 +468,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"ea"
 		)
 	);
-	m_main_menu->add_item(edit_account_detail_item);
+	m_main_menu->push_item(edit_account_detail_item);
 
 	shared_ptr<MenuItem> quit_item
 	(	new MenuItem
@@ -478,7 +478,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 			"x"
 		)
 	);
-	m_main_menu->add_item(quit_item);
+	m_main_menu->push_item(quit_item);
 }
 
 
@@ -657,10 +657,10 @@ void PhatbooksTextSession::display_draft_journals()
 					)
 				)
 			);
-			menu.add_item(menu_item);
+			menu.push_item(menu_item);
 		}
 		shared_ptr<MenuItem> exit_item(MenuItem::provide_menu_exit());
-		menu.add_item(exit_item);
+		menu.push_item(exit_item);
 		menu.present_to_user();
 		if (menu.last_choice() == exit_item)
 		{
@@ -911,7 +911,7 @@ PhatbooksTextSession::populate_journal_editing_menu_core
 			"al"
 		)
 	);
-	menu.add_item(add_entry_item);
+	menu.push_item(add_entry_item);
 
 	ItemPtr delete_entry_item
 	(	new MenuItem
@@ -921,7 +921,7 @@ PhatbooksTextSession::populate_journal_editing_menu_core
 			"dl"
 		)
 	);
-	menu.add_item(delete_entry_item);
+	menu.push_item(delete_entry_item);
 
 	ItemPtr amend_entry_item
 	(	new MenuItem
@@ -931,7 +931,7 @@ PhatbooksTextSession::populate_journal_editing_menu_core
 			"el"
 		)
 	);
-	menu.add_item(amend_entry_item);
+	menu.push_item(amend_entry_item);
 
 	ItemPtr amend_comment_item
 	(	new MenuItem
@@ -943,7 +943,7 @@ PhatbooksTextSession::populate_journal_editing_menu_core
 			"et"
 		)
 	);
-	menu.add_item(amend_comment_item);
+	menu.push_item(amend_comment_item);
 	return;
 }
 
@@ -978,7 +978,7 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 			"dt"
 		)
 	);
-	menu.add_item(delete_journal_item);
+	menu.push_item(delete_journal_item);
 	ItemPtr simple_exit_item = MenuItem::provide_menu_exit();
 	ItemPtr exit_without_saving_item
 	(	new MenuItem
@@ -1004,10 +1004,10 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 	);
 	if (!simple_exit)
 	{
-		menu.add_item(exit_without_saving_item);
+		menu.push_item(exit_without_saving_item);
 		if (journal.is_balanced())
 		{
-			menu.add_item(exit_with_saving_item);
+			menu.push_item(exit_with_saving_item);
 		}
 		else
 		{
@@ -1018,7 +1018,7 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 	else
 	{
 		assert (journal.is_balanced());
-		menu.add_item(simple_exit_item);
+		menu.push_item(simple_exit_item);
 	}
 	menu.present_to_user();	
 	ItemPtr const last_choice = menu.last_choice();
@@ -1114,7 +1114,7 @@ PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
 				"ar"
 			)
 		);
-		menu.add_item(add_repeater_item);
+		menu.push_item(add_repeater_item);
 
 		ItemPtr delete_repeaters_item
 		(	new MenuItem
@@ -1137,12 +1137,12 @@ PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
 		);
 		if (journal.has_repeaters())
 		{
-			menu.add_item(delete_repeaters_item);
+			menu.push_item(delete_repeaters_item);
 		}
 		else if (journal.is_balanced())
 		{
 			assert (!journal.has_repeaters());
-			menu.add_item(convert_to_ordinary_journal_item);
+			menu.push_item(convert_to_ordinary_journal_item);
 		}
 		finalize_journal_editing_cycle
 		(	journal,
@@ -1180,7 +1180,7 @@ PhatbooksTextSession::conduct_ordinary_journal_editing
 				"ed"
 			)
 		);
-		menu.add_item(amend_date_item);
+		menu.push_item(amend_date_item);
 
 		finalize_journal_editing_cycle
 		(	journal,
@@ -1976,7 +1976,7 @@ PhatbooksTextSession::elicit_account()
 	for (vector<BString>::size_type i = 0; i != names.size(); ++i)
 	{
 		shared_ptr<MenuItem> item(new MenuItem(bstring_to_std8(names[i])));
-		account_type_menu.add_item(item);
+		account_type_menu.push_item(item);
 	}
 	cout << "What kind of account do you wish to create?" << endl;
 	account_type_menu.present_to_user();
@@ -2035,30 +2035,30 @@ PhatbooksTextSession::elicit_repeater()
 			"29th, 30th or 31st)"
 		)
 	);
-	frequency_menu.add_item(monthly_day_x);
+	frequency_menu.push_item(monthly_day_x);
 	shared_ptr<MenuItem> monthly_day_last
 	(	new MenuItem("Every month, on the last day of the month")
 	);
-	frequency_menu.add_item(monthly_day_last);
+	frequency_menu.push_item(monthly_day_last);
 	shared_ptr<MenuItem> N_monthly_day_x
 	(	new MenuItem
 		(	"Every N months, on a given day of the month (except the "
 			"29th, 30th or 31st)"
 		)
 	);
-	frequency_menu.add_item(N_monthly_day_x);
+	frequency_menu.push_item(N_monthly_day_x);
 	shared_ptr<MenuItem> N_monthly_day_last
 	(	new MenuItem("Every N months, on the last day of the month")
 	);
-	frequency_menu.add_item(N_monthly_day_last);
+	frequency_menu.push_item(N_monthly_day_last);
 	shared_ptr<MenuItem> weekly(new MenuItem("Every week"));
-	frequency_menu.add_item(weekly);
+	frequency_menu.push_item(weekly);
 	shared_ptr<MenuItem> N_weekly(new MenuItem("Every N weeks"));
-	frequency_menu.add_item(N_weekly);
+	frequency_menu.push_item(N_weekly);
 	shared_ptr<MenuItem> daily(new MenuItem("Every day"));
-	frequency_menu.add_item(daily);
+	frequency_menu.push_item(daily);
 	shared_ptr<MenuItem> N_daily(new MenuItem("Every N days"));
-	frequency_menu.add_item(N_daily);
+	frequency_menu.push_item(N_daily);
 	frequency_menu.present_to_user();
 	shared_ptr<MenuItem const> const choice =
 		frequency_menu.last_choice();
@@ -2274,7 +2274,7 @@ PhatbooksTextSession::elicit_transaction_type()
 			"e"
 		)
 	);
-	menu.add_item(expenditure_selection);
+	menu.push_item(expenditure_selection);
 	shared_ptr<MenuItem> revenue_selection
 	(	new MenuItem
 		(	"Revenue transaction",
@@ -2283,7 +2283,7 @@ PhatbooksTextSession::elicit_transaction_type()
 			"r"
 		)
 	);
-	menu.add_item(revenue_selection);
+	menu.push_item(revenue_selection);
 	shared_ptr<MenuItem> balance_sheet_selection
 	(	new MenuItem
 		(	"Transfer between assets or liabilities",
@@ -2292,7 +2292,7 @@ PhatbooksTextSession::elicit_transaction_type()
 			"a"
 		)
 	);
-	menu.add_item(balance_sheet_selection);
+	menu.push_item(balance_sheet_selection);
 	shared_ptr<MenuItem> envelope_selection
 	(	new MenuItem
 		(	"Transfer between budgeting envelopes",
@@ -2301,7 +2301,7 @@ PhatbooksTextSession::elicit_transaction_type()
 			"b"
 		)
 	);
-	menu.add_item(envelope_selection);
+	menu.push_item(envelope_selection);
 	menu.present_to_user();
 	shared_ptr<MenuItem const> const selection = menu.last_choice();
 	TransactionType const ret =
@@ -2586,10 +2586,10 @@ PhatbooksTextSession::finalize_journal(ProtoJournal& journal)
 		)
 	);
 	Menu journal_action_menu;
-	journal_action_menu.add_item(post);
-	journal_action_menu.add_item(save_draft);
-	journal_action_menu.add_item(save_recurring);
-	journal_action_menu.add_item(abandon);
+	journal_action_menu.push_item(post);
+	journal_action_menu.push_item(save_draft);
+	journal_action_menu.push_item(save_recurring);
+	journal_action_menu.push_item(abandon);
 	journal_action_menu.present_to_user();
 	shared_ptr<MenuItem const> journal_action =
 		journal_action_menu.last_choice();
