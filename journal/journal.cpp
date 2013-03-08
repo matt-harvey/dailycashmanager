@@ -98,34 +98,20 @@ Journal::do_output(ostream& os) const
 	os << endl;
 	if (!comment().empty()) os << comment() << endl;
 	os << endl;
-	vector<string> headings;
-	headings.push_back("Entry id");
-	headings.push_back("Account");
-	headings.push_back("Comment");
-
+	Table<Entry> table;
+	table.push_column(Entry::create_id_column());
+	table.push_column(Entry::create_account_name_column());
+	table.push_column(Entry::create_comment_column());
 #	ifdef PHATBOOKS_EXPOSE_COMMODITY
-		headings.push_back("Commodity");
+		table.push_column(Entry::create_commodity_abbreviation_column());
 #	endif
-
-	headings.push_back("Amount");
-	headings.push_back("Reconciled?");
-	vector<alignment::Flag> alignments(headings.size(), alignment::left);
-
-#	ifdef PHATBOOKS_EXPOSE_COMMODITY
-		alignments[4] = alignment::right;
-#	else
-		alignments[3] = alignment::right;
-#	endif
-
 	bool const change_signs = !is_actual();
-	Table<Entry> const table
-	(	entries().begin(),
-		entries().end(),
-		change_signs? make_reversed_entry_row: make_entry_row,
-		headings,
-		alignments,
-		2
+	table.push_column
+	(	change_signs?
+		Entry::create_amount_column():
+		Entry::create_reversed_amount_column()
 	);
+	table.populate(entries().begin(), entries().end());
 	os << table;
 	return;
 }

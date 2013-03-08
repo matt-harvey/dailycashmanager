@@ -7,6 +7,8 @@
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include "b_string.hpp"
+#include <consolixx/alignment.hpp>
+#include <consolixx/column.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -17,11 +19,13 @@
 
 using boost::lexical_cast;
 using boost::shared_ptr;
+using consolixx::Column;
 using jewel::Decimal;
 using sqloxx::Handle;
 using std::string;
 using std::vector;
 
+namespace alignment = consolixx::alignment;
 namespace gregorian = boost::gregorian;
 
 namespace phatbooks
@@ -152,72 +156,126 @@ Entry::Entry(sqloxx::Handle<EntryImpl> const& p_handle):
 
 namespace
 {
-	shared_ptr<vector<string> > make_entry_row_aux
-	(	Entry const& entry,
-		bool reverse,
-		bool make_augmented_ordinary
-	)
+	// Convenient non-member functions for initializing consolixx::Columns.
+	// "mcs" stands for "MakeCellString" and helps these functions to
+	// stand out as "unusual".
+	string mcs_entry_ordinary_journal_id(Entry const& entry)
 	{
-		shared_ptr<vector<string> > ret(new vector<string>);
-		// TODO Here and in the journal printing method, I
-		// should add journal_id as either the first or second
-		// column.
-		if (make_augmented_ordinary)
-		{
-			OrdinaryJournal journal(entry.journal<OrdinaryJournal>());
-			ret->push_back(lexical_cast<string>(journal.date()));
-			ret->push_back(lexical_cast<string>(journal.id()));
-		}
+		OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
+		return lexical_cast<string>(journal.id());
+	}
+	string mcs_entry_ordinary_journal_date(Entry const& entry)
+	{
+		OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
+		return lexical_cast<string>(journal.date());
+	}
+	string mcs_entry_id(Entry const& entry)
+	{
 		if (entry.has_id())
 		{
-			ret->push_back(lexical_cast<string>(entry.id()));
+			return lexical_cast<string>(entry.id());
 		}
-		else
-		{
-			ret->push_back("N/A");
-		}
-		ret->push_back(bstring_to_std8(entry.account().name()));
-		ret->push_back(bstring_to_std8(entry.comment()));
-#		ifdef PHATBOOKS_EXPOSE_COMMODITY
-			ret->push_back
-			(	bstring_to_std8(entry.account().commodity().abbreviation())
-			);
-#		endif
-		Decimal amount = entry.amount();
-		if (reverse)
-		{
-			Decimal::places_type const places = amount.places();
-			amount = round(-amount, places);
-		}
-		ret->push_back(finformat_std8(amount));
-		ret->push_back(entry.is_reconciled()? "y": "n");
-		return ret;
+		assert (!entry.has_id());
+		return "N/A";
 	}
+	string mcs_entry_account_name(Entry const& entry)
+	{
+		return bstring_to_std8(entry.account().name());
+	}
+	string mcs_entry_comment(Entry const& entry)
+	{
+		return bstring_to_std8(entry.comment());
+	}
+#	ifdef PHATBOOKS_EXPOSE_COMMODITY
+		string mcs_entry_commodity_abbreviation(Entry const& entry)
+		{
+			return bstring_to_std8
+			(	entry.account().commodity().abbreviation()
+			);
+		}
+#	endif
+	string mcs_entry_amount(Entry const& entry)
+	{
+		return finformat_std8(entry.amount());
+	}
+	string mcs_entry_reversed_amount(Entry const& entry)
+	{
+		Decimal const amount = entry.amount();
+		Decimal::places_type const places = amount.places();
+		return finformat_std8(round(-amount, places));
+	}
+	string mcs_entry_reconciliation_status(Entry const& entry)
+	{
+		return entry.is_reconciled()? "y": "n";
+	}
+}  // end anonymous namespace
+		
 
-
-}  // End anonymous namespace
-
-
-shared_ptr<vector<string> >
-make_entry_row(Entry const& entry)
+Column<Entry>
+Entry::create_ordinary_journal_id_column()
 {
-	return make_entry_row_aux(entry, false, false);
+	return Column<Entry>
+	(	mcs_entry_ordinary_journal_id,
+		"Journal ID",
+		alignment::right
+	);
+}
+
+Column<Entry>
+Entry::create_ordinary_journal_date_column()
+{
+	return Column<Entry>(mcs_entry_ordinary_journal_date, "Date");
+}
+
+Column<Entry>
+Entry::create_id_column()
+{
+	return Column<Entry>(mcs_entry_id, "Entry ID", alignment::right);
+}
+
+Column<Entry>
+Entry::create_account_name_column()
+{
+	return Column<Entry>(mcs_entry_account_name, "Account");
+}
+
+Column<Entry>
+Entry::create_comment_column()
+{
+	return Column<Entry>(mcs_entry_comment, "Comment");
 }
 
 
-shared_ptr<vector<string> >
-make_reversed_entry_row(Entry const& entry)
+#ifdef PHATBOOKS_EXPOSE_COMMODITY
+	Column<Entry>
+	Entry::create_commodity_abbreviation_column()
+	{
+		return Column<Entry>(mcs_entry_commodity_abbreviation, "Commodity");
+	}
+#endif  // PHATBOOKS_EXPOSE_COMMODITY
+
+
+Column<Entry>
+Entry::create_amount_column()
 {
-	return make_entry_row_aux(entry, true, false);
+	return Column<Entry>(mcs_entry_amount, "Amount", alignment::right);
 }
 
-
-shared_ptr<vector<string> >
-make_augmented_ordinary_entry_row(Entry const& entry)
+Column<Entry>
+Entry::create_reversed_amount_column()
 {
-	return make_entry_row_aux(entry, false, true);
+	return Column<Entry>
+	(	mcs_entry_reversed_amount,
+		"Amount",
+		alignment::right
+	);
 }
 
+Column<Entry>
+Entry::create_reconciliation_status_column()
+{
+	return Column<Entry>(mcs_entry_reconciliation_status, "Reconciled?");
+}
 
 }  // namespace phatbooks
 

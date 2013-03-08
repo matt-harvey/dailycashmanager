@@ -267,19 +267,10 @@ namespace
 	template <typename AccountReaderT>
 	void print_account_reader(AccountReaderT& p_reader)
 	{
-		vector<string> headings;
-		headings.push_back("ACCOUNT");
-		headings.push_back("BALANCE ");
-		vector<alignment::Flag> alignments;
-		alignments.push_back(alignment::left);
-		alignments.push_back(alignment::right);
-		Table<Account> const table
-		(	p_reader.begin(),
-			p_reader.end(),
-			make_account_row,
-			headings,
-			alignments
-		);
+		Table<Account> table;
+		table.push_column(Account::create_name_column());
+		table.push_column(Account::create_friendly_balance_column());
+		table.populate(p_reader.begin(), p_reader.end());
 		cout << table;
 		return;
 	}
@@ -1198,20 +1189,12 @@ void
 PhatbooksTextSession::display_account_detail()
 {
 	cout << endl;
-	vector<string> headings;
-	headings.push_back("Name");
-	headings.push_back("Type");
-	headings.push_back("Description");
-	vector<alignment::Flag> alignments(3, alignment::left);
+	Table<Account> table;
 	AccountReader reader(database_connection());
-	Table<Account> const table
-	(	reader.begin(),
-		reader.end(),
-		make_detailed_account_row,
-		headings,
-		alignments,
-		2
-	);
+	table.push_column(Account::create_name_column());
+	table.push_column(Account::create_type_column());
+	table.push_column(Account::create_description_column());
+	table.populate(reader.begin(), reader.end());
 	cout << endl << table << endl;
 	return;
 }
@@ -1348,46 +1331,18 @@ PhatbooksTextSession::conduct_reconciliation()
 			}
 		}
 		
-		// TODO Headings should somehow be provided as part, or else "near the
-		// source of", the "create_row"
-		// function - they depend on that function and so that's where they
-		// belong. This would require changing the interface of consolixx::Table.
-		vector<string> headings;
-		headings.push_back("Date");
-		headings.push_back("Journal id");
-		headings.push_back("Entry id");
-		headings.push_back("Account");
-		headings.push_back("Comment");
+		Table<Entry> table;
+		table.push_column(Entry::create_ordinary_journal_date_column());
+		table.push_column(Entry::create_ordinary_journal_id_column());
+		table.push_column(Entry::create_id_column());
+		table.push_column(Entry::create_account_name_column());
+		table.push_column(Entry::create_comment_column());
 #		ifdef PHATBOOKS_EXPOSE_COMMODITY
-			headings.push_back("Commodity");
+			table.push_column(Entry::create_commodity_abbreviation_column());
 #		endif
-		headings.push_back("Amount");
-		headings.push_back("Reconciled?");
-		using alignment::left;
-		using alignment::right;
-		alignment::Flag const alignments[] =
-		{ 	left,
-			right,
-			right,
-			left,
-			left,
-#		ifdef PHATBOOKS_EXPOSE_COMMODITY
-				left,
-#		endif
-			right,
-			left
-		};
-		Table<Entry> const table
-		(	table_vec.begin(),
-			table_vec.end(),
-			make_augmented_ordinary_entry_row,
-			headings,
-			vector<alignment::Flag>
-			(	alignments,
-				alignments + sizeof(alignments) / sizeof(alignments[0])
-			),
-			2
-		);
+		table.push_column(Entry::create_amount_column());
+		table.push_column(Entry::create_reconciliation_status_column());
+		table.populate(table_vec.begin(), table_vec.end());
 		cout << endl << table << endl;
 
 		cout << "\nTotal balance at "
@@ -1722,43 +1677,17 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 		}
 	}
 
-	vector<string> headings;
-	headings.push_back("Date");
-	headings.push_back("Journal id");
-	headings.push_back("Entry id");
-	headings.push_back("Account");
-	headings.push_back("Comment");
+	Table<Entry> table;
+	table.push_column(Entry::create_ordinary_journal_date_column());
+	table.push_column(Entry::create_ordinary_journal_id_column());
+	table.push_column(Entry::create_id_column());
+	table.push_column(Entry::create_account_name_column());
+	table.push_column(Entry::create_comment_column());
 #	ifdef PHATBOOKS_EXPOSE_COMMODITY
-		headings.push_back("Commodity");
+		table.push_column(Entry::create_commodity_abbreviation_column());
 #	endif
-	headings.push_back("Amount");
-	headings.push_back("Reconciled");
-
-	using alignment::left;
-	using alignment::right;
-	alignment::Flag const alignments[] =
-	{ 	left,  // Date
-		right, // Journal id
-		right, // Entry id
-		left,  // Account
-		left,  // Comment
-#		ifdef PHATBOOKS_EXPOSE_COMMODITY
-			left,  // Commodity
-#		endif
-		right, // Amount
-		left   // Reconciled
-	};
-	Table<Entry> const table
-	(	table_vec.begin(),
-		table_vec.end(),
-		make_augmented_ordinary_entry_row,
-		headings,
-		vector<alignment::Flag>
-		(	alignments,
-			alignments + sizeof(alignments) / sizeof(alignments[0])
-		),
-		2
-	);
+	table.push_column(Entry::create_amount_column());
+	table.populate(table_vec.begin(), table_vec.end());
 	cout << endl << table << endl;
 
 	if (filtering_for_account)

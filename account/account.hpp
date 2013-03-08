@@ -7,6 +7,7 @@
 #include "commodity.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <boost/shared_ptr.hpp>
+#include <consolixx/column.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <jewel/decimal.hpp>
@@ -145,6 +146,14 @@ public:
 	void set_commodity(Commodity const& p_commodity);
 
 	void set_description(BString const& p_description);
+
+	// Functions for returning consolixx::Columns, to facilitate
+	// construction of consolixx::Tables, for displaying
+	// Account-related data in text form.
+	static consolixx::Column<Account> create_name_column();
+	static consolixx::Column<Account> create_type_column();
+	static consolixx::Column<Account> create_description_column();
+	static consolixx::Column<Account> create_friendly_balance_column();
 
 private:
 	Account(sqloxx::Handle<AccountImpl> const& p_handle);

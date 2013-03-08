@@ -5,6 +5,7 @@
 #include "entry_impl.hpp"
 #include "finformat.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include <consolixx/column.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -151,6 +152,25 @@ public:
 	 * \e journal_id.
 	 */
 	void mimic(Entry const& rhs);
+
+	// Functions for returning consolixx::Columns, to facilitate
+	// construction of consolixx::Tables, for displaying
+	// Entry-related data in text form.
+	// Note the ones beginnning "create_ordinary_journal..." will not
+	// behave correctly unless all the Entries with which we
+	// will be populating the Table, are such as to have OrdinaryJournal
+	// Journals, i.e. are "ordinary" (rather than draft) entries. 
+	static consolixx::Column<Entry> create_ordinary_journal_id_column();
+	static consolixx::Column<Entry> create_ordinary_journal_date_column();
+	static consolixx::Column<Entry> create_id_column();
+	static consolixx::Column<Entry> create_account_name_column();
+	static consolixx::Column<Entry> create_comment_column();
+#	ifdef PHATBOOKS_EXPOSE_COMMODITY
+		static consolixx::Column<Entry> create_commodity_abbreviation_column();
+#	endif	
+	static consolixx::Column<Entry> create_amount_column();
+	static consolixx::Column<Entry> create_reversed_amount_column();
+	static consolixx::Column<Entry> create_reconciliation_status_column();
 
 private:
 	Entry(sqloxx::Handle<EntryImpl> const& p_handle);

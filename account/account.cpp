@@ -8,18 +8,23 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "b_string.hpp"
-#include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
+#include <consolixx/alignment.hpp>
+#include <consolixx/column.hpp>
 #include <jewel/decimal.hpp>
+#include <sqloxx/handle.hpp>
 #include <string>
 #include <vector>
 
+using consolixx::Column;
 using phatbooks::account_type::AccountType;
 using sqloxx::Handle;
 using boost::shared_ptr;
 using jewel::Decimal;
 using std::string;
 using std::vector;
+
+namespace alignment = consolixx::alignment;
 
 
 namespace phatbooks
@@ -162,28 +167,61 @@ Account::set_description(BString const& p_description)
 	return;
 }
 
-shared_ptr<vector<string> >
-make_account_row(Account const& account)
+
+namespace
 {
-	shared_ptr<vector<string> > ret(new vector<string>);
-	ret->push_back(bstring_to_std8(account.name()));
-	ret->push_back(finformat_std8(account.friendly_balance()));
-	return ret;
+	// Convenient non-member functions for initializing consolixx::Columns.
+	// "mcs" stands for "MakeCellString" and helps these functions to
+	// stand out as "unusual".
+	string mcs_account_name(Account const& account)
+	{
+		return bstring_to_std8(account.name());
+	}
+	string mcs_account_type(Account const& account)
+	{
+		return bstring_to_std8
+		(	account_type_to_string(account.account_type())
+		);
+	}
+	string mcs_account_description(Account const& account)
+	{
+		return bstring_to_std8(account.description());
+	}
+	string mcs_account_friendly_balance(Account const& account)
+	{
+		return finformat_std8(account.friendly_balance());
+	}
+}  // end anonymous namespace
+
+
+
+Column<Account>
+Account::create_name_column()
+{
+	return Column<Account>(mcs_account_name, "Account");
 }
 
-shared_ptr<vector<string> >
-make_detailed_account_row(Account const& account)
+Column<Account>
+Account::create_type_column()
 {
-	shared_ptr<vector<string> > ret(new vector<string>);
-	ret->push_back(bstring_to_std8(account.name()));
-	ret->push_back
-	(	bstring_to_std8(account_type_to_string(account.account_type()))
+	return Column<Account>(mcs_account_type, "Type");
+}
+
+Column<Account>
+Account::create_description_column()
+{
+	return Column<Account>(mcs_account_description, "Desciption");
+}
+
+Column<Account>
+Account::create_friendly_balance_column()
+{
+	return Column<Account>
+	(	mcs_account_friendly_balance, 
+		"Balance",
+		alignment::right
 	);
-	ret->push_back(bstring_to_std8(account.description()));
-	return ret;
 }
-
-
 
 
 // Free-standing functions
