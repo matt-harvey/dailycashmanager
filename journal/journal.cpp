@@ -108,8 +108,8 @@ Journal::do_output(ostream& os) const
 	bool const change_signs = !is_actual();
 	table.push_column
 	(	change_signs?
-		Entry::create_amount_column():
-		Entry::create_reversed_amount_column()
+		Entry::create_reversed_amount_column():
+		Entry::create_amount_column()
 	);
 	table.populate(entries().begin(), entries().end());
 	os << table;
