@@ -693,7 +693,7 @@ PhatbooksTextSession::elicit_entry_insertion(PersistentJournal& journal)
 	cout << "Comment for this line (or Enter for no comment): ";
 	entry.set_comment(std8_to_bstring(get_user_input()));
 	entry.set_whether_reconciled(false);
-	journal.add_entry(entry);
+	journal.push_entry(entry);
 	return;
 }
 
@@ -841,7 +841,7 @@ void
 PhatbooksTextSession::elicit_repeater_insertion(DraftJournal& journal)
 {
 	Repeater repeater = elicit_repeater();
-	journal.add_repeater(repeater);
+	journal.push_repeater(repeater);
 	return;
 }
 
@@ -2343,7 +2343,7 @@ PhatbooksTextSession::elicit_primary_entries
 	cout << "Comment for this line (or Enter for no comment): ";
 	entry.set_comment(std8_to_bstring(get_user_input()));
 	entry.set_whether_reconciled(false);
-	journal.add_entry(entry);
+	journal.push_entry(entry);
 	return;
 }
 
@@ -2455,7 +2455,7 @@ PhatbooksTextSession::elicit_secondary_entries
 			cout << "Comment for this line (or Enter for no comment): ";
 			current_entry.set_comment(std8_to_bstring(get_user_input()));
 			current_entry.set_whether_reconciled(false);
-			journal.add_entry(current_entry);
+			journal.push_entry(current_entry);
 			cout << endl;
 		}
 	}
@@ -2481,7 +2481,7 @@ PhatbooksTextSession::elicit_secondary_entries
 		secondary_entry.set_comment(std8_to_bstring(get_user_input()));
 		secondary_entry.set_amount(-journal.balance());
 		secondary_entry.set_whether_reconciled(false);
-		journal.add_entry(secondary_entry);
+		journal.push_entry(secondary_entry);
 	}
 	return;
 }
@@ -2540,7 +2540,7 @@ PhatbooksTextSession::finalize_draft_journal
 	if (autopost)
 	{
 		Repeater repeater = elicit_repeater();
-		journal.add_repeater(repeater);
+		journal.push_repeater(repeater);
 	}
 	journal.save();
 	cout << "Draft journal has been saved:" << endl << endl

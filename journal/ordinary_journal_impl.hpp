@@ -60,7 +60,7 @@ public:
 	/**
 	 * @todo Figure out throwing behaviour.
 	 */
-	void add_entry(Entry& entry);
+	void push_entry(Entry& entry);
 
 	void remove_entry(Entry& entry);
 

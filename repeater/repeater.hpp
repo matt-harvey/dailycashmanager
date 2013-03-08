@@ -99,7 +99,7 @@ public:
 	 * This function should \e not normally be used. The usual way
 	 * to associate a Repeater with a DraftJournal is to pass a
 	 * \e shared_ptr to the Repeater to
-	 * \e DraftJournal::add_repeater(...). The DraftJournal class
+	 * \e DraftJournal::push_repeater(...). The DraftJournal class
 	 * takes care of assigning the correct journal id to Repeaters,
 	 * without client code needing to do this directly.
 	 */

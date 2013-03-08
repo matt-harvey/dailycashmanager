@@ -67,14 +67,14 @@ DraftJournalImpl::set_comment(BString const& p_comment)
 }
 
 void
-DraftJournalImpl::add_entry(Entry& entry)
+DraftJournalImpl::push_entry(Entry& entry)
 {
 	load();
 	if (has_id())
 	{
 		entry.set_journal_id(id());
 	}
-	ProtoJournal::add_entry(entry);
+	ProtoJournal::push_entry(entry);
 	return;
 }
 
@@ -185,7 +185,7 @@ DraftJournalImpl::set_name(BString const& p_name)
 
 
 void
-DraftJournalImpl::add_repeater(Repeater& repeater)
+DraftJournalImpl::push_repeater(Repeater& repeater)
 {
 	load();
 	if (has_id())

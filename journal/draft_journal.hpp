@@ -90,7 +90,7 @@ public:
 	);
 
 	void set_name(BString const& p_name);
-	void add_repeater(Repeater& repeater);
+	void push_repeater(Repeater& repeater);
 	BString name() const;
 
 	/**
@@ -118,7 +118,7 @@ private:
 	std::vector<Entry> const& do_get_entries() const;
 	void do_set_whether_actual(bool p_is_actual);
 	void do_set_comment(BString const& p_comment);
-	void do_add_entry(Entry& entry);
+	void do_push_entry(Entry& entry);
 	void do_remove_entry(Entry& entry);
 	BString do_get_comment() const;
 	bool do_get_whether_actual() const;

@@ -78,9 +78,9 @@ DraftJournal::set_name(BString const& p_name)
 
 
 void
-DraftJournal::add_repeater(Repeater& repeater)
+DraftJournal::push_repeater(Repeater& repeater)
 {
-	impl().add_repeater(repeater);
+	impl().push_repeater(repeater);
 	return;
 }
 
@@ -112,9 +112,9 @@ DraftJournal::do_set_comment(BString const& p_comment)
 }
 
 void
-DraftJournal::do_add_entry(Entry& entry)
+DraftJournal::do_push_entry(Entry& entry)
 {
-	impl().add_entry(entry);
+	impl().push_entry(entry);
 	return;
 }
 

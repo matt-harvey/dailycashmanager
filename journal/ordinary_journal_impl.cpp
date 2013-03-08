@@ -71,14 +71,14 @@ OrdinaryJournalImpl::set_comment(BString const& p_comment)
 }
 
 void
-OrdinaryJournalImpl::add_entry(Entry& entry)
+OrdinaryJournalImpl::push_entry(Entry& entry)
 {
 	load();
 	if (has_id())
 	{
 		entry.set_journal_id(id());
 	}
-	ProtoJournal::add_entry(entry);
+	ProtoJournal::push_entry(entry);
 	return;
 }
 

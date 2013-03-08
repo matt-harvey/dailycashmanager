@@ -103,9 +103,9 @@ OrdinaryJournal::set_date(boost::gregorian::date const& p_date)
 }
 
 void
-OrdinaryJournal::do_add_entry(Entry& entry)
+OrdinaryJournal::do_push_entry(Entry& entry)
 {
-	impl().add_entry(entry);
+	impl().push_entry(entry);
 	return;
 }
 

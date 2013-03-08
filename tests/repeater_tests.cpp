@@ -37,20 +37,20 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	entry1.set_comment("Test entry");
 	entry1.set_amount(Decimal("-0.95"));
 	entry1.set_whether_reconciled(false);
-	dj.add_entry(entry1);
+	dj.push_entry(entry1);
 	
 	Entry entry2(dbc);
 	entry2.set_account(Account(dbc, "food"));
 	entry2.set_comment("Test entry");
 	entry2.set_amount(Decimal("0.95"));
 	entry2.set_whether_reconciled(false);
-	dj.add_entry(entry2);
+	dj.push_entry(entry2);
 
 	Repeater repeater1(dbc);
 	repeater1.set_interval_type(interval_type::days);
 	repeater1.set_interval_units(3);
 	repeater1.set_next_date(date(2012, 5, 30));
-	dj.add_repeater(repeater1);
+	dj.push_repeater(repeater1);
 	dj.save();
 
 	CHECK_EQUAL(repeater1.next_date(), date(2012, 5, 30));
@@ -62,7 +62,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	repeater2.set_interval_type(interval_type::weeks);
 	repeater2.set_interval_units(2);
 	repeater2.set_next_date(date(2012, 12, 31));
-	dj.add_repeater(repeater2);
+	dj.push_repeater(repeater2);
 	dj.save();
 
 	CHECK_EQUAL(repeater2.next_date(2), date(2013, 1, 28));
@@ -161,20 +161,20 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	entry1a.set_comment(BString("Test entry")); // BString is optional
 	entry1a.set_amount(Decimal("-1090.95"));
 	entry1a.set_whether_reconciled(false);
-	dj1.add_entry(entry1a);
+	dj1.push_entry(entry1a);
 	
 	Entry entry1b(dbc);
 	entry1b.set_account(Account(dbc, "food"));
 	entry1b.set_comment("Test entry");
 	entry1b.set_amount(Decimal("1090.95"));
 	entry1b.set_whether_reconciled(false);
-	dj1.add_entry(entry1b);
+	dj1.push_entry(entry1b);
 
 	Repeater repeater1(dbc);
 	repeater1.set_interval_type(interval_type::weeks);
 	repeater1.set_interval_units(2);
 	repeater1.set_next_date(date(2012, 7, 30));
-	dj1.add_repeater(repeater1);
+	dj1.push_repeater(repeater1);
 
 	dj1.save();
 

@@ -74,7 +74,7 @@ public:
 	 * Sets the journal_id for the EntryImpl. Note this should \e not
 	 * normally be called. The usual way to associate an EntryImpl with a
 	 * Journal (or DraftJournal or OrdinaryJournal) is for the EntryImpl
-	 * to be added to the Journal via its add_entry(...) method.
+	 * to be added to the Journal via its push_entry(...) method.
 	 */
 	void set_journal_id(Id p_journal_id);
 

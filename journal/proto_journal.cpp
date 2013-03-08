@@ -119,7 +119,7 @@ ProtoJournal::do_set_comment(BString const& p_comment)
 }
 
 void
-ProtoJournal::do_add_entry(Entry& entry)
+ProtoJournal::do_push_entry(Entry& entry)
 {
 	m_data->entries.push_back(entry);
 	return;
@@ -339,7 +339,7 @@ ProtoJournal::mimic_core
 			Entry entry(dbc);
 			entry.mimic(*it);
 			if (id) entry.set_journal_id(value(id));
-			add_entry(entry);
+			push_entry(entry);
 		}
 	}
 	return;

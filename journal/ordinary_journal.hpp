@@ -93,7 +93,7 @@ private:
 	// Define pure virtual functions inherited from Journal
 	void do_set_whether_actual(bool p_is_actual);
 	void do_set_comment(BString const& p_comment);
-	void do_add_entry(Entry& entry);
+	void do_push_entry(Entry& entry);
 	void do_remove_entry(Entry& entry);
 	bool do_get_whether_actual() const;
 	BString do_get_comment() const;

@@ -39,9 +39,9 @@ Journal::set_comment(BString const& p_comment)
 }
 
 void
-Journal::add_entry(Entry& entry)
+Journal::push_entry(Entry& entry)
 {
-	do_add_entry(entry);
+	do_push_entry(entry);
 	return;
 }
 

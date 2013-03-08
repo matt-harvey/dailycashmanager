@@ -33,7 +33,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	entry1.set_comment(test_comment);
 	entry1.set_amount(Decimal("0.00"));
 	entry1.set_whether_reconciled(false);
-	dj1.add_entry(entry1);
+	dj1.push_entry(entry1);
 
 	BString target = BString("");
 	CHECK_EQUAL(dj1.repeater_description(), "");
@@ -42,7 +42,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	repeater1a.set_interval_type(interval_type::months);
 	repeater1a.set_interval_units(1);
 	repeater1a.set_next_date(date(2012, 9, 15));
-	dj1.add_repeater(repeater1a);
+	dj1.push_repeater(repeater1a);
 
 	target = BString
 	(	"This transaction is automatically recorded every month, "
@@ -54,7 +54,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	repeater1b.set_interval_type(interval_type::days);
 	repeater1b.set_interval_units(3);
 	repeater1b.set_next_date(date(2012, 9, 12));
-	dj1.add_repeater(repeater1b);
+	dj1.push_repeater(repeater1b);
 
 	target = BString
 	(	"This transaction is automatically recorded every month, "

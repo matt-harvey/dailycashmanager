@@ -80,7 +80,7 @@ public:
 	 * @todo Figure out throwing behaviour. Should it check that
 	 * the account exists? Etc. Etc.
 	 */
-	void add_entry(Entry& entry);
+	void push_entry(Entry& entry);
 
 	void remove_entry(Entry& entry);
 
@@ -98,7 +98,7 @@ public:
 
 	void set_name(BString const& p_name);
 	
-	void add_repeater(Repeater& repeater);
+	void push_repeater(Repeater& repeater);
 	
 	BString name();
 
