@@ -67,7 +67,7 @@ int
 GraphicalSession::do_run(string const& filepath_str)
 {
 	// TODO Validate the filepath here first - similar to what
-	// we do in PhatbooksTextSession::do_run(...).
+	// we do in TextSession::do_run(...).
 	
 	// TODO There is code duplicated between here and the
 	// other form of do_run

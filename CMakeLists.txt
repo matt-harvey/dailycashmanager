@@ -18,7 +18,7 @@ set (immediate_directories
 	 output_aux
 	 phatbooks_database_connection
 	 phatbooks_persistent_object
-	 phatbooks_text_session
+	 text_session
 	 repeater
 	 session)
 
@@ -122,7 +122,7 @@ endif ()
 
 
 set (tui_files
-	 phatbooks_text_session/phatbooks_text_session.cpp)
+	 text_session/text_session.cpp)
 
 set (main_files
 	 account/account.cpp

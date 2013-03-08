@@ -1,5 +1,5 @@
-#ifndef GUARD_phatbooks_text_session_hpp
-#define GUARD_phatbooks_text_session_hpp
+#ifndef GUARD_text_session_hpp
+#define GUARD_text_session_hpp
 
 #include "session.hpp"
 #include <boost/filesystem.hpp>
@@ -10,7 +10,7 @@
 #include <string>
 
 
-/** \file phatbooks_text_session.hpp
+/** \file text_session.hpp
  *
  * \brief Header for text/console user interface for Phatbooks.
  *
@@ -51,13 +51,13 @@ namespace tui
  * database file, it needs to be impossible for the user to proceed
  * with creating a database connection to that file.
  */
-class PhatbooksTextSession:
+class TextSession:
 	public Session
 {
 public:
 
-	PhatbooksTextSession();
-	virtual ~PhatbooksTextSession();	
+	TextSession();
+	virtual ~TextSession();	
 
 
 private:
@@ -375,5 +375,5 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_phatbooks_text_session_hpp
+#endif  // GUARD_text_session_hpp
 

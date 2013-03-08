@@ -1,7 +1,7 @@
-#include "phatbooks_text_session.hpp"
+#include "text_session.hpp"
 
 
-/** \file phatbooks_text_session.cpp
+/** \file text_session.cpp
  *
  * \brief Source file for text/console user interface code for Phatbooks.
  *
@@ -124,10 +124,6 @@ namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
-
-
-
-
 namespace tui
 {
 
@@ -323,7 +319,7 @@ namespace
 
 
 
-PhatbooksTextSession::PhatbooksTextSession():
+TextSession::TextSession():
 	m_main_menu(new Menu)
 {
 	// Set up main menu.
@@ -338,7 +334,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 		shared_ptr<MenuItem> elicit_commodity_item
 		(	new MenuItem
 			(	"New commodity",
-				bind(&PhatbooksTextSession::elicit_commodity, this),
+				bind(&TextSession::elicit_commodity, this),
 				true,
 				"c"
 			)
@@ -351,7 +347,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> elicit_account_item
 	(	new MenuItem
 		(	"New account",
-			bind(&PhatbooksTextSession::elicit_account, this),
+			bind(&TextSession::elicit_account, this),
 			true,
 			"a"
 		)
@@ -363,7 +359,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> elicit_journal_item
 	(	new MenuItem
 		(	"New transaction",
-			bind(&PhatbooksTextSession::elicit_journal, this),
+			bind(&TextSession::elicit_journal, this),
 			true,
 			"t"
 		)
@@ -373,7 +369,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> display_draft_journals_item
 	(	new MenuItem
 		(	"View draft and recurring transactions",
-			bind(&PhatbooksTextSession::display_draft_journals, this),
+			bind(&TextSession::display_draft_journals, this),
 			true,
 			"v"
 		)
@@ -391,7 +387,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> display_journal_from_id_item
 	(	new MenuItem
 		(	"Select a transaction by ID",
-			bind(&PhatbooksTextSession::display_journal_from_id, this),
+			bind(&TextSession::display_journal_from_id, this),
 			true,
 			"i"
 		)
@@ -402,7 +398,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	(	new MenuItem
 		(	"List actual transactions",
 			bind
-			(	&PhatbooksTextSession::display_ordinary_actual_entries,
+			(	&TextSession::display_ordinary_actual_entries,
 				this
 			),
 			true,
@@ -416,7 +412,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> display_balance_sheet_selection
 	(	new MenuItem
 		(	"Display the balances of asset and liability accounts",
-			bind(&PhatbooksTextSession::display_balance_sheet, this),
+			bind(&TextSession::display_balance_sheet, this),
 			true,
 			"b"
 		)
@@ -426,7 +422,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> display_envelopes_selection
 	(	new MenuItem
 		(	"Display envelope balances",
-			bind(&PhatbooksTextSession::display_envelopes, this),
+			bind(&TextSession::display_envelopes, this),
 			true,
 			"e"
 		)
@@ -436,7 +432,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> perform_reconciliation_selection
 	(	new MenuItem
 		(	"Perform account reconciliation",
-			bind(&PhatbooksTextSession::conduct_reconciliation, this),
+			bind(&TextSession::conduct_reconciliation, this),
 			true,
 			"r"
 		)
@@ -446,7 +442,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> display_account_detail_item
 	(	new MenuItem
 		(	"Account and category detail",
-			bind(&PhatbooksTextSession::display_account_detail, this),
+			bind(&TextSession::display_account_detail, this),
 			true,
 			"ad"
 		)
@@ -456,7 +452,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> edit_account_detail_item
 	(	new MenuItem
 		(	"Edit account detail",
-			bind(&PhatbooksTextSession::conduct_account_editing, this),
+			bind(&TextSession::conduct_account_editing, this),
 			true,
 			"ea"
 		)
@@ -466,7 +462,7 @@ PhatbooksTextSession::PhatbooksTextSession():
 	shared_ptr<MenuItem> quit_item
 	(	new MenuItem
 		(	"Quit",
-			bind(&PhatbooksTextSession::wrap_up, this),
+			bind(&TextSession::wrap_up, this),
 			false,
 			"x"
 		)
@@ -475,12 +471,12 @@ PhatbooksTextSession::PhatbooksTextSession():
 }
 
 
-PhatbooksTextSession::~PhatbooksTextSession()
+TextSession::~TextSession()
 {
 }
 
 int
-PhatbooksTextSession::do_run()
+TextSession::do_run()
 {
 	// TODO Tidy this ugly control flow.
 	// TODO Make sure this control flow actually works the way it should.
@@ -536,7 +532,7 @@ PhatbooksTextSession::do_run()
 }
 
 int
-PhatbooksTextSession::do_run(string const& filepath_str)
+TextSession::do_run(string const& filepath_str)
 {
 	boost::filesystem::path filepath(filepath_str);
 	string const filename = filepath.filename().string();
@@ -555,7 +551,7 @@ PhatbooksTextSession::do_run(string const& filepath_str)
 
 
 int
-PhatbooksTextSession::run_with_filepath
+TextSession::run_with_filepath
 (	boost::filesystem::path const& filepath
 )
 {
@@ -602,7 +598,7 @@ PhatbooksTextSession::run_with_filepath
 
 
 string
-PhatbooksTextSession::elicit_existing_account_name(bool accept_empty)
+TextSession::elicit_existing_account_name(bool accept_empty)
 {
 	 while (true)
 	 {
@@ -621,9 +617,9 @@ PhatbooksTextSession::elicit_existing_account_name(bool accept_empty)
 
 
 
-void PhatbooksTextSession::display_draft_journals()
+void TextSession::display_draft_journals()
 {
-	typedef PhatbooksTextSession PTS;  // For brevity in the below
+	typedef TextSession PTS;  // For brevity in the below
 
 	// We need this loop here so the menu will update itself
 	// if a journal is deleted.
@@ -665,7 +661,7 @@ void PhatbooksTextSession::display_draft_journals()
 
 
 void
-PhatbooksTextSession::elicit_entry_insertion(PersistentJournal& journal)
+TextSession::elicit_entry_insertion(PersistentJournal& journal)
 {
 	Entry entry(database_connection());
 	cout << "Enter name of account or category for new transaction line: ";
@@ -693,7 +689,7 @@ PhatbooksTextSession::elicit_entry_insertion(PersistentJournal& journal)
 
 
 void
-PhatbooksTextSession::elicit_entry_deletion(PersistentJournal& journal)	
+TextSession::elicit_entry_deletion(PersistentJournal& journal)	
 {
 	cout << "Enter the entry id of the transaction line you wish to delete, "
 	     << "or just hit Enter to abort: ";
@@ -713,7 +709,7 @@ PhatbooksTextSession::elicit_entry_deletion(PersistentJournal& journal)
 
 
 void
-PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
+TextSession::elicit_entry_amendment(PersistentJournal& journal)
 {
 	cout << "Enter the entry id of the transaction line you wish to amend, "
 	     << "or just hit Enter to abort: ";
@@ -795,7 +791,7 @@ PhatbooksTextSession::elicit_entry_amendment(PersistentJournal& journal)
 
 
 void
-PhatbooksTextSession::elicit_journal_deletion(PersistentJournal& journal)
+TextSession::elicit_journal_deletion(PersistentJournal& journal)
 {
 	cout << "Are you sure you want to delete this entire transaction? (y/n) ";
 	string const confirmation = get_constrained_user_input
@@ -820,7 +816,7 @@ PhatbooksTextSession::elicit_journal_deletion(PersistentJournal& journal)
 
 	
 void
-PhatbooksTextSession::elicit_comment_amendment
+TextSession::elicit_comment_amendment
 (	PersistentJournal& journal
 )
 {
@@ -831,7 +827,7 @@ PhatbooksTextSession::elicit_comment_amendment
 
 
 void
-PhatbooksTextSession::elicit_repeater_insertion(DraftJournal& journal)
+TextSession::elicit_repeater_insertion(DraftJournal& journal)
 {
 	Repeater repeater = elicit_repeater();
 	journal.push_repeater(repeater);
@@ -839,7 +835,7 @@ PhatbooksTextSession::elicit_repeater_insertion(DraftJournal& journal)
 }
 
 void
-PhatbooksTextSession::elicit_repeater_deletion(DraftJournal& journal)
+TextSession::elicit_repeater_deletion(DraftJournal& journal)
 {
 	journal.clear_repeaters();
 	cout << "\nAutomatic recording has been disabled for this transaction.\n"
@@ -848,7 +844,7 @@ PhatbooksTextSession::elicit_repeater_deletion(DraftJournal& journal)
 }
 
 void
-PhatbooksTextSession::exit_journal_edit_without_saving
+TextSession::exit_journal_edit_without_saving
 (	PersistentJournal& journal
 )
 {
@@ -859,7 +855,7 @@ PhatbooksTextSession::exit_journal_edit_without_saving
 }
 
 void
-PhatbooksTextSession::exit_journal_edit_saving_changes
+TextSession::exit_journal_edit_saving_changes
 (	PersistentJournal& journal
 )
 {
@@ -870,7 +866,7 @@ PhatbooksTextSession::exit_journal_edit_saving_changes
 }
 
 void
-PhatbooksTextSession::elicit_date_amendment
+TextSession::elicit_date_amendment
 (	OrdinaryJournal& journal
 )
 {
@@ -888,13 +884,13 @@ PhatbooksTextSession::elicit_date_amendment
 }
 
 void
-PhatbooksTextSession::populate_journal_editing_menu_core
+TextSession::populate_journal_editing_menu_core
 (	Menu& menu,
 	PersistentJournal& journal
 )
 {
 	typedef shared_ptr<MenuItem const> ItemPtr;
-	typedef PhatbooksTextSession PTS;  // For brevity below.
+	typedef TextSession PTS;  // For brevity below.
 
 	ItemPtr add_entry_item
 	(	new MenuItem
@@ -942,7 +938,7 @@ PhatbooksTextSession::populate_journal_editing_menu_core
 
 
 void
-PhatbooksTextSession::finalize_journal_editing_cycle
+TextSession::finalize_journal_editing_cycle
 (	PersistentJournal& journal,
 	Menu& menu,
 	bool& exiting,
@@ -959,7 +955,7 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 	string const jnl_type_descr =
 		journal_type_is_draft? " draft" : "";
 	typedef shared_ptr<MenuItem const> ItemPtr;
-	typedef PhatbooksTextSession PTS;  // For brevity below
+	typedef TextSession PTS;  // For brevity below
 	ItemPtr delete_journal_item
 	(	new MenuItem
 		(	"Delete transaction",
@@ -1030,7 +1026,7 @@ PhatbooksTextSession::finalize_journal_editing_cycle
 
 	
 void
-PhatbooksTextSession::elicit_ordinary_journal_from_draft
+TextSession::elicit_ordinary_journal_from_draft
 (	DraftJournal& draft_journal
 )
 {
@@ -1082,10 +1078,10 @@ PhatbooksTextSession::elicit_ordinary_journal_from_draft
 	
 
 void
-PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
+TextSession::conduct_draft_journal_editing(DraftJournal& journal)
 {
 	typedef shared_ptr<MenuItem const> ItemPtr;
-	typedef PhatbooksTextSession PTS;  // For brevity below.
+	typedef TextSession PTS;  // For brevity below.
 
 	for 
 	(	bool exiting = false, first_time = true;
@@ -1149,12 +1145,12 @@ PhatbooksTextSession::conduct_draft_journal_editing(DraftJournal& journal)
 }
 
 void
-PhatbooksTextSession::conduct_ordinary_journal_editing
+TextSession::conduct_ordinary_journal_editing
 (	OrdinaryJournal& journal
 )
 {
 	typedef shared_ptr<MenuItem const> ItemPtr;
-	typedef PhatbooksTextSession PTS;
+	typedef TextSession PTS;
 	for
 	(	bool exiting = false, first_time = true;
 		!exiting;
@@ -1188,7 +1184,7 @@ PhatbooksTextSession::conduct_ordinary_journal_editing
 
 
 void
-PhatbooksTextSession::display_account_detail()
+TextSession::display_account_detail()
 {
 	cout << endl;
 	Table<Account> table;
@@ -1203,7 +1199,7 @@ PhatbooksTextSession::display_account_detail()
 
 
 void
-PhatbooksTextSession::conduct_account_editing()
+TextSession::conduct_account_editing()
 {
 	cout << "\nEnter name of account or category to "
 	     << "edit (or just hit Enter to abort): ";
@@ -1242,7 +1238,7 @@ PhatbooksTextSession::conduct_account_editing()
 
 
 void
-PhatbooksTextSession::conduct_reconciliation()
+TextSession::conduct_reconciliation()
 {
 	// TODO This is a giant mess and needs refactoring
 	Account account(database_connection());
@@ -1490,7 +1486,7 @@ PhatbooksTextSession::conduct_reconciliation()
 
 
 void
-PhatbooksTextSession::display_journal_from_id()
+TextSession::display_journal_from_id()
 {
 	// The lexical casts are to prevent the insertion of thousands
 	// separators in the id numbers
@@ -1530,7 +1526,7 @@ PhatbooksTextSession::display_journal_from_id()
 
 
 void
-PhatbooksTextSession::display_ordinary_actual_entries()
+TextSession::display_ordinary_actual_entries()
 {
 	// TODO There is probably factor-out-able code between this and the
 	// Draft/Ordinary/Journal printing methods.
@@ -1707,7 +1703,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 
 #ifdef PHATBOOKS_EXPOSE_COMMODITY
 	void
-	PhatbooksTextSession::elicit_commodity()
+	TextSession::elicit_commodity()
 	{
 		Commodity commodity(database_connection());
 
@@ -1824,7 +1820,7 @@ PhatbooksTextSession::display_ordinary_actual_entries()
 
 
 string
-PhatbooksTextSession::elicit_unused_account_name(bool allow_empty_to_escape)
+TextSession::elicit_unused_account_name(bool allow_empty_to_escape)
 {
 	string input;
 	for (bool input_is_valid = false; !input_is_valid; )
@@ -1861,7 +1857,7 @@ PhatbooksTextSession::elicit_unused_account_name(bool allow_empty_to_escape)
 
 
 void
-PhatbooksTextSession::elicit_account()
+TextSession::elicit_account()
 {
 
 	Account account(database_connection());
@@ -1954,7 +1950,7 @@ PhatbooksTextSession::elicit_account()
 
 
 Repeater
-PhatbooksTextSession::elicit_repeater()
+TextSession::elicit_repeater()
 {
 	Repeater repeater(database_connection());
 	cout << "\nHow often do you want this transaction to be recorded?"
@@ -2074,7 +2070,7 @@ PhatbooksTextSession::elicit_repeater()
 
 
 string
-PhatbooksTextSession::dialogue_phrase
+TextSession::dialogue_phrase
 (	TransactionType transaction_type,
 	PhraseType phrase_type
 )
@@ -2122,7 +2118,7 @@ PhatbooksTextSession::dialogue_phrase
 
 
 bool
-PhatbooksTextSession::account_is_valid
+TextSession::account_is_valid
 (	TransactionType transaction_type,
 	TransactionPhase transaction_phase,
 	Account const& account,
@@ -2148,7 +2144,7 @@ PhatbooksTextSession::account_is_valid
 
 
 optional<Account>
-PhatbooksTextSession::elicit_valid_account
+TextSession::elicit_valid_account
 (	TransactionType transaction_type,
 	TransactionPhase transaction_phase,
 	bool allow_empty_to_escape
@@ -2193,8 +2189,8 @@ PhatbooksTextSession::elicit_valid_account
 
 	
 	
-PhatbooksTextSession::TransactionType
-PhatbooksTextSession::elicit_transaction_type()
+TextSession::TransactionType
+TextSession::elicit_transaction_type()
 {
 	Menu menu;
 	shared_ptr<MenuItem> expenditure_selection
@@ -2248,7 +2244,7 @@ PhatbooksTextSession::elicit_transaction_type()
 
 
 void
-PhatbooksTextSession::elicit_primary_entries
+TextSession::elicit_primary_entries
 (	ProtoJournal& journal,
 	TransactionType transaction_type
 )
@@ -2280,7 +2276,7 @@ PhatbooksTextSession::elicit_primary_entries
 
 
 void
-PhatbooksTextSession::elicit_secondary_entries
+TextSession::elicit_secondary_entries
 (	ProtoJournal& journal,
 	TransactionType transaction_type
 )
@@ -2419,7 +2415,7 @@ PhatbooksTextSession::elicit_secondary_entries
 
 
 void
-PhatbooksTextSession::finalize_ordinary_journal(OrdinaryJournal& journal)
+TextSession::finalize_ordinary_journal(OrdinaryJournal& journal)
 {
 	gregorian::date d = gregorian::day_clock::local_day();
 	cout << "Enter transaction date as an eight-digit number of the "
@@ -2438,7 +2434,7 @@ PhatbooksTextSession::finalize_ordinary_journal(OrdinaryJournal& journal)
 
 
 void
-PhatbooksTextSession::finalize_draft_journal
+TextSession::finalize_draft_journal
 (	DraftJournal& journal,
 	bool autopost
 )
@@ -2481,7 +2477,7 @@ PhatbooksTextSession::finalize_draft_journal
 
 
 void
-PhatbooksTextSession::finalize_journal(ProtoJournal& journal)
+TextSession::finalize_journal(ProtoJournal& journal)
 {
 	cout << endl << journal << endl << endl;
 	shared_ptr<MenuItem> post
@@ -2568,7 +2564,7 @@ PhatbooksTextSession::finalize_journal(ProtoJournal& journal)
 
 
 void
-PhatbooksTextSession::elicit_journal()
+TextSession::elicit_journal()
 {
 	ProtoJournal journal;
 	TransactionType const transaction_type = elicit_transaction_type();
@@ -2587,7 +2583,7 @@ PhatbooksTextSession::elicit_journal()
 
 
 
-void PhatbooksTextSession::notify_autoposts
+void TextSession::notify_autoposts
 (	shared_ptr<list<OrdinaryJournal> > journals
 ) const
 {
@@ -2612,7 +2608,7 @@ void PhatbooksTextSession::notify_autoposts
 
 
 
-void PhatbooksTextSession::display_balance_sheet()
+void TextSession::display_balance_sheet()
 {
 	// TODO Locale reversion is not exception-safe here.
 	// TODO Code is duplicated between here and display_envelopes().
@@ -2626,7 +2622,7 @@ void PhatbooksTextSession::display_balance_sheet()
 	return;
 }
 
-void PhatbooksTextSession::display_envelopes()
+void TextSession::display_envelopes()
 {
 	// TODO Locale reversion is not exception-safe here.
 	PLAccountReader pl_reader(database_connection());
@@ -2641,7 +2637,7 @@ void PhatbooksTextSession::display_envelopes()
 
 
 
-void PhatbooksTextSession::wrap_up()
+void TextSession::wrap_up()
 {
 	return;
 }

@@ -57,7 +57,7 @@
 #include "application.hpp"
 #include "b_string.hpp"
 #include "graphical_session.hpp"
-#include "phatbooks_text_session.hpp"
+#include "text_session.hpp"
 #include <tclap/CmdLine.h>
 #include <cassert>
 #include <iostream>
@@ -67,7 +67,7 @@ using phatbooks::Application;
 using phatbooks::BString;
 using phatbooks::bstring_to_std8;
 using phatbooks::gui::GraphicalSession;
-using phatbooks::tui::PhatbooksTextSession;
+using phatbooks::tui::TextSession;
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -119,7 +119,7 @@ int main(int argc, char** argv)
 			return graphical_session.run(filepath_str);
 		}
 		assert (using_console_mode);
-		PhatbooksTextSession text_session;
+		TextSession text_session;
 		if (filepath_str.empty())
 		{
 			return text_session.run();
