@@ -33,8 +33,9 @@
 #include "repeater.hpp"
 #include "b_string.hpp"
 #include <consolixx/get_input.hpp>
+#include <consolixx/menu.hpp>
+#include <consolixx/menu_item.hpp>
 #include <consolixx/table.hpp>
-#include <consolixx/text_session.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/handle.hpp>
@@ -78,8 +79,9 @@ using consolixx::get_date_from_user;
 using consolixx::get_user_input;
 using consolixx::get_constrained_user_input;
 using consolixx::get_decimal_from_user;
+using consolixx::Menu;
+using consolixx::MenuItem;
 using consolixx::Table;
-using consolixx::TextSession;
 using jewel::Decimal;
 using jewel::DecimalRangeException;
 using jewel::value;

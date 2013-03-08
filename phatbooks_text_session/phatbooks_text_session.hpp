@@ -2,11 +2,11 @@
 #define GUARD_phatbooks_text_session_hpp
 
 #include "session.hpp"
-#include <consolixx/text_session.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <consolixx/menu.hpp>
 #include <string>
 
 
@@ -52,8 +52,7 @@ namespace tui
  * with creating a database connection to that file.
  */
 class PhatbooksTextSession:
-	public Session,  // phatbooks::Session
-	private consolixx::TextSession
+	public Session
 {
 public:
 
@@ -328,7 +327,7 @@ private:
 	// the "top" MenuItems in the the journal editing Menu, which items
 	// are common to both functions.
 	void populate_journal_editing_menu_core
-	(	Menu& menu,
+	(	consolixx::Menu& menu,
 		PersistentJournal& journal
 	);
 
@@ -353,7 +352,7 @@ private:
 	// false if it it's an OrdinaryJournal.
 	void finalize_journal_editing_cycle
 	(	PersistentJournal& journal,
-		Menu& menu,
+		consolixx::Menu& menu,
 		bool& exiting,
 		bool simple_exit,
 		bool journal_type_is_draft
@@ -368,7 +367,7 @@ private:
 	
 	void wrap_up();
 
-	boost::shared_ptr<Menu> m_main_menu;
+	boost::shared_ptr<consolixx::Menu> m_main_menu;
 };
 
 
