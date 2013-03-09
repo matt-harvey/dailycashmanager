@@ -245,6 +245,25 @@ namespace
 		accumulator += ret;
 		return ret;
 	}
+	Decimal col_aux_running_total_amount
+	(	Entry const& entry,
+		Decimal& accumulator
+	)
+	{
+		accumulator += entry.amount();
+		return accumulator;
+	}
+	Decimal col_aux_running_total_reconciled_amount
+	(	Entry const& entry,
+		Decimal& accumulator
+	)
+	{
+		if (entry.is_reconciled())
+		{
+			accumulator += entry.amount();
+		}
+		return accumulator;
+	}
 	string col_aux_reconciliation_status_to_string(bool p_is_reconciled)
 	{
 		return p_is_reconciled? "y": "n";
@@ -341,11 +360,11 @@ Entry::create_reversed_amount_column()
 }
 
 AccumulatingColumn<Entry, Decimal>*
-Entry::create_accumulating_amount_column()
+Entry::create_accumulating_amount_column(Decimal const& p_seed)
 {
 	return new AccumulatingColumn<Entry, Decimal>
 	(	col_aux_accumulate_amount,
-		Decimal(0, 0),
+		p_seed,
 		"Amount",
 		alignment::right,
 		finformat_std8
@@ -353,12 +372,38 @@ Entry::create_accumulating_amount_column()
 }
 
 AccumulatingColumn<Entry, Decimal>*
-Entry::create_accumulating_reversed_amount_column()
+Entry::create_accumulating_reversed_amount_column(Decimal const& p_seed)
 {
 	return new AccumulatingColumn<Entry, Decimal>
 	(	col_aux_accumulate_reversed_amount,
-		Decimal(0, 0),
+		p_seed,
 		"Amount",
+		alignment::right,
+		finformat_std8
+	);
+}
+
+AccumulatingColumn<Entry, Decimal>*
+Entry::create_running_total_amount_column(Decimal const& p_seed)
+{
+	return new AccumulatingColumn<Entry, Decimal>
+	(	col_aux_running_total_amount,
+		p_seed,
+		"Running balance",
+		alignment::right,
+		finformat_std8
+	);
+}
+	
+AccumulatingColumn<Entry, Decimal>*
+Entry::create_running_total_reconciled_amount_column
+(	Decimal const& p_seed
+)
+{
+	return new AccumulatingColumn<Entry, Decimal>
+	(	col_aux_running_total_reconciled_amount,
+		p_seed,
+		"Reconciled to date",
 		alignment::right,
 		finformat_std8
 	);
