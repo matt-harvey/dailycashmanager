@@ -216,7 +216,7 @@ namespace
 		Decimal amount;
 		for (bool input_is_valid = false; !input_is_valid; )
 		{
-			cout << "Enter amount" << transaction_description
+			cout << "Enter amount " << transaction_description
 #			ifdef PHATBOOKS_EXPOSE_COMMODITY
 			     << " (in units of " << commodity.abbreviation()
 				 << ")"
