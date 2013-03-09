@@ -116,14 +116,14 @@ Journal::do_output(ostream& os) const
 	if (change_signs)
 	{
 		ColumnPtr const amount_column
-		(	Entry::create_amount_column()
+		(	Entry::create_accumulating_amount_column()
 		);
 		table.push_column(amount_column);
 	}
 	else
 	{
 		ColumnPtr const reversed_amount_column
-		(	Entry::create_reversed_amount_column()
+		(	Entry::create_accumulating_reversed_amount_column()
 		);
 		table.push_column(reversed_amount_column);
 	}
