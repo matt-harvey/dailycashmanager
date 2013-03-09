@@ -99,7 +99,7 @@ private:
 	BString do_get_comment() const;
 	std::vector<Entry> const& do_get_entries() const;
 
-	// Redefine impure virtual function inherited from Journal
+	// Virtual function inherited from Journal
 	void do_output(std::ostream& os) const;
 
 	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);

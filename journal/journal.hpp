@@ -4,8 +4,9 @@
 #include "b_string.hpp"
 #include "entry.hpp"
 #include "phatbooks_persistent_object.hpp"
-#include <ostream>
+#include <consolixx/table.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <ostream>
 #include <vector>
 #include <string>
 
@@ -78,9 +79,13 @@ public:
 	bool is_balanced() const;
 
 protected:
-	virtual void do_output(std::ostream& os) const;
+	void push_core_journal_columns
+	(	consolixx::Table<Entry>& table
+	) const;
+	void output_core_journal_header(std::ostream& os) const;
 
 private:
+	virtual void do_output(std::ostream& os) const = 0;
 	virtual std::vector<Entry> const& do_get_entries() const = 0;
 	virtual void do_set_whether_actual(bool p_is_actual) = 0;
 	virtual void do_set_comment(BString const& p_comment) = 0;

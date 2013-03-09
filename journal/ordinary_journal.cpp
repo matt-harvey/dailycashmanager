@@ -163,7 +163,7 @@ OrdinaryJournal::do_output(ostream& os) const
 	os << date() << " ";
 	// lexical_cast here avoids unwanted formatting
 	os << "ORDINARY JOURNAL ID " << lexical_cast<string>(id()) << " ";
-	Journal::do_output(os);
+	PersistentJournal::do_output(os);
 	return;
 }
 

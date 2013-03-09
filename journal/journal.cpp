@@ -90,18 +90,9 @@ Journal::is_balanced() const
 }
 
 void
-Journal::do_output(ostream& os) const
+Journal::push_core_journal_columns(Table<Entry>& table) const
 {
-	namespace alignment	= consolixx::alignment;
-	if (is_actual()) os << "ACTUAL TRANSACTION";
-	else os << "BUDGET TRANSACTION";
-	os << endl;
-	if (!comment().empty()) os << comment() << endl;
-	os << endl;
-	Table<Entry> table;
 	typedef Table<Entry>::ColumnPtr ColumnPtr;
-	ColumnPtr const id_column(Entry::create_id_column());
-	table.push_column(id_column);
 	ColumnPtr const name_column(Entry::create_account_name_column());
 	table.push_column(name_column);
 	ColumnPtr const comment_column(Entry::create_comment_column());
@@ -127,8 +118,28 @@ Journal::do_output(ostream& os) const
 		);
 		table.push_column(reversed_amount_column);
 	}
+	return;
+}
+	
+
+void
+Journal::output_core_journal_header(ostream& os) const
+{
+	namespace alignment	= consolixx::alignment;
+	if (is_actual()) os << "ACTUAL TRANSACTION";
+	else os << "BUDGET TRANSACTION";
+	os << endl;
+	if (!comment().empty()) os << comment() << endl;
+	os << endl;
+
+	/*
+	Table<Entry> table;
+	ColumnPtr const id_column(Entry::create_id_column());
+	table.push_column(id_column);
+	push_core_journal_columns(table);
 	table.populate(entries().begin(), entries().end());
 	os << table;
+	*/
 	return;
 }
 

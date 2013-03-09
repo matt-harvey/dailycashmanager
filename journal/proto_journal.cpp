@@ -98,6 +98,18 @@ ProtoJournal::~ProtoJournal()
 	*/
 }
 
+void
+ProtoJournal::do_output(ostream& os) const
+{
+	Journal::output_core_journal_header(os);
+	Table<Entry> table;
+	push_core_journal_columns(table);
+	table.populate(entries().begin(), entries().end());
+	os << table;
+	return;
+}
+
+
 vector<Entry> const& 
 ProtoJournal::do_get_entries() const
 {

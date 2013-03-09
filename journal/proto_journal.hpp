@@ -21,6 +21,7 @@
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -109,6 +110,7 @@ private:
 	// Implement virtual functions inherited from Journal
 	// todo Figure out whether these need to be virtual here.
 	// I'm pretty sure they \e don't.
+	virtual void do_output(std::ostream& os) const;
 	virtual std::vector<Entry> const& do_get_entries() const;
 	virtual void do_set_whether_actual(bool p_is_actual);
 	virtual void do_set_comment(BString const& p_comment);

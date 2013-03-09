@@ -177,7 +177,7 @@ DraftJournal::do_output(ostream& os) const
 {
 	os << "DRAFT JOURNAL ID " << id() << " "
 	   << " NAME " << name() << " ";
-	Journal::do_output(os);
+	PersistentJournal::do_output(os);
 	os << endl << repeater_description() << endl;
 	return;
 }
