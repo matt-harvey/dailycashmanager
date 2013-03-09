@@ -106,17 +106,17 @@ Journal::push_core_journal_columns(Table<Entry>& table) const
 	bool const change_signs = !is_actual();
 	if (change_signs)
 	{
-		ColumnPtr const amount_column
-		(	Entry::create_accumulating_amount_column()
-		);
-		table.push_column(amount_column);
-	}
-	else
-	{
 		ColumnPtr const reversed_amount_column
 		(	Entry::create_accumulating_reversed_amount_column()
 		);
 		table.push_column(reversed_amount_column);
+	}
+	else
+	{
+		ColumnPtr const amount_column
+		(	Entry::create_accumulating_amount_column()
+		);
+		table.push_column(amount_column);
 	}
 	return;
 }
