@@ -1287,8 +1287,8 @@ TextSession::conduct_reconciliation()
 	gregorian::date closing_date;	
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
-		cout << "Enter statement closing date as an 8-digit number of the form "
-			 << "YYYYMMDD: ";
+		cout << "Enter statement closing date as an 8-digit number of the "
+			 << "form YYYYMMDD: ";
 		closing_date = value(get_date_from_user());
 		if (closing_date >= opening_date)
 		{
@@ -1309,7 +1309,7 @@ TextSession::conduct_reconciliation()
 		// TODO Factor out common code shared between here and
 		// display_ordinary_actual_entries().
 		
-		Decimal total_balance(0, 0);
+		Decimal opening_balance(0, 0);
 		Decimal reconciled_balance(0, 0);
 		ActualOrdinaryEntryReader reader(database_connection());
 		vector<Entry> table_vec;
@@ -1322,7 +1322,7 @@ TextSession::conduct_reconciliation()
 			if (it->account() == account)
 			{
 				Decimal const amount = it->amount();
-				total_balance += amount;
+				opening_balance += amount;
 				if (it->is_reconciled()) reconciled_balance += amount;
 				else table_vec.push_back(*it);
 			}
@@ -1335,11 +1335,11 @@ TextSession::conduct_reconciliation()
 			{
 				table_vec.push_back(*it);
 				Decimal const amount = it->amount();
-				total_balance += amount;
 				if (it->is_reconciled()) reconciled_balance += amount;
 			}
 		}
 		
+		// Configure Table columns for display
 		Table<Entry> table;
 		typedef Table<Entry>::ColumnPtr ColumnPtr;
 		ColumnPtr const date_column
@@ -1352,8 +1352,6 @@ TextSession::conduct_reconciliation()
 		table.push_column(journal_id_column);
 		ColumnPtr const id_column(Entry::create_id_column());
 		table.push_column(id_column);
-		ColumnPtr const account_column(Entry::create_account_name_column());
-		table.push_column(account_column);
 		ColumnPtr const comment_column(Entry::create_comment_column());
 		table.push_column(comment_column);
 #		ifdef PHATBOOKS_EXPOSE_COMMODITY
@@ -1364,6 +1362,12 @@ TextSession::conduct_reconciliation()
 #		endif
 		ColumnPtr const amount_column(Entry::create_amount_column());
 		table.push_column(amount_column);
+		ColumnPtr const running_total_column
+		(	Entry::create_running_total_amount_column
+			(	opening_balance
+			)
+		);
+		table.push_column(running_total_column);
 		ColumnPtr const reconciliation_status_column
 		(	Entry::create_reconciliation_status_column()
 		);
@@ -1371,9 +1375,7 @@ TextSession::conduct_reconciliation()
 		table.populate(table_vec.begin(), table_vec.end());
 		cout << endl << table << endl;
 
-		cout << "\nTotal balance at "
-			 << closing_date << ": "
-			 << finformat_std8(total_balance) << endl;
+		// Summarise totals
 		cout << "\nReconciled balance at "
 			 << closing_date << ": "
 			 << finformat_std8(reconciled_balance) << endl;
@@ -1444,7 +1446,8 @@ TextSession::conduct_reconciliation()
 					vector<string> invalid_ids;
 					DatabaseTransaction transaction(database_connection());	
 					for
-					(	vector<string>::const_iterator isit = id_strings.begin(),
+					(	vector<string>::const_iterator
+							isit = id_strings.begin(),
 							isend = id_strings.end();
 						isit != isend;
 						++isit
@@ -1452,10 +1455,13 @@ TextSession::conduct_reconciliation()
 					{
 						try
 						{
-							Entry::Id const id = lexical_cast<Entry::Id>(*isit);
+							Entry::Id const id =
+								lexical_cast<Entry::Id>(*isit);
 							Entry entry(database_connection(), id);
-							vector<Entry>::const_iterator eit = table_vec.begin();
-							vector<Entry>::const_iterator eend = table_vec.end();
+							vector<Entry>::const_iterator eit =
+								table_vec.begin();
+							vector<Entry>::const_iterator eend =
+								table_vec.end();
 							for ( ; (eit != eend) && (eit->id() != id); ++eit)
 							{
 							}
@@ -1715,8 +1721,11 @@ TextSession::display_ordinary_actual_entries()
 	table.push_column(journal_id_column);
 	ColumnPtr const id_column(Entry::create_id_column());
 	table.push_column(id_column);
-	ColumnPtr const account_column(Entry::create_account_name_column());
-	table.push_column(account_column);
+	if (!filtering_for_account)
+	{
+		ColumnPtr const account_column(Entry::create_account_name_column());
+		table.push_column(account_column);
+	}
 	ColumnPtr const comment_column(Entry::create_comment_column());
 	table.push_column(comment_column);
 #	ifdef PHATBOOKS_EXPOSE_COMMODITY
@@ -1727,6 +1736,19 @@ TextSession::display_ordinary_actual_entries()
 #	endif
 	ColumnPtr const amount_column(Entry::create_amount_column());
 	table.push_column(amount_column);
+	if (filtering_for_account)
+	{
+		assert (maybe_account);
+		if (is_asset_or_liability(value(maybe_account)))
+		{
+			JEWEL_DEBUG_LOG << __FILE__ << " " << __LINE__ << endl;
+			ColumnPtr const running_balance_column
+			(	Entry::create_running_total_amount_column(opening_balance)
+			);
+			table.push_column(running_balance_column);
+		}
+	}
+
 	table.populate(table_vec.begin(), table_vec.end());
 	cout << endl << table << endl;
 
@@ -1734,7 +1756,7 @@ TextSession::display_ordinary_actual_entries()
 	{
 		assert (maybe_account);
 		summarise_balance_movement
-		(	*maybe_account,
+		(	value(maybe_account),
 			opening_balance,
 			closing_balance
 		);

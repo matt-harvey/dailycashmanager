@@ -246,8 +246,8 @@ public:
 		);
 
 	/**
-	 * Creates a column that displays a running total amount and
-	 * shows the final running total at the foot of the column.
+	 * Creates a column that displays a running total amount, but
+	 * does not show a footer.
 	 */
 	static consolixx::AccumulatingColumn<Entry, jewel::Decimal>*
 		create_running_total_amount_column
@@ -256,8 +256,7 @@ public:
 
 	/**
 	 * Creates a column that displays a running total of reconciled
-	 * amount and shows the
-	 * final running total reconciled amount at the foot of the column.
+	 * amount, but does not show a footer.
 	 */
 	static consolixx::AccumulatingColumn<Entry, jewel::Decimal>*
 		create_running_total_reconciled_amount_column

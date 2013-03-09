@@ -386,13 +386,16 @@ Entry::create_accumulating_reversed_amount_column(Decimal const& p_seed)
 AccumulatingColumn<Entry, Decimal>*
 Entry::create_running_total_amount_column(Decimal const& p_seed)
 {
-	return new AccumulatingColumn<Entry, Decimal>
-	(	col_aux_running_total_amount,
-		p_seed,
-		"Running balance",
-		alignment::right,
-		finformat_std8
-	);
+	AccumulatingColumn<Entry, Decimal>* ret =
+		new AccumulatingColumn<Entry, Decimal>
+		(	col_aux_running_total_amount,
+			p_seed,
+			"Balance",
+			alignment::right,
+			finformat_std8
+		);
+	ret->suppress_footer();
+	return ret;
 }
 	
 AccumulatingColumn<Entry, Decimal>*
@@ -400,13 +403,16 @@ Entry::create_running_total_reconciled_amount_column
 (	Decimal const& p_seed
 )
 {
-	return new AccumulatingColumn<Entry, Decimal>
-	(	col_aux_running_total_reconciled_amount,
-		p_seed,
-		"Reconciled to date",
-		alignment::right,
-		finformat_std8
-	);
+	AccumulatingColumn<Entry, Decimal>* ret =
+		new AccumulatingColumn<Entry, Decimal>
+		(	col_aux_running_total_reconciled_amount,
+			p_seed,
+			"Reconciled balance",
+			alignment::right,
+			finformat_std8
+		);
+	ret->suppress_footer();
+	return ret;
 }
 
 PlainColumn<Entry, bool>*
