@@ -150,10 +150,18 @@ public:
 	// Functions for returning consolixx::Columns, to facilitate
 	// construction of consolixx::Tables, for displaying
 	// Account-related data in text form.
-	static consolixx::Column<Account> create_name_column();
-	static consolixx::Column<Account> create_type_column();
-	static consolixx::Column<Account> create_description_column();
-	static consolixx::Column<Account> create_friendly_balance_column();
+	// Client is responsible for deleting the heap-allocated
+	// object pointed to by the returned pointer.
+	static consolixx::PlainColumn<Account, BString>*
+		create_name_column();
+	static consolixx::PlainColumn<Account, account_type::AccountType>*
+		create_type_column();
+	static consolixx::PlainColumn<Account, BString>*
+		create_description_column();
+	static consolixx::PlainColumn<Account, jewel::Decimal>*
+		create_friendly_balance_column();
+	static consolixx::AccumulatingColumn<Account, jewel::Decimal>*
+		create_accumulating_friendly_balance_column();
 
 private:
 	Account(sqloxx::Handle<AccountImpl> const& p_handle);

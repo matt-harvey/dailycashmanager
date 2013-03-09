@@ -7,20 +7,27 @@
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include "b_string.hpp"
+#include <boost/lexical_cast.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
+#include <boost/shared_ptr.hpp>
 #include <consolixx/alignment.hpp>
 #include <consolixx/column.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/optional.hpp>
 #include <sqloxx/handle.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>
 
 using boost::lexical_cast;
+using boost::optional;
 using boost::shared_ptr;
-using consolixx::Column;
+using consolixx::PlainColumn;
+using consolixx::AccumulatingColumn;
 using jewel::Decimal;
+using jewel::UninitializedOptionalException;
+using jewel::value;
 using sqloxx::Handle;
 using std::string;
 using std::vector;
@@ -156,125 +163,216 @@ Entry::Entry(sqloxx::Handle<EntryImpl> const& p_handle):
 
 namespace
 {
-	// Convenient non-member functions for initializing consolixx::Columns.
-	// "mcs" stands for "MakeCellString" and helps these functions to
-	// stand out as "unusual".
-	string mcs_entry_ordinary_journal_id(Entry const& entry)
+	// Convenient non-member functions to assist in constructing
+	// consolixx::Column objects per below.
+	sqloxx::Id col_aux_ordinary_journal_id(Entry const& entry)
 	{
-		OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
-		return lexical_cast<string>(journal.id());
-	}
-	string mcs_entry_ordinary_journal_date(Entry const& entry)
-	{
-		OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
-		return lexical_cast<string>(journal.date());
-	}
-	string mcs_entry_id(Entry const& entry)
-	{
-		if (entry.has_id())
+		OrdinaryJournal const journal = entry.journal<OrdinaryJournal>();
+		if (!journal.has_id())
 		{
-			return lexical_cast<string>(entry.id());
-		}
-		assert (!entry.has_id());
-		return "N/A";
-	}
-	string mcs_entry_account_name(Entry const& entry)
-	{
-		return bstring_to_std8(entry.account().name());
-	}
-	string mcs_entry_comment(Entry const& entry)
-	{
-		return bstring_to_std8(entry.comment());
-	}
-#	ifdef PHATBOOKS_EXPOSE_COMMODITY
-		string mcs_entry_commodity_abbreviation(Entry const& entry)
-		{
-			return bstring_to_std8
-			(	entry.account().commodity().abbreviation()
+			throw UninitializedOptionalException
+			(	"Journal does not have id."
 			);
 		}
-#	endif
-	string mcs_entry_amount(Entry const& entry)
-	{
-		return finformat_std8(entry.amount());
+		assert (journal.has_id());
+		BOOST_STATIC_ASSERT
+		(	(boost::is_same<OrdinaryJournal::Id, sqloxx::Id>::value)
+		);
+		return journal.id();
 	}
-	string mcs_entry_reversed_amount(Entry const& entry)
+	gregorian::date col_aux_ordinary_journal_date(Entry const& entry)
+	{
+		return entry.journal<OrdinaryJournal>().date();
+	}
+	optional<Entry::Id> col_aux_optional_id(Entry const& entry)
+	{
+		optional<Entry::Id> ret;
+		if (entry.has_id()) ret = entry.id();
+		return ret;
+	}
+	string col_aux_optional_id_to_string(optional<Entry::Id> id)
+	{
+		if (id)
+		{
+			return lexical_cast<string>(value(id));
+		}
+		assert (!id);
+		return "N/A";
+	}
+	BString col_aux_account_name(Entry const& entry)
+	{
+		return entry.account().name();
+	}
+	BString col_aux_comment(Entry const& entry)
+	{
+		return entry.comment();
+	}
+#	ifdef PHATBOOKS_EXPOSE_COMMODITY
+		BString col_aux_commodity_abbreviation(Entry const& entry)
+		{
+			return entry.account().commodity().abbreviation();
+		}
+#	endif
+	Decimal col_aux_amount(Entry const& entry)
+	{
+		return entry.amount();
+	}
+	Decimal col_aux_reversed_amount(Entry const& entry)
 	{
 		Decimal const amount = entry.amount();
-		Decimal::places_type const places = amount.places();
-		return finformat_std8(round(-amount, places));
+		return round(-amount, amount.places());
 	}
-	string mcs_entry_reconciliation_status(Entry const& entry)
+	bool col_aux_reconciliation_status(Entry const& entry)
 	{
-		return entry.is_reconciled()? "y": "n";
+		return entry.is_reconciled();
+	}
+	Decimal col_aux_accumulate_amount
+	(	Entry const& entry,
+		Decimal& accumulator
+	)
+	{
+		Decimal const ret = entry.amount();
+		accumulator += ret;
+		return ret;
+	}
+	Decimal col_aux_accumulate_reversed_amount
+	(	Entry const& entry,
+		Decimal& accumulator
+	)
+	{
+		Decimal const raw_amount = entry.amount();
+		Decimal const ret = round(-raw_amount, raw_amount.places());
+		accumulator += ret;
+		return ret;
+	}
+	string col_aux_reconciliation_status_to_string(bool p_is_reconciled)
+	{
+		return p_is_reconciled? "y": "n";
 	}
 }  // end anonymous namespace
 		
 
-Column<Entry>
+PlainColumn<Entry, Journal::Id>*
 Entry::create_ordinary_journal_id_column()
 {
-	return Column<Entry>
-	(	mcs_entry_ordinary_journal_id,
+	return new PlainColumn<Entry, Journal::Id>
+	(	col_aux_ordinary_journal_id,
 		"Journal ID",
 		alignment::right
 	);
 }
 
-Column<Entry>
+PlainColumn<Entry, gregorian::date>*
 Entry::create_ordinary_journal_date_column()
 {
-	return Column<Entry>(mcs_entry_ordinary_journal_date, "Date");
+	return new PlainColumn<Entry, gregorian::date>
+	(	col_aux_ordinary_journal_date,
+		"Date"
+	);
 }
 
-Column<Entry>
+PlainColumn<Entry, optional<Entry::Id> >*
 Entry::create_id_column()
 {
-	return Column<Entry>(mcs_entry_id, "Entry ID", alignment::right);
+	return new PlainColumn<Entry, optional<Id> >
+	(	col_aux_optional_id,
+		"Entry ID",
+		alignment::right,
+		col_aux_optional_id_to_string
+	);
 }
 
-Column<Entry>
+PlainColumn<Entry, BString>*
 Entry::create_account_name_column()
 {
-	return Column<Entry>(mcs_entry_account_name, "Account");
+	return new PlainColumn<Entry, BString>
+	(	col_aux_account_name,
+		"Account",
+		alignment::left,
+		bstring_to_std8
+	);
 }
 
-Column<Entry>
+PlainColumn<Entry, BString>*
 Entry::create_comment_column()
 {
-	return Column<Entry>(mcs_entry_comment, "Comment");
+	return new PlainColumn<Entry, BString>
+	(	col_aux_comment,
+		"Comment",
+		alignment::left,
+		bstring_to_std8
+	);
 }
 
-
 #ifdef PHATBOOKS_EXPOSE_COMMODITY
-	Column<Entry>
+	PlainColumn<Entry, BString>*
 	Entry::create_commodity_abbreviation_column()
 	{
-		return Column<Entry>(mcs_entry_commodity_abbreviation, "Commodity");
+		return new PlainColumn<Entry, BString>
+		(	col_aux_commodity_abbreviation,
+			"Commodity",
+			alignment::left,
+			bstring_to_std8
+		);
 	}
 #endif  // PHATBOOKS_EXPOSE_COMMODITY
 
 
-Column<Entry>
+PlainColumn<Entry, Decimal>*
 Entry::create_amount_column()
 {
-	return Column<Entry>(mcs_entry_amount, "Amount", alignment::right);
-}
-
-Column<Entry>
-Entry::create_reversed_amount_column()
-{
-	return Column<Entry>
-	(	mcs_entry_reversed_amount,
+	return new PlainColumn<Entry, Decimal>
+	(	col_aux_amount,
 		"Amount",
-		alignment::right
+		alignment::right,
+		finformat_std8
 	);
 }
 
-Column<Entry>
+PlainColumn<Entry, Decimal>*
+Entry::create_reversed_amount_column()
+{
+	return new PlainColumn<Entry, Decimal>
+	(	col_aux_reversed_amount,
+		"Amount",
+		alignment::right,
+		finformat_std8
+	);
+}
+
+AccumulatingColumn<Entry, Decimal>*
+Entry::create_accumulating_amount_column()
+{
+	return new AccumulatingColumn<Entry, Decimal>
+	(	col_aux_accumulate_amount,
+		Decimal(0, 0),
+		"Amount",
+		alignment::right,
+		finformat_std8
+	);
+}
+
+AccumulatingColumn<Entry, Decimal>*
+Entry::create_accumulating_reversed_amount_column()
+{
+	return new AccumulatingColumn<Entry, Decimal>
+	(	col_aux_accumulate_reversed_amount,
+		Decimal(0, 0),
+		"Amount",
+		alignment::right,
+		finformat_std8
+	);
+}
+
+PlainColumn<Entry, bool>*
 Entry::create_reconciliation_status_column()
 {
-	return Column<Entry>(mcs_entry_reconciliation_status, "Reconciled?");
+	return new PlainColumn<Entry, bool>
+	(	col_aux_reconciliation_status,
+		"Reconciled?",
+		alignment::left,
+		col_aux_reconciliation_status_to_string
+	);
 }
 
 }  // namespace phatbooks

@@ -9,6 +9,7 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <string>
@@ -18,6 +19,8 @@ namespace phatbooks
 
 class Account;
 class PhatbooksDatabaseConnection;
+
+
 
 
 /**
@@ -160,17 +163,36 @@ public:
 	// behave correctly unless all the Entries with which we
 	// will be populating the Table, are such as to have OrdinaryJournal
 	// Journals, i.e. are "ordinary" (rather than draft) entries. 
-	static consolixx::Column<Entry> create_ordinary_journal_id_column();
-	static consolixx::Column<Entry> create_ordinary_journal_date_column();
-	static consolixx::Column<Entry> create_id_column();
-	static consolixx::Column<Entry> create_account_name_column();
-	static consolixx::Column<Entry> create_comment_column();
+	// Client is responsible for deleting the heap-allocated object
+	// pointed to by the returned pointer.
+	// WARNING We use sqloxx::Id here in lieu of OrdinaryJournal::Id, to avoid
+	// circular includes. This is a bit imperfect. We have a static
+	// assertion in the source file to break compilation if these are
+	// ever two different types.
+	static consolixx::PlainColumn<Entry, sqloxx::Id>*
+		create_ordinary_journal_id_column();
+	static consolixx::PlainColumn<Entry, boost::gregorian::date>*
+		create_ordinary_journal_date_column();
+	static consolixx::PlainColumn<Entry, boost::optional<Id> >*
+		create_id_column();
+	static consolixx::PlainColumn<Entry, BString>*
+		create_account_name_column();
+	static consolixx::PlainColumn<Entry, BString>*
+		create_comment_column();
 #	ifdef PHATBOOKS_EXPOSE_COMMODITY
-		static consolixx::Column<Entry> create_commodity_abbreviation_column();
+		static consolixx::PlainColumn<Entry, BString>*
+			create_commodity_abbreviation_column();
 #	endif	
-	static consolixx::Column<Entry> create_amount_column();
-	static consolixx::Column<Entry> create_reversed_amount_column();
-	static consolixx::Column<Entry> create_reconciliation_status_column();
+	static consolixx::PlainColumn<Entry, jewel::Decimal>*
+		create_amount_column();
+	static consolixx::PlainColumn<Entry, jewel::Decimal>*
+		create_reversed_amount_column();
+	static consolixx::AccumulatingColumn<Entry, jewel::Decimal>*
+		create_accumulating_amount_column();
+	static consolixx::AccumulatingColumn<Entry, jewel::Decimal>*
+		create_accumulating_reversed_amount_column();
+	static consolixx::PlainColumn<Entry, bool>*
+		create_reconciliation_status_column();
 
 private:
 	Entry(sqloxx::Handle<EntryImpl> const& p_handle);

@@ -99,18 +99,34 @@ Journal::do_output(ostream& os) const
 	if (!comment().empty()) os << comment() << endl;
 	os << endl;
 	Table<Entry> table;
-	table.push_column(Entry::create_id_column());
-	table.push_column(Entry::create_account_name_column());
-	table.push_column(Entry::create_comment_column());
+	typedef Table<Entry>::ColumnPtr ColumnPtr;
+	ColumnPtr const id_column(Entry::create_id_column());
+	table.push_column(id_column);
+	ColumnPtr const name_column(Entry::create_account_name_column());
+	table.push_column(name_column);
+	ColumnPtr const comment_column(Entry::create_comment_column());
+	table.push_column(comment_column);
 #	ifdef PHATBOOKS_EXPOSE_COMMODITY
-		table.push_column(Entry::create_commodity_abbreviation_column());
+		ColumnPtr const commodity_column
+		(	Entry::create_commodity_abbreviation_column()
+		);
+		table.push_column(commodity_column);
 #	endif
 	bool const change_signs = !is_actual();
-	table.push_column
-	(	change_signs?
-		Entry::create_reversed_amount_column():
-		Entry::create_amount_column()
-	);
+	if (change_signs)
+	{
+		ColumnPtr const amount_column
+		(	Entry::create_amount_column()
+		);
+		table.push_column(amount_column);
+	}
+	else
+	{
+		ColumnPtr const reversed_amount_column
+		(	Entry::create_reversed_amount_column()
+		);
+		table.push_column(reversed_amount_column);
+	}
 	table.populate(entries().begin(), entries().end());
 	os << table;
 	return;

@@ -32,6 +32,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include "b_string.hpp"
+#include <consolixx/column.hpp>
 #include <consolixx/get_input.hpp>
 #include <consolixx/menu.hpp>
 #include <consolixx/menu_item.hpp>
@@ -75,6 +76,7 @@ using sqloxx::SQLStatement;
 using std::vector;
 // end play code
 
+using consolixx::Column;
 using consolixx::get_date_from_user;
 using consolixx::get_user_input;
 using consolixx::get_constrained_user_input;
@@ -266,8 +268,13 @@ namespace
 	void print_account_reader(AccountReaderT& p_reader)
 	{
 		Table<Account> table;
-		table.push_column(Account::create_name_column());
-		table.push_column(Account::create_friendly_balance_column());
+		typedef Table<Account>::ColumnPtr ColumnPtr;
+		ColumnPtr const name_column(Account::create_name_column());
+		table.push_column(name_column);
+		ColumnPtr const friendly_balance_column
+		(	Account::create_friendly_balance_column()
+		);
+		table.push_column(friendly_balance_column);
 		table.populate(p_reader.begin(), p_reader.end());
 		cout << table;
 		return;
@@ -1188,10 +1195,14 @@ TextSession::display_account_detail()
 {
 	cout << endl;
 	Table<Account> table;
+	typedef Table<Account>::ColumnPtr ColumnPtr;
+	ColumnPtr const name_column(Account::create_name_column());
+	table.push_column(name_column);
+	ColumnPtr const type_column(Account::create_type_column());
+	table.push_column(type_column);
+	ColumnPtr const description_column(Account::create_description_column());
+	table.push_column(description_column);
 	AccountReader reader(database_connection());
-	table.push_column(Account::create_name_column());
-	table.push_column(Account::create_type_column());
-	table.push_column(Account::create_description_column());
 	table.populate(reader.begin(), reader.end());
 	cout << endl << table << endl;
 	return;
@@ -1330,16 +1341,33 @@ TextSession::conduct_reconciliation()
 		}
 		
 		Table<Entry> table;
-		table.push_column(Entry::create_ordinary_journal_date_column());
-		table.push_column(Entry::create_ordinary_journal_id_column());
-		table.push_column(Entry::create_id_column());
-		table.push_column(Entry::create_account_name_column());
-		table.push_column(Entry::create_comment_column());
+		typedef Table<Entry>::ColumnPtr ColumnPtr;
+		ColumnPtr const date_column
+		(	Entry::create_ordinary_journal_date_column()
+		);
+		table.push_column(date_column);
+		ColumnPtr const journal_id_column
+		(	Entry::create_ordinary_journal_id_column()
+		);
+		table.push_column(journal_id_column);
+		ColumnPtr const id_column(Entry::create_id_column());
+		table.push_column(id_column);
+		ColumnPtr const account_column(Entry::create_account_name_column());
+		table.push_column(account_column);
+		ColumnPtr const comment_column(Entry::create_comment_column());
+		table.push_column(comment_column);
 #		ifdef PHATBOOKS_EXPOSE_COMMODITY
-			table.push_column(Entry::create_commodity_abbreviation_column());
+			ColumnPtr const commodity_column
+			(	Entry::create_commodity_abbreviation_column()
+			);
+			table.push_column(commodity_column);	
 #		endif
-		table.push_column(Entry::create_amount_column());
-		table.push_column(Entry::create_reconciliation_status_column());
+		ColumnPtr const amount_column(Entry::create_amount_column());
+		table.push_column(amount_column);
+		ColumnPtr const reconciliation_status_column
+		(	Entry::create_reconciliation_status_column()
+		);
+		table.push_column(reconciliation_status_column);
 		table.populate(table_vec.begin(), table_vec.end());
 		cout << endl << table << endl;
 
@@ -1676,15 +1704,29 @@ TextSession::display_ordinary_actual_entries()
 	}
 
 	Table<Entry> table;
-	table.push_column(Entry::create_ordinary_journal_date_column());
-	table.push_column(Entry::create_ordinary_journal_id_column());
-	table.push_column(Entry::create_id_column());
-	table.push_column(Entry::create_account_name_column());
-	table.push_column(Entry::create_comment_column());
+	typedef Table<Entry>::ColumnPtr ColumnPtr;
+	ColumnPtr const date_column
+	(	Entry::create_ordinary_journal_date_column()
+	);
+	table.push_column(date_column);
+	ColumnPtr const journal_id_column
+	(	Entry::create_ordinary_journal_id_column()
+	);
+	table.push_column(journal_id_column);
+	ColumnPtr const id_column(Entry::create_id_column());
+	table.push_column(id_column);
+	ColumnPtr const account_column(Entry::create_account_name_column());
+	table.push_column(account_column);
+	ColumnPtr const comment_column(Entry::create_comment_column());
+	table.push_column(comment_column);
 #	ifdef PHATBOOKS_EXPOSE_COMMODITY
-		table.push_column(Entry::create_commodity_abbreviation_column());
+		ColumnPtr commodity_column
+		(	Entry::create_commodity_abbreviation_column()
+		);
+		table.push_column(commodity_column);
 #	endif
-	table.push_column(Entry::create_amount_column());
+	ColumnPtr const amount_column(Entry::create_amount_column());
+	table.push_column(amount_column);
 	table.populate(table_vec.begin(), table_vec.end());
 	cout << endl << table << endl;
 

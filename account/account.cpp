@@ -16,7 +16,8 @@
 #include <string>
 #include <vector>
 
-using consolixx::Column;
+using consolixx::AccumulatingColumn;
+using consolixx::PlainColumn;
 using phatbooks::account_type::AccountType;
 using sqloxx::Handle;
 using boost::shared_ptr;
@@ -171,55 +172,92 @@ Account::set_description(BString const& p_description)
 namespace
 {
 	// Convenient non-member functions for initializing consolixx::Columns.
-	// "mcs" stands for "MakeCellString" and helps these functions to
-	// stand out as "unusual".
-	string mcs_account_name(Account const& account)
+	BString col_aux_name(Account const& account)
 	{
-		return bstring_to_std8(account.name());
+		return account.name();
 	}
-	string mcs_account_type(Account const& account)
+	account_type::AccountType col_aux_account_type(Account const& account)
 	{
-		return bstring_to_std8
-		(	account_type_to_string(account.account_type())
-		);
+		return account.account_type();
 	}
-	string mcs_account_description(Account const& account)
+	string col_aux_account_type_to_std8(account_type::AccountType type)
 	{
-		return bstring_to_std8(account.description());
+		return bstring_to_std8(account_type_to_string(type));
 	}
-	string mcs_account_friendly_balance(Account const& account)
+	BString col_aux_description(Account const& account)
 	{
-		return finformat_std8(account.friendly_balance());
+		return account.description();
+	}
+	Decimal col_aux_friendly_balance(Account const& account)
+	{
+		return account.friendly_balance();
+	}
+	Decimal col_aux_accumulating_friendly_balance
+	(	Account const& account,
+		Decimal& accumulator
+	)
+	{
+		Decimal const ret = account.friendly_balance();
+		accumulator += ret;
+		return ret;
 	}
 }  // end anonymous namespace
 
 
 
-Column<Account>
+PlainColumn<Account, BString>*
 Account::create_name_column()
 {
-	return Column<Account>(mcs_account_name, "Account");
+	return new PlainColumn<Account, BString>
+	(	col_aux_name,
+		"Account",
+		alignment::left,
+		bstring_to_std8
+	);
 }
 
-Column<Account>
+PlainColumn<Account, account_type::AccountType>*
 Account::create_type_column()
 {
-	return Column<Account>(mcs_account_type, "Type");
+	return new PlainColumn<Account, account_type::AccountType>
+	(	col_aux_account_type,
+		"Type",
+		alignment::left,
+		col_aux_account_type_to_std8
+	);
 }
 
-Column<Account>
+PlainColumn<Account, BString>*
 Account::create_description_column()
 {
-	return Column<Account>(mcs_account_description, "Desciption");
+	return new PlainColumn<Account, BString>
+	(	col_aux_description,
+		"Description",
+		alignment::left,
+		bstring_to_std8
+	);
 }
 
-Column<Account>
+PlainColumn<Account, Decimal>*
 Account::create_friendly_balance_column()
 {
-	return Column<Account>
-	(	mcs_account_friendly_balance, 
+	return new PlainColumn<Account, Decimal>
+	(	col_aux_friendly_balance,
 		"Balance",
-		alignment::right
+		alignment::right,
+		finformat_std8
+	);
+}
+
+AccumulatingColumn<Account, Decimal>*
+Account::create_accumulating_friendly_balance_column()
+{
+	return new AccumulatingColumn<Account, Decimal>
+	(	col_aux_accumulating_friendly_balance,
+		Decimal(0, 0),
+		"Balance",
+		alignment::right,
+		finformat_std8
 	);
 }
 
