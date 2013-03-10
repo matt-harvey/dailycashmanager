@@ -331,7 +331,6 @@ namespace
 TextSession::TextSession():
 	m_main_menu(new Menu)
 {
-	refresh_main_menu();
 }
 
 
@@ -419,70 +418,81 @@ TextSession::refresh_main_menu()
 		m_main_menu->push_item(display_journal_from_id_item);
 	}
 
-	shared_ptr<MenuItem> display_ordinary_actual_entries_item
-	(	new MenuItem
-		(	"List actual transactions",
-			bind
-			(	&TextSession::display_ordinary_actual_entries,
-				this
-			),
-			true,
-			"l"
-		)
-	);
-	m_main_menu->push_item(display_ordinary_actual_entries_item);
+	if
+	(	!Entry::none_exists(database_connection()) &&
+		!OrdinaryJournal::none_exists(database_connection())
+	)
+	{
+		shared_ptr<MenuItem> display_ordinary_actual_entries_item
+		(	new MenuItem
+			(	"List actual transactions",
+				bind
+				(	&TextSession::display_ordinary_actual_entries,
+					this
+				),
+				true,
+				"l"
+			)
+		);
+		m_main_menu->push_item(display_ordinary_actual_entries_item);
+	}
 
 	// TODO Should this also display equity accounts? Do we even have
 	// any equity accounts?
-	shared_ptr<MenuItem> display_balance_sheet_item
-	(	new MenuItem
-		(	"Display the balances of asset and liability accounts",
-			bind(&TextSession::display_balance_sheet, this),
-			true,
-			"b"
-		)
-	);
-	m_main_menu->push_item(display_balance_sheet_item);
+	if (!Account::none_exists(database_connection()))
+	{
+		shared_ptr<MenuItem> display_balance_sheet_item
+		(	new MenuItem
+			(	"Display the balances of asset and liability accounts",
+				bind(&TextSession::display_balance_sheet, this),
+				true,
+				"b"
+			)
+		);
+		m_main_menu->push_item(display_balance_sheet_item);
 
-	shared_ptr<MenuItem> display_envelopes_item
-	(	new MenuItem
-		(	"Display envelope balances",
-			bind(&TextSession::display_envelopes, this),
-			true,
-			"e"
-		)
-	);
-	m_main_menu->push_item(display_envelopes_item);
+		shared_ptr<MenuItem> display_envelopes_item
+		(	new MenuItem
+			(	"Display envelope balances",
+				bind(&TextSession::display_envelopes, this),
+				true,
+				"e"
+			)
+		);
+		m_main_menu->push_item(display_envelopes_item);
 
-	shared_ptr<MenuItem> perform_reconciliation_item
-	(	new MenuItem
-		(	"Perform account reconciliation",
-			bind(&TextSession::conduct_reconciliation, this),
-			true,
-			"r"
-		)
-	);
-	m_main_menu->push_item(perform_reconciliation_item);
+		// TODO We should hide this unless there is at least one
+		// balance sheet account.
+		shared_ptr<MenuItem> perform_reconciliation_item
+		(	new MenuItem
+			(	"Perform account reconciliation",
+				bind(&TextSession::conduct_reconciliation, this),
+				true,
+				"r"
+			)
+		);
+		m_main_menu->push_item(perform_reconciliation_item);
 
-	shared_ptr<MenuItem> display_account_detail_item
-	(	new MenuItem
-		(	"Account and category detail",
-			bind(&TextSession::display_account_detail, this),
-			true,
-			"ad"
-		)
-	);
-	m_main_menu->push_item(display_account_detail_item);
+		shared_ptr<MenuItem> display_account_detail_item
+		(	new MenuItem
+			(	"Account and category detail",
+				bind(&TextSession::display_account_detail, this),
+				true,
+				"ad"
+			)
+		);
+		m_main_menu->push_item(display_account_detail_item);
 
-	shared_ptr<MenuItem> edit_account_detail_item
-	(	new MenuItem
-		(	"Edit account detail",
-			bind(&TextSession::conduct_account_editing, this),
-			true,
-			"ea"
-		)
-	);
-	m_main_menu->push_item(edit_account_detail_item);
+		shared_ptr<MenuItem> edit_account_detail_item
+		(	new MenuItem
+			(	"Edit account detail",
+				bind(&TextSession::conduct_account_editing, this),
+				true,
+				"ea"
+			)
+		);
+		m_main_menu->push_item(edit_account_detail_item);
+	}
 
 	shared_ptr<MenuItem> quit_item
 	(	new MenuItem
@@ -613,6 +623,7 @@ TextSession::run_with_filepath
 	shared_ptr<list<OrdinaryJournal> > auto_posted_journals =
 		update_repeaters_till(today);
 	notify_autoposts(auto_posted_journals);
+	refresh_main_menu(); // TODO This needs to happen each time the main menu is entered, not just at the beginning.
 	m_main_menu->present_to_user();	
 	return 0;
 }
