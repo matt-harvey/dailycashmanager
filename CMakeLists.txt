@@ -7,6 +7,7 @@ set (immediate_directories
 	 account
 	 application
 	 b_string
+	 column_creation
 	 commodity
 	 date
 	 entry
@@ -132,6 +133,7 @@ set (main_files
 	 account/balance_cache.cpp
 	 application/application.cpp
 	 b_string/b_string.cpp
+	 column_creation/column_creation.cpp
 	 commodity/commodity.cpp
 	 commodity/commodity_impl.cpp
 	 date/date.cpp

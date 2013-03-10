@@ -5,7 +5,6 @@
 #include "entry_impl.hpp"
 #include "finformat.hpp"
 #include "phatbooks_persistent_object.hpp"
-#include <consolixx/column.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -155,126 +154,6 @@ public:
 	 * \e journal_id.
 	 */
 	void mimic(Entry const& rhs);
-
-
-
-
-
-	/***************************************************************/
-	// Here follow functions for
-	// creating consolixx::Columns, to facilitate
-	// construction of consolixx::Tables, for displaying
-	// Entry-related data in text form.
-	// Client is responsible for deleting the heap-allocated object
-	// pointed to by the returned pointer.
-	// WARNING We use sqloxx::Id here in lieu of OrdinaryJournal::Id, to avoid
-	// circular includes. This is a bit imperfect. We have a static
-	// assertion in the source file to break compilation if these are
-	// ever two different types.
-	
-	/**
-	 * Creates a column that shows the journal id of each entry's journal.
-	 * Should not be used unless we KNOW that all the entry's in the
-	 * desired range are ordinary (not draft or proto) entries.
-	 */
-	static consolixx::PlainColumn<Entry, sqloxx::Id>*
-		create_ordinary_journal_id_column();
-
-	/**
-	 * Creates a column that shows the date of each entry. Should not be
-	 * used unless we KNOW that all the entries in range are
-	 * ordinary (not draft or proto) entries.
-	 */
-	static consolixx::PlainColumn<Entry, boost::gregorian::date>*
-		create_ordinary_journal_date_column();
-	
-	/**
-	 * Creates a column that shows the id of each entry.
-	 */
-	static consolixx::PlainColumn<Entry, boost::optional<Id> >*
-		create_id_column();
-	
-	/**
-	 * Creates a column that shows the name of the account of
-	 * each entry.
-	 */
-	static consolixx::PlainColumn<Entry, BString>*
-		create_account_name_column();
-
-	/**
-	 * Creates a column that shows the comment of each entry.
-	 */
-	static consolixx::PlainColumn<Entry, BString>*
-		create_comment_column();
-	
-#	ifdef PHATBOOKS_EXPOSE_COMMODITY
-		static consolixx::PlainColumn<Entry, BString>*
-			create_commodity_abbreviation_column();
-#	endif	
-
-	/**
-	 * Creates a column that shows the amount of each entry.
-	 */
-	static consolixx::PlainColumn<Entry, jewel::Decimal>*
-		create_amount_column();
-
-	/**
-	 * Creates a column that show the amount of each entry,
-	 * with the sign switched.
-	 */
-	static consolixx::PlainColumn<Entry, jewel::Decimal>*
-		create_reversed_amount_column();
-
-	/**
-	 * Creates a column that displays each entry's amount and
-	 * calculates a total to
-	 * show at the foot of the column.
-	 */
-	static consolixx::AccumulatingColumn<Entry, jewel::Decimal>*
-		create_accumulating_amount_column
-		(	jewel::Decimal const& p_seed = jewel::Decimal(0, 0)
-		);
-
-	/**
-	 * Creates a column that displays each entry's reversed amount and
-	 * calculates a total
-	 * to show at the foot of the column.
-	 */
-	static consolixx::AccumulatingColumn<Entry, jewel::Decimal>*
-		create_accumulating_reversed_amount_column
-		(	jewel::Decimal const& p_seed = jewel::Decimal(0, 0)
-		);
-
-	/**
-	 * Creates a column that displays a running total amount, but
-	 * does not show a footer.
-	 */
-	static consolixx::AccumulatingColumn<Entry, jewel::Decimal>*
-		create_running_total_amount_column
-		(	jewel::Decimal const& p_seed = jewel::Decimal(0, 0)
-		);
-
-	/**
-	 * Creates a column that displays a running total of reconciled
-	 * amount, but does not show a footer.
-	 */
-	static consolixx::AccumulatingColumn<Entry, jewel::Decimal>*
-		create_running_total_reconciled_amount_column
-		(	jewel::Decimal const& p_seed = jewel::Decimal(0, 0)
-		);
-
-	/**
-	 * Creates a column that shows the reconciliation status
-	 * ("y" or "n").
-	 */
-	static consolixx::PlainColumn<Entry, bool>*
-		create_reconciliation_status_column();
-	
-	// End of section containing functions for creating
-	// consolixx::Columns.
-	/**************************************************************/
-
-
 
 private:
 	Entry(sqloxx::Handle<EntryImpl> const& p_handle);

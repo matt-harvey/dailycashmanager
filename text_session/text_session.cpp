@@ -16,6 +16,7 @@
 #include "account_reader.hpp"
 #include "account_type.hpp"
 #include "application.hpp"
+#include "column_creation.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
@@ -269,10 +270,11 @@ namespace
 	{
 		Table<Account> table;
 		typedef Table<Account>::ColumnPtr ColumnPtr;
-		ColumnPtr const name_column(Account::create_name_column());
+		namespace col = column_creation;
+		ColumnPtr const name_column(col::create_account_name_column());
 		table.push_column(name_column);
 		ColumnPtr const friendly_balance_column
-		(	Account::create_friendly_balance_column()
+		(	col::create_account_friendly_balance_column()
 		);
 		table.push_column(friendly_balance_column);
 		table.populate(p_reader.begin(), p_reader.end());
@@ -1193,14 +1195,17 @@ TextSession::conduct_ordinary_journal_editing
 void
 TextSession::display_account_detail()
 {
+	namespace col = column_creation;
 	cout << endl;
 	Table<Account> table;
 	typedef Table<Account>::ColumnPtr ColumnPtr;
-	ColumnPtr const name_column(Account::create_name_column());
+	ColumnPtr const name_column(col::create_account_name_column());
 	table.push_column(name_column);
-	ColumnPtr const type_column(Account::create_type_column());
+	ColumnPtr const type_column(col::create_account_type_column());
 	table.push_column(type_column);
-	ColumnPtr const description_column(Account::create_description_column());
+	ColumnPtr const description_column
+	(	col::create_account_description_column()
+	);
 	table.push_column(description_column);
 	AccountReader reader(database_connection());
 	table.populate(reader.begin(), reader.end());
@@ -1342,34 +1347,35 @@ TextSession::conduct_reconciliation()
 		// Configure Table columns for display
 		Table<Entry> table;
 		typedef Table<Entry>::ColumnPtr ColumnPtr;
+		namespace col = column_creation;
 		ColumnPtr const date_column
-		(	Entry::create_ordinary_journal_date_column()
+		(	col::create_entry_ordinary_journal_date_column()
 		);
 		table.push_column(date_column);
 		ColumnPtr const journal_id_column
-		(	Entry::create_ordinary_journal_id_column()
+		(	col::create_entry_ordinary_journal_id_column()
 		);
 		table.push_column(journal_id_column);
-		ColumnPtr const id_column(Entry::create_id_column());
+		ColumnPtr const id_column(col::create_entry_id_column());
 		table.push_column(id_column);
-		ColumnPtr const comment_column(Entry::create_comment_column());
+		ColumnPtr const comment_column(col::create_entry_comment_column());
 		table.push_column(comment_column);
 #		ifdef PHATBOOKS_EXPOSE_COMMODITY
 			ColumnPtr const commodity_column
-			(	Entry::create_commodity_abbreviation_column()
+			(	col::create_entry_commodity_abbreviation_column()
 			);
 			table.push_column(commodity_column);	
 #		endif
-		ColumnPtr const amount_column(Entry::create_amount_column());
+		ColumnPtr const amount_column(col::create_entry_amount_column());
 		table.push_column(amount_column);
 		ColumnPtr const running_total_column
-		(	Entry::create_running_total_amount_column
+		(	col::create_entry_running_total_amount_column
 			(	opening_balance
 			)
 		);
 		table.push_column(running_total_column);
 		ColumnPtr const reconciliation_status_column
-		(	Entry::create_reconciliation_status_column()
+		(	col::create_entry_reconciliation_status_column()
 		);
 		table.push_column(reconciliation_status_column);
 		table.populate(table_vec.begin(), table_vec.end());
@@ -1711,30 +1717,33 @@ TextSession::display_ordinary_actual_entries()
 
 	Table<Entry> table;
 	typedef Table<Entry>::ColumnPtr ColumnPtr;
+	namespace col = column_creation;
 	ColumnPtr const date_column
-	(	Entry::create_ordinary_journal_date_column()
+	(	col::create_entry_ordinary_journal_date_column()
 	);
 	table.push_column(date_column);
 	ColumnPtr const journal_id_column
-	(	Entry::create_ordinary_journal_id_column()
+	(	col::create_entry_ordinary_journal_id_column()
 	);
 	table.push_column(journal_id_column);
-	ColumnPtr const id_column(Entry::create_id_column());
+	ColumnPtr const id_column(col::create_entry_id_column());
 	table.push_column(id_column);
 	if (!filtering_for_account)
 	{
-		ColumnPtr const account_column(Entry::create_account_name_column());
+		ColumnPtr const account_column
+		(	col::create_entry_account_name_column()
+		);
 		table.push_column(account_column);
 	}
-	ColumnPtr const comment_column(Entry::create_comment_column());
+	ColumnPtr const comment_column(col::create_entry_comment_column());
 	table.push_column(comment_column);
 #	ifdef PHATBOOKS_EXPOSE_COMMODITY
 		ColumnPtr commodity_column
-		(	Entry::create_commodity_abbreviation_column()
+		(	col::create_entry_commodity_abbreviation_column()
 		);
 		table.push_column(commodity_column);
 #	endif
-	ColumnPtr const amount_column(Entry::create_amount_column());
+	ColumnPtr const amount_column(col::create_entry_amount_column());
 	table.push_column(amount_column);
 	if (filtering_for_account)
 	{
@@ -1743,7 +1752,7 @@ TextSession::display_ordinary_actual_entries()
 		{
 			JEWEL_DEBUG_LOG << __FILE__ << " " << __LINE__ << endl;
 			ColumnPtr const running_balance_column
-			(	Entry::create_running_total_amount_column(opening_balance)
+			(	col::create_entry_running_total_amount_column(opening_balance)
 			);
 			table.push_column(running_balance_column);
 		}

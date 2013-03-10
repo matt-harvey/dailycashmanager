@@ -7,7 +7,6 @@
 #include "commodity.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <boost/shared_ptr.hpp>
-#include <consolixx/column.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <jewel/decimal.hpp>
@@ -147,21 +146,6 @@ public:
 
 	void set_description(BString const& p_description);
 
-	// Functions for returning consolixx::Columns, to facilitate
-	// construction of consolixx::Tables, for displaying
-	// Account-related data in text form.
-	// Client is responsible for deleting the heap-allocated
-	// object pointed to by the returned pointer.
-	static consolixx::PlainColumn<Account, BString>*
-		create_name_column();
-	static consolixx::PlainColumn<Account, account_type::AccountType>*
-		create_type_column();
-	static consolixx::PlainColumn<Account, BString>*
-		create_description_column();
-	static consolixx::PlainColumn<Account, jewel::Decimal>*
-		create_friendly_balance_column();
-	static consolixx::AccumulatingColumn<Account, jewel::Decimal>*
-		create_accumulating_friendly_balance_column();
 
 private:
 	Account(sqloxx::Handle<AccountImpl> const& p_handle);

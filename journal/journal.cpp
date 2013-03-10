@@ -1,4 +1,5 @@
 #include "b_string.hpp"
+#include "column_creation.hpp"
 #include "journal.hpp"
 #include "entry.hpp"
 #include <consolixx/table.hpp>
@@ -17,8 +18,16 @@ using std::ostream;
 using std::string;
 using std::vector;
 
+
+
+
 namespace phatbooks
 {
+
+using column_creation::create_entry_accumulating_amount_column;
+using column_creation::create_entry_accumulating_reversed_amount_column;
+using column_creation::create_entry_account_name_column;
+using column_creation::create_entry_comment_column;
 
 Journal::~Journal()
 {
@@ -93,13 +102,14 @@ void
 Journal::push_core_journal_columns(Table<Entry>& table) const
 {
 	typedef Table<Entry>::ColumnPtr ColumnPtr;
-	ColumnPtr const name_column(Entry::create_account_name_column());
+	ColumnPtr const name_column(create_entry_account_name_column());
 	table.push_column(name_column);
-	ColumnPtr const comment_column(Entry::create_comment_column());
+	ColumnPtr const comment_column(create_entry_comment_column());
 	table.push_column(comment_column);
 #	ifdef PHATBOOKS_EXPOSE_COMMODITY
+		using column_creation::create_entry_commodity_abbreviation_column;
 		ColumnPtr const commodity_column
-		(	Entry::create_commodity_abbreviation_column()
+		(	create_entry_commodity_abbreviation_column()
 		);
 		table.push_column(commodity_column);
 #	endif
@@ -107,14 +117,14 @@ Journal::push_core_journal_columns(Table<Entry>& table) const
 	if (change_signs)
 	{
 		ColumnPtr const reversed_amount_column
-		(	Entry::create_accumulating_reversed_amount_column()
+		(	create_entry_accumulating_reversed_amount_column()
 		);
 		table.push_column(reversed_amount_column);
 	}
 	else
 	{
 		ColumnPtr const amount_column
-		(	Entry::create_accumulating_amount_column()
+		(	create_entry_accumulating_amount_column()
 		);
 		table.push_column(amount_column);
 	}
@@ -131,15 +141,6 @@ Journal::output_core_journal_header(ostream& os) const
 	os << endl;
 	if (!comment().empty()) os << comment() << endl;
 	os << endl;
-
-	/*
-	Table<Entry> table;
-	ColumnPtr const id_column(Entry::create_id_column());
-	table.push_column(id_column);
-	push_core_journal_columns(table);
-	table.populate(entries().begin(), entries().end());
-	os << table;
-	*/
 	return;
 }
 
