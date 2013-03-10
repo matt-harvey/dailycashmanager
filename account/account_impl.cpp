@@ -384,6 +384,12 @@ AccountImpl::primary_table_name()
 }
 
 string
+AccountImpl::exclusive_table_name()
+{
+	return primary_table_name();
+}
+
+string
 AccountImpl::primary_key_name()
 {
 	return "account_id";

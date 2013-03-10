@@ -317,6 +317,12 @@ EntryImpl::primary_table_name()
 }
 
 std::string
+EntryImpl::exclusive_table_name()
+{
+	return primary_table_name();
+}
+
+std::string
 EntryImpl::primary_key_name()
 {
 	return "entry_id";

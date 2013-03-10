@@ -45,6 +45,12 @@ DraftJournalImpl::primary_table_name()
 }
 
 string
+DraftJournalImpl::exclusive_table_name()
+{
+	return "draft_journal_detail";
+}
+
+string
 DraftJournalImpl::primary_key_name()
 {
 	return ProtoJournal::primary_key_name();

@@ -348,6 +348,11 @@ std::string CommodityImpl::primary_table_name()
 	return "commodities";
 }
 
+std::string CommodityImpl::exclusive_table_name()
+{
+	return primary_table_name();
+}
+
 std::string CommodityImpl::primary_key_name()
 {
 	return "commodity_id";

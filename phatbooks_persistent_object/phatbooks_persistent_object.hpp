@@ -69,6 +69,13 @@ class PhatbooksPersistentObject:
 public:
 	bool operator==(PhatbooksPersistentObject const& rhs) const;
 	bool operator!=(PhatbooksPersistentObject const& rhs) const;
+	static bool exists
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		Id p_id
+	);
+	static bool none_exists
+	(	PhatbooksDatabaseConnection& p_database_connection
+	);
 
 protected:
 	PhatbooksPersistentObject
@@ -79,10 +86,6 @@ protected:
 		Id p_id
 	);
 	PhatbooksPersistentObject(sqloxx::Handle<Impl> const& p_handle);
-	static bool exists
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
-	);
 	Impl& impl();
 	Impl& impl() const;
 
@@ -133,6 +136,16 @@ PhatbooksPersistentObject<Impl>::exists
 )
 {
 	return Impl::exists(p_database_connection, p_id);
+}
+
+template <typename Impl>
+inline
+bool
+PhatbooksPersistentObject<Impl>::none_exists
+(	PhatbooksDatabaseConnection& p_database_connection
+)
+{
+	return Impl::none_exists(p_database_connection);
 }
 
 template <typename Impl>

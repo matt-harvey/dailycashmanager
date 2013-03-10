@@ -351,6 +351,12 @@ RepeaterImpl::primary_table_name()
 }
 
 string
+RepeaterImpl::exclusive_table_name()
+{
+	return primary_table_name();
+}
+
+string
 RepeaterImpl::primary_key_name()
 {
 	return "repeater_id";

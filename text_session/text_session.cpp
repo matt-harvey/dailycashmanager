@@ -331,13 +331,18 @@ namespace
 TextSession::TextSession():
 	m_main_menu(new Menu)
 {
-	// Set up main menu.
-	// TODO Move setup of main menu to a separate function. In setting up
-	// the menu, this function should inspect the database to determine
-	// whether, for example, there are any Commodities saved. If, for
-	// example, there are no Commodities, then it does not make sense to
-	// allow the user to create any Accounts. Etc.. The main menu should
-	// not offer the user options that they cannot act upon.
+	refresh_main_menu();
+}
+
+
+TextSession::~TextSession()
+{
+}
+
+void
+TextSession::refresh_main_menu()
+{
+	m_main_menu->clear_items();
 
 #	ifdef PHATBOOKS_EXPOSE_COMMODITY
 		shared_ptr<MenuItem> elicit_commodity_item
@@ -351,39 +356,44 @@ TextSession::TextSession():
 		m_main_menu->push_item(elicit_commodity_item);
 #	endif
 
-	// WARNING Until there is not yet at least one Commodity, this should
-	// not appear in the main menu.
-	shared_ptr<MenuItem> elicit_account_item
-	(	new MenuItem
-		(	"New account",
-			bind(&TextSession::elicit_account, this),
-			true,
-			"a"
-		)
-	);
-	m_main_menu->push_item(elicit_account_item);
+	if (!Commodity::none_exists(database_connection()))
+	{
+		shared_ptr<MenuItem> elicit_account_item
+		(	new MenuItem
+			(	"New account",
+				bind(&TextSession::elicit_account, this),
+				true,
+				"a"
+			)
+		);
+		m_main_menu->push_item(elicit_account_item);
+	}
 
-	// WARNING Until there is at least one Account, this should not appear in
-	// the main menu.
-	shared_ptr<MenuItem> elicit_journal_item
-	(	new MenuItem
-		(	"New transaction",
-			bind(&TextSession::elicit_journal, this),
-			true,
-			"t"
-		)
-	);
-	m_main_menu->push_item(elicit_journal_item);
+	if (!Account::none_exists(database_connection()))
+	{
+		shared_ptr<MenuItem> elicit_journal_item
+		(	new MenuItem
+			(	"New transaction",
+				bind(&TextSession::elicit_journal, this),
+				true,
+				"t"
+			)
+		);
+		m_main_menu->push_item(elicit_journal_item);
+	}
 
-	shared_ptr<MenuItem> display_draft_journals_item
-	(	new MenuItem
-		(	"View draft and recurring transactions",
-			bind(&TextSession::display_draft_journals, this),
-			true,
-			"v"
-		)
-	);
-	m_main_menu->push_item(display_draft_journals_item);
+	if (!DraftJournal::none_exists(database_connection()))
+	{
+		shared_ptr<MenuItem> display_draft_journals_item
+		(	new MenuItem
+			(	"View draft and recurring transactions",
+				bind(&TextSession::display_draft_journals, this),
+				true,
+				"v"
+			)
+		);
+		m_main_menu->push_item(display_draft_journals_item);
+	}
 
 	// TODO The wording "Select a transaction by ID" is not clear for
 	// the user as to whether we are referring to a PersistentJournal id,
@@ -393,15 +403,21 @@ TextSession::TextSession():
 	//
 	// WARNING This crashes if the menu item is even \e selected, before
 	// any journals have been posted.
-	shared_ptr<MenuItem> display_journal_from_id_item
-	(	new MenuItem
-		(	"Select a transaction by ID",
-			bind(&TextSession::display_journal_from_id, this),
-			true,
-			"i"
-		)
-	);
-	m_main_menu->push_item(display_journal_from_id_item);
+	if
+	(	!OrdinaryJournal::none_exists(database_connection()) ||
+		!DraftJournal::none_exists(database_connection())
+	)
+	{
+		shared_ptr<MenuItem> display_journal_from_id_item
+		(	new MenuItem
+			(	"Select a transaction by ID",
+				bind(&TextSession::display_journal_from_id, this),
+				true,
+				"i"
+			)
+		);
+		m_main_menu->push_item(display_journal_from_id_item);
+	}
 
 	shared_ptr<MenuItem> display_ordinary_actual_entries_item
 	(	new MenuItem
@@ -418,7 +434,7 @@ TextSession::TextSession():
 
 	// TODO Should this also display equity accounts? Do we even have
 	// any equity accounts?
-	shared_ptr<MenuItem> display_balance_sheet_selection
+	shared_ptr<MenuItem> display_balance_sheet_item
 	(	new MenuItem
 		(	"Display the balances of asset and liability accounts",
 			bind(&TextSession::display_balance_sheet, this),
@@ -426,9 +442,9 @@ TextSession::TextSession():
 			"b"
 		)
 	);
-	m_main_menu->push_item(display_balance_sheet_selection);
+	m_main_menu->push_item(display_balance_sheet_item);
 
-	shared_ptr<MenuItem> display_envelopes_selection
+	shared_ptr<MenuItem> display_envelopes_item
 	(	new MenuItem
 		(	"Display envelope balances",
 			bind(&TextSession::display_envelopes, this),
@@ -436,9 +452,9 @@ TextSession::TextSession():
 			"e"
 		)
 	);
-	m_main_menu->push_item(display_envelopes_selection);
+	m_main_menu->push_item(display_envelopes_item);
 
-	shared_ptr<MenuItem> perform_reconciliation_selection
+	shared_ptr<MenuItem> perform_reconciliation_item
 	(	new MenuItem
 		(	"Perform account reconciliation",
 			bind(&TextSession::conduct_reconciliation, this),
@@ -446,7 +462,7 @@ TextSession::TextSession():
 			"r"
 		)
 	);
-	m_main_menu->push_item(perform_reconciliation_selection);
+	m_main_menu->push_item(perform_reconciliation_item);
 
 	shared_ptr<MenuItem> display_account_detail_item
 	(	new MenuItem
@@ -477,11 +493,8 @@ TextSession::TextSession():
 		)
 	);
 	m_main_menu->push_item(quit_item);
-}
 
-
-TextSession::~TextSession()
-{
+	return;
 }
 
 int
@@ -551,7 +564,6 @@ TextSession::do_run(string const& filepath_str)
 		boost::filesystem::path const final_filepath(filepath_str);
 		return run_with_filepath(final_filepath);
 	}
-	assert (!is_valid_filename);
 	assert (!error_message.empty());
 	cout << "Cannot open file with this name. "
 	     << error_message << endl;

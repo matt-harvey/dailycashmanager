@@ -42,6 +42,7 @@ public:
 		IdentityMap;
 
 	static std::string primary_table_name();
+	static std::string exclusive_table_name();
 	static std::string primary_key_name();
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
@@ -61,6 +62,8 @@ public:
 		BString const& p_name
 	);
 
+	
+	
 	/**
 	 * Does not throw.
 	 */

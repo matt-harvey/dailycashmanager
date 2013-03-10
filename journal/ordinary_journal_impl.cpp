@@ -49,6 +49,12 @@ OrdinaryJournalImpl::primary_table_name()
 }
 
 string
+OrdinaryJournalImpl::exclusive_table_name()
+{
+	return "ordinary_journal_detail";
+}
+
+string
 OrdinaryJournalImpl::primary_key_name()
 {
 	return ProtoJournal::primary_key_name();

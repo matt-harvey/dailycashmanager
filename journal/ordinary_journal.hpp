@@ -29,7 +29,7 @@ class PhatbooksDatabaseConnection;
  */
 class OrdinaryJournal:
 	public PersistentJournal,
-	virtual private PhatbooksPersistentObject<OrdinaryJournalImpl>
+	virtual public PhatbooksPersistentObject<OrdinaryJournalImpl>
 {
 public:
 
