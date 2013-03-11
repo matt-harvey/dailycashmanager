@@ -320,6 +320,58 @@ namespace
 		return;
 	}	
 
+	bool no_persistent_journals_exist(PhatbooksDatabaseConnection& dbc)
+	{
+		return
+			DraftJournal::none_exists(dbc) &&
+			OrdinaryJournal::none_exists(dbc);
+	}
+
+	bool no_ordinary_entries_exist(PhatbooksDatabaseConnection& dbc)
+	{
+		if (OrdinaryJournal::none_exists(dbc))
+		{
+			return true;
+		}
+		assert (!OrdinaryJournal::none_exists(dbc));
+		OrdinaryJournalReader reader(dbc);
+		for
+		(	OrdinaryJournalReader::const_iterator it = reader.begin();
+			it != reader.end();
+			++it
+		)
+		{
+			if (!it->entries().empty())
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	bool no_balance_sheet_accounts_exist(PhatbooksDatabaseConnection& dbc)
+	{
+		// TODO This is really inefficient. We could do this much faster
+		// with a single SQLStatement; however I am reluctant to put
+		// SQLStatements in the TUI module. Probably the Account class
+		// should provide a static function to test this.
+		BalanceSheetAccountReader reader(dbc);
+		return reader.empty();
+	}
+
+	bool no_pl_accounts_exist(PhatbooksDatabaseConnection& dbc)
+	{
+		// TODO This is really inefficient. We could do this much faster
+		// with a single SQLStatement; however I am reluctant to put
+		// SQLStatements in the TUI module. Probably the Account class
+		// should provide a static function to test this.
+		PLAccountReader reader(dbc);
+		return reader.empty();
+	}
+
+
+
+	
 }  
 
 /********* END ANONYMOUS INNER NAMESPACE *************/
@@ -339,10 +391,8 @@ TextSession::~TextSession()
 }
 
 void
-TextSession::refresh_main_menu()
+TextSession::create_main_menu()
 {
-	m_main_menu->clear_items();
-
 #	ifdef PHATBOOKS_EXPOSE_COMMODITY
 		shared_ptr<MenuItem> elicit_commodity_item
 		(	new MenuItem
@@ -355,144 +405,147 @@ TextSession::refresh_main_menu()
 		m_main_menu->push_item(elicit_commodity_item);
 #	endif
 
-	if (!Commodity::none_exists(database_connection()))
-	{
-		shared_ptr<MenuItem> elicit_account_item
-		(	new MenuItem
-			(	"New account",
-				bind(&TextSession::elicit_account, this),
-				true,
-				"a"
-			)
-		);
-		m_main_menu->push_item(elicit_account_item);
-	}
+	shared_ptr<MenuItem> elicit_account_item
+	(	new MenuItem
+		(	"New account",
+			bind(&TextSession::elicit_account, this),
+			true,
+			"a"
+		)
+	);
+	elicit_account_item->set_hiding_condition
+	(	bind(Commodity::none_exists, ref(database_connection()))
+	);
+	m_main_menu->push_item(elicit_account_item);
 
-	if (!Account::none_exists(database_connection()))
-	{
-		shared_ptr<MenuItem> elicit_journal_item
-		(	new MenuItem
-			(	"New transaction",
-				bind(&TextSession::elicit_journal, this),
-				true,
-				"t"
-			)
-		);
-		m_main_menu->push_item(elicit_journal_item);
-	}
+	shared_ptr<MenuItem> elicit_journal_item
+	(	new MenuItem
+		(	"New transaction",
+			bind(&TextSession::elicit_journal, this),
+			true,
+			"t"
+		)
+	);
+	elicit_journal_item->set_hiding_condition
+	(	bind(Account::none_exists, ref(database_connection()))
+	);
+	m_main_menu->push_item(elicit_journal_item);
 
-	if (!DraftJournal::none_exists(database_connection()))
-	{
-		shared_ptr<MenuItem> display_draft_journals_item
-		(	new MenuItem
-			(	"View draft and recurring transactions",
-				bind(&TextSession::display_draft_journals, this),
-				true,
-				"v"
-			)
-		);
-		m_main_menu->push_item(display_draft_journals_item);
-	}
+	shared_ptr<MenuItem> display_draft_journals_item
+	(	new MenuItem
+		(	"View draft and recurring transactions",
+			bind(&TextSession::display_draft_journals, this),
+			true,
+			"v"
+		)
+	);
+	display_draft_journals_item->set_hiding_condition
+	(	bind(DraftJournal::none_exists, ref(database_connection()))
+	);
+	m_main_menu->push_item(display_draft_journals_item);
 
-	// TODO The wording "Select a transaction by ID" is not clear for
+	// TODO The wording "Select a transaction by ID" would not be clear for
 	// the user as to whether we are referring to a PersistentJournal id,
 	// or to an Entry id. We a need a user-facing vocabulary that is going
 	// to distinguish between these two, while also not sounding too
-	// technical or confusing.
+	// technical or confusing. For now we have settled on "Select
+	// a transaction by journal ID".
 	//
 	// WARNING This crashes if the menu item is even \e selected, before
 	// any journals have been posted.
-	if
-	(	!OrdinaryJournal::none_exists(database_connection()) ||
-		!DraftJournal::none_exists(database_connection())
-	)
-	{
-		shared_ptr<MenuItem> display_journal_from_id_item
-		(	new MenuItem
-			(	"Select a transaction by ID",
-				bind(&TextSession::display_journal_from_id, this),
-				true,
-				"i"
-			)
-		);
-		m_main_menu->push_item(display_journal_from_id_item);
-	}
+	shared_ptr<MenuItem> display_journal_from_id_item
+	(	new MenuItem
+		(	"Select a transaction by journal ID",
+			bind(&TextSession::display_journal_from_id, this),
+			true,
+			"i"
+		)
+	);
+	display_journal_from_id_item->set_hiding_condition
+	(	bind(no_persistent_journals_exist, ref(database_connection()))
+	);
+	m_main_menu->push_item(display_journal_from_id_item);
 
-	if
-	(	!Entry::none_exists(database_connection()) &&
-		!OrdinaryJournal::none_exists(database_connection())
-	)
-	{
-		shared_ptr<MenuItem> display_ordinary_actual_entries_item
-		(	new MenuItem
-			(	"List actual transactions",
-				bind
-				(	&TextSession::display_ordinary_actual_entries,
-					this
-				),
-				true,
-				"l"
-			)
-		);
-		m_main_menu->push_item(display_ordinary_actual_entries_item);
-	}
+	shared_ptr<MenuItem> display_ordinary_actual_entries_item
+	(	new MenuItem
+		(	"List actual transactions",
+			bind
+			(	&TextSession::display_ordinary_actual_entries,
+				this
+			),
+			true,
+			"l"
+		)
+	);
+	display_ordinary_actual_entries_item->set_hiding_condition
+	(	bind(no_ordinary_entries_exist, ref(database_connection()))
+	);
+	m_main_menu->push_item(display_ordinary_actual_entries_item);
 
-	// TODO Should this also display equity accounts? Do we even have
-	// any equity accounts?
-	if (!Account::none_exists(database_connection()))
-	{
-		shared_ptr<MenuItem> display_balance_sheet_item
-		(	new MenuItem
-			(	"Display the balances of asset and liability accounts",
-				bind(&TextSession::display_balance_sheet, this),
-				true,
-				"b"
-			)
-		);
-		m_main_menu->push_item(display_balance_sheet_item);
+	shared_ptr<MenuItem> display_balance_sheet_item
+	(	new MenuItem
+		(	"Display the balances of asset and liability accounts",
+			bind(&TextSession::display_balance_sheet, this),
+			true,
+			"b"
+		)
+	);
+	display_balance_sheet_item->set_hiding_condition
+	(	bind(no_balance_sheet_accounts_exist, ref(database_connection()))
+	);
+	m_main_menu->push_item(display_balance_sheet_item);
 
-		shared_ptr<MenuItem> display_envelopes_item
-		(	new MenuItem
-			(	"Display envelope balances",
-				bind(&TextSession::display_envelopes, this),
-				true,
-				"e"
-			)
-		);
-		m_main_menu->push_item(display_envelopes_item);
+	shared_ptr<MenuItem> display_envelopes_item
+	(	new MenuItem
+		(	"Display envelope balances",
+			bind(&TextSession::display_envelopes, this),
+			true,
+			"e"
+		)
+	);
+	display_envelopes_item->set_hiding_condition
+	(	bind(no_pl_accounts_exist, ref(database_connection()))
+	);
+	m_main_menu->push_item(display_envelopes_item);
 
-		// TODO We should hide this unless there is at least one
-		// balance sheet account.
-		shared_ptr<MenuItem> perform_reconciliation_item
-		(	new MenuItem
-			(	"Perform account reconciliation",
-				bind(&TextSession::conduct_reconciliation, this),
-				true,
-				"r"
-			)
-		);
-		m_main_menu->push_item(perform_reconciliation_item);
+	shared_ptr<MenuItem> perform_reconciliation_item
+	(	new MenuItem
+		(	"Perform account reconciliation",
+			bind(&TextSession::conduct_reconciliation, this),
+			true,
+			"r"
+		)
+	);
+	perform_reconciliation_item->set_hiding_condition
+	(	bind(no_balance_sheet_accounts_exist, ref(database_connection()))
+	);
+	m_main_menu->push_item(perform_reconciliation_item);
 
-		shared_ptr<MenuItem> display_account_detail_item
-		(	new MenuItem
-			(	"Account and category detail",
-				bind(&TextSession::display_account_detail, this),
-				true,
-				"ad"
-			)
-		);
-		m_main_menu->push_item(display_account_detail_item);
+	shared_ptr<MenuItem> display_account_detail_item
+	(	new MenuItem
+		(	"Account and category detail",
+			bind(&TextSession::display_account_detail, this),
+			true,
+			"ad"
+		)
+	);
+	display_account_detail_item->set_hiding_condition
+	(	bind(Account::none_exists, ref(database_connection()))
+	);
+	m_main_menu->push_item(display_account_detail_item);
 
-		shared_ptr<MenuItem> edit_account_detail_item
-		(	new MenuItem
-			(	"Edit account detail",
-				bind(&TextSession::conduct_account_editing, this),
-				true,
-				"ea"
-			)
-		);
-		m_main_menu->push_item(edit_account_detail_item);
-	}
+	shared_ptr<MenuItem> edit_account_detail_item
+	(	new MenuItem
+		(	"Edit account detail",
+			bind(&TextSession::conduct_account_editing, this),
+			true,
+			"ea"
+		)
+	);
+	edit_account_detail_item->set_hiding_condition
+	(	bind(Account::none_exists, ref(database_connection()))
+	);
+	m_main_menu->push_item(edit_account_detail_item);
 
 	shared_ptr<MenuItem> quit_item
 	(	new MenuItem
@@ -623,7 +676,7 @@ TextSession::run_with_filepath
 	shared_ptr<list<OrdinaryJournal> > auto_posted_journals =
 		update_repeaters_till(today);
 	notify_autoposts(auto_posted_journals);
-	refresh_main_menu(); // TODO This needs to happen each time the main menu is entered, not just at the beginning.
+	create_main_menu();
 	m_main_menu->present_to_user();	
 	return 0;
 }
@@ -1295,9 +1348,6 @@ TextSession::conduct_reconciliation()
 		account = Account(database_connection(), account_name);
 		if (!is_asset_or_liability(account))
 		{
-			// TODO Despite the below message, we display the "is reconciled"
-			// property even for Entries of which the account is not an asset
-			// or liability account. Is this misleading for the user?
 			cout << "Only asset or liability accounts can be reconciled. "
 				 << "Please try again."
 				 << endl;
@@ -1327,7 +1377,7 @@ TextSession::conduct_reconciliation()
 			assert (closing_date < opening_date);
 			cout << "Closing date cannot be earlier than opening date. "
 				 << "Please try again: ";
-			assert (input_is_valid = false);
+			assert (input_is_valid == false);
 		}
 	}
 
@@ -1367,7 +1417,7 @@ TextSession::conduct_reconciliation()
 			}
 		}
 		
-		// Configure Table columns for display
+		// Configure Table
 		Table<Entry> table;
 		typedef Table<Entry>::ColumnPtr ColumnPtr;
 		namespace col = column_creation;
@@ -1402,6 +1452,8 @@ TextSession::conduct_reconciliation()
 		);
 		table.push_column(reconciliation_status_column);
 		table.populate(table_vec.begin(), table_vec.end());
+
+		// Display Table
 		cout << endl << table << endl;
 
 		// Summarise totals
@@ -1413,7 +1465,7 @@ TextSession::conduct_reconciliation()
 		// Get user input on which to reconcile
 		cout << "Enter \"a\" to mark all entries as reconciled, "
 		     << "\"u\" to unmark all, or"
-		     << " a series of entry ids - separated by spaces - to toggle "
+		     << " a series of entry IDs - separated by spaces - to toggle "
 			 << "the reconciliation status of selected entries (or just hit "
 			 << "Enter to return to the previous menu) :"
 			 << endl;

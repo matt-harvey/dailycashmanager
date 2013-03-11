@@ -68,17 +68,7 @@ private:
 	 */
 	int do_run();
 
-	/**
-	 * This function always clears the menu of all MenuItems, and
-	 * then builds the menu up again from scratch. The MenuItems that are
-	 * inserted into the menu each time it is configured, depend on whether
-	 * the database is in a certain state. For example, if there are not
-	 * yet any Accounts created, then MenuItems that depend on the
-	 * existence of Accounts, should not be presented to the user, and
-	 * so are not inserted into the main menu if it is configured at
-	 * such a time.
-	 */
-	void refresh_main_menu();
+	void create_main_menu();
 
 	/**
 	 * Implements virtual function do_run, inherited from
