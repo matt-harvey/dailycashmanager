@@ -98,6 +98,11 @@ public:
 		account_type::AccountType p_account_type
 	);
 
+	static bool none_saved_with_account_super_type
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		account_super_type::AccountSuperType p_account_super_type
+	);
+
 	/**
 	 * Get an AccountImpl by id from database.
 	 */

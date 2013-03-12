@@ -117,6 +117,18 @@ Account::none_saved_with_account_type
 	);
 }
 
+bool
+Account::none_saved_with_account_super_type
+(	PhatbooksDatabaseConnection& p_database_connection,
+	account_super_type::AccountSuperType p_account_super_type
+)
+{
+	return AccountImpl::none_saved_with_account_super_type
+	(	p_database_connection,
+		p_account_super_type
+	);
+}
+
 
 BString
 Account::name() const
@@ -202,6 +214,12 @@ bool is_asset_or_liability(Account const& account)
 	default:
 		return false;
 	}
+}
+
+bool is_balance_sheet_account(Account const& account)
+{
+	return account.account_super_type() ==
+		account_super_type::balance_sheet;
 }
 
 bool is_expense(Account const& account)

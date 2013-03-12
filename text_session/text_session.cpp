@@ -160,6 +160,8 @@ namespace
 		string const ret =
 		(	validator == is_asset_or_liability?
 			"asset or liability account":
+			validator == is_balance_sheet_account?
+			"asset, liability or equity account":
 			validator == is_expense?
 			"expense category":
 			validator == is_revenue?
@@ -320,14 +322,14 @@ namespace
 		return;
 	}	
 
-	bool no_persistent_journals_exist(PhatbooksDatabaseConnection& dbc)
+	bool no_persistent_journals_saved(PhatbooksDatabaseConnection& dbc)
 	{
 		return
 			DraftJournal::none_saved(dbc) &&
 			OrdinaryJournal::none_saved(dbc);
 	}
 
-	bool no_ordinary_entries_exist(PhatbooksDatabaseConnection& dbc)
+	bool no_ordinary_entries_saved(PhatbooksDatabaseConnection& dbc)
 	{
 		if (OrdinaryJournal::none_saved(dbc))
 		{
@@ -349,29 +351,54 @@ namespace
 		return true;
 	}
 
-	bool no_balance_sheet_accounts_exist(PhatbooksDatabaseConnection& dbc)
+	bool no_balance_sheet_accounts_saved(PhatbooksDatabaseConnection& dbc)
 	{
-		// TODO This is really inefficient. We could do this much faster
-		// with a single SQLStatement; however I am reluctant to put
-		// SQLStatements in the TUI module. Probably the Account class
-		// should provide a static function to test this.
-		BalanceSheetAccountReader reader(dbc);
-		return reader.empty();
+		return Account::none_saved_with_account_super_type
+		(	dbc,
+			account_super_type::balance_sheet
+		);
 	}
 
-	bool no_pl_accounts_exist(PhatbooksDatabaseConnection& dbc)
+	bool no_pl_accounts_saved(PhatbooksDatabaseConnection& dbc)
 	{
-		// TODO This is really inefficient. We could do this much faster
-		// with a single SQLStatement; however I am reluctant to put
-		// SQLStatements in the TUI module. Probably the Account class
-		// should provide a static function to test this.
-		PLAccountReader reader(dbc);
-		return reader.empty();
+		return Account::none_saved_with_account_super_type
+		(	dbc,
+			account_super_type::pl
+		);
 	}
 
+	bool fewer_than_two_accounts_saved(PhatbooksDatabaseConnection& dbc)
+	{
+		AccountReader reader(dbc);
+		return reader.size() < 2;
+	}
 
-
+	bool account_types_missing_for_expenditure_transaction
+	(	PhatbooksDatabaseConnection& dbc
+	)
+	{
+		return
+			no_balance_sheet_accounts_saved(dbc) ||
+			Account::none_saved_with_account_type
+			(	dbc,
+				account_type::expense
+			);
+	}
 	
+	bool account_types_missing_for_revenue_transaction
+	(	PhatbooksDatabaseConnection& dbc
+	)
+	{
+		return
+			no_balance_sheet_accounts_saved(dbc) ||
+			Account::none_saved_with_account_type
+			(	dbc,
+				account_type::revenue
+			);
+	}
+		
+		
+				
 }  
 
 /********* END ANONYMOUS INNER NAMESPACE *************/
@@ -427,7 +454,10 @@ TextSession::create_main_menu()
 		)
 	);
 	elicit_journal_item->set_hiding_condition
-	(	bind(Account::none_saved, ref(database_connection()))
+	(	bind
+		(	fewer_than_two_accounts_saved,
+			ref(database_connection())
+		)
 	);
 	m_main_menu->push_item(elicit_journal_item);
 
@@ -462,7 +492,7 @@ TextSession::create_main_menu()
 		)
 	);
 	display_journal_from_id_item->set_hiding_condition
-	(	bind(no_persistent_journals_exist, ref(database_connection()))
+	(	bind(no_persistent_journals_saved, ref(database_connection()))
 	);
 	m_main_menu->push_item(display_journal_from_id_item);
 
@@ -478,7 +508,7 @@ TextSession::create_main_menu()
 		)
 	);
 	display_ordinary_actual_entries_item->set_hiding_condition
-	(	bind(no_ordinary_entries_exist, ref(database_connection()))
+	(	bind(no_ordinary_entries_saved, ref(database_connection()))
 	);
 	m_main_menu->push_item(display_ordinary_actual_entries_item);
 
@@ -491,7 +521,7 @@ TextSession::create_main_menu()
 		)
 	);
 	display_balance_sheet_item->set_hiding_condition
-	(	bind(no_balance_sheet_accounts_exist, ref(database_connection()))
+	(	bind(no_balance_sheet_accounts_saved, ref(database_connection()))
 	);
 	m_main_menu->push_item(display_balance_sheet_item);
 
@@ -504,7 +534,7 @@ TextSession::create_main_menu()
 		)
 	);
 	display_envelopes_item->set_hiding_condition
-	(	bind(no_pl_accounts_exist, ref(database_connection()))
+	(	bind(no_pl_accounts_saved, ref(database_connection()))
 	);
 	m_main_menu->push_item(display_envelopes_item);
 
@@ -517,7 +547,7 @@ TextSession::create_main_menu()
 		)
 	);
 	perform_reconciliation_item->set_hiding_condition
-	(	bind(no_balance_sheet_accounts_exist, ref(database_connection()))
+	(	bind(no_balance_sheet_accounts_saved, ref(database_connection()))
 	);
 	m_main_menu->push_item(perform_reconciliation_item);
 
@@ -1336,7 +1366,7 @@ TextSession::conduct_reconciliation()
 	Account account(database_connection());
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
-		cout << "Enter name of asset or liability account "
+		cout << "Enter name of asset, liability or equity account "
 			 << "(or leave blank to abort): ";
 		string const account_name = elicit_existing_account_name(true);
 		if (account_name.empty())
@@ -1346,9 +1376,10 @@ TextSession::conduct_reconciliation()
 		}
 		assert (!account_name.empty());
 		account = Account(database_connection(), account_name);
-		if (!is_asset_or_liability(account))
+		if (is_balance_sheet_account(account))
 		{
-			cout << "Only asset or liability accounts can be reconciled. "
+			cout << "Only asset, liability or equity accounts can "
+				 << "be reconciled. "
 				 << "Please try again."
 				 << endl;
 			assert (!input_is_valid);
@@ -1358,7 +1389,10 @@ TextSession::conduct_reconciliation()
 			input_is_valid = true;
 		}
 	}
-	assert (is_asset_or_liability(account));
+	assert
+	(	account.account_super_type() ==
+		account_super_type::balance_sheet
+	);
 	cout << "Enter statement opening date as an 8-digit number of the form"
 		 << " YYYYMMDD: ";
 	gregorian::date const opening_date = value(get_date_from_user());
@@ -1727,14 +1761,14 @@ TextSession::display_ordinary_actual_entries()
 	if (account_name.empty()) assert (!filtering_for_account);
 	Account account(database_connection());
 	if (maybe_account) account = value(maybe_account);
-	bool const is_asset_or_liab =
+	bool const is_balance_sheet =
 	(	maybe_account?
-		is_asset_or_liability(value(maybe_account)):
+		is_balance_sheet_account(value(maybe_account)):
 		false
 	);
 	bool const accumulating_pre_start_date_entries =
 	(	filtering_for_account &&
-		is_asset_or_liab
+		is_balance_sheet
 	);
 
 	ActualOrdinaryEntryReader reader(database_connection());
@@ -1756,7 +1790,7 @@ TextSession::display_ordinary_actual_entries()
 			)
 			{
 				opening_balance += it->amount();
-				assert (is_asset_or_liab);
+				assert (is_balance_sheet);
 			}
 		}
 	}
@@ -1823,9 +1857,8 @@ TextSession::display_ordinary_actual_entries()
 	if (filtering_for_account)
 	{
 		assert (maybe_account);
-		if (is_asset_or_liability(value(maybe_account)))
+		if (is_balance_sheet)
 		{
-			JEWEL_DEBUG_LOG << __FILE__ << " " << __LINE__ << endl;
 			ColumnPtr const running_balance_column
 			(	col::create_entry_running_total_amount_column(opening_balance)
 			);
@@ -2280,7 +2313,7 @@ TextSession::account_is_valid
 	ValidatorMatrix const validator_matrix =
 	{	{ is_asset_or_liability, is_expense },
 		{ is_asset_or_liability, is_revenue },
-		{ is_asset_or_liability, is_asset_or_liability },
+		{ is_balance_sheet_account, is_balance_sheet_account },
 		{ is_pl_account, is_pl_account },
 		{ is_not_pure_envelope, is_not_pure_envelope }
 	};
@@ -2349,6 +2382,12 @@ TextSession::elicit_transaction_type()
 			"e"
 		)
 	);
+	expenditure_selection->set_hiding_condition
+	(	bind
+		(	account_types_missing_for_expenditure_transaction,
+			ref(database_connection())
+		)
+	);
 	menu.push_item(expenditure_selection);
 	shared_ptr<MenuItem> revenue_selection
 	(	new MenuItem
@@ -2358,13 +2397,25 @@ TextSession::elicit_transaction_type()
 			"r"
 		)
 	);
+	revenue_selection->set_hiding_condition
+	(	bind
+		(	account_types_missing_for_revenue_transaction,
+			ref(database_connection())
+		)
+	);
 	menu.push_item(revenue_selection);
 	shared_ptr<MenuItem> balance_sheet_selection
 	(	new MenuItem
-		(	"Transfer between assets or liabilities",
+		(	"Transfer between asset, liability or equity accounts",
 			MenuItem::do_nothing,
 			false,
 			"a"
+		)
+	);
+	balance_sheet_selection->set_hiding_condition
+	(	bind
+		(	no_balance_sheet_accounts_saved,
+			ref(database_connection())
 		)
 	);
 	menu.push_item(balance_sheet_selection);
@@ -2375,6 +2426,9 @@ TextSession::elicit_transaction_type()
 			false,
 			"b"
 		)
+	);
+	envelope_selection->set_hiding_condition
+	(	bind(no_pl_accounts_saved, ref(database_connection()))
 	);
 	menu.push_item(envelope_selection);
 	menu.present_to_user();

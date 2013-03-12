@@ -114,6 +114,16 @@ public:
 		account_type::AccountType p_account_type
 	);
 
+	/**
+	 * @returns \e true if and only if there \e no instances of Account
+	 * with account super type \e p_account_super_type saved in the database
+	 * connected to be p_database_connection.
+	 */
+	static bool none_saved_with_account_super_type
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		account_super_type::AccountSuperType p_account_super_type
+	);
+
 	static void setup_tables();
 
 	~Account();
@@ -189,6 +199,7 @@ make_detailed_account_row(Account const& account);
 
 // Free-standing functions
 bool is_asset_or_liability(Account const& account);
+bool is_balance_sheet_account(Account const& account);
 bool is_expense(Account const& account);
 bool is_revenue(Account const& account);
 bool is_pl_account(Account const& account);
