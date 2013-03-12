@@ -182,6 +182,13 @@ AccountImpl::account_type()
 	return value(m_data->account_type);
 }
 
+AccountImpl::AccountSuperType
+AccountImpl::account_super_type()
+{
+	load();
+	return super_type(account_type());
+}
+
 BString
 AccountImpl::name()
 {

@@ -61,6 +61,7 @@ public:
 	BOOST_STATIC_ASSERT((boost::is_same<Id, sqloxx::Id>::value));
 
 	typedef account_type::AccountType AccountType;
+	typedef account_super_type::AccountSuperType AccountSuperType;
 
 	typedef sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
@@ -109,6 +110,8 @@ public:
 	Commodity commodity();
 
 	AccountType account_type();
+
+	AccountSuperType account_super_type();
 
 	BString description();
 

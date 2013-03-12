@@ -19,6 +19,7 @@
 using consolixx::AccumulatingColumn;
 using consolixx::PlainColumn;
 using phatbooks::account_type::AccountType;
+using phatbooks::account_super_type::AccountSuperType;
 using sqloxx::Handle;
 using boost::shared_ptr;
 using jewel::Decimal;
@@ -135,6 +136,12 @@ Account::account_type() const
 	return impl().account_type();
 }
 
+AccountSuperType
+Account::account_super_type() const
+{
+	return impl().account_super_type();
+}
+
 BString
 Account::description() const
 {
@@ -209,19 +216,7 @@ bool is_revenue(Account const& account)
 
 bool is_pl_account(Account const& account)
 {
-	switch (account.account_type())
-	{
-	case account_type::asset:
-	case account_type::liability:
-	case account_type::equity:
-		return false;
-	case account_type::revenue:
-	case account_type::expense:
-	case account_type::pure_envelope:
-		return true;
-	default:
-		assert (false);
-	}
+	return account.account_super_type() == account_super_type::pl;
 }
 
 

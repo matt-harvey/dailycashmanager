@@ -6,6 +6,7 @@
 
 namespace phatbooks
 {
+
 namespace account_type
 {
 	enum AccountType
@@ -21,9 +22,22 @@ namespace account_type
 		expense,
 		pure_envelope
 	};
-
 }  // namespace account_type
 
+
+
+namespace account_super_type
+{
+	enum AccountSuperType
+	{
+		balance_sheet,
+		pl  			// Profit and loss
+	};
+}  // namespace account_super_type
+
+
+account_super_type::AccountSuperType
+super_type(account_type::AccountType p_account_type);
 
 std::vector<BString>
 account_type_names();

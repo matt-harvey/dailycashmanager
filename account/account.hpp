@@ -36,6 +36,7 @@ class Account:
 {
 public:
 	typedef account_type::AccountType AccountType;
+	typedef account_super_type::AccountSuperType AccountSuperType;
 	typedef
 		PhatbooksPersistentObject<AccountImpl>
 		PhatbooksPersistentObject;
@@ -131,6 +132,11 @@ public:
 	 * @ returns AccountType of account.
 	 */
 	AccountType account_type() const;
+
+	/**
+	 * @returns AccountSuperType of account.
+	 */
+	AccountSuperType account_super_type() const;
 
 	/**
 	 * @ returns description of account.

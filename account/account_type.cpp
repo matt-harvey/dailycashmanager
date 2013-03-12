@@ -10,7 +10,23 @@ namespace phatbooks
 {
 
 
-
+account_super_type::AccountSuperType
+super_type(account_type::AccountType p_account_type)
+{
+	switch (p_account_type)
+	{
+	case account_type::asset:
+	case account_type::liability:
+	case account_type::equity:
+		return account_super_type::balance_sheet;
+	case account_type::revenue:
+	case account_type::expense:
+	case account_type::pure_envelope:
+		return account_super_type::pl;
+	default:
+		assert (false);
+	}
+}
 
 vector<BString>
 account_type_names()
