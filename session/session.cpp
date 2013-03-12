@@ -95,16 +95,19 @@ Session::update_repeaters_till(gregorian::date d)
 	);
 
 	RepeaterReader repeater_reader(database_connection());
-	for
-	(	RepeaterReader::iterator it = repeater_reader.begin(),
-			end = repeater_reader.end();
-		it != end;
-		++it
-	)
+	// Anonymous scope
 	{
-		while (it->next_date() <= d)
+		RepeaterReader::const_iterator const end = repeater_reader.end();
+		for
+		(	RepeaterReader::iterator it = repeater_reader.begin();
+			it != end;
+			++it
+		)
 		{
-			auto_posted_journals->push_back(it->fire_next());
+			while (it->next_date() <= d)
+			{
+				auto_posted_journals->push_back(it->fire_next());
+			}
 		}
 	}
 	auto_posted_journals->sort(is_earlier_than);

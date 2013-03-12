@@ -103,6 +103,11 @@ BalanceCache::refresh()
 	// objects. However, with IdentityMap's caching enabled, it is
 	// simpler and more maintainable for the below to be implemented
 	// as shown here.
+	//
+	// TODO Things are a bit confused here, in that it's not clear whether
+	// we are conceptually dealing with a map of Account or a map
+	// of AccountImpl. In practice it doesn't matter, but in it's
+	// still a bit troubling.
 	scoped_ptr<Map> map_elect_ptr(new Map);	
 	Map& map_elect = *map_elect_ptr;
 	AccountReader account_reader(m_database_connection);
