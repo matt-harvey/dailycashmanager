@@ -1376,7 +1376,7 @@ TextSession::conduct_reconciliation()
 		}
 		assert (!account_name.empty());
 		account = Account(database_connection(), account_name);
-		if (is_balance_sheet_account(account))
+		if (!is_balance_sheet_account(account))
 		{
 			cout << "Only asset, liability or equity accounts can "
 				 << "be reconciled. "
@@ -1434,9 +1434,15 @@ TextSession::conduct_reconciliation()
 			if (it->account() == account)
 			{
 				Decimal const amount = it->amount();
-				opening_balance += amount;
-				if (it->is_reconciled()) reconciled_balance += amount;
-				else table_vec.push_back(*it);
+				if (it->is_reconciled())
+				{
+					reconciled_balance += amount;
+					opening_balance += amount;
+				}
+				else
+				{
+					table_vec.push_back(*it);
+				}
 			}
 		}
 
