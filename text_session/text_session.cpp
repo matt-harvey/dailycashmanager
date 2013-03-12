@@ -323,17 +323,17 @@ namespace
 	bool no_persistent_journals_exist(PhatbooksDatabaseConnection& dbc)
 	{
 		return
-			DraftJournal::none_exists(dbc) &&
-			OrdinaryJournal::none_exists(dbc);
+			DraftJournal::none_saved(dbc) &&
+			OrdinaryJournal::none_saved(dbc);
 	}
 
 	bool no_ordinary_entries_exist(PhatbooksDatabaseConnection& dbc)
 	{
-		if (OrdinaryJournal::none_exists(dbc))
+		if (OrdinaryJournal::none_saved(dbc))
 		{
 			return true;
 		}
-		assert (!OrdinaryJournal::none_exists(dbc));
+		assert (!OrdinaryJournal::none_saved(dbc));
 		OrdinaryJournalReader reader(dbc);
 		for
 		(	OrdinaryJournalReader::const_iterator it = reader.begin();
@@ -414,7 +414,7 @@ TextSession::create_main_menu()
 		)
 	);
 	elicit_account_item->set_hiding_condition
-	(	bind(Commodity::none_exists, ref(database_connection()))
+	(	bind(Commodity::none_saved, ref(database_connection()))
 	);
 	m_main_menu->push_item(elicit_account_item);
 
@@ -427,7 +427,7 @@ TextSession::create_main_menu()
 		)
 	);
 	elicit_journal_item->set_hiding_condition
-	(	bind(Account::none_exists, ref(database_connection()))
+	(	bind(Account::none_saved, ref(database_connection()))
 	);
 	m_main_menu->push_item(elicit_journal_item);
 
@@ -440,7 +440,7 @@ TextSession::create_main_menu()
 		)
 	);
 	display_draft_journals_item->set_hiding_condition
-	(	bind(DraftJournal::none_exists, ref(database_connection()))
+	(	bind(DraftJournal::none_saved, ref(database_connection()))
 	);
 	m_main_menu->push_item(display_draft_journals_item);
 
@@ -530,7 +530,7 @@ TextSession::create_main_menu()
 		)
 	);
 	display_account_detail_item->set_hiding_condition
-	(	bind(Account::none_exists, ref(database_connection()))
+	(	bind(Account::none_saved, ref(database_connection()))
 	);
 	m_main_menu->push_item(display_account_detail_item);
 
@@ -543,7 +543,7 @@ TextSession::create_main_menu()
 		)
 	);
 	edit_account_detail_item->set_hiding_condition
-	(	bind(Account::none_exists, ref(database_connection()))
+	(	bind(Account::none_saved, ref(database_connection()))
 	);
 	m_main_menu->push_item(edit_account_detail_item);
 

@@ -73,7 +73,7 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
-	static bool none_exists
+	static bool none_saved
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
@@ -141,11 +141,11 @@ PhatbooksPersistentObject<Impl>::exists
 template <typename Impl>
 inline
 bool
-PhatbooksPersistentObject<Impl>::none_exists
+PhatbooksPersistentObject<Impl>::none_saved
 (	PhatbooksDatabaseConnection& p_database_connection
 )
 {
-	return Impl::none_exists(p_database_connection);
+	return Impl::none_saved(p_database_connection);
 }
 
 template <typename Impl>
