@@ -268,17 +268,30 @@ namespace
 	}
 
 	template <typename AccountReaderT>
-	void print_account_reader(AccountReaderT& p_reader)
+	void print_account_reader
+	(	AccountReaderT& p_reader,
+		bool show_total = true
+	)
 	{
 		Table<Account> table;
 		typedef Table<Account>::ColumnPtr ColumnPtr;
 		namespace col = column_creation;
 		ColumnPtr const name_column(col::create_account_name_column());
 		table.push_column(name_column);
-		ColumnPtr const friendly_balance_column
-		(	col::create_account_friendly_balance_column()
-		);
-		table.push_column(friendly_balance_column);
+		if (show_total)
+		{
+			ColumnPtr const accumulating_friendly_balance_column
+			(	col::create_account_accumulating_friendly_balance_column()
+			);
+			table.push_column(accumulating_friendly_balance_column);
+		}
+		else
+		{
+			ColumnPtr const friendly_balance_column
+			(	col::create_account_friendly_balance_column()
+			);
+			table.push_column(friendly_balance_column);
+		}
 		table.populate(p_reader.begin(), p_reader.end());
 		cout << table;
 		return;

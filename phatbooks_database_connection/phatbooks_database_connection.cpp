@@ -141,7 +141,9 @@ PhatbooksDatabaseConnection::setup()
 		return;
 	}
 	assert (!setup_has_occurred());
+
 	DatabaseTransaction transaction(*this);
+
 	setup_boolean_table();
 	Commodity::setup_tables(*this);
 	Account::setup_tables(*this);
@@ -151,8 +153,11 @@ PhatbooksDatabaseConnection::setup()
 	Repeater::setup_tables(*this);
 	Entry::setup_tables(*this);
 	mark_setup_as_having_occurred();
+
 	transaction.commit();
+
 	assert (setup_has_occurred());
+
 	return;
 }
 
