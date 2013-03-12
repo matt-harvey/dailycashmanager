@@ -62,5 +62,4 @@ string_to_account_type(BString const& p_string)
 }
 
 
-
 }  // namespace phatbooks

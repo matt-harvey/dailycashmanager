@@ -72,7 +72,7 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 		statement.step_final();
 	}
 
-	#ifndef DEBUG
+#	ifndef DEBUG
 		SQLStatement checker
 		(	dbc,
 			"select max(account_type_id) from account_types"
@@ -81,7 +81,7 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 		Id const maxi = checker.extract<Id>(0);
 		assert (maxi == 6);
 		checker.step_final();
-	#endif
+#	endif
 
 	dbc.execute_sql
 	(	"create table accounts "
@@ -160,7 +160,20 @@ AccountImpl::exists
 	return statement.step();
 }
 
-
+bool
+AccountImpl::none_saved_with_account_type
+(	PhatbooksDatabaseConnection& p_database_connection,
+	account_type::AccountType p_account_type
+)
+{
+	SQLStatement statement
+	(	p_database_connection,
+		"select account_id from accounts where "
+		"account_type = :p"
+	);
+	statement.bind(":p", static_cast<int>(p_account_type));
+	return !statement.step();
+}
 
 AccountImpl::AccountType
 AccountImpl::account_type()

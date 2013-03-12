@@ -164,7 +164,7 @@ namespace
 			"expense category":
 			validator == is_revenue?
 			"revenue category":
-			validator == is_envelope?
+			validator == is_pl_account?
 			"envelope (revenue, expense or pure envelope)":  // TODO This description sucks
 			validator == is_not_pure_envelope?
 			"account or category for this transaction":  // TODO This description sucks
@@ -2281,7 +2281,7 @@ TextSession::account_is_valid
 	{	{ is_asset_or_liability, is_expense },
 		{ is_asset_or_liability, is_revenue },
 		{ is_asset_or_liability, is_asset_or_liability },
-		{ is_envelope, is_envelope },
+		{ is_pl_account, is_pl_account },
 		{ is_not_pure_envelope, is_not_pure_envelope }
 	};
 	AccountValidator const validate =

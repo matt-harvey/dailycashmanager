@@ -84,7 +84,7 @@ public:
 	);
 
 	/**
-	 * @returns \c true if and only if \c p_name is the name of an Account
+	 * @returns \e true if and only if \e p_name is the name of an Account
 	 * stored in the database.
 	 *
 	 * @param p_name name of Account.
@@ -101,6 +101,16 @@ public:
 	static bool exists
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		BString const& p_name
+	);
+
+	/**
+	 * @returns \e true if and only if there are \e no instances of Account
+	 * with account type \e p_account_type saved in the database connected to
+	 * by p_database_connection.
+	 */
+	static bool none_saved_with_account_type
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		account_type::AccountType p_account_type
 	);
 
 	static void setup_tables();
@@ -175,8 +185,10 @@ make_detailed_account_row(Account const& account);
 bool is_asset_or_liability(Account const& account);
 bool is_expense(Account const& account);
 bool is_revenue(Account const& account);
-bool is_envelope(Account const& account);
+bool is_pl_account(Account const& account);
 bool is_not_pure_envelope(Account const& account);
+std::vector<account_type::AccountType> balance_sheet_account_types();
+std::vector<account_type::AccountType> pl_account_types();
 
 
 

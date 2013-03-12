@@ -8,8 +8,6 @@ namespace phatbooks
 {
 namespace account_type
 {
-
-
 	enum AccountType
 	{
 		// enum order is significant, as the database contains
@@ -24,8 +22,6 @@ namespace account_type
 		pure_envelope
 	};
 
-
-
 }  // namespace account_type
 
 
@@ -37,6 +33,7 @@ account_type_to_string(account_type::AccountType p_account_type);
 
 account_type::AccountType
 string_to_account_type(BString const& p_string);
+
 
 
 }  // namespace phatbooks

@@ -91,7 +91,12 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		BString const& p_name
 	);
-	
+
+	static bool none_saved_with_account_type
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		account_type::AccountType p_account_type
+	);
+
 	/**
 	 * Get an AccountImpl by id from database.
 	 */

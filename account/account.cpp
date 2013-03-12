@@ -104,6 +104,19 @@ Account::exists
 	);
 }
 
+bool
+Account::none_saved_with_account_type
+(	PhatbooksDatabaseConnection& p_database_connection,
+	account_type::AccountType p_account_type
+)
+{
+	return AccountImpl::none_saved_with_account_type
+	(	p_database_connection,
+		p_account_type
+	);
+}
+
+
 BString
 Account::name() const
 {
@@ -194,20 +207,20 @@ bool is_revenue(Account const& account)
 	return account.account_type() == account_type::revenue;
 }
 
-bool is_envelope(Account const& account)
+bool is_pl_account(Account const& account)
 {
 	switch (account.account_type())
 	{
 	case account_type::asset:
 	case account_type::liability:
-		return false;
 	case account_type::equity:
+		return false;
 	case account_type::revenue:
 	case account_type::expense:
 	case account_type::pure_envelope:
 		return true;
 	default:
-		assert (false);	
+		assert (false);
 	}
 }
 
