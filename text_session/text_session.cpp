@@ -25,6 +25,7 @@
 #include "entry_reader.hpp"
 #include "filename_validation.hpp"
 #include "finformat.hpp"
+#include "frequency.hpp"
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
 #include "ordinary_journal_reader.hpp"
@@ -2192,7 +2193,7 @@ TextSession::elicit_repeater()
 
 		
 
-	// Determine duration step type
+	// Determine frequency step type
 	optional<interval_type::IntervalType> step_type;
 	if (choice == monthly_day_x || choice == N_monthly_day_x)
 	{
@@ -2215,7 +2216,7 @@ TextSession::elicit_repeater()
 	}
 	assert (step_type);
 
-	// Determine duration number of steps
+	// Determine frequency number of steps
 	optional<int> num_steps;
 	if
 	(	choice == monthly_day_x ||
@@ -2262,10 +2263,10 @@ TextSession::elicit_repeater()
 			}
 		}
 	}
-	// Set duration
+	// Set frequency
 	assert (step_type);
 	assert (num_steps);
-	repeater.set_duration(Duration(value(num_steps), value(step_type)));
+	repeater.set_frequency(Frequency(value(num_steps), value(step_type)));
 
 	// Determine next posting date
 	cout << "Enter the first date on which the transaction will occur"

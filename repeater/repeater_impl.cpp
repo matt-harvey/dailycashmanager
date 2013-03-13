@@ -12,7 +12,7 @@
 
 #include "repeater_impl.hpp"
 #include "date.hpp"
-#include "date_duration.hpp"
+#include "frequency.hpp"
 #include "draft_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
@@ -110,10 +110,10 @@ RepeaterImpl::~RepeaterImpl()
 }
 
 void
-RepeaterImpl::set_duration(DateDuration const& p_duration)
+RepeaterImpl::set_frequency(Frequency const& p_frequency)
 {
 	load();
-	m_data->duration = p_duration;
+	m_data->frequency = p_frequency;
 	return;
 }
 
@@ -137,11 +137,11 @@ RepeaterImpl::set_journal_id(DraftJournal::Id p_journal_id)
 }
 
 
-Duration
-RepeaterImpl::duration()
+Frequency
+RepeaterImpl::frequency()
 {
 	load();
-	return value(m_data->duration);
+	return value(m_data->frequency);
 }
 
 
@@ -157,15 +157,16 @@ RepeaterImpl::next_date(vector<gregorian::date>::size_type n)
 	{
 		return ret;
 	}
+	Frequency const frequency = value(m_data->frequency);
 	// WARNING This conversion is potentially unsafe.
-	Size const units = value(m_data->duration).num_steps();
+	Size const units = frequency.num_steps();
 	if (multiplication_is_unsafe(units, n))
 	{
 		throw UnsafeArithmeticException("Unsafe multiplication.");
 	}
 	assert (!multiplication_is_unsafe(units, n));
 	Size const steps = units * n;
-	switch (value(m_data->duration).step_type())
+	switch (frequency.step_type())
 	{
 	case interval_type::days:
 		ret += gregorian::date_duration(steps);
@@ -267,7 +268,7 @@ RepeaterImpl::do_load()
 	statement.bind(":p", id());
 	statement.step();
 	RepeaterImpl temp(*this);
-	temp.m_data->duration = DateDuration
+	temp.m_data->frequency = Frequency
 	(	statement.extract<int>(0),
 		static_cast<interval_type::IntervalType>(statement.extract<int>(1))
 	);
@@ -282,11 +283,11 @@ RepeaterImpl::do_load()
 void
 RepeaterImpl::process_saving_statement(SQLStatement& statement)
 {
-	Duration const duration = value(m_data->duration);
-	statement.bind(":interval_units", duration.num_steps());
+	Frequency const frequency = value(m_data->frequency);
+	statement.bind(":interval_units", frequency.num_steps());
 	statement.bind
 	(	":interval_type_id",
-		static_cast<int>(duration.step_type())
+		static_cast<int>(frequency.step_type())
 	);
 	statement.bind(":next_date", value(m_data->next_date));
 	statement.bind(":journal_id", value(m_data->journal_id));
@@ -330,7 +331,7 @@ RepeaterImpl::do_save_new()
 void
 RepeaterImpl::do_ghostify()
 {
-	clear(m_data->duration);
+	clear(m_data->frequency);
 	clear(m_data->next_date);
 	clear(m_data->journal_id);
 	return;

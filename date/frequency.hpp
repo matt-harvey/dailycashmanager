@@ -1,15 +1,15 @@
-#ifndef GUARD_date_duration_hpp
-#define GUARD_date_duration_hpp
+#ifndef GUARD_frequency_hpp
+#define GUARD_frequency_hpp
 
 #include "interval_type.hpp"
 
 namespace phatbooks
 {
 
-class DateDuration
+class Frequency
 {
 public:
-	DateDuration(int p_num_steps, interval_type::IntervalType p_step_type);
+	Frequency(int p_num_steps, interval_type::IntervalType p_step_type);
 	int num_steps() const;
 	interval_type::IntervalType step_type() const;
 
@@ -23,4 +23,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_date_duration_hpp
+#endif  // GUARD_frequency_hpp

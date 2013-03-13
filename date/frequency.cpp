@@ -1,10 +1,10 @@
-#include "date_duration.hpp"
+#include "frequency.hpp"
 #include "interval_type.hpp"
 
 namespace phatbooks
 {
 
-DateDuration::DateDuration
+Frequency::Frequency
 (	int p_num_steps,
 	interval_type::IntervalType p_step_type
 ):
@@ -14,13 +14,13 @@ DateDuration::DateDuration
 }
 
 int
-DateDuration::num_steps() const
+Frequency::num_steps() const
 {
 	return m_num_steps;
 }
 
 int
-DateDuration::step_type() const
+Frequency::step_type() const
 {
 	return m_step_type;
 }

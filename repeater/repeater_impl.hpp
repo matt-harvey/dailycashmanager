@@ -13,7 +13,7 @@
 
 
 #include "date.hpp"
-#include "date_duration.hpp"
+#include "frequency.hpp"
 #include "draft_journal.hpp"
 #include "interval_type.hpp"
 #include "ordinary_journal.hpp"
@@ -40,7 +40,7 @@ namespace phatbooks
  * semantics of Repeater).
  *
  * @todo The nomenclature here is a bit inconsistent. We should adopt
- * a nomenclature that is consistent across DateDuration, IntervalType
+ * a nomenclature that is consistent across Frequency, IntervalType
  * and Repeater, in regards to "step type" and "num steps".
  */
 class RepeaterImpl:
@@ -72,13 +72,13 @@ public:
 
 	~RepeaterImpl();
 
-	void set_duration(DateDuration const& p_duration);
+	void set_frequency(Frequency const& p_frequency);
 
 	void set_next_date(boost::gregorian::date const& p_next_date);
 
 	void set_journal_id(DraftJournal::Id p_journal_id);
 		
-	Duration duration() cost;
+	Duration frequency() cost;
 
 	/**
 	 * @throws UnsafeArithmeticException in the extremely unlikely event of
@@ -137,7 +137,7 @@ private:
 
 struct RepeaterImpl::RepeaterData
 {
-	boost::optional<DateDuration> duration;
+	boost::optional<Frequency> frequency;
 	boost::optional<DateRep> next_date;
 	boost::optional<DraftJournal::Id> journal_id;
 };

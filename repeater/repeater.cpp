@@ -1,5 +1,5 @@
 #include "repeater.hpp"
-#include "date_duration.hpp"
+#include "frequency.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
@@ -64,9 +64,9 @@ Repeater::create_unchecked
 
 
 void
-Repeater::set_duration(DateDuration p_duration)
+Repeater::set_frequency(Frequency p_frequency)
 {
-	impl().set_duration(p_duration);
+	impl().set_frequency(p_frequency);
 	return;
 }
 
@@ -86,9 +86,9 @@ Repeater::set_next_date(gregorian::date const& p_next_date)
 
 
 Duration
-Repeater::duration() const
+Repeater::frequency() const
 {
-	return impl().duration();
+	return impl().frequency();
 }
 
 
@@ -128,17 +128,17 @@ string
 frequency_description(Repeater const& repeater)
 {
 	string ret = "every ";
-	DateDuration const duration = repeater.duration();
-	int const num_steps = duration.num_steps();
+	Frequency const frequency = repeater.frequency();
+	int const num_steps = frequency.num_steps();
 	if (num_steps > 1)
     {
 		ret += lexical_cast<string>(num_steps);
 		ret += " ";
-		ret += bstring_to_std8(phrase(duration.step_type(), true));
+		ret += bstring_to_std8(phrase(frequency.step_type(), true));
 	}
 	else
 	{
-		ret += bstring_to_std8(phrase(duration.step_type(), false));
+		ret += bstring_to_std8(phrase(frequency.step_type(), false));
 	}
 	return ret;
 }

@@ -3,7 +3,7 @@
 
 #include "interval_type.hpp"
 #include "draft_journal.hpp"
-#include "date_duration.hpp"
+#include "frequency.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
@@ -94,7 +94,7 @@ public:
 	);
 
 
-	void set_duration(DateDuration const p_duration);
+	void set_frequency(Frequency const p_frequency);
 
 	/**
 	 * Associated the Repeater with a particular DraftJournal, by
@@ -126,7 +126,7 @@ public:
 	 */
 	OrdinaryJournal fire_next();
 
-	DateDuration duration() const;
+	Frequency frequency() const;
 
 	/**
 	 * Calling next_date() (which is equivalent to calling next_date(0)), will

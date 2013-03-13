@@ -138,7 +138,7 @@ set (main_files
 	 commodity/commodity.cpp
 	 commodity/commodity_impl.cpp
 	 date/date.cpp
-	 date/date_duration.cpp
+	 date/frequency.cpp
 	 date/interval_type.cpp
 	 entry/entry.cpp
 	 entry/entry_impl.cpp
