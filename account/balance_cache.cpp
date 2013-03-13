@@ -133,6 +133,14 @@ BalanceCache::refresh()
 		Entry const entry(*it);
 		*(map_elect[entry.account().id()]) += entry.amount();
 	}
+	// TODO Is this dangerous to get the local day? What if the
+	// user is crossing between timezones?
+	boost::gregorian::date const today = gregorian::date_clock::local_day();
+	BudgetManagerAttorney::request_hypothetical_update
+	(	m_database_connection,
+		*map_elect,
+		today
+	);
 	using std::swap;
 	swap(m_map, map_elect_ptr);
 	m_map_is_stale = false;

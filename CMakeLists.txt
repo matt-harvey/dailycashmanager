@@ -7,7 +7,6 @@ set (immediate_directories
 	 account
 	 application
 	 b_string
-	 budget_manager
 	 column_creation
 	 commodity
 	 date
@@ -134,7 +133,7 @@ set (main_files
 	 account/balance_cache.cpp
 	 application/application.cpp
 	 b_string/b_string.cpp
-	 budget_manager/budget_manager.cpp
+	 account/budget_manager.cpp
 	 column_creation/column_creation.cpp
 	 commodity/commodity.cpp
 	 commodity/commodity_impl.cpp

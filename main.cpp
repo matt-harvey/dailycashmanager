@@ -77,6 +77,12 @@ using TCLAP::CmdLine;
 using TCLAP::SwitchArg;
 using TCLAP::UnlabeledValueArg;
 
+// TODO We need a proper solution to the potential for integer overflow.
+// Mostly we use jewel::Decimal arithmetic - which will throw if unsafe -
+// but we're not actually handling these exceptions for the user. The
+// program would just crash. (And eventually will probably want to use
+// SQL summing rather than summing jewel::Decimal in BalanceCache::refresh;
+// and I'm not sure that throws at all if unsafe.)
 
 int main(int argc, char** argv)
 {
