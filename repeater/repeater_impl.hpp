@@ -13,6 +13,7 @@
 
 
 #include "date.hpp"
+#include "date_duration.hpp"
 #include "draft_journal.hpp"
 #include "interval_type.hpp"
 #include "ordinary_journal.hpp"
@@ -37,6 +38,10 @@ namespace phatbooks
  * Provides implementation for Repeater. Multiple Repeater instances may
  * be associated with a single RepaeaterImpl (due to the shallow copy
  * semantics of Repeater).
+ *
+ * @todo The nomenclature here is a bit inconsistent. We should adopt
+ * a nomenclature that is consistent across DateDuration, IntervalType
+ * and Repeater, in regards to "step type" and "num steps".
  */
 class RepeaterImpl:
 	public sqloxx::PersistentObject<RepeaterImpl, PhatbooksDatabaseConnection>
@@ -53,8 +58,6 @@ public:
 	typedef sqloxx::IdentityMap<RepeaterImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
 
-	typedef interval_type::IntervalType IntervalType;
-
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	explicit
@@ -69,17 +72,13 @@ public:
 
 	~RepeaterImpl();
 
-	void set_interval_type(IntervalType p_interval_type);
-
-	void set_interval_units(int p_interval_units);
+	void set_duration(DateDuration const& p_duration);
 
 	void set_next_date(boost::gregorian::date const& p_next_date);
 
 	void set_journal_id(DraftJournal::Id p_journal_id);
 		
-	IntervalType interval_type();
-
-	int interval_units();
+	Duration duration() cost;
 
 	/**
 	 * @throws UnsafeArithmeticException in the extremely unlikely event of
@@ -138,8 +137,7 @@ private:
 
 struct RepeaterImpl::RepeaterData
 {
-	boost::optional<RepeaterImpl::IntervalType> interval_type;
-	boost::optional<int> interval_units;
+	boost::optional<DateDuration> duration;
 	boost::optional<DateRep> next_date;
 	boost::optional<DraftJournal::Id> journal_id;
 };

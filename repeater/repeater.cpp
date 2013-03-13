@@ -1,7 +1,8 @@
+#include "repeater.hpp"
+#include "date_duration.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
-#include "repeater.hpp"
 #include "repeater_impl.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "b_string.hpp"
@@ -63,16 +64,9 @@ Repeater::create_unchecked
 
 
 void
-Repeater::set_interval_type(IntervalType p_interval_type)
+Repeater::set_duration(DateDuration p_duration)
 {
-	impl().set_interval_type(p_interval_type);
-	return;
-}
-
-void
-Repeater::set_interval_units(int p_interval_units)
-{
-	impl().set_interval_units(p_interval_units);
+	impl().set_duration(p_duration);
 	return;
 }
 
@@ -91,17 +85,12 @@ Repeater::set_next_date(gregorian::date const& p_next_date)
 }
 
 
-Repeater::IntervalType
-Repeater::interval_type() const
+Duration
+Repeater::duration() const
 {
-	return impl().interval_type();
+	return impl().duration();
 }
 
-int
-Repeater::interval_units() const
-{
-	return impl().interval_units();
-}
 
 gregorian::date
 Repeater::next_date(vector<gregorian::date>::size_type n) const
@@ -139,16 +128,17 @@ string
 frequency_description(Repeater const& repeater)
 {
 	string ret = "every ";
-	int const units = repeater.interval_units();	
-	if (units > 1)
+	DateDuration const duration = repeater.duration();
+	int const num_steps = duration.num_steps();
+	if (num_steps > 1)
     {
-		ret += lexical_cast<string>(units);
+		ret += lexical_cast<string>(num_steps);
 		ret += " ";
-		ret += bstring_to_std8(phrase(repeater.interval_type(), true));
+		ret += bstring_to_std8(phrase(duration.step_type(), true));
 	}
 	else
 	{
-		ret += bstring_to_std8(phrase(repeater.interval_type(), false));
+		ret += bstring_to_std8(phrase(duration.step_type(), false));
 	}
 	return ret;
 }

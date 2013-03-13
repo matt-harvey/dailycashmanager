@@ -12,6 +12,7 @@
 
 #include "repeater_impl.hpp"
 #include "date.hpp"
+#include "date_duration.hpp"
 #include "draft_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
@@ -52,6 +53,9 @@ namespace phatbooks
 void
 RepeaterImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
+	// TODO IntervalType is now to be used by classes other
+	// than Repeater. The code for populating the interval_types
+	// table should be moved elsewhere.
 	dbc.execute_sql
 	(	"create table interval_types"
 		"("
@@ -62,6 +66,9 @@ RepeaterImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 		"insert into interval_types(interval_type_id) values(3); "
 		"insert into interval_types(interval_type_id) values(4);"
 	);
+	// TODO Should carefully swap the order of columns
+	// interval_units and interval_type_id, to reflect their
+	// usage.
 	dbc.execute_sql
 	(	"create table repeaters"
 		"("
@@ -103,21 +110,13 @@ RepeaterImpl::~RepeaterImpl()
 }
 
 void
-RepeaterImpl::set_interval_type(IntervalType p_interval_type)
+RepeaterImpl::set_duration(DateDuration const& p_duration)
 {
 	load();
-	m_data->interval_type = p_interval_type;
+	m_data->duration = p_duration;
 	return;
 }
 
-
-void
-RepeaterImpl::set_interval_units(int p_interval_units)
-{
-	load();
-	m_data->interval_units = p_interval_units;
-	return;
-}
 
 
 void
@@ -138,19 +137,11 @@ RepeaterImpl::set_journal_id(DraftJournal::Id p_journal_id)
 }
 
 
-RepeaterImpl::IntervalType
-RepeaterImpl::interval_type()
+Duration
+RepeaterImpl::duration()
 {
 	load();
-	return value(m_data->interval_type);
-}
-
-
-int
-RepeaterImpl::interval_units()
-{
-	load();
-	return value(m_data->interval_units);
+	return value(m_data->duration);
 }
 
 
@@ -166,14 +157,15 @@ RepeaterImpl::next_date(vector<gregorian::date>::size_type n)
 	{
 		return ret;
 	}
-	Size const units = value(m_data->interval_units);
+	// WARNING This conversion is potentially unsafe.
+	Size const units = value(m_data->duration).num_steps();
 	if (multiplication_is_unsafe(units, n))
 	{
 		throw UnsafeArithmeticException("Unsafe multiplication.");
 	}
 	assert (!multiplication_is_unsafe(units, n));
 	Size const steps = units * n;
-	switch (value(m_data->interval_type))
+	switch (value(m_data->duration).step_type())
 	{
 	case interval_type::days:
 		ret += gregorian::date_duration(steps);
@@ -269,15 +261,16 @@ RepeaterImpl::do_load()
 {
 	SQLStatement statement
 	(	database_connection(),
-		"select interval_type_id, interval_units, next_date, journal_id "
+		"select interval_units, interval_type_id, next_date, journal_id "
 		"from repeaters where repeater_id = :p"
 	);
 	statement.bind(":p", id());
 	statement.step();
 	RepeaterImpl temp(*this);
-	temp.m_data->interval_type =
-		static_cast<IntervalType>(statement.extract<int>(0));
-	temp.m_data->interval_units = statement.extract<int>(1);
+	temp.m_data->duration = DateDuration
+	(	statement.extract<int>(0),
+		static_cast<interval_type::IntervalType>(statement.extract<int>(1))
+	);
 	temp.m_data->next_date =
 		numeric_cast<DateRep>(statement.extract<long long>(2));
 	temp.m_data->journal_id = statement.extract<DraftJournal::Id>(3);
@@ -289,11 +282,12 @@ RepeaterImpl::do_load()
 void
 RepeaterImpl::process_saving_statement(SQLStatement& statement)
 {
+	Duration const duration = value(m_data->duration);
+	statement.bind(":interval_units", duration.num_steps());
 	statement.bind
 	(	":interval_type_id",
-		static_cast<int>(value(m_data->interval_type))
+		static_cast<int>(duration.step_type())
 	);
-	statement.bind(":interval_units", value(m_data->interval_units));
 	statement.bind(":next_date", value(m_data->next_date));
 	statement.bind(":journal_id", value(m_data->journal_id));
 	statement.step_final();
@@ -307,8 +301,8 @@ RepeaterImpl::do_save_existing()
 	SQLStatement updater
 	(	database_connection(),
 		"update repeaters set "
-		"interval_type_id = :interval_type_id, "
 		"interval_units = :interval_units, "
+		"interval_type_id = :interval_type_id, "
 		"next_date = :next_date, "
 		"journal_id = :journal_id "
 		"where repeater_id = :repeater_id"
@@ -324,9 +318,9 @@ RepeaterImpl::do_save_new()
 {
 	SQLStatement inserter
 	(	database_connection(),
-		"insert into repeaters(interval_type_id, interval_units, "
-		"next_date, journal_id) values(:interval_type_id, "
-		":interval_units, :next_date, :journal_id)"
+		"insert into repeaters(interval_units, interval_type_id, "
+		"next_date, journal_id) values(:interval_units, "
+		":interval_type_id, :next_date, :journal_id)"
 	);
 	process_saving_statement(inserter);
 	return;
@@ -336,8 +330,7 @@ RepeaterImpl::do_save_new()
 void
 RepeaterImpl::do_ghostify()
 {
-	clear(m_data->interval_type);
-	clear(m_data->interval_units);
+	clear(m_data->duration);
 	clear(m_data->next_date);
 	clear(m_data->journal_id);
 	return;

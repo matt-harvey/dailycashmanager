@@ -2190,28 +2190,33 @@ TextSession::elicit_repeater()
 	shared_ptr<MenuItem const> const choice =
 		frequency_menu.last_choice();
 
-	// Determine interval type
+		
+
+	// Determine duration step type
+	optional<interval_type::IntervalType> step_type;
 	if (choice == monthly_day_x || choice == N_monthly_day_x)
 	{
-		repeater.set_interval_type(interval_type::months);
+		step_type = interval_type::months;
 	}
 	else if
 	(	choice == monthly_day_last ||
 		choice == N_monthly_day_last
 	)
 	{
-		repeater.set_interval_type(interval_type::month_ends);
+		step_type = interval_type::month_ends;
 	}
 	else if (choice == weekly || choice == N_weekly)
 	{
-		repeater.set_interval_type(interval_type::weeks);
+		step_type = interval_type::weeks;
 	}
 	else if (choice == daily || choice == N_daily)
 	{
-		repeater.set_interval_type(interval_type::days);
+		step_type = interval_type::days;
 	}
+	assert (step_type);
 
-	// Determine interval units
+	// Determine duration number of steps
+	optional<int> num_steps;
 	if
 	(	choice == monthly_day_x ||
 		choice == monthly_day_last ||
@@ -2219,7 +2224,7 @@ TextSession::elicit_repeater()
 		choice == daily
 	)
 	{
-		repeater.set_interval_units(1);
+		num_steps = 1;
 	}
 	else
 	{
@@ -2243,8 +2248,7 @@ TextSession::elicit_repeater()
 			{
 				try
 				{
-					int const units = lexical_cast<int>(input);
-					repeater.set_interval_units(units);
+					num_steps = lexical_cast<int>(input);
 					is_valid = true;
 				}
 				catch (bad_lexical_cast&)
@@ -2257,7 +2261,12 @@ TextSession::elicit_repeater()
 						"than 0: ";
 			}
 		}
-	}	
+	}
+	// Set duration
+	assert (step_type);
+	assert (num_steps);
+	repeater.set_duration(Duration(value(num_steps), value(step_type)));
+
 	// Determine next posting date
 	cout << "Enter the first date on which the transaction will occur"
 		 << ", as an eight-digit number of the form YYYYMMDD (or just"

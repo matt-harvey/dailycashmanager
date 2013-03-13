@@ -3,6 +3,7 @@
 
 #include "interval_type.hpp"
 #include "draft_journal.hpp"
+#include "date_duration.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
@@ -16,6 +17,10 @@
 
 namespace phatbooks
 {
+
+
+
+
 
 /**
  * Instances of this class serve as "alarms" that "fire" at regular intervals.
@@ -89,9 +94,7 @@ public:
 	);
 
 
-	void set_interval_type(IntervalType p_interval_type);
-
-	void set_interval_units(int p_interval_units);
+	void set_duration(DateDuration const p_duration);
 
 	/**
 	 * Associated the Repeater with a particular DraftJournal, by
@@ -123,15 +126,7 @@ public:
 	 */
 	OrdinaryJournal fire_next();
 
-	IntervalType interval_type() const;
-
-	/**
-	 * @param n the number of leaps into the future beyond the the next date,
-	 * leaping by interval_units() intervals each time, where each interval
-	 * is given by interval_type(). If n is 0 then it is simply the next
-	 * firing date that is returned.
-	 */
-	int interval_units() const;
+	DateDuration duration() const;
 
 	/**
 	 * Calling next_date() (which is equivalent to calling next_date(0)), will

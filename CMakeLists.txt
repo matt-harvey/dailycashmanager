@@ -138,6 +138,8 @@ set (main_files
 	 commodity/commodity.cpp
 	 commodity/commodity_impl.cpp
 	 date/date.cpp
+	 date/date_duration.cpp
+	 date/interval_type.cpp
 	 entry/entry.cpp
 	 entry/entry_impl.cpp
 	 entry/entry_reader.cpp
@@ -155,7 +157,6 @@ set (main_files
 	 session/session.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
 	 phatbooks_persistent_object/phatbooks_persistent_object.cpp
-	 repeater/interval_type.cpp
 	 repeater/repeater.cpp
 	 repeater/repeater_impl.cpp
 	 repeater/repeater_reader.cpp)

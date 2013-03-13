@@ -50,8 +50,9 @@ public:
 	 * way to find out when the last posting date of a given journal
 	 * actually way. DraftJournal objects currently only store the NEXT
 	 * posting date. It may be easiest to simply add this last posting
-	 * date to DraftJournal as another data member. Then the BudgetManager
-	 * can simply query this DraftJournal to find the last posting date.
+	 * date to Repeater as another data member. Then the BudgetManager
+	 * can simply query the Repeater via the DraftJournal to find
+	 * the last posting date.
 	 * It needs this information for when it executes
 	 * hypothetical_update(...) and permanent_update(...). But note
 	 * if it posts its own update journal later than the instrument does
