@@ -74,6 +74,17 @@ BalanceCache::technical_balance(AccountImpl::Id p_account_id)
 void
 BalanceCache::mark_as_stale()
 {
+	// TODO We need to mark the BalanceCache as stale whenever there is a
+	// a change in date; this might occur while the user is using the
+	// application. We can do this as follows. We store the date
+	// when the balance cache was last updated. Whenever there is
+	// a request for a balance, we compare the last update date
+	// with today's date. If the latter is later than the former,
+	// then we mark as stale and do an update. If this occurs, then
+	// we should also check the Repeaters for recurring DraftJournal
+	// autoposts while we're at it. We should notify the user of any
+	// automatically posted transactions in a way that doesn't interfere
+	// with their current "workflow".
 	m_map_is_stale = true;
 }
 
