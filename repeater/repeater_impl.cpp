@@ -157,16 +157,16 @@ RepeaterImpl::next_date(vector<gregorian::date>::size_type n)
 	{
 		return ret;
 	}
-	Frequency const frequency = value(m_data->frequency);
+	Frequency const freq = value(m_data->frequency);
 	// WARNING This conversion is potentially unsafe.
-	Size const units = frequency.num_steps();
+	Size const units = freq.num_steps();
 	if (multiplication_is_unsafe(units, n))
 	{
 		throw UnsafeArithmeticException("Unsafe multiplication.");
 	}
 	assert (!multiplication_is_unsafe(units, n));
 	Size const steps = units * n;
-	switch (frequency.step_type())
+	switch (freq.step_type())
 	{
 	case interval_type::days:
 		ret += gregorian::date_duration(steps);
@@ -283,11 +283,11 @@ RepeaterImpl::do_load()
 void
 RepeaterImpl::process_saving_statement(SQLStatement& statement)
 {
-	Frequency const frequency = value(m_data->frequency);
-	statement.bind(":interval_units", frequency.num_steps());
+	Frequency const freq = value(m_data->frequency);
+	statement.bind(":interval_units", freq.num_steps());
 	statement.bind
 	(	":interval_type_id",
-		static_cast<int>(frequency.step_type())
+		static_cast<int>(freq.step_type())
 	);
 	statement.bind(":next_date", value(m_data->next_date));
 	statement.bind(":journal_id", value(m_data->journal_id));

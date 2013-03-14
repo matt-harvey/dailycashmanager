@@ -8,6 +8,7 @@
 #include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include "b_string.hpp"
+#include "frequency.hpp"
 
 namespace gregorian = boost::gregorian;
 
@@ -39,8 +40,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	CHECK_EQUAL(dj1.repeater_description(), "");
 
 	Repeater repeater1a(dbc);
-	repeater1a.set_interval_type(interval_type::months);
-	repeater1a.set_interval_units(1);
+	repeater1a.set_frequency(Frequency(1, interval_type::months));
 	repeater1a.set_next_date(date(2012, 9, 15));
 	dj1.push_repeater(repeater1a);
 
@@ -51,8 +51,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	CHECK_EQUAL(dj1.repeater_description(), target);
 
 	Repeater repeater1b(dbc);
-	repeater1b.set_interval_type(interval_type::days);
-	repeater1b.set_interval_units(3);
+	repeater1b.set_frequency(Frequency(3, interval_type::days));
 	repeater1b.set_next_date(date(2012, 9, 12));
 	dj1.push_repeater(repeater1b);
 

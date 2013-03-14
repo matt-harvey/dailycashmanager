@@ -1,7 +1,9 @@
 #include "frequency.hpp"
 #include "interval_type.hpp"
+#include <boost/lexical_cast.hpp>
 #include <string>
 
+using boost::lexical_cast;
 using std::string;
 
 namespace phatbooks
@@ -22,14 +24,14 @@ Frequency::num_steps() const
 	return m_num_steps;
 }
 
-int
+interval_type::IntervalType
 Frequency::step_type() const
 {
 	return m_step_type;
 }
 
 string
-Frequency::frequency_description(Frequency const& frequency) const
+frequency_description(Frequency const& frequency)
 {
 	string ret = "every ";
 	int const num_steps = frequency.num_steps();

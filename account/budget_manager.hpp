@@ -2,6 +2,7 @@
 #define GUARD_budget_manager_hpp
 
 #include "account.hpp"
+#include "budget_item.hpp"
 #include "draft_journal.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -17,7 +18,6 @@ namespace jewel
 namespace phatbooks
 {
 
-class BudgetItem;
 class PhatbooksDatabaseConnection;
 // End forward declarations
 
@@ -30,6 +30,9 @@ class BudgetManager:
 	public boost::noncopyable
 {
 public:
+
+	
+	BudgetManager(PhatbooksDatabaseConnection& m_database_connection);
 	
 	/**
 	 * The "instrument" is a recurring DraftJournal that happens
@@ -94,13 +97,15 @@ public:
 	void permanent_update
 	(	boost::gregorian::date const& p_date
 	);
-	
+
 
 private:
 	typedef boost::unordered_map<Account::Id, BudgetItem> Map;
 	PhatbooksDatabaseConnection& m_database_connection;
 	boost::scoped_ptr<Map> m_map;
-	boost::gregorian::date m_last_permanent_update;
+
+	// WARNING This probably shouldn't be an optional.
+	boost::optional<boost::gregorian::date> m_last_permanent_update;
 };
 
 

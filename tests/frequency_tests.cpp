@@ -1,6 +1,8 @@
 #include "frequency.hpp"
 #include "interval_type.hpp"
+#include "phatbooks_tests_common.hpp"
 #include <UnitTest++/UnitTest++.h>
+#include <typeinfo>
 
 namespace phatbooks
 {
@@ -19,7 +21,7 @@ TEST_FIXTURE(TestFixture, test_frequency_phrase_description)
 	CHECK_EQUAL(frequency_description(frequency1), BString("every day"));
 
 	Frequency const frequency2(12, interval_type::days);
-	CHECK_EQUAL(frequency_description(frequency2, "every 12 days"));
+	CHECK_EQUAL(frequency_description(frequency2), "every 12 days");
 
 	Frequency const frequency3(1, interval_type::weeks);
 	CHECK_EQUAL(frequency_description(frequency3), "every week");

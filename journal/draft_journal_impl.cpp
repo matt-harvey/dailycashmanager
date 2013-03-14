@@ -422,7 +422,7 @@ DraftJournalImpl::repeater_description()
 			ret += BString
 			(	"\nIn addition, this transaction is automatically recorded "
 			);
-			ret += frequency_description(it->frequency);
+			ret += frequency_description(it->frequency());
 			ret += BString(", with the next recording due on ");
 			gregorian::date const next_date_this_cycle = it->next_date();
 			

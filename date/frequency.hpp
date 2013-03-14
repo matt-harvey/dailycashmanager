@@ -35,7 +35,7 @@ private:
 /**
  * @returns an English adverbial phrase describing the Frequency.
  */
-std::string frequency_description(Frequency const& frequency) const;
+std::string frequency_description(Frequency const& frequency);
 
 
 }  // namespace phatbooks

@@ -78,7 +78,7 @@ public:
 
 	void set_journal_id(DraftJournal::Id p_journal_id);
 		
-	Duration frequency() cost;
+	Frequency frequency();
 
 	/**
 	 * @throws UnsafeArithmeticException in the extremely unlikely event of

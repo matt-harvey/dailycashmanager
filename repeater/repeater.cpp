@@ -85,7 +85,7 @@ Repeater::set_next_date(gregorian::date const& p_next_date)
 }
 
 
-Duration
+Frequency
 Repeater::frequency() const
 {
 	return impl().frequency();

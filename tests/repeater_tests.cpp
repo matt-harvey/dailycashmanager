@@ -68,7 +68,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	CHECK_EQUAL(repeater2.next_date(1), date(2013, 1, 14));
 
 	Repeater repeater3(dbc);
-	Repeater3.set_frequency(Frequency(1, interval_type::months));
+	repeater3.set_frequency(Frequency(1, interval_type::months));
 	repeater3.set_next_date(date(2014, 9, 20));
 	CHECK_EQUAL(repeater3.next_date(5), date(2015, 2, 20));
 
