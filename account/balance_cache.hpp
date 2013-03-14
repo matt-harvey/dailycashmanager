@@ -49,6 +49,8 @@ class BalanceCache:
 {
 public:
 
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+
 	BalanceCache(PhatbooksDatabaseConnection& p_database_connection);
 
 	// Retrieve the technical_balance for a particular AccountImpl.
@@ -63,6 +65,7 @@ public:
 	
 	// Mark a particular AccountImpl's cache entry as stale
 	void mark_as_stale(AccountImpl::Id p_account_id); 
+
 
 private:
 

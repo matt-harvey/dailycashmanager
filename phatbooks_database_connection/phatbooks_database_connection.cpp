@@ -152,6 +152,7 @@ PhatbooksDatabaseConnection::setup()
 	OrdinaryJournal::setup_tables(*this);
 	Repeater::setup_tables(*this);
 	Entry::setup_tables(*this);
+	BalanceCache::setup_tables(*this);
 	mark_setup_as_having_occurred();
 
 	transaction.commit();

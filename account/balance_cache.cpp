@@ -9,6 +9,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <algorithm>
 #include <cassert>
 
@@ -17,6 +18,7 @@ using boost::scoped_ptr;
 using jewel::Decimal;
 using jewel::clear;
 using jewel::value;
+using sqloxx::SQLStatement;
 
 // For debugging only
 #include <jewel/debug_log.hpp>
@@ -27,6 +29,18 @@ using std::endl;
 namespace phatbooks
 {
 
+void
+BalanceCache::setup_tables(PhatbooksDatabaseConnection& dbc)
+{
+	dbc.execute_sql
+	(	"create view balance_view as "
+		"select account_id, sum(amount) as balance "
+		"from "
+		"entries join ordinary_journal_detail using(journal_id) "
+		"group by account_id;"
+	);
+	return;
+}
 
 BalanceCache::BalanceCache
 (	PhatbooksDatabaseConnection& p_database_connection
@@ -107,14 +121,6 @@ BalanceCache::mark_as_stale(AccountImpl::Id p_account_id)
 void
 BalanceCache::refresh()
 {
-	// Note, if I end up turning off the sqloxx::IdentityMap's
-	// caching (which is totally separate to this balance caching), I may wish
-	// to speed up the below by using SQL sum function etc.. 
-	// This would be very fast, and avoid having to load Entry
-	// objects. However, with IdentityMap's caching enabled, it is
-	// simpler and more maintainable for the below to be implemented
-	// as shown here.
-	//
 	// TODO Things are a bit confused here, in that it's not clear whether
 	// we are conceptually dealing with a map of Account or a map
 	// of AccountImpl. In practice it doesn't matter, but in it's
@@ -133,18 +139,21 @@ BalanceCache::refresh()
 		map_elect[account.id()] =
 			Decimal(0, account.commodity().precision());
 	}
-	OrdinaryEntryReader entry_reader(m_database_connection);
-	for
-	(	OrdinaryEntryReader::const_iterator it = entry_reader.begin(),
-			end = entry_reader.end();
-		it != end;
-		++it
-	)
+	
+	SQLStatement statement
+	(	m_database_connection,
+		"select account_id, balance from balance_view"
+	);
+	while (statement.step())
 	{
-		Entry const entry(*it);
-		*(map_elect[entry.account().id()]) += entry.amount();
+		Account::Id const account_id = statement.extract<Account::Id>(0);
+		Account const account(m_database_connection, account_id);
+		map_elect[account_id] = Decimal
+		(	statement.extract<Decimal::int_type>(1),
+			account.commodity().precision()
+		);
 	}
-	/** In due course we will probaby want to uncomment and
+	/** In due course we will may want to uncomment and
 	 * implement this.
 	// TODO Is this dangerous to get the local day? What if the
 	// user is crossing between timezones?
