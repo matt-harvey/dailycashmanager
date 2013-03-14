@@ -33,6 +33,9 @@ void
 BalanceCache::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
+	(	"create index entry_account_index on entries(account_id)"
+	);
+	dbc.execute_sql
 	(	"create view balance_view as "
 		"select account_id, sum(amount) as balance "
 		"from "
