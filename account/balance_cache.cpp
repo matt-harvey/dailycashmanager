@@ -4,9 +4,12 @@
 #include "entry.hpp"
 #include "balance_cache.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "entry/entry_reader.hpp"
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/unordered_map.hpp>
+#include <jewel/checked_arithmetic.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -15,6 +18,8 @@
 
 using boost::optional;
 using boost::scoped_ptr;
+using boost::unordered_map;
+using jewel::addition_is_unsafe;
 using jewel::Decimal;
 using jewel::clear;
 using jewel::value;
@@ -34,13 +39,6 @@ BalanceCache::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create index entry_account_index on entries(account_id)"
-	);
-	dbc.execute_sql
-	(	"create view balance_view as "
-		"select account_id, sum(amount) as balance "
-		"from "
-		"entries join ordinary_journal_detail using(journal_id) "
-		"group by account_id;"
 	);
 	return;
 }
@@ -124,13 +122,13 @@ BalanceCache::mark_as_stale(AccountImpl::Id p_account_id)
 void
 BalanceCache::refresh()
 {
-	// TODO Things are a bit confused here, in that it's not clear whether
-	// we are conceptually dealing with a map of Account or a map
-	// of AccountImpl. In practice it doesn't matter, but in it's
-	// still a bit troubling.
-	scoped_ptr<Map> map_elect_ptr(new Map);	
-	Map& map_elect = *map_elect_ptr;
+	// TODO Sort out whether, conceptually, we are looking at
+	// Account::Id, or at AccountImpl::Id. Make sure the header reflects
+	// this too. (In practice it doesn't matter though.)
+	typedef unordered_map<Account::Id, Decimal::int_type> WorkingMap;
+	WorkingMap working_map;
 	AccountReader account_reader(m_database_connection);
+	assert (working_map.empty());
 	for
 	(	AccountReader::const_iterator it = account_reader.begin(),
 			end = account_reader.end();
@@ -138,36 +136,53 @@ BalanceCache::refresh()
 		++it
 	)
 	{
-		Account const account(*it);
-		map_elect[account.id()] =
-			Decimal(0, account.commodity().precision());
+		working_map[it->id()] = 0;
 	}
 	
-	SQLStatement statement
-	(	m_database_connection,
-		"select account_id, balance from balance_view"
-	);
-	while (statement.step())
+	// It has been established that this is faster than using SQL
+	// SUM and GROUP to sum Account totals. Note also that we have
+	// chosen not to use an OrdinaryEntryReader here: we don't want
+	// to load all the non-actual Entries into memory.
+
+	// Standalone scope
 	{
-		Account::Id const account_id = statement.extract<Account::Id>(0);
-		Account const account(m_database_connection, account_id);
-		map_elect[account_id] = Decimal
-		(	statement.extract<Decimal::int_type>(1),
-			account.commodity().precision()
+		SQLStatement statement
+		(	m_database_connection,
+			"select account_id, amount from entries join "
+			"ordinary_journal_detail using(journal_id)"
 		);
+		Account::Id account_id;
+		Decimal::int_type amount_intval;
+		while (statement.step())
+		{
+			account_id = statement.extract<Account::Id>(0);
+			amount_intval = statement.extract<Decimal::int_type>(1);
+			if (addition_is_unsafe(working_map[account_id], amount_intval))
+			{
+				throw UnsafeArithmeticException
+				(	"Unsafe addition while refreshing BalanceCache."
+				);
+			}
+			working_map[account_id] += amount_intval;
+		}
 	}
-	/** In due course we will may want to uncomment and
-	 * implement this.
-	// TODO Is this dangerous to get the local day? What if the
-	// user is crossing between timezones?
-	boost::gregorian::date const today = gregorian::date_clock::local_day();
-	typedef PhatbooksDatabaseConnection::BudgetManagerAttorney;
-	BudgetManagerAttorney::hypothetical_update
-	(	m_database_connection,
-		*map_elect,
-		today
-	);
-	*/
+	scoped_ptr<Map> map_elect_ptr(new Map);	
+	Map& map_elect = *map_elect_ptr;
+	assert (map_elect.empty());
+	for
+	(	WorkingMap::const_iterator it = working_map.begin(),
+			end = working_map.end();
+		it != end;
+		++it
+	)
+	{
+		Account::Id const account_id = it->first;
+		Account const account(m_database_connection, account_id);
+		map_elect[account_id] =
+			Decimal(it->second, account.commodity().precision());
+	}
+	assert (map_elect.size() == working_map.size());
+	assert (map_elect_ptr->size() == map_elect.size());
 	using std::swap;
 	swap(m_map, map_elect_ptr);
 	m_map_is_stale = false;

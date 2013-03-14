@@ -260,7 +260,7 @@ AccountImpl::friendly_balance()
 		return tecbal;
 		assert (false);  // Execution never reaches here.
 
-	case account_super_type::pl
+	case account_super_type::pl:
 		return round(tecbal * Decimal(-1, 0), tecbal.places());
 		assert (false);  // Execution never reaches here.
 
