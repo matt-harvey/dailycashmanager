@@ -248,7 +248,7 @@ AccountImpl::friendly_balance()
 {
 	load();
 	Decimal const tecbal = technical_balance();
-	switch (value(m_data->account_type))
+	switch (super_type(value(m_data->account_type)))
 	{
 	// todo Should equity have sign switched? Will we ever
 	// display equity accounts anyway?
@@ -256,15 +256,11 @@ AccountImpl::friendly_balance()
 	// on sign change? Or is this
 	// ruled out by higher level code?
 
-	case account_type::asset:  // Fall through
-	case account_type::liability:  // Fall through
-	case account_type::equity:
+	case account_super_type::balance_sheet:
 		return tecbal;
 		assert (false);  // Execution never reaches here.
 
-	case account_type::revenue:  // Fall through
-	case account_type::expense:  // Fall through
-	case account_type::pure_envelope:
+	case account_super_type::pl
 		return round(tecbal * Decimal(-1, 0), tecbal.places());
 		assert (false);  // Execution never reaches here.
 

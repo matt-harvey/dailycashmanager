@@ -299,6 +299,7 @@ namespace
 		{
 		case account_type::asset:
 		case account_type::liability:
+		case account_type::equity:
 			cout << "Opening balance for "
 			     << account.name() << ": "
 				 << finformat_std8(opening_balance) << endl;
@@ -318,7 +319,6 @@ namespace
 				 << endl;
 			break;
 		case account_type::pure_envelope:  // TODO Should this be here?
-		case account_type::equity:  // TODO Should this be here?
 		default:
 			assert (false);
 		}
