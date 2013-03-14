@@ -146,11 +146,6 @@ private:
 
 
 
-/**
- * @returns an English phrase describing the frequency of the
- * Repeater.
- */
-std::string frequency_description(Repeater const& repeater);
 
 
 }  // namespace phatbooks

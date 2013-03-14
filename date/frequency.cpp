@@ -1,5 +1,8 @@
 #include "frequency.hpp"
 #include "interval_type.hpp"
+#include <string>
+
+using std::string;
 
 namespace phatbooks
 {
@@ -23,6 +26,24 @@ int
 Frequency::step_type() const
 {
 	return m_step_type;
+}
+
+string
+Frequency::frequency_description(Frequency const& frequency) const
+{
+	string ret = "every ";
+	int const num_steps = frequency.num_steps();
+	if (num_steps > 1)
+    {
+		ret += lexical_cast<string>(num_steps);
+		ret += " ";
+		ret += bstring_to_std8(phrase(frequency.step_type(), true));
+	}
+	else
+	{
+		ret += bstring_to_std8(phrase(frequency.step_type(), false));
+	}
+	return ret;
 }
 
 

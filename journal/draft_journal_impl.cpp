@@ -403,7 +403,7 @@ DraftJournalImpl::repeater_description()
 	assert (!m_dj_data->repeaters.empty());
 	BString ret("This transaction is automatically recorded ");
 	vector<Repeater>::const_iterator it = m_dj_data->repeaters.begin();
-	ret += frequency_description(*it);
+	ret += frequency_description(it->frequency());
 	ret += BString(", with the next recording due on ");
 	gregorian::date next_date = it->next_date();
 
@@ -422,7 +422,7 @@ DraftJournalImpl::repeater_description()
 			ret += BString
 			(	"\nIn addition, this transaction is automatically recorded "
 			);
-			ret += frequency_description(*it);
+			ret += frequency_description(it->frequency);
 			ret += BString(", with the next recording due on ");
 			gregorian::date const next_date_this_cycle = it->next_date();
 			

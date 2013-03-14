@@ -124,25 +124,5 @@ Repeater::Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle):
 }
 
 
-string
-frequency_description(Repeater const& repeater)
-{
-	string ret = "every ";
-	Frequency const frequency = repeater.frequency();
-	int const num_steps = frequency.num_steps();
-	if (num_steps > 1)
-    {
-		ret += lexical_cast<string>(num_steps);
-		ret += " ";
-		ret += bstring_to_std8(phrase(frequency.step_type(), true));
-	}
-	else
-	{
-		ret += bstring_to_std8(phrase(frequency.step_type(), false));
-	}
-	return ret;
-}
-
-
 
 }  // namespace phatbooks
