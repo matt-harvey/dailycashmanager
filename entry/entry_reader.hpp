@@ -16,15 +16,6 @@ typedef
 	EntryReader;
 
 
-class OrdinaryEntryReader: public EntryReader
-{
-public:
-
-	explicit OrdinaryEntryReader
-	(	PhatbooksDatabaseConnection& p_database_connection
-	);
-};
-
 class ActualOrdinaryEntryReader: public EntryReader
 {
 public:
