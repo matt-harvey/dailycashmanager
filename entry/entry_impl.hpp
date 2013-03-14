@@ -109,8 +109,8 @@ public:
 	 */
 	void mimic(EntryImpl& rhs);
 
-	template <typename JournalType>
-	JournalType journal();
+	template <typename PersistentJournalType>
+	PersistentJournalType journal();
 
 private:
 
@@ -143,12 +143,12 @@ struct EntryImpl::EntryData
 };
 
 
-template <typename JournalType>
-JournalType
+template <typename PersistentJournalType>
+PersistentJournalType
 EntryImpl::journal()
 {
 	load();
-	return JournalType
+	return PersistentJournalType
 	(	database_connection(),
 		jewel::value(m_data->journal_id)
 	);

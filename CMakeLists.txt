@@ -173,6 +173,7 @@ set (test_files
 	 tests/test.cpp
 	 tests/draft_journal_tests.cpp
 	 tests/filename_validation_tests.cpp
+	 tests/frequency_tests.cpp
 	 tests/interval_type_tests.cpp
 	 tests/ordinary_journal_tests.cpp
 	 tests/phatbooks_tests_common.cpp

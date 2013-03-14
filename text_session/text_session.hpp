@@ -236,12 +236,6 @@ private:
 	 * for P&L accounts that is not the native currency of the entity
 	 * itself.
 	 *
-	 * @todo HIGH PRIORITY Need to ensure there is at least one comodity in
-	 * the database before the user enters this dialogue. The best
-	 * solution for this would be to force the user to create the native
-	 * commodity for the entity as a whole, immediately they create a new
-	 * entity (i.e. new database).
-	 *
 	 * @todo In the part of the implementation where the user is asked for
 	 * a commodity abbreviation, this should really be done by providing a
 	 * list of the available commodities from which to select. This could

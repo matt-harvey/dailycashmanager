@@ -30,6 +30,8 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
+#include <algorithm>
+#include <iterator>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -49,10 +51,12 @@ using jewel::clear;
 using jewel::Decimal;
 using jewel::output_aux;
 using jewel::value;
+using std::back_inserter;
 using std::ios_base;
 using std::logic_error;
 using std::ostream;
 using std::ostringstream;
+using std::remove_copy;
 using std::string;
 using std::vector;
 
@@ -140,20 +144,14 @@ ProtoJournal::do_push_entry(Entry& entry)
 void
 ProtoJournal::do_remove_entry(Entry& entry)
 {
-	// TODO I could probably do this more elegantly using some STL function.
-	vector<Entry> new_entry_vec = m_data->entries;
+	vector<Entry> temp = m_data->entries;
 	m_data->entries.clear();
-	for
-	(	vector<Entry>::iterator it = new_entry_vec.begin();
-		it != new_entry_vec.end();
-		++it
-	)
-	{
-		if (*it != entry)
-		{
-			m_data->entries.push_back(*it);
-		}
-	}
+	remove_copy
+	(	temp.begin(),
+		temp.end(),
+		back_inserter(m_data->entries),
+		entry
+	);
 	return;
 }
 		

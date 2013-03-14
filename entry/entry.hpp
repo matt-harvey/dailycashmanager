@@ -131,12 +131,16 @@ public:
 
 	bool is_reconciled() const;
 	
-	// WARNING Quick hack
-	template <typename JournalType>
-	JournalType journal() const
-	{
-		return impl().journal<JournalType>();
-	}
+	/**
+	 * @returns the journal to which this Entry is attached.
+	 *
+	 * Note the PersistentJournalType must be known by the client, and must
+	 * be specified as a template parameter. PersistentJournalType can ONLY
+	 * be either OrdinaryJournal or DraftJournal. Otherwise, behaviour
+	 * is undefined.
+	 */
+	template <typename PersistentJournalType>
+	PersistentJournalType journal() const;
 
 	/**
 	 * @returns the posting date of the Entry, assuming it is associated
@@ -160,21 +164,13 @@ private:
 };
 
 
-// Keep these as std::string, to work with consolixx::Table.
+template <typename PersistentJournalType>
+PersistentJournalType
+Entry::journal() const
+{
+	return impl().journal<PersistentJournalType>();
+}
 
-boost::shared_ptr<std::vector<std::string> >
-make_entry_row(Entry const& entry);
-
-boost::shared_ptr<std::vector<std::string> >
-make_reversed_entry_row(Entry const& entry);
-
-// Like above but should only be used with ordinary entries (i.e.
-// entries of which the Journal is an OrdinaryJournal.
-// Includes journal id and date in the entry row produced.
-// If the OrdinaryJournal for the Entry does not have an id then
-// this will fail.
-boost::shared_ptr<std::vector<std::string> >
-make_augmented_ordinary_entry_row(Entry const& entry);
 
 }  // namespace phatbooks
 

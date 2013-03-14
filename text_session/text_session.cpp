@@ -67,17 +67,6 @@
 #include <string>
 #include <vector>
 
-// WARNING play code
-#include "sqloxx/sql_statement.hpp"
-#include <boost/unordered_map.hpp>
-#include <jewel/stopwatch.hpp>
-#include <vector>
-using boost::unordered_map;
-using jewel::Stopwatch;
-using sqloxx::SQLStatement;
-using std::vector;
-// end play code
-
 using consolixx::Column;
 using consolixx::get_date_from_user;
 using consolixx::get_user_input;
@@ -2781,15 +2770,9 @@ TextSession::finalize_journal(ProtoJournal& journal)
 	}
 	return;
 
-	// WARNING
-	// We also need to ensure the journal either
-	// balances or is to be a draft journal. If it's draft, we need to create
-	// Repeater objects if required. Before posting, we need to ensure
+	// TODO
+	// Before posting, we need to ensure
 	// the entries will not overflow the account balances.
-	// If the journal is a draft, it should also be given a unique name by the
-	// user.
-	// Note there are complications when a single Journal involves multiple
-	// commodities.
 }
 
 

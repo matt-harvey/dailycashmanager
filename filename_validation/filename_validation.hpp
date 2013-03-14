@@ -38,14 +38,6 @@ bool is_valid_filename
 	bool extension_is_explicit = true
 );
 
-/**
- * @todo HIGH PRIORITY Implement this.
- */
-bool is_valid_filepath
-(	std::string const& s,
-	std::string& message,
-	bool extension_is_explicit = true
-);
 
 
 }  // namespace phatbooks

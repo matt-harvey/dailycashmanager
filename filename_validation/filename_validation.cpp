@@ -100,48 +100,6 @@ namespace
 	}
 
 	/**
-	 * @returns base of filename, i.e. filename not including
-	 * the extension. Does not include any dot. Note if the filename
-	 * starts with a dot, this returns the string after the first dot,
-	 * up to but not including the second dot.
-	 *
-	 * WARNING I actually don't think we need this, so I have commented
-	 * it out.
-	bool filename_base(string const& s)
-	{
-		typedef string::const_iterator Iter;
-		Iter it = s.begin();
-		if (*it == '.')
-		{
-			Iter rev = s.end();
-			while (*rev != '.') --rev;
-			assert (rev == '.');
-			if (rev == it)
-			{
-				// There is only one dot and the whole thing is the base
-				return s;
-			}
-			else
-			{
-				// There are multiple dots.
-				return string(it, rev);
-			}
-		}
-		assert (it == s.begin());
-		assert (s[0] != '.');
-		Iter rev = s.end();
-		while (rev != s.begin() && *rev != '.') --rev;
-		if (*rev == '.')
-		{
-			return string(it, rev);
-		}
-		assert (rev == s.begin());
-		assert (rev != '.');
-		return s;
-	}
-	*/
-
-	/**
 	 * @return filename extension, \e including the dot. Can be empty
 	 * string.
 	 */
