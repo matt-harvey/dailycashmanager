@@ -266,7 +266,7 @@ EntryImpl::do_save_new()
 			"comment, "
 			"account_id, "
 			"amount, "
-			"is_reconciled "
+			"is_reconciled"
 		") "
 		"values"
 		"("

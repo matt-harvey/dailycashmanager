@@ -50,7 +50,6 @@ public:
 
 	~BudgetItemImpl();
 
-	void set
 	
 	// Keep as std::string, for consistency with sqloxx
 	static std::string primary_table_name();
@@ -68,7 +67,6 @@ private:
 	void do_save_existing();
 	void do_save_new();
 	void do_ghostify();
-	void do_remove();
 	void process_saving_statement(sqloxx::SQLStatement& statement);
 
 	struct BudgetItemData;
@@ -79,10 +77,10 @@ private:
 
 struct BudgetItemImpl::BudgetItemData
 {
-	boost::optional<BString m_description>;
-	boost::optional<Account> m_account;
-	boost::optional<Frequency> m_frequency;
-	boost::optional<jewel::Decimal> m_decimal;
+	boost::optional<Account> account;
+	boost::optional<BString> description;
+	boost::optional<Frequency> frequency;
+	boost::optional<jewel::Decimal> amount;
 };
 
 
