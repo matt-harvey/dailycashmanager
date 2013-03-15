@@ -17,15 +17,19 @@
 #include "b_string.hpp"
 #include "entry_impl.hpp"
 #include "phatbooks_database_connection.hpp"
-#include <sqloxx/general_typedefs.hpp>
-#include <sqloxx/persistent_object.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/persistent_object.hpp>
 #include <string>
 
+
+namespace sqloxx
+{
+	SQLStatement;  // Forward declaration
+}
 
 
 namespace phatbooks

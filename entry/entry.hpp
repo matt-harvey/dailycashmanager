@@ -40,7 +40,7 @@ public:
 
 	/*
 	 * Set up tables in the database required for the persistence of
-	 * EntryImpl objects.
+	 * Entry objects.
 	 */
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
