@@ -1,4 +1,20 @@
 #include "budget_item_impl.hpp"
+#include "account.hpp"
+#include "b_string.hpp"
+#include "frequency.hpp"
+#include "phatbooks_database_connection.hpp"
+#include <jewel/decimal.hpp>
+#include <jewel/optional.hpp>
+#include <sqloxx/identity_map.hpp>
+#include <sqloxx/sql_statement.hpp>
+#include <string>
+
+using jewel::clear;
+using jewel::Decimal;
+using jewel::value;
+using sqloxx::IdentityMap;
+using sqloxx::SQLStatement;
+using std::string;
 
 namespace phatbooks
 {
@@ -7,7 +23,7 @@ namespace phatbooks
 void
 BudgetItemImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
-	dbc.exectute_sql
+	dbc.execute_sql
 	(	"create table budget_items"
 		"("
 			"budget_item_id integer primary key autoincrement, "
@@ -22,7 +38,15 @@ BudgetItemImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 	return;
 }
 	
-		
+
+BudgetItemImpl::BudgetItemImpl
+(	IdentityMap& p_identity_map
+):
+	PersistentObject(p_identity_map),
+	m_data(new BudgetItemData)
+{
+}
+
 BudgetItemImpl::BudgetItemImpl
 (	IdentityMap& p_identity_map,
 	Id p_id
@@ -56,7 +80,7 @@ BudgetItemImpl::primary_key_name()
 	return "budget_item_id";	
 }
 
-BudgetItemImpl(BudgetItemImpl const& rhs):
+BudgetItemImpl::BudgetItemImpl(BudgetItemImpl const& rhs):
 	PersistentObject(rhs),
 	m_data(new BudgetItemData(*(rhs.m_data)))
 {
@@ -66,7 +90,7 @@ void
 BudgetItemImpl::set_description(BString const& p_description)
 {
 	load();
-	m_data->description = p_description;
+	m_data->description = bstring_to_std8(p_description);
 	return;
 }
 
@@ -87,7 +111,7 @@ BudgetItemImpl::set_frequency(Frequency const& p_frequency)
 }
 
 void
-BudgetItemImpl::set_amount(jewel::Decimal const& p_amount)
+BudgetItemImpl::set_amount(Decimal const& p_amount)
 {
 	load();
 	m_data->amount = p_amount;
@@ -95,40 +119,49 @@ BudgetItemImpl::set_amount(jewel::Decimal const& p_amount)
 }
 
 BString
-BudgetItemImpl::description() const
+BudgetItemImpl::description()
 {
 	load();
 	return value(m_data->description);
 }
 
 Account
-BudgetItemImpl::account() const
+BudgetItemImpl::account()
 {
 	load();
 	return value(m_data->account);
 }
 
 Frequency
-BudgetItemImpl::frequency() const
+BudgetItemImpl::frequency()
 {
 	load();
-	return value(m_data-frequency);
+	return value(m_data->frequency);
 }
 
 Decimal
-BudgetItemImpl::amount() const
+BudgetItemImpl::amount()
 {
 	load();
 	return value(m_data->amount);
 }
 
+void
+BudgetItemImpl::swap(BudgetItemImpl& rhs)
+{
+	swap_base_internals(rhs);
+	using std::swap;
+	swap(m_data, rhs.m_data);
+	return;
+}
 
 void
 BudgetItemImpl::do_load()
 {
 	BudgetItemImpl temp(*this);
 	SQLStatement statement
-	(	"select account_id, description, interval_units, interval_type_id, "
+	(	database_connection(),
+		"select account_id, description, interval_units, interval_type_id, "
 		"amount from budget_items where budget_item_id = :p"
 	);
 	statement.bind(":p", id());
@@ -156,10 +189,13 @@ void
 BudgetItemImpl::process_saving_statement(SQLStatement& statement)
 {
 	statement.bind(":account_id", value(m_data->account).id());
-	statement.bind(":description", value(m_data->description));
+	statement.bind
+	(	":description",
+		bstring_to_std8(value(m_data->description))
+	);
 	Frequency const freq = value(m_data->frequency);
-	statement.bind(":interval_units", m_data->frequency->num_steps());
-	statement.bind(":interval_type_id", m_data->frequency->step_type());
+	statement.bind(":interval_units", freq.num_steps());
+	statement.bind(":interval_type_id", freq.step_type());
 	statement.bind(":amount", m_data->amount->intval());
 	statement.step_final();
 	return;

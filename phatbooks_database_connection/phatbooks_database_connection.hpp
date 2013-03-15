@@ -36,6 +36,7 @@ namespace phatbooks
 // Forward declarations
 class BalanceCache;
 class AccountImpl;
+class BudgetItemImpl;
 class CommodityImpl;
 class EntryImpl;
 class DraftJournalImpl;
@@ -146,6 +147,8 @@ private:
 
 	sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>*
 		m_account_map;
+	sqloxx::IdentityMap<BudgetItemImpl, PhatbooksDatabaseConnection>*
+		m_budget_item_map;
 	sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>*
 		m_commodity_map;
 	sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>*

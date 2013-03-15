@@ -11,6 +11,8 @@
 
 #include "account_impl.hpp"
 #include "b_string.hpp"
+#include "budget_item.hpp"
+#include "budget_item_impl.hpp"
 #include "commodity_impl.hpp"
 #include "entry_impl.hpp"
 #include "draft_journal_impl.hpp"
@@ -94,7 +96,7 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 	// avoidance of invalid reads and writes (and thus of undefined
 	// behaviour) is crucially dependent on the order in which
 	// the IdentityMaps are destroyed (because objects in the
-	// cache contains Handles to other objects in other caches, and we
+	// cache contain Handles to other objects in other caches, and we
 	// don't want dangling Handles).
 	// This is horribly brittle! Find a way of guarding against error here.
 	// Basically, where instances of a class ("Referor") contain
@@ -124,6 +126,10 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 	delete m_entry_map; 
 	m_entry_map = 0;
 
+	// Must be deleted before m_account_map
+	delete m_budget_item_map;
+	m_budget_item_map = 0;
+
 	// Must be deleted before m_commodity_map
 	delete m_account_map;
 	m_account_map = 0;
@@ -147,6 +153,7 @@ PhatbooksDatabaseConnection::setup()
 	setup_boolean_table();
 	Commodity::setup_tables(*this);
 	Account::setup_tables(*this);
+	BudgetItem::setup_tables(*this);
 	ProtoJournal::setup_tables(*this);
 	DraftJournal::setup_tables(*this);
 	OrdinaryJournal::setup_tables(*this);
@@ -170,6 +177,7 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 	case 0: case 1: case 2: case 3: case 4:
 		m_commodity_map->disable_caching();
 		m_account_map->disable_caching();
+		m_budget_item_map->disable_caching();
 		m_repeater_map->disable_caching();
 		m_draft_journal_map->disable_caching();
 		m_ordinary_journal_map->disable_caching();
@@ -178,6 +186,7 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 	case 5: case 6: case 7: case 8: case 9:
 		m_commodity_map->enable_caching();
 		m_account_map->enable_caching();
+		m_budget_item_map->disable_caching();
 		m_repeater_map->disable_caching();
 		m_draft_journal_map->disable_caching();
 		m_ordinary_journal_map->disable_caching();
@@ -187,6 +196,7 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 		assert (level > 0);
 		m_commodity_map->enable_caching();
 		m_account_map->enable_caching();
+		m_budget_item_map->enable_caching();
 		m_repeater_map->enable_caching();
 		m_draft_journal_map->enable_caching();
 		m_ordinary_journal_map->enable_caching();
@@ -274,6 +284,13 @@ sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>&
 PhatbooksDatabaseConnection::identity_map<AccountImpl>()
 {
 	return *m_account_map;
+}
+
+template <>
+sqloxx::IdentityMap<BudgetItemImpl, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<BudgetItemImpl>()
+{
+	return *m_budget_item_map;
 }
 
 template <>

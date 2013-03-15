@@ -11,15 +11,15 @@
 #include <sqloxx/persistent_object.hpp>
 #include <string>
 
-namespace phatbooks
-{
-
 
 namespace sqloxx
 {
-	SQLStatement;  // Forward declaration
+	class SQLStatement;  // Forward declaration
 }
 
+
+namespace phatbooks
+{
 
 
 class BudgetItemImpl:
@@ -37,12 +37,14 @@ public:
 	typedef typename PersistentObject::Id Id;
 
 	typedef
-		sqlox::IdentityMap<BudgetItemImpl, PhatbooksDatabaseConnection>
+		sqloxx::IdentityMap<BudgetItemImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
 	
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
-		
-	explicit
+
+	
+	explicit BudgetItemImpl(IdentityMap& p_identity_map);	
+
 	BudgetItemImpl
 	(	IdentityMap& p_identity_map,
 		Id p_id
@@ -50,7 +52,21 @@ public:
 
 	~BudgetItemImpl();
 
-	
+	void set_description(BString const& p_description);
+	void set_account(Account const& p_account);
+	void set_frequency(Frequency const& p_frequency);
+	void set_amount(jewel::Decimal const& p_amount);
+	BString description();
+	Account account();
+	Frequency frequency();
+	jewel::Decimal amount();
+
+	/**
+	 * @todo Provide non-member swap and specialized std::swap per
+	 * "Effective C++".
+	 */
+	void swap(BudgetItemImpl& rhs);
+
 	// Keep as std::string, for consistency with sqloxx
 	static std::string primary_table_name();
 	static std::string exclusive_table_name();

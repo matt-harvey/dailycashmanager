@@ -1,11 +1,14 @@
 #ifndef GUARD_amalgamated_budget_hpp
 #define GUARD_amalgamated_budget_hpp
 
+#include "account.hpp"
 #include "frequency.hpp"
 #include <cassert>
 #include <boost/scoped_ptr.hpp>
 #include <boost/unordered_map.hpp>
-#include <jewel/decimal.hpp>
+
+
+
 
 namespace phatbooks
 {
@@ -30,7 +33,7 @@ public:
 	AmalgamatedBudget
 	(	Frequency const& p_frequency,
 		BudgetItemIter const& beg,
-		BudgetItemIter const& end,
+		BudgetItemIter const& end
 	);
 
 private:
@@ -42,6 +45,7 @@ private:
 };
 
 
+template
 <typename BudgetItemIter>
 AmalgamatedBudget::AmalgamatedBudget
 (	Frequency const& p_frequency,
@@ -52,7 +56,7 @@ AmalgamatedBudget::AmalgamatedBudget
 	m_map(new Map)
 {
 	// First we calculate budgets amalgamated on annual basis
-	assert (m_map.empty());
+	assert (m_map->empty());
 	BudgetItemIter it = beg;
 	for ( ; it != end; ++it)
 	{
@@ -63,19 +67,23 @@ AmalgamatedBudget::AmalgamatedBudget
 		(	raw_frequency,
 			raw_amount
 		);
-		Map::iterator tmit = m_map.find(account_id);
-		if (tmit == m_map.end())
+		Map::iterator tmit = m_map->find(account_id);
+		if (tmit == m_map->end())
 		{
-			m_map[account_id] = Decimal(0, annual_amount.places());
+			(*m_map)[account_id] = jewel::Decimal(0, annual_amount.places());
 		}
 		else
 		{
 			tmit->second += annual_amount;
 		}
 	}
-	assert (m_map.empty());
+	assert (m_map->empty());
 	// Now convert to desired frequency
-	for (Map::iterator mit = m_map.begin(); mit != m_map.end(); ++mit)
+	for 
+	(	Map::iterator mit = m_map->begin(), mend = m_map->end();
+		mit != mend;
+		++mit
+	)
 	{
 		mit->second = convert_from_annual(m_frequency, mit->second);
 	}

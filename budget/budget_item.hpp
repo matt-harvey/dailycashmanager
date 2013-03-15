@@ -1,7 +1,6 @@
 #ifndef GUARD_budget_item_hpp
 #define GUARD_budget_item_hpp
 
-#include "account.hpp"
 #include "b_string.hpp"
 #include "budget_item_impl.hpp"
 #include "frequency.hpp"
@@ -11,6 +10,9 @@
 
 namespace phatbooks
 {
+
+class Account;
+class PhatbooksDatabaseConnection;
 
 /**
  * A BudgetItem represents a given item of recurring
@@ -45,7 +47,7 @@ public:
 	 * any particular object in the database.
 	 */
 	explicit BudgetItem
-	(	PhatbooksDatabaseConnection& p_database_connection,
+	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
 	/**

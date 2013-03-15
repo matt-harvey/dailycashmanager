@@ -28,7 +28,7 @@
 
 namespace sqloxx
 {
-	SQLStatement;  // Forward declaration
+	class SQLStatement;  // Forward declaration
 }
 
 
