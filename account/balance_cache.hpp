@@ -6,6 +6,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/unordered_map.hpp>
+#include <vector>
 
 // Forward declarations
 namespace jewel
@@ -43,6 +44,8 @@ class PhatbooksDatabaseConnection;
 
 /**
  * Provides a cache for holding AccountImpl balances.
+ *
+ * @todo Testing.
  */
 class BalanceCache:
 	public boost::noncopyable
@@ -77,6 +80,8 @@ private:
 		Map;
 		
 	void refresh();
+	void refresh_all();
+	void refresh_targetted(std::vector<AccountImpl::Id> const& p_targets);
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	boost::scoped_ptr<Map> m_map;
