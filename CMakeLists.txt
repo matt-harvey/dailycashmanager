@@ -132,7 +132,6 @@ set (main_files
 	 account/account_type.cpp
 	 account/balance_cache.cpp
 	 account/budget_item.cpp
-	 account/budget_manager.cpp
 	 application/application.cpp
 	 b_string/b_string.cpp
 	 column_creation/column_creation.cpp
