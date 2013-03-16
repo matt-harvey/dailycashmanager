@@ -74,6 +74,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	DatabaseConnection(),
 	m_balance_cache(0),
 	m_account_map(0),
+	m_budget_item_map(0),
 	m_commodity_map(0),
 	m_entry_map(0),
 	m_ordinary_journal_map(0),
@@ -83,6 +84,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	typedef PhatbooksDatabaseConnection PDC;
 	m_balance_cache = new BalanceCache(*this);
 	m_account_map = new IdentityMap<AccountImpl, PDC>(*this);
+	m_budget_item_map = new IdentityMap<BudgetItemImpl, PDC>(*this);
 	m_commodity_map = new IdentityMap<CommodityImpl, PDC>(*this);
 	m_entry_map = new IdentityMap<EntryImpl, PDC>(*this);
 	m_ordinary_journal_map = new IdentityMap<OrdinaryJournalImpl, PDC>(*this);

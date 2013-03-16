@@ -8,6 +8,12 @@
 namespace phatbooks
 {
 
+/**
+ * Represents a recurring period of time, e.g. "every 5 weeks".
+ *
+ * @todo What does it mean if num_steps is negative or zero?
+ * Should we allow it?
+ */
 class Frequency
 {
 public:
@@ -45,11 +51,13 @@ frequency_description(Frequency const& frequency);
  * p_amount is Decimal("10") and p_frequency is
  * Frequency(2, interval_type::month), then 
  * the returned value would be Decimal("60").
+ *
+ * @todo Testing.
  */
 jewel::Decimal
 convert_to_annual
 (	Frequency const& p_frequency,
-	jewel::Decimal p_amount
+	jewel::Decimal const& p_amount
 );
 
 /**
@@ -58,10 +66,13 @@ convert_to_annual
  * terms. For example, suppose p_amount is Decimal("520"), and
  * p_frequency is Frequency(1, interval_type::week); then
  * the returned value would be Decimal("10").
+ *
+ * @todo Testing.
  */
-jewel::Decimal convert_from_annual
+jewel::Decimal
+convert_from_annual
 (	Frequency const& p_frequency,
-	jewel::Decimal p_amount
+	jewel::Decimal const& p_amount
 );
 
 
