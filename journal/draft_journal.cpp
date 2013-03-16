@@ -184,7 +184,4 @@ DraftJournal::do_output(ostream& os) const
 
 
 
-
-
-
 }  // namespace phatbooks
