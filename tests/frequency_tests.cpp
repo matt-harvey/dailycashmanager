@@ -225,5 +225,65 @@ TEST(test_frequency_convert_to_annual)
 	);
 }
 
+
+TEST(frequency_test_convert_from_annual)
+{
+	CHECK_EQUAL
+	(	convert_from_annual
+		(	Frequency(1, interval_type::days),
+			Decimal("365.25")
+		),
+		Decimal("1")
+	);
+	Decimal const res_a = convert_from_annual
+	(	Frequency(15, interval_type::days),
+		Decimal("98.05")
+	);
+	CHECK(res_a > Decimal("4.0266940"));
+	CHECK(res_a < Decimal("4.0266941"));
+	Decimal const res_b = convert_from_annual
+	(	Frequency(2, interval_type::weeks),
+		Decimal("4000")
+	);
+	CHECK(res_b > Decimal("153.3196"));
+	CHECK(res_b < Decimal("153.3197"));
+	Decimal const res_c = convert_from_annual
+	(	Frequency(1249, interval_type::weeks),
+		Decimal("-9000.78")
+	);
+	CHECK(res_c < Decimal("-215451.935"));
+	CHECK(res_c > Decimal("-215451.936"));
+	Decimal const res_d = convert_from_annual
+	(	Frequency(19, interval_type::months),
+		Decimal(".0001001")
+	);
+	CHECK(res_d > Decimal("0.0001584"));
+	CHECK(res_d < Decimal("0.0001585"));
+	Decimal const res_e = convert_from_annual
+	(	Frequency(1, interval_type::months),
+		Decimal("-3")
+	);
+	CHECK_EQUAL(res_e, Decimal("-0.25"));
+	Decimal const res_f = convert_from_annual
+	(	Frequency(3, interval_type::months),
+		Decimal("0")
+	);
+	CHECK_EQUAL(res_f, Decimal("0"));
+	Decimal const res_g = convert_from_annual
+	(	Frequency(5000, interval_type::month_ends),
+		Decimal("19.26898")
+	);
+	CHECK(res_g > Decimal("8028.74166"));
+	CHECK(res_g < Decimal("8028.74167"));
+	Decimal const res_h = convert_from_annual
+	(	Frequency(5, interval_type::month_ends),
+		Decimal("20000000")
+	);
+	CHECK(res_h > Decimal("8333333.33"));
+	CHECK(res_h < Decimal("8333333.34"));
+}
+
+
+
 }  // namespace test
 }  // namespace phatbooks
