@@ -1,8 +1,11 @@
 #include "frequency.hpp"
 #include "interval_type.hpp"
 #include "phatbooks_tests_common.hpp"
+#include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <typeinfo>
+
+using jewel::Decimal;
 
 namespace phatbooks
 {
@@ -117,8 +120,110 @@ TEST(test_frequency_phrase_description)
 }
 
 
+TEST(test_frequency_convert_to_annual)
+{
+	Frequency const freq_1_days(1, interval_type::days);
+	Frequency const freq_5_days(5, interval_type::days);
+	Frequency const freq_4732_days(4732, interval_type::days);
+	Frequency const freq_1_weeks(1, interval_type::weeks);
+	Frequency const freq_340_weeks(340, interval_type::weeks);
+	Frequency const freq_2_weeks(2, interval_type::weeks);
+	Frequency const freq_1_months(1, interval_type::months);
+	Frequency const freq_5_months(5, interval_type::months);
+	Frequency const freq_6049_months(6049, interval_type::months);
+	Frequency const freq_1_month_ends(1, interval_type::month_ends);
+	Frequency const freq_5_month_ends(5, interval_type::month_ends);
 
+	CHECK_EQUAL
+	(	convert_to_annual(freq_1_days, Decimal("100")),
+		Decimal("36525")
+	);
+	CHECK_EQUAL
+	(	convert_to_annual(freq_1_days, Decimal("0")),
+		Decimal("0")
+	);
+	CHECK_EQUAL
+	(	convert_to_annual(freq_1_days, Decimal("-0.000015")),
+		Decimal("-0.00547875")
+	);
+	CHECK_EQUAL
+	(	convert_to_annual(freq_5_days, Decimal("19.6")),
+		Decimal("1431.78")
+	);
+	CHECK_EQUAL
+	(	convert_to_annual(freq_5_days, Decimal("6788.97")),
+		Decimal("495934.2585")
+	);
+	Decimal const res_a =
+		convert_to_annual(freq_4732_days, Decimal("96.555"));
+	CHECK(res_a > Decimal("7.452813"));
+	CHECK(res_a < Decimal("7.452814"));
+	
+	Decimal const res_b =
+		convert_to_annual(freq_4732_days, Decimal("-0.0003"));
+	CHECK(res_b < Decimal("-0.00002315"));
+	CHECK(res_b > Decimal("-0.00002316"));
 
+	Decimal const res_c =
+		convert_to_annual(freq_1_weeks, Decimal("1"));
+	CHECK(res_c < Decimal("52.1785715"));
+	CHECK(res_c > Decimal("52.1785714"));
+
+	Decimal const res_d =
+		convert_to_annual(freq_1_weeks, Decimal("9007823.24"));
+	CHECK(res_d > Decimal("470015348"));
+	CHECK(res_d < Decimal("470015349"));
+
+	Decimal const res_e =
+		convert_to_annual(freq_340_weeks, Decimal("4.778245"));
+	CHECK(res_e > Decimal("0.73329"));
+	CHECK(res_e < Decimal("0.73331"));
+
+	CHECK_EQUAL
+	(	convert_to_annual(freq_2_weeks, Decimal("-5.25")),
+		Decimal("-136.96875")
+	);
+
+	CHECK_EQUAL
+	(	convert_to_annual(freq_1_months, Decimal("-6000.26")),
+		Decimal("-72003.12")
+	);
+
+	CHECK_EQUAL
+	(	convert_to_annual(freq_1_months, Decimal("-1")),
+		Decimal("-12.00000")
+	);
+
+	CHECK_EQUAL
+	(	convert_to_annual(freq_1_months, Decimal("0.0000000")),
+		Decimal("-.0")
+	);
+
+	CHECK_EQUAL
+	(	convert_to_annual(freq_5_months, Decimal("40.9800")),
+		Decimal("98.352")
+	);
+
+	Decimal const res_f =
+		convert_to_annual(freq_6049_months, Decimal(-245, 1));
+	CHECK(res_f < Decimal("-0.048603"));
+	CHECK(res_f > Decimal("-0.048604"));
+
+	CHECK_EQUAL
+	(	convert_to_annual(freq_1_month_ends, Decimal("9182.73")),
+		Decimal("110192.76")
+	);
+
+	CHECK_EQUAL
+	(	convert_to_annual(freq_5_month_ends, Decimal("900")),
+		Decimal("2160")
+	);
+
+	CHECK_EQUAL
+	(	convert_to_annual(freq_5_month_ends, Decimal(0, 0)),
+		Decimal("0")
+	);
+}
 
 }  // namespace test
 }  // namespace phatbooks
