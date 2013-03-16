@@ -120,7 +120,7 @@ TEST(test_frequency_phrase_description)
 }
 
 
-TEST(test_frequency_convert_to_annual)
+TEST(test_frequency_convert_to_annual_basic)
 {
 	Frequency const freq_1_days(1, interval_type::days);
 	Frequency const freq_5_days(5, interval_type::days);
@@ -133,6 +133,9 @@ TEST(test_frequency_convert_to_annual)
 	Frequency const freq_6049_months(6049, interval_type::months);
 	Frequency const freq_1_month_ends(1, interval_type::month_ends);
 	Frequency const freq_5_month_ends(5, interval_type::month_ends);
+	
+	Frequency const freq_12_months(12, interval_type::months);
+	Frequency const freq_12_month_ends(12, interval_type::month_ends);
 
 	CHECK_EQUAL
 	(	convert_to_annual(freq_1_days, Decimal("100")),
@@ -223,10 +226,19 @@ TEST(test_frequency_convert_to_annual)
 	(	convert_to_annual(freq_5_month_ends, Decimal(0, 0)),
 		Decimal("0")
 	);
+
+	Decimal const amt_a("989.826001");
+	CHECK_EQUAL(convert_to_annual(freq_12_months, amt_a), amt_a); 
+	Decimal const amt_b("-0.00023");
+	CHECK_EQUAL(convert_to_annual(freq_12_months, amt_b), amt_b);
+	Decimal const amt_c("1");
+	CHECK_EQUAL(convert_to_annual(freq_12_month_ends, amt_c), amt_c);
+	Decimal const amt_d("0");
+	CHECK_EQUAL(convert_to_annual(freq_12_month_ends, amt_d), amt_d);
 }
 
 
-TEST(frequency_test_convert_from_annual)
+TEST(frequency_test_convert_from_annual_basic)
 {
 	CHECK_EQUAL
 	(	convert_from_annual
@@ -281,7 +293,27 @@ TEST(frequency_test_convert_from_annual)
 	);
 	CHECK(res_h > Decimal("8333333.33"));
 	CHECK(res_h < Decimal("8333333.34"));
+	Decimal const amt_a("-999.9200001");
+	Decimal const res_i = convert_from_annual
+	(	Frequency(12, interval_type::month_ends),
+		amt_a
+	);
+	CHECK_EQUAL(res_i, amt_a);
+	Decimal const amt_b("0");
+	Decimal const res_j = convert_from_annual
+	(	Frequency(12, interval_type::months),
+		amt_b
+	);
+	CHECK_EQUAL(res_j, amt_b);
+	Decimal const amt_c("60000000");
+	Decimal const res_k = convert_from_annual
+	(	Frequency(12, interval_type::month_ends),
+		amt_c
+	);
+	CHECK_EQUAL(res_k, amt_c);
 }
+
+
 
 
 
