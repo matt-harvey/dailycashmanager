@@ -55,7 +55,8 @@ AmalgamatedBudget::AmalgamatedBudget
 	m_frequency(p_frequency),
 	m_map(new Map)
 {
-	// First we calculate budgets amalgamated on annual basis
+	// First we calculate budgets amalgamated on the basis of
+	// the canonical frequency
 	assert (m_map->empty());
 	BudgetItemIter it = beg;
 	for ( ; it != end; ++it)
@@ -63,18 +64,19 @@ AmalgamatedBudget::AmalgamatedBudget
 		Account::Id const account_id = it->account().id();
 		jewel::Decimal const raw_amount = it->amount();
 		Frequency const raw_frequency = it->frequency();
-		jewel::Decimal const annual_amount = convert_to_annual
+		jewel::Decimal const canonical_amount = convert_to_canonical
 		(	raw_frequency,
 			raw_amount
 		);
 		Map::iterator tmit = m_map->find(account_id);
 		if (tmit == m_map->end())
 		{
-			(*m_map)[account_id] = jewel::Decimal(0, annual_amount.places());
+			(*m_map)[account_id] =
+				jewel::Decimal(0, canonical_amount.places());
 		}
 		else
 		{
-			tmit->second += annual_amount;
+			tmit->second += canonical_amount;
 		}
 	}
 	assert (m_map->empty());
@@ -85,7 +87,7 @@ AmalgamatedBudget::AmalgamatedBudget
 		++mit
 	)
 	{
-		mit->second = convert_from_annual(m_frequency, mit->second);
+		mit->second = convert_from_canonical(m_frequency, mit->second);
 	}
 }
 		

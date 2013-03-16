@@ -43,6 +43,16 @@ private:
 
 // Free-standing functions
 
+
+
+/**
+ * @returns a Frequency to be used in Phatbooks as the canonical
+ * Frequency for storing certain information. This Frequency is designed
+ * to allow for conversion to and from a range of other Frequencies
+ * while minimizing rounding loss on "round trip" conversions.
+ */
+Frequency const canonical_frequency();
+
 /**
  * @returns an English adverbial phrase describing the Frequency.
  */
@@ -55,8 +65,6 @@ frequency_description(Frequency const& frequency);
  * p_amount is Decimal("10") and p_frequency is
  * Frequency(2, interval_type::month), then 
  * the returned value would be Decimal("60").
- *
- * @todo Testing.
  */
 jewel::Decimal
 convert_to_annual
@@ -66,18 +74,48 @@ convert_to_annual
 
 /**
  * @returns an amount in terms of the frequency
- * given by p_frequency, assuming p_amount in annual
+ * given by p_frequency, assuming p_amount is in annual
  * terms. For example, suppose p_amount is Decimal("520"), and
  * p_frequency is Frequency(1, interval_type::week); then
  * the returned value would be Decimal("10").
- *
- * @todo Testing.
  */
 jewel::Decimal
 convert_from_annual
 (	Frequency const& p_frequency,
 	jewel::Decimal const& p_amount
 );
+
+/**
+ * @returns an amount that is equivalent to p_amount, but in
+ * terms of canonical_frequency(), rather than in terms of p_frequency.
+ * <em>C. f.</em> convert_to_annual.
+ *
+ * @todo Implementation.
+ *
+ * @todo Testing.
+ */
+jewel::Decimal
+convert_to_canonical
+(	Frequency const& p_frequency,
+	jewel::Decimal const& p_amount
+);
+
+/**
+ * @returns an amount in terms of the frequency
+ * given by p_frequency, assuming p_amount is in terms of
+ * the canonical_frequency().
+ * <em>C. f.</em> convert_from_annual.
+ *
+ * @todo Implementation.
+ *
+ * @todo Testing.
+ */
+jewel::Decimal
+convert_from_canonical
+(	Frequency const& p_frequency,
+	jewel::Decimal const& p_amount
+);
+
 
 
 }  // namespace phatbooks

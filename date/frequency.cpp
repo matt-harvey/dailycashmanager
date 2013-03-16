@@ -52,35 +52,77 @@ frequency_description(Frequency const& frequency)
 	return ret;
 }
 
-
 namespace
 {
-
-	Decimal const days_per_year()
+	Decimal const
+	days_per_year()
 	{
 		static Decimal const ret("365.25");
 		return ret;
 	}
-	Decimal const days_per_week()
+	Decimal const
+	days_per_week()
 	{
 		static Decimal const ret("7");
 		return ret;
 	}
-	Decimal const months_per_year()
+	Decimal const
+	months_per_year()
 	{
 		static Decimal const ret("12");
 		return ret;
 	}
+	Decimal const days_per_canonical_interval()
+	{
+		static Decimal const ret =
+			days_per_year() * days_per_week() * months_per_year();
+		assert (round(ret, 0) == ret);
+		return ret;
+	}
+	Decimal const weeks_per_canonical_interval()
+	{
+		static Decimal const ret =
+			days_per_canonical_interval() / days_per_week();
+		assert (round(ret, 0) == ret);
+		return ret;
+	}
+	Decimal const years_per_canonical_interval()
+	{
+		static Decimal const ret =
+			days_per_canonical_interval() / days_per_year();
+		assert (round(ret, 0) == ret);
+		return ret;
+	}
+	Decimal const months_per_canonical_interval()
+	{
+		static Decimal const ret =
+			years_per_canonical_interval() * months_per_year();
+		assert (round(ret, 0) == ret);
+		return ret;
+	}
 
-}  // End anonymous namespace
+}  // end anonymous namespace
 
+
+Frequency const canonical_frequency()
+{
+	assert
+	(	round(days_per_canonical_interval(), 0) ==
+		days_per_canonical_interval()
+	);
+	static Frequency const ret
+	(	round(days_per_canonical_interval(), 0).intval(),
+		interval_type::days
+	);
+	return ret;
+}
 
 Decimal
 convert_to_annual(Frequency const& p_frequency, Decimal const& p_amount)
 {
 	// TODO How to handle DecimalMultiplicationException and
 	// DecimalDivisionException? Will they occur often?
-	// We could get all complicatad in the below to do rounding
+	// We could get all complicated in the below to do rounding
 	// to prevent overflow in many cases - but that complexity probably
 	// belongs in jewel::Decimal, not here...
 	Decimal const steps(p_frequency.num_steps(), 0);
@@ -90,14 +132,13 @@ convert_to_annual(Frequency const& p_frequency, Decimal const& p_amount)
 		return p_amount * days_per_year() / steps;
 	case interval_type::weeks:
 		return p_amount * days_per_year() / days_per_week() / steps;
-	case interval_type::months: // Fall through
+	case interval_type::months:  // fall through
 	case interval_type::month_ends:
 		return p_amount * months_per_year() / steps;
 	default:
 		assert (false);
 	}
 }
-	
 
 Decimal
 convert_from_annual(Frequency const& p_frequency, Decimal const& p_amount)
@@ -121,6 +162,47 @@ convert_from_annual(Frequency const& p_frequency, Decimal const& p_amount)
 		assert (false);
 	}
 }
+
+Decimal
+convert_to_canonical(Frequency const& p_frequency, Decimal const& p_amount)
+{
+	// TODO How to handle DecimalMultiplicationException and
+	// DecimalDivisionException? Will they occur often?
+	Decimal const steps(p_frequency.num_steps(), 0);
+	switch (p_frequency.step_type())
+	{
+	case interval_type::days:
+		return p_amount * days_per_canonical_interval() / steps;
+	case interval_type::weeks:
+		return p_amount * weeks_per_canonical_interval() / steps;
+	case interval_type::months:  // fall through
+	case interval_type::month_ends:
+		return p_amount * months_per_canonical_interval() / steps;
+	default:
+		assert (false);
+	}
+}
+
+Decimal
+convert_from_canonical(Frequency const& p_frequency, Decimal const& p_amount)
+{
+	// TODO How to handle DecimalMultiplicationException and
+	// DecimalDivisionException? Will they occur often?
+	Decimal const steps(p_frequency.num_steps(), 0);
+	switch (p_frequency.step_type())
+	{
+	case interval_type::days:
+		return p_amount * steps / days_per_canonical_interval();
+	case interval_type::weeks:
+		return p_amount * steps / weeks_per_canonical_interval();
+	case interval_type::months:  // fall through
+	case interval_type::month_ends:
+		return p_amount * steps / months_per_canonical_interval();
+	default:
+		assert (false);
+	}
+}
+
 
 
 }  // namespace phatbooks
