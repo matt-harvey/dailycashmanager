@@ -120,7 +120,7 @@ TEST(test_frequency_phrase_description)
 }
 
 
-TEST(test_frequency_convert_to_annual_basic)
+TEST(test_frequency_convert_to_annual)
 {
 	Frequency const freq_1_days(1, interval_type::days);
 	Frequency const freq_5_days(5, interval_type::days);
@@ -238,7 +238,7 @@ TEST(test_frequency_convert_to_annual_basic)
 }
 
 
-TEST(frequency_test_convert_from_annual_basic)
+TEST(frequency_test_convert_from_annual)
 {
 	CHECK_EQUAL
 	(	convert_from_annual
@@ -313,6 +313,54 @@ TEST(frequency_test_convert_from_annual_basic)
 	CHECK_EQUAL(res_k, amt_c);
 }
 
+
+TEST(frequency_test_convert_to_and_from_canonical)
+{
+	Frequency const freq_1_days(1, interval_type::days);
+	Frequency const freq_5_days(5, interval_type::days);
+	Frequency const freq_4732_days(4732, interval_type::days);
+	Frequency const freq_30681_days(30681, interval_type::days);
+	Frequency const freq_1_weeks(1, interval_type::weeks);
+	Frequency const freq_340_weeks(340, interval_type::weeks);
+	Frequency const freq_2_weeks(2, interval_type::weeks);
+	Frequency const freq_1_months(1, interval_type::months);
+	Frequency const freq_5_months(5, interval_type::months);
+	Frequency const freq_6049_months(6049, interval_type::months);
+	Frequency const freq_1_month_ends(1, interval_type::month_ends);
+	Frequency const freq_5_month_ends(5, interval_type::month_ends);
+
+	Decimal const dec_0("0");
+	Decimal const dec_1("1");
+	Decimal const dec_3("3");
+	Decimal const dec_2_50("2.50");
+	Decimal const dec_9_65("9.65");
+	Decimal const dec_n1("-1");
+	Decimal const dec_n9_61("-9.61");
+	Decimal const dec_0_0000015("0.0000015");
+	Decimal const dec_n6980097228_02("6980097228.02");
+	Decimal const dec_9_55555("9.555555");
+	Decimal const dec_20000000_01("20000000.01");
+	Decimal const dec_n0000005("-0.0000005");
+
+	Decimal const res_a = convert_to_canonical(freq_1_days, dec_0);
+	Decimal const res_b = convert_from_canonical(freq_1_days, res_a);
+	CHECK_EQUAL(res_b, dec_0);
+
+	Decimal const res_c = convert_to_canonical(freq_1_days, dec_n0000005);
+	Decimal const res_d = convert_from_canonical(freq_1_days, res_c);
+	CHECK_EQUAL(res_d, dec_n0000005);
+
+	Decimal const res_e = convert_to_canonical(freq_5_month_ends, dec_1);
+	Decimal const res_f = convert_from_canonical(freq_5_month_ends, res_e);
+	CHECK_EQUAL(res_f, dec_1);
+
+	Decimal const res_g = convert_to_canonical(freq_1_month_ends, dec_20000000_01);
+	Decimal const res_h = convert_from_canonical(freq_1_month_ends, res_g);
+	CHECK_EQUAL(res_h, dec_20000000_01);
+
+	// TODO Finish these tests.
+
+}
 
 
 
