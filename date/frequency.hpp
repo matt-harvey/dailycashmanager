@@ -44,7 +44,6 @@ private:
 // Free-standing functions
 
 
-
 /**
  * @returns a Frequency to be used in Phatbooks as the canonical
  * Frequency for storing certain information. This Frequency is designed
@@ -65,6 +64,8 @@ frequency_description(Frequency const& frequency);
  * p_amount is Decimal("10") and p_frequency is
  * Frequency(2, interval_type::month), then 
  * the returned value would be Decimal("60").
+ *
+ * @todo Document circumstances under which this can throw.
  */
 jewel::Decimal
 convert_to_annual
@@ -78,6 +79,8 @@ convert_to_annual
  * terms. For example, suppose p_amount is Decimal("520"), and
  * p_frequency is Frequency(1, interval_type::week); then
  * the returned value would be Decimal("10").
+ *
+ * @todo Document circumstances under which this can throw.
  */
 jewel::Decimal
 convert_from_annual
@@ -92,7 +95,7 @@ convert_from_annual
  *
  * @todo Implementation.
  *
- * @todo Testing.
+ * @todo Document circumstances under which this can throw.
  */
 jewel::Decimal
 convert_to_canonical
@@ -108,7 +111,7 @@ convert_to_canonical
  *
  * @todo Implementation.
  *
- * @todo Testing.
+ * @todo Document circumstances under which this can throw.
  */
 jewel::Decimal
 convert_from_canonical

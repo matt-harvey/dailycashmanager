@@ -120,11 +120,6 @@ Frequency const canonical_frequency()
 Decimal
 convert_to_annual(Frequency const& p_frequency, Decimal const& p_amount)
 {
-	// TODO How to handle DecimalMultiplicationException and
-	// DecimalDivisionException? Will they occur often?
-	// We could get all complicated in the below to do rounding
-	// to prevent overflow in many cases - but that complexity probably
-	// belongs in jewel::Decimal, not here...
 	Decimal const steps(p_frequency.num_steps(), 0);
 	switch (p_frequency.step_type())
 	{
@@ -143,11 +138,6 @@ convert_to_annual(Frequency const& p_frequency, Decimal const& p_amount)
 Decimal
 convert_from_annual(Frequency const& p_frequency, Decimal const& p_amount)
 {
-	// TODO How to handle DecimalMultiplicationException and
-	// DecimalDivisionException? Will they occur often?
-	// We could get all complicatad in the below to do rounding
-	// to prevent overflow in many cases - but that complexity probably
-	// belongs in jewel::Decimal, not here...
 	Decimal const steps(p_frequency.num_steps(), 0);
 	switch (p_frequency.step_type())
 	{
@@ -166,8 +156,6 @@ convert_from_annual(Frequency const& p_frequency, Decimal const& p_amount)
 Decimal
 convert_to_canonical(Frequency const& p_frequency, Decimal const& p_amount)
 {
-	// TODO How to handle DecimalMultiplicationException and
-	// DecimalDivisionException? Will they occur often?
 	Decimal const steps(p_frequency.num_steps(), 0);
 	switch (p_frequency.step_type())
 	{
@@ -186,8 +174,6 @@ convert_to_canonical(Frequency const& p_frequency, Decimal const& p_amount)
 Decimal
 convert_from_canonical(Frequency const& p_frequency, Decimal const& p_amount)
 {
-	// TODO How to handle DecimalMultiplicationException and
-	// DecimalDivisionException? Will they occur often?
 	Decimal const steps(p_frequency.num_steps(), 0);
 	switch (p_frequency.step_type())
 	{
@@ -203,6 +189,11 @@ convert_from_canonical(Frequency const& p_frequency, Decimal const& p_amount)
 	}
 }
 
+// TODO How to handle DecimalMultiplicationException and
+// DecimalDivisionException in the Frequency convertions
+// functions? Will they occur often?
+// The answer may be just to force the user not to input weird Frequencies
+// that we know could cause issues.
 
 
 }  // namespace phatbooks

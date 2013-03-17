@@ -18,6 +18,11 @@ namespace phatbooks
  * An AmalgamatedBudget contains at most a single amount
  * per Account, and has a single frequency shared by all
  * the items in the AmalgamatedBudget.
+ *
+ * @todo There are issues with overflow and rounding, converting
+ * between different frequencies. See the tests for
+ * the frequency conversion functions. Find a sensible way to
+ * deal with these issues.
  */
 class AmalgamatedBudget
 {

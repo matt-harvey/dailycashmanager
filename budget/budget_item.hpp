@@ -15,7 +15,7 @@ class Account;
 class PhatbooksDatabaseConnection;
 
 /**
- * A BudgetItem represents a given item of recurring
+ * A BudgetItem represents a given item of recurring revenue or
  * expenditure, with a specific Account. For example, a
  * Christmas-related BudgetItem might recur annually, relate
  * to an Account called "gifts", and have an amount of $300.

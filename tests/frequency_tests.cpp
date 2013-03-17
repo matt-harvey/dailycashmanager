@@ -5,6 +5,11 @@
 #include <UnitTest++/UnitTest++.h>
 #include <typeinfo>
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
+
 using jewel::Decimal;
 
 namespace phatbooks
@@ -322,9 +327,10 @@ TEST(frequency_test_convert_to_and_from_canonical)
 	Frequency const freq_30681_days(30681, interval_type::days);
 	Frequency const freq_1_weeks(1, interval_type::weeks);
 	Frequency const freq_340_weeks(340, interval_type::weeks);
-	Frequency const freq_2_weeks(2, interval_type::weeks);
+	Frequency const freq_3_weeks(2, interval_type::weeks);
 	Frequency const freq_1_months(1, interval_type::months);
 	Frequency const freq_5_months(5, interval_type::months);
+	Frequency const freq_17_months(17, interval_type::months);
 	Frequency const freq_6049_months(6049, interval_type::months);
 	Frequency const freq_1_month_ends(1, interval_type::month_ends);
 	Frequency const freq_5_month_ends(5, interval_type::month_ends);
@@ -342,6 +348,11 @@ TEST(frequency_test_convert_to_and_from_canonical)
 	Decimal const dec_20000000_01("20000000.01");
 	Decimal const dec_n0000005("-0.0000005");
 
+	// Testing that "round trip" journeys to and from the canonical
+	// Frequency, leave us back where we started. Note the actual
+	// value of the canonical Frequency is not publically
+	// exposed.
+
 	Decimal const res_a = convert_to_canonical(freq_1_days, dec_0);
 	Decimal const res_b = convert_from_canonical(freq_1_days, res_a);
 	CHECK_EQUAL(res_b, dec_0);
@@ -354,12 +365,70 @@ TEST(frequency_test_convert_to_and_from_canonical)
 	Decimal const res_f = convert_from_canonical(freq_5_month_ends, res_e);
 	CHECK_EQUAL(res_f, dec_1);
 
-	Decimal const res_g = convert_to_canonical(freq_1_month_ends, dec_20000000_01);
+	Decimal const res_g =
+		convert_to_canonical(freq_1_month_ends, dec_20000000_01);
 	Decimal const res_h = convert_from_canonical(freq_1_month_ends, res_g);
 	CHECK_EQUAL(res_h, dec_20000000_01);
 
-	// TODO Finish these tests.
+	Decimal const res_i = convert_to_canonical(freq_6049_months, dec_3);
+	// Rounding to prevent DecimalMultiplicationException on the way
+	// back. We would have to do this in application code.
+	Decimal const res_j = convert_from_canonical(freq_6049_months, res_i);
+	CHECK(res_j < dec_3 + Decimal(1, dec_3.places() + 2));
+	CHECK(res_j > dec_3 - Decimal(1, dec_3.places() + 2));
+	cout << res_j << endl;
 
+	Decimal const res_k = convert_to_canonical(freq_4732_days, dec_9_55555);
+	// Rounding to prevent DecimalMultiplicationException on the way
+	// back. We would have to do this in application code.
+	Decimal const res_kr = round(res_k, dec_9_55555.places() * 2);
+	Decimal const res_l = convert_from_canonical(freq_4732_days, res_kr);
+	CHECK(res_l < dec_9_55555 + Decimal(1, dec_9_55555.places() + 2));
+	CHECK(res_l > dec_9_55555 - Decimal(1, dec_9_55555.places() + 2));
+	cout << res_l << endl;
+	
+	Decimal const res_m = convert_to_canonical(freq_5_months, dec_2_50);
+	Decimal const res_n = convert_from_canonical(freq_5_months, res_m);
+	CHECK_EQUAL(res_n, dec_2_50);
+
+	Decimal const res_o =
+		convert_to_canonical(freq_30681_days, dec_n6980097228_02);
+	// Rounding to prevent DecimalMultiplicationException on the way
+	// back. We would have to do this in application code.
+	Decimal const res_or = round(res_o, dec_n6980097228_02.places() * 2);
+	Decimal const res_p = convert_from_canonical(freq_30681_days, res_or);
+	CHECK
+	(	res_p <
+		dec_n6980097228_02 + Decimal(1, dec_n6980097228_02.places() + 2)
+	);
+	CHECK
+	(	res_p >
+		dec_n6980097228_02 - Decimal(1, dec_n6980097228_02.places() + 2)
+	);
+
+	Decimal const res_q = convert_to_canonical(freq_1_weeks, dec_9_65);
+	Decimal const res_r = convert_from_canonical(freq_1_weeks, res_q);
+	CHECK_EQUAL(res_r, dec_9_65);
+
+	Decimal const res_s = convert_to_canonical(freq_340_weeks, dec_0_0000015);
+	Decimal const res_t = convert_from_canonical(freq_340_weeks, res_s);
+	CHECK_EQUAL(res_t, dec_0_0000015);
+
+	Decimal const res_u = convert_to_canonical(freq_3_weeks, dec_n1);
+	Decimal const res_v = convert_from_canonical(freq_3_weeks, res_u);
+	CHECK_EQUAL(res_v, dec_n1);
+
+	Decimal const res_w = convert_to_canonical(freq_1_months, dec_n9_61);
+	Decimal const res_x = convert_from_canonical(freq_1_months, res_w);
+	CHECK_EQUAL(res_x, dec_n9_61);
+
+	Decimal const res_y = convert_to_canonical(freq_17_months, dec_n9_61);
+	// Rounding to prevent DecimalMultiplicationException on the way
+	// back. We would have to do this in application code.
+	Decimal const res_yr = round(res_y, dec_n9_61.places() * 2);
+	Decimal const res_z = convert_from_canonical(freq_17_months, res_yr);
+	CHECK(res_z < dec_n9_61 + Decimal(1, dec_n9_61.places() + 2));
+	CHECK(res_z > dec_n9_61 - Decimal(1, dec_n9_61.places() + 2));
 }
 
 
