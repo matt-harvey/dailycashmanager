@@ -1,16 +1,19 @@
 #include "frequency.hpp"
+#include "amalgamated_budget.hpp"
 #include "interval_type.hpp"
 #include "phatbooks_tests_common.hpp"
 #include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
-#include <typeinfo>
-
+#include <cassert>
 #include <iostream>
+#include <typeinfo>
+#include <vector>
+
 using std::cout;
 using std::endl;
-
-
+using std::vector;
 using jewel::Decimal;
+
 
 namespace phatbooks
 {
@@ -321,114 +324,37 @@ TEST(frequency_test_convert_from_annual)
 
 TEST(frequency_test_convert_to_and_from_canonical)
 {
-	Frequency const freq_1_days(1, interval_type::days);
-	Frequency const freq_5_days(5, interval_type::days);
-	Frequency const freq_4732_days(4732, interval_type::days);
-	Frequency const freq_30681_days(30681, interval_type::days);
-	Frequency const freq_1_weeks(1, interval_type::weeks);
-	Frequency const freq_340_weeks(340, interval_type::weeks);
-	Frequency const freq_3_weeks(2, interval_type::weeks);
-	Frequency const freq_1_months(1, interval_type::months);
-	Frequency const freq_5_months(5, interval_type::months);
-	Frequency const freq_17_months(17, interval_type::months);
-	Frequency const freq_6049_months(6049, interval_type::months);
-	Frequency const freq_1_month_ends(1, interval_type::month_ends);
-	Frequency const freq_5_month_ends(5, interval_type::month_ends);
-
-	Decimal const dec_0("0");
-	Decimal const dec_1("1");
-	Decimal const dec_3("3");
-	Decimal const dec_2_50("2.50");
-	Decimal const dec_9_65("9.65");
-	Decimal const dec_n1("-1");
-	Decimal const dec_n9_61("-9.61");
-	Decimal const dec_0_0000015("0.0000015");
-	Decimal const dec_n6980097228_02("6980097228.02");
-	Decimal const dec_9_55555("9.555555");
-	Decimal const dec_20000000_01("20000000.01");
-	Decimal const dec_n0000005("-0.0000005");
-
-	// Testing that "round trip" journeys to and from the canonical
-	// Frequency, leave us back where we started. Note the actual
-	// value of the canonical Frequency is not publically
-	// exposed.
-
-	Decimal const res_a = convert_to_canonical(freq_1_days, dec_0);
-	Decimal const res_b = convert_from_canonical(freq_1_days, res_a);
-	CHECK_EQUAL(res_b, dec_0);
-
-	Decimal const res_c = convert_to_canonical(freq_1_days, dec_n0000005);
-	Decimal const res_d = convert_from_canonical(freq_1_days, res_c);
-	CHECK_EQUAL(res_d, dec_n0000005);
-
-	Decimal const res_e = convert_to_canonical(freq_5_month_ends, dec_1);
-	Decimal const res_f = convert_from_canonical(freq_5_month_ends, res_e);
-	CHECK_EQUAL(res_f, dec_1);
-
-	Decimal const res_g =
-		convert_to_canonical(freq_1_month_ends, dec_20000000_01);
-	Decimal const res_h = convert_from_canonical(freq_1_month_ends, res_g);
-	CHECK_EQUAL(res_h, dec_20000000_01);
-
-	Decimal const res_i = convert_to_canonical(freq_6049_months, dec_3);
-	// Rounding to prevent DecimalMultiplicationException on the way
-	// back. We would have to do this in application code.
-	Decimal const res_j = convert_from_canonical(freq_6049_months, res_i);
-	CHECK(res_j < dec_3 + Decimal(1, dec_3.places() + 2));
-	CHECK(res_j > dec_3 - Decimal(1, dec_3.places() + 2));
-	cout << res_j << endl;
-
-	Decimal const res_k = convert_to_canonical(freq_4732_days, dec_9_55555);
-	// Rounding to prevent DecimalMultiplicationException on the way
-	// back. We would have to do this in application code.
-	Decimal const res_kr = round(res_k, dec_9_55555.places() * 2);
-	Decimal const res_l = convert_from_canonical(freq_4732_days, res_kr);
-	CHECK(res_l < dec_9_55555 + Decimal(1, dec_9_55555.places() + 2));
-	CHECK(res_l > dec_9_55555 - Decimal(1, dec_9_55555.places() + 2));
-	cout << res_l << endl;
-	
-	Decimal const res_m = convert_to_canonical(freq_5_months, dec_2_50);
-	Decimal const res_n = convert_from_canonical(freq_5_months, res_m);
-	CHECK_EQUAL(res_n, dec_2_50);
-
-	Decimal const res_o =
-		convert_to_canonical(freq_30681_days, dec_n6980097228_02);
-	// Rounding to prevent DecimalMultiplicationException on the way
-	// back. We would have to do this in application code.
-	Decimal const res_or = round(res_o, dec_n6980097228_02.places() * 2);
-	Decimal const res_p = convert_from_canonical(freq_30681_days, res_or);
-	CHECK
-	(	res_p <
-		dec_n6980097228_02 + Decimal(1, dec_n6980097228_02.places() + 2)
-	);
-	CHECK
-	(	res_p >
-		dec_n6980097228_02 - Decimal(1, dec_n6980097228_02.places() + 2)
-	);
-
-	Decimal const res_q = convert_to_canonical(freq_1_weeks, dec_9_65);
-	Decimal const res_r = convert_from_canonical(freq_1_weeks, res_q);
-	CHECK_EQUAL(res_r, dec_9_65);
-
-	Decimal const res_s = convert_to_canonical(freq_340_weeks, dec_0_0000015);
-	Decimal const res_t = convert_from_canonical(freq_340_weeks, res_s);
-	CHECK_EQUAL(res_t, dec_0_0000015);
-
-	Decimal const res_u = convert_to_canonical(freq_3_weeks, dec_n1);
-	Decimal const res_v = convert_from_canonical(freq_3_weeks, res_u);
-	CHECK_EQUAL(res_v, dec_n1);
-
-	Decimal const res_w = convert_to_canonical(freq_1_months, dec_n9_61);
-	Decimal const res_x = convert_from_canonical(freq_1_months, res_w);
-	CHECK_EQUAL(res_x, dec_n9_61);
-
-	Decimal const res_y = convert_to_canonical(freq_17_months, dec_n9_61);
-	// Rounding to prevent DecimalMultiplicationException on the way
-	// back. We would have to do this in application code.
-	Decimal const res_yr = round(res_y, dec_n9_61.places() * 2);
-	Decimal const res_z = convert_from_canonical(freq_17_months, res_yr);
-	CHECK(res_z < dec_n9_61 + Decimal(1, dec_n9_61.places() + 2));
-	CHECK(res_z > dec_n9_61 - Decimal(1, dec_n9_61.places() + 2));
+	// We test only the Frequencies that are supported by
+	// AmalgamatedBudget. These are deliberately restricted,
+	// to avoid the possibility of overflow and precision loss on
+	// the "round trip" that we are testing here.
+	vector<Frequency> frequencies;
+	AmalgamatedBudget::generate_supported_frequencies(frequencies);
+	vector<Decimal> amounts;
+	amounts.push_back(Decimal("0"));
+	amounts.push_back(Decimal("1"));
+	amounts.push_back(Decimal("3"));
+	amounts.push_back(Decimal("2.50"));
+	amounts.push_back(Decimal("9.65"));
+	amounts.push_back(Decimal("-1"));
+	amounts.push_back(Decimal("-9.61"));
+	amounts.push_back(Decimal("0.0000015"));
+	amounts.push_back(Decimal("6980097228.02"));
+	amounts.push_back(Decimal("9.555555"));
+	amounts.push_back(Decimal("20000000.01"));
+	amounts.push_back(Decimal("-0.0000005"));
+	for (vector<Decimal>::size_type i = 0; i != amounts.size(); ++i)
+	{
+		for (vector<Frequency>::size_type j = 0; j != frequencies.size(); ++j)
+		{
+			Decimal const amount = amounts[i];
+			Frequency const freq = frequencies[j];
+			assert (AmalgamatedBudget::supports_frequency(freq));
+			Decimal const res_a = convert_to_canonical(freq, amount);
+			Decimal const res_b = convert_from_canonical(freq, res_a);
+			CHECK_EQUAL(res_b, amount);
+		}
+	}
 }
 
 

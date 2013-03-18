@@ -14,6 +14,13 @@ namespace phatbooks
 {
 
 
+// TODO Write a function finformat_to_wxstring(...). Use
+// wxWidgets' localization facilities to query the thousands
+// separator and decimal point for the current locale, and
+// reflect this in the implementation of this function. See
+// p. 443 of the wxWidgets book.
+
+
 /**
  * @returns decimal formatted as a std::string with parentheses to
  * indicate negative, if it's negative.

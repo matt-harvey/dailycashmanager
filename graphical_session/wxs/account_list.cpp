@@ -58,6 +58,7 @@ namespace
 			ret->SetItem
 			(	i,
 				1,
+				// TODO Replace this with finformat_wxstring
 				bstring_to_wx(finformat_bstring(it->friendly_balance()))
 			);
 		}

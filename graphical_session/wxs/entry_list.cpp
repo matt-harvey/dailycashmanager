@@ -55,16 +55,24 @@ namespace
 		)
 		{
 			OrdinaryJournal journal(it->journal<OrdinaryJournal>());
+
+			// TODO Ensure this is going to be localized. I should probably
+			// use wxWidgets localization facilities here.
 			string const s_date_string = lexical_cast<string>(journal.date());
 			BString const b_date_string = std8_to_bstring(s_date_string);
 			wxString const wx_date_string = bstring_to_wx(b_date_string);
+
 			wxString const account_string = bstring_to_wx
 			(	it->account().name()
 			);
 			wxString const comment_string = bstring_to_wx(it->comment());
+
+			// TODO I should use finformat_wxstring here instead. See
+			// note in finformat.hpp.
 			wxString const amount_string = bstring_to_wx
 			(	finformat_bstring(it->amount())
 			);
+
 			// TODO Should have a tick icon here rather than a "Y".
 			wxString const reconciled_string =
 				(it->is_reconciled()? "Y": "N");

@@ -52,31 +52,41 @@ frequency_description(Frequency const& frequency)
 	return ret;
 }
 
+
+
 namespace
 {
-	Decimal const
-	days_per_year()
+	Decimal const days_per_year()
 	{
 		static Decimal const ret("365.25");
 		return ret;
 	}
-	Decimal const
-	days_per_week()
+	Decimal const days_per_week()
 	{
 		static Decimal const ret("7");
 		return ret;
 	}
-	Decimal const
-	months_per_year()
+	Decimal const months_per_year()
 	{
 		static Decimal const ret("12");
 		return ret;
 	}
-	Decimal const days_per_canonical_interval()
+	Decimal const days_per_month()
 	{
 		static Decimal const ret =
-			days_per_year() * days_per_week() * months_per_year();
-		assert (round(ret, 0) == ret);
+			days_per_year() / months_per_year();
+		return ret;
+	}
+	bool is_whole(Decimal const& d)
+	{
+		return round(d, 0) == d;
+	}
+	Decimal const days_per_canonical_interval()
+	{
+		// A number with that's wholly divisible
+		// by various commonly used Frequencies expressed
+		// in numbers of days.
+		static Decimal const ret(654528, 0);
 		return ret;
 	}
 	Decimal const weeks_per_canonical_interval()

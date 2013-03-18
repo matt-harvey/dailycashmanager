@@ -65,6 +65,12 @@ JEWEL_DERIVED_EXCEPTION(UnbalancedJournalException, PhatbooksException);
  */
 JEWEL_DERIVED_EXCEPTION(TooManySessions, PhatbooksException);
 
+/**
+ * Exception to be thrown when a Frequency is not supported or valid
+ * in some context.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidFrequencyException, PhatbooksException);
+
 }  // namespace phatbooks
 
 #endif  // GUARD_phatbooks_exceptions_hpp
