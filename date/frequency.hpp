@@ -51,7 +51,8 @@ private:
  * @returns a Frequency to be used in Phatbooks as the canonical
  * Frequency for storing certain information. This Frequency is designed
  * to allow for conversion to and from a range of other Frequencies
- * while minimizing rounding loss on "round trip" conversions.
+ * while minimizing rounding loss and the chance of overflow on
+ * "round trip" conversions.
  */
 Frequency const canonical_frequency();
 
@@ -96,8 +97,6 @@ convert_from_annual
  * terms of canonical_frequency(), rather than in terms of p_frequency.
  * <em>C. f.</em> convert_to_annual.
  *
- * @todo Implementation.
- *
  * @todo Document circumstances under which this can throw.
  */
 jewel::Decimal
@@ -111,8 +110,6 @@ convert_to_canonical
  * given by p_frequency, assuming p_amount is in terms of
  * the canonical_frequency().
  * <em>C. f.</em> convert_from_annual.
- *
- * @todo Implementation.
  *
  * @todo Document circumstances under which this can throw.
  */
