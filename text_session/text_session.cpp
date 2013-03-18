@@ -308,6 +308,9 @@ namespace
 			cout << "Closing balance: " << finformat_std8(closing_balance)
 			     << endl;
 			break;
+		case account_type::pure_envelope:
+			// TODO Do we want some special message here?
+			// Fall through
 		case account_type::expense:
 			cout << "Amount spent in period on " << account.name()
 			     << ": " << finformat_std8(closing_balance - opening_balance)
@@ -318,7 +321,6 @@ namespace
 			     << ": " << finformat_std8(closing_balance - opening_balance)
 				 << endl;
 			break;
-		case account_type::pure_envelope:  // TODO Should this be here?
 		default:
 			assert (false);
 		}
