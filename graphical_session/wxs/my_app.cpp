@@ -5,6 +5,7 @@
 #include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/shared_ptr.hpp>
+#include <wx/snglinst.h>
 #include <wx/wx.h>
 
 
@@ -29,6 +30,16 @@ it you get into all kinds of problems.
 bool MyApp::OnInit()
 {
 	wxString const app_name = bstring_to_wx(Application::application_name());
+
+	// Prevent multiple instances run by the same user
+	wxString const app_name_plus_user_id =
+		app_name + wxString::Format("-%s", wxGetUserId().c_str());
+	m_checker = new wxSingleInstanceChecker(app_name_plus_user_id);
+	if (m_checker->IsAnotherRunning())
+	{
+		wxLogError(app_name + " is already running.");
+		return false;
+	}
 
 	// Note it breaks if we use scoped_ptr here. We don't need to
 	// memory-manage this explicitly anyway, as Destroy() will be called
@@ -99,6 +110,12 @@ MyApp::set_database_connection
 {
 	m_database_connection = p_database_connection;
 	return;
+}
+
+int MyApp::OnExit()
+{
+	delete m_checker;
+	return 0;
 }
 
 }  // namespace gui
