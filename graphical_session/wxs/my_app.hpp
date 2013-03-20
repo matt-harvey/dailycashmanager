@@ -26,7 +26,7 @@ public:
 	void set_database_connection
 	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 	);
-	wxLocale& locale();
+	wxLocale const& locale() const;
 
 private:
 	PhatbooksDatabaseConnection& database_connection()

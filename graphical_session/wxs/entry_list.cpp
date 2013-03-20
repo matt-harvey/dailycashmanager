@@ -42,7 +42,7 @@ namespace
 		);
 
 		// Insert columns
-		ret->InsertColumn(date_col_num, "Date", wxLIST_FORMAT_LEFT);
+		ret->InsertColumn(date_col_num, "Date", wxLIST_FORMAT_RIGHT);
 		ret->InsertColumn(account_col_num, "Account", wxLIST_FORMAT_LEFT);
 		ret->InsertColumn(comment_col_num, "Comment", wxLIST_FORMAT_LEFT);
 		ret->InsertColumn(amount_col_num, "Amount", wxLIST_FORMAT_RIGHT);

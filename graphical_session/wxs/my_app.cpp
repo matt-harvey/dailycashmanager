@@ -108,8 +108,8 @@ bool MyApp::OnInit()
 	return true;
 }
 
-wxLocale&
-MyApp::locale()
+wxLocale const&
+MyApp::locale() const
 {
 	return m_locale;
 }
