@@ -37,7 +37,10 @@ namespace
 		(	parent,
 			wxID_ANY,
 			wxDefaultPosition,
-			wxSize(parent->GetClientSize().GetX() / 2, parent->GetClientSize().GetY()),
+			wxSize
+			(	parent->GetClientSize().GetX() / 2,
+				parent->GetClientSize().GetY()
+			),
 			wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
 		);
 

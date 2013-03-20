@@ -19,6 +19,11 @@ using std::string;
 namespace phatbooks
 {
 
+
+typedef
+	PhatbooksDatabaseConnection::BudgetAttorney
+	BudgetAttorney;
+
 	
 void
 BudgetItemImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -204,6 +209,7 @@ BudgetItemImpl::process_saving_statement(SQLStatement& statement)
 void
 BudgetItemImpl::do_save_existing()
 {
+	BudgetAttorney::mark_as_stale(database_connection());
 	SQLStatement updater
 	(	database_connection(),
 		"update budget_items set "
@@ -222,6 +228,7 @@ BudgetItemImpl::do_save_existing()
 void
 BudgetItemImpl::do_save_new()
 {
+	BudgetAttorney::mark_as_stale(database_connection());
 	SQLStatement inserter
 	(	database_connection(),
 		"insert into budget_items"
@@ -255,5 +262,17 @@ BudgetItemImpl::do_ghostify()
 	return;
 }
 
+void
+BudgetItemImpl::do_remove()
+{
+	BudgetAttorney::mark_as_stale(database_connection());
+	string const statement_text =
+		"delete from " + primary_table_name() + " where " +
+		primary_key_name() = " = :p";
+	SQLStatement statement(database_connection(), statement_text);
+	statement.bind(":p", id());
+	statement.step_final();
+	return;
+}
 
 }  // namespace phatbooks

@@ -137,6 +137,7 @@ set (main_files
 	 budget/amalgamated_budget.cpp
 	 budget/budget_item.cpp
 	 budget/budget_item_impl.cpp
+	 budget/budget_item_reader.cpp
 	 column_creation/column_creation.cpp
 	 commodity/commodity.cpp
 	 commodity/commodity_impl.cpp

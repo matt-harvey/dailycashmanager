@@ -35,6 +35,7 @@ namespace phatbooks
 
 // Forward declarations
 class BalanceCache;
+class AmalgamatedBudget;
 class AccountImpl;
 class BudgetItemImpl;
 class CommodityImpl;
@@ -131,9 +132,30 @@ public:
 			sqloxx::Id p_account_id
 		);
 	};
-		 
-
 	friend class BalanceCacheAttorney;
+
+	/**
+	 * Class to provide restricted access to cache in which AmalgamatedBudget
+	 * is stored.
+	 */
+	class BudgetAttorney
+	{
+	public:
+		friend BudgetItemImpl;
+	private:
+		// Mark whole AmalgamatedBudget as stale
+		static void mark_as_stale
+		(	PhatbooksDatabaseConnection const& p_database_connection
+		);
+		// Retrieve the amalgamated budget for a given Account,
+		// expressed in terms of the standard Frequency of the
+		// AmalgamatedBudget for this PhatbooksDatabaseConnection.
+		static jewel::Decimal budget
+		(	PhatbooksDatabaseConnection const& p_database_connection,
+			sqloxx::Id p_account_id
+		);
+	};
+	friend class BudgetAttorney;
 
 	template<typename T>
 	sqloxx::IdentityMap<T, PhatbooksDatabaseConnection>& identity_map();
@@ -144,6 +166,7 @@ private:
 	void mark_setup_as_having_occurred();
 
 	BalanceCache* m_balance_cache;
+	AmalgamatedBudget* m_budget;
 
 	sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>*
 		m_account_map;

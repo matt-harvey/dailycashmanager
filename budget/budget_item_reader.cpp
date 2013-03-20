@@ -1,6 +1,6 @@
-#include "repeater_reader.hpp"
+#include "budget_item_reader.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "repeater.hpp"
+#include "budget_item.hpp"
 #include <sqloxx/reader.hpp>
 
 using sqloxx::Reader;
@@ -8,17 +8,15 @@ using sqloxx::Reader;
 namespace phatbooks
 {
 
-RepeaterReader::RepeaterReader
+BudgetItemReader::BudgetItemReader
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
-	Reader<Repeater, PhatbooksDatabaseConnection>
+	Reader<BudgetItem, PhatbooksDatabaseConnection>
 	(	p_database_connection,
-		"select repeater_id from repeaters"
+		"select budget_item_id from budget_items"
 	)
 {
 }
-
-
 
 
 }  // namespace phatbooks

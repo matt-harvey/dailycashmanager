@@ -1,12 +1,13 @@
 #ifndef GUARD_amalgamated_budget_hpp
 #define GUARD_amalgamated_budget_hpp
 
-#include "account.hpp"
+#include "account_impl.hpp"
+#include "interval_type.hpp"
 #include "frequency.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <boost/unordered_map.hpp>
-#include <cassert>
+#include <jewel/decimal.hpp>
 #include <vector>
 
 
@@ -25,18 +26,23 @@ class AmalgamatedBudget
 {
 public:
 
+	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+
+	AmalgamatedBudget(PhatbooksDatabaseConnection& p_database_connection);
+
+	Frequency frequency() const;
+	void set_frequency(Frequency const& p_frequency);
+
 	/**
-	 * Create an AmalgamatedBudget by inspecting all the
-	 * BudgetItems in a given range, and amalgamating them
-	 * into a single recurring budget with a given
-	 * Frequency.
+	 * @returns the amalgamated budget for the given Account, at the
+	 * Frequency of the AmalgamatedBudget.
 	 */
-	template <typename BudgetItemIter>
-	AmalgamatedBudget
-	(	Frequency const& p_frequency,
-		BudgetItemIter const& beg,
-		BudgetItemIter const& end
-	);
+	jewel::Decimal budget(AccountImpl::Id p_account_id);
+
+	/**
+	 * Mark the AmalgamatedBudget as a whole as stale.
+	 */
+	void mark_as_stale();
 
 	/**
 	 * Populates vec with all and only the Frequencies that are supported
@@ -50,65 +56,19 @@ public:
 
 private:
 
+	typedef boost::unordered_map<AccountImpl::Id, jewel::Decimal> Map;
+	void refresh();
+
+	PhatbooksDatabaseConnection& m_database_connection;
 	Frequency m_frequency;
-	typedef boost::unordered_map<Account::Id, jewel::Decimal> Map;
 	boost::scoped_ptr<Map> m_map;
+	bool m_map_is_stale;
 
 };
 
 
-template
-<typename BudgetItemIter>
-AmalgamatedBudget::AmalgamatedBudget
-(	Frequency const& p_frequency,
-	BudgetItemIter const& beg,
-	BudgetItemIter const& end
-):
-	m_frequency(p_frequency),
-	m_map(new Map)
-{
-	// First we calculate budgets amalgamated on the basis of
-	// the canonical frequency
-	assert (m_map->empty());
-	BudgetItemIter it = beg;
-	for ( ; it != end; ++it)
-	{
-		Frequency const raw_frequency = it->frequency();
-		if (!AmalgamatedBudget::supports_frequency(raw_frequency))
-		{
-			throw InvalidFrequencyException
-			(	"Frequency not supported by AmalgamatedBudget."
-			);
-		}
-		Account::Id const account_id = it->account().id();
-		jewel::Decimal const raw_amount = it->amount();
-		jewel::Decimal const canonical_amount = convert_to_canonical
-		(	raw_frequency,
-			raw_amount
-		);
-		Map::iterator tmit = m_map->find(account_id);
-		if (tmit == m_map->end()) (*m_map)[account_id] = canonical_amount;
-		else tmit->second += canonical_amount;
-	}
-	assert (m_map->empty());
-#	ifdef DEBUG
-		for (BudgetItemIter jt = beg; jt != end; ++jt)
-		{
-			assert (m_map->find(jt->account().id()) != m_map->end());
-		}
-#	endif
-	// Now convert to desired frequency
-	for 
-	(	Map::iterator mit = m_map->begin(), mend = m_map->end();
-		mit != mend;
-		++mit
-	)
-	{
-		mit->second = convert_from_canonical(m_frequency, mit->second);
-	}
-}
-		
-	
+
+
 
 
 }  // namespace phatbooks

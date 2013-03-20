@@ -10,6 +10,7 @@
  */
 
 #include "account_impl.hpp"
+#include "amalgamated_budget.hpp"
 #include "b_string.hpp"
 #include "budget_item.hpp"
 #include "budget_item_impl.hpp"
@@ -83,6 +84,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 {
 	typedef PhatbooksDatabaseConnection PDC;
 	m_balance_cache = new BalanceCache(*this);
+	m_budget = new AmalgamatedBudget(*this);
 	m_account_map = new IdentityMap<AccountImpl, PDC>(*this);
 	m_budget_item_map = new IdentityMap<BudgetItemImpl, PDC>(*this);
 	m_commodity_map = new IdentityMap<CommodityImpl, PDC>(*this);
@@ -112,6 +114,9 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 
 	delete m_balance_cache;
 	m_balance_cache = 0;
+
+	delete m_budget;
+	m_budget = 0;
 
 	// Must be deleted before m_entry_map and before m_repeater_map
 	delete m_draft_journal_map;
@@ -156,6 +161,7 @@ PhatbooksDatabaseConnection::setup()
 	Commodity::setup_tables(*this);
 	Account::setup_tables(*this);
 	BudgetItem::setup_tables(*this);
+	AmalgamatedBudget::setup_tables(*this);
 	ProtoJournal::setup_tables(*this);
 	DraftJournal::setup_tables(*this);
 	OrdinaryJournal::setup_tables(*this);
@@ -278,6 +284,33 @@ BalanceCacheAttorney::technical_balance
 	return p_database_connection.m_balance_cache->technical_balance
 	(	p_account_id
 	);
+}
+
+
+
+// BudgetAttorney
+
+typedef
+	PhatbooksDatabaseConnection::BudgetAttorney
+	BudgetAttorney;
+
+void
+BudgetAttorney::mark_as_stale
+(	PhatbooksDatabaseConnection const& p_database_connection
+)
+{
+	p_database_connection.m_budget->mark_as_stale();
+	return;
+}
+
+
+Decimal
+BudgetAttorney::budget
+(	PhatbooksDatabaseConnection const& p_database_connection,
+	AccountImpl::Id p_account_id
+)
+{
+	return p_database_connection.m_budget->budget(p_account_id);
 }
 
 
