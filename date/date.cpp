@@ -16,6 +16,9 @@
 
 #include "date.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <wx/datetime.h>
+#include <wx/intl.h>
+#include <wx/string.h>
 #include <cassert>
 #include <limits>
 
@@ -110,6 +113,33 @@ boost_date_from_julian_int(DateRep julian_int)
 }
 
 
+namespace
+{
+	wxDateTime boost_to_wx_date(boost::gregorian::date const& p_date)
+	{
+		assert (static_cast<int>(wxDateTime::Jan) == 0);
+		assert (static_cast<int>(wxDateTime::Dec) == 11);
+		return wxDateTime
+		(	p_date.day(),
+			static_cast<wxDateTime::Month>(p_date.month() - 1),
+			p_date.year(),
+			0,
+			0,
+			0,
+			0
+		);
+	}
+
+
+}  // end anonymous namespace
+
+
+wxString
+date_format_wx(boost::gregorian::date const& p_date)
+{
+	wxDateTime const wxdt = boost_to_wx_date(p_date);
+	return wxdt.FormatDate();
+}
 
 
 }  // namespace phatbooks

@@ -15,6 +15,9 @@
 
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <wx/datetime.h>
+#include <wx/intl.h>
+#include <wx/string.h>
 
 namespace phatbooks
 {
@@ -84,6 +87,13 @@ julian_int(boost::gregorian::date p_date);
  */
 boost::gregorian::date
 boost_date_from_julian_int(DateRep julian_int);
+
+/**
+ * @returns a wxString representation of the p_date, formatted according
+ * to the current wxLocale.
+ */
+wxString
+date_format_wx(boost::gregorian::date const& p_date);
 
 	
 }  // namespace phatbooks

@@ -84,15 +84,6 @@ using TCLAP::UnlabeledValueArg;
 // SQL summing rather than summing jewel::Decimal in BalanceCache::refresh;
 // and I'm not sure that throws at all if unsafe.)
 
-// TODO Internationalization of dates. wxWidgets provides
-// facilities to achieve this, which we can use for the GUI code and
-// may also want to use for the non-GUI code (although internationalizing
-// the latter is a low priority). It doesn't look that hard. In due course
-// we may also want to provide message catalogues containing translations
-// of messages into different languages, but this is a lower priority
-// than dates and numbers. (Note internationalization of monetary numbers is
-// already taken care of with finformat_wx(...).)
-
 
 int main(int argc, char** argv)
 {

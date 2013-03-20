@@ -1,6 +1,7 @@
 #include "entry_list.hpp"
-#include "b_string.hpp"
 #include "account.hpp"
+#include "b_string.hpp"
+#include "date.hpp"
 #include "entry.hpp"
 #include "entry_reader.hpp"
 #include "my_app.hpp"
@@ -60,11 +61,7 @@ namespace
 		{
 			OrdinaryJournal journal(it->journal<OrdinaryJournal>());
 
-			// TODO Ensure this is going to be localized. I should probably
-			// use wxWidgets localization facilities here.
-			string const s_date_string = lexical_cast<string>(journal.date());
-			BString const b_date_string = std8_to_bstring(s_date_string);
-			wxString const wx_date_string = bstring_to_wx(b_date_string);
+			wxString const wx_date_string = date_format_wx(journal.date());
 
 			wxString const account_string = bstring_to_wx
 			(	it->account().name()
