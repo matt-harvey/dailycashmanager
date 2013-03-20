@@ -2,6 +2,7 @@
 #define GUARD_finformat_hpp
 
 #include "b_string.hpp"
+#include <wx/intl.h>
 #include <string>
 
 namespace jewel
@@ -12,13 +13,6 @@ namespace jewel
 
 namespace phatbooks
 {
-
-
-// TODO Write a function finformat_to_wxstring(...). Use
-// wxWidgets' localization facilities to query the thousands
-// separator and decimal point for the current locale, and
-// reflect this in the implementation of this function. See
-// p. 443 of the wxWidgets book.
 
 
 /**
@@ -43,6 +37,17 @@ std::string finformat_std8(jewel::Decimal const& decimal);
  */
 BString finformat_bstring(jewel::Decimal const& decimal);
 
+/**
+ * @returns decimal formatted as a wxString, with parentheses
+ * to indicate negative, and with thousands separator and
+ * decimal point characters drawn from the wxLocale passed to
+ * the second parameter, in relation to the wxLocaleCategory
+ * wxLOCALE_CAT_MONEY.
+ *
+ * @todo Testing.
+ */
+wxString finformat_wx(jewel::Decimal const& decimal, wxLocale const& loc);
+	
 
 
 

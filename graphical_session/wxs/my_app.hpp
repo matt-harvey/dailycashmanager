@@ -4,6 +4,7 @@
 #include "my_frame.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/shared_ptr.hpp>
+#include <wx/intl.h>
 #include <wx/snglinst.h>
 #include <wx/wx.h>
 
@@ -25,6 +26,7 @@ public:
 	void set_database_connection
 	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 	);
+	wxLocale& locale();
 
 private:
 	PhatbooksDatabaseConnection& database_connection()
@@ -33,6 +35,7 @@ private:
 	}
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	wxSingleInstanceChecker* m_checker;
+	wxLocale m_locale;
 };
 
 // Implements MyApp& wxGetApp()

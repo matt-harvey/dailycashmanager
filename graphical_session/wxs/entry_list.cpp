@@ -3,6 +3,7 @@
 #include "account.hpp"
 #include "entry.hpp"
 #include "entry_reader.hpp"
+#include "my_app.hpp"
 #include "ordinary_journal.hpp"
 #include <boost/lexical_cast.hpp>
 #include <string>
@@ -46,6 +47,9 @@ namespace
 		ret->InsertColumn(amount_col_num, "Amount", wxLIST_FORMAT_RIGHT);
 		ret->InsertColumn(reconciled_col_num, "R", wxLIST_FORMAT_LEFT);
 
+		// WARNING This sucks
+		MyApp* app = dynamic_cast<MyApp*>(wxTheApp);
+
 		EntryReader::size_type i = 0;
 		for
 		(	EntryReader::const_iterator it = reader.begin(),
@@ -67,11 +71,8 @@ namespace
 			);
 			wxString const comment_string = bstring_to_wx(it->comment());
 
-			// TODO I should use finformat_wxstring here instead. See
-			// note in finformat.hpp.
-			wxString const amount_string = bstring_to_wx
-			(	finformat_bstring(it->amount())
-			);
+			// WARNING This sucks
+			wxString const amount_string = finformat_wx(it->amount(), app->locale());
 
 			// TODO Should have a tick icon here rather than a "Y".
 			wxString const reconciled_string =

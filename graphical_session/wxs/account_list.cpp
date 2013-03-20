@@ -2,10 +2,13 @@
 #include "account_reader.hpp"
 #include "b_string.hpp"
 #include "finformat.hpp"
+#include "my_app.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <vector>
+#include <wx/intl.h>
 #include <wx/listctrl.h>
 #include <wx/string.h>
+#include <wx/wx.h>
 
 using std::vector;
 
@@ -39,7 +42,21 @@ namespace
 		// Insert balance column
 		ret->InsertColumn(1, "Balance", wxLIST_FORMAT_RIGHT);
 
+		// WARNING hack. We should get this locale from MyApp not
+		// create it here.
+		/*
+		wxLocale loc;
+		if (!loc.Init(wxLANGUAGE_DEFAULT, wxLOCALE_LOAD_DEFAULT))
+		{
+			wxLogError("Could not initialize locale.");
+		}
+		*/
+
 		AccountReader::size_type i = 0;
+
+		// WARNING This sucks
+		MyApp* app = dynamic_cast<MyApp*>(wxTheApp);
+
 		for
 		(	AccountReader::const_iterator it = reader.begin(),
 				end = reader.end();
@@ -58,8 +75,7 @@ namespace
 			ret->SetItem
 			(	i,
 				1,
-				// TODO Replace this with finformat_wxstring
-				bstring_to_wx(finformat_bstring(it->friendly_balance()))
+				finformat_wx(it->friendly_balance(), app->locale())  // WARNING This sucks
 			);
 		}
 		ret->SetColumnWidth(0, wxLIST_AUTOSIZE);

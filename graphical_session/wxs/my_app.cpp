@@ -40,6 +40,12 @@ bool MyApp::OnInit()
 		wxLogError(app_name + " is already running.");
 		return false;
 	}
+	// Initialize locale
+	if (!m_locale.Init(wxLANGUAGE_DEFAULT, wxLOCALE_LOAD_DEFAULT))
+	{
+		wxLogError("Could not initialize locale.");
+		return false;
+	}
 
 	// Note it breaks if we use scoped_ptr here. We don't need to
 	// memory-manage this explicitly anyway, as Destroy() will be called
@@ -102,6 +108,11 @@ bool MyApp::OnInit()
 	return true;
 }
 
+wxLocale&
+MyApp::locale()
+{
+	return m_locale;
+}
 
 void
 MyApp::set_database_connection
