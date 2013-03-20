@@ -52,6 +52,10 @@ typedef
 	PhatbooksDatabaseConnection::BalanceCacheAttorney
 	BalanceCacheAttorney;
 
+typedef
+	PhatbooksDatabaseConnection::BudgetAttorney
+	BudgetAttorney;
+
 
 
 void
@@ -356,6 +360,7 @@ void
 AccountImpl::do_save_existing()
 {
 	BalanceCacheAttorney::mark_as_stale(database_connection());
+	BudgetAttorney::mark_as_stale(database_connection());
 	SQLStatement updater
 	(	database_connection(),
 		"update accounts set "
@@ -374,6 +379,7 @@ void
 AccountImpl::do_save_new()
 {
 	BalanceCacheAttorney::mark_as_stale(database_connection());
+	BudgetAttorney::mark_as_stale(database_connection());
 	SQLStatement inserter
 	(	database_connection(),
 		"insert into accounts(account_type_id, name, description, "
@@ -388,6 +394,7 @@ void
 AccountImpl::do_remove()
 {
 	BalanceCacheAttorney::mark_as_stale(database_connection());
+	BudgetAttorney::mark_as_stale(database_connection());
 	string const statement_text =
 		"delete from " + primary_table_name() + " where " +
 		primary_key_name() + " = :p";
