@@ -87,17 +87,16 @@ AmalgamatedBudget::AmalgamatedBudget
 			raw_amount
 		);
 		Map::iterator tmit = m_map->find(account_id);
-		if (tmit == m_map->end())
-		{
-			(*m_map)[account_id] =
-				jewel::Decimal(0, canonical_amount.places());
-		}
-		else
-		{
-			tmit->second += canonical_amount;
-		}
+		if (tmit == m_map->end()) (*m_map)[account_id] = canonical_amount;
+		else tmit->second += canonical_amount;
 	}
 	assert (m_map->empty());
+#	ifdef DEBUG
+		for (BudgetItemIter jt = beg; jt != end; ++jt)
+		{
+			assert (m_map->find(jt->account().id()) != m_map->end());
+		}
+#	endif
 	// Now convert to desired frequency
 	for 
 	(	Map::iterator mit = m_map->begin(), mend = m_map->end();
