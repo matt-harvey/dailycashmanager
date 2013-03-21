@@ -245,10 +245,20 @@ AmalgamatedBudget::refresh_instrument()
 	// TODO High priority
 	// Here we need to regenerate the instrument on the basis
 	// of the AmalgamatedBudget.
-	// ....
-	//
-	//
-	//
+	// There are non-existing functions here... this is so
+	// far just a sketch.
+	
+	DraftJournal const fresh_journal(m_database_connection);
+
+	// We want to retain the repeater characteristics, comment and
+	// name of exising m_instrument...
+	fresh_journal.mimic(m_instrument);
+	// ... but we want to recreate all the Entries from scratch
+	fresh_journal.clear_entries();
+	imbue_entries(fresh_journal);
+	// Now do mimic back into m_instrument (make sure mimic
+	// is atomic... see other existing "mimic" functions for how).
+	m_instrument.mimic(fresh_journal);
 	return;
 }
 
