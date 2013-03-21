@@ -196,6 +196,7 @@ AmalgamatedBudget::refresh()
 	}
 	using std::swap;
 	swap(m_map, map_elect);
+	m_map_is_stale = false;
 	return;
 }
 		
