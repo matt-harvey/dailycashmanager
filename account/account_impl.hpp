@@ -123,6 +123,8 @@ public:
 	jewel::Decimal technical_balance();
 
 	jewel::Decimal friendly_balance();
+	
+	jewel::Decimal budget();
 
 	void set_account_type(AccountType p_account_type);
 

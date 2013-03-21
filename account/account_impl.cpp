@@ -273,7 +273,15 @@ AccountImpl::friendly_balance()
 	}
 }
 	
-	
+Decimal
+AccountImpl::budget()
+{
+	load();
+	return BudgetAttorney::budget
+	(	database_connection(),
+		id()
+	);
+}
 
 void
 AccountImpl::set_account_type(AccountType p_account_type)

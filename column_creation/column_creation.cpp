@@ -175,6 +175,16 @@ namespace
 		accumulator += ret;
 		return ret;
 	}
+	Decimal account_col_aux_budget
+	(	Account const& account,
+		Decimal& accumulator
+	)
+	{
+		Decimal const ret = account.budget();
+		accumulator += ret;
+		return ret;
+	}
+
 
 }  // end anonymous namespace
 		
@@ -391,7 +401,21 @@ create_account_accumulating_friendly_balance_column()
 	);
 }
 
-
+AccumulatingColumn<Account, Decimal>*
+create_account_budget_column
+(	PhatbooksDatabaseConnection const& p_database_connection
+)
+{
+	Frequency const frequency = p_database_connection.budget_frequency();
+	assert (frequency.num_steps() == 1);
+	return new AccumulatingColumn<Account, Decimal>
+	(	account_col_aux_budget,
+		Decimal(0, 0),
+		"Budget/" + bstring_to_std8(phrase(frequency.step_type(), false)),
+		alignment::right,
+		finformat_std8
+	);
+}
 
 
 }  // namespace column_creation

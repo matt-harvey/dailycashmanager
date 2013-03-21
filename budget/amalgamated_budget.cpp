@@ -51,6 +51,7 @@ AmalgamatedBudget::AmalgamatedBudget
 Frequency
 AmalgamatedBudget::frequency() const
 {
+	assert (m_frequency.num_steps() == 1);
 	return m_frequency;
 }
 

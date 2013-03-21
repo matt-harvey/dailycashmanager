@@ -12,6 +12,7 @@
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/sqloxx_exceptions.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <algorithm>
 #include <cassert>
@@ -25,6 +26,7 @@ using jewel::Decimal;
 using jewel::clear;
 using jewel::value;
 using sqloxx::SQLStatement;
+using sqloxx::ValueTypeException;
 using std::vector;
 
 // For debugging only
@@ -255,17 +257,32 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 			"select sum(amount) from entries join ordinary_journal_detail "
 			"using(journal_id) where account_id = :account_id"
 		);
+		JEWEL_DEBUG_LOG << "Refreshing for account_id = " << account_id << endl;
 		statement.bind(":account_id", account_id);
+		JEWEL_DEBUG_LOG << "Statement bound." << endl;
 		if (statement.step())
 		{
-			(*m_map)[account_id] = Decimal
-			(	statement.extract<Decimal::int_type>(0),
-				account.commodity().precision()
-			);
+			JEWEL_DEBUG_LOG << "In result row." << endl;
+			// TODO Catching exception here is a crappy way of telling whether
+			// there are no entries to sum
+			try
+			{
+				(*m_map)[account_id] = Decimal
+				(	statement.extract<Decimal::int_type>(0),
+					account.commodity().precision()
+				);
+			}
+			catch (ValueTypeException&)
+			{
+				// There are no entries to sum
+				(*m_map)[account_id] = Decimal(0, account.commodity().precision());
+			}
 			statement.step_final();
 		}
 		else
 		{
+			assert (false);  // There is always a result row even if it has null.
+			JEWEL_DEBUG_LOG << "No result row." << endl;
 			(*m_map)[account_id] =
 				Decimal(0, account.commodity().precision());
 		}

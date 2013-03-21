@@ -14,6 +14,7 @@
 
 #include "account_type.hpp"
 #include "b_string.hpp"
+#include "frequency.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -134,6 +135,9 @@ public:
 	};
 	friend class BalanceCacheAttorney;
 
+	// TODO Move implementation into .cpp file
+	Frequency budget_frequency() const;
+
 	/**
 	 * Class to provide restricted access to cache in which AmalgamatedBudget
 	 * is stored.
@@ -141,7 +145,9 @@ public:
 	class BudgetAttorney
 	{
 	public:
+		friend AccountImpl;
 		friend BudgetItemImpl;
+		friend PhatbooksDatabaseConnection;
 	private:
 		// Mark whole AmalgamatedBudget as stale
 		static void mark_as_stale

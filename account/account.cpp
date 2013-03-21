@@ -167,6 +167,12 @@ Account::technical_balance() const
 }
 
 Decimal
+Account::budget() const
+{
+	return impl().budget();
+}
+
+Decimal
 Account::friendly_balance() const
 {
 	return impl().friendly_balance();

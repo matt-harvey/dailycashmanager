@@ -175,7 +175,18 @@ create_account_friendly_balance_column();
 consolixx::AccumulatingColumn<Account, jewel::Decimal>*
 create_account_accumulating_friendly_balance_column();
 
-
+/**
+ * Creates a column showing the amalgamated (recurrring) budget
+ * for each Account, with the total of all the amalgamated
+ * budgets at the foot of the Column. The database
+ * connection must be passed to the second paramter so we
+ * can get the frequency of the AmalgamatedBudget, which
+ * affects the wording of the header.
+ */
+consolixx::AccumulatingColumn<Account, jewel::Decimal>*
+create_account_budget_column
+(	PhatbooksDatabaseConnection const& p_database_connection
+);
 
 
 }  // namespace column_creation

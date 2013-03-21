@@ -244,6 +244,12 @@ PhatbooksDatabaseConnection::setup_has_occurred()
 }
 
 
+Frequency
+PhatbooksDatabaseConnection::budget_frequency() const
+{
+	return m_budget->frequency();
+}
+
 
 // BalanceCacheAttorney
 

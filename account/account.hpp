@@ -172,6 +172,15 @@ public:
 	 */
 	jewel::Decimal friendly_balance() const;
 
+	/**
+	 * @returns the amount of the recurring budget for
+	 * the account, in terms of the standard
+	 * Frequency for database_connection().
+	 * E.g. if the standard Frequency is daily, then
+	 * then a budget() of 100.00 implies 100.00/day.
+	 */
+	jewel::Decimal budget() const;
+
 	void set_account_type(AccountType p_account_type);
 
 	void set_name(BString const& p_name);

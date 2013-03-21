@@ -30,7 +30,13 @@ public:
 
 	AmalgamatedBudget(PhatbooksDatabaseConnection& p_database_connection);
 
+	/**
+	 * @returns the Frequency of the AmalgamatedBudget. This
+	 * is guaranteed to be always such that
+	 * num_steps() == 1.
+	 */
 	Frequency frequency() const;
+
 	void set_frequency(Frequency const& p_frequency);
 
 	/**

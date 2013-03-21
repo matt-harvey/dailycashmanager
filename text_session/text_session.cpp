@@ -257,12 +257,12 @@ namespace
 		}
 	}
 
-	template <typename AccountReaderT>
-	void print_account_reader
-	(	AccountReaderT& p_reader,
+	void print_bs_account_reader
+	(	BalanceSheetAccountReader const& p_reader,
 		bool show_total = true
 	)
 	{
+		JEWEL_DEBUG_LOG << "Printing BalanceSheetAccountReader." << endl;
 		Table<Account> table;
 		typedef Table<Account>::ColumnPtr ColumnPtr;
 		namespace col = column_creation;
@@ -282,6 +282,43 @@ namespace
 			);
 			table.push_column(friendly_balance_column);
 		}
+		table.populate(p_reader.begin(), p_reader.end());
+		cout << table;
+		return;
+	}
+
+	void print_pl_account_reader
+	(	PLAccountReader const& p_reader,
+		PhatbooksDatabaseConnection const& p_database_connection,
+		bool show_total = true
+	)
+	{
+		// TODO Factor out code common to here and print_bs_account_reader
+		JEWEL_DEBUG_LOG << "Printing PLAccountReader." << endl;
+		Table<Account> table;
+		typedef Table<Account>::ColumnPtr ColumnPtr;
+		namespace col = column_creation;
+		ColumnPtr const name_column(col::create_account_name_column());
+		name_column->set_header("Category");
+		table.push_column(name_column);
+		if (show_total)
+		{
+			ColumnPtr const accumulating_friendly_balance_column
+			(	col::create_account_accumulating_friendly_balance_column()
+			);
+			table.push_column(accumulating_friendly_balance_column);
+		}
+		else
+		{
+			ColumnPtr const friendly_balance_column
+			(	col::create_account_friendly_balance_column()
+			);
+			table.push_column(friendly_balance_column);
+		}
+		ColumnPtr const budget_column
+		(	col::create_account_budget_column(p_database_connection)
+		);
+		table.push_column(budget_column);
 		table.populate(p_reader.begin(), p_reader.end());
 		cout << table;
 		return;
@@ -2833,7 +2870,7 @@ void TextSession::display_balance_sheet()
 	cout.imbue(locale(""));
 	cout << endl << endl;
 	cout << "BALANCE SHEET: " << endl << endl;
-	print_account_reader(bs_reader);
+	print_bs_account_reader(bs_reader);
 	cout.imbue(orig_loc);
 	return;
 }
@@ -2846,7 +2883,7 @@ void TextSession::display_envelopes()
 	cout.imbue(locale(""));
 	cout << endl << endl;
 	cout << "ENVELOPES: " << endl << endl;
-	print_account_reader(pl_reader);
+	print_pl_account_reader(pl_reader, database_connection());
 	cout.imbue(orig_loc);
 	return;
 }
