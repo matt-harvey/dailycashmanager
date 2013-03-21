@@ -16,6 +16,13 @@ using sqloxx::IdentityMap;
 using sqloxx::SQLStatement;
 using std::string;
 
+
+// For debugging
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
+// End debugging stuff
+
 namespace phatbooks
 {
 
@@ -28,6 +35,7 @@ typedef
 void
 BudgetItemImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
+	JEWEL_DEBUG_LOG << "Setting up BudgetItemImpl tables." << endl;
 	dbc.execute_sql
 	(	"create table budget_items"
 		"("

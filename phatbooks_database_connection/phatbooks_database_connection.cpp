@@ -160,12 +160,12 @@ PhatbooksDatabaseConnection::setup()
 	setup_boolean_table();
 	Commodity::setup_tables(*this);
 	Account::setup_tables(*this);
-	BudgetItem::setup_tables(*this);
-	AmalgamatedBudget::setup_tables(*this);
 	ProtoJournal::setup_tables(*this);
 	DraftJournal::setup_tables(*this);
 	OrdinaryJournal::setup_tables(*this);
 	Repeater::setup_tables(*this);
+	BudgetItem::setup_tables(*this);
+	AmalgamatedBudget::setup_tables(*this);
 	Entry::setup_tables(*this);
 	BalanceCache::setup_tables(*this);
 	mark_setup_as_having_occurred();

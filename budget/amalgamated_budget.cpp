@@ -2,17 +2,20 @@
 #include "account_impl.hpp"
 #include "account_reader.hpp"
 #include "budget_item_reader.hpp"
+#include "draft_journal.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <algorithm>
 #include <cassert>
 #include <vector>
 
 using boost::scoped_ptr;
 using jewel::Decimal;
+using sqloxx::SQLStatement;
 using std::vector;
 
 // For debugging only
@@ -32,9 +35,26 @@ namespace phatbooks
 void
 AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
+	JEWEL_DEBUG_LOG << "Setting up AmalgamatedBudget tables." << endl;
 	dbc.execute_sql
 	(	"create index budget_item_account_index on budget_items(account_id)"
 	);
+	dbc.execute_sql
+	(	"create table amalgamated_budget_data(journal_id integer primary key "
+		"references draft_journal_detail)"
+	);
+	DraftJournal instrument(dbc);
+	instrument.set_name("AMALGAMATED BUDGET INSTRUMENT");
+	instrument.set_whether_actual(false);
+	instrument.set_comment("");
+	instrument.save();
+	SQLStatement statement
+	(	dbc,
+		"insert into amalgamated_budget_data(journal_id) values(:p)"
+	);
+	statement.bind(":p", instrument.id());
+	statement.step_final();
+	JEWEL_DEBUG_LOG << "AmalgamatedBudget tables have been set up." << endl;
 	return;
 }
 
@@ -44,9 +64,18 @@ AmalgamatedBudget::AmalgamatedBudget
 	m_database_connection(p_database_connection),
 	m_frequency(1, interval_type::days),
 	m_map(new Map),
-	m_map_is_stale(true)
+	m_map_is_stale(true),
+	m_instrument(0)
 {
 }
+
+
+AmalgamatedBudget::~AmalgamatedBudget()
+{
+	delete m_instrument;
+	m_instrument = 0;
+}
+
 
 Frequency
 AmalgamatedBudget::frequency() const
@@ -84,6 +113,8 @@ void
 AmalgamatedBudget::mark_as_stale()
 {
 	m_map_is_stale = true;
+	// TODO When a BudgetItem is created, changed or etc.., we need a way
+	// to reflect this \e immediately in the "instrument" DraftJournal.
 }
 
 void
@@ -194,13 +225,51 @@ AmalgamatedBudget::refresh()
 	{
 		mit->second = convert_from_canonical(m_frequency, mit->second);
 	}
+	load_instrument();
+	refresh_instrument();
 	using std::swap;
 	swap(m_map, map_elect);
 	m_map_is_stale = false;
 	return;
 }
-		
-	
+
+
+void
+AmalgamatedBudget::refresh_instrument()
+{
+	// TODO High priority
+	// Here we need to regenerate the instrument on the basis
+	// of the AmalgamatedBudget.
+	// ....
+	//
+	//
+	//
+	return;
+}
+
+
+void
+AmalgamatedBudget::load_instrument()
+{
+	// Set the instrument (the DraftJournal that carries out
+	// the AmalgamatedBudget)
+	SQLStatement statement
+	(	m_database_connection,
+		"select journal_id from amalgamated_budget_data"
+	);
+	statement.step();
+	if (m_instrument)
+	{
+		delete m_instrument;
+		m_instrument = 0;
+	}
+	m_instrument = new DraftJournal
+	(	m_database_connection,
+		statement.extract<DraftJournal::Id>(0)
+	);
+	statement.step_final();
+	return;
+}
 
 
 }  // namespace phatbooks

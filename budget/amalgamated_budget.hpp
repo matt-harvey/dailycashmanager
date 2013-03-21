@@ -2,9 +2,11 @@
 #define GUARD_amalgamated_budget_hpp
 
 #include "account_impl.hpp"
+#include "draft_journal.hpp"
 #include "interval_type.hpp"
 #include "frequency.hpp"
 #include "phatbooks_exceptions.hpp"
+#include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <jewel/decimal.hpp>
@@ -22,13 +24,16 @@ namespace phatbooks
  * per Account, and has a single frequency shared by all
  * the items in the AmalgamatedBudget.
  */
-class AmalgamatedBudget
+class AmalgamatedBudget:
+	boost::noncopyable
 {
 public:
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	AmalgamatedBudget(PhatbooksDatabaseConnection& p_database_connection);
+
+	~AmalgamatedBudget();
 
 	/**
 	 * @returns the Frequency of the AmalgamatedBudget. This
@@ -64,11 +69,16 @@ private:
 
 	typedef boost::unordered_map<AccountImpl::Id, jewel::Decimal> Map;
 	void refresh();
+	void refresh_instrument();
+	void load_instrument();
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	Frequency m_frequency;
 	boost::scoped_ptr<Map> m_map;
 	bool m_map_is_stale;
+
+	// The DraftJournal that "effects" the AmalgamatedBudget
+	DraftJournal* m_instrument; 
 
 };
 
