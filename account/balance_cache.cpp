@@ -1,6 +1,5 @@
 #include "account.hpp"
 #include "account_impl.hpp"
-#include "account_reader.hpp"
 #include "entry.hpp"
 #include "balance_cache.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -8,6 +7,7 @@
 #include "entry/entry_reader.hpp"
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/static_assert.hpp>
 #include <boost/unordered_map.hpp>
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/decimal.hpp>
@@ -35,13 +35,13 @@ using std::vector;
 using std::endl;
 // End debugging stuff
 
-// TODO Sort out whether, conceptually, we are looking at
-// Account::Id, or at AccountImpl::Id. Amend code here to reflect
-// (currently it is confused in regards to this). Make sure the header
-// reflects this too. (In practice it doesn't matter though.)
+
 
 namespace phatbooks
 {
+
+BOOST_STATIC_ASSERT((boost::is_same<Account::Id, AccountImpl::Id>::value));
+
 
 void
 BalanceCache::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -131,8 +131,7 @@ BalanceCache::refresh()
 
 	// TODO Figure out the best value for fulcrum.
 
-	static AccountReader::size_type const fulcrum = 5;
-	AccountReader account_reader(m_database_connection);
+	static vector<AccountImpl::Id>::size_type const fulcrum = 5;
 	vector<AccountImpl::Id> stale_account_ids;
 	SQLStatement statement
 	(	m_database_connection,
@@ -149,7 +148,7 @@ BalanceCache::refresh()
 		Map::const_iterator location_in_cache = m_map->find(account_id);
 		if (location_in_cache == map_end || !(location_in_cache->second))
 		{
-			// Either this Account::Id is not in the cache at all,
+			// Either this AccountImpl::Id is not in the cache at all,
 			// or it's in there but marked as stale.
 			stale_account_ids.push_back(account_id);
 		}
@@ -176,9 +175,8 @@ BalanceCache::refresh()
 void
 BalanceCache::refresh_all()
 {
-	typedef unordered_map<Account::Id, Decimal::int_type> WorkingMap;
+	typedef unordered_map<AccountImpl::Id, Decimal::int_type> WorkingMap;
 	WorkingMap working_map;
-	AccountReader account_reader(m_database_connection);
 	assert (working_map.empty());
 	SQLStatement accounts_scanner
 	(	m_database_connection,
@@ -186,7 +184,7 @@ BalanceCache::refresh_all()
 	);
 	while (accounts_scanner.step())
 	{
-		working_map[accounts_scanner.extract<Account::Id>(0)] = 0;
+		working_map[accounts_scanner.extract<AccountImpl::Id>(0)] = 0;
 	}
 	
 	// It has been established that this is faster than using SQL
@@ -201,11 +199,11 @@ BalanceCache::refresh_all()
 			"select account_id, amount from entries join "
 			"ordinary_journal_detail using(journal_id)"
 		);
-		Account::Id account_id;
+		AccountImpl::Id account_id;
 		Decimal::int_type amount_intval;
 		while (statement.step())
 		{
-			account_id = statement.extract<Account::Id>(0);
+			account_id = statement.extract<AccountImpl::Id>(0);
 			amount_intval = statement.extract<Decimal::int_type>(1);
 			if (addition_is_unsafe(working_map[account_id], amount_intval))
 			{
@@ -226,7 +224,7 @@ BalanceCache::refresh_all()
 		++it
 	)
 	{
-		Account::Id const account_id = it->first;
+		AccountImpl::Id const account_id = it->first;
 		Account const account(m_database_connection, account_id);
 		map_elect[account_id] =
 			Decimal(it->second, account.commodity().precision());

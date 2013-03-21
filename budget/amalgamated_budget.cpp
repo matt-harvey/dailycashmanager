@@ -1,11 +1,12 @@
 #include "amalgamated_budget.hpp"
+#include "account.hpp"
 #include "account_impl.hpp"
-#include "account_reader.hpp"
 #include "budget_item_reader.hpp"
 #include "draft_journal.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
 #include <boost/scoped_ptr.hpp>
+#include <boost/static_assert.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -24,13 +25,16 @@ using std::vector;
 using std::endl;
 // End debugging stuff
 
-// TODO Sort out whether, conceptually, we are looking at
-// Account::Id, or at AccountImpl::Id. Amend code here to reflect
-// (currently it is confused in regards to this). Make sure the header
-// reflects this too. (In practice it doesn't matter though.)
+
+
+
 
 namespace phatbooks
 {
+
+
+BOOST_STATIC_ASSERT((boost::is_same<Account::Id, AccountImpl::Id>::value));
+
 
 void
 AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -179,17 +183,18 @@ AmalgamatedBudget::refresh()
 	scoped_ptr<Map> map_elect(new Map);
 	assert (map_elect->empty());
 
-	AccountReader const account_reader(m_database_connection);
-	for
-	(	AccountReader::const_iterator it = account_reader.begin(),
-			end = account_reader.end();
-		it != end;
-		++it
-	)
+	SQLStatement account_selector
+	(	m_database_connection,
+		"select account_id from accounts"
+	);
+	while (account_selector.step())
 	{
-		(*map_elect)[it->id()] = Decimal(0, it->commodity().precision());
+		AccountImpl::Id const account_id =
+			account_selector.extract<AccountImpl::Id>(0);
+		Account const account(m_database_connection, account_id);
+		(*map_elect)[account_id] =
+			Decimal(0, account.commodity().precision());
 	}
-
 	BudgetItemReader budget_item_reader(m_database_connection);
 	BudgetItemReader::const_iterator const beg = budget_item_reader.begin();
 	BudgetItemReader::const_iterator const end = budget_item_reader.end();
@@ -206,7 +211,7 @@ AmalgamatedBudget::refresh()
 			(	"Frequency not supported by AmalgamatedBudget."
 			);
 		}
-		Account::Id const account_id = it->account().id();
+		AccountImpl::Id const account_id = it->account().id();
 		jewel::Decimal const raw_amount = it->amount();
 		jewel::Decimal const canonical_amount = convert_to_canonical
 		(	raw_frequency,

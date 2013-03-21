@@ -794,6 +794,8 @@ void TextSession::display_draft_journals()
 			++it
 		)
 		{
+			// TODO Prevent the AMALGAMATED BUDGET JOURNAL from
+			// being shown to the user.
 			shared_ptr<MenuItem const> const menu_item
 			(	new MenuItem
 				(	bstring_to_std8(it->name()),
