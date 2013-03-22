@@ -15,13 +15,17 @@
 #include <sqloxx/sql_statement.hpp>
 #include <algorithm>
 #include <cassert>
+#include <numeric>
 #include <ostream>
+#include <utility>
 #include <vector>
 
 using boost::scoped_ptr;
 using jewel::Decimal;
 using sqloxx::SQLStatement;
+using std::accumulate;
 using std::ostream;
+using std::pair;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -116,6 +120,31 @@ AmalgamatedBudget::budget(AccountImpl::Id p_account_id)
 }
 
 
+namespace
+{
+	Decimal map_entry_accumulation_aux
+	(	Decimal const& dec,
+		pair<AccountImpl::Id, Decimal> const& rhs
+	)
+	{
+		return dec + rhs.second;
+	}
+
+}  // end anonymous namespace	
+
+
+Decimal
+AmalgamatedBudget::balance() const
+{
+	return accumulate
+	(	m_map->begin(),
+		m_map->end(),
+		Decimal(0, 0),
+		map_entry_accumulation_aux
+	);
+}	
+
+
 // TODO Make sure I mark as stale whenever required.
 void
 AmalgamatedBudget::mark_as_stale()
@@ -131,6 +160,7 @@ AmalgamatedBudget::generate_supported_frequencies(vector<Frequency>& vec)
 	// NOTE This is co-dependent with the function
 	// AmalgamatedBudget::supports_frequency. If this
 	// changes, that must change too.
+	vec.reserve(10);
 	vec.push_back(Frequency(1, interval_type::days));
 	vec.push_back(Frequency(1, interval_type::weeks));
 	vec.push_back(Frequency(2, interval_type::weeks));
@@ -232,7 +262,10 @@ AmalgamatedBudget::refresh()
 		++mit
 	)
 	{
-		mit->second = convert_from_canonical(m_frequency, mit->second);
+		mit->second = round
+		(	convert_from_canonical(m_frequency, mit->second),
+			Account(m_database_connection, mit->first).commodity().precision()
+		);
 	}
 	load_instrument();
 	refresh_instrument();

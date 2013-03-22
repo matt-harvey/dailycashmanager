@@ -8,11 +8,13 @@
 #include <jewel/output_aux.hpp>
 #include <iostream>
 #include <ostream>
+#include <numeric>
 #include <string>
 #include <vector>
 
 using consolixx::Table;
 using jewel::Decimal;
+using std::accumulate;
 using std::endl;
 using std::ostream;
 using std::string;
@@ -86,16 +88,25 @@ Journal::is_actual() const
 	return do_get_whether_actual();
 }
 
+
+namespace
+{
+	Decimal entry_accumulation_aux(Decimal const& dec, Entry const& entry)
+	{
+		return dec + entry.amount();
+	}
+}  // end anonymous namespace
+		
+
 Decimal
 Journal::balance() const
 {
-	typedef vector<Entry>::const_iterator Iter;
-	Decimal ret(0, 0);
-	for (Iter it = entries().begin(), end = entries().end(); it != end; ++it)
-	{
-		ret += it->amount();
-	}
-	return ret;
+	return accumulate
+	(	entries().begin(),
+		entries().end(),
+		Decimal(0, 0),
+		entry_accumulation_aux
+	);
 }
 		
 

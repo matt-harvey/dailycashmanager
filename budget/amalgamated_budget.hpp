@@ -47,9 +47,15 @@ public:
 
 	/**
 	 * @returns the amalgamated budget for the given Account, at the
-	 * Frequency of the AmalgamatedBudget.
+	 * Frequency returned by frequency().
 	 */
 	jewel::Decimal budget(AccountImpl::Id p_account_id);
+
+	/**
+	 * @returns the sum of all the Account budgets in AmalgamatedBudget,
+	 * at the Frequency returned by frequency().
+	 */
+	jewel::Decimal balance() const;
 
 	/**
 	 * Mark the AmalgamatedBudget as a whole as stale.

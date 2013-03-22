@@ -1568,7 +1568,6 @@ TextSession::conduct_reconciliation()
 		{
 			typedef vector<Entry>::iterator EntryIt;
 			string const input = get_user_input();
-			// TODO I should use for_each algorithm here.
 			if (input == "a")
 			{
 				DatabaseTransaction transaction(database_connection());	
@@ -2935,16 +2934,10 @@ void TextSession::review_budget()
 						false
 					)
 				)
-			<< ":"
-			<< account.budget()
+			<< ": "
+			<< finformat_std8(account.budget())
 			<< endl;
 	}
-
-						
-	// TODO HIGH PRIORITY Finish implementing this.
-
-
-
 	return;
 }
 
