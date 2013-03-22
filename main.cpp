@@ -60,6 +60,7 @@
 #include "text_session.hpp"
 #include <tclap/CmdLine.h>
 #include <cassert>
+#include <ios>
 #include <iostream>
 #include <string>
 
@@ -69,6 +70,7 @@ using phatbooks::bstring_to_std8;
 using phatbooks::gui::GraphicalSession;
 using phatbooks::tui::TextSession;
 using std::cerr;
+using std::clog;
 using std::cout;
 using std::endl;
 using std::string;
@@ -87,6 +89,10 @@ using TCLAP::UnlabeledValueArg;
 
 int main(int argc, char** argv)
 {
+	cout.exceptions(std::ios::badbit | std::ios::failbit);
+	cerr.exceptions(std::ios::badbit | std::ios::failbit);
+	clog.exceptions(std::ios::badbit | std::ios::failbit);
+
 	try
 	{
 		// Process command line arguments
