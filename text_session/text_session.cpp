@@ -15,6 +15,7 @@
 #include "account.hpp"
 #include "account_reader.hpp"
 #include "account_type.hpp"
+#include "amalgamated_budget.hpp"
 #include "application.hpp"
 #include "column_creation.hpp"
 #include "commodity.hpp"
@@ -57,6 +58,7 @@
 #include <boost/ref.hpp>
 #include <boost/regex.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/unordered_map.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <algorithm>
 #include <iostream>
@@ -87,6 +89,7 @@ using boost::cref;
 using boost::lexical_cast;
 using boost::optional;
 using boost::shared_ptr;
+using boost::unordered_map;
 using boost::ref;
 using boost::regex;
 using boost::regex_match;
@@ -436,8 +439,6 @@ namespace
 				account_type::revenue
 			);
 	}
-		
-		
 				
 }  
 
@@ -500,6 +501,19 @@ TextSession::create_main_menu()
 		)
 	);
 	m_main_menu->push_item(elicit_journal_item);
+
+	shared_ptr<MenuItem> elicit_budget_item_item  // Yes it says 'item_item'
+	(	new MenuItem
+		(	"New budget item",
+			bind(&TextSession::elicit_budget_item, this),
+			true,
+			"bi"
+		)
+	);
+	elicit_budget_item_item->set_hiding_condition
+	(	bind(no_pl_accounts_saved, ref(database_connection()))
+	);
+	m_main_menu->push_item(elicit_budget_item_item);
 
 	shared_ptr<MenuItem> display_draft_journals_item
 	(	new MenuItem
@@ -784,8 +798,76 @@ TextSession::elicit_existing_account_name(bool accept_empty)
 }
 
 
+void
+TextSession::elicit_budget_item()
+{
+	BudgetItem budget_item(database_connection());
+	cout << "Enter name of revenue or expense category, or pure envelope, "
+	     << "for new budget item (or Enter to abort): ";
+	optional<Account> const maybe_account =
+		elicit_valid_account(envelope_transaction, primary_phase, true);
+	if (!maybe_account)
+	{
+		cout << "Budget item has not been created. "
+		     << "Returning to previous menu." << endl << endl;
+		return;
+	}
+	// Get Account
+	budget_item.set_account(value(maybe_account));
 
-void TextSession::display_draft_journals()
+	// Get description
+	cout << "Enter description of budget item: ";
+	budget_item.set_description(get_user_input());
+
+	// Get Frequency
+	typedef vector<Frequency> Freqs;
+	typedef Freqs::size_type FreqsSz;
+	typedef shared_ptr<MenuItem const> MenuItemPtr;
+	Freqs freqs;
+	AmalgamatedBudget::generate_supported_frequencies(freqs);
+	Menu frequency_menu
+	(	"Indicate how often this item occurs, "
+		"by selecting an item from the above menu: "
+	);
+
+	// WARNING This is a bit grotesque - due to need to map
+	// MenuItemPtr to Frequency - but we can't use Frequency
+	// directly as value in map as it doesn't have a default
+	// constructor - so we use pointers to Frequency.
+	unordered_map<MenuItemPtr, Frequency*> menu_item_map;
+	for (FreqsSz i = 0; i != freqs.size(); ++i)
+	{
+		MenuItemPtr const menu_item
+		(	new MenuItem(bstring_to_std8(frequency_description(freqs[i])))
+		);
+		frequency_menu.push_item(menu_item);
+		menu_item_map[menu_item] = &(freqs[i]);
+	}
+	frequency_menu.present_to_user();
+	budget_item.set_frequency
+	(	*(menu_item_map[frequency_menu.last_choice()])
+	);
+
+	// Get amount
+	Decimal amount = elicit_constrained_amount
+	(	budget_item.account().commodity(),
+		"of item"
+	);
+	budget_item.set_amount(amount);
+	// TODO Finish implementing
+		
+
+	
+
+	
+	
+	
+
+
+}
+
+void
+TextSession::display_draft_journals()
 {
 	typedef TextSession PTS;  // For brevity in the below
 
@@ -2922,7 +3004,12 @@ void TextSession::review_budget()
 		for (BudVec::size_type i = 0; i != items.size(); ++i)
 		{
 			BudgetItem const& item = items[i];
-			cout << "\t" << item.description() << ":"
+			string const description = bstring_to_std8(item.description());
+			cout << "\t"
+			     << "Item no. "
+				 << lexical_cast<string>(item.id())  // to avoid formatting
+				 << ". "
+			     << (description.empty()? "": item.description() + ": ")
 			     << item.amount() << " "
 			     << frequency_description(item.frequency())
 				 << endl;

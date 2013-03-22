@@ -268,6 +268,11 @@ private:
 	 */
 	std::string elicit_existing_account_name(bool accept_empty = false);
 
+	/**
+	 * Elicit from user a new BudgetItem.
+	 */
+	void elicit_budget_item();
+
 	void elicit_entry_insertion(PersistentJournal& journal);
 	void elicit_entry_deletion(PersistentJournal& journal);
 	void elicit_entry_amendment(PersistentJournal& journal);
