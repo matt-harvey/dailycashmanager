@@ -148,6 +148,12 @@ OrdinaryJournal::mimic(DraftJournal const& rhs)
 	return;
 }
 
+void
+OrdinaryJournal::do_clear_entries()
+{
+	impl().clear_entries();
+	return;
+}
 
 OrdinaryJournal::OrdinaryJournal
 (	sqloxx::Handle<OrdinaryJournalImpl> const& p_handle

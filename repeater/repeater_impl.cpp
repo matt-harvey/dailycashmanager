@@ -356,4 +356,16 @@ RepeaterImpl::primary_key_name()
 	return "repeater_id";
 }
 
+void
+RepeaterImpl::mimic(RepeaterImpl& rhs)
+{
+	load();
+	RepeaterImpl temp(*this);
+	temp.set_frequency(rhs.frequency());
+	temp.set_next_date(rhs.next_date(0));
+	swap(temp);
+	return;
+}
+
+
 }  // namespace phatbooks

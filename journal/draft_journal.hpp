@@ -106,11 +106,13 @@ public:
 	 * applicable to DraftJournal.
 	 */
 	void mimic(ProtoJournal const& rhs);
+	void mimic(DraftJournal const& rhs);
+
+	std::vector<Repeater> const& repeaters() const;
 
 	bool has_repeaters() const;
 
 	void clear_repeaters();
-
 
 private:
 
@@ -120,6 +122,7 @@ private:
 	void do_set_comment(BString const& p_comment);
 	void do_push_entry(Entry& entry);
 	void do_remove_entry(Entry& entry);
+	void do_clear_entries();
 	BString do_get_comment() const;
 	bool do_get_whether_actual() const;
 	

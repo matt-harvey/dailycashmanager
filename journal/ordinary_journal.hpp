@@ -88,6 +88,7 @@ public:
 	void mimic(ProtoJournal const& rhs);
 	void mimic(DraftJournal const& rhs);
 
+
 private:
 
 	// Define pure virtual functions inherited from Journal
@@ -95,6 +96,7 @@ private:
 	void do_set_comment(BString const& p_comment);
 	void do_push_entry(Entry& entry);
 	void do_remove_entry(Entry& entry);
+	void do_clear_entries();
 	bool do_get_whether_actual() const;
 	BString do_get_comment() const;
 	std::vector<Entry> const& do_get_entries() const;

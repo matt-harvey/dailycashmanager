@@ -123,6 +123,11 @@ Repeater::Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle):
 {
 }
 
-
+void
+Repeater::mimic(Repeater const& rhs)
+{
+	impl().mimic(rhs.impl());
+	return;
+}
 
 }  // namespace phatbooks

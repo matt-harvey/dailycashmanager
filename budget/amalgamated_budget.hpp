@@ -72,6 +72,24 @@ private:
 	void refresh_instrument();
 	void load_instrument();
 
+	/**
+	 * Create and push Entries onto \e journal that reflect the
+	 * AmalgamatedBudget. This does nothing to change the Repeaters,
+	 * comment or other journal-level attributes of journal - it only
+	 * affects the entries. If there are already Entries in journal,
+	 * these are all cleared prior to the new Entries being pushed on.
+	 */
+	void reflect_entries(DraftJournal& journal);
+
+	/**
+	 * Examines the Repeaters of \e journal. If there is exactly one
+	 * Repeater, and it reflects the same Frequency as the AmalgamatedBudget
+	 * Frequency, then that Repeater is left unchanged. Otherwise, all
+	 * Repeaters are cleared from \e journal, and a new Repeater is
+	 * pushed onto \e journal, with TODAY as its next_date().
+	 */
+	void reflect_repeater(DraftJournal& journal);
+
 	PhatbooksDatabaseConnection& m_database_connection;
 	Frequency m_frequency;
 	boost::scoped_ptr<Map> m_map;

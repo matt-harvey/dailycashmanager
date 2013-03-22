@@ -140,6 +140,14 @@ public:
 
 	DraftJournal::Id journal_id() const;
 
+	/**
+	 * Copy attributes of rhs to *this, but do \e not copy:\n
+	 * 	\e id,\n
+	 * 	\e database_connection, or\n
+	 * 	\e journal_id.
+	 */
+	void mimic(Repeater const& rhs);
+
 private:
 	Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle);
 };

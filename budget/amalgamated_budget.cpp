@@ -3,8 +3,11 @@
 #include "account_impl.hpp"
 #include "budget_item_reader.hpp"
 #include "draft_journal.hpp"
+#include "entry.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
+#include "repeater.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/static_assert.hpp>
 #include <jewel/debug_log.hpp>
@@ -19,12 +22,13 @@ using jewel::Decimal;
 using sqloxx::SQLStatement;
 using std::vector;
 
+namespace gregorian = boost::gregorian;
+
 // For debugging only
 #include <jewel/debug_log.hpp>
 #include <iostream>
 using std::endl;
 // End debugging stuff
-
 
 
 
@@ -199,6 +203,7 @@ AmalgamatedBudget::refresh()
 	BudgetItemReader::const_iterator const beg = budget_item_reader.begin();
 	BudgetItemReader::const_iterator const end = budget_item_reader.end();
 	
+	JEWEL_DEBUG_LOG << "Calculating AmalgamatedBudget using canonical frequency." << endl;
 	// First we calculate budgets amalgamated on the basis of
 	// the canonical frequency
 	BudgetItemReader::const_iterator it = beg;
@@ -221,6 +226,7 @@ AmalgamatedBudget::refresh()
 		assert (tmit != map_elect->end());	
 		tmit->second += canonical_amount;
 	}
+	JEWEL_DEBUG_LOG << "Converting AmalgamatedBudget to target frequency." << endl;
 	// Now convert to desired frequency
 	for 
 	(	Map::iterator mit = map_elect->begin(), mend = map_elect->end();
@@ -242,23 +248,17 @@ AmalgamatedBudget::refresh()
 void
 AmalgamatedBudget::refresh_instrument()
 {
-	// TODO High priority
-	// Here we need to regenerate the instrument on the basis
-	// of the AmalgamatedBudget.
-	// There are non-existing functions here... this is so
-	// far just a sketch.
-	
-	DraftJournal const fresh_journal(m_database_connection);
-
-	// We want to retain the repeater characteristics, comment and
-	// name of exising m_instrument...
-	fresh_journal.mimic(m_instrument);
-	// ... but we want to recreate all the Entries from scratch
-	fresh_journal.clear_entries();
-	imbue_entries(fresh_journal);
-	// Now do mimic back into m_instrument (make sure mimic
-	// is atomic... see other existing "mimic" functions for how).
-	m_instrument.mimic(fresh_journal);
+	JEWEL_DEBUG_LOG << "Refreshing AmalgamatedBudget::m_instrument." << endl;
+	DraftJournal fresh_journal(m_database_connection);
+	JEWEL_DEBUG_LOG << "Temp journal is mimicking existing m_instrument." << endl;
+	fresh_journal.mimic(*m_instrument);
+	JEWEL_DEBUG_LOG << "Reflecting correct entries into temp journal." << endl;
+	reflect_entries(fresh_journal);
+	JEWEL_DEBUG_LOG << "Reflecting correct repeater into temp journal." << endl;
+	reflect_repeater(fresh_journal);
+	JEWEL_DEBUG_LOG << "Copying temp across to m_instrument." << endl;
+	(*m_instrument) = fresh_journal;
+	JEWEL_DEBUG_LOG << "Instrument now looks like this:\n" << *m_instrument << endl;
 	return;
 }
 
@@ -285,6 +285,55 @@ AmalgamatedBudget::load_instrument()
 	statement.step_final();
 	return;
 }
+
+
+void
+AmalgamatedBudget::reflect_entries(DraftJournal& journal)
+{
+	journal.clear_entries();
+	Map const& map = *m_map;
+	for
+	(	Map::const_iterator it = map.begin(), end = map.end();
+		it != end;
+		++it
+	)
+	{
+		Entry entry(m_database_connection);
+		Account const account(m_database_connection, it->first);
+		entry.set_account(account);
+		entry.set_comment("");
+		entry.set_amount(it->second);
+		entry.set_whether_reconciled(false);
+		journal.push_entry(entry);
+	}
+	return;
+}
+
+
+void
+AmalgamatedBudget::reflect_repeater(DraftJournal& journal)
+{
+	vector<Repeater> const& old_repeaters = journal.repeaters();
+	if (old_repeaters.size() == 1)
+	{
+		Frequency const old_frequency = old_repeaters[0].frequency();
+		if 
+		(	old_frequency.step_type() == m_frequency.step_type() &&
+			old_frequency.num_steps() == m_frequency.num_steps()
+		)
+		{
+			return;
+		}
+	}
+	journal.clear_repeaters();
+	Repeater new_repeater(m_database_connection);
+	new_repeater.set_frequency(m_frequency);
+	new_repeater.set_next_date(gregorian::day_clock::local_day());
+	assert (journal.repeaters().empty());
+	journal.push_repeater(new_repeater);
+	return;
+}
+
 
 
 }  // namespace phatbooks

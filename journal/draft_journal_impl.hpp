@@ -118,10 +118,14 @@ public:
 	 * applicable to DraftJournalImpl.
 	 */
 	void mimic(ProtoJournal const& rhs);
+	void mimic(DraftJournalImpl& rhs);  // not const& rhs because loading required
+
+	std::vector<Repeater> const& repeaters();
 
 	bool has_repeaters();
 
 	void clear_repeaters();
+	void clear_entries();
 
 private:
 

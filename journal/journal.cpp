@@ -61,6 +61,13 @@ Journal::remove_entry(Entry& entry)
 	return;
 }
 
+void
+Journal::clear_entries()
+{
+	do_clear_entries();
+	return;
+}
+
 std::vector<Entry> const&
 Journal::entries() const
 {
@@ -76,6 +83,7 @@ Journal::comment() const
 bool
 Journal::is_actual() const
 {
+	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
 	return do_get_whether_actual();
 }
 

@@ -165,6 +165,7 @@ ProtoJournal::do_get_comment() const
 bool
 ProtoJournal::do_get_whether_actual() const
 {
+	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
 	return value(m_data->is_actual);
 }
 
@@ -272,6 +273,7 @@ ProtoJournal::do_load_journal_core
 	ProtoJournal::Id id
 )
 {
+	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
 	SQLStatement statement
 	(	dbc,
 		"select is_actual, comment from journals where journal_id = :p"
@@ -290,7 +292,10 @@ ProtoJournal::do_load_journal_core
 		Entry entry(dbc, entr_id);
 		temp.m_data->entries.push_back(entry);
 	}
+	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
+	JEWEL_DEBUG_LOG << "Loading whether actual..." << endl;
 	temp.m_data->is_actual = static_cast<bool>(statement.extract<int>(0));
+	JEWEL_DEBUG_LOG << "Loaded whether actual..." << endl;
 	temp.m_data->comment = std8_to_bstring(statement.extract<string>(1));
 	swap(temp);	
 	return;
@@ -324,7 +329,7 @@ ProtoJournal::primary_key_name()
 }
 
 void
-ProtoJournal::clear_entries()
+ProtoJournal::do_clear_entries()
 {
 	(m_data->entries).clear();
 	return;
@@ -342,7 +347,7 @@ ProtoJournal::mimic_core
 	clear_entries();
 	typedef vector<Entry>::const_iterator It;
 	vector<Entry> const& rentries = rhs.entries();
-	if (!rhs.entries().empty())
+	if (!rentries.empty())
 	{
 		for (It it = rentries.begin(), end = rentries.end(); it != end; ++it)
 		{
@@ -352,6 +357,7 @@ ProtoJournal::mimic_core
 			push_entry(entry);
 		}
 	}
+	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
 	return;
 }
 

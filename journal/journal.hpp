@@ -60,6 +60,7 @@ public:
 	void set_comment(BString const& p_comment);
 	void push_entry(Entry& entry);
 	void remove_entry(Entry& entry);
+	void clear_entries();
 
 	std::vector<Entry> const& entries() const;
 	BString comment() const;
@@ -91,6 +92,7 @@ private:
 	virtual void do_set_comment(BString const& p_comment) = 0;
 	virtual void do_push_entry(Entry& entry) = 0;
 	virtual void do_remove_entry(Entry& entry) = 0;
+	virtual void do_clear_entries() = 0;
 	virtual BString do_get_comment() const = 0;
 	virtual bool do_get_whether_actual() const = 0;
 

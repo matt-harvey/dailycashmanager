@@ -95,7 +95,10 @@ DraftJournalImpl::remove_entry(Entry& entry)
 bool
 DraftJournalImpl::is_actual()
 {
+	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
+	JEWEL_DEBUG_LOG << "Calling load() on DraftJournalImpl" << endl;
 	load();
+	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
 	return ProtoJournal::is_actual();
 }
 
@@ -120,6 +123,12 @@ DraftJournalImpl::entries()
 }
 
 
+vector<Repeater> const&
+DraftJournalImpl::repeaters()
+{
+	load();
+	return m_dj_data->repeaters;
+}
 
 void
 DraftJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -392,6 +401,14 @@ DraftJournalImpl::clear_repeaters()
 	return;
 }
 
+void
+DraftJournalImpl::clear_entries()
+{
+	load();
+	ProtoJournal::clear_entries();
+	return;
+}
+
 BString
 DraftJournalImpl::repeater_description()
 {
@@ -457,6 +474,39 @@ DraftJournalImpl::mimic(ProtoJournal const& rhs)
 	swap(temp);
 	return;
 }
+
+
+void
+DraftJournalImpl::mimic(DraftJournalImpl& rhs)
+{
+	load();
+	DraftJournalImpl temp(*this);
+
+	// Necessary as mimic_core will only treat rhs as Journal, and
+	// getters won't load.
+	rhs.load();
+
+	optional<Id> t_id;
+	if (has_id()) t_id = id();
+	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
+	temp.mimic_core(rhs, database_connection(), t_id);
+	clear_repeaters();
+	typedef vector<Repeater>::const_iterator It;
+	vector<Repeater> const& rreps = rhs.repeaters();
+	if (!rreps.empty())
+	{
+		for (It it = rreps.begin(), end = rreps.end(); it != end; ++it)
+		{
+			Repeater repeater(database_connection());
+			repeater.mimic(*it);
+			if (t_id) repeater.set_journal_id(value(t_id));
+			m_dj_data->repeaters.push_back(repeater);
+		}
+	}
+	return;
+}
+			
+
 
 }  // namespace phatbooks
 

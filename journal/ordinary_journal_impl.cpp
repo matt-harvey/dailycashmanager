@@ -312,6 +312,16 @@ OrdinaryJournalImpl::mimic(Journal const& rhs)
 }
 
 
+void
+OrdinaryJournalImpl::clear_entries()
+{
+	load();
+	ProtoJournal::clear_entries();
+	return;
+}
+
+
+
 }  // namespace phatbooks
 
 

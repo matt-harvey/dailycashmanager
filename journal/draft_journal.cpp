@@ -98,6 +98,13 @@ DraftJournal::clear_repeaters()
 }
 
 void
+DraftJournal::do_clear_entries()
+{
+	impl().clear_entries();
+	return;
+}
+
+void
 DraftJournal::do_set_whether_actual(bool p_is_actual)
 {
 	impl().set_whether_actual(p_is_actual);
@@ -128,6 +135,7 @@ DraftJournal::do_remove_entry(Entry& entry)
 bool
 DraftJournal::do_get_whether_actual() const
 {
+	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
 	return impl().is_actual();
 }
 
@@ -147,6 +155,14 @@ vector<Entry> const&
 DraftJournal::do_get_entries() const
 {
 	return impl().entries();
+}
+
+
+
+vector<Repeater> const&
+DraftJournal::repeaters() const
+{
+	return impl().repeaters();
 }
 
 
@@ -170,7 +186,12 @@ DraftJournal::mimic(ProtoJournal const& rhs)
 	return;
 }
 
-
+void
+DraftJournal::mimic(DraftJournal const& rhs)
+{
+	impl().mimic(rhs.impl());
+	return;
+}
 
 void
 DraftJournal::do_output(ostream& os) const

@@ -123,6 +123,8 @@ public:
 	 */
 	void mimic(Journal const& rhs);
 
+	void clear_entries();
+
 private:
 
 	/**

@@ -103,7 +103,6 @@ protected:
 		boost::optional<Id> id
 	);
 
-	void clear_entries();
 
 private:
 
@@ -116,6 +115,7 @@ private:
 	virtual void do_set_comment(BString const& p_comment);
 	virtual void do_push_entry(Entry& entry);
 	virtual void do_remove_entry(Entry& entry);
+	virtual void do_clear_entries();
 	virtual BString do_get_comment() const;
 	virtual bool do_get_whether_actual() const;
 
