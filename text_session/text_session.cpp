@@ -262,7 +262,6 @@ namespace
 		bool show_total = true
 	)
 	{
-		JEWEL_DEBUG_LOG << "Printing BalanceSheetAccountReader." << endl;
 		Table<Account> table;
 		typedef Table<Account>::ColumnPtr ColumnPtr;
 		namespace col = column_creation;
@@ -294,7 +293,6 @@ namespace
 	)
 	{
 		// TODO Factor out code common to here and print_bs_account_reader
-		JEWEL_DEBUG_LOG << "Printing PLAccountReader." << endl;
 		Table<Account> table;
 		typedef Table<Account>::ColumnPtr ColumnPtr;
 		namespace col = column_creation;

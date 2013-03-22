@@ -43,7 +43,6 @@ BOOST_STATIC_ASSERT((boost::is_same<Account::Id, AccountImpl::Id>::value));
 void
 AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
-	JEWEL_DEBUG_LOG << "Setting up AmalgamatedBudget tables." << endl;
 	dbc.execute_sql
 	(	"create index budget_item_account_index on budget_items(account_id)"
 	);
@@ -62,7 +61,6 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	);
 	statement.bind(":p", instrument.id());
 	statement.step_final();
-	JEWEL_DEBUG_LOG << "AmalgamatedBudget tables have been set up." << endl;
 	return;
 }
 
@@ -183,7 +181,6 @@ AmalgamatedBudget::supports_frequency(Frequency const& p_frequency)
 void
 AmalgamatedBudget::refresh()
 {
-	JEWEL_DEBUG_LOG << "Refreshing AmalgamatedBudget." << endl;
 	scoped_ptr<Map> map_elect(new Map);
 	assert (map_elect->empty());
 
@@ -203,7 +200,6 @@ AmalgamatedBudget::refresh()
 	BudgetItemReader::const_iterator const beg = budget_item_reader.begin();
 	BudgetItemReader::const_iterator const end = budget_item_reader.end();
 	
-	JEWEL_DEBUG_LOG << "Calculating AmalgamatedBudget using canonical frequency." << endl;
 	// First we calculate budgets amalgamated on the basis of
 	// the canonical frequency
 	BudgetItemReader::const_iterator it = beg;
@@ -226,7 +222,6 @@ AmalgamatedBudget::refresh()
 		assert (tmit != map_elect->end());	
 		tmit->second += canonical_amount;
 	}
-	JEWEL_DEBUG_LOG << "Converting AmalgamatedBudget to target frequency." << endl;
 	// Now convert to desired frequency
 	for 
 	(	Map::iterator mit = map_elect->begin(), mend = map_elect->end();
@@ -248,17 +243,11 @@ AmalgamatedBudget::refresh()
 void
 AmalgamatedBudget::refresh_instrument()
 {
-	JEWEL_DEBUG_LOG << "Refreshing AmalgamatedBudget::m_instrument." << endl;
 	DraftJournal fresh_journal(m_database_connection);
-	JEWEL_DEBUG_LOG << "Temp journal is mimicking existing m_instrument." << endl;
 	fresh_journal.mimic(*m_instrument);
-	JEWEL_DEBUG_LOG << "Reflecting correct entries into temp journal." << endl;
 	reflect_entries(fresh_journal);
-	JEWEL_DEBUG_LOG << "Reflecting correct repeater into temp journal." << endl;
 	reflect_repeater(fresh_journal);
-	JEWEL_DEBUG_LOG << "Copying temp across to m_instrument." << endl;
-	(*m_instrument) = fresh_journal;
-	JEWEL_DEBUG_LOG << "Instrument now looks like this:\n" << *m_instrument << endl;
+	m_instrument->mimic(fresh_journal);
 	return;
 }
 

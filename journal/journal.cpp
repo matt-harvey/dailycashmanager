@@ -83,7 +83,6 @@ Journal::comment() const
 bool
 Journal::is_actual() const
 {
-	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
 	return do_get_whether_actual();
 }
 

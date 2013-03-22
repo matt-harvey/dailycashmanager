@@ -7,13 +7,17 @@
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include <sqloxx/handle.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
 #include <ostream>
+#include <string>
 
+using boost::lexical_cast;
 using boost::shared_ptr;
 using std::endl;
 using std::ostream;
+using std::string;
 using std::vector;
 using sqloxx::Handle;
 
@@ -135,7 +139,6 @@ DraftJournal::do_remove_entry(Entry& entry)
 bool
 DraftJournal::do_get_whether_actual() const
 {
-	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
 	return impl().is_actual();
 }
 
@@ -196,8 +199,12 @@ DraftJournal::mimic(DraftJournal const& rhs)
 void
 DraftJournal::do_output(ostream& os) const
 {
-	os << "DRAFT JOURNAL ID " << id() << " "
-	   << " NAME " << name() << " ";
+	os << "DRAFT JOURNAL";
+	if (has_id())
+	{
+		os << " ID " << lexical_cast<string>(id());
+	}
+	os << " NAME " << name() << " ";
 	PersistentJournal::do_output(os);
 	os << endl << repeater_description() << endl;
 	return;

@@ -95,10 +95,7 @@ DraftJournalImpl::remove_entry(Entry& entry)
 bool
 DraftJournalImpl::is_actual()
 {
-	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
-	JEWEL_DEBUG_LOG << "Calling load() on DraftJournalImpl" << endl;
 	load();
-	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
 	return ProtoJournal::is_actual();
 }
 
@@ -469,7 +466,7 @@ DraftJournalImpl::mimic(ProtoJournal const& rhs)
 	load();
 	DraftJournalImpl temp(*this);
 	optional<Id> t_id;
-	if (has_id()) t_id = id();
+	if (temp.has_id()) t_id = temp.id();
 	temp.mimic_core(rhs, database_connection(), t_id);
 	swap(temp);
 	return;
@@ -487,10 +484,10 @@ DraftJournalImpl::mimic(DraftJournalImpl& rhs)
 	rhs.load();
 
 	optional<Id> t_id;
-	if (has_id()) t_id = id();
-	JEWEL_DEBUG_LOG << __FILE__ << __LINE__ << endl;
+	if (temp.has_id()) t_id = temp.id();
 	temp.mimic_core(rhs, database_connection(), t_id);
-	clear_repeaters();
+	temp.set_name(rhs.name());
+	temp.clear_repeaters();
 	typedef vector<Repeater>::const_iterator It;
 	vector<Repeater> const& rreps = rhs.repeaters();
 	if (!rreps.empty())
@@ -500,9 +497,10 @@ DraftJournalImpl::mimic(DraftJournalImpl& rhs)
 			Repeater repeater(database_connection());
 			repeater.mimic(*it);
 			if (t_id) repeater.set_journal_id(value(t_id));
-			m_dj_data->repeaters.push_back(repeater);
+			temp.m_dj_data->repeaters.push_back(repeater);
 		}
 	}
+	swap(temp);
 	return;
 }
 			

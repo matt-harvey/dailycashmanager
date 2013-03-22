@@ -120,9 +120,6 @@ BalanceCache::mark_as_stale(AccountImpl::Id p_account_id)
 void
 BalanceCache::refresh()
 {
-	JEWEL_DEBUG_LOG << "Refreshing balance cache" << endl;
-
-
 	// Here we decide whether it's quickest to do a complete rebuild of
 	// the entire cache, or whether it's quicker just the
 	// stale accounts. (Either way, we end
@@ -156,16 +153,11 @@ BalanceCache::refresh()
 	assert (stale_account_ids.size() <= fulcrum);
 	if (stale_account_ids.size() == fulcrum)
 	{
-		JEWEL_DEBUG_LOG << "Calling BalanceCache::refresh_all()" << endl;
 		refresh_all();
 	}
 	else
 	{
 		assert (stale_account_ids.size() < fulcrum);
-		JEWEL_DEBUG_LOG << "Calling BalanceCache::refresh_targetted() "
-		                << "with " << stale_account_ids.size()
-						<< " stale accounts_ids"
-						<< endl;
 		refresh_targetted(stale_account_ids);
 	}
 	m_map_is_stale = false;
@@ -255,12 +247,9 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 			"select sum(amount) from entries join ordinary_journal_detail "
 			"using(journal_id) where account_id = :account_id"
 		);
-		JEWEL_DEBUG_LOG << "Refreshing for account_id = " << account_id << endl;
 		statement.bind(":account_id", account_id);
-		JEWEL_DEBUG_LOG << "Statement bound." << endl;
 		if (statement.step())
 		{
-			JEWEL_DEBUG_LOG << "In result row." << endl;
 			// TODO Catching exception here is a crappy way of telling whether
 			// there are no entries to sum
 			try
@@ -280,7 +269,6 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 		else
 		{
 			assert (false);  // There is always a result row even if it has null.
-			JEWEL_DEBUG_LOG << "No result row." << endl;
 			(*m_map)[account_id] =
 				Decimal(0, account.commodity().precision());
 		}

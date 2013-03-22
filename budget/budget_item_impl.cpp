@@ -35,7 +35,6 @@ typedef
 void
 BudgetItemImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
-	JEWEL_DEBUG_LOG << "Setting up BudgetItemImpl tables." << endl;
 	dbc.execute_sql
 	(	"create table budget_items"
 		"("
