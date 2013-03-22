@@ -11,9 +11,9 @@
 #include "account_impl.hpp"
 #include "account_type.hpp"
 #include "b_string.hpp"
+#include "budget_item.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "b_string.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -281,6 +281,26 @@ AccountImpl::budget()
 	(	database_connection(),
 		id()
 	);
+}
+
+vector<BudgetItem>
+AccountImpl::budget_items()
+{
+	load();
+	vector<BudgetItem> ret;
+	SQLStatement s
+	(	database_connection(),
+		"select budget_item_id from budget_items where "
+		"account_id = :p"
+	);
+	s.bind(":p", id());
+	assert (ret.empty());
+	while (s.step())
+	{
+		BudgetItem bi(database_connection(), s.extract<BudgetItem::Id>(0));
+		ret.push_back(bi);
+	}
+	return ret;
 }
 
 void

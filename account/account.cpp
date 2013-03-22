@@ -172,6 +172,12 @@ Account::budget() const
 	return impl().budget();
 }
 
+vector<BudgetItem>
+Account::budget_items() const
+{
+	return impl().budget_items();
+}
+
 Decimal
 Account::friendly_balance() const
 {

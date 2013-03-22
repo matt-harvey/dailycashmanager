@@ -578,6 +578,19 @@ TextSession::create_main_menu()
 	);
 	m_main_menu->push_item(display_envelopes_item);
 
+	shared_ptr<MenuItem> review_budget_item
+	(	new MenuItem
+		(	"Review budget",
+			bind(&TextSession::review_budget, this),
+			true,
+			"rb"
+		)
+	);
+	review_budget_item->set_hiding_condition
+	(	bind(no_pl_accounts_saved, ref(database_connection()))
+	);
+	m_main_menu->push_item(review_budget_item);
+
 	shared_ptr<MenuItem> perform_reconciliation_item
 	(	new MenuItem
 		(	"Perform account reconciliation",
@@ -2888,6 +2901,52 @@ void TextSession::display_envelopes()
 	return;
 }
 
+
+void TextSession::review_budget()
+{
+	// TODO Make sure there aren't any BudgetItems with non-P&L accounts
+	// (probably better to ensure that in AmalgamatedBudget than
+	// here).
+
+	// Print the BudgetItems and amalgamated budget for each P&L Account.
+	PLAccountReader pla_reader(database_connection());
+	for
+	(	PLAccountReader::const_iterator it = pla_reader.begin();
+		it != pla_reader.end();
+		++it
+	)
+	{
+		Account const& account = *it;
+		typedef vector<BudgetItem> BudVec;
+		BudVec const items = account.budget_items();
+		cout << "\n" << account.name() << "" << endl;
+		for (BudVec::size_type i = 0; i != items.size(); ++i)
+		{
+			BudgetItem const& item = items[i];
+			cout << "\t" << item.description() << ":"
+			     << item.amount() << " "
+			     << frequency_description(item.frequency())
+				 << endl;
+		}
+		cout << "\tBudgeted per "
+		     << bstring_to_std8
+			    (	phrase
+					(	database_connection().budget_frequency().step_type(),
+						false
+					)
+				)
+			<< ":"
+			<< account.budget()
+			<< endl;
+	}
+
+						
+	// TODO HIGH PRIORITY Finish implementing this.
+
+
+
+	return;
+}
 
 
 void TextSession::wrap_up()

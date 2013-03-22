@@ -1,7 +1,6 @@
 #ifndef GUARD_budget_item_impl_hpp
 #define GUARD_budget_item_impl_hpp
 
-#include "account.hpp"
 #include "b_string.hpp"
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -14,12 +13,14 @@
 
 namespace sqloxx
 {
-	class SQLStatement;  // Forward declaration
+	class SQLStatement;
 }
 
 
 namespace phatbooks
 {
+
+class Account;
 
 
 class BudgetItemImpl:
@@ -94,7 +95,7 @@ private:
 
 struct BudgetItemImpl::BudgetItemData
 {
-	boost::optional<Account> account;
+	boost::optional<Id> account_id;
 	boost::optional<BString> description;
 	boost::optional<Frequency> frequency;
 	boost::optional<jewel::Decimal> amount;

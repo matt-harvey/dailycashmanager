@@ -317,6 +317,7 @@ private:
 	void display_journal_from_id();
 	void display_ordinary_actual_entries();
 	void display_envelopes();
+	void review_budget();
 
 	// To factor out some code common to \e conduct_ordinary_journal_editing
 	// and \e conduct_draft_journal_editing. This is called to populate

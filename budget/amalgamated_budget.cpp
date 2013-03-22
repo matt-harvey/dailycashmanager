@@ -15,11 +15,13 @@
 #include <sqloxx/sql_statement.hpp>
 #include <algorithm>
 #include <cassert>
+#include <ostream>
 #include <vector>
 
 using boost::scoped_ptr;
 using jewel::Decimal;
 using sqloxx::SQLStatement;
+using std::ostream;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -177,7 +179,8 @@ AmalgamatedBudget::supports_frequency(Frequency const& p_frequency)
 		assert (false);
 	}
 }
-		
+	
+
 void
 AmalgamatedBudget::refresh()
 {
@@ -322,6 +325,8 @@ AmalgamatedBudget::reflect_repeater(DraftJournal& journal)
 	journal.push_repeater(new_repeater);
 	return;
 }
+
+
 
 
 

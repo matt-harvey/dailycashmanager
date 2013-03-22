@@ -3,6 +3,7 @@
 #include "b_string.hpp"
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <boost/static_assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/identity_map.hpp>
@@ -25,6 +26,9 @@ using std::endl;
 
 namespace phatbooks
 {
+
+
+BOOST_STATIC_ASSERT((boost::is_same<Account::Id, BudgetItem::Id>::value));
 
 
 typedef
@@ -110,7 +114,7 @@ void
 BudgetItemImpl::set_account(Account const& p_account)
 {
 	load();
-	m_data->account = p_account;
+	m_data->account_id = p_account.id();
 	return;
 }
 
@@ -141,7 +145,10 @@ Account
 BudgetItemImpl::account()
 {
 	load();
-	return value(m_data->account);
+	return Account
+	(	database_connection(),
+		value(m_data->account_id)
+	);
 }
 
 Frequency
@@ -178,15 +185,13 @@ BudgetItemImpl::do_load()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	Account const acct
-	(	database_connection(),
-		statement.extract<Account::Id>(0)
-	);
+	Account::Id const acct_id =  statement.extract<Account::Id>(0);
+	Account const acct(database_connection(), acct_id);
 	Decimal const amt
 	(	statement.extract<Decimal::int_type>(4),
 		acct.commodity().precision()
 	);
-	temp.m_data->account = acct;
+	temp.m_data->account_id = acct_id;
 	temp.m_data->description = std8_to_bstring(statement.extract<string>(1));
 	using interval_type::IntervalType;
 	temp.m_data->frequency = Frequency
@@ -200,7 +205,7 @@ BudgetItemImpl::do_load()
 void
 BudgetItemImpl::process_saving_statement(SQLStatement& statement)
 {
-	statement.bind(":account_id", value(m_data->account).id());
+	statement.bind(":account_id", value(m_data->account_id));
 	statement.bind
 	(	":description",
 		bstring_to_std8(value(m_data->description))
@@ -262,7 +267,7 @@ BudgetItemImpl::do_save_new()
 void
 BudgetItemImpl::do_ghostify()
 {
-	clear(m_data->account);
+	clear(m_data->account_id);
 	clear(m_data->description);
 	clear(m_data->frequency);
 	clear(m_data->amount);

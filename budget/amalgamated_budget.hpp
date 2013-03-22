@@ -10,6 +10,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <jewel/decimal.hpp>
+#include <ostream>
 #include <vector>
 
 
@@ -98,8 +99,8 @@ private:
 	// The DraftJournal that "effects" the AmalgamatedBudget
 	DraftJournal* m_instrument; 
 
-};
 
+};
 
 
 

@@ -15,7 +15,6 @@
 
 #include "account.hpp"
 #include "b_string.hpp"
-#include "entry_impl.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>

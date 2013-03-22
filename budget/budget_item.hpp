@@ -3,7 +3,6 @@
 
 #include "b_string.hpp"
 #include "budget_item_impl.hpp"
-#include "frequency.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
@@ -12,6 +11,7 @@ namespace phatbooks
 {
 
 class Account;
+class Frequency;
 class PhatbooksDatabaseConnection;
 
 /**
@@ -69,7 +69,6 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
 	);
-
 
 	/**
 	 * Set a description to be associated with the BudgetItem.

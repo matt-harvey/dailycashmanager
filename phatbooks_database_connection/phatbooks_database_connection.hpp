@@ -50,6 +50,14 @@ class RepeaterImpl;
  * Phatbooks-specific database connection class.
  * See API documentation for sqloxx::DatabaseConnection,
  * for parts of API inherited from sqloxx::DatabaseConnection.
+ *
+ * A PhatbooksDatabaseConnection represents a connection to a
+ * particular database in which data is stored for a particular
+ * accounting entity. Since there is only on accounting entity
+ * per database - and there is no distinct "Entity" class in
+ * the Phatbooks object model - we can generally treat
+ * a PhatbooksDatabaseConnection as a proxy for the accounting
+ * entity itself.
  */
 class PhatbooksDatabaseConnection:
 	public sqloxx::DatabaseConnection

@@ -14,6 +14,7 @@
 
 #include "account_type.hpp"
 #include "b_string.hpp"
+#include "budget_item.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/static_assert.hpp>
@@ -42,6 +43,8 @@ namespace detail
 {
 	class AccountData;
 }
+
+
 
 /**
  * Implements Account.
@@ -125,6 +128,8 @@ public:
 	jewel::Decimal friendly_balance();
 	
 	jewel::Decimal budget();
+
+	std::vector<BudgetItem> budget_items();
 
 	void set_account_type(AccountType p_account_type);
 

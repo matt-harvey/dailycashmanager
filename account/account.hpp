@@ -4,7 +4,7 @@
 #include "account_impl.hpp"
 #include "account_type.hpp"
 #include "b_string.hpp"
-#include "commodity.hpp"
+#include "budget_item.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <boost/shared_ptr.hpp>
 #include <sqloxx/general_typedefs.hpp>
@@ -16,6 +16,7 @@
 namespace phatbooks
 {
 
+class Commodity;
 class PhatbooksDatabaseConnection;
 
 
@@ -180,6 +181,13 @@ public:
 	 * then a budget() of 100.00 implies 100.00/day.
 	 */
 	jewel::Decimal budget() const;
+
+	/**
+	 * @returns a std::vector containing all and only
+	 * the saved BudgetItems for this Account.
+	 */
+	std::vector<BudgetItem> budget_items() const;
+
 
 	void set_account_type(AccountType p_account_type);
 
