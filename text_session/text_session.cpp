@@ -854,15 +854,14 @@ TextSession::elicit_budget_item()
 		"of item"
 	);
 	budget_item.set_amount(amount);
+
+	// Display BudgetItem
+	cout << "\nCompleted budget item is as follows:"
+	     << endl << budget_item << endl << endl;
+
+
+
 	// TODO Finish implementing
-		
-
-	
-
-	
-	
-	
-
 
 }
 
@@ -3005,14 +3004,7 @@ void TextSession::review_budget()
 		{
 			BudgetItem const& item = items[i];
 			string const description = bstring_to_std8(item.description());
-			cout << "\t"
-			     << "Item no. "
-				 << lexical_cast<string>(item.id())  // to avoid formatting
-				 << ". "
-			     << (description.empty()? "": item.description() + ": ")
-			     << item.amount() << " "
-			     << frequency_description(item.frequency())
-				 << endl;
+			cout << "\t" << item;
 		}
 		cout << "\tBudgeted per "
 		     << bstring_to_std8

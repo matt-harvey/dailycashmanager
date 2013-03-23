@@ -157,7 +157,7 @@ Journal::output_core_journal_header(ostream& os) const
 	if (is_actual()) os << "ACTUAL TRANSACTION";
 	else os << "BUDGET TRANSACTION";
 	os << endl;
-	if (!comment().empty()) os << comment() << endl;
+	if (!comment().empty()) os << bstring_to_std8(comment()) << endl;
 	os << endl;
 	return;
 }

@@ -2,14 +2,22 @@
 #include "account.hpp"
 #include "budget_item_impl.hpp"
 #include "b_string.hpp"
+#include "finformat.hpp"
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include <boost/lexical_cast.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/output_aux.hpp>
 #include <sqloxx/handle.hpp>
+#include <iostream>
+#include <ostream>
 
+using boost::lexical_cast;
 using jewel::Decimal;
 using sqloxx::Handle;
+using std::endl;
+using std::ostream;
 
 namespace phatbooks
 {
@@ -103,6 +111,32 @@ BudgetItem::amount() const
 BudgetItem::BudgetItem(sqloxx::Handle<BudgetItemImpl> const& p_handle):
 	PhatbooksPersistentObject(p_handle)
 {
+}
+
+void
+BudgetItem::output_budget_item_aux(ostream& os, BudgetItem const& bi)
+{
+	os << "BUDGET ITEM"
+	   << (		bi.has_id()?
+				" ID " + lexical_cast<BudgetItem::Id>(bi.id()):
+				""
+		  )
+	   << ". "
+	   << (		bi.description().empty()?
+	   			"":
+	   			bstring_to_std8(bi.description()) + ": "
+		  )
+	   << finformat_std8(bi.amount()) << " "
+	   << frequency_description(bi.frequency())
+	   << endl;
+	return;
+}
+
+ostream&
+operator<<(ostream& os, BudgetItem const& bi)
+{
+	jewel::output_aux(os, bi, BudgetItem::output_budget_item_aux);
+	return os;
 }
 
 

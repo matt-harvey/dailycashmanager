@@ -6,6 +6,7 @@
 #include "phatbooks_persistent_object.hpp"
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
+#include <ostream>
 
 namespace phatbooks
 {
@@ -98,10 +99,25 @@ public:
 	jewel::Decimal amount() const;
 
 private:
+
 	BudgetItem(sqloxx::Handle<BudgetItemImpl> const& p_handle);	
+
+	static void
+	output_budget_item_aux(std::ostream& os, BudgetItem const& bi);
+	
+	friend
+	std::ostream& operator<<(std::ostream& os, BudgetItem const& bi);
+
 };
 
-}  // namespace phatbooks
 
+std::ostream&
+operator<<(std::ostream& os, BudgetItem const& bi);
+
+
+
+
+
+}  // namespace phatbooks
 
 #endif  // GUARD_budget_item_hpp
