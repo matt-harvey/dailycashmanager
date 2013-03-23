@@ -267,10 +267,10 @@ AmalgamatedBudget::refresh()
 			Account(m_database_connection, mit->first).commodity().precision()
 		);
 	}
-	load_instrument();
-	refresh_instrument();
 	using std::swap;
 	swap(m_map, map_elect);
+	load_instrument();
+	refresh_instrument();
 	m_map_is_stale = false;
 	return;
 }
@@ -315,6 +315,7 @@ AmalgamatedBudget::load_instrument()
 void
 AmalgamatedBudget::reflect_entries(DraftJournal& journal)
 {
+	JEWEL_DEBUG_LOG << "Just entered AmalgamatedBudget::reflect_entries(DraftJournal&)" << endl;
 	journal.clear_entries();
 	Map const& map = *m_map;
 	for
@@ -327,7 +328,9 @@ AmalgamatedBudget::reflect_entries(DraftJournal& journal)
 		Account const account(m_database_connection, it->first);
 		entry.set_account(account);
 		entry.set_comment("");
-		entry.set_amount(it->second);
+		JEWEL_DEBUG_LOG << "Setting amount for instrument entry for " << account.name() << "...";
+		entry.set_amount(-(it->second));  // TODO Make sure signs are OK esp. with revenue...
+		JEWEL_DEBUG_LOG << "Amount set to " << entry.amount() << endl;
 		entry.set_whether_reconciled(false);
 		journal.push_entry(entry);
 	}
