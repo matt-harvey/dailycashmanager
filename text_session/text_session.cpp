@@ -2989,6 +2989,10 @@ void TextSession::review_budget()
 
 	// Print the BudgetItems and amalgamated budget for each P&L Account.
 	PLAccountReader pla_reader(database_connection());
+	Frequency const budget_frequency =
+		database_connection().budget_frequency();
+	assert (budget_frequency.num_steps() == 1);
+	cout << endl;
 	for
 	(	PLAccountReader::const_iterator it = pla_reader.begin();
 		it != pla_reader.end();
@@ -2998,23 +3002,23 @@ void TextSession::review_budget()
 		Account const& account = *it;
 		typedef vector<BudgetItem> BudVec;
 		BudVec const items = account.budget_items();
-		cout << "\n" << account.name() << "" << endl;
+		cout << account.name() << ": ";
+		Decimal budget = account.budget();
+		if (budget == Decimal(0, 0))
+		{
+			cout << "NIL" << endl;
+		}
+		else
+		{
+			cout << finformat_std8_nopad(account.budget())
+			     << frequency_description(budget_frequency, " per")
+				 << endl;
+		}
 		for (BudVec::size_type i = 0; i != items.size(); ++i)
 		{
 			BudgetItem const& item = items[i];
-			string const description = bstring_to_std8(item.description());
-			cout << "\t" << item;
+			cout << "\t" << item << endl;
 		}
-		cout << "\tBudgeted per "
-		     << bstring_to_std8
-			    (	phrase
-					(	database_connection().budget_frequency().step_type(),
-						false
-					)
-				)
-			<< ": "
-			<< finformat_std8(account.budget())
-			<< endl;
 	}
 	return;
 }

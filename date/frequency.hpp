@@ -58,9 +58,16 @@ Frequency const canonical_frequency();
 
 /**
  * @returns an English adverbial phrase describing the Frequency.
+ * The first word of the description is can be specified (but
+ * has a default, seen in function declaration). E.g. we could
+ * get either "per 3 weeks" or "every 3 weeks", depending on
+ * the string passed to the second parameter.
  */
 std::string
-frequency_description(Frequency const& frequency);
+frequency_description
+(	Frequency const& frequency,
+	std::string const& first_word = "per"
+);
 
 /**
  * @returns an amount that is equivalent to p_amount, but in

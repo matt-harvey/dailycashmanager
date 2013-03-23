@@ -19,35 +19,83 @@ namespace phatbooks
  * @returns decimal formatted as a std::string with parentheses to
  * indicate negative, if it's negative.
  *
- * Note the string will have a space added to the end if it's
+ * Note the string will have an extra space added to the end if it's
  * positive. This helps line things up in tables etc..
  * Also if it's zero, it will be converted to the string "-",
- * followed by a number of spaces equal to decimal.places().
+ * followed by a number of spaces equal to decimal.places(), followed
+ * again by an additional space to assist with alignment.
+ *
+ * @param decimal the Decimal to be formatted.
  */
-std::string finformat_std8(jewel::Decimal const& decimal);
+std::string finformat_std8
+(	jewel::Decimal const& decimal
+);
 
 /**
  * @returns decimal formatted as a BString, with parentheses to
  * indicate negative, if it's negative.
  *
- * Note the string will have a space added to the end if it's
+ * Note the string will have an extra space added to the end if it's
  * positive. This helps line things up in tables etc..
  * Also if it's zero, it will be converted to the string "-",
- * followed by a number of spaces equal to decimal.places().
+ * followed by a number of spaces equal to decimal.places(), followed
+ * again by an additional space to assist with alignment.
+ *
+ * @param decimal the Decimal to be formatted.
  */
-BString finformat_bstring(jewel::Decimal const& decimal);
+BString finformat_bstring
+(	jewel::Decimal const& decimal
+);
 
 /**
  * @returns decimal formatted as a wxString, with parentheses
  * to indicate negative, and with thousands separator and
  * decimal point characters drawn from the wxLocale passed to
- * the second parameter, in relation to the wxLocaleCategory
+ * the \e loc parameter, in relation to the wxLocaleCategory
  * wxLOCALE_CAT_MONEY.
+ *
+ * Note the string will have a space added to the end if it's
+ * positive. This helps line things up in tables etc..
+ * Also if it's zero, it will be converted to the string "-",
+ * followed by a number of spaces equal to decimal.places().
+ *
+ * @param decimal the Decimal to be formatted.
+ *
+ * @param loc the wxLocale according which we want to
+ * Decimal to be formatted.
  *
  * @todo Testing.
  */
-wxString finformat_wx(jewel::Decimal const& decimal, wxLocale const& loc);
-	
+wxString finformat_wx
+(	jewel::Decimal const& decimal,
+	wxLocale const& loc
+);
+
+
+
+
+/**
+ * Functions named finformat...nopad are like the finformat...
+ * functions without "nopad", except they do not add an extra
+ * space to the right when formatting non-negative numbers.
+ * @{
+ */
+std::string finformat_std8_nopad
+(	jewel::Decimal const& decimal
+);
+
+BString finformat_bstring_nopad
+(	jewel::Decimal const& decimal
+);
+
+wxString finformat_wx_nopad
+(	jewel::Decimal const& decimal,
+	wxLocale const& loc
+);
+/** }@ */
+
+
+
 
 
 

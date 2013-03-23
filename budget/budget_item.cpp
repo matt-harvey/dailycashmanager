@@ -118,19 +118,18 @@ BudgetItem::BudgetItem(sqloxx::Handle<BudgetItemImpl> const& p_handle):
 void
 BudgetItem::output_budget_item_aux(ostream& os, BudgetItem const& bi)
 {
-	os << "BUDGET ITEM"
-	   << (		bi.has_id()?
-				" ID " + lexical_cast<string>(bi.id()):
-				""
-		  )
-	   << ". "
-	   << (		bi.description().empty()?
-	   			"":
-	   			bstring_to_std8(bi.description()) + ": "
-		  )
-	   << finformat_std8(bi.amount()) << " "
-	   << frequency_description(bi.frequency())
-	   << endl;
+	os << "BUDGET ITEM";
+	if (bi.has_id())
+	{
+		// lexical cast to avoid unwanted formatting
+		os << " ID " + lexical_cast<string>(bi.id());
+	}
+	os << ": " << finformat_std8_nopad(bi.amount()) << " ";
+	os << frequency_description(bi.frequency(), "per");
+	if (!bi.description().empty())
+	{
+		os << " (" << bstring_to_std8(bi.description()) << ")";
+	}
 	return;
 }
 

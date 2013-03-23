@@ -35,9 +35,9 @@ Frequency::step_type() const
 }
 
 string
-frequency_description(Frequency const& frequency)
+frequency_description(Frequency const& frequency, string const& first_word)
 {
-	string ret = "every ";
+	string ret = first_word + " ";
 	int const num_steps = frequency.num_steps();
 	if (num_steps > 1)
     {
