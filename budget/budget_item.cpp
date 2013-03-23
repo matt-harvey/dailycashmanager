@@ -12,12 +12,14 @@
 #include <sqloxx/handle.hpp>
 #include <iostream>
 #include <ostream>
+#include <string>
 
 using boost::lexical_cast;
 using jewel::Decimal;
 using sqloxx::Handle;
 using std::endl;
 using std::ostream;
+using std::string;
 
 namespace phatbooks
 {
@@ -118,7 +120,7 @@ BudgetItem::output_budget_item_aux(ostream& os, BudgetItem const& bi)
 {
 	os << "BUDGET ITEM"
 	   << (		bi.has_id()?
-				" ID " + lexical_cast<BudgetItem::Id>(bi.id()):
+				" ID " + lexical_cast<string>(bi.id()):
 				""
 		  )
 	   << ". "

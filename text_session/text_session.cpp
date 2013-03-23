@@ -862,6 +862,8 @@ TextSession::elicit_budget_item()
 
 
 	// TODO Finish implementing
+	budget_item.save();
+	cout << "\nBudget item saved:\n" << budget_item << endl << endl;
 
 }
 
