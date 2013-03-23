@@ -4,6 +4,10 @@
 namespace phatbooks
 {
 
+PhatbooksPersistentObjectBase::~PhatbooksPersistentObjectBase()
+{
+}
+
 void
 PhatbooksPersistentObjectBase::save()
 {

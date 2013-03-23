@@ -71,6 +71,17 @@ JEWEL_DERIVED_EXCEPTION(TooManySessions, PhatbooksException);
  */
 JEWEL_DERIVED_EXCEPTION(InvalidFrequencyException, PhatbooksException);
 
+/**
+ * Exception to be thrown when an attempt is made to get the
+ * balancing account from AmalgamatedBudget when it has not
+ * been initialized.
+ */
+JEWEL_DERIVED_EXCEPTION
+(	UninitializedBalancingAccountException,
+	PhatbooksException
+);
+
+
 }  // namespace phatbooks
 
 #endif  // GUARD_phatbooks_exceptions_hpp

@@ -20,6 +20,9 @@ namespace phatbooks
 {
 
 
+class Account;
+
+
 /**
  * An AmalgamatedBudget contains at most a single amount
  * per Account, and has a single frequency shared by all
@@ -72,11 +75,22 @@ public:
 
 	static bool supports_frequency(Frequency const& p_frequency);
 
+	/**
+	 * @returns the Account such, that if the AmalgamatedBudget
+	 * is not otherwise "balanced", any imbalanced is reconciled
+	 * to this Account.
+	 *
+	 * @throws UninitializedBalancingAccountException if
+	 * balancing account is uninitialized.
+	 */
+	Account balancing_account() const;
+
 private:
 
 	typedef boost::unordered_map<AccountImpl::Id, jewel::Decimal> Map;
 	void refresh();
 	void refresh_instrument();
+	void load_balancing_account();
 	void load_instrument();
 
 	/**
@@ -105,6 +119,10 @@ private:
 	// The DraftJournal that "effects" the AmalgamatedBudget
 	DraftJournal* m_instrument; 
 
+	// The Id of the Account such that, when refreshing m_instrument, if the
+	// journal is not otherwise balanced, any imbalance overflows
+	// to this Account.
+	Account* m_balancing_account;
 
 };
 

@@ -41,6 +41,7 @@ class PhatbooksPersistentObjectBase
 public:
 	typedef sqloxx::Id Id;
 
+	virtual ~PhatbooksPersistentObjectBase();
 	void save();
 	Id id() const;
 	PhatbooksDatabaseConnection& database_connection() const;
@@ -67,6 +68,7 @@ class PhatbooksPersistentObject:
 	virtual public PhatbooksPersistentObjectBase
 {
 public:
+	virtual ~PhatbooksPersistentObject();
 	bool operator==(PhatbooksPersistentObject const& rhs) const;
 	bool operator!=(PhatbooksPersistentObject const& rhs) const;
 	static bool exists
@@ -99,6 +101,10 @@ private:
 	sqloxx::Handle<Impl> m_impl;
 };
 
+template <typename Impl>
+PhatbooksPersistentObject<Impl>::~PhatbooksPersistentObject()
+{
+}
 
 template <typename Impl>
 PhatbooksPersistentObject<Impl>::PhatbooksPersistentObject

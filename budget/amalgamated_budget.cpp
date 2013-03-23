@@ -1,11 +1,13 @@
 #include "amalgamated_budget.hpp"
 #include "account.hpp"
 #include "account_impl.hpp"
+#include "account_type.hpp"
 #include "budget_item_reader.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "repeater.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -53,20 +55,39 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	(	"create index budget_item_account_index on budget_items(account_id)"
 	);
 	dbc.execute_sql
-	(	"create table amalgamated_budget_data(journal_id integer primary key "
-		"references draft_journal_detail)"
+	(	"create table amalgamated_budget_data"
+		"("
+			"journal_id integer unique not null "
+			"references draft_journal_detail, "
+			"balancing_account_id integer unique not null "
+			"references accounts"
+		")"
 	);
 	DraftJournal instrument(dbc);
 	instrument.set_name("AMALGAMATED BUDGET INSTRUMENT");
 	instrument.set_whether_actual(false);
 	instrument.set_comment("");
 	instrument.save();
+
+	Account balancing_account(dbc);
+	balancing_account.set_account_type(account_type::pure_envelope);
+	balancing_account.set_name("BUDGET IMBALANCE");
+	balancing_account.set_description("");
+	balancing_account.set_commodity
+	(	Commodity::default_commodity(dbc)
+	);
+	balancing_account.save();
+
 	SQLStatement statement
 	(	dbc,
-		"insert into amalgamated_budget_data(journal_id) values(:p)"
+		"insert into amalgamated_budget_data"
+		"(journal_id, balancing_account_id) "
+		"values(:journal_id, :balancing_account_id)"
 	);
-	statement.bind(":p", instrument.id());
+	statement.bind(":journal_id", instrument.id());
+	statement.bind(":balancing_account_id", balancing_account.id());
 	statement.step_final();
+
 	return;
 }
 
@@ -77,7 +98,8 @@ AmalgamatedBudget::AmalgamatedBudget
 	m_frequency(1, interval_type::days),
 	m_map(new Map),
 	m_map_is_stale(true),
-	m_instrument(0)
+	m_instrument(0),
+	m_balancing_account(0)
 {
 }
 
@@ -86,6 +108,9 @@ AmalgamatedBudget::~AmalgamatedBudget()
 {
 	delete m_instrument;
 	m_instrument = 0;
+
+	delete m_balancing_account;
+	m_balancing_account = 0;
 }
 
 
@@ -211,6 +236,21 @@ AmalgamatedBudget::supports_frequency(Frequency const& p_frequency)
 }
 	
 
+Account
+AmalgamatedBudget::balancing_account() const
+{
+	if (!m_balancing_account)
+	{
+		throw UninitializedBalancingAccountException
+		(	"Balancing account uninitialized."
+		);
+	}
+	assert (m_balancing_account != 0);
+	return *m_balancing_account;
+}
+
+
+
 void
 AmalgamatedBudget::refresh()
 {
@@ -269,6 +309,7 @@ AmalgamatedBudget::refresh()
 	}
 	using std::swap;
 	swap(m_map, map_elect);
+	load_balancing_account();
 	load_instrument();
 	refresh_instrument();
 	m_map_is_stale = false;
@@ -283,10 +324,43 @@ AmalgamatedBudget::refresh_instrument()
 	fresh_journal.mimic(*m_instrument);
 	reflect_entries(fresh_journal);
 	reflect_repeater(fresh_journal);
+
+	// Deal with imbalance
+	Account const ba = balancing_account();
+	Entry balancing_entry(m_database_connection);
+	balancing_entry.set_account(ba);
+	balancing_entry.set_comment("");
+	balancing_entry.set_whether_reconciled(false);
+	balancing_entry.set_amount
+	(	-round(fresh_journal.balance(), ba.commodity().precision())
+	);
+	fresh_journal.push_entry(balancing_entry);
+	assert (fresh_journal.is_balanced());
+
 	m_instrument->mimic(fresh_journal);
 	return;
 }
 
+void
+AmalgamatedBudget::load_balancing_account()
+{
+	SQLStatement statement
+	(	m_database_connection,
+		"select balancing_account_id from amalgamated_budget_data"
+	);
+	statement.step();
+	if (m_balancing_account)
+	{
+		delete m_balancing_account;
+		m_balancing_account = 0;
+	}
+	m_balancing_account = new Account
+	(	m_database_connection,
+		statement.extract<Account::Id>(0)
+	);
+	statement.step_final();
+	return;
+}
 
 void
 AmalgamatedBudget::load_instrument()
@@ -315,7 +389,6 @@ AmalgamatedBudget::load_instrument()
 void
 AmalgamatedBudget::reflect_entries(DraftJournal& journal)
 {
-	JEWEL_DEBUG_LOG << "Just entered AmalgamatedBudget::reflect_entries(DraftJournal&)" << endl;
 	journal.clear_entries();
 	Map const& map = *m_map;
 	for
@@ -328,9 +401,7 @@ AmalgamatedBudget::reflect_entries(DraftJournal& journal)
 		Account const account(m_database_connection, it->first);
 		entry.set_account(account);
 		entry.set_comment("");
-		JEWEL_DEBUG_LOG << "Setting amount for instrument entry for " << account.name() << "...";
 		entry.set_amount(-(it->second));  // TODO Make sure signs are OK esp. with revenue...
-		JEWEL_DEBUG_LOG << "Amount set to " << entry.amount() << endl;
 		entry.set_whether_reconciled(false);
 		journal.push_entry(entry);
 	}
