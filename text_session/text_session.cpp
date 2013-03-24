@@ -3237,11 +3237,18 @@ void TextSession::review_budget()
 				cout << "\t" << item << endl;
 			}
 		}
-		cout << "\nBudget imbalance: "
-			 << finformat_std8(database_connection().budget_balance())
-			 << " per "
-			 << frequency_description(database_connection().budget_frequency())
-			 << endl;
+		Decimal const budget_balance = database_connection().budget_balance();
+		if (budget_balance == Decimal(0, 0))
+		{
+			cout << "\nBudget is balanced." << endl;
+		}
+		else
+		{
+			Frequency const bf = database_connection().budget_frequency();
+			cout << "\nBudget imbalance: "
+				 << finformat_std8(budget_balance) << " per "
+				 << frequency_description(bf) << endl;
+		}
 		Menu budget_item_menu;
 		populate_budget_item_menu(budget_item_menu);
 		shared_ptr<MenuItem> exit_item(MenuItem::provide_menu_exit());
