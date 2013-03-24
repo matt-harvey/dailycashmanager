@@ -17,6 +17,8 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
+
+
 class MyApp:
 	public wxApp
 {

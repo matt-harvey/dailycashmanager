@@ -170,13 +170,18 @@ AmalgamatedBudget::balance() const
 }	
 
 
-// TODO Make sure I mark as stale whenever required.
 void
 AmalgamatedBudget::mark_as_stale()
 {
 	m_map_is_stale = true;
-	// TODO When a BudgetItem is created, changed or etc.., we need a way
-	// to reflect this \e immediately in the "instrument" DraftJournal.
+
+	// TODO The AmalgamatedBudget is refreshed immediately here.
+	// We need to do this to ensure m_instrument is always
+	// current. This makes the "mark_as_stale" interface look
+	// kind of degenerate. Perhaps we can now simplify things
+	// somehow.
+	refresh();
+	assert (!m_map_is_stale);
 }
 
 void
@@ -338,6 +343,7 @@ AmalgamatedBudget::refresh_instrument()
 	assert (fresh_journal.is_balanced());
 
 	m_instrument->mimic(fresh_journal);
+	m_instrument->save();
 	return;
 }
 
@@ -401,7 +407,7 @@ AmalgamatedBudget::reflect_entries(DraftJournal& journal)
 		Account const account(m_database_connection, it->first);
 		entry.set_account(account);
 		entry.set_comment("");
-		entry.set_amount(-(it->second));  // TODO Make sure signs are OK esp. with revenue...
+		entry.set_amount(-(it->second));
 		entry.set_whether_reconciled(false);
 		journal.push_entry(entry);
 	}

@@ -896,9 +896,14 @@ TextSession::elicit_budget_item()
 	budget_item.set_frequency(value(elicit_budget_frequency()));
 
 	// Get amount
+	string word = "of item";
+	if (budget_item.account().account_type() == account_type::revenue)
+	{
+		word += " (as a NEGATIVE amount, to budget for revenue)";
+	}
 	Decimal amount = elicit_constrained_amount
 	(	budget_item.account().commodity(),
-		"of item"
+		word
 	);
 	budget_item.set_amount(amount);
 
@@ -973,6 +978,7 @@ TextSession::elicit_budget_item_amendment()
 	if (frequency) budget_item.set_frequency(value(frequency));
 
 	// Get amount
+	//
 	// TODO This is very similar to code in elicit_entry_amendment.
 	// Factor out the common code.
 	for (bool input_is_valid = false; !input_is_valid; )
