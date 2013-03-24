@@ -273,6 +273,11 @@ private:
 	 */
 	void elicit_budget_item();
 
+	void elicit_budget_item_amendment();
+	void elicit_budget_item_deletion();
+
+	
+
 	void elicit_entry_insertion(PersistentJournal& journal);
 	void elicit_entry_deletion(PersistentJournal& journal);
 	void elicit_entry_amendment(PersistentJournal& journal);
@@ -323,6 +328,7 @@ private:
 	void display_ordinary_actual_entries();
 	void display_envelopes();
 	void review_budget();
+	void populate_budget_item_menu(consolixx::Menu& menu);
 
 	// To factor out some code common to \e conduct_ordinary_journal_editing
 	// and \e conduct_draft_journal_editing. This is called to populate

@@ -250,6 +250,12 @@ PhatbooksDatabaseConnection::budget_frequency() const
 	return m_budget->frequency();
 }
 
+Decimal
+PhatbooksDatabaseConnection::budget_balance() const
+{
+	return m_budget->balance();
+}
+
 
 // BalanceCacheAttorney
 

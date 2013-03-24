@@ -502,19 +502,6 @@ TextSession::create_main_menu()
 	);
 	m_main_menu->push_item(elicit_journal_item);
 
-	shared_ptr<MenuItem> elicit_budget_item_item  // Yes it says 'item_item'
-	(	new MenuItem
-		(	"New budget item",
-			bind(&TextSession::elicit_budget_item, this),
-			true,
-			"bi"
-		)
-	);
-	elicit_budget_item_item->set_hiding_condition
-	(	bind(no_pl_accounts_saved, ref(database_connection()))
-	);
-	m_main_menu->push_item(elicit_budget_item_item);
-
 	shared_ptr<MenuItem> display_draft_journals_item
 	(	new MenuItem
 		(	"View draft and recurring transactions",
@@ -859,9 +846,102 @@ TextSession::elicit_budget_item()
 	cout << "\nCompleted budget item is as follows:"
 	     << endl << budget_item << endl << endl;
 
-	budget_item.save();
-	cout << "\nBudget item saved:\n" << budget_item << endl << endl;
+	// Confirm save or abort
+	cout << "Save budget_item (y/n)? ";
+	string const confirmation = get_constrained_user_input
+	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
+		"Try again, entering \"y\" to record budget item, "
+		"or \"n\" to abort: ",
+		false
+	);
+	if (confirmation == "y")
+	{
+		budget_item.save();
+		cout << "\nBudget item recorded:\n" << endl
+		     << budget_item << endl;
+	}
+	else
+	{
+		assert (confirmation == "n");
+		cout << "\nBudget item has not been recorded. " << endl;
+	}
+	return;
+}
 
+void
+TextSession::elicit_budget_item_amendment()
+{
+	// Get the BudgetItem
+	// TODO I should probably move this part into a separate function.
+	// There is probably shareable code between this and the function
+	// to elicit an existing Account etc..
+	BudgetItem budget_item(database_connection());
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		cout << "Enter ID of the budget item you wish to "
+		     << "amend, or Enter to abort: ";
+		string const s = get_user_input();
+		if (s.empty())
+		{
+			cout << "Editing aborted." << endl;
+			return;
+		}
+		try
+		{
+			BudgetItem::Id const id = lexical_cast<BudgetItem::Id>(s);
+			if (BudgetItem::exists(database_connection(), id))
+			{
+				budget_item = BudgetItem(database_connection(), id);
+				input_is_valid = true;
+			}
+			else
+			{
+				cout << "There is no budget item with this ID. "
+				     << "Please try again.";
+				assert (!input_is_valid);
+			}
+		}
+		catch (bad_lexical_cast&)
+		{
+			cout << "Please try again, entering a numerical budget "
+			     << "item ID" << endl;
+			assert (!input_is_valid);
+		}
+	}
+	// Guide user through amendment
+	cout << budget_item << endl;
+	// Get Account
+	cout << "Enter name of new account or category (or Enter to leave "
+	     << "unchanged): ";
+	optional<Account> maybe_new_account = elicit_valid_account
+	(	envelope_transaction,
+		primary_phase,
+		true
+	);
+	if (maybe_new_account)
+	{
+		budget_item.set_account(value(maybe_new_account));
+	}
+	// Get description
+	cout << "Enter new description (or Enter to leave unchanged): ";
+	string const description = get_user_input();
+	if (!description.empty())
+	{
+		budget_item.set_description(description);
+	}
+	// Get Frequency
+	typedef vector<Frequency> Freqs;
+	// TODO Finish implementing.	
+		
+}
+
+	
+
+
+void
+TextSession::elicit_budget_item_deletion()
+{
+	// TODO implement
 }
 
 void
@@ -972,7 +1052,8 @@ TextSession::elicit_entry_amendment(PersistentJournal& journal)
 	Entry entry = value(maybe_entry);
 
 	// Edit account
-	cout << "Enter name of new account (or Enter to leave unchanged): ";
+	cout << "Enter name of new account or category "
+	     << "(or Enter to leave unchanged): ";
 	TransactionType const transaction_type =
 		journal.is_actual()?
 		generic_transaction:
@@ -2988,43 +3069,98 @@ void TextSession::review_budget()
 	// here).
 
 	// Print the BudgetItems and amalgamated budget for each P&L Account.
-	PLAccountReader pla_reader(database_connection());
-	Frequency const budget_frequency =
-		database_connection().budget_frequency();
-	assert (budget_frequency.num_steps() == 1);
-	cout << endl;
-	for
-	(	PLAccountReader::const_iterator it = pla_reader.begin();
-		it != pla_reader.end();
-		++it
-	)
+	while (true)
 	{
-		Account const& account = *it;
-		typedef vector<BudgetItem> BudVec;
-		BudVec const items = account.budget_items();
-		cout << account.name() << ": ";
-		Decimal budget = account.budget();
-		if (budget == Decimal(0, 0))
+		PLAccountReader pla_reader(database_connection());
+		Frequency const budget_frequency =
+			database_connection().budget_frequency();
+		assert (budget_frequency.num_steps() == 1);
+		cout << endl;
+		for
+		(	PLAccountReader::const_iterator it = pla_reader.begin();
+			it != pla_reader.end();
+			++it
+		)
 		{
-			cout << "NIL" << endl;
+			Account const& account = *it;
+			typedef vector<BudgetItem> BudVec;
+			BudVec const items = account.budget_items();
+			cout << account.name() << ": ";
+			Decimal budget = account.budget();
+			if (budget == Decimal(0, 0))
+			{
+				cout << "NIL" << endl;
+			}
+			else
+			{
+				cout << finformat_std8_nopad(account.budget())
+					 << frequency_description(budget_frequency, " per")
+					 << endl;
+			}
+			for (BudVec::size_type i = 0; i != items.size(); ++i)
+			{
+				BudgetItem const& item = items[i];
+				cout << "\t" << item << endl;
+			}
 		}
-		else
+		cout << "\nBudget imbalance: "
+			 << finformat_std8(database_connection().budget_balance())
+			 << " per "
+			 << frequency_description(database_connection().budget_frequency())
+			 << endl;
+		Menu budget_item_menu;
+		populate_budget_item_menu(budget_item_menu);
+		shared_ptr<MenuItem> exit_item(MenuItem::provide_menu_exit());
+		budget_item_menu.push_item(exit_item);
+		budget_item_menu.present_to_user();
+		if (budget_item_menu.last_choice() == exit_item)
 		{
-			cout << finformat_std8_nopad(account.budget())
-			     << frequency_description(budget_frequency, " per")
-				 << endl;
-		}
-		for (BudVec::size_type i = 0; i != items.size(); ++i)
-		{
-			BudgetItem const& item = items[i];
-			cout << "\t" << item << endl;
+			break;
 		}
 	}
 	return;
 }
 
+void
+TextSession::populate_budget_item_menu(Menu& menu)
+{
+	assert (!no_pl_accounts_saved(database_connection()));
 
-void TextSession::wrap_up()
+	shared_ptr<MenuItem> elicit_budget_item_item  // Yes it says 'item_item'
+	(	new MenuItem
+		(	"New budget item",
+			bind(&TextSession::elicit_budget_item, this),
+			false,
+			"n"
+		)
+	);
+	menu.push_item(elicit_budget_item_item);
+
+	shared_ptr<MenuItem> amend_budget_item_item
+	(	new MenuItem
+		(	"Edit budget item",
+			bind(&TextSession::elicit_budget_item_amendment, this),
+			false,
+			"e"
+		)
+	);
+	menu.push_item(amend_budget_item_item);
+
+	shared_ptr<MenuItem> delete_budget_item
+	(	new MenuItem
+		(	"Delete budget item",
+			bind(&TextSession::elicit_budget_item_deletion, this),
+			false,
+			"d"
+		)
+	);
+	menu.push_item(delete_budget_item);
+	
+	return;
+}
+
+void
+TextSession::wrap_up()
 {
 	return;
 }

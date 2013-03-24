@@ -146,6 +146,8 @@ public:
 	// TODO Move implementation into .cpp file
 	Frequency budget_frequency() const;
 
+	jewel::Decimal budget_balance() const;
+
 	/**
 	 * Class to provide restricted access to cache in which AmalgamatedBudget
 	 * is stored.
