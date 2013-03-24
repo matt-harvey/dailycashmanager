@@ -138,7 +138,6 @@ AmalgamatedBudget::frequency() const
 	return m_frequency;
 }
 
-
 void
 AmalgamatedBudget::set_frequency(Frequency const& p_frequency)
 {
@@ -147,8 +146,6 @@ AmalgamatedBudget::set_frequency(Frequency const& p_frequency)
 	regenerate();
 	return;
 }
-
-
 
 Decimal
 AmalgamatedBudget::budget(AccountImpl::Id p_account_id) const
@@ -251,6 +248,12 @@ AmalgamatedBudget::balancing_account() const
 	return *m_balancing_account;
 }
 
+DraftJournal
+AmalgamatedBudget::instrument() const
+{
+	load();
+	return *m_instrument;
+}
 
 void
 AmalgamatedBudget::regenerate()

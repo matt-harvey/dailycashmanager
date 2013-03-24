@@ -89,6 +89,15 @@ public:
 	 */
 	Account balancing_account() const;
 
+	/**
+	 * @returns the DraftJournal that serves as the "instrument"
+	 * by means of which the AmalgamatedBudget effects regular
+	 * distributions of budget amounts to budgeting envelopes
+	 * (Accounts).
+	 */
+	DraftJournal instrument() const;
+
+
 private:
 
 	typedef boost::unordered_map<AccountImpl::Id, jewel::Decimal> Map;

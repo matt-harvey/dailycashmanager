@@ -215,6 +215,13 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 }
 
 
+DraftJournal
+PhatbooksDatabaseConnection::budget_instrument() const
+{
+	return m_budget->instrument();
+}
+
+
 namespace
 {
 	string const setup_flag = "setup_flag_996149162";

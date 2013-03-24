@@ -40,8 +40,9 @@ class AmalgamatedBudget;
 class AccountImpl;
 class BudgetItemImpl;
 class CommodityImpl;
-class EntryImpl;
+class DraftJournal;
 class DraftJournalImpl;
+class EntryImpl;
 class OrdinaryJournalImpl;
 class RepeaterImpl;
 
@@ -108,6 +109,19 @@ public:
 	 */
 	void set_caching_level(unsigned int level);
 
+	/**
+	 * @returns the DraftJournal that serves as the "instrument"
+	 * by means of which the AmalgamatedBudget (for the accounting
+	 * entity represented by the PhatbooksDatabaseConnection) effects regular
+	 * distributions of budget amounts to budgeting envelopes
+	 * (Accounts).
+	 *
+	 * @todo Prevent the budget instrument from being edited or
+	 * deleted, except via code in AmalgamatedBudget. This could
+	 * be achieved using a signature class for AmalgamatedBudget.
+	 */
+	DraftJournal budget_instrument() const;
+	
 	/**
 	 * Class to provide restricted access to cache holding
 	 * Account balances.

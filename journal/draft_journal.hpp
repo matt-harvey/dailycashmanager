@@ -114,6 +114,7 @@ public:
 
 	void clear_repeaters();
 
+	
 private:
 
 	// Define pure virtual functions inherited from Journal
