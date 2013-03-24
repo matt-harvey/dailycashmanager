@@ -429,13 +429,17 @@ AmalgamatedBudget::reflect_entries(DraftJournal& p_journal)
 		++it
 	)
 	{
-		Entry entry(m_database_connection);
-		Account const account(m_database_connection, it->first);
-		entry.set_account(account);
-		entry.set_comment("");
-		entry.set_amount(-(it->second));
-		entry.set_whether_reconciled(false);
-		p_journal.push_entry(entry);
+		if (it->second != Decimal(0, 0))
+		{
+			Entry entry(m_database_connection);
+			entry.set_account
+			(	Account(m_database_connection, it->first)
+			);
+			entry.set_comment("");
+			entry.set_amount(-(it->second));
+			entry.set_whether_reconciled(false);
+			p_journal.push_entry(entry);
+		}
 	}
 	return;
 }
