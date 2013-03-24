@@ -439,7 +439,50 @@ namespace
 				account_type::revenue
 			);
 	}
-				
+	
+	optional<Frequency> elicit_budget_frequency
+	(	string const allow_escape_with = ""
+	)
+	{
+		typedef vector<Frequency> Freqs;
+		typedef Freqs::size_type FreqsSz;
+		typedef shared_ptr<MenuItem const> MenuItemPtr;
+		Freqs freqs;
+		AmalgamatedBudget::generate_supported_frequencies(freqs);
+		Menu frequency_menu
+		(	"Indicate how often this item occurs, "
+			"by selecting an item from the above menu: "
+		);
+
+		// WARNING This is a bit grotesque - due to need to map
+		// MenuItemPtr to Frequency - but we can't use Frequency
+		// directly as value in map as it doesn't have a default
+		// constructor - so we use pointers to Frequency.
+		unordered_map<MenuItemPtr, Frequency*> menu_item_map;
+		for (FreqsSz i = 0; i != freqs.size(); ++i)
+		{
+			MenuItemPtr const menu_item
+			(	new MenuItem(bstring_to_std8(frequency_description(freqs[i])))
+			);
+			frequency_menu.push_item(menu_item);
+			menu_item_map[menu_item] = &(freqs[i]);
+		}
+		if (!allow_escape_with.empty())
+		{
+			MenuItemPtr const exit_item
+			(	MenuItem::provide_menu_exit(allow_escape_with)
+			);
+			frequency_menu.push_item(exit_item);
+			menu_item_map[exit_item] = 0;
+		}
+		frequency_menu.present_to_user();
+		optional<Frequency> ret;
+		Frequency const* const selected_frequency =
+			menu_item_map[frequency_menu.last_choice()];
+		if (selected_frequency) ret = *selected_frequency;
+		return ret;
+	}
+
 }  
 
 /********* END ANONYMOUS INNER NAMESPACE *************/
@@ -807,33 +850,7 @@ TextSession::elicit_budget_item()
 	budget_item.set_description(get_user_input());
 
 	// Get Frequency
-	typedef vector<Frequency> Freqs;
-	typedef Freqs::size_type FreqsSz;
-	typedef shared_ptr<MenuItem const> MenuItemPtr;
-	Freqs freqs;
-	AmalgamatedBudget::generate_supported_frequencies(freqs);
-	Menu frequency_menu
-	(	"Indicate how often this item occurs, "
-		"by selecting an item from the above menu: "
-	);
-
-	// WARNING This is a bit grotesque - due to need to map
-	// MenuItemPtr to Frequency - but we can't use Frequency
-	// directly as value in map as it doesn't have a default
-	// constructor - so we use pointers to Frequency.
-	unordered_map<MenuItemPtr, Frequency*> menu_item_map;
-	for (FreqsSz i = 0; i != freqs.size(); ++i)
-	{
-		MenuItemPtr const menu_item
-		(	new MenuItem(bstring_to_std8(frequency_description(freqs[i])))
-		);
-		frequency_menu.push_item(menu_item);
-		menu_item_map[menu_item] = &(freqs[i]);
-	}
-	frequency_menu.present_to_user();
-	budget_item.set_frequency
-	(	*(menu_item_map[frequency_menu.last_choice()])
-	);
+	budget_item.set_frequency(value(elicit_budget_frequency()));
 
 	// Get amount
 	Decimal amount = elicit_constrained_amount
@@ -847,7 +864,7 @@ TextSession::elicit_budget_item()
 	     << endl << budget_item << endl << endl;
 
 	// Confirm save or abort
-	cout << "Save budget_item (y/n)? ";
+	cout << "Save budget item (y/n)? ";
 	string const confirmation = get_constrained_user_input
 	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
 		"Try again, entering \"y\" to record budget item, "
@@ -897,7 +914,7 @@ TextSession::elicit_budget_item_amendment()
 			else
 			{
 				cout << "There is no budget item with this ID. "
-				     << "Please try again.";
+				     << "Please try again." << endl;
 				assert (!input_is_valid);
 			}
 		}
@@ -930,9 +947,75 @@ TextSession::elicit_budget_item_amendment()
 		budget_item.set_description(description);
 	}
 	// Get Frequency
-	typedef vector<Frequency> Freqs;
-	// TODO Finish implementing.	
-		
+	optional<Frequency> frequency = elicit_budget_frequency
+	(	"Leave frequency unchanged"
+	);
+	if (frequency) budget_item.set_frequency(value(frequency));
+
+	// Get amount
+	// TODO This is very similar to code in elicit_entry_amendment.
+	// Factor out the common code.
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		cout << "Enter new amount for budget item (or Enter to "
+		     << "leave unchanged): ";
+		optional<Decimal> const maybe_new_amount =
+			get_decimal_from_user(true);
+		if (!maybe_new_amount)
+		{
+			input_is_valid = true;
+		}
+		else
+		{
+			Decimal new_amount = value(maybe_new_amount);
+			Decimal::places_type const initial_precision =
+				new_amount.places();
+			Commodity const commodity = budget_item.account().commodity();
+			try
+			{
+				new_amount = jewel::round(new_amount, commodity.precision());
+				budget_item.set_amount(new_amount);
+				input_is_valid = true;
+				if (new_amount.places() < initial_precision)
+				{
+					cout << "Amount rounded to " << new_amount << "." << endl;
+				}
+			}
+			catch (DecimalRangeException&)
+			{
+				cout << "The number you entered cannot be safely "
+					 << "rounded to the required precison of "
+					 << commodity.precision()
+					 << " decimal places. Please try again."
+					 << endl;
+				assert (!input_is_valid);
+			}
+		}
+	}
+	// Display BudgetItem
+	cout << "\nAmended budget item is as follows:"
+	     << endl << budget_item << endl << endl;
+	
+	// Confirm save or abort
+	cout << "Save changes (y/n)? ";
+	string const confirmation = get_constrained_user_input
+	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
+		"Try again, entering \"y\" to save changes, "
+		"or \"n\" to cancel changes: ",
+		false
+	);
+	if (confirmation == "y")
+	{
+		budget_item.save();
+		cout << "\nBudget item is now as follows:\n" << endl
+		     << budget_item << endl;
+	}
+	else
+	{
+		assert (confirmation == "n");
+		cout << "\nChanges have not been saved. " << endl;
+	}
+	return;
 }
 
 	
