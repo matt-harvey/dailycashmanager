@@ -221,7 +221,6 @@ BudgetItemImpl::process_saving_statement(SQLStatement& statement)
 void
 BudgetItemImpl::do_save_existing()
 {
-	BudgetAttorney::mark_as_stale(database_connection());
 	SQLStatement updater
 	(	database_connection(),
 		"update budget_items set "
@@ -234,13 +233,13 @@ BudgetItemImpl::do_save_existing()
 	);
 	updater.bind(":budget_item_id", id());
 	process_saving_statement(updater);
+	BudgetAttorney::regenerate(database_connection());
 	return;
 }
 
 void
 BudgetItemImpl::do_save_new()
 {
-	BudgetAttorney::mark_as_stale(database_connection());
 	SQLStatement inserter
 	(	database_connection(),
 		"insert into budget_items"
@@ -261,6 +260,7 @@ BudgetItemImpl::do_save_new()
 		")"
 	);
 	process_saving_statement(inserter);
+	BudgetAttorney::regenerate(database_connection());
 	return;
 }
 			
@@ -277,13 +277,13 @@ BudgetItemImpl::do_ghostify()
 void
 BudgetItemImpl::do_remove()
 {
-	BudgetAttorney::mark_as_stale(database_connection());
 	string const statement_text =
 		"delete from " + primary_table_name() + " where " +
 		primary_key_name() + " = :p";
 	SQLStatement statement(database_connection(), statement_text);
 	statement.bind(":p", id());
 	statement.step_final();
+	BudgetAttorney::regenerate(database_connection());
 	return;
 }
 

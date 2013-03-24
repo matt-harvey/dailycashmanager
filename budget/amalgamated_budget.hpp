@@ -52,18 +52,22 @@ public:
 	 * @returns the amalgamated budget for the given Account, at the
 	 * Frequency returned by frequency().
 	 */
-	jewel::Decimal budget(AccountImpl::Id p_account_id);
+	jewel::Decimal budget(AccountImpl::Id p_account_id) const;
 
 	/**
 	 * @returns the sum of all the Account budgets in AmalgamatedBudget,
 	 * at the Frequency returned by frequency().
+	 *
+	 * Note this is non-const only because it requires calling
+	 * load().
 	 */
 	jewel::Decimal balance() const;
 
 	/**
-	 * Mark the AmalgamatedBudget as a whole as stale.
+	 * Regenerate the AmalgamatedBudget on the basis of the currently
+	 * saved BudgetItems.
 	 */
-	void mark_as_stale();
+	void regenerate();
 
 	/**
 	 * Populates vec with all and only the Frequencies that are supported
@@ -88,41 +92,78 @@ public:
 private:
 
 	typedef boost::unordered_map<AccountImpl::Id, jewel::Decimal> Map;
-	void refresh();
-	void refresh_instrument();
-	void load_balancing_account();
-	void load_instrument();
+
+
+	void regenerate_map();
+
+	void regenerate_instrument();
 
 	/**
-	 * Create and push Entries onto \e journal that reflect the
+	 * Load the persistent aspects of AmalgamatedBudget from the
+	 * database into memory; but do not \e regenerate the
+	 * budget from the BudgetItems.
+	 *
+	 * Note this is "conceptually" const, even though it
+	 * changes the internal state.
+	 */
+	void load() const;
+
+	void load_balancing_account() const;
+
+	/**
+	 * Loads the instrument from the database, but does \e not \e regenerate
+	 * the instrument from the saved BudgetItems.
+	 */
+	void load_instrument() const;
+
+	/**
+	 * Should only be called by load(), the first time AmalgamatedBudget is
+	 * loaded.
+	 */
+	void load_map() const;
+
+	/**
+	 * This does the work of actually generating the map
+	 * afresh from the saved BudgetItems. It's a bit dodgy
+	 * that we're calling this const, as sometimes the map
+	 * can completely change rather than just being loaded
+	 * for the first time. But we do this so this can
+	 * provide implementation details both for
+	 * load_map() (const) and for refresh_map().
+	 */
+	void generate_map() const;
+
+	/**
+	 * Create and push Entries onto \e p_journal that reflect the
 	 * AmalgamatedBudget. This does nothing to change the Repeaters,
 	 * comment or other journal-level attributes of journal - it only
-	 * affects the entries. If there are already Entries in journal,
+	 * affects the entries in p_journal. If there are already
+	 * Entries in p_journal,
 	 * these are all cleared prior to the new Entries being pushed on.
 	 */
-	void reflect_entries(DraftJournal& journal);
+	void reflect_entries(DraftJournal& p_journal);
 
 	/**
-	 * Examines the Repeaters of \e journal. If there is exactly one
+	 * Examines the Repeaters of p_journal. If there is exactly one
 	 * Repeater, and it reflects the same Frequency as the AmalgamatedBudget
 	 * Frequency, then that Repeater is left unchanged. Otherwise, all
-	 * Repeaters are cleared from \e journal, and a new Repeater is
-	 * pushed onto \e journal, with TODAY as its next_date().
+	 * Repeaters are cleared from p_journal, and a new Repeater is
+	 * pushed onto p_journal, with \e today as its next_date().
 	 */
-	void reflect_repeater(DraftJournal& journal);
+	void reflect_repeater(DraftJournal& p_journal);
 
+	bool mutable m_is_loaded;
 	PhatbooksDatabaseConnection& m_database_connection;
 	Frequency m_frequency;
-	boost::scoped_ptr<Map> m_map;
-	bool m_map_is_stale;
+	mutable boost::scoped_ptr<Map> m_map;
 
 	// The DraftJournal that "effects" the AmalgamatedBudget
-	DraftJournal* m_instrument; 
+	mutable DraftJournal* m_instrument; 
 
-	// The Id of the Account such that, when refreshing m_instrument, if the
+	// The Id of the Account such that, when regenerating m_instrument, if the
 	// journal is not otherwise balanced, any imbalance overflows
 	// to this Account.
-	Account* m_balancing_account;
+	mutable Account* m_balancing_account;
 
 };
 

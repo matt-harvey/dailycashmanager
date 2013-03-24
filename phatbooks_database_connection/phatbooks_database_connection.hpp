@@ -143,7 +143,6 @@ public:
 	};
 	friend class BalanceCacheAttorney;
 
-	// TODO Move implementation into .cpp file
 	Frequency budget_frequency() const;
 
 	jewel::Decimal budget_balance() const;
@@ -159,8 +158,10 @@ public:
 		friend BudgetItemImpl;
 		friend PhatbooksDatabaseConnection;
 	private:
-		// Mark whole AmalgamatedBudget as stale
-		static void mark_as_stale
+		// Regenerate the AmalgamatedBudget, and its associated
+		// "instrument" DraftJournal, on the basis of the currently
+		// saved BudgetItems.
+		static void regenerate
 		(	PhatbooksDatabaseConnection const& p_database_connection
 		);
 		// Retrieve the amalgamated budget for a given Account,

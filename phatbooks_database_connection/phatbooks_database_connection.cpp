@@ -307,11 +307,11 @@ typedef
 	BudgetAttorney;
 
 void
-BudgetAttorney::mark_as_stale
+BudgetAttorney::regenerate
 (	PhatbooksDatabaseConnection const& p_database_connection
 )
 {
-	p_database_connection.m_budget->mark_as_stale();
+	p_database_connection.m_budget->regenerate();
 	return;
 }
 

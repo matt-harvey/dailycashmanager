@@ -388,7 +388,6 @@ void
 AccountImpl::do_save_existing()
 {
 	BalanceCacheAttorney::mark_as_stale(database_connection());
-	BudgetAttorney::mark_as_stale(database_connection());
 	SQLStatement updater
 	(	database_connection(),
 		"update accounts set "
@@ -400,6 +399,7 @@ AccountImpl::do_save_existing()
 	);
 	updater.bind(":account_id", id());
 	process_saving_statement(updater);
+	BudgetAttorney::regenerate(database_connection());
 	return;
 }
 
@@ -407,7 +407,6 @@ void
 AccountImpl::do_save_new()
 {
 	BalanceCacheAttorney::mark_as_stale(database_connection());
-	BudgetAttorney::mark_as_stale(database_connection());
 	SQLStatement inserter
 	(	database_connection(),
 		"insert into accounts(account_type_id, name, description, "
@@ -415,6 +414,7 @@ AccountImpl::do_save_new()
 		":commodity_id)"
 	);
 	process_saving_statement(inserter);
+	BudgetAttorney::regenerate(database_connection());
 	return;
 }
 
@@ -422,13 +422,13 @@ void
 AccountImpl::do_remove()
 {
 	BalanceCacheAttorney::mark_as_stale(database_connection());
-	BudgetAttorney::mark_as_stale(database_connection());
 	string const statement_text =
 		"delete from " + primary_table_name() + " where " +
 		primary_key_name() + " = :p";
 	SQLStatement statement(database_connection(), statement_text);
 	statement.bind(":p", id());
 	statement.step_final();
+	BudgetAttorney::regenerate(database_connection());
 	return;
 }
 

@@ -94,10 +94,10 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 AmalgamatedBudget::AmalgamatedBudget
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
+	m_is_loaded(false),
 	m_database_connection(p_database_connection),
 	m_frequency(1, interval_type::days),
 	m_map(new Map),
-	m_map_is_stale(true),
 	m_instrument(0),
 	m_balancing_account(0)
 {
@@ -114,9 +114,26 @@ AmalgamatedBudget::~AmalgamatedBudget()
 }
 
 
+void
+AmalgamatedBudget::load() const
+{
+	if (m_is_loaded)
+	{
+		return;
+	}
+	assert (!m_is_loaded);
+	load_balancing_account();
+	load_instrument();
+	load_map();
+	m_is_loaded = true;
+	return;
+}
+
+
 Frequency
 AmalgamatedBudget::frequency() const
 {
+	load();
 	assert (m_frequency.num_steps() == 1);
 	return m_frequency;
 }
@@ -125,20 +142,18 @@ AmalgamatedBudget::frequency() const
 void
 AmalgamatedBudget::set_frequency(Frequency const& p_frequency)
 {
-	mark_as_stale();
+	load();
 	m_frequency = p_frequency;
+	regenerate();
 	return;
 }
 
 
 
 Decimal
-AmalgamatedBudget::budget(AccountImpl::Id p_account_id)
+AmalgamatedBudget::budget(AccountImpl::Id p_account_id) const
 {
-	if (m_map_is_stale)
-	{
-		refresh();
-	}
+	load();
 	Map::const_iterator it = m_map->find(p_account_id);
 	assert (it != m_map->end());
 	return it->second;
@@ -161,6 +176,7 @@ namespace
 Decimal
 AmalgamatedBudget::balance() const
 {
+	load();
 	return accumulate
 	(	m_map->begin(),
 		m_map->end(),
@@ -169,20 +185,6 @@ AmalgamatedBudget::balance() const
 	);
 }	
 
-
-void
-AmalgamatedBudget::mark_as_stale()
-{
-	m_map_is_stale = true;
-
-	// TODO The AmalgamatedBudget is refreshed immediately here.
-	// We need to do this to ensure m_instrument is always
-	// current. This makes the "mark_as_stale" interface look
-	// kind of degenerate. Perhaps we can now simplify things
-	// somehow.
-	refresh();
-	assert (!m_map_is_stale);
-}
 
 void
 AmalgamatedBudget::generate_supported_frequencies(vector<Frequency>& vec)
@@ -244,20 +246,34 @@ AmalgamatedBudget::supports_frequency(Frequency const& p_frequency)
 Account
 AmalgamatedBudget::balancing_account() const
 {
-	if (!m_balancing_account)
-	{
-		throw UninitializedBalancingAccountException
-		(	"Balancing account uninitialized."
-		);
-	}
+	load();
 	assert (m_balancing_account != 0);
 	return *m_balancing_account;
 }
 
 
+void
+AmalgamatedBudget::regenerate()
+{
+	load();
+	regenerate_map();
+	regenerate_instrument();
+	return;
+}
+
 
 void
-AmalgamatedBudget::refresh()
+AmalgamatedBudget::load_map() const
+{
+	assert (!m_is_loaded);
+	assert (m_map->empty());
+	generate_map();
+	return;
+}
+
+
+void
+AmalgamatedBudget::generate_map() const
 {
 	scoped_ptr<Map> map_elect(new Map);
 	assert (map_elect->empty());
@@ -314,17 +330,25 @@ AmalgamatedBudget::refresh()
 	}
 	using std::swap;
 	swap(m_map, map_elect);
-	load_balancing_account();
-	load_instrument();
-	refresh_instrument();
-	m_map_is_stale = false;
+
 	return;
 }
 
 
 void
-AmalgamatedBudget::refresh_instrument()
+AmalgamatedBudget::regenerate_map()
 {
+	load();
+	generate_map();
+	return;
+}
+
+
+void
+AmalgamatedBudget::regenerate_instrument()
+{
+	load();
+
 	DraftJournal fresh_journal(m_database_connection);
 	fresh_journal.mimic(*m_instrument);
 	reflect_entries(fresh_journal);
@@ -344,11 +368,12 @@ AmalgamatedBudget::refresh_instrument()
 
 	m_instrument->mimic(fresh_journal);
 	m_instrument->save();
+
 	return;
 }
 
 void
-AmalgamatedBudget::load_balancing_account()
+AmalgamatedBudget::load_balancing_account() const
 {
 	SQLStatement statement
 	(	m_database_connection,
@@ -369,7 +394,7 @@ AmalgamatedBudget::load_balancing_account()
 }
 
 void
-AmalgamatedBudget::load_instrument()
+AmalgamatedBudget::load_instrument() const
 {
 	// Set the instrument (the DraftJournal that carries out
 	// the AmalgamatedBudget)
@@ -393,9 +418,10 @@ AmalgamatedBudget::load_instrument()
 
 
 void
-AmalgamatedBudget::reflect_entries(DraftJournal& journal)
+AmalgamatedBudget::reflect_entries(DraftJournal& p_journal)
 {
-	journal.clear_entries();
+	load();
+	p_journal.clear_entries();
 	Map const& map = *m_map;
 	for
 	(	Map::const_iterator it = map.begin(), end = map.end();
@@ -409,16 +435,17 @@ AmalgamatedBudget::reflect_entries(DraftJournal& journal)
 		entry.set_comment("");
 		entry.set_amount(-(it->second));
 		entry.set_whether_reconciled(false);
-		journal.push_entry(entry);
+		p_journal.push_entry(entry);
 	}
 	return;
 }
 
 
 void
-AmalgamatedBudget::reflect_repeater(DraftJournal& journal)
+AmalgamatedBudget::reflect_repeater(DraftJournal& p_journal)
 {
-	vector<Repeater> const& old_repeaters = journal.repeaters();
+	load();
+	vector<Repeater> const& old_repeaters = p_journal.repeaters();
 	if (old_repeaters.size() == 1)
 	{
 		Frequency const old_frequency = old_repeaters[0].frequency();
@@ -430,12 +457,12 @@ AmalgamatedBudget::reflect_repeater(DraftJournal& journal)
 			return;
 		}
 	}
-	journal.clear_repeaters();
+	p_journal.clear_repeaters();
 	Repeater new_repeater(m_database_connection);
 	new_repeater.set_frequency(m_frequency);
 	new_repeater.set_next_date(gregorian::day_clock::local_day());
-	assert (journal.repeaters().empty());
-	journal.push_repeater(new_repeater);
+	assert (p_journal.repeaters().empty());
+	p_journal.push_repeater(new_repeater);
 	return;
 }
 
