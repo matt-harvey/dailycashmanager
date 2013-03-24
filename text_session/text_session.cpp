@@ -204,6 +204,49 @@ namespace
 		);
 	}
 
+	optional<BudgetItem> elicit_existing_budget_item
+	(	PhatbooksDatabaseConnection& dbc,
+		std::string const prompt
+	)
+	{
+		// TODO Factor out common code between this and other functions
+		// to elicit existing business objects from TUI user.
+		optional<BudgetItem> ret;
+		while (true)
+		{
+			cout << prompt;
+			string const s = get_user_input();
+			if (s.empty())
+			{
+				assert (!ret);
+				return ret;
+			}
+			try
+			{
+				BudgetItem::Id const id = lexical_cast<BudgetItem::Id>(s);
+				if (BudgetItem::exists(dbc, id))
+				{
+					ret = BudgetItem(dbc, id);
+					return ret;
+				}
+				else
+				{
+					cout << "There is no budget item with this ID. "
+					     << "Please try again." << endl;
+					assert (!ret);
+				}
+			}
+			catch (bad_lexical_cast&)
+			{
+				cout << "Please try again, entering a numerical budget "
+				     << "item ID." << endl;
+				assert (!ret);
+			}
+		}
+		assert (false);  // Execution never reaches here.
+	}
+
+
 	Decimal elicit_constrained_amount
 	(	Commodity const& commodity,
 		string const& transaction_description
@@ -889,44 +932,21 @@ void
 TextSession::elicit_budget_item_amendment()
 {
 	// Get the BudgetItem
-	// TODO I should probably move this part into a separate function.
-	// There is probably shareable code between this and the function
-	// to elicit an existing Account etc..
-	BudgetItem budget_item(database_connection());
-	for (bool input_is_valid = false; !input_is_valid; )
+	optional<BudgetItem> maybe_budget_item = elicit_existing_budget_item
+	(	database_connection(),
+		"Enter ID of the budget item you wish to amend, or Enter to abort: "
+	);
+	if (!maybe_budget_item)
 	{
-		cout << "Enter ID of the budget item you wish to "
-		     << "amend, or Enter to abort: ";
-		string const s = get_user_input();
-		if (s.empty())
-		{
-			cout << "Editing aborted." << endl;
-			return;
-		}
-		try
-		{
-			BudgetItem::Id const id = lexical_cast<BudgetItem::Id>(s);
-			if (BudgetItem::exists(database_connection(), id))
-			{
-				budget_item = BudgetItem(database_connection(), id);
-				input_is_valid = true;
-			}
-			else
-			{
-				cout << "There is no budget item with this ID. "
-				     << "Please try again." << endl;
-				assert (!input_is_valid);
-			}
-		}
-		catch (bad_lexical_cast&)
-		{
-			cout << "Please try again, entering a numerical budget "
-			     << "item ID" << endl;
-			assert (!input_is_valid);
-		}
+		cout << "Editing aborted." << endl;
+		return;
 	}
+	assert (maybe_budget_item);
+	BudgetItem budget_item = value(maybe_budget_item);
+
 	// Guide user through amendment
 	cout << budget_item << endl;
+
 	// Get Account
 	cout << "Enter name of new account or category (or Enter to leave "
 	     << "unchanged): ";
@@ -1024,8 +1044,39 @@ TextSession::elicit_budget_item_amendment()
 void
 TextSession::elicit_budget_item_deletion()
 {
-	// TODO implement
+	// Get the BudgetItem
+	optional<BudgetItem> maybe_budget_item = elicit_existing_budget_item
+	(	database_connection(),
+		"Enter ID of the budget item you wish to delete, or Enter to abort: "
+	);
+	if (!maybe_budget_item)
+	{
+		cout << "Deletion aborted." << endl;
+		return;
+	}
+	assert (maybe_budget_item);
+	BudgetItem budget_item = value(maybe_budget_item);
+	cout << budget_item << endl;
+	cout << "Are you sure you want to delete this budget item? (y/n) "; 
+	string const confirmation = get_constrained_user_input
+	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
+		"Try again, entering \"y\" to save delete, "
+		"or \"n\" to keep: ",
+		false
+	);
+	if (confirmation == "y")
+	{
+		budget_item.remove();
+		cout << "\nBudget item deleted." << endl << endl;
+	}
+	else
+	{
+		assert (confirmation == "n");
+		cout << "\nBudget item has not been deleted. " << endl;
+	}
+	return;
 }
+
 
 void
 TextSession::display_draft_journals()

@@ -280,7 +280,7 @@ BudgetItemImpl::do_remove()
 	BudgetAttorney::mark_as_stale(database_connection());
 	string const statement_text =
 		"delete from " + primary_table_name() + " where " +
-		primary_key_name() = " = :p";
+		primary_key_name() + " = :p";
 	SQLStatement statement(database_connection(), statement_text);
 	statement.bind(":p", id());
 	statement.step_final();
