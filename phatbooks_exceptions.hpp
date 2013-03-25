@@ -81,6 +81,13 @@ JEWEL_DERIVED_EXCEPTION
 	PhatbooksException
 );
 
+/**
+ * Exception to be thrown when there is an attempt made to delete the
+ * persistent database record of a PhatbooksPersistentObject (or
+ * derived class) instance, that should not be deleted from the
+ * database.
+ */
+JEWEL_DERIVED_EXCEPTION(PreservedRecordDeletionException, PhatbooksException);
 
 }  // namespace phatbooks
 

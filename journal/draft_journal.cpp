@@ -80,7 +80,6 @@ DraftJournal::set_name(BString const& p_name)
 	return;
 }
 
-
 void
 DraftJournal::push_repeater(Repeater& repeater)
 {
@@ -160,14 +159,11 @@ DraftJournal::do_get_entries() const
 	return impl().entries();
 }
 
-
-
 vector<Repeater> const&
 DraftJournal::repeaters() const
 {
 	return impl().repeaters();
 }
-
 
 BString
 DraftJournal::repeater_description() const

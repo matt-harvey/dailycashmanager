@@ -138,6 +138,12 @@ private:
 	void do_save_existing();
 	void do_save_new();
 	void do_ghostify();
+
+	/**
+	 * Note if the DraftJournalImpl corresponds to the budget instrument
+	 * for database_connection(), then PreservedRecordDeletionException is
+	 * thrown.
+	 */
 	void do_remove();
 
 	struct DraftJournalData;

@@ -32,6 +32,13 @@ class Repeater;
  * Alternatively, a DraftJournal may have Repeaters associated with it.
  * A DraftJournal with Repeaters corresponds to a recurring transaction,
  * that is automatically posted by the application at specified intervals.
+ *
+ * Note attempting to call remove() on a DraftJournal that is equal to
+ * the database_connection().budget_instrument() will result in
+ * PreservedRecordDeletionException being thrown. (remove() does not
+ * appear in this header at it is inherited from
+ * PhatbooksPersistentObject<DraftJournalImpl>, and is implemented
+ * in DraftJournalImpl.)
  */
 class DraftJournal:
 	public PersistentJournal,

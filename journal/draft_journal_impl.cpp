@@ -165,10 +165,6 @@ DraftJournalImpl::DraftJournalImpl
 
 DraftJournalImpl::~DraftJournalImpl()
 {
-	/* If m_dj_data is a smart pointer, this is not required.
-	delete m_dj_data;
-	m_dj_data = 0;
-	*/
 }
 
 
@@ -363,6 +359,12 @@ DraftJournalImpl::do_ghostify()
 void
 DraftJournalImpl::do_remove()
 {
+	if (id() == database_connection().budget_instrument().id())
+	{
+		throw PreservedRecordDeletionException
+		(	"Budget instrument DraftJournalImpl cannot be deleted."
+		);
+	}
 	// TODO Confirm exception-safety of whole remove() function, once
 	// the below is taken into account.
 	SQLStatement journal_detail_deleter
