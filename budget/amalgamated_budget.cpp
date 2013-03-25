@@ -12,7 +12,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/static_assert.hpp>
-#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <algorithm>
@@ -64,9 +63,13 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 		")"
 	);
 	DraftJournal instrument(dbc);
-	instrument.set_name("AMALGAMATED BUDGET INSTRUMENT");
+	instrument.set_name("AMALGAMATED BUDGET JOURNAL");
 	instrument.set_whether_actual(false);
 	instrument.set_comment("");
+	Repeater repeater(dbc);
+	repeater.set_frequency(Frequency(1, interval_type::days));
+	repeater.set_next_date(gregorian::day_clock::local_day());
+	instrument.push_repeater(repeater);
 	instrument.save();
 
 	Account balancing_account(dbc);
@@ -77,6 +80,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	(	Commodity::default_commodity(dbc)
 	);
 	balancing_account.save();
+
 
 	SQLStatement statement
 	(	dbc,
@@ -258,9 +262,25 @@ AmalgamatedBudget::instrument() const
 void
 AmalgamatedBudget::regenerate()
 {
-	load();
-	regenerate_map();
-	regenerate_instrument();
+	// If amalgamated_budget_data has not yet been populated, then
+	// proceeding here would cause the program to crash, as
+	// we wouldn't be able to load the balancing account id, etc..
+	// So if amalgamated_budget_data has not been created yet,
+	// we simply return. It is expected this will only happen on
+	// initial setup of the database (due to calling of
+	// regenerate() by hook in AccountImpl saving method, when
+	// balancing account is first saved).
+	SQLStatement statement
+	(	m_database_connection,
+		"select * from amalgamated_budget_data"
+	);
+	if (statement.step())
+	{
+		load();
+		regenerate_map();
+		regenerate_instrument();
+		statement.step_final();
+	}
 	return;
 }
 
@@ -382,7 +402,8 @@ AmalgamatedBudget::load_balancing_account() const
 	(	m_database_connection,
 		"select balancing_account_id from amalgamated_budget_data"
 	);
-	statement.step();
+	bool check = statement.step();
+	assert (check);
 	if (m_balancing_account)
 	{
 		delete m_balancing_account;

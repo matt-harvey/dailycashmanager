@@ -7,9 +7,9 @@
 #include "budget_item.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <boost/shared_ptr.hpp>
+#include <jewel/decimal.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
-#include <jewel/decimal.hpp>
 #include <string>
 #include <vector>
 

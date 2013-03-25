@@ -1105,8 +1105,6 @@ TextSession::display_draft_journals()
 			++it
 		)
 		{
-			// TODO Prevent the AMALGAMATED BUDGET JOURNAL from
-			// being shown to the user.
 			shared_ptr<MenuItem const> const menu_item
 			(	new MenuItem
 				(	bstring_to_std8(it->name()),
@@ -1554,6 +1552,16 @@ TextSession::conduct_draft_journal_editing(DraftJournal& journal)
 	typedef shared_ptr<MenuItem const> ItemPtr;
 	typedef TextSession PTS;  // For brevity below.
 
+	if (journal == database_connection().budget_instrument())
+	{
+		cout << endl << journal << endl;
+		cout << "This is the main budget journal and cannot be edited "
+		     << "directly. To amend budget items, select \"Review budget\" "
+			 << "from the main menu."
+			 << endl;
+		return;
+	}
+	assert (journal != database_connection().budget_instrument());
 	for 
 	(	bool exiting = false, first_time = true;
 		!exiting;
