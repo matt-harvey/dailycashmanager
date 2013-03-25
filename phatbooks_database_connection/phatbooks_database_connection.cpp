@@ -215,6 +215,12 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 }
 
 
+Account
+PhatbooksDatabaseConnection::balancing_account() const
+{
+	return m_budget->balancing_account();
+}
+
 DraftJournal
 PhatbooksDatabaseConnection::budget_instrument() const
 {

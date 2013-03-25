@@ -35,9 +35,10 @@ namespace phatbooks
 {
 
 // Forward declarations
-class BalanceCache;
 class AmalgamatedBudget;
+class Account;
 class AccountImpl;
+class BalanceCache;
 class BudgetItemImpl;
 class CommodityImpl;
 class DraftJournal;
@@ -108,6 +109,12 @@ public:
 	 * @todo Determinate and document throwing behaviour.
 	 */
 	void set_caching_level(unsigned int level);
+
+	/**
+	 * @returns the Account to which budget imbalances are reconciled
+	 * in the budget_instrument().
+	 */
+	Account balancing_account() const;
 
 	/**
 	 * @returns the DraftJournal that serves as the "instrument"

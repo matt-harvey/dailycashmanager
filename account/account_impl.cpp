@@ -9,11 +9,13 @@
  */
 
 #include "account_impl.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "b_string.hpp"
 #include "budget_item.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -421,6 +423,12 @@ AccountImpl::do_save_new()
 void
 AccountImpl::do_remove()
 {
+	if (id() == database_connection().balancing_account().id())
+	{
+		throw PreservedRecordDeletionException
+		(	"Budget balancing account cannot be deleted."
+		);
+	}
 	BalanceCacheAttorney::mark_as_stale(database_connection());
 	string const statement_text =
 		"delete from " + primary_table_name() + " where " +
