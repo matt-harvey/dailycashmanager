@@ -53,6 +53,8 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	dbc.execute_sql
 	(	"create index budget_item_account_index on budget_items(account_id)"
 	);
+	// NOTE UserDraftJournalReader has knowledge of this schema. Ensure
+	// any changes to the schema are also reflected there, as appropriate.
 	dbc.execute_sql
 	(	"create table amalgamated_budget_data"
 		"("

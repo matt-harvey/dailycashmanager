@@ -73,6 +73,16 @@ DraftJournal::exists
 	);
 }
 
+bool
+DraftJournal::no_user_draft_journals_saved
+(	PhatbooksDatabaseConnection& p_database_connection
+)
+{
+	return DraftJournalImpl::no_user_draft_journals_saved
+	(	p_database_connection
+	);
+}
+
 void
 DraftJournal::set_name(BString const& p_name)
 {

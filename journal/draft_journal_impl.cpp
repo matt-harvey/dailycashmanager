@@ -1,6 +1,13 @@
 #include "b_string.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
+
+#ifndef NDEBUG
+	// We only need this to support some
+	// assertions.
+	#include "draft_journal_reader.hpp"
+#endif
+
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -184,6 +191,57 @@ DraftJournalImpl::exists
 	return statement.step();
 }
 
+bool
+DraftJournalImpl::no_user_draft_journals_saved
+(	PhatbooksDatabaseConnection& p_database_connection
+)
+{
+#	ifndef NDEBUG
+		// We could just examine this directly; but it seems
+		// inefficient to load the whole reader when we only
+		// need to step through at most 2 rows to find
+		// whether to return true or false. So we have
+		// the reader here only to provide a cross-check for debug
+		// builds.
+		UserDraftJournalReader const udjr(p_database_connection);
+#	endif
+
+	// We could have examined the AmalgamatedBudget data table
+	// directly here (per code in UserDraftJournalReader), but
+	// we don't want this function to have knowledge of how
+	// AmalgamatedBudget stores it data.
+	SQLStatement statement
+	(	p_database_connection,
+		"select journal_id from draft_journal_detail"
+	);
+	bool const draft_journals_exist = statement.step();
+	if (!draft_journals_exist)
+	{
+		assert (udjr.empty());
+		return true;
+	}
+	DraftJournal const dj
+	(	p_database_connection,
+		statement.extract<DraftJournal::Id>(0)
+	);
+	bool const multiple_draft_journals_exist = statement.step();
+	if (multiple_draft_journals_exist)
+	{
+		assert (!udjr.empty());
+		return false;
+	}
+	assert (draft_journals_exist && !multiple_draft_journals_exist);
+	if (dj == p_database_connection.budget_instrument())
+	{
+		assert (udjr.empty());
+		return true;
+	}
+	else
+	{
+		assert (!udjr.empty());
+		return false;
+	}
+}
 
 void
 DraftJournalImpl::set_name(BString const& p_name)

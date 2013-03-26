@@ -96,6 +96,18 @@ public:
 		BString const& p_name
 	);
 
+	/**
+	 * @returns \c true if the only DraftJournal
+	 * that is saved is p_database_connection.budget_instrument(); or
+	 * if there are no DraftJournals saved at all. If there is one
+	 * or more DraftJournal saved other than
+	 * p_database_connection.budget_instrument(), then this
+	 * function returns false.
+	 */
+	static bool no_user_draft_journals_saved
+	(	PhatbooksDatabaseConnection& p_database_connection
+	);
+
 	void set_name(BString const& p_name);
 	void push_repeater(Repeater& repeater);
 	BString name() const;

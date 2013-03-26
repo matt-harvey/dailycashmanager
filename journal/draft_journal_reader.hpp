@@ -19,6 +19,15 @@ public:
 };
 
 
+class UserDraftJournalReader:
+	public sqloxx::Reader<DraftJournal, PhatbooksDatabaseConnection>
+{
+public:
+	explicit UserDraftJournalReader
+	(	PhatbooksDatabaseConnection& p_database_connection
+	);
+};
+
 
 }  // namespace phatbooks
 

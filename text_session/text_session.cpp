@@ -597,7 +597,10 @@ TextSession::create_main_menu()
 		)
 	);
 	display_draft_journals_item->set_hiding_condition
-	(	bind(DraftJournal::none_saved, ref(database_connection()))
+	(	bind
+		(	DraftJournal::no_user_draft_journals_saved,
+			ref(database_connection())
+		)
 	);
 	m_main_menu->push_item(display_draft_journals_item);
 
@@ -1098,10 +1101,10 @@ TextSession::display_draft_journals()
 		(	"Select a transaction to view from the above menu, "
 			"or 'x' to exit: "
 		);
-		DraftJournalReader const dj_reader(database_connection());
+		UserDraftJournalReader const udj_reader(database_connection());
 		for
-		(	DraftJournalReader::const_iterator it = dj_reader.begin();
-			it != dj_reader.end();
+		(	DraftJournalReader::const_iterator it = udj_reader.begin();
+			it != udj_reader.end();
 			++it
 		)
 		{
@@ -1554,6 +1557,10 @@ TextSession::conduct_draft_journal_editing(DraftJournal& journal)
 
 	if (journal == database_connection().budget_instrument())
 	{
+		// This block may in fact be dead code, depending on how
+		// whether we let the user see the budget instrument journal
+		// at all. In any case, we want this here; we never want the
+		// user to be able to edit this journal directly.
 		cout << endl << journal << endl;
 		cout << "This is the main budget journal and cannot be edited "
 		     << "directly. To amend budget items, select \"Review budget\" "
