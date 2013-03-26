@@ -3289,23 +3289,29 @@ void TextSession::review_budget()
 			)
 			{
 				Account const& account = *it;
-				cout << account.name() << ": ";
-				Decimal budget = account.budget();
-				if (budget == Decimal(0, 0))
-				{
-					cout << "NIL" << endl;
-				}
-				else
-				{
-					cout << finformat_std8_nopad(account.budget())
-						 << frequency_description(budget_frequency, " per")
-						 << endl;
-				}
+
 				typedef vector<BudgetItem> BudVec;
 				BudVec const items = account.budget_items();
-				for (BudVec::size_type i = 0; i != items.size(); ++i)
+				if (!items.empty())
 				{
-					cout << "\t" << items[i] << endl;
+					cout << account.name() << ": ";
+					Decimal budget = account.budget();
+					if (budget == Decimal(0, 0))
+					{
+						cout << "NIL" << endl;
+					}
+					else
+					{
+						cout << finformat_std8_nopad(account.budget())
+						     << " "
+							 << frequency_description(budget_frequency, "per")
+							 << endl;
+					}
+					for (BudVec::size_type i = 0; i != items.size(); ++i)
+					{
+						cout << "\t" << items[i] << endl;
+					}
+					cout << endl;
 				}
 			}
 			Decimal const budget_balance =
@@ -3317,8 +3323,9 @@ void TextSession::review_budget()
 			else
 			{
 				cout << "\nBudget imbalance: "
-					 << finformat_std8(budget_balance) << " per "
-					 << frequency_description(budget_frequency) << endl;
+					 << finformat_std8(budget_balance)
+					 << frequency_description(budget_frequency, "per")
+					 << endl;
 			}
 		}
 		Menu budget_item_menu;
