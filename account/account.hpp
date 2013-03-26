@@ -106,6 +106,17 @@ public:
 	);
 
 	/**
+	 * @returns \e true if the only P&L Account that is saved is
+	 * p_database_connection.balancing_account(), or if there are no
+	 * P&L Accounts saved at all. If there is one or more P&L Account saved
+	 * other than p_database_connection.balancing_account(), then
+	 * this function returns \e false.
+	 */
+	static bool no_user_pl_accounts_saved
+	(	PhatbooksDatabaseConnection& p_database_connection
+	);
+
+	/**
 	 * @returns \e true if and only if there are \e no instances of Account
 	 * with account type \e p_account_type saved in the database connected to
 	 * by p_database_connection.

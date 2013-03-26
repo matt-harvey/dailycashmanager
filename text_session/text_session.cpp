@@ -677,7 +677,10 @@ TextSession::create_main_menu()
 		)
 	);
 	review_budget_item->set_hiding_condition
-	(	bind(no_pl_accounts_saved, ref(database_connection()))
+	(	bind
+		(	AccountImpl::no_user_pl_accounts_saved,
+			ref(database_connection())
+		)
 	);
 	m_main_menu->push_item(review_budget_item);
 
@@ -878,18 +881,35 @@ void
 TextSession::elicit_budget_item()
 {
 	BudgetItem budget_item(database_connection());
-	cout << "Enter name of revenue or expense category, or pure envelope, "
-	     << "for new budget item (or Enter to abort): ";
-	optional<Account> const maybe_account =
-		elicit_valid_account(envelope_transaction, primary_phase, true);
-	if (!maybe_account)
-	{
-		cout << "Budget item has not been created. "
-		     << "Returning to previous menu." << endl << endl;
-		return;
-	}
+
 	// Get Account
-	budget_item.set_account(value(maybe_account));
+	while (true)
+	{
+		cout << "Enter name of revenue or expense category, or pure "
+			 << "envelope, for new budget item (or Enter to abort): ";
+		optional<Account> const maybe_account =
+			elicit_valid_account(envelope_transaction, primary_phase, true);
+		if (!maybe_account)
+		{
+			cout << "Budget item has not been created. "
+				 << "Returning to previous menu." << endl << endl;
+			return;
+		}
+		Account const account = value(maybe_account);
+		if (account == database_connection().balancing_account())
+		{
+			cout << "Cannot allocate budget to "
+						 << account.name()
+						 << ". Please enter a different "
+						 << "account."
+						 << endl;
+		}
+		else
+		{
+			budget_item.set_account(account);
+			break;
+		}
+	}
 
 	// Get description
 	cout << "Enter description of budget item: ";
@@ -956,16 +976,40 @@ TextSession::elicit_budget_item_amendment()
 	cout << budget_item << endl;
 
 	// Get Account
-	cout << "Enter name of new account or category (or Enter to leave "
-	     << "unchanged): ";
-	optional<Account> maybe_new_account = elicit_valid_account
-	(	envelope_transaction,
-		primary_phase,
-		true
-	);
-	if (maybe_new_account)
+	//
+	// TODO There is very similar (but not identical) code between here
+	// and elicit_budget_item().
+	while (true)
 	{
-		budget_item.set_account(value(maybe_new_account));
+		cout << "Enter name of new revenue or expense category, or pure "
+			 << "envelope (or Enter to leave unchanged): ";
+		optional<Account> maybe_new_account = elicit_valid_account
+		(	envelope_transaction,
+			primary_phase,
+			true
+		);
+		if (maybe_new_account)
+		{
+			Account const account = value(maybe_new_account);
+			if (account == database_connection().balancing_account())
+			{
+				cout << "Cannot allocate budget to "
+				     << account.name()
+					 << ". Please enter a different "
+					 << "account."
+					 << endl;
+			}
+			else
+			{
+				budget_item.set_account(account);
+				break;
+			}
+		}
+		else
+		{
+			// Leave Account unchanged
+			break;
+		}
 	}
 	// Get description
 	cout << "Enter new description (or Enter to leave unchanged): ";

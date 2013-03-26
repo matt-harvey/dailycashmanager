@@ -10,6 +10,7 @@
 
 #include "account_impl.hpp"
 #include "account.hpp"
+#include "account_reader.hpp"
 #include "account_type.hpp"
 #include "b_string.hpp"
 #include "budget_item.hpp"
@@ -164,6 +165,26 @@ AccountImpl::exists
 	);
 	statement.bind(":p", bstring_to_std8(p_name));
 	return statement.step();
+}
+
+bool
+AccountImpl::no_user_pl_accounts_saved
+(	PhatbooksDatabaseConnection& p_database_connection
+)
+{
+	PLAccountReader const reader(p_database_connection);
+	if (reader.empty())
+	{
+		return true;
+	}
+	assert (reader.size() > 0);
+	if (reader.size() > 1)
+	{
+		return false;
+	}
+	assert (reader.size() == 1);
+	Account const sole_account = *(reader.begin());
+	return (sole_account == p_database_connection.balancing_account());
 }
 
 bool

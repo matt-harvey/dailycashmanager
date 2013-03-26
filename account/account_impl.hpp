@@ -96,6 +96,10 @@ public:
 		BString const& p_name
 	);
 
+	static bool no_user_pl_accounts_saved
+	(	PhatbooksDatabaseConnection& p_database_connection
+	);
+
 	static bool none_saved_with_account_type
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		account_type::AccountType p_account_type

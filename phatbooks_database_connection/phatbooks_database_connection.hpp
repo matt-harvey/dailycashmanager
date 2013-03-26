@@ -116,6 +116,7 @@ public:
 	 */
 	Account balancing_account() const;
 
+
 	/**
 	 * @returns the DraftJournal that serves as the "instrument"
 	 * by means of which the AmalgamatedBudget (for the accounting

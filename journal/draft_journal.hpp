@@ -97,8 +97,8 @@ public:
 	);
 
 	/**
-	 * @returns \c true if the only DraftJournal
-	 * that is saved is p_database_connection.budget_instrument(); or
+	 * @returns \e true if the only DraftJournal
+	 * that is saved is p_database_connection.budget_instrument(), or
 	 * if there are no DraftJournals saved at all. If there is one
 	 * or more DraftJournal saved other than
 	 * p_database_connection.budget_instrument(), then this
