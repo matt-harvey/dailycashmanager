@@ -3226,49 +3226,56 @@ void TextSession::review_budget()
 	// Print the BudgetItems and amalgamated budget for each P&L Account.
 	while (true)
 	{
-		PLAccountReader pla_reader(database_connection());
 		Frequency const budget_frequency =
 			database_connection().budget_frequency();
 		assert (budget_frequency.num_steps() == 1);
 		cout << endl;
-		for
-		(	PLAccountReader::const_iterator it = pla_reader.begin();
-			it != pla_reader.end();
-			++it
-		)
+		if (BudgetItem::none_saved(database_connection()))
 		{
-			Account const& account = *it;
-			typedef vector<BudgetItem> BudVec;
-			BudVec const items = account.budget_items();
-			cout << account.name() << ": ";
-			Decimal budget = account.budget();
-			if (budget == Decimal(0, 0))
-			{
-				cout << "NIL" << endl;
-			}
-			else
-			{
-				cout << finformat_std8_nopad(account.budget())
-					 << frequency_description(budget_frequency, " per")
-					 << endl;
-			}
-			for (BudVec::size_type i = 0; i != items.size(); ++i)
-			{
-				BudgetItem const& item = items[i];
-				cout << "\t" << item << endl;
-			}
-		}
-		Decimal const budget_balance = database_connection().budget_balance();
-		if (budget_balance == Decimal(0, 0))
-		{
-			cout << "\nBudget is balanced." << endl;
+			assert (database_connection().budget_balance() == Decimal(0, 0));
+			cout << "\nBudget has yet to be created." << endl;
 		}
 		else
 		{
-			Frequency const bf = database_connection().budget_frequency();
-			cout << "\nBudget imbalance: "
-				 << finformat_std8(budget_balance) << " per "
-				 << frequency_description(bf) << endl;
+			PLAccountReader pla_reader(database_connection());
+			for
+			(	PLAccountReader::const_iterator it = pla_reader.begin();
+				it != pla_reader.end();
+				++it
+			)
+			{
+				Account const& account = *it;
+				cout << account.name() << ": ";
+				Decimal budget = account.budget();
+				if (budget == Decimal(0, 0))
+				{
+					cout << "NIL" << endl;
+				}
+				else
+				{
+					cout << finformat_std8_nopad(account.budget())
+						 << frequency_description(budget_frequency, " per")
+						 << endl;
+				}
+				typedef vector<BudgetItem> BudVec;
+				BudVec const items = account.budget_items();
+				for (BudVec::size_type i = 0; i != items.size(); ++i)
+				{
+					cout << "\t" << items[i] << endl;
+				}
+			}
+			Decimal const budget_balance =
+				database_connection().budget_balance();
+			if (budget_balance == Decimal(0, 0))
+			{
+				cout << "\nBudget is balanced." << endl;
+			}
+			else
+			{
+				cout << "\nBudget imbalance: "
+					 << finformat_std8(budget_balance) << " per "
+					 << frequency_description(budget_frequency) << endl;
+			}
 		}
 		Menu budget_item_menu;
 		populate_budget_item_menu(budget_item_menu);
@@ -3306,9 +3313,12 @@ TextSession::populate_budget_item_menu(Menu& menu)
 			"e"
 		)
 	);
+	amend_budget_item_item->set_hiding_condition
+	(	bind(BudgetItem::none_saved, ref(database_connection()))
+	);
 	menu.push_item(amend_budget_item_item);
 
-	shared_ptr<MenuItem> delete_budget_item
+	shared_ptr<MenuItem> delete_budget_item_item
 	(	new MenuItem
 		(	"Delete budget item",
 			bind(&TextSession::elicit_budget_item_deletion, this),
@@ -3316,7 +3326,11 @@ TextSession::populate_budget_item_menu(Menu& menu)
 			"d"
 		)
 	);
-	menu.push_item(delete_budget_item);
+	database_connection().budget_frequency();
+	delete_budget_item_item->set_hiding_condition
+	(	bind(BudgetItem::none_saved, ref(database_connection()))
+	);
+	menu.push_item(delete_budget_item_item);
 	
 	return;
 }
