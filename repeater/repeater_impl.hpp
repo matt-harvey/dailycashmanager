@@ -112,7 +112,7 @@ public:
 	OrdinaryJournal fire_next();
 	
 
-	DraftJournal::Id journal_id();
+	DraftJournal draft_journal();
 
 	void swap(RepeaterImpl& rhs);
 

@@ -207,36 +207,51 @@ OrdinaryJournal
 RepeaterImpl::fire_next()
 {
 	load();
+	DraftJournal const dj = draft_journal();
 	OrdinaryJournal oj(database_connection());
-	oj.mimic(DraftJournal(database_connection(), journal_id()));
-	boost::gregorian::date const old_next_date = next_date(0);
-	oj.set_date(old_next_date);
-	boost::gregorian::date const next_date_elect = next_date(1);
-	
-	DatabaseTransaction transaction(database_connection());
-	try
+	gregorian::date const next_date_elect = next_date(1);
+	if 
+	(	dj == database_connection().budget_instrument() &&
+		dj.entries().empty()
+	)
 	{
-		oj.save();
+		// Special case - if we're dealing with the budget instrument
+		// and has no Entries, we do not cause the OrdinaryJournal to
+		// be saved. We simply return it in an uninitialized state.
+		// However, we still need to advance the next posting
+		// date of the repeater.
 		set_next_date(next_date_elect);
-		save();
-		transaction.commit();
 	}
-	catch (std::exception&)
+	else
 	{
-		set_next_date(old_next_date);
-		transaction.cancel();
-		throw;
+		oj.mimic(dj);
+		gregorian::date const old_next_date = next_date(0);
+		oj.set_date(old_next_date);
+		DatabaseTransaction transaction(database_connection());
+		try
+		{
+			oj.save();
+			set_next_date(next_date_elect);
+			save();
+			transaction.commit();
+		}
+		catch (std::exception&)
+		{
+			set_next_date(old_next_date);
+			transaction.cancel();
+			throw;
+		}
 	}
 	return oj;
 }
 
 
 
-DraftJournal::Id
-RepeaterImpl::journal_id()
+DraftJournal
+RepeaterImpl::draft_journal()
 {
 	load();
-	return value(m_data->journal_id);
+	return DraftJournal(database_connection(), value(m_data->journal_id));
 }
 
 

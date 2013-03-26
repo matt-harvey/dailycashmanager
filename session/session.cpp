@@ -106,7 +106,29 @@ Session::update_repeaters_till(gregorian::date d)
 		{
 			while (it->next_date() <= d)
 			{
-				auto_posted_journals->push_back(it->fire_next());
+				OrdinaryJournal const oj = it->fire_next();
+				// In the special case where oj is
+				// database_connection().budget_instrument(), and is
+				// devoid of entries, firing it does not cause any
+				// OrdinaryJournal to be posted, but simply advances
+				// the next posting date. In this case the returned
+				// OrdinaryJournal will have no id.
+#				ifndef NDEBUG
+					DraftJournal const dj = it->draft_journal();
+					DraftJournal const bi =
+						database_connection().budget_instrument();
+#				endif
+				if (oj.has_id())
+				{
+					assert(dj != bi || !dj.entries().empty());
+					auto_posted_journals->push_back(oj);
+				}
+				else
+				{
+					assert (dj == bi);
+					assert (dj.entries().empty());
+					assert (oj.entries().empty());
+				}
 			}
 		}
 	}

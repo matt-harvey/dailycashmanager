@@ -1,4 +1,5 @@
 #include "repeater.hpp"
+#include "draft_journal.hpp"
 #include "frequency.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_persistent_object.hpp"
@@ -111,10 +112,10 @@ Repeater::fire_next()
 	return impl().fire_next();
 }
 
-DraftJournal::Id
-Repeater::journal_id() const
+DraftJournal
+Repeater::draft_journal() const
 {
-	return impl().journal_id();
+	return impl().draft_journal();
 }
 
 

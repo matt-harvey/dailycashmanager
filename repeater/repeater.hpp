@@ -19,7 +19,7 @@ namespace phatbooks
 {
 
 
-
+class DraftJournal;
 
 
 /**
@@ -122,6 +122,15 @@ public:
 	 * with the date of the OrdinaryJournal being next_date(0). Then
 	 * update \e next_date internally to (what was) next_date(1).
 	 *
+	 * If the DraftJournal is database_connection().budget_instrument(),
+	 * and is devoid of Entries, then an OrdinaryJournal is not
+	 * actually posted; however the next_date is still updated. In this
+	 * case, an OrdinaryJournal will still be returned, but it will have id,
+	 * no Entries and no other attributes.
+	 * This behaviour is to avoid mystifying the user with
+	 * empty journal posting notifications in case they have not
+	 * yet set up any BudgetItems.
+	 *
 	 * @returns the just-posted OrdinaryJournal.
 	 */
 	OrdinaryJournal fire_next();
@@ -138,7 +147,7 @@ public:
 	(	std::vector<boost::gregorian::date>::size_type n = 0
 	) const;
 
-	DraftJournal::Id journal_id() const;
+	DraftJournal draft_journal() const;
 
 	/**
 	 * Copy attributes of rhs to *this, but do \e not copy:\n
