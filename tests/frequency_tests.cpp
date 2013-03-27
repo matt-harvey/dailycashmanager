@@ -85,45 +85,45 @@ TEST(test_frequency_constructors_assignment_num_steps_and_step_type)
 TEST(test_frequency_phrase_description)
 {
 	Frequency const frequency1(1, interval_type::days);
-	CHECK_EQUAL(frequency_description(frequency1), "every day");
+	CHECK_EQUAL(frequency_description(frequency1, "every"), "every day");
 	CHECK
 	(	typeid(frequency_description(frequency1)) ==
 		typeid(std::string)
 	);
-	CHECK_EQUAL(frequency_description(frequency1), BString("every day"));
+	CHECK_EQUAL(frequency_description(frequency1), BString("per day"));
 
 	Frequency const frequency2(12, interval_type::days);
-	CHECK_EQUAL(frequency_description(frequency2), "every 12 days");
+	CHECK_EQUAL(frequency_description(frequency2), "per 12 days");
 
 	Frequency const frequency3(1, interval_type::weeks);
-	CHECK_EQUAL(frequency_description(frequency3), "every week");
+	CHECK_EQUAL(frequency_description(frequency3, "every"), "every week");
 	
 	Frequency const frequency4(2, interval_type::weeks);
-	CHECK_EQUAL(frequency_description(frequency4), "every 2 weeks");
+	CHECK_EQUAL(frequency_description(frequency4, " !! "), " !!  2 weeks");
 
 	Frequency const frequency5(3, interval_type::months);
-	CHECK_EQUAL(frequency_description(frequency5), "every 3 months");
+	CHECK_EQUAL(frequency_description(frequency5), "per 3 months");
 
 	Frequency const frequency6(1, interval_type::months);
-	CHECK_EQUAL(frequency_description(frequency6), "every month");
+	CHECK_EQUAL(frequency_description(frequency6), "per month");
 
 	Frequency const frequency7(12, interval_type::months);
-	CHECK_EQUAL(frequency_description(frequency7), "every 12 months");
+	CHECK_EQUAL(frequency_description(frequency7), "per 12 months");
 
 	Frequency const frequency8(1, interval_type::month_ends);
 	CHECK_EQUAL
-	(	frequency_description(frequency8),
+	(	frequency_description(frequency8, "every"),
 		"every month, on the last day of the month"
 	);
 
 	Frequency const frequency9(10, interval_type::month_ends);
 	CHECK_EQUAL
-	(	frequency_description(frequency9),
+	(	frequency_description(frequency9, "every"),
 		"every 10 months, on the last day of the month"
 	);
 	CHECK_EQUAL
 	(	frequency_description(frequency9),
-		BString("every 10 months, on the last day of the month")
+		BString("per 10 months, on the last day of the month")
 	);
 }
 
