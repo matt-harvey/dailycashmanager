@@ -26,6 +26,11 @@ namespace account_type
 
 
 
+/**
+ * @todo There should probably be a table in the database listing the
+ * AccountSuperTypes. The account_types table should then contain the
+ * information about which AccountType maps to which AccountSuperType.
+ */
 namespace account_super_type
 {
 	enum AccountSuperType

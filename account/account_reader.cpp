@@ -1,6 +1,8 @@
 #include "account_reader.hpp"
+#include "account_type.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/reader.hpp>
+#include <cassert>
 
 namespace phatbooks
 {
@@ -33,6 +35,37 @@ AccountReader::AccountReader
 }
 
 
+namespace
+{
+	void check_account_super_types_boundary(int begin_pl)
+	{
+#		ifndef NDEBUG
+			account_type::AccountType acctype =
+				static_cast<account_type::AccountType>(begin_pl - 1);
+			assert(super_type(acctype) == account_super_type::balance_sheet);
+
+			acctype = static_cast<account_type::AccountType>(begin_pl);
+			assert (super_type(acctype) == account_super_type::pl);
+
+			assert
+			(	account_super_type::balance_sheet != account_super_type::pl
+			);
+#		else
+  			// Silence compiler warning about unused param.
+			(void)begin_pl;
+#		endif
+		return;
+	}
+
+}  // end anonymous namespace
+
+
+
+/**
+ * @todo If we had a table of AccountSuperTypes in the
+ * database, this could make this query more robust, and we could get rid of
+ * check_account_super_types().
+ */
 BalanceSheetAccountReader::BalanceSheetAccountReader
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
@@ -42,9 +75,15 @@ BalanceSheetAccountReader::BalanceSheetAccountReader
 		"order by account_type_id, name"
 	)
 {
+	check_account_super_types_boundary(4);
 }
 
 
+/**
+ * @todo If we had a table of AccountSuperTypes in the
+ * database, we could make this query more robust, and we could get rid of
+ * check_account_super_types().
+ */
 PLAccountReader::PLAccountReader
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
@@ -54,6 +93,7 @@ PLAccountReader::PLAccountReader
 		"order by account_type_id, name"
 	)
 {
+	check_account_super_types_boundary(4);
 }
 
 
