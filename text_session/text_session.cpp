@@ -1836,8 +1836,8 @@ TextSession::conduct_reconciliation()
 		// TODO Factor out common code shared between here and
 		// display_ordinary_actual_entries().
 		
-		Decimal opening_balance = account.technical_opening_balance();
-		Decimal reconciled_balance = opening_balance; // TODO Is this right?
+		Decimal opening_balance(0, 0);
+		Decimal reconciled_balance(0, 0);
 		ActualOrdinaryEntryReader reader(database_connection());
 		vector<Entry> table_vec;
 		typedef ActualOrdinaryEntryReader::const_iterator ReaderIt;
@@ -2176,6 +2176,7 @@ TextSession::display_ordinary_actual_entries()
 		}
 	}
 	
+	Decimal opening_balance(0, 0);
 	bool const filtering_for_account = (maybe_account? true: false);
 	if (account_name.empty()) assert (!filtering_for_account);
 	Account account(database_connection());
@@ -2189,14 +2190,6 @@ TextSession::display_ordinary_actual_entries()
 	(	filtering_for_account &&
 		is_balance_sheet
 	);
-	Decimal opening_balance(0, 0);
-	if (accumulating_pre_start_date_entries)
-	{
-		assert (filtering_for_account);
-		assert (is_balance_sheet);
-		assert (maybe_account);
-		opening_balance = maybe_account->technical_opening_balance();
-	}
 
 	ActualOrdinaryEntryReader reader(database_connection());
 	ActualOrdinaryEntryReader::const_iterator it = reader.begin();
@@ -2222,6 +2215,7 @@ TextSession::display_ordinary_actual_entries()
 		}
 	}
 	vector<Entry> table_vec;
+
 
 	// Examine entries later than or equal to the start date
 	Decimal closing_balance = opening_balance;

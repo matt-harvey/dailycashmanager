@@ -81,9 +81,6 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	Commodity const balancing_account_commodity =
 		Commodity::default_commodity(dbc);
 	balancing_account.set_commodity(balancing_account_commodity);
-	balancing_account.set_opening_balance
-	(	Decimal(0, balancing_account_commodity.precision())
-	);
 	balancing_account.save();
 
 	SQLStatement statement

@@ -127,10 +127,6 @@ public:
 
 	BString description();
 
-	jewel::Decimal technical_opening_balance();
-
-	jewel::Decimal friendly_opening_balance();
-
 	jewel::Decimal technical_balance();
 
 	jewel::Decimal friendly_balance();
@@ -146,8 +142,6 @@ public:
 	void set_commodity(Commodity const& p_commodity);
 
 	void set_description(BString const& p_description);
-
-	void set_opening_balance(jewel::Decimal const& p_opening_balance);
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
@@ -182,7 +176,6 @@ private:
 		boost::optional<Commodity> commodity;
 		boost::optional<account_type::AccountType> account_type;
 		boost::optional<BString> description;
-		boost::optional<jewel::Decimal> opening_balance;
 	};
 
 	boost::scoped_ptr<AccountData> m_data;

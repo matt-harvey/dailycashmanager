@@ -139,7 +139,7 @@ BalanceCache::refresh()
 	{
 		// TODO HIGH PRIORITY. What if an Account has been
 		// removed from the database? This loop needs won't find these!
-		// They will stay in the cache. (Does this matter?)
+		// They will stay in the cache.
 		AccountImpl::Id const account_id =
 			statement.extract<AccountImpl::Id>(0);
 		Map::const_iterator location_in_cache = m_map->find(account_id);
@@ -219,7 +219,6 @@ BalanceCache::refresh_all()
 		AccountImpl::Id const account_id = it->first;
 		Account const account(m_database_connection, account_id);
 		map_elect[account_id] =
-			account.technical_opening_balance() +
 			Decimal(it->second, account.commodity().precision());
 	}
 	assert (map_elect.size() == working_map.size());
@@ -233,7 +232,7 @@ BalanceCache::refresh_all()
 void
 BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 {
-	// TODO Is this exception-safe?
+	// TODO Is this exception safe?
 	typedef vector<AccountImpl::Id> IdVec;
 	for
 	(	IdVec::const_iterator it = p_targets.begin(), end = p_targets.end();
@@ -243,7 +242,6 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 	{
 		AccountImpl::Id const account_id = *it;
 		Account const account(m_database_connection, account_id);
-		Decimal const opening_balance = account.technical_opening_balance();
 		SQLStatement statement
 		(	m_database_connection,
 			"select sum(amount) from entries join ordinary_journal_detail "
@@ -256,29 +254,23 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 			// there are no entries to sum
 			try
 			{
-				(*m_map)[account_id] =
-					opening_balance +
-					Decimal
-					(	statement.extract<Decimal::int_type>(0),
-						account.commodity().precision()
-					);
+				(*m_map)[account_id] = Decimal
+				(	statement.extract<Decimal::int_type>(0),
+					account.commodity().precision()
+				);
 			}
 			catch (ValueTypeException&)
 			{
-				// There are no entries to sum - we got a ValueTypeException
-				// because the query result was NULL
-				(*m_map)[account_id] = opening_balance;
+				// There are no entries to sum
+				(*m_map)[account_id] = Decimal(0, account.commodity().precision());
 			}
 			statement.step_final();
 		}
 		else
 		{
-			// There is always a result row even if it has null; so
-			// we should never reach here.
-			assert (false);
-
-			// But if we did reach here, we would logically do this.
-			(*m_map)[account_id] = opening_balance;
+			assert (false);  // There is always a result row even if it has null.
+			(*m_map)[account_id] =
+				Decimal(0, account.commodity().precision());
 		}
 	}
 	return;

@@ -194,18 +194,6 @@ Account::friendly_balance() const
 	return impl().friendly_balance();
 }
 
-Decimal
-Account::technical_opening_balance() const
-{
-	return impl().technical_opening_balance();
-}
-
-Decimal
-Account::friendly_opening_balance() const
-{
-	return impl().friendly_opening_balance();
-}
-
 void
 Account::set_account_type(AccountType p_account_type)
 {
@@ -234,12 +222,7 @@ Account::set_description(BString const& p_description)
 	return;
 }
 
-void
-Account::set_opening_balance(Decimal const& p_opening_balance)
-{
-	impl().set_opening_balance(p_opening_balance);
-	return;
-}
+
 
 // Free-standing functions
 
