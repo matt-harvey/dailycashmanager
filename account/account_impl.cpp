@@ -97,7 +97,8 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"account_type_id not null references account_types, "
 			"name text not null unique, "
 			"description text, "
-			"commodity_id references commodities"
+			"commodity_id references commodities, "
+			"opening_balance integer default 0 not null"
 		"); "
 	);
 
@@ -261,6 +262,42 @@ AccountImpl::description()
 }
 
 Decimal
+AccountImpl::technical_opening_balance()
+{
+	load();
+	return value(m_data->opening_balance);
+}
+
+
+namespace
+{
+	Decimal technical_to_friendly
+	(	Decimal const& d,
+		account_type::AccountType acctype
+	)
+	{
+		switch (super_type(acctype))
+		{
+		case account_super_type::balance_sheet:
+			return d;
+		case account_super_type::pl:
+			return round(d * Decimal(-1, 0), d.places());
+		default:
+			assert (false);
+		}
+	}
+}  // end anonymous namespace
+
+
+Decimal
+AccountImpl::friendly_opening_balance()
+{
+	load();
+	return technical_to_friendly(technical_opening_balance(), account_type());
+}
+
+
+Decimal
 AccountImpl::technical_balance()
 {
 	load();  // This may be unnecessary but there's no harm in it.
@@ -274,26 +311,7 @@ Decimal
 AccountImpl::friendly_balance()
 {
 	load();
-	Decimal const tecbal = technical_balance();
-	switch (super_type(value(m_data->account_type)))
-	{
-	// todo Should equity have sign switched? Will we ever
-	// display equity accounts anyway?
-	// todo Deal with remote possibility of exception
-	// on sign change? Or is this
-	// ruled out by higher level code?
-
-	case account_super_type::balance_sheet:
-		return tecbal;
-		assert (false);  // Execution never reaches here.
-
-	case account_super_type::pl:
-		return round(tecbal * Decimal(-1, 0), tecbal.places());
-		assert (false);  // Execution never reaches here.
-
-	default:
-		assert (false);  // Execution never reaches here.
-	}
+	return technical_to_friendly(technical_balance(), account_type());
 }
 	
 Decimal
@@ -359,6 +377,14 @@ AccountImpl::set_description(BString const& p_description)
 }
 
 void
+AccountImpl::set_opening_balance(Decimal const& p_opening_balance)
+{
+	load();
+	m_data->opening_balance = p_opening_balance;
+	return;
+}
+
+void
 AccountImpl::swap(AccountImpl& rhs)
 {
 	swap_base_internals(rhs);
@@ -372,8 +398,8 @@ AccountImpl::do_load()
 {
 	SQLStatement statement
 	(	database_connection(),
-		"select name, commodity_id, account_type_id, description "
-		"from accounts where account_id = :p"
+		"select name, commodity_id, account_type_id, description, "
+		"opening_balance from accounts where account_id = :p"
 	);
 	statement.bind(":p", id());
 	statement.step();
@@ -386,6 +412,10 @@ AccountImpl::do_load()
 	temp.m_data->account_type =
 		static_cast<AccountType>(statement.extract<int>(2));
 	temp.m_data->description = std8_to_bstring(statement.extract<string>(3));
+	temp.m_data->opening_balance = Decimal
+	(	statement.extract<Decimal::int_type>(4),
+		commodity().precision()
+	);
 	swap(temp);
 	return;
 }
@@ -403,6 +433,7 @@ AccountImpl::process_saving_statement(SQLStatement& statement)
 		bstring_to_std8(value(m_data->description))
 	);
 	statement.bind(":commodity_id", value(m_data->commodity).id());
+	statement.bind(":opening_balance", m_data->opening_balance->intval());
 	statement.step_final();
 	return;
 }
@@ -417,7 +448,8 @@ AccountImpl::do_save_existing()
 		"name = :name, "
 		"commodity_id = :commodity_id, "
 		"account_type_id = :account_type_id, "
-		"description = :description "
+		"description = :description, "
+		"opening_balance = :opening_balance "
 		"where account_id = :account_id"
 	);
 	updater.bind(":account_id", id());
@@ -433,8 +465,8 @@ AccountImpl::do_save_new()
 	SQLStatement inserter
 	(	database_connection(),
 		"insert into accounts(account_type_id, name, description, "
-		"commodity_id) values(:account_type_id, :name, :description, "
-		":commodity_id)"
+		"commodity_id, opening_balance) values(:account_type_id, :name, "
+		":description, :commodity_id, :opening_balance)"
 	);
 	process_saving_statement(inserter);
 	BudgetAttorney::regenerate(database_connection());
@@ -476,6 +508,7 @@ AccountImpl::do_ghostify()
 	clear(m_data->commodity);
 	clear(m_data->account_type);
 	clear(m_data->description);
+	clear(m_data->opening_balance);
 	return;
 }
 

@@ -166,7 +166,7 @@ public:
 	BString description() const;
 
 	/**
-	 * Returns "technical" account balance, which is
+	 * @returns "technical" account balance, which is
 	 * positive for debit balances and negative for
 	 * credit balances. For P&L accounts this
 	 * corresponds to the unspent funds in the envelope,
@@ -178,11 +178,29 @@ public:
 	jewel::Decimal technical_balance() const;
 
 	/**
-	 * Returns "user friendly" account balance, which, for
+	 * @returns "user friendly" account balance, which, for
 	 * P&L accounts, has the signs reversed relative to
 	 * technical_balance().
 	 */
 	jewel::Decimal friendly_balance() const;
+
+	/**
+	 * @returns "technical" opening balance for the
+	 * Accouint, which is positive for debit balances
+	 * and negative for credit balances. Note that
+	 * for balance sheet Accounts, this represents
+	 * the actual opening balance of the Account; but
+	 * for P&L Accounts, this represents the initial
+	 * allocation of budget funds into the "envelope"
+	 * for this Account (which will generally be a credit),
+	 */
+	jewel::Decimal technical_opening_balance() const;
+
+	/**
+	 * friendly_opening_balance() is to technical_opening_balance()
+	 * what friendly_balance() it to technical_balance().
+	 */
+	jewel::Decimal friendly_opening_balance() const;
 
 	/**
 	 * @returns the amount of the recurring budget for
@@ -207,6 +225,15 @@ public:
 	void set_commodity(Commodity const& p_commodity);
 
 	void set_description(BString const& p_description);
+	
+	/**
+	 * Set the opening balance of the Account. This
+	 * should be set in terms of the technical opening
+	 * balance, not the friendly opening balance (see
+	 * corresponding getters for more information about
+	 * the difference).
+	 */
+	void set_opening_balance(jewel::Decimal const& p_opening_balance);
 
 
 private:
