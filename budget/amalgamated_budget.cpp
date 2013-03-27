@@ -86,7 +86,6 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	);
 	balancing_account.save();
 
-
 	SQLStatement statement
 	(	dbc,
 		"insert into amalgamated_budget_data"
@@ -383,17 +382,20 @@ AmalgamatedBudget::regenerate_instrument()
 	reflect_repeater(fresh_journal);
 
 	// Deal with imbalance
-	Account const ba = balancing_account();
-	Entry balancing_entry(m_database_connection);
-	balancing_entry.set_account(ba);
-	balancing_entry.set_comment("");
-	balancing_entry.set_whether_reconciled(false);
-	balancing_entry.set_amount
-	(	-round(fresh_journal.balance(), ba.commodity().precision())
-	);
-	fresh_journal.push_entry(balancing_entry);
-	assert (fresh_journal.is_balanced());
-
+	Decimal const imbalance = fresh_journal.balance();
+	if (imbalance != Decimal(0, 0))
+	{
+		Account const ba = balancing_account();
+		Entry balancing_entry(m_database_connection);
+		balancing_entry.set_account(ba);
+		balancing_entry.set_comment("");
+		balancing_entry.set_whether_reconciled(false);
+		balancing_entry.set_amount
+		(	-round(imbalance, ba.commodity().precision())
+		);
+		fresh_journal.push_entry(balancing_entry);
+		assert (fresh_journal.is_balanced());
+	}
 	m_instrument->mimic(fresh_journal);
 	m_instrument->save();
 

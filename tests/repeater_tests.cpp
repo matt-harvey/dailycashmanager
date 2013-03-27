@@ -92,9 +92,10 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	repeater6.set_next_date(date(1999, 2, 28));
 	CHECK_EQUAL(repeater6.next_date(1), date(2000, 2, 29));
 
-	Repeater repeater1b(dbc, 1);
-	CHECK_EQUAL(repeater1b.next_date(), date(2012, 5, 30));
-	CHECK_EQUAL(repeater1b.next_date(1), date(2012, 6, 2));
+	// TODO Put something here to test retrieving a Repeater by
+	// ID. But note, there are "system Repeaters" floating
+	// around, possibly ones that have been saved and then
+	// deleted, and these make the ID non-obvious.
 }
 
 TEST_FIXTURE(TestFixture, test_repeater_firings_till)
@@ -170,14 +171,14 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 
 	dj1.save();
 
-	Repeater repeater1b(dbc, 1);
-	OrdinaryJournal oj1b = repeater1b.fire_next();
+	Repeater repeater1b = repeater1;
+	OrdinaryJournal const oj1b = repeater1b.fire_next();
 	CHECK_EQUAL(oj1b.comment(), "journal to test repeater");
 	CHECK_EQUAL(oj1b.comment(), BString("journal to test repeater"));
 	CHECK_EQUAL(oj1b.date(), date(2012, 7, 30));
 	CHECK_EQUAL(repeater1.next_date(), date(2012, 8, 13));
 
-	OrdinaryJournal oj1c(dbc, 2);
+	OrdinaryJournal const oj1c = oj1b;
 	CHECK_EQUAL(oj1c.date(), date(2012, 7, 30));
 	CHECK_EQUAL(oj1c.comment(), "journal to test repeater");
 	CHECK_EQUAL(oj1c.entries().size(), 2);
@@ -185,12 +186,11 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	repeater1b.fire_next();
 	repeater1b.fire_next();
 
-	OrdinaryJournal oj3(dbc, 3);
-	OrdinaryJournal oj4(dbc, 4);
+	OrdinaryJournal oj3(dbc, oj1c.id() + 1);
+	OrdinaryJournal oj4(dbc, oj1c.id() + 2);
 
 	CHECK_EQUAL(oj3.date(), date(2012, 8, 13));
 	CHECK_EQUAL(oj4.date(), date(2012, 8, 27));
-	CHECK_EQUAL(oj4.id(), 4);
 	CHECK_EQUAL(oj3.comment(), oj4.comment());
 	vector<Entry>::const_iterator it3 = ++oj3.entries().begin();
 	vector<Entry>::const_iterator it4 = ++oj4.entries().begin();

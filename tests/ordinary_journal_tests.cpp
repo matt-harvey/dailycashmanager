@@ -5,6 +5,7 @@
 #include "proto_journal.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <vector>
@@ -22,6 +23,7 @@ namespace phatbooks
 {
 namespace test
 {
+
 
 TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 {
@@ -53,6 +55,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	CHECK_EQUAL(oj1.entries().size(), 2);
 	oj1.save();
 	CHECK(!oj1.entries().empty());
+
 	for
 	(	vector<Entry>::const_iterator it1 = oj1.entries().begin(),
 		  end = oj1.entries().end();
@@ -60,21 +63,19 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		++it1
 	)
 	{
-		CHECK( (it1->id() == 1) || (it1->id() == 2) );
-		if (it1->id() == 1)
+		CHECK(it1->id() == 1 || it1->id() == 2);
+		if (it1->account() == Account(dbc, "cash"))
 		{
-			CHECK_EQUAL(it1->account().id(), Account(dbc, "cash").id());
 			CHECK_EQUAL(it1->comment(), "igloo entry a");
 			CHECK_EQUAL(it1->amount(), Decimal("0.99"));
 			CHECK_EQUAL(it1->is_reconciled(), true);
 		}
 		else
 		{
-			CHECK_EQUAL(it1->id(), 2);
+			CHECK(it1->account() == Account(dbc, "food"));
 			CHECK_EQUAL(it1->is_reconciled(), false);
 			CHECK_EQUAL(it1->amount(), Decimal("-0.99"));
 			CHECK_EQUAL(it1->comment(), "igloo entry b");
-			CHECK_EQUAL(it1->account().id(), Account(dbc, "food").id());
 		}
 	}
 	DraftJournal dj2(dbc);
@@ -100,7 +101,6 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		oj1.entries().begin();
 	for ( ; it2 != oj1.entries().end(); ++it2)
 	{
-		CHECK(it2->id() == 3);
 		CHECK_EQUAL(it2->account().id(), Account(dbc, "food").id());
 		CHECK_EQUAL(it2->comment(), "steam");
 		CHECK_EQUAL(it2->is_reconciled(), false);
@@ -170,7 +170,10 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 
 	journal1.save();
 
-	OrdinaryJournal journal1b(dbc, 1);
+	// We already have a system journal (the budget instrument) so
+	// we expect journal1b to have an id of 2, not 1.
+	OrdinaryJournal journal1b(dbc, 2);
+
 	CHECK(journal1b.is_balanced());
 	Entry entry1c(dbc);
 	entry1c.set_account(Account(dbc, "food"));
