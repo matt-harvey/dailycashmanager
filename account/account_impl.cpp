@@ -405,16 +405,17 @@ AccountImpl::do_load()
 	statement.step();
 	AccountImpl temp(*this);
 	temp.m_data->name = std8_to_bstring(statement.extract<string>(0));
-	temp.m_data->commodity = Commodity
+	Commodity const comm
 	(	database_connection(),
-		statement.extract<Id>(1)
+		statement.extract<Commodity::Id>(1)
 	);
+	temp.m_data->commodity = comm;
 	temp.m_data->account_type =
 		static_cast<AccountType>(statement.extract<int>(2));
 	temp.m_data->description = std8_to_bstring(statement.extract<string>(3));
 	temp.m_data->opening_balance = Decimal
 	(	statement.extract<Decimal::int_type>(4),
-		commodity().precision()
+		comm.precision()
 	);
 	swap(temp);
 	return;
