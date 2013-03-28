@@ -2149,12 +2149,49 @@ TextSession::display_ordinary_actual_entries()
 	}
 
 	// TODO Factor out process of "getting date range from user" into a
-	// separate function.
-	cout << "Enter start date as an 8-digit number of the form YYYYMMDD, "
-			"or leave blank for no start date: ";
-	optional<gregorian::date> const maybe_earliest_date =
-		get_date_from_user(true);
+	// separate function. This in turn could delegate to a "get date from
+	// user" function that is specific to Phatbooks (rather than just
+	// calling the consolixx one), in that it encapsulates the code to
+	// rule out dates earlier than the entity creation date.
+	gregorian::date const entity_creation_date =
+		database_connection().entity_creation_date();
+	gregorian::date earliest_date;
 
+	// Get start date
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		cout << "Enter start date as an 8-digit number of the form YYYYMMDD, "
+				"or leave blank for earliest possible date ("
+			 << gregorian::to_iso_string(entity_creation_date)
+			 << "): ";
+		optional<gregorian::date> const maybe_earliest_date =
+			get_date_from_user(true);
+		if (!maybe_earliest_date)
+		{
+			earliest_date = entity_creation_date;
+			input_is_valid = true;
+		}
+		else if (value(maybe_earliest_date) >= entity_creation_date)
+		{
+			earliest_date = value(maybe_earliest_date);
+			input_is_valid = true;
+		}
+		else
+		{
+			assert (maybe_earliest_date);
+			assert (value(maybe_earliest_date) < entity_creation_date);
+			cout << "You have entered a date earlier than the creation "
+				 << "date for this "
+				 << Application::application_name()
+				 << " file ("
+				 << gregorian::to_iso_string(entity_creation_date)
+				 << "). Please try again."
+				 << endl;
+			assert (!input_is_valid);
+		}
+	}
+
+	// Get end date
 	optional<gregorian::date> maybe_latest_date;
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
@@ -2162,20 +2199,18 @@ TextSession::display_ordinary_actual_entries()
 				"or leave blank for no end date: ";
 		maybe_latest_date = get_date_from_user(true);
 		if 
-		(	!maybe_earliest_date ||
-			!maybe_latest_date || 
-			(value(maybe_latest_date) >= value(maybe_earliest_date))
+		(	!maybe_latest_date ||
+			(value(maybe_latest_date) >= earliest_date)
 		)
 		{
 			input_is_valid = true;
 		}
 		else
 		{
-			assert (maybe_earliest_date);
 			assert (maybe_latest_date);
-			assert (value(maybe_latest_date) < value(maybe_earliest_date));
+			assert (value(maybe_latest_date) < earliest_date);
 			cout << "End date cannot be earlier than start date. "
-					"Please try again: ";
+					"Please try again." << endl;
 			assert (!input_is_valid);
 		}
 	}
@@ -2199,27 +2234,18 @@ TextSession::display_ordinary_actual_entries()
 	ActualOrdinaryEntryReader::const_iterator it = reader.begin();
 	ActualOrdinaryEntryReader::const_iterator const end = reader.end();
 
-	// Examine pre-start-date entries
-	if (maybe_earliest_date)
+	for ( ; (it != end) && (it->date() < earliest_date); ++it)
 	{
-		for
-		(	gregorian::date const earliest = *maybe_earliest_date;
-			(it != end) && (it->date() < earliest);
-			++it
+		if
+		(	accumulating_pre_start_date_entries &&
+			(it->account() == account)
 		)
 		{
-			if
-			(	accumulating_pre_start_date_entries &&
-				(it->account() == account)
-			)
-			{
-				opening_balance += it->amount();
-				assert (is_balance_sheet);
-			}
+			opening_balance += it->amount();
+			assert (is_balance_sheet);
 		}
 	}
 	vector<Entry> table_vec;
-
 
 	// Examine entries later than or equal to the start date
 	Decimal closing_balance = opening_balance;
@@ -2595,8 +2621,6 @@ TextSession::elicit_repeater()
 	shared_ptr<MenuItem const> const choice =
 		frequency_menu.last_choice();
 
-		
-
 	// Determine frequency step type
 	optional<interval_type::IntervalType> step_type;
 	if (choice == monthly_day_x || choice == N_monthly_day_x)
@@ -2676,6 +2700,9 @@ TextSession::elicit_repeater()
 	cout << "Enter the first date on which the transaction will occur"
 		 << ", as an eight-digit number of the form YYYYMMDD (or just"
 		 << " hit enter for today's date): ";
+	// TODO Stop user from entering a date in the past. It is especially
+	// important to stop them from entering a date that is earlier than
+	// the entity creation date.
 	optional<gregorian::date> const d = get_date_from_user(true);
 	if (d) repeater.set_next_date(*d);
 	else repeater.set_next_date(gregorian::day_clock::local_day());
