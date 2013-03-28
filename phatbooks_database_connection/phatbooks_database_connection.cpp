@@ -12,6 +12,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "account.hpp"
 #include "account_impl.hpp"
+#include "account_reader.hpp"
 #include "amalgamated_budget.hpp"
 #include "b_string.hpp"
 #include "budget_item.hpp"
@@ -27,6 +28,7 @@
 #include "entry.hpp"
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
+#include "ordinary_journal_reader.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
@@ -61,6 +63,7 @@ using jewel::value;
 using sqloxx::DatabaseConnection;
 using sqloxx::DatabaseTransaction;
 using sqloxx::IdentityMap;
+using sqloxx::Reader;
 using sqloxx::SQLStatement;
 using sqloxx::SQLiteException;
 using std::endl;
@@ -193,6 +196,7 @@ PhatbooksDatabaseConnection::setup()
 	}
 	assert (tables_are_configured());
 	load_permanent_entity_data();
+	perform_integrity_checks();
 	return;
 }
 
@@ -430,6 +434,7 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_creation_date
 
 
 
+
 // Getters for IdentityMaps
 
 template <>
@@ -482,6 +487,42 @@ PhatbooksDatabaseConnection::identity_map<RepeaterImpl>()
 }
 
 
+void
+PhatbooksDatabaseConnection::perform_integrity_checks()
+{
+#	ifndef NDEBUG
+
+		// Check integrity of Account balances
+		AccountReader const account_reader(*this);
+		Decimal total_opening_balances;
+		Decimal total_balances;
+		for
+		(	AccountReader::const_iterator it = account_reader.begin();
+			it != account_reader.end();
+			++it
+		)
+		{
+			total_opening_balances += it->technical_opening_balance();
+			total_balances += it->technical_balance();
+		}
+		assert (total_opening_balances == Decimal(0, 0));
+		assert (total_balances == Decimal(0, 0));
+		
+		// Check journal dates are OK
+		OrdinaryJournalReader const oj_reader(*this);
+		for
+		(	OrdinaryJournalReader::const_iterator it = oj_reader.begin();
+			it != oj_reader.end();
+			++it
+		)
+		{
+			assert (it->date() >= opening_balance_journal_date());
+		}
+
+#	endif
+	return;
+}
+		
 
 
 }  // namespace phatbooks

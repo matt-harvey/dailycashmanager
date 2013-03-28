@@ -296,7 +296,7 @@ private:
 	sqloxx::IdentityMap<RepeaterImpl, PhatbooksDatabaseConnection>*
 		m_repeater_map;
 
-
+	void perform_integrity_checks();
 
 };  // PhatbooksDatabaseConnection
 

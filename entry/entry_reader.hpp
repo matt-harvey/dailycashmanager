@@ -15,7 +15,6 @@ typedef
 	sqloxx::Reader<Entry, PhatbooksDatabaseConnection>
 	EntryReader;
 
-
 class ActualOrdinaryEntryReader: public EntryReader
 {
 public:
