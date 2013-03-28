@@ -2542,11 +2542,68 @@ TextSession::elicit_account()
 		account_type_menu.last_choice()->banner();
 	account.set_account_type(string_to_account_type(account_type_name));
 
-
 	// Get description 
 	cout << "Enter description for new account (or hit enter for no "
 	        "description): ";
 	account.set_description(std8_to_bstring(get_user_input()));
+
+	// Get opening balance
+	cout << "Enter ";
+	switch (account.account_super_type())
+	{
+	case account_super_type::balance_sheet:
+		cout << "opening balance";
+		if (account.account_type() == account_type::liability)
+		{
+			cout << " (enter negative amount for liability)";
+		}
+		cout << ": ";
+		break;
+	case account_super_type::pl:
+		cout << "initial budget allocation: ";
+		break;
+	default:
+		assert (false);
+	}
+	OrdinaryJournal opening_balance_journal(database_connection());
+	for (bool input_is_valid = false; !input_is_valid; )
+	{
+		// TODO Repeating code already used elsewhere - fix...
+		Decimal const raw_opening_balance = value(get_decimal_from_user());
+		Decimal::places_type const entered_precision =
+			raw_opening_balance.places();
+		try
+		{
+			Decimal opening_balance = jewel::round
+			(	raw_opening_balance,
+				account.commodity().precision()
+			);
+			if (opening_balance.places() < entered_precision)
+			{
+				cout << "Amount rounded to " << opening_balance
+				     << ". " << endl;
+			}
+			if (account.account_super_type() == account_super_type::pl)
+			{
+				opening_balance = -opening_balance;
+			}
+			opening_balance_journal =
+				OrdinaryJournal::create_opening_balance_journal
+				(	account,
+					opening_balance
+				);
+	 		input_is_valid = true;
+		}
+		catch (DecimalRangeException&)
+		{
+			cout << "The number you entered cannot be safely "
+			     << "rounded to the required precision of "
+				 << account.commodity().precision()
+				 << " decimal places. Please try again."
+				 << endl;
+			assert (!input_is_valid);
+		}
+	}
 	
 	// Confirm with user before creating account
 	cout << endl << "You have proposed to create the following account: "
@@ -2572,7 +2629,21 @@ TextSession::elicit_account()
 	else
 	{
 		assert (confirmation == "y");
+
 		account.save();
+		try
+		{
+			opening_balance_journal.save();
+		}
+		catch (...)
+		{
+			// This is very unlikely to happen... but it's possible.
+			assert (account.technical_opening_balance() == Decimal(0, 0));
+			account.remove();
+			cout << "Error: Account could not be saved. "
+			     << "Account has not been created." << endl;
+			throw;
+		}
 		cout << "Account created." << endl;
 	}
 	return;
@@ -3007,7 +3078,8 @@ TextSession::elicit_secondary_entries
 				try
 				{
 					current_entry_amount = jewel::round
-					(	current_entry_amount, current_commodity.precision()
+					(	current_entry_amount,
+						current_commodity.precision()
 					);
 					if (current_entry_amount.places() < entered_precision)
 					{

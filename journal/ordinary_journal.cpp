@@ -90,8 +90,12 @@ OrdinaryJournal::create_opening_balance_journal
 	// appropriate to implement it here.
 	PhatbooksDatabaseConnection& dbc = p_account.database_connection();
 	Account const balancing_account = dbc.balancing_account();
+	Decimal const old_opening_balance =
+		p_account.has_id()?
+		p_account.technical_opening_balance():
+		Decimal(0, p_account.commodity().precision());
 	Decimal const primary_entry_amount =
-		p_desired_opening_balance - p_account.technical_opening_balance();
+		p_desired_opening_balance - old_opening_balance;
 
 	OrdinaryJournal ret(dbc);
 

@@ -81,6 +81,14 @@ public:
 	 * (non-budget) journal if p_account is a balance sheet Account;
 	 * otherwise, if p_account is a P&L account, it will be
 	 * a budget journal.
+	 *
+	 * The returned OrdinaryJournal should not be saved unless and until
+	 * p_account has an id (i.e. is persisted to the database).
+	 *
+	 * Between creating the OrdinaryJournal from this
+	 * function, and saving it, there should be no
+	 * other adjustments made to the opening balances of
+	 * Accounts.
 	 */
 	static OrdinaryJournal create_opening_balance_journal
 	(	Account const& p_account,
