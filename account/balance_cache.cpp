@@ -103,7 +103,7 @@ BalanceCache::technical_opening_balance(AccountImpl::Id p_account_id)
 	SQLStatement statement
 	(	m_database_connection,
 		"select sum(amount) from ordinary_journal_detail "
-		"join entries using(journal_id) where date = :date, "
+		"join entries using(journal_id) where date = :date "
 		"and account_id = :account_id"
 	);
 	statement.bind
@@ -111,13 +111,29 @@ BalanceCache::technical_opening_balance(AccountImpl::Id p_account_id)
 		julian_int(m_database_connection.opening_balance_journal_date())
 	);
 	statement.bind(":account_id", p_account_id);
-	statement.step();
 	Account const account(m_database_connection, p_account_id);
-	Decimal const ret
-	(	statement.extract<Decimal::int_type>(0),
-		account.commodity().precision()
-	);
-	statement.step_final();
+	Decimal::places_type const places = account.commodity().precision();
+	Decimal ret(0, places);
+	if (statement.step())
+	{
+		// TODO Catching exception here is a crappy way of telling
+		// whether there are no entries to sum.
+		try
+		{
+			ret = Decimal(statement.extract<Decimal::int_type>(0), places);
+		}
+		catch (ValueTypeException&)
+		{
+			// There are no entries to sum - leave ret as zero
+		}
+		statement.step_final();
+	}
+	else
+	{
+		// There should be a result row even if there are no entries
+		// to sum
+		assert (false);
+	}
 	return ret;
 }
 

@@ -1724,6 +1724,10 @@ TextSession::display_account_detail()
 	table.push_column(name_column);
 	ColumnPtr const type_column(col::create_account_type_column());
 	table.push_column(type_column);
+	ColumnPtr const opening_balance_column
+	(	col::create_account_friendly_opening_balance_column()
+	);
+	table.push_column(opening_balance_column);
 	ColumnPtr const description_column
 	(	col::create_account_description_column()
 	);

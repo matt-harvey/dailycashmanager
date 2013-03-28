@@ -47,9 +47,9 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	entry1b.set_amount(Decimal("-0.99"));
 	journal1.push_entry(entry1b);
 	OrdinaryJournal oj1(dbc);
-	oj1.set_date(date(2000, 1, 5));
+	oj1.set_date(date(3000, 1, 5));
 	oj1.mimic(journal1);
-	CHECK_EQUAL(oj1.date(), date(2000, 1, 5));
+	CHECK_EQUAL(oj1.date(), date(3000, 1, 5));
 	CHECK_EQUAL(oj1.is_actual(), true);
 	CHECK_EQUAL(oj1.comment(), "igloo");
 	CHECK_EQUAL(oj1.entries().size(), 2);
@@ -95,7 +95,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	CHECK_EQUAL(oj1.is_actual(), false);
 	CHECK_EQUAL(oj1.comment(), "steam engine");
 	CHECK_EQUAL(oj1.entries().size(), 1);
-	CHECK_EQUAL(oj1.date(), date(2000, 1, 5));
+	CHECK_EQUAL(oj1.date(), date(3000, 1, 5));
 	oj1.save();
 	vector<Entry>::const_iterator it2 =
 		oj1.entries().begin();
@@ -161,7 +161,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	entry1b.set_whether_reconciled(false);
 	entry1b.set_amount(Decimal("50.09"));
 	journal1.push_entry(entry1b);
-	journal1.set_date(date(2000, 1, 5));
+	journal1.set_date(date(3000, 1, 5));
 
 	CHECK(!journal1.is_balanced());
 	CHECK_THROW(journal1.save(), UnbalancedJournalException);

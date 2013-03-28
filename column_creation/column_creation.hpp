@@ -170,7 +170,7 @@ create_account_friendly_balance_column();
 /**
  * Creates a column showing the friendly balance of an
  * Account, with the total of all the friendly balances
- * (of Accounts in the Table) at the foot of the Column.
+ * (of Accounts in the Table) at the foot of the column.
  */
 consolixx::AccumulatingColumn<Account, jewel::Decimal>*
 create_account_accumulating_friendly_balance_column();
@@ -188,6 +188,12 @@ create_account_budget_column
 (	PhatbooksDatabaseConnection const& p_database_connection
 );
 
+/**
+ * Creates a column showing the "friendly" opening balance
+ * of an Account.
+ */
+consolixx::PlainColumn<Account, jewel::Decimal>*
+create_account_friendly_opening_balance_column();
 
 }  // namespace column_creation
 }  // namespace phatbooks

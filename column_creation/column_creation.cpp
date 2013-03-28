@@ -167,6 +167,10 @@ namespace
 	{
 		return account.friendly_balance();
 	}
+	Decimal account_col_aux_friendly_opening_balance(Account const& account)
+	{
+		return account.friendly_opening_balance();
+	}
 	Decimal account_col_aux_accumulating_friendly_balance
 	(	Account const& account,
 		Decimal& accumulator
@@ -413,6 +417,17 @@ create_account_budget_column
 	(	account_col_aux_budget,
 		Decimal(0, 0),
 		"Budget/" + bstring_to_std8(phrase(frequency.step_type(), false)),
+		alignment::right,
+		finformat_std8
+	);
+}
+
+PlainColumn<Account, Decimal>*
+create_account_friendly_opening_balance_column()
+{
+	return new PlainColumn<Account, Decimal>
+	(	account_col_aux_friendly_opening_balance,
+		"Opening balance",
 		alignment::right,
 		finformat_std8
 	);
