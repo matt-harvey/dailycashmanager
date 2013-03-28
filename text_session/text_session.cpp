@@ -246,7 +246,6 @@ namespace
 		assert (false);  // Execution never reaches here.
 	}
 
-
 	Decimal elicit_constrained_amount
 	(	Commodity const& commodity,
 		string const& transaction_description
@@ -2548,61 +2547,34 @@ TextSession::elicit_account()
 	account.set_description(std8_to_bstring(get_user_input()));
 
 	// Get opening balance
-	cout << "Enter ";
+	string opening_balance_description;
+
 	switch (account.account_super_type())
 	{
 	case account_super_type::balance_sheet:
-		cout << "opening balance";
+		opening_balance_description = "of opening balance";
 		if (account.account_type() == account_type::liability)
 		{
-			cout << " (enter negative amount for liability)";
+			opening_balance_description +=
+				" (enter negative amount for liability)";
 		}
-		cout << ": ";
 		break;
 	case account_super_type::pl:
-		cout << "initial budget allocation: ";
+		opening_balance_description = "of initial budget allocation";
 		break;
 	default:
 		assert (false);
 	}
-	OrdinaryJournal opening_balance_journal(database_connection());
-	for (bool input_is_valid = false; !input_is_valid; )
+
+	Decimal opening_balance = elicit_constrained_amount
+	(	account.commodity(),
+		opening_balance_description
+	);
+	if (account.account_super_type() == account_super_type::pl)
 	{
-		// TODO Repeating code already used elsewhere - fix...
-		Decimal const raw_opening_balance = value(get_decimal_from_user());
-		Decimal::places_type const entered_precision =
-			raw_opening_balance.places();
-		try
-		{
-			Decimal opening_balance = jewel::round
-			(	raw_opening_balance,
-				account.commodity().precision()
-			);
-			if (opening_balance.places() < entered_precision)
-			{
-				cout << "Amount rounded to " << opening_balance
-				     << ". " << endl;
-			}
-			if (account.account_super_type() == account_super_type::pl)
-			{
-				opening_balance = -opening_balance;
-			}
-			opening_balance_journal =
-				OrdinaryJournal::create_opening_balance_journal
-				(	account,
-					opening_balance
-				);
-	 		input_is_valid = true;
-		}
-		catch (DecimalRangeException&)
-		{
-			cout << "The number you entered cannot be safely "
-			     << "rounded to the required precision of "
-				 << account.commodity().precision()
-				 << " decimal places. Please try again."
-				 << endl;
-			assert (!input_is_valid);
-		}
+		// TODO Deal with (tiny) possibility of exception being
+		// thrown here?
+		opening_balance = -opening_balance;
 	}
 	
 	// Confirm with user before creating account
@@ -2633,6 +2605,11 @@ TextSession::elicit_account()
 		account.save();
 		try
 		{
+			OrdinaryJournal opening_balance_journal =
+				OrdinaryJournal::create_opening_balance_journal
+				(	account,
+					opening_balance
+				);
 			opening_balance_journal.save();
 		}
 		catch (...)
