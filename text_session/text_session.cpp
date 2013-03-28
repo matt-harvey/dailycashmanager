@@ -246,29 +246,47 @@ namespace
 		assert (false);  // Execution never reaches here.
 	}
 
-	Decimal elicit_constrained_amount
+	optional<Decimal> elicit_constrained_amount
 	(	Commodity const& commodity,
-		string const& transaction_description
+		string const& initial_prompt,
+		string const& escape_option_description = "",
+		bool allow_enter_to_escape = false
 	)
 	{
-		Decimal amount;
+		optional<Decimal> maybe_amount;
 		for (bool input_is_valid = false; !input_is_valid; )
 		{
-			cout << "Enter amount " << transaction_description
+			cout << initial_prompt;
 #			ifdef PHATBOOKS_EXPOSE_COMMODITY
-			     << " (in units of " << commodity.abbreviation()
-				 << ")"
+			cout << " (in units of " << commodity.abbreviation()
+				 << ")";
 #			endif
-				 << ": ";
-			amount = value(get_decimal_from_user());
-			Decimal::places_type const initial_precision = amount.places();
+			if (allow_enter_to_escape)
+			{
+				cout << ", or just hit Enter " << escape_option_description;
+			}
+			cout << ": ";
+			maybe_amount = get_decimal_from_user(allow_enter_to_escape);
+			if (!maybe_amount)
+			{
+				assert (allow_enter_to_escape);
+				return maybe_amount;
+			}
+			assert (maybe_amount);
+			Decimal::places_type const initial_precision =
+				maybe_amount->places();
 			try
 			{
-				amount = jewel::round(amount, commodity.precision());
+				maybe_amount = jewel::round
+				(	value(maybe_amount),
+					commodity.precision()
+				);
 				input_is_valid = true;
-				if (amount.places() < initial_precision)
+				if (maybe_amount->places() < initial_precision)
 				{
-					cout << "Amount rounded to " << amount << "." << endl;
+					cout << "Amount rounded to "
+					     << value(maybe_amount)
+						 << "." << endl;
 				}
 			}
 			catch (DecimalRangeException&)
@@ -281,7 +299,7 @@ namespace
 				assert (!input_is_valid);
 			}
 		}
-		return amount;
+		return maybe_amount;
 	}
 
 	// TODO This function is weird and misleading in what it does, and
@@ -527,7 +545,7 @@ namespace
 
 }  
 
-/********* END ANONYMOUS INNER NAMESPACE *************/
+/********* END ANONYMOUS NAMESPACE *************/
 
 
 
@@ -918,16 +936,17 @@ TextSession::elicit_budget_item()
 	budget_item.set_frequency(value(elicit_budget_frequency()));
 
 	// Get amount
-	string word = "of item";
+	string prompt = "Enter amount of item";
 	if (budget_item.account().account_type() == account_type::revenue)
 	{
-		word += " (as a NEGATIVE amount, to budget for revenue)";
+		prompt += " (as a NEGATIVE amount, to budget for revenue)";
 	}
-	Decimal amount = elicit_constrained_amount
+	optional<Decimal> const maybe_amount = elicit_constrained_amount
 	(	budget_item.account().commodity(),
-		word
+		prompt
 	);
-	budget_item.set_amount(amount);
+	assert (maybe_amount);
+	budget_item.set_amount(value(maybe_amount));
 
 	// Display BudgetItem
 	cout << "\nCompleted budget item is as follows:"
@@ -1187,9 +1206,12 @@ TextSession::elicit_entry_insertion(PersistentJournal& journal)
 	(	value(elicit_valid_account(transaction_type, primary_phase))
 	);
 	Commodity const commodity = entry.account().commodity();
-	Decimal const amount = elicit_constrained_amount
-	(	commodity,
-		dialogue_phrase(generic_transaction, amount_prompt)
+	Decimal const amount = value
+	(	elicit_constrained_amount
+		(	commodity,
+			"Enter amount " +
+				dialogue_phrase(generic_transaction, amount_prompt)
+		)
 	);
 	bool const sign_needs_changing = !journal.is_actual();
 	entry.set_amount(sign_needs_changing? -amount: amount);
@@ -1258,48 +1280,17 @@ TextSession::elicit_entry_amendment(PersistentJournal& journal)
 	if (!new_comment.empty()) entry.set_comment(std8_to_bstring(new_comment));
 
 	// Edit amount
-	for (bool input_is_valid = false; !input_is_valid; )
+	optional<Decimal> const maybe_amount = elicit_constrained_amount
+	(	entry.account().commodity(),
+		"Enter new amount for this line",
+		"to leave unchanged",
+		true
+	);
+	if (maybe_amount)
 	{
-		cout << "Enter new amount for this line "
-		     << "(or Enter to leave unchanged): ";
-		optional<Decimal> const maybe_new_amount =
-			get_decimal_from_user(true);
-		if (!maybe_new_amount)
-		{
-			input_is_valid = true;
-		}
-		else
-		{
-			// TODO The below is very similar to code the
-			// function elicit_constrained_amount. Can I factor
-			// this out?
-			Decimal new_amount = value(maybe_new_amount);
-			Decimal::places_type const initial_precision =
-				new_amount.places();
-			Commodity const commodity = entry.account().commodity();
-			try
-			{
-				new_amount = jewel::round(new_amount, commodity.precision());
-				bool const sign_needs_changing = !journal.is_actual();
-				entry.set_amount
-				(	sign_needs_changing? -new_amount: new_amount
-				);
-				input_is_valid = true;
-				if (new_amount.places() < initial_precision)
-				{
-					cout << "Amount rounded to " << new_amount << "." << endl;
-				}
-			}
-			catch (DecimalRangeException&)
-			{
-				cout << "The number you entered cannot be safely "
-					 << "rounded to the required precison of "
-					 << commodity.precision()
-					 << " decimal places. Please try again."
-					 << endl;
-				assert (!input_is_valid);
-			}
-		}
+		Decimal const new_amount = value(maybe_amount);
+		bool const sign_needs_changing = !journal.is_actual();
+		entry.set_amount(sign_needs_changing? -new_amount: new_amount);
 	}
 	return;
 }
@@ -1752,25 +1743,78 @@ TextSession::conduct_account_editing()
 	assert (!account_name.empty());
 	Account account(database_connection(), std8_to_bstring(account_name));
 
-	cout << "Enter new name (or Enter to leave unchanged): ";
+	cout << "Enter new name, or just hit Enter to leave unchanged: ";
 	string const new_name = elicit_unused_account_name(true);
 	if (!new_name.empty()) account.set_name(std8_to_bstring(new_name));
 
-	cout << "Enter new description (or Enter to leave unchanged): ";
+	cout << "Enter new description, or just hit Enter to leave unchanged: ";
 	string const new_description = get_user_input();
 	if (!new_description.empty())
 	{
 		account.set_description(std8_to_bstring(new_description));
 	}
-	account.save();
-	cout << "Changes have been saved:" << endl;
-	if (!new_name.empty())
+
+	string opening_balance_prompt = "Enter new ";
+
+	switch (account.account_super_type())
 	{
-		cout << "New name: " << new_name << endl;
+	case account_super_type::balance_sheet:
+		opening_balance_prompt += "opening balance";
+		break;
+	case account_super_type::pl:
+		opening_balance_prompt += "initial budget allocation";
+		break;
+	default:
+		assert (false);
 	}
-	if (!new_description.empty())
+
+	optional<Decimal> const maybe_new_opening_balance =
+		elicit_constrained_amount
+		(	account.commodity(),
+			opening_balance_prompt,
+			"to leave unchanged",
+			true
+		);
+	OrdinaryJournal oj(database_connection());
+	if (maybe_new_opening_balance)
 	{
-		cout << "New description: " << new_description << endl;
+		oj = OrdinaryJournal::create_opening_balance_journal
+		(	account,
+			value(maybe_new_opening_balance)
+		);
+	}
+
+	cout << "Save changes? (y/n) ";
+	string const changes_confirmed = get_constrained_user_input
+	(	boost::lambda::_1 == "y" || boost::lambda::_1 == "n",
+		"Enter 'y' to save changes, or 'n' to abort: ",
+		false
+	);
+	if (changes_confirmed == "y")
+	{
+		// TODO Make this atomic
+		account.save(); oj.save();
+
+		cout << "Changes have been saved:" << endl;
+		if (!new_name.empty())
+		{
+			cout << "New name: " << new_name << endl;
+		}
+		if (!new_description.empty())
+		{
+			cout << "New description: " << new_description << endl;
+		}
+		if (maybe_new_opening_balance)
+		{
+			cout << "New opening balance: "
+			     << finformat_std8(value(maybe_new_opening_balance))
+				 << endl;
+		}
+	}
+	else
+	{
+		assert (changes_confirmed == "n");
+		cout << "Changes have not been saved.";
 	}
 	cout << endl;
 	return;
@@ -2566,9 +2610,11 @@ TextSession::elicit_account()
 		assert (false);
 	}
 
-	Decimal opening_balance = elicit_constrained_amount
-	(	account.commodity(),
-		opening_balance_description
+	Decimal opening_balance = value
+	(	elicit_constrained_amount
+		(	account.commodity(),
+			"Enter amount " + opening_balance_description
+		)
 	);
 	if (account.account_super_type() == account_super_type::pl)
 	{
@@ -2968,9 +3014,11 @@ TextSession::elicit_primary_entries
 	(	value(elicit_valid_account(transaction_type, primary_phase))
 	);
 	Commodity const commodity = entry.account().commodity();
-	Decimal const amount = elicit_constrained_amount
-	(	commodity,
-		dialogue_phrase(transaction_type, amount_prompt)
+	Decimal const amount = value
+	(	elicit_constrained_amount
+		(	commodity,
+			"Enter amount " + dialogue_phrase(transaction_type, amount_prompt)
+		)
 	);
 	bool const sign_needs_changing =
 	(	transaction_type == expenditure_transaction ||
