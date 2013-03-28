@@ -15,6 +15,8 @@
 #include "account_type.hpp"
 #include "b_string.hpp"
 #include "frequency.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -44,6 +46,7 @@ class CommodityImpl;
 class DraftJournal;
 class DraftJournalImpl;
 class EntryImpl;
+class OrdinaryJournal;
 class OrdinaryJournalImpl;
 class RepeaterImpl;
 
@@ -74,16 +77,40 @@ public:
 	~PhatbooksDatabaseConnection();
 
 	/**
+	 * Client code should call this after opening the
+	 * PhatbooksDatabaseConnection via
+	 * sqloxx::DatabaseConnection::open(...).
+	 *
 	 * Creates tables required for Phatbooks, and inserts rows
 	 * into certain tables to provide application-level data where
-	 * required. If the database already contains these tables,
-	 * the function does nothing. This function should always be
-	 * called after calling DatabaseConnection::open.
+	 * required - if this has not already occurred (this step is
+	 * ignored if the database has already been configured for
+	 * Phatbooks).
+	 *
+	 * Any "entity level" data is then loaded into memory where required.
 	 *
 	 * @throws SQLiteException or some derivative thereof, if setup is
 	 * unsuccessful.
+	 *
+	 * @todo Should this be automatically called by
+	 * DatabaseConnection::open(), via a private virtual method?
+	 * Currently client code needs to remember to call this after calling
+	 * open. This is error prone.
 	 */
 	void setup();
+
+	/**
+	 * @returns the date on which the database was created. This notionally
+	 * corresponds to the date on which the accounting entity was
+	 * created.
+	 */
+	boost::gregorian::date entity_creation_date() const;
+
+	/**
+	 * @returns the date which all, and only, the <em>opening balance</em>
+	 * journals are dated at, for this entity.
+	 */
+	boost::gregorian::date opening_balance_journal_date() const;
 
 	/**
 	 * Set degree of caching of objects loaded from database.
@@ -115,7 +142,6 @@ public:
 	 * in the budget_instrument().
 	 */
 	Account balancing_account() const;
-
 
 	/**
 	 * @returns the DraftJournal that serves as the "instrument"
@@ -159,6 +185,11 @@ public:
 		);
 		// Retrieve the technical_balance of an Account
 		static jewel::Decimal technical_balance
+		(	PhatbooksDatabaseConnection const& p_database_connection,
+			sqloxx::Id p_account_id
+		);
+		// Retrieve the technical opening balance of an Account
+		static jewel::Decimal technical_opening_balance
 		(	PhatbooksDatabaseConnection const& p_database_connection,
 			sqloxx::Id p_account_id
 		);
@@ -208,8 +239,44 @@ public:
 
 private:
 
-	bool setup_has_occurred();
-	void mark_setup_as_having_occurred();
+	void setup_entity_table();
+	bool tables_are_configured();
+	void mark_tables_as_configured();
+
+
+
+	/**
+	 * Store certain data relating to the accounting entity, where the
+	 * data is unchanging and stored permanently in the database - we
+	 * just load it here for easy access. (Note, the main reason for
+	 * this structure is to enable the getter for creation_date to be
+	 * const the the level of PhatbooksDatabaseConnection, so we
+	 * have to load it separately as we can't create a SQLStatement
+	 * on a const DatabaseConnection. Se we load it separately
+	 * here as part of setup.
+	 */
+	class PermanentEntityData
+	{
+	public:
+		boost::gregorian::date creation_date() const;
+		
+		/**
+		 * @throws EntityCreationDateException if we try to set
+		 * the entity creation date when it has already been
+		 * initialized to some other date.
+		 */
+		void set_creation_date(boost::gregorian::date const& p_date);
+
+	private:
+		boost::optional<boost::gregorian::date> m_creation_date;
+	};
+
+	/**
+	 * Load PermanentEntityData from the database into memory.
+	 */
+	void load_permanent_entity_data();
+
+	PermanentEntityData* m_permanent_entity_data;
 
 	BalanceCache* m_balance_cache;
 	AmalgamatedBudget* m_budget;

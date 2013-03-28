@@ -15,8 +15,10 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <jewel/signature.hpp>
 #include <string>
 #include <vector>
 
@@ -25,17 +27,14 @@ using boost::optional;
 using boost::shared_ptr;
 using jewel::clear;
 using jewel::Decimal;
+using jewel::Signature;
 using jewel::value;
 using sqloxx::SQLStatement;
 using std::string;
 using std::vector;
 
 
-#include <jewel/debug_log.hpp>
-#include <iostream>
-using std::endl;
-
-
+namespace gregorian = boost::gregorian;
 
 
 namespace phatbooks
@@ -174,17 +173,53 @@ OrdinaryJournalImpl::~OrdinaryJournalImpl()
 {
 }
 
+void
+OrdinaryJournalImpl::set_date(gregorian::date const& p_date)
+{
+	if (p_date < database_connection().entity_creation_date())
+	{
+		throw InvalidJournalDateException
+		(	"Date of OrdinaryJournal cannot be set to a date "
+			"earlier than the entity creation date, using the "
+			"set_date function."
+		);
+	}
+	assert (p_date != database_connection().opening_balance_journal_date());
+	load();
+	set_date_unrestricted(p_date);
+	assert
+	(	boost_date_from_julian_int(value(m_date)) >=
+		database_connection().entity_creation_date()
+	);
+	return;
+}
 
 void
-OrdinaryJournalImpl::set_date(boost::gregorian::date const& p_date)
+OrdinaryJournalImpl::set_date_unrestricted
+(	gregorian::date const& p_date,
+	Signature<OrdinaryJournal> const& p_signature
+)
+{
+	// Silence compiler warning re. unused parameter. The Signature
+	// is there to provide access control only; we don't actually
+	// want to use this parameter for anything inside the function
+	// body.
+	(void)p_signature;
+
+	load();
+	set_date_unrestricted(p_date);
+	return;
+}
+
+void
+OrdinaryJournalImpl::set_date_unrestricted(gregorian::date const& p_date)
 {
 	load();
 	m_date = julian_int(p_date);
 	return;
 }
 
-
-boost::gregorian::date
+gregorian::date
 OrdinaryJournalImpl::date()
 {
 	load();

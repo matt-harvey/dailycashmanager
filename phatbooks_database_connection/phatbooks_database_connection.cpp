@@ -9,23 +9,24 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
+#include "phatbooks_database_connection.hpp"
+#include "account.hpp"
 #include "account_impl.hpp"
 #include "amalgamated_budget.hpp"
 #include "b_string.hpp"
 #include "budget_item.hpp"
 #include "budget_item_impl.hpp"
 #include "commodity_impl.hpp"
-#include "entry_impl.hpp"
+#include "date.hpp"
 #include "draft_journal_impl.hpp"
+#include "entry_impl.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "repeater_impl.hpp"
-#include "account.hpp"
 #include "balance_cache.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
@@ -35,12 +36,13 @@
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <sqloxx/sql_statement.hpp>
-#include <stdexcept>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/optional.hpp>
 #include <cassert>
 #include <iostream>
 #include <list>
@@ -55,6 +57,7 @@
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::Decimal;
+using jewel::value;
 using sqloxx::DatabaseConnection;
 using sqloxx::DatabaseTransaction;
 using sqloxx::IdentityMap;
@@ -65,7 +68,7 @@ using std::list;
 using std::runtime_error;
 using std::string;
 
-
+namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
@@ -73,7 +76,9 @@ namespace phatbooks
 
 PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	DatabaseConnection(),
+	m_permanent_entity_data(0),
 	m_balance_cache(0),
+	m_budget(0),
 	m_account_map(0),
 	m_budget_item_map(0),
 	m_commodity_map(0),
@@ -83,6 +88,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	m_repeater_map(0)
 {
 	typedef PhatbooksDatabaseConnection PDC;
+	m_permanent_entity_data = new PermanentEntityData;
 	m_balance_cache = new BalanceCache(*this);
 	m_budget = new AmalgamatedBudget(*this);
 	m_account_map = new IdentityMap<AccountImpl, PDC>(*this);
@@ -143,38 +149,66 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 
 	delete m_commodity_map;
 	m_commodity_map = 0;
+
+	delete m_permanent_entity_data;
+	m_permanent_entity_data = 0;
+}
+
+void
+PhatbooksDatabaseConnection::load_permanent_entity_data()
+{
+	SQLStatement statement
+	(	*this,
+		"select creation_date from entity_data"
+	);
+	statement.step();
+	m_permanent_entity_data->set_creation_date
+	(	boost_date_from_julian_int(statement.extract<DateRep>(0))
+	);
+	statement.step_final();  // Verify only one row
+	return;
 }
 
 
 void
 PhatbooksDatabaseConnection::setup()
 {
-	if (setup_has_occurred())
+	if (!tables_are_configured())
 	{
-		return;
+		DatabaseTransaction transaction(*this);
+		setup_boolean_table();
+		setup_entity_table();
+		Commodity::setup_tables(*this);
+		Account::setup_tables(*this);
+		ProtoJournal::setup_tables(*this);
+		DraftJournal::setup_tables(*this);
+		OrdinaryJournal::setup_tables(*this);
+		Repeater::setup_tables(*this);
+		BudgetItem::setup_tables(*this);
+		AmalgamatedBudget::setup_tables(*this);
+		Entry::setup_tables(*this);
+		BalanceCache::setup_tables(*this);
+		mark_tables_as_configured();
+		transaction.commit();
 	}
-	assert (!setup_has_occurred());
-
-	DatabaseTransaction transaction(*this);
-
-	setup_boolean_table();
-	Commodity::setup_tables(*this);
-	Account::setup_tables(*this);
-	ProtoJournal::setup_tables(*this);
-	DraftJournal::setup_tables(*this);
-	OrdinaryJournal::setup_tables(*this);
-	Repeater::setup_tables(*this);
-	BudgetItem::setup_tables(*this);
-	AmalgamatedBudget::setup_tables(*this);
-	Entry::setup_tables(*this);
-	BalanceCache::setup_tables(*this);
-	mark_setup_as_having_occurred();
-
-	transaction.commit();
-
-	assert (setup_has_occurred());
-
+	assert (tables_are_configured());
+	load_permanent_entity_data();
 	return;
+}
+
+gregorian::date
+PhatbooksDatabaseConnection::entity_creation_date() const
+{
+	return m_permanent_entity_data->creation_date();
+}
+
+
+gregorian::date
+PhatbooksDatabaseConnection::opening_balance_journal_date() const
+{
+	gregorian::date const ret =
+		entity_creation_date() - gregorian::date_duration(1);
+	return ret;
 }
 
 void
@@ -234,15 +268,39 @@ namespace
 }
 
 void
-PhatbooksDatabaseConnection::mark_setup_as_having_occurred()
+PhatbooksDatabaseConnection::mark_tables_as_configured()
 {
 	execute_sql("create table " + setup_flag + "(dummy_column);");
 	return;
 }
 
+void
+PhatbooksDatabaseConnection::setup_entity_table()
+{
+	// Entity table represents entity level data
+	// for the database as a whole. It should only ever
+	// have one row.
+	SQLStatement table_creation_statement
+	(	*this,
+		"create table entity_data"
+		"("
+			"creation_date integer not null"
+		")"
+	);
+	table_creation_statement.step_final();
+	SQLStatement populator
+	(	*this,
+		"insert into entity_data(creation_date) "
+		"values(:creation_date)"
+	);
+	gregorian::date const today = gregorian::day_clock::local_day();
+	populator.bind(":creation_date", julian_int(today));
+	populator.step_final();
+	return;
+}
 
 bool
-PhatbooksDatabaseConnection::setup_has_occurred()
+PhatbooksDatabaseConnection::tables_are_configured()
 {
 	// TODO Make this nicer. 
 	try
@@ -255,7 +313,6 @@ PhatbooksDatabaseConnection::setup_has_occurred()
 		return false;
 	}
 }
-
 
 Frequency
 PhatbooksDatabaseConnection::budget_frequency() const
@@ -286,7 +343,6 @@ BalanceCacheAttorney::mark_as_stale
 	return;
 }
 
-
 void
 BalanceCacheAttorney::mark_as_stale
 (	PhatbooksDatabaseConnection const& p_database_connection,
@@ -299,7 +355,6 @@ BalanceCacheAttorney::mark_as_stale
 	return;
 }
 
-
 Decimal
 BalanceCacheAttorney::technical_balance
 (	PhatbooksDatabaseConnection const& p_database_connection,
@@ -311,6 +366,16 @@ BalanceCacheAttorney::technical_balance
 	);
 }
 
+Decimal
+BalanceCacheAttorney::technical_opening_balance
+(	PhatbooksDatabaseConnection const& p_database_connection,
+	AccountImpl::Id p_account_id
+)
+{
+	return p_database_connection.m_balance_cache->technical_opening_balance
+	(	p_account_id
+	);
+}
 
 
 // BudgetAttorney
@@ -338,6 +403,34 @@ BudgetAttorney::budget
 	return p_database_connection.m_budget->budget(p_account_id);
 }
 
+
+
+// PermanentEntityData
+
+gregorian::date
+PhatbooksDatabaseConnection::PermanentEntityData::creation_date() const
+{
+	return value(m_creation_date);
+}
+
+void
+PhatbooksDatabaseConnection::PermanentEntityData::set_creation_date
+(	boost::gregorian::date const& p_date
+)
+{
+	if (m_creation_date && (p_date != value(m_creation_date)))
+	{
+		throw EntityCreationDateException
+		(	"Entity creation date cannot be changed once set."
+		);
+	}
+	m_creation_date = p_date;
+	return;
+}
+
+
+
+// Getters for IdentityMaps
 
 template <>
 sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>&

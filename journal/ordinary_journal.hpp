@@ -10,6 +10,7 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <jewel/decimal.hpp>
 #include <iostream>
 #include <ostream>
 #include <vector>
@@ -73,6 +74,25 @@ public:
 		Id p_id
 	);
 
+	/**
+	 * @returns an OrdinaryJournal that, <em> if saved </em>, will
+	 * adjust the opening balance of p_account to become
+	 * p_desired_opening_balance. The journal will be an actual
+	 * (non-budget) journal if p_account is a balance sheet Account;
+	 * otherwise, if p_account is a P&L account, it will be
+	 * a budget journal.
+	 */
+	static OrdinaryJournal create_opening_balance_journal
+	(	Account const& p_account,
+		jewel::Decimal const& p_desired_opening_balance
+	);
+
+	/**
+	 * Set date of OrdinaryJournal.
+	 *
+	 * @throws InvalidJournalDateException if the date is earlier than
+	 * database_connection().entity_creation_date().
+	 */
 	void set_date(boost::gregorian::date const& p_date);
 
 	/**
@@ -90,6 +110,12 @@ public:
 
 
 private:
+	
+	/**
+	 * Sets the date of the OrdinaryJournal. There is no restriction
+	 * on what date can be passed here.
+	 */
+	void set_date_unrestricted(boost::gregorian::date const& p_date);
 
 	// Define pure virtual functions inherited from Journal
 	void do_set_whether_actual(bool p_is_actual);

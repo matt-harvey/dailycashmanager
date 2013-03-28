@@ -14,10 +14,24 @@
 #include <string>
 #include <vector>
 
+
+// Begin forward declarations
+
+namespace jewel
+{
+	template <typename T> class Signature;
+}
+
+
 namespace phatbooks
 {
 
 class DraftJournal;
+class OrdinaryJournal;
+
+// End forward declarations
+
+
 
 class OrdinaryJournalImpl:
 	public sqloxx::PersistentObject
@@ -101,9 +115,19 @@ public:
 	~OrdinaryJournalImpl();
 
 	/**
-	 * Does not throw.
+	 * Can throw InvalidJournalDateException, if we attempt to
+	 * set to a prohibited date.
 	 */
 	void set_date(boost::gregorian::date const& p_date);
+
+	/**
+	 * Allows us to set to any date, but only OrdinaryJournal can
+	 * call it.
+	 */
+	void set_date_unrestricted
+	(	boost::gregorian::date const& p_date,
+		jewel::Signature<OrdinaryJournal> const& p_signature
+	);
 
 	/**
 	 * @todo Verify throwing behaviour and determine dependence on DateRep.
@@ -132,6 +156,11 @@ private:
 	 */
 	OrdinaryJournalImpl(OrdinaryJournalImpl const& rhs);
 
+	/**
+	 * Signature-less version of the public function of the same name;
+	 * so that we can call it from within OrdinaryJournalImpl.
+	 */
+	void set_date_unrestricted(boost::gregorian::date const& p_date);
 
 	void do_load();
 	void do_save_existing();

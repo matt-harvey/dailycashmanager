@@ -1,4 +1,5 @@
 #include "ordinary_journal.hpp"
+#include "account.hpp"
 #include "b_string.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
@@ -7,11 +8,13 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
-#include <jewel/output_aux.hpp>
-#include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/decimal.hpp>
+#include <jewel/output_aux.hpp>
+#include <jewel/signature.hpp>
+#include <sqloxx/handle.hpp>
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
@@ -20,7 +23,9 @@
 
 using boost::lexical_cast;
 using boost::shared_ptr;
+using jewel::Decimal;
 using jewel::output_aux;
+using jewel::Signature;
 using sqloxx::Handle;
 using std::ios_base;
 using std::ostream;
@@ -72,14 +77,53 @@ OrdinaryJournal::create_unchecked
 	);
 }
 
+OrdinaryJournal
+OrdinaryJournal::create_opening_balance_journal
+(	Account const& p_account,
+	Decimal const& p_desired_opening_balance
+)
+{
+	// Normally the implementation of OrdinaryJournal function is
+	// delegated to OrdinaryJournalImpl. But here, we are using
+	// a static function to return an OrdinaryJournal, which we create using
+	// "high level", OrdinaryJournal-level functions; so it seems
+	// appropriate to implement it here.
+	PhatbooksDatabaseConnection& dbc = p_account.database_connection();
+	Account const balancing_account = dbc.balancing_account();
+	Decimal const primary_entry_amount =
+		p_desired_opening_balance - p_account.technical_opening_balance();
+
+	OrdinaryJournal ret(dbc);
+
+	Entry primary_entry(dbc);
+	primary_entry.set_account(p_account);
+	primary_entry.set_comment("Opening balance entry");
+	primary_entry.set_amount(primary_entry_amount);
+	primary_entry.set_whether_reconciled(false);
+	ret.push_entry(primary_entry);
+
+	Entry balancing_entry(dbc);
+	balancing_entry.set_account(balancing_account);
+	balancing_entry.set_comment("Opening balance entry");
+	balancing_entry.set_amount(-primary_entry_amount);
+	balancing_entry.set_whether_reconciled(false);
+	ret.push_entry(balancing_entry);
+
+	ret.set_comment("Opening balance adjustment");
+	ret.set_whether_actual
+	(	p_account.account_super_type() == account_super_type::balance_sheet
+	);
+	ret.set_date_unrestricted
+	(	dbc.opening_balance_journal_date()
+	);
+	return ret;
+}
 
 boost::gregorian::date
 OrdinaryJournal::date() const
 {
 	return impl().date();
 }
-
-
 
 void
 OrdinaryJournal::do_set_whether_actual(bool p_is_actual)
@@ -99,6 +143,14 @@ void
 OrdinaryJournal::set_date(boost::gregorian::date const& p_date)
 {
 	impl().set_date(p_date);
+	return;
+}
+
+void
+OrdinaryJournal::set_date_unrestricted(boost::gregorian::date const& p_date)
+{
+	Signature<OrdinaryJournal> const signature;
+	impl().set_date_unrestricted(p_date, signature);
 	return;
 }
 

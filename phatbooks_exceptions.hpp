@@ -89,6 +89,19 @@ JEWEL_DERIVED_EXCEPTION
  */
 JEWEL_DERIVED_EXCEPTION(PreservedRecordDeletionException, PhatbooksException);
 
+/**
+ * Exception to be thrown if an attempt is made to set the date of an
+ * OrdinaryJournal to a prohibited date.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidJournalDateException, PhatbooksException);
+
+/**
+ * Exception to be thrown when there is an attempt to do something
+ * "invalid" with the entity creation date of an accounting entity.
+ */
+JEWEL_DERIVED_EXCEPTION(EntityCreationDateException, PhatbooksException);
+
+
 }  // namespace phatbooks
 
 #endif  // GUARD_phatbooks_exceptions_hpp

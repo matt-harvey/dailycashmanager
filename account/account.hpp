@@ -166,7 +166,7 @@ public:
 	BString description() const;
 
 	/**
-	 * Returns "technical" account balance, which is
+	 * @returns "technical" account balance, which is
 	 * positive for debit balances and negative for
 	 * credit balances. For P&L accounts this
 	 * corresponds to the unspent funds in the envelope,
@@ -178,11 +178,29 @@ public:
 	jewel::Decimal technical_balance() const;
 
 	/**
-	 * Returns "user friendly" account balance, which, for
-	 * P&L accounts, has the signs reversed relative to
+	 * @returns "user friendly" account balance, which, for
+	 * P&L accounts only, has the signs reversed relative to
 	 * technical_balance().
 	 */
 	jewel::Decimal friendly_balance() const;
+
+	/**
+	 * @returns "technical" opening balance of Account.
+	 * See documentation for technical_balance() and
+	 * friendly_balance(), for explanation
+	 * of difference between "technical" and "friendly"
+	 * balance.
+	 */
+	jewel::Decimal technical_opening_balance() const;
+
+	/**
+	 * @returns "user-friendly" opening balance of Account.
+	 * See documentation for technical_balance() and
+	 * friendly_balance(), for explanation
+	 * of difference between "technical" and "friendly"
+	 * balance.
+	 */
+	jewel::Decimal friendly_opening_balance() const;
 
 	/**
 	 * @returns the amount of the recurring budget for

@@ -171,12 +171,6 @@ Account::description() const
 }
 
 Decimal
-Account::technical_balance() const
-{
-	return impl().technical_balance();
-}
-
-Decimal
 Account::budget() const
 {
 	return impl().budget();
@@ -189,9 +183,27 @@ Account::budget_items() const
 }
 
 Decimal
+Account::technical_balance() const
+{
+	return impl().technical_balance();
+}
+
+Decimal
 Account::friendly_balance() const
 {
 	return impl().friendly_balance();
+}
+
+Decimal
+Account::technical_opening_balance() const
+{
+	return impl().technical_opening_balance();
+}
+
+Decimal
+Account::friendly_opening_balance() const
+{
+	return impl().friendly_opening_balance();
 }
 
 void

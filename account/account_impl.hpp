@@ -130,6 +130,10 @@ public:
 	jewel::Decimal technical_balance();
 
 	jewel::Decimal friendly_balance();
+
+	jewel::Decimal technical_opening_balance();
+
+	jewel::Decimal friendly_opening_balance();
 	
 	jewel::Decimal budget();
 

@@ -260,6 +260,30 @@ AccountImpl::description()
 	return value(m_data->description);
 }
 
+
+namespace
+{
+	// Convert a "technical balance" to a "friendly balance",
+	// where the balance is the balance of an Account with
+	// account_super_type() ast.
+	Decimal technical_to_friendly
+	(	Decimal const& d,
+		account_super_type::AccountSuperType ast
+	)
+	{
+		switch (ast)
+		{
+		case account_super_type::balance_sheet:
+			return d;
+		case account_super_type::pl:
+			return round(d * Decimal(-1, 0), d.places());
+		default:
+			assert (false);
+		}
+	}
+}  // end anonymous namespace
+
+
 Decimal
 AccountImpl::technical_balance()
 {
@@ -274,28 +298,29 @@ Decimal
 AccountImpl::friendly_balance()
 {
 	load();
-	Decimal const tecbal = technical_balance();
-	switch (super_type(value(m_data->account_type)))
-	{
-	// todo Should equity have sign switched? Will we ever
-	// display equity accounts anyway?
-	// todo Deal with remote possibility of exception
-	// on sign change? Or is this
-	// ruled out by higher level code?
-
-	case account_super_type::balance_sheet:
-		return tecbal;
-		assert (false);  // Execution never reaches here.
-
-	case account_super_type::pl:
-		return round(tecbal * Decimal(-1, 0), tecbal.places());
-		assert (false);  // Execution never reaches here.
-
-	default:
-		assert (false);  // Execution never reaches here.
-	}
+	return technical_to_friendly(technical_balance(), account_super_type());
 }
-	
+
+Decimal
+AccountImpl::technical_opening_balance()
+{
+	load();
+	return BalanceCacheAttorney::technical_opening_balance
+	(	database_connection(),
+		id()
+	);
+}
+
+Decimal
+AccountImpl::friendly_opening_balance()
+{
+	load();
+	return technical_to_friendly
+	(	technical_opening_balance(),
+		account_super_type()
+	);
+}
+
 Decimal
 AccountImpl::budget()
 {

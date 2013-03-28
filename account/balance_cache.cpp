@@ -1,5 +1,6 @@
 #include "account.hpp"
 #include "account_impl.hpp"
+#include "date.hpp"
 #include "entry.hpp"
 #include "balance_cache.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -65,14 +66,13 @@ BalanceCache::BalanceCache
 Decimal
 BalanceCache::technical_balance(AccountImpl::Id p_account_id)
 {
-	AccountImpl::Id const id = p_account_id;
 	if (m_map_is_stale)
 	{
 		refresh();
 	}
 	else
 	{
-		Map::iterator const it = m_map->find(id);
+		Map::iterator const it = m_map->find(p_account_id);
 
 		// If a new AccountImpl has been added, then the AccountImpl
 		// class should have marked the map as a whole as stale,
@@ -91,9 +91,35 @@ BalanceCache::technical_balance(AccountImpl::Id p_account_id)
 			refresh();
 		}
 	}
-	return *(m_map->find(id)->second);
+	return *(m_map->find(p_account_id)->second);
 }
 
+Decimal
+BalanceCache::technical_opening_balance(AccountImpl::Id p_account_id)
+{
+	// We don't actually do any caching of opening balances, since
+	// they are quick to calculate. (We would expect only a small number
+	// of opening balance journals for any given Account.)
+	SQLStatement statement
+	(	m_database_connection,
+		"select sum(amount) from ordinary_journal_detail "
+		"join entries using(journal_id) where date = :date, "
+		"and account_id = :account_id"
+	);
+	statement.bind
+	(	":date",
+		julian_int(m_database_connection.opening_balance_journal_date())
+	);
+	statement.bind(":account_id", p_account_id);
+	statement.step();
+	Account const account(m_database_connection, p_account_id);
+	Decimal const ret
+	(	statement.extract<Decimal::int_type>(0),
+		account.commodity().precision()
+	);
+	statement.step_final();
+	return ret;
+}
 
 void
 BalanceCache::mark_as_stale()
