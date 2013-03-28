@@ -302,6 +302,26 @@ namespace
 		return maybe_amount;
 	}
 
+	optional<gregorian::date> elicit_constrained_date
+	(	string const& prompt,
+		gregorian::date const& earliest_permissible_date,
+		string const& message_if_date_too_early,
+		bool allow_enter_to_escape = true
+	)
+	{
+		cout << prompt;
+		optional<gregorian::date> ret;
+		while  // Note assignment here is deliberate
+		(	(ret = get_date_from_user(allow_enter_to_escape)) &&
+			(value(ret) < earliest_permissible_date)
+		)
+		{
+			cout << message_if_date_too_early << endl;
+			cout << prompt;
+		}
+		return ret;
+	}
+
 	// TODO This function is weird and misleading in what it does, and
 	// it doesn't really belong here.
 	bool identifies_existent_journal
@@ -1376,9 +1396,18 @@ TextSession::elicit_date_amendment
 (	OrdinaryJournal& journal
 )
 {
-	cout << "\nEnter new transaction date in the form YYYYMMDDD "
-	     << "(or Enter to abort): ";
-	optional<gregorian::date> const maybe_date = get_date_from_user(true);	
+	gregorian::date const entity_creation_date =
+		database_connection().entity_creation_date();
+	optional<gregorian::date> const maybe_date = elicit_constrained_date
+	(	"Enter new transaction date in the form YYYYMMDD "
+			"(or Enter to abort): ",
+		entity_creation_date,
+		"Transaction date cannot be earlier than the date this " +
+			bstring_to_std8(Application::application_name()) +
+			"file was created (" +
+			gregorian::to_iso_string(entity_creation_date) +
+			")."
+	);
 	if (!maybe_date)
 	{
 		cout << "Date left unchanged." << endl;
@@ -1544,11 +1573,27 @@ TextSession::elicit_ordinary_journal_from_draft
 	// TODO There is duplicated code between here and
 	// finalize_ordinary_journal
 	gregorian::date d = gregorian::day_clock::local_day();
-	cout << "Enter transaction date as an eight-digit number of the "
-		 << "form YYYYMMDD, or just hit enter for today's date ("
-		 << gregorian::to_iso_string(d)
-		 << "): ";
-	optional<gregorian::date> const date_input = get_date_from_user(true);
+	string const date_prompt =
+		"Enter transaction date as an eight-digit number of the "
+			"form YYYYMMDD, or just hit enter for today's date (" +
+			gregorian::to_iso_string(d) +
+			"): ";
+	cout << date_prompt;
+
+	gregorian::date const entity_creation_date =
+		database_connection().entity_creation_date();
+	optional<gregorian::date> const date_input = elicit_constrained_date
+	(	"Enter transaction date as an eight-digit number of the "
+			"form YYYYMMDD, or just hit Enter for today's date (" +
+			gregorian::to_iso_string(d) +
+			"): ",
+		entity_creation_date,
+		"Transaction date cannot be earlier than the date this " +
+			bstring_to_std8(Application::application_name()) +
+			"file was created (" +
+			gregorian::to_iso_string(entity_creation_date) +
+			")."
+	);
 	if (date_input) d = value(date_input);
 	ordinary_journal.set_date(d);
 	
@@ -1855,28 +1900,19 @@ TextSession::conduct_reconciliation()
 	(	account.account_super_type() ==
 		account_super_type::balance_sheet
 	);
-	cout << "Enter statement opening date as an 8-digit number of the form"
-		 << " YYYYMMDD: ";
+	cout << "Enter statement opening date as an eight-digit number of the "
+		 << "form YYYYMMDD: ";
 	gregorian::date const opening_date = value(get_date_from_user());
-	gregorian::date closing_date;	
-	for (bool input_is_valid = false; !input_is_valid; )
-	{
-		cout << "Enter statement closing date as an 8-digit number of the "
-			 << "form YYYYMMDD: ";
-		closing_date = value(get_date_from_user());
-		if (closing_date >= opening_date)
-		{
-			input_is_valid = true;
-		}
-		else
-		{
-			assert (closing_date < opening_date);
-			cout << "Closing date cannot be earlier than opening date. "
-				 << "Please try again: ";
-			assert (input_is_valid == false);
-		}
-	}
-
+	gregorian::date const closing_date = value
+	(	elicit_constrained_date
+		(	"Enter statement closing date as an eight-digit number of the "
+				"form YYYYMMDD: ",
+			opening_date,
+			"Closing date cannot be earlier than opening date.",
+			false
+		)
+	);
+	assert (closing_date >= opening_date);
 
 	for (bool exiting = false; !exiting; )
 	{
@@ -2191,72 +2227,36 @@ TextSession::display_ordinary_actual_entries()
 		assert (!maybe_account);
 	}
 
-	// TODO Factor out process of "getting date range from user" into a
-	// separate function. This in turn could delegate to a "get date from
-	// user" function that is specific to Phatbooks (rather than just
-	// calling the consolixx one), in that it encapsulates the code to
-	// rule out dates earlier than the entity creation date.
 	gregorian::date const entity_creation_date =
 		database_connection().entity_creation_date();
-	gregorian::date earliest_date;
 
 	// Get start date
-	for (bool input_is_valid = false; !input_is_valid; )
-	{
-		cout << "Enter start date as an 8-digit number of the form YYYYMMDD, "
-				"or leave blank for earliest possible date ("
-			 << gregorian::to_iso_string(entity_creation_date)
-			 << "): ";
-		optional<gregorian::date> const maybe_earliest_date =
-			get_date_from_user(true);
-		if (!maybe_earliest_date)
-		{
-			earliest_date = entity_creation_date;
-			input_is_valid = true;
-		}
-		else if (value(maybe_earliest_date) >= entity_creation_date)
-		{
-			earliest_date = value(maybe_earliest_date);
-			input_is_valid = true;
-		}
-		else
-		{
-			assert (maybe_earliest_date);
-			assert (value(maybe_earliest_date) < entity_creation_date);
-			cout << "You have entered a date earlier than the creation "
-				 << "date for this "
-				 << Application::application_name()
-				 << " file ("
-				 << gregorian::to_iso_string(entity_creation_date)
-				 << "). Please try again."
-				 << endl;
-			assert (!input_is_valid);
-		}
-	}
+	optional<gregorian::date> const maybe_earliest_date =
+		elicit_constrained_date
+		(	"Enter start date as an 8-digit number of the form YYYYMMDD, "
+				"or leave blank for earliest possible date (" +
+				gregorian::to_iso_string(entity_creation_date) +
+				"): ",
+			entity_creation_date,
+			"You have entered a date earlier than the date this " +
+				bstring_to_std8(Application::application_name()) +
+				" file was created (" +
+				gregorian::to_iso_string(entity_creation_date) +
+				"). Please try again."
+		);
+	gregorian::date const earliest_date =
+		maybe_earliest_date?
+		value(maybe_earliest_date):
+		entity_creation_date;
 
 	// Get end date
-	optional<gregorian::date> maybe_latest_date;
-	for (bool input_is_valid = false; !input_is_valid; )
-	{
-		cout << "Enter end date as an 8-digit number of the form YYYYMMDD, "
-				"or leave blank for no end date: ";
-		maybe_latest_date = get_date_from_user(true);
-		if 
-		(	!maybe_latest_date ||
-			(value(maybe_latest_date) >= earliest_date)
-		)
-		{
-			input_is_valid = true;
-		}
-		else
-		{
-			assert (maybe_latest_date);
-			assert (value(maybe_latest_date) < earliest_date);
-			cout << "End date cannot be earlier than start date. "
-					"Please try again." << endl;
-			assert (!input_is_valid);
-		}
-	}
+	optional<gregorian::date> const maybe_latest_date =
+		elicit_constrained_date
+		(	"Enter end date as an 8-digit number of the form YYYYMMDD, "
+				"or leave blank for no end date: ",
+			earliest_date,
+			"End date cannot be earlier than start date. Please try again."
+		);
 	
 	Decimal opening_balance(0, 0);
 	bool const filtering_for_account = (maybe_account? true: false);
@@ -2791,15 +2791,17 @@ TextSession::elicit_repeater()
 	repeater.set_frequency(Frequency(value(num_steps), value(step_type)));
 
 	// Determine next posting date
-	cout << "Enter the first date on which the transaction will occur"
-		 << ", as an eight-digit number of the form YYYYMMDD (or just"
-		 << " hit enter for today's date): ";
-	// TODO Stop user from entering a date in the past. It is especially
-	// important to stop them from entering a date that is earlier than
-	// the entity creation date.
-	optional<gregorian::date> const d = get_date_from_user(true);
+	gregorian::date const today = gregorian::day_clock::local_day();
+	optional<gregorian::date> const d = elicit_constrained_date
+	(	"Enter the first date on which the transaction will occur, "
+			"as an 8-digit number of the form YYYYMMDD (or just "
+			"hit Enter for today's date): ",
+		today,
+		"Next transaction date cannot be set in the past. Please try again"
+	);
+	assert (!d || (d >= database_connection().entity_creation_date()));
 	if (d) repeater.set_next_date(*d);
-	else repeater.set_next_date(gregorian::day_clock::local_day());
+	else repeater.set_next_date(today);
 	return repeater;
 }
 
@@ -3177,12 +3179,20 @@ void
 TextSession::finalize_ordinary_journal(OrdinaryJournal& journal)
 {
 	gregorian::date d = gregorian::day_clock::local_day();
-	cout << "Enter transaction date as an eight-digit number of the "
-		 << "form YYYYMMDD, or just hit enter for today's date ("
-		 << gregorian::to_iso_string(d)
-		 << "): ";
-
-	optional<gregorian::date> const date_input = get_date_from_user(true);
+	gregorian::date const entity_creation_date =
+		database_connection().entity_creation_date();
+	optional<gregorian::date> const date_input = elicit_constrained_date
+	(	"Enter transaction date as an eight-digit number of the "
+			"form YYYYMMDD, or just hit Enter for today's date (" +
+			gregorian::to_iso_string(d) +
+			"): ",
+		entity_creation_date,
+		"Transaction date cannot be earlier than the date this " +
+			bstring_to_std8(Application::application_name()) +
+			" file was created (" +
+			gregorian::to_iso_string(entity_creation_date) +
+			")."
+	);
 	if (date_input) d = value(date_input);
 	journal.set_date(d);
 	journal.save();
