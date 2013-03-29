@@ -15,6 +15,7 @@
 #include "frequency.hpp"
 #include "draft_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -122,6 +123,14 @@ RepeaterImpl::set_frequency(Frequency const& p_frequency)
 void
 RepeaterImpl::set_next_date(boost::gregorian::date const& p_next_date)
 {
+	if (p_next_date < database_connection().entity_creation_date())
+	{
+		throw InvalidRepeaterDateException
+		(	"Next firing date of RepeaterImpl cannot be set to a date "
+			"earlier than the entity creation date."
+		);
+	}
+	assert (p_next_date >= database_connection().entity_creation_date());
 	load();
 	m_data->next_date = julian_int(p_next_date);
 	return;

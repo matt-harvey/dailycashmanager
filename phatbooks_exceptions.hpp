@@ -96,6 +96,12 @@ JEWEL_DERIVED_EXCEPTION(PreservedRecordDeletionException, PhatbooksException);
 JEWEL_DERIVED_EXCEPTION(InvalidJournalDateException, PhatbooksException);
 
 /**
+ * Exception to be thrown if an attempt is made to set the next_date
+ * of a Repeater to a prohibited date.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidRepeaterDateException, PhatbooksException);
+
+/**
  * Exception to be thrown when there is an attempt to do something
  * "invalid" with the entity creation date of an accounting entity.
  */

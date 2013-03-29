@@ -108,6 +108,12 @@ public:
 	 */
 	void set_journal_id(DraftJournal::Id p_journal_id);
 
+	/**
+	 * Set the date when the Repeater will next fire.
+	 *
+	 * @throws InvalidRepeaterDateException if the date is earlier
+	 * than database_connection().entity_creation_date().
+	 */
 	void set_next_date(boost::gregorian::date const& p_next_date);
 
 	/**

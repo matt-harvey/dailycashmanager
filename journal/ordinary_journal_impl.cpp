@@ -179,7 +179,7 @@ OrdinaryJournalImpl::set_date(gregorian::date const& p_date)
 	if (p_date < database_connection().entity_creation_date())
 	{
 		throw InvalidJournalDateException
-		(	"Date of OrdinaryJournal cannot be set to a date "
+		(	"Date of OrdinaryJournalImpl cannot be set to a date "
 			"earlier than the entity creation date, using the "
 			"set_date function."
 		);
