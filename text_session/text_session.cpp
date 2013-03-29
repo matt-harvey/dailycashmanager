@@ -1799,34 +1799,50 @@ TextSession::conduct_account_editing()
 		account.set_description(std8_to_bstring(new_description));
 	}
 
-	string opening_balance_prompt = "Enter new ";
-
-	switch (account.account_super_type())
-	{
-	case account_super_type::balance_sheet:
-		opening_balance_prompt += "opening balance";
-		break;
-	case account_super_type::pl:
-		opening_balance_prompt += "initial budget allocation";
-		break;
-	default:
-		assert (false);
-	}
-
-	optional<Decimal> const maybe_new_opening_balance =
-		elicit_constrained_amount
-		(	account.commodity(),
-			opening_balance_prompt,
-			"to leave unchanged",
-			true
-		);
 	OrdinaryJournal oj(database_connection());
-	if (maybe_new_opening_balance)
+	bool changing_opening_balance = false;
+	string opening_balance_word;
+	if (account != database_connection().balancing_account())
 	{
-		oj = OrdinaryJournal::create_opening_balance_journal
-		(	account,
-			value(maybe_new_opening_balance)
-		);
+		string opening_balance_prompt = "Enter new ";
+		switch (account.account_super_type())
+		{
+		case account_super_type::balance_sheet:
+			opening_balance_word = "opening balance";
+			break;
+		case account_super_type::pl:
+			opening_balance_word = "initial budget allocation";
+			break;
+		default:
+			assert (false);
+		}
+		optional<Decimal> const maybe_new_opening_balance =
+			elicit_constrained_amount
+			(	account.commodity(),
+				opening_balance_prompt + opening_balance_word,
+				"to leave unchanged",
+				true
+			);
+		if (maybe_new_opening_balance)
+		{
+			Decimal new_opening_balance = value(maybe_new_opening_balance);
+			if (account.account_super_type() == account_super_type::pl)
+			{
+				new_opening_balance = -new_opening_balance;
+			}
+			oj = OrdinaryJournal::create_opening_balance_journal
+			(	account,
+				new_opening_balance	
+			);
+			changing_opening_balance = true;
+		}
+		else assert (!changing_opening_balance);
+	}
+	else
+	{
+		cout << "Note, opening balance for " << account.name()
+		     << " cannot be directly changed." << endl;
+		assert (!changing_opening_balance);
 	}
 
 	cout << "Save changes? (y/n) ";
@@ -1838,7 +1854,8 @@ TextSession::conduct_account_editing()
 	if (changes_confirmed == "y")
 	{
 		// TODO Make this atomic
-		account.save(); oj.save();
+		account.save();
+		if (changing_opening_balance) oj.save();
 
 		cout << "Changes have been saved:" << endl;
 		if (!new_name.empty())
@@ -1849,10 +1866,11 @@ TextSession::conduct_account_editing()
 		{
 			cout << "New description: " << new_description << endl;
 		}
-		if (maybe_new_opening_balance)
+		if (changing_opening_balance)
 		{
-			cout << "New opening balance: "
-			     << finformat_std8(value(maybe_new_opening_balance))
+			assert (!opening_balance_word.empty());
+			cout << "New " << opening_balance_word << ": "
+			     << finformat_std8(account.friendly_opening_balance())
 				 << endl;
 		}
 	}
