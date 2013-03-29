@@ -12,19 +12,19 @@ namespace tui
 
 
 /**
- * Abstract base class. A TextDialogue<Seed, Output> represents
+ * Abstract base class. A TextDialogue<Target> represents
  * a TUI interaction with the user. The objective of the dialogue
- * is to take an object of type Seed, get some valid input from the
- * user, and then produce an object of type Output. The object
- * should first be constructed by passing a Seed to the constructor.
- * Then generate() should be called to return the desired Output
- * object. The Input and Output objects should both be
- * copy-constructible.
+ * is to take an non-const ref to an object of type Target, get
+ * some valid input from the
+ * user, and then perform transformations on the Target according to
+ * the input. The object
+ * should first be constructed by passing a Target& to the constructor.
+ * Then process() should be called to perform the transformation.
  *
  * This is an abstract base class and the following pure virtual
- * methods need to be provided by a subclass.
+ * methods need to be defined by a subclass.
  *
- * 		do_get_main_prompt() should be defined to return a std::string
+ * 		do_create_main_prompt() should be defined to return a std::string
  * 		that is the main prompt to be presented to the user, e.g.
  * 		"Please enter a number: ".
  *
@@ -33,77 +33,79 @@ namespace tui
  * 		would be considered valid input from the user. If the
  * 		string is invalid, then an error message should generally
  * 		be printed to std::cout, within the body of
- * 		do_validate_user_string.
+ * 		do_validate_user_string, prior to returning false.
  *
- * 		do_transform(Seed const&, std::string const&) should be defined
+ * 		do_transform(std::string const&) should be defined
  * 		to take a string - assumed to be already validated -
- * 		and a Seed, and produce the appropriate instance of Output.
+ * 		and to perform whatever transformations are desired on
+ * 		the Target&. Note the subclass can access the Target
+ * 		using the protected function target(), which returns
+ * 		a non-const reference to the Target, enabling arbitrary
+ * 		transformations to be performed to the Target from the
+ * 		subclass.
  */
-template <typename Seed, typename Output>
+template <typename Target>
 class TextDialogue
 {
 public:
 
-	TextDialogue(Seed const& p_seed);
-	Output generate() const;
+	TextDialogue(Target& p_target);
+	void process() const;
 	virtual ~TextDialogue();
 
 protected:
 
-	Seed seed() const;
+	Target& target();
 
 private:
 	
-	virtual std::string do_get_main_prompt() const = 0;
+	virtual std::string do_create_main_prompt() const = 0;
 
 	virtual bool do_validate_user_string(std::string const& s) const = 0;
 
-	virtual Ouput do_transform
-	(	Seed const& p_seed,
-		std::string const& p_input
-	) const = 0;
+	virtual void do_process(std::string const& p_input) = 0;
 	
 	std::string get_user_string() const;
 
-	Seed const m_seed;
+	Target& m_target;
 };
 
 
-template <typename Seed, typename Output>
-TextDialogue<Seed, Output>::TextDialogue(Seed const& p_seed):
-	m_seed(p_seed)
+template <typename Target>
+TextDialogue<Target>::TextDialogue(Target const& p_target):
+	m_target(p_target)
 {
 }
 
-template <typename Seed, typename Output>
-TextDialogue<Seed, Output>::TextDialogue()
+template <typename Target>
+TextDialogue<Target>::TextDialogue()
 {
 }
 
-template <typename Seed, typename Output>
-Seed
-TextDialogue<Seed, Output>::seed() const
+template <typename Target>
+Target
+TextDialogue<Target>::target() const
 {
-	return m_seed;
+	return m_target;
 }
 
-template <typename Seed, typename Output>
+template <typename Target>
 std::string
-TextDialogue<Seed, Output>::get_user_string() const
+TextDialogue<Target>::get_user_string() const
 {
-	std::cout << do_get_main_prompt();
+	std::cout << do_create_main_prompt();
 	return consolixx::get_user_input();
 }
 
-template <typename Seed, typename Output>
+template <typename Target>
 Output
-TextDialogue<Seed, Output>::generate()
+TextDialogue<Target>::process()
 {
 	std::string input;
 	while (!do_validate_user_string(input = get_user_string()))
 	{
 	}
-	return do_transform(m_seed, input);
+	return do_transform(input);
 }
 
 
