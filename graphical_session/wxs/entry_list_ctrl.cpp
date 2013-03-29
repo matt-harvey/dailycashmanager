@@ -1,4 +1,4 @@
-#include "entry_list.hpp"
+#include "entry_list_ctrl.hpp"
 #include "account.hpp"
 #include "b_string.hpp"
 #include "date.hpp"
@@ -20,7 +20,7 @@ namespace gui
 namespace
 {
 
-	EntryList*
+	EntryListCtrl*
 	create_ordinary_entry_list_from_reader
 	(	wxWindow* parent,
 		EntryReader const& reader
@@ -33,7 +33,7 @@ namespace
 		static const int reconciled_col_num = 4;
 		static const int num_columns = 5;
 		
-		EntryList* ret = new wxListCtrl
+		EntryListCtrl* ret = new wxListCtrl
 		(	parent,
 			wxID_ANY,
 			wxDefaultPosition,
@@ -72,7 +72,8 @@ namespace
 			wxString const comment_string = bstring_to_wx(it->comment());
 
 			// WARNING This sucks
-			wxString const amount_string = finformat_wx(it->amount(), app->locale());
+			wxString const amount_string =
+				finformat_wx(it->amount(), app->locale());
 
 			// TODO Should have a tick icon here rather than a "Y".
 			wxString const reconciled_string =
@@ -96,14 +97,17 @@ namespace
 		{
 			ret->SetColumnWidth(j, wxLIST_AUTOSIZE);
 		}
-		ret->SetColumnWidth(comment_col_num, ret->GetColumnWidth(account_col_num));
+		ret->SetColumnWidth
+		(	comment_col_num,
+			ret->GetColumnWidth(account_col_num)
+		);
 		return ret;
 	}
 
 }  // end anonymous namespace
 
 
-EntryList* create_actual_ordinary_entry_list
+EntryListCtrl* create_actual_ordinary_entry_list
 (	wxWindow* parent,
 	PhatbooksDatabaseConnection& dbc
 )

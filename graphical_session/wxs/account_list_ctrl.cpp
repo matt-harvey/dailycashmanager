@@ -1,4 +1,4 @@
-#include "account_list.hpp"
+#include "account_list_ctrl.hpp"
 #include "account_reader.hpp"
 #include "b_string.hpp"
 #include "finformat.hpp"
@@ -22,13 +22,13 @@ namespace gui
 namespace
 {
 
-	AccountList*
+	AccountListCtrl*
 	create_account_list_from_reader
 	(	wxWindow* parent,
 		AccountReaderBase const& reader
 	)
 	{
-		AccountList* ret = new wxListCtrl
+		AccountListCtrl* ret = new wxListCtrl
 		(	parent,
 			wxID_ANY,
 			wxDefaultPosition,
@@ -90,7 +90,7 @@ namespace
 }  // end anonymous namespace
 
 
-AccountList* create_balance_sheet_account_list
+AccountListCtrl* create_balance_sheet_account_list
 (	wxWindow* parent,
 	PhatbooksDatabaseConnection& dbc
 )
@@ -100,7 +100,7 @@ AccountList* create_balance_sheet_account_list
 }
 
 
-AccountList* create_pl_account_list
+AccountListCtrl* create_pl_account_list
 (	wxWindow* parent,
 	PhatbooksDatabaseConnection& dbc
 )

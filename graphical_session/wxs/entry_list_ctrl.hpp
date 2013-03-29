@@ -1,5 +1,5 @@
-#ifndef GUARD_entry_list_hpp
-#define GUARD_entry_list_hpp
+#ifndef GUARD_entry_list_ctrl_hpp
+#define GUARD_entry_list_ctrl_hpp
 
 
 #include <wx/listctrl.h>
@@ -12,15 +12,15 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
-typedef wxListCtrl EntryList;
+typedef wxListCtrl EntryListCtrl;
 
 /**
- * @returns a pointer to a heap-allocated EntryList, listing
+ * @returns a pointer to a heap-allocated EntryListCtrl, listing
  * all and only the \e actual (non-budget) OrdinaryEntry's stored in \e dbc.
  * The client does not need to take care of the memory - the memory
  * is taken care of by the parent window.
  */
-EntryList* create_actual_ordinary_entry_list
+EntryListCtrl* create_actual_ordinary_entry_list
 (	wxWindow* parent,
 	PhatbooksDatabaseConnection& dbc
 );
@@ -30,4 +30,4 @@ EntryList* create_actual_ordinary_entry_list
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_entry_list_hpp
+#endif  // GUARD_entry_list_ctrl_hpp

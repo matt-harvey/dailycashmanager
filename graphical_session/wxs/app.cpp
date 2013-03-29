@@ -1,6 +1,6 @@
 #include "app.hpp"
-#include "account_list.hpp"
-#include "entry_list.hpp"
+#include "account_list_ctrl.hpp"
+#include "entry_list_ctrl.hpp"
 #include "application.hpp"
 #include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -77,15 +77,15 @@ bool App::OnInit()
 
 	// Here's where we add widgets to frame
 	
-	AccountList* pl_account_list = create_pl_account_list
+	AccountListCtrl* pl_account_list = create_pl_account_list
 	(	top_panel,
 		database_connection()
 	);
-	EntryList* act_ord_entry_list = create_actual_ordinary_entry_list
+	EntryListCtrl* act_ord_entry_list = create_actual_ordinary_entry_list
 	(	top_panel,
 		database_connection()
 	);
-	AccountList* bs_account_list = create_balance_sheet_account_list
+	AccountListCtrl* bs_account_list = create_balance_sheet_account_list
 	(	top_panel,
 		database_connection()
 	);
