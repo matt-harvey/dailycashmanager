@@ -1,7 +1,7 @@
 #include "graphical_session.hpp"
 #include "application.hpp"
 #include "b_string.hpp"
-#include "wxs/my_app.hpp"
+#include "wxs/app.hpp"
 #include <boost/shared_ptr.hpp>
 #include <string>
 
@@ -31,7 +31,7 @@ GraphicalSession::do_run()
 	// we do this instead of using the IMPLEMENT_APP macro from
 	// wxWidgets, because we don't want IMPLEMENT_APP to provide us
 	// with a main function - we already have our own.
-	wxApp* pApp = new MyApp;
+	wxApp* pApp = new App;
 	wxApp::SetInstance(pApp);
 	BString const app_name = Application::application_name();
 
@@ -78,7 +78,7 @@ GraphicalSession::do_run(string const& filepath_str)
 	);
 	dbc->open(filepath_str);
 
-	MyApp* pApp = new MyApp;
+	App* pApp = new App;
 	pApp->set_database_connection(dbc);
 	wxApp::SetInstance(pApp);
 	BString const app_name = Application::application_name();	

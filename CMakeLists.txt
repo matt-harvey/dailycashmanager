@@ -169,8 +169,8 @@ set (gui_files
 	 graphical_session/graphical_session.cpp
 	 graphical_session/wxs/account_list.cpp
 	 graphical_session/wxs/entry_list.cpp
-	 graphical_session/wxs/my_app.cpp
-	 graphical_session/wxs/my_frame.cpp)
+	 graphical_session/wxs/app.cpp
+	 graphical_session/wxs/frame.cpp)
 
 set (test_files
 	 ${main_files}

@@ -4,7 +4,7 @@
 #include "date.hpp"
 #include "entry.hpp"
 #include "entry_reader.hpp"
-#include "my_app.hpp"
+#include "app.hpp"
 #include "ordinary_journal.hpp"
 #include <boost/lexical_cast.hpp>
 #include <string>
@@ -52,7 +52,7 @@ namespace
 		ret->InsertColumn(reconciled_col_num, "R", wxLIST_FORMAT_LEFT);
 
 		// WARNING This sucks
-		MyApp* app = dynamic_cast<MyApp*>(wxTheApp);
+		App* app = dynamic_cast<App*>(wxTheApp);
 
 		EntryReader::size_type i = 0;
 		for

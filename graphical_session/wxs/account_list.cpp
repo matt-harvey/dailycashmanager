@@ -2,7 +2,7 @@
 #include "account_reader.hpp"
 #include "b_string.hpp"
 #include "finformat.hpp"
-#include "my_app.hpp"
+#include "app.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <vector>
 #include <wx/intl.h>
@@ -32,7 +32,10 @@ namespace
 		(	parent,
 			wxID_ANY,
 			wxDefaultPosition,
-			wxSize(parent->GetClientSize().GetX() / 4, parent->GetClientSize().GetY()),
+			wxSize
+			(	parent->GetClientSize().GetX() / 4,
+				parent->GetClientSize().GetY()
+			),
 			wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
 		);
 
@@ -42,7 +45,7 @@ namespace
 		// Insert balance column
 		ret->InsertColumn(1, "Balance", wxLIST_FORMAT_RIGHT);
 
-		// WARNING hack. We should get this locale from MyApp not
+		// WARNING hack. We should get this locale from App not
 		// create it here.
 		/*
 		wxLocale loc;
@@ -55,7 +58,7 @@ namespace
 		AccountReader::size_type i = 0;
 
 		// WARNING This sucks
-		MyApp* app = dynamic_cast<MyApp*>(wxTheApp);
+		App* app = dynamic_cast<App*>(wxTheApp);
 
 		for
 		(	AccountReader::const_iterator it = reader.begin(),
