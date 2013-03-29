@@ -191,7 +191,7 @@ namespace
 			"Transaction does not contain a line with this entry id. "
 				"Try again, entering one of the following ids:\n" +
 				id_string +
-				"\nor hit Enter to abort: "
+				"\nor just hit Enter to abort: "
 		);
 		if (input.empty())
 		{
@@ -263,7 +263,7 @@ namespace
 #			endif
 			if (allow_enter_to_escape)
 			{
-				cout << ", or just hit Enter " << escape_option_description;
+				cout << ", or leave blank " << escape_option_description;
 			}
 			cout << ": ";
 			maybe_amount = get_decimal_from_user(allow_enter_to_escape);
@@ -923,7 +923,7 @@ TextSession::elicit_budget_item()
 	while (true)
 	{
 		cout << "Enter name of revenue or expense category, or pure "
-			 << "envelope, for new budget item (or Enter to abort): ";
+			 << "envelope, for new budget item, or just hit Enter to abort: ";
 		optional<Account> const maybe_account =
 			elicit_valid_account(envelope_transaction, primary_phase, true);
 		if (!maybe_account)
@@ -1000,7 +1000,8 @@ TextSession::elicit_budget_item_amendment()
 	// Get the BudgetItem
 	optional<BudgetItem> maybe_budget_item = elicit_existing_budget_item
 	(	database_connection(),
-		"Enter ID of the budget item you wish to amend, or Enter to abort: "
+		"Enter ID of the budget item you wish to amend, or "
+			"just hit Enter to abort: "
 	);
 	if (!maybe_budget_item)
 	{
@@ -1020,7 +1021,7 @@ TextSession::elicit_budget_item_amendment()
 	while (true)
 	{
 		cout << "Enter name of new revenue or expense category, or pure "
-			 << "envelope (or Enter to leave unchanged): ";
+			 << "envelope, or leave blank to leave unchanged: ";
 		optional<Account> maybe_new_account = elicit_valid_account
 		(	envelope_transaction,
 			primary_phase,
@@ -1050,7 +1051,7 @@ TextSession::elicit_budget_item_amendment()
 		}
 	}
 	// Get description
-	cout << "Enter new description (or Enter to leave unchanged): ";
+	cout << "Enter new description, or leave blank to leave unchanged: ";
 	string const description = get_user_input();
 	if (!description.empty())
 	{
@@ -1068,8 +1069,8 @@ TextSession::elicit_budget_item_amendment()
 	// Factor out the common code.
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
-		cout << "Enter new amount for budget item (or Enter to "
-		     << "leave unchanged): ";
+		cout << "Enter new amount for budget item, or leave blank to "
+		     << "leave unchanged: ";
 		optional<Decimal> const maybe_new_amount =
 			get_decimal_from_user(true);
 		if (!maybe_new_amount)
@@ -1138,7 +1139,8 @@ TextSession::elicit_budget_item_deletion()
 	// Get the BudgetItem
 	optional<BudgetItem> maybe_budget_item = elicit_existing_budget_item
 	(	database_connection(),
-		"Enter ID of the budget item you wish to delete, or Enter to abort: "
+		"Enter ID of the budget item you wish to delete, "
+			"or just hit Enter to abort: "
 	);
 	if (!maybe_budget_item)
 	{
@@ -1278,8 +1280,8 @@ TextSession::elicit_entry_amendment(PersistentJournal& journal)
 	Entry entry = value(maybe_entry);
 
 	// Edit account
-	cout << "Enter name of new account or category "
-	     << "(or Enter to leave unchanged): ";
+	cout << "Enter name of new account or category, "
+	     << "or leave blank to leave unchanged: ";
 	TransactionType const transaction_type =
 		journal.is_actual()?
 		generic_transaction:
@@ -1295,7 +1297,7 @@ TextSession::elicit_entry_amendment(PersistentJournal& journal)
 	}
 
 	// Edit comment
- 	cout << "Enter new comment for this line (or Enter to leave unchanged): ";
+ 	cout << "Enter new comment for this line, or leave blank to leave unchanged: ";
 	string const new_comment = get_user_input();
 	if (!new_comment.empty()) entry.set_comment(std8_to_bstring(new_comment));
 
@@ -1399,8 +1401,8 @@ TextSession::elicit_date_amendment
 	gregorian::date const entity_creation_date =
 		database_connection().entity_creation_date();
 	optional<gregorian::date> const maybe_date = elicit_constrained_date
-	(	"Enter new transaction date in the form YYYYMMDD "
-			"(or Enter to abort): ",
+	(	"Enter new transaction date in the form YYYYMMDD, "
+			"or just hit Enter to abort: ",
 		entity_creation_date,
 		"Transaction date cannot be earlier than the date this " +
 			bstring_to_std8(Application::application_name()) +
@@ -1778,7 +1780,7 @@ void
 TextSession::conduct_account_editing()
 {
 	cout << "\nEnter name of account or category to "
-	     << "edit (or just hit Enter to abort): ";
+	     << "edit, or just hit Enter to abort: ";
 	string const account_name = elicit_existing_account_name(true);
 	if (account_name.empty())
 	{
@@ -1788,11 +1790,11 @@ TextSession::conduct_account_editing()
 	assert (!account_name.empty());
 	Account account(database_connection(), std8_to_bstring(account_name));
 
-	cout << "Enter new name, or just hit Enter to leave unchanged: ";
+	cout << "Enter new name, or leave blank to leave unchanged: ";
 	string const new_name = elicit_unused_account_name(true);
 	if (!new_name.empty()) account.set_name(std8_to_bstring(new_name));
 
-	cout << "Enter new description, or just hit Enter to leave unchanged: ";
+	cout << "Enter new description, or leave blank to leave unchanged: ";
 	string const new_description = get_user_input();
 	if (!new_description.empty())
 	{
@@ -2022,8 +2024,8 @@ TextSession::conduct_reconciliation()
 		cout << "Enter \"a\" to mark all entries as reconciled, "
 		     << "\"u\" to unmark all, or"
 		     << " a series of entry IDs - separated by spaces - to toggle "
-			 << "the reconciliation status of selected entries (or just hit "
-			 << "Enter to return to the previous menu) :"
+			 << "the reconciliation status of selected entries, or just hit "
+			 << "Enter to return to the previous menu:"
 			 << endl;
 		for (bool input_is_valid = false; !input_is_valid; )
 		{
@@ -3350,8 +3352,7 @@ TextSession::elicit_journal()
 	ProtoJournal journal;
 	TransactionType const transaction_type = elicit_transaction_type();
 	journal.set_whether_actual(transaction_type != envelope_transaction);
-	cout << "Enter a comment describing the transaction (or Enter to "
-	        "leave blank): ";
+	cout << "Enter a comment describing the transaction (can leave blank): ";
 	journal.set_comment(std8_to_bstring(get_user_input()));
 	cout << endl;
 	elicit_primary_entries(journal, transaction_type);
