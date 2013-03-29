@@ -300,6 +300,7 @@ PhatbooksDatabaseConnection::setup_entity_table()
 	gregorian::date const today = gregorian::day_clock::local_day();
 	populator.bind(":creation_date", julian_int(today));
 	populator.step_final();
+	m_permanent_entity_data->set_creation_date(today);
 	return;
 }
 
