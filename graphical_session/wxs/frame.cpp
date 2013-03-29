@@ -54,6 +54,7 @@ Frame::Frame(wxString const& title):
 	menuBar->Append(fileMenu, wxT("&File"));
 	menuBar->Append(helpMenu, wxT("&Help"));
 
+
 #	if JEWEL_ON_WINDOWS
 		Maximize();
 #	endif

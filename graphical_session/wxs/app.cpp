@@ -51,55 +51,61 @@ bool App::OnInit()
 	// memory-manage this explicitly anyway, as Destroy() will be called
 	// when the user closes the window.
 	Frame* frame = new Frame(app_name);
-	frame->Connect
-	(	wxID_EXIT,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::OnQuit)
-	);
-	frame->Connect
-	(	wxID_ABOUT,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::OnAbout)
-	);
 
-	// Child windows are memory-managed by their parents.
-	wxPanel* top_panel
-	(	new wxPanel
-		(	frame,
-			wxID_ANY,
-			wxDefaultPosition,
-			wxDefaultSize,
-			wxFULL_REPAINT_ON_RESIZE
-		)
-	);
+	// TODO Move this to Frame constructor or Frame::OnInit
 
-	wxBoxSizer* top_sizer = new wxBoxSizer(wxHORIZONTAL);
+		frame->Connect
+		(	wxID_EXIT,
+			wxEVT_COMMAND_MENU_SELECTED,
+			wxCommandEventHandler(Frame::OnQuit)
+		);
+		frame->Connect
+		(	wxID_ABOUT,
+			wxEVT_COMMAND_MENU_SELECTED,
+			wxCommandEventHandler(Frame::OnAbout)
+		);
 
-	// Here's where we add widgets to frame
-	
-	AccountListCtrl* pl_account_list = create_pl_account_list
-	(	top_panel,
-		database_connection()
-	);
-	EntryListCtrl* act_ord_entry_list = create_actual_ordinary_entry_list
-	(	top_panel,
-		database_connection()
-	);
-	AccountListCtrl* bs_account_list = create_balance_sheet_account_list
-	(	top_panel,
-		database_connection()
-	);
+		// Child windows are memory-managed by their parents.
+		wxPanel* top_panel
+		(	new wxPanel
+			(	frame,
+				wxID_ANY,
+				wxDefaultPosition,
+				wxDefaultSize,
+				wxFULL_REPAINT_ON_RESIZE
+			)
+		);
 
-	// WARNING The sizer doesn't seem to be doing much here
-	top_sizer->Add(pl_account_list, wxSizerFlags(1).Expand());
-	top_sizer->Add(act_ord_entry_list, wxSizerFlags(2).Expand());
-	top_sizer->Add(bs_account_list, wxSizerFlags(1).Expand());
 
-	// Then we set this as panel's sizer
-	top_panel->SetSizer(top_sizer);
+	// TODO Having creating Panel class, move the following code
+	// to Panel constructor or OnInit.
 
-	top_sizer->Fit(top_panel);
-	top_sizer->SetSizeHints(top_panel);
+		wxBoxSizer* top_sizer = new wxBoxSizer(wxHORIZONTAL);
+
+		// Here's where we add widgets to frame
+		
+		AccountListCtrl* pl_account_list = create_pl_account_list
+		(	top_panel,
+			database_connection()
+		);
+		EntryListCtrl* act_ord_entry_list = create_actual_ordinary_entry_list
+		(	top_panel,
+			database_connection()
+		);
+		AccountListCtrl* bs_account_list = create_balance_sheet_account_list
+		(	top_panel,
+			database_connection()
+		);
+
+		top_sizer->Add(pl_account_list, wxSizerFlags(1).Expand());
+		top_sizer->Add(act_ord_entry_list, wxSizerFlags(2).Expand());
+		top_sizer->Add(bs_account_list, wxSizerFlags(1).Expand());
+
+		// Then we set this as panel's sizer
+		top_panel->SetSizer(top_sizer);
+
+		top_sizer->Fit(top_panel);
+		top_sizer->SetSizeHints(top_panel);
 
 	// Show it
 	frame->Show(true);
