@@ -1893,7 +1893,7 @@ TextSession::conduct_reconciliation()
 	Account account(database_connection());
 	for (bool input_is_valid = false; !input_is_valid; )
 	{
-		cout << "Enter name of asset, liability or equity account "
+		cout << "Enter name of asset or liability account "
 			 << "(or leave blank to abort): ";
 		string const account_name = elicit_existing_account_name(true);
 		if (account_name.empty())
@@ -1903,11 +1903,10 @@ TextSession::conduct_reconciliation()
 		}
 		assert (!account_name.empty());
 		account = Account(database_connection(), account_name);
-		if (!is_balance_sheet_account(account))
+		if (!is_asset_or_liability(account))
 		{
-			cout << "Only asset, liability or equity accounts can "
+			cout << "Only asset or liability accounts can "
 				 << "be reconciled. "
-				 << "Please try again."
 				 << endl;
 			assert (!input_is_valid);
 		}
@@ -1920,6 +1919,7 @@ TextSession::conduct_reconciliation()
 	(	account.account_super_type() ==
 		account_super_type::balance_sheet
 	);
+	assert (account.account_type() != account_type::equity);
 	cout << "Enter statement opening date as an eight-digit number of the "
 		 << "form YYYYMMDD: ";
 	gregorian::date const opening_date = value(get_date_from_user());
@@ -2553,7 +2553,6 @@ TextSession::elicit_unused_account_name(bool allow_empty_to_escape)
 void
 TextSession::elicit_account()
 {
-
 	Account account(database_connection());
 
 	// Get account name
@@ -2596,8 +2595,13 @@ TextSession::elicit_account()
 	vector<BString> const names = account_type_names();
 	for (vector<BString>::size_type i = 0; i != names.size(); ++i)
 	{
-		shared_ptr<MenuItem> item(new MenuItem(bstring_to_std8(names[i])));
-		account_type_menu.push_item(item);
+		// Don't expose equity account type to user
+		BString const b_name = names[i];
+		if (string_to_account_type(b_name) != account_type::equity)
+		{
+			shared_ptr<MenuItem> item(new MenuItem(bstring_to_std8(b_name)));
+			account_type_menu.push_item(item);
+		}
 	}
 	cout << "What kind of account do you wish to create?" << endl;
 	account_type_menu.present_to_user();
@@ -2982,7 +2986,7 @@ TextSession::elicit_transaction_type()
 	menu.push_item(revenue_selection);
 	shared_ptr<MenuItem> balance_sheet_selection
 	(	new MenuItem
-		(	"Transfer between asset, liability or equity accounts",
+		(	"Transfer between asset or liability accounts",
 			MenuItem::do_nothing,
 			false,
 			"a"
