@@ -111,7 +111,11 @@ AccountImpl::id_for_name
 	BString const& name
 )
 {
-	// TODO This is somewhat inefficient
+	// This is a crude linear search, but should be fast enough
+	// unless the user has a truly huge number of Accounts.
+	// We do it this way as we need to match case-insensitively,
+	// and in a way that respects locale. So we do the string matching
+	// in the application code rather than in SQL.
 	BString const target = to_lower(name);
 	SQLStatement statement
 	(	dbc,

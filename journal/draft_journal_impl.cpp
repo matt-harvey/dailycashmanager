@@ -183,12 +183,21 @@ DraftJournalImpl::exists
 	BString const& p_name
 )
 {
+	BString const target = to_lower(p_name);
 	SQLStatement statement
 	(	p_database_connection,
-		"select name from draft_journal_detail where name = :p"
+		"select name from draft_journal_detail"
 	);
-	statement.bind(":p", bstring_to_std8(p_name));
-	return statement.step();
+	while (statement.step())
+	{
+		BString const candidate =
+			to_lower(std8_to_bstring(statement.extract<string>(0)));
+		if (candidate == target)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 bool
