@@ -29,7 +29,7 @@ TopPanel::TopPanel
 	m_bs_account_list(0)
 {
 	m_top_sizer = new wxBoxSizer(wxHORIZONTAL);
-	m_pl_account_list = create_pl_account_list
+	m_pl_account_list = AccountListCtrl::create_pl_account_list
 	(	this,
 		m_database_connection
 	);
@@ -37,7 +37,7 @@ TopPanel::TopPanel
 	(	this,
 		m_database_connection
 	);
-	m_bs_account_list = create_balance_sheet_account_list
+	m_bs_account_list = AccountListCtrl::create_balance_sheet_account_list
 	(	this,
 		m_database_connection
 	);

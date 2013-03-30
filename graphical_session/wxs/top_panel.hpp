@@ -1,10 +1,6 @@
 #ifndef GUARD_top_panel_hpp
 #define GUARD_top_panel_hpp
 
-// TODO Only need forward declaration or typedef. Should make
-// "..._fwd.hpp" headers for these so we don't need to know
-// which here.
-#include "account_list_ctrl.hpp"
 #include "entry_list_ctrl.hpp"
 
 #include <wx/wx.h>
@@ -19,6 +15,7 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
+class AccountListCtrl;
 class Frame;
 
 // End forward declarations

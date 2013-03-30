@@ -19,96 +19,77 @@ namespace gui
 {
 
 
-namespace
-{
-
-	AccountListCtrl*
-	create_account_list_from_reader
-	(	wxWindow* parent,
-		AccountReaderBase const& reader
-	)
-	{
-		AccountListCtrl* ret = new wxListCtrl
-		(	parent,
-			wxID_ANY,
-			wxDefaultPosition,
-			wxSize
-			(	parent->GetClientSize().GetX() / 4,
-				parent->GetClientSize().GetY()
-			),
-			wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
-		);
-
-		// Insert name column
-		ret->InsertColumn(0, "Name", wxLIST_FORMAT_LEFT);
-
-		// Insert balance column
-		ret->InsertColumn(1, "Balance", wxLIST_FORMAT_RIGHT);
-
-		// WARNING hack. We should get this locale from App not
-		// create it here.
-		/*
-		wxLocale loc;
-		if (!loc.Init(wxLANGUAGE_DEFAULT, wxLOCALE_LOAD_DEFAULT))
-		{
-			wxLogError("Could not initialize locale.");
-		}
-		*/
-
-		AccountReader::size_type i = 0;
-
-		// WARNING This sucks
-		App* app = dynamic_cast<App*>(wxTheApp);
-
-		for
-		(	AccountReader::const_iterator it = reader.begin(),
-				end = reader.end();
-			it != end;
-			++it, ++i
-		)
-		{
-			// Insert item, with string for Column 0
-			ret->InsertItem(i, bstring_to_wx(it->name()));
-		
-			// The item may change position due to e.g. sorting, so store the
-			// original index in the item's data
-			ret->SetItemData(i, i);
-
-			// Insert the balance string
-			ret->SetItem
-			(	i,
-				1,
-				finformat_wx(it->friendly_balance(), app->locale())  // WARNING This sucks
-			);
-		}
-		ret->SetColumnWidth(0, wxLIST_AUTOSIZE);
-		ret->SetColumnWidth(1, wxLIST_AUTOSIZE);
-
-		return ret;
-	}
-
-}  // end anonymous namespace
-
-
-AccountListCtrl* create_balance_sheet_account_list
+AccountListCtrl*
+AccountListCtrl::create_balance_sheet_account_list
 (	wxWindow* parent,
 	PhatbooksDatabaseConnection& dbc
 )
 {
 	BalanceSheetAccountReader reader(dbc);
-	return create_account_list_from_reader(parent, reader);
+	AccountListCtrl* ret = new AccountListCtrl(parent, reader, dbc);
+	return ret;
 }
 
-
-AccountListCtrl* create_pl_account_list
+AccountListCtrl*
+AccountListCtrl::create_pl_account_list
 (	wxWindow* parent,
 	PhatbooksDatabaseConnection& dbc
 )
 {
 	PLAccountReader reader(dbc);
-	return create_account_list_from_reader(parent, reader);
+	AccountListCtrl* ret = new AccountListCtrl(parent, reader, dbc);
+	return ret;
 }
 
+AccountListCtrl::AccountListCtrl
+(	wxWindow* p_parent,
+	AccountReaderBase& p_reader,
+	PhatbooksDatabaseConnection& p_database_connection
+):
+	wxListCtrl
+	(	p_parent,
+		wxID_ANY,
+		wxDefaultPosition,
+		wxSize
+		(	p_parent->GetClientSize().GetX() / 4,
+			p_parent->GetClientSize().GetY()
+		),
+		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
+	),
+	m_database_connection(p_database_connection)
+{
+	InsertColumn(0, "Name", wxLIST_FORMAT_LEFT);
+	InsertColumn(1, "Balance", wxLIST_FORMAT_RIGHT);
+
+	AccountReader::size_type i = 0;
+
+	// WARNING This sucks
+	App* app = dynamic_cast<App*>(wxTheApp);
+
+	for
+	(	AccountReader::const_iterator it = p_reader.begin(),
+			end = p_reader.end();
+		it != end;
+		++it, ++i
+	)
+	{
+		// Insert item, with string for Column 0
+		InsertItem(i, bstring_to_wx(it->name()));
+	
+		// The item may change position due to e.g. sorting, so store the
+		// original index in the item's data
+		SetItemData(i, i);
+
+		// Insert the balance string
+		SetItem
+		(	i,
+			1,
+			finformat_wx(it->friendly_balance(), app->locale())  // WARNING This sucks
+		);
+	}
+	SetColumnWidth(0, wxLIST_AUTOSIZE);
+	SetColumnWidth(1, wxLIST_AUTOSIZE);
+}
 
 
 
