@@ -215,8 +215,30 @@ private:
 	 */
 	void elicit_commodity();
 
+	/**
+	 * Elicit from user a string that does not match the name of any
+	 * Account already saved in the database. Reprompts user until they
+	 * provide a valid string. Matching is done case insensitively.
+	 *
+	 * @returns the first valid string entered by the user.
+	 *
+	 * @param allow_empty_to_escape If set to true, an empty string
+	 * is considered valid and is returned if entered by the user;
+	 * otherwise, the user will be reprompted if they
+	 * enter an empty string.
+	 *
+	 * @param allow_name_of_account If a null pointer
+	 * is passed here, then the function behaves
+	 * as normal. If this parameter is non-null
+	 * however, then if the user enters a string that matches \e this
+	 * Account's name (case-insensitively), then that string will be
+	 * permitted, and will be returned by the function. (If the optional
+	 * is initialized with an Account that has an uninitialized name, then
+	 * behaviour is undefined.)
+	 */
 	std::string elicit_unused_account_name
-	(	bool allow_empty_to_escape = false
+	(	bool allow_empty_to_escape = false,
+		Account const* allow_name_of_account = 0
 	);
 
 	/**

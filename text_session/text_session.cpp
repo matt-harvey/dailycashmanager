@@ -1791,7 +1791,8 @@ TextSession::conduct_account_editing()
 	Account account(database_connection(), std8_to_bstring(account_name));
 
 	cout << "Enter new name, or leave blank to leave unchanged: ";
-	string const new_name = elicit_unused_account_name(true);
+	string const new_name = elicit_unused_account_name(true, &account);
+		
 	if (!new_name.empty()) account.set_name(std8_to_bstring(new_name));
 
 	cout << "Enter new description, or leave blank to leave unchanged: ";
@@ -2514,7 +2515,10 @@ TextSession::display_ordinary_actual_entries()
 
 
 string
-TextSession::elicit_unused_account_name(bool allow_empty_to_escape)
+TextSession::elicit_unused_account_name
+(	bool allow_empty_to_escape,
+	Account const* allow_name_of_account
+)
 {
 	string input;
 	for (bool input_is_valid = false; !input_is_valid; )
@@ -2535,6 +2539,17 @@ TextSession::elicit_unused_account_name(bool allow_empty_to_escape)
 		(	Account::exists(database_connection(), std8_to_bstring(input))
 		)
 		{
+			if (allow_name_of_account)
+			{
+				Account preexisting_account
+				(	database_connection(),
+					std8_to_bstring(input)
+				);
+				if (preexisting_account == *allow_name_of_account)
+				{
+					return input;
+				}
+			}
 			cout << "An account with this name already exists. "
 			     << "Please try again: ";
 		}
