@@ -1,8 +1,6 @@
 #ifndef GUARD_top_panel_hpp
 #define GUARD_top_panel_hpp
 
-#include "entry_list_ctrl.hpp"
-
 #include <wx/wx.h>
 
 namespace phatbooks
@@ -16,6 +14,7 @@ namespace gui
 {
 
 class AccountListCtrl;
+class EntryListCtrl;
 class Frame;
 
 // End forward declarations
