@@ -33,7 +33,7 @@ TopPanel::TopPanel
 	(	this,
 		m_database_connection
 	);
-	m_entry_list = create_actual_ordinary_entry_list
+	m_entry_list = EntryListCtrl::create_actual_ordinary_entry_list
 	(	this,
 		m_database_connection
 	);

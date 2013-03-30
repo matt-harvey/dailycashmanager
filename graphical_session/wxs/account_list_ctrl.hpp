@@ -3,6 +3,7 @@
 
 #include "account_reader.hpp"
 #include <wx/listctrl.h>
+#include <wx/wx.h>
 
 namespace phatbooks
 {
@@ -43,7 +44,7 @@ private:
 
 	AccountListCtrl
 	(	wxWindow* p_parent,
-		AccountReaderBase& p_reader,
+		AccountReaderBase const& p_reader,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 	PhatbooksDatabaseConnection& m_database_connection;

@@ -25,7 +25,7 @@ AccountListCtrl::create_balance_sheet_account_list
 	PhatbooksDatabaseConnection& dbc
 )
 {
-	BalanceSheetAccountReader reader(dbc);
+	BalanceSheetAccountReader const reader(dbc);
 	AccountListCtrl* ret = new AccountListCtrl(parent, reader, dbc);
 	return ret;
 }
@@ -36,14 +36,14 @@ AccountListCtrl::create_pl_account_list
 	PhatbooksDatabaseConnection& dbc
 )
 {
-	PLAccountReader reader(dbc);
+	PLAccountReader const reader(dbc);
 	AccountListCtrl* ret = new AccountListCtrl(parent, reader, dbc);
 	return ret;
 }
 
 AccountListCtrl::AccountListCtrl
 (	wxWindow* p_parent,
-	AccountReaderBase& p_reader,
+	AccountReaderBase const& p_reader,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxListCtrl
