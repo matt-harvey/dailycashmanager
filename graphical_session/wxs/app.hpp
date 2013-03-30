@@ -30,11 +30,9 @@ public:
 	);
 	wxLocale const& locale() const;
 
+	PhatbooksDatabaseConnection& database_connection();
+
 private:
-	PhatbooksDatabaseConnection& database_connection()
-	{
-		return *m_database_connection;
-	}
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	wxSingleInstanceChecker* m_checker;
 	wxLocale m_locale;

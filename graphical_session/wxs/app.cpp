@@ -1,6 +1,4 @@
 #include "app.hpp"
-#include "account_list_ctrl.hpp"
-#include "entry_list_ctrl.hpp"
 #include "application.hpp"
 #include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -52,61 +50,6 @@ bool App::OnInit()
 	// when the user closes the window.
 	Frame* frame = new Frame(app_name);
 
-	// TODO Move this to Frame constructor or Frame::OnInit
-
-		frame->Connect
-		(	wxID_EXIT,
-			wxEVT_COMMAND_MENU_SELECTED,
-			wxCommandEventHandler(Frame::OnQuit)
-		);
-		frame->Connect
-		(	wxID_ABOUT,
-			wxEVT_COMMAND_MENU_SELECTED,
-			wxCommandEventHandler(Frame::OnAbout)
-		);
-
-		// Child windows are memory-managed by their parents.
-		wxPanel* top_panel
-		(	new wxPanel
-			(	frame,
-				wxID_ANY,
-				wxDefaultPosition,
-				wxDefaultSize,
-				wxFULL_REPAINT_ON_RESIZE
-			)
-		);
-
-
-	// TODO Having creating Panel class, move the following code
-	// to Panel constructor or OnInit.
-
-		wxBoxSizer* top_sizer = new wxBoxSizer(wxHORIZONTAL);
-
-		// Here's where we add widgets to frame
-		
-		AccountListCtrl* pl_account_list = create_pl_account_list
-		(	top_panel,
-			database_connection()
-		);
-		EntryListCtrl* act_ord_entry_list = create_actual_ordinary_entry_list
-		(	top_panel,
-			database_connection()
-		);
-		AccountListCtrl* bs_account_list = create_balance_sheet_account_list
-		(	top_panel,
-			database_connection()
-		);
-
-		top_sizer->Add(pl_account_list, wxSizerFlags(1).Expand());
-		top_sizer->Add(act_ord_entry_list, wxSizerFlags(2).Expand());
-		top_sizer->Add(bs_account_list, wxSizerFlags(1).Expand());
-
-		// Then we set this as panel's sizer
-		top_panel->SetSizer(top_sizer);
-
-		top_sizer->Fit(top_panel);
-		top_sizer->SetSizeHints(top_panel);
-
 	// Show it
 	frame->Show(true);
 
@@ -127,6 +70,12 @@ App::set_database_connection
 {
 	m_database_connection = p_database_connection;
 	return;
+}
+
+PhatbooksDatabaseConnection&
+App::database_connection()
+{
+	return *m_database_connection;
 }
 
 int App::OnExit()
