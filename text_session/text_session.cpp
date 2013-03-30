@@ -3417,7 +3417,6 @@ void TextSession::display_balance_sheet()
 	locale const orig_loc = cout.getloc();
 	cout.imbue(locale(""));
 	cout << endl << endl;
-	cout << "BALANCE SHEET: " << endl << endl;
 	print_bs_account_reader(bs_reader);
 	cout.imbue(orig_loc);
 	return;
@@ -3430,7 +3429,6 @@ void TextSession::display_envelopes()
 	locale const orig_loc = cout.getloc();
 	cout.imbue(locale(""));
 	cout << endl << endl;
-	cout << "ENVELOPES: " << endl << endl;
 	print_pl_account_reader(pl_reader, database_connection());
 	cout.imbue(orig_loc);
 	return;
