@@ -6,22 +6,37 @@
 
 namespace phatbooks
 {
+
+// Begin forward declarations
+
+class PhatbooksDatabaseConnection;
+
 namespace gui
 {
+
+class TopPanel;
+
+// End forward declarations
 
 class Frame:
 	public wxFrame
 {
 public:
 
-	// Constructor
-	Frame(wxString const& title);
+	Frame
+	(	wxString const& title,
+		PhatbooksDatabaseConnection& p_database_connection
+	);
 
 	// Event handlers
 	void OnQuit(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
 
 private:
+
+	PhatbooksDatabaseConnection& m_database_connection;
+	TopPanel* m_top_panel;
+
 };
 
 

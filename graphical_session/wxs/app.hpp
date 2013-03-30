@@ -11,12 +11,16 @@
 namespace phatbooks
 {
 
-class PhatbooksDatabaseConnection;
+// begin forward declarations
 
+class PhatbooksDatabaseConnection;
 
 namespace gui
 {
 
+class Frame;
+
+// end forward declarations
 
 
 class App:

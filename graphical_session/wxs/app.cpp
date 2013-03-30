@@ -48,7 +48,7 @@ bool App::OnInit()
 	// Note it breaks if we use scoped_ptr here. We don't need to
 	// memory-manage this explicitly anyway, as Destroy() will be called
 	// when the user closes the window.
-	Frame* frame = new Frame(app_name);
+	Frame* frame = new Frame(app_name, *m_database_connection);
 
 	// Show it
 	frame->Show(true);
