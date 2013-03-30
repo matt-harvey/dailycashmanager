@@ -52,6 +52,14 @@ wxString bstring_to_wx(BString const& wxs);
  */
 BString wx_to_bstring(wxString const& wxs);
 
+/**
+ * @returns a BString that is the bs converted to lower-case.
+ *
+ * @todo Determine if this respects locale and Unicode.
+ *
+ * @warning Note this only works if BString is wxString.
+ */
+BString to_lower(BString const& bs);
 
 }  // namespace phatbooks
 

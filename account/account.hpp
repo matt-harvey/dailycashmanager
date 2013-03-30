@@ -78,7 +78,11 @@ public:
 	);
 
 	/**
-	 * Get an Account by name from the database.
+	 * Get an Account by name from the database, with the name
+	 * matched case insensitively.
+	 *
+	 * @throws InvalidAccountNameException if there is no AccountImpl
+	 * named p_name (matched case insensitively).
 	 */
 	Account
 	(	PhatbooksDatabaseConnection& p_database_connection,
@@ -87,7 +91,7 @@ public:
 
 	/**
 	 * @returns \e true if and only if \e p_name is the name of an Account
-	 * stored in the database.
+	 * stored in the database, matched case insensitively.
 	 *
 	 * @param p_name name of Account.
 	 *

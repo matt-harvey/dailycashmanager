@@ -1,8 +1,10 @@
 #include "b_string.hpp"
+#include <boost/static_assert.hpp>
 #include <wx/string.h>
 #include <string>
 
 using std::string;
+
 
 namespace phatbooks
 {
@@ -67,6 +69,14 @@ wx_to_bstring(wxString const& wxs)
 #	endif
 }
 
+
+
+BString
+to_lower(BString const& bs)
+{
+	BOOST_STATIC_ASSERT((PHATBOOKS_USING_WX_STRING_AS_B_STRING));
+	return bs.Lower();
+}
 
 
 }  // namespace phatbooks

@@ -77,7 +77,13 @@ public:
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
-	 * Returns the id of the AccountImpl with name p_name.
+	 * @returns the Id of the AccountImpl with name p_name, matched
+	 * case insensitively. If
+	 * there are multiple such AccountImpls, then it is undefined
+	 * which Id will be returned, but one will be.
+	 *
+	 * @throws InvalidAccountNameException if there is no AccountImpl
+	 * named p_name (this is tested case insensitively).
 	 */
 	static Id id_for_name
 	(	PhatbooksDatabaseConnection& dbc,

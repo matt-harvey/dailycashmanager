@@ -111,15 +111,24 @@ AccountImpl::id_for_name
 	BString const& name
 )
 {
+	// TODO This is somewhat inefficient
+	BString const target = to_lower(name);
 	SQLStatement statement
 	(	dbc,
-		"select account_id from accounts where name = :name"
+		"select account_id, name from accounts"
 	);
-	statement.bind(":name", bstring_to_std8(name));
-	statement.step();
-	Id const ret = statement.extract<Id>(0);
-	statement.step_final();
-	return ret;
+	while (statement.step())
+	{
+		BString const candidate =
+			to_lower(std8_to_bstring(statement.extract<string>(1)));
+		if (candidate == target)
+		{
+			return statement.extract<AccountImpl::Id>(0);
+		}
+	}
+	throw InvalidAccountNameException
+	(	"There is no AccountImpl with the passed name."
+	);
 }
 
 
@@ -159,13 +168,23 @@ AccountImpl::exists
 	BString const& p_name
 )
 {
+	BString const target = to_lower(p_name);
 	SQLStatement statement
 	(	p_database_connection,
-		"select name from accounts where name = :p"
+		"select name from accounts"
 	);
-	statement.bind(":p", bstring_to_std8(p_name));
-	return statement.step();
+	while (statement.step())
+	{
+		BString const candidate =
+			to_lower(std8_to_bstring(statement.extract<string>(0)));
+		if (candidate == target)
+		{
+			return true;
+		}
+	}
+	return false;
 }
+
 
 bool
 AccountImpl::no_user_pl_accounts_saved
