@@ -231,10 +231,26 @@ EntryImpl::process_saving_statement(SQLStatement& statement)
 void
 EntryImpl::do_save_existing()
 {
+	// We need to get the old Account so we can mark it as stale
+	SQLStatement old_account_capturer
+	(	database_connection(),
+		"select account_id from entries where entry_id = :p"
+	);
+	old_account_capturer.bind(":p", id());
+	old_account_capturer.step();
+	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
+	(	database_connection(),
+		old_account_capturer.extract<Account::Id>(0)
+	);
+	old_account_capturer.step_final();
+
+	// And we also need to mark the new Account as stale
 	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection(),
 		account().id()
 	);
+
+	// And now we can update the Entry itself
 	SQLStatement updater
 	(	database_connection(),
 		"update entries set "
