@@ -43,6 +43,13 @@ public:
 	 */
 	std::vector<Account>& accounts();
 
+	/**
+	 * Save all the Accounts currently stored in the DefaultAccountGenerator.
+	 * This should be called after the user has been given the opportunity
+	 * to accept or reject the default Accounts.
+	 */
+	void save_accounts();
+
 private:
 	
 	/**

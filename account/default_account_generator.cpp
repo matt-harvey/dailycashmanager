@@ -45,6 +45,21 @@ DefaultAccountGenerator::accounts()
 }
 
 void
+DefaultAccountGenerator::save_accounts()
+{
+	for
+	(	vector<Account>::iterator it = m_accounts->begin(),
+			end = m_accounts->end();
+		it != end;
+		++it
+	)
+	{
+		it->save();
+	}
+	return;
+}
+
+void
 DefaultAccountGenerator::initialize_default_accounts()
 {
 	// TODO This assumes we have PHATBOOKS_EXPOSE_COMMODITY
