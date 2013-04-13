@@ -1,6 +1,8 @@
 #ifndef GUARD_welcome_wizard_hpp
 #define GUARD_welcome_wizard_hpp
 
+#include <boost/filesystem.hpp>
+#include <wx/filedlg.h>
 #include <wx/wizard.h>
 #include <wx/string.h>
 
@@ -40,10 +42,24 @@ private:
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	
+	/**
+	 * This is the first page the user sees when opening the application
+	 * without a file selected. This welcomes the user and prompts them to
+	 * select a file.
+	 */
 	class WelcomePage: public wxWizardPageSimple
 	{
 	public:
 		WelcomePage(WelcomeWizard* parent);
+
+		/**
+		 * Get a valid filepath from the user (could be a filepath that
+		 * doesn't yet exist).
+		 */
+		boost::filesystem::path elicit_filepath();
+
+	private:
+		wxFileDialog* m_file_dialog;
 	};
 
 	class LocaleSetupPage: public wxWizardPageSimple
