@@ -172,7 +172,8 @@ set (gui_files
 	 graphical_session/wxs/app.cpp
 	 graphical_session/wxs/entry_list_ctrl.cpp
 	 graphical_session/wxs/frame.cpp
-	 graphical_session/wxs/top_panel.cpp)
+	 graphical_session/wxs/top_panel.cpp
+	 graphical_session/wxs/welcome_wizard.cpp)
 
 set (test_files
 	 ${main_files}
