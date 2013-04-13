@@ -94,7 +94,6 @@ TestFixture::TestFixture():
 	abort_if_exists(db_filepath);
 	pdbc->open(db_filepath);
 	pdbc->set_caching_level(10);
-	pdbc->setup();
 	setup_test_commodities(*pdbc);
 	setup_test_accounts(*pdbc);
 	assert (pdbc->is_valid());

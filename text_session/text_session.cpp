@@ -884,7 +884,6 @@ TextSession::run_with_filepath
 	     << bstring_to_std8(Application::application_name())
 		 << "!" << endl;
 
-	database_connection().setup();
 	gregorian::date const today = gregorian::day_clock::local_day();
 	shared_ptr<list<OrdinaryJournal> > auto_posted_journals =
 		update_repeaters_till(today);

@@ -174,7 +174,7 @@ PhatbooksDatabaseConnection::load_permanent_entity_data()
 
 
 void
-PhatbooksDatabaseConnection::setup()
+PhatbooksDatabaseConnection::do_setup()
 {
 	if (!tables_are_configured())
 	{

@@ -77,6 +77,7 @@ GraphicalSession::do_run(string const& filepath_str)
 	(	new PhatbooksDatabaseConnection
 	);
 	dbc->open(filepath_str);
+	dbc->set_caching_level(10);
 
 	App* pApp = new App;
 	pApp->set_database_connection(dbc);

@@ -77,29 +77,6 @@ public:
 	~PhatbooksDatabaseConnection();
 
 	/**
-	 * Client code should call this after opening the
-	 * PhatbooksDatabaseConnection via
-	 * sqloxx::DatabaseConnection::open(...).
-	 *
-	 * Creates tables required for Phatbooks, and inserts rows
-	 * into certain tables to provide application-level data where
-	 * required - if this has not already occurred (this step is
-	 * ignored if the database has already been configured for
-	 * Phatbooks).
-	 *
-	 * Any "entity level" data is then loaded into memory where required.
-	 *
-	 * @throws SQLiteException or some derivative thereof, if setup is
-	 * unsuccessful.
-	 *
-	 * @todo Should this be automatically called by
-	 * DatabaseConnection::open(), via a private virtual method?
-	 * Currently client code needs to remember to call this after calling
-	 * open. This is error prone.
-	 */
-	void setup();
-
-	/**
 	 * @returns the date on which the database was created. This notionally
 	 * corresponds to the date on which the accounting entity was
 	 * created.
@@ -238,6 +215,29 @@ public:
 	sqloxx::IdentityMap<T, PhatbooksDatabaseConnection>& identity_map();
 
 private:
+
+	/**
+	 * Overrides sqloxx::DatabaseConnection::do_setup(). Will be called
+	 * as final step in execution of open().
+	 *
+	 * Creates tables required for Phatbooks, and inserts rows
+	 * into certain tables to provide application-level data where
+	 * required - if this has not already occurred (this step is
+	 * ignored if the database has already been configured for
+	 * Phatbooks).
+	 *
+	 * Any "entity level" data is then loaded into memory where required.
+	 *
+	 * @throws SQLiteException or some derivative thereof, if setup is
+	 * unsuccessful.
+	 *
+	 * @todo Should this be automatically called by
+	 * DatabaseConnection::open(), via a private virtual method?
+	 * Currently client code needs to remember to call this after calling
+	 * open. This is error prone.
+	 */
+	void do_setup();
+
 
 	void setup_entity_table();
 	bool tables_are_configured();

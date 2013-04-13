@@ -109,8 +109,9 @@ DefaultAccountGenerator::initialize_default_accounts()
 	// of the user, and will be done in client code closer to the UI).
 	Commodity const default_commodity =
 		Commodity::default_commodity(m_database_connection);
-	
-	for (vector<ProtoAccount>::size_type i = 0; i != pv.size(); ++i)
+	vector<ProtoAccount>::size_type sz = pv.size();
+	m_accounts->reserve(sz);
+	for (vector<ProtoAccount>::size_type i = 0; i != sz; ++i)
 	{
 		Account account(m_database_connection);
 		account.set_name(pv[i].first);
