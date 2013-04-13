@@ -40,8 +40,24 @@ private:
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	
-	class Page: public wxWizardPageSimple
+	class WelcomePage: public wxWizardPageSimple
 	{
+	public:
+		WelcomePage(WelcomeWizard* parent);
+	};
+
+	class LocaleSetupPage: public wxWizardPageSimple
+	{
+	public:
+		LocaleSetupPage(WelcomeWizard* parent);
+
+	};
+
+	class AccountSetupPage: public wxWizardPageSimple
+	{
+	public:
+		AccountSetupPage(WelcomeWizard* parent);
+
 	};
 
 

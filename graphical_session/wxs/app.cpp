@@ -51,8 +51,14 @@ bool App::OnInit()
 		// Then the database connection has not been opened.
 		// We need to prompt the user either (a) to open an existing
 		// file, or (b) to create a new file via the wizard.
-		WelcomeWizard welcome_wizard(*m_database_connection);
-		welcome_wizard.run();
+		// TODO The wxWidgets documentation seems to assume that one
+		// would create this on the heap. But is there any reason we
+		// can't just create it on the stack?
+		WelcomeWizard* welcome_wizard = new WelcomeWizard
+		(	*m_database_connection
+		);
+		welcome_wizard->run();
+		welcome_wizard->Destroy();
 	}
 	assert (m_database_connection->is_valid());
 	Frame* frame = new Frame(app_name, *m_database_connection);
