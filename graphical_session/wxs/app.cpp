@@ -2,6 +2,7 @@
 #include "application.hpp"
 #include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "welcome_wizard.hpp"
 #include <boost/shared_ptr.hpp>
 #include <wx/snglinst.h>
 #include <wx/wx.h>
@@ -45,12 +46,16 @@ bool App::OnInit()
 		return false;
 	}
 
-	// Note it breaks if we use scoped_ptr here. We don't need to
-	// memory-manage this explicitly anyway, as Destroy() will be called
-	// when the user closes the window.
+	if (!m_database_connection->is_valid())
+	{
+		// Then the database connection has not been opened.
+		// We need to prompt the user either (a) to open an existing
+		// file, or (b) to create a new file via the wizard.
+		WelcomeWizard welcome_wizard(*m_database_connection);
+		welcome_wizard.run();
+	}
+	assert (m_database_connection->is_valid());
 	Frame* frame = new Frame(app_name, *m_database_connection);
-
-	// Show it
 	frame->Show(true);
 
 	// Start the event loop

@@ -6,11 +6,17 @@
 
 namespace phatbooks
 {
+
+// Begin forward declarations
+
+class PhatbooksDatabaseConnection;
+
 namespace gui
 {
 
-// Forward declaration
 class Frame;
+
+// End forward declarations
 
 
 /**
@@ -22,9 +28,17 @@ class WelcomeWizard:
 {
 public:
 	
-	WelcomeWizard(Frame* parent);
+	/**
+	 * Precondition: p_database_connection is not valid (that's the whole
+	 * reason we are calling the wizard...).
+	 */
+	WelcomeWizard(PhatbooksDatabaseConnection& p_database_connection);
+
+	void run();
 
 private:
+
+	PhatbooksDatabaseConnection& m_database_connection;
 	
 	class Page: public wxWizardPageSimple
 	{

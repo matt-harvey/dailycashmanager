@@ -27,11 +27,16 @@ GraphicalSession::~GraphicalSession()
 int
 GraphicalSession::do_run()
 {
+	shared_ptr<PhatbooksDatabaseConnection> dbc
+	(	new PhatbooksDatabaseConnection
+	);
+
 	// This is a bit messy, but
 	// we do this instead of using the IMPLEMENT_APP macro from
 	// wxWidgets, because we don't want IMPLEMENT_APP to provide us
 	// with a main function - we already have our own.
-	wxApp* pApp = new App;
+	App* pApp = new App;
+	pApp->set_database_connection(dbc);
 	wxApp::SetInstance(pApp);
 	BString const app_name = Application::application_name();
 
