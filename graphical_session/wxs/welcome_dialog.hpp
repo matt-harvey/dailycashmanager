@@ -23,12 +23,13 @@ public:
 
 	WelcomeDialog(PhatbooksDatabaseConnection& p_database_connection);
 
+	bool user_wants_new_file() const;
+
 private:
 	
 	void configure_buttons();
 	void on_new_file_button_click(wxCommandEvent& event);
 	void on_existing_file_button_click(wxCommandEvent& event);
-	bool user_wants_new_file() const;
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	bool m_user_wants_new_file;

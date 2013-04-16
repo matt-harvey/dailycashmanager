@@ -57,7 +57,17 @@ bool App::OnInit()
 		WelcomeDialog welcome_dialog(*m_database_connection);
 		if (welcome_dialog.ShowModal() == wxID_OK)
 		{
-			m_database_connection->open(elicit_existing_filepath());
+			if (welcome_dialog.user_wants_new_file())
+			{
+				// TODO Summon SetupWizard
+				// ...
+			}
+			else
+			{
+				// TODO Cause last-opened filepath to be remembered
+				// from session to session.
+				m_database_connection->open(elicit_existing_filepath());
+			}
 		}
 		else
 		{
