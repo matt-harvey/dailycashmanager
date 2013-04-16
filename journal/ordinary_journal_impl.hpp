@@ -17,17 +17,13 @@
 
 // Begin forward declarations
 
-namespace jewel
-{
-	template <typename T> class Signature;
-}
-
 
 namespace phatbooks
 {
 
 class DraftJournal;
 class OrdinaryJournal;
+class OrdinaryJournalSignature;
 
 // End forward declarations
 
@@ -126,7 +122,7 @@ public:
 	 */
 	void set_date_unrestricted
 	(	boost::gregorian::date const& p_date,
-		jewel::Signature<OrdinaryJournal> const& p_signature
+		OrdinaryJournalSignature const& p_signature
 	);
 
 	/**

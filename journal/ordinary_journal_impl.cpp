@@ -18,7 +18,6 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
-#include <jewel/signature.hpp>
 #include <string>
 #include <vector>
 
@@ -27,7 +26,6 @@ using boost::optional;
 using boost::shared_ptr;
 using jewel::clear;
 using jewel::Decimal;
-using jewel::Signature;
 using jewel::value;
 using sqloxx::SQLStatement;
 using std::string;
@@ -197,7 +195,7 @@ OrdinaryJournalImpl::set_date(gregorian::date const& p_date)
 void
 OrdinaryJournalImpl::set_date_unrestricted
 (	gregorian::date const& p_date,
-	Signature<OrdinaryJournal> const& p_signature
+	OrdinaryJournalSignature const& p_signature
 )
 {
 	// Silence compiler warning re. unused parameter. The Signature

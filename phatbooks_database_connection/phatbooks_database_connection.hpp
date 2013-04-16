@@ -184,9 +184,9 @@ public:
 	class BudgetAttorney
 	{
 	public:
-		friend AccountImpl;
-		friend BudgetItemImpl;
-		friend PhatbooksDatabaseConnection;
+		friend class AccountImpl;
+		friend class BudgetItemImpl;
+		friend class PhatbooksDatabaseConnection;
 	private:
 		// Regenerate the AmalgamatedBudget, and its associated
 		// "instrument" DraftJournal, on the basis of the currently

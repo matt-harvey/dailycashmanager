@@ -10,6 +10,7 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/noncopyable.hpp>
 #include <jewel/decimal.hpp>
 #include <iostream>
 #include <ostream>
@@ -116,7 +117,7 @@ public:
 	void mimic(ProtoJournal const& rhs);
 	void mimic(DraftJournal const& rhs);
 
-
+	
 private:
 	
 	/**
@@ -139,6 +140,23 @@ private:
 	void do_output(std::ostream& os) const;
 
 	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);
+};
+
+
+
+/**
+ * Used for access control. Similar to jewel::Signature (which we can't use
+ * here as we are eschewing C++11).
+ */
+class OrdinaryJournalSignature:
+	private boost::noncopyable
+{
+public:
+	friend class OrdinaryJournal;
+private:
+	OrdinaryJournalSignature()
+	{
+	}
 };
 
 
