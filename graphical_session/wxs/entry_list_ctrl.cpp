@@ -8,6 +8,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/lexical_cast.hpp>
+#include <wx/progdlg.h>
 #include <string>
 
 using boost::lexical_cast;
@@ -65,6 +66,18 @@ EntryListCtrl::EntryListCtrl
 	App* app = dynamic_cast<App*>(wxTheApp);
 
 	EntryReader::size_type i = 0;
+	EntryReader::size_type progress = 0;
+	EntryReader::size_type const progress_max = p_reader.size() / 32;
+
+	// Create a progress dialog
+	wxProgressDialog progress_dialog
+	(	wxEmptyString,
+		"Loading transactions...",
+		progress_max,
+		this,
+		wxPD_APP_MODAL | wxPD_AUTO_HIDE
+	);
+
 	for
 	(	EntryReader::const_iterator it = p_reader.begin(),
 			end = p_reader.end();
@@ -100,7 +113,16 @@ EntryListCtrl::EntryListCtrl
 		SetItem(i, comment_col_num, comment_string);
 		SetItem(i, amount_col_num, amount_string);
 		SetItem(i, reconciled_col_num, reconciled_string);
+
+		// Update the progress dialog
+		if (i % 32 == 0)
+		{
+			assert (progress <= progress_max);
+			progress_dialog.Update(progress);
+			++progress;
+		}
 	}
+	progress_dialog.Destroy();
 	for (int j = 0; j != 5; ++j)
 	{
 		SetColumnWidth(j, wxLIST_AUTOSIZE);
