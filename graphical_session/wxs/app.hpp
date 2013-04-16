@@ -3,6 +3,7 @@
 
 #include "frame.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 #include <wx/intl.h>
 #include <wx/snglinst.h>
@@ -37,6 +38,7 @@ public:
 	PhatbooksDatabaseConnection& database_connection();
 
 private:
+	boost::filesystem::path elicit_existing_filepath();
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	wxSingleInstanceChecker* m_checker;
 	wxLocale m_locale;

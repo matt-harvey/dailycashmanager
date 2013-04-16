@@ -3,7 +3,9 @@
 #include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "welcome_dialog.hpp"
+#include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
+#include <wx/filedlg.h>
 #include <wx/snglinst.h>
 #include <wx/wx.h>
 
@@ -26,6 +28,8 @@ The wxPanel might seem pointless, but apparently if you don't use
 it you get into all kinds of problems.
 */
 
+
+
 bool App::OnInit()
 {
 	wxString const app_name = bstring_to_wx(Application::application_name());
@@ -45,7 +49,6 @@ bool App::OnInit()
 		wxLogError("Could not initialize locale.");
 		return false;
 	}
-
 	if (!m_database_connection->is_valid())
 	{
 		// Then the database connection has not been opened.
@@ -54,7 +57,7 @@ bool App::OnInit()
 		WelcomeDialog welcome_dialog(*m_database_connection);
 		if (welcome_dialog.ShowModal() == wxID_OK)
 		{
-			m_database_connection->open(welcome_dialog.get_filepath());
+			m_database_connection->open(elicit_existing_filepath());
 		}
 		else
 		{
@@ -95,6 +98,46 @@ int App::OnExit()
 	delete m_checker;
 	return 0;
 }
+
+
+namespace
+{
+	wxString filepath_wildcard()
+	{
+		return wxString("*") +
+			bstring_to_wx(Application::filename_extension());
+	}
+
+}  // end anonymous namespace
+
+
+
+boost::filesystem::path
+App::elicit_existing_filepath()
+{
+	boost::filesystem::path ret;
+	wxFileDialog file_dialog
+	(	0,
+		wxEmptyString,
+		wxEmptyString,
+		wxEmptyString,
+		filepath_wildcard(),
+		wxFD_FILE_MUST_EXIST
+	);
+	if (file_dialog.ShowModal() == wxID_OK)
+	{
+		wxString const filepath_wxs = file_dialog.GetPath();
+		ret = boost::filesystem::path
+		(	bstring_to_std8(wx_to_bstring(filepath_wxs))
+		);
+	}
+	else
+	{
+		// TODO Then what?
+	}
+	return ret;
+}
+
 
 }  // namespace gui
 }  // namespace phatbooks

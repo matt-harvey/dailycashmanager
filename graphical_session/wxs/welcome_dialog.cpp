@@ -1,17 +1,13 @@
 #include "welcome_dialog.hpp"
 #include "application.hpp"
 #include "phatbooks_database_connection.hpp"
-#include <boost/filesystem.hpp>
-#include <jewel/optional.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
-#include <wx/filedlg.h>
 #include <wx/sizer.h>
 #include <wx/string.h>
 #include <cassert>
 #include <cmath>
 
-using jewel::value;
 using std::max;
 
 namespace phatbooks
@@ -32,16 +28,6 @@ BEGIN_EVENT_TABLE(WelcomeDialog, wxDialog)
 END_EVENT_TABLE()
 
 
-namespace
-{
-	wxString filepath_wildcard()
-	{
-		return wxString("*") +
-			bstring_to_wx(Application::filename_extension());
-	}
-
-}  // end anonymous namespace
-
 
 WelcomeDialog::WelcomeDialog
 (	PhatbooksDatabaseConnection& p_database_connection
@@ -57,6 +43,7 @@ WelcomeDialog::WelcomeDialog
 		wxFULL_REPAINT_ON_RESIZE | wxRESIZE_BORDER | wxRESIZE_BORDER
 	),
 	m_database_connection(p_database_connection),
+	m_user_wants_new_file(false),
 	m_top_sizer(0),
 	m_new_file_button(0),
 	m_existing_file_button(0)
@@ -114,19 +101,11 @@ WelcomeDialog::configure_buttons()
 }
 
 
-boost::filesystem::path
-WelcomeDialog::get_filepath() const
-{
-	return value(m_filepath);
-}
-
-
 void
 WelcomeDialog::on_new_file_button_click(wxCommandEvent& event)
 {
-	// TODO Implement
-	// ...
-
+	m_user_wants_new_file = true;
+	EndModal(wxID_OK);
 	return;
 }
 
@@ -134,27 +113,16 @@ WelcomeDialog::on_new_file_button_click(wxCommandEvent& event)
 void
 WelcomeDialog::on_existing_file_button_click(wxCommandEvent& event)
 {
-	wxFileDialog* file_dialog = new wxFileDialog
-	(	this,
-		wxEmptyString,
-		wxEmptyString,
-		wxEmptyString,
-		filepath_wildcard(),
-		wxFD_FILE_MUST_EXIST
-	);
-	if (file_dialog->ShowModal() == wxID_OK)
-	{
-		wxString const filepath_wxs = file_dialog->GetPath();
-		m_filepath = boost::filesystem::path
-		(	bstring_to_std8(wx_to_bstring(filepath_wxs))
-		);
-		EndModal(wxID_OK);
-	}
-	else
-	{
-		// TODO Then what?
-	}
+	assert (!m_user_wants_new_file);
+	EndModal(wxID_OK);
 	return;
+}
+
+
+bool
+WelcomeDialog::user_wants_new_file() const
+{
+	return m_user_wants_new_file;
 }
 
 }  // namespace gui
