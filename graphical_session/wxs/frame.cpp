@@ -64,7 +64,6 @@ Frame::Frame
 	menuBar->Append(fileMenu, wxT("&File"));
 	menuBar->Append(helpMenu, wxT("&Help"));
 
-
 #	if JEWEL_ON_WINDOWS
 		Maximize();
 #	endif

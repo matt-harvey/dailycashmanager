@@ -52,7 +52,14 @@ bool App::OnInit()
 		// We need to prompt the user either (a) to open an existing
 		// file, or (b) to create a new file via the wizard.
 		WelcomeDialog welcome_dialog(*m_database_connection);
-		welcome_dialog.ShowModal();
+		if (welcome_dialog.ShowModal() == wxID_OK)
+		{
+			m_database_connection->open(welcome_dialog.get_filepath());
+		}
+		else
+		{
+			// TODO Then what?
+		}
 	}
 	assert (m_database_connection->is_valid());
 	Frame* frame = new Frame(app_name, *m_database_connection);
