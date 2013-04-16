@@ -3,6 +3,7 @@
 
 #include <wx/button.h>
 #include <wx/dialog.h>
+#include <wx/sizer.h>
 
 namespace phatbooks
 {
@@ -23,9 +24,15 @@ public:
 	WelcomeDialog(PhatbooksDatabaseConnection& p_database_connection);
 
 private:
+	
+	void configure_buttons();
+
 	PhatbooksDatabaseConnection& m_database_connection;
+	wxGridSizer* m_top_sizer;
 	wxButton* m_new_file_button;
 	wxButton* m_existing_file_button;
+	static int const s_new_file_button_id = wxID_HIGHEST + 1;
+	static int const s_existing_file_button_id = wxID_HIGHEST + 2;
 
 };  // WelcomeDialog
 
