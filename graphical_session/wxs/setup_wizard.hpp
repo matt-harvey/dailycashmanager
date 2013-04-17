@@ -4,7 +4,9 @@
 #include <boost/filesystem.hpp>
 #include <wx/filedlg.h>
 #include <wx/radiobox.h>
+#include <wx/sizer.h>
 #include <wx/string.h>
+#include <wx/textctrl.h>
 #include <wx/wizard.h>
 
 namespace phatbooks
@@ -66,6 +68,8 @@ public:
 
 private:
 	PhatbooksDatabaseConnection& m_database_connection;
+	wxBoxSizer* m_top_sizer;
+	wxTextCtrl* m_filename_ctrl;
 
 };  // SetupWizard::FilepathPage
 

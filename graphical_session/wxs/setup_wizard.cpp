@@ -7,8 +7,10 @@
 #include <boost/filesystem.hpp>
 #include <wx/filedlg.h>
 #include <wx/radiobox.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
 #include <wx/string.h>
-#include <wx/textdlg.h>
+#include <wx/textctrl.h>
 #include <wx/wizard.h>
 #include <cassert>
 #include <string>
@@ -24,9 +26,13 @@ namespace gui
 
 namespace
 {
-	wxString const app_name()
+	wxString const wx_app_name()
 	{
 		return bstring_to_wx(Application::application_name());
+	}
+	wxString const wx_extension()
+	{
+		return bstring_to_wx(Application::filename_extension());
 	}
 
 }  // end anonymous namespace
@@ -42,7 +48,7 @@ SetupWizard::SetupWizard
 	wxWizard
 	(	0,
 		wxID_ANY,
-		app_name() + wxString(" Setup Wizard"),
+		wx_app_name() + wxString(" Setup Wizard"),
 		wxBitmap(icon_xpm),  // TODO Put a proper image here
 		wxDefaultPosition,
 		wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER
@@ -75,11 +81,35 @@ SetupWizard::FilepathPage::FilepathPage
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxWizardPageSimple(parent),
-	m_database_connection(p_database_connection)
+	m_database_connection(p_database_connection),
+	m_top_sizer(0),
+	m_filename_ctrl(0)
 {
-	
+	m_top_sizer = new wxBoxSizer(wxVERTICAL);
 
-
+	wxStaticText* filename_prompt = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString("Enter name of new file:")
+	);
+	m_top_sizer->Add(filename_prompt, 0, 5);
+	wxString const ext = wx_extension();
+	m_filename_ctrl = new wxTextCtrl
+	(	this,
+		wxID_ANY,
+		wxString("MyBudget") + ext,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,  // style
+		wxDefaultValidator  // TODO We need a proper validator here
+	);
+	m_top_sizer->Add(m_filename_ctrl);	
+		
+	// TODO Finish implementing
+	// ...
+			
+	SetSizer(m_top_sizer);
+	m_top_sizer->Fit(this);
 }
 
 
