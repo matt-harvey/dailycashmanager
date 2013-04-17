@@ -66,6 +66,9 @@ Application::last_opened_file()
 void
 Application::set_last_opened_file(filesystem::path const& p_path)
 {
+	// Assert precondition
+	assert (filesystem::absolute(p_path) == p_path);
+
 	string const s_path = p_path.string();
 	wxString const wx_path = bstring_to_wx(std8_to_bstring(s_path));
 	config().Write(config_location_for_last_opened_file(), wx_path);

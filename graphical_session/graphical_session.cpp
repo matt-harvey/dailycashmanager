@@ -98,9 +98,6 @@ GraphicalSession::do_run(string const& filepath_str)
 	int argca = 0;
 	while (argvs[argca] != 0) ++argca;
 
-	// Record last opened file
-	Application::set_last_opened_file(filepath);
-
 	// At last...
 	wxEntryStart(argca, argvs);
 	wxTheApp->OnInit();

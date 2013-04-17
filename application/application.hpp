@@ -46,6 +46,8 @@ public:
 	/**
 	 * Record a filepath as being the last application file opened by the
 	 * user.
+	 *
+	 * Precondition: p_path should be an absolute path.
 	 */
 	static void set_last_opened_file(boost::filesystem::path const& p_path);
 

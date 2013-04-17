@@ -65,12 +65,9 @@ bool App::OnInit()
 			}
 			else
 			{
-				// TODO Cause last-opened filepath to be remembered
-				// from session to session.
 				boost::filesystem::path const filepath =
 					elicit_existing_filepath();
 				m_database_connection->open(filepath);
-				Application::set_last_opened_file(filepath);
 			}
 		}
 		else
@@ -79,6 +76,12 @@ bool App::OnInit()
 		}
 	}
 	assert (m_database_connection->is_valid());
+	using boost::filesystem::absolute;
+	assert
+	(	absolute(m_database_connection->filepath()) ==
+		m_database_connection->filepath()
+	);
+	Application::set_last_opened_file(m_database_connection->filepath());
 	Frame* frame = new Frame(app_name, *m_database_connection);
 	frame->Show(true);
 
