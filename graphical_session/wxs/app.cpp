@@ -4,14 +4,23 @@
 #include "phatbooks_database_connection.hpp"
 #include "welcome_dialog.hpp"
 #include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
-#include <jewel/debug_log.hpp>
+#include <jewel/optional.hpp>
 #include <wx/filedlg.h>
 #include <wx/snglinst.h>
 #include <wx/wx.h>
 
+// For debugging
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
 
+
+using boost::optional;
 using boost::shared_ptr;
+using jewel::value;
+namespace filesystem = boost::filesystem;
 
 namespace phatbooks
 {
@@ -65,7 +74,7 @@ bool App::OnInit()
 			}
 			else
 			{
-				boost::filesystem::path const filepath =
+				filesystem::path const filepath =
 					elicit_existing_filepath();
 				m_database_connection->open(filepath);
 			}
@@ -76,7 +85,7 @@ bool App::OnInit()
 		}
 	}
 	assert (m_database_connection->is_valid());
-	using boost::filesystem::absolute;
+	using filesystem::absolute;
 	assert
 	(	absolute(m_database_connection->filepath()) ==
 		m_database_connection->filepath()
@@ -129,22 +138,37 @@ namespace
 
 
 
-boost::filesystem::path
+filesystem::path
 App::elicit_existing_filepath()
 {
-	boost::filesystem::path ret;
+	filesystem::path ret;
+	wxString default_directory = wxEmptyString;
+	wxString default_filename = wxEmptyString;
+
+	// Set the default path to the last opened file, if there is one
+	optional<filesystem::path> const last_opened =
+		Application::last_opened_file();
+	if (last_opened)
+	{
+		filesystem::path const fp = value(last_opened);
+		default_directory =
+			bstring_to_wx(std8_to_bstring(fp.parent_path().string()));
+		default_filename =
+			bstring_to_wx(std8_to_bstring(fp.filename().string()));
+	}
 	wxFileDialog file_dialog
 	(	0,
 		wxEmptyString,
-		wxEmptyString,
-		wxEmptyString,
+		default_directory,
+		default_filename,
 		filepath_wildcard(),
 		wxFD_FILE_MUST_EXIST
 	);
+	// Show the dialog
 	if (file_dialog.ShowModal() == wxID_OK)
 	{
 		wxString const filepath_wxs = file_dialog.GetPath();
-		ret = boost::filesystem::path
+		ret = filesystem::path
 		(	bstring_to_std8(wx_to_bstring(filepath_wxs))
 		);
 	}
