@@ -2,6 +2,7 @@
 #include "application.hpp"
 #include "b_string.hpp"
 #include "wxs/app.hpp"
+#include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
 
@@ -53,12 +54,6 @@ GraphicalSession::do_run()
 	while (argvs[argca] != 0) ++argca;
 
 	// At last...
-	// TODO We need to invoke a wizard to assist the user
-	// to create a file - or to open an existing file from within
-	// the GUI. The invoking of the wizard should be done within
-	// wxApp, and could be triggered by something in argvs.
-	// Currently we get a crash in the attempt to populate the
-	// AccountList from a non-existent database.
 	wxEntryStart(argca, argvs);
 	wxTheApp->OnInit();
 	wxTheApp->OnRun();
@@ -81,7 +76,8 @@ GraphicalSession::do_run(string const& filepath_str)
 	shared_ptr<PhatbooksDatabaseConnection> dbc
 	(	new PhatbooksDatabaseConnection
 	);
-	dbc->open(filepath_str);
+	boost::filesystem::path const filepath(filepath_str);
+	dbc->open(filepath);
 
 	App* pApp = new App;
 	pApp->set_database_connection(dbc);
@@ -101,6 +97,9 @@ GraphicalSession::do_run(string const& filepath_str)
 	wchar_t* argvs[] = { argv0_wct, argv1_wct, 0 };
 	int argca = 0;
 	while (argvs[argca] != 0) ++argca;
+
+	// Record last opened file
+	Application::set_last_opened_file(filepath);
 
 	// At last...
 	wxEntryStart(argca, argvs);

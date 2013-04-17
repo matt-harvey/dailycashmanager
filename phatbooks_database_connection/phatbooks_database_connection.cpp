@@ -14,6 +14,7 @@
 #include "account_impl.hpp"
 #include "account_reader.hpp"
 #include "amalgamated_budget.hpp"
+// #include "application.hpp"
 #include "b_string.hpp"
 #include "budget_item.hpp"
 #include "budget_item_impl.hpp"
@@ -174,7 +175,7 @@ PhatbooksDatabaseConnection::load_permanent_entity_data()
 
 
 void
-PhatbooksDatabaseConnection::do_setup()
+PhatbooksDatabaseConnection::do_setup(boost::filesystem::path const& filepath)
 {
 	if (!tables_are_configured())
 	{
@@ -197,6 +198,7 @@ PhatbooksDatabaseConnection::do_setup()
 	assert (tables_are_configured());
 	load_permanent_entity_data();
 	perform_integrity_checks();
+	// Application::set_last_opened_file(filepath); // This seems to break if wxApp has not been created.
 	return;
 }
 

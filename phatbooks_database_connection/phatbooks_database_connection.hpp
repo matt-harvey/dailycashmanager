@@ -16,6 +16,7 @@
 #include "b_string.hpp"
 #include "frequency.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
@@ -228,6 +229,8 @@ private:
 	 *
 	 * Any "entity level" data is then loaded into memory where required.
 	 *
+	 * Record \e filepath as the last application file opened by the user.
+	 *
 	 * @throws SQLiteException or some derivative thereof, if setup is
 	 * unsuccessful.
 	 *
@@ -236,7 +239,7 @@ private:
 	 * Currently client code needs to remember to call this after calling
 	 * open. This is error prone.
 	 */
-	void do_setup();
+	void do_setup(boost::filesystem::path const& filepath);
 
 
 	void setup_entity_table();

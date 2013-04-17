@@ -187,8 +187,6 @@ set (test_files
 	 tests/phatbooks_tests_common.cpp
 	 tests/repeater_tests.cpp)
 
-
-
 add_executable(
 	phatbooks
 	main.cpp

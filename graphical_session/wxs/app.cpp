@@ -67,7 +67,10 @@ bool App::OnInit()
 			{
 				// TODO Cause last-opened filepath to be remembered
 				// from session to session.
-				m_database_connection->open(elicit_existing_filepath());
+				boost::filesystem::path const filepath =
+					elicit_existing_filepath();
+				m_database_connection->open(filepath);
+				Application::set_last_opened_file(filepath);
 			}
 		}
 		else
