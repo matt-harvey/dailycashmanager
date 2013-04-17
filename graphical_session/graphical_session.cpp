@@ -55,8 +55,15 @@ GraphicalSession::do_run()
 
 	// At last...
 	wxEntryStart(argca, argvs);
-	wxTheApp->OnInit();
-	wxTheApp->OnRun();
+	if (wxTheApp->OnInit())
+	{
+		wxTheApp->OnRun();
+	}
+	else
+	{
+		// User has cancelled rather than opening a file
+		// Nothing to do.
+	}
 	wxTheApp->OnExit();
 	wxEntryCleanup();
 	return 0;

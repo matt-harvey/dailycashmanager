@@ -78,7 +78,7 @@ EntryListCtrl::EntryListCtrl
 		"Loading transactions...",
 		progress_max,
 		this,
-		wxPD_APP_MODAL | wxPD_AUTO_HIDE
+		wxPD_APP_MODAL | wxPD_AUTO_HIDE | wxRESIZE_BORDER
 	);
 
 	for

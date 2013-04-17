@@ -60,7 +60,7 @@ bool App::OnInit()
 		wxLogError("Could not initialize locale.");
 		return false;
 	}
-	if (!database_connection().is_valid())
+	while (!database_connection().is_valid())
 	{
 		// Then the database connection has not been opened.
 		// We need to prompt the user either (a) to open an existing
@@ -75,14 +75,17 @@ bool App::OnInit()
 			}
 			else
 			{
-				filesystem::path const filepath =
-					elicit_existing_filepath();
-				database_connection().open(filepath);
+				filesystem::path const filepath = elicit_existing_filepath();
+				if (!filepath.empty())
+				{
+					database_connection().open(filepath);
+				}
 			}
 		}
 		else
 		{
-			// TODO Then what?
+			// User has cancelled rather than opening a file.
+			return false;
 		}
 	}
 	assert (database_connection().is_valid());
@@ -143,6 +146,7 @@ filesystem::path
 App::elicit_existing_filepath()
 {
 	filesystem::path ret;
+	assert (ret.empty());
 	wxString default_directory = wxEmptyString;
 	wxString default_filename = wxEmptyString;
 

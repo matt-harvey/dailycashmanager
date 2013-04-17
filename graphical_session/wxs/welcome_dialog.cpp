@@ -25,6 +25,10 @@ BEGIN_EVENT_TABLE(WelcomeDialog, wxDialog)
 	(	s_existing_file_button_id,
 		WelcomeDialog::on_existing_file_button_click
 	)
+	EVT_BUTTON
+	(	s_existing_file_button_id,
+		WelcomeDialog::on_cancel_button_click
+	)
 END_EVENT_TABLE()
 
 
@@ -40,15 +44,16 @@ WelcomeDialog::WelcomeDialog
 			wxString("!"),
 		wxDefaultPosition,
 		wxSize(wxDefaultSize.x * 2, wxDefaultSize.y * 2),
-		wxFULL_REPAINT_ON_RESIZE | wxRESIZE_BORDER | wxRESIZE_BORDER
+		wxRESIZE_BORDER
 	),
 	m_database_connection(p_database_connection),
 	m_user_wants_new_file(false),
 	m_top_sizer(0),
 	m_new_file_button(0),
-	m_existing_file_button(0)
+	m_existing_file_button(0),
+	m_cancel_button(0)
 {
-	m_top_sizer = new wxGridSizer(4, 1, 0, 0);
+	m_top_sizer = new wxGridSizer(7, 1, 0, 0);
 	SetSizer(m_top_sizer);
 	configure_buttons();
 	m_top_sizer->Fit(this);
@@ -81,23 +86,42 @@ WelcomeDialog::configure_buttons()
 		wxDefaultPosition,
 		m_existing_file_button->GetSize()
 	);
+	m_cancel_button = new wxButton
+	(	this,
+		wxID_CANCEL,
+		wxString("Cancel"),
+		wxDefaultPosition,
+		m_existing_file_button->GetSize()
+	);
 	assert
 	(	m_new_file_button->GetSize() ==
+		m_existing_file_button->GetSize()
+	);
+	assert
+	(	m_cancel_button->GetSize() ==
 		m_existing_file_button->GetSize()
 	);
 	// Use sizer to position buttons on dialog
 	m_top_sizer->Add
 	(	m_new_file_button,
 		1,
-		wxALIGN_CENTER | wxBOTTOM | wxLEFT | wxRIGHT,
+		wxALIGN_CENTER | wxLEFT | wxRIGHT,
 		20
 	);
+	m_top_sizer->AddStretchSpacer();
 	m_top_sizer->Add
 	(	m_existing_file_button,
 		1,
 		wxALIGN_CENTER | wxLEFT | wxRIGHT,
 		20
 	);
+	m_top_sizer->AddStretchSpacer();
+	m_top_sizer->Add
+	(	m_cancel_button,
+		1,
+		wxALIGN_CENTER | wxLEFT | wxRIGHT
+	);
+	m_top_sizer->AddStretchSpacer();
 }
 
 
@@ -106,6 +130,7 @@ WelcomeDialog::on_new_file_button_click(wxCommandEvent& event)
 {
 	m_user_wants_new_file = true;
 	EndModal(wxID_OK);
+	(void)event;  // Silence compiler warning about unused parameter.
 	return;
 }
 
@@ -115,6 +140,17 @@ WelcomeDialog::on_existing_file_button_click(wxCommandEvent& event)
 {
 	assert (!m_user_wants_new_file);
 	EndModal(wxID_OK);
+	(void)event;  // Silence compiler warning about unused parameter.
+	return;
+}
+
+
+void
+WelcomeDialog::on_cancel_button_click(wxCommandEvent& event)
+{
+	assert (!m_user_wants_new_file);
+	EndModal(wxID_CANCEL);
+	(void)event;  // Silence compiler warning about unused parameter.
 	return;
 }
 
