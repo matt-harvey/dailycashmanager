@@ -8,6 +8,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/lexical_cast.hpp>
+#include <jewel/debug_log.hpp>
 #include <wx/progdlg.h>
 #include <string>
 
@@ -67,7 +68,9 @@ EntryListCtrl::EntryListCtrl
 
 	EntryReader::size_type i = 0;
 	EntryReader::size_type progress = 0;
-	EntryReader::size_type const progress_max = p_reader.size() / 32;
+	EntryReader::size_type const progress_scaling_factor = 32;
+	EntryReader::size_type const progress_max =
+		p_reader.size() / progress_scaling_factor;
 
 	// Create a progress dialog
 	wxProgressDialog progress_dialog
@@ -115,7 +118,7 @@ EntryListCtrl::EntryListCtrl
 		SetItem(i, reconciled_col_num, reconciled_string);
 
 		// Update the progress dialog
-		if (i % 32 == 0)
+		if (i % progress_scaling_factor == 0)
 		{
 			assert (progress <= progress_max);
 			progress_dialog.Update(progress);

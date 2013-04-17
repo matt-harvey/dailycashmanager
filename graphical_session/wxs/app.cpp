@@ -5,6 +5,7 @@
 #include "welcome_dialog.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/debug_log.hpp>
 #include <wx/filedlg.h>
 #include <wx/snglinst.h>
 #include <wx/wx.h>
