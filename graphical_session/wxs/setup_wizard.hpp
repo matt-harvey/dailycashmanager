@@ -26,8 +26,7 @@ class Frame;
  * Represents the wizard that is presented to GUI users when they first
  * start up the application.
  */
-class SetupWizard:
-	public wxWizard
+class SetupWizard: public wxWizard
 {
 public:
 	
@@ -57,51 +56,45 @@ private:
  * without a file selected. This welcomes the user and prompts them to
  * select a file.
  */
-class SetupWizard::FilepathPage:
-	public wxWizardPageSimple
+class SetupWizard::FilepathPage: public wxWizardPageSimple
 {
 public:
 	FilepathPage
 	(	SetupWizard* parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
-	~FilepathPage();
-	// virtual void OnWizardPageChanging(wxWizardEvent& event);
 
 private:
-
-	// Should correspond to choices in radio box
-	enum RadioBoxChoice
-	{	e_create_new_file = 0,
-		e_open_existing_file = 1
-	};
-
-	wxFileDialog* m_file_dialog;
-	wxRadioBox* m_radio_box;
 	PhatbooksDatabaseConnection& m_database_connection;
-	
-	// DECLARE_EVENT_TABLE()
 
 };  // SetupWizard::FilepathPage
 
 
 
 
-class SetupWizard::LocalizationPage:
-	public wxWizardPageSimple
+class SetupWizard::LocalizationPage: public wxWizardPageSimple
 {
 public:
-	LocalizationPage(SetupWizard* parent);
+	LocalizationPage
+	(	SetupWizard* parent,
+		PhatbooksDatabaseConnection& p_database_connection
+	);
+private:
+	PhatbooksDatabaseConnection& m_database_connection;
 
 };  // SetupWizard::LocalizationPage
 
 
 
-class SetupWizard::AccountPage:
-	public wxWizardPageSimple
+class SetupWizard::AccountPage: public wxWizardPageSimple
 {
 public:
-	AccountPage(SetupWizard* parent);
+	AccountPage
+	(	SetupWizard* parent,
+		PhatbooksDatabaseConnection& p_database_connection
+	);
+private:
+	PhatbooksDatabaseConnection& m_database_connection;
 
 };  // SetupWizard::AccountPage
 

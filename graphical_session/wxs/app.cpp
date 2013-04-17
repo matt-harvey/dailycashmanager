@@ -2,6 +2,7 @@
 #include "application.hpp"
 #include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "setup_wizard.hpp"
 #include "welcome_dialog.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
@@ -59,24 +60,24 @@ bool App::OnInit()
 		wxLogError("Could not initialize locale.");
 		return false;
 	}
-	if (!m_database_connection->is_valid())
+	if (!database_connection().is_valid())
 	{
 		// Then the database connection has not been opened.
 		// We need to prompt the user either (a) to open an existing
 		// file, or (b) to create a new file via the wizard.
-		WelcomeDialog welcome_dialog(*m_database_connection);
+		WelcomeDialog welcome_dialog(database_connection());
 		if (welcome_dialog.ShowModal() == wxID_OK)
 		{
 			if (welcome_dialog.user_wants_new_file())
 			{
-				// TODO Summon SetupWizard
-				// ...
+				SetupWizard setup_wizard(database_connection());
+				setup_wizard.run();
 			}
 			else
 			{
 				filesystem::path const filepath =
 					elicit_existing_filepath();
-				m_database_connection->open(filepath);
+				database_connection().open(filepath);
 			}
 		}
 		else
@@ -84,14 +85,14 @@ bool App::OnInit()
 			// TODO Then what?
 		}
 	}
-	assert (m_database_connection->is_valid());
+	assert (database_connection().is_valid());
 	using filesystem::absolute;
 	assert
-	(	absolute(m_database_connection->filepath()) ==
-		m_database_connection->filepath()
+	(	absolute(database_connection().filepath()) ==
+		database_connection().filepath()
 	);
-	Application::set_last_opened_file(m_database_connection->filepath());
-	Frame* frame = new Frame(app_name, *m_database_connection);
+	Application::set_last_opened_file(database_connection().filepath());
+	Frame* frame = new Frame(app_name, database_connection());
 	frame->Show(true);
 
 	// Start the event loop
