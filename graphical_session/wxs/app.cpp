@@ -148,7 +148,10 @@ App::elicit_existing_filepath()
 	// Set the default path to the last opened file, if there is one
 	optional<filesystem::path> const last_opened =
 		Application::last_opened_file();
-	if (last_opened)
+	if
+	(	last_opened &&
+		filesystem::exists(filesystem::status(value(last_opened)))
+	)
 	{
 		filesystem::path const fp = value(last_opened);
 		default_directory =
