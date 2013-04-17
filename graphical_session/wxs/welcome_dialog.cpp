@@ -18,15 +18,15 @@ namespace gui
 
 BEGIN_EVENT_TABLE(WelcomeDialog, wxDialog)
 	EVT_BUTTON
-	(	s_new_file_button_id,
-		WelcomeDialog::on_new_file_button_click
-	)
-	EVT_BUTTON
 	(	s_existing_file_button_id,
 		WelcomeDialog::on_existing_file_button_click
 	)
 	EVT_BUTTON
-	(	s_existing_file_button_id,
+	(	s_new_file_button_id,
+		WelcomeDialog::on_new_file_button_click
+	)
+	EVT_BUTTON
+	(	wxID_CANCEL,
 		WelcomeDialog::on_cancel_button_click
 	)
 END_EVENT_TABLE()
@@ -49,8 +49,8 @@ WelcomeDialog::WelcomeDialog
 	m_database_connection(p_database_connection),
 	m_user_wants_new_file(false),
 	m_top_sizer(0),
-	m_new_file_button(0),
 	m_existing_file_button(0),
+	m_new_file_button(0),
 	m_cancel_button(0)
 {
 	m_top_sizer = new wxGridSizer(7, 1, 0, 0);
@@ -103,14 +103,14 @@ WelcomeDialog::configure_buttons()
 	);
 	// Use sizer to position buttons on dialog
 	m_top_sizer->Add
-	(	m_new_file_button,
+	(	m_existing_file_button,
 		1,
 		wxALIGN_CENTER | wxLEFT | wxRIGHT,
 		20
 	);
 	m_top_sizer->AddStretchSpacer();
 	m_top_sizer->Add
-	(	m_existing_file_button,
+	(	m_new_file_button,
 		1,
 		wxALIGN_CENTER | wxLEFT | wxRIGHT,
 		20
@@ -119,19 +119,10 @@ WelcomeDialog::configure_buttons()
 	m_top_sizer->Add
 	(	m_cancel_button,
 		1,
-		wxALIGN_CENTER | wxLEFT | wxRIGHT
+		wxALIGN_CENTER | wxLEFT | wxRIGHT,
+		20
 	);
 	m_top_sizer->AddStretchSpacer();
-}
-
-
-void
-WelcomeDialog::on_new_file_button_click(wxCommandEvent& event)
-{
-	m_user_wants_new_file = true;
-	EndModal(wxID_OK);
-	(void)event;  // Silence compiler warning about unused parameter.
-	return;
 }
 
 
@@ -139,6 +130,16 @@ void
 WelcomeDialog::on_existing_file_button_click(wxCommandEvent& event)
 {
 	assert (!m_user_wants_new_file);
+	EndModal(wxID_OK);
+	(void)event;  // Silence compiler warning about unused parameter.
+	return;
+}
+
+
+void
+WelcomeDialog::on_new_file_button_click(wxCommandEvent& event)
+{
+	m_user_wants_new_file = true;
 	EndModal(wxID_OK);
 	(void)event;  // Silence compiler warning about unused parameter.
 	return;
