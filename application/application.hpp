@@ -44,6 +44,18 @@ public:
 	static boost::optional<boost::filesystem::path> last_opened_file();
 
 	/**
+	 * @returns the default directory in which application files
+	 * should be saved unless specified otherwise by the user. This
+	 * would generally correspond to the user's home directory. If
+	 * an initialized optional is returned, then the directory is
+	 * guaranteed to exist at the time it is returned. If an uninitialized
+	 * optional is returned, then an existing default home directory could
+	 * not be determined. If initialized, then the value of the optional
+	 * will be an absolute filepath.
+	 */
+	static boost::optional<boost::filesystem::path> default_directory();
+
+	/**
 	 * Record a filepath as being the last application file opened by the
 	 * user.
 	 *

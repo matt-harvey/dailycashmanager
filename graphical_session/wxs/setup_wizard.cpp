@@ -5,7 +5,10 @@
 #include "frame.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
+#include <jewel/optional.hpp>
 #include <wx/filedlg.h>
+#include <wx/gbsizer.h>
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -15,8 +18,11 @@
 #include <cassert>
 #include <string>
 
-
+using boost::optional;
+using jewel::value;
 using std::string;
+
+namespace filesystem = boost::filesystem;
 
 namespace phatbooks
 {
@@ -83,28 +89,95 @@ SetupWizard::FilepathPage::FilepathPage
 	wxWizardPageSimple(parent),
 	m_database_connection(p_database_connection),
 	m_top_sizer(0),
-	m_filename_ctrl(0)
+	m_filename_row_sizer(0),
+	m_directory_row_sizer(0),
+	m_filename_ctrl(0),
+	m_directory_ctrl(0)
 {
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
+	m_filename_row_sizer = new wxBoxSizer(wxHORIZONTAL);
+	m_directory_row_sizer = new wxBoxSizer(wxHORIZONTAL);
 
+	// First row
 	wxStaticText* filename_prompt = new wxStaticText
 	(	this,
 		wxID_ANY,
-		wxString("Enter name of new file:")
+		wxString("Name for new file:"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT
 	);
-	m_top_sizer->Add(filename_prompt, 0, 5);
+	m_top_sizer->Add(filename_prompt);
+	
+	// Second row
+	m_top_sizer->Add(m_filename_row_sizer);
 	wxString const ext = wx_extension();
 	m_filename_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
-		wxString("MyBudget") + ext,
+		wxString("MyBudget"),
 		wxDefaultPosition,
-		wxDefaultSize,
+		wxDLG_UNIT(this, wxSize(75, 10)),
 		0,  // style
 		wxDefaultValidator  // TODO We need a proper validator here
 	);
-	m_top_sizer->Add(m_filename_ctrl);	
-		
+	m_filename_row_sizer->Add(m_filename_ctrl);
+	wxStaticText* extension_text = new wxStaticText
+	(	this,
+		wxID_ANY,
+		ext,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT | wxALIGN_BOTTOM
+	);
+	m_filename_row_sizer->Add(extension_text);
+	
+	// Third row
+	m_top_sizer->AddSpacer(m_filename_ctrl->GetSize().y);
+
+	// Fourth row
+	wxStaticText* directory_prompt = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString("Folder where file should be saved:"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT
+	);
+	m_top_sizer->Add(directory_prompt);
+
+	// Fifth row
+	m_top_sizer->Add(m_directory_row_sizer);
+	wxString default_directory = wxEmptyString;
+	optional<filesystem::path> const maybe_directory =
+		Application::default_directory();
+	if (maybe_directory)
+	{
+		default_directory =
+			bstring_to_wx(std8_to_bstring(value(maybe_directory).string()));
+	}
+	m_directory_ctrl = new wxTextCtrl
+	(	this,
+		wxID_ANY,
+		default_directory,
+		wxDefaultPosition,
+		wxDLG_UNIT(this, wxSize(75, 10)),
+		0,  // style
+		wxDefaultValidator  // TODO We need a proper validator here
+	);
+	m_directory_row_sizer->Add(m_directory_ctrl);
+
+
+
+
+
+
+
+
+	
+
+	
+
 	// TODO Finish implementing
 	// ...
 			

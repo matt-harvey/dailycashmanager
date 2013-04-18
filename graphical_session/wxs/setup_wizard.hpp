@@ -69,7 +69,10 @@ public:
 private:
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;
+	wxBoxSizer* m_filename_row_sizer;
+	wxBoxSizer* m_directory_row_sizer;
 	wxTextCtrl* m_filename_ctrl;
+	wxTextCtrl* m_directory_ctrl;
 
 };  // SetupWizard::FilepathPage
 

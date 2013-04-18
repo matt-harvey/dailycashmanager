@@ -2,12 +2,16 @@
 #include "b_string.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
+#include <jewel/optional.hpp>
 #include <wx/config.h>
 #include <wx/string.h>
 #include <cassert>
+#include <cstdlib>
 #include <string>
 
 using boost::optional;
+using jewel::value;
+using std::getenv;
 using std::string;
 namespace filesystem = boost::filesystem;
 
@@ -76,6 +80,22 @@ Application::set_last_opened_file(filesystem::path const& p_path)
 	return;
 }
 
+
+optional<filesystem::path>
+Application::default_directory()
+{
+	optional<filesystem::path> ret;
+	if (char const* home_c = getenv("HOME"))  // assignment deliberate
+	{
+		filesystem::path const home(home_c);
+		if (filesystem::exists(filesystem::status(home)))
+		{
+			ret = filesystem::absolute(home);
+		}
+	}
+	assert (!ret || (filesystem::absolute(value(ret)) == value(ret)));
+	return ret;
+}
 
 wxConfig&
 Application::config()
