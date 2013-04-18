@@ -162,10 +162,10 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 	wxString const wx_directory	= page->m_directory_ctrl->GetValue();
 	filesystem::path const path =
 		wx_to_boost_filepath(wx_directory, wx_filename);
-	string filename_validity_error_message;
+	string filename_error_message;
 	bool const filename_is_valid = is_valid_filename
 	(	bstring_to_std8(wx_to_bstring(wx_filename)),
-		filename_validity_error_message,
+		filename_error_message,
 		false  // We don't want explicit extension
 	);
 	bool const directory_exists =
@@ -180,15 +180,24 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 		// TODO Do we need to display an error message here?
 		if (!filename_is_valid)
 		{
-			JEWEL_DEBUG_LOG << "Invalid filename: " << wx_filename << endl;
+			wxString const message =
+				bstring_to_wx(std8_to_bstring(filename_error_message));
+			assert (!message.IsEmpty());
+			wxMessageBox(message);
 		}
 		if (!directory_exists)
 		{
-			JEWEL_DEBUG_LOG << "Directory does not exist: " << wx_directory << endl;
+			wxMessageBox("Folder does not exist.");
 		}
 		if (filepath_already_exists)
 		{
-			JEWEL_DEBUG_LOG << path.string() << endl;
+			wxMessageBox
+			(	wxString("File named ") +
+				wx_filename +
+				wxString(" already exists in ") +
+				wx_directory +
+				wxString(".")
+			);
 		}
 		return false;
 	}
