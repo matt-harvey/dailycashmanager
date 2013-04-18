@@ -9,6 +9,8 @@
 #include <wx/sizer.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
+#include <wx/validate.h>
+#include <wx/window.h>
 #include <wx/wizard.h>
 
 namespace phatbooks
@@ -46,6 +48,8 @@ private:
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	
+	class FilepathValidator;
+
 	class FilepathPage;
 	class LocalizationPage;
 	class AccountPage;
@@ -53,6 +57,43 @@ private:
 
 };  // SetupWizard
 
+
+/**
+ * To facilitate validation of filepath entered in
+ * SetupWizard::FilepathPage.
+ *
+ * @todo The implementation of this is rather messy. Make it
+ * nicer.
+ */
+class SetupWizard::FilepathValidator: public wxValidator
+{
+public:
+	FilepathValidator(boost::filesystem::path* p_filepath);
+	FilepathValidator(FilepathValidator const& rhs);
+
+	/*** Functions inherited from wxValidator virtuals ***/
+
+	/**
+	 * @param parent should be passed the wxTextCtrl in
+	 * a FilepathPage,
+	 * that contains the filename entered by the user.
+	 * Then validator then validates this by ensuring that:\n
+	 * (a) it can be a valid filename; and\n
+	 * (b) the filepath consisting of text in \e parent, appended
+	 * to the directory also entered into the FilepathPage to which
+	 * the \e parent belongs, does not already exist.
+	 */
+	bool Validate(wxWindow* parent);
+
+	bool TransferFromWindow();
+
+	bool TransferToWindow();
+
+	wxObject* Clone() const; 
+
+private:
+	boost::filesystem::path* m_filepath;
+};
 
 
 /**
@@ -63,10 +104,13 @@ private:
 class SetupWizard::FilepathPage: public wxWizardPageSimple
 {
 public:
+	friend class FilepathValidator;
+
 	FilepathPage
 	(	SetupWizard* parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
+	boost::optional<boost::filesystem::path> selected_filepath() const;
 
 private:
 
@@ -76,10 +120,10 @@ private:
 	wxBoxSizer* m_top_sizer;
 	wxBoxSizer* m_filename_row_sizer;
 	wxBoxSizer* m_directory_row_sizer;
-	wxTextCtrl* m_filename_ctrl;
 	wxTextCtrl* m_directory_ctrl;
 	wxButton* m_directory_button;
-	boost::optional<boost::filesystem::path> m_selected_directory;
+	wxTextCtrl* m_filename_ctrl;
+	boost::filesystem::path* m_selected_filepath;
 
 	static int const s_directory_button_id = wxID_HIGHEST + 1;
 
