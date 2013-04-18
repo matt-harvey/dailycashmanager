@@ -166,7 +166,7 @@ App::elicit_existing_filepath()
 	}
 	wxFileDialog file_dialog
 	(	0,
-		wxEmptyString,
+		wxEmptyString,	
 		default_directory,
 		default_filename,
 		filepath_wildcard(),

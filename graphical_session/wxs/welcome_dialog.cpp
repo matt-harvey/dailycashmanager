@@ -77,19 +77,19 @@ WelcomeDialog::configure_buttons()
 	m_existing_file_button = new wxButton
 	(	this,
 		s_existing_file_button_id,
-		wxString("Open an existing ") + file_descriptor
+		wxString("Open an &existing ") + file_descriptor
 	);
 	m_new_file_button = new wxButton
 	(	this,
 		s_new_file_button_id,
-		wxString("Create a new ") + file_descriptor,
+		wxString("Create a &new ") + file_descriptor,
 		wxDefaultPosition,
 		m_existing_file_button->GetSize()
 	);
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,
-		wxString("Cancel"),
+		wxString("&Cancel"),
 		wxDefaultPosition,
 		m_existing_file_button->GetSize()
 	);

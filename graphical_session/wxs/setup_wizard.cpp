@@ -7,6 +7,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <jewel/optional.hpp>
+#include <wx/button.h>
+#include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include <wx/gbsizer.h>
 #include <wx/radiobox.h>
@@ -45,8 +47,9 @@ namespace
 
 
 
-
 /*** SetupWizard ***/
+
+
 
 SetupWizard::SetupWizard
 (	PhatbooksDatabaseConnection& p_database_connection
@@ -82,6 +85,17 @@ SetupWizard::run()
 
 /*** SetupWizard::FilepathPage ***/
 
+
+
+BEGIN_EVENT_TABLE(SetupWizard::FilepathPage, wxWizardPageSimple)
+	EVT_BUTTON
+	(	s_directory_button_id,
+		SetupWizard::FilepathPage::on_directory_button_click
+	)
+END_EVENT_TABLE()
+
+
+
 SetupWizard::FilepathPage::FilepathPage
 (	SetupWizard* parent,
 	PhatbooksDatabaseConnection& p_database_connection
@@ -92,11 +106,14 @@ SetupWizard::FilepathPage::FilepathPage
 	m_filename_row_sizer(0),
 	m_directory_row_sizer(0),
 	m_filename_ctrl(0),
-	m_directory_ctrl(0)
+	m_directory_ctrl(0),
+	m_directory_button(0)
 {
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
 	m_filename_row_sizer = new wxBoxSizer(wxHORIZONTAL);
 	m_directory_row_sizer = new wxBoxSizer(wxHORIZONTAL);
+
+	wxSize const dlg_unit_size(80, 11);
 
 	// First row
 	wxStaticText* filename_prompt = new wxStaticText
@@ -117,7 +134,7 @@ SetupWizard::FilepathPage::FilepathPage
 		wxID_ANY,
 		wxString("MyBudget"),
 		wxDefaultPosition,
-		wxDLG_UNIT(this, wxSize(75, 10)),
+		wxDLG_UNIT(this, dlg_unit_size),
 		0,  // style
 		wxDefaultValidator  // TODO We need a proper validator here
 	);
@@ -161,31 +178,56 @@ SetupWizard::FilepathPage::FilepathPage
 		wxID_ANY,
 		default_directory,
 		wxDefaultPosition,
-		wxDLG_UNIT(this, wxSize(75, 10)),
-		0,  // style
+		wxDLG_UNIT(this, dlg_unit_size),
+		wxTE_READONLY,  // style
 		wxDefaultValidator  // TODO We need a proper validator here
 	);
+	m_directory_button = new wxButton
+	(	this,
+		s_directory_button_id,
+		wxString("&Browse..."),
+		wxDefaultPosition,
+		wxSize(wxDefaultSize.x, m_directory_ctrl->GetSize().y)
+	);
 	m_directory_row_sizer->Add(m_directory_ctrl);
+	m_directory_row_sizer->Add(m_directory_button, 0, wxLEFT, 5);
 
-
-
-
-
-
-
-
-	
-
-	
-
-	// TODO Finish implementing
-	// ...
-			
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 }
 
 
+void
+SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
+{
+	wxString default_directory = m_directory_ctrl->GetValue();
+	filesystem::path const default_path
+	(	bstring_to_std8(wx_to_bstring(default_directory))
+	);
+	if (!filesystem::exists(filesystem::status(default_path)))
+	{
+		default_directory = wxEmptyString;
+	}
+	else
+	{
+		assert (filesystem::absolute(default_path) == default_path);
+	}
+	wxDirDialog directory_dialog
+	(	this,
+		wxEmptyString,
+		default_directory,
+		wxDD_NEW_DIR_BUTTON
+	);
+	if (directory_dialog.ShowModal() == wxID_OK)
+	{
+		wxString const wx_directory = directory_dialog.GetPath();
+		m_selected_directory =
+			filesystem::path(bstring_to_std8(wx_to_bstring(wx_directory)));
+		m_directory_ctrl->ChangeValue(wx_directory);
+	}
+	(void)event;  // Silence compiler warning about unused parameter.
+	return;
+}
 
 
 
