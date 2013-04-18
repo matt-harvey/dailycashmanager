@@ -2,6 +2,7 @@
 #include "b_string.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
+#include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
 #include <wx/config.h>
 #include <wx/string.h>
@@ -85,9 +86,18 @@ optional<filesystem::path>
 Application::default_directory()
 {
 	optional<filesystem::path> ret;
-	if (char const* home_c = getenv("HOME"))  // assignment deliberate
+#	if JEWEL_ON_WINDOWS
+	char const* win_home_drive = getenv("HOMEDRIVE");
+	char const* win_home_path = getenv("HOMEPATH");
+	if (win_home_drive && win_home_path)
 	{
-		filesystem::path const home(home_c);
+		string const home_str =
+			string(win_home_drive) + string(win_home_path);
+#	else
+	if (char const* home_str = getenv("HOME"))  // assignment deliberate
+	{
+#	endif
+		filesystem::path const home(home_str);
 		if (filesystem::exists(filesystem::status(home)))
 		{
 			ret = filesystem::absolute(home);
