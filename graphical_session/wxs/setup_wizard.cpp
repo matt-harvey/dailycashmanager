@@ -115,8 +115,8 @@ SetupWizard::run()
 		new LocalizationPage(this, m_database_connection);
 	AccountPage* account_page =
 		new AccountPage(this, m_database_connection);
-	filepath_page->SetNext(localization_page);
-	localization_page->SetNext(account_page);
+	wxWizardPageSimple::Chain(filepath_page, localization_page);
+	wxWizardPageSimple::Chain(localization_page, account_page);
 	RunWizard(filepath_page);
 }
 
