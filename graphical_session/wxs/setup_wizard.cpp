@@ -100,24 +100,24 @@ SetupWizard::SetupWizard
 		wxDefaultPosition,
 		wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER
 	),
-	m_database_connection(p_database_connection)
+	m_database_connection(p_database_connection),
+	m_filepath_page(0),
+	m_localization_page(0),
+	m_account_page(0)
 {
 	assert (!m_database_connection.is_valid());
+	m_filepath_page = new FilepathPage(this, m_database_connection);
+	m_localization_page = new LocalizationPage(this, m_database_connection);
+	m_account_page = new AccountPage(this, m_database_connection);
+	wxWizardPageSimple::Chain(m_filepath_page, m_localization_page);
+	wxWizardPageSimple::Chain(m_localization_page, m_account_page);
 }
 
 
 void
 SetupWizard::run()
 {
-	FilepathPage* filepath_page =
-		new FilepathPage(this, m_database_connection);
-	LocalizationPage* localization_page =
-		new LocalizationPage(this, m_database_connection);
-	AccountPage* account_page =
-		new AccountPage(this, m_database_connection);
-	wxWizardPageSimple::Chain(filepath_page, localization_page);
-	wxWizardPageSimple::Chain(localization_page, account_page);
-	RunWizard(filepath_page);
+	RunWizard(m_filepath_page);
 }
 
 

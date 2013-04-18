@@ -46,15 +46,17 @@ public:
 
 private:
 
-	PhatbooksDatabaseConnection& m_database_connection;
-	
 	class FilepathValidator;
 
 	class FilepathPage;
 	class LocalizationPage;
 	class AccountPage;
 
-
+	PhatbooksDatabaseConnection& m_database_connection;
+	FilepathPage* m_filepath_page;
+	LocalizationPage* m_localization_page;
+	AccountPage* m_account_page;
+	
 };  // SetupWizard
 
 
