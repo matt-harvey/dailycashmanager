@@ -1,8 +1,9 @@
+#include "commodity_impl.hpp"
 #include "balance_cache.hpp"
 #include "b_string.hpp"
-#include "commodity_impl.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "b_string.hpp"
+#include "commodity.hpp"
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -45,6 +46,7 @@ namespace phatbooks
 {
 
 
+
 void CommodityImpl::setup_tables
 (	PhatbooksDatabaseConnection& dbc
 )
@@ -64,28 +66,8 @@ void CommodityImpl::setup_tables
 		")"
 	);
 	statement.step_final();
-
-#	ifndef PHATBOOKS_EXPOSE_COMMODITY
-		// Populate with default commodity.
-		Commodity default_commodity(dbc);
-		default_commodity.set_abbreviation(default_commodity_abbreviation());
-		default_commodity.set_name("default commodity name");
-		default_commodity.set_description("default commodity description");
-		default_commodity.set_precision(2);
-		default_commodity.set_multiplier_to_base(Decimal("1"));
-		default_commodity.save();
-#	endif
-
 	return;
 }
-
-#ifndef PHATBOOKS_EXPOSE_COMMODITY
-	BString
-	CommodityImpl::default_commodity_abbreviation()
-	{
-		return "default commodity abbreviation";
-	}
-#endif
 
 CommodityImpl::Id
 CommodityImpl::id_for_abbreviation

@@ -69,6 +69,7 @@ using sqloxx::SQLStatement;
 using sqloxx::SQLiteException;
 using std::endl;
 using std::list;
+using std::logic_error;
 using std::runtime_error;
 using std::string;
 
@@ -151,15 +152,15 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 	delete m_account_map;
 	m_account_map = 0;
 
-	delete m_commodity_map;
-	m_commodity_map = 0;
-
 	delete m_permanent_entity_data;
 	m_permanent_entity_data = 0;
+
+	delete m_commodity_map;
+	m_commodity_map = 0;
 }
 
 void
-PhatbooksDatabaseConnection::load_permanent_entity_data()
+PhatbooksDatabaseConnection::load_creation_date()
 {
 	SQLStatement statement
 	(	*this,
@@ -173,30 +174,68 @@ PhatbooksDatabaseConnection::load_permanent_entity_data()
 	return;
 }
 
+void
+PhatbooksDatabaseConnection::load_default_commodity()
+{
+	SQLStatement statement
+	(	*this,
+		"select default_commodity_id from entity_data"
+	);
+	statement.step();
+	Commodity commodity
+	(	*this,
+		statement.extract<Commodity::Id>(0)
+	);
+	m_permanent_entity_data->set_default_commodity(commodity);
+	return;
+}
+
 
 void
 PhatbooksDatabaseConnection::do_setup()
 {
 	if (!tables_are_configured())
 	{
+		JEWEL_DEBUG_LOG_LOCATION;
+#		ifndef PHATBOOKS_EXPOSE_COMMODITY
+			Commodity commodity(*this);
+			commodity.set_abbreviation("default commodity abbreviation");
+			commodity.set_name("default commodity name");
+			commodity.set_description("default commodity description");
+			commodity.set_precision(2);
+			commodity.set_multiplier_to_base(Decimal("1"));
+			set_default_commodity(commodity);
+#		endif
+		JEWEL_DEBUG_LOG_LOCATION;
 		DatabaseTransaction transaction(*this);
+		JEWEL_DEBUG_LOG_LOCATION;
 		setup_boolean_table();
-		setup_entity_table();
+		JEWEL_DEBUG_LOG_LOCATION;
 		Commodity::setup_tables(*this);
+		JEWEL_DEBUG_LOG_LOCATION;
+		setup_entity_table();
+		JEWEL_DEBUG_LOG_LOCATION;
+		save_default_commodity();
 		Account::setup_tables(*this);
 		ProtoJournal::setup_tables(*this);
 		DraftJournal::setup_tables(*this);
 		OrdinaryJournal::setup_tables(*this);
 		Repeater::setup_tables(*this);
+		JEWEL_DEBUG_LOG_LOCATION;
 		BudgetItem::setup_tables(*this);
+		JEWEL_DEBUG_LOG_LOCATION;
 		AmalgamatedBudget::setup_tables(*this);
+		JEWEL_DEBUG_LOG_LOCATION;
 		Entry::setup_tables(*this);
+		JEWEL_DEBUG_LOG_LOCATION;
 		BalanceCache::setup_tables(*this);
+		JEWEL_DEBUG_LOG_LOCATION;
 		mark_tables_as_configured();
 		transaction.commit();
 	}
 	assert (tables_are_configured());
-	load_permanent_entity_data();
+	load_creation_date();
+	load_default_commodity();
 	perform_integrity_checks();
 	return;
 }
@@ -260,6 +299,31 @@ PhatbooksDatabaseConnection::balancing_account() const
 	return m_budget->balancing_account();
 }
 
+
+Commodity
+PhatbooksDatabaseConnection::default_commodity() const
+{
+	return m_permanent_entity_data->default_commodity();
+}
+
+
+void
+PhatbooksDatabaseConnection::set_default_commodity
+(	Commodity const& p_commodity
+)
+{
+	assert (m_permanent_entity_data);
+
+	// TODO Make this atomic
+	m_permanent_entity_data->set_default_commodity(p_commodity);
+	if (is_valid() && tables_are_configured())
+	{
+		save_default_commodity();
+	}
+	return;
+}
+
+
 DraftJournal
 PhatbooksDatabaseConnection::budget_instrument() const
 {
@@ -280,6 +344,19 @@ PhatbooksDatabaseConnection::mark_tables_as_configured()
 }
 
 void
+PhatbooksDatabaseConnection::save_default_commodity()
+{
+	// TODO Make this atomic
+	default_commodity().save();
+	SQLStatement statement
+	(	*this,
+		"update entity_data set default_commodity_id = :p"
+	);
+	statement.bind(":p", default_commodity().id());
+	statement.step_final();
+}
+
+void
 PhatbooksDatabaseConnection::setup_entity_table()
 {
 	// Entity table represents entity level data
@@ -289,7 +366,11 @@ PhatbooksDatabaseConnection::setup_entity_table()
 	(	*this,
 		"create table entity_data"
 		"("
-			"creation_date integer not null"
+			"creation_date integer not null, "
+
+			// Can be null: we want to be able to populate this
+			// table before we have created any Commodities.
+			"default_commodity_id references commodities"
 		")"
 	);
 	table_creation_statement.step_final();
@@ -302,6 +383,7 @@ PhatbooksDatabaseConnection::setup_entity_table()
 	populator.bind(":creation_date", julian_int(today));
 	populator.step_final();
 	m_permanent_entity_data->set_creation_date(today);
+
 	return;
 }
 
@@ -413,10 +495,32 @@ BudgetAttorney::budget
 
 // PermanentEntityData
 
+
+PhatbooksDatabaseConnection::PermanentEntityData::PermanentEntityData():
+	m_default_commodity(0)
+{
+}
+
+PhatbooksDatabaseConnection::PermanentEntityData::~PermanentEntityData()
+{
+	delete m_default_commodity;
+	m_default_commodity = 0;
+}
+
 gregorian::date
 PhatbooksDatabaseConnection::PermanentEntityData::creation_date() const
 {
 	return value(m_creation_date);
+}
+
+Commodity
+PhatbooksDatabaseConnection::PermanentEntityData::default_commodity() const
+{
+	if (!m_default_commodity)
+	{
+		throw std::logic_error("Default commodity has not been set.");
+	}
+	return *m_default_commodity;
 }
 
 void
@@ -434,8 +538,16 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_creation_date
 	return;
 }
 
-
-
+void
+PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
+(	Commodity const& p_commodity
+)
+{
+	if (m_default_commodity) *m_default_commodity = p_commodity;
+	else m_default_commodity = new Commodity(p_commodity);
+	return;
+}
+		
 
 // Getters for IdentityMaps
 

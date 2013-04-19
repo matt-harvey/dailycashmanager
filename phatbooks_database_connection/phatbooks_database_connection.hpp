@@ -43,6 +43,7 @@ class Account;
 class AccountImpl;
 class BalanceCache;
 class BudgetItemImpl;
+class Commodity;
 class CommodityImpl;
 class DraftJournal;
 class DraftJournalImpl;
@@ -120,6 +121,19 @@ public:
 	 * in the budget_instrument().
 	 */
 	Account balancing_account() const;
+
+	/**
+	 * @returns the default Commodity for the entity represented by
+	 * the PhatbooksDatabaseConnection.
+	 *
+	 * @todo It sucks that this is not const.
+	 */
+	Commodity default_commodity() const;
+
+	/**
+	 * Set the default commodity for the entity to p_commodity.
+	 */
+	void set_default_commodity(Commodity const& p_commodity);
 
 	/**
 	 * @returns the DraftJournal that serves as the "instrument"
@@ -239,27 +253,40 @@ private:
 	 */
 	void do_setup();
 
-
 	void setup_entity_table();
 	bool tables_are_configured();
 	void mark_tables_as_configured();
 
-
+	/**
+	 * Persist to the database the default Commodity. Note that as well
+	 * as calling save() on the default Commodity, this also stores in
+	 * the database the fact that \e this Commodity is the \e default
+	 * Commodity.
+	 */
+	void save_default_commodity();
 
 	/**
 	 * Store certain data relating to the accounting entity, where the
 	 * data is unchanging and stored permanently in the database - we
 	 * just load it here for easy access. (Note, the main reason for
-	 * this structure is to enable the getter for creation_date to be
-	 * const the the level of PhatbooksDatabaseConnection, so we
-	 * have to load it separately as we can't create a SQLStatement
+	 * this structure is to enable the getters for these data to be
+	 * const: we have to load it separately as we can't create a SQLStatement
 	 * on a const DatabaseConnection. Se we load it separately
-	 * here as part of setup.
+	 * here as part of setup.)
+	 *
+	 * Note an instance of PermanentEntityData has no connection to
+	 * a database; it is \e just a cache; the PhatbooksDatabaseConnection
+	 * must separately manage the persistence of this data to the
+	 * database.
 	 */
 	class PermanentEntityData
 	{
 	public:
+		PermanentEntityData();
+		~PermanentEntityData();
+
 		boost::gregorian::date creation_date() const;
+		Commodity default_commodity() const;
 		
 		/**
 		 * @throws EntityCreationDateException if we try to set
@@ -268,14 +295,23 @@ private:
 		 */
 		void set_creation_date(boost::gregorian::date const& p_date);
 
+		void set_default_commodity(Commodity const& p_commodity);
+
 	private:
 		boost::optional<boost::gregorian::date> m_creation_date;
+		Commodity* m_default_commodity;
+
 	};
 
 	/**
-	 * Load PermanentEntityData from the database into memory.
+	 * Load creation date from the database into memory.
 	 */
-	void load_permanent_entity_data();
+	void load_creation_date();
+
+	/**
+	 * Load default commodity from the database into memory.
+	 */
+	void load_default_commodity();
 
 	PermanentEntityData* m_permanent_entity_data;
 

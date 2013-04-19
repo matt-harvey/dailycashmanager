@@ -2599,9 +2599,7 @@ TextSession::elicit_account()
 			}
 		}
 #	else
-		account.set_commodity
-		(	Commodity::default_commodity(database_connection())
-		);
+		account.set_commodity(database_connection().default_commodity());
 #	endif  // PHATBOOKS_EXPOSE_COMMODITY
 
 	// Get account type

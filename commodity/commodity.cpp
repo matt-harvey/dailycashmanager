@@ -67,19 +67,6 @@ Commodity::Commodity
 {
 }
 
-#ifndef PHATBOOKS_EXPOSE_COMMODITY
-	Commodity
-	Commodity::default_commodity
-	(	PhatbooksDatabaseConnection& dbc
-	)
-	{
-		return Commodity
-		(	dbc,
-			CommodityImpl::default_commodity_abbreviation()
-		);
-	}
-#endif
-
 
 bool
 Commodity::exists_with_abbreviation

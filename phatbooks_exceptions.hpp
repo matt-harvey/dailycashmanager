@@ -107,7 +107,6 @@ JEWEL_DERIVED_EXCEPTION(InvalidRepeaterDateException, PhatbooksException);
  */
 JEWEL_DERIVED_EXCEPTION(EntityCreationDateException, PhatbooksException);
 
-
 /**
  * Exception to be thrown when something purporting to be the name of
  * an Account is not in fact the name of an Account.

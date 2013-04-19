@@ -108,7 +108,7 @@ DefaultAccountGenerator::initialize_default_accounts()
 	// (but note we don't save them - saving them will be at the discretion
 	// of the user, and will be done in client code closer to the UI).
 	Commodity const default_commodity =
-		Commodity::default_commodity(m_database_connection);
+		m_database_connection.default_commodity();
 	vector<ProtoAccount>::size_type sz = pv.size();
 	m_accounts->reserve(sz);
 	for (vector<ProtoAccount>::size_type i = 0; i != sz; ++i)

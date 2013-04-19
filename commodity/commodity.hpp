@@ -64,12 +64,6 @@ public:
 		Id p_id
 	);
 
-#	ifndef PHATBOOKS_EXPOSE_COMMODITY
-		static Commodity default_commodity
-		(	PhatbooksDatabaseConnection& dbc
-		);
-#	endif
-
 	/**
 	 * Faster way of creating a Commodity, but does not check
 	 * whether id exists.
