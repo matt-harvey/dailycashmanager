@@ -258,21 +258,14 @@ private:
 	void mark_tables_as_configured();
 
 	/**
-	 * Persist to the database the default Commodity. Note that as well
-	 * as calling save() on the default Commodity, this also stores in
-	 * the database the fact that \e this Commodity is the \e default
-	 * Commodity.
-	 */
-	void save_default_commodity();
-
-	/**
-	 * Store certain data relating to the accounting entity, where the
-	 * data is unchanging and stored permanently in the database - we
-	 * just load it here for easy access. (Note, the main reason for
-	 * this structure is to enable the getters for these data to be
-	 * const: we have to load it separately as we can't create a SQLStatement
+	 * Cache certain data relating to the accounting entity, where the
+	 * data is generally unchanging and stored permanently in the database -
+	 * we just load it here for (a) quick access, but also (b) so that
+	 * the getters for these data, in the PhatbooksDatabaseConnection itself -
+	 * can be const: we have to load them separately as we can't create a
+	 * SQLStatement
 	 * on a const DatabaseConnection. Se we load it separately
-	 * here as part of setup.)
+	 * here as part of do_setup().
 	 *
 	 * Note an instance of PermanentEntityData has no connection to
 	 * a database; it is \e just a cache; the PhatbooksDatabaseConnection
@@ -299,6 +292,9 @@ private:
 
 	private:
 		boost::optional<boost::gregorian::date> m_creation_date;
+
+		// A raw pointer is used here to avoid having to #include
+		// commodity.hpp.
 		Commodity* m_default_commodity;
 
 	};
@@ -312,6 +308,14 @@ private:
 	 * Load default commodity from the database into memory.
 	 */
 	void load_default_commodity();
+
+	/**
+	 * Persist to the database the default Commodity. Note that as well
+	 * as calling save() on the default Commodity, this also stores in
+	 * the database the fact that \e this Commodity is the \e default
+	 * Commodity.
+	 */
+	void save_default_commodity();
 
 	PermanentEntityData* m_permanent_entity_data;
 

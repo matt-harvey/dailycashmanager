@@ -196,7 +196,6 @@ PhatbooksDatabaseConnection::do_setup()
 {
 	if (!tables_are_configured())
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
 #		ifndef PHATBOOKS_EXPOSE_COMMODITY
 			Commodity commodity(*this);
 			commodity.set_abbreviation("default commodity abbreviation");
@@ -206,30 +205,20 @@ PhatbooksDatabaseConnection::do_setup()
 			commodity.set_multiplier_to_base(Decimal("1"));
 			set_default_commodity(commodity);
 #		endif
-		JEWEL_DEBUG_LOG_LOCATION;
 		DatabaseTransaction transaction(*this);
-		JEWEL_DEBUG_LOG_LOCATION;
 		setup_boolean_table();
-		JEWEL_DEBUG_LOG_LOCATION;
 		Commodity::setup_tables(*this);
-		JEWEL_DEBUG_LOG_LOCATION;
 		setup_entity_table();
-		JEWEL_DEBUG_LOG_LOCATION;
 		save_default_commodity();
 		Account::setup_tables(*this);
 		ProtoJournal::setup_tables(*this);
 		DraftJournal::setup_tables(*this);
 		OrdinaryJournal::setup_tables(*this);
 		Repeater::setup_tables(*this);
-		JEWEL_DEBUG_LOG_LOCATION;
 		BudgetItem::setup_tables(*this);
-		JEWEL_DEBUG_LOG_LOCATION;
 		AmalgamatedBudget::setup_tables(*this);
-		JEWEL_DEBUG_LOG_LOCATION;
 		Entry::setup_tables(*this);
-		JEWEL_DEBUG_LOG_LOCATION;
 		BalanceCache::setup_tables(*this);
-		JEWEL_DEBUG_LOG_LOCATION;
 		mark_tables_as_configured();
 		transaction.commit();
 	}
