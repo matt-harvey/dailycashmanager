@@ -112,7 +112,7 @@ SetupWizard::SetupWizard
 		wx_app_name() + wxString(" Setup Wizard"),
 		wxBitmap(icon_xpm),  // TODO Put a proper image here
 		wxDefaultPosition,
-		wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER
+		wxDEFAULT_DIALOG_STYLE | wxFULL_REPAINT_ON_RESIZE
 	),
 	m_database_connection(p_database_connection),
 	m_filepath_page(0),
@@ -125,6 +125,7 @@ SetupWizard::SetupWizard
 	m_account_page = new AccountPage(this, m_database_connection);
 	wxWizardPageSimple::Chain(m_filepath_page, m_localization_page);
 	wxWizardPageSimple::Chain(m_localization_page, m_account_page);
+	GetPageAreaSizer()->Add(m_filepath_page);
 }
 
 
@@ -304,7 +305,7 @@ SetupWizard::FilepathPage::FilepathPage
 	m_filename_row_sizer = new wxBoxSizer(wxHORIZONTAL);
 	m_directory_row_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-	wxSize const dlg_unit_size(80, 11);
+	wxSize const dlg_unit_size(100, 13);
 
 	// First row
 	wxStaticText* directory_prompt = new wxStaticText
@@ -344,7 +345,7 @@ SetupWizard::FilepathPage::FilepathPage
 		wxDefaultPosition,
 		wxSize(wxDefaultSize.x, m_directory_ctrl->GetSize().y)
 	);
-	m_directory_row_sizer->Add(m_directory_ctrl);
+	m_directory_row_sizer->Add(m_directory_ctrl, wxSizerFlags(1).Expand());
 	m_directory_row_sizer->Add(m_directory_button, 0, wxLEFT, 5);
 
 	// Third row
@@ -373,7 +374,7 @@ SetupWizard::FilepathPage::FilepathPage
 		0,  // style
 		FilepathValidator(m_selected_filepath)
 	);
-	m_filename_row_sizer->Add(m_filename_ctrl);
+	m_filename_row_sizer->Add(m_filename_ctrl, wxSizerFlags(1).Expand());
 	wxStaticText* extension_text = new wxStaticText
 	(	this,
 		wxID_ANY,
