@@ -58,9 +58,9 @@ namespace
 	)
 	{
 		filesystem::path const directory =
-			filesystem::path(bstring_to_std8(wx_to_bstring(wx_directory)));
+			filesystem::path(wx_to_std8(wx_directory));
 		filesystem::path const filename =
-			filesystem::path(bstring_to_std8(wx_to_bstring(wx_filename)));
+			filesystem::path(wx_to_std8(wx_filename));
 		filesystem::path ret = directory;
 		ret /= filename;
 		return ret;
@@ -68,9 +68,7 @@ namespace
 
 	wxString with_extension(wxString const& s)
 	{
-		filesystem::path const path
-		(	bstring_to_std8(wx_to_bstring(s))
-		);
+		filesystem::path const path(wx_to_std8(s));
 		if
 		(	std8_to_bstring(path.extension().string()) ==
 			Application::filename_extension()
@@ -79,6 +77,22 @@ namespace
 			return s;
 		}
 		return s + wxString(bstring_to_wx(Application::filename_extension()));
+	}
+
+	wxString without_extension(wxString const& s)
+	{
+		filesystem::path const path(wx_to_std8(s));
+		if
+		(	std8_to_bstring(path.extension().string()) ==
+			Application::filename_extension()
+		)
+		{
+			if (path.extension() != path)
+			{
+				return std8_to_wx(path.stem().string());
+			}
+		}
+		return s;
 	}
 
 }  // end anonymous namespace
@@ -164,7 +178,7 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 		wx_to_boost_filepath(wx_directory, wx_filename);
 	string filename_error_message;
 	bool const filename_is_valid = is_valid_filename
-	(	bstring_to_std8(wx_to_bstring(wx_filename)),
+	(	wx_to_std8(wx_filename),
 		filename_error_message,
 		false  // We don't want explicit extension
 	);
@@ -180,8 +194,7 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 		// TODO Do we need to display an error message here?
 		if (!filename_is_valid)
 		{
-			wxString const message =
-				bstring_to_wx(std8_to_bstring(filename_error_message));
+			wxString const message = std8_to_wx(filename_error_message);
 			assert (!message.IsEmpty());
 			wxMessageBox(message);
 		}
@@ -243,7 +256,9 @@ SetupWizard::FilepathValidator::TransferToWindow()
 			return false;
 		}
 		text_ctrl->SetValue
-		(	bstring_to_wx(std8_to_bstring(m_filepath->filename().string()))
+		(	without_extension
+			(	std8_to_wx(m_filepath->filename().string())
+			)
 		);
 	}
 	return true;
@@ -309,8 +324,7 @@ SetupWizard::FilepathPage::FilepathPage
 		Application::default_directory();
 	if (maybe_directory)
 	{
-		default_directory =
-			bstring_to_wx(std8_to_bstring(value(maybe_directory).string()));
+		default_directory = std8_to_wx(value(maybe_directory).string());
 		assert (!m_selected_filepath);
 		m_selected_filepath = new filesystem::path(value(maybe_directory));
 	}
@@ -390,9 +404,7 @@ void
 SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 {
 	wxString default_directory = m_directory_ctrl->GetValue();
-	filesystem::path const default_path
-	(	bstring_to_std8(wx_to_bstring(default_directory))
-	);
+	filesystem::path const default_path(wx_to_std8(default_directory));
 	if (!filesystem::exists(filesystem::status(default_path)))
 	{
 		default_directory = wxEmptyString;

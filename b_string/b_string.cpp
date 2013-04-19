@@ -10,21 +10,6 @@ namespace phatbooks
 {
 
 
-namespace
-{
-
-	wxString std8_to_wx(string const& s)
-	{
-		return wxString::FromUTF8(s.c_str());
-	}
-
-	string wx_to_std8(wxString const& wxs)
-	{
-		return string(wxs.utf8_str());
-	}
-
-}  // end anonymous namespace
-
 
 std::string
 bstring_to_std8(BString const& bs)
@@ -69,6 +54,19 @@ wx_to_bstring(wxString const& wxs)
 #	endif
 }
 
+
+wxString
+std8_to_wx(string const& s)
+{
+	return wxString::FromUTF8(s.c_str());
+}
+
+
+string
+wx_to_std8(wxString const& wxs)
+{
+	return string(wxs.utf8_str());
+}
 
 
 BString

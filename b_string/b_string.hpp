@@ -53,6 +53,16 @@ wxString bstring_to_wx(BString const& wxs);
 BString wx_to_bstring(wxString const& wxs);
 
 /**
+ * Convert from std::string to wxString.
+ */
+wxString std8_to_wx(std::string const& s);
+
+/**
+ * Convert from wxString to std::string.
+ */
+std::string wx_to_std8(wxString const& wxs);
+
+/**
  * @returns a BString that is the bs converted to lower-case.
  *
  * @todo Determine if this respects locale and Unicode.
