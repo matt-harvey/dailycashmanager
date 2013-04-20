@@ -1,0 +1,162 @@
+Currency,Symbol,Precision
+Afghan afghani ,AFN ,2
+Albanian lek ,ALL ,2
+Algerian dinar ,DZD ,2
+Angolan kwanza ,AOA ,2
+Argentine peso ,ARS ,2
+Armenian dram ,AMD ,2
+Aruban florin ,AWG ,2
+Australian dollar ,AUD ,2
+Azerbaijani manat ,AZN ,2
+Bahamian dollar ,BSD ,2
+Bahraini dinar ,BHD ,3
+Bangladeshi taka ,BDT ,2
+Barbadian dollar ,BBD ,2
+Belarusian ruble ,BYR ,2
+Belize dollar ,BZD ,2
+Bermudian dollar ,BMD ,2
+Bhutanese ngultrum ,BTN ,2
+Bolivian boliviano ,BOB ,2
+Bosnia and Herzegovina convertible mark ,BAM ,2
+Botswana pula ,BWP ,2
+Brazilian real ,BRL ,2
+British pound ,GBP ,2
+Brunei dollar ,BND ,2
+Bulgarian lev ,BGN ,2
+Burmese kyat ,MMK ,2
+Burundian franc ,BIF ,2
+Cambodian riel ,KHR ,2
+Canadian dollar ,CAD ,2
+Cape Verdean escudo ,CVE ,2
+Cayman Islands dollar ,KYD ,2
+Central African CFA franc ,XAF ,2
+CFP franc ,XPF ,2
+Chilean peso ,CLP ,2
+Chinese yuan ,CNY ,2
+Colombian peso ,COP ,2
+Comorian franc ,KMF ,2
+Congolese franc ,CDF ,2
+Costa Rican colón ,CRC ,2
+Croatian kuna ,HRK ,2
+Cuban convertible peso ,CUC ,2
+Cuban peso ,CUP ,2
+Czech koruna ,CZK ,2
+Danish krone ,DKK ,2
+Djiboutian franc ,DJF ,2
+Dominican peso ,DOP ,2
+East Caribbean dollar ,XCD ,2
+Egyptian pound ,EGP ,2
+Eritrean nakfa ,ERN ,2
+Ethiopian birr ,ETB ,2
+Euro ,EUR ,2
+Falkland Islands pound ,FKP ,2
+Fijian dollar ,FJD ,2
+Gambian dalasi ,GMD ,2
+Georgian lari ,GEL ,2
+Ghana cedi ,GHS ,2
+Gibraltar pound ,GIP ,2
+Guatemalan quetzal ,GTQ ,2
+Guernsey pound ,GGP,2
+Guinean franc ,GNF ,2
+Guyanese dollar ,GYD ,2
+Haitian gourde ,HTG ,2
+Honduran lempira ,HNL ,2
+Hong Kong dollar ,HKD ,2
+Hungarian forint ,HUF ,2
+Icelandic króna ,ISK ,2
+Indian rupee ,INR ,2
+Indonesian rupiah ,IDR ,2
+Iranian rial ,IRR ,2
+Iraqi dinar ,IQD ,3
+Israeli new shekel ,ILS ,2
+Jamaican dollar ,JMD ,2
+Japanese yen ,JPY ,2
+Jersey pound ,JEP,2
+Jordanian dinar ,JOD ,2
+Kazakhstani tenge ,KZT ,2
+Kenyan shilling ,KES ,2
+Kuwaiti dinar ,KWD ,3
+Kyrgyzstani som ,KGS ,2
+Lao kip ,LAK ,2
+Latvian lats ,LVL ,2
+Lebanese pound ,LBP ,2
+Lesotho loti ,LSL ,2
+Liberian dollar ,LRD ,2
+Libyan dinar ,LYD ,3
+Lithuanian litas ,LTL ,2
+Macanese pataca ,MOP ,2
+Macedonian denar ,MKD ,2
+Malawian kwacha ,MWK ,2
+Malaysian ringgit ,MYR ,2
+Maldivian rufiyaa ,MVR ,2
+Manx pound ,IMP,2
+Mauritian rupee ,MUR ,2
+Mexican peso ,MXN ,2
+Moldovan leu ,MDL ,2
+Mongolian tögrög ,MNT ,2
+Moroccan dirham ,MAD ,2
+Mozambican metical ,MZN ,2
+Namibian dollar ,NAD ,2
+Nepalese rupee ,NPR ,2
+Netherlands Antillean guilder ,ANG ,2
+New Taiwan dollar ,TWD ,2
+New Zealand dollar ,NZD ,2
+Nicaraguan córdoba ,NIO ,2
+Nigerian naira ,NGN ,2
+North Korean won ,KPW ,2
+Norwegian krone ,NOK ,2
+Omani rial ,OMR ,3
+Pakistani rupee ,PKR ,2
+Panamanian balboa ,PAB ,2
+Papua New Guinean kina ,PGK ,2
+Paraguayan guaraní ,PYG ,2
+Peruvian nuevo sol ,PEN ,2
+Philippine peso ,PHP ,2
+Polish złoty ,PLN ,2
+Qatari riyal ,QAR ,2
+Romanian leu ,RON ,2
+Russian ruble ,RUB ,2
+Rwandan franc ,RWF ,2
+Saint Helena pound ,SHP ,2
+Salvadoran colón ,SVC ,2
+Samoan tālā ,WST ,2
+São Tomé and Príncipe dobra ,STD ,2
+Saudi riyal ,SAR ,2
+Serbian dinar ,RSD ,2
+Seychellois rupee ,SCR ,2
+Sierra Leonean leone ,SLL ,2
+Singapore dollar ,SGD ,2
+Solomon Islands dollar ,SBD ,2
+Somali shilling ,SOS ,2
+South African rand ,ZAR ,2
+South Korean won ,KRW ,2
+South Sudanese pound ,SSP ,2
+Sri Lankan rupee ,LKR ,2
+Sudanese pound ,SDG ,2
+Surinamese dollar ,SRD ,2
+Swazi lilangeni ,SZL ,2
+Swedish krona ,SEK ,2
+Swiss franc ,CHF ,2
+Syrian pound ,SYP ,2
+Tajikistani somoni ,TJS ,2
+Tanzanian shilling ,TZS ,2
+Thai baht ,THB ,2
+Tongan paʻanga ,TOP ,2
+Transnistrian ruble ,PRB,2
+Trinidad and Tobago dollar ,TTD ,2
+Tunisian dinar ,TND ,3
+Turkish lira ,TRY ,2
+Turkmenistan manat ,TMT ,2
+Ugandan shilling ,UGX ,2
+Ukrainian hryvnia ,UAH ,2
+United Arab Emirates dirham ,AED ,2
+United States dollar ,USD ,2
+Uruguayan peso ,UYU ,2
+Uzbekistani som ,UZS ,2
+Vanuatu vatu ,VUV ,0
+Venezuelan bolívar ,VEF ,2
+Vietnamese đồng ,VND ,1
+West African CFA franc ,XOF ,2
+Yemeni rial ,YER ,2
+Zambian kwacha ,ZMW ,2
+END

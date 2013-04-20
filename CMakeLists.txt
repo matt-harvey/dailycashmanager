@@ -10,6 +10,7 @@ set (immediate_directories
 	 budget
 	 column_creation
 	 commodity
+	 currency
 	 date
 	 entry
 	 filename_validation
@@ -142,6 +143,7 @@ set (main_files
 	 column_creation/column_creation.cpp
 	 commodity/commodity.cpp
 	 commodity/commodity_impl.cpp
+	 currency/currency.cpp
 	 date/date.cpp
 	 date/frequency.cpp
 	 date/interval_type.cpp
