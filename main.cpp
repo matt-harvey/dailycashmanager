@@ -87,11 +87,36 @@ using TCLAP::UnlabeledValueArg;
 // and I'm not sure that throws at all if unsafe.)
 
 
+/*
+// WARNING temp play
+#include "commodity.hpp"
+#include "currency.hpp"
+#include "phatbooks_database_connection.hpp"
+#include <vector>
+using namespace phatbooks;
+using namespace std;
+// WARNING end temp play
+*/
+
+
 int main(int argc, char** argv)
 {
 	cout.exceptions(std::ios::badbit | std::ios::failbit);
 	cerr.exceptions(std::ios::badbit | std::ios::failbit);
 	clog.exceptions(std::ios::badbit | std::ios::failbit);
+
+	/*
+	// WARNING temp play
+	PhatbooksDatabaseConnection dbc;
+	CurrencyManager currency_manager(dbc);
+	vector<Commodity> const& vec = currency_manager.currencies();
+	for (size_t i = 0; i != vec.size(); ++i)
+	{
+		cout << vec[i].name() << endl;
+	}
+	return 0;
+	// WARNING end temp
+	*/
 
 	try
 	{
