@@ -15,6 +15,12 @@ class PhatbooksDatabaseConnection;
 /**
  * Presents a list of almost all currencies in the world, as
  * Commodity objects in a std::vector.
+ *
+ * @todo The Japanese yen is officially divided into 100 sen; but a single
+ * sen is of minuscule value, and it in everyday life, divisions smaller
+ * than 1 yen are not used. Perhaps this is the case with other currencies.
+ * Do we want to allow for this, and store some currencies in amounts
+ * less precise than their official precision?
  */
 class CurrencyManager: boost::noncopyable
 {
