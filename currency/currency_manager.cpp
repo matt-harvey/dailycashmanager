@@ -1,4 +1,4 @@
-#include "currency.hpp"
+#include "currency_manager.hpp"
 #include "commodity.hpp"
 #include <wx/string.h>
 #include <cassert>
@@ -35,7 +35,7 @@ namespace
 	{
 		// currency.inl contains repetitive code generated from a csv
 		// file via a script.
-		#include "currency.inc"
+		#include "currency_manager.inc"
 		return;
 	}
 

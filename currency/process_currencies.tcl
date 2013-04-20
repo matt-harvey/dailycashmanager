@@ -7,7 +7,7 @@
 # want to clobber it!)
 
 set infile [open currencies.csv r]
-set outfile [open currency.inc w]
+set outfile [open currency_manager.inc w]
 
 # Discard first line (headers)
 gets $infile line

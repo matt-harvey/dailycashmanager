@@ -1,5 +1,5 @@
-#ifndef GUARD_currency_hpp
-#define GUARD_currency_hpp
+#ifndef GUARD_currency_manager_hpp
+#define GUARD_currency_manager_hpp
 
 #include "commodity.hpp"
 #include <boost/noncopyable.hpp>
@@ -29,4 +29,4 @@ private:
 
 }  // namespace phatbooks
 
-#endif  // GUARD_currency_hpp
+#endif  // GUARD_currency_manager_hpp

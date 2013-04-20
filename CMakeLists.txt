@@ -143,7 +143,7 @@ set (main_files
 	 column_creation/column_creation.cpp
 	 commodity/commodity.cpp
 	 commodity/commodity_impl.cpp
-	 currency/currency.cpp
+	 currency/currency_manager.cpp
 	 date/date.cpp
 	 date/frequency.cpp
 	 date/interval_type.cpp
