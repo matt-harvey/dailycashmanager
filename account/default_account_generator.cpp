@@ -74,6 +74,7 @@ DefaultAccountGenerator::save_accounts()
 		{
 			it->ghostify();
 		}
+		throw;
 	}
 	return;
 }
