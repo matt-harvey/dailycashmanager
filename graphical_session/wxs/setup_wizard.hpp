@@ -218,14 +218,34 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 	~AccountPage();
+
+	class AccountTreeList;
+
 private:
+
 	PhatbooksDatabaseConnection& m_database_connection;
 	DefaultAccountGenerator* m_default_account_generator;	
 	wxBoxSizer* m_top_sizer;
-	wxTreeListCtrl* m_account_tree;
+	AccountTreeList* m_account_tree;
 
 };  // SetupWizard::AccountPage
 
+
+class SetupWizard::AccountPage::AccountTreeList:
+	public wxTreeListCtrl
+{
+public:
+	AccountTreeList
+	(	AccountPage* parent,
+		wxSize const& size,
+		DefaultAccountGenerator& p_default_account_generator
+	);
+private:
+	void OnItemChecked(wxTreeListEvent& event);
+	DefaultAccountGenerator& m_default_account_generator;
+
+	DECLARE_EVENT_TABLE()
+};
 
 
 }  // namespace gui

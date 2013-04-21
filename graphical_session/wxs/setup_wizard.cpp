@@ -590,7 +590,6 @@ SetupWizard::AccountPage::AccountPage
 	(	m_database_connection
 	);
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
-	vector<Account>& accounts = m_default_account_generator->accounts();
 
 	// First row
 	wxStaticText* account_prompt_1 = new wxStaticText
@@ -618,27 +617,72 @@ SetupWizard::AccountPage::AccountPage
 
 	// Third row
 	wxSize const standard_dlg_size = SetupWizard::standard_text_box_size();
-	wxSize const tree_dlg_size
-	(	standard_dlg_size.x * 1.4,
-		standard_dlg_size.y * accounts.size() * 1.5
-	);
-	m_account_tree = new wxTreeListCtrl
+	wxSize const tree_dlg_size = wxDLG_UNIT
 	(	this,
+		wxSize
+		(	standard_dlg_size.x * 1.4,
+			standard_dlg_size.y *
+				m_default_account_generator->accounts().size() * 1.5
+		)
+	);
+	m_account_tree = new AccountTreeList
+	(	this,
+		tree_dlg_size,
+		*m_default_account_generator
+	);
+	m_top_sizer->Add(m_account_tree);
+
+	SetSizer(m_top_sizer);
+	m_top_sizer->Fit(this);
+}
+
+SetupWizard::AccountPage::~AccountPage()
+{
+	delete m_default_account_generator;
+	m_default_account_generator = 0;
+
+	delete m_account_tree;
+	m_account_tree = 0;
+}
+
+
+/*** AccountTreeList ***/
+
+
+BEGIN_EVENT_TABLE
+(	SetupWizard::AccountPage::AccountTreeList,
+	wxTreeListCtrl
+)
+	EVT_TREELIST_ITEM_CHECKED(wxID_ANY, AccountTreeList::OnItemChecked)
+END_EVENT_TABLE()
+
+
+
+SetupWizard::AccountPage::AccountTreeList::AccountTreeList
+(	AccountPage* parent,
+	wxSize const& size,
+	DefaultAccountGenerator& p_default_account_generator
+):
+	wxTreeListCtrl
+	(	parent,
 		wxID_ANY,
 		wxDefaultPosition,
-		wxDLG_UNIT(this, tree_dlg_size),
-		wxTL_MULTIPLE | wxTL_CHECKBOX
-	);
-	m_account_tree->AppendColumn(wxString("Account"));
-	wxTreeListItem const root_item = m_account_tree->GetRootItem();
+		size,
+		wxTL_MULTIPLE | wxTL_CHECKBOX | wxTL_3STATE
+	),
+	m_default_account_generator(p_default_account_generator)
+{
+	vector<Account>& accounts = m_default_account_generator.accounts();
+	AppendColumn(wxString("Account"));
+	wxTreeListItem const root_item = GetRootItem();
 	wxTreeListItem const asset_item =
-		m_account_tree->AppendItem(root_item, wxString("Assets"));
+		AppendItem(root_item, wxString("Assets"));
 	wxTreeListItem const liability_item =
-		m_account_tree->AppendItem(root_item, wxString("Liabilities"));
+		AppendItem(root_item, wxString("Liabilities"));
 	wxTreeListItem const revenue_item =
-		m_account_tree->AppendItem(root_item, wxString("Revenue categories"));
+		AppendItem(root_item, wxString("Revenue categories"));
 	wxTreeListItem const expense_item =
-		m_account_tree->AppendItem(root_item, wxString("Expense categories"));
+		AppendItem(root_item, wxString("Expense categories"));
 	for
 	(	vector<Account>::const_iterator it = accounts.begin(),
 			end = accounts.end();
@@ -664,29 +708,32 @@ SetupWizard::AccountPage::AccountPage
 		default:
 			assert (false);
 		}
-		wxTreeListItem const account_item =
-			m_account_tree->AppendItem(parent_item, bstring_to_wx(it->name()));
-		m_account_tree->CheckItem(account_item);
+		AppendItem(parent_item, bstring_to_wx(it->name()));
 	}	
-	m_account_tree->Expand(asset_item);
-	m_account_tree->Expand(liability_item);
-	m_account_tree->Expand(revenue_item);
-	m_account_tree->Expand(expense_item);
-
-	m_top_sizer->Add(m_account_tree);
-
-	SetSizer(m_top_sizer);
-	m_top_sizer->Fit(this);
+	Expand(asset_item);
+	CheckItemRecursively(asset_item);
+	Expand(liability_item);
+	CheckItemRecursively(liability_item);
+	Expand(revenue_item);
+	CheckItemRecursively(revenue_item);
+	Expand(expense_item);
+	CheckItemRecursively(expense_item);
 }
 
-SetupWizard::AccountPage::~AccountPage()
+void
+SetupWizard::AccountPage::AccountTreeList::
+OnItemChecked(wxTreeListEvent& event)
 {
-	delete m_default_account_generator;
-	m_default_account_generator = 0;
-
-	delete m_account_tree;
-	m_account_tree = 0;
+	wxTreeListItem item = event.GetItem();
+	CheckItemRecursively(item, GetCheckedState(item));
+	wxTreeListItem parent = GetItemParent(item);
+	if (parent != GetRootItem())
+	{
+		UpdateItemParentStateRecursively(item);
+	}
+	return;
 }
+
 
 
 }  // namespace gui
