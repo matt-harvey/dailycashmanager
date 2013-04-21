@@ -214,6 +214,7 @@ if (WIN32)
 	# On Windows we use CPack to create a graphical installer
 	# Do "make package" (or "mingw32-make package") to create the installer.
 	set (application_name "Phatbooks")
+	set (CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
 	set (CPACK_GENERATOR NSIS)
 	set (CPACK_NSIS_PACKAGE_NAME "${application_name}")
 	set (CPACK_PACKAGE_VENDOR "${application_name}")
@@ -228,8 +229,8 @@ if (WIN32)
 	set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\icon\\\\icon.ico")
 	set (CPACK_NSIS_INSTALLED_ICON_NAME "phatbooks.exe")
 	set (CPACK_NSIS_MENU_LINKS "phatbooks.exe" "${application_name}")  # Put a link to the application executable in the Shortcuts menu
-	set (CPACK_NSIS_MUI_FINISHPAGE_RUN "phatbooks.exe")  # Give user option to launch application immediately after installing
 	set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}\\\\licence.txt")
+	set (CPACK_NSIS_MUI_FINISHPAGE_RUN "phatbooks.exe")  # Give user option to launch application immediately after installing
 	install(TARGETS phatbooks RUNTIME DESTINATION .)
 	include(CPack)
 else ()
