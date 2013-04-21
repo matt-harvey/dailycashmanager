@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.6)
 
-project (phatbooks_project)
+project (phatbooks)
 
 set (immediate_directories
      .
@@ -212,13 +212,22 @@ if (WIN32)
 	# set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -mwindows")
 
 	# On Windows we use CPack to create a graphical installer
-	set (CPACK_NSIS_PACKAGE_NAME "Phatbooks")
-	set (CPACK_PACKAGE_FILE_NAME "Phatbooks setup")
+	# Do "make package" (or "mingw32-make package") to create the installer.
+	set (application_name "Phatbooks")
+	set (CPACK_GENERATOR NSIS)
+	set (CPACK_NSIS_PACKAGE_NAME "${application_name}")
+	set (CPACK_PACKAGE_VENDOR "${application_name}")
+	set (CPACK_PACKAGE_FILE_NAME "${application_name} setup")
+	set (CPACK_PACKAGE_INSTALL_DIRECTORY "${application_name}")
+	set (CPACK_PACKAGE_VERSION "1.0.0")
+	set (CPACK_PACKAGE_VERSION_MAJOR "1")
+	set (CPACK_PACKAGE_VERSION_MINOR "0")
+	set (CPACK_PACKAGE_VERSION_PATCH "0")
 	set (CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\icon\\\\icon.ico")
 	set (CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\icon\\\\icon.ico")
 	set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\icon\\\\icon.ico")
 	set (CPACK_NSIS_INSTALLED_ICON_NAME "phatbooks.exe")
-	set (CPACK_NSIS_MENU_LINKS "phatbooks.exe" "Phatbooks")  # Put a link to the application executable in the Shortcuts menu
+	set (CPACK_NSIS_MENU_LINKS "phatbooks.exe" "${application_name}")  # Put a link to the application executable in the Shortcuts menu
 	set (CPACK_NSIS_MUI_FINISHPAGE_RUN "phatbooks.exe")  # Give user option to launch application immediately after installing
 	set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}\\\\licence.txt")
 	install(TARGETS phatbooks RUNTIME DESTINATION .)

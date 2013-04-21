@@ -47,12 +47,9 @@
 // this can be done via the CPack/NSIS installer configuration - see
 // NSIS documentation.
 
-// TODO Within the Windows Control Panel's list of programs, and possibly
-// elsewhere, the version of Phatbooks shows as v0.1.1. This looks
-// unprofessional. Set the version number explicitly in CMakeLists.txt,
-// (and in Tags in svn) and ensure this carries through consistently to
-// all places where it might be seen by users or potential users (e.g.
-// the website, the licence, the installer...).
+// TODO Set the version number in a single location and find a way
+// to ensure this is reflected consistently everywhere it appears
+// (website, installer, licence text etc.).
 
 #include "application.hpp"
 #include "b_string.hpp"
