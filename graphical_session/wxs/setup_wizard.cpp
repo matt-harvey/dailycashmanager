@@ -24,7 +24,7 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
-#include <wx/treectrl.h>
+#include <wx/treelist.h>
 #include <wx/validate.h>
 #include <wx/wizard.h>
 #include <cassert>
@@ -622,22 +622,23 @@ SetupWizard::AccountPage::AccountPage
 	(	standard_dlg_size.x * 1.4,
 		standard_dlg_size.y * accounts.size() * 1.5
 	);
-	m_account_tree = new wxTreeCtrl
+	m_account_tree = new wxTreeListCtrl
 	(	this,
 		wxID_ANY,
 		wxDefaultPosition,
 		wxDLG_UNIT(this, tree_dlg_size),
-		wxTR_HAS_BUTTONS | wxTR_NO_LINES
+		wxTL_MULTIPLE | wxTL_CHECKBOX
 	);
-	wxTreeItemId const root_id = m_account_tree->AddRoot(wxEmptyString);
-	wxTreeItemId const asset_id =
-		m_account_tree->AppendItem(root_id, wxString("Assets"));
-	wxTreeItemId const liability_id =
-		m_account_tree->AppendItem(root_id, wxString("Liabilities"));
-	wxTreeItemId const revenue_id =
-		m_account_tree->AppendItem(root_id, wxString("Revenue categories"));
-	wxTreeItemId const expense_id =
-		m_account_tree->AppendItem(root_id, wxString("Expense categories"));
+	m_account_tree->AppendColumn(wxString("Account"));
+	wxTreeListItem const root_item = m_account_tree->GetRootItem();
+	wxTreeListItem const asset_item =
+		m_account_tree->AppendItem(root_item, wxString("Assets"));
+	wxTreeListItem const liability_item =
+		m_account_tree->AppendItem(root_item, wxString("Liabilities"));
+	wxTreeListItem const revenue_item =
+		m_account_tree->AppendItem(root_item, wxString("Revenue categories"));
+	wxTreeListItem const expense_item =
+		m_account_tree->AppendItem(root_item, wxString("Expense categories"));
 	for
 	(	vector<Account>::const_iterator it = accounts.begin(),
 			end = accounts.end();
@@ -645,27 +646,33 @@ SetupWizard::AccountPage::AccountPage
 		++it
 	)
 	{
-		wxTreeItemId parent_id = asset_id;
+		wxTreeListItem parent_item = asset_item;
 		switch (it->account_type())
 		{
 		case account_type::asset:
-			parent_id = asset_id;
+			parent_item = asset_item;
 			break;
 		case account_type::liability:
-			parent_id = liability_id;
+			parent_item = liability_item;
 			break;
 		case account_type::revenue:
-			parent_id = revenue_id;
+			parent_item = revenue_item;
 			break;
 		case account_type::expense:
-			parent_id = expense_id;
+			parent_item = expense_item;
 			break;
 		default:
 			assert (false);
 		}
-		m_account_tree->AppendItem(parent_id, bstring_to_wx(it->name()));
+		wxTreeListItem const account_item =
+			m_account_tree->AppendItem(parent_item, bstring_to_wx(it->name()));
+		m_account_tree->CheckItem(account_item);
 	}	
-	m_account_tree->ExpandAll();
+	m_account_tree->Expand(asset_item);
+	m_account_tree->Expand(liability_item);
+	m_account_tree->Expand(revenue_item);
+	m_account_tree->Expand(expense_item);
+
 	m_top_sizer->Add(m_account_tree);
 
 	SetSizer(m_top_sizer);

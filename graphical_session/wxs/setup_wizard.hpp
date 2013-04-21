@@ -13,7 +13,7 @@
 #include <wx/sizer.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
-#include <wx/treectrl.h>
+#include <wx/treelist.h>
 #include <wx/validate.h>
 #include <wx/window.h>
 #include <wx/wizard.h>
@@ -222,7 +222,7 @@ private:
 	PhatbooksDatabaseConnection& m_database_connection;
 	DefaultAccountGenerator* m_default_account_generator;	
 	wxBoxSizer* m_top_sizer;
-	wxTreeCtrl* m_account_tree;
+	wxTreeListCtrl* m_account_tree;
 
 };  // SetupWizard::AccountPage
 
