@@ -1,6 +1,7 @@
 #include "setup_wizard.hpp"
 #include "application.hpp"
 #include "b_string.hpp"
+#include "currency_manager.hpp"
 #include "icon.xpm"
 #include "filename_validation.hpp"
 #include "frame.hpp"
@@ -8,9 +9,12 @@
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <jewel/optional.hpp>
+#include <wx/arrstr.h>
 #include <wx/button.h>
+#include <wx/combobox.h>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
+#include <wx/gdicmn.h>
 #include <wx/gbsizer.h>
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
@@ -21,10 +25,12 @@
 #include <wx/wizard.h>
 #include <cassert>
 #include <string>
+#include <vector>
 
 using boost::optional;
 using jewel::value;
 using std::string;
+using std::vector;
 
 // For debugging
 #include <jewel/debug_log.hpp>
@@ -135,6 +141,11 @@ SetupWizard::run()
 	RunWizard(m_filepath_page);
 }
 
+wxSize
+SetupWizard::standard_text_box_size()
+{
+	return wxSize(80, 12);
+}
 
 
 /*** SetupWizard::FilepathValidator ***/
@@ -305,7 +316,7 @@ SetupWizard::FilepathPage::FilepathPage
 	m_filename_row_sizer = new wxBoxSizer(wxHORIZONTAL);
 	m_directory_row_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-	wxSize const dlg_unit_size(100, 13);
+	wxSize const dlg_unit_size = SetupWizard::standard_text_box_size();
 
 	// First row
 	wxStaticText* directory_prompt = new wxStaticText
@@ -443,11 +454,59 @@ SetupWizard::LocalizationPage::LocalizationPage
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxWizardPageSimple(parent),
-	m_database_connection(p_database_connection)
+	m_database_connection(p_database_connection),
+	m_currency_manager(0),
+	m_top_sizer(0)
 {
-	// TODO Implement
+	m_currency_manager = new CurrencyManager(p_database_connection);
+	m_top_sizer = new wxBoxSizer(wxVERTICAL);
+	wxSize const dlg_unit_size = SetupWizard::standard_text_box_size();
+
+	// First row
+	wxStaticText* currency_prompt = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString("Select your currency"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT
+	);
+	m_top_sizer->Add(currency_prompt);
+
+	// Second row
+	wxArrayString currency_strings;
+	for
+	(	vector<Commodity>::const_iterator it =
+				m_currency_manager->currencies().begin(),
+			end = m_currency_manager->currencies().end();
+		it != end;
+		++it
+	)
+	{
+		wxString const name = bstring_to_wx(it->name());
+		wxString const abbreviation = bstring_to_wx(it->abbreviation());
+		currency_strings.Add(name + wxString(" (") + abbreviation + ")");
+	}
+	m_currency_box = new wxComboBox
+	(	this,
+		wxID_ANY,
+		currency_strings[0],
+		wxDefaultPosition,
+		wxDLG_UNIT(this, wxSize(dlg_unit_size.x * 1.4, dlg_unit_size.y)),
+		currency_strings,
+		wxCB_DROPDOWN | wxCB_SORT | wxCB_READONLY
+	);
+	m_top_sizer->Add(m_currency_box);
+
+	SetSizer(m_top_sizer);
+	m_top_sizer->Fit(this);
 }
 
+SetupWizard::LocalizationPage::~LocalizationPage()
+{
+	delete m_currency_manager;
+	m_currency_manager = 0;
+}
 
 
 /*** AccountPage ***/

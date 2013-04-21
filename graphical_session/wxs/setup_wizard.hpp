@@ -5,7 +5,9 @@
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <wx/button.h>
+#include <wx/combobox.h>
 #include <wx/filedlg.h>
+#include <wx/gdicmn.h>
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/string.h>
@@ -19,6 +21,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class CurrencyManager;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -45,6 +48,14 @@ public:
 	SetupWizard(PhatbooksDatabaseConnection& p_database_connection);
 
 	void run();
+
+	/**
+	 * @returns a standard size to be used for text controls
+	 * (wxTextCtrl, wxComboBox) in the pages of this wizard.
+	 * The returned wxSize is intended to be used with wxDLG_UNIT macro
+	 * when initializing the controls' sizes.
+	 */
+	static wxSize standard_text_box_size();
 
 private:
 
@@ -149,9 +160,12 @@ public:
 	(	SetupWizard* parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
+	~LocalizationPage();
 private:
 	PhatbooksDatabaseConnection& m_database_connection;
-
+	CurrencyManager* m_currency_manager;
+	wxBoxSizer* m_top_sizer;
+	wxComboBox* m_currency_box;
 
 };  // SetupWizard::LocalizationPage
 

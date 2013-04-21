@@ -1,6 +1,7 @@
 #ifndef GUARD_currency_manager_hpp
 #define GUARD_currency_manager_hpp
 
+#include "b_string.hpp"
 #include "commodity.hpp"
 #include <boost/noncopyable.hpp>
 #include <vector>
@@ -35,6 +36,14 @@ public:
 	 * will be initialized.
 	 */
 	std::vector<Commodity> const& currencies() const;
+
+	/**
+	 * @return the Commodity in the CurrencyManager that has abbreviation
+	 * \e p_abbreviation. If there is no Commodity with this abbreviation,
+	 * CurrencyManagerException is thrown.
+	 */
+	Commodity
+	get_commodity_with_abbreviation(BString const& p_abbreviation) const;
 
 private:
 	PhatbooksDatabaseConnection& m_database_connection;

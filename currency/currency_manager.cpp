@@ -1,5 +1,7 @@
 #include "currency_manager.hpp"
+#include "b_string.hpp"
 #include "commodity.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <wx/string.h>
 #include <cassert>
 #include <string>
@@ -66,6 +68,30 @@ CurrencyManager::currencies() const
 	assert (m_currencies);
 	return *m_currencies;
 }
+
+Commodity
+CurrencyManager::get_commodity_with_abbreviation
+(	BString const& p_abbreviation
+) const
+{
+	for
+	(	vector<Commodity>::const_iterator it = m_currencies->begin(),
+			end = m_currencies->end();
+			it != end;
+			++it
+	)
+	{
+		if (it->abbreviation() == p_abbreviation)
+		{
+			return *it;
+		}
+	}
+	throw CurrencyManagerException
+	(	"No Commodity in CurrencyManager has this abbreviation."
+	);
+}
+	
+		
 
 
 
