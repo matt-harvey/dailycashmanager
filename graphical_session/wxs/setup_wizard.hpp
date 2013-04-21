@@ -2,6 +2,7 @@
 #define GUARD_setup_wizard_hpp
 
 #include <boost/filesystem.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <wx/button.h>
 #include <wx/filedlg.h>
@@ -32,7 +33,8 @@ class Frame;
  * Represents the wizard that is presented to GUI users when they first
  * start up the application.
  */
-class SetupWizard: public wxWizard
+class SetupWizard:
+	public wxWizard
 {
 public:
 	
@@ -103,7 +105,9 @@ private:
  * without a file selected. This welcomes the user and prompts them to
  * select a file.
  */
-class SetupWizard::FilepathPage: public wxWizardPageSimple
+class SetupWizard::FilepathPage:
+	public wxWizardPageSimple,
+	private boost::noncopyable
 {
 public:
 	friend class FilepathValidator;
@@ -136,7 +140,9 @@ private:
 
 
 
-class SetupWizard::LocalizationPage: public wxWizardPageSimple
+class SetupWizard::LocalizationPage:
+	public wxWizardPageSimple,
+	private boost::noncopyable
 {
 public:
 	LocalizationPage
@@ -146,11 +152,14 @@ public:
 private:
 	PhatbooksDatabaseConnection& m_database_connection;
 
+
 };  // SetupWizard::LocalizationPage
 
 
 
-class SetupWizard::AccountPage: public wxWizardPageSimple
+class SetupWizard::AccountPage:
+	public wxWizardPageSimple,
+	private boost::noncopyable
 {
 public:
 	AccountPage
