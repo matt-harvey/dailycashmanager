@@ -126,10 +126,6 @@ DefaultAccountGenerator::initialize_default_accounts()
 	// (but note we don't save them - saving them will be at the discretion
 	// of the user, and will be done in client code closer to the UI).
 
-	/*
-	Commodity const default_commodity =
-		m_database_connection.default_commodity();
-	*/
 	vector<ProtoAccount>::size_type sz = pv.size();
 	m_accounts->reserve(sz);
 	for (vector<ProtoAccount>::size_type i = 0; i != sz; ++i)
@@ -137,7 +133,16 @@ DefaultAccountGenerator::initialize_default_accounts()
 		Account account(m_database_connection);
 		account.set_name(pv[i].first);
 		account.set_account_type(pv[i].second);
-		// account.set_commodity(default_commodity);  // Left unitialized!
+
+		// Note Commodity is left uninitialized! This is a bit odd.
+		// Previously we set the Commodity for all these Accounts to
+		// m_database_connection.default_commodity(). But it was
+		// discovered this creates headaches for client code, as
+		// we then can't create these Accounts unless
+		// the default Commodity has already been set for this
+		// PhatbooksDatabaseConnection. It is easier for certain client code
+		// if it is able to create the Accounts first.
+
 		account.set_description("");
 		m_accounts->push_back(account);
 	}

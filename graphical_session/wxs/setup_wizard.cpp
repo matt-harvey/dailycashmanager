@@ -162,7 +162,7 @@ SetupWizard::run()
 wxSize
 SetupWizard::standard_text_box_size()
 {
-	return wxSize(90, 12);
+	return wxSize(140, 12);
 }
 
 void
@@ -620,7 +620,7 @@ SetupWizard::AccountPage::AccountPage
 	wxSize const standard_dlg_size = SetupWizard::standard_text_box_size();
 	wxSize const tree_dlg_size
 	(	standard_dlg_size.x * 1.4,
-		standard_dlg_size.y * accounts.size() + 5
+		standard_dlg_size.y * accounts.size() * 1.5
 	);
 	m_account_tree = new wxTreeCtrl
 	(	this,
@@ -665,6 +665,7 @@ SetupWizard::AccountPage::AccountPage
 		}
 		m_account_tree->AppendItem(parent_id, bstring_to_wx(it->name()));
 	}	
+	m_account_tree->ExpandAll();
 	m_top_sizer->Add(m_account_tree);
 
 	SetSizer(m_top_sizer);
