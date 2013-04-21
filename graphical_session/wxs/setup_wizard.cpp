@@ -8,6 +8,7 @@
 #include "phatbooks_database_connection.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
+#include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/arrstr.h>
 #include <wx/button.h>
@@ -24,11 +25,14 @@
 #include <wx/validate.h>
 #include <wx/wizard.h>
 #include <cassert>
+#include <map>
 #include <string>
 #include <vector>
 
 using boost::optional;
+using jewel::Decimal;
 using jewel::value;
+using std::map;
 using std::string;
 using std::vector;
 
@@ -138,13 +142,47 @@ SetupWizard::SetupWizard
 void
 SetupWizard::run()
 {
-	RunWizard(m_filepath_page);
+	if (RunWizard(m_filepath_page))
+	{
+		// Then user completed Wizard rather than cancelling.
+		configure_default_commodity();
+		create_file();
+		configure_accounts();
+	}
+	return;
 }
 
 wxSize
 SetupWizard::standard_text_box_size()
 {
 	return wxSize(80, 12);
+}
+
+void
+SetupWizard::configure_default_commodity()
+{
+	assert (m_localization_page);
+	Commodity commodity = m_localization_page->selected_currency();
+	commodity.set_multiplier_to_base(Decimal(1, 0));
+	m_database_connection.set_default_commodity(commodity);
+	return;
+}
+
+void
+SetupWizard::create_file()
+{
+	assert (m_filepath_page);
+	assert (m_filepath_page->selected_filepath());
+	m_database_connection.open(value(m_filepath_page->selected_filepath()));
+	return;
+}
+
+void
+SetupWizard::configure_accounts()
+{
+	// TODO Implement
+	// ...
+	return;
 }
 
 
@@ -456,11 +494,15 @@ SetupWizard::LocalizationPage::LocalizationPage
 	wxWizardPageSimple(parent),
 	m_database_connection(p_database_connection),
 	m_currency_manager(0),
+	m_currency_map(0),
 	m_top_sizer(0)
 {
 	m_currency_manager = new CurrencyManager(p_database_connection);
+	m_currency_map = new map<wxString, BString>;
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
 	wxSize const dlg_unit_size = SetupWizard::standard_text_box_size();
+
+	assert (m_currency_map->empty());
 
 	// First row
 	wxStaticText* currency_prompt = new wxStaticText
@@ -485,7 +527,10 @@ SetupWizard::LocalizationPage::LocalizationPage
 	{
 		wxString const name = bstring_to_wx(it->name());
 		wxString const abbreviation = bstring_to_wx(it->abbreviation());
-		currency_strings.Add(name + wxString(" (") + abbreviation + ")");
+		wxString const currency_text =
+			name + wxString(" (") + abbreviation + wxString(")");
+		currency_strings.Add(currency_text);
+		(*m_currency_map)[currency_text] = wx_to_bstring(abbreviation);
 	}
 	m_currency_box = new wxComboBox
 	(	this,
@@ -506,6 +551,18 @@ SetupWizard::LocalizationPage::~LocalizationPage()
 {
 	delete m_currency_manager;
 	m_currency_manager = 0;
+
+	delete m_currency_map;
+	m_currency_map = 0;
+}
+
+Commodity
+SetupWizard::LocalizationPage::selected_currency() const
+{
+	return
+		m_currency_manager->get_currency_with_abbreviation
+		(	(*m_currency_map)[m_currency_box->GetValue()]
+		);
 }
 
 

@@ -129,7 +129,11 @@ public:
 	Commodity default_commodity() const;
 
 	/**
-	 * Set the default commodity for the entity to p_commodity.
+	 * Set the default commodity for the entity to p_commodity. If this
+	 * is set before the database connection has been opened to a
+	 * database, then, when the connection \e is opened, the Commodity
+	 * that was set as the default Commodity will be automatically
+	 * saved to the database at that time.
 	 *
 	 * @throws InvalidDefaultCommodityException when p_commodity has
 	 * a multiplier_to_base that is not equal to Decimal(1, 0).
@@ -283,6 +287,9 @@ private:
 		~PermanentEntityData();
 
 		boost::gregorian::date creation_date() const;
+
+		bool default_commodity_is_set() const;
+
 		Commodity default_commodity() const;
 		
 		/**

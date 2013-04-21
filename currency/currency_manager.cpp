@@ -70,7 +70,7 @@ CurrencyManager::currencies() const
 }
 
 Commodity
-CurrencyManager::get_commodity_with_abbreviation
+CurrencyManager::get_currency_with_abbreviation
 (	BString const& p_abbreviation
 ) const
 {

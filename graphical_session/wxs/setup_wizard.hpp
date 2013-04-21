@@ -1,6 +1,7 @@
 #ifndef GUARD_setup_wizard_hpp
 #define GUARD_setup_wizard_hpp
 
+#include "commodity.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
@@ -15,12 +16,14 @@
 #include <wx/validate.h>
 #include <wx/window.h>
 #include <wx/wizard.h>
+#include <map>
 
 namespace phatbooks
 {
 
 // Begin forward declarations
 
+class Commodity;
 class CurrencyManager;
 class PhatbooksDatabaseConnection;
 
@@ -65,6 +68,30 @@ private:
 	class LocalizationPage;
 	class AccountPage;
 
+	/**
+	 * Set the default Commodity for m_database_connection, based on
+	 * the currency selected by the user in the wizard.
+	 *
+	 * Should be called only after calling RunWizard().
+	 */
+	void configure_default_commodity();
+
+	/**
+	 * Open m_database_connection to filepath selected by the user
+	 * in the wizard, creating the file in the process.
+	 *
+	 * Should be called only after calling RunWizard().
+	 */
+	void create_file();
+
+	/**
+	 * Reflect in the database the Accounts selected by user in
+	 * the wizard.
+	 *
+	 * Should be called only after calling RunWizard().
+	 */
+	void configure_accounts();
+	
 	PhatbooksDatabaseConnection& m_database_connection;
 	FilepathPage* m_filepath_page;
 	LocalizationPage* m_localization_page;
@@ -161,9 +188,16 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 	~LocalizationPage();
+	Commodity selected_currency() const;
 private:
 	PhatbooksDatabaseConnection& m_database_connection;
 	CurrencyManager* m_currency_manager;
+
+	// Map from wxStrings appearing in m_currency_box, to BStrings
+	// being Commodity abbreviations using which Commodities can
+	// be retrieved from the CurrencyManager.
+	std::map<wxString, BString>* m_currency_map;
+
 	wxBoxSizer* m_top_sizer;
 	wxComboBox* m_currency_box;
 

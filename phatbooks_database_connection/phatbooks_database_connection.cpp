@@ -196,7 +196,10 @@ PhatbooksDatabaseConnection::do_setup()
 {
 	if (!tables_are_configured())
 	{
-#		ifndef PHATBOOKS_EXPOSE_COMMODITY
+		assert (m_permanent_entity_data);
+		if (!m_permanent_entity_data->default_commodity_is_set())
+		{
+			// Then we create a "default default commodity".	
 			Commodity commodity(*this);
 			commodity.set_abbreviation("default commodity abbreviation");
 			commodity.set_name("default commodity name");
@@ -204,7 +207,9 @@ PhatbooksDatabaseConnection::do_setup()
 			commodity.set_precision(2);
 			commodity.set_multiplier_to_base(Decimal("1"));
 			set_default_commodity(commodity);
-#		endif
+			assert (m_permanent_entity_data->default_commodity_is_set());
+		}
+
 		DatabaseTransaction transaction(*this);
 		setup_boolean_table();
 		Commodity::setup_tables(*this);
@@ -502,13 +507,21 @@ PhatbooksDatabaseConnection::PermanentEntityData::creation_date() const
 	return value(m_creation_date);
 }
 
+bool
+PhatbooksDatabaseConnection::
+PermanentEntityData::default_commodity_is_set() const
+{
+	return m_default_commodity != 0;
+}
+
 Commodity
 PhatbooksDatabaseConnection::PermanentEntityData::default_commodity() const
 {
-	if (!m_default_commodity)
+	if (!default_commodity_is_set())
 	{
 		throw std::logic_error("Default commodity has not been set.");
 	}
+	assert (m_default_commodity);
 	return *m_default_commodity;
 }
 

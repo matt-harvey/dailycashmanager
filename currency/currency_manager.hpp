@@ -38,12 +38,16 @@ public:
 	std::vector<Commodity> const& currencies() const;
 
 	/**
-	 * @return the Commodity in the CurrencyManager that has abbreviation
-	 * \e p_abbreviation. If there is no Commodity with this abbreviation,
-	 * CurrencyManagerException is thrown.
+	 * @returns the Commodity with p_abbreviation as its abbreviation(),
+	 * from among those stored in CurrencyManager. There is guaranteed
+	 * to be no more than one Commodity stored with a given abbreviation.
+	 * 
+	 * @throws CurrencyManagerException if there is no commodity with this
+	 * abbreviation in the CurrencyManager.
 	 */
 	Commodity
-	get_commodity_with_abbreviation(BString const& p_abbreviation) const;
+	get_currency_with_abbreviation(BString const& p_abbreviation) const;
+
 
 private:
 	PhatbooksDatabaseConnection& m_database_connection;
