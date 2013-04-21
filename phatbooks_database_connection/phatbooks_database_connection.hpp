@@ -125,13 +125,17 @@ public:
 	/**
 	 * @returns the default Commodity for the entity represented by
 	 * the PhatbooksDatabaseConnection.
-	 *
-	 * @todo It sucks that this is not const.
 	 */
 	Commodity default_commodity() const;
 
 	/**
 	 * Set the default commodity for the entity to p_commodity.
+	 *
+	 * @throws InvalidDefaultCommodityException when p_commodity has
+	 * a multiplier_to_base that is not equal to Decimal(1, 0).
+	 *
+	 * @throws jewel::UninitializedOptionalException if p_commodity
+	 * does not have an initialized multiplier_to_base.
 	 */
 	void set_default_commodity(Commodity const& p_commodity);
 

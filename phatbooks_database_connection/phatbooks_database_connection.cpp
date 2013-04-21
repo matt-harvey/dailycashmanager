@@ -532,6 +532,13 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
 (	Commodity const& p_commodity
 )
 {
+	if (p_commodity.multiplier_to_base() != Decimal(1, 0))
+	{
+		throw InvalidDefaultCommodityException
+		(	"Default Commodity has multiplier_to_base that is not equal "
+			"to Decimal(1, 0)."
+		);
+	}
 	if (m_default_commodity) *m_default_commodity = p_commodity;
 	else m_default_commodity = new Commodity(p_commodity);
 	return;

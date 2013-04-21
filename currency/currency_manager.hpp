@@ -27,7 +27,15 @@ class CurrencyManager: boost::noncopyable
 public:
 	CurrencyManager(PhatbooksDatabaseConnection& p_database_connection);
 	~CurrencyManager();
+
+	/**
+	 * @returns a reference to a container of Commodities, representing
+	 * almost all the currencies of the world. For these Commodities
+	 * multiplier_to_base() will be uninitialized, but all other attributes
+	 * will be initialized.
+	 */
 	std::vector<Commodity> const& currencies() const;
+
 private:
 	PhatbooksDatabaseConnection& m_database_connection;
 	std::vector<Commodity>* m_currencies;

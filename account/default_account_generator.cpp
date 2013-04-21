@@ -4,10 +4,14 @@
 #include "b_string.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <sqloxx/database_transaction.hpp>
 #include <cassert>
+#include <stdexcept>
 #include <utility>
 #include <vector>
 
+using sqloxx::DatabaseTransaction;
+using std::exception;
 using std::make_pair;
 using std::pair;
 using std::vector;
@@ -25,11 +29,8 @@ DefaultAccountGenerator::DefaultAccountGenerator
 
 DefaultAccountGenerator::~DefaultAccountGenerator()
 {
-	if (m_accounts)
-	{
-		delete m_accounts;
-		m_accounts = 0;
-	}
+	delete m_accounts;
+	m_accounts = 0;
 }
 
 vector<Account>&
@@ -47,14 +48,32 @@ DefaultAccountGenerator::accounts()
 void
 DefaultAccountGenerator::save_accounts()
 {
-	for
-	(	vector<Account>::iterator it = m_accounts->begin(),
-			end = m_accounts->end();
-		it != end;
-		++it
-	)
+	DatabaseTransaction transaction(m_database_connection);
+	try
 	{
-		it->save();
+		for
+		(	vector<Account>::iterator it = m_accounts->begin(),
+				end = m_accounts->end();
+			it != end;
+			++it
+		)
+		{
+			it->save();
+		}
+		transaction.commit();
+	}
+	catch (exception&)
+	{
+		transaction.cancel();
+		for
+		(	vector<Account>::iterator it = m_accounts->begin(),
+				end = m_accounts->end();
+			it != end;
+			++it
+		)
+		{
+			it->ghostify();
+		}
 	}
 	return;
 }

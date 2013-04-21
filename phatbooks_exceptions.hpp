@@ -113,6 +113,13 @@ JEWEL_DERIVED_EXCEPTION(EntityCreationDateException, PhatbooksException);
  */
 JEWEL_DERIVED_EXCEPTION(InvalidAccountNameException, PhatbooksException);
 
+/**
+ * Exception to be thrown when something is about a Commodity puts it
+ * in a state whereby it cannot validly be the default Commodity for the
+ * entity represented by a PhatbooksDatabaseConnection.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidDefaultCommodityException, PhatbooksException);
+
 }  // namespace phatbooks
 
 #endif  // GUARD_phatbooks_exceptions_hpp
