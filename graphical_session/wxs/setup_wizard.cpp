@@ -1,10 +1,12 @@
 #include "setup_wizard.hpp"
+#include "account_type.hpp"
 #include "application.hpp"
 #include "b_string.hpp"
 #include "currency_manager.hpp"
-#include "icon.xpm"
+#include "default_account_generator.hpp"
 #include "filename_validation.hpp"
 #include "frame.hpp"
+#include "icon.xpm"
 #include "phatbooks_database_connection.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
@@ -22,6 +24,7 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
+#include <wx/treectrl.h>
 #include <wx/validate.h>
 #include <wx/wizard.h>
 #include <cassert>
@@ -145,7 +148,11 @@ SetupWizard::run()
 	if (RunWizard(m_filepath_page))
 	{
 		// Then user completed Wizard rather than cancelling.
-		configure_default_commodity();
+
+		// Default Commodity already configured by
+		// LocalizationPage event.
+		// configure_default_commodity();
+
 		create_file();
 		configure_accounts();
 	}
@@ -155,7 +162,7 @@ SetupWizard::run()
 wxSize
 SetupWizard::standard_text_box_size()
 {
-	return wxSize(80, 12);
+	return wxSize(90, 12);
 }
 
 void
@@ -487,6 +494,7 @@ SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 
 /*** SetupWizard::LocalizationPage ***/
 
+
 SetupWizard::LocalizationPage::LocalizationPage
 (	SetupWizard* parent,
 	PhatbooksDatabaseConnection& p_database_connection
@@ -573,11 +581,104 @@ SetupWizard::AccountPage::AccountPage
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxWizardPageSimple(parent),
-	m_database_connection(p_database_connection)
+	m_database_connection(p_database_connection),
+	m_default_account_generator(0),
+	m_top_sizer(0),
+	m_account_tree(0)
 {
-	// TODO Implement
+	m_default_account_generator = new DefaultAccountGenerator
+	(	m_database_connection
+	);
+	m_top_sizer = new wxBoxSizer(wxVERTICAL);
+	vector<Account>& accounts = m_default_account_generator->accounts();
+
+	// First row
+	wxStaticText* account_prompt_1 = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString
+		(	"Select the accounts and categories you want to start off with."
+		),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT
+	);
+	m_top_sizer->Add(account_prompt_1);
+
+	// Second row
+	wxStaticText* account_prompt_2 = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString("Note you can always change these later."),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT
+	);
+	m_top_sizer->Add(account_prompt_2);
+
+	// Third row
+	wxSize const standard_dlg_size = SetupWizard::standard_text_box_size();
+	wxSize const tree_dlg_size
+	(	standard_dlg_size.x * 1.4,
+		standard_dlg_size.y * accounts.size() + 5
+	);
+	m_account_tree = new wxTreeCtrl
+	(	this,
+		wxID_ANY,
+		wxDefaultPosition,
+		wxDLG_UNIT(this, tree_dlg_size),
+		wxTR_HAS_BUTTONS | wxTR_NO_LINES
+	);
+	wxTreeItemId const root_id = m_account_tree->AddRoot(wxEmptyString);
+	wxTreeItemId const asset_id =
+		m_account_tree->AppendItem(root_id, wxString("Assets"));
+	wxTreeItemId const liability_id =
+		m_account_tree->AppendItem(root_id, wxString("Liabilities"));
+	wxTreeItemId const revenue_id =
+		m_account_tree->AppendItem(root_id, wxString("Revenue categories"));
+	wxTreeItemId const expense_id =
+		m_account_tree->AppendItem(root_id, wxString("Expense categories"));
+	for
+	(	vector<Account>::const_iterator it = accounts.begin(),
+			end = accounts.end();
+		it != end;
+		++it
+	)
+	{
+		wxTreeItemId parent_id = asset_id;
+		switch (it->account_type())
+		{
+		case account_type::asset:
+			parent_id = asset_id;
+			break;
+		case account_type::liability:
+			parent_id = liability_id;
+			break;
+		case account_type::revenue:
+			parent_id = revenue_id;
+			break;
+		case account_type::expense:
+			parent_id = expense_id;
+			break;
+		default:
+			assert (false);
+		}
+		m_account_tree->AppendItem(parent_id, bstring_to_wx(it->name()));
+	}	
+	m_top_sizer->Add(m_account_tree);
+
+	SetSizer(m_top_sizer);
+	m_top_sizer->Fit(this);
 }
 
+SetupWizard::AccountPage::~AccountPage()
+{
+	delete m_default_account_generator;
+	m_default_account_generator = 0;
+
+	delete m_account_tree;
+	m_account_tree = 0;
+}
 
 
 }  // namespace gui

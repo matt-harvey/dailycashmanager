@@ -13,6 +13,7 @@
 #include <wx/sizer.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
+#include <wx/treectrl.h>
 #include <wx/validate.h>
 #include <wx/window.h>
 #include <wx/wizard.h>
@@ -25,6 +26,7 @@ namespace phatbooks
 
 class Commodity;
 class CurrencyManager;
+class DefaultAccountGenerator;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -70,7 +72,7 @@ private:
 
 	/**
 	 * Set the default Commodity for m_database_connection, based on
-	 * the currency selected by the user in the wizard.
+	 * the currency selected by the user.
 	 *
 	 * Should be called only after calling RunWizard().
 	 */
@@ -80,7 +82,8 @@ private:
 	 * Open m_database_connection to filepath selected by the user
 	 * in the wizard, creating the file in the process.
 	 *
-	 * Should be called only after calling RunWizard().
+	 * Should be called only after calling RunWizard(), and after calling
+	 * configure_default_commodity().
 	 */
 	void create_file();
 
@@ -214,8 +217,12 @@ public:
 	(	SetupWizard* parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
+	~AccountPage();
 private:
 	PhatbooksDatabaseConnection& m_database_connection;
+	DefaultAccountGenerator* m_default_account_generator;	
+	wxBoxSizer* m_top_sizer;
+	wxTreeCtrl* m_account_tree;
 
 };  // SetupWizard::AccountPage
 

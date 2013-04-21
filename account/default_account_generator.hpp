@@ -40,6 +40,8 @@ public:
 	 *
 	 * Note this does not include the budget balancing Account - since
 	 * this is \e always present and cannot be opted-away by the user.
+	 * 
+	 * The returned Accounts do not have their commodity initialized.
 	 *
 	 * @todo Ensure this does not cause existing Accounts to be overwritten.
 	 */

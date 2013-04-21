@@ -116,7 +116,6 @@ DefaultAccountGenerator::initialize_default_accounts()
 	pv.push_back(make_pair<BS, AT>("Gas", expense));
 	pv.push_back(make_pair<BS, AT>("Interest paid", expense));
 	pv.push_back(make_pair<BS, AT>("Recreation", expense));
-	pv.push_back(make_pair<BS, AT>("Retirement fund", pure_envelope));
 
 		// TODO Do we want a "mortgage" Account among the defaults?
 		// The correct accounting for mortgage repayments is fairly complex.
@@ -126,8 +125,11 @@ DefaultAccountGenerator::initialize_default_accounts()
 	// Now we use this information to populate m_accounts with actual Accounts
 	// (but note we don't save them - saving them will be at the discretion
 	// of the user, and will be done in client code closer to the UI).
+
+	/*
 	Commodity const default_commodity =
 		m_database_connection.default_commodity();
+	*/
 	vector<ProtoAccount>::size_type sz = pv.size();
 	m_accounts->reserve(sz);
 	for (vector<ProtoAccount>::size_type i = 0; i != sz; ++i)
@@ -135,7 +137,7 @@ DefaultAccountGenerator::initialize_default_accounts()
 		Account account(m_database_connection);
 		account.set_name(pv[i].first);
 		account.set_account_type(pv[i].second);
-		account.set_commodity(default_commodity);
+		// account.set_commodity(default_commodity);  // Left unitialized!
 		account.set_description("");
 		m_accounts->push_back(account);
 	}
