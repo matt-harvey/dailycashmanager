@@ -13,6 +13,7 @@
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/database_transaction.hpp>
 #include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/combobox.h>
@@ -36,6 +37,7 @@
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::DatabaseTransaction;
 using std::map;
 using std::string;
 using std::vector;
@@ -185,6 +187,7 @@ SetupWizard::configure_accounts()
 	assert (m_database_connection.default_commodity_is_set());  // precondition
 	Commodity const commodity = m_database_connection.default_commodity();
 	vector<Account> accounts = m_account_page->selected_accounts();
+	DatabaseTransaction transaction(m_database_connection);
 	for
 	(	vector<Account>::iterator it = accounts.begin(), end = accounts.end();
 		it != end;
@@ -194,6 +197,7 @@ SetupWizard::configure_accounts()
 		it->set_commodity(commodity);
 		it->save();
 	}
+	transaction.commit();
 	return;
 }
 
