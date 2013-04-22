@@ -634,6 +634,7 @@ SetupWizard::AccountPage::AccountPage
 
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
+	Layout();
 }
 
 SetupWizard::AccountPage::~AccountPage()
@@ -718,6 +719,8 @@ SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 	CheckItemRecursively(revenue_item);
 	Expand(expense_item);
 	CheckItemRecursively(expense_item);
+	Expand(root_item);
+	Layout();
 }
 
 void
