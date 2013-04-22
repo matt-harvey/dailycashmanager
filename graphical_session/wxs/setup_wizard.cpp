@@ -546,7 +546,7 @@ SetupWizard::LocalizationPage::LocalizationPage
 		wxID_ANY,
 		currency_strings[0],
 		wxDefaultPosition,
-		wxDLG_UNIT(this, wxSize(dlg_unit_size.x * 1.4, dlg_unit_size.y)),
+		wxDLG_UNIT(this, dlg_unit_size),
 		currency_strings,
 		wxCB_DROPDOWN | wxCB_SORT | wxCB_READONLY
 	);
@@ -624,7 +624,7 @@ SetupWizard::AccountPage::AccountPage
 		wxSize
 		(	standard_dlg_size.x * 1.4,
 			standard_dlg_size.y *
-				m_default_account_generator->accounts().size() * 1.5
+				(m_default_account_generator->accounts().size() + 4)
 		)
 	);
 	m_account_tree = new AccountTreeList
