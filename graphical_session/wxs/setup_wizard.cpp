@@ -443,6 +443,7 @@ SetupWizard::FilepathPage::FilepathPage
 
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
+	Layout();
 }
 
 optional<filesystem::path>
@@ -553,6 +554,7 @@ SetupWizard::LocalizationPage::LocalizationPage
 
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
+	Layout();
 }
 
 SetupWizard::LocalizationPage::~LocalizationPage()

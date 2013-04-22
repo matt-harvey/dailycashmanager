@@ -58,6 +58,7 @@ WelcomeDialog::WelcomeDialog
 	configure_buttons();
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
+	Layout();
 	CentreOnScreen();	
 }
 

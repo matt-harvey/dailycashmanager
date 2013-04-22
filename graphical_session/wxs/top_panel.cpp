@@ -47,6 +47,7 @@ TopPanel::TopPanel
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
+	Layout();
 }
 
 
