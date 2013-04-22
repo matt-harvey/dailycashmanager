@@ -67,7 +67,6 @@ private:
 	class FilepathValidator;
 
 	class FilepathPage;
-	class LocalizationPage;
 	class AccountPage;
 
 	/**
@@ -97,7 +96,6 @@ private:
 	
 	PhatbooksDatabaseConnection& m_database_connection;
 	FilepathPage* m_filepath_page;
-	LocalizationPage* m_localization_page;
 	AccountPage* m_account_page;
 	
 };  // SetupWizard
@@ -157,42 +155,13 @@ public:
 	(	SetupWizard* parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
+	~FilepathPage();
 	boost::optional<boost::filesystem::path> selected_filepath() const;
-
+	Commodity selected_currency() const;
 private:
 
 	void on_directory_button_click(wxCommandEvent& event);
 
-	PhatbooksDatabaseConnection& m_database_connection;
-	wxBoxSizer* m_top_sizer;
-	wxBoxSizer* m_filename_row_sizer;
-	wxBoxSizer* m_directory_row_sizer;
-	wxTextCtrl* m_directory_ctrl;
-	wxButton* m_directory_button;
-	wxTextCtrl* m_filename_ctrl;
-	boost::filesystem::path* m_selected_filepath;
-
-	static int const s_directory_button_id = wxID_HIGHEST + 1;
-
-	DECLARE_EVENT_TABLE()
-
-};  // SetupWizard::FilepathPage
-
-
-
-
-class SetupWizard::LocalizationPage:
-	public wxWizardPageSimple,
-	private boost::noncopyable
-{
-public:
-	LocalizationPage
-	(	SetupWizard* parent,
-		PhatbooksDatabaseConnection& p_database_connection
-	);
-	~LocalizationPage();
-	Commodity selected_currency() const;
-private:
 	PhatbooksDatabaseConnection& m_database_connection;
 	CurrencyManager* m_currency_manager;
 
@@ -202,9 +171,20 @@ private:
 	std::map<wxString, BString>* m_currency_map;
 
 	wxBoxSizer* m_top_sizer;
+	wxBoxSizer* m_filename_row_sizer;
+	wxBoxSizer* m_directory_row_sizer;
+	wxTextCtrl* m_directory_ctrl;
+	wxButton* m_directory_button;
+	wxTextCtrl* m_filename_ctrl;
 	wxComboBox* m_currency_box;
 
-};  // SetupWizard::LocalizationPage
+	boost::filesystem::path* m_selected_filepath;
+
+	static int const s_directory_button_id = wxID_HIGHEST + 1;
+
+	DECLARE_EVENT_TABLE()
+
+};  // SetupWizard::FilepathPage
 
 
 

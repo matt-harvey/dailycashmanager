@@ -129,15 +129,12 @@ SetupWizard::SetupWizard
 	),
 	m_database_connection(p_database_connection),
 	m_filepath_page(0),
-	m_localization_page(0),
 	m_account_page(0)
 {
 	assert (!m_database_connection.is_valid());
 	m_filepath_page = new FilepathPage(this, m_database_connection);
-	m_localization_page = new LocalizationPage(this, m_database_connection);
 	m_account_page = new AccountPage(this, m_database_connection);
-	wxWizardPageSimple::Chain(m_filepath_page, m_localization_page);
-	wxWizardPageSimple::Chain(m_localization_page, m_account_page);
+	wxWizardPageSimple::Chain(m_filepath_page, m_account_page);
 	GetPageAreaSizer()->Add(m_filepath_page);
 }
 
@@ -165,7 +162,7 @@ void
 SetupWizard::configure_default_commodity()
 {
 	assert (m_localization_page);
-	Commodity commodity = m_localization_page->selected_currency();
+	Commodity commodity = m_filepath_page->selected_currency();
 	commodity.set_multiplier_to_base(Decimal(1, 0));
 	m_database_connection.set_default_commodity(commodity);
 	return;
@@ -304,8 +301,6 @@ SetupWizard::FilepathValidator::TransferToWindow()
 			dynamic_cast<wxTextCtrl*>(GetWindow());
 		if (!text_ctrl)
 		{
-			JEWEL_DEBUG_LOG_LOCATION;
-			JEWEL_DEBUG_LOG << "Huh!" << endl;
 			return false;
 		}
 		text_ctrl->SetValue
@@ -345,6 +340,8 @@ SetupWizard::FilepathPage::FilepathPage
 ):
 	wxWizardPageSimple(parent),
 	m_database_connection(p_database_connection),
+	m_currency_manager(0),
+	m_currency_map(0),
 	m_top_sizer(0),
 	m_filename_row_sizer(0),
 	m_directory_row_sizer(0),
@@ -353,6 +350,8 @@ SetupWizard::FilepathPage::FilepathPage
 	m_filename_ctrl(0),
 	m_selected_filepath(0)
 {
+	m_currency_manager = new CurrencyManager(p_database_connection);
+	m_currency_map = new map<wxString, BString>;
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
 	m_filename_row_sizer = new wxBoxSizer(wxHORIZONTAL);
 	m_directory_row_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -437,9 +436,61 @@ SetupWizard::FilepathPage::FilepathPage
 	);
 	m_filename_row_sizer->Add(extension_text);
 
+	// Sixth row
+	m_top_sizer->AddSpacer(m_directory_ctrl->GetSize().y);
+
+	// Seventh row
+	wxStaticText* currency_prompt = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString("Select your currency"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT
+	);
+	m_top_sizer->Add(currency_prompt);
+
+	// Eighth row
+	wxArrayString currency_strings;
+	for
+	(	vector<Commodity>::const_iterator it =
+			m_currency_manager->currencies().begin(),
+			end = m_currency_manager->currencies().end();
+		it != end;
+		++it
+	)
+	{
+		wxString const name = bstring_to_wx(it->name());
+		wxString const abbreviation = bstring_to_wx(it->abbreviation());
+		wxString const currency_text =
+			name + wxString(" (") + abbreviation + wxString(")");
+		currency_strings.Add(currency_text);
+		(*m_currency_map)[currency_text] = wx_to_bstring(abbreviation);
+	}
+	assert (!currency_strings.IsEmpty());
+	m_currency_box = new wxComboBox
+	(	this,
+		wxID_ANY,
+		currency_strings[0],
+		wxDefaultPosition,
+		wxDLG_UNIT(this, dlg_unit_size),
+		currency_strings,
+		wxCB_DROPDOWN | wxCB_SORT | wxCB_READONLY
+	);
+	m_top_sizer->Add(m_currency_box);
+
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	Layout();
+}
+
+SetupWizard::FilepathPage::~FilepathPage()
+{
+	delete m_currency_manager;
+	m_currency_manager = 0;
+
+	delete m_currency_map;
+	m_currency_map = 0;
 }
 
 optional<filesystem::path>
@@ -452,7 +503,15 @@ SetupWizard::FilepathPage::selected_filepath() const
 	}
 	return ret;
 }
-		
+
+Commodity
+SetupWizard::FilepathPage::selected_currency() const
+{
+	return
+		m_currency_manager->get_currency_with_abbreviation
+		(	(*m_currency_map)[m_currency_box->GetValue()]
+		);
+}
 
 void
 SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
@@ -487,89 +546,6 @@ SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 }
 
 
-
-
-/*** SetupWizard::LocalizationPage ***/
-
-
-SetupWizard::LocalizationPage::LocalizationPage
-(	SetupWizard* parent,
-	PhatbooksDatabaseConnection& p_database_connection
-):
-	wxWizardPageSimple(parent),
-	m_database_connection(p_database_connection),
-	m_currency_manager(0),
-	m_currency_map(0),
-	m_top_sizer(0)
-{
-	m_currency_manager = new CurrencyManager(p_database_connection);
-	m_currency_map = new map<wxString, BString>;
-	m_top_sizer = new wxBoxSizer(wxVERTICAL);
-	wxSize const dlg_unit_size = SetupWizard::standard_text_box_size();
-
-	assert (m_currency_map->empty());
-
-	// First row
-	wxStaticText* currency_prompt = new wxStaticText
-	(	this,
-		wxID_ANY,
-		wxString("Select your currency"),
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_LEFT
-	);
-	m_top_sizer->Add(currency_prompt);
-
-	// Second row
-	wxArrayString currency_strings;
-	for
-	(	vector<Commodity>::const_iterator it =
-				m_currency_manager->currencies().begin(),
-			end = m_currency_manager->currencies().end();
-		it != end;
-		++it
-	)
-	{
-		wxString const name = bstring_to_wx(it->name());
-		wxString const abbreviation = bstring_to_wx(it->abbreviation());
-		wxString const currency_text =
-			name + wxString(" (") + abbreviation + wxString(")");
-		currency_strings.Add(currency_text);
-		(*m_currency_map)[currency_text] = wx_to_bstring(abbreviation);
-	}
-	m_currency_box = new wxComboBox
-	(	this,
-		wxID_ANY,
-		currency_strings[0],
-		wxDefaultPosition,
-		wxDLG_UNIT(this, dlg_unit_size),
-		currency_strings,
-		wxCB_DROPDOWN | wxCB_SORT | wxCB_READONLY
-	);
-	m_top_sizer->Add(m_currency_box);
-
-	SetSizer(m_top_sizer);
-	m_top_sizer->Fit(this);
-	Layout();
-}
-
-SetupWizard::LocalizationPage::~LocalizationPage()
-{
-	delete m_currency_manager;
-	m_currency_manager = 0;
-
-	delete m_currency_map;
-	m_currency_map = 0;
-}
-
-Commodity
-SetupWizard::LocalizationPage::selected_currency() const
-{
-	return
-		m_currency_manager->get_currency_with_abbreviation
-		(	(*m_currency_map)[m_currency_box->GetValue()]
-		);
-}
 
 
 /*** AccountPage ***/
