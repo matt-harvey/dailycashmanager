@@ -42,8 +42,10 @@ public:
 	 * from among those stored in CurrencyManager. There is guaranteed
 	 * to be no more than one Commodity stored with a given abbreviation.
 	 * 
-	 * @throws CurrencyManagerException if there is no commodity with this
+	 * @throws CurrencyManagerException if there is no Commodity with this
 	 * abbreviation in the CurrencyManager.
+	 *
+	 * @todo Enforce the abovementioned guarantee.
 	 */
 	Commodity
 	get_currency_with_abbreviation(BString const& p_abbreviation) const;

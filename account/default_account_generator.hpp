@@ -2,6 +2,7 @@
 #define GUARD_default_account_generator_hpp
 
 #include "account.hpp"
+#include "b_string.hpp"
 #include <boost/noncopyable.hpp>
 #include <vector>
 
@@ -53,6 +54,18 @@ public:
 	 * to accept or reject the default Accounts.
 	 */
 	void save_accounts();
+
+	/**
+	 * @returns the Account with p_name as its name(), from among those
+	 * currently stored in the DefaultAccountGenerator. There is guaranteed
+	 * to be no more than one Account stored with a given name.
+	 *
+	 * @throws DefaultAccountGeneratorException if there is no Account with
+	 * this name in the DefaultAccountGenerator.
+	 *
+	 * @todo Enforce the abovementioned guarantee.
+	 */
+	Account get_account_named(BString const& p_name) const;
 
 private:
 	

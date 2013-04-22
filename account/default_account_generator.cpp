@@ -4,6 +4,7 @@
 #include "b_string.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <sqloxx/database_transaction.hpp>
 #include <cassert>
 #include <stdexcept>
@@ -77,6 +78,26 @@ DefaultAccountGenerator::save_accounts()
 		throw;
 	}
 	return;
+}
+
+Account
+DefaultAccountGenerator::get_account_named(BString const& p_name) const
+{
+	for
+	(	vector<Account>::const_iterator it = m_accounts->begin(),
+			end = m_accounts->end();
+		it != end;
+		++it
+	)
+	{
+		if (it->name() == p_name)
+		{
+			return *it;
+		}
+	}
+	throw DefaultAccountGeneratorException
+	(	"No Account in DefaultAccountGenerator has this name."
+	);
 }
 
 void

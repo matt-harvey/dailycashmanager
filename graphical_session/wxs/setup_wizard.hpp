@@ -1,6 +1,8 @@
 #ifndef GUARD_setup_wizard_hpp
 #define GUARD_setup_wizard_hpp
 
+#include "account.hpp"
+#include "account_type.hpp"
 #include "commodity.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/noncopyable.hpp>
@@ -18,13 +20,13 @@
 #include <wx/window.h>
 #include <wx/wizard.h>
 #include <map>
+#include <vector>
 
 namespace phatbooks
 {
 
 // Begin forward declarations
 
-class Commodity;
 class CurrencyManager;
 class DefaultAccountGenerator;
 class PhatbooksDatabaseConnection;
@@ -90,7 +92,8 @@ private:
 	 * Reflect in the database the Accounts selected by user in
 	 * the wizard.
 	 *
-	 * Should be called only after calling RunWizard().
+	 * Should be called only after calling RunWizard(), and after calling
+	 * configure_default_commodity() and create_file().
 	 */
 	void configure_accounts();
 	
@@ -143,6 +146,10 @@ private:
  * This is the first page the user sees when opening the application
  * without a file selected. This welcomes the user and prompts them to
  * select a file.
+ *
+ * @todo In currency selection box, it would probably be better to associate
+ * data with the items using SetItemData etc., than using crude mapping from
+ * strings etc..
  */
 class SetupWizard::FilepathPage:
 	public wxWizardPageSimple,
@@ -199,6 +206,8 @@ public:
 	);
 	~AccountPage();
 
+	std::vector<Account> selected_accounts() const;	
+
 	class AccountTreeList;
 
 private:
@@ -211,6 +220,11 @@ private:
 };  // SetupWizard::AccountPage
 
 
+/**
+ * @todo It would probably be better to associate data with
+ * the items in the tree using SetItemData etc., than using
+ * crude mapping from strings etc..
+ */
 class SetupWizard::AccountPage::AccountTreeList:
 	public wxTreeListCtrl
 {
@@ -220,9 +234,18 @@ public:
 		wxSize const& size,
 		DefaultAccountGenerator& p_default_account_generator
 	);
+	void selected_accounts(std::vector<Account>& vec) const;
+
 private:
+	
 	void OnItemChecked(wxTreeListEvent& event);
+
+	static wxString account_type_label
+	(	account_type::AccountType p_account_type
+	);
+
 	DefaultAccountGenerator& m_default_account_generator;
+	std::vector<wxTreeListItem> m_leaf_nodes;
 
 	DECLARE_EVENT_TABLE()
 };

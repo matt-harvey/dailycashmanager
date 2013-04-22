@@ -126,6 +126,12 @@ JEWEL_DERIVED_EXCEPTION(InvalidDefaultCommodityException, PhatbooksException);
  */
 JEWEL_DERIVED_EXCEPTION(CurrencyManagerException, PhatbooksException);
 
+/**
+ * Exception to be thrown by DefaultAccountGenerator when exceptional
+ * behaviour occurs that is specifically related to that class.
+ */
+JEWEL_DERIVED_EXCEPTION(DefaultAccountGeneratorException, PhatbooksException);
+
 }  // namespace phatbooks
 
 #endif  // GUARD_phatbooks_exceptions_hpp

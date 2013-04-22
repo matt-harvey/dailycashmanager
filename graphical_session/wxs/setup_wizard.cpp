@@ -1,4 +1,5 @@
 #include "setup_wizard.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "application.hpp"
 #include "b_string.hpp"
@@ -180,8 +181,19 @@ SetupWizard::create_file()
 void
 SetupWizard::configure_accounts()
 {
-	// TODO Implement
-	// ...
+	assert (m_database_connection.is_valid());  // precondition
+	assert (m_database_connection.default_commodity_is_set());  // precondition
+	Commodity const commodity = m_database_connection.default_commodity();
+	vector<Account> accounts = m_account_page->selected_accounts();
+	for
+	(	vector<Account>::iterator it = accounts.begin(), end = accounts.end();
+		it != end;
+		++it
+	)
+	{
+		it->set_commodity(commodity);
+		it->save();
+	}
 	return;
 }
 
@@ -620,6 +632,14 @@ SetupWizard::AccountPage::~AccountPage()
 	m_account_tree = 0;
 }
 
+vector<Account>
+SetupWizard::AccountPage::selected_accounts() const
+{
+	vector<Account> ret;
+	assert (m_account_tree);
+	m_account_tree->selected_accounts(ret);
+	return ret;
+}
 
 /*** AccountTreeList ***/
 
@@ -651,13 +671,13 @@ SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 	AppendColumn(wxString("Account"));
 	wxTreeListItem const root_item = GetRootItem();
 	wxTreeListItem const asset_item =
-		AppendItem(root_item, wxString("Assets"));
+		AppendItem(root_item, account_type_label(account_type::asset));
 	wxTreeListItem const liability_item =
-		AppendItem(root_item, wxString("Liabilities"));
+		AppendItem(root_item, account_type_label(account_type::liability));
 	wxTreeListItem const revenue_item =
-		AppendItem(root_item, wxString("Revenue categories"));
+		AppendItem(root_item, account_type_label(account_type::revenue));
 	wxTreeListItem const expense_item =
-		AppendItem(root_item, wxString("Expense categories"));
+		AppendItem(root_item, account_type_label(account_type::expense));
 	for
 	(	vector<Account>::const_iterator it = accounts.begin(),
 			end = accounts.end();
@@ -683,7 +703,9 @@ SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 		default:
 			assert (false);
 		}
-		AppendItem(parent_item, bstring_to_wx(it->name()));
+		m_leaf_nodes.push_back
+		(	AppendItem(parent_item, bstring_to_wx(it->name()))
+		);
 	}	
 	Expand(asset_item);
 	CheckItemRecursively(asset_item);
@@ -695,6 +717,52 @@ SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 	CheckItemRecursively(expense_item);
 	Expand(root_item);
 	Layout();
+}
+
+wxString
+SetupWizard::AccountPage::AccountTreeList::account_type_label
+(	account_type::AccountType p_account_type
+)
+{
+	switch (p_account_type)
+	{
+	case account_type::asset:
+		return wxString("Assets");
+	case account_type::liability:
+		return wxString("Liabilities");
+	case account_type::equity:
+		return wxString("Equity items");
+	case account_type::revenue:
+		return wxString("Revenue categories");
+	case account_type::expense:
+		return wxString("Expense categeries");
+	case account_type::pure_envelope:
+		return wxString("Pure envelope categories");
+	default:
+		assert (false);
+	}
+}
+
+void
+SetupWizard::AccountPage::AccountTreeList::
+selected_accounts(vector<Account>& vec) const
+{
+	for
+	(	vector<wxTreeListItem>::const_iterator it = m_leaf_nodes.begin(),
+			end = m_leaf_nodes.end();
+		it != end;
+		++it
+	)
+	{
+		if (GetCheckedState(*it) == wxCHK_CHECKED)
+		{
+			BString const name = wx_to_bstring(GetItemText(*it, 0));
+			vec.push_back
+			(	m_default_account_generator.get_account_named(name)
+			);
+		}
+	}
+	return;
 }
 
 void
