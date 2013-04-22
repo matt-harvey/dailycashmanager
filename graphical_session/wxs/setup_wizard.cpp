@@ -148,11 +148,7 @@ SetupWizard::run()
 	if (RunWizard(m_filepath_page))
 	{
 		// Then user completed Wizard rather than cancelling.
-
-		// Default Commodity already configured by
-		// LocalizationPage event.
-		// configure_default_commodity();
-
+		configure_default_commodity();
 		create_file();
 		configure_accounts();
 	}
