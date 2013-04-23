@@ -782,7 +782,7 @@ SetupWizard::AccountPage::AccountTreeList::account_type_label
 	case account_type::revenue:
 		return wxString("Revenue categories");
 	case account_type::expense:
-		return wxString("Expense categeries");
+		return wxString("Expense categories");
 	case account_type::pure_envelope:
 		return wxString("Pure envelope categories");
 	default:
