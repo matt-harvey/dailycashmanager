@@ -4,11 +4,11 @@
 #include "application.hpp"
 #include "b_string.hpp"
 #include "client_data.hpp"
-#include "currency_manager.hpp"
 #include "default_account_generator.hpp"
 #include "filename_validation.hpp"
 #include "frame.hpp"
 #include "icon.xpm"
+#include "make_currencies.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
@@ -353,9 +353,7 @@ SetupWizard::FilepathPage::FilepathPage
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxWizardPageSimple(parent),
-	m_database_connection(p_database_connection),
-	m_currency_manager(0),
-	m_currency_map(0),
+	m_currencies(make_currencies(p_database_connection)),
 	m_top_sizer(0),
 	m_filename_row_sizer(0),
 	m_directory_row_sizer(0),
@@ -364,8 +362,6 @@ SetupWizard::FilepathPage::FilepathPage
 	m_filename_ctrl(0),
 	m_selected_filepath(0)
 {
-	m_currency_manager = new CurrencyManager(p_database_connection);
-	m_currency_map = new map<wxString, BString>;
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
 	m_filename_row_sizer = new wxBoxSizer(wxHORIZONTAL);
 	m_directory_row_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -465,32 +461,34 @@ SetupWizard::FilepathPage::FilepathPage
 	m_top_sizer->Add(currency_prompt);
 
 	// Eighth row
-	wxArrayString currency_strings;
-	for
-	(	vector<Commodity>::const_iterator it =
-			m_currency_manager->currencies().begin(),
-			end = m_currency_manager->currencies().end();
-		it != end;
-		++it
-	)
-	{
-		wxString const name = bstring_to_wx(it->name());
-		wxString const abbreviation = bstring_to_wx(it->abbreviation());
-		wxString const currency_text =
-			name + wxString(" (") + abbreviation + wxString(")");
-		currency_strings.Add(currency_text);
-		(*m_currency_map)[currency_text] = wx_to_bstring(abbreviation);
-	}
-	assert (!currency_strings.IsEmpty());
 	m_currency_box = new wxComboBox
 	(	this,
 		wxID_ANY,
-		currency_strings[0],
+		wxEmptyString,
 		wxDefaultPosition,
 		wxDLG_UNIT(this, dlg_unit_size),
-		currency_strings,
+		0,
+		0,
 		wxCB_DROPDOWN | wxCB_SORT | wxCB_READONLY
 	);
+	for (vector<Commodity>::size_type i = 0; i != m_currencies.size(); ++i)
+	{
+		Commodity const commodity = m_currencies[i];
+		wxString const name = bstring_to_wx(commodity.name());
+		wxString const abb = bstring_to_wx(commodity.abbreviation());
+		unsigned int const item_index = m_currency_box->Append
+		(	name + wxString(" (") + abb + wxString(")")
+		);
+		ClientData<Commodity>* const data =
+			new ClientData<Commodity>(commodity);
+
+		// Note control will take care of memory management
+		// Note also that the association of each item with a particular
+		// Commodity stays constant even while the order of items is
+		// changed due to sorting - which is what we want.
+		m_currency_box->SetClientObject(item_index, data);
+	}
+	m_currency_box->SetSelection(0);
 	m_top_sizer->Add(m_currency_box);
 
 	SetSizer(m_top_sizer);
@@ -500,11 +498,6 @@ SetupWizard::FilepathPage::FilepathPage
 
 SetupWizard::FilepathPage::~FilepathPage()
 {
-	delete m_currency_manager;
-	m_currency_manager = 0;
-
-	delete m_currency_map;
-	m_currency_map = 0;
 }
 
 optional<filesystem::path>
@@ -521,10 +514,11 @@ SetupWizard::FilepathPage::selected_filepath() const
 Commodity
 SetupWizard::FilepathPage::selected_currency() const
 {
-	return
-		m_currency_manager->get_currency_with_abbreviation
-		(	(*m_currency_map)[m_currency_box->GetValue()]
-		);
+	unsigned int const index = m_currency_box->GetSelection();
+	typedef ClientData<Commodity> Data;
+	Data* data = dynamic_cast<Data*>(m_currency_box->GetClientObject(index));
+	assert (data != 0);
+	return data->data();
 }
 
 void

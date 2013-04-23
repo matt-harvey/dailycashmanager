@@ -19,7 +19,6 @@
 #include <wx/validate.h>
 #include <wx/window.h>
 #include <wx/wizard.h>
-#include <map>
 #include <vector>
 
 namespace phatbooks
@@ -27,7 +26,6 @@ namespace phatbooks
 
 // Begin forward declarations
 
-class CurrencyManager;
 class DefaultAccountGenerator;
 class PhatbooksDatabaseConnection;
 
@@ -169,13 +167,7 @@ private:
 
 	void on_directory_button_click(wxCommandEvent& event);
 
-	PhatbooksDatabaseConnection& m_database_connection;
-	CurrencyManager* m_currency_manager;
-
-	// Map from wxStrings appearing in m_currency_box, to BStrings
-	// being Commodity abbreviations using which Commodities can
-	// be retrieved from the CurrencyManager.
-	std::map<wxString, BString>* m_currency_map;
+	std::vector<Commodity> const m_currencies;
 
 	wxBoxSizer* m_top_sizer;
 	wxBoxSizer* m_filename_row_sizer;
