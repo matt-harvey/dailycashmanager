@@ -26,7 +26,6 @@ namespace phatbooks
 
 // Begin forward declarations
 
-class DefaultAccountGenerator;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -205,7 +204,6 @@ public:
 private:
 
 	PhatbooksDatabaseConnection& m_database_connection;
-	DefaultAccountGenerator* m_default_account_generator;	
 	wxBoxSizer* m_top_sizer;
 	AccountTreeList* m_account_tree;
 
@@ -224,7 +222,7 @@ public:
 	AccountTreeList
 	(	AccountPage* parent,
 		wxSize const& size,
-		DefaultAccountGenerator& p_default_account_generator
+		std::vector<Account> const& p_default_accounts
 	);
 	void selected_accounts(std::vector<Account>& vec) const;
 
@@ -236,7 +234,7 @@ private:
 	(	account_type::AccountType p_account_type
 	);
 
-	DefaultAccountGenerator& m_default_account_generator;
+	std::vector<Account> const& m_default_accounts;
 
 	DECLARE_EVENT_TABLE()
 };

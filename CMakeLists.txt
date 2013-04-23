@@ -133,7 +133,7 @@ set (main_files
 	 account/account_reader.cpp
 	 account/account_type.cpp
 	 account/balance_cache.cpp
-	 account/default_account_generator.cpp
+	 account/make_default_accounts.cpp
 	 application/application.cpp
 	 b_string/b_string.cpp
 	 budget/amalgamated_budget.cpp

@@ -236,6 +236,9 @@ private:
 };
 
 
+/* Free functions ********************************************/
+
+
 // This has to be std::string as it interfaces with Consolixx
 // which requires it to be std::string
 boost::shared_ptr<std::vector<std::string> >
@@ -246,8 +249,6 @@ make_account_row(Account const& account);
 boost::shared_ptr<std::vector<std::string> >
 make_detailed_account_row(Account const& account);
 
-
-// Free-standing functions
 bool is_asset_or_liability(Account const& account);
 bool is_balance_sheet_account(Account const& account);
 bool is_expense(Account const& account);
@@ -256,6 +257,8 @@ bool is_pl_account(Account const& account);
 bool is_not_pure_envelope(Account const& account);
 std::vector<account_type::AccountType> balance_sheet_account_types();
 std::vector<account_type::AccountType> pl_account_types();
+
+
 
 
 

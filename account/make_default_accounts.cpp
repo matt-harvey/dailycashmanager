@@ -1,18 +1,13 @@
-#include "default_account_generator.hpp"
+#include "make_default_accounts.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
 #include "b_string.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
-#include <sqloxx/database_transaction.hpp>
 #include <cassert>
-#include <stdexcept>
 #include <utility>
 #include <vector>
 
-using sqloxx::DatabaseTransaction;
-using std::exception;
 using std::make_pair;
 using std::pair;
 using std::vector;
@@ -20,101 +15,21 @@ using std::vector;
 namespace phatbooks
 {
 
-DefaultAccountGenerator::DefaultAccountGenerator
-(	PhatbooksDatabaseConnection& p_phatbooks_database_connection
-):
-	m_accounts(0),
-	m_database_connection(p_phatbooks_database_connection)
+vector<Account>
+make_default_accounts(PhatbooksDatabaseConnection& p_database_connection)
 {
-}
-
-DefaultAccountGenerator::~DefaultAccountGenerator()
-{
-	delete m_accounts;
-	m_accounts = 0;
-}
-
-vector<Account>&
-DefaultAccountGenerator::accounts()
-{
-	if (!m_accounts)
-	{
-		m_accounts = new vector<Account>;
-		initialize_default_accounts();
-	}
-	assert (m_accounts);
-	return *m_accounts;
+	vector<Account> ret;
+	make_default_accounts(p_database_connection, ret);
+	return ret;
 }
 
 void
-DefaultAccountGenerator::save_accounts()
+make_default_accounts
+(	PhatbooksDatabaseConnection& p_database_connection,
+	vector<Account>& vec
+)
 {
-	DatabaseTransaction transaction(m_database_connection);
-	try
-	{
-		for
-		(	vector<Account>::iterator it = m_accounts->begin(),
-				end = m_accounts->end();
-			it != end;
-			++it
-		)
-		{
-			it->save();
-		}
-		transaction.commit();
-	}
-	catch (exception&)
-	{
-		transaction.cancel();
-		for
-		(	vector<Account>::iterator it = m_accounts->begin(),
-				end = m_accounts->end();
-			it != end;
-			++it
-		)
-		{
-			it->ghostify();
-		}
-		throw;
-	}
-	return;
-}
-
-/*
- * ABANDONED - not required
-Account
-DefaultAccountGenerator::get_account_named(BString const& p_name) const
-{
-	for
-	(	vector<Account>::const_iterator it = m_accounts->begin(),
-			end = m_accounts->end();
-		it != end;
-		++it
-	)
-	{
-		if (it->name() == p_name)
-		{
-			return *it;
-		}
-	}
-	throw DefaultAccountGeneratorException
-	(	"No Account in DefaultAccountGenerator has this name."
-	);
-}
-*/
-
-void
-DefaultAccountGenerator::initialize_default_accounts()
-{
-	// TODO This assumes we have PHATBOOKS_EXPOSE_COMMODITY
-	// switched off. So this is "unconditional compilation", whereas
-	// elsewhere we have conditional compilation for this same
-	// switch. Make this consistent.
-
-	// Assert preconditions
-
-	assert (m_accounts != 0);
-	assert (m_accounts->empty());
+	assert (vec.empty());  // precondition
 
 	// First we fill a vector with the minimum information we are going to
 	// need about each Account.
@@ -129,6 +44,7 @@ DefaultAccountGenerator::initialize_default_accounts()
 	typedef AccountType AT;
 	typedef BString BS;
 	ProtoVec pv;
+	pv.reserve(12);
 	pv.push_back(make_pair<BS, AT>("Cash", asset));
 	pv.push_back(make_pair<BS, AT>("Cheque account", asset));
 	pv.push_back(make_pair<BS, AT>("Credit card", liability));
@@ -152,10 +68,10 @@ DefaultAccountGenerator::initialize_default_accounts()
 	// of the user, and will be done in client code closer to the UI).
 
 	vector<ProtoAccount>::size_type sz = pv.size();
-	m_accounts->reserve(sz);
+	vec.reserve(sz);	
 	for (vector<ProtoAccount>::size_type i = 0; i != sz; ++i)
 	{
-		Account account(m_database_connection);
+		Account account(p_database_connection);
 		account.set_name(pv[i].first);
 		account.set_account_type(pv[i].second);
 
@@ -169,11 +85,11 @@ DefaultAccountGenerator::initialize_default_accounts()
 		// if it is able to create the Accounts first.
 
 		account.set_description("");
-		m_accounts->push_back(account);
+		vec.push_back(account);
 	}
 
-	assert (m_accounts->size() == pv.size());
-	assert (m_accounts->size() != 0);
+	assert (vec.size() == pv.size());
+	assert (vec.size() != 0);
 
 	return;
 }

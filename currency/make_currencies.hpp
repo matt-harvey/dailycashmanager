@@ -12,7 +12,7 @@ class PhatbooksDatabaseConnection;
 
 
 /**
- * @returns a list of almost all major currencies in the world, as
+ * @returns a vector of almost all major currencies in the world, as
  * Commodity objects in a std::vector (where the Australian dollar, for
  * example, is a major currency but the Australian cent is not). Each
  * Commodity will have as its
@@ -48,7 +48,7 @@ make_currencies(PhatbooksDatabaseConnection& p_database_connection);
  * passed to \e vec.
  *
  * @param vec the vector which the function will populate with
- * Commodities. vec Should be empty when passed to the function.
+ * Commodities. \e vec should be empty when passed to the function.
  */
 void
 make_currencies

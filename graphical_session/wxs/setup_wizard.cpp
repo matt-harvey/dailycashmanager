@@ -4,11 +4,11 @@
 #include "application.hpp"
 #include "b_string.hpp"
 #include "client_data.hpp"
-#include "default_account_generator.hpp"
 #include "filename_validation.hpp"
 #include "frame.hpp"
 #include "icon.xpm"
 #include "make_currencies.hpp"
+#include "make_default_accounts.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
@@ -564,13 +564,9 @@ SetupWizard::AccountPage::AccountPage
 ):
 	wxWizardPageSimple(parent),
 	m_database_connection(p_database_connection),
-	m_default_account_generator(0),
 	m_top_sizer(0),
 	m_account_tree(0)
 {
-	m_default_account_generator = new DefaultAccountGenerator
-	(	m_database_connection
-	);
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
 
 	// First row
@@ -599,18 +595,20 @@ SetupWizard::AccountPage::AccountPage
 
 	// Third row
 	wxSize const standard_dlg_size = SetupWizard::standard_text_box_size();
+	vector<Account> const default_accounts = make_default_accounts
+	(	m_database_connection
+	);
 	wxSize const tree_dlg_size = wxDLG_UNIT
 	(	this,
 		wxSize
 		(	standard_dlg_size.x * 1.4,
-			standard_dlg_size.y *
-				(m_default_account_generator->accounts().size() + 4)
+			standard_dlg_size.y * (default_accounts.size() + 4)
 		)
 	);
 	m_account_tree = new AccountTreeList
 	(	this,
 		tree_dlg_size,
-		*m_default_account_generator
+		default_accounts	
 	);
 	m_top_sizer->Add(m_account_tree);
 
@@ -621,9 +619,6 @@ SetupWizard::AccountPage::AccountPage
 
 SetupWizard::AccountPage::~AccountPage()
 {
-	delete m_default_account_generator;
-	m_default_account_generator = 0;
-
 	delete m_account_tree;
 	m_account_tree = 0;
 }
@@ -652,7 +647,7 @@ END_EVENT_TABLE()
 SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 (	AccountPage* parent,
 	wxSize const& size,
-	DefaultAccountGenerator& p_default_account_generator
+	vector<Account> const& p_default_accounts
 ):
 	wxTreeListCtrl
 	(	parent,
@@ -661,9 +656,8 @@ SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 		size,
 		wxTL_MULTIPLE | wxTL_CHECKBOX | wxTL_3STATE
 	),
-	m_default_account_generator(p_default_account_generator)
+	m_default_accounts(p_default_accounts)
 {
-	vector<Account>& accounts = m_default_account_generator.accounts();
 	AppendColumn(wxString("Account"));
 	wxTreeListItem const root_item = GetRootItem();
 	wxTreeListItem const asset_item =
@@ -675,8 +669,8 @@ SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 	wxTreeListItem const expense_item =
 		AppendItem(root_item, account_type_label(account_type::expense));
 	for
-	(	vector<Account>::const_iterator it = accounts.begin(),
-			end = accounts.end();
+	(	vector<Account>::const_iterator it = m_default_accounts.begin(),
+			end = m_default_accounts.end();
 		it != end;
 		++it
 	)
