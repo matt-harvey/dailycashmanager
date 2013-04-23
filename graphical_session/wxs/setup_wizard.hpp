@@ -60,6 +60,9 @@ public:
 	 * when initializing the controls' sizes.
 	 */
 	static wxSize standard_text_box_size();
+	
+	Commodity selected_currency() const;
+
 
 private:
 
@@ -67,6 +70,8 @@ private:
 
 	class FilepathPage;
 	class AccountPage;
+
+	void render_account_page();
 
 	/**
 	 * Set the default Commodity for m_database_connection, based on
@@ -165,6 +170,7 @@ public:
 private:
 
 	void on_directory_button_click(wxCommandEvent& event);
+	void on_wizard_page_changing(wxWizardEvent& event);
 
 	std::vector<Commodity> const m_currencies;
 
@@ -199,6 +205,8 @@ public:
 
 	std::vector<Account> selected_accounts() const;	
 
+	void render(Commodity const& p_commodity);
+
 	class AccountTreeList;
 
 private:
@@ -222,7 +230,8 @@ public:
 	AccountTreeList
 	(	AccountPage* parent,
 		wxSize const& size,
-		std::vector<Account> const& p_default_accounts
+		std::vector<Account> const& p_default_accounts,
+		Commodity const& p_commodity
 	);
 	void selected_accounts(std::vector<Account>& vec) const;
 

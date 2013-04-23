@@ -1,10 +1,12 @@
 #include "setup_wizard.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
+#include "app.hpp"
 #include "application.hpp"
 #include "b_string.hpp"
 #include "client_data.hpp"
 #include "filename_validation.hpp"
+#include "finformat.hpp"
 #include "frame.hpp"
 #include "icon.xpm"
 #include "make_currencies.hpp"
@@ -162,10 +164,23 @@ SetupWizard::standard_text_box_size()
 	return wxSize(140, 12);
 }
 
+Commodity
+SetupWizard::selected_currency() const
+{
+	return m_filepath_page->selected_currency();
+}
+
+void
+SetupWizard::render_account_page()
+{
+	assert (m_account_page);
+	m_account_page->render(selected_currency());
+}
+
 void
 SetupWizard::configure_default_commodity()
 {
-	Commodity commodity = m_filepath_page->selected_currency();
+	Commodity commodity = selected_currency();
 	commodity.set_multiplier_to_base(Decimal(1, 0));
 	m_database_connection.set_default_commodity(commodity);
 	return;
@@ -343,6 +358,10 @@ BEGIN_EVENT_TABLE(SetupWizard::FilepathPage, wxWizardPageSimple)
 	EVT_BUTTON
 	(	s_directory_button_id,
 		SetupWizard::FilepathPage::on_directory_button_click
+	)
+	EVT_WIZARD_PAGE_CHANGING
+	(	wxID_ANY,
+		SetupWizard::FilepathPage::on_wizard_page_changing
 	)
 END_EVENT_TABLE()
 
@@ -553,7 +572,14 @@ SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 	return;
 }
 
-
+void
+SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
+{
+	SetupWizard* parent = dynamic_cast<SetupWizard*>(GetParent());
+	parent->render_account_page();
+	(void)event;  // Silence compiler warning about unused parameter
+	return;
+}
 
 
 /*** AccountPage ***/
@@ -566,6 +592,12 @@ SetupWizard::AccountPage::AccountPage
 	m_database_connection(p_database_connection),
 	m_top_sizer(0),
 	m_account_tree(0)
+{
+	render(parent->selected_currency());
+}
+
+void
+SetupWizard::AccountPage::AccountPage::render(Commodity const& p_commodity)
 {
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -602,13 +634,14 @@ SetupWizard::AccountPage::AccountPage
 	(	this,
 		wxSize
 		(	standard_dlg_size.x * 1.4,
-			standard_dlg_size.y * (default_accounts.size() + 4)
+			standard_dlg_size.y * (default_accounts.size() + 5)
 		)
 	);
 	m_account_tree = new AccountTreeList
 	(	this,
 		tree_dlg_size,
-		default_accounts	
+		default_accounts,
+		p_commodity
 	);
 	m_top_sizer->Add(m_account_tree);
 
@@ -647,7 +680,8 @@ END_EVENT_TABLE()
 SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 (	AccountPage* parent,
 	wxSize const& size,
-	vector<Account> const& p_default_accounts
+	vector<Account> const& p_default_accounts,
+	Commodity const& p_commodity
 ):
 	wxTreeListCtrl
 	(	parent,
@@ -658,7 +692,14 @@ SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 	),
 	m_default_accounts(p_default_accounts)
 {
+	// TODO HIGH PRIORITY. The sizing of the columns is all wrong.
+	// This seems to be a bug in wxWidgets - judging from a discussion online.
 	AppendColumn(wxString("Account"));
+	AppendColumn
+	(	wxString("Opening balance"),
+		50,
+		wxALIGN_RIGHT
+	);
 	wxTreeListItem const root_item = GetRootItem();
 	wxTreeListItem const asset_item =
 		AppendItem(root_item, account_type_label(account_type::asset));
@@ -668,6 +709,17 @@ SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 		AppendItem(root_item, account_type_label(account_type::revenue));
 	wxTreeListItem const expense_item =
 		AppendItem(root_item, account_type_label(account_type::expense));
+
+	// Make text to show in opening balance column by default (i.e. unless and
+	// until changed by user).
+	// WARNING This sucks
+	App* const app = dynamic_cast<App*>(wxTheApp);
+	Decimal const default_balance(0, p_commodity.precision());
+	wxString const default_balance_text = finformat_wx
+	(	default_balance,
+		app->locale()
+	);
+
 	for
 	(	vector<Account>::const_iterator it = m_default_accounts.begin(),
 			end = m_default_accounts.end();
@@ -697,6 +749,7 @@ SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 			AppendItem(parent_item, bstring_to_wx(it->name()));
 		ClientData<Account>* const account_data
 			= new ClientData<Account>(*it);
+		SetItemText(item, 1, default_balance_text);
 		// Note account_data will be deleted by the AccountTreeList
 		// (by code inherited from wxTreeListCtrl).
 		SetItemData(item, account_data);
