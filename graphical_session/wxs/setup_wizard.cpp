@@ -712,6 +712,8 @@ SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 			AppendItem(parent_item, bstring_to_wx(it->name()));
 		ClientData<Account>* const account_data
 			= new ClientData<Account>(*it);
+		// Note account_data will be deleted by the AccountTreeList
+		// (by code inherited from wxTreeListCtrl).
 		SetItemData(item, account_data);
 	}	
 	Expand(asset_item);
