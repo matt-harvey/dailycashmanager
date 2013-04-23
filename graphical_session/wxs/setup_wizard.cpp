@@ -165,7 +165,6 @@ SetupWizard::standard_text_box_size()
 void
 SetupWizard::configure_default_commodity()
 {
-	assert (m_localization_page);
 	Commodity commodity = m_filepath_page->selected_currency();
 	commodity.set_multiplier_to_base(Decimal(1, 0));
 	m_database_connection.set_default_commodity(commodity);
@@ -184,8 +183,6 @@ SetupWizard::create_file()
 void
 SetupWizard::configure_accounts()
 {
-	assert (m_database_connection.is_valid());  // precondition
-	assert (m_database_connection.default_commodity_is_set());  // precondition
 	Commodity const commodity = m_database_connection.default_commodity();
 	vector<Account> accounts = m_account_page->selected_accounts();
 	DatabaseTransaction transaction(m_database_connection);
