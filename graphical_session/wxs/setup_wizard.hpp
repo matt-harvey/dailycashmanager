@@ -245,7 +245,6 @@ private:
 	);
 
 	DefaultAccountGenerator& m_default_account_generator;
-	std::vector<wxTreeListItem> m_leaf_nodes;
 
 	DECLARE_EVENT_TABLE()
 };

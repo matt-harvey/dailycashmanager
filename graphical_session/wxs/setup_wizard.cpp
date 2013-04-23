@@ -3,6 +3,7 @@
 #include "account_type.hpp"
 #include "application.hpp"
 #include "b_string.hpp"
+#include "client_data.hpp"
 #include "currency_manager.hpp"
 #include "default_account_generator.hpp"
 #include "filename_validation.hpp"
@@ -707,9 +708,11 @@ SetupWizard::AccountPage::AccountTreeList::AccountTreeList
 		default:
 			assert (false);
 		}
-		m_leaf_nodes.push_back
-		(	AppendItem(parent_item, bstring_to_wx(it->name()))
-		);
+		wxTreeListItem const item =
+			AppendItem(parent_item, bstring_to_wx(it->name()));
+		ClientData<Account>* const account_data
+			= new ClientData<Account>(*it);
+		SetItemData(item, account_data);
 	}	
 	Expand(asset_item);
 	CheckItemRecursively(asset_item);
@@ -752,18 +755,19 @@ SetupWizard::AccountPage::AccountTreeList::
 selected_accounts(vector<Account>& vec) const
 {
 	for
-	(	vector<wxTreeListItem>::const_iterator it = m_leaf_nodes.begin(),
-			end = m_leaf_nodes.end();
-		it != end;
-		++it
+	(	wxTreeListItem item = GetFirstItem();
+		item.IsOk();
+		item = GetNextItem(item)
 	)
 	{
-		if (GetCheckedState(*it) == wxCHK_CHECKED)
+		if (GetCheckedState(item) == wxCHK_CHECKED)
 		{
-			BString const name = wx_to_bstring(GetItemText(*it, 0));
-			vec.push_back
-			(	m_default_account_generator.get_account_named(name)
-			);
+			ClientData<Account>* const cd =
+				dynamic_cast<ClientData<Account>* >(GetItemData(item));
+			if (cd)  // To skip AccountType header nodes.
+			{
+				vec.push_back(cd->data());
+			}
 		}
 	}
 	return;

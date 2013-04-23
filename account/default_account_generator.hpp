@@ -55,7 +55,7 @@ public:
 	 */
 	void save_accounts();
 
-	/**
+	/*
 	 * @returns the Account with p_name as its name(), from among those
 	 * currently stored in the DefaultAccountGenerator. There is guaranteed
 	 * to be no more than one Account stored with a given name.
@@ -64,8 +64,10 @@ public:
 	 * this name in the DefaultAccountGenerator.
 	 *
 	 * @todo Enforce the abovementioned guarantee.
-	 */
+	 *
+	 * ABANDONED - not required.
 	Account get_account_named(BString const& p_name) const;
+	 */
 
 private:
 	

@@ -36,14 +36,14 @@ ClientData<T>::ClientData(T const& p_data):
 {
 }
 
-tempate <typename T>
+template <typename T>
 ClientData<T>::~ClientData()
 {
 }
 
 template <typename T>
 T
-ClientData<T>::ClientData() const
+ClientData<T>::data() const
 {
 	return m_data;
 }

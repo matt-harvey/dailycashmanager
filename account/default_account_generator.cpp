@@ -80,6 +80,8 @@ DefaultAccountGenerator::save_accounts()
 	return;
 }
 
+/*
+ * ABANDONED - not required
 Account
 DefaultAccountGenerator::get_account_named(BString const& p_name) const
 {
@@ -99,6 +101,7 @@ DefaultAccountGenerator::get_account_named(BString const& p_name) const
 	(	"No Account in DefaultAccountGenerator has this name."
 	);
 }
+*/
 
 void
 DefaultAccountGenerator::initialize_default_accounts()
