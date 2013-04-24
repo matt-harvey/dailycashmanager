@@ -170,6 +170,7 @@ set (main_files
 
 set (gui_files
 	 graphical_session/graphical_session.cpp
+	 graphical_session/wxs/account_data_view_model.cpp
 	 graphical_session/wxs/account_list_ctrl.cpp
 	 graphical_session/wxs/app.cpp
 	 graphical_session/wxs/entry_list_ctrl.cpp
