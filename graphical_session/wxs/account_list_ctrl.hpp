@@ -13,6 +13,10 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
+/**
+ * Displays a list of Accounts and their balances, and, optionally
+ * the daily budget associated with each Account.
+ */
 class AccountListCtrl:
 	public wxListCtrl
 {
@@ -23,6 +27,8 @@ public:
 	 * all and only the balance sheet accounts stored in \e dbc.
 	 * The client does not need to take care of the memory - the memory
 	 * is taken care of by the parent window.
+	 *
+	 * The name of each balance sheet Account is shown along with its balance.
 	 */
 	static AccountListCtrl* create_balance_sheet_account_list
 	(	wxWindow* parent,
@@ -34,6 +40,11 @@ public:
 	 * all and only the profit-and-loss accounts stored in \e dbc.
 	 * The client does not need to take care of the memory - the memory
 	 * is taken care of by the parent window.
+	 *
+	 * The name of each P&L Account is shown along with its envelope
+	 * balance and daily budget allocation.
+	 *
+	 * @todo Implement display of daily budget allocation.
 	 */
 	static AccountListCtrl* create_pl_account_list
 	(	wxWindow* parent,
@@ -45,7 +56,8 @@ private:
 	AccountListCtrl
 	(	wxWindow* p_parent,
 		AccountReaderBase const& p_reader,
-		PhatbooksDatabaseConnection& p_database_connection
+		PhatbooksDatabaseConnection& p_database_connection,
+		bool p_show_daily_budget = false
 	);
 	PhatbooksDatabaseConnection& m_database_connection;
 };

@@ -9,6 +9,7 @@
 #include "phatbooks_database_connection.hpp"
 #include <boost/lexical_cast.hpp>
 #include <jewel/debug_log.hpp>
+#include <wx/intl.h>
 #include <wx/progdlg.h>
 #include <string>
 
@@ -63,8 +64,8 @@ EntryListCtrl::EntryListCtrl
 	InsertColumn(amount_col_num, "Amount", wxLIST_FORMAT_RIGHT);
 	InsertColumn(reconciled_col_num, "R", wxLIST_FORMAT_LEFT);
 
-	// WARNING This sucks
 	App* app = dynamic_cast<App*>(wxTheApp);
+	wxLocale const& locale = app->locale();
 
 	EntryReader::size_type i = 0;
 	EntryReader::size_type progress = 0;
@@ -94,10 +95,7 @@ EntryListCtrl::EntryListCtrl
 		(	it->account().name()
 		);
 		wxString const comment_string = bstring_to_wx(it->comment());
-
-		// WARNING This sucks
-		wxString const amount_string =
-			finformat_wx(it->amount(), app->locale());
+		wxString const amount_string = finformat_wx(it->amount(), locale);
 
 		// TODO Should have a tick icon here rather than a "Y".
 		wxString const reconciled_string =

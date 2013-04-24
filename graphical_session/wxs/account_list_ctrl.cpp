@@ -37,14 +37,15 @@ AccountListCtrl::create_pl_account_list
 )
 {
 	PLAccountReader const reader(dbc);
-	AccountListCtrl* ret = new AccountListCtrl(parent, reader, dbc);
+	AccountListCtrl* ret = new AccountListCtrl(parent, reader, dbc, true);
 	return ret;
 }
 
 AccountListCtrl::AccountListCtrl
 (	wxWindow* p_parent,
 	AccountReaderBase const& p_reader,
-	PhatbooksDatabaseConnection& p_database_connection
+	PhatbooksDatabaseConnection& p_database_connection,
+	bool p_show_daily_budget
 ):
 	wxListCtrl
 	(	p_parent,
@@ -60,11 +61,15 @@ AccountListCtrl::AccountListCtrl
 {
 	InsertColumn(0, "Name", wxLIST_FORMAT_LEFT);
 	InsertColumn(1, "Balance", wxLIST_FORMAT_RIGHT);
+	if (p_show_daily_budget)
+	{
+		InsertColumn(2, "Daily budget", wxLIST_FORMAT_RIGHT);
+	}
 
 	AccountReader::size_type i = 0;
 
-	// WARNING This sucks
 	App* app = dynamic_cast<App*>(wxTheApp);
+	wxLocale const& locale = app->locale();
 
 	for
 	(	AccountReader::const_iterator it = p_reader.begin(),
@@ -81,14 +86,20 @@ AccountListCtrl::AccountListCtrl
 		SetItemData(i, i);
 
 		// Insert the balance string
-		SetItem
-		(	i,
-			1,
-			finformat_wx(it->friendly_balance(), app->locale())  // WARNING This sucks
-		);
+		SetItem(i, 1, finformat_wx(it->friendly_balance(), locale));
+
+		if (p_show_daily_budget)
+		{
+			// Insert budget string
+			SetItem(i, 2, finformat_wx(it->budget(), locale));
+		}
 	}
 	SetColumnWidth(0, wxLIST_AUTOSIZE);
 	SetColumnWidth(1, wxLIST_AUTOSIZE);
+	if (p_show_daily_budget)
+	{
+		SetColumnWidth(2, wxLIST_AUTOSIZE);
+	}
 }
 
 
