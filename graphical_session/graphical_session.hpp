@@ -21,6 +21,14 @@ public:
 	GraphicalSession();
 	virtual ~GraphicalSession();
 
+	/**
+	 * Notify session of existing application instance (which could
+	 * be either a console or a graphical session), so that just after
+	 * the wxWidgets initialization code has run, it can display an
+	 * appropriate message box and abort.
+	 */
+	void notify_existing_application_instance();
+
 private:
 
 	/**
@@ -41,6 +49,7 @@ private:
 	 */
 	int do_run(std::string const& filepath_str);
 
+	bool m_existing_application_instance_notified;
 };
 
 

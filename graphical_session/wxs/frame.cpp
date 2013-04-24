@@ -94,6 +94,7 @@ Frame::OnAbout(wxCommandEvent& event)
 	wxString msg;
 	msg.Printf("Hello and welcome to %s", wxVERSION_STRING);
 	wxMessageBox(msg, "About Minimal", wxOK | wxICON_INFORMATION, this);
+	(void)event;  // Silence compiler warning re. unused parameter.
 	return;
 }
 
@@ -102,6 +103,7 @@ Frame::OnQuit(wxCommandEvent& event)
 {
 	// Destroy the frame
 	Close();
+	(void)event;  // Silence compiler warning re. unused parameter.
 	return;
 }
 

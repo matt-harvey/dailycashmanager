@@ -17,12 +17,20 @@ namespace phatbooks
 namespace gui
 {
 
-GraphicalSession::GraphicalSession()
+GraphicalSession::GraphicalSession():
+	m_existing_application_instance_notified(false)
 {
 }
 
 GraphicalSession::~GraphicalSession()
 {
+}
+
+void
+GraphicalSession::notify_existing_application_instance()
+{
+	m_existing_application_instance_notified = true;
+	return;
 }
 
 int
@@ -37,6 +45,12 @@ GraphicalSession::do_run()
 	// wxWidgets, because we don't want IMPLEMENT_APP to provide us
 	// with a main function - we already have our own.
 	App* pApp = new App;
+	
+	if (m_existing_application_instance_notified)
+	{
+		pApp->notify_existing_application_instance();
+	}
+
 	pApp->set_database_connection(dbc);
 	wxApp::SetInstance(pApp);
 	BString const app_name = Application::application_name();
@@ -84,9 +98,18 @@ GraphicalSession::do_run(string const& filepath_str)
 	(	new PhatbooksDatabaseConnection
 	);
 	boost::filesystem::path const filepath(filepath_str);
-	dbc->open(filepath);
 
 	App* pApp = new App;
+
+	if (m_existing_application_instance_notified)
+	{
+		pApp->notify_existing_application_instance();
+	}
+	else
+	{
+		dbc->open(filepath);
+	}
+
 	pApp->set_database_connection(dbc);
 	wxApp::SetInstance(pApp);
 	BString const app_name = Application::application_name();	

@@ -9,7 +9,6 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/optional.hpp>
 #include <wx/filedlg.h>
-#include <wx/snglinst.h>
 #include <wx/wx.h>
 
 // For debugging
@@ -39,21 +38,22 @@ The wxPanel might seem pointless, but apparently if you don't use
 it you get into all kinds of problems.
 */
 
+App::App():
+	m_existing_application_instance_notified(false)
+{
+}
 
 
 bool App::OnInit()
 {
 	wxString const app_name = bstring_to_wx(Application::application_name());
 
-	// Prevent multiple instances run by the same user
-	wxString const app_name_plus_user_id =
-		app_name + wxString::Format("-%s", wxGetUserId().c_str());
-	m_checker = new wxSingleInstanceChecker(app_name_plus_user_id);
-	if (m_checker->IsAnotherRunning())
+	if (m_existing_application_instance_notified)
 	{
-		wxLogError(app_name + " is already running.");
+		wxLogError(app_name + wxString(" is already running."));
 		return false;
 	}
+
 	// Initialize locale
 	if (!m_locale.Init(wxLANGUAGE_DEFAULT, wxLOCALE_LOAD_DEFAULT))
 	{
@@ -117,6 +117,12 @@ App::set_database_connection
 	return;
 }
 
+void
+App::notify_existing_application_instance()
+{
+	m_existing_application_instance_notified = true;
+}
+
 PhatbooksDatabaseConnection&
 App::database_connection()
 {
@@ -125,7 +131,7 @@ App::database_connection()
 
 int App::OnExit()
 {
-	delete m_checker;
+	// Any cleanup code here.
 	return 0;
 }
 
