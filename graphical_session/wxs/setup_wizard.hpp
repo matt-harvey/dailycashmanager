@@ -74,8 +74,11 @@ private:
 
 	class FilepathValidator;
 	class FilepathPage;
+	class AccountPage;
+	class BalanceSheetAccountPage;
+	class PLAccountPage;
 
-	void render_account_page();
+	void render_account_pages();
 
 	/**
 	 * Set the default Commodity for m_database_connection, based on
@@ -105,6 +108,8 @@ private:
 	
 	PhatbooksDatabaseConnection& m_database_connection;
 	FilepathPage* m_filepath_page;
+	BalanceSheetAccountPage* m_balance_sheet_account_page;
+	PLAccountPage* m_pl_account_page;
 	
 };  // SetupWizard
 
@@ -194,6 +199,64 @@ private:
 };  // SetupWizard::FilepathPage
 
 
+/**
+ * Represents a page for setting up Accounts in a SetupWizard.
+ * Abstract base class - more specific Account page types derive
+ * from this.
+ */
+class SetupWizard::AccountPage:
+	public wxWizardPageSimple,
+	private boost::noncopyable
+{
+public:
+	AccountPage
+	(	SetupWizard* parent,
+		PhatbooksDatabaseConnection& p_database_connection
+	);
+
+	void render();
+
+protected:
+	PhatbooksDatabaseConnection& database_connection();
+
+private:
+	virtual void do_render() = 0;
+	PhatbooksDatabaseConnection& m_database_connection;
+};
+
+
+/**
+ * Represents a page for setting up balance sheet Accounts in a
+ * SetupWizard.
+ */
+class SetupWizard::BalanceSheetAccountPage:
+	public SetupWizard::AccountPage
+{
+public:
+	BalanceSheetAccountPage
+	(	SetupWizard* parent,
+		PhatbooksDatabaseConnection& p_database_connection
+	);
+private:
+	void do_render();
+};
+
+
+/***
+ * Represents a page for setting up profit-and-loss Accounts in
+ * a SetupWizard.
+ */
+class SetupWizard::PLAccountPage:
+	public SetupWizard::AccountPage
+{
+public:
+	PLAccountPage
+	(	SetupWizard* parent,
+		PhatbooksDatabaseConnection& p_database_connection
+	);
+private:
+	void do_render();
+};
 
 }  // namespace gui
 }  // namesapce phatbooks

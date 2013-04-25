@@ -168,18 +168,19 @@ SetupWizard::selected_currency() const
 }
 
 void
-SetupWizard::render_account_page()
+SetupWizard::render_account_pages()
 {
-	// TODO Implement this... we used to have an AccountPage after
-	// the FilepathPage, but it was broken. We need to reinstate it
-	// (or have two Account pages, one for balance sheet and one for
-	// P&L).
-	// Once reinstated, the call to render_account_page should cause
+	// TODO
+	// The call to render_account_pages() should cause
 	// the AccountPage(s) to be rendered, in light of whatever currency
 	// is currently selected on the previous page. This is because
 	// the currency that is selected may infuence the degree of
 	// precision, and hence the spacing of the "zero dash" on the
 	// AccountPage(s).
+	assert (m_balance_sheet_account_page);
+	assert (m_pl_account_page);
+	m_balance_sheet_account_page->render();
+	m_pl_account_page->render();
 	return;
 }
 
@@ -587,11 +588,69 @@ void
 SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 {
 	SetupWizard* parent = dynamic_cast<SetupWizard*>(GetParent());
-	parent->render_account_page();
+	parent->render_account_pages();
 	(void)event;  // Silence compiler warning about unused parameter
 	return;
 }
 
+
+
+/*** SetupWizard::AccountPage ***/
+
+SetupWizard::AccountPage::AccountPage
+(	SetupWizard* parent,
+	PhatbooksDatabaseConnection& p_database_connection
+):
+	wxWizardPageSimple(parent),
+	m_database_connection(p_database_connection)
+{
+}
+
+void
+SetupWizard::AccountPage::render()
+{
+	do_render();
+	return;
+}
+
+PhatbooksDatabaseConnection&
+SetupWizard::AccountPage::database_connection()
+{
+	return m_database_connection;
+}
+
+
+/*** BalanceSheetAccountPage ***/
+
+SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
+(	SetupWizard* parent,
+	PhatbooksDatabaseConnection& p_database_connection
+):
+	AccountPage(parent, p_database_connection)
+{
+}
+
+void
+SetupWizard::BalanceSheetAccountPage::do_render()
+{
+	// TODO Implement
+}
+
+/*** PLAccountPage ***/
+
+SetupWizard::PLAccountPage::PLAccountPage
+(	SetupWizard* parent,
+	PhatbooksDatabaseConnection& p_database_connection
+):
+	AccountPage(parent, p_database_connection)
+{
+}
+
+void
+SetupWizard::PLAccountPage::do_render()
+{
+	// TODO Implement
+}
 
 
 }  // namespace gui
