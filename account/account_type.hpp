@@ -50,6 +50,10 @@ account_type_names();
 BString
 account_type_to_string(account_type::AccountType p_account_type);
 
+/**
+ * @throws InvalidAccountTypeStringException if there is no
+ * AccountType that corresponds to this string.
+ */
 account_type::AccountType
 string_to_account_type(BString const& p_string);
 

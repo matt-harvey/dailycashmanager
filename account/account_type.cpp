@@ -1,5 +1,6 @@
 #include "account_type.hpp"
 #include "b_string.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <map>
 #include <vector>
 
@@ -74,7 +75,16 @@ string_to_account_type(BString const& p_string)
 		}
 		calculated_already = true;
 	}
-	return dict[p_string];
+	map<BString, account_type::AccountType>::const_iterator jt =
+		dict.find(p_string);
+	if (jt == dict.end())
+	{
+		throw InvalidAccountTypeStringException
+		(	"String does not identify AccountType"
+		);
+	}
+	assert (jt != dict.end());
+	return jt->second;
 }
 
 

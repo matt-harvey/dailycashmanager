@@ -173,6 +173,8 @@ set (gui_files
 	 graphical_session/wxs/account_data_view_model.cpp
 	 graphical_session/wxs/account_list_ctrl.cpp
 	 graphical_session/wxs/app.cpp
+	 graphical_session/wxs/account_type_variant_data.cpp
+	 graphical_session/wxs/decimal_variant_data.cpp
 	 graphical_session/wxs/entry_list_ctrl.cpp
 	 graphical_session/wxs/frame.cpp
 	 graphical_session/wxs/setup_wizard.cpp

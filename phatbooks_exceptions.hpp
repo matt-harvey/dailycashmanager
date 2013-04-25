@@ -132,6 +132,15 @@ JEWEL_DERIVED_EXCEPTION(CurrencyManagerException, PhatbooksException);
  */
 JEWEL_DERIVED_EXCEPTION(DefaultAccountGeneratorException, PhatbooksException);
 
+/**
+ * Exception to be thrown when an string does not correspond to any
+ * account_type::AccountType, but purports to do so.
+ */
+JEWEL_DERIVED_EXCEPTION
+(	InvalidAccountTypeStringException, PhatbooksException
+);
+
+
 }  // namespace phatbooks
 
 #endif  // GUARD_phatbooks_exceptions_hpp
