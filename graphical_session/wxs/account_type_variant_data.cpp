@@ -6,6 +6,8 @@
 #include <string>
 #include <typeinfo>
 
+using std::istream;
+using std::ostream;
 using std::string;
 
 namespace phatbooks
@@ -32,11 +34,11 @@ AccountTypeVariantData::Eq(wxVariantData& data) const
 wxString
 AccountTypeVariantData::GetType() const
 {
-	return wxString("AccountType");
+	return wxString("phatbooks::account_type::AccountType");
 }
 
 bool
-AccountTypeVariantData::Read(std::istream& stream)
+AccountTypeVariantData::Read(istream& stream)
 {
 	try
 	{
@@ -69,7 +71,7 @@ AccountTypeVariantData::Read(wxString& string)
 }
 
 bool
-AccountTypeVariantData::Write(std::ostream& stream) const
+AccountTypeVariantData::Write(ostream& stream) const
 {
 	try
 	{
