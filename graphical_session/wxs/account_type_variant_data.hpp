@@ -18,7 +18,10 @@ namespace gui
 class AccountTypeVariantData: public wxVariantData
 {
 public:
+
 	AccountTypeVariantData(account_type::AccountType p_account_type);
+
+	account_type::AccountType account_type() const;
 
 	/**
 	 * Define function inherited as pure virtual from wxVariantData.

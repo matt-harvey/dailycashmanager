@@ -23,9 +23,23 @@ namespace gui
  * 	Account name;\e
  * 	Account type; and\e
  * 	Account opening balance.
+ *
+ * The implementation of this class is somewhat grotesque, mainly on
+ * account of having to satisfy the old-style wxWidgets API.
+ *
+ * @todo Review cases where all the hideous casts might fail and so
+ * on, and prevent silent failure in all such cases.
+ *
+ * @todo Use anonymous-namespace-scoped constants instead of literal
+ * column numbers throughout implementation.
+ *
+ * @todo The way I have implemented identifiers (using a map) is needlessly
+ * complex. The identifiers should basically be glorified pointers to
+ * the objects in the container - see wxWidgets' sample code.
+ *
+ * @todo Who controls the memory for wxDataViewItem?
  */
-class AccountDataViewModel:
-	public wxDataViewModel
+class AccountDataViewModel: public wxDataViewModel
 {
 public:
 

@@ -2,6 +2,7 @@
 #include "account.hpp"
 #include "account_type_variant_data.hpp"
 #include "decimal_variant_data.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/dataview.h>
@@ -87,7 +88,7 @@ AccountDataViewModel::GetColumnType(unsigned int col) const
 	case 2:
 		return DecimalVariantData::GetTypeStatic();
 	default:
-		assert (false);
+		throw AccountDataViewModelException("Invalid column number.");
 	}
 }
 
@@ -98,7 +99,38 @@ AccountDataViewModel::GetValue
 	unsigned int col
 ) const
 {
-	// TODO Implement
+	unsigned int* identifier_ptr = static_cast<unsigned int*>(item.GetID());
+	unsigned int const identifier = *identifier_ptr;
+	Map::const_iterator it = m_accounts.find(identifier);
+	if (it == m_accounts.end())
+	{
+		throw AccountDataViewModelException
+		(	"Could not find AugmentedAccount in AccountDataViewModel."
+		);
+	}
+	AugmentedAccount const& aug_account = *(it->second);
+	wxVariantData* data = 0;
+	switch (col)
+	{
+	case 0:
+		variant = bstring_to_wx(aug_account.account.name());
+		break;
+	case 1:
+		data = new AccountTypeVariantData
+		(	aug_account.account.account_type()
+		);
+		variant.SetData(data);
+		break;
+	case 2:
+		data = new DecimalVariantData
+		(	aug_account.technical_opening_balance
+		);
+		variant.SetData(data);
+		break;
+	default:
+		throw AccountDataViewModelException("Invalid column number.");
+	}
+	return;
 }
 
 bool
@@ -108,7 +140,47 @@ AccountDataViewModel::SetValue
 	unsigned int col
 )
 {
-	// TODO Implement
+	unsigned int* identifier_ptr = static_cast<unsigned int*>(item.GetID());
+	unsigned int const identifier = *identifier_ptr;
+	Map::iterator it = m_accounts.find(identifier);
+	if (it == m_accounts.end())
+	{
+		throw AccountDataViewModelException
+		(	"Could not find AugmentedAccount in AccountDataViewModel."
+		);
+	}
+	AugmentedAccount& aug_account = *(it->second);
+	AccountTypeVariantData* atvd = 0;
+	DecimalVariantData* dvd = 0;
+	switch (col)
+	{
+	case 0:
+		aug_account.account.set_name(wx_to_bstring(variant.GetString()));
+		return true;
+	case 1:
+		atvd = dynamic_cast<AccountTypeVariantData*>
+		(	variant.GetData()
+		);
+		if (!atvd)
+		{
+			throw AccountDataViewModelException("Wrong wxVariant type.");
+		}
+		aug_account.account.set_account_type(atvd->account_type());
+		return true;
+	case 2:
+		dvd = dynamic_cast<DecimalVariantData*>
+		(	variant.GetData()
+		);
+		if (!dvd)
+		{
+			throw AccountDataViewModelException("Wrong wxVariant type.");
+		}
+		aug_account.technical_opening_balance = dvd->decimal();
+		return true;
+	default:
+		throw AccountDataViewModelException("Invalid column number.");
+	}
+	return false;
 }
 
 unsigned int

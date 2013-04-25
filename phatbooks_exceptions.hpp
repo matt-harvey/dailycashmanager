@@ -137,9 +137,18 @@ JEWEL_DERIVED_EXCEPTION(DefaultAccountGeneratorException, PhatbooksException);
  * account_type::AccountType, but purports to do so.
  */
 JEWEL_DERIVED_EXCEPTION
-(	InvalidAccountTypeStringException, PhatbooksException
+(	InvalidAccountTypeStringException,
+	PhatbooksException
 );
 
+/**
+ * Exception to be thrown by AccountDataViewModel when exceptional behaviour
+ * occurs that is specifically related to that class.
+ */
+JEWEL_DERIVED_EXCEPTION
+(	AccountDataViewModelException,
+	PhatbooksException
+);
 
 }  // namespace phatbooks
 

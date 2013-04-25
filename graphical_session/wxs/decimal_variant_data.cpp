@@ -26,6 +26,12 @@ DecimalVariantData::DecimalVariantData(Decimal const& p_decimal):
 {
 }
 
+Decimal
+DecimalVariantData::decimal() const
+{
+	return m_decimal;
+}
+
 bool
 DecimalVariantData::Eq(wxVariantData& data) const
 {

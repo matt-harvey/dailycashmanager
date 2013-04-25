@@ -22,6 +22,12 @@ AccountTypeVariantData::AccountTypeVariantData
 {
 }
 
+account_type::AccountType
+AccountTypeVariantData::account_type() const
+{
+	return m_account_type;
+}
+
 bool
 AccountTypeVariantData::Eq(wxVariantData& data) const
 {

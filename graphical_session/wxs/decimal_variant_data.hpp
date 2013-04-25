@@ -20,6 +20,8 @@ class DecimalVariantData: public wxVariantData
 public:
 	DecimalVariantData(jewel::Decimal const& p_decimal);
 
+	jewel::Decimal decimal() const;
+
 	/**
 	 * Define function inherited as pure virtual from wxVariantData.
 	 */
@@ -53,7 +55,7 @@ public:
 	/**
 	 * Define function inherited as pure virtual from wxVariantData.
 	 *
-	 * string should be empty when passed in.
+	 * \e string should be empty when passed in.
 	 */
 	bool Write(wxString& string) const;
 
