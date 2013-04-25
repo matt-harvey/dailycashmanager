@@ -2,7 +2,9 @@
 #define GUARD_account_type_variant_data_hpp
 
 #include "account_type.hpp"
+#include <wx/string.h>
 #include <wx/variant.h>
+#include <iosfwd>
 
 namespace phatbooks
 {
@@ -13,21 +15,42 @@ namespace gui
  * Derived from wxVariantData. This is to enable account_type::AccountType
  * data to be stored in a wxVariant.
  */
-class AccountTypeVariantData
+class AccountTypeVariantData: public wxVariantData
 {
 public:
 	AccountTypeVariantData(account_type::AccountType p_account_type);
-	virtual bool Eq(wxVariantData& data) const;
-	virtual wxString GetType() const;
-
-	virtual bool Read(std::istream& stream);
-	virtual bool Read(wxString& string);
-	virtual bool Write(std::ostream& stream) const;
 
 	/**
-	 * string should be empty when passed in.
+	 * Define function inherited as pure virtual from wxVariantData.
 	 */
-	virtual bool Write(wxString& string) const;
+	bool Eq(wxVariantData& data) const;
+
+	/**
+	 * Define function inherited as pure virtual from wxVariantData.
+	 */
+	wxString GetType() const;
+
+	/**
+	 * Define function inherited as pure virtual from wxVariantData.
+	 */
+	bool Read(std::istream& stream);
+
+	/**
+	 * Define function inherited as pure virtual from wxVariantData.
+	 */
+	bool Read(wxString& string);
+
+	/**
+	 * Define function inherited as pure virtual from wxVariantData.
+	 */
+	bool Write(std::ostream& stream) const;
+
+	/**
+	 * Define function inherited as pure virtual from wxVariantData.
+	 *
+	 * @param string should be empty when passed in.
+	 */
+	bool Write(wxString& string) const;
 
 
 private:

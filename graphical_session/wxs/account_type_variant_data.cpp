@@ -1,5 +1,8 @@
 #include "account_type_variant_data.hpp"
 #include "account_type.hpp"
+#include <wx/string.h>
+#include <istream>
+#include <ostream>
 #include <string>
 #include <typeinfo>
 
