@@ -19,22 +19,35 @@ namespace phatbooks
 namespace gui
 {
 
+
 AccountDataViewModel::AccountDataViewModel
 (	vector<AugmentedAccount> const& p_accounts
-):
-	// Start at 1 as 0 is reserved for invalid wxDataViewItem
-	m_least_available_identifier(1)
+)
 {
-	vector<AugmentedAccount>::size_type i = 0;
-	vector<AugmentedAccount>::size_type const max = p_accounts.size();
-	while (i != max)
+	for
+	(	vector<AugmentedAccount>::const_iterator it = p_accounts.begin(),
+			end = p_accounts.end();
+		it != end;
+		++it
+	)
 	{
-		shared_ptr<AugmentedAccount> account
-		(	new AugmentedAccount(p_accounts[i++])
-		);
-		m_accounts[m_least_available_identifier++] = account;
-		assert (i + 1 == m_least_available_identifier);
-	}	
+		AugmentedAccount* augmented_account = new AugmentedAccount(*it);
+		m_accounts.push_back(augmented_account);
+	}
+}
+
+AccountDataViewModel::~AccountDataViewModel()
+{
+	for
+	(	vector<AugmentedAccount*>::iterator it = m_accounts.begin(),
+			end = m_accounts.end();
+		it != end;
+		++it
+	)
+	{
+		delete *it;
+		*it = 0;
+	}
 }
 
 bool
@@ -81,11 +94,11 @@ AccountDataViewModel::GetColumnType(unsigned int col) const
 {
 	switch (col)
 	{
-	case 0:
+	case s_name_column:
 		return wxString("string");
-	case 1:
+	case s_account_type_column:
 		return AccountTypeVariantData::GetTypeStatic();
-	case 2:
+	case s_opening_balance_column:
 		return DecimalVariantData::GetTypeStatic();
 	default:
 		throw AccountDataViewModelException("Invalid column number.");
@@ -99,38 +112,35 @@ AccountDataViewModel::GetValue
 	unsigned int col
 ) const
 {
-	unsigned int* identifier_ptr = static_cast<unsigned int*>(item.GetID());
-	unsigned int const identifier = *identifier_ptr;
-	Map::const_iterator it = m_accounts.find(identifier);
-	if (it == m_accounts.end())
+	AugmentedAccount* augmented_account =
+		static_cast<AugmentedAccount*>(item.GetID());
+	if (!augmented_account)
 	{
 		throw AccountDataViewModelException
-		(	"Could not find AugmentedAccount in AccountDataViewModel."
+		(	"Invalid pointer to AugmentedAccount."
 		);
 	}
-	AugmentedAccount const& aug_account = *(it->second);
 	wxVariantData* data = 0;
 	switch (col)
 	{
-	case 0:
-		variant = bstring_to_wx(aug_account.account.name());
-		break;
-	case 1:
+	case s_name_column:
+		variant = bstring_to_wx(augmented_account->account.name());
+		return;
+	case s_account_type_column:
 		data = new AccountTypeVariantData
-		(	aug_account.account.account_type()
+		(	augmented_account->account.account_type()
 		);
 		variant.SetData(data);
-		break;
-	case 2:
+		return;
+	case s_opening_balance_column:
 		data = new DecimalVariantData
-		(	aug_account.technical_opening_balance
+		(	augmented_account->technical_opening_balance
 		);
 		variant.SetData(data);
-		break;
+		return;
 	default:
 		throw AccountDataViewModelException("Invalid column number.");
 	}
-	return;
 }
 
 bool
@@ -140,42 +150,38 @@ AccountDataViewModel::SetValue
 	unsigned int col
 )
 {
-	unsigned int* identifier_ptr = static_cast<unsigned int*>(item.GetID());
-	unsigned int const identifier = *identifier_ptr;
-	Map::iterator it = m_accounts.find(identifier);
-	if (it == m_accounts.end())
+	AugmentedAccount* augmented_account =
+		static_cast<AugmentedAccount*>(item.GetID());
+	if (!augmented_account)
 	{
 		throw AccountDataViewModelException
-		(	"Could not find AugmentedAccount in AccountDataViewModel."
+		(	"Invalid pointer to AugmentedAccount."
 		);
 	}
-	AugmentedAccount& aug_account = *(it->second);
 	AccountTypeVariantData* atvd = 0;
 	DecimalVariantData* dvd = 0;
 	switch (col)
 	{
-	case 0:
-		aug_account.account.set_name(wx_to_bstring(variant.GetString()));
-		return true;
-	case 1:
-		atvd = dynamic_cast<AccountTypeVariantData*>
-		(	variant.GetData()
+	case s_name_column:
+		augmented_account->account.set_name
+		(	wx_to_bstring(variant.GetString())
 		);
+		return true;
+	case s_account_type_column:
+		atvd = dynamic_cast<AccountTypeVariantData*>(variant.GetData());
 		if (!atvd)
 		{
 			throw AccountDataViewModelException("Wrong wxVariant type.");
 		}
-		aug_account.account.set_account_type(atvd->account_type());
+		augmented_account->account.set_account_type(atvd->account_type());
 		return true;
-	case 2:
-		dvd = dynamic_cast<DecimalVariantData*>
-		(	variant.GetData()
-		);
+	case s_opening_balance_column:
+		dvd = dynamic_cast<DecimalVariantData*>(variant.GetData());
 		if (!dvd)
 		{
 			throw AccountDataViewModelException("Wrong wxVariant type.");
 		}
-		aug_account.technical_opening_balance = dvd->decimal();
+		augmented_account->technical_opening_balance = dvd->decimal();
 		return true;
 	default:
 		throw AccountDataViewModelException("Invalid column number.");
@@ -187,13 +193,14 @@ unsigned int
 AccountDataViewModel::get_all_items(wxDataViewItemArray& items) const
 {
 	for
-	(	Map::const_iterator it = m_accounts.begin(), end = m_accounts.end();
+	(	vector<AugmentedAccount*>::const_iterator it = m_accounts.begin(),
+			end = m_accounts.end();
 		it != end;
 		++it
 	)
 	{
-		void* identifier = new unsigned int(it->first);
-		items.Add(wxDataViewItem(identifier));
+		void* item = static_cast<void*>(*it);
+		items.Add(wxDataViewItem(item));
 	}
 	return m_accounts.size();
 }

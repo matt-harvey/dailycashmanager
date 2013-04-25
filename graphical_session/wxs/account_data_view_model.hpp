@@ -24,20 +24,11 @@ namespace gui
  * 	Account type; and\e
  * 	Account opening balance.
  *
- * The implementation of this class is somewhat grotesque, mainly on
+ * The implementation of this class is a bit ugly, mainly on
  * account of having to satisfy the old-style wxWidgets API.
  *
  * @todo Review cases where all the hideous casts might fail and so
  * on, and prevent silent failure in all such cases.
- *
- * @todo Use anonymous-namespace-scoped constants instead of literal
- * column numbers throughout implementation.
- *
- * @todo The way I have implemented identifiers (using a map) is needlessly
- * complex. The identifiers should basically be glorified pointers to
- * the objects in the container - see wxWidgets' sample code.
- *
- * @todo Who controls the memory for wxDataViewItem?
  */
 class AccountDataViewModel: public wxDataViewModel
 {
@@ -58,6 +49,8 @@ public:
 	 * Accounts to be modelled.
 	 */
 	AccountDataViewModel(std::vector<AugmentedAccount> const& p_accounts);
+
+	~AccountDataViewModel();
 	
 	/**
 	 * Function inherited as pure virtual from wxDataViewModel.
@@ -121,15 +114,11 @@ private:
 	unsigned int get_all_items(wxDataViewItemArray& items) const;
 
 	static unsigned int const s_num_columns = 3;
+	static unsigned int const s_name_column = 0;
+	static unsigned int const s_account_type_column = 1;
+	static unsigned int const s_opening_balance_column = 2;
 
-	unsigned int m_least_available_identifier;
-
-	// Map identifiers to AugmentedAccounts
-	typedef boost::unordered_map
-	<	unsigned int,
-		boost::shared_ptr<AugmentedAccount>
-	> Map;
-	Map m_accounts;
+	std::vector<AugmentedAccount*> m_accounts;
 
 };  // AccountDataViewModel
 
