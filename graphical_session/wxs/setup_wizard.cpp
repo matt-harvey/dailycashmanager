@@ -134,13 +134,10 @@ SetupWizard::SetupWizard
 		wxDEFAULT_DIALOG_STYLE | wxFULL_REPAINT_ON_RESIZE
 	),
 	m_database_connection(p_database_connection),
-	m_filepath_page(0),
-	m_account_page(0)
+	m_filepath_page(0)
 {
 	assert (!m_database_connection.is_valid());
 	m_filepath_page = new FilepathPage(this, m_database_connection);
-	m_account_page = new AccountPage(this, m_database_connection);
-	wxWizardPageSimple::Chain(m_filepath_page, m_account_page);
 	GetPageAreaSizer()->Add(m_filepath_page);
 }
 
@@ -173,8 +170,17 @@ SetupWizard::selected_currency() const
 void
 SetupWizard::render_account_page()
 {
-	assert (m_account_page);
-	m_account_page->render(selected_currency());
+	// TODO Implement this... we used to have an AccountPage after
+	// the FilepathPage, but it was broken. We need to reinstate it
+	// (or have two Account pages, one for balance sheet and one for
+	// P&L).
+	// Once reinstated, the call to render_account_page should cause
+	// the AccountPage(s) to be rendered, in light of whatever currency
+	// is currently selected on the previous page. This is because
+	// the currency that is selected may infuence the degree of
+	// precision, and hence the spacing of the "zero dash" on the
+	// AccountPage(s).
+	return;
 }
 
 void
@@ -198,6 +204,10 @@ SetupWizard::create_file()
 void
 SetupWizard::configure_accounts()
 {
+	// TODO Implement this (again), once we have implemented the
+	// AccountPage(s).
+
+	/* Old implementation was as follows...
 	Commodity const commodity = m_database_connection.default_commodity();
 	vector<Account> accounts = m_account_page->selected_accounts();
 	DatabaseTransaction transaction(m_database_connection);
@@ -211,6 +221,7 @@ SetupWizard::configure_accounts()
 		it->save();
 	}
 	transaction.commit();
+	*/
 	return;
 }
 
@@ -578,252 +589,6 @@ SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 	SetupWizard* parent = dynamic_cast<SetupWizard*>(GetParent());
 	parent->render_account_page();
 	(void)event;  // Silence compiler warning about unused parameter
-	return;
-}
-
-
-/*** AccountPage ***/
-
-SetupWizard::AccountPage::AccountPage
-(	SetupWizard* parent,	
-	PhatbooksDatabaseConnection& p_database_connection
-):
-	wxWizardPageSimple(parent),
-	m_database_connection(p_database_connection),
-	m_top_sizer(0),
-	m_account_tree(0)
-{
-	render(parent->selected_currency());
-}
-
-void
-SetupWizard::AccountPage::AccountPage::render(Commodity const& p_commodity)
-{
-	m_top_sizer = new wxBoxSizer(wxVERTICAL);
-
-	// First row
-	wxStaticText* account_prompt_1 = new wxStaticText
-	(	this,
-		wxID_ANY,
-		wxString
-		(	"Select the accounts and categories you want to start off with."
-		),
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_LEFT
-	);
-	m_top_sizer->Add(account_prompt_1);
-
-	// Second row
-	wxStaticText* account_prompt_2 = new wxStaticText
-	(	this,
-		wxID_ANY,
-		wxString("Note you can always change these later."),
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_LEFT
-	);
-	m_top_sizer->Add(account_prompt_2);
-
-	// Third row
-	wxSize const standard_dlg_size = SetupWizard::standard_text_box_size();
-	vector<Account> const default_accounts = make_default_accounts
-	(	m_database_connection
-	);
-	wxSize const tree_dlg_size = wxDLG_UNIT
-	(	this,
-		wxSize
-		(	standard_dlg_size.x * 1.4,
-			standard_dlg_size.y * (default_accounts.size() + 5)
-		)
-	);
-	m_account_tree = new AccountTreeList
-	(	this,
-		tree_dlg_size,
-		default_accounts,
-		p_commodity
-	);
-	m_top_sizer->Add(m_account_tree);
-
-	SetSizer(m_top_sizer);
-	m_top_sizer->Fit(this);
-	Layout();
-}
-
-SetupWizard::AccountPage::~AccountPage()
-{
-	delete m_account_tree;
-	m_account_tree = 0;
-}
-
-vector<Account>
-SetupWizard::AccountPage::selected_accounts() const
-{
-	vector<Account> ret;
-	assert (m_account_tree);
-	m_account_tree->selected_accounts(ret);
-	return ret;
-}
-
-/*** AccountTreeList ***/
-
-
-BEGIN_EVENT_TABLE
-(	SetupWizard::AccountPage::AccountTreeList,
-	wxTreeListCtrl
-)
-	EVT_TREELIST_ITEM_CHECKED(wxID_ANY, AccountTreeList::OnItemChecked)
-END_EVENT_TABLE()
-
-
-
-SetupWizard::AccountPage::AccountTreeList::AccountTreeList
-(	AccountPage* parent,
-	wxSize const& size,
-	vector<Account> const& p_default_accounts,
-	Commodity const& p_commodity
-):
-	wxTreeListCtrl
-	(	parent,
-		wxID_ANY,
-		wxDefaultPosition,
-		size,
-		wxTL_MULTIPLE | wxTL_CHECKBOX | wxTL_3STATE
-	),
-	m_default_accounts(p_default_accounts)
-{
-	// TODO HIGH PRIORITY. The sizing of the columns is all wrong.
-	// This seems to be a bug in wxWidgets - judging from a discussion online.
-	AppendColumn(wxString("Account"));
-	AppendColumn
-	(	wxString("Opening balance"),
-		50,
-		wxALIGN_RIGHT
-	);
-	wxTreeListItem const root_item = GetRootItem();
-	wxTreeListItem const asset_item =
-		AppendItem(root_item, account_type_label(account_type::asset));
-	wxTreeListItem const liability_item =
-		AppendItem(root_item, account_type_label(account_type::liability));
-	wxTreeListItem const revenue_item =
-		AppendItem(root_item, account_type_label(account_type::revenue));
-	wxTreeListItem const expense_item =
-		AppendItem(root_item, account_type_label(account_type::expense));
-
-	// Make text to show in opening balance column by default (i.e. unless and
-	// until changed by user).
-	// WARNING This sucks
-	App* const app = dynamic_cast<App*>(wxTheApp);
-	Decimal const default_balance(0, p_commodity.precision());
-	wxString const default_balance_text = finformat_wx
-	(	default_balance,
-		app->locale()
-	);
-
-	for
-	(	vector<Account>::const_iterator it = m_default_accounts.begin(),
-			end = m_default_accounts.end();
-		it != end;
-		++it
-	)
-	{
-		wxTreeListItem parent_item = asset_item;
-		switch (it->account_type())
-		{
-		case account_type::asset:
-			parent_item = asset_item;
-			break;
-		case account_type::liability:
-			parent_item = liability_item;
-			break;
-		case account_type::revenue:
-			parent_item = revenue_item;
-			break;
-		case account_type::expense:
-			parent_item = expense_item;
-			break;
-		default:
-			assert (false);
-		}
-		wxTreeListItem const item =
-			AppendItem(parent_item, bstring_to_wx(it->name()));
-		ClientData<Account>* const account_data
-			= new ClientData<Account>(*it);
-		SetItemText(item, 1, default_balance_text);
-		// Note account_data will be deleted by the AccountTreeList
-		// (by code inherited from wxTreeListCtrl).
-		SetItemData(item, account_data);
-	}	
-	Expand(asset_item);
-	CheckItemRecursively(asset_item);
-	Expand(liability_item);
-	CheckItemRecursively(liability_item);
-	Expand(revenue_item);
-	CheckItemRecursively(revenue_item);
-	Expand(expense_item);
-	CheckItemRecursively(expense_item);
-	Expand(root_item);
-	Layout();
-}
-
-wxString
-SetupWizard::AccountPage::AccountTreeList::account_type_label
-(	account_type::AccountType p_account_type
-)
-{
-	switch (p_account_type)
-	{
-	case account_type::asset:
-		return wxString("Assets");
-	case account_type::liability:
-		return wxString("Liabilities");
-	case account_type::equity:
-		return wxString("Equity items");
-	case account_type::revenue:
-		return wxString("Revenue categories");
-	case account_type::expense:
-		return wxString("Expense categories");
-	case account_type::pure_envelope:
-		return wxString("Pure envelope categories");
-	default:
-		assert (false);
-	}
-}
-
-void
-SetupWizard::AccountPage::AccountTreeList::
-selected_accounts(vector<Account>& vec) const
-{
-	for
-	(	wxTreeListItem item = GetFirstItem();
-		item.IsOk();
-		item = GetNextItem(item)
-	)
-	{
-		if (GetCheckedState(item) == wxCHK_CHECKED)
-		{
-			ClientData<Account>* const cd =
-				dynamic_cast<ClientData<Account>* >(GetItemData(item));
-			if (cd)  // To skip AccountType header nodes.
-			{
-				vec.push_back(cd->data());
-			}
-		}
-	}
-	return;
-}
-
-void
-SetupWizard::AccountPage::AccountTreeList::
-OnItemChecked(wxTreeListEvent& event)
-{
-	wxTreeListItem item = event.GetItem();
-	CheckItemRecursively(item, GetCheckedState(item));
-	wxTreeListItem parent = GetItemParent(item);
-	if (parent != GetRootItem())
-	{
-		UpdateItemParentStateRecursively(item);
-	}
 	return;
 }
 

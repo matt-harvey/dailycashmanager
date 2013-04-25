@@ -39,6 +39,12 @@ class Frame;
 /**
  * Represents the wizard that is presented to GUI users when they first
  * start up the application.
+ *
+ * @todo Reinstate AccountPage - or rather pages - to offer user the chance
+ * to set up Accounts and opening balances (with suggested defaults)
+ * prior to first entering the main window. There should be page for
+ * balance sheet Accounts, followed by a page for P&L Accounts
+ * ("categories").
  */
 class SetupWizard:
 	public wxWizard
@@ -67,9 +73,7 @@ public:
 private:
 
 	class FilepathValidator;
-
 	class FilepathPage;
-	class AccountPage;
 
 	void render_account_page();
 
@@ -101,7 +105,6 @@ private:
 	
 	PhatbooksDatabaseConnection& m_database_connection;
 	FilepathPage* m_filepath_page;
-	AccountPage* m_account_page;
 	
 };  // SetupWizard
 
@@ -190,63 +193,6 @@ private:
 
 };  // SetupWizard::FilepathPage
 
-
-
-class SetupWizard::AccountPage:
-	public wxWizardPageSimple,
-	private boost::noncopyable
-{
-public:
-	AccountPage
-	(	SetupWizard* parent,
-		PhatbooksDatabaseConnection& p_database_connection
-	);
-	~AccountPage();
-
-	std::vector<Account> selected_accounts() const;	
-
-	void render(Commodity const& p_commodity);
-
-	class AccountTreeList;
-
-private:
-
-	PhatbooksDatabaseConnection& m_database_connection;
-	wxBoxSizer* m_top_sizer;
-	AccountTreeList* m_account_tree;
-
-};  // SetupWizard::AccountPage
-
-
-/**
- * @todo It would probably be better to associate data with
- * the items in the tree using SetItemData etc., than using
- * crude mapping from strings etc..
- */
-class SetupWizard::AccountPage::AccountTreeList:
-	public wxTreeListCtrl
-{
-public:
-	AccountTreeList
-	(	AccountPage* parent,
-		wxSize const& size,
-		std::vector<Account> const& p_default_accounts,
-		Commodity const& p_commodity
-	);
-	void selected_accounts(std::vector<Account>& vec) const;
-
-private:
-	
-	void OnItemChecked(wxTreeListEvent& event);
-
-	static wxString account_type_label
-	(	account_type::AccountType p_account_type
-	);
-
-	std::vector<Account> const& m_default_accounts;
-
-	DECLARE_EVENT_TABLE()
-};
 
 
 }  // namespace gui
