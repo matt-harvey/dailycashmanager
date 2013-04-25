@@ -1,5 +1,6 @@
 #include "finformat.hpp"
 #include <jewel/decimal.hpp>
+#include <jewel/decimal_exceptions.hpp>
 #include <wx/intl.h>
 #include <algorithm>
 #include <cassert>
@@ -12,6 +13,7 @@
 #include <vector>
 
 using jewel::Decimal;
+using jewel::DecimalFromStringException;
 using std::back_inserter;
 using std::copy;
 using std::deque;
@@ -256,15 +258,51 @@ wxString finformat_wx_nopad
 	return aux_finformat_wx(decimal, loc, false);
 }
 
+jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc)
+{
+	typedef wxChar CharT;
+	typedef wxString::size_type sz_t;
+	CharT const open_paren = wxChar('(');
+	CharT const close_paren = wxChar(')');
+	CharT const minus_sign = wxChar('-');
+	wxString const decimal_point_s = loc.GetInfo
+	(	wxLOCALE_DECIMAL_POINT,
+		wxLOCALE_CAT_MONEY
+	);
+	wxString const thousands_sep_s = loc.GetInfo
+	(	wxLOCALE_THOUSANDS_SEP,
+		wxLOCALE_CAT_MONEY
+	);
+	// TODO Are the following assertions always going to be true? No,
+	// they are not...
+	assert (decimal_point_s.size() == 1);
+	assert (thousands_sep_s.size() == 1);
+	if (wxs.IsEmpty())
+	{
+		throw DecimalFromStringException
+		(	"Cannot construct Decimal from an empty string."
+		);
+	}
+	assert (wxs.Len() >= 1);
 
-		
-					
-		
-				
-			
-	
+	// We first convert wxs into a canonical form in which there are no
+	// thousands separators, negativity is indicated only by a minus
+	// sign, and the decimal point is '.'.
+	if ( (wxs[0] == open_paren) && (wxs[wxs.Len() - 1] == close_paren) )
+	{
+		wxs[0] = minus_sign;  // Replace left parenthesis with minus sign
+		wxs.RemoveLast();  // Drop right parenthesis
+	}
+	wxs.Replace(thousands_sep_s, wxEmptyString);
 
+	// TODO This will come unstuck if we ever make Decimal
+	// constructor-from-string sensitive to locale.
+	wxs.Replace(decimal_point_s, wxString("."));
 
+	string s = wx_to_std8(wxs);
+	return Decimal(s);
+
+}
 
 
 }  // namespace phatbooks

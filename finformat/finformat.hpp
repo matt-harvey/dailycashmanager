@@ -72,8 +72,6 @@ wxString finformat_wx
 );
 
 
-
-
 /**
  * Functions named finformat...nopad are like the finformat...
  * functions without "nopad", except they do not add an extra
@@ -95,8 +93,16 @@ wxString finformat_wx_nopad
 /** }@ */
 
 
-
-
+/**
+ * Assuming a locale of loc, convert a wxString to a jewel::Decimal.
+ *
+ * This is a fairly tolerant conversion and will accept strings
+ * either with or without thousands separators, or with either
+ * parentheses or the minus sign as a minus indicator.
+ * The symbols that are accepted for the thousands separator and
+ * decimal point depend on the wxLocale passed to \e loc.
+ */
+jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc);
 
 
 }  // namespace phatbooks
