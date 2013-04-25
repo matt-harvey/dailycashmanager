@@ -1,5 +1,7 @@
 #include "account_data_view_model.hpp"
 #include "account.hpp"
+#include "account_type_variant_data.hpp"
+#include "decimal_variant_data.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/dataview.h>
@@ -79,11 +81,11 @@ AccountDataViewModel::GetColumnType(unsigned int col) const
 	switch (col)
 	{
 	case 0:
-	// TODO Implement
+		return wxString("string");
 	case 1:
-	// TODO Implement
+		return AccountTypeVariantData::GetTypeStatic();
 	case 2:
-	// TODO Implement
+		return DecimalVariantData::GetTypeStatic();
 	default:
 		assert (false);
 	}

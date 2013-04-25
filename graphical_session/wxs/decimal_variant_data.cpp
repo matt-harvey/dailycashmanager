@@ -36,9 +36,15 @@ DecimalVariantData::Eq(wxVariantData& data) const
 }
 
 wxString
-DecimalVariantData::GetType() const
+DecimalVariantData::GetTypeStatic()
 {
 	return wxString("jewel::Decimal");
+}
+
+wxString
+DecimalVariantData::GetType() const
+{
+	return GetTypeStatic();
 }
 
 bool

@@ -26,6 +26,11 @@ public:
 	bool Eq(wxVariantData& data) const;
 
 	/**
+	 * Like GetType (below) but is a static function.
+	 */
+	static wxString GetTypeStatic();
+
+	/**
 	 * Define function inherited as pure virtual from wxVariantData.
 	 */
 	wxString GetType() const;

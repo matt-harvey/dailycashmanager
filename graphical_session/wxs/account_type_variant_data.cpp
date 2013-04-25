@@ -32,9 +32,15 @@ AccountTypeVariantData::Eq(wxVariantData& data) const
 }
 
 wxString
-AccountTypeVariantData::GetType() const
+AccountTypeVariantData::GetTypeStatic()
 {
 	return wxString("phatbooks::account_type::AccountType");
+}
+
+wxString
+AccountTypeVariantData::GetType() const
+{
+	return GetTypeStatic();
 }
 
 bool
