@@ -1,7 +1,7 @@
 #include "account_data_view_model.hpp"
 #include "account.hpp"
 #include "account_type_variant_data.hpp"
-#include "decimal_variant_data.hpp"
+#include "../decimal_variant_data.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -53,15 +53,20 @@ AccountDataViewModel::~AccountDataViewModel()
 bool
 AccountDataViewModel::IsContainer(wxDataViewItem const& item) const
 {
-	(void)item;  // silence compiler warning re. unused variable
+	if (!item.IsOk())
+	{
+		throw AccountDataViewModelException("Invalid wxDataViewItem");
+	}
 	return false;
 }
 
 wxDataViewItem
 AccountDataViewModel::GetParent(wxDataViewItem const& item) const
 {
-	(void)item;  // silence compiler warning re. unused variable
-	
+	if (!item.IsOk())
+	{
+		throw AccountDataViewModelException("Invalid wxDataViewItem");
+	}
 	// Always returns an invalid wxDataViewItem since none
 	// of the items have parents that are not the root
 	return wxDataViewItem(0);
@@ -73,6 +78,10 @@ AccountDataViewModel::GetChildren
 	wxDataViewItemArray& children
 ) const
 {
+	if (!item.IsOk())
+	{
+		throw AccountDataViewModelException("Invalid wxDataViewItem");
+	}
 	if (item == wxDataViewItem(0))
 	{
 		// Then the item is the root and all the AugmentedAccounts are its
@@ -112,6 +121,10 @@ AccountDataViewModel::GetValue
 	unsigned int col
 ) const
 {
+	if (!item.IsOk())
+	{
+		throw AccountDataViewModelException("Invalid wxDataViewItem.");
+	}
 	AugmentedAccount* augmented_account =
 		static_cast<AugmentedAccount*>(item.GetID());
 	if (!augmented_account)
@@ -150,6 +163,10 @@ AccountDataViewModel::SetValue
 	unsigned int col
 )
 {
+	if (!item.IsOk())
+	{
+		throw AccountDataViewModelException("Invalid wxDataViewItem.");
+	}
 	AugmentedAccount* augmented_account =
 		static_cast<AugmentedAccount*>(item.GetID());
 	if (!augmented_account)
