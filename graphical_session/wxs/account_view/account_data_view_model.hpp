@@ -46,7 +46,7 @@ public:
 
 	/**
 	 * Construct AccountDataViewModel with a container of the
-	 * Accounts to be modelled.
+	 * AugmentedAccounts to be modelled.
 	 */
 	AccountDataViewModel(std::vector<AugmentedAccount> const& p_accounts);
 

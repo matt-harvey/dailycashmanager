@@ -3,6 +3,7 @@
 
 #include "account.hpp"
 #include "account_type.hpp"
+#include "account_view/account_data_view_model.hpp"
 #include "commodity.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/noncopyable.hpp>
@@ -249,6 +250,8 @@ public:
 private:
 	void do_render_account_view();
 	wxString do_get_main_text() const;
+	wxDataViewCtrl* m_account_view_ctrl;
+	AccountDataViewModel* m_account_data_view_model;
 };
 
 

@@ -1,5 +1,6 @@
 #include "setup_wizard.hpp"
 #include "account.hpp"
+#include "account_view/account_data_view_model.hpp"
 #include "account_type.hpp"
 #include "app.hpp"
 #include "application.hpp"
@@ -113,6 +114,15 @@ namespace
 			}
 		}
 		return s;
+	}
+
+	void make_default_augmented_accounts
+	(	account_type::AccountType,
+		vector<AccountDataViewModel::AugmentedAccount>& vec
+	)
+	{
+		// TODO Implement	
+		return;
 	}
 
 }  // end anonymous namespace
@@ -673,7 +683,8 @@ SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
 (	SetupWizard* parent,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
-	AccountPage(parent, p_database_connection)
+	AccountPage(parent, p_database_connection),
+	m_account_view_ctrl(0)
 {
 }
 
@@ -691,10 +702,34 @@ SetupWizard::BalanceSheetAccountPage::do_get_main_text() const
 	);
 }
 
+
 void
 SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 {
-	// TODO Implement	
+	wxSize const size =
+		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
+	m_account_view_ctrl = new wxDataViewCtrl
+	(	this,
+		wxID_ANY,
+		wxDefaultPosition,
+		wxSize(size.x, size.y * 100)  // TODO Fix this size
+	);
+	vector<AccountDataViewModel::AugmentedAccount> augmented_accounts;
+	make_default_augmented_accounts
+	(	account_type::asset,
+		augmented_accounts
+	);
+	make_default_augmented_accounts
+	(	account_type::liability,
+		augmented_accounts
+	);
+	m_account_data_view_model = new AccountDataViewModel(augmented_accounts);
+	m_account_view_ctrl->AssociateModel(m_account_data_view_model);
+	m_account_data_view_model->DecRef();  // Due to wxDataViewModel ref. count
+	// TODO Finish implementing	
+
+		
+		
 }
 
 

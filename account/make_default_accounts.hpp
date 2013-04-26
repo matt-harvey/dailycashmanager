@@ -32,12 +32,25 @@ make_default_accounts(PhatbooksDatabaseConnection& p_database_connection);
  * Behaves like make_default_accounts(PhatbooksDatabaseConnection&), but
  * instead of returning a vector, it populates the vector passed to \e vec.
  *
- * @param vec the vector which the function will populate with Accounts.
- * \e vec should be empty when passed to this function.
+ * @param vec the vector which the function will populate with Accounts. The
+ * Accounts will be pushed onto the back of e\ vec - which need not be empty
+ * when passed to the function.
  */
 void make_default_accounts
 (	PhatbooksDatabaseConnection& p_database_connection,
 	std::vector<Account>& vec
+);
+
+/**
+ * Behaves like the two-parameter function with the same name, but only
+ * populates \e vec with default Accounts of AccountType p_account_type.
+ * The Accounts will be pushed onto the back of \e vec - which need not be
+ * empty when passed to the function.
+ */
+void make_default_accounts
+(	PhatbooksDatabaseConnection& p_database_connection,
+	std::vector<Account>& vec,
+	account_type::AccountType p_account_type
 );
 
 

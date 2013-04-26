@@ -44,6 +44,9 @@ namespace account_super_type
 account_super_type::AccountSuperType
 super_type(account_type::AccountType p_account_type);
 
+std::vector<account_type::AccountType>
+account_types();
+
 std::vector<BString>
 account_type_names();
 

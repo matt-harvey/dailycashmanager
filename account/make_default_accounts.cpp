@@ -29,53 +29,71 @@ make_default_accounts
 	vector<Account>& vec
 )
 {
-	assert (vec.empty());  // precondition
+	typedef vector<account_type::AccountType> Vec;
+	Vec const atypes = account_types();
+	for (Vec::const_iterator it = atypes.begin(); it != atypes.end(); ++it)
+	{
+		make_default_accounts(p_database_connection, vec, *it);
+	}
+	return;
+}
 
-	// First we fill a vector with the minimum information we are going to
-	// need about each Account.
-	using account_type::AccountType;
-	using account_type::asset;
-	using account_type::liability;
-	using account_type::revenue;
-	using account_type::expense;
-	using account_type::pure_envelope;
-	typedef pair<BString, account_type::AccountType> ProtoAccount;
-	typedef vector<ProtoAccount> ProtoVec;
-	typedef AccountType AT;
-	typedef BString BS;
-	ProtoVec pv;
-	pv.reserve(12);
-	pv.push_back(make_pair<BS, AT>("Cash", asset));
-	pv.push_back(make_pair<BS, AT>("Cheque account", asset));
-	pv.push_back(make_pair<BS, AT>("Credit card", liability));
-	pv.push_back(make_pair<BS, AT>("Salary", revenue));
-	pv.push_back(make_pair<BS, AT>("Interest earned", revenue));
-	pv.push_back(make_pair<BS, AT>("Food", expense));
-	pv.push_back(make_pair<BS, AT>("Household supplies", expense));
-	pv.push_back(make_pair<BS, AT>("Rent", expense));
-	pv.push_back(make_pair<BS, AT>("Electricity", expense));
-	pv.push_back(make_pair<BS, AT>("Gas", expense));
-	pv.push_back(make_pair<BS, AT>("Interest paid", expense));
-	pv.push_back(make_pair<BS, AT>("Recreation", expense));
+void
+make_default_accounts
+(	PhatbooksDatabaseConnection& p_database_connection,
+	vector<Account>& vec,
+	account_type::AccountType p_account_type
+)
+{
+	vector<BString> names;
 
+	// First we fill a vector with the Account names.
+	switch (p_account_type)
+	{
+	case account_type::asset:
+		names.push_back(BString("Cash"));
+		names.push_back(BString("Cheque account"));
+		break;
+	case account_type::liability:
+		names.push_back(BString("Credit card"));
+		return;
+	case account_type::equity:
+		// There are no default equity Accounts.
+		return;
+	case account_type::revenue:
+		names.push_back(BString("Salary"));
+		names.push_back(BString("Interest received"));
+		return;
+	case account_type::expense:
+		names.reserve(7);
+		names.push_back(BString("Food"));
+		names.push_back(BString("Household supplies"));
+		names.push_back(BString("Rent"));
+		names.push_back(BString("Electricity"));
+		names.push_back(BString("Gas"));
+		names.push_back(BString("Interest paid"));
+		names.push_back(BString("Recreation"));
 		// TODO Do we want a "mortgage" Account among the defaults?
 		// The correct accounting for mortgage repayments is fairly complex.
 		// How would we present it to the user? Would we just cheat and treat
 		// it as an expense?
-
-	// Now we use this information to populate m_accounts with actual Accounts
+		return;
+	case account_type::pure_envelope:
+		// There are no default pure_envelope Accounts.
+		return;
+	default:
+		assert (false);
+	}
+	// Now we use this information to populate vec with actual Accounts
 	// (but note we don't save them - saving them will be at the discretion
 	// of the user, and will be done in client code closer to the UI).
-
-	vector<ProtoAccount>::size_type sz = pv.size();
-	vec.reserve(sz);	
-	for (vector<ProtoAccount>::size_type i = 0; i != sz; ++i)
+	for (vector<BString>::size_type i = 0; i != names.size(); ++i)
 	{
 		Account account(p_database_connection);
-		account.set_name(pv[i].first);
-		account.set_account_type(pv[i].second);
+		account.set_name(names[i]);
+		account.set_account_type(p_account_type);
 
-		// Note Commodity is left uninitialized! This is a bit odd.
+		// Note Commodity is left uninitialized. This is a bit odd.
 		// Previously we set the Commodity for all these Accounts to
 		// m_database_connection.default_commodity(). But it was
 		// discovered this creates headaches for client code, as
@@ -84,16 +102,11 @@ make_default_accounts
 		// PhatbooksDatabaseConnection. It is easier for certain client code
 		// if it is able to create the Accounts first.
 
-		account.set_description("");
+		account.set_description(BString(""));
 		vec.push_back(account);
 	}
-
-	assert (vec.size() == pv.size());
-	assert (vec.size() != 0);
-
 	return;
 }
-
 
 
 

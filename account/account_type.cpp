@@ -29,6 +29,20 @@ super_type(account_type::AccountType p_account_type)
 	}
 }
 
+vector<account_type::AccountType>
+account_types()
+{
+	vector<account_type::AccountType> ret;
+	ret.reserve(6);
+	ret.push_back(account_type::asset);
+	ret.push_back(account_type::liability);
+	ret.push_back(account_type::equity);
+	ret.push_back(account_type::revenue);
+	ret.push_back(account_type::expense);
+	ret.push_back(account_type::pure_envelope);
+	return ret;
+}
+
 vector<BString>
 account_type_names()
 {
@@ -36,6 +50,7 @@ account_type_names()
 	static vector<BString> ret;
 	while (!calculated_already)
 	{
+		ret.reserve(6);
 		ret.push_back("Asset");
 		ret.push_back("Liability");
 		ret.push_back("Equity");
