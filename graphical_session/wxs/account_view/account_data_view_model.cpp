@@ -4,6 +4,7 @@
 #include "../decimal_variant_data.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/shared_ptr.hpp>
+#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/dataview.h>
 #include <wx/variant.h>
@@ -53,22 +54,16 @@ AccountDataViewModel::~AccountDataViewModel()
 bool
 AccountDataViewModel::IsContainer(wxDataViewItem const& item) const
 {
-	if (!item.IsOk())
-	{
-		throw AccountDataViewModelException("Invalid wxDataViewItem");
-	}
+	(void)item;  // Silence compiler warning re. unused parameter.
 	return false;
 }
 
 wxDataViewItem
 AccountDataViewModel::GetParent(wxDataViewItem const& item) const
 {
-	if (!item.IsOk())
-	{
-		throw AccountDataViewModelException("Invalid wxDataViewItem");
-	}
 	// Always returns an invalid wxDataViewItem since none
 	// of the items have parents that are not the root
+	(void)item;  // Silence compiler warning re. unused parameter.
 	return wxDataViewItem(0);
 }
 
@@ -78,12 +73,9 @@ AccountDataViewModel::GetChildren
 	wxDataViewItemArray& children
 ) const
 {
-	if (!item.IsOk())
-	{
-		throw AccountDataViewModelException("Invalid wxDataViewItem");
-	}
 	if (item == wxDataViewItem(0))
 	{
+		assert (!item.IsOk());
 		// Then the item is the root and all the AugmentedAccounts are its
 		// children. Deliberately start counting from 1, as 0 is for an
 		// invalid wxDataViewItem.

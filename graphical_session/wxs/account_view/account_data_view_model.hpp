@@ -109,6 +109,21 @@ public:
 		unsigned int col
 	);
 	
+	static unsigned int name_column()
+	{
+		return s_name_column;
+	}
+
+	static unsigned int account_type_column()
+	{
+		return s_account_type_column;
+	}
+
+	static unsigned int opening_balance_column()
+	{
+		return s_opening_balance_column;
+	}
+
 private:
 
 	unsigned int get_all_items(wxDataViewItemArray& items) const;

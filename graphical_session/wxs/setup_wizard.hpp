@@ -10,6 +10,7 @@
 #include <boost/optional.hpp>
 #include <wx/button.h>
 #include <wx/combobox.h>
+#include <wx/dataview.h>
 #include <wx/filedlg.h>
 #include <wx/gdicmn.h>
 #include <wx/radiobox.h>

@@ -21,6 +21,7 @@
 #include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/combobox.h>
+#include <wx/dataview.h>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include <wx/gdicmn.h>
@@ -117,11 +118,21 @@ namespace
 	}
 
 	void make_default_augmented_accounts
-	(	account_type::AccountType,
-		vector<AccountDataViewModel::AugmentedAccount>& vec
+	(	PhatbooksDatabaseConnection& dbc,
+		vector<AccountDataViewModel::AugmentedAccount>& vec,
+		account_type::AccountType p_account_type	
 	)
 	{
-		// TODO Implement	
+		vector<Account> accounts;
+		make_default_accounts(dbc, accounts, p_account_type);
+		for (vector<Account>::size_type i = 0; i != accounts.size(); ++i)
+		{
+			AccountDataViewModel::AugmentedAccount augmented_account =
+			{	accounts[i],
+				Decimal(0, 0)
+			};
+			vec.push_back(augmented_account);
+		}
 		return;
 	}
 
@@ -712,24 +723,47 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	(	this,
 		wxID_ANY,
 		wxDefaultPosition,
-		wxSize(size.x, size.y * 100)  // TODO Fix this size
+		wxSize(size.x * 20, size.y * 200)  // TODO Fix this size
 	);
 	vector<AccountDataViewModel::AugmentedAccount> augmented_accounts;
 	make_default_augmented_accounts
-	(	account_type::asset,
-		augmented_accounts
+	(	database_connection(),
+		augmented_accounts,
+		account_type::asset
 	);
 	make_default_augmented_accounts
-	(	account_type::liability,
-		augmented_accounts
+	(	database_connection(),
+		augmented_accounts,
+		account_type::liability
 	);
+	assert (!augmented_accounts.empty());
 	m_account_data_view_model = new AccountDataViewModel(augmented_accounts);
 	m_account_view_ctrl->AssociateModel(m_account_data_view_model);
 	m_account_data_view_model->DecRef();  // Due to wxDataViewModel ref. count
-	// TODO Finish implementing	
-
+	/*
+	wxDataViewTextRenderer* account_name_renderer
+	(	"string",
+		wxDATAVIEW_CELL_EDITABLE
+	);
+	wxDataViewColumn* account_name_column
+	(	wxString("Account"),
+		account_name_renderer,
+		AccountDataViewModel::name_column(),
+		wxDVC_DEFAULT_WIDTH,
+		wxALIGN_CENTER
+	);
+	*/
+	m_account_view_ctrl->AppendTextColumn
+	(	wxString("Account"),
+		AccountDataViewModel::name_column(),
+		wxDATAVIEW_CELL_EDITABLE,
+		-1,
+		wxALIGN_LEFT
+	);
 		
-		
+	// TODO Finish implementing
+	// ...
+	add_to_top_sizer(m_account_view_ctrl);
 }
 
 

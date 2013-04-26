@@ -56,14 +56,14 @@ make_default_accounts
 		break;
 	case account_type::liability:
 		names.push_back(BString("Credit card"));
-		return;
+		break;
 	case account_type::equity:
 		// There are no default equity Accounts.
-		return;
+		break;
 	case account_type::revenue:
 		names.push_back(BString("Salary"));
 		names.push_back(BString("Interest received"));
-		return;
+		break;
 	case account_type::expense:
 		names.reserve(7);
 		names.push_back(BString("Food"));
@@ -77,10 +77,10 @@ make_default_accounts
 		// The correct accounting for mortgage repayments is fairly complex.
 		// How would we present it to the user? Would we just cheat and treat
 		// it as an expense?
-		return;
+		break;
 	case account_type::pure_envelope:
 		// There are no default pure_envelope Accounts.
-		return;
+		break;
 	default:
 		assert (false);
 	}
