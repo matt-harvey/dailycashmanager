@@ -225,7 +225,10 @@ protected:
 	PhatbooksDatabaseConnection& database_connection();
 	void add_to_top_sizer(wxWindow* window);
 private:
-	virtual void do_render() = 0;
+	virtual wxString do_get_main_text() const = 0;
+	virtual void do_render_account_view() = 0;
+	void render_main_text();
+	void render_account_view();
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;
 };
@@ -244,7 +247,8 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 private:
-	void do_render();
+	void do_render_account_view();
+	wxString do_get_main_text() const;
 };
 
 
@@ -261,7 +265,8 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 private:
-	void do_render();
+	void do_render_account_view();
+	wxString do_get_main_text() const;
 };
 
 }  // namespace gui

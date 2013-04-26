@@ -621,10 +621,36 @@ void
 SetupWizard::AccountPage::render()
 {
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
-	do_render();
 	SetSizer(m_top_sizer);
+	render_main_text();
+	render_account_view();
 	m_top_sizer->Fit(this);
 	Layout();
+	return;
+}
+
+void
+SetupWizard::AccountPage::render_main_text()
+{
+	wxStaticText* text = new wxStaticText
+	(	this,
+		wxID_ANY,
+		do_get_main_text(),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT
+	);
+	wxSize const size =
+		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
+	text->Wrap(size.x * 1.2);
+	add_to_top_sizer(text);
+	return;
+}
+
+void
+SetupWizard::AccountPage::render_account_view()
+{
+	do_render_account_view();
 	return;
 }
 
@@ -651,30 +677,26 @@ SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
 {
 }
 
-void
-SetupWizard::BalanceSheetAccountPage::do_render()
+wxString
+SetupWizard::BalanceSheetAccountPage::do_get_main_text() const
 {
-	wxStaticText* text = new wxStaticText
-	(	this,
-		wxID_ANY,
-		wxString
-		(	"What asset and liability accounts do you want to start with? "
-			"Assets are things you \"own\", like cash, savings and investments. "
-			"Liabilities are things you \"owe\", such as loans and credit cards. "
-			"Some examples are below; you can keep, delete or add to these as "
-			"you please. "
-			"Enter the current balance of each account in the right-hand column. "
-			"Note you can always change these later from the main screen. "
-		),
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_LEFT
+	return wxString
+	(	"What asset and liability accounts do you want to start with? "
+		"Assets are things you \"own\", like cash, savings and investments. "
+		"Liabilities are things you \"owe\", such as loans and credit cards. "
+		"Some examples are below; you can keep, delete or add to these as "
+		"you please. "
+		"Enter the current balance of each account in the right-hand column. "
+		"Note you can always change these later from the main screen. "
 	);
-	wxSize const size = wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
-	text->Wrap(size.x * 1.2);
-	add_to_top_sizer(text);
-	
 }
+
+void
+SetupWizard::BalanceSheetAccountPage::do_render_account_view()
+{
+	// TODO Implement	
+}
+
 
 /*** PLAccountPage ***/
 
@@ -686,10 +708,18 @@ SetupWizard::PLAccountPage::PLAccountPage
 {
 }
 
-void
-SetupWizard::PLAccountPage::do_render()
+wxString
+SetupWizard::PLAccountPage::do_get_main_text() const
 {
-	
+	return wxString
+	(	"TO IMPLEMENT"  // TODO Write this text properly
+	);
+}
+
+void
+SetupWizard::PLAccountPage::do_render_account_view()
+{
+	// TODO Implement	
 }
 
 }  // namespace gui
