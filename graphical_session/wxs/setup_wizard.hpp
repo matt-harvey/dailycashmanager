@@ -45,6 +45,11 @@ class Frame;
  * prior to first entering the main window. There should be page for
  * balance sheet Accounts, followed by a page for P&L Accounts
  * ("categories").
+ *
+ * @todo In the FilepathPage, the controls for the directory and the
+ * filepath look like you can write in them, but actually you can't. This
+ * misleads the user and is bad (which is pointed out in the "GUI Bloopers"
+ * book). Fix it.
  */
 class SetupWizard:
 	public wxWizard
@@ -218,10 +223,11 @@ public:
 
 protected:
 	PhatbooksDatabaseConnection& database_connection();
-
+	void add_to_top_sizer(wxWindow* window);
 private:
 	virtual void do_render() = 0;
 	PhatbooksDatabaseConnection& m_database_connection;
+	wxBoxSizer* m_top_sizer;
 };
 
 
@@ -259,7 +265,7 @@ private:
 };
 
 }  // namespace gui
-}  // namesapce phatbooks
+}  // namespace phatbooks
 
 
 #endif  // GUARD_setup_wizard_hpp

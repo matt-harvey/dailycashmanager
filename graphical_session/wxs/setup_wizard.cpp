@@ -31,6 +31,7 @@
 #include <wx/textctrl.h>
 #include <wx/treelist.h>
 #include <wx/validate.h>
+#include <wx/window.h>
 #include <wx/wizard.h>
 #include <cassert>
 #include <map>
@@ -134,11 +135,20 @@ SetupWizard::SetupWizard
 		wxDEFAULT_DIALOG_STYLE | wxFULL_REPAINT_ON_RESIZE
 	),
 	m_database_connection(p_database_connection),
-	m_filepath_page(0)
+	m_filepath_page(0),
+	m_balance_sheet_account_page(0),
+	m_pl_account_page(0)
 {
 	assert (!m_database_connection.is_valid());
 	m_filepath_page = new FilepathPage(this, m_database_connection);
 	GetPageAreaSizer()->Add(m_filepath_page);
+	m_balance_sheet_account_page = new BalanceSheetAccountPage
+	(	this,
+		m_database_connection
+	);
+	m_pl_account_page = new PLAccountPage(this, m_database_connection);
+	wxWizardPageSimple::Chain(m_filepath_page, m_balance_sheet_account_page);
+	wxWizardPageSimple::Chain(m_balance_sheet_account_page, m_pl_account_page);
 }
 
 
@@ -602,14 +612,19 @@ SetupWizard::AccountPage::AccountPage
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxWizardPageSimple(parent),
-	m_database_connection(p_database_connection)
+	m_database_connection(p_database_connection),
+	m_top_sizer(0)
 {
 }
 
 void
 SetupWizard::AccountPage::render()
 {
+	m_top_sizer = new wxBoxSizer(wxVERTICAL);
 	do_render();
+	SetSizer(m_top_sizer);
+	m_top_sizer->Fit(this);
+	Layout();
 	return;
 }
 
@@ -619,6 +634,12 @@ SetupWizard::AccountPage::database_connection()
 	return m_database_connection;
 }
 
+void
+SetupWizard::AccountPage::add_to_top_sizer(wxWindow* window)
+{
+	m_top_sizer->Add(window);
+	return;
+}
 
 /*** BalanceSheetAccountPage ***/
 
@@ -633,7 +654,26 @@ SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
 void
 SetupWizard::BalanceSheetAccountPage::do_render()
 {
-	// TODO Implement
+	wxStaticText* text = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString
+		(	"What asset and liability accounts do you want to start with? "
+			"Assets are things you \"own\", like cash, savings and investments. "
+			"Liabilities are things you \"owe\", such as loans and credit cards. "
+			"Some examples are below; you can keep, delete or add to these as "
+			"you please. "
+			"Enter the current balance of each account in the right-hand column. "
+			"Note you can always change these later from the main screen. "
+		),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT
+	);
+	wxSize const size = wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
+	text->Wrap(size.x * 1.2);
+	add_to_top_sizer(text);
+	
 }
 
 /*** PLAccountPage ***/
@@ -649,9 +689,8 @@ SetupWizard::PLAccountPage::PLAccountPage
 void
 SetupWizard::PLAccountPage::do_render()
 {
-	// TODO Implement
+	
 }
-
 
 }  // namespace gui
 }  // namesapce phatbooks
