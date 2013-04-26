@@ -162,14 +162,15 @@ SetupWizard::SetupWizard
 {
 	assert (!m_database_connection.is_valid());
 	m_filepath_page = new FilepathPage(this, m_database_connection);
-	GetPageAreaSizer()->Add(m_filepath_page);
 	m_balance_sheet_account_page = new BalanceSheetAccountPage
 	(	this,
 		m_database_connection
 	);
 	m_pl_account_page = new PLAccountPage(this, m_database_connection);
+	render_account_pages();
 	wxWizardPageSimple::Chain(m_filepath_page, m_balance_sheet_account_page);
 	wxWizardPageSimple::Chain(m_balance_sheet_account_page, m_pl_account_page);
+	GetPageAreaSizer()->Add(m_filepath_page);
 }
 
 
@@ -723,7 +724,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	(	this,
 		wxID_ANY,
 		wxDefaultPosition,
-		wxSize(size.x * 20, size.y * 200)  // TODO Fix this size
+		wxSize(size.x, size.y * 10)
 	);
 	vector<AccountDataViewModel::AugmentedAccount> augmented_accounts;
 	make_default_augmented_accounts
