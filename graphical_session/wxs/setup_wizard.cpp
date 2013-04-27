@@ -6,6 +6,7 @@
 #include "application.hpp"
 #include "b_string.hpp"
 #include "client_data.hpp"
+#include "decimal_renderer.hpp"
 #include "filename_validation.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
@@ -718,6 +719,7 @@ SetupWizard::BalanceSheetAccountPage::do_get_main_text() const
 void
 SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 {
+	// Create the control for displaying Accounts
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
 	m_account_view_ctrl = new wxDataViewCtrl
@@ -726,17 +728,27 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 		wxDefaultPosition,
 		wxSize(size.x, size.y * 10)
 	);
+	// Configure the AccountTypes for which we want Accounts
 	vector<AccountDataViewModel::AugmentedAccount> augmented_accounts;
-	make_default_augmented_accounts
-	(	database_connection(),
-		augmented_accounts,
-		account_type::asset
-	);
-	make_default_augmented_accounts
-	(	database_connection(),
-		augmented_accounts,
-		account_type::liability
-	);
+	typedef vector<account_type::AccountType> AccountTypes;
+	AccountTypes account_types;
+	account_types.push_back(account_type::asset);
+	account_types.push_back(account_type::liability);
+
+	// Make default Accounts for these AccountTypes; while we're at it, make
+	// an array of names for the AccountTypes.
+	wxArrayString account_type_names;
+	for (AccountTypes::size_type i = 0; i != account_types.size(); ++i)
+	{
+		make_default_augmented_accounts
+		(	database_connection(),
+			augmented_accounts,
+			account_types[i]
+		);
+		account_type_names.Add
+		(	bstring_to_wx(account_type_to_string(account_types[i]))
+		);
+	}
 	assert (!augmented_accounts.empty());
 	m_account_data_view_model = new AccountDataViewModel(augmented_accounts);
 	m_account_view_ctrl->AssociateModel(m_account_data_view_model);
@@ -751,9 +763,10 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 		account_name_renderer,
 		AccountDataViewModel::name_column(),
 		wxDVC_DEFAULT_WIDTH,
-		wxALIGN_CENTER
+		wxALIGN_LEFT
 	);
 	*/
+	// Account name column
 	m_account_view_ctrl->AppendTextColumn
 	(	wxString("Account"),
 		AccountDataViewModel::name_column(),
@@ -761,7 +774,19 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 		-1,
 		wxALIGN_LEFT
 	);
-		
+	// AccountType column
+	wxDataViewChoiceRenderer* account_type_renderer =
+		new wxDataViewChoiceRenderer(account_type_names);
+	wxDataViewColumn* account_type_column = new wxDataViewColumn
+	(	wxString("Type"),
+		account_type_renderer,
+		AccountDataViewModel::account_type_column(),
+		wxDVC_DEFAULT_WIDTH,
+		wxALIGN_LEFT
+	);
+	m_account_view_ctrl->AppendColumn(account_type_column);
+	
+
 	// TODO Finish implementing
 	// ...
 	add_to_top_sizer(m_account_view_ctrl);

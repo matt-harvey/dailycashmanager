@@ -167,7 +167,6 @@ AccountDataViewModel::SetValue
 		(	"Invalid pointer to AugmentedAccount."
 		);
 	}
-	AccountTypeVariantData* atvd = 0;
 	DecimalVariantData* dvd = 0;
 	switch (col)
 	{
@@ -177,12 +176,9 @@ AccountDataViewModel::SetValue
 		);
 		return true;
 	case s_account_type_column:
-		atvd = dynamic_cast<AccountTypeVariantData*>(variant.GetData());
-		if (!atvd)
-		{
-			throw AccountDataViewModelException("Wrong wxVariant type.");
-		}
-		augmented_account->account.set_account_type(atvd->account_type());
+		augmented_account->account.set_account_type
+		(	string_to_account_type(wx_to_bstring(variant.GetString()))
+		);
 		return true;
 	case s_opening_balance_column:
 		dvd = dynamic_cast<DecimalVariantData*>(variant.GetData());
