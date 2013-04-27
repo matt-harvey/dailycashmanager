@@ -1,6 +1,5 @@
 #include "account_data_view_model.hpp"
 #include "account.hpp"
-#include "account_type_variant_data.hpp"
 #include "../decimal_variant_data.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/shared_ptr.hpp>
@@ -95,10 +94,9 @@ AccountDataViewModel::GetColumnType(unsigned int col) const
 {
 	switch (col)
 	{
-	case s_name_column:
-		return wxString("string");
+	case s_name_column:  // fall through
 	case s_account_type_column:
-		return AccountTypeVariantData::GetTypeStatic();
+		return wxString("string");
 	case s_opening_balance_column:
 		return DecimalVariantData::GetTypeStatic();
 	default:
@@ -132,10 +130,9 @@ AccountDataViewModel::GetValue
 		variant = bstring_to_wx(augmented_account->account.name());
 		return;
 	case s_account_type_column:
-		data = new AccountTypeVariantData
-		(	augmented_account->account.account_type()
+		variant = bstring_to_wx
+		(	account_type_to_string(augmented_account->account.account_type())
 		);
-		variant.SetData(data);
 		return;
 	case s_opening_balance_column:
 		data = new DecimalVariantData

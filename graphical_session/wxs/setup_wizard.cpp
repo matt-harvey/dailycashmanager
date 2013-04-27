@@ -753,19 +753,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	m_account_data_view_model = new AccountDataViewModel(augmented_accounts);
 	m_account_view_ctrl->AssociateModel(m_account_data_view_model);
 	m_account_data_view_model->DecRef();  // Due to wxDataViewModel ref. count
-	/*
-	wxDataViewTextRenderer* account_name_renderer
-	(	"string",
-		wxDATAVIEW_CELL_EDITABLE
-	);
-	wxDataViewColumn* account_name_column
-	(	wxString("Account"),
-		account_name_renderer,
-		AccountDataViewModel::name_column(),
-		wxDVC_DEFAULT_WIDTH,
-		wxALIGN_LEFT
-	);
-	*/
+
 	// Account name column
 	m_account_view_ctrl->AppendTextColumn
 	(	wxString("Account"),
