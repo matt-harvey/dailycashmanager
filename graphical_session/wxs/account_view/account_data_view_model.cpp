@@ -3,7 +3,6 @@
 #include "../decimal_variant_data.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/shared_ptr.hpp>
-#include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/dataview.h>
 #include <wx/variant.h>
@@ -13,6 +12,12 @@
 using boost::shared_ptr;
 using jewel::Decimal;
 using std::vector;
+
+// For debugging
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
+
 
 namespace phatbooks
 {
@@ -31,6 +36,10 @@ AccountDataViewModel::AccountDataViewModel
 		++it
 	)
 	{
+		JEWEL_DEBUG_LOG << "Adding AugmentedAccount* to AccountDataViewModel "
+		                << "with Account name "
+						<< it->account.name()
+						<< endl;
 		AugmentedAccount* augmented_account = new AugmentedAccount(*it);
 		m_accounts.push_back(augmented_account);
 	}
@@ -75,10 +84,14 @@ AccountDataViewModel::GetChildren
 	if (item == wxDataViewItem(0))
 	{
 		assert (!item.IsOk());
+		JEWEL_DEBUG_LOG << "Calling AccountDataViewModel::GetChildren"
+		                << endl;
 		// Then the item is the root and all the AugmentedAccounts are its
 		// children. Deliberately start counting from 1, as 0 is for an
 		// invalid wxDataViewItem.
-		return get_all_items(children);
+		unsigned int const ret = get_all_items(children);
+		JEWEL_DEBUG_LOG << "Number of children gotten: " << ret << endl;
+		return ret;
 	}
 	return 0;
 }
