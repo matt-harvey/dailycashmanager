@@ -768,8 +768,10 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	(	wxString("Account name"),
 		account_name_renderer,
 		0,  // Column number
-		wxDVC_DEFAULT_WIDTH,
-		wxALIGN_LEFT
+		wxDVC_DEFAULT_WIDTH * 2,
+		wxALIGN_LEFT,
+		wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE
+
 	);
 	m_account_view_ctrl->AppendColumn(account_name_column);
 
