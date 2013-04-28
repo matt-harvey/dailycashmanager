@@ -767,7 +767,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	wxDataViewColumn* account_name_column = new wxDataViewColumn
 	(	wxString("Account name"),
 		account_name_renderer,
-		1,
+		0,  // Column number
 		wxDVC_DEFAULT_WIDTH,
 		wxALIGN_LEFT
 	);
@@ -779,9 +779,10 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	wxDataViewColumn* account_type_column = new wxDataViewColumn
 	(	wxString("Type"),
 		account_type_renderer,
-		1,
+		1,  // Column number
 		wxDVC_DEFAULT_WIDTH,
-		wxALIGN_LEFT
+		wxALIGN_LEFT,
+		wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE
 	);
 	m_account_view_ctrl->AppendColumn(account_type_column);
 
