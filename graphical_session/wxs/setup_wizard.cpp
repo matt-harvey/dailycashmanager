@@ -1,6 +1,5 @@
 #include "setup_wizard.hpp"
 #include "account.hpp"
-#include "account_view/account_data_view_model.hpp"
 #include "account_type.hpp"
 #include "app.hpp"
 #include "application.hpp"
@@ -65,6 +64,13 @@ namespace gui
 
 namespace
 {
+
+	struct AugmentedAccount
+	{
+		Account account;
+		jewel::Decimal technical_opening_balance;
+	};
+
 	wxString const wx_app_name()
 	{
 		return bstring_to_wx(Application::application_name());
@@ -120,7 +126,7 @@ namespace
 
 	void make_default_augmented_accounts
 	(	PhatbooksDatabaseConnection& dbc,
-		vector<AccountDataViewModel::AugmentedAccount>& vec,
+		vector<AugmentedAccount>& vec,
 		account_type::AccountType p_account_type	
 	)
 	{
@@ -128,7 +134,7 @@ namespace
 		make_default_accounts(dbc, accounts, p_account_type);
 		for (vector<Account>::size_type i = 0; i != accounts.size(); ++i)
 		{
-			AccountDataViewModel::AugmentedAccount augmented_account =
+			AugmentedAccount augmented_account =
 			{	accounts[i],
 				Decimal(0, 0)
 			};
@@ -719,17 +725,18 @@ SetupWizard::BalanceSheetAccountPage::do_get_main_text() const
 void
 SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 {
+
 	// Create the control for displaying Accounts
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
-	m_account_view_ctrl = new wxDataViewCtrl
+	m_account_view_ctrl = new wxDataViewListCtrl
 	(	this,
 		wxID_ANY,
 		wxDefaultPosition,
-		wxSize(size.x, size.y * 10)
+		wxSize(size.x * 1.5, size.y * 10)
 	);
 	// Configure the AccountTypes for which we want Accounts
-	vector<AccountDataViewModel::AugmentedAccount> augmented_accounts;
+	vector<AugmentedAccount> augmented_accounts;
 	typedef vector<account_type::AccountType> AccountTypes;
 	AccountTypes account_types;
 	account_types.push_back(account_type::asset);
@@ -750,31 +757,48 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 		);
 	}
 	assert (!augmented_accounts.empty());
-	m_account_data_view_model = new AccountDataViewModel(augmented_accounts);
-	m_account_view_ctrl->AssociateModel(m_account_data_view_model);
-	m_account_data_view_model->DecRef();  // Due to wxDataViewModel ref. count
-	assert (m_account_data_view_model);
 
 	// Account name column
-	m_account_view_ctrl->AppendTextColumn
-	(	wxString("Account"),
-		AccountDataViewModel::name_column(),
-		wxDATAVIEW_CELL_EDITABLE,
-		-1,
+	wxDataViewTextRenderer* account_name_renderer =
+		new wxDataViewTextRenderer
+		(	wxString("string"),
+			wxDATAVIEW_CELL_EDITABLE
+		);
+	wxDataViewColumn* account_name_column = new wxDataViewColumn
+	(	wxString("Account name"),
+		account_name_renderer,
+		1,
+		wxDVC_DEFAULT_WIDTH,
 		wxALIGN_LEFT
 	);
+	m_account_view_ctrl->AppendColumn(account_name_column);
+
 	// AccountType column
 	wxDataViewChoiceRenderer* account_type_renderer =
 		new wxDataViewChoiceRenderer(account_type_names);
 	wxDataViewColumn* account_type_column = new wxDataViewColumn
 	(	wxString("Type"),
 		account_type_renderer,
-		AccountDataViewModel::account_type_column(),
+		1,
 		wxDVC_DEFAULT_WIDTH,
 		wxALIGN_LEFT
 	);
 	m_account_view_ctrl->AppendColumn(account_type_column);
-	
+
+	// Populate rows
+	for (vector<AugmentedAccount>::size_type i = 0; i != augmented_accounts.size(); ++i)
+	{
+		wxVector<wxVariant> data;
+		data.push_back(wxVariant(bstring_to_wx(augmented_accounts[i].account.name())));
+		data.push_back
+		(	wxVariant
+			(	bstring_to_wx
+				(	account_type_to_string(augmented_accounts[i].account.account_type())
+				)
+			)
+		);
+		m_account_view_ctrl->AppendItem(data);
+	}
 
 	// TODO Finish implementing
 	// ...
