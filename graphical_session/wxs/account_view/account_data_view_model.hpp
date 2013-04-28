@@ -2,6 +2,7 @@
 #define GUARD_account_data_view_model_hpp
 
 #include "account.hpp"
+#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <jewel/decimal.hpp>
@@ -30,7 +31,9 @@ namespace gui
  * @todo Review cases where all the hideous casts might fail and so
  * on, and prevent silent failure in all such cases.
  */
-class AccountDataViewModel: public wxDataViewModel
+class AccountDataViewModel:
+	public wxDataViewModel,
+	private boost::noncopyable
 {
 public:
 
@@ -133,6 +136,7 @@ private:
 	static unsigned int const s_account_type_column = 1;
 	static unsigned int const s_opening_balance_column = 2;
 
+	wxDataViewItem* m_root;
 	std::vector<AugmentedAccount*> m_accounts;
 
 };  // AccountDataViewModel

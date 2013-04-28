@@ -27,8 +27,10 @@ namespace gui
 
 AccountDataViewModel::AccountDataViewModel
 (	vector<AugmentedAccount> const& p_accounts
-)
+):
+	m_root(0)
 {
+	m_root = new wxDataViewItem;
 	for
 	(	vector<AugmentedAccount>::const_iterator it = p_accounts.begin(),
 			end = p_accounts.end();
@@ -53,25 +55,21 @@ AccountDataViewModel::~AccountDataViewModel()
 		delete *it;
 		*it = 0;
 	}
+	delete m_root;
+	m_root = 0;
 }
 
 bool
 AccountDataViewModel::IsContainer(wxDataViewItem const& item) const
 {
-	if (item == wxDataViewItem(0))
-	{
-		return true;
-	}
-	return false;
+	return item == *m_root;
 }
 
 wxDataViewItem
 AccountDataViewModel::GetParent(wxDataViewItem const& item) const
 {
-	// Always returns an invalid wxDataViewItem since none
-	// of the items have parents that are not the root
-	(void)item;  // Silence compiler warning re. unused parameter.
-	return wxDataViewItem(0);
+	(void)item;
+	return *m_root;  // All items have root as parent
 }
 
 unsigned int
@@ -80,16 +78,7 @@ AccountDataViewModel::GetChildren
 	wxDataViewItemArray& children
 ) const
 {
-	if (item == wxDataViewItem(0))
-	{
-		assert (!item.IsOk());
-		// Then the item is the root and all the AugmentedAccounts are its
-		// children. Deliberately start counting from 1, as 0 is for an
-		// invalid wxDataViewItem.
-		unsigned int const ret = get_all_items(children);
-		return ret;
-	}
-	return 0;
+	return (item == *m_root)? get_all_items(children): 0;
 }
 	
 unsigned int
