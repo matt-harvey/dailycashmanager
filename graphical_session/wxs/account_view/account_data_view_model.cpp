@@ -36,10 +36,6 @@ AccountDataViewModel::AccountDataViewModel
 		++it
 	)
 	{
-		JEWEL_DEBUG_LOG << "Adding AugmentedAccount* to AccountDataViewModel "
-		                << "with Account name "
-						<< it->account.name()
-						<< endl;
 		AugmentedAccount* augmented_account = new AugmentedAccount(*it);
 		m_accounts.push_back(augmented_account);
 	}
@@ -62,7 +58,10 @@ AccountDataViewModel::~AccountDataViewModel()
 bool
 AccountDataViewModel::IsContainer(wxDataViewItem const& item) const
 {
-	(void)item;  // Silence compiler warning re. unused parameter.
+	if (item == wxDataViewItem(0))
+	{
+		return true;
+	}
 	return false;
 }
 
@@ -84,13 +83,10 @@ AccountDataViewModel::GetChildren
 	if (item == wxDataViewItem(0))
 	{
 		assert (!item.IsOk());
-		JEWEL_DEBUG_LOG << "Calling AccountDataViewModel::GetChildren"
-		                << endl;
 		// Then the item is the root and all the AugmentedAccounts are its
 		// children. Deliberately start counting from 1, as 0 is for an
 		// invalid wxDataViewItem.
 		unsigned int const ret = get_all_items(children);
-		JEWEL_DEBUG_LOG << "Number of children gotten: " << ret << endl;
 		return ret;
 	}
 	return 0;
