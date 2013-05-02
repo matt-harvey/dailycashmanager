@@ -26,6 +26,7 @@
 #include <wx/filedlg.h>
 #include <wx/gdicmn.h>
 #include <wx/gbsizer.h>
+#include <wx/intl.h>
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -460,6 +461,9 @@ SetupWizard::FilepathPage::FilepathPage
 		assert (!m_selected_filepath);
 		m_selected_filepath = new filesystem::path(value(maybe_directory));
 	}
+	// TODO We should make this a static text field or something that
+	// is obviously noneditable so the user doesn't feel frustrated when
+	// they try to edit it.
 	m_directory_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
@@ -467,7 +471,7 @@ SetupWizard::FilepathPage::FilepathPage
 		wxDefaultPosition,
 		wxDLG_UNIT(this, dlg_unit_size),
 		wxTE_READONLY,  // style
-		wxDefaultValidator  // TODO We need a proper validator here
+		wxDefaultValidator  // TODO Not user-editable anyway
 	);
 	m_directory_button = new wxButton
 	(	this,
@@ -710,6 +714,7 @@ SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
 wxString
 SetupWizard::BalanceSheetAccountPage::do_get_main_text() const
 {
+	// TODO Make this message much less verbose.
 	return wxString
 	(	"What asset and liability accounts do you want to start with? "
 		"Assets are things you \"own\", like cash, savings and investments. "
@@ -719,6 +724,13 @@ SetupWizard::BalanceSheetAccountPage::do_get_main_text() const
 		"Enter the current balance of each account in the right-hand column. "
 		"Note you can always change these later from the main screen. "
 	);
+}
+
+wxLocale const&
+SetupWizard::BalanceSheetAccountPage::locale() const
+{
+	App* app = dynamic_cast<App*>(wxTheApp);
+	return app->locale();
 }
 
 
@@ -736,8 +748,9 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 		wxSize(size.x * 1.5, size.y * 10)
 	);
 	// Configure the AccountTypes for which we want Accounts
-	vector<AugmentedAccount> augmented_accounts;
+	typedef vector<AugmentedAccount> AugmentedAccounts;
 	typedef vector<account_type::AccountType> AccountTypes;
+	AugmentedAccounts augmented_accounts;
 	AccountTypes account_types;
 	account_types.push_back(account_type::asset);
 	account_types.push_back(account_type::liability);
@@ -788,23 +801,47 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	);
 	m_account_view_ctrl->AppendColumn(account_type_column);
 
+	// Opening balance column
+	DecimalRenderer* opening_balance_renderer = new DecimalRenderer;
+	wxDataViewColumn* opening_balance_column = new wxDataViewColumn
+	(	wxString("Opening balance"),
+		opening_balance_renderer,
+		2,  // Column number
+		wxDVC_DEFAULT_WIDTH,
+		wxALIGN_RIGHT,
+		wxDATAVIEW_COL_RESIZABLE
+	);
+	m_account_view_ctrl->AppendColumn(opening_balance_column);
+
 	// Populate rows
-	for (vector<AugmentedAccount>::size_type i = 0; i != augmented_accounts.size(); ++i)
+	for
+	(	AugmentedAccounts::size_type i = 0;
+		i != augmented_accounts.size();
+		++i
+	)
 	{
 		wxVector<wxVariant> data;
-		data.push_back(wxVariant(bstring_to_wx(augmented_accounts[i].account.name())));
+		AugmentedAccount const& augmented_account = augmented_accounts[i];
+		Account const account = augmented_account.account;
+		data.push_back(wxVariant(bstring_to_wx(account.name())));
 		data.push_back
 		(	wxVariant
 			(	bstring_to_wx
-				(	account_type_to_string(augmented_accounts[i].account.account_type())
+				(	account_type_to_string(account.account_type())
+				)
+			)
+		);
+		data.push_back
+		(	wxVariant
+			(	finformat_wx
+				(	augmented_account.technical_opening_balance,
+					locale()
 				)
 			)
 		);
 		m_account_view_ctrl->AppendItem(data);
 	}
 
-	// TODO Finish implementing
-	// ...
 	add_to_top_sizer(m_account_view_ctrl);
 }
 

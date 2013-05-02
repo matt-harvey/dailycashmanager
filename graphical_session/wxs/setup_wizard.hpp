@@ -12,6 +12,7 @@
 #include <wx/dataview.h>
 #include <wx/filedlg.h>
 #include <wx/gdicmn.h>
+#include <wx/intl.h>
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/string.h>
@@ -249,9 +250,10 @@ public:
 	);
 private:
 	void do_render_account_view();
+	wxLocale const& locale() const;
 	wxString do_get_main_text() const;
 	wxDataViewListCtrl* m_account_view_ctrl;
-	wxDataViewIndexListModel* m_account_data_view_model;
+	// wxDataViewIndexListModel* m_account_data_view_model;
 };
 
 

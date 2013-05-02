@@ -3,6 +3,9 @@
 
 #include <jewel/decimal.hpp>
 #include <wx/dataview.h>
+#include <wx/dc.h>
+#include <wx/gdicmn.h>
+#include <wx/intl.h>
 #include <wx/window.h>
 
 namespace phatbooks
@@ -35,10 +38,14 @@ public:
 
 	bool GetValueFromEditorCtrl(wxWindow* editor, wxVariant& value);
 
+	bool Render(wxRect cell, wxDC* dc, int state);
+
 protected:
 
 private:
-	
+
+	wxLocale const& locale() const;
+
 	jewel::Decimal m_decimal;	
 
 };  // class DecimalRenderer

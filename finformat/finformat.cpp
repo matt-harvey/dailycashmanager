@@ -98,9 +98,6 @@ namespace
 		// Special case of zero
 		if (intval == 0)
 		{
-			// WARNING tmp
-			if (places != 2) abort();
-
 			ret.push_back(CharT('-'));
 			if (places > 0)
 			{
@@ -260,6 +257,7 @@ wxString finformat_wx_nopad
 
 jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc)
 {
+	wxs = wxs.Trim();
 	typedef wxChar CharT;
 	typedef wxString::size_type sz_t;
 	CharT const open_paren = wxChar('(');
