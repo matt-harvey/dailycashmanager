@@ -18,7 +18,7 @@ DecimalRenderer::DecimalRenderer():
 	wxDataViewCustomRenderer
 	(	"string",
 		wxDATAVIEW_CELL_EDITABLE,
-		wxALIGN_LEFT
+		wxALIGN_RIGHT
 	),
 	m_decimal(0, 0)
 {
@@ -74,7 +74,7 @@ DecimalRenderer::CreateEditorCtrl
 	return new wxTextCtrl
 	(	parent,
 		wxID_ANY,
-		finformat_wx(m_decimal, locale()),  // TODO Should we derive this from value?
+		value.GetString(),
 		labelRect.GetTopLeft(),
 		labelRect.GetSize(),
 		wxALIGN_RIGHT,
