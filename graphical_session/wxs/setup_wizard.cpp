@@ -135,7 +135,7 @@ namespace
 		make_default_accounts(dbc, accounts, p_account_type);
 		for (vector<Account>::size_type i = 0; i != accounts.size(); ++i)
 		{
-			AugmentedAccount augmented_account =
+			AugmentedAccount const augmented_account =
 			{	accounts[i],
 				Decimal(0, 0)
 			};
@@ -807,7 +807,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	(	wxString("Opening balance"),
 		opening_balance_renderer,
 		2,  // Column number
-		wxDVC_DEFAULT_WIDTH,
+		wxDVC_DEFAULT_WIDTH * 1.5,
 		wxALIGN_RIGHT,
 		wxDATAVIEW_COL_RESIZABLE
 	);
@@ -821,7 +821,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	)
 	{
 		wxVector<wxVariant> data;
-		AugmentedAccount const& augmented_account = augmented_accounts[i];
+		AugmentedAccount const augmented_account = augmented_accounts[i];
 		Account const account = augmented_account.account;
 		data.push_back(wxVariant(bstring_to_wx(account.name())));
 		data.push_back
