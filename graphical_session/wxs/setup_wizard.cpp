@@ -831,14 +831,11 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 				)
 			)
 		);
-		data.push_back
-		(	wxVariant
-			(	finformat_wx
-				(	augmented_account.technical_opening_balance,
-					locale()
-				)
-			)
+		wxString const opening_balance_str = finformat_wx
+		(	augmented_account.technical_opening_balance,
+			locale()
 		);
+		data.push_back(wxVariant(opening_balance_str));
 		m_account_view_ctrl->AppendItem(data);
 	}
 

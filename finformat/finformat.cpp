@@ -277,11 +277,13 @@ jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc)
 	assert (thousands_sep_s.size() == 1);
 	if (wxs.IsEmpty())
 	{
-		throw DecimalFromStringException
-		(	"Cannot construct Decimal from an empty string."
-		);
+		return Decimal(0, 0);
 	}
 	assert (wxs.Len() >= 1);
+	if (wxs.Len() == 1 && wxs[0] == minus_sign)
+	{
+		return Decimal(0, 0);
+	}
 
 	// We first convert wxs into a canonical form in which there are no
 	// thousands separators, negativity is indicated only by a minus

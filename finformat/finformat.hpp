@@ -101,6 +101,12 @@ wxString finformat_wx_nopad
  * parentheses or the minus sign as a minus indicator.
  * The symbols that are accepted for the thousands separator and
  * decimal point depend on the wxLocale passed to \e loc.
+ *
+ * Leading and trailing whitespace is ignored.
+ *
+ * An empty string will be interpreted as Decimal(0, 0).
+ *
+ * A string that is just a dash will be interpreted as Decimal(0, 0).
  */
 jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc);
 

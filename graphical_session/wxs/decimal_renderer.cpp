@@ -2,6 +2,7 @@
 #include "decimal_variant_data.hpp"
 #include "app.hpp"
 #include "finformat.hpp"
+#include <jewel/debug_log.hpp>
 #include <wx/app.h>
 #include <wx/dataview.h>
 #include <wx/dc.h>
@@ -39,11 +40,11 @@ DecimalRenderer::SetValue(wxVariant const& value)
 }
 
 bool
-DecimalRenderer::GetValue(wxVariant& variant) const
+DecimalRenderer::GetValue(wxVariant& value) const
 {
 	try
 	{
-		variant = finformat_wx(m_decimal, locale());
+		value = finformat_wx(m_decimal, locale());
 		return true;
 	}
 	catch (...)
@@ -102,12 +103,18 @@ DecimalRenderer::GetValueFromEditorCtrl(wxWindow* editor, wxVariant& value)
 }
 	
 bool
-DecimalRenderer::Render(wxRect cell, wxDC* dc, int state)
+DecimalRenderer::Render(wxRect rect, wxDC* dc, int state)
 {
 	wxString const str = finformat_wx(m_decimal, locale());
 	try
 	{
-		RenderText(str, 0, cell, dc, state);
+		RenderText
+		(	str,
+			0,  // no offset
+			rect,
+			dc,
+			state
+		);
 		return true;
 	}
 	catch (...)

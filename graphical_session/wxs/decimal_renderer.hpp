@@ -24,7 +24,7 @@ public:
 
 	bool SetValue(wxVariant const& value);
 
-	bool GetValue(wxVariant& variant) const;
+	bool GetValue(wxVariant& value) const;
 
 	wxSize GetSize() const;
 
@@ -38,7 +38,7 @@ public:
 
 	bool GetValueFromEditorCtrl(wxWindow* editor, wxVariant& value);
 
-	bool Render(wxRect cell, wxDC* dc, int state);
+	bool Render(wxRect rect, wxDC* dc, int state);
 
 protected:
 
