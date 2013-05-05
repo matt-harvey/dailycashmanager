@@ -14,7 +14,7 @@ namespace gui
 {
 
 /**
- * Class for rendering account_type::AccountType data in a wxDataViewCtrl
+ * Class for rendering jewel::Decimal data in a wxDataViewCtrl
  */
 class DecimalRenderer: public wxDataViewCustomRenderer
 {
