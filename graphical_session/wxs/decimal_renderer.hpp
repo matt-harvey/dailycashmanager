@@ -20,7 +20,7 @@ class DecimalRenderer: public wxDataViewCustomRenderer
 {
 public:
 
-	DecimalRenderer();
+	DecimalRenderer(jewel::Decimal::places_type p_precision);
 
 	bool SetValue(wxVariant const& value);
 

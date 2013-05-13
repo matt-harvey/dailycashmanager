@@ -3,6 +3,7 @@
 #include "app.hpp"
 #include "finformat.hpp"
 #include <jewel/debug_log.hpp>
+#include <jewel/decimal.hpp>
 #include <wx/app.h>
 #include <wx/dataview.h>
 #include <wx/dc.h>
@@ -10,18 +11,21 @@
 #include <wx/intl.h>
 #include <wx/window.h>
 
+using jewel::Decimal;
+using jewel::round;
+
 namespace phatbooks
 {
 namespace gui
 {
 
-DecimalRenderer::DecimalRenderer():
+DecimalRenderer::DecimalRenderer(Decimal::places_type p_precision):
 	wxDataViewCustomRenderer
 	(	"string",
 		wxDATAVIEW_CELL_EDITABLE,
 		wxALIGN_RIGHT
 	),
-	m_decimal(0, 0)
+	m_decimal(0, p_precision)
 {
 }
 		
@@ -30,7 +34,8 @@ DecimalRenderer::SetValue(wxVariant const& value)
 {
 	try
 	{
-		m_decimal = wx_to_decimal(value.GetString(), locale());
+		Decimal const temp = wx_to_decimal(value.GetString(), locale());
+		m_decimal = round(temp, m_decimal.places());
 		return true;
 	}
 	catch (...)

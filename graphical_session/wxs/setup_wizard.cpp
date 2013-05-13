@@ -128,7 +128,8 @@ namespace
 	void make_default_augmented_accounts
 	(	PhatbooksDatabaseConnection& dbc,
 		vector<AugmentedAccount>& vec,
-		account_type::AccountType p_account_type	
+		account_type::AccountType p_account_type,
+		Decimal::places_type precision
 	)
 	{
 		vector<Account> accounts;
@@ -137,7 +138,7 @@ namespace
 		{
 			AugmentedAccount const augmented_account =
 			{	accounts[i],
-				Decimal(0, 0)
+				Decimal(0, precision)
 			};
 			vec.push_back(augmented_account);
 		}
@@ -641,12 +642,13 @@ SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 /*** SetupWizard::AccountPage ***/
 
 SetupWizard::AccountPage::AccountPage
-(	SetupWizard* parent,
+(	SetupWizard* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
-	wxWizardPageSimple(parent),
+	wxWizardPageSimple(p_parent),
 	m_database_connection(p_database_connection),
-	m_top_sizer(0)
+	m_top_sizer(0),
+	m_parent(*p_parent)
 {
 }
 
@@ -700,13 +702,20 @@ SetupWizard::AccountPage::add_to_top_sizer(wxWindow* window)
 	return;
 }
 
+SetupWizard const&
+SetupWizard::AccountPage::parent() const
+{
+	return m_parent;
+}
+
+
 /*** BalanceSheetAccountPage ***/
 
 SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
-(	SetupWizard* parent,
+(	SetupWizard* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
-	AccountPage(parent, p_database_connection),
+	AccountPage(p_parent, p_database_connection),
 	m_account_view_ctrl(0)
 {
 }
@@ -737,7 +746,6 @@ SetupWizard::BalanceSheetAccountPage::locale() const
 void
 SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 {
-
 	// Create the control for displaying Accounts
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
@@ -758,12 +766,15 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	// Make default Accounts for these AccountTypes; while we're at it, make
 	// an array of names for the AccountTypes.
 	wxArrayString account_type_names;
+	Decimal::places_type const precision =
+		parent().selected_currency().precision();
 	for (AccountTypes::size_type i = 0; i != account_types.size(); ++i)
 	{
 		make_default_augmented_accounts
 		(	database_connection(),
 			augmented_accounts,
-			account_types[i]
+			account_types[i],
+			precision
 		);
 		account_type_names.Add
 		(	bstring_to_wx(account_type_to_string(account_types[i]))
@@ -802,7 +813,9 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	m_account_view_ctrl->AppendColumn(account_type_column);
 
 	// Opening balance column
-	DecimalRenderer* opening_balance_renderer = new DecimalRenderer;
+	DecimalRenderer* opening_balance_renderer = new DecimalRenderer
+	(	parent().selected_currency().precision()
+	);
 	wxDataViewColumn* opening_balance_column = new wxDataViewColumn
 	(	wxString("Opening balance"),
 		opening_balance_renderer,
@@ -846,10 +859,10 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 /*** PLAccountPage ***/
 
 SetupWizard::PLAccountPage::PLAccountPage
-(	SetupWizard* parent,
+(	SetupWizard* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
-	AccountPage(parent, p_database_connection)
+	AccountPage(p_parent, p_database_connection)
 {
 }
 

@@ -53,8 +53,7 @@ class Frame;
  * misleads the user and is bad (which is pointed out in the "GUI Bloopers"
  * book). Fix it.
  */
-class SetupWizard:
-	public wxWizard
+class SetupWizard: public wxWizard
 {
 public:
 	
@@ -217,7 +216,7 @@ class SetupWizard::AccountPage:
 {
 public:
 	AccountPage
-	(	SetupWizard* parent,
+	(	SetupWizard* p_parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
@@ -226,6 +225,7 @@ public:
 protected:
 	PhatbooksDatabaseConnection& database_connection();
 	void add_to_top_sizer(wxWindow* window);
+	SetupWizard const& parent() const;
 private:
 	virtual wxString do_get_main_text() const = 0;
 	virtual void do_render_account_view() = 0;
@@ -233,6 +233,7 @@ private:
 	void render_account_view();
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;
+	SetupWizard const& m_parent;
 };
 
 
@@ -240,12 +241,11 @@ private:
  * Represents a page for setting up balance sheet Accounts in a
  * SetupWizard.
  */
-class SetupWizard::BalanceSheetAccountPage:
-	public SetupWizard::AccountPage
+class SetupWizard::BalanceSheetAccountPage: public SetupWizard::AccountPage
 {
 public:
 	BalanceSheetAccountPage
-	(	SetupWizard* parent,
+	(	SetupWizard* p_parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 private:
