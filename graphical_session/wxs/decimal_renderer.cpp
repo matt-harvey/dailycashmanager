@@ -25,7 +25,8 @@ DecimalRenderer::DecimalRenderer(Decimal::places_type p_precision):
 		wxDATAVIEW_CELL_EDITABLE,
 		wxALIGN_RIGHT
 	),
-	m_decimal(0, p_precision)
+	m_decimal(0, p_precision),
+	m_precision(p_precision)
 {
 }
 		
@@ -34,8 +35,8 @@ DecimalRenderer::SetValue(wxVariant const& value)
 {
 	try
 	{
-		Decimal const temp = wx_to_decimal(value.GetString(), locale());
-		m_decimal = round(temp, m_decimal.places());
+		Decimal const d = wx_to_decimal(value.GetString(), locale());
+		m_decimal = round(d, m_precision);
 		return true;
 	}
 	catch (...)
@@ -110,11 +111,10 @@ DecimalRenderer::GetValueFromEditorCtrl(wxWindow* editor, wxVariant& value)
 bool
 DecimalRenderer::Render(wxRect rect, wxDC* dc, int state)
 {
-	wxString const str = finformat_wx(m_decimal, locale());
 	try
 	{
 		RenderText
-		(	str,
+		(	finformat_wx(m_decimal, locale()),
 			0,  // no offset
 			rect,
 			dc,

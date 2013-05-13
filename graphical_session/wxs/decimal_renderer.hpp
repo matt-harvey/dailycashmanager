@@ -46,7 +46,8 @@ private:
 
 	wxLocale const& locale() const;
 
-	jewel::Decimal m_decimal;	
+	jewel::Decimal m_decimal;
+	jewel::Decimal::places_type m_precision;
 
 };  // class DecimalRenderer
 

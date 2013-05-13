@@ -566,6 +566,12 @@ SetupWizard::FilepathPage::FilepathPage
 	m_currency_box->SetSelection(0);
 	m_top_sizer->Add(m_currency_box);
 
+	// Additional space at bottom
+	for (size_t i = 0; i != 5; ++i)
+	{
+		m_top_sizer->AddSpacer(m_directory_ctrl->GetSize().y);
+	}
+
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	Layout();
@@ -716,6 +722,7 @@ SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	AccountPage(p_parent, p_database_connection),
+	m_account_adding_button(0),
 	m_account_view_ctrl(0)
 {
 }
@@ -747,7 +754,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	(	this,
 		wxID_ANY,
 		wxDefaultPosition,
-		wxSize(size.x * 1.5, size.y * 10)
+		wxSize(size.x * 1.5, size.y * 9)
 	);
 	// Configure the AccountTypes for which we want Accounts
 	typedef vector<AugmentedAccount> AugmentedAccounts;
@@ -788,8 +795,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 		0,  // Column number
 		wxDVC_DEFAULT_WIDTH * 2,
 		wxALIGN_LEFT,
-		wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE
-
+		wxDATAVIEW_COL_RESIZABLE
 	);
 	m_account_view_ctrl->AppendColumn(account_name_column);
 
@@ -802,7 +808,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 		1,  // Column number
 		wxDVC_DEFAULT_WIDTH,
 		wxALIGN_LEFT,
-		wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE
+		wxDATAVIEW_COL_RESIZABLE
 	);
 	m_account_view_ctrl->AppendColumn(account_type_column);
 
@@ -845,9 +851,39 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 		data.push_back(wxVariant(opening_balance_str));
 		m_account_view_ctrl->AppendItem(data);
 	}
-
 	add_to_top_sizer(m_account_view_ctrl);
+
+	// Add button via which user can add Accounts
+	// TODO This is inelegant. It would be better if the user could
+	// add Accounts by clicking a blank row at the bottom, of by
+	// clicking a small icon or button that appears to the side and
+	// just under the current lowest row.
+	m_account_adding_button = new wxButton
+	(	this,
+		s_account_adding_button_id,
+		wxString("&Add Account"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	add_to_top_sizer(m_account_adding_button);
+
+	return;
 }
+
+void
+SetupWizard::BalanceSheetAccountPage::add_account()
+{
+	// Add a blank row at the bottom, where user can enter
+	// additional Accounts.
+	wxVector<wxVariant> blank_row_data;
+	for (wxVector<wxVariant>::size_type i = 0; i != 3; ++i)
+	{
+		blank_row_data.push_back(wxVariant(wxEmptyString));
+	};
+	m_account_view_ctrl->AppendItem(blank_row_data);
+	return;
+}
+
 
 
 /*** PLAccountPage ***/

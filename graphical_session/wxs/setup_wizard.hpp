@@ -252,6 +252,9 @@ private:
 	void do_render_account_view();
 	wxLocale const& locale() const;
 	wxString do_get_main_text() const;
+	void add_account();
+	static int const s_account_adding_button_id = wxID_HIGHEST + 1;
+	wxButton* m_account_adding_button;
 	wxDataViewListCtrl* m_account_view_ctrl;
 	// wxDataViewIndexListModel* m_account_data_view_model;
 };
