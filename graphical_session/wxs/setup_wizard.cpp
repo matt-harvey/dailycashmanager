@@ -677,7 +677,7 @@ SetupWizard::AccountPage::render_main_text()
 	);
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
-	text->Wrap(size.x * 1.2);
+	text->Wrap(size.x * 1.5);
 	add_to_top_sizer(text);
 	return;
 }
@@ -725,13 +725,7 @@ SetupWizard::BalanceSheetAccountPage::do_get_main_text() const
 {
 	// TODO Make this message much less verbose.
 	return wxString
-	(	"What asset and liability accounts do you want to start with? "
-		"Assets are things you \"own\", like cash, savings and investments. "
-		"Liabilities are things you \"owe\", such as loans and credit cards. "
-		"Some examples are below; you can keep, delete or add to these as "
-		"you please. "
-		"Enter the current balance of each account in the right-hand column. "
-		"Note you can always change these later from the main screen. "
+	(	"Enter your assets (things you own) and liabilities (what you owe)"
 	);
 }
 
