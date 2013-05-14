@@ -717,6 +717,15 @@ SetupWizard::AccountPage::parent() const
 
 /*** BalanceSheetAccountPage ***/
 
+
+BEGIN_EVENT_TABLE(SetupWizard::BalanceSheetAccountPage, wxWizardPageSimple)
+	EVT_BUTTON
+	(	s_account_adding_button_id,
+		SetupWizard::BalanceSheetAccountPage::on_account_adding_button_click
+	)
+END_EVENT_TABLE()
+
+
 SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
 (	SetupWizard* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection
@@ -849,7 +858,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 			locale()
 		);
 		data.push_back(wxVariant(opening_balance_str));
-		m_account_view_ctrl->AppendItem(data);
+		m_account_view_ctrl->AppendItem(data, wxUIntPtr(0));
 	}
 	add_to_top_sizer(m_account_view_ctrl);
 
@@ -880,10 +889,20 @@ SetupWizard::BalanceSheetAccountPage::add_account()
 	{
 		blank_row_data.push_back(wxVariant(wxEmptyString));
 	};
-	m_account_view_ctrl->AppendItem(blank_row_data);
+	m_account_view_ctrl->AppendItem(blank_row_data, wxUIntPtr(0));
+	Layout();
 	return;
 }
 
+void
+SetupWizard::BalanceSheetAccountPage::on_account_adding_button_click
+(	wxCommandEvent& event
+)
+{
+	(void)event;  // Silence compiler warning re. ignored parameter.
+	add_account();
+	return;
+}
 
 
 /*** PLAccountPage ***/

@@ -253,10 +253,14 @@ private:
 	wxLocale const& locale() const;
 	wxString do_get_main_text() const;
 	void add_account();
+	void on_account_adding_button_click(wxCommandEvent& event);
 	static int const s_account_adding_button_id = wxID_HIGHEST + 1;
 	wxButton* m_account_adding_button;
 	wxDataViewListCtrl* m_account_view_ctrl;
 	// wxDataViewIndexListModel* m_account_data_view_model;
+	
+	DECLARE_EVENT_TABLE()
+
 };
 
 
