@@ -731,7 +731,6 @@ SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	AccountPage(p_parent, p_database_connection),
-	m_account_adding_button(0),
 	m_account_view_ctrl(0)
 {
 }
@@ -762,7 +761,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	(	this,
 		wxID_ANY,
 		wxDefaultPosition,
-		wxSize(size.x * 1.5, size.y * 9)
+		wxSize(size.x * 1.6, size.y * 9)
 	);
 	// Configure the AccountTypes for which we want Accounts
 	typedef vector<AugmentedAccount> AugmentedAccounts;
@@ -859,21 +858,18 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 		data.push_back(wxVariant(opening_balance_str));
 		m_account_view_ctrl->AppendItem(data, wxUIntPtr(0));
 	}
+	// Add blank rows at bottom, where user might add additional
+	// Accounts
+	for (AugmentedAccounts::size_type i = 0; i != 20; ++i)
+	{
+		wxVector<wxVariant> data;
+		for (size_t i = 0; i != 3; ++i)
+		{
+			data.push_back(wxVariant(wxEmptyString));
+		}
+		m_account_view_ctrl->AppendItem(data, wxUIntPtr(0));
+	}
 	add_to_top_sizer(m_account_view_ctrl);
-
-	// Add button via which user can add Accounts
-	// TODO This is inelegant. It would be better if the user could
-	// add Accounts by clicking a blank row at the bottom, of by
-	// clicking a small icon or button that appears to the side and
-	// just under the current lowest row.
-	m_account_adding_button = new wxButton
-	(	this,
-		s_account_adding_button_id,
-		wxString("&Add Account"),
-		wxDefaultPosition,
-		wxDefaultSize
-	);
-	add_to_top_sizer(m_account_adding_button);
 
 	return;
 }

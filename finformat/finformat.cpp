@@ -96,6 +96,7 @@ namespace
 		deque<CharT> ret;
 		assert (ret.empty());
 		// Special case of zero
+		/*
 		if (intval == 0)
 		{
 			ret.push_back(CharT('-'));
@@ -109,9 +110,11 @@ namespace
 				if (pad) ret.push_back(CharT(' '));
 			}
 		}
+		else
+		*/
 		// special case of smallest possible m_intval - as we cannot take the
 		// absolute value below
-		else if (intval == numeric_limits<Decimal::int_type>::min())
+		if (intval == numeric_limits<Decimal::int_type>::min())
 		{
 			// TODO HIGH PRIORITY Fix this.
 			assert (false);
