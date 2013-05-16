@@ -739,7 +739,6 @@ SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
 wxString
 SetupWizard::BalanceSheetAccountPage::do_get_main_text() const
 {
-	// TODO Make this message much less verbose.
 	return wxString
 	(	"Enter your assets (things you own) and liabilities (what you owe)"
 	);
