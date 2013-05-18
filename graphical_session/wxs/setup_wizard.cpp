@@ -637,8 +637,16 @@ SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 void
 SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 {
+	static bool changed_once = false;
 	SetupWizard* parent = dynamic_cast<SetupWizard*>(GetParent());
-	parent->render_account_pages();
+
+	// We only want this to occur the first time we change into this
+	// page.
+	if (!changed_once)
+	{
+		parent->render_account_pages();
+		changed_once = true;
+	}
 	(void)event;  // Silence compiler warning about unused parameter
 	return;
 }
