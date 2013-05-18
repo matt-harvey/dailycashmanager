@@ -82,7 +82,7 @@ private:
 	class FilepathPage;
 	class AccountPage;
 	class BalanceSheetAccountPage;
-	class PLAccountPage;
+	// class PLAccountPage;
 
 	void render_account_pages();
 
@@ -115,7 +115,7 @@ private:
 	PhatbooksDatabaseConnection& m_database_connection;
 	FilepathPage* m_filepath_page;
 	BalanceSheetAccountPage* m_balance_sheet_account_page;
-	PLAccountPage* m_pl_account_page;
+	// PLAccountPage* m_pl_account_page;
 	
 };  // SetupWizard
 
@@ -262,7 +262,7 @@ private:
 
 };
 
-
+#if 0
 /***
  * Represents a page for setting up profit-and-loss Accounts in
  * a SetupWizard.
@@ -279,6 +279,7 @@ private:
 	void do_render_account_view();
 	wxString do_get_main_text() const;
 };
+#endif
 
 }  // namespace gui
 }  // namespace phatbooks

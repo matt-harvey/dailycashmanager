@@ -166,8 +166,8 @@ SetupWizard::SetupWizard
 	),
 	m_database_connection(p_database_connection),
 	m_filepath_page(0),
-	m_balance_sheet_account_page(0),
-	m_pl_account_page(0)
+	m_balance_sheet_account_page(0)
+	// , m_pl_account_page(0)
 {
 	assert (!m_database_connection.is_valid());
 	m_filepath_page = new FilepathPage(this, m_database_connection);
@@ -175,10 +175,10 @@ SetupWizard::SetupWizard
 	(	this,
 		m_database_connection
 	);
-	m_pl_account_page = new PLAccountPage(this, m_database_connection);
+	// m_pl_account_page = new PLAccountPage(this, m_database_connection);
 	render_account_pages();
 	wxWizardPageSimple::Chain(m_filepath_page, m_balance_sheet_account_page);
-	wxWizardPageSimple::Chain(m_balance_sheet_account_page, m_pl_account_page);
+	// wxWizardPageSimple::Chain(m_balance_sheet_account_page, m_pl_account_page);
 	GetPageAreaSizer()->Add(m_filepath_page);
 }
 
@@ -219,9 +219,9 @@ SetupWizard::render_account_pages()
 	// precision, and hence the spacing of the "zero dash" on the
 	// AccountPage(s).
 	assert (m_balance_sheet_account_page);
-	assert (m_pl_account_page);
+	// assert (m_pl_account_page);
 	m_balance_sheet_account_page->render();
-	m_pl_account_page->render();
+	// m_pl_account_page->render();
 	return;
 }
 
@@ -863,7 +863,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	for (AugmentedAccounts::size_type i = 0; i != 20; ++i)
 	{
 		wxVector<wxVariant> data;
-		for (size_t i = 0; i != 3; ++i)
+		for (size_t j = 0; j != 3; ++j)
 		{
 			data.push_back(wxVariant(wxEmptyString));
 		}
@@ -899,9 +899,8 @@ SetupWizard::BalanceSheetAccountPage::on_account_adding_button_click
 	return;
 }
 
-
+#if 0
 /*** PLAccountPage ***/
-
 SetupWizard::PLAccountPage::PLAccountPage
 (	SetupWizard* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection
@@ -921,8 +920,9 @@ SetupWizard::PLAccountPage::do_get_main_text() const
 void
 SetupWizard::PLAccountPage::do_render_account_view()
 {
-	// TODO Implement	
+	// TODO Implement
 }
+#endif
 
 }  // namespace gui
 }  // namesapce phatbooks
