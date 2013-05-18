@@ -38,9 +38,9 @@ private:
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;
+	AccountListCtrl* m_bs_account_list;
 	AccountListCtrl* m_pl_account_list;
 	EntryListCtrl* m_entry_list;
-	AccountListCtrl* m_bs_account_list;
 };
 
 

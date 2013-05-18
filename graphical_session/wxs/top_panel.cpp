@@ -24,11 +24,15 @@ TopPanel::TopPanel
 	),
 	m_database_connection(p_database_connection),
 	m_top_sizer(0),
+	m_bs_account_list(0),
 	m_pl_account_list(0),
-	m_entry_list(0),
-	m_bs_account_list(0)
+	m_entry_list(0)
 {
 	m_top_sizer = new wxBoxSizer(wxHORIZONTAL);
+	m_bs_account_list = AccountListCtrl::create_balance_sheet_account_list
+	(	this,
+		m_database_connection
+	);
 	m_pl_account_list = AccountListCtrl::create_pl_account_list
 	(	this,
 		m_database_connection
@@ -37,13 +41,9 @@ TopPanel::TopPanel
 	(	this,
 		m_database_connection
 	);
-	m_bs_account_list = AccountListCtrl::create_balance_sheet_account_list
-	(	this,
-		m_database_connection
-	);
-	m_top_sizer->Add(m_pl_account_list, wxSizerFlags(1).Expand());
-	m_top_sizer->Add(m_entry_list, wxSizerFlags(2).Expand());
-	m_top_sizer->Add(m_bs_account_list, wxSizerFlags(1).Expand());
+	m_top_sizer->Add(m_bs_account_list, wxSizerFlags(2).Expand());
+	m_top_sizer->Add(m_pl_account_list, wxSizerFlags(3).Expand());
+	m_top_sizer->Add(m_entry_list, wxSizerFlags(4).Expand());
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
