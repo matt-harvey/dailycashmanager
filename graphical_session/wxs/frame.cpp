@@ -6,6 +6,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "top_panel.hpp"
 #include <jewel/on_windows.hpp>
+#include <wx/menu.h>
 #include <wx/string.h>
 #include <wx/icon.h>
 #include <wx/wx.h>
@@ -35,7 +36,10 @@ Frame::Frame
 #		endif
 	),
 	m_database_connection(p_database_connection),
-	m_top_panel(0)
+	m_top_panel(0),
+	m_menu_bar(0),
+	m_file_menu(0),
+	m_help_menu(0)
 {
 	// Set the frame icon
 	// TODO I should use SetIcons to associate several icons of
@@ -45,50 +49,46 @@ Frame::Frame
 	SetIcon(wxIcon(icon_xpm));
 
 	// Create menus
-	wxMenu* helpMenu = new wxMenu;
-	wxMenu* fileMenu = new wxMenu;
-
-	// The "About" item should be in the help menu
-	helpMenu->Append
+	m_menu_bar = new wxMenuBar;
+	m_help_menu = new wxMenu;
+	m_file_menu = new wxMenu;
+	m_help_menu->Append
 	(	wxID_ABOUT,
 		wxT("&About...\tF1"),
 		wxT("Show about dialog")
 	);
-	fileMenu->Append
+	m_file_menu->Append
 	(	wxID_EXIT,
 		wxT("E&xit\tAlt-X"),
 		wxT("Quit this program")
 	);
-	// Now append the freshly created menus to the menu bar...
-	wxMenuBar* menuBar = new wxMenuBar();
-	menuBar->Append(fileMenu, wxT("&File"));
-	menuBar->Append(helpMenu, wxT("&Help"));
+	m_menu_bar->Append(m_file_menu, wxT("&File"));
+	m_menu_bar->Append(m_help_menu, wxT("&Help"));
+
+	SetMenuBar(m_menu_bar);
+
+	Connect
+	(	wxID_EXIT,
+		wxEVT_COMMAND_MENU_SELECTED,
+		wxCommandEventHandler(Frame::on_quit)
+	);
+	Connect
+	(	wxID_ABOUT,
+		wxEVT_COMMAND_MENU_SELECTED,
+		wxCommandEventHandler(Frame::on_about)
+	);
 
 #	if JEWEL_ON_WINDOWS
 		Maximize();
 #	endif
 
-	// ... and attach this menu bar to the frame
-	SetMenuBar(menuBar);
-
-	Connect
-	(	wxID_EXIT,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::OnQuit)
-	);
-	Connect
-	(	wxID_ABOUT,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::OnAbout)
-	);
-	
 	m_top_panel = new TopPanel(this, m_database_connection);
 
 }
 	
 
 void
-Frame::OnAbout(wxCommandEvent& event)
+Frame::on_about(wxCommandEvent& event)
 {
 	// TODO Put proper messages here
 	wxString msg;
@@ -99,7 +99,7 @@ Frame::OnAbout(wxCommandEvent& event)
 }
 
 void
-Frame::OnQuit(wxCommandEvent& event)
+Frame::on_quit(wxCommandEvent& event)
 {
 	// Destroy the frame
 	Close();

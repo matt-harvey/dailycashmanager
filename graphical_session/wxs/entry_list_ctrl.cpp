@@ -55,7 +55,7 @@ EntryListCtrl::EntryListCtrl
 	static const int comment_col_num = 2;
 	static const int amount_col_num = 3;
 	static const int reconciled_col_num = 4;
-	static const int num_columns = 5;
+	// static const int num_columns = 5;
 
 	// Insert columns
 	InsertColumn(date_col_num, "Date", wxLIST_FORMAT_RIGHT);
