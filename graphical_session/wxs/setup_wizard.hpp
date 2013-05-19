@@ -75,7 +75,16 @@ public:
 	
 	Commodity selected_currency() const;
 
+	struct AugmentedAccount
+	{
+		Account account;
+		jewel::Decimal technical_opening_balance;
+	};
 
+	void selected_augmented_accounts
+	(	std::vector<AugmentedAccount>& out
+	) const;
+	
 private:
 
 	class FilepathValidator;
@@ -222,13 +231,22 @@ public:
 
 	void render();
 
+	void selected_augmented_accounts
+	(	std::vector<SetupWizard::AugmentedAccount>& out
+	) const;
+
 protected:
-	PhatbooksDatabaseConnection& database_connection();
+	PhatbooksDatabaseConnection& database_connection() const;
 	void add_to_top_sizer(wxWindow* window);
 	SetupWizard const& parent() const;
+
 private:
 	virtual wxString do_get_main_text() const = 0;
 	virtual void do_render_account_view() = 0;
+	virtual void do_get_selected_augmented_accounts
+	(	std::vector<SetupWizard::AugmentedAccount>& out
+	) const = 0;
+
 	void render_main_text();
 	void render_account_view();
 	PhatbooksDatabaseConnection& m_database_connection;
@@ -250,10 +268,18 @@ public:
 	);
 private:
 	void do_render_account_view();
+	void do_get_selected_augmented_accounts
+	(	std::vector<SetupWizard::AugmentedAccount>& out
+	) const;
 	wxLocale const& locale() const;
 	wxString do_get_main_text() const;
-	void add_account();
-	void on_account_adding_button_click(wxCommandEvent& event);
+	// void add_account();
+	// void on_account_adding_button_click(wxCommandEvent& event);
+	static unsigned int const s_account_name_col_num = 0;
+	static unsigned int const s_account_type_col_num = 1;
+	static unsigned int const s_opening_balance_col_num = 2;
+	static unsigned int const s_num_columns = 3;
+
 	static int const s_account_adding_button_id = wxID_HIGHEST + 1;
 	wxDataViewListCtrl* m_account_view_ctrl;
 	// wxDataViewIndexListModel* m_account_data_view_model;

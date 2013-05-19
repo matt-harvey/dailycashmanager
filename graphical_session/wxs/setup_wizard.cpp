@@ -34,6 +34,7 @@
 #include <wx/textctrl.h>
 #include <wx/treelist.h>
 #include <wx/validate.h>
+#include <wx/variant.h>
 #include <wx/window.h>
 #include <wx/wizard.h>
 #include <cassert>
@@ -65,12 +66,7 @@ namespace gui
 
 namespace
 {
-
-	struct AugmentedAccount
-	{
-		Account account;
-		jewel::Decimal technical_opening_balance;
-	};
+	typedef SetupWizard::AugmentedAccount AugmentedAccount;
 
 	wxString const wx_app_name()
 	{
@@ -206,6 +202,13 @@ Commodity
 SetupWizard::selected_currency() const
 {
 	return m_filepath_page->selected_currency();
+}
+
+void
+SetupWizard::selected_augmented_accounts(vector<AugmentedAccount>& out) const
+{
+	m_balance_sheet_account_page->selected_augmented_accounts(out);
+	return;
 }
 
 void
@@ -679,6 +682,15 @@ SetupWizard::AccountPage::render()
 }
 
 void
+SetupWizard::AccountPage::selected_augmented_accounts
+(	vector<AugmentedAccount>& out
+) const
+{
+	do_get_selected_augmented_accounts(out);
+	return;
+}
+
+void
 SetupWizard::AccountPage::render_main_text()
 {
 	wxStaticText* text = new wxStaticText
@@ -704,7 +716,7 @@ SetupWizard::AccountPage::render_account_view()
 }
 
 PhatbooksDatabaseConnection&
-SetupWizard::AccountPage::database_connection()
+SetupWizard::AccountPage::database_connection() const
 {
 	return m_database_connection;
 }
@@ -727,10 +739,12 @@ SetupWizard::AccountPage::parent() const
 
 
 BEGIN_EVENT_TABLE(SetupWizard::BalanceSheetAccountPage, wxWizardPageSimple)
+	/*
 	EVT_BUTTON
 	(	s_account_adding_button_id,
 		SetupWizard::BalanceSheetAccountPage::on_account_adding_button_click
 	)
+	*/
 END_EVENT_TABLE()
 
 
@@ -749,6 +763,49 @@ SetupWizard::BalanceSheetAccountPage::do_get_main_text() const
 	return wxString
 	(	"Enter your assets (things you own) and liabilities (what you owe)"
 	);
+}
+
+void
+SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
+(	vector<AugmentedAccount>& out
+) const
+{
+	unsigned int const num_rows = m_account_view_ctrl->GetItemCount();
+	for (unsigned int row = 0; row != num_rows; ++row)
+	{
+		AugmentedAccount augmented_account =
+		{	Account(database_connection()),
+			Decimal(0, 0)
+		};
+		for (unsigned int col = 0; col != s_num_columns; ++col)
+		{
+			wxVariant value;
+			m_account_view_ctrl->GetValue(value, row, col);
+			switch (col)
+			{
+			case s_account_name_col_num:
+				augmented_account.account.set_name
+				(	wx_to_bstring(value.GetString())
+				);
+				break;
+			case s_account_type_col_num:
+				augmented_account.account.set_account_type
+				(	string_to_account_type(wx_to_bstring(value.GetString()))
+				);
+				break;
+			case s_opening_balance_col_num:
+				augmented_account.technical_opening_balance =
+					wx_to_decimal(value.GetString(), locale());
+				break;
+			default:
+				assert (false);  // Execution should never reach here
+			}
+		}
+		out.push_back(augmented_account);
+	}
+	// TODO Deal with AugmentedAccounts in out that have duplicate names or
+	// empty names or all-blankspace names or names.
+	return;
 }
 
 wxLocale const&
@@ -807,7 +864,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	wxDataViewColumn* account_name_column = new wxDataViewColumn
 	(	wxString("Account name"),
 		account_name_renderer,
-		0,  // Column number
+		s_account_name_col_num,
 		wxDVC_DEFAULT_WIDTH * 2,
 		wxALIGN_LEFT,
 		wxDATAVIEW_COL_RESIZABLE
@@ -820,7 +877,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	wxDataViewColumn* account_type_column = new wxDataViewColumn
 	(	wxString("Type"),
 		account_type_renderer,
-		1,  // Column number
+		s_account_type_col_num,
 		wxDVC_DEFAULT_WIDTH,
 		wxALIGN_LEFT,
 		wxDATAVIEW_COL_RESIZABLE
@@ -834,7 +891,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	wxDataViewColumn* opening_balance_column = new wxDataViewColumn
 	(	wxString("Opening balance"),
 		opening_balance_renderer,
-		2,  // Column number
+		s_opening_balance_col_num,
 		wxDVC_DEFAULT_WIDTH * 1.5,
 		wxALIGN_RIGHT,
 		wxDATAVIEW_COL_RESIZABLE
@@ -871,7 +928,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	for (AugmentedAccounts::size_type i = 0; i != 20; ++i)
 	{
 		wxVector<wxVariant> data;
-		for (size_t j = 0; j != 3; ++j)
+		for (size_t j = 0; j != s_num_columns; ++j)
 		{
 			data.push_back(wxVariant(wxEmptyString));
 		}
@@ -882,13 +939,14 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	return;
 }
 
+/*
 void
 SetupWizard::BalanceSheetAccountPage::add_account()
 {
 	// Add a blank row at the bottom, where user can enter
 	// additional Accounts.
 	wxVector<wxVariant> blank_row_data;
-	for (wxVector<wxVariant>::size_type i = 0; i != 3; ++i)
+	for (wxVector<wxVariant>::size_type i = 0; i != s_num_columns; ++i)
 	{
 		blank_row_data.push_back(wxVariant(wxEmptyString));
 	};
@@ -896,7 +954,9 @@ SetupWizard::BalanceSheetAccountPage::add_account()
 	Layout();
 	return;
 }
+*/
 
+/*
 void
 SetupWizard::BalanceSheetAccountPage::on_account_adding_button_click
 (	wxCommandEvent& event
@@ -906,6 +966,7 @@ SetupWizard::BalanceSheetAccountPage::on_account_adding_button_click
 	add_account();
 	return;
 }
+*/
 
 #if 0
 /*** PLAccountPage ***/
