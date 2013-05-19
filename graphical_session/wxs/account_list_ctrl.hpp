@@ -1,9 +1,11 @@
 #ifndef GUARD_account_list_ctrl_hpp
 #define GUARD_account_list_ctrl_hpp
 
+#include "account.hpp"
 #include "account_reader.hpp"
 #include <wx/listctrl.h>
 #include <wx/wx.h>
+#include <vector>
 
 namespace phatbooks
 {
@@ -17,8 +19,7 @@ namespace gui
  * Displays a list of Accounts and their balances, and, optionally
  * the daily budget associated with each Account.
  */
-class AccountListCtrl:
-	public wxListCtrl
+class AccountListCtrl: public wxListCtrl
 {
 public:
 
@@ -51,15 +52,25 @@ public:
 		PhatbooksDatabaseConnection& dbc
 	);
 
+	/**
+	 * Populates \e out with all and only the currently selected Accounts in
+	 * the AccountListCtrl.
+	 */
+	void selected_accounts(std::vector<Account>& out);
+
 private:
 
 	AccountListCtrl
 	(	wxWindow* p_parent,
 		AccountReaderBase const& p_reader,
 		PhatbooksDatabaseConnection& p_database_connection,
-		bool p_show_daily_budget = false
+		bool p_show_daily_budget
 	);
 	PhatbooksDatabaseConnection& m_database_connection;
+
+	static int const s_name_col = 0;
+	static int const s_balance_col = s_name_col + 1;
+	static int const s_budget_col = s_name_col + 2;
 };
 
 

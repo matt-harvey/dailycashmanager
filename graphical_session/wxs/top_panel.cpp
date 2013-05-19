@@ -1,9 +1,13 @@
 #include "top_panel.hpp"
+#include "account.hpp"
 #include "account_list_ctrl.hpp"
 #include "entry_list_ctrl.hpp"
 #include "frame.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <wx/wx.h>
+#include <vector>
+
+using std::vector;
 
 namespace phatbooks
 {
@@ -49,6 +53,27 @@ TopPanel::TopPanel
 	m_top_sizer->SetSizeHints(this);
 	Layout();
 }
+
+void
+TopPanel::selected_balance_sheet_accounts(vector<Account>& out) const
+{
+	m_bs_account_list->selected_accounts(out);
+	return;
+}
+
+void
+TopPanel::selected_pl_accounts(vector<Account>& out) const
+{
+	m_pl_account_list->selected_accounts(out);
+	return;
+}
+
+
+
+
+
+
+
 
 
 }  // namespace gui

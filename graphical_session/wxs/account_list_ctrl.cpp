@@ -1,14 +1,16 @@
 #include "account_list_ctrl.hpp"
+#include "account.hpp"
 #include "account_reader.hpp"
 #include "b_string.hpp"
 #include "finformat.hpp"
 #include "app.hpp"
 #include "phatbooks_database_connection.hpp"
-#include <vector>
 #include <wx/intl.h>
 #include <wx/listctrl.h>
 #include <wx/string.h>
 #include <wx/wx.h>
+#include <cassert>
+#include <vector>
 
 using std::vector;
 
@@ -26,7 +28,7 @@ AccountListCtrl::create_balance_sheet_account_list
 )
 {
 	BalanceSheetAccountReader const reader(dbc);
-	AccountListCtrl* ret = new AccountListCtrl(parent, reader, dbc);
+	AccountListCtrl* ret = new AccountListCtrl(parent, reader, dbc, false);
 	return ret;
 }
 
@@ -59,11 +61,11 @@ AccountListCtrl::AccountListCtrl
 	),
 	m_database_connection(p_database_connection)
 {
-	InsertColumn(0, "Name", wxLIST_FORMAT_LEFT);
-	InsertColumn(1, "Balance", wxLIST_FORMAT_RIGHT);
+	InsertColumn(s_name_col, "Name", wxLIST_FORMAT_LEFT);
+	InsertColumn(s_balance_col, "Balance", wxLIST_FORMAT_RIGHT);
 	if (p_show_daily_budget)
 	{
-		InsertColumn(2, "Daily budget", wxLIST_FORMAT_RIGHT);
+		InsertColumn(s_budget_col, "Daily budget", wxLIST_FORMAT_RIGHT);
 	}
 
 	AccountReader::size_type i = 0;
@@ -86,23 +88,44 @@ AccountListCtrl::AccountListCtrl
 		SetItemData(i, i);
 
 		// Insert the balance string
-		SetItem(i, 1, finformat_wx(it->friendly_balance(), locale));
+		SetItem
+		(	i,
+			s_balance_col,
+			finformat_wx(it->friendly_balance(), locale)
+		);
 
 		if (p_show_daily_budget)
 		{
 			// Insert budget string
-			SetItem(i, 2, finformat_wx(it->budget(), locale));
+			SetItem(i, s_budget_col, finformat_wx(it->budget(), locale));
 		}
 	}
-	SetColumnWidth(0, wxLIST_AUTOSIZE);
-	SetColumnWidth(1, wxLIST_AUTOSIZE);
+	SetColumnWidth(s_name_col, wxLIST_AUTOSIZE);
+	SetColumnWidth(s_balance_col, wxLIST_AUTOSIZE);
 	if (p_show_daily_budget)
 	{
-		SetColumnWidth(2, wxLIST_AUTOSIZE);
+		SetColumnWidth(s_budget_col, wxLIST_AUTOSIZE);
 	}
 }
 
-
+void
+AccountListCtrl::selected_accounts(vector<Account>& out)
+{
+	size_t i = 0;
+	size_t const lim = GetItemCount();
+	for ( ; i != lim; ++i)
+	{
+		if(GetItemState(i, wxLIST_STATE_SELECTED))
+		{
+			Account const account
+			(	m_database_connection,
+				wx_to_bstring(GetItemText(i))
+			);
+			out.push_back(account);
+		}
+	}
+	return;
+}	
 
 }  // namespace gui
 }  // namespace phatbooks

@@ -1,7 +1,9 @@
 #ifndef GUARD_top_panel_hpp
 #define GUARD_top_panel_hpp
 
+#include "account.hpp"
 #include <wx/wx.h>
+#include <vector>
 
 namespace phatbooks
 {
@@ -33,6 +35,17 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
+	/**
+	 * Populates \e out with a vector of the balance sheet Accounts currently
+	 * selected by the user in the main window.
+	 */
+	void selected_balance_sheet_accounts(std::vector<Account>& out) const;
+
+	/**
+	 * Populates \e out with a vector of the P&L Accounts currently selected
+	 * by the user in the main window.
+	 */
+	void selected_pl_accounts(std::vector<Account>& out) const;
 
 private:
 
