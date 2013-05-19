@@ -6,6 +6,7 @@
 #include "icon.xpm"
 #include "phatbooks_database_connection.hpp"
 #include "top_panel.hpp"
+#include "transaction_dialog.hpp"
 #include <jewel/on_windows.hpp>
 #include <wx/menu.h>
 #include <wx/string.h>
@@ -48,7 +49,7 @@ Frame::Frame
 	m_top_panel(0),
 	m_menu_bar(0),
 	m_file_menu(0),
-	m_test_menu(0),
+	m_new_menu(0),
 	m_help_menu(0)
 {
 	// Set the frame icon
@@ -61,17 +62,17 @@ Frame::Frame
 	// Create menus
 	m_menu_bar = new wxMenuBar;
 	m_file_menu = new wxMenu;
-	m_test_menu = new wxMenu;
+	m_new_menu = new wxMenu;
 	m_help_menu = new wxMenu;
 	m_file_menu->Append
 	(	wxID_EXIT,
 		wxT("E&xit\tAlt-X"),
 		wxT("Quit this program")
 	);
-	m_test_menu->Append
-	(	s_test_selected_accounts_id,
-		wxT("&Selected accounts"),
-		wxT("Print names of selected Accounts to console")
+	m_new_menu->Append
+	(	s_new_transaction_id,
+		wxT("New &transaction"),
+		wxT("Record a new transaction")
 	);
 	m_help_menu->Append
 	(	wxID_ABOUT,
@@ -79,7 +80,7 @@ Frame::Frame
 		wxT("Show about dialog")
 	);
 	m_menu_bar->Append(m_file_menu, wxT("&File"));
-	m_menu_bar->Append(m_test_menu, wxT("&Test"));
+	m_menu_bar->Append(m_new_menu, wxT("&New"));
 	m_menu_bar->Append(m_help_menu, wxT("&Help"));
 
 	SetMenuBar(m_menu_bar);
@@ -90,9 +91,9 @@ Frame::Frame
 		wxCommandEventHandler(Frame::on_quit)
 	);
 	Connect
-	(	s_test_selected_accounts_id,
+	(	s_new_transaction_id,
 		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_test_selected_accounts)
+		wxCommandEventHandler(Frame::on_new_transaction)
 	);
 	Connect
 	(	wxID_ABOUT,
@@ -130,16 +131,22 @@ Frame::on_quit(wxCommandEvent& event)
 }
 
 void
-Frame::on_test_selected_accounts(wxCommandEvent& event)
+Frame::on_new_transaction(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
 	vector<Account> selected_accounts;
 	selected_balance_sheet_accounts(selected_accounts);
 	selected_pl_accounts(selected_accounts);
-	for (vector<Account>::size_type i = 0; i != selected_accounts.size(); ++i)
+	TransactionDialog transaction_dialog(selected_accounts);
+	if (transaction_dialog.ShowModal() == wxID_OK)
 	{
-		cout << selected_accounts[i].name() << endl;
+		// TODO Do stuff
 	}
+	else
+	{
+		// TODO What then?
+	}
+	transaction_dialog.Destroy();
 	return;
 }
 

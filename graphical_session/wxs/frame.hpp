@@ -33,7 +33,7 @@ public:
 	// Event handlers
 	void on_quit(wxCommandEvent& event);
 	void on_about(wxCommandEvent& event);
-	void on_test_selected_accounts(wxCommandEvent& event);
+	void on_new_transaction(wxCommandEvent& event);
 
 	/**
 	 * Populates \e out with a vector of the balance sheet Accounts currently
@@ -49,15 +49,15 @@ public:
 
 private:
 
+	static int const s_new_transaction_id = wxID_HIGHEST + 1;
+
 	PhatbooksDatabaseConnection& m_database_connection;
 	TopPanel* m_top_panel;
 
 	wxMenuBar* m_menu_bar;
 	wxMenu* m_file_menu;
-	wxMenu* m_test_menu;
+	wxMenu* m_new_menu;
 	wxMenu* m_help_menu;
-	
-	static int const s_test_selected_accounts_id = wxID_HIGHEST + 1;
 };
 
 
