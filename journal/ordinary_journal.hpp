@@ -77,7 +77,7 @@ public:
 
 	/**
 	 * @returns an OrdinaryJournal that, <em> if saved </em>, will
-	 * adjust the opening balance of p_account to become
+	 * adjust the technical opening balance of p_account to become
 	 * p_desired_opening_balance. The journal will be an actual
 	 * (non-budget) journal if p_account is a balance sheet Account;
 	 * otherwise, if p_account is a P&L account, it will be

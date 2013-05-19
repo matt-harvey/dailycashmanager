@@ -1,9 +1,13 @@
 #include "account_type.hpp"
 #include "b_string.hpp"
 #include "phatbooks_exceptions.hpp"
+#include <jewel/debug_log.hpp>
+#include <iostream>
 #include <map>
 #include <vector>
 
+using std::cout;
+using std::endl;
 using std::map;
 using std::vector;
 
@@ -94,6 +98,7 @@ string_to_account_type(BString const& p_string)
 		dict.find(p_string);
 	if (jt == dict.end())
 	{
+		JEWEL_DEBUG_LOG << p_string << endl;
 		throw InvalidAccountTypeStringException
 		(	"String does not identify AccountType"
 		);

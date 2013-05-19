@@ -12,6 +12,7 @@
 #include "icon.xpm"
 #include "make_currencies.hpp"
 #include "make_default_accounts.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
@@ -148,6 +149,12 @@ namespace
 /*** SetupWizard ***/
 
 
+/*
+BEGIN_EVENT_TABLE(SetupWizard, wxWizard)
+	EVT_WIZARD_FINISHED(wxID_ANY, SetupWizard::on_wizard_finish)
+END_EVENT_TABLE()
+*/
+
 
 SetupWizard::SetupWizard
 (	PhatbooksDatabaseConnection& p_database_connection
@@ -249,24 +256,38 @@ SetupWizard::create_file()
 void
 SetupWizard::configure_accounts()
 {
-	// TODO Implement this (again), once we have implemented the
-	// AccountPage(s).
-
-	/* Old implementation was as follows...
-	Commodity const commodity = m_database_connection.default_commodity();
-	vector<Account> accounts = m_account_page->selected_accounts();
+	vector<AugmentedAccount> augmented_accounts;
+	selected_augmented_accounts(augmented_accounts);
+	vector<AugmentedAccount>::iterator it = augmented_accounts.begin();
+	vector<AugmentedAccount>::iterator const end = augmented_accounts.end();
 	DatabaseTransaction transaction(m_database_connection);
-	for
-	(	vector<Account>::iterator it = accounts.begin(), end = accounts.end();
-		it != end;
-		++it
-	)
+	for ( ; it != end; ++it)
 	{
-		it->set_commodity(commodity);
-		it->save();
+		wxString const name_wx = bstring_to_wx(it->account.name()).Trim();	
+		if (name_wx.IsEmpty())
+		{
+			// TODO React accordingly...
+		}
+		else
+		{
+			it->account.set_commodity(selected_currency());
+			it->account.set_description(BString(""));
+			it->account.save();
+			JEWEL_DEBUG_LOG << it->technical_opening_balance << endl;
+			assert 
+			(	it->technical_opening_balance.places() ==
+				selected_currency().precision()
+			);
+			OrdinaryJournal opening_balance_journal
+			(	OrdinaryJournal::create_opening_balance_journal
+				(	it->account,
+					it->technical_opening_balance
+				)
+			);
+			opening_balance_journal.save();
+		}
 	}
 	transaction.commit();
-	*/
 	return;
 }
 
@@ -777,31 +798,28 @@ SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
 		{	Account(database_connection()),
 			Decimal(0, 0)
 		};
-		for (unsigned int col = 0; col != s_num_columns; ++col)
+		wxVariant value;
+		m_account_view_ctrl->GetValue(value, row, s_account_name_col_num);
+		wxString const account_name_wx = value.GetString().Trim();
+		m_account_view_ctrl->GetValue(value, row, s_account_type_col_num);
+		wxString const account_type_wx = value.GetString().Trim();
+		m_account_view_ctrl->GetValue(value, row, s_opening_balance_col_num);
+		wxString const op_bal_wx = value.GetString().Trim();
+		if (account_name_wx.IsEmpty() || account_type_wx.IsEmpty())
 		{
-			wxVariant value;
-			m_account_view_ctrl->GetValue(value, row, col);
-			switch (col)
-			{
-			case s_account_name_col_num:
-				augmented_account.account.set_name
-				(	wx_to_bstring(value.GetString())
-				);
-				break;
-			case s_account_type_col_num:
-				augmented_account.account.set_account_type
-				(	string_to_account_type(wx_to_bstring(value.GetString()))
-				);
-				break;
-			case s_opening_balance_col_num:
-				augmented_account.technical_opening_balance =
-					wx_to_decimal(value.GetString(), locale());
-				break;
-			default:
-				assert (false);  // Execution should never reach here
-			}
+			// TODO react accordingly
 		}
-		out.push_back(augmented_account);
+		else
+		{
+			BString const account_name = wx_to_bstring(account_name_wx);
+			account_type::AccountType const account_type =
+				string_to_account_type(wx_to_bstring(account_type_wx));
+			augmented_account.account.set_name(account_name);
+			augmented_account.account.set_account_type(account_type);
+			augmented_account.technical_opening_balance =
+				wx_to_decimal(op_bal_wx, locale());
+			out.push_back(augmented_account);
+		}
 	}
 	// TODO Deal with AugmentedAccounts in out that have duplicate names or
 	// empty names or all-blankspace names or names.

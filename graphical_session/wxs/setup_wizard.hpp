@@ -62,7 +62,7 @@ public:
 	 * reason we are calling the wizard...).
 	 */
 	SetupWizard(PhatbooksDatabaseConnection& p_database_connection);
-
+	
 	void run();
 
 	/**
@@ -81,11 +81,11 @@ public:
 		jewel::Decimal technical_opening_balance;
 	};
 
+private:
+
 	void selected_augmented_accounts
 	(	std::vector<AugmentedAccount>& out
 	) const;
-	
-private:
 
 	class FilepathValidator;
 	class FilepathPage;
@@ -120,7 +120,7 @@ private:
 	 * configure_default_commodity() and create_file().
 	 */
 	void configure_accounts();
-	
+
 	PhatbooksDatabaseConnection& m_database_connection;
 	FilepathPage* m_filepath_page;
 	BalanceSheetAccountPage* m_balance_sheet_account_page;
