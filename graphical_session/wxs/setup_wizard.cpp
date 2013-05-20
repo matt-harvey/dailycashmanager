@@ -273,7 +273,6 @@ SetupWizard::configure_accounts()
 			it->account.set_commodity(selected_currency());
 			it->account.set_description(BString(""));
 			it->account.save();
-			JEWEL_DEBUG_LOG << it->technical_opening_balance << endl;
 			assert 
 			(	it->technical_opening_balance.places() ==
 				selected_currency().precision()
@@ -385,8 +384,6 @@ SetupWizard::FilepathValidator::TransferFromWindow()
 			dynamic_cast<FilepathPage*>(GetWindow()->GetParent());
 		if (!page)
 		{
-			JEWEL_DEBUG_LOG_LOCATION;
-			JEWEL_DEBUG_LOG << "Huh!" << endl;
 			return false;
 		}
 		optional<filesystem::path> const path =
@@ -805,6 +802,8 @@ SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
 		wxString const account_type_wx = value.GetString().Trim();
 		m_account_view_ctrl->GetValue(value, row, s_opening_balance_col_num);
 		wxString const op_bal_wx = value.GetString().Trim();
+		Decimal::places_type const precision =
+			parent().selected_currency().precision();
 		if (account_name_wx.IsEmpty() || account_type_wx.IsEmpty())
 		{
 			// TODO react accordingly
@@ -817,7 +816,11 @@ SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
 			augmented_account.account.set_name(account_name);
 			augmented_account.account.set_account_type(account_type);
 			augmented_account.technical_opening_balance =
-				wx_to_decimal(op_bal_wx, locale());
+				round(wx_to_decimal(op_bal_wx, locale()), precision);
+			assert
+			(	augmented_account.technical_opening_balance.places() ==
+				parent().selected_currency().precision()
+			);
 			out.push_back(augmented_account);
 		}
 	}

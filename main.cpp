@@ -86,9 +86,9 @@ using TCLAP::UnlabeledValueArg;
 // and I'm not sure that throws at all if unsafe.)
 
 
+
 int main(int argc, char** argv)
 {
-
 	try
 	{
 		// Enable exceptions on standard streams

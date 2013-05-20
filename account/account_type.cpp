@@ -98,7 +98,6 @@ string_to_account_type(BString const& p_string)
 		dict.find(p_string);
 	if (jt == dict.end())
 	{
-		JEWEL_DEBUG_LOG << p_string << endl;
 		throw InvalidAccountTypeStringException
 		(	"String does not identify AccountType"
 		);

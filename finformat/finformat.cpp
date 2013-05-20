@@ -24,9 +24,15 @@ using std::string;
 using std::terminate;  // WARNING tmp
 using std::vector;
 
+
+// For debugging
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
+
+
 namespace phatbooks
 {
-
 
 namespace
 {
@@ -303,7 +309,8 @@ jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc)
 	wxs.Replace(decimal_point_s, wxString("."));
 
 	string s = wx_to_std8(wxs);
-	return Decimal(s);
+	Decimal const ret(s);
+	return ret;
 
 }
 
