@@ -114,6 +114,12 @@ JEWEL_DERIVED_EXCEPTION(EntityCreationDateException, PhatbooksException);
 JEWEL_DERIVED_EXCEPTION(InvalidAccountNameException, PhatbooksException);
 
 /**
+ * Exception to be thrown when there is an attempt to name an Account with
+ * a name that has already been used.
+ */
+JEWEL_DERIVED_EXCEPTION(DuplicateAccountNameException, PhatbooksException);
+
+/**
  * Exception to be thrown when something is about a Commodity puts it
  * in a state whereby it cannot validly be the default Commodity for the
  * entity represented by a PhatbooksDatabaseConnection.

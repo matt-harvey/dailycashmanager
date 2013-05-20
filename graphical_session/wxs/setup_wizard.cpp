@@ -14,6 +14,7 @@
 #include "make_default_accounts.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
@@ -40,6 +41,7 @@
 #include <wx/wizard.h>
 #include <cassert>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -48,6 +50,7 @@ using jewel::Decimal;
 using jewel::value;
 using sqloxx::DatabaseTransaction;
 using std::map;
+using std::set;
 using std::string;
 using std::vector;
 
@@ -194,7 +197,15 @@ SetupWizard::run()
 		// Then user completed Wizard rather than cancelling.
 		configure_default_commodity();
 		create_file();
-		configure_accounts();
+		try
+		{
+			configure_accounts();
+		}
+		catch (...)
+		{
+			delete_file();
+			throw;
+		}
 	}
 	return;
 }
@@ -252,6 +263,15 @@ SetupWizard::create_file()
 	m_database_connection.open(value(m_filepath_page->selected_filepath()));
 	return;
 }
+
+void
+SetupWizard::delete_file()
+{
+	assert (m_filepath_page);
+	boost::filesystem::remove(value(m_filepath_page->selected_filepath()));
+	return;
+}
+
 
 void
 SetupWizard::configure_accounts()
@@ -789,6 +809,10 @@ SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
 ) const
 {
 	unsigned int const num_rows = m_account_view_ctrl->GetItemCount();
+
+	// Record Account names as we go, so we can check for duplicates
+	set<BString> account_names_used;
+
 	for (unsigned int row = 0; row != num_rows; ++row)
 	{
 		AugmentedAccount augmented_account =
@@ -811,6 +835,18 @@ SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
 		else
 		{
 			BString const account_name = wx_to_bstring(account_name_wx);
+			BString const account_name_lower = to_lower(account_name);
+			if
+			(	account_names_used.find(account_name_lower) !=
+				account_names_used.end()
+			)
+			{
+				// Account name has already appeared in a previous row
+				throw DuplicateAccountNameException
+				(	"Account name has already been used."
+				);
+			}
+			account_names_used.insert(account_name_lower);
 			account_type::AccountType const account_type =
 				string_to_account_type(wx_to_bstring(account_type_wx));
 			augmented_account.account.set_name(account_name);

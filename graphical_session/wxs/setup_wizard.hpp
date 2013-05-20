@@ -112,6 +112,8 @@ private:
 	 */
 	void create_file();
 
+	void delete_file();
+
 	/**
 	 * Reflect in the database the Accounts selected by user in
 	 * the wizard.
@@ -218,6 +220,10 @@ private:
  * Represents a page for setting up Accounts in a SetupWizard.
  * Abstract base class - more specific Account page types derive
  * from this.
+ *
+ * @todo HIGH PRIORITY Make it prompt user if duplicate or otherwise
+ * invalid Accounts are entered. Capture this prompt within this
+ * class, in page-change handler.
  */
 class SetupWizard::AccountPage:
 	public wxWizardPageSimple,
@@ -268,9 +274,15 @@ public:
 	);
 private:
 	void do_render_account_view();
+
+	/**
+	 * @throws DuplicateAccountNameException in the event that the same
+	 * Account name appears in two or more rows.
+	 */
 	void do_get_selected_augmented_accounts
 	(	std::vector<SetupWizard::AugmentedAccount>& out
 	) const;
+
 	wxLocale const& locale() const;
 	wxString do_get_main_text() const;
 	// void add_account();
