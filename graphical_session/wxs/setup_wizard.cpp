@@ -812,7 +812,8 @@ SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	AccountPage(p_parent, p_database_connection),
-	m_account_view_ctrl(0)
+	m_account_view_ctrl(0),
+	m_num_rows(0)
 {
 }
 
@@ -829,10 +830,9 @@ SetupWizard::BalanceSheetAccountPage::account_names_valid
 (	wxString& error_message
 ) const
 {
-	unsigned int const num_rows = m_account_view_ctrl->GetItemCount();
 	set<wxString> account_names;
 	wxVariant value;
-	for (unsigned int row = 0; row != num_rows; ++row)
+	for (unsigned int row = 0; row != m_num_rows; ++row)
 	{
 		m_account_view_ctrl->GetValue(value, row, s_account_name_col_num);
 		wxString const account_name = value.GetString().Trim().Lower();
@@ -855,9 +855,8 @@ SetupWizard::BalanceSheetAccountPage::account_types_valid
 (	wxString& error_message
 ) const
 {
-	unsigned int const num_rows = m_account_view_ctrl->GetItemCount();
 	wxVariant variant;
-	for (unsigned int row = 0; row != num_rows; ++row)
+	for (unsigned int row = 0; row != m_num_rows; ++row)
 	{
 		m_account_view_ctrl->GetValue(variant, row, s_account_name_col_num);
 		wxString const account_name = variant.GetString().Trim();
@@ -881,8 +880,7 @@ SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
 (	vector<AugmentedAccount>& out
 ) const
 {
-	unsigned int const num_rows = m_account_view_ctrl->GetItemCount();
-	for (unsigned int row = 0; row != num_rows; ++row)
+	for (unsigned int row = 0; row != m_num_rows; ++row)
 	{
 		AugmentedAccount augmented_account =
 		{	Account(database_connection()),
@@ -1039,7 +1037,8 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	}
 	// Add blank rows at bottom, where user might add additional
 	// Accounts
-	for (AugmentedAccounts::size_type i = 0; i != 20; ++i)
+	unsigned int const num_extra_rows = 20;
+	for (AugmentedAccounts::size_type i = 0; i != num_extra_rows; ++i)
 	{
 		wxVector<wxVariant> data;
 		for (size_t j = 0; j != s_num_columns; ++j)
@@ -1049,6 +1048,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 		m_account_view_ctrl->AppendItem(data, wxUIntPtr(0));
 	}
 	add_to_top_sizer(m_account_view_ctrl);
+	m_num_rows = augmented_accounts.size() + num_extra_rows;
 
 	return;
 }

@@ -300,9 +300,12 @@ private:
 	static unsigned int const s_account_type_col_num = 1;
 	static unsigned int const s_opening_balance_col_num = 2;
 	static unsigned int const s_num_columns = 3;
+	
+
 
 	static int const s_account_adding_button_id = wxID_HIGHEST + 1;
 	wxDataViewListCtrl* m_account_view_ctrl;
+	unsigned int m_num_rows;
 	// wxDataViewIndexListModel* m_account_data_view_model;
 	
 	void on_wizard_page_changing(wxWizardEvent& event);
