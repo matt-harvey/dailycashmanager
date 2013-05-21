@@ -253,11 +253,16 @@ private:
 	(	std::vector<SetupWizard::AugmentedAccount>& out
 	) const = 0;
 
+	// virtual bool account_names_valid(wxString& error_message) const = 0;
+	// virtual bool account_types_valid(wxString& error_message) const = 0;
+
+
 	void render_main_text();
 	void render_account_view();
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;
 	SetupWizard const& m_parent;
+
 };
 
 
@@ -287,6 +292,10 @@ private:
 	wxString do_get_main_text() const;
 	// void add_account();
 	// void on_account_adding_button_click(wxCommandEvent& event);
+	
+	bool account_names_valid(wxString& error_message) const;
+	bool account_types_valid(wxString& error_message) const;
+
 	static unsigned int const s_account_name_col_num = 0;
 	static unsigned int const s_account_type_col_num = 1;
 	static unsigned int const s_opening_balance_col_num = 2;
@@ -296,6 +305,8 @@ private:
 	wxDataViewListCtrl* m_account_view_ctrl;
 	// wxDataViewIndexListModel* m_account_data_view_model;
 	
+	void on_wizard_page_changing(wxWizardEvent& event);
+
 	DECLARE_EVENT_TABLE()
 
 };

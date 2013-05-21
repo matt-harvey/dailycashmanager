@@ -152,12 +152,6 @@ namespace
 /*** SetupWizard ***/
 
 
-/*
-BEGIN_EVENT_TABLE(SetupWizard, wxWizard)
-	EVT_WIZARD_FINISHED(wxID_ANY, SetupWizard::on_wizard_finish)
-END_EVENT_TABLE()
-*/
-
 
 SetupWizard::SetupWizard
 (	PhatbooksDatabaseConnection& p_database_connection
@@ -366,7 +360,6 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 		!filepath_already_exists;
 	if (!ret)
 	{
-		// TODO Do we need to display an error message here?
 		if (!filename_is_valid)
 		{
 			wxString const message = std8_to_wx(filename_error_message);
@@ -678,6 +671,7 @@ SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 void
 SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 {
+	JEWEL_DEBUG_LOG << "Hola!" << endl;
 	static bool changed_once = false;
 	SetupWizard* parent = dynamic_cast<SetupWizard*>(GetParent());
 
@@ -695,6 +689,10 @@ SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 
 
 /*** SetupWizard::AccountPage ***/
+
+
+
+
 
 SetupWizard::AccountPage::AccountPage
 (	SetupWizard* p_parent,
@@ -777,6 +775,10 @@ SetupWizard::AccountPage::parent() const
 
 
 BEGIN_EVENT_TABLE(SetupWizard::BalanceSheetAccountPage, wxWizardPageSimple)
+	EVT_WIZARD_PAGE_CHANGING
+	(	wxID_ANY,
+		SetupWizard::BalanceSheetAccountPage::on_wizard_page_changing
+	)
 	/*
 	EVT_BUTTON
 	(	s_account_adding_button_id,
@@ -784,6 +786,25 @@ BEGIN_EVENT_TABLE(SetupWizard::BalanceSheetAccountPage, wxWizardPageSimple)
 	)
 	*/
 END_EVENT_TABLE()
+
+
+
+void
+SetupWizard::BalanceSheetAccountPage::on_wizard_page_changing(wxWizardEvent& event)
+{
+	JEWEL_DEBUG_LOG << "huh?" << endl;
+	wxString error_message;
+	assert (error_message.IsEmpty());
+	if
+	(	!account_names_valid(error_message) ||
+		!account_types_valid(error_message)
+	)
+	{
+		wxMessageBox(error_message);
+		event.Veto();
+	}
+	return;
+}
 
 
 SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
@@ -803,16 +824,64 @@ SetupWizard::BalanceSheetAccountPage::do_get_main_text() const
 	);
 }
 
+bool
+SetupWizard::BalanceSheetAccountPage::account_names_valid
+(	wxString& error_message
+) const
+{
+	unsigned int const num_rows = m_account_view_ctrl->GetItemCount();
+	set<wxString> account_names;
+	wxVariant value;
+	for (unsigned int row = 0; row != num_rows; ++row)
+	{
+		m_account_view_ctrl->GetValue(value, row, s_account_name_col_num);
+		wxString const account_name = value.GetString().Trim().Lower();
+		if
+		(	(!account_name.IsEmpty()) &&
+			(account_names.find(account_name) != account_names.end())
+		)
+		{
+			error_message = "Duplicate account name: ";
+			error_message += account_name;
+			return false;
+		}
+		account_names.insert(account_name);
+	}
+	return true;
+}
+
+bool
+SetupWizard::BalanceSheetAccountPage::account_types_valid
+(	wxString& error_message
+) const
+{
+	unsigned int const num_rows = m_account_view_ctrl->GetItemCount();
+	wxVariant variant;
+	for (unsigned int row = 0; row != num_rows; ++row)
+	{
+		m_account_view_ctrl->GetValue(variant, row, s_account_name_col_num);
+		wxString const account_name = variant.GetString().Trim();
+		if (!account_name.IsEmpty())
+		{
+			m_account_view_ctrl->
+				GetValue(variant, row, s_account_type_col_num);
+			if (variant.GetString().Trim().IsEmpty())
+			{
+				error_message = "Account type not specified for account ";
+				error_message += account_name;
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 void
 SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
 (	vector<AugmentedAccount>& out
 ) const
 {
 	unsigned int const num_rows = m_account_view_ctrl->GetItemCount();
-
-	// Record Account names as we go, so we can check for duplicates
-	set<BString> account_names_used;
-
 	for (unsigned int row = 0; row != num_rows; ++row)
 	{
 		AugmentedAccount augmented_account =
@@ -835,20 +904,8 @@ SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
 		else
 		{
 			BString const account_name = wx_to_bstring(account_name_wx);
-			BString const account_name_lower = to_lower(account_name);
-			if
-			(	account_names_used.find(account_name_lower) !=
-				account_names_used.end()
-			)
-			{
-				// Account name has already appeared in a previous row
-				throw DuplicateAccountNameException
-				(	"Account name has already been used."
-				);
-			}
-			account_names_used.insert(account_name_lower);
 			account_type::AccountType const account_type =
-				string_to_account_type(wx_to_bstring(account_type_wx));
+			string_to_account_type(wx_to_bstring(account_type_wx));
 			augmented_account.account.set_name(account_name);
 			augmented_account.account.set_account_type(account_type);
 			augmented_account.technical_opening_balance =
