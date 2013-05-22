@@ -27,12 +27,11 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	),
 	m_top_sizer(0)
 {
-	m_top_sizer = new wxBoxSizer(wxVERTICAL);
+	m_top_sizer = new wxGridSizer(p_accounts.size(), 2, 0, 0);
 	vector<Account>::size_type const sz = p_accounts.size();
 	vector<Account>::size_type i = 0;
 	for ( ; i != sz; ++i)
 	{
-		wxBoxSizer* row_sizer = new wxBoxSizer(wxHORIZONTAL);
 		wxStaticText* account_name_text = new wxStaticText
 		(	this,
 			wxID_ANY,
@@ -50,9 +49,8 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 			0  // style
 			// TODO Need a validator
 		);
-		m_top_sizer->Add(row_sizer);
-		row_sizer->Add(account_name_text, wxSizerFlags(1).Expand());
-		row_sizer->Add(entry_ctrl, 0, wxLEFT, 5);
+		m_top_sizer->Add(account_name_text, 1, wxALIGN_LEFT | wxLEFT | wxRIGHT);
+		m_top_sizer->Add(entry_ctrl, 1, wxALIGN_RIGHT | wxLEFT | wxRIGHT);
 	}
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);

@@ -24,7 +24,7 @@ public:
 protected:
 
 private:
-	wxBoxSizer* m_top_sizer;
+	wxGridSizer* m_top_sizer;
 	static unsigned int const s_start_entry_amount_ids = wxID_HIGHEST + 1;
 
 };  // class TransactionDialog
