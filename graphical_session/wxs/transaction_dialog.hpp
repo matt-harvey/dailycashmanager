@@ -5,6 +5,7 @@
 
 #include "account.hpp"
 #include <wx/button.h>
+#include <wx/calctrl.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
 #include <vector>
@@ -28,7 +29,8 @@ private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
 
-	wxGridSizer* m_top_sizer;
+	wxFlexGridSizer* m_top_sizer;
+	wxCalendarCtrl* m_calendar_ctrl;
 	wxButton* m_ok_button;
 	wxButton* m_cancel_button;
 

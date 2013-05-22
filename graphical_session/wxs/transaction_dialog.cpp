@@ -6,6 +6,7 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
+#include <wx/calctrl.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -53,10 +54,11 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		wxDEFAULT_DIALOG_STYLE
 	),
 	m_top_sizer(0),
+	m_calendar_ctrl(0),
 	m_ok_button(0),
 	m_cancel_button(0)
 {
-	m_top_sizer = new wxGridSizer(p_accounts.size() + 1, 2, 0, 0);
+	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 2, 2, 0, 0);
 	vector<Account>::size_type const sz = p_accounts.size();
 	vector<Account>::size_type i = 0;
 	for ( ; i != sz; ++i)
@@ -81,6 +83,9 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		m_top_sizer->Add(account_name_text, 1, wxALIGN_LEFT | wxLEFT | wxRIGHT);
 		m_top_sizer->Add(entry_ctrl, 1, wxALIGN_RIGHT | wxLEFT | wxRIGHT);
 	}
+	m_calendar_ctrl = new wxCalendarCtrl(this, wxID_ANY);
+	m_top_sizer->AddStretchSpacer();
+	m_top_sizer->Add(m_calendar_ctrl);
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,
