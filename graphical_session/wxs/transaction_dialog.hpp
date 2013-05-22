@@ -4,6 +4,7 @@
 #define GUARD_transaction_dialog_hpp
 
 #include "account.hpp"
+#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
 #include <vector>
@@ -24,8 +25,16 @@ public:
 protected:
 
 private:
+	void on_ok_button_click(wxCommandEvent& event);
+	void on_cancel_button_click(wxCommandEvent& event);
+
 	wxGridSizer* m_top_sizer;
+	wxButton* m_ok_button;
+	wxButton* m_cancel_button;
+
 	static unsigned int const s_start_entry_amount_ids = wxID_HIGHEST + 1;
+
+	DECLARE_EVENT_TABLE()
 
 };  // class TransactionDialog
 

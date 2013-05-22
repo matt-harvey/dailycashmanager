@@ -16,7 +16,7 @@ namespace phatbooks
 namespace gui
 {
 
-DecimalValidator::DecimalValidator(Decimal* p_decimal):
+DecimalValidator::DecimalValidator(Decimal const& p_decimal):
 	m_decimal(p_decimal)
 {
 }
@@ -39,10 +39,7 @@ DecimalValidator::Validate(wxWindow* WXUNUSED(parent))
 	}
 	try
 	{
-		if (m_decimal)
-		{
-			*m_decimal = wx_to_decimal(wxString(text_ctrl->GetValue()), locale());
-		}
+		m_decimal = wx_to_decimal(wxString(text_ctrl->GetValue()), locale());
 		return true;
 	}
 	catch (jewel::Exception& e)
@@ -57,26 +54,19 @@ bool
 DecimalValidator::TransferFromWindow()
 {
 	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
-	if (m_decimal)
-	{
-		return true;
-	}
-	return false;
+	return true;
 }
 
 bool
 DecimalValidator::TransferToWindow()
 {
 	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
-	if (m_decimal)
+	wxTextCtrl* const text_ctrl = dynamic_cast<wxTextCtrl*>(GetWindow());
+	if (!text_ctrl)
 	{
-		wxTextCtrl* const text_ctrl = dynamic_cast<wxTextCtrl*>(GetWindow());
-		if (!text_ctrl)
-		{
-			return false;
-		}
-		text_ctrl->SetValue(finformat_wx(*m_decimal, locale()));
+		return false;
 	}
+	text_ctrl->SetValue(finformat_wx(m_decimal, locale()));
 	return true;
 }
 

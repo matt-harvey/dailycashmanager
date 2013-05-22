@@ -1,19 +1,9 @@
 #ifndef GUARD_decimal_validator_hpp
 #define GUARD_decimal_validator_hpp
 
+#include <jewel/decimal.hpp>
 #include <wx/intl.h>
 #include <wx/validate.h>
-
-// Begin forward declarations
-
-namespace jewel
-{
-
-class Decimal;
-
-}  // namespace jewel
-
-// End forward declarations
 
 
 
@@ -25,7 +15,7 @@ namespace gui
 class DecimalValidator: public wxValidator
 {
 public:
-	DecimalValidator(jewel::Decimal* p_decimal);
+	DecimalValidator(jewel::Decimal const& p_decimal);
 	DecimalValidator(DecimalValidator const& rhs);
 
 	/**
@@ -39,7 +29,7 @@ public:
 
 private:
 	wxLocale const& locale() const;
-	jewel::Decimal* m_decimal;
+	jewel::Decimal m_decimal;
 
 };  // class DecimalValidator
 
