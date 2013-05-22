@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_client_data_hpp
 #define GUARD_client_data_hpp
 

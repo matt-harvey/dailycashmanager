@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_graphical_session_hpp
 #define GUARD_graphical_session_hpp
 

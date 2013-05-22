@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_interval_type_hpp
 #define GUARD_interval_type_hpp
 

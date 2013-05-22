@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "finformat.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>

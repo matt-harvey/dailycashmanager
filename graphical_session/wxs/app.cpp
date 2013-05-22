@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "app.hpp"
 #include "application.hpp"
 #include "b_string.hpp"

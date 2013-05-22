@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "commodity.hpp"
 #include "commodity_impl.hpp"
 #include "phatbooks_database_connection.hpp"

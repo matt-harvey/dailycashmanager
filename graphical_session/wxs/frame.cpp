@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "frame.hpp"
 #include "account.hpp"
 #include "account_list_ctrl.hpp"

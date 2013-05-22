@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "make_currencies.hpp"
 #include "commodity.hpp"
 #include <wx/string.h>

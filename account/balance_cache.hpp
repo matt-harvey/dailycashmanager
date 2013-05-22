@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_balance_cache_hpp
 #define GUARD_balance_cache_hpp
 

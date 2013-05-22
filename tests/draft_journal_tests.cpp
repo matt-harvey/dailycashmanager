@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "account.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"

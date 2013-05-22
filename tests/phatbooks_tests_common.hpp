@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_phatbooks_tests_common_hpp
 #define GUARD_phatbooks_tests_common_hpp
 

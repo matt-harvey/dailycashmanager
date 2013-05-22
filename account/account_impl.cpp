@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 /** \file account_impl.cpp
  *
  * \brief Source file for code pertaining to AccountImpl class.

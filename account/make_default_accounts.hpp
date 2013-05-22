@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_make_default_accounts_hpp
 #define GUARD_make_default_accounts_hpp
 

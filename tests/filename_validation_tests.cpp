@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "filename_validation.hpp"
 #include <UnitTest++/UnitTest++.h>
 #include <cassert>

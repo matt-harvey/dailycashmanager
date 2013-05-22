@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "make_default_accounts.hpp"
 #include "account.hpp"
 #include "account_type.hpp"

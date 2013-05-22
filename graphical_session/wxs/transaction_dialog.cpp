@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "transaction_dialog.hpp"
 #include "account.hpp"
 #include <wx/dialog.h>

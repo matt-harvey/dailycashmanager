@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "decimal_renderer.hpp"
 #include "decimal_variant_data.hpp"
 #include "app.hpp"

@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "repeater.hpp"
 #include "draft_journal.hpp"
 #include "frequency.hpp"

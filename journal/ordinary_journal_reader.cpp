@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "ordinary_journal_reader.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"

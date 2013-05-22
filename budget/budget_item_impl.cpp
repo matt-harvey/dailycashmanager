@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "budget_item_impl.hpp"
 #include "account.hpp"
 #include "b_string.hpp"

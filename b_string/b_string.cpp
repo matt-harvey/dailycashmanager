@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "b_string.hpp"
 #include <boost/static_assert.hpp>
 #include <wx/string.h>

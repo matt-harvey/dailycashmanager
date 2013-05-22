@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "commodity_impl.hpp"
 #include "balance_cache.hpp"
 #include "b_string.hpp"

@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "welcome_dialog.hpp"
 #include "application.hpp"
 #include "phatbooks_database_connection.hpp"

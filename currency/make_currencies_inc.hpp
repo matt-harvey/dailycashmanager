@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 		vec.push_back(make_currency(dbc, L"Kazakhstani tenge", "KZT", 2));
 		vec.push_back(make_currency(dbc, L"Chilean peso", "CLP", 2));
 		vec.push_back(make_currency(dbc, L"Central African CFA franc", "XAF", 2));

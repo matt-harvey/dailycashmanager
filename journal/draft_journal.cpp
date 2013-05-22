@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "b_string.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"

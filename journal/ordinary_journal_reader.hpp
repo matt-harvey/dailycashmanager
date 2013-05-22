@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_ordinary_journal_reader_hpp
 #define GUARD_ordinary_journal_reader_hpp
 

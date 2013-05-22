@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_text_dialogue_hpp
 #define GUARD_text_dialogue_hpp
 
