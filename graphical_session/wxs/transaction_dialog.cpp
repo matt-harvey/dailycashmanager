@@ -3,6 +3,7 @@
 #include "transaction_dialog.hpp"
 #include "account.hpp"
 #include "date.hpp"
+#include "date_validator.hpp"
 #include "decimal_validator.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
@@ -86,11 +87,11 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	m_date_ctrl = new wxTextCtrl
 	(	this,
 		s_date_ctrl_id,
-		date_format_wx(today()),
+		wxEmptyString,
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_RIGHT
-		// TODO Should have Validator here
+		wxALIGN_RIGHT,
+		DateValidator(today())	
 	);
 
 	m_top_sizer->AddStretchSpacer();

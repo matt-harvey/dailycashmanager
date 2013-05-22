@@ -375,10 +375,10 @@ PhatbooksDatabaseConnection::setup_entity_table()
 		"insert into entity_data(creation_date) "
 		"values(:creation_date)"
 	);
-	gregorian::date const today = gregorian::day_clock::local_day();
-	populator.bind(":creation_date", julian_int(today));
+	gregorian::date const today_date = today();
+	populator.bind(":creation_date", julian_int(today_date));
 	populator.step_final();
-	m_permanent_entity_data->set_creation_date(today);
+	m_permanent_entity_data->set_creation_date(today_date);
 
 	return;
 }

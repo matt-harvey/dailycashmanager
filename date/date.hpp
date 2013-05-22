@@ -91,7 +91,7 @@ boost::gregorian::date
 boost_date_from_julian_int(DateRep julian_int);
 
 /**
- * @returns Todays date, local time.
+ * @returns Today's date, local time.
  */
 boost::gregorian::date
 today();

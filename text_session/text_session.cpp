@@ -886,9 +886,8 @@ TextSession::run_with_filepath
 	     << bstring_to_std8(Application::application_name())
 		 << "!" << endl;
 
-	gregorian::date const today = gregorian::day_clock::local_day();
 	shared_ptr<list<OrdinaryJournal> > auto_posted_journals =
-		update_repeaters_till(today);
+		update_repeaters_till(today());
 	notify_autoposts(auto_posted_journals);
 	create_main_menu();
 	m_main_menu->present_to_user();	
@@ -1575,7 +1574,7 @@ TextSession::elicit_ordinary_journal_from_draft
 
 	// TODO There is duplicated code between here and
 	// finalize_ordinary_journal
-	gregorian::date d = gregorian::day_clock::local_day();
+	gregorian::date d = today();
 	string const date_prompt =
 		"Enter transaction date as an eight-digit number of the "
 			"form YYYYMMDD, or just hit enter for today's date (" +
@@ -2829,17 +2828,17 @@ TextSession::elicit_repeater()
 	repeater.set_frequency(Frequency(value(num_steps), value(step_type)));
 
 	// Determine next posting date
-	gregorian::date const today = gregorian::day_clock::local_day();
+	gregorian::date const today_date = today();
 	optional<gregorian::date> const d = elicit_constrained_date
 	(	"Enter the first date on which the transaction will occur, "
 			"as an 8-digit number of the form YYYYMMDD (or just "
 			"hit Enter for today's date): ",
-		today,
+		today_date,
 		"Next transaction date cannot be set in the past. Please try again"
 	);
 	assert (!d || (d >= database_connection().entity_creation_date()));
 	if (d) repeater.set_next_date(*d);
-	else repeater.set_next_date(today);
+	else repeater.set_next_date(today_date);
 	return repeater;
 }
 
@@ -3216,7 +3215,7 @@ TextSession::elicit_secondary_entries
 void
 TextSession::finalize_ordinary_journal(OrdinaryJournal& journal)
 {
-	gregorian::date d = gregorian::day_clock::local_day();
+	gregorian::date d = today();
 	gregorian::date const entity_creation_date =
 		database_connection().entity_creation_date();
 	optional<gregorian::date> const date_input = elicit_constrained_date
