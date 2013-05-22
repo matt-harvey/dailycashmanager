@@ -2,6 +2,7 @@
 
 #include "transaction_dialog.hpp"
 #include "account.hpp"
+#include "decimal_validator.hpp"
 #include <wx/dialog.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -34,7 +35,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	{
 		wxStaticText* account_name_text = new wxStaticText
 		(	this,
-			wxID_ANY,
+			s_start_entry_amount_ids + i,
 			bstring_to_wx(p_accounts[i].name()),
 			wxDefaultPosition,
 			wxDefaultSize,
@@ -46,8 +47,8 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 			wxEmptyString,
 			wxDefaultPosition,
 			wxDefaultSize,
-			0  // style
-			// TODO Need a validator
+			wxALIGN_RIGHT,
+			DecimalValidator(0)
 		);
 		m_top_sizer->Add(account_name_text, 1, wxALIGN_LEFT | wxLEFT | wxRIGHT);
 		m_top_sizer->Add(entry_ctrl, 1, wxALIGN_RIGHT | wxLEFT | wxRIGHT);
