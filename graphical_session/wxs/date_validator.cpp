@@ -1,7 +1,9 @@
 #include "date_validator.hpp"
 #include "date.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/exception/all.hpp>
 #include <jewel/debug_log.hpp>
+#include <wx/msgdlg.h>
 #include <wx/textctrl.h>
 #include <wx/validate.h>
 #include <cassert>
@@ -41,21 +43,31 @@ DateValidator::Validate(wxWindow* WXUNUSED(parent))
 	wxDateTime date_wx;
 	wxString const date_text(text_ctrl->GetValue());
 	date_wx.ParseDate(date_text, &parsed_to_position);
-	if (parsed_to_position != date_text.end())
+	if (parsed_to_position == date_text.end())
 	{
-		// TODO Display error message
-		JEWEL_DEBUG_LOG << "Date string no good!" << endl;
-		return false;
+		// Parsing was successful
+		int year = date_wx.GetYear();
+		if (year < 100) year += 2000;
+		int const month = static_cast<int>(date_wx.GetMonth()) + 1;
+		int const day = date_wx.GetDay();
+		try
+		{
+			m_date = gregorian::date(year, month, day);
+			return true;
+		}
+		catch (boost::exception&)
+		{
+			// Cannot construct gregorian::date.
+			// Fall through to produce error message below.
+		}
 	}
-	JEWEL_DEBUG_LOG << "Year: " << date_wx.GetYear() << endl;
-	JEWEL_DEBUG_LOG << "Month: " << static_cast<int>(date_wx.GetMonth()) + 1 << endl;
-	JEWEL_DEBUG_LOG << "Day: " << date_wx.GetDay() << endl;
-	int year = date_wx.GetYear();
-	if (year < 100) year += 2000;
-	int const month = static_cast<int>(date_wx.GetMonth()) + 1;
-	int const day = date_wx.GetDay();
-	m_date = gregorian::date(year, month, day);
-	return true;
+	wxMessageBox
+	(	wxString("\"") +
+		date_text +
+		wxString("\" ") +
+		wxString("is not recognised as a date.")
+	);
+	return false;
 }
 
 bool

@@ -17,6 +17,10 @@ namespace gui
 
 /**
  * Dialog in which user creates a new transaction (i.e. Journal).
+ *
+ * @todo Ensure Journal balances.
+ *
+ * @todo Provide option to save as Draft, Recurring or etc. etc..
  */
 class TransactionDialog: public wxDialog
 {

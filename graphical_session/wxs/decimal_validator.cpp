@@ -5,6 +5,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
 #include <jewel/exception.hpp>
+#include <wx/msgdlg.h>
 #include <wx/textctrl.h>
 #include <wx/validate.h>
 #include <cassert>

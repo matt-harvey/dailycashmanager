@@ -31,6 +31,7 @@
 #include <wx/filedlg.h>
 #include <wx/gdicmn.h>
 #include <wx/gbsizer.h>
+#include <wx/msgdlg.h>
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>

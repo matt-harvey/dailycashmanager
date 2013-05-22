@@ -14,6 +14,7 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
+#include <cassert>
 #include <iostream>
 #include <vector>
 
@@ -29,12 +30,6 @@ namespace gui
 
 
 BEGIN_EVENT_TABLE(TransactionDialog, wxDialog)
-	/*
-	EVT_BUTTON
-	(	wxID_CANCEL,
-		TransactionDialog::on_cancel_button_click
-	)
-	*/
 	EVT_BUTTON
 	(	wxID_OK,
 		TransactionDialog::on_ok_button_click
@@ -126,7 +121,9 @@ TransactionDialog::on_ok_button_click(wxCommandEvent& event)
 	(void)event;  // Silence compiler warning re. unused parameter.
 	if (Validate() && TransferDataFromWindow())
 	{
-		JEWEL_DEBUG_LOG << "Validation and data transfer from window all good." << endl;
+		assert (IsModal());
+		// TODO Actually post the transaction or etc.
+		EndModal(wxID_OK);
 	}
 	else
 	{
@@ -134,14 +131,6 @@ TransactionDialog::on_ok_button_click(wxCommandEvent& event)
 	}
 	return;
 }
-
-/*
-void
-TransactionDialog::on_cancel_button_click(wxCommandEvent& event)
-{
-	// TODO Is this even necessary?
-}
-*/
 
 
 }  // namespace gui
