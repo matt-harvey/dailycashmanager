@@ -7,7 +7,6 @@
 #include <wx/dataview.h>
 #include <wx/dc.h>
 #include <wx/gdicmn.h>
-#include <wx/intl.h>
 #include <wx/window.h>
 
 namespace phatbooks
@@ -45,8 +44,6 @@ public:
 protected:
 
 private:
-
-	wxLocale const& locale() const;
 
 	jewel::Decimal m_decimal;
 	jewel::Decimal::places_type m_precision;

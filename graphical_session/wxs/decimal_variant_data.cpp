@@ -4,8 +4,8 @@
 #include "app.hpp"
 #include "b_string.hpp"
 #include "finformat.hpp"
+#include "locale.hpp"
 #include <jewel/decimal.hpp>
-#include <wx/intl.h>
 #include <wx/string.h>
 #include <cassert>
 #include <istream>
@@ -63,9 +63,7 @@ DecimalVariantData::Read(std::istream& stream)
 		string s;
 		stream >> s;
 		wxString wxs = std8_to_wx(s);
-		App* app = dynamic_cast<App*>(wxTheApp);
-		wxLocale const& locale = app->locale();
-		m_decimal = wx_to_decimal(wxs, locale);
+		m_decimal = wx_to_decimal(wxs, locale());
 		return static_cast<bool>(stream);
 	}
 	catch (...)
@@ -79,9 +77,7 @@ DecimalVariantData::Read(wxString& string)
 {
 	try
 	{
-		App* app = dynamic_cast<App*>(wxTheApp);
-		wxLocale const& locale = app->locale();
-		m_decimal = wx_to_decimal(string, locale);
+		m_decimal = wx_to_decimal(string, locale());
 		return true;
 	}
 	catch (...)
@@ -96,9 +92,7 @@ DecimalVariantData::Write(ostream& stream) const
 	try
 	{
 		wxString wxs;
-		App* app = dynamic_cast<App*>(wxTheApp);
-		wxLocale const& locale = app->locale();
-		wxs = finformat_wx(m_decimal, locale);
+		wxs = finformat_wx(m_decimal, locale());
 		stream << wx_to_std8(wxs);
 		return static_cast<bool>(stream);
 	}
@@ -114,9 +108,7 @@ DecimalVariantData::Write(wxString& string) const
 	assert (string.IsEmpty());
 	try
 	{
-		App* app = dynamic_cast<App*>(wxTheApp);
-		wxLocale const& locale = app->locale();
-		string = finformat_wx(m_decimal, locale);
+		string = finformat_wx(m_decimal, locale());
 		return true;
 	}
 	catch (...)

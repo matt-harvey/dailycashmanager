@@ -1,10 +1,10 @@
 #include "decimal_validator.hpp"
 #include "app.hpp"
 #include "finformat.hpp"
+#include "locale.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
 #include <jewel/exception.hpp>
-#include <wx/intl.h>
 #include <wx/textctrl.h>
 #include <wx/validate.h>
 #include <cassert>
@@ -77,12 +77,6 @@ DecimalValidator::Clone() const
 }
 
 
-wxLocale const&
-DecimalValidator::locale() const
-{
-	App* app = dynamic_cast<App*>(wxTheApp);
-	return app->locale();
-}
 
 }  // namespace gui
 }  // namespace phatbooks

@@ -12,6 +12,7 @@
 #include "finformat.hpp"
 #include "frame.hpp"
 #include "icon.xpm"
+#include "locale.hpp"
 #include "make_currencies.hpp"
 #include "make_default_accounts.hpp"
 #include "ordinary_journal.hpp"
@@ -30,7 +31,6 @@
 #include <wx/filedlg.h>
 #include <wx/gdicmn.h>
 #include <wx/gbsizer.h>
-#include <wx/intl.h>
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -920,13 +920,6 @@ SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
 	// TODO Deal with AugmentedAccounts in out that have duplicate names or
 	// empty names or all-blankspace names or names.
 	return;
-}
-
-wxLocale const&
-SetupWizard::BalanceSheetAccountPage::locale() const
-{
-	App* app = dynamic_cast<App*>(wxTheApp);
-	return app->locale();
 }
 
 

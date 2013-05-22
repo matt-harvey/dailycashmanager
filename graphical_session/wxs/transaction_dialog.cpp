@@ -43,8 +43,6 @@ END_EVENT_TABLE()
 
 
 
-
-
 TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	wxDialog
 	(	0,  // Null parent implies top-level window is parent
@@ -66,7 +64,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	{
 		wxStaticText* account_name_text = new wxStaticText
 		(	this,
-			s_start_custom_ids + i,
+			s_date_ctrl_id + i,
 			bstring_to_wx(p_accounts[i].name()),
 			wxDefaultPosition,
 			wxDefaultSize,
@@ -74,7 +72,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		);
 		wxTextCtrl* entry_ctrl = new wxTextCtrl
 		(	this,
-			s_start_custom_ids + i,
+			s_date_ctrl_id + i,
 			wxEmptyString,
 			wxDefaultPosition,
 			wxDefaultSize,
@@ -87,7 +85,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 
 	m_date_ctrl = new wxTextCtrl
 	(	this,
-		s_start_custom_ids + i,
+		s_date_ctrl_id,
 		date_format_wx(today()),
 		wxDefaultPosition,
 		wxDefaultSize,

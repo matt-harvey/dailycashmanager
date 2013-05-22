@@ -172,11 +172,13 @@ set (gui_files
 	 graphical_session/graphical_session.cpp
 	 graphical_session/wxs/account_list_ctrl.cpp
 	 graphical_session/wxs/app.cpp
+	 graphical_session/wxs/date_validator.cpp
 	 graphical_session/wxs/decimal_renderer.cpp
 	 graphical_session/wxs/decimal_validator.cpp
 	 graphical_session/wxs/decimal_variant_data.cpp
 	 graphical_session/wxs/entry_list_ctrl.cpp
 	 graphical_session/wxs/frame.cpp
+	 graphical_session/wxs/locale.cpp
 	 graphical_session/wxs/setup_wizard.cpp
 	 graphical_session/wxs/top_panel.cpp
 	 graphical_session/wxs/transaction_dialog.cpp

@@ -4,13 +4,13 @@
 #include "decimal_variant_data.hpp"
 #include "app.hpp"
 #include "finformat.hpp"
+#include "locale.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/app.h>
 #include <wx/dataview.h>
 #include <wx/dc.h>
 #include <wx/gdicmn.h>
-#include <wx/intl.h>
 #include <wx/window.h>
 
 using jewel::Decimal;
@@ -131,12 +131,6 @@ DecimalRenderer::Render(wxRect rect, wxDC* dc, int state)
 }
 
 
-wxLocale const&
-DecimalRenderer::locale() const
-{
-	App* app = dynamic_cast<App*>(wxTheApp);
-	return app->locale();
-}
 
 }  // namespace phatbooks
 }  // namespace gui

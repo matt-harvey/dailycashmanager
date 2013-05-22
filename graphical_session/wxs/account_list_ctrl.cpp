@@ -1,13 +1,13 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "account_list_ctrl.hpp"
+#include "app.hpp"
 #include "account.hpp"
 #include "account_reader.hpp"
 #include "b_string.hpp"
 #include "finformat.hpp"
-#include "app.hpp"
+#include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
-#include <wx/intl.h>
 #include <wx/listctrl.h>
 #include <wx/string.h>
 #include <wx/wx.h>
@@ -72,9 +72,6 @@ AccountListCtrl::AccountListCtrl
 
 	AccountReader::size_type i = 0;
 
-	App* app = dynamic_cast<App*>(wxTheApp);
-	wxLocale const& locale = app->locale();
-
 	for
 	(	AccountReader::const_iterator it = p_reader.begin(),
 			end = p_reader.end();
@@ -93,13 +90,13 @@ AccountListCtrl::AccountListCtrl
 		SetItem
 		(	i,
 			s_balance_col,
-			finformat_wx(it->friendly_balance(), locale)
+			finformat_wx(it->friendly_balance(), locale())
 		);
 
 		if (p_show_daily_budget)
 		{
 			// Insert budget string
-			SetItem(i, s_budget_col, finformat_wx(it->budget(), locale));
+			SetItem(i, s_budget_col, finformat_wx(it->budget(), locale()));
 		}
 	}
 	SetColumnWidth(s_name_col, wxLIST_AUTOSIZE);

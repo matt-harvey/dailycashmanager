@@ -14,7 +14,6 @@
 #include <wx/dataview.h>
 #include <wx/filedlg.h>
 #include <wx/gdicmn.h>
-#include <wx/intl.h>
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/string.h>
@@ -290,7 +289,6 @@ private:
 	(	std::vector<SetupWizard::AugmentedAccount>& out
 	) const;
 
-	wxLocale const& locale() const;
 	wxString do_get_main_text() const;
 	// void add_account();
 	// void on_account_adding_button_click(wxCommandEvent& event);

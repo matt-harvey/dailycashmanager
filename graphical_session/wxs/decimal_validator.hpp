@@ -28,7 +28,6 @@ public:
 	wxObject* Clone() const;
 
 private:
-	wxLocale const& locale() const;
 	jewel::Decimal m_decimal;
 
 };  // class DecimalValidator
