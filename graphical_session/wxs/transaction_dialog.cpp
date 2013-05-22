@@ -2,6 +2,7 @@
 
 #include "transaction_dialog.hpp"
 #include "account.hpp"
+#include "date.hpp"
 #include "decimal_validator.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
@@ -54,7 +55,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		wxDEFAULT_DIALOG_STYLE
 	),
 	m_top_sizer(0),
-	m_calendar_ctrl(0),
+	m_date_ctrl(0),
 	m_ok_button(0),
 	m_cancel_button(0)
 {
@@ -65,7 +66,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	{
 		wxStaticText* account_name_text = new wxStaticText
 		(	this,
-			s_start_entry_amount_ids + i,
+			s_start_custom_ids + i,
 			bstring_to_wx(p_accounts[i].name()),
 			wxDefaultPosition,
 			wxDefaultSize,
@@ -73,7 +74,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		);
 		wxTextCtrl* entry_ctrl = new wxTextCtrl
 		(	this,
-			s_start_entry_amount_ids + i,
+			s_start_custom_ids + i,
 			wxEmptyString,
 			wxDefaultPosition,
 			wxDefaultSize,
@@ -83,9 +84,20 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		m_top_sizer->Add(account_name_text, 1, wxALIGN_LEFT | wxLEFT | wxRIGHT);
 		m_top_sizer->Add(entry_ctrl, 1, wxALIGN_RIGHT | wxLEFT | wxRIGHT);
 	}
-	m_calendar_ctrl = new wxCalendarCtrl(this, wxID_ANY);
+
+	m_date_ctrl = new wxTextCtrl
+	(	this,
+		s_start_custom_ids + i,
+		date_format_wx(today()),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_RIGHT
+		// TODO Should have Validator here
+	);
+
 	m_top_sizer->AddStretchSpacer();
-	m_top_sizer->Add(m_calendar_ctrl);
+	m_top_sizer->Add(m_date_ctrl, 1, wxALIGN_RIGHT | wxLEFT | wxRIGHT);
+
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,

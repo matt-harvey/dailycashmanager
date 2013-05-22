@@ -115,6 +115,12 @@ boost_date_from_julian_int(DateRep julian_int)
 }
 
 
+boost::gregorian::date
+today()
+{
+	return boost::gregorian::day_clock::local_day();
+}
+
 namespace
 {
 	wxDateTime boost_to_wx_date(boost::gregorian::date const& p_date)

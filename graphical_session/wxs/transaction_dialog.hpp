@@ -30,11 +30,11 @@ private:
 	void on_cancel_button_click(wxCommandEvent& event);
 
 	wxFlexGridSizer* m_top_sizer;
-	wxCalendarCtrl* m_calendar_ctrl;
+	wxWindow* m_date_ctrl;
 	wxButton* m_ok_button;
 	wxButton* m_cancel_button;
 
-	static unsigned int const s_start_entry_amount_ids = wxID_HIGHEST + 1;
+	static unsigned int const s_start_custom_ids = wxID_HIGHEST + 1;
 
 	DECLARE_EVENT_TABLE()
 

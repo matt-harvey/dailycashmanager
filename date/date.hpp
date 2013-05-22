@@ -91,6 +91,12 @@ boost::gregorian::date
 boost_date_from_julian_int(DateRep julian_int);
 
 /**
+ * @returns Todays date, local time.
+ */
+boost::gregorian::date
+today();
+
+/**
  * @returns a wxString representation of the p_date, formatted according
  * to the current wxLocale.
  */
