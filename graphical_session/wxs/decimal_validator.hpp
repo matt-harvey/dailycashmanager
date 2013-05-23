@@ -3,7 +3,7 @@
 
 #include <jewel/decimal.hpp>
 #include <wx/intl.h>
-#include <wx/validate.h>
+#include <wx/valtext.h>
 
 
 
@@ -12,10 +12,14 @@ namespace phatbooks
 namespace gui
 {
 
-class DecimalValidator: public wxValidator
+class DecimalValidator: public wxTextValidator
 {
 public:
-	DecimalValidator(jewel::Decimal const& p_decimal);
+	DecimalValidator
+	(	jewel::Decimal const& p_decimal,
+		jewel::Decimal::places_type p_precision
+	);
+
 	DecimalValidator(DecimalValidator const& rhs);
 
 	/**
@@ -28,6 +32,7 @@ public:
 	wxObject* Clone() const;
 
 private:
+	jewel::Decimal::places_type m_precision;
 	jewel::Decimal m_decimal;
 
 };  // class DecimalValidator

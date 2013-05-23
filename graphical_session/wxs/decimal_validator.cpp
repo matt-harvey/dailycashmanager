@@ -7,23 +7,29 @@
 #include <jewel/exception.hpp>
 #include <wx/msgdlg.h>
 #include <wx/textctrl.h>
-#include <wx/validate.h>
+#include <wx/valtext.h>
 #include <cassert>
 
 using jewel::Decimal;
+using jewel::round;
 
 namespace phatbooks
 {
 namespace gui
 {
 
-DecimalValidator::DecimalValidator(Decimal const& p_decimal):
+DecimalValidator::DecimalValidator
+(	Decimal const& p_decimal,
+	Decimal::places_type p_precision
+):
+	m_precision(p_precision),
 	m_decimal(p_decimal)
 {
 }
 
 DecimalValidator::DecimalValidator(DecimalValidator const& rhs):
-	wxValidator(),
+	wxTextValidator(),
+	m_precision(rhs.m_precision),
 	m_decimal(rhs.m_decimal)
 {
 }
@@ -40,12 +46,15 @@ DecimalValidator::Validate(wxWindow* WXUNUSED(parent))
 	}
 	try
 	{
-		m_decimal = wx_to_decimal(wxString(text_ctrl->GetValue()), locale());
+		m_decimal = round
+		(	wx_to_decimal(wxString(text_ctrl->GetValue()), locale()),
+			m_precision
+		);
 		return true;
 	}
 	catch (jewel::Exception& e)
 	{
-		// TODO Is e.what() user-friendly enough?
+		// TODO e.what() is not user-friendly enough.
 		wxMessageBox(std8_to_wx(e.what()));
 		return false;
 	}

@@ -72,13 +72,16 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	Size const sz = p_accounts.size();
 	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, ++id)
 	{
+		Account const account = p_accounts[i];
 		wxStaticText* account_name_text = new wxStaticText
 		(	this,
 			id,
-			bstring_to_wx(p_accounts[i].name()),
+			bstring_to_wx(account.name()),
 			wxDefaultPosition,
 			wxDefaultSize
 		);
+		Decimal::places_type const precision =
+			account.commodity().precision();
 		wxTextCtrl* entry_ctrl = new wxTextCtrl
 		(	this,
 			id,
@@ -86,7 +89,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 			wxDefaultPosition,
 			m_ok_button->GetSize(),
 			wxALIGN_RIGHT,
-			DecimalValidator(Decimal(0, 0))
+			DecimalValidator(Decimal(0, precision), precision) 
 		);
 		int base_flag = wxLEFT | wxRIGHT;
 		if (i == 0) base_flag |= wxTOP;

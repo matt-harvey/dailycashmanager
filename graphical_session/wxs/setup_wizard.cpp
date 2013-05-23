@@ -792,7 +792,9 @@ END_EVENT_TABLE()
 
 
 void
-SetupWizard::BalanceSheetAccountPage::on_wizard_page_changing(wxWizardEvent& event)
+SetupWizard::BalanceSheetAccountPage::on_wizard_page_changing
+(	wxWizardEvent& event
+)
 {
 	wxString error_message;
 	assert (error_message.IsEmpty());
