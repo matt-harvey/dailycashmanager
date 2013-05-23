@@ -5,11 +5,14 @@
 #include "date.hpp"
 #include "date_validator.hpp"
 #include "decimal_validator.hpp"
+#include "finformat.hpp"
+#include "locale.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
 #include <wx/calctrl.h>
 #include <wx/dialog.h>
+#include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
@@ -37,8 +40,6 @@ BEGIN_EVENT_TABLE(TransactionDialog, wxDialog)
 END_EVENT_TABLE()
 
 
-
-
 TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	wxDialog
 	(	0,  // Null parent implies top-level window is parent
@@ -53,6 +54,8 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	m_ok_button(0),
 	m_cancel_button(0)
 {
+	assert (m_amount_boxes.empty());
+
 	// We construct m_ok_button first as we want to be able to refer to its
 	// size when sizing certain other controls below. But we will not add
 	// the OK button to m_top_sizer till later.
@@ -65,20 +68,20 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	);
 
 	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 2, 2, 0, 0);
-	vector<Account>::size_type const sz = p_accounts.size();
-	vector<Account>::size_type i = 0;
-	for ( ; i != sz; ++i)
+	typedef vector<Account>::size_type Size;
+	Size const sz = p_accounts.size();
+	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, ++id)
 	{
 		wxStaticText* account_name_text = new wxStaticText
 		(	this,
-			s_date_ctrl_id + i,
+			id,
 			bstring_to_wx(p_accounts[i].name()),
 			wxDefaultPosition,
 			wxDefaultSize
 		);
 		wxTextCtrl* entry_ctrl = new wxTextCtrl
 		(	this,
-			s_date_ctrl_id + i,
+			id,
 			wxEmptyString,
 			wxDefaultPosition,
 			m_ok_button->GetSize(),
@@ -89,6 +92,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		if (i == 0) base_flag |= wxTOP;
 		m_top_sizer->Add(account_name_text, 1, base_flag | wxALIGN_LEFT, 16);
 		m_top_sizer->Add(entry_ctrl, 1, base_flag | wxALIGN_RIGHT, 16);
+		m_amount_boxes.push_back(entry_ctrl);
 	}
 
 	m_date_ctrl = new wxTextCtrl
@@ -139,14 +143,34 @@ TransactionDialog::on_ok_button_click(wxCommandEvent& event)
 	if (Validate() && TransferDataFromWindow())
 	{
 		assert (IsModal());
-		// TODO Actually post the transaction or etc.
-		EndModal(wxID_OK);
+		if (is_balanced())
+		{
+			// TODO Actually post the transaction or etc.
+			EndModal(wxID_OK);
+		}
+		else
+		{
+			wxMessageBox("Transaction does not balance.");
+		}
 	}
 	else
 	{
 		JEWEL_DEBUG_LOG << "Problem validating and/or transferring data from window." << endl;
 	}
 	return;
+}
+
+bool
+TransactionDialog::is_balanced() const
+{
+	Decimal balance(0, 0);
+	vector<wxTextCtrl*>::size_type i = 0;
+	vector<wxTextCtrl*>::size_type const sz = m_amount_boxes.size();
+	for ( ; i != sz; ++i)
+	{
+		balance += wx_to_decimal(m_amount_boxes[i]->GetValue(), locale());
+	}
+	return balance == Decimal(0, 0);
 }
 
 

@@ -31,14 +31,18 @@ protected:
 
 private:
 	void on_ok_button_click(wxCommandEvent& event);
-	void on_cancel_button_click(wxCommandEvent& event);
+	bool is_balanced() const;
 
+	int m_max_entry_row_id;
 	wxFlexGridSizer* m_top_sizer;
 	wxTextCtrl* m_date_ctrl;
 	wxButton* m_ok_button;
 	wxButton* m_cancel_button;
 
+	std::vector<wxTextCtrl*> m_amount_boxes;
+
 	static unsigned int const s_date_ctrl_id = wxID_HIGHEST + 1;
+	static unsigned int const s_min_entry_row_id = s_date_ctrl_id + 1;
 
 	DECLARE_EVENT_TABLE()
 
