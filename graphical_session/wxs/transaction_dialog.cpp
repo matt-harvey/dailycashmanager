@@ -87,8 +87,9 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 			wxALIGN_RIGHT,
 			DecimalValidator(Decimal(0, 0))
 		);
-		m_top_sizer->Add(account_name_text, 1, wxALIGN_LEFT | wxLEFT | wxRIGHT);
-		m_top_sizer->Add(entry_ctrl, 1, wxALIGN_RIGHT | wxLEFT | wxRIGHT);
+		m_top_sizer->
+			Add(account_name_text, 1, wxALIGN_LEFT | wxLEFT | wxRIGHT, 16);
+		m_top_sizer->Add(entry_ctrl, 1, wxALIGN_RIGHT | wxLEFT | wxRIGHT, 16);
 	}
 
 	m_date_ctrl = new wxTextCtrl
@@ -102,7 +103,8 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	);
 
 	m_top_sizer->AddStretchSpacer();
-	m_top_sizer->Add(m_date_ctrl, 1, wxALIGN_RIGHT | wxLEFT | wxRIGHT);
+	m_top_sizer->
+		Add(m_date_ctrl, 1, wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxTOP, 16);
 
 	m_cancel_button = new wxButton
 	(	this,
@@ -111,8 +113,18 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	m_top_sizer->Add(m_cancel_button);
-	m_top_sizer->Add(m_ok_button);
+	m_top_sizer->Add
+	(	m_cancel_button,
+		1,
+		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
+		16
+	);
+	m_top_sizer->Add
+	(	m_ok_button,
+		1,
+		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
+		16
+	);
 
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
