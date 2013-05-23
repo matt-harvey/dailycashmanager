@@ -111,15 +111,15 @@ TEST_FIXTURE(TestFixture, test_repeater_firings_till)
 		repeater1.firings_till(date(2999, 5, 2));
 	CHECK(firings1->empty());
 	firings1 = repeater1.firings_till(date(3000, 5, 4));
-	CHECK_EQUAL(firings1->size(), 1);
+	CHECK_EQUAL(firings1->size(), unsigned(1));
 	CHECK_EQUAL((*firings1)[0], date(3000, 5, 3));
 	firings1 = repeater1.firings_till(date(3000, 5, 2));
 	CHECK(firings1->empty());
 	firings1 = repeater1.firings_till(date(3000, 5, 3));
-	CHECK_EQUAL(firings1->size(), 1);
+	CHECK_EQUAL(firings1->size(), unsigned(1));
 	CHECK_EQUAL((*firings1)[0], date(3000, 5, 3));
 	firings1 = repeater1.firings_till(date(3000, 5, 20));
-	CHECK_EQUAL(firings1->size(), 4);
+	CHECK_EQUAL(firings1->size(), unsigned(4));
 	CHECK_EQUAL((*firings1)[0], date(3000, 5, 3));
 	CHECK_EQUAL((*firings1)[1], date(3000, 5, 8));
 	CHECK_EQUAL((*firings1)[2], date(3000, 5, 13));
@@ -132,10 +132,10 @@ TEST_FIXTURE(TestFixture, test_repeater_firings_till)
 	firings2 = repeater2.firings_till(date(3012, 12, 30));
 	CHECK(firings2->empty());
 	firings2 = repeater2.firings_till(date(3013, 2, 28));
-	CHECK_EQUAL(firings2->size(), 1);
+	CHECK_EQUAL(firings2->size(), unsigned(1));
 	CHECK_EQUAL((*firings2)[0], date(3012, 12, 31));
 	firings2 = repeater2.firings_till(date(3013, 12, 31));
-	CHECK_EQUAL(firings2->size(), 5);
+	CHECK_EQUAL(firings2->size(), unsigned(5));
 	CHECK_EQUAL((*firings2)[4], date(3013, 12, 31));
 	CHECK_EQUAL((*firings2)[3], date(3013, 9, 30));
 	CHECK_EQUAL((*firings2)[2], date(3013, 6, 30));
@@ -183,7 +183,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	OrdinaryJournal const oj1c = oj1b;
 	CHECK_EQUAL(oj1c.date(), date(3012, 7, 30));
 	CHECK_EQUAL(oj1c.comment(), "journal to test repeater");
-	CHECK_EQUAL(oj1c.entries().size(), 2);
+	CHECK_EQUAL(oj1c.entries().size(), unsigned(2));
 
 	repeater1b.fire_next();
 	repeater1b.fire_next();

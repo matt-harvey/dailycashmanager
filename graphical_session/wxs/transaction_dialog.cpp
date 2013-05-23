@@ -61,8 +61,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		wxID_OK,
 		wxString("&OK"),
 		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_RIGHT
+		wxDefaultSize
 	);
 
 	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 2, 2, 0, 0);
@@ -75,8 +74,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 			s_date_ctrl_id + i,
 			bstring_to_wx(p_accounts[i].name()),
 			wxDefaultPosition,
-			wxDefaultSize,
-			wxALIGN_LEFT
+			wxDefaultSize
 		);
 		wxTextCtrl* entry_ctrl = new wxTextCtrl
 		(	this,
@@ -87,9 +85,10 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 			wxALIGN_RIGHT,
 			DecimalValidator(Decimal(0, 0))
 		);
-		m_top_sizer->
-			Add(account_name_text, 1, wxALIGN_LEFT | wxLEFT | wxRIGHT, 16);
-		m_top_sizer->Add(entry_ctrl, 1, wxALIGN_RIGHT | wxLEFT | wxRIGHT, 16);
+		int base_flag = wxLEFT | wxRIGHT;
+		if (i == 0) base_flag |= wxTOP;
+		m_top_sizer->Add(account_name_text, 1, base_flag | wxALIGN_LEFT, 16);
+		m_top_sizer->Add(entry_ctrl, 1, base_flag | wxALIGN_RIGHT, 16);
 	}
 
 	m_date_ctrl = new wxTextCtrl

@@ -674,7 +674,6 @@ SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 void
 SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 {
-	JEWEL_DEBUG_LOG << "Hola!" << endl;
 	static bool changed_once = false;
 	SetupWizard* parent = dynamic_cast<SetupWizard*>(GetParent());
 
@@ -795,7 +794,6 @@ END_EVENT_TABLE()
 void
 SetupWizard::BalanceSheetAccountPage::on_wizard_page_changing(wxWizardEvent& event)
 {
-	JEWEL_DEBUG_LOG << "huh?" << endl;
 	wxString error_message;
 	assert (error_message.IsEmpty());
 	if
@@ -805,7 +803,10 @@ SetupWizard::BalanceSheetAccountPage::on_wizard_page_changing(wxWizardEvent& eve
 	{
 		wxMessageBox(error_message);
 		event.Veto();
+		return;
 	}
+	assert (account_names_valid(error_message));
+	assert (account_types_valid(error_message));
 	return;
 }
 
