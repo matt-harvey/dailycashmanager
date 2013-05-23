@@ -45,8 +45,8 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		wxID_ANY,
 		"New transaction",
 		wxDefaultPosition,
-		wxDefaultSize,
-		wxDEFAULT_DIALOG_STYLE
+		wxDefaultSize
+		// , wxRESIZE_BORDER
 	),
 	m_top_sizer(0),
 	m_date_ctrl(0),
@@ -122,13 +122,15 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	m_top_sizer->Add
 	(	m_ok_button,
 		1,
-		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
+		wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
 		16
 	);
 
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
 	Layout();
+	CentreOnScreen();
 }
 
 void
