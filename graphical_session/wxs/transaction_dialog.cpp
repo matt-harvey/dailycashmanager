@@ -53,6 +53,18 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	m_ok_button(0),
 	m_cancel_button(0)
 {
+	// We construct m_ok_button first as we want to be able to refer to its
+	// size when sizing certain other controls below. But we will not add
+	// the OK button to m_top_sizer till later.
+	m_ok_button = new wxButton
+	(	this,
+		wxID_OK,
+		wxString("&OK"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_RIGHT
+	);
+
 	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 2, 2, 0, 0);
 	vector<Account>::size_type const sz = p_accounts.size();
 	vector<Account>::size_type i = 0;
@@ -71,7 +83,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 			s_date_ctrl_id + i,
 			wxEmptyString,
 			wxDefaultPosition,
-			wxDefaultSize,
+			m_ok_button->GetSize(),
 			wxALIGN_RIGHT,
 			DecimalValidator(Decimal(0, 0))
 		);
@@ -84,7 +96,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		s_date_ctrl_id,
 		wxEmptyString,
 		wxDefaultPosition,
-		wxDefaultSize,
+		m_ok_button->GetSize(),
 		wxALIGN_RIGHT,
 		DateValidator(today())	
 	);
@@ -100,14 +112,6 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		wxDefaultSize
 	);
 	m_top_sizer->Add(m_cancel_button);
-	m_ok_button = new wxButton
-	(	this,
-		wxID_OK,
-		wxString("&OK"),
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_RIGHT
-	);
 	m_top_sizer->Add(m_ok_button);
 
 	SetSizer(m_top_sizer);
