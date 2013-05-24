@@ -4,6 +4,7 @@
 #include "account.hpp"
 #include "date.hpp"
 #include "date_validator.hpp"
+#include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
@@ -12,6 +13,7 @@
 #include <wx/button.h>
 #include <wx/calctrl.h>
 #include <wx/dialog.h>
+#include <wx/event.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -82,14 +84,11 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		);
 		Decimal::places_type const precision =
 			account.commodity().precision();
-		wxTextCtrl* entry_ctrl = new wxTextCtrl
+		DecimalTextCtrl* entry_ctrl = new DecimalTextCtrl
 		(	this,
 			id,
-			wxEmptyString,
-			wxDefaultPosition,
 			m_ok_button->GetSize(),
-			wxALIGN_RIGHT,
-			DecimalValidator(Decimal(0, precision), precision) 
+			precision
 		);
 		int base_flag = wxLEFT | wxRIGHT;
 		if (i == 0) base_flag |= wxTOP;
@@ -167,8 +166,8 @@ bool
 TransactionDialog::is_balanced() const
 {
 	Decimal balance(0, 0);
-	vector<wxTextCtrl*>::size_type i = 0;
-	vector<wxTextCtrl*>::size_type const sz = m_amount_boxes.size();
+	vector<DecimalTextCtrl*>::size_type i = 0;
+	vector<DecimalTextCtrl*>::size_type const sz = m_amount_boxes.size();
 	for ( ; i != sz; ++i)
 	{
 		balance += wx_to_decimal(m_amount_boxes[i]->GetValue(), locale());

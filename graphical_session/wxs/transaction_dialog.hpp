@@ -4,8 +4,10 @@
 #define GUARD_transaction_dialog_hpp
 
 #include "account.hpp"
+#include "decimal_text_ctrl.hpp"
 #include <wx/button.h>
 #include <wx/dialog.h>
+#include <wx/event.h>
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
 #include <vector>
@@ -39,7 +41,7 @@ private:
 	wxButton* m_ok_button;
 	wxButton* m_cancel_button;
 
-	std::vector<wxTextCtrl*> m_amount_boxes;
+	std::vector<DecimalTextCtrl*> m_amount_boxes;
 
 	static unsigned int const s_date_ctrl_id = wxID_HIGHEST + 1;
 	static unsigned int const s_min_entry_row_id = s_date_ctrl_id + 1;
