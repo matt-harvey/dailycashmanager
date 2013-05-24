@@ -20,8 +20,10 @@ namespace gui
 
 DecimalValidator::DecimalValidator
 (	Decimal const& p_decimal,
-	Decimal::places_type p_precision
+	Decimal::places_type p_precision,
+	bool p_print_dash_for_zero
 ):
+	m_print_dash_for_zero(p_print_dash_for_zero),
 	m_precision(p_precision),
 	m_decimal(p_decimal)
 {
@@ -29,6 +31,7 @@ DecimalValidator::DecimalValidator
 
 DecimalValidator::DecimalValidator(DecimalValidator const& rhs):
 	wxTextValidator(),
+	m_print_dash_for_zero(rhs.m_print_dash_for_zero),
 	m_precision(rhs.m_precision),
 	m_decimal(rhs.m_decimal)
 {
@@ -76,7 +79,8 @@ DecimalValidator::TransferToWindow()
 	{
 		return false;
 	}
-	text_ctrl->SetValue(finformat_wx(m_decimal, locale()));
+	text_ctrl->
+		SetValue(finformat_wx(m_decimal, locale(), m_print_dash_for_zero));
 	return true;
 }
 

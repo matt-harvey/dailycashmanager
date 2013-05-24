@@ -139,7 +139,8 @@ EntryListCtrl::add_entry(Entry const& entry)
 	wxString const wx_date_string = date_format_wx(journal.date());
 	wxString const account_string = bstring_to_wx(entry.account().name());
 	wxString const comment_string = bstring_to_wx(entry.comment());
-	wxString const amount_string = finformat_wx(entry.amount(), locale());
+	wxString const amount_string =
+		finformat_wx(entry.amount(), locale(), false);
 
 	// TODO Should have a tick icon here rather than a "Y".
 	wxString const reconciled_string = (entry.is_reconciled()? "Y": "N");
@@ -165,9 +166,15 @@ EntryListCtrl::add_entry(Entry const& entry)
 void
 EntryListCtrl::update_for_posted_journal(OrdinaryJournal const& journal)
 {
-	vector<Entry>::const_iterator it = journal.entries().begin();
-	vector<Entry>::const_iterator const end = journal.entries().end();
-	for ( ; it != end; ++it) add_entry(*it);
+	if (journal.is_actual())
+	{
+		vector<Entry>::const_iterator it = journal.entries().begin();
+		vector<Entry>::const_iterator const end = journal.entries().end();
+		for ( ; it != end; ++it)
+		{
+			add_entry(*it);
+		}
+	}
 	return;
 }
 		

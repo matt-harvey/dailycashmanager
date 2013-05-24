@@ -997,7 +997,8 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 
 	// Opening balance column
 	DecimalRenderer* opening_balance_renderer = new DecimalRenderer
-	(	parent().selected_currency().precision()
+	(	parent().selected_currency().precision(),
+		false
 	);
 	wxDataViewColumn* opening_balance_column = new wxDataViewColumn
 	(	wxString("Opening balance"),
@@ -1029,7 +1030,8 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 		);
 		wxString const opening_balance_str = finformat_wx
 		(	augmented_account.technical_opening_balance,
-			locale()
+			locale(),
+			false
 		);
 		data.push_back(wxVariant(opening_balance_str));
 		m_account_view_ctrl->AppendItem(data, wxUIntPtr(0));

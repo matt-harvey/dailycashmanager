@@ -129,7 +129,8 @@ TransactionDialog::TransactionDialog
 		(	this,
 			id,
 			wxSize(ok_button_size.x * 1.5, account_name_text_size.y * 1.2),
-			precision
+			precision,
+			false
 		);
 		int base_flag = wxLEFT;
 		if (i == 0) base_flag |= wxTOP;
@@ -251,11 +252,13 @@ TransactionDialog::post_journal() const
 			entry.set_comment
 			(	wx_to_bstring(m_comment_boxes[i]->GetValue())
 			);
-			Decimal const amount = wx_to_decimal
+			Decimal amount = wx_to_decimal
 			(	wxString(m_amount_boxes[i]->GetValue()),
 				locale()
 			);
-			entry.set_amount(journal.is_actual()? amount: -amount);
+			if (!journal.is_actual()) amount = -amount;
+			amount = round(amount, account.commodity().precision());
+			entry.set_amount(amount);
 			entry.set_whether_reconciled(false);
 			journal.push_entry(entry);
 		}

@@ -1,5 +1,7 @@
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
+#include "finformat.hpp"
+#include "locale.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/event.h>
@@ -26,16 +28,25 @@ DecimalTextCtrl::DecimalTextCtrl
 (	wxWindow* p_parent,
 	unsigned int p_id,
 	wxSize const& p_size,
-	Decimal::places_type p_precision
+	Decimal::places_type p_precision,
+	bool p_print_dash_for_zero
 ):
 	wxTextCtrl
 	(	p_parent,
 		p_id,
-		wxEmptyString,
+		finformat_wx
+		(	Decimal(0, p_precision),
+			locale(),
+			p_print_dash_for_zero
+		),
 		wxDefaultPosition,
 		p_size,
 		wxALIGN_RIGHT,
-		DecimalValidator(Decimal(0, p_precision), p_precision)
+		DecimalValidator
+		(	Decimal(0, p_precision),
+			p_precision,
+			p_print_dash_for_zero
+		)
 	),
 	m_precision(p_precision)
 {

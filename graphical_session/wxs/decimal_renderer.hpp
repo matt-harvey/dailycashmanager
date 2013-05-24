@@ -21,7 +21,10 @@ class DecimalRenderer: public wxDataViewCustomRenderer
 {
 public:
 
-	DecimalRenderer(jewel::Decimal::places_type p_precision);
+	DecimalRenderer
+	(	jewel::Decimal::places_type p_precision,
+		bool p_dash_for_zero = true  // Render zero as '-'
+	);
 
 	bool SetValue(wxVariant const& value);
 
@@ -41,10 +44,9 @@ public:
 
 	bool Render(wxRect rect, wxDC* dc, int state);
 
-protected:
-
 private:
 
+	bool m_dash_for_zero;
 	jewel::Decimal m_decimal;
 	jewel::Decimal::places_type m_precision;
 

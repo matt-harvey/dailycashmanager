@@ -23,7 +23,8 @@ public:
 	(	wxWindow* p_parent,
 		unsigned int p_id,
 		wxSize const& p_size,
-		jewel::Decimal::places_type p_precision
+		jewel::Decimal::places_type p_precision,
+		bool p_print_dash_for_zero = true
 	);
 
 private:

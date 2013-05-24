@@ -78,7 +78,8 @@ namespace
 	wxString aux_finformat_wx
 	(	jewel::Decimal const& decimal,
 		wxLocale const& loc,
-		bool pad
+		bool pad,
+		bool dash_for_zero
 	)
 	{
 		// TODO Make this cleaner and more efficient.
@@ -104,8 +105,7 @@ namespace
 		deque<CharT> ret;
 		assert (ret.empty());
 		// Special case of zero
-		/*
-		if (intval == 0)
+		if (dash_for_zero && intval == 0)
 		{
 			ret.push_back(CharT('-'));
 			if (places > 0)
@@ -118,11 +118,9 @@ namespace
 				if (pad) ret.push_back(CharT(' '));
 			}
 		}
-		else
-		*/
 		// special case of smallest possible m_intval - as we cannot take the
 		// absolute value below
-		if (intval == numeric_limits<Decimal::int_type>::min())
+		else if (intval == numeric_limits<Decimal::int_type>::min())
 		{
 			// TODO HIGH PRIORITY Fix this.
 			assert (false);
@@ -212,7 +210,6 @@ namespace
 		{
 			wret.Append(*dit);
 		}
-
 		return wret;
 	}
 	
@@ -237,10 +234,11 @@ BString finformat_bstring
 
 wxString finformat_wx
 (	jewel::Decimal const& decimal,
-	wxLocale const& loc
+	wxLocale const& loc,
+	bool dash_for_zero
 )
 {
-	return aux_finformat_wx(decimal, loc, true);
+	return aux_finformat_wx(decimal, loc, true, dash_for_zero);
 }
 
 
@@ -260,10 +258,11 @@ BString finformat_bstring_nopad
 
 wxString finformat_wx_nopad
 (	jewel::Decimal const& decimal,
-	wxLocale const& loc
+	wxLocale const& loc,
+	bool dash_for_zero
 )
 {
-	return aux_finformat_wx(decimal, loc, false);
+	return aux_finformat_wx(decimal, loc, false, dash_for_zero);
 }
 
 jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc)
@@ -288,6 +287,8 @@ jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc)
 	assert (thousands_sep_s.size() == 1);
 	if (wxs.IsEmpty())
 	{
+		// TODO Should probably throw an exception here, rather
+		// than creating a Decimal initialized to zero.
 		return Decimal(0, 0);
 	}
 	assert (wxs.Len() >= 1);

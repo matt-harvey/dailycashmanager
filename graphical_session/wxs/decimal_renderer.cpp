@@ -21,12 +21,16 @@ namespace phatbooks
 namespace gui
 {
 
-DecimalRenderer::DecimalRenderer(Decimal::places_type p_precision):
+DecimalRenderer::DecimalRenderer
+(	Decimal::places_type p_precision,
+	bool p_dash_for_zero
+):
 	wxDataViewCustomRenderer
 	(	"string",
 		wxDATAVIEW_CELL_EDITABLE,
 		wxALIGN_RIGHT
 	),
+	m_dash_for_zero(p_dash_for_zero),
 	m_decimal(0, p_precision),
 	m_precision(p_precision)
 {
@@ -52,7 +56,7 @@ DecimalRenderer::GetValue(wxVariant& value) const
 {
 	try
 	{
-		value = finformat_wx(m_decimal, locale());
+		value = finformat_wx(m_decimal, locale(), m_dash_for_zero);
 		return true;
 	}
 	catch (...)
@@ -116,7 +120,7 @@ DecimalRenderer::Render(wxRect rect, wxDC* dc, int state)
 	try
 	{
 		RenderText
-		(	finformat_wx(m_decimal, locale()),
+		(	finformat_wx(m_decimal, locale(), m_dash_for_zero),
 			0,  // no offset
 			rect,
 			dc,

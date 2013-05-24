@@ -66,11 +66,14 @@ BString finformat_bstring
  * @param loc the wxLocale according which we want to
  * Decimal to be formatted.
  *
+ * @param print zero as '-' character.
+ *
  * @todo Testing.
  */
 wxString finformat_wx
 (	jewel::Decimal const& decimal,
-	wxLocale const& loc
+	wxLocale const& loc,
+	bool dash_for_zero = true
 );
 
 
@@ -90,7 +93,8 @@ BString finformat_bstring_nopad
 
 wxString finformat_wx_nopad
 (	jewel::Decimal const& decimal,
-	wxLocale const& loc
+	wxLocale const& loc,
+	bool dash_for_zero = true
 );
 /** }@ */
 
