@@ -1075,7 +1075,7 @@ SetupWizard::BalanceSheetAccountPage::on_account_adding_button_click
 (	wxCommandEvent& event
 )
 {
-	(void)event;  // Silence compiler warning re. ignored parameter.
+	(void)event;  // Silence compiler re. ignored parameter.
 	add_account();
 	return;
 }

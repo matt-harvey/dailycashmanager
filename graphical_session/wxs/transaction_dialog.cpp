@@ -258,7 +258,13 @@ TransactionDialog::post_journal() const
 			journal.push_entry(entry);
 		}
 		assert (journal.is_balanced());
+
+		// TODO HIGH PRIORITY Make this react to the user's selection as to
+		// whether actual or budget. Also change signs of entries if required,
+		// relative to the "user-friendly signs" of the amounts entered and
+		// seen by the user.
 		journal.set_whether_actual(true);
+
 		journal.set_comment("");
 
 		wxDateTime const date_wx = m_date_ctrl->GetValue();
@@ -270,7 +276,7 @@ TransactionDialog::post_journal() const
 
 		journal.save();
 
-		// TODO Refresh display to refect changes caused by posting
+		// TODO Refresh display to reflect changes caused by posting
 		// journal.
 	}
 }
