@@ -14,11 +14,13 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
+#include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/datectrl.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
+#include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
@@ -61,6 +63,7 @@ TransactionDialog::TransactionDialog
 		// , wxRESIZE_BORDER
 	),
 	m_top_sizer(0),
+	m_actual_vs_budget_ctrl(0),
 	m_date_ctrl(0),
 	m_cancel_button(0),
 	m_ok_button(0),
@@ -83,7 +86,7 @@ TransactionDialog::TransactionDialog
 	wxSize const ok_button_size = m_ok_button->GetSize();
 
 	// Top sizer
-	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 3, 3, 0, 0);
+	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 4, 3, 0, 0);
 
 	// Column titles
 	wxStaticText* header0 = new wxStaticText(this, wxID_ANY, "Account");
@@ -141,6 +144,30 @@ TransactionDialog::TransactionDialog
 		m_comment_boxes.push_back(comment_ctrl);
 		m_amount_boxes.push_back(entry_ctrl);
 	}
+
+	m_top_sizer->AddStretchSpacer();
+	m_top_sizer->AddStretchSpacer();
+
+	// Radio box for selecting actual vs. budget
+	wxArrayString radio_box_strings;
+	radio_box_strings.Add(wxString("Actual"));
+	radio_box_strings.Add(wxString("Budget"));
+	m_actual_vs_budget_ctrl = new wxRadioBox
+	(	this,
+		wxID_ANY,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		radio_box_strings,
+		1,
+		wxRA_SPECIFY_COLS
+	);
+	m_top_sizer->Add
+	(	m_actual_vs_budget_ctrl,
+		3,
+		wxRIGHT | wxLEFT | wxALIGN_RIGHT,
+		10
+	);
 
 	m_top_sizer->AddStretchSpacer();
 	m_top_sizer->AddStretchSpacer();

@@ -11,6 +11,8 @@ namespace gui
 
 /**
  * Validates a wxString purporting to represent a date.
+ *
+ * @todo If this is no longer being used anywhere, get rid of it.
  */
 class DateValidator: public wxValidator
 {

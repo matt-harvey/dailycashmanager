@@ -16,6 +16,8 @@ namespace gui
 /**
  * Derived from wxVariantData. This is to enable jewel::Decimal data
  * to be stored in a wxVariant.
+ *
+ * @todo If this is no longer being used anywhere, get rid of it.
  */
 class DecimalVariantData: public wxVariantData
 {

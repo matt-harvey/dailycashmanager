@@ -9,6 +9,7 @@
 #include <wx/datectrl.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
+#include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
@@ -60,6 +61,7 @@ private:
 
 	int m_max_entry_row_id;
 	wxFlexGridSizer* m_top_sizer;
+	wxRadioBox* m_actual_vs_budget_ctrl;
 	wxDatePickerCtrl* m_date_ctrl;
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;
