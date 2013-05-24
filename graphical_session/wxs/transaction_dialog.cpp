@@ -90,9 +90,10 @@ TransactionDialog::TransactionDialog
 	wxStaticText* header0 = new wxStaticText(this, wxID_ANY, "Account");
 	wxStaticText* header1 = new wxStaticText(this, wxID_ANY, "Comment");
 	wxStaticText* header2 = new wxStaticText(this, wxID_ANY, "Amount");
-	m_top_sizer->Add(header0, 2, wxLEFT | wxBOTTOM, 10);
-	m_top_sizer->Add(header1, 3, wxLEFT | wxBOTTOM, 10);
-	m_top_sizer->Add(header2, 2, wxLEFT | wxBOTTOM, 10);
+	unsigned int const header_flag = wxLEFT | wxTOP | wxBOTTOM;
+	m_top_sizer->Add(header0, 2, header_flag, 10);
+	m_top_sizer->Add(header1, 3, header_flag, 10);
+	m_top_sizer->Add(header2, 2, header_flag, 10);
 
 	// Rows for entering Entry details
 	typedef vector<Account>::size_type Size;
