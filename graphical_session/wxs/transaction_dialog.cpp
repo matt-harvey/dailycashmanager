@@ -6,8 +6,13 @@
 #include "date_validator.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
+#include "entry.hpp"
 #include "finformat.hpp"
+#include "frame.hpp"
+#include "ordinary_journal.hpp"
 #include "locale.hpp"
+#include "phatbooks_database_connection.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
@@ -27,6 +32,8 @@ using jewel::Decimal;
 using std::endl;
 using std::vector;
 
+namespace gregorian = boost::gregorian;
+
 namespace phatbooks
 {
 namespace gui
@@ -42,9 +49,12 @@ BEGIN_EVENT_TABLE(TransactionDialog, wxDialog)
 END_EVENT_TABLE()
 
 
-TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
+TransactionDialog::TransactionDialog
+(	Frame* p_parent,
+	vector<Account> const& p_accounts
+):
 	wxDialog
-	(	0,  // Null parent implies top-level window is parent
+	(	p_parent,
 		wxID_ANY,
 		"New transaction",
 		wxDefaultPosition,
@@ -54,8 +64,11 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	m_top_sizer(0),
 	m_date_ctrl(0),
 	m_ok_button(0),
-	m_cancel_button(0)
+	m_cancel_button(0),
+	m_database_connection(0)
 {
+	assert (m_account_name_boxes.empty());
+	assert (m_comment_boxes.empty());
 	assert (m_amount_boxes.empty());
 
 	// We construct m_ok_button first as we want to be able to refer to its
@@ -87,6 +100,10 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, ++id)
 	{
 		Account const account = p_accounts[i];
+		if (!m_database_connection)
+		{
+			m_database_connection = &(account.database_connection());
+		}
 		wxStaticText* account_name_text = new wxStaticText
 		(	this,
 			id,
@@ -119,6 +136,9 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 			Add(comment_ctrl, 3, base_flag | wxALIGN_LEFT, 10);
 		m_top_sizer->
 			Add(entry_ctrl, 2, base_flag | wxRIGHT | wxALIGN_RIGHT, 10);
+
+		m_account_name_boxes.push_back(account_name_text);
+		m_comment_boxes.push_back(comment_ctrl);
 		m_amount_boxes.push_back(entry_ctrl);
 	}
 
@@ -177,7 +197,7 @@ TransactionDialog::on_ok_button_click(wxCommandEvent& event)
 		assert (IsModal());
 		if (is_balanced())
 		{
-			// TODO Actually post the transaction or etc.
+			post_journal();
 			EndModal(wxID_OK);
 		}
 		else
@@ -185,11 +205,61 @@ TransactionDialog::on_ok_button_click(wxCommandEvent& event)
 			wxMessageBox("Transaction does not balance.");
 		}
 	}
-	else
-	{
-		JEWEL_DEBUG_LOG << "Problem validating and/or transferring data from window." << endl;
-	}
 	return;
+}
+
+void
+TransactionDialog::post_journal() const
+{
+	if (m_database_connection)
+	{
+		OrdinaryJournal journal(*m_database_connection);
+		size_t const sz = m_account_name_boxes.size();
+		assert (sz == m_comment_boxes.size());
+		assert (sz == m_amount_boxes.size());
+		for (size_t i = 0; i != sz; ++i)
+		{
+			assert (m_database_connection);
+			Account const account
+			(	*m_database_connection,
+				wx_to_bstring(wxString(m_account_name_boxes[i]->GetLabel()))
+			);
+			Entry entry(*m_database_connection);
+			entry.set_account(account);
+			entry.set_comment
+			(	wx_to_bstring(m_comment_boxes[i]->GetValue())
+			);
+			entry.set_amount
+			(	wx_to_decimal
+				(	wxString(m_amount_boxes[i]->GetValue()),
+					locale()
+				)
+			);
+			entry.set_whether_reconciled(false);
+			journal.push_entry(entry);
+		}
+		assert (journal.is_balanced());
+		journal.set_whether_actual(false);
+		journal.set_comment("");
+
+		// TODO Factor out code common to here and DateValidator::Validate,
+		// for converting a wxString to a boost::gregorian::date.
+		wxString const date_text(m_date_ctrl->GetValue());
+		wxString::const_iterator parsed_to_position;
+		wxDateTime date_wx;
+		date_wx.ParseDate(date_text, &parsed_to_position);
+		assert (parsed_to_position == date_text.end());
+		int year = date_wx.GetYear();
+		if (year < 100) year += 2000;
+		int const month = static_cast<int>(date_wx.GetMonth()) + 1;
+		int const day = date_wx.GetDay();
+		journal.set_date(gregorian::date(year, month, day));
+
+		journal.save();
+
+		// TODO Refresh display to refect changes caused by posting
+		// journal.
+	}
 }
 
 bool

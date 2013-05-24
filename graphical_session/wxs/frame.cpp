@@ -111,7 +111,6 @@ Frame::Frame
 
 }
 	
-
 void
 Frame::on_about(wxCommandEvent& event)
 {
@@ -139,7 +138,7 @@ Frame::on_new_transaction(wxCommandEvent& event)
 	vector<Account> selected_accounts;
 	selected_balance_sheet_accounts(selected_accounts);
 	selected_pl_accounts(selected_accounts);
-	TransactionDialog transaction_dialog(selected_accounts);
+	TransactionDialog transaction_dialog(this, selected_accounts);
 	if (transaction_dialog.ShowModal() == wxID_OK)
 	{
 		// TODO Do stuff
