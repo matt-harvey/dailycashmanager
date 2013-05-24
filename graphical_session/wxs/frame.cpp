@@ -6,6 +6,7 @@
 #include "app.hpp"
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "top_panel.hpp"
 #include "transaction_dialog.hpp"
@@ -162,6 +163,13 @@ void
 Frame::selected_pl_accounts(vector<Account>& out) const
 {
 	m_top_panel->selected_pl_accounts(out);
+	return;
+}
+
+void
+Frame::update_for_posted_journal(OrdinaryJournal const& journal)
+{
+	m_top_panel->update_for_posted_journal(journal);
 	return;
 }
 

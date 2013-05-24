@@ -233,15 +233,9 @@ TransactionDialog::post_journal() const
 	if (m_database_connection)
 	{
 		OrdinaryJournal journal(*m_database_connection);
-
 		journal.set_whether_actual
 		(	m_actual_vs_budget_ctrl->GetSelection() == 0
 		);
-		JEWEL_DEBUG_LOG << "Journal set to "
-		                << (journal.is_actual()? "actual": "budget")
-						<< "."
-						<< endl;
-
 		size_t const sz = m_account_name_boxes.size();
 		assert (sz == m_comment_boxes.size());
 		assert (sz == m_amount_boxes.size());
@@ -266,9 +260,7 @@ TransactionDialog::post_journal() const
 			journal.push_entry(entry);
 		}
 		assert (journal.is_balanced());
-
 		journal.set_comment("");
-
 		wxDateTime const date_wx = m_date_ctrl->GetValue();
 		int year = date_wx.GetYear();
 		if (year < 100) year += 2000;
@@ -278,8 +270,9 @@ TransactionDialog::post_journal() const
 
 		journal.save();
 
-		// TODO Refresh display to reflect changes caused by posting
-		// journal.
+		Frame* const frame = dynamic_cast<Frame*>(GetParent());
+		assert (frame);
+		frame->update_for_posted_journal(journal);
 	}
 }
 

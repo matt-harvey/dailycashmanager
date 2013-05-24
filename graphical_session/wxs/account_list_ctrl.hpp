@@ -60,6 +60,15 @@ public:
 	 */
 	void selected_accounts(std::vector<Account>& out);
 
+	/**
+	 * Redraw AccountListCtrl on the basis of what is currently in the
+	 * database.
+	 *
+	 * @todo Should be using inheritance here rather than this boolean flag.
+	 */
+	void update(bool balance_sheet);
+
+
 private:
 
 	AccountListCtrl
@@ -68,6 +77,10 @@ private:
 		PhatbooksDatabaseConnection& p_database_connection,
 		bool p_show_daily_budget
 	);
+
+	void update(AccountReaderBase const& p_reader);
+
+	bool m_show_daily_budget;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 	static int const s_name_col = 0;

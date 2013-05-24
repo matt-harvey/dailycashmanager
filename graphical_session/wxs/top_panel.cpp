@@ -5,6 +5,7 @@
 #include "account_list_ctrl.hpp"
 #include "entry_list_ctrl.hpp"
 #include "frame.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <wx/wx.h>
 #include <vector>
@@ -70,6 +71,14 @@ TopPanel::selected_pl_accounts(vector<Account>& out) const
 	return;
 }
 
+void
+TopPanel::update_for_posted_journal(OrdinaryJournal const& journal)
+{
+	m_bs_account_list->update(true);
+	m_pl_account_list->update(false);
+	m_entry_list->update_for_posted_journal(journal);
+	return;
+}
 
 
 

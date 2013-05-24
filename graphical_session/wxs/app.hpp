@@ -51,6 +51,7 @@ public:
 
 	PhatbooksDatabaseConnection& database_connection();
 
+
 private:
 	boost::filesystem::path elicit_existing_filepath();
 	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;

@@ -61,11 +61,54 @@ AccountListCtrl::AccountListCtrl
 		),
 		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
 	),
+	m_show_daily_budget(p_show_daily_budget),
 	m_database_connection(p_database_connection)
 {
+	update(p_reader);
+}
+
+void
+AccountListCtrl::selected_accounts(vector<Account>& out)
+{
+	size_t i = 0;
+	size_t const lim = GetItemCount();
+	for ( ; i != lim; ++i)
+	{
+		if(GetItemState(i, wxLIST_STATE_SELECTED))
+		{
+			Account const account
+			(	m_database_connection,
+				wx_to_bstring(GetItemText(i))
+			);
+			out.push_back(account);
+		}
+	}
+	return;
+}	
+
+void
+AccountListCtrl::update(bool balance_sheet)
+{
+	if (balance_sheet)
+	{
+		BalanceSheetAccountReader const reader(m_database_connection);
+		update(reader);
+	}
+	else
+	{
+		PLAccountReader const reader(m_database_connection);
+		update(reader);
+	}
+	return;
+}
+
+void
+AccountListCtrl::update(AccountReaderBase const& p_reader)
+{
+	ClearAll();
 	InsertColumn(s_name_col, "Name", wxLIST_FORMAT_LEFT);
 	InsertColumn(s_balance_col, "Balance", wxLIST_FORMAT_RIGHT);
-	if (p_show_daily_budget)
+	if (m_show_daily_budget)
 	{
 		InsertColumn(s_budget_col, "Daily budget", wxLIST_FORMAT_RIGHT);
 	}
@@ -93,7 +136,7 @@ AccountListCtrl::AccountListCtrl
 			finformat_wx(it->friendly_balance(), locale())
 		);
 
-		if (p_show_daily_budget)
+		if (m_show_daily_budget)
 		{
 			// Insert budget string
 			SetItem(i, s_budget_col, finformat_wx(it->budget(), locale()));
@@ -101,30 +144,12 @@ AccountListCtrl::AccountListCtrl
 	}
 	SetColumnWidth(s_name_col, wxLIST_AUTOSIZE);
 	SetColumnWidth(s_balance_col, wxLIST_AUTOSIZE);
-	if (p_show_daily_budget)
+	if (m_show_daily_budget)
 	{
 		SetColumnWidth(s_budget_col, wxLIST_AUTOSIZE);
 	}
-}
-
-void
-AccountListCtrl::selected_accounts(vector<Account>& out)
-{
-	size_t i = 0;
-	size_t const lim = GetItemCount();
-	for ( ; i != lim; ++i)
-	{
-		if(GetItemState(i, wxLIST_STATE_SELECTED))
-		{
-			Account const account
-			(	m_database_connection,
-				wx_to_bstring(GetItemText(i))
-			);
-			out.push_back(account);
-		}
-	}
 	return;
-}	
+}
 
 }  // namespace gui
 }  // namespace phatbooks

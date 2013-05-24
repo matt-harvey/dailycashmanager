@@ -11,13 +11,18 @@
 namespace phatbooks
 {
 
+// Begin forward declarations
+
+class Entry;
+class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
+
+// End forward declarations
 
 namespace gui
 {
 
-class EntryListCtrl:
-	public wxListCtrl
+class EntryListCtrl: public wxListCtrl
 {
 public:
 		
@@ -32,13 +37,22 @@ public:
 		PhatbooksDatabaseConnection& dbc
 	);
 
+	/**
+	 * Update displayed entries to reflect that a \e journal has been
+	 * posted.
+	 */
+	void update_for_posted_journal(OrdinaryJournal const& journal);
+
 private:
-	
+
 	EntryListCtrl
 	(	wxWindow* p_parent,
 		EntryReader const& p_reader,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
+	
+	void add_entry(Entry const& entry);
+
 	PhatbooksDatabaseConnection& m_database_connection;
 };
 
