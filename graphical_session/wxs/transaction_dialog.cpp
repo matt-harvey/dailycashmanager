@@ -239,7 +239,7 @@ TransactionDialog::post_journal() const
 			journal.push_entry(entry);
 		}
 		assert (journal.is_balanced());
-		journal.set_whether_actual(false);
+		journal.set_whether_actual(true);
 		journal.set_comment("");
 
 		// TODO Factor out code common to here and DateValidator::Validate,
