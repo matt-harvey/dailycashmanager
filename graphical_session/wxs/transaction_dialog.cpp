@@ -77,9 +77,9 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	wxStaticText* header0 = new wxStaticText(this, wxID_ANY, "Account");
 	wxStaticText* header1 = new wxStaticText(this, wxID_ANY, "Comment");
 	wxStaticText* header2 = new wxStaticText(this, wxID_ANY, "Amount");
-	m_top_sizer->Add(header0, 2, wxLEFT | wxRIGHT | wxBOTTOM, 10);
-	m_top_sizer->Add(header1, 3, wxLEFT | wxRIGHT | wxBOTTOM, 10);
-	m_top_sizer->Add(header2, 2, wxLEFT | wxRIGHT | wxBOTTOM, 10);
+	m_top_sizer->Add(header0, 2, wxLEFT | wxBOTTOM, 10);
+	m_top_sizer->Add(header1, 3, wxLEFT | wxBOTTOM, 10);
+	m_top_sizer->Add(header2, 2, wxLEFT | wxBOTTOM, 10);
 
 	// Rows for entering Entry details
 	typedef vector<Account>::size_type Size;
@@ -100,7 +100,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 			id,
 			wxEmptyString,
 			wxDefaultPosition,
-			wxSize(ok_button_size.x * 2, account_name_text_size.y * 1.2),
+			wxSize(ok_button_size.x * 4.5, account_name_text_size.y * 1.2),
 			wxALIGN_LEFT
 		);
 		Decimal::places_type const precision =
@@ -108,14 +108,17 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		DecimalTextCtrl* entry_ctrl = new DecimalTextCtrl
 		(	this,
 			id,
-			wxSize(ok_button_size.x, account_name_text_size.y * 1.2),
+			wxSize(ok_button_size.x * 1.5, account_name_text_size.y * 1.2),
 			precision
 		);
-		int base_flag = wxLEFT | wxRIGHT;
+		int base_flag = wxLEFT;
 		if (i == 0) base_flag |= wxTOP;
-		m_top_sizer->Add(account_name_text, 2, base_flag | wxALIGN_LEFT, 10);
-		m_top_sizer->Add(comment_ctrl, 3, base_flag | wxALIGN_LEFT, 10);
-		m_top_sizer->Add(entry_ctrl, 2, base_flag | wxALIGN_RIGHT, 10);
+		m_top_sizer->
+			Add(account_name_text, 2, base_flag | wxRIGHT | wxALIGN_LEFT, 10);
+		m_top_sizer->
+			Add(comment_ctrl, 3, base_flag | wxALIGN_LEFT, 10);
+		m_top_sizer->
+			Add(entry_ctrl, 2, base_flag | wxRIGHT | wxALIGN_RIGHT, 10);
 		m_amount_boxes.push_back(entry_ctrl);
 	}
 
@@ -132,7 +135,7 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 
 	m_top_sizer->AddStretchSpacer();
 	m_top_sizer->
-		Add(m_date_ctrl, 2, wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxTOP, 10);
+		Add(m_date_ctrl, 2, wxALIGN_RIGHT | wxLEFT | wxTOP, 10);
 	m_top_sizer->AddStretchSpacer();
 
 	// Cancel and OK buttons

@@ -44,7 +44,6 @@ DecimalTextCtrl::DecimalTextCtrl
 void
 DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
 {
-	JEWEL_DEBUG_LOG << "Entered DecimalTextCtrl::on_kill_focus." << endl;
 	// Unfortunately if we call Validate() and TransferDataToWindow()
 	// directly on the DecimalTextCtrl, it doesn't work. We have to call
 	// through parent instead.
