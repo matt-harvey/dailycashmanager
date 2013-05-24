@@ -68,8 +68,20 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 		wxDefaultPosition,
 		wxDefaultSize
 	);
+	wxSize const ok_button_size = m_ok_button->GetSize();
 
-	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 2, 2, 0, 0);
+	// Top sizer
+	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 3, 3, 0, 0);
+
+	// Column titles
+	wxStaticText* header0 = new wxStaticText(this, wxID_ANY, "Account");
+	wxStaticText* header1 = new wxStaticText(this, wxID_ANY, "Comment");
+	wxStaticText* header2 = new wxStaticText(this, wxID_ANY, "Amount");
+	m_top_sizer->Add(header0, 2, wxLEFT | wxRIGHT | wxBOTTOM, 10);
+	m_top_sizer->Add(header1, 3, wxLEFT | wxRIGHT | wxBOTTOM, 10);
+	m_top_sizer->Add(header2, 2, wxLEFT | wxRIGHT | wxBOTTOM, 10);
+
+	// Rows for entering Entry details
 	typedef vector<Account>::size_type Size;
 	Size const sz = p_accounts.size();
 	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, ++id)
@@ -82,21 +94,32 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 			wxDefaultPosition,
 			wxDefaultSize
 		);
+		wxSize const account_name_text_size = account_name_text->GetSize();
+		wxTextCtrl* comment_ctrl = new wxTextCtrl
+		(	this,
+			id,
+			wxEmptyString,
+			wxDefaultPosition,
+			wxSize(ok_button_size.x * 2, account_name_text_size.y * 1.2),
+			wxALIGN_LEFT
+		);
 		Decimal::places_type const precision =
 			account.commodity().precision();
 		DecimalTextCtrl* entry_ctrl = new DecimalTextCtrl
 		(	this,
 			id,
-			m_ok_button->GetSize(),
+			wxSize(ok_button_size.x, account_name_text_size.y * 1.2),
 			precision
 		);
 		int base_flag = wxLEFT | wxRIGHT;
 		if (i == 0) base_flag |= wxTOP;
-		m_top_sizer->Add(account_name_text, 1, base_flag | wxALIGN_LEFT, 16);
-		m_top_sizer->Add(entry_ctrl, 1, base_flag | wxALIGN_RIGHT, 16);
+		m_top_sizer->Add(account_name_text, 2, base_flag | wxALIGN_LEFT, 10);
+		m_top_sizer->Add(comment_ctrl, 3, base_flag | wxALIGN_LEFT, 10);
+		m_top_sizer->Add(entry_ctrl, 2, base_flag | wxALIGN_RIGHT, 10);
 		m_amount_boxes.push_back(entry_ctrl);
 	}
 
+	// Date control
 	m_date_ctrl = new wxTextCtrl
 	(	this,
 		s_date_ctrl_id,
@@ -109,8 +132,10 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 
 	m_top_sizer->AddStretchSpacer();
 	m_top_sizer->
-		Add(m_date_ctrl, 1, wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxTOP, 16);
+		Add(m_date_ctrl, 2, wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxTOP, 10);
+	m_top_sizer->AddStretchSpacer();
 
+	// Cancel and OK buttons
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,
@@ -122,15 +147,17 @@ TransactionDialog::TransactionDialog(vector<Account> const& p_accounts):
 	(	m_cancel_button,
 		1,
 		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
-		16
+		10
 	);
+	m_top_sizer->AddStretchSpacer();
 	m_top_sizer->Add
 	(	m_ok_button,
 		1,
 		wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
-		16
+		10
 	);
 
+	// "Admin"
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
