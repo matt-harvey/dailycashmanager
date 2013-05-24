@@ -3,7 +3,6 @@
 #include "transaction_dialog.hpp"
 #include "account.hpp"
 #include "date.hpp"
-#include "date_validator.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
 #include "entry.hpp"
@@ -16,7 +15,7 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
-#include <wx/calctrl.h>
+#include <wx/datectrl.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
@@ -63,8 +62,8 @@ TransactionDialog::TransactionDialog
 	),
 	m_top_sizer(0),
 	m_date_ctrl(0),
-	m_ok_button(0),
 	m_cancel_button(0),
+	m_ok_button(0),
 	m_database_connection(0)
 {
 	assert (m_account_name_boxes.empty());
@@ -143,22 +142,13 @@ TransactionDialog::TransactionDialog
 		m_amount_boxes.push_back(entry_ctrl);
 	}
 
+	m_top_sizer->AddStretchSpacer();
+	m_top_sizer->AddStretchSpacer();
+
 	// Date control
-	m_date_ctrl = new wxTextCtrl
-	(	this,
-		s_date_ctrl_id,
-		wxEmptyString,
-		wxDefaultPosition,
-		m_ok_button->GetSize(),
-		wxALIGN_RIGHT,
-		DateValidator(today())	
-	);
-
-	m_top_sizer->AddStretchSpacer();
-	m_top_sizer->
-		Add(m_date_ctrl, 2, wxALIGN_RIGHT | wxLEFT | wxTOP, 10);
-	m_top_sizer->AddStretchSpacer();
-
+	m_date_ctrl = new wxDatePickerCtrl(this, wxID_ANY);
+	m_top_sizer->Add(m_date_ctrl, 2, wxRIGHT | wxLEFT | wxTOP, 10);
+	
 	// Cancel and OK buttons
 	m_cancel_button = new wxButton
 	(	this,
@@ -169,15 +159,15 @@ TransactionDialog::TransactionDialog
 	);
 	m_top_sizer->Add
 	(	m_cancel_button,
-		1,
+		2,
 		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
 		10
 	);
 	m_top_sizer->AddStretchSpacer();
 	m_top_sizer->Add
 	(	m_ok_button,
-		1,
-		wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
+		2,
+		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
 		10
 	);
 
@@ -192,7 +182,7 @@ TransactionDialog::TransactionDialog
 void
 TransactionDialog::on_ok_button_click(wxCommandEvent& event)
 {
-	(void)event;  // Silence compiler warning re. unused parameter.
+	(void)event;  // Silence compiler re. unused parameter.
 	if (Validate() && TransferDataFromWindow())
 	{
 		assert (IsModal());
@@ -208,6 +198,7 @@ TransactionDialog::on_ok_button_click(wxCommandEvent& event)
 	}
 	return;
 }
+
 
 void
 TransactionDialog::post_journal() const
@@ -243,13 +234,7 @@ TransactionDialog::post_journal() const
 		journal.set_whether_actual(true);
 		journal.set_comment("");
 
-		// TODO Factor out code common to here and DateValidator::Validate,
-		// for converting a wxString to a boost::gregorian::date.
-		wxString const date_text(m_date_ctrl->GetValue());
-		wxString::const_iterator parsed_to_position;
-		wxDateTime date_wx;
-		date_wx.ParseDate(date_text, &parsed_to_position);
-		assert (parsed_to_position == date_text.end());
+		wxDateTime const date_wx = m_date_ctrl->GetValue();
 		int year = date_wx.GetYear();
 		if (year < 100) year += 2000;
 		int const month = static_cast<int>(date_wx.GetMonth()) + 1;

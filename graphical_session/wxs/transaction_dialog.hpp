@@ -6,6 +6,7 @@
 #include "account.hpp"
 #include "decimal_text_ctrl.hpp"
 #include <wx/button.h>
+#include <wx/datectrl.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/sizer.h>
@@ -59,9 +60,9 @@ private:
 
 	int m_max_entry_row_id;
 	wxFlexGridSizer* m_top_sizer;
-	wxTextCtrl* m_date_ctrl;
-	wxButton* m_ok_button;
+	wxDatePickerCtrl* m_date_ctrl;
 	wxButton* m_cancel_button;
+	wxButton* m_ok_button;
 
 	std::vector<wxStaticText*> m_account_name_boxes;
 	std::vector<wxTextCtrl*> m_comment_boxes;
