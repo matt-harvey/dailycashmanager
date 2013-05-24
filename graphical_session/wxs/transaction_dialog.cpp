@@ -233,6 +233,15 @@ TransactionDialog::post_journal() const
 	if (m_database_connection)
 	{
 		OrdinaryJournal journal(*m_database_connection);
+
+		journal.set_whether_actual
+		(	m_actual_vs_budget_ctrl->GetSelection() == 0
+		);
+		JEWEL_DEBUG_LOG << "Journal set to "
+		                << (journal.is_actual()? "actual": "budget")
+						<< "."
+						<< endl;
+
 		size_t const sz = m_account_name_boxes.size();
 		assert (sz == m_comment_boxes.size());
 		assert (sz == m_amount_boxes.size());
@@ -248,22 +257,15 @@ TransactionDialog::post_journal() const
 			entry.set_comment
 			(	wx_to_bstring(m_comment_boxes[i]->GetValue())
 			);
-			entry.set_amount
-			(	wx_to_decimal
-				(	wxString(m_amount_boxes[i]->GetValue()),
-					locale()
-				)
+			Decimal const amount = wx_to_decimal
+			(	wxString(m_amount_boxes[i]->GetValue()),
+				locale()
 			);
+			entry.set_amount(journal.is_actual()? amount: -amount);
 			entry.set_whether_reconciled(false);
 			journal.push_entry(entry);
 		}
 		assert (journal.is_balanced());
-
-		// TODO HIGH PRIORITY Make this react to the user's selection as to
-		// whether actual or budget. Also change signs of entries if required,
-		// relative to the "user-friendly signs" of the amounts entered and
-		// seen by the user.
-		journal.set_whether_actual(true);
 
 		journal.set_comment("");
 
