@@ -886,8 +886,8 @@ TextSession::run_with_filepath
 	     << bstring_to_std8(Application::application_name())
 		 << "!" << endl;
 
-	shared_ptr<list<OrdinaryJournal> > auto_posted_journals =
-		update_repeaters_till(today());
+	shared_ptr<list<OrdinaryJournal> > const auto_posted_journals =
+		update_repeaters(database_connection());
 	notify_autoposts(auto_posted_journals);
 	create_main_menu();
 	m_main_menu->present_to_user();	

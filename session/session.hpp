@@ -3,7 +3,6 @@
 #ifndef GUARD_session_hpp
 #define GUARD_session_hpp
 
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <list>
@@ -52,9 +51,7 @@ public:
 
 protected:
 	PhatbooksDatabaseConnection& database_connection() const;
-	boost::shared_ptr<std::list<OrdinaryJournal> > update_repeaters_till
-	(	boost::gregorian::date d
-	);
+
 private:
 	virtual int do_run() = 0;
 	virtual int do_run(std::string const& filepath_str) = 0;

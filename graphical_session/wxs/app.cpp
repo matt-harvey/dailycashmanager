@@ -3,7 +3,9 @@
 #include "app.hpp"
 #include "application.hpp"
 #include "b_string.hpp"
+#include "date.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "repeater.hpp"
 #include "setup_wizard.hpp"
 #include "welcome_dialog.hpp"
 #include <boost/filesystem.hpp>
@@ -97,6 +99,10 @@ bool App::OnInit()
 		database_connection().filepath()
 	);
 	Application::set_last_opened_file(database_connection().filepath());
+
+	// TODO Notify user of autoposted journals.
+	update_repeaters(database_connection());
+
 	Frame* frame = new Frame(app_name, database_connection());
 	frame->Show(true);
 

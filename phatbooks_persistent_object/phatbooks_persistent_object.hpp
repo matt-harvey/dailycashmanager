@@ -3,7 +3,6 @@
 #ifndef GUARD_phatbooks_persistent_object_hpp
 #define GUARD_phatbooks_persistent_object_hpp
 
-#include "phatbooks_database_connection.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 
@@ -37,6 +36,13 @@
 
 namespace phatbooks
 {
+
+// Begin forward declarations
+
+class PhatbooksDatabaseConnection;
+
+// End forward declarations
+
 
 class PhatbooksPersistentObjectBase
 {
@@ -102,6 +108,18 @@ private:
 	void do_ghostify();
 	sqloxx::Handle<Impl> m_impl;
 };
+
+
+
+}  // namespace phatbooks
+
+
+
+// Not including this till here, as we want to avoid circular inclusion.
+#include "phatbooks_database_connection.hpp"
+
+namespace phatbooks
+{
 
 template <typename Impl>
 PhatbooksPersistentObject<Impl>::~PhatbooksPersistentObject()

@@ -22,8 +22,10 @@
 #include "budget_item_impl.hpp"
 #include "commodity_impl.hpp"
 #include "date.hpp"
+#include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
 #include "entry_impl.hpp"
+#include "ordinary_journal.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "repeater_impl.hpp"
 #include "balance_cache.hpp"
@@ -35,6 +37,7 @@
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
+#include "repeater_reader.hpp"
 #include "b_string.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/database_transaction.hpp>
@@ -351,6 +354,8 @@ PhatbooksDatabaseConnection::save_default_commodity()
 	statement.bind(":p", default_commodity().id());
 	statement.step_final();
 }
+
+
 
 void
 PhatbooksDatabaseConnection::setup_entity_table()

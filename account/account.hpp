@@ -34,8 +34,7 @@ class PhatbooksDatabaseConnection;
  * visible or hidden). The user should probably not be able to hide Accounts
  * that have a non-zero balance, though.
  */
-class Account:
-	public PhatbooksPersistentObject<AccountImpl>
+class Account: public PhatbooksPersistentObject<AccountImpl>
 {
 public:
 	typedef account_type::AccountType AccountType;

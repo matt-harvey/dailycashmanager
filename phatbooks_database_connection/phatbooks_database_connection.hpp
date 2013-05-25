@@ -19,18 +19,23 @@
 #include "frequency.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
+#include <list>
 #include <string>
 
 
 
+// Begin forward declarations
+
 namespace sqloxx
 {
-	// Forward declaration
+	// TODO Sqloxx should provide a forward declaration
+	// header so clients don't have to do this manually.
 	template <typename T, typename Connection>
 	class IdentityMap;
 }
@@ -39,7 +44,6 @@ namespace sqloxx
 namespace phatbooks
 {
 
-// Forward declarations
 class AmalgamatedBudget;
 class Account;
 class AccountImpl;
@@ -53,6 +57,8 @@ class EntryImpl;
 class OrdinaryJournal;
 class OrdinaryJournalImpl;
 class RepeaterImpl;
+
+// End forward declarations
 
 
 /**
@@ -239,6 +245,7 @@ public:
 	template<typename T>
 	sqloxx::IdentityMap<T, PhatbooksDatabaseConnection>& identity_map();
 
+
 private:
 
 	/**
@@ -330,6 +337,7 @@ private:
 	 */
 	void save_default_commodity();
 
+	
 	PermanentEntityData* m_permanent_entity_data;
 
 	BalanceCache* m_balance_cache;

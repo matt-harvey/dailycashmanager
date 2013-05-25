@@ -3,9 +3,10 @@
 #ifndef GUARD_repeater_hpp
 #define GUARD_repeater_hpp
 
-#include "interval_type.hpp"
+#include "date.hpp"
 #include "draft_journal.hpp"
 #include "frequency.hpp"
+#include "interval_type.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
@@ -170,6 +171,19 @@ private:
 };
 
 
+// Free functions
+
+/**
+ * Bring Repeaters up to date (thereby posting auto posted journals),
+ * returning a boost::shared_ptr to a list containing the resulting
+ * OrdinaryJournals, sorted by the order in which they have been
+ * posted, from earliest to latest.
+ */
+boost::shared_ptr<std::list<OrdinaryJournal> >
+update_repeaters
+(	PhatbooksDatabaseConnection& dbc,
+	boost::gregorian::date d = today()
+);
 
 
 

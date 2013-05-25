@@ -83,69 +83,6 @@ Session::database_connection() const
 }
 
 
-namespace
-{
-	bool
-	is_earlier_than(OrdinaryJournal const& lhs, OrdinaryJournal const& rhs)
-	{
-		return lhs.date() < rhs.date();
-	}
-}  // End anonymous namespace
-
-
-shared_ptr<list<OrdinaryJournal> >
-Session::update_repeaters_till(gregorian::date d)
-{
-	shared_ptr<list<OrdinaryJournal> > auto_posted_journals
-	(	new list<OrdinaryJournal>
-	);
-
-	RepeaterReader repeater_reader(database_connection());
-	// Anonymous scope
-	{
-		RepeaterReader::const_iterator const end = repeater_reader.end();
-		for
-		(	RepeaterReader::iterator it = repeater_reader.begin();
-			it != end;
-			++it
-		)
-		{
-			while (it->next_date() <= d)
-			{
-				OrdinaryJournal const oj = it->fire_next();
-				// In the special case where oj is
-				// database_connection().budget_instrument(), and is
-				// devoid of entries, firing it does not cause any
-				// OrdinaryJournal to be posted, but simply advances
-				// the next posting date. In this case the returned
-				// OrdinaryJournal will have no id.
-#				ifndef NDEBUG
-					DraftJournal const dj = it->draft_journal();
-					DraftJournal const bi =
-						database_connection().budget_instrument();
-#				endif
-				if (oj.has_id())
-				{
-					assert(dj != bi || !dj.entries().empty());
-					auto_posted_journals->push_back(oj);
-				}
-				else
-				{
-					assert (dj == bi);
-					assert (dj.entries().empty());
-					assert (oj.entries().empty());
-				}
-			}
-		}
-	}
-	auto_posted_journals->sort(is_earlier_than);
-
-	return auto_posted_journals;
-}
-
-			
-	
-
 
 
 
