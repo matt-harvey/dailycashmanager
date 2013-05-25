@@ -56,7 +56,7 @@ BEGIN_EVENT_TABLE(TransactionDialog, wxDialog)
 	)
 END_EVENT_TABLE()
 
-// TODO HIGH PRIORITY.
+// TODO
 // There are bugs in wxWidgets' wxDatePickerCtrl under wxGTK.
 // Firstly, tab traversal gets stuck on that control.
 // Secondly, if we type a different date and then press "Enter" for OK,
@@ -64,6 +64,8 @@ END_EVENT_TABLE()
 // seems to be TODAY's date, not the date actually entered. This appears to
 // be an unresolved bug in wxWidgets.
 // Note adding wxTAB_TRAVERSAL to style does not seem to fix the problem.
+// Stop-gap measure for time being is to use wxCalendarCtrl instead of
+// wxDateCtrl, when not on Windows.
 
 TransactionDialog::TransactionDialog
 (	Frame* p_parent,
