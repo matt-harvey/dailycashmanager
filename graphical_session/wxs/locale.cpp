@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "locale.hpp"
 #include "app.hpp"
 #include <wx/intl.h>

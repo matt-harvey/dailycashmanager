@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
 #include "finformat.hpp"

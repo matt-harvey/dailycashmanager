@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "date_validator.hpp"
 #include "date.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>

@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_date_validator_hpp
 #define GUARD_date_validator_hpp
 
