@@ -74,7 +74,7 @@ Frame::Frame
 	);
 	m_new_menu->Append
 	(	s_new_transaction_id,
-		wxT("New &transaction"),
+		wxT("New &transaction \tAlt-T"),
 		wxT("Record a new transaction")
 	);
 	m_help_menu->Append

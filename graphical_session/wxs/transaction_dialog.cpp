@@ -198,6 +198,7 @@ TransactionDialog::TransactionDialog
 		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
 		10
 	);
+	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
 
 	// "Admin"
 	SetSizer(m_top_sizer);
