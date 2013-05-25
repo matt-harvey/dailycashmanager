@@ -49,6 +49,14 @@ BEGIN_EVENT_TABLE(TransactionDialog, wxDialog)
 	)
 END_EVENT_TABLE()
 
+// TODO HIGH PRIORITY.
+// There are bugs in wxWidgets' wxDatePickerCtrl, at least in wxGTK.
+// Firstly, tab traversal gets stuck on that control.
+// Secondly, if we type a different date and then press "Enter" for OK,
+// the date that actually gets picked up as the transaction date always
+// seems to be TODAY's date, not the date actually entered. This appears to
+// be an unresolved bug in wxWidgets.
+// Note adding wxTAB_TRAVERSAL to style does not seem to fix the problem.
 
 TransactionDialog::TransactionDialog
 (	Frame* p_parent,
@@ -60,7 +68,6 @@ TransactionDialog::TransactionDialog
 		"New transaction",
 		wxDefaultPosition,
 		wxDefaultSize
-		// , wxRESIZE_BORDER
 	),
 	m_top_sizer(0),
 	m_actual_vs_budget_ctrl(0),
