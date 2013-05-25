@@ -6,6 +6,7 @@
 #include "account.hpp"
 #include "account_reader.hpp"
 #include <wx/listctrl.h>
+#include <wx/string.h>
 #include <wx/wx.h>
 #include <vector>
 
@@ -75,10 +76,14 @@ private:
 	(	wxWindow* p_parent,
 		AccountReaderBase const& p_reader,
 		PhatbooksDatabaseConnection& p_database_connection,
-		bool p_show_daily_budget
+		bool p_show_daily_budget,
+		wxString const& p_left_column_title
 	);
 
-	void update(AccountReaderBase const& p_reader);
+	void update
+	(	AccountReaderBase const& p_reader,
+		wxString const& p_left_column_title
+	);
 
 	bool m_show_daily_budget;
 	PhatbooksDatabaseConnection& m_database_connection;

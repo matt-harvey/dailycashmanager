@@ -30,7 +30,13 @@ AccountListCtrl::create_balance_sheet_account_list
 )
 {
 	BalanceSheetAccountReader const reader(dbc);
-	AccountListCtrl* ret = new AccountListCtrl(parent, reader, dbc, false);
+	AccountListCtrl* ret = new AccountListCtrl
+	(	parent,
+		reader,
+		dbc,
+		false,
+		wxString("Account")
+	);
 	return ret;
 }
 
@@ -41,7 +47,13 @@ AccountListCtrl::create_pl_account_list
 )
 {
 	PLAccountReader const reader(dbc);
-	AccountListCtrl* ret = new AccountListCtrl(parent, reader, dbc, true);
+	AccountListCtrl* ret = new AccountListCtrl
+	(	parent,
+		reader,
+		dbc,
+		true,
+		wxString("Category")
+	);
 	return ret;
 }
 
@@ -49,7 +61,8 @@ AccountListCtrl::AccountListCtrl
 (	wxWindow* p_parent,
 	AccountReaderBase const& p_reader,
 	PhatbooksDatabaseConnection& p_database_connection,
-	bool p_show_daily_budget
+	bool p_show_daily_budget,
+	wxString const& p_left_column_title
 ):
 	wxListCtrl
 	(	p_parent,
@@ -64,7 +77,7 @@ AccountListCtrl::AccountListCtrl
 	m_show_daily_budget(p_show_daily_budget),
 	m_database_connection(p_database_connection)
 {
-	update(p_reader);
+	update(p_reader, p_left_column_title);
 }
 
 void
@@ -92,21 +105,24 @@ AccountListCtrl::update(bool balance_sheet)
 	if (balance_sheet)
 	{
 		BalanceSheetAccountReader const reader(m_database_connection);
-		update(reader);
+		update(reader, "Account");
 	}
 	else
 	{
 		PLAccountReader const reader(m_database_connection);
-		update(reader);
+		update(reader, "Category");
 	}
 	return;
 }
 
 void
-AccountListCtrl::update(AccountReaderBase const& p_reader)
+AccountListCtrl::update
+(	AccountReaderBase const& p_reader,
+	wxString const& p_left_column_title
+)
 {
 	ClearAll();
-	InsertColumn(s_name_col, "Name", wxLIST_FORMAT_LEFT);
+	InsertColumn(s_name_col, p_left_column_title, wxLIST_FORMAT_LEFT);
 	InsertColumn(s_balance_col, "Balance", wxLIST_FORMAT_RIGHT);
 	if (m_show_daily_budget)
 	{

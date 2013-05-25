@@ -44,13 +44,22 @@ TopPanel::TopPanel
 	(	this,
 		m_database_connection
 	);
+	/*
 	m_entry_list = EntryListCtrl::create_actual_ordinary_entry_list
 	(	this,
 		m_database_connection
 	);
-	m_top_sizer->Add(m_bs_account_list, wxSizerFlags(2).Expand());
-	m_top_sizer->Add(m_pl_account_list, wxSizerFlags(3).Expand());
-	m_top_sizer->Add(m_entry_list, wxSizerFlags(4).Expand());
+	*/
+	m_top_sizer->Add
+	(	m_bs_account_list,
+		wxSizerFlags(2).Expand().Border(wxNORTH | wxSOUTH | wxWEST, 15)
+	);
+	m_top_sizer->Add
+	(	m_pl_account_list,
+		wxSizerFlags(3).Expand().Border(wxNORTH | wxSOUTH | wxWEST, 15)
+	);
+	m_top_sizer->AddStretchSpacer(3);
+	// m_top_sizer->Add(m_entry_list, wxSizerFlags(4).Expand());
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -76,7 +85,8 @@ TopPanel::update_for_posted_journal(OrdinaryJournal const& journal)
 {
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
-	m_entry_list->update_for_posted_journal(journal);
+	(void)journal;  // Silence compiler re. unused variable.
+	// m_entry_list->update_for_posted_journal(journal);
 	return;
 }
 
