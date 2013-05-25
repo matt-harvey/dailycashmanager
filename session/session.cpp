@@ -30,6 +30,10 @@ namespace phatbooks
 
 int Session::s_num_instances = 0;
 
+// TODO This is ignoring the PhatbooksDatabaseConnection which we
+// have ALREADY created as part of the Session constructor.
+// The whole Session hierarcy, and the interaction between
+// GraphicalSession and App, is a bit of a mess.
 Session::Session():
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
