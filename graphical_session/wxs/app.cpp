@@ -100,7 +100,7 @@ bool App::OnInit()
 	);
 	Application::set_last_opened_file(database_connection().filepath());
 
-	// TODO Notify user of autoposted journals.
+	// TODO HIGH PRIORITY Notify user of autoposted journals.
 	update_repeaters(database_connection());
 
 	Frame* frame = new Frame(app_name, database_connection());
