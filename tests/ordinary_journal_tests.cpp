@@ -54,7 +54,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	CHECK_EQUAL(oj1.date(), date(3000, 1, 5));
 	CHECK_EQUAL(oj1.is_actual(), true);
 	CHECK_EQUAL(oj1.comment(), "igloo");
-	CHECK_EQUAL(oj1.entries().size(), 2);
+	CHECK_EQUAL(oj1.entries().size(), size_t(2));
 	oj1.save();
 	CHECK(!oj1.entries().empty());
 
@@ -96,7 +96,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 
 	CHECK_EQUAL(oj1.is_actual(), false);
 	CHECK_EQUAL(oj1.comment(), "steam engine");
-	CHECK_EQUAL(oj1.entries().size(), 1);
+	CHECK_EQUAL(oj1.entries().size(), size_t(1));
 	CHECK_EQUAL(oj1.date(), date(3000, 1, 5));
 	oj1.save();
 	vector<Entry>::const_iterator it2 =
@@ -133,7 +133,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	OrdinaryJournal oj2b(dbc, 2);
 	CHECK_EQUAL(oj2b.id(), 2);
 	CHECK_EQUAL(oj2b.comment(), "steam engine");
-	CHECK_EQUAL(oj2b.entries().size(), 1);
+	CHECK_EQUAL(oj2b.entries().size(), size_t(1));
 	CHECK_EQUAL(oj2b.date(), date(2000, 1, 5));
 	vector<Entry>::const_iterator it2b = oj2b.entries().begin();
 	CHECK_EQUAL(it2b->amount(), Decimal("0"));
