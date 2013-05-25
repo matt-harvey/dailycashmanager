@@ -14,9 +14,16 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/on_windows.hpp>
 #include <wx/arrstr.h>
 #include <wx/button.h>
-#include <wx/datectrl.h>
+
+#ifndef JEWEL_ON_WINDOWS
+#	include <wx/calctrl.h>
+#else
+#	include <wx/datectrl.h>
+#endif
+
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
@@ -181,14 +188,15 @@ TransactionDialog::TransactionDialog
 	m_top_sizer->AddStretchSpacer();
 
 	// Date control
-	m_date_ctrl = new wxDatePickerCtrl
-	(	this,
-		wxID_ANY,
-		wxDefaultDateTime,
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxDP_DEFAULT | wxDP_SHOWCENTURY | wxDP_SPIN
-	);
+	m_date_ctrl = new
+#	ifndef JEWEL_ON_WINDOWS
+		wxCalendarCtrl
+#	else
+		wxDatePickerCtrl
+#	endif
+		(	this,
+			wxID_ANY
+		);
 	m_top_sizer->Add(m_date_ctrl, 2, wxRIGHT | wxLEFT | wxTOP, 10);
 	
 	// Cancel and OK buttons
@@ -279,7 +287,13 @@ TransactionDialog::post_journal() const
 		}
 		assert (journal.is_balanced());
 		journal.set_comment("");
-		wxDateTime const date_wx = m_date_ctrl->GetValue();
+		wxDateTime const date_wx = m_date_ctrl->
+#		ifndef JEWEL_ON_WINDOWS
+			GetDate();
+#		else
+			GetValue();
+#		endif
+
 		int year = date_wx.GetYear();
 		if (year < 100) year += 2000;
 		int const month = static_cast<int>(date_wx.GetMonth()) + 1;

@@ -5,8 +5,15 @@
 
 #include "account.hpp"
 #include "decimal_text_ctrl.hpp"
+#include <jewel/on_windows.hpp>
 #include <wx/button.h>
-#include <wx/datectrl.h>
+
+#ifndef JEWEL_ON_WINDOWS
+#	include <wx/calctrl.h>
+#else
+#	include <wx/datectrl.h>
+#endif
+
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/radiobox.h>
@@ -62,7 +69,16 @@ private:
 	int m_max_entry_row_id;
 	wxFlexGridSizer* m_top_sizer;
 	wxRadioBox* m_actual_vs_budget_ctrl;
-	wxDatePickerCtrl* m_date_ctrl;
+
+	// Avoid using wxDatePickerCtrl unless on Windows - it's buggy
+	// on wxGTK (and I haven't yet tested it on OSX).
+#	ifndef JEWEL_ON_WINDOWS
+		wxCalendarCtrl*
+#	else
+		wxDatePickerCtrl*
+#	endif
+			m_date_ctrl;
+	
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;
 
