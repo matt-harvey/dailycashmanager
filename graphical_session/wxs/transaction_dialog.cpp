@@ -50,7 +50,7 @@ BEGIN_EVENT_TABLE(TransactionDialog, wxDialog)
 END_EVENT_TABLE()
 
 // TODO HIGH PRIORITY.
-// There are bugs in wxWidgets' wxDatePickerCtrl, at least in wxGTK.
+// There are bugs in wxWidgets' wxDatePickerCtrl under wxGTK.
 // Firstly, tab traversal gets stuck on that control.
 // Secondly, if we type a different date and then press "Enter" for OK,
 // the date that actually gets picked up as the transaction date always
@@ -181,7 +181,14 @@ TransactionDialog::TransactionDialog
 	m_top_sizer->AddStretchSpacer();
 
 	// Date control
-	m_date_ctrl = new wxDatePickerCtrl(this, wxID_ANY);
+	m_date_ctrl = new wxDatePickerCtrl
+	(	this,
+		wxID_ANY,
+		wxDefaultDateTime,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxDP_DEFAULT | wxDP_SHOWCENTURY | wxDP_SPIN
+	);
 	m_top_sizer->Add(m_date_ctrl, 2, wxRIGHT | wxLEFT | wxTOP, 10);
 	
 	// Cancel and OK buttons
