@@ -8,6 +8,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "transaction_ctrl.hpp"
 #include <wx/wx.h>
+#include <cassert>
 #include <vector>
 
 using std::vector;
@@ -35,7 +36,19 @@ TopPanel::TopPanel
 	m_pl_account_list(0),
 	m_transaction_ctrl(0)
 {
-	// Configure Account lists
+	m_top_sizer = new wxBoxSizer(wxHORIZONTAL);
+	configure_account_lists();
+	configure_transaction_ctrl();
+	SetSizer(m_top_sizer);
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	Layout();
+}
+
+void
+TopPanel::configure_account_lists()
+{
+	assert (m_top_sizer);
 	m_bs_account_list = AccountListCtrl::create_balance_sheet_account_list
 	(	this,
 		m_database_connection
@@ -44,15 +57,6 @@ TopPanel::TopPanel
 	(	this,
 		m_database_connection
 	);
-
-	// Configure TransactionCtrl
-	vector<Account> selected_accounts;
-	selected_balance_sheet_accounts(selected_accounts);
-	selected_pl_accounts(selected_accounts);
-	m_transaction_ctrl = new TransactionCtrl(this, selected_accounts);
-
-	// Add elements to sizer
-	m_top_sizer = new wxBoxSizer(wxHORIZONTAL);
 	m_top_sizer->Add
 	(	m_bs_account_list,
 		wxSizerFlags(2).Expand().Border(wxNORTH | wxSOUTH | wxWEST, 15)
@@ -61,15 +65,30 @@ TopPanel::TopPanel
 	(	m_pl_account_list,
 		wxSizerFlags(3).Expand().Border(wxNORTH | wxSOUTH | wxWEST, 15)
 	);
+	return;
+}
+
+void
+TopPanel::configure_transaction_ctrl()
+{
+	assert (m_top_sizer);
+	vector<Account> selected_accounts;
+	selected_balance_sheet_accounts(selected_accounts);
+	selected_pl_accounts(selected_accounts);
+	configure_transaction_ctrl(selected_accounts);
+	return;
+}
+
+void
+TopPanel::configure_transaction_ctrl(vector<Account> const& p_accounts)
+{
+	m_transaction_ctrl = new TransactionCtrl(this, p_accounts);
 	m_top_sizer->Add
 	(	m_transaction_ctrl,
 		wxSizerFlags(5).Expand().
 			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, 15)
 	);
-	SetSizer(m_top_sizer);
-	m_top_sizer->Fit(this);
-	m_top_sizer->SetSizeHints(this);
-	Layout();
+	return;
 }
 
 void
@@ -100,12 +119,7 @@ TopPanel::redraw_transaction_ctrl(vector<Account> const& p_accounts)
 {
 	m_top_sizer->Detach(m_transaction_ctrl);
 	TransactionCtrl* old = m_transaction_ctrl;
-	m_transaction_ctrl = new TransactionCtrl(this, p_accounts);
-	m_top_sizer->Add
-	(	m_transaction_ctrl,
-		wxSizerFlags(5).Expand().
-			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, 15)
-	);
+	configure_transaction_ctrl(p_accounts);
 	old->Destroy();
 	old = 0;
 	Layout();

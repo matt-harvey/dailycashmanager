@@ -63,6 +63,10 @@ public:
 
 private:
 
+	void configure_account_lists();
+	void configure_transaction_ctrl();
+	void configure_transaction_ctrl(std::vector<Account> const& p_accounts);
+
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;
 	AccountListCtrl* m_bs_account_list;
