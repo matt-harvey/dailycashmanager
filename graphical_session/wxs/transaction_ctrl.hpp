@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_transaction_dialog_hpp
-#define GUARD_transaction_dialog_hpp
+#ifndef GUARD_transaction_ctrl_hpp
+#define GUARD_transaction_ctrl_hpp
 
 #include "account.hpp"
 #include "decimal_text_ctrl.hpp"
@@ -46,7 +46,7 @@ class Frame;
  *
  * @todo Provide option to save as Draft, Recurring or etc. etc..
  */
-class TransactionDialog: public wxDialog
+class TransactionCtrl: public wxDialog
 {
 public:
 	
@@ -54,7 +54,7 @@ public:
 	 * All Accounts in p_accounts should be associated with the same
 	 * PhatbooksDatabaseConnection.
 	 */
-	TransactionDialog
+	TransactionCtrl
 	(	Frame* p_parent,
 		std::vector<Account> const& p_accounts
 	);
@@ -94,9 +94,9 @@ private:
 	// Non-owning pointer
 	PhatbooksDatabaseConnection* m_database_connection;
 
-};  // class TransactionDialog
+};  // class TransactionCtrl
 
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_transaction_dialog_hpp
+#endif  // GUARD_transaction_ctrl_hpp

@@ -1,6 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "transaction_dialog.hpp"
+#include "transaction_ctrl.hpp"
 #include "account.hpp"
 #include "date.hpp"
 #include "decimal_text_ctrl.hpp"
@@ -49,10 +49,10 @@ namespace gui
 
 
 
-BEGIN_EVENT_TABLE(TransactionDialog, wxDialog)
+BEGIN_EVENT_TABLE(TransactionCtrl, wxDialog)
 	EVT_BUTTON
 	(	wxID_OK,
-		TransactionDialog::on_ok_button_click
+		TransactionCtrl::on_ok_button_click
 	)
 END_EVENT_TABLE()
 
@@ -67,7 +67,7 @@ END_EVENT_TABLE()
 // Stop-gap measure for time being is to use wxCalendarCtrl instead of
 // wxDateCtrl, when not on Windows.
 
-TransactionDialog::TransactionDialog
+TransactionCtrl::TransactionCtrl
 (	Frame* p_parent,
 	vector<Account> const& p_accounts
 ):
@@ -233,7 +233,7 @@ TransactionDialog::TransactionDialog
 }
 
 void
-TransactionDialog::on_ok_button_click(wxCommandEvent& event)
+TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
 	if (Validate() && TransferDataFromWindow())
@@ -254,7 +254,7 @@ TransactionDialog::on_ok_button_click(wxCommandEvent& event)
 
 
 void
-TransactionDialog::post_journal() const
+TransactionCtrl::post_journal() const
 {
 	if (m_database_connection)
 	{
@@ -311,7 +311,7 @@ TransactionDialog::post_journal() const
 }
 
 bool
-TransactionDialog::is_balanced() const
+TransactionCtrl::is_balanced() const
 {
 	Decimal balance(0, 0);
 	vector<DecimalTextCtrl*>::size_type i = 0;

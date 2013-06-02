@@ -182,7 +182,7 @@ set (gui_files
 	 graphical_session/wxs/locale.cpp
 	 graphical_session/wxs/setup_wizard.cpp
 	 graphical_session/wxs/top_panel.cpp
-	 graphical_session/wxs/transaction_dialog.cpp
+	 graphical_session/wxs/transaction_ctrl.cpp
 	 graphical_session/wxs/welcome_dialog.cpp)
 
 set (test_files

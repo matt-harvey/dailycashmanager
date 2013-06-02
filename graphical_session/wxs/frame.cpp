@@ -9,7 +9,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "top_panel.hpp"
-#include "transaction_dialog.hpp"
+#include "transaction_ctrl.hpp"
 #include <jewel/on_windows.hpp>
 #include <wx/menu.h>
 #include <wx/string.h>
@@ -139,8 +139,8 @@ Frame::on_new_transaction(wxCommandEvent& event)
 	vector<Account> selected_accounts;
 	selected_balance_sheet_accounts(selected_accounts);
 	selected_pl_accounts(selected_accounts);
-	TransactionDialog transaction_dialog(this, selected_accounts);
-	if (transaction_dialog.ShowModal() == wxID_OK)
+	TransactionCtrl transaction_ctrl(this, selected_accounts);
+	if (transaction_ctrl.ShowModal() == wxID_OK)
 	{
 		// TODO Do stuff
 	}
@@ -148,7 +148,7 @@ Frame::on_new_transaction(wxCommandEvent& event)
 	{
 		// TODO What then?
 	}
-	transaction_dialog.Destroy();
+	transaction_ctrl.Destroy();
 	return;
 }
 
