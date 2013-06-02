@@ -53,6 +53,10 @@ BEGIN_EVENT_TABLE(TransactionCtrl, wxPanel)
 	(	wxID_OK,
 		TransactionCtrl::on_ok_button_click
 	)
+	EVT_BUTTON
+	(	wxID_CANCEL,
+		TransactionCtrl::on_cancel_button_click
+	)
 END_EVENT_TABLE()
 
 // TODO
@@ -238,6 +242,9 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 		if (is_balanced())
 		{
 			post_journal();
+			TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
+			assert (panel);
+			panel->update();
 		}
 		else
 		{
@@ -245,6 +252,16 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 		}
 	}
 	return;
+}
+
+void
+TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
+{
+
+	(void)event;  // Silence compiler re. unused parameter
+	TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
+	assert (panel);
+	panel->update();
 }
 
 
@@ -296,12 +313,7 @@ TransactionCtrl::post_journal() const
 		int const month = static_cast<int>(date_wx.GetMonth()) + 1;
 		int const day = date_wx.GetDay();
 		journal.set_date(gregorian::date(year, month, day));
-
 		journal.save();
-
-		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
-		assert (panel);
-		panel->update_for_posted_journal(journal);
 	}
 }
 

@@ -63,6 +63,7 @@ protected:
 
 private:
 	void on_ok_button_click(wxCommandEvent& event);
+	void on_cancel_button_click(wxCommandEvent& event);
 	void post_journal() const;
 	bool is_balanced() const;
 

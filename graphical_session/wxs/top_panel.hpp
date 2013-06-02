@@ -51,9 +51,9 @@ public:
 	void selected_pl_accounts(std::vector<Account>& out) const;
 
 	/**
-	 * Update the display to reflect that \e journal has been posted.
+	 * Update the display to reflect current state of database.
 	 */
-	void update_for_posted_journal(OrdinaryJournal const& journal);
+	void update();
 
 	/**
 	 * Configure the TransactionCtrl to reflect the Accounts in p_accounts.
