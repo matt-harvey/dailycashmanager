@@ -3,10 +3,10 @@
 #include "top_panel.hpp"
 #include "account.hpp"
 #include "account_list_ctrl.hpp"
-#include "entry_list_ctrl.hpp"
 #include "frame.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "transaction_ctrl.hpp"
 #include <wx/wx.h>
 #include <vector>
 
@@ -33,9 +33,9 @@ TopPanel::TopPanel
 	m_top_sizer(0),
 	m_bs_account_list(0),
 	m_pl_account_list(0),
-	m_entry_list(0)
+	m_transaction_ctrl(0)
 {
-	m_top_sizer = new wxBoxSizer(wxHORIZONTAL);
+	// Configure Account lists
 	m_bs_account_list = AccountListCtrl::create_balance_sheet_account_list
 	(	this,
 		m_database_connection
@@ -44,12 +44,15 @@ TopPanel::TopPanel
 	(	this,
 		m_database_connection
 	);
-	/*
-	m_entry_list = EntryListCtrl::create_actual_ordinary_entry_list
-	(	this,
-		m_database_connection
-	);
-	*/
+
+	// Configure TransactionCtrl
+	vector<Account> selected_accounts;
+	selected_balance_sheet_accounts(selected_accounts);
+	selected_pl_accounts(selected_accounts);
+	m_transaction_ctrl = new TransactionCtrl(this, selected_accounts);
+
+	// Add elements to sizer
+	m_top_sizer = new wxBoxSizer(wxHORIZONTAL);
 	m_top_sizer->Add
 	(	m_bs_account_list,
 		wxSizerFlags(2).Expand().Border(wxNORTH | wxSOUTH | wxWEST, 15)
@@ -58,8 +61,11 @@ TopPanel::TopPanel
 	(	m_pl_account_list,
 		wxSizerFlags(3).Expand().Border(wxNORTH | wxSOUTH | wxWEST, 15)
 	);
-	m_top_sizer->AddStretchSpacer(3);
-	// m_top_sizer->Add(m_entry_list, wxSizerFlags(4).Expand());
+	m_top_sizer->Add
+	(	m_transaction_ctrl,
+		wxSizerFlags(5).Expand().
+			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, 15)
+	);
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -86,7 +92,6 @@ TopPanel::update_for_posted_journal(OrdinaryJournal const& journal)
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
 	(void)journal;  // Silence compiler re. unused variable.
-	// m_entry_list->update_for_posted_journal(journal);
 	return;
 }
 

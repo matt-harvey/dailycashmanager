@@ -4,7 +4,8 @@
 #define GUARD_top_panel_hpp
 
 #include "account.hpp"
-#include <wx/wx.h>
+#include <wx/panel.h>
+#include <wx/sizer.h>
 #include <vector>
 
 namespace phatbooks
@@ -19,8 +20,8 @@ namespace gui
 {
 
 class AccountListCtrl;
-class EntryListCtrl;
 class Frame;
+class TransactionCtrl;
 
 // End forward declarations
 
@@ -28,8 +29,7 @@ class Frame;
 /**
  * Top level panel intended as immediate child of Frame.
  */
-class TopPanel:
-	public wxPanel
+class TopPanel: public wxPanel
 {
 public:
 
@@ -61,7 +61,7 @@ private:
 	wxBoxSizer* m_top_sizer;
 	AccountListCtrl* m_bs_account_list;
 	AccountListCtrl* m_pl_account_list;
-	EntryListCtrl* m_entry_list;
+	TransactionCtrl* m_transaction_ctrl;
 };
 
 

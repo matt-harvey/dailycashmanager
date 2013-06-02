@@ -11,12 +11,14 @@
 #include "ordinary_journal.hpp"
 #include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "top_panel.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/on_windows.hpp>
 #include <wx/arrstr.h>
 #include <wx/button.h>
+#include <wx/panel.h>
 
 #ifndef JEWEL_ON_WINDOWS
 #	include <wx/calctrl.h>
@@ -24,7 +26,6 @@
 #	include <wx/datectrl.h>
 #endif
 
-#include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
 #include <wx/radiobox.h>
@@ -49,7 +50,7 @@ namespace gui
 
 
 
-BEGIN_EVENT_TABLE(TransactionCtrl, wxDialog)
+BEGIN_EVENT_TABLE(TransactionCtrl, wxPanel)
 	EVT_BUTTON
 	(	wxID_OK,
 		TransactionCtrl::on_ok_button_click
@@ -68,13 +69,12 @@ END_EVENT_TABLE()
 // wxDateCtrl, when not on Windows.
 
 TransactionCtrl::TransactionCtrl
-(	Frame* p_parent,
+(	TopPanel* p_parent,
 	vector<Account> const& p_accounts
 ):
-	wxDialog
+	wxPanel
 	(	p_parent,
 		wxID_ANY,
-		"New transaction",
 		wxDefaultPosition,
 		wxDefaultSize
 	),
@@ -229,7 +229,6 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
 	Layout();
-	CentreOnScreen();
 }
 
 void
@@ -238,11 +237,9 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 	(void)event;  // Silence compiler re. unused parameter.
 	if (Validate() && TransferDataFromWindow())
 	{
-		assert (IsModal());
 		if (is_balanced())
 		{
 			post_journal();
-			EndModal(wxID_OK);
 		}
 		else
 		{

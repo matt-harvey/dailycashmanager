@@ -139,6 +139,9 @@ Frame::on_new_transaction(wxCommandEvent& event)
 	vector<Account> selected_accounts;
 	selected_balance_sheet_accounts(selected_accounts);
 	selected_pl_accounts(selected_accounts);
+	// TODO High priority Change this to reflect new design for
+	// TransactionCtrl (now a wxPanel not wxDialog).
+	/*
 	TransactionCtrl transaction_ctrl(this, selected_accounts);
 	if (transaction_ctrl.ShowModal() == wxID_OK)
 	{
@@ -149,6 +152,7 @@ Frame::on_new_transaction(wxCommandEvent& event)
 		// TODO What then?
 	}
 	transaction_ctrl.Destroy();
+	*/
 	return;
 }
 

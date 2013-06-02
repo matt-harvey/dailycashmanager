@@ -14,8 +14,8 @@
 #	include <wx/datectrl.h>
 #endif
 
-#include <wx/dialog.h>
 #include <wx/event.h>
+#include <wx/panel.h>
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -32,7 +32,7 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
-class Frame;
+class TopPanel;
 
 // End forward declarations
 
@@ -46,7 +46,7 @@ class Frame;
  *
  * @todo Provide option to save as Draft, Recurring or etc. etc..
  */
-class TransactionCtrl: public wxDialog
+class TransactionCtrl: public wxPanel
 {
 public:
 	
@@ -55,7 +55,7 @@ public:
 	 * PhatbooksDatabaseConnection.
 	 */
 	TransactionCtrl
-	(	Frame* p_parent,
+	(	TopPanel* p_parent,
 		std::vector<Account> const& p_accounts
 	);
 
