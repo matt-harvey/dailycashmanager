@@ -121,6 +121,18 @@ AccountListCtrl::update
 	wxString const& p_left_column_title
 )
 {
+	// Remember which rows are selected currently
+	vector<size_t> selected_rows;
+	size_t const lim = GetItemCount();
+	for (size_t j = 0 ; j != lim; ++j)
+	{
+		if (GetItemState(j, wxLIST_STATE_SELECTED))
+		{
+			selected_rows.push_back(j);
+		}
+	}
+
+	// Now redraw
 	ClearAll();
 	InsertColumn(s_name_col, p_left_column_title, wxLIST_FORMAT_LEFT);
 	InsertColumn(s_balance_col, "Balance", wxLIST_FORMAT_RIGHT);
@@ -158,12 +170,25 @@ AccountListCtrl::update
 			SetItem(i, s_budget_col, finformat_wx(it->budget(), locale()));
 		}
 	}
+
+	// Reinstate the selections we remembered
+	size_t const sel_sz = selected_rows.size();
+	for (size_t k = 0; k != sel_sz; ++k)
+	{
+		SetItemState
+		(	selected_rows[k],
+			wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED
+		);
+	}
+
+	// Configure column widths
 	SetColumnWidth(s_name_col, wxLIST_AUTOSIZE);
 	SetColumnWidth(s_balance_col, wxLIST_AUTOSIZE);
 	if (m_show_daily_budget)
 	{
 		SetColumnWidth(s_budget_col, wxLIST_AUTOSIZE);
 	}
+
 	return;
 }
 

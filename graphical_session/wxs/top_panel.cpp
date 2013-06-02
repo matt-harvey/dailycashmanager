@@ -82,12 +82,24 @@ TopPanel::configure_transaction_ctrl()
 void
 TopPanel::configure_transaction_ctrl(vector<Account> const& p_accounts)
 {
+	TransactionCtrl* old = 0;
+	if (m_top_sizer && m_transaction_ctrl)
+	{
+		m_top_sizer->Detach(m_transaction_ctrl);
+		old = m_transaction_ctrl;
+	}
 	m_transaction_ctrl = new TransactionCtrl(this, p_accounts);
 	m_top_sizer->Add
 	(	m_transaction_ctrl,
-		wxSizerFlags(5).Expand().
+		wxSizerFlags(4).Expand().
 			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, 15)
 	);
+	if (old)
+	{
+		old->Destroy();
+		old = 0;
+	}
+	Layout();
 	return;
 }
 
@@ -108,25 +120,17 @@ TopPanel::selected_pl_accounts(vector<Account>& out) const
 void
 TopPanel::update_for_posted_journal(OrdinaryJournal const& journal)
 {
+	// TODO Deal with flicker in Amount boxes of TransactionCtrl, when
+	// redrawing after posting of Journal.
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
+	configure_transaction_ctrl();
 	(void)journal;  // Silence compiler re. unused variable.
 	return;
 }
 
-void
-TopPanel::redraw_transaction_ctrl(vector<Account> const& p_accounts)
-{
-	m_top_sizer->Detach(m_transaction_ctrl);
-	TransactionCtrl* old = m_transaction_ctrl;
-	configure_transaction_ctrl(p_accounts);
-	old->Destroy();
-	old = 0;
-	Layout();
-	return;
-}
-
-
+	
+	
 
 
 

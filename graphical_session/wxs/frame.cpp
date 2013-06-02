@@ -138,7 +138,7 @@ Frame::on_new_transaction(wxCommandEvent& event)
 	vector<Account> selected_accounts;
 	selected_balance_sheet_accounts(selected_accounts);
 	selected_pl_accounts(selected_accounts);
-	m_top_panel->redraw_transaction_ctrl(selected_accounts);
+	m_top_panel->configure_transaction_ctrl(selected_accounts);
 	return;
 }
 

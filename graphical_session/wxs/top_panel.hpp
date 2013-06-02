@@ -56,16 +56,21 @@ public:
 	void update_for_posted_journal(OrdinaryJournal const& journal);
 
 	/**
-	 * Redraw m_transaction_ctrl on the basis of Accounts in
-	 * p_accounts
+	 * Configure the TransactionCtrl to reflect the Accounts in p_accounts.
 	 */
-	void redraw_transaction_ctrl(std::vector<Account> const& p_accounts);
+	void configure_transaction_ctrl(std::vector<Account> const& p_accounts);
 
 private:
 
 	void configure_account_lists();
+
+	/**
+	 * Configure the TransactionCtrl to reflect the currently selected
+	 * Accounts (if any).
+	 *
+	 * @todo What if fewer than 2 Accounts are selected?
+	 */
 	void configure_transaction_ctrl();
-	void configure_transaction_ctrl(std::vector<Account> const& p_accounts);
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;

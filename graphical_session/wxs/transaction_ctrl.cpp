@@ -48,8 +48,6 @@ namespace phatbooks
 namespace gui
 {
 
-
-
 BEGIN_EVENT_TABLE(TransactionCtrl, wxPanel)
 	EVT_BUTTON
 	(	wxID_OK,

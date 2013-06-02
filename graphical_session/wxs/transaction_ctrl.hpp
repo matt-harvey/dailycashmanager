@@ -58,7 +58,7 @@ public:
 	(	TopPanel* p_parent,
 		std::vector<Account> const& p_accounts
 	);
-
+	
 protected:
 
 private:

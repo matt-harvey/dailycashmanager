@@ -69,7 +69,6 @@ public:
 	 */
 	void update(bool balance_sheet);
 
-
 private:
 
 	AccountListCtrl
