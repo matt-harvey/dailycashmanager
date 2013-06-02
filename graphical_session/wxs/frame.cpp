@@ -6,10 +6,8 @@
 #include "app.hpp"
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
-#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "top_panel.hpp"
-#include "transaction_ctrl.hpp"
 #include <jewel/on_windows.hpp>
 #include <wx/menu.h>
 #include <wx/string.h>
@@ -19,9 +17,10 @@
 
 using std::vector;
 
-#include <iostream>  // for testing
-using std::cout;     // for testing
-using std::endl;     // for testing
+#include <jewel/debug_log.hpp>  // for debugging / testing
+#include <iostream>  // for debugging / testinga
+using std::cout;     // for debugging / testing
+using std::endl;     // for debubbing / testing
 
 
 namespace phatbooks
@@ -139,20 +138,7 @@ Frame::on_new_transaction(wxCommandEvent& event)
 	vector<Account> selected_accounts;
 	selected_balance_sheet_accounts(selected_accounts);
 	selected_pl_accounts(selected_accounts);
-	// TODO High priority Change this to reflect new design for
-	// TransactionCtrl (now a wxPanel not wxDialog).
-	/*
-	TransactionCtrl transaction_ctrl(this, selected_accounts);
-	if (transaction_ctrl.ShowModal() == wxID_OK)
-	{
-		// TODO Do stuff
-	}
-	else
-	{
-		// TODO What then?
-	}
-	transaction_ctrl.Destroy();
-	*/
+	m_top_panel->redraw_transaction_ctrl(selected_accounts);
 	return;
 }
 
@@ -167,13 +153,6 @@ void
 Frame::selected_pl_accounts(vector<Account>& out) const
 {
 	m_top_panel->selected_pl_accounts(out);
-	return;
-}
-
-void
-Frame::update_for_posted_journal(OrdinaryJournal const& journal)
-{
-	m_top_panel->update_for_posted_journal(journal);
 	return;
 }
 

@@ -55,6 +55,12 @@ public:
 	 */
 	void update_for_posted_journal(OrdinaryJournal const& journal);
 
+	/**
+	 * Redraw m_transaction_ctrl on the basis of Accounts in
+	 * p_accounts
+	 */
+	void redraw_transaction_ctrl(std::vector<Account> const& p_accounts);
+
 private:
 
 	PhatbooksDatabaseConnection& m_database_connection;

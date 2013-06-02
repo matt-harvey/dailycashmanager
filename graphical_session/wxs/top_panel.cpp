@@ -95,7 +95,22 @@ TopPanel::update_for_posted_journal(OrdinaryJournal const& journal)
 	return;
 }
 
-
+void
+TopPanel::redraw_transaction_ctrl(vector<Account> const& p_accounts)
+{
+	m_top_sizer->Detach(m_transaction_ctrl);
+	TransactionCtrl* old = m_transaction_ctrl;
+	m_transaction_ctrl = new TransactionCtrl(this, p_accounts);
+	m_top_sizer->Add
+	(	m_transaction_ctrl,
+		wxSizerFlags(5).Expand().
+			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, 15)
+	);
+	old->Destroy();
+	old = 0;
+	Layout();
+	return;
+}
 
 
 

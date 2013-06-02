@@ -301,9 +301,9 @@ TransactionCtrl::post_journal() const
 
 		journal.save();
 
-		Frame* const frame = dynamic_cast<Frame*>(GetParent());
-		assert (frame);
-		frame->update_for_posted_journal(journal);
+		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
+		assert (panel);
+		panel->update_for_posted_journal(journal);
 	}
 }
 

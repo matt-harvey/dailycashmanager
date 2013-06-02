@@ -14,7 +14,6 @@ namespace phatbooks
 
 // Begin forward declarations
 
-class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -49,11 +48,6 @@ public:
 	 * by the user in the main window.
 	 */
 	void selected_pl_accounts(std::vector<Account>& out) const;
-
-	/**
-	 * Update the display to reflect that \e journal has been posted.
-	 */
-	void update_for_posted_journal(OrdinaryJournal const& journal);
 
 private:
 
