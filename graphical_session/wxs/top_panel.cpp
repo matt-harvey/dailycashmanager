@@ -120,8 +120,6 @@ TopPanel::selected_pl_accounts(vector<Account>& out) const
 void
 TopPanel::update()
 {
-	// TODO Deal with flicker in Amount boxes of TransactionCtrl, when
-	// redrawing TransactionCtrl.
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
 	configure_transaction_ctrl();

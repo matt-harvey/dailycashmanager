@@ -45,6 +45,13 @@ class TopPanel;
  * @todo Ensure Journal balances.
  *
  * @todo Provide option to save as Draft, Recurring or etc. etc..
+ *
+ * @todo When the update the TopPanel after posting or cancelling Journal
+ * from TransactionCtrl, there is flicker. This is because we are redrawing
+ * the entire TopPanel from scratch. We could get rid of the flicker by
+ * only redrawing the parts we need. However, the only noticeable flicker
+ * seems to be from the TransactionCtrl itself. So maybe we need only optimize
+ * the redrawing of the TransactionCtrl.
  */
 class TransactionCtrl: public wxPanel
 {
