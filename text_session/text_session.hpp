@@ -4,6 +4,7 @@
 #define GUARD_text_session_hpp
 
 #include "session.hpp"
+#include "transaction_type.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
 #include <boost/optional.hpp>
@@ -109,19 +110,6 @@ private:
 	 */
 	int run_with_filepath(boost::filesystem::path const& filepath);
 
-	// This effects only the presentation to the user when
-	// constructing the journal and is not stored as an aspect of
-	// the eventual journal object.
-	enum TransactionType
-	{
-		expenditure_transaction = 0,
-		revenue_transaction,
-		balance_sheet_transaction,
-		envelope_transaction,
-		generic_transaction
-	};
-	static int const num_transaction_types = 5;
-
 	// Various phrases used in interacting with the user. The wording
 	// used for each phrase may vary with TransactionType
 	enum PhraseType
@@ -147,7 +135,7 @@ private:
 	// Retrieve the user-facing string appropriate for a given
 	// TransactionType and PhraseType
 	std::string dialogue_phrase
-	(	TransactionType transaction_type,
+	(	transaction_type::TransactionType transaction_type,
 		PhraseType dialogue_phrase
 	);
 
@@ -156,7 +144,7 @@ private:
 	// Places a user-friendly description of what \e would be valid
 	// in validity_description (e.g. "asset or liability account").
 	bool account_is_valid
-	(	TransactionType transaction_type,
+	(	transaction_type::TransactionType transaction_type,
 		TransactionPhase transaction_phase,
 		Account const& account,
 		std::string& validity_description
@@ -170,21 +158,21 @@ private:
 	// a valid account is entered, and an initialized optional
 	// will always be returned.
 	boost::optional<Account> elicit_valid_account
-	(	TransactionType transaction_type,
+	(	transaction_type::TransactionType transaction_type,
 		TransactionPhase transaction_phase,
 		bool allow_empty_to_escape = false
 	);
 		
-	TransactionType elicit_transaction_type();
+	transaction_type::TransactionType elicit_transaction_type();
 
 	void elicit_primary_entries
 	(	ProtoJournal& journal,
-		TransactionType transaction_type
+		transaction_type::TransactionType transaction_type
 	);
 
 	void elicit_secondary_entries
 	(	ProtoJournal& journal,
-		TransactionType transaction_type
+		transaction_type::TransactionType transaction_type
 	);
 
 	void finalize_journal(ProtoJournal& journal);

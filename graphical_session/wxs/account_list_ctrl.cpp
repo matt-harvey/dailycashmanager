@@ -132,7 +132,7 @@ AccountListCtrl::update
 		}
 	}
 
-	// Now redraw
+	// Now (re)draw
 	ClearAll();
 	InsertColumn(s_name_col, p_left_column_title, wxLIST_FORMAT_LEFT);
 	InsertColumn(s_balance_col, "Balance", wxLIST_FORMAT_RIGHT);

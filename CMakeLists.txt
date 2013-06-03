@@ -23,7 +23,8 @@ set (immediate_directories
 	 phatbooks_persistent_object
 	 text_session
 	 repeater
-	 session)
+	 session
+	 transaction_type)
 
 if (WIN32)
 	include_directories (${immediate_directories}
@@ -166,7 +167,8 @@ set (main_files
 	 phatbooks_persistent_object/phatbooks_persistent_object.cpp
 	 repeater/repeater.cpp
 	 repeater/repeater_impl.cpp
-	 repeater/repeater_reader.cpp)
+	 repeater/repeater_reader.cpp
+	 transaction_type/transaction_type.cpp)
 
 set (gui_files
 	 graphical_session/graphical_session.cpp

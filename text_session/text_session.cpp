@@ -19,6 +19,7 @@
 #include "account_type.hpp"
 #include "amalgamated_budget.hpp"
 #include "application.hpp"
+#include "b_string.hpp"
 #include "column_creation.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
@@ -36,7 +37,7 @@
 #include "proto_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
-#include "b_string.hpp"
+#include "transaction_type.hpp"
 #include <consolixx/column.hpp>
 #include <consolixx/get_input.hpp>
 #include <consolixx/menu.hpp>
@@ -122,6 +123,15 @@ namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
+
+using transaction_type::TransactionType;
+using transaction_type::expenditure_transaction;
+using transaction_type::revenue_transaction;
+using transaction_type::balance_sheet_transaction;
+using transaction_type::envelope_transaction;
+using transaction_type::generic_transaction;
+using transaction_type::num_transaction_types;
+
 namespace tui
 {
 
@@ -2963,7 +2973,7 @@ TextSession::elicit_valid_account
 
 	
 	
-TextSession::TransactionType
+TransactionType
 TextSession::elicit_transaction_type()
 {
 	Menu menu;
