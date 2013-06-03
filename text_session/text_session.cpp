@@ -2861,6 +2861,8 @@ TextSession::dialogue_phrase
 {
 	typedef string Vocab[num_phrase_types];
 	typedef Vocab VocabMap[num_transaction_types];
+	assert (static_cast<int>(num_phrase_types) == 5);
+	assert (static_cast<int>(num_transaction_types) == 5);
 	static VocabMap const dictionary =
 	{	{	"account from which money was spent",
 			"spent",

@@ -2,6 +2,8 @@
 
 #include "transaction_ctrl.hpp"
 #include "account.hpp"
+#include "account_reader.hpp"
+#include "b_string.hpp"
 #include "date.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
@@ -18,6 +20,7 @@
 #include <jewel/on_windows.hpp>
 #include <wx/arrstr.h>
 #include <wx/button.h>
+#include <wx/combobox.h>
 #include <wx/panel.h>
 
 #ifndef JEWEL_ON_WINDOWS
@@ -115,6 +118,23 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->Add(header1, 3, header_flag, 10);
 	m_top_sizer->Add(header2, 2, header_flag, 10);
 
+	// We need the names of all Accounts in an array, to help us
+	// construct the wxComboboxes from the which the user will choose
+	// Accounts.
+	wxArrayString all_account_names;
+	if (!p_accounts.empty())
+	{
+		m_database_connection = &(p_accounts[0].database_connection());
+		assert (m_database_connection);
+		AccountReader const all_account_reader(*m_database_connection);
+		AccountReader::const_iterator it = all_account_reader.begin();
+		AccountReader::const_iterator const end = all_account_reader.end();
+		for ( ; it != end; ++it)
+		{
+			all_account_names.Add(bstring_to_wx(it->name()));
+		}
+	}
+
 	// Rows for entering Entry details
 	typedef vector<Account>::size_type Size;
 	Size const sz = p_accounts.size();
@@ -125,20 +145,22 @@ TransactionCtrl::TransactionCtrl
 		{
 			m_database_connection = &(account.database_connection());
 		}
-		wxStaticText* account_name_text = new wxStaticText
+		wxComboBox* account_name_box = new wxComboBox
 		(	this,
 			id,
 			bstring_to_wx(account.name()),
 			wxDefaultPosition,
-			wxDefaultSize
+			wxSize(ok_button_size.x * 1.5, wxDefaultSize.y),
+			all_account_names,
+			wxCB_READONLY | wxCB_SORT
 		);
-		wxSize const account_name_text_size = account_name_text->GetSize();
+		wxSize const account_name_box_size = account_name_box->GetSize();
 		wxTextCtrl* comment_ctrl = new wxTextCtrl
 		(	this,
 			id,
 			wxEmptyString,
 			wxDefaultPosition,
-			wxSize(ok_button_size.x * 4.5, account_name_text_size.y * 1.2),
+			wxSize(ok_button_size.x * 4.5, account_name_box_size.y),
 			wxALIGN_LEFT
 		);
 		Decimal::places_type const precision =
@@ -146,20 +168,20 @@ TransactionCtrl::TransactionCtrl
 		DecimalTextCtrl* entry_ctrl = new DecimalTextCtrl
 		(	this,
 			id,
-			wxSize(ok_button_size.x * 1.5, account_name_text_size.y * 1.2),
+			wxSize(ok_button_size.x * 1.5, account_name_box_size.y),
 			precision,
 			false
 		);
 		int base_flag = wxLEFT;
 		if (i == 0) base_flag |= wxTOP;
 		m_top_sizer->
-			Add(account_name_text, 2, base_flag | wxRIGHT | wxALIGN_LEFT, 10);
+			Add(account_name_box, 2, base_flag | wxRIGHT | wxALIGN_LEFT, 10);
 		m_top_sizer->
 			Add(comment_ctrl, 3, base_flag | wxALIGN_LEFT, 10);
 		m_top_sizer->
 			Add(entry_ctrl, 2, base_flag | wxRIGHT | wxALIGN_RIGHT, 10);
 
-		m_account_name_boxes.push_back(account_name_text);
+		m_account_name_boxes.push_back(account_name_box);
 		m_comment_boxes.push_back(comment_ctrl);
 		m_amount_boxes.push_back(entry_ctrl);
 	}

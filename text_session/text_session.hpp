@@ -118,9 +118,9 @@ private:
 		amount_prompt,
 		secondary_account_prompt,
 		secondary_account_prompt_simple,
-		secondary_account_prompt_plural
+		secondary_account_prompt_plural,
+		num_phrase_types  // Do not add enumerators below this
 	};
-	static int const num_phrase_types = 5;
 
 	// As the user adds Entries to an Account, they are in a particular
 	// "phase". The phase determines various aspects of the user-facing

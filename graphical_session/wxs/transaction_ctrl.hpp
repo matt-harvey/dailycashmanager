@@ -14,6 +14,7 @@
 #	include <wx/datectrl.h>
 #endif
 
+#include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/panel.h>
 #include <wx/radiobox.h>
@@ -88,7 +89,7 @@ private:
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;
 
-	std::vector<wxStaticText*> m_account_name_boxes;
+	std::vector<wxComboBox*> m_account_name_boxes;
 	std::vector<wxTextCtrl*> m_comment_boxes;
 	std::vector<DecimalTextCtrl*> m_amount_boxes;
 

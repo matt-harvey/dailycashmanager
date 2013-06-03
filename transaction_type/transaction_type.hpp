@@ -8,8 +8,10 @@ namespace transaction_type
 {
 	/**
 	 * Different types of "transactions" (i.e., Journals), as they appear
-	 * to the \e user. The affects the way we present Journal-related
-	 * information to the user.
+	 * to the \e user. This affects the way we present Journal-related
+	 * information to the user, for example whether we use the words
+	 * "amount spent", "amount earned" or "amount transferred" when
+	 * requesting the transaction amount from the user.
 	 */
 	enum TransactionType
 	{
