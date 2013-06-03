@@ -304,7 +304,7 @@ TransactionCtrl::post_journal() const
 			assert (m_database_connection);
 			Account const account
 			(	*m_database_connection,
-				wx_to_bstring(wxString(m_account_name_boxes[i]->GetLabel()))
+				wx_to_bstring(wxString(m_account_name_boxes[i]->GetValue()))
 			);
 			Entry entry(*m_database_connection);
 			entry.set_account(account);
