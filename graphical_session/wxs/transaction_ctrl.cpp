@@ -145,6 +145,7 @@ TransactionCtrl::TransactionCtrl
 		{
 			m_database_connection = &(account.database_connection());
 		}
+		// TODO High priority this wxComboBox needs validation.
 		wxComboBox* account_name_box = new wxComboBox
 		(	this,
 			id,
@@ -152,8 +153,9 @@ TransactionCtrl::TransactionCtrl
 			wxDefaultPosition,
 			wxSize(ok_button_size.x * 1.5, wxDefaultSize.y),
 			all_account_names,
-			wxCB_READONLY | wxCB_SORT
+			wxCB_SORT
 		);
+		account_name_box->AutoComplete(all_account_names);
 		wxSize const account_name_box_size = account_name_box->GetSize();
 		wxTextCtrl* comment_ctrl = new wxTextCtrl
 		(	this,
