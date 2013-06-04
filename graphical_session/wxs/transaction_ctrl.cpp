@@ -182,9 +182,6 @@ TransactionCtrl::TransactionCtrl
 		m_amount_boxes.push_back(entry_ctrl);
 	}
 
-	m_top_sizer->AddStretchSpacer();
-	m_top_sizer->AddStretchSpacer();
-
 	// Radio box for selecting actual vs. budget
 	wxArrayString radio_box_strings;
 	radio_box_strings.Add(wxString("Actual"));
@@ -202,17 +199,17 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->Add
 	(	m_actual_vs_budget_ctrl,
 		3,
-		wxRIGHT | wxLEFT | wxALIGN_RIGHT,
+		wxALIGN_LEFT | wxRIGHT | wxLEFT,
 		10
 	);
 
-	m_top_sizer->AddStretchSpacer();
 	m_top_sizer->AddStretchSpacer();
 
 	// Date control
 	wxSize const date_ctrl_sz(ok_button_size.x, ok_button_size.y);
 	m_date_ctrl = new DateCtrl(this, wxID_ANY, date_ctrl_sz);
-	m_top_sizer->Add(m_date_ctrl, 2, wxRIGHT | wxLEFT | wxTOP, 10);
+	m_top_sizer->
+		Add(m_date_ctrl, 2, wxALIGN_RIGHT | wxRIGHT | wxLEFT | wxTOP, 10);
 	
 	// Cancel and OK buttons
 	m_cancel_button = new wxButton
@@ -232,7 +229,7 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->Add
 	(	m_ok_button,
 		2,
-		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
+		wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
 		10
 	);
 	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
