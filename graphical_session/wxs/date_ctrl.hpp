@@ -15,6 +15,10 @@ namespace gui
 
 /**
  * Widget with which the user may select a date.
+ *
+ * @todo On Windows, at least, this is acting strangely. It
+ * is flipping the day and the month around, at least in some
+ * situations such as as used in TransactionCtrl.
  */
 class DateCtrl: public wxTextCtrl
 {
