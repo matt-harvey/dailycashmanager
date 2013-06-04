@@ -5,6 +5,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/exception/all.hpp>
 #include <jewel/debug_log.hpp>
+#include <wx/datetime.h>
 #include <wx/msgdlg.h>
 #include <wx/textctrl.h>
 #include <wx/validate.h>

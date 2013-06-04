@@ -153,10 +153,13 @@ JEWEL_DERIVED_EXCEPTION
  * Exception to be thrown by AccountDataViewModel when exceptional behaviour
  * occurs that is specifically related to that class.
  */
-JEWEL_DERIVED_EXCEPTION
-(	AccountDataViewModelException,
-	PhatbooksException
-);
+JEWEL_DERIVED_EXCEPTION(AccountDataViewModelException, PhatbooksException);
+
+/**
+ * Exception to be thrown when a something that is supposed to represent a
+ * date, does not in fact represent a valid date.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidDateException, PhatbooksException);
 
 }  // namespace phatbooks
 

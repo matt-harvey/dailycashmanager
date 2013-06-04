@@ -30,11 +30,8 @@ public:
 	);
 
 private:
-
 	void on_kill_focus(wxFocusEvent& event);
-
 	jewel::Decimal::places_type m_precision;
-
 	DECLARE_EVENT_TABLE()
 
 };  // class DecimalTextCtrl

@@ -63,6 +63,7 @@ DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
 	GetParent()->Validate();
 	GetParent()->TransferDataToWindow();
 	event.Skip();
+	return;
 }
 
 }  // namespace gui

@@ -33,6 +33,7 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
+class DateCtrl;
 class TopPanel;
 
 // End forward declarations
@@ -77,14 +78,7 @@ private:
 	wxFlexGridSizer* m_top_sizer;
 	wxRadioBox* m_actual_vs_budget_ctrl;
 
-	// Avoid using wxDatePickerCtrl unless on Windows - it's buggy
-	// on wxGTK (and I haven't yet tested it on OSX).
-#	ifndef JEWEL_ON_WINDOWS
-		wxCalendarCtrl*
-#	else
-		wxDatePickerCtrl*
-#	endif
-			m_date_ctrl;
+	DateCtrl* m_date_ctrl;
 	
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;

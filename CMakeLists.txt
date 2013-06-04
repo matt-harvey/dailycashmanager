@@ -174,6 +174,7 @@ set (gui_files
 	 graphical_session/graphical_session.cpp
 	 graphical_session/wxs/account_list_ctrl.cpp
 	 graphical_session/wxs/app.cpp
+	 graphical_session/wxs/date_ctrl.cpp
 	 graphical_session/wxs/date_validator.cpp
 	 graphical_session/wxs/decimal_renderer.cpp
 	 graphical_session/wxs/decimal_text_ctrl.cpp

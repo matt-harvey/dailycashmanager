@@ -5,6 +5,7 @@
 #include "account_reader.hpp"
 #include "b_string.hpp"
 #include "date.hpp"
+#include "date_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
 #include "entry.hpp"
@@ -22,13 +23,6 @@
 #include <wx/button.h>
 #include <wx/combobox.h>
 #include <wx/panel.h>
-
-#ifndef JEWEL_ON_WINDOWS
-#	include <wx/calctrl.h>
-#else
-#	include <wx/datectrl.h>
-#endif
-
 #include <wx/event.h>
 #include <wx/msgdlg.h>
 #include <wx/radiobox.h>
@@ -62,16 +56,16 @@ BEGIN_EVENT_TABLE(TransactionCtrl, wxPanel)
 	)
 END_EVENT_TABLE()
 
-// TODO
-// There are bugs in wxWidgets' wxDatePickerCtrl under wxGTK.
+// WARNING There are bugs in wxWidgets' wxDatePickerCtrl under wxGTK.
 // Firstly, tab traversal gets stuck on that control.
 // Secondly, if we type a different date and then press "Enter" for OK,
 // the date that actually gets picked up as the transaction date always
 // seems to be TODAY's date, not the date actually entered. This appears to
 // be an unresolved bug in wxWidgets.
 // Note adding wxTAB_TRAVERSAL to style does not seem to fix the problem.
-// Stop-gap measure for time being is to use wxCalendarCtrl instead of
-// wxDateCtrl, when not on Windows.
+// We have used a simple, validated wxTextCtrl here instead, to avoid
+// these problems. Might later add a button to pop up a wxCalendarCtrl
+// if the user wants one.
 
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
@@ -216,15 +210,8 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->AddStretchSpacer();
 
 	// Date control
-	m_date_ctrl = new
-#	ifndef JEWEL_ON_WINDOWS
-		wxCalendarCtrl
-#	else
-		wxDatePickerCtrl
-#	endif
-		(	this,
-			wxID_ANY
-		);
+	wxSize const date_ctrl_sz(ok_button_size.x, ok_button_size.y);
+	m_date_ctrl = new DateCtrl(this, wxID_ANY, date_ctrl_sz);
 	m_top_sizer->Add(m_date_ctrl, 2, wxRIGHT | wxLEFT | wxTOP, 10);
 	
 	// Cancel and OK buttons
@@ -325,18 +312,11 @@ TransactionCtrl::post_journal() const
 		}
 		assert (journal.is_balanced());
 		journal.set_comment("");
-		wxDateTime const date_wx = m_date_ctrl->
-#		ifndef JEWEL_ON_WINDOWS
-			GetDate();
-#		else
-			GetValue();
-#		endif
 
-		int year = date_wx.GetYear();
-		if (year < 100) year += 2000;
-		int const month = static_cast<int>(date_wx.GetMonth()) + 1;
-		int const day = date_wx.GetDay();
-		journal.set_date(gregorian::date(year, month, day));
+		// Process date
+		journal.set_date(m_date_ctrl->date());
+
+		// Save journal
 		journal.save();
 	}
 }
