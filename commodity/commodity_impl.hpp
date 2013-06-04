@@ -15,21 +15,16 @@
 
 
 #include "phatbooks_database_connection.hpp"
-#include <sqloxx/general_typedefs.hpp>
-#include <sqloxx/identity_map.hpp>
-#include <sqloxx/persistent_object.hpp>
-#include <jewel/debug_log.hpp>
-#include <jewel/decimal.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/optional.hpp>
 #include <boost/static_assert.hpp>
+#include <jewel/debug_log.hpp>
+#include <jewel/decimal.hpp>
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/identity_map.hpp>
+#include <sqloxx/persistent_object.hpp>
+#include <sqloxx/sql_statement_fwd.hpp>
 #include <string>
-
-
-namespace sqloxx
-{
-	class SQLStatement;
-}  // namespace sqloxx
 
 
 namespace phatbooks

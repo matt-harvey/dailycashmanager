@@ -23,6 +23,7 @@
 #include <boost/optional.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/identity_map_fwd.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <list>
@@ -30,19 +31,10 @@
 
 
 
-// Begin forward declarations
-
-namespace sqloxx
-{
-	// TODO Sqloxx should provide a forward declaration
-	// header so clients don't have to do this manually.
-	template <typename T, typename Connection>
-	class IdentityMap;
-}
-
-
 namespace phatbooks
 {
+
+// Begin forward declarations
 
 class AmalgamatedBudget;
 class Account;

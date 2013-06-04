@@ -24,13 +24,8 @@
 #include <jewel/optional.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/persistent_object.hpp>
+#include <sqloxx/sql_statement_fwd.hpp>
 #include <string>
-
-
-namespace sqloxx
-{
-	class SQLStatement;  // Forward declaration
-}
 
 
 namespace phatbooks
