@@ -31,6 +31,8 @@ public:
 	bool TransferToWindow();
 	wxObject* Clone() const;
 
+	boost::gregorian::date date() const;
+
 private:
 	boost::gregorian::date m_date;
 

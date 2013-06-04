@@ -43,49 +43,12 @@ DateCtrl::DateCtrl
 	
 
 boost::gregorian::date
-DateCtrl::date() const
+DateCtrl::date()
 {
-	// TODO Factor out code that is duplicated between here and
-	// DateValidator::Validate.
-	wxDateTime date_wx;
-	wxString const date_text = GetValue();
-	wxString::const_iterator parsed_to_position;
-	wxLocaleInfo const formats[] =
-		{wxLOCALE_SHORT_DATE_FMT, wxLOCALE_LONG_DATE_FMT};
-	size_t const num_formats = sizeof(formats) / sizeof(formats[0]);
-	assert (num_formats > 0);
-	for (size_t i = 0; i != num_formats; ++i)
-	{
-		date_wx.ParseFormat
-		(	date_text,
-			locale().GetInfo(formats[i]),
-			&parsed_to_position
-		);
-		if (parsed_to_position == date_text.end())
-		{
-			break;
-		}
-	}
-	if (parsed_to_position != date_text.end())
-	{
-		throw InvalidDateException
-		(	"Cannot extract a valid wxDateTime from DateCtrl."
-		);
-	}
-	int year = date_wx.GetYear();
-	if (year < 100) year += 2000;
-	int const month = static_cast<int>(date_wx.GetMonth()) + 1;
-	int const day = date_wx.GetDay();
-	try
-	{
-		return gregorian::date(year, month, day);
-	}
-	catch (boost::exception&)
-	{
-		throw InvalidDateException
-		(	"Cannot convert wxDateTime to boost::gregorian::date."
-		);
-	}
+	DateValidator const* const validator =
+		dynamic_cast<DateValidator const*>(GetValidator());
+	assert (validator);
+	return validator->date();
 }
 	
 

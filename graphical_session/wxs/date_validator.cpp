@@ -116,5 +116,11 @@ DateValidator::Clone() const
 	return new DateValidator(*this);
 }
 
+gregorian::date
+DateValidator::date() const
+{
+	return m_date;
+}
+
 }  // namespace gui
 }  // namespace phatbooks
