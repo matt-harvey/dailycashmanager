@@ -2,10 +2,12 @@
 
 #include "date_validator.hpp"
 #include "date.hpp"
+#include "locale.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/exception/all.hpp>
 #include <jewel/debug_log.hpp>
 #include <wx/datetime.h>
+#include <wx/intl.h>
 #include <wx/msgdlg.h>
 #include <wx/textctrl.h>
 #include <wx/validate.h>
@@ -45,7 +47,22 @@ DateValidator::Validate(wxWindow* WXUNUSED(parent))
 	wxString::const_iterator parsed_to_position;
 	wxDateTime date_wx;
 	wxString const date_text(text_ctrl->GetValue());
-	date_wx.ParseDate(date_text, &parsed_to_position);
+	wxLocaleInfo const formats[] =
+		{wxLOCALE_SHORT_DATE_FMT, wxLOCALE_LONG_DATE_FMT};
+	size_t const num_formats = sizeof(formats) / sizeof(formats[0]);
+	assert (num_formats > 0);
+	for (size_t i = 0; i != num_formats; ++i)
+	{
+		date_wx.ParseFormat
+		(	date_text,
+			locale().GetInfo(formats[i]),
+			&parsed_to_position
+		);
+		if (parsed_to_position == date_text.end())
+		{
+			break;
+		}
+	}
 	if (parsed_to_position == date_text.end())
 	{
 		// Parsing was successful

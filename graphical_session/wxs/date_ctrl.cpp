@@ -1,10 +1,12 @@
 #include "date_ctrl.hpp"
 #include "date_validator.hpp"
+#include "locale.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <wx/datetime.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/intl.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <wx/window.h>
@@ -43,10 +45,27 @@ DateCtrl::DateCtrl
 boost::gregorian::date
 DateCtrl::date() const
 {
+	// TODO Factor out code that is duplicated between here and
+	// DateValidator::Validate.
 	wxDateTime date_wx;
 	wxString const date_text = GetValue();
 	wxString::const_iterator parsed_to_position;
-	date_wx.ParseDate(date_text, &parsed_to_position);
+	wxLocaleInfo const formats[] =
+		{wxLOCALE_SHORT_DATE_FMT, wxLOCALE_LONG_DATE_FMT};
+	size_t const num_formats = sizeof(formats) / sizeof(formats[0]);
+	assert (num_formats > 0);
+	for (size_t i = 0; i != num_formats; ++i)
+	{
+		date_wx.ParseFormat
+		(	date_text,
+			locale().GetInfo(formats[i]),
+			&parsed_to_position
+		);
+		if (parsed_to_position == date_text.end())
+		{
+			break;
+		}
+	}
 	if (parsed_to_position != date_text.end())
 	{
 		throw InvalidDateException
