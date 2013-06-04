@@ -4,13 +4,10 @@
 #define GUARD_finformat_hpp
 
 #include "b_string.hpp"
+#include <jewel/decimal_fwd.hpp>
 #include <wx/intl.h>
 #include <string>
 
-namespace jewel
-{
-	class Decimal;
-}
 
 
 namespace phatbooks

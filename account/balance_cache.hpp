@@ -8,13 +8,9 @@
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/unordered_map.hpp>
+#include <jewel/decimal_fwd.hpp>
 #include <vector>
 
-// Forward declarations
-namespace jewel
-{
-	class Decimal;
-}
 
 namespace phatbooks
 {

@@ -7,16 +7,11 @@
 #include "entry.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <consolixx/table.hpp>
+#include <jewel/decimal_fwd.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <ostream>
 #include <vector>
 #include <string>
-
-namespace jewel
-{
-	class Decimal;
-}  // namespace jewel
-
 
 
 namespace phatbooks
