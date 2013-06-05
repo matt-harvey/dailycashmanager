@@ -1,6 +1,9 @@
 #ifndef GUARD_transaction_type_hpp
 #define GUARD_transaction_type_hpp
 
+#include "b_string.hpp"
+#include <vector>
+
 namespace phatbooks
 {
 
@@ -20,10 +23,26 @@ namespace transaction_type
 		balance_sheet_transaction,
 		envelope_transaction,
 		generic_transaction,
-		num_transaction_types  // do not enumerators after here
+		num_transaction_types  // do not insert enumerators below here
 	};
 
 }  // namespace transaction_type
+
+
+std::vector<transaction_type::TransactionType> const&
+transaction_types();
+
+BString
+transaction_type_to_verb
+(	transaction_type::TransactionType p_transaction_type
+);
+
+bool
+transaction_type_is_actual
+(	transaction_type::TransactionType p_transaction_type
+);
+
+
 }  // namespace phatbooks
 
 #endif  // GUARD_transaction_type_hpp
