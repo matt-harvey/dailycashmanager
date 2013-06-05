@@ -4,6 +4,7 @@
 #include "account.hpp"
 #include "account_name_validator.hpp"
 #include "b_string.hpp"
+#include <jewel/debug_log.hpp>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
 #include <wx/event.h>
@@ -84,26 +85,38 @@ AccountCtrl::AccountCtrl
 	AccountIter const& p_end,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
-	m_database_connection(p_database_connection)
-{
-	wxArrayString valid_account_names;
-	assert (valid_account_names.IsEmpty());
-	for ( ; p_beg != p_end; ++p_beg)
-	{
-		valid_account_names.Add(bstring_to_wx(p_beg->name()));
-	}
-	wxString const account_name_wx = bstring_to_wx(p_account.name());
-	Create
+	wxComboBox
 	(	p_parent,
 		p_id,
-		account_name_wx,
+		bstring_to_wx(p_account.name()),
 		wxDefaultPosition,
 		p_size,
-		valid_account_names,	
-		wxCB_SORT,
-		AccountNameValidator(account_name_wx, valid_account_names)
+		wxArrayString(),	
+		wxCB_SORT
+	),
+	m_database_connection(p_database_connection)
+{
+	JEWEL_DEBUG_LOG_LOCATION;
+	wxArrayString valid_account_names;
+	JEWEL_DEBUG_LOG_LOCATION;
+	assert (valid_account_names.IsEmpty());
+	JEWEL_DEBUG_LOG_LOCATION;
+	for ( ; p_beg != p_end; ++p_beg)
+	{
+		wxString const name_wx = bstring_to_wx(p_beg->name());
+		valid_account_names.Add(name_wx);  // remembers as valid name
+		Append(name_wx);  // adds to combobox
+	}
+	JEWEL_DEBUG_LOG_LOCATION;
+	AccountNameValidator validator
+	(	bstring_to_wx(p_account.name()),
+		valid_account_names
 	);
+	JEWEL_DEBUG_LOG_LOCATION;
+	SetValidator(validator);
+	JEWEL_DEBUG_LOG_LOCATION;
 	AutoComplete(valid_account_names);
+	JEWEL_DEBUG_LOG_LOCATION;
 }
 
 

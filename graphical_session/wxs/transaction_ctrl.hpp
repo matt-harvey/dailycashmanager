@@ -56,7 +56,8 @@ public:
 	 */
 	TransactionCtrl
 	(	TopPanel* p_parent,
-		std::vector<Account> const& p_accounts
+		std::vector<Account> const& p_accounts,
+		PhatbooksDatabaseConnection& p_database_connection
 	);
 	
 protected:
@@ -85,8 +86,7 @@ private:
 
 	DECLARE_EVENT_TABLE()
 
-	// Non-owning pointer
-	PhatbooksDatabaseConnection* m_database_connection;
+	PhatbooksDatabaseConnection& m_database_connection;
 
 };  // class TransactionCtrl
 

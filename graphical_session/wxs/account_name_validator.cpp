@@ -2,7 +2,7 @@
 #include <wx/arrstr.h>
 #include <wx/msgdlg.h>
 #include <wx/string.h>
-#include <wx/textctrl.h>
+#include <wx/textentry.h>
 #include <wx/validate.h>
 
 namespace phatbooks
@@ -30,14 +30,10 @@ AccountNameValidator::AccountNameValidator(AccountNameValidator const& rhs):
 bool
 AccountNameValidator::Validate(wxWindow* WXUNUSED(wxparent))
 {
-	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
-	wxTextCtrl const* const text_ctrl =
-		dynamic_cast<wxTextCtrl*>(GetWindow());
-	if (!text_ctrl)
-	{
-		return false;
-	}
-	wxString const text(text_ctrl->GetValue());
+	wxTextEntry const* const text_entry =
+		dynamic_cast<wxTextEntry*>(GetWindow());
+	assert (text_entry);
+	wxString const text(text_entry->GetValue());
 	int position = wxNOT_FOUND;
 	if ((position = m_valid_account_names.Index(text)) == wxNOT_FOUND)
 	{
@@ -57,20 +53,16 @@ AccountNameValidator::Validate(wxWindow* WXUNUSED(wxparent))
 bool
 AccountNameValidator::TransferFromWindow()
 {
-	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	assert (dynamic_cast<wxTextEntry*>(GetWindow()));
 	return true;
 }
 
 bool
 AccountNameValidator::TransferToWindow()
 {
-	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
-	wxTextCtrl* const text_ctrl = dynamic_cast<wxTextCtrl*>(GetWindow());
-	if (!text_ctrl)
-	{
-		return false;
-	}
-	text_ctrl->SetValue(m_account_name);
+	wxTextEntry* const text_entry = dynamic_cast<wxTextEntry*>(GetWindow());
+	assert (text_entry);
+	text_entry->SetValue(m_account_name);
 	return true;
 }
 

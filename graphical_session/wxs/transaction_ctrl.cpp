@@ -70,7 +70,8 @@ END_EVENT_TABLE()
 
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
-	vector<Account> const& p_accounts
+	vector<Account> const& p_accounts,
+	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxPanel
 	(	p_parent,
@@ -83,15 +84,18 @@ TransactionCtrl::TransactionCtrl
 	m_date_ctrl(0),
 	m_cancel_button(0),
 	m_ok_button(0),
-	m_database_connection(0)
+	m_database_connection(p_database_connection)
 {
+	JEWEL_DEBUG_LOG_LOCATION;
 	assert (m_account_name_boxes.empty());
 	assert (m_comment_boxes.empty());
 	assert (m_amount_boxes.empty());
+	JEWEL_DEBUG_LOG_LOCATION;
 
 	// We construct m_ok_button first as we want to be able to refer to its
 	// size when sizing certain other controls below. But we will not add
 	// the OK button to m_top_sizer till later.
+	JEWEL_DEBUG_LOG_LOCATION;
 	m_ok_button = new wxButton
 	(	this,
 		wxID_OK,
@@ -99,26 +103,31 @@ TransactionCtrl::TransactionCtrl
 		wxDefaultPosition,
 		wxDefaultSize
 	);
+	JEWEL_DEBUG_LOG_LOCATION;
 	wxSize const ok_button_size = m_ok_button->GetSize();
+	JEWEL_DEBUG_LOG_LOCATION;
 
 	// Top sizer
 	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 4, 3, 0, 0);
+	JEWEL_DEBUG_LOG_LOCATION;
 
 	// Column titles
 	wxStaticText* header0 = new wxStaticText(this, wxID_ANY, "Account");
 	wxStaticText* header1 = new wxStaticText(this, wxID_ANY, "Comment");
 	wxStaticText* header2 = new wxStaticText(this, wxID_ANY, "Amount");
 	unsigned int const header_flag = wxLEFT | wxTOP | wxBOTTOM;
+	JEWEL_DEBUG_LOG_LOCATION;
 	m_top_sizer->Add(header0, 2, header_flag, 10);
 	m_top_sizer->Add(header1, 3, header_flag, 10);
 	m_top_sizer->Add(header2, 2, header_flag, 10);
+	JEWEL_DEBUG_LOG_LOCATION;
 
 	// We need the names of all Accounts, to help us
 	// construct the wxComboboxes from the which the user will choose
 	// Accounts.
-	m_database_connection = &(p_accounts[0].database_connection());
-	assert (m_database_connection);
-	AccountReader const all_account_reader(*m_database_connection);
+	JEWEL_DEBUG_LOG_LOCATION;
+	AccountReader const all_account_reader(m_database_connection);
+	JEWEL_DEBUG_LOG_LOCATION;
 
 	// Rows for entering Entry details
 	typedef vector<Account>::size_type Size;
@@ -126,10 +135,6 @@ TransactionCtrl::TransactionCtrl
 	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, ++id)
 	{
 		Account const account = p_accounts[i];
-		if (!m_database_connection)
-		{
-			m_database_connection = &(account.database_connection());
-		}
 		AccountCtrl* account_name_box = new AccountCtrl
 		(	this,
 			id,
@@ -137,7 +142,7 @@ TransactionCtrl::TransactionCtrl
 			wxSize(ok_button_size.x * 1.5, wxDefaultSize.y),
 			all_account_reader.begin(),
 			all_account_reader.end(),
-			*m_database_connection
+			m_database_connection
 		);
 		wxSize const account_name_box_size = account_name_box->GetSize();
 		wxTextCtrl* comment_ctrl = new wxTextCtrl
@@ -172,9 +177,13 @@ TransactionCtrl::TransactionCtrl
 	}
 
 	// Radio box for selecting actual vs. budget
+	JEWEL_DEBUG_LOG_LOCATION;
 	wxArrayString radio_box_strings;
+	JEWEL_DEBUG_LOG_LOCATION;
 	radio_box_strings.Add(wxString("Actual"));
+	JEWEL_DEBUG_LOG_LOCATION;
 	radio_box_strings.Add(wxString("Budget"));
+	JEWEL_DEBUG_LOG_LOCATION;
 	m_actual_vs_budget_ctrl = new wxRadioBox
 	(	this,
 		wxID_ANY,
@@ -185,6 +194,7 @@ TransactionCtrl::TransactionCtrl
 		1,
 		wxRA_SPECIFY_COLS
 	);
+	JEWEL_DEBUG_LOG_LOCATION;
 	m_top_sizer->Add
 	(	m_actual_vs_budget_ctrl,
 		3,
@@ -193,12 +203,14 @@ TransactionCtrl::TransactionCtrl
 	);
 
 	m_top_sizer->AddStretchSpacer();
+	JEWEL_DEBUG_LOG_LOCATION;
 
 	// Date control
 	wxSize const date_ctrl_sz(ok_button_size.x, ok_button_size.y);
 	m_date_ctrl = new DateCtrl(this, wxID_ANY, date_ctrl_sz);
 	m_top_sizer->
 		Add(m_date_ctrl, 2, wxALIGN_RIGHT | wxRIGHT | wxLEFT | wxTOP, 10);
+	JEWEL_DEBUG_LOG_LOCATION;
 	
 	// Cancel and OK buttons
 	m_cancel_button = new wxButton
@@ -215,6 +227,7 @@ TransactionCtrl::TransactionCtrl
 		10
 	);
 	m_top_sizer->AddStretchSpacer();
+	JEWEL_DEBUG_LOG_LOCATION;
 	m_top_sizer->Add
 	(	m_ok_button,
 		2,
@@ -222,12 +235,15 @@ TransactionCtrl::TransactionCtrl
 		10
 	);
 	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
+	JEWEL_DEBUG_LOG_LOCATION;
 
 	// "Admin"
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
+	JEWEL_DEBUG_LOG_LOCATION;
 	Layout();
+	JEWEL_DEBUG_LOG_LOCATION;
 }
 
 void
@@ -265,46 +281,42 @@ TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 void
 TransactionCtrl::post_journal() const
 {
-	if (m_database_connection)
+	OrdinaryJournal journal(m_database_connection);
+	journal.set_whether_actual
+	(	m_actual_vs_budget_ctrl->GetSelection() == 0
+	);
+	size_t const sz = m_account_name_boxes.size();
+	assert (sz == m_comment_boxes.size());
+	assert (sz == m_amount_boxes.size());
+	for (size_t i = 0; i != sz; ++i)
 	{
-		OrdinaryJournal journal(*m_database_connection);
-		journal.set_whether_actual
-		(	m_actual_vs_budget_ctrl->GetSelection() == 0
+		Account const account
+		(	m_database_connection,
+			wx_to_bstring(wxString(m_account_name_boxes[i]->GetValue()))
 		);
-		size_t const sz = m_account_name_boxes.size();
-		assert (sz == m_comment_boxes.size());
-		assert (sz == m_amount_boxes.size());
-		for (size_t i = 0; i != sz; ++i)
-		{
-			assert (m_database_connection);
-			Account const account
-			(	*m_database_connection,
-				wx_to_bstring(wxString(m_account_name_boxes[i]->GetValue()))
-			);
-			Entry entry(*m_database_connection);
-			entry.set_account(account);
-			entry.set_comment
-			(	wx_to_bstring(m_comment_boxes[i]->GetValue())
-			);
-			Decimal amount = wx_to_decimal
-			(	wxString(m_amount_boxes[i]->GetValue()),
-				locale()
-			);
-			if (!journal.is_actual()) amount = -amount;
-			amount = round(amount, account.commodity().precision());
-			entry.set_amount(amount);
-			entry.set_whether_reconciled(false);
-			journal.push_entry(entry);
-		}
-		assert (journal.is_balanced());
-		journal.set_comment("");
-
-		// Process date
-		journal.set_date(m_date_ctrl->date());
-
-		// Save journal
-		journal.save();
+		Entry entry(m_database_connection);
+		entry.set_account(account);
+		entry.set_comment
+		(	wx_to_bstring(m_comment_boxes[i]->GetValue())
+		);
+		Decimal amount = wx_to_decimal
+		(	wxString(m_amount_boxes[i]->GetValue()),
+			locale()
+		);
+		if (!journal.is_actual()) amount = -amount;
+		amount = round(amount, account.commodity().precision());
+		entry.set_amount(amount);
+		entry.set_whether_reconciled(false);
+		journal.push_entry(entry);
 	}
+	assert (journal.is_balanced());
+	journal.set_comment("");
+
+	// Process date
+	journal.set_date(m_date_ctrl->date());
+
+	// Save journal
+	journal.save();
 }
 
 bool

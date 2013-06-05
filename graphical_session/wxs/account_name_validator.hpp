@@ -13,6 +13,11 @@ namespace gui
 /**
  * Validates a wxString purporting to be the name of an
  * Account, within a given set of permissible Account names.
+ *
+ * @todo There is nothing in particular about this class which means
+ * we must use it for Account names. It could be used for validating
+ * against any sequence of wxStrings. We should probably embrace this
+ * generality, and rename the class accordingly.
  */
 class AccountNameValidator: public wxValidator
 {
@@ -24,7 +29,7 @@ public:
 	AccountNameValidator(AccountNameValidator const& rhs);
 
 	/**
-	 * @param parent should point to an instance of wxTextCtrl.
+	 * @param parent should point to an instance of wxTextEntry.
 	 */
 	bool Validate(wxWindow* parent);
 

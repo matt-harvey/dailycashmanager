@@ -88,7 +88,8 @@ TopPanel::configure_transaction_ctrl(vector<Account> const& p_accounts)
 		m_top_sizer->Detach(m_transaction_ctrl);
 		old = m_transaction_ctrl;
 	}
-	m_transaction_ctrl = new TransactionCtrl(this, p_accounts);
+	m_transaction_ctrl =
+		new TransactionCtrl(this, p_accounts, m_database_connection);
 	m_top_sizer->Add
 	(	m_transaction_ctrl,
 		wxSizerFlags(4).Expand().
