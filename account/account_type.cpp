@@ -35,26 +35,29 @@ super_type(account_type::AccountType p_account_type)
 	}
 }
 
-vector<account_type::AccountType>
+vector<account_type::AccountType> const&
 account_types()
 {
-	vector<account_type::AccountType> ret;
-	ret.reserve(6);
-	ret.push_back(account_type::asset);
-	ret.push_back(account_type::liability);
-	ret.push_back(account_type::equity);
-	ret.push_back(account_type::revenue);
-	ret.push_back(account_type::expense);
-	ret.push_back(account_type::pure_envelope);
+	static vector<account_type::AccountType> ret;
+	if (ret.empty())
+	{
+		ret.reserve(6);
+		ret.push_back(account_type::asset);
+		ret.push_back(account_type::liability);
+		ret.push_back(account_type::equity);
+		ret.push_back(account_type::revenue);
+		ret.push_back(account_type::expense);
+		ret.push_back(account_type::pure_envelope);
+	}
+	assert (ret.size() == 6);
 	return ret;
 }
 
-vector<BString>
+vector<BString> const&
 account_type_names()
 {
-	static bool calculated_already = false;
 	static vector<BString> ret;
-	while (!calculated_already)
+	if (ret.empty())
 	{
 		ret.reserve(6);
 		ret.push_back("Asset");
@@ -63,8 +66,8 @@ account_type_names()
 		ret.push_back("Revenue");
 		ret.push_back("Expense");
 		ret.push_back("Pure envelope");
-		calculated_already = true;
 	}
+	assert (ret.size() == 6);
 	return ret;
 }
 

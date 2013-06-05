@@ -46,10 +46,10 @@ namespace account_super_type
 account_super_type::AccountSuperType
 super_type(account_type::AccountType p_account_type);
 
-std::vector<account_type::AccountType>
+std::vector<account_type::AccountType> const&
 account_types();
 
-std::vector<BString>
+std::vector<BString> const&
 account_type_names();
 
 BString

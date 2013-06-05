@@ -19,11 +19,16 @@ vector<TransactionType> const&
 transaction_types()
 {
 	static vector<TransactionType> ret;
-	ret.reserve(num_transaction_types);
-	for (size_t i = 0; i != num_transaction_types; ++i)
+	if (ret.empty())
 	{
-		ret.push_back(static_cast<TransactionType>(i));
+		size_t const sz = static_cast<size_t>(num_transaction_types);
+		ret.reserve(sz);
+		for (size_t i = 0; i != sz; ++i)
+		{
+			ret.push_back(static_cast<TransactionType>(i));
+		}
 	}
+	assert (ret.size() == static_cast<size_t>(num_transaction_types));
 	return ret;
 }
 
