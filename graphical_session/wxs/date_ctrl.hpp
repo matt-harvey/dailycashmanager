@@ -33,18 +33,14 @@ public:
 	/**
 	 * @returns a date from the control.
 	 *
-	 * @throws phatbooks::InvalidDateException if the text in the
-	 * control cannot be converted to a valid date.
-	 *
 	 * Unfortunately this can't currently be const because the
 	 * wxWindow::GetValidator() function used in the implementation,
-	 * in not const.
+	 * is not const.
 	 */
 	boost::gregorian::date date();
 
 private:
 	void on_kill_focus(wxFocusEvent& event);
-	boost::gregorian::date m_date;
 	DECLARE_EVENT_TABLE()
 
 };  // class DateCtrl

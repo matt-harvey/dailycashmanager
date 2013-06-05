@@ -2,6 +2,7 @@
 
 #include "transaction_ctrl.hpp"
 #include "account.hpp"
+#include "account_ctrl.hpp"
 #include "account_reader.hpp"
 #include "b_string.hpp"
 #include "date.hpp"
@@ -63,7 +64,7 @@ END_EVENT_TABLE()
 // seems to be TODAY's date, not the date actually entered. This appears to
 // be an unresolved bug in wxWidgets.
 // Note adding wxTAB_TRAVERSAL to style does not seem to fix the problem.
-// We have used a simple, validated wxTextCtrl here instead, to avoid
+// We have used a simple custom class, DateCtrl here instead, to avoid
 // these problems. Might later add a button to pop up a wxCalendarCtrl
 // if the user wants one.
 
@@ -112,22 +113,12 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->Add(header1, 3, header_flag, 10);
 	m_top_sizer->Add(header2, 2, header_flag, 10);
 
-	// We need the names of all Accounts in an array, to help us
+	// We need the names of all Accounts, to help us
 	// construct the wxComboboxes from the which the user will choose
 	// Accounts.
-	wxArrayString all_account_names;
-	if (!p_accounts.empty())
-	{
-		m_database_connection = &(p_accounts[0].database_connection());
-		assert (m_database_connection);
-		AccountReader const all_account_reader(*m_database_connection);
-		AccountReader::const_iterator it = all_account_reader.begin();
-		AccountReader::const_iterator const end = all_account_reader.end();
-		for ( ; it != end; ++it)
-		{
-			all_account_names.Add(bstring_to_wx(it->name()));
-		}
-	}
+	m_database_connection = &(p_accounts[0].database_connection());
+	assert (m_database_connection);
+	AccountReader const all_account_reader(*m_database_connection);
 
 	// Rows for entering Entry details
 	typedef vector<Account>::size_type Size;
@@ -139,17 +130,15 @@ TransactionCtrl::TransactionCtrl
 		{
 			m_database_connection = &(account.database_connection());
 		}
-		// TODO High priority this wxComboBox needs validation.
-		wxComboBox* account_name_box = new wxComboBox
+		AccountCtrl* account_name_box = new AccountCtrl
 		(	this,
 			id,
-			bstring_to_wx(account.name()),
-			wxDefaultPosition,
+			account,
 			wxSize(ok_button_size.x * 1.5, wxDefaultSize.y),
-			all_account_names,
-			wxCB_SORT
+			all_account_reader.begin(),
+			all_account_reader.end(),
+			*m_database_connection
 		);
-		account_name_box->AutoComplete(all_account_names);
 		wxSize const account_name_box_size = account_name_box->GetSize();
 		wxTextCtrl* comment_ctrl = new wxTextCtrl
 		(	this,

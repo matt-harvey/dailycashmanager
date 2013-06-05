@@ -7,14 +7,6 @@
 #include "decimal_text_ctrl.hpp"
 #include <jewel/on_windows.hpp>
 #include <wx/button.h>
-
-#ifndef JEWEL_ON_WINDOWS
-#	include <wx/calctrl.h>
-#else
-#	include <wx/datectrl.h>
-#endif
-
-#include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/panel.h>
 #include <wx/radiobox.h>
@@ -33,6 +25,7 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
+class AccountCtrl;
 class DateCtrl;
 class TopPanel;
 
@@ -83,7 +76,7 @@ private:
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;
 
-	std::vector<wxComboBox*> m_account_name_boxes;
+	std::vector<AccountCtrl*> m_account_name_boxes;
 	std::vector<wxTextCtrl*> m_comment_boxes;
 	std::vector<DecimalTextCtrl*> m_amount_boxes;
 

@@ -10,6 +10,7 @@
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <wx/window.h>
+#include <cassert>
 
 namespace gregorian = boost::gregorian;
 
@@ -36,8 +37,7 @@ DateCtrl::DateCtrl
 		p_size,
 		wxALIGN_RIGHT,
 		DateValidator(p_date)
-	),
-	m_date(p_date)
+	)
 {
 }
 	
