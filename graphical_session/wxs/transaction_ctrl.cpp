@@ -221,7 +221,11 @@ TransactionCtrl::TransactionCtrl
 	// WARNING temporary testing code - normally would have spacer
 
 	TransactionTypeCtrl* const transaction_type_ctrl =
-		new TransactionTypeCtrl(this, wxID_ANY, wxDefaultSize);
+	new TransactionTypeCtrl
+	(	this,
+		wxID_ANY,
+		wxSize(ok_button_size.x * 4.5, ok_button_size.y)
+	);
 	m_top_sizer->Add
 	(	transaction_type_ctrl,
 		2,

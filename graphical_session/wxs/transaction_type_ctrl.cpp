@@ -41,7 +41,7 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		bstring_to_wx(transaction_type_to_verb(static_cast<TransactionType>(0))),
 		wxDefaultPosition,
 		p_size,
-		wxSP_ARROW_KEYS,
+		wxSP_ARROW_KEYS | wxSP_WRAP,
 		0,
 		max(0, static_cast<int>(num_transaction_types) - 1),
 		0
@@ -63,6 +63,7 @@ TransactionTypeCtrl::on_spin(wxSpinEvent& event)
 	                << transaction_type_to_verb(new_transaction_type)
 					<< endl;
 	SetValue(bstring_to_wx(transaction_type_to_verb(new_transaction_type)));
+	SetSelection(0, 0);  // Unselect it
 	return;
 }
 	
