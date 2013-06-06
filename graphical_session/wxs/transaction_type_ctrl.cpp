@@ -35,7 +35,7 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		bstring_to_wx(transaction_type_to_verb(p_transaction_type)),
 		wxDefaultPosition,
 		p_size,
-		wxSP_ARROW_KEYS,
+		wxSP_ARROW_KEYS | wxSP_WRAP,
 		0,
 		static_cast<int>(max(0, num_transaction_types - 1))
 	),

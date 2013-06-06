@@ -16,6 +16,7 @@
 #include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "top_panel.hpp"
+#include "transaction_type_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
@@ -209,7 +210,30 @@ TransactionCtrl::TransactionCtrl
 		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
 		10
 	);
+
+
+#if 0
+
 	m_top_sizer->AddStretchSpacer();
+
+#else
+
+	// WARNING temporary testing code - normally would have spacer
+
+	TransactionTypeCtrl* const transaction_type_ctrl =
+		new TransactionTypeCtrl(this, wxID_ANY, wxDefaultSize);
+	m_top_sizer->Add
+	(	transaction_type_ctrl,
+		2,
+		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
+		10
+	);
+
+#endif
+
+
+
+
 	m_top_sizer->Add
 	(	m_ok_button,
 		2,
