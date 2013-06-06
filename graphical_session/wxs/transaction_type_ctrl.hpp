@@ -1,7 +1,6 @@
 #ifndef GUARD_transaction_type_ctrl_hpp
 #define GUARD_transaction_type_ctrl_hpp
 
-#include "transaction_type.hpp"
 #include <wx/gdicmn.h>
 #include <wx/window.h>
 #include <wx/windowid.h>
@@ -25,14 +24,11 @@ public:
 	TransactionTypeCtrl
 	(	wxWindow* p_parent,
 		wxWindowID p_id,
-		wxSize p_size,
-		transaction_type::TransactionType p_transaction_type =
-			static_cast<transaction_type::TransactionType>(0)
+		wxSize p_size
 	);
 
 private:
 	void on_spin(wxSpinEvent& event);
-	transaction_type::TransactionType m_transaction_type;
 
 	DECLARE_EVENT_TABLE()
 
