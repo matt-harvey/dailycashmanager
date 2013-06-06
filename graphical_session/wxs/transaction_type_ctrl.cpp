@@ -1,13 +1,15 @@
 #include "transaction_type_ctrl.hpp"
 #include "b_string.hpp"
+#include "string_set_validator.hpp"
 #include "transaction_type.hpp"
+#include <wx/arrstr.h>
+#include <wx/combobox.h>
 #include <wx/gdicmn.h>
 #include <wx/window.h>
 #include <wx/windowid.h>
-#include <wx/spinctrl.h>
-#include <algorithm>
+#include <vector>
 
-using std::max;
+using std::vector;
 
 
 // For debugging
@@ -25,48 +27,65 @@ using transaction_type::TransactionType;
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(TransactionTypeCtrl, wxSpinCtrl)
-	EVT_SPINCTRL(wxID_ANY, TransactionTypeCtrl::on_spin)
+BEGIN_EVENT_TABLE(TransactionTypeCtrl, wxComboBox)
+	EVT_KILL_FOCUS(TransactionTypeCtrl::on_kill_focus)
 END_EVENT_TABLE()
 
 
 TransactionTypeCtrl::TransactionTypeCtrl
 (	wxWindow* p_parent,
 	wxWindowID p_id,
-	wxSize p_size
+	wxSize const& p_size
 ):
-	wxSpinCtrl
+	wxComboBox
 	(	p_parent,
 		p_id,
-		bstring_to_wx(transaction_type_to_verb(static_cast<TransactionType>(0))),
+		bstring_to_wx
+		(	transaction_type_to_verb(static_cast<TransactionType>(0))
+		),
 		wxDefaultPosition,
 		p_size,
-		wxSP_ARROW_KEYS | wxSP_WRAP,
-		0,
-		max(0, static_cast<int>(num_transaction_types) - 1),
-		0
+		wxArrayString()
 	)
 {
+	wxArrayString transaction_type_verbs;
+	assert (transaction_type_verbs.IsEmpty());
+	vector<TransactionType> const tt = transaction_types();
+	vector<TransactionType>::const_iterator it = tt.begin();
+	vector<TransactionType>::const_iterator const end = tt.end();
+	for ( ; it != end; ++it)
+	{
+		wxString const verb = bstring_to_wx
+		(	transaction_type_to_verb(*it)
+		);
+		transaction_type_verbs.Add(verb);  // remember as valid name
+		Append(verb);  // add to combobox
+	}
+	StringSetValidator validator
+	(	GetValue(),
+		transaction_type_verbs,
+		"transaction type"
+	);
+	SetValidator(validator);
+	AutoComplete(transaction_type_verbs);
 }
 
 void
-TransactionTypeCtrl::on_spin(wxSpinEvent& event)
+TransactionTypeCtrl::on_kill_focus(wxFocusEvent& event)
 {
-	JEWEL_DEBUG_LOG << "Entered TransactionTypeCtrl::on_spin(...)" << endl;
-	TransactionType const new_transaction_type =
-		static_cast<TransactionType>(event.GetPosition());
-	JEWEL_DEBUG_LOG << "After spinning, TransactionType as int"
-	                << static_cast<int>(new_transaction_type)
-					<< endl;
-	JEWEL_DEBUG_LOG << "After spinning, "
-	                << "transaction_type_to_verb(m_transaction_type) is: "
-	                << transaction_type_to_verb(new_transaction_type)
-					<< endl;
-	SetValue(bstring_to_wx(transaction_type_to_verb(new_transaction_type)));
-	SetSelection(0, 0);  // Unselect it
+	// TODO Make a class from which we can privately inherit, to capture
+	// this on_kill_focus behaviour, which is shared by several custom
+	// widget classes in phatbooks::gui.
+
+	// Unfortunately if we call Validate() and TransferDataToWindow()
+	// directly on the AccountCtrl, it doesn't work. We have to call
+	// through parent instead.
+	GetParent()->Validate();
+	GetParent()->TransferDataToWindow();
+	event.Skip();
 	return;
 }
-	
+
 
 
 }  // namespace gui

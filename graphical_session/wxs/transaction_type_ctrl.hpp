@@ -1,10 +1,12 @@
 #ifndef GUARD_transaction_type_ctrl_hpp
 #define GUARD_transaction_type_ctrl_hpp
 
+#include "transaction_type.hpp"
+#include <wx/combobox.h>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/window.h>
 #include <wx/windowid.h>
-#include <wx/spinctrl.h>
 
 namespace phatbooks
 {
@@ -13,22 +15,31 @@ namespace gui
 
 /**
  * Widget to enable the user to select a TransactionType.
- *
- * @todo To implement this, we need to capture the EVT_SPINCTRL /
- * wxSpinEvent, and, on the basis of the underlying int/TransactionType
- * value, set the text that is shown in the control.
  */
-class TransactionTypeCtrl: public wxSpinCtrl
+class TransactionTypeCtrl: public wxComboBox
 {
 public:
+
 	TransactionTypeCtrl
 	(	wxWindow* p_parent,
 		wxWindowID p_id,
-		wxSize p_size
+		wxSize const& p_size
+	);
+
+	/**
+	 * @returns the currently selected TransactionType.
+	 */
+	transaction_type::TransactionType transaction_type() const;
+
+	/**
+	 * Sets the TransactionType displayed in the control.
+	 */
+	void set_transaction_type
+	(	transaction_type::TransactionType transaction_type
 	);
 
 private:
-	void on_spin(wxSpinEvent& event);
+	void on_kill_focus(wxFocusEvent& event);
 
 	DECLARE_EVENT_TABLE()
 

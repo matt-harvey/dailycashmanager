@@ -1,6 +1,6 @@
 #include "account_ctrl.hpp"
 #include "account.hpp"
-#include "account_name_validator.hpp"
+#include "string_set_validator.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <wx/combobox.h>
 #include <wx/event.h>
@@ -18,13 +18,10 @@ END_EVENT_TABLE()
 Account
 AccountCtrl::account()
 {
-	AccountNameValidator const* const validator =
-		dynamic_cast<AccountNameValidator const*>(GetValidator());
+	StringSetValidator const* const validator =
+		dynamic_cast<StringSetValidator const*>(GetValidator());
 	assert (validator);
-	return Account
-	(	m_database_connection,
-		validator->account_name()
-	);
+	return Account(m_database_connection, validator->text());
 }
 
 void

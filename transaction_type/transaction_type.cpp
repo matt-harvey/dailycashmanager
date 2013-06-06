@@ -19,7 +19,8 @@ vector<TransactionType> const&
 transaction_types()
 {
 	static vector<TransactionType> ret;
-	if (ret.empty())
+	static bool initialized = false;
+	if (!initialized)
 	{
 		size_t const sz = static_cast<size_t>(num_transaction_types);
 		ret.reserve(sz);
@@ -27,6 +28,7 @@ transaction_types()
 		{
 			ret.push_back(static_cast<TransactionType>(i));
 		}
+		initialized = true;
 	}
 	assert (ret.size() == static_cast<size_t>(num_transaction_types));
 	return ret;

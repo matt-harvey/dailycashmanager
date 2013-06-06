@@ -2,8 +2,8 @@
 #define GUARD_account_ctrl_hpp
 
 #include "account.hpp"
-#include "account_name_validator.hpp"
 #include "b_string.hpp"
+#include "string_set_validator.hpp"
 #include <jewel/debug_log.hpp>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
@@ -96,27 +96,21 @@ AccountCtrl::AccountCtrl
 	),
 	m_database_connection(p_database_connection)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	wxArrayString valid_account_names;
-	JEWEL_DEBUG_LOG_LOCATION;
 	assert (valid_account_names.IsEmpty());
-	JEWEL_DEBUG_LOG_LOCATION;
 	for ( ; p_beg != p_end; ++p_beg)
 	{
 		wxString const name_wx = bstring_to_wx(p_beg->name());
 		valid_account_names.Add(name_wx);  // remembers as valid name
 		Append(name_wx);  // adds to combobox
 	}
-	JEWEL_DEBUG_LOG_LOCATION;
-	AccountNameValidator validator
+	StringSetValidator validator
 	(	bstring_to_wx(p_account.name()),
-		valid_account_names
+		valid_account_names,
+		"account or category"
 	);
-	JEWEL_DEBUG_LOG_LOCATION;
 	SetValidator(validator);
-	JEWEL_DEBUG_LOG_LOCATION;
 	AutoComplete(valid_account_names);
-	JEWEL_DEBUG_LOG_LOCATION;
 }
 
 
