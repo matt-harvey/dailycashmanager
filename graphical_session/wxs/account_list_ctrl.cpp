@@ -11,9 +11,11 @@
 #include <wx/listctrl.h>
 #include <wx/string.h>
 #include <wx/wx.h>
+#include <algorithm>
 #include <cassert>
 #include <vector>
 
+using std::max;
 using std::vector;
 
 
@@ -182,12 +184,16 @@ AccountListCtrl::update
 	}
 
 	// Configure column widths
-	SetColumnWidth(s_name_col, wxLIST_AUTOSIZE);
+	SetColumnWidth(s_name_col, wxLIST_AUTOSIZE_USEHEADER);
+	SetColumnWidth(s_name_col, max(GetColumnWidth(s_name_col), 200));
 	SetColumnWidth(s_balance_col, wxLIST_AUTOSIZE);
+	SetColumnWidth(s_balance_col, max(GetColumnWidth(s_balance_col), 90));
 	if (m_show_daily_budget)
 	{
 		SetColumnWidth(s_budget_col, wxLIST_AUTOSIZE);
+		SetColumnWidth(s_budget_col, max(GetColumnWidth(s_budget_col), 90));
 	}
+	Layout();
 
 	return;
 }
