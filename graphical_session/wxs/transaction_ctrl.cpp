@@ -53,6 +53,10 @@ BEGIN_EVENT_TABLE(TransactionCtrl, wxPanel)
 		TransactionCtrl::on_ok_button_click
 	)
 	EVT_BUTTON
+	(	s_recurring_transaction_button_id,
+		TransactionCtrl::on_recurring_transaction_button_click
+	)
+	EVT_BUTTON
 	(	wxID_CANCEL,
 		TransactionCtrl::on_cancel_button_click
 	)
@@ -81,10 +85,13 @@ TransactionCtrl::TransactionCtrl
 		wxDefaultSize
 	),
 	m_top_sizer(0),
-	m_actual_vs_budget_ctrl(0),
+	m_transaction_type_ctrl(0),
+	m_primary_amount_ctrl(0),
 	m_date_ctrl(0),
 	m_cancel_button(0),
+	m_recurring_transaction_button(0),
 	m_ok_button(0),
+	m_actual_vs_budget_ctrl(0),
 	m_database_connection(p_database_connection)
 {
 	assert (m_account_name_boxes.empty());
@@ -104,7 +111,37 @@ TransactionCtrl::TransactionCtrl
 	wxSize const ok_button_size = m_ok_button->GetSize();
 
 	// Top sizer
-	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 4, 3, 0, 0);
+	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 5, 6, 0, 0);
+
+	// Row 0
+	m_top_sizer->AddStretchSpacer();
+	m_transaction_type_ctrl = new TransactionTypectrl
+	(	this,
+		wxID_ANY,
+		wxSize(ok_button_size.x * 4.5, ok_button_size.y),
+	);
+	m_top_sizer->Add(m_transaction_type_ctrl, 2, wxLEFT | wxRIGHT, wxALIGN_LEFT, 10);
+	m_primary_amount_ctrl = new DecimalTextCtrl
+	(	this,
+		id,
+		wxSize(ok_button_size.x * 1.5, account_name_box_size.y),
+		m_database_connection.default_commodity().precision(),
+		false
+	);
+	m_top_sizer->Add(m_primary_amount_ctrl, 2, wxLEFT | wxRIGHT | wxALIGN_RIGHT, 10);
+	m_top_sizer->AddStretchSpacer();
+	wxSize const date_ctrl_sz(ok_button_size.x, ok_button_size.y);
+	m_date_ctrl = new DateCtrl(this, wxID_ANY, date_ctrl_sz);
+	m_top_sizer->
+		Add(m_date_ctrl, 2, wxALIGN_RIGHT | wxRIGHT | wxLEFT | wxTOP, 10);
+
+	// Row 1
+	m_destination_side_phrase = new wxStaticText("SOURCE SIDE PHRASE");
+	m_top_sizer->Add(m_destination_side_phrase);
+
+	// TODO UP TO HERE IN REWRITE
+
+
 
 	// Column titles
 	wxStaticText* header0 = new wxStaticText(this, wxID_ANY, "Account");
@@ -190,11 +227,6 @@ TransactionCtrl::TransactionCtrl
 
 	m_top_sizer->AddStretchSpacer();
 
-	// Date control
-	wxSize const date_ctrl_sz(ok_button_size.x, ok_button_size.y);
-	m_date_ctrl = new DateCtrl(this, wxID_ANY, date_ctrl_sz);
-	m_top_sizer->
-		Add(m_date_ctrl, 2, wxALIGN_RIGHT | wxRIGHT | wxLEFT | wxTOP, 10);
 	
 	// Cancel and OK buttons
 	m_cancel_button = new wxButton
@@ -210,30 +242,6 @@ TransactionCtrl::TransactionCtrl
 		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
 		10
 	);
-
-
-#if 0
-
-	m_top_sizer->AddStretchSpacer();
-
-#else
-
-	// WARNING temporary testing code - normally would have spacer
-
-	TransactionTypeCtrl* const transaction_type_ctrl =
-	new TransactionTypeCtrl
-	(	this,
-		wxID_ANY,
-		wxSize(ok_button_size.x * 4.5, ok_button_size.y)
-	);
-	m_top_sizer->Add
-	(	transaction_type_ctrl,
-		2,
-		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
-		10
-	);
-
-#endif
 
 
 
@@ -271,6 +279,13 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 			wxMessageBox("Transaction does not balance.");
 		}
 	}
+	return;
+}
+
+void
+TransactionCtrl::on_recurring_transaction_button_click(wxCommandEvent& event)
+{
+	// TODO Implement
 	return;
 }
 

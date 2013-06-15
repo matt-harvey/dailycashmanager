@@ -5,6 +5,7 @@
 
 #include "account.hpp"
 #include "decimal_text_ctrl.hpp"
+#include "transaction_type_ctrl.hpp"
 #include <jewel/on_windows.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -64,25 +65,39 @@ protected:
 
 private:
 	void on_ok_button_click(wxCommandEvent& event);
+	void on_recurring_transaction_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
 	void post_journal() const;
 	bool is_balanced() const;
 
 	int m_max_entry_row_id;
 	wxFlexGridSizer* m_top_sizer;
-	wxRadioBox* m_actual_vs_budget_ctrl;
 
+	// Re. "source side" of transaction
+	wxStaticText* m_source_side_phrase;
+
+	// Re. "destinations side" of transaction
+	wxStaticText* m_destination_side_phrase;
+
+	TransactionTypeCtrl* m_transaction_type_ctrl;
+	DecimalTextCtrl* m_primary_amount_ctrl;
 	DateCtrl* m_date_ctrl;
 	
 	wxButton* m_cancel_button;
+	wxButton* m_recurring_transaction_button;
 	wxButton* m_ok_button;
+	wxRadioBox* m_actual_vs_budget_ctrl;
 
 	std::vector<AccountCtrl*> m_account_name_boxes;
 	std::vector<wxTextCtrl*> m_comment_boxes;
 	std::vector<DecimalTextCtrl*> m_amount_boxes;
 
-	static unsigned int const s_date_ctrl_id = wxID_HIGHEST + 1;
-	static unsigned int const s_min_entry_row_id = s_date_ctrl_id + 1;
+	static unsigned int const s_date_ctrl_id =
+		wxID_HIGHEST + 1;
+	static unsigned int const s_recurring_transaction_button_id =
+		s_date_ctrl_id + 1;	
+	static unsigned int const s_min_entry_row_id =
+		s_recurring_transaction_button_id + 1;
 
 	DECLARE_EVENT_TABLE()
 
