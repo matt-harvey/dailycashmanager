@@ -1,4 +1,5 @@
 #include "transaction_type.hpp"
+#include "account_type.hpp"
 #include "b_string.hpp"
 #include <cassert>
 #include <vector>
@@ -59,5 +60,65 @@ transaction_type_is_actual(TransactionType p_transaction_type)
 {
 	return p_transaction_type != envelope_transaction;
 }
+
+vector<account_type::AccountType> const&
+source_account_types
+(	transaction_type::TransactionType p_transaction_type
+)
+{
+	static vector<account_type::AccountType>
+		ret_array[static_cast<size_t>(num_transaction_types)];
+	static bool initialized = false;
+
+	if (!initialized)
+	{
+#		ifndef NDEBUG
+			for
+			(	size_t i = 0;
+				i != static_cast<size_t>(num_transaction_types);
+				++i
+			)
+			{
+				assert (ret_array[i].empty());
+			}
+#		endif
+
+		ret_array[static_cast<size_t>(expenditure_transaction)].
+			push_back(account_type::asset);
+		ret_array[static_cast<size_t>(expenditure_transaction)].
+			push_back(account_type::liability);
+
+		ret_array[static_cast<size_t>(revenue_transaction)].
+			push_back(account_type::revenue);
+
+		ret_array[static_cast<size_t>(balance_sheet_transaction)].
+			push_back(account_type::asset);
+		ret_array[static_cast<size_t>(balance_sheet_transaction)].
+			push_back(account_type::liability);
+
+		ret_array[static_cast<size_t>(envelope_transaction)].
+			push_back(account_type::revenue);
+		ret_array[static_cast<size_t>(envelope_transaction)].
+			push_back(account_type::expense);
+		ret_array[static_cast<size_t>(envelope_transaction)].
+			push_back(account_type::pure_envelope);
+
+		// Generic transaction - can handle all AccountTypes;
+		ret_array[static_cast<size_t>(generic_transaction)] = account_types();
+	
+		// Now we're initialized.
+		initialized = true;
+	}
+
+#	ifndef NDEBUG
+		vector<account_type::AccountType> const& debug_ret =
+			ret_array[static_cast<size_t>(p_transaction_type)];
+		assert (!debug_ret.empty());
+		assert (initialized);
+#	endif
+
+	return ret_array[static_cast<size_t>(p_transaction_type)];
+}
+
 
 }  // namespace phatbooks

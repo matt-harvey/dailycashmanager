@@ -1,6 +1,7 @@
 #ifndef GUARD_transaction_type_hpp
 #define GUARD_transaction_type_hpp
 
+#include "account_type.hpp"
 #include "b_string.hpp"
 #include <vector>
 
@@ -29,16 +30,45 @@ namespace transaction_type
 }  // namespace transaction_type
 
 
+/**
+ * @returns a vector of all the TransactionTypes.
+ */
 std::vector<transaction_type::TransactionType> const&
 transaction_types();
 
+/**
+ * @returns a natural language verb corresponding to a p_tranaction_type;
+ * for example, "Spend".
+ */
 BString
 transaction_type_to_verb
 (	transaction_type::TransactionType p_transaction_type
 );
 
+/**
+ * @returns true if and only if p_transaction_type is a type of actual
+ * transaction, as opposed to budget transaction.
+ */
 bool
 transaction_type_is_actual
+(	transaction_type::TransactionType p_transaction_type
+);
+
+/**
+ * @returns a vector of AccountTypes appropriate for a given
+ * TransactionType's \e source Account.
+ */
+std::vector<account_type::AccountType> const&
+source_account_types
+(	transaction_type::TransactionType p_transaction_type
+);
+
+/**
+ * @returns a vector of AccountTypes appropriate for a given
+ * TransactionType's \e destination Account.
+ */
+std::vector<account_type::AccountType> const&
+destination_account_types
 (	transaction_type::TransactionType p_transaction_type
 );
 
