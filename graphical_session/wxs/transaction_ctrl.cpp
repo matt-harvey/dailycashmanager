@@ -111,20 +111,21 @@ TransactionCtrl::TransactionCtrl
 	wxSize const ok_button_size = m_ok_button->GetSize();
 
 	// Top sizer
-	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 5, 6, 0, 0);
+	m_top_sizer = new wxFlexGridSizer(p_accounts.size() + 4, 5, 0, 0);
 
 	// Row 0
 	m_top_sizer->AddStretchSpacer();
-	m_transaction_type_ctrl = new TransactionTypectrl
+	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(ok_button_size.x * 4.5, ok_button_size.y),
+		wxSize(ok_button_size.x * 4.5, ok_button_size.y)
 	);
-	m_top_sizer->Add(m_transaction_type_ctrl, 2, wxLEFT | wxRIGHT, wxALIGN_LEFT, 10);
+	m_top_sizer->Add
+		(m_transaction_type_ctrl, 2, wxLEFT | wxRIGHT | wxALIGN_LEFT, 10);
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
-		id,
-		wxSize(ok_button_size.x * 1.5, account_name_box_size.y),
+		s_primary_amount_ctrl_id,
+		wxSize(ok_button_size.x * 1.5, ok_button_size.y),
 		m_database_connection.default_commodity().precision(),
 		false
 	);
@@ -133,24 +134,16 @@ TransactionCtrl::TransactionCtrl
 	wxSize const date_ctrl_sz(ok_button_size.x, ok_button_size.y);
 	m_date_ctrl = new DateCtrl(this, wxID_ANY, date_ctrl_sz);
 	m_top_sizer->
-		Add(m_date_ctrl, 2, wxALIGN_RIGHT | wxRIGHT | wxLEFT | wxTOP, 10);
+		Add(m_date_ctrl, 2, wxALIGN_RIGHT | wxRIGHT | wxLEFT, 10);
 
 	// Row 1
-	m_destination_side_phrase = new wxStaticText("SOURCE SIDE PHRASE");
-	m_top_sizer->Add(m_destination_side_phrase);
+	m_top_sizer->AddStretchSpacer();
+	m_top_sizer->AddStretchSpacer();
+	m_top_sizer->AddStretchSpacer();
+	m_top_sizer->AddStretchSpacer();
+	m_top_sizer->AddStretchSpacer();
 
-	// TODO UP TO HERE IN REWRITE
-
-
-
-	// Column titles
-	wxStaticText* header0 = new wxStaticText(this, wxID_ANY, "Account");
-	wxStaticText* header1 = new wxStaticText(this, wxID_ANY, "Comment");
-	wxStaticText* header2 = new wxStaticText(this, wxID_ANY, "Amount");
-	unsigned int const header_flag = wxLEFT | wxTOP | wxBOTTOM;
-	m_top_sizer->Add(header0, 2, header_flag, 10);
-	m_top_sizer->Add(header1, 3, header_flag, 10);
-	m_top_sizer->Add(header2, 2, header_flag, 10);
+	// Row 2 + 
 
 	// We need the names of all Accounts, to help us
 	// construct the wxComboboxes from the which the user will choose
@@ -192,10 +185,14 @@ TransactionCtrl::TransactionCtrl
 		);
 		int base_flag = wxLEFT;
 		if (i == 0) base_flag |= wxTOP;
+		m_top_sizer->AddStretchSpacer();  // WARNING Should be "phrase"...
 		m_top_sizer->
 			Add(account_name_box, 2, base_flag | wxRIGHT | wxALIGN_LEFT, 10);
 		m_top_sizer->
 			Add(comment_ctrl, 3, base_flag | wxALIGN_LEFT, 10);
+		// WARNING comment_ctrl should stretch 2 columns, rather than having a
+		// stretch spacer here.
+		m_top_sizer->AddStretchSpacer();
 		m_top_sizer->
 			Add(entry_ctrl, 2, base_flag | wxRIGHT | wxALIGN_RIGHT, 10);
 
@@ -203,6 +200,45 @@ TransactionCtrl::TransactionCtrl
 		m_comment_boxes.push_back(comment_ctrl);
 		m_amount_boxes.push_back(entry_ctrl);
 	}
+
+
+	// Button row
+	m_top_sizer->AddStretchSpacer();
+	m_cancel_button = new wxButton
+	(	this,
+		wxID_CANCEL,
+		wxString("&Cancel"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	m_top_sizer->Add
+	(	m_cancel_button,
+		2,
+		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
+		10
+	);
+	m_recurring_transaction_button = new wxButton
+	(	this,
+		s_recurring_transaction_button_id,
+		wxString("&Recurring..."),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	m_top_sizer->Add
+	(	m_recurring_transaction_button,
+		2,
+		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
+		10
+	);
+	m_top_sizer->AddStretchSpacer();
+	m_top_sizer->Add
+	(	m_ok_button,
+		2,
+		wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
+		10
+	);
+	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
+
 
 	// Radio box for selecting actual vs. budget
 	wxArrayString radio_box_strings;
@@ -228,31 +264,6 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->AddStretchSpacer();
 
 	
-	// Cancel and OK buttons
-	m_cancel_button = new wxButton
-	(	this,
-		wxID_CANCEL,
-		wxString("&Cancel"),
-		wxDefaultPosition,
-		wxDefaultSize
-	);
-	m_top_sizer->Add
-	(	m_cancel_button,
-		2,
-		wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
-		10
-	);
-
-
-
-
-	m_top_sizer->Add
-	(	m_ok_button,
-		2,
-		wxALIGN_RIGHT | wxLEFT | wxRIGHT | wxBOTTOM | wxTOP,
-		10
-	);
-	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
 
 	// "Admin"
 	SetSizer(m_top_sizer);

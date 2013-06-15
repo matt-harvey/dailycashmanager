@@ -94,8 +94,10 @@ private:
 
 	static unsigned int const s_date_ctrl_id =
 		wxID_HIGHEST + 1;
+	static unsigned int const s_primary_amount_ctrl_id =
+		s_date_ctrl_id + 1;
 	static unsigned int const s_recurring_transaction_button_id =
-		s_date_ctrl_id + 1;	
+		s_primary_amount_ctrl_id + 1;	
 	static unsigned int const s_min_entry_row_id =
 		s_recurring_transaction_button_id + 1;
 
