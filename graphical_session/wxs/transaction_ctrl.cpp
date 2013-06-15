@@ -98,6 +98,8 @@ TransactionCtrl::TransactionCtrl
 	assert (m_comment_boxes.empty());
 	assert (m_amount_boxes.empty());
 
+	size_t row = 0;	
+
 	// We construct m_ok_button first as we want to be able to refer to its
 	// size when sizing certain other controls below. But we will not add
 	// the OK button to m_top_sizer till later.
@@ -114,13 +116,12 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer = new wxGridBagSizer();
 	SetSizer(m_top_sizer);
 
-	// Row 0
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
 		wxID_ANY,
 		wxSize(ok_button_size.x * 2, ok_button_size.y)
 	);
-	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(0, 1));
+	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 1));
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
 		s_primary_amount_ctrl_id,
@@ -128,13 +129,13 @@ TransactionCtrl::TransactionCtrl
 		m_database_connection.default_commodity().precision(),
 		false
 	);
-	m_top_sizer->Add(m_primary_amount_ctrl, wxGBPosition(0, 2));
+	m_top_sizer->Add(m_primary_amount_ctrl, wxGBPosition(row, 2));
 	wxSize const date_ctrl_sz(ok_button_size.x, ok_button_size.y);
 	m_date_ctrl = new DateCtrl(this, wxID_ANY, date_ctrl_sz);
-	m_top_sizer->Add(m_date_ctrl, wxGBPosition(0, 4));
+	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 4));
 
-	// Row 2+ 
-
+	row += 2;
+	
 	// We need the names of all Accounts, to help us
 	// construct the wxComboboxes from the which the user will choose
 	// Accounts.
@@ -143,7 +144,7 @@ TransactionCtrl::TransactionCtrl
 	// Rows for entering Entry details
 	typedef vector<Account>::size_type Size;
 	Size const sz = p_accounts.size();
-	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, ++id)
+	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, ++id, ++row)
 	{
 		Account const account = p_accounts[i];
 		AccountCtrl* account_name_box = new AccountCtrl
@@ -175,7 +176,6 @@ TransactionCtrl::TransactionCtrl
 		);
 		int base_flag = wxLEFT;
 		if (i == 0) base_flag |= wxTOP;
-		Size const row = i + 2;
 		m_top_sizer->Add(account_name_box, wxGBPosition(row, 1));
 		m_top_sizer->Add(comment_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 2));
 		m_top_sizer->Add(entry_ctrl, wxGBPosition(row, 4));
@@ -193,8 +193,7 @@ TransactionCtrl::TransactionCtrl
 		wxDefaultPosition,
 		wxSize(ok_button_size.x, ok_button_size.y)
 	);
-	// TODO HIGH PRIORITY - row number should not be hard coded like this
-	m_top_sizer->Add(m_cancel_button, wxGBPosition(4, 1));
+	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 1));
 	m_recurring_transaction_button = new wxButton
 	(	this,
 		s_recurring_transaction_button_id,
@@ -202,9 +201,11 @@ TransactionCtrl::TransactionCtrl
 		wxDefaultPosition,
 		wxSize(ok_button_size.x, ok_button_size.y)
 	);
-	m_top_sizer->Add(m_recurring_transaction_button, wxGBPosition(4, 2));
-	m_top_sizer->Add(m_ok_button, wxGBPosition(4, 4));
+	m_top_sizer->Add(m_recurring_transaction_button, wxGBPosition(row, 2));
+	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 4));
 	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
+
+	++row;
 
 	// Radio box for selecting actual vs. budget
 	wxArrayString radio_box_strings;
@@ -220,7 +221,7 @@ TransactionCtrl::TransactionCtrl
 		1,
 		wxRA_SPECIFY_COLS
 	);
-	m_top_sizer->Add(m_actual_vs_budget_ctrl, wxGBPosition(5, 1));
+	m_top_sizer->Add(m_actual_vs_budget_ctrl, wxGBPosition(row, 1));
 
 	// "Admin"
 	// SetSizer(m_top_sizer);
