@@ -43,26 +43,26 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 
 	Repeater repeater1a(dbc);
 	repeater1a.set_frequency(Frequency(1, interval_type::months));
-	repeater1a.set_next_date(date(2012, 9, 15));
+	repeater1a.set_next_date(date(2524, 9, 15));
 	dj1.push_repeater(repeater1a);
 
 	target = BString
 	(	"This transaction is automatically recorded every month, "
-		"with the next recording due on 2012-Sep-15."
+		"with the next recording due on 2524-Sep-15."
 	);
 	CHECK_EQUAL(dj1.repeater_description(), target);
 
 	Repeater repeater1b(dbc);
 	repeater1b.set_frequency(Frequency(3, interval_type::days));
-	repeater1b.set_next_date(date(2012, 9, 12));
+	repeater1b.set_next_date(date(3950, 9, 12));
 	dj1.push_repeater(repeater1b);
 
 	target = BString
 	(	"This transaction is automatically recorded every month, "
-		"with the next recording due on 2012-Sep-15.\n"
+		"with the next recording due on 2524-Sep-15.\n"
 		"In addition, this transaction is automatically recorded every "
-		"3 days, with the next recording due on 2012-Sep-12.\n"
-		"This transaction will next be recorded on 2012-Sep-12."
+		"3 days, with the next recording due on 3950-Sep-12.\n"
+		"This transaction will next be recorded on 2524-Sep-15."
 	);
 	CHECK_EQUAL(dj1.repeater_description(), target);
 }

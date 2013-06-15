@@ -200,7 +200,8 @@ set (test_files
 	 tests/interval_type_tests.cpp
 	 tests/ordinary_journal_tests.cpp
 	 tests/phatbooks_tests_common.cpp
-	 tests/repeater_tests.cpp)
+	 tests/repeater_tests.cpp
+	 tests/transaction_type_tests.cpp)
 
 add_executable(
 	phatbooks
