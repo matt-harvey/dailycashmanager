@@ -118,14 +118,14 @@ TransactionCtrl::TransactionCtrl
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(ok_button_size.x * 4.5, ok_button_size.y)
+		wxSize(ok_button_size.x * 2, ok_button_size.y)
 	);
 	m_top_sizer->Add
 		(m_transaction_type_ctrl, 2, wxLEFT | wxRIGHT | wxALIGN_LEFT, 10);
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
 		s_primary_amount_ctrl_id,
-		wxSize(ok_button_size.x * 1.5, ok_button_size.y),
+		wxSize(ok_button_size.x * 2, ok_button_size.y),
 		m_database_connection.default_commodity().precision(),
 		false
 	);
@@ -143,7 +143,7 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->AddStretchSpacer();
 	m_top_sizer->AddStretchSpacer();
 
-	// Row 2 + 
+	// Row 2+ 
 
 	// We need the names of all Accounts, to help us
 	// construct the wxComboboxes from the which the user will choose
@@ -160,7 +160,7 @@ TransactionCtrl::TransactionCtrl
 		(	this,
 			id,
 			account,
-			wxSize(ok_button_size.x * 1.5, wxDefaultSize.y),
+			wxSize(ok_button_size.x * 2, ok_button_size.y),
 			all_account_reader.begin(),
 			all_account_reader.end(),
 			m_database_connection
@@ -179,7 +179,7 @@ TransactionCtrl::TransactionCtrl
 		DecimalTextCtrl* entry_ctrl = new DecimalTextCtrl
 		(	this,
 			id,
-			wxSize(ok_button_size.x * 1.5, account_name_box_size.y),
+			wxSize(ok_button_size.x * 2, account_name_box_size.y),
 			precision,
 			false
 		);
@@ -201,7 +201,6 @@ TransactionCtrl::TransactionCtrl
 		m_amount_boxes.push_back(entry_ctrl);
 	}
 
-
 	// Button row
 	m_top_sizer->AddStretchSpacer();
 	m_cancel_button = new wxButton
@@ -209,7 +208,7 @@ TransactionCtrl::TransactionCtrl
 		wxID_CANCEL,
 		wxString("&Cancel"),
 		wxDefaultPosition,
-		wxDefaultSize
+		wxSize(ok_button_size.x, ok_button_size.y)
 	);
 	m_top_sizer->Add
 	(	m_cancel_button,
@@ -222,7 +221,7 @@ TransactionCtrl::TransactionCtrl
 		s_recurring_transaction_button_id,
 		wxString("&Recurring..."),
 		wxDefaultPosition,
-		wxDefaultSize
+		wxSize(ok_button_size.x, ok_button_size.y)
 	);
 	m_top_sizer->Add
 	(	m_recurring_transaction_button,
@@ -238,7 +237,6 @@ TransactionCtrl::TransactionCtrl
 		10
 	);
 	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
-
 
 	// Radio box for selecting actual vs. budget
 	wxArrayString radio_box_strings;
@@ -262,8 +260,6 @@ TransactionCtrl::TransactionCtrl
 	);
 
 	m_top_sizer->AddStretchSpacer();
-
-	
 
 	// "Admin"
 	SetSizer(m_top_sizer);
@@ -296,15 +292,14 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 void
 TransactionCtrl::on_recurring_transaction_button_click(wxCommandEvent& event)
 {
-	// TODO Implement
+	(void)event;  // Silence compiler re. unused parameter.
 	return;
 }
 
 void
 TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 {
-
-	(void)event;  // Silence compiler re. unused parameter
+	(void)event;  // Silence compiler re. unused parameter.
 	TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
 	assert (panel);
 	panel->update();
