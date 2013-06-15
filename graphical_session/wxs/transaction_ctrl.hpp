@@ -71,6 +71,9 @@ private:
 	bool is_balanced() const;
 
 	int m_max_entry_row_id;
+
+	// TODO As we want some subwidgets to span multiple columns, this
+	// needs to be a wxGridBagSizer, not a wxFlexGridSizer.
 	wxFlexGridSizer* m_top_sizer;
 
 	// Re. "source side" of transaction
