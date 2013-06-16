@@ -8,6 +8,7 @@
 #include "finformat.hpp"
 #include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <boost/optional.hpp>
 #include <wx/listctrl.h>
 #include <wx/string.h>
 #include <wx/wx.h>
@@ -15,6 +16,7 @@
 #include <cassert>
 #include <vector>
 
+using boost::optional;
 using std::max;
 using std::vector;
 
@@ -197,6 +199,14 @@ AccountListCtrl::update
 
 	return;
 }
+
+boost::optional<Account>
+AccountListCtrl::default_account() const
+{
+	// TODO HIGH PRIORITY Implement this.
+}
+
+
 
 }  // namespace gui
 }  // namespace phatbooks

@@ -66,8 +66,8 @@ public:
 	 * account_super_type::pl.
 	 */
 	void configure_transaction_ctrl
-	(	std::vector<Account> const& p_balance_sheet_accounts,
-		std::vector<Account> const& p_pl_accounts
+	(	std::vector<Account> p_balance_sheet_accounts,
+		std::vector<Account> p_pl_accounts
 	);
 
 private:

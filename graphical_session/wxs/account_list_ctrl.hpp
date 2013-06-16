@@ -5,6 +5,7 @@
 
 #include "account.hpp"
 #include "account_reader.hpp"
+#include <boost/optional.hpp>
 #include <wx/listctrl.h>
 #include <wx/string.h>
 #include <wx/wx.h>
@@ -68,6 +69,13 @@ public:
 	 * @todo Should be using inheritance here rather than this boolean flag.
 	 */
 	void update(bool balance_sheet);
+
+	/**
+	 * @returns an optional containing an Account that may be considered as
+	 * the default Account in the AccountListCtrl; except that, if the
+	 * AccountListCtrl is empty, returns an uninitialized optional.
+	 */
+	boost::optional<Account> default_account() const;
 
 private:
 

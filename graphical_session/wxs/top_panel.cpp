@@ -7,10 +7,14 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_ctrl.hpp"
+#include <boost/optional.hpp>
+#include <jewel/optional.hpp>
 #include <wx/wx.h>
 #include <cassert>
 #include <vector>
 
+using boost::optional;
+using jewel::value;
 using std::vector;
 
 namespace phatbooks
@@ -82,10 +86,31 @@ TopPanel::configure_transaction_ctrl()
 
 void
 TopPanel::configure_transaction_ctrl
-(	vector<Account> const& p_balance_sheet_accounts,
-	vector<Account> const& p_pl_accounts
+(	vector<Account> p_balance_sheet_accounts,
+	vector<Account> p_pl_accounts
 )
 {
+	if (p_balance_sheet_accounts.size() + p_pl_accounts.size() < unsigned(2))
+	{
+		if (p_balance_sheet_accounts.empty())
+		{
+			optional<Account> const maybe_bs_account =
+				m_bs_account_list->default_account();
+			if (maybe_bs_account)
+			{
+				p_balance_sheet_accounts.push_back(value(maybe_bs_account));
+			}
+		}
+		if (p_pl_accounts.empty())
+		{
+			optional<Account> const maybe_pl_account =
+				m_pl_account_list->default_account();
+			if (maybe_pl_account)
+			{
+				p_pl_accounts.push_back(value(maybe_bs_account));
+			}
+		}
+	}
 	TransactionCtrl* old = 0;
 	if (m_top_sizer && m_transaction_ctrl)
 	{
