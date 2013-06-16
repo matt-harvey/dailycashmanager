@@ -1,4 +1,5 @@
 #include "transaction_type.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "b_string.hpp"
 #include <cassert>
@@ -179,5 +180,74 @@ destination_account_types
 	return ret_array[static_cast<size_t>(p_transaction_type)];
 }
 
+TransactionType
+natural_transaction_type(Account const& account_x, Account const& account_y)
+{
+	account_type::AccountType const account_type_x = account_x.account_type();
+	account_type::AccountType const account_type_y = account_y.account_type();
+
+	switch (account_type_x)
+	{
+	case account_type::asset:  // fallthrough
+	case account_type::liability:
+		switch (account_type_y)
+		{
+		case account_type::asset:  // fallthrough
+		case account_type::liability:
+			return balance_sheet_transaction;
+		case account_type::equity:
+			return generic_transaction;
+		case account_type::revenue:
+			return revenue_transaction;
+		case account_type::expense:
+			return expenditure_transaction;
+		case account_type::pure_envelope:
+			return generic_transaction;
+		default:
+			assert (false);
+		}
+		assert (false);
+	case account_type::equity:
+		return generic_transaction;
+	case account_type::revenue:
+		switch (account_type_y)
+		{
+		case account_type::asset:  // fallthrough
+		case account_type::liability:
+			return revenue_transaction;
+		case account_type::equity:
+			return generic_transaction;
+		case account_type::revenue:  // fallthrough
+		case account_type::expense:  // fallthrough
+		case account_type::pure_envelope:
+			return envelope_transaction;
+		default:
+			assert (false);
+		}
+		assert (false);
+	case account_type::expense:
+		switch (account_type_y)
+		{
+		case account_type::asset:  // fallthrough
+		case account_type::liability:	
+			return expenditure_transaction;
+		case account_type::equity:
+			return generic_transaction;
+		case account_type::revenue:  // fallthrough
+		case account_type::expense:  // fallthrough
+		case account_type::pure_envelope:
+			return envelope_transaction;
+		default:
+			assert (false);
+		}
+		assert (false);
+	case account_type::pure_envelope:
+		return envelope_transaction;
+	default:
+		assert (false);
+	}
+
+	assert (false);
+}
 
 }  // namespace phatbooks

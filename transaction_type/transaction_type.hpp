@@ -8,6 +8,8 @@
 namespace phatbooks
 {
 
+class Account;  // forward declaration
+
 namespace transaction_type
 {
 	/**
@@ -71,6 +73,15 @@ std::vector<account_type::AccountType> const&
 destination_account_types
 (	transaction_type::TransactionType p_transaction_type
 );
+
+/**
+ * @returns the TransactionType that it would be natural to assume
+ * to be applicable, for a given pair of Accounts. For example,
+ * if one is an expense Account and the other is an asset Account,
+ * then it would be natural to assume we have an expenditure_transaction.
+ */
+transaction_type::TransactionType
+natural_transaction_type(Account const& account_x, Account const& account_y);
 
 
 }  // namespace phatbooks
