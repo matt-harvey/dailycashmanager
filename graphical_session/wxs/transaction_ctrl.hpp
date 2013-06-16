@@ -57,7 +57,8 @@ public:
 	 */
 	TransactionCtrl
 	(	TopPanel* p_parent,
-		std::vector<Account> const& p_accounts,
+		std::vector<Account> const& p_balance_sheet_accounts,
+		std::vector<Account> const& p_pl_accounts,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 	

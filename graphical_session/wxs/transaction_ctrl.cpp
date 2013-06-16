@@ -75,7 +75,8 @@ END_EVENT_TABLE()
 
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
-	vector<Account> const& p_accounts,
+	vector<Account> const& p_balance_sheet_accounts,
+	vector<Account> const& p_pl_accounts,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxPanel

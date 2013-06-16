@@ -56,9 +56,19 @@ public:
 	void update();
 
 	/**
-	 * Configure the TransactionCtrl to reflect the Accounts in p_accounts.
+	 * Configure the TransactionCtrl to reflect the Accounts passed in the
+	 * parameters.
+	 *
+	 * @param p_balance_sheet_accounts a possibly empty sequence of Accounts
+	 * of account_super_type::balance_sheet.
+	 *
+	 * @param p_pl_accounts a possibly empty sequence of Accounts of
+	 * account_super_type::pl.
 	 */
-	void configure_transaction_ctrl(std::vector<Account> const& p_accounts);
+	void configure_transaction_ctrl
+	(	std::vector<Account> const& p_balance_sheet_accounts,
+		std::vector<Account> const& p_pl_accounts
+	);
 
 private:
 

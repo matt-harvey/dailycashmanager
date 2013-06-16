@@ -135,10 +135,12 @@ void
 Frame::on_new_transaction(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
-	vector<Account> selected_accounts;
-	selected_balance_sheet_accounts(selected_accounts);
-	selected_pl_accounts(selected_accounts);
-	m_top_panel->configure_transaction_ctrl(selected_accounts);
+	vector<Account> balance_sheet_accounts;
+	selected_balance_sheet_accounts(balance_sheet_accounts);
+	vector<Account> pl_accounts;
+	selected_pl_accounts(pl_accounts);
+	m_top_panel->
+		configure_transaction_ctrl(balance_sheet_accounts, pl_accounts);
 	return;
 }
 

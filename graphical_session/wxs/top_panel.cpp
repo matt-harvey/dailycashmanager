@@ -72,15 +72,19 @@ void
 TopPanel::configure_transaction_ctrl()
 {
 	assert (m_top_sizer);
-	vector<Account> selected_accounts;
-	selected_balance_sheet_accounts(selected_accounts);
-	selected_pl_accounts(selected_accounts);
-	configure_transaction_ctrl(selected_accounts);
+	vector<Account> balance_sheet_accounts;
+	selected_balance_sheet_accounts(balance_sheet_accounts);
+	vector<Account> pl_accounts;
+	selected_pl_accounts(pl_accounts);
+	configure_transaction_ctrl(balance_sheet_accounts, pl_accounts);
 	return;
 }
 
 void
-TopPanel::configure_transaction_ctrl(vector<Account> const& p_accounts)
+TopPanel::configure_transaction_ctrl
+(	vector<Account> const& p_balance_sheet_accounts,
+	vector<Account> const& p_pl_accounts
+)
 {
 	TransactionCtrl* old = 0;
 	if (m_top_sizer && m_transaction_ctrl)
@@ -88,8 +92,12 @@ TopPanel::configure_transaction_ctrl(vector<Account> const& p_accounts)
 		m_top_sizer->Detach(m_transaction_ctrl);
 		old = m_transaction_ctrl;
 	}
-	m_transaction_ctrl =
-		new TransactionCtrl(this, p_accounts, m_database_connection);
+	m_transaction_ctrl = new TransactionCtrl
+	(	this,
+		p_balance_sheet_accounts,
+		p_pl_accounts,
+		m_database_connection
+	);
 	m_top_sizer->Add
 	(	m_transaction_ctrl,
 		wxSizerFlags(4).Expand().
