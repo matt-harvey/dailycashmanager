@@ -119,18 +119,18 @@ TransactionCtrl::TransactionCtrl
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(ok_button_size.x * 2, ok_button_size.y)
+		wxSize(ok_button_size.x * 2, wxDefaultSize.y)
 	);
 	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 1));
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
 		s_primary_amount_ctrl_id,
-		wxSize(ok_button_size.x * 2, ok_button_size.y),
+		wxSize(ok_button_size.x * 2, wxDefaultSize.y),
 		m_database_connection.default_commodity().precision(),
 		false
 	);
 	m_top_sizer->Add(m_primary_amount_ctrl, wxGBPosition(row, 2));
-	wxSize const date_ctrl_sz(ok_button_size.x, ok_button_size.y);
+	wxSize const date_ctrl_sz(ok_button_size.x, wxDefaultSize.y);
 	m_date_ctrl = new DateCtrl(this, wxID_ANY, date_ctrl_sz);
 	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 4));
 
@@ -151,7 +151,7 @@ TransactionCtrl::TransactionCtrl
 		(	this,
 			id,
 			account,
-			wxSize(ok_button_size.x * 2, ok_button_size.y),
+			wxSize(ok_button_size.x * 2, wxDefaultSize.y),
 			all_account_reader.begin(),
 			all_account_reader.end(),
 			m_database_connection
