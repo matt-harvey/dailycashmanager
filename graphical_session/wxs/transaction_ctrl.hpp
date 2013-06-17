@@ -79,6 +79,15 @@ public:
 		std::vector<Account> const& p_pl_accounts,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
+
+	/**
+	 * Refresh the selections available in the AccountCtrls in the
+	 * TransactionCtrl, and the selection in the TransactionTypeCtrl,
+	 * to match p_transaction_type.
+	 */
+	void refresh_for_transaction_type
+	(	transaction_type::TransactionType p_transaction_type
+	);
 	
 protected:
 

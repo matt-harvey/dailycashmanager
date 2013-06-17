@@ -20,6 +20,9 @@ class TransactionTypeCtrl: public wxComboBox
 {
 public:
 
+	/**
+	 * p_parent must be a TransactionCtrl*.
+	 */
 	TransactionTypeCtrl
 	(	wxWindow* p_parent,
 		wxWindowID p_id,
@@ -40,6 +43,7 @@ public:
 
 private:
 	void on_kill_focus(wxFocusEvent& event);
+	void on_text_change(wxCommandEvent& event);
 
 	DECLARE_EVENT_TABLE()
 

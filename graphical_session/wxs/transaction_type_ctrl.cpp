@@ -1,6 +1,7 @@
 #include "transaction_type_ctrl.hpp"
 #include "b_string.hpp"
 #include "string_set_validator.hpp"
+#include "transaction_ctrl.hpp"
 #include "transaction_type.hpp"
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
@@ -29,6 +30,7 @@ namespace gui
 
 BEGIN_EVENT_TABLE(TransactionTypeCtrl, wxComboBox)
 	EVT_KILL_FOCUS(TransactionTypeCtrl::on_kill_focus)
+	EVT_TEXT(wxID_ANY, TransactionTypeCtrl::on_text_change)
 END_EVENT_TABLE()
 
 
@@ -45,7 +47,8 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		),
 		wxDefaultPosition,
 		p_size,
-		wxArrayString()
+		wxArrayString(),
+		wxCB_READONLY
 	)
 {
 	wxArrayString transaction_type_verbs;
@@ -67,8 +70,18 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		"transaction type"
 	);
 	SetValidator(validator);
+	// TODO AutoComplete is irrelevant if we have the wxComboBox as readonly.
+	// But we still might want to let the user select by just typing the first
+	// letter or something.
 	AutoComplete(transaction_type_verbs);
 }
+
+transaction_type::TransactionType
+TransactionTypeCtrl::transaction_type() const
+{
+	return static_cast<transaction_type::TransactionType>(GetSelection());
+}
+
 
 void
 TransactionTypeCtrl::set_transaction_type
@@ -95,6 +108,15 @@ TransactionTypeCtrl::on_kill_focus(wxFocusEvent& event)
 	return;
 }
 
+void
+TransactionTypeCtrl::on_text_change(wxCommandEvent& event)
+{
+	TransactionCtrl* parent = dynamic_cast<TransactionCtrl*>(GetParent());
+	assert(parent);
+	parent->refresh_for_transaction_type(transaction_type());
+	event.Skip();
+	return;
+}
 
 
 }  // namespace gui

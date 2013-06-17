@@ -295,6 +295,17 @@ TransactionCtrl::TransactionCtrl
 }
 
 void
+TransactionCtrl::refresh_for_transaction_type
+(	transaction_type::TransactionType p_transaction_type
+)
+{
+	JEWEL_DEBUG_LOG << "Called TransactionCtrl::refresh_for_transaction_type."
+	                << endl;
+	// TODO Implement.
+
+}
+
+void
 TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
