@@ -30,7 +30,6 @@
 #include <wx/panel.h>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
-#include <wx/radiobox.h>
 #include <wx/gbsizer.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
@@ -97,12 +96,11 @@ TransactionCtrl::TransactionCtrl
 	m_cancel_button(0),
 	m_recurring_transaction_button(0),
 	m_ok_button(0),
-	m_actual_vs_budget_ctrl(0),
 	m_database_connection(p_database_connection)
 {
 	assert (m_account_name_boxes.empty());
 	assert (m_comment_boxes.empty());
-	assert (m_amount_boxes.empty());
+	assert (m_split_buttons.empty());
 	assert (!p_balance_sheet_accounts.empty() || !p_pl_accounts.empty());
 	assert (p_balance_sheet_accounts.size() + p_pl_accounts.size() >= 2);
 	
@@ -201,7 +199,7 @@ TransactionCtrl::TransactionCtrl
 	accounts.push_back(account_y);
 
 	Size const sz = accounts.size();
-	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, ++id, ++row)
+	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, id += 2, ++row)
 	{
 		Account const account = accounts[i];
 		assert ((i == 0) || (i == 1));
@@ -229,24 +227,22 @@ TransactionCtrl::TransactionCtrl
 			wxSize(ok_button_size.x * 4.5, account_name_box_size.y),
 			wxALIGN_LEFT
 		);
-		Decimal::places_type const precision =
-			account.commodity().precision();
-		DecimalTextCtrl* entry_ctrl = new DecimalTextCtrl
+		wxButton* split_button = new wxButton
 		(	this,
-			id,
-			wxSize(ok_button_size.x * 2, account_name_box_size.y),
-			precision,
-			false
+			id + 1,
+			wxString("&Split..."),
+			wxDefaultPosition,
+			ok_button_size
 		);
 		int base_flag = wxLEFT;
 		if (i == 0) base_flag |= wxTOP;
 		m_top_sizer->Add(account_name_box, wxGBPosition(row, 1));
 		m_top_sizer->Add(comment_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 2));
-		m_top_sizer->Add(entry_ctrl, wxGBPosition(row, 4));
+		m_top_sizer->Add(split_button, wxGBPosition(row, 4));
 
 		m_account_name_boxes.push_back(account_name_box);
 		m_comment_boxes.push_back(comment_ctrl);
-		m_amount_boxes.push_back(entry_ctrl);
+		m_split_buttons.push_back(split_button);
 	}
 
 	// Button row
@@ -255,7 +251,7 @@ TransactionCtrl::TransactionCtrl
 		wxID_CANCEL,
 		wxString("&Cancel"),
 		wxDefaultPosition,
-		wxSize(ok_button_size.x, ok_button_size.y)
+		ok_button_size
 	);
 	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 1));
 	m_recurring_transaction_button = new wxButton
@@ -275,17 +271,6 @@ TransactionCtrl::TransactionCtrl
 	wxArrayString radio_box_strings;
 	radio_box_strings.Add(wxString("Actual"));
 	radio_box_strings.Add(wxString("Budget"));
-	m_actual_vs_budget_ctrl = new wxRadioBox
-	(	this,
-		wxID_ANY,
-		wxEmptyString,
-		wxDefaultPosition,
-		wxDefaultSize,
-		radio_box_strings,
-		1,
-		wxRA_SPECIFY_COLS
-	);
-	m_top_sizer->Add(m_actual_vs_budget_ctrl, wxGBPosition(row, 1));
 
 	// "Admin"
 	// SetSizer(m_top_sizer);
@@ -347,12 +332,18 @@ void
 TransactionCtrl::post_journal() const
 {
 	OrdinaryJournal journal(m_database_connection);
-	journal.set_whether_actual
-	(	m_actual_vs_budget_ctrl->GetSelection() == 0
-	);
+	transaction_type::TransactionType const ttype =
+		m_transaction_type_ctrl->transaction_type();
+	journal.set_whether_actual(transaction_type_is_actual(ttype));
 	size_t const sz = m_account_name_boxes.size();
 	assert (sz == m_comment_boxes.size());
-	assert (sz == m_amount_boxes.size());
+	Decimal const primary_amount = wx_to_decimal
+	(	wxString(m_primary_amount_ctrl->GetValue()),
+		locale()
+	);
+	// WARNING This can't yet handle Journals with a number of entries
+	// other than 2.
+	assert (sz == 2);
 	for (size_t i = 0; i != sz; ++i)
 	{
 		Account const account
@@ -364,11 +355,16 @@ TransactionCtrl::post_journal() const
 		entry.set_comment
 		(	wx_to_bstring(m_comment_boxes[i]->GetValue())
 		);
-		Decimal amount = wx_to_decimal
-		(	wxString(m_amount_boxes[i]->GetValue()),
-			locale()
-		);
-		if (!journal.is_actual()) amount = -amount;
+		Decimal amount = primary_amount;
+		if (i == 0)
+		{
+			// This is the source account
+			amount = -amount;
+		}
+		if (!journal.is_actual())
+		{
+			amount = -amount;
+		}
 		amount = round(amount, account.commodity().precision());
 		entry.set_amount(amount);
 		entry.set_whether_reconciled(false);
@@ -387,6 +383,11 @@ TransactionCtrl::post_journal() const
 bool
 TransactionCtrl::is_balanced() const
 {
+	// WARNING For now this is trivial, as we have only the primary_amount
+	// informing one each of only two sides of the transaction. But it
+	// probably won't always be trivial.
+	return true;
+	/*
 	Decimal balance(0, 0);
 	vector<DecimalTextCtrl*>::size_type i = 0;
 	vector<DecimalTextCtrl*>::size_type const sz = m_amount_boxes.size();
@@ -395,6 +396,7 @@ TransactionCtrl::is_balanced() const
 		balance += wx_to_decimal(m_amount_boxes[i]->GetValue(), locale());
 	}
 	return balance == Decimal(0, 0);
+	*/
 }
 
 
