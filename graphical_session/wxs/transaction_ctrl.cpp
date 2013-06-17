@@ -170,7 +170,7 @@ TransactionCtrl::TransactionCtrl
 		wxID_ANY,
 		currency_abbreviation,
 		wxDefaultPosition,
-		ok_button_size,
+		ok_button_size * 2,
 		wxALIGN_RIGHT
 	);
 	m_top_sizer->Add
