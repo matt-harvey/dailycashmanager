@@ -20,6 +20,7 @@
 #include "transaction_type_ctrl.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/on_windows.hpp>
@@ -39,6 +40,7 @@
 #include <iostream>
 #include <vector>
 
+using boost::scoped_ptr;
 using jewel::Decimal;
 using std::endl;
 using std::vector;
@@ -176,12 +178,21 @@ TransactionCtrl::TransactionCtrl
 
 	row += 2;
 	
-	// We need the names of all Accounts, to help us
-	// construct the wxComboboxes from the which the user will choose
-	// Accounts.
-	// TODO HIGH PRIORITY Should be restricted to a subset of the
-	// Accounts, depending on TransactionType.
-	AccountReader const all_account_reader(m_database_connection);
+	// We need the names of available Accounts, for the given
+	// TransactionType, from which the user will choose
+	// Accounts, for each side of the transaction.
+	scoped_ptr<AccountReaderBase> const account_reader_x
+	(	create_source_account_reader
+		(	m_database_connection,
+			initial_transaction_type
+		)
+	);
+	scoped_ptr<AccountReaderBase> const account_reader_y
+	(	create_destination_account_reader
+		(	m_database_connection,
+			initial_transaction_type
+		)
+	);
 
 	// Rows for entering Entry details
 	typedef vector<Account>::size_type Size;
@@ -193,13 +204,20 @@ TransactionCtrl::TransactionCtrl
 	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, ++id, ++row)
 	{
 		Account const account = accounts[i];
+		assert ((i == 0) || (i == 1));
+		assert (accounts.size() == 2);
+		AccountReaderBase* account_reader =
+		(	(i == 0)?
+			account_reader_x.get():
+			account_reader_y.get()
+		);
 		AccountCtrl* account_name_box = new AccountCtrl
 		(	this,
 			id,
 			account,
 			wxSize(ok_button_size.x * 2, wxDefaultSize.y),
-			all_account_reader.begin(),
-			all_account_reader.end(),
+			account_reader->begin(),
+			account_reader->end(),
 			m_database_connection
 		);
 		wxSize const account_name_box_size = account_name_box->GetSize();

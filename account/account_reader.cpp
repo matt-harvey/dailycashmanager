@@ -130,7 +130,7 @@ RevenueAccountReader::RevenueAccountReader
 	AccountReaderBase
 	(	p_database_connection,
 		"select account_id from accounts where account_type_id = 4 "
-			"order by name"
+		"order by name"
 	)
 {
 	check_revenue_type_int(4);
@@ -141,8 +141,8 @@ ExpenseAccountReader::ExpenseAccountReader
 ):
 	AccountReaderBase
 	(	p_database_connection,
-		"select account_id from accounts where account_type_id = 5"
-			"order by name"
+		"select account_id from accounts where account_type_id = 5 "
+		"order by name"
 	)
 {
 	check_expense_type_int(5);
