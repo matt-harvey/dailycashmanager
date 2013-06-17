@@ -46,6 +46,9 @@ class TopPanel;
  * from TransactionCtrl, there is flicker. This is because we are redrawing
  * the entire TopPanel from scratch. We could probably get rid of the flicker
  * by only redrawing the parts we need.
+ *
+ * @todo Ensure this can handle situation where insufficient default
+ * Accounts are available.
  */
 class TransactionCtrl: public wxPanel
 {
@@ -54,6 +57,21 @@ public:
 	/**
 	 * All Accounts in p_accounts should be associated with the same
 	 * PhatbooksDatabaseConnection.
+	 *
+	 * @param p_parent parent panel
+	 *
+	 * @param p_balance_sheet_accounts a sequence of Accounts
+	 * all of which must be balance sheet Accounts (i.e. of
+	 * account_super_type::balance_sheet). May be empty providing
+	 * p_pl_accounts has at least 2 elements.
+	 *
+	 * @param p_pl_accounts a sequence of Accounts all of which
+	 * must be P&L Accounts (i.e. of account_super_type::pl). May be empty
+	 * providing p_balance_sheet_accounts has at least 2 elements.
+	 *
+	 * @param p_database_connection database connection. Must be the same
+	 * one that the Accounts in p_balance_sheet_accounts and
+	 * p_pl_accounts are associated with.
 	 */
 	TransactionCtrl
 	(	TopPanel* p_parent,

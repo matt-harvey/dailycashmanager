@@ -71,6 +71,15 @@ TransactionTypeCtrl::TransactionTypeCtrl
 }
 
 void
+TransactionTypeCtrl::set_transaction_type
+(	transaction_type::TransactionType p_transaction_type
+)
+{
+	SetSelection(static_cast<int>(p_transaction_type));
+	return;
+}
+
+void
 TransactionTypeCtrl::on_kill_focus(wxFocusEvent& event)
 {
 	// TODO Make a class from which we can privately inherit, to capture

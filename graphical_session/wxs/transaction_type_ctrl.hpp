@@ -35,7 +35,7 @@ public:
 	 * Sets the TransactionType displayed in the control.
 	 */
 	void set_transaction_type
-	(	transaction_type::TransactionType transaction_type
+	(	transaction_type::TransactionType p_transaction_type
 	);
 
 private:

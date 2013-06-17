@@ -107,7 +107,7 @@ TopPanel::configure_transaction_ctrl
 				m_pl_account_list->default_account();
 			if (maybe_pl_account)
 			{
-				p_pl_accounts.push_back(value(maybe_bs_account));
+				p_pl_accounts.push_back(value(maybe_pl_account));
 			}
 		}
 	}

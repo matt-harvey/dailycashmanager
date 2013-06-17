@@ -200,10 +200,19 @@ AccountListCtrl::update
 	return;
 }
 
-boost::optional<Account>
+optional<Account>
 AccountListCtrl::default_account() const
 {
-	// TODO HIGH PRIORITY Implement this.
+	optional<Account> ret;
+	if (GetItemCount() != 0)
+	{
+		assert (GetItemCount() > 0);
+		ret = Account
+		(	m_database_connection,
+			wx_to_bstring(GetItemText(GetTopItem()))
+		);
+	}
+	return ret;
 }
 
 

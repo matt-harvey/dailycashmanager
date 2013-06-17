@@ -4,6 +4,7 @@
 #include "account.hpp"
 #include "account_ctrl.hpp"
 #include "account_reader.hpp"
+#include "account_type.hpp"
 #include "b_string.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
@@ -17,6 +18,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "top_panel.hpp"
 #include "transaction_type_ctrl.hpp"
+#include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
@@ -32,6 +34,7 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <vector>
@@ -98,6 +101,41 @@ TransactionCtrl::TransactionCtrl
 	assert (m_account_name_boxes.empty());
 	assert (m_comment_boxes.empty());
 	assert (m_amount_boxes.empty());
+	assert (!p_balance_sheet_accounts.empty() || !p_pl_accounts.empty());
+	assert (p_balance_sheet_accounts.size() + p_pl_accounts.size() >= 2);
+	
+	// Figure out the natural TransactionType given the Accounts we have
+	// been passed. We will use this initialize the TransactionTypeCtrl.
+	Account account_x(p_database_connection);
+	Account account_y(p_database_connection);
+	if (p_balance_sheet_accounts.empty())
+	{
+		assert (p_pl_accounts.size() >= 2);
+		account_x = p_pl_accounts[0];
+		account_y = p_pl_accounts[1];
+	}
+	else if (p_pl_accounts.empty())
+	{
+		assert (p_balance_sheet_accounts.size() >= 2);
+		account_x = p_balance_sheet_accounts[0];
+		account_y = p_balance_sheet_accounts[1];
+	}
+	else
+	{
+		assert (!p_balance_sheet_accounts.empty());
+		assert (!p_pl_accounts.empty());
+		account_x = p_balance_sheet_accounts[0];
+		account_y = p_pl_accounts[0];
+	}
+	if (account_y.account_type() == account_type::revenue)
+	{
+		using std::swap;
+		swap(account_x, account_y);
+	}
+	assert (account_x.has_id());
+	assert (account_y.has_id());
+	transaction_type::TransactionType const initial_transaction_type =
+		natural_transaction_type(account_x, account_y);
 
 	size_t row = 0;	
 
@@ -122,6 +160,7 @@ TransactionCtrl::TransactionCtrl
 		wxID_ANY,
 		wxSize(ok_button_size.x * 2, wxDefaultSize.y)
 	);
+	m_transaction_type_ctrl->set_transaction_type(initial_transaction_type);
 	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 1));
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
@@ -140,14 +179,20 @@ TransactionCtrl::TransactionCtrl
 	// We need the names of all Accounts, to help us
 	// construct the wxComboboxes from the which the user will choose
 	// Accounts.
+	// TODO HIGH PRIORITY Should be restricted to a subset of the
+	// Accounts, depending on TransactionType.
 	AccountReader const all_account_reader(m_database_connection);
 
 	// Rows for entering Entry details
 	typedef vector<Account>::size_type Size;
-	Size const sz = p_accounts.size();
+	vector<Account> accounts;
+	accounts.push_back(account_x);
+	accounts.push_back(account_y);
+
+	Size const sz = accounts.size();
 	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, ++id, ++row)
 	{
-		Account const account = p_accounts[i];
+		Account const account = accounts[i];
 		AccountCtrl* account_name_box = new AccountCtrl
 		(	this,
 			id,
