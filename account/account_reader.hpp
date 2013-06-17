@@ -16,8 +16,7 @@ typedef
 	AccountReaderBase;
 
 
-class AccountReader:
-	public AccountReaderBase
+class AccountReader: public AccountReaderBase
 {
 public:
 	explicit AccountReader
@@ -26,9 +25,7 @@ public:
 };
 
 
-
-class BalanceSheetAccountReader:
-	public AccountReaderBase
+class BalanceSheetAccountReader: public AccountReaderBase
 {
 public:
 	explicit BalanceSheetAccountReader
@@ -37,12 +34,26 @@ public:
 };
 
 
-
-class PLAccountReader:
-	public AccountReaderBase
+class PLAccountReader: public AccountReaderBase
 {
 public:
 	explicit PLAccountReader
+	(	PhatbooksDatabaseConnection& p_database_connection
+	);
+};
+
+class RevenueAccountReader: public AccountReaderBase
+{
+public:
+	explicit RevenueAccountReader
+	(	PhatbooksDatabaseConnection& p_database_connection
+	);
+};
+
+class ExpenseAccountReader: public AccountReaderBase
+{
+public:
+	explicit ExpenseAccountReader
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 };

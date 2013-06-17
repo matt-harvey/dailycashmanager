@@ -58,7 +58,31 @@ namespace
 #		endif
 		return;
 	}
+	
+	void check_revenue_type_int(int n)
+	{
+#		ifndef NDEBUG
+			int const rev_int = static_cast<int>(account_type::revenue);
+			assert (n == rev_int);
+#		else
+			(void)n;  // Silence compiler re. unused parameter.
+#		endif
+		return;
+	}
+		
+	void check_expense_type_int(int n)
+	{
+#		ifndef NDEBUG
+			int const exp_int = static_cast<int>(account_type::expense);
+			assert (n == exp_int);
+#		else
+			(void)n;  // Silence compiler re. unused parameter.
+#		endif
+		return;
+	}
+	
 
+	
 }  // end anonymous namespace
 
 
@@ -99,6 +123,27 @@ PLAccountReader::PLAccountReader
 }
 
 
+RevenueAccountReader::RevenueAccountReader
+(	PhatbooksDatabaseConnection& p_database_connection
+):
+	AccountReaderBase
+	(	p_database_connection,
+		"select account_id from accounts where account_type_id = 4"
+	)
+{
+	check_revenue_type_int(4);
+}
+
+ExpenseAccountReader::ExpenseAccountReader
+(	PhatbooksDatabaseConnection& p_database_connection
+):
+	AccountReaderBase
+	(	p_database_connection,
+		"select account_id from accounts where account_type_id = 5"
+	)
+{
+	check_expense_type_int(5);
+}
 
 
 }  // namespace phatbooks
