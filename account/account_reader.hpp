@@ -59,6 +59,54 @@ public:
 };
 
 
+}  // namespace phatbooks
+
+#include "transaction_type.hpp"
+
+namespace phatbooks
+{
+
+
+/**
+ * @returns a pointer to a heap-allocated AccountReaderBase,
+ * which will read only those Accounts (associated with
+ * p_database_connection) which are eligible to be the "source"
+ * Account for a transaction of type p_transaction_type.
+ *
+ * The caller is responsible for managing the memory
+ * pointed to by the returned pointer.
+ *
+ * Guaranteed either to throw an exception, or else return a valid
+ * pointer.
+ *
+ * @todo Is there code/information duplication between here and
+ * functions in transaction_type.hpp?
+ */
+AccountReaderBase* create_source_account_reader
+(	PhatbooksDatabaseConnection& p_database_connection,
+	transaction_type::TransactionType p_transaction_type
+);
+
+/**
+ * @returns a pointer to a heap-allocated AccountReaderBase,
+ * which will read only those Accounts (associated with
+ * p_database_connection) which are eligible to be the "destination"
+ * Account for a transaction of type p_transaction_type.
+ *
+ * Guarantees either to throw an exception, or else returns a valid
+ * pointer.
+ *
+ * The caller responsible for managing the memory pointed to by
+ * the returned pointer.
+ *
+ * @todo Is there code/information duplication between here and
+ * functions in transaction_type.hpp?
+ */
+AccountReaderBase* create_destination_account_reader
+(	PhatbooksDatabaseConnection& p_database_connection,
+	transaction_type::TransactionType p_transaction_type
+);
+
 
 }  // namespace phatbooks
 

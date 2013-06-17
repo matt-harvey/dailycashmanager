@@ -1,7 +1,6 @@
 #ifndef GUARD_transaction_type_hpp
 #define GUARD_transaction_type_hpp
 
-#include "account_type.hpp"
 #include "b_string.hpp"
 #include <vector>
 
@@ -55,6 +54,15 @@ bool
 transaction_type_is_actual
 (	transaction_type::TransactionType p_transaction_type
 );
+
+
+}  // namespace phatbooks
+
+
+#include "account_type.hpp"
+
+namespace phatbooks
+{
 
 /**
  * @returns a vector of AccountTypes appropriate for a given

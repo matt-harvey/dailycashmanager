@@ -3,6 +3,7 @@
 #include "account_reader.hpp"
 #include "account_type.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "transaction_type.hpp"
 #include <sqloxx/reader.hpp>
 #include <cassert>
 
@@ -128,7 +129,8 @@ RevenueAccountReader::RevenueAccountReader
 ):
 	AccountReaderBase
 	(	p_database_connection,
-		"select account_id from accounts where account_type_id = 4"
+		"select account_id from accounts where account_type_id = 4 "
+			"order by name"
 	)
 {
 	check_revenue_type_int(4);
@@ -140,9 +142,58 @@ ExpenseAccountReader::ExpenseAccountReader
 	AccountReaderBase
 	(	p_database_connection,
 		"select account_id from accounts where account_type_id = 5"
+			"order by name"
 	)
 {
 	check_expense_type_int(5);
+}
+
+AccountReaderBase*
+create_source_account_reader
+(	PhatbooksDatabaseConnection& p_database_connection,
+	transaction_type::TransactionType p_transaction_type
+)
+{
+	switch (p_transaction_type)
+	{
+	case transaction_type::expenditure_transaction:
+		return new BalanceSheetAccountReader(p_database_connection);
+	case transaction_type::revenue_transaction:
+		return new RevenueAccountReader(p_database_connection);
+	case transaction_type::balance_sheet_transaction:
+		return new BalanceSheetAccountReader(p_database_connection);
+	case transaction_type::envelope_transaction:
+		return new PLAccountReader(p_database_connection);
+	case transaction_type::generic_transaction:
+		return new AccountReader(p_database_connection);
+	default:
+		assert (false);
+	}
+	assert (false);
+}
+
+AccountReaderBase*
+create_destination_account_reader
+(	PhatbooksDatabaseConnection& p_database_connection,
+	transaction_type::TransactionType p_transaction_type
+)
+{
+	switch (p_transaction_type)
+	{
+	case transaction_type::expenditure_transaction:
+		return new ExpenseAccountReader(p_database_connection);
+	case transaction_type::revenue_transaction:
+		return new BalanceSheetAccountReader(p_database_connection);
+	case transaction_type::balance_sheet_transaction:
+		return new BalanceSheetAccountReader(p_database_connection);
+	case transaction_type::envelope_transaction:
+		return new PLAccountReader(p_database_connection);
+	case transaction_type::generic_transaction:
+		return new AccountReader(p_database_connection);
+	default:
+		assert (false);
+	}
+	assert (false);
 }
 
 
