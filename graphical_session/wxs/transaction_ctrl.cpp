@@ -162,23 +162,6 @@ TransactionCtrl::TransactionCtrl
 	);
 	m_transaction_type_ctrl->set_transaction_type(initial_transaction_type);
 	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 1));
-	wxString const currency_abbreviation = bstring_to_wx
-	(	m_database_connection.default_commodity().abbreviation()
-	);
-	wxStaticText* const currency_text = new wxStaticText
-	(	this,
-		wxID_ANY,
-		currency_abbreviation,
-		wxDefaultPosition,
-		ok_button_size * 2,
-		wxALIGN_RIGHT
-	);
-	m_top_sizer->Add
-	(	currency_text,
-		wxGBPosition(row, 2),
-		wxDefaultSpan,
-		wxALIGN_RIGHT
-	);
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
 		s_primary_amount_ctrl_id,
@@ -192,10 +175,19 @@ TransactionCtrl::TransactionCtrl
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
-	wxSize const date_ctrl_sz(ok_button_size.x, ok_button_size.y);
+	wxString currency_abbreviation = bstring_to_wx
+	(	m_database_connection.default_commodity().abbreviation()
+	);
+	currency_abbreviation = wxString(" ") + currency_abbreviation;
+	wxStaticText* const currency_text = new wxStaticText
+	(	this,
+		wxID_ANY,
+		currency_abbreviation,
+		wxDefaultPosition,
+		ok_button_size
+	);
+	m_top_sizer->Add(currency_text, wxGBPosition(row, 4));
 
-	row += 2;
-	
 	// We need the names of available Accounts, for the given
 	// TransactionType, from which the user will choose
 	// Accounts, for each side of the transaction.
@@ -218,7 +210,7 @@ TransactionCtrl::TransactionCtrl
 	accounts.push_back(account_x);
 	accounts.push_back(account_y);
 
-	++row;
+	row += 3;
 
 	Size const sz = accounts.size();
 	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, id += 2, row += 3)
@@ -293,7 +285,7 @@ TransactionCtrl::TransactionCtrl
 		ok_button_size
 	);
 	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 1));
-	m_date_ctrl = new DateCtrl(this, wxID_ANY, date_ctrl_sz);
+	m_date_ctrl = new DateCtrl(this, wxID_ANY, ok_button_size);
 	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 2));
 	m_recurring_transaction_button = new wxButton
 	(	this,
