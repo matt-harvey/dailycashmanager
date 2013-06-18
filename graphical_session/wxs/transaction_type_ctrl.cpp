@@ -30,7 +30,7 @@ namespace gui
 
 BEGIN_EVENT_TABLE(TransactionTypeCtrl, wxComboBox)
 	EVT_KILL_FOCUS(TransactionTypeCtrl::on_kill_focus)
-	EVT_TEXT(wxID_ANY, TransactionTypeCtrl::on_text_change)
+	// EVT_TEXT(wxID_ANY, TransactionTypeCtrl::on_text_change)
 END_EVENT_TABLE()
 
 
@@ -51,11 +51,13 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		//, wxCB_READONLY
 	)
 {
+	JEWEL_DEBUG_LOG_LOCATION;
 	wxArrayString transaction_type_verbs;
 	assert (transaction_type_verbs.IsEmpty());
 	vector<TransactionType> const tt = transaction_types();
 	vector<TransactionType>::const_iterator it = tt.begin();
 	vector<TransactionType>::const_iterator const end = tt.end();
+	JEWEL_DEBUG_LOG_LOCATION;
 	for ( ; it != end; ++it)
 	{
 		wxString const verb = bstring_to_wx
@@ -70,15 +72,27 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		"transaction type"
 	);
 	SetValidator(validator);
+	SetSelection(0);  // In effort to avoid apparent bug in Windows.
 	// TODO AutoComplete is irrelevant if we have the wxComboBox as readonly.
 	// But we still might want to let the user select by just typing the first
 	// letter or something.
+	JEWEL_DEBUG_LOG_LOCATION;
 	AutoComplete(transaction_type_verbs);
+	JEWEL_DEBUG_LOG_LOCATION;
 }
 
 transaction_type::TransactionType
 TransactionTypeCtrl::transaction_type() const
 {
+	JEWEL_DEBUG_LOG_LOCATION;
+	int const selection = GetSelection();
+#	ifndef NDEBUG
+		JEWEL_DEBUG_LOG << GetStringSelection() << endl;
+		assert (selection >= 0);
+		int const num_ttypes_as_int =
+			static_cast<int>(transaction_type::num_transaction_types);
+		assert (selection < num_ttypes_as_int);
+#	endif
 	return static_cast<transaction_type::TransactionType>(GetSelection());
 }
 
@@ -108,15 +122,27 @@ TransactionTypeCtrl::on_kill_focus(wxFocusEvent& event)
 	return;
 }
 
+/*
 void
 TransactionTypeCtrl::on_text_change(wxCommandEvent& event)
 {
 	TransactionCtrl* parent = dynamic_cast<TransactionCtrl*>(GetParent());
 	assert(parent);
+	transaction_type::TransactionType const ttype = transaction_type();
+
+#	ifndef NDEBUG
+		int const ttype_as_int = static_cast<int>(ttype);
+		int const num_ttypes_as_int =
+			static_cast<int>(transaction_type::num_transaction_types);
+		assert (ttype_as_int >= 0);
+		assert (ttype_as_int < num_ttypes_as_int);
+#	endif
+
 	parent->refresh_for_transaction_type(transaction_type());
-	event.Skip();
+	// event.Skip();
 	return;
 }
+*/
 
 
 }  // namespace gui

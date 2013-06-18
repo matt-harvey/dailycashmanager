@@ -7,6 +7,11 @@
 #include <sqloxx/reader.hpp>
 #include <cassert>
 
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
+
+
 namespace phatbooks
 {
 
@@ -167,6 +172,10 @@ create_source_account_reader
 	case transaction_type::generic_transaction:
 		return new AccountReader(p_database_connection);
 	default:
+		JEWEL_DEBUG_LOG << "Unexpected TransactionType passed to "
+		                << "create_source_account_reader "
+						<< static_cast<int>(p_transaction_type)
+						<< endl;
 		assert (false);
 	}
 	assert (false);
@@ -191,6 +200,10 @@ create_destination_account_reader
 	case transaction_type::generic_transaction:
 		return new AccountReader(p_database_connection);
 	default:
+		JEWEL_DEBUG_LOG << "Unexpected TransactionType passed to "
+		                << "create_destination_account_reader "
+						<< static_cast<int>(p_transaction_type)
+						<< endl;
 		assert (false);
 	}
 	assert (false);

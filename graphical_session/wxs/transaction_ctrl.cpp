@@ -66,6 +66,10 @@ BEGIN_EVENT_TABLE(TransactionCtrl, wxPanel)
 	(	wxID_CANCEL,
 		TransactionCtrl::on_cancel_button_click
 	)
+	EVT_TEXT
+	(	s_transaction_type_ctrl_id,
+		TransactionCtrl::on_transaction_type_ctrl_text_change
+	)
 END_EVENT_TABLE()
 
 // WARNING There are bugs in wxWidgets' wxDatePickerCtrl under wxGTK.
@@ -160,7 +164,7 @@ TransactionCtrl::TransactionCtrl
 
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
-		wxID_ANY,
+		s_transaction_type_ctrl_id,
 		wxSize(ok_button_size.x * 2, ok_button_size.y)
 	);
 	m_transaction_type_ctrl->set_transaction_type(initial_transaction_type);
@@ -194,6 +198,15 @@ TransactionCtrl::TransactionCtrl
 	// We need the names of available Accounts, for the given
 	// TransactionType, from which the user will choose
 	// Accounts, for each side of the transaction.
+	
+#	ifndef NDEBUG
+		int const ttype_as_int = static_cast<int>(initial_transaction_type);
+		int const num_ttypes_as_int =
+			static_cast<int>(transaction_type::num_transaction_types);
+		assert (ttype_as_int >= 0);
+		assert (ttype_as_int < num_ttypes_as_int);
+#	endif  // NDEBUG
+
 	scoped_ptr<AccountReaderBase> const account_reader_x
 	(	create_source_account_reader
 		(	m_database_connection,
@@ -323,6 +336,14 @@ TransactionCtrl::refresh_for_transaction_type
 (	transaction_type::TransactionType p_transaction_type
 )
 {
+#	ifndef NDEBUG
+		int const ttype_as_int = static_cast<int>(p_transaction_type);
+		int const num_ttypes_as_int =
+			static_cast<int>(transaction_type::num_transaction_types);
+		assert (ttype_as_int >= 0);
+		assert (ttype_as_int < num_ttypes_as_int);
+#	endif  // NDEBUG
+
 	set<AccountCtrlComplex>::iterator it =
 		m_account_selectors.begin();
 	set<AccountCtrlComplex>::iterator const end =
@@ -396,6 +417,27 @@ TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 	panel->update();
 }
 
+void
+TransactionCtrl::on_transaction_type_ctrl_text_change(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler re. unused parameter.
+	if (m_transaction_type_ctrl)
+	{
+		transaction_type::TransactionType const ttype =
+			m_transaction_type_ctrl->transaction_type();	
+		
+	#	ifndef NDEBUG
+			int const ttype_as_int = static_cast<int>(ttype);
+			int const num_ttypes_as_int =
+				static_cast<int>(transaction_type::num_transaction_types);
+			assert (ttype_as_int >= 0);
+			assert (ttype_as_int < num_ttypes_as_int);
+	#	endif
+
+		refresh_for_transaction_type(ttype);
+	}
+	return;
+}
 
 void
 TransactionCtrl::post_journal() const

@@ -95,6 +95,7 @@ private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_recurring_transaction_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
+	void on_transaction_type_ctrl_text_change(wxCommandEvent& event);
 	void post_journal() const;
 	bool is_balanced() const;
 
@@ -148,8 +149,10 @@ private:
 		s_date_ctrl_id + 1;
 	static unsigned int const s_recurring_transaction_button_id =
 		s_primary_amount_ctrl_id + 1;	
-	static unsigned int const s_min_entry_row_id =
+	static unsigned int const s_transaction_type_ctrl_id =
 		s_recurring_transaction_button_id + 1;
+	static unsigned int const s_min_entry_row_id =
+		s_transaction_type_ctrl_id + 1;
 
 	DECLARE_EVENT_TABLE()
 
