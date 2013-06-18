@@ -13,6 +13,7 @@
 #include <wx/gbsizer.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <set>
 #include <vector>
 
 namespace phatbooks
@@ -118,6 +119,28 @@ private:
 	std::vector<AccountCtrl*> m_account_name_boxes;
 	std::vector<wxTextCtrl*> m_comment_boxes;
 	std::vector<wxButton*> m_split_buttons;
+
+	/**
+	 * Represents an AccountCtrl within the TransactionCtrl, along
+	 * with accompanying information about the role of that
+	 * AccountCtrl in the TransactionCtrl.
+	 */
+	struct AccountCtrlComplex
+	{
+		// Non-owning pointer
+		AccountCtrl* ctrl;
+
+		// true if this is used to select a "source"
+		// Account; false if this is used to select a "destination"
+		// Account.
+		bool is_source;
+		bool operator<(AccountCtrlComplex const& rhs) const
+		{
+			return ctrl < rhs.ctrl;
+		}
+	};
+
+	std::set<AccountCtrlComplex> m_account_selectors;
 
 	static unsigned int const s_date_ctrl_id =
 		wxID_HIGHEST + 1;

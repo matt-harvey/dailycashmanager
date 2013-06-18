@@ -37,11 +37,13 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
+#include <set>
 #include <vector>
 
 using boost::scoped_ptr;
 using jewel::Decimal;
 using std::endl;
+using std::set;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -103,6 +105,7 @@ TransactionCtrl::TransactionCtrl
 	assert (m_split_buttons.empty());
 	assert (!p_balance_sheet_accounts.empty() || !p_pl_accounts.empty());
 	assert (p_balance_sheet_accounts.size() + p_pl_accounts.size() >= 2);
+	assert (m_account_selectors.empty());
 	
 	// Figure out the natural TransactionType given the Accounts we have
 	// been passed. We will use this initialize the TransactionTypeCtrl.
@@ -250,6 +253,9 @@ TransactionCtrl::TransactionCtrl
 			account_reader->end(),
 			m_database_connection
 		);
+		AccountCtrlComplex const comp =
+			{ account_name_box, (i == 0)? true: false };
+		m_account_selectors.insert(comp);
 		wxSize const account_name_box_size = account_name_box->GetSize();
 		wxTextCtrl* comment_ctrl = new wxTextCtrl
 		(	this,
@@ -317,10 +323,43 @@ TransactionCtrl::refresh_for_transaction_type
 (	transaction_type::TransactionType p_transaction_type
 )
 {
-	JEWEL_DEBUG_LOG << "Called TransactionCtrl::refresh_for_transaction_type."
-	                << endl;
-	// TODO Implement.
-
+	set<AccountCtrlComplex>::iterator it =
+		m_account_selectors.begin();
+	set<AccountCtrlComplex>::iterator const end =
+		m_account_selectors.end();
+	scoped_ptr<AccountReaderBase> const account_reader_x
+	(	create_source_account_reader
+		(	m_database_connection,
+			p_transaction_type
+		)
+	);
+	scoped_ptr<AccountReaderBase> const account_reader_y
+	(	create_destination_account_reader
+		(	m_database_connection,
+			p_transaction_type
+		)
+	);
+	for ( ; it != end; ++it)
+	{
+		AccountReaderBase const* const reader =
+		(	it->is_source?
+			account_reader_x.get():
+			account_reader_y.get()
+		);
+		AccountCtrl* control = it->ctrl;
+		wxSize const sz = control->GetSize();
+		assert (!reader->empty());  // TODO Figure out what to do if this isn't true.
+		control->recreate  // TODO Implement
+		(	this,
+			wxID_ANY,
+			reader[0], 
+			sz,
+			reader->begin(),
+			reader->end(),
+			m_database_connection
+		);
+	}
+	return;
 }
 
 void
