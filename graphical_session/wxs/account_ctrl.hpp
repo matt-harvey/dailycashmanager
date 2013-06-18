@@ -64,6 +64,17 @@ public:
 	 */
 	Account	account();
 
+	/**
+	 * Reset the selections available in the Combobox, to the
+	 * Accounts in the range p_beg to p_end. Must not be an
+	 * empty range.
+	 */
+	template <typename AccountIter>
+	void set
+	(	AccountIter p_beg,
+		AccountIter const& p_end
+	);
+
 private:
 	void on_kill_focus(wxFocusEvent& event);
 	PhatbooksDatabaseConnection& m_database_connection;
@@ -111,6 +122,30 @@ AccountCtrl::AccountCtrl
 	);
 	SetValidator(validator);
 	AutoComplete(valid_account_names);
+}
+
+template <typename AccountIter>
+void
+AccountCtrl::set(AccountIter p_beg, AccountIter const& p_end)
+{
+	assert (p_end > p_beg);
+	wxArrayString valid_account_names;
+	for ( ; p_beg != p_end; ++p_beg)
+	{
+		wxString const name_wx = bstring_to_wx(p_beg->name());
+		valid_account_names.Add(name_wx);
+	}
+	assert (!valid_account_names.IsEmpty());
+	StringSetValidator validator
+	(	valid_account_names[0],
+		valid_account_names,
+		"account or category"
+	);
+	SetValue(valid_account_names[0]);
+	Set(valid_account_names);
+	SetValidator(validator);
+	AutoComplete(valid_account_names);
+	return;
 }
 
 

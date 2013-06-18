@@ -341,23 +341,20 @@ TransactionCtrl::refresh_for_transaction_type
 	);
 	for ( ; it != end; ++it)
 	{
-		AccountReaderBase const* const reader =
-		(	it->is_source?
-			account_reader_x.get():
-			account_reader_y.get()
-		);
-		AccountCtrl* control = it->ctrl;
-		wxSize const sz = control->GetSize();
-		assert (!reader->empty());  // TODO Figure out what to do if this isn't true.
-		control->recreate  // TODO Implement
-		(	this,
-			wxID_ANY,
-			reader[0], 
-			sz,
-			reader->begin(),
-			reader->end(),
-			m_database_connection
-		);
+		assert (!account_reader_x->empty());  // TODO Figure out what to do if this isn't true.
+		assert (!account_reader_y->empty());  // TODO Figure out what to do if this isn't true.
+		if (it->is_source)
+		{
+			assert (it->ctrl);
+			assert (account_reader_x);
+			it->ctrl->set(account_reader_x->begin(), account_reader_x->end());
+		}
+		else
+		{
+			assert (it->ctrl);
+			assert (account_reader_y);
+			it->ctrl->set(account_reader_y->begin(), account_reader_y->end());
+		}
 	}
 	return;
 }
