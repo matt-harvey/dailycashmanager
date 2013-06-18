@@ -37,6 +37,7 @@ DateValidator::DateValidator(DateValidator const& rhs):
 bool
 DateValidator::Validate(wxWindow* WXUNUSED(parent))
 {
+	// TODO Make this more accepting of different formats.
 	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	wxTextCtrl const* const text_ctrl =
 		dynamic_cast<wxTextCtrl*>(GetWindow());

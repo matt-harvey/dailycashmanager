@@ -59,8 +59,8 @@ DecimalValidator::Validate(wxWindow* WXUNUSED(parent))
 	}
 	catch (jewel::Exception& e)
 	{
-		// TODO e.what() is not user-friendly enough.
-		wxMessageBox(std8_to_wx(e.what()));
+		// We don't display an error message here. We just return false,
+		// without updating m_decimal.
 		return false;
 	}
 }
