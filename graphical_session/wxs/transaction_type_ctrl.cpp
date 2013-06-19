@@ -58,8 +58,8 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		),
 		wxDefaultPosition,
 		p_size,
-		wxArrayString()
-		//, wxCB_READONLY
+		wxArrayString(),
+		wxCB_READONLY
 	)
 {
 	wxArrayString transaction_type_verbs;
