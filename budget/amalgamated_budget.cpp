@@ -78,7 +78,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 	Account balancing_account(dbc);
 	balancing_account.set_account_type(account_type::pure_envelope);
-	balancing_account.set_name("BUDGET IMBALANCE");
+	balancing_account.set_name("Budget imbalance");
 	balancing_account.set_description("");
 	Commodity const balancing_account_commodity = dbc.default_commodity();
 	balancing_account.set_commodity(balancing_account_commodity);
