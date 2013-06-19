@@ -53,13 +53,11 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		//, wxCB_READONLY
 	)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	wxArrayString transaction_type_verbs;
 	assert (transaction_type_verbs.IsEmpty());
 	vector<TransactionType> const tt = transaction_types();
 	vector<TransactionType>::const_iterator it = tt.begin();
 	vector<TransactionType>::const_iterator const end = tt.end();
-	JEWEL_DEBUG_LOG_LOCATION;
 	for ( ; it != end; ++it)
 	{
 		wxString const verb = bstring_to_wx
@@ -78,15 +76,12 @@ TransactionTypeCtrl::TransactionTypeCtrl
 	// TODO AutoComplete is irrelevant if we have the wxComboBox as readonly.
 	// But we still might want to let the user select by just typing the first
 	// letter or something.
-	JEWEL_DEBUG_LOG_LOCATION;
 	AutoComplete(transaction_type_verbs);
-	JEWEL_DEBUG_LOG_LOCATION;
 }
 
 optional<transaction_type::TransactionType>
 TransactionTypeCtrl::transaction_type() const
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	optional<transaction_type::TransactionType> ret;
 	int const selection = GetSelection();
 	if (selection < 0)
@@ -94,7 +89,6 @@ TransactionTypeCtrl::transaction_type() const
 		return ret;
 	}
 #	ifndef NDEBUG
-		JEWEL_DEBUG_LOG << GetStringSelection() << endl;
 		assert (selection >= 0);
 		int const num_ttypes_as_int =
 			static_cast<int>(transaction_type::num_transaction_types);
@@ -125,9 +119,7 @@ TransactionTypeCtrl::on_kill_focus(wxFocusEvent& event)
 	// through parent instead.
 	GetParent()->Validate();
 	GetParent()->TransferDataToWindow();
-	JEWEL_DEBUG_LOG_LOCATION;
 	event.Skip();
-	JEWEL_DEBUG_LOG_LOCATION;
 	return;
 }
 

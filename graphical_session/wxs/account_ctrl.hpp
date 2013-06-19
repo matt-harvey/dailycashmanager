@@ -128,7 +128,6 @@ template <typename AccountIter>
 void
 AccountCtrl::set(AccountIter p_beg, AccountIter const& p_end)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	assert (p_end > p_beg);
 	wxArrayString valid_account_names;
 	for ( ; p_beg != p_end; ++p_beg)
