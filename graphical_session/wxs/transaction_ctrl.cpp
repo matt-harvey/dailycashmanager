@@ -19,13 +19,13 @@
 #include "top_panel.hpp"
 #include "transaction_type_ctrl.hpp"
 #include "transaction_type.hpp"
+#include <boost/optional.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
-#include <boost/optional.hpp>
 #include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/combobox.h>
@@ -69,10 +69,6 @@ BEGIN_EVENT_TABLE(TransactionCtrl, wxPanel)
 	EVT_BUTTON
 	(	wxID_CANCEL,
 		TransactionCtrl::on_cancel_button_click
-	)
-	EVT_TEXT
-	(	s_transaction_type_ctrl_id,
-		TransactionCtrl::on_transaction_type_ctrl_text_change
 	)
 END_EVENT_TABLE()
 
@@ -419,31 +415,6 @@ TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 	TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
 	assert (panel);
 	panel->update();
-}
-
-void
-TransactionCtrl::on_transaction_type_ctrl_text_change(wxCommandEvent& event)
-{
-	(void)event;  // Silence compiler re. unused parameter.
-	if (m_transaction_type_ctrl)
-	{
-		optional<transaction_type::TransactionType> const ttype =
-			m_transaction_type_ctrl->transaction_type();	
-		if (!ttype)
-		{
-			return;
-		}
-	#	ifndef NDEBUG
-			int const ttype_as_int = static_cast<int>(value(ttype));
-			int const num_ttypes_as_int =
-				static_cast<int>(transaction_type::num_transaction_types);
-			assert (ttype_as_int >= 0);
-			assert (ttype_as_int < num_ttypes_as_int);
-	#	endif
-
-		refresh_for_transaction_type(value(ttype));
-	}
-	return;
 }
 
 void

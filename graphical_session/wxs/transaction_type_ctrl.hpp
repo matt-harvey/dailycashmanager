@@ -48,7 +48,7 @@ public:
 
 private:
 	void on_kill_focus(wxFocusEvent& event);
-	// void on_text_change(wxCommandEvent& event);
+	void on_change(wxCommandEvent& event);
 
 	DECLARE_EVENT_TABLE()
 

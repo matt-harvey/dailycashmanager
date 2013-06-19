@@ -4,6 +4,7 @@
 #include "transaction_ctrl.hpp"
 #include "transaction_type.hpp"
 #include <boost/optional.hpp>
+#include <jewel/optional.hpp>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
 #include <wx/gdicmn.h>
@@ -12,6 +13,7 @@
 #include <vector>
 
 using boost::optional;
+using jewel::value;
 using std::vector;
 
 
@@ -31,8 +33,13 @@ namespace gui
 {
 
 BEGIN_EVENT_TABLE(TransactionTypeCtrl, wxComboBox)
-	EVT_KILL_FOCUS(TransactionTypeCtrl::on_kill_focus)
-	// EVT_TEXT(wxID_ANY, TransactionTypeCtrl::on_text_change)
+	EVT_KILL_FOCUS
+	(	TransactionTypeCtrl::on_kill_focus
+	)
+	EVT_COMBOBOX
+	(	wxID_ANY,
+		TransactionTypeCtrl::on_change
+	)
 END_EVENT_TABLE()
 
 
@@ -123,27 +130,30 @@ TransactionTypeCtrl::on_kill_focus(wxFocusEvent& event)
 	return;
 }
 
-/*
 void
-TransactionTypeCtrl::on_text_change(wxCommandEvent& event)
+TransactionTypeCtrl::on_change(wxCommandEvent& event)
 {
+	(void)event;  // silence compiler re. unused param.
 	TransactionCtrl* parent = dynamic_cast<TransactionCtrl*>(GetParent());
 	assert(parent);
-	transaction_type::TransactionType const ttype = transaction_type();
+	optional<transaction_type::TransactionType> const maybe_ttype =
+		transaction_type();
+	if (!maybe_ttype)
+	{
+		return;
+	}
 
 #	ifndef NDEBUG
-		int const ttype_as_int = static_cast<int>(ttype);
+		int const ttype_as_int = static_cast<int>(value(maybe_ttype));
 		int const num_ttypes_as_int =
 			static_cast<int>(transaction_type::num_transaction_types);
 		assert (ttype_as_int >= 0);
 		assert (ttype_as_int < num_ttypes_as_int);
 #	endif
 
-	parent->refresh_for_transaction_type(transaction_type());
-	// event.Skip();
+	parent->refresh_for_transaction_type(value(maybe_ttype));
 	return;
 }
-*/
 
 
 }  // namespace gui

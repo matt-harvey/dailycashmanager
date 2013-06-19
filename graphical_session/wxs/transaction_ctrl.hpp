@@ -95,7 +95,7 @@ private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_recurring_transaction_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
-	void on_transaction_type_ctrl_text_change(wxCommandEvent& event);
+
 	void post_journal() const;
 	bool is_balanced() const;
 
