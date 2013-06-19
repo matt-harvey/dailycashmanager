@@ -128,6 +128,7 @@ template <typename AccountIter>
 void
 AccountCtrl::set(AccountIter p_beg, AccountIter const& p_end)
 {
+	JEWEL_DEBUG_LOG_LOCATION;
 	assert (p_end > p_beg);
 	wxArrayString valid_account_names;
 	for ( ; p_beg != p_end; ++p_beg)
@@ -141,10 +142,10 @@ AccountCtrl::set(AccountIter p_beg, AccountIter const& p_end)
 		valid_account_names,
 		"account or category"
 	);
-	SetValue(valid_account_names[0]);
 	Set(valid_account_names);
 	SetValidator(validator);
 	AutoComplete(valid_account_names);
+	SetValue(valid_account_names[0]);
 	return;
 }
 

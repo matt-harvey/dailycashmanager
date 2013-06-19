@@ -24,6 +24,8 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/on_windows.hpp>
+#include <jewel/optional.hpp>
+#include <boost/optional.hpp>
 #include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/combobox.h>
@@ -40,8 +42,10 @@
 #include <set>
 #include <vector>
 
+using boost::optional;
 using boost::scoped_ptr;
 using jewel::Decimal;
+using jewel::value;
 using std::endl;
 using std::set;
 using std::vector;
@@ -423,18 +427,21 @@ TransactionCtrl::on_transaction_type_ctrl_text_change(wxCommandEvent& event)
 	(void)event;  // Silence compiler re. unused parameter.
 	if (m_transaction_type_ctrl)
 	{
-		transaction_type::TransactionType const ttype =
+		optional<transaction_type::TransactionType> const ttype =
 			m_transaction_type_ctrl->transaction_type();	
-		
+		if (!ttype)
+		{
+			return;
+		}
 	#	ifndef NDEBUG
-			int const ttype_as_int = static_cast<int>(ttype);
+			int const ttype_as_int = static_cast<int>(value(ttype));
 			int const num_ttypes_as_int =
 				static_cast<int>(transaction_type::num_transaction_types);
 			assert (ttype_as_int >= 0);
 			assert (ttype_as_int < num_ttypes_as_int);
 	#	endif
 
-		refresh_for_transaction_type(ttype);
+		refresh_for_transaction_type(value(ttype));
 	}
 	return;
 }
@@ -443,8 +450,9 @@ void
 TransactionCtrl::post_journal() const
 {
 	OrdinaryJournal journal(m_database_connection);
+	// TODO What if the dereferencing of optional fails?
 	transaction_type::TransactionType const ttype =
-		m_transaction_type_ctrl->transaction_type();
+		value(m_transaction_type_ctrl->transaction_type());
 	journal.set_whether_actual(transaction_type_is_actual(ttype));
 	size_t const sz = m_account_name_boxes.size();
 	assert (sz == m_comment_boxes.size());

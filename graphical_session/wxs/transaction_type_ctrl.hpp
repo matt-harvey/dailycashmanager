@@ -2,6 +2,7 @@
 #define GUARD_transaction_type_ctrl_hpp
 
 #include "transaction_type.hpp"
+#include <boost/optional.hpp>
 #include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -30,9 +31,13 @@ public:
 	);
 
 	/**
-	 * @returns the currently selected TransactionType.
+	 * @returns the currently selected TransactionType, wrapped in a
+	 * boost::optional. This may be an uninitialized optional in case
+	 * we are in Windows and the underlying wxComboBox is in a
+	 * transitional state.
 	 */
-	transaction_type::TransactionType transaction_type() const;
+	boost::optional<transaction_type::TransactionType>
+	transaction_type() const;
 
 	/**
 	 * Sets the TransactionType displayed in the control.

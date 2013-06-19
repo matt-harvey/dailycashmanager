@@ -3,6 +3,7 @@
 #include "string_set_validator.hpp"
 #include "transaction_ctrl.hpp"
 #include "transaction_type.hpp"
+#include <boost/optional.hpp>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
 #include <wx/gdicmn.h>
@@ -10,6 +11,7 @@
 #include <wx/windowid.h>
 #include <vector>
 
+using boost::optional;
 using std::vector;
 
 
@@ -81,11 +83,16 @@ TransactionTypeCtrl::TransactionTypeCtrl
 	JEWEL_DEBUG_LOG_LOCATION;
 }
 
-transaction_type::TransactionType
+optional<transaction_type::TransactionType>
 TransactionTypeCtrl::transaction_type() const
 {
 	JEWEL_DEBUG_LOG_LOCATION;
+	optional<transaction_type::TransactionType> ret;
 	int const selection = GetSelection();
+	if (selection < 0)
+	{
+		return ret;
+	}
 #	ifndef NDEBUG
 		JEWEL_DEBUG_LOG << GetStringSelection() << endl;
 		assert (selection >= 0);
@@ -93,9 +100,9 @@ TransactionTypeCtrl::transaction_type() const
 			static_cast<int>(transaction_type::num_transaction_types);
 		assert (selection < num_ttypes_as_int);
 #	endif
-	return static_cast<transaction_type::TransactionType>(GetSelection());
+	ret = static_cast<transaction_type::TransactionType>(selection);
+	return ret;
 }
-
 
 void
 TransactionTypeCtrl::set_transaction_type
@@ -118,7 +125,9 @@ TransactionTypeCtrl::on_kill_focus(wxFocusEvent& event)
 	// through parent instead.
 	GetParent()->Validate();
 	GetParent()->TransferDataToWindow();
+	JEWEL_DEBUG_LOG_LOCATION;
 	event.Skip();
+	JEWEL_DEBUG_LOG_LOCATION;
 	return;
 }
 
