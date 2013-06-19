@@ -46,11 +46,11 @@ transaction_type_to_verb(TransactionType p_transaction_type)
 	case revenue_transaction:
 		return "Earn";
 	case balance_sheet_transaction:
-		return "Transfer between accounts";
+		return "Account transfer";
 	case envelope_transaction:
-		return "Transfer between budget envelopes";
+		return "Budget transfer";
 	case generic_transaction:
-		return "Generic transaction";
+		return "Generic";
 	default:
 		assert (false);
 	}
