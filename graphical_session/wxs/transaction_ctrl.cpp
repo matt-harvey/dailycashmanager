@@ -165,14 +165,17 @@ TransactionCtrl::TransactionCtrl
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
 		s_transaction_type_ctrl_id,
-		wxSize(ok_button_size.x * 2, ok_button_size.y)
+		wxSize(ok_button_size.x * 2, wxDefaultSize.y)
 	);
+	
+	wxSize const text_box_size = m_transaction_type_ctrl->GetSize();
+
 	m_transaction_type_ctrl->set_transaction_type(initial_transaction_type);
 	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 1));
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
 		s_primary_amount_ctrl_id,
-		wxSize(ok_button_size.x * 2, ok_button_size.y),
+		wxSize(ok_button_size.x * 2, text_box_size.y),
 		m_database_connection.default_commodity().precision(),
 		false
 	);
@@ -191,7 +194,7 @@ TransactionCtrl::TransactionCtrl
 		wxID_ANY,
 		currency_abbreviation,
 		wxDefaultPosition,
-		ok_button_size
+		wxSize(wxDefaultSize.x, text_box_size.y)
 	);
 	m_top_sizer->Add(currency_text, wxGBPosition(row, 4));
 
@@ -230,7 +233,7 @@ TransactionCtrl::TransactionCtrl
 			wxID_ANY,
 			((i == 0)? wxString(" Source:"): wxString(" Destination:")),
 			wxDefaultPosition,
-			wxDefaultSize,
+			wxSize(wxDefaultSize.x, text_box_size.y),
 			wxALIGN_LEFT
 		);
 		m_top_sizer->Add(account_label, wxGBPosition(row - 1, 1));
@@ -239,7 +242,7 @@ TransactionCtrl::TransactionCtrl
 			wxID_ANY,
 			wxString("Comment:"),
 			wxDefaultPosition,
-			wxDefaultSize,
+			wxSize(wxDefaultSize.x, text_box_size.y),
 			wxALIGN_LEFT
 		);
 		m_top_sizer->Add(comment_label, wxGBPosition(row - 1, 2));
@@ -255,7 +258,7 @@ TransactionCtrl::TransactionCtrl
 		(	this,
 			id,
 			account,
-			wxSize(ok_button_size.x * 2, ok_button_size.y),
+			wxSize(ok_button_size.x * 2, text_box_size.y),
 			account_reader->begin(),
 			account_reader->end(),
 			m_database_connection
@@ -269,7 +272,7 @@ TransactionCtrl::TransactionCtrl
 			id,
 			wxEmptyString,
 			wxDefaultPosition,
-			wxSize(ok_button_size.x * 4.5, account_name_box_size.y),
+			wxSize(ok_button_size.x * 4.5, text_box_size.y),
 			wxALIGN_LEFT
 		);
 		wxButton* split_button = new wxButton
@@ -277,7 +280,7 @@ TransactionCtrl::TransactionCtrl
 			id + 1,
 			wxString("Split..."),
 			wxDefaultPosition,
-			ok_button_size
+			wxSize(ok_button_size.x, account_name_box_size.y)
 		);
 		int base_flag = wxLEFT;
 		if (i == 0) base_flag |= wxTOP;
@@ -293,20 +296,25 @@ TransactionCtrl::TransactionCtrl
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,
-		wxString("&Cancel"),
+		wxString("&Clear"),
 		wxDefaultPosition,
-		ok_button_size
+		wxSize(ok_button_size.x, text_box_size.y)
 	);
 	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 1));
-	m_date_ctrl = new DateCtrl(this, wxID_ANY, ok_button_size);
+	m_date_ctrl = new DateCtrl
+	(	this,
+		wxID_ANY,
+		wxSize(wxDefaultSize.x, text_box_size.y)
+	);
 	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 2));
 	m_recurring_transaction_button = new wxButton
 	(	this,
 		s_recurring_transaction_button_id,
 		wxString("&Recurring..."),
 		wxDefaultPosition,
-		wxSize(ok_button_size.x, ok_button_size.y)
+		wxSize(ok_button_size.x, text_box_size.y)
 	);
+	m_ok_button->SetSize(wxSize(ok_button_size.x, text_box_size.y));
 	m_top_sizer->Add(m_recurring_transaction_button, wxGBPosition(row, 3));
 	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 4));
 	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
