@@ -2,6 +2,7 @@
 #define GUARD_transaction_type_hpp
 
 #include "b_string.hpp"
+#include <cassert>
 #include <vector>
 
 namespace phatbooks
@@ -55,6 +56,14 @@ transaction_type_is_actual
 (	transaction_type::TransactionType p_transaction_type
 );
 
+/**
+ * Check for validity of p_transaction_type, using assert statement.
+ * Terminates program if invalid while NDEBUG is not defined; otherwise
+ * does nothing.
+ */
+void assert_transaction_type_validity
+(	transaction_type::TransactionType p_transaction_type
+);
 
 }  // namespace phatbooks
 
@@ -90,6 +99,24 @@ destination_account_types
  */
 transaction_type::TransactionType
 natural_transaction_type(Account const& account_x, Account const& account_y);
+
+
+// Inline implementations
+
+inline
+void
+assert_transaction_type_validity
+(	transaction_type::TransactionType p_transaction_type
+)
+{
+#	ifndef NDEBUG
+		int const ttype_as_int = static_cast<int>(p_transaction_type);
+		int const num_ttypes_as_int =
+			static_cast<int>(transaction_type::num_transaction_types);
+		assert (ttype_as_int >= 0);
+		assert (ttype_as_int < num_ttypes_as_int);
+#	endif  // NDEBUG
+}
 
 
 }  // namespace phatbooks

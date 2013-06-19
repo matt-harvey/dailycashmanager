@@ -198,14 +198,8 @@ TransactionCtrl::TransactionCtrl
 	// We need the names of available Accounts, for the given
 	// TransactionType, from which the user will choose
 	// Accounts, for each side of the transaction.
-	
-#	ifndef NDEBUG
-		int const ttype_as_int = static_cast<int>(initial_transaction_type);
-		int const num_ttypes_as_int =
-			static_cast<int>(transaction_type::num_transaction_types);
-		assert (ttype_as_int >= 0);
-		assert (ttype_as_int < num_ttypes_as_int);
-#	endif  // NDEBUG
+
+	assert_transaction_type_validity(initial_transaction_type);
 
 	scoped_ptr<AccountReaderBase> const account_reader_x
 	(	create_source_account_reader
@@ -336,14 +330,7 @@ TransactionCtrl::refresh_for_transaction_type
 (	transaction_type::TransactionType p_transaction_type
 )
 {
-#	ifndef NDEBUG
-		int const ttype_as_int = static_cast<int>(p_transaction_type);
-		int const num_ttypes_as_int =
-			static_cast<int>(transaction_type::num_transaction_types);
-		assert (ttype_as_int >= 0);
-		assert (ttype_as_int < num_ttypes_as_int);
-#	endif  // NDEBUG
-
+	assert_transaction_type_validity(p_transaction_type);
 	set<AccountCtrlComplex>::iterator it =
 		m_account_selectors.begin();
 	set<AccountCtrlComplex>::iterator const end =

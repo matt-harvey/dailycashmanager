@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "transaction_type_ctrl.hpp"
 #include "b_string.hpp"
 #include "string_set_validator.hpp"
@@ -95,13 +97,10 @@ TransactionTypeCtrl::transaction_type() const
 	{
 		return ret;
 	}
-#	ifndef NDEBUG
-		assert (selection >= 0);
-		int const num_ttypes_as_int =
-			static_cast<int>(transaction_type::num_transaction_types);
-		assert (selection < num_ttypes_as_int);
-#	endif
-	ret = static_cast<transaction_type::TransactionType>(selection);
+	transaction_type::TransactionType const ttype =
+		static_cast<transaction_type::TransactionType>(selection);
+	assert_transaction_type_validity(ttype);
+	ret = ttype;
 	return ret;
 }
 
@@ -142,15 +141,7 @@ TransactionTypeCtrl::on_change(wxCommandEvent& event)
 	{
 		return;
 	}
-
-#	ifndef NDEBUG
-		int const ttype_as_int = static_cast<int>(value(maybe_ttype));
-		int const num_ttypes_as_int =
-			static_cast<int>(transaction_type::num_transaction_types);
-		assert (ttype_as_int >= 0);
-		assert (ttype_as_int < num_ttypes_as_int);
-#	endif
-
+	assert_transaction_type_validity(value(maybe_ttype));
 	parent->refresh_for_transaction_type(value(maybe_ttype));
 	return;
 }

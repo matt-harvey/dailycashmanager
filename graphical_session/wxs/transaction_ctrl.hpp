@@ -89,8 +89,6 @@ public:
 	(	transaction_type::TransactionType p_transaction_type
 	);
 	
-protected:
-
 private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_recurring_transaction_button_click(wxCommandEvent& event);
@@ -154,9 +152,9 @@ private:
 	static unsigned int const s_min_entry_row_id =
 		s_transaction_type_ctrl_id + 1;
 
-	DECLARE_EVENT_TABLE()
-
 	PhatbooksDatabaseConnection& m_database_connection;
+
+	DECLARE_EVENT_TABLE()
 
 };  // class TransactionCtrl
 
