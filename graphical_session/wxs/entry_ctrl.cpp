@@ -244,7 +244,7 @@ EntryCtrl::add_row()
 	m_comment_boxes.push_back(comment_ctrl);
 	wxButton* split_button = new wxButton
 	(	this,
-		wxID_ANY,
+		s_split_button_id,
 		wxString("Split..."),
 		wxDefaultPosition,
 		wxDefaultSize
@@ -254,8 +254,12 @@ EntryCtrl::add_row()
 
 	++m_next_row;
 
-	// Note, calling Layout() and GetParent()->Layout does not seem to
-	// help here.
+	Layout();  // Must call this.
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	// GetParent()->Layout(); // Do not call this.
+	// GetParent()->GetSizer()->RecalcSizes();  // Do not call this.
+	GetParent()->Fit();
 
 	return;
 }
