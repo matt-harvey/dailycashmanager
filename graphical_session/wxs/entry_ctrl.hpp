@@ -3,7 +3,9 @@
 
 
 #include "account.hpp"
+#include "account_reader.hpp"
 #include "transaction_type.hpp"
+#include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
@@ -29,7 +31,9 @@ class TransactionCtrl;
 // End forward declarations
 
 
-class EntryCtrl: public wxPanel
+class EntryCtrl:
+	public wxPanel,
+	private boost::noncopyable
 {
 public:
 	EntryCtrl
@@ -44,6 +48,8 @@ public:
 	(	transaction_type::TransactionType p_transaction_type
 	);
 
+	~EntryCtrl();
+
 private:
 	
 	wxString side_description() const;
@@ -57,6 +63,8 @@ private:
 
 	bool m_is_source;
 	transaction_type::TransactionType m_transaction_type;
+	AccountReaderBase* m_account_reader;
+
 	wxGridBagSizer* m_top_sizer;
 	wxStaticText* m_side_descriptor;
 	std::vector<AccountCtrl*> m_account_name_boxes;
