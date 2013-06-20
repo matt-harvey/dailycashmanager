@@ -146,18 +146,6 @@ TransactionCtrl::TransactionCtrl
 
 	size_t row = 0;	
 
-	// We construct m_ok_button first as we want to be able to refer to its
-	// size when sizing certain other controls below. But we will not add
-	// the OK button to m_top_sizer till later.
-	m_ok_button = new wxButton
-	(	this,
-		wxID_OK,
-		wxString("&OK"),
-		wxDefaultPosition,
-		wxDefaultSize
-	);
-	wxSize const ok_button_size = m_ok_button->GetSize();
-
 	// Top sizer
 	m_top_sizer = new wxGridBagSizer();
 	SetSizer(m_top_sizer);
@@ -165,17 +153,19 @@ TransactionCtrl::TransactionCtrl
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
 		s_transaction_type_ctrl_id,
-		wxSize(ok_button_size.x * 2, wxDefaultSize.y)
+		wxDefaultSize
 	);
-	
-	wxSize const text_box_size = m_transaction_type_ctrl->GetSize();
 
 	m_transaction_type_ctrl->set_transaction_type(initial_transaction_type);
 	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 1));
+	wxSize const text_box_size_raw = m_transaction_type_ctrl->GetSize();
+	wxSize const text_box_size =
+		wxSize(text_box_size_raw.x * 2, text_box_size_raw.y);
+
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
 		s_primary_amount_ctrl_id,
-		wxSize(ok_button_size.x * 2, text_box_size.y),
+		text_box_size,
 		m_database_connection.default_commodity().precision(),
 		false
 	);
@@ -194,7 +184,7 @@ TransactionCtrl::TransactionCtrl
 		wxID_ANY,
 		currency_abbreviation,
 		wxDefaultPosition,
-		wxSize(wxDefaultSize.x, text_box_size.y)
+		wxSize(text_box_size.x, text_box_size.y)
 	);
 	m_top_sizer->Add(currency_text, wxGBPosition(row, 4));
 
@@ -238,6 +228,7 @@ TransactionCtrl::TransactionCtrl
 		source_accounts,
 		m_database_connection,
 		initial_transaction_type,
+		text_box_size,
 		true
 	);
 	m_destination_entry_ctrl = new EntryCtrl
@@ -245,6 +236,7 @@ TransactionCtrl::TransactionCtrl
 		destination_accounts,
 		m_database_connection,
 		initial_transaction_type,
+		text_box_size,
 		false
 	);
 	m_top_sizer->
@@ -265,13 +257,13 @@ TransactionCtrl::TransactionCtrl
 		wxID_CANCEL,
 		wxString("&Clear"),
 		wxDefaultPosition,
-		wxSize(ok_button_size.x, text_box_size.y)
+		wxSize(text_box_size.x, text_box_size.y)
 	);
 	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 1));
 	m_date_ctrl = new DateCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(wxDefaultSize.x, text_box_size.y)
+		wxSize(text_box_size.x, text_box_size.y)
 	);
 	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 2));
 	m_recurring_transaction_button = new wxButton
@@ -279,11 +271,18 @@ TransactionCtrl::TransactionCtrl
 		s_recurring_transaction_button_id,
 		wxString("&Recurring..."),
 		wxDefaultPosition,
-		wxSize(ok_button_size.x, text_box_size.y)
+		wxSize(text_box_size.x, text_box_size.y)
 	);
-	m_ok_button->SetSize(wxSize(ok_button_size.x, text_box_size.y));
 	m_top_sizer->Add(m_recurring_transaction_button, wxGBPosition(row, 3));
-	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 4));
+	m_ok_button = new wxButton
+	(	this,
+		wxID_OK,
+		wxString("&OK"),
+		wxDefaultPosition,
+		wxSize(text_box_size.x, text_box_size.y)
+	);
+
+	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 5));
 	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
 
 	++row;

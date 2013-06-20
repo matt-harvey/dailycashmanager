@@ -8,6 +8,7 @@
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/gbsizer.h>
+#include <wx/gdicmn.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
@@ -41,6 +42,7 @@ public:
 		std::vector<Account> const& p_accounts,
 		PhatbooksDatabaseConnection& p_database_connection,
 		transaction_type::TransactionType p_transaction_type,
+		wxSize const& p_text_ctrl_size,
 		bool p_is_source
 	);
 
@@ -65,13 +67,15 @@ private:
 	transaction_type::TransactionType m_transaction_type;
 	AccountReaderBase* m_account_reader;
 
+	wxSize m_text_ctrl_size;
+
 	wxGridBagSizer* m_top_sizer;
 	wxStaticText* m_side_descriptor;
 	std::vector<AccountCtrl*> m_account_name_boxes;
 	std::vector<wxTextCtrl*> m_comment_boxes;
 	std::vector<wxButton*> m_split_buttons;
 
-	unsigned int m_next_row;
+	size_t m_next_row;
 
 	DECLARE_EVENT_TABLE()
 

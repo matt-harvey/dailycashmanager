@@ -6,6 +6,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <wx/button.h>
 #include <wx/gbsizer.h>
+#include <wx/gdicmn.h>
 #include <wx/panel.h>
 #include <wx/string.h>
 #include <cassert>
@@ -36,13 +37,16 @@ EntryCtrl::EntryCtrl
 	vector<Account> const& p_accounts,
 	PhatbooksDatabaseConnection& p_database_connection,
 	transaction_type::TransactionType p_transaction_type,
+	wxSize const& p_text_ctrl_size,
 	bool p_is_source
 ):
 	wxPanel(p_parent),
 	m_database_connection(p_database_connection),
+
 	m_is_source(p_is_source),
 	m_transaction_type(p_transaction_type),
 	m_account_reader(0),
+	m_text_ctrl_size(p_text_ctrl_size),
 	m_top_sizer(0),
 	m_side_descriptor(0),
 	m_next_row(0)
@@ -66,13 +70,12 @@ EntryCtrl::EntryCtrl
 	wxStaticText* const comment_label = new wxStaticText
 	(	this,
 		wxID_ANY,
-		wxString("Comment"),
+		wxString(" Memo:"),
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_LEFT
 	);
 	m_top_sizer->Add(comment_label, wxGBPosition(m_next_row, 1));
-
 
 	// Subsequent rows
 
@@ -98,6 +101,7 @@ EntryCtrl::EntryCtrl
 	vector<Account>::const_iterator it = p_accounts.begin();
 	vector<Account>::const_iterator const end = p_accounts.end();
 
+
 	// TODO Factor this out. (Re-used add_row().)
 	for ( ; it != end; ++it, ++m_next_row)
 	{
@@ -105,7 +109,7 @@ EntryCtrl::EntryCtrl
 		(	this,
 			wxID_ANY,
 			*it,
-			wxDefaultSize,
+			m_text_ctrl_size,
 			m_account_reader->begin(),
 			m_account_reader->end(),
 			m_database_connection
@@ -117,7 +121,7 @@ EntryCtrl::EntryCtrl
 			wxID_ANY,
 			wxEmptyString,
 			wxDefaultPosition,
-			wxSize(account_name_box->GetSize().x * 4, wxDefaultSize.y),
+			wxSize(m_text_ctrl_size.x * 4, m_text_ctrl_size.y),
 			wxALIGN_LEFT
 		);
 		m_top_sizer->Add(comment_ctrl, wxGBPosition(m_next_row, 1), wxGBSpan(1, 2));
@@ -127,7 +131,7 @@ EntryCtrl::EntryCtrl
 			s_split_button_id,
 			wxString("Split..."),
 			wxDefaultPosition,
-			wxDefaultSize
+			m_text_ctrl_size
 		);
 		m_top_sizer->Add(split_button, wxGBPosition(m_next_row, 3));
 		m_split_buttons.push_back(split_button);
@@ -157,8 +161,10 @@ EntryCtrl::refresh_for_transaction_type
 	}
 	assert (p_transaction_type != m_transaction_type);
 	m_transaction_type = p_transaction_type;
+
 	delete m_account_reader;
 	m_account_reader = 0;
+
 	if (m_is_source)
 	{
 		assert (!m_account_reader);
@@ -181,6 +187,7 @@ EntryCtrl::refresh_for_transaction_type
 		++i
 	)
 	{
+		assert (m_account_reader);
 		m_account_name_boxes[i]->
 			set(m_account_reader->begin(), m_account_reader->end());
 	}
@@ -203,7 +210,7 @@ EntryCtrl::add_row()
 	(	this,
 		wxID_ANY,
 		m_account_name_boxes.at(m_account_name_boxes.size() - 1)->account(),
-		wxDefaultSize,
+		m_text_ctrl_size,
 		m_account_reader->begin(),
 		m_account_reader->end(),
 		m_database_connection
@@ -215,7 +222,7 @@ EntryCtrl::add_row()
 		wxID_ANY,
 		wxEmptyString,
 		wxDefaultPosition,
-		wxSize(account_name_box->GetSize().x * 4, wxDefaultSize.y),
+		wxSize(m_text_ctrl_size.x * 4, m_text_ctrl_size.y),
 		wxALIGN_LEFT
 	);
 	m_top_sizer->
@@ -226,7 +233,7 @@ EntryCtrl::add_row()
 		s_split_button_id,
 		wxString("Split..."),
 		wxDefaultPosition,
-		wxDefaultSize
+		m_text_ctrl_size
 	);
 	m_top_sizer->Add(split_button, wxGBPosition(m_next_row, 3));
 	m_split_buttons.push_back(split_button);
