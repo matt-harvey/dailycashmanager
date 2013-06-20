@@ -75,17 +75,15 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		transaction_type_verbs.Add(verb);  // remember as valid name
 		Append(verb);  // add to combobox
 	}
+	/*
 	StringSetValidator validator
 	(	GetValue(),
 		transaction_type_verbs,
 		"transaction type"
 	);
 	SetValidator(validator);
+	*/
 	SetSelection(0);  // In effort to avoid apparent bug in Windows.
-	// TODO AutoComplete is irrelevant if we have the wxComboBox as readonly.
-	// But we still might want to let the user select by just typing the first
-	// letter or something.
-	AutoComplete(transaction_type_verbs);
 }
 
 optional<transaction_type::TransactionType>
