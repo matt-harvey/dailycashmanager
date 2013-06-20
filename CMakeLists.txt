@@ -182,6 +182,7 @@ set (gui_files
 	 graphical_session/wxs/decimal_text_ctrl.cpp
 	 graphical_session/wxs/decimal_validator.cpp
 	 graphical_session/wxs/decimal_variant_data.cpp
+	 graphical_session/wxs/entry_ctrl.cpp
 	 graphical_session/wxs/entry_list_ctrl.cpp
 	 graphical_session/wxs/frame.cpp
 	 graphical_session/wxs/locale.cpp

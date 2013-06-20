@@ -13,7 +13,6 @@
 #include <wx/gbsizer.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <set>
 #include <vector>
 
 namespace phatbooks
@@ -28,6 +27,7 @@ namespace gui
 
 class AccountCtrl;
 class DateCtrl;
+class EntryCtrl;
 class TopPanel;
 
 // End forward declarations
@@ -49,6 +49,9 @@ class TopPanel;
  *
  * @todo Ensure this can handle situation where insufficient default
  * Accounts are available.
+ *
+ * @todo HIGH PRIORITY Get rid of members that have been rendered
+ * obsolete by EntryCtrl.
  */
 class TransactionCtrl: public wxPanel
 {
@@ -101,13 +104,11 @@ private:
 
 	wxGridBagSizer* m_top_sizer;
 
-	// Re. "source side" of transaction
-	wxStaticText* m_source_side_phrase;
-
-	// Re. "destinations side" of transaction
-	wxStaticText* m_destination_side_phrase;
-
 	TransactionTypeCtrl* m_transaction_type_ctrl;
+
+	EntryCtrl* m_source_entry_ctrl;	
+	EntryCtrl* m_destination_entry_ctrl;
+
 	DecimalTextCtrl* m_primary_amount_ctrl;
 	DateCtrl* m_date_ctrl;
 	
@@ -138,8 +139,6 @@ private:
 			return ctrl < rhs.ctrl;
 		}
 	};
-
-	std::set<AccountCtrlComplex> m_account_selectors;
 
 	static unsigned int const s_date_ctrl_id =
 		wxID_HIGHEST + 1;

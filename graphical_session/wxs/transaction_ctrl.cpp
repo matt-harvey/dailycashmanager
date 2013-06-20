@@ -11,6 +11,7 @@
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
 #include "entry.hpp"
+#include "entry_ctrl.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
 #include "ordinary_journal.hpp"
@@ -39,7 +40,6 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include <set>
 #include <vector>
 
 using boost::optional;
@@ -47,7 +47,6 @@ using boost::scoped_ptr;
 using jewel::Decimal;
 using jewel::value;
 using std::endl;
-using std::set;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -97,6 +96,8 @@ TransactionCtrl::TransactionCtrl
 	),
 	m_top_sizer(0),
 	m_transaction_type_ctrl(0),
+	m_source_entry_ctrl(0),
+	m_destination_entry_ctrl(0),
 	m_primary_amount_ctrl(0),
 	m_date_ctrl(0),
 	m_cancel_button(0),
@@ -109,7 +110,6 @@ TransactionCtrl::TransactionCtrl
 	assert (m_split_buttons.empty());
 	assert (!p_balance_sheet_accounts.empty() || !p_pl_accounts.empty());
 	assert (p_balance_sheet_accounts.size() + p_pl_accounts.size() >= 2);
-	assert (m_account_selectors.empty());
 	
 	// Figure out the natural TransactionType given the Accounts we have
 	// been passed. We will use this initialize the TransactionTypeCtrl.
@@ -225,73 +225,40 @@ TransactionCtrl::TransactionCtrl
 
 	row += 3;
 
-	Size const sz = accounts.size();
-	for (Size id = s_min_entry_row_id, i = 0 ; i != sz; ++i, id += 2, row += 3)
-	{
-		wxStaticText* const account_label = new wxStaticText
-		(	this,
-			wxID_ANY,
-			((i == 0)? wxString(" Source:"): wxString(" Destination:")),
-			wxDefaultPosition,
-			wxSize(wxDefaultSize.x, text_box_size.y),
-			wxALIGN_LEFT
-		);
-		m_top_sizer->Add(account_label, wxGBPosition(row - 1, 1));
-		wxStaticText* const comment_label = new wxStaticText
-		(	this,
-			wxID_ANY,
-			wxString("Comment:"),
-			wxDefaultPosition,
-			wxSize(wxDefaultSize.x, text_box_size.y),
-			wxALIGN_LEFT
-		);
-		m_top_sizer->Add(comment_label, wxGBPosition(row - 1, 2));
-		Account const account = accounts[i];
-		assert ((i == 0) || (i == 1));
-		assert (accounts.size() == 2);
-		AccountReaderBase* account_reader =
-		(	(i == 0)?
-			account_reader_x.get():
-			account_reader_y.get()
-		);
-		AccountCtrl* account_name_box = new AccountCtrl
-		(	this,
-			id,
-			account,
-			wxSize(ok_button_size.x * 2, text_box_size.y),
-			account_reader->begin(),
-			account_reader->end(),
-			m_database_connection
-		);
-		AccountCtrlComplex const comp =
-			{ account_name_box, (i == 0)? true: false };
-		m_account_selectors.insert(comp);
-		wxSize const account_name_box_size = account_name_box->GetSize();
-		wxTextCtrl* comment_ctrl = new wxTextCtrl
-		(	this,
-			id,
-			wxEmptyString,
-			wxDefaultPosition,
-			wxSize(ok_button_size.x * 4.5, text_box_size.y),
-			wxALIGN_LEFT
-		);
-		wxButton* split_button = new wxButton
-		(	this,
-			id + 1,
-			wxString("Split..."),
-			wxDefaultPosition,
-			wxSize(ok_button_size.x, account_name_box_size.y)
-		);
-		int base_flag = wxLEFT;
-		if (i == 0) base_flag |= wxTOP;
-		m_top_sizer->Add(account_name_box, wxGBPosition(row, 1));
-		m_top_sizer->Add(comment_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 2));
-		m_top_sizer->Add(split_button, wxGBPosition(row, 4));
+	// WARNING Temp hack
+	assert (accounts.size() >= 2);
 
-		m_account_name_boxes.push_back(account_name_box);
-		m_comment_boxes.push_back(comment_ctrl);
-		m_split_buttons.push_back(split_button);
-	}
+	vector<Account> source_accounts;
+	source_accounts.push_back(accounts[0]);
+	vector<Account> destination_accounts;
+	destination_accounts.push_back(accounts[1]);
+
+	m_source_entry_ctrl = new EntryCtrl
+	(	this,
+		source_accounts,
+		m_database_connection,
+		initial_transaction_type,
+		true
+	);
+	m_destination_entry_ctrl = new EntryCtrl
+	(	this,
+		destination_accounts,
+		m_database_connection,
+		initial_transaction_type,
+		false
+	);
+	m_top_sizer->
+		Add(m_source_entry_ctrl, wxGBPosition(row, 1), wxGBSpan(1, 4));
+	
+	row += 2;
+
+	m_top_sizer->
+		Add(m_destination_entry_ctrl, wxGBPosition(row, 1), wxGBSpan(1, 4));
+	
+	row += 2;
+
+
+	// Buttons and date control
 
 	m_cancel_button = new wxButton
 	(	this,
@@ -321,11 +288,6 @@ TransactionCtrl::TransactionCtrl
 
 	++row;
 
-	// Radio box for selecting actual vs. budget
-	wxArrayString radio_box_strings;
-	radio_box_strings.Add(wxString("Actual"));
-	radio_box_strings.Add(wxString("Budget"));
-
 	// "Admin"
 	// SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
@@ -338,40 +300,8 @@ TransactionCtrl::refresh_for_transaction_type
 (	transaction_type::TransactionType p_transaction_type
 )
 {
-	assert_transaction_type_validity(p_transaction_type);
-	set<AccountCtrlComplex>::iterator it =
-		m_account_selectors.begin();
-	set<AccountCtrlComplex>::iterator const end =
-		m_account_selectors.end();
-	scoped_ptr<AccountReaderBase> const account_reader_x
-	(	create_source_account_reader
-		(	m_database_connection,
-			p_transaction_type
-		)
-	);
-	scoped_ptr<AccountReaderBase> const account_reader_y
-	(	create_destination_account_reader
-		(	m_database_connection,
-			p_transaction_type
-		)
-	);
-	for ( ; it != end; ++it)
-	{
-		assert (!account_reader_x->empty());  // TODO Figure out what to do if this isn't true.
-		assert (!account_reader_y->empty());  // TODO Figure out what to do if this isn't true.
-		if (it->is_source)
-		{
-			assert (it->ctrl);
-			assert (account_reader_x);
-			it->ctrl->set(account_reader_x->begin(), account_reader_x->end());
-		}
-		else
-		{
-			assert (it->ctrl);
-			assert (account_reader_y);
-			it->ctrl->set(account_reader_y->begin(), account_reader_y->end());
-		}
-	}
+	m_source_entry_ctrl->refresh_for_transaction_type(p_transaction_type);
+	m_destination_entry_ctrl->refresh_for_transaction_type(p_transaction_type);
 	return;
 }
 
@@ -415,6 +345,9 @@ TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 void
 TransactionCtrl::post_journal() const
 {
+	// TODO HIGH PRIORITY Fix this
+	// to work now that we have EntryCtrl instead of storing
+	// Entry info directly in the TransactionCtrl.
 	OrdinaryJournal journal(m_database_connection);
 	// TODO What if the dereferencing of optional fails?
 	transaction_type::TransactionType const ttype =
