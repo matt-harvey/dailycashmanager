@@ -207,12 +207,12 @@ DraftJournal::mimic(DraftJournal const& rhs)
 void
 DraftJournal::do_output(ostream& os) const
 {
-	os << "DRAFT JOURNAL";
+	os << "DRAFT JOURNAL ";
 	if (has_id())
 	{
-		os << " ID " << lexical_cast<string>(id());
+		os << "ID " << lexical_cast<string>(id()) << " ";
 	}
-	os << " NAME " << name() << " ";
+	os << "NAME " << name() << " ";
 	PersistentJournal::do_output(os);
 	os << endl << repeater_description() << endl;
 	return;
