@@ -112,7 +112,7 @@ TransactionCtrl::TransactionCtrl
 	assert (p_balance_sheet_accounts.size() + p_pl_accounts.size() >= 2);
 	
 	// Figure out the natural TransactionType given the Accounts we have
-	// been passed. We will use this initialize the TransactionTypeCtrl.
+	// been passed. We will use this to initialize the TransactionTypeCtrl.
 	Account account_x(p_database_connection);
 	Account account_y(p_database_connection);
 	if (p_balance_sheet_accounts.empty())
@@ -153,14 +153,14 @@ TransactionCtrl::TransactionCtrl
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
 		s_transaction_type_ctrl_id,
-		wxDefaultSize
+		wxSize(160, 33)
 	);
 
 	m_transaction_type_ctrl->set_transaction_type(initial_transaction_type);
-	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 1));
-	wxSize const text_box_size_raw = m_transaction_type_ctrl->GetSize();
-	wxSize const text_box_size =
-		wxSize(text_box_size_raw.x * 2, text_box_size_raw.y);
+	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 0));
+	wxSize const text_box_size = m_transaction_type_ctrl->GetSize();
+	assert (text_box_size.x == 160);
+	assert (text_box_size.y == 33);
 
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
@@ -171,7 +171,7 @@ TransactionCtrl::TransactionCtrl
 	);
 	m_top_sizer->Add
 	(	m_primary_amount_ctrl,
-		wxGBPosition(row, 3),
+		wxGBPosition(row, 2),
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
@@ -184,9 +184,9 @@ TransactionCtrl::TransactionCtrl
 		wxID_ANY,
 		currency_abbreviation,
 		wxDefaultPosition,
-		wxSize(text_box_size.x, text_box_size.y)
+		text_box_size
 	);
-	m_top_sizer->Add(currency_text, wxGBPosition(row, 4));
+	m_top_sizer->Add(currency_text, wxGBPosition(row, 3));
 
 	// We need the names of available Accounts, for the given
 	// TransactionType, from which the user will choose
@@ -240,12 +240,12 @@ TransactionCtrl::TransactionCtrl
 		false
 	);
 	m_top_sizer->
-		Add(m_source_entry_ctrl, wxGBPosition(row, 1), wxGBSpan(1, 4));
+		Add(m_source_entry_ctrl, wxGBPosition(row, 0), wxGBSpan(1, 4), wxEXPAND);
 	
 	row += 2;
 
 	m_top_sizer->
-		Add(m_destination_entry_ctrl, wxGBPosition(row, 1), wxGBSpan(1, 4));
+		Add(m_destination_entry_ctrl, wxGBPosition(row, 0), wxGBSpan(1, 4), wxEXPAND);
 	
 	row += 2;
 
@@ -259,13 +259,13 @@ TransactionCtrl::TransactionCtrl
 		wxDefaultPosition,
 		wxSize(text_box_size.x, text_box_size.y)
 	);
-	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 1));
+	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
 	m_date_ctrl = new DateCtrl
 	(	this,
 		wxID_ANY,
 		wxSize(text_box_size.x, text_box_size.y)
 	);
-	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 2));
+	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 1));
 	m_recurring_transaction_button = new wxButton
 	(	this,
 		s_recurring_transaction_button_id,
@@ -273,7 +273,7 @@ TransactionCtrl::TransactionCtrl
 		wxDefaultPosition,
 		wxSize(text_box_size.x, text_box_size.y)
 	);
-	m_top_sizer->Add(m_recurring_transaction_button, wxGBPosition(row, 3));
+	m_top_sizer->Add(m_recurring_transaction_button, wxGBPosition(row, 2));
 	m_ok_button = new wxButton
 	(	this,
 		wxID_OK,
@@ -282,7 +282,7 @@ TransactionCtrl::TransactionCtrl
 		wxSize(text_box_size.x, text_box_size.y)
 	);
 
-	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 5));
+	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 3));
 	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
 
 	++row;
@@ -291,6 +291,7 @@ TransactionCtrl::TransactionCtrl
 	// SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
+	Fit();
 	Layout();
 }
 

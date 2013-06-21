@@ -42,7 +42,6 @@ EntryCtrl::EntryCtrl
 ):
 	wxPanel(p_parent),
 	m_database_connection(p_database_connection),
-
 	m_is_source(p_is_source),
 	m_transaction_type(p_transaction_type),
 	m_account_reader(0),
@@ -121,10 +120,11 @@ EntryCtrl::EntryCtrl
 			wxID_ANY,
 			wxEmptyString,
 			wxDefaultPosition,
-			wxSize(m_text_ctrl_size.x * 4, m_text_ctrl_size.y),
+			wxSize(m_text_ctrl_size.x * 2, m_text_ctrl_size.y),
 			wxALIGN_LEFT
 		);
-		m_top_sizer->Add(comment_ctrl, wxGBPosition(m_next_row, 1), wxGBSpan(1, 2));
+		m_top_sizer->
+			Add(comment_ctrl, wxGBPosition(m_next_row, 1), wxGBSpan(1, 2));
 		m_comment_boxes.push_back(comment_ctrl);
 		wxButton* split_button = new wxButton
 		(	this,
@@ -139,7 +139,9 @@ EntryCtrl::EntryCtrl
 	
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
-	Layout();
+	// Fit();
+	// Layout();
+	GetParent()->Fit();
 }
 
 EntryCtrl::~EntryCtrl()
@@ -222,7 +224,7 @@ EntryCtrl::add_row()
 		wxID_ANY,
 		wxEmptyString,
 		wxDefaultPosition,
-		wxSize(m_text_ctrl_size.x * 4, m_text_ctrl_size.y),
+		wxSize(m_text_ctrl_size.x * 2, m_text_ctrl_size.y),
 		wxALIGN_LEFT
 	);
 	m_top_sizer->
