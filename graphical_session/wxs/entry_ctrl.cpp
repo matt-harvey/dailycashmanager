@@ -2,6 +2,7 @@
 #include "account.hpp"
 #include "account_ctrl.hpp"
 #include "account_reader.hpp"
+#include "decimal_text_ctrl.hpp"
 #include "transaction_type.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <wx/button.h>
@@ -52,7 +53,6 @@ EntryCtrl::EntryCtrl
 {
 	assert (m_account_name_boxes.empty());
 	assert (m_comment_boxes.empty());
-	assert (m_split_buttons.empty());
 
 	assert_transaction_type_validity(m_transaction_type);
 
@@ -75,6 +75,15 @@ EntryCtrl::EntryCtrl
 		wxALIGN_LEFT
 	);
 	m_top_sizer->Add(comment_label, wxGBPosition(m_next_row, 1));
+
+	m_split_button = new wxButton
+	(	this,
+		s_split_button_id,
+		wxString("Split..."),
+		wxDefaultPosition,
+		m_text_ctrl_size
+	);
+	m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row, 3));
 
 	// Subsequent rows
 
@@ -99,7 +108,6 @@ EntryCtrl::EntryCtrl
 
 	vector<Account>::const_iterator it = p_accounts.begin();
 	vector<Account>::const_iterator const end = p_accounts.end();
-
 
 	// TODO Factor this out. (Re-used add_row().)
 	for ( ; it != end; ++it, ++m_next_row)
@@ -126,15 +134,16 @@ EntryCtrl::EntryCtrl
 		m_top_sizer->
 			Add(comment_ctrl, wxGBPosition(m_next_row, 1), wxGBSpan(1, 2));
 		m_comment_boxes.push_back(comment_ctrl);
-		wxButton* split_button = new wxButton
+
+		DecimalTextCtrl* amount_ctrl = new DecimalTextCtrl
 		(	this,
-			s_split_button_id,
-			wxString("Split..."),
-			wxDefaultPosition,
-			m_text_ctrl_size
+			wxID_ANY,
+			m_text_ctrl_size,
+			m_database_connection.default_commodity().precision(),
+			false
 		);
-		m_top_sizer->Add(split_button, wxGBPosition(m_next_row, 3));
-		m_split_buttons.push_back(split_button);
+		m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
+		m_amount_boxes.push_back(amount_ctrl);
 	}
 	
 	m_top_sizer->Fit(this);
@@ -230,15 +239,16 @@ EntryCtrl::add_row()
 	m_top_sizer->
 		Add(comment_ctrl, wxGBPosition(m_next_row, 1), wxGBSpan(1, 2));
 	m_comment_boxes.push_back(comment_ctrl);
-	wxButton* split_button = new wxButton
+
+	DecimalTextCtrl* amount_ctrl = new DecimalTextCtrl
 	(	this,
-		s_split_button_id,
-		wxString("Split..."),
-		wxDefaultPosition,
-		m_text_ctrl_size
+		wxID_ANY,
+		m_text_ctrl_size,
+		m_database_connection.default_commodity().precision(),
+		false
 	);
-	m_top_sizer->Add(split_button, wxGBPosition(m_next_row, 3));
-	m_split_buttons.push_back(split_button);
+	m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
+	m_amount_boxes.push_back(amount_ctrl);
 
 	++m_next_row;
 

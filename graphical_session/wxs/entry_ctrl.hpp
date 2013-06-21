@@ -27,6 +27,7 @@ namespace gui
 {
 
 class AccountCtrl;
+class DecimalTextCtrl;
 class TransactionCtrl;
 
 // End forward declarations
@@ -71,9 +72,10 @@ private:
 
 	wxGridBagSizer* m_top_sizer;
 	wxStaticText* m_side_descriptor;
+	wxButton* m_split_button;
 	std::vector<AccountCtrl*> m_account_name_boxes;
 	std::vector<wxTextCtrl*> m_comment_boxes;
-	std::vector<wxButton*> m_split_buttons;
+	std::vector<DecimalTextCtrl*> m_amount_boxes;
 
 	size_t m_next_row;
 
