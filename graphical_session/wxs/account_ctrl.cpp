@@ -1,10 +1,15 @@
 #include "account_ctrl.hpp"
 #include "account.hpp"
+#include "b_string.hpp"
 #include "string_set_validator.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <wx/combobox.h>
 #include <wx/event.h>
 #include <cassert>
+
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
 
 namespace phatbooks
 {
@@ -21,7 +26,11 @@ AccountCtrl::account()
 	StringSetValidator const* const validator =
 		dynamic_cast<StringSetValidator const*>(GetValidator());
 	assert (validator);
-	return Account(m_database_connection, validator->text());
+	JEWEL_DEBUG_LOG << "Returning account from AccountCtrl::account() "
+	                << "with name: "
+					<< wx_to_bstring(GetValue())
+					<< endl;
+	return Account(m_database_connection, wx_to_bstring(GetValue()));
 }
 
 void

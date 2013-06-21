@@ -13,7 +13,6 @@
 #include <wx/gbsizer.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <vector>
 
 namespace phatbooks
 {
@@ -118,10 +117,6 @@ private:
 	wxButton* m_cancel_button;
 	wxButton* m_recurring_transaction_button;
 	wxButton* m_ok_button;
-
-	std::vector<AccountCtrl*> m_account_name_boxes;
-	std::vector<wxTextCtrl*> m_comment_boxes;
-	std::vector<wxButton*> m_split_buttons;
 
 	static unsigned int const s_date_ctrl_id =
 		wxID_HIGHEST + 1;

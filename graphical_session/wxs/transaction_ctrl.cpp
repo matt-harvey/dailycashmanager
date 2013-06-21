@@ -105,9 +105,6 @@ TransactionCtrl::TransactionCtrl
 	m_ok_button(0),
 	m_database_connection(p_database_connection)
 {
-	assert (m_account_name_boxes.empty());
-	assert (m_comment_boxes.empty());
-	assert (m_split_buttons.empty());
 	assert (!p_balance_sheet_accounts.empty() || !p_pl_accounts.empty());
 	assert (p_balance_sheet_accounts.size() + p_pl_accounts.size() >= 2);
 	
@@ -378,44 +375,30 @@ TransactionCtrl::post_journal() const
 	transaction_type::TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
 	journal.set_whether_actual(transaction_type_is_actual(ttype));
-	size_t const sz = m_account_name_boxes.size();
-	assert (sz == m_comment_boxes.size());
-	// WARNING This can't yet handle Journals with a number of entries
-	// other than 2.
-	assert (sz == 2);
-	for (size_t i = 0; i != sz; ++i)
+
+	size_t const num_entry_controls = 2;
+	EntryCtrl const* const entry_controls[num_entry_controls] =
+	{	m_source_entry_ctrl,
+		m_destination_entry_ctrl
+	};
+	for (size_t i = 0; i != num_entry_controls; ++i)
 	{
-		Account const account
-		(	m_database_connection,
-			wx_to_bstring(wxString(m_account_name_boxes[i]->GetValue()))
-		);
-		Entry entry(m_database_connection);
-		entry.set_account(account);
-		entry.set_comment
-		(	wx_to_bstring(m_comment_boxes[i]->GetValue())
-		);
-		Decimal amount = primary_amount();
-		if (i == 0)
+		vector<Entry> entries = entry_controls[i]->make_entries();
+		for (vector<Entry>::size_type j = 0; j != entries.size(); ++j)
 		{
-			// This is the source account
-			amount = -amount;
+			journal.push_entry(entries[j]);
 		}
-		if (!journal.is_actual())
-		{
-			amount = -amount;
-		}
-		amount = round(amount, account.commodity().precision());
-		entry.set_amount(amount);
-		entry.set_whether_reconciled(false);
-		journal.push_entry(entry);
 	}
-	assert (journal.is_balanced());
 	journal.set_comment("");
 
 	// Process date
 	journal.set_date(m_date_ctrl->date());
 
+	JEWEL_DEBUG_LOG << "\n" << journal << endl;
+
 	// Save journal
+	// TODO This assertion might fail.
+	assert (journal.is_balanced());
 	journal.save();
 }
 

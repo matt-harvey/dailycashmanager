@@ -176,6 +176,7 @@ EntryCtrl::refresh_for_transaction_type
 (	transaction_type::TransactionType p_transaction_type
 )
 {
+	JEWEL_DEBUG_LOG << "Entered EntryCtrl::refresh_for_transaction_type." << endl;
 	assert_transaction_type_validity(p_transaction_type);
 	if (p_transaction_type == m_transaction_type)
 	{
@@ -253,7 +254,16 @@ EntryCtrl::make_entries() const
 		entry.set_comment(wx_to_bstring(m_comment_boxes[i]->GetValue()));
 
 		assert (m_amount_boxes[i]);
-		entry.set_amount(m_amount_boxes[i]->amount());
+		Decimal amount = m_amount_boxes[i]->amount();
+		if (!transaction_type_is_actual(m_transaction_type))
+		{
+			amount = -amount;
+		}
+		if (m_is_source)
+		{
+			amount = -amount;
+		}
+		entry.set_amount(amount);
 
 		entry.set_whether_reconciled(false);
 
