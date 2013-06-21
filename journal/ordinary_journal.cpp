@@ -224,10 +224,10 @@ OrdinaryJournal::do_output(ostream& os) const
 {
 	os << date() << " ";
 	// lexical_cast here avoids unwanted formatting
-	os << "ORDINARY JOURNAL";
+	os << "ORDINARY JOURNAL ";
 	if (has_id())
 	{
-		os << " ID " << lexical_cast<string>(id()) << " ";
+		os << "ID " << lexical_cast<string>(id()) << " ";
 	}
 	PersistentJournal::do_output(os);
 	return;
