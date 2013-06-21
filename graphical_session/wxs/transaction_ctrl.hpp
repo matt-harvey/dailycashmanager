@@ -48,9 +48,13 @@ class TopPanel;
  *
  * @todo Ensure this can handle situation where insufficient default
  * Accounts are available.
+ * 
+ * @todo If "OK" / "Save" is pressed via the Enter key, without first having
+ * changed focus away from m_primary_amount_ctrl, then the primary amount
+ * is not propagated through to the entries.
  *
- * @todo HIGH PRIORITY Get rid of members that have been rendered
- * obsolete by EntryCtrl.
+ * @todo Handle case where Journal doesn't balance - or else structure
+ * things so that this is impossible.
  */
 class TransactionCtrl: public wxPanel
 {
@@ -91,12 +95,14 @@ public:
 	(	transaction_type::TransactionType p_transaction_type
 	);
 
-	void reset_entry_ctrl_amounts();
+	void notify_decimal_ctrl_focus_kill();
 
 private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_recurring_transaction_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
+
+	void reset_entry_ctrl_amounts();
 
 	void post_journal() const;
 	bool is_balanced() const;

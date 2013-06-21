@@ -288,11 +288,9 @@ TransactionCtrl::refresh_for_transaction_type
 }
 
 void
-TransactionCtrl::reset_entry_ctrl_amounts()
+TransactionCtrl::notify_decimal_ctrl_focus_kill()
 {
-	Decimal const pa = primary_amount();
-	m_source_entry_ctrl->set_primary_amount(pa);
-	m_destination_entry_ctrl->set_primary_amount(pa);
+	reset_entry_ctrl_amounts();
 	return;
 }
 
@@ -331,6 +329,15 @@ TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 	TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
 	assert (panel);
 	panel->update();
+}
+	
+void
+TransactionCtrl::reset_entry_ctrl_amounts()
+{
+	Decimal const pa = primary_amount();
+	m_source_entry_ctrl->set_primary_amount(pa);
+	m_destination_entry_ctrl->set_primary_amount(pa);
+	return;
 }
 
 Decimal

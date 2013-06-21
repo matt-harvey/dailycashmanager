@@ -96,11 +96,11 @@ DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
 	GetParent()->Validate();
 	GetParent()->TransferDataToWindow();
 
-	// TODO This is rather convoluted.
+	// TODO This is rather convoluted. It's a bit "coupled" too.
 	TransactionCtrl* const tc = dynamic_cast<TransactionCtrl*>(GetParent());
 	if (tc)
 	{
-		tc->reset_entry_ctrl_amounts();
+		tc->notify_decimal_ctrl_focus_kill();
 	}
 	event.Skip();
 	return;
