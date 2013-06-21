@@ -164,8 +164,8 @@ BalanceCache::mark_as_stale(AccountImpl::Id p_account_id)
 void
 BalanceCache::refresh()
 {
-	// Here we decide whether it's quickest to do a complete rebuild of
-	// the entire cache, or whether it's quicker just the
+	// Here we decide whether it's quicker to do a complete rebuild of
+	// the entire cache, or whether it's quicker just to update for the
 	// stale accounts. (Either way, we end
 	// up with totally refreshed cache at the end - this is
 	// purely an optimization decision.)
@@ -179,7 +179,7 @@ BalanceCache::refresh()
 		"select account_id from accounts"
 	);
 	Map::const_iterator const map_end = m_map->end();
-	while (statement.step() && stale_account_ids.size() != fulcrum)
+	while (statement.step() && (stale_account_ids.size() != fulcrum))
 	{
 		// TODO HIGH PRIORITY. What if an Account has been
 		// removed from the database? This loop needs won't find these!
@@ -187,7 +187,7 @@ BalanceCache::refresh()
 		AccountImpl::Id const account_id =
 			statement.extract<AccountImpl::Id>(0);
 		Map::const_iterator location_in_cache = m_map->find(account_id);
-		if (location_in_cache == map_end || !(location_in_cache->second))
+		if ((location_in_cache == map_end) || !(location_in_cache->second))
 		{
 			// Either this AccountImpl::Id is not in the cache at all,
 			// or it's in there but marked as stale.
@@ -228,7 +228,7 @@ BalanceCache::refresh_all()
 	// chosen not to use an OrdinaryEntryReader here: we don't want
 	// to load all the non-actual Entries into memory.
 
-	// Standalone scope
+	// Bare scope
 	{
 		SQLStatement statement
 		(	m_database_connection,
@@ -253,17 +253,18 @@ BalanceCache::refresh_all()
 	scoped_ptr<Map> map_elect_ptr(new Map);	
 	Map& map_elect = *map_elect_ptr;
 	assert (map_elect.empty());
-	for
-	(	WorkingMap::const_iterator it = working_map.begin(),
-			end = working_map.end();
-		it != end;
-		++it
-	)
+
+	// Bare scope
 	{
-		AccountImpl::Id const account_id = it->first;
-		Account const account(m_database_connection, account_id);
-		map_elect[account_id] =
-			Decimal(it->second, account.commodity().precision());
+		WorkingMap::const_iterator it = working_map.begin();
+		WorkingMap::const_iterator const end = working_map.end();
+		for ( ; it != end; ++it)
+		{
+			AccountImpl::Id const account_id = it->first;
+			Account const account(m_database_connection, account_id);
+			map_elect[account_id] =
+				Decimal(it->second, account.commodity().precision());
+		}
 	}
 	assert (map_elect.size() == working_map.size());
 	assert (map_elect_ptr->size() == map_elect.size());
@@ -278,11 +279,9 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 {
 	// TODO Is this exception safe?
 	typedef vector<AccountImpl::Id> IdVec;
-	for
-	(	IdVec::const_iterator it = p_targets.begin(), end = p_targets.end();
-		it != end;
-		++it
-	)
+	IdVec::const_iterator it = p_targets.begin();
+	IdVec::const_iterator const end = p_targets.end();
+	for ( ; it != end; ++it)
 	{
 		AccountImpl::Id const account_id = *it;
 		Account const account(m_database_connection, account_id);
@@ -295,7 +294,7 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 		if (statement.step())
 		{
 			// TODO Catching exception here is a crappy way of telling whether
-			// there are no entries to sum
+			// there are no entries to sum.
 			try
 			{
 				(*m_map)[account_id] = Decimal
@@ -306,13 +305,17 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 			catch (ValueTypeException&)
 			{
 				// There are no entries to sum
-				(*m_map)[account_id] = Decimal(0, account.commodity().precision());
+				(*m_map)[account_id] =
+					Decimal(0, account.commodity().precision());
 			}
 			statement.step_final();
 		}
 		else
 		{
-			assert (false);  // There is always a result row even if it has null.
+			// There is always a result row even if it has null.
+			assert (false);
+
+			// But we do this anyway.
 			(*m_map)[account_id] =
 				Decimal(0, account.commodity().precision());
 		}
