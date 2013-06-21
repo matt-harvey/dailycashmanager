@@ -86,7 +86,7 @@ EntryCtrl::EntryCtrl
 	m_split_button = new wxButton
 	(	this,
 		s_split_button_id,
-		wxString("Split..."),
+		wxString("Split"),
 		wxDefaultPosition,
 		m_text_ctrl_size
 	);
