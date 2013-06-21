@@ -12,6 +12,7 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
+
 // TODO Make the installer create an association on the user's system
 // between the Phatbooks file extension and the Phatbooks application.
 // See CMake book, page. 162.
