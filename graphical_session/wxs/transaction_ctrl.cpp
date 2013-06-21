@@ -157,22 +157,6 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 0));
 	wxSize const text_box_size = m_transaction_type_ctrl->GetSize();
 
-	wxString currency_abbreviation = bstring_to_wx
-	(	m_database_connection.default_commodity().abbreviation()
-	);
-	// Using whitespace string here as right-alignment of wxStaticText
-	// is not working (appears to be a bug in wxWidgets).
-	currency_abbreviation = wxString(30, ' ') + currency_abbreviation;
-	wxStaticText* const currency_text = new wxStaticText
-	(	this,
-		wxID_ANY,
-		currency_abbreviation,
-		wxDefaultPosition,
-		text_box_size,
-		wxALIGN_BOTTOM
-	);
-	m_top_sizer->Add(currency_text, wxGBPosition(row, 2));
-
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
 		s_primary_amount_ctrl_id,
@@ -192,19 +176,6 @@ TransactionCtrl::TransactionCtrl
 	// Accounts, for each side of the transaction.
 
 	assert_transaction_type_validity(initial_transaction_type);
-
-	scoped_ptr<AccountReaderBase> const account_reader_x
-	(	create_source_account_reader
-		(	m_database_connection,
-			initial_transaction_type
-		)
-	);
-	scoped_ptr<AccountReaderBase> const account_reader_y
-	(	create_destination_account_reader
-		(	m_database_connection,
-			initial_transaction_type
-		)
-	);
 
 	// Rows for entering Entry details
 	typedef vector<Account>::size_type Size;
