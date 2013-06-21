@@ -221,13 +221,16 @@ TransactionCtrl::TransactionCtrl
 	vector<Account> destination_accounts;
 	destination_accounts.push_back(accounts[1]);
 
+	Decimal::places_type const precision =
+		m_database_connection.default_commodity().precision();
 	m_source_entry_ctrl = new EntryCtrl
 	(	this,
 		source_accounts,
 		m_database_connection,
 		initial_transaction_type,
 		text_box_size,
-		true
+		true,
+		Decimal(0, precision)
 	);
 	m_destination_entry_ctrl = new EntryCtrl
 	(	this,
@@ -235,15 +238,24 @@ TransactionCtrl::TransactionCtrl
 		m_database_connection,
 		initial_transaction_type,
 		text_box_size,
-		false
+		false,
+		Decimal(0, precision)	
 	);
-	m_top_sizer->
-		Add(m_source_entry_ctrl, wxGBPosition(row, 0), wxGBSpan(1, 4), wxEXPAND);
+	m_top_sizer->Add
+	(	m_source_entry_ctrl,
+		wxGBPosition(row, 0),
+		wxGBSpan(1, 4),
+		wxEXPAND
+	);
 	
 	row += 2;
 
-	m_top_sizer->
-		Add(m_destination_entry_ctrl, wxGBPosition(row, 0), wxGBSpan(1, 4), wxEXPAND);
+	m_top_sizer->Add
+	(	m_destination_entry_ctrl,
+		wxGBPosition(row, 0),
+		wxGBSpan(1, 4),
+		wxEXPAND
+	);
 	
 	row += 2;
 
@@ -304,6 +316,15 @@ TransactionCtrl::refresh_for_transaction_type
 }
 
 void
+TransactionCtrl::reset_entry_ctrl_amounts()
+{
+	Decimal const pa = primary_amount();
+	m_source_entry_ctrl->set_primary_amount(pa);
+	m_destination_entry_ctrl->set_primary_amount(pa);
+	return;
+}
+
+void
 TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
@@ -340,6 +361,17 @@ TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 	panel->update();
 }
 
+Decimal
+TransactionCtrl::primary_amount() const
+{
+	return Decimal
+	(	wx_to_decimal
+		(	wxString(m_primary_amount_ctrl->GetValue()),
+			locale()
+		)
+	);
+}
+
 void
 TransactionCtrl::post_journal() const
 {
@@ -353,10 +385,6 @@ TransactionCtrl::post_journal() const
 	journal.set_whether_actual(transaction_type_is_actual(ttype));
 	size_t const sz = m_account_name_boxes.size();
 	assert (sz == m_comment_boxes.size());
-	Decimal const primary_amount = wx_to_decimal
-	(	wxString(m_primary_amount_ctrl->GetValue()),
-		locale()
-	);
 	// WARNING This can't yet handle Journals with a number of entries
 	// other than 2.
 	assert (sz == 2);
@@ -371,7 +399,7 @@ TransactionCtrl::post_journal() const
 		entry.set_comment
 		(	wx_to_bstring(m_comment_boxes[i]->GetValue())
 		);
-		Decimal amount = primary_amount;
+		Decimal amount = primary_amount();
 		if (i == 0)
 		{
 			// This is the source account

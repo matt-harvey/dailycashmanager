@@ -4,6 +4,7 @@
 #include "decimal_validator.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
+#include "transaction_ctrl.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/event.h>
@@ -62,6 +63,13 @@ DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
 	// through parent instead.
 	GetParent()->Validate();
 	GetParent()->TransferDataToWindow();
+
+	// TODO This is rather convoluted.
+	TransactionCtrl* const tc = dynamic_cast<TransactionCtrl*>(GetParent());
+	if (tc)
+	{
+		tc->reset_entry_ctrl_amounts();
+	}
 	event.Skip();
 	return;
 }

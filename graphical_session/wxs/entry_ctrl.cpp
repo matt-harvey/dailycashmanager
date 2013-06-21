@@ -3,8 +3,11 @@
 #include "account_ctrl.hpp"
 #include "account_reader.hpp"
 #include "decimal_text_ctrl.hpp"
+#include "finformat.hpp"
+#include "locale.hpp"
 #include "transaction_type.hpp"
 #include <boost/scoped_ptr.hpp>
+#include <jewel/decimal.hpp>
 #include <wx/button.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
@@ -14,6 +17,7 @@
 #include <vector>
 
 using boost::scoped_ptr;
+using jewel::Decimal;
 using std::vector;
 
 #include <jewel/debug_log.hpp>
@@ -39,11 +43,13 @@ EntryCtrl::EntryCtrl
 	PhatbooksDatabaseConnection& p_database_connection,
 	transaction_type::TransactionType p_transaction_type,
 	wxSize const& p_text_ctrl_size,
-	bool p_is_source
+	bool p_is_source,
+	Decimal const& p_primary_amount
 ):
 	wxPanel(p_parent),
 	m_database_connection(p_database_connection),
 	m_is_source(p_is_source),
+	m_primary_amount(p_primary_amount),
 	m_transaction_type(p_transaction_type),
 	m_account_reader(0),
 	m_text_ctrl_size(p_text_ctrl_size),
@@ -110,7 +116,7 @@ EntryCtrl::EntryCtrl
 	vector<Account>::const_iterator const end = p_accounts.end();
 
 	// TODO Factor this out. (Re-used add_row().)
-	for ( ; it != end; ++it, ++m_next_row)
+	for (size_t entry_num = 0; it != end; ++it, ++m_next_row, ++entry_num)
 	{
 		AccountCtrl* account_name_box = new AccountCtrl
 		(	this,
@@ -135,13 +141,20 @@ EntryCtrl::EntryCtrl
 			Add(comment_ctrl, wxGBPosition(m_next_row, 1), wxGBSpan(1, 2));
 		m_comment_boxes.push_back(comment_ctrl);
 
+		Decimal::places_type const precision = m_primary_amount.places();
 		DecimalTextCtrl* amount_ctrl = new DecimalTextCtrl
 		(	this,
 			wxID_ANY,
 			m_text_ctrl_size,
-			m_database_connection.default_commodity().precision(),
+			precision,
 			false
 		);
+		if (entry_num == 0)
+		{
+			amount_ctrl->SetValue
+			(	finformat_wx(m_primary_amount, locale(), false)
+			);
+		}
 		m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
 		m_amount_boxes.push_back(amount_ctrl);
 	}
@@ -206,6 +219,28 @@ EntryCtrl::refresh_for_transaction_type
 }
 
 void
+EntryCtrl::set_primary_amount(Decimal const& p_primary_amount)
+{
+	m_primary_amount = p_primary_amount;
+	typedef vector<DecimalTextCtrl*>::size_type Size;
+	Size const sz = m_amount_boxes.size();
+	assert (sz > 0);	
+	m_amount_boxes[0]->
+		SetValue(finformat_wx(m_primary_amount, locale(), false));
+	for (Size i = 1; i != sz; ++i)
+	{
+		m_amount_boxes[i]->SetValue
+		(	finformat_wx
+			(	Decimal(0, m_primary_amount.places()),
+				locale(),
+				false
+			)
+		);
+	}
+	return;
+}
+
+void
 EntryCtrl::on_split_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
@@ -244,7 +279,7 @@ EntryCtrl::add_row()
 	(	this,
 		wxID_ANY,
 		m_text_ctrl_size,
-		m_database_connection.default_commodity().precision(),
+		m_primary_amount.places(),
 		false
 	);
 	m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));

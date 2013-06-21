@@ -6,6 +6,7 @@
 #include "account_reader.hpp"
 #include "transaction_type.hpp"
 #include <boost/noncopyable.hpp>
+#include <jewel/decimal.hpp>
 #include <wx/button.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
@@ -44,12 +45,15 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection,
 		transaction_type::TransactionType p_transaction_type,
 		wxSize const& p_text_ctrl_size,
-		bool p_is_source
+		bool p_is_source,
+		jewel::Decimal const& p_primary_amount
 	);
 
 	void refresh_for_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
 	);
+
+	void set_primary_amount(jewel::Decimal const& p_primary_amount);
 
 	~EntryCtrl();
 
@@ -65,6 +69,7 @@ private:
 	static unsigned int const s_split_button_id = wxID_HIGHEST + 1;
 
 	bool m_is_source;
+	jewel::Decimal m_primary_amount;
 	transaction_type::TransactionType m_transaction_type;
 	AccountReaderBase* m_account_reader;
 

@@ -91,7 +91,9 @@ public:
 	void refresh_for_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
 	);
-	
+
+	void reset_entry_ctrl_amounts();
+
 private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_recurring_transaction_button_click(wxCommandEvent& event);
@@ -99,6 +101,7 @@ private:
 
 	void post_journal() const;
 	bool is_balanced() const;
+	jewel::Decimal primary_amount() const;
 
 	int m_max_entry_row_id;
 
