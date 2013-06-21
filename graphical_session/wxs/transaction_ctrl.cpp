@@ -347,7 +347,7 @@ TransactionCtrl::primary_amount() const
 }
 
 void
-TransactionCtrl::post_journal() const
+TransactionCtrl::post_journal()
 {
 	// TODO HIGH PRIORITY Fix this
 	// to work now that we have EntryCtrl instead of storing
@@ -363,12 +363,32 @@ TransactionCtrl::post_journal() const
 	{	m_source_entry_ctrl,
 		m_destination_entry_ctrl
 	};
+	bool non_zero_entry_exists = false;
 	for (size_t i = 0; i != num_entry_controls; ++i)
 	{
 		vector<Entry> entries = entry_controls[i]->make_entries();
 		for (vector<Entry>::size_type j = 0; j != entries.size(); ++j)
 		{
-			journal.push_entry(entries[j]);
+			Entry entry = entries[j];
+			if (entry.amount() != Decimal(0, 0))
+			{
+				non_zero_entry_exists = true;
+			}
+			journal.push_entry(entry);
+		}
+	}
+	if (!non_zero_entry_exists)
+	{
+		// Then maybe OK was pressed before the primary amount was
+		// propagated through to the entries.
+		// TODO This is messy, and feels fragile.
+		if (primary_amount() != Decimal(0, 0))
+		{
+			// Then it CAN'T have been propagated. Let's propagate it
+			// and try again.
+			reset_entry_ctrl_amounts();
+			post_journal();
+			return;
 		}
 	}
 	journal.set_comment("");

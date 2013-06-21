@@ -34,7 +34,20 @@ class TransactionCtrl;
 
 // End forward declarations
 
-
+/**
+ * Widget for entering details regarding a single "side" of a transaction.
+ * This could comprise multiple Entries. A "side" usually represents
+ * either all the credit Entries of a Journal, or all the debit Entries.
+ * A side is either "source" (usually credit), or "destination"
+ * (usually debit). However, the "source" and "destination" concepts may
+ * not always correspond to debit and credit.
+ *
+ * @todo Document better the concept of a "transaction" versus that of a
+ * Journal.
+ *
+ * @todo Make the amount controls read-only unless and until additional
+ * lines are added. We might even want to hide them entirely.
+ */
 class EntryCtrl:
 	public wxPanel,
 	private boost::noncopyable

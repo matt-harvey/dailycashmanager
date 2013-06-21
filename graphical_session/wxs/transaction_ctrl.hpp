@@ -49,10 +49,6 @@ class TopPanel;
  * @todo Ensure this can handle situation where insufficient default
  * Accounts are available.
  * 
- * @todo If "OK" / "Save" is pressed via the Enter key, without first having
- * changed focus away from m_primary_amount_ctrl, then the primary amount
- * is not propagated through to the entries.
- *
  * @todo Handle case where Journal doesn't balance - or else structure
  * things so that this is impossible.
  */
@@ -104,7 +100,7 @@ private:
 
 	void reset_entry_ctrl_amounts();
 
-	void post_journal() const;
+	void post_journal();
 	bool is_balanced() const;
 	jewel::Decimal primary_amount() const;
 

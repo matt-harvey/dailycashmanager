@@ -79,12 +79,13 @@ DecimalTextCtrl::amount() const
 	// TODO This isn't really integrated with the DecimalValidator.
 	// It probably should be. However, by doing it this way, this
 	// method can be const.
-	return Decimal
+	Decimal const raw
 	(	wx_to_decimal
 		(	wxString(GetValue()),
 			locale()
 		)
 	);
+	return round(raw, m_precision);
 }
 
 void
