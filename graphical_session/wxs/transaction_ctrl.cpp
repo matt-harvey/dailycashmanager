@@ -153,14 +153,12 @@ TransactionCtrl::TransactionCtrl
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
 		s_transaction_type_ctrl_id,
-		wxSize(160, 33)
+		wxSize(160, wxDefaultSize.y)
 	);
 
 	m_transaction_type_ctrl->set_transaction_type(initial_transaction_type);
 	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 0));
 	wxSize const text_box_size = m_transaction_type_ctrl->GetSize();
-	assert (text_box_size.x == 160);
-	assert (text_box_size.y == 33);
 
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
