@@ -364,12 +364,7 @@ TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 Decimal
 TransactionCtrl::primary_amount() const
 {
-	return Decimal
-	(	wx_to_decimal
-		(	wxString(m_primary_amount_ctrl->GetValue()),
-			locale()
-		)
-	);
+	return m_primary_amount_ctrl->amount();
 }
 
 void

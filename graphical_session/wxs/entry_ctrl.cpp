@@ -3,6 +3,7 @@
 #include "account_ctrl.hpp"
 #include "account_reader.hpp"
 #include "decimal_text_ctrl.hpp"
+#include "entry.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
 #include "transaction_type.hpp"
@@ -151,9 +152,7 @@ EntryCtrl::EntryCtrl
 		);
 		if (entry_num == 0)
 		{
-			amount_ctrl->SetValue
-			(	finformat_wx(m_primary_amount, locale(), false)
-			);
+			amount_ctrl->set_amount(m_primary_amount);
 		}
 		m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
 		m_amount_boxes.push_back(amount_ctrl);
@@ -225,19 +224,45 @@ EntryCtrl::set_primary_amount(Decimal const& p_primary_amount)
 	typedef vector<DecimalTextCtrl*>::size_type Size;
 	Size const sz = m_amount_boxes.size();
 	assert (sz > 0);	
-	m_amount_boxes[0]->
-		SetValue(finformat_wx(m_primary_amount, locale(), false));
+	m_amount_boxes[0]->set_amount(m_primary_amount);
 	for (Size i = 1; i != sz; ++i)
 	{
-		m_amount_boxes[i]->SetValue
-		(	finformat_wx
-			(	Decimal(0, m_primary_amount.places()),
-				locale(),
-				false
-			)
-		);
+		m_amount_boxes[i]->set_amount(Decimal(0, m_primary_amount.places()));
 	}
 	return;
+}
+
+vector<Entry>
+EntryCtrl::make_entries() const
+{
+	assert (m_account_name_boxes.size() == m_comment_boxes.size());
+	assert (m_comment_boxes.size() == m_amount_boxes.size());
+	assert (m_amount_boxes.size() == m_account_name_boxes.size());
+	typedef std::vector<Entry>::size_type Size;
+	Size const sz = m_account_name_boxes.size();
+
+	vector<Entry> ret;
+	for (Size i = 0; i != sz; ++i)
+	{
+		Entry entry(m_database_connection);
+
+		assert (m_account_name_boxes[i]);
+		entry.set_account(m_account_name_boxes[i]->account());
+
+		assert (m_comment_boxes[i]);
+		entry.set_comment(wx_to_bstring(m_comment_boxes[i]->GetValue()));
+
+		assert (m_amount_boxes[i]);
+		entry.set_amount(m_amount_boxes[i]->amount());
+
+		entry.set_whether_reconciled(false);
+
+		ret.push_back(entry);
+		assert (!entry.has_id());
+	}
+
+	assert (ret.size() == sz);
+	return ret;
 }
 
 void

@@ -4,6 +4,7 @@
 
 #include "account.hpp"
 #include "account_reader.hpp"
+#include "entry.hpp"
 #include "transaction_type.hpp"
 #include <boost/noncopyable.hpp>
 #include <jewel/decimal.hpp>
@@ -49,13 +50,20 @@ public:
 		jewel::Decimal const& p_primary_amount
 	);
 
+	~EntryCtrl();
+
 	void refresh_for_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
 	);
 
 	void set_primary_amount(jewel::Decimal const& p_primary_amount);
 
-	~EntryCtrl();
+	/**
+	 * @returns a vector of newly created Entries (WITHOUT ids), based
+	 * on the data currently in the EntryCtrl. The Entries will not
+	 * be associated with any Journal.
+	 */
+	std::vector<Entry> make_entries() const;
 
 private:
 	
