@@ -56,7 +56,7 @@ StringSetValidator::Validate(wxWindow* WXUNUSED(wxparent))
 bool
 StringSetValidator::TransferFromWindow()
 {
-	dynamic_cast<wxTextEntry*>(GetWindow());
+	assert (dynamic_cast<wxTextEntry*>(GetWindow()));
 	return true;
 }
 
@@ -75,11 +75,13 @@ StringSetValidator::Clone() const
 	return new StringSetValidator(*this);
 }
 
+/*
 wxString
 StringSetValidator::text() const
 {
 	return m_text;
 }
+*/
 
 
 

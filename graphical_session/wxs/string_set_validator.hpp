@@ -46,7 +46,8 @@ public:
 	bool TransferToWindow();
 	wxObject* Clone() const;
 
-	wxString text() const;
+	// TODO This isn't working. Need to fix.
+	// wxString text() const;
 
 private:
 	wxString m_text;
