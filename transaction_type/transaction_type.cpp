@@ -21,6 +21,44 @@ using transaction_type::num_transaction_types;
 using std::set;
 using std::vector;
 
+
+
+// Anonymous namespace
+namespace
+{
+	typedef set<account_type::AccountType> AccountTypeSet;
+
+	AccountTypeSet available_account_types
+	(	PhatbooksDatabaseConnection& p_database_connection
+	)
+	{
+		AccountReader reader(p_database_connection);
+		AccountTypeSet ret;
+		vector<account_type::AccountType>::size_type const num_account_types =
+		account_types().size();
+
+		// Bare scope
+		{
+			AccountReaderBase::const_iterator it = reader.begin();
+			AccountReaderBase::const_iterator const end = reader.end();
+			for
+			(	;   
+				(it != end) &&
+					(ret.size() != num_account_types);
+				++it
+			)
+			{
+				ret.insert(it->account_type());
+			}
+		}
+		return ret;	
+	}
+}  // End anonymous namespace
+
+
+
+
+
 vector<TransactionType> const&
 transaction_types()
 {
@@ -45,51 +83,35 @@ available_transaction_types
 (	PhatbooksDatabaseConnection& p_database_connection
 )
 {
-	// TODO Tidy this up.
-
-	AccountReaderBase reader(p_database_connection);
-	typedef set<account_type::AccountType> AccountTypeSet;
-	AccountTypeSet available_account_types;
-	vector<account_type::AccountType>::size_type const num_account_types =
-		account_types().size();
-
-	// Bare scope
-	{
-		AccountReaderBase::const_iterator it = reader.begin();
-		AccountReaderBase::const_iterator const end = reader.end();
-		for
-		(	;   
-			it != end && available_account_types.size() != num_account_types;
-			++it
-		)
-		{
-			available_account_types.insert(it->account_type());
-		}
-	}
-
 	typedef vector<TransactionType> TTypeVec;
+	typedef vector<account_type::AccountType> ATypeVec;
+
 	TTypeVec ret;
 
+	AccountTypeSet const avail_account_types =
+		available_account_types(p_database_connection);
+
 	// Bare scope
 	{
-		TTypeVec::size_type sz = transaction_types.size();
+		TTypeVec::size_type sz = transaction_types().size();
 		for (TTypeVec::size_type i = 0; i != sz; ++i)
 		{
 			int transaction_type_support = 0;
-			AccountTypeSet const aset_end = available_account_types.end();
+			AccountTypeSet::const_iterator const aset_end =
+				avail_account_types.end();
 			TransactionType const ttype = transaction_types()[i];
 
 			// Bare scope
 			{
 				// See if has got at least one of source AccountTypes
 				// for this TransactionType.
-				vector<account_type::AccountType>::const_iterator avec_it =
+				ATypeVec::const_iterator avec_it =
 					source_account_types(ttype).begin();
-				vector<account_type::AccountType>::const_iterator const avec_end =
-					source_account_type(ttype).end();
+				ATypeVec::const_iterator const avec_end =
+					source_account_types(ttype).end();
 				for ( ; avec_it != avec_end; ++avec_it)
 				{
-					if (available_account_types.find(*avec_it) != aset_end)
+					if (avail_account_types.find(*avec_it) != aset_end)
 					{
 						++transaction_type_support;
 						break;
@@ -101,15 +123,15 @@ available_transaction_types
 
 			// Bare scope
 			{
-				// See if it has got at least one of the destination AccountTypes
-				// for this TransactionType.
-				vector<account_type::AccountType>::const_iterator avec_it =
+				// See if it has got at least one of the destination
+				// AccountTypes for this TransactionType.
+				ATypeVec::const_iterator avec_it =
 					destination_account_types(ttype).begin();
-				vector<account_type::AccountType>::const_iterator const avec_end =
-					destination_account_type(ttype).end();
+				ATypeVec::const_iterator const avec_end =
+					destination_account_types(ttype).end();
 				for ( ; avec_it != avec_end; ++avec_it)
 				{
-					if (available_account_types.find(*avec_it) != aset_end)
+					if (avail_account_types.find(*avec_it) != aset_end)
 					{
 						++transaction_type_support;
 						break;
