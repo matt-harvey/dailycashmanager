@@ -279,10 +279,19 @@ EntryCtrl::make_entries() const
 		entry.set_comment(wx_to_bstring(m_comment_boxes[i]->GetValue()));
 
 		Decimal amount = m_primary_amount;
-		if (!m_amount_boxes.empty())
+		JEWEL_DEBUG_LOG << "m_primary_amount: " << m_primary_amount << endl;
+		if (m_amount_boxes.size() != 0)
 		{
+			JEWEL_DEBUG_LOG_LOCATION;
 			assert (m_amount_boxes.size() == sz);
+			assert (sz > 1);
 			assert (m_amount_boxes[i]);
+			JEWEL_DEBUG_LOG << "m_amount_boxes[i]->amount(): "
+			                << m_amount_boxes[i]->amount()
+							<< endl;
+			JEWEL_DEBUG_LOG << "m_amount_boxes[i]->GetValue(): "
+			                << m_amount_boxes[i]->GetValue()
+							<< endl;
 			amount = m_amount_boxes[i]->amount();
 		}
 		if (!transaction_type_is_actual(m_transaction_type))
@@ -293,7 +302,9 @@ EntryCtrl::make_entries() const
 		{
 			amount = -amount;
 		}
+		JEWEL_DEBUG_LOG << "amount: " << amount << endl;
 		entry.set_amount(amount);
+		JEWEL_DEBUG_LOG << "entry.amount(): " << entry.amount() << endl;
 
 		entry.set_whether_reconciled(false);
 
@@ -315,9 +326,6 @@ EntryCtrl::on_split_button_click(wxCommandEvent& event)
 void
 EntryCtrl::add_row()
 {
-	// TODO HIGH PRIORITY. If there is currently only 1 row then we need
-	// to reposition the Split button up to Row 0, and we also need to provide
-	// the original Entry row with a DecimalTextCtrl for its amount.
 	assert (m_account_name_boxes.size() >= 1);
 	AccountCtrl* account_name_box = new AccountCtrl
 	(	this,
@@ -350,6 +358,27 @@ EntryCtrl::add_row()
 		false
 	);
 	m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
+
+	if (m_amount_boxes.size() == 0)
+	{
+		// Then the initial Entry line now needs a DecimalTextCtrl too, and
+		// we need to reposition m_split_button to make way for it.
+		m_top_sizer->Detach(m_split_button);
+		assert (m_next_row >= 2);
+		m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row - 2, 3));
+		DecimalTextCtrl* prev_amount_ctrl = new DecimalTextCtrl
+		(	this,
+			wxID_ANY,
+			m_text_ctrl_size,
+			m_primary_amount.places(),
+			false
+		);
+		prev_amount_ctrl->set_amount(m_primary_amount);
+		m_top_sizer->Add(prev_amount_ctrl, wxGBPosition(m_next_row - 1, 3));
+		assert (m_amount_boxes.empty());
+		m_amount_boxes.push_back(prev_amount_ctrl);
+	}
+
 	m_amount_boxes.push_back(amount_ctrl);
 
 	++m_next_row;
