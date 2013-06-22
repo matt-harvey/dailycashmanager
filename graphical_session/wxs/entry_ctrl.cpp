@@ -60,6 +60,7 @@ EntryCtrl::EntryCtrl
 {
 	assert (m_account_name_boxes.empty());
 	assert (m_comment_boxes.empty());
+	assert (m_amount_boxes.empty());
 
 	assert_transaction_type_validity(m_transaction_type);
 
@@ -90,7 +91,13 @@ EntryCtrl::EntryCtrl
 		wxDefaultPosition,
 		m_text_ctrl_size
 	);
-	m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row, 3));
+
+	// Split button is in row 0 if and only if there are multiple
+	// Accounts.
+	if (p_accounts.size() > 1)
+	{
+		m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row, 3));
+	}
 
 	// Subsequent rows
 
@@ -142,20 +149,33 @@ EntryCtrl::EntryCtrl
 			Add(comment_ctrl, wxGBPosition(m_next_row, 1), wxGBSpan(1, 2));
 		m_comment_boxes.push_back(comment_ctrl);
 
-		Decimal::places_type const precision = m_primary_amount.places();
-		DecimalTextCtrl* amount_ctrl = new DecimalTextCtrl
-		(	this,
-			wxID_ANY,
-			m_text_ctrl_size,
-			precision,
-			false
-		);
-		if (entry_num == 0)
+		// If there is only one Account then there is only one "Entry line",
+		// and that Entry line will also house the "Split" button. There will
+		// then be no need to have an amount_ctrl for just the one
+		// Entry. If there are multiple Entries then we must have already
+		// placed the Split button at row 0, and in that case we also need
+		// an amount_ctrl for each Entry.
+		if (p_accounts.size() == 1)
 		{
-			amount_ctrl->set_amount(m_primary_amount);
+			m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row, 3));
 		}
-		m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
-		m_amount_boxes.push_back(amount_ctrl);
+		else
+		{
+			Decimal::places_type const precision = m_primary_amount.places();
+			DecimalTextCtrl* amount_ctrl = new DecimalTextCtrl
+			(	this,
+				wxID_ANY,
+				m_text_ctrl_size,
+				precision,
+				false
+			);
+			if (entry_num == 0)
+			{
+				amount_ctrl->set_amount(m_primary_amount);
+			}
+			m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
+			m_amount_boxes.push_back(amount_ctrl);
+		}
 	}
 	
 	m_top_sizer->Fit(this);
@@ -224,11 +244,16 @@ EntryCtrl::set_primary_amount(Decimal const& p_primary_amount)
 	m_primary_amount = p_primary_amount;
 	typedef vector<DecimalTextCtrl*>::size_type Size;
 	Size const sz = m_amount_boxes.size();
-	assert (sz > 0);	
-	m_amount_boxes[0]->set_amount(m_primary_amount);
-	for (Size i = 1; i != sz; ++i)
+	if (sz > 0)
 	{
-		m_amount_boxes[i]->set_amount(Decimal(0, m_primary_amount.places()));
+		assert (m_amount_boxes[0]);
+		m_amount_boxes[0]->set_amount(m_primary_amount);
+		for (Size i = 1; i != sz; ++i)
+		{
+			assert (m_amount_boxes[i]);
+			m_amount_boxes[i]->
+				set_amount(Decimal(0, m_primary_amount.places()));
+		}
 	}
 	return;
 }
@@ -237,8 +262,8 @@ vector<Entry>
 EntryCtrl::make_entries() const
 {
 	assert (m_account_name_boxes.size() == m_comment_boxes.size());
-	assert (m_comment_boxes.size() == m_amount_boxes.size());
-	assert (m_amount_boxes.size() == m_account_name_boxes.size());
+	assert (m_comment_boxes.size() >= m_amount_boxes.size());
+	assert (m_amount_boxes.size() <= m_account_name_boxes.size());
 	typedef std::vector<Entry>::size_type Size;
 	Size const sz = m_account_name_boxes.size();
 
@@ -253,8 +278,13 @@ EntryCtrl::make_entries() const
 		assert (m_comment_boxes[i]);
 		entry.set_comment(wx_to_bstring(m_comment_boxes[i]->GetValue()));
 
-		assert (m_amount_boxes[i]);
-		Decimal amount = m_amount_boxes[i]->amount();
+		Decimal amount = m_primary_amount;
+		if (!m_amount_boxes.empty())
+		{
+			assert (m_amount_boxes.size() == sz);
+			assert (m_amount_boxes[i]);
+			amount = m_amount_boxes[i]->amount();
+		}
 		if (!transaction_type_is_actual(m_transaction_type))
 		{
 			amount = -amount;
@@ -270,7 +300,6 @@ EntryCtrl::make_entries() const
 		ret.push_back(entry);
 		assert (!entry.has_id());
 	}
-
 	assert (ret.size() == sz);
 	return ret;
 }
@@ -286,6 +315,9 @@ EntryCtrl::on_split_button_click(wxCommandEvent& event)
 void
 EntryCtrl::add_row()
 {
+	// TODO HIGH PRIORITY. If there is currently only 1 row then we need
+	// to reposition the Split button up to Row 0, and we also need to provide
+	// the original Entry row with a DecimalTextCtrl for its amount.
 	assert (m_account_name_boxes.size() >= 1);
 	AccountCtrl* account_name_box = new AccountCtrl
 	(	this,
