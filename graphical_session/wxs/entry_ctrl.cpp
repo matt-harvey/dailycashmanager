@@ -84,18 +84,20 @@ EntryCtrl::EntryCtrl
 	);
 	m_top_sizer->Add(comment_label, wxGBPosition(m_next_row, 1));
 
-	m_split_button = new wxButton
-	(	this,
-		s_split_button_id,
-		wxString("Split"),
-		wxDefaultPosition,
-		m_text_ctrl_size
-	);
 
 	// Split button is in row 0 if and only if there are multiple
 	// Accounts.
 	if (p_accounts.size() > 1)
 	{
+		// Note the order of construction of elements effects tab
+		// traversal.
+		m_split_button = new wxButton
+		(	this,
+			s_split_button_id,
+			wxString("Split"),
+			wxDefaultPosition,
+			m_text_ctrl_size
+		);
 		m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row, 3));
 	}
 
@@ -157,6 +159,13 @@ EntryCtrl::EntryCtrl
 		// an amount_ctrl for each Entry.
 		if (p_accounts.size() == 1)
 		{
+			m_split_button = new wxButton
+			(	this,
+				s_split_button_id,
+				wxString("Split"),
+				wxDefaultPosition,
+				m_text_ctrl_size
+			);
 			m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row, 3));
 		}
 		else
@@ -366,6 +375,8 @@ EntryCtrl::add_row()
 		m_top_sizer->Detach(m_split_button);
 		assert (m_next_row >= 2);
 		m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row - 2, 3));
+		assert (!m_account_name_boxes.empty());
+		m_split_button->MoveBeforeInTabOrder(m_account_name_boxes[0]);
 		DecimalTextCtrl* prev_amount_ctrl = new DecimalTextCtrl
 		(	this,
 			wxID_ANY,
@@ -375,6 +386,7 @@ EntryCtrl::add_row()
 		);
 		prev_amount_ctrl->set_amount(m_primary_amount);
 		m_top_sizer->Add(prev_amount_ctrl, wxGBPosition(m_next_row - 1, 3));
+		prev_amount_ctrl->MoveBeforeInTabOrder(account_name_box);
 		assert (m_amount_boxes.empty());
 		m_amount_boxes.push_back(prev_amount_ctrl);
 	}
