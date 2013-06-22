@@ -8,7 +8,12 @@
 namespace phatbooks
 {
 
-class Account;  // forward declaration
+// Begin forward declarations
+
+class Account;
+class PhatbooksDatabaseConnection;
+
+// End forward declarations
 
 namespace transaction_type
 {
@@ -37,6 +42,17 @@ namespace transaction_type
  */
 std::vector<transaction_type::TransactionType> const&
 transaction_types();
+
+/**
+ * @returns a vector containing every TransactionType for which
+ * there exist, saved in p_database_connection, Accounts of the
+ * requisite AccountTypes for that TransactionType.
+ */
+std::vector<transaction_type::TransactionType>
+available_transaction_types
+(	PhatbooksDatabaseConnection& p_database_connection
+);
+
 
 /**
  * @returns a natural language verb corresponding to a p_tranaction_type;
