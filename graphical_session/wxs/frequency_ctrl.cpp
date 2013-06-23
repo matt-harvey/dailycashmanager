@@ -47,7 +47,7 @@ namespace
 
 	wxString once_off_string()
 	{	
-		return wxString("Once-off, on");
+		return wxString("Record once only, on");
 	}
 
 }  // end anonymous namespace
@@ -61,7 +61,7 @@ FrequencyCtrl::FrequencyCtrl
 	wxComboBox
 	(	p_parent,
 		p_id,
-		once_off_string(),  // WARNING This isn't a Frequency!
+		once_off_string(),
 		wxDefaultPosition,
 		p_size,
 		wxArrayString(),
@@ -74,11 +74,10 @@ FrequencyCtrl::FrequencyCtrl
 		available_frequencies().end();
 	for ( ; it != end; ++it)
 	{
-		wxString wxs = 
-			std8_to_wx(frequency_description(*it, "every")).Capitalize();
+		wxString wxs = wxString("Record ");
+		wxs += std8_to_wx(frequency_description(*it, "every"));
 		wxs += ", starting";
 		Append(wxs);
-
 	}
 	SetSelection(0);
 }
