@@ -34,8 +34,6 @@ class TopPanel;
 // End forward declarations
 
 
-
-
 /**
  * Dialog in which user creates a new transaction (i.e. Journal).
  *

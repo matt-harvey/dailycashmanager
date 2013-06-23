@@ -10,14 +10,17 @@
 #include "date_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
+#include "draft_journal.hpp"
 #include "entry.hpp"
 #include "entry_ctrl.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
 #include "frequency_ctrl.hpp"
 #include "ordinary_journal.hpp"
+#include "proto_journal.hpp"
 #include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "repeater.hpp"
 #include "top_panel.hpp"
 #include "transaction_type_ctrl.hpp"
 #include "transaction_type.hpp"
@@ -347,7 +350,7 @@ TransactionCtrl::post_journal()
 	// TODO HIGH PRIORITY Fix this
 	// to work now that we have EntryCtrl instead of storing
 	// Entry info directly in the TransactionCtrl.
-	OrdinaryJournal journal(m_database_connection);
+	ProtoJournal journal;
 	// TODO What if the dereferencing of optional fails?
 	transaction_type::TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
@@ -386,15 +389,36 @@ TransactionCtrl::post_journal()
 	}
 	journal.set_comment("");
 
-	// Process date
-	journal.set_date(m_date_ctrl->date());
-
-	JEWEL_DEBUG_LOG << "\n" << journal << endl;
-
-	// Save journal
-	// TODO This assertion might fail.
-	assert (journal.is_balanced());
-	journal.save();
+	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
+	if (maybe_frequency)
+	{
+		DraftJournal dj(m_database_connection);
+		dj.mimic(journal);
+		Repeater repeater(m_database_connection);
+		repeater.set_frequency(value(maybe_frequency));
+		repeater.set_next_date(m_date_ctrl->date());
+		// TODO HIGH PRIORITY This can stuff up the next date is
+		// invalid for the selected Frequency. Make sure this works
+		// OK.
+		dj.push_repeater(repeater);
+		// TODO HIGH PRIORITY Get name for DraftJournal? Do we need one?
+		// WARNING The name needs to be unique per database schema.
+		dj.set_name(wx_to_bstring(wxEmptyString));
+		assert (dj.is_balanced());
+		dj.save();
+		JEWEL_DEBUG_LOG << "Posted Journal:\n\n" << dj << endl;
+	}
+	else
+	{
+		assert (!maybe_frequency);
+		OrdinaryJournal oj(m_database_connection);
+		oj.mimic(journal);
+		oj.set_date(m_date_ctrl->date());
+		assert (oj.is_balanced());
+		oj.save();
+		JEWEL_DEBUG_LOG << "Posted journal:\n\n" << oj << endl;
+	}
+	return;
 }
 
 bool
