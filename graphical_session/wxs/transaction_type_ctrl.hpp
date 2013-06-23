@@ -4,6 +4,7 @@
 #define GUARD_transaction_type_ctrl_hpp
 
 #include "transaction_type.hpp"
+#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <wx/combobox.h>
 #include <wx/event.h>
@@ -26,7 +27,7 @@ namespace gui
 /**
  * Widget to enable the user to select a TransactionType.
  */
-class TransactionTypeCtrl: public wxComboBox
+class TransactionTypeCtrl: public wxComboBox, private boost::noncopyable
 {
 public:
 

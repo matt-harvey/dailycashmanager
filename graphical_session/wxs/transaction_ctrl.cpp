@@ -184,7 +184,7 @@ TransactionCtrl::TransactionCtrl
 	accounts.push_back(account_x);
 	accounts.push_back(account_y);
 
-	row += 3;
+	row += 2;
 
 	// WARNING Temp hack
 	assert (accounts.size() >= 2);
@@ -233,22 +233,8 @@ TransactionCtrl::TransactionCtrl
 	row += 2;
 
 
-	// Buttons and date control
+	// Date controls
 
-	m_cancel_button = new wxButton
-	(	this,
-		wxID_CANCEL,
-		wxString("&Clear"),
-		wxDefaultPosition,
-		wxSize(text_box_size.x, text_box_size.y)
-	);
-	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
-	m_date_ctrl = new DateCtrl
-	(	this,
-		wxID_ANY,
-		wxSize(text_box_size.x, text_box_size.y)
-	);
-	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 1));
 	m_recurring_transaction_button = new wxButton
 	(	this,
 		s_recurring_transaction_button_id,
@@ -257,6 +243,25 @@ TransactionCtrl::TransactionCtrl
 		wxSize(text_box_size.x, text_box_size.y)
 	);
 	m_top_sizer->Add(m_recurring_transaction_button, wxGBPosition(row, 2));
+	m_date_ctrl = new DateCtrl
+	(	this,
+		wxID_ANY,
+		wxSize(text_box_size.x, text_box_size.y)
+	);
+	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 3));
+
+	row += 2;
+
+	// Cancel and OK buttons
+
+	m_cancel_button = new wxButton
+	(	this,
+		wxID_CANCEL,
+		wxString("&Clear"),
+		wxDefaultPosition,
+		wxSize(text_box_size.x, text_box_size.y)
+	);
+	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 2));
 	m_ok_button = new wxButton
 	(	this,
 		wxID_OK,
@@ -283,8 +288,10 @@ TransactionCtrl::refresh_for_transaction_type
 (	transaction_type::TransactionType p_transaction_type
 )
 {
-	m_source_entry_ctrl->refresh_for_transaction_type(p_transaction_type);
-	m_destination_entry_ctrl->refresh_for_transaction_type(p_transaction_type);
+	m_source_entry_ctrl->
+		refresh_for_transaction_type(p_transaction_type);
+	m_destination_entry_ctrl->
+		refresh_for_transaction_type(p_transaction_type);
 	return;
 }
 
