@@ -2,6 +2,7 @@
 #define GUARD_frequency_ctrl_hpp
 
 #include <boost/noncopyable.hpp>
+#include <boost/optional.hpp>
 #include <wx/combobox.h>
 #include <wx/gdicmn.h>
 #include <wx/window.h>
@@ -20,7 +21,8 @@ namespace gui
 {
 
 /**
- * Widget for the the user to select a Frequency.
+ * Widget for the the user to select a Frequency (for a DraftJournal), or
+ * else to select no Frequency (for an OrdinaryJournal).
  */
 class FrequencyCtrl: public wxComboBox, private boost::noncopyable
 {
@@ -33,9 +35,13 @@ public:
 	);
 
 	/**
-	 * @todo Implement this.
+	 * If no Frequency is selected (i.e. "Once off" or equivalent is selected)
+	 * then this returns an uninitialized boost::optional<Frequency>.
+	 * If a Frequency is selected, then this returns a
+	 * boost::optional<Frequency> that has been initialized with that
+	 * Frequency.
 	 */
-	Frequency frequency() const;
+	boost::optional<Frequency> frequency() const;
 
 };  // class FrequencyCtrl
 

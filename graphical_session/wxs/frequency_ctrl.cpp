@@ -1,12 +1,14 @@
 #include "frequency_ctrl.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
+#include <boost/optional.hpp>
 #include <wx/combobox.h>
 #include <wx/gdicmn.h>
 #include <wx/window.h>
 #include <wx/windowid.h>
 #include <vector>
 
+using boost::optional;
 using std::vector;
 
 namespace phatbooks
@@ -43,6 +45,11 @@ namespace
 		return ret;
 	}
 
+	wxString once_off_string()
+	{	
+		return wxString("Once-off, on");
+	}
+
 }  // end anonymous namespace
 
 
@@ -54,24 +61,44 @@ FrequencyCtrl::FrequencyCtrl
 	wxComboBox
 	(	p_parent,
 		p_id,
-		wxString("Once off"),  // WARNING This isn't a Frequency!
+		once_off_string(),  // WARNING This isn't a Frequency!
 		wxDefaultPosition,
 		p_size,
 		wxArrayString(),
 		wxCB_READONLY
 	)
 {
-	wxArrayString choices;
-	choices.Add(wxString("One off"));
+	Append(once_off_string());
 	vector<Frequency>::const_iterator it = available_frequencies().begin();
 	vector<Frequency>::const_iterator const end =
 		available_frequencies().end();
 	for ( ; it != end; ++it)
 	{
-		Append(std8_to_wx(frequency_description(*it, "every")));
+		wxString wxs = 
+			std8_to_wx(frequency_description(*it, "every")).Capitalize();
+		wxs += ", starting";
+		Append(wxs);
+
 	}
+	SetSelection(0);
 }
-	
+
+optional<Frequency>
+FrequencyCtrl::frequency() const
+{
+	optional<Frequency> ret;
+	vector<Frequency>::size_type const selection = GetSelection();
+	if (selection == 0)
+	{
+		assert (GetValue() == once_off_string());
+		assert (!ret);
+		return ret;
+	}
+	assert (selection > 0);
+	ret = available_frequencies()[selection - 1];
+	return ret;
+}
+
 	
 
 

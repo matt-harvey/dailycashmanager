@@ -14,6 +14,7 @@
 #include "entry_ctrl.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
+#include "frequency_ctrl.hpp"
 #include "ordinary_journal.hpp"
 #include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -62,10 +63,6 @@ BEGIN_EVENT_TABLE(TransactionCtrl, wxPanel)
 		TransactionCtrl::on_ok_button_click
 	)
 	EVT_BUTTON
-	(	s_recurring_transaction_button_id,
-		TransactionCtrl::on_recurring_transaction_button_click
-	)
-	EVT_BUTTON
 	(	wxID_CANCEL,
 		TransactionCtrl::on_cancel_button_click
 	)
@@ -99,9 +96,9 @@ TransactionCtrl::TransactionCtrl
 	m_source_entry_ctrl(0),
 	m_destination_entry_ctrl(0),
 	m_primary_amount_ctrl(0),
+	m_frequency_ctrl(0),
 	m_date_ctrl(0),
 	m_cancel_button(0),
-	m_recurring_transaction_button(0),
 	m_ok_button(0),
 	m_database_connection(p_database_connection)
 {
@@ -153,10 +150,9 @@ TransactionCtrl::TransactionCtrl
 		wxSize(160, wxDefaultSize.y),
 		m_database_connection
 	);
-
 	m_transaction_type_ctrl->set_transaction_type(initial_transaction_type);
-	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 0));
 	wxSize const text_box_size = m_transaction_type_ctrl->GetSize();
+	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 0));
 
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
@@ -167,7 +163,7 @@ TransactionCtrl::TransactionCtrl
 	);
 	m_top_sizer->Add
 	(	m_primary_amount_ctrl,
-		wxGBPosition(row, 3),
+		wxGBPosition(row, 1),
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
@@ -232,17 +228,13 @@ TransactionCtrl::TransactionCtrl
 	
 	row += 2;
 
-
-	// Date controls
-
-	m_recurring_transaction_button = new wxButton
+	// Date and Frequency controls
+	m_frequency_ctrl = new FrequencyCtrl
 	(	this,
-		s_recurring_transaction_button_id,
-		wxString("&Recurring..."),
-		wxDefaultPosition,
-		wxSize(text_box_size.x, text_box_size.y)
+		wxID_ANY,
+		wxSize(text_box_size.x * 2, text_box_size.y)
 	);
-	m_top_sizer->Add(m_recurring_transaction_button, wxGBPosition(row, 2));
+	m_top_sizer->Add(m_frequency_ctrl, wxGBPosition(row, 1), wxGBSpan(1, 2));
 	m_date_ctrl = new DateCtrl
 	(	this,
 		wxID_ANY,
@@ -252,8 +244,7 @@ TransactionCtrl::TransactionCtrl
 
 	row += 2;
 
-	// Cancel and OK buttons
-
+	// Cancel/Clear button
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,
@@ -261,7 +252,9 @@ TransactionCtrl::TransactionCtrl
 		wxDefaultPosition,
 		wxSize(text_box_size.x, text_box_size.y)
 	);
-	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 2));
+	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 1));
+
+	// Save/OK button
 	m_ok_button = new wxButton
 	(	this,
 		wxID_OK,
@@ -272,8 +265,6 @@ TransactionCtrl::TransactionCtrl
 
 	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 3));
 	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
-
-	++row;
 
 	// "Admin"
 	// SetSizer(m_top_sizer);
@@ -329,13 +320,6 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 			wxMessageBox("Transaction does not balance.");
 		}
 	}
-	return;
-}
-
-void
-TransactionCtrl::on_recurring_transaction_button_click(wxCommandEvent& event)
-{
-	(void)event;  // Silence compiler re. unused parameter.
 	return;
 }
 

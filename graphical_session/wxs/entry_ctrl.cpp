@@ -85,7 +85,6 @@ EntryCtrl::EntryCtrl
 	);
 	m_top_sizer->Add(comment_label, wxGBPosition(m_next_row, 1));
 
-
 	// Split button is in row 0 if and only if there are multiple
 	// Accounts.
 	if (p_accounts.size() > 1)

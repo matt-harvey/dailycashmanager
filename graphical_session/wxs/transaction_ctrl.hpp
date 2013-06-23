@@ -28,6 +28,7 @@ namespace gui
 class AccountCtrl;
 class DateCtrl;
 class EntryCtrl;
+class FrequencyCtrl;
 class TopPanel;
 
 // End forward declarations
@@ -101,7 +102,6 @@ public:
 	
 private:
 	void on_ok_button_click(wxCommandEvent& event);
-	void on_recurring_transaction_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
 
 	void reset_entry_ctrl_amounts();
@@ -119,20 +119,18 @@ private:
 	EntryCtrl* m_destination_entry_ctrl;
 
 	DecimalTextCtrl* m_primary_amount_ctrl;
+	FrequencyCtrl* m_frequency_ctrl;
 	DateCtrl* m_date_ctrl;
 	
 	wxButton* m_cancel_button;
-	wxButton* m_recurring_transaction_button;
 	wxButton* m_ok_button;
 
 	static unsigned int const s_date_ctrl_id =
 		wxID_HIGHEST + 1;
 	static unsigned int const s_primary_amount_ctrl_id =
 		s_date_ctrl_id + 1;
-	static unsigned int const s_recurring_transaction_button_id =
-		s_primary_amount_ctrl_id + 1;	
 	static unsigned int const s_transaction_type_ctrl_id =
-		s_recurring_transaction_button_id + 1;
+		s_primary_amount_ctrl_id + 1;
 	static unsigned int const s_min_entry_row_id =
 		s_transaction_type_ctrl_id + 1;
 
