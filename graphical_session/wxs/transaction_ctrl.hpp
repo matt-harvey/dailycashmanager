@@ -51,6 +51,9 @@ class TopPanel;
  * 
  * @todo Handle case where Journal doesn't balance - or else structure
  * things so that this is impossible.
+ *
+ * @todo HIGH PRIORITY. Split transactions are not being posted properly.
+ * Entire amount is getting posted to the 0th Entry in the EntryCtrl.
  */
 class TransactionCtrl: public wxPanel
 {
