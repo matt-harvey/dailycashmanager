@@ -26,10 +26,6 @@ AccountCtrl::account()
 	StringSetValidator const* const validator =
 		dynamic_cast<StringSetValidator const*>(GetValidator());
 	assert (validator);
-	JEWEL_DEBUG_LOG << "Returning account from AccountCtrl::account() "
-	                << "with name: "
-					<< wx_to_bstring(GetValue())
-					<< endl;
 	return Account(m_database_connection, wx_to_bstring(GetValue()));
 }
 

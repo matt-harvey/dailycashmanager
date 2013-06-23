@@ -6,6 +6,7 @@
 #include "account.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "transaction_type_ctrl.hpp"
+#include <jewel/decimal_fwd.hpp>
 #include <jewel/on_windows.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -96,6 +97,8 @@ public:
 
 	void notify_decimal_ctrl_focus_kill();
 
+	jewel::Decimal primary_amount() const;
+	
 private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_recurring_transaction_button_click(wxCommandEvent& event);
@@ -105,7 +108,6 @@ private:
 
 	void post_journal();
 	bool is_balanced() const;
-	jewel::Decimal primary_amount() const;
 
 	int m_max_entry_row_id;
 

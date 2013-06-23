@@ -78,8 +78,10 @@ public:
 	 */
 	std::vector<Entry> make_entries() const;
 
+	bool is_all_zero() const;
+
 private:
-	
+
 	wxString side_description() const;
 
 	void on_split_button_click(wxCommandEvent& event);

@@ -7,6 +7,7 @@
 #include "finformat.hpp"
 #include "locale.hpp"
 #include "transaction_type.hpp"
+#include "transaction_ctrl.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
@@ -205,7 +206,6 @@ EntryCtrl::refresh_for_transaction_type
 (	transaction_type::TransactionType p_transaction_type
 )
 {
-	JEWEL_DEBUG_LOG << "Entered EntryCtrl::refresh_for_transaction_type." << endl;
 	assert_transaction_type_validity(p_transaction_type);
 	if (p_transaction_type == m_transaction_type)
 	{
@@ -251,15 +251,13 @@ void
 EntryCtrl::set_primary_amount(Decimal const& p_primary_amount)
 {
 	m_primary_amount = p_primary_amount;
-	typedef vector<DecimalTextCtrl*>::size_type Size;
-	Size const sz = m_amount_boxes.size();
-	if (sz > 0)
+	if (is_all_zero() && (m_amount_boxes.size() > 1))
 	{
-		assert (m_amount_boxes[0]);
+		assert (m_amount_boxes.size() > 0);
 		m_amount_boxes[0]->set_amount(m_primary_amount);
-		for (Size i = 1; i != sz; ++i)
+		vector<DecimalTextCtrl>::size_type i = 1;
+		for ( ; i != m_amount_boxes.size(); ++i)
 		{
-			assert (m_amount_boxes[i]);
 			m_amount_boxes[i]->
 				set_amount(Decimal(0, m_primary_amount.places()));
 		}
@@ -288,19 +286,11 @@ EntryCtrl::make_entries() const
 		entry.set_comment(wx_to_bstring(m_comment_boxes[i]->GetValue()));
 
 		Decimal amount = m_primary_amount;
-		JEWEL_DEBUG_LOG << "m_primary_amount: " << m_primary_amount << endl;
 		if (m_amount_boxes.size() != 0)
 		{
-			JEWEL_DEBUG_LOG_LOCATION;
 			assert (m_amount_boxes.size() == sz);
 			assert (sz > 1);
 			assert (m_amount_boxes[i]);
-			JEWEL_DEBUG_LOG << "m_amount_boxes[i]->amount(): "
-			                << m_amount_boxes[i]->amount()
-							<< endl;
-			JEWEL_DEBUG_LOG << "m_amount_boxes[i]->GetValue(): "
-			                << m_amount_boxes[i]->GetValue()
-							<< endl;
 			amount = m_amount_boxes[i]->amount();
 		}
 		if (!transaction_type_is_actual(m_transaction_type))
@@ -311,17 +301,38 @@ EntryCtrl::make_entries() const
 		{
 			amount = -amount;
 		}
-		JEWEL_DEBUG_LOG << "amount: " << amount << endl;
 		entry.set_amount(amount);
-		JEWEL_DEBUG_LOG << "entry.amount(): " << entry.amount() << endl;
-
 		entry.set_whether_reconciled(false);
-
 		ret.push_back(entry);
 		assert (!entry.has_id());
 	}
 	assert (ret.size() == sz);
 	return ret;
+}
+
+bool
+EntryCtrl::is_all_zero() const
+{
+	if (m_amount_boxes.empty())
+	{
+		// WARNING Tightly coupled!
+		TransactionCtrl const* const transaction_ctrl =
+			dynamic_cast<TransactionCtrl const*>(GetParent());
+		assert (transaction_ctrl);
+		return transaction_ctrl->primary_amount() == Decimal(0, 0);
+	}
+	for
+	(	vector<DecimalTextCtrl>::size_type i = 0;
+		i != m_amount_boxes.size();
+		++i
+	)
+	{
+		if (m_amount_boxes[i]->amount() != Decimal(0, 0))
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 void

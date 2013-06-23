@@ -97,10 +97,15 @@ DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
 	GetParent()->Validate();
 	GetParent()->TransferDataToWindow();
 
-	// TODO This is rather convoluted. It's a bit "coupled" too.
+	// TODO This is rather convoluted. It also tightly couples DecimalTextCtrl
+	// with TransactionCtrl. I should do this using the "Listener Pattern"
+	// instead.
 	TransactionCtrl* const tc = dynamic_cast<TransactionCtrl*>(GetParent());
 	if (tc)
 	{
+		JEWEL_DEBUG_LOG << "Calling TransactionCtrl::notify_decimal_ctrl_focus_kill() "
+		                << "from DecimalTextCtrl::on_kill_focus"
+						<< endl;
 		tc->notify_decimal_ctrl_focus_kill();
 	}
 	event.Skip();

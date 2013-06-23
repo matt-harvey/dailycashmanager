@@ -302,10 +302,19 @@ TransactionCtrl::notify_decimal_ctrl_focus_kill()
 	return;
 }
 
+Decimal
+TransactionCtrl::primary_amount() const
+{
+	return m_primary_amount_ctrl->amount();
+}
+
 void
 TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
+	Decimal const primary_amt = primary_amount();
+	m_source_entry_ctrl->set_primary_amount(primary_amt);
+	m_destination_entry_ctrl->set_primary_amount(primary_amt);
 	if (Validate() && TransferDataFromWindow())
 	{
 		if (is_balanced())
@@ -348,12 +357,6 @@ TransactionCtrl::reset_entry_ctrl_amounts()
 	return;
 }
 
-Decimal
-TransactionCtrl::primary_amount() const
-{
-	return m_primary_amount_ctrl->amount();
-}
-
 void
 TransactionCtrl::post_journal()
 {
@@ -371,21 +374,19 @@ TransactionCtrl::post_journal()
 	{	m_source_entry_ctrl,
 		m_destination_entry_ctrl
 	};
-	bool non_zero_entry_exists = false;
 	for (size_t i = 0; i != num_entry_controls; ++i)
 	{
 		vector<Entry> entries = entry_controls[i]->make_entries();
 		for (vector<Entry>::size_type j = 0; j != entries.size(); ++j)
 		{
 			Entry entry = entries[j];
-			if (entry.amount() != Decimal(0, 0))
-			{
-				non_zero_entry_exists = true;
-			}
 			journal.push_entry(entry);
 		}
 	}
-	if (!non_zero_entry_exists)
+	if
+	(	m_source_entry_ctrl->is_all_zero() &&
+		m_destination_entry_ctrl->is_all_zero()
+	)
 	{
 		// Then maybe OK was pressed before the primary amount was
 		// propagated through to the entries.
