@@ -260,7 +260,7 @@ TransactionCtrl::TransactionCtrl
 	m_ok_button = new wxButton
 	(	this,
 		wxID_OK,
-		wxString("&OK"),
+		wxString("&Save"),
 		wxDefaultPosition,
 		wxSize(text_box_size.x, text_box_size.y)
 	);
