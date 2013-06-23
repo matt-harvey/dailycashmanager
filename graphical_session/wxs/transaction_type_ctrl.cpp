@@ -65,9 +65,6 @@ TransactionTypeCtrl::TransactionTypeCtrl
 	),
 	m_database_connection(p_database_connection)
 {
-	wxArrayString transaction_type_verbs;
-	assert (transaction_type_verbs.IsEmpty());
-
 	// TODO We need a mechanism whereby, if additional TransactionTypes
 	// become available after the TransactionTypeCtrl has been
 	// constructed, the TransactionTypeCtrl is notified and updates
@@ -82,17 +79,8 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		wxString const verb = bstring_to_wx
 		(	transaction_type_to_verb(*it)
 		);
-		transaction_type_verbs.Add(verb);  // remember as valid name
 		Append(verb);  // add to combobox
 	}
-	/*
-	StringSetValidator validator
-	(	GetValue(),
-		transaction_type_verbs,
-		"transaction type"
-	);
-	SetValidator(validator);
-	*/
 	SetSelection(0);  // In effort to avoid apparent bug in Windows.
 }
 

@@ -23,6 +23,7 @@ namespace
 		static vector<Frequency> ret;
 		if (ret.empty())
 		{
+			ret.reserve(14);
 			ret.push_back(Frequency(1, interval_type::days));
 			ret.push_back(Frequency(1, interval_type::weeks));
 			ret.push_back(Frequency(2, interval_type::weeks));
@@ -60,7 +61,15 @@ FrequencyCtrl::FrequencyCtrl
 		wxCB_READONLY
 	)
 {
-	// TODO Implement this
+	wxArrayString choices;
+	choices.Add(wxString("One off"));
+	vector<Frequency>::const_iterator it = available_frequencies().begin();
+	vector<Frequency>::const_iterator const end =
+		available_frequencies().end();
+	for ( ; it != end; ++it)
+	{
+		Append(std8_to_wx(frequency_description(*it, "every")));
+	}
 }
 	
 	
