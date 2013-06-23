@@ -13,6 +13,13 @@
 
 namespace phatbooks
 {
+
+// Begin forward declarations
+
+class PhatbooksDatabaseConnection;
+
+// End forward declarations
+
 namespace gui
 {
 
@@ -29,7 +36,8 @@ public:
 	TransactionTypeCtrl
 	(	wxWindow* p_parent,
 		wxWindowID p_id,
-		wxSize const& p_size
+		wxSize const& p_size,
+		PhatbooksDatabaseConnection& p_database_connection
 	);
 
 	/**
@@ -51,6 +59,8 @@ public:
 private:
 	void on_kill_focus(wxFocusEvent& event);
 	void on_change(wxCommandEvent& event);
+
+	PhatbooksDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE()
 

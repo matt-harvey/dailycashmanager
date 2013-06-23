@@ -55,13 +55,24 @@ available_transaction_types
 
 
 /**
- * @returns a natural language verb corresponding to a p_tranaction_type;
- * for example, "Spend".
+ * @returns a natural language verb or or other phrase corresponding to
+ * a p_tranaction_type; for example, "Spend".
  */
 BString
 transaction_type_to_verb
 (	transaction_type::TransactionType p_transaction_type
 );
+
+/**
+ * @returns a TransactionType from a natural language language verb or
+ * other phrase (e.g. "Spend"). The correspondence is case-sensitive and
+ * is the same as that used in the transaction_type_to_verb(...) function.
+ *
+ * @throws InvalidTransactionTypeException if p_phrase does not correspond to
+ * any TransactionType.
+ */
+transaction_type::TransactionType
+transaction_type_from_verb(BString const& p_phrase);
 
 /**
  * @returns true if and only if p_transaction_type is a type of actual

@@ -4,13 +4,16 @@
 #include "account_type.hpp"
 #include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <cassert>
+#include <map>
 #include <set>
 #include <vector>
 
 namespace phatbooks
 {
 
+using std::map;
 using transaction_type::TransactionType;
 using transaction_type::expenditure_transaction;
 using transaction_type::revenue_transaction;
@@ -53,6 +56,28 @@ namespace
 		}
 		return ret;	
 	}
+
+	BString expenditure_verb()
+	{
+		return BString("Spend");
+	}
+	BString revenue_verb()
+	{
+		return BString("Earn");
+	}
+	BString balance_sheet_verb()
+	{
+		return BString("Account transfer");
+	}
+	BString envelope_verb()
+	{
+		return BString("Budget transfer");
+	}
+	BString generic_verb()
+	{
+		return BString("Generic");
+	}
+
 }  // End anonymous namespace
 
 
@@ -156,19 +181,55 @@ transaction_type_to_verb(TransactionType p_transaction_type)
 	switch (p_transaction_type)
 	{
 	case expenditure_transaction:
-		return "Spend";
+		return expenditure_verb();
 	case revenue_transaction:
-		return "Earn";
+		return revenue_verb();
 	case balance_sheet_transaction:
-		return "Account transfer";
+		return balance_sheet_verb();
 	case envelope_transaction:
-		return "Budget transfer";
+		return envelope_verb();
 	case generic_transaction:
-		return "Generic";
+		return generic_verb();
 	default:
 		assert (false);
 	}
 }
+
+TransactionType
+transaction_type_from_verb(BString const& p_phrase)
+{
+	typedef map<BString, TransactionType> Dict;
+	static Dict dict;
+	static bool calculated_already = false;
+	if (!calculated_already)
+	{
+		assert (dict.empty());
+		dict[expenditure_verb()] = expenditure_transaction;
+		dict[revenue_verb()] = revenue_transaction;
+		dict[balance_sheet_verb()] = balance_sheet_transaction;
+		dict[envelope_verb()] = envelope_transaction;
+		dict[generic_verb()] = generic_transaction;
+		calculated_already = true;
+	}
+	assert (!dict.empty());
+	assert
+	(	dict.size() ==
+		static_cast<Dict::size_type>(num_transaction_types)
+	);
+	Dict::const_iterator const it = dict.find(p_phrase);
+	if (it == dict.end())
+	{
+		throw InvalidTransactionTypeException
+		(	"BString passed to transaction_type_from_verb does not "
+			"correspond to any TransactionType."
+		);
+	}
+	assert (it != dict.end());
+	return it->second;
+}
+
+		
+		
 
 bool
 transaction_type_is_actual(TransactionType p_transaction_type)

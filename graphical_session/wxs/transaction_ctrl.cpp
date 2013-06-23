@@ -150,7 +150,8 @@ TransactionCtrl::TransactionCtrl
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
 		s_transaction_type_ctrl_id,
-		wxSize(160, wxDefaultSize.y)
+		wxSize(160, wxDefaultSize.y),
+		m_database_connection
 	);
 
 	m_transaction_type_ctrl->set_transaction_type(initial_transaction_type);

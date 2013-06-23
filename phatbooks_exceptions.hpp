@@ -163,10 +163,16 @@ JEWEL_DERIVED_EXCEPTION
 JEWEL_DERIVED_EXCEPTION(AccountDataViewModelException, PhatbooksException);
 
 /**
- * Exception to be thrown when a something that is supposed to represent a
+ * Exception to be thrown when something that is supposed to represent a
  * date, does not in fact represent a valid date.
  */
 JEWEL_DERIVED_EXCEPTION(InvalidDateException, PhatbooksException);
+
+/**
+ * Exception to be thrown when something that is supposed to represent a
+ * TransactionType, does not in fact represent a TransactionType.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidTransactionTypeException, PhatbooksException);
 
 }  // namespace phatbooks
 
