@@ -348,7 +348,7 @@ void
 TransactionCtrl::post_journal()
 {
 	ProtoJournal journal;
-	assert (transaction_type_ctrl->transaction_type());
+	assert (m_transaction_type_ctrl->transaction_type());
 	transaction_type::TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
 	journal.set_whether_actual(transaction_type_is_actual(ttype));

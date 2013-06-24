@@ -4,6 +4,7 @@
 #define GUARD_interval_type_hpp
 
 #include "b_string.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 namespace phatbooks
 {
@@ -43,6 +44,20 @@ enum IntervalType
  */
 BString phrase(interval_type::IntervalType x, bool is_plural);
 
+/**
+ * @returns \e true if and only if \e p_date can occur within
+ * an indefinitely long sequence of dates separated by intervals of
+ * \e p_interval_type. This is particularly relevant for \e
+ * interval_type::months and \e interval_type::month_ends. E.g. a date
+ * of 29 Feb. 2012 cannot be accommodated by interval_type::months because
+ * not all months have a 29th; and a date of 30 July 2014 cannot be
+ * accommodated by interval_type::month_ends because it is not the last
+ * day of a month.
+ */
+bool is_valid_date_for_interval_type
+(	boost::gregorian::date const& p_date,
+	interval_type::IntervalType p_interval_type
+);
 
 }  // namespace phatbooks
 

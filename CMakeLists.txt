@@ -196,6 +196,7 @@ set (gui_files
 set (test_files
 	 ${main_files}
 	 tests/test.cpp
+	 tests/date_tests.cpp
 	 tests/draft_journal_tests.cpp
 	 tests/filename_validation_tests.cpp
 	 tests/frequency_tests.cpp
