@@ -347,11 +347,8 @@ TransactionCtrl::reset_entry_ctrl_amounts()
 void
 TransactionCtrl::post_journal()
 {
-	// TODO HIGH PRIORITY Fix this
-	// to work now that we have EntryCtrl instead of storing
-	// Entry info directly in the TransactionCtrl.
 	ProtoJournal journal;
-	// TODO What if the dereferencing of optional fails?
+	assert (transaction_type_ctrl->transaction_type());
 	transaction_type::TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
 	journal.set_whether_actual(transaction_type_is_actual(ttype));
