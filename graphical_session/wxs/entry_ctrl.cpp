@@ -172,7 +172,7 @@ EntryCtrl::EntryCtrl
 		}
 		else
 		{
-			Decimal::places_type const precision = m_primary_amount.places();
+			Decimal::places_type const precision = primary_amount().places();
 			DecimalTextCtrl* amount_ctrl = new DecimalTextCtrl
 			(	this,
 				wxID_ANY,
@@ -182,7 +182,7 @@ EntryCtrl::EntryCtrl
 			);
 			if (entry_num == 0)
 			{
-				amount_ctrl->set_amount(m_primary_amount);
+				amount_ctrl->set_amount(primary_amount());
 			}
 			m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
 			m_amount_boxes.push_back(amount_ctrl);
@@ -266,6 +266,29 @@ EntryCtrl::set_primary_amount(Decimal const& p_primary_amount)
 	return;
 }
 
+Decimal
+EntryCtrl::primary_amount() const
+{
+	return m_primary_amount;
+}
+
+bool
+EntryCtrl::is_balanced() const
+{
+	if (m_amount_boxes.empty())
+	{
+		return true;
+	}
+	vector<DecimalTextCtrl>::size_type const sz = m_amount_boxes.size();
+	assert (sz >= 2);
+	Decimal entry_sum(0, 0);
+	for (vector<DecimalTextCtrl>::size_type i = 0; i != sz; ++i)
+	{
+		entry_sum += m_amount_boxes[i]->amount();
+	}
+	return entry_sum == primary_amount();
+}
+
 vector<Entry>
 EntryCtrl::make_entries() const
 {
@@ -286,7 +309,7 @@ EntryCtrl::make_entries() const
 		assert (m_comment_boxes[i]);
 		entry.set_comment(wx_to_bstring(m_comment_boxes[i]->GetValue()));
 
-		Decimal amount = m_primary_amount;
+		Decimal amount = primary_amount();
 		if (m_amount_boxes.size() != 0)
 		{
 			assert (m_amount_boxes.size() == sz);
@@ -375,7 +398,7 @@ EntryCtrl::add_row()
 	(	this,
 		wxID_ANY,
 		m_text_ctrl_size,
-		m_primary_amount.places(),
+		primary_amount().places(),
 		false
 	);
 	m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
@@ -393,10 +416,10 @@ EntryCtrl::add_row()
 		(	this,
 			wxID_ANY,
 			m_text_ctrl_size,
-			m_primary_amount.places(),
+			primary_amount().places(),
 			false
 		);
-		prev_amount_ctrl->set_amount(m_primary_amount);
+		prev_amount_ctrl->set_amount(primary_amount());
 		m_top_sizer->Add(prev_amount_ctrl, wxGBPosition(m_next_row - 1, 3));
 		prev_amount_ctrl->MoveBeforeInTabOrder(account_name_box);
 		assert (m_amount_boxes.empty());

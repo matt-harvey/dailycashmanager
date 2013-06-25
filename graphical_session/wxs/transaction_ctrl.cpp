@@ -455,20 +455,22 @@ TransactionCtrl::post_journal()
 bool
 TransactionCtrl::is_balanced() const
 {
-	// WARNING For now this is trivial, as we have only the primary_amount
-	// informing one each of only two sides of the transaction. But it
-	// probably won't always be trivial.
-	return true;
-	/*
-	Decimal balance(0, 0);
-	vector<DecimalTextCtrl*>::size_type i = 0;
-	vector<DecimalTextCtrl*>::size_type const sz = m_amount_boxes.size();
-	for ( ; i != sz; ++i)
+	Decimal const primary_amt = primary_amount();
+	size_t const num_entry_controls = 2;
+	EntryCtrl const* const entry_controls[num_entry_controls] =
+		{ m_source_entry_ctrl, m_destination_entry_ctrl };
+	for (size_t i = 0; i != num_entry_controls; ++i)
 	{
-		balance += wx_to_decimal(m_amount_boxes[i]->GetValue(), locale());
+		if (!entry_controls[i]->is_balanced())
+		{
+			return false;
+		}
+		if (entry_controls[i]->primary_amount() != primary_amt)
+		{
+			return false;
+		}
 	}
-	return balance == Decimal(0, 0);
-	*/
+	return true;
 }
 
 

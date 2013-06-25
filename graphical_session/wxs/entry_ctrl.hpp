@@ -73,6 +73,10 @@ public:
 
 	void set_primary_amount(jewel::Decimal const& p_primary_amount);
 
+	jewel::Decimal primary_amount() const;
+
+	bool is_balanced() const;
+
 	/**
 	 * @returns a vector of newly created Entries (WITHOUT ids), based
 	 * on the data currently in the EntryCtrl. The Entries will not
