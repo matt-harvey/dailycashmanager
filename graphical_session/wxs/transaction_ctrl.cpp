@@ -11,6 +11,7 @@
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
 #include "draft_journal.hpp"
+#include "draft_journal_naming_ctrl.hpp"
 #include "entry.hpp"
 #include "entry_ctrl.hpp"
 #include "finformat.hpp"
@@ -391,9 +392,21 @@ TransactionCtrl::post_journal()
 		// invalid for the selected Frequency. Make sure this works
 		// OK.
 		dj.push_repeater(repeater);
-		// TODO HIGH PRIORITY Get name for DraftJournal? Do we need one?
-		// WARNING The name needs to be unique per database schema.
-		dj.set_name(wx_to_bstring(wxEmptyString));
+	
+		// Get a name for the DraftJournal
+		DraftJournalNamingCtrl naming_ctrl(this, m_database_connection);
+		if (naming_ctrl.ShowModal() == wxID_OK)
+		{
+			dj.set_name(naming_ctrl.draft_journal_name());
+		}
+		else
+		{
+			// TODO What are circumstances in which this point might
+			// be reached? Is our error message adequate?
+			wxMessageBox("Error naming recurring transaction.");
+			return false;
+		}
+
 		assert (dj.is_balanced());
 		dj.save();
 		JEWEL_DEBUG_LOG << "Posted Journal:\n\n" << dj << endl;
