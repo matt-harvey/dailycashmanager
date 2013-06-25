@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_draft_journal_naming_ctrl_hpp
-#define GUARD_draft_journal_naming_ctrl_hpp
+#ifndef GUARD_draft_journal_naming_dialog_hpp
+#define GUARD_draft_journal_naming_dialog_hpp
 
 #include "b_string.hpp"
 #include <boost/noncopyable.hpp>
@@ -30,11 +30,11 @@ class TransactionCtrl;
  * Widget for extracting a name from the user, for a DraftJournal created
  * via the GUI.
  */
-class DraftJournalNamingCtrl: public wxDialog, private boost::noncopyable
+class DraftJournalNamingDialog: public wxDialog, private boost::noncopyable
 {
 public:
 	
-	DraftJournalNamingCtrl
+	DraftJournalNamingDialog
 	(	TransactionCtrl* p_parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
@@ -55,9 +55,9 @@ private:
 
 	DECLARE_EVENT_TABLE()
 
-};  // class DraftJournalNamingCtrl
+};  // class DraftJournalNamingDialog
 
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_draft_journal_naming_ctrl_hpp
+#endif  // GUARD_draft_journal_naming_dialog_hpp

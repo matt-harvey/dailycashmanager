@@ -11,7 +11,7 @@
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
 #include "draft_journal.hpp"
-#include "draft_journal_naming_ctrl.hpp"
+#include "draft_journal_naming_dialog.hpp"
 #include "entry.hpp"
 #include "entry_ctrl.hpp"
 #include "finformat.hpp"
@@ -394,7 +394,7 @@ TransactionCtrl::post_journal()
 		dj.push_repeater(repeater);
 	
 		// Get a name for the DraftJournal
-		DraftJournalNamingCtrl naming_ctrl(this, m_database_connection);
+		DraftJournalNamingDialog naming_ctrl(this, m_database_connection);
 		if (naming_ctrl.ShowModal() == wxID_OK)
 		{
 			dj.set_name(naming_ctrl.draft_journal_name());

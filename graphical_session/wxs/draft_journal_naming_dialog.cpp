@@ -1,6 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "draft_journal_naming_ctrl.hpp"
+#include "draft_journal_naming_dialog.hpp"
 #include "draft_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_ctrl.hpp"
@@ -18,14 +18,14 @@ namespace phatbooks
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(DraftJournalNamingCtrl, wxDialog)
+BEGIN_EVENT_TABLE(DraftJournalNamingDialog, wxDialog)
 	EVT_BUTTON
 	(	wxID_OK,
-		DraftJournalNamingCtrl::on_ok_button_click
+		DraftJournalNamingDialog::on_ok_button_click
 	)
 END_EVENT_TABLE()
 
-DraftJournalNamingCtrl::DraftJournalNamingCtrl
+DraftJournalNamingDialog::DraftJournalNamingDialog
 (	TransactionCtrl* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
@@ -92,13 +92,13 @@ DraftJournalNamingCtrl::DraftJournalNamingCtrl
 }
 
 BString
-DraftJournalNamingCtrl::draft_journal_name() const
+DraftJournalNamingDialog::draft_journal_name() const
 {
 	return m_draft_journal_name;
 }
 
 void
-DraftJournalNamingCtrl::set_draft_journal_name(BString const& p_name)
+DraftJournalNamingDialog::set_draft_journal_name(BString const& p_name)
 {
 	m_draft_journal_name = p_name;
 	return;
@@ -106,7 +106,7 @@ DraftJournalNamingCtrl::set_draft_journal_name(BString const& p_name)
 
 
 void
-DraftJournalNamingCtrl::on_ok_button_click(wxCommandEvent& event)
+DraftJournalNamingDialog::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
 	wxString const trimmed_name = m_name_ctrl->GetValue().Trim();
