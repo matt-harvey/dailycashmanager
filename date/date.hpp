@@ -103,7 +103,13 @@ today();
 wxString
 date_format_wx(boost::gregorian::date const& p_date);
 
-	
+/**
+ * @returns the date that is the last day of the month in which p_date
+ * is situated.
+ */
+boost::gregorian::date
+month_end_for_date(boost::gregorian::date const& p_date);
+
 }  // namespace phatbooks
 
 

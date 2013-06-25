@@ -73,6 +73,40 @@ TEST(test_is_valid_date_for_interval_type)
 	}
 }
 
+TEST(test_month_end_for_date)
+{
+	using gregorian::date;
+
+	date const d0(2013, 9, 14);
+	CHECK_EQUAL(month_end_for_date(d0), date(2013, 9, 30));
+
+	date const d1(1900, 12, 31);
+	CHECK_EQUAL(month_end_for_date(d1), date(1900, 12, 31));
+
+	date const d2(2980, 6, 1);
+	CHECK_EQUAL(month_end_for_date(d2), date(2980, 6, 30));
+
+	date const d3(1980, 1, 29);
+	CHECK_EQUAL(month_end_for_date(d3), date(1980, 1, 31));
+
+	date const d4(1642, 2, 28);
+	CHECK_EQUAL(month_end_for_date(d4), date(1642, 2, 28));
+
+	date const d5(2000, 2, 3);
+	CHECK_EQUAL(month_end_for_date(d5), date(2000, 2, 29));
+
+	date const d6(2100, 2, 26);
+	CHECK_EQUAL(month_end_for_date(d6), date(2100, 2, 28));
+
+	date const d7(1962, 5, 30);
+	CHECK_EQUAL(month_end_for_date(d7), date(1962, 5, 31));
+
+	date const d8(1500, 11, 30);
+	CHECK_EQUAL(month_end_for_date(d8), date(1500, 11, 30));
+
+	date const d9(2015, 12, 2);
+	CHECK_EQUAL(month_end_for_date(d9), date(2015, 12, 31));
+}
 
 }  // namespace test
 }  // namespace phatbooks
