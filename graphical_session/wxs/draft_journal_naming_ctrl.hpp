@@ -47,7 +47,7 @@ private:
 
 	void on_ok_button_click(wxCommandEvent& event);
 
-	wxGridSizer* m_top_sizer;
+	wxFlexGridSizer* m_top_sizer;
 	wxTextCtrl* m_name_ctrl;
 	wxButton* m_ok_button;
 	PhatbooksDatabaseConnection& m_database_connection;

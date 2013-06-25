@@ -8,6 +8,7 @@
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
+#include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
@@ -33,8 +34,7 @@ DraftJournalNamingCtrl::DraftJournalNamingCtrl
 		wxID_ANY,
 		wxEmptyString,
 		wxDefaultPosition,
-		wxDefaultSize,
-		wxRESIZE_BORDER
+		wxDefaultSize
 	),
 	m_top_sizer(0),
 	m_name_ctrl(0),
@@ -42,8 +42,12 @@ DraftJournalNamingCtrl::DraftJournalNamingCtrl
 	m_database_connection(p_database_connection),
 	m_draft_journal_name("")
 {
-	m_top_sizer = new wxGridSizer(3, 1, 0, 0);
+	m_top_sizer = new wxFlexGridSizer(2, 4, wxSize(10, 10));
 	SetSizer(m_top_sizer);
+
+	// Row 0
+
+	m_top_sizer->AddSpacer(10);
 
 	wxStaticText* label = new wxStaticText
 	(	this,
@@ -54,16 +58,36 @@ DraftJournalNamingCtrl::DraftJournalNamingCtrl
 		wxALIGN_LEFT
 	);
 	m_top_sizer->Add(label);
+	
+	m_top_sizer->AddSpacer(10);
+	m_top_sizer->AddSpacer(10);
 
-	m_name_ctrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+	// Row 1
+
+	m_top_sizer->AddSpacer(10);
+
+	m_name_ctrl = new wxTextCtrl
+	(	this,
+		wxID_ANY,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxSize(450, wxDefaultSize.y)
+	);
 	m_top_sizer->Add(m_name_ctrl);
 	
-	m_ok_button = new wxButton(this, wxID_OK, wxString("&OK"));
+	m_ok_button = new wxButton
+	(	this,
+		wxID_OK,
+		wxString("&OK"),
+		wxDefaultPosition,
+		wxSize(wxDefaultSize.x, m_name_ctrl->GetSize().GetHeight())
+	);
 	m_top_sizer->Add(m_ok_button);
+
+	m_top_sizer->AddSpacer(10);
 
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
-	Layout();
 	CentreOnScreen();
 }
 
