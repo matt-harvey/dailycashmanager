@@ -252,6 +252,8 @@ void
 EntryCtrl::set_primary_amount(Decimal const& p_primary_amount)
 {
 	m_primary_amount = p_primary_amount;
+	
+	/*
 	if (is_all_zero() && (m_amount_boxes.size() > 1))
 	{
 		assert (m_amount_boxes.size() > 0);
@@ -263,6 +265,8 @@ EntryCtrl::set_primary_amount(Decimal const& p_primary_amount)
 				set_amount(Decimal(0, m_primary_amount.places()));
 		}
 	}
+	*/
+
 	return;
 }
 
