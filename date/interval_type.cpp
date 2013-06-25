@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "b_string.hpp"
+#include "date.hpp"
 #include "interval_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <cassert>
@@ -48,7 +49,7 @@ is_valid_date_for_interval_type
 	case interval_type::months:
 		return p_date.day() <= 28;
 	case interval_type::month_ends:
-		return (p_date + gregorian::date_duration(1)).day() == 1;
+		return p_date == month_end_for_date(p_date);
 	default:
 		assert (false);
 	}

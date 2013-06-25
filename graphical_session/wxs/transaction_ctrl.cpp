@@ -313,10 +313,12 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 	{
 		if (is_balanced())
 		{
-			post_journal();
-			TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
-			assert (panel);
-			panel->update();
+			if (post_journal())
+			{
+				TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
+				assert (panel);
+				panel->update();
+			}
 		}
 		else
 		{
@@ -344,7 +346,7 @@ TransactionCtrl::reset_entry_ctrl_amounts()
 	return;
 }
 
-void
+bool
 TransactionCtrl::post_journal()
 {
 	ProtoJournal journal;
@@ -380,8 +382,7 @@ TransactionCtrl::post_journal()
 			// Then it CAN'T have been propagated. Let's propagate it
 			// and try again.
 			reset_entry_ctrl_amounts();
-			post_journal();
-			return;
+			return post_journal();
 		}
 	}
 	journal.set_comment("");
@@ -392,8 +393,39 @@ TransactionCtrl::post_journal()
 		DraftJournal dj(m_database_connection);
 		dj.mimic(journal);
 		Repeater repeater(m_database_connection);
-		repeater.set_frequency(value(maybe_frequency));
-		repeater.set_next_date(m_date_ctrl->date());
+		gregorian::date const next_date = m_date_ctrl->date();
+		Frequency const freq = value(maybe_frequency);
+
+		// Ensure valid combination of Frequency and next posting date.
+		if (!is_valid_date_for_interval_type(next_date, freq.step_type()))
+		{
+			if (freq.step_type() == interval_type::months)
+			{
+				assert (next_date.day() > 28);
+				wxMessageBox
+				(	"Next date for this recurring transaction must be "
+					"the 29th of the month or earlier."
+				);
+				return false;
+			}
+			else
+			{
+				// TODO If interval_type is month_end, use month_end_for_date
+				// function to generate and suggest using the last day of the
+				// month instead of the entered date.
+				assert (freq.step_type() == interval_type::month_ends);
+				assert (month_end_for_date(next_date) != next_date);
+				wxMessageBox
+				(	"Date must be the last day of the month."
+				);
+				return false;
+			}
+		}
+
+		assert (is_valid_date_for_interval_type(next_date, freq.step_type()));
+		repeater.set_next_date(next_date);
+		repeater.set_frequency(freq);
+
 		// TODO HIGH PRIORITY This can stuff up the next date is
 		// invalid for the selected Frequency. Make sure this works
 		// OK.
@@ -404,6 +436,7 @@ TransactionCtrl::post_journal()
 		assert (dj.is_balanced());
 		dj.save();
 		JEWEL_DEBUG_LOG << "Posted Journal:\n\n" << dj << endl;
+		return true;
 	}
 	else
 	{
@@ -414,8 +447,9 @@ TransactionCtrl::post_journal()
 		assert (oj.is_balanced());
 		oj.save();
 		JEWEL_DEBUG_LOG << "Posted journal:\n\n" << oj << endl;
+		return true;
 	}
-	return;
+	assert (false);
 }
 
 bool

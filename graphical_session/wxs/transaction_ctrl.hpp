@@ -104,7 +104,11 @@ private:
 
 	void reset_entry_ctrl_amounts();
 
-	void post_journal();
+	/**
+	 * @returns true if and only if journal was actually posted.
+	 */
+	bool post_journal();
+
 	bool is_balanced() const;
 
 	int m_max_entry_row_id;
