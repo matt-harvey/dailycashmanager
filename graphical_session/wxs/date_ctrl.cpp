@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "date_ctrl.hpp"
 #include "date_validator.hpp"
 #include "locale.hpp"

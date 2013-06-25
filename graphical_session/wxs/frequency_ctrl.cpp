@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "frequency_ctrl.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"

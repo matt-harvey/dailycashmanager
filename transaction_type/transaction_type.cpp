@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "transaction_type.hpp"
 #include "account.hpp"
 #include "account_reader.hpp"

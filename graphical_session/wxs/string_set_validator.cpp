@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "string_set_validator.hpp"
 #include <wx/arrstr.h>
 #include <wx/msgdlg.h>

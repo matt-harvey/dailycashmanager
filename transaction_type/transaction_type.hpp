@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_transaction_type_hpp
 #define GUARD_transaction_type_hpp
 

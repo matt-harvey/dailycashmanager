@@ -3,6 +3,7 @@
 #ifndef GUARD_welcome_dialog_hpp
 #define GUARD_welcome_dialog_hpp
 
+#include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
@@ -19,7 +20,7 @@ namespace gui
 
 // End forward declarations
 
-class WelcomeDialog: public wxDialog
+class WelcomeDialog: public wxDialog, private boost::noncopyable
 {
 public:
 
