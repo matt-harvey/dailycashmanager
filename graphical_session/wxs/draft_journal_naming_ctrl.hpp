@@ -3,26 +3,41 @@
 #ifndef GUARD_draft_journal_naming_ctrl_hpp
 #define GUARD_draft_journal_naming_ctrl_hpp
 
+#include "b_string.hpp"
 #include <boost/noncopyable.hpp>
 #include <wx/dialog.h>
+#include <wx/sizer.h>
 
 namespace phatbooks
 {
+
+// Begin forward declarations
+
+class PhatbooksDatabaseConnection;
+
+// End forward declarations
+
 namespace gui
 {
 
 /**
  * Widget for extracting a name from the user, for a DraftJournal created
- * via the GUI, and then saving that DraftJournal providing the user
- * provides a valid name.
+ * via the GUI.
  */
 class DraftJournalNamingCtrl: public wxDialog, private boost::noncopyable
 {
 public:
+	
+	DraftJournalNamingCtrl
+	(	PhatbooksDatabaseConnection& p_database_connection
+	);
 
-protected:
+	BString draft_journal_name() const;
 
 private:
+
+	wxGridSizer* m_top_sizer;
+	PhatbooksDatabaseConnection& m_database_connection;
 
 };  // class DraftJournalNamingCtrl
 
