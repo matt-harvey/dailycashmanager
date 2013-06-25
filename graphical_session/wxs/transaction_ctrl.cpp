@@ -193,16 +193,13 @@ TransactionCtrl::TransactionCtrl
 	vector<Account> destination_accounts;
 	destination_accounts.push_back(accounts[1]);
 
-	Decimal::places_type const precision =
-		m_database_connection.default_commodity().precision();
 	m_source_entry_ctrl = new EntryCtrl
 	(	this,
 		source_accounts,
 		m_database_connection,
 		initial_transaction_type,
 		text_box_size,
-		true,
-		Decimal(0, precision)
+		true
 	);
 	m_destination_entry_ctrl = new EntryCtrl
 	(	this,
@@ -210,8 +207,7 @@ TransactionCtrl::TransactionCtrl
 		m_database_connection,
 		initial_transaction_type,
 		text_box_size,
-		false,
-		Decimal(0, precision)	
+		false
 	);
 	m_top_sizer->Add
 	(	m_source_entry_ctrl,
@@ -289,13 +285,6 @@ TransactionCtrl::refresh_for_transaction_type
 	return;
 }
 
-void
-TransactionCtrl::notify_decimal_ctrl_focus_kill()
-{
-	reset_entry_ctrl_amounts();
-	return;
-}
-
 Decimal
 TransactionCtrl::primary_amount() const
 {
@@ -306,9 +295,6 @@ void
 TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	Decimal const primary_amt = primary_amount();
-	m_source_entry_ctrl->set_primary_amount(primary_amt);
-	m_destination_entry_ctrl->set_primary_amount(primary_amt);
 	if (Validate() && TransferDataFromWindow())
 	{
 		if (is_balanced())
@@ -336,15 +322,6 @@ TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 	assert (panel);
 	panel->update();
 }
-	
-void
-TransactionCtrl::reset_entry_ctrl_amounts()
-{
-	Decimal const pa = primary_amount();
-	m_source_entry_ctrl->set_primary_amount(pa);
-	m_destination_entry_ctrl->set_primary_amount(pa);
-	return;
-}
 
 bool
 TransactionCtrl::post_journal()
@@ -367,22 +344,6 @@ TransactionCtrl::post_journal()
 		{
 			Entry entry = entries[j];
 			journal.push_entry(entry);
-		}
-	}
-	if
-	(	m_source_entry_ctrl->is_all_zero() &&
-		m_destination_entry_ctrl->is_all_zero()
-	)
-	{
-		// Then maybe OK was pressed before the primary amount was
-		// propagated through to the entries.
-		// TODO This is messy, and feels fragile.
-		if (primary_amount() != Decimal(0, 0))
-		{
-			// Then it CAN'T have been propagated. Let's propagate it
-			// and try again.
-			reset_entry_ctrl_amounts();
-			return post_journal();
 		}
 	}
 	journal.set_comment("");
@@ -465,10 +426,7 @@ TransactionCtrl::is_balanced() const
 		{
 			return false;
 		}
-		if (entry_controls[i]->primary_amount() != primary_amt)
-		{
-			return false;
-		}
+		assert (entry_controls[i]->primary_amount() == primary_amt);
 	}
 	return true;
 }

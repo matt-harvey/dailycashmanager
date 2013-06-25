@@ -47,13 +47,11 @@ EntryCtrl::EntryCtrl
 	PhatbooksDatabaseConnection& p_database_connection,
 	transaction_type::TransactionType p_transaction_type,
 	wxSize const& p_text_ctrl_size,
-	bool p_is_source,
-	Decimal const& p_primary_amount
+	bool p_is_source
 ):
 	wxPanel(p_parent),
 	m_database_connection(p_database_connection),
 	m_is_source(p_is_source),
-	m_primary_amount(p_primary_amount),
 	m_transaction_type(p_transaction_type),
 	m_account_reader(0),
 	m_text_ctrl_size(p_text_ctrl_size),
@@ -248,32 +246,13 @@ EntryCtrl::refresh_for_transaction_type
 	return;
 }
 
-void
-EntryCtrl::set_primary_amount(Decimal const& p_primary_amount)
-{
-	m_primary_amount = p_primary_amount;
-	
-	/*
-	if (is_all_zero() && (m_amount_boxes.size() > 1))
-	{
-		assert (m_amount_boxes.size() > 0);
-		m_amount_boxes[0]->set_amount(m_primary_amount);
-		vector<DecimalTextCtrl>::size_type i = 1;
-		for ( ; i != m_amount_boxes.size(); ++i)
-		{
-			m_amount_boxes[i]->
-				set_amount(Decimal(0, m_primary_amount.places()));
-		}
-	}
-	*/
-
-	return;
-}
-
 Decimal
 EntryCtrl::primary_amount() const
 {
-	return m_primary_amount;
+	TransactionCtrl const* const parent =
+		dynamic_cast<TransactionCtrl const*>(GetParent());
+	assert (parent);
+	return parent->primary_amount();
 }
 
 bool

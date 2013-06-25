@@ -5,7 +5,6 @@
 #include "finformat.hpp"
 #include "locale.hpp"
 #include "phatbooks_exceptions.hpp"
-#include "transaction_ctrl.hpp"
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/event.h>
@@ -96,18 +95,6 @@ DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
 	// through parent instead.
 	GetParent()->Validate();
 	GetParent()->TransferDataToWindow();
-
-	// TODO This is rather convoluted. It also tightly couples DecimalTextCtrl
-	// with TransactionCtrl. I should do this using the "Listener Pattern"
-	// instead.
-	TransactionCtrl* const tc = dynamic_cast<TransactionCtrl*>(GetParent());
-	if (tc)
-	{
-		JEWEL_DEBUG_LOG << "Calling TransactionCtrl::notify_decimal_ctrl_focus_kill() "
-		                << "from DecimalTextCtrl::on_kill_focus"
-						<< endl;
-		tc->notify_decimal_ctrl_focus_kill();
-	}
 	event.Skip();
 	return;
 }

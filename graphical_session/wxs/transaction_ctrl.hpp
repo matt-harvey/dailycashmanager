@@ -94,15 +94,11 @@ public:
 	(	transaction_type::TransactionType p_transaction_type
 	);
 
-	void notify_decimal_ctrl_focus_kill();
-
 	jewel::Decimal primary_amount() const;
 	
 private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
-
-	void reset_entry_ctrl_amounts();
 
 	/**
 	 * @returns true if and only if journal was actually posted.
