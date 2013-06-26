@@ -33,6 +33,19 @@ class AccountDialog: public wxDialog, private boost::noncopyable
 {
 public:
 
+	/**
+	 * @param p_parent parent Frame.
+	 *
+	 * @param p_account the Account the editing and possible saving of which
+	 * will be facilitated via this widget. If p_account does not have an
+	 * id, then it is assumed that none of its other settable characteristics
+	 * have been set, and the AccountDialog will be used to populate the
+	 * Account's details from scratch. If p_account does have an id, then
+	 * it is assumed that all of its settable characteristics have already
+	 * been set. In that case, the AccountDialog will be used as a means
+	 * for the user optionally to change some or all of the existing
+	 * characteristics of the Account.
+	 */
 	AccountDialog
 	(	Frame* p_parent,
 		Account& p_account,

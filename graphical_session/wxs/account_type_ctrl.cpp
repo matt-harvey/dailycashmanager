@@ -28,10 +28,11 @@ AccountTypeCtrl::AccountTypeCtrl
 		wxArrayString(),
 		wxCB_READONLY
 	),
+	m_account_super_type(p_account_super_type),
 	m_database_connection(p_database_connection)
 {
 	typedef vector<account_type::AccountType> ATypeVec;
-	ATypeVec const& atypes = account_types(p_account_super_type);
+	ATypeVec const& atypes = account_types(m_account_super_type);
 	ATypeVec::const_iterator it = atypes.begin();
 	ATypeVec::const_iterator const end = atypes.end();
 	for ( ; it != end; ++it)

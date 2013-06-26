@@ -37,8 +37,15 @@ public:
 
 	account_type::AccountType account_type() const;
 
+	/**
+	 * @todo HIGH PRIORITY Implement this. Should throw if p_account_type
+	 * is not in m_account_super_type.
+	 */
+	void set_account_type(account_type::AccountType p_account_type);
+
 private:
 
+	account_super_type::AccountSuperType m_account_super_type;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 };  // class AccountTypeCtrl

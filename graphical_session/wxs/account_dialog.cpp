@@ -95,8 +95,15 @@ AccountDialog::AccountDialog
 	m_opening_amount_ctrl(0),
 	m_account(p_account)
 {
+	// TODO HIGH This should throw if both m_account has an ID and the
+	// AccountSuperType of m_account does not match p_account_super_type.
+
 	m_top_sizer = new wxGridBagSizer;
 	SetSizer(m_top_sizer);
+
+	int row = 0;
+
+	// Row 0
 
 	wxStaticText* name_ctrl_label = new wxStaticText
 	(	this,
@@ -106,10 +113,102 @@ AccountDialog::AccountDialog
 		wxDefaultSize,
 		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
 	);
-	m_top_sizer->Add(name_ctrl_label, wxGBPosition(0,0));
+	m_top_sizer->Add(name_ctrl_label, wxGBPosition(row, 0));
+	wxString const name_tmp =
+	(	m_account.has_id()?
+		wx_to_bstring(p_account.name()):
+		wxEmptyString
+	);
+	m_name_ctrl = new wxTextCtrl
+	(	this,
+		wxID_ANY,
+		name_tmp,
+		wxDefaultPosition,
+		wxSize(450, wxDefaultSize.y)
+	);
+	m_top_sizer->Add(m_name_ctrl, wxGBPosition(row, 1));
+
+	++row;
+
+	// Row 1
+
+	wxStaticText* account_type_ctrl_label = new wxStaticText
+	(	this,
+		wxID_ANY,
+		account_type_ctrl_label_string(p_account_super_type),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
+	);
+	m_top_sizer->Add(account_type_ctrl_label, wxGBPosition(row, 0);
+	m_account_type_ctrl = new AccountTypeCtrl
+	(	this,
+		wxID_ANY,
+		m_name_ctrl->GetSize()
+		m_account.database_connection(),
+		p_account_super_type
+	);
+	if (m_account.has_id())
+	{	
+		m_account_type_ctrl->set_account_type(m_account.account_type());
+	}
+	m_top_sizer->Add(m_account_type_ctrl, wxGBPosition(row, 1);
+
+	++row;
+
+	// Row 2
+	
+	wxStaticText* description_label = new wxStaticText
+	(	this,
+		wxID_ANY,
+		account_description_label_string(p_account_super_type),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_RIGHT
+	);
+	m_top_sizer->Add(description_label, wxGBPosition(row, 0);
+	wxString const description_tmp =
+	(	m_account.has_id()?
+		wx_to_bstring(p_account.description()):
+		wxEmptyString
+	);
+	m_description_ctrl = new wxTextCtrl
+	(	this,
+		wxID_ANY,
+		description_tmp,
+		wxDefaultPosition,
+		m_name_ctrl->GetSize()
+	);
+	m_top_sizer->Add(m_description_ctrl, wxGBPosition(row, 0));
+
+	++row;
+
+	// Row 3
+	
+	wxStaticText* opening_amount_ctrl_label = wxStaticText
+	(	this,
+		wxID_ANY,
+		opening_amount_label_string(p_account_super_type),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_RIGHT
+	);
+	m_top_sizer->Add(opening_amount_ctrl_label, wxGBPosition(row, 0);
+	m_opening_amount_ctrl = new DecimalTextCtrl
+	(	this,
+		wxID_ANY,
+		wxSize(m_name_ctrl->GetSize().x / 2.0, wxDefaultSize.y),
+		(	m_account.has_id()?
+			m_account.commodity().precision():
+			m_account.database_connection().default_commodity().precision()
+		),
+		false
+	);
+	m_top_sizer->Add(m_opening_amount_ctrl, wxGBPosition(row, 0);
 
 
-	// TODO Implement
+
+	// TODO HIGH PRIORITY Finish implementing.
 }
 
 }  // namespace gui
