@@ -29,8 +29,7 @@ AccountDialog::AccountDialog
 	m_account_type_ctrl(0),
 	m_description_ctrl(0),
 	m_opening_amount_ctrl(0),
-	m_account(p_account),
-	account_super_type::AccountSuperType p_account_super_type
+	m_account(p_account)
 {
 	m_top_sizer = new wxGridBagSizer;
 	SetSizer(m_top_sizer);

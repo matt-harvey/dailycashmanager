@@ -30,10 +30,10 @@ AccountTypeCtrl::AccountTypeCtrl
 	),
 	m_database_connection(p_database_connection)
 {
-	vector<BString>::const_iterator it =
-		account_types(p_account_super_type).begin();
-	vector<BString>::const_iterator const end =
-		account_types(p_account_super_type).end();
+	typedef vector<account_type::AccountType> ATypeVec;
+	ATypeVec const& atypes = account_types(p_account_super_type);
+	ATypeVec::const_iterator it = atypes.begin();
+	ATypeVec::const_iterator const end = atypes.end();
 	for ( ; it != end; ++it)
 	{
 		Append(bstring_to_wx(account_type_to_string(*it)));
