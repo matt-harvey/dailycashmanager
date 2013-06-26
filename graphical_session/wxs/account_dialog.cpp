@@ -98,6 +98,15 @@ AccountDialog::AccountDialog
 	m_top_sizer = new wxGridBagSizer;
 	SetSizer(m_top_sizer);
 
+	wxStaticText* name_ctrl_label = new wxStaticText
+	(	this,
+		wxID_ANY,
+		account_name_ctrl_label_string(p_account_super_type),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
+	);
+	m_top_sizer->Add(name_ctrl_label, wxGBPosition(0,0));
 
 
 	// TODO Implement
