@@ -5,7 +5,7 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
-#include <wx/sizer.h>
+#include <wx/gbsizer.h>
 #include <wx/textctrl.h>
 
 namespace phatbooks
@@ -18,6 +18,8 @@ class Account;
 namespace gui
 {
 
+class AccountTypeCtrl;
+class DecimalTextCtrl;
 class Frame;
 
 // End forward declarations
@@ -33,6 +35,12 @@ public:
 	AccountDialog(Frame* p_parent, Account& p_account);
 
 private:
+
+	wxGridBagSizer* m_top_sizer;
+	wxTextCtrl* m_name_ctrl;
+	AccountTypeCtrl* m_account_type_ctrl;
+	wxTextCtrl* m_description_ctrl;
+	DecimalTextCtrl* m_opening_amount_ctrl;
 
 	Account& m_account;
 
