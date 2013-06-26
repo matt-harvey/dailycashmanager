@@ -148,13 +148,18 @@ JEWEL_DERIVED_EXCEPTION(CurrencyManagerException, PhatbooksException);
 JEWEL_DERIVED_EXCEPTION(DefaultAccountGeneratorException, PhatbooksException);
 
 /**
- * Exception to be thrown when an string does not correspond to any
+ * Exception to be thrown when a string does not correspond to any
  * account_type::AccountType, but purports to do so.
  */
 JEWEL_DERIVED_EXCEPTION
 (	InvalidAccountTypeStringException,
 	PhatbooksException
 );
+
+/**
+ * Exception to be thrown when an AccountType is invalid in a given context.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidAccountTypeException, PhatbooksException);
 
 /**
  * Exception to be thrown by AccountDataViewModel when exceptional behaviour

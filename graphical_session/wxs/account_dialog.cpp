@@ -114,11 +114,11 @@ AccountDialog::AccountDialog
 		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
 	);
 	m_top_sizer->Add(name_ctrl_label, wxGBPosition(row, 0));
-	wxString const name_tmp =
-	(	m_account.has_id()?
-		wx_to_bstring(p_account.name()):
-		wxEmptyString
-	);
+	wxString name_tmp = wxEmptyString;
+	if (m_account.has_id())
+	{
+		name_tmp = bstring_to_wx(p_account.name());
+	}
 	m_name_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
@@ -140,11 +140,11 @@ AccountDialog::AccountDialog
 		wxDefaultSize,
 		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
 	);
-	m_top_sizer->Add(account_type_ctrl_label, wxGBPosition(row, 0);
+	m_top_sizer->Add(account_type_ctrl_label, wxGBPosition(row, 0));
 	m_account_type_ctrl = new AccountTypeCtrl
 	(	this,
 		wxID_ANY,
-		m_name_ctrl->GetSize()
+		m_name_ctrl->GetSize(),
 		m_account.database_connection(),
 		p_account_super_type
 	);
@@ -152,7 +152,7 @@ AccountDialog::AccountDialog
 	{	
 		m_account_type_ctrl->set_account_type(m_account.account_type());
 	}
-	m_top_sizer->Add(m_account_type_ctrl, wxGBPosition(row, 1);
+	m_top_sizer->Add(m_account_type_ctrl, wxGBPosition(row, 1));
 
 	++row;
 
@@ -166,12 +166,12 @@ AccountDialog::AccountDialog
 		wxDefaultSize,
 		wxALIGN_RIGHT
 	);
-	m_top_sizer->Add(description_label, wxGBPosition(row, 0);
-	wxString const description_tmp =
-	(	m_account.has_id()?
-		wx_to_bstring(p_account.description()):
-		wxEmptyString
-	);
+	m_top_sizer->Add(description_label, wxGBPosition(row, 0));
+	wxString description_tmp = wxEmptyString;
+	if (m_account.has_id())
+	{
+		description_tmp = bstring_to_wx(p_account.description());
+	}
 	m_description_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
@@ -185,7 +185,7 @@ AccountDialog::AccountDialog
 
 	// Row 3
 	
-	wxStaticText* opening_amount_ctrl_label = wxStaticText
+	wxStaticText* opening_amount_ctrl_label = new wxStaticText
 	(	this,
 		wxID_ANY,
 		opening_amount_label_string(p_account_super_type),
@@ -193,7 +193,7 @@ AccountDialog::AccountDialog
 		wxDefaultSize,
 		wxALIGN_RIGHT
 	);
-	m_top_sizer->Add(opening_amount_ctrl_label, wxGBPosition(row, 0);
+	m_top_sizer->Add(opening_amount_ctrl_label, wxGBPosition(row, 0));
 	m_opening_amount_ctrl = new DecimalTextCtrl
 	(	this,
 		wxID_ANY,
@@ -204,7 +204,7 @@ AccountDialog::AccountDialog
 		),
 		false
 	);
-	m_top_sizer->Add(m_opening_amount_ctrl, wxGBPosition(row, 0);
+	m_top_sizer->Add(m_opening_amount_ctrl, wxGBPosition(row, 0));
 
 
 

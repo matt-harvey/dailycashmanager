@@ -2,6 +2,7 @@
 #include "account_dialog.hpp"
 #include "account_type.hpp"
 #include "b_string.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <wx/combobox.h>
 #include <vector>
 
@@ -47,6 +48,21 @@ AccountTypeCtrl::account_type() const
 {
 	assert (!GetValue().IsEmpty());
 	return string_to_account_type(wx_to_bstring(GetValue()));
+}
+
+void
+AccountTypeCtrl::set_account_type(account_type::AccountType p_account_type)
+{
+	if (super_type(p_account_type) != m_account_super_type)
+	{
+		throw InvalidAccountTypeException
+		(	"AccountType is invalid given the AccountSuperType of this "
+			"AccountTypeCtrl."
+		);
+	}
+	assert (m_account_super_type == super_type(p_account_type));
+	SetValue(bstring_to_wx(account_type_to_string(p_account_type)));
+	return;
 }
 
 
