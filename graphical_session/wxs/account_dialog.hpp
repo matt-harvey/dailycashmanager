@@ -59,6 +59,8 @@ private:
 	AccountTypeCtrl* m_account_type_ctrl;
 	wxTextCtrl* m_description_ctrl;
 	DecimalTextCtrl* m_opening_amount_ctrl;
+	wxButton* m_cancel_button;
+	wxButton* m_ok_button;
 
 	Account& m_account;
 

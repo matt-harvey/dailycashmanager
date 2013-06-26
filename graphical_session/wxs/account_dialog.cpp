@@ -206,10 +206,36 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add(m_opening_amount_ctrl, wxGBPosition(row, 0));
 
+	++row;
 
+	// Row 4
 
-	// TODO HIGH PRIORITY Finish implementing.
+	m_cancel_button = new wxButton
+	(	this,
+		wxID_CANCEL,
+		wxString("&Cancel"),
+		wxDefaultPosition,
+		m_name_ctrl->GetSize()
+	);
+	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
+
+	m_ok_button = new wxButton
+	(	this,
+		wxID_OK,
+		wxString("&Save"),
+		wxDefaultPosition,
+		m_name_ctrl->GetSize()
+	);
+	m_top_sizer->Add
+	(	m_ok_button,
+		wxGBPosition(row, 1),
+		wxDefaultSpan,
+		wxALIGN_RIGHT
+	);
 }
+
+
+
 
 }  // namespace gui
 }  // namespace phatbooks
