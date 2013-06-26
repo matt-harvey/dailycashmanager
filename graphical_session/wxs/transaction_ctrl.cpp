@@ -145,7 +145,7 @@ TransactionCtrl::TransactionCtrl
 	size_t row = 0;	
 
 	// Top sizer
-	m_top_sizer = new wxGridBagSizer();
+	m_top_sizer = new wxGridBagSizer;
 	SetSizer(m_top_sizer);
 
 	m_transaction_type_ctrl = new TransactionTypeCtrl

@@ -53,6 +53,38 @@ account_types()
 	return ret;
 }
 
+vector<account_type::AccountType> const&
+account_types(account_super_type::AccountSuperType p_account_super_type)
+{
+	static vector<account_type::AccountType> pl_ret;
+	static vector<account_type::AccountType> bs_ret;
+	if (pl_ret.empty())
+	{
+		pl_ret.reserve(3);
+		pl_ret.push_back(account_type::revenue);
+		pl_ret.push_back(account_type::expense);
+		pl_ret.push_back(account_type::pure_envelope);
+	}
+	if (bs_ret.empty())
+	{
+		bs_ret.reserve(3);
+		bs_ret.push_back(account_type::asset);
+		bs_ret.push_back(account_type::liability);
+		bs_ret.push_back(account_type::equity);
+	}
+	switch (p_account_super_type)
+	{
+	case account_super_type::pl:
+		return pl_ret;
+	case account_super_type::balance_sheet:
+		return bs_ret;
+	default:
+		assert (false);
+	}
+	assert (false);
+}
+		
+
 vector<BString> const&
 account_type_names()
 {

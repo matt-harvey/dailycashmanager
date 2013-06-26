@@ -1,6 +1,7 @@
 #ifndef GUARD_account_dialog_hpp
 #define GUARD_account_dialog_hpp
 
+#include "account_type.hpp"
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -32,7 +33,11 @@ class AccountDialog: public wxDialog, private boost::noncopyable
 {
 public:
 
-	AccountDialog(Frame* p_parent, Account& p_account);
+	AccountDialog
+	(	Frame* p_parent,
+		Account& p_account,
+		account_super_type::AccountSuperType p_account_super_type
+	);
 
 private:
 

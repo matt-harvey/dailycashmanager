@@ -31,7 +31,8 @@ public:
 	(	AccountDialog* p_parent,
 		wxWindowID p_id,
 		wxSize const& p_size,
-		PhatbooksDatabaseConnection& p_database_connection
+		PhatbooksDatabaseConnection& p_database_connection,
+		account_super_type::AccountSuperType p_account_super_type
 	);
 
 	account_type::AccountType account_type() const;

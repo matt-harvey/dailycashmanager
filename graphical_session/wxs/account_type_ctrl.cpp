@@ -16,7 +16,8 @@ AccountTypeCtrl::AccountTypeCtrl
 (	AccountDialog* p_parent,
 	wxWindowID p_id,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection
+	PhatbooksDatabaseConnection& p_database_connection,
+	account_super_type::AccountSuperType p_account_super_type
 ):
 	wxComboBox
 	(	p_parent,
@@ -29,9 +30,14 @@ AccountTypeCtrl::AccountTypeCtrl
 	),
 	m_database_connection(p_database_connection)
 {
-	vector<BString>::const_iterator it = account_type_names().begin();
-	vector<BString>::const_iterator const end = account_type_names().end();
-	for ( ; it != end; ++it) Append(bstring_to_wx(*it));
+	vector<BString>::const_iterator it =
+		account_types(p_account_super_type).begin();
+	vector<BString>::const_iterator const end =
+		account_types(p_account_super_type).end();
+	for ( ; it != end; ++it)
+	{
+		Append(bstring_to_wx(account_type_to_string(*it)));
+	}	
 	SetSelection(0);  // In effort to avoid apparent bug in Windows
 }
 
