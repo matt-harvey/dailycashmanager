@@ -53,6 +53,8 @@ public:
 	);
 
 private:
+	void on_ok_button_click(wxCommandEvent& event);
+	void on_cancel_button_click(wxCommandEvent& event);
 
 	wxGridBagSizer* m_top_sizer;
 	wxTextCtrl* m_name_ctrl;
@@ -63,6 +65,8 @@ private:
 	wxButton* m_ok_button;
 
 	Account& m_account;
+
+	DECLARE_EVENT_TABLE()
 
 };  // class AccountDialog
 

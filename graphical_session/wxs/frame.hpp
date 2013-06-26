@@ -32,10 +32,6 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
-	// Event handlers
-	void on_quit(wxCommandEvent& event);
-	void on_about(wxCommandEvent& event);
-	void on_new_transaction(wxCommandEvent& event);
 
 	/**
 	 * Populates \e out with a vector of the balance sheet Accounts currently
@@ -51,7 +47,16 @@ public:
 
 private:
 
-	static int const s_new_transaction_id = wxID_HIGHEST + 1;
+	// Event handlers
+	void on_quit(wxCommandEvent& event);
+	void on_about(wxCommandEvent& event);
+	void on_new_bs_account(wxCommandEvent& event);
+	void on_new_pl_account(wxCommandEvent& event);
+	void on_new_transaction(wxCommandEvent& event);
+
+	static int const s_new_bs_account_id = wxID_HIGHEST + 1;
+	static int const s_new_pl_account_id = s_new_bs_account_id + 1;
+	static int const s_new_transaction_id = s_new_pl_account_id + 1;
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	TopPanel* m_top_panel;

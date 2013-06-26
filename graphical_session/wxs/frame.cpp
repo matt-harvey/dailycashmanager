@@ -72,6 +72,16 @@ Frame::Frame
 		wxT("Quit this program")
 	);
 	m_new_menu->Append
+	(	s_new_bs_account_id,
+		wxT("New &account"),
+		wxT("Create a new asset or liability account")
+	);
+	m_new_menu->Append
+	(	s_new_pl_account_id,
+		wxT("New &category"),
+		wxT("Create a new revenue or expenditure category")
+	);
+	m_new_menu->Append
 	(	s_new_transaction_id,
 		wxT("New &transaction \tAlt-T"),
 		wxT("Record a new transaction")
@@ -91,6 +101,16 @@ Frame::Frame
 	(	wxID_EXIT,
 		wxEVT_COMMAND_MENU_SELECTED,
 		wxCommandEventHandler(Frame::on_quit)
+	);
+	Connect
+	(	s_new_bs_account_id,
+		wxEVT_COMMAND_MENU_SELECTED,
+		wxCommandEventHandler(Frame::on_new_bs_account)
+	);
+	Connect
+	(	s_new_pl_account_id,
+		wxEVT_COMMAND_MENU_SELECTED,
+		wxCommandEventHandler(Frame::on_new_pl_account)
 	);
 	Connect
 	(	s_new_transaction_id,
@@ -129,6 +149,18 @@ Frame::on_quit(wxCommandEvent& event)
 	Close();
 	(void)event;  // Silence compiler warning re. unused parameter.
 	return;
+}
+
+void
+Frame::on_new_bs_account(wxCommandEvent& event)
+{
+	// TODO HIGH PRIORITY Implement this
+}
+
+void
+Frame::on_new_pl_account(wxCommandEvent& event)
+{
+	// TODO HIGH PRIORITY Implement this
 }
 
 void

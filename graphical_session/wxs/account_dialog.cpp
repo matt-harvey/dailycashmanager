@@ -19,6 +19,18 @@ namespace phatbooks
 namespace gui
 {
 
+BEGIN_EVENT_TABLE(AccountDialog, wxDialog)
+	EVT_BUTTON
+	(	wxID_OK,
+		AccountDialog::on_ok_button_click
+	)
+	EVT_BUTTON
+	(	wxID_CANCEL,
+		AccountDialog::on_cancel_button_click
+	)
+END_EVENT_TABLE()
+
+
 namespace
 {
 	wxString account_super_type_string
@@ -234,7 +246,17 @@ AccountDialog::AccountDialog
 	);
 }
 
+void
+AccountDialog::on_ok_button_click(wxCommandEvent& event)
+{
+	// TODO HIGH PRIORITY Implement
+}
 
+void
+AccountDialog::on_cancel_button_click(wxCommandEvent& event)
+{
+	// TODO HIGH PRIORITY Implement
+}
 
 
 }  // namespace gui
