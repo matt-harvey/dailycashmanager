@@ -288,7 +288,8 @@ AccountDialog::AccountDialog
 	);
 
 	m_top_sizer->Fit(this);
-	Fit();
+	m_top_sizer->SetSizeHints(this);
+	CentreOnScreen();
 	Layout();
 }
 
