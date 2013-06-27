@@ -49,7 +49,7 @@ DraftJournalNamingDialog::DraftJournalNamingDialog
 
 	// Row 0
 
-	m_top_sizer->AddSpacer(standard_border());
+	m_top_sizer->AddSpacer(0);
 
 	wxStaticText* label = new wxStaticText
 	(	this,
@@ -60,13 +60,13 @@ DraftJournalNamingDialog::DraftJournalNamingDialog
 		wxALIGN_LEFT
 	);
 	m_top_sizer->Add(label);
-	
-	m_top_sizer->AddSpacer(standard_border());
-	m_top_sizer->AddSpacer(standard_border());
 
+	m_top_sizer->AddSpacer(0);
+	m_top_sizer->AddSpacer(standard_border());
+	
 	// Row 1
 
-	m_top_sizer->AddSpacer(10);
+	m_top_sizer->AddSpacer(0);
 
 	m_name_ctrl = new wxTextCtrl
 	(	this,
@@ -86,7 +86,7 @@ DraftJournalNamingDialog::DraftJournalNamingDialog
 	);
 	m_top_sizer->Add(m_ok_button);
 
-	m_top_sizer->AddSpacer(10);
+	m_top_sizer->AddSpacer(0);
 
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
