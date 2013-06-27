@@ -28,11 +28,6 @@ class Frame;
 /**
  * Dialog to facilitate creation of new Accounts and editing of details
  * of existing Accounts.
- *
- * @todo HIGH PRIORITY When new balance sheet Account
- * is created, the balance sheet AccountListCtrl is not being
- * updated (this may be a bug in Frame or elsewhere rather than
- * in AccountDialog).
  */
 class AccountDialog: public wxDialog, private boost::noncopyable
 {

@@ -162,7 +162,14 @@ Frame::on_new_bs_account(wxCommandEvent& event)
 		account,
 		account_super_type::balance_sheet
 	);
-	account_dialog.ShowModal();
+	if (account_dialog.ShowModal() == wxID_OK)
+	{
+		// TODO This will obliterate any contents of the TransactionCtrl.
+		// Do we want this? We probably \e do want it to update the
+		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
+		// we don't really want it to obliterate everything else.
+		m_top_panel->update();
+	}
 	return;
 }
 
