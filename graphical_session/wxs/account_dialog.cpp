@@ -191,7 +191,7 @@ AccountDialog::AccountDialog
 		wxDefaultPosition,
 		m_name_ctrl->GetSize()
 	);
-	m_top_sizer->Add(m_description_ctrl, wxGBPosition(row, 0));
+	m_top_sizer->Add(m_description_ctrl, wxGBPosition(row, 1));
 
 	++row;
 
@@ -216,7 +216,7 @@ AccountDialog::AccountDialog
 		),
 		false
 	);
-	m_top_sizer->Add(m_opening_amount_ctrl, wxGBPosition(row, 0));
+	m_top_sizer->Add(m_opening_amount_ctrl, wxGBPosition(row, 1));
 
 	++row;
 

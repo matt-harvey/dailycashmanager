@@ -2,6 +2,7 @@
 
 #include "frame.hpp"
 #include "account.hpp"
+#include "account_dialog.hpp"
 #include "account_list_ctrl.hpp"
 #include "app.hpp"
 #include "entry_list_ctrl.hpp"
@@ -154,13 +155,25 @@ Frame::on_quit(wxCommandEvent& event)
 void
 Frame::on_new_bs_account(wxCommandEvent& event)
 {
-	// TODO HIGH PRIORITY Implement this
+	(void)event;  // Silence compiler warning re. unused parameter.
+	Account account(m_database_connection);
+	AccountDialog account_dialog
+	(	this,
+		account,
+		account_super_type::balance_sheet
+	);
+	account_dialog.ShowModal();
+	return;
 }
 
 void
 Frame::on_new_pl_account(wxCommandEvent& event)
 {
-	// TODO HIGH PRIORITY Implement this
+	(void)event;  // Silence compiler warning re. unused parameter.
+	Account account(m_database_connection);
+	AccountDialog account_dialog(this, account, account_super_type::pl);
+	account_dialog.ShowModal();
+	return;
 }
 
 void
