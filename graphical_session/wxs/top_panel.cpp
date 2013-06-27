@@ -63,11 +63,11 @@ TopPanel::configure_account_lists()
 	);
 	m_top_sizer->Add
 	(	m_bs_account_list,
-		wxSizerFlags(2).Expand().Border(wxNORTH | wxSOUTH | wxWEST, 15)
+		wxSizerFlags(2).Expand().Border(wxNORTH | wxSOUTH | wxWEST, 5)
 	);
 	m_top_sizer->Add
 	(	m_pl_account_list,
-		wxSizerFlags(3).Expand().Border(wxNORTH | wxSOUTH | wxWEST, 15)
+		wxSizerFlags(3).Expand().Border(wxNORTH | wxSOUTH | wxWEST, 5)
 	);
 	return;
 }
