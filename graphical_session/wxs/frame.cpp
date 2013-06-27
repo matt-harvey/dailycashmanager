@@ -53,6 +53,7 @@ Frame::Frame
 	m_menu_bar(0),
 	m_file_menu(0),
 	m_new_menu(0),
+	m_edit_menu(0),
 	m_help_menu(0)
 {
 	// Set the frame icon
@@ -66,38 +67,59 @@ Frame::Frame
 	m_menu_bar = new wxMenuBar;
 	m_file_menu = new wxMenu;
 	m_new_menu = new wxMenu;
+	m_edit_menu = new wxMenu;
 	m_help_menu = new wxMenu;
+
+	// Configure "file" menu
 	m_file_menu->Append
 	(	wxID_EXIT,
-		wxT("E&xit\tAlt-X"),
-		wxT("Quit this program")
+		wxString("E&xit\tAlt-X"),
+		wxString("Quit this program")
 	);
+	m_menu_bar->Append(m_file_menu, wxString("&File"));
+
+	// Configure "new" menu
 	m_new_menu->Append
 	(	s_new_bs_account_id,
-		wxT("New &account"),
-		wxT("Create a new asset or liability account")
+		wxString("New &account"),
+		wxString("Create a new asset or liability account")
 	);
 	m_new_menu->Append
 	(	s_new_pl_account_id,
-		wxT("New &category"),
-		wxT("Create a new revenue or expenditure category")
+		wxString("New &category"),
+		wxString("Create a new revenue or expenditure category")
 	);
 	m_new_menu->Append
 	(	s_new_transaction_id,
-		wxT("New &transaction \tAlt-T"),
-		wxT("Record a new transaction")
+		wxString("New &transaction \tAlt-T"),
+		wxString("Record a new transaction")
 	);
+	m_menu_bar->Append(m_new_menu, wxString("&New"));
+
+	// Configure "edit" menu
+	m_edit_menu->Append
+	(	s_edit_bs_account_id,
+		wxString("Edit &account"),
+		wxString("Edit an exising asset or liability account")
+	);
+	m_edit_menu->Append
+	(	s_edit_pl_account_id,
+		wxString("Edit &category"),
+		wxString("Edit an existing revenue or expenditure category")
+	);
+	m_menu_bar->Append(m_edit_menu, wxString("&Edit"));
+
+	// Configure "help" menu
 	m_help_menu->Append
 	(	wxID_ABOUT,
-		wxT("&About...\tF1"),
-		wxT("Show about dialog")
+		wxString("&About...\tF1"),
+		wxString("Show about dialog")
 	);
-	m_menu_bar->Append(m_file_menu, wxT("&File"));
-	m_menu_bar->Append(m_new_menu, wxT("&New"));
-	m_menu_bar->Append(m_help_menu, wxT("&Help"));
+	m_menu_bar->Append(m_help_menu, wxString("&Help"));
 
 	SetMenuBar(m_menu_bar);
 
+	// Connect events to menus
 	Connect
 	(	wxID_EXIT,
 		wxEVT_COMMAND_MENU_SELECTED,
@@ -117,6 +139,15 @@ Frame::Frame
 	(	s_new_transaction_id,
 		wxEVT_COMMAND_MENU_SELECTED,
 		wxCommandEventHandler(Frame::on_new_transaction)
+	);
+	Connect
+	(	s_edit_bs_account_id,
+		wxEVT_COMMAND_MENU_SELECTED,
+		wxCommandEventHandler(Frame::on_edit_bs_account)
+	);
+	Connect
+	(	s_edit_pl_account_id,
+		wxCommandEventHandler(Frame::on_edit_pl_account)
 	);
 	Connect
 	(	wxID_ABOUT,
@@ -188,6 +219,20 @@ Frame::on_new_pl_account(wxCommandEvent& event)
 		m_top_panel->update();
 	}
 	return;
+}
+
+void
+Frame::on_edit_bs_account(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler re. unused parameter.
+	// TODO HIGH PRIORITY Implement this.
+}
+
+void
+Frame::on_edit_pl_account(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler re. unused parameter.
+	// TODO HIGH PRIORITY Implement this.
 }
 
 void
