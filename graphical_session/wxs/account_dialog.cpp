@@ -61,7 +61,7 @@ namespace
 	{
 		return
 			account_super_type_string(p_account_super_type) +
-			wxString(" name:");
+			wxString(" name ");
 	}
 
 	wxString account_type_ctrl_label_string
@@ -70,7 +70,7 @@ namespace
 	{
 		return
 			account_super_type_string(p_account_super_type) +
-			wxString(" type:");
+			wxString(" type ");
 	}
 
 	wxString account_description_label_string
@@ -78,7 +78,7 @@ namespace
 	)
 	{
 		(void)p_account_super_type;  // silence compiler re. unused param.
-		return wxString("Description:");
+		return wxString("Description ");
 	}
 
 	wxString opening_amount_label_string
@@ -88,9 +88,9 @@ namespace
 		switch (p_account_super_type)
 		{
 		case account_super_type::balance_sheet:
-			return wxString("Opening balance:");
+			return wxString("Opening balance ");
 		case account_super_type::pl:
-			return wxString("Initial budget allocation:");
+			return wxString("Initial budget allocation ");
 		default:
 			assert (false);
 		}
@@ -140,7 +140,12 @@ AccountDialog::AccountDialog
 		wxDefaultSize,
 		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
 	);
-	m_top_sizer->Add(name_ctrl_label, wxGBPosition(row, 0), wxDefaultSpan, wxALIGN_RIGHT);
+	m_top_sizer->Add
+	(	name_ctrl_label,
+		wxGBPosition(row, 0),
+		wxDefaultSpan,
+		wxALIGN_RIGHT
+	);
 	wxString name_tmp = wxEmptyString;
 	if (m_account.has_id())
 	{
@@ -167,7 +172,12 @@ AccountDialog::AccountDialog
 		wxDefaultSize,
 		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
 	);
-	m_top_sizer->Add(account_type_ctrl_label, wxGBPosition(row, 0), wxDefaultSpan, wxALIGN_RIGHT);
+	m_top_sizer->Add
+	(	account_type_ctrl_label,
+		wxGBPosition(row, 0),
+		wxDefaultSpan,
+		wxALIGN_RIGHT
+	);
 	m_account_type_ctrl = new AccountTypeCtrl
 	(	this,
 		wxID_ANY,
@@ -193,7 +203,12 @@ AccountDialog::AccountDialog
 		wxDefaultSize,
 		wxALIGN_RIGHT
 	);
-	m_top_sizer->Add(description_label, wxGBPosition(row, 0), wxDefaultSpan, wxALIGN_RIGHT);
+	m_top_sizer->Add
+	(	description_label,
+		wxGBPosition(row, 0),
+		wxDefaultSpan,
+		wxALIGN_RIGHT
+	);
 	wxString description_tmp = wxEmptyString;
 	if (m_account.has_id())
 	{
@@ -220,7 +235,12 @@ AccountDialog::AccountDialog
 		wxDefaultSize,
 		wxALIGN_RIGHT
 	);
-	m_top_sizer->Add(opening_amount_ctrl_label, wxGBPosition(row, 0), wxDefaultSpan, wxALIGN_RIGHT);
+	m_top_sizer->Add
+	(	opening_amount_ctrl_label,
+		wxGBPosition(row, 0),
+		wxDefaultSpan,
+		wxALIGN_RIGHT
+	);
 	m_opening_amount_ctrl = new DecimalTextCtrl
 	(	this,
 		wxID_ANY,
@@ -244,7 +264,12 @@ AccountDialog::AccountDialog
 		wxDefaultPosition,
 		wxSize(wxDefaultSize.x, m_name_ctrl->GetSize().y)
 	);
-	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0), wxDefaultSpan, wxALIGN_LEFT);
+	m_top_sizer->Add
+	(	m_cancel_button,
+		wxGBPosition(row, 0),
+		wxDefaultSpan,
+		wxALIGN_LEFT
+	);
 
 	m_ok_button = new wxButton
 	(	this,
