@@ -140,13 +140,13 @@ AccountDialog::AccountDialog
 		account_name_ctrl_label_string(p_account_super_type),
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
+		wxALIGN_RIGHT | wxALIGN_CENTRE
 	);
 	m_top_sizer->Add
 	(	name_ctrl_label,
 		wxGBPosition(row, 1),
 		wxDefaultSpan,
-		wxALIGN_RIGHT
+		wxALIGN_RIGHT | wxALIGN_CENTRE
 	);
 	wxString name_tmp = wxEmptyString;
 	if (m_account.has_id())
@@ -160,7 +160,7 @@ AccountDialog::AccountDialog
 		wxDefaultPosition,
 		wxSize(450, wxDefaultSize.y)
 	);
-	m_top_sizer->Add(m_name_ctrl, wxGBPosition(row, 2));
+	m_top_sizer->Add(m_name_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 3));
 
 	++row;
 
@@ -172,13 +172,13 @@ AccountDialog::AccountDialog
 		account_type_ctrl_label_string(p_account_super_type),
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
+		wxALIGN_RIGHT | wxALIGN_CENTRE
 	);
 	m_top_sizer->Add
 	(	account_type_ctrl_label,
 		wxGBPosition(row, 1),
 		wxDefaultSpan,
-		wxALIGN_RIGHT
+		wxALIGN_RIGHT | wxALIGN_CENTRE
 	);
 	m_account_type_ctrl = new AccountTypeCtrl
 	(	this,
@@ -191,7 +191,8 @@ AccountDialog::AccountDialog
 	{	
 		m_account_type_ctrl->set_account_type(m_account.account_type());
 	}
-	m_top_sizer->Add(m_account_type_ctrl, wxGBPosition(row, 2));
+	m_top_sizer->
+		Add(m_account_type_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 3));
 
 	++row;
 
@@ -203,13 +204,13 @@ AccountDialog::AccountDialog
 		account_description_label_string(p_account_super_type),
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_RIGHT
+		wxALIGN_RIGHT | wxALIGN_CENTRE
 	);
 	m_top_sizer->Add
 	(	description_label,
 		wxGBPosition(row, 1),
 		wxDefaultSpan,
-		wxALIGN_RIGHT
+		wxALIGN_RIGHT | wxALIGN_CENTRE
 	);
 	wxString description_tmp = wxEmptyString;
 	if (m_account.has_id())
@@ -223,7 +224,8 @@ AccountDialog::AccountDialog
 		wxDefaultPosition,
 		m_name_ctrl->GetSize()
 	);
-	m_top_sizer->Add(m_description_ctrl, wxGBPosition(row, 2));
+	m_top_sizer->
+		Add(m_description_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 3));
 
 	++row;
 
@@ -235,13 +237,13 @@ AccountDialog::AccountDialog
 		opening_amount_label_string(p_account_super_type),
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_RIGHT
+		wxALIGN_RIGHT | wxALIGN_CENTRE
 	);
 	m_top_sizer->Add
 	(	opening_amount_ctrl_label,
 		wxGBPosition(row, 1),
 		wxDefaultSpan,
-		wxALIGN_RIGHT
+		wxALIGN_RIGHT | wxALIGN_CENTRE
 	);
 	m_opening_amount_ctrl = new DecimalTextCtrl
 	(	this,
@@ -253,26 +255,23 @@ AccountDialog::AccountDialog
 		),
 		false
 	);
-	m_top_sizer->Add(m_opening_amount_ctrl, wxGBPosition(row, 2));
-
-	++row;
-
-	// Row 4
+	m_top_sizer->
+		Add(m_opening_amount_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 1));
 
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,
 		wxString("&Cancel"),
 		wxDefaultPosition,
-		wxSize(wxDefaultSize.x, m_name_ctrl->GetSize().y)
+		wxSize(wxDefaultSize.x, m_name_ctrl->GetSize().y),
+		wxALIGN_RIGHT  // WARNING Doesn't seem to work
 	);
 	m_top_sizer->Add
 	(	m_cancel_button,
-		wxGBPosition(row, 1),
+		wxGBPosition(row, 3),
 		wxDefaultSpan,
-		wxALIGN_LEFT
+		wxALIGN_RIGHT  // WARNING Doesn't seem to work
 	);
-
 	m_ok_button = new wxButton
 	(	this,
 		wxID_OK,
@@ -282,14 +281,14 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	m_ok_button,
-		wxGBPosition(row, 2),
+		wxGBPosition(row, 4),
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
 
-	// Hack to add some space to left
+	// Hack to add some space to right.
 	wxStaticText* dummy = new wxStaticText(this, wxID_ANY, wxEmptyString);
-	m_top_sizer->Add(dummy, wxGBPosition(row, 3));
+	m_top_sizer->Add(dummy, wxGBPosition(row, 5));
 
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
