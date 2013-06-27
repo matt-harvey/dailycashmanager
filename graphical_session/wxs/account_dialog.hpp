@@ -28,6 +28,15 @@ class Frame;
 /**
  * Dialog to facilitate creation of new Accounts and editing of details
  * of existing Accounts.
+ *
+ * @todo HIGH PRIORITY When new balance sheet Account
+ * is created, the balance sheet AccountListCtrl is not being
+ * updated (this may be a bug in Frame or elsewhere rather than
+ * in AccountDialog).
+ *
+ * @todo HIGH PRIORITY We need "manually" to ensure that signs
+ * will be the right way around when creating opening balancing
+ * Journal from AccountDialog.
  */
 class AccountDialog: public wxDialog, private boost::noncopyable
 {
@@ -55,6 +64,17 @@ public:
 private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
+
+	/**
+	 * Updates m_account based on the data entered by the user.
+	 *
+	 * @param p_is_new_account should be passed true if and only if
+	 * m_account does not have an id.
+	 *
+	 * @returns true if and only if m_account is successfully updated
+	 * and saved.
+	 */
+	bool update_account_from_dialog(bool p_is_new_account);
 
 	wxGridBagSizer* m_top_sizer;
 	wxTextCtrl* m_name_ctrl;

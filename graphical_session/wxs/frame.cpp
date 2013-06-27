@@ -172,7 +172,14 @@ Frame::on_new_pl_account(wxCommandEvent& event)
 	(void)event;  // Silence compiler warning re. unused parameter.
 	Account account(m_database_connection);
 	AccountDialog account_dialog(this, account, account_super_type::pl);
-	account_dialog.ShowModal();
+	if (account_dialog.ShowModal() == wxID_OK)
+	{
+		// TODO This will obliterate any contents of the TransactionCtrl.
+		// Do we want this? We probably \e do want it to update the
+		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
+		// we don't really want it to obliterate everything else.
+		m_top_panel->update();
+	}
 	return;
 }
 

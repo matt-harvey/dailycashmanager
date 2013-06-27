@@ -44,7 +44,6 @@ public:
 		PhatbooksPersistentObject;
 	typedef PhatbooksPersistentObjectBase::Id Id;
 
-
 	/**
 	 * Sets up tables in the database required for the persistence of
 	 * Account objects.

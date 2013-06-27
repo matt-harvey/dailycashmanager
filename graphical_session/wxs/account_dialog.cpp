@@ -4,16 +4,21 @@
 #include "account_type_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "frame.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/noncopyable.hpp>
+#include <sqloxx/database_transaction.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
+#include <wx/msgdlg.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <wx/window.h>
 #include <cassert>
+
+using sqloxx::DatabaseTransaction;
 
 namespace phatbooks
 {
@@ -264,16 +269,69 @@ void
 AccountDialog::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	// TODO HIGH PRIORITY Implement
+	if (update_account_from_dialog(!m_account.has_id()))
+	{
+		EndModal(wxID_OK);
+	}
+	return;
 }
 
 void
 AccountDialog::on_cancel_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	// TODO HIGH PRIORITY Implement
+	EndModal(wxID_CANCEL);
 }
 
+bool
+AccountDialog::update_account_from_dialog(bool p_is_new_account)
+{
+	DatabaseTransaction transaction(m_account.database_connection());
+
+	Account temp(m_account.database_connection());
+	BString const prospective_name =
+		wx_to_bstring(m_name_ctrl->GetValue().Trim());
+	if (Account::exists(temp.database_connection(), prospective_name))
+	{
+		wxMessageBox
+		(	"There is already an account or category with this name."
+		);
+		return false;
+	}
+	if (prospective_name.IsEmpty())
+	{
+		wxMessageBox("Name cannot be blank.");
+		return false;
+	}
+	temp.set_name(m_name_ctrl->GetValue());
+	temp.set_account_type(m_account_type_ctrl->account_type());
+	temp.set_description(m_description_ctrl->GetValue());
+		
+	if (p_is_new_account)
+	{
+		temp.set_commodity
+		(	m_account.database_connection().default_commodity()
+		);
+	}
+
+	temp.save();
+	
+	OrdinaryJournal objnl = OrdinaryJournal::create_opening_balance_journal
+	(	temp,
+		m_opening_amount_ctrl->amount()
+	);
+	objnl.save();
+
+	m_account = temp;
+	transaction.commit();
+
+	wxString msg =
+		account_super_type_string(super_type(m_account.account_type()));
+	msg += wxString(" has been ");
+	msg += (p_is_new_account? wxString(" created."): wxString(" updated."));
+
+	return true;
+}
 
 }  // namespace gui
 }  // namespace phatbooks
