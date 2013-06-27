@@ -63,7 +63,7 @@ namespace
 	{
 		return
 			account_super_type_string(p_account_super_type) +
-			wxString(" name ");
+			wxString(" name");
 	}
 
 	wxString account_type_ctrl_label_string
@@ -72,7 +72,7 @@ namespace
 	{
 		return
 			account_super_type_string(p_account_super_type) +
-			wxString(" type ");
+			wxString(" type");
 	}
 
 	wxString account_description_label_string
@@ -80,7 +80,7 @@ namespace
 	)
 	{
 		(void)p_account_super_type;  // silence compiler re. unused param.
-		return wxString("Description ");
+		return wxString("Description");
 	}
 
 	wxString opening_amount_label_string
@@ -90,9 +90,9 @@ namespace
 		switch (p_account_super_type)
 		{
 		case account_super_type::balance_sheet:
-			return wxString("Opening balance ");
+			return wxString("Opening balance");
 		case account_super_type::pl:
-			return wxString("Initial budget allocation ");
+			return wxString("Initial budget allocation");
 		default:
 			assert (false);
 		}
@@ -127,13 +127,13 @@ AccountDialog::AccountDialog
 		);
 	}
 
-	m_top_sizer = new wxGridBagSizer;
+	m_top_sizer = new wxGridBagSizer(5, 5);
 	SetSizer(m_top_sizer);
 
 	int row = 0;
 
 	// Row 0
-
+	
 	wxStaticText* name_ctrl_label = new wxStaticText
 	(	this,
 		wxID_ANY,
@@ -144,7 +144,7 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	name_ctrl_label,
-		wxGBPosition(row, 0),
+		wxGBPosition(row, 1),
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
@@ -160,7 +160,7 @@ AccountDialog::AccountDialog
 		wxDefaultPosition,
 		wxSize(450, wxDefaultSize.y)
 	);
-	m_top_sizer->Add(m_name_ctrl, wxGBPosition(row, 1));
+	m_top_sizer->Add(m_name_ctrl, wxGBPosition(row, 2));
 
 	++row;
 
@@ -176,7 +176,7 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	account_type_ctrl_label,
-		wxGBPosition(row, 0),
+		wxGBPosition(row, 1),
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
@@ -191,7 +191,7 @@ AccountDialog::AccountDialog
 	{	
 		m_account_type_ctrl->set_account_type(m_account.account_type());
 	}
-	m_top_sizer->Add(m_account_type_ctrl, wxGBPosition(row, 1));
+	m_top_sizer->Add(m_account_type_ctrl, wxGBPosition(row, 2));
 
 	++row;
 
@@ -207,7 +207,7 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	description_label,
-		wxGBPosition(row, 0),
+		wxGBPosition(row, 1),
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
@@ -223,7 +223,7 @@ AccountDialog::AccountDialog
 		wxDefaultPosition,
 		m_name_ctrl->GetSize()
 	);
-	m_top_sizer->Add(m_description_ctrl, wxGBPosition(row, 1));
+	m_top_sizer->Add(m_description_ctrl, wxGBPosition(row, 2));
 
 	++row;
 
@@ -239,7 +239,7 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	opening_amount_ctrl_label,
-		wxGBPosition(row, 0),
+		wxGBPosition(row, 1),
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
@@ -253,7 +253,7 @@ AccountDialog::AccountDialog
 		),
 		false
 	);
-	m_top_sizer->Add(m_opening_amount_ctrl, wxGBPosition(row, 1));
+	m_top_sizer->Add(m_opening_amount_ctrl, wxGBPosition(row, 2));
 
 	++row;
 
@@ -268,7 +268,7 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	m_cancel_button,
-		wxGBPosition(row, 0),
+		wxGBPosition(row, 1),
 		wxDefaultSpan,
 		wxALIGN_LEFT
 	);
@@ -282,10 +282,14 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	m_ok_button,
-		wxGBPosition(row, 1),
+		wxGBPosition(row, 2),
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
+
+	// Hack to add some space to left
+	wxStaticText* dummy = new wxStaticText(this, wxID_ANY, wxEmptyString);
+	m_top_sizer->Add(dummy, wxGBPosition(row, 3));
 
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);

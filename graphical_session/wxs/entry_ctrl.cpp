@@ -65,7 +65,7 @@ EntryCtrl::EntryCtrl
 
 	assert_transaction_type_validity(m_transaction_type);
 
-	m_top_sizer = new wxGridBagSizer();
+	m_top_sizer = new wxGridBagSizer(5, 5);
 	SetSizer(m_top_sizer);
 
 	// Row 0
