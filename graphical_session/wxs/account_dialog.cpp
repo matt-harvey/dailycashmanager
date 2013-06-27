@@ -4,6 +4,7 @@
 #include "account_type_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "frame.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -107,11 +108,45 @@ AccountDialog::AccountDialog
 	m_opening_amount_ctrl(0),
 	m_account(p_account)
 {
-	// TODO HIGH This should throw if both m_account has an ID and the
-	// AccountSuperType of m_account does not match p_account_super_type.
+	if
+	(	m_account.has_id() &&
+		(super_type(m_account.account_type()) != p_account_super_type)
+	)
+	{
+		throw InvalidAccountTypeException
+		(	"AccountType of Account passed to AccountDialog constructor does "
+			"not belong to the AccountSuperType passed to the same "
+			"constructor."
+		);
+	}
 
 	m_top_sizer = new wxGridBagSizer;
 	SetSizer(m_top_sizer);
+
+	// Hack to overcome the fact that right-alignment of wxStaticText
+	// doesn't work.
+	size_t const num_rows = 4;
+	wxString labels[num_rows] =
+	{	account_name_ctrl_label_string(p_account_super_type),
+		account_type_ctrl_label_string(p_account_super_type),
+		account_description_label_string(p_account_super_type),
+		opening_amount_label_string(p_account_super_type)
+	};
+	assert (sizeof(labels) / sizeof(labels[0]) == num_rows);
+	size_t max_label_length = 0;
+	for (size_t i = 0; i != num_rows; ++i)
+	{
+		size_t const length = labels[i].Length();
+		if (max_label_length < length) max_label_length = length;
+	}
+	for (size_t i = 0; i != num_rows; ++i)
+	{
+		assert (max_label_length >= labels[i].Length());
+		size_t const padding = max_label_length - labels[i].Length();
+		wxString temp(padding, ' ');
+		temp += labels[i];
+		labels[i] = temp;
+	}
 
 	int row = 0;
 
@@ -120,7 +155,7 @@ AccountDialog::AccountDialog
 	wxStaticText* name_ctrl_label = new wxStaticText
 	(	this,
 		wxID_ANY,
-		account_name_ctrl_label_string(p_account_super_type),
+		labels[row],
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
@@ -147,7 +182,7 @@ AccountDialog::AccountDialog
 	wxStaticText* account_type_ctrl_label = new wxStaticText
 	(	this,
 		wxID_ANY,
-		account_type_ctrl_label_string(p_account_super_type),
+		labels[row],
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
@@ -173,7 +208,7 @@ AccountDialog::AccountDialog
 	wxStaticText* description_label = new wxStaticText
 	(	this,
 		wxID_ANY,
-		account_description_label_string(p_account_super_type),
+		labels[row],
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_RIGHT
@@ -200,7 +235,7 @@ AccountDialog::AccountDialog
 	wxStaticText* opening_amount_ctrl_label = new wxStaticText
 	(	this,
 		wxID_ANY,
-		opening_amount_label_string(p_account_super_type),
+		labels[row],
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_RIGHT
@@ -253,12 +288,14 @@ AccountDialog::AccountDialog
 void
 AccountDialog::on_ok_button_click(wxCommandEvent& event)
 {
+	(void)event;  // Silence compiler re. unused parameter.
 	// TODO HIGH PRIORITY Implement
 }
 
 void
 AccountDialog::on_cancel_button_click(wxCommandEvent& event)
 {
+	(void)event;  // Silence compiler re. unused parameter.
 	// TODO HIGH PRIORITY Implement
 }
 
