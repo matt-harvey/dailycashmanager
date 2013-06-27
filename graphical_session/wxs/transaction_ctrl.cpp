@@ -232,7 +232,7 @@ TransactionCtrl::TransactionCtrl
 	m_frequency_ctrl = new FrequencyCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(text_box_size.x * 3, text_box_size.y)
+		wxSize(text_box_size.x * 3 + 5, text_box_size.y)
 	);
 	m_top_sizer->Add(m_frequency_ctrl, wxGBPosition(row, 0), wxGBSpan(1, 3));
 	m_date_ctrl = new DateCtrl
