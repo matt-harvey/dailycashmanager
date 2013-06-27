@@ -224,15 +224,70 @@ Frame::on_new_pl_account(wxCommandEvent& event)
 void
 Frame::on_edit_bs_account(wxCommandEvent& event)
 {
+	// TODO Factor out repeated code in the various member functions
+	// that invoke an AccountDialog.
+
 	(void)event;  // Silence compiler re. unused parameter.
-	// TODO HIGH PRIORITY Implement this.
+	vector<Account> accounts;
+	selected_balance_sheet_accounts(accounts);
+	if (accounts.empty())
+	{
+		// TODO HIGH PRIORITY Deal with this... for now, we
+		// just return.
+		return;
+	}
+	assert (accounts.size() >= 1);
+	assert
+	(	super_type(accounts[0].account_type()) ==
+		account_super_type::balance_sheet
+	);
+	AccountDialog account_dialog
+	(	this,
+		accounts[0],
+		account_super_type::balance_sheet
+	);
+	if (account_dialog.ShowModal() == wxID_OK)
+	{
+		// TODO This will obliterate any contents of the TransactionCtrl.
+		// Do we want this? We probably \e do want it to update the
+		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
+		// we don't really want it to obliterate everything else.
+		m_top_panel->update();
+	}
+	return;
 }
 
 void
 Frame::on_edit_pl_account(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	// TODO HIGH PRIORITY Implement this.
+	vector<Account> accounts;
+	selected_pl_accounts(accounts);
+	if (accounts.empty())
+	{
+		// TODO HIGH PRIORITY Deal with this... for now, we just
+		// return.
+		return;
+	}
+	assert (accounts.size() >= 1);
+	assert
+	(	super_type(accounts[0].account_type()) ==
+		account_super_type::pl
+	);
+	AccountDialog account_dialog
+	(	this,
+		accounts[0],
+		account_super_type::pl
+	);
+	if (account_dialog.ShowModal() == wxID_OK)
+	{
+		// TODO This will obliterate any contents of the TransactionCtrl.
+		// Do we want this? We probably \e do want it to update the
+		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
+		// we don't really want it to obliterate everything else.
+		m_top_panel->update();
+	}
+	return;
 }
 
 void
