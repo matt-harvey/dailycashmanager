@@ -17,6 +17,12 @@ namespace gui
 /**
  * A subclass of wxTextCtrl specifically for the entry and validation
  * of wxString representations of jewel::Decimal.
+ *
+ * @todo We are using DecimalValidator in the implementation of this.
+ * But it seems like this is only creating complexity, without providing
+ * any real benefit. Should I just move the behaviour we do require from
+ * DecimalValidator directly into DecimalTextCtrl, and then abolish
+ * DecimalValidator?
  */
 class DecimalTextCtrl: public wxTextCtrl
 {
@@ -33,6 +39,13 @@ public:
 	 * @throws phatbooks::PrecisionException if and only if
 	 * p_amount.places() does not match the inherent precision of
 	 * the EntryCtrl.
+	 *
+	 * WARNING As a side-effect of calling this function, the
+	 * \e parent window of the DecimalTextCtrl will have
+	 * Validate() and TransferDataFromWindow() called on it.
+	 * This is an unfortunate workaround for odd behaviour whereby
+	 * wWidgets does not seem to support these functions being
+	 * called directly on the DecimalTextCtl itself.
 	 */
 	void set_amount(jewel::Decimal const& p_amount);
 

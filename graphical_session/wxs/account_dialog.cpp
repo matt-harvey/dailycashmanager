@@ -23,6 +23,12 @@
 using jewel::Decimal;
 using sqloxx::DatabaseTransaction;
 
+// For debugging
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
+
+
 namespace phatbooks
 {
 namespace gui
@@ -250,12 +256,23 @@ AccountDialog::AccountDialog
 	(	this,
 		wxID_ANY,
 		wxSize(m_name_ctrl->GetSize().x / 2.0, wxDefaultSize.y),
-		(	m_account.has_id()?
-			m_account.commodity().precision():
-			m_account.database_connection().default_commodity().precision()
-		),
+		m_account.database_connection().default_commodity().precision(),
 		false
 	);
+	if (m_account.has_id())
+	{
+		JEWEL_DEBUG_LOG_LOCATION;
+		JEWEL_DEBUG_LOG << "m_account.friendly_opening_balance(): "
+		                << m_account.friendly_opening_balance()
+						<< endl;
+		// TODO HIGH PRIORITY The display here is not actually updating when
+		// we do the following.
+		m_opening_amount_ctrl->
+			set_amount(m_account.friendly_opening_balance());
+		JEWEL_DEBUG_LOG << "m_opening_amount_ctrl->GetValue(): "
+		                << m_opening_amount_ctrl->GetValue()
+						<< endl;
+	}
 	m_top_sizer->
 		Add(m_opening_amount_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 1));
 
