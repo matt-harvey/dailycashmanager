@@ -7,6 +7,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/noncopyable.hpp>
+#include <jewel/decimal.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -18,6 +19,7 @@
 #include <wx/window.h>
 #include <cassert>
 
+using jewel::Decimal;
 using sqloxx::DatabaseTransaction;
 
 namespace phatbooks
@@ -339,12 +341,20 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		);
 	}
 
+
 	temp.save();
 	
+	Decimal opening_amount = m_opening_amount_ctrl->amount();
+	if (super_type(temp.account_type()) == account_super_type::pl)
+	{
+		// TODO Handle small possibility of overflow here.
+		opening_amount = -opening_amount;
+	}
 	OrdinaryJournal objnl = OrdinaryJournal::create_opening_balance_journal
 	(	temp,
-		m_opening_amount_ctrl->amount()
+		opening_amount
 	);
+		
 	objnl.save();
 
 	m_account = temp;

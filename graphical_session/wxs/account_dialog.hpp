@@ -33,10 +33,6 @@ class Frame;
  * is created, the balance sheet AccountListCtrl is not being
  * updated (this may be a bug in Frame or elsewhere rather than
  * in AccountDialog).
- *
- * @todo HIGH PRIORITY We need "manually" to ensure that signs
- * will be the right way around when creating opening balancing
- * Journal from AccountDialog.
  */
 class AccountDialog: public wxDialog, private boost::noncopyable
 {
