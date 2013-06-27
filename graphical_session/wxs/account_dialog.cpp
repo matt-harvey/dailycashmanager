@@ -6,6 +6,7 @@
 #include "frame.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "sizing.hpp"
 #include <boost/noncopyable.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/database_transaction.hpp>
@@ -127,7 +128,7 @@ AccountDialog::AccountDialog
 		);
 	}
 
-	m_top_sizer = new wxGridBagSizer(5, 5);
+	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 
 	int row = 0;
@@ -288,7 +289,7 @@ AccountDialog::AccountDialog
 
 	// Hack to add some space to right.
 	wxStaticText* dummy = new wxStaticText(this, wxID_ANY, wxEmptyString);
-	m_top_sizer->Add(dummy, wxGBPosition(row, 5));
+	m_top_sizer->Add(dummy, wxGBPosition(row, standard_border()));
 
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);

@@ -22,6 +22,7 @@
 #include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
+#include "sizing.hpp"
 #include "top_panel.hpp"
 #include "transaction_type_ctrl.hpp"
 #include "transaction_type.hpp"
@@ -145,7 +146,7 @@ TransactionCtrl::TransactionCtrl
 	size_t row = 0;	
 
 	// Top sizer
-	m_top_sizer = new wxGridBagSizer(5, 5);
+	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 
 	m_transaction_type_ctrl = new TransactionTypeCtrl
@@ -232,7 +233,7 @@ TransactionCtrl::TransactionCtrl
 	m_frequency_ctrl = new FrequencyCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(text_box_size.x * 3 + 5, text_box_size.y)
+		wxSize(text_box_size.x * 3 + standard_gap(), text_box_size.y)
 	);
 	m_top_sizer->Add(m_frequency_ctrl, wxGBPosition(row, 0), wxGBSpan(1, 3));
 	m_date_ctrl = new DateCtrl

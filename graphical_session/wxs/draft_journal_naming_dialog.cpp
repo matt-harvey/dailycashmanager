@@ -3,6 +3,7 @@
 #include "draft_journal_naming_dialog.hpp"
 #include "draft_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "sizing.hpp"
 #include "transaction_ctrl.hpp"
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -42,12 +43,13 @@ DraftJournalNamingDialog::DraftJournalNamingDialog
 	m_database_connection(p_database_connection),
 	m_draft_journal_name("")
 {
-	m_top_sizer = new wxFlexGridSizer(2, 4, wxSize(10, 10));
+	m_top_sizer =
+		new wxFlexGridSizer(2, 4, wxSize(standard_gap(), standard_gap()));
 	SetSizer(m_top_sizer);
 
 	// Row 0
 
-	m_top_sizer->AddSpacer(10);
+	m_top_sizer->AddSpacer(standard_border());
 
 	wxStaticText* label = new wxStaticText
 	(	this,
@@ -59,8 +61,8 @@ DraftJournalNamingDialog::DraftJournalNamingDialog
 	);
 	m_top_sizer->Add(label);
 	
-	m_top_sizer->AddSpacer(10);
-	m_top_sizer->AddSpacer(10);
+	m_top_sizer->AddSpacer(standard_border());
+	m_top_sizer->AddSpacer(standard_border());
 
 	// Row 1
 

@@ -6,6 +6,7 @@
 #include "frame.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "sizing.hpp"
 #include "transaction_ctrl.hpp"
 #include <boost/optional.hpp>
 #include <jewel/optional.hpp>
@@ -63,11 +64,13 @@ TopPanel::configure_account_lists()
 	);
 	m_top_sizer->Add
 	(	m_bs_account_list,
-		wxSizerFlags(2).Expand().Border(wxNORTH | wxSOUTH | wxWEST, 5)
+		wxSizerFlags(2).Expand().
+			Border(wxNORTH | wxSOUTH | wxWEST, standard_border())
 	);
 	m_top_sizer->Add
 	(	m_pl_account_list,
-		wxSizerFlags(3).Expand().Border(wxNORTH | wxSOUTH | wxWEST, 5)
+		wxSizerFlags(3).Expand().
+			Border(wxNORTH | wxSOUTH | wxWEST, standard_border())
 	);
 	return;
 }
@@ -126,7 +129,7 @@ TopPanel::configure_transaction_ctrl
 	m_top_sizer->Add
 	(	m_transaction_ctrl,
 		wxSizerFlags(4).Expand().
-			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, 15)
+			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 3)
 	);
 	if (old)
 	{
