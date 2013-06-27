@@ -227,7 +227,7 @@ AccountDialog::AccountDialog
 		wxID_CANCEL,
 		wxString("&Cancel"),
 		wxDefaultPosition,
-		m_name_ctrl->GetSize()
+		wxSize(wxDefaultSize.x, m_name_ctrl->GetSize().y)
 	);
 	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
 
@@ -236,7 +236,7 @@ AccountDialog::AccountDialog
 		wxID_OK,
 		wxString("&Save"),
 		wxDefaultPosition,
-		m_name_ctrl->GetSize()
+		wxSize(wxDefaultSize.x, m_name_ctrl->GetSize().y)
 	);
 	m_top_sizer->Add
 	(	m_ok_button,
@@ -244,6 +244,10 @@ AccountDialog::AccountDialog
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
+
+	m_top_sizer->Fit(this);
+	Fit();
+	Layout();
 }
 
 void
