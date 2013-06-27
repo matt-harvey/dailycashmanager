@@ -123,31 +123,6 @@ AccountDialog::AccountDialog
 	m_top_sizer = new wxGridBagSizer;
 	SetSizer(m_top_sizer);
 
-	// Hack to overcome the fact that right-alignment of wxStaticText
-	// doesn't work.
-	size_t const num_rows = 4;
-	wxString labels[num_rows] =
-	{	account_name_ctrl_label_string(p_account_super_type),
-		account_type_ctrl_label_string(p_account_super_type),
-		account_description_label_string(p_account_super_type),
-		opening_amount_label_string(p_account_super_type)
-	};
-	assert (sizeof(labels) / sizeof(labels[0]) == num_rows);
-	size_t max_label_length = 0;
-	for (size_t i = 0; i != num_rows; ++i)
-	{
-		size_t const length = labels[i].Length();
-		if (max_label_length < length) max_label_length = length;
-	}
-	for (size_t i = 0; i != num_rows; ++i)
-	{
-		assert (max_label_length >= labels[i].Length());
-		size_t const padding = max_label_length - labels[i].Length();
-		wxString temp(padding, ' ');
-		temp += labels[i];
-		labels[i] = temp;
-	}
-
 	int row = 0;
 
 	// Row 0
@@ -155,12 +130,12 @@ AccountDialog::AccountDialog
 	wxStaticText* name_ctrl_label = new wxStaticText
 	(	this,
 		wxID_ANY,
-		labels[row],
+		account_name_ctrl_label_string(p_account_super_type),
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
 	);
-	m_top_sizer->Add(name_ctrl_label, wxGBPosition(row, 0));
+	m_top_sizer->Add(name_ctrl_label, wxGBPosition(row, 0), wxDefaultSpan, wxALIGN_RIGHT);
 	wxString name_tmp = wxEmptyString;
 	if (m_account.has_id())
 	{
@@ -182,12 +157,12 @@ AccountDialog::AccountDialog
 	wxStaticText* account_type_ctrl_label = new wxStaticText
 	(	this,
 		wxID_ANY,
-		labels[row],
+		account_type_ctrl_label_string(p_account_super_type),
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_RIGHT  // WARNING This doesn't work, due to bug in wxWidgets
 	);
-	m_top_sizer->Add(account_type_ctrl_label, wxGBPosition(row, 0));
+	m_top_sizer->Add(account_type_ctrl_label, wxGBPosition(row, 0), wxDefaultSpan, wxALIGN_RIGHT);
 	m_account_type_ctrl = new AccountTypeCtrl
 	(	this,
 		wxID_ANY,
@@ -208,12 +183,12 @@ AccountDialog::AccountDialog
 	wxStaticText* description_label = new wxStaticText
 	(	this,
 		wxID_ANY,
-		labels[row],
+		account_description_label_string(p_account_super_type),
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_RIGHT
 	);
-	m_top_sizer->Add(description_label, wxGBPosition(row, 0));
+	m_top_sizer->Add(description_label, wxGBPosition(row, 0), wxDefaultSpan, wxALIGN_RIGHT);
 	wxString description_tmp = wxEmptyString;
 	if (m_account.has_id())
 	{
@@ -235,12 +210,12 @@ AccountDialog::AccountDialog
 	wxStaticText* opening_amount_ctrl_label = new wxStaticText
 	(	this,
 		wxID_ANY,
-		labels[row],
+		opening_amount_label_string(p_account_super_type),
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_RIGHT
 	);
-	m_top_sizer->Add(opening_amount_ctrl_label, wxGBPosition(row, 0));
+	m_top_sizer->Add(opening_amount_ctrl_label, wxGBPosition(row, 0), wxDefaultSpan, wxALIGN_RIGHT);
 	m_opening_amount_ctrl = new DecimalTextCtrl
 	(	this,
 		wxID_ANY,
@@ -264,7 +239,7 @@ AccountDialog::AccountDialog
 		wxDefaultPosition,
 		wxSize(wxDefaultSize.x, m_name_ctrl->GetSize().y)
 	);
-	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
+	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0), wxDefaultSpan, wxALIGN_LEFT);
 
 	m_ok_button = new wxButton
 	(	this,
