@@ -147,13 +147,13 @@ AccountDialog::AccountDialog
 		account_name_ctrl_label_string(p_account_super_type),
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_RIGHT | wxALIGN_CENTRE
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
 	(	name_ctrl_label,
 		wxGBPosition(row, 1),
 		wxDefaultSpan,
-		wxALIGN_RIGHT | wxALIGN_CENTRE
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	wxString name_tmp = wxEmptyString;
 	if (m_account.has_id())
@@ -179,13 +179,13 @@ AccountDialog::AccountDialog
 		account_type_ctrl_label_string(p_account_super_type),
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_RIGHT | wxALIGN_CENTRE
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
 	(	account_type_ctrl_label,
 		wxGBPosition(row, 1),
 		wxDefaultSpan,
-		wxALIGN_RIGHT | wxALIGN_CENTRE
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_account_type_ctrl = new AccountTypeCtrl
 	(	this,
@@ -211,13 +211,13 @@ AccountDialog::AccountDialog
 		account_description_label_string(p_account_super_type),
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_RIGHT | wxALIGN_CENTRE
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
 	(	description_label,
 		wxGBPosition(row, 1),
 		wxDefaultSpan,
-		wxALIGN_RIGHT | wxALIGN_CENTRE
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	wxString description_tmp = wxEmptyString;
 	if (m_account.has_id())
@@ -244,13 +244,13 @@ AccountDialog::AccountDialog
 		opening_amount_label_string(p_account_super_type),
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_RIGHT | wxALIGN_CENTRE
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
 	(	opening_amount_ctrl_label,
 		wxGBPosition(row, 1),
 		wxDefaultSpan,
-		wxALIGN_RIGHT | wxALIGN_CENTRE
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_opening_amount_ctrl = new DecimalTextCtrl
 	(	this,
