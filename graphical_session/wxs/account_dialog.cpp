@@ -333,7 +333,11 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		wx_to_bstring(m_name_ctrl->GetValue().Trim());
 	if (Account::exists(temp.database_connection(), prospective_name))
 	{
-		if (m_account.has_id() && (m_account.name() == prospective_name))
+		bool const name_matches =
+		(	bstring_to_wx(m_account.name()).Lower() ==
+			bstring_to_wx(prospective_name).Lower()
+		);
+		if (m_account.has_id() && name_matches)
 		{
 			// Then everything's OK, the user has just kept the original
 			// name.
