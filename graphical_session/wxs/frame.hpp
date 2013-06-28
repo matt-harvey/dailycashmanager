@@ -59,8 +59,8 @@ private:
 	static int const s_new_bs_account_id = wxID_HIGHEST + 1;
 	static int const s_new_pl_account_id = s_new_bs_account_id + 1;
 	static int const s_new_transaction_id = s_new_pl_account_id + 1;
-	static int const s_edit_pl_account_id = s_new_transaction_id + 1;
-	static int const s_edit_bs_account_id = s_edit_pl_account_id + 1;
+	static int const s_edit_bs_account_id = s_new_transaction_id + 1;
+	static int const s_edit_pl_account_id = s_edit_bs_account_id + 1;
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	TopPanel* m_top_panel;

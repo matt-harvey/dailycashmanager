@@ -261,17 +261,8 @@ AccountDialog::AccountDialog
 	);
 	if (m_account.has_id())
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
-		JEWEL_DEBUG_LOG << "m_account.friendly_opening_balance(): "
-		                << m_account.friendly_opening_balance()
-						<< endl;
-		// TODO HIGH PRIORITY The display here is not actually updating when
-		// we do the following.
 		m_opening_amount_ctrl->
 			set_amount(m_account.friendly_opening_balance());
-		JEWEL_DEBUG_LOG << "m_opening_amount_ctrl->GetValue(): "
-		                << m_opening_amount_ctrl->GetValue()
-						<< endl;
 	}
 	m_top_sizer->
 		Add(m_opening_amount_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 1));
@@ -337,15 +328,23 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 {
 	DatabaseTransaction transaction(m_account.database_connection());
 
-	Account temp(m_account.database_connection());
+	Account temp = m_account;
 	BString const prospective_name =
 		wx_to_bstring(m_name_ctrl->GetValue().Trim());
 	if (Account::exists(temp.database_connection(), prospective_name))
 	{
-		wxMessageBox
-		(	"There is already an account or category with this name."
-		);
-		return false;
+		if (m_account.has_id() && (m_account.name() == prospective_name))
+		{
+			// Then everything's OK, the user has just kept the original
+			// name.
+		}
+		else
+		{
+			wxMessageBox
+			(	"There is already an account or category with this name."
+			);
+			return false;
+		}
 	}
 	if (prospective_name.IsEmpty())
 	{
@@ -363,7 +362,6 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		);
 	}
 
-
 	temp.save();
 	
 	Decimal opening_amount = m_opening_amount_ctrl->amount();
@@ -376,7 +374,6 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	(	temp,
 		opening_amount
 	);
-		
 	objnl.save();
 
 	m_account = temp;

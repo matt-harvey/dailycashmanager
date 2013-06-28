@@ -28,6 +28,15 @@ class Frame;
 /**
  * Dialog to facilitate creation of new Accounts and editing of details
  * of existing Accounts.
+ *
+ * @todo We don't want the user to be able to choose the Equity
+ * AccountType. Also, we don't want the user to be able to change a
+ * P&L Account to account_type::pure_envelope if it has actual
+ * transactions recorded against it. In fact, if the user is editing
+ * an existing Account, it probably doesn't make a lot of sense to allow
+ * them to change the existing AccountType at all. It would be only very
+ * rarely that the user would want to change this anyway; enabling them
+ * to change it may just be confusing.
  */
 class AccountDialog: public wxDialog, private boost::noncopyable
 {

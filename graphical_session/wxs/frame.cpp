@@ -147,6 +147,7 @@ Frame::Frame
 	);
 	Connect
 	(	s_edit_pl_account_id,
+		wxEVT_COMMAND_MENU_SELECTED,
 		wxCommandEventHandler(Frame::on_edit_pl_account)
 	);
 	Connect
@@ -232,8 +233,11 @@ Frame::on_edit_bs_account(wxCommandEvent& event)
 	selected_balance_sheet_accounts(accounts);
 	if (accounts.empty())
 	{
-		// TODO HIGH PRIORITY Deal with this... for now, we
-		// just return.
+		// TODO HIGH PRIORITY Deal with this in a more user-friendly
+		// way. For now, we just do this.
+		wxMessageBox
+		(	"Account to edit must first be selected in main window."
+		);
 		return;
 	}
 	assert (accounts.size() >= 1);
@@ -265,8 +269,11 @@ Frame::on_edit_pl_account(wxCommandEvent& event)
 	selected_pl_accounts(accounts);
 	if (accounts.empty())
 	{
-		// TODO HIGH PRIORITY Deal with this... for now, we just
-		// return.
+		// TODO HIGH PRIORITY Deal with this in a more user-friendly
+		// way. For now, we just do this.
+		wxMessageBox
+		(	"Category to edit must first be selected in main window."
+		);
 		return;
 	}
 	assert (accounts.size() >= 1);

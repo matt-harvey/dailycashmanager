@@ -59,31 +59,17 @@ DecimalTextCtrl::DecimalTextCtrl
 void
 DecimalTextCtrl::set_amount(Decimal const& p_amount)
 {
-	JEWEL_DEBUG_LOG << "Entered DecimalTextCtrl::set_amount" << endl;
-	JEWEL_DEBUG_LOG << "having passed "
-	                << p_amount
-					<< " to p_amount"
-					<< endl;
 	if (p_amount.places() != m_precision)
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
 		throw PrecisionException
 		(	"Precision of Decimal amount does not match the precision "
 			"expected by the DecimalTextCtrl."
 		);
 	}
-	JEWEL_DEBUG_LOG_LOCATION;
 	assert (p_amount.places() == m_precision);
-	JEWEL_DEBUG_LOG_LOCATION;
 	wxString const amount_string =
 		finformat_wx(p_amount, locale(), m_print_dash_for_zero);
-	JEWEL_DEBUG_LOG << "About to set DecimalTextCtrl value to "
-	                << amount_string
-					<< endl;
 	SetValue(amount_string);
-	JEWEL_DEBUG_LOG_LOCATION;
-	JEWEL_DEBUG_LOG << "Value of DecimalTextCtrl is now "
-	                << GetValue() << endl;
 
 	// TODO This really sucks. We are validating the entire parent
 	// window as a side-effect of setting the value of just one
