@@ -51,7 +51,7 @@ DraftJournalListCtrl::update(UserDraftJournalReader const& p_reader)
 
 	// Now (re)draw
 	ClearAll();
-	InsertColumn(s_name_col, "Name", wxLIST_FORMAT_LEFT);
+	InsertColumn(s_name_col, "Recurring transaction", wxLIST_FORMAT_LEFT);
 	InsertColumn(s_frequency_col, "Frequency", wxLIST_FORMAT_LEFT);
 	InsertColumn(s_next_date_col, "Next date", wxLIST_FORMAT_RIGHT);
 	
@@ -115,7 +115,7 @@ DraftJournalListCtrl::update(UserDraftJournalReader const& p_reader)
 
 	// Configure column widths
 	SetColumnWidth(s_name_col, wxLIST_AUTOSIZE_USEHEADER);
-	SetColumnWidth(s_name_col, max(GetColumnWidth(s_name_col), 200));
+	SetColumnWidth(s_name_col, max(GetColumnWidth(s_name_col), 400));
 	SetColumnWidth(s_frequency_col, wxLIST_AUTOSIZE_USEHEADER);
 	SetColumnWidth(s_next_date_col, wxLIST_AUTOSIZE);
 

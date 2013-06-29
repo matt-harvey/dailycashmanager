@@ -53,7 +53,7 @@ TopPanel::TopPanel
 	m_top_sizer->Add
 	(	m_right_column_sizer,
 		wxSizerFlags(4).Expand().
-			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 3)
+			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
 	);
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
@@ -141,8 +141,8 @@ TopPanel::configure_transaction_ctrl
 	);
 	m_right_column_sizer->Add
 	(	m_transaction_ctrl,
-		wxSizerFlags(4).Expand().
-			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 3)
+		wxSizerFlags(6).Expand().
+			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
 	);
 	if (old)
 	{
@@ -171,8 +171,8 @@ TopPanel::configure_draft_journal_list_ctrl()
 	);
 	m_right_column_sizer->Add
 	(	m_draft_journal_list,
-		wxSizerFlags(4).Expand().
-			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 3)
+		wxSizerFlags(1).Expand().
+			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
 	);
 	if (old)
 	{

@@ -50,6 +50,8 @@ class TopPanel;
  * showing the amount of imbalance somewhere in the TransactionCtrl, and
  * perhaps automatically putting the imbalanced amount in the last Entry
  * (although that might result in surprising behaviour for this user?).
+ *
+ * @todo This needs to be able to scroll.
  */
 class TransactionCtrl: public wxPanel
 {
