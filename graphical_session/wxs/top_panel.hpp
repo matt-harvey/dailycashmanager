@@ -20,6 +20,7 @@ namespace gui
 {
 
 class AccountListCtrl;
+class DraftJournalListCtrl;
 class Frame;
 class TransactionCtrl;
 
@@ -82,11 +83,15 @@ private:
 	 */
 	void configure_transaction_ctrl();
 
+	void configure_draft_journal_list_ctrl();
+
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;
+	wxBoxSizer* m_right_column_sizer;
 	AccountListCtrl* m_bs_account_list;
 	AccountListCtrl* m_pl_account_list;
 	TransactionCtrl* m_transaction_ctrl;
+	DraftJournalListCtrl* m_draft_journal_list;
 };
 
 

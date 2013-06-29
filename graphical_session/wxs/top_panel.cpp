@@ -3,6 +3,8 @@
 #include "top_panel.hpp"
 #include "account.hpp"
 #include "account_list_ctrl.hpp"
+#include "draft_journal_list_ctrl.hpp"
+#include "draft_journal_reader.hpp"
 #include "frame.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -37,13 +39,22 @@ TopPanel::TopPanel
 	),
 	m_database_connection(p_database_connection),
 	m_top_sizer(0),
+	m_right_column_sizer(0),
 	m_bs_account_list(0),
 	m_pl_account_list(0),
-	m_transaction_ctrl(0)
+	m_transaction_ctrl(0),
+	m_draft_journal_list(0)
 {
 	m_top_sizer = new wxBoxSizer(wxHORIZONTAL);
+	m_right_column_sizer = new wxBoxSizer(wxVERTICAL);
 	configure_account_lists();
 	configure_transaction_ctrl();
+	configure_draft_journal_list_ctrl();
+	m_top_sizer->Add
+	(	m_right_column_sizer,
+		wxSizerFlags(4).Expand().
+			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 3)
+	);
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -79,6 +90,7 @@ void
 TopPanel::configure_transaction_ctrl()
 {
 	assert (m_top_sizer);
+	assert (m_right_column_sizer);
 	vector<Account> balance_sheet_accounts;
 	selected_balance_sheet_accounts(balance_sheet_accounts);
 	vector<Account> pl_accounts;
@@ -115,9 +127,10 @@ TopPanel::configure_transaction_ctrl
 		}
 	}
 	TransactionCtrl* old = 0;
-	if (m_top_sizer && m_transaction_ctrl)
+	assert (m_right_column_sizer);
+	if (m_transaction_ctrl)
 	{
-		m_top_sizer->Detach(m_transaction_ctrl);
+		m_right_column_sizer->Detach(m_transaction_ctrl);
 		old = m_transaction_ctrl;
 	}
 	m_transaction_ctrl = new TransactionCtrl
@@ -126,8 +139,38 @@ TopPanel::configure_transaction_ctrl
 		p_pl_accounts,
 		m_database_connection
 	);
-	m_top_sizer->Add
+	m_right_column_sizer->Add
 	(	m_transaction_ctrl,
+		wxSizerFlags(4).Expand().
+			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 3)
+	);
+	if (old)
+	{
+		old->Destroy();
+		old = 0;
+	}
+	Layout();
+	return;
+}
+
+void
+TopPanel::configure_draft_journal_list_ctrl()
+{
+	DraftJournalListCtrl* old = 0;
+	assert (m_right_column_sizer);
+	if (m_draft_journal_list)
+	{
+		m_right_column_sizer->Detach(m_draft_journal_list);
+		old = m_draft_journal_list;
+	}
+	UserDraftJournalReader const reader(m_database_connection);
+	m_draft_journal_list = new DraftJournalListCtrl
+	(	this,
+		wxDefaultSize,
+		reader
+	);
+	m_right_column_sizer->Add
+	(	m_draft_journal_list,
 		wxSizerFlags(4).Expand().
 			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 3)
 	);
