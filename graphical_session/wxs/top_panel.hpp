@@ -29,10 +29,6 @@ class TransactionCtrl;
 
 /**
  * Top level panel intended as immediate child of Frame.
- *
- * @todo HIGH PRIORITY Ensure DraftJournalListCtrl is updated when
- * required. Ensure it is updated and positioned in the correct order
- * relative to TransactionCtrl.
  */
 class TopPanel: public wxPanel
 {

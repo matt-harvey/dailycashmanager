@@ -203,6 +203,7 @@ TopPanel::update()
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
 	configure_transaction_ctrl();
+	configure_draft_journal_list_ctrl();
 	return;
 }
 
