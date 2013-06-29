@@ -4,6 +4,7 @@
 #include "account.hpp"
 #include "account_dialog.hpp"
 #include "account_list_ctrl.hpp"
+#include "application.hpp"
 #include "app.hpp"
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
@@ -167,11 +168,14 @@ Frame::Frame
 void
 Frame::on_about(wxCommandEvent& event)
 {
-	// TODO Put proper messages here
-	wxString msg;
-	msg.Printf("Hello and welcome to %s", wxVERSION_STRING);
-	wxMessageBox(msg, "About Minimal", wxOK | wxICON_INFORMATION, this);
 	(void)event;  // Silence compiler warning re. unused parameter.
+	// TODO Put better message here
+	wxString msg;
+	msg.Printf
+	(	"Hello and welcome to %s",
+		bstring_to_wx(Application::application_name())
+	);
+	wxMessageBox(msg);
 	return;
 }
 
