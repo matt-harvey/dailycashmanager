@@ -11,7 +11,6 @@
 #include <boost/optional.hpp>
 #include <wx/listctrl.h>
 #include <wx/string.h>
-#include <wx/wx.h>
 #include <algorithm>
 #include <cassert>
 #include <vector>
@@ -181,7 +180,8 @@ AccountListCtrl::update
 	{
 		SetItemState
 		(	selected_rows[k],
-			wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED
+			wxLIST_STATE_SELECTED,
+			wxLIST_STATE_SELECTED
 		);
 	}
 

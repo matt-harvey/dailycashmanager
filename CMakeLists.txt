@@ -184,6 +184,7 @@ set (gui_files
 	 graphical_session/wxs/decimal_text_ctrl.cpp
 	 graphical_session/wxs/decimal_validator.cpp
 	 graphical_session/wxs/decimal_variant_data.cpp
+	 graphical_session/wxs/draft_journal_list_ctrl.cpp
 	 graphical_session/wxs/draft_journal_naming_dialog.cpp
 	 graphical_session/wxs/entry_ctrl.cpp
 	 graphical_session/wxs/entry_list_ctrl.cpp

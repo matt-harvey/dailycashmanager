@@ -11,6 +11,10 @@ namespace phatbooks
 {
 
 
+/**
+ * Reads all DraftJournals including "system" DraftJournals which it is
+ * not intended for the user to edit directly.
+ */
 class DraftJournalReader:
 	public sqloxx::Reader<DraftJournal, PhatbooksDatabaseConnection>
 {
@@ -21,6 +25,10 @@ public:
 };
 
 
+/**
+ * Reads all DraftJournals except "system" DraftJournals which it is not
+ * intended for the user to edit directly.
+ */
 class UserDraftJournalReader:
 	public sqloxx::Reader<DraftJournal, PhatbooksDatabaseConnection>
 {
