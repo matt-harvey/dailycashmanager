@@ -99,12 +99,12 @@ Frame::Frame
 	// Configure "edit" menu
 	m_edit_menu->Append
 	(	s_edit_bs_account_id,
-		wxString("Edit &account"),
+		wxString("Edit selected &account"),
 		wxString("Edit an exising asset or liability account")
 	);
 	m_edit_menu->Append
 	(	s_edit_pl_account_id,
-		wxString("Edit &category"),
+		wxString("Edit selected &category"),
 		wxString("Edit an existing revenue or expenditure category")
 	);
 	m_menu_bar->Append(m_edit_menu, wxString("&Edit"));
