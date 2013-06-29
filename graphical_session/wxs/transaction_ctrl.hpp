@@ -37,10 +37,6 @@ class TopPanel;
 /**
  * Dialog in which user creates a new transaction (i.e. Journal).
  *
- * @todo Ensure Journal balances.
- *
- * @todo Provide option to save as Draft, Recurring or etc. etc..
- *
  * @todo When the update the TopPanel after posting or cancelling Journal
  * from TransactionCtrl, there is flicker. This is because we are redrawing
  * the entire TopPanel from scratch. We could probably get rid of the flicker
@@ -48,12 +44,12 @@ class TopPanel;
  *
  * @todo Ensure this can handle situation where insufficient default
  * Accounts are available.
- * 
- * @todo Handle case where Journal doesn't balance - or else structure
- * things so that this is impossible.
  *
- * @todo HIGH PRIORITY. Split transactions are not being posted properly.
- * Entire amount is getting posted to the 0th Entry in the EntryCtrl.
+ * @todo Make it so that it is easier for the user to balance the Journal.
+ * Things that could facilitate this include enabling simple arithmetic,
+ * showing the amount of imbalance somewhere in the TransactionCtrl, and
+ * perhaps automatically putting the imbalanced amount in the last Entry
+ * (although that might result in surprising behaviour for this user?).
  */
 class TransactionCtrl: public wxPanel
 {
@@ -62,6 +58,18 @@ public:
 	/**
 	 * All Accounts in p_accounts should be associated with the same
 	 * PhatbooksDatabaseConnection.
+	 *
+	 * Note, with the vectors of Accounts passed to p_balance_sheet_accounts
+	 * and p_pl_accounts, not every Account in these vectors will necessarily
+	 * be used. If both vectors are non-empty then only the 0th Account
+	 * in each vector will be used. If one of the vectors is empty,
+	 * then the front 2 Accounts in the other vector will be used, and that's
+	 * all.
+	 *
+	 * @todo This constructor is entirely non-obvious in the way it
+	 * behaves. Instead of passing two vectors, we would expect to pass two
+	 * Accounts, one the source Account and the other the destination
+	 * Account.
 	 *
 	 * @param p_parent parent panel
 	 *
