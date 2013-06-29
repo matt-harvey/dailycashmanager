@@ -53,7 +53,7 @@ TopPanel::TopPanel
 	m_top_sizer->Add
 	(	m_right_column_sizer,
 		wxSizerFlags(4).Expand().
-			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
+			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border())
 	);
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
@@ -169,11 +169,7 @@ TopPanel::configure_draft_journal_list_ctrl()
 		wxDefaultSize,
 		reader
 	);
-	m_right_column_sizer->Add
-	(	m_draft_journal_list,
-		wxSizerFlags(1).Expand().
-			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
-	);
+	m_right_column_sizer->Add(m_draft_journal_list, wxSizerFlags(1).Expand());
 	if (old)
 	{
 		old->Destroy();
