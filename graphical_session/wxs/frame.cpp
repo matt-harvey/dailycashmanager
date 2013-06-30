@@ -50,12 +50,12 @@ Frame::Frame
 #		endif
 	),
 	m_database_connection(p_database_connection),
-	m_top_panel(0),
 	m_menu_bar(0),
 	m_file_menu(0),
 	m_new_menu(0),
 	m_edit_menu(0),
-	m_help_menu(0)
+	m_help_menu(0),
+	m_top_panel(0)
 {
 	// Set the frame icon
 	// TODO I should use SetIcons to associate several icons of

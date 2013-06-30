@@ -63,13 +63,14 @@ private:
 	static int const s_edit_pl_account_id = s_edit_bs_account_id + 1;
 
 	PhatbooksDatabaseConnection& m_database_connection;
-	TopPanel* m_top_panel;
 
 	wxMenuBar* m_menu_bar;
 	wxMenu* m_file_menu;
 	wxMenu* m_new_menu;
 	wxMenu* m_edit_menu;
 	wxMenu* m_help_menu;
+
+	TopPanel* m_top_panel;
 };
 
 

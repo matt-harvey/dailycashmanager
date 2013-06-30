@@ -12,7 +12,10 @@
 #include "transaction_ctrl.hpp"
 #include <boost/optional.hpp>
 #include <jewel/optional.hpp>
-#include <wx/wx.h>
+#include <wx/notebook.h>
+#include <wx/panel.h>
+#include <wx/sizer.h>
+#include <wx/string.h>
 #include <cassert>
 #include <vector>
 
@@ -39,6 +42,9 @@ TopPanel::TopPanel
 	),
 	m_database_connection(p_database_connection),
 	m_top_sizer(0),
+	m_notebook(0),
+	m_notebook_page_1(0),
+	m_notebook_page_2(0),
 	m_right_column_sizer(0),
 	m_bs_account_list(0),
 	m_pl_account_list(0),
@@ -46,43 +52,69 @@ TopPanel::TopPanel
 	m_draft_journal_list(0)
 {
 	m_top_sizer = new wxBoxSizer(wxHORIZONTAL);
+	m_notebook = new wxNotebook
+	(	this,
+		wxID_ANY,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxNB_TOP
+	);
 	m_right_column_sizer = new wxBoxSizer(wxVERTICAL);
-	configure_account_lists();
-	configure_transaction_ctrl();
-	configure_draft_journal_list_ctrl();
+	m_top_sizer->Add
+	(	m_notebook,
+		wxSizerFlags(6).Expand().
+			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border())
+	);
+	m_notebook_page_1 = new wxPanel(m_notebook, wxID_ANY);
+	m_notebook_page_2 = new wxPanel(m_notebook, wxID_ANY);
+	m_notebook->AddPage(m_notebook_page_1, wxString("Balances"), true);
+	m_notebook->AddPage(m_notebook_page_2, wxString("Transactions"), false);
 	m_top_sizer->Add
 	(	m_right_column_sizer,
 		wxSizerFlags(4).Expand().
 			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border())
 	);
+	configure_account_lists();
+	configure_transaction_ctrl();
+	configure_draft_journal_list_ctrl();
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
 	Layout();
 }
 
+// TODO We have no consistent convention here about what is "configure" and
+// what is "update", and when each such function gets called (i.e. once, or
+// every update, or...?).
+
 void
 TopPanel::configure_account_lists()
 {
-	assert (m_top_sizer);
+	assert (m_notebook_page_1);
 	m_bs_account_list = AccountListCtrl::create_balance_sheet_account_list
-	(	this,
+	(	m_notebook_page_1,
 		m_database_connection
 	);
 	m_pl_account_list = AccountListCtrl::create_pl_account_list
-	(	this,
+	(	m_notebook_page_1,
 		m_database_connection
 	);
-	m_top_sizer->Add
+	wxBoxSizer* page_1_sizer = new wxBoxSizer(wxHORIZONTAL);
+	page_1_sizer->Add
 	(	m_bs_account_list,
 		wxSizerFlags(2).Expand().
 			Border(wxNORTH | wxSOUTH | wxWEST, standard_border())
 	);
-	m_top_sizer->Add
+	page_1_sizer->Add
 	(	m_pl_account_list,
 		wxSizerFlags(3).Expand().
 			Border(wxNORTH | wxSOUTH | wxWEST, standard_border())
 	);
+	m_notebook_page_1->SetSizer(page_1_sizer);
+	page_1_sizer->Fit(m_notebook_page_1);
+	page_1_sizer->SetSizeHints(m_notebook_page_1);
+	m_notebook_page_1->Fit();
+	Layout();
 	return;
 }
 

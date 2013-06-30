@@ -4,6 +4,7 @@
 #define GUARD_top_panel_hpp
 
 #include "account.hpp"
+#include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <vector>
@@ -87,6 +88,9 @@ private:
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;
+	wxNotebook* m_notebook;
+	wxPanel* m_notebook_page_1;
+	wxPanel* m_notebook_page_2;
 	wxBoxSizer* m_right_column_sizer;
 	AccountListCtrl* m_bs_account_list;
 	AccountListCtrl* m_pl_account_list;
