@@ -22,6 +22,7 @@ namespace gui
 
 class AccountListCtrl;
 class DraftJournalListCtrl;
+class EntryListCtrl;
 class Frame;
 class TransactionCtrl;
 
@@ -53,9 +54,20 @@ public:
 	void selected_pl_accounts(std::vector<Account>& out) const;
 
 	/**
-	 * Update the display to reflect current state of database.
+	 * Update the display to reflect current state of database, after
+	 * saving of p_saved_object.
 	 */
-	void update();
+	void update_for(DraftJournal const& p_saved_object);
+	void update_for(OrdinaryJournal const& p_saved_object);
+	void update_for(Account const& p_saved_object);
+
+	/**
+	 * Configure the TransactionCtrl to reflect the currently selected
+	 * Accounts (if any).
+	 *
+	 * @todo What if fewer than 2 Accounts are selected?
+	 */
+	void configure_transaction_ctrl();
 
 	/**
 	 * Configure the TransactionCtrl to reflect the Accounts passed in the
@@ -76,13 +88,7 @@ private:
 
 	void configure_account_lists();
 
-	/**
-	 * Configure the TransactionCtrl to reflect the currently selected
-	 * Accounts (if any).
-	 *
-	 * @todo What if fewer than 2 Accounts are selected?
-	 */
-	void configure_transaction_ctrl();
+	void configure_entry_list();
 
 	void configure_draft_journal_list_ctrl();
 
@@ -94,6 +100,7 @@ private:
 	wxBoxSizer* m_right_column_sizer;
 	AccountListCtrl* m_bs_account_list;
 	AccountListCtrl* m_pl_account_list;
+	EntryListCtrl* m_entry_list;
 	TransactionCtrl* m_transaction_ctrl;
 	DraftJournalListCtrl* m_draft_journal_list;
 };

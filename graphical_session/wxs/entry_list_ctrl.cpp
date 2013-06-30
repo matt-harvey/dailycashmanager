@@ -12,6 +12,7 @@
 #include "phatbooks_database_connection.hpp"
 #include <boost/lexical_cast.hpp>
 #include <jewel/debug_log.hpp>
+#include <wx/gdicmn.h>
 #include <wx/progdlg.h>
 #include <vector>
 #include <string>
@@ -74,7 +75,7 @@ EntryListCtrl::EntryListCtrl
 		wxID_ANY,
 		wxDefaultPosition,
 		wxSize
-		(	p_parent->GetClientSize().GetX() / 2,
+		(	p_parent->GetClientSize().GetX(),
 			p_parent->GetClientSize().GetY()
 		),
 		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE

@@ -204,7 +204,7 @@ Frame::on_new_bs_account(wxCommandEvent& event)
 		// Do we want this? We probably \e do want it to update the
 		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
 		// we don't really want it to obliterate everything else.
-		m_top_panel->update();
+		m_top_panel->update_for(account);
 	}
 	return;
 }
@@ -221,7 +221,7 @@ Frame::on_new_pl_account(wxCommandEvent& event)
 		// Do we want this? We probably \e do want it to update the
 		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
 		// we don't really want it to obliterate everything else.
-		m_top_panel->update();
+		m_top_panel->update_for(account);
 	}
 	return;
 }
@@ -245,13 +245,14 @@ Frame::on_edit_bs_account(wxCommandEvent& event)
 		return;
 	}
 	assert (accounts.size() >= 1);
+	Account account = accounts[0];
 	assert
-	(	super_type(accounts[0].account_type()) ==
+	(	super_type(account.account_type()) ==
 		account_super_type::balance_sheet
 	);
 	AccountDialog account_dialog
 	(	this,
-		accounts[0],
+		account,
 		account_super_type::balance_sheet
 	);
 	if (account_dialog.ShowModal() == wxID_OK)
@@ -260,7 +261,7 @@ Frame::on_edit_bs_account(wxCommandEvent& event)
 		// Do we want this? We probably \e do want it to update the
 		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
 		// we don't really want it to obliterate everything else.
-		m_top_panel->update();
+		m_top_panel->update_for(account);
 	}
 	return;
 }
@@ -281,13 +282,14 @@ Frame::on_edit_pl_account(wxCommandEvent& event)
 		return;
 	}
 	assert (accounts.size() >= 1);
+	Account account = accounts[0];
 	assert
-	(	super_type(accounts[0].account_type()) ==
+	(	super_type(account.account_type()) ==
 		account_super_type::pl
 	);
 	AccountDialog account_dialog
 	(	this,
-		accounts[0],
+		account,
 		account_super_type::pl
 	);
 	if (account_dialog.ShowModal() == wxID_OK)
@@ -296,7 +298,7 @@ Frame::on_edit_pl_account(wxCommandEvent& event)
 		// Do we want this? We probably \e do want it to update the
 		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
 		// we don't really want it to obliterate everything else.
-		m_top_panel->update();
+		m_top_panel->update_for(account);
 	}
 	return;
 }

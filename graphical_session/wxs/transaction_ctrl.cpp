@@ -301,12 +301,7 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 	{
 		if (is_balanced())
 		{
-			if (post_journal())
-			{
-				TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
-				assert (panel);
-				panel->update();
-			}
+			post_journal();
 		}
 		else
 		{
@@ -322,7 +317,7 @@ TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 	(void)event;  // Silence compiler re. unused parameter.
 	TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
 	assert (panel);
-	panel->update();
+	panel->configure_transaction_ctrl();
 }
 
 bool
@@ -411,6 +406,9 @@ TransactionCtrl::post_journal()
 		assert (dj.is_balanced());
 		dj.save();
 		JEWEL_DEBUG_LOG << "Posted Journal:\n\n" << dj << endl;
+		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
+		assert (panel);
+		panel->update_for(dj);
 		return true;
 	}
 	else
@@ -422,6 +420,9 @@ TransactionCtrl::post_journal()
 		assert (oj.is_balanced());
 		oj.save();
 		JEWEL_DEBUG_LOG << "Posted journal:\n\n" << oj << endl;
+		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
+		assert (panel);
+		panel->update_for(oj);
 		return true;
 	}
 	assert (false);

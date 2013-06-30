@@ -5,8 +5,8 @@
 
 
 #include "entry_reader.hpp"
+#include <wx/gdicmn.h>
 #include <wx/listctrl.h>
-#include <wx/wx.h>
 
 namespace phatbooks
 {

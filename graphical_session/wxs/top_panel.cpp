@@ -5,6 +5,7 @@
 #include "account_list_ctrl.hpp"
 #include "draft_journal_list_ctrl.hpp"
 #include "draft_journal_reader.hpp"
+#include "entry_list_ctrl.hpp"
 #include "frame.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -48,6 +49,7 @@ TopPanel::TopPanel
 	m_right_column_sizer(0),
 	m_bs_account_list(0),
 	m_pl_account_list(0),
+	m_entry_list(0),
 	m_transaction_ctrl(0),
 	m_draft_journal_list(0)
 {
@@ -75,6 +77,7 @@ TopPanel::TopPanel
 			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border())
 	);
 	configure_account_lists();
+	configure_entry_list();
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	SetSizer(m_top_sizer);
@@ -114,6 +117,25 @@ TopPanel::configure_account_lists()
 	page_1_sizer->Fit(m_notebook_page_1);
 	page_1_sizer->SetSizeHints(m_notebook_page_1);
 	m_notebook_page_1->Fit();
+	Layout();
+	return;
+}
+
+void
+TopPanel::configure_entry_list()
+{
+	assert (m_notebook_page_2);
+	assert (m_notebook_page_1);
+	m_entry_list = EntryListCtrl::create_actual_ordinary_entry_list
+	(	m_notebook_page_2,
+		m_database_connection
+	);
+	wxBoxSizer* page_2_sizer = new wxBoxSizer(wxHORIZONTAL);
+	m_notebook_page_2->SetSizer(page_2_sizer);
+	page_2_sizer->Add(m_entry_list, wxSizerFlags(1).Expand());
+	page_2_sizer->Fit(m_notebook_page_2);
+	page_2_sizer->SetSizeHints(m_notebook_page_2);
+	m_notebook_page_2->Fit();
 	Layout();
 	return;
 }
@@ -226,8 +248,32 @@ TopPanel::selected_pl_accounts(vector<Account>& out) const
 }
 
 void
-TopPanel::update()
+TopPanel::update_for(OrdinaryJournal const& p_saved_object)
 {
+	m_bs_account_list->update(true);
+	m_pl_account_list->update(false);
+	m_entry_list->update_for_posted_journal(p_saved_object);
+	configure_transaction_ctrl();
+	configure_draft_journal_list_ctrl();
+	return;
+}
+
+void
+TopPanel::update_for(DraftJournal const& p_saved_object)
+{
+	(void)p_saved_object;  // Silence compiler re. unused parameter.
+	// m_bs_account_list->update(true);  // No point doing this here.
+	// m_pl_account_list->update(false); // No point doing this here.
+	configure_transaction_ctrl();
+	configure_draft_journal_list_ctrl();
+	return;
+}
+
+void
+TopPanel::update_for(Account const& p_saved_object)
+{
+	// TODO HIGH PRIORITY Need to update for opening balance journal as well??
+	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
 	configure_transaction_ctrl();
