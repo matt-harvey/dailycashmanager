@@ -90,6 +90,9 @@ TopPanel::TopPanel
 // what is "update", and when each such function gets called (i.e. once, or
 // every update, or...?).
 
+// TODO The TransactionCtrl and the DraftJournalListCtrl swap places in the
+// display when updated. Need to fix.
+
 void
 TopPanel::configure_account_lists()
 {
