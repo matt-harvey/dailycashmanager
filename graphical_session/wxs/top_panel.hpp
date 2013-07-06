@@ -84,13 +84,13 @@ public:
 		std::vector<Account> p_pl_accounts
 	);
 
+	void configure_draft_journal_list_ctrl();
+
 private:
 
 	void configure_account_lists();
 
 	void configure_entry_list();
-
-	void configure_draft_journal_list_ctrl();
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;

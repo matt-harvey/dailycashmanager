@@ -24,6 +24,13 @@ using boost::optional;
 using jewel::value;
 using std::vector;
 
+
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
+
+
+
 namespace phatbooks
 {
 namespace gui
@@ -96,6 +103,7 @@ TopPanel::TopPanel
 void
 TopPanel::configure_account_lists()
 {
+	JEWEL_DEBUG_LOG << "Entered configure_accounts_lists()" << endl;
 	assert (m_notebook_page_1);
 	m_bs_account_list = AccountListCtrl::create_balance_sheet_account_list
 	(	m_notebook_page_1,
@@ -127,6 +135,7 @@ TopPanel::configure_account_lists()
 void
 TopPanel::configure_entry_list()
 {
+	JEWEL_DEBUG_LOG << "Entered configure_entry_list()" << endl;
 	assert (m_notebook_page_2);
 	assert (m_notebook_page_1);
 	m_entry_list = EntryListCtrl::create_actual_ordinary_entry_list
@@ -146,6 +155,7 @@ TopPanel::configure_entry_list()
 void
 TopPanel::configure_transaction_ctrl()
 {
+	JEWEL_DEBUG_LOG << "Entered configure_transaction_ctrl()" << endl;
 	assert (m_top_sizer);
 	assert (m_right_column_sizer);
 	vector<Account> balance_sheet_accounts;
@@ -162,6 +172,7 @@ TopPanel::configure_transaction_ctrl
 	vector<Account> p_pl_accounts
 )
 {
+	JEWEL_DEBUG_LOG << "Entered configure_transaction_ctrl(...)" << endl;
 	if (p_balance_sheet_accounts.size() + p_pl_accounts.size() < unsigned(2))
 	{
 		if (p_balance_sheet_accounts.empty())
@@ -213,6 +224,7 @@ TopPanel::configure_transaction_ctrl
 void
 TopPanel::configure_draft_journal_list_ctrl()
 {
+	JEWEL_DEBUG_LOG << "Entered configure_draft_journal_list_ctrl()" << endl;
 	DraftJournalListCtrl* old = 0;
 	assert (m_right_column_sizer);
 	if (m_draft_journal_list)
