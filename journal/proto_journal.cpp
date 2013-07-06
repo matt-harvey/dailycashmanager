@@ -21,6 +21,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "b_string.hpp"
+#include "transaction_type.hpp"
 #include <consolixx/table.hpp>
 #include <jewel/output_aux.hpp>
 #include <sqloxx/next_auto_key.hpp>
@@ -70,7 +71,6 @@ using std::endl;
 namespace phatbooks
 {
 
-
 void
 ProtoJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
@@ -82,6 +82,23 @@ ProtoJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"comment text"
 		");"
 	);
+	dbc.execute_sql
+	(	"create table transaction_types"
+		"("
+			"transaction_type_id integer primary key"
+		");"
+	);
+	using transaction_type::TransactionType;
+	SQLStatement statement(dbc, "insert into transaction_types :p");
+	for
+	(	int i = 0;
+		i != static_cast<int>(transaction_type::num_transaction_types);
+		++i
+	)
+	{
+		statement.bind(":p", i);
+		statement.step_final();
+	}
 	return;
 }
 
