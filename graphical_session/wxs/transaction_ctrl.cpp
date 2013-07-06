@@ -17,6 +17,7 @@
 #include "finformat.hpp"
 #include "frame.hpp"
 #include "frequency_ctrl.hpp"
+#include "persistent_journal.hpp"
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
 #include "locale.hpp"
@@ -273,6 +274,30 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->SetSizeHints(this);
 	Fit();
 	Layout();
+}
+
+TransactionCtrl::TransactionCtrl
+(	TopPanel* p_parent,
+	PersistentJournal& p_journal
+):
+	wxPanel
+	(	p_parent,
+		wxID_ANY,
+		wxDefaultPosition,
+		wxDefaultSize
+	),
+	m_top_sizer(0),
+	m_transaction_type_ctrl(0),
+	m_source_entry_ctrl(0),
+	m_destination_entry_ctrl(0),
+	m_primary_amount_ctrl(0),
+	m_frequency_ctrl(0),
+	m_date_ctrl(0),
+	m_cancel_button(0),
+	m_ok_button(0),
+	m_database_connection(p_journal.database_connection())
+{
+	// TODO Implement
 }
 
 void

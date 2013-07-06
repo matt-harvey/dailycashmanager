@@ -20,6 +20,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class PersistentJournal;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -94,6 +95,12 @@ public:
 		std::vector<Account> const& p_pl_accounts,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
+
+	/**
+	 * Create a TransactionCtrl to allow the user to change the
+	 * Entries and other attributes of an already-saved Journal.
+	 */
+	TransactionCtrl(TopPanel* p_parent, PersistentJournal& p_journal);
 
 	/**
 	 * Refresh the selections available in the AccountCtrls in the
