@@ -76,6 +76,11 @@ public:
 	 */
 	bool is_balanced() const;
 
+	/**
+	 * @todo Implement and document.
+	 */
+	jewel::Decimal primary_amount() const;
+
 protected:
 	void push_core_journal_columns
 	(	consolixx::Table<Entry>& table

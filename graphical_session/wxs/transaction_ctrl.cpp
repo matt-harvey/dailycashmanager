@@ -297,6 +297,64 @@ TransactionCtrl::TransactionCtrl
 	m_ok_button(0),
 	m_database_connection(p_journal.database_connection())
 {
+	// TODO Make TransactionType depend on the Journal rather than just
+	// defaulting to generic.
+	transaction_type::TransactionType const initial_transaction_type
+		= transaction_type::generic_transaction;
+	size_t row = 0;
+
+	// Top sizer
+	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
+	SetSizer(m_top_sizer);
+
+	m_transaction_type_ctrl = new TransactionTypeCtrl
+	(	this,
+		s_transaction_type_ctrl_id,
+		wxSize(160, wxDefaultSize.y),
+		m_database_connection
+	);
+	m_transaction_type_ctrl->set_transaction_type(initial_transaction_type);
+	wxSize const text_box_size = m_transaction_type_ctrl->GetSize();
+
+	m_primary_amount_ctrl = new DecimalTextCtrl
+	(	this,
+		p_journal.primary_amount(),
+		text_box_size,
+		m_database_connection.default_commodity().precision(),
+		false
+	);
+	m_top_sizer->Add
+	(	m_primary_amount_ctrl,
+		wxGBPosition(row, 3),
+		wxDefaultSpan,
+		wxALIGN_RIGHT
+	);
+
+	// We need the names of available Accounts, for the given TransactionType,
+	// from which the user will choose Accounts, for each side of the
+	// transaction.
+	
+	assert_transaction_type_validity(initial_transaction_type);
+
+	// Row for entering Entry details
+	for (vector<Entry>::size_type i = 0; i != entries.size(); ++i)
+	{
+		accounts.push_back(entries[i].account());
+	}
+	row += 2;
+
+	// WARNING temp hack
+	// WARNING This might no be true.
+	assert (accounts.size() >= 2);
+
+	// TODO Make source and destination Account vectors. I need a scientific
+	// approach to this. There should be TransactionType stored in the
+	// database for each PersistentJournal, and then within the database
+	// there should probably also be stored a number indicating at what
+	// point the "destination Accounts" and the "source Accounts" end.
+	
+
+
 	// TODO Implement
 }
 
