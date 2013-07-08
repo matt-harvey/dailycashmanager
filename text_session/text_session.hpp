@@ -53,6 +53,9 @@ namespace tui
  * but is not a Phatbooks database file. If it is not a Phatbooks
  * database file, it needs to be impossible for the user to proceed
  * with creating a database connection to that file.
+ *
+ * @todo HIGH PRIORITY Incorporate TransactionType into
+ * Journal related code.
  */
 class TextSession:
 	public Session
