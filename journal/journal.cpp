@@ -118,6 +118,25 @@ Journal::is_balanced() const
 	return balance() == Decimal(0, 0);
 }
 
+Decimal
+Journal::primary_amount() const
+{
+	Decimal const zero(0, 0);
+	Decimal ret = zero;
+	vector<Entry>::const_iterator it = entries().begin();
+	vector<Entry>::const_iterator const end = entries().end();
+	for ( ; it != end; ++it)
+	{
+		Decimal const amount = it->amount();
+		if (amount > zero)
+		{
+			ret += amount;
+		}
+	}
+	assert (ret >= zero);
+	return ret;
+}
+
 void
 Journal::push_core_journal_columns(Table<Entry>& table) const
 {

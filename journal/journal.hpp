@@ -77,7 +77,8 @@ public:
 	bool is_balanced() const;
 
 	/**
-	 * @todo Implement and document.
+	 * @returns a non-negative Decimal being the sum of all the debit
+	 * entries of the Journal.
 	 */
 	jewel::Decimal primary_amount() const;
 
