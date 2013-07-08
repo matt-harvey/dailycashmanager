@@ -9,6 +9,7 @@
 #include "phatbooks_persistent_object.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "proto_journal.hpp"
+#include "transaction_type.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -130,11 +131,15 @@ private:
 
 	// Define pure virtual functions inherited from Journal
 	void do_set_whether_actual(bool p_is_actual);
+	void do_set_transaction_type
+	(	transaction_type::TransactionType p_transaction_type
+	);
 	void do_set_comment(BString const& p_comment);
 	void do_push_entry(Entry& entry);
 	void do_remove_entry(Entry& entry);
 	void do_clear_entries();
 	bool do_get_whether_actual() const;
+	transaction_type::TransactionType do_get_transaction_type() const;
 	BString do_get_comment() const;
 	std::vector<Entry> const& do_get_entries() const;
 

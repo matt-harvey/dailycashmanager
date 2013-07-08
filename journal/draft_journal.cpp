@@ -8,6 +8,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
+#include "transaction_type.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
@@ -127,6 +128,15 @@ DraftJournal::do_set_whether_actual(bool p_is_actual)
 }
 
 void
+DraftJournal::do_set_transaction_type
+(	transaction_type::TransactionType p_transaction_type
+)
+{
+	impl().set_transaction_type(p_transaction_type);
+	return;
+}
+
+void
 DraftJournal::do_set_comment(BString const& p_comment)
 {
 	impl().set_comment(p_comment);
@@ -151,6 +161,12 @@ bool
 DraftJournal::do_get_whether_actual() const
 {
 	return impl().is_actual();
+}
+
+transaction_type::TransactionType
+DraftJournal::do_get_transaction_type() const
+{
+	return impl().transaction_type();
 }
 
 BString

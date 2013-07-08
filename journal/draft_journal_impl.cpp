@@ -10,12 +10,13 @@
 	#include "draft_journal_reader.hpp"
 #endif
 
+#include "b_string.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
-#include "b_string.hpp"
+#include "transaction_type.hpp"
 #include <sqloxx/sql_statement.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
@@ -76,6 +77,16 @@ DraftJournalImpl::set_whether_actual(bool p_is_actual)
 }
 
 void
+DraftJournalImpl::set_transaction_type
+(	transaction_type::TransactionType p_transaction_type
+)
+{
+	load();
+	ProtoJournal::set_transaction_type(p_transaction_type);
+	return;
+}
+
+void
 DraftJournalImpl::set_comment(BString const& p_comment)
 {
 	load();
@@ -108,6 +119,13 @@ DraftJournalImpl::is_actual()
 {
 	load();
 	return ProtoJournal::is_actual();
+}
+
+transaction_type::TransactionType
+DraftJournalImpl::transaction_type()
+{
+	load();
+	return ProtoJournal::transaction_type();
 }
 
 BString

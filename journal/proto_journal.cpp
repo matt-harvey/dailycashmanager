@@ -75,14 +75,6 @@ void
 ProtoJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
-	(	"create table journals"
-		"("
-			"journal_id integer primary key autoincrement, "
-			"is_actual integer not null references booleans, "
-			"comment text"
-		");"
-	);
-	dbc.execute_sql
 	(	"create table transaction_types"
 		"("
 			"transaction_type_id integer primary key"
@@ -99,6 +91,16 @@ ProtoJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 		statement.bind(":p", i);
 		statement.step_final();
 	}
+	dbc.execute_sql
+	(	"create table journals"
+		"("
+			"journal_id integer primary key autoincrement, "
+			"is_actual integer not null references booleans, "
+			"transaction_type_id integer not null references "
+				"transaction_types, "
+			"comment text"
+		");"
+	);
 	return;
 }
 
@@ -147,6 +149,15 @@ ProtoJournal::do_set_whether_actual(bool p_is_actual)
 }
 
 void
+ProtoJournal::do_set_transaction_type
+(	transaction_type::TransactionType p_transaction_type
+)
+{
+	m_data->transaction_type = p_transaction_type;
+	return;
+}
+
+void
 ProtoJournal::do_set_comment(BString const& p_comment)
 {
 	m_data->comment = p_comment;
@@ -187,6 +198,12 @@ ProtoJournal::do_get_whether_actual() const
 	return value(m_data->is_actual);
 }
 
+transaction_type::TransactionType
+ProtoJournal::do_get_transaction_type() const
+{
+	return value(m_data->transaction_type);
+}
+
 void
 ProtoJournal::swap(ProtoJournal& rhs)
 {
@@ -212,10 +229,14 @@ ProtoJournal::do_save_new_journal_core
 	>	(dbc, "journals");
 	SQLStatement statement
 	(	dbc,
-		"insert into journals(is_actual, comment) "
-		"values(:is_actual, :comment)"
+		"insert into journals(is_actual, transaction_type_id, comment) "
+		"values(:is_actual, :transaction_type_id, :comment)"
 	);
 	statement.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
+	statement.bind
+	(	":transaction_type_id",
+		static_cast<int>(value(m_data->transaction_type))
+	);
 	statement.bind(":comment", bstring_to_std8(value(m_data->comment)));
 	statement.step_final();
 	typedef vector<Entry>::iterator EntryIter;
@@ -242,10 +263,15 @@ ProtoJournal::do_save_existing_journal_core
 	}
 	SQLStatement updater
 	(	dbc,
-		"update journals set is_actual = :is_actual, comment = :comment "
+		"update journals set is_actual = :is_actual, comment = :comment, "
+		"transaction_type_id = :transaction_type_id "
 		"where journal_id = :id"
 	);
 	updater.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
+	updater.bind
+	(	":transaction_type_id",
+		static_cast<int>(value(m_data->transaction_type))
+	);
 	updater.bind(":comment", bstring_to_std8(value(m_data->comment)));
 	updater.bind(":id", id);
 	updater.step_final();
@@ -293,7 +319,8 @@ ProtoJournal::do_load_journal_core
 {
 	SQLStatement statement
 	(	dbc,
-		"select is_actual, comment from journals where journal_id = :p"
+		"select is_actual, transaction_type_id, comment from journals "
+		"where journal_id = :p"
 	);
 	statement.bind(":p", id);
 	statement.step();
@@ -310,7 +337,11 @@ ProtoJournal::do_load_journal_core
 		temp.m_data->entries.push_back(entry);
 	}
 	temp.m_data->is_actual = static_cast<bool>(statement.extract<int>(0));
-	temp.m_data->comment = std8_to_bstring(statement.extract<string>(1));
+	temp.m_data->transaction_type =
+		static_cast<transaction_type::TransactionType>
+		(	statement.extract<int>(1)
+		);
+	temp.m_data->comment = std8_to_bstring(statement.extract<string>(2));
 	swap(temp);	
 	return;
 }
@@ -319,6 +350,7 @@ void
 ProtoJournal::do_ghostify_journal_core()
 {
 	clear(m_data->is_actual);
+	clear(m_data->transaction_type);
 	clear(m_data->comment);
 	typedef vector<Entry>::iterator EntryIter;
 	EntryIter endpoint = m_data->entries.end();
@@ -357,6 +389,7 @@ ProtoJournal::mimic_core
 )
 {
 	set_whether_actual(rhs.is_actual());
+	set_transaction_type(rhs.transaction_type());
 	set_comment(rhs.comment());
 	clear_entries();
 	typedef vector<Entry>::const_iterator It;

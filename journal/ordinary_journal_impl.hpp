@@ -8,6 +8,7 @@
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
+#include "transaction_type.hpp"
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -65,6 +66,13 @@ public:
 	void set_whether_actual(bool p_is_actual);
 
 	/**
+	 * @todo Document
+	 */
+	void set_transaction_type
+	(	transaction_type::TransactionType p_transaction_type
+	);
+
+	/**
 	 * Does not throw, except possibly \c std::bad_alloc in extreme
 	 * circumstances.
 	 */
@@ -78,6 +86,8 @@ public:
 	void remove_entry(Entry& entry);
 
 	bool is_actual();
+
+	transaction_type::TransactionType transaction_type();
 
 	/**
 	 * Does not throw, except perhaps \c std::bad_alloc in

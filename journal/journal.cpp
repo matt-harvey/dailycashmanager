@@ -4,6 +4,7 @@
 #include "column_creation.hpp"
 #include "journal.hpp"
 #include "entry.hpp"
+#include "transaction_type.hpp"
 #include <consolixx/table.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
@@ -41,6 +42,15 @@ void
 Journal::set_whether_actual(bool p_is_actual)
 {
 	do_set_whether_actual(p_is_actual);
+	return;
+}
+
+void
+Journal::set_transaction_type
+(	transaction_type::TransactionType p_transaction_type
+)
+{
+	do_set_transaction_type(p_transaction_type);
 	return;
 }
 
@@ -90,6 +100,11 @@ Journal::is_actual() const
 	return do_get_whether_actual();
 }
 
+transaction_type::TransactionType
+Journal::transaction_type() const
+{
+	return do_get_transaction_type();
+}
 
 namespace
 {
@@ -174,6 +189,7 @@ Journal::push_core_journal_columns(Table<Entry>& table) const
 void
 Journal::output_core_journal_header(ostream& os) const
 {
+	// TODO Incorporate transaction_type() into output.
 	namespace alignment	= consolixx::alignment;
 	if (is_actual()) os << "ACTUAL TRANSACTION";
 	else os << "BUDGET TRANSACTION";

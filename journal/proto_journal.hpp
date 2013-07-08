@@ -18,6 +18,7 @@
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "transaction_type.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
@@ -114,16 +115,21 @@ private:
 	virtual void do_output(std::ostream& os) const;
 	virtual std::vector<Entry> const& do_get_entries() const;
 	virtual void do_set_whether_actual(bool p_is_actual);
+	virtual void do_set_transaction_type
+	(	transaction_type::TransactionType p_transaction_type
+	);
 	virtual void do_set_comment(BString const& p_comment);
 	virtual void do_push_entry(Entry& entry);
 	virtual void do_remove_entry(Entry& entry);
 	virtual void do_clear_entries();
 	virtual BString do_get_comment() const;
 	virtual bool do_get_whether_actual() const;
+	virtual transaction_type::TransactionType do_get_transaction_type() const;
 
 	struct ProtoJournalData
 	{
 		boost::optional<bool> is_actual;
+		boost::optional<transaction_type::TransactionType> transaction_type;
 		boost::optional<BString> comment;
 		std::vector<Entry> entries;
 	};

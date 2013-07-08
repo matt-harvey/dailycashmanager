@@ -7,6 +7,7 @@
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
+#include "transaction_type.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/handle.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -68,6 +69,16 @@ OrdinaryJournalImpl::set_whether_actual(bool p_is_actual)
 }
 
 void
+OrdinaryJournalImpl::set_transaction_type
+(	transaction_type::TransactionType p_transaction_type
+)
+{
+	load();
+	ProtoJournal::set_transaction_type(p_transaction_type);
+	return;
+}
+
+void
 OrdinaryJournalImpl::set_comment(BString const& p_comment)
 {
 	load();
@@ -101,6 +112,13 @@ OrdinaryJournalImpl::is_actual()
 {
 	load();
 	return ProtoJournal::is_actual();
+}
+
+transaction_type::TransactionType
+OrdinaryJournalImpl::transaction_type()
+{
+	load();
+	return ProtoJournal::transaction_type();
 }
 
 BString

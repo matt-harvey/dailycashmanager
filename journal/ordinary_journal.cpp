@@ -10,6 +10,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
+#include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
@@ -117,6 +118,7 @@ OrdinaryJournal::create_opening_balance_journal
 	ret.set_whether_actual
 	(	p_account.account_super_type() == account_super_type::balance_sheet
 	);
+	ret.set_transaction_type(transaction_type::generic_transaction);
 	ret.set_date_unrestricted
 	(	dbc.opening_balance_journal_date()
 	);
@@ -133,6 +135,15 @@ void
 OrdinaryJournal::do_set_whether_actual(bool p_is_actual)
 {
 	impl().set_whether_actual(p_is_actual);
+	return;
+}
+
+void
+OrdinaryJournal::do_set_transaction_type
+(	transaction_type::TransactionType p_transaction_type
+)
+{
+	impl().set_transaction_type(p_transaction_type);
 	return;
 }
 
@@ -176,6 +187,12 @@ bool
 OrdinaryJournal::do_get_whether_actual() const
 {
 	return impl().is_actual();
+}
+
+transaction_type::TransactionType
+OrdinaryJournal::do_get_transaction_type() const
+{
+	return impl().transaction_type();
 }
 
 BString

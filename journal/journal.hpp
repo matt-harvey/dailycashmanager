@@ -6,6 +6,7 @@
 #include "b_string.hpp"
 #include "entry.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include "transaction_type.hpp"
 #include <consolixx/table.hpp>
 #include <jewel/decimal_fwd.hpp>
 #include <sqloxx/general_typedefs.hpp>
@@ -54,6 +55,9 @@ public:
 	virtual ~Journal();
 
 	void set_whether_actual(bool p_is_actual);
+	void set_transaction_type
+	(	transaction_type::TransactionType p_transaction_type
+	);
 	void set_comment(BString const& p_comment);
 	void push_entry(Entry& entry);
 	void remove_entry(Entry& entry);
@@ -62,6 +66,7 @@ public:
 	std::vector<Entry> const& entries() const;
 	BString comment() const;
 	bool is_actual() const;
+	transaction_type::TransactionType transaction_type() const;
 	jewel::Decimal balance() const;
 
 
@@ -92,12 +97,17 @@ private:
 	virtual void do_output(std::ostream& os) const = 0;
 	virtual std::vector<Entry> const& do_get_entries() const = 0;
 	virtual void do_set_whether_actual(bool p_is_actual) = 0;
+	virtual void do_set_transaction_type
+	(	transaction_type::TransactionType p_transaction_type
+	) = 0;
 	virtual void do_set_comment(BString const& p_comment) = 0;
 	virtual void do_push_entry(Entry& entry) = 0;
 	virtual void do_remove_entry(Entry& entry) = 0;
 	virtual void do_clear_entries() = 0;
 	virtual BString do_get_comment() const = 0;
 	virtual bool do_get_whether_actual() const = 0;
+	virtual transaction_type::TransactionType
+		do_get_transaction_type() const = 0;
 
 	static void output_journal_aux(std::ostream& os, Journal const& oj);
 	

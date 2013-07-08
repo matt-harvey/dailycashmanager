@@ -6,6 +6,7 @@
 #include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
+#include "transaction_type.hpp"
 #include <sqloxx/persistent_object.hpp>
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -75,6 +76,13 @@ public:
 	void set_whether_actual(bool p_is_actual);
 
 	/**
+	 * @todo Document.
+	 */
+	void set_transaction_type
+	(	transaction_type::TransactionType p_transaction_type
+	);
+
+	/**
 	 * Set comment for journal
 	 *
 	 * Does not throw, except possibly \c std::bad_alloc in extreme
@@ -93,6 +101,8 @@ public:
 	void remove_entry(Entry& entry);
 
 	bool is_actual();
+
+	transaction_type::TransactionType transaction_type();
 
 	/**
 	 * @returns journal comment.
