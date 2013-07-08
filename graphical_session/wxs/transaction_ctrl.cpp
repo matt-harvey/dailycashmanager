@@ -297,10 +297,8 @@ TransactionCtrl::TransactionCtrl
 	m_ok_button(0),
 	m_database_connection(p_journal.database_connection())
 {
-	// TODO Make TransactionType depend on the Journal rather than just
-	// defaulting to generic.
 	transaction_type::TransactionType const initial_transaction_type
-		= transaction_type::generic_transaction;
+		= p_journal.transaction_type();
 	size_t row = 0;
 
 	// Top sizer

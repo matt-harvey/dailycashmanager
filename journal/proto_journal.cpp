@@ -81,7 +81,10 @@ ProtoJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 		");"
 	);
 	using transaction_type::TransactionType;
-	SQLStatement statement(dbc, "insert into transaction_types :p");
+	SQLStatement statement
+	(	dbc,
+		"insert into transaction_types(transaction_type_id) values(:p)"
+	);
 	for
 	(	int i = 0;
 		i != static_cast<int>(transaction_type::num_transaction_types);
