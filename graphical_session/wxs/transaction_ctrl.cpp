@@ -318,11 +318,12 @@ TransactionCtrl::TransactionCtrl
 
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
-		p_journal.primary_amount(),
+		s_primary_amount_ctrl_id,
 		text_box_size,
 		m_database_connection.default_commodity().precision(),
 		false
 	);
+	m_primary_amount_ctrl->set_amount(p_journal.primary_amount());
 	m_top_sizer->Add
 	(	m_primary_amount_ctrl,
 		wxGBPosition(row, 3),
@@ -337,6 +338,8 @@ TransactionCtrl::TransactionCtrl
 	assert_transaction_type_validity(initial_transaction_type);
 
 	// Row for entering Entry details
+	vector<Entry> entries = p_journal.entries();  // WARNING This makes a copy
+	vector<Account> accounts;
 	for (vector<Entry>::size_type i = 0; i != entries.size(); ++i)
 	{
 		accounts.push_back(entries[i].account());
