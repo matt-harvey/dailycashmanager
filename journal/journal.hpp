@@ -59,6 +59,7 @@ public:
 	(	transaction_type::TransactionType p_transaction_type
 	);
 	void set_comment(BString const& p_comment);
+	void set_fulcrum(size_t p_fulcrum);
 	void push_entry(Entry& entry);
 	void remove_entry(Entry& entry);
 	void clear_entries();
@@ -67,6 +68,7 @@ public:
 	BString comment() const;
 	bool is_actual() const;
 	transaction_type::TransactionType transaction_type() const;
+	size_t fulcrum() const;
 	jewel::Decimal balance() const;
 
 
@@ -101,6 +103,7 @@ private:
 	(	transaction_type::TransactionType p_transaction_type
 	) = 0;
 	virtual void do_set_comment(BString const& p_comment) = 0;
+	virtual void do_set_fulcrum(size_t p_fulcrum) = 0;
 	virtual void do_push_entry(Entry& entry) = 0;
 	virtual void do_remove_entry(Entry& entry) = 0;
 	virtual void do_clear_entries() = 0;
@@ -108,6 +111,7 @@ private:
 	virtual bool do_get_whether_actual() const = 0;
 	virtual transaction_type::TransactionType
 		do_get_transaction_type() const = 0;
+	virtual size_t do_get_fulcrum() const = 0;
 
 	static void output_journal_aux(std::ostream& os, Journal const& oj);
 	

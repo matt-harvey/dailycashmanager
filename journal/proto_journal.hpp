@@ -119,17 +119,20 @@ private:
 	(	transaction_type::TransactionType p_transaction_type
 	);
 	virtual void do_set_comment(BString const& p_comment);
+	virtual void do_set_fulcrum(size_t p_fulcrum);
 	virtual void do_push_entry(Entry& entry);
 	virtual void do_remove_entry(Entry& entry);
 	virtual void do_clear_entries();
 	virtual BString do_get_comment() const;
 	virtual bool do_get_whether_actual() const;
 	virtual transaction_type::TransactionType do_get_transaction_type() const;
+	virtual size_t do_get_fulcrum() const;
 
 	struct ProtoJournalData
 	{
 		boost::optional<bool> is_actual;
 		boost::optional<transaction_type::TransactionType> transaction_type;
+		boost::optional<size_t> fulcrum;
 		boost::optional<BString> comment;
 		std::vector<Entry> entries;
 	};

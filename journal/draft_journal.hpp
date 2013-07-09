@@ -146,12 +146,14 @@ private:
 	(	transaction_type::TransactionType p_transaction_type
 	);
 	void do_set_comment(BString const& p_comment);
+	void do_set_fulcrum(size_t p_fulcrum);
 	void do_push_entry(Entry& entry);
 	void do_remove_entry(Entry& entry);
 	void do_clear_entries();
 	BString do_get_comment() const;
 	bool do_get_whether_actual() const;
 	transaction_type::TransactionType do_get_transaction_type() const;
+	size_t do_get_fulcrum() const;
 	
 	// Redefine impure virtual function inherited from Journal
 	void do_output(std::ostream& os) const;

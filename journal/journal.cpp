@@ -62,6 +62,13 @@ Journal::set_comment(BString const& p_comment)
 }
 
 void
+Journal::set_fulcrum(size_t p_fulcrum)
+{
+	do_set_fulcrum(p_fulcrum);
+	return;
+}
+
+void
 Journal::push_entry(Entry& entry)
 {
 	do_push_entry(entry);
@@ -104,6 +111,12 @@ transaction_type::TransactionType
 Journal::transaction_type() const
 {
 	return do_get_transaction_type();
+}
+
+size_t
+Journal::fulcrum() const
+{
+	return do_get_fulcrum();
 }
 
 namespace

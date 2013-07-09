@@ -155,6 +155,13 @@ OrdinaryJournal::do_set_comment(BString const& p_comment)
 }
 
 void
+OrdinaryJournal::do_set_fulcrum(size_t p_fulcrum)
+{
+	impl().set_fulcrum(p_fulcrum);
+	return;
+}
+
+void
 OrdinaryJournal::set_date(boost::gregorian::date const& p_date)
 {
 	impl().set_date(p_date);
@@ -199,6 +206,12 @@ BString
 OrdinaryJournal::do_get_comment() const
 {
 	return impl().comment();
+}
+
+size_t
+OrdinaryJournal::do_get_fulcrum() const
+{
+	return impl().fulcrum();
 }
 
 vector<Entry> const&

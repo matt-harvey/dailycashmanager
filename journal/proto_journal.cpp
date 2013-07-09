@@ -101,6 +101,7 @@ ProtoJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"is_actual integer not null references booleans, "
 			"transaction_type_id integer not null references "
 				"transaction_types, "
+			"fulcrum integer not null, "
 			"comment text"
 		");"
 	);
@@ -168,6 +169,13 @@ ProtoJournal::do_set_comment(BString const& p_comment)
 }
 
 void
+ProtoJournal::do_set_fulcrum(size_t p_fulcrum)
+{
+	m_data->fulcrum = p_fulcrum;
+	return;
+}
+
+void
 ProtoJournal::do_push_entry(Entry& entry)
 {
 	m_data->entries.push_back(entry);
@@ -207,6 +215,12 @@ ProtoJournal::do_get_transaction_type() const
 	return value(m_data->transaction_type);
 }
 
+size_t
+ProtoJournal::do_get_fulcrum() const
+{
+	return value(m_data->fulcrum);
+}
+
 void
 ProtoJournal::swap(ProtoJournal& rhs)
 {
@@ -232,14 +246,16 @@ ProtoJournal::do_save_new_journal_core
 	>	(dbc, "journals");
 	SQLStatement statement
 	(	dbc,
-		"insert into journals(is_actual, transaction_type_id, comment) "
-		"values(:is_actual, :transaction_type_id, :comment)"
+		"insert into journals(is_actual, transaction_type_id, "
+		"fulcrum, comment) "
+		"values(:is_actual, :transaction_type_id, :fulcrum, :comment)"
 	);
 	statement.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
 	statement.bind
 	(	":transaction_type_id",
 		static_cast<int>(value(m_data->transaction_type))
 	);
+	statement.bind(":fulcrum", numeric_cast<int>(value(m_data->fulcrum)));
 	statement.bind(":comment", bstring_to_std8(value(m_data->comment)));
 	statement.step_final();
 	typedef vector<Entry>::iterator EntryIter;
@@ -267,7 +283,7 @@ ProtoJournal::do_save_existing_journal_core
 	SQLStatement updater
 	(	dbc,
 		"update journals set is_actual = :is_actual, comment = :comment, "
-		"transaction_type_id = :transaction_type_id "
+		"transaction_type_id = :transaction_type_id, fulcrum = :fulcrum "
 		"where journal_id = :id"
 	);
 	updater.bind(":is_actual", static_cast<int>(value(m_data->is_actual)));
@@ -275,6 +291,7 @@ ProtoJournal::do_save_existing_journal_core
 	(	":transaction_type_id",
 		static_cast<int>(value(m_data->transaction_type))
 	);
+	updater.bind(":fulcrum", numeric_cast<int>(value(m_data->fulcrum)));
 	updater.bind(":comment", bstring_to_std8(value(m_data->comment)));
 	updater.bind(":id", id);
 	updater.step_final();
@@ -322,8 +339,8 @@ ProtoJournal::do_load_journal_core
 {
 	SQLStatement statement
 	(	dbc,
-		"select is_actual, transaction_type_id, comment from journals "
-		"where journal_id = :p"
+		"select is_actual, transaction_type_id, fulcrum, comment "
+		"from journals where journal_id = :p"
 	);
 	statement.bind(":p", id);
 	statement.step();
@@ -344,7 +361,8 @@ ProtoJournal::do_load_journal_core
 		static_cast<transaction_type::TransactionType>
 		(	statement.extract<int>(1)
 		);
-	temp.m_data->comment = std8_to_bstring(statement.extract<string>(2));
+	temp.m_data->fulcrum = numeric_cast<size_t>(statement.extract<int>(2));
+	temp.m_data->comment = std8_to_bstring(statement.extract<string>(3));
 	swap(temp);	
 	return;
 }
@@ -354,6 +372,7 @@ ProtoJournal::do_ghostify_journal_core()
 {
 	clear(m_data->is_actual);
 	clear(m_data->transaction_type);
+	clear(m_data->fulcrum);
 	clear(m_data->comment);
 	typedef vector<Entry>::iterator EntryIter;
 	EntryIter endpoint = m_data->entries.end();
@@ -393,6 +412,7 @@ ProtoJournal::mimic_core
 {
 	set_whether_actual(rhs.is_actual());
 	set_transaction_type(rhs.transaction_type());
+	set_fulcrum(rhs.fulcrum());
 	set_comment(rhs.comment());
 	clear_entries();
 	typedef vector<Entry>::const_iterator It;

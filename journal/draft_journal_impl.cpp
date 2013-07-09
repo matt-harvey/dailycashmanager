@@ -95,6 +95,14 @@ DraftJournalImpl::set_comment(BString const& p_comment)
 }
 
 void
+DraftJournalImpl::set_fulcrum(size_t p_fulcrum)
+{
+	load();
+	ProtoJournal::set_fulcrum(p_fulcrum);
+	return;
+}
+
+void
 DraftJournalImpl::push_entry(Entry& entry)
 {
 	load();
@@ -135,6 +143,12 @@ DraftJournalImpl::comment()
 	return ProtoJournal::comment();
 }
 
+size_t
+DraftJournalImpl::fulcrum()
+{
+	load();
+	return ProtoJournal::fulcrum();
+}
 
 vector<Entry> const&
 DraftJournalImpl::entries()
