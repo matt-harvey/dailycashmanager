@@ -335,28 +335,10 @@ TransactionCtrl::TransactionCtrl
 	
 	assert_transaction_type_validity(initial_transaction_type);
 
-	// Row for entering Entry details
-	vector<Entry> entries = p_journal.entries();  // WARNING This makes a copy
-	vector<Account> accounts;
-	for (vector<Entry>::size_type i = 0; i != entries.size(); ++i)
-	{
-		accounts.push_back(entries[i].account());
-	}
-	row += 2;
-
-	// WARNING temp hack
-	// WARNING This might no be true.
-	assert (accounts.size() >= 2);
-
-	// TODO Make source and destination Account vectors. I need a scientific
-	// approach to this. There should be TransactionType stored in the
-	// database for each PersistentJournal, and then within the database
-	// there should probably also be stored a number indicating at what
-	// point the "destination Accounts" and the "source Accounts" end.
-	
-
 
 	// TODO Implement
+	// EntryCtrl should probably have a constructor which takes (amount other
+	// parameters) a vector<Entry>.
 }
 
 void
