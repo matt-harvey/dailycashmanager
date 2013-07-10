@@ -64,6 +64,18 @@ public:
 		bool p_is_source
 	);
 
+	/**
+	 * @todo Implement this.
+	 */
+	EntryCtrl
+	(	wxWindow* p_parent,
+		std::vector<Entry> const& p_entries,
+		PhatbooksDatabaseConnection& p_database_connection,
+		transaction_type::TransactionType p_transaction_type,
+		wxSize const& p_text_ctrl_size,
+		bool p_is_source
+	);
+
 	~EntryCtrl();
 
 	void refresh_for_transaction_type

@@ -194,6 +194,7 @@ EntryCtrl::EntryCtrl
 	GetParent()->Fit();
 }
 
+
 EntryCtrl::~EntryCtrl()
 {
 	delete m_account_reader;

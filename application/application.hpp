@@ -14,6 +14,8 @@ namespace phatbooks
 /**
  * Class for encapsulating very general application-level
  * information.
+ *
+ * @todo Make sure we can't clobber an existing config file.
  */
 class Application
 {
