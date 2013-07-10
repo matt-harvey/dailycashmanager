@@ -396,6 +396,7 @@ TransactionCtrl::post_journal()
 	transaction_type::TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
 	journal.set_whether_actual(transaction_type_is_actual(ttype));
+	journal.set_transaction_type(ttype);
 
 	size_t const num_entry_controls = 2;
 	EntryCtrl const* const entry_controls[num_entry_controls] =

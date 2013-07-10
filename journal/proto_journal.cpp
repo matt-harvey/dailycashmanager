@@ -410,11 +410,17 @@ ProtoJournal::mimic_core
 	optional<Id> id
 )
 {
+	JEWEL_DEBUG_LOG_LOCATION;
 	set_whether_actual(rhs.is_actual());
+	JEWEL_DEBUG_LOG_LOCATION;
 	set_transaction_type(rhs.transaction_type());
+	JEWEL_DEBUG_LOG_LOCATION;
 	set_fulcrum(rhs.fulcrum());
+	JEWEL_DEBUG_LOG_LOCATION;
 	set_comment(rhs.comment());
+	JEWEL_DEBUG_LOG_LOCATION;
 	clear_entries();
+	JEWEL_DEBUG_LOG_LOCATION;
 	typedef vector<Entry>::const_iterator It;
 	vector<Entry> const& rentries = rhs.entries();
 	if (!rentries.empty())
@@ -427,6 +433,7 @@ ProtoJournal::mimic_core
 			push_entry(entry);
 		}
 	}
+	JEWEL_DEBUG_LOG_LOCATION;
 	return;
 }
 
