@@ -66,7 +66,14 @@ public:
 
 	std::vector<Entry> const& entries() const;
 	BString comment() const;
+
+	/**
+	 * @todo Do we even need is_actual now that we are recording
+	 * transaction_type? Because only Journals of
+	 * transaction_type::envelope_transaction can be non-actual.
+	 */
 	bool is_actual() const;
+
 	transaction_type::TransactionType transaction_type() const;
 	size_t fulcrum() const;
 	jewel::Decimal balance() const;

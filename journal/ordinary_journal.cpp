@@ -115,10 +115,22 @@ OrdinaryJournal::create_opening_balance_journal
 	ret.push_entry(balancing_entry);
 
 	ret.set_comment("Opening balance adjustment");
-	ret.set_whether_actual
-	(	p_account.account_super_type() == account_super_type::balance_sheet
-	);
-	ret.set_transaction_type(transaction_type::generic_transaction);
+	if (p_account.account_super_type() == account_super_type::balance_sheet)
+	{
+		ret.set_whether_actual(true);
+		ret.set_transaction_type(transaction_type::generic_transaction);
+	}
+	else
+	{
+		ret.set_whether_actual(false);
+		ret.set_transaction_type(transaction_type::envelope_transaction);
+	}
+
+	// WARNING The source and destination Accounts are the opposite way
+	// round to what would be expected by the user here; but this probably
+	// doesn't matter, as the user should never see the opening balance
+	// Journals directly.
+	ret.set_fulcrum(1);
 	ret.set_date_unrestricted
 	(	dbc.opening_balance_journal_date()
 	);

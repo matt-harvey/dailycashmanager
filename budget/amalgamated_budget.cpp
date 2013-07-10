@@ -11,6 +11,7 @@
 #include "interval_type.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "repeater.hpp"
+#include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/static_assert.hpp>
@@ -70,6 +71,8 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	instrument.set_name("AMALGAMATED BUDGET JOURNAL");
 	instrument.set_whether_actual(false);
 	instrument.set_comment("");
+	instrument.set_transaction_type(transaction_type::envelope_transaction);
+	instrument.set_fulcrum(0);
 	Repeater repeater(dbc);
 	repeater.set_frequency(Frequency(1, interval_type::days));
 	repeater.set_next_date(gregorian::day_clock::local_day());
@@ -394,6 +397,10 @@ AmalgamatedBudget::regenerate_instrument()
 		fresh_journal.push_entry(balancing_entry);
 		assert (fresh_journal.is_balanced());
 	}
+	// WARNING The source and destination are the opposite way
+	// round to usual here. But it probably doesn't matter, as
+	// the user won't be seeing this Journal anyway.
+	fresh_journal.set_fulcrum(fresh_journal.entries().size());
 	m_instrument->mimic(fresh_journal);
 	m_instrument->save();
 

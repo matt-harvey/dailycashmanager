@@ -405,6 +405,10 @@ TransactionCtrl::post_journal()
 	for (size_t i = 0; i != num_entry_controls; ++i)
 	{
 		vector<Entry> entries = entry_controls[i]->make_entries();
+		if (i == 0)
+		{
+			journal.set_fulcrum(entries.size());
+		}
 		for (vector<Entry>::size_type j = 0; j != entries.size(); ++j)
 		{
 			Entry entry = entries[j];
