@@ -136,6 +136,8 @@ EntryListCtrl::EntryListCtrl
 void
 EntryListCtrl::add_entry(Entry const& entry)
 {
+	assert (entry.has_id());  // assert precondition
+
 	OrdinaryJournal journal(entry.journal<OrdinaryJournal>());
 	wxString const wx_date_string = date_format_wx(journal.date());
 	wxString const account_string = bstring_to_wx(entry.account().name());
@@ -153,8 +155,10 @@ EntryListCtrl::add_entry(Entry const& entry)
 	InsertItem(i, wx_date_string);
 
 	// The item may change position due to e.g. sorting, so store the
-	// original index in the item's data
-	SetItemData(i, i);
+	// Entry ID in the item's data
+	// TODO Do a static assert to ensure second param will fit the id.
+	assert (entry.has_id());
+	SetItemData(i, entry.id());
 
 	// Populate the other columns
 	SetItem(i, account_col_num(), account_string);
@@ -179,7 +183,21 @@ EntryListCtrl::update_for_posted_journal(OrdinaryJournal const& journal)
 	return;
 }
 		
-
+void
+EntryListCtrl::selected_entries(vector<Entry>& out)
+{
+	size_t i = 0;
+	size_t const lim = GetItemCount();
+	for ( ; i != lim; ++i)
+	{
+		if (GetItemState(i, wxLIST_STATE_SELECTED))
+		{
+			Entry const entry(m_database_connection, GetItemData(i));
+			out.push_back(entry);
+		}
+	}
+	return;
+}
 
 }  // namespace gui
 }  // namespace phatbooks

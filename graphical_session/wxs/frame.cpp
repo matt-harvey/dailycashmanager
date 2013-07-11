@@ -8,6 +8,7 @@
 #include "app.hpp"
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "top_panel.hpp"
 #include <jewel/on_windows.hpp>
@@ -108,6 +109,11 @@ Frame::Frame
 		wxString("Edit selected &category"),
 		wxString("Edit an existing revenue or expenditure category")
 	);
+	m_edit_menu->Append
+	(	s_edit_journal_id,
+		wxString("Edit selected &transaction"),
+		wxString("Edit an existing transaction")
+	);
 	m_menu_bar->Append(m_edit_menu, wxString("&Edit"));
 
 	// Configure "help" menu
@@ -150,6 +156,11 @@ Frame::Frame
 	(	s_edit_pl_account_id,
 		wxEVT_COMMAND_MENU_SELECTED,
 		wxCommandEventHandler(Frame::on_edit_pl_account)
+	);
+	Connect
+	(	s_edit_journal_id,
+		wxEVT_COMMAND_MENU_SELECTED,
+		wxCommandEventHandler(Frame::on_edit_ordinary_journal)
 	);
 	Connect
 	(	wxID_ABOUT,
@@ -304,6 +315,28 @@ Frame::on_edit_pl_account(wxCommandEvent& event)
 }
 
 void
+Frame::on_edit_ordinary_journal(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler warning re. unused parameter.
+	vector<OrdinaryJournal> journals;
+	selected_ordinary_journals(journals);
+	if (journals.empty())
+	{
+		// TODO It should be impossible for the user to even reach
+		// here, as the menu item to edit a transaction should be
+		// disabled unless a transaction is selected.
+		wxMessageBox("No transaction is currently selected.");	
+		return;	
+	}
+	else
+	{
+		assert (journals.size() >= 1);
+		m_top_panel->configure_transaction_ctrl(journals[0]);
+	}
+	return;
+}
+
+void
 Frame::on_new_transaction(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
@@ -330,6 +363,12 @@ Frame::selected_pl_accounts(vector<Account>& out) const
 	return;
 }
 
+void
+Frame::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
+{
+	m_top_panel->selected_ordinary_journals(out);
+	return;
+}
 
 }  // namespace gui
 }  // namespace phatbooks

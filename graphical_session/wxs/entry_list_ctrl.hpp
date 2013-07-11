@@ -5,15 +5,16 @@
 
 
 #include "entry_reader.hpp"
+#include "entry.hpp"
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
+#include <vector>
 
 namespace phatbooks
 {
 
 // Begin forward declarations
 
-class Entry;
 class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
@@ -43,6 +44,11 @@ public:
 	 */
 	void update_for_posted_journal(OrdinaryJournal const& journal);
 
+	/**
+	 * Populates \e out with the currently selected Entries (if any).
+	 */
+	void selected_entries(std::vector<Entry>& out);
+
 private:
 
 	EntryListCtrl
@@ -51,6 +57,9 @@ private:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 	
+	/**
+	 * @param entry must be an Entry with an id.
+	 */
 	void add_entry(Entry const& entry);
 
 	PhatbooksDatabaseConnection& m_database_connection;

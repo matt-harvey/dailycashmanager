@@ -4,6 +4,7 @@
 #define GUARD_top_panel_hpp
 
 #include "account.hpp"
+#include "ordinary_journal.hpp"
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -14,7 +15,6 @@ namespace phatbooks
 
 // Begin forward declarations
 
-class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -54,6 +54,12 @@ public:
 	void selected_pl_accounts(std::vector<Account>& out) const;
 
 	/**
+	 * Populates \e out with a vector of the OrdinaryJournals currently
+	 * selected by the user in the main window.
+	 */
+	void selected_ordinary_journals(std::vector<OrdinaryJournal>& out) const;
+
+	/**
 	 * Update the display to reflect current state of database, after
 	 * saving of p_saved_object.
 	 */
@@ -68,6 +74,11 @@ public:
 	 * @todo What if fewer than 2 Accounts are selected?
 	 */
 	void configure_transaction_ctrl();
+
+	/**
+	 * Configure the TransactionCtrl to reflect an existing OrdinaryJournal.
+	 */
+	void configure_transaction_ctrl(OrdinaryJournal& p_journal);
 
 	/**
 	 * Configure the TransactionCtrl to reflect the Accounts passed in the

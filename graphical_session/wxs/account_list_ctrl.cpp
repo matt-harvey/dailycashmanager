@@ -90,7 +90,7 @@ AccountListCtrl::selected_accounts(vector<Account>& out)
 	size_t const lim = GetItemCount();
 	for ( ; i != lim; ++i)
 	{
-		if(GetItemState(i, wxLIST_STATE_SELECTED))
+		if (GetItemState(i, wxLIST_STATE_SELECTED))
 		{
 			Account const account
 			(	m_database_connection,
