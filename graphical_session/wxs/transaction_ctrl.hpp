@@ -117,6 +117,13 @@ private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
 
+	// Returns next row.
+	// Places size of "standard text box" in p_text_box_size.
+	size_t configure_top_controls
+	(	transaction_type::TransactionType p_transaction_type,
+		wxSize& p_text_box_size
+	);
+
 	/**
 	 * @returns true if and only if journal was actually posted.
 	 */

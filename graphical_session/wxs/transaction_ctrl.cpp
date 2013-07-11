@@ -141,38 +141,12 @@ TransactionCtrl::TransactionCtrl
 	}
 	assert (account_x.has_id());
 	assert (account_y.has_id());
+
 	transaction_type::TransactionType const initial_transaction_type =
 		natural_transaction_type(account_x, account_y);
 
-	size_t row = 0;	
-
-	// Top sizer
-	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
-	SetSizer(m_top_sizer);
-
-	m_transaction_type_ctrl = new TransactionTypeCtrl
-	(	this,
-		s_transaction_type_ctrl_id,
-		wxSize(160, wxDefaultSize.y),
-		m_database_connection
-	);
-	m_transaction_type_ctrl->set_transaction_type(initial_transaction_type);
-	wxSize const text_box_size = m_transaction_type_ctrl->GetSize();
-	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 0));
-
-	m_primary_amount_ctrl = new DecimalTextCtrl
-	(	this,
-		s_primary_amount_ctrl_id,
-		text_box_size,
-		m_database_connection.default_commodity().precision(),
-		false
-	);
-	m_top_sizer->Add
-	(	m_primary_amount_ctrl,
-		wxGBPosition(row, 3),
-		wxDefaultSpan,
-		wxALIGN_RIGHT
-	);
+	wxSize text_box_size;
+	size_t row = configure_top_controls(initial_transaction_type, text_box_size);
 
 	// We need the names of available Accounts, for the given
 	// TransactionType, from which the user will choose
@@ -185,8 +159,6 @@ TransactionCtrl::TransactionCtrl
 	vector<Account> accounts;
 	accounts.push_back(account_x);
 	accounts.push_back(account_y);
-
-	row += 2;
 
 	// WARNING Temp hack
 	assert (accounts.size() >= 2);
@@ -299,35 +271,10 @@ TransactionCtrl::TransactionCtrl
 {
 	transaction_type::TransactionType const initial_transaction_type
 		= p_journal.transaction_type();
-	size_t row = 0;
 
-	// Top sizer
-	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
-	SetSizer(m_top_sizer);
+	wxSize text_box_size;
+	size_t row = configure_top_controls(initial_transaction_type, text_box_size);
 
-	m_transaction_type_ctrl = new TransactionTypeCtrl
-	(	this,
-		s_transaction_type_ctrl_id,
-		wxSize(160, wxDefaultSize.y),
-		m_database_connection
-	);
-	m_transaction_type_ctrl->set_transaction_type(initial_transaction_type);
-	wxSize const text_box_size = m_transaction_type_ctrl->GetSize();
-
-	m_primary_amount_ctrl = new DecimalTextCtrl
-	(	this,
-		s_primary_amount_ctrl_id,
-		text_box_size,
-		m_database_connection.default_commodity().precision(),
-		false
-	);
-	m_primary_amount_ctrl->set_amount(p_journal.primary_amount());
-	m_top_sizer->Add
-	(	m_primary_amount_ctrl,
-		wxGBPosition(row, 3),
-		wxDefaultSpan,
-		wxALIGN_RIGHT
-	);
 
 	// We need the names of available Accounts, for the given TransactionType,
 	// from which the user will choose Accounts, for each side of the
@@ -339,6 +286,45 @@ TransactionCtrl::TransactionCtrl
 	// TODO Implement
 	// EntryCtrl should probably have a constructor which takes (amount other
 	// parameters) a vector<Entry>.
+}
+
+size_t
+TransactionCtrl::configure_top_controls
+(	transaction_type::TransactionType p_transaction_type,
+	wxSize& p_text_box_size
+)
+{
+	size_t row = 0;	
+
+	// Top sizer
+	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
+	SetSizer(m_top_sizer);
+
+	m_transaction_type_ctrl = new TransactionTypeCtrl
+	(	this,
+		s_transaction_type_ctrl_id,
+		wxSize(160, wxDefaultSize.y),
+		m_database_connection
+	);
+	m_transaction_type_ctrl->set_transaction_type(p_transaction_type);
+	p_text_box_size = m_transaction_type_ctrl->GetSize();
+	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 0));
+
+	m_primary_amount_ctrl = new DecimalTextCtrl
+	(	this,
+		s_primary_amount_ctrl_id,
+		p_text_box_size,
+		m_database_connection.default_commodity().precision(),
+		false
+	);
+	m_top_sizer->Add
+	(	m_primary_amount_ctrl,
+		wxGBPosition(row, 3),
+		wxDefaultSpan,
+		wxALIGN_RIGHT
+	);
+	row += 2;
+	return row;
 }
 
 void
