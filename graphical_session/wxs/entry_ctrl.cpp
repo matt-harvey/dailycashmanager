@@ -10,8 +10,10 @@
 #include "locale.hpp"
 #include "transaction_type.hpp"
 #include "transaction_ctrl.hpp"
+#include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/optional.hpp>
 #include <wx/button.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
@@ -20,8 +22,10 @@
 #include <cassert>
 #include <vector>
 
+using boost::optional;
 using boost::scoped_ptr;
 using jewel::Decimal;
+using jewel::value;
 using std::vector;
 
 #include <jewel/debug_log.hpp>
@@ -62,18 +66,101 @@ EntryCtrl::EntryCtrl
 	assert (m_account_name_boxes.empty());
 	assert (m_comment_boxes.empty());
 	assert (m_amount_boxes.empty());
-
 	assert_transaction_type_validity(m_transaction_type);
 
 	m_top_sizer = new wxGridBagSizer(5, 5);
 	SetSizer(m_top_sizer);
 
-	// Row 0
+	bool const multiple_entries = (p_accounts.size() > 1);
 
-	configure_top_row(p_accounts.size() > 1);
+	// Row 0
+	configure_top_row(multiple_entries);
+
+	// Subsequent rows
+	configure_account_reader();
+	vector<Account>::const_iterator it = p_accounts.begin();
+	vector<Account>::const_iterator const end = p_accounts.end();
+	optional<Decimal> const maybe_previous_row_amount;
+	for ( ; it != end; ++it)
+	{
+		add_row
+		(	*it,
+			wxEmptyString,
+			Decimal(0, it->commodity().precision()),
+			maybe_previous_row_amount,
+			multiple_entries
+		);
+	}
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	// Fit();
+	// Layout();
+	GetParent()->Fit();
+}
+
+EntryCtrl::EntryCtrl
+(	wxWindow* p_parent,
+	std::vector<Entry> const& p_entries,
+	PhatbooksDatabaseConnection& p_database_connection,
+	transaction_type::TransactionType p_transaction_type,
+	wxSize const& p_text_ctrl_size,
+	bool p_is_source
+):
+	wxPanel(p_parent),
+	m_database_connection(p_database_connection),
+	m_is_source(p_is_source),
+	m_transaction_type(p_transaction_type),
+	m_account_reader(0),
+	m_text_ctrl_size(p_text_ctrl_size),
+	m_top_sizer(0),
+	m_side_descriptor(0),
+	m_next_row(0)
+{
+	assert (m_account_name_boxes.empty());
+	assert (m_comment_boxes.empty());
+	assert (m_amount_boxes.empty());
+	assert_transaction_type_validity(m_transaction_type);
+
+	m_top_sizer = new wxGridBagSizer(5, 5);
+	SetSizer(m_top_sizer);
+
+	vector<Entry>::size_type const sz = p_entries.size();
+	bool const multiple_entries = (sz > 1);
+
+	// Row 0
+	configure_top_row(multiple_entries);
 
 	// Subsequent rows
 
+	configure_account_reader();
+	optional<Decimal> maybe_previous_row_amount;
+	for (vector<Entry>::size_type i = 0; i != sz; ++i)
+	{
+		add_row
+		(	p_entries[i].account(),
+			bstring_to_wx(p_entries[i].comment()),
+			p_entries[i].amount(),
+			maybe_previous_row_amount,
+			multiple_entries
+		);
+		if (i == 0) maybe_previous_row_amount = p_entries[i].amount();
+	}
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	// Fit();
+	// Layout();
+	GetParent()->Fit();
+}
+
+EntryCtrl::~EntryCtrl()
+{
+	delete m_account_reader;
+	m_account_reader = 0;
+}
+
+void
+EntryCtrl::configure_account_reader()
+{
 	if (m_is_source)
 	{
 		assert (!m_account_reader);
@@ -90,27 +177,7 @@ EntryCtrl::EntryCtrl
 			m_transaction_type
 		);
 	}
-
-	vector<Account>::const_iterator it = p_accounts.begin();
-	vector<Account>::const_iterator const end = p_accounts.end();
-
-	for ( ; it != end; ++it)
-	{
-		add_row(*it, p_accounts.size() > 1);
-	}
-	
-	m_top_sizer->Fit(this);
-	m_top_sizer->SetSizeHints(this);
-	// Fit();
-	// Layout();
-	GetParent()->Fit();
-}
-
-
-EntryCtrl::~EntryCtrl()
-{
-	delete m_account_reader;
-	m_account_reader = 0;
+	return;
 }
 
 void
@@ -296,15 +363,22 @@ void
 EntryCtrl::on_split_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
-	add_row
-	(	m_account_name_boxes.at(m_account_name_boxes.size() - 1)->account(),
-		true
-	);
+	Account const account =
+		m_account_name_boxes.at(m_account_name_boxes.size() - 1)->account();
+	Decimal const amount(0, account.commodity().precision());
+	optional<Decimal> const maybe_prev_amount;
+	add_row(account, wxEmptyString, amount, maybe_prev_amount, true);
 	return;
 }
 
 void
-EntryCtrl::add_row(Account const& p_account, bool p_multiple_entries)
+EntryCtrl::add_row
+(	Account const& p_account,
+	wxString const& p_comment,
+	Decimal const& p_amount,
+	optional<Decimal> const& p_previous_row_amount,
+	bool p_multiple_entries
+)
 {
 	AccountCtrl* account_name_box = new AccountCtrl
 	(	this,
@@ -320,7 +394,7 @@ EntryCtrl::add_row(Account const& p_account, bool p_multiple_entries)
 	wxTextCtrl* comment_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
-		wxEmptyString,
+		p_comment,
 		wxDefaultPosition,
 		wxSize(m_text_ctrl_size.x * 2, m_text_ctrl_size.y),
 		wxALIGN_LEFT
@@ -348,6 +422,7 @@ EntryCtrl::add_row(Account const& p_account, bool p_multiple_entries)
 	}
 	else
 	{
+		assert (p_multiple_entries);
 		Decimal::places_type const precision = primary_amount().places();
 		DecimalTextCtrl* amount_ctrl = new DecimalTextCtrl
 		(	this,
@@ -358,9 +433,8 @@ EntryCtrl::add_row(Account const& p_account, bool p_multiple_entries)
 		);
 		if (m_amount_boxes.size() == 0)
 		{
-			// Then this is the first of multiple amount boxes.
-			amount_ctrl->set_amount(primary_amount());
-		
+			// Then this is the SECOND entry row. The first one didn't have
+			// an amount box...
 			// The initial Entry line now needs a DecimalTextCtrl too, and
 			// we need to reposition m_split_button to make way for it.
 			m_top_sizer->Detach(m_split_button);
@@ -375,12 +449,20 @@ EntryCtrl::add_row(Account const& p_account, bool p_multiple_entries)
 				primary_amount().places(),
 				false
 			);
-			prev_amount_ctrl->set_amount(primary_amount());
+			if (p_previous_row_amount)
+			{
+				prev_amount_ctrl->set_amount(value(p_previous_row_amount));
+			}
+			else
+			{
+				prev_amount_ctrl->set_amount(primary_amount());
+			}
 			m_top_sizer->Add(prev_amount_ctrl, wxGBPosition(m_next_row - 1, 3));
 			prev_amount_ctrl->MoveBeforeInTabOrder(account_name_box);
 			assert (m_amount_boxes.empty());
 			m_amount_boxes.push_back(prev_amount_ctrl);
 		}
+		amount_ctrl->set_amount(p_amount);
 		m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
 		m_amount_boxes.push_back(amount_ctrl);
 	}

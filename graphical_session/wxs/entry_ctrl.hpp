@@ -9,6 +9,7 @@
 #include "entry.hpp"
 #include "transaction_type.hpp"
 #include <boost/noncopyable.hpp>
+#include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
 #include <wx/gbsizer.h>
@@ -64,9 +65,6 @@ public:
 		bool p_is_source
 	);
 
-	/**
-	 * @todo Implement this.
-	 */
 	EntryCtrl
 	(	wxWindow* p_parent,
 		std::vector<Entry> const& p_entries,
@@ -98,15 +96,18 @@ public:
 	bool is_all_zero() const;
 
 private:
-
+	void configure_account_reader();
 	void configure_top_row(bool p_include_split_button);
-
-	void add_row(Account const& p_account, bool p_multiple_entries);
-
+	void add_row
+	(	Account const& p_account,
+		wxString const& p_comment,
+		jewel::Decimal const& p_amount,
+		boost::optional<jewel::Decimal> const& p_previous_row_amount,
+		bool p_multiple_entries
+	);
+	void add_row(Entry const& p_entry, bool p_multiple_entries);
 	wxString side_description() const;
-
 	void on_split_button_click(wxCommandEvent& event);
-	void add_row();
 
 	PhatbooksDatabaseConnection& m_database_connection;
 
