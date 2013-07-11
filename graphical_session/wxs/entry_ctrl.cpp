@@ -438,7 +438,7 @@ EntryCtrl::add_row
 			// The initial Entry line now needs a DecimalTextCtrl too, and
 			// we need to reposition m_split_button to make way for it.
 			m_top_sizer->Detach(m_split_button);
-			assert (m_next_row >= 2);
+			assert (m_next_row == 1);
 			m_top_sizer->Add(m_split_button, wxGBPosition(0, 3));
 			assert (!m_account_name_boxes.empty());
 			m_split_button->MoveBeforeInTabOrder(m_account_name_boxes[0]);

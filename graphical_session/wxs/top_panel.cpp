@@ -170,7 +170,7 @@ TopPanel::configure_transaction_ctrl(OrdinaryJournal& p_journal)
 	assert (m_right_column_sizer);
 	if (m_transaction_ctrl)
 	{
-		m_right_column_sizer->Detach(m_transaction_ctrl);
+		m_right_column_sizer->Detach(m_transaction_ctrl); // WARNING Will this leak memory?
 		old = m_transaction_ctrl;
 	}
 	m_transaction_ctrl = new TransactionCtrl(this, p_journal);
@@ -228,7 +228,7 @@ TopPanel::configure_transaction_ctrl
 	JEWEL_DEBUG_LOG_LOCATION;
 	if (m_transaction_ctrl)
 	{
-		m_right_column_sizer->Detach(m_transaction_ctrl);
+		m_right_column_sizer->Detach(m_transaction_ctrl);  // WARNING Will this leak memory?
 		old = m_transaction_ctrl;
 	}
 	JEWEL_DEBUG_LOG_LOCATION;
@@ -269,7 +269,7 @@ TopPanel::configure_draft_journal_list_ctrl()
 	assert (m_right_column_sizer);
 	if (m_draft_journal_list)
 	{
-		m_right_column_sizer->Detach(m_draft_journal_list);
+		m_right_column_sizer->Detach(m_draft_journal_list); // WARNING Will this result in memory leak?
 		old = m_draft_journal_list;
 	}
 	UserDraftJournalReader const reader(m_database_connection);
@@ -279,11 +279,13 @@ TopPanel::configure_draft_journal_list_ctrl()
 		reader
 	);
 	m_right_column_sizer->Add(m_draft_journal_list, wxSizerFlags(1).Expand());
+	/*
 	if (old)
 	{
-		old->Destroy();
+		old->Destroy(); // WARNING This seems to result in double-free
 		old = 0;
 	}
+	*/
 	Layout();
 	return;
 }
