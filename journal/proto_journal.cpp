@@ -81,16 +81,16 @@ ProtoJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 		");"
 	);
 	using transaction_type::TransactionType;
-	SQLStatement statement
-	(	dbc,
-		"insert into transaction_types(transaction_type_id) values(:p)"
-	);
 	for
 	(	int i = 0;
 		i != static_cast<int>(transaction_type::num_transaction_types);
 		++i
 	)
 	{
+		SQLStatement statement
+		(	dbc,
+			"insert into transaction_types(transaction_type_id) values(:p)"
+		);
 		statement.bind(":p", i);
 		statement.step_final();
 	}
@@ -410,17 +410,11 @@ ProtoJournal::mimic_core
 	optional<Id> id
 )
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	set_whether_actual(rhs.is_actual());
-	JEWEL_DEBUG_LOG_LOCATION;
 	set_transaction_type(rhs.transaction_type());
-	JEWEL_DEBUG_LOG_LOCATION;
 	set_fulcrum(rhs.fulcrum());
-	JEWEL_DEBUG_LOG_LOCATION;
 	set_comment(rhs.comment());
-	JEWEL_DEBUG_LOG_LOCATION;
 	clear_entries();
-	JEWEL_DEBUG_LOG_LOCATION;
 	typedef vector<Entry>::const_iterator It;
 	vector<Entry> const& rentries = rhs.entries();
 	if (!rentries.empty())
@@ -433,7 +427,6 @@ ProtoJournal::mimic_core
 			push_entry(entry);
 		}
 	}
-	JEWEL_DEBUG_LOG_LOCATION;
 	return;
 }
 

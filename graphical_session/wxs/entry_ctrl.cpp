@@ -457,7 +457,8 @@ EntryCtrl::add_row
 			{
 				prev_amount_ctrl->set_amount(primary_amount());
 			}
-			m_top_sizer->Add(prev_amount_ctrl, wxGBPosition(m_next_row - 1, 3));
+			m_top_sizer->
+				Add(prev_amount_ctrl, wxGBPosition(m_next_row - 1, 3));
 			prev_amount_ctrl->MoveBeforeInTabOrder(account_name_box);
 			assert (m_amount_boxes.empty());
 			m_amount_boxes.push_back(prev_amount_ctrl);
