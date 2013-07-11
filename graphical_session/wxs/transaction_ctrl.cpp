@@ -17,7 +17,6 @@
 #include "finformat.hpp"
 #include "frame.hpp"
 #include "frequency_ctrl.hpp"
-#include "persistent_journal.hpp"
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
 #include "locale.hpp"
@@ -144,15 +143,9 @@ TransactionCtrl::TransactionCtrl
 
 	transaction_type::TransactionType const initial_transaction_type =
 		natural_transaction_type(account_x, account_y);
-
+	assert_transaction_type_validity(initial_transaction_type);
 	wxSize text_box_size;
 	size_t row = configure_top_controls(initial_transaction_type, text_box_size);
-
-	// We need the names of available Accounts, for the given
-	// TransactionType, from which the user will choose
-	// Accounts, for each side of the transaction.
-
-	assert_transaction_type_validity(initial_transaction_type);
 
 	// Rows for entering Entry details
 	typedef vector<Account>::size_type Size;
@@ -250,7 +243,7 @@ TransactionCtrl::TransactionCtrl
 
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
-	PersistentJournal& p_journal
+	OrdinaryJournal& p_journal
 ):
 	wxPanel
 	(	p_parent,
@@ -271,21 +264,105 @@ TransactionCtrl::TransactionCtrl
 {
 	transaction_type::TransactionType const initial_transaction_type
 		= p_journal.transaction_type();
-
+	assert_transaction_type_validity(initial_transaction_type);
 	wxSize text_box_size;
 	size_t row = configure_top_controls(initial_transaction_type, text_box_size);
 
+	vector<Entry> const& entries = p_journal.entries();
+	vector<Entry>::size_type const fulcrum = p_journal.fulcrum();
+	vector<Entry>::size_type i = 0;
+	vector<Entry>::size_type const sz = entries.size();
+	vector<Entry> source_entries;
+	vector<Entry> destination_entries;
+	for ( ; i != fulcrum; ++i) source_entries.push_back(entries[i]);
+	assert (i == fulcrum);
+	for ( ; i != sz; ++i) destination_entries.push_back(entries[i]);
 
-	// We need the names of available Accounts, for the given TransactionType,
-	// from which the user will choose Accounts, for each side of the
-	// transaction.
+	m_source_entry_ctrl = new EntryCtrl
+	(	this,
+		source_entries,
+		m_database_connection,
+		initial_transaction_type,
+		text_box_size,
+		true
+	);
+	m_destination_entry_ctrl = new EntryCtrl
+	(	this,
+		destination_entries,
+		m_database_connection,
+		initial_transaction_type,
+		text_box_size,
+		false
+	);
+
+	m_top_sizer->Add
+	(	m_source_entry_ctrl,
+		wxGBPosition(row, 0),
+		wxGBSpan(1, 4),
+		wxEXPAND
+	);
 	
-	assert_transaction_type_validity(initial_transaction_type);
+	row += 2;
+
+	m_top_sizer->Add
+	(	m_destination_entry_ctrl,
+		wxGBPosition(row, 0),
+		wxGBSpan(1, 4),
+		wxEXPAND
+	);
+	
+	row += 2;
+
+	// TODO Factor out code duplicated with other constructor.
+
+	// Date and Frequency controls
+	m_frequency_ctrl = new FrequencyCtrl
+	(	this,
+		wxID_ANY,
+		wxSize(text_box_size.x * 3 + standard_gap(), text_box_size.y)
+	);
+	m_top_sizer->Add(m_frequency_ctrl, wxGBPosition(row, 0), wxGBSpan(1, 3));
+
+	m_date_ctrl = new DateCtrl
+	(	this,
+		wxID_ANY,
+		wxSize(text_box_size.x, text_box_size.y),
+		p_journal.date()
+	);
+	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 3));
+
+	row += 2;
+
+	// Cancel/Clear button
+	m_cancel_button = new wxButton
+	(	this,
+		wxID_CANCEL,
+		wxString("&Clear"),
+		wxDefaultPosition,
+		wxSize(text_box_size.x, text_box_size.y)
+	);
+	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
+
+	// Save/OK button
+	m_ok_button = new wxButton
+	(	this,
+		wxID_OK,
+		wxString("&Save"),
+		wxDefaultPosition,
+		wxSize(text_box_size.x, text_box_size.y)
+	);
+
+	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 3));
+	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
+
+	// "Admin"
+	// SetSizer(m_top_sizer);
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	Fit();
+	Layout();
 
 
-	// TODO Implement
-	// EntryCtrl should probably have a constructor which takes (amount other
-	// parameters) a vector<Entry>.
 }
 
 size_t

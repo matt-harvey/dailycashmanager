@@ -20,7 +20,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
-class PersistentJournal;
+class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -98,9 +98,11 @@ public:
 
 	/**
 	 * Create a TransactionCtrl to allow the user to change the
-	 * Entries and other attributes of an already-saved Journal.
+	 * Entries and other attributes of an already-saved OrdinaryJournal.
+	 *
+	 * @todo We need a similar constructor for DraftJournal.
 	 */
-	TransactionCtrl(TopPanel* p_parent, PersistentJournal& p_journal);
+	TransactionCtrl(TopPanel* p_parent, OrdinaryJournal& p_journal);
 
 	/**
 	 * Refresh the selections available in the AccountCtrls in the
