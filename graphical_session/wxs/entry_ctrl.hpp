@@ -99,6 +99,10 @@ public:
 
 private:
 
+	void configure_top_row(bool p_include_split_button);
+
+	void add_row(Account const& p_account, bool p_multiple_entries);
+
 	wxString side_description() const;
 
 	void on_split_button_click(wxCommandEvent& event);

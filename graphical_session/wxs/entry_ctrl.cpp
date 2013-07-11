@@ -70,40 +70,9 @@ EntryCtrl::EntryCtrl
 
 	// Row 0
 
-	assert (m_next_row == 0);
-
-	m_side_descriptor = new wxStaticText(this, wxID_ANY, side_description());
-	m_top_sizer->Add(m_side_descriptor, wxGBPosition(m_next_row, 0));
-
-	wxStaticText* const comment_label = new wxStaticText
-	(	this,
-		wxID_ANY,
-		wxString(" Memo:"),
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_LEFT
-	);
-	m_top_sizer->Add(comment_label, wxGBPosition(m_next_row, 1));
-
-	// Split button is in row 0 if and only if there are multiple
-	// Accounts.
-	if (p_accounts.size() > 1)
-	{
-		// Note the order of construction of elements effects tab
-		// traversal.
-		m_split_button = new wxButton
-		(	this,
-			s_split_button_id,
-			wxString("Split"),
-			wxDefaultPosition,
-			m_text_ctrl_size
-		);
-		m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row, 3));
-	}
+	configure_top_row(p_accounts.size() > 1);
 
 	// Subsequent rows
-
-	++m_next_row;
 
 	if (m_is_source)
 	{
@@ -125,66 +94,9 @@ EntryCtrl::EntryCtrl
 	vector<Account>::const_iterator it = p_accounts.begin();
 	vector<Account>::const_iterator const end = p_accounts.end();
 
-	// TODO Factor this out. (Re-used add_row().)
-	for (size_t entry_num = 0; it != end; ++it, ++m_next_row, ++entry_num)
+	for ( ; it != end; ++it)
 	{
-		AccountCtrl* account_name_box = new AccountCtrl
-		(	this,
-			wxID_ANY,
-			*it,
-			m_text_ctrl_size,
-			m_account_reader->begin(),
-			m_account_reader->end(),
-			m_database_connection
-		);
-		m_top_sizer->Add(account_name_box, wxGBPosition(m_next_row, 0));
-		m_account_name_boxes.push_back(account_name_box);
-		wxTextCtrl* comment_ctrl = new wxTextCtrl
-		(	this,
-			wxID_ANY,
-			wxEmptyString,
-			wxDefaultPosition,
-			wxSize(m_text_ctrl_size.x * 2, m_text_ctrl_size.y),
-			wxALIGN_LEFT
-		);
-		m_top_sizer->
-			Add(comment_ctrl, wxGBPosition(m_next_row, 1), wxGBSpan(1, 2));
-		m_comment_boxes.push_back(comment_ctrl);
-
-		// If there is only one Account then there is only one "Entry line",
-		// and that Entry line will also house the "Split" button. There will
-		// then be no need to have an amount_ctrl for just the one
-		// Entry. If there are multiple Entries then we must have already
-		// placed the Split button at row 0, and in that case we also need
-		// an amount_ctrl for each Entry.
-		if (p_accounts.size() == 1)
-		{
-			m_split_button = new wxButton
-			(	this,
-				s_split_button_id,
-				wxString("Split"),
-				wxDefaultPosition,
-				m_text_ctrl_size
-			);
-			m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row, 3));
-		}
-		else
-		{
-			Decimal::places_type const precision = primary_amount().places();
-			DecimalTextCtrl* amount_ctrl = new DecimalTextCtrl
-			(	this,
-				wxID_ANY,
-				m_text_ctrl_size,
-				precision,
-				false
-			);
-			if (entry_num == 0)
-			{
-				amount_ctrl->set_amount(primary_amount());
-			}
-			m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
-			m_amount_boxes.push_back(amount_ctrl);
-		}
+		add_row(*it, p_accounts.size() > 1);
 	}
 	
 	m_top_sizer->Fit(this);
@@ -199,6 +111,43 @@ EntryCtrl::~EntryCtrl()
 {
 	delete m_account_reader;
 	m_account_reader = 0;
+}
+
+void
+EntryCtrl::configure_top_row(bool p_include_split_button)
+{
+	assert (m_next_row == 0);
+	m_side_descriptor = new wxStaticText(this, wxID_ANY, side_description());
+	m_top_sizer->Add(m_side_descriptor, wxGBPosition(m_next_row, 0));
+
+	wxStaticText* const comment_label = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString(" Memo:"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT
+	);
+	m_top_sizer->Add(comment_label, wxGBPosition(m_next_row, 1));
+
+	// Split button is in row 0 if and only if there are multiple
+	// Accounts.
+	if (p_include_split_button)
+	{
+		// Note the order of construction of elements effects tab
+		// traversal.
+		m_split_button = new wxButton
+		(	this,
+			s_split_button_id,
+			wxString("Split"),
+			wxDefaultPosition,
+			m_text_ctrl_size
+		);
+		m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row, 3));
+	}
+	++m_next_row;
+	assert (m_next_row == 1);
+	return;
 }
 
 void
@@ -347,18 +296,20 @@ void
 EntryCtrl::on_split_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
-	add_row();
+	add_row
+	(	m_account_name_boxes.at(m_account_name_boxes.size() - 1)->account(),
+		true
+	);
 	return;
 }
 
 void
-EntryCtrl::add_row()
+EntryCtrl::add_row(Account const& p_account, bool p_multiple_entries)
 {
-	assert (m_account_name_boxes.size() >= 1);
 	AccountCtrl* account_name_box = new AccountCtrl
 	(	this,
 		wxID_ANY,
-		m_account_name_boxes.at(m_account_name_boxes.size() - 1)->account(),
+		p_account,
 		m_text_ctrl_size,
 		m_account_reader->begin(),
 		m_account_reader->end(),
@@ -378,39 +329,61 @@ EntryCtrl::add_row()
 		Add(comment_ctrl, wxGBPosition(m_next_row, 1), wxGBSpan(1, 2));
 	m_comment_boxes.push_back(comment_ctrl);
 
-	DecimalTextCtrl* amount_ctrl = new DecimalTextCtrl
-	(	this,
-		wxID_ANY,
-		m_text_ctrl_size,
-		primary_amount().places(),
-		false
-	);
-	m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
-
-	if (m_amount_boxes.size() == 0)
+	// If there is only one Account then there is only one "Entry line",
+	// and that Entry line will also house the "Split" button. There will
+	// then be no need to have an amount_ctrl for just the one
+	// Entry. If there are multiple Entries then we must have already
+	// placed the Split button at row 0, and in that case we also need
+	// an amount_ctrl for each Entry.
+	if (!p_multiple_entries)
 	{
-		// Then the initial Entry line now needs a DecimalTextCtrl too, and
-		// we need to reposition m_split_button to make way for it.
-		m_top_sizer->Detach(m_split_button);
-		assert (m_next_row >= 2);
-		m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row - 2, 3));
-		assert (!m_account_name_boxes.empty());
-		m_split_button->MoveBeforeInTabOrder(m_account_name_boxes[0]);
-		DecimalTextCtrl* prev_amount_ctrl = new DecimalTextCtrl
+		m_split_button = new wxButton
+		(	this,
+			s_split_button_id,
+			wxString("Split"),
+			wxDefaultPosition,
+			m_text_ctrl_size
+		);
+		m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row, 3));
+	}
+	else
+	{
+		Decimal::places_type const precision = primary_amount().places();
+		DecimalTextCtrl* amount_ctrl = new DecimalTextCtrl
 		(	this,
 			wxID_ANY,
 			m_text_ctrl_size,
-			primary_amount().places(),
+			precision,
 			false
 		);
-		prev_amount_ctrl->set_amount(primary_amount());
-		m_top_sizer->Add(prev_amount_ctrl, wxGBPosition(m_next_row - 1, 3));
-		prev_amount_ctrl->MoveBeforeInTabOrder(account_name_box);
-		assert (m_amount_boxes.empty());
-		m_amount_boxes.push_back(prev_amount_ctrl);
+		if (m_amount_boxes.size() == 0)
+		{
+			// Then this is the first of multiple amount boxes.
+			amount_ctrl->set_amount(primary_amount());
+		
+			// The initial Entry line now needs a DecimalTextCtrl too, and
+			// we need to reposition m_split_button to make way for it.
+			m_top_sizer->Detach(m_split_button);
+			assert (m_next_row >= 2);
+			m_top_sizer->Add(m_split_button, wxGBPosition(0, 3));
+			assert (!m_account_name_boxes.empty());
+			m_split_button->MoveBeforeInTabOrder(m_account_name_boxes[0]);
+			DecimalTextCtrl* prev_amount_ctrl = new DecimalTextCtrl
+			(	this,
+				wxID_ANY,
+				m_text_ctrl_size,
+				primary_amount().places(),
+				false
+			);
+			prev_amount_ctrl->set_amount(primary_amount());
+			m_top_sizer->Add(prev_amount_ctrl, wxGBPosition(m_next_row - 1, 3));
+			prev_amount_ctrl->MoveBeforeInTabOrder(account_name_box);
+			assert (m_amount_boxes.empty());
+			m_amount_boxes.push_back(prev_amount_ctrl);
+		}
+		m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
+		m_amount_boxes.push_back(amount_ctrl);
 	}
-
-	m_amount_boxes.push_back(amount_ctrl);
 
 	++m_next_row;
 
