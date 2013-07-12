@@ -166,12 +166,12 @@ TopPanel::configure_transaction_ctrl()
 void
 TopPanel::configure_transaction_ctrl(OrdinaryJournal& p_journal)
 {
-	// TransactionCtrl* old = 0;
+	TransactionCtrl* old = 0;
 	assert (m_right_column_sizer);
 	if (m_transaction_ctrl)
 	{
-		m_right_column_sizer->Detach(m_transaction_ctrl); // WARNING Will this leak memory?
-		// old = m_transaction_ctrl;
+		m_right_column_sizer->Detach(m_transaction_ctrl);
+		old = m_transaction_ctrl;
 	}
 	m_transaction_ctrl = new TransactionCtrl(this, p_journal);
 	m_right_column_sizer->Insert
@@ -180,13 +180,11 @@ TopPanel::configure_transaction_ctrl(OrdinaryJournal& p_journal)
 		wxSizerFlags(6).Expand().
 			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
 	);
-	/*
 	if (old)
 	{
-		old->Destroy();  // Results in double-free (why?) WARNING
+		old->Destroy();
 		old = 0;
 	}
-	*/
 	Layout();
 	return;
 }
@@ -218,12 +216,12 @@ TopPanel::configure_transaction_ctrl
 			}
 		}
 	}
-	// TransactionCtrl* old = 0;
+	TransactionCtrl* old = 0;
 	assert (m_right_column_sizer);
 	if (m_transaction_ctrl)
 	{
-		m_right_column_sizer->Detach(m_transaction_ctrl);  // WARNING Will this leak memory?
-		// old = m_transaction_ctrl;
+		m_right_column_sizer->Detach(m_transaction_ctrl);
+		old = m_transaction_ctrl;
 	}
 	m_transaction_ctrl = new TransactionCtrl
 	(	this,
@@ -237,13 +235,11 @@ TopPanel::configure_transaction_ctrl
 		wxSizerFlags(6).Expand().
 			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
 	);
-	/*
 	if (old)
 	{
-		old->Destroy();  // Results in double-free (why?) // WARNING
+		old->Destroy();
 		old = 0;
 	}
-	*/
 	Layout();
 	return;
 }
@@ -251,12 +247,12 @@ TopPanel::configure_transaction_ctrl
 void
 TopPanel::configure_draft_journal_list_ctrl()
 {
-	// DraftJournalListCtrl* old = 0;
+	DraftJournalListCtrl* old = 0;
 	assert (m_right_column_sizer);
 	if (m_draft_journal_list)
 	{
-		m_right_column_sizer->Detach(m_draft_journal_list); // WARNING Will this result in memory leak?
-		// old = m_draft_journal_list;
+		m_right_column_sizer->Detach(m_draft_journal_list);
+		old = m_draft_journal_list;
 	}
 	UserDraftJournalReader const reader(m_database_connection);
 	m_draft_journal_list = new DraftJournalListCtrl
@@ -265,13 +261,11 @@ TopPanel::configure_draft_journal_list_ctrl()
 		reader
 	);
 	m_right_column_sizer->Add(m_draft_journal_list, wxSizerFlags(1).Expand());
-	/*
 	if (old)
 	{
-		old->Destroy(); // WARNING This seems to result in double-free
+		old->Destroy();
 		old = 0;
 	}
-	*/
 	Layout();
 	return;
 }
