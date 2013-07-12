@@ -4,6 +4,7 @@
 #define GUARD_frame_hpp
 
 #include "account.hpp"
+#include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
 #include <wx/menu.h>
 #include <wx/wx.h>
@@ -34,22 +35,28 @@ public:
 	);
 
 	/**
-	 * Populates \e out with a vector of the balance sheet Accounts currently
+	 * Populates \e out with all the balance sheet Accounts currently
 	 * selected by the user in the main window.
 	 */
 	void selected_balance_sheet_accounts(std::vector<Account>& out) const;
 
 	/**
-	 * Populates \e out with a vector of the P&L Accounts currently selected
+	 * Populates \e out with all the P&L Accounts currently selected
 	 * by the user in the main window.
 	 */
 	void selected_pl_accounts(std::vector<Account>& out) const;
 
 	/**
-	 * Populates \e out with a vector of the OrdinaryJournals currently
+	 * Populates \e out with all the OrdinaryJournals currently
 	 * selected by the user in the main window.
 	 */
 	void selected_ordinary_journals(std::vector<OrdinaryJournal>& out) const;
+
+	/**
+	 * Populates \e out with all the DraftJournals currently
+	 * selected by the user in the main window.
+	 */
+	void selected_draft_journals(std::vector<DraftJournal>& out) const;
 
 private:
 
@@ -62,13 +69,15 @@ private:
 	void on_edit_bs_account(wxCommandEvent& event);
 	void on_edit_pl_account(wxCommandEvent& event);
 	void on_edit_ordinary_journal(wxCommandEvent& event);
+	void on_edit_draft_journal(wxCommandEvent& event);
 
 	static int const s_new_bs_account_id = wxID_HIGHEST + 1;
 	static int const s_new_pl_account_id = s_new_bs_account_id + 1;
 	static int const s_new_transaction_id = s_new_pl_account_id + 1;
 	static int const s_edit_bs_account_id = s_new_transaction_id + 1;
 	static int const s_edit_pl_account_id = s_edit_bs_account_id + 1;
-	static int const s_edit_journal_id = s_edit_pl_account_id + 1;
+	static int const s_edit_ordinary_journal_id = s_edit_pl_account_id + 1;
+	static int const s_edit_draft_journal_id = s_edit_ordinary_journal_id + 1;
 
 	PhatbooksDatabaseConnection& m_database_connection;
 

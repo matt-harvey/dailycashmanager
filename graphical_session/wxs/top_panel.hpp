@@ -4,7 +4,10 @@
 #define GUARD_top_panel_hpp
 
 #include "account.hpp"
+#include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
+#include "sizing.hpp"
+#include "transaction_ctrl.hpp"
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -42,22 +45,28 @@ public:
 	);
 
 	/**
-	 * Populates \e out with a vector of the balance sheet Accounts currently
+	 * Populates \e out with all the balance sheet Accounts currently
 	 * selected by the user in the main window.
 	 */
 	void selected_balance_sheet_accounts(std::vector<Account>& out) const;
 
 	/**
-	 * Populates \e out with a vector of the P&L Accounts currently selected
+	 * Populates \e out with all the P&L Accounts currently selected
 	 * by the user in the main window.
 	 */
 	void selected_pl_accounts(std::vector<Account>& out) const;
 
 	/**
-	 * Populates \e out with a vector of the OrdinaryJournals currently
+	 * Populates \e out with all the OrdinaryJournals currently
 	 * selected by the user in the main window.
 	 */
 	void selected_ordinary_journals(std::vector<OrdinaryJournal>& out) const;
+
+	/**
+	 * Populates \e out with all the DraftJournals currently
+	 * selected by the user in the main window.
+	 */
+	void selected_draft_journals(std::vector<DraftJournal>& out) const;
 
 	/**
 	 * Update the display to reflect current state of database, after
@@ -81,9 +90,12 @@ public:
 	void configure_transaction_ctrl();
 
 	/**
-	 * Configure the TransactionCtrl to reflect an existing OrdinaryJournal.
+	 * Configure the TransactionCtrl to reflect an existing OrdinaryJournal
+	 * or DraftJournal.
+	 * \e JournalType should be either OrdinaryJournal or DraftJournal.
 	 */
-	void configure_transaction_ctrl(OrdinaryJournal& p_journal);
+	template <typename JournalType>
+	void configure_transaction_ctrl(JournalType& p_journal);
 
 	/**
 	 * Configure the TransactionCtrl to reflect the Accounts passed in the
@@ -121,6 +133,36 @@ private:
 	DraftJournalListCtrl* m_draft_journal_list;
 };
 
+
+
+// IMPLEMENT MEMBER FUNCTION TEMPLATE
+
+template <typename JournalType>
+void
+TopPanel::configure_transaction_ctrl(JournalType& p_journal)
+{
+	TransactionCtrl* old = 0;
+	assert (m_right_column_sizer);
+	if (m_transaction_ctrl)
+	{
+		m_right_column_sizer->Detach(m_transaction_ctrl);
+		old = m_transaction_ctrl;
+	}
+	m_transaction_ctrl = new TransactionCtrl(this, p_journal);
+	m_right_column_sizer->Insert
+	(	0,
+		m_transaction_ctrl,
+		wxSizerFlags(6).Expand().
+			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
+	);
+	if (old)
+	{
+		old->Destroy();
+		old = 0;
+	}
+	Layout();
+	return;
+}
 
 
 }  // namespace gui

@@ -4,6 +4,7 @@
 #include "draft_journal.hpp"
 #include "draft_journal_reader.hpp"
 #include "frequency.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include <wx/listctrl.h>
 #include <algorithm>
@@ -22,7 +23,8 @@ namespace gui
 DraftJournalListCtrl::DraftJournalListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	UserDraftJournalReader const& p_reader
+	UserDraftJournalReader const& p_reader,
+	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxListCtrl
 	(	p_parent,
@@ -30,9 +32,26 @@ DraftJournalListCtrl::DraftJournalListCtrl
 		wxDefaultPosition,
 		p_size,
 		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
-	)
+	),
+	m_database_connection(p_database_connection)
 {
 	update(p_reader);
+}
+
+void
+DraftJournalListCtrl::selected_draft_journals(vector<DraftJournal>& out)
+{
+	size_t i = 0;
+	size_t const lim = GetItemCount();
+	for ( ; i != lim; ++i)
+	{
+		if (GetItemState(i, wxLIST_STATE_SELECTED))
+		{
+			DraftJournal const dj(m_database_connection, GetItemData(i));
+			out.push_back(dj);
+		}
+	}
+	return;
 }
 
 void
@@ -64,8 +83,10 @@ DraftJournalListCtrl::update(UserDraftJournalReader const& p_reader)
 		InsertItem(i, bstring_to_wx(it->name()));
 		
 		// The item may change position due to e.g. sorting, so store the
-		// original index in the item's data
-		SetItemData(i, i);
+		// Journal ID in the item's data
+		// TODO Do a static assert to ensure second param will fit the id.
+		assert (it->has_id());
+		SetItemData(i, it->id());
 
 		// Set the frequency and next-date columns.
 

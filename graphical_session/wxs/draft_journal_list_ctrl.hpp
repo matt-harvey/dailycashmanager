@@ -4,12 +4,14 @@
 #include "draft_journal.hpp"
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
+#include <vector>
 
 namespace phatbooks
 {
 
 // Begin forward declarations
 
+class PhatbooksDatabaseConnection;
 class UserDraftJournalReader;
 
 // End forward declarations
@@ -24,8 +26,15 @@ public:
 	DraftJournalListCtrl
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		UserDraftJournalReader const& p_reader
+		UserDraftJournalReader const& p_reader,
+		PhatbooksDatabaseConnection& p_database_connection
 	);
+
+	/**
+	 * Populates \e out with all the DraftJournals currently
+	 * selected by the user in the DraftJournalListCtrl.
+	 */
+	void selected_draft_journals(std::vector<DraftJournal>& out);
 
 private:
 
@@ -34,6 +43,8 @@ private:
 	static int const s_name_col = 0;
 	static int const s_frequency_col = s_name_col + 1;
 	static int const s_next_date_col = s_frequency_col + 1;
+
+	PhatbooksDatabaseConnection& m_database_connection;
 
 };  // class DraftJournalListCtrl
 

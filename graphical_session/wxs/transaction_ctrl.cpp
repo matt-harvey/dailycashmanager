@@ -399,6 +399,32 @@ TransactionCtrl::TransactionCtrl
 	Layout();
 }
 
+TransactionCtrl::TransactionCtrl
+(	TopPanel* p_parent,
+	DraftJournal const& p_journal
+):
+	wxPanel
+	(	p_parent,
+		wxID_ANY,
+		wxDefaultPosition,
+		wxDefaultSize
+	),
+	m_top_sizer(0),
+	m_transaction_type_ctrl(0),
+	m_source_entry_ctrl(0),
+	m_destination_entry_ctrl(0),
+	m_primary_amount_ctrl(0),
+	m_frequency_ctrl(0),
+	m_date_ctrl(0),
+	m_cancel_button(0),
+	m_ok_button(0),
+	m_journal(0),
+	m_database_connection(p_journal.database_connection())
+{
+	// TODO HIGH PRIORITY Implement this.
+}	
+
+
 TransactionCtrl::~TransactionCtrl()
 {
 	delete m_journal;

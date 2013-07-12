@@ -8,6 +8,7 @@
 #include "app.hpp"
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
+#include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "top_panel.hpp"
@@ -110,9 +111,14 @@ Frame::Frame
 		wxString("Edit an existing revenue or expenditure category")
 	);
 	m_edit_menu->Append
-	(	s_edit_journal_id,
-		wxString("Edit selected &transaction"),
-		wxString("Edit an existing transaction")
+	(	s_edit_ordinary_journal_id,
+		wxString("Edit selected &ordinary transaction"),
+		wxString("Edit an existing ordinary (non-recurring) transaction")
+	);
+	m_edit_menu->Append
+	(	s_edit_draft_journal_id,
+		wxString("Edit selected &recurring transaction"),
+		wxString("Edit an exising recurring transaction")
 	);
 	m_menu_bar->Append(m_edit_menu, wxString("&Edit"));
 
@@ -158,9 +164,14 @@ Frame::Frame
 		wxCommandEventHandler(Frame::on_edit_pl_account)
 	);
 	Connect
-	(	s_edit_journal_id,
+	(	s_edit_ordinary_journal_id,
 		wxEVT_COMMAND_MENU_SELECTED,
 		wxCommandEventHandler(Frame::on_edit_ordinary_journal)
+	);
+	Connect
+	(	s_edit_draft_journal_id,
+		wxEVT_COMMAND_MENU_SELECTED,
+		wxCommandEventHandler(Frame::on_edit_draft_journal)
 	);
 	Connect
 	(	wxID_ABOUT,
@@ -323,16 +334,33 @@ Frame::on_edit_ordinary_journal(wxCommandEvent& event)
 	if (journals.empty())
 	{
 		// TODO It should be impossible for the user to even reach
-		// here, as the menu item to edit a transaction should be
-		// disabled unless a transaction is selected.
+		// here, as the menu item to edit an ordinary transaction should
+		// be disabled unless an ordinary transaction is selected.
 		wxMessageBox("No transaction is currently selected.");	
 		return;	
 	}
-	else
+	assert (journals.size() >= 1);
+	m_top_panel->configure_transaction_ctrl(journals[0]);
+	return;
+}
+
+void
+Frame::on_edit_draft_journal(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler warning re. unused parameter
+	vector<DraftJournal> journals;
+	selected_draft_journals(journals);
+	if (journals.empty())
 	{
-		assert (journals.size() >= 1);
-		m_top_panel->configure_transaction_ctrl(journals[0]);
+		// TODO It should be impossible for the user to even reach
+		// here, as the menu item to edit a recurring transaction
+		// should be disabled unless a recurring transaction
+		// is selected.
+		wxMessageBox("No recurring transaction is currently selected.");
+		return;
 	}
+	assert (journals.size() >= 1);
+	m_top_panel->configure_transaction_ctrl(journals[0]);
 	return;
 }
 
@@ -367,6 +395,13 @@ void
 Frame::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 {
 	m_top_panel->selected_ordinary_journals(out);
+	return;
+}
+
+void
+Frame::selected_draft_journals(vector<DraftJournal>& out) const
+{
+	m_top_panel->selected_draft_journals(out);
 	return;
 }
 

@@ -164,32 +164,6 @@ TopPanel::configure_transaction_ctrl()
 }
 
 void
-TopPanel::configure_transaction_ctrl(OrdinaryJournal& p_journal)
-{
-	TransactionCtrl* old = 0;
-	assert (m_right_column_sizer);
-	if (m_transaction_ctrl)
-	{
-		m_right_column_sizer->Detach(m_transaction_ctrl);
-		old = m_transaction_ctrl;
-	}
-	m_transaction_ctrl = new TransactionCtrl(this, p_journal);
-	m_right_column_sizer->Insert
-	(	0,
-		m_transaction_ctrl,
-		wxSizerFlags(6).Expand().
-			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
-	);
-	if (old)
-	{
-		old->Destroy();
-		old = 0;
-	}
-	Layout();
-	return;
-}
-
-void
 TopPanel::configure_transaction_ctrl
 (	vector<Account> p_balance_sheet_accounts,
 	vector<Account> p_pl_accounts
@@ -258,7 +232,8 @@ TopPanel::configure_draft_journal_list_ctrl()
 	m_draft_journal_list = new DraftJournalListCtrl
 	(	this,
 		wxDefaultSize,
-		reader
+		reader,
+		m_database_connection
 	);
 	m_right_column_sizer->Add(m_draft_journal_list, wxSizerFlags(1).Expand());
 	if (old)
@@ -285,7 +260,7 @@ TopPanel::selected_pl_accounts(vector<Account>& out) const
 }
 
 void
-TopPanel::selected_ordinary_journals(std::vector<OrdinaryJournal>& out) const
+TopPanel::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 {
 	vector<Entry> entries;
 	m_entry_list->selected_entries(entries);
@@ -295,6 +270,13 @@ TopPanel::selected_ordinary_journals(std::vector<OrdinaryJournal>& out) const
 	{
 		out.push_back(it->journal<OrdinaryJournal>());
 	}
+	return;
+}
+
+void
+TopPanel::selected_draft_journals(vector<DraftJournal>& out) const
+{
+	m_draft_journal_list->selected_draft_journals(out);
 	return;
 }
 
@@ -312,15 +294,11 @@ TopPanel::update_for(OrdinaryJournal const& p_saved_object)
 void
 TopPanel::update_for(DraftJournal const& p_saved_object)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
-	JEWEL_DEBUG_LOG_LOCATION;
 	// m_bs_account_list->update(true);  // No point doing this here.
 	// m_pl_account_list->update(false); // No point doing this here.
 	configure_transaction_ctrl();
-	JEWEL_DEBUG_LOG_LOCATION;
 	configure_draft_journal_list_ctrl();
-	JEWEL_DEBUG_LOG_LOCATION;
 	return;
 }
 
