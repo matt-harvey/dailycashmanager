@@ -166,12 +166,12 @@ TopPanel::configure_transaction_ctrl()
 void
 TopPanel::configure_transaction_ctrl(OrdinaryJournal& p_journal)
 {
-	TransactionCtrl* old = 0;
+	// TransactionCtrl* old = 0;
 	assert (m_right_column_sizer);
 	if (m_transaction_ctrl)
 	{
 		m_right_column_sizer->Detach(m_transaction_ctrl); // WARNING Will this leak memory?
-		old = m_transaction_ctrl;
+		// old = m_transaction_ctrl;
 	}
 	m_transaction_ctrl = new TransactionCtrl(this, p_journal);
 	m_right_column_sizer->Insert
@@ -197,7 +197,6 @@ TopPanel::configure_transaction_ctrl
 	vector<Account> p_pl_accounts
 )
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	if (p_balance_sheet_accounts.size() + p_pl_accounts.size() < unsigned(2))
 	{
 		if (p_balance_sheet_accounts.empty())
@@ -209,7 +208,6 @@ TopPanel::configure_transaction_ctrl
 				p_balance_sheet_accounts.push_back(value(maybe_bs_account));
 			}
 		}
-		JEWEL_DEBUG_LOG_LOCATION;
 		if (p_pl_accounts.empty())
 		{
 			optional<Account> const maybe_pl_account =
@@ -219,58 +217,46 @@ TopPanel::configure_transaction_ctrl
 				p_pl_accounts.push_back(value(maybe_pl_account));
 			}
 		}
-		JEWEL_DEBUG_LOG_LOCATION;
 	}
-	JEWEL_DEBUG_LOG_LOCATION;
-	TransactionCtrl* old = 0;
-	JEWEL_DEBUG_LOG_LOCATION;
+	// TransactionCtrl* old = 0;
 	assert (m_right_column_sizer);
-	JEWEL_DEBUG_LOG_LOCATION;
 	if (m_transaction_ctrl)
 	{
 		m_right_column_sizer->Detach(m_transaction_ctrl);  // WARNING Will this leak memory?
-		old = m_transaction_ctrl;
+		// old = m_transaction_ctrl;
 	}
-	JEWEL_DEBUG_LOG_LOCATION;
 	m_transaction_ctrl = new TransactionCtrl
 	(	this,
 		p_balance_sheet_accounts,
 		p_pl_accounts,
 		m_database_connection
 	);
-	JEWEL_DEBUG_LOG_LOCATION;
 	m_right_column_sizer->Insert
 	(	0,
 		m_transaction_ctrl,
 		wxSizerFlags(6).Expand().
 			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
 	);
-	JEWEL_DEBUG_LOG_LOCATION;
 	/*
 	if (old)
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
 		old->Destroy();  // Results in double-free (why?) // WARNING
-		JEWEL_DEBUG_LOG_LOCATION;
 		old = 0;
-		JEWEL_DEBUG_LOG_LOCATION;
 	}
 	*/
-	JEWEL_DEBUG_LOG_LOCATION;
 	Layout();
-	JEWEL_DEBUG_LOG_LOCATION;
 	return;
 }
 
 void
 TopPanel::configure_draft_journal_list_ctrl()
 {
-	DraftJournalListCtrl* old = 0;
+	// DraftJournalListCtrl* old = 0;
 	assert (m_right_column_sizer);
 	if (m_draft_journal_list)
 	{
 		m_right_column_sizer->Detach(m_draft_journal_list); // WARNING Will this result in memory leak?
-		old = m_draft_journal_list;
+		// old = m_draft_journal_list;
 	}
 	UserDraftJournalReader const reader(m_database_connection);
 	m_draft_journal_list = new DraftJournalListCtrl

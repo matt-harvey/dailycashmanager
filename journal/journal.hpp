@@ -91,8 +91,8 @@ public:
 	bool is_balanced() const;
 
 	/**
-	 * @returns a non-negative Decimal being the sum of all the debit
-	 * entries of the Journal.
+	 * @returns a Decimal being the sum of all the Entry amounts after the
+	 * fulcrum.
 	 */
 	jewel::Decimal primary_amount() const;
 

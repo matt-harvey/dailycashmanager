@@ -46,7 +46,7 @@ StringSetValidator::Validate(wxWindow* WXUNUSED(wxparent))
 		(	wxString("\"") +
 			candidate_text +
 			wxString("\" ") +
-			wxString("is not a valid") + m_description_for_error_message
+			wxString("is not a valid ") + m_description_for_error_message
 		);
 		return false;
 	}

@@ -431,14 +431,13 @@ EntryCtrl::add_row
 			precision,
 			false
 		);
-		if (m_amount_boxes.size() == 0)
+		if (m_amount_boxes.empty() && (m_next_row == 2))
 		{
-			// Then this is the SECOND entry row. The first one didn't have
-			// an amount box...
-			// The initial Entry line now needs a DecimalTextCtrl too, and
+			// Then this is either the 0 or the 1 entry row. The 0 one
+			// doesn't have an amount box...
+			// The 0 Entry line now needs a DecimalTextCtrl too, and
 			// we need to reposition m_split_button to make way for it.
 			m_top_sizer->Detach(m_split_button);
-			assert (m_next_row == 1);
 			m_top_sizer->Add(m_split_button, wxGBPosition(0, 3));
 			assert (!m_account_name_boxes.empty());
 			m_split_button->MoveBeforeInTabOrder(m_account_name_boxes[0]);
@@ -458,11 +457,12 @@ EntryCtrl::add_row
 				prev_amount_ctrl->set_amount(primary_amount());
 			}
 			m_top_sizer->
-				Add(prev_amount_ctrl, wxGBPosition(m_next_row - 1, 3));
+				Add(prev_amount_ctrl, wxGBPosition(1, 3));
 			prev_amount_ctrl->MoveBeforeInTabOrder(account_name_box);
 			assert (m_amount_boxes.empty());
 			m_amount_boxes.push_back(prev_amount_ctrl);
 		}
+		JEWEL_DEBUG_LOG << "p_amount: " << p_amount << endl;
 		amount_ctrl->set_amount(p_amount);
 		m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
 		m_amount_boxes.push_back(amount_ctrl);

@@ -149,19 +149,10 @@ Journal::is_balanced() const
 Decimal
 Journal::primary_amount() const
 {
-	Decimal const zero(0, 0);
-	Decimal ret = zero;
-	vector<Entry>::const_iterator it = entries().begin();
-	vector<Entry>::const_iterator const end = entries().end();
-	for ( ; it != end; ++it)
-	{
-		Decimal const amount = it->amount();
-		if (amount > zero)
-		{
-			ret += amount;
-		}
-	}
-	assert (ret >= zero);
+	Decimal ret(0, 0);
+	vector<Entry>::size_type i = fulcrum();
+	vector<Entry>::size_type const sz = entries().size();
+	for ( ; i != sz; ++i) ret += entries()[i].amount();
 	return ret;
 }
 

@@ -145,7 +145,11 @@ TransactionCtrl::TransactionCtrl
 		natural_transaction_type(account_x, account_y);
 	assert_transaction_type_validity(initial_transaction_type);
 	wxSize text_box_size;
-	size_t row = configure_top_controls(initial_transaction_type, text_box_size);
+	size_t row = configure_top_controls
+	(	initial_transaction_type,
+		text_box_size,
+		Decimal(0, m_database_connection.default_commodity().precision())
+	);
 
 	// Rows for entering Entry details
 	typedef vector<Account>::size_type Size;
@@ -266,7 +270,11 @@ TransactionCtrl::TransactionCtrl
 		= p_journal.transaction_type();
 	assert_transaction_type_validity(initial_transaction_type);
 	wxSize text_box_size;
-	size_t row = configure_top_controls(initial_transaction_type, text_box_size);
+	size_t row = configure_top_controls
+	(	initial_transaction_type,
+		text_box_size,
+		p_journal.primary_amount()
+	);
 
 	vector<Entry> const& entries = p_journal.entries();
 	vector<Entry>::size_type const fulcrum = p_journal.fulcrum();
@@ -368,7 +376,8 @@ TransactionCtrl::TransactionCtrl
 size_t
 TransactionCtrl::configure_top_controls
 (	transaction_type::TransactionType p_transaction_type,
-	wxSize& p_text_box_size
+	wxSize& p_text_box_size,
+	Decimal const& p_primary_amount
 )
 {
 	size_t row = 0;	
@@ -394,6 +403,7 @@ TransactionCtrl::configure_top_controls
 		m_database_connection.default_commodity().precision(),
 		false
 	);
+	m_primary_amount_ctrl->set_amount(p_primary_amount);
 	m_top_sizer->Add
 	(	m_primary_amount_ctrl,
 		wxGBPosition(row, 3),

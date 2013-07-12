@@ -123,7 +123,8 @@ private:
 	// Places size of "standard text box" in p_text_box_size.
 	size_t configure_top_controls
 	(	transaction_type::TransactionType p_transaction_type,
-		wxSize& p_text_box_size
+		wxSize& p_text_box_size,
+		jewel::Decimal const& p_primary_amount
 	);
 
 	/**
