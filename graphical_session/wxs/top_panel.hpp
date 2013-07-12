@@ -62,6 +62,11 @@ public:
 	/**
 	 * Update the display to reflect current state of database, after
 	 * saving of p_saved_object.
+	 *
+	 * @todo HIGH PRIORITY The update_for(DraftJournal const&) and
+	 * update_for(OrdinaryJournal const&) functions assume we have saved
+	 * a \e new Journal; but we also need to be able to update for an
+	 * \e existing Journal that the user has edited and saved.
 	 */
 	void update_for(DraftJournal const& p_saved_object);
 	void update_for(OrdinaryJournal const& p_saved_object);
