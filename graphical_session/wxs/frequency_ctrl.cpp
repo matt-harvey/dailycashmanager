@@ -58,7 +58,9 @@ namespace
 FrequencyCtrl::FrequencyCtrl
 (	wxWindow* p_parent,
 	wxWindowID p_id,
-	wxSize const& p_size
+	wxSize const& p_size,
+	bool p_support_ordinary_journal,
+	bool p_support_draft_journal
 ):
 	wxComboBox
 	(	p_parent,
@@ -68,18 +70,28 @@ FrequencyCtrl::FrequencyCtrl
 		p_size,
 		wxArrayString(),
 		wxCB_READONLY
-	)
+	),
+	m_support_ordinary_journal(p_support_ordinary_journal),
+	m_support_draft_journal(p_support_draft_journal)
 {
-	Append(once_off_string());
-	vector<Frequency>::const_iterator it = available_frequencies().begin();
-	vector<Frequency>::const_iterator const end =
-		available_frequencies().end();
-	for ( ; it != end; ++it)
+	assert (m_support_ordinary_journal || m_support_draft_journal);
+	if (m_support_ordinary_journal)
 	{
-		wxString wxs = wxString("Record ");
-		wxs += std8_to_wx(frequency_description(*it, "every"));
-		wxs += ", starting";
-		Append(wxs);
+		Append(once_off_string());
+	}
+	if (m_support_draft_journal)
+	{
+		vector<Frequency>::const_iterator it =
+			available_frequencies().begin();
+		vector<Frequency>::const_iterator const end =
+			available_frequencies().end();
+		for ( ; it != end; ++it)
+		{
+			wxString wxs = wxString("Record ");
+			wxs += std8_to_wx(frequency_description(*it, "every"));
+			wxs += ", starting";
+			Append(wxs);
+		}
 	}
 	SetSelection(0);
 }
@@ -88,19 +100,21 @@ optional<Frequency>
 FrequencyCtrl::frequency() const
 {
 	optional<Frequency> ret;
-	vector<Frequency>::size_type const selection = GetSelection();
-	if (selection == 0)
+	vector<Frequency>::size_type index = GetSelection();
+	if (m_support_ordinary_journal)
 	{
-		assert (GetValue() == once_off_string());
-		assert (!ret);
-		return ret;
+		if (index == 0)
+		{
+			assert (GetValue() == once_off_string());
+			assert (!ret);
+			return ret;
+		}
+		assert (index >= 1);
+		index -= 1;
 	}
-	assert (selection > 0);
-	ret = available_frequencies()[selection - 1];
+	ret = available_frequencies()[index];
 	return ret;
 }
-
-	
 
 
 }  // namespace gui

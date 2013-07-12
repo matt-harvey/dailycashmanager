@@ -340,7 +340,9 @@ TransactionCtrl::TransactionCtrl
 	m_frequency_ctrl = new FrequencyCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(text_box_size.x * 3 + standard_gap(), text_box_size.y)
+		wxSize(text_box_size.x * 3 + standard_gap(), text_box_size.y),
+		true,
+		false
 	);
 	m_top_sizer->Add(m_frequency_ctrl, wxGBPosition(row, 0), wxGBSpan(1, 3));
 
@@ -555,7 +557,7 @@ TransactionCtrl::post_journal()
 		dj.push_repeater(repeater);
 	
 		// Get a name for the DraftJournal
-		DraftJournalNamingDialog naming_ctrl(this, m_database_connection);
+		DraftJournalNamingDialog naming_ctrl(0, m_database_connection);
 		if (naming_ctrl.ShowModal() == wxID_OK)
 		{
 			dj.set_name(naming_ctrl.draft_journal_name());
@@ -717,7 +719,7 @@ TransactionCtrl::save_existing_journal()
 				assert (next_date.day() > 28);
 				wxMessageBox
 				(	"Next date for this recurring transaction must be "
-					"the 29th of the month or earlier."
+					"the 28th of the month or earlier."
 				);
 				return false;
 			}

@@ -55,6 +55,8 @@ class TopPanel;
  * (although that might result in surprising behaviour for this user?).
  *
  * @todo This needs to be able to scroll.
+ *
+ * @todo This crashes when we save a DraftJournal.
  */
 class TransactionCtrl: public wxPanel, private boost::noncopyable
 {

@@ -36,10 +36,16 @@ class FrequencyCtrl: public wxComboBox, private boost::noncopyable
 {
 public:
 
+	/**
+	 * @precondition must pass true to either or both
+	 * p_support_ordinary_journal or p_support_draft_journal.
+	 */
 	FrequencyCtrl
 	(	wxWindow* p_parent,
 		wxWindowID p_id,
-		wxSize const& p_size
+		wxSize const& p_size,
+		bool p_support_ordinary_journal = true,
+		bool p_support_draft_journal = true
 	);
 
 	/**
@@ -50,6 +56,10 @@ public:
 	 * Frequency.
 	 */
 	boost::optional<Frequency> frequency() const;
+
+private:
+	bool m_support_ordinary_journal;
+	bool m_support_draft_journal;
 
 };  // class FrequencyCtrl
 

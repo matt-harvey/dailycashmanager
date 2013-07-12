@@ -312,11 +312,15 @@ TopPanel::update_for(OrdinaryJournal const& p_saved_object)
 void
 TopPanel::update_for(DraftJournal const& p_saved_object)
 {
+	JEWEL_DEBUG_LOG_LOCATION;
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
+	JEWEL_DEBUG_LOG_LOCATION;
 	// m_bs_account_list->update(true);  // No point doing this here.
 	// m_pl_account_list->update(false); // No point doing this here.
 	configure_transaction_ctrl();
+	JEWEL_DEBUG_LOG_LOCATION;
 	configure_draft_journal_list_ctrl();
+	JEWEL_DEBUG_LOG_LOCATION;
 	return;
 }
 
