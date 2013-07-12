@@ -11,6 +11,7 @@
 #include <wx/gdicmn.h>
 #include <wx/window.h>
 #include <wx/windowid.h>
+#include <vector>
 
 namespace phatbooks
 {
@@ -32,13 +33,19 @@ class TransactionTypeCtrl: public wxComboBox, private boost::noncopyable
 public:
 
 	/**
-	 * p_parent must be a TransactionCtrl*.
+	 * p_parent must be a TransactionCtrl*. Make sure that the vector
+	 * passed to p_transaction_types does not contain any TransactionTypes
+	 * that are not in available_transaction_types(p_database_connection) -
+	 * this is the caller's responsibility.
+	 * p_transaction_types should not be empty.
 	 */
 	TransactionTypeCtrl
 	(	wxWindow* p_parent,
 		wxWindowID p_id,
 		wxSize const& p_size,
-		PhatbooksDatabaseConnection& p_database_connection
+		PhatbooksDatabaseConnection& p_database_connection,
+		std::vector<transaction_type::TransactionType> const&
+			p_transaction_types
 	);
 
 	/**
@@ -61,6 +68,7 @@ private:
 	void on_kill_focus(wxFocusEvent& event);
 	void on_change(wxCommandEvent& event);
 
+	std::vector<transaction_type::TransactionType> m_transaction_types;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE()

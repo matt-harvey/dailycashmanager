@@ -6,6 +6,7 @@
 #include "account.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "transaction_type_ctrl.hpp"
+#include "transaction_type.hpp"
 #include <boost/noncopyable.hpp>
 #include <jewel/decimal_fwd.hpp>
 #include <jewel/on_windows.hpp>
@@ -130,7 +131,9 @@ private:
 	size_t configure_top_controls
 	(	transaction_type::TransactionType p_transaction_type,
 		wxSize& p_text_box_size,
-		jewel::Decimal const& p_primary_amount
+		jewel::Decimal const& p_primary_amount,
+		std::vector<transaction_type::TransactionType> const&
+			p_available_transaction_types
 	);
 
 	/**

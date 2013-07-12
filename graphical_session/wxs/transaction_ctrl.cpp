@@ -150,7 +150,8 @@ TransactionCtrl::TransactionCtrl
 	size_t row = configure_top_controls
 	(	initial_transaction_type,
 		text_box_size,
-		Decimal(0, m_database_connection.default_commodity().precision())
+		Decimal(0, m_database_connection.default_commodity().precision()),
+		available_transaction_types(m_database_connection)
 	);
 
 	// Rows for entering Entry details
@@ -283,10 +284,22 @@ TransactionCtrl::TransactionCtrl
 		= p_journal.transaction_type();
 	assert_transaction_type_validity(initial_transaction_type);
 	wxSize text_box_size;
+	vector<transaction_type::TransactionType> available_transaction_types;
+	available_transaction_types.push_back(initial_transaction_type);
+	using transaction_type::envelope_transaction;
+	using transaction_type::generic_transaction;
+	if
+	(	(initial_transaction_type != envelope_transaction) &&
+		(initial_transaction_type != generic_transaction)
+	)
+	{
+		available_transaction_types.push_back(generic_transaction);
+	}
 	size_t row = configure_top_controls
 	(	initial_transaction_type,
 		text_box_size,
-		p_journal.primary_amount()
+		p_journal.primary_amount(),
+		available_transaction_types
 	);
 
 	vector<Entry> const& entries = p_journal.entries();
@@ -397,7 +410,9 @@ size_t
 TransactionCtrl::configure_top_controls
 (	transaction_type::TransactionType p_transaction_type,
 	wxSize& p_text_box_size,
-	Decimal const& p_primary_amount
+	Decimal const& p_primary_amount,
+	vector<transaction_type::TransactionType> const&
+		p_available_transaction_types
 )
 {
 	size_t row = 0;	
@@ -410,7 +425,8 @@ TransactionCtrl::configure_top_controls
 	(	this,
 		s_transaction_type_ctrl_id,
 		wxSize(160, wxDefaultSize.y),
-		m_database_connection
+		m_database_connection,
+		p_available_transaction_types
 	);
 	m_transaction_type_ctrl->set_transaction_type(p_transaction_type);
 	p_text_box_size = m_transaction_type_ctrl->GetSize();

@@ -50,7 +50,8 @@ TransactionTypeCtrl::TransactionTypeCtrl
 (	wxWindow* p_parent,
 	wxWindowID p_id,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection
+	PhatbooksDatabaseConnection& p_database_connection,
+	vector<transaction_type::TransactionType> const& p_transaction_types
 ):
 	wxComboBox
 	(	p_parent,
@@ -63,17 +64,18 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		wxArrayString(),
 		wxCB_READONLY
 	),
+	m_transaction_types(p_transaction_types),
 	m_database_connection(p_database_connection)
 {
+	assert (!m_transaction_types.empty());
 	// TODO We need a mechanism whereby, if additional TransactionTypes
 	// become available after the TransactionTypeCtrl has been
 	// constructed, the TransactionTypeCtrl is notified and updates
 	// itself accordingly.
-	vector<TransactionType> const tt =
-		available_transaction_types(m_database_connection);
-
-	vector<TransactionType>::const_iterator it = tt.begin();
-	vector<TransactionType>::const_iterator const end = tt.end();
+	vector<TransactionType>::const_iterator it =
+		m_transaction_types.begin();
+	vector<TransactionType>::const_iterator const end =
+		m_transaction_types.end();
 	for ( ; it != end; ++it)
 	{
 		wxString const verb = bstring_to_wx
@@ -103,8 +105,21 @@ TransactionTypeCtrl::set_transaction_type
 (	transaction_type::TransactionType p_transaction_type
 )
 {
-	SetSelection(static_cast<int>(p_transaction_type));
-	return;
+	for (int i = 0; ; ++i)
+	{
+		transaction_type::TransactionType const ttype =
+			m_transaction_types[i];
+		if (ttype == p_transaction_type)
+		{
+			SetSelection(i);
+			return;
+		}
+		if (i == static_cast<int>(transaction_type::num_transaction_types))
+		{
+			assert (false);
+			return;
+		}
+	}
 }
 
 void
