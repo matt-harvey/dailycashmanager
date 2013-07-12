@@ -6,6 +6,7 @@
 #include "account.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "transaction_type_ctrl.hpp"
+#include <boost/noncopyable.hpp>
 #include <jewel/decimal_fwd.hpp>
 #include <jewel/on_windows.hpp>
 #include <wx/button.h>
@@ -21,6 +22,7 @@ namespace phatbooks
 // Begin forward declarations
 
 class OrdinaryJournal;
+class PersistentJournal;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -54,7 +56,7 @@ class TopPanel;
  *
  * @todo This needs to be able to scroll.
  */
-class TransactionCtrl: public wxPanel
+class TransactionCtrl: public wxPanel, private boost::noncopyable
 {
 public:
 	
@@ -102,7 +104,9 @@ public:
 	 *
 	 * @todo We need a similar constructor for DraftJournal.
 	 */
-	TransactionCtrl(TopPanel* p_parent, OrdinaryJournal& p_journal);
+	TransactionCtrl(TopPanel* p_parent, OrdinaryJournal const& p_journal);
+
+	~TransactionCtrl();
 
 	/**
 	 * Refresh the selections available in the AccountCtrls in the
@@ -132,6 +136,11 @@ private:
 	 */
 	bool post_journal();
 
+	/**
+	 * @returns true if and only if existing journal was successfully saved.
+	 */
+	bool save_existing_journal();
+
 	bool is_balanced() const;
 
 	int m_max_entry_row_id;
@@ -159,6 +168,7 @@ private:
 	static unsigned int const s_min_entry_row_id =
 		s_transaction_type_ctrl_id + 1;
 
+	PersistentJournal* m_journal;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE()

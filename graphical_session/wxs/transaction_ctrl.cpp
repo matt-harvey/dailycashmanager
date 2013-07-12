@@ -21,6 +21,7 @@
 #include "proto_journal.hpp"
 #include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "persistent_journal.hpp"
 #include "repeater.hpp"
 #include "sizing.hpp"
 #include "top_panel.hpp"
@@ -105,6 +106,7 @@ TransactionCtrl::TransactionCtrl
 	m_date_ctrl(0),
 	m_cancel_button(0),
 	m_ok_button(0),
+	m_journal(0),
 	m_database_connection(p_database_connection)
 {
 	assert (!p_balance_sheet_accounts.empty() || !p_pl_accounts.empty());
@@ -247,7 +249,7 @@ TransactionCtrl::TransactionCtrl
 
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
-	OrdinaryJournal& p_journal
+	OrdinaryJournal const& p_journal
 ):
 	wxPanel
 	(	p_parent,
@@ -264,8 +266,19 @@ TransactionCtrl::TransactionCtrl
 	m_date_ctrl(0),
 	m_cancel_button(0),
 	m_ok_button(0),
+	m_journal(0),
 	m_database_connection(p_journal.database_connection())
 {
+	// TODO Make it so that, given this is an existing Journal we don't allow the user
+	// to edit the TransactionType (or else maybe they can only change the
+	// TransactionType to transaction_type::generic_transaction).
+
+	// TODO Make it so that, given this is an existing Journal, the user cannot change
+	// the Journal from OrdinaryJournal to DraftJournal or vice versa. This would
+	// involve restricting the options available in the FrequencyCtrl.
+
+	m_journal = new OrdinaryJournal(p_journal);
+
 	transaction_type::TransactionType const initial_transaction_type
 		= p_journal.transaction_type();
 	assert_transaction_type_validity(initial_transaction_type);
@@ -369,8 +382,13 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->SetSizeHints(this);
 	Fit();
 	Layout();
+}
 
-
+TransactionCtrl::~TransactionCtrl()
+{
+	delete m_journal;
+	m_journal = 0;
+	// wxWidgets takes care of deleting the other pointer members
 }
 
 size_t
@@ -440,7 +458,8 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 	{
 		if (is_balanced())
 		{
-			post_journal();
+			if (m_journal) save_existing_journal();
+			else post_journal();
 		}
 		else
 		{
@@ -569,6 +588,199 @@ TransactionCtrl::post_journal()
 		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
 		assert (panel);
 		panel->update_for(oj);
+		return true;
+	}
+	assert (false);
+}
+
+bool
+TransactionCtrl::save_existing_journal()
+{
+	assert (m_journal);
+	assert (m_transaction_type_ctrl->transaction_type());
+	transaction_type::TransactionType const ttype =
+		value(m_transaction_type_ctrl->transaction_type());
+	m_journal->set_whether_actual(transaction_type_is_actual(ttype));
+	m_journal->set_transaction_type(ttype);
+
+	// Make a vector containing the source Entries
+	vector<Entry> source_entries;
+	// Bare scope
+	{
+		// Populate it with the original source Entries
+		vector<Entry>::size_type i = 0;
+		vector<Entry>::size_type const f = m_journal->fulcrum();
+		for ( ; i != f; ++i)
+		{
+			source_entries.push_back(m_journal->entries()[i]);
+		}
+	}
+	// Make a vector containing the destination Entries
+	vector<Entry> destination_entries;
+	// Bare scope
+	{
+		// Populate it with the original destination Entries
+		vector<Entry>::size_type i = m_journal->fulcrum();
+		vector<Entry>::size_type const sz = m_journal->entries().size();
+		for ( ; i != sz; ++i)
+		{
+			destination_entries.push_back(m_journal->entries()[i]);
+		}
+	}
+	// Via the EntryCtrl, additional Entries might have been inserted
+	// the source Entries, the destination Entries, or both.
+
+	vector<Entry> doomed_entries;
+
+	// Update source entries with data from m_source_entry_ctrl
+	// Bare scope
+	{
+		vector<Entry> fresh_source_entries =
+			m_source_entry_ctrl->make_entries();
+		vector<Entry>::size_type i = 0;
+		vector<Entry>::size_type const sz = source_entries.size();
+		for ( ; i != sz; ++i)
+		{
+			if (i < fresh_source_entries.size())
+			{
+				source_entries[i].mimic(fresh_source_entries[i]);
+			}
+			else
+			{
+				doomed_entries.push_back(source_entries[i]);
+			}
+		}	
+		for ( ; i < fresh_source_entries.size(); ++i)
+		{
+			assert (i >= source_entries.size());
+			source_entries.push_back(fresh_source_entries[i]);
+		}
+	}
+	// Update destination entries with data from m_destination_entry_ctrl
+	// Bare scope
+	// TODO Factor out code duplicated between here and the previous block.
+	{
+		vector<Entry> fresh_destination_entries =
+			m_destination_entry_ctrl->make_entries();
+		vector<Entry>::size_type i = 0;
+		vector<Entry>::size_type const sz = destination_entries.size();
+		for ( ; i != sz; ++i)
+		{
+			if (i < fresh_destination_entries.size())
+			{
+				destination_entries[i].mimic(fresh_destination_entries[i]);
+			}
+			else
+			{
+				doomed_entries.push_back(destination_entries[i]);
+			}
+		}
+		for ( ; i < fresh_destination_entries.size(); ++i)
+		{
+			assert (i >= destination_entries.size());
+			destination_entries.push_back(fresh_destination_entries[i]);
+		}
+	}
+	// Clear the exiting entries from journal, then reinsert all the updated
+	// entries, then remove the doomed entries.
+	m_journal->clear_entries();
+	// Bare scope
+	{
+		vector<Entry>::size_type i = 0;
+		vector<Entry>::size_type sz = source_entries.size();
+		for ( ; i != sz; ++i) m_journal->push_entry(source_entries[i]);
+
+		i = 0;
+		sz = destination_entries.size();
+		for ( ; i != sz; ++i) m_journal->push_entry(destination_entries[i]);
+
+		i = 0;
+		sz = doomed_entries.size();
+		for ( ; i != sz; ++i) m_journal->remove_entry(doomed_entries[i]);
+	}
+		
+	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
+
+	if (maybe_frequency)
+	{
+		DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal);
+		assert (dj);
+		gregorian::date const next_date = m_date_ctrl->date();
+		Frequency const freq = value(maybe_frequency);
+		
+		// Ensure valid combination of Frequency and next posting date
+		// TODO Factor out duplicated code between this and post_journal().
+		if (!is_valid_date_for_interval_type(next_date, freq.step_type()))
+		{
+			if (freq.step_type() == interval_type::months)
+			{
+				assert (next_date.day() > 28);
+				wxMessageBox
+				(	"Next date for this recurring transaction must be "
+					"the 29th of the month or earlier."
+				);
+				return false;
+			}
+			else
+			{
+				// TODO If interval_type is month_end, use month_end_for_date
+				// function to generate and suggest using the last day of the
+				// month instead of the entered date.
+				assert (freq.step_type() == interval_type::month_ends);
+				assert (month_end_for_date(next_date) != next_date);
+				wxMessageBox
+				(	"Date must be the last day of the month."
+				);
+				return false;
+			}
+		}
+
+		assert (is_valid_date_for_interval_type(next_date, freq.step_type()));
+		
+		if (dj->repeaters().empty())
+		{
+			Repeater repeater(m_database_connection);
+			repeater.set_next_date(next_date);
+			repeater.set_frequency(freq);
+			dj->push_repeater(repeater);
+		}
+		else
+		{
+			// WARNING Does this work? It's like I'm circumventing the constness
+			// of DraftJournal::repeaters().
+			assert (dj->repeaters().size() >= 1);
+			Repeater old_repeater = dj->repeaters()[0];
+			old_repeater.set_next_date(next_date);
+			old_repeater.set_frequency(freq);
+			old_repeater.save();
+		}
+		assert (dj->is_balanced());
+		dj->save();
+		JEWEL_DEBUG_LOG << "Saved Journal:\n\n" << *dj << endl;
+		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
+		assert (panel);
+		panel->update_for(*dj);
+		return true;
+	}
+	else
+	{
+		assert (!maybe_frequency);
+		OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal);
+		assert (oj);
+		oj->set_date(m_date_ctrl->date());
+	
+		// WARNING temp debug
+		if (!oj->is_balanced())
+		{
+			JEWEL_DEBUG_LOG << "Unbalanced Journal:\n\n" << *oj << endl;
+		}
+
+		assert (oj->is_balanced());
+		oj->save();
+		JEWEL_DEBUG_LOG << "Saved Journal:\n\n" << *oj << endl;
+		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
+		assert (panel);
+		panel->update_for(*oj);
 		return true;
 	}
 	assert (false);
