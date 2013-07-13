@@ -31,7 +31,7 @@ DraftJournalListCtrl::DraftJournalListCtrl
 		wxID_ANY,
 		wxDefaultPosition,
 		p_size,
-		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
+		wxLC_REPORT | wxLC_SINGLE_SEL | wxFULL_REPAINT_ON_RESIZE
 	),
 	m_database_connection(p_database_connection)
 {
