@@ -26,7 +26,6 @@ public:
 };
 
 
-
 }  // namespace phatbooks
 
 

@@ -157,6 +157,5 @@ Entry::Entry(sqloxx::Handle<EntryImpl> const& p_handle):
 {
 }
 
-
 }  // namespace phatbooks
 

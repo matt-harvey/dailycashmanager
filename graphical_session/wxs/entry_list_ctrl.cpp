@@ -10,6 +10,7 @@
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/unordered_map.hpp>
 #include <jewel/debug_log.hpp>
@@ -22,6 +23,8 @@ using boost::lexical_cast;
 using boost::unordered_map;
 using std::string;
 using std::vector;
+
+namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
@@ -106,6 +109,8 @@ EntryListCtrl::EntryListCtrl
 		wxPD_APP_MODAL | wxPD_AUTO_HIDE | wxRESIZE_BORDER
 	);
 
+	gregorian::date const opening_balance_journal_date =
+		m_database_connection.opening_balance_journal_date();
 	for
 	(	EntryReader::const_iterator it = p_reader.begin(),
 			end = p_reader.end();
@@ -113,7 +118,10 @@ EntryListCtrl::EntryListCtrl
 		++it, ++i
 	)
 	{
-		add_entry(*it);
+		if (it->date() != opening_balance_journal_date)
+		{
+			add_entry(*it);
+		}
 
 		// Update the progress dialog
 		if (i % progress_scaling_factor == 0)

@@ -305,9 +305,6 @@ TopPanel::update_for_new(DraftJournal const& p_saved_object)
 void
 TopPanel::update_for_new(Account const& p_saved_object)
 {
-	// TODO HIGH PRIORITY Need to update for opening balance journal as well??
-	// Or if we just make opening balance journals invisible to the user, will
-	// that solve the problem?
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
@@ -342,9 +339,6 @@ TopPanel::update_for_amended(DraftJournal const& p_saved_object)
 void
 TopPanel::update_for_amended(Account const& p_saved_object)
 {
-	// TODO HIGH PRIORITY Need to update for opening balance journal as well??
-	// Or if we just make opening balance journals invisible to the user, will
-	// that solve the problem?
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
