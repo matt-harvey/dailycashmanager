@@ -281,18 +281,18 @@ TopPanel::selected_draft_journals(vector<DraftJournal>& out) const
 }
 
 void
-TopPanel::update_for(OrdinaryJournal const& p_saved_object)
+TopPanel::update_for_new(OrdinaryJournal const& p_saved_object)
 {
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
-	m_entry_list->update_for_posted_journal(p_saved_object);
+	m_entry_list->update_for_new(p_saved_object);
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
 }
 
 void
-TopPanel::update_for(DraftJournal const& p_saved_object)
+TopPanel::update_for_new(DraftJournal const& p_saved_object)
 {
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	// m_bs_account_list->update(true);  // No point doing this here.
@@ -303,7 +303,7 @@ TopPanel::update_for(DraftJournal const& p_saved_object)
 }
 
 void
-TopPanel::update_for(Account const& p_saved_object)
+TopPanel::update_for_new(Account const& p_saved_object)
 {
 	// TODO HIGH PRIORITY Need to update for opening balance journal as well??
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
@@ -314,7 +314,17 @@ TopPanel::update_for(Account const& p_saved_object)
 	return;
 }
 
-	
+void
+TopPanel::update_for_amended(Account const& p_saved_object)
+{
+	// TODO HIGH PRIORITY Need to update for opening balance journal as well??
+	(void)p_saved_object;  // Silence compiler re. unused parameter.
+	m_bs_account_list->update(true);
+	m_pl_account_list->update(false);
+	configure_transaction_ctrl();
+	configure_draft_journal_list_ctrl();
+	return;
+}
 	
 
 

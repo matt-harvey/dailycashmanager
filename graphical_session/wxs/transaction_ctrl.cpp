@@ -657,7 +657,7 @@ TransactionCtrl::post_journal()
 		JEWEL_DEBUG_LOG << "Posted Journal:\n\n" << dj << endl;
 		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
 		assert (panel);
-		panel->update_for(dj);
+		panel->update_for_new(dj);
 		return true;
 	}
 	else
@@ -671,7 +671,7 @@ TransactionCtrl::post_journal()
 		JEWEL_DEBUG_LOG << "Posted journal:\n\n" << oj << endl;
 		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
 		assert (panel);
-		panel->update_for(oj);
+		panel->update_for_new(oj);
 		return true;
 	}
 	assert (false);
@@ -843,7 +843,7 @@ TransactionCtrl::save_existing_journal()
 		JEWEL_DEBUG_LOG << "Saved Journal:\n\n" << *dj << endl;
 		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
 		assert (panel);
-		panel->update_for(*dj);
+		panel->update_for_amended(*dj);
 		return true;
 	}
 	else
@@ -864,7 +864,7 @@ TransactionCtrl::save_existing_journal()
 		JEWEL_DEBUG_LOG << "Saved Journal:\n\n" << *oj << endl;
 		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
 		assert (panel);
-		panel->update_for(*oj);
+		panel->update_for_amended(*oj);
 		return true;
 	}
 	assert (false);

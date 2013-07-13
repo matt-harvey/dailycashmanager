@@ -39,10 +39,10 @@ public:
 	);
 
 	/**
-	 * Update displayed entries to reflect that a \e journal has been
-	 * posted.
+	 * Update displayed entries to reflect that a \e p_journal has been newly
+	 * posted (having not previously existed in the database).
 	 */
-	void update_for_posted_journal(OrdinaryJournal const& journal);
+	void update_for_new(OrdinaryJournal const& p_journal);
 
 	/**
 	 * Populates \e out with the currently selected Entries (if any).

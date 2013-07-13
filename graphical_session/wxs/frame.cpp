@@ -226,7 +226,7 @@ Frame::on_new_bs_account(wxCommandEvent& event)
 		// Do we want this? We probably \e do want it to update the
 		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
 		// we don't really want it to obliterate everything else.
-		m_top_panel->update_for(account);
+		m_top_panel->update_for_new(account);
 	}
 	return;
 }
@@ -243,7 +243,7 @@ Frame::on_new_pl_account(wxCommandEvent& event)
 		// Do we want this? We probably \e do want it to update the
 		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
 		// we don't really want it to obliterate everything else.
-		m_top_panel->update_for(account);
+		m_top_panel->update_for_new(account);
 	}
 	return;
 }
@@ -283,7 +283,7 @@ Frame::on_edit_bs_account(wxCommandEvent& event)
 		// Do we want this? We probably \e do want it to update the
 		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
 		// we don't really want it to obliterate everything else.
-		m_top_panel->update_for(account);
+		m_top_panel->update_for_amended(account);
 	}
 	return;
 }
@@ -320,7 +320,7 @@ Frame::on_edit_pl_account(wxCommandEvent& event)
 		// Do we want this? We probably \e do want it to update the
 		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
 		// we don't really want it to obliterate everything else.
-		m_top_panel->update_for(account);
+		m_top_panel->update_for_amended(account);
 	}
 	return;
 }

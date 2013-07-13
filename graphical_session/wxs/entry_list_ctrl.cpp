@@ -169,12 +169,12 @@ EntryListCtrl::add_entry(Entry const& entry)
 
 
 void
-EntryListCtrl::update_for_posted_journal(OrdinaryJournal const& journal)
+EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
 {
-	if (journal.is_actual())
+	if (p_journal.is_actual())
 	{
-		vector<Entry>::const_iterator it = journal.entries().begin();
-		vector<Entry>::const_iterator const end = journal.entries().end();
+		vector<Entry>::const_iterator it = p_journal.entries().begin();
+		vector<Entry>::const_iterator const end = p_journal.entries().end();
 		for ( ; it != end; ++it)
 		{
 			add_entry(*it);
