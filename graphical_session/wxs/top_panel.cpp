@@ -306,6 +306,8 @@ void
 TopPanel::update_for_new(Account const& p_saved_object)
 {
 	// TODO HIGH PRIORITY Need to update for opening balance journal as well??
+	// Or if we just make opening balance journals invisible to the user, will
+	// that solve the problem?
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
@@ -315,9 +317,34 @@ TopPanel::update_for_new(Account const& p_saved_object)
 }
 
 void
+TopPanel::update_for_amended(OrdinaryJournal const& p_saved_object)
+{
+	m_bs_account_list->update(true);
+	m_pl_account_list->update(false);
+	m_entry_list->update_for_amended(p_saved_object);
+	configure_transaction_ctrl();
+	configure_draft_journal_list_ctrl();
+	return;
+}
+
+void
+TopPanel::update_for_amended(DraftJournal const& p_saved_object)
+{
+	(void)p_saved_object;  // Silence compiler re. unused parameter.
+	m_bs_account_list->update(true);
+	m_pl_account_list->update(false);
+	// m_entry_list->update_for_amended(p_saved_object);  // Does not apply for DraftJournal.
+	configure_transaction_ctrl();
+	configure_draft_journal_list_ctrl();
+	return;
+}
+
+void
 TopPanel::update_for_amended(Account const& p_saved_object)
 {
 	// TODO HIGH PRIORITY Need to update for opening balance journal as well??
+	// Or if we just make opening balance journals invisible to the user, will
+	// that solve the problem?
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);

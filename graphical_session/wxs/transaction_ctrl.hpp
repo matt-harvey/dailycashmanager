@@ -58,7 +58,9 @@ class TopPanel;
  *
  * @todo This needs to be able to scroll.
  *
- * @todo This crashes when we save a DraftJournal.
+ * @todo When transaction_type::generic_transaction is selected, the
+ * Journal is implicitly an actual Journal; however the user is neverthless
+ * able to select account_type::pure_envelope Accounts.
  */
 class TransactionCtrl: public wxPanel, private boost::noncopyable
 {

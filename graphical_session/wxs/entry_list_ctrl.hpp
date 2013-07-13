@@ -8,6 +8,7 @@
 #include "entry.hpp"
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
+#include <boost/unordered_map.hpp>
 #include <vector>
 
 namespace phatbooks
@@ -45,6 +46,15 @@ public:
 	void update_for_new(OrdinaryJournal const& p_journal);
 
 	/**
+	 * Update displayed entries to reflect that an already-saved
+	 * OrdinaryJournal p_journal has just been amended, and the amendments
+	 * saved.
+	 *
+	 * @todo Implement this.
+	 */
+	void update_for_amended(OrdinaryJournal const& p_journal);
+
+	/**
 	 * Populates \e out with the currently selected Entries (if any).
 	 */
 	void selected_entries(std::vector<Entry>& out);
@@ -59,8 +69,16 @@ private:
 	
 	/**
 	 * @param entry must be an Entry with an id.
+	 *
+	 * @todo This doesn't take care of sorting by date.
 	 */
 	void add_entry(Entry const& entry);
+
+	/**
+	 * Map from Entry ids to wxWidgets-managed identifiers in the widget.
+	 */
+	typedef boost::unordered_map<Entry::Id, long> IndexMap;
+	IndexMap m_index_map;
 
 	PhatbooksDatabaseConnection& m_database_connection;
 };

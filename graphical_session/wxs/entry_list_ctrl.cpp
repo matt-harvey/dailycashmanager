@@ -11,6 +11,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/lexical_cast.hpp>
+#include <boost/unordered_map.hpp>
 #include <jewel/debug_log.hpp>
 #include <wx/gdicmn.h>
 #include <wx/progdlg.h>
@@ -18,6 +19,7 @@
 #include <string>
 
 using boost::lexical_cast;
+using boost::unordered_map;
 using std::string;
 using std::vector;
 
@@ -159,6 +161,7 @@ EntryListCtrl::add_entry(Entry const& entry)
 	// TODO Do a static assert to ensure second param will fit the id.
 	assert (entry.has_id());
 	SetItemData(i, entry.id());
+	m_index_map[entry.id()] = i;
 
 	// Populate the other columns
 	SetItem(i, account_col_num(), account_string);
@@ -166,7 +169,6 @@ EntryListCtrl::add_entry(Entry const& entry)
 	SetItem(i, amount_col_num(), amount_string);
 	SetItem(i, reconciled_col_num(), reconciled_string);
 }
-
 
 void
 EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
@@ -182,7 +184,41 @@ EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
 	}
 	return;
 }
-		
+
+void
+EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
+{
+	if (!p_journal.is_actual())
+	{
+		return;
+	}
+	assert (p_journal.is_actual());
+	vector<Entry>::const_iterator it = p_journal.entries().begin();
+	vector<Entry>::const_iterator const end = p_journal.entries().end();
+	wxString const wx_date_string = date_format_wx(p_journal.date());
+	for ( ; it != end; ++it)
+	{
+		IndexMap::const_iterator const jt = m_index_map.find(it->id());
+		if (jt == m_index_map.end())
+		{
+			add_entry(*it);
+		}
+		else
+		{
+			long const index = jt->second;
+			assert (GetItemData(index) == static_cast<unsigned long>(it->id()));
+			SetItemText(index, wx_date_string);
+			SetItem(index, account_col_num(), bstring_to_wx(it->account().name()));
+			SetItem(index, comment_col_num(), bstring_to_wx(it->comment()));
+			SetItem(index, amount_col_num(), finformat_wx(it->amount(), locale(), false));
+			// TODO Factor out code duplicated between here and add_entry().
+			wxString const reconciled_string = (it->is_reconciled()? "Y": "N");
+			SetItem(index, reconciled_col_num(), reconciled_string);
+		}
+	}
+	return;
+}
+
 void
 EntryListCtrl::selected_entries(vector<Entry>& out)
 {
