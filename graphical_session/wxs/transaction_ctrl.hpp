@@ -141,6 +141,8 @@ private:
 			p_available_transaction_types
 	);
 
+	void configure_for_journal_editing();
+
 	/**
 	 * @returns true if and only if journal was actually posted.
 	 */

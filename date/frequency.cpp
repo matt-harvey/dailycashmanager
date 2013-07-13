@@ -201,6 +201,16 @@ convert_from_canonical(Frequency const& p_frequency, Decimal const& p_amount)
 	}
 }
 
+bool
+operator==(Frequency const& lhs, Frequency const& rhs)
+{
+	return
+		(lhs.num_steps() == rhs.num_steps()) &&
+		(lhs.step_type() == rhs.step_type());
+}
+
+
+
 // TODO How to handle DecimalMultiplicationException and
 // DecimalDivisionException in the Frequency convertions
 // functions? Will they occur often?

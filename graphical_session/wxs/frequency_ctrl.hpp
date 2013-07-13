@@ -3,6 +3,7 @@
 #ifndef GUARD_frequency_ctrl_hpp
 #define GUARD_frequency_ctrl_hpp
 
+#include "frequency.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <wx/combobox.h>
@@ -12,12 +13,6 @@
 
 namespace phatbooks
 {
-
-// Begin forward declarations
-
-class Frequency;
-
-// End forward declarations
 
 namespace gui
 {
@@ -56,6 +51,19 @@ public:
 	 * Frequency.
 	 */
 	boost::optional<Frequency> frequency() const;
+
+	/**
+	 * If p_maybe_frequency is passed an uninitialized optional, then
+	 * the FrequencyCtrl will display "Once off" or equivalent, or else
+	 * will throw InvalidFrequencyException if OrdinaryJournals are not
+	 * supported.
+	 *
+	 * If p_maybe_frequency is passed an initialized optional, then
+	 * the FrequencyCtrl will display text describing the Frequency with
+	 * which it has been initialized, or else will throw InvalidFrequencyException
+	 * if DraftJournals are not supported.
+	 */
+	void set_frequency(boost::optional<Frequency> const& p_maybe_frequency);
 
 private:
 	bool m_support_ordinary_journal;

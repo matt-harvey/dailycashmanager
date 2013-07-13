@@ -128,7 +128,7 @@ convert_from_canonical
 	jewel::Decimal const& p_amount
 );
 
-
+bool operator==(Frequency const& lhs, Frequency const& rhs);
 
 }  // namespace phatbooks
 

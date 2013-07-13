@@ -16,6 +16,7 @@
 #include "entry_ctrl.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
+#include "frequency.hpp"
 #include "frequency_ctrl.hpp"
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
@@ -279,124 +280,7 @@ TransactionCtrl::TransactionCtrl
 	// involve restricting the options available in the FrequencyCtrl.
 
 	m_journal = new OrdinaryJournal(p_journal);
-
-	transaction_type::TransactionType const initial_transaction_type
-		= p_journal.transaction_type();
-	assert_transaction_type_validity(initial_transaction_type);
-	wxSize text_box_size;
-	vector<transaction_type::TransactionType> available_transaction_types;
-	available_transaction_types.push_back(initial_transaction_type);
-	using transaction_type::envelope_transaction;
-	using transaction_type::generic_transaction;
-	if
-	(	(initial_transaction_type != envelope_transaction) &&
-		(initial_transaction_type != generic_transaction)
-	)
-	{
-		available_transaction_types.push_back(generic_transaction);
-	}
-	size_t row = configure_top_controls
-	(	initial_transaction_type,
-		text_box_size,
-		p_journal.primary_amount(),
-		available_transaction_types
-	);
-
-	vector<Entry> const& entries = p_journal.entries();
-	vector<Entry>::size_type const fulcrum = p_journal.fulcrum();
-	vector<Entry>::size_type i = 0;
-	vector<Entry>::size_type const sz = entries.size();
-	vector<Entry> source_entries;
-	vector<Entry> destination_entries;
-	for ( ; i != fulcrum; ++i) source_entries.push_back(entries[i]);
-	assert (i == fulcrum);
-	for ( ; i != sz; ++i) destination_entries.push_back(entries[i]);
-
-	m_source_entry_ctrl = new EntryCtrl
-	(	this,
-		source_entries,
-		m_database_connection,
-		initial_transaction_type,
-		text_box_size,
-		true
-	);
-	m_destination_entry_ctrl = new EntryCtrl
-	(	this,
-		destination_entries,
-		m_database_connection,
-		initial_transaction_type,
-		text_box_size,
-		false
-	);
-
-	m_top_sizer->Add
-	(	m_source_entry_ctrl,
-		wxGBPosition(row, 0),
-		wxGBSpan(1, 4),
-		wxEXPAND
-	);
-	
-	row += 2;
-
-	m_top_sizer->Add
-	(	m_destination_entry_ctrl,
-		wxGBPosition(row, 0),
-		wxGBSpan(1, 4),
-		wxEXPAND
-	);
-	
-	row += 2;
-
-	// TODO Factor out code duplicated with other constructor.
-
-	// Date and Frequency controls
-	m_frequency_ctrl = new FrequencyCtrl
-	(	this,
-		wxID_ANY,
-		wxSize(text_box_size.x * 3 + standard_gap(), text_box_size.y),
-		true,
-		false
-	);
-	m_top_sizer->Add(m_frequency_ctrl, wxGBPosition(row, 0), wxGBSpan(1, 3));
-
-	m_date_ctrl = new DateCtrl
-	(	this,
-		wxID_ANY,
-		wxSize(text_box_size.x, text_box_size.y),
-		p_journal.date()
-	);
-	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 3));
-
-	row += 2;
-
-	// Cancel/Clear button
-	m_cancel_button = new wxButton
-	(	this,
-		wxID_CANCEL,
-		wxString("&Clear"),
-		wxDefaultPosition,
-		wxSize(text_box_size.x, text_box_size.y)
-	);
-	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
-
-	// Save/OK button
-	m_ok_button = new wxButton
-	(	this,
-		wxID_OK,
-		wxString("&Save"),
-		wxDefaultPosition,
-		wxSize(text_box_size.x, text_box_size.y)
-	);
-
-	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 3));
-	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
-
-	// "Admin"
-	// SetSizer(m_top_sizer);
-	m_top_sizer->Fit(this);
-	m_top_sizer->SetSizeHints(this);
-	Fit();
-	Layout();
+	configure_for_journal_editing();
 }
 
 TransactionCtrl::TransactionCtrl
@@ -421,9 +305,9 @@ TransactionCtrl::TransactionCtrl
 	m_journal(0),
 	m_database_connection(p_journal.database_connection())
 {
-	// TODO HIGH PRIORITY Implement this.
-}	
-
+	m_journal = new DraftJournal(p_journal);
+	configure_for_journal_editing();
+}
 
 TransactionCtrl::~TransactionCtrl()
 {
@@ -474,6 +358,162 @@ TransactionCtrl::configure_top_controls
 	);
 	row += 2;
 	return row;
+}
+
+void
+TransactionCtrl::configure_for_journal_editing()
+{
+	assert (m_journal);
+	transaction_type::TransactionType const initial_transaction_type
+		= m_journal->transaction_type();
+	assert_transaction_type_validity(initial_transaction_type);
+	wxSize text_box_size;
+	vector<transaction_type::TransactionType> available_transaction_types;
+	available_transaction_types.push_back(initial_transaction_type);
+	using transaction_type::envelope_transaction;
+	using transaction_type::generic_transaction;
+	if
+	(	(initial_transaction_type != envelope_transaction) &&
+		(initial_transaction_type != generic_transaction)
+	)
+	{
+		available_transaction_types.push_back(generic_transaction);
+	}
+	size_t row = configure_top_controls
+	(	initial_transaction_type,
+		text_box_size,
+		m_journal->primary_amount(),
+		available_transaction_types
+	);
+
+	vector<Entry> const& entries = m_journal->entries();
+	vector<Entry>::size_type const fulcrum = m_journal->fulcrum();
+	vector<Entry>::size_type i = 0;
+	vector<Entry>::size_type const sz = entries.size();
+	vector<Entry> source_entries;
+	vector<Entry> destination_entries;
+	for ( ; i != fulcrum; ++i) source_entries.push_back(entries[i]);
+	assert (i == fulcrum);
+	for ( ; i != sz; ++i) destination_entries.push_back(entries[i]);
+
+	m_source_entry_ctrl = new EntryCtrl
+	(	this,
+		source_entries,
+		m_database_connection,
+		initial_transaction_type,
+		text_box_size,
+		true
+	);
+	m_destination_entry_ctrl = new EntryCtrl
+	(	this,
+		destination_entries,
+		m_database_connection,
+		initial_transaction_type,
+		text_box_size,
+		false
+	);
+
+	m_top_sizer->Add
+	(	m_source_entry_ctrl,
+		wxGBPosition(row, 0),
+		wxGBSpan(1, 4),
+		wxEXPAND
+	);
+	
+	row += 2;
+
+	m_top_sizer->Add
+	(	m_destination_entry_ctrl,
+		wxGBPosition(row, 0),
+		wxGBSpan(1, 4),
+		wxEXPAND
+	);
+	
+	row += 2;
+
+	// TODO Factor out code duplicated with other constructor.
+
+	OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal);
+	bool const is_ordinary = static_cast<bool>(oj);
+	DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal);
+	bool const is_draft = static_cast<bool>(dj);
+	assert (!(is_ordinary && is_draft));
+	assert (is_ordinary || is_draft);
+
+	// Date and Frequency controls
+	m_frequency_ctrl = new FrequencyCtrl
+	(	this,
+		wxID_ANY,
+		wxSize(text_box_size.x * 3 + standard_gap(), text_box_size.y),
+		is_ordinary,
+		is_draft
+	);
+	m_top_sizer->Add(m_frequency_ctrl, wxGBPosition(row, 0), wxGBSpan(1, 3));
+	optional<Frequency> maybe_frequency;
+	if (is_draft)
+	{
+		// TODO From GUI user cannot possibly create a DraftJournal with no
+		// Repeaters, or with more than 1 Repeater. This next bit only works
+		// if that remains true, AND non-GUI-created DraftJournals are never
+		// accessed from the GUI!
+		assert (dj->repeaters().size() == 1);
+		maybe_frequency = dj->repeaters().at(0).frequency();
+	}	
+	m_frequency_ctrl->set_frequency(maybe_frequency);
+
+	gregorian::date date;
+	if (is_draft)
+	{
+		// TODO From GUI user cannot possibly create a DraftJournal with no
+		// Repeaters, or with more than 1 Repeater. This next bit only works
+		// if that remains true, AND non-GUI-created DraftJournals are never
+		// accessed from the GUI!
+		assert (dj->repeaters().size() == 1);
+		date = dj->repeaters().at(0).next_date();
+	}
+	else
+	{
+		assert (is_ordinary);
+		date = oj->date();
+	}
+	m_date_ctrl = new DateCtrl
+	(	this,
+		wxID_ANY,
+		wxSize(text_box_size.x, text_box_size.y),
+		date
+	);
+	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 3));
+
+	row += 2;
+
+	// Cancel/Clear button
+	m_cancel_button = new wxButton
+	(	this,
+		wxID_CANCEL,
+		wxString("&Clear"),
+		wxDefaultPosition,
+		wxSize(text_box_size.x, text_box_size.y)
+	);
+	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
+
+	// Save/OK button
+	m_ok_button = new wxButton
+	(	this,
+		wxID_OK,
+		wxString("&Save"),
+		wxDefaultPosition,
+		wxSize(text_box_size.x, text_box_size.y)
+	);
+
+	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 3));
+	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
+
+	// "Admin"
+	// SetSizer(m_top_sizer);
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	Fit();
+	Layout();
 }
 
 void

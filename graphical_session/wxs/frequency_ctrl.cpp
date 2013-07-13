@@ -3,7 +3,9 @@
 #include "frequency_ctrl.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
+#include "phatbooks_exceptions.hpp"
 #include <boost/optional.hpp>
+#include <jewel/optional.hpp>
 #include <wx/combobox.h>
 #include <wx/gdicmn.h>
 #include <wx/window.h>
@@ -11,6 +13,7 @@
 #include <vector>
 
 using boost::optional;
+using jewel::value;
 using std::vector;
 
 namespace phatbooks
@@ -116,6 +119,46 @@ FrequencyCtrl::frequency() const
 	return ret;
 }
 
+void
+FrequencyCtrl::set_frequency(optional<Frequency> const& p_maybe_frequency)
+{
+	if (p_maybe_frequency)
+	{
+		if (!m_support_draft_journal)
+		{
+			throw InvalidFrequencyException
+			(	"FrequencyCtrl does not support recurring transaction "
+				"Frequencies."
+			);
+		}
+		assert (m_support_draft_journal);
+		Frequency const freq = value(p_maybe_frequency);
+		vector<Frequency>::const_iterator it =
+			available_frequencies().begin();
+		vector<Frequency>::const_iterator const end =
+			available_frequencies().end();
+		vector<Frequency>::size_type i = (m_support_ordinary_journal? 1: 0);
+		for ( ; it != end; ++it, ++i)
+		{
+			if (*it == freq)
+			{
+				SetSelection(i);
+				return;
+			}
+		}
+		assert (false);
+	}
+	assert (!p_maybe_frequency);
+	if (!m_support_ordinary_journal)
+	{
+		throw InvalidFrequencyException
+		(	"FrequencyCtrl does not support \"once-off\" selection."
+		);
+	}
+	assert (m_support_ordinary_journal);
+	SetSelection(0);
+	return;
+}
 
 }  // namespace gui
 }  // namespace phatbooks
