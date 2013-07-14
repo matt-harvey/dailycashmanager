@@ -133,7 +133,34 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 
 	++m_next_row;
 
-	// TODO Create the row with Cancel and OK buttons.
+	// Final row
+	
+	m_cancel_button = new wxButton
+	(	this,
+		wxID_CANCEL,
+		wxString("&Cancel"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	m_top_sizer->Add(m_cancel_button, wxGBPosition(m_next_row, 1));
+	m_ok_button = new wxButton
+	(	this,
+		wxID_OK,
+		wxString("&Save"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	m_top_sizer->
+		Add(m_ok_button, wxGBPosition(m_next_row, 4), wxGBSpan(1, 2));
+	m_ok_button->SetDefault();  // Enter key will now trigger "Save" button
+
+	// "Admin"
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	Fit();
+	Layout();
+
+
 }
 
 void

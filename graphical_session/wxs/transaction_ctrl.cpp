@@ -239,7 +239,7 @@ TransactionCtrl::TransactionCtrl
 	);
 
 	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 3));
-	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
+	m_ok_button->SetDefault();  // Enter key will now trigger "Save" button
 
 	// "Admin"
 	// SetSizer(m_top_sizer);
