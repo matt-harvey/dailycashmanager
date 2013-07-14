@@ -36,6 +36,10 @@ public:
 	BudgetDialog(Frame* p_parent, Account const& p_account);
 
 private:
+	void on_pop_item_button_click(wxCommandEvent& event);
+	void on_push_item_button_click(wxCommandEvent& event);
+	void on_ok_button_click(wxCommandEvent& event);
+	void on_cancel_button_click(wxCommandEvent& event);
 
 	void reset_budget_summary();
 	void push_item(BudgetItem const& p_budget_item);
@@ -59,6 +63,8 @@ private:
 
 	Account const& m_account;
 	std::vector<BudgetItem> m_budget_items;
+
+	DECLARE_EVENT_TABLE()
 
 };  // class BudgetDialog
 

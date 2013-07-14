@@ -24,6 +24,24 @@ namespace phatbooks
 namespace gui
 {
 
+BEGIN_EVENT_TABLE(BudgetDialog, wxDialog)
+	EVT_BUTTON
+	(	s_pop_item_button_id,
+		BudgetDialog::on_pop_item_button_click
+	)
+	EVT_BUTTON
+	(	s_push_item_button_id,
+		BudgetDialog::on_push_item_button_click
+	)
+	EVT_BUTTON
+	(	wxID_OK,
+		BudgetDialog::on_ok_button_click
+	)
+	EVT_BUTTON
+	(	wxID_CANCEL,
+		BudgetDialog::on_cancel_button_click
+	)
+END_EVENT_TABLE()
 
 
 BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
@@ -159,14 +177,42 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	m_top_sizer->SetSizeHints(this);
 	Fit();
 	Layout();
+}
 
+void
+BudgetDialog::on_pop_item_button_click(wxCommandEvent& event)
+{
+	(void)event;  // silence compiler re. unused parameter.
+	// TODO HIGH PRIORITY Implement
+}
 
+void
+BudgetDialog::on_push_item_button_click(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler re. unused parameter.
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+BudgetDialog::on_cancel_button_click(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler re. unused parameter.
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+BudgetDialog::on_ok_button_click(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler re. unused parameter.
+	// TODO HIGH PRIORITY Implement
 }
 
 void
 BudgetDialog::reset_budget_summary()
 {
-	// TODO HIGH PRIORITY Implement
+	m_summary_amount_text->SetLabelText(generate_summary_amount_text());
+	m_summary_frequency_text->SetLabelText(generate_summary_frequency_text());
+	return;
 }
 
 void
