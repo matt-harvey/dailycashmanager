@@ -1,11 +1,13 @@
 #ifndef GUARD_budget_dialog_hpp
 #define GUARD_budget_dialog_hpp
 
+#include "budget_item.hpp"
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/gbsizer.h>
 #include <wx/stattext.h>
+#include <vector>
 
 namespace phatbooks
 {
@@ -35,18 +37,17 @@ public:
 
 private:
 
-	/**
-	 * @todo Implement.
-	 */
 	void reset_budget_summary();
+	void push_item(BudgetItem const& p_budget_item);
+	PhatbooksDatabaseConnection& database_connection();
 
 	static int const s_pop_item_button_id = wxID_HIGHEST + 1;
 	static int const s_push_item_button_id = s_pop_item_button_id + 1;
 
-	PhatbooksDatabaseConnection& database_connection();
-
 	wxString generate_summary_amount_text();
 	wxString generate_summary_frequency_text();
+
+	size_t m_next_row;
 
 	wxGridBagSizer* m_top_sizer;
 	wxStaticText* m_summary_amount_text;
@@ -57,6 +58,7 @@ private:
 	wxButton* m_ok_button;
 
 	Account const& m_account;
+	std::vector<BudgetItem> m_budget_items;
 
 };  // class BudgetDialog
 

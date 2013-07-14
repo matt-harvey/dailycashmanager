@@ -1,6 +1,8 @@
 #include "budget_dialog.hpp"
 #include "account.hpp"
 #include "b_string.hpp"
+#include "budget_item.hpp"
+#include "budget_item_reader.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
 #include "locale.hpp"
@@ -12,8 +14,10 @@
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
+#include <vector>
 
 using jewel::Decimal;
+using std::vector;
 
 namespace phatbooks
 {
@@ -29,6 +33,7 @@ namespace
 
 BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
+	m_next_row(0),
 	m_top_sizer(0),
 	m_summary_amount_text(0),
 	m_summary_frequency_text(0),
@@ -41,8 +46,6 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);	
 
-	int row = 0;
-
 	// Row 0
 	wxStaticText* account_label = new wxStaticText
 	(	this,
@@ -54,7 +57,7 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	account_label,
-		wxGBPosition(row, 1),
+		wxGBPosition(m_next_row, 1),
 		wxGBSpan(1, 2),
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
@@ -68,7 +71,7 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	m_summary_amount_text,
-		wxGBPosition(row, 3),
+		wxGBPosition(m_next_row, 3),
 		wxDefaultSpan,
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
@@ -82,12 +85,12 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	m_summary_frequency_text,
-		wxGBPosition(row, 4),
+		wxGBPosition(m_next_row, 4),
 		wxGBSpan(1, 2),
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 
-	++row;
+	++m_next_row;
 
 	// Row 1
 	m_pop_item_button = new wxButton
@@ -100,7 +103,7 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	m_pop_item_button,
-		wxGBPosition(row, 4),
+		wxGBPosition(m_next_row, 4),
 		wxDefaultSpan,
 		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
 	);
@@ -114,19 +117,41 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	m_push_item_button,
-		wxGBPosition(row, 5),
+		wxGBPosition(m_next_row, 5),
 		wxDefaultSpan,
 		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
 	);
 	
-	++row;
+	++m_next_row;
 
 	// Row 2
-	
-	// TODO Continue implementing
+	// Bare scope
+	{
+		BudgetItemReader const reader(database_connection());
+		BudgetItemReader::const_iterator it = reader.begin();
+		BudgetItemReader::const_iterator const end = reader.end();
+		for ( ; it != end; ++it)
+		{
+			 if (it->account() == m_account) push_item(*it);
+		}
+	}
 
+	++m_next_row;
+
+	// TODO Create the row with Cancel and OK buttons.
 }
 
+void
+BudgetDialog::reset_budget_summary()
+{
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+BudgetDialog::push_item(BudgetItem const& p_budget_item)
+{
+	// TODO HIGH PRIORITY Implement
+}
 
 wxString
 BudgetDialog::generate_summary_amount_text()
