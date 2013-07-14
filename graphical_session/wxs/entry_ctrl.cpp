@@ -386,8 +386,7 @@ EntryCtrl::add_row
 		p_account,
 		m_text_ctrl_size,
 		m_account_reader->begin(),
-		m_account_reader->end(),
-		m_database_connection
+		m_account_reader->end()
 	);
 	m_top_sizer->Add(account_name_box, wxGBPosition(m_next_row, 0));
 	m_account_name_boxes.push_back(account_name_box);

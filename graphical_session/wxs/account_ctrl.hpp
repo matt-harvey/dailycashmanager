@@ -6,6 +6,7 @@
 #include "account.hpp"
 #include "b_string.hpp"
 #include "string_set_validator.hpp"
+#include <boost/noncopyable.hpp>
 #include <jewel/debug_log.hpp>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
@@ -26,7 +27,7 @@ namespace gui
  * Widget by means of which the user is enabled to select an
  * \e existing Account.
  */
-class AccountCtrl: public wxComboBox
+class AccountCtrl: public wxComboBox, private boost::noncopyable
 {
 public:
 
@@ -53,8 +54,7 @@ public:
 		Account const& p_account,
 		wxSize const& p_size,
 		AccountIter p_beg,
-		AccountIter const& p_end,
-		PhatbooksDatabaseConnection& p_database_connection
+		AccountIter const& p_end
 	);
 	
 	/**
@@ -95,8 +95,7 @@ AccountCtrl::AccountCtrl
 	Account const& p_account,
 	wxSize const& p_size,
 	AccountIter p_beg,
-	AccountIter const& p_end,
-	PhatbooksDatabaseConnection& p_database_connection
+	AccountIter const& p_end
 ):
 	wxComboBox
 	(	p_parent,
@@ -107,7 +106,7 @@ AccountCtrl::AccountCtrl
 		wxArrayString(),	
 		wxCB_SORT
 	),
-	m_database_connection(p_database_connection)
+	m_database_connection(p_account.database_connection())
 {
 	wxArrayString valid_account_names;
 	assert (valid_account_names.IsEmpty());
