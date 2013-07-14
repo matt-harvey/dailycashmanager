@@ -41,14 +41,34 @@ private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
 
+	/**
+	 * Resets budget summary text at top of Dialog, on the basis
+	 * of the budgets currently saved in the \e database, regardless of
+	 * what is currently shown in the BudgetDialog itself.
+	 *
+	 * @todo Is this actually called anywhere?
+	 */
 	void reset_budget_summary();
+
 	void push_item(BudgetItem const& p_budget_item);
 	PhatbooksDatabaseConnection& database_connection();
 
 	static int const s_pop_item_button_id = wxID_HIGHEST + 1;
 	static int const s_push_item_button_id = s_pop_item_button_id + 1;
 
+	/**
+	 * @returns string describing the standardized budget frequency for
+	 * database_connection() on the basis of what is currently saved in the
+	 * \e database, regardless of what is currently shown in the BudgetDialog
+	 * itself.
+	 */
 	wxString generate_summary_amount_text();
+
+	/**
+	 * @returns string describing the budget amount for m_account on the basis
+	 * of what is currently saved in the \e database, regardless of what
+	 * is currently shown in the BudgetDialog itself.
+	 */
 	wxString generate_summary_frequency_text();
 
 	size_t m_next_row;
