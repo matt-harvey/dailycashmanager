@@ -7,6 +7,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "sizing.hpp"
 #include <jewel/decimal.hpp>
+#include <wx/button.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
@@ -43,7 +44,6 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	int row = 0;
 
 	// Row 0
-	
 	wxStaticText* account_label = new wxStaticText
 	(	this,
 		wxID_ANY,
@@ -55,7 +55,7 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	m_top_sizer->Add
 	(	account_label,
 		wxGBPosition(row, 1),
-		wxDefaultSpan,
+		wxGBSpan(1, 2),
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_summary_amount_text = new wxStaticText
@@ -83,14 +83,48 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	m_top_sizer->Add
 	(	m_summary_frequency_text,
 		wxGBPosition(row, 4),
-		wxDefaultSpan,
+		wxGBSpan(1, 2),
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
-	
-	// Row 1
 
-	// TODO Continue implementing
+	++row;
+
+	// Row 1
+	m_pop_item_button = new wxButton
+	(	this,
+		s_pop_item_button_id,
+		wxString("-"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
+	);
+	m_top_sizer->Add
+	(	m_pop_item_button,
+		wxGBPosition(row, 4),
+		wxDefaultSpan,
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
+	);
+	m_push_item_button = new wxButton
+	(	this,
+		s_push_item_button_id,
+		wxString("+"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
+	);
+	m_top_sizer->Add
+	(	m_push_item_button,
+		wxGBPosition(row, 5),
+		wxDefaultSpan,
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
+	);
 	
+	++row;
+
+	// Row 2
+	
+	// TODO Continue implementing
+
 }
 
 

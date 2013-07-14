@@ -2,6 +2,7 @@
 #define GUARD_budget_dialog_hpp
 
 #include <boost/noncopyable.hpp>
+#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/gbsizer.h>
 #include <wx/stattext.h>
@@ -39,6 +40,9 @@ private:
 	 */
 	void reset_budget_summary();
 
+	static int const s_pop_item_button_id = wxID_HIGHEST + 1;
+	static int const s_push_item_button_id = s_pop_item_button_id + 1;
+
 	PhatbooksDatabaseConnection& database_connection();
 
 	wxString generate_summary_amount_text();
@@ -47,6 +51,8 @@ private:
 	wxGridBagSizer* m_top_sizer;
 	wxStaticText* m_summary_amount_text;
 	wxStaticText* m_summary_frequency_text;
+	wxButton* m_pop_item_button;
+	wxButton* m_push_item_button;
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;
 
