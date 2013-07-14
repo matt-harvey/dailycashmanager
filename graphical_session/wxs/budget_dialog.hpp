@@ -50,6 +50,15 @@ private:
 	 */
 	void reset_budget_summary();
 
+	/**
+	 * Updates the BudgetItems for m_account based on the data entered
+	 * by the user.
+	 *
+	 * @returns true if an only if the BudgetItems for m_account are
+	 * successfully updated and saved.
+	 */
+	bool update_budgets_from_dialog();
+
 	void push_item(BudgetItem const& p_budget_item);
 	PhatbooksDatabaseConnection& database_connection();
 

@@ -323,6 +323,7 @@ AccountDialog::on_cancel_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
 	EndModal(wxID_CANCEL);
+	return;
 }
 
 bool
@@ -388,7 +389,8 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	wxString msg =
 		account_super_type_string(super_type(m_account.account_type()));
 	msg += wxString(" has been ");
-	msg += (p_is_new_account? wxString(" created."): wxString(" updated."));
+	msg += (p_is_new_account? wxString("created."): wxString("updated."));
+	wxMessageBox(msg);
 
 	return true;
 }

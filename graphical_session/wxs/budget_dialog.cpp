@@ -9,6 +9,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "sizing.hpp"
 #include <jewel/decimal.hpp>
+#include <sqloxx/database_transaction.hpp>
 #include <wx/button.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
@@ -17,6 +18,7 @@
 #include <vector>
 
 using jewel::Decimal;
+using sqloxx::DatabaseTransaction;
 using std::vector;
 
 namespace phatbooks
@@ -197,14 +199,19 @@ void
 BudgetDialog::on_cancel_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	// TODO HIGH PRIORITY Implement
+	EndModal(wxID_CANCEL);
+	return;
 }
 
 void
 BudgetDialog::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	// TODO HIGH PRIORITY Implement
+	if (update_budgets_from_dialog())
+	{
+		EndModal(wxID_OK);
+	}
+	return;
 }
 
 void
@@ -213,6 +220,22 @@ BudgetDialog::reset_budget_summary()
 	m_summary_amount_text->SetLabelText(generate_summary_amount_text());
 	m_summary_frequency_text->SetLabelText(generate_summary_frequency_text());
 	return;
+}
+
+bool
+BudgetDialog::update_budgets_from_dialog()
+{
+	DatabaseTransaction transaction(database_connection());
+
+	// TODO Implement this properly in here....
+	return false;  // WARNING temp.
+
+	transaction.commit();
+	wxString msg("Budgets for ");
+	msg += bstring_to_wx(m_account.name());
+	msg += wxString(" have been updated.");
+	wxMessageBox(msg);
+	return true;
 }
 
 void
