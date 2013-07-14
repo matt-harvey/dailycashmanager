@@ -2,7 +2,9 @@
 #define GUARD_budget_dialog_hpp
 
 #include <boost/noncopyable.hpp>
-#include <wx/combobox.h>
+#include <wx/dialog.h>
+#include <wx/gbsizer.h>
+#include <wx/stattext.h>
 
 namespace phatbooks
 {
@@ -19,7 +21,7 @@ class Frame;
 // End forward declarations
 
 
-class BudgetDialog: public wxComboBox, private boost::noncopyable
+class BudgetDialog: public wxDialog, private boost::noncopyable
 {
 public:
 
@@ -27,7 +29,15 @@ public:
 
 private:
 
+	wxGridBagSizer* m_top_sizer;
+	wxStaticText* m_summary_text;
+	wxButton* m_cancel_button;
+	wxButton* m_ok_button;
+
+	Account const& m_account;
+
 };  // class BudgetDialog
+
 
 }  // namespace gui
 }  // namespace phatbooks
