@@ -24,11 +24,6 @@ namespace phatbooks
 namespace gui
 {
 
-namespace
-{
-	
-
-}  // end anonymous namespace
 
 
 BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
