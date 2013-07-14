@@ -14,7 +14,9 @@
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
+#include <wx/gdicmn.h>
 #include <wx/msgdlg.h>
+#include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <wx/window.h>
