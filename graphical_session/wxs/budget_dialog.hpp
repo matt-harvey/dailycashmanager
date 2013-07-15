@@ -5,6 +5,7 @@
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
+#include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
@@ -49,6 +50,15 @@ private:
 	void on_cancel_button_click(wxCommandEvent& event);
 
 	/**
+	 * This is triggered by DecimalTextCtrl::on_kill_focus(...).
+	 * We override with behaviour we need to set budget summary
+	 * text. WARNING How dodgy and indirect is this?
+	 *
+	 * @todo We also need FrequencyCtrl to trigger this...
+	 */
+	virtual bool TransferDataToWindow();
+
+	/**
 	 * Resets budget summary text at top of Dialog, on the basis
 	 * of the budgets currently saved in the \e database, regardless of
 	 * what is currently shown in the BudgetDialog itself.
@@ -79,7 +89,7 @@ private:
 	(	wxWindow* p_tab_predecessor
 	);
 
-	PhatbooksDatabaseConnection& database_connection();
+	PhatbooksDatabaseConnection& database_connection() const;
 
 	static int const s_pop_item_button_id = wxID_HIGHEST + 1;
 	static int const s_push_item_button_id = s_pop_item_button_id + 1;
@@ -114,8 +124,15 @@ private:
 		wxTextCtrl* description_ctrl;
 		DecimalTextCtrl* amount_ctrl;
 		FrequencyCtrl* frequency_ctrl;
+
 	};
 
+	/**
+	 * @returns a vector of newly created BudgetItems (WITHOUT ids),
+	 * based on the data currently in the BudgetItemComponent.
+	 */
+	std::vector<BudgetItem> make_budget_items() const;
+	
 	std::vector<BudgetItemComponent> m_budget_item_components;
 
 	Account const& m_account;

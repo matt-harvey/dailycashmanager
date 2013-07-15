@@ -9,6 +9,7 @@
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
 #include <ostream>
+#include <vector>
 
 namespace phatbooks
 {
@@ -116,7 +117,20 @@ private:
 std::ostream&
 operator<<(std::ostream& os, BudgetItem const& bi);
 
-
+/**
+ * @p_budget_items is a vector of BudgetItems which are assumed to be all
+ * of the same PhatbooksDatabaseConnection and the same Account.
+ *
+ * @returns the amount that approximates, to the Account's native Commodity's
+ * precision, the equivalent of normalizing and summing at
+ * the PhatbooksDatabaseConnection's budget_frequency(), all the BudgetItems
+ * in the range [b, e). Range should not be empty.
+ */
+jewel::Decimal
+normalized_total
+(	std::vector<BudgetItem>::const_iterator b,
+	std::vector<BudgetItem>::const_iterator const& e
+);
 
 
 

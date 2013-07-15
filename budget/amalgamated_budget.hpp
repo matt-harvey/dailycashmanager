@@ -30,8 +30,7 @@ class Account;
  * per Account, and has a single frequency shared by all
  * the items in the AmalgamatedBudget.
  */
-class AmalgamatedBudget:
-	boost::noncopyable
+class AmalgamatedBudget: boost::noncopyable
 {
 public:
 
@@ -103,7 +102,6 @@ public:
 private:
 
 	typedef boost::unordered_map<AccountImpl::Id, jewel::Decimal> Map;
-
 
 	void regenerate_map();
 

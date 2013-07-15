@@ -14,8 +14,10 @@
 #include "sizing.hpp"
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <wx/button.h>
+#include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
@@ -25,13 +27,13 @@
 
 using boost::optional;
 using jewel::Decimal;
+using jewel::value;
 using sqloxx::DatabaseTransaction;
 using std::vector;
 
 #include <jewel/debug_log.hpp>
 #include <iostream>
 using std::endl;
-
 
 namespace phatbooks
 {
@@ -56,7 +58,6 @@ BEGIN_EVENT_TABLE(BudgetDialog, wxDialog)
 		BudgetDialog::on_cancel_button_click
 	)
 END_EVENT_TABLE()
-
 
 BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
@@ -220,6 +221,35 @@ BudgetDialog::on_cancel_button_click(wxCommandEvent& event)
 	return;
 }
 
+bool
+BudgetDialog::TransferDataToWindow()
+{
+	// WARNING This is really inefficient.
+	vector<BudgetItem> budget_items = make_budget_items();
+	assert (m_summary_amount_text);
+	vector<BudgetItem>::const_iterator it = budget_items.begin();
+	if (budget_items.empty())
+	{
+		m_summary_amount_text->SetLabelText
+		(	finformat_wx
+			(	Decimal(0, m_account.commodity().precision()),
+				locale()
+			)
+		);
+	}
+	else
+	{
+		assert (budget_items.end() - it > 0);
+		m_summary_amount_text->SetLabelText
+		(	finformat_wx
+			(	normalized_total(it, budget_items.end()),
+				locale()
+			)
+		);
+	}
+	return true;
+}
+
 void
 BudgetDialog::on_ok_button_click(wxCommandEvent& event)
 {
@@ -244,7 +274,7 @@ BudgetDialog::update_budgets_from_dialog()
 {
 	DatabaseTransaction transaction(database_connection());
 
-	// TODO Implement this properly in here....
+	// TODO HIGH PRIORITY Implement this properly in here....
 	return false;  // WARNING temp.
 
 	transaction.commit();
@@ -293,8 +323,12 @@ BudgetDialog::push_item(BudgetItem const& p_budget_item)
 		wxGBPosition(m_next_row, 3),
 		wxGBSpan(1, 1)
 	);
-	budget_item_component.frequency_ctrl =
-		new FrequencyCtrl(this, wxID_ANY, wxDefaultSize);
+	budget_item_component.frequency_ctrl = new FrequencyCtrl
+	(	this,
+		wxID_ANY,
+		wxDefaultSize,
+		database_connection()
+	);
 	optional<Frequency> const maybe_frequency = p_budget_item.frequency();
 	budget_item_component.frequency_ctrl->set_frequency(maybe_frequency);
 	m_top_sizer->Add
@@ -336,7 +370,7 @@ BudgetDialog::generate_summary_frequency_text()
 }
 
 PhatbooksDatabaseConnection&
-BudgetDialog::database_connection()
+BudgetDialog::database_connection() const
 {
 	return m_account.database_connection();
 }
@@ -373,6 +407,35 @@ BudgetDialog::add_bottom_row_widgets_to_sizer()
 	++m_next_row;
 	return;
 }
+
+vector<BudgetItem>
+BudgetDialog::make_budget_items() const
+{
+	vector<BudgetItem> ret;
+	vector<BudgetItem>::size_type i = 0;
+	vector<BudgetItem>::size_type const sz = m_budget_item_components.size();
+	for ( ; i != sz; ++i)
+	{
+		BudgetItemComponent const& component = m_budget_item_components.at(i);
+		BudgetItem budget_item(database_connection());
+		budget_item.set_account(m_account);
+		budget_item.set_description(component.description_ctrl->GetValue());
+		budget_item.set_amount(component.amount_ctrl->amount());
+		assert (component.frequency_ctrl->frequency());
+		budget_item.set_frequency
+		(	value(component.frequency_ctrl->frequency())
+		);
+		assert
+		(	database_connection().supports_budget_frequency
+			(	budget_item.frequency()
+			)
+		);
+		ret.push_back(budget_item);
+	}
+	assert (ret.size() == m_budget_item_components.size());
+	return ret;
+}
+
 
 }  // namespace gui
 }  // namespace phatbooks

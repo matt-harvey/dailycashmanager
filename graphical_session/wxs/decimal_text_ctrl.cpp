@@ -82,7 +82,6 @@ DecimalTextCtrl::set_amount(Decimal const& p_amount)
 	return;
 }
 
-
 Decimal
 DecimalTextCtrl::amount() const
 {

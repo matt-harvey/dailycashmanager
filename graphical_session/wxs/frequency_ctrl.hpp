@@ -14,18 +14,27 @@
 namespace phatbooks
 {
 
+// Begin forward declarations
+
+class PhatbooksDatabaseConnection;
+
 namespace gui
 {
+
+// End forward declarations
 
 /**
  * Widget for the the user to select a Frequency (for a DraftJournal), or
  * else to select no Frequency (for an OrdinaryJournal).
  *
- * @todo HIGH PRIORITY Reflected the selected Frequency in
- * TransactionCtrl::post_journal().
- *
  * @todo HIGH PRIORITY Ensure that the "every month" and "last day of month"
  * options work sensibly in relation to the date entered in the date control.
+ *
+ * @todo HIGH PRIORITY Indexing is all out of whack in that the Frequencies
+ * in FrequencyCtrl do not correspond to those in available_frequencies()
+ * and frequency() and possibly other functions are faulty as a result. Need
+ * to fix and it's probably easiest to do if we have a m_available_frequencies
+ * member for every individual FrequencyCtrl.
  */
 class FrequencyCtrl: public wxComboBox, private boost::noncopyable
 {
@@ -56,6 +65,7 @@ public:
 	(	wxWindow* p_parent,
 		wxWindowID p_id,
 		wxSize const& p_size,
+		PhatbooksDatabaseConnection& p_database_connection,
 		bool p_supports_ordinary_journal = false,
 		bool p_supports_draft_journal = false
 	);
@@ -87,6 +97,7 @@ private:
 	bool supports_draft_journal() const;
 	bool supports_budget_item() const;
 
+	PhatbooksDatabaseConnection& m_database_connection;
 	bool const m_supports_ordinary_journal;
 	bool const m_supports_draft_journal;
 

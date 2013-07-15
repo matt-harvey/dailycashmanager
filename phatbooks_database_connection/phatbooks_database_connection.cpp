@@ -415,6 +415,13 @@ PhatbooksDatabaseConnection::budget_balance() const
 	return m_budget->balance();
 }
 
+bool
+PhatbooksDatabaseConnection::supports_budget_frequency
+(	Frequency const& p_frequency
+) const
+{
+	return m_budget->supports_frequency(p_frequency);
+}
 
 // BalanceCacheAttorney
 

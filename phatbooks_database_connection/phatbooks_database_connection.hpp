@@ -200,6 +200,8 @@ public:
 
 	jewel::Decimal budget_balance() const;
 
+	bool supports_budget_frequency(Frequency const& p_frequency) const;
+
 	/**
 	 * Class to provide restricted access to cache in which AmalgamatedBudget
 	 * is stored.

@@ -15,13 +15,16 @@
 #include <iostream>
 #include <ostream>
 #include <string>
+#include <vector>
 
 using boost::lexical_cast;
 using jewel::Decimal;
+using jewel::round;
 using sqloxx::Handle;
 using std::endl;
 using std::ostream;
 using std::string;
+using std::vector;
 
 namespace phatbooks
 {
@@ -142,5 +145,26 @@ operator<<(ostream& os, BudgetItem const& bi)
 	return os;
 }
 
+Decimal
+normalized_total
+(	vector<BudgetItem>::const_iterator b,
+	vector<BudgetItem>::const_iterator const& e
+)
+{
+	assert (e - b > 0);  // Assert precondition.
+	PhatbooksDatabaseConnection const& dbc = b->database_connection();
+	Decimal::places_type const prec = b->account().commodity().precision();
+	Decimal ret(0, prec);
+	for ( ; b != e; ++b)
+	{
+		assert
+		(	b->database_connection().supports_budget_frequency
+			(	b->frequency()
+			)
+		);
+		ret += convert_to_canonical(b->frequency(), b->amount());
+	}
+	return round(convert_from_canonical(dbc.budget_frequency(), ret), prec);
+}
 
 }  // namespace phatbooks

@@ -208,6 +208,7 @@ TransactionCtrl::TransactionCtrl
 	(	this,
 		wxID_ANY,
 		wxSize(text_box_size.x * 3 + standard_gap(), text_box_size.y),
+		m_database_connection,
 		true,
 		true
 	);
@@ -447,6 +448,7 @@ TransactionCtrl::configure_for_journal_editing()
 	(	this,
 		wxID_ANY,
 		wxSize(text_box_size.x * 3 + standard_gap(), text_box_size.y),
+		m_database_connection,
 		is_ordinary,
 		is_draft
 	);

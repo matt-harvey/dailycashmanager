@@ -3,6 +3,7 @@
 #include "frequency_ctrl.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/optional.hpp>
 #include <jewel/optional.hpp>
@@ -65,6 +66,7 @@ FrequencyCtrl::FrequencyCtrl
 (	wxWindow* p_parent,
 	wxWindowID p_id,
 	wxSize const& p_size,
+	PhatbooksDatabaseConnection& p_database_connection,
 	bool p_supports_ordinary_journal,
 	bool p_supports_draft_journal
 ):
@@ -77,6 +79,7 @@ FrequencyCtrl::FrequencyCtrl
 		wxArrayString(),
 		wxCB_READONLY
 	),
+	m_database_connection(p_database_connection),
 	m_supports_ordinary_journal(p_supports_ordinary_journal),
 	m_supports_draft_journal(p_supports_draft_journal)
 {
@@ -95,7 +98,7 @@ FrequencyCtrl::FrequencyCtrl
 			assert (!supports_draft_journal());
 			for ( ; it != end; ++it)
 			{
-				if (it->step_type() != interval_type::month_ends)
+				if (m_database_connection.supports_budget_frequency(*it))
 				{
 					Append(std8_to_wx(frequency_description(*it)));
 				}

@@ -191,7 +191,6 @@ AmalgamatedBudget::balance() const
 	);
 }	
 
-
 void
 AmalgamatedBudget::generate_supported_frequencies(vector<Frequency>& vec)
 {
@@ -211,7 +210,6 @@ AmalgamatedBudget::generate_supported_frequencies(vector<Frequency>& vec)
 	vec.push_back(Frequency(12, interval_type::months));
 	return;
 }
-
 
 bool
 AmalgamatedBudget::supports_frequency(Frequency const& p_frequency)
@@ -247,7 +245,6 @@ AmalgamatedBudget::supports_frequency(Frequency const& p_frequency)
 		assert (false);
 	}
 }
-	
 
 Account
 AmalgamatedBudget::balancing_account() const
@@ -288,7 +285,6 @@ AmalgamatedBudget::regenerate()
 	}
 	return;
 }
-
 
 void
 AmalgamatedBudget::load_map() const
