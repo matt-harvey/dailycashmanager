@@ -290,13 +290,8 @@ BudgetDialog::push_item(BudgetItem const& p_budget_item)
 		wxGBPosition(m_next_row, 3),
 		wxGBSpan(1, 1)
 	);
-	budget_item_component.frequency_ctrl = new FrequencyCtrl
-	(	this,
-		wxID_ANY,
-		wxDefaultSize,
-		false,
-		true
-	);
+	budget_item_component.frequency_ctrl =
+		new FrequencyCtrl(this, wxID_ANY, wxDefaultSize);
 	optional<Frequency> const maybe_frequency = p_budget_item.frequency();
 	budget_item_component.frequency_ctrl->set_frequency(maybe_frequency);
 	m_top_sizer->Add

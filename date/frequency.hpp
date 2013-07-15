@@ -38,16 +38,12 @@ public:
 	 */
 	interval_type::IntervalType step_type() const;
 
-
 private:
 	int m_num_steps;
 	interval_type::IntervalType m_step_type;
 };
 
 // Free-standing functions
-
-
-
 
 /**
  * @returns a Frequency to be used in Phatbooks as the canonical

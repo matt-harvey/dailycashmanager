@@ -65,8 +65,8 @@ FrequencyCtrl::FrequencyCtrl
 (	wxWindow* p_parent,
 	wxWindowID p_id,
 	wxSize const& p_size,
-	bool p_support_ordinary_journal,
-	bool p_support_draft_journal
+	bool p_supports_ordinary_journal,
+	bool p_supports_draft_journal
 ):
 	wxComboBox
 	(	p_parent,
@@ -77,26 +77,40 @@ FrequencyCtrl::FrequencyCtrl
 		wxArrayString(),
 		wxCB_READONLY
 	),
-	m_support_ordinary_journal(p_support_ordinary_journal),
-	m_support_draft_journal(p_support_draft_journal)
+	m_supports_ordinary_journal(p_supports_ordinary_journal),
+	m_supports_draft_journal(p_supports_draft_journal)
 {
-	assert (m_support_ordinary_journal || m_support_draft_journal);
-	if (m_support_ordinary_journal)
+	if (supports_ordinary_journal())
 	{
 		Append(once_off_string());
 	}
-	if (m_support_draft_journal)
+	if (supports_draft_journal() || supports_budget_item())
 	{
 		vector<Frequency>::const_iterator it =
 			available_frequencies().begin();
 		vector<Frequency>::const_iterator const end =
 			available_frequencies().end();
-		for ( ; it != end; ++it)
+		if (supports_budget_item())
 		{
-			wxString wxs = wxString("Record ");
-			wxs += std8_to_wx(frequency_description(*it, "every"));
-			wxs += ", starting";
-			Append(wxs);
+			assert (!supports_draft_journal());
+			for ( ; it != end; ++it)
+			{
+				if (it->step_type() != interval_type::month_ends)
+				{
+					Append(std8_to_wx(frequency_description(*it)));
+				}
+			}
+		}
+		else
+		{
+			assert (supports_draft_journal());
+			for ( ; it != end; ++it)
+			{
+				wxString wxs = wxString("Record ");
+				wxs += std8_to_wx(frequency_description(*it, "every"));
+				wxs += ", starting";
+				Append(wxs);
+			}
 		}
 	}
 	SetSelection(0);
@@ -107,7 +121,7 @@ FrequencyCtrl::frequency() const
 {
 	optional<Frequency> ret;
 	vector<Frequency>::size_type index = GetSelection();
-	if (m_support_ordinary_journal)
+	if (supports_ordinary_journal())
 	{
 		if (index == 0)
 		{
@@ -127,20 +141,31 @@ FrequencyCtrl::set_frequency(optional<Frequency> const& p_maybe_frequency)
 {
 	if (p_maybe_frequency)
 	{
-		if (!m_support_draft_journal)
+		if (!supports_draft_journal() && !supports_budget_item())
 		{
 			throw InvalidFrequencyException
 			(	"FrequencyCtrl does not support recurring transaction "
 				"Frequencies."
 			);
 		}
-		assert (m_support_draft_journal);
 		Frequency const freq = value(p_maybe_frequency);
+		if (!supports_draft_journal())
+		{
+			if (freq.step_type() == interval_type::month_ends)
+			{
+				throw InvalidFrequencyException
+				(	"FrequencyCtrl does not support interval_type::month_ends"
+					", as it is not calibrated to support DraftJournal "
+					"Repeater Frequencies."
+				);
+			}
+		}
+		assert (supports_draft_journal() || supports_budget_item());
 		vector<Frequency>::const_iterator it =
 			available_frequencies().begin();
 		vector<Frequency>::const_iterator const end =
 			available_frequencies().end();
-		vector<Frequency>::size_type i = (m_support_ordinary_journal? 1: 0);
+		vector<Frequency>::size_type i = (supports_ordinary_journal()? 1: 0);
 		for ( ; it != end; ++it, ++i)
 		{
 			if (*it == freq)
@@ -152,15 +177,33 @@ FrequencyCtrl::set_frequency(optional<Frequency> const& p_maybe_frequency)
 		assert (false);
 	}
 	assert (!p_maybe_frequency);
-	if (!m_support_ordinary_journal)
+	if (!supports_ordinary_journal())
 	{
 		throw InvalidFrequencyException
 		(	"FrequencyCtrl does not support \"once-off\" selection."
 		);
 	}
-	assert (m_support_ordinary_journal);
+	assert (supports_ordinary_journal());
 	SetSelection(0);
 	return;
+}
+
+bool
+FrequencyCtrl::supports_ordinary_journal() const
+{
+	return m_supports_ordinary_journal;
+}
+
+bool
+FrequencyCtrl::supports_draft_journal() const
+{
+	return m_supports_draft_journal;
+}
+
+bool
+FrequencyCtrl::supports_budget_item() const
+{
+	return !(m_supports_ordinary_journal || m_supports_draft_journal);
 }
 
 }  // namespace gui

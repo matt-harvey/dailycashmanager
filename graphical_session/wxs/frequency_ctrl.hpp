@@ -32,15 +32,32 @@ class FrequencyCtrl: public wxComboBox, private boost::noncopyable
 public:
 
 	/**
-	 * @precondition must pass true to either or both
-	 * p_support_ordinary_journal or p_support_draft_journal.
+	 * @param p_parent parent window
+	 *
+	 * @param p_id id
+	 *
+	 * @param p_size size
+	 *
+	 * @param p_supports_ordinary_journal pass \e true to support
+	 * "Frequencies" that are  to an OrdinaryJournal (as opposed to
+	 * DraftJournal). The only such Frequency is "once-off" (which is
+	 * not actually represented by a Frequency at all).
+	 *
+	 * @param p_supports_draft_journal pass \e true to support Frequencies
+	 * that are required for repeating DraftJournals (i.e. DraftJournals
+	 * with at least one Repeater).
+	 *
+	 * If both p_supports_ordinary_journal and p_supports_draft_journal are
+	 * passed e\ false, then the FrequencyCtrl will display text appropriate
+	 * to selected a Frequency for the purpose of a BudgetItem (as opposed
+	 * to a Journal).
 	 */
 	FrequencyCtrl
 	(	wxWindow* p_parent,
 		wxWindowID p_id,
 		wxSize const& p_size,
-		bool p_support_ordinary_journal = true,
-		bool p_support_draft_journal = true
+		bool p_supports_ordinary_journal = false,
+		bool p_supports_draft_journal = false
 	);
 
 	/**
@@ -66,8 +83,13 @@ public:
 	void set_frequency(boost::optional<Frequency> const& p_maybe_frequency);
 
 private:
-	bool m_support_ordinary_journal;
-	bool m_support_draft_journal;
+	bool supports_ordinary_journal() const;
+	bool supports_draft_journal() const;
+	bool supports_budget_item() const;
+
+	bool const m_supports_ordinary_journal;
+	bool const m_supports_draft_journal;
+
 
 };  // class FrequencyCtrl
 
