@@ -28,6 +28,16 @@ class FrequencyCtrl;
 // End forward declarations
 
 
+/**
+ * Dialog for user to configure BudgetItems for a given Account.
+ *
+ * @todo FrequencyCtrl used in this dialog is inappropriately
+ * worded - need to enable FrequencyCtrl to be customized appropriately.
+ *
+ * @todo push_item(), if called after Cancel and OK buttons have been
+ * created, will add row \e under these buttons, when it should be
+ * added above.
+ */
 class BudgetDialog: public wxDialog, private boost::noncopyable
 {
 public:
