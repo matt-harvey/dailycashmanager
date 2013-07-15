@@ -35,6 +35,8 @@ public:
 	bool TransferToWindow();
 	wxObject* Clone() const;
 
+	jewel::Decimal decimal() const;
+
 private:
 	bool m_print_dash_for_zero;
 	jewel::Decimal::places_type m_precision;

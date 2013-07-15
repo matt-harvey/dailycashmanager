@@ -83,18 +83,12 @@ DecimalTextCtrl::set_amount(Decimal const& p_amount)
 }
 
 Decimal
-DecimalTextCtrl::amount() const
+DecimalTextCtrl::amount()
 {
-	// TODO This isn't really integrated with the DecimalValidator.
-	// It probably should be. However, by doing it this way, this
-	// method can be const.
-	Decimal const raw
-	(	wx_to_decimal
-		(	wxString(GetValue()),
-			locale()
-		)
-	);
-	return round(raw, m_precision);
+	DecimalValidator const* const validator =
+		dynamic_cast<DecimalValidator const*>(GetValidator());
+	assert (validator);
+	return validator->decimal();
 }
 
 void

@@ -39,6 +39,12 @@ DecimalValidator::DecimalValidator(DecimalValidator const& rhs):
 {
 }
 
+Decimal
+DecimalValidator::decimal() const
+{
+	return m_decimal;
+}
+
 bool
 DecimalValidator::Validate(wxWindow* WXUNUSED(parent))
 {

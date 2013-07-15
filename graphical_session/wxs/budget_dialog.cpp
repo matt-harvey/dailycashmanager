@@ -224,28 +224,37 @@ BudgetDialog::on_cancel_button_click(wxCommandEvent& event)
 bool
 BudgetDialog::TransferDataToWindow()
 {
-	// WARNING This is really inefficient.
-	vector<BudgetItem> budget_items = make_budget_items();
-	assert (m_summary_amount_text);
-	vector<BudgetItem>::const_iterator it = budget_items.begin();
-	if (budget_items.empty())
+	// WARNING This is inefficient.
+
+	if (!wxDialog::TransferDataToWindow())
 	{
-		m_summary_amount_text->SetLabelText
-		(	finformat_wx
-			(	Decimal(0, m_account.commodity().precision()),
-				locale()
-			)
-		);
+		return false;
 	}
-	else
+	
+	// Bare scope
 	{
-		assert (budget_items.end() - it > 0);
-		m_summary_amount_text->SetLabelText
-		(	finformat_wx
-			(	normalized_total(it, budget_items.end()),
-				locale()
-			)
-		);
+		vector<BudgetItem> budget_items = make_budget_items();
+		assert (m_summary_amount_text);
+		vector<BudgetItem>::const_iterator it = budget_items.begin();
+		if (budget_items.empty())
+		{
+			m_summary_amount_text->SetLabelText
+			(	finformat_wx
+				(	Decimal(0, m_account.commodity().precision()),
+					locale()
+				)
+			);
+		}
+		else
+		{
+			assert (budget_items.end() - it > 0);
+			m_summary_amount_text->SetLabelText
+			(	finformat_wx
+				(	normalized_total(it, budget_items.end()),
+					locale()
+				)
+			);
+		}
 	}
 	return true;
 }

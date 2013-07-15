@@ -49,7 +49,7 @@ public:
 	 */
 	void set_amount(jewel::Decimal const& p_amount);
 
-	jewel::Decimal amount() const;
+	jewel::Decimal amount();
 
 private:
 	void on_kill_focus(wxFocusEvent& event);
