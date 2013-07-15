@@ -7,6 +7,7 @@
 #include <wx/dialog.h>
 #include <wx/gbsizer.h>
 #include <wx/stattext.h>
+#include <wx/textctrl.h>
 #include <vector>
 
 namespace phatbooks
@@ -20,7 +21,9 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
+class DecimalTextCtrl;
 class Frame;
+class FrequencyCtrl;
 
 // End forward declarations
 
@@ -59,7 +62,12 @@ private:
 	 */
 	bool update_budgets_from_dialog();
 
+	/**
+	 * p_budget_item should have all attributes initialized, except that
+	 * it need not have an id.
+	 */
 	void push_item(BudgetItem const& p_budget_item);
+
 	PhatbooksDatabaseConnection& database_connection();
 
 	static int const s_pop_item_button_id = wxID_HIGHEST + 1;
@@ -89,6 +97,15 @@ private:
 	wxButton* m_push_item_button;
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;
+
+	struct BudgetItemComponent
+	{
+		wxTextCtrl* description_ctrl;
+		DecimalTextCtrl* amount_ctrl;
+		FrequencyCtrl* frequency_ctrl;
+	};
+
+	std::vector<BudgetItemComponent> m_budget_item_components;
 
 	Account const& m_account;
 	std::vector<BudgetItem> m_budget_items;

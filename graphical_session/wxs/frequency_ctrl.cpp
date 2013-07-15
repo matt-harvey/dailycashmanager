@@ -34,17 +34,20 @@ namespace
 			ret.push_back(Frequency(1, interval_type::days));
 			ret.push_back(Frequency(1, interval_type::weeks));
 			ret.push_back(Frequency(2, interval_type::weeks));
+			ret.push_back(Frequency(3, interval_type::weeks));
 			ret.push_back(Frequency(4, interval_type::weeks));
 			ret.push_back(Frequency(1, interval_type::months));
 			ret.push_back(Frequency(2, interval_type::months));
 			ret.push_back(Frequency(3, interval_type::months));
 			ret.push_back(Frequency(4, interval_type::months));
 			ret.push_back(Frequency(6, interval_type::months));
+			ret.push_back(Frequency(12, interval_type::months));
 			ret.push_back(Frequency(1, interval_type::month_ends));
 			ret.push_back(Frequency(2, interval_type::month_ends));
 			ret.push_back(Frequency(3, interval_type::month_ends));
 			ret.push_back(Frequency(4, interval_type::month_ends));
 			ret.push_back(Frequency(6, interval_type::month_ends));
+			ret.push_back(Frequency(12, interval_type::month_ends));
 		}
 		assert (!ret.empty());
 		return ret;

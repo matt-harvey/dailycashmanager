@@ -3,11 +3,16 @@
 #include "b_string.hpp"
 #include "budget_item.hpp"
 #include "budget_item_reader.hpp"
+#include "decimal_text_ctrl.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
+#include "frequency.hpp"
+#include "frequency_ctrl.hpp"
+#include "interval_type.hpp"
 #include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sizing.hpp"
+#include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <wx/button.h>
@@ -17,9 +22,15 @@
 #include <wx/string.h>
 #include <vector>
 
+using boost::optional;
 using jewel::Decimal;
 using sqloxx::DatabaseTransaction;
 using std::vector;
+
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
+
 
 namespace phatbooks
 {
@@ -174,6 +185,8 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 		Add(m_ok_button, wxGBPosition(m_next_row, 4), wxGBSpan(1, 2));
 	m_ok_button->SetDefault();  // Enter key will now trigger "Save" button
 
+	++m_next_row;
+
 	// "Admin"
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -192,7 +205,15 @@ void
 BudgetDialog::on_push_item_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	// TODO HIGH PRIORITY Implement
+	BudgetItem budget_item(database_connection());
+	budget_item.set_account(m_account);
+	budget_item.set_description(BString(""));
+	budget_item.set_amount(Decimal(0, m_account.commodity().precision()));
+	budget_item.set_frequency(Frequency(1, interval_type::days));
+	push_item(budget_item);
+	Fit();
+	Layout();
+	return;
 }
 
 void
@@ -241,7 +262,53 @@ BudgetDialog::update_budgets_from_dialog()
 void
 BudgetDialog::push_item(BudgetItem const& p_budget_item)
 {
-	// TODO HIGH PRIORITY Implement
+	assert (p_budget_item.account() == m_account);
+	BudgetItemComponent budget_item_component = {0, 0, 0};
+	budget_item_component.description_ctrl = new wxTextCtrl
+	(	this,
+		wxID_ANY,
+		bstring_to_wx(p_budget_item.description()),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	m_top_sizer->Add
+	(	budget_item_component.description_ctrl,
+		wxGBPosition(m_next_row, 1),
+		wxGBSpan(1, 2)
+	);
+	Decimal const amount = p_budget_item.amount();
+	budget_item_component.amount_ctrl = new DecimalTextCtrl
+	(	this,
+		wxID_ANY,
+		wxDefaultSize,
+		amount.places(),
+		false
+	);
+	budget_item_component.amount_ctrl->set_amount(amount);
+	m_top_sizer->Add
+	(	budget_item_component.amount_ctrl,
+		wxGBPosition(m_next_row, 3),
+		wxGBSpan(1, 1)
+	);
+	budget_item_component.frequency_ctrl = new FrequencyCtrl
+	(	this,
+		wxID_ANY,
+		wxDefaultSize,
+		false,
+		true
+	);
+	optional<Frequency> const maybe_frequency = p_budget_item.frequency();
+	budget_item_component.frequency_ctrl->set_frequency(maybe_frequency);
+	m_top_sizer->Add
+	(	budget_item_component.frequency_ctrl,
+		wxGBPosition(m_next_row, 4),
+		wxGBSpan(1, 2)
+	);
+	m_budget_item_components.push_back(budget_item_component);
+
+	++m_next_row;
+
+	return;
 }
 
 wxString

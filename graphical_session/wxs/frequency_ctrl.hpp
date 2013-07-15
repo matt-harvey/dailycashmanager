@@ -60,8 +60,8 @@ public:
 	 *
 	 * If p_maybe_frequency is passed an initialized optional, then
 	 * the FrequencyCtrl will display text describing the Frequency with
-	 * which it has been initialized, or else will throw InvalidFrequencyException
-	 * if DraftJournals are not supported.
+	 * which it has been initialized, or else will throw
+	 * InvalidFrequencyException if DraftJournals are not supported.
 	 */
 	void set_frequency(boost::optional<Frequency> const& p_maybe_frequency);
 
