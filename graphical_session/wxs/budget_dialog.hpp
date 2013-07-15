@@ -2,6 +2,7 @@
 #define GUARD_budget_dialog_hpp
 
 #include "budget_item.hpp"
+#include "frequency_ctrl.hpp"
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -25,7 +26,6 @@ namespace gui
 
 class DecimalTextCtrl;
 class Frame;
-class FrequencyCtrl;
 
 // End forward declarations
 
@@ -54,18 +54,19 @@ private:
 	 * We override with behaviour we need to set budget summary
 	 * text. WARNING How dodgy and indirect is this?
 	 *
-	 * @todo We also need FrequencyCtrl to trigger this...
+	 * @todo We also need SpecialFrequencyCtrl to trigger this...
 	 */
 	virtual bool TransferDataToWindow();
 
 	/**
-	 * Resets budget summary text at top of Dialog, on the basis
-	 * of the budgets currently saved in the \e database, regardless of
-	 * what is currently shown in the BudgetDialog itself.
+	 * Updates budget summary text at top of Dialog, on the basis
+	 * what is currently shown in the BudgetDialog itself, regardless
+	 * of what is in the database. The budget summary text encompasses
+	 * both the amount and frequency.
 	 *
 	 * @todo Is this actually called anywhere?
 	 */
-	void reset_budget_summary();
+	void update_budget_summary();
 
 	/**
 	 * Updates the BudgetItems for m_account based on the data entered
@@ -119,11 +120,30 @@ private:
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;
 
+	/**
+	 * Like FrequencyCtrl, but change of selection causes parent
+	 * BudgetDialog to update its summary text.
+	 */
+	class SpecialFrequencyCtrl: public FrequencyCtrl
+	{
+	public:
+		SpecialFrequencyCtrl
+		(	BudgetDialog* p_parent,
+			wxWindowID p_id,
+			wxSize const& p_size,
+			PhatbooksDatabaseConnection& p_database_connection
+		);
+	private:	
+		void on_text_change(wxCommandEvent& event);
+		DECLARE_EVENT_TABLE()
+	};
+	friend class SpecialFrequencyCtrl;
+
 	struct BudgetItemComponent
 	{
 		wxTextCtrl* description_ctrl;
 		DecimalTextCtrl* amount_ctrl;
-		FrequencyCtrl* frequency_ctrl;
+		SpecialFrequencyCtrl* frequency_ctrl;
 
 	};
 

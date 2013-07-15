@@ -59,6 +59,10 @@ BEGIN_EVENT_TABLE(BudgetDialog, wxDialog)
 	)
 END_EVENT_TABLE()
 
+BEGIN_EVENT_TABLE(BudgetDialog::SpecialFrequencyCtrl, FrequencyCtrl)
+	EVT_TEXT(wxID_ANY, BudgetDialog::SpecialFrequencyCtrl::on_text_change)
+END_EVENT_TABLE()
+
 BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
 	m_next_row(0),
@@ -224,38 +228,11 @@ BudgetDialog::on_cancel_button_click(wxCommandEvent& event)
 bool
 BudgetDialog::TransferDataToWindow()
 {
-	// WARNING This is inefficient.
-
 	if (!wxDialog::TransferDataToWindow())
 	{
 		return false;
 	}
-	
-	// Bare scope
-	{
-		vector<BudgetItem> budget_items = make_budget_items();
-		assert (m_summary_amount_text);
-		vector<BudgetItem>::const_iterator it = budget_items.begin();
-		if (budget_items.empty())
-		{
-			m_summary_amount_text->SetLabelText
-			(	finformat_wx
-				(	Decimal(0, m_account.commodity().precision()),
-					locale()
-				)
-			);
-		}
-		else
-		{
-			assert (budget_items.end() - it > 0);
-			m_summary_amount_text->SetLabelText
-			(	finformat_wx
-				(	normalized_total(it, budget_items.end()),
-					locale()
-				)
-			);
-		}
-	}
+	update_budget_summary();
 	return true;
 }
 
@@ -271,10 +248,31 @@ BudgetDialog::on_ok_button_click(wxCommandEvent& event)
 }
 
 void
-BudgetDialog::reset_budget_summary()
+BudgetDialog::update_budget_summary()
 {
-	m_summary_amount_text->SetLabelText(generate_summary_amount_text());
-	m_summary_frequency_text->SetLabelText(generate_summary_frequency_text());
+	// WARNING This is inefficient.
+	vector<BudgetItem> budget_items = make_budget_items();
+	assert (m_summary_amount_text);
+	vector<BudgetItem>::const_iterator it = budget_items.begin();
+	if (budget_items.empty())
+	{
+		m_summary_amount_text->SetLabelText
+		(	finformat_wx
+			(	Decimal(0, m_account.commodity().precision()),
+				locale()
+			)
+		);
+	}
+	else
+	{
+		assert (budget_items.end() - it > 0);
+		m_summary_amount_text->SetLabelText
+		(	finformat_wx
+			(	normalized_total(it, budget_items.end()),
+				locale()
+			)
+		);
+	}
 	return;
 }
 
@@ -332,7 +330,7 @@ BudgetDialog::push_item(BudgetItem const& p_budget_item)
 		wxGBPosition(m_next_row, 3),
 		wxGBSpan(1, 1)
 	);
-	budget_item_component.frequency_ctrl = new FrequencyCtrl
+	budget_item_component.frequency_ctrl = new SpecialFrequencyCtrl
 	(	this,
 		wxID_ANY,
 		wxDefaultSize,
@@ -445,6 +443,26 @@ BudgetDialog::make_budget_items() const
 	return ret;
 }
 
+BudgetDialog::SpecialFrequencyCtrl::SpecialFrequencyCtrl
+(	BudgetDialog* p_parent,
+	wxWindowID p_id,
+	wxSize const& p_size,
+	PhatbooksDatabaseConnection& p_database_connection
+):
+	FrequencyCtrl(p_parent, p_id, p_size, p_database_connection)
+{
+}
+
+void
+BudgetDialog::SpecialFrequencyCtrl::on_text_change(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler re. unused parameter.
+	BudgetDialog* const budget_dialog =
+		dynamic_cast<BudgetDialog*>(GetParent());
+	assert (budget_dialog);
+	budget_dialog->update_budget_summary();
+	return;
+}	
 
 }  // namespace gui
 }  // namespace phatbooks
