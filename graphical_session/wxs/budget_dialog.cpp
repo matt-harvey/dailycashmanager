@@ -20,6 +20,7 @@
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
+#include <wx/window.h>
 #include <vector>
 
 using boost::optional;
@@ -162,8 +163,6 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 		}
 	}
 
-	++m_next_row;
-
 	// Final row
 	
 	m_cancel_button = new wxButton
@@ -173,7 +172,6 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	m_top_sizer->Add(m_cancel_button, wxGBPosition(m_next_row, 1));
 	m_ok_button = new wxButton
 	(	this,
 		wxID_OK,
@@ -181,11 +179,9 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	m_top_sizer->
-		Add(m_ok_button, wxGBPosition(m_next_row, 4), wxGBSpan(1, 2));
 	m_ok_button->SetDefault();  // Enter key will now trigger "Save" button
 
-	++m_next_row;
+	add_bottom_row_widgets_to_sizer();
 
 	// "Admin"
 	m_top_sizer->Fit(this);
@@ -263,6 +259,13 @@ void
 BudgetDialog::push_item(BudgetItem const& p_budget_item)
 {
 	assert (p_budget_item.account() == m_account);
+
+	if (m_cancel_button)
+	{
+		assert (m_ok_button);
+		detach_bottom_row_widgets_from_sizer();
+	}
+
 	BudgetItemComponent budget_item_component = {0, 0, 0};
 	budget_item_component.description_ctrl = new wxTextCtrl
 	(	this,
@@ -303,6 +306,15 @@ BudgetDialog::push_item(BudgetItem const& p_budget_item)
 
 	++m_next_row;
 
+	if (m_cancel_button)
+	{
+		assert (m_ok_button);
+		add_bottom_row_widgets_to_sizer();
+		move_bottom_row_widgets_after_in_tab_order
+		(	budget_item_component.frequency_ctrl
+		);
+	}
+
 	return;
 }
 
@@ -327,6 +339,39 @@ PhatbooksDatabaseConnection&
 BudgetDialog::database_connection()
 {
 	return m_account.database_connection();
+}
+
+void
+BudgetDialog::detach_bottom_row_widgets_from_sizer()
+{
+	assert (m_cancel_button);
+	assert (m_ok_button);
+	m_top_sizer->Detach(m_cancel_button);
+	m_top_sizer->Detach(m_ok_button);
+	--m_next_row;
+	return;
+}
+
+void
+BudgetDialog::move_bottom_row_widgets_after_in_tab_order
+(	wxWindow* p_tab_predecessor
+)
+{
+	m_cancel_button->MoveAfterInTabOrder(p_tab_predecessor);
+	m_ok_button->MoveAfterInTabOrder(m_cancel_button);
+	return;
+}
+
+void
+BudgetDialog::add_bottom_row_widgets_to_sizer()
+{
+	assert (m_cancel_button);
+	assert (m_ok_button);
+	m_top_sizer->Add(m_cancel_button, wxGBPosition(m_next_row, 1));
+	m_top_sizer->
+		Add(m_ok_button, wxGBPosition(m_next_row, 4), wxGBSpan(1, 2));
+	++m_next_row;
+	return;
 }
 
 }  // namespace gui

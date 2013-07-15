@@ -8,6 +8,7 @@
 #include <wx/gbsizer.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/window.h>
 #include <vector>
 
 namespace phatbooks
@@ -30,10 +31,6 @@ class FrequencyCtrl;
 
 /**
  * Dialog for user to configure BudgetItems for a given Account.
- *
- * @todo push_item(), if called after Cancel and OK buttons have been
- * created, will add row \e under these buttons, when it should be
- * added above.
  */
 class BudgetDialog: public wxDialog, private boost::noncopyable
 {
@@ -74,6 +71,13 @@ private:
 	 * it need not have an id.
 	 */
 	void push_item(BudgetItem const& p_budget_item);
+
+	void detach_bottom_row_widgets_from_sizer();
+	void add_bottom_row_widgets_to_sizer();
+
+	void move_bottom_row_widgets_after_in_tab_order
+	(	wxWindow* p_tab_predecessor
+	);
 
 	PhatbooksDatabaseConnection& database_connection();
 
