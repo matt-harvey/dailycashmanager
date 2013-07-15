@@ -32,6 +32,9 @@ class Frame;
 
 /**
  * Dialog for user to configure BudgetItems for a given Account.
+ *
+ * @todo Make the "-" button look disabled unless there is more than
+ * one BudgetItemComponent.
  */
 class BudgetDialog: public wxDialog, private boost::noncopyable
 {
@@ -83,6 +86,12 @@ private:
 	 */
 	void push_item(BudgetItem const& p_budget_item);
 
+	/**
+	 * Remove the last BudgetItemComponent and update the budget summary text
+	 * accordingly.
+	 */
+	void pop_item();
+
 	void detach_bottom_row_widgets_from_sizer();
 	void add_bottom_row_widgets_to_sizer();
 
@@ -101,14 +110,14 @@ private:
 	 * \e database, regardless of what is currently shown in the BudgetDialog
 	 * itself.
 	 */
-	wxString generate_summary_amount_text();
+	wxString initial_summary_amount_text();
 
 	/**
 	 * @returns string describing the budget amount for m_account on the basis
 	 * of what is currently saved in the \e database, regardless of what
 	 * is currently shown in the BudgetDialog itself.
 	 */
-	wxString generate_summary_frequency_text();
+	wxString initial_summary_frequency_text();
 
 	size_t m_next_row;
 

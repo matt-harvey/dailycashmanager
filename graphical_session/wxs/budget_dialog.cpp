@@ -96,7 +96,7 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	m_summary_amount_text = new wxStaticText
 	(	this,
 		wxID_ANY,
-		generate_summary_amount_text(),
+		initial_summary_amount_text(),
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
@@ -110,7 +110,7 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	m_summary_frequency_text = new wxStaticText
 	(	this,
 		wxID_ANY,
-		generate_summary_frequency_text(),
+		initial_summary_frequency_text(),
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
@@ -199,7 +199,10 @@ void
 BudgetDialog::on_pop_item_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter.
-	// TODO HIGH PRIORITY Implement
+	pop_item();
+	Fit();
+	Layout();
+	return;
 }
 
 void
@@ -359,14 +362,49 @@ BudgetDialog::push_item(BudgetItem const& p_budget_item)
 	return;
 }
 
+void
+BudgetDialog::pop_item()
+{
+	assert (m_cancel_button);
+	assert (m_ok_button);
+	assert (!m_budget_item_components.empty());
+	if (m_budget_item_components.size() == 1)
+	{
+		return;
+	}
+	assert (m_budget_item_components.size() > 1);
+	detach_bottom_row_widgets_from_sizer();
+
+	// Bare scope
+	{
+		BudgetItemComponent& last =
+			m_budget_item_components[m_budget_item_components.size() - 1];
+		m_top_sizer->Detach(last.description_ctrl);
+		m_top_sizer->Detach(last.amount_ctrl);
+		m_top_sizer->Detach(last.frequency_ctrl);
+		last.description_ctrl->Destroy();
+		last.description_ctrl = 0;
+		last.amount_ctrl->Destroy();
+		last.amount_ctrl = 0;
+		last.frequency_ctrl->Destroy();
+		last.frequency_ctrl = 0;
+	}
+
+	m_budget_item_components.pop_back();
+	--m_next_row;
+	add_bottom_row_widgets_to_sizer();
+	update_budget_summary();
+	return;
+}
+
 wxString
-BudgetDialog::generate_summary_amount_text()
+BudgetDialog::initial_summary_amount_text()
 {
 	return finformat_wx(m_account.budget(), locale());
 }
 
 wxString
-BudgetDialog::generate_summary_frequency_text()
+BudgetDialog::initial_summary_frequency_text()
 {
 	return
 		std8_to_wx
