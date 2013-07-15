@@ -3,6 +3,7 @@
 #include "top_panel.hpp"
 #include "account.hpp"
 #include "account_list_ctrl.hpp"
+#include "account_type.hpp"
 #include "draft_journal_list_ctrl.hpp"
 #include "draft_journal_reader.hpp"
 #include "entry_list_ctrl.hpp"
@@ -347,8 +348,14 @@ TopPanel::update_for_amended(Account const& p_saved_object)
 	return;
 }
 	
-
-
+void
+TopPanel::update_for_amended_budget(Account const& p_account)
+{
+	(void)p_account;  // Silence compiler re. unused parameter.
+	assert (super_type(p_account.account_type()) == account_super_type::pl);
+	m_pl_account_list->update(false);
+	return;
+}
 
 
 }  // namespace gui

@@ -6,6 +6,7 @@
 #include "account_list_ctrl.hpp"
 #include "application.hpp"
 #include "app.hpp"
+#include "budget_dialog.hpp"
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
 #include "draft_journal.hpp"
@@ -120,6 +121,11 @@ Frame::Frame
 		wxString("Edit selected &recurring transaction"),
 		wxString("Edit an exising recurring transaction")
 	);
+	m_edit_menu->Append
+	(	s_edit_budget_id,
+		wxString("Edit budget"),
+		wxString("Edit budget for selected category")
+	);
 	m_menu_bar->Append(m_edit_menu, wxString("&Edit"));
 
 	// Configure "help" menu
@@ -172,6 +178,11 @@ Frame::Frame
 	(	s_edit_draft_journal_id,
 		wxEVT_COMMAND_MENU_SELECTED,
 		wxCommandEventHandler(Frame::on_edit_draft_journal)
+	);
+	Connect
+	(	s_edit_budget_id,
+		wxEVT_COMMAND_MENU_SELECTED,
+		wxCommandEventHandler(Frame::on_edit_budget)
 	);
 	Connect
 	(	wxID_ABOUT,
@@ -245,6 +256,19 @@ Frame::on_new_pl_account(wxCommandEvent& event)
 		// we don't really want it to obliterate everything else.
 		m_top_panel->update_for_new(account);
 	}
+	return;
+}
+
+void
+Frame::on_new_transaction(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler warning re. unused parameter.
+	vector<Account> balance_sheet_accounts;
+	selected_balance_sheet_accounts(balance_sheet_accounts);
+	vector<Account> pl_accounts;
+	selected_pl_accounts(pl_accounts);
+	m_top_panel->
+		configure_transaction_ctrl(balance_sheet_accounts, pl_accounts);
 	return;
 }
 
@@ -347,7 +371,7 @@ Frame::on_edit_ordinary_journal(wxCommandEvent& event)
 void
 Frame::on_edit_draft_journal(wxCommandEvent& event)
 {
-	(void)event;  // Silence compiler warning re. unused parameter
+	(void)event;  // Silence compiler warning re. unused parameter.
 	vector<DraftJournal> journals;
 	selected_draft_journals(journals);
 	if (journals.empty())
@@ -365,15 +389,29 @@ Frame::on_edit_draft_journal(wxCommandEvent& event)
 }
 
 void
-Frame::on_new_transaction(wxCommandEvent& event)
+Frame::on_edit_budget(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
-	vector<Account> balance_sheet_accounts;
-	selected_balance_sheet_accounts(balance_sheet_accounts);
-	vector<Account> pl_accounts;
-	selected_pl_accounts(pl_accounts);
-	m_top_panel->
-		configure_transaction_ctrl(balance_sheet_accounts, pl_accounts);
+	vector<Account> accounts;
+	selected_pl_accounts(accounts);
+	if (accounts.empty())
+	{
+		// TODO HIGH PRIORITY Deal with this in a more user-friendly
+		// way. For now, we just do this.
+		wxMessageBox
+		(	"To edit the budget for a category, a category must first be "
+			"selected in the main window."
+		);
+		return;
+	}
+	assert (accounts.size() >= 1);
+	Account account = accounts[0];
+	assert (super_type(account.account_type()) == account_super_type::pl);
+	BudgetDialog budget_dialog(this, account);
+	if (budget_dialog.ShowModal() == wxID_OK)
+	{
+		m_top_panel->update_for_amended_budget(account);
+	}
 	return;
 }
 

@@ -89,6 +89,15 @@ public:
 	void update_for_amended(OrdinaryJournal const& p_saved_object);
 	void update_for_amended(Account const& p_saved_object);
 
+	/**
+	 * Update the display to reflect current state of database, after
+	 * BudgetItems pertaining to p_account have been added, deleted
+	 * and/or amended.
+	 * 
+	 * Precondition: p_account should be of account_super_type::pl.
+	 */
+	void update_for_amended_budget(Account const& p_account);
+
 
 	/**
 	 * Configure the TransactionCtrl to reflect the currently selected
