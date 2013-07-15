@@ -10,6 +10,7 @@
 #include <wx/gdicmn.h>
 #include <wx/window.h>
 #include <wx/windowid.h>
+#include <vector>
 
 namespace phatbooks
 {
@@ -29,12 +30,6 @@ namespace gui
  *
  * @todo HIGH PRIORITY Ensure that the "every month" and "last day of month"
  * options work sensibly in relation to the date entered in the date control.
- *
- * @todo HIGH PRIORITY Indexing is all out of whack in that the Frequencies
- * in FrequencyCtrl do not correspond to those in available_frequencies()
- * and frequency() and possibly other functions are faulty as a result. Need
- * to fix and it's probably easiest to do if we have a m_available_frequencies
- * member for every individual FrequencyCtrl.
  */
 class FrequencyCtrl: public wxComboBox, private boost::noncopyable
 {
@@ -96,6 +91,8 @@ private:
 	bool supports_ordinary_journal() const;
 	bool supports_draft_journal() const;
 	bool supports_budget_item() const;
+
+	std::vector<Frequency> m_frequencies;
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	bool const m_supports_ordinary_journal;

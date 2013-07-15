@@ -83,6 +83,7 @@ FrequencyCtrl::FrequencyCtrl
 	m_supports_ordinary_journal(p_supports_ordinary_journal),
 	m_supports_draft_journal(p_supports_draft_journal)
 {
+	assert (m_frequencies.empty());
 	if (supports_ordinary_journal())
 	{
 		Append(once_off_string());
@@ -101,6 +102,7 @@ FrequencyCtrl::FrequencyCtrl
 				if (m_database_connection.supports_budget_frequency(*it))
 				{
 					Append(std8_to_wx(frequency_description(*it)));
+					m_frequencies.push_back(*it);
 				}
 			}
 		}
@@ -113,6 +115,7 @@ FrequencyCtrl::FrequencyCtrl
 				wxs += std8_to_wx(frequency_description(*it, "every"));
 				wxs += ", starting";
 				Append(wxs);
+				m_frequencies.push_back(*it);
 			}
 		}
 	}
@@ -135,7 +138,7 @@ FrequencyCtrl::frequency() const
 		assert (index >= 1);
 		index -= 1;
 	}
-	ret = available_frequencies()[index];
+	ret = m_frequencies[index];
 	return ret;
 }
 
@@ -164,10 +167,8 @@ FrequencyCtrl::set_frequency(optional<Frequency> const& p_maybe_frequency)
 			}
 		}
 		assert (supports_draft_journal() || supports_budget_item());
-		vector<Frequency>::const_iterator it =
-			available_frequencies().begin();
-		vector<Frequency>::const_iterator const end =
-			available_frequencies().end();
+		vector<Frequency>::const_iterator it = m_frequencies.begin();
+		vector<Frequency>::const_iterator const end = m_frequencies.end();
 		vector<Frequency>::size_type i = (supports_ordinary_journal()? 1: 0);
 		for ( ; it != end; ++it, ++i)
 		{
