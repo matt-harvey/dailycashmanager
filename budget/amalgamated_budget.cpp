@@ -50,6 +50,16 @@ namespace phatbooks
 BOOST_STATIC_ASSERT((boost::is_same<Account::Id, AccountImpl::Id>::value));
 
 
+namespace
+{
+	// Identifies which (if any) is the balancing Entry, in the instrument.
+	BString balancing_entry_comment()
+	{
+		return BString("Balancing entry");
+	}
+
+}  // end anonymous namespace
+
 void
 AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
@@ -162,7 +172,12 @@ AmalgamatedBudget::budget(AccountImpl::Id p_account_id) const
 	load();
 	Map::const_iterator it = m_map->find(p_account_id);
 	assert (it != m_map->end());
-	return it->second;
+	Decimal ret = it->second;
+	if (p_account_id == balancing_account().id())
+	{
+		ret += instrument_balancing_amount();	
+	}
+	return ret;
 }
 
 
@@ -385,7 +400,7 @@ AmalgamatedBudget::regenerate_instrument()
 		Account const ba = balancing_account();
 		Entry balancing_entry(m_database_connection);
 		balancing_entry.set_account(ba);
-		balancing_entry.set_comment("");
+		balancing_entry.set_comment(balancing_entry_comment());
 		balancing_entry.set_whether_reconciled(false);
 		balancing_entry.set_amount
 		(	-round(imbalance, ba.commodity().precision())
@@ -476,7 +491,6 @@ AmalgamatedBudget::reflect_entries(DraftJournal& p_journal)
 	return;
 }
 
-
 void
 AmalgamatedBudget::reflect_repeater(DraftJournal& p_journal)
 {
@@ -502,8 +516,35 @@ AmalgamatedBudget::reflect_repeater(DraftJournal& p_journal)
 	return;
 }
 
+Decimal
+AmalgamatedBudget::instrument_balancing_amount() const
+{
+	load();
+	assert (m_instrument);
+	vector<Entry> const& entries = m_instrument->entries();
+	Decimal ret(0, m_database_connection.default_commodity().precision());
+	vector<Entry>::const_iterator it = entries.begin();
+	vector<Entry>::const_iterator const end = entries.end();
+	BString const balancing_entry_marker = balancing_entry_comment();
+	for ( ; it != end; ++it)
+	{
+		if (it->comment() == balancing_entry_marker)
+		{
+			ret -= it->amount();
+		}
+	}
 
+#	ifndef NDEBUG
+	if (!entries.empty())
+	{
+		assert (m_instrument->repeaters().size() == 1);
+		Repeater const repeater = m_instrument->repeaters()[0];
+		assert (repeater.frequency() == frequency());
+	}
+#	endif
 
+	return ret;
+}
 
 
 }  // namespace phatbooks

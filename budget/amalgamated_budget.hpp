@@ -161,6 +161,8 @@ private:
 	 */
 	void reflect_repeater(DraftJournal& p_journal);
 
+	jewel::Decimal instrument_balancing_amount() const;
+
 	bool mutable m_is_loaded;
 	PhatbooksDatabaseConnection& m_database_connection;
 	Frequency m_frequency;
@@ -169,7 +171,7 @@ private:
 	// The DraftJournal that "effects" the AmalgamatedBudget
 	mutable DraftJournal* m_instrument; 
 
-	// The Id of the Account such that, when regenerating m_instrument, if the
+	// The the Account such that, when regenerating m_instrument, if the
 	// journal is not otherwise balanced, any imbalance overflows
 	// to this Account.
 	mutable Account* m_balancing_account;

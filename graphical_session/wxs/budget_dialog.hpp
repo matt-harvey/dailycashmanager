@@ -35,6 +35,12 @@ class Frame;
  *
  * @todo Make the "-" button look disabled unless there is more than
  * one BudgetItemComponent.
+ *
+ * @todo HIGH PRIORITY Ensure it is clear to the user what sign a \e revenue
+ * budget should be (positive or negative).
+ *
+ * @todo HIGH PRIORITY Prevent the user from directly editing the budget
+ * imbalance Account's budgets.
  */
 class BudgetDialog: public wxDialog, private boost::noncopyable
 {
