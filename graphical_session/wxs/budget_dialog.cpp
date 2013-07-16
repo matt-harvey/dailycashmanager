@@ -208,6 +208,7 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
 	Fit();
+	CentreOnScreen();
 	Layout();
 }
 
@@ -264,15 +265,22 @@ BudgetDialog::TransferDataToWindow()
 
 	for ( ; i != sz; ++i)
 	{
-		DecimalTextCtrl& amount_ctrl = *(m_budget_item_components[i].amount_ctrl);
-		Decimal const amount = amount_ctrl.amount();
+		DecimalTextCtrl* const amount_ctrl =
+			m_budget_item_components[i].amount_ctrl;
+		Decimal const amount = amount_ctrl->amount();
 		if
 		(	((amount > zero) && (account_type == account_type::revenue)) ||
 			((amount < zero) && (account_type == account_type::expense))
 		)
 		{
 			SignWarning warning(this, account_type);
-			warning.ShowModal();
+			int const result = warning.ShowModal();
+			assert ((result == wxID_YES) || (result == wxID_NO));
+			if (result == wxID_YES)
+			{
+				// TODO Deal with tiny possibility of overflow here?
+				amount_ctrl->set_amount(-amount);
+			}
 		}
 	}
 
