@@ -295,7 +295,7 @@ void
 BudgetDialog::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	if (update_budgets_from_dialog())
+	if (Validate() && TransferDataFromWindow() && update_budgets_from_dialog())
 	{
 		EndModal(wxID_OK);
 	}
