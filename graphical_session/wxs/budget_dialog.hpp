@@ -184,7 +184,6 @@ private:
 	public:
 		SignWarning
 		(	wxWindow* p_parent,
-			DecimalTextCtrl& p_amount_ctrl,
 			account_type::AccountType p_account_type
 		);
 	private:

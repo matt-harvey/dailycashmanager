@@ -271,7 +271,8 @@ BudgetDialog::TransferDataToWindow()
 			((amount < zero) && (account_type == account_type::expense))
 		)
 		{
-			SignWarning(this, amount_ctrl, account_type);
+			SignWarning warning(this, account_type);
+			warning.ShowModal();
 		}
 	}
 
@@ -586,7 +587,6 @@ BudgetDialog::SpecialFrequencyCtrl::on_text_change(wxCommandEvent& event)
 
 BudgetDialog::SignWarning::SignWarning
 (	wxWindow* p_parent,
-	DecimalTextCtrl& p_amount_ctrl,
 	account_type::AccountType p_account_type
 ):
 	wxMessageDialog
@@ -596,9 +596,6 @@ BudgetDialog::SignWarning::SignWarning
 		wxYES_NO
 	)
 {
-	// TODO HIGH PRIORITY Finish implementing. Need to intercept user's
-	// click of Yes or No and if "Yes", change the sign of the amount
-	// shown in p_amount_ctrl.
 }
 
 wxString
