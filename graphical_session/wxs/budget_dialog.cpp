@@ -74,6 +74,7 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	m_account(p_account)
 {
 	assert (m_account.has_id());  // assert precondition
+	assert (m_budget_items.empty());
 
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);	
@@ -164,7 +165,11 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 		BudgetItemReader::const_iterator const end = reader.end();
 		for ( ; it != end; ++it)
 		{
-			 if (it->account() == m_account) push_item(*it);
+			if (it->account() == m_account)
+		 	{
+			 	push_item_component(*it);
+				m_budget_items.push_back(*it);
+			}
 		}
 	}
 
@@ -199,7 +204,7 @@ void
 BudgetDialog::on_pop_item_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter.
-	pop_item();
+	pop_item_component();
 	Fit();
 	Layout();
 	return;
@@ -214,7 +219,7 @@ BudgetDialog::on_push_item_button_click(wxCommandEvent& event)
 	budget_item.set_description(BString(""));
 	budget_item.set_amount(Decimal(0, m_account.commodity().precision()));
 	budget_item.set_frequency(Frequency(1, interval_type::days));
-	push_item(budget_item);
+	push_item_component(budget_item);
 	Fit();
 	Layout();
 	return;
@@ -284,8 +289,58 @@ BudgetDialog::update_budgets_from_dialog()
 {
 	DatabaseTransaction transaction(database_connection());
 
-	// TODO HIGH PRIORITY Implement this properly in here....
-	return false;  // WARNING temp.
+	typedef vector<BudgetItem> ItemVec;
+
+	// Make m_budget_items match the BudgetItems implied by
+	// m_budget_item_components (what is shown in the BudgetDialog).
+	// Bare scope
+	{
+		ItemVec const items_new = make_budget_items();
+		JEWEL_DEBUG_LOG << "items_new.size(): " << items_new.size() << endl;
+		JEWEL_DEBUG_LOG << "m_budget_items.size(): " << m_budget_items.size() << endl;
+		ItemVec::size_type const num_items_old = m_budget_items.size();
+		ItemVec::size_type const num_items_new = items_new.size();
+		ItemVec::size_type i = 0;
+		for ( ; (i != num_items_old) && (i != num_items_new); ++i)
+		{
+			assert (i < m_budget_items.size());
+			assert (i < m_budget_item_components.size());
+			m_budget_items[i].mimic(items_new[i]);
+		}
+		assert ((i == num_items_old) || (i == num_items_new));
+		JEWEL_DEBUG_LOG << "m_budget_items.size(): " << m_budget_items.size() << endl;
+		if (num_items_old < num_items_new)
+		{
+			JEWEL_DEBUG_LOG_LOCATION;
+			assert (i == num_items_old);
+			for ( ; i != num_items_new; ++i)
+			{
+				m_budget_items.push_back(items_new[i]);
+			}
+		}
+		else
+		{
+			JEWEL_DEBUG_LOG_LOCATION;
+			assert (num_items_new <= num_items_old);
+			assert (num_items_old == m_budget_items.size());
+			while (m_budget_items.size() != num_items_new)
+			{
+				assert (m_budget_items.size() > num_items_new);	
+				BudgetItem doomed_item = m_budget_items.back();
+				m_budget_items.pop_back();
+				doomed_item.remove();
+			}
+			assert (m_budget_items.size() == num_items_new);
+		}
+		JEWEL_DEBUG_LOG << "m_budget_items.size(): " << m_budget_items.size() << endl;
+	}
+	// Save the amended m_budget_items
+	// Bare scope
+	{
+		ItemVec::iterator it = m_budget_items.begin();
+		ItemVec::iterator const end = m_budget_items.end();
+		for ( ; it != end; ++it) it->save();
+	}
 
 	transaction.commit();
 	wxString msg("Budgets for ");
@@ -296,7 +351,7 @@ BudgetDialog::update_budgets_from_dialog()
 }
 
 void
-BudgetDialog::push_item(BudgetItem const& p_budget_item)
+BudgetDialog::push_item_component(BudgetItem const& p_budget_item)
 {
 	assert (p_budget_item.account() == m_account);
 
@@ -363,7 +418,7 @@ BudgetDialog::push_item(BudgetItem const& p_budget_item)
 }
 
 void
-BudgetDialog::pop_item()
+BudgetDialog::pop_item_component()
 {
 	assert (m_cancel_button);
 	assert (m_ok_button);

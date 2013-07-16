@@ -115,6 +115,13 @@ BudgetItem::amount() const
 	return impl().amount();
 }
 
+void
+BudgetItem::mimic(BudgetItem const& rhs)
+{
+	impl().mimic(rhs.impl());
+	return;
+}
+
 BudgetItem::BudgetItem(sqloxx::Handle<BudgetItemImpl> const& p_handle):
 	PhatbooksPersistentObject(p_handle)
 {

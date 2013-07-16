@@ -98,6 +98,19 @@ BudgetItemImpl::primary_key_name()
 	return "budget_item_id";	
 }
 
+void
+BudgetItemImpl::mimic(BudgetItemImpl& rhs)
+{
+	load();
+	BudgetItemImpl temp(*this);
+	temp.set_description(rhs.description());
+	temp.set_account(rhs.account());
+	temp.set_frequency(rhs.frequency());
+	temp.set_amount(rhs.amount());
+	swap(temp);
+	return;
+}
+
 BudgetItemImpl::BudgetItemImpl(BudgetItemImpl const& rhs):
 	PersistentObject(rhs),
 	m_data(new BudgetItemData(*(rhs.m_data)))

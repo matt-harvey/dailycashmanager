@@ -101,6 +101,13 @@ public:
 	Frequency frequency() const;
 	jewel::Decimal amount() const;
 
+	/**
+	 * Copy attributes of rhs to *this, but do \e not copy:\n
+	 * \e id, or\n
+	 * \e database_connection.
+	 */
+	void mimic(BudgetItem const& rhs);
+
 private:
 
 	BudgetItem(sqloxx::Handle<BudgetItemImpl> const& p_handle);	

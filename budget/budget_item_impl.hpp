@@ -71,6 +71,13 @@ public:
 	static std::string exclusive_table_name();
 	static std::string primary_key_name();
 
+	/**
+	 * Copy attributes of rhs to *this, but do \e not copy:\n
+	 * \e id, or\n
+	 * \e database_connection.\n
+	 */
+	void mimic(BudgetItemImpl& rhs);
+
 private:
 	
 	/**

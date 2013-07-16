@@ -104,7 +104,7 @@ public:
 	/**
 	 * Copy attributes of rhs to *this, but do \e not copy:\n
 	 * \e id,\n
-	 * \e database_connection,or \n
+	 * \e database_connection, or \n
 	 * \e journal_id.
 	 */
 	void mimic(EntryImpl& rhs);

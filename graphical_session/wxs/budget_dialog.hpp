@@ -73,7 +73,7 @@ private:
 
 	/**
 	 * Updates the BudgetItems for m_account based on the data entered
-	 * by the user.
+	 * by the user, and saves changes to database.
 	 *
 	 * @returns true if an only if the BudgetItems for m_account are
 	 * successfully updated and saved.
@@ -83,14 +83,19 @@ private:
 	/**
 	 * p_budget_item should have all attributes initialized, except that
 	 * it need not have an id.
+	 *
+	 * Add a BudgetItemComponent describing p_budget_item. This does \e not
+	 * affect the underlying BudgetItems (to update these call
+	 * update_budgets_from_dialog()).
 	 */
-	void push_item(BudgetItem const& p_budget_item);
+	void push_item_component(BudgetItem const& p_budget_item);
 
 	/**
 	 * Remove the last BudgetItemComponent and update the budget summary text
-	 * accordingly.
+	 * accordingly. This does \e affect the underlying BudgetItems (to update
+	 * these call update_budgets_from_dialog()).
 	 */
-	void pop_item();
+	void pop_item_component();
 
 	void detach_bottom_row_widgets_from_sizer();
 	void add_bottom_row_widgets_to_sizer();
@@ -148,6 +153,10 @@ private:
 	};
 	friend class SpecialFrequencyCtrl;
 
+	/**
+	 * Groups together into a single object a set of widgets
+	 * representing a single BudgetItem.
+	 */
 	struct BudgetItemComponent
 	{
 		wxTextCtrl* description_ctrl;
