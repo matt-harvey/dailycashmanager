@@ -337,10 +337,6 @@ BudgetDialog::update_budgets_from_dialog()
 	}
 
 	transaction.commit();
-	wxString msg("Budgets for ");
-	msg += bstring_to_wx(m_account.name());
-	msg += wxString(" have been updated.");
-	wxMessageBox(msg);
 	return true;
 }
 
