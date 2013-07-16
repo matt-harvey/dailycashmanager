@@ -1,5 +1,6 @@
 #include "budget_dialog.hpp"
 #include "account.hpp"
+#include "account_reader.hpp"
 #include "account_type.hpp"
 #include "b_string.hpp"
 #include "budget_item.hpp"
@@ -295,8 +296,11 @@ void
 BudgetDialog::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	if (Validate() && TransferDataFromWindow() && update_budgets_from_dialog())
+	if
+	(	Validate() && TransferDataFromWindow() && update_budgets_from_dialog()
+	)
 	{
+		prompt_to_balance();
 		EndModal(wxID_OK);
 	}
 	return;
@@ -570,6 +574,38 @@ BudgetDialog::make_budget_items() const
 	}
 	assert (ret.size() == m_budget_item_components.size());
 	return ret;
+}
+
+void
+BudgetDialog::prompt_to_balance()
+{
+	Decimal const imbalance =
+		database_connection().balancing_account().budget();
+	Decimal const zero(0, m_account.commodity().precision());
+	if (imbalance == zero)
+	{
+		return;
+	}
+	assert (imbalance != zero);
+	account_type::AccountType const account_type =
+		m_account.account_type();
+	optional<Account> maybe_target_account;	
+	if
+	(	(account_type == account_type::expense) ||
+		(account_type == account_type::pure_envelope)
+	)
+	{
+		RevenueAccountReader const reader(database_connection());
+		RevenueAccountReader::const_iterator it = reader.begin();
+		RevenueAccountReader::const_iterator const end = reader.end();
+		for ( ; it != end; ++it)
+		{
+			if (it->budget() != zero) maybe_target_account = *it;
+		}
+	}
+	BalancingDialog balancing_dialog(this, imbalance, maybe_target_account);
+	balancing_dialog.ShowModal();  // TODO Do we need to test return value?
+	return;
 }
 
 BudgetDialog::SpecialFrequencyCtrl::SpecialFrequencyCtrl

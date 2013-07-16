@@ -1,9 +1,11 @@
 #ifndef GUARD_budget_dialog_hpp
 #define GUARD_budget_dialog_hpp
 
+#include "account.hpp"
 #include "budget_item.hpp"
 #include "frequency_ctrl.hpp"
 #include <boost/noncopyable.hpp>
+#include <boost/optional.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -19,7 +21,6 @@ namespace phatbooks
 
 // Begin forward declarations
 
-class Account;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -191,10 +192,33 @@ private:
 	};
 
 	/**
+	 * Used to prompt the user for an offsetting budget adjustment to
+	 * an Account other than the one whose BudgetItems have just been
+	 * edited, to encourage balance budget.
+	 *
+	 * @todo HIGH PRIORITY Implement this.
+	 */
+	class BalancingDialog: public wxDialog
+	{
+	public:
+		BalancingDialog
+		(	wxWindow* p_parent,
+			jewel::Decimal const& p_imbalance,
+			boost::optional<Account> const& p_maybe_target
+		);
+	};
+
+	/**
 	 * @returns a vector of newly created BudgetItems (WITHOUT ids),
 	 * based on the data currently in the BudgetItemComponent.
 	 */
 	std::vector<BudgetItem> make_budget_items() const;
+
+	/**
+	 * Prompts user to select another Account to which to balance
+	 * the budget; but does nothing if the budget now balances.
+	 */
+	void prompt_to_balance();
 	
 	std::vector<BudgetItemComponent> m_budget_item_components;
 
