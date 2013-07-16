@@ -296,8 +296,6 @@ BudgetDialog::update_budgets_from_dialog()
 	// Bare scope
 	{
 		ItemVec const items_new = make_budget_items();
-		JEWEL_DEBUG_LOG << "items_new.size(): " << items_new.size() << endl;
-		JEWEL_DEBUG_LOG << "m_budget_items.size(): " << m_budget_items.size() << endl;
 		ItemVec::size_type const num_items_old = m_budget_items.size();
 		ItemVec::size_type const num_items_new = items_new.size();
 		ItemVec::size_type i = 0;
@@ -308,10 +306,8 @@ BudgetDialog::update_budgets_from_dialog()
 			m_budget_items[i].mimic(items_new[i]);
 		}
 		assert ((i == num_items_old) || (i == num_items_new));
-		JEWEL_DEBUG_LOG << "m_budget_items.size(): " << m_budget_items.size() << endl;
 		if (num_items_old < num_items_new)
 		{
-			JEWEL_DEBUG_LOG_LOCATION;
 			assert (i == num_items_old);
 			for ( ; i != num_items_new; ++i)
 			{
@@ -320,7 +316,6 @@ BudgetDialog::update_budgets_from_dialog()
 		}
 		else
 		{
-			JEWEL_DEBUG_LOG_LOCATION;
 			assert (num_items_new <= num_items_old);
 			assert (num_items_old == m_budget_items.size());
 			while (m_budget_items.size() != num_items_new)
@@ -332,7 +327,6 @@ BudgetDialog::update_budgets_from_dialog()
 			}
 			assert (m_budget_items.size() == num_items_new);
 		}
-		JEWEL_DEBUG_LOG << "m_budget_items.size(): " << m_budget_items.size() << endl;
 	}
 	// Save the amended m_budget_items
 	// Bare scope
@@ -422,12 +416,11 @@ BudgetDialog::pop_item_component()
 {
 	assert (m_cancel_button);
 	assert (m_ok_button);
-	assert (!m_budget_item_components.empty());
-	if (m_budget_item_components.size() == 1)
+	if (m_budget_item_components.empty())
 	{
 		return;
 	}
-	assert (m_budget_item_components.size() > 1);
+	assert (m_budget_item_components.size() >= 1);
 	detach_bottom_row_widgets_from_sizer();
 
 	// Bare scope
