@@ -1,5 +1,6 @@
 #include "budget_dialog.hpp"
 #include "account.hpp"
+#include "account_ctrl.hpp"
 #include "account_reader.hpp"
 #include "account_type.hpp"
 #include "b_string.hpp"
@@ -43,6 +44,9 @@ namespace phatbooks
 namespace gui
 {
 
+// Begin event tables
+
+
 BEGIN_EVENT_TABLE(BudgetDialog, wxDialog)
 	EVT_BUTTON
 	(	s_pop_item_button_id,
@@ -65,6 +69,14 @@ END_EVENT_TABLE()
 BEGIN_EVENT_TABLE(BudgetDialog::SpecialFrequencyCtrl, FrequencyCtrl)
 	EVT_TEXT(wxID_ANY, BudgetDialog::SpecialFrequencyCtrl::on_text_change)
 END_EVENT_TABLE()
+
+BEGIN_EVENT_TABLE(BudgetDialog::BalancingDialog, wxDialog)
+	EVT_BUTTON(wxID_NO, BudgetDialog::BalancingDialog::on_no_button_click)
+	EVT_BUTTON(wxID_YES, BudgetDialog::BalancingDialog::on_yes_button_click)
+END_EVENT_TABLE()
+
+// End event tables
+
 
 BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
@@ -586,25 +598,33 @@ BudgetDialog::prompt_to_balance()
 	{
 		return;
 	}
-	assert (imbalance != zero);
-	account_type::AccountType const account_type =
-		m_account.account_type();
-	optional<Account> maybe_target_account;	
-	if
-	(	(account_type == account_type::expense) ||
-		(account_type == account_type::pure_envelope)
-	)
+	if (!Account::no_user_pl_accounts_saved(database_connection()))
 	{
-		RevenueAccountReader const reader(database_connection());
-		RevenueAccountReader::const_iterator it = reader.begin();
-		RevenueAccountReader::const_iterator const end = reader.end();
-		for ( ; it != end; ++it)
+		assert (imbalance != zero);
+		account_type::AccountType const account_type =
+			m_account.account_type();
+		optional<Account> maybe_target_account;	
+		if
+		(	(account_type == account_type::expense) ||
+			(account_type == account_type::pure_envelope)
+		)
 		{
-			if (it->budget() != zero) maybe_target_account = *it;
+			RevenueAccountReader const reader(database_connection());
+			RevenueAccountReader::const_iterator it = reader.begin();
+			RevenueAccountReader::const_iterator const end = reader.end();
+			for ( ; it != end; ++it)
+			{
+				if (it->budget() != zero) maybe_target_account = *it;
+			}
 		}
+		BalancingDialog balancing_dialog
+		(	this,
+			imbalance,
+			maybe_target_account,
+			database_connection()
+		);
+		balancing_dialog.ShowModal();  // TODO Do we need to test return value?
 	}
-	BalancingDialog balancing_dialog(this, imbalance, maybe_target_account);
-	balancing_dialog.ShowModal();  // TODO Do we need to test return value?
 	return;
 }
 
@@ -667,7 +687,94 @@ BudgetDialog::SignWarning::get_message
 	);
 }
 
+BudgetDialog::BalancingDialog::BalancingDialog
+(	wxWindow* p_parent,
+	jewel::Decimal const& p_imbalance,
+	boost::optional<Account> const& p_maybe_account,
+	PhatbooksDatabaseConnection& p_database_connection
+):
+	wxDialog(p_parent, wxID_ANY, wxEmptyString),
+	m_top_sizer(0),
+	m_account_ctrl(0),
+	m_no_button(0),
+	m_yes_button(0),
+	m_imbalance(p_imbalance),
+	m_database_connection(p_database_connection)
+{
+	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
+	SetSizer(m_top_sizer);	
+
+	int row = 0;
+
+	wxString text("Budget is now out of balance by an amount of ");
+	text += finformat_wx(p_imbalance, locale(), false);
+	text += wxString(".");
+	wxStaticText* const imbalance_message = new wxStaticText
+	(	this,
+		wxID_ANY,
+		text,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+	);
+	m_top_sizer->Add(imbalance_message, wxGBPosition(row, 1), wxGBSpan(1, 2));
+
+	// TODO Put a proper user comprehensible message here (need a
+	// multi-row wxStaticText).
+
+	++row;
+
+	PLAccountReader account_reader(m_database_connection);
+	assert (!account_reader.empty());
+	Account const suggested_account =
+	(	p_maybe_account?
+		value(p_maybe_account):
+		(*account_reader.begin())
+	);
+	m_account_ctrl = new AccountCtrl
+	(	this,
+		wxID_ANY,
+		suggested_account,
+		wxDefaultSize,
+		account_reader.begin(),
+		account_reader.end()
+	);
+	m_top_sizer->Add(m_account_ctrl, wxGBPosition(row, 1), wxGBSpan(1, 2));
 	
+	++row;
+
+	// TODO These messages are probably not very user-friendly.
+	m_no_button = new wxButton
+	(	this,
+		wxID_NO,
+		wxString("&Leave unbalanced")
+	);
+	m_top_sizer->Add(m_no_button, wxGBPosition(row, 1));
+	m_yes_button = new wxButton
+	(	this,
+		wxID_YES,
+		wxString("&Offset to above category")
+	);
+	m_top_sizer->Add(m_yes_button, wxGBPosition(row, 2));
+
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	Layout();
+}
+		
+void
+BudgetDialog::BalancingDialog::on_no_button_click(wxCommandEvent& event)
+{
+	(void)event;  // silence compiler re. unused parameter
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+BudgetDialog::BalancingDialog::on_yes_button_click(wxCommandEvent& event)
+{
+	(void)event;  // silence compiler re. unused parameter
+	// TODO HIGH PRIORITY Implement
+}
 
 }  // namespace gui
 }  // namespace phatbooks

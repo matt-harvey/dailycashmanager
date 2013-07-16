@@ -26,6 +26,7 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
+class AccountCtrl;
 class DecimalTextCtrl;
 class Frame;
 
@@ -201,11 +202,38 @@ private:
 	class BalancingDialog: public wxDialog
 	{
 	public:
+		/**
+		 * @param p_parent parent window.
+		 *
+		 * @param p_imbalance amount of the budget imbalance for which
+		 * we will ask the user if they want to offset it elsewhere.
+		 *
+		 * @param p_maybe_target If initialized, this is the Account
+		 * which we will provide the user as the "default" suggested
+		 * Account where they might like to offset the imbalance. If
+		 * not initialized, then the "default" will just be whatever
+		 * Account appears first in the AccountCtrl that will be
+		 * provided within the BalancingDialog.
+		 *
+		 * Precondition: there must be at least one user-saved P&L Account
+		 * saved in p_database_connection.
+		 */
 		BalancingDialog
 		(	wxWindow* p_parent,
 			jewel::Decimal const& p_imbalance,
-			boost::optional<Account> const& p_maybe_target
+			boost::optional<Account> const& p_maybe_target,
+			PhatbooksDatabaseConnection& p_database_connection
 		);
+	private:
+		void on_no_button_click(wxCommandEvent& event);
+		void on_yes_button_click(wxCommandEvent& event);
+		wxGridBagSizer* m_top_sizer;
+		AccountCtrl* m_account_ctrl;
+		wxButton* m_no_button;
+		wxButton* m_yes_button;
+		jewel::Decimal const m_imbalance;
+		PhatbooksDatabaseConnection& m_database_connection;
+		DECLARE_EVENT_TABLE()
 	};
 
 	/**
