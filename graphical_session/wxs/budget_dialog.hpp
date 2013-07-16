@@ -36,9 +36,6 @@ class Frame;
  *
  * @todo Make the "-" button look disabled unless there is more than
  * one BudgetItemComponent.
- *
- * @todo Ensure it is clear to the user what sign a \e revenue
- * budget should be (positive or negative).
  */
 class BudgetDialog: public wxDialog, private boost::noncopyable
 {
@@ -177,6 +174,10 @@ private:
 	 * Used to warn user if signs are the wrong way round to
 	 * what is expected for individual BudgetItems. Gives user
 	 * the opportunity to correct the sign.
+	 *
+	 * Should only be used with account_type::revenue and
+	 * account_type::expense. These are the only AccountTypes
+	 * for which a particular sign is expected.
 	 */
 	class SignWarning: public wxMessageDialog
 	{
@@ -186,6 +187,8 @@ private:
 			DecimalTextCtrl& p_amount_ctrl,
 			account_type::AccountType p_account_type
 		);
+	private:
+		static wxString get_message(account_type::AccountType p_account_type);
 	};
 
 	/**

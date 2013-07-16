@@ -584,5 +584,49 @@ BudgetDialog::SpecialFrequencyCtrl::on_text_change(wxCommandEvent& event)
 	return;
 }	
 
+BudgetDialog::SignWarning::SignWarning
+(	wxWindow* p_parent,
+	DecimalTextCtrl& p_amount_ctrl,
+	account_type::AccountType p_account_type
+):
+	wxMessageDialog
+	(	p_parent,
+		get_message(p_account_type),
+		wxEmptyString,
+		wxYES_NO
+	)
+{
+	// TODO HIGH PRIORITY Finish implementing. Need to intercept user's
+	// click of Yes or No and if "Yes", change the sign of the amount
+	// shown in p_amount_ctrl.
+}
+
+wxString
+BudgetDialog::SignWarning::get_message
+(	account_type::AccountType p_account_type
+)
+{
+	assert
+	(	(p_account_type == account_type::revenue) ||
+		(p_account_type == account_type::expense)
+	);
+	if (p_account_type == account_type::revenue)
+	{
+		return wxString
+		(	"Budget amounts for revenue categories should usually be "
+			"negative. Do you want to change this amount to "
+			"a negative number?"
+		);
+	}
+	assert (p_account_type == account_type::expense);
+	return wxString
+	(	"Budget amounts for expense categories should usually be "
+		"a positive. Do you want to change this amount to "
+		"a positive number?"
+	);
+}
+
+	
+
 }  // namespace gui
 }  // namespace phatbooks
