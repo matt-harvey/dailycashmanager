@@ -8,6 +8,7 @@
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
+#include <wx/msgdlg.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/window.h>
@@ -36,7 +37,7 @@ class Frame;
  * @todo Make the "-" button look disabled unless there is more than
  * one BudgetItemComponent.
  *
- * @todo HIGH PRIORITY Ensure it is clear to the user what sign a \e revenue
+ * @todo Ensure it is clear to the user what sign a \e revenue
  * budget should be (positive or negative).
  */
 class BudgetDialog: public wxDialog, private boost::noncopyable
@@ -170,7 +171,21 @@ private:
 		wxTextCtrl* description_ctrl;
 		DecimalTextCtrl* amount_ctrl;
 		SpecialFrequencyCtrl* frequency_ctrl;
+	};
 
+	/**
+	 * Used to warn user if signs are the wrong way round to
+	 * what is expected for individual BudgetItems. Gives user
+	 * the opportunity to correct the sign.
+	 */
+	class SignWarning: public wxMessageDialog
+	{
+	public:
+		SignWarning
+		(	wxWindow* p_parent,
+			DecimalTextCtrl& p_amount_ctrl,
+			account_type::AccountType p_account_type
+		);
 	};
 
 	/**

@@ -1,5 +1,6 @@
 #include "budget_dialog.hpp"
 #include "account.hpp"
+#include "account_type.hpp"
 #include "b_string.hpp"
 #include "budget_item.hpp"
 #include "budget_item_reader.hpp"
@@ -250,7 +251,34 @@ BudgetDialog::TransferDataToWindow()
 	{
 		return false;
 	}
+	// Make sure there are no unusual signs
+	// (+ for revenue Accounts or - for expense Accounts) and warn the
+	// user in case there are, giving them the opportunity to correct it.	
+	vector<BudgetItemComponent>::size_type i = 0;
+	vector<BudgetItemComponent>::size_type const sz =
+		m_budget_item_components.size();
+	account_type::AccountType const account_type = m_account.account_type();
+
+	// Set precision of "zero" for more efficient comparisons.
+	Decimal const zero(0, m_account.commodity().precision());
+
+	for ( ; i != sz; ++i)
+	{
+		DecimalTextCtrl& amount_ctrl = *(m_budget_item_components[i].amount_ctrl);
+		Decimal const amount = amount_ctrl.amount();
+		if
+		(	((amount > zero) && (account_type == account_type::revenue)) ||
+			((amount < zero) && (account_type == account_type::expense))
+		)
+		{
+			SignWarning(this, amount_ctrl, account_type);
+		}
+	}
+
+	// Update the budget summary text on the basis of what's now in the
+	// BudgetDialog.
 	update_budget_summary();
+
 	return true;
 }
 
