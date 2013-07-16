@@ -406,6 +406,14 @@ Frame::on_edit_budget(wxCommandEvent& event)
 	}
 	assert (accounts.size() >= 1);
 	Account account = accounts[0];
+	if (account == m_database_connection.balancing_account())
+	{
+		wxString msg("Budgets for the \"");
+		msg += bstring_to_wx(account.name());
+		msg += wxString("\" category cannot be edited directly.");
+		wxMessageBox(msg);
+		return;
+	}
 	assert (super_type(account.account_type()) == account_super_type::pl);
 	BudgetDialog budget_dialog(this, account);
 	if (budget_dialog.ShowModal() == wxID_OK)

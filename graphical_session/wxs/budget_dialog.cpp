@@ -11,6 +11,7 @@
 #include "interval_type.hpp"
 #include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "sizing.hpp"
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
@@ -75,6 +76,15 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 {
 	assert (m_account.has_id());  // assert precondition
 	assert (m_budget_items.empty());
+
+	if (p_account == p_account.database_connection().balancing_account())
+	{
+		throw BudgetEditingException
+		(	"Cannot use BudgetDialog to edit budgets for the budget "
+			"balancing Account."
+		);
+	}
+	assert (m_account != database_connection().balancing_account());
 
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);	

@@ -38,9 +38,6 @@ class Frame;
  *
  * @todo HIGH PRIORITY Ensure it is clear to the user what sign a \e revenue
  * budget should be (positive or negative).
- *
- * @todo HIGH PRIORITY Prevent the user from directly editing the budget
- * imbalance Account's budgets.
  */
 class BudgetDialog: public wxDialog, private boost::noncopyable
 {
@@ -48,7 +45,12 @@ public:
 
 	/**
 	 * @param p_parent parent window
+	 *
 	 * @param p_account must have id.
+	 *
+	 * @throws BudgetEditingException if p_account is the balancing_account()
+	 * of p_account.database_connection() - as the user should not be enabled
+	 * to edit the balancing account's budget directly.
 	 */
 	BudgetDialog(Frame* p_parent, Account const& p_account);
 

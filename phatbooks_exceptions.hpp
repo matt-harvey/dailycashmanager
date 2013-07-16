@@ -91,6 +91,12 @@ JEWEL_DERIVED_EXCEPTION
 );
 
 /**
+ * Exception to be thrown when an attempt is made to edit budgets
+ * in an invalid way.
+ */
+JEWEL_DERIVED_EXCEPTION(BudgetEditingException, PhatbooksException);
+
+/**
  * Exception to be thrown when there is an attempt made to delete the
  * persistent database record of a PhatbooksPersistentObject (or
  * derived class) instance, that should not be deleted from the
