@@ -206,7 +206,8 @@ private:
 		 * @param p_parent parent window.
 		 *
 		 * @param p_imbalance amount of the budget imbalance for which
-		 * we will ask the user if they want to offset it elsewhere.
+		 * we will ask the user if they want to offset it elsewhere,
+		 * expressed in terms of database_connection().budget_frequency().
 		 *
 		 * @param p_maybe_target If initialized, this is the Account
 		 * which we will provide the user as the "default" suggested
@@ -227,6 +228,8 @@ private:
 	private:
 		void on_no_button_click(wxCommandEvent& event);
 		void on_yes_button_click(wxCommandEvent& event);
+		void update_budgets_from_dialog(Account const& p_account);
+		bool budget_is_balanced() const;
 		wxGridBagSizer* m_top_sizer;
 		AccountCtrl* m_account_ctrl;
 		wxButton* m_no_button;

@@ -729,7 +729,7 @@ BudgetDialog::BalancingDialog::BalancingDialog
 	Account const suggested_account =
 	(	p_maybe_account?
 		value(p_maybe_account):
-		(*account_reader.begin())
+		*account_reader.begin()
 	);
 	m_account_ctrl = new AccountCtrl
 	(	this,
@@ -766,14 +766,64 @@ void
 BudgetDialog::BalancingDialog::on_no_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter
-	// TODO HIGH PRIORITY Implement
+	EndModal(wxID_NO);
+	return;
 }
 
 void
 BudgetDialog::BalancingDialog::on_yes_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter
-	// TODO HIGH PRIORITY Implement
+	update_budgets_from_dialog(m_account_ctrl->account());
+	EndModal(wxID_YES);
+	return;
+}
+
+void
+BudgetDialog::BalancingDialog::update_budgets_from_dialog
+(	Account const& p_target
+)
+{
+	BString const offsetting_item_description("Offsetting budget adjustment");
+	Frequency const target_frequency =
+		m_database_connection.budget_frequency();
+	BudgetItemReader reader(m_database_connection);
+	BudgetItemReader::iterator it = reader.begin();
+	BudgetItemReader::iterator const end = reader.end();
+	for ( ; it != end; ++it)
+	{
+		// If there is already a "general offsetting BudgetItem" for
+		// the target Account, then roll it into that.
+		if
+		(	(it->account() == p_target) &&
+			(it->description() == offsetting_item_description) &&
+			(it->frequency() == target_frequency)
+		)
+		{
+			it->set_amount(it->amount() + m_imbalance);
+			it->save();
+			assert (budget_is_balanced());
+			return;
+		}
+	}
+	// There was not already a "general offsetting BudgetItem" for
+	// the target Account, so we create a new BudgetItem.
+	BudgetItem adjusting_item(m_database_connection);
+	adjusting_item.set_description(offsetting_item_description);
+	adjusting_item.set_account(p_target);
+	adjusting_item.set_frequency(target_frequency);
+	adjusting_item.set_amount(m_imbalance);
+	adjusting_item.save();
+	assert (budget_is_balanced());
+	return;
+}
+
+bool
+BudgetDialog::BalancingDialog::budget_is_balanced() const
+{
+	return
+		m_database_connection.balancing_account().budget() ==
+		Decimal(0, 0);
 }
 
 }  // namespace gui
