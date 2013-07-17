@@ -61,6 +61,13 @@ class TopPanel;
  * @todo When transaction_type::generic_transaction is selected, the
  * Journal is implicitly an actual Journal; however the user is neverthless
  * able to select account_type::pure_envelope Accounts.
+ *
+ * @todo HIGH PRIORITY The GUI user needs to be able to delete
+ * PersistentJournals.
+ *
+ * @todo Is it clear for user what "Clear" button does? The user might think
+ * this actually deletes the transaction, when all it in fact does is clear
+ * the contents of the TransactionCtrl.
  */
 class TransactionCtrl: public wxPanel, private boost::noncopyable
 {
