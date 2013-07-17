@@ -158,12 +158,12 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 		s_pop_item_button_id,
 		wxString("Remove item"),
 		wxDefaultPosition,
-		wxDefaultSize,
+		wxSize(medium_width(), wxDefaultSize.y),
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
 	(	m_pop_item_button,
-		wxGBPosition(m_next_row, 4),
+		wxGBPosition(m_next_row, 3),
 		wxDefaultSpan,
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
@@ -172,12 +172,12 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 		s_push_item_button_id,
 		wxString("Add item"),
 		wxDefaultPosition,
-		wxDefaultSize,
+		wxSize(medium_width(), wxDefaultSize.y),
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
 	(	m_push_item_button,
-		wxGBPosition(m_next_row, 5),
+		wxGBPosition(m_next_row, 4),
 		wxDefaultSpan,
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
@@ -238,15 +238,14 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 		wxID_CANCEL,
 		wxString("&Cancel"),
 		wxDefaultPosition,
-		wxDefaultSize
+		wxSize(medium_width(), wxDefaultSize.y)
 	);
 	m_ok_button = new wxButton
 	(	this,
 		wxID_OK,
 		wxString("&Save"),
 		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_RIGHT
+		wxSize(medium_width(), wxDefaultSize.y)
 	);
 	m_ok_button->SetDefault();  // Enter key will now trigger "Save" button
 
@@ -455,7 +454,7 @@ BudgetDialog::push_item_component(BudgetItem const& p_budget_item)
 		wxID_ANY,
 		bstring_to_wx(p_budget_item.description()),
 		wxDefaultPosition,
-		wxSize(360, wxDefaultSize.y)
+		wxSize(large_width(), wxDefaultSize.y)
 	);
 	m_top_sizer->Add
 	(	budget_item_component.description_ctrl,
@@ -468,7 +467,7 @@ BudgetDialog::push_item_component(BudgetItem const& p_budget_item)
 	budget_item_component.amount_ctrl = new DecimalTextCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(desc_size.x / 2, desc_size.y),
+		wxSize(medium_width(), desc_size.y),
 		amount.places(),
 		false
 	);
@@ -481,7 +480,7 @@ BudgetDialog::push_item_component(BudgetItem const& p_budget_item)
 	budget_item_component.frequency_ctrl = new SpecialFrequencyCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(desc_size.x / 2, desc_size.y),
+		wxSize(medium_width(), desc_size.y),
 		database_connection()
 	);
 	optional<Frequency> const maybe_frequency = p_budget_item.frequency();
@@ -591,12 +590,7 @@ BudgetDialog::add_bottom_row_widgets_to_sizer()
 	assert (m_cancel_button);
 	assert (m_ok_button);
 	m_top_sizer->Add(m_cancel_button, wxGBPosition(m_next_row, 1));
-	m_top_sizer->Add
-	(	m_ok_button,
-		wxGBPosition(m_next_row, 4),
-		wxGBSpan(1, 2),
-		wxALIGN_RIGHT
-	);
+	m_top_sizer->Add(m_ok_button, wxGBPosition(m_next_row, 4));
 	++m_next_row;
 	return;
 }

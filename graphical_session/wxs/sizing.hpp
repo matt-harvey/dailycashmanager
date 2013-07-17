@@ -25,6 +25,18 @@ int standard_gap();
  */
 int standard_border();
 
+/**
+ * @returns a standardized "medium" width suitable, for example, for
+ * a DecimalTextCtrl. This is guaranteed to be an even integer.
+ */
+int medium_width();
+
+/**
+ * @returns a standardized "large" width suitable, for example, for
+ * a wxTextCtrl for entering an Entry comment of a few words.
+ */
+int large_width();
+
 }  // namespace gui
 }  // namespace phatbooks
 

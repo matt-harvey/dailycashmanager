@@ -207,7 +207,10 @@ TransactionCtrl::TransactionCtrl
 	m_frequency_ctrl = new FrequencyCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(text_box_size.x * 3 + standard_gap(), text_box_size.y),
+		wxSize
+		(	medium_width() * 3 + standard_gap() * 2,
+			text_box_size.y
+		),
 		m_database_connection,
 		true,
 		true
@@ -216,7 +219,7 @@ TransactionCtrl::TransactionCtrl
 	m_date_ctrl = new DateCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(text_box_size.x, text_box_size.y)
+		text_box_size
 	);
 	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 3));
 
@@ -228,7 +231,7 @@ TransactionCtrl::TransactionCtrl
 		wxID_CANCEL,
 		wxString("&Clear"),
 		wxDefaultPosition,
-		wxSize(text_box_size.x, text_box_size.y)
+		text_box_size
 	);
 	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
 
@@ -238,7 +241,7 @@ TransactionCtrl::TransactionCtrl
 		wxID_OK,
 		wxString("&Save"),
 		wxDefaultPosition,
-		wxSize(text_box_size.x, text_box_size.y)
+		text_box_size
 	);
 
 	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 3));
@@ -337,7 +340,7 @@ TransactionCtrl::configure_top_controls
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
 		s_transaction_type_ctrl_id,
-		wxSize(160, wxDefaultSize.y),
+		wxSize(medium_width(), wxDefaultSize.y),
 		m_database_connection,
 		p_available_transaction_types
 	);

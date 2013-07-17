@@ -10,6 +10,7 @@
 #include "locale.hpp"
 #include "transaction_type.hpp"
 #include "transaction_ctrl.hpp"
+#include "sizing.hpp"
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -395,7 +396,7 @@ EntryCtrl::add_row
 		wxID_ANY,
 		p_comment,
 		wxDefaultPosition,
-		wxSize(m_text_ctrl_size.x * 2, m_text_ctrl_size.y),
+		wxSize(m_text_ctrl_size.x * 2 + standard_gap(), m_text_ctrl_size.y),
 		wxALIGN_LEFT
 	);
 	m_top_sizer->
