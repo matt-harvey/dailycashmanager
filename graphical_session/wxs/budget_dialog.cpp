@@ -124,13 +124,13 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 		initial_summary_amount_text(),
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
 	(	m_summary_amount_text,
 		wxGBPosition(m_next_row, 3),
 		wxDefaultSpan,
-		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
 	);
 	m_summary_frequency_text = new wxStaticText
 	(	this,
@@ -148,40 +148,75 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	);
 
 	++m_next_row;
+	
+	// Next row - blank
+	++m_next_row;
 
-	// Row 1
+	// Next row
 	m_pop_item_button = new wxButton
 	(	this,
 		s_pop_item_button_id,
-		wxString("-"),
+		wxString("Remove item"),
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
 	(	m_pop_item_button,
 		wxGBPosition(m_next_row, 4),
 		wxDefaultSpan,
-		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_push_item_button = new wxButton
 	(	this,
 		s_push_item_button_id,
-		wxString("+"),
+		wxString("Add item"),
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
 	(	m_push_item_button,
 		wxGBPosition(m_next_row, 5),
 		wxDefaultSpan,
-		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 	
 	++m_next_row;
 
-	// Row 2
+	// Next row
+	wxStaticText* description_label = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString("Description")
+	);
+	m_top_sizer->Add
+	(	description_label,
+		wxGBPosition(m_next_row, 1),
+		wxGBSpan(1, 2)
+	);
+	wxStaticText* amount_label = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString("Amount")
+	);
+	m_top_sizer->Add
+	(	amount_label,
+		wxGBPosition(m_next_row, 3)
+	);
+	wxStaticText* frequency_label = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString("Frequency")
+	);
+	m_top_sizer->Add
+	(	frequency_label,
+		wxGBPosition(m_next_row, 4)
+	);
+
+	++m_next_row;
+
+	// Next row
 	// Bare scope
 	{
 		BudgetItemReader const reader(database_connection());
@@ -198,7 +233,6 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	}
 
 	// Final row
-	
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,
@@ -211,7 +245,8 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 		wxID_OK,
 		wxString("&Save"),
 		wxDefaultPosition,
-		wxDefaultSize
+		wxDefaultSize,
+		wxALIGN_RIGHT
 	);
 	m_ok_button->SetDefault();  // Enter key will now trigger "Save" button
 
@@ -420,18 +455,20 @@ BudgetDialog::push_item_component(BudgetItem const& p_budget_item)
 		wxID_ANY,
 		bstring_to_wx(p_budget_item.description()),
 		wxDefaultPosition,
-		wxDefaultSize
+		wxSize(360, wxDefaultSize.y)
 	);
 	m_top_sizer->Add
 	(	budget_item_component.description_ctrl,
 		wxGBPosition(m_next_row, 1),
 		wxGBSpan(1, 2)
 	);
+	wxSize const desc_size =
+		budget_item_component.description_ctrl->GetSize();
 	Decimal const amount = p_budget_item.amount();
 	budget_item_component.amount_ctrl = new DecimalTextCtrl
 	(	this,
 		wxID_ANY,
-		wxDefaultSize,
+		wxSize(desc_size.x / 2, desc_size.y),
 		amount.places(),
 		false
 	);
@@ -444,7 +481,7 @@ BudgetDialog::push_item_component(BudgetItem const& p_budget_item)
 	budget_item_component.frequency_ctrl = new SpecialFrequencyCtrl
 	(	this,
 		wxID_ANY,
-		wxDefaultSize,
+		wxSize(desc_size.x / 2, desc_size.y),
 		database_connection()
 	);
 	optional<Frequency> const maybe_frequency = p_budget_item.frequency();
@@ -554,8 +591,12 @@ BudgetDialog::add_bottom_row_widgets_to_sizer()
 	assert (m_cancel_button);
 	assert (m_ok_button);
 	m_top_sizer->Add(m_cancel_button, wxGBPosition(m_next_row, 1));
-	m_top_sizer->
-		Add(m_ok_button, wxGBPosition(m_next_row, 4), wxGBSpan(1, 2));
+	m_top_sizer->Add
+	(	m_ok_button,
+		wxGBPosition(m_next_row, 4),
+		wxGBSpan(1, 2),
+		wxALIGN_RIGHT
+	);
 	++m_next_row;
 	return;
 }
@@ -653,7 +694,8 @@ BudgetDialog::prompt_to_balance()
 			maybe_target_account,
 			database_connection()
 		);
-		balancing_dialog.ShowModal();  // TODO Do we need to test return value?
+		// TODO Do we need to test return value below?
+		balancing_dialog.ShowModal();
 	}
 	return;
 }
@@ -749,7 +791,7 @@ BudgetDialog::BalancingDialog::BalancingDialog
 	);
 	m_top_sizer->Add(imbalance_message, wxGBPosition(row, 1), wxGBSpan(1, 2));
 
-	// TODO Put a proper user comprehensible message here (need a
+	// TODO Put a proper user-comprehensible message here (need a
 	// multi-row wxStaticText).
 
 	++row;
