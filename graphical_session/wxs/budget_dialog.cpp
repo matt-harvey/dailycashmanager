@@ -781,12 +781,42 @@ BudgetDialog::BalancingDialog::BalancingDialog
 		text,
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add(imbalance_message, wxGBPosition(row, 1), wxGBSpan(1, 2));
 
-	// TODO Put a proper user-comprehensible message here (need a
-	// multi-row wxStaticText).
+	++row;
+
+	m_no_button = new wxButton
+	(	this,
+		wxID_NO,
+		wxString("&Leave unbalanced"),
+		wxDefaultPosition,
+		wxSize(large_width(), wxDefaultSize.y)
+	);
+	m_top_sizer->Add
+	(	m_no_button,
+		wxGBPosition(row, 1),
+		wxDefaultSpan,
+		wxALIGN_CENTRE
+	);
+
+	++row;
+
+	m_yes_button = new wxButton
+	(	this,
+		wxID_YES,
+		wxString("&Offset to category below"),
+		wxDefaultPosition,
+		wxSize(large_width(), wxDefaultSize.y)
+	);
+	m_top_sizer->Add
+	(	m_yes_button,
+		wxGBPosition(row, 1),
+		wxDefaultSpan,
+		wxALIGN_CENTRE
+	);
+
 
 	++row;
 
@@ -801,28 +831,17 @@ BudgetDialog::BalancingDialog::BalancingDialog
 	(	this,
 		wxID_ANY,
 		suggested_account,
-		wxDefaultSize,
+		wxSize(large_width(), wxDefaultSize.y),
 		account_reader.begin(),
 		account_reader.end(),
 		true  // Exclude balancing Account (which would be useless)
 	);
-	m_top_sizer->Add(m_account_ctrl, wxGBPosition(row, 1), wxGBSpan(1, 2));
-	
-	++row;
-
-	// TODO These messages are probably not very user-friendly.
-	m_no_button = new wxButton
-	(	this,
-		wxID_NO,
-		wxString("&Leave unbalanced")
+	m_top_sizer->Add
+	(	m_account_ctrl,
+		wxGBPosition(row, 1),
+		wxDefaultSpan,
+		wxALIGN_CENTRE
 	);
-	m_top_sizer->Add(m_no_button, wxGBPosition(row, 1));
-	m_yes_button = new wxButton
-	(	this,
-		wxID_YES,
-		wxString("&Offset to above category")
-	);
-	m_top_sizer->Add(m_yes_button, wxGBPosition(row, 2));
 
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
