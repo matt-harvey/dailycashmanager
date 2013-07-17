@@ -58,6 +58,14 @@ public:
 	);
 };
 
+class PureEnvelopeAccountReader: public AccountReaderBase
+{
+public:
+	explicit PureEnvelopeAccountReader
+	(	PhatbooksDatabaseConnection& p_database_connection
+	);
+};
+
 
 }  // namespace phatbooks
 

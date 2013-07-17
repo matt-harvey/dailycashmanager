@@ -46,6 +46,11 @@ public:
 	 *
 	 * @param p_end Iterator to one-past-end of sequence of the Accounts
 	 * that will be considered valid selections for this control.
+	 *
+	 * @param p_exclude_balancing_account If \e true, then the Account
+	 * returned by
+	 * p_account.database_connection().balancing_account() will not
+	 * appear in the Combobox, even if it is in the range provided.
 	 */
 	template <typename AccountIter>
 	AccountCtrl
@@ -54,7 +59,8 @@ public:
 		Account const& p_account,
 		wxSize const& p_size,
 		AccountIter p_beg,
-		AccountIter const& p_end
+		AccountIter const& p_end,
+		bool p_exclude_balancing_account = false
 	);
 	
 	/**
@@ -69,12 +75,16 @@ public:
 	/**
 	 * Reset the selections available in the Combobox, to the
 	 * Accounts in the range p_beg to p_end. Must not be an
-	 * empty range.
+	 * empty range. If p_exclude_balancing_account is \e true, then
+	 * the Account returned by
+	 * p_beg->database_connection().balancing_account() will not
+	 * appear in the Combobox, even if it is in the range provided.
 	 */
 	template <typename AccountIter>
 	void set
 	(	AccountIter p_beg,
-		AccountIter const& p_end
+		AccountIter const& p_end,
+		bool p_exclude_balancing_account = false
 	);
 
 private:
@@ -95,7 +105,8 @@ AccountCtrl::AccountCtrl
 	Account const& p_account,
 	wxSize const& p_size,
 	AccountIter p_beg,
-	AccountIter const& p_end
+	AccountIter const& p_end,
+	bool p_exclude_balancing_account
 ):
 	wxComboBox
 	(	p_parent,
@@ -110,11 +121,24 @@ AccountCtrl::AccountCtrl
 {
 	wxArrayString valid_account_names;
 	assert (valid_account_names.IsEmpty());
+	Account const balancing_account =
+		m_database_connection.balancing_account();
+	assert
+	(	balancing_account ==
+		p_account.database_connection().balancing_account()
+	);
 	for ( ; p_beg != p_end; ++p_beg)
 	{
-		wxString const name_wx = bstring_to_wx(p_beg->name());
-		valid_account_names.Add(name_wx);  // remembers as valid name
-		Append(name_wx);  // adds to combobox
+		if (p_exclude_balancing_account && (*p_beg == balancing_account))
+		{
+			// Then don't include it
+		}
+		else
+		{
+			wxString const name_wx = bstring_to_wx(p_beg->name());
+			valid_account_names.Add(name_wx);  // remembers as valid name
+			Append(name_wx);  // adds to combobox
+		}
 	}
 	StringSetValidator validator
 	(	bstring_to_wx(p_account.name()),
@@ -127,14 +151,27 @@ AccountCtrl::AccountCtrl
 
 template <typename AccountIter>
 void
-AccountCtrl::set(AccountIter p_beg, AccountIter const& p_end)
+AccountCtrl::set
+(	AccountIter p_beg,
+	AccountIter const& p_end,
+	bool p_exclude_balancing_account
+)
 {
 	assert (p_end > p_beg);
 	wxArrayString valid_account_names;
+	Account const balancing_account =
+		p_beg->database_connection().balancing_account();
 	for ( ; p_beg != p_end; ++p_beg)
 	{
-		wxString const name_wx = bstring_to_wx(p_beg->name());
-		valid_account_names.Add(name_wx);
+		if (p_exclude_balancing_account && (*p_beg == balancing_account))
+		{
+			// Then don't include it
+		}
+		else
+		{
+			wxString const name_wx = bstring_to_wx(p_beg->name());
+			valid_account_names.Add(name_wx);
+		}
 	}
 	assert (!valid_account_names.IsEmpty());
 	StringSetValidator validator

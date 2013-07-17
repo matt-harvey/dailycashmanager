@@ -591,8 +591,9 @@ BudgetDialog::make_budget_items() const
 void
 BudgetDialog::prompt_to_balance()
 {
-	Decimal const imbalance =
-		database_connection().balancing_account().budget();
+	Account const balancing_account =
+		database_connection().balancing_account();
+	Decimal const imbalance = balancing_account.budget();
 	Decimal const zero(0, m_account.commodity().precision());
 	if (imbalance == zero)
 	{
@@ -605,18 +606,47 @@ BudgetDialog::prompt_to_balance()
 			m_account.account_type();
 		optional<Account> maybe_target_account;	
 		if
-		(	(account_type == account_type::expense) ||
-			(account_type == account_type::pure_envelope)
+		(	(   (account_type == account_type::expense) ||
+			    (account_type == account_type::pure_envelope)    )
+			      &&
+			(   imbalance < zero   )
 		)
 		{
-			RevenueAccountReader const reader(database_connection());
-			RevenueAccountReader::const_iterator it = reader.begin();
-			RevenueAccountReader::const_iterator const end = reader.end();
-			for ( ; it != end; ++it)
+			// If m_account is an expense or pure_envelope Account, then
+			// usually we would expect the offset to go to a revenue Account,
+			// or perhaps to a pure_envelope Account. Often all such offsets
+			// will go to a single Account (e.g. "Salary"); so we look for
+			// an revenue or pure_envelope Account that already has a
+			// negative entry, and that is the Account we offer as
+			// the "default" offsetting Account to the user.
+			RevenueAccountReader const ra_reader(database_connection());
+			RevenueAccountReader::const_iterator ra_it =
+				ra_reader.begin();
+			RevenueAccountReader::const_iterator const ra_end =
+				ra_reader.end();
+			PureEnvelopeAccountReader const pe_reader(database_connection());
+			PureEnvelopeAccountReader::const_iterator pe_it =
+				pe_reader.begin();
+			PureEnvelopeAccountReader::const_iterator const pe_end =
+				pe_reader.end();
+			for ( ; ra_it != ra_end; ++ra_it)
 			{
-				if (it->budget() != zero) maybe_target_account = *it;
+				if ((ra_it->budget() < zero) && (*ra_it != balancing_account))
+				{
+					maybe_target_account = *ra_it;
+					goto out;
+				}
+			}
+			for ( ; pe_it != pe_end; ++pe_it)
+			{
+				if ((pe_it->budget() < zero) && (*pe_it != balancing_account))
+				{
+					maybe_target_account = *pe_it;
+					goto out;
+				}
 			}
 		}
+		out:
 		BalancingDialog balancing_dialog
 		(	this,
 			imbalance,
@@ -737,7 +767,8 @@ BudgetDialog::BalancingDialog::BalancingDialog
 		suggested_account,
 		wxDefaultSize,
 		account_reader.begin(),
-		account_reader.end()
+		account_reader.end(),
+		true  // Exclude balancing Account (which would be useless)
 	);
 	m_top_sizer->Add(m_account_ctrl, wxGBPosition(row, 1), wxGBSpan(1, 2));
 	

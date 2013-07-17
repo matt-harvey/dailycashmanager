@@ -86,8 +86,17 @@ namespace
 #		endif
 		return;
 	}
-	
 
+	void check_pure_envelope_type(int n)
+	{
+#		ifndef NDEBUG
+			int const pe_int = static_cast<int>(account_type::pure_envelope);
+			assert (n == pe_int);
+#		else
+			(void)n;  // Silence compiler re. unused parameter.
+#		endif
+		return;
+	}
 	
 }  // end anonymous namespace
 
@@ -151,6 +160,18 @@ ExpenseAccountReader::ExpenseAccountReader
 	)
 {
 	check_expense_type_int(5);
+}
+
+PureEnvelopeAccountReader::PureEnvelopeAccountReader
+(	PhatbooksDatabaseConnection& p_database_connection
+):
+	AccountReaderBase
+	(	p_database_connection,
+		"select account_id from accounts where account_type_id = 6 "
+		"order by name "
+	)
+{
+	check_pure_envelope_type(6);
 }
 
 AccountReaderBase*
