@@ -608,8 +608,6 @@ TransactionCtrl::on_delete_button_click(wxCommandEvent& event)
 			panel->update_for_deleted_draft_journal(doomed_journal_id);
 			panel->update_for_deleted_draft_entries(doomed_entry_ids);
 		}
-		panel->configure_transaction_ctrl();
-		// panel->configure_draft_journal_list_ctrl();
 	}
 	return;
 }

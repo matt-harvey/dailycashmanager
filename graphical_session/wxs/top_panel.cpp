@@ -360,13 +360,21 @@ TopPanel::update_for_amended_budget(Account const& p_account)
 void
 TopPanel::update_for_deleted_ordinary_journal(OrdinaryJournal::Id p_doomed_id)
 {
-	// TODO HIGH PRIORITY Implement	
+	(void)p_doomed_id;  // Silence compiler re. unused parameter.
+	m_bs_account_list->update(true);
+	m_pl_account_list->update(false);
+	configure_transaction_ctrl();
+	configure_draft_journal_list_ctrl();
+	return;
 }
 
 void
-TopPanel::update_for_deleted_draft_journal(DraftJournal::Id doomed_id)
+TopPanel::update_for_deleted_draft_journal(DraftJournal::Id p_doomed_id)
 {
-	// TODO HIGH PRIORITY Implement
+	(void)p_doomed_id;  // Silence compiler re. unused parameter.
+	configure_transaction_ctrl();
+	configure_draft_journal_list_ctrl();
+	return;
 }
 
 void
@@ -374,7 +382,8 @@ TopPanel::update_for_deleted_ordinary_entries
 (	vector<Entry::Id> const& p_doomed_ids
 )
 {
-	// TODO HIGH PRIORITY Implement
+	m_entry_list->update_for_deleted(p_doomed_ids);
+	return;
 }
 
 void

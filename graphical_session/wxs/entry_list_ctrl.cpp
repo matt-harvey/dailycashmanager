@@ -228,6 +228,26 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 }
 
 void
+EntryListCtrl::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
+{
+	vector<Entry::Id>::const_iterator it = p_doomed_ids.begin();
+	vector<Entry::Id>::const_iterator const end = p_doomed_ids.end();
+	for ( ; it != end; ++it)
+	{
+		IndexMap::iterator jt = m_index_map.find(*it);
+		if (jt != m_index_map.end())
+		{
+			DeleteItem(jt->second);
+			// TODO HIGH PRIORITY This appears to break m_index_map's
+			// validity due to wxWidgets' identifiers changing after
+			// an item is deleted. Fix this!
+			m_index_map.erase(jt);
+		}
+	}
+	return;
+}
+
+void
 EntryListCtrl::selected_entries(vector<Entry>& out)
 {
 	size_t i = 0;

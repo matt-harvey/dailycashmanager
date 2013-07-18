@@ -55,6 +55,13 @@ public:
 	void update_for_amended(OrdinaryJournal const& p_journal);
 
 	/**
+	 * Update displayed entries to reflect that the Entries with IDs
+	 * (as in Entry::id()) in p_doomed_ids have been deleted from the
+	 * database.
+	 */
+	void update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids);
+
+	/**
 	 * Populates \e out with the currently selected Entries (if any).
 	 */
 	void selected_entries(std::vector<Entry>& out);
