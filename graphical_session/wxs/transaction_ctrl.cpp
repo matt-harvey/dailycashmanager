@@ -106,6 +106,7 @@ TransactionCtrl::TransactionCtrl
 	m_frequency_ctrl(0),
 	m_date_ctrl(0),
 	m_cancel_button(0),
+	m_delete_button(0),
 	m_ok_button(0),
 	m_journal(0),
 	m_database_connection(p_database_connection)
@@ -235,6 +236,9 @@ TransactionCtrl::TransactionCtrl
 	);
 	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
 
+	// Note "Delete button" is not used unless we are editing an
+	// existing PersistentJournal.
+
 	// Save/OK button
 	m_ok_button = new wxButton
 	(	this,
@@ -273,6 +277,7 @@ TransactionCtrl::TransactionCtrl
 	m_frequency_ctrl(0),
 	m_date_ctrl(0),
 	m_cancel_button(0),
+	m_delete_button(0),
 	m_ok_button(0),
 	m_journal(0),
 	m_database_connection(p_journal.database_connection())
@@ -497,17 +502,27 @@ TransactionCtrl::configure_for_journal_editing()
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,
-		wxString("&Clear"),
+		wxString("&Cancel"),
 		wxDefaultPosition,
 		wxSize(text_box_size.x, text_box_size.y)
 	);
 	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
 
+	// Delete button
+	m_delete_button = new wxButton
+	(	this,
+		s_delete_button_id,
+		wxString("&Delete transaction"),
+		wxDefaultPosition,
+		wxSize(text_box_size.x, text_box_size.y)
+	);
+	m_top_sizer->Add(m_delete_button, wxGBPosition(row, 1));
+
 	// Save/OK button
 	m_ok_button = new wxButton
 	(	this,
 		wxID_OK,
-		wxString("&Save"),
+		wxString("&Save changes"),
 		wxDefaultPosition,
 		wxSize(text_box_size.x, text_box_size.y)
 	);
@@ -542,6 +557,53 @@ TransactionCtrl::primary_amount() const
 }
 
 void
+TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler re. unused parameter.
+	TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
+	assert (panel);
+	panel->configure_transaction_ctrl();
+	panel->configure_draft_journal_list_ctrl();
+	return;
+}
+
+void
+TransactionCtrl::on_delete_button_click(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler re. unused parameter.
+	assert (m_journal);
+	wxMessageDialog confirmation
+	(	this,
+		wxString("Are you sure you want to delete this entire transaction?"),
+		wxEmptyString,
+		wxYES_NO
+	);
+	int const result = confirmation.ShowModal();
+	if (result == wxID_YES)
+	{
+		remove_journal();
+		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
+		assert (panel);
+		panel->configure_transaction_ctrl();
+		panel->configure_draft_journal_list_ctrl();
+		OrdinaryJournal const* const oj =
+			dynamic_cast<OrdinaryJournal const*>(m_journal);
+		if (oj)
+		{
+			panel->update_for_deleted(*oj);
+		}
+		else
+		{
+			DraftJournal const* const dj =
+				dynamic_cast<DraftJournal const*>(m_journal);
+			assert (dj);
+			panel->update_for_deleted(*dj);
+		}
+	}
+	return;
+}
+
+void
 TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
@@ -557,17 +619,6 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 			wxMessageBox("Transaction does not balance.");
 		}
 	}
-	return;
-}
-
-void
-TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
-{
-	(void)event;  // Silence compiler re. unused parameter.
-	TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
-	assert (panel);
-	panel->configure_transaction_ctrl();
-	panel->configure_draft_journal_list_ctrl();
 	return;
 }
 
@@ -682,6 +733,14 @@ TransactionCtrl::post_journal()
 		return true;
 	}
 	assert (false);
+}
+
+bool
+TransactionCtrl::remove_journal()
+{
+	assert (m_journal);
+	m_journal->remove();
+	return true;
 }
 
 bool

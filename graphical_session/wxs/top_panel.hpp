@@ -83,11 +83,23 @@ public:
 	 * in the database, but has just been amended and the amendments
 	 * saved.
 	 *
-	 * @todo Implement the ones for Journals.
+	 * @todo These assume no Entries have been deleted from the
+	 * Journal in question. This is assumption is correct only as long
+	 * as TransactionCtrl does not support deletion of individual
+	 * Entries.
 	 */
 	void update_for_amended(DraftJournal const& p_saved_object);
 	void update_for_amended(OrdinaryJournal const& p_saved_object);
 	void update_for_amended(Account const& p_saved_object);
+
+	/**
+	 * Update the display to reflect that p_saved_object has just
+	 * been removed from the database.
+	 *
+	 * @todo HIGH PRIORITY - implement
+	 */
+	void update_for_deleted(DraftJournal const& p_saved_object);
+	void update_for_deleted(OrdinaryJournal const& p_saved_object);
 
 	/**
 	 * Update the display to reflect current state of database, after

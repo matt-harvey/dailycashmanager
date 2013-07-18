@@ -137,8 +137,9 @@ public:
 	jewel::Decimal primary_amount() const;
 	
 private:
-	void on_ok_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
+	void on_delete_button_click(wxCommandEvent& event);
+	void on_ok_button_click(wxCommandEvent& event);
 
 	// Returns next row.
 	// Places size of "standard text box" in p_text_box_size.
@@ -156,6 +157,13 @@ private:
 	 * @returns true if and only if journal was actually posted.
 	 */
 	bool post_journal();
+
+	/**
+	 * Removes *m_journal from database.
+	 *
+	 * @returns true if and only if journal was actually removed.
+	 */
+	bool remove_journal();
 
 	/**
 	 * @returns true if and only if existing journal was successfully saved.
@@ -178,6 +186,7 @@ private:
 	DateCtrl* m_date_ctrl;
 	
 	wxButton* m_cancel_button;
+	wxButton* m_delete_button;
 	wxButton* m_ok_button;
 
 	static unsigned int const s_date_ctrl_id =
@@ -186,8 +195,10 @@ private:
 		s_date_ctrl_id + 1;
 	static unsigned int const s_transaction_type_ctrl_id =
 		s_primary_amount_ctrl_id + 1;
-	static unsigned int const s_min_entry_row_id =
+	static unsigned int const s_delete_button_id =
 		s_transaction_type_ctrl_id + 1;
+	static unsigned int const s_min_entry_row_id =
+		s_delete_button_id + 1;
 
 	PersistentJournal* m_journal;
 	PhatbooksDatabaseConnection& m_database_connection;
