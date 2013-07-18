@@ -8,7 +8,7 @@
 #include "entry.hpp"
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
-#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 #include <vector>
 
 namespace phatbooks
@@ -82,10 +82,10 @@ private:
 	void add_entry(Entry const& entry);
 
 	/**
-	 * Map from Entry ids to wxWidgets-managed identifiers in the widget.
+	 * To remember which Entries have been added.
 	 */
-	typedef boost::unordered_map<Entry::Id, long> IndexMap;
-	IndexMap m_index_map;
+	typedef boost::unordered_set<Entry::Id> IdSet;
+	IdSet m_id_set;
 
 	PhatbooksDatabaseConnection& m_database_connection;
 };

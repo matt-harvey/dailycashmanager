@@ -12,7 +12,6 @@
 #include "phatbooks_database_connection.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/unordered_map.hpp>
 #include <jewel/debug_log.hpp>
 #include <wx/gdicmn.h>
 #include <wx/progdlg.h>
@@ -20,7 +19,6 @@
 #include <string>
 
 using boost::lexical_cast;
-using boost::unordered_map;
 using std::string;
 using std::vector;
 
@@ -169,7 +167,7 @@ EntryListCtrl::add_entry(Entry const& entry)
 	// TODO Do a static assert to ensure second param will fit the id.
 	assert (entry.has_id());
 	SetItemData(i, entry.id());
-	m_index_map[entry.id()] = i;
+	m_id_set.insert(entry.id());
 
 	// Populate the other columns
 	SetItem(i, account_col_num(), account_string);
@@ -206,22 +204,37 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 	wxString const wx_date_string = date_format_wx(p_journal.date());
 	for ( ; it != end; ++it)
 	{
-		IndexMap::const_iterator const jt = m_index_map.find(it->id());
-		if (jt == m_index_map.end())
+		Entry::Id const id = it->id();
+		IdSet::const_iterator const jt = m_id_set.find(id);
+		if (jt == m_id_set.end())
 		{
 			add_entry(*it);
 		}
 		else
 		{
-			long const index = jt->second;
-			assert (GetItemData(index) == static_cast<unsigned long>(it->id()));
-			SetItemText(index, wx_date_string);
-			SetItem(index, account_col_num(), bstring_to_wx(it->account().name()));
-			SetItem(index, comment_col_num(), bstring_to_wx(it->comment()));
-			SetItem(index, amount_col_num(), finformat_wx(it->amount(), locale(), false));
-			// TODO Factor out code duplicated between here and add_entry().
-			wxString const reconciled_string = (it->is_reconciled()? "Y": "N");
-			SetItem(index, reconciled_col_num(), reconciled_string);
+			long const pos = FindItem(-1, id);
+			assert (GetItemData(pos) == static_cast<unsigned long>(it->id()));
+			SetItemText(pos, wx_date_string);
+			SetItem
+			(	pos,
+				account_col_num(),
+				bstring_to_wx(it->account().name())
+			);
+			SetItem
+			(	pos,
+				comment_col_num(),
+				bstring_to_wx(it->comment())
+			);
+			SetItem
+			(	pos,
+				amount_col_num(),
+				finformat_wx(it->amount(), locale(), false)
+			);
+			SetItem
+			(	pos,
+				reconciled_col_num(),
+				(it->is_reconciled()? "Y": "N")
+			);
 		}
 	}
 	return;
@@ -234,14 +247,11 @@ EntryListCtrl::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 	vector<Entry::Id>::const_iterator const end = p_doomed_ids.end();
 	for ( ; it != end; ++it)
 	{
-		IndexMap::iterator jt = m_index_map.find(*it);
-		if (jt != m_index_map.end())
+		IdSet::iterator jt = m_id_set.find(*it);
+		if (jt != m_id_set.end())
 		{
-			DeleteItem(jt->second);
-			// TODO HIGH PRIORITY This appears to break m_index_map's
-			// validity due to wxWidgets' identifiers changing after
-			// an item is deleted. Fix this!
-			m_index_map.erase(jt);
+			DeleteItem(FindItem(-1, *jt));
+			m_id_set.erase(jt);
 		}
 	}
 	return;

@@ -462,7 +462,6 @@ EntryCtrl::add_row
 			assert (m_amount_boxes.empty());
 			m_amount_boxes.push_back(prev_amount_ctrl);
 		}
-		JEWEL_DEBUG_LOG << "p_amount: " << p_amount << endl;
 		amount_ctrl->set_amount(p_amount);
 		m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
 		m_amount_boxes.push_back(amount_ctrl);
