@@ -73,6 +73,10 @@ BEGIN_EVENT_TABLE(TransactionCtrl, wxPanel)
 	(	wxID_CANCEL,
 		TransactionCtrl::on_cancel_button_click
 	)
+	EVT_BUTTON
+	(	s_delete_button_id,
+		TransactionCtrl::on_delete_button_click
+	)
 END_EVENT_TABLE()
 
 // WARNING There are bugs in wxWidgets' wxDatePickerCtrl under wxGTK.
@@ -581,24 +585,31 @@ TransactionCtrl::on_delete_button_click(wxCommandEvent& event)
 	int const result = confirmation.ShowModal();
 	if (result == wxID_YES)
 	{
+		PersistentJournal::Id const doomed_journal_id = m_journal->id();
+		vector<Entry::Id> doomed_entry_ids;
+		vector<Entry> const& doomed_entries = m_journal->entries();
+		vector<Entry>::const_iterator it = doomed_entries.begin();
+		vector<Entry>::const_iterator const end = doomed_entries.end();
+		for ( ; it != end; ++it) doomed_entry_ids.push_back(it->id());
 		remove_journal();
+		assert (!m_journal->has_id());
 		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
 		assert (panel);
-		panel->configure_transaction_ctrl();
-		panel->configure_draft_journal_list_ctrl();
-		OrdinaryJournal const* const oj =
-			dynamic_cast<OrdinaryJournal const*>(m_journal);
+		OrdinaryJournal* const oj = dynamic_cast<OrdinaryJournal*>(m_journal);
 		if (oj)
 		{
-			panel->update_for_deleted(*oj);
+			panel->update_for_deleted_ordinary_journal(doomed_journal_id);
+			panel->update_for_deleted_ordinary_entries(doomed_entry_ids);
 		}
 		else
 		{
-			DraftJournal const* const dj =
-				dynamic_cast<DraftJournal const*>(m_journal);
+			DraftJournal* const dj = dynamic_cast<DraftJournal*>(m_journal);
 			assert (dj);
-			panel->update_for_deleted(*dj);
+			panel->update_for_deleted_draft_journal(doomed_journal_id);
+			panel->update_for_deleted_draft_entries(doomed_entry_ids);
 		}
+		panel->configure_transaction_ctrl();
+		// panel->configure_draft_journal_list_ctrl();
 	}
 	return;
 }

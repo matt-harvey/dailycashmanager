@@ -357,6 +357,39 @@ TopPanel::update_for_amended_budget(Account const& p_account)
 	return;
 }
 
+void
+TopPanel::update_for_deleted_ordinary_journal(OrdinaryJournal::Id p_doomed_id)
+{
+	// TODO HIGH PRIORITY Implement	
+}
+
+void
+TopPanel::update_for_deleted_draft_journal(DraftJournal::Id doomed_id)
+{
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+TopPanel::update_for_deleted_ordinary_entries
+(	vector<Entry::Id> const& p_doomed_ids
+)
+{
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+TopPanel::update_for_deleted_draft_entries
+(	vector<Entry::Id> const& p_doomed_ids
+)
+{
+	(void)p_doomed_ids;  // Silence compiler re. unused parameter
+
+	// Nothing to do, as DraftJournal Entries are not displayed individually
+	// in the top panel (except possibly TransactionCtrl, but that can take
+	// care of itself). The deleted DraftJournal itself is processed via
+	// update_for_deleted_draft_journal.
+	return;
+}
 
 }  // namespace gui
 }  // namespace phatbooks

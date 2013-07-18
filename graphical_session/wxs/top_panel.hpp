@@ -5,6 +5,7 @@
 
 #include "account.hpp"
 #include "draft_journal.hpp"
+#include "entry.hpp"
 #include "ordinary_journal.hpp"
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
@@ -93,13 +94,18 @@ public:
 	void update_for_amended(Account const& p_saved_object);
 
 	/**
-	 * Update the display to reflect that p_saved_object has just
+	 * Update the display to reflect that the object with
+	 * p_doomed_id (or the objects with p_doomed_ids) have just
 	 * been removed from the database.
-	 *
-	 * @todo HIGH PRIORITY - implement
 	 */
-	void update_for_deleted(DraftJournal const& p_saved_object);
-	void update_for_deleted(OrdinaryJournal const& p_saved_object);
+	void update_for_deleted_ordinary_journal(OrdinaryJournal::Id p_doomed_id);
+	void update_for_deleted_draft_journal(DraftJournal::Id p_doomed_id);
+	void update_for_deleted_ordinary_entries
+	(	std::vector<Entry::Id> const& p_doomed_ids
+	);
+	void update_for_deleted_draft_entries
+	(	std::vector<Entry::Id> const& p_doomed_ids
+	);
 
 	/**
 	 * Update the display to reflect current state of database, after
