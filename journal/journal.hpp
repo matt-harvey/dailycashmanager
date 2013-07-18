@@ -92,7 +92,9 @@ public:
 
 	/**
 	 * @returns a Decimal being the sum of all the Entry amounts after the
-	 * fulcrum.
+	 * fulcrum. This will generally be a positive number, assuming the
+	 * "source" Account/s will before the "fulcrum", and the "destination"
+	 * Accounts/s after.
 	 */
 	jewel::Decimal primary_amount() const;
 

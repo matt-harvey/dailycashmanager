@@ -153,7 +153,12 @@ Journal::primary_amount() const
 	vector<Entry>::size_type i = fulcrum();
 	vector<Entry>::size_type const sz = entries().size();
 	for ( ; i != sz; ++i) ret += entries()[i].amount();
-	return ret;
+	if (is_actual())
+	{
+		return ret;
+	}
+	assert (!is_actual());
+	return -ret;
 }
 
 void
