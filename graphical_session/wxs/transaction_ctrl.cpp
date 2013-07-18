@@ -450,7 +450,7 @@ TransactionCtrl::configure_for_journal_editing()
 	m_frequency_ctrl = new FrequencyCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(text_box_size.x * 3 + standard_gap(), text_box_size.y),
+		wxSize(text_box_size.x * 3 + standard_gap() * 2, text_box_size.y),
 		m_database_connection,
 		is_ordinary,
 		is_draft
