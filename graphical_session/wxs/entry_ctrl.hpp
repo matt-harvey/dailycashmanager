@@ -102,6 +102,7 @@ private:
 	(	Account const& p_account,
 		wxString const& p_comment,
 		jewel::Decimal const& p_amount,
+		bool p_is_reconciled,
 		boost::optional<jewel::Decimal> const& p_previous_row_amount,
 		bool p_multiple_entries
 	);
@@ -125,6 +126,7 @@ private:
 	std::vector<AccountCtrl*> m_account_name_boxes;
 	std::vector<wxTextCtrl*> m_comment_boxes;
 	std::vector<DecimalTextCtrl*> m_amount_boxes;
+	std::vector<int> m_reconciliation_statuses;  // avoid vector<bool>
 
 	size_t m_next_row;
 

@@ -69,10 +69,6 @@ class TopPanel;
  * this actually deletes the transaction, when all it in fact does is clear
  * the contents of the TransactionCtrl.
  *
- * @todo HIGH PRIORITY Editing an OrdinaryJournal then saving it seems
- * to result in all Entries being set to "unreconciled", even if they
- * were reconciled before.
- *
  * @todo When user deletes a Journal where some or all of the Entries
  * in that Journal have already been reconciled, then we need either
  * to prevent this from happening at all, or else to warn the user

@@ -802,7 +802,12 @@ TransactionCtrl::save_existing_journal()
 		{
 			if (i < fresh_source_entries.size())
 			{
+				JEWEL_DEBUG_LOG << "Mimicking source entry." << endl;
 				source_entries[i].mimic(fresh_source_entries[i]);
+				assert
+				(	source_entries[i].is_reconciled() ==
+					fresh_source_entries[i].is_reconciled()
+				);
 			}
 			else
 			{
@@ -827,7 +832,12 @@ TransactionCtrl::save_existing_journal()
 		{
 			if (i < fresh_destination_entries.size())
 			{
+				JEWEL_DEBUG_LOG << "Mimicking destination entry." << endl;
 				destination_entries[i].mimic(fresh_destination_entries[i]);
+				assert
+				(	destination_entries[i].is_reconciled() ==
+					fresh_destination_entries[i].is_reconciled()
+				);
 			}
 			else
 			{

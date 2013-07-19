@@ -89,6 +89,7 @@ EntryCtrl::EntryCtrl
 			wxEmptyString,
 			Decimal(0, it->commodity().precision()),
 			maybe_previous_row_amount,
+			false,
 			multiple_entries
 		);
 	}
@@ -137,14 +138,16 @@ EntryCtrl::EntryCtrl
 	optional<Decimal> maybe_previous_row_amount;
 	for (vector<Entry>::size_type i = 0; i != sz; ++i)
 	{
+		Entry const& entry = p_entries[i];
 		add_row
-		(	p_entries[i].account(),
-			bstring_to_wx(p_entries[i].comment()),
-			p_entries[i].amount(),
+		(	entry.account(),
+			bstring_to_wx(entry.comment()),
+			entry.amount(),
+			entry.is_reconciled(),
 			maybe_previous_row_amount,
 			multiple_entries
 		);
-		if (i == 0) maybe_previous_row_amount = p_entries[i].amount();
+		if (i == 0) maybe_previous_row_amount = entry.amount();
 	}
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -327,7 +330,7 @@ EntryCtrl::make_entries() const
 			amount = -amount;
 		}
 		entry.set_amount(amount);
-		entry.set_whether_reconciled(false);
+		entry.set_whether_reconciled(m_reconciliation_statuses[i]);
 		ret.push_back(entry);
 		assert (!entry.has_id());
 	}
@@ -368,7 +371,7 @@ EntryCtrl::on_split_button_click(wxCommandEvent& event)
 		m_account_name_boxes.at(m_account_name_boxes.size() - 1)->account();
 	Decimal const amount(0, account.commodity().precision());
 	optional<Decimal> const maybe_prev_amount;
-	add_row(account, wxEmptyString, amount, maybe_prev_amount, true);
+	add_row(account, wxEmptyString, amount, false, maybe_prev_amount, true);
 	return;
 }
 
@@ -377,6 +380,7 @@ EntryCtrl::add_row
 (	Account const& p_account,
 	wxString const& p_comment,
 	Decimal const& p_amount,
+	bool p_is_reconciled,
 	optional<Decimal> const& p_previous_row_amount,
 	bool p_multiple_entries
 )
@@ -402,6 +406,8 @@ EntryCtrl::add_row
 	m_top_sizer->
 		Add(comment_ctrl, wxGBPosition(m_next_row, 1), wxGBSpan(1, 2));
 	m_comment_boxes.push_back(comment_ctrl);
+
+	m_reconciliation_statuses.push_back(static_cast<int>(p_is_reconciled));
 
 	// If there is only one Account then there is only one "Entry line",
 	// and that Entry line will also house the "Split" button. There will
