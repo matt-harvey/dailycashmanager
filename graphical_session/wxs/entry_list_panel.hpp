@@ -6,6 +6,7 @@
 #include <boost/optional.hpp>
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
+#include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
 #include <wx/window.h>
@@ -47,6 +48,8 @@ public:
 	void selected_entries(std::vector<Entry>& out);
 
 private:
+	void on_refresh_button_click(wxCommandEvent& event);
+
 	void configure_entry_list_ctrl();
 	boost::optional<Account> maybe_account() const;
 	
@@ -63,6 +66,8 @@ private:
 	wxButton* m_refresh_button;
 	EntryListCtrl* m_entry_list_ctrl;
 	PhatbooksDatabaseConnection& m_database_connection;
+
+	DECLARE_EVENT_TABLE()
 
 };  // class EntryListPanel
 

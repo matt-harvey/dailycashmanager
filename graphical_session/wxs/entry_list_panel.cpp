@@ -11,6 +11,7 @@
 #include <boost/optional.hpp>
 #include <jewel/optional.hpp>
 #include <wx/button.h>
+#include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
 #include <wx/window.h>
@@ -24,6 +25,10 @@ namespace phatbooks
 {
 namespace gui
 {
+
+BEGIN_EVENT_TABLE(EntryListPanel, wxPanel)
+	EVT_BUTTON(s_refresh_button_id, EntryListPanel::on_refresh_button_click)
+END_EVENT_TABLE()
 
 namespace
 {
@@ -75,7 +80,7 @@ EntryListPanel::EntryListPanel
 	m_top_sizer->Add(m_max_date_selector, wxGBPosition(top_row(), 3));
 	m_refresh_button = new wxButton
 	(	this,
-		wxID_OK,
+		s_refresh_button_id,
 		wxString("&Refresh"),
 		wxDefaultPosition,
 		m_max_date_selector->GetSize()
@@ -90,6 +95,14 @@ EntryListPanel::EntryListPanel
 	m_top_sizer->SetSizeHints(this);
 	Fit();
 	Layout();
+}
+
+void
+EntryListPanel::on_refresh_button_click(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler re. unused parameter.
+	configure_entry_list_ctrl();
+	return;
 }
 
 void
@@ -160,6 +173,8 @@ EntryListPanel::configure_entry_list_ctrl()
 		wxGBPosition(top_row() + 1, 1),
 		wxGBSpan(1, 4)
 	);
+	Fit();
+	Layout();
 	return;
 }
 
