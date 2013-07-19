@@ -59,8 +59,12 @@ class TopPanel;
  * @todo This needs to be able to scroll.
  *
  * @todo When transaction_type::generic_transaction is selected, the
- * Journal is implicitly an actual Journal; however the user is neverthless
+ * Journal is implicitly an actual Journal; however the user is nevertheless
  * able to select account_type::pure_envelope Accounts.
+ *
+ * @todo When editing an existing transaction, if the user changes the
+ * TransactionType, then the AccountCtrls are reset, and the user
+ * loses the existing Account information. Prevent this from occurring.
  *
  * @todo HIGH PRIORITY The GUI user needs to be able to delete
  * PersistentJournals.
