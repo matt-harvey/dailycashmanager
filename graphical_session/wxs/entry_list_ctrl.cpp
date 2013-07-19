@@ -158,6 +158,7 @@ EntryListCtrl::EntryListCtrl
 		}
 	}
 	progress_dialog.Destroy();
+	set_column_widths();
 }
 
 EntryListCtrl::EntryListCtrl
@@ -216,13 +217,18 @@ EntryListCtrl::insert_columns()
 void
 EntryListCtrl::set_column_widths()
 {
+	// TODO Determine column widths in a better way, so that
+	// the Account column takes up just enough size for the Account
+	// name (up to a reasonable maximum), and then the comment column
+	// is sized such that the total width of all columns just occupies
+	// the full width of the available area.
 	for (int j = 0; j != 5; ++j)
 	{
 		SetColumnWidth(j, wxLIST_AUTOSIZE);
 	}
 	SetColumnWidth
 	(	comment_col_num(),
-		GetColumnWidth(account_col_num())
+		GetColumnWidth(account_col_num()) * 3
 	);
 	return;
 }
@@ -295,6 +301,7 @@ EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
 			if (would_accept_entry(*it)) add_entry(*it);
 		}
 	}
+	set_column_widths();
 	return;
 }
 
@@ -362,6 +369,7 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 			}
 		}
 	}
+	set_column_widths();
 	return;
 }
 

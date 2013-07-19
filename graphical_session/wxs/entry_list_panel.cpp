@@ -53,7 +53,7 @@ EntryListPanel::EntryListPanel
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 
-	++m_next_row;  // Want to leave space at top.
+	++m_next_row;  // To leave some space at top.
 
 	wxStaticText* account_label =
 		new wxStaticText(this, wxID_ANY, wxString(" Account or category:"));
