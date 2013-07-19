@@ -36,6 +36,16 @@ namespace phatbooks
 JEWEL_DERIVED_EXCEPTION(PhatbooksException, jewel::Exception);
 
 /**
+ * Exception to be thrown when program attempts to execute code which
+ * depends on some functionality which has not yet been implemented.
+ * This exception should not feature in release builds.
+ */
+JEWEL_DERIVED_EXCEPTION
+(	UnimplementedFunctionalityException,
+	jewel::Exception
+);
+
+/**
  * Exception to be thrown when an object has not met certain preconditions
  * for being stored in the database.
  */

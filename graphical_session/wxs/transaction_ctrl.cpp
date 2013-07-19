@@ -251,7 +251,6 @@ TransactionCtrl::TransactionCtrl
 	m_ok_button->SetDefault();  // Enter key will now trigger "Save" button
 
 	// "Admin"
-	// SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
 	Fit();
