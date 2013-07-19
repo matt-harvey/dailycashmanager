@@ -39,13 +39,6 @@ Journal::~Journal()
 }
 
 void
-Journal::set_whether_actual(bool p_is_actual)
-{
-	do_set_whether_actual(p_is_actual);
-	return;
-}
-
-void
 Journal::set_transaction_type
 (	transaction_type::TransactionType p_transaction_type
 )
@@ -104,7 +97,7 @@ Journal::comment() const
 bool
 Journal::is_actual() const
 {
-	return do_get_whether_actual();
+	return transaction_type_is_actual(transaction_type());
 }
 
 transaction_type::TransactionType

@@ -79,7 +79,6 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	);
 	DraftJournal instrument(dbc);
 	instrument.set_name("AMALGAMATED BUDGET JOURNAL");
-	instrument.set_whether_actual(false);
 	instrument.set_comment("");
 	instrument.set_transaction_type(transaction_type::envelope_transaction);
 	instrument.set_fulcrum(0);

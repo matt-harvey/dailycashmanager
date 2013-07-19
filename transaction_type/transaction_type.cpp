@@ -230,9 +230,6 @@ transaction_type_from_verb(BString const& p_phrase)
 	return it->second;
 }
 
-		
-		
-
 bool
 transaction_type_is_actual(TransactionType p_transaction_type)
 {

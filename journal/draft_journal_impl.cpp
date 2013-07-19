@@ -69,14 +69,6 @@ DraftJournalImpl::primary_key_name()
 }
 
 void
-DraftJournalImpl::set_whether_actual(bool p_is_actual)
-{
-	load();
-	ProtoJournal::set_whether_actual(p_is_actual);
-	return;
-}
-
-void
 DraftJournalImpl::set_transaction_type
 (	transaction_type::TransactionType p_transaction_type
 )
@@ -120,13 +112,6 @@ DraftJournalImpl::remove_entry(Entry& entry)
 	load();
 	ProtoJournal::remove_entry(entry);
 	return;
-}
-
-bool
-DraftJournalImpl::is_actual()
-{
-	load();
-	return ProtoJournal::is_actual();
 }
 
 transaction_type::TransactionType

@@ -117,12 +117,10 @@ OrdinaryJournal::create_opening_balance_journal
 	ret.set_comment("Opening balance adjustment");
 	if (p_account.account_super_type() == account_super_type::balance_sheet)
 	{
-		ret.set_whether_actual(true);
 		ret.set_transaction_type(transaction_type::generic_transaction);
 	}
 	else
 	{
-		ret.set_whether_actual(false);
 		ret.set_transaction_type(transaction_type::envelope_transaction);
 	}
 
@@ -141,13 +139,6 @@ boost::gregorian::date
 OrdinaryJournal::date() const
 {
 	return impl().date();
-}
-
-void
-OrdinaryJournal::do_set_whether_actual(bool p_is_actual)
-{
-	impl().set_whether_actual(p_is_actual);
-	return;
 }
 
 void
@@ -200,12 +191,6 @@ OrdinaryJournal::do_remove_entry(Entry& entry)
 {
 	impl().remove_entry(entry);
 	return;
-}
-
-bool
-OrdinaryJournal::do_get_whether_actual() const
-{
-	return impl().is_actual();
 }
 
 transaction_type::TransactionType

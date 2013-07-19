@@ -54,7 +54,6 @@ public:
 		
 	virtual ~Journal();
 
-	void set_whether_actual(bool p_is_actual);
 	void set_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
 	);
@@ -67,11 +66,6 @@ public:
 	std::vector<Entry> const& entries() const;
 	BString comment() const;
 
-	/**
-	 * @todo Do we even need is_actual now that we are recording
-	 * transaction_type? Because only Journals of
-	 * transaction_type::envelope_transaction can be non-actual.
-	 */
 	bool is_actual() const;
 
 	transaction_type::TransactionType transaction_type() const;
@@ -107,7 +101,6 @@ protected:
 private:
 	virtual void do_output(std::ostream& os) const = 0;
 	virtual std::vector<Entry> const& do_get_entries() const = 0;
-	virtual void do_set_whether_actual(bool p_is_actual) = 0;
 	virtual void do_set_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
 	) = 0;
@@ -117,7 +110,6 @@ private:
 	virtual void do_remove_entry(Entry& entry) = 0;
 	virtual void do_clear_entries() = 0;
 	virtual BString do_get_comment() const = 0;
-	virtual bool do_get_whether_actual() const = 0;
 	virtual transaction_type::TransactionType
 		do_get_transaction_type() const = 0;
 	virtual size_t do_get_fulcrum() const = 0;

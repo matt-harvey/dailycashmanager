@@ -141,7 +141,6 @@ private:
 
 	// Define pure virtual functions inherited from Journal
 	std::vector<Entry> const& do_get_entries() const;
-	void do_set_whether_actual(bool p_is_actual);
 	void do_set_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
 	);
@@ -151,7 +150,6 @@ private:
 	void do_remove_entry(Entry& entry);
 	void do_clear_entries();
 	BString do_get_comment() const;
-	bool do_get_whether_actual() const;
 	transaction_type::TransactionType do_get_transaction_type() const;
 	size_t do_get_fulcrum() const;
 	

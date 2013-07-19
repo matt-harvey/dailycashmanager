@@ -114,7 +114,6 @@ private:
 	// I'm pretty sure they \e don't.
 	virtual void do_output(std::ostream& os) const;
 	virtual std::vector<Entry> const& do_get_entries() const;
-	virtual void do_set_whether_actual(bool p_is_actual);
 	virtual void do_set_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
 	);
@@ -124,13 +123,11 @@ private:
 	virtual void do_remove_entry(Entry& entry);
 	virtual void do_clear_entries();
 	virtual BString do_get_comment() const;
-	virtual bool do_get_whether_actual() const;
 	virtual transaction_type::TransactionType do_get_transaction_type() const;
 	virtual size_t do_get_fulcrum() const;
 
 	struct ProtoJournalData
 	{
-		boost::optional<bool> is_actual;
 		boost::optional<transaction_type::TransactionType> transaction_type;
 		boost::optional<size_t> fulcrum;
 		boost::optional<BString> comment;

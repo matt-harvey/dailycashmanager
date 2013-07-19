@@ -3380,7 +3380,6 @@ TextSession::elicit_journal()
 {
 	ProtoJournal journal;
 	TransactionType const transaction_type = elicit_transaction_type();
-	journal.set_whether_actual(transaction_type != envelope_transaction);
 	cout << "Enter a comment describing the transaction (can leave blank): ";
 	journal.set_comment(std8_to_bstring(get_user_input()));
 	cout << endl;

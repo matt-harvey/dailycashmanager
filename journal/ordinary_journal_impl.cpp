@@ -61,14 +61,6 @@ OrdinaryJournalImpl::primary_key_name()
 }
 
 void
-OrdinaryJournalImpl::set_whether_actual(bool p_is_actual)
-{
-	load();
-	ProtoJournal::set_whether_actual(p_is_actual);
-	return;
-}
-
-void
 OrdinaryJournalImpl::set_transaction_type
 (	transaction_type::TransactionType p_transaction_type
 )
@@ -113,13 +105,6 @@ OrdinaryJournalImpl::remove_entry(Entry& entry)
 	load();
 	ProtoJournal::remove_entry(entry);
 	return;
-}
-
-bool
-OrdinaryJournalImpl::is_actual()
-{
-	load();
-	return ProtoJournal::is_actual();
 }
 
 transaction_type::TransactionType

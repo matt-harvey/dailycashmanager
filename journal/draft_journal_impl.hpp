@@ -71,11 +71,6 @@ public:
 
 	
 	/**
-	 * Does not throw.
-	 */
-	void set_whether_actual(bool p_is_actual);
-
-	/**
 	 * @todo Document.
 	 */
 	void set_transaction_type
@@ -107,8 +102,6 @@ public:
 	void push_entry(Entry& entry);
 
 	void remove_entry(Entry& entry);
-
-	bool is_actual();
 
 	size_t fulcrum();
 
