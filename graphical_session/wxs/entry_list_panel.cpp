@@ -16,6 +16,7 @@
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
+#include <wx/stattext.h>
 #include <wx/window.h>
 #include <vector>
 
@@ -34,20 +35,13 @@ BEGIN_EVENT_TABLE(EntryListPanel, wxPanel)
 	EVT_BUTTON(s_refresh_button_id, EntryListPanel::on_refresh_button_click)
 END_EVENT_TABLE()
 
-namespace
-{
-	int top_row()
-	{
-		return 0;
-	}
-
-}  // end anonymous namespace
 
 EntryListPanel::EntryListPanel
 (	wxWindow* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxPanel(p_parent, wxID_ANY),
+	m_next_row(0),
 	m_top_sizer(0),
 	m_account_ctrl(0),
 	m_min_date_ctrl(0),
@@ -58,6 +52,21 @@ EntryListPanel::EntryListPanel
 {
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
+
+	++m_next_row;  // Want to leave space at top.
+
+	wxStaticText* account_label =
+		new wxStaticText(this, wxID_ANY, wxString(" Account or category:"));
+	m_top_sizer->Add(account_label, wxGBPosition(m_next_row, 1));
+	wxStaticText* min_date_label =
+		new wxStaticText(this, wxID_ANY, wxString(" From:"));
+	m_top_sizer->Add(min_date_label, wxGBPosition(m_next_row, 2));
+	wxStaticText* max_date_label =
+		new wxStaticText(this, wxID_ANY, wxString(" To:"));
+	m_top_sizer->Add(max_date_label, wxGBPosition(m_next_row, 3));
+
+	++m_next_row;
+
 	AccountReader const reader(m_database_connection);
 	assert (!reader.empty());  // TODO What if this fails?
 	m_account_ctrl = new AccountCtrl
@@ -69,7 +78,7 @@ EntryListPanel::EntryListPanel
 		reader.end()
 	);
 	int const std_height = m_account_ctrl->GetSize().GetHeight();
-	m_top_sizer->Add(m_account_ctrl, wxGBPosition(top_row(), 1));
+	m_top_sizer->Add(m_account_ctrl, wxGBPosition(m_next_row, 1));
 	m_min_date_ctrl = new DateCtrl
 	(	this,
 		s_min_date_ctrl_id,
@@ -77,7 +86,7 @@ EntryListPanel::EntryListPanel
 		today(),
 		true
 	);
-	m_top_sizer->Add(m_min_date_ctrl, wxGBPosition(top_row(), 2));
+	m_top_sizer->Add(m_min_date_ctrl, wxGBPosition(m_next_row, 2));
 	m_max_date_ctrl = new DateCtrl
 	(	this,
 		s_max_date_ctrl_id,
@@ -85,7 +94,7 @@ EntryListPanel::EntryListPanel
 		today(),
 		true
 	);
-	m_top_sizer->Add(m_max_date_ctrl, wxGBPosition(top_row(), 3));
+	m_top_sizer->Add(m_max_date_ctrl, wxGBPosition(m_next_row, 3));
 	m_refresh_button = new wxButton
 	(	this,
 		s_refresh_button_id,
@@ -94,7 +103,9 @@ EntryListPanel::EntryListPanel
 		m_max_date_ctrl->GetSize()
 	);
 	m_refresh_button->SetDefault();
-	m_top_sizer->Add(m_refresh_button, wxGBPosition(top_row(), 4));
+	m_top_sizer->Add(m_refresh_button, wxGBPosition(m_next_row, 4));
+
+	++m_next_row;
 
 	configure_entry_list_ctrl();
 
@@ -153,6 +164,7 @@ EntryListPanel::configure_entry_list_ctrl()
 		m_top_sizer->Detach(m_entry_list_ctrl);
 		m_entry_list_ctrl->Destroy();
 		m_entry_list_ctrl = 0;
+		--m_next_row;
 	}
 	m_entry_list_ctrl = EntryListCtrl::create_actual_ordinary_entry_list
 	(	this,
@@ -166,9 +178,10 @@ EntryListPanel::configure_entry_list_ctrl()
 	);
 	m_top_sizer->Add
 	(	m_entry_list_ctrl,
-		wxGBPosition(top_row() + 1, 1),
+		wxGBPosition(m_next_row, 1),
 		wxGBSpan(1, 4)
 	);
+	++m_next_row;
 	Fit();
 	Layout();
 	return;

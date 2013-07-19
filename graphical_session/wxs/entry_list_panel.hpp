@@ -61,6 +61,8 @@ private:
 	static int const s_refresh_button_id = s_max_date_ctrl_id + 1;
 	static int const s_entry_list_ctrl_id = s_refresh_button_id + 1;
 
+	int m_next_row;
+
 	wxGridBagSizer* m_top_sizer;
 	AccountCtrl* m_account_ctrl;
 	DateCtrl* m_min_date_ctrl;
