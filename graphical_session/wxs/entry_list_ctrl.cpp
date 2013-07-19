@@ -13,7 +13,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
-#include <jewel/debug_log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/gdicmn.h>
 #include <wx/progdlg.h>
@@ -25,6 +24,11 @@ using boost::optional;
 using jewel::value;
 using std::string;
 using std::vector;
+
+// For debugging
+	#include <jewel/debug_log.hpp>
+	#include <iostream>
+	using std::endl;
 
 namespace gregorian = boost::gregorian;
 
@@ -55,6 +59,10 @@ namespace
 	int reconciled_col_num()
 	{
 		return 4;
+	}
+	int num_columns()
+	{
+		return 5;
 	}
 	bool lies_within
 	(	gregorian::date const& p_target,
@@ -217,19 +225,35 @@ EntryListCtrl::insert_columns()
 void
 EntryListCtrl::set_column_widths()
 {
-	// TODO Determine column widths in a better way, so that
+	// We arrange the widths so that
 	// the Account column takes up just enough size for the Account
-	// name (up to a reasonable maximum), and then the comment column
-	// is sized such that the total width of all columns just occupies
+	// name - up to a reasonable maximum - the other columns take up just
+	// enough room for their contents, and then the comment column
+	// is sized such that the total width of all columns occupies exactly
 	// the full width of the available area.
-	for (int j = 0; j != 5; ++j)
+	int const num_cols = num_columns();
+	for (int j = 0; j != num_cols; ++j)
 	{
 		SetColumnWidth(j, wxLIST_AUTOSIZE);
 	}
-	SetColumnWidth
-	(	comment_col_num(),
-		GetColumnWidth(account_col_num()) * 3
-	);
+	int const max_account_col_width = 200;
+	if (GetColumnWidth(account_col_num()) > max_account_col_width)
+	{
+		SetColumnWidth(account_col_num(), max_account_col_width);
+	}
+	int total_widths = 0;
+	for (int j = 0; j != num_cols; ++j)
+	{
+		total_widths += GetColumnWidth(j);
+	}
+
+	// TODO Make this more precise
+	int const scrollbar_width_allowance = 50;
+
+	int const shortfall =
+		GetSize().GetWidth() - total_widths - scrollbar_width_allowance;
+	int const current_comment_width = GetColumnWidth(comment_col_num());
+	SetColumnWidth(comment_col_num(), current_comment_width + shortfall);
 	return;
 }
 
