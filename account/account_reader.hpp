@@ -66,6 +66,17 @@ public:
 	);
 };
 
+/**
+ * Reads only Accounts which are not of account_type::pure_envelope.
+ */
+class ImpureAccountReader: public AccountReaderBase
+{
+public:
+	explicit ImpureAccountReader
+	(	PhatbooksDatabaseConnection& p_database_connection
+	);
+};
+
 
 }  // namespace phatbooks
 

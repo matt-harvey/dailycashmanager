@@ -174,6 +174,18 @@ PureEnvelopeAccountReader::PureEnvelopeAccountReader
 	check_pure_envelope_type(6);
 }
 
+ImpureAccountReader::ImpureAccountReader
+(	PhatbooksDatabaseConnection& p_database_connection
+):
+	AccountReaderBase
+	(	p_database_connection,
+		"select account_id from accounts where account_type_id != 6 "
+		"order by name "
+	)
+{
+	check_pure_envelope_type(6);
+}
+
 AccountReaderBase*
 create_source_account_reader
 (	PhatbooksDatabaseConnection& p_database_connection,
@@ -191,7 +203,7 @@ create_source_account_reader
 	case transaction_type::envelope_transaction:
 		return new PLAccountReader(p_database_connection);
 	case transaction_type::generic_transaction:
-		return new AccountReader(p_database_connection);
+		return new ImpureAccountReader(p_database_connection);
 	default:
 		assert (false);
 	}
@@ -215,7 +227,7 @@ create_destination_account_reader
 	case transaction_type::envelope_transaction:
 		return new PLAccountReader(p_database_connection);
 	case transaction_type::generic_transaction:
-		return new AccountReader(p_database_connection);
+		return new ImpureAccountReader(p_database_connection);
 	default:
 		JEWEL_DEBUG_LOG << "Unexpected TransactionType passed to "
 		                << "create_destination_account_reader "

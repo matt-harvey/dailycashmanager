@@ -67,7 +67,7 @@ EntryListPanel::EntryListPanel
 
 	++m_next_row;
 
-	AccountReader const reader(m_database_connection);
+	ImpureAccountReader const reader(m_database_connection);
 	assert (!reader.empty());  // TODO What if this fails?
 	m_account_ctrl = new AccountCtrl
 	(	this,
