@@ -13,12 +13,14 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <jewel/debug_log.hpp>
+#include <jewel/optional.hpp>
 #include <wx/gdicmn.h>
 #include <wx/progdlg.h>
 #include <vector>
 #include <string>
 
 using boost::lexical_cast;
+using jewel::value;
 using std::string;
 using std::vector;
 
@@ -58,15 +60,25 @@ namespace
 
 EntryListCtrl*
 EntryListCtrl::create_actual_ordinary_entry_list
-(	wxWindow* parent,
-	PhatbooksDatabaseConnection& dbc
+(	wxWindow* p_parent,
+	PhatbooksDatabaseConnection& p_database_connection
 )
 {
-	ActualOrdinaryEntryReader const reader(dbc);
-	EntryListCtrl* ret = new EntryListCtrl(parent, reader, dbc);
+	ActualOrdinaryEntryReader const reader(p_database_connection);
+	EntryListCtrl* ret =
+		new EntryListCtrl(p_parent, reader, p_database_connection);
 	return ret;
 }
 
+EntryListCtrl*
+EntryListCtrl::create_actual_ordinary_entry_list
+(	wxWindow* p_parent,
+	Account const& p_account
+)
+{
+	EntryListCtrl* ret = new EntryListCtrl(p_parent, p_account);
+	return ret;
+}
 
 EntryListCtrl::EntryListCtrl
 (	wxWindow* p_parent,
@@ -85,12 +97,8 @@ EntryListCtrl::EntryListCtrl
 	),
 	m_database_connection(p_database_connection)
 {
-	// Insert columns
-	InsertColumn(date_col_num(), "Date", wxLIST_FORMAT_RIGHT);
-	InsertColumn(account_col_num(), "Account", wxLIST_FORMAT_LEFT);
-	InsertColumn(comment_col_num(), "Comment", wxLIST_FORMAT_LEFT);
-	InsertColumn(amount_col_num(), "Amount", wxLIST_FORMAT_RIGHT);
-	InsertColumn(reconciled_col_num(), "R", wxLIST_FORMAT_LEFT);
+	assert (!m_maybe_account);
+	insert_columns();
 
 	EntryReader::size_type i = 0;
 	EntryReader::size_type progress = 0;
@@ -130,6 +138,58 @@ EntryListCtrl::EntryListCtrl
 		}
 	}
 	progress_dialog.Destroy();
+}
+
+EntryListCtrl::EntryListCtrl(wxWindow* p_parent, Account const& p_account):
+	wxListCtrl
+	(	p_parent,
+		wxID_ANY,
+		wxDefaultPosition,
+		wxSize
+		(	p_parent->GetClientSize().GetX(),
+			p_parent->GetClientSize().GetY()
+		),
+		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
+	),
+	m_database_connection(p_account.database_connection()),
+	m_maybe_account(p_account)
+{
+	insert_columns();
+
+	// TODO Should we bother with a progress indicator here?
+	
+	gregorian::date const opening_balance_journal_date =
+		m_database_connection.opening_balance_journal_date();
+	ActualOrdinaryEntryReader const reader(m_database_connection);
+	ActualOrdinaryEntryReader::const_iterator it = reader.begin();
+	ActualOrdinaryEntryReader::const_iterator const end = reader.end();
+	for ( ; it != end; ++it)
+	{
+		if
+		(	(it->account() == p_account) &&
+			(it->date() != opening_balance_journal_date)
+		)
+		{
+			add_entry(*it);
+		}
+	}
+	set_column_widths();
+}
+
+void
+EntryListCtrl::insert_columns()
+{
+	InsertColumn(date_col_num(), "Date", wxLIST_FORMAT_RIGHT);
+	InsertColumn(account_col_num(), "Account", wxLIST_FORMAT_LEFT);
+	InsertColumn(comment_col_num(), "Comment", wxLIST_FORMAT_LEFT);
+	InsertColumn(amount_col_num(), "Amount", wxLIST_FORMAT_RIGHT);
+	InsertColumn(reconciled_col_num(), "R", wxLIST_FORMAT_LEFT);
+	return;
+}
+
+void
+EntryListCtrl::set_column_widths()
+{
 	for (int j = 0; j != 5; ++j)
 	{
 		SetColumnWidth(j, wxLIST_AUTOSIZE);
@@ -138,13 +198,17 @@ EntryListCtrl::EntryListCtrl
 	(	comment_col_num(),
 		GetColumnWidth(account_col_num())
 	);
+	return;
 }
-
 
 void
 EntryListCtrl::add_entry(Entry const& entry)
 {
 	assert (entry.has_id());  // assert precondition
+	assert
+	(	!filtering_for_account() ||
+		(entry.account() == value(m_maybe_account))
+	);
 
 	OrdinaryJournal journal(entry.journal<OrdinaryJournal>());
 	wxString const wx_date_string = date_format_wx(journal.date());
@@ -176,6 +240,12 @@ EntryListCtrl::add_entry(Entry const& entry)
 	SetItem(i, reconciled_col_num(), reconciled_string);
 }
 
+bool
+EntryListCtrl::filtering_for_account() const
+{
+	return static_cast<bool>(m_maybe_account);
+}
+
 void
 EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
 {
@@ -183,9 +253,18 @@ EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
 	{
 		vector<Entry>::const_iterator it = p_journal.entries().begin();
 		vector<Entry>::const_iterator const end = p_journal.entries().end();
-		for ( ; it != end; ++it)
+		if (!filtering_for_account())
 		{
-			add_entry(*it);
+			for ( ; it != end; ++it) add_entry(*it);
+		}
+		else
+		{
+			assert (m_maybe_account);
+			Account const account = value(m_maybe_account);
+			for ( ; it != end; ++it)
+			{
+				if (it->account() == account) add_entry(*it);
+			}
 		}
 	}
 	return;
@@ -208,33 +287,57 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 		IdSet::const_iterator const jt = m_id_set.find(id);
 		if (jt == m_id_set.end())
 		{
-			add_entry(*it);
+			// Entry not yet displayed.
+			if
+			(	!filtering_for_account() ||
+				(it->account() == value(m_maybe_account))
+			)
+			{
+				add_entry(*it);
+			}
 		}
 		else
 		{
+			// Entry is displayed
 			long const pos = FindItem(-1, id);
 			assert (GetItemData(pos) == static_cast<unsigned long>(it->id()));
-			SetItemText(pos, wx_date_string);
-			SetItem
-			(	pos,
-				account_col_num(),
-				bstring_to_wx(it->account().name())
-			);
-			SetItem
-			(	pos,
-				comment_col_num(),
-				bstring_to_wx(it->comment())
-			);
-			SetItem
-			(	pos,
-				amount_col_num(),
-				finformat_wx(it->amount(), locale(), false)
-			);
-			SetItem
-			(	pos,
-				reconciled_col_num(),
-				(it->is_reconciled()? "Y": "N")
-			);
+			if
+			(	filtering_for_account() &&
+				(it->account() != value(m_maybe_account))
+			)
+			{
+				// Account is no longer the filtered-for Account, so remove
+				// this Entry from the display.
+				DeleteItem(pos);
+				assert (jt != m_id_set.end());
+				m_id_set.erase(jt);
+			}
+			else
+			{
+				// Update the row for this Entry to match the current
+				// state of the Entry.
+				SetItemText(pos, wx_date_string);
+				SetItem
+				(	pos,
+					account_col_num(),
+					bstring_to_wx(it->account().name())
+				);
+				SetItem
+				(	pos,
+					comment_col_num(),
+					bstring_to_wx(it->comment())
+				);
+				SetItem
+				(	pos,
+					amount_col_num(),
+					finformat_wx(it->amount(), locale(), false)
+				);
+				SetItem
+				(	pos,
+					reconciled_col_num(),
+					(it->is_reconciled()? "Y": "N")
+				);
+			}
 		}
 	}
 	return;
