@@ -96,12 +96,7 @@ TransactionCtrl::TransactionCtrl
 	vector<Account> const& p_pl_accounts,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
-	wxPanel
-	(	p_parent,
-		wxID_ANY,
-		wxDefaultPosition,
-		wxDefaultSize
-	),
+	wxPanel(p_parent, wxID_ANY),
 	m_top_sizer(0),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),
@@ -267,12 +262,7 @@ TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
 	OrdinaryJournal const& p_journal
 ):
-	wxPanel
-	(	p_parent,
-		wxID_ANY,
-		wxDefaultPosition,
-		wxDefaultSize
-	),
+	wxPanel(p_parent, wxID_ANY),
 	m_top_sizer(0),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),
@@ -302,12 +292,7 @@ TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
 	DraftJournal const& p_journal
 ):
-	wxPanel
-	(	p_parent,
-		wxID_ANY,
-		wxDefaultPosition,
-		wxDefaultSize
-	),
+	wxPanel(p_parent, wxID_ANY),
 	m_top_sizer(0),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),

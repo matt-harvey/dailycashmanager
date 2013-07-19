@@ -189,6 +189,7 @@ set (gui_files
 	 graphical_session/wxs/draft_journal_naming_dialog.cpp
 	 graphical_session/wxs/entry_ctrl.cpp
 	 graphical_session/wxs/entry_list_ctrl.cpp
+	 graphical_session/wxs/entry_list_panel.cpp
 	 graphical_session/wxs/frame.cpp
 	 graphical_session/wxs/frequency_ctrl.cpp
 	 graphical_session/wxs/locale.cpp
