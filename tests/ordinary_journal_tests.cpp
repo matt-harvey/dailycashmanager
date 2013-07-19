@@ -6,6 +6,7 @@
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
@@ -32,7 +33,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
 	ProtoJournal journal1;
-	journal1.set_whether_actual(true);
+	journal1.set_transaction_type(transaction_type::generic_transaction);
 	journal1.set_comment("igloo");
 
 	Entry entry1a(dbc);
@@ -81,7 +82,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		}
 	}
 	DraftJournal dj2(dbc);
-	dj2.set_whether_actual(false);
+	dj2.set_transaction_type(transaction_type::envelope_transaction);
 	dj2.set_comment("steam engine");
 	dj2.set_name("some journal");
 	
@@ -110,7 +111,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 
 	/* No longer providing mimic of OrdinaryJournal, so test commented out.
 	OrdinaryJournal oj2(dbc);
-	oj2.set_whether_actual(true);
+	oj2.set_transaction_type(transaction_type::generic_transaction);
 	oj2.set_comment("random");
 	oj2.set_date(date(2010, 11, 30));
 	
@@ -146,7 +147,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
 	OrdinaryJournal journal1(dbc);
-	journal1.set_whether_actual(true);
+	journal1.set_transaction_type(transaction_type::generic_transaction);
 	journal1.set_comment("igloo");
 
 	Entry entry1a(dbc);

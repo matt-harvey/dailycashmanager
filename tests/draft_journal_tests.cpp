@@ -11,6 +11,7 @@
 #include <UnitTest++/UnitTest++.h>
 #include "b_string.hpp"
 #include "frequency.hpp"
+#include "transaction_type.hpp"
 
 namespace gregorian = boost::gregorian;
 
@@ -26,7 +27,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 	DraftJournal dj1(dbc);
-	dj1.set_whether_actual(true);
+	dj1.set_transaction_type(transaction_type::generic_transaction);
 	dj1.set_comment("draft journal to test repeater_description");
 	dj1.set_name("test");
 

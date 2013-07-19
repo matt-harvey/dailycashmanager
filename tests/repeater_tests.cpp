@@ -8,6 +8,7 @@
 #include "interval_type.hpp"
 #include "phatbooks_tests_common.hpp"
 #include "repeater.hpp"
+#include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -31,7 +32,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
 	DraftJournal dj(dbc);
-	dj.set_whether_actual(true);
+	dj.set_transaction_type(transaction_type::generic_transaction);
 	dj.set_comment("draft journal to test repeater");
 	dj.set_name("Test");
 	
@@ -148,7 +149,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
 	DraftJournal dj1(dbc);
-	dj1.set_whether_actual(true);
+	dj1.set_transaction_type(transaction_type::generic_transaction);
 	dj1.set_comment("journal to test repeater");
 	dj1.set_name(BString("Test"));  // BString is optional
 	
