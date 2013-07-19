@@ -59,17 +59,18 @@ EntryListPanel::EntryListPanel
 		reader.begin(),
 		reader.end()
 	);
+	int const std_height = m_account_ctrl->GetSize().GetHeight();
 	m_top_sizer->Add(m_account_ctrl, wxGBPosition(top_row(), 1));
 	m_min_date_selector = new DateCtrl
 	(	this,
 		s_min_date_selector_id,
-		wxSize(medium_width(), wxDefaultSize.y)
+		wxSize(medium_width(), std_height)
 	);
 	m_top_sizer->Add(m_min_date_selector, wxGBPosition(top_row(), 2));
 	m_max_date_selector = new DateCtrl
 	(	this,
 		s_max_date_selector_id,
-		wxSize(medium_width(), wxDefaultSize.y)
+		wxSize(medium_width(), std_height)
 	);
 	m_top_sizer->Add(m_max_date_selector, wxGBPosition(top_row(), 3));
 	m_refresh_button = new wxButton
@@ -136,10 +137,13 @@ EntryListPanel::configure_entry_list_ctrl()
 		m_entry_list_ctrl->Destroy();
 		m_entry_list_ctrl = 0;
 	}
+	size_t const width =
+		large_width() + medium_width() * 3 + standard_gap() * 3;
 	if (maybe_acct)
 	{
 		m_entry_list_ctrl = EntryListCtrl::create_actual_ordinary_entry_list
 		(	this,
+			wxSize(width, wxDefaultSize.y),
 			value(maybe_acct)
 		);
 	}
@@ -147,10 +151,15 @@ EntryListPanel::configure_entry_list_ctrl()
 	{
 		m_entry_list_ctrl = EntryListCtrl::create_actual_ordinary_entry_list
 		(	this,
+			wxSize(width, wxDefaultSize.y),
 			m_database_connection
 		);
 	}
-	m_top_sizer->Add(m_entry_list_ctrl, wxGBPosition(top_row() + 1, 1));
+	m_top_sizer->Add
+	(	m_entry_list_ctrl,
+		wxGBPosition(top_row() + 1, 1),
+		wxGBSpan(1, 4)
+	);
 	return;
 }
 

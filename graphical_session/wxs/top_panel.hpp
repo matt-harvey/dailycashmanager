@@ -26,7 +26,7 @@ namespace gui
 
 class AccountListCtrl;
 class DraftJournalListCtrl;
-class EntryListCtrl;
+class EntryListPanel;
 class Frame;
 class TransactionCtrl;
 
@@ -164,7 +164,7 @@ private:
 	wxBoxSizer* m_right_column_sizer;
 	AccountListCtrl* m_bs_account_list;
 	AccountListCtrl* m_pl_account_list;
-	EntryListCtrl* m_entry_list;
+	EntryListPanel* m_entry_list;
 	TransactionCtrl* m_transaction_ctrl;
 	DraftJournalListCtrl* m_draft_journal_list;
 };

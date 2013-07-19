@@ -61,27 +61,30 @@ namespace
 EntryListCtrl*
 EntryListCtrl::create_actual_ordinary_entry_list
 (	wxWindow* p_parent,
+	wxSize const& p_size,
 	PhatbooksDatabaseConnection& p_database_connection
 )
 {
 	ActualOrdinaryEntryReader const reader(p_database_connection);
 	EntryListCtrl* ret =
-		new EntryListCtrl(p_parent, reader, p_database_connection);
+		new EntryListCtrl(p_parent, p_size, reader, p_database_connection);
 	return ret;
 }
 
 EntryListCtrl*
 EntryListCtrl::create_actual_ordinary_entry_list
 (	wxWindow* p_parent,
+	wxSize const& p_size,
 	Account const& p_account
 )
 {
-	EntryListCtrl* ret = new EntryListCtrl(p_parent, p_account);
+	EntryListCtrl* ret = new EntryListCtrl(p_parent, p_size, p_account);
 	return ret;
 }
 
 EntryListCtrl::EntryListCtrl
 (	wxWindow* p_parent,
+	wxSize const& p_size,
 	EntryReader const& p_reader,
 	PhatbooksDatabaseConnection& p_database_connection	
 ):
@@ -89,10 +92,7 @@ EntryListCtrl::EntryListCtrl
 	(	p_parent,
 		wxID_ANY,
 		wxDefaultPosition,
-		wxSize
-		(	p_parent->GetClientSize().GetX(),
-			p_parent->GetClientSize().GetY()
-		),
+		p_size,
 		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
 	),
 	m_database_connection(p_database_connection)
@@ -140,15 +140,16 @@ EntryListCtrl::EntryListCtrl
 	progress_dialog.Destroy();
 }
 
-EntryListCtrl::EntryListCtrl(wxWindow* p_parent, Account const& p_account):
+EntryListCtrl::EntryListCtrl
+(	wxWindow* p_parent,
+	wxSize const& p_size,
+	Account const& p_account
+):
 	wxListCtrl
 	(	p_parent,
 		wxID_ANY,
 		wxDefaultPosition,
-		wxSize
-		(	p_parent->GetClientSize().GetX(),
-			p_parent->GetClientSize().GetY()
-		),
+		p_size,
 		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
 	),
 	m_database_connection(p_account.database_connection()),

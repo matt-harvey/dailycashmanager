@@ -38,6 +38,7 @@ public:
 	 */
 	static EntryListCtrl* create_actual_ordinary_entry_list
 	(	wxWindow* parent,
+		wxSize const& p_size,
 		PhatbooksDatabaseConnection& dbc
 	);
 
@@ -49,6 +50,7 @@ public:
 	 */
 	static EntryListCtrl* create_actual_ordinary_entry_list
 	(	wxWindow* p_parent,
+		wxSize const& p_size,
 		Account const& p_account
 	);
 	
@@ -84,12 +86,14 @@ private:
 
 	EntryListCtrl
 	(	wxWindow* p_parent,
+		wxSize const& p_size,
 		EntryReader const& p_reader,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
 	EntryListCtrl
 	(	wxWindow* p_parent,
+		wxSize const& p_size,
 		Account const& p_account
 	);
 

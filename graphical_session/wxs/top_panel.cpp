@@ -6,7 +6,7 @@
 #include "account_type.hpp"
 #include "draft_journal_list_ctrl.hpp"
 #include "draft_journal_reader.hpp"
-#include "entry_list_ctrl.hpp"
+#include "entry_list_panel.hpp"
 #include "frame.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -137,7 +137,7 @@ TopPanel::configure_entry_list()
 {
 	assert (m_notebook_page_2);
 	assert (m_notebook_page_1);
-	m_entry_list = EntryListCtrl::create_actual_ordinary_entry_list
+	m_entry_list = new EntryListPanel
 	(	m_notebook_page_2,
 		m_database_connection
 	);
