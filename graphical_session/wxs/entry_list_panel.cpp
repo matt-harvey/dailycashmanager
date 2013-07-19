@@ -179,9 +179,12 @@ EntryListPanel::configure_entry_list_ctrl()
 	m_top_sizer->Add
 	(	m_entry_list_ctrl,
 		wxGBPosition(m_next_row, 1),
-		wxGBSpan(1, 4)
+		wxGBSpan(1, 4),
+		wxEXPAND
 	);
 	++m_next_row;
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
 	Fit();
 	Layout();
 	return;

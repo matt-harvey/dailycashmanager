@@ -38,6 +38,9 @@ class EntryListCtrl;
  * @todo Do we want the user to be able to view non-actual transactions?
  * If we do, then, among other things, the AccountCtrl will need to allow
  * the user to select Accounts of account_type::pure_envelope.
+ *
+ * @todo The EntryListCtrl within the EntryListPanel should take up all
+ * of the available horizontal area.
  */
 class EntryListPanel: public wxPanel, private boost::noncopyable
 {

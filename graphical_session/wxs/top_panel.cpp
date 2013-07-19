@@ -143,7 +143,7 @@ TopPanel::configure_entry_list()
 	);
 	wxBoxSizer* page_2_sizer = new wxBoxSizer(wxHORIZONTAL);
 	m_notebook_page_2->SetSizer(page_2_sizer);
-	page_2_sizer->Add(m_entry_list, wxSizerFlags(1).Expand());
+	page_2_sizer->Add(m_entry_list, wxEXPAND);
 	page_2_sizer->Fit(m_notebook_page_2);
 	page_2_sizer->SetSizeHints(m_notebook_page_2);
 	m_notebook_page_2->Fit();
