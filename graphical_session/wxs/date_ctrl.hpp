@@ -5,6 +5,7 @@
 
 #include "date.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/textctrl.h>
@@ -18,9 +19,8 @@ namespace gui
 /**
  * Widget with which the user may select a date.
  *
- * @todo On Windows, at least, this is acting strangely. It
- * is flipping the day and the month around, at least in some
- * situations such as as used in TransactionCtrl.
+ * @param p_allow_blank should be set to true if and only if we will
+ * permit the user to leave the DateCtrl blank.
  */
 class DateCtrl: public wxTextCtrl
 {
@@ -29,17 +29,20 @@ public:
 	(	wxWindow* p_parent,
 		unsigned int p_id,
 		wxSize const& p_size,
-		boost::gregorian::date const& p_date = today()
+		boost::gregorian::date const& p_date = today(),
+		bool p_allow_blank = false
 	);
 
 	/**
-	 * @returns a date from the control.
+	 * @returns a boost::optional initialized with the date in the
+	 * control, or uninitialized if the control does not show
+	 * a date.
 	 *
 	 * Unfortunately this can't currently be const because the
 	 * wxWindow::GetValidator() function used in the implementation,
 	 * is not const.
 	 */
-	boost::gregorian::date date();
+	boost::optional<boost::gregorian::date> date();
 
 private:
 	void on_kill_focus(wxFocusEvent& event);

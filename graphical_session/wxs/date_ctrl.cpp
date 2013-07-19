@@ -5,6 +5,7 @@
 #include "locale.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
 #include <wx/datetime.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -14,6 +15,7 @@
 #include <wx/window.h>
 #include <cassert>
 
+using boost::optional;
 namespace gregorian = boost::gregorian;
 
 namespace phatbooks
@@ -29,7 +31,8 @@ DateCtrl::DateCtrl
 (	wxWindow* p_parent,
 	unsigned int p_id,
 	wxSize const& p_size,
-	gregorian::date const& p_date
+	gregorian::date const& p_date,
+	bool p_allow_blank
 ):
 	wxTextCtrl
 	(	p_parent,
@@ -38,13 +41,12 @@ DateCtrl::DateCtrl
 		wxDefaultPosition,
 		p_size,
 		wxALIGN_RIGHT,
-		DateValidator(p_date)
+		DateValidator(p_date, p_allow_blank)
 	)
 {
 }
 	
-
-boost::gregorian::date
+optional<gregorian::date>
 DateCtrl::date()
 {
 	DateValidator const* const validator =
@@ -52,9 +54,6 @@ DateCtrl::date()
 	assert (validator);
 	return validator->date();
 }
-	
-
-
 
 void
 DateCtrl::on_kill_focus(wxFocusEvent& event)

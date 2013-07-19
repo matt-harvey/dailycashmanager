@@ -4,6 +4,7 @@
 #define GUARD_date_validator_hpp
 
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
 #include <wx/validate.h>
 
 namespace phatbooks
@@ -17,7 +18,7 @@ namespace gui
 class DateValidator: public wxValidator
 {
 public:
-	DateValidator(boost::gregorian::date const& p_date);
+	DateValidator(boost::gregorian::date const& p_date, bool p_allow_blank);
 	DateValidator(DateValidator const& rhs);
 
 	/**
@@ -29,10 +30,11 @@ public:
 	bool TransferToWindow();
 	wxObject* Clone() const;
 
-	boost::gregorian::date date() const;
+	boost::optional<boost::gregorian::date> date() const;
 
 private:
-	boost::gregorian::date m_date;
+	bool m_allow_blank;
+	boost::optional<boost::gregorian::date> m_date;
 
 };  // class DateValidator
 

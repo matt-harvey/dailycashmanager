@@ -1,9 +1,7 @@
 #ifndef GUARD_entry_list_panel_hpp
 #define GUARD_entry_list_panel_hpp
 
-#include "account.hpp"
 #include "entry.hpp"
-#include <boost/optional.hpp>
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -17,6 +15,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class Account;
 class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
@@ -49,20 +48,19 @@ public:
 
 private:
 	void on_refresh_button_click(wxCommandEvent& event);
-
 	void configure_entry_list_ctrl();
-	boost::optional<Account> maybe_account() const;
+	Account selected_account() const;
 	
 	static int const s_account_ctrl_id = wxID_HIGHEST + 1;
-	static int const s_min_date_selector_id = s_account_ctrl_id + 1;
-	static int const s_max_date_selector_id = s_min_date_selector_id + 1;
-	static int const s_refresh_button_id = s_max_date_selector_id + 1;
+	static int const s_min_date_ctrl_id = s_account_ctrl_id + 1;
+	static int const s_max_date_ctrl_id = s_min_date_ctrl_id + 1;
+	static int const s_refresh_button_id = s_max_date_ctrl_id + 1;
 	static int const s_entry_list_ctrl_id = s_refresh_button_id + 1;
 
 	wxGridBagSizer* m_top_sizer;
 	AccountCtrl* m_account_ctrl;
-	DateCtrl* m_min_date_selector;
-	DateCtrl* m_max_date_selector;
+	DateCtrl* m_min_date_ctrl;
+	DateCtrl* m_max_date_ctrl;
 	wxButton* m_refresh_button;
 	EntryListCtrl* m_entry_list_ctrl;
 	PhatbooksDatabaseConnection& m_database_connection;

@@ -4,8 +4,10 @@
 #include "date.hpp"
 #include "locale.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
 #include <boost/exception/all.hpp>
 #include <jewel/debug_log.hpp>
+#include <jewel/optional.hpp>
 #include <wx/datetime.h>
 #include <wx/intl.h>
 #include <wx/msgdlg.h>
@@ -14,6 +16,9 @@
 #include <cassert>
 #include <iostream>
 
+using boost::optional;
+using jewel::clear;
+using jewel::value;
 using std::endl;
 
 namespace gregorian = boost::gregorian;
@@ -23,13 +28,18 @@ namespace phatbooks
 namespace gui
 {
 
-DateValidator::DateValidator(gregorian::date const& p_date):
+DateValidator::DateValidator
+(	gregorian::date const& p_date,
+	bool p_allow_blank
+):
+	m_allow_blank(p_allow_blank),
 	m_date(p_date)
 {
 }
 
 DateValidator::DateValidator(DateValidator const& rhs):
 	wxValidator(),
+	m_allow_blank(rhs.m_allow_blank),
 	m_date(rhs.m_date)
 {
 }
@@ -48,6 +58,11 @@ DateValidator::Validate(wxWindow* WXUNUSED(parent))
 	wxString::const_iterator parsed_to_position;
 	wxDateTime date_wx;
 	wxString const date_text(text_ctrl->GetValue());
+	if (m_allow_blank && date_text.IsEmpty())
+	{
+		clear(m_date);		
+		return true;
+	}
 	wxLocaleInfo const formats[] =
 		{wxLOCALE_SHORT_DATE_FMT, wxLOCALE_LONG_DATE_FMT};
 	size_t const num_formats = sizeof(formats) / sizeof(formats[0]);
@@ -107,7 +122,18 @@ DateValidator::TransferToWindow()
 	{
 		return false;
 	}
-	text_ctrl->SetValue(date_format_wx(m_date));
+	if (!m_date)
+	{
+		if (!m_allow_blank)
+		{
+			return false;
+		}
+		assert (m_allow_blank && !m_date);
+		text_ctrl->SetValue(wxEmptyString);
+		return true;
+	}
+	assert (m_date);
+	text_ctrl->SetValue(date_format_wx(value(m_date)));
 	return true;
 }
 
@@ -117,7 +143,7 @@ DateValidator::Clone() const
 	return new DateValidator(*this);
 }
 
-gregorian::date
+optional<gregorian::date>
 DateValidator::date() const
 {
 	return m_date;

@@ -650,7 +650,8 @@ TransactionCtrl::post_journal()
 		DraftJournal dj(m_database_connection);
 		dj.mimic(journal);
 		Repeater repeater(m_database_connection);
-		gregorian::date const next_date = m_date_ctrl->date();
+		assert (m_date_ctrl->date());
+		gregorian::date const next_date = value(m_date_ctrl->date());
 		Frequency const freq = value(maybe_frequency);
 
 		// Ensure valid combination of Frequency and next posting date.
@@ -715,7 +716,8 @@ TransactionCtrl::post_journal()
 		assert (!maybe_frequency);
 		OrdinaryJournal oj(m_database_connection);
 		oj.mimic(journal);
-		oj.set_date(m_date_ctrl->date());
+		assert (m_date_ctrl->date());
+		oj.set_date(value(m_date_ctrl->date()));
 		assert (oj.is_balanced());
 		oj.save();
 		JEWEL_DEBUG_LOG << "Posted journal:\n\n" << oj << endl;
@@ -856,7 +858,8 @@ TransactionCtrl::save_existing_journal()
 	{
 		DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal);
 		assert (dj);
-		gregorian::date const next_date = m_date_ctrl->date();
+		assert (m_date_ctrl->date());
+		gregorian::date const next_date = value(m_date_ctrl->date());
 		Frequency const freq = value(maybe_frequency);
 		
 		// Ensure valid combination of Frequency and next posting date
@@ -918,7 +921,8 @@ TransactionCtrl::save_existing_journal()
 		assert (!maybe_frequency);
 		OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal);
 		assert (oj);
-		oj->set_date(m_date_ctrl->date());
+		assert (m_date_ctrl->date());
+		oj->set_date(value(m_date_ctrl->date()));
 	
 		// WARNING temp debug
 		if (!oj->is_balanced())

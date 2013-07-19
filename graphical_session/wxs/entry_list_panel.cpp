@@ -2,14 +2,13 @@
 #include "account.hpp"
 #include "account_ctrl.hpp"
 #include "account_reader.hpp"
+#include "date.hpp"
 #include "date_ctrl.hpp"
 #include "entry.hpp"
 #include "entry_list_ctrl.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sizing.hpp"
-#include <boost/optional.hpp>
-#include <jewel/optional.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -17,8 +16,6 @@
 #include <wx/window.h>
 #include <vector>
 
-using boost::optional;
-using jewel::value;
 using std::vector;
 
 namespace phatbooks
@@ -46,8 +43,8 @@ EntryListPanel::EntryListPanel
 	wxPanel(p_parent, wxID_ANY),
 	m_top_sizer(0),
 	m_account_ctrl(0),
-	m_min_date_selector(0),
-	m_max_date_selector(0),
+	m_min_date_ctrl(0),
+	m_max_date_ctrl(0),
 	m_refresh_button(0),
 	m_entry_list_ctrl(0),
 	m_database_connection(p_database_connection)
@@ -66,24 +63,28 @@ EntryListPanel::EntryListPanel
 	);
 	int const std_height = m_account_ctrl->GetSize().GetHeight();
 	m_top_sizer->Add(m_account_ctrl, wxGBPosition(top_row(), 1));
-	m_min_date_selector = new DateCtrl
+	m_min_date_ctrl = new DateCtrl
 	(	this,
-		s_min_date_selector_id,
-		wxSize(medium_width(), std_height)
+		s_min_date_ctrl_id,
+		wxSize(medium_width(), std_height),
+		today(),
+		true
 	);
-	m_top_sizer->Add(m_min_date_selector, wxGBPosition(top_row(), 2));
-	m_max_date_selector = new DateCtrl
+	m_top_sizer->Add(m_min_date_ctrl, wxGBPosition(top_row(), 2));
+	m_max_date_ctrl = new DateCtrl
 	(	this,
-		s_max_date_selector_id,
-		wxSize(medium_width(), std_height)
+		s_max_date_ctrl_id,
+		wxSize(medium_width(), std_height),
+		today(),
+		true
 	);
-	m_top_sizer->Add(m_max_date_selector, wxGBPosition(top_row(), 3));
+	m_top_sizer->Add(m_max_date_ctrl, wxGBPosition(top_row(), 3));
 	m_refresh_button = new wxButton
 	(	this,
 		s_refresh_button_id,
 		wxString("&Refresh"),
 		wxDefaultPosition,
-		m_max_date_selector->GetSize()
+		m_max_date_ctrl->GetSize()
 	);
 	m_refresh_button->SetDefault();
 	m_top_sizer->Add(m_refresh_button, wxGBPosition(top_row(), 4));
@@ -140,8 +141,6 @@ EntryListPanel::selected_entries(vector<Entry>& out)
 void
 EntryListPanel::configure_entry_list_ctrl()
 {
-	optional<Account> const maybe_acct = maybe_account();
-
 	// TODO Enable filtering by date
 
 	if (m_entry_list_ctrl)
@@ -150,24 +149,14 @@ EntryListPanel::configure_entry_list_ctrl()
 		m_entry_list_ctrl->Destroy();
 		m_entry_list_ctrl = 0;
 	}
-	size_t const width =
-		large_width() + medium_width() * 3 + standard_gap() * 3;
-	if (maybe_acct)
-	{
-		m_entry_list_ctrl = EntryListCtrl::create_actual_ordinary_entry_list
-		(	this,
-			wxSize(width, wxDefaultSize.y),
-			value(maybe_acct)
-		);
-	}
-	else
-	{
-		m_entry_list_ctrl = EntryListCtrl::create_actual_ordinary_entry_list
-		(	this,
-			wxSize(width, wxDefaultSize.y),
-			m_database_connection
-		);
-	}
+	m_entry_list_ctrl = EntryListCtrl::create_actual_ordinary_entry_list
+	(	this,
+		wxSize
+		(	large_width() + medium_width() * 3 + standard_gap() * 3,
+			wxDefaultSize.y
+		),
+		selected_account()
+	);
 	m_top_sizer->Add
 	(	m_entry_list_ctrl,
 		wxGBPosition(top_row() + 1, 1),
@@ -178,15 +167,10 @@ EntryListPanel::configure_entry_list_ctrl()
 	return;
 }
 
-optional<Account>
-EntryListPanel::maybe_account() const
+Account
+EntryListPanel::selected_account() const
 {
-	optional<Account> ret;
-	// TODO We need a mechanism for returning an unitialized optional - which
-	// would signify that we will show Entries of any Account.
-	assert (m_account_ctrl);
-	ret = m_account_ctrl->account();
-	return ret;
+	return m_account_ctrl->account();
 }
 
 }  // namespace gui
