@@ -9,6 +9,9 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sizing.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
+#include <jewel/optional.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -16,7 +19,11 @@
 #include <wx/window.h>
 #include <vector>
 
+using boost::optional;
+using jewel::value;
 using std::vector;
+
+namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
@@ -141,8 +148,6 @@ EntryListPanel::selected_entries(vector<Entry>& out)
 void
 EntryListPanel::configure_entry_list_ctrl()
 {
-	// TODO Enable filtering by date
-
 	if (m_entry_list_ctrl)
 	{
 		m_top_sizer->Detach(m_entry_list_ctrl);
@@ -155,7 +160,9 @@ EntryListPanel::configure_entry_list_ctrl()
 		(	large_width() + medium_width() * 3 + standard_gap() * 3,
 			wxDefaultSize.y
 		),
-		selected_account()
+		selected_account(),
+		selected_min_date(),
+		selected_max_date()
 	);
 	m_top_sizer->Add
 	(	m_entry_list_ctrl,
@@ -172,6 +179,20 @@ EntryListPanel::selected_account() const
 {
 	return m_account_ctrl->account();
 }
+
+optional<gregorian::date>
+EntryListPanel::selected_min_date() const
+{
+	return m_min_date_ctrl->date();
+}
+
+optional<gregorian::date>
+EntryListPanel::selected_max_date() const
+{
+	return m_max_date_ctrl->date();
+}
+	
+
 
 }  // namespace gui
 }  // namespace phatbooks

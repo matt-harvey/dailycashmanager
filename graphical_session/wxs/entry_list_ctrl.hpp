@@ -9,6 +9,7 @@
 #include "entry.hpp"
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <boost/unordered_set.hpp>
 #include <vector>
@@ -46,14 +47,23 @@ public:
 	 * @returns a pointer to a heap-allocated EntryListCtrl, listing
 	 * all and only the \e actual (non-budget) OrdinaryEntries stored in
 	 * \e p_account.database_connection() which have \e p_account as their
-	 * Account.
+	 * Account, and which lie between the date stored in p_maybe_min_date
+	 * and the date stored in p_maybe_max_date, inclusive. If
+	 * p_maybe_min_date is an uninitialized optional, then there is no
+	 * minimum date; and if p_maybe_max_date is an uninitialized optional
+	 * then there is no maximum date. Having said this, even if there is no
+	 * minimum date, then the opening balance date may act as an effective
+	 * minimum date...
 	 */
 	static EntryListCtrl* create_actual_ordinary_entry_list
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		Account const& p_account
+		Account const& p_account,
+		boost::optional<boost::gregorian::date> const& p_maybe_min_date =
+			boost::optional<boost::gregorian::date>(),
+		boost::optional<boost::gregorian::date> const& p_maybe_max_date =
+			boost::optional<boost::gregorian::date>()
 	);
-	
 
 	/**
 	 * Update displayed entries to reflect that a \e p_journal has been newly
@@ -94,7 +104,11 @@ private:
 	EntryListCtrl
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		Account const& p_account
+		Account const& p_account,
+		boost::optional<boost::gregorian::date> const& p_maybe_min_date =
+			boost::optional<boost::gregorian::date>(),
+		boost::optional<boost::gregorian::date> const& p_maybe_max_date =
+			boost::optional<boost::gregorian::date>()
 	);
 
 	void insert_columns();
@@ -103,9 +117,17 @@ private:
 	/**
 	 * @param entry must be an Entry with an id.
 	 *
-	 * @todo This doesn't take care of sorting by date.
+	 * @todo HIGH PRIORITY This doesn't take care of sorting by date.
 	 */
 	void add_entry(Entry const& entry);
+
+	/**
+	 * @returns true if and only if p_entry falls within the filtering
+	 * parameters for the EntryListCtrl.
+	 *
+	 * Note this does NOT filter for opening balance journal date.
+	 */
+	bool would_accept_entry(Entry const& p_entry) const;
 
 	bool filtering_for_account() const;
 
@@ -117,6 +139,8 @@ private:
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	boost::optional<Account> m_maybe_account;
+	boost::gregorian::date m_min_date;
+	boost::optional<boost::gregorian::date> m_maybe_max_date;
 };
 
 

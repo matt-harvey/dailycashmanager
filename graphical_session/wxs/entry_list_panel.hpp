@@ -2,7 +2,9 @@
 #define GUARD_entry_list_panel_hpp
 
 #include "entry.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/optional.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -50,6 +52,8 @@ private:
 	void on_refresh_button_click(wxCommandEvent& event);
 	void configure_entry_list_ctrl();
 	Account selected_account() const;
+	boost::optional<boost::gregorian::date> selected_min_date() const;
+	boost::optional<boost::gregorian::date> selected_max_date() const;
 	
 	static int const s_account_ctrl_id = wxID_HIGHEST + 1;
 	static int const s_min_date_ctrl_id = s_account_ctrl_id + 1;

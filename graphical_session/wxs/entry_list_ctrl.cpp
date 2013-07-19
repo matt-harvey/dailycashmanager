@@ -12,6 +12,7 @@
 #include "phatbooks_database_connection.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/optional.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/gdicmn.h>
@@ -20,6 +21,7 @@
 #include <string>
 
 using boost::lexical_cast;
+using boost::optional;
 using jewel::value;
 using std::string;
 using std::vector;
@@ -54,6 +56,16 @@ namespace
 	{
 		return 4;
 	}
+	bool lies_within
+	(	gregorian::date const& p_target,
+		gregorian::date const& p_min,
+		optional<gregorian::date> const& p_max
+	)
+	{
+		bool const ok_with_min = (p_target >= p_min);
+		bool const ok_with_max = (!p_max || (p_target <= value(p_max)));
+		return ok_with_min && ok_with_max;
+	}
 
 }  // End anonymous namespace
 
@@ -75,10 +87,18 @@ EntryListCtrl*
 EntryListCtrl::create_actual_ordinary_entry_list
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	Account const& p_account
+	Account const& p_account,
+	optional<gregorian::date> const& p_maybe_min_date,
+	optional<gregorian::date> const& p_maybe_max_date
 )
 {
-	EntryListCtrl* ret = new EntryListCtrl(p_parent, p_size, p_account);
+	EntryListCtrl* ret = new EntryListCtrl
+	(	p_parent,
+		p_size,
+		p_account,
+		p_maybe_min_date,
+		p_maybe_max_date
+	);
 	return ret;
 }
 
@@ -95,9 +115,14 @@ EntryListCtrl::EntryListCtrl
 		p_size,
 		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
 	),
-	m_database_connection(p_database_connection)
+	m_database_connection(p_database_connection),
+	m_min_date
+	(	m_database_connection.opening_balance_journal_date() +
+		gregorian::date_duration(1)
+	)
 {
 	assert (!m_maybe_account);
+	assert (!m_maybe_max_date);
 	insert_columns();
 
 	EntryReader::size_type i = 0;
@@ -115,20 +140,15 @@ EntryListCtrl::EntryListCtrl
 		wxPD_APP_MODAL | wxPD_AUTO_HIDE | wxRESIZE_BORDER
 	);
 
-	gregorian::date const opening_balance_journal_date =
-		m_database_connection.opening_balance_journal_date();
-	for
-	(	EntryReader::const_iterator it = p_reader.begin(),
-			end = p_reader.end();
-		it != end;
-		++it, ++i
-	)
+	EntryReader::const_iterator it = p_reader.begin();
+	EntryReader::const_iterator const end = p_reader.end();
+	for ( ; it != end; ++it)
 	{
-		if (it->date() != opening_balance_journal_date)
+		if (it->date() != m_min_date)
 		{
+			assert (would_accept_entry(*it));
 			add_entry(*it);
 		}
-
 		// Update the progress dialog
 		if (i % progress_scaling_factor == 0)
 		{
@@ -143,7 +163,9 @@ EntryListCtrl::EntryListCtrl
 EntryListCtrl::EntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	Account const& p_account
+	Account const& p_account,
+	optional<gregorian::date> const& p_maybe_min_date,
+	optional<gregorian::date> const& p_maybe_max_date
 ):
 	wxListCtrl
 	(	p_parent,
@@ -153,26 +175,29 @@ EntryListCtrl::EntryListCtrl
 		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
 	),
 	m_database_connection(p_account.database_connection()),
-	m_maybe_account(p_account)
+	m_maybe_account(p_account),
+	m_min_date
+	(	p_maybe_min_date?
+		value(p_maybe_min_date):
+		p_account.database_connection().opening_balance_journal_date() +
+			gregorian::date_duration(1)
+	),
+	m_maybe_max_date(p_maybe_max_date)
 {
 	insert_columns();
 
-	// TODO Should we bother with a progress indicator here?
+	// TODO Should we have a progress indicator here?
 	
-	gregorian::date const opening_balance_journal_date =
-		m_database_connection.opening_balance_journal_date();
 	ActualOrdinaryEntryReader const reader(m_database_connection);
 	ActualOrdinaryEntryReader::const_iterator it = reader.begin();
 	ActualOrdinaryEntryReader::const_iterator const end = reader.end();
+	// WARNING This could probably be made significantly more
+	// efficient. Consider that reader should already be sorted by date.
+	// Also we could have special version of would_accept_entry() where
+	// it is assumed that we are filtering for Account.
 	for ( ; it != end; ++it)
 	{
-		if
-		(	(it->account() == p_account) &&
-			(it->date() != opening_balance_journal_date)
-		)
-		{
-			add_entry(*it);
-		}
+		if (would_accept_entry(*it)) add_entry(*it);
 	}
 	set_column_widths();
 }
@@ -202,16 +227,27 @@ EntryListCtrl::set_column_widths()
 	return;
 }
 
+bool
+EntryListCtrl::would_accept_entry(Entry const& p_entry) const
+{
+	if (filtering_for_account())
+	{
+		assert (m_maybe_account);
+		if (p_entry.account() != value(m_maybe_account))
+		{
+			return false;
+		}
+	}
+	return lies_within(p_entry.date(), m_min_date, m_maybe_max_date);
+}
+
 void
 EntryListCtrl::add_entry(Entry const& entry)
 {
 	assert (entry.has_id());  // assert precondition
-	assert
-	(	!filtering_for_account() ||
-		(entry.account() == value(m_maybe_account))
-	);
+	assert (would_accept_entry(entry));
 
-	OrdinaryJournal journal(entry.journal<OrdinaryJournal>());
+	OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
 	wxString const wx_date_string = date_format_wx(journal.date());
 	wxString const account_string = bstring_to_wx(entry.account().name());
 	wxString const comment_string = bstring_to_wx(entry.comment());
@@ -254,18 +290,9 @@ EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
 	{
 		vector<Entry>::const_iterator it = p_journal.entries().begin();
 		vector<Entry>::const_iterator const end = p_journal.entries().end();
-		if (!filtering_for_account())
+		for ( ; it != end; ++it)
 		{
-			for ( ; it != end; ++it) add_entry(*it);
-		}
-		else
-		{
-			assert (m_maybe_account);
-			Account const account = value(m_maybe_account);
-			for ( ; it != end; ++it)
-			{
-				if (it->account() == account) add_entry(*it);
-			}
+			if (would_accept_entry(*it)) add_entry(*it);
 		}
 	}
 	return;
@@ -289,10 +316,7 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 		if (jt == m_id_set.end())
 		{
 			// Entry not yet displayed.
-			if
-			(	!filtering_for_account() ||
-				(it->account() == value(m_maybe_account))
-			)
+			if (would_accept_entry(*it))
 			{
 				add_entry(*it);
 			}
@@ -302,13 +326,10 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 			// Entry is displayed
 			long const pos = FindItem(-1, id);
 			assert (GetItemData(pos) == static_cast<unsigned long>(it->id()));
-			if
-			(	filtering_for_account() &&
-				(it->account() != value(m_maybe_account))
-			)
+			if (!would_accept_entry(*it))
 			{
-				// Account is no longer the filtered-for Account, so remove
-				// this Entry from the display.
+				// Things have changed such that the Entry should no longer be
+				// included in the display.
 				DeleteItem(pos);
 				assert (jt != m_id_set.end());
 				m_id_set.erase(jt);
