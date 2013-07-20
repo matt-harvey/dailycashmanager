@@ -13,9 +13,11 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
+#include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
 #include <wx/gdicmn.h>
 #include <wx/progdlg.h>
+#include <wx/scrolwin.h>
 #include <vector>
 #include <string>
 
@@ -439,9 +441,16 @@ EntryListCtrl::selected_entries(vector<Entry>& out)
 void
 EntryListCtrl::scroll_to_bottom()
 {
+	int const count = GetItemCount();
+	if (count > 0)
+	{
+		EnsureVisible(count - 1);
+	}
+	/*
 	int const max_range = GetScrollRange(wxVERTICAL);
 	int const page_size = GetScrollPageSize(wxVERTICAL);
 	Scroll(-1, max_range - page_size);
+	*/
 	return;
 }
 

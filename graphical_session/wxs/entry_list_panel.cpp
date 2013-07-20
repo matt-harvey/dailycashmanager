@@ -11,6 +11,7 @@
 #include "sizing.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -160,11 +161,18 @@ EntryListPanel::selected_entries(vector<Entry>& out)
 void
 EntryListPanel::configure_entry_list_ctrl()
 {
-	int const unused_height =
+#	if JEWEL_ON_WINDOWS
+	Freeze();  // Stop flickering
+#	endif
+
+	int unused_height =
 		GetClientSize().GetY() -
 		m_account_ctrl->GetSize().GetY() * 2 -
 		standard_gap() * 3 -
 		standard_border() * 2;
+#	if JEWEL_ON_WINDOWS
+		unused_height -= standard_gap() * 3;
+#	endif
 	EntryListCtrl* temp = EntryListCtrl::create_actual_ordinary_entry_list
 	(	this,
 		wxSize
@@ -197,6 +205,10 @@ EntryListPanel::configure_entry_list_ctrl()
 	// Layout();
 	
 	m_entry_list_ctrl->scroll_to_bottom();
+
+#	if JEWEL_ON_WINDOWS
+	Thaw();
+#	endif
 
 	return;
 }
