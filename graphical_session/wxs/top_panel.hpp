@@ -116,7 +116,6 @@ public:
 	 */
 	void update_for_amended_budget(Account const& p_account);
 
-
 	/**
 	 * Configure the TransactionCtrl to reflect the currently selected
 	 * Accounts (if any).

@@ -143,6 +143,24 @@ EntryListPanel::update_for_amended(OrdinaryJournal const& p_journal)
 }
 
 void
+EntryListPanel::update_for_new(Account const& p_account)
+{
+	assert (m_entry_list_ctrl);
+	m_entry_list_ctrl->update_for_new(p_account);
+	// TODO HIGH PRIORITY Also need to update AccountCtrl.
+	return;
+}
+
+void
+EntryListPanel::update_for_amended(Account const& p_account)
+{
+	assert (m_entry_list_ctrl);
+	m_entry_list_ctrl->update_for_amended(p_account);
+	// TODO HIGH PRIORITY Also need to update AccountCtrl.
+	return;
+}
+
+void
 EntryListPanel::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 {
 	assert (m_entry_list_ctrl);

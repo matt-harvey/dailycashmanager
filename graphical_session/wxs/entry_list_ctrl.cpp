@@ -457,6 +457,37 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 }
 
 void
+EntryListCtrl::update_for_new(Account const& p_account)
+{
+	(void)p_account;  // Silence compiler re. unused parameter.
+	// Nothing to do.
+	return;
+}
+
+void
+EntryListCtrl::update_for_amended(Account const& p_account)
+{
+	if (filtering_for_account())
+	{
+		// Then we are not showing Account name so nothing to do.
+		return;
+	}
+	assert (!filtering_for_account());
+	size_t i = 0;
+	size_t const lim = GetItemCount();
+	wxString const name = bstring_to_wx(p_account.name());
+	for ( ; i != lim; ++i)
+	{
+		Entry const entry(m_database_connection, GetItemData(i));
+		if (entry.account() == p_account)
+		{
+			SetItem(i, account_col_num(), name);
+		}
+	}
+	return;
+}
+
+void
 EntryListCtrl::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 {
 	vector<Entry::Id>::const_iterator it = p_doomed_ids.begin();

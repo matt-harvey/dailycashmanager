@@ -53,6 +53,8 @@ public:
 
 	void update_for_new(OrdinaryJournal const& p_journal);
 	void update_for_amended(OrdinaryJournal const& p_journal);
+	void update_for_new(Account const& p_account);
+	void update_for_amended(Account const& p_account);
 	void update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids);
 	void selected_entries(std::vector<Entry>& out);
 

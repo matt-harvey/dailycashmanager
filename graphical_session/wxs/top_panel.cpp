@@ -309,6 +309,7 @@ TopPanel::update_for_new(Account const& p_saved_object)
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
+	m_entry_list->update_for_new(p_saved_object);
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -343,6 +344,7 @@ TopPanel::update_for_amended(Account const& p_saved_object)
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
+	m_entry_list->update_for_amended(p_saved_object);
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;

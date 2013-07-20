@@ -27,6 +27,23 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
+/**
+ * @todo When filtering by Account:
+ * 	If balance sheet Account, add column showing cumulative balance for
+ * 	Account for all time up the point of the Entry, for each Entry shown.
+ * 	We may also want to add a "reconciled balance" column.
+ *  If P&L Account, add column showing cumulative total spent in the period
+ *  shown.
+ *  These changes will probably make it so complex to update for new
+ *  Journals, deleted Journals etc, that we may no longer want to
+ *  do these updates at all, but rather just leave it up to the user
+ *  to click "Refresh" - or else just do a crude, slowish update
+ *  by refreshing the whole thing each time there's a change. But note,
+ *  if we leave it up to the user to click "Refresh", then there will be
+ *  times when the display shows non-existent Entries. We will then have
+ *  to intercept the user on those occasions when they try to edit a
+ *  transaction by selecting one of the non-existent Entries.
+ */
 class EntryListCtrl: public wxListCtrl
 {
 public:
@@ -79,6 +96,9 @@ public:
 	 * @todo Implement this.
 	 */
 	void update_for_amended(OrdinaryJournal const& p_journal);
+
+	void update_for_new(Account const& p_account);
+	void update_for_amended(Account const& p_account);
 
 	/**
 	 * Update displayed entries to reflect that the Entries with IDs
