@@ -132,6 +132,14 @@ private:
 	bool would_accept_entry(Entry const& p_entry) const;
 
 	bool filtering_for_account() const;
+	bool showing_reconciled_column() const;
+
+	int date_col_num() const;
+	int account_col_num() const;
+	int comment_col_num() const;
+	int amount_col_num() const;
+	int reconciled_col_num() const;
+	int num_columns() const;
 
 	/**
 	 * To remember which Entries have been added.

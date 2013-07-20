@@ -42,30 +42,6 @@ namespace gui
 // Anonymous namespace
 namespace
 {
-	int date_col_num()
-	{
-		return 0;
-	}
-	int account_col_num()
-	{
-		return 1;
-	}
-	int comment_col_num()
-	{
-		return 2;
-	}
-	int amount_col_num()
-	{
-		return 3;
-	}
-	int reconciled_col_num()
-	{
-		return 4;
-	}
-	int num_columns()
-	{
-		return 5;
-	}
 	bool lies_within
 	(	gregorian::date const& p_target,
 		gregorian::date const& p_min,
@@ -223,10 +199,16 @@ void
 EntryListCtrl::insert_columns()
 {
 	InsertColumn(date_col_num(), "Date", wxLIST_FORMAT_RIGHT);
-	InsertColumn(account_col_num(), "Account", wxLIST_FORMAT_LEFT);
-	InsertColumn(comment_col_num(), "Comment", wxLIST_FORMAT_LEFT);
+	if (!filtering_for_account())
+	{
+		InsertColumn(account_col_num(), "Account", wxLIST_FORMAT_LEFT);
+	}
+	InsertColumn(comment_col_num(), "Memo", wxLIST_FORMAT_LEFT);
 	InsertColumn(amount_col_num(), "Amount", wxLIST_FORMAT_RIGHT);
-	InsertColumn(reconciled_col_num(), "R", wxLIST_FORMAT_LEFT);
+	if (showing_reconciled_column())
+	{
+		InsertColumn(reconciled_col_num(), "R", wxLIST_FORMAT_LEFT);
+	}
 	return;
 }
 
@@ -234,9 +216,9 @@ void
 EntryListCtrl::set_column_widths()
 {
 	// We arrange the widths so that
-	// the Account column takes up just enough size for the Account
-	// name - up to a reasonable maximum - the other columns take up just
-	// enough room for their contents, and then the comment column
+	// the Account column (if present) takes up just enough size for the
+	// Account name - up to a reasonable maximum - the other columns take up
+	// just enough room for their contents, and then the comment column
 	// is sized such that the total width of all columns occupies exactly
 	// the full width of the available area.
 	int const num_cols = num_columns();
@@ -245,9 +227,12 @@ EntryListCtrl::set_column_widths()
 		SetColumnWidth(j, wxLIST_AUTOSIZE);
 	}
 	int const max_account_col_width = 200;
-	if (GetColumnWidth(account_col_num()) > max_account_col_width)
+	if (!filtering_for_account())
 	{
-		SetColumnWidth(account_col_num(), max_account_col_width);
+		if (GetColumnWidth(account_col_num()) > max_account_col_width)
+		{
+			SetColumnWidth(account_col_num(), max_account_col_width);
+		}
 	}
 	int total_widths = 0;
 	for (int j = 0; j != num_cols; ++j)
@@ -287,7 +272,6 @@ EntryListCtrl::add_entry(Entry const& entry)
 
 	OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
 	wxString const wx_date_string = date_format_wx(journal.date());
-	wxString const account_string = bstring_to_wx(entry.account().name());
 	wxString const comment_string = bstring_to_wx(entry.comment());
 	wxString const amount_string =
 		finformat_wx(entry.amount(), locale(), false);
@@ -309,16 +293,77 @@ EntryListCtrl::add_entry(Entry const& entry)
 	m_id_set.insert(entry.id());
 
 	// Populate the other columns
-	SetItem(i, account_col_num(), account_string);
+	if (!filtering_for_account())
+	{
+		wxString const account_string = bstring_to_wx(entry.account().name());
+		SetItem(i, account_col_num(), account_string);
+	}
 	SetItem(i, comment_col_num(), comment_string);
 	SetItem(i, amount_col_num(), amount_string);
-	SetItem(i, reconciled_col_num(), reconciled_string);
+	if (showing_reconciled_column())
+	{
+		SetItem(i, reconciled_col_num(), reconciled_string);
+	}
 }
 
 bool
 EntryListCtrl::filtering_for_account() const
 {
 	return static_cast<bool>(m_maybe_account);
+}
+
+bool
+EntryListCtrl::showing_reconciled_column() const
+{
+	if (!filtering_for_account())
+	{
+		return true;
+	}
+	assert (m_maybe_account);
+	return
+		super_type(value(m_maybe_account).account_type()) ==
+		account_super_type::balance_sheet;
+}
+
+int
+EntryListCtrl::date_col_num() const
+{
+	return 0;
+}
+
+int
+EntryListCtrl::account_col_num() const
+{
+	assert (!filtering_for_account());
+	return 1;
+}
+
+int
+EntryListCtrl::comment_col_num() const
+{
+	return filtering_for_account()? 1: 2;
+}
+
+int
+EntryListCtrl::amount_col_num() const
+{
+	return filtering_for_account()? 2: 3;
+}
+
+int
+EntryListCtrl::reconciled_col_num() const
+{
+	assert (showing_reconciled_column());
+	return filtering_for_account()? 3: 4;
+}
+
+int
+EntryListCtrl::num_columns() const
+{
+	int ret = 4;
+	if (filtering_for_account()) --ret;
+	if (showing_reconciled_column()) ++ret;
+	return ret;
 }
 
 void
@@ -378,11 +423,14 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 				// Update the row for this Entry to match the current
 				// state of the Entry.
 				SetItemText(pos, wx_date_string);
-				SetItem
-				(	pos,
-					account_col_num(),
-					bstring_to_wx(it->account().name())
-				);
+				if (!filtering_for_account())
+				{
+					SetItem
+					(	pos,
+						account_col_num(),
+						bstring_to_wx(it->account().name())
+					);
+				}
 				SetItem
 				(	pos,
 					comment_col_num(),
@@ -393,11 +441,14 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 					amount_col_num(),
 					finformat_wx(it->amount(), locale(), false)
 				);
-				SetItem
-				(	pos,
-					reconciled_col_num(),
-					(it->is_reconciled()? "Y": "N")
-				);
+				if (showing_reconciled_column())
+				{
+					SetItem
+					(	pos,
+						reconciled_col_num(),
+						(it->is_reconciled()? "Y": "N")
+					);
+				}
 			}
 		}
 	}
