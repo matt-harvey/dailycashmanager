@@ -167,6 +167,9 @@ EntryListCtrl::EntryListCtrl
 	}
 	progress_dialog.Destroy();
 	set_column_widths();
+
+	Fit();
+	Layout();
 }
 
 EntryListCtrl::EntryListCtrl
@@ -209,6 +212,9 @@ EntryListCtrl::EntryListCtrl
 		if (would_accept_entry(*it)) add_entry(*it);
 	}
 	set_column_widths();
+
+	Fit();
+	Layout();
 }
 
 void
@@ -429,6 +435,16 @@ EntryListCtrl::selected_entries(vector<Entry>& out)
 	}
 	return;
 }
+
+void
+EntryListCtrl::scroll_to_bottom()
+{
+	int const max_range = GetScrollRange(wxVERTICAL);
+	int const page_size = GetScrollPageSize(wxVERTICAL);
+	Scroll(-1, max_range - page_size);
+	return;
+}
+
 
 }  // namespace gui
 }  // namespace phatbooks

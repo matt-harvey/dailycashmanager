@@ -39,8 +39,9 @@ class EntryListCtrl;
  * If we do, then, among other things, the AccountCtrl will need to allow
  * the user to select Accounts of account_type::pure_envelope.
  *
- * @todo The EntryListCtrl within the EntryListPanel should take up all
- * of the available horizontal area.
+ * @todo EntryListCtrl has zero height until such time as user
+ * first clicks "Refresh". Various attempted workarounds for this
+ * have been tried to no avail...
  */
 class EntryListPanel: public wxPanel, private boost::noncopyable
 {
@@ -55,9 +56,13 @@ public:
 	void update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids);
 	void selected_entries(std::vector<Entry>& out);
 
+	// WARNING Hack... This should be private, but we need to call it from
+	// TopPanel to ensure EntryListCtrl is properly sized, AFTER the
+	// EntryListPanel has been constructed.
+	void configure_entry_list_ctrl();
+
 private:
 	void on_refresh_button_click(wxCommandEvent& event);
-	void configure_entry_list_ctrl();
 	Account selected_account() const;
 	boost::optional<boost::gregorian::date> selected_min_date() const;
 	boost::optional<boost::gregorian::date> selected_max_date() const;

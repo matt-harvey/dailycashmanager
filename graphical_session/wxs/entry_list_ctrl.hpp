@@ -92,6 +92,8 @@ public:
 	 */
 	void selected_entries(std::vector<Entry>& out);
 
+	void scroll_to_bottom();
+
 private:
 
 	EntryListCtrl

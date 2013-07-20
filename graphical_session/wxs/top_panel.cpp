@@ -62,6 +62,7 @@ TopPanel::TopPanel
 	m_draft_journal_list(0)
 {
 	m_top_sizer = new wxBoxSizer(wxHORIZONTAL);
+	SetSizer(m_top_sizer);
 	m_notebook = new wxNotebook
 	(	this,
 		wxID_ANY,
@@ -88,7 +89,6 @@ TopPanel::TopPanel
 	configure_entry_list();
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
-	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
 	Layout();
@@ -142,8 +142,8 @@ TopPanel::configure_entry_list()
 		m_database_connection
 	);
 	wxBoxSizer* page_2_sizer = new wxBoxSizer(wxHORIZONTAL);
+	page_2_sizer->Add(m_entry_list, wxSizerFlags(1).Expand());
 	m_notebook_page_2->SetSizer(page_2_sizer);
-	page_2_sizer->Add(m_entry_list, wxEXPAND);
 	page_2_sizer->Fit(m_notebook_page_2);
 	page_2_sizer->SetSizeHints(m_notebook_page_2);
 	m_notebook_page_2->Fit();

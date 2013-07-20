@@ -18,6 +18,7 @@
 #include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/window.h>
+#include <utility>
 #include <vector>
 
 using boost::optional;
@@ -159,23 +160,30 @@ EntryListPanel::selected_entries(vector<Entry>& out)
 void
 EntryListPanel::configure_entry_list_ctrl()
 {
-	if (m_entry_list_ctrl)
-	{
-		m_top_sizer->Detach(m_entry_list_ctrl);
-		m_entry_list_ctrl->Destroy();
-		m_entry_list_ctrl = 0;
-		--m_next_row;
-	}
-	m_entry_list_ctrl = EntryListCtrl::create_actual_ordinary_entry_list
+	int const unused_height =
+		GetClientSize().GetY() -
+		m_account_ctrl->GetSize().GetY() * 2 -
+		standard_gap() * 3 -
+		standard_border() * 2;
+	EntryListCtrl* temp = EntryListCtrl::create_actual_ordinary_entry_list
 	(	this,
 		wxSize
 		(	large_width() + medium_width() * 3 + standard_gap() * 3,
-			wxDefaultSize.y
+			unused_height
 		),
 		selected_account(),
 		selected_min_date(),
 		selected_max_date()
 	);
+	using std::swap;
+	swap(temp, m_entry_list_ctrl);
+	if (temp)
+	{
+		m_top_sizer->Detach(temp);
+		temp->Destroy();
+		temp = 0;
+		--m_next_row;
+	}
 	m_top_sizer->Add
 	(	m_entry_list_ctrl,
 		wxGBPosition(m_next_row, 1),
@@ -183,10 +191,13 @@ EntryListPanel::configure_entry_list_ctrl()
 		wxEXPAND
 	);
 	++m_next_row;
-	m_top_sizer->Fit(this);
-	m_top_sizer->SetSizeHints(this);
+	// m_top_sizer->Fit(this);
+	// m_top_sizer->SetSizeHints(this);
 	Fit();
-	Layout();
+	// Layout();
+	
+	m_entry_list_ctrl->scroll_to_bottom();
+
 	return;
 }
 
