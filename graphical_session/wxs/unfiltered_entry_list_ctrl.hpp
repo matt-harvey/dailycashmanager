@@ -10,6 +10,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class Account;
 class EntryReader;
 
 // End forward declarations
@@ -33,12 +34,16 @@ public:
 	virtual ~UnfilteredEntryListCtrl();
 
 private:
-	
+	void set_non_date_columns(long p_row, Entry const& p_entry);
+
 	virtual bool do_require_progress_log() const;
 	virtual void do_insert_columns();
 	virtual bool do_approve_entry(Entry const& p_entry) const;
 	virtual void do_push_entry(Entry const& p_entry);
+	virtual void do_update_row_for_entry(long p_row, Entry const& p_entry);
 	virtual void do_set_column_widths();
+	virtual int do_get_num_columns() const;
+	virtual void do_update_for_amended(Account const& p_account);
 
 };  // class UnfilteredEntryListCtrl
 

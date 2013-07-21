@@ -1,4 +1,9 @@
 #include "account_entry_list_ctrl.hpp"
+#include "account.hpp"
+#include "entry_list_ctrl.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
+#include <wx/window.h>
 
 namespace phatbooks
 {
@@ -58,6 +63,29 @@ AccountEntryListCtrl::do_approve_entry(Entry const& p_entry)
 		lies_within(p_entry.date(), m_min_date, m_maybe_max_date);
 }
 
+void
+AccountEntryListCtrl::do_set_column_widths()
+{
+	// We arrange the widths so that the comment column
+	// is sized such that the total width of all columns occupies exactly
+	// the full width of the available area.
+	int const num_cols = num_columns();
+	for (int j = 0; j != num_cols; ++j)
+	{
+		SetColumnWidth(j, wxLIST_AUTOSIZE);
+	}
+	int total_widths = 0;
+	for (int j = 0; j != num_cols; ++j)
+	{
+		total_widths += GetColumnWidth(j);
+	}
+
+	int const shortfall =
+		GetSize().GetWidth() - total_widths - scrollbar_width_allowance();
+	int const current_comment_width = GetColumnWidth(comment_col_num());
+	SetColumnWidth(comment_col_num(), current_comment_width + shortfall);
+	return;
+}
 
 
 }  // namespace gui

@@ -47,8 +47,6 @@ class EntryListCtrl: public wxListCtrl, private boost::noncopyable
 {
 public:
 
-	// WARNING "NEW HIERARCHY STUFF" BELOW
-
 	/**
 	 * @returns a pointer to a heap-allocated EntryListCtrl, listing
 	 * all and only the \e actual (non-budget) OrdinaryEntries stored in \e
@@ -60,9 +58,6 @@ public:
 		wxSize const& p_size,
 		PhatbooksDatabaseConnection& dbc
 	);
-
-
-	// WARNING "OLD STUFF" BELOW
 
 	/**
 	 * @returns a pointer to a heap-allocated EntryListCtrl, listing
@@ -98,13 +93,12 @@ public:
 	 * Update displayed entries to reflect that an already-saved
 	 * OrdinaryJournal p_journal has just been amended, and the amendments
 	 * saved.
-	 *
-	 * @todo Implement this.
 	 */
 	void update_for_amended(OrdinaryJournal const& p_journal);
 
-	void update_for_new(Account const& p_account);
 	void update_for_amended(Account const& p_account);
+
+	void update_for_new(Account const& p_account);
 
 	/**
 	 * Update displayed entries to reflect that the Entries with IDs
@@ -120,9 +114,13 @@ public:
 
 	void scroll_to_bottom();
 
+protected:
+	int num_columns() const;
+	int scrollbar_width_allowance() const;
+
 private:
 
-	// WARNING New stuff
+	void update_row_for_entry(long p_row, Entry const& p_entry);
 
 	/**
 	 * To be called by factory functions prior to returning pointer to newly
@@ -137,55 +135,25 @@ private:
 	virtual bool do_require_progress_log() const = 0;
 	virtual void do_insert_columns() = 0;
 	virtual bool do_approve_entry(Entry const& p_entry) = 0;
-	virtual void do_push_entry(Entry const p_entry) = 0;
+	
+	// TODO In current derived classes this doesn't take care of sorting by
+	// date.
+	virtual void do_push_entry(Entry const& p_entry) = 0;
+
+	// Assumes Entry is located at p_row.
+	virtual void do_update_row_for_entry(long p_row, Entry const& p_entry) = 0;
+
 	virtual void do_set_column_widths() = 0;
+	virtual int do_get_num_columns() const = 0;
 
-	// WARNING old stuff
-
-	EntryListCtrl
-	(	wxWindow* p_parent,
-		wxSize const& p_size,
-		Account const& p_account,
-		boost::optional<boost::gregorian::date> const& p_maybe_min_date =
-			boost::optional<boost::gregorian::date>(),
-		boost::optional<boost::gregorian::date> const& p_maybe_max_date =
-			boost::optional<boost::gregorian::date>()
-	);
+	virtual void do_update_for_amended(Account const& p_account);
 
 	void set_column_widths();
 
-	/**
-	 * @param entry must be an Entry with an id.
-	 *
-	 * @todo HIGH PRIORITY This doesn't take care of sorting by date.
-	 */
-	void add_entry(Entry const& entry);
-
-	/**
-	 * @returns true if and only if p_entry falls within the filtering
-	 * parameters for the EntryListCtrl.
-	 *
-	 * Note this does NOT filter for opening balance journal date.
-	 */
-	bool would_accept_entry(Entry const& p_entry) const;
-
-	bool filtering_for_account() const;
-	bool showing_reconciled_column() const;
-
-	int date_col_num() const;
-	int account_col_num() const;
-	int comment_col_num() const;
-	int amount_col_num() const;
-	int reconciled_col_num() const;
-	int num_columns() const;
-
-	/**
-	 * To remember which Entries have been added.
-	 */
+	// To remember which Entries have been added.
 	typedef boost::unordered_set<Entry::Id> IdSet;
-
-	// WARNING NEW STUFF
 	IdSet m_id_set;
+
 	PhatbooksDatabaseConnection& m_database_connection;
 
 };

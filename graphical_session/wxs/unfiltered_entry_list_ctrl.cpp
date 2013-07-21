@@ -28,7 +28,7 @@ namespace
 	{
 		return 3;
 	}
-	int num_columns()
+	int anon_num_columns()
 	{
 		return 4;
 	}
@@ -74,30 +74,48 @@ UnfilteredEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 void
 UnfilteredEntryListCtrl::do_push_entry(Entry const& p_entry)
 {
-	OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
-	wxString const wx_date_string = date_format_wx(journal.date());
-	wxString const account_string = bstring_to_wx(entry.account().name());
-	wxString const comment_string = bstring_to_wx(entry.comment());
-	wxString const amount_string =
-		finformat_wx(entry.amount(), locale(), false);
-
 	long const i = GetItemCount();
-
-	// Populate 0th column
+	OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
 	assert (date_col_num() == 0);
-	InsertItem(i, wx_date_string);
+	InsertItem(i, date_format_wx(journal.date()));
+	set_non_date_columns(i, p_entry);
+	return;
+}
 
-	// The item may change position due to e.g. sorting, so store the
-	// Entry ID in the item's data
-	// TODO Do a static assert to ensure second param will fit the id.
-	assert (entry.has_id());
-	SetItemData(i, entry.id());
+void
+UnfilteredEntryListCtrl::do_update_row_for_entry
+(	long p_row,
+	Entry const& p_entry
+)
+{
+	OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
+	SetItemText(p_row, date_format_wx(journal.date()));
+	set_non_date_columns(p_row, p_entry);
+	return;
+}
 
-	// Populate the other columns
-	SetItem(i, account_col_num(), account_string);
-	SetItem(i, comment_col_num(), comment_string);
-	SetItem(i, amount_col_num(), amount_string);
-
+void
+UnfilteredEntryListCtrl::set_non_date_columns
+(	long p_row,
+	Entry const& p_entry
+)
+{
+	SetItem
+	(	p_row,
+		account_col_num(),
+		bstring_to_wx(it->account().name())
+	);
+	SetItem
+	(	p_row,
+		comment_col_num(),
+		bstring_to_wx(it->comment())
+	);
+	SetItem
+	(	p_row,
+		amount_col_num(),
+		finformat_wx(it->amount(), locale(), false)
+	);
+	assert (num_columns() == 4);
 	return;
 }
 
@@ -126,16 +144,35 @@ UnfilteredEntryListCtrl::do_set_column_widths()
 		total_widths += GetColumnWidth(j);
 	}
 
-	// TODO Make this more precise
-	int const scrollbar_width_allowance = 50;
-
 	int const shortfall =
-		GetSize().GetWidth() - total_widths - scrollbar_width_allowance;
+		GetSize().GetWidth() - total_widths - scrollbar_width_allowance();
 	int const current_comment_width = GetColumnWidth(comment_col_num());
 	SetColumnWidth(comment_col_num(), current_comment_width + shortfall);
 	return;
 }
 
+int
+UnfilteredEntryListCtrl::do_get_num_columns()
+{
+	return anon_num_columns();
+}
+
+void
+UnfilteredEntryListCtrl::do_update_for_amended(Account const& p_account)
+{
+	size_t i = 0;
+	size_t const lim = GetItemCount();
+	wxString const name = bstring_to_wx(p_account.name());
+	for ( ; i != lim; ++i)
+	{
+		Entry const entry(m_database_connection, GetItemData(i));
+		if (entry.account() == p_account)
+		{
+			SetItem(i, account_col_num(), name);
+		}
+	}
+	return;
+}
 
 }  // namespace gui
 }  // namespace phatbooks
