@@ -5,6 +5,9 @@ namespace phatbooks
 namespace gui
 {
 
+PLAccountEntryListCtrl::~PLAccountEntryListCtrl()
+{
+}
 
 }  // namespace gui
 }  // namespace phatbooks

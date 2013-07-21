@@ -10,6 +10,7 @@
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/unordered_set.hpp>
 #include <vector>
@@ -44,7 +45,7 @@ namespace gui
  *  to intercept the user on those occasions when they try to edit a
  *  transaction by selecting one of the non-existent Entries.
  */
-class EntryListCtrl: public wxListCtrl
+class EntryListCtrl: public wxListCtrl, private boost::noncopyable
 {
 public:
 		
