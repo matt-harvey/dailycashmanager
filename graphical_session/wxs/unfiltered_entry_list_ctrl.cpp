@@ -28,8 +28,13 @@ namespace
 	{
 		return 3;
 	}
+	int num_columns()
+	{
+		return 4;
+	}
 
 }  // end anonymous namespace
+
 
 UnfilteredEntryListCtrl::UnfilteredEntryListCtrl
 (	wxWindow* p_parent,
@@ -93,6 +98,41 @@ UnfilteredEntryListCtrl::do_push_entry(Entry const& p_entry)
 	SetItem(i, comment_col_num(), comment_string);
 	SetItem(i, amount_col_num(), amount_string);
 
+	return;
+}
+
+void
+UnfilteredEntryListCtrl::do_set_column_widths()
+{
+	// We arrange the widths so that
+	// the Account column takes up just enough size for the
+	// Account name - up to a reasonable maximum - the other columns take up
+	// just enough room for their contents, and then the comment column
+	// is sized such that the total width of all columns occupies exactly
+	// the full width of the available area.
+	int const num_cols = num_columns();
+	for (int j = 0; j != num_cols; ++j)
+	{
+		SetColumnWidth(j, wxLIST_AUTOSIZE);
+	}
+	int const max_account_col_width = 200;
+	if (GetColumnWidth(account_col_num()) > max_account_col_width)
+	{
+		SetColumnWidth(account_col_num(), max_account_col_width);
+	}
+	int total_widths = 0;
+	for (int j = 0; j != num_cols; ++j)
+	{
+		total_widths += GetColumnWidth(j);
+	}
+
+	// TODO Make this more precise
+	int const scrollbar_width_allowance = 50;
+
+	int const shortfall =
+		GetSize().GetWidth() - total_widths - scrollbar_width_allowance;
+	int const current_comment_width = GetColumnWidth(comment_col_num());
+	SetColumnWidth(comment_col_num(), current_comment_width + shortfall);
 	return;
 }
 

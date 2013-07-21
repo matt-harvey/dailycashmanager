@@ -40,28 +40,6 @@ namespace phatbooks
 namespace gui
 {
 
-// WARNING "NEW HIERARCHY" STUFF BELOW
-
-
-
-// Anonymous namespace
-namespace
-{
-	bool lies_within
-	(	gregorian::date const& p_target,
-		gregorian::date const& p_min,
-		optional<gregorian::date> const& p_max
-	)
-	{
-		bool const ok_with_min = (p_target >= p_min);
-		bool const ok_with_max = (!p_max || (p_target <= value(p_max)));
-		return ok_with_min && ok_with_max;
-	}
-
-}  // End anonymous namespace
-
-
-
 EntryListCtrl::EntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
@@ -90,11 +68,39 @@ EntryListCtrl::create_actual_ordinary_entry_list
 		p_size,
 		p_database_connection
 	);
-	ret->insert_columns();
-	ret->populate();
-	ret->Fit();
-	ret->Layout();
+	initialize(ret);
 	return ret;
+}
+
+EntryListCtrl*
+EntryListCtrl::create_actual_ordinary_entry_list
+(	wxWindow* p_parent,
+	wxSize const& p_size,
+	Account const& p_account,
+	optional<gregorian::date> const& p_maybe_min_date,
+	optional<gregorian::date> const& p_maybe_max_date
+)
+{
+	EntryListCtrl* ret = new EntryListCtrl
+	(	p_parent,
+		p_size,
+		p_account,
+		p_maybe_min_date,
+		p_maybe_max_date
+	);
+	initialize(ret);
+	return ret;
+}
+
+void
+EntryListCtrl::initialize(EntryListCtrl* p_entry_list_ctrl)
+{
+	p_entry_list_ctrl->insert_columns();
+	p_entry_list_ctrl->populate();
+	p_entry_list_ctrl->set_column_widths();
+	p_entry_list_ctrl->Fit();
+	p_entry_list_ctrl->Layout();
+	return;
 }
 
 void
@@ -147,6 +153,13 @@ EntryListCtrl::populate()
 }
 
 void
+EntryListCtrl::set_column_widths()
+{
+	do_set_column_widths();
+	return;
+}
+
+void
 EntryListCtrl::process_candidate_entry(Entry const& p_entry)
 {
 	assert (entry.has_id());
@@ -159,75 +172,11 @@ EntryListCtrl::process_candidate_entry(Entry const& p_entry)
 }
 
 
-// WARNING OLD STRUCTURE BELOW
-
-EntryListCtrl*
-EntryListCtrl::create_actual_ordinary_entry_list
-(	wxWindow* p_parent,
-	wxSize const& p_size,
-	Account const& p_account,
-	optional<gregorian::date> const& p_maybe_min_date,
-	optional<gregorian::date> const& p_maybe_max_date
-)
-{
-	EntryListCtrl* ret = new EntryListCtrl
-	(	p_parent,
-		p_size,
-		p_account,
-		p_maybe_min_date,
-		p_maybe_max_date
-	);
-	return ret;
-}
-
-EntryListCtrl::EntryListCtrl
-(	wxWindow* p_parent,
-	wxSize const& p_size,
-	Account const& p_account,
-	optional<gregorian::date> const& p_maybe_min_date,
-	optional<gregorian::date> const& p_maybe_max_date
-):
-	wxListCtrl
-	(	p_parent,
-		wxID_ANY,
-		wxDefaultPosition,
-		p_size,
-		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
-	),
-	m_database_connection(p_account.database_connection()),
-	m_maybe_account(p_account),
-	m_min_date
-	(	p_maybe_min_date?
-		value(p_maybe_min_date):
-		p_account.database_connection().opening_balance_journal_date() +
-			gregorian::date_duration(1)
-	),
-	m_maybe_max_date(p_maybe_max_date)
-{
-	insert_columns();
-
-	// TODO Should we have a progress indicator here?
-	
-	ActualOrdinaryEntryReader const reader(m_database_connection);
-	ActualOrdinaryEntryReader::const_iterator it = reader.begin();
-	ActualOrdinaryEntryReader::const_iterator const end = reader.end();
-	// WARNING This could probably be made significantly more
-	// efficient. Consider that reader should already be sorted by date.
-	// Also we could have special version of would_accept_entry() where
-	// it is assumed that we are filtering for Account.
-	for ( ; it != end; ++it)
-	{
-		if (would_accept_entry(*it)) add_entry(*it);
-	}
-	set_column_widths();
-
-	Fit();
-	Layout();
-}
-
 EntryListCtrl::~EntryListCtrl()
 {
 }
+
+// WARNING OLD STUFF BELOW
 
 void
 EntryListCtrl::insert_columns()

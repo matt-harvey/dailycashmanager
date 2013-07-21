@@ -9,8 +9,8 @@ namespace gui
 {
 
 /**
- * An EntryListCtrl which is filtered by Account, where the Account
- * is of account_super_type::balance_sheet.
+ * An AccountEntryListCtrl where the Account is of
+ * account_super_type::balance_sheet.
  */
 class BSAccountEntryListCtrl: public AccountEntryListCtrl
 {

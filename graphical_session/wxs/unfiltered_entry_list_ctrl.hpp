@@ -18,10 +18,8 @@ namespace gui
 {
 
 /**
- * An EntryListCtrl which is not filtered by Account (but which may be
- * filtered by date).
- *
- * @todo Support filtering by date?
+ * An EntryListCtrl which is not filtered by Account or date.
+ * Shows only \e actual (non-budget) and \e ordinary (non-draft) Entries.
  */
 class UnfilteredEntryListCtrl: public EntryListCtrl
 {
@@ -40,6 +38,7 @@ private:
 	virtual void do_insert_columns();
 	virtual bool do_approve_entry(Entry const& p_entry) const;
 	virtual void do_push_entry(Entry const& p_entry);
+	virtual void do_set_column_widths();
 
 };  // class UnfilteredEntryListCtrl
 

@@ -9,9 +9,7 @@
 #include "entry.hpp"
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/optional.hpp>
 #include <boost/unordered_set.hpp>
 #include <vector>
 
@@ -126,6 +124,12 @@ private:
 
 	// WARNING New stuff
 
+	/**
+	 * To be called by factory functions prior to returning pointer to newly
+	 * created EntryListCtrl.
+	 */
+	static void initialize(EntryListCtrl* p_entry_list_ctrl);
+
 	void insert_columns();
 	void populate();
 	void process_candidate_entry(Entry const& p_entry);
@@ -134,15 +138,9 @@ private:
 	virtual void do_insert_columns() = 0;
 	virtual bool do_approve_entry(Entry const& p_entry) = 0;
 	virtual void do_push_entry(Entry const p_entry) = 0;
+	virtual void do_set_column_widths() = 0;
 
 	// WARNING old stuff
-
-	EntryListCtrl
-	(	wxWindow* p_parent,
-		wxSize const& p_size,
-		EntryReader const& p_reader,
-		PhatbooksDatabaseConnection& p_database_connection
-	);
 
 	EntryListCtrl
 	(	wxWindow* p_parent,
@@ -190,10 +188,6 @@ private:
 	IdSet m_id_set;
 	PhatbooksDatabaseConnection& m_database_connection;
 
-	// WARNING OLD STUFF
-	boost::optional<Account> m_maybe_account;  // TODO Shouldn't be here
-	boost::gregorian::date m_min_date;
-	boost::optional<boost::gregorian::date> m_maybe_max_date;
 };
 
 
