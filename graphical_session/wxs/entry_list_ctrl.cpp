@@ -10,6 +10,7 @@
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "unfiltered_entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
@@ -39,6 +40,10 @@ namespace phatbooks
 namespace gui
 {
 
+// WARNING "NEW HIERARCHY" STUFF BELOW
+
+
+
 // Anonymous namespace
 namespace
 {
@@ -56,6 +61,23 @@ namespace
 }  // End anonymous namespace
 
 
+
+EntryListCtrl::EntryListCtrl
+(	wxWindow* p_parent,
+	wxSize const& p_size,
+	PhatbooksDatabaseConnection
+):
+	wxListCtrl
+	(	p_parent,
+		wxID_ANY,
+		wxDefaultPosition,
+		p_size,
+		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
+	),
+	m_database_connection(p_database_connection)
+{
+}
+
 EntryListCtrl*
 EntryListCtrl::create_actual_ordinary_entry_list
 (	wxWindow* p_parent,
@@ -63,11 +85,81 @@ EntryListCtrl::create_actual_ordinary_entry_list
 	PhatbooksDatabaseConnection& p_database_connection
 )
 {
-	ActualOrdinaryEntryReader const reader(p_database_connection);
-	EntryListCtrl* ret =
-		new EntryListCtrl(p_parent, p_size, reader, p_database_connection);
+	EntryListCtrl* ret = new UnfilteredEntryListCtrl
+	(	p_parent,
+		p_size,
+		p_database_connection
+	);
+	ret->insert_columns();
+	ret->populate();
+	ret->Fit();
+	ret->Layout();
 	return ret;
 }
+
+void
+EntryListCtrl::insert_columns()
+{
+	do_insert_columns();
+	return;
+}
+
+void
+EntryListCtrl::populate()
+{
+	boost::scoped_ptr<EntryReader> const reader(make_entry_reader());
+	EntryReader::const_iterator it = reader->begin();
+	EntryReader::const_iterator const end = reader->end();
+	if (do_require_progress_log())
+	{
+		EntryReader::size_type i = 0;
+		EntryReader::size_type progress = 0;
+		EntryReader::size_type const progress_scaling_factor = 32;
+		EntryReader::size_type const progress_max =
+			reader.size() / progress_scaling_factor;
+		wxProgressDialog progress_dialog
+		(	wxEmptyString,
+			"Loading transactions...",
+			progress_max,
+			this,
+			wxPD_APP_MODAL | wxPD_AUTO_HIDE | wxRESIZE_BORDER
+		);
+		for ( ; it != end; ++it, ++i)
+		{
+			process_candidate_entry(*it);
+			if (i % progress_scaling_factor == 0)
+			{
+				assert (progress <= progress_max);
+				progress_dialog.Update(progress);'
+				++progress;
+			}
+		}
+		progress_dialog.Destroy();
+	}
+	else
+	{
+		for ( ; it != end; ++it)
+		{
+			process_candidate_entry(*it);
+		}
+	}
+	return;
+}
+
+void
+EntryListCtrl::process_candidate_entry(Entry const& p_entry)
+{
+	assert (entry.has_id());
+	if (do_approve_entry(p_entry))
+	{
+		do_push_entry(p_entry);
+		m_id_set.insert(entry.id());
+	}
+	return;
+}
+
+
+// WARNING OLD STRUCTURE BELOW
 
 EntryListCtrl*
 EntryListCtrl::create_actual_ordinary_entry_list
@@ -86,68 +178,6 @@ EntryListCtrl::create_actual_ordinary_entry_list
 		p_maybe_max_date
 	);
 	return ret;
-}
-
-EntryListCtrl::EntryListCtrl
-(	wxWindow* p_parent,
-	wxSize const& p_size,
-	EntryReader const& p_reader,
-	PhatbooksDatabaseConnection& p_database_connection	
-):
-	wxListCtrl
-	(	p_parent,
-		wxID_ANY,
-		wxDefaultPosition,
-		p_size,
-		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
-	),
-	m_database_connection(p_database_connection),
-	m_min_date
-	(	m_database_connection.opening_balance_journal_date() +
-		gregorian::date_duration(1)
-	)
-{
-	assert (!m_maybe_account);
-	assert (!m_maybe_max_date);
-	insert_columns();
-
-	EntryReader::size_type i = 0;
-	EntryReader::size_type progress = 0;
-	EntryReader::size_type const progress_scaling_factor = 32;
-	EntryReader::size_type const progress_max =
-		p_reader.size() / progress_scaling_factor;
-
-	// Create a progress dialog
-	wxProgressDialog progress_dialog
-	(	wxEmptyString,
-		"Loading transactions...",
-		progress_max,
-		this,
-		wxPD_APP_MODAL | wxPD_AUTO_HIDE | wxRESIZE_BORDER
-	);
-
-	EntryReader::const_iterator it = p_reader.begin();
-	EntryReader::const_iterator const end = p_reader.end();
-	for ( ; it != end; ++it)
-	{
-		if (it->date() != m_min_date)
-		{
-			assert (would_accept_entry(*it));
-			add_entry(*it);
-		}
-		// Update the progress dialog
-		if (i % progress_scaling_factor == 0)
-		{
-			assert (progress <= progress_max);
-			progress_dialog.Update(progress);
-			++progress;
-		}
-	}
-	progress_dialog.Destroy();
-	set_column_widths();
-
-	Fit();
-	Layout();
 }
 
 EntryListCtrl::EntryListCtrl
@@ -308,6 +338,7 @@ EntryListCtrl::add_entry(Entry const& entry)
 	{
 		SetItem(i, reconciled_col_num(), reconciled_string);
 	}
+	return;
 }
 
 bool

@@ -48,7 +48,9 @@ namespace gui
 class EntryListCtrl: public wxListCtrl, private boost::noncopyable
 {
 public:
-		
+
+	// WARNING "NEW HIERARCHY STUFF" BELOW
+
 	/**
 	 * @returns a pointer to a heap-allocated EntryListCtrl, listing
 	 * all and only the \e actual (non-budget) OrdinaryEntries stored in \e
@@ -60,6 +62,9 @@ public:
 		wxSize const& p_size,
 		PhatbooksDatabaseConnection& dbc
 	);
+
+
+	// WARNING "OLD STUFF" BELOW
 
 	/**
 	 * @returns a pointer to a heap-allocated EntryListCtrl, listing
@@ -119,6 +124,19 @@ public:
 
 private:
 
+	// WARNING New stuff
+
+	void insert_columns();
+	void populate();
+	void process_candidate_entry(Entry const& p_entry);
+
+	virtual bool do_require_progress_log() const = 0;
+	virtual void do_insert_columns() = 0;
+	virtual bool do_approve_entry(Entry const& p_entry) = 0;
+	virtual void do_push_entry(Entry const p_entry) = 0;
+
+	// WARNING old stuff
+
 	EntryListCtrl
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
@@ -136,7 +154,6 @@ private:
 			boost::optional<boost::gregorian::date>()
 	);
 
-	void insert_columns();
 	void set_column_widths();
 
 	/**
@@ -168,13 +185,20 @@ private:
 	 * To remember which Entries have been added.
 	 */
 	typedef boost::unordered_set<Entry::Id> IdSet;
-	IdSet m_id_set;
 
+	// WARNING NEW STUFF
+	IdSet m_id_set;
 	PhatbooksDatabaseConnection& m_database_connection;
-	boost::optional<Account> m_maybe_account;
+
+	// WARNING OLD STUFF
+	boost::optional<Account> m_maybe_account;  // TODO Shouldn't be here
 	boost::gregorian::date m_min_date;
 	boost::optional<boost::gregorian::date> m_maybe_max_date;
 };
+
+
+
+
 
 
 }  // namespace gui
