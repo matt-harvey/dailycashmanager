@@ -195,6 +195,10 @@ EntryListCtrl::EntryListCtrl
 	Layout();
 }
 
+EntryListCtrl::~EntryListCtrl()
+{
+}
+
 void
 EntryListCtrl::insert_columns()
 {

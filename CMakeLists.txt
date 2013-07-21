@@ -176,9 +176,9 @@ set (gui_files
 	 graphical_session/wxs/account_dialog.cpp
 	 graphical_session/wxs/account_list_ctrl.cpp
 	 graphical_session/wxs/account_type_ctrl.cpp
-	 graphical_session/wxs/budget_dialog.cpp
-	 graphical_session/wxs/string_set_validator.cpp
 	 graphical_session/wxs/app.cpp
+	 graphical_session/wxs/bs_account_entry_list_ctrl.cpp
+	 graphical_session/wxs/budget_dialog.cpp
 	 graphical_session/wxs/date_ctrl.cpp
 	 graphical_session/wxs/date_validator.cpp
 	 graphical_session/wxs/decimal_renderer.cpp
@@ -193,8 +193,10 @@ set (gui_files
 	 graphical_session/wxs/frame.cpp
 	 graphical_session/wxs/frequency_ctrl.cpp
 	 graphical_session/wxs/locale.cpp
+	 graphical_session/wxs/pl_account_entry_list_ctrl.cpp
 	 graphical_session/wxs/setup_wizard.cpp
 	 graphical_session/wxs/sizing.cpp
+	 graphical_session/wxs/string_set_validator.cpp
 	 graphical_session/wxs/top_panel.cpp
 	 graphical_session/wxs/transaction_ctrl.cpp
 	 graphical_session/wxs/transaction_type_ctrl.cpp

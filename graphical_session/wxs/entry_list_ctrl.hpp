@@ -82,6 +82,8 @@ public:
 			boost::optional<boost::gregorian::date>()
 	);
 
+	virtual ~EntryListCtrl();
+
 	/**
 	 * Update displayed entries to reflect that a \e p_journal has been newly
 	 * posted (having not previously existed in the database).
