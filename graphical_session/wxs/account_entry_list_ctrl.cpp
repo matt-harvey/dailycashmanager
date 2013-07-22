@@ -3,7 +3,13 @@
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/optional.hpp>
 #include <wx/window.h>
+
+using boost::optional;
+using jewel::value;
+
+namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
@@ -26,7 +32,7 @@ namespace
 
 }  // End anonymous namespace
 
-AccountEntryListCtrl
+AccountEntryListCtrl::AccountEntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
 	Account const& p_account,
@@ -50,13 +56,13 @@ AccountEntryListCtrl::~AccountEntryListCtrl()
 }
 
 bool
-AccountEntryListCtrl::do_require_progress_log()
+AccountEntryListCtrl::do_require_progress_log() const
 {
 	return false;
 }
 
 bool
-AccountEntryListCtrl::do_approve_entry(Entry const& p_entry)
+AccountEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 {
 	return
 		(p_entry.account() == m_account) &&
@@ -82,8 +88,12 @@ AccountEntryListCtrl::do_set_column_widths()
 
 	int const shortfall =
 		GetSize().GetWidth() - total_widths - scrollbar_width_allowance();
-	int const current_comment_width = GetColumnWidth(comment_col_num());
-	SetColumnWidth(comment_col_num(), current_comment_width + shortfall);
+	int const current_comment_width =
+		GetColumnWidth(do_get_comment_col_num());
+	SetColumnWidth
+	(	do_get_comment_col_num(),
+		current_comment_width + shortfall
+	);
 	return;
 }
 

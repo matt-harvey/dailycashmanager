@@ -1,6 +1,17 @@
 #include "pl_account_entry_list_ctrl.hpp"
 #include "account_entry_list_ctrl.hpp"
 #include "entry.hpp"
+#include "locale.hpp"
+#include "ordinary_journal.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
+#include <jewel/optional.hpp>
+
+using boost::optional;
+using jewel::value;
+
+namespace gregorian = boost::gregorian;
+
 
 namespace phatbooks
 {
@@ -33,8 +44,8 @@ PLAccountEntryListCtrl::PLAccountEntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
 	Account const& p_account,
-	boost::optional<gregorian::date> const& p_maybe_min_date,
-	boost::optional<gregorian::date> const& p_maybe_max_date
+	optional<gregorian::date> const& p_maybe_min_date,
+	optional<gregorian::date> const& p_maybe_max_date
 ):
 	AccountEntryListCtrl
 	(	p_parent,
@@ -51,17 +62,17 @@ PLAccountEntryListCtrl::~PLAccountEntryListCtrl()
 }
 
 void
-BSAccountEntryListCtrl::set_non_date_columns(long p_row, Entry const& p_entry)
+PLAccountEntryListCtrl::set_non_date_columns(long p_row, Entry const& p_entry)
 {
 	SetItem
 	(	p_row,
 		comment_col_num(),
-		bstring_to_wx(it->comment())
+		bstring_to_wx(p_entry.comment())
 	);
 	SetItem
 	(	p_row,
 		amount_col_num(),
-		finformat_wx(it->amount(), locale(), false)
+		finformat_wx(p_entry.amount(), locale(), false)
 	);
 	assert (num_columns() == 3);
 	return;
@@ -80,7 +91,7 @@ PLAccountEntryListCtrl::do_insert_columns()
 void
 PLAccountEntryListCtrl::do_push_entry(Entry const& p_entry)
 {
-	OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
+	OrdinaryJournal const journal(p_entry.journal<OrdinaryJournal>());
 	long const i = GetItemCount();
 
 	// Populate 0th column
@@ -90,10 +101,10 @@ PLAccountEntryListCtrl::do_push_entry(Entry const& p_entry)
 
 	// Populate the other columns
 
-	SetItem(i, comment_col_num(), bstring_to_wx(entry.comment());
+	SetItem(i, comment_col_num(), bstring_to_wx(p_entry.comment()));
 
 	wxString const amount_string =
-		finformat_wx(entry.amount(), locale(), false);
+		finformat_wx(p_entry.amount(), locale(), false);
 	SetItem(i, amount_col_num(), amount_string);
 
 	return;
@@ -106,10 +117,16 @@ PLAccountEntryListCtrl::do_update_row_for_entry
 	Entry const& p_entry
 )
 {
-	OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
+	OrdinaryJournal const journal(p_entry.journal<OrdinaryJournal>());
 	SetItemText(p_row, date_format_wx(journal.date()));
 	set_non_date_columns(p_row, p_entry);
 	return;
+}
+
+int
+PLAccountEntryListCtrl::do_get_comment_col_num() const
+{
+	return comment_col_num();
 }
 
 int

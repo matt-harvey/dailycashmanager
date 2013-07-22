@@ -115,8 +115,15 @@ public:
 	void scroll_to_bottom();
 
 protected:
+	EntryListCtrl
+	(	wxWindow* p_parent,
+		wxSize const& p_size,
+		PhatbooksDatabaseConnection& p_database_connection
+	);
+
 	int num_columns() const;
 	int scrollbar_width_allowance() const;
+	PhatbooksDatabaseConnection& database_connection();
 
 private:
 
@@ -134,7 +141,7 @@ private:
 
 	virtual bool do_require_progress_log() const = 0;
 	virtual void do_insert_columns() = 0;
-	virtual bool do_approve_entry(Entry const& p_entry) = 0;
+	virtual bool do_approve_entry(Entry const& p_entry) const = 0;
 	
 	// TODO In current derived classes this doesn't take care of sorting by
 	// date.
@@ -147,6 +154,8 @@ private:
 	virtual int do_get_num_columns() const = 0;
 
 	virtual void do_update_for_amended(Account const& p_account);
+	
+	virtual EntryReader* do_make_entry_reader() const;
 
 	void set_column_widths();
 

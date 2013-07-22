@@ -1,6 +1,16 @@
 #include "bs_account_entry_list_ctrl.hpp"
 #include "account_entry_list_ctrl.hpp"
 #include "entry.hpp"
+#include "locale.hpp"
+#include "ordinary_journal.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
+#include <jewel/optional.hpp>
+
+using boost::optional;
+using jewel::value;
+
+namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
@@ -33,12 +43,12 @@ namespace
 }  // end anonymous namespace
 
 
-BSAccountEntryList::BSAccountEntryList
+BSAccountEntryListCtrl::BSAccountEntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
 	Account const& p_account,
-	boost::optional<gregorian::date> const& p_maybe_min_date,
-	boost::optional<gregorian::date> const& p_maybe_max_date
+	optional<gregorian::date> const& p_maybe_min_date,
+	optional<gregorian::date> const& p_maybe_max_date
 ):
 	AccountEntryListCtrl
 	(	p_parent,
@@ -60,17 +70,17 @@ BSAccountEntryListCtrl::set_non_date_columns(long p_row, Entry const& p_entry)
 	SetItem
 	(	p_row,
 		comment_col_num(),
-		bstring_to_wx(it->comment())
+		bstring_to_wx(p_entry.comment())
 	);
 	SetItem
 	(	p_row,
 		amount_col_num(),
-		finformat_wx(it->amount(), locale(), false)
+		finformat_wx(p_entry.amount(), locale(), false)
 	);
 	SetItem
 	(	p_row,
 		reconciled_col_num(),
-		(it->is_reconciled? wxString("Y"): wxString("N"))
+		(p_entry.is_reconciled()? wxString("Y"): wxString("N"))
 	);
 	assert (num_columns() == 4);
 	return;
@@ -91,7 +101,7 @@ void
 BSAccountEntryListCtrl::do_push_entry(Entry const& p_entry)
 {
 	long const i = GetItemCount();
-	OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
+	OrdinaryJournal const journal(p_entry.journal<OrdinaryJournal>());
 	assert (date_col_num() == 0);
 	InsertItem(i, date_format_wx(journal.date()));
 	set_non_date_columns(i, p_entry);
@@ -104,10 +114,16 @@ BSAccountEntryListCtrl::do_update_row_for_entry
 	Entry const& p_entry
 )
 {
-	OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
+	OrdinaryJournal const journal(p_entry.journal<OrdinaryJournal>());
 	SetItemText(p_row, date_format_wx(journal.date()));
 	set_non_date_columns(p_row, p_entry);
 	return;
+}
+
+int
+BSAccountEntryListCtrl::do_get_comment_col_num() const
+{
+	return comment_col_num();
 }
 
 int

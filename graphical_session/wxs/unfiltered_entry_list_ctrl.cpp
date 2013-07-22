@@ -1,6 +1,8 @@
 #include "unfiltered_entry_list_ctrl.hpp"
 #include "entry_list_ctrl.hpp"
 #include "entry_reader.hpp"
+#include "locale.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <wx/window.h>
 #include <wx/gdicmn.h>
@@ -49,8 +51,8 @@ UnfilteredEntryListCtrl::~UnfilteredEntryListCtrl()
 {
 }
 
-void
-UnfilteredEntryListCtrl::do_require_progress_log()
+bool
+UnfilteredEntryListCtrl::do_require_progress_log() const
 {
 	return true;
 }
@@ -68,6 +70,7 @@ UnfilteredEntryListCtrl::do_insert_columns()
 bool
 UnfilteredEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 {
+	(void)p_entry;  // Silence compiler re. unused parameter.
 	return true;
 }
 
@@ -75,7 +78,7 @@ void
 UnfilteredEntryListCtrl::do_push_entry(Entry const& p_entry)
 {
 	long const i = GetItemCount();
-	OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
+	OrdinaryJournal const journal(p_entry.journal<OrdinaryJournal>());
 	assert (date_col_num() == 0);
 	InsertItem(i, date_format_wx(journal.date()));
 	set_non_date_columns(i, p_entry);
@@ -88,7 +91,7 @@ UnfilteredEntryListCtrl::do_update_row_for_entry
 	Entry const& p_entry
 )
 {
-	OrdinaryJournal const journal(entry.journal<OrdinaryJournal>());
+	OrdinaryJournal const journal(p_entry.journal<OrdinaryJournal>());
 	SetItemText(p_row, date_format_wx(journal.date()));
 	set_non_date_columns(p_row, p_entry);
 	return;
@@ -103,17 +106,17 @@ UnfilteredEntryListCtrl::set_non_date_columns
 	SetItem
 	(	p_row,
 		account_col_num(),
-		bstring_to_wx(it->account().name())
+		bstring_to_wx(p_entry.account().name())
 	);
 	SetItem
 	(	p_row,
 		comment_col_num(),
-		bstring_to_wx(it->comment())
+		bstring_to_wx(p_entry.comment())
 	);
 	SetItem
 	(	p_row,
 		amount_col_num(),
-		finformat_wx(it->amount(), locale(), false)
+		finformat_wx(p_entry.amount(), locale(), false)
 	);
 	assert (num_columns() == 4);
 	return;
@@ -152,7 +155,7 @@ UnfilteredEntryListCtrl::do_set_column_widths()
 }
 
 int
-UnfilteredEntryListCtrl::do_get_num_columns()
+UnfilteredEntryListCtrl::do_get_num_columns() const
 {
 	return anon_num_columns();
 }
@@ -165,7 +168,7 @@ UnfilteredEntryListCtrl::do_update_for_amended(Account const& p_account)
 	wxString const name = bstring_to_wx(p_account.name());
 	for ( ; i != lim; ++i)
 	{
-		Entry const entry(m_database_connection, GetItemData(i));
+		Entry const entry(database_connection(), GetItemData(i));
 		if (entry.account() == p_account)
 		{
 			SetItem(i, account_col_num(), name);

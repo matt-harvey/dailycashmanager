@@ -46,7 +46,7 @@ namespace gui
 EntryListCtrl::EntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection
+	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxListCtrl
 	(	p_parent,
@@ -87,7 +87,7 @@ EntryListCtrl::create_actual_ordinary_entry_list
 	EntryListCtrl* ret = 0;
 	switch (super_type(p_account.account_type()))
 	{
-	case account_super_type::balance_sheet
+	case account_super_type::balance_sheet:
 		ret = new BSAccountEntryListCtrl
 		(	p_parent,
 			p_size,
@@ -134,7 +134,7 @@ EntryListCtrl::insert_columns()
 void
 EntryListCtrl::populate()
 {
-	boost::scoped_ptr<EntryReader> const reader(make_entry_reader());
+	boost::scoped_ptr<EntryReader> const reader(do_make_entry_reader());
 	EntryReader::const_iterator it = reader->begin();
 	EntryReader::const_iterator const end = reader->end();
 	if (do_require_progress_log())
@@ -143,7 +143,7 @@ EntryListCtrl::populate()
 		EntryReader::size_type progress = 0;
 		EntryReader::size_type const progress_scaling_factor = 32;
 		EntryReader::size_type const progress_max =
-			reader.size() / progress_scaling_factor;
+			reader->size() / progress_scaling_factor;
 		wxProgressDialog progress_dialog
 		(	wxEmptyString,
 			"Loading transactions...",
@@ -157,7 +157,7 @@ EntryListCtrl::populate()
 			if (i % progress_scaling_factor == 0)
 			{
 				assert (progress <= progress_max);
-				progress_dialog.Update(progress);'
+				progress_dialog.Update(progress);
 				++progress;
 			}
 		}
@@ -183,7 +183,7 @@ EntryListCtrl::set_column_widths()
 void
 EntryListCtrl::process_candidate_entry(Entry const& p_entry)
 {
-	assert (entry.has_id());
+	assert (p_entry.has_id());
 	if (do_approve_entry(p_entry))
 	{
 		long const i = GetItemCount();
@@ -191,8 +191,8 @@ EntryListCtrl::process_candidate_entry(Entry const& p_entry)
 		// The item may change position due to e.g. sorting, so store the
 		// Entry ID in the item's data
 		// TODO Do a static assert to ensure second param will fit the id.
-		SetItemData(i, entry.id());
-		m_id_set.insert(entry.id());
+		SetItemData(i, p_entry.id());
+		m_id_set.insert(p_entry.id());
 	}
 	return;
 }
@@ -207,10 +207,10 @@ EntryListCtrl::do_update_for_amended(Account const& p_account)
 void
 EntryListCtrl::update_row_for_entry(long p_row, Entry const& p_entry)
 {
-	assert (entry.has_id());
+	assert (p_entry.has_id());
 	assert (do_approve_entry(p_entry));
 	assert (FindItem(-1, p_entry.id()) == p_row);
-	do_update_row_for_entry();
+	do_update_row_for_entry(p_row, p_entry);
 	return;
 }
 
@@ -346,6 +346,17 @@ EntryListCtrl::scrollbar_width_allowance() const
 	return 50;
 }
 
+EntryReader*
+EntryListCtrl::do_make_entry_reader() const
+{
+	return new ActualOrdinaryEntryReader(m_database_connection);
+}
+
+PhatbooksDatabaseConnection&
+EntryListCtrl::database_connection()
+{
+	return m_database_connection;
+}
 
 }  // namespace gui
 }  // namespace phatbooks

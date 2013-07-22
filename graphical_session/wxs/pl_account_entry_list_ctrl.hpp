@@ -29,8 +29,8 @@ public:
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
 		Account const& p_account,
-		boost::optional<gregorian::date> const& p_maybe_min_date,
-		boost::optional<gregorian::date> const& p_maybe_max_date
+		boost::optional<boost::gregorian::date> const& p_maybe_min_date,
+		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);
 
 	virtual ~PLAccountEntryListCtrl();
@@ -48,6 +48,7 @@ private:
 	// TODO Could factor shared code up in hierarchy here.
 	virtual void do_update_row_for_entry(long p_row, Entry const& p_entry);
 
+	virtual int do_get_comment_col_num() const;
 	virtual int do_get_num_columns() const;
 
 };  // class PLAccountEntryListCtrl
