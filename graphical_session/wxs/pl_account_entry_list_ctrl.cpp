@@ -75,9 +75,8 @@ PLAccountEntryListCtrl::do_set_non_date_columns(long p_row, Entry const& p_entry
 }
 
 void
-PLAccountEntryListCtrl::do_insert_columns()
+PLAccountEntryListCtrl::do_insert_non_date_columns()
 {
-	InsertColumn(date_col_num(), wxString("Date"), wxLIST_FORMAT_RIGHT);
 	InsertColumn(comment_col_num(), wxString("Memo"), wxLIST_FORMAT_LEFT);
 	InsertColumn(amount_col_num(), wxString("Amount"), wxLIST_FORMAT_RIGHT);
 	assert (num_columns() == 3);

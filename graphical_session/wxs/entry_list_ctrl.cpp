@@ -127,7 +127,15 @@ EntryListCtrl::initialize(EntryListCtrl* p_entry_list_ctrl)
 void
 EntryListCtrl::insert_columns()
 {
-	do_insert_columns();
+	insert_date_column();
+	do_insert_non_date_columns();
+	return;
+}
+
+void
+EntryListCtrl::insert_date_column()
+{
+	InsertColumn(date_col_num(), "Date", wxLIST_FORMAT_RIGHT);
 	return;
 }
 

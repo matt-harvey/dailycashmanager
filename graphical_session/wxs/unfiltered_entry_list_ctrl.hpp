@@ -35,9 +35,8 @@ public:
 
 private:
 	virtual void do_set_non_date_columns(long p_row, Entry const& p_entry);
-
+	virtual void do_insert_non_date_columns();
 	virtual bool do_require_progress_log() const;
-	virtual void do_insert_columns();
 	virtual bool do_approve_entry(Entry const& p_entry) const;
 	virtual void do_set_column_widths();
 	virtual int do_get_num_columns() const;

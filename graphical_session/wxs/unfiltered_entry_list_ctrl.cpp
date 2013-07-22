@@ -54,9 +54,8 @@ UnfilteredEntryListCtrl::do_require_progress_log() const
 }
 
 void
-UnfilteredEntryListCtrl::do_insert_columns()
+UnfilteredEntryListCtrl::do_insert_non_date_columns()
 {
-	InsertColumn(date_col_num(), "Date", wxLIST_FORMAT_RIGHT);
 	InsertColumn(account_col_num(), "Account", wxLIST_FORMAT_LEFT);
 	InsertColumn(comment_col_num(), "Memo", wxLIST_FORMAT_LEFT);
 	InsertColumn(amount_col_num(), "Amount", wxLIST_FORMAT_RIGHT);

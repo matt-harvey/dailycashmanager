@@ -83,9 +83,8 @@ BSAccountEntryListCtrl::do_set_non_date_columns(long p_row, Entry const& p_entry
 }
 
 void
-BSAccountEntryListCtrl::do_insert_columns()
+BSAccountEntryListCtrl::do_insert_non_date_columns()
 {
-	InsertColumn(date_col_num(), wxString("Date"), wxLIST_FORMAT_RIGHT);
 	InsertColumn(comment_col_num(), wxString("Memo"), wxLIST_FORMAT_LEFT);
 	InsertColumn(amount_col_num(), wxString("Amount"), wxLIST_FORMAT_RIGHT);
 	InsertColumn(reconciled_col_num(), wxString("R"), wxLIST_FORMAT_LEFT);

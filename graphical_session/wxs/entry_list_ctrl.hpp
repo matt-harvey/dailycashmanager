@@ -138,12 +138,7 @@ protected:
 private:
 
 	virtual bool do_require_progress_log() const = 0;
-
-	/**
-	 * Date column should be inserted first.
-	 */
-	virtual void do_insert_columns() = 0;
-
+	virtual void do_insert_non_date_columns() = 0;
 	virtual bool do_approve_entry(Entry const& p_entry) const = 0;
 	virtual void do_set_non_date_columns
 	(	long p_row,
@@ -169,6 +164,7 @@ private:
 	static void initialize(EntryListCtrl* p_entry_list_ctrl);
 
 	void insert_columns();
+	void insert_date_column();
 	void populate();
 	void process_candidate_entry(Entry const& p_entry);
 
