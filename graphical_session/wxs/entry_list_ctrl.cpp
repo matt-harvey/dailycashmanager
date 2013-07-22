@@ -217,26 +217,28 @@ EntryListCtrl::row_for_date(gregorian::date const& p_date)
 	long max = GetItemCount();
 	while (true)
 	{
-		// TODO We should I be getting the dates from the text in the
-		// EntryListCtrl row, rather than from the Entry referenced by the
-		// row. They should usually be the same, but possibly they won't
-		// always be the same - especially if we are in the process of
-		// updating for new or changed Entries.
 		assert (min < max);
 		long const guess = (min + max) / 2;
 		if (guess == 0)
 		{
 			return guess;
 		}
-		Entry::Id const entry_id = GetItemData(guess);
-		Entry const entry(m_database_connection, entry_id);
-		gregorian::date const date = entry.date();
-	
+		optional<gregorian::date> const maybe_date = parse_date
+		(	GetItemText(guess),
+			locale()
+		);
+		assert (maybe_date);
+		gregorian::date const date = value(maybe_date);
+
 		long const guess_predecessor = guess - 1;
 		assert (guess_predecessor >= 0);
-		Entry::Id const predecessor_id = GetItemData(guess_predecessor);
-		Entry const predecessor_entry(database_connection(), predecessor_id);
-		gregorian::date const predecessor_date = predecessor_entry.date();
+		optional<gregorian::date> const maybe_predecessor_date = parse_date
+		(	GetItemText(guess_predecessor),
+			locale()
+		);
+		assert (maybe_predecessor_date);
+		gregorian::date const predecessor_date =
+			value(maybe_predecessor_date);
 
 		assert (predecessor_date <= date);
 		if ((predecessor_date <= p_date) && (p_date <= date))
