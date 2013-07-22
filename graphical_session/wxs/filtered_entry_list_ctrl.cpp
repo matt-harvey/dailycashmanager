@@ -55,6 +55,12 @@ FilteredEntryListCtrl::~FilteredEntryListCtrl()
 {
 }
 
+Account const&
+FilteredEntryListCtrl::account() const
+{
+	return m_account;
+}
+
 bool
 FilteredEntryListCtrl::do_require_progress_log() const
 {

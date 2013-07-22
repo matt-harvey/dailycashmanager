@@ -4,8 +4,10 @@
 #include "filtered_entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/decimal_fwd.hpp>
 #include <wx/gdicmn.h>
 #include <wx/window.h>
+#include <wx/string.h>
 
 namespace phatbooks
 {
@@ -42,6 +44,14 @@ private:
 
 	virtual int do_get_comment_col_num() const;
 	virtual int do_get_num_columns() const;
+
+	virtual void do_accumulate(Entry const& p_entry);
+
+	wxString verb() const;
+	jewel::Decimal friendly_amount(Entry const& p_entry) const;
+
+	bool const m_reverse_signs;
+	jewel::Decimal m_accumulator;
 
 };  // class PLAccountEntryListCtrl
 

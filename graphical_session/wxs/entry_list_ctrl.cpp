@@ -217,17 +217,8 @@ EntryListCtrl::set_column_widths()
 void
 EntryListCtrl::process_candidate_entry(Entry const& p_entry)
 {
-	assert (p_entry.has_id());
-	if (do_approve_entry(p_entry))
-	{
-		long const i = GetItemCount();
-		push_entry(p_entry);
-		// The item may change position due to e.g. sorting, so store the
-		// Entry ID in the item's data
-		// TODO Do a static assert to ensure second param will fit the id.
-		SetItemData(i, p_entry.id());
-		m_id_set.insert(p_entry.id());
-	}
+	assert(p_entry.has_id());
+	if (do_approve_entry(p_entry)) push_entry(p_entry);
 	return;
 }
 
@@ -388,8 +379,22 @@ EntryListCtrl::push_entry(Entry const& p_entry)
 {
 	long const i = GetItemCount();
 	assert (date_col_num() == 0);
+	do_accumulate(p_entry);
 	InsertItem(i, date_format_wx(p_entry.date()));
 	do_set_non_date_columns(i, p_entry);
+
+	// The item may change position due to e.g. sorting, so store the
+	// Entry ID in the item's data
+	// TODO Do a static assert to ensure second param will fit the id.
+	SetItemData(i, p_entry.id());
+	m_id_set.insert(p_entry.id());
+	return;
+}
+
+void
+EntryListCtrl::do_accumulate(Entry const& p_entry)
+{
+	(void)p_entry;  // Silence compiler re. unused variable
 	return;
 }
 

@@ -2,9 +2,11 @@
 #define GUARD_filtered_entry_list_ctrl_hpp
 
 #include "account.hpp"
+#include "entry.hpp"
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/decimal.hpp>
 #include <wx/window.h>
 
 namespace phatbooks
@@ -33,6 +35,9 @@ public:
 
 	virtual ~FilteredEntryListCtrl();
 
+protected:
+	Account const& account() const;
+
 private:
 	virtual bool do_require_progress_log() const;
 	virtual void do_insert_non_date_columns() = 0;
@@ -46,6 +51,7 @@ private:
 	boost::optional<boost::gregorian::date> const m_maybe_max_date;
 
 };  // class FilteredEntryListCtrl
+	
 
 }  // namespace gui
 }  // namespace phatbooks

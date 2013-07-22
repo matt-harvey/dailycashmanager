@@ -40,8 +40,7 @@ namespace gui
  * 	If balance sheet Account, add column showing cumulative balance for
  * 	Account for all time up the point of the Entry, for each Entry shown.
  * 	We may also want to add a "reconciled balance" column.
- *  If P&L Account, add column showing cumulative total spent in the period
- *  shown.
+ *
  *  These changes will probably make it so complex to update for new
  *  Journals, deleted Journals etc, that we may no longer want to
  *  do these updates at all, but rather just leave it up to the user
@@ -51,6 +50,10 @@ namespace gui
  *  times when the display shows non-existent Entries. We will then have
  *  to intercept the user on those occasions when they try to edit a
  *  transaction by selecting one of the non-existent Entries.
+ *
+ * @todo HIGH PRIORITY The "update_for..." functions are now broken
+ * for PLAccountEntryListCtrl, as they do not adjust the accumulator
+ * column.
  */
 class EntryListCtrl: public wxListCtrl, private boost::noncopyable
 {
@@ -149,6 +152,7 @@ private:
 	virtual int do_get_num_columns() const = 0;
 	virtual int do_get_comment_col_num() const = 0;
 	virtual void do_update_for_amended(Account const& p_account);
+	virtual void do_accumulate(Entry const& p_entry);
 
 	/**
 	 * Should return a pointer to an EntryReader which reads Entries from
