@@ -182,6 +182,32 @@ EntryListCtrl::populate()
 }
 
 void
+EntryListCtrl::autosize_column_widths()
+{
+	int const num_cols = num_columns();
+	for (int i = 0; i != num_cols; ++i) SetColumnWidth(i, wxLIST_AUTOSIZE);
+	return;
+}
+
+void
+EntryListCtrl::adjust_comment_column_to_fit()
+{
+	int total_widths = 0;
+	int const num_cols = num_columns();
+	for (int i = 0; i != num_cols; ++i) total_widths += GetColumnWidth(i);
+	int const shortfall =
+		GetSize().GetWidth() - total_widths - scrollbar_width_allowance();
+	int const current_comment_width =
+		GetColumnWidth(do_get_comment_col_num());
+	SetColumnWidth
+	(	do_get_comment_col_num(),
+		current_comment_width + shortfall
+	);
+	return;
+
+}
+
+void
 EntryListCtrl::set_column_widths()
 {
 	do_set_column_widths();

@@ -131,8 +131,9 @@ protected:
 	);
 
 	int num_columns() const;
-	int scrollbar_width_allowance() const;
 	int date_col_num() const;
+	void autosize_column_widths();
+	void adjust_comment_column_to_fit();
 	PhatbooksDatabaseConnection& database_connection();
 
 private:
@@ -146,6 +147,7 @@ private:
 	) = 0;
 	virtual void do_set_column_widths() = 0;
 	virtual int do_get_num_columns() const = 0;
+	virtual int do_get_comment_col_num() const = 0;
 	virtual void do_update_for_amended(Account const& p_account);
 
 	/**
@@ -158,6 +160,7 @@ private:
 	virtual EntryReader* do_make_entry_reader() const;
 
 	void set_column_widths();
+	int scrollbar_width_allowance() const;
 
 	 // To be called by factory functions prior to returning pointer to newly
 	 // created EntryListCtrl.

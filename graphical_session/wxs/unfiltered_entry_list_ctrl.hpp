@@ -39,8 +39,11 @@ private:
 	virtual bool do_require_progress_log() const;
 	virtual bool do_approve_entry(Entry const& p_entry) const;
 	virtual void do_set_column_widths();
+	virtual int do_get_comment_col_num() const;
 	virtual int do_get_num_columns() const;
 	virtual void do_update_for_amended(Account const& p_account);
+
+	void adjust_account_column();
 
 };  // class UnfilteredEntryListCtrl
 

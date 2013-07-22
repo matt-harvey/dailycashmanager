@@ -72,28 +72,8 @@ FilteredEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 void
 FilteredEntryListCtrl::do_set_column_widths()
 {
-	// We arrange the widths so that the comment column
-	// is sized such that the total width of all columns occupies exactly
-	// the full width of the available area.
-	int const num_cols = num_columns();
-	for (int j = 0; j != num_cols; ++j)
-	{
-		SetColumnWidth(j, wxLIST_AUTOSIZE);
-	}
-	int total_widths = 0;
-	for (int j = 0; j != num_cols; ++j)
-	{
-		total_widths += GetColumnWidth(j);
-	}
-
-	int const shortfall =
-		GetSize().GetWidth() - total_widths - scrollbar_width_allowance();
-	int const current_comment_width =
-		GetColumnWidth(do_get_comment_col_num());
-	SetColumnWidth
-	(	do_get_comment_col_num(),
-		current_comment_width + shortfall
-	);
+	autosize_column_widths();
+	adjust_comment_column_to_fit();
 	return;
 }
 

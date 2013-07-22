@@ -95,35 +95,29 @@ UnfilteredEntryListCtrl::do_set_non_date_columns
 }
 
 void
-UnfilteredEntryListCtrl::do_set_column_widths()
+UnfilteredEntryListCtrl::adjust_account_column()
 {
-	// We arrange the widths so that
-	// the Account column takes up just enough size for the
-	// Account name - up to a reasonable maximum - the other columns take up
-	// just enough room for their contents, and then the comment column
-	// is sized such that the total width of all columns occupies exactly
-	// the full width of the available area.
-	int const num_cols = num_columns();
-	for (int j = 0; j != num_cols; ++j)
-	{
-		SetColumnWidth(j, wxLIST_AUTOSIZE);
-	}
 	int const max_account_col_width = 200;
 	if (GetColumnWidth(account_col_num()) > max_account_col_width)
 	{
 		SetColumnWidth(account_col_num(), max_account_col_width);
 	}
-	int total_widths = 0;
-	for (int j = 0; j != num_cols; ++j)
-	{
-		total_widths += GetColumnWidth(j);
-	}
-
-	int const shortfall =
-		GetSize().GetWidth() - total_widths - scrollbar_width_allowance();
-	int const current_comment_width = GetColumnWidth(comment_col_num());
-	SetColumnWidth(comment_col_num(), current_comment_width + shortfall);
 	return;
+}
+
+void
+UnfilteredEntryListCtrl::do_set_column_widths()
+{
+	autosize_column_widths();
+	adjust_account_column();
+	adjust_comment_column_to_fit();
+	return;
+}
+
+int
+UnfilteredEntryListCtrl::do_get_comment_col_num() const
+{
+	return comment_col_num();
 }
 
 int
