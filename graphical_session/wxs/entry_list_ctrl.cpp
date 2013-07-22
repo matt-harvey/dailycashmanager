@@ -145,6 +145,7 @@ EntryListCtrl::populate()
 	boost::scoped_ptr<EntryReader> const reader(do_make_entry_reader());
 	EntryReader::const_iterator it = reader->begin();
 	EntryReader::const_iterator const end = reader->end();
+	do_initialize_accumulation(it, end);
 	if (do_require_progress_log())
 	{
 		EntryReader::size_type i = 0;
@@ -395,6 +396,18 @@ void
 EntryListCtrl::do_accumulate(Entry const& p_entry)
 {
 	(void)p_entry;  // Silence compiler re. unused variable
+	return;
+}
+
+void
+EntryListCtrl::do_initialize_accumulation
+(	EntryReader::const_iterator it,
+	EntryReader::const_iterator const& end
+)
+{
+	// Silence compiler re. unused parameters
+	(void)it;
+	(void)end;
 	return;
 }
 

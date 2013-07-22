@@ -61,6 +61,12 @@ FilteredEntryListCtrl::account() const
 	return m_account;
 }
 
+gregorian::date
+FilteredEntryListCtrl::min_date() const
+{
+	return m_min_date;
+}
+
 bool
 FilteredEntryListCtrl::do_require_progress_log() const
 {

@@ -27,13 +27,21 @@ namespace
 	{
 		return 2;
 	}
-	int reconciled_col_num()
+	int balance_col_num()
 	{
 		return 3;
 	}
-	int anon_num_columns()
+	int reconciled_col_num()
 	{
 		return 4;
+	}
+	int reconciled_balance_col_num()
+	{
+		return 5;
+	}
+	int anon_num_columns()
+	{
+		return 6;
 	}
 
 }  // end anonymous namespace
@@ -52,7 +60,9 @@ BSAccountEntryListCtrl::BSAccountEntryListCtrl
 		p_account,
 		p_maybe_min_date,
 		p_maybe_max_date
-	)
+	),
+	m_accumulated_balance(0, p_account.commodity().precision()),
+	m_accumulated_reconciled_balance(0, p_account.commodity().precision())
 {
 }
 
@@ -75,20 +85,77 @@ BSAccountEntryListCtrl::do_set_non_date_columns(long p_row, Entry const& p_entry
 	);
 	SetItem
 	(	p_row,
+		balance_col_num(),
+		finformat_wx(m_accumulated_balance, locale(), false)
+	);
+	SetItem
+	(	p_row,
 		reconciled_col_num(),
 		(p_entry.is_reconciled()? wxString("Y"): wxString("N"))
 	);
-	assert (num_columns() == 4);
+	SetItem
+	(	p_row,
+		reconciled_balance_col_num(),
+		finformat_wx(m_accumulated_reconciled_balance, locale(), false)
+	);
+	assert (num_columns() == 6);
+	return;
+}
+
+void
+BSAccountEntryListCtrl::do_accumulate(Entry const& p_entry)
+{
+	m_accumulated_balance += p_entry.amount();
+	if (p_entry.is_reconciled())
+	{
+		m_accumulated_reconciled_balance += p_entry.amount();
+	}
+	return;
+}
+
+void
+BSAccountEntryListCtrl::do_initialize_accumulation
+(	EntryReader::const_iterator it,
+	EntryReader::const_iterator const& end
+)
+{
+	gregorian::date const start_date = min_date();
+	for ( ; (it->date() < start_date) && (it != end); ++it)
+	{
+		if (it->account() == account()) do_accumulate(*it);
+	}
 	return;
 }
 
 void
 BSAccountEntryListCtrl::do_insert_non_date_columns()
 {
-	InsertColumn(comment_col_num(), wxString("Memo"), wxLIST_FORMAT_LEFT);
-	InsertColumn(amount_col_num(), wxString("Amount"), wxLIST_FORMAT_RIGHT);
-	InsertColumn(reconciled_col_num(), wxString("R"), wxLIST_FORMAT_LEFT);
-	assert (num_columns() == 4);
+	InsertColumn
+	(	comment_col_num(),
+		wxString("Memo"),
+		wxLIST_FORMAT_LEFT
+	);
+	InsertColumn
+	(	amount_col_num(),
+		wxString("Amount"),
+		wxLIST_FORMAT_RIGHT
+	);
+	InsertColumn
+	(	balance_col_num(),
+		wxString("Balance"),
+		wxLIST_FORMAT_RIGHT
+	);
+	InsertColumn
+	(	reconciled_col_num(),
+		wxString("R"),
+		wxLIST_FORMAT_LEFT
+	);
+	InsertColumn
+	(	reconciled_balance_col_num(),
+		wxString("Reconciled"),
+		wxLIST_FORMAT_LEFT
+	);
+	assert (num_columns() == 6);
 	return;
 }
 

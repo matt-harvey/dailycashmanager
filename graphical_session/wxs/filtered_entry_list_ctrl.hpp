@@ -37,6 +37,7 @@ public:
 
 protected:
 	Account const& account() const;
+	boost::gregorian::date min_date() const;
 
 private:
 	virtual bool do_require_progress_log() const;

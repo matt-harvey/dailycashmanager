@@ -36,24 +36,9 @@ namespace gui
  *
  * @todo Better document the interface with derived classes.
  *
- * @todo When filtering by Account:
- * 	If balance sheet Account, add column showing cumulative balance for
- * 	Account for all time up the point of the Entry, for each Entry shown.
- * 	We may also want to add a "reconciled balance" column.
- *
- *  These changes will probably make it so complex to update for new
- *  Journals, deleted Journals etc, that we may no longer want to
- *  do these updates at all, but rather just leave it up to the user
- *  to click "Refresh" - or else just do a crude, slowish update
- *  by refreshing the whole thing each time there's a change. But note,
- *  if we leave it up to the user to click "Refresh", then there will be
- *  times when the display shows non-existent Entries. We will then have
- *  to intercept the user on those occasions when they try to edit a
- *  transaction by selecting one of the non-existent Entries.
- *
  * @todo HIGH PRIORITY The "update_for..." functions are now broken
- * for PLAccountEntryListCtrl, as they do not adjust the accumulator
- * column.
+ * for PLAccountEntryListCtrl and BSAccountEntryListCtrl, as they do not
+ * adjust the accumulator column/s.
  */
 class EntryListCtrl: public wxListCtrl, private boost::noncopyable
 {
@@ -153,6 +138,10 @@ private:
 	virtual int do_get_comment_col_num() const = 0;
 	virtual void do_update_for_amended(Account const& p_account);
 	virtual void do_accumulate(Entry const& p_entry);
+	virtual void do_initialize_accumulation
+	(	EntryReader::const_iterator it,
+		EntryReader::const_iterator const& end
+	);
 
 	/**
 	 * Should return a pointer to an EntryReader which reads Entries from
