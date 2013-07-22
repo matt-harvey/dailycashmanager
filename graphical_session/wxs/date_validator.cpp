@@ -55,55 +55,25 @@ DateValidator::Validate(wxWindow* WXUNUSED(parent))
 	{
 		return false;
 	}
-	wxString::const_iterator parsed_to_position;
-	wxDateTime date_wx;
 	wxString const date_text(text_ctrl->GetValue());
 	if (m_allow_blank && date_text.IsEmpty())
 	{
 		clear(m_date);		
 		return true;
 	}
-	wxLocaleInfo const formats[] =
-		{wxLOCALE_SHORT_DATE_FMT, wxLOCALE_LONG_DATE_FMT};
-	size_t const num_formats = sizeof(formats) / sizeof(formats[0]);
-	assert (num_formats > 0);
-	for (size_t i = 0; i != num_formats; ++i)
+	optional<gregorian::date> temp = parse_date(date_text, locale());
+	if (!temp)
 	{
-		date_wx.ParseFormat
-		(	date_text,
-			locale().GetInfo(formats[i]),
-			&parsed_to_position
+		wxMessageBox
+		(	wxString("\"") +
+			date_text +
+			wxString("\" ") +
+			wxString("is not recognised as a date.")
 		);
-		if (parsed_to_position == date_text.end())
-		{
-			break;
-		}
+		return false;
 	}
-	if (parsed_to_position == date_text.end())
-	{
-		// Parsing was successful
-		int year = date_wx.GetYear();
-		if (year < 100) year += 2000;
-		int const month = static_cast<int>(date_wx.GetMonth()) + 1;
-		int const day = date_wx.GetDay();
-		try
-		{
-			m_date = gregorian::date(year, month, day);
-			return true;
-		}
-		catch (boost::exception&)
-		{
-			// Cannot construct gregorian::date.
-			// Fall through to produce error message below.
-		}
-	}
-	wxMessageBox
-	(	wxString("\"") +
-		date_text +
-		wxString("\" ") +
-		wxString("is not recognised as a date.")
-	);
-	return false;
+	m_date = temp;
+	return true;
 }
 
 bool

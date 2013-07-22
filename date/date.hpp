@@ -17,6 +17,7 @@
 
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
 #include <wx/datetime.h>
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -102,6 +103,16 @@ today();
  */
 wxString
 date_format_wx(boost::gregorian::date const& p_date);
+
+/**
+ * @returns an optional initialized with a date based on parsing p_string
+ * using current wxLocale. The returned optional is uninitialized if
+ * p_string cannot be successfully parsed as a date.
+ * 
+ * @todo Make this more accepting of different formats.
+ */
+boost::optional<boost::gregorian::date>
+parse_date(wxString const& p_string, wxLocale const& p_locale);
 
 /**
  * @returns the date that is the last day of the month in which p_date
