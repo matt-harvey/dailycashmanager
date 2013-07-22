@@ -211,8 +211,6 @@ EntryListCtrl::adjust_comment_column_to_fit()
 long
 EntryListCtrl::row_for_date(gregorian::date const& p_date)
 {
-	// TODO HIGH PRIORITY This is broken.
-
 	long min = 0;
 	long max = GetItemCount();
 	while (true)
