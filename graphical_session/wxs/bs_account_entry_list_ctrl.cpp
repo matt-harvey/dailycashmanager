@@ -1,6 +1,6 @@
 #include "bs_account_entry_list_ctrl.hpp"
-#include "account_entry_list_ctrl.hpp"
 #include "entry.hpp"
+#include "filtered_entry_list_ctrl.hpp"
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -50,7 +50,7 @@ BSAccountEntryListCtrl::BSAccountEntryListCtrl
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date
 ):
-	AccountEntryListCtrl
+	FilteredEntryListCtrl
 	(	p_parent,
 		p_size,
 		p_account,

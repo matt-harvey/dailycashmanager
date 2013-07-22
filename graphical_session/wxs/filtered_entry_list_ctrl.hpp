@@ -1,5 +1,5 @@
-#ifndef GUARD_account_entry_list_ctrl_hpp
-#define GUARD_account_entry_list_ctrl_hpp
+#ifndef GUARD_filtered_entry_list_ctrl_hpp
+#define GUARD_filtered_entry_list_ctrl_hpp
 
 #include "account.hpp"
 #include "entry_list_ctrl.hpp"
@@ -13,15 +13,15 @@ namespace gui
 {
 
 /**
- * An EntryListCtrl which is filtered by Account (and may also be
- * filtered by date).
+ * An EntryListCtrl which is filtered by Account and may also be
+ * filtered by date.
  *
  * Shows only \e actual (non-budget) and ordinary (non-draft) Entries.
  */
-class AccountEntryListCtrl: public EntryListCtrl
+class FilteredEntryListCtrl: public EntryListCtrl
 {
 public:
-	AccountEntryListCtrl
+	FilteredEntryListCtrl
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
 		Account const& p_account,
@@ -29,7 +29,7 @@ public:
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);
 
-	virtual ~AccountEntryListCtrl();
+	virtual ~FilteredEntryListCtrl();
 
 private:
 	virtual bool do_require_progress_log() const;
@@ -46,9 +46,9 @@ private:
 	boost::gregorian::date const m_min_date;
 	boost::optional<boost::gregorian::date> const m_maybe_max_date;
 
-};  // class AccountEntryListCtrl
+};  // class FilteredEntryListCtrl
 
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_account_entry_list_ctrl_hpp
+#endif  // GUARD_filtered_entry_list_ctrl_hpp

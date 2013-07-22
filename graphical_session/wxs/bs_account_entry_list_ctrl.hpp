@@ -1,7 +1,7 @@
 #ifndef GUARD_bs_account_entry_list_ctrl_hpp
 #define GUARD_bs_account_entry_list_ctrl_hpp
 
-#include "account_entry_list_ctrl.hpp"
+#include "filtered_entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <wx/gdicmn.h>
@@ -21,10 +21,10 @@ namespace gui
 {
 
 /**
- * An AccountEntryListCtrl where the Account is of
+ * A FilteredEntryListCtrl where the Account is of
  * account_super_type::balance_sheet.
  */
-class BSAccountEntryListCtrl: public AccountEntryListCtrl
+class BSAccountEntryListCtrl: public FilteredEntryListCtrl
 {
 public:
 	BSAccountEntryListCtrl

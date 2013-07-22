@@ -1,4 +1,4 @@
-#include "account_entry_list_ctrl.hpp"
+#include "filtered_entry_list_ctrl.hpp"
 #include "account.hpp"
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -32,7 +32,7 @@ namespace
 
 }  // End anonymous namespace
 
-AccountEntryListCtrl::AccountEntryListCtrl
+FilteredEntryListCtrl::FilteredEntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
 	Account const& p_account,
@@ -51,18 +51,18 @@ AccountEntryListCtrl::AccountEntryListCtrl
 {
 }
 
-AccountEntryListCtrl::~AccountEntryListCtrl()
+FilteredEntryListCtrl::~FilteredEntryListCtrl()
 {
 }
 
 bool
-AccountEntryListCtrl::do_require_progress_log() const
+FilteredEntryListCtrl::do_require_progress_log() const
 {
 	return false;
 }
 
 bool
-AccountEntryListCtrl::do_approve_entry(Entry const& p_entry) const
+FilteredEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 {
 	return
 		(p_entry.account() == m_account) &&
@@ -70,7 +70,7 @@ AccountEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 }
 
 void
-AccountEntryListCtrl::do_set_column_widths()
+FilteredEntryListCtrl::do_set_column_widths()
 {
 	// We arrange the widths so that the comment column
 	// is sized such that the total width of all columns occupies exactly

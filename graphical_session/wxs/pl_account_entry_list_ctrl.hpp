@@ -1,7 +1,7 @@
 #ifndef GUARD_pl_account_entry_list_ctrl_hpp
 #define GUARD_pl_account_entry_list_ctrl_hpp
 
-#include "account_entry_list_ctrl.hpp"
+#include "filtered_entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <wx/gdicmn.h>
@@ -20,9 +20,9 @@ namespace gui
 {
 
 /**
- * An AccountEntryListCtrl where the Account is of account_super_type::pl.
+ * A FilteredEntryListCtrl where the Account is of account_super_type::pl.
  */
-class PLAccountEntryListCtrl: public AccountEntryListCtrl
+class PLAccountEntryListCtrl: public FilteredEntryListCtrl
 {
 public:
 	PLAccountEntryListCtrl

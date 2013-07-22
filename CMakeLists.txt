@@ -174,7 +174,6 @@ set (gui_files
 	 graphical_session/graphical_session.cpp
 	 graphical_session/wxs/account_ctrl.cpp
 	 graphical_session/wxs/account_dialog.cpp
-	 graphical_session/wxs/account_entry_list_ctrl.cpp
 	 graphical_session/wxs/account_list_ctrl.cpp
 	 graphical_session/wxs/account_type_ctrl.cpp
 	 graphical_session/wxs/app.cpp
@@ -191,6 +190,7 @@ set (gui_files
 	 graphical_session/wxs/entry_ctrl.cpp
 	 graphical_session/wxs/entry_list_ctrl.cpp
 	 graphical_session/wxs/entry_list_panel.cpp
+	 graphical_session/wxs/filtered_entry_list_ctrl.cpp
 	 graphical_session/wxs/frame.cpp
 	 graphical_session/wxs/frequency_ctrl.cpp
 	 graphical_session/wxs/locale.cpp
