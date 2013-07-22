@@ -122,6 +122,7 @@ protected:
 	int date_col_num() const;
 	void autosize_column_widths();
 	void adjust_comment_column_to_fit();
+	long row_for_date(boost::gregorian::date const& p_date);
 	PhatbooksDatabaseConnection& database_connection();
 
 private:
@@ -162,10 +163,14 @@ private:
 	void insert_columns();
 	void insert_date_column();
 	void populate();
-	void process_candidate_entry(Entry const& p_entry);
+	void process_push_candidate_entry(Entry const& p_entry);
+	void process_insertion_candidate_entry(Entry const& p_entry);
 
-	// WARNING This doesn't take care of sorting by date
-	void push_entry(Entry const& p_entry);
+	// This inserts in correct date order
+	void insert_entry(Entry const& p_entry);
+
+	// This doesn't take care of sorting by date
+	void push_back_entry(Entry const& p_entry);
 
 	// To remember which Entries have been added.
 	typedef boost::unordered_set<Entry::Id> IdSet;

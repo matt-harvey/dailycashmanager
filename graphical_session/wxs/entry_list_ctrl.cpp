@@ -162,7 +162,7 @@ EntryListCtrl::populate()
 		);
 		for ( ; it != end; ++it, ++i)
 		{
-			process_candidate_entry(*it);
+			process_push_candidate_entry(*it);
 			if (i % progress_scaling_factor == 0)
 			{
 				assert (progress <= progress_max);
@@ -176,7 +176,7 @@ EntryListCtrl::populate()
 	{
 		for ( ; it != end; ++it)
 		{
-			process_candidate_entry(*it);
+			process_push_candidate_entry(*it);
 		}
 	}
 	return;
@@ -208,6 +208,49 @@ EntryListCtrl::adjust_comment_column_to_fit()
 
 }
 
+long
+EntryListCtrl::row_for_date(gregorian::date const& p_date)
+{
+	long min = 0;
+	long max = GetItemCount();
+	while (true)
+	{
+		// WARNING Should I be getting the dates from the text in the
+		// EntryListCtrl row, rather than from the Entry referenced by the
+		// row? They should usually be the same, but perhaps they won't always
+		// be the same - especially if we are in the process of updating
+		// for new or changed Entries.
+		long const guess = (max + min) / 2;
+		if (guess == 0)
+		{
+			return guess;
+		}
+		Entry::Id const entry_id = GetItemData(guess);
+		Entry const entry(m_database_connection, entry_id);
+		gregorian::date const date = entry.date();
+	
+		long const guess_predecessor = guess - 1;
+		assert (guess_predecessor >= 0);
+		Entry::Id const predecessor_entry_id = GetItemData(guess_predecessor);
+		Entry const predecessor_entry(database_connection(), predecessor_entry_id);
+		gregorian::date const predecessor_date = predecessor_entry.date();
+
+		assert (predecessor_date <= date);
+		if ((predecessor_date <= p_date) && (p_date <= date))
+		{
+			return guess;
+		}
+		if (p_date < predecessor_date)
+		{
+			max = guess_predecessor;
+		}
+		else if (p_date > date)
+		{
+			min = guess;
+		}
+	}
+}
+
 void
 EntryListCtrl::set_column_widths()
 {
@@ -216,10 +259,18 @@ EntryListCtrl::set_column_widths()
 }
 
 void
-EntryListCtrl::process_candidate_entry(Entry const& p_entry)
+EntryListCtrl::process_push_candidate_entry(Entry const& p_entry)
 {
-	assert(p_entry.has_id());
-	if (do_approve_entry(p_entry)) push_entry(p_entry);
+	assert (p_entry.has_id());
+	if (do_approve_entry(p_entry)) push_back_entry(p_entry);
+	return;
+}
+
+void
+EntryListCtrl::process_insertion_candidate_entry(Entry const& p_entry)
+{
+	assert (p_entry.has_id());
+	if (do_approve_entry(p_entry)) insert_entry(p_entry);
 	return;
 }
 
@@ -241,7 +292,13 @@ EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
 	{
 		vector<Entry>::const_iterator it = p_journal.entries().begin();
 		vector<Entry>::const_iterator const end = p_journal.entries().end();
-		for ( ; it != end; ++it) process_candidate_entry(*it);
+		for ( ; it != end; ++it)
+		{
+			if (do_approve_entry(*it))
+			{
+				insert_entry(*it);
+			}
+		}
 	}
 	set_column_widths();
 	return;
@@ -250,6 +307,8 @@ EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
 void
 EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 {
+	// WARNING This has the potential to cause serious flicker.
+	// Under Windows we could do freeze/thaw.
 	if (!p_journal.is_actual())
 	{
 		return;
@@ -262,30 +321,17 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 	{
 		Entry::Id const id = it->id();
 		IdSet::const_iterator const jt = m_id_set.find(id);
-		if (jt == m_id_set.end())
+		if (jt != m_id_set.end())
 		{
-			// Entry not yet displayed.
-			process_candidate_entry(*it);
-		}
-		else
-		{
-			// Entry is displayed
+			// Entry is displayed - delete it first - then we will reinsert
+			// it at the correct date position (note date may have changed)
+			// if still approved.
 			long const pos = FindItem(-1, id);
 			assert (GetItemData(pos) == static_cast<unsigned long>(it->id()));
-			if (!do_approve_entry(*it))
-			{
-				// Things have changed such that the Entry should no longer be
-				// included in the display.
-				DeleteItem(pos);
-				assert (jt != m_id_set.end());
-				m_id_set.erase(jt);
-			}
-			else
-			{
-				SetItemText(pos, date_format_wx(it->date()));
-				do_set_non_date_columns(pos, *it);
-			}
+			DeleteItem(pos);
+			m_id_set.erase(jt);
 		}
+		process_insertion_candidate_entry(*it);
 	}
 	set_column_widths();
 	return;
@@ -376,7 +422,7 @@ EntryListCtrl::date_col_num() const
 }
 
 void
-EntryListCtrl::push_entry(Entry const& p_entry)
+EntryListCtrl::push_back_entry(Entry const& p_entry)
 {
 	long const i = GetItemCount();
 	assert (date_col_num() == 0);
@@ -389,6 +435,19 @@ EntryListCtrl::push_entry(Entry const& p_entry)
 	// TODO Do a static assert to ensure second param will fit the id.
 	SetItemData(i, p_entry.id());
 	m_id_set.insert(p_entry.id());
+	return;
+}
+
+void
+EntryListCtrl::insert_entry(Entry const& p_entry)
+{
+	gregorian::date const date = p_entry.date();
+	long const pos = row_for_date(date);
+	InsertItem(pos, date_format_wx(date));
+	do_set_non_date_columns(pos, p_entry);
+	Entry::Id const id = p_entry.id();
+	SetItemData(pos, id);
+	m_id_set.insert(id);
 	return;
 }
 
