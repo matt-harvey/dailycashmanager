@@ -187,7 +187,7 @@ EntryListCtrl::process_candidate_entry(Entry const& p_entry)
 	if (do_approve_entry(p_entry))
 	{
 		long const i = GetItemCount();
-		do_push_entry(p_entry);
+		push_entry(p_entry);
 		// The item may change position due to e.g. sorting, so store the
 		// Entry ID in the item's data
 		// TODO Do a static assert to ensure second param will fit the id.
@@ -201,16 +201,6 @@ void
 EntryListCtrl::do_update_for_amended(Account const& p_account)
 {
 	(void)p_account;  // Silence compiler re. unused variable
-	return;
-}
-
-void
-EntryListCtrl::update_row_for_entry(long p_row, Entry const& p_entry)
-{
-	assert (p_entry.has_id());
-	assert (do_approve_entry(p_entry));
-	assert (FindItem(-1, p_entry.id()) == p_row);
-	do_update_row_for_entry(p_row, p_entry);
 	return;
 }
 
@@ -266,7 +256,8 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 			}
 			else
 			{
-				update_row_for_entry(pos, *it);
+				SetItemText(pos, date_format_wx(it->date()));
+				do_set_non_date_columns(pos, *it);
 			}
 		}
 	}
@@ -350,6 +341,22 @@ EntryReader*
 EntryListCtrl::do_make_entry_reader() const
 {
 	return new ActualOrdinaryEntryReader(m_database_connection);
+}
+
+int
+EntryListCtrl::date_col_num() const
+{
+	return 0;
+}
+
+void
+EntryListCtrl::push_entry(Entry const& p_entry)
+{
+	long const i = GetItemCount();
+	assert (date_col_num() == 0);
+	InsertItem(i, date_format_wx(p_entry.date()));
+	do_set_non_date_columns(i, p_entry);
+	return;
 }
 
 PhatbooksDatabaseConnection&

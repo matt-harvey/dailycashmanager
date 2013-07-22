@@ -19,10 +19,6 @@ namespace gui
 
 namespace
 {
-	int date_col_num()
-	{
-		return 0;
-	}
 	int comment_col_num()
 	{
 		return 1;
@@ -65,7 +61,7 @@ BSAccountEntryListCtrl::~BSAccountEntryListCtrl()
 }
 
 void
-BSAccountEntryListCtrl::set_non_date_columns(long p_row, Entry const& p_entry)
+BSAccountEntryListCtrl::do_set_non_date_columns(long p_row, Entry const& p_entry)
 {
 	SetItem
 	(	p_row,
@@ -94,29 +90,6 @@ BSAccountEntryListCtrl::do_insert_columns()
 	InsertColumn(amount_col_num(), wxString("Amount"), wxLIST_FORMAT_RIGHT);
 	InsertColumn(reconciled_col_num(), wxString("R"), wxLIST_FORMAT_LEFT);
 	assert (num_columns() == 4);
-	return;
-}
-
-void
-BSAccountEntryListCtrl::do_push_entry(Entry const& p_entry)
-{
-	long const i = GetItemCount();
-	OrdinaryJournal const journal(p_entry.journal<OrdinaryJournal>());
-	assert (date_col_num() == 0);
-	InsertItem(i, date_format_wx(journal.date()));
-	set_non_date_columns(i, p_entry);
-	return;
-}
-
-void
-BSAccountEntryListCtrl::do_update_row_for_entry
-(	long p_row,
-	Entry const& p_entry
-)
-{
-	OrdinaryJournal const journal(p_entry.journal<OrdinaryJournal>());
-	SetItemText(p_row, date_format_wx(journal.date()));
-	set_non_date_columns(p_row, p_entry);
 	return;
 }
 

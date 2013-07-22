@@ -20,10 +20,6 @@ namespace gui
 
 namespace
 {
-	int date_col_num()
-	{
-		return 0;
-	}
 	int comment_col_num()
 	{
 		return 1;
@@ -62,7 +58,7 @@ PLAccountEntryListCtrl::~PLAccountEntryListCtrl()
 }
 
 void
-PLAccountEntryListCtrl::set_non_date_columns(long p_row, Entry const& p_entry)
+PLAccountEntryListCtrl::do_set_non_date_columns(long p_row, Entry const& p_entry)
 {
 	SetItem
 	(	p_row,
@@ -85,41 +81,6 @@ PLAccountEntryListCtrl::do_insert_columns()
 	InsertColumn(comment_col_num(), wxString("Memo"), wxLIST_FORMAT_LEFT);
 	InsertColumn(amount_col_num(), wxString("Amount"), wxLIST_FORMAT_RIGHT);
 	assert (num_columns() == 3);
-	return;
-}
-
-void
-PLAccountEntryListCtrl::do_push_entry(Entry const& p_entry)
-{
-	OrdinaryJournal const journal(p_entry.journal<OrdinaryJournal>());
-	long const i = GetItemCount();
-
-	// Populate 0th column
-
-	assert (date_col_num() == 0);
-	InsertItem(i, date_format_wx(journal.date()));
-
-	// Populate the other columns
-
-	SetItem(i, comment_col_num(), bstring_to_wx(p_entry.comment()));
-
-	wxString const amount_string =
-		finformat_wx(p_entry.amount(), locale(), false);
-	SetItem(i, amount_col_num(), amount_string);
-
-	return;
-
-}
-
-void
-PLAccountEntryListCtrl::do_update_row_for_entry
-(	long p_row,
-	Entry const& p_entry
-)
-{
-	OrdinaryJournal const journal(p_entry.journal<OrdinaryJournal>());
-	SetItemText(p_row, date_format_wx(journal.date()));
-	set_non_date_columns(p_row, p_entry);
 	return;
 }
 

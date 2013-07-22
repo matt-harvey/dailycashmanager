@@ -14,10 +14,6 @@ namespace gui
 
 namespace
 {
-	int date_col_num()
-	{
-		return 0;
-	}
 	int account_col_num()
 	{
 		return 1;
@@ -75,30 +71,7 @@ UnfilteredEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 }
 
 void
-UnfilteredEntryListCtrl::do_push_entry(Entry const& p_entry)
-{
-	long const i = GetItemCount();
-	OrdinaryJournal const journal(p_entry.journal<OrdinaryJournal>());
-	assert (date_col_num() == 0);
-	InsertItem(i, date_format_wx(journal.date()));
-	set_non_date_columns(i, p_entry);
-	return;
-}
-
-void
-UnfilteredEntryListCtrl::do_update_row_for_entry
-(	long p_row,
-	Entry const& p_entry
-)
-{
-	OrdinaryJournal const journal(p_entry.journal<OrdinaryJournal>());
-	SetItemText(p_row, date_format_wx(journal.date()));
-	set_non_date_columns(p_row, p_entry);
-	return;
-}
-
-void
-UnfilteredEntryListCtrl::set_non_date_columns
+UnfilteredEntryListCtrl::do_set_non_date_columns
 (	long p_row,
 	Entry const& p_entry
 )

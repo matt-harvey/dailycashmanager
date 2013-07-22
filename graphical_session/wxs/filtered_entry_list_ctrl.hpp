@@ -17,6 +17,8 @@ namespace gui
  * filtered by date.
  *
  * Shows only \e actual (non-budget) and ordinary (non-draft) Entries.
+ *
+ * @todo Need to override do_update_for_amended(Account const& p_account).
  */
 class FilteredEntryListCtrl: public EntryListCtrl
 {
@@ -35,8 +37,6 @@ private:
 	virtual bool do_require_progress_log() const;
 	virtual void do_insert_columns() = 0;
 	virtual bool do_approve_entry(Entry const& p_entry) const;
-	virtual void do_push_entry(Entry const& p_entry) = 0;
-	virtual void do_update_row_for_entry(long p_row, Entry const& p_entry) = 0;
 	virtual void do_set_column_widths();
 	virtual int do_get_comment_col_num() const = 0;
 	virtual int do_get_num_columns() const = 0;

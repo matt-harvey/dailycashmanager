@@ -27,6 +27,15 @@ namespace gui
 {
 
 /**
+ * Displays a list of Entries. Derived classes must defined various
+ * pure virtual functions - and may override certain impure virtual functions
+ * - to govern which Entries are displayed, and which columns of data are
+ * displayed. However every EntryListCtrl will have the date of the Entry
+ * showing in the first column, and should only ever show Entries from
+ * OrdinaryJournals (not DraftJournals).
+ *
+ * @todo Better document the interface with derived classes.
+ *
  * @todo When filtering by Account:
  * 	If balance sheet Account, add column showing cumulative balance for
  * 	Account for all time up the point of the Entry, for each Entry shown.
@@ -123,41 +132,48 @@ protected:
 
 	int num_columns() const;
 	int scrollbar_width_allowance() const;
+	int date_col_num() const;
 	PhatbooksDatabaseConnection& database_connection();
 
 private:
 
-	void update_row_for_entry(long p_row, Entry const& p_entry);
+	virtual bool do_require_progress_log() const = 0;
 
 	/**
-	 * To be called by factory functions prior to returning pointer to newly
-	 * created EntryListCtrl.
+	 * Date column should be inserted first.
 	 */
+	virtual void do_insert_columns() = 0;
+
+	virtual bool do_approve_entry(Entry const& p_entry) const = 0;
+	virtual void do_set_non_date_columns
+	(	long p_row,
+		Entry const& p_entry
+	) = 0;
+	virtual void do_set_column_widths() = 0;
+	virtual int do_get_num_columns() const = 0;
+	virtual void do_update_for_amended(Account const& p_account);
+
+	/**
+	 * Should return a pointer to an EntryReader which reads Entries from
+	 * database_connection() associated with OrdinaryJournals
+	 * (not DraftJournals). By default this returns a pointer to an
+	 * ActualOrdinaryEntryReader. The base class EntryListCtrl will take
+	 * care of managing the memory of the returned pointer.
+	 */
+	virtual EntryReader* do_make_entry_reader() const;
+
+	void set_column_widths();
+
+	 // To be called by factory functions prior to returning pointer to newly
+	 // created EntryListCtrl.
 	static void initialize(EntryListCtrl* p_entry_list_ctrl);
 
 	void insert_columns();
 	void populate();
 	void process_candidate_entry(Entry const& p_entry);
 
-	virtual bool do_require_progress_log() const = 0;
-	virtual void do_insert_columns() = 0;
-	virtual bool do_approve_entry(Entry const& p_entry) const = 0;
-	
-	// TODO In current derived classes this doesn't take care of sorting by
-	// date.
-	virtual void do_push_entry(Entry const& p_entry) = 0;
-
-	// Assumes Entry is located at p_row.
-	virtual void do_update_row_for_entry(long p_row, Entry const& p_entry) = 0;
-
-	virtual void do_set_column_widths() = 0;
-	virtual int do_get_num_columns() const = 0;
-
-	virtual void do_update_for_amended(Account const& p_account);
-	
-	virtual EntryReader* do_make_entry_reader() const;
-
-	void set_column_widths();
+	// WARNING This doesn't take care of sorting by date
+	void push_entry(Entry const& p_entry);
 
 	// To remember which Entries have been added.
 	typedef boost::unordered_set<Entry::Id> IdSet;
