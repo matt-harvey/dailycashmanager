@@ -21,6 +21,8 @@ namespace gui
 /**
  * An EntryListCtrl which is not filtered by Account or date.
  * Shows only \e actual (non-budget) and \e ordinary (non-draft) Entries.
+ *
+ * WARNING This may not be used.
  */
 class UnfilteredEntryListCtrl: public EntryListCtrl
 {

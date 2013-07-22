@@ -211,16 +211,19 @@ EntryListCtrl::adjust_comment_column_to_fit()
 long
 EntryListCtrl::row_for_date(gregorian::date const& p_date)
 {
+	// TODO HIGH PRIORITY This is broken.
+
 	long min = 0;
 	long max = GetItemCount();
 	while (true)
 	{
-		// WARNING Should I be getting the dates from the text in the
+		// TODO We should I be getting the dates from the text in the
 		// EntryListCtrl row, rather than from the Entry referenced by the
-		// row? They should usually be the same, but perhaps they won't always
-		// be the same - especially if we are in the process of updating
-		// for new or changed Entries.
-		long const guess = (max + min) / 2;
+		// row. They should usually be the same, but possibly they won't
+		// always be the same - especially if we are in the process of
+		// updating for new or changed Entries.
+		assert (min < max);
+		long const guess = (min + max) / 2;
 		if (guess == 0)
 		{
 			return guess;
@@ -231,8 +234,8 @@ EntryListCtrl::row_for_date(gregorian::date const& p_date)
 	
 		long const guess_predecessor = guess - 1;
 		assert (guess_predecessor >= 0);
-		Entry::Id const predecessor_entry_id = GetItemData(guess_predecessor);
-		Entry const predecessor_entry(database_connection(), predecessor_entry_id);
+		Entry::Id const predecessor_id = GetItemData(guess_predecessor);
+		Entry const predecessor_entry(database_connection(), predecessor_id);
 		gregorian::date const predecessor_date = predecessor_entry.date();
 
 		assert (predecessor_date <= date);
@@ -240,12 +243,15 @@ EntryListCtrl::row_for_date(gregorian::date const& p_date)
 		{
 			return guess;
 		}
+		assert ((p_date < predecessor_date) || (date < p_date));
 		if (p_date < predecessor_date)
 		{
-			max = guess_predecessor;
+			assert (guess < max);
+			max = guess;
 		}
-		else if (p_date > date)
+		else if (date < p_date)
 		{
+			assert (guess > min);
 			min = guess;
 		}
 	}
