@@ -152,18 +152,20 @@ public:
 private:
 
 	void configure_account_lists();
-
 	void configure_entry_list();
+	void configure_reconciliation_page();
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;
 	wxNotebook* m_notebook;
-	wxPanel* m_notebook_page_1;
-	wxPanel* m_notebook_page_2;
+	wxPanel* m_notebook_page_accounts;
+	wxPanel* m_notebook_page_transactions;
+	wxPanel* m_notebook_page_reconciliations;
 	wxBoxSizer* m_right_column_sizer;
 	AccountListCtrl* m_bs_account_list;
 	AccountListCtrl* m_pl_account_list;
-	EntryListPanel* m_entry_list;
+	EntryListPanel* m_transaction_panel;
+	EntryListPanel* m_reconciliation_panel;
 	TransactionCtrl* m_transaction_ctrl;
 	DraftJournalListCtrl* m_draft_journal_list;
 };

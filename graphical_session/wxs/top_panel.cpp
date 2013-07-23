@@ -18,6 +18,7 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/string.h>
+#include <wx/window.h>
 #include <cassert>
 #include <vector>
 
@@ -52,12 +53,14 @@ TopPanel::TopPanel
 	m_database_connection(p_database_connection),
 	m_top_sizer(0),
 	m_notebook(0),
-	m_notebook_page_1(0),
-	m_notebook_page_2(0),
+	m_notebook_page_accounts(0),
+	m_notebook_page_transactions(0),
+	m_notebook_page_reconciliations(0),
 	m_right_column_sizer(0),
 	m_bs_account_list(0),
 	m_pl_account_list(0),
-	m_entry_list(0),
+	m_transaction_panel(0),
+	m_reconciliation_panel(0),
 	m_transaction_ctrl(0),
 	m_draft_journal_list(0)
 {
@@ -76,10 +79,15 @@ TopPanel::TopPanel
 		wxSizerFlags(6).Expand().
 			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border())
 	);
-	m_notebook_page_1 = new wxPanel(m_notebook, wxID_ANY);
-	m_notebook_page_2 = new wxPanel(m_notebook, wxID_ANY);
-	m_notebook->AddPage(m_notebook_page_1, wxString("Balances"), true);
-	m_notebook->AddPage(m_notebook_page_2, wxString("Transactions"), false);
+	m_notebook_page_accounts = new wxPanel(m_notebook, wxID_ANY);
+	m_notebook_page_transactions = new wxPanel(m_notebook, wxID_ANY);
+	m_notebook_page_reconciliations = new wxPanel(m_notebook, wxID_ANY);
+	m_notebook->
+		AddPage(m_notebook_page_accounts, wxString("Balances"), true);
+	m_notebook->
+		AddPage(m_notebook_page_transactions, wxString("Transactions"), false);
+	m_notebook->
+		AddPage(m_notebook_page_reconciliations, wxString("Reconciliations"), false);
 	m_top_sizer->Add
 	(	m_right_column_sizer,
 		wxSizerFlags(4).Expand().
@@ -87,6 +95,7 @@ TopPanel::TopPanel
 	);
 	configure_account_lists();
 	configure_entry_list();
+	configure_reconciliation_page();
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	m_top_sizer->Fit(this);
@@ -104,13 +113,13 @@ TopPanel::TopPanel
 void
 TopPanel::configure_account_lists()
 {
-	assert (m_notebook_page_1);
+	assert (m_notebook_page_accounts);
 	m_bs_account_list = AccountListCtrl::create_balance_sheet_account_list
-	(	m_notebook_page_1,
+	(	m_notebook_page_accounts,
 		m_database_connection
 	);
 	m_pl_account_list = AccountListCtrl::create_pl_account_list
-	(	m_notebook_page_1,
+	(	m_notebook_page_accounts,
 		m_database_connection
 	);
 	wxBoxSizer* page_1_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -124,10 +133,10 @@ TopPanel::configure_account_lists()
 		wxSizerFlags(3).Expand().
 			Border(wxNORTH | wxSOUTH | wxWEST, standard_border())
 	);
-	m_notebook_page_1->SetSizer(page_1_sizer);
-	page_1_sizer->Fit(m_notebook_page_1);
-	page_1_sizer->SetSizeHints(m_notebook_page_1);
-	m_notebook_page_1->Fit();
+	m_notebook_page_accounts->SetSizer(page_1_sizer);
+	page_1_sizer->Fit(m_notebook_page_accounts);
+	page_1_sizer->SetSizeHints(m_notebook_page_accounts);
+	m_notebook_page_accounts->Fit();
 	Layout();
 	return;
 }
@@ -135,18 +144,37 @@ TopPanel::configure_account_lists()
 void
 TopPanel::configure_entry_list()
 {
-	assert (m_notebook_page_2);
-	assert (m_notebook_page_1);
-	m_entry_list = new EntryListPanel
-	(	m_notebook_page_2,
+	assert (m_notebook_page_transactions);
+	assert (!m_transaction_panel);
+	m_transaction_panel = new EntryListPanel
+	(	m_notebook_page_transactions,
 		m_database_connection
 	);
 	wxBoxSizer* page_2_sizer = new wxBoxSizer(wxHORIZONTAL);
-	page_2_sizer->Add(m_entry_list, wxSizerFlags(1).Expand());
-	m_notebook_page_2->SetSizer(page_2_sizer);
-	page_2_sizer->Fit(m_notebook_page_2);
-	page_2_sizer->SetSizeHints(m_notebook_page_2);
-	m_notebook_page_2->Fit();
+	page_2_sizer->Add(m_transaction_panel, wxSizerFlags(1).Expand());
+	m_notebook_page_transactions->SetSizer(page_2_sizer);
+	page_2_sizer->Fit(m_notebook_page_transactions);
+	page_2_sizer->SetSizeHints(m_notebook_page_transactions);
+	m_notebook_page_transactions->Fit();
+	Layout();
+	return;
+}
+
+void
+TopPanel::configure_reconciliation_page()
+{
+	assert (m_notebook_page_reconciliations);
+	assert (!m_reconciliation_panel);
+	m_reconciliation_panel = new EntryListPanel
+	(	m_notebook_page_reconciliations,
+		m_database_connection
+	);
+	wxBoxSizer* page_3_sizer = new wxBoxSizer(wxHORIZONTAL);
+	page_3_sizer->Add(m_reconciliation_panel, wxSizerFlags(1).Expand());
+	m_notebook_page_reconciliations->SetSizer(page_3_sizer);
+	page_3_sizer->Fit(m_notebook_page_reconciliations);
+	page_3_sizer->SetSizeHints(m_notebook_page_reconciliations);
+	m_notebook_page_reconciliations->Fit();
 	Layout();
 	return;
 }
@@ -264,7 +292,16 @@ void
 TopPanel::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 {
 	vector<Entry> entries;
-	m_entry_list->selected_entries(entries);
+	assert (m_notebook);
+	wxWindow* const page = m_notebook->GetCurrentPage();
+	if (page == static_cast<wxWindow*>(m_notebook_page_transactions))
+	{
+		m_transaction_panel->selected_entries(entries);
+	}
+	else if (page == static_cast<wxWindow*>(m_notebook_page_reconciliations))
+	{
+		m_transaction_panel->selected_entries(entries);
+	}
 	vector<Entry>::const_iterator it = entries.begin();
 	vector<Entry>::const_iterator const end = entries.end();
 	for ( ; it != end; ++it)
@@ -286,7 +323,8 @@ TopPanel::update_for_new(OrdinaryJournal const& p_saved_object)
 {
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
-	m_entry_list->update_for_new(p_saved_object);
+	m_transaction_panel->update_for_new(p_saved_object);
+	m_reconciliation_panel->update_for_new(p_saved_object);
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -309,7 +347,8 @@ TopPanel::update_for_new(Account const& p_saved_object)
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
-	m_entry_list->update_for_new(p_saved_object);
+	m_transaction_panel->update_for_new(p_saved_object);
+	m_reconciliation_panel->update_for_new(p_saved_object);
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -320,7 +359,8 @@ TopPanel::update_for_amended(OrdinaryJournal const& p_saved_object)
 {
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
-	m_entry_list->update_for_amended(p_saved_object);
+	m_transaction_panel->update_for_amended(p_saved_object);
+	m_reconciliation_panel->update_for_amended(p_saved_object);
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -332,7 +372,9 @@ TopPanel::update_for_amended(DraftJournal const& p_saved_object)
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
-	// m_entry_list->update_for_amended(p_saved_object);  // Does not apply for DraftJournal.
+	// m_transaction_panel->update_for_amended(p_saved_object);  // Does not apply for DraftJournal.
+	// m_reconciliation_panel->update_for_amended(p_saved_object);  // Does not apply for
+	// DraftJournal.
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -344,7 +386,8 @@ TopPanel::update_for_amended(Account const& p_saved_object)
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
-	m_entry_list->update_for_amended(p_saved_object);
+	m_transaction_panel->update_for_amended(p_saved_object);
+	m_reconciliation_panel->update_for_amended(p_saved_object);
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -384,7 +427,8 @@ TopPanel::update_for_deleted_ordinary_entries
 (	vector<Entry::Id> const& p_doomed_ids
 )
 {
-	m_entry_list->update_for_deleted(p_doomed_ids);
+	m_transaction_panel->update_for_deleted(p_doomed_ids);
+	m_reconciliation_panel->update_for_deleted(p_doomed_ids);
 	return;
 }
 
