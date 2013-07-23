@@ -13,6 +13,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "pl_account_entry_list_ctrl.hpp"
+#include "summary_datum.hpp"
 #include "unfiltered_entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
@@ -117,6 +118,7 @@ void
 EntryListCtrl::initialize(EntryListCtrl* p_entry_list_ctrl)
 {
 	p_entry_list_ctrl->insert_columns();
+	p_entry_list_ctrl->do_initialize_summary_data();
 	p_entry_list_ctrl->populate();
 	p_entry_list_ctrl->set_column_widths();
 	p_entry_list_ctrl->Fit();
@@ -291,6 +293,7 @@ void
 EntryListCtrl::process_push_candidate_entry(Entry const& p_entry)
 {
 	assert (p_entry.has_id());
+	do_process_candidate_entry_for_summary(p_entry);
 	if (do_approve_entry(p_entry)) push_back_entry(p_entry);
 	return;
 }
@@ -299,6 +302,7 @@ void
 EntryListCtrl::process_insertion_candidate_entry(Entry const& p_entry)
 {
 	assert (p_entry.has_id());
+	do_process_candidate_entry_for_summary(p_entry);
 	if (do_approve_entry(p_entry)) insert_entry(p_entry);
 	return;
 }
@@ -373,6 +377,7 @@ EntryListCtrl::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 	{
 		Entry const entry(database_connection(), *it);
 		remove_entry_if_present(entry);
+		do_process_removal_candidate_for_summary(entry);
 	}
 	return;
 }
@@ -404,6 +409,12 @@ EntryListCtrl::scroll_to_bottom()
 	return;
 }
 
+vector<SummaryDatum>
+EntryListCtrl::summary_data() const
+{
+	return do_get_summary_data();
+}
+
 int
 EntryListCtrl::num_columns() const
 {
@@ -422,6 +433,36 @@ EntryListCtrl::do_make_entry_reader() const
 {
 	return new ActualOrdinaryEntryReader(m_database_connection);
 }
+
+vector<SummaryDatum>
+EntryListCtrl::do_get_summary_data() const
+{
+	vector<SummaryDatum> ret;
+	assert (ret.empty());
+	return ret;
+}
+
+void
+EntryListCtrl::do_initialize_summary_data()
+{
+	// Do nothing.
+	return;
+}
+
+void
+EntryListCtrl::do_process_candidate_entry_for_summary(Entry const& p_entry)
+{
+	(void)p_entry;  // Silence compiler re. unused parameter.
+	return;
+}
+
+void
+EntryListCtrl::do_process_removal_candidate_for_summary(Entry const& p_entry)
+{
+	(void)p_entry;  // Silence compiler re. unused parameter.
+	return;
+}
+
 
 int
 EntryListCtrl::date_col_num() const

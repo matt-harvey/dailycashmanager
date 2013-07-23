@@ -42,6 +42,13 @@ class EntryListCtrl;
  * @todo EntryListCtrl has zero height until such time as user
  * first clicks "Refresh". Various attempted workarounds for this
  * have been tried to no avail...
+ *
+ * @todo HIGH PRIORITY Incorporate the result of calling
+ * m_entry_list_ctrl->summary_data() into the EntryListPanel.
+ *
+ * @todo Make a subclass of FilteredEntryListCtrl called
+ * ReconciliationEntryList, and use that with EntryListPanel to enable
+ * users to perform Account reconciliations.
  */
 class EntryListPanel: public wxPanel, private boost::noncopyable
 {

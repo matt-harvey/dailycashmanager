@@ -7,6 +7,7 @@
 #include "account.hpp"
 #include "entry_reader.hpp"
 #include "entry.hpp"
+#include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/unordered_set.hpp>
@@ -108,6 +109,8 @@ public:
 
 	void scroll_to_bottom();
 
+	std::vector<SummaryDatum> summary_data() const;
+
 protected:
 	EntryListCtrl
 	(	wxWindow* p_parent,
@@ -142,9 +145,17 @@ private:
 	 * database_connection() associated with OrdinaryJournals
 	 * (not DraftJournals). By default this returns a pointer to an
 	 * ActualOrdinaryEntryReader. The base class EntryListCtrl will take
-	 * care of managing the memory of the returned pointer.
+	 * care of managing the memory of the returned pointer. The reader should
+	 * also read Entries in date order - or things could get messy.
 	 */
 	virtual EntryReader* do_make_entry_reader() const;
+
+	virtual std::vector<SummaryDatum> do_get_summary_data() const;
+	virtual void do_initialize_summary_data();
+	virtual void do_process_candidate_entry_for_summary(Entry const& p_entry);
+	virtual void do_process_removal_candidate_for_summary
+	(	Entry const& p_entry
+	);
 
 	void set_column_widths();
 	int scrollbar_width_allowance() const;
