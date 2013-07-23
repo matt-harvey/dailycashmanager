@@ -321,13 +321,7 @@ EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
 	{
 		vector<Entry>::const_iterator it = p_journal.entries().begin();
 		vector<Entry>::const_iterator const end = p_journal.entries().end();
-		for ( ; it != end; ++it)
-		{
-			if (do_approve_entry(*it))
-			{
-				insert_entry(*it);
-			}
-		}
+		for ( ; it != end; ++it) process_insertion_candidate_entry(*it);
 	}
 	set_column_widths();
 	return;
@@ -348,18 +342,7 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 	wxString const wx_date_string = date_format_wx(p_journal.date());
 	for ( ; it != end; ++it)
 	{
-		Entry::Id const id = it->id();
-		IdSet::const_iterator const jt = m_id_set.find(id);
-		if (jt != m_id_set.end())
-		{
-			// Entry is displayed - delete it first - then we will reinsert
-			// it at the correct date position (note date may have changed)
-			// if still approved.
-			long const pos = FindItem(-1, id);
-			assert (GetItemData(pos) == static_cast<unsigned long>(it->id()));
-			DeleteItem(pos);
-			m_id_set.erase(jt);
-		}
+		remove_entry_if_present(*it);
 		process_insertion_candidate_entry(*it);
 	}
 	set_column_widths();
@@ -388,12 +371,8 @@ EntryListCtrl::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 	vector<Entry::Id>::const_iterator const end = p_doomed_ids.end();
 	for ( ; it != end; ++it)
 	{
-		IdSet::iterator jt = m_id_set.find(*it);
-		if (jt != m_id_set.end())
-		{
-			DeleteItem(FindItem(-1, *jt));
-			m_id_set.erase(jt);
-		}
+		Entry const entry(database_connection(), *it);
+		remove_entry_if_present(entry);
 	}
 	return;
 }
@@ -476,6 +455,21 @@ EntryListCtrl::insert_entry(Entry const& p_entry)
 	Entry::Id const id = p_entry.id();
 	SetItemData(pos, id);
 	m_id_set.insert(id);
+	return;
+}
+
+void
+EntryListCtrl::remove_entry_if_present(Entry const& p_entry)
+{
+	Entry::Id const id = p_entry.id();
+	IdSet::const_iterator const it = m_id_set.find(id);
+	if (it != m_id_set.end())
+	{
+		long const pos = FindItem(-1, id);
+		assert (GetItemData(pos) == static_cast<unsigned long>(id));
+		DeleteItem(pos);
+		m_id_set.erase(it);
+	}
 	return;
 }
 
