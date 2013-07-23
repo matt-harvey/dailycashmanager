@@ -40,7 +40,9 @@ END_EVENT_TABLE()
 
 EntryListPanel::EntryListPanel
 (	wxWindow* p_parent,
-	PhatbooksDatabaseConnection& p_database_connection
+	PhatbooksDatabaseConnection& p_database_connection,
+	bool p_include_pl_accounts,
+	bool p_allow_blank_dates
 ):
 	wxPanel(p_parent, wxID_ANY),
 	m_next_row(0),
@@ -57,8 +59,11 @@ EntryListPanel::EntryListPanel
 
 	++m_next_row;  // To leave some space at top.
 
+	wxString account_label_text(" Account");
+	if (p_include_pl_accounts) account_label_text += wxString(" or category");
+	account_label_text += wxString(":");
 	wxStaticText* account_label =
-		new wxStaticText(this, wxID_ANY, wxString(" Account or category:"));
+		new wxStaticText(this, wxID_ANY, account_label_text);
 	m_top_sizer->Add(account_label, wxGBPosition(m_next_row, 1));
 	wxStaticText* min_date_label =
 		new wxStaticText(this, wxID_ANY, wxString(" From:"));
@@ -69,16 +74,32 @@ EntryListPanel::EntryListPanel
 
 	++m_next_row;
 
-	ImpureAccountReader const reader(m_database_connection);
-	assert (!reader.empty());  // TODO What if this fails?
-	m_account_ctrl = new AccountCtrl
-	(	this,
-		s_account_ctrl_id,
-		*(reader.begin()),
-		wxSize(large_width(), wxDefaultSize.y),
-		reader.begin(),
-		reader.end()
-	);
+	if (p_include_pl_accounts)
+	{
+		ImpureAccountReader const reader(m_database_connection);
+		assert (!reader.empty());  // TODO What if this fails?
+		m_account_ctrl = new AccountCtrl
+		(	this,
+			s_account_ctrl_id,
+			*(reader.begin()),
+			wxSize(large_width(), wxDefaultSize.y),
+			reader.begin(),
+			reader.end()
+		);
+	}
+	else
+	{
+		BalanceSheetAccountReader const reader(m_database_connection);
+		assert (!reader.empty());  // TODO What if this fails
+		m_account_ctrl = new AccountCtrl
+		(	this,
+			s_account_ctrl_id,
+			*(reader.begin()),
+			wxSize(large_width(), wxDefaultSize.y),
+			reader.begin(),
+			reader.end()
+		);
+	}
 	int const std_height = m_account_ctrl->GetSize().GetHeight();
 	m_top_sizer->Add(m_account_ctrl, wxGBPosition(m_next_row, 1));
 	m_min_date_ctrl = new DateCtrl
@@ -86,7 +107,7 @@ EntryListPanel::EntryListPanel
 		s_min_date_ctrl_id,
 		wxSize(medium_width(), std_height),
 		today(),
-		true
+		p_allow_blank_dates
 	);
 	m_top_sizer->Add(m_min_date_ctrl, wxGBPosition(m_next_row, 2));
 	m_max_date_ctrl = new DateCtrl
@@ -94,7 +115,7 @@ EntryListPanel::EntryListPanel
 		s_max_date_ctrl_id,
 		wxSize(medium_width(), std_height),
 		today(),
-		true
+		p_allow_blank_dates
 	);
 	m_top_sizer->Add(m_max_date_ctrl, wxGBPosition(m_next_row, 3));
 	m_refresh_button = new wxButton

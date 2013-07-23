@@ -167,7 +167,9 @@ TopPanel::configure_reconciliation_page()
 	assert (!m_reconciliation_panel);
 	m_reconciliation_panel = new EntryListPanel
 	(	m_notebook_page_reconciliations,
-		m_database_connection
+		m_database_connection,
+		false,
+		false
 	);
 	wxBoxSizer* page_3_sizer = new wxBoxSizer(wxHORIZONTAL);
 	page_3_sizer->Add(m_reconciliation_panel, wxSizerFlags(1).Expand());

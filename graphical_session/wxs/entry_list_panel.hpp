@@ -55,7 +55,9 @@ class EntryListPanel: public wxPanel, private boost::noncopyable
 public:
 	EntryListPanel
 	(	wxWindow* p_parent,
-		PhatbooksDatabaseConnection& p_database_connection
+		PhatbooksDatabaseConnection& p_database_connection,
+		bool p_include_pl_accounts = true,
+		bool p_allow_blank_dates = true
 	);
 
 	void update_for_new(OrdinaryJournal const& p_journal);
