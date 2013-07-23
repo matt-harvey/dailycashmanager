@@ -208,39 +208,63 @@ EntryListCtrl::adjust_comment_column_to_fit()
 
 }
 
+gregorian::date
+EntryListCtrl::date_displayed(long p_row) const
+{
+	assert (date_col_num() == 0);
+	optional<gregorian::date> const maybe_date = parse_date
+	(	GetItemText(p_row),
+		locale()
+	);
+	assert (maybe_date);
+	return value(maybe_date);
+}
+
 long
-EntryListCtrl::row_for_date(gregorian::date const& p_date)
+EntryListCtrl::row_for_date(gregorian::date const& p_date) const
 {
 	long min = 0;
-	long max = GetItemCount();
+	long const num_rows = GetItemCount();
+	long max = num_rows;
+
+	// Deal with common or special cases
+	if (max == 0)
+	{
+		// No Entries displayed
+		return 0;		
+	}
+	assert (max == num_rows);
+	assert (max > 0);
+	if (date_displayed(max - 1) <= p_date)
+	{
+		// Very end
+		return max;
+	}
+	// Date is neither first nor last... find it using binary search.
 	while (true)
 	{
 		assert (min < max);
-		long const guess = (min + max) / 2;
-		if (guess == 0)
+		long guess = (min + max) / 2;
+		if (guess == min)
 		{
+			// Find end of contiguous rows showing this date
+			while ((date_displayed(guess) == p_date) && (guess != num_rows))
+			{
+				++guess;
+			}
 			return guess;
 		}
-		optional<gregorian::date> const maybe_date = parse_date
-		(	GetItemText(guess),
-			locale()
-		);
-		assert (maybe_date);
-		gregorian::date const date = value(maybe_date);
-
-		long const guess_predecessor = guess - 1;
-		assert (guess_predecessor >= 0);
-		optional<gregorian::date> const maybe_predecessor_date = parse_date
-		(	GetItemText(guess_predecessor),
-			locale()
-		);
-		assert (maybe_predecessor_date);
-		gregorian::date const predecessor_date =
-			value(maybe_predecessor_date);
-
+		gregorian::date const date = date_displayed(guess);
+		assert (guess > 0);
+		gregorian::date const predecessor_date = date_displayed(guess - 1);
 		assert (predecessor_date <= date);
 		if ((predecessor_date <= p_date) && (p_date <= date))
 		{
+			// Find end of contiguous rows showing this date
+			while ((date_displayed(guess) == p_date) && (guess != num_rows))
+			{
+				++guess;
+			}
 			return guess;
 		}
 		assert ((p_date < predecessor_date) || (date < p_date));

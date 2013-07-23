@@ -66,6 +66,9 @@ class TopPanel;
  * in that Journal have already been reconciled, then we need either
  * to prevent this from happening at all, or else to warn the user
  * that the reconciliations will be out of whack.
+ *
+ * @todo Intercept the situation where user sets date earlier than entity
+ * creation date. Currently this just throws and crashes.
  */
 class TransactionCtrl: public wxPanel, private boost::noncopyable
 {

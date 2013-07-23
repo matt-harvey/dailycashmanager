@@ -7,10 +7,11 @@
 #include "account.hpp"
 #include "entry_reader.hpp"
 #include "entry.hpp"
-#include <wx/gdicmn.h>
-#include <wx/listctrl.h>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/unordered_set.hpp>
+#include <wx/gdicmn.h>
+#include <wx/listctrl.h>
 #include <vector>
 
 namespace phatbooks
@@ -122,7 +123,8 @@ protected:
 	int date_col_num() const;
 	void autosize_column_widths();
 	void adjust_comment_column_to_fit();
-	long row_for_date(boost::gregorian::date const& p_date);
+	boost::gregorian::date date_displayed(long p_row) const;
+	long row_for_date(boost::gregorian::date const& p_date) const;
 	PhatbooksDatabaseConnection& database_connection();
 
 private:
