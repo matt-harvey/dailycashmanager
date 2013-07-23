@@ -27,13 +27,9 @@ namespace
 	{
 		return 2;
 	}
-	int reconciled_col_num()
-	{
-		return 3;
-	}
 	int anon_num_columns()
 	{
-		return 4;
+		return 3;
 	}
 
 }  // end anonymous namespace
@@ -76,12 +72,7 @@ BSAccountEntryListCtrl::do_set_non_date_columns
 		amount_col_num(),
 		finformat_wx(p_entry.amount(), locale(), false)
 	);
-	SetItem
-	(	p_row,
-		reconciled_col_num(),
-		(p_entry.is_reconciled()? wxString("Y"): wxString("N"))
-	);
-	assert (num_columns() == 4);
+	assert (num_columns() == 3);
 	return;
 }
 
@@ -98,12 +89,7 @@ BSAccountEntryListCtrl::do_insert_non_date_columns()
 		wxString("Amount"),
 		wxLIST_FORMAT_RIGHT
 	);
-	InsertColumn
-	(	reconciled_col_num(),
-		wxString("R"),
-		wxLIST_FORMAT_LEFT
-	);
-	assert (num_columns() == 4);
+	assert (num_columns() == 3);
 	return;
 }
 
