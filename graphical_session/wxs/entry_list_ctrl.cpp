@@ -145,7 +145,6 @@ EntryListCtrl::populate()
 	boost::scoped_ptr<EntryReader> const reader(do_make_entry_reader());
 	EntryReader::const_iterator it = reader->begin();
 	EntryReader::const_iterator const end = reader->end();
-	do_initialize_accumulation(it, end);
 	if (do_require_progress_log())
 	{
 		EntryReader::size_type i = 0;
@@ -456,7 +455,6 @@ EntryListCtrl::push_back_entry(Entry const& p_entry)
 {
 	long const i = GetItemCount();
 	assert (date_col_num() == 0);
-	do_accumulate(p_entry);
 	InsertItem(i, date_format_wx(p_entry.date()));
 	do_set_non_date_columns(i, p_entry);
 
@@ -478,25 +476,6 @@ EntryListCtrl::insert_entry(Entry const& p_entry)
 	Entry::Id const id = p_entry.id();
 	SetItemData(pos, id);
 	m_id_set.insert(id);
-	return;
-}
-
-void
-EntryListCtrl::do_accumulate(Entry const& p_entry)
-{
-	(void)p_entry;  // Silence compiler re. unused variable
-	return;
-}
-
-void
-EntryListCtrl::do_initialize_accumulation
-(	EntryReader::const_iterator it,
-	EntryReader::const_iterator const& end
-)
-{
-	// Silence compiler re. unused parameters
-	(void)it;
-	(void)end;
 	return;
 }
 

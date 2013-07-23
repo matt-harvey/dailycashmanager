@@ -36,10 +36,6 @@ namespace gui
  * OrdinaryJournals (not DraftJournals).
  *
  * @todo Better document the interface with derived classes.
- *
- * @todo HIGH PRIORITY The "update_for..." functions are now broken
- * for PLAccountEntryListCtrl and BSAccountEntryListCtrl, as they do not
- * adjust the accumulator column/s.
  */
 class EntryListCtrl: public wxListCtrl, private boost::noncopyable
 {
@@ -140,11 +136,6 @@ private:
 	virtual int do_get_num_columns() const = 0;
 	virtual int do_get_comment_col_num() const = 0;
 	virtual void do_update_for_amended(Account const& p_account);
-	virtual void do_accumulate(Entry const& p_entry);
-	virtual void do_initialize_accumulation
-	(	EntryReader::const_iterator it,
-		EntryReader::const_iterator const& end
-	);
 
 	/**
 	 * Should return a pointer to an EntryReader which reads Entries from

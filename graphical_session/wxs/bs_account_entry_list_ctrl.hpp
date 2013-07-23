@@ -42,14 +42,6 @@ private:
 	virtual void do_insert_non_date_columns();
 	virtual int do_get_comment_col_num() const;
 	virtual int do_get_num_columns() const;
-	virtual void do_accumulate(Entry const& p_entry);
-	virtual void do_initialize_accumulation
-	(	EntryReader::const_iterator it,
-		EntryReader::const_iterator const& end
-	);
-
-	jewel::Decimal m_accumulated_balance;
-	jewel::Decimal m_accumulated_reconciled_balance;
 
 };  // class BSAccountEntryListCtrl
 

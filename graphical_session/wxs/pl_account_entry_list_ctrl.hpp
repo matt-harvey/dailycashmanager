@@ -43,13 +43,11 @@ private:
 	virtual void do_insert_non_date_columns();
 	virtual int do_get_comment_col_num() const;
 	virtual int do_get_num_columns() const;
-	virtual void do_accumulate(Entry const& p_entry);
 
 	wxString verb() const;
 	jewel::Decimal friendly_amount(Entry const& p_entry) const;
 
 	bool const m_reverse_signs;
-	jewel::Decimal m_accumulator;
 
 };  // class PLAccountEntryListCtrl
 

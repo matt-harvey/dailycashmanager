@@ -30,13 +30,9 @@ namespace
 	{
 		return 2;
 	}
-	int accumulator_col_num()
-	{
-		return 3;
-	}
 	int anon_num_columns()
 	{
-		return 4;
+		return 3;
 	}
 
 }  // end anonymous namespace
@@ -56,8 +52,7 @@ PLAccountEntryListCtrl::PLAccountEntryListCtrl
 		p_maybe_min_date,
 		p_maybe_max_date
 	),
-	m_reverse_signs(p_account.account_type() == account_type::revenue),
-	m_accumulator(0, p_account.commodity().precision())
+	m_reverse_signs(p_account.account_type() == account_type::revenue)
 {
 }
 
@@ -81,19 +76,7 @@ PLAccountEntryListCtrl::do_set_non_date_columns
 		amount_col_num(),
 		finformat_wx(friendly_amount(p_entry), locale(), false)
 	);
-	SetItem
-	(	p_row,
-		accumulator_col_num(),
-		finformat_wx(m_accumulator, locale(), false)
-	);
-	assert (num_columns() == 4);
-	return;
-}
-
-void
-PLAccountEntryListCtrl::do_accumulate(Entry const& p_entry)
-{
-	m_accumulator += friendly_amount(p_entry);
+	assert (num_columns() == 3);
 	return;
 }
 
@@ -124,12 +107,7 @@ PLAccountEntryListCtrl::do_insert_non_date_columns()
 		wxString("Amount ") + verb(),
 		wxLIST_FORMAT_RIGHT
 	);
-	InsertColumn
-	(	accumulator_col_num(),
-		wxString("Total ") + verb(),
-		wxLIST_FORMAT_RIGHT
-	);
-	assert (num_columns() == 4);
+	assert (num_columns() == 3);
 	return;
 }
 
