@@ -44,13 +44,19 @@ FilteredEntryListCtrl::FilteredEntryListCtrl
 	EntryListCtrl(p_parent, p_size, p_account.database_connection()),
 	m_account(p_account),
 	m_min_date
-	(	p_maybe_min_date?
-		value(p_maybe_min_date):
-		p_account.database_connection().opening_balance_journal_date() +
-			gregorian::date_duration(1)
+	(	p_account.database_connection().opening_balance_journal_date() +
+		gregorian::date_duration(1)
 	),
 	m_maybe_max_date(p_maybe_max_date)
 {
+	if (p_maybe_min_date)
+	{
+		gregorian::date const provided_min_date = value(p_maybe_min_date);
+		if (provided_min_date > m_min_date)
+		{
+			m_min_date = provided_min_date;
+		}
+	}
 }
 
 FilteredEntryListCtrl::~FilteredEntryListCtrl()

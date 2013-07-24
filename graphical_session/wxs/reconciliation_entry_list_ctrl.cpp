@@ -63,6 +63,7 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 		optional<gregorian::date>(p_min_date),
 		optional<gregorian::date>(p_max_date)
 	),
+	m_max_date(p_max_date),
 	m_closing_balance(0, p_account.commodity().precision()),
 	m_reconciled_closing_balance(0, p_account.commodity().precision())
 {
@@ -117,6 +118,31 @@ ReconciliationEntryListCtrl::do_insert_non_date_columns()
 	);
 	assert (num_columns() == 4);
 	return;
+}
+
+bool
+ReconciliationEntryListCtrl::do_approve_entry(Entry const& p_entry) const
+{
+	if (p_entry.account() != account())
+	{
+		return false;
+	}
+	gregorian::date const date = p_entry.date();
+	if (date > max_date())
+	{
+		return false;
+	}
+	if (date < min_date())
+	{
+		// We include unreconciled Entries even if they're prior to the
+		// min_date(), providing they're not later than max_date().
+		assert (date <= max_date());
+		return !p_entry.is_reconciled();
+	}
+	assert (p_entry.account() == account());
+	assert (date >= min_date());
+	assert (date <= max_date());
+	return true;
 }
 
 int

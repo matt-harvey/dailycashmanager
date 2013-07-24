@@ -47,7 +47,7 @@ private:
 	virtual int do_get_comment_col_num() const = 0;
 	
 	Account const m_account;
-	boost::gregorian::date const m_min_date;
+	boost::gregorian::date m_min_date;
 	boost::optional<boost::gregorian::date> const m_maybe_max_date;
 
 };  // class FilteredEntryListCtrl
