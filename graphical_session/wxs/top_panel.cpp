@@ -301,7 +301,7 @@ TopPanel::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 	}
 	else if (page == static_cast<wxWindow*>(m_notebook_page_reconciliations))
 	{
-		m_transaction_panel->selected_entries(entries);
+		m_reconciliation_panel->selected_entries(entries);
 	}
 	vector<Entry>::const_iterator it = entries.begin();
 	vector<Entry>::const_iterator const end = entries.end();
