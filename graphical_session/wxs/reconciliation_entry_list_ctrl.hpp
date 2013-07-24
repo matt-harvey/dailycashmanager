@@ -29,6 +29,11 @@ namespace gui
  * that is prior to the min_date? This shouldn't matter because the user
  * shouldn't be able to edit an Entry that is reconciled; and if it is
  * unreconciled it will be in the list... but make sure this is OK.
+ *
+ * @todo HIGH PRIORITY In ReconciliationPanel, and in
+ * ReconciliationEntryListCtrl, we need to update rows for changes in
+ * reconciliation status when required. This should be done separately
+ * from the way we update for Journal amendments.
  */
 class ReconciliationEntryListCtrl: public FilteredEntryListCtrl
 {
@@ -64,7 +69,6 @@ private:
 		return m_max_date;
 	}
 
-	jewel::Decimal m_opening_balance;
 	jewel::Decimal m_closing_balance;
 	jewel::Decimal m_reconciled_closing_balance;
 

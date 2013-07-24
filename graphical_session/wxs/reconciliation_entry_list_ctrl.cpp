@@ -16,6 +16,11 @@ using jewel::Decimal;
 using jewel::value;
 using std::vector;
 
+// For debugging
+	#include <jewel/debug_log.hpp>
+	#include <iostream>
+	using std::endl;
+
 namespace gregorian = boost::gregorian;
 
 namespace phatbooks
@@ -58,7 +63,6 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 		optional<gregorian::date>(p_min_date),
 		optional<gregorian::date>(p_max_date)
 	),
-	m_opening_balance(0, p_account.commodity().precision()),
 	m_closing_balance(0, p_account.commodity().precision()),
 	m_reconciled_closing_balance(0, p_account.commodity().precision())
 {
@@ -132,20 +136,15 @@ ReconciliationEntryListCtrl::do_get_summary_data() const
 {
 	vector<SummaryDatum> ret;
 	SummaryDatum a
-	(	wxString("Opening balance"),
-		m_opening_balance
-	);
-	SummaryDatum b
 	(	wxString("Closing balance"),
 		m_closing_balance
 	);
-	SummaryDatum c
+	SummaryDatum b
 	(	wxString("Reconciled balance"),
 		m_reconciled_closing_balance
 	);
 	ret.push_back(a);
 	ret.push_back(b);
-	ret.push_back(c);
 	return ret;
 }
 
@@ -160,17 +159,10 @@ ReconciliationEntryListCtrl::do_process_candidate_entry_for_summary
 	}
 	assert (p_entry.account() == account());
 	jewel::Decimal const amount = p_entry.amount();
-	if (p_entry.date() < min_date())
-	{
-		m_opening_balance += amount;
-	}
 	if (p_entry.date() <= max_date())
 	{
 		m_closing_balance += amount;
-		if (p_entry.is_reconciled())
-		{
-			m_reconciled_closing_balance += amount;
-		}
+		if (p_entry.is_reconciled()) m_reconciled_closing_balance += amount;
 	}
 	return;
 }
@@ -178,20 +170,35 @@ ReconciliationEntryListCtrl::do_process_candidate_entry_for_summary
 void
 ReconciliationEntryListCtrl::do_process_removal_for_summary(long p_row)
 {
-	(void)p_row;
-	// TODO HIGH PRIORITY Implement
+	Decimal const amount = amount_for_row(p_row);
+	m_closing_balance -= amount;
+#	ifndef NDEBUG
+		wxListItem item;
+		item.SetId(p_row);
+		item.SetColumn(reconciled_col_num());
+		GetItem(item);
+		assert (item.GetText() == wxString("N"));
+		// as we don't allow user to delete reconciled Entries.
+		// so we don't need to adjust m_reconciled_closing_balance here.
+#	endif
+	return;	
 }
 
 Decimal
 ReconciliationEntryListCtrl::amount_for_row(long p_row) const
 {
+	JEWEL_DEBUG_LOG << "Calling amount_for_row(long p_row) with p_row of: "
+	                << p_row
+					<< endl;
 	wxListItem item;
 	item.SetId(p_row);
 	item.SetColumn(amount_col_num());
 	GetItem(item);
-	return wx_to_decimal(item.GetText(), locale());
-
+	Decimal ret = wx_to_decimal(item.GetText(), locale());
+	JEWEL_DEBUG_LOG << "Returning amount of: " << ret << endl;
+	return ret;
 }
+
 
 }  // namespace gui
 }  // namespace phatbooks

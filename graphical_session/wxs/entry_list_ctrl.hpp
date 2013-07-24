@@ -185,7 +185,7 @@ private:
 	// This inserts in correct date order
 	void insert_entry(Entry const& p_entry);
 	
-	void remove_entry_if_present(Entry const& p_entry);
+	void remove_if_present(Entry::Id p_entry_id);
 
 	// This doesn't take care of sorting by date
 	void push_back_entry(Entry const& p_entry);

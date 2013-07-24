@@ -371,7 +371,7 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 	wxString const wx_date_string = date_format_wx(p_journal.date());
 	for ( ; it != end; ++it)
 	{
-		remove_entry_if_present(*it);
+		remove_if_present(it->id());
 		process_insertion_candidate_entry(*it);
 	}
 	set_column_widths();
@@ -398,11 +398,7 @@ EntryListCtrl::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 {
 	vector<Entry::Id>::const_iterator it = p_doomed_ids.begin();
 	vector<Entry::Id>::const_iterator const end = p_doomed_ids.end();
-	for ( ; it != end; ++it)
-	{
-		Entry const entry(database_connection(), *it);
-		remove_entry_if_present(entry);
-	}
+	for ( ; it != end; ++it) remove_if_present(*it);
 	return;
 }
 
@@ -524,14 +520,13 @@ EntryListCtrl::insert_entry(Entry const& p_entry)
 }
 
 void
-EntryListCtrl::remove_entry_if_present(Entry const& p_entry)
+EntryListCtrl::remove_if_present(Entry::Id p_entry_id)
 {
-	Entry::Id const id = p_entry.id();
-	IdSet::const_iterator const it = m_id_set.find(id);
+	IdSet::const_iterator const it = m_id_set.find(p_entry_id);
 	if (it != m_id_set.end())
 	{
-		long const pos = FindItem(-1, id);
-		assert (GetItemData(pos) == static_cast<unsigned long>(id));
+		long const pos = FindItem(-1, p_entry_id);
+		assert (GetItemData(pos) == static_cast<unsigned long>(p_entry_id));
 		do_process_removal_for_summary(pos);
 		DeleteItem(pos);
 		m_id_set.erase(it);
