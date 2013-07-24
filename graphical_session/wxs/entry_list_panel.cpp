@@ -41,10 +41,10 @@ END_EVENT_TABLE()
 EntryListPanel::EntryListPanel
 (	wxWindow* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection,
-	bool p_include_pl_accounts,
-	bool p_allow_blank_dates
+	bool p_support_reconciliations
 ):
 	wxPanel(p_parent, wxID_ANY),
+	m_support_reconciliations(p_support_reconciliations),
 	m_next_row(0),
 	m_top_sizer(0),
 	m_account_ctrl(0),
@@ -57,10 +57,13 @@ EntryListPanel::EntryListPanel
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 
+	bool const include_pl_accounts = !m_support_reconciliations;
+	bool const allow_blank_dates = !m_support_reconciliations;
+
 	++m_next_row;  // To leave some space at top.
 
 	wxString account_label_text(" Account");
-	if (p_include_pl_accounts) account_label_text += wxString(" or category");
+	if (include_pl_accounts) account_label_text += wxString(" or category");
 	account_label_text += wxString(":");
 	wxStaticText* account_label =
 		new wxStaticText(this, wxID_ANY, account_label_text);
@@ -74,7 +77,7 @@ EntryListPanel::EntryListPanel
 
 	++m_next_row;
 
-	if (p_include_pl_accounts)
+	if (include_pl_accounts)
 	{
 		ImpureAccountReader const reader(m_database_connection);
 		assert (!reader.empty());  // TODO What if this fails?
@@ -107,7 +110,7 @@ EntryListPanel::EntryListPanel
 		s_min_date_ctrl_id,
 		wxSize(medium_width(), std_height),
 		today(),
-		p_allow_blank_dates
+		allow_blank_dates
 	);
 	m_top_sizer->Add(m_min_date_ctrl, wxGBPosition(m_next_row, 2));
 	m_max_date_ctrl = new DateCtrl
@@ -115,7 +118,7 @@ EntryListPanel::EntryListPanel
 		s_max_date_ctrl_id,
 		wxSize(medium_width(), std_height),
 		today(),
-		p_allow_blank_dates
+		allow_blank_dates
 	);
 	m_top_sizer->Add(m_max_date_ctrl, wxGBPosition(m_next_row, 3));
 	m_refresh_button = new wxButton
@@ -212,16 +215,35 @@ EntryListPanel::configure_entry_list_ctrl()
 #	if JEWEL_ON_WINDOWS
 		unused_height -= standard_gap() * 3;
 #	endif
-	EntryListCtrl* temp = EntryListCtrl::create_actual_ordinary_entry_list
-	(	this,
-		wxSize
-		(	large_width() + medium_width() * 3 + standard_gap() * 3,
-			unused_height
-		),
-		selected_account(),
-		selected_min_date(),
-		selected_max_date()
-	);
+	EntryListCtrl* temp = 0;
+	if (m_support_reconciliations)
+	{
+		assert (selected_min_date());
+		assert (selected_max_date());
+		temp = EntryListCtrl::create_reconciliation_entry_list
+		(	this,
+			wxSize
+			(	large_width() + medium_width() * 3 + standard_gap() * 3,
+				unused_height
+			),
+			selected_account(),
+			value(selected_min_date()),
+			value(selected_max_date())
+		);
+	}
+	else
+	{
+		temp = EntryListCtrl::create_actual_ordinary_entry_list
+		(	this,
+			wxSize
+			(	large_width() + medium_width() * 3 + standard_gap() * 3,
+				unused_height
+			),
+			selected_account(),
+			selected_min_date(),
+			selected_max_date()
+		);
+	}
 	using std::swap;
 	swap(temp, m_entry_list_ctrl);
 	if (temp)

@@ -56,8 +56,7 @@ public:
 	EntryListPanel
 	(	wxWindow* p_parent,
 		PhatbooksDatabaseConnection& p_database_connection,
-		bool p_include_pl_accounts = true,
-		bool p_allow_blank_dates = true
+		bool p_support_reconciliations = false
 	);
 
 	void update_for_new(OrdinaryJournal const& p_journal);
@@ -84,8 +83,9 @@ private:
 	static int const s_refresh_button_id = s_max_date_ctrl_id + 1;
 	static int const s_entry_list_ctrl_id = s_refresh_button_id + 1;
 
+	bool m_support_reconciliations;
 	int m_next_row;
-
+	
 	wxGridBagSizer* m_top_sizer;
 	AccountCtrl* m_account_ctrl;
 	DateCtrl* m_min_date_ctrl;

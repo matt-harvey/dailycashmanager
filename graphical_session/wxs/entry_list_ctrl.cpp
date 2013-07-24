@@ -13,6 +13,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "pl_account_entry_list_ctrl.hpp"
+#include "reconciliation_entry_list_ctrl.hpp"
 #include "summary_datum.hpp"
 #include "unfiltered_entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -110,6 +111,30 @@ EntryListCtrl::create_actual_ordinary_entry_list
 		assert (false);  // Execution never reaches here.
 	}
 	assert (ret);
+	initialize(ret);
+	return ret;
+}
+
+EntryListCtrl*
+EntryListCtrl::create_reconciliation_entry_list
+(	wxWindow* p_parent,
+	wxSize const& p_size,
+	Account const& p_account,
+	gregorian::date const& p_min_date,
+	gregorian::date const& p_max_date
+)
+{
+	assert
+	(	super_type(p_account.account_type()) ==
+		account_super_type::balance_sheet
+	);
+	EntryListCtrl* ret = new ReconciliationEntryListCtrl
+	(	p_parent,
+		p_size,
+		p_account,
+		p_min_date,
+		p_max_date
+	);
 	initialize(ret);
 	return ret;
 }

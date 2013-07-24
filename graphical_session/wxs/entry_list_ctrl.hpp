@@ -76,6 +76,20 @@ public:
 			boost::optional<boost::gregorian::date>()
 	);
 
+	/**
+	 * @returns a pointer to a heap-allocated EntryListCtrl, especially
+	 * designed to facilitate balance sheet Account reconciliations.
+	 *
+	 * \e p_account should be a balance sheet Account.
+	 */
+	static EntryListCtrl* create_reconciliation_entry_list
+	(	wxWindow* p_parent,
+		wxSize const& p_size,
+		Account const& p_account,
+		boost::gregorian::date const& p_min_date,
+		boost::gregorian::date const& p_max_date
+	);
+
 	virtual ~EntryListCtrl();
 
 	/**
