@@ -3,10 +3,12 @@
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/window.h>
 
 using boost::optional;
+using jewel::Decimal;
 using jewel::value;
 
 namespace gregorian = boost::gregorian;

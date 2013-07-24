@@ -6,7 +6,6 @@
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
-#include <jewel/decimal.hpp>
 #include <wx/window.h>
 
 namespace phatbooks

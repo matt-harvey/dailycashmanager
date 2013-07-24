@@ -402,7 +402,6 @@ EntryListCtrl::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 	{
 		Entry const entry(database_connection(), *it);
 		remove_entry_if_present(entry);
-		do_process_removal_candidate_for_summary(entry);
 	}
 	return;
 }
@@ -482,9 +481,9 @@ EntryListCtrl::do_process_candidate_entry_for_summary(Entry const& p_entry)
 }
 
 void
-EntryListCtrl::do_process_removal_candidate_for_summary(Entry const& p_entry)
+EntryListCtrl::do_process_removal_for_summary(long p_row)
 {
-	(void)p_entry;  // Silence compiler re. unused parameter.
+	(void)p_row;  // Silence compiler re. unused parameter.
 	return;
 }
 
@@ -533,6 +532,7 @@ EntryListCtrl::remove_entry_if_present(Entry const& p_entry)
 	{
 		long const pos = FindItem(-1, id);
 		assert (GetItemData(pos) == static_cast<unsigned long>(id));
+		do_process_removal_for_summary(pos);
 		DeleteItem(pos);
 		m_id_set.erase(it);
 	}

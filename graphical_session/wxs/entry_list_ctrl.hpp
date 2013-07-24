@@ -167,9 +167,7 @@ private:
 	virtual std::vector<SummaryDatum> do_get_summary_data() const;
 	virtual void do_initialize_summary_data();
 	virtual void do_process_candidate_entry_for_summary(Entry const& p_entry);
-	virtual void do_process_removal_candidate_for_summary
-	(	Entry const& p_entry
-	);
+	virtual void do_process_removal_for_summary(long p_row);
 
 	void set_column_widths();
 	int scrollbar_width_allowance() const;

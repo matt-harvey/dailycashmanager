@@ -1,14 +1,20 @@
 #include "reconciliation_entry_list_ctrl.hpp"
 #include "entry.hpp"
 #include "filtered_entry_list_ctrl.hpp"
+#include "finformat.hpp"
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
+#include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <vector>
 
 using boost::optional;
+using jewel::Decimal;
 using jewel::value;
+using std::vector;
 
 namespace gregorian = boost::gregorian;
 
@@ -51,7 +57,10 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 		p_account,
 		optional<gregorian::date>(p_min_date),
 		optional<gregorian::date>(p_max_date)
-	)
+	),
+	m_opening_balance(0, p_account.commodity().precision()),
+	m_closing_balance(0, p_account.commodity().precision()),
+	m_reconciled_closing_balance(0, p_account.commodity().precision())
 {
 }
 
@@ -118,8 +127,71 @@ ReconciliationEntryListCtrl::do_get_num_columns() const
 	return anon_num_columns();
 }
 
+vector<SummaryDatum>
+ReconciliationEntryListCtrl::do_get_summary_data() const
+{
+	vector<SummaryDatum> ret;
+	SummaryDatum a
+	(	wxString("Opening balance"),
+		m_opening_balance
+	);
+	SummaryDatum b
+	(	wxString("Closing balance"),
+		m_closing_balance
+	);
+	SummaryDatum c
+	(	wxString("Reconciled balance"),
+		m_reconciled_closing_balance
+	);
+	ret.push_back(a);
+	ret.push_back(b);
+	ret.push_back(c);
+	return ret;
+}
 
+void
+ReconciliationEntryListCtrl::do_process_candidate_entry_for_summary
+(	Entry const& p_entry
+)
+{
+	if (p_entry.account() != account())
+	{
+		return;
+	}
+	assert (p_entry.account() == account());
+	jewel::Decimal const amount = p_entry.amount();
+	if (p_entry.date() < min_date())
+	{
+		m_opening_balance += amount;
+	}
+	if (p_entry.date() <= max_date())
+	{
+		m_closing_balance += amount;
+		if (p_entry.is_reconciled())
+		{
+			m_reconciled_closing_balance += amount;
+		}
+	}
+	return;
+}
 
+void
+ReconciliationEntryListCtrl::do_process_removal_for_summary(long p_row)
+{
+	(void)p_row;
+	// TODO HIGH PRIORITY Implement
+}
+
+Decimal
+ReconciliationEntryListCtrl::amount_for_row(long p_row) const
+{
+	wxListItem item;
+	item.SetId(p_row);
+	item.SetColumn(amount_col_num());
+	GetItem(item);
+	return wx_to_decimal(item.GetText(), locale());
+
+}
 
 }  // namespace gui
 }  // namespace phatbooks

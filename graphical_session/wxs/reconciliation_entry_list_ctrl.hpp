@@ -2,10 +2,13 @@
 #define GUARD_reconciliation_entry_list_ctrl_hpp
 
 #include "filtered_entry_list_ctrl.hpp"
+#include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/decimal.hpp>
 #include <wx/gdicmn.h>
 #include <wx/window.h>
+
 
 namespace phatbooks
 {
@@ -21,6 +24,12 @@ class Entry;
 namespace gui
 {
 
+/**
+ * @todo What about effect on opening balance etc. of an Entry being deleted
+ * that is prior to the min_date? This shouldn't matter because the user
+ * shouldn't be able to edit an Entry that is reconciled; and if it is
+ * unreconciled it will be in the list... but make sure this is OK.
+ */
 class ReconciliationEntryListCtrl: public FilteredEntryListCtrl
 {
 public:
@@ -40,6 +49,24 @@ private:
 	virtual void do_insert_non_date_columns();
 	virtual int do_get_comment_col_num() const;
 	virtual int do_get_num_columns() const;
+
+	virtual std::vector<SummaryDatum> do_get_summary_data() const;
+	virtual void do_process_candidate_entry_for_summary(Entry const& p_entry);
+	virtual void do_process_removal_for_summary(long p_row);
+
+	jewel::Decimal amount_for_row(long p_row) const;
+
+	// This duplicates FilteredEntryListCtrl, but is done for ease and
+	// efficiency to avoid having to deference an optional.
+	boost::gregorian::date m_max_date;
+	boost::gregorian::date max_date() const
+	{
+		return m_max_date;
+	}
+
+	jewel::Decimal m_opening_balance;
+	jewel::Decimal m_closing_balance;
+	jewel::Decimal m_reconciled_closing_balance;
 
 };  // class ReconciliationEntryListCtrl
 

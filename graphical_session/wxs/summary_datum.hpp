@@ -17,12 +17,15 @@ class SummaryDatum
 {
 public:
 	SummaryDatum(wxString const& p_label, jewel::Decimal const& p_amount);
+	SummaryDatum(SummaryDatum const& rhs);
+	SummaryDatum& operator=(SummaryDatum const& rhs);
+
 	wxString label() const;
 	jewel::Decimal amount() const;
 	void set_amount(jewel::Decimal const& p_amount);
 
 private:
-	wxString const m_label;
+	wxString m_label;
 	jewel::Decimal m_amount;
 
 };  // class SummaryDatum
