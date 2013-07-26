@@ -315,6 +315,7 @@ EntryListPanel::preconfigure_summary()
 		assert (m_summary_data_text_items.empty());
 
 		wxSize const size(wxDefaultSize.x, m_text_ctrl_height);
+
 		wxStaticText* closing_balance_label = new wxStaticText
 		(	this,
 			wxID_ANY,
@@ -337,6 +338,15 @@ EntryListPanel::preconfigure_summary()
 		m_summary_label_text_items.push_back(reconciled_balance_label);
 
 		++m_next_row;
+
+		wxStaticText* hint = new wxStaticText
+		(	this,
+			wxID_ANY,
+			wxString("(Right-click item to toggle whether reconciled.)"),
+			wxDefaultPosition,
+			size
+		);
+		m_top_sizer->Add(hint, wxGBPosition(m_next_row, 1));
 
 		wxStaticText* closing_balance_amount = new wxStaticText
 		(	this,
