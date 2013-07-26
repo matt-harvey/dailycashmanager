@@ -9,6 +9,7 @@
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <wx/listctrl.h>
 #include <vector>
 
 using boost::optional;
@@ -27,6 +28,13 @@ namespace phatbooks
 {
 namespace gui
 {
+
+BEGIN_EVENT_TABLE(ReconciliationEntryListCtrl, FilteredEntryListCtrl)
+	EVT_LIST_ITEM_RIGHT_CLICK
+	(	wxID_ANY,
+		ReconciliationEntryListCtrl::on_item_right_click
+	)
+END_EVENT_TABLE()
 
 namespace
 {
@@ -224,6 +232,36 @@ ReconciliationEntryListCtrl::do_process_removal_for_summary(long p_row)
 		// so we don't need to adjust m_reconciled_closing_balance here.
 #	endif
 	return;	
+}
+
+void
+ReconciliationEntryListCtrl::on_item_right_click(wxListEvent& event)
+{
+	int const col = reconciled_col_num();
+	Entry::Id const entry_id = event.GetData();	
+	long const pos = event.GetIndex();
+	assert (FindItem(-1, entry_id) == pos);
+	assert (entry_id >= 0);
+	assert (GetItemData(pos) == static_cast<size_t>(entry_id));
+
+	Entry entry(database_connection(), entry_id);
+	bool const old_reconciliation_status = entry.is_reconciled();
+	entry.set_whether_reconciled(!old_reconciliation_status);
+	SetItem(pos, col, entry.is_reconciled()? wxString("Y"): wxString("N"));
+	if (entry.is_reconciled())
+	{
+		m_reconciled_closing_balance += entry.amount();
+	}
+	else
+	{
+		m_reconciled_closing_balance -= entry.amount();
+	}
+	entry.save();
+	ReconciliationListPanel* parent =
+		dynamic_cast<ReconciliationListPanel*>(GetParent());
+	assert (parent);
+	parent->postconfigure_summary();
+	return;
 }
 
 Decimal

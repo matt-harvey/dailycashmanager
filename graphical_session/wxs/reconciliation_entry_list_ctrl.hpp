@@ -8,6 +8,7 @@
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/gdicmn.h>
+#include <wx/listctrl.h>
 #include <wx/window.h>
 
 
@@ -62,6 +63,8 @@ private:
 	virtual void do_process_candidate_entry_for_summary(Entry const& p_entry);
 	virtual void do_process_removal_for_summary(long p_row);
 
+	void on_item_right_click(wxListEvent& event);
+
 	jewel::Decimal amount_for_row(long p_row) const;
 
 	// This duplicates FilteredEntryListCtrl, but is done for ease and
@@ -75,6 +78,8 @@ private:
 	std::vector<SummaryDatum>* m_summary_data;
 	jewel::Decimal m_closing_balance;
 	jewel::Decimal m_reconciled_closing_balance;
+
+	DECLARE_EVENT_TABLE()
 
 };  // class ReconciliationEntryListCtrl
 

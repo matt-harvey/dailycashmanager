@@ -72,9 +72,10 @@ public:
 	// EntryListPanel has been constructed.
 	void configure_entry_list_ctrl();
 
+	void postconfigure_summary();
+
 private:
 	void preconfigure_summary();
-	void postconfigure_summary();
 
 	void on_refresh_button_click(wxCommandEvent& event);
 	Account selected_account() const;
