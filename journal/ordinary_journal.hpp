@@ -93,6 +93,10 @@ public:
 	 * function, and saving it, there should be no
 	 * other adjustments made to the opening balances of
 	 * Accounts.
+	 *
+	 * Note the returned OrdinaryJournal will be ready to save immediately;
+	 * all of its attributes will be in a valid state. In particular, it
+	 * will be marked as \e reconciled.
 	 */
 	static OrdinaryJournal create_opening_balance_journal
 	(	Account const& p_account,

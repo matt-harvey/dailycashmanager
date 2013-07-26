@@ -142,6 +142,7 @@ protected:
 	boost::gregorian::date date_displayed(long p_row) const;
 	long row_for_date(boost::gregorian::date const& p_date) const;
 	PhatbooksDatabaseConnection& database_connection();
+	PhatbooksDatabaseConnection const& database_connection() const;
 
 private:
 

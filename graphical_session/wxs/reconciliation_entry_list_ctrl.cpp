@@ -148,6 +148,10 @@ ReconciliationEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 		// We include unreconciled Entries even if they're prior to the
 		// min_date(), providing they're not later than max_date().
 		assert (date <= max_date());
+		assert
+		(	(date > database_connection().opening_balance_journal_date()) ||
+			p_entry.is_reconciled()
+		);
 		return !p_entry.is_reconciled();
 	}
 	assert (p_entry.account() == account());

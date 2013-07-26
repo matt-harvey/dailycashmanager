@@ -104,7 +104,7 @@ OrdinaryJournal::create_opening_balance_journal
 	primary_entry.set_account(p_account);
 	primary_entry.set_comment("Opening balance entry");
 	primary_entry.set_amount(primary_entry_amount);
-	primary_entry.set_whether_reconciled(false);
+	primary_entry.set_whether_reconciled(true);
 	ret.push_entry(primary_entry);
 
 	Entry balancing_entry(dbc);

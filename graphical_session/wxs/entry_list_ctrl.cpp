@@ -540,5 +540,11 @@ EntryListCtrl::database_connection()
 	return m_database_connection;
 }
 
+PhatbooksDatabaseConnection const&
+EntryListCtrl::database_connection() const
+{
+	return m_database_connection;
+}
+
 }  // namespace gui
 }  // namespace phatbooks
