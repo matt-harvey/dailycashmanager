@@ -74,7 +74,7 @@ public:
 
 private:
 	void preconfigure_summary();
-	void configure_summary();
+	void postconfigure_summary();
 
 	void on_refresh_button_click(wxCommandEvent& event);
 	Account selected_account() const;
@@ -92,6 +92,7 @@ private:
 
 	int m_height_aux;
 	int m_client_size_aux;
+	int m_text_ctrl_height;
 
 	wxGridBagSizer* m_top_sizer;
 	AccountCtrl* m_account_ctrl;

@@ -82,6 +82,7 @@ EntryListPanel::EntryListPanel
 	m_top_sizer->Add(account_label, wxGBPosition(m_next_row, 1));
 	wxStaticText* min_date_label =
 		new wxStaticText(this, wxID_ANY, wxString(" From:"));
+	m_text_ctrl_height = min_date_label->GetSize().GetY();
 	m_top_sizer->Add(min_date_label, wxGBPosition(m_next_row, 2));
 	wxStaticText* max_date_label =
 		new wxStaticText(this, wxID_ANY, wxString(" To:"));
@@ -147,7 +148,7 @@ EntryListPanel::EntryListPanel
 
 	preconfigure_summary();
 	configure_entry_list_ctrl();
-	configure_summary();
+	postconfigure_summary();
 
 	// "Admin"
 	m_top_sizer->Fit(this);
@@ -161,7 +162,7 @@ EntryListPanel::on_refresh_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
 	configure_entry_list_ctrl();
-	configure_summary();
+	postconfigure_summary();
 	return;
 }
 
@@ -170,6 +171,7 @@ EntryListPanel::update_for_new(OrdinaryJournal const& p_journal)
 {
 	assert (m_entry_list_ctrl);
 	m_entry_list_ctrl->update_for_new(p_journal);
+	postconfigure_summary();
 	return;
 }
 
@@ -178,6 +180,7 @@ EntryListPanel::update_for_amended(OrdinaryJournal const& p_journal)
 {
 	assert (m_entry_list_ctrl);
 	m_entry_list_ctrl->update_for_amended(p_journal);
+	postconfigure_summary();
 	return;
 }
 
@@ -186,6 +189,7 @@ EntryListPanel::update_for_new(Account const& p_account)
 {
 	assert (m_entry_list_ctrl);
 	m_entry_list_ctrl->update_for_new(p_account);
+	postconfigure_summary();
 	// TODO HIGH PRIORITY Also need to update AccountCtrl.
 	return;
 }
@@ -195,6 +199,7 @@ EntryListPanel::update_for_amended(Account const& p_account)
 {
 	assert (m_entry_list_ctrl);
 	m_entry_list_ctrl->update_for_amended(p_account);
+	postconfigure_summary();
 	// TODO HIGH PRIORITY Also need to update AccountCtrl.
 	return;
 }
@@ -204,6 +209,7 @@ EntryListPanel::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 {
 	assert (m_entry_list_ctrl);
 	m_entry_list_ctrl->update_for_deleted(p_doomed_ids);
+	postconfigure_summary();
 	return;
 }
 
@@ -238,7 +244,7 @@ EntryListPanel::configure_entry_list_ctrl()
 			m_client_size_aux -
 			m_account_ctrl->GetSize().GetY() * num_extra_rows -
 			standard_gap() * (num_extra_rows + 1) -
-			standard_border() * num_extra_rows;
+			standard_border() * 2;
 #		if JEWEL_ON_WINDOWS
 			m_height_aux -= standard_gap() * (num_extra_rows + 1);
 #		endif
@@ -252,11 +258,9 @@ EntryListPanel::configure_entry_list_ctrl()
 		(	this,
 			wxSize
 			(	large_width() + medium_width() * 3 + standard_gap() * 3,
-				m_height_aux -
-					// WARNING - ugly - "coupled"
-					2 * m_account_ctrl->GetSize().GetY() -
-					standard_gap() * (2 + 1) -
-					standard_border() * 2
+				m_height_aux - 
+					// WARNING - ugly - "tightly coupled"
+					2 * m_text_ctrl_height - standard_gap() * 2
 			),
 			selected_account(),
 			value(selected_min_date()),
@@ -313,10 +317,16 @@ EntryListPanel::preconfigure_summary()
 {
 	if (m_support_reconciliations)
 	{
+		assert (m_summary_label_text_items.empty());
+		assert (m_summary_data_text_items.empty());
+
+		wxSize const size(wxDefaultSize.x, m_text_ctrl_height);
 		wxStaticText* closing_balance_label = new wxStaticText
 		(	this,
 			wxID_ANY,
-			wxEmptyString
+			wxEmptyString,
+			wxDefaultPosition,
+			size
 		);
 		m_top_sizer->Add(closing_balance_label, wxGBPosition(m_next_row, 2));
 		m_summary_label_text_items.push_back(closing_balance_label);
@@ -324,9 +334,12 @@ EntryListPanel::preconfigure_summary()
 		wxStaticText* reconciled_balance_label = new wxStaticText
 		(	this,
 			wxID_ANY,
-			wxEmptyString
+			wxEmptyString,
+			wxDefaultPosition,
+			size
 		);
-		m_top_sizer->Add(reconciled_balance_label, wxGBPosition(m_next_row, 3));
+		m_top_sizer->
+			Add(reconciled_balance_label, wxGBPosition(m_next_row, 3));
 		m_summary_label_text_items.push_back(reconciled_balance_label);
 
 		++m_next_row;
@@ -336,7 +349,7 @@ EntryListPanel::preconfigure_summary()
 			wxID_ANY,
 			wxEmptyString,
 			wxDefaultPosition,
-			wxDefaultSize,
+			size,
 			wxALIGN_RIGHT
 		);
 		m_top_sizer->Add
@@ -351,7 +364,7 @@ EntryListPanel::preconfigure_summary()
 			wxID_ANY,
 			wxEmptyString,
 			wxDefaultPosition,
-			wxDefaultSize,
+			size,
 			wxALIGN_RIGHT
 		);
 		m_top_sizer->Add
@@ -360,7 +373,7 @@ EntryListPanel::preconfigure_summary()
 			wxDefaultSpan,
 			wxALIGN_RIGHT
 		);
-		m_summary_data_text_items.push_back(reconciled_balance_label);
+		m_summary_data_text_items.push_back(reconciled_balance_amount);
 		
 		++m_next_row;
 	}
@@ -368,7 +381,7 @@ EntryListPanel::preconfigure_summary()
 }
 
 void
-EntryListPanel::configure_summary()
+EntryListPanel::postconfigure_summary()
 {
 	assert
 	(	m_summary_label_text_items.size() ==
@@ -377,7 +390,8 @@ EntryListPanel::configure_summary()
 	if (m_support_reconciliations)
 	{
 		assert (m_entry_list_ctrl);
-		vector<SummaryDatum> const summary_data = m_entry_list_ctrl->summary_data();
+		vector<SummaryDatum> const summary_data =
+			m_entry_list_ctrl->summary_data();
 		vector<SummaryDatum>::size_type i = 0;
 		vector<SummaryDatum>::size_type const sz = summary_data.size();
 		assert (sz == m_summary_label_text_items.size());
