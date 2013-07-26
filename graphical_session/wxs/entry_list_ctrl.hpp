@@ -125,7 +125,7 @@ public:
 
 	void scroll_to_bottom();
 
-	std::vector<SummaryDatum> summary_data() const;
+	std::vector<SummaryDatum> const& summary_data() const;
 
 protected:
 	EntryListCtrl
@@ -166,7 +166,7 @@ private:
 	 */
 	virtual EntryReader* do_make_entry_reader() const;
 
-	virtual std::vector<SummaryDatum> do_get_summary_data() const;
+	virtual std::vector<SummaryDatum> const& do_get_summary_data() const;
 	virtual void do_initialize_summary_data();
 	virtual void do_process_candidate_entry_for_summary(Entry const& p_entry);
 	virtual void do_process_removal_for_summary(long p_row);

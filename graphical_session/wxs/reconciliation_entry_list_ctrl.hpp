@@ -56,7 +56,8 @@ private:
 	virtual int do_get_comment_col_num() const;
 	virtual int do_get_num_columns() const;
 
-	virtual std::vector<SummaryDatum> do_get_summary_data() const;
+	virtual std::vector<SummaryDatum> const& do_get_summary_data() const;
+	virtual void do_initialize_summary_data();
 	virtual void do_process_candidate_entry_for_summary(Entry const& p_entry);
 	virtual void do_process_removal_for_summary(long p_row);
 
@@ -70,6 +71,7 @@ private:
 		return m_max_date;
 	}
 
+	std::vector<SummaryDatum>* m_summary_data;
 	jewel::Decimal m_closing_balance;
 	jewel::Decimal m_reconciled_closing_balance;
 

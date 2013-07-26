@@ -90,7 +90,6 @@ private:
 	bool m_support_reconciliations;
 	int m_next_row;
 
-	int m_height_aux;
 	int m_client_size_aux;
 	int m_text_ctrl_height;
 

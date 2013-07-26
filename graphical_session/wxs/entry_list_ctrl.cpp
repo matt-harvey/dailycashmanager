@@ -429,7 +429,7 @@ EntryListCtrl::scroll_to_bottom()
 	return;
 }
 
-vector<SummaryDatum>
+vector<SummaryDatum> const&
 EntryListCtrl::summary_data() const
 {
 	return do_get_summary_data();
@@ -454,10 +454,10 @@ EntryListCtrl::do_make_entry_reader() const
 	return new ActualOrdinaryEntryReader(m_database_connection);
 }
 
-vector<SummaryDatum>
+vector<SummaryDatum> const&
 EntryListCtrl::do_get_summary_data() const
 {
-	vector<SummaryDatum> ret;
+	static const vector<SummaryDatum> ret;
 	assert (ret.empty());
 	return ret;
 }

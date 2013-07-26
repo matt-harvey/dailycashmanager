@@ -64,6 +64,7 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 		optional<gregorian::date>(p_max_date)
 	),
 	m_max_date(p_max_date),
+	m_summary_data(0),
 	m_closing_balance(0, p_account.commodity().precision()),
 	m_reconciled_closing_balance(0, p_account.commodity().precision())
 {
@@ -71,6 +72,8 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 
 ReconciliationEntryListCtrl::~ReconciliationEntryListCtrl()
 {
+	delete m_summary_data;
+	m_summary_data = 0;
 }
 
 void
@@ -157,21 +160,34 @@ ReconciliationEntryListCtrl::do_get_num_columns() const
 	return anon_num_columns();
 }
 
-vector<SummaryDatum>
+vector<SummaryDatum> const&
 ReconciliationEntryListCtrl::do_get_summary_data() const
 {
-	vector<SummaryDatum> ret;
+	assert (!m_summary_data->empty());
+	m_summary_data->at(0).set_amount(m_closing_balance);
+	m_summary_data->at(1).set_amount(m_reconciled_closing_balance);
+	return *m_summary_data;
+}
+
+void
+ReconciliationEntryListCtrl::do_initialize_summary_data()
+{
+	m_closing_balance = Decimal(0, account().commodity().precision());
+	m_reconciled_closing_balance =
+		Decimal(0, account().commodity().precision());
+	assert (!m_summary_data);
+	m_summary_data = new std::vector<SummaryDatum>;
 	SummaryDatum a
 	(	wxString("Closing balance"),
 		m_closing_balance
 	);
+	m_summary_data->push_back(a);
 	SummaryDatum b
 	(	wxString("Reconciled balance"),
 		m_reconciled_closing_balance
 	);
-	ret.push_back(a);
-	ret.push_back(b);
-	return ret;
+	m_summary_data->push_back(b);
+	return;
 }
 
 void
