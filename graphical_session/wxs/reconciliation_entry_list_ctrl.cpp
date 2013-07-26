@@ -50,7 +50,7 @@ namespace
 }  // end anonymous namespace
 
 ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
-(	wxWindow* p_parent,
+(	ReconciliationListPanel* p_parent,
 	wxSize const& p_size,
 	Account const& p_account,
 	gregorian::date const& p_min_date,

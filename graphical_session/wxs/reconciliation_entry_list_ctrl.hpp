@@ -2,6 +2,7 @@
 #define GUARD_reconciliation_entry_list_ctrl_hpp
 
 #include "filtered_entry_list_ctrl.hpp"
+#include "reconciliation_list_panel.hpp"
 #include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -40,7 +41,7 @@ class ReconciliationEntryListCtrl: public FilteredEntryListCtrl
 public:
 
 	ReconciliationEntryListCtrl
-	(	wxWindow* p_parent,
+	(	ReconciliationListPanel* p_parent,
 		wxSize const& p_size,
 		Account const& p_account,
 		boost::gregorian::date const& p_min_date,

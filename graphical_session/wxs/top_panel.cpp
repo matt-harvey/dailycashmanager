@@ -10,6 +10,7 @@
 #include "frame.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "reconciliation_list_panel.hpp"
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
 #include <boost/optional.hpp>
@@ -165,7 +166,7 @@ TopPanel::configure_reconciliation_page()
 {
 	assert (m_notebook_page_reconciliations);
 	assert (!m_reconciliation_panel);
-	m_reconciliation_panel = new EntryListPanel
+	m_reconciliation_panel = new ReconciliationListPanel
 	(	m_notebook_page_reconciliations,
 		m_database_connection,
 		true

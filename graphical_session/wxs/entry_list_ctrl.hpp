@@ -7,6 +7,7 @@
 #include "account.hpp"
 #include "entry_reader.hpp"
 #include "entry.hpp"
+#include "reconciliation_list_panel.hpp"
 #include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/noncopyable.hpp>
@@ -85,7 +86,7 @@ public:
 	 * \e p_account should be a balance sheet Account.
 	 */
 	static ReconciliationEntryListCtrl* create_reconciliation_entry_list
-	(	wxWindow* p_parent,
+	(	ReconciliationListPanel* p_parent,
 		wxSize const& p_size,
 		Account const& p_account,
 		boost::gregorian::date const& p_min_date,

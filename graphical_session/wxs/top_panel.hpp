@@ -7,6 +7,7 @@
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
+#include "reconciliation_list_panel.hpp"
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
 #include <wx/notebook.h>
@@ -165,7 +166,7 @@ private:
 	AccountListCtrl* m_bs_account_list;
 	AccountListCtrl* m_pl_account_list;
 	EntryListPanel* m_transaction_panel;
-	EntryListPanel* m_reconciliation_panel;
+	ReconciliationListPanel* m_reconciliation_panel;
 	TransactionCtrl* m_transaction_ctrl;
 	DraftJournalListCtrl* m_draft_journal_list;
 };
