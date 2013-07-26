@@ -213,15 +213,11 @@ ReconciliationEntryListCtrl::do_process_removal_for_summary(long p_row)
 Decimal
 ReconciliationEntryListCtrl::amount_for_row(long p_row) const
 {
-	JEWEL_DEBUG_LOG << "Calling amount_for_row(long p_row) with p_row of: "
-	                << p_row
-					<< endl;
 	wxListItem item;
 	item.SetId(p_row);
 	item.SetColumn(amount_col_num());
 	GetItem(item);
 	Decimal ret = wx_to_decimal(item.GetText(), locale());
-	JEWEL_DEBUG_LOG << "Returning amount of: " << ret << endl;
 	return ret;
 }
 

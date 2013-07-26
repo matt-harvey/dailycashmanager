@@ -115,7 +115,7 @@ EntryListCtrl::create_actual_ordinary_entry_list
 	return ret;
 }
 
-EntryListCtrl*
+ReconciliationEntryListCtrl*
 EntryListCtrl::create_reconciliation_entry_list
 (	wxWindow* p_parent,
 	wxSize const& p_size,
@@ -128,7 +128,7 @@ EntryListCtrl::create_reconciliation_entry_list
 	(	super_type(p_account.account_type()) ==
 		account_super_type::balance_sheet
 	);
-	EntryListCtrl* ret = new ReconciliationEntryListCtrl
+	ReconciliationEntryListCtrl* ret = new ReconciliationEntryListCtrl
 	(	p_parent,
 		p_size,
 		p_account,

@@ -23,10 +23,12 @@ namespace phatbooks
 class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
-// End forward declarations
-
 namespace gui
 {
+
+class ReconciliationEntryListCtrl;
+
+// End forward declarations
 
 /**
  * Displays a list of Entries. Derived classes must defined various
@@ -82,7 +84,7 @@ public:
 	 *
 	 * \e p_account should be a balance sheet Account.
 	 */
-	static EntryListCtrl* create_reconciliation_entry_list
+	static ReconciliationEntryListCtrl* create_reconciliation_entry_list
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
 		Account const& p_account,

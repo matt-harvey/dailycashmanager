@@ -9,6 +9,7 @@
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
+#include <wx/stattext.h>
 #include <wx/window.h>
 #include <vector>
 
@@ -72,6 +73,9 @@ public:
 	void configure_entry_list_ctrl();
 
 private:
+	void preconfigure_summary();
+	void configure_summary();
+
 	void on_refresh_button_click(wxCommandEvent& event);
 	Account selected_account() const;
 	boost::optional<boost::gregorian::date> selected_min_date() const;
@@ -85,13 +89,18 @@ private:
 
 	bool m_support_reconciliations;
 	int m_next_row;
-	
+
+	int m_height_aux;
+	int m_client_size_aux;
+
 	wxGridBagSizer* m_top_sizer;
 	AccountCtrl* m_account_ctrl;
 	DateCtrl* m_min_date_ctrl;
 	DateCtrl* m_max_date_ctrl;
 	wxButton* m_refresh_button;
 	EntryListCtrl* m_entry_list_ctrl;
+	std::vector<wxStaticText*> m_summary_label_text_items;
+	std::vector<wxStaticText*> m_summary_data_text_items;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE()

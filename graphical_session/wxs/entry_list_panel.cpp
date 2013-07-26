@@ -6,9 +6,12 @@
 #include "date_ctrl.hpp"
 #include "entry.hpp"
 #include "entry_list_ctrl.hpp"
+#include "locale.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "reconciliation_entry_list_ctrl.hpp"
 #include "sizing.hpp"
+#include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/on_windows.hpp>
@@ -28,6 +31,13 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
+
+// For debugging
+	#include <jewel/debug_log.hpp>
+	#include <iostream>
+	using std::endl;
+
+
 namespace phatbooks
 {
 namespace gui
@@ -46,6 +56,8 @@ EntryListPanel::EntryListPanel
 	wxPanel(p_parent, wxID_ANY),
 	m_support_reconciliations(p_support_reconciliations),
 	m_next_row(0),
+	m_height_aux(0),
+	m_client_size_aux(0),
 	m_top_sizer(0),
 	m_account_ctrl(0),
 	m_min_date_ctrl(0),
@@ -133,7 +145,9 @@ EntryListPanel::EntryListPanel
 
 	++m_next_row;
 
+	preconfigure_summary();
 	configure_entry_list_ctrl();
+	configure_summary();
 
 	// "Admin"
 	m_top_sizer->Fit(this);
@@ -147,6 +161,7 @@ EntryListPanel::on_refresh_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
 	configure_entry_list_ctrl();
+	configure_summary();
 	return;
 }
 
@@ -203,18 +218,31 @@ EntryListPanel::selected_entries(vector<Entry>& out)
 void
 EntryListPanel::configure_entry_list_ctrl()
 {
+	// WARNING This is a horrible mess.
+	if (m_entry_list_ctrl)
+	{
+		m_top_sizer->Detach(m_entry_list_ctrl);
+		--m_next_row;
+	}
+	
 #	if JEWEL_ON_WINDOWS
 	Freeze();  // Stop flickering
 #	endif
 
-	int unused_height =
-		GetClientSize().GetY() -
-		m_account_ctrl->GetSize().GetY() * 2 -
-		standard_gap() * 3 -
-		standard_border() * 2;
-#	if JEWEL_ON_WINDOWS
-		unused_height -= standard_gap() * 3;
-#	endif
+	int const num_extra_rows = 2;
+	if (m_client_size_aux < 100)
+	{
+		JEWEL_DEBUG_LOG << GetClientSize().GetY() << endl;
+		m_client_size_aux = GetClientSize().GetY();
+		m_height_aux =
+			m_client_size_aux -
+			m_account_ctrl->GetSize().GetY() * num_extra_rows -
+			standard_gap() * (num_extra_rows + 1) -
+			standard_border() * num_extra_rows;
+#		if JEWEL_ON_WINDOWS
+			m_height_aux -= standard_gap() * (num_extra_rows + 1);
+#		endif
+	}
 	EntryListCtrl* temp = 0;
 	if (m_support_reconciliations)
 	{
@@ -224,7 +252,11 @@ EntryListPanel::configure_entry_list_ctrl()
 		(	this,
 			wxSize
 			(	large_width() + medium_width() * 3 + standard_gap() * 3,
-				unused_height
+				m_height_aux -
+					// WARNING - ugly - "coupled"
+					2 * m_account_ctrl->GetSize().GetY() -
+					standard_gap() * (2 + 1) -
+					standard_border() * 2
 			),
 			selected_account(),
 			value(selected_min_date()),
@@ -237,21 +269,21 @@ EntryListPanel::configure_entry_list_ctrl()
 		(	this,
 			wxSize
 			(	large_width() + medium_width() * 3 + standard_gap() * 3,
-				unused_height
+				m_height_aux
 			),
 			selected_account(),
 			selected_min_date(),
 			selected_max_date()
 		);
 	}
+
 	using std::swap;
 	swap(temp, m_entry_list_ctrl);
 	if (temp)
 	{
-		m_top_sizer->Detach(temp);
+		// m_top_sizer->Detach(temp);
 		temp->Destroy();
 		temp = 0;
-		--m_next_row;
 	}
 	m_top_sizer->Add
 	(	m_entry_list_ctrl,
@@ -260,6 +292,8 @@ EntryListPanel::configure_entry_list_ctrl()
 		wxEXPAND
 	);
 	++m_next_row;
+
+
 	// m_top_sizer->Fit(this);
 	// m_top_sizer->SetSizeHints(this);
 	Fit();
@@ -271,6 +305,93 @@ EntryListPanel::configure_entry_list_ctrl()
 	Thaw();
 #	endif
 
+	return;
+}
+
+void
+EntryListPanel::preconfigure_summary()
+{
+	if (m_support_reconciliations)
+	{
+		wxStaticText* closing_balance_label = new wxStaticText
+		(	this,
+			wxID_ANY,
+			wxEmptyString
+		);
+		m_top_sizer->Add(closing_balance_label, wxGBPosition(m_next_row, 2));
+		m_summary_label_text_items.push_back(closing_balance_label);
+
+		wxStaticText* reconciled_balance_label = new wxStaticText
+		(	this,
+			wxID_ANY,
+			wxEmptyString
+		);
+		m_top_sizer->Add(reconciled_balance_label, wxGBPosition(m_next_row, 3));
+		m_summary_label_text_items.push_back(reconciled_balance_label);
+
+		++m_next_row;
+
+		wxStaticText* closing_balance_amount = new wxStaticText
+		(	this,
+			wxID_ANY,
+			wxEmptyString,
+			wxDefaultPosition,
+			wxDefaultSize,
+			wxALIGN_RIGHT
+		);
+		m_top_sizer->Add
+		(	closing_balance_amount,
+			wxGBPosition(m_next_row, 2),
+			wxDefaultSpan,
+			wxALIGN_RIGHT
+		);
+		m_summary_data_text_items.push_back(closing_balance_amount);
+		wxStaticText* reconciled_balance_amount = new wxStaticText
+		(	this,
+			wxID_ANY,
+			wxEmptyString,
+			wxDefaultPosition,
+			wxDefaultSize,
+			wxALIGN_RIGHT
+		);
+		m_top_sizer->Add
+		(	reconciled_balance_amount,
+			wxGBPosition(m_next_row, 3),
+			wxDefaultSpan,
+			wxALIGN_RIGHT
+		);
+		m_summary_data_text_items.push_back(reconciled_balance_label);
+		
+		++m_next_row;
+	}
+	return;
+}
+
+void
+EntryListPanel::configure_summary()
+{
+	assert
+	(	m_summary_label_text_items.size() ==
+		m_summary_data_text_items.size()
+	);
+	if (m_support_reconciliations)
+	{
+		assert (m_entry_list_ctrl);
+		vector<SummaryDatum> const summary_data = m_entry_list_ctrl->summary_data();
+		vector<SummaryDatum>::size_type i = 0;
+		vector<SummaryDatum>::size_type const sz = summary_data.size();
+		assert (sz == m_summary_label_text_items.size());
+		for ( ; i != sz; ++i)
+		{
+			JEWEL_DEBUG_LOG << summary_data[i].label() << ": "
+			                << summary_data[i].amount() << endl;
+			m_summary_label_text_items[i]->SetLabel(summary_data[i].label());
+			m_summary_data_text_items[i]->SetLabel
+			(	finformat_wx(summary_data[i].amount(), locale(), false)
+			);
+		}
+	}
+	Layout();
 	return;
 }
 
