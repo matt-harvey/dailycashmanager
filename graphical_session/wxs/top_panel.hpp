@@ -186,7 +186,11 @@ TopPanel::configure_transaction_ctrl(JournalType& p_journal)
 		m_right_column_sizer->Detach(m_transaction_ctrl);
 		old = m_transaction_ctrl;
 	}
-	m_transaction_ctrl = new TransactionCtrl(this, p_journal);
+	m_transaction_ctrl = new TransactionCtrl
+	(	this,
+		wxSize(GetClientSize().x, 10000),
+		p_journal
+	);
 	m_right_column_sizer->Insert
 	(	0,
 		m_transaction_ctrl,

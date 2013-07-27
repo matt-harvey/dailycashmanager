@@ -3,7 +3,6 @@
 #ifndef GUARD_entry_ctrl_hpp
 #define GUARD_entry_ctrl_hpp
 
-
 #include "account.hpp"
 #include "account_reader.hpp"
 #include "entry.hpp"
@@ -57,7 +56,7 @@ class EntryCtrl:
 {
 public:
 	EntryCtrl
-	(	wxWindow* p_parent,
+	(	TransactionCtrl* p_parent,
 		std::vector<Account> const& p_accounts,
 		PhatbooksDatabaseConnection& p_database_connection,
 		transaction_type::TransactionType p_transaction_type,
@@ -66,7 +65,7 @@ public:
 	);
 
 	EntryCtrl
-	(	wxWindow* p_parent,
+	(	TransactionCtrl* p_parent,
 		std::vector<Entry> const& p_entries,
 		PhatbooksDatabaseConnection& p_database_connection,
 		transaction_type::TransactionType p_transaction_type,

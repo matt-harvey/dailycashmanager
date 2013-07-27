@@ -230,6 +230,7 @@ TopPanel::configure_transaction_ctrl
 	}
 	m_transaction_ctrl = new TransactionCtrl
 	(	this,
+		wxSize(GetClientSize().x, 10000),
 		p_balance_sheet_accounts,
 		p_pl_accounts,
 		m_database_connection

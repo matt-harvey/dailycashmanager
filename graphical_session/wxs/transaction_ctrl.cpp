@@ -38,10 +38,11 @@
 #include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/combobox.h>
-#include <wx/panel.h>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
+#include <wx/gdicmn.h>
 #include <wx/gbsizer.h>
+#include <wx/scrolwin.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
@@ -64,7 +65,7 @@ namespace phatbooks
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(TransactionCtrl, wxPanel)
+BEGIN_EVENT_TABLE(TransactionCtrl, wxScrolledWindow)
 	EVT_BUTTON
 	(	wxID_OK,
 		TransactionCtrl::on_ok_button_click
@@ -92,11 +93,12 @@ END_EVENT_TABLE()
 
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
+	wxSize const& p_size,
 	vector<Account> const& p_balance_sheet_accounts,
 	vector<Account> const& p_pl_accounts,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
-	wxPanel(p_parent, wxID_ANY),
+	wxScrolledWindow(p_parent, wxID_ANY, wxDefaultPosition, p_size),
 	m_top_sizer(0),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),
@@ -255,13 +257,16 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->SetSizeHints(this);
 	Fit();
 	Layout();
+
+	configure_scrollbars();
 }
 
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
+	wxSize const& p_size,
 	OrdinaryJournal const& p_journal
 ):
-	wxPanel(p_parent, wxID_ANY),
+	wxScrolledWindow(p_parent, wxID_ANY, wxDefaultPosition, p_size),
 	m_top_sizer(0),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),
@@ -285,13 +290,15 @@ TransactionCtrl::TransactionCtrl
 
 	m_journal = new OrdinaryJournal(p_journal);
 	configure_for_journal_editing();
+	configure_scrollbars();
 }
 
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
+	wxSize const& p_size,
 	DraftJournal const& p_journal
 ):
-	wxPanel(p_parent, wxID_ANY),
+	wxScrolledWindow(p_parent, wxID_ANY, wxDefaultPosition, p_size),
 	m_top_sizer(0),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),
@@ -306,6 +313,7 @@ TransactionCtrl::TransactionCtrl
 {
 	m_journal = new DraftJournal(p_journal);
 	configure_for_journal_editing();
+	configure_scrollbars();
 }
 
 TransactionCtrl::~TransactionCtrl()
@@ -542,6 +550,22 @@ Decimal
 TransactionCtrl::primary_amount() const
 {
 	return m_primary_amount_ctrl->amount();
+}
+
+void
+TransactionCtrl::configure_scrollbars()
+{
+	// Fit();  // Don't do this.
+	SetScrollbars
+	(	10,
+		10,
+		GetBestSize().GetX() / 10 + 2,
+		GetBestSize().GetY() / 10 + 2
+	);
+	// m_top_sizer->Fit(this);  // Don't do this.
+	// Layout();  // Don't do this.
+
+	return;
 }
 
 void

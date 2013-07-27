@@ -47,7 +47,7 @@ END_EVENT_TABLE()
 
 
 EntryCtrl::EntryCtrl
-(	wxWindow* p_parent,
+(	TransactionCtrl* p_parent,
 	vector<Account> const& p_accounts,
 	PhatbooksDatabaseConnection& p_database_connection,
 	transaction_type::TransactionType p_transaction_type,
@@ -101,7 +101,7 @@ EntryCtrl::EntryCtrl
 }
 
 EntryCtrl::EntryCtrl
-(	wxWindow* p_parent,
+(	TransactionCtrl* p_parent,
 	std::vector<Entry> const& p_entries,
 	PhatbooksDatabaseConnection& p_database_connection,
 	transaction_type::TransactionType p_transaction_type,
@@ -372,6 +372,7 @@ EntryCtrl::on_split_button_click(wxCommandEvent& event)
 	Decimal const amount(0, account.commodity().precision());
 	optional<Decimal> const maybe_prev_amount;
 	add_row(account, wxEmptyString, amount, false, maybe_prev_amount, true);
+
 	return;
 }
 
@@ -476,11 +477,17 @@ EntryCtrl::add_row
 	++m_next_row;
 
 	Layout();  // Must call this.
+	
+	TransactionCtrl* parent = dynamic_cast<TransactionCtrl*>(GetParent());
+	assert (parent);
+
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
 	// GetParent()->Layout(); // Do not call this.
 	// GetParent()->GetSizer()->RecalcSizes();  // Do not call this.
-	GetParent()->Fit();
+	parent->configure_scrollbars();
+
+	// parent->Fit();  // Do not call this.
 
 	return;
 }

@@ -12,8 +12,9 @@
 #include <jewel/on_windows.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
-#include <wx/panel.h>
+#include <wx/gdicmn.h>
 #include <wx/gbsizer.h>
+#include <wx/scrolwin.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 
@@ -69,8 +70,15 @@ class TopPanel;
  *
  * @todo Intercept the situation where user sets date earlier than entity
  * creation date. Currently this just throws and crashes.
+ *
+ * @todo Make it so that even when the vertical scrollbar appears, there is
+ * still enough room to fit all the sub-widgets, and no horizontal scrollbar.
+ *
+ * @todo Make it so that when configure_scrollbars() is called, the "scrolled
+ * position" does not jump back to the top all the time, but rather stays
+ * constant, from the user's point of view.
  */
-class TransactionCtrl: public wxPanel, private boost::noncopyable
+class TransactionCtrl: public wxScrolledWindow, private boost::noncopyable
 {
 public:
 	
@@ -107,6 +115,7 @@ public:
 	 */
 	TransactionCtrl
 	(	TopPanel* p_parent,
+		wxSize const& p_size,
 		std::vector<Account> const& p_balance_sheet_accounts,
 		std::vector<Account> const& p_pl_accounts,
 		PhatbooksDatabaseConnection& p_database_connection
@@ -116,13 +125,21 @@ public:
 	 * Create a TransactionCtrl to allow the user to edit an
 	 * already-saved OrdinaryJournal.
 	 */
-	TransactionCtrl(TopPanel* p_parent, OrdinaryJournal const& p_journal);
+	TransactionCtrl
+	(	TopPanel* p_parent,
+		wxSize const& p_size,
+		OrdinaryJournal const& p_journal
+	);
 
 	/**
 	 * Create a TransactionCtrl to allow the user to edit an
 	 * already-saved DraftJournal.
 	 */
-	TransactionCtrl(TopPanel* p_parent, DraftJournal const& p_journal);
+	TransactionCtrl
+	(	TopPanel* p_parent,
+		wxSize const& p_size,
+		DraftJournal const& p_journal
+	);
 
 	~TransactionCtrl();
 
@@ -136,6 +153,8 @@ public:
 	);
 
 	jewel::Decimal primary_amount() const;
+
+	void configure_scrollbars();
 	
 private:
 	void on_cancel_button_click(wxCommandEvent& event);
