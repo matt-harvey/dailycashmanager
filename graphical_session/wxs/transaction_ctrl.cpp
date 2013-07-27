@@ -98,7 +98,13 @@ TransactionCtrl::TransactionCtrl
 	vector<Account> const& p_pl_accounts,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
-	wxScrolledWindow(p_parent, wxID_ANY, wxDefaultPosition, p_size),
+	wxScrolledWindow
+	(	p_parent,
+		wxID_ANY,
+		wxDefaultPosition,
+		p_size,
+		wxVSCROLL
+	),
 	m_top_sizer(0),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),
@@ -255,7 +261,7 @@ TransactionCtrl::TransactionCtrl
 	// "Admin"
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
-	Fit();
+	FitInside();
 	Layout();
 
 	configure_scrollbars();
@@ -266,7 +272,13 @@ TransactionCtrl::TransactionCtrl
 	wxSize const& p_size,
 	OrdinaryJournal const& p_journal
 ):
-	wxScrolledWindow(p_parent, wxID_ANY, wxDefaultPosition, p_size),
+	wxScrolledWindow
+	(	p_parent,
+		wxID_ANY,
+		wxDefaultPosition,
+		p_size,
+		wxVSCROLL
+	),
 	m_top_sizer(0),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),
@@ -298,7 +310,13 @@ TransactionCtrl::TransactionCtrl
 	wxSize const& p_size,
 	DraftJournal const& p_journal
 ):
-	wxScrolledWindow(p_parent, wxID_ANY, wxDefaultPosition, p_size),
+	wxScrolledWindow
+	(	p_parent,
+		wxID_ANY,
+		wxDefaultPosition,
+		p_size,
+		wxVSCROLL
+	),
 	m_top_sizer(0),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),
@@ -337,6 +355,8 @@ TransactionCtrl::configure_top_controls
 	// Top sizer
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
+
+	add_dummy_column();
 
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
@@ -530,7 +550,7 @@ TransactionCtrl::configure_for_journal_editing()
 	// SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
-	Fit();
+	FitInside();
 	Layout();
 }
 
@@ -555,17 +575,22 @@ TransactionCtrl::primary_amount() const
 void
 TransactionCtrl::configure_scrollbars()
 {
-	// Fit();  // Don't do this.
-	SetScrollbars
-	(	10,
-		10,
-		GetBestSize().GetX() / 10 + 2,
-		GetBestSize().GetY() / 10 + 2
-	);
-	// m_top_sizer->Fit(this);  // Don't do this.
-	// Layout();  // Don't do this.
-
+	SetScrollRate(0, 10);
+	FitInside();
 	return;
+}
+
+void
+TransactionCtrl::add_dummy_column()
+{
+	wxStaticText* dummy = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxSize(20, 1)
+	);
+	m_top_sizer->Add(dummy, wxGBPosition(0, 4));
 }
 
 void

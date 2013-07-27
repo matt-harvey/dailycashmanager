@@ -70,13 +70,6 @@ class TopPanel;
  *
  * @todo Intercept the situation where user sets date earlier than entity
  * creation date. Currently this just throws and crashes.
- *
- * @todo Make it so that even when the vertical scrollbar appears, there is
- * still enough room to fit all the sub-widgets, and no horizontal scrollbar.
- *
- * @todo Make it so that when configure_scrollbars() is called, the "scrolled
- * position" does not jump back to the top all the time, but rather stays
- * constant, from the user's point of view.
  */
 class TransactionCtrl: public wxScrolledWindow, private boost::noncopyable
 {
@@ -160,6 +153,10 @@ private:
 	void on_cancel_button_click(wxCommandEvent& event);
 	void on_delete_button_click(wxCommandEvent& event);
 	void on_ok_button_click(wxCommandEvent& event);
+
+	// Adds some blank space to the right to allow space for vertical
+	// scrollbar.
+	void add_dummy_column();
 
 	// Returns next row.
 	// Places size of "standard text box" in p_text_box_size.
