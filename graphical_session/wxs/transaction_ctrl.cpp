@@ -258,13 +258,13 @@ TransactionCtrl::TransactionCtrl
 	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 3));
 	m_ok_button->SetDefault();  // Enter key will now trigger "Save" button
 
+	configure_scrollbars();
+
 	// "Admin"
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
 	FitInside();
 	Layout();
-
-	configure_scrollbars();
 }
 
 TransactionCtrl::TransactionCtrl
@@ -302,7 +302,6 @@ TransactionCtrl::TransactionCtrl
 
 	m_journal = new OrdinaryJournal(p_journal);
 	configure_for_journal_editing();
-	configure_scrollbars();
 }
 
 TransactionCtrl::TransactionCtrl
@@ -331,7 +330,6 @@ TransactionCtrl::TransactionCtrl
 {
 	m_journal = new DraftJournal(p_journal);
 	configure_for_journal_editing();
-	configure_scrollbars();
 }
 
 TransactionCtrl::~TransactionCtrl()
@@ -545,6 +543,8 @@ TransactionCtrl::configure_for_journal_editing()
 
 	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 3));
 	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
+
+	configure_scrollbars();
 
 	// "Admin"
 	// SetSizer(m_top_sizer);

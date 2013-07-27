@@ -485,8 +485,7 @@ EntryCtrl::add_row
 	m_top_sizer->SetSizeHints(this);
 	// GetParent()->Layout(); // Do not call this.
 	// GetParent()->GetSizer()->RecalcSizes();  // Do not call this.
-	parent->configure_scrollbars();
-
+	parent->FitInside();
 	// parent->Fit();  // Do not call this.
 
 	return;
