@@ -364,6 +364,7 @@ TopPanel::update_for_new(OrdinaryJournal const& p_saved_object)
 	m_pl_account_list->update(false);
 	m_transaction_panel->update_for_new(p_saved_object);
 	m_reconciliation_panel->update_for_new(p_saved_object);
+	m_report_panel->update_for_new(p_saved_object);
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -388,6 +389,7 @@ TopPanel::update_for_new(Account const& p_saved_object)
 	m_pl_account_list->update(false);
 	m_transaction_panel->update_for_new(p_saved_object);
 	m_reconciliation_panel->update_for_new(p_saved_object);
+	m_report_panel->update_for_new(p_saved_object);
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -400,6 +402,7 @@ TopPanel::update_for_amended(OrdinaryJournal const& p_saved_object)
 	m_pl_account_list->update(false);
 	m_transaction_panel->update_for_amended(p_saved_object);
 	m_reconciliation_panel->update_for_amended(p_saved_object);
+	m_report_panel->update_for_new(p_saved_object);
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -427,6 +430,7 @@ TopPanel::update_for_amended(Account const& p_saved_object)
 	m_pl_account_list->update(false);
 	m_transaction_panel->update_for_amended(p_saved_object);
 	m_reconciliation_panel->update_for_amended(p_saved_object);
+	m_report_panel->update_for_new(p_saved_object);
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -438,6 +442,7 @@ TopPanel::update_for_amended_budget(Account const& p_account)
 	(void)p_account;  // Silence compiler re. unused parameter.
 	assert (super_type(p_account.account_type()) == account_super_type::pl);
 	m_pl_account_list->update(false);
+	// TODO Do we need to update ReportPanel for amended budget?
 	return;
 }
 
@@ -468,6 +473,7 @@ TopPanel::update_for_deleted_ordinary_entries
 {
 	m_transaction_panel->update_for_deleted(p_doomed_ids);
 	m_reconciliation_panel->update_for_deleted(p_doomed_ids);
+	m_report_panel->update_for_deleted(p_doomed_ids);
 	return;
 }
 

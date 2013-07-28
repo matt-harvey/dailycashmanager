@@ -1,6 +1,7 @@
 #ifndef GUARD_report_panel_hpp
 #define GUARD_report_panel_hpp
 
+#include "entry.hpp"
 #include <boost/noncopyable.hpp>
 #include <wx/panel.h>
 #include <wx/button.h>
@@ -8,12 +9,15 @@
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
 #include <wx/window.h>
+#include <vector>
 
 namespace phatbooks
 {
 
 // Begin forward declarations
 
+class Account;
+class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -34,6 +38,12 @@ public:
 	(	wxWindow* p_parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
+
+	void update_for_new(OrdinaryJournal const& p_journal);
+	void update_for_amended(OrdinaryJournal const& p_journal);
+	void update_for_new(Account const& p_account);
+	void update_for_amended(Account const& p_account);
+	void update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids);
 
 private:
 	void on_refresh_button_click(wxCommandEvent& event);

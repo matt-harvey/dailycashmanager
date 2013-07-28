@@ -30,6 +30,35 @@ ReportPanel::ReportPanel
 	// TODO HIGH PRIORITY Implement
 }
 
+void
+ReportPanel::update_for_new(OrdinaryJournal const& p_journal)
+{
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+ReportPanel::update_for_amended(OrdinaryJournal const& p_journal)
+{
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+ReportPanel::update_for_new(Account const& p_account)
+{
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+ReportPanel::update_for_amended(Account const& p_account)
+{
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+ReportPanel::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
+{
+	// TODO HIGH PRIORITY Implement
+}
 
 void
 ReportPanel::on_refresh_button_click(wxCommandEvent& event)
