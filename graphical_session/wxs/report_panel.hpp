@@ -24,6 +24,7 @@ namespace gui
 {
 
 class DateCtrl;
+class Report;
 
 // End forward declarations
 
@@ -51,6 +52,8 @@ private:
 	void configure_top();
 	void configure_bottom();
 
+	account_super_type::AccountSuperType selected_account_super_type() const;
+
 	static int const s_min_date_ctrl_id = wxID_HIGHEST + 1;
 	static int const s_max_date_ctrl_id = s_min_date_ctrl_id + 1;
 	static int const s_refresh_button_id = s_max_date_ctrl_id + 1;
@@ -62,6 +65,7 @@ private:
 	DateCtrl* m_min_date_ctrl;
 	DateCtrl* m_max_date_ctrl;
 	wxButton* m_refresh_button;
+	Report* m_report;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE()

@@ -11,6 +11,7 @@
 #include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/optional.hpp>
 #include <boost/unordered_set.hpp>
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>

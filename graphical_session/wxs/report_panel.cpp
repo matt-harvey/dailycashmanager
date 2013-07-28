@@ -1,6 +1,9 @@
 #include "report_panel.hpp"
+#include "account_type.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
+#include "phatbooks_database_connection.hpp"
+#include "report.hpp"
 #include "sizing.hpp"
 #include "string_set_validator.hpp"
 #include <wx/button.h>
@@ -19,6 +22,19 @@ BEGIN_EVENT_TABLE(ReportPanel, wxPanel)
 	EVT_BUTTON(s_refresh_button_id, ReportPanel::on_refresh_button_click)
 END_EVENT_TABLE()
 
+namespace
+{
+	wxString balance_sheet_report_name()
+	{
+		return wxString("Balance sheet");
+	}
+	wxString pl_report_name()
+	{
+		return wxString("Income and expenditure");
+	}
+
+}  // end anonymous namespace
+
 ReportPanel::ReportPanel
 (	wxWindow* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection
@@ -30,6 +46,7 @@ ReportPanel::ReportPanel
 	m_min_date_ctrl(0),
 	m_max_date_ctrl(0),
 	m_refresh_button(0),
+	m_report(0),
 	m_database_connection(p_database_connection)
 {
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
@@ -66,8 +83,8 @@ ReportPanel::configure_top()
 	
 	// Report type combobox
 	wxArrayString report_type_names;
-	report_type_names.Add(wxString("Balance sheet"));
-	report_type_names.Add(wxString("Income and expenditure"));
+	report_type_names.Add(balance_sheet_report_name());
+	report_type_names.Add(pl_report_name());
 	m_report_type_ctrl = new wxComboBox
 	(	this,
 		wxID_ANY,
@@ -130,8 +147,42 @@ void
 ReportPanel::configure_bottom()
 {
 	assert (m_top_sizer);
-	// TODO HIGH PRIORITY Implement
+	Report* temp = Report::create
+	(	this,
+		wxDefaultSize,  // TODO Refine this.
+		selected_account_super_type(),
+		m_database_connection,
+		m_min_date_ctrl->date(),
+		m_max_date_ctrl->date()
+	);
+	if (m_report)
+	{
+		--m_next_row;
+		m_top_sizer->Detach(m_report);
+		m_report->Destroy();
+		m_report = 0;
+	}
+	assert (temp);
+	m_report = temp;
+	m_top_sizer->Add(m_report, wxGBPosition(m_next_row, 1), wxGBSpan(1, 4));
+	Fit();
+	
+	++m_next_row;
+
 	return;
+}
+
+account_super_type::AccountSuperType
+ReportPanel::selected_account_super_type() const
+{
+	assert (m_report_type_ctrl);
+	wxString const report_name = m_report_type_ctrl->GetValue();
+	if (report_name == balance_sheet_report_name())
+	{
+		return account_super_type::balance_sheet;
+	}
+	assert (report_name == pl_report_name());
+	return account_super_type::pl;
 }
 
 void
@@ -167,7 +218,8 @@ ReportPanel::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
 void
 ReportPanel::on_refresh_button_click(wxCommandEvent& event)
 {
-	// TODO HIGH PRIORITY Implement
+	configure_bottom();
+	return;
 }
 
 
