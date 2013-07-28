@@ -103,7 +103,7 @@ TopPanel::TopPanel
 		false
 	);
 	m_notebook->AddPage
-	(	m_notebook_page_reconciliations,
+	(	m_notebook_page_reports,
 		wxString("Reports"),
 		false
 	);
@@ -203,7 +203,18 @@ TopPanel::configure_reconciliation_page()
 void
 TopPanel::configure_report_page()
 {
-	// TODO HIGH PRIORITY Implement.
+	assert (m_notebook_page_reports);
+	assert (!m_report_panel);
+	m_report_panel =
+		new ReportPanel(m_notebook_page_reports, m_database_connection);
+	wxBoxSizer* page_4_sizer = new wxBoxSizer(wxHORIZONTAL);
+	page_4_sizer->Add(m_report_panel, wxSizerFlags(1).Expand());
+	m_notebook_page_reports->SetSizer(page_4_sizer);
+	page_4_sizer->Fit(m_notebook_page_reports);
+	page_4_sizer->SetSizeHints(m_notebook_page_reports);
+	m_notebook_page_reports->Fit();
+	Layout();
+	return;
 }
 
 void
