@@ -138,10 +138,14 @@ AccountListCtrl::update
 	// Now (re)draw
 	ClearAll();
 	InsertColumn(s_name_col, p_left_column_title, wxLIST_FORMAT_LEFT);
-	InsertColumn(s_balance_col, "Balance", wxLIST_FORMAT_RIGHT);
+	InsertColumn
+	(	s_balance_col,
+		m_show_daily_budget? wxString("Available"): wxString("Balance"),
+		wxLIST_FORMAT_RIGHT
+	);
 	if (m_show_daily_budget)
 	{
-		InsertColumn(s_budget_col, "Daily budget", wxLIST_FORMAT_RIGHT);
+		InsertColumn(s_budget_col, "Daily top-up", wxLIST_FORMAT_RIGHT);
 	}
 
 	AccountReader::size_type i = 0;
