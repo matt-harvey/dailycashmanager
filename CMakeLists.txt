@@ -177,6 +177,7 @@ set (gui_files
 	 graphical_session/wxs/account_list_ctrl.cpp
 	 graphical_session/wxs/account_type_ctrl.cpp
 	 graphical_session/wxs/app.cpp
+	 graphical_session/wxs/balance_sheet_report.cpp
 	 graphical_session/wxs/bs_account_entry_list_ctrl.cpp
 	 graphical_session/wxs/budget_dialog.cpp
 	 graphical_session/wxs/date_ctrl.cpp
@@ -195,7 +196,9 @@ set (gui_files
 	 graphical_session/wxs/frequency_ctrl.cpp
 	 graphical_session/wxs/locale.cpp
 	 graphical_session/wxs/pl_account_entry_list_ctrl.cpp
+	 graphical_session/wxs/pl_report.cpp
 	 graphical_session/wxs/reconciliation_entry_list_ctrl.cpp
+	 graphical_session/wxs/report.cpp
 	 graphical_session/wxs/report_panel.cpp
 	 graphical_session/wxs/setup_wizard.cpp
 	 graphical_session/wxs/sizing.cpp
