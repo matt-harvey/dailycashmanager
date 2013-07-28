@@ -1,5 +1,8 @@
 #include "report_panel.hpp"
+#include "date.hpp"
 #include "date_ctrl.hpp"
+#include "sizing.hpp"
+#include "string_set_validator.hpp"
 #include <wx/button.h>
 #include <wx/combobox.h>
 #include <wx/event.h>
@@ -29,7 +32,105 @@ ReportPanel::ReportPanel
 	m_refresh_button(0),
 	m_database_connection(p_database_connection)
 {
+	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
+	SetSizer(m_top_sizer);
+
+	++m_next_row;
+	
+	configure_top();
+	configure_bottom();
+	
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	Fit();
+	Layout();
+}
+
+void
+ReportPanel::configure_top()
+{
+	assert (m_top_sizer);
+	assert (m_next_row == 0);
+
+	wxStaticText* report_type_label =
+		new wxStaticText(this, wxID_ANY, wxString(" Report:"));
+	m_top_sizer->Add(report_type_label, wxGBPosition(m_next_row, 1));
+	wxStaticText* min_date_label =
+		new wxStaticText(this, wxID_ANY, wxString(" From:"));
+	m_top_sizer->Add(min_date_label, wxGBPosition(m_next_row, 2));
+	wxStaticText* max_date_label =
+		new wxStaticText(this, wxID_ANY, wxString(" To:"));
+	m_top_sizer->Add(max_date_label, wxGBPosition(m_next_row, 3));
+
+	++m_next_row;
+	
+	wxArrayString report_type_names;
+	report_type_names.Add(wxString("Balance sheet"));
+	report_type_names.Add(wxString("Income and expenditure"));
+	m_report_type_ctrl = new wxComboBox
+	(	this,
+		wxID_ANY,
+		report_type_names[0],
+		wxDefaultPosition,
+		wxSize(large_width(), wxDefaultSize.y),
+		wxArrayString()
+	);
+	for (size_t i = 0; i != report_type_names.GetCount(); ++i)
+	{
+		m_report_type_ctrl->Append(report_type_names[i]);
+	}
+	assert (!report_type_names.IsEmpty());
+	StringSetValidator report_type_name_validator
+	(	report_type_names[0],
+		report_type_names,
+		"Report type"
+	);
+	m_report_type_ctrl->SetValidator(report_type_name_validator);
+	m_top_sizer->Add(m_report_type_ctrl, wxGBPosition(m_next_row, 1));
+
+	// WARNING There is duplicated code between here and EntryListPanel,
+	// and also to some extent between here and ReconciliationPanel.
+	assert (m_report_type_ctrl);
+	int const std_height = m_report_type_ctrl->GetSize().GetHeight();
+
+	bool const allow_blank_dates = true;
+	m_min_date_ctrl = new DateCtrl
+	(	this,
+		s_min_date_ctrl_id,
+		wxSize(medium_width(), std_height),
+		today(),
+		allow_blank_dates
+	);
+	m_top_sizer->Add(m_min_date_ctrl, wxGBPosition(m_next_row, 2));
+	m_max_date_ctrl = new DateCtrl
+	(	this,
+		s_max_date_ctrl_id,
+		wxSize(medium_width(), std_height),
+		today(),
+		allow_blank_dates
+	);
+	m_top_sizer->Add(m_max_date_ctrl, wxGBPosition(m_next_row, 3));
+	m_refresh_button = new wxButton
+	(	this,
+		s_refresh_button_id,
+		wxString("&Refresh"),
+		wxDefaultPosition,
+		m_max_date_ctrl->GetSize()
+	);
+	m_refresh_button->SetDefault();
+	m_top_sizer->Add(m_refresh_button, wxGBPosition(m_next_row, 4));
+
+	++m_next_row;
+
+	return;
+}
+
+void
+ReportPanel::configure_bottom()
+{
+	assert (m_top_sizer);
 	// TODO HIGH PRIORITY Implement
+	return;
 }
 
 void

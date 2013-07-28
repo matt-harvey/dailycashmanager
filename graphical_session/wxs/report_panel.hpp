@@ -48,7 +48,12 @@ public:
 private:
 	void on_refresh_button_click(wxCommandEvent& event);
 
-	static int const s_refresh_button_id = wxID_HIGHEST + 1;
+	void configure_top();
+	void configure_bottom();
+
+	static int const s_min_date_ctrl_id = wxID_HIGHEST + 1;
+	static int const s_max_date_ctrl_id = s_min_date_ctrl_id + 1;
+	static int const s_refresh_button_id = s_max_date_ctrl_id + 1;
 
 	int m_next_row;
 
