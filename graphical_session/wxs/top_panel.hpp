@@ -29,6 +29,7 @@ class AccountListCtrl;
 class DraftJournalListCtrl;
 class EntryListPanel;
 class Frame;
+class ReportPanel;
 class TransactionCtrl;
 
 // End forward declarations
@@ -36,6 +37,9 @@ class TransactionCtrl;
 
 /**
  * Top level panel intended as immediate child of Frame.
+ *
+ * @todo HIGH PRIORITY m_reports_page to be updated for new/amended/deleted
+ * Journals, Accounts, etc. etc..
  */
 class TopPanel: public wxPanel
 {
@@ -155,6 +159,7 @@ private:
 	void configure_account_lists();
 	void configure_entry_list();
 	void configure_reconciliation_page();
+	void configure_report_page();
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;
@@ -162,11 +167,13 @@ private:
 	wxPanel* m_notebook_page_accounts;
 	wxPanel* m_notebook_page_transactions;
 	wxPanel* m_notebook_page_reconciliations;
+	wxPanel* m_notebook_page_reports;
 	wxBoxSizer* m_right_column_sizer;
 	AccountListCtrl* m_bs_account_list;
 	AccountListCtrl* m_pl_account_list;
 	EntryListPanel* m_transaction_panel;
 	ReconciliationListPanel* m_reconciliation_panel;
+	ReportPanel* m_report_panel;
 	TransactionCtrl* m_transaction_ctrl;
 	DraftJournalListCtrl* m_draft_journal_list;
 };

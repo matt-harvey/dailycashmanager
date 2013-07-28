@@ -11,6 +11,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "reconciliation_list_panel.hpp"
+#include "report_panel.hpp"
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
 #include <boost/optional.hpp>
@@ -57,11 +58,13 @@ TopPanel::TopPanel
 	m_notebook_page_accounts(0),
 	m_notebook_page_transactions(0),
 	m_notebook_page_reconciliations(0),
+	m_notebook_page_reports(0),
 	m_right_column_sizer(0),
 	m_bs_account_list(0),
 	m_pl_account_list(0),
 	m_transaction_panel(0),
 	m_reconciliation_panel(0),
+	m_report_panel(0),
 	m_transaction_ctrl(0),
 	m_draft_journal_list(0)
 {
@@ -83,12 +86,27 @@ TopPanel::TopPanel
 	m_notebook_page_accounts = new wxPanel(m_notebook, wxID_ANY);
 	m_notebook_page_transactions = new wxPanel(m_notebook, wxID_ANY);
 	m_notebook_page_reconciliations = new wxPanel(m_notebook, wxID_ANY);
-	m_notebook->
-		AddPage(m_notebook_page_accounts, wxString("Balances"), true);
-	m_notebook->
-		AddPage(m_notebook_page_transactions, wxString("Transactions"), false);
-	m_notebook->
-		AddPage(m_notebook_page_reconciliations, wxString("Reconciliations"), false);
+	m_notebook_page_reports = new wxPanel(m_notebook, wxID_ANY);
+	m_notebook->AddPage
+	(	m_notebook_page_accounts,
+		wxString("Balances"),
+		true
+	);
+	m_notebook->AddPage
+	(	m_notebook_page_transactions,
+		wxString("Transactions"),
+		false
+	);
+	m_notebook->AddPage
+	(	m_notebook_page_reconciliations,
+		wxString("Reconciliations"),
+		false
+	);
+	m_notebook->AddPage
+	(	m_notebook_page_reconciliations,
+		wxString("Reports"),
+		false
+	);
 	m_top_sizer->Add
 	(	m_right_column_sizer,
 		wxSizerFlags(4).Expand().
@@ -97,6 +115,7 @@ TopPanel::TopPanel
 	configure_account_lists();
 	configure_entry_list();
 	configure_reconciliation_page();
+	configure_report_page();
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	m_top_sizer->Fit(this);
@@ -179,6 +198,12 @@ TopPanel::configure_reconciliation_page()
 	m_notebook_page_reconciliations->Fit();
 	Layout();
 	return;
+}
+
+void
+TopPanel::configure_report_page()
+{
+	// TODO HIGH PRIORITY Implement.
 }
 
 void
