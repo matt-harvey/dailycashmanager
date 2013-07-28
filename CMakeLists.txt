@@ -196,6 +196,7 @@ set (gui_files
 	 graphical_session/wxs/locale.cpp
 	 graphical_session/wxs/pl_account_entry_list_ctrl.cpp
 	 graphical_session/wxs/reconciliation_entry_list_ctrl.cpp
+	 graphical_session/wxs/report_panel.cpp
 	 graphical_session/wxs/setup_wizard.cpp
 	 graphical_session/wxs/sizing.cpp
 	 graphical_session/wxs/string_set_validator.cpp
