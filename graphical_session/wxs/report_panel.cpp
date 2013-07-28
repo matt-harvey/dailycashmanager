@@ -50,10 +50,10 @@ void
 ReportPanel::configure_top()
 {
 	assert (m_top_sizer);
-	assert (m_next_row == 0);
 
+	// Labels
 	wxStaticText* report_type_label =
-		new wxStaticText(this, wxID_ANY, wxString(" Report:"));
+		new wxStaticText(this, wxID_ANY, wxString(" Report type:"));
 	m_top_sizer->Add(report_type_label, wxGBPosition(m_next_row, 1));
 	wxStaticText* min_date_label =
 		new wxStaticText(this, wxID_ANY, wxString(" From:"));
@@ -64,6 +64,7 @@ ReportPanel::configure_top()
 
 	++m_next_row;
 	
+	// Report type combobox
 	wxArrayString report_type_names;
 	report_type_names.Add(wxString("Balance sheet"));
 	report_type_names.Add(wxString("Income and expenditure"));
@@ -73,25 +74,23 @@ ReportPanel::configure_top()
 		report_type_names[0],
 		wxDefaultPosition,
 		wxSize(large_width(), wxDefaultSize.y),
-		wxArrayString()
+		wxArrayString(),
+		wxCB_READONLY
 	);
 	for (size_t i = 0; i != report_type_names.GetCount(); ++i)
 	{
 		m_report_type_ctrl->Append(report_type_names[i]);
 	}
 	assert (!report_type_names.IsEmpty());
-	StringSetValidator report_type_name_validator
-	(	report_type_names[0],
-		report_type_names,
-		"Report type"
-	);
-	m_report_type_ctrl->SetValidator(report_type_name_validator);
+	m_report_type_ctrl->SetValue(report_type_names[0]);
 	m_top_sizer->Add(m_report_type_ctrl, wxGBPosition(m_next_row, 1));
 
 	// WARNING There is duplicated code between here and EntryListPanel,
 	// and also to some extent between here and ReconciliationPanel.
 	assert (m_report_type_ctrl);
 	int const std_height = m_report_type_ctrl->GetSize().GetHeight();
+
+	// Date range boxes
 
 	bool const allow_blank_dates = true;
 	m_min_date_ctrl = new DateCtrl
@@ -110,6 +109,8 @@ ReportPanel::configure_top()
 		allow_blank_dates
 	);
 	m_top_sizer->Add(m_max_date_ctrl, wxGBPosition(m_next_row, 3));
+
+	// Refresh button
 	m_refresh_button = new wxButton
 	(	this,
 		s_refresh_button_id,
