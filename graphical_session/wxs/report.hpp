@@ -2,17 +2,21 @@
 #define GUARD_report_hpp
 
 #include "account_type.hpp"
+#include "entry.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <wx/gdicmn.h>
 #include <wx/scrolwin.h>
+#include <vector>
 
 namespace phatbooks
 {
 
 // Begin forward declarations
 
+class Account;
+class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -41,6 +45,12 @@ public:
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date =
 			boost::optional<boost::gregorian::date>()
 	);
+
+	void update_for_new(OrdinaryJournal const& p_journal);
+	void update_for_amended(OrdinaryJournal const& p_journal);
+	void update_for_new(Account const& p_account);
+	void update_for_amended(Account const& p_account);
+	void update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids);
 
 protected:
 	PhatbooksDatabaseConnection& database_connection();

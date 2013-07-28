@@ -1,7 +1,10 @@
 #include "report_panel.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
+#include "entry.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "report.hpp"
 #include "sizing.hpp"
@@ -188,31 +191,41 @@ ReportPanel::selected_account_super_type() const
 void
 ReportPanel::update_for_new(OrdinaryJournal const& p_journal)
 {
-	// TODO HIGH PRIORITY Implement
+	assert (m_report);
+	m_report->update_for_new(p_journal);
+	return;
 }
 
 void
 ReportPanel::update_for_amended(OrdinaryJournal const& p_journal)
 {
-	// TODO HIGH PRIORITY Implement
+	assert (m_report);
+	m_report->update_for_amended(p_journal);
+	return;
 }
 
 void
 ReportPanel::update_for_new(Account const& p_account)
 {
-	// TODO HIGH PRIORITY Implement
+	assert (m_report);
+	m_report->update_for_new(p_account);
+	return;
 }
 
 void
 ReportPanel::update_for_amended(Account const& p_account)
 {
-	// TODO HIGH PRIORITY Implement
+	assert (m_report);
+	m_report->update_for_amended(p_account);
+	return;
 }
 
 void
 ReportPanel::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
 {
-	// TODO HIGH PRIORITY Implement
+	assert (m_report);
+	m_report->update_for_deleted(p_doomed_ids);
+	return;
 }
 
 void

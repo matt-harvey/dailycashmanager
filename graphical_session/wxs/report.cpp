@@ -1,6 +1,9 @@
 #include "report.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "balance_sheet_report.hpp"
+#include "entry.hpp"
+#include "ordinary_journal.hpp"
 #include "pl_report.hpp"
 #include "report_panel.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -73,6 +76,36 @@ Report::Report
 
 Report::~Report()
 {
+}
+
+void
+Report::update_for_new(OrdinaryJournal const& p_journal)
+{
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+Report::update_for_amended(OrdinaryJournal const& p_journal)
+{
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+Report::update_for_new(Account const& p_account)
+{
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+Report::update_for_amended(Account const& p_account)
+{
+	// TODO HIGH PRIORITY Implement
+}
+
+void
+Report::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
+{
+	// TODO HIGH PRIORITY Implement
 }
 
 PhatbooksDatabaseConnection&
