@@ -3,7 +3,7 @@
 
 #include "entry.hpp"
 #include <boost/noncopyable.hpp>
-#include <wx/panel.h>
+#include <wx/combobox.h>
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -53,6 +53,7 @@ private:
 	int m_next_row;
 
 	wxGridBagSizer* m_top_sizer;
+	wxComboBox* m_report_type_ctrl;
 	DateCtrl* m_min_date_ctrl;
 	DateCtrl* m_max_date_ctrl;
 	wxButton* m_refresh_button;

@@ -1,6 +1,7 @@
 #include "report_panel.hpp"
 #include "date_ctrl.hpp"
 #include <wx/button.h>
+#include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
@@ -22,6 +23,7 @@ ReportPanel::ReportPanel
 	wxPanel(p_parent, wxID_ANY),
 	m_next_row(0),
 	m_top_sizer(0),
+	m_report_type_ctrl(0),
 	m_min_date_ctrl(0),
 	m_max_date_ctrl(0),
 	m_refresh_button(0),
