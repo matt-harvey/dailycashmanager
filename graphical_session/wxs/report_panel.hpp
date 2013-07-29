@@ -31,6 +31,13 @@ class Report;
 /**
  * Panel for holding date-filtered balance sheet and profit-and-loss
  * reports.
+ *
+ * @todo We can make things more straightforward and speed start-up times
+ * by having the date boxes start out blank. We can then have
+ * BalanceSheetReport initially just use the balance() of each Account
+ * simpliciter as "Closing balance" and "Movement", and use a
+ * \e nil amount for the "Opening balance" column. This can be written
+ * into the code for initializing the m_balance_map.
  */
 class ReportPanel: public wxPanel, private boost::noncopyable
 {
