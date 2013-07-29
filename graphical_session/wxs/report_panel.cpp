@@ -156,6 +156,7 @@ ReportPanel::configure_bottom()
 	// TODO Can we make this a bit more efficient by, instead of creating a
 	// whole new Report, calling a generate() or regenerate() method
 	// on the existing Report?
+	
 	assert (m_top_sizer);
 	if (m_client_size_aux < 100)  // WARNING Ugly hack
 	{
@@ -177,8 +178,7 @@ ReportPanel::configure_bottom()
 	(	this,
 		wxSize
 		(	large_width() + medium_width() * 3 + standard_gap() * 3,
-			height_aux -
-				2 * m_text_ctrl_height - standard_gap() * 2
+			height_aux
 		),
 		selected_account_super_type(),
 		m_database_connection,

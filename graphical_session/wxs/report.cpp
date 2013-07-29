@@ -74,8 +74,7 @@ Report::Report
 	(	p_parent,
 		wxID_ANY,
 		wxDefaultPosition,
-		p_size,
-		wxVSCROLL
+		p_size
 	),
 	m_next_row(0),
 	m_top_sizer(0),
@@ -213,10 +212,10 @@ Report::generate()
 	configure_scrollbars();
 	do_generate();
 	// GetParent()->Layout();
-	m_top_sizer->Fit(this);
-	m_top_sizer->SetSizeHints(this);
+	// m_top_sizer->Fit(this);
+	// m_top_sizer->SetSizeHints(this);
 	FitInside();
-	Layout();
+	// Layout();
 	return;
 }
 
