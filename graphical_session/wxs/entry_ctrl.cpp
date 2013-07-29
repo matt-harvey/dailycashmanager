@@ -496,10 +496,10 @@ EntryCtrl::side_description() const
 {
 	if (m_is_source)
 	{
-		return " Source:";
+		return wxString(" Source:");
 	}
 	assert (!m_is_source);
-	return " Destination:";
+	return wxString(" Destination:");
 }
 
 }  // namespace gui

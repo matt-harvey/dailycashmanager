@@ -80,7 +80,7 @@ protected:
 	void make_text
 	(	wxString const& p_text,
 		int p_column,
-		int p_flags = wxALIGN_LEFT
+		int p_alignment_flags = wxALIGN_LEFT
 	);
 
 	void make_number_text(jewel::Decimal const& p_amount, int p_column);

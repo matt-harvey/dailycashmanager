@@ -45,6 +45,8 @@ ReportPanel::ReportPanel
 ):
 	wxPanel(p_parent, wxID_ANY),
 	m_next_row(0),
+	m_client_size_aux(0),
+	m_text_ctrl_height(0),
 	m_top_sizer(0),
 	m_report_type_ctrl(0),
 	m_min_date_ctrl(0),
@@ -78,6 +80,7 @@ ReportPanel::configure_top()
 	m_top_sizer->Add(report_type_label, wxGBPosition(m_next_row, 1));
 	wxStaticText* min_date_label =
 		new wxStaticText(this, wxID_ANY, wxString(" From:"));
+	m_text_ctrl_height = min_date_label->GetSize().GetY();
 	m_top_sizer->Add(min_date_label, wxGBPosition(m_next_row, 2));
 	wxStaticText* max_date_label =
 		new wxStaticText(this, wxID_ANY, wxString(" To:"));
@@ -154,9 +157,29 @@ ReportPanel::configure_bottom()
 	// whole new Report, calling a generate() or regenerate() method
 	// on the existing Report?
 	assert (m_top_sizer);
+	if (m_client_size_aux < 100)  // WARNING Ugly hack
+	{
+		m_client_size_aux = GetClientSize().GetY();
+	}
+	int const num_extra_rows = 2;
+	assert (m_min_date_ctrl);
+	int height_aux =
+		m_client_size_aux -
+		m_min_date_ctrl->GetSize().GetY() * num_extra_rows -
+		standard_gap() * (num_extra_rows + 1) -
+		standard_border() * 2;
+
+#	if JEWEL_ON_WINDOWS
+		height_aux -= standard_gap() * (num_extra_rows + 1);
+#	endif
+
 	Report* temp = Report::create
 	(	this,
-		wxDefaultSize,  // TODO Refine this.
+		wxSize
+		(	large_width() + medium_width() * 3 + standard_gap() * 3,
+			height_aux -
+				2 * m_text_ctrl_height - standard_gap() * 2
+		),
 		selected_account_super_type(),
 		m_database_connection,
 		m_min_date_ctrl->date(),
@@ -173,8 +196,11 @@ ReportPanel::configure_bottom()
 	}
 	m_report->generate();
 	m_top_sizer->
-		Add(m_report, wxGBPosition(m_next_row, 1), wxGBSpan(1, 4), wxEXPAND);
-	Fit();
+		Add(m_report, wxGBPosition(m_next_row, 1), wxGBSpan(1, 4));
+	// m_top_sizer->Fit(this);
+	// m_top_sizer->SetSizeHints(this);
+	// Fit();
+	Layout();
 	
 	++m_next_row;
 

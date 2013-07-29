@@ -30,8 +30,8 @@ public:
 	(	ReportPanel* p_parent,
 		wxSize const& p_size,
 		PhatbooksDatabaseConnection& p_database_connection,
-		boost::optional<boost::gregorian::date> p_maybe_min_date,
-		boost::optional<boost::gregorian::date> p_maybe_max_date
+		boost::optional<boost::gregorian::date> const& p_maybe_min_date,
+		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);
 
 	virtual ~PLReport();

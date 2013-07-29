@@ -66,6 +66,9 @@ private:
 	static int const s_refresh_button_id = s_max_date_ctrl_id + 1;
 
 	int m_next_row;
+	
+	int m_client_size_aux;
+	int m_text_ctrl_height;
 
 	wxGridBagSizer* m_top_sizer;
 	wxComboBox* m_report_type_ctrl;

@@ -57,6 +57,7 @@ EntryListPanel::EntryListPanel
 	m_support_reconciliations(p_support_reconciliations),
 	m_next_row(0),
 	m_client_size_aux(0),
+	m_text_ctrl_height(0),
 	m_top_sizer(0),
 	m_account_ctrl(0),
 	m_min_date_ctrl(0),

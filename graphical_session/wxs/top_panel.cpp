@@ -208,7 +208,8 @@ TopPanel::configure_report_page()
 	m_report_panel =
 		new ReportPanel(m_notebook_page_reports, m_database_connection);
 	wxBoxSizer* page_4_sizer = new wxBoxSizer(wxHORIZONTAL);
-	page_4_sizer->Add(m_report_panel, wxSizerFlags(1).Expand());
+	page_4_sizer->Add(m_report_panel, wxSizerFlags(10).Expand());
+
 	m_notebook_page_reports->SetSizer(page_4_sizer);
 	page_4_sizer->Fit(m_notebook_page_reports);
 	page_4_sizer->SetSizeHints(m_notebook_page_reports);

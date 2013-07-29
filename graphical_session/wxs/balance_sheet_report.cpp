@@ -65,6 +65,7 @@ BalanceSheetReport::do_generate()
 void
 BalanceSheetReport::refresh_map()
 {
+	// TODO Can we just ignore equity Accounts here?
 	m_balance_map.clear();
 	assert (m_balance_map.empty());
 	optional<gregorian::date> const maybe_max_d = maybe_max_date();
@@ -111,6 +112,8 @@ BalanceSheetReport::display_text()
 {
 	// Assume m_balance_map is up-to-date. Use its contents to display
 	// the report contents.
+	
+	// TODO Can we just ignore equity Accounts here?
 
 	increment_row();
 
@@ -167,10 +170,7 @@ BalanceSheetReport::display_text()
 	);
 	Decimal net_assets_opening = zero;
 	Decimal net_assets_closing = zero;
-
-	vector<wxString>::size_type i = 0;
-	vector<wxString>::size_type const sz = section_titles.size();
-	for ( ; i != sz; ++i)
+	for (vector<wxString>::size_type i = 0 ; i != section_titles.size(); ++i)
 	{
 		// WARNING This relies on every Account having the same Commodity.
 		Decimal opening_balance_total = zero;

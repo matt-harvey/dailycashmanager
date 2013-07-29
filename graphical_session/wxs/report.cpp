@@ -115,6 +115,7 @@ void
 Report::increment_row()
 {
 	++m_next_row;
+	// FitInside();
 	return;
 }
 
@@ -128,7 +129,7 @@ void
 Report::make_text
 (	wxString const& p_text,
 	int p_column,
-	int p_flags
+	int p_alignment_flags
 )
 {
 	wxStaticText* header = new wxStaticText
@@ -137,9 +138,14 @@ Report::make_text
 		p_text,
 		wxDefaultPosition,
 		wxDefaultSize,
-		p_flags
+		p_alignment_flags
 	);
-	top_sizer().Add(header, wxGBPosition(next_row(), p_column));
+	top_sizer().Add
+	(	header,
+		wxGBPosition(next_row(), p_column),
+		wxDefaultSpan,
+		p_alignment_flags
+	);
 	return;
 }
 
@@ -204,19 +210,20 @@ void
 Report::generate()
 {
 	// TODO Can we factor up more shared code here?
-	do_generate();
 	configure_scrollbars();
+	do_generate();
+	// GetParent()->Layout();
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
 	FitInside();
-	GetParent()->Fit();
-	// Layout();
+	Layout();
 	return;
 }
 
 void
 Report::configure_scrollbars()
 {
+	JEWEL_DEBUG_LOG_LOCATION;
 	SetScrollRate(0, 10);
 	FitInside();
 	return;
