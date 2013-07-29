@@ -1,9 +1,12 @@
 #ifndef GUARD_pl_report_hpp
 #define GUARD_pl_report_hpp
 
+#include "account.hpp"
 #include "report.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <boost/unordered_map.hpp>
+#include <jewel/decimal.hpp>
 #include <wx/gdicmn.h>
 
 namespace phatbooks
@@ -39,6 +42,9 @@ private:
 	void refresh_map();
 
 	void display_text();
+
+	typedef boost::unordered_map<Account::Id, jewel::Decimal> Map;
+	Map m_map;
 
 };  // class PLReport
 

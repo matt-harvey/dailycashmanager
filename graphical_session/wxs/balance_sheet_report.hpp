@@ -43,7 +43,6 @@ private:
 
 	void display_text();
 
-
 	struct BalanceDatum
 	{
 		BalanceDatum();
