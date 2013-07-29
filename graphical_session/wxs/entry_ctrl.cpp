@@ -69,7 +69,7 @@ EntryCtrl::EntryCtrl
 	assert (m_amount_boxes.empty());
 	assert_transaction_type_validity(m_transaction_type);
 
-	m_top_sizer = new wxGridBagSizer(5, 5);
+	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 
 	bool const multiple_entries = (p_accounts.size() > 1);
@@ -123,7 +123,7 @@ EntryCtrl::EntryCtrl
 	assert (m_amount_boxes.empty());
 	assert_transaction_type_validity(m_transaction_type);
 
-	m_top_sizer = new wxGridBagSizer(5, 5);
+	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 
 	vector<Entry>::size_type const sz = p_entries.size();
