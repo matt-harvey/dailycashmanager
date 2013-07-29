@@ -5,7 +5,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <boost/unordered_map.hpp>
-#include <jewel/decimal.hpp>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
 
@@ -40,17 +39,10 @@ public:
 private:
 	virtual void do_generate();
 
-	void refresh_balance_map();
+	void refresh_map();
 
 	void display_text();
 
-	void make_text
-	(	wxString const& p_text,
-		int p_column,
-		int p_flags = wxALIGN_LEFT
-	);
-
-	void make_number_text(jewel::Decimal const& p_amount, int p_column);
 
 	struct BalanceDatum
 	{
@@ -62,8 +54,6 @@ private:
 
 	typedef boost::unordered_map<Account::Id, BalanceDatum> BalanceMap;
 	BalanceMap m_balance_map;
-
-	int m_next_row;
 
 };  // class BalanceSheetReport
 

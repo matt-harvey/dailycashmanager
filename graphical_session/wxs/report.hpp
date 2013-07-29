@@ -6,6 +6,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
+#include <jewel/decimal_fwd.hpp>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
 #include <wx/scrolwin.h>
@@ -73,11 +74,24 @@ protected:
 
 	wxGridBagSizer& top_sizer();
 
+	void increment_row();
+	int next_row() const;
+
+	void make_text
+	(	wxString const& p_text,
+		int p_column,
+		int p_flags = wxALIGN_LEFT
+	);
+
+	void make_number_text(jewel::Decimal const& p_amount, int p_column);
+
 private:
 	virtual void do_generate() = 0;
 
 	void configure_scrollbars();
 
+
+	int m_next_row;
 	wxGridBagSizer* m_top_sizer;
 	PhatbooksDatabaseConnection& m_database_connection;
 	boost::gregorian::date m_min_date;

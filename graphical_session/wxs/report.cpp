@@ -3,15 +3,20 @@
 #include "account_type.hpp"
 #include "balance_sheet_report.hpp"
 #include "entry.hpp"
+#include "finformat.hpp"
+#include "locale.hpp"
 #include "ordinary_journal.hpp"
 #include "pl_report.hpp"
 #include "report_panel.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sizing.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <wx/stattext.h>
 
 using boost::optional;
+using jewel::Decimal;
 using jewel::value;
 
 namespace gregorian = boost::gregorian;
@@ -72,6 +77,7 @@ Report::Report
 		p_size,
 		wxVSCROLL
 	),
+	m_next_row(0),
 	m_top_sizer(0),
 	m_database_connection(p_database_connection),
 	m_min_date(database_connection().opening_balance_journal_date()),
@@ -103,6 +109,58 @@ optional<gregorian::date>
 Report::maybe_max_date() const
 {
 	return m_maybe_max_date;
+}
+
+void
+Report::increment_row()
+{
+	++m_next_row;
+	return;
+}
+
+int
+Report::next_row() const
+{
+	return m_next_row;
+}
+
+void
+Report::make_text
+(	wxString const& p_text,
+	int p_column,
+	int p_flags
+)
+{
+	wxStaticText* header = new wxStaticText
+	(	this,
+		wxID_ANY,
+		p_text,
+		wxDefaultPosition,
+		wxDefaultSize,
+		p_flags
+	);
+	top_sizer().Add(header, wxGBPosition(next_row(), p_column));
+	return;
+}
+
+void
+Report::make_number_text(jewel::Decimal const& p_amount, int p_column)
+{
+	wxStaticText* text = new wxStaticText
+	(	this,
+		wxID_ANY,
+		finformat_wx(p_amount, locale()),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_RIGHT
+	);
+	top_sizer().Add
+	(	text,
+		wxGBPosition(next_row(), p_column),
+		wxDefaultSpan,
+		wxALIGN_RIGHT
+	);
+	return;
 }
 
 wxGridBagSizer&
@@ -169,6 +227,8 @@ Report::database_connection()
 {
 	return m_database_connection;
 }
+
+
 
 }  // namespace gui
 }  // namespace phatbooks

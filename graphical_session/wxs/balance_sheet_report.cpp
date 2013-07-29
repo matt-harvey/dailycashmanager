@@ -3,7 +3,6 @@
 #include "account_type.hpp"
 #include "b_string.hpp"
 #include "entry_reader.hpp"
-#include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "report.hpp"
 #include "report_panel.hpp"
@@ -12,7 +11,6 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/gdicmn.h>
-#include <wx/stattext.h>
 #include <wx/window.h>
 #include <list>
 #include <vector>
@@ -48,8 +46,7 @@ BalanceSheetReport::BalanceSheetReport
 		p_database_connection,
 		p_maybe_min_date,
 		p_maybe_max_date
-	),
-	m_next_row(0)
+	)
 {
 	assert (m_balance_map.empty());
 }
@@ -57,7 +54,7 @@ BalanceSheetReport::BalanceSheetReport
 void
 BalanceSheetReport::do_generate()
 {
-	refresh_balance_map();
+	refresh_map();
 	display_text();
 
 	// Don't do "FitInside()", "configure_scrollbars" or that "admin" stuff,
@@ -66,7 +63,7 @@ BalanceSheetReport::do_generate()
 }
 
 void
-BalanceSheetReport::refresh_balance_map()
+BalanceSheetReport::refresh_map()
 {
 	m_balance_map.clear();
 	assert (m_balance_map.empty());
@@ -115,14 +112,14 @@ BalanceSheetReport::display_text()
 	// Assume m_balance_map is up-to-date. Use its contents to display
 	// the report contents.
 
-	++m_next_row;
+	increment_row();
 
 	make_text(wxString("Opening balance "), 1, wxALIGN_RIGHT);
 	make_text(wxString("  Movement "), 2, wxALIGN_RIGHT);
 	make_text(wxString("  Closing balance "), 3, wxALIGN_RIGHT);
 
-	++m_next_row;
-
+	increment_row();
+	
 	list<wxString> asset_names;
 	list<wxString> equity_names;
 	list<wxString> liability_names;
@@ -191,7 +188,9 @@ BalanceSheetReport::display_text()
 			assert (false);
 		}
 		make_text(section_titles.at(i), 0);
-		++m_next_row;
+		
+		increment_row();
+
 		list<wxString>::const_iterator it = names->begin();
 		list<wxString>::const_iterator const end = names->end();
 		for ( ; it != end; ++it)
@@ -213,7 +212,8 @@ BalanceSheetReport::display_text()
 				make_number_text(cb, 3);
 				opening_balance_total += ob;
 				closing_balance_total += cb;
-				++m_next_row;
+
+				increment_row();
 			}
 		}
 		make_text(wxString("  Total"), 0);
@@ -222,8 +222,9 @@ BalanceSheetReport::display_text()
 		make_number_text(closing_balance_total, 3);
 		net_assets_opening += opening_balance_total;
 		net_assets_closing += closing_balance_total;
-		++m_next_row;
-		++m_next_row;
+
+		increment_row();
+		increment_row();
 	}
 
 	make_text(wxString("  Net assets"), 0);
@@ -231,47 +232,8 @@ BalanceSheetReport::display_text()
 	make_number_text(net_assets_closing - net_assets_opening, 2);
 	make_number_text(net_assets_closing, 3);
 
-	++m_next_row;
+	increment_row();
 
-	return;
-}
-
-void
-BalanceSheetReport::make_text
-(	wxString const& p_text,
-	int p_column,
-	int p_flags
-)
-{
-	wxStaticText* header = new wxStaticText
-	(	this,
-		wxID_ANY,
-		p_text,
-		wxDefaultPosition,
-		wxDefaultSize,
-		p_flags
-	);
-	top_sizer().Add(header, wxGBPosition(m_next_row, p_column));
-	return;
-}
-
-void
-BalanceSheetReport::make_number_text(Decimal const& p_amount, int p_column)
-{
-	wxStaticText* text = new wxStaticText
-	(	this,
-		wxID_ANY,
-		finformat_wx(p_amount, locale()),
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_RIGHT
-	);
-	top_sizer().Add
-	(	text,
-		wxGBPosition(m_next_row, p_column),
-		wxDefaultSpan,
-		wxALIGN_RIGHT
-	);
 	return;
 }
 

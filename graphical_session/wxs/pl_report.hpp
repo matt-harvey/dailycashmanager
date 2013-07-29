@@ -36,6 +36,10 @@ public:
 private:
 	virtual void do_generate();
 
+	void refresh_map();
+
+	void display_text();
+
 };  // class PLReport
 
 }  // namespace gui
