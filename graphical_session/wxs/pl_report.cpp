@@ -171,7 +171,9 @@ PLReport::display_text()
 		// WARNING This relies on every Account having the same Commodity
 		Decimal total = zero;
 		list<wxString>* names = 0;
-		switch (section_account_types.at(i))
+		account_type::AccountType const account_type =
+			section_account_types.at(i);
+		switch (account_type)
 		{
 		case account_type::revenue:
 			names = &revenue_names;
@@ -193,7 +195,11 @@ PLReport::display_text()
 			Account const account(database_connection(), wx_to_bstring(*it));
 			Map::const_iterator const jt = m_map.find(account.id());
 			assert (jt != m_map.end());
-			Decimal const& b = jt->second;
+			Decimal const& b =
+			(	(account_type == account_type::expense)?
+				jt->second:
+				-(jt->second)
+			);
 
 			// Only show Accounts with non-zero balances
 			if (b != zero)
@@ -207,7 +213,11 @@ PLReport::display_text()
 		}
 		make_text(wxString("  Total"), 0);
 		make_number_text(total, 1);
-		net_revenue += total;
+		net_revenue +=
+		(	(account_type == account_type::revenue)?
+			total:
+			-total
+		);
 
 		increment_row();
 		increment_row();
