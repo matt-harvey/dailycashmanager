@@ -34,6 +34,7 @@ public:
 	virtual ~PLReport();
 
 private:
+	virtual void do_generate();
 
 };  // class PLReport
 

@@ -36,5 +36,11 @@ PLReport::~PLReport()
 {
 }
 
+void
+PLReport::do_generate()
+{
+	// TODO HIGH PRIORITY Implement.
+}
+
 }  // namespace gui
 }  // namespace phatbooks

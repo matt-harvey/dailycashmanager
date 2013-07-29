@@ -149,6 +149,9 @@ ReportPanel::configure_top()
 void
 ReportPanel::configure_bottom()
 {
+	// TODO Can we make this a bit more efficient by, instead of creating a
+	// whole new Report, calling a generate() or regenerate() method
+	// on the existing Report?
 	assert (m_top_sizer);
 	Report* temp = Report::create
 	(	this,
@@ -167,6 +170,7 @@ ReportPanel::configure_bottom()
 	}
 	assert (temp);
 	m_report = temp;
+	m_report->generate();
 	m_top_sizer->Add(m_report, wxGBPosition(m_next_row, 1), wxGBSpan(1, 4));
 	Fit();
 	

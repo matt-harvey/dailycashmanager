@@ -7,8 +7,12 @@
 #include "pl_report.hpp"
 #include "report_panel.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "sizing.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <jewel/optional.hpp>
 
 using boost::optional;
+using jewel::value;
 
 namespace gregorian = boost::gregorian;
 
@@ -68,14 +72,44 @@ Report::Report
 		p_size,
 		wxVSCROLL
 	),
+	m_top_sizer(0),
 	m_database_connection(p_database_connection),
-	m_maybe_min_date(p_maybe_min_date),
+	m_min_date(database_connection().opening_balance_journal_date()),
 	m_maybe_max_date(p_maybe_max_date)
 {
+	if (p_maybe_min_date)
+	{
+		gregorian::date const provided_min_date = value(p_maybe_min_date);
+		if (provided_min_date > m_min_date)
+		{
+			m_min_date = provided_min_date;
+		}
+	}
+	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
+	SetSizer(m_top_sizer);
 }
 
 Report::~Report()
 {
+}
+
+gregorian::date
+Report::min_date() const
+{
+	return m_min_date;
+}
+
+optional<gregorian::date>
+Report::maybe_max_date() const
+{
+	return m_maybe_max_date;
+}
+
+wxGridBagSizer&
+Report::top_sizer()
+{
+	assert (m_top_sizer);
+	return *m_top_sizer;
 }
 
 void
@@ -106,6 +140,27 @@ void
 Report::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
 {
 	// TODO HIGH PRIORITY Implement
+}
+
+void
+Report::generate()
+{
+	// TODO Can we factor up more shared code here?
+	do_generate();
+	configure_scrollbars();
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	FitInside();
+	Layout();
+	return;
+}
+
+void
+Report::configure_scrollbars()
+{
+	SetScrollRate(0, 10);
+	FitInside();
+	return;
 }
 
 PhatbooksDatabaseConnection&
