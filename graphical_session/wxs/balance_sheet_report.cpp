@@ -15,11 +15,13 @@
 #include <wx/stattext.h>
 #include <wx/window.h>
 #include <list>
+#include <vector>
 
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
 using std::list;
+using std::vector;
 
 namespace gregorian = boost::gregorian;
 
@@ -150,12 +152,42 @@ BalanceSheetReport::display_text()
 		equity_names.sort();
 		liability_names.sort();
 	}
-	// Bare scope - Do the asset section of the report
+	vector<wxString> section_titles;
+	section_titles.push_back(wxString("ASSETS"));
+	// WARNING Assuming no Equity Account.
+	section_titles.push_back(wxString("LIABILITIES"));
+	vector<account_type::AccountType> section_account_types;
+	section_account_types.push_back(account_type::asset);
+	// WARNING Assuming no Equity Account.
+	section_account_types.push_back(account_type::liability);
+	assert (section_titles.size() == section_account_types.size());
+
+	vector<wxString>::size_type i = 0;
+	vector<wxString>::size_type const sz = section_titles.size();
+	for ( ; i != sz; ++i)
 	{
-		make_text(wxString("Assets"), 0);
+		// WARNING This relies on every Account having the same Commodity.
+		list<wxString>* names = 0;
+		switch(section_account_types.at(i))
+		{
+		case account_type::asset:
+			names = &asset_names;
+			break;
+		case account_type::liability:
+			names = &liability_names;
+			break;
+		default:
+			assert (false);
+		}
+		make_text(section_titles.at(i), 0);
 		++m_next_row;
-		list<wxString>::const_iterator it = asset_names.begin();
-		list<wxString>::const_iterator const end = asset_names.end();
+		Decimal opening_balance_total
+		(	0,
+			database_connection().default_commodity().precision()
+		);
+		Decimal closing_balance_total = opening_balance_total;
+		list<wxString>::const_iterator it = names->begin();
+		list<wxString>::const_iterator const end = names->end();
 		for ( ; it != end; ++it)
 		{
 			make_text(*it, 0);
@@ -169,8 +201,16 @@ BalanceSheetReport::display_text()
 			make_number_text(ob, 1);
 			make_number_text(cb - ob, 2);
 			make_number_text(cb, 3);
+			opening_balance_total += ob;
+			closing_balance_total += cb;
 			++m_next_row;
 		}
+		make_text(wxString("  Total"), 0);
+		make_number_text(opening_balance_total, 1);
+		make_number_text(closing_balance_total - opening_balance_total, 2);
+		make_number_text(closing_balance_total, 3);
+		++m_next_row;
+		++m_next_row;
 	}
 
 	// TODO Finish implementing this.
