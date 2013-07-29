@@ -115,9 +115,11 @@ BalanceSheetReport::display_text()
 	// Assume m_balance_map is up-to-date. Use its contents to display
 	// the report contents.
 
-	make_text(wxString("Opening balance"), 1);
-	make_text(wxString("Movement"), 2);
-	make_text(wxString("Closing balance"), 3);
+	++m_next_row;
+
+	make_text(wxString("Opening balance "), 1, wxALIGN_RIGHT);
+	make_text(wxString("  Movement "), 2, wxALIGN_RIGHT);
+	make_text(wxString("  Closing balance "), 3, wxALIGN_RIGHT);
 
 	++m_next_row;
 
@@ -162,11 +164,20 @@ BalanceSheetReport::display_text()
 	section_account_types.push_back(account_type::liability);
 	assert (section_titles.size() == section_account_types.size());
 
+	Decimal const zero
+	(	0,
+		database_connection().default_commodity().precision()
+	);
+	Decimal net_assets_opening = zero;
+	Decimal net_assets_closing = zero;
+
 	vector<wxString>::size_type i = 0;
 	vector<wxString>::size_type const sz = section_titles.size();
 	for ( ; i != sz; ++i)
 	{
 		// WARNING This relies on every Account having the same Commodity.
+		Decimal opening_balance_total = zero;
+		Decimal closing_balance_total = zero;
 		list<wxString>* names = 0;
 		switch(section_account_types.at(i))
 		{
@@ -181,16 +192,10 @@ BalanceSheetReport::display_text()
 		}
 		make_text(section_titles.at(i), 0);
 		++m_next_row;
-		Decimal opening_balance_total
-		(	0,
-			database_connection().default_commodity().precision()
-		);
-		Decimal closing_balance_total = opening_balance_total;
 		list<wxString>::const_iterator it = names->begin();
 		list<wxString>::const_iterator const end = names->end();
 		for ( ; it != end; ++it)
 		{
-			make_text(*it, 0);
 			Account const account(database_connection(), wx_to_bstring(*it));
 			BalanceMap::const_iterator const jt =
 				m_balance_map.find(account.id());
@@ -198,27 +203,45 @@ BalanceSheetReport::display_text()
 			BalanceDatum const& datum = jt->second;
 			Decimal const& ob = datum.opening_balance;
 			Decimal const& cb = datum.closing_balance;
-			make_number_text(ob, 1);
-			make_number_text(cb - ob, 2);
-			make_number_text(cb, 3);
-			opening_balance_total += ob;
-			closing_balance_total += cb;
-			++m_next_row;
+
+			// Only show Accounts with non-zero balances
+			if ((ob != zero) || (cb != zero))
+			{
+				make_text(*it, 0);
+				make_number_text(ob, 1);
+				make_number_text(cb - ob, 2);
+				make_number_text(cb, 3);
+				opening_balance_total += ob;
+				closing_balance_total += cb;
+				++m_next_row;
+			}
 		}
 		make_text(wxString("  Total"), 0);
 		make_number_text(opening_balance_total, 1);
 		make_number_text(closing_balance_total - opening_balance_total, 2);
 		make_number_text(closing_balance_total, 3);
+		net_assets_opening += opening_balance_total;
+		net_assets_closing += closing_balance_total;
 		++m_next_row;
 		++m_next_row;
 	}
 
-	// TODO Finish implementing this.
+	make_text(wxString("  Net assets"), 0);
+	make_number_text(net_assets_opening, 1);
+	make_number_text(net_assets_closing - net_assets_opening, 2);
+	make_number_text(net_assets_closing, 3);
+
+	++m_next_row;
+
 	return;
 }
 
 void
-BalanceSheetReport::make_text(wxString const& p_text, int p_column)
+BalanceSheetReport::make_text
+(	wxString const& p_text,
+	int p_column,
+	int p_flags
+)
 {
 	wxStaticText* header = new wxStaticText
 	(	this,
@@ -226,7 +249,7 @@ BalanceSheetReport::make_text(wxString const& p_text, int p_column)
 		p_text,
 		wxDefaultPosition,
 		wxDefaultSize,
-		wxALIGN_LEFT
+		p_flags
 	);
 	top_sizer().Add(header, wxGBPosition(m_next_row, p_column));
 	return;

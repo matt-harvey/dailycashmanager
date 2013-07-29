@@ -15,6 +15,7 @@
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
+#include <utility>
 
 namespace phatbooks
 {
@@ -161,17 +162,18 @@ ReportPanel::configure_bottom()
 		m_min_date_ctrl->date(),
 		m_max_date_ctrl->date()
 	);
-	if (m_report)
+	using std::swap;
+	swap(temp, m_report);
+	if (temp)
 	{
+		m_top_sizer->Detach(temp);
+		temp->Destroy();
+		temp = 0;
 		--m_next_row;
-		m_top_sizer->Detach(m_report);
-		m_report->Destroy();
-		m_report = 0;
 	}
-	assert (temp);
-	m_report = temp;
 	m_report->generate();
-	m_top_sizer->Add(m_report, wxGBPosition(m_next_row, 1), wxGBSpan(1, 4));
+	m_top_sizer->
+		Add(m_report, wxGBPosition(m_next_row, 1), wxGBSpan(1, 4), wxEXPAND);
 	Fit();
 	
 	++m_next_row;
@@ -235,6 +237,7 @@ ReportPanel::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
 void
 ReportPanel::on_refresh_button_click(wxCommandEvent& event)
 {
+	(void)event;  // Silence compiler re. unused parameter.
 	configure_bottom();
 	return;
 }
