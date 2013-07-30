@@ -10,6 +10,7 @@
 #include <jewel/decimal.hpp>
 #include <wx/gdicmn.h>
 #include <wx/gbsizer.h>
+#include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <set>
@@ -38,7 +39,7 @@ namespace
 			assert (ret.empty());
 			typedef vector<account_type::AccountType> ATypeVec;
 			ATypeVec const& account_types =
-				account_types(p_account_super_type);
+				phatbooks::account_types(p_account_super_type);
 			ATypeVec::const_iterator it = account_types.begin();
 			ATypeVec::const_iterator const end = account_types.end();
 			for ( ; it != end; ++it)
@@ -71,7 +72,7 @@ MultiAccountPanel::MultiAccountPanel
 	m_top_sizer(0),
 	m_database_connection(p_database_connection)
 {
-	m_top_sizer = new wxGBSizer(standard_gap(), standard_gap());
+	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 
 	increment_row();
@@ -92,10 +93,15 @@ MultiAccountPanel::MultiAccountPanel
 
 	increment_row();
 
-	vector<Account> const& suggested_accounts =
+	vector<Account> sugg_accounts =
 		suggested_accounts(m_database_connection, m_account_super_type);
-	vector<Account>::iterator it = suggested_accounts.begin();
-	vector<Account>::iterator const end = suggested_accounts.end();
+	vector<Account>::size_type const sz = sugg_accounts.size();
+	m_account_name_boxes.reserve(sz);
+	m_account_type_boxes.reserve(sz);
+	m_description_boxes.reserve(sz);
+	m_opening_balance_boxes.reserve(sz);
+	vector<Account>::iterator it = sugg_accounts.begin();
+	vector<Account>::iterator const end = sugg_accounts.end();
 	for ( ; it != end; ++it)
 	{
 		int const row = current_row();
@@ -109,7 +115,6 @@ MultiAccountPanel::MultiAccountPanel
 			wxSize(medium_width(), wxDefaultSize.y),
 			wxALIGN_LEFT
 		);
-		account_name_box->set_account_type(it->account_type());
 		top_sizer().Add(account_name_box, wxGBPosition(row, 1));
 		m_account_name_boxes.push_back(account_name_box);
 
@@ -121,6 +126,7 @@ MultiAccountPanel::MultiAccountPanel
 			database_connection(),
 			m_account_super_type
 		);
+		account_type_box->set_account_type(it->account_type());
 		top_sizer().Add(account_type_box, wxGBPosition(row, 2));
 		m_account_type_boxes.push_back(account_type_box);
 
@@ -137,7 +143,7 @@ MultiAccountPanel::MultiAccountPanel
 			Add(description_box, wxGBPosition(row, 3), wxGBSpan(1, 2));
 		m_description_boxes.push_back(description_box);
 
-		it->set_commodity().database_connection().default_commodity();
+		it->set_commodity(database_connection().default_commodity());
 
 		// Opening balance
 		DecimalTextCtrl* opening_balance_box = new DecimalTextCtrl
@@ -162,7 +168,7 @@ MultiAccountPanel::~MultiAccountPanel()
 {
 }
 
-wxGrigBagSizer&
+wxGridBagSizer&
 MultiAccountPanel::top_sizer()
 {
 	assert (m_top_sizer);
@@ -187,19 +193,19 @@ MultiAccountPanel::selected_augmented_accounts
 		AugmentedAccount augmented_account(database_connection());
 		Account& account = augmented_account.account;
 		account.set_name
-		(	wx_to_bstring(m_account_name_boxes[i].GetValue().Trim())
+		(	wx_to_bstring(m_account_name_boxes[i]->GetValue().Trim())
 		);
 		account_type::AccountType const account_type =
-			m_account_type_boxes[i].account_type();
+			m_account_type_boxes[i]->account_type();
 		assert (super_type(account_type) == m_account_super_type);
 		account.set_account_type(account_type);
-		account.set_description(m_description_boxes[i].GetValue());
+		account.set_description(m_description_boxes[i]->GetValue());
 		account.set_commodity(database_connection().default_commodity());
 
 		// TODO Make sure it is clear to the user which way round the
 		// signs are supposed to go.
-		augmented_account.techical_opening_balance =
-			m_opening_balance_boxes[i].amount();
+		augmented_account.technical_opening_balance =
+			m_opening_balance_boxes[i]->amount();
 
 		assert (!account.has_id());
 		out.push_back(augmented_account);
@@ -214,20 +220,20 @@ MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 	set<wxString> account_names;
 	vector<wxTextCtrl*>::size_type i = 0;
 	vector<wxTextCtrl*>::size_type const sz = m_account_name_boxes.size();
-	for ( ; it != sz; ++it)
+	for ( ; i != sz; ++i)
 	{
 		wxString const name =
 			m_account_name_boxes[i]->GetValue().Trim().Lower();
 		if (name.IsEmpty())
 		{
 			// TODO "Name" should be either "Account name" or "Category name".
-			error_message = wxString("Name is blank");
+			p_error_message = wxString("Name is blank");
 			return false;
 		}
 		if (account_names.find(name) != account_names.end())
 		{
-			error_message = wxString("Duplicate account name: ");
-			error_message += name;
+			p_error_message = wxString("Duplicate account name: ");
+			p_error_message += name;
 			return false;
 		}
 	}
@@ -248,6 +254,10 @@ MultiAccountPanel::increment_row()
 
 void
 MultiAccountPanel::make_text
+(	wxString const& p_text,
+	int p_column,
+	int p_alignment_flags
+)
 {
 	wxStaticText* header = new wxStaticText
 	(	this,
@@ -259,7 +269,7 @@ MultiAccountPanel::make_text
 	);
 	top_sizer().Add
 	(	header,
-		wxGBPosition(next_row(), p_column),
+		wxGBPosition(current_row(), p_column),
 		wxDefaultSpan,
 		p_alignment_flags
 	);
@@ -267,27 +277,42 @@ MultiAccountPanel::make_text
 }
 
 PhatbooksDatabaseConnection&
-database_connection()
+MultiAccountPanel::database_connection()
+{
+	return m_database_connection;
+}
+
+PhatbooksDatabaseConnection const&
+MultiAccountPanel::database_connection() const
 {
 	return m_database_connection;
 }
 
 void
-Report::configure_scrollbars()
+MultiAccountPanel::configure_scrollbars()
 {
 	SetScrollRate(0, 10);
 	FitInside();
 	return;
 }
 
-Report::AugmentedAccount::AugmentedAccount
+MultiAccountPanel::AugmentedAccount::AugmentedAccount
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
 	account(p_database_connection),
 	technical_opening_balance
 	(	0,
-		p_database_connection.default_commodity().precision
+		p_database_connection.default_commodity().precision()
 	)
+{
+}
+
+MultiAccountPanel::AugmentedAccount::AugmentedAccount
+(	Account const& p_account,
+	Decimal const& p_technical_opening_balance
+):
+	account(p_account),
+	technical_opening_balance(p_technical_opening_balance)
 {
 }
 

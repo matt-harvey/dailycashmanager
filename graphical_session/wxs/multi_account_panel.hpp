@@ -51,6 +51,10 @@ public:
 	struct AugmentedAccount
 	{
 		AugmentedAccount(PhatbooksDatabaseConnection& p_database_connection);
+		AugmentedAccount
+		(	Account const& p_account,
+			jewel::Decimal const& p_technical_opening_balance
+		);
 		Account account;
 		jewel::Decimal technical_opening_balance;
 	};
@@ -71,7 +75,7 @@ public:
 	 */
 	void selected_augmented_accounts
 	(	std::vector<AugmentedAccount>& out
-	) const;
+	);
 
 	/**
 	 * @return \e true if and only if the Account names entered in the
@@ -92,6 +96,7 @@ protected:
 		int p_alignment_flags = wxALIGN_LEFT
 	);
 	PhatbooksDatabaseConnection& database_connection();
+	PhatbooksDatabaseConnection const& database_connection() const;
 
 private:
 

@@ -138,12 +138,10 @@ namespace
 	{
 		vector<Account> accounts;
 		make_default_accounts(dbc, accounts, p_account_type);
+		Decimal const zero(0, precision);
 		for (vector<Account>::size_type i = 0; i != accounts.size(); ++i)
 		{
-			AugmentedAccount const augmented_account =
-			{	accounts[i],
-				Decimal(0, precision)
-			};
+			AugmentedAccount const augmented_account(accounts[i], zero);
 			vec.push_back(augmented_account);
 		}
 		return;
@@ -839,7 +837,7 @@ SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	AccountPage(p_parent, p_database_connection),
-	m_account_view_ctrl(0),
+	m_multi_account_panel(0),
 	m_num_rows(0)
 {
 }
