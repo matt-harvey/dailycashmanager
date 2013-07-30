@@ -212,7 +212,7 @@ Report::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
 void
 Report::generate()
 {
-	// TODO Can we factor up more shared code here?
+	// TODO Can we factor up more shared code into here?
 	configure_scrollbars();
 	do_generate();
 	// GetParent()->Layout();

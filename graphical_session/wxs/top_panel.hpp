@@ -40,6 +40,15 @@ class TransactionCtrl;
  *
  * @todo HIGH PRIORITY m_reports_page to be updated for new/amended/deleted
  * Journals, Accounts, etc. etc..
+ *
+ * @todo The various "update_for_..." functions each contain calls to
+ * analogous "update_for_..." functions for each of the sub-widgets
+ * in TopPanel. This makes for repetitive code. We could probably streamline
+ * this and make it more maintainable either by using wxWidgets' event
+ * system, or else by having an abstract base class for the various
+ * sub-widget classes, and then storing pointers to these in a vector
+ * in TopPanel, and running through the vector calling "update_for_..." on
+ * each.
  */
 class TopPanel: public wxPanel
 {

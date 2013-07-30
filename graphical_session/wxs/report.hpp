@@ -96,7 +96,6 @@ private:
 
 	void configure_scrollbars();
 
-
 	int m_next_row;
 	wxGridBagSizer* m_top_sizer;
 	PhatbooksDatabaseConnection& m_database_connection;
