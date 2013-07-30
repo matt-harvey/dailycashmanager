@@ -3,6 +3,7 @@
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
 #include "b_string.hpp"
+#include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "make_default_accounts.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -58,7 +59,8 @@ MultiAccountPanel::MultiAccountPanel
 (	wxWindow* p_parent,
 	wxSize const& p_size,
 	PhatbooksDatabaseConnection& p_database_connection,
-	account_super_type::AccountSuperType p_account_super_type
+	account_super_type::AccountSuperType p_account_super_type,
+	Commodity const& p_commodity
 ):
 	wxScrolledWindow
 	(	p_parent,
@@ -70,7 +72,8 @@ MultiAccountPanel::MultiAccountPanel
 	m_account_super_type(p_account_super_type),
 	m_current_row(0),
 	m_top_sizer(0),
-	m_database_connection(p_database_connection)
+	m_database_connection(p_database_connection),
+	m_commodity(p_commodity)
 {
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
@@ -143,7 +146,7 @@ MultiAccountPanel::MultiAccountPanel
 			Add(description_box, wxGBPosition(row, 3), wxGBSpan(1, 2));
 		m_description_boxes.push_back(description_box);
 
-		it->set_commodity(database_connection().default_commodity());
+		it->set_commodity(m_commodity);
 
 		// Opening balance
 		DecimalTextCtrl* opening_balance_box = new DecimalTextCtrl
@@ -190,7 +193,10 @@ MultiAccountPanel::selected_augmented_accounts
 	vector<AugmentedAccount>::size_type i = 0;
 	for ( ; i != sz; ++i)
 	{
-		AugmentedAccount augmented_account(database_connection());
+		AugmentedAccount augmented_account
+		(	database_connection(),
+			m_commodity
+		);
 		Account& account = augmented_account.account;
 		account.set_name
 		(	wx_to_bstring(m_account_name_boxes[i]->GetValue().Trim())
@@ -200,7 +206,7 @@ MultiAccountPanel::selected_augmented_accounts
 		assert (super_type(account_type) == m_account_super_type);
 		account.set_account_type(account_type);
 		account.set_description(m_description_boxes[i]->GetValue());
-		account.set_commodity(database_connection().default_commodity());
+		account.set_commodity(m_commodity);
 
 		// TODO Make sure it is clear to the user which way round the
 		// signs are supposed to go.
@@ -297,13 +303,11 @@ MultiAccountPanel::configure_scrollbars()
 }
 
 MultiAccountPanel::AugmentedAccount::AugmentedAccount
-(	PhatbooksDatabaseConnection& p_database_connection
+(	PhatbooksDatabaseConnection& p_database_connection,
+	Commodity const& p_commodity
 ):
 	account(p_database_connection),
-	technical_opening_balance
-	(	0,
-		p_database_connection.default_commodity().precision()
-	)
+	technical_opening_balance(0, p_commodity.precision())
 {
 }
 

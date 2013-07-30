@@ -4,6 +4,7 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
+#include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
 #include <boost/noncopyable.hpp>
 #include <jewel/decimal.hpp>
@@ -20,6 +21,7 @@ namespace phatbooks
 
 // begin forward declarations
 
+class Commodity;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -35,6 +37,10 @@ namespace gui
  *
  * @todo Some functions here duplicate some in Report (e.g. make_text). Find
  * an elegant way to re-use this code.
+ *
+ * @todo We need to ensure that a the database connection has a default
+ * Commodity, or else, we need to pass a Commodity separately to the
+ * MultiAccountPanel constructor.
  */
 class MultiAccountPanel: public wxScrolledWindow, private boost::noncopyable
 {
@@ -43,14 +49,18 @@ public:
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
 		PhatbooksDatabaseConnection& m_database_connection,
-		account_super_type::AccountSuperType p_account_super_type
+		account_super_type::AccountSuperType p_account_super_type,
+		Commodity const& p_commodity
 	);
 		
 	virtual ~MultiAccountPanel();
 
 	struct AugmentedAccount
 	{
-		AugmentedAccount(PhatbooksDatabaseConnection& p_database_connection);
+		AugmentedAccount
+		(	PhatbooksDatabaseConnection& p_database_connection,
+			Commodity const& p_commodity
+		);
 		AugmentedAccount
 		(	Account const& p_account,
 			jewel::Decimal const& p_technical_opening_balance
@@ -66,9 +76,9 @@ public:
 	 * will not have IDs). Also, no opening balance Journals will be saved
 	 * (it is the client's responsibility to create opening balance Journals,
 	 * if they desire to do so, using the information provided in the
-	 * AugmentedAccounts. In each of the AugmentedAccounts, the \e account
-	 * member will have as its Commodity the Commodity returned by
-	 * MultiAccountPanel::database_connection().default_commodity().
+	 * AugmentedAccounts. The Accounts in the AugmentedAccounts will have
+	 * their commodity() attribute initialized to
+	 * database_connection().default_commodity().
 	 *
 	 * \e out should be empty when passed to this function. It is the caller's
 	 * responsibility to ensure this.
@@ -106,6 +116,7 @@ private:
 	int m_current_row;
 	wxGridBagSizer* m_top_sizer;
 	PhatbooksDatabaseConnection& m_database_connection;
+	Commodity m_commodity;
 
 	std::vector<wxTextCtrl*> m_account_name_boxes;
 	std::vector<AccountTypeCtrl*> m_account_type_boxes;

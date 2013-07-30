@@ -887,11 +887,13 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	// Create the control for displaying Accounts
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
+	Commodity const commodity = parent().selected_currency();
 	m_multi_account_panel = new MultiAccountPanel
 	(	this,
 		wxSize(size.x * 1.6, size.y * 9),
 		database_connection(),
-		account_super_type::balance_sheet
+		account_super_type::balance_sheet,
+		commodity
 	);
 	top_sizer().Add(m_multi_account_panel, wxGBPosition(current_row(), 0));
 	increment_row();
