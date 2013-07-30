@@ -122,7 +122,7 @@ PLReport::display_text()
 
 	increment_row();
 
-	make_text(wxString("Total "), 1, wxALIGN_RIGHT);
+	make_text(wxString("Total "), 2, wxALIGN_RIGHT);
 
 	increment_row();
 
@@ -184,7 +184,7 @@ PLReport::display_text()
 		default:
 			assert (false);
 		}
-		make_text(section_titles.at(i), 0);
+		make_text(section_titles.at(i), 1);
 
 		increment_row();
 
@@ -204,15 +204,15 @@ PLReport::display_text()
 			// Only show Accounts with non-zero balances
 			if (b != zero)
 			{
-				make_text(*it, 0);
-				make_number_text(b, 1);
+				make_text(*it, 1);
+				make_number_text(b, 2);
 				total += b;
 
 				increment_row();
 			}
 		}
-		make_text(wxString("  Total"), 0);
-		make_number_text(total, 1);
+		make_text(wxString("  Total"), 1);
+		make_number_text(total, 2);
 		net_revenue +=
 		(	(account_type == account_type::revenue)?
 			total:
@@ -223,8 +223,8 @@ PLReport::display_text()
 		increment_row();
 	}
 
-	make_text(wxString("  Net revenue"), 0);
-	make_number_text(net_revenue, 1);
+	make_text(wxString("  Net revenue"), 1);
+	make_number_text(net_revenue, 2);
 
 	increment_row();
 	

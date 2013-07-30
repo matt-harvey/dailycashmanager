@@ -117,9 +117,9 @@ BalanceSheetReport::display_text()
 
 	increment_row();
 
-	make_text(wxString("Opening balance "), 1, wxALIGN_RIGHT);
-	make_text(wxString("  Movement "), 2, wxALIGN_RIGHT);
-	make_text(wxString("  Closing balance "), 3, wxALIGN_RIGHT);
+	make_text(wxString("Opening balance "), 2, wxALIGN_RIGHT);
+	make_text(wxString("  Movement "), 3, wxALIGN_RIGHT);
+	make_text(wxString("  Closing balance "), 4, wxALIGN_RIGHT);
 
 	increment_row();
 	
@@ -187,7 +187,7 @@ BalanceSheetReport::display_text()
 		default:
 			assert (false);
 		}
-		make_text(section_titles.at(i), 0);
+		make_text(section_titles.at(i), 1);
 		
 		increment_row();
 
@@ -206,20 +206,20 @@ BalanceSheetReport::display_text()
 			// Only show Accounts with non-zero balances
 			if ((ob != zero) || (cb != zero))
 			{
-				make_text(*it, 0);
-				make_number_text(ob, 1);
-				make_number_text(cb - ob, 2);
-				make_number_text(cb, 3);
+				make_text(*it, 1);
+				make_number_text(ob, 2);
+				make_number_text(cb - ob, 3);
+				make_number_text(cb, 4);
 				opening_balance_total += ob;
 				closing_balance_total += cb;
 
 				increment_row();
 			}
 		}
-		make_text(wxString("  Total"), 0);
-		make_number_text(opening_balance_total, 1);
-		make_number_text(closing_balance_total - opening_balance_total, 2);
-		make_number_text(closing_balance_total, 3);
+		make_text(wxString("  Total"), 1);
+		make_number_text(opening_balance_total, 2);
+		make_number_text(closing_balance_total - opening_balance_total, 3);
+		make_number_text(closing_balance_total, 4);
 		net_assets_opening += opening_balance_total;
 		net_assets_closing += closing_balance_total;
 
@@ -227,10 +227,10 @@ BalanceSheetReport::display_text()
 		increment_row();
 	}
 
-	make_text(wxString("  Net assets"), 0);
-	make_number_text(net_assets_opening, 1);
-	make_number_text(net_assets_closing - net_assets_opening, 2);
-	make_number_text(net_assets_closing, 3);
+	make_text(wxString("  Net assets"), 1);
+	make_number_text(net_assets_opening, 2);
+	make_number_text(net_assets_closing - net_assets_opening, 3);
+	make_number_text(net_assets_closing, 4);
 
 	increment_row();
 

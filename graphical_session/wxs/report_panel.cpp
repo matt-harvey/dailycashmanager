@@ -23,7 +23,7 @@ namespace gui
 {
 
 BEGIN_EVENT_TABLE(ReportPanel, wxPanel)
-	EVT_BUTTON(s_refresh_button_id, ReportPanel::on_refresh_button_click)
+	EVT_BUTTON(s_run_button_id, ReportPanel::on_run_button_click)
 END_EVENT_TABLE()
 
 namespace
@@ -51,7 +51,7 @@ ReportPanel::ReportPanel
 	m_report_type_ctrl(0),
 	m_min_date_ctrl(0),
 	m_max_date_ctrl(0),
-	m_refresh_button(0),
+	m_run_button(0),
 	m_report(0),
 	m_database_connection(p_database_connection)
 {
@@ -135,15 +135,15 @@ ReportPanel::configure_top()
 	m_top_sizer->Add(m_max_date_ctrl, wxGBPosition(m_next_row, 3));
 
 	// Refresh button
-	m_refresh_button = new wxButton
+	m_run_button = new wxButton
 	(	this,
-		s_refresh_button_id,
-		wxString("&Refresh"),
+		s_run_button_id,
+		wxString("&Run"),
 		wxDefaultPosition,
 		m_max_date_ctrl->GetSize()
 	);
-	m_refresh_button->SetDefault();
-	m_top_sizer->Add(m_refresh_button, wxGBPosition(m_next_row, 4));
+	m_run_button->SetDefault();
+	m_top_sizer->Add(m_run_button, wxGBPosition(m_next_row, 4));
 
 	++m_next_row;
 
@@ -261,7 +261,7 @@ ReportPanel::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
 }
 
 void
-ReportPanel::on_refresh_button_click(wxCommandEvent& event)
+ReportPanel::on_run_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
 	configure_bottom();

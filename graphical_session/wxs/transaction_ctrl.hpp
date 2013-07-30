@@ -70,6 +70,9 @@ class TopPanel;
  *
  * @todo Intercept the situation where user sets date earlier than entity
  * creation date. Currently this just throws and crashes.
+ *
+ * @todo When user creates or amended an Account, the TransactionCtrl should
+ * be updated seamlessly, rather than being recreated from scratch.
  */
 class TransactionCtrl: public wxScrolledWindow, private boost::noncopyable
 {

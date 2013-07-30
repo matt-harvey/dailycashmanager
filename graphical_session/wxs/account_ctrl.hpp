@@ -14,6 +14,7 @@
 #include <wx/string.h>
 #include <wx/window.h>
 #include <cassert>
+#include <map>
 
 namespace phatbooks
 {
@@ -51,6 +52,8 @@ public:
 	 * returned by
 	 * p_account.database_connection().balancing_account() will not
 	 * appear in the Combobox, even if it is in the range provided.
+	 *
+	 * All Accounts in the given range must have IDs.
 	 */
 	template <typename AccountIter>
 	AccountCtrl
@@ -79,6 +82,8 @@ public:
 	 * the Account returned by
 	 * p_beg->database_connection().balancing_account() will not
 	 * appear in the Combobox, even if it is in the range provided.
+	 *
+	 * All Accounts in the range must have IDs.
 	 */
 	template <typename AccountIter>
 	void set
@@ -87,9 +92,17 @@ public:
 		bool p_exclude_balancing_account = false
 	);
 
+	void update_for_new(Account const& p_account);
+	void update_for_amended(Account const& p_account);
+
 private:
 	void on_kill_focus(wxFocusEvent& event);
+
+	bool m_exclude_balancing_account;
 	PhatbooksDatabaseConnection& m_database_connection;
+
+	typedef std::map<wxString, Account::Id> AccountMap;
+	AccountMap m_account_map;
 
 	DECLARE_EVENT_TABLE()
 
@@ -117,6 +130,7 @@ AccountCtrl::AccountCtrl
 		wxArrayString(),	
 		wxCB_SORT
 	),
+	m_exclude_balancing_account(p_exclude_balancing_account),
 	m_database_connection(p_account.database_connection())
 {
 	wxArrayString valid_account_names;
@@ -129,7 +143,7 @@ AccountCtrl::AccountCtrl
 	);
 	for ( ; p_beg != p_end; ++p_beg)
 	{
-		if (p_exclude_balancing_account && (*p_beg == balancing_account))
+		if (m_exclude_balancing_account && (*p_beg == balancing_account))
 		{
 			// Then don't include it
 		}
@@ -138,6 +152,10 @@ AccountCtrl::AccountCtrl
 			wxString const name_wx = bstring_to_wx(p_beg->name());
 			valid_account_names.Add(name_wx);  // remembers as valid name
 			Append(name_wx);  // adds to combobox
+
+			// Remember the Account associated with this name (comes in handy
+			// when we have to update for a change in Account name).
+			m_account_map[name_wx] = p_beg->id();
 		}
 	}
 	StringSetValidator validator
@@ -157,13 +175,15 @@ AccountCtrl::set
 	bool p_exclude_balancing_account
 )
 {
-	assert (p_end > p_beg);
+	// assert (p_end > p_beg);
+	m_account_map.clear();
+	m_exclude_balancing_account = p_exclude_balancing_account;
 	wxArrayString valid_account_names;
 	Account const balancing_account =
 		p_beg->database_connection().balancing_account();
 	for ( ; p_beg != p_end; ++p_beg)
 	{
-		if (p_exclude_balancing_account && (*p_beg == balancing_account))
+		if (m_exclude_balancing_account && (*p_beg == balancing_account))
 		{
 			// Then don't include it
 		}
@@ -171,6 +191,7 @@ AccountCtrl::set
 		{
 			wxString const name_wx = bstring_to_wx(p_beg->name());
 			valid_account_names.Add(name_wx);
+			m_account_map[name_wx] = p_beg->id();
 		}
 	}
 	assert (!valid_account_names.IsEmpty());

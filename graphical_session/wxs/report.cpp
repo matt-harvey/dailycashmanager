@@ -114,7 +114,6 @@ void
 Report::increment_row()
 {
 	++m_next_row;
-	// FitInside();
 	return;
 }
 
@@ -178,31 +177,36 @@ Report::top_sizer()
 void
 Report::update_for_new(OrdinaryJournal const& p_journal)
 {
-	// TODO HIGH PRIORITY Implement
+	(void)p_journal;  // silence compiler re. unused parameter.
+	return;
 }
 
 void
 Report::update_for_amended(OrdinaryJournal const& p_journal)
 {
-	// TODO HIGH PRIORITY Implement
+	(void)p_journal;  // silence compiler re. unused parameter.
+	return;
 }
 
 void
 Report::update_for_new(Account const& p_account)
 {
-	// TODO HIGH PRIORITY Implement
+	(void)p_account;  // silence compiler re. unused parameter.
+	return;
 }
 
 void
 Report::update_for_amended(Account const& p_account)
 {
-	// TODO HIGH PRIORITY Implement
+	(void)p_account;  // silence compiler re. unused parameter.
+	return;
 }
 
 void
 Report::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
 {
-	// TODO HIGH PRIORITY Implement
+	(void)p_doomed_ids;
+	return;
 }
 
 void
@@ -222,7 +226,6 @@ Report::generate()
 void
 Report::configure_scrollbars()
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	SetScrollRate(0, 10);
 	FitInside();
 	return;
