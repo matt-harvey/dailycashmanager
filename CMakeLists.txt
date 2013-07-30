@@ -195,6 +195,7 @@ set (gui_files
 	 graphical_session/wxs/frame.cpp
 	 graphical_session/wxs/frequency_ctrl.cpp
 	 graphical_session/wxs/locale.cpp
+	 graphical_session/wxs/multi_account_panel.cpp
 	 graphical_session/wxs/pl_account_entry_list_ctrl.cpp
 	 graphical_session/wxs/pl_report.cpp
 	 graphical_session/wxs/reconciliation_entry_list_ctrl.cpp
