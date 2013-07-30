@@ -236,6 +236,8 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
+	virtual ~AccountPage();
+
 	void render();
 
 	void selected_augmented_accounts

@@ -707,6 +707,10 @@ SetupWizard::AccountPage::AccountPage
 {
 }
 
+SetupWizard::AccountPage::~AccountPage()
+{
+}
+
 void
 SetupWizard::AccountPage::render()
 {
