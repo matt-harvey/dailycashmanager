@@ -18,6 +18,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "sizing.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
@@ -694,13 +695,12 @@ SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 
 
 
-
-
 SetupWizard::AccountPage::AccountPage
 (	SetupWizard* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxWizardPageSimple(p_parent),
+	m_current_row(0),
 	m_database_connection(p_database_connection),
 	m_top_sizer(0),
 	m_parent(*p_parent)
@@ -714,8 +714,9 @@ SetupWizard::AccountPage::~AccountPage()
 void
 SetupWizard::AccountPage::render()
 {
-	m_top_sizer = new wxBoxSizer(wxVERTICAL);
+	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
+	increment_row();
 	render_main_text();
 	render_account_view();
 	m_top_sizer->Fit(this);
@@ -746,7 +747,9 @@ SetupWizard::AccountPage::render_main_text()
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
 	text->Wrap(size.x * 1.5);
-	add_to_top_sizer(text);
+	top_sizer().Add(text, wxGBPosition(current_row(), 1));
+	increment_row();
+	increment_row();
 	return;
 }
 
@@ -763,17 +766,30 @@ SetupWizard::AccountPage::database_connection() const
 	return m_database_connection;
 }
 
-void
-SetupWizard::AccountPage::add_to_top_sizer(wxWindow* window)
-{
-	m_top_sizer->Add(window);
-	return;
-}
-
 SetupWizard const&
 SetupWizard::AccountPage::parent() const
 {
 	return m_parent;
+}
+
+wxGridBagSizer&
+SetupWizard::AccountPage::top_sizer()
+{
+	assert (m_top_sizer);
+	return *m_top_sizer;
+}
+
+int
+SetupWizard::AccountPage::current_row() const
+{
+	return m_current_row;
+}
+
+void
+SetupWizard::AccountPage::increment_row()
+{
+	++m_current_row;
+	return;
 }
 
 
@@ -793,6 +809,8 @@ BEGIN_EVENT_TABLE(SetupWizard::BalanceSheetAccountPage, wxWizardPageSimple)
 	*/
 END_EVENT_TABLE()
 
+
+// WARNING UP TO HERE in re-working to use MultiAccountPanel.
 
 
 void
@@ -1052,7 +1070,7 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 		}
 		m_account_view_ctrl->AppendItem(data, wxUIntPtr(0));
 	}
-	add_to_top_sizer(m_account_view_ctrl);
+	top_sizer().Add(m_account_view_ctrl, wxGBPosition(current_row(), 1));
 	m_num_rows = augmented_accounts.size() + num_extra_rows;
 
 	return;

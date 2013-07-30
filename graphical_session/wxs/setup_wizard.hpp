@@ -13,6 +13,7 @@
 #include <wx/combobox.h>
 #include <wx/dataview.h>
 #include <wx/filedlg.h>
+#include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
@@ -246,9 +247,10 @@ public:
 
 protected:
 	PhatbooksDatabaseConnection& database_connection() const;
-	void add_to_top_sizer(wxWindow* window);
 	SetupWizard const& parent() const;
-
+	wxGridBagSizer& top_sizer();
+	int current_row() const;
+	void increment_row();
 private:
 	virtual wxString do_get_main_text() const = 0;
 	virtual void do_render_account_view() = 0;
@@ -262,8 +264,9 @@ private:
 
 	void render_main_text();
 	void render_account_view();
+	int m_current_row;
 	PhatbooksDatabaseConnection& m_database_connection;
-	wxBoxSizer* m_top_sizer;
+	wxGridBagSizer* m_top_sizer;
 	SetupWizard const& m_parent;
 
 };
