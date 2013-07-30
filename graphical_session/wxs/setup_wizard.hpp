@@ -6,6 +6,7 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
+#include "multi_account_panel.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
@@ -36,6 +37,7 @@ namespace gui
 {
 
 class Frame;
+class MultiAccountPanel;
 
 // End forward declarations
 
@@ -77,11 +79,7 @@ public:
 	
 	Commodity selected_currency() const;
 
-	struct AugmentedAccount
-	{
-		Account account;
-		jewel::Decimal technical_opening_balance;
-	};
+	typedef MultiAccountPanel::AugmentedAccount AugmentedAccount;
 
 private:
 
@@ -251,6 +249,7 @@ protected:
 	wxGridBagSizer& top_sizer();
 	int current_row() const;
 	void increment_row();
+
 private:
 	virtual wxString do_get_main_text() const = 0;
 	virtual void do_render_account_view() = 0;
@@ -260,7 +259,6 @@ private:
 
 	// virtual bool account_names_valid(wxString& error_message) const = 0;
 	// virtual bool account_types_valid(wxString& error_message) const = 0;
-
 
 	void render_main_text();
 	void render_account_view();
@@ -305,13 +303,10 @@ private:
 	static unsigned int const s_account_type_col_num = 1;
 	static unsigned int const s_opening_balance_col_num = 2;
 	static unsigned int const s_num_columns = 3;
-	
-
 
 	static int const s_account_adding_button_id = wxID_HIGHEST + 1;
-	wxDataViewListCtrl* m_account_view_ctrl;
+	MultiAccountPanel* m_multi_account_panel;
 	unsigned int m_num_rows;
-	// wxDataViewIndexListModel* m_account_data_view_model;
 	
 	void on_wizard_page_changing(wxWizardEvent& event);
 

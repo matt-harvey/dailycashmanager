@@ -80,15 +80,15 @@ protected:
 
 	wxGridBagSizer& top_sizer();
 
+	// TODO Functions here would be useful in other classes too. Find an
+	// elegant way to re-use this code.
 	void increment_row();
 	int next_row() const;
-
 	void make_text
 	(	wxString const& p_text,
 		int p_column,
 		int p_alignment_flags = wxALIGN_LEFT
 	);
-
 	void make_number_text(jewel::Decimal const& p_amount, int p_column);
 
 private:

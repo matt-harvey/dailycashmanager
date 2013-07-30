@@ -834,7 +834,6 @@ SetupWizard::BalanceSheetAccountPage::on_wizard_page_changing
 	return;
 }
 
-
 SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
 (	SetupWizard* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection
@@ -849,7 +848,7 @@ wxString
 SetupWizard::BalanceSheetAccountPage::do_get_main_text() const
 {
 	return wxString
-	(	"Enter your assets (things you own) and liabilities (what you owe)"
+	(	"Enter your assets (things you own) and liabilities (what you owe)."
 	);
 }
 
@@ -858,24 +857,8 @@ SetupWizard::BalanceSheetAccountPage::account_names_valid
 (	wxString& error_message
 ) const
 {
-	set<wxString> account_names;
-	wxVariant value;
-	for (unsigned int row = 0; row != m_num_rows; ++row)
-	{
-		m_account_view_ctrl->GetValue(value, row, s_account_name_col_num);
-		wxString const account_name = value.GetString().Trim().Lower();
-		if
-		(	(!account_name.IsEmpty()) &&
-			(account_names.find(account_name) != account_names.end())
-		)
-		{
-			error_message = "Duplicate account name: ";
-			error_message += account_name;
-			return false;
-		}
-		account_names.insert(account_name);
-	}
-	return true;
+	assert (m_multi_account_panel);
+	return m_multi_account_panel->account_names_valid(error_message);
 }
 
 bool
@@ -883,23 +866,9 @@ SetupWizard::BalanceSheetAccountPage::account_types_valid
 (	wxString& error_message
 ) const
 {
-	wxVariant variant;
-	for (unsigned int row = 0; row != m_num_rows; ++row)
-	{
-		m_account_view_ctrl->GetValue(variant, row, s_account_name_col_num);
-		wxString const account_name = variant.GetString().Trim();
-		if (!account_name.IsEmpty())
-		{
-			m_account_view_ctrl->
-				GetValue(variant, row, s_account_type_col_num);
-			if (variant.GetString().Trim().IsEmpty())
-			{
-				error_message = "Account type not specified for account ";
-				error_message += account_name;
-				return false;
-			}
-		}
-	}
+	// This used to do something but now we are guaranteed that AccountTypes
+	// will be valid, given the way MultiAccountPanel works.
+	(void)error_message;  // silence compiler re. unused parameter
 	return true;
 }
 
@@ -908,43 +877,8 @@ SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
 (	vector<AugmentedAccount>& out
 ) const
 {
-	for (unsigned int row = 0; row != m_num_rows; ++row)
-	{
-		AugmentedAccount augmented_account =
-		{	Account(database_connection()),
-			Decimal(0, 0)
-		};
-		wxVariant value;
-		m_account_view_ctrl->GetValue(value, row, s_account_name_col_num);
-		wxString const account_name_wx = value.GetString().Trim();
-		m_account_view_ctrl->GetValue(value, row, s_account_type_col_num);
-		wxString const account_type_wx = value.GetString().Trim();
-		m_account_view_ctrl->GetValue(value, row, s_opening_balance_col_num);
-		wxString const op_bal_wx = value.GetString().Trim();
-		Decimal::places_type const precision =
-			parent().selected_currency().precision();
-		if (account_name_wx.IsEmpty() || account_type_wx.IsEmpty())
-		{
-			// TODO react accordingly
-		}
-		else
-		{
-			BString const account_name = wx_to_bstring(account_name_wx);
-			account_type::AccountType const account_type =
-			string_to_account_type(wx_to_bstring(account_type_wx));
-			augmented_account.account.set_name(account_name);
-			augmented_account.account.set_account_type(account_type);
-			augmented_account.technical_opening_balance =
-				round(wx_to_decimal(op_bal_wx, locale()), precision);
-			assert
-			(	augmented_account.technical_opening_balance.places() ==
-				parent().selected_currency().precision()
-			);
-			out.push_back(augmented_account);
-		}
-	}
-	// TODO Deal with AugmentedAccounts in out that have duplicate names or
-	// empty names or all-blankspace names or names.
+	assert (m_multi_account_panel);
+	m_multi_account_panel->selected_augmented_accounts(out);
 	return;
 }
 
@@ -955,180 +889,16 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	// Create the control for displaying Accounts
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
-	m_account_view_ctrl = new wxDataViewListCtrl
+	m_multi_account_panel = new MultiAccountPanel
 	(	this,
-		wxID_ANY,
-		wxDefaultPosition,
-		wxSize(size.x * 1.6, size.y * 9)
+		wxSize(size.x * 1.6, size.y * 9),
+		database_connection(),
+		account_super_type::balance_sheet
 	);
-	// Configure the AccountTypes for which we want Accounts
-	typedef vector<AugmentedAccount> AugmentedAccounts;
-	typedef vector<account_type::AccountType> AccountTypes;
-	AugmentedAccounts augmented_accounts;
-	AccountTypes account_types;
-	account_types.push_back(account_type::asset);
-	account_types.push_back(account_type::liability);
-
-	// Make default Accounts for these AccountTypes; while we're at it, make
-	// an array of names for the AccountTypes.
-	wxArrayString account_type_names;
-	Decimal::places_type const precision =
-		parent().selected_currency().precision();
-	for (AccountTypes::size_type i = 0; i != account_types.size(); ++i)
-	{
-		make_default_augmented_accounts
-		(	database_connection(),
-			augmented_accounts,
-			account_types[i],
-			precision
-		);
-		account_type_names.Add
-		(	bstring_to_wx(account_type_to_string(account_types[i]))
-		);
-	}
-	assert (!augmented_accounts.empty());
-
-	// Account name column
-	wxDataViewTextRenderer* account_name_renderer =
-		new wxDataViewTextRenderer
-		(	wxString("string"),
-			wxDATAVIEW_CELL_EDITABLE
-		);
-	wxDataViewColumn* account_name_column = new wxDataViewColumn
-	(	wxString("Account name"),
-		account_name_renderer,
-		s_account_name_col_num,
-		wxDVC_DEFAULT_WIDTH * 2,
-		wxALIGN_LEFT,
-		wxDATAVIEW_COL_RESIZABLE
-	);
-	m_account_view_ctrl->AppendColumn(account_name_column);
-
-	// AccountType column
-	wxDataViewChoiceRenderer* account_type_renderer =
-		new wxDataViewChoiceRenderer(account_type_names);
-	wxDataViewColumn* account_type_column = new wxDataViewColumn
-	(	wxString("Type"),
-		account_type_renderer,
-		s_account_type_col_num,
-		wxDVC_DEFAULT_WIDTH,
-		wxALIGN_LEFT,
-		wxDATAVIEW_COL_RESIZABLE
-	);
-	m_account_view_ctrl->AppendColumn(account_type_column);
-
-	// Opening balance column
-	DecimalRenderer* opening_balance_renderer = new DecimalRenderer
-	(	parent().selected_currency().precision(),
-		false
-	);
-	wxDataViewColumn* opening_balance_column = new wxDataViewColumn
-	(	wxString("Opening balance"),
-		opening_balance_renderer,
-		s_opening_balance_col_num,
-		wxDVC_DEFAULT_WIDTH * 1.5,
-		wxALIGN_RIGHT,
-		wxDATAVIEW_COL_RESIZABLE
-	);
-	m_account_view_ctrl->AppendColumn(opening_balance_column);
-
-	// Populate rows
-	for
-	(	AugmentedAccounts::size_type i = 0;
-		i != augmented_accounts.size();
-		++i
-	)
-	{
-		wxVector<wxVariant> data;
-		AugmentedAccount const augmented_account = augmented_accounts[i];
-		Account const account = augmented_account.account;
-		data.push_back(wxVariant(bstring_to_wx(account.name())));
-		data.push_back
-		(	wxVariant
-			(	bstring_to_wx
-				(	account_type_to_string(account.account_type())
-				)
-			)
-		);
-		wxString const opening_balance_str = finformat_wx
-		(	augmented_account.technical_opening_balance,
-			locale(),
-			false
-		);
-		data.push_back(wxVariant(opening_balance_str));
-		m_account_view_ctrl->AppendItem(data, wxUIntPtr(0));
-	}
-	// Add blank rows at bottom, where user might add additional
-	// Accounts
-	unsigned int const num_extra_rows = 20;
-	for (AugmentedAccounts::size_type i = 0; i != num_extra_rows; ++i)
-	{
-		wxVector<wxVariant> data;
-		for (size_t j = 0; j != s_num_columns; ++j)
-		{
-			data.push_back(wxVariant(wxEmptyString));
-		}
-		m_account_view_ctrl->AppendItem(data, wxUIntPtr(0));
-	}
-	top_sizer().Add(m_account_view_ctrl, wxGBPosition(current_row(), 1));
-	m_num_rows = augmented_accounts.size() + num_extra_rows;
-
+	top_sizer().Add(m_multi_account_panel, wxGBPosition(current_row(), 0));
+	increment_row();
 	return;
 }
-
-/*
-void
-SetupWizard::BalanceSheetAccountPage::add_account()
-{
-	// Add a blank row at the bottom, where user can enter
-	// additional Accounts.
-	wxVector<wxVariant> blank_row_data;
-	for (wxVector<wxVariant>::size_type i = 0; i != s_num_columns; ++i)
-	{
-		blank_row_data.push_back(wxVariant(wxEmptyString));
-	};
-	m_account_view_ctrl->AppendItem(blank_row_data, wxUIntPtr(0));
-	Layout();
-	return;
-}
-*/
-
-/*
-void
-SetupWizard::BalanceSheetAccountPage::on_account_adding_button_click
-(	wxCommandEvent& event
-)
-{
-	(void)event;  // Silence compiler re. ignored parameter.
-	add_account();
-	return;
-}
-*/
-
-#if 0
-/*** PLAccountPage ***/
-SetupWizard::PLAccountPage::PLAccountPage
-(	SetupWizard* p_parent,
-	PhatbooksDatabaseConnection& p_database_connection
-):
-	AccountPage(p_parent, p_database_connection)
-{
-}
-
-wxString
-SetupWizard::PLAccountPage::do_get_main_text() const
-{
-	return wxString
-	(	"TO IMPLEMENT"  // TODO Write this text properly
-	);
-}
-
-void
-SetupWizard::PLAccountPage::do_render_account_view()
-{
-	// TODO Implement
-}
-#endif
 
 }  // namespace gui
 }  // namesapce phatbooks

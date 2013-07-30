@@ -6,6 +6,7 @@
 #include <wx/combobox.h>
 #include <wx/gdicmn.h>
 #include <wx/windowid.h>
+#include <wx/window.h>
 
 namespace phatbooks
 {
@@ -17,8 +18,6 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
-class AccountDialog;
-
 // End forward declarations
 
 /**
@@ -28,7 +27,7 @@ class AccountTypeCtrl: public wxComboBox, private boost::noncopyable
 {
 public:
 	AccountTypeCtrl
-	(	AccountDialog* p_parent,
+	(	wxWindow* p_parent,
 		wxWindowID p_id,
 		wxSize const& p_size,
 		PhatbooksDatabaseConnection& p_database_connection,

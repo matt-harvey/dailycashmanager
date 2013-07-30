@@ -4,6 +4,7 @@
 #include "b_string.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <wx/combobox.h>
+#include <wx/window.h>
 #include <vector>
 
 using std::vector;
@@ -14,7 +15,7 @@ namespace gui
 {
 
 AccountTypeCtrl::AccountTypeCtrl
-(	AccountDialog* p_parent,
+(	wxWindow* p_parent,
 	wxWindowID p_id,
 	wxSize const& p_size,
 	PhatbooksDatabaseConnection& p_database_connection,
