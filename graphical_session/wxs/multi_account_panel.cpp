@@ -121,11 +121,13 @@ MultiAccountPanel::MultiAccountPanel
 		top_sizer().Add(account_name_box, wxGBPosition(row, 0));
 		m_account_name_boxes.push_back(account_name_box);
 
+		int const height = account_name_box->GetSize().GetY();
+
 		// Account type
 		AccountTypeCtrl* account_type_box = new AccountTypeCtrl
 		(	this,
 			wxID_ANY,
-			wxSize(medium_width(), wxDefaultSize.y),
+			wxSize(medium_width(), height),
 			database_connection(),
 			m_account_super_type
 		);
@@ -139,7 +141,7 @@ MultiAccountPanel::MultiAccountPanel
 			wxID_ANY,
 			it->description(),
 			wxDefaultPosition,
-			wxSize(large_width(), wxDefaultSize.y),
+			wxSize(large_width(), height),
 			wxALIGN_LEFT
 		);
 		top_sizer().
@@ -152,7 +154,7 @@ MultiAccountPanel::MultiAccountPanel
 		DecimalTextCtrl* opening_balance_box = new DecimalTextCtrl
 		(	this,
 			wxID_ANY,
-			wxSize(medium_width(), wxDefaultSize.y),
+			wxSize(medium_width(), height),
 			it->commodity().precision(),
 			false
 		);
