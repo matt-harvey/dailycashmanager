@@ -14,10 +14,12 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
+#include <cassert>
 #include <set>
 #include <vector>
 
 using jewel::Decimal;
+using jewel::round;
 using std::set;
 using std::vector;
 
@@ -67,7 +69,7 @@ MultiAccountPanel::MultiAccountPanel
 		wxID_ANY,
 		wxDefaultPosition,
 		p_size,
-		wxVSCROLL
+		wxVSCROLL | wxHSCROLL
 	),
 	m_account_super_type(p_account_super_type),
 	m_current_row(0),
@@ -139,7 +141,7 @@ MultiAccountPanel::MultiAccountPanel
 			wxID_ANY,
 			it->description(),
 			wxDefaultPosition,
-			wxSize(medium_width(), wxDefaultSize.y),
+			wxSize(large_width(), wxDefaultSize.y),
 			wxALIGN_LEFT
 		);
 		top_sizer().
@@ -163,12 +165,45 @@ MultiAccountPanel::MultiAccountPanel
 	}
 
 	configure_scrollbars();
-	FitInside();
+	Layout();
 }
 
 
 MultiAccountPanel::~MultiAccountPanel()
 {
+}
+
+int
+MultiAccountPanel::required_width()
+{
+	return
+		medium_width() * 3 +
+		large_width() * 1 +
+		standard_gap() * 3 +
+		standard_border() * 2 +
+		scrollbar_width_allowance();
+}
+
+void
+MultiAccountPanel::set_commodity(Commodity const& p_commodity)
+{
+	Decimal::places_type const precision = p_commodity.precision();
+	if (precision == m_commodity.precision())
+	{
+		return;
+	}
+	assert (precision != m_commodity.precision());
+	vector<DecimalTextCtrl*>::size_type i = 0;
+	vector<DecimalTextCtrl*>::size_type const sz =
+		m_opening_balance_boxes.size();
+	for ( ; i != sz; ++i)
+	{
+		// TODO Handle potential Decimal exception here on rounding.
+		Decimal const old_amount = m_opening_balance_boxes[i]->amount();
+		Decimal const new_amount = round(old_amount, precision);
+		m_opening_balance_boxes[i]->set_amount(new_amount);
+	}
+	return;
 }
 
 wxGridBagSizer&
@@ -297,7 +332,8 @@ MultiAccountPanel::database_connection() const
 void
 MultiAccountPanel::configure_scrollbars()
 {
-	SetScrollRate(0, 10);
+	// WARNING Disable horizontal scrolling later (make it 0, 10).
+	SetScrollRate(10, 10);
 	FitInside();
 	return;
 }

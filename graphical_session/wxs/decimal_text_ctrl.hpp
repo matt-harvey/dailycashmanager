@@ -36,10 +36,6 @@ public:
 	);
 	
 	/**
-	 * @throws phatbooks::PrecisionException if and only if
-	 * p_amount.places() does not match the inherent precision of
-	 * the EntryCtrl.
-	 *
 	 * WARNING As a side-effect of calling this function, the
 	 * \e parent window of the DecimalTextCtrl will have
 	 * Validate() and TransferDataFromWindow() called on it.

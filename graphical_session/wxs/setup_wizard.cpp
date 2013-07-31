@@ -219,6 +219,15 @@ SetupWizard::selected_currency() const
 }
 
 void
+SetupWizard::set_assumed_currency(Commodity const& p_commodity)
+{
+	assert (m_balance_sheet_account_page);	
+	m_balance_sheet_account_page->set_commodity(p_commodity);
+	// TODO Do this for m_pl_account_page too, if we have this.
+	return;
+}
+
+void
 SetupWizard::selected_augmented_accounts(vector<AugmentedAccount>& out) const
 {
 	m_balance_sheet_account_page->selected_augmented_accounts(out);
@@ -228,6 +237,8 @@ SetupWizard::selected_augmented_accounts(vector<AugmentedAccount>& out) const
 void
 SetupWizard::render_account_pages()
 {
+	JEWEL_DEBUG_LOG << "Entered SetupWizard::render_account_pages()" << endl;
+
 	// TODO
 	// The call to render_account_pages() should cause
 	// the AccountPage(s) to be rendered, in light of whatever currency
@@ -673,17 +684,10 @@ SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 void
 SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 {
-	static bool changed_once = false;
-	SetupWizard* parent = dynamic_cast<SetupWizard*>(GetParent());
-
-	// We only want this to occur the first time we change into this
-	// page.
-	if (!changed_once)
-	{
-		parent->render_account_pages();
-		changed_once = true;
-	}
 	(void)event;  // Silence compiler warning about unused parameter
+	SetupWizard* const parent = dynamic_cast<SetupWizard*>(GetParent());
+	assert (parent);
+	parent->set_assumed_currency(selected_currency());
 	return;
 }
 
@@ -712,12 +716,14 @@ SetupWizard::AccountPage::~AccountPage()
 void
 SetupWizard::AccountPage::render()
 {
+	JEWEL_DEBUG_LOG << "Entered SetupWizard::AccountPage::render()" << endl;
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 	increment_row();
 	render_main_text();
 	render_account_view();
-	m_top_sizer->Fit(this);
+	// m_top_sizer->Fit(this);
+	// Fit();
 	Layout();
 	return;
 }
@@ -745,7 +751,7 @@ SetupWizard::AccountPage::render_main_text()
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
 	text->Wrap(size.x * 1.5);
-	top_sizer().Add(text, wxGBPosition(current_row(), 1));
+	top_sizer().Add(text, wxGBPosition(current_row(), 0));
 	increment_row();
 	increment_row();
 	return;
@@ -754,6 +760,10 @@ SetupWizard::AccountPage::render_main_text()
 void
 SetupWizard::AccountPage::render_account_view()
 {
+	JEWEL_DEBUG_LOG << "Entered "
+	                << "SetupWizard::AccountPage::render_account_view()."
+					<< endl;
+
 	do_render_account_view();
 	return;
 }
@@ -806,9 +816,6 @@ BEGIN_EVENT_TABLE(SetupWizard::BalanceSheetAccountPage, wxWizardPageSimple)
 	)
 	*/
 END_EVENT_TABLE()
-
-
-// WARNING UP TO HERE in re-working to use MultiAccountPanel.
 
 
 void
@@ -880,23 +887,36 @@ SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
 	return;
 }
 
-
 void
 SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 {
+	JEWEL_DEBUG_LOG << "Entered "
+	                << "SetupWizard::BalanceSheetAccountPage::do_render_account_view()."
+					<< endl;
+
 	// Create the control for displaying Accounts
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
 	Commodity const commodity = parent().selected_currency();
 	m_multi_account_panel = new MultiAccountPanel
 	(	this,
-		wxSize(size.x * 1.6, size.y * 9),
+		wxSize(MultiAccountPanel::required_width(), size.y * 9),
 		database_connection(),
 		account_super_type::balance_sheet,
 		commodity
 	);
 	top_sizer().Add(m_multi_account_panel, wxGBPosition(current_row(), 0));
 	increment_row();
+	return;
+}
+
+void
+SetupWizard::BalanceSheetAccountPage::set_commodity
+(	Commodity const& p_commodity
+)
+{
+	assert (m_multi_account_panel);
+	m_multi_account_panel->set_commodity(p_commodity);
 	return;
 }
 

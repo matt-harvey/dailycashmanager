@@ -45,6 +45,14 @@ DecimalValidator::decimal() const
 	return m_decimal;
 }
 
+void
+DecimalValidator::set_precision(jewel::Decimal::places_type p_precision)
+{
+	m_precision = p_precision;
+	m_decimal = round(m_decimal, p_precision);
+	return;
+}
+
 bool
 DecimalValidator::Validate(wxWindow* WXUNUSED(parent))
 {

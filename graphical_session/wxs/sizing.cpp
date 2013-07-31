@@ -29,5 +29,11 @@ large_width()
 	return medium_width() * 2 + standard_gap();
 }
 
+int scrollbar_width_allowance()
+{
+	// TODO Use conditional compilation to adapt this to different platforms.
+	return 20;
+}
+
 }  // namespace gui
 }  // namespace phatbooks

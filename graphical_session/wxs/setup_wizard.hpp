@@ -79,6 +79,8 @@ public:
 	
 	Commodity selected_currency() const;
 
+	void set_assumed_currency(Commodity const& p_commodity);		
+
 	typedef MultiAccountPanel::AugmentedAccount AugmentedAccount;
 
 private:
@@ -281,6 +283,9 @@ public:
 	(	SetupWizard* p_parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
+
+	void set_commodity(Commodity const& p_commodity);
+
 private:
 	void do_render_account_view();
 

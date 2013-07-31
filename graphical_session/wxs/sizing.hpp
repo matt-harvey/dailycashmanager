@@ -37,6 +37,12 @@ int medium_width();
  */
 int large_width();
 
+/**
+ * @returns a width that is supposed to be as wide as, or slightly wider than,
+ * a vertical scrollbar.
+ */
+int scrollbar_width_allowance();
+
 }  // namespace gui
 }  // namespace phatbooks
 

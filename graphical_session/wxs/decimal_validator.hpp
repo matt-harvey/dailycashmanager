@@ -36,6 +36,8 @@ public:
 	wxObject* Clone() const;
 
 	jewel::Decimal decimal() const;
+	
+	void set_precision(jewel::Decimal::places_type p_precision);
 
 private:
 	bool m_print_dash_for_zero;

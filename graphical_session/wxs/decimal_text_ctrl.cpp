@@ -59,12 +59,14 @@ DecimalTextCtrl::DecimalTextCtrl
 void
 DecimalTextCtrl::set_amount(Decimal const& p_amount)
 {
-	if (p_amount.places() != m_precision)
+	Decimal::places_type const prec = p_amount.places();
+	if (prec != m_precision)
 	{
-		throw PrecisionException
-		(	"Precision of Decimal amount does not match the precision "
-			"expected by the DecimalTextCtrl."
-		);
+		DecimalValidator* const validator =
+			dynamic_cast<DecimalValidator*>(GetValidator());	
+		assert (validator);
+		m_precision = prec;
+		validator->set_precision(prec);
 	}
 	assert (p_amount.places() == m_precision);
 	wxString const amount_string =

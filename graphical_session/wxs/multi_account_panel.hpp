@@ -55,6 +55,14 @@ public:
 		
 	virtual ~MultiAccountPanel();
 
+	/**
+	 * @returns the width required to fit all the widgets in a
+	 * MultiAccountPanel, along with a standard border and scrollbar.
+	 */
+	static int required_width();
+
+	void set_commodity(Commodity const& p_commodity);
+
 	struct AugmentedAccount
 	{
 		AugmentedAccount
