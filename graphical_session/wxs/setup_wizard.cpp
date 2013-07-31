@@ -154,7 +154,6 @@ namespace
 /*** SetupWizard ***/
 
 
-
 SetupWizard::SetupWizard
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
@@ -183,7 +182,6 @@ SetupWizard::SetupWizard
 	// wxWizardPageSimple::Chain(m_balance_sheet_account_page, m_pl_account_page);
 	GetPageAreaSizer()->Add(m_filepath_page);
 }
-
 
 void
 SetupWizard::run()
@@ -237,8 +235,6 @@ SetupWizard::selected_augmented_accounts(vector<AugmentedAccount>& out) const
 void
 SetupWizard::render_account_pages()
 {
-	JEWEL_DEBUG_LOG << "Entered SetupWizard::render_account_pages()" << endl;
-
 	// TODO
 	// The call to render_account_pages() should cause
 	// the AccountPage(s) to be rendered, in light of whatever currency
@@ -278,7 +274,6 @@ SetupWizard::delete_file()
 	boost::filesystem::remove(value(m_filepath_page->selected_filepath()));
 	return;
 }
-
 
 void
 SetupWizard::configure_accounts()
@@ -399,7 +394,6 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 	return ret;
 }
 
-
 bool
 SetupWizard::FilepathValidator::TransferFromWindow()
 {
@@ -418,7 +412,6 @@ SetupWizard::FilepathValidator::TransferFromWindow()
 	}
 	return true;
 }
-			
 
 bool
 SetupWizard::FilepathValidator::TransferToWindow()
@@ -440,7 +433,6 @@ SetupWizard::FilepathValidator::TransferToWindow()
 	}
 	return true;
 }
-
 
 wxObject*
 SetupWizard::FilepathValidator::Clone() const
@@ -716,7 +708,6 @@ SetupWizard::AccountPage::~AccountPage()
 void
 SetupWizard::AccountPage::render()
 {
-	JEWEL_DEBUG_LOG << "Entered SetupWizard::AccountPage::render()" << endl;
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 	increment_row();
@@ -760,10 +751,6 @@ SetupWizard::AccountPage::render_main_text()
 void
 SetupWizard::AccountPage::render_account_view()
 {
-	JEWEL_DEBUG_LOG << "Entered "
-	                << "SetupWizard::AccountPage::render_account_view()."
-					<< endl;
-
 	do_render_account_view();
 	return;
 }
@@ -890,10 +877,6 @@ SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
 void
 SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 {
-	JEWEL_DEBUG_LOG << "Entered "
-	                << "SetupWizard::BalanceSheetAccountPage::do_render_account_view()."
-					<< endl;
-
 	// Create the control for displaying Accounts
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());

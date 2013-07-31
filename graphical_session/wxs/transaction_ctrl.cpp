@@ -348,13 +348,32 @@ TransactionCtrl::configure_top_controls
 		p_available_transaction_types
 )
 {
-	size_t row = 0;	
+	size_t row = 0;
 
 	// Top sizer
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 
+	// Add some space to the right to provide room for scrollbar
 	add_dummy_column();
+
+	// Leave enough blank space at the top so that the first row
+	// of proper widgets lines up with the "bar" at the top of
+	// the panels to the left.
+	// TODO Tweak this for different platforms, using conditional
+	// compilation.
+	++row;
+	++row;
+	wxStaticText* dummy = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxSize(0, 0)
+	);
+	m_top_sizer->Add(dummy, wxGBPosition(row, 0));
+
+	++row;
 
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
@@ -588,7 +607,7 @@ TransactionCtrl::add_dummy_column()
 		wxID_ANY,
 		wxEmptyString,
 		wxDefaultPosition,
-		wxSize(20, 1)
+		wxSize(scrollbar_width_allowance(), 1)
 	);
 	m_top_sizer->Add(dummy, wxGBPosition(0, 4));
 }
