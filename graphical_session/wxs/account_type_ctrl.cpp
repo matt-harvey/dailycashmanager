@@ -39,7 +39,11 @@ AccountTypeCtrl::AccountTypeCtrl
 	ATypeVec::const_iterator const end = atypes.end();
 	for ( ; it != end; ++it)
 	{
-		Append(bstring_to_wx(account_type_to_string(*it)));
+		// WARNING Hack to stop users from accessing account_type::equity.
+		if (*it != account_type::equity)
+		{
+			Append(bstring_to_wx(account_type_to_string(*it)));
+		}
 	}	
 	SetSelection(0);  // In effort to avoid apparent bug in Windows
 }
