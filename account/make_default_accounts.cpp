@@ -55,6 +55,24 @@ make_default_accounts
 	case account_type::asset:
 		names.push_back(BString("Cash"));
 		names.push_back(BString("Cheque account"));
+		// WARNING Begin temp
+		names.push_back(BString("a"));
+		names.push_back(BString("b"));
+		names.push_back(BString("c"));
+		names.push_back(BString("d"));
+		names.push_back(BString("e"));
+		names.push_back(BString("f"));
+		names.push_back(BString("g"));
+		names.push_back(BString("h"));
+		names.push_back(BString("i"));
+		names.push_back(BString("j"));
+		names.push_back(BString("k"));
+		names.push_back(BString("l"));
+		names.push_back(BString("m"));
+		names.push_back(BString("n"));
+		names.push_back(BString("o"));
+		names.push_back(BString("p"));
+		// WARNING End temp
 		break;
 	case account_type::liability:
 		names.push_back(BString("Credit card"));

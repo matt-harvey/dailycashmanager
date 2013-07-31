@@ -69,7 +69,7 @@ MultiAccountPanel::MultiAccountPanel
 		wxID_ANY,
 		wxDefaultPosition,
 		p_size,
-		wxVSCROLL | wxHSCROLL
+		wxVSCROLL
 	),
 	m_account_super_type(p_account_super_type),
 	m_current_row(0),
@@ -79,8 +79,6 @@ MultiAccountPanel::MultiAccountPanel
 {
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
-
-	increment_row();
 	
 	wxString account_name_label(" Account name:");
 	wxString opening_balance_label(" Opening balance:");
@@ -90,11 +88,11 @@ MultiAccountPanel::MultiAccountPanel
 		opening_balance_label = wxString(" Initial budget allocation");
 	}
 
-	make_text(account_name_label, 1);
-	make_text(wxString(" Type:"), 2);
-	make_text(wxString(" Description:"), 3);
-	// Deliberately skipping column 4.
-	make_text(opening_balance_label, 5);
+	make_text(account_name_label, 0);
+	make_text(wxString(" Type:"), 1);
+	make_text(wxString(" Description:"), 2);
+	// Deliberately skipping column 3.
+	make_text(opening_balance_label, 4);
 
 	increment_row();
 
@@ -120,7 +118,7 @@ MultiAccountPanel::MultiAccountPanel
 			wxSize(medium_width(), wxDefaultSize.y),
 			wxALIGN_LEFT
 		);
-		top_sizer().Add(account_name_box, wxGBPosition(row, 1));
+		top_sizer().Add(account_name_box, wxGBPosition(row, 0));
 		m_account_name_boxes.push_back(account_name_box);
 
 		// Account type
@@ -132,7 +130,7 @@ MultiAccountPanel::MultiAccountPanel
 			m_account_super_type
 		);
 		account_type_box->set_account_type(it->account_type());
-		top_sizer().Add(account_type_box, wxGBPosition(row, 2));
+		top_sizer().Add(account_type_box, wxGBPosition(row, 1));
 		m_account_type_boxes.push_back(account_type_box);
 
 		// Description
@@ -145,7 +143,7 @@ MultiAccountPanel::MultiAccountPanel
 			wxALIGN_LEFT
 		);
 		top_sizer().
-			Add(description_box, wxGBPosition(row, 3), wxGBSpan(1, 2));
+			Add(description_box, wxGBPosition(row, 2), wxGBSpan(1, 2));
 		m_description_boxes.push_back(description_box);
 
 		it->set_commodity(m_commodity);
@@ -158,7 +156,7 @@ MultiAccountPanel::MultiAccountPanel
 			it->commodity().precision(),
 			false
 		);
-		top_sizer().Add(opening_balance_box, wxGBPosition(row, 5));
+		top_sizer().Add(opening_balance_box, wxGBPosition(row, 4));
 		m_opening_balance_boxes.push_back(opening_balance_box);
 
 		increment_row();
@@ -332,8 +330,7 @@ MultiAccountPanel::database_connection() const
 void
 MultiAccountPanel::configure_scrollbars()
 {
-	// WARNING Disable horizontal scrolling later (make it 0, 10).
-	SetScrollRate(10, 10);
+	SetScrollRate(0, 10);
 	FitInside();
 	return;
 }
