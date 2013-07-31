@@ -881,6 +881,18 @@ SetupWizard::BalanceSheetAccountPage::do_render_account_view()
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
 	Commodity const commodity = parent().selected_currency();
+
+	// Add dummy column to right to allow room for scrollbar.
+	wxStaticText* dummy = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxSize(scrollbar_width_allowance(), 1)
+	);
+	top_sizer().Add(dummy, wxGBPosition(current_row(), 1));
+
+	// Main body of page.
 	m_multi_account_panel = new MultiAccountPanel
 	(	this,
 		wxSize(MultiAccountPanel::required_width(), size.y * 9),

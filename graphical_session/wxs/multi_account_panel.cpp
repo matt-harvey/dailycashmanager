@@ -79,7 +79,8 @@ MultiAccountPanel::MultiAccountPanel
 {
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
-	
+
+	// Row of column headings
 	wxString account_name_label(" Account name:");
 	wxString opening_balance_label(" Opening balance:");
 	if (m_account_super_type == account_super_type::pl)
@@ -96,6 +97,8 @@ MultiAccountPanel::MultiAccountPanel
 
 	increment_row();
 
+	// Main body of MultiAccountPanel - a grid of fields where user
+	// can edit Account attributes and opening balances.
 	vector<Account> sugg_accounts =
 		suggested_accounts(m_database_connection, m_account_super_type);
 	vector<Account>::size_type const sz = sugg_accounts.size();
@@ -164,6 +167,7 @@ MultiAccountPanel::MultiAccountPanel
 		increment_row();
 	}
 
+	// "Admin"
 	configure_scrollbars();
 	Layout();
 }
