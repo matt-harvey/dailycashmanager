@@ -25,6 +25,11 @@ using jewel::round;
 using std::set;
 using std::vector;
 
+// for debugging
+	#include <jewel/debug_log.hpp>
+	#include <iostream>
+	using std::endl;
+
 namespace phatbooks
 {
 namespace gui
@@ -66,7 +71,6 @@ namespace
 		}
 		return ret;
 	}
-
 
 }  // end anonymous namespace
 
@@ -158,70 +162,12 @@ MultiAccountPanel::MultiAccountPanel
 	m_opening_balance_boxes.reserve(sz);
 	vector<Account>::iterator it = sugg_accounts.begin();
 	vector<Account>::iterator const end = sugg_accounts.end();
-	for ( ; it != end; ++it)
-	{
-		int const row = current_row();
-	
-		// Account name
-		wxTextCtrl* account_name_box = new wxTextCtrl
-		(	this,
-			wxID_ANY,
-			bstring_to_wx(it->name()),
-			wxDefaultPosition,
-			wxSize(medium_width(), wxDefaultSize.y),
-			wxALIGN_LEFT
-		);
-		top_sizer().Add(account_name_box, wxGBPosition(row, 0));
-		m_account_name_boxes.push_back(account_name_box);
-
-		int const height = account_name_box->GetSize().GetY();
-
-		// Account type
-		AccountTypeCtrl* account_type_box = new AccountTypeCtrl
-		(	this,
-			wxID_ANY,
-			wxSize(medium_width(), height),
-			database_connection(),
-			m_account_super_type
-		);
-		account_type_box->set_account_type(it->account_type());
-		top_sizer().Add(account_type_box, wxGBPosition(row, 1));
-		m_account_type_boxes.push_back(account_type_box);
-
-		// Description
-		wxTextCtrl* description_box = new wxTextCtrl
-		(	this,
-			wxID_ANY,
-			it->description(),
-			wxDefaultPosition,
-			wxSize(large_width(), height),
-			wxALIGN_LEFT
-		);
-		top_sizer().
-			Add(description_box, wxGBPosition(row, 2), wxGBSpan(1, 2));
-		m_description_boxes.push_back(description_box);
-
-		it->set_commodity(m_commodity);
-
-		// Opening balance
-		DecimalTextCtrl* opening_balance_box = new DecimalTextCtrl
-		(	this,
-			wxID_ANY,
-			wxSize(medium_width(), height),
-			it->commodity().precision(),
-			false
-		);
-		top_sizer().Add(opening_balance_box, wxGBPosition(row, 4));
-		m_opening_balance_boxes.push_back(opening_balance_box);
-
-		increment_row();
-	}
+	for ( ; it != end; ++it) add_row(*it);
 
 	// "Admin"
 	configure_scrollbars();
 	Layout();
 }
-
 
 MultiAccountPanel::~MultiAccountPanel()
 {
@@ -236,6 +182,85 @@ MultiAccountPanel::required_width()
 		standard_gap() * 3 +
 		standard_border() * 2 +
 		scrollbar_width_allowance();
+}
+
+Account
+MultiAccountPanel::blank_account()
+{
+	Account ret(database_connection());
+	BString const empty_string;
+	assert (empty_string.empty());
+	ret.set_name(empty_string);
+	ret.set_description(empty_string);
+	vector<account_type::AccountType> const& atypes =
+		account_types(m_account_super_type);
+	assert (!atypes.empty());
+	ret.set_account_type(atypes.at(0));
+	return ret;
+}
+
+void
+MultiAccountPanel::add_row(Account& p_account)
+{
+	int const row = current_row();
+
+	// Account name
+	wxTextCtrl* account_name_box = new wxTextCtrl
+	(	this,
+		wxID_ANY,
+		bstring_to_wx(p_account.name()),
+		wxDefaultPosition,
+		wxSize(medium_width(), wxDefaultSize.y),
+		wxALIGN_LEFT
+	);
+	top_sizer().Add(account_name_box, wxGBPosition(row, 0));
+	m_account_name_boxes.push_back(account_name_box);
+
+	int const height = account_name_box->GetSize().GetY();
+
+	// Account type
+	AccountTypeCtrl* account_type_box = new AccountTypeCtrl
+	(	this,
+		wxID_ANY,
+		wxSize(medium_width(), height),
+		database_connection(),
+		m_account_super_type
+	);
+	account_type_box->set_account_type(p_account.account_type());
+	top_sizer().Add(account_type_box, wxGBPosition(row, 1));
+	m_account_type_boxes.push_back(account_type_box);
+
+	// Description
+	wxTextCtrl* description_box = new wxTextCtrl
+	(	this,
+		wxID_ANY,
+		p_account.description(),
+		wxDefaultPosition,
+		wxSize(large_width(), height),
+		wxALIGN_LEFT
+	);
+	top_sizer().
+		Add(description_box, wxGBPosition(row, 2), wxGBSpan(1, 2));
+	m_description_boxes.push_back(description_box);
+
+	p_account.set_commodity(m_commodity);
+
+	// Opening balance
+	DecimalTextCtrl* opening_balance_box = new DecimalTextCtrl
+	(	this,
+		wxID_ANY,
+		wxSize(medium_width(), height),
+		p_account.commodity().precision(),
+		false
+	);
+	top_sizer().Add(opening_balance_box, wxGBPosition(row, 4));
+	m_opening_balance_boxes.push_back(opening_balance_box);
+
+	increment_row();
+
+	FitInside();
+
+	return;
 }
 
 void
@@ -322,7 +347,7 @@ MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 		if (name.IsEmpty())
 		{
 			p_error_message =
-				account_concept_name(true) + wxString(" is blank");
+				account_concept_name(true) + wxString(" name is blank");
 			return false;
 		}
 		if (account_names.find(name) != account_names.end())
@@ -350,7 +375,7 @@ MultiAccountPanel::increment_row()
 void
 MultiAccountPanel::decrement_row()
 {
-	++m_current_row;
+	--m_current_row;
 }
 
 void
@@ -420,14 +445,36 @@ void
 MultiAccountPanel::on_pop_row_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused variable
-	// TODO HIGH PRIORITY Implement.
+	if (m_account_name_boxes.empty())
+	{
+		return;
+	}
+#	ifndef NDEBUG
+		vector<wxTextCtrl*>::size_type const sz = m_account_name_boxes.size();
+		assert (sz > 0);
+		assert (sz == m_account_type_boxes.size());
+		assert (sz == m_description_boxes.size());
+		assert (sz == m_opening_balance_boxes.size());
+#	endif
+
+	pop_widget_from(m_opening_balance_boxes);
+	pop_widget_from(m_description_boxes);
+	pop_widget_from(m_account_type_boxes);
+	pop_widget_from(m_account_name_boxes);
+
+	decrement_row();
+
+	FitInside();
+	return;
 }
 
 void
 MultiAccountPanel::on_push_row_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused variable
-	// TODO HIGH PRIORITY Implement.
+	Account account = blank_account();
+	add_row(account);
+	return;
 }
 
 MultiAccountPanel::AugmentedAccount::AugmentedAccount

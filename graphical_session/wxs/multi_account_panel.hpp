@@ -18,6 +18,10 @@
 #include <wx/window.h>
 #include <vector>
 
+// for debugging
+	#include <jewel/debug_log.hpp>
+	#include <iostream>
+
 namespace phatbooks
 {
 
@@ -127,14 +131,32 @@ private:
 	void configure_scrollbars();
 
 	/**
+	 * @returns a newly created Account with Commodity not set but
+	 * with text fields set to the empty string. The returned Account will
+	 * not have been saved to the database (so will not have an ID).
+	 * Account type will be set to an AccountType belonging to
+	 * \e m_account_super_type.
+	 */
+	Account blank_account();
+
+	/**
+	 * Add a row to the display showing details for p_account. Be warned
+	 * that this will set \e p_account.commodity() to m_commodity, even
+	 * if \e p_account already has a Commodity set.
+	 */
+	void add_row(Account& p_account);
+
+	/**
 	 * @returns "account", "category" or some such string to describe
 	 * to the \e user the "thing" which they are creating in this
 	 * particular MultiAccountPanel.
 	 */
 	wxString account_concept_name(bool p_capitalize = false) const;
 
+	template <typename T> void pop_widget_from(std::vector<T>& p_vec);
+	
 	static unsigned int const s_pop_row_button_id = wxID_HIGHEST + 1;
-	static unsigned int const s_push_row_button_id = s_pop_row_button_id;
+	static unsigned int const s_push_row_button_id = s_pop_row_button_id + 1;
 
 	account_super_type::AccountSuperType m_account_super_type;
 	int m_current_row;
@@ -152,6 +174,22 @@ private:
 	DECLARE_EVENT_TABLE()
 
 };  // class MultiAccountPanel
+
+
+// IMPLEMENT MEMBER TEMPLATES
+
+template <typename T>
+void
+MultiAccountPanel::pop_widget_from(std::vector<T>& p_vec)
+{
+	T doomed_elem = p_vec.back();
+	top_sizer().Detach(doomed_elem);
+	doomed_elem->Destroy();
+	doomed_elem = 0;
+	p_vec.pop_back();
+	return;
+}
+
 
 }  // namespace gui
 }  // namespace phatbooks
