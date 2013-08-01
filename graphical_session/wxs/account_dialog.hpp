@@ -46,6 +46,9 @@ class Frame;
  * "opening deposit" concept into the AccountDialog, or else make it clear
  * to the user that "Opening balance" refers to balance at entity start
  * date.
+ *
+ * @todo HIGH PRIORITY Make it so the user cannot proceed if there are
+ * duplicate Account names (tested case-insensitively).
  */
 class AccountDialog: public wxDialog, private boost::noncopyable
 {
