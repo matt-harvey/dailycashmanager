@@ -356,6 +356,7 @@ MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 			p_error_message += name;
 			return false;
 		}
+		account_names.insert(name);
 	}
 	return true;
 }
