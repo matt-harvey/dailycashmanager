@@ -8,6 +8,8 @@
 #include "decimal_text_ctrl.hpp"
 #include <boost/noncopyable.hpp>
 #include <jewel/decimal.hpp>
+#include <wx/button.h>
+#include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
 #include <wx/scrolwin.h>
@@ -108,6 +110,7 @@ protected:
 	wxGridBagSizer& top_sizer();
 	int current_row() const;
 	void increment_row();
+	void decrement_row();
 	void make_text
 	(	wxString const& p_text,
 		int p_column,
@@ -118,11 +121,26 @@ protected:
 
 private:
 
+	void on_pop_row_button_click(wxCommandEvent& event);
+	void on_push_row_button_click(wxCommandEvent& event);
+
 	void configure_scrollbars();
+
+	/**
+	 * @returns "account", "category" or some such string to describe
+	 * to the \e user the "thing" which they are creating in this
+	 * particular MultiAccountPanel.
+	 */
+	wxString account_concept_name(bool p_capitalize = false) const;
+
+	static unsigned int const s_pop_row_button_id = wxID_HIGHEST + 1;
+	static unsigned int const s_push_row_button_id = s_pop_row_button_id;
 
 	account_super_type::AccountSuperType m_account_super_type;
 	int m_current_row;
 	wxGridBagSizer* m_top_sizer;
+	wxButton* m_pop_row_button;
+	wxButton* m_push_row_button;
 	PhatbooksDatabaseConnection& m_database_connection;
 	Commodity m_commodity;
 
@@ -130,6 +148,8 @@ private:
 	std::vector<AccountTypeCtrl*> m_account_type_boxes;
 	std::vector<wxTextCtrl*> m_description_boxes;
 	std::vector<DecimalTextCtrl*> m_opening_balance_boxes;
+
+	DECLARE_EVENT_TABLE()
 
 };  // class MultiAccountPanel
 

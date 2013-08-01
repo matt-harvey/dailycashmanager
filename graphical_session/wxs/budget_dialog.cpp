@@ -46,7 +46,6 @@ namespace gui
 
 // Begin event tables
 
-
 BEGIN_EVENT_TABLE(BudgetDialog, wxDialog)
 	EVT_BUTTON
 	(	s_pop_item_button_id,

@@ -9,6 +9,8 @@
 #include "phatbooks_database_connection.hpp"
 #include "sizing.hpp"
 #include <jewel/decimal.hpp>
+#include <wx/button.h>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/gbsizer.h>
 #include <wx/stattext.h>
@@ -27,6 +29,17 @@ namespace phatbooks
 {
 namespace gui
 {
+
+BEGIN_EVENT_TABLE(MultiAccountPanel, wxScrolledWindow)
+	EVT_BUTTON
+	(	s_pop_row_button_id,
+		MultiAccountPanel::on_pop_row_button_click
+	)
+	EVT_BUTTON
+	(	s_push_row_button_id,
+		MultiAccountPanel::on_push_row_button_click
+	)
+END_EVENT_TABLE()
 
 namespace
 {
@@ -54,6 +67,7 @@ namespace
 		return ret;
 	}
 
+
 }  // end anonymous namespace
 
 
@@ -74,18 +88,54 @@ MultiAccountPanel::MultiAccountPanel
 	m_account_super_type(p_account_super_type),
 	m_current_row(0),
 	m_top_sizer(0),
+	m_pop_row_button(0),
+	m_push_row_button(0),
 	m_database_connection(p_database_connection),
 	m_commodity(p_commodity)
 {
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 
+	// Buttons
+	m_pop_row_button = new wxButton
+	(	this,
+		s_pop_row_button_id,
+		wxString("Remove ") + account_concept_name(),
+		wxDefaultPosition,
+		wxSize(medium_width(), wxDefaultSize.y),
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+	);
+	top_sizer().Add
+	(	m_pop_row_button,
+		wxGBPosition(current_row(), 3),
+		wxDefaultSpan,
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+	);
+	m_push_row_button = new wxButton
+	(	this,
+		s_push_row_button_id,
+		wxString("Add ") + account_concept_name(),
+		wxDefaultPosition,
+		wxSize(medium_width(), wxDefaultSize.y),
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+	);
+	top_sizer().Add
+	(	m_push_row_button,
+		wxGBPosition(current_row(), 4),
+		wxDefaultSpan,
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+	);
+
+	increment_row();
+
+	increment_row();
+
 	// Row of column headings
-	wxString account_name_label(" Account name:");
+	wxString const account_name_label =
+		wxString(" ") + account_concept_name(true) + wxString(" name:");
 	wxString opening_balance_label(" Opening balance:");
 	if (m_account_super_type == account_super_type::pl)
 	{
-		account_name_label = wxString(" Category name:");
 		opening_balance_label = wxString(" Initial budget allocation");
 	}
 
@@ -271,8 +321,8 @@ MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 			m_account_name_boxes[i]->GetValue().Trim().Lower();
 		if (name.IsEmpty())
 		{
-			// TODO "Name" should be either "Account name" or "Category name".
-			p_error_message = wxString("Name is blank");
+			p_error_message =
+				account_concept_name(true) + wxString(" is blank");
 			return false;
 		}
 		if (account_names.find(name) != account_names.end())
@@ -293,6 +343,12 @@ MultiAccountPanel::current_row() const
 
 void
 MultiAccountPanel::increment_row()
+{
+	++m_current_row;
+}
+
+void
+MultiAccountPanel::decrement_row()
 {
 	++m_current_row;
 }
@@ -339,6 +395,39 @@ MultiAccountPanel::configure_scrollbars()
 	SetScrollRate(0, 10);
 	FitInside();
 	return;
+}
+
+wxString
+MultiAccountPanel::account_concept_name(bool p_capitalize) const
+{
+	// TODO This "user facing Account concept name" concept is used
+	// elsewhere. This information should be singly located for use
+	// across the application - probably in a free standing function in
+	// "account.hpp".
+	switch (m_account_super_type)
+	{
+	case account_super_type::balance_sheet:
+		return p_capitalize? wxString("Account"): wxString("account");
+	case account_super_type::pl:
+		return p_capitalize? wxString("Category"): wxString("category");
+	default:
+		assert (false);
+	}
+	assert (false);
+}
+
+void
+MultiAccountPanel::on_pop_row_button_click(wxCommandEvent& event)
+{
+	(void)event;  // silence compiler re. unused variable
+	// TODO HIGH PRIORITY Implement.
+}
+
+void
+MultiAccountPanel::on_push_row_button_click(wxCommandEvent& event)
+{
+	(void)event;  // silence compiler re. unused variable
+	// TODO HIGH PRIORITY Implement.
 }
 
 MultiAccountPanel::AugmentedAccount::AugmentedAccount
