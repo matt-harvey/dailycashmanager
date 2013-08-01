@@ -34,6 +34,16 @@ using column_creation::create_entry_accumulating_reversed_amount_column;
 using column_creation::create_entry_account_name_column;
 using column_creation::create_entry_comment_column;
 
+
+namespace
+{
+	Decimal entry_accumulation_aux(Decimal const& dec, Entry const& entry)
+	{
+		return dec + entry.amount();
+	}
+}  // end anonymous namespace
+
+
 Journal::~Journal()
 {
 }
@@ -112,15 +122,6 @@ Journal::fulcrum() const
 	return do_get_fulcrum();
 }
 
-namespace
-{
-	Decimal entry_accumulation_aux(Decimal const& dec, Entry const& entry)
-	{
-		return dec + entry.amount();
-	}
-}  // end anonymous namespace
-		
-
 Decimal
 Journal::balance() const
 {
@@ -131,7 +132,6 @@ Journal::balance() const
 		entry_accumulation_aux
 	);
 }
-		
 
 bool
 Journal::is_balanced() const
@@ -142,16 +142,12 @@ Journal::is_balanced() const
 Decimal
 Journal::primary_amount() const
 {
-	Decimal ret(0, 0);
+	Decimal total(0, 0);
+	vector<Entry> const& entry_vec = entries();
 	vector<Entry>::size_type i = fulcrum();
-	vector<Entry>::size_type const sz = entries().size();
-	for ( ; i != sz; ++i) ret += entries()[i].amount();
-	if (is_actual())
-	{
-		return ret;
-	}
-	assert (!is_actual());
-	return -ret;
+	vector<Entry>::size_type const sz = entry_vec.size();
+	for ( ; i != sz; ++i) total += entry_vec[i].amount();
+	return is_actual()? total: -total;
 }
 
 void

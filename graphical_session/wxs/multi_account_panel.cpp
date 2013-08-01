@@ -16,11 +16,13 @@
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <cassert>
+#include <numeric>
 #include <set>
 #include <vector>
 
 using jewel::Decimal;
 using jewel::round;
+using std::accumulate;
 using std::set;
 using std::vector;
 
@@ -69,6 +71,10 @@ namespace
 			initialized = true;
 		}
 		return ret;
+	}
+	Decimal total_amount_aux(Decimal const& dec, DecimalTextCtrl* ctrl)
+	{
+		return dec + ctrl->amount();
 	}
 
 }  // end anonymous namespace
@@ -338,6 +344,17 @@ MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 		account_names.insert(name);
 	}
 	return true;
+}
+
+Decimal
+MultiAccountPanel::total_amount() const
+{
+	return accumulate
+	(	m_opening_balance_boxes.begin(),
+		m_opening_balance_boxes.end(),
+		Decimal(0, m_commodity.precision()),
+		total_amount_aux
+	);
 }
 
 wxString

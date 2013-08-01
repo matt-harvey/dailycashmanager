@@ -105,6 +105,12 @@ public:
 	 */
 	bool account_names_valid(wxString& p_error_message) const;
 
+	/**
+	 * @returns the total of all the amounts entered in the
+	 * amount boxes in the MultiAccountPanel.
+	 */
+	jewel::Decimal total_amount() const;
+
 private:
 
 	void on_pop_row_button_click(wxCommandEvent& event);
