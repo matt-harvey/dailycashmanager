@@ -83,7 +83,7 @@ protected:
 	// TODO Functions here would be useful in other classes too. Find an
 	// elegant way to re-use this code.
 	void increment_row();
-	int next_row() const;
+	int current_row() const;
 	void make_text
 	(	wxString const& p_text,
 		int p_column,
@@ -96,7 +96,7 @@ private:
 
 	void configure_scrollbars();
 
-	int m_next_row;
+	int m_current_row;
 	wxGridBagSizer* m_top_sizer;
 	PhatbooksDatabaseConnection& m_database_connection;
 	boost::gregorian::date m_min_date;

@@ -39,6 +39,21 @@ public:
 private:
 	virtual void do_generate();
 
+	/**
+	 * @returns an initialized optional only if there is a max_date().
+	 */
+	boost::optional<int> maybe_num_days_in_period() const;
+
+	/**
+	 * Displays "N/A" or the like if p_count is zero. Displays in
+	 * current_row().
+	 */
+	void display_mean
+	(	int p_column,
+		jewel::Decimal const& p_total = jewel::Decimal(0, 0),
+		int p_count = 0
+	);
+
 	void refresh_map();
 
 	void display_text();

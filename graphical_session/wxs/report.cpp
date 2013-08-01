@@ -76,7 +76,7 @@ Report::Report
 		wxDefaultPosition,
 		p_size
 	),
-	m_next_row(0),
+	m_current_row(0),
 	m_top_sizer(0),
 	m_database_connection(p_database_connection),
 	m_min_date(database_connection().opening_balance_journal_date()),
@@ -113,14 +113,14 @@ Report::maybe_max_date() const
 void
 Report::increment_row()
 {
-	++m_next_row;
+	++m_current_row;
 	return;
 }
 
 int
-Report::next_row() const
+Report::current_row() const
 {
-	return m_next_row;
+	return m_current_row;
 }
 
 void
@@ -140,7 +140,7 @@ Report::make_text
 	);
 	top_sizer().Add
 	(	header,
-		wxGBPosition(next_row(), p_column),
+		wxGBPosition(current_row(), p_column),
 		wxDefaultSpan,
 		p_alignment_flags
 	);
@@ -160,7 +160,7 @@ Report::make_number_text(jewel::Decimal const& p_amount, int p_column)
 	);
 	top_sizer().Add
 	(	text,
-		wxGBPosition(next_row(), p_column),
+		wxGBPosition(current_row(), p_column),
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);

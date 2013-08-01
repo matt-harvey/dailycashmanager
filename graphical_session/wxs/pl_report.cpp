@@ -1,6 +1,7 @@
 #include "pl_report.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
+#include "date.hpp"
 #include "entry_reader.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "report.hpp"
@@ -56,6 +57,42 @@ PLReport::do_generate()
 
 	// Don't do "FitInside()", "configure_scrollbars" or that "admin" stuff,
 	// as this is done in the Report base class, in Report::generate().
+	return;
+}
+
+optional<int>
+PLReport::maybe_num_days_in_period() const
+{
+	optional<int> ret;
+	optional<gregorian::date> const maybe_max = maybe_max_date();
+	if (maybe_max)
+	{
+		gregorian::date_duration const interval =
+			value(maybe_max) - min_date();
+		int const temp = interval.days() + 1;
+		ret = ((temp >= 0)? temp: 0);
+	}
+	return ret;
+}
+
+void
+PLReport::display_mean
+(	int p_column,
+	Decimal const& p_total,
+	int p_count
+)
+{
+	if (p_count == 0)
+	{
+		make_text(wxString("N/A "), p_column, wxALIGN_RIGHT);
+	}
+	else
+	{
+		make_number_text
+		(	round(p_total / Decimal(p_count, 0), p_total.places()),
+			p_column
+		);
+	}
 	return;
 }
 
@@ -117,12 +154,14 @@ PLReport::display_text()
 {
 	// Assume m_map is up-to-date. Use it contents to display
 	// the report contents.
-
-	// TODO We should show weekly and/or daily averages as well.
+	
+	optional<int> const maybe_num_days = maybe_num_days_in_period();
+	int const count_for_mean = (maybe_num_days? value(maybe_num_days): 0);
 
 	increment_row();
 
 	make_text(wxString("Total "), 2, wxALIGN_RIGHT);
+	make_text(wxString("  Daily average "), 3, wxALIGN_RIGHT);
 
 	increment_row();
 
@@ -208,11 +247,16 @@ PLReport::display_text()
 				make_number_text(b, 2);
 				total += b;
 
+				display_mean(3, b, count_for_mean);
+
 				increment_row();
 			}
 		}
 		make_text(wxString("  Total"), 1);
 		make_number_text(total, 2);
+
+		display_mean(3, total, count_for_mean);		
+		
 		net_revenue +=
 		(	(account_type == account_type::revenue)?
 			total:
@@ -225,6 +269,8 @@ PLReport::display_text()
 
 	make_text(wxString("  Net revenue"), 1);
 	make_number_text(net_revenue, 2);
+
+	display_mean(3, net_revenue, count_for_mean);
 
 	increment_row();
 	
