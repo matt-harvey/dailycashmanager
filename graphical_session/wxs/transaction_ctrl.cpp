@@ -18,6 +18,7 @@
 #include "frame.hpp"
 #include "frequency.hpp"
 #include "frequency_ctrl.hpp"
+#include "gridded_scrolled_panel.hpp"
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
 #include "locale.hpp"
@@ -41,8 +42,6 @@
 #include <wx/event.h>
 #include <wx/msgdlg.h>
 #include <wx/gdicmn.h>
-#include <wx/gbsizer.h>
-#include <wx/scrolwin.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
@@ -65,7 +64,7 @@ namespace phatbooks
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(TransactionCtrl, wxScrolledWindow)
+BEGIN_EVENT_TABLE(TransactionCtrl, GriddedScrolledPanel)
 	EVT_BUTTON
 	(	wxID_OK,
 		TransactionCtrl::on_ok_button_click
@@ -98,14 +97,7 @@ TransactionCtrl::TransactionCtrl
 	vector<Account> const& p_pl_accounts,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
-	wxScrolledWindow
-	(	p_parent,
-		wxID_ANY,
-		wxDefaultPosition,
-		p_size,
-		wxVSCROLL
-	),
-	m_top_sizer(0),
+	GriddedScrolledPanel(p_parent, p_size, p_database_connection),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),
 	m_destination_entry_ctrl(0),
@@ -115,15 +107,14 @@ TransactionCtrl::TransactionCtrl
 	m_cancel_button(0),
 	m_delete_button(0),
 	m_ok_button(0),
-	m_journal(0),
-	m_database_connection(p_database_connection)
+	m_journal(0)
 {
 	assert (!p_balance_sheet_accounts.empty() || !p_pl_accounts.empty());
 	assert (p_balance_sheet_accounts.size() + p_pl_accounts.size() >= 2);
 	
 	// Figure out the natural TransactionType given the Accounts we have
 	// been passed. We will use this to initialize the TransactionTypeCtrl.
-	Account account_x(p_database_connection);
+	Account account_x(database_connection());
 	Account account_y(p_database_connection);
 	if (p_balance_sheet_accounts.empty())
 	{
@@ -156,11 +147,11 @@ TransactionCtrl::TransactionCtrl
 		natural_transaction_type(account_x, account_y);
 	assert_transaction_type_validity(initial_transaction_type);
 	wxSize text_box_size;
-	size_t row = configure_top_controls
+	configure_top_controls
 	(	initial_transaction_type,
 		text_box_size,
-		Decimal(0, m_database_connection.default_commodity().precision()),
-		available_transaction_types(m_database_connection)
+		Decimal(0, database_connection().default_commodity().precision()),
+		available_transaction_types(database_connection())
 	);
 
 	// Rows for entering Entry details
@@ -180,7 +171,7 @@ TransactionCtrl::TransactionCtrl
 	m_source_entry_ctrl = new EntryCtrl
 	(	this,
 		source_accounts,
-		m_database_connection,
+		database_connection(),
 		initial_transaction_type,
 		text_box_size,
 		true
@@ -188,28 +179,30 @@ TransactionCtrl::TransactionCtrl
 	m_destination_entry_ctrl = new EntryCtrl
 	(	this,
 		destination_accounts,
-		m_database_connection,
+		database_connection(),
 		initial_transaction_type,
 		text_box_size,
 		false
 	);
-	m_top_sizer->Add
+	top_sizer().Add
 	(	m_source_entry_ctrl,
-		wxGBPosition(row, 0),
+		wxGBPosition(current_row(), 0),
 		wxGBSpan(1, 4),
 		wxEXPAND
 	);
-	
-	row += 2;
 
-	m_top_sizer->Add
+	increment_row();
+	increment_row();
+
+	top_sizer().Add
 	(	m_destination_entry_ctrl,
-		wxGBPosition(row, 0),
+		wxGBPosition(current_row(), 0),
 		wxGBSpan(1, 4),
 		wxEXPAND
 	);
 	
-	row += 2;
+	increment_row();
+	increment_row();
 
 	// Date and Frequency controls
 	m_frequency_ctrl = new FrequencyCtrl
@@ -219,19 +212,21 @@ TransactionCtrl::TransactionCtrl
 		(	medium_width() * 3 + standard_gap() * 2,
 			text_box_size.y
 		),
-		m_database_connection,
+		database_connection(),
 		true,
 		true
 	);
-	m_top_sizer->Add(m_frequency_ctrl, wxGBPosition(row, 0), wxGBSpan(1, 3));
+	top_sizer().
+		Add(m_frequency_ctrl, wxGBPosition(current_row(), 0), wxGBSpan(1, 3));
 	m_date_ctrl = new DateCtrl
 	(	this,
 		wxID_ANY,
 		text_box_size
 	);
-	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 3));
+	top_sizer().Add(m_date_ctrl, wxGBPosition(current_row(), 3));
 
-	row += 2;
+	increment_row();
+	increment_row();
 
 	// Cancel/Clear button
 	m_cancel_button = new wxButton
@@ -241,7 +236,7 @@ TransactionCtrl::TransactionCtrl
 		wxDefaultPosition,
 		text_box_size
 	);
-	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
+	top_sizer().Add(m_cancel_button, wxGBPosition(current_row(), 0));
 
 	// Note "Delete button" is not used unless we are editing an
 	// existing PersistentJournal.
@@ -255,14 +250,12 @@ TransactionCtrl::TransactionCtrl
 		text_box_size
 	);
 
-	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 3));
+	top_sizer().Add(m_ok_button, wxGBPosition(current_row(), 3));
 	m_ok_button->SetDefault();  // Enter key will now trigger "Save" button
 
-	configure_scrollbars();
-
 	// "Admin"
-	m_top_sizer->Fit(this);
-	m_top_sizer->SetSizeHints(this);
+	top_sizer().Fit(this);
+	top_sizer().SetSizeHints(this);
 	FitInside();
 	Layout();
 }
@@ -272,14 +265,11 @@ TransactionCtrl::TransactionCtrl
 	wxSize const& p_size,
 	OrdinaryJournal const& p_journal
 ):
-	wxScrolledWindow
+	GriddedScrolledPanel
 	(	p_parent,
-		wxID_ANY,
-		wxDefaultPosition,
 		p_size,
-		wxVSCROLL
+		p_journal.database_connection()
 	),
-	m_top_sizer(0),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),
 	m_destination_entry_ctrl(0),
@@ -289,8 +279,7 @@ TransactionCtrl::TransactionCtrl
 	m_cancel_button(0),
 	m_delete_button(0),
 	m_ok_button(0),
-	m_journal(0),
-	m_database_connection(p_journal.database_connection())
+	m_journal(0)
 {
 	// TODO Make it so that, given this is an existing Journal we don't allow the user
 	// to edit the TransactionType (or else maybe they can only change the
@@ -309,14 +298,11 @@ TransactionCtrl::TransactionCtrl
 	wxSize const& p_size,
 	DraftJournal const& p_journal
 ):
-	wxScrolledWindow
+	GriddedScrolledPanel
 	(	p_parent,
-		wxID_ANY,
-		wxDefaultPosition,
 		p_size,
-		wxVSCROLL
+		p_journal.database_connection()
 	),
-	m_top_sizer(0),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),
 	m_destination_entry_ctrl(0),
@@ -325,8 +311,7 @@ TransactionCtrl::TransactionCtrl
 	m_date_ctrl(0),
 	m_cancel_button(0),
 	m_ok_button(0),
-	m_journal(0),
-	m_database_connection(p_journal.database_connection())
+	m_journal(0)
 {
 	m_journal = new DraftJournal(p_journal);
 	configure_for_journal_editing();
@@ -339,7 +324,7 @@ TransactionCtrl::~TransactionCtrl()
 	// wxWidgets takes care of deleting the other pointer members
 }
 
-size_t
+void
 TransactionCtrl::configure_top_controls
 (	transaction_type::TransactionType p_transaction_type,
 	wxSize& p_text_box_size,
@@ -348,12 +333,6 @@ TransactionCtrl::configure_top_controls
 		p_available_transaction_types
 )
 {
-	size_t row = 0;
-
-	// Top sizer
-	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
-	SetSizer(m_top_sizer);
-
 	// Add some space to the right to provide room for scrollbar
 	add_dummy_column();
 
@@ -362,8 +341,9 @@ TransactionCtrl::configure_top_controls
 	// the panels to the left.
 	// TODO Tweak this for different platforms, using conditional
 	// compilation.
-	++row;
-	++row;
+	increment_row();
+	increment_row();
+
 	wxStaticText* dummy = new wxStaticText
 	(	this,
 		wxID_ANY,
@@ -371,37 +351,39 @@ TransactionCtrl::configure_top_controls
 		wxDefaultPosition,
 		wxSize(0, 0)
 	);
-	m_top_sizer->Add(dummy, wxGBPosition(row, 0));
+	top_sizer().Add(dummy, wxGBPosition(current_row(), 0));
 
-	++row;
-
+	increment_row();
+	
 	m_transaction_type_ctrl = new TransactionTypeCtrl
 	(	this,
 		s_transaction_type_ctrl_id,
 		wxSize(medium_width(), wxDefaultSize.y),
-		m_database_connection,
+		database_connection(),
 		p_available_transaction_types
 	);
 	m_transaction_type_ctrl->set_transaction_type(p_transaction_type);
 	p_text_box_size = m_transaction_type_ctrl->GetSize();
-	m_top_sizer->Add(m_transaction_type_ctrl, wxGBPosition(row, 0));
+	top_sizer().Add(m_transaction_type_ctrl, wxGBPosition(current_row(), 0));
 
 	m_primary_amount_ctrl = new DecimalTextCtrl
 	(	this,
 		s_primary_amount_ctrl_id,
 		p_text_box_size,
-		m_database_connection.default_commodity().precision(),
+		database_connection().default_commodity().precision(),
 		false
 	);
 	m_primary_amount_ctrl->set_amount(p_primary_amount);
-	m_top_sizer->Add
+	top_sizer().Add
 	(	m_primary_amount_ctrl,
-		wxGBPosition(row, 3),
+		wxGBPosition(current_row(), 3),
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
-	row += 2;
-	return row;
+	increment_row();
+	increment_row();
+
+	return;
 }
 
 void
@@ -423,7 +405,7 @@ TransactionCtrl::configure_for_journal_editing()
 	{
 		available_transaction_types.push_back(generic_transaction);
 	}
-	size_t row = configure_top_controls
+	configure_top_controls
 	(	initial_transaction_type,
 		text_box_size,
 		m_journal->primary_amount(),
@@ -443,7 +425,7 @@ TransactionCtrl::configure_for_journal_editing()
 	m_source_entry_ctrl = new EntryCtrl
 	(	this,
 		source_entries,
-		m_database_connection,
+		database_connection(),
 		initial_transaction_type,
 		text_box_size,
 		true
@@ -451,29 +433,31 @@ TransactionCtrl::configure_for_journal_editing()
 	m_destination_entry_ctrl = new EntryCtrl
 	(	this,
 		destination_entries,
-		m_database_connection,
+		database_connection(),
 		initial_transaction_type,
 		text_box_size,
 		false
 	);
 
-	m_top_sizer->Add
+	top_sizer().Add
 	(	m_source_entry_ctrl,
-		wxGBPosition(row, 0),
+		wxGBPosition(current_row(), 0),
 		wxGBSpan(1, 4),
 		wxEXPAND
 	);
-	
-	row += 2;
 
-	m_top_sizer->Add
+	increment_row();
+	increment_row();
+
+	top_sizer().Add
 	(	m_destination_entry_ctrl,
-		wxGBPosition(row, 0),
+		wxGBPosition(current_row(), 0),
 		wxGBSpan(1, 4),
 		wxEXPAND
 	);
 	
-	row += 2;
+	increment_row();
+	increment_row();
 
 	// TODO Factor out code duplicated with other constructor.
 
@@ -489,11 +473,12 @@ TransactionCtrl::configure_for_journal_editing()
 	(	this,
 		wxID_ANY,
 		wxSize(text_box_size.x * 3 + standard_gap() * 2, text_box_size.y),
-		m_database_connection,
+		database_connection(),
 		is_ordinary,
 		is_draft
 	);
-	m_top_sizer->Add(m_frequency_ctrl, wxGBPosition(row, 0), wxGBSpan(1, 3));
+	top_sizer().
+		Add(m_frequency_ctrl, wxGBPosition(current_row(), 0), wxGBSpan(1, 3));
 	optional<Frequency> maybe_frequency;
 	if (is_draft)
 	{
@@ -527,9 +512,10 @@ TransactionCtrl::configure_for_journal_editing()
 		wxSize(text_box_size.x, text_box_size.y),
 		date
 	);
-	m_top_sizer->Add(m_date_ctrl, wxGBPosition(row, 3));
+	top_sizer().Add(m_date_ctrl, wxGBPosition(current_row(), 3));
 
-	row += 2;
+	increment_row();
+	increment_row();
 
 	// Cancel/Clear button
 	m_cancel_button = new wxButton
@@ -539,7 +525,7 @@ TransactionCtrl::configure_for_journal_editing()
 		wxDefaultPosition,
 		wxSize(text_box_size.x, text_box_size.y)
 	);
-	m_top_sizer->Add(m_cancel_button, wxGBPosition(row, 0));
+	top_sizer().Add(m_cancel_button, wxGBPosition(current_row(), 0));
 
 	// Delete button
 	m_delete_button = new wxButton
@@ -549,7 +535,7 @@ TransactionCtrl::configure_for_journal_editing()
 		wxDefaultPosition,
 		wxSize(text_box_size.x, text_box_size.y)
 	);
-	m_top_sizer->Add(m_delete_button, wxGBPosition(row, 1));
+	top_sizer().Add(m_delete_button, wxGBPosition(current_row(), 1));
 
 	// Save/OK button
 	m_ok_button = new wxButton
@@ -560,15 +546,12 @@ TransactionCtrl::configure_for_journal_editing()
 		wxSize(text_box_size.x, text_box_size.y)
 	);
 
-	m_top_sizer->Add(m_ok_button, wxGBPosition(row, 3));
+	top_sizer().Add(m_ok_button, wxGBPosition(current_row(), 3));
 	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
 
-	configure_scrollbars();
-
 	// "Admin"
-	// SetSizer(m_top_sizer);
-	m_top_sizer->Fit(this);
-	m_top_sizer->SetSizeHints(this);
+	top_sizer().Fit(this);
+	top_sizer().SetSizeHints(this);
 	FitInside();
 	Layout();
 }
@@ -592,14 +575,6 @@ TransactionCtrl::primary_amount() const
 }
 
 void
-TransactionCtrl::configure_scrollbars()
-{
-	SetScrollRate(0, 10);
-	FitInside();
-	return;
-}
-
-void
 TransactionCtrl::add_dummy_column()
 {
 	wxStaticText* dummy = new wxStaticText
@@ -609,7 +584,7 @@ TransactionCtrl::add_dummy_column()
 		wxDefaultPosition,
 		wxSize(scrollbar_width_allowance(), 1)
 	);
-	m_top_sizer->Add(dummy, wxGBPosition(0, 4));
+	top_sizer().Add(dummy, wxGBPosition(0, 4));
 }
 
 void
@@ -715,9 +690,9 @@ TransactionCtrl::post_journal()
 	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
 	if (maybe_frequency)
 	{
-		DraftJournal dj(m_database_connection);
+		DraftJournal dj(database_connection());
 		dj.mimic(journal);
-		Repeater repeater(m_database_connection);
+		Repeater repeater(database_connection());
 		assert (m_date_ctrl->date());
 		gregorian::date const next_date = value(m_date_ctrl->date());
 		Frequency const freq = value(maybe_frequency);
@@ -758,7 +733,7 @@ TransactionCtrl::post_journal()
 		dj.push_repeater(repeater);
 	
 		// Get a name for the DraftJournal
-		DraftJournalNamingDialog naming_ctrl(0, m_database_connection);
+		DraftJournalNamingDialog naming_ctrl(0, database_connection());
 		if (naming_ctrl.ShowModal() == wxID_OK)
 		{
 			dj.set_name(naming_ctrl.draft_journal_name());
@@ -782,7 +757,7 @@ TransactionCtrl::post_journal()
 	else
 	{
 		assert (!maybe_frequency);
-		OrdinaryJournal oj(m_database_connection);
+		OrdinaryJournal oj(database_connection());
 		oj.mimic(journal);
 		assert (m_date_ctrl->date());
 		oj.set_date(value(m_date_ctrl->date()));
@@ -961,7 +936,7 @@ TransactionCtrl::save_existing_journal()
 		
 		if (dj->repeaters().empty())
 		{
-			Repeater repeater(m_database_connection);
+			Repeater repeater(database_connection());
 			repeater.set_next_date(next_date);
 			repeater.set_frequency(freq);
 			dj->push_repeater(repeater);

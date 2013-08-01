@@ -5,16 +5,14 @@
 
 #include "account.hpp"
 #include "decimal_text_ctrl.hpp"
+#include "gridded_scrolled_panel.hpp"
 #include "transaction_type_ctrl.hpp"
 #include "transaction_type.hpp"
-#include <boost/noncopyable.hpp>
 #include <jewel/decimal_fwd.hpp>
 #include <jewel/on_windows.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
-#include <wx/gbsizer.h>
-#include <wx/scrolwin.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 
@@ -74,7 +72,7 @@ class TopPanel;
  * @todo When user creates or amended an Account, the TransactionCtrl should
  * be updated seamlessly, rather than being recreated from scratch.
  */
-class TransactionCtrl: public wxScrolledWindow, private boost::noncopyable
+class TransactionCtrl: public GriddedScrolledPanel
 {
 public:
 	
@@ -149,8 +147,6 @@ public:
 	);
 
 	jewel::Decimal primary_amount() const;
-
-	void configure_scrollbars();
 	
 private:
 	void on_cancel_button_click(wxCommandEvent& event);
@@ -161,9 +157,8 @@ private:
 	// scrollbar.
 	void add_dummy_column();
 
-	// Returns next row.
 	// Places size of "standard text box" in p_text_box_size.
-	size_t configure_top_controls
+	void configure_top_controls
 	(	transaction_type::TransactionType p_transaction_type,
 		wxSize& p_text_box_size,
 		jewel::Decimal const& p_primary_amount,
@@ -194,8 +189,6 @@ private:
 
 	int m_max_entry_row_id;
 
-	wxGridBagSizer* m_top_sizer;
-
 	TransactionTypeCtrl* m_transaction_type_ctrl;
 
 	EntryCtrl* m_source_entry_ctrl;	
@@ -221,7 +214,6 @@ private:
 		s_delete_button_id + 1;
 
 	PersistentJournal* m_journal;
-	PhatbooksDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE()
 
