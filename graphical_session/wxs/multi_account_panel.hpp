@@ -39,9 +39,6 @@ namespace gui
  * panel in which the user can create and configure multiple Accounts,
  * with the types, descriptions and opening balances.
  *
- * @todo Some functions here duplicate some in Report (e.g. make_text). Find
- * an elegant way to re-use this code.
- *
  * @todo We need to ensure that a the database connection has a default
  * Commodity, or else, we need to pass a Commodity separately to the
  * MultiAccountPanel constructor.
