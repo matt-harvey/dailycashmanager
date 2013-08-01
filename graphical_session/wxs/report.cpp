@@ -71,11 +71,7 @@ Report::Report
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date
 ):
-	GriddedScrolledPanel
-	(	p_parent,
-		p_size,
-		p_database_connection
-	),
+	GriddedScrolledPanel(p_parent, p_size, p_database_connection),
 	m_min_date
 	(	database_connection().opening_balance_journal_date() +
 		gregorian::date_duration(1)

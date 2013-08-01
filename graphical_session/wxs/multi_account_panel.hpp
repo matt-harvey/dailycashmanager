@@ -6,13 +6,11 @@
 #include "account_type_ctrl.hpp"
 #include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
-#include <boost/noncopyable.hpp>
+#include "gridded_scrolled_panel.hpp"
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
-#include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
-#include <wx/scrolwin.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <wx/window.h>
@@ -48,13 +46,13 @@ namespace gui
  * Commodity, or else, we need to pass a Commodity separately to the
  * MultiAccountPanel constructor.
  */
-class MultiAccountPanel: public wxScrolledWindow, private boost::noncopyable
+class MultiAccountPanel: public GriddedScrolledPanel
 {
 public:
 	MultiAccountPanel
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		PhatbooksDatabaseConnection& m_database_connection,
+		PhatbooksDatabaseConnection& p_database_connection,
 		account_super_type::AccountSuperType p_account_super_type,
 		Commodity const& p_commodity
 	);
@@ -109,26 +107,11 @@ public:
 	 * placed inside \e error_message.
 	 */
 	bool account_names_valid(wxString& p_error_message) const;
-	
-protected:
-	wxGridBagSizer& top_sizer();
-	int current_row() const;
-	void increment_row();
-	void decrement_row();
-	void make_text
-	(	wxString const& p_text,
-		int p_column,
-		int p_alignment_flags = wxALIGN_LEFT
-	);
-	PhatbooksDatabaseConnection& database_connection();
-	PhatbooksDatabaseConnection const& database_connection() const;
 
 private:
 
 	void on_pop_row_button_click(wxCommandEvent& event);
 	void on_push_row_button_click(wxCommandEvent& event);
-
-	void configure_scrollbars();
 
 	/**
 	 * @returns a newly created Account with Commodity not set but
@@ -159,11 +142,8 @@ private:
 	static unsigned int const s_push_row_button_id = s_pop_row_button_id + 1;
 
 	account_super_type::AccountSuperType m_account_super_type;
-	int m_current_row;
-	wxGridBagSizer* m_top_sizer;
 	wxButton* m_pop_row_button;
 	wxButton* m_push_row_button;
-	PhatbooksDatabaseConnection& m_database_connection;
 	Commodity m_commodity;
 
 	std::vector<wxTextCtrl*> m_account_name_boxes;

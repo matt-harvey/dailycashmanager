@@ -5,6 +5,7 @@
 #include "b_string.hpp"
 #include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
+#include "gridded_scrolled_panel.hpp"
 #include "make_default_accounts.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sizing.hpp"
@@ -12,8 +13,6 @@
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
-#include <wx/gbsizer.h>
-#include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <cassert>
@@ -35,7 +34,7 @@ namespace phatbooks
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(MultiAccountPanel, wxScrolledWindow)
+BEGIN_EVENT_TABLE(MultiAccountPanel, GriddedScrolledPanel)
 	EVT_BUTTON
 	(	s_pop_row_button_id,
 		MultiAccountPanel::on_pop_row_button_click
@@ -74,7 +73,6 @@ namespace
 
 }  // end anonymous namespace
 
-
 MultiAccountPanel::MultiAccountPanel
 (	wxWindow* p_parent,
 	wxSize const& p_size,
@@ -82,24 +80,12 @@ MultiAccountPanel::MultiAccountPanel
 	account_super_type::AccountSuperType p_account_super_type,
 	Commodity const& p_commodity
 ):
-	wxScrolledWindow
-	(	p_parent,
-		wxID_ANY,
-		wxDefaultPosition,
-		p_size,
-		wxVSCROLL
-	),
+	GriddedScrolledPanel(p_parent, p_size, p_database_connection),
 	m_account_super_type(p_account_super_type),
-	m_current_row(0),
-	m_top_sizer(0),
 	m_pop_row_button(0),
 	m_push_row_button(0),
-	m_database_connection(p_database_connection),
 	m_commodity(p_commodity)
 {
-	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
-	SetSizer(m_top_sizer);
-
 	// Buttons
 	m_pop_row_button = new wxButton
 	(	this,
@@ -143,18 +129,18 @@ MultiAccountPanel::MultiAccountPanel
 		opening_balance_label = wxString(" Initial budget allocation");
 	}
 
-	make_text(account_name_label, 0);
-	make_text(wxString(" Type:"), 1);
-	make_text(wxString(" Description:"), 2);
+	display_text(account_name_label, 0);
+	display_text(wxString(" Type:"), 1);
+	display_text(wxString(" Description:"), 2);
 	// Deliberately skipping column 3.
-	make_text(opening_balance_label, 4);
+	display_text(opening_balance_label, 4);
 
 	increment_row();
 
 	// Main body of MultiAccountPanel - a grid of fields where user
 	// can edit Account attributes and opening balances.
 	vector<Account> sugg_accounts =
-		suggested_accounts(m_database_connection, m_account_super_type);
+		suggested_accounts(database_connection(), m_account_super_type);
 	vector<Account>::size_type const sz = sugg_accounts.size();
 	m_account_name_boxes.reserve(sz);
 	m_account_type_boxes.reserve(sz);
@@ -165,7 +151,7 @@ MultiAccountPanel::MultiAccountPanel
 	for ( ; it != end; ++it) add_row(*it);
 
 	// "Admin"
-	configure_scrollbars();
+	FitInside();
 	Layout();
 }
 
@@ -285,13 +271,6 @@ MultiAccountPanel::set_commodity(Commodity const& p_commodity)
 	return;
 }
 
-wxGridBagSizer&
-MultiAccountPanel::top_sizer()
-{
-	assert (m_top_sizer);
-	return *m_top_sizer;
-}
-
 void
 MultiAccountPanel::selected_augmented_accounts
 (	vector<AugmentedAccount>& out
@@ -359,68 +338,6 @@ MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 		account_names.insert(name);
 	}
 	return true;
-}
-
-int
-MultiAccountPanel::current_row() const
-{
-	return m_current_row;
-}
-
-void
-MultiAccountPanel::increment_row()
-{
-	++m_current_row;
-}
-
-void
-MultiAccountPanel::decrement_row()
-{
-	--m_current_row;
-}
-
-void
-MultiAccountPanel::make_text
-(	wxString const& p_text,
-	int p_column,
-	int p_alignment_flags
-)
-{
-	wxStaticText* header = new wxStaticText
-	(	this,
-		wxID_ANY,
-		p_text,
-		wxDefaultPosition,
-		wxDefaultSize,
-		p_alignment_flags
-	);
-	top_sizer().Add
-	(	header,
-		wxGBPosition(current_row(), p_column),
-		wxDefaultSpan,
-		p_alignment_flags
-	);
-	return;
-}
-
-PhatbooksDatabaseConnection&
-MultiAccountPanel::database_connection()
-{
-	return m_database_connection;
-}
-
-PhatbooksDatabaseConnection const&
-MultiAccountPanel::database_connection() const
-{
-	return m_database_connection;
-}
-
-void
-MultiAccountPanel::configure_scrollbars()
-{
-	SetScrollRate(0, 10);
-	FitInside();
-	return;
 }
 
 wxString
