@@ -41,7 +41,7 @@ private:
 
 	void refresh_map();
 
-	void display_text();
+	void display_body();
 
 	struct BalanceDatum
 	{

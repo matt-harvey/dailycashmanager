@@ -56,7 +56,7 @@ private:
 
 	void refresh_map();
 
-	void display_text();
+	void display_body();
 
 	typedef boost::unordered_map<Account::Id, jewel::Decimal> Map;
 	Map m_map;

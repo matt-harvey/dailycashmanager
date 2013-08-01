@@ -3,13 +3,10 @@
 
 #include "account_type.hpp"
 #include "entry.hpp"
+#include "gridded_scrolled_panel.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
-#include <jewel/decimal_fwd.hpp>
-#include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
-#include <wx/scrolwin.h>
 #include <vector>
 
 namespace phatbooks
@@ -38,7 +35,7 @@ class ReportPanel;
  * It is inconsistent with what is currently occurring in the
  * EntryListPanel and the ReconciliationPanel.
  */
-class Report: public wxScrolledWindow, private boost::noncopyable
+class Report: public GriddedScrolledPanel
 {
 public:
 	virtual ~Report();
@@ -63,7 +60,6 @@ public:
 	void generate();
 
 protected:
-	PhatbooksDatabaseConnection& database_connection();
 	Report
 	(	ReportPanel* p_parent,
 		wxSize const& p_size,
@@ -78,27 +74,8 @@ protected:
 	boost::gregorian::date min_date() const;
 	boost::optional<boost::gregorian::date> maybe_max_date() const;
 
-	wxGridBagSizer& top_sizer();
-
-	// TODO Functions here would be useful in other classes too. Find an
-	// elegant way to re-use this code.
-	void increment_row();
-	int current_row() const;
-	void make_text
-	(	wxString const& p_text,
-		int p_column,
-		int p_alignment_flags = wxALIGN_LEFT
-	);
-	void make_number_text(jewel::Decimal const& p_amount, int p_column);
-
 private:
 	virtual void do_generate() = 0;
-
-	void configure_scrollbars();
-
-	int m_current_row;
-	wxGridBagSizer* m_top_sizer;
-	PhatbooksDatabaseConnection& m_database_connection;
 	boost::gregorian::date m_min_date;
 	boost::optional<boost::gregorian::date> m_maybe_max_date;
 

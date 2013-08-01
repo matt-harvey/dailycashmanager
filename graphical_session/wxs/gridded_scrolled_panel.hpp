@@ -2,6 +2,7 @@
 #define GUARD_gridded_scrolled_panel_hpp
 
 #include <jewel/decimal_fwd.hpp>
+#include <boost/noncopyable.hpp>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
 #include <wx/scrolwin.h>
@@ -27,10 +28,12 @@ namespace gui
  * phatbooks::gui::standard_gap() incorporated into the sizing scheme
  * (see "sizing.hpp").
  *
- * Typically this will be a private or protected base class for more
- * customized client classes.
+ * This is a general purpose widget class which will typically be inherited
+ * by more customized widget classes.
  */
-class GriddedScrolledPanel: wxScrolledWindow
+class GriddedScrolledPanel:
+	public wxScrolledWindow,
+	private boost::noncopyable
 {
 public:
 
@@ -47,6 +50,8 @@ public:
 	);
 
 	virtual ~GriddedScrolledPanel();
+
+protected:
 
 	wxGridBagSizer& top_sizer();
 

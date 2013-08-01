@@ -4,6 +4,7 @@
 #include "balance_sheet_report.hpp"
 #include "entry.hpp"
 #include "finformat.hpp"
+#include "gridded_scrolled_panel.hpp"
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
 #include "pl_report.hpp"
@@ -13,7 +14,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
-#include <wx/stattext.h>
+#include <wx/gdicmn.h>
 
 using boost::optional;
 using jewel::Decimal;
@@ -70,15 +71,11 @@ Report::Report
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date
 ):
-	wxScrolledWindow
+	GriddedScrolledPanel
 	(	p_parent,
-		wxID_ANY,
-		wxDefaultPosition,
-		p_size
+		p_size,
+		p_database_connection
 	),
-	m_current_row(0),
-	m_top_sizer(0),
-	m_database_connection(p_database_connection),
 	m_min_date
 	(	database_connection().opening_balance_journal_date() +
 		gregorian::date_duration(1)
@@ -93,8 +90,6 @@ Report::Report
 			m_min_date = provided_min_date;
 		}
 	}
-	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
-	SetSizer(m_top_sizer);
 }
 
 Report::~Report()
@@ -111,70 +106,6 @@ optional<gregorian::date>
 Report::maybe_max_date() const
 {
 	return m_maybe_max_date;
-}
-
-void
-Report::increment_row()
-{
-	++m_current_row;
-	return;
-}
-
-int
-Report::current_row() const
-{
-	return m_current_row;
-}
-
-void
-Report::make_text
-(	wxString const& p_text,
-	int p_column,
-	int p_alignment_flags
-)
-{
-	wxStaticText* header = new wxStaticText
-	(	this,
-		wxID_ANY,
-		p_text,
-		wxDefaultPosition,
-		wxDefaultSize,
-		p_alignment_flags
-	);
-	top_sizer().Add
-	(	header,
-		wxGBPosition(current_row(), p_column),
-		wxDefaultSpan,
-		p_alignment_flags
-	);
-	return;
-}
-
-void
-Report::make_number_text(jewel::Decimal const& p_amount, int p_column)
-{
-	wxStaticText* text = new wxStaticText
-	(	this,
-		wxID_ANY,
-		finformat_wx(p_amount, locale()),
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_RIGHT
-	);
-	top_sizer().Add
-	(	text,
-		wxGBPosition(current_row(), p_column),
-		wxDefaultSpan,
-		wxALIGN_RIGHT
-	);
-	return;
-}
-
-wxGridBagSizer&
-Report::top_sizer()
-{
-	assert (m_top_sizer);
-	return *m_top_sizer;
 }
 
 void
@@ -215,8 +146,6 @@ Report::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
 void
 Report::generate()
 {
-	// TODO Can we factor up more shared code into here?
-	configure_scrollbars();
 	do_generate();
 	// GetParent()->Layout();
 	// m_top_sizer->Fit(this);
@@ -225,21 +154,6 @@ Report::generate()
 	// Layout();
 	return;
 }
-
-void
-Report::configure_scrollbars()
-{
-	SetScrollRate(0, 10);
-	FitInside();
-	return;
-}
-
-PhatbooksDatabaseConnection&
-Report::database_connection()
-{
-	return m_database_connection;
-}
-
 
 
 }  // namespace gui

@@ -55,7 +55,7 @@ void
 BalanceSheetReport::do_generate()
 {
 	refresh_map();
-	display_text();
+	display_body();
 
 	// Don't do "FitInside()", "configure_scrollbars" or that "admin" stuff,
 	// as this is done in the Report base class, in Report::generate().
@@ -108,7 +108,7 @@ BalanceSheetReport::refresh_map()
 }
 
 void
-BalanceSheetReport::display_text()
+BalanceSheetReport::display_body()
 {
 	// Assume m_balance_map is up-to-date. Use its contents to display
 	// the report contents.
@@ -117,9 +117,9 @@ BalanceSheetReport::display_text()
 
 	increment_row();
 
-	make_text(wxString("Opening balance "), 2, wxALIGN_RIGHT);
-	make_text(wxString("  Movement "), 3, wxALIGN_RIGHT);
-	make_text(wxString("  Closing balance "), 4, wxALIGN_RIGHT);
+	display_text(wxString("Opening balance "), 2, wxALIGN_RIGHT);
+	display_text(wxString("  Movement "), 3, wxALIGN_RIGHT);
+	display_text(wxString("  Closing balance "), 4, wxALIGN_RIGHT);
 
 	increment_row();
 	
@@ -187,7 +187,7 @@ BalanceSheetReport::display_text()
 		default:
 			assert (false);
 		}
-		make_text(section_titles.at(i), 1);
+		display_text(section_titles.at(i), 1);
 		
 		increment_row();
 
@@ -206,20 +206,20 @@ BalanceSheetReport::display_text()
 			// Only show Accounts with non-zero balances
 			if ((ob != zero) || (cb != zero))
 			{
-				make_text(*it, 1);
-				make_number_text(ob, 2);
-				make_number_text(cb - ob, 3);
-				make_number_text(cb, 4);
+				display_text(*it, 1);
+				display_decimal(ob, 2);
+				display_decimal(cb - ob, 3);
+				display_decimal(cb, 4);
 				opening_balance_total += ob;
 				closing_balance_total += cb;
 
 				increment_row();
 			}
 		}
-		make_text(wxString("  Total"), 1);
-		make_number_text(opening_balance_total, 2);
-		make_number_text(closing_balance_total - opening_balance_total, 3);
-		make_number_text(closing_balance_total, 4);
+		display_text(wxString("  Total"), 1);
+		display_decimal(opening_balance_total, 2);
+		display_decimal(closing_balance_total - opening_balance_total, 3);
+		display_decimal(closing_balance_total, 4);
 		net_assets_opening += opening_balance_total;
 		net_assets_closing += closing_balance_total;
 
@@ -227,10 +227,10 @@ BalanceSheetReport::display_text()
 		increment_row();
 	}
 
-	make_text(wxString("  Net assets"), 1);
-	make_number_text(net_assets_opening, 2);
-	make_number_text(net_assets_closing - net_assets_opening, 3);
-	make_number_text(net_assets_closing, 4);
+	display_text(wxString("  Net assets"), 1);
+	display_decimal(net_assets_opening, 2);
+	display_decimal(net_assets_closing - net_assets_opening, 3);
+	display_decimal(net_assets_closing, 4);
 
 	increment_row();
 

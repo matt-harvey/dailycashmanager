@@ -53,7 +53,7 @@ void
 PLReport::do_generate()
 {
 	refresh_map();
-	display_text();
+	display_body();
 
 	// Don't do "FitInside()", "configure_scrollbars" or that "admin" stuff,
 	// as this is done in the Report base class, in Report::generate().
@@ -84,11 +84,11 @@ PLReport::display_mean
 {
 	if (p_count == 0)
 	{
-		make_text(wxString("N/A "), p_column, wxALIGN_RIGHT);
+		display_text(wxString("N/A "), p_column, wxALIGN_RIGHT);
 	}
 	else
 	{
-		make_number_text
+		display_decimal
 		(	round(p_total / Decimal(p_count, 0), p_total.places()),
 			p_column
 		);
@@ -150,7 +150,7 @@ PLReport::refresh_map()
 }
 
 void
-PLReport::display_text()
+PLReport::display_body()
 {
 	// Assume m_map is up-to-date. Use it contents to display
 	// the report contents.
@@ -160,8 +160,8 @@ PLReport::display_text()
 
 	increment_row();
 
-	make_text(wxString("Total "), 2, wxALIGN_RIGHT);
-	make_text(wxString("  Daily average "), 3, wxALIGN_RIGHT);
+	display_text(wxString("Total "), 2, wxALIGN_RIGHT);
+	display_text(wxString("  Daily average "), 3, wxALIGN_RIGHT);
 
 	increment_row();
 
@@ -223,7 +223,7 @@ PLReport::display_text()
 		default:
 			assert (false);
 		}
-		make_text(section_titles.at(i), 1);
+		display_text(section_titles.at(i), 1);
 
 		increment_row();
 
@@ -243,8 +243,8 @@ PLReport::display_text()
 			// Only show Accounts with non-zero balances
 			if (b != zero)
 			{
-				make_text(*it, 1);
-				make_number_text(b, 2);
+				display_text(*it, 1);
+				display_decimal(b, 2);
 				total += b;
 
 				display_mean(3, b, count_for_mean);
@@ -252,8 +252,8 @@ PLReport::display_text()
 				increment_row();
 			}
 		}
-		make_text(wxString("  Total"), 1);
-		make_number_text(total, 2);
+		display_text(wxString("  Total"), 1);
+		display_decimal(total, 2);
 
 		display_mean(3, total, count_for_mean);		
 		
@@ -267,8 +267,8 @@ PLReport::display_text()
 		increment_row();
 	}
 
-	make_text(wxString("  Net revenue"), 1);
-	make_number_text(net_revenue, 2);
+	display_text(wxString("  Net revenue"), 1);
+	display_decimal(net_revenue, 2);
 
 	display_mean(3, net_revenue, count_for_mean);
 
