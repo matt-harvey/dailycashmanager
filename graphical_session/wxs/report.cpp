@@ -79,7 +79,10 @@ Report::Report
 	m_current_row(0),
 	m_top_sizer(0),
 	m_database_connection(p_database_connection),
-	m_min_date(database_connection().opening_balance_journal_date()),
+	m_min_date
+	(	database_connection().opening_balance_journal_date() +
+		gregorian::date_duration(1)
+	),
 	m_maybe_max_date(p_maybe_max_date)
 {
 	if (p_maybe_min_date)
