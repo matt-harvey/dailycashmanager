@@ -50,9 +50,7 @@ class TransactionCtrl;
  * @todo Make the amount controls read-only unless and until additional
  * lines are added. We might even want to hide them entirely.
  */
-class EntryCtrl:
-	public wxPanel,
-	private boost::noncopyable
+class EntryCtrl: public wxPanel, private boost::noncopyable
 {
 public:
 	EntryCtrl
@@ -105,7 +103,6 @@ private:
 		boost::optional<jewel::Decimal> const& p_previous_row_amount,
 		bool p_multiple_entries
 	);
-	void add_row(Entry const& p_entry, bool p_multiple_entries);
 	wxString side_description() const;
 	void on_split_button_click(wxCommandEvent& event);
 

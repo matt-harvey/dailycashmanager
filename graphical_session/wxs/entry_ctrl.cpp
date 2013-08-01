@@ -139,15 +139,20 @@ EntryCtrl::EntryCtrl
 	for (vector<Entry>::size_type i = 0; i != sz; ++i)
 	{
 		Entry const& entry = p_entries[i];
+		Decimal amount = (m_is_source? -entry.amount(): entry.amount());
+		if (m_transaction_type == transaction_type::envelope_transaction)
+		{
+			amount = -amount;
+		}
 		add_row
 		(	entry.account(),
 			bstring_to_wx(entry.comment()),
-			entry.amount(),
+			amount,
 			entry.is_reconciled(),
 			maybe_previous_row_amount,
 			multiple_entries
 		);
-		if (i == 0) maybe_previous_row_amount = entry.amount();
+		if (i == 0) maybe_previous_row_amount = amount;
 	}
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
