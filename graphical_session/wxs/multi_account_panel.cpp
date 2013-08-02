@@ -95,7 +95,7 @@ MultiAccountPanel::MultiAccountPanel
 		wxString("Remove ") + account_concept_name(),
 		wxDefaultPosition,
 		wxSize(medium_width(), wxDefaultSize.y),
-		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 	top_sizer().Add
 	(	m_pop_row_button,

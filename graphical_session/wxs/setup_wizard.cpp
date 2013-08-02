@@ -894,7 +894,9 @@ SetupWizard::AccountPage::on_wizard_page_changed
 
 	// TODO Manually set default and focus to the "Next" or "Finish" buttons
 	// to stop it from resting on the "Remove Account" button inside the
-	// MultiAccountPanels. (The below is a failed attempt to do this.)
+	// MultiAccountPanels. (The below is a failed attempt to do this.) This
+	// is a problem on Gnome but not on Windows. It looks like a
+	// Gnome-specific bug with wxWidgets.
 	/*
 	wxWindowList const& children = GetParent()->GetChildren();
 	wxWindowList::const_iterator it = children.begin();
