@@ -280,8 +280,10 @@ MultiAccountPanel::selected_augmented_accounts
 (	vector<AugmentedAccount>& out
 )
 {
-	assert (out.empty());  // precondition
-
+#	ifndef NDEBUG
+		vector<AugmentedAccount>::size_type const original_size =
+			out.size();
+#	endif
 	vector<AugmentedAccount>::size_type const sz =
 		m_account_name_boxes.size();
 	assert (m_account_type_boxes.size() == sz);
@@ -306,14 +308,20 @@ MultiAccountPanel::selected_augmented_accounts
 		account.set_commodity(m_commodity);
 
 		// TODO Make sure it is clear to the user which way round the
-		// signs are supposed to go.
+		// signs are supposed to go, especially for account_type::liability
+		// (where the user should normally enter a negative number).
 		augmented_account.technical_opening_balance =
-			m_opening_balance_boxes[i]->amount();
+		(	m_account_super_type == account_super_type::pl?
+			-m_opening_balance_boxes[i]->amount():
+			m_opening_balance_boxes[i]->amount()
+		);
 
 		assert (!account.has_id());
 		out.push_back(augmented_account);
 	}
-	assert (out.size() == sz);
+#	ifndef NDEBUG
+		assert (out.size() == original_size + sz);
+#	endif
 	return;
 }
 

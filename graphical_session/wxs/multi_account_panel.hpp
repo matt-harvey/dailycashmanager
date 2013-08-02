@@ -89,8 +89,9 @@ public:
 	 * their commodity() attribute initialized to
 	 * database_connection().default_commodity().
 	 *
-	 * \e out should be empty when passed to this function. It is the caller's
-	 * responsibility to ensure this.
+	 * \e out need not be empty when passed to this function. The selected
+	 * AugmentedAccounts will simply be pushed onto the back of the existing
+	 * vector, whether it is empty or not.
 	 */
 	void selected_augmented_accounts
 	(	std::vector<AugmentedAccount>& out

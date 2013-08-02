@@ -56,6 +56,9 @@ class MultiAccountPanel;
  * filepath look like you can write in them, but actually you can't. This
  * misleads the user and is bad (which is pointed out in the "GUI Bloopers"
  * book). Fix it.
+ *
+ * @todo Ensure that Account names in m_pl_account_page do not
+ * conflict with those in m_balance_sheet_account_page.
  */
 class SetupWizard: public wxWizard
 {

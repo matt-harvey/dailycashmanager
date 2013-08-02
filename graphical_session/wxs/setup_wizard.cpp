@@ -240,6 +240,7 @@ void
 SetupWizard::selected_augmented_accounts(vector<AugmentedAccount>& out) const
 {
 	m_balance_sheet_account_page->selected_augmented_accounts(out);
+	m_pl_account_page->selected_augmented_accounts(out);
 	return;
 }
 
