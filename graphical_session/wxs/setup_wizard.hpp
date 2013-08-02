@@ -92,8 +92,6 @@ private:
 	class FilepathValidator;
 	class FilepathPage;
 	class AccountPage;
-	class BalanceSheetAccountPage;
-	// class PLAccountPage;
 
 	void render_account_pages();
 
@@ -127,8 +125,8 @@ private:
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	FilepathPage* m_filepath_page;
-	BalanceSheetAccountPage* m_balance_sheet_account_page;
-	// PLAccountPage* m_pl_account_page;
+	AccountPage* m_balance_sheet_account_page;
+	AccountPage* m_pl_account_page;
 	
 };  // SetupWizard
 
@@ -222,10 +220,6 @@ private:
  * Represents a page for setting up Accounts in a SetupWizard.
  * Abstract base class - more specific Account page types derive
  * from this.
- *
- * @todo HIGH PRIORITY Make it prompt user if duplicate or otherwise
- * invalid Accounts are entered. Capture this prompt within this
- * class, in page-change handler.
  */
 class SetupWizard::AccountPage:
 	public wxWizardPageSimple,
@@ -234,6 +228,7 @@ class SetupWizard::AccountPage:
 public:
 	AccountPage
 	(	SetupWizard* p_parent,
+		account_super_type::AccountSuperType p_account_super_type,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
@@ -245,6 +240,8 @@ public:
 	(	std::vector<SetupWizard::AugmentedAccount>& out
 	) const;
 
+	void set_commodity(Commodity const& p_commodity);
+
 protected:
 	PhatbooksDatabaseConnection& database_connection() const;
 	SetupWizard const& parent() const;
@@ -252,91 +249,27 @@ protected:
 	int current_row() const;
 	void increment_row();
 
-private:
-	virtual wxString do_get_main_text() const = 0;
-	virtual void do_render_account_view() = 0;
-	virtual void do_get_selected_augmented_accounts
-	(	std::vector<SetupWizard::AugmentedAccount>& out
-	) const = 0;
+	bool account_names_valid(wxString& p_error_message) const;
+	bool account_types_valid(wxString& p_error_message) const;
 
-	// virtual bool account_names_valid(wxString& error_message) const = 0;
-	// virtual bool account_types_valid(wxString& error_message) const = 0;
+private:
+
+	void on_wizard_page_changing(wxWizardEvent& event);
 
 	void render_main_text();
 	void render_account_view();
+	wxString main_text() const;
+
+	account_super_type::AccountSuperType m_account_super_type;
 	int m_current_row;
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxGridBagSizer* m_top_sizer;
+	MultiAccountPanel* m_multi_account_panel;
 	SetupWizard const& m_parent;
 
-};
-
-
-/**
- * Represents a page for setting up balance sheet Accounts in a
- * SetupWizard.
- */
-class SetupWizard::BalanceSheetAccountPage: public SetupWizard::AccountPage
-{
-public:
-	BalanceSheetAccountPage
-	(	SetupWizard* p_parent,
-		PhatbooksDatabaseConnection& p_database_connection
-	);
-
-	void set_commodity(Commodity const& p_commodity);
-
-private:
-	void do_render_account_view();
-
-	/**
-	 * @throws DuplicateAccountNameException in the event that the same
-	 * Account name appears in two or more rows.
-	 */
-	void do_get_selected_augmented_accounts
-	(	std::vector<SetupWizard::AugmentedAccount>& out
-	) const;
-
-	wxString do_get_main_text() const;
-	// void add_account();
-	// void on_account_adding_button_click(wxCommandEvent& event);
-	
-	bool account_names_valid(wxString& error_message) const;
-	bool account_types_valid(wxString& error_message) const;
-
-	static unsigned int const s_account_name_col_num = 0;
-	static unsigned int const s_account_type_col_num = 1;
-	static unsigned int const s_opening_balance_col_num = 2;
-	static unsigned int const s_num_columns = 3;
-
-	static int const s_account_adding_button_id = wxID_HIGHEST + 1;
-	MultiAccountPanel* m_multi_account_panel;
-	unsigned int m_num_rows;
-	
-	void on_wizard_page_changing(wxWizardEvent& event);
-
 	DECLARE_EVENT_TABLE()
-
 };
 
-#if 0
-/***
- * Represents a page for setting up profit-and-loss Accounts in
- * a SetupWizard.
- */
-class SetupWizard::PLAccountPage:
-	public SetupWizard::AccountPage
-{
-public:
-	PLAccountPage
-	(	SetupWizard* parent,
-		PhatbooksDatabaseConnection& p_database_connection
-	);
-private:
-	void do_render_account_view();
-	wxString do_get_main_text() const;
-};
-#endif
 
 }  // namespace gui
 }  // namespace phatbooks

@@ -167,19 +167,30 @@ SetupWizard::SetupWizard
 	),
 	m_database_connection(p_database_connection),
 	m_filepath_page(0),
-	m_balance_sheet_account_page(0)
-	// , m_pl_account_page(0)
+	m_balance_sheet_account_page(0),
+	m_pl_account_page(0)
 {
 	assert (!m_database_connection.is_valid());
 	m_filepath_page = new FilepathPage(this, m_database_connection);
-	m_balance_sheet_account_page = new BalanceSheetAccountPage
+	m_balance_sheet_account_page = new AccountPage
 	(	this,
+		account_super_type::balance_sheet,
 		m_database_connection
 	);
-	// m_pl_account_page = new PLAccountPage(this, m_database_connection);
+	m_pl_account_page = new AccountPage
+	(	this,
+		account_super_type::pl,
+		m_database_connection
+	);
 	render_account_pages();
-	wxWizardPageSimple::Chain(m_filepath_page, m_balance_sheet_account_page);
-	// wxWizardPageSimple::Chain(m_balance_sheet_account_page, m_pl_account_page);
+	wxWizardPageSimple::Chain
+	(	m_filepath_page,
+		m_balance_sheet_account_page
+	);
+	wxWizardPageSimple::Chain
+	(	m_balance_sheet_account_page,
+		m_pl_account_page
+	);
 	GetPageAreaSizer()->Add(m_filepath_page);
 }
 
@@ -221,7 +232,7 @@ SetupWizard::set_assumed_currency(Commodity const& p_commodity)
 {
 	assert (m_balance_sheet_account_page);	
 	m_balance_sheet_account_page->set_commodity(p_commodity);
-	// TODO Do this for m_pl_account_page too, if we have this.
+	m_pl_account_page->set_commodity(p_commodity);
 	return;
 }
 
@@ -243,9 +254,9 @@ SetupWizard::render_account_pages()
 	// precision, and hence the spacing of the "zero dash" on the
 	// AccountPage(s).
 	assert (m_balance_sheet_account_page);
-	// assert (m_pl_account_page);
+	assert (m_pl_account_page);
 	m_balance_sheet_account_page->render();
-	// m_pl_account_page->render();
+	m_pl_account_page->render();
 	return;
 }
 
@@ -687,16 +698,24 @@ SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 
 /*** SetupWizard::AccountPage ***/
 
-
+BEGIN_EVENT_TABLE(SetupWizard::AccountPage, wxWizardPageSimple)
+	EVT_WIZARD_PAGE_CHANGING
+	(	wxID_ANY,
+		SetupWizard::AccountPage::on_wizard_page_changing
+	)
+END_EVENT_TABLE()
 
 SetupWizard::AccountPage::AccountPage
 (	SetupWizard* p_parent,
+	account_super_type::AccountSuperType p_account_super_type,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxWizardPageSimple(p_parent),
+	m_account_super_type(p_account_super_type),
 	m_current_row(0),
 	m_database_connection(p_database_connection),
 	m_top_sizer(0),
+	m_multi_account_panel(0),
 	m_parent(*p_parent)
 {
 }
@@ -724,7 +743,17 @@ SetupWizard::AccountPage::selected_augmented_accounts
 (	vector<AugmentedAccount>& out
 ) const
 {
-	do_get_selected_augmented_accounts(out);
+	m_multi_account_panel->selected_augmented_accounts(out);
+	return;
+}
+
+void
+SetupWizard::AccountPage::set_commodity
+(	Commodity const& p_commodity
+)
+{
+	assert (m_multi_account_panel);
+	m_multi_account_panel->set_commodity(p_commodity);
 	return;
 }
 
@@ -734,7 +763,7 @@ SetupWizard::AccountPage::render_main_text()
 	wxStaticText* text = new wxStaticText
 	(	this,
 		wxID_ANY,
-		do_get_main_text(),
+		main_text(),
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_LEFT
@@ -751,7 +780,33 @@ SetupWizard::AccountPage::render_main_text()
 void
 SetupWizard::AccountPage::render_account_view()
 {
-	do_render_account_view();
+	// Create the control for displaying Accounts
+	wxSize const size =
+		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
+	Commodity const commodity = parent().selected_currency();
+
+	// Add dummy column to right to allow room for scrollbar.
+	wxStaticText* dummy = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxSize(scrollbar_width_allowance(), 1)
+	);
+	top_sizer().Add(dummy, wxGBPosition(current_row(), 1));
+
+	JEWEL_DEBUG_LOG_LOCATION;
+
+	// Main body of page.
+	m_multi_account_panel = new MultiAccountPanel
+	(	this,
+		wxSize(MultiAccountPanel::required_width(), size.y * 18),
+		database_connection(),
+		m_account_super_type,
+		commodity
+	);
+	top_sizer().Add(m_multi_account_panel, wxGBPosition(current_row(), 0));
+	increment_row();
 	return;
 }
 
@@ -787,26 +842,28 @@ SetupWizard::AccountPage::increment_row()
 	return;
 }
 
+bool
+SetupWizard::AccountPage::account_names_valid
+(	wxString& error_message
+) const
+{
+	assert (m_multi_account_panel);
+	return m_multi_account_panel->account_names_valid(error_message);
+}
 
-/*** BalanceSheetAccountPage ***/
-
-
-BEGIN_EVENT_TABLE(SetupWizard::BalanceSheetAccountPage, wxWizardPageSimple)
-	EVT_WIZARD_PAGE_CHANGING
-	(	wxID_ANY,
-		SetupWizard::BalanceSheetAccountPage::on_wizard_page_changing
-	)
-	/*
-	EVT_BUTTON
-	(	s_account_adding_button_id,
-		SetupWizard::BalanceSheetAccountPage::on_account_adding_button_click
-	)
-	*/
-END_EVENT_TABLE()
-
+bool
+SetupWizard::AccountPage::account_types_valid
+(	wxString& error_message
+) const
+{
+	// This used to do something but now we are guaranteed that AccountTypes
+	// will be valid, given the way MultiAccountPanel works.
+	(void)error_message;  // silence compiler re. unused parameter
+	return true;
+}
 
 void
-SetupWizard::BalanceSheetAccountPage::on_wizard_page_changing
+SetupWizard::AccountPage::on_wizard_page_changing
 (	wxWizardEvent& event
 )
 {
@@ -826,93 +883,26 @@ SetupWizard::BalanceSheetAccountPage::on_wizard_page_changing
 	return;
 }
 
-SetupWizard::BalanceSheetAccountPage::BalanceSheetAccountPage
-(	SetupWizard* p_parent,
-	PhatbooksDatabaseConnection& p_database_connection
-):
-	AccountPage(p_parent, p_database_connection),
-	m_multi_account_panel(0),
-	m_num_rows(0)
-{
-}
-
 wxString
-SetupWizard::BalanceSheetAccountPage::do_get_main_text() const
+SetupWizard::AccountPage::main_text() const
 {
-	return wxString
-	(	" Enter your assets (things you own) and liabilities (what you owe)."
-	);
-}
-
-bool
-SetupWizard::BalanceSheetAccountPage::account_names_valid
-(	wxString& error_message
-) const
-{
-	assert (m_multi_account_panel);
-	return m_multi_account_panel->account_names_valid(error_message);
-}
-
-bool
-SetupWizard::BalanceSheetAccountPage::account_types_valid
-(	wxString& error_message
-) const
-{
-	// This used to do something but now we are guaranteed that AccountTypes
-	// will be valid, given the way MultiAccountPanel works.
-	(void)error_message;  // silence compiler re. unused parameter
-	return true;
-}
-
-void
-SetupWizard::BalanceSheetAccountPage::do_get_selected_augmented_accounts
-(	vector<AugmentedAccount>& out
-) const
-{
-	assert (m_multi_account_panel);
-	m_multi_account_panel->selected_augmented_accounts(out);
-	return;
-}
-
-void
-SetupWizard::BalanceSheetAccountPage::do_render_account_view()
-{
-	// Create the control for displaying Accounts
-	wxSize const size =
-		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
-	Commodity const commodity = parent().selected_currency();
-
-	// Add dummy column to right to allow room for scrollbar.
-	wxStaticText* dummy = new wxStaticText
-	(	this,
-		wxID_ANY,
-		wxEmptyString,
-		wxDefaultPosition,
-		wxSize(scrollbar_width_allowance(), 1)
-	);
-	top_sizer().Add(dummy, wxGBPosition(current_row(), 1));
-
-	// Main body of page.
-	m_multi_account_panel = new MultiAccountPanel
-	(	this,
-		wxSize(MultiAccountPanel::required_width(), size.y * 9),
-		database_connection(),
-		account_super_type::balance_sheet,
-		commodity
-	);
-	top_sizer().Add(m_multi_account_panel, wxGBPosition(current_row(), 0));
-	increment_row();
-	return;
-}
-
-void
-SetupWizard::BalanceSheetAccountPage::set_commodity
-(	Commodity const& p_commodity
-)
-{
-	assert (m_multi_account_panel);
-	m_multi_account_panel->set_commodity(p_commodity);
-	return;
+	wxString ret(" ");
+	switch (m_account_super_type)
+	{
+	case account_super_type::balance_sheet:
+		ret += wxString
+		(	"Enter your assets (things you own) and liabilities "
+			"(what you owe)."
+		);
+		break;
+	case account_super_type::pl:
+		ret += wxString("Enter some revenue and expenditure categories.");
+		break;
+	default:
+		assert (false);
+	}
+	ret += wxString(" (Note, you can always add more later.)");
+	return ret;
 }
 
 }  // namespace gui

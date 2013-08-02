@@ -53,20 +53,25 @@ make_default_accounts
 	switch (p_account_type)
 	{
 	case account_type::asset:
+		JEWEL_DEBUG_LOG_LOCATION;
 		names.push_back(BString("Cash"));
 		names.push_back(BString("Cheque account"));
 		break;
 	case account_type::liability:
+		JEWEL_DEBUG_LOG_LOCATION;
 		names.push_back(BString("Credit card"));
 		break;
 	case account_type::equity:
+		JEWEL_DEBUG_LOG_LOCATION;
 		// There are no default equity Accounts.
 		break;
 	case account_type::revenue:
+		JEWEL_DEBUG_LOG_LOCATION;
 		names.push_back(BString("Salary"));
 		names.push_back(BString("Interest received"));
 		break;
 	case account_type::expense:
+		JEWEL_DEBUG_LOG_LOCATION;
 		names.reserve(7);
 		names.push_back(BString("Food"));
 		names.push_back(BString("Household supplies"));
@@ -81,6 +86,7 @@ make_default_accounts
 		// it as an expense?
 		break;
 	case account_type::pure_envelope:
+		JEWEL_DEBUG_LOG_LOCATION;
 		// There are no default pure_envelope Accounts.
 		break;
 	default:
