@@ -704,6 +704,10 @@ BEGIN_EVENT_TABLE(SetupWizard::AccountPage, wxWizardPageSimple)
 	(	wxID_ANY,
 		SetupWizard::AccountPage::on_wizard_page_changing
 	)
+	EVT_WIZARD_PAGE_CHANGED
+	(	wxID_ANY,
+		SetupWizard::AccountPage::on_wizard_page_changed
+	)
 END_EVENT_TABLE()
 
 SetupWizard::AccountPage::AccountPage
@@ -736,7 +740,6 @@ SetupWizard::AccountPage::render()
 	// m_top_sizer->Fit(this);
 	// Fit();
 	Layout();
-	return;
 }
 
 void
@@ -880,6 +883,42 @@ SetupWizard::AccountPage::on_wizard_page_changing
 	assert (account_names_valid(error_message));
 	assert (account_types_valid(error_message));
 	return;
+}
+
+void
+SetupWizard::AccountPage::on_wizard_page_changed
+(	wxWizardEvent& event
+)
+{
+	(void)event;  // silence compiler re. unused parameter
+
+	// TODO Manually set default and focus to the "Next" or "Finish" buttons
+	// to stop it from resting on the "Remove Account" button inside the
+	// MultiAccountPanels. (The below is a failed attempt to do this.)
+	/*
+	wxWindowList const& children = GetParent()->GetChildren();
+	wxWindowList::const_iterator it = children.begin();
+	wxWindowList::const_iterator const end = children.end();
+	for ( ; it != end; ++it)
+	{
+		wxButton* button = 0;
+		if ((button = dynamic_cast<wxButton*>(*it)))
+		{
+			wxString const label = button->GetLabel();
+			JEWEL_DEBUG_LOG << (wxString("|") + label + wxString("|")) << endl;
+			JEWEL_DEBUG_LOG << label.size() << endl;
+			if
+			(	(label == wxString("&Next >")) ||
+				(label == wxString("&Finish"))
+			)
+			{
+				JEWEL_DEBUG_LOG << "Hit!" << endl;
+				button->SetDefault();
+				button->SetFocusFromKbd();
+			}
+		}
+	}
+	*/
 }
 
 wxString

@@ -88,6 +88,7 @@ MultiAccountPanel::MultiAccountPanel
 	m_commodity(p_commodity)
 {
 	// Buttons
+
 	m_pop_row_button = new wxButton
 	(	this,
 		s_pop_row_button_id,
@@ -118,7 +119,6 @@ MultiAccountPanel::MultiAccountPanel
 	);
 
 	increment_row();
-
 	increment_row();
 
 	// Row of column headings
@@ -157,6 +157,9 @@ MultiAccountPanel::MultiAccountPanel
 	// "Admin"
 	FitInside();
 	// Layout();
+	
+	assert (!m_opening_balance_boxes.empty());
+	m_opening_balance_boxes.at(0)->SetFocus();
 }
 
 MultiAccountPanel::~MultiAccountPanel()

@@ -54,6 +54,7 @@ AccountCtrl::update_for_new(Account const& p_account)
 void
 AccountCtrl::update_for_amended(Account const& p_account)
 {
+	(void)p_account;  // silence compiler re. unused parameter
 	Account const selected_account = account();
 	list<Account> accounts;
 	list<Account>::size_type const sz = GetCount();

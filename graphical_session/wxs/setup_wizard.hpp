@@ -258,6 +258,7 @@ protected:
 private:
 
 	void on_wizard_page_changing(wxWizardEvent& event);
+	void on_wizard_page_changed(wxWizardEvent& event);
 
 	void render_main_text();
 	void render_account_view();
