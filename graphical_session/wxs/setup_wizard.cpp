@@ -795,8 +795,6 @@ SetupWizard::AccountPage::render_account_view()
 	);
 	top_sizer().Add(dummy, wxGBPosition(current_row(), 1));
 
-	JEWEL_DEBUG_LOG_LOCATION;
-
 	// Main body of page.
 	m_multi_account_panel = new MultiAccountPanel
 	(	this,

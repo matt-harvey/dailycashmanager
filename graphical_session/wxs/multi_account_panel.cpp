@@ -142,8 +142,6 @@ MultiAccountPanel::MultiAccountPanel
 	// can edit Account attributes and opening balances.
 	vector<Account> sugg_accounts =
 		suggested_accounts(database_connection(), m_account_super_type);
-	JEWEL_DEBUG_LOG_LOCATION;
-	JEWEL_DEBUG_LOG << "m_account_super_type: " << m_account_super_type << endl;
 	vector<Account>::size_type const sz = sugg_accounts.size();
 	m_account_name_boxes.reserve(sz);
 	m_account_type_boxes.reserve(sz);
@@ -153,8 +151,6 @@ MultiAccountPanel::MultiAccountPanel
 	vector<Account>::iterator const end = sugg_accounts.end();
 	for ( ; it != end; ++it)
 	{
-		JEWEL_DEBUG_LOG << it->name() << endl;
-		JEWEL_DEBUG_LOG_LOCATION;
 		add_row(*it);
 	}
 
@@ -189,7 +185,6 @@ MultiAccountPanel::blank_account()
 	vector<account_type::AccountType> const& atypes =
 		account_types(m_account_super_type);
 	assert (!atypes.empty());
-	JEWEL_DEBUG_LOG_LOCATION;
 	ret.set_account_type(atypes.at(0));
 	return ret;
 }
@@ -197,8 +192,6 @@ MultiAccountPanel::blank_account()
 void
 MultiAccountPanel::add_row(Account& p_account)
 {
-	JEWEL_DEBUG_LOG << "Entered MultiAccountPanel::add_row(...)" << endl;
-	
 	int const row = current_row();
 
 	// Account name
@@ -223,13 +216,6 @@ MultiAccountPanel::add_row(Account& p_account)
 		database_connection(),
 		m_account_super_type
 	);
-	JEWEL_DEBUG_LOG_LOCATION;
-	JEWEL_DEBUG_LOG << "p_account.name(): "
-	                << p_account.name()
-					<< endl;
-	JEWEL_DEBUG_LOG << "p_account.account_type(): "
-	                << account_type_to_string(p_account.account_type())
-					<< endl;
 	account_type_box->set_account_type(p_account.account_type());
 	top_sizer().Add(account_type_box, wxGBPosition(row, 1));
 	m_account_type_boxes.push_back(account_type_box);
@@ -315,7 +301,6 @@ MultiAccountPanel::selected_augmented_accounts
 		account_type::AccountType const account_type =
 			m_account_type_boxes[i]->account_type();
 		assert (super_type(account_type) == m_account_super_type);
-		JEWEL_DEBUG_LOG_LOCATION;
 		account.set_account_type(account_type);
 		account.set_description(m_description_boxes[i]->GetValue());
 		account.set_commodity(m_commodity);
@@ -421,7 +406,6 @@ MultiAccountPanel::on_push_row_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused variable
 	Account account = blank_account();
-	JEWEL_DEBUG_LOG_LOCATION;
 	add_row(account);
 	return;
 }
