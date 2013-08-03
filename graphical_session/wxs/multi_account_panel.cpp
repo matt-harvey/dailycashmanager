@@ -36,17 +36,6 @@ namespace phatbooks
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(MultiAccountPanel, GriddedScrolledPanel)
-	EVT_BUTTON
-	(	s_pop_row_button_id,
-		MultiAccountPanel::on_pop_row_button_click
-	)
-	EVT_BUTTON
-	(	s_push_row_button_id,
-		MultiAccountPanel::on_push_row_button_click
-	)
-END_EVENT_TABLE()
-
 namespace
 {
 	vector<Account> suggested_accounts
@@ -83,47 +72,13 @@ MultiAccountPanel::MultiAccountPanel
 ):
 	GriddedScrolledPanel(p_parent, p_size, p_database_connection),
 	m_account_super_type(p_account_super_type),
-	m_pop_row_button(0),
-	m_push_row_button(0),
 	m_commodity(p_commodity)
 {
-	// Buttons
-
-	m_pop_row_button = new wxButton
-	(	this,
-		s_pop_row_button_id,
-		wxString("Remove ") + account_concept_name(),
-		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.y),
-		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
-	);
-	top_sizer().Add
-	(	m_pop_row_button,
-		wxGBPosition(current_row(), 3),
-		wxDefaultSpan,
-		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
-	);
-	m_push_row_button = new wxButton
-	(	this,
-		s_push_row_button_id,
-		wxString("Add ") + account_concept_name(),
-		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.y),
-		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
-	);
-	top_sizer().Add
-	(	m_push_row_button,
-		wxGBPosition(current_row(), 4),
-		wxDefaultSpan,
-		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
-	);
-
-	increment_row();
-	increment_row();
-
 	// Row of column headings
 	wxString const account_name_label =
-		wxString(" ") + account_concept_name(true) + wxString(" name:");
+		wxString(" ") +
+		bstring_to_wx(account_concept_name(m_account_super_type, true)) +
+		wxString(" name:");
 	wxString opening_balance_label(" Opening balance:");
 	if (m_account_super_type == account_super_type::pl)
 	{
@@ -151,7 +106,7 @@ MultiAccountPanel::MultiAccountPanel
 	vector<Account>::iterator const end = sugg_accounts.end();
 	for ( ; it != end; ++it)
 	{
-		add_row(*it);
+		push_row(*it);
 	}
 
 	// "Admin"
@@ -177,6 +132,40 @@ MultiAccountPanel::required_width()
 		scrollbar_width_allowance();
 }
 
+void
+MultiAccountPanel::push_row()
+{
+	Account account = blank_account();
+	push_row(account);
+	return;
+}
+
+void
+MultiAccountPanel::pop_row()
+{
+	if (m_account_name_boxes.empty())
+	{
+		return;
+	}
+#	ifndef NDEBUG
+		vector<wxTextCtrl*>::size_type const sz = m_account_name_boxes.size();
+		assert (sz > 0);
+		assert (sz == m_account_type_boxes.size());
+		assert (sz == m_description_boxes.size());
+		assert (sz == m_opening_balance_boxes.size());
+#	endif
+
+	pop_widget_from(m_opening_balance_boxes);
+	pop_widget_from(m_description_boxes);
+	pop_widget_from(m_account_type_boxes);
+	pop_widget_from(m_account_name_boxes);
+
+	decrement_row();
+
+	FitInside();
+	return;
+}
+
 Account
 MultiAccountPanel::blank_account()
 {
@@ -193,7 +182,7 @@ MultiAccountPanel::blank_account()
 }
 
 void
-MultiAccountPanel::add_row(Account& p_account)
+MultiAccountPanel::push_row(Account& p_account)
 {
 	int const row = current_row();
 
@@ -341,7 +330,10 @@ MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 		if (name.IsEmpty())
 		{
 			p_error_message =
-				account_concept_name(true) + wxString(" name is blank");
+				bstring_to_wx
+				(	account_concept_name(m_account_super_type, true)
+				) +
+				wxString(" name is blank");
 			return false;
 		}
 		if (account_names.find(name) != account_names.end())
@@ -364,61 +356,6 @@ MultiAccountPanel::total_amount() const
 		Decimal(0, m_commodity.precision()),
 		total_amount_aux
 	);
-}
-
-wxString
-MultiAccountPanel::account_concept_name(bool p_capitalize) const
-{
-	// TODO This "user facing Account concept name" concept is used
-	// elsewhere. This information should be singly located for use
-	// across the application - probably in a free standing function in
-	// "account.hpp".
-	switch (m_account_super_type)
-	{
-	case account_super_type::balance_sheet:
-		return p_capitalize? wxString("Account"): wxString("account");
-	case account_super_type::pl:
-		return p_capitalize? wxString("Category"): wxString("category");
-	default:
-		assert (false);
-	}
-	assert (false);
-}
-
-void
-MultiAccountPanel::on_pop_row_button_click(wxCommandEvent& event)
-{
-	(void)event;  // silence compiler re. unused variable
-	if (m_account_name_boxes.empty())
-	{
-		return;
-	}
-#	ifndef NDEBUG
-		vector<wxTextCtrl*>::size_type const sz = m_account_name_boxes.size();
-		assert (sz > 0);
-		assert (sz == m_account_type_boxes.size());
-		assert (sz == m_description_boxes.size());
-		assert (sz == m_opening_balance_boxes.size());
-#	endif
-
-	pop_widget_from(m_opening_balance_boxes);
-	pop_widget_from(m_description_boxes);
-	pop_widget_from(m_account_type_boxes);
-	pop_widget_from(m_account_name_boxes);
-
-	decrement_row();
-
-	FitInside();
-	return;
-}
-
-void
-MultiAccountPanel::on_push_row_button_click(wxCommandEvent& event)
-{
-	(void)event;  // silence compiler re. unused variable
-	Account account = blank_account();
-	add_row(account);
-	return;
 }
 
 MultiAccountPanel::AugmentedAccount::AugmentedAccount

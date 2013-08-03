@@ -700,6 +700,14 @@ SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 /*** SetupWizard::AccountPage ***/
 
 BEGIN_EVENT_TABLE(SetupWizard::AccountPage, wxWizardPageSimple)
+	EVT_BUTTON
+	(	s_pop_row_button_id,
+		SetupWizard::AccountPage::on_pop_row_button_click
+	)
+	EVT_BUTTON
+	(	s_push_row_button_id,
+		SetupWizard::AccountPage::on_push_row_button_click
+	)
 	EVT_WIZARD_PAGE_CHANGING
 	(	wxID_ANY,
 		SetupWizard::AccountPage::on_wizard_page_changing
@@ -736,9 +744,13 @@ SetupWizard::AccountPage::render()
 	SetSizer(m_top_sizer);
 	increment_row();
 	render_main_text();
+	render_buttons();
+	increment_row();
+	increment_row();
 	render_account_view();
-	// m_top_sizer->Fit(this);
-	// Fit();
+	increment_row();
+	m_top_sizer->Fit(this);
+	Fit();
 	Layout();
 }
 
@@ -769,15 +781,47 @@ SetupWizard::AccountPage::render_main_text()
 		wxID_ANY,
 		main_text(),
 		wxDefaultPosition,
-		wxDefaultSize,
+		wxSize(medium_width() * 3 + standard_gap() * 2, wxDefaultSize.y),
 		wxALIGN_LEFT
 	);
-	wxSize const size =
-		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
-	text->Wrap(size.x * 1.5);
-	top_sizer().Add(text, wxGBPosition(current_row(), 0));
-	increment_row();
-	increment_row();
+	text->Wrap(medium_width() * 3 + standard_gap() * 2);
+	top_sizer().Add(text, wxGBPosition(current_row(), 0), wxGBSpan(1, 3));
+	return;
+}
+
+void
+SetupWizard::AccountPage::render_buttons()
+{
+	wxString const concept_name =
+		bstring_to_wx(account_concept_name(m_account_super_type));
+	m_pop_row_button = new wxButton
+	(	this,
+		s_pop_row_button_id,
+		wxString("Remove ") + concept_name,
+		wxDefaultPosition,
+		wxSize(medium_width(), wxDefaultSize.y),
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+	);
+	top_sizer().Add
+	(	m_pop_row_button,
+		wxGBPosition(current_row(), 3),
+		wxDefaultSpan,
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+	);
+	m_push_row_button = new wxButton
+	(	this,
+		s_push_row_button_id,
+		wxString("Add ") + concept_name,
+		wxDefaultPosition,
+		wxSize(medium_width(), wxDefaultSize.y),
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+	);
+	top_sizer().Add
+	(	m_push_row_button,
+		wxGBPosition(current_row(), 4),
+		wxDefaultSpan,
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+	);
 	return;
 }
 
@@ -797,18 +841,21 @@ SetupWizard::AccountPage::render_account_view()
 		wxDefaultPosition,
 		wxSize(scrollbar_width_allowance(), 1)
 	);
-	top_sizer().Add(dummy, wxGBPosition(current_row(), 1));
+	top_sizer().Add(dummy, wxGBPosition(current_row(), 5));
 
 	// Main body of page.
 	m_multi_account_panel = new MultiAccountPanel
 	(	this,
-		wxSize(MultiAccountPanel::required_width(), size.y * 18),
+		wxSize(MultiAccountPanel::required_width(), size.y * 14),
 		database_connection(),
 		m_account_super_type,
 		commodity
 	);
-	top_sizer().Add(m_multi_account_panel, wxGBPosition(current_row(), 0));
-	increment_row();
+	top_sizer().Add
+	(	m_multi_account_panel,
+		wxGBPosition(current_row(), 0),
+		wxGBSpan(1, 5)
+	);
 	return;
 }
 
@@ -862,6 +909,24 @@ SetupWizard::AccountPage::account_types_valid
 	// will be valid, given the way MultiAccountPanel works.
 	(void)error_message;  // silence compiler re. unused parameter
 	return true;
+}
+
+void
+SetupWizard::AccountPage::on_pop_row_button_click(wxCommandEvent& event)
+{
+	(void)event;  // silence compiler re. unused variable
+	assert (m_multi_account_panel);
+	m_multi_account_panel->pop_row();
+	return;
+}
+
+void
+SetupWizard::AccountPage::on_push_row_button_click(wxCommandEvent& event)
+{
+	(void)event;  // silence compiler re. unused variable
+	assert (m_multi_account_panel);
+	m_multi_account_panel->push_row();
+	return;
 }
 
 void

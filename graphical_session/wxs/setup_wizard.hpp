@@ -257,15 +257,23 @@ protected:
 
 private:
 
+	void on_pop_row_button_click(wxCommandEvent& event);
+	void on_push_row_button_click(wxCommandEvent& event);
 	void on_wizard_page_changing(wxWizardEvent& event);
 	void on_wizard_page_changed(wxWizardEvent& event);
 
 	void render_main_text();
+	void render_buttons();
 	void render_account_view();
 	wxString main_text() const;
 
+	static unsigned int const s_pop_row_button_id = wxID_HIGHEST + 1;
+	static unsigned int const s_push_row_button_id = s_pop_row_button_id + 1;
+
 	account_super_type::AccountSuperType m_account_super_type;
 	int m_current_row;
+	wxButton* m_pop_row_button;
+	wxButton* m_push_row_button;
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxGridBagSizer* m_top_sizer;
 	MultiAccountPanel* m_multi_account_panel;

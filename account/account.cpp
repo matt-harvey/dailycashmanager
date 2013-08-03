@@ -279,6 +279,22 @@ bool is_not_pure_envelope(Account const& account)
 	return account.account_type() != account_type::pure_envelope;
 }
 
+BString account_concept_name
+(	account_super_type::AccountSuperType p_account_super_type,
+	bool p_capitalize
+)
+{
+	switch (p_account_super_type)
+	{
+	case account_super_type::balance_sheet:
+		return p_capitalize? BString("Account"): BString("account");
+	case account_super_type::pl:
+		return p_capitalize? BString("Category"): BString("category");
+	default:
+		assert (false);
+	}
+	assert (false);
+}
 
 
 }   // namespace phatbooks

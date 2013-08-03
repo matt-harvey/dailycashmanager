@@ -258,8 +258,15 @@ bool is_not_pure_envelope(Account const& account);
 std::vector<account_type::AccountType> balance_sheet_account_types();
 std::vector<account_type::AccountType> pl_account_types();
 
-
-
+/**
+ * @returns "account", "category" or some such string to describe
+ * to the \e user the "thing" which they are creating in this
+ * particular MultiAccountPanel.
+ */
+BString account_concept_name
+(	account_super_type::AccountSuperType p_account_super_type,
+	bool p_capitalize = false
+);
 
 
 }  // namespace phatbooks

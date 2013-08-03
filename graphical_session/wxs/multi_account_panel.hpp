@@ -9,7 +9,6 @@
 #include "gridded_scrolled_panel.hpp"
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
-#include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
@@ -112,10 +111,20 @@ public:
 	 */
 	jewel::Decimal total_amount() const;
 
-private:
+	/**
+	 * Add a new row with blank text boxes, and zero (rounded to precision
+	 * of the Commodity of the MultiAccountPanel) in the opening balance
+	 * boxes.
+	 */
+	void push_row();
 
-	void on_pop_row_button_click(wxCommandEvent& event);
-	void on_push_row_button_click(wxCommandEvent& event);
+	/**
+	 * Remove the bottom displayed row. Does nothing if there are no rows
+	 * left.
+	 */
+	void pop_row();
+
+private:
 
 	/**
 	 * @returns a newly created Account with Commodity not set but
@@ -131,31 +140,17 @@ private:
 	 * that this will set \e p_account.commodity() to m_commodity, even
 	 * if \e p_account already has a Commodity set.
 	 */
-	void add_row(Account& p_account);
-
-	/**
-	 * @returns "account", "category" or some such string to describe
-	 * to the \e user the "thing" which they are creating in this
-	 * particular MultiAccountPanel.
-	 */
-	wxString account_concept_name(bool p_capitalize = false) const;
+	void push_row(Account& p_account);
 
 	template <typename T> void pop_widget_from(std::vector<T>& p_vec);
 	
-	static unsigned int const s_pop_row_button_id = wxID_HIGHEST + 1;
-	static unsigned int const s_push_row_button_id = s_pop_row_button_id + 1;
-
 	account_super_type::AccountSuperType m_account_super_type;
-	wxButton* m_pop_row_button;
-	wxButton* m_push_row_button;
 	Commodity m_commodity;
 
 	std::vector<wxTextCtrl*> m_account_name_boxes;
 	std::vector<AccountTypeCtrl*> m_account_type_boxes;
 	std::vector<wxTextCtrl*> m_description_boxes;
 	std::vector<DecimalTextCtrl*> m_opening_balance_boxes;
-
-	DECLARE_EVENT_TABLE()
 
 };  // class MultiAccountPanel
 
