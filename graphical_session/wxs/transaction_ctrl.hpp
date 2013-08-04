@@ -63,6 +63,12 @@ class TopPanel;
  *
  * @todo When user creates or amended an Account, the TransactionCtrl should
  * be updated seamlessly, rather than being recreated from scratch.
+ *
+ * @todo HIGH PRIORITY Loading a Journal that has been saved after editing
+ * that involves splitting and/or unsplitting of EntryCtrl will often result
+ * in complete failure, with Entries appearing in unexpected rows, as a result
+ * of the Entries being loaded in order of Entry::Id. The fix should involve
+ * the save_existing_journal method.
  */
 class TransactionCtrl: public GriddedScrolledPanel
 {

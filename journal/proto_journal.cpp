@@ -332,7 +332,8 @@ ProtoJournal::do_load_journal_core
 	ProtoJournal temp(*this);
 	SQLStatement entry_finder
 	(	dbc,	
-		"select entry_id from entries where journal_id = :jid"
+		"select entry_id from entries where journal_id = :jid "
+		"order by entry_id"
 	);
 	entry_finder.bind(":jid", id);
 	while (entry_finder.step())

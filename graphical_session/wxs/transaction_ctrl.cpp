@@ -49,6 +49,7 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
+#include <iterator>
 #include <vector>
 
 using boost::optional;
@@ -56,6 +57,8 @@ using boost::scoped_ptr;
 using jewel::num_elements;
 using jewel::Decimal;
 using jewel::value;
+using std::back_inserter;
+using std::copy;
 using std::endl;
 using std::vector;
 
@@ -815,92 +818,49 @@ TransactionCtrl::save_existing_journal()
 		value(m_transaction_type_ctrl->transaction_type());
 	m_journal->set_transaction_type(ttype);
 
-	// Make a vector containing the source Entries
-	vector<Entry> source_entries;
-	// Bare scope
-	{
-		// Populate it with the original source Entries
-		vector<Entry>::size_type i = 0;
-		vector<Entry>::size_type const f = m_journal->fulcrum();
-		for ( ; i != f; ++i)
-		{
-			source_entries.push_back(m_journal->entries()[i]);
-		}
-	}
-	// Make a vector containing the destination Entries
-	vector<Entry> destination_entries;
-	// Bare scope
-	{
-		// Populate it with the original destination Entries
-		vector<Entry>::size_type i = m_journal->fulcrum();
-		vector<Entry>::size_type const sz = m_journal->entries().size();
-		for ( ; i != sz; ++i)
-		{
-			destination_entries.push_back(m_journal->entries()[i]);
-		}
-	}
+	typedef vector<Entry> Vec;
+
+	// Start with the original Entries.
+	Vec entries = m_journal->entries();
+
 	// Via the EntryCtrl, additional Entries might have been inserted into,
 	// or removed from, the source Entries, the destination Entries, or both.
+	Vec doomed_entries;
 
-	vector<Entry> doomed_entries;
-
-	// Update source entries with data from m_source_entry_ctrl
+	// Update entries with data from m_source_entry_ctrl and
+	// m_destination_entry_ctrl.
 	// Bare scope
 	{
-		vector<Entry> fresh_source_entries =
-			m_source_entry_ctrl->make_entries();
-		vector<Entry>::size_type i = 0;
-		vector<Entry>::size_type const sz = source_entries.size();
+		Vec fresh_entries = m_source_entry_ctrl->make_entries();
+		m_journal->set_fulcrum(fresh_entries.size());
+		Vec const fresh_destination_entries =
+			m_destination_entry_ctrl->make_entries();
+		copy
+		(	fresh_destination_entries.begin(),
+			fresh_destination_entries.end(),
+			back_inserter(fresh_entries)
+		);
+		Vec::size_type i = 0;
+		Vec::size_type const sz = entries.size();
 		for ( ; i != sz; ++i)
 		{
-			if (i < fresh_source_entries.size())
+			if (i < fresh_entries.size())
 			{
-				JEWEL_DEBUG_LOG << "Mimicking source entry." << endl;
-				source_entries[i].mimic(fresh_source_entries[i]);
+				entries[i].mimic(fresh_entries[i]);
 				assert
-				(	source_entries[i].is_reconciled() ==
-					fresh_source_entries[i].is_reconciled()
+				(	entries[i].is_reconciled() ==
+					fresh_entries[i].is_reconciled()
 				);
 			}
 			else
 			{
-				doomed_entries.push_back(source_entries[i]);
+				doomed_entries.push_back(entries[i]);
 			}
 		}	
-		for ( ; i < fresh_source_entries.size(); ++i)
+		for ( ; i < fresh_entries.size(); ++i)
 		{
-			assert (i >= source_entries.size());
-			source_entries.push_back(fresh_source_entries[i]);
-		}
-	}
-	// Update destination entries with data from m_destination_entry_ctrl
-	// Bare scope
-	// TODO Factor out code duplicated between here and the previous block.
-	{
-		vector<Entry> fresh_destination_entries =
-			m_destination_entry_ctrl->make_entries();
-		vector<Entry>::size_type i = 0;
-		vector<Entry>::size_type const sz = destination_entries.size();
-		for ( ; i != sz; ++i)
-		{
-			if (i < fresh_destination_entries.size())
-			{
-				JEWEL_DEBUG_LOG << "Mimicking destination entry." << endl;
-				destination_entries[i].mimic(fresh_destination_entries[i]);
-				assert
-				(	destination_entries[i].is_reconciled() ==
-					fresh_destination_entries[i].is_reconciled()
-				);
-			}
-			else
-			{
-				doomed_entries.push_back(destination_entries[i]);
-			}
-		}
-		for ( ; i < fresh_destination_entries.size(); ++i)
-		{
-			assert (i >= destination_entries.size());
-			destination_entries.push_back(fresh_destination_entries[i]);
+			assert (i >= entries.size());
+			entries.push_back(fresh_entries[i]);
 		}
 	}
 	// Clear the existing entries from journal, then reinsert all the updated
@@ -908,16 +868,27 @@ TransactionCtrl::save_existing_journal()
 	m_journal->clear_entries();
 	// Bare scope
 	{
-		vector<Entry>::size_type i = 0;
-		vector<Entry>::size_type sz = source_entries.size();
-		for ( ; i != sz; ++i) m_journal->push_entry(source_entries[i]);
-
-		i = 0;
-		sz = destination_entries.size();
-		for ( ; i != sz; ++i) m_journal->push_entry(destination_entries[i]);
-
-		i = 0;
-		sz = doomed_entries.size();
+		Vec::size_type i = 0;
+		Vec::size_type sz = entries.size();
+#		ifndef NDEBUG
+			Entry::Id test_id = 0;
+#		endif
+		for ( ; i != sz; ++i)
+		{
+#			ifndef NDEBUG
+				if (entries[i].has_id())
+				{
+					assert (entries[i].id() > test_id);
+					test_id = entries[i].id();
+				}
+#			endif
+			m_journal->push_entry(entries[i]);
+		}
+	}
+	// Bare scope
+	{
+		Vec::size_type i = 0;
+		Vec::size_type const sz = doomed_entries.size();
 		for ( ; i != sz; ++i) m_journal->remove_entry(doomed_entries[i]);
 	}
 		
