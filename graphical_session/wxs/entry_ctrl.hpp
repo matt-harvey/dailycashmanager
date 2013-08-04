@@ -106,7 +106,8 @@ private:
 
 	void configure_account_reader();
 	void configure_top_row(bool p_include_split_button);
-	void add_row
+	void pop_row();
+	void push_row
 	(	Account const& p_account,
 		wxString const& p_comment,
 		jewel::Decimal const& p_amount,
@@ -114,7 +115,9 @@ private:
 		boost::optional<jewel::Decimal> const& p_previous_row_amount,
 		bool p_multiple_entries
 	);
+	void adjust_layout_for_new_number_of_rows();
 	wxString side_description() const;
+	void on_unsplit_button_click(wxCommandEvent& event);
 	void on_split_button_click(wxCommandEvent& event);
 
 	/**
@@ -123,9 +126,12 @@ private:
 	 */
 	void autobalance(EntryDecimalTextCtrl* p_target);
 
+	template <typename T> void pop_widget_from(std::vector<T>& p_vec);
+
 	PhatbooksDatabaseConnection& m_database_connection;
 
-	static unsigned int const s_split_button_id = wxID_HIGHEST + 1;
+	static unsigned int const s_unsplit_button_id = wxID_HIGHEST + 1;
+	static unsigned int const s_split_button_id = s_unsplit_button_id + 1;
 
 	bool m_is_source;
 	transaction_type::TransactionType m_transaction_type;
@@ -135,17 +141,32 @@ private:
 
 	wxGridBagSizer* m_top_sizer;
 	wxStaticText* m_side_descriptor;
+	wxButton* m_unsplit_button;
 	wxButton* m_split_button;
 	std::vector<AccountCtrl*> m_account_name_boxes;
 	std::vector<wxTextCtrl*> m_comment_boxes;
 	std::vector<EntryDecimalTextCtrl*> m_amount_boxes;
 	std::vector<int> m_reconciliation_statuses;  // avoid vector<bool>
 
-	size_t m_next_row;
+	size_t m_current_row;
 
 	DECLARE_EVENT_TABLE()
 
 };  // class EntryCtrl
+
+// TODO This duplicates code also contained in MultiAccountPanel. Factor
+// out if there's a clean way to do it.
+template <typename T>
+void
+EntryCtrl::pop_widget_from(std::vector<T>& p_vec)
+{
+	T doomed_elem = p_vec.back();
+	m_top_sizer->Detach(doomed_elem);
+	doomed_elem->Destroy();
+	doomed_elem = 0;
+	p_vec.pop_back();
+	return;
+}
 
 
 }  // namespace gui

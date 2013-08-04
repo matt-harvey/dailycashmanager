@@ -40,6 +40,10 @@ namespace gui
 
 BEGIN_EVENT_TABLE(EntryCtrl, wxPanel)
 	EVT_BUTTON
+	(	s_unsplit_button_id,
+		EntryCtrl::on_unsplit_button_click
+	)
+	EVT_BUTTON
 	(	s_split_button_id,
 		EntryCtrl::on_split_button_click
 	)
@@ -67,7 +71,9 @@ EntryCtrl::EntryCtrl
 	m_text_ctrl_size(p_text_ctrl_size),
 	m_top_sizer(0),
 	m_side_descriptor(0),
-	m_next_row(0)
+	m_unsplit_button(0),
+	m_split_button(0),
+	m_current_row(0)
 {
 	assert (m_account_name_boxes.empty());
 	assert (m_comment_boxes.empty());
@@ -89,7 +95,7 @@ EntryCtrl::EntryCtrl
 	optional<Decimal> const maybe_previous_row_amount;
 	for ( ; it != end; ++it)
 	{
-		add_row
+		push_row
 		(	*it,
 			wxEmptyString,
 			Decimal(0, it->commodity().precision()),
@@ -121,7 +127,9 @@ EntryCtrl::EntryCtrl
 	m_text_ctrl_size(p_text_ctrl_size),
 	m_top_sizer(0),
 	m_side_descriptor(0),
-	m_next_row(0)
+	m_unsplit_button(0),
+	m_split_button(0),
+	m_current_row(0)
 {
 	assert (m_account_name_boxes.empty());
 	assert (m_comment_boxes.empty());
@@ -149,7 +157,7 @@ EntryCtrl::EntryCtrl
 		{
 			amount = -amount;
 		}
-		add_row
+		push_row
 		(	entry.account(),
 			bstring_to_wx(entry.comment()),
 			amount,
@@ -197,9 +205,9 @@ EntryCtrl::configure_account_reader()
 void
 EntryCtrl::configure_top_row(bool p_include_split_button)
 {
-	assert (m_next_row == 0);
+	assert (m_current_row == 0);
 	m_side_descriptor = new wxStaticText(this, wxID_ANY, side_description());
-	m_top_sizer->Add(m_side_descriptor, wxGBPosition(m_next_row, 0));
+	m_top_sizer->Add(m_side_descriptor, wxGBPosition(m_current_row, 0));
 
 	wxStaticText* const comment_label = new wxStaticText
 	(	this,
@@ -209,7 +217,7 @@ EntryCtrl::configure_top_row(bool p_include_split_button)
 		wxDefaultSize,
 		wxALIGN_LEFT
 	);
-	m_top_sizer->Add(comment_label, wxGBPosition(m_next_row, 1));
+	m_top_sizer->Add(comment_label, wxGBPosition(m_current_row, 1));
 
 	// Split button is in row 0 if and only if there are multiple
 	// Accounts.
@@ -224,10 +232,10 @@ EntryCtrl::configure_top_row(bool p_include_split_button)
 			wxDefaultPosition,
 			m_text_ctrl_size
 		);
-		m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row, 3));
+		m_top_sizer->Add(m_split_button, wxGBPosition(m_current_row, 3));
 	}
-	++m_next_row;
-	assert (m_next_row == 1);
+	++m_current_row;
+	assert (m_current_row == 1);
 	return;
 }
 
@@ -381,14 +389,66 @@ EntryCtrl::on_split_button_click(wxCommandEvent& event)
 		m_account_name_boxes.at(m_account_name_boxes.size() - 1)->account();
 	Decimal const amount(0, account.commodity().precision());
 	optional<Decimal> const maybe_prev_amount;
-	add_row(account, wxEmptyString, amount, false, maybe_prev_amount, true);
+	push_row(account, wxEmptyString, amount, false, maybe_prev_amount, true);
 	assert (!m_amount_boxes.empty());
 	autobalance(m_amount_boxes.back());
 	return;
 }
 
 void
-EntryCtrl::add_row
+EntryCtrl::on_unsplit_button_click(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler warning re. unused parameter.
+	pop_row();
+	return;
+}
+
+void
+EntryCtrl::pop_row()
+{
+	if (m_account_name_boxes.size() == 1)
+	{
+		return;
+	}
+	assert (m_account_name_boxes.size() > 1);
+
+#	ifndef NDEBUG
+		vector<AccountCtrl*>::size_type const sz =
+			m_account_name_boxes.size();
+		assert (sz > 0);
+		assert (sz == m_comment_boxes.size());
+		assert (sz == m_amount_boxes.size());
+		assert (sz == m_reconciliation_statuses.size());
+#	endif
+
+	pop_widget_from(m_account_name_boxes);
+	pop_widget_from(m_comment_boxes);
+	pop_widget_from(m_amount_boxes);
+	m_reconciliation_statuses.pop_back();
+
+	if (m_account_name_boxes.size() == 1)
+	{
+		// Rearrange things to destroy m_unsplit_button, and move
+		// m_split_button to its "inline" position, in place of the remaining
+		// EntryDecimalAmountCtrl.
+		pop_widget_from(m_amount_boxes);
+		m_top_sizer->Detach(m_unsplit_button);
+		m_unsplit_button->Destroy();
+		m_unsplit_button = 0;
+		m_top_sizer->Detach(m_split_button);
+		m_top_sizer->Add(m_split_button, wxGBPosition(1, 3));
+		m_comment_boxes.back()->MoveBeforeInTabOrder(m_split_button);
+	}
+	
+	--m_current_row;
+
+	adjust_layout_for_new_number_of_rows();
+
+	return;
+}
+
+void
+EntryCtrl::push_row
 (	Account const& p_account,
 	wxString const& p_comment,
 	Decimal const& p_amount,
@@ -397,6 +457,8 @@ EntryCtrl::add_row
 	bool p_multiple_entries
 )
 {
+	// WARNING This is quite messy.
+
 	AccountCtrl* account_name_box = new AccountCtrl
 	(	this,
 		wxID_ANY,
@@ -405,7 +467,7 @@ EntryCtrl::add_row
 		m_account_reader->begin(),
 		m_account_reader->end()
 	);
-	m_top_sizer->Add(account_name_box, wxGBPosition(m_next_row, 0));
+	m_top_sizer->Add(account_name_box, wxGBPosition(m_current_row, 0));
 	m_account_name_boxes.push_back(account_name_box);
 	wxTextCtrl* comment_ctrl = new wxTextCtrl
 	(	this,
@@ -416,7 +478,7 @@ EntryCtrl::add_row
 		wxALIGN_LEFT
 	);
 	m_top_sizer->
-		Add(comment_ctrl, wxGBPosition(m_next_row, 1), wxGBSpan(1, 2));
+		Add(comment_ctrl, wxGBPosition(m_current_row, 1), wxGBSpan(1, 2));
 	m_comment_boxes.push_back(comment_ctrl);
 
 	m_reconciliation_statuses.push_back(static_cast<int>(p_is_reconciled));
@@ -436,7 +498,7 @@ EntryCtrl::add_row
 			wxDefaultPosition,
 			m_text_ctrl_size
 		);
-		m_top_sizer->Add(m_split_button, wxGBPosition(m_next_row, 3));
+		m_top_sizer->Add(m_split_button, wxGBPosition(m_current_row, 3));
 	}
 	else
 	{
@@ -445,41 +507,68 @@ EntryCtrl::add_row
 		(	this,
 			m_text_ctrl_size
 		);
-		if (m_amount_boxes.empty() && (m_next_row == 2))
+		if (m_current_row == 2)
 		{
 			// Then this is either the 0 or the 1 entry row. The 0 one
 			// doesn't have an amount box...
 			// The 0 Entry line now needs a EntryDecimalTextCtrl too, and
 			// we need to reposition m_split_button to make way for it.
-			m_top_sizer->Detach(m_split_button);
-			m_top_sizer->Add(m_split_button, wxGBPosition(0, 3));
-			assert (!m_account_name_boxes.empty());
-			m_split_button->MoveBeforeInTabOrder(m_account_name_boxes[0]);
-			EntryDecimalTextCtrl* prev_amount_ctrl = new EntryDecimalTextCtrl
+			m_unsplit_button = new wxButton
 			(	this,
+				s_unsplit_button_id,
+				wxString("Unsplit"),
+				wxDefaultPosition,
 				m_text_ctrl_size
 			);
-			if (p_previous_row_amount)
+			m_top_sizer->Add
+			(	m_unsplit_button,
+				wxGBPosition(0, 2),
+				wxDefaultSpan,
+				wxALIGN_RIGHT
+			);
+			if (m_amount_boxes.empty())
 			{
-				prev_amount_ctrl->set_amount(value(p_previous_row_amount));
+				m_top_sizer->Detach(m_split_button);
+				m_top_sizer->Add(m_split_button, wxGBPosition(0, 3));
+				assert (!m_account_name_boxes.empty());
+				m_split_button->MoveBeforeInTabOrder(m_account_name_boxes[0]);
+				EntryDecimalTextCtrl* prev_amount_ctrl =
+					new EntryDecimalTextCtrl
+					(	this,
+						m_text_ctrl_size
+					);
+				if (p_previous_row_amount)
+				{
+					prev_amount_ctrl->
+						set_amount(value(p_previous_row_amount));
+				}
+				else
+				{
+					prev_amount_ctrl->set_amount(primary_amount());
+				}
+				m_top_sizer->
+					Add(prev_amount_ctrl, wxGBPosition(1, 3));
+				prev_amount_ctrl->MoveBeforeInTabOrder(account_name_box);
+				assert (m_amount_boxes.empty());
+				m_amount_boxes.push_back(prev_amount_ctrl);
 			}
-			else
-			{
-				prev_amount_ctrl->set_amount(primary_amount());
-			}
-			m_top_sizer->
-				Add(prev_amount_ctrl, wxGBPosition(1, 3));
-			prev_amount_ctrl->MoveBeforeInTabOrder(account_name_box);
-			assert (m_amount_boxes.empty());
-			m_amount_boxes.push_back(prev_amount_ctrl);
+			m_unsplit_button->MoveBeforeInTabOrder(m_split_button);
 		}
 		amount_ctrl->set_amount(p_amount);
-		m_top_sizer->Add(amount_ctrl, wxGBPosition(m_next_row, 3));
+		m_top_sizer->Add(amount_ctrl, wxGBPosition(m_current_row, 3));
 		m_amount_boxes.push_back(amount_ctrl);
 	}
 
-	++m_next_row;
+	++m_current_row;
 
+	adjust_layout_for_new_number_of_rows();
+
+	return;
+}
+
+void
+EntryCtrl::adjust_layout_for_new_number_of_rows()
+{
 	Layout();  // Must call this.
 	
 	TransactionCtrl* parent = dynamic_cast<TransactionCtrl*>(GetParent());

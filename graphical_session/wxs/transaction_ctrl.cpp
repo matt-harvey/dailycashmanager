@@ -537,7 +537,7 @@ TransactionCtrl::configure_for_journal_editing()
 		wxDefaultPosition,
 		wxSize(text_box_size.x, text_box_size.y)
 	);
-	top_sizer().Add(m_delete_button, wxGBPosition(current_row(), 1));
+	top_sizer().Add(m_delete_button, wxGBPosition(current_row(), 2));
 
 	// Save/OK button
 	m_ok_button = new wxButton
@@ -839,8 +839,8 @@ TransactionCtrl::save_existing_journal()
 			destination_entries.push_back(m_journal->entries()[i]);
 		}
 	}
-	// Via the EntryCtrl, additional Entries might have been inserted
-	// the source Entries, the destination Entries, or both.
+	// Via the EntryCtrl, additional Entries might have been inserted into,
+	// or removed from, the source Entries, the destination Entries, or both.
 
 	vector<Entry> doomed_entries;
 
@@ -903,7 +903,7 @@ TransactionCtrl::save_existing_journal()
 			destination_entries.push_back(fresh_destination_entries[i]);
 		}
 	}
-	// Clear the exiting entries from journal, then reinsert all the updated
+	// Clear the existing entries from journal, then reinsert all the updated
 	// entries, then remove the doomed entries.
 	m_journal->clear_entries();
 	// Bare scope
