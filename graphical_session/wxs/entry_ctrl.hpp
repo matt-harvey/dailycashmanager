@@ -93,6 +93,7 @@ public:
 	bool is_all_zero() const;
 
 private:
+	jewel::Decimal total_amount() const;
 	void configure_account_reader();
 	void configure_top_row(bool p_include_split_button);
 	void add_row
@@ -105,6 +106,15 @@ private:
 	);
 	wxString side_description() const;
 	void on_split_button_click(wxCommandEvent& event);
+
+	/**
+	 * Adjusts the amount in \e p_target_ctrl on the basis of
+	 * a change in the amount in \e p_source_ctrl, such
+	 * that the journal continues to balance despite the change.
+	 *
+	 * Assumes that <em>p_target != p_source</em> (and that neither is null).
+	 */
+	void autobalance(DecimalTextCtrl* p_target, DecimalTextCtrl* p_source);
 
 	PhatbooksDatabaseConnection& m_database_connection;
 

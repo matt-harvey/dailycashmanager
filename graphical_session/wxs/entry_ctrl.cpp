@@ -284,18 +284,7 @@ EntryCtrl::primary_amount() const
 bool
 EntryCtrl::is_balanced() const
 {
-	if (m_amount_boxes.empty())
-	{
-		return true;
-	}
-	vector<DecimalTextCtrl>::size_type const sz = m_amount_boxes.size();
-	assert (sz >= 2);
-	Decimal entry_sum(0, 0);
-	for (vector<DecimalTextCtrl>::size_type i = 0; i != sz; ++i)
-	{
-		entry_sum += m_amount_boxes[i]->amount();
-	}
-	return entry_sum == primary_amount();
+	return total_amount() == primary_amount();
 }
 
 vector<Entry>
@@ -366,6 +355,23 @@ EntryCtrl::is_all_zero() const
 		}
 	}
 	return true;
+}
+
+Decimal
+EntryCtrl::total_amount() const
+{
+	if (m_amount_boxes.empty())
+	{
+		return primary_amount();
+	}
+	vector<DecimalTextCtrl>::size_type const sz = m_amount_boxes.size();
+	assert (sz >= 2);
+	Decimal ret(0, 0);
+	for (vector<DecimalTextCtrl>::size_type i = 0; i != sz; ++i)
+	{
+		ret += m_amount_boxes[i]->amount();
+	}
+	return ret;
 }
 
 void
@@ -505,6 +511,38 @@ EntryCtrl::side_description() const
 	}
 	assert (!m_is_source);
 	return wxString(" Destination:");
+}
+
+void
+EntryCtrl::autobalance(DecimalTextCtrl* p_target, DecimalTextCtrl* p_source)
+{
+	// TODO This needs to be called when there is a kill-focus event from one
+	// of the DecimalTextCtrls - or perhaps only when an "autobalance" button
+	// is pressed. The latter might be less surprising for the user. If we
+	// trigger it from kill-focus, we would need to see if that kill-focus
+	// comes from the "save" button being pressed. If it does, we NOT trigger
+	// auto-balance, as the user wouldn't be able to see the actual change
+	// that has been made.
+
+	// Preconditions
+	assert (p_target);
+	assert (p_source);
+	assert (p_target != p_source);
+
+	Decimal const orig_total = total_amount();
+	Decimal const orig_primary_amount = primary_amount();
+	if (orig_total != orig_primary_amount)
+	{
+		Decimal const orig_target_amount = p_target->amount();
+		Decimal const required_increment = orig_primary_amount - orig_total;
+		p_target->set_amount(orig_target_amount + required_increment);
+		assert (p_target->amount().places() == orig_target_amount.places());
+	}
+
+	// Postconditions
+	assert (primary_amount() == orig_primary_amount);
+	assert (total_amount() == primary_amount());
+	return;
 }
 
 }  // namespace gui
