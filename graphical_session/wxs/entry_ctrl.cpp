@@ -544,6 +544,13 @@ EntryCtrl::EntryDecimalTextCtrl::EntryDecimalTextCtrl
 		false
 	)
 {
+	// TODO We should have an application-level setting where user can
+	// disable tooltips.
+	SetToolTip
+	(	wxString
+		(	"Double-click to balance transaction automatically to this line."
+		)
+	);
 }
 
 EntryCtrl::EntryDecimalTextCtrl::~EntryDecimalTextCtrl()
