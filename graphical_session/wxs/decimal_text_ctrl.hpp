@@ -23,6 +23,10 @@ namespace gui
  * any real benefit. Should I just move the behaviour we do require from
  * DecimalValidator directly into DecimalTextCtrl, and then abolish
  * DecimalValidator?
+ *
+ * @todo Enable the user to enter simple sums as well as just a single
+ * amount. The simple sums should be calculated on validation, and then
+ * the result displayed.
  */
 class DecimalTextCtrl: public wxTextCtrl
 {

@@ -77,11 +77,9 @@ public:
 	(	transaction_type::TransactionType p_transaction_type
 	);
 
-	void set_primary_amount(jewel::Decimal const& p_primary_amount);
-
 	jewel::Decimal primary_amount() const;
 
-	bool is_balanced() const;
+	jewel::Decimal total_amount() const;
 
 	/**
 	 * @returns a vector of newly created Entries (WITHOUT ids), based
@@ -106,7 +104,6 @@ private:
 
 	friend class EntryDecimalTextCtrl;
 
-	jewel::Decimal total_amount() const;
 	void configure_account_reader();
 	void configure_top_row(bool p_include_split_button);
 	void add_row

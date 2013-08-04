@@ -32,6 +32,7 @@
 #include <boost/optional.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <jewel/array_utilities.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/on_windows.hpp>
@@ -52,6 +53,7 @@
 
 using boost::optional;
 using boost::scoped_ptr;
+using jewel::num_elements;
 using jewel::Decimal;
 using jewel::value;
 using std::endl;
@@ -643,6 +645,8 @@ void
 TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
+	assert (m_source_entry_ctrl);
+	assert (m_destination_entry_ctrl);
 	if (Validate() && TransferDataFromWindow())
 	{
 		if (is_balanced())
@@ -652,7 +656,29 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 		}
 		else
 		{
-			wxMessageBox("Transaction does not balance.");
+			wxString msg = wxEmptyString;
+			msg += wxString("Cannot save unbalanced transaction.\n");
+			Decimal const imbalances[] =
+			{	m_source_entry_ctrl->total_amount() - primary_amount(),
+				m_destination_entry_ctrl->total_amount() - primary_amount()
+			};
+			for (size_t i = 0; i != num_elements(imbalances); ++i)
+			{
+				Decimal const& imbalance = imbalances[i];
+				if (imbalance != Decimal(0, 0))
+				{
+					msg += "Total of ";
+					msg += 
+					(	(i == 0)?
+						wxString("source "):
+						wxString("destination ")
+					);
+					msg += "amounts differs from main transaction amount by ";
+					msg += finformat_wx_nopad(imbalance, locale(), false);
+					msg += ".\n";
+				}
+			}
+			wxMessageBox(msg);
 		}
 	}
 	return;
@@ -988,12 +1014,11 @@ bool
 TransactionCtrl::is_balanced() const
 {
 	Decimal const primary_amt = primary_amount();
-	size_t const num_entry_controls = 2;
-	EntryCtrl const* const entry_controls[num_entry_controls] =
+	EntryCtrl const* const entry_controls[] =
 		{ m_source_entry_ctrl, m_destination_entry_ctrl };
-	for (size_t i = 0; i != num_entry_controls; ++i)
+	for (size_t i = 0; i != num_elements(entry_controls); ++i)
 	{
-		if (!entry_controls[i]->is_balanced())
+		if (entry_controls[i]->total_amount() != primary_amt)
 		{
 			return false;
 		}

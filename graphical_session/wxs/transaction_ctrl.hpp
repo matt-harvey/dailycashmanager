@@ -49,14 +49,6 @@ class TopPanel;
  * @todo Ensure this can handle situation where insufficient default
  * Accounts are available.
  *
- * @todo Make it so that it is easier for the user to balance the Journal.
- * Things that could facilitate this include enabling simple arithmetic,
- * showing the amount of imbalance somewhere in the TransactionCtrl, and
- * perhaps automatically putting the imbalanced amount in the last Entry
- * (although that might result in surprising behaviour for this user?).
- *
- * @todo This needs to be able to scroll.
- *
  * @todo When editing an existing transaction, if the user changes the
  * TransactionType, then the AccountCtrls are reset, and the user
  * loses the existing Account information. Prevent this from occurring.

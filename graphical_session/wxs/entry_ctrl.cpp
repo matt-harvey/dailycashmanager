@@ -286,12 +286,6 @@ EntryCtrl::primary_amount() const
 	return parent->primary_amount();
 }
 
-bool
-EntryCtrl::is_balanced() const
-{
-	return total_amount() == primary_amount();
-}
-
 vector<Entry>
 EntryCtrl::make_entries() const
 {
