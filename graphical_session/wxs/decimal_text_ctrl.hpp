@@ -34,7 +34,9 @@ public:
 		jewel::Decimal::places_type p_precision,
 		bool p_print_dash_for_zero = true
 	);
-	
+
+	virtual ~DecimalTextCtrl();
+
 	/**
 	 * WARNING As a side-effect of calling this function, the
 	 * \e parent window of the DecimalTextCtrl will have
@@ -49,6 +51,8 @@ public:
 
 private:
 	void on_kill_focus(wxFocusEvent& event);
+	virtual void do_on_kill_focus(wxFocusEvent& event);
+
 	bool m_print_dash_for_zero;
 	jewel::Decimal::places_type m_precision;
 	DECLARE_EVENT_TABLE()

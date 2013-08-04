@@ -5,6 +5,7 @@
 
 #include "account.hpp"
 #include "account_reader.hpp"
+#include "decimal_text_ctrl.hpp"
 #include "entry.hpp"
 #include "transaction_type.hpp"
 #include <boost/noncopyable.hpp>
@@ -31,7 +32,6 @@ namespace gui
 {
 
 class AccountCtrl;
-class DecimalTextCtrl;
 class TransactionCtrl;
 
 // End forward declarations
@@ -93,6 +93,19 @@ public:
 	bool is_all_zero() const;
 
 private:
+
+	class EntryDecimalTextCtrl: public DecimalTextCtrl
+	{
+	public:
+		EntryDecimalTextCtrl(EntryCtrl* p_parent, wxSize const& p_size);
+		virtual ~EntryDecimalTextCtrl();
+	private:
+		virtual void do_on_kill_focus(wxFocusEvent& event);
+		void offload_imbalance() const;
+	};
+
+	friend class EntryDecimalTextCtrl;
+
 	jewel::Decimal total_amount() const;
 	void configure_account_reader();
 	void configure_top_row(bool p_include_split_button);
@@ -111,7 +124,7 @@ private:
 	 * Adjusts the amount in \e p_target on the basis of
 	 * such that the EntryCtrl becomes balanced.
 	 */
-	void autobalance(DecimalTextCtrl* p_target);
+	void autobalance(EntryDecimalTextCtrl* p_target);
 
 	PhatbooksDatabaseConnection& m_database_connection;
 
@@ -128,7 +141,7 @@ private:
 	wxButton* m_split_button;
 	std::vector<AccountCtrl*> m_account_name_boxes;
 	std::vector<wxTextCtrl*> m_comment_boxes;
-	std::vector<DecimalTextCtrl*> m_amount_boxes;
+	std::vector<EntryDecimalTextCtrl*> m_amount_boxes;
 	std::vector<int> m_reconciliation_statuses;  // avoid vector<bool>
 
 	size_t m_next_row;

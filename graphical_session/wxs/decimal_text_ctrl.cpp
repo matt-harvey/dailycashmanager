@@ -56,6 +56,10 @@ DecimalTextCtrl::DecimalTextCtrl
 {
 }
 
+DecimalTextCtrl::~DecimalTextCtrl()
+{
+}
+
 void
 DecimalTextCtrl::set_amount(Decimal const& p_amount)
 {
@@ -95,6 +99,13 @@ DecimalTextCtrl::amount()
 
 void
 DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
+{
+	do_on_kill_focus(event);
+	return;
+}
+
+void
+DecimalTextCtrl::do_on_kill_focus(wxFocusEvent& event)
 {
 	// Unfortunately if we call Validate() and TransferDataToWindow()
 	// directly on the DecimalTextCtrl, it doesn't work. We have to call

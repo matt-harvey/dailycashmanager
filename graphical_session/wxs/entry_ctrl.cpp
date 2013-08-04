@@ -344,7 +344,7 @@ EntryCtrl::is_all_zero() const
 		return transaction_ctrl->primary_amount() == Decimal(0, 0);
 	}
 	for
-	(	vector<DecimalTextCtrl>::size_type i = 0;
+	(	vector<EntryDecimalTextCtrl*>::size_type i = 0;
 		i != m_amount_boxes.size();
 		++i
 	)
@@ -364,10 +364,10 @@ EntryCtrl::total_amount() const
 	{
 		return primary_amount();
 	}
-	vector<DecimalTextCtrl>::size_type const sz = m_amount_boxes.size();
+	vector<EntryDecimalTextCtrl*>::size_type const sz = m_amount_boxes.size();
 	assert (sz >= 2);
 	Decimal ret(0, 0);
-	for (vector<DecimalTextCtrl>::size_type i = 0; i != sz; ++i)
+	for (vector<EntryDecimalTextCtrl*>::size_type i = 0; i != sz; ++i)
 	{
 		ret += m_amount_boxes[i]->amount();
 	}
@@ -441,30 +441,23 @@ EntryCtrl::add_row
 	else
 	{
 		assert (p_multiple_entries);
-		Decimal::places_type const precision = primary_amount().places();
-		DecimalTextCtrl* amount_ctrl = new DecimalTextCtrl
+		EntryDecimalTextCtrl* amount_ctrl = new EntryDecimalTextCtrl
 		(	this,
-			wxID_ANY,
-			m_text_ctrl_size,
-			precision,
-			false
+			m_text_ctrl_size
 		);
 		if (m_amount_boxes.empty() && (m_next_row == 2))
 		{
 			// Then this is either the 0 or the 1 entry row. The 0 one
 			// doesn't have an amount box...
-			// The 0 Entry line now needs a DecimalTextCtrl too, and
+			// The 0 Entry line now needs a EntryDecimalTextCtrl too, and
 			// we need to reposition m_split_button to make way for it.
 			m_top_sizer->Detach(m_split_button);
 			m_top_sizer->Add(m_split_button, wxGBPosition(0, 3));
 			assert (!m_account_name_boxes.empty());
 			m_split_button->MoveBeforeInTabOrder(m_account_name_boxes[0]);
-			DecimalTextCtrl* prev_amount_ctrl = new DecimalTextCtrl
+			EntryDecimalTextCtrl* prev_amount_ctrl = new EntryDecimalTextCtrl
 			(	this,
-				wxID_ANY,
-				m_text_ctrl_size,
-				primary_amount().places(),
-				false
+				m_text_ctrl_size
 			);
 			if (p_previous_row_amount)
 			{
@@ -514,16 +507,8 @@ EntryCtrl::side_description() const
 }
 
 void
-EntryCtrl::autobalance(DecimalTextCtrl* p_target)
+EntryCtrl::autobalance(EntryDecimalTextCtrl* p_target)
 {
-	// TODO This needs to be called when there is a kill-focus event from one
-	// of the DecimalTextCtrls - or perhaps only when an "autobalance" button
-	// is pressed. The latter might be less surprising for the user. If we
-	// trigger it from kill-focus, we would need to see if that kill-focus
-	// comes from the "save" button being pressed. If it does, we NOT trigger
-	// auto-balance, as the user wouldn't be able to see the actual change
-	// that has been made.
-
 	assert (p_target);
 	Decimal const orig_total = total_amount();
 	Decimal const orig_primary_amount = primary_amount();
@@ -540,6 +525,58 @@ EntryCtrl::autobalance(DecimalTextCtrl* p_target)
 	assert (total_amount() == primary_amount());
 	return;
 }
+
+EntryCtrl::EntryDecimalTextCtrl::EntryDecimalTextCtrl
+(	EntryCtrl* p_parent,
+	wxSize const& p_size
+):
+	DecimalTextCtrl
+	(	p_parent,
+		wxID_ANY,
+		p_size,
+		p_parent->primary_amount().places(),
+		false
+	)
+{
+}
+
+EntryCtrl::EntryDecimalTextCtrl::~EntryDecimalTextCtrl()
+{
+}
+
+void
+EntryCtrl::EntryDecimalTextCtrl::do_on_kill_focus(wxFocusEvent& event)
+{
+	GetParent()->Validate();
+	GetParent()->TransferDataToWindow();
+
+	offload_imbalance();
+
+	event.Skip();
+	return;
+}
+
+void
+EntryCtrl::EntryDecimalTextCtrl::offload_imbalance() const
+{
+	// Autobalance to a DecimalTextCtrl in the same EntryCtrl, which is
+	// not this DecimalTextCtrl.
+	EntryCtrl* const parent = dynamic_cast<EntryCtrl*>(GetParent());
+	assert (parent);
+	vector<EntryDecimalTextCtrl*>& amount_boxes = parent->m_amount_boxes;
+	assert (amount_boxes.size() > 1);
+	if (this == amount_boxes.back())
+	{
+		assert (amount_boxes[0] != this);
+		parent->autobalance(amount_boxes[0]);
+	}
+	else
+	{
+		parent->autobalance(amount_boxes.back());
+	}
+	return;
+}
+
 
 }  // namespace gui
 }  // namespace phatbooks
