@@ -58,17 +58,11 @@ class TopPanel;
  * to prevent this from happening at all, or else to warn the user
  * that the reconciliations will be out of whack.
  *
- * @todo Intercept the situation where user sets date earlier than entity
- * creation date. Currently this just throws and crashes.
+ * @todo HIGH PRIORITY Intercept the situation where user sets date earlier
+ * than entity creation date. Currently this just throws and crashes.
  *
  * @todo When user creates or amended an Account, the TransactionCtrl should
  * be updated seamlessly, rather than being recreated from scratch.
- *
- * @todo HIGH PRIORITY Loading a Journal that has been saved after editing
- * that involves splitting and/or unsplitting of EntryCtrl will often result
- * in complete failure, with Entries appearing in unexpected rows, as a result
- * of the Entries being loaded in order of Entry::Id. The fix should involve
- * the save_existing_journal method.
  */
 class TransactionCtrl: public GriddedScrolledPanel
 {
