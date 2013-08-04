@@ -46,9 +46,6 @@ class TransactionCtrl;
  *
  * @todo Document better the concept of a "transaction" versus that of a
  * Journal.
- *
- * @todo Make the amount controls read-only unless and until additional
- * lines are added. We might even want to hide them entirely.
  */
 class EntryCtrl: public wxPanel, private boost::noncopyable
 {
