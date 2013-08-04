@@ -514,7 +514,7 @@ EntryCtrl::side_description() const
 }
 
 void
-EntryCtrl::autobalance(DecimalTextCtrl* p_target, DecimalTextCtrl* p_source)
+EntryCtrl::autobalance(DecimalTextCtrl* p_target)
 {
 	// TODO This needs to be called when there is a kill-focus event from one
 	// of the DecimalTextCtrls - or perhaps only when an "autobalance" button
@@ -524,11 +524,7 @@ EntryCtrl::autobalance(DecimalTextCtrl* p_target, DecimalTextCtrl* p_source)
 	// auto-balance, as the user wouldn't be able to see the actual change
 	// that has been made.
 
-	// Preconditions
 	assert (p_target);
-	assert (p_source);
-	assert (p_target != p_source);
-
 	Decimal const orig_total = total_amount();
 	Decimal const orig_primary_amount = primary_amount();
 	if (orig_total != orig_primary_amount)

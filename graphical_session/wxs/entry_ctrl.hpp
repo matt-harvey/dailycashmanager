@@ -108,13 +108,10 @@ private:
 	void on_split_button_click(wxCommandEvent& event);
 
 	/**
-	 * Adjusts the amount in \e p_target_ctrl on the basis of
-	 * a change in the amount in \e p_source_ctrl, such
-	 * that the journal continues to balance despite the change.
-	 *
-	 * Assumes that <em>p_target != p_source</em> (and that neither is null).
+	 * Adjusts the amount in \e p_target on the basis of
+	 * such that the EntryCtrl becomes balanced.
 	 */
-	void autobalance(DecimalTextCtrl* p_target, DecimalTextCtrl* p_source);
+	void autobalance(DecimalTextCtrl* p_target);
 
 	PhatbooksDatabaseConnection& m_database_connection;
 
