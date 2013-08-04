@@ -657,7 +657,7 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 		else
 		{
 			wxString msg = wxEmptyString;
-			msg += wxString("Cannot save unbalanced transaction.\n");
+			msg += wxString("Cannot save unbalanced transaction.");
 			Decimal const imbalances[] =
 			{	m_source_entry_ctrl->total_amount() - primary_amount(),
 				m_destination_entry_ctrl->total_amount() - primary_amount()
@@ -667,7 +667,7 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 				Decimal const& imbalance = imbalances[i];
 				if (imbalance != Decimal(0, 0))
 				{
-					msg += "Total of ";
+					msg += "\n\nTotal of ";
 					msg += 
 					(	(i == 0)?
 						wxString("source "):
@@ -675,7 +675,7 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 					);
 					msg += "amounts differs from main transaction amount by ";
 					msg += finformat_wx_nopad(imbalance, locale(), false);
-					msg += ".\n";
+					msg += ".";
 				}
 			}
 			wxMessageBox(msg);
