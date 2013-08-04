@@ -100,8 +100,8 @@ private:
 		EntryDecimalTextCtrl(EntryCtrl* p_parent, wxSize const& p_size);
 		virtual ~EntryDecimalTextCtrl();
 	private:
-		virtual void do_on_kill_focus(wxFocusEvent& event);
-		void offload_imbalance() const;
+		void on_left_double_click(wxMouseEvent& event);
+		DECLARE_EVENT_TABLE()
 	};
 
 	friend class EntryDecimalTextCtrl;

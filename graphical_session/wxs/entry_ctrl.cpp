@@ -45,6 +45,11 @@ BEGIN_EVENT_TABLE(EntryCtrl, wxPanel)
 	)
 END_EVENT_TABLE()
 
+BEGIN_EVENT_TABLE(EntryCtrl::EntryDecimalTextCtrl, DecimalTextCtrl)
+	EVT_LEFT_DCLICK
+	(	EntryCtrl::EntryDecimalTextCtrl::on_left_double_click
+	)
+END_EVENT_TABLE()
 
 EntryCtrl::EntryCtrl
 (	TransactionCtrl* p_parent,
@@ -383,7 +388,8 @@ EntryCtrl::on_split_button_click(wxCommandEvent& event)
 	Decimal const amount(0, account.commodity().precision());
 	optional<Decimal> const maybe_prev_amount;
 	add_row(account, wxEmptyString, amount, false, maybe_prev_amount, true);
-
+	assert (!m_amount_boxes.empty());
+	autobalance(m_amount_boxes.back());
 	return;
 }
 
@@ -545,35 +551,12 @@ EntryCtrl::EntryDecimalTextCtrl::~EntryDecimalTextCtrl()
 }
 
 void
-EntryCtrl::EntryDecimalTextCtrl::do_on_kill_focus(wxFocusEvent& event)
+EntryCtrl::EntryDecimalTextCtrl::on_left_double_click(wxMouseEvent& event)
 {
-	GetParent()->Validate();
-	GetParent()->TransferDataToWindow();
-
-	offload_imbalance();
-
-	event.Skip();
-	return;
-}
-
-void
-EntryCtrl::EntryDecimalTextCtrl::offload_imbalance() const
-{
-	// Autobalance to a DecimalTextCtrl in the same EntryCtrl, which is
-	// not this DecimalTextCtrl.
+	(void)event;  // silence compiler re. unused parameter
 	EntryCtrl* const parent = dynamic_cast<EntryCtrl*>(GetParent());
 	assert (parent);
-	vector<EntryDecimalTextCtrl*>& amount_boxes = parent->m_amount_boxes;
-	assert (amount_boxes.size() > 1);
-	if (this == amount_boxes.back())
-	{
-		assert (amount_boxes[0] != this);
-		parent->autobalance(amount_boxes[0]);
-	}
-	else
-	{
-		parent->autobalance(amount_boxes.back());
-	}
+	parent->autobalance(this);
 	return;
 }
 
