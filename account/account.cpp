@@ -294,8 +294,8 @@ BString account_concept_name
 		ret += (p_capitalize? BString("Account"): BString("account"));
 		break;
 	case account_super_type::pl:
-		if (p_include_article) ret += BString("a ");
-		ret += (p_capitalize? BString("Category"): BString("category"));
+		if (p_include_article) ret += BString("an ");
+		ret += (p_capitalize? BString("Envelope"): BString("envelope"));
 		break;
 	default:
 		assert (false);
