@@ -173,6 +173,8 @@ TransactionCtrl::TransactionCtrl
 	vector<Account> destination_accounts;
 	destination_accounts.push_back(accounts[1]);
 
+	assert (text_box_size.x == medium_width());
+
 	m_source_entry_ctrl = new EntryCtrl
 	(	this,
 		source_accounts,
@@ -192,8 +194,7 @@ TransactionCtrl::TransactionCtrl
 	top_sizer().Add
 	(	m_source_entry_ctrl,
 		wxGBPosition(current_row(), 0),
-		wxGBSpan(1, 4),
-		wxEXPAND
+		wxGBSpan(1, 4)
 	);
 
 	increment_row();
@@ -202,8 +203,7 @@ TransactionCtrl::TransactionCtrl
 	top_sizer().Add
 	(	m_destination_entry_ctrl,
 		wxGBPosition(current_row(), 0),
-		wxGBSpan(1, 4),
-		wxEXPAND
+		wxGBSpan(1, 4)
 	);
 	
 	increment_row();
@@ -213,10 +213,7 @@ TransactionCtrl::TransactionCtrl
 	m_frequency_ctrl = new FrequencyCtrl
 	(	this,
 		wxID_ANY,
-		wxSize
-		(	medium_width() * 3 + standard_gap() * 2,
-			text_box_size.y
-		),
+		wxSize(medium_width() * 3 + standard_gap() * 2, text_box_size.y),
 		database_connection(),
 		true,
 		true
@@ -427,6 +424,8 @@ TransactionCtrl::configure_for_journal_editing()
 	assert (i == fulcrum);
 	for ( ; i != sz; ++i) destination_entries.push_back(entries[i]);
 
+	assert (text_box_size.x == medium_width());
+
 	m_source_entry_ctrl = new EntryCtrl
 	(	this,
 		source_entries,
@@ -447,8 +446,7 @@ TransactionCtrl::configure_for_journal_editing()
 	top_sizer().Add
 	(	m_source_entry_ctrl,
 		wxGBPosition(current_row(), 0),
-		wxGBSpan(1, 4),
-		wxEXPAND
+		wxGBSpan(1, 4)
 	);
 
 	increment_row();
@@ -457,8 +455,7 @@ TransactionCtrl::configure_for_journal_editing()
 	top_sizer().Add
 	(	m_destination_entry_ctrl,
 		wxGBPosition(current_row(), 0),
-		wxGBSpan(1, 4),
-		wxEXPAND
+		wxGBSpan(1, 4)
 	);
 	
 	increment_row();
@@ -514,7 +511,7 @@ TransactionCtrl::configure_for_journal_editing()
 	m_date_ctrl = new DateCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(text_box_size.x, text_box_size.y),
+		text_box_size,
 		date
 	);
 	top_sizer().Add(m_date_ctrl, wxGBPosition(current_row(), 3));
@@ -528,19 +525,9 @@ TransactionCtrl::configure_for_journal_editing()
 		wxID_CANCEL,
 		wxString("&Cancel"),
 		wxDefaultPosition,
-		wxSize(text_box_size.x, text_box_size.y)
+		text_box_size
 	);
 	top_sizer().Add(m_cancel_button, wxGBPosition(current_row(), 0));
-
-	// Delete button
-	m_delete_button = new wxButton
-	(	this,
-		s_delete_button_id,
-		wxString("&Delete transaction"),
-		wxDefaultPosition,
-		wxSize(text_box_size.x, text_box_size.y)
-	);
-	top_sizer().Add(m_delete_button, wxGBPosition(current_row(), 2));
 
 	// Save/OK button
 	m_ok_button = new wxButton
@@ -548,11 +535,25 @@ TransactionCtrl::configure_for_journal_editing()
 		wxID_OK,
 		wxString("&Save changes"),
 		wxDefaultPosition,
-		wxSize(text_box_size.x, text_box_size.y)
+		text_box_size
 	);
-
 	top_sizer().Add(m_ok_button, wxGBPosition(current_row(), 3));
 	m_ok_button->SetDefault();  // Enter key will now trigger "OK" button
+
+	increment_row();
+	increment_row();
+
+	// Delete button
+	m_delete_button = new wxButton
+	(	this,
+		s_delete_button_id,
+		wxString("&Delete transaction"),
+		wxDefaultPosition,
+		text_box_size
+	);
+	top_sizer().Add(m_delete_button, wxGBPosition(current_row(), 0));
+
+	increment_row();
 
 	// "Admin"
 	top_sizer().Fit(this);

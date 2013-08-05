@@ -59,9 +59,6 @@ class TopPanel;
  * @todo When user creates or amended an Account, the TransactionCtrl should
  * be updated seamlessly, rather than being recreated from scratch.
  *
- * @todo Positioning of sub-widgets is out-of-whack when TransactionCtrl
- * is used to edit an existing PersistentJournal.
- *
  * @todo It's not obvious to the user that the TransactionCtrl actually is
  * for creating new transactions (rather than for, say, filtering the
  * information that is displayed to the left).
