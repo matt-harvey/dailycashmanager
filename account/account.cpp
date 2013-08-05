@@ -281,19 +281,39 @@ bool is_not_pure_envelope(Account const& account)
 
 BString account_concept_name
 (	account_super_type::AccountSuperType p_account_super_type,
-	bool p_capitalize
+	bool p_capitalize,
+	bool p_include_article
 )
 {
+	BString ret;
+	assert (ret.IsEmpty());
 	switch (p_account_super_type)
 	{
 	case account_super_type::balance_sheet:
-		return p_capitalize? BString("Account"): BString("account");
+		if (p_include_article) ret += BString("an ");
+		ret += (p_capitalize? BString("Account"): BString("account"));
+		break;
 	case account_super_type::pl:
-		return p_capitalize? BString("Category"): BString("category");
+		if (p_include_article) ret += BString("a ");
+		ret += (p_capitalize? BString("Category"): BString("category"));
+		break;
 	default:
 		assert (false);
 	}
-	assert (false);
+	return ret;
+}
+
+BString account_concepts_phrase(bool p_include_article)
+{
+	static BString const ret =
+		account_concept_name
+		(	account_super_type::balance_sheet,
+			false,
+			p_include_article
+		) +
+		BString(" or ") +
+		account_concept_name(account_super_type::pl);
+	return ret;
 }
 
 

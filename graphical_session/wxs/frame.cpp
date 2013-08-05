@@ -6,6 +6,7 @@
 #include "account_list_ctrl.hpp"
 #include "application.hpp"
 #include "app.hpp"
+#include "b_string.hpp"
 #include "budget_dialog.hpp"
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
@@ -82,16 +83,25 @@ Frame::Frame
 	);
 	m_menu_bar->Append(m_file_menu, wxString("&File"));
 
+	wxString const balance_sheet_account_concept_name = bstring_to_wx
+	(	account_concept_name(account_super_type::balance_sheet)
+	);
+	wxString const pl_account_concept_name = bstring_to_wx
+	(	account_concept_name(account_super_type::pl)
+	);
+
 	// Configure "new" menu
 	m_new_menu->Append
 	(	s_new_bs_account_id,
-		wxString("New &account"),
-		wxString("Create a new asset or liability account")
+		wxString("New &") + balance_sheet_account_concept_name,
+		wxString("Create a new asset or liability ") +
+			balance_sheet_account_concept_name
 	);
 	m_new_menu->Append
 	(	s_new_pl_account_id,
-		wxString("New &category"),
-		wxString("Create a new revenue or expenditure category")
+		wxString("New &") + pl_account_concept_name,
+		wxString("Create a new revenue or expenditure ") +
+			pl_account_concept_name
 	);
 	m_new_menu->Append
 	(	s_new_transaction_id,
@@ -103,13 +113,14 @@ Frame::Frame
 	// Configure "edit" menu
 	m_edit_menu->Append
 	(	s_edit_bs_account_id,
-		wxString("Edit selected &account"),
+		wxString("Edit selected &") + balance_sheet_account_concept_name,
 		wxString("Edit an exising asset or liability account")
 	);
 	m_edit_menu->Append
 	(	s_edit_pl_account_id,
-		wxString("Edit selected &category"),
-		wxString("Edit an existing revenue or expenditure category")
+		wxString("Edit selected &") + pl_account_concept_name,
+		wxString("Edit an existing revenue or expenditure ") +
+			pl_account_concept_name
 	);
 	m_edit_menu->Append
 	(	s_edit_ordinary_journal_id,
@@ -124,7 +135,8 @@ Frame::Frame
 	m_edit_menu->Append
 	(	s_edit_budget_id,
 		wxString("Edit budget"),
-		wxString("Edit budget for selected category")
+		wxString("Edit budget for selected ") +
+			pl_account_concept_name
 	);
 	m_menu_bar->Append(m_edit_menu, wxString("&Edit"));
 
@@ -322,8 +334,11 @@ Frame::on_edit_pl_account(wxCommandEvent& event)
 	{
 		// TODO HIGH PRIORITY Deal with this in a more user-friendly
 		// way. For now, we just do this.
+		wxString const concept_name =
+			bstring_to_wx(account_concept_name(account_super_type::pl, true));
 		wxMessageBox
-		(	"Category to edit must first be selected in main window."
+		(	concept_name +
+			wxString(" to edit must first be selected in main window.")
 		);
 		return;
 	}
@@ -398,10 +413,19 @@ Frame::on_edit_budget(wxCommandEvent& event)
 	{
 		// TODO HIGH PRIORITY Deal with this in a more user-friendly
 		// way. For now, we just do this.
-		wxMessageBox
-		(	"To edit the budget for a category, a category must first be "
-			"selected in the main window."
+		wxString msg("To edit the budget for ");
+		wxString const concept_name = bstring_to_wx
+		(	account_concept_name
+			(	account_super_type::pl,
+				false,
+				true
+			)
 		);
+		msg += concept_name;
+		msg += wxString(", ");
+		msg += concept_name;
+		msg += wxString(" must first be selected in the main window.");
+		wxMessageBox(msg);
 		return;
 	}
 	assert (accounts.size() >= 1);
@@ -410,7 +434,9 @@ Frame::on_edit_budget(wxCommandEvent& event)
 	{
 		wxString msg("Budgets for the \"");
 		msg += bstring_to_wx(account.name());
-		msg += wxString("\" category cannot be edited directly.");
+		msg += wxString("\" ");
+		msg += bstring_to_wx(account_concept_name(account_super_type::pl));
+		msg += wxString(" cannot be edited directly.");
 		wxMessageBox(msg);
 		return;
 	}

@@ -223,11 +223,6 @@ private:
  * Represents a page for setting up Accounts in a SetupWizard.
  * Abstract base class - more specific Account page types derive
  * from this.
- *
- * @todo HIGH PRIORITY Adding an Account does not respect precision of the
- * Commodity. Select the Vietnamese Dong, for example. Then go into
- * the P&L AccountPage, and add a category. The opening balance of the
- * added category shows 2 decimal places whereas it should show 1.
  */
 class SetupWizard::AccountPage:
 	public wxWizardPageSimple,

@@ -54,16 +54,7 @@ namespace
 	(	account_super_type::AccountSuperType p_account_super_type
 	)
 	{
-		switch (p_account_super_type)
-		{
-		case account_super_type::balance_sheet:
-			return wxString("Account");
-		case account_super_type::pl:
-			return wxString("Category");
-		default:
-			assert (false);
-		}
-		assert (false);
+		return account_concept_name(p_account_super_type, true);
 	}
 
 	wxString account_name_ctrl_label_string
@@ -348,7 +339,9 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		else
 		{
 			wxMessageBox
-			(	"There is already an account or category with this name."
+			(	wxString("There is already ") +
+				bstring_to_wx(account_concepts_phrase(true)) +
+				wxString(" with this name.")
 			);
 			return false;
 		}

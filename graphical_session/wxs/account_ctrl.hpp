@@ -161,7 +161,7 @@ AccountCtrl::AccountCtrl
 	StringSetValidator validator
 	(	bstring_to_wx(p_account.name()),
 		valid_account_names,
-		"account or category"
+		bstring_to_wx(account_concepts_phrase())
 	);
 	SetValidator(validator);
 	AutoComplete(valid_account_names);
@@ -198,7 +198,7 @@ AccountCtrl::set
 	StringSetValidator validator
 	(	valid_account_names[0],
 		valid_account_names,
-		"account or category"
+		bstring_to_wx(account_concepts_phrase())
 	);
 	Set(valid_account_names);
 	SetValidator(validator);

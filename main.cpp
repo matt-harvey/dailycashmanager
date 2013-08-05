@@ -20,9 +20,6 @@
 // TODO It's not obvious to non-accountants that "-" means NIL. It may
 // be better just to put "0.00". (But it's also less readable...)
 
-// TODO Rename user-facing "Category" concept to "Envelope". Then the
-// main concept has a name.
-
 // TODO (For GUI). Users expect double clicking to "open" an item, and
 // right-clicking to cause a context-dependent menu to pop up.
 

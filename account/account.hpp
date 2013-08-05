@@ -262,12 +262,30 @@ std::vector<account_type::AccountType> pl_account_types();
  * @returns "account", "category" or some such string to describe
  * to the \e user the "thing" which they are creating in this
  * particular MultiAccountPanel.
+ *
+ * @p_capitalize - set to \e true to capitalize the first letter of
+ * returned string.
+ *
+ * @p_include_article - set to \e true to include an indefinite
+ * article before the returned string (this can be important as it could
+ * be either "an" or "a" depending on the returned string.
  */
 BString account_concept_name
 (	account_super_type::AccountSuperType p_account_super_type,
-	bool p_capitalize = false
+	bool p_capitalize = false,
+	bool p_include_article = false
 );
 
+/**
+ * @returns a string of the form "X or Y", where "X" and "Y" are the names
+ * of the different possible "account concepts" (e.g. this might
+ * return something like "account or category").
+ *
+ * @p_include_article - set to \e true to include an indefinite
+ * article before the returned string (this can be important as it could
+ * be either "an" or "a" depending on the returned string.
+ */
+BString account_concepts_phrase(bool p_include_article = false);
 
 }  // namespace phatbooks
 

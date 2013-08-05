@@ -55,7 +55,7 @@ AccountListCtrl::create_pl_account_list
 		reader,
 		dbc,
 		true,
-		wxString("Category")
+		bstring_to_wx(account_concept_name(account_super_type::pl, true))
 	);
 	return ret;
 }
@@ -108,12 +108,25 @@ AccountListCtrl::update(bool balance_sheet)
 	if (balance_sheet)
 	{
 		BalanceSheetAccountReader const reader(m_database_connection);
-		update(reader, "Account");
+		update
+		(	reader,
+			bstring_to_wx
+			(	account_concept_name
+				(	account_super_type::balance_sheet,
+					true
+				)
+			)
+		);
 	}
 	else
 	{
 		PLAccountReader const reader(m_database_connection);
-		update(reader, "Category");
+		update
+		(	reader,
+			bstring_to_wx
+			(	account_concept_name(account_super_type::pl, true)
+			)
+		);
 	}
 	return;
 }

@@ -805,7 +805,9 @@ BudgetDialog::BalancingDialog::BalancingDialog
 	m_yes_button = new wxButton
 	(	this,
 		wxID_YES,
-		wxString("&Offset to category below"),
+		wxString("&Offset to ") +
+			bstring_to_wx(account_concept_name(account_super_type::pl)) +
+			wxString(" below"),
 		wxDefaultPosition,
 		wxSize(large_width(), wxDefaultSize.y)
 	);

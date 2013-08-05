@@ -2,6 +2,7 @@
 #include "account.hpp"
 #include "account_ctrl.hpp"
 #include "account_reader.hpp"
+#include "b_string.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
 #include "entry.hpp"
@@ -74,8 +75,17 @@ EntryListPanel::EntryListPanel
 
 	++m_next_row;  // To leave some space at top.
 
-	wxString account_label_text(" Account");
-	if (include_pl_accounts) account_label_text += wxString(" or category");
+	wxString account_label_text(" ");
+	account_label_text += bstring_to_wx
+	(	account_concept_name(account_super_type::balance_sheet, true)
+	);
+	if (include_pl_accounts)
+	{
+		account_label_text += wxString(" or ");
+		account_label_text += bstring_to_wx
+		(	account_concept_name(account_super_type::pl)
+		);
+	}
 	account_label_text += wxString(":");
 	wxStaticText* account_label =
 		new wxStaticText(this, wxID_ANY, account_label_text);
