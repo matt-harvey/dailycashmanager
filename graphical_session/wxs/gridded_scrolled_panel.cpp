@@ -71,6 +71,7 @@ void
 GriddedScrolledPanel::decrement_row()
 {
 	--m_current_row;
+	return;
 }
 
 void

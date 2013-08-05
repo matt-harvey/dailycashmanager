@@ -41,11 +41,6 @@ class TopPanel;
 /**
  * Dialog in which user creates a new transaction (i.e. Journal).
  *
- * @todo When the update the TopPanel after posting or cancelling Journal
- * from TransactionCtrl, there is flicker. This is because we are redrawing
- * the entire TopPanel from scratch. We could probably get rid of the flicker
- * by only redrawing the parts we need.
- *
  * @todo Ensure this can handle situation where insufficient default
  * Accounts are available.
  *
@@ -63,6 +58,9 @@ class TopPanel;
  *
  * @todo When user creates or amended an Account, the TransactionCtrl should
  * be updated seamlessly, rather than being recreated from scratch.
+ *
+ * @todo Positioning of sub-widgets is out-of-whack when TransactionCtrl
+ * is used to edit an existing PersistentJournal.
  */
 class TransactionCtrl: public GriddedScrolledPanel
 {

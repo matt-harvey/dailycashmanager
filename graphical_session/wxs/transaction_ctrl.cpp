@@ -477,7 +477,7 @@ TransactionCtrl::configure_for_journal_editing()
 	m_frequency_ctrl = new FrequencyCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(text_box_size.x * 3 + standard_gap() * 2, text_box_size.y),
+		wxSize(medium_width() * 3 + standard_gap() * 2, text_box_size.y),
 		database_connection(),
 		is_ordinary,
 		is_draft
@@ -940,9 +940,9 @@ TransactionCtrl::save_existing_journal()
 		}
 		else
 		{
-			// WARNING Does this work? It's like I'm circumventing the constness
-			// of DraftJournal::repeaters().
-			assert (dj->repeaters().size() >= 1);
+			// WARNING Does this work? It's like I'm circumventing the
+			// constness of DraftJournal::repeaters().
+			assert (!dj->repeaters().empty());
 			Repeater old_repeater = dj->repeaters()[0];
 			old_repeater.set_next_date(next_date);
 			old_repeater.set_frequency(freq);
