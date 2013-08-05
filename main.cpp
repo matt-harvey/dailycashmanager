@@ -17,6 +17,21 @@
 // between the Phatbooks file extension and the Phatbooks application.
 // See CMake book, page. 162.
 
+// TODO It's not obvious to non-accountants that "-" means NIL. It may
+// be better just to put "0.00". (But it's also less readable...)
+
+// TODO Rename user-facing "Category" concept to "Envelope". Then the
+// main concept has a name.
+
+// TODO (For GUI). Users expect double clicking to "open" an item, and
+// right-clicking to cause a context-dependent menu to pop up.
+
+// TODO The application should automatically create a zipped backup
+// file so that the session can be recovered if something goes wrong.
+
+// TODO The database file should perhaps have a checksum to guard
+// against its contents changing other than via the application.
+
 // TODO Facilitate automatic checking for updates from user's
 // machine, as well as easy process for providing updates
 // via NSIS. It appears that the default configuration of CPack/NSIS is

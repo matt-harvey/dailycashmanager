@@ -49,6 +49,11 @@ class TransactionCtrl;
  * sub-widget classes, and then storing pointers to these in a vector
  * in TopPanel, and running through the vector calling "update_for_..." on
  * each.
+ *
+ * @todo Put some space between the two AccountListCtrls, or do some other
+ * thing, to clearly indicate that these are conceptually separate controls,
+ * and that one is not, say, a subset of the other. Put a similar kind of
+ * "divider" between the envelope list and the TransactionCtrl to the right.
  */
 class TopPanel: public wxPanel
 {

@@ -230,6 +230,10 @@ SetupWizard::selected_currency() const
 void
 SetupWizard::set_assumed_currency(Commodity const& p_commodity)
 {
+	JEWEL_DEBUG_LOG << "Entered set_assumed_currency, with "
+	                << "p_commodity being: "
+					<< p_commodity.name()
+					<< endl;
 	assert (m_balance_sheet_account_page);	
 	m_balance_sheet_account_page->set_commodity(p_commodity);
 	m_pl_account_page->set_commodity(p_commodity);
@@ -290,6 +294,7 @@ SetupWizard::delete_file()
 void
 SetupWizard::configure_accounts()
 {
+	JEWEL_DEBUG_LOG << "Entered SetupWizard::configure_accounts()." << endl;
 	vector<AugmentedAccount> augmented_accounts;
 	selected_augmented_accounts(augmented_accounts);
 	vector<AugmentedAccount>::iterator it = augmented_accounts.begin();

@@ -264,6 +264,7 @@ MultiAccountPanel::set_commodity(Commodity const& p_commodity)
 		Decimal const new_amount = round(old_amount, precision);
 		m_opening_balance_boxes[i]->set_amount(new_amount);
 	}
+	m_commodity = p_commodity;
 	return;
 }
 
