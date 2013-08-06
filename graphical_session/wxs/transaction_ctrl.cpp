@@ -160,18 +160,11 @@ TransactionCtrl::TransactionCtrl
 	);
 
 	// Rows for entering Entry details
-	typedef vector<Account>::size_type Size;
-	vector<Account> accounts;
-	accounts.push_back(account_x);
-	accounts.push_back(account_y);
-
-	// WARNING Temp hack
-	assert (accounts.size() >= 2);
 
 	vector<Account> source_accounts;
-	source_accounts.push_back(accounts[0]);
+	source_accounts.push_back(account_x);
 	vector<Account> destination_accounts;
-	destination_accounts.push_back(accounts[1]);
+	destination_accounts.push_back(account_y);
 
 	assert (text_box_size.x == medium_width());
 
