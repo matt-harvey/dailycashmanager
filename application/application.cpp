@@ -35,19 +35,19 @@ namespace
 BString
 Application::application_name()
 {
-	return "PresentCents";
+	return "Phatbooks";
 }
 
 BString
 Application::filename_extension()
 {
-	return ".pc";
+	return ".phat";
 }
 
 BString
 Application::vendor_name()
 {
-	return "PresentCents";
+	return "Phatbooks";
 }
 
 optional<filesystem::path>
