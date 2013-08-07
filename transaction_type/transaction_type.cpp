@@ -12,6 +12,9 @@
 #include <set>
 #include <vector>
 
+// TODO The implementations of the various functions defined in this file
+// seem more complicated than they should be.
+
 namespace phatbooks
 {
 
@@ -73,7 +76,7 @@ namespace
 	}
 	BString envelope_verb()
 	{
-		return BString("Budget transfer");
+		return BString("Envelope transfer");
 	}
 	BString generic_verb()
 	{
@@ -293,6 +296,39 @@ source_account_types
 #	endif
 
 	return ret_array[static_cast<size_t>(p_transaction_type)];
+}
+
+
+void
+source_super_types
+(	transaction_type::TransactionType p_transaction_type,
+	set<account_super_type::AccountSuperType>& out
+)
+{
+	// WARNING This is pretty inefficient. But it probably doesn't matter.
+	vector<account_type::AccountType> const& atypes =
+		source_account_types(p_transaction_type);
+	vector<account_type::AccountType>::const_iterator it = atypes.begin();
+	vector<account_type::AccountType>::const_iterator const end =
+		atypes.end();
+	for ( ; it != end; ++it) out.insert(super_type(*it));	
+	return;
+}
+
+void
+destination_super_types
+(	transaction_type::TransactionType p_transaction_type,
+	set<account_super_type::AccountSuperType>& out
+)
+{
+	// WARNING This is pretty inefficient. But it probably doesn't matter.
+	vector<account_type::AccountType> const& atypes =
+		destination_account_types(p_transaction_type);
+	vector<account_type::AccountType>::const_iterator it = atypes.begin();
+	vector<account_type::AccountType>::const_iterator const end =
+		atypes.end();
+	for ( ; it != end; ++it) out.insert(super_type(*it));	
+	return;
 }
 
 vector<account_type::AccountType> const&

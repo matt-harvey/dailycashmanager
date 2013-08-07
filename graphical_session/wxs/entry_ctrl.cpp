@@ -21,12 +21,14 @@
 #include <wx/panel.h>
 #include <wx/string.h>
 #include <cassert>
+#include <set>
 #include <vector>
 
 using boost::optional;
 using boost::scoped_ptr;
 using jewel::Decimal;
 using jewel::value;
+using std::set;
 using std::vector;
 
 #include <jewel/debug_log.hpp>
@@ -282,6 +284,11 @@ EntryCtrl::refresh_for_transaction_type
 		m_account_name_boxes[i]->
 			set(m_account_reader->begin(), m_account_reader->end());
 	}
+
+	m_side_descriptor->SetLabel(side_description());
+
+	Layout();
+
 	return;
 }
 
@@ -587,12 +594,29 @@ EntryCtrl::adjust_layout_for_new_number_of_rows()
 wxString
 EntryCtrl::side_description() const
 {
-	if (m_is_source)
+	// WARNING This is pretty inefficient. But it probably doesn't
+	// matter.
+	wxString ret(" ");
+	set<account_super_type::AccountSuperType> super_types;
+	switch (m_transaction_type)
 	{
-		return wxString(" Source:");
+	case transaction_type::expenditure_transaction:  // fall through
+	case transaction_type::revenue_transaction:
+		if (m_is_source) source_super_types(m_transaction_type, super_types);
+		else destination_super_types(m_transaction_type, super_types);
+		assert(super_types.size() == 1);
+		ret += account_concept_name(*(super_types.begin()), true);
+		break;
+	case transaction_type::balance_sheet_transaction: // fall through
+	case transaction_type::envelope_transaction:  // fall through
+	case transaction_type::generic_transaction:
+		ret += (m_is_source? wxString("Source"): wxString("Destination"));
+		break;
+	default:
+		assert (false);
 	}
-	assert (!m_is_source);
-	return wxString(" Destination:");
+	ret += ":";
+	return ret;
 }
 
 void

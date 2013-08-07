@@ -5,6 +5,7 @@
 
 #include "b_string.hpp"
 #include <cassert>
+#include <set>
 #include <vector>
 
 namespace phatbooks
@@ -119,6 +120,19 @@ std::vector<account_type::AccountType> const&
 destination_account_types
 (	transaction_type::TransactionType p_transaction_type
 );
+
+void
+source_super_types
+(	transaction_type::TransactionType p_transaction_type,
+	std::set<account_super_type::AccountSuperType>& out
+);
+
+void
+destination_super_types
+(	transaction_type::TransactionType p_transaction_type,
+	std::set<account_super_type::AccountSuperType>& out
+);
+
 
 /**
  * @returns the TransactionType that it would be natural to assume
