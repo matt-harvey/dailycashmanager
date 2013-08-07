@@ -879,6 +879,20 @@ SetupWizard::AccountPage::render_account_view()
 		wxGBPosition(current_row(), 0),
 		wxGBSpan(1, 5)
 	);
+
+	// Add an empty row at bottom. This is a hack to prevent the scrolled
+	// area from dropping off the bottom. Unclear on why this was happening -
+	// but this fixes it.
+	increment_row();
+	wxStaticText* dummy2 = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxSize(1, size.y)
+	);
+	top_sizer().Add(dummy2, wxGBPosition(current_row(), 0));
+
 	return;
 }
 

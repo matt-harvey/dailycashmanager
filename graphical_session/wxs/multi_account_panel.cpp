@@ -130,9 +130,6 @@ MultiAccountPanel::MultiAccountPanel
 	// "Admin"
 	FitInside();
 	// Layout();
-	
-	assert (!m_opening_balance_boxes.empty());
-	m_opening_balance_boxes.at(0)->SetFocus();
 }
 
 MultiAccountPanel::~MultiAccountPanel()
