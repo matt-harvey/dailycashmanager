@@ -609,8 +609,10 @@ EntryCtrl::side_description() const
 		break;
 	case transaction_type::balance_sheet_transaction: // fall through
 	case transaction_type::envelope_transaction:  // fall through
-	case transaction_type::generic_transaction:
 		ret += (m_is_source? wxString("Source"): wxString("Destination"));
+		break;
+	case transaction_type::generic_transaction:
+		ret += (m_is_source? wxString("CR"): wxString("DR"));
 		break;
 	default:
 		assert (false);
