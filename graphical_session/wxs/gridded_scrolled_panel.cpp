@@ -74,7 +74,7 @@ GriddedScrolledPanel::decrement_row()
 	return;
 }
 
-void
+wxStaticText*
 GriddedScrolledPanel::display_text
 (	wxString const& p_text,
 	int p_column,
@@ -95,19 +95,20 @@ GriddedScrolledPanel::display_text
 		wxDefaultSpan,
 		p_alignment_flags
 	);
-	return;
+	return text;
 }
 
-void
+wxStaticText*
 GriddedScrolledPanel::display_decimal
 (	jewel::Decimal const& p_decimal,
-	int p_column
+	int p_column,
+	bool p_dash_for_zero
 )
 {
 	wxStaticText* text = new wxStaticText
 	(	this,
 		wxID_ANY,
-		finformat_wx(p_decimal, locale()),
+		finformat_wx(p_decimal, locale(), p_dash_for_zero),
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_RIGHT
@@ -118,7 +119,7 @@ GriddedScrolledPanel::display_decimal
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
-	return;
+	return text;
 }
 
 PhatbooksDatabaseConnection&

@@ -6,6 +6,7 @@
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
 #include <wx/scrolwin.h>
+#include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/window.h>
 
@@ -66,9 +67,14 @@ protected:
 
 	/**
 	 * Display wxString using a wxStaticText at the position given
-	 * by current_row() and \e p_column.
+	 * by current_row() and \e p_column. This both creates the text
+	 * and adds it to the sizer.
+	 *
+	 * @returns a pointer to the displayed wxStaticText. (As always in
+	 * wxWidgets, this points to memory managed by the parent window,
+	 * which in this case is the GriddedScrolledPanel.)
 	 */
-	void display_text
+	wxStaticText* display_text
 	(	wxString const& p_text,
 		int p_column,
 		int p_alignment_flags = wxALIGN_LEFT
@@ -76,11 +82,17 @@ protected:
 
 	/**
 	 * Display a jewel::Decimal using a wxStaticText at the position
-	 * given by current_row() and \e p_column.
+	 * given by current_row() and \e p_column. This both creates the
+	 * text and adds it to the sizer.
+	 *
+	 * @returns a pointer to the displayed wxStaticText. (As always in
+	 * wxWidgets, this points to memory managed by the parent window,
+	 * which in this case is the GriddedScrolledPanel.)
 	 */
-	void display_decimal
+	wxStaticText* display_decimal
 	(	jewel::Decimal const& p_decimal,
-		int p_column
+		int p_column,
+		bool p_dash_for_zero = true
 	);
 
 	PhatbooksDatabaseConnection& database_connection();

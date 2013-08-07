@@ -5,6 +5,8 @@
 #include "b_string.hpp"
 #include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
+#include "finformat.hpp"
+#include "locale.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include "make_default_accounts.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -13,6 +15,7 @@
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <cassert>
@@ -72,8 +75,22 @@ MultiAccountPanel::MultiAccountPanel
 ):
 	GriddedScrolledPanel(p_parent, p_size, p_database_connection),
 	m_account_super_type(p_account_super_type),
-	m_commodity(p_commodity)
+	m_commodity(p_commodity),
+	m_total_text(0)
 {
+	// Row of total text etc.
+	display_text(wxString("Total:"), 3, wxALIGN_RIGHT);
+	m_total_text = display_decimal
+	(	Decimal(0, m_commodity.precision()),
+		4,
+		false
+	);
+	// Dummy column to right
+	display_text(wxEmptyString, 5);
+
+	increment_row();
+	increment_row();
+
 	// Row of column headings
 	wxString const account_name_label =
 		wxString(" ") +
@@ -84,7 +101,6 @@ MultiAccountPanel::MultiAccountPanel
 	{
 		opening_balance_label = wxString(" Initial budget allocation");
 	}
-
 	display_text(account_name_label, 0);
 	display_text(wxString(" Type:"), 1);
 	display_text(wxString(" Description:"), 2);
@@ -166,6 +182,14 @@ MultiAccountPanel::pop_row()
 	return;
 }
 
+void
+MultiAccountPanel::update_total()
+{
+	m_total_text->SetLabel(finformat_wx(total_amount(), locale(), false));
+	Layout();  // This is essential.
+	return;
+}
+
 Account
 MultiAccountPanel::blank_account()
 {
@@ -228,12 +252,9 @@ MultiAccountPanel::push_row(Account& p_account)
 	p_account.set_commodity(m_commodity);
 
 	// Opening balance
-	DecimalTextCtrl* opening_balance_box = new DecimalTextCtrl
+	SpecialDecimalTextCtrl* opening_balance_box = new SpecialDecimalTextCtrl
 	(	this,
-		wxID_ANY,
-		wxSize(medium_width(), height),
-		p_account.commodity().precision(),
-		false
+		wxSize(medium_width(), height)
 	);
 	top_sizer().Add(opening_balance_box, wxGBPosition(row, 4));
 	m_opening_balance_boxes.push_back(opening_balance_box);
@@ -254,8 +275,8 @@ MultiAccountPanel::set_commodity(Commodity const& p_commodity)
 		return;
 	}
 	assert (precision != m_commodity.precision());
-	vector<DecimalTextCtrl*>::size_type i = 0;
-	vector<DecimalTextCtrl*>::size_type const sz =
+	vector<SpecialDecimalTextCtrl*>::size_type i = 0;
+	vector<SpecialDecimalTextCtrl*>::size_type const sz =
 		m_opening_balance_boxes.size();
 	for ( ; i != sz; ++i)
 	{
@@ -375,6 +396,39 @@ MultiAccountPanel::AugmentedAccount::AugmentedAccount
 	account(p_account),
 	technical_opening_balance(p_technical_opening_balance)
 {
+}
+
+MultiAccountPanel::SpecialDecimalTextCtrl::SpecialDecimalTextCtrl
+(	MultiAccountPanel* p_parent,
+	wxSize const& p_size
+):
+	DecimalTextCtrl
+	(	p_parent,
+		wxID_ANY,
+		p_size,
+		p_parent->m_commodity.precision(),
+		false
+	)
+{
+}
+
+MultiAccountPanel::SpecialDecimalTextCtrl::~SpecialDecimalTextCtrl()
+{
+}
+
+void
+MultiAccountPanel::SpecialDecimalTextCtrl::do_on_kill_focus
+(	wxFocusEvent& event
+)
+{
+	GetParent()->Validate();
+	GetParent()->TransferDataToWindow();
+	MultiAccountPanel* const parent =
+		dynamic_cast<MultiAccountPanel*>(GetParent());	
+	assert (parent);
+	parent->update_total();
+	event.Skip();
+	return;
 }
 
 

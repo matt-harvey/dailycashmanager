@@ -230,10 +230,6 @@ SetupWizard::selected_currency() const
 void
 SetupWizard::set_assumed_currency(Commodity const& p_commodity)
 {
-	JEWEL_DEBUG_LOG << "Entered set_assumed_currency, with "
-	                << "p_commodity being: "
-					<< p_commodity.name()
-					<< endl;
 	assert (m_balance_sheet_account_page);	
 	m_balance_sheet_account_page->set_commodity(p_commodity);
 	m_pl_account_page->set_commodity(p_commodity);
@@ -294,7 +290,6 @@ SetupWizard::delete_file()
 void
 SetupWizard::configure_accounts()
 {
-	JEWEL_DEBUG_LOG << "Entered SetupWizard::configure_accounts()." << endl;
 	vector<AugmentedAccount> augmented_accounts;
 	selected_augmented_accounts(augmented_accounts);
 	vector<AugmentedAccount>::iterator it = augmented_accounts.begin();
@@ -977,14 +972,11 @@ SetupWizard::AccountPage::on_wizard_page_changed
 		if ((button = dynamic_cast<wxButton*>(*it)))
 		{
 			wxString const label = button->GetLabel();
-			JEWEL_DEBUG_LOG << (wxString("|") + label + wxString("|")) << endl;
-			JEWEL_DEBUG_LOG << label.size() << endl;
 			if
 			(	(label == wxString("&Next >")) ||
 				(label == wxString("&Finish"))
 			)
 			{
-				JEWEL_DEBUG_LOG << "Hit!" << endl;
 				button->SetDefault();
 				button->SetFocusFromKbd();
 			}

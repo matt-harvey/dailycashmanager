@@ -9,7 +9,9 @@
 #include "gridded_scrolled_panel.hpp"
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <wx/window.h>
@@ -126,6 +128,22 @@ public:
 
 private:
 
+	class SpecialDecimalTextCtrl: public DecimalTextCtrl
+	{
+	public:
+		SpecialDecimalTextCtrl
+		(	MultiAccountPanel* p_parent,
+			wxSize const& p_size
+		);
+		virtual ~SpecialDecimalTextCtrl();
+	private:
+		void do_on_kill_focus(wxFocusEvent& event);
+	};
+
+	friend class SpecialDecimalTextCtrl;
+
+	void update_total();
+
 	/**
 	 * @returns a newly created Account with Commodity not set but
 	 * with text fields set to the empty string. The returned Account will
@@ -147,10 +165,12 @@ private:
 	account_super_type::AccountSuperType m_account_super_type;
 	Commodity m_commodity;
 
+	wxStaticText* m_total_text;
+
 	std::vector<wxTextCtrl*> m_account_name_boxes;
 	std::vector<AccountTypeCtrl*> m_account_type_boxes;
 	std::vector<wxTextCtrl*> m_description_boxes;
-	std::vector<DecimalTextCtrl*> m_opening_balance_boxes;
+	std::vector<SpecialDecimalTextCtrl*> m_opening_balance_boxes;
 
 };  // class MultiAccountPanel
 
