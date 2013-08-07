@@ -799,16 +799,17 @@ SetupWizard::AccountPage::total_balance_sheet_amount() const
 void
 SetupWizard::AccountPage::render_main_text()
 {
+	int const width = medium_width() * 3 + standard_gap();
 	wxStaticText* text = new wxStaticText
 	(	this,
 		wxID_ANY,
 		main_text(),
 		wxDefaultPosition,
-		wxSize(medium_width() * 3 + standard_gap() * 2, wxDefaultSize.y),
-		wxALIGN_LEFT
+		wxSize(width, wxDefaultSize.y),
+		wxALIGN_LEFT | wxBORDER_SIMPLE
 	);
-	text->Wrap(medium_width() * 3 + standard_gap() * 2);
-	top_sizer().Add(text, wxGBPosition(current_row(), 0), wxGBSpan(1, 3));
+	text->Wrap(width);
+	top_sizer().Add(text, wxGBPosition(current_row(), 0), wxGBSpan(2, 3));
 	return;
 }
 
@@ -1007,17 +1008,25 @@ SetupWizard::AccountPage::main_text() const
 	{
 	case account_super_type::balance_sheet:
 		ret += wxString
-		(	"Enter your assets (things you own) and liabilities "
-			"(what you owe)."
+		(	"Enter your assets (\"what you own\") and liabilities "
+			"(\"what you owe\"), along with the current balances of "
+			"each. "
 		);
 		break;
 	case account_super_type::pl:
-		ret += wxString("Enter some revenue and expenditure categories.");
+		ret += wxString
+		(	"Enter some revenue and expenditure categories, along with "
+			"the amount of funds you want to allocate to each of "
+			"these \"envelopes\" to start out with."
+		);
 		break;
 	default:
 		assert (false);
 	}
-	ret += wxString(" (Note, you can always add more later.)");
+	ret += wxString
+	(	" \n\nNote, you can always add to or change these later, so it "
+		"doesn't matter much if you can't think of them all now."
+	);
 	return ret;
 }
 
