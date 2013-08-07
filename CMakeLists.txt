@@ -26,6 +26,8 @@ set (immediate_directories
 	 session
 	 transaction_type)
 
+# add_definitions(-DPHATBOOKS_DISALLOW_DASH_FOR_ZERO)
+
 if (WIN32)
 	include_directories (${immediate_directories}
 	                     C:/Dev-Cpp

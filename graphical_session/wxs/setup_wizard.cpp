@@ -806,7 +806,7 @@ SetupWizard::AccountPage::render_main_text()
 		main_text(),
 		wxDefaultPosition,
 		wxSize(width, wxDefaultSize.y),
-		wxALIGN_LEFT | wxBORDER_SIMPLE
+		wxALIGN_LEFT
 	);
 	text->Wrap(width);
 	top_sizer().Add(text, wxGBPosition(current_row(), 0), wxGBSpan(2, 3));

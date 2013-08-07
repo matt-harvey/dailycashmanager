@@ -82,6 +82,10 @@ namespace
 		bool dash_for_zero
 	)
 	{
+#		if PHATBOOKS_DISALLOW_DASH_FOR_ZERO
+			dash_for_zero = false;
+#		endif   // PHATBOOKS_DISALLOW_DASH_FOR_ZERO
+
 		// TODO Make this cleaner and more efficient.
 		Decimal::places_type const places = decimal.places();
 		Decimal::int_type const intval = decimal.intval();
@@ -105,7 +109,7 @@ namespace
 		deque<CharT> ret;
 		assert (ret.empty());
 		// Special case of zero
-		if (dash_for_zero && intval == 0)
+		if (dash_for_zero && (intval == 0))
 		{
 			ret.push_back(CharT('-'));
 			if (places > 0)
@@ -114,7 +118,9 @@ namespace
 				{
 					ret.push_back(CharT(' '));
 				}
-				ret.push_back(CharT(' '));  // WARNING wxWidgets font alignment hack to make it look good with variable width font
+				// wxWidgets font alignment hack to make it look good
+				// with variable width font.
+				ret.push_back(CharT(' '));
 				if (pad) ret.push_back(CharT(' '));
 			}
 		}
@@ -240,7 +246,6 @@ wxString finformat_wx
 {
 	return aux_finformat_wx(decimal, loc, true, dash_for_zero);
 }
-
 
 std::string finformat_std8_nopad
 (	jewel::Decimal const& decimal

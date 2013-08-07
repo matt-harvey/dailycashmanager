@@ -8,8 +8,6 @@
 #include <wx/intl.h>
 #include <string>
 
-
-
 namespace phatbooks
 {
 
@@ -58,6 +56,10 @@ BString finformat_bstring
  * Also if it's zero, it will be converted to the string "-",
  * followed by a number of spaces equal to decimal.places().
  *
+ * If PHATBOOKS_DISALLOW_DASH_FOR_ZERO is defined, then
+ * dash is never used for zero, even if \e dash_for_zero is
+ * passed \e true.
+ *
  * @param decimal the Decimal to be formatted.
  *
  * @param loc the wxLocale according which we want to
@@ -78,6 +80,11 @@ wxString finformat_wx
  * Functions named finformat...nopad are like the finformat...
  * functions without "nopad", except they do not add an extra
  * space to the right when formatting non-negative numbers.
+ *
+ * If PHATBOOKS_DISALLOW_DASH_FOR_ZERO is defined, then
+ * dash is never used for zero, even if \e dash_for_zero is
+ * passed \e true.
+
  * @{
  */
 std::string finformat_std8_nopad
@@ -110,6 +117,10 @@ wxString finformat_wx_nopad
  * An empty string will be interpreted as Decimal(0, 0).
  *
  * A string that is just a dash will be interpreted as Decimal(0, 0).
+ *
+ * If PHATBOOKS_DISALLOW_DASH_FOR_ZERO is defined, then
+ * dash is never used for zero, even if \e dash_for_zero is
+ * passed \e true.
  */
 jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc);
 
