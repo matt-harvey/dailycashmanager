@@ -983,33 +983,6 @@ SetupWizard::AccountPage::on_wizard_page_changed
 	m_multi_account_panel->update_summary();
 	m_multi_account_panel->SetFocus();
 	return;
-	
-	// TODO Manually set default and focus to the "Next" or "Finish" buttons
-	// to stop it from resting on the "Remove Account" button inside the
-	// MultiAccountPanels. (The below is a failed attempt to do this.) This
-	// is a problem on Gnome but not on Windows. It looks like a
-	// Gnome-specific bug with wxWidgets.
-	/*
-	wxWindowList const& children = GetParent()->GetChildren();
-	wxWindowList::const_iterator it = children.begin();
-	wxWindowList::const_iterator const end = children.end();
-	for ( ; it != end; ++it)
-	{
-		wxButton* button = 0;
-		if ((button = dynamic_cast<wxButton*>(*it)))
-		{
-			wxString const label = button->GetLabel();
-			if
-			(	(label == wxString("&Next >")) ||
-				(label == wxString("&Finish"))
-			)
-			{
-				button->SetDefault();
-				button->SetFocusFromKbd();
-			}
-		}
-	}
-	*/
 }
 
 wxString
