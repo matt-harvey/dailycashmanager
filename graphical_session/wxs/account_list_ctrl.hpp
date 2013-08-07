@@ -6,6 +6,7 @@
 #include "account.hpp"
 #include "account_reader.hpp"
 #include <boost/optional.hpp>
+#include <wx/event.h>
 #include <wx/listctrl.h>
 #include <wx/string.h>
 #include <wx/wx.h>
@@ -87,6 +88,8 @@ private:
 		wxString const& p_left_column_title
 	);
 
+	void on_item_activated(wxListEvent& event);
+
 	void update
 	(	AccountReaderBase const& p_reader,
 		wxString const& p_left_column_title
@@ -98,6 +101,8 @@ private:
 	static int const s_name_col = 0;
 	static int const s_balance_col = s_name_col + 1;
 	static int const s_budget_col = s_name_col + 2;
+
+	DECLARE_EVENT_TABLE()
 };
 
 

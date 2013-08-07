@@ -17,11 +17,15 @@
 // between the Phatbooks file extension and the Phatbooks application.
 // See CMake book, page. 162.
 
-// TODO It's not obvious to non-accountants that "-" means NIL. It may
-// be better just to put "0.00". (But it's also less readable...)
-
 // TODO (For GUI). Users expect double clicking to "open" an item, and
 // right-clicking to cause a context-dependent menu to pop up.
+
+// TODO HIGH PRIORITY. Things have gotten messy such that we should
+// use wxEvent mechanism to update for changes in PhatbooksPersistentObjects.
+// Create event classses that inherit (directly or indirectly) from
+// wxEvent and fire off events when objects change. The firer then
+// won't have to worry about just which of its ancestor widgets needs to
+// be updated.
 
 // TODO The application should automatically create a zipped backup
 // file so that the session can be recovered if something goes wrong.

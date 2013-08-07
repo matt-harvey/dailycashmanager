@@ -29,6 +29,8 @@ namespace phatbooks
 namespace gui
 {
 
+// TODO We can use "EVT_LIST_ITEM_COL_CLICK" to activate this
+// on left click of the "Reconciled" column - which is more intuitive.
 BEGIN_EVENT_TABLE(ReconciliationEntryListCtrl, FilteredEntryListCtrl)
 	EVT_LIST_ITEM_RIGHT_CLICK
 	(	wxID_ANY,

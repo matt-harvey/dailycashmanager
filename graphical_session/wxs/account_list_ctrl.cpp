@@ -3,13 +3,17 @@
 #include "account_list_ctrl.hpp"
 #include "app.hpp"
 #include "account.hpp"
+#include "account_dialog.hpp"
 #include "account_reader.hpp"
 #include "b_string.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
+#include "top_panel.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/optional.hpp>
+#include <wx/event.h>
 #include <wx/listctrl.h>
+#include <wx/notebook.h>
 #include <wx/string.h>
 #include <algorithm>
 #include <cassert>
@@ -25,6 +29,13 @@ namespace phatbooks
 namespace gui
 {
 
+
+BEGIN_EVENT_TABLE(AccountListCtrl, wxListCtrl)
+	EVT_LIST_ITEM_ACTIVATED
+	(	wxID_ANY,	
+		AccountListCtrl::on_item_activated
+	)
+END_EVENT_TABLE()
 
 AccountListCtrl*
 AccountListCtrl::create_balance_sheet_account_list
@@ -101,6 +112,35 @@ AccountListCtrl::selected_accounts(vector<Account>& out)
 	}
 	return;
 }	
+
+void
+AccountListCtrl::on_item_activated(wxListEvent& event)
+{
+	wxString const account_name = GetItemText(event.GetIndex());
+	Account account(m_database_connection, account_name);
+	AccountDialog account_dialog
+	(	this,
+		account,
+		super_type(account.account_type())
+	);
+	if (account_dialog.ShowModal() == wxID_OK)
+	{
+		// WARNING This is hideous. This is a great advertisement for
+		// why we need to use the event system.
+		wxPanel* const parent = dynamic_cast<wxPanel*>(GetParent());
+		assert (parent);
+		wxNotebook* const grandparent = dynamic_cast<wxNotebook*>
+		(	parent->GetParent()
+		);
+		assert (grandparent);
+		TopPanel* const greatgrandparent = dynamic_cast<TopPanel*>
+		(	grandparent->GetParent()
+		);
+		assert (greatgrandparent);
+		greatgrandparent->update_for_amended(account);
+	}
+	return;
+}
 
 void
 AccountListCtrl::update(bool balance_sheet)

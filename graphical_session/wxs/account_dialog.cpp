@@ -3,7 +3,6 @@
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"
-#include "frame.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "sizing.hpp"
@@ -103,7 +102,7 @@ namespace
 
 
 AccountDialog::AccountDialog
-(	Frame* p_parent,
+(	wxWindow* p_parent,
 	Account& p_account,
 	account_super_type::AccountSuperType p_account_super_type
 ):
@@ -378,12 +377,6 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 
 	m_account = temp;
 	transaction.commit();
-
-	wxString msg =
-		account_super_type_string(super_type(m_account.account_type()));
-	msg += wxString(" has been ");
-	msg += (p_is_new_account? wxString("created."): wxString("updated."));
-	wxMessageBox(msg);
 
 	return true;
 }

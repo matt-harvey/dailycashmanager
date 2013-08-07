@@ -8,6 +8,7 @@
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/textctrl.h>
+#include <wx/window.h>
 
 namespace phatbooks
 {
@@ -21,7 +22,6 @@ namespace gui
 
 class AccountTypeCtrl;
 class DecimalTextCtrl;
-class Frame;
 
 // End forward declarations
 
@@ -68,7 +68,7 @@ public:
 	 * characteristics of the Account.
 	 */
 	AccountDialog
-	(	Frame* p_parent,
+	(	wxWindow* p_parent,
 		Account& p_account,
 		account_super_type::AccountSuperType p_account_super_type
 	);
