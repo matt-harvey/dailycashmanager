@@ -153,7 +153,7 @@ AccountListCtrl::update
 	InsertColumn(s_name_col, p_left_column_title, wxLIST_FORMAT_LEFT);
 	InsertColumn
 	(	s_balance_col,
-		m_show_daily_budget? wxString("Available"): wxString("Balance"),
+		wxString("Balance"),
 		wxLIST_FORMAT_RIGHT
 	);
 	if (m_show_daily_budget)

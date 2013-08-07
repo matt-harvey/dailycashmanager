@@ -96,16 +96,11 @@ MultiAccountPanel::MultiAccountPanel
 		wxString(" ") +
 		bstring_to_wx(account_concept_name(m_account_super_type, true)) +
 		wxString(" name:");
-	wxString opening_balance_label(" Opening balance:");
-	if (m_account_super_type == account_super_type::pl)
-	{
-		opening_balance_label = wxString(" Initial budget allocation");
-	}
 	display_text(account_name_label, 0);
 	display_text(wxString(" Type:"), 1);
 	display_text(wxString(" Description:"), 2);
 	// Deliberately skipping column 3.
-	display_text(opening_balance_label, 4);
+	display_text(wxString(" Opening balance:"), 4);
 
 	increment_row();
 
