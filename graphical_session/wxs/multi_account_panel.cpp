@@ -10,6 +10,7 @@
 #include "gridded_scrolled_panel.hpp"
 #include "make_default_accounts.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "setup_wizard.hpp"
 #include "sizing.hpp"
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
@@ -67,7 +68,7 @@ namespace
 }  // end anonymous namespace
 
 MultiAccountPanel::MultiAccountPanel
-(	wxWindow* p_parent,
+(	SetupWizard::AccountPage* p_parent,
 	wxSize const& p_size,
 	PhatbooksDatabaseConnection& p_database_connection,
 	account_super_type::AccountSuperType p_account_super_type,
@@ -76,12 +77,18 @@ MultiAccountPanel::MultiAccountPanel
 	GriddedScrolledPanel(p_parent, p_size, p_database_connection),
 	m_account_super_type(p_account_super_type),
 	m_commodity(p_commodity),
-	m_total_text(0)
+	m_summary_amount_text(0)
 {
 	// Row of total text etc.
-	display_text(wxString("Total:"), 3, wxALIGN_RIGHT);
-	m_total_text = display_decimal
-	(	Decimal(0, m_commodity.precision()),
+	wxString summary_label("Total");
+	if (m_account_super_type == account_super_type::pl)
+	{
+		summary_label += wxString(" to allocate");
+	}
+	summary_label += ":";
+	display_text(summary_label, 3, wxALIGN_RIGHT);
+	m_summary_amount_text = display_decimal
+	(	summary_amount(),
 		4,
 		false
 	);
@@ -177,10 +184,25 @@ MultiAccountPanel::pop_row()
 	return;
 }
 
-void
-MultiAccountPanel::update_total()
+Decimal
+MultiAccountPanel::summary_amount() const
 {
-	m_total_text->SetLabel(finformat_wx(total_amount(), locale(), false));
+	if (m_account_super_type == account_super_type::balance_sheet)
+	{
+		return total_amount();
+	}
+	assert (m_account_super_type == account_super_type::pl);
+	SetupWizard::AccountPage const* const parent =
+		dynamic_cast<SetupWizard::AccountPage const*>(GetParent());
+	assert (parent);
+	return parent->total_balance_sheet_amount() - total_amount();
+}
+
+void
+MultiAccountPanel::update_summary()
+{
+	m_summary_amount_text->
+		SetLabel(finformat_wx(summary_amount(), locale(), false));
 	Layout();  // This is essential.
 	return;
 }
@@ -375,24 +397,6 @@ MultiAccountPanel::total_amount() const
 	);
 }
 
-MultiAccountPanel::AugmentedAccount::AugmentedAccount
-(	PhatbooksDatabaseConnection& p_database_connection,
-	Commodity const& p_commodity
-):
-	account(p_database_connection),
-	technical_opening_balance(0, p_commodity.precision())
-{
-}
-
-MultiAccountPanel::AugmentedAccount::AugmentedAccount
-(	Account const& p_account,
-	Decimal const& p_technical_opening_balance
-):
-	account(p_account),
-	technical_opening_balance(p_technical_opening_balance)
-{
-}
-
 MultiAccountPanel::SpecialDecimalTextCtrl::SpecialDecimalTextCtrl
 (	MultiAccountPanel* p_parent,
 	wxSize const& p_size
@@ -421,7 +425,7 @@ MultiAccountPanel::SpecialDecimalTextCtrl::do_on_kill_focus
 	MultiAccountPanel* const parent =
 		dynamic_cast<MultiAccountPanel*>(GetParent());	
 	assert (parent);
-	parent->update_total();
+	parent->update_summary();
 	event.Skip();
 	return;
 }

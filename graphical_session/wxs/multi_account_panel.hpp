@@ -7,6 +7,7 @@
 #include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "gridded_scrolled_panel.hpp"
+#include "setup_wizard.hpp"
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -14,7 +15,6 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
-#include <wx/window.h>
 #include <vector>
 
 // for debugging
@@ -48,7 +48,7 @@ class MultiAccountPanel: public GriddedScrolledPanel
 {
 public:
 	MultiAccountPanel
-	(	wxWindow* p_parent,
+	(	SetupWizard::AccountPage* p_parent,
 		wxSize const& p_size,
 		PhatbooksDatabaseConnection& p_database_connection,
 		account_super_type::AccountSuperType p_account_super_type,
@@ -64,20 +64,6 @@ public:
 	static int required_width();
 
 	void set_commodity(Commodity const& p_commodity);
-
-	struct AugmentedAccount
-	{
-		AugmentedAccount
-		(	PhatbooksDatabaseConnection& p_database_connection,
-			Commodity const& p_commodity
-		);
-		AugmentedAccount
-		(	Account const& p_account,
-			jewel::Decimal const& p_technical_opening_balance
-		);
-		Account account;
-		jewel::Decimal technical_opening_balance;
-	};
 
 	/**
 	 * Populates \e out with AugmentedAccounts corresponding to what has
@@ -126,7 +112,11 @@ public:
 	 */
 	void pop_row();
 
+	void update_summary();
+
 private:
+
+	jewel::Decimal summary_amount() const;
 
 	class SpecialDecimalTextCtrl: public DecimalTextCtrl
 	{
@@ -141,8 +131,6 @@ private:
 	};
 
 	friend class SpecialDecimalTextCtrl;
-
-	void update_total();
 
 	/**
 	 * @returns a newly created Account with Commodity not set but
@@ -165,7 +153,7 @@ private:
 	account_super_type::AccountSuperType m_account_super_type;
 	Commodity m_commodity;
 
-	wxStaticText* m_total_text;
+	wxStaticText* m_summary_amount_text;
 
 	std::vector<wxTextCtrl*> m_account_name_boxes;
 	std::vector<AccountTypeCtrl*> m_account_type_boxes;

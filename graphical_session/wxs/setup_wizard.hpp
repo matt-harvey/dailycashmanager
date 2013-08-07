@@ -6,7 +6,6 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
-#include "multi_account_panel.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
@@ -84,7 +83,9 @@ public:
 
 	void set_assumed_currency(Commodity const& p_commodity);		
 
-	typedef MultiAccountPanel::AugmentedAccount AugmentedAccount;
+	jewel::Decimal total_opening_balance() const;
+
+	class AccountPage;
 
 private:
 
@@ -94,7 +95,6 @@ private:
 
 	class FilepathValidator;
 	class FilepathPage;
-	class AccountPage;
 
 	void render_account_pages();
 
@@ -240,10 +240,20 @@ public:
 	void render();
 
 	void selected_augmented_accounts
-	(	std::vector<SetupWizard::AugmentedAccount>& out
+	(	std::vector<AugmentedAccount>& out
 	) const;
 
 	void set_commodity(Commodity const& p_commodity);
+
+	jewel::Decimal total_amount() const;
+
+	/**
+	 * @returns the total_amount() of the balance sheet AccountPage in the
+	 * same SetupWizard as this AccountPage.
+	 *
+	 * WARNING This is rather convoluted.
+	 */
+	jewel::Decimal total_balance_sheet_amount() const;
 
 protected:
 	PhatbooksDatabaseConnection& database_connection() const;

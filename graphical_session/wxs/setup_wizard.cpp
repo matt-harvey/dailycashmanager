@@ -15,6 +15,7 @@
 #include "locale.hpp"
 #include "make_currencies.hpp"
 #include "make_default_accounts.hpp"
+#include "multi_account_panel.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -74,8 +75,6 @@ namespace gui
 
 namespace
 {
-	typedef SetupWizard::AugmentedAccount AugmentedAccount;
-
 	wxString const wx_app_name()
 	{
 		return bstring_to_wx(Application::application_name());
@@ -225,6 +224,13 @@ Commodity
 SetupWizard::selected_currency() const
 {
 	return m_filepath_page->selected_currency();
+}
+
+Decimal
+SetupWizard::total_opening_balance() const
+{
+	assert (m_balance_sheet_account_page);
+	return m_balance_sheet_account_page->total_amount();
 }
 
 void
@@ -773,6 +779,23 @@ SetupWizard::AccountPage::set_commodity
 	return;
 }
 
+Decimal
+SetupWizard::AccountPage::total_amount() const
+{
+	if (m_multi_account_panel)
+	{
+		return m_multi_account_panel->total_amount();
+	}
+	assert (!m_multi_account_panel);
+	return Decimal(0, 0);
+}
+
+Decimal
+SetupWizard::AccountPage::total_balance_sheet_amount() const
+{
+	return parent().total_opening_balance();
+}
+
 void
 SetupWizard::AccountPage::render_main_text()
 {
@@ -956,7 +979,11 @@ SetupWizard::AccountPage::on_wizard_page_changed
 )
 {
 	(void)event;  // silence compiler re. unused parameter
-
+	assert (m_multi_account_panel);
+	m_multi_account_panel->update_summary();
+	m_multi_account_panel->SetFocus();
+	return;
+	
 	// TODO Manually set default and focus to the "Next" or "Finish" buttons
 	// to stop it from resting on the "Remove Account" button inside the
 	// MultiAccountPanels. (The below is a failed attempt to do this.) This

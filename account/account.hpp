@@ -236,6 +236,27 @@ private:
 };
 
 
+/**
+ * Represents an Account together with an amount representing
+ * its onpening balance. This is simply a convenient way of
+ * grouping these two pieces of information together; hence a
+ * struct.
+ */
+struct AugmentedAccount
+{
+	AugmentedAccount
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		Commodity const& p_commodity
+	);
+	AugmentedAccount
+	(	Account const& p_account,
+		jewel::Decimal const& p_technical_opening_balance
+	);
+	Account account;
+	jewel::Decimal technical_opening_balance;
+};
+
+
 /* Free functions ********************************************/
 
 

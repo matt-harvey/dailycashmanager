@@ -236,6 +236,26 @@ Account::set_description(BString const& p_description)
 	return;
 }
 
+// AugmentedAccount
+
+
+AugmentedAccount::AugmentedAccount
+(	PhatbooksDatabaseConnection& p_database_connection,
+	Commodity const& p_commodity
+):
+	account(p_database_connection),
+	technical_opening_balance(0, p_commodity.precision())
+{
+}
+
+AugmentedAccount::AugmentedAccount
+(	Account const& p_account,
+	jewel::Decimal const& p_technical_opening_balance
+):
+	account(p_account),
+	technical_opening_balance(p_technical_opening_balance)
+{
+}
 
 
 // Free-standing functions
