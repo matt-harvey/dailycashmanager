@@ -4,6 +4,7 @@
 #include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
 #include <wx/event.h>
+#include <wx/window.h>
 
 namespace phatbooks
 {
@@ -36,6 +37,27 @@ public:
 	 */
     wxEvent* Clone();
 
+	/**
+	 * Convenience function to fire a PersistentObjectEvent with which
+	 * no existing PhatbooksPersistentObject is associated.
+	 */
+	static void fire
+	(	wxWindow* p_originator,
+		wxEventType p_event_type
+	);
+
+	/**
+	 * Convenience function to fire a PersistentObjectEvent with which
+	 * an existing PhatbooksPersistentObject is associated.
+	 *
+	 * Precondition: \e p_object must have an id.
+	 */
+	static void fire
+	(	wxWindow* p_originator,
+		wxEventType p_event_type,
+		PhatbooksPersistentObjectBase& p_object
+	);
+
 private:
 	boost::optional<Id> m_maybe_po_id;	
 
@@ -43,6 +65,9 @@ private:
 };
 
 
+/**
+ * Event types associated with PersistentObjectEvent.
+ */
 BEGIN_DECLARE_EVENT_TYPES()
 
 	/**
@@ -74,9 +99,10 @@ BEGIN_DECLARE_EVENT_TYPES()
 	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_DELETED_EVENT, -1)
 
-	// Analogous to "_ACCOUNT" event types, but for
-	// PersistentJournals.
-
+	/**
+	 * The following are analogous to "_ACCOUNT" event types, but for
+	 * PersistentJournals.
+	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_CREATING_EVENT, -1)
 	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_EDITING_EVENT, -1)
 	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_CREATED_EVENT, -1)

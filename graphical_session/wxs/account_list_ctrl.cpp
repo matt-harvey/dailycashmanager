@@ -122,15 +122,13 @@ AccountListCtrl::on_item_activated(wxListEvent& event)
 
 	// Fire an account editing request. This will be handled higher up
 	// the window hierarchy.
-    PersistentObjectEvent po_event
-	(	PHATBOOKS_ACCOUNT_EDITING_EVENT,
-		wxID_ANY,
-		account.id()
+	PersistentObjectEvent::fire
+	(	this,
+		PHATBOOKS_ACCOUNT_EDITING_EVENT,
+		account
 	);
-    po_event.SetEventObject(this);
-    GetEventHandler()->ProcessEvent(po_event);
 	return;
-}
+ }
 
 void
 AccountListCtrl::update(bool balance_sheet)
