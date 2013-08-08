@@ -81,6 +81,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	(	wxID_ANY,
 		Frame::on_ordinary_entry_deleted_event
 	)
+	PHATBOOKS_EVT_BUDGET_EDITED
+	(	wxID_ANY,
+		Frame::on_budget_edited_event
+	)
 END_EVENT_TABLE()
 
 Frame::Frame
@@ -466,10 +470,7 @@ Frame::on_menu_edit_budget(wxCommandEvent& event)
 	}
 	assert (super_type(account.account_type()) == account_super_type::pl);
 	BudgetDialog budget_dialog(this, account);
-	if (budget_dialog.ShowModal() == wxID_OK)
-	{
-		m_top_panel->update_for_amended_budget(account);
-	}
+	budget_dialog.ShowModal();
 	return;
 }
 
@@ -618,6 +619,17 @@ Frame::on_ordinary_entry_deleted_event(PersistentObjectEvent& event)
 	doomed_ids[0] = value(maybe_id);
 	assert (m_top_panel);
 	m_top_panel->update_for_deleted_ordinary_entries(doomed_ids);
+	return;
+}
+
+void
+Frame::on_budget_edited_event(PersistentObjectEvent& event)
+{
+	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_id();
+	assert (maybe_id);
+	Account account(m_database_connection, value(maybe_id));
+	assert (m_top_panel);
+	m_top_panel->update_for_amended_budget(account);
 	return;
 }
 

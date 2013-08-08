@@ -44,7 +44,7 @@ class BudgetDialog: public wxDialog, private boost::noncopyable
 public:
 
 	/**
-	 * @param p_parent parent window
+	 * @param p_parent parent window. <em>This should not be null.</em>
 	 *
 	 * @param p_account must have id.
 	 *

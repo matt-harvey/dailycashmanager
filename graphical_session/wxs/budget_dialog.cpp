@@ -89,6 +89,7 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 {
 	assert (m_account.has_id());  // assert precondition
 	assert (m_budget_items.empty());
+	assert (p_parent);
 
 	if (p_account == p_account.database_connection().balancing_account())
 	{
@@ -433,6 +434,15 @@ BudgetDialog::update_budgets_from_dialog()
 	}
 
 	transaction.commit();
+
+	assert (GetParent());
+	assert (m_account.has_id());
+	PersistentObjectEvent::fire
+	(	GetParent(),
+		PHATBOOKS_BUDGET_EDITED_EVENT,
+		m_account.id()
+	);
+
 	return true;
 }
 

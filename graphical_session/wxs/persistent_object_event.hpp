@@ -155,6 +155,14 @@ BEGIN_DECLARE_EVENT_TYPES()
 	DECLARE_EVENT_TYPE(PHATBOOKS_DRAFT_ENTRY_DELETED_EVENT, -1)
 	DECLARE_EVENT_TYPE(PHATBOOKS_ORDINARY_ENTRY_DELETED_EVENT, -1)
 
+	/**
+	 * To notify of a change in the BudgetItems associated
+	 * with a given Account. Note that for this event, it is
+	 * the id() of the \e Account that is relevant (not the id() of
+	 * the BudgetItems (if any)).
+	 */
+	DECLARE_EVENT_TYPE(PHATBOOKS_BUDGET_EDITED_EVENT, -1)
+
 END_DECLARE_EVENT_TYPES()
 
 
@@ -239,6 +247,12 @@ typedef
 
 #define PHATBOOKS_EVT_ORDINARY_ENTRY_DELETED(id, fn) \
     DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_ORDINARY_ENTRY_DELETED_EVENT, id, -1, \
+    (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
+	(wxNotifyEventFunction) \
+	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
+
+#define PHATBOOKS_EVT_BUDGET_EDITED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_BUDGET_EDITED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
