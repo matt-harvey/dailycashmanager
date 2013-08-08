@@ -625,7 +625,7 @@ Frame::on_ordinary_entry_deleted_event(PersistentObjectEvent& event)
 void
 Frame::on_budget_edited_event(PersistentObjectEvent& event)
 {
-	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_id();
+	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_po_id();
 	assert (maybe_id);
 	Account account(m_database_connection, value(maybe_id));
 	assert (m_top_panel);

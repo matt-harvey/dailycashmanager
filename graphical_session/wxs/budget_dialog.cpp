@@ -13,6 +13,7 @@
 #include "frequency_ctrl.hpp"
 #include "interval_type.hpp"
 #include "locale.hpp"
+#include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "sizing.hpp"
