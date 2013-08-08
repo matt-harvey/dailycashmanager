@@ -38,6 +38,10 @@ class Frame;
  *
  * @todo Make the "-" button look disabled unless there is more than
  * one BudgetItemComponent.
+ *
+ * @todo It's probably more user-friendly if the user can edit
+ * BudgetItems via AccountDialog rather than having to open this
+ * separate dialog.
  */
 class BudgetDialog: public wxDialog, private boost::noncopyable
 {
