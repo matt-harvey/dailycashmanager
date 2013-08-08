@@ -1,4 +1,4 @@
-#include "event.hpp"
+#include "persistent_object_event.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
 #include <wx/event.h>

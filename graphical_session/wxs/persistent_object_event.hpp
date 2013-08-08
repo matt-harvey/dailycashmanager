@@ -1,5 +1,5 @@
-#ifndef GUARD_event_hpp
-#define GUARD_event_hpp
+#ifndef GUARD_persistent_object_event_hpp
+#define GUARD_persistent_object_event_hpp
 
 #include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
@@ -123,4 +123,4 @@ typedef
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_event_hpp
+#endif  // GUARD_persistent_object_event_hpp
