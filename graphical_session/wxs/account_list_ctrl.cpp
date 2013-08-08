@@ -9,6 +9,7 @@
 #include "finformat.hpp"
 #include "locale.hpp"
 #include "top_panel.hpp"
+#include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/optional.hpp>
 #include <wx/event.h>
@@ -118,27 +119,16 @@ AccountListCtrl::on_item_activated(wxListEvent& event)
 {
 	wxString const account_name = GetItemText(event.GetIndex());
 	Account account(m_database_connection, account_name);
-	AccountDialog account_dialog
-	(	this,
-		account,
-		super_type(account.account_type())
+
+	// Fire an account editing request. This will be handled higher up
+	// the window hierarchy.
+    PersistentObjectEvent po_event
+	(	PHATBOOKS_ACCOUNT_EDITING_EVENT,
+		wxID_ANY,
+		account.id()
 	);
-	if (account_dialog.ShowModal() == wxID_OK)
-	{
-		// WARNING This is hideous. This is a great advertisement for
-		// why we need to use the event system.
-		wxPanel* const parent = dynamic_cast<wxPanel*>(GetParent());
-		assert (parent);
-		wxNotebook* const grandparent = dynamic_cast<wxNotebook*>
-		(	parent->GetParent()
-		);
-		assert (grandparent);
-		TopPanel* const greatgrandparent = dynamic_cast<TopPanel*>
-		(	grandparent->GetParent()
-		);
-		assert (greatgrandparent);
-		greatgrandparent->update_for_amended(account);
-	}
+    po_event.SetEventObject(this);
+    GetEventHandler()->ProcessEvent(po_event);
 	return;
 }
 

@@ -21,6 +21,7 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
+class PersistentObjectEvent;
 class TopPanel;
 
 // End forward declarations
@@ -60,17 +61,24 @@ public:
 
 private:
 
-	// Event handlers
-	void on_quit(wxCommandEvent& event);
-	void on_about(wxCommandEvent& event);
-	void on_new_bs_account(wxCommandEvent& event);
-	void on_new_pl_account(wxCommandEvent& event);
-	void on_new_transaction(wxCommandEvent& event);
-	void on_edit_bs_account(wxCommandEvent& event);
-	void on_edit_pl_account(wxCommandEvent& event);
-	void on_edit_ordinary_journal(wxCommandEvent& event);
-	void on_edit_draft_journal(wxCommandEvent& event);
-	void on_edit_budget(wxCommandEvent& event);
+	// Event handlers - menu selections
+	void on_menu_quit(wxCommandEvent& event);
+	void on_menu_about(wxCommandEvent& event);
+	void on_menu_new_bs_account(wxCommandEvent& event);
+	void on_menu_new_pl_account(wxCommandEvent& event);
+	void on_menu_new_transaction(wxCommandEvent& event);
+	void on_menu_edit_bs_account(wxCommandEvent& event);
+	void on_menu_edit_pl_account(wxCommandEvent& event);
+	void on_menu_edit_ordinary_journal(wxCommandEvent& event);
+	void on_menu_edit_draft_journal(wxCommandEvent& event);
+	void on_menu_edit_budget(wxCommandEvent& event);
+
+	// Event handlers - other - captures Account editing request
+	// fired from lower down the window hierarchy.
+	void on_account_editing_requested(PersistentObjectEvent& event);	
+
+	// The actual function which conducts Account editing.
+	void edit_account(Account& account);
 
 	static int const s_new_bs_account_id = wxID_HIGHEST + 1;
 	static int const s_new_pl_account_id = s_new_bs_account_id + 1;
@@ -90,6 +98,8 @@ private:
 	wxMenu* m_help_menu;
 
 	TopPanel* m_top_panel;
+
+	DECLARE_EVENT_TABLE()
 };
 
 

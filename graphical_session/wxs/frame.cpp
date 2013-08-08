@@ -12,15 +12,20 @@
 #include "icon.xpm"
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
+#include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "top_panel.hpp"
+#include <boost/optional.hpp>
 #include <jewel/on_windows.hpp>
+#include <jewel/optional.hpp>
 #include <wx/menu.h>
 #include <wx/string.h>
 #include <wx/icon.h>
 #include <wx/wx.h>
 #include <vector>
 
+using boost::optional;
+using jewel::value;
 using std::vector;
 
 #include <jewel/debug_log.hpp>  // for debugging / testing
@@ -34,6 +39,12 @@ namespace phatbooks
 namespace gui
 {
 
+BEGIN_EVENT_TABLE(Frame, wxFrame)
+	PHATBOOKS_EVT_ACCOUNT_EDITING
+	(	wxID_ANY,
+		Frame::on_account_editing_requested
+	)
+END_EVENT_TABLE()
 
 Frame::Frame
 (	wxString const& title,
@@ -154,52 +165,52 @@ Frame::Frame
 	Connect
 	(	wxID_EXIT,
 		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_quit)
+		wxCommandEventHandler(Frame::on_menu_quit)
 	);
 	Connect
 	(	s_new_bs_account_id,
 		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_new_bs_account)
+		wxCommandEventHandler(Frame::on_menu_new_bs_account)
 	);
 	Connect
 	(	s_new_pl_account_id,
 		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_new_pl_account)
+		wxCommandEventHandler(Frame::on_menu_new_pl_account)
 	);
 	Connect
 	(	s_new_transaction_id,
 		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_new_transaction)
+		wxCommandEventHandler(Frame::on_menu_new_transaction)
 	);
 	Connect
 	(	s_edit_bs_account_id,
 		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_edit_bs_account)
+		wxCommandEventHandler(Frame::on_menu_edit_bs_account)
 	);
 	Connect
 	(	s_edit_pl_account_id,
 		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_edit_pl_account)
+		wxCommandEventHandler(Frame::on_menu_edit_pl_account)
 	);
 	Connect
 	(	s_edit_ordinary_journal_id,
 		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_edit_ordinary_journal)
+		wxCommandEventHandler(Frame::on_menu_edit_ordinary_journal)
 	);
 	Connect
 	(	s_edit_draft_journal_id,
 		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_edit_draft_journal)
+		wxCommandEventHandler(Frame::on_menu_edit_draft_journal)
 	);
 	Connect
 	(	s_edit_budget_id,
 		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_edit_budget)
+		wxCommandEventHandler(Frame::on_menu_edit_budget)
 	);
 	Connect
 	(	wxID_ABOUT,
 		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_about)
+		wxCommandEventHandler(Frame::on_menu_about)
 	);
 
 #	if JEWEL_ON_WINDOWS
@@ -211,7 +222,7 @@ Frame::Frame
 }
 	
 void
-Frame::on_about(wxCommandEvent& event)
+Frame::on_menu_about(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
 	// TODO Put better message here
@@ -225,7 +236,7 @@ Frame::on_about(wxCommandEvent& event)
 }
 
 void
-Frame::on_quit(wxCommandEvent& event)
+Frame::on_menu_quit(wxCommandEvent& event)
 {
 	// Destroy the frame
 	Close();
@@ -234,7 +245,7 @@ Frame::on_quit(wxCommandEvent& event)
 }
 
 void
-Frame::on_new_bs_account(wxCommandEvent& event)
+Frame::on_menu_new_bs_account(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
 	Account account(m_database_connection);
@@ -255,7 +266,7 @@ Frame::on_new_bs_account(wxCommandEvent& event)
 }
 
 void
-Frame::on_new_pl_account(wxCommandEvent& event)
+Frame::on_menu_new_pl_account(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
 	Account account(m_database_connection);
@@ -272,7 +283,7 @@ Frame::on_new_pl_account(wxCommandEvent& event)
 }
 
 void
-Frame::on_new_transaction(wxCommandEvent& event)
+Frame::on_menu_new_transaction(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
 	vector<Account> balance_sheet_accounts;
@@ -285,7 +296,7 @@ Frame::on_new_transaction(wxCommandEvent& event)
 }
 
 void
-Frame::on_edit_bs_account(wxCommandEvent& event)
+Frame::on_menu_edit_bs_account(wxCommandEvent& event)
 {
 	// TODO Factor out repeated code in the various member functions
 	// that invoke an AccountDialog.
@@ -308,24 +319,12 @@ Frame::on_edit_bs_account(wxCommandEvent& event)
 	(	super_type(account.account_type()) ==
 		account_super_type::balance_sheet
 	);
-	AccountDialog account_dialog
-	(	this,
-		account,
-		account_super_type::balance_sheet
-	);
-	if (account_dialog.ShowModal() == wxID_OK)
-	{
-		// TODO This will obliterate any contents of the TransactionCtrl.
-		// Do we want this? We probably \e do want it to update the
-		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
-		// we don't really want it to obliterate everything else.
-		m_top_panel->update_for_amended(account);
-	}
+	edit_account(account);
 	return;
 }
 
 void
-Frame::on_edit_pl_account(wxCommandEvent& event)
+Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
 	vector<Account> accounts;
@@ -348,24 +347,12 @@ Frame::on_edit_pl_account(wxCommandEvent& event)
 	(	super_type(account.account_type()) ==
 		account_super_type::pl
 	);
-	AccountDialog account_dialog
-	(	this,
-		account,
-		account_super_type::pl
-	);
-	if (account_dialog.ShowModal() == wxID_OK)
-	{
-		// TODO This will obliterate any contents of the TransactionCtrl.
-		// Do we want this? We probably \e do want it to update the
-		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
-		// we don't really want it to obliterate everything else.
-		m_top_panel->update_for_amended(account);
-	}
+	edit_account(account);
 	return;
 }
 
 void
-Frame::on_edit_ordinary_journal(wxCommandEvent& event)
+Frame::on_menu_edit_ordinary_journal(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
 	vector<OrdinaryJournal> journals;
@@ -384,7 +371,7 @@ Frame::on_edit_ordinary_journal(wxCommandEvent& event)
 }
 
 void
-Frame::on_edit_draft_journal(wxCommandEvent& event)
+Frame::on_menu_edit_draft_journal(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
 	vector<DraftJournal> journals;
@@ -404,7 +391,7 @@ Frame::on_edit_draft_journal(wxCommandEvent& event)
 }
 
 void
-Frame::on_edit_budget(wxCommandEvent& event)
+Frame::on_menu_edit_budget(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
 	vector<Account> accounts;
@@ -450,6 +437,16 @@ Frame::on_edit_budget(wxCommandEvent& event)
 }
 
 void
+Frame::on_account_editing_requested(PersistentObjectEvent& event)
+{
+	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_po_id();
+	assert (maybe_id);
+	Account account(m_database_connection, value(maybe_id));
+	edit_account(account);
+	return;
+}
+
+void
 Frame::selected_balance_sheet_accounts(vector<Account>& out) const
 {
 	m_top_panel->selected_balance_sheet_accounts(out);
@@ -476,6 +473,26 @@ Frame::selected_draft_journals(vector<DraftJournal>& out) const
 	m_top_panel->selected_draft_journals(out);
 	return;
 }
+
+void
+Frame::edit_account(Account& p_account)
+{
+	AccountDialog account_dialog
+	(	this,
+		p_account,
+		super_type(p_account.account_type())
+	);
+	if (account_dialog.ShowModal() == wxID_OK)
+	{
+		// TODO This will obliterate any contents of the TransactionCtrl.
+		// Do we want this? We probably \e do want it to update the
+		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
+		// we don't really want it to obliterate everything else.
+		m_top_panel->update_for_amended(p_account);
+	}
+	return;
+}
+
 
 }  // namespace gui
 }  // namespace phatbooks

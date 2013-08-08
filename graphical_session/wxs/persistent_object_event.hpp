@@ -29,6 +29,8 @@ public:
 
 	PersistentObjectEvent(PersistentObjectEvent const& rhs);
 
+	boost::optional<Id> maybe_po_id() const;
+
     /**
 	 * Required for sending with wxPostEvent().
 	 */
@@ -43,11 +45,37 @@ private:
 
 BEGIN_DECLARE_EVENT_TYPES()
 
+	/**
+	 * Fire to signify that we want the user to be given the opportunity
+	 * to create an Account.
+	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_CREATING_EVENT, -1)
+
+	/**
+	 * Fire to signify that we want the user to be given the opportunity
+	 * to edit an Account.
+	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_EDITING_EVENT, -1)
+
+	/**
+	 * Fire to signifiy that the user has just created (and saved) an
+	 * Account.
+	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_CREATED_EVENT, -1)
+
+	/**
+	 * Fire to signify that the user has just edited an Account
+	 * (and saved the changes).
+	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_EDITED_EVENT, -1)
+
+	/**
+	 * Fire to indicated that the user has just deleted an Account.
+	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_DELETED_EVENT, -1)
+
+	// Analogous to "_ACCOUNT" event types, but for
+	// PersistentJournals.
 
 	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_CREATING_EVENT, -1)
 	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_EDITING_EVENT, -1)
@@ -57,6 +85,9 @@ BEGIN_DECLARE_EVENT_TYPES()
 
 END_DECLARE_EVENT_TYPES()
 
+
+
+// Various boilerplate called for by the wxWidgets event system.
 
 typedef
 	void (wxEvtHandler::*PersistentObjectEventFunction)

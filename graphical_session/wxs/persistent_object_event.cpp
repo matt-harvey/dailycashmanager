@@ -3,18 +3,23 @@
 #include <boost/optional.hpp>
 #include <wx/event.h>
 
+using boost::optional;
+
 namespace phatbooks
 {
 namespace gui
 {
 
-DEFINE_EVENT_TYPE(AccountCreationEvent)
-DEFINE_EVENT_TYPE(AccountUpdateEvent)
-DEFINE_EVENT_TYPE(AccountDeletionEvent)
-
-DEFINE_EVENT_TYPE(JournalCreationEvent)
-DEFINE_EVENT_TYPE(JournalUpdateEvent)
-DEFINE_EVENT_TYPE(JournalDeletionEvent)
+DEFINE_EVENT_TYPE(PHATBOOKS_ACCOUNT_CREATING_EVENT)
+DEFINE_EVENT_TYPE(PHATBOOKS_ACCOUNT_EDITING_EVENT)
+DEFINE_EVENT_TYPE(PHATBOOKS_ACCOUNT_CREATED_EVENT)
+DEFINE_EVENT_TYPE(PHATBOOKS_ACCOUNT_EDITED_EVENT)
+DEFINE_EVENT_TYPE(PHATBOOKS_ACCOUNT_DELETED_EVENT)
+DEFINE_EVENT_TYPE(PHATBOOKS_JOURNAL_CREATING_EVENT)
+DEFINE_EVENT_TYPE(PHATBOOKS_JOURNAL_EDITING_EVENT)
+DEFINE_EVENT_TYPE(PHATBOOKS_JOURNAL_CREATED_EVENT)
+DEFINE_EVENT_TYPE(PHATBOOKS_JOURNAL_EDITED_EVENT)
+DEFINE_EVENT_TYPE(PHATBOOKS_JOURNAL_DELETED_EVENT)
 
 IMPLEMENT_DYNAMIC_CLASS(PersistentObjectEvent, wxCommandEvent)
 
@@ -34,6 +39,12 @@ PersistentObjectEvent::PersistentObjectEvent
 	wxCommandEvent(rhs.GetEventType(), rhs.GetId()),
 	m_maybe_po_id(rhs.m_maybe_po_id)
 {
+}
+
+optional<PersistentObjectEvent::Id>
+PersistentObjectEvent::maybe_po_id() const
+{
+	return m_maybe_po_id;
 }
 
 wxEvent*
