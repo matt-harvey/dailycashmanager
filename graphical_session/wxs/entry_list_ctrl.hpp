@@ -13,6 +13,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/unordered_set.hpp>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
 #include <vector>
@@ -159,6 +160,8 @@ private:
 	virtual int do_get_comment_col_num() const = 0;
 	virtual void do_update_for_amended(Account const& p_account);
 
+	void on_item_activated(wxListEvent& event);
+
 	/**
 	 * Should return a pointer to an EntryReader which reads Entries from
 	 * database_connection() associated with OrdinaryJournals
@@ -201,7 +204,9 @@ private:
 
 	PhatbooksDatabaseConnection& m_database_connection;
 
-};
+	DECLARE_EVENT_TABLE()
+
+};  // class EntryListCtrl
 
 
 

@@ -11,6 +11,7 @@
 #include "entry_reader.hpp"
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
+#include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "pl_account_entry_list_ctrl.hpp"
 #include "reconciliation_entry_list_ctrl.hpp"
@@ -21,6 +22,7 @@
 #include <boost/optional.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/progdlg.h>
 #include <wx/scrolwin.h>
@@ -44,6 +46,13 @@ namespace phatbooks
 {
 namespace gui
 {
+
+BEGIN_EVENT_TABLE(EntryListCtrl, wxListCtrl)
+	EVT_LIST_ITEM_ACTIVATED
+	(	wxID_ANY,
+		EntryListCtrl::on_item_activated
+	)
+END_EVENT_TABLE()
 
 EntryListCtrl::EntryListCtrl
 (	wxWindow* p_parent,
@@ -336,6 +345,25 @@ void
 EntryListCtrl::do_update_for_amended(Account const& p_account)
 {
 	(void)p_account;  // Silence compiler re. unused variable
+	return;
+}
+
+void
+EntryListCtrl::on_item_activated(wxListEvent& event)
+{
+	Entry entry
+	(	database_connection(),
+		GetItemData(event.GetIndex())
+	);
+	OrdinaryJournal journal = entry.journal<OrdinaryJournal>();
+
+	// Fire a PersistentJournal editing request. This will be handled
+	// higher up the window hierarchy.
+	PersistentObjectEvent::fire
+	(	this,
+		PHATBOOKS_JOURNAL_EDITING_EVENT,
+		journal
+	);
 	return;
 }
 
