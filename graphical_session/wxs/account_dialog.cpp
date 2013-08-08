@@ -382,24 +382,22 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 
 	// Notify window higher in the hierarchy that they need to update for
 	// changed Account and new OridinaryJournal.
-	JEWEL_DEBUG_LOG_LOCATION;
-	JEWEL_DEBUG_LOG << "p_is_new_account: " << p_is_new_account << endl;
 	assert (GetParent());
+	wxEventType const event_type =
+	(	p_is_new_account?
+		PHATBOOKS_ACCOUNT_CREATED_EVENT:
+		PHATBOOKS_ACCOUNT_EDITED_EVENT
+	);
 	PersistentObjectEvent::fire
-	(	GetParent(),
-		(	p_is_new_account?
-			PHATBOOKS_ACCOUNT_CREATED_EVENT:
-			PHATBOOKS_ACCOUNT_EDITED_EVENT
-		),
+	(	GetParent(),  // can't use "this" here, or event is missed
+		event_type,
 		m_account
 	);
-	JEWEL_DEBUG_LOG_LOCATION;
 	PersistentObjectEvent::fire
-	(	GetParent(),
+	(	GetParent(),  // can't use "this" here, or event is missed
 		PHATBOOKS_JOURNAL_CREATED_EVENT,
 		objnl
 	);
-	JEWEL_DEBUG_LOG_LOCATION;
 
 	return true;
 }

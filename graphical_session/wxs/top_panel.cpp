@@ -399,6 +399,8 @@ TopPanel::update_for_new(Account const& p_saved_object)
 void
 TopPanel::update_for_amended(OrdinaryJournal const& p_saved_object)
 {
+	JEWEL_DEBUG_LOG << "Entered TopPanel::update_for_amended(OrdinaryJournal const&)"
+	                << endl;
 	m_bs_account_list->update(true);
 	m_pl_account_list->update(false);
 	m_transaction_panel->update_for_amended(p_saved_object);
@@ -426,14 +428,10 @@ TopPanel::update_for_amended(DraftJournal const& p_saved_object)
 void
 TopPanel::update_for_amended(Account const& p_saved_object)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
-	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update(true);
-	JEWEL_DEBUG_LOG_LOCATION;
 	m_pl_account_list->update(false);
 	m_transaction_panel->update_for_amended(p_saved_object);
 	m_reconciliation_panel->update_for_amended(p_saved_object);
-	JEWEL_DEBUG_LOG_LOCATION;
 	m_report_panel->update_for_new(p_saved_object);
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();

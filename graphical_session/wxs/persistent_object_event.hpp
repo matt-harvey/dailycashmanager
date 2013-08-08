@@ -58,7 +58,34 @@ public:
 		PhatbooksPersistentObjectBase& p_object
 	);
 
+	/**
+	 * Convenience function to fire one or more PersistentObjectEvents
+	 * notifying that Entries that had ids \e p_doomed_ids, are now deleted.
+	 * Use for Entries that were associated with a a DraftJournal.
+	 */
+	static void notify_doomed_draft_entries
+	(	wxWindow* p_originator,
+		std::vector<Id> const& p_doomed_ids
+	);
+	
+	/**
+	 * Convenience function to fire on or more PersistentObjectEvents
+	 * notifying that Entries that has ids \e p_doomed_ids, are now
+	 * deleted. Use for Entries that were associated with an OrdinaryJournal.
+	 */
+	static void notify_doomed_ordinary_entries
+	(	wxWindow* p_originator,
+		std::vector<Id> const& p_doomed_ids
+	);
+
 private:
+
+	static void notify_many
+	(	wxWindow* p_originator,
+		wxEventType p_event_type,
+		std::vector<Id> const& p_po_ids
+	);
+
 	boost::optional<Id> m_maybe_po_id;	
 
 	DECLARE_DYNAMIC_CLASS(PersistentObjectEvent)
@@ -108,6 +135,12 @@ BEGIN_DECLARE_EVENT_TYPES()
 	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_CREATED_EVENT, -1)
 	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_EDITED_EVENT, -1)
 	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_DELETED_EVENT, -1)
+
+	/**
+	 * And for Entries.
+	 */
+	DECLARE_EVENT_TYPE(PHATBOOKS_DRAFT_ENTRY_DELETED_EVENT, -1)
+	DECLARE_EVENT_TYPE(PHATBOOKS_ORDINARY_ENTRY_DELETED_EVENT, -1)
 
 END_DECLARE_EVENT_TYPES()
 
@@ -175,6 +208,18 @@ typedef
 
 #define PHATBOOKS_EVT_JOURNAL_DELETED(id, fn) \
     DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_JOURNAL_DELETED_EVENT, id, -1, \
+    (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
+	(wxNotifyEventFunction) \
+	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
+
+#define PHATBOOKS_EVT_DRAFT_ENTRY_DELETED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_DRAFT_ENTRY_DELETED_EVENT, id, -1, \
+    (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
+	(wxNotifyEventFunction) \
+	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
+
+#define PHATBOOKS_EVT_ORDINARY_ENTRY_DELETED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_ORDINARY_ENTRY_DELETED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),

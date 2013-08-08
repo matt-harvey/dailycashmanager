@@ -65,6 +65,14 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	(	wxID_ANY,
 		Frame::on_journal_edited_event
 	)
+	PHATBOOKS_EVT_DRAFT_ENTRY_DELETED
+	(	wxID_ANY,
+		Frame::on_draft_entry_deleted_event
+	)
+	PHATBOOKS_EVT_ORDINARY_ENTRY_DELETED
+	(	wxID_ANY,
+		Frame::on_ordinary_entry_deleted_event
+	)
 END_EVENT_TABLE()
 
 Frame::Frame
@@ -503,13 +511,10 @@ Frame::on_account_edited_event(PersistentObjectEvent& event)
 	// Do we want this? We probably \e do want it to update the
 	// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
 	// we don't really want it to obliterate everything else.
-	JEWEL_DEBUG_LOG_LOCATION;	
 	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_po_id();
 	assert (maybe_id);
 	Account const account(m_database_connection, value(maybe_id));
-	JEWEL_DEBUG_LOG_LOCATION;	
 	m_top_panel->update_for_amended(account);
-	JEWEL_DEBUG_LOG_LOCATION;	
 	return;
 }
 
@@ -522,12 +527,12 @@ Frame::on_journal_created_event(PersistentObjectEvent& event)
 	PersistentJournal::Id const journal_id = value(maybe_id);
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
-		DraftJournal journal(m_database_connection, journal_id);
+		DraftJournal const journal(m_database_connection, journal_id);
 		m_top_panel->update_for_new(journal);
 	}
 	else
 	{
-		OrdinaryJournal journal(m_database_connection, journal_id);
+		OrdinaryJournal const journal(m_database_connection, journal_id);
 		m_top_panel->update_for_new(journal);
 	}
 	return;
@@ -543,14 +548,50 @@ Frame::on_journal_edited_event(PersistentObjectEvent& event)
 	PersistentJournal::Id const journal_id = value(maybe_id);
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
-		DraftJournal journal(m_database_connection, journal_id);
+		DraftJournal const journal(m_database_connection, journal_id);
 		m_top_panel->update_for_amended(journal);
 	}
 	else
 	{
-		OrdinaryJournal journal(m_database_connection, journal_id);
+		OrdinaryJournal const journal(m_database_connection, journal_id);
 		m_top_panel->update_for_amended(journal);
 	}
+	return;
+}
+
+void
+Frame::on_draft_entry_deleted_event(PersistentObjectEvent& event)
+{
+	JEWEL_DEBUG_LOG << "Entered Frame::on_draft_entry_deleted_event(...)"
+	                << endl;
+	// TODO The chain of functions that are now called (via m_top_panel)
+	// expect a vector. This is now just pointlessly wasteful given
+	// what we are now processing one event at a time!
+	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_po_id();
+	assert (maybe_id);
+	static vector<Entry::Id> doomed_ids(1, 0);
+	assert (doomed_ids.size() == 1);
+	doomed_ids[0] = value(maybe_id);
+	assert (m_top_panel);
+	m_top_panel->update_for_deleted_draft_entries(doomed_ids);
+	return;
+}
+
+void
+Frame::on_ordinary_entry_deleted_event(PersistentObjectEvent& event)
+{
+	JEWEL_DEBUG_LOG << "Entered Frame::on_ordinary_entry_deleted_event(...)"
+	                << endl;
+	// TODO The chain of functions that are now called (via m_top_panel)
+	// a vector. This is now just pointlessly wasteful given
+	// what we are now processing one event at a time!
+	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_po_id();
+	assert (maybe_id);
+	static vector<Entry::Id> doomed_ids(1, 0);
+	assert (doomed_ids.size() == 1);
+	doomed_ids[0] = value(maybe_id);
+	assert (m_top_panel);
+	m_top_panel->update_for_deleted_ordinary_entries(doomed_ids);
 	return;
 }
 

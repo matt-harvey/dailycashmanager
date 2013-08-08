@@ -399,6 +399,9 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 	wxString const wx_date_string = date_format_wx(p_journal.date());
 	for ( ; it != end; ++it)
 	{
+		// TODO This causes each Entry to go to the end of its "date block"
+		// even if it was ALREADY THERE at the beginning. This could bewilder
+		// users.
 		remove_if_present(it->id());
 		process_insertion_candidate_entry(*it);
 	}

@@ -779,6 +779,7 @@ TransactionCtrl::post_journal()
 		assert (dj.is_balanced());
 		dj.save();
 		JEWEL_DEBUG_LOG << "Posted Journal:\n\n" << dj << endl;
+		// Note the next line may destroy "this"!
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_CREATED_EVENT,
@@ -796,6 +797,7 @@ TransactionCtrl::post_journal()
 		assert (oj.is_balanced());
 		oj.save();
 		JEWEL_DEBUG_LOG << "Posted journal:\n\n" << oj << endl;
+		// Note the next line may destroy "this"!
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_CREATED_EVENT,
@@ -890,11 +892,16 @@ TransactionCtrl::save_existing_journal()
 			m_journal->push_entry(entries[i]);
 		}
 	}
+	vector<Entry::Id> doomed_entry_ids;
 	// Bare scope
 	{
 		Vec::size_type i = 0;
 		Vec::size_type const sz = doomed_entries.size();
-		for ( ; i != sz; ++i) m_journal->remove_entry(doomed_entries[i]);
+		for ( ; i != sz; ++i)
+		{
+			m_journal->remove_entry(doomed_entries[i]);
+			doomed_entry_ids.push_back(doomed_entries[i].id());
+		}
 	}
 		
 	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
@@ -956,6 +963,11 @@ TransactionCtrl::save_existing_journal()
 		assert (dj->is_balanced());
 		dj->save();
 		JEWEL_DEBUG_LOG << "Saved Journal:\n\n" << *dj << endl;
+		PersistentObjectEvent::notify_doomed_draft_entries
+		(	this,
+			doomed_entry_ids
+		);
+		// Note the next line may destroy "this"!
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_EDITED_EVENT,
@@ -980,6 +992,11 @@ TransactionCtrl::save_existing_journal()
 		assert (oj->is_balanced());
 		oj->save();
 		JEWEL_DEBUG_LOG << "Saved Journal:\n\n" << *oj << endl;
+		PersistentObjectEvent::notify_doomed_ordinary_entries
+		(	this,
+			doomed_entry_ids
+		);
+		// Note the next line may destroy "this"!
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_EDITED_EVENT,
