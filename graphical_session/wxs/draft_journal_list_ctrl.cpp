@@ -4,8 +4,10 @@
 #include "draft_journal.hpp"
 #include "draft_journal_reader.hpp"
 #include "frequency.hpp"
+#include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
+#include <wx/event.h>
 #include <wx/listctrl.h>
 #include <algorithm>
 #include <string>
@@ -19,6 +21,13 @@ namespace phatbooks
 {
 namespace gui
 {
+
+BEGIN_EVENT_TABLE(DraftJournalListCtrl, wxListCtrl)
+	EVT_LIST_ITEM_ACTIVATED
+	(	wxID_ANY,
+		DraftJournalListCtrl::on_item_activated
+	)
+END_EVENT_TABLE()
 
 DraftJournalListCtrl::DraftJournalListCtrl
 (	wxWindow* p_parent,
@@ -51,6 +60,24 @@ DraftJournalListCtrl::selected_draft_journals(vector<DraftJournal>& out)
 			out.push_back(dj);
 		}
 	}
+	return;
+}
+
+void
+DraftJournalListCtrl::on_item_activated(wxListEvent& event)
+{
+	DraftJournal journal
+	(	m_database_connection,
+		GetItemData(event.GetIndex())
+	);
+	
+	// Fire a PersistentJournal editing request. This will be handled
+	// higher up the window hierarchy.
+	PersistentObjectEvent::fire
+	(	this,
+		PHATBOOKS_JOURNAL_EDITING_EVENT,
+		journal
+	);
 	return;
 }
 

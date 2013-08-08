@@ -120,7 +120,7 @@ AccountListCtrl::on_item_activated(wxListEvent& event)
 	wxString const account_name = GetItemText(event.GetIndex());
 	Account account(m_database_connection, account_name);
 
-	// Fire an account editing request. This will be handled higher up
+	// Fire an Account editing request. This will be handled higher up
 	// the window hierarchy.
 	PersistentObjectEvent::fire
 	(	this,

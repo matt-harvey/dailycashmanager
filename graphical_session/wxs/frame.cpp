@@ -12,6 +12,7 @@
 #include "icon.xpm"
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
+#include "persistent_journal.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "top_panel.hpp"
@@ -43,6 +44,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	PHATBOOKS_EVT_ACCOUNT_EDITING
 	(	wxID_ANY,
 		Frame::on_account_editing_requested
+	)
+	PHATBOOKS_EVT_JOURNAL_EDITING
+	(	wxID_ANY,
+		Frame::on_journal_editing_requested
 	)
 END_EVENT_TABLE()
 
@@ -366,7 +371,7 @@ Frame::on_menu_edit_ordinary_journal(wxCommandEvent& event)
 		return;	
 	}
 	assert (journals.size() >= 1);
-	m_top_panel->configure_transaction_ctrl(journals[0]);
+	edit_journal(journals[0]);
 	return;
 }
 
@@ -386,7 +391,7 @@ Frame::on_menu_edit_draft_journal(wxCommandEvent& event)
 		return;
 	}
 	assert (journals.size() >= 1);
-	m_top_panel->configure_transaction_ctrl(journals[0]);
+	edit_journal(journals[0]);
 	return;
 }
 
@@ -447,6 +452,25 @@ Frame::on_account_editing_requested(PersistentObjectEvent& event)
 }
 
 void
+Frame::on_journal_editing_requested(PersistentObjectEvent& event)
+{
+	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_po_id();
+	assert (maybe_id);
+	PersistentJournal::Id const journal_id = value(maybe_id);
+	if (journal_id_is_draft(m_database_connection, journal_id))
+	{
+		DraftJournal journal(m_database_connection, value(maybe_id));
+		edit_journal(journal);
+	}
+	else
+	{
+		OrdinaryJournal journal(m_database_connection, value(maybe_id));
+		edit_journal(journal);
+	}
+	return;
+}
+
+void
 Frame::selected_balance_sheet_accounts(vector<Account>& out) const
 {
 	m_top_panel->selected_balance_sheet_accounts(out);
@@ -492,7 +516,6 @@ Frame::edit_account(Account& p_account)
 	}
 	return;
 }
-
 
 }  // namespace gui
 }  // namespace phatbooks

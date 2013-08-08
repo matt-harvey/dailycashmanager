@@ -6,6 +6,7 @@
 #include "account.hpp"
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
+#include "top_panel.hpp"
 #include <wx/menu.h>
 #include <wx/wx.h>
 #include <wx/string.h>
@@ -22,7 +23,6 @@ namespace gui
 {
 
 class PersistentObjectEvent;
-class TopPanel;
 
 // End forward declarations
 
@@ -76,9 +76,15 @@ private:
 	// Event handlers - other - captures Account editing request
 	// fired from lower down the window hierarchy.
 	void on_account_editing_requested(PersistentObjectEvent& event);	
+	void on_journal_editing_requested(PersistentObjectEvent& event);
 
 	// The actual function which conducts Account editing.
-	void edit_account(Account& account);
+	void edit_account(Account& p_account);
+
+	// The actual function which conducts Journal editing. JournalType
+	// must be either OrdinaryJournal or DraftJournal.
+	template <typename JournalType>
+	void edit_journal(JournalType& p_journal);
 
 	static int const s_new_bs_account_id = wxID_HIGHEST + 1;
 	static int const s_new_pl_account_id = s_new_bs_account_id + 1;
@@ -102,6 +108,20 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
+
+// IMPLEMENT MEMBER FUNCTION TEMPLATES
+
+template <typename JournalType>
+void
+Frame::edit_journal(JournalType& p_journal)
+{
+	assert (m_top_panel);
+	m_top_panel->configure_transaction_ctrl(p_journal);
+	// TODO Bring the focus into the TransactionCtrl so the user can start
+	// populating the TransactionCtrl immediately without having to click
+	// into it.
+	return;
+}
 
 }  // namespace gui
 }  // namespace phatbooks

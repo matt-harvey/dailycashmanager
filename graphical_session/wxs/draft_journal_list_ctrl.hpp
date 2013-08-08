@@ -2,6 +2,7 @@
 #define GUARD_draft_journal_list_ctrl_hpp
 
 #include "draft_journal.hpp"
+#include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
 #include <vector>
@@ -38,6 +39,8 @@ public:
 
 private:
 
+	void on_item_activated(wxListEvent& event);
+
 	void update(UserDraftJournalReader const& p_reader);
 
 	static int const s_name_col = 0;
@@ -45,6 +48,8 @@ private:
 	static int const s_next_date_col = s_frequency_col + 1;
 
 	PhatbooksDatabaseConnection& m_database_connection;
+
+	DECLARE_EVENT_TABLE()
 
 };  // class DraftJournalListCtrl
 
