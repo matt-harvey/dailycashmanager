@@ -15,10 +15,19 @@ class PersistentObjectEvent: public wxCommandEvent
 public:
 	typedef PhatbooksPersistentObjectBase::Id Id;
 
+	/**
+	 * @param p_event_id is the wxWidgets event id.
+	 *
+	 * @param p_maybe_po_id may contain the id() of the
+	 * PhatbooksPersistentObject to which this event pertains.
+	 */
 	PersistentObjectEvent
 	(	wxEventType p_event_type = wxEVT_NULL,
-		boost::optional<Id> p_maybe_id = boost::optional<Id>()
+		int p_event_id = 0,
+		boost::optional<Id> p_maybe_po_id = boost::optional<Id>()
 	);
+
+	PersistentObjectEvent(PersistentObjectEvent const& rhs);
 
     /**
 	 * Required for sending with wxPostEvent().
@@ -26,12 +35,9 @@ public:
     wxEvent* Clone();
 
 private:
-
-	wxEventType m_event_type;
-	boost::optional<Id> m_maybe_id;	
+	boost::optional<Id> m_maybe_po_id;	
 
 	DECLARE_DYNAMIC_CLASS(PersistentObjectEvent)
-
 };
 
 

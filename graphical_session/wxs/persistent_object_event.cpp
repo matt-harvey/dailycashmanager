@@ -20,10 +20,19 @@ IMPLEMENT_DYNAMIC_CLASS(PersistentObjectEvent, wxCommandEvent)
 
 PersistentObjectEvent::PersistentObjectEvent
 (	wxEventType p_event_type,
-	boost::optional<Id> p_maybe_id
+	int p_event_id,
+	boost::optional<Id> p_maybe_po_id
 ):
-	m_event_type(p_event_type),
-	m_maybe_id(p_maybe_id)
+	wxCommandEvent(p_event_type, p_event_id),
+	m_maybe_po_id(p_maybe_po_id)
+{
+}
+
+PersistentObjectEvent::PersistentObjectEvent
+(	PersistentObjectEvent const& rhs
+):
+	wxCommandEvent(rhs.GetEventType(), rhs.GetId()),
+	m_maybe_po_id(rhs.m_maybe_po_id)
 {
 }
 
