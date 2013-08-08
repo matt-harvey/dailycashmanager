@@ -27,7 +27,8 @@ DEFINE_EVENT_TYPE(PHATBOOKS_JOURNAL_CREATING_EVENT)
 DEFINE_EVENT_TYPE(PHATBOOKS_JOURNAL_EDITING_EVENT)
 DEFINE_EVENT_TYPE(PHATBOOKS_JOURNAL_CREATED_EVENT)
 DEFINE_EVENT_TYPE(PHATBOOKS_JOURNAL_EDITED_EVENT)
-DEFINE_EVENT_TYPE(PHATBOOKS_JOURNAL_DELETED_EVENT)
+DEFINE_EVENT_TYPE(PHATBOOKS_DRAFT_JOURNAL_DELETED_EVENT)
+DEFINE_EVENT_TYPE(PHATBOOKS_ORDINARY_JOURNAL_DELETED_EVENT)
 DEFINE_EVENT_TYPE(PHATBOOKS_DRAFT_ENTRY_DELETED_EVENT)
 DEFINE_EVENT_TYPE(PHATBOOKS_ORDINARY_ENTRY_DELETED_EVENT)
 
@@ -83,7 +84,18 @@ PersistentObjectEvent::fire
 )
 {
 	assert (p_object.has_id());  // precondition
-	PersistentObjectEvent event(p_event_type, wxID_ANY, p_object.id());
+	fire(p_originator, p_event_type, p_object.id());
+	return;
+}
+
+void
+PersistentObjectEvent::fire
+(	wxWindow* p_originator,
+	wxEventType p_event_type,
+	PersistentObjectEvent::Id p_po_id
+)
+{
+	PersistentObjectEvent event(p_event_type, wxID_ANY, p_po_id);
 	event.SetEventObject(p_originator);
 	p_originator->GetEventHandler()->ProcessEvent(event);
 	return;
@@ -127,14 +139,7 @@ PersistentObjectEvent::notify_many
 	assert (p_originator);
 	vector<Id>::const_iterator it = p_po_ids.begin();
 	vector<Id>::const_iterator const end = p_po_ids.end();
-	for ( ; it != end; ++it)
-	{
-		PersistentObjectEvent event(p_event_type, wxID_ANY, *it);
-		event.SetEventObject(p_originator);
-		wxEvtHandler* const handler = p_originator->GetEventHandler();
-		assert (handler);
-		handler->ProcessEvent(event);
-	}
+	for ( ; it != end; ++it) fire(p_originator, p_event_type, *it);
 	return;
 	
 }

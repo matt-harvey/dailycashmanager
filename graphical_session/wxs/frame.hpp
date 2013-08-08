@@ -84,6 +84,8 @@ private:
 	void on_account_edited_event(PersistentObjectEvent& event);
 	void on_journal_created_event(PersistentObjectEvent& event);
 	void on_journal_edited_event(PersistentObjectEvent& event);
+	void on_draft_journal_deleted_event(PersistentObjectEvent& event);
+	void on_ordinary_journal_deleted_event(PersistentObjectEvent& event);
 	void on_draft_entry_deleted_event(PersistentObjectEvent& event);
 	void on_ordinary_entry_deleted_event(PersistentObjectEvent& event);
 

@@ -65,6 +65,14 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	(	wxID_ANY,
 		Frame::on_journal_edited_event
 	)
+	PHATBOOKS_EVT_DRAFT_JOURNAL_DELETED
+	(	wxID_ANY,
+		Frame::on_draft_journal_deleted_event
+	)
+	PHATBOOKS_EVT_ORDINARY_JOURNAL_DELETED
+	(	wxID_ANY,
+		Frame::on_ordinary_journal_deleted_event
+	)
 	PHATBOOKS_EVT_DRAFT_ENTRY_DELETED
 	(	wxID_ANY,
 		Frame::on_draft_entry_deleted_event
@@ -560,10 +568,30 @@ Frame::on_journal_edited_event(PersistentObjectEvent& event)
 }
 
 void
+Frame::on_draft_journal_deleted_event(PersistentObjectEvent& event)
+{
+	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_po_id();
+	assert (maybe_id);
+	PersistentJournal::Id const journal_id = value(maybe_id);
+	assert (m_top_panel);
+	m_top_panel->update_for_deleted_draft_journal(journal_id);
+	return;
+}
+
+void
+Frame::on_ordinary_journal_deleted_event(PersistentObjectEvent& event)
+{
+	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_po_id();
+	assert (maybe_id);
+	PersistentJournal::Id const journal_id = value(maybe_id);
+	assert (m_top_panel);
+	m_top_panel->update_for_deleted_ordinary_journal(journal_id);
+	return;
+}
+
+void
 Frame::on_draft_entry_deleted_event(PersistentObjectEvent& event)
 {
-	JEWEL_DEBUG_LOG << "Entered Frame::on_draft_entry_deleted_event(...)"
-	                << endl;
 	// TODO The chain of functions that are now called (via m_top_panel)
 	// expect a vector. This is now just pointlessly wasteful given
 	// what we are now processing one event at a time!
@@ -580,8 +608,6 @@ Frame::on_draft_entry_deleted_event(PersistentObjectEvent& event)
 void
 Frame::on_ordinary_entry_deleted_event(PersistentObjectEvent& event)
 {
-	JEWEL_DEBUG_LOG << "Entered Frame::on_ordinary_entry_deleted_event(...)"
-	                << endl;
 	// TODO The chain of functions that are now called (via m_top_panel)
 	// a vector. This is now just pointlessly wasteful given
 	// what we are now processing one event at a time!

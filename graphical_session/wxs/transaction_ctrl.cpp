@@ -612,29 +612,7 @@ TransactionCtrl::on_delete_button_click(wxCommandEvent& event)
 	int const result = confirmation.ShowModal();
 	if (result == wxID_YES)
 	{
-		PersistentJournal::Id const doomed_journal_id = m_journal->id();
-		vector<Entry::Id> doomed_entry_ids;
-		vector<Entry> const& doomed_entries = m_journal->entries();
-		vector<Entry>::const_iterator it = doomed_entries.begin();
-		vector<Entry>::const_iterator const end = doomed_entries.end();
-		for ( ; it != end; ++it) doomed_entry_ids.push_back(it->id());
 		remove_journal();
-		assert (!m_journal->has_id());
-		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
-		assert (panel);
-		OrdinaryJournal* const oj = dynamic_cast<OrdinaryJournal*>(m_journal);
-		if (oj)
-		{
-			panel->update_for_deleted_ordinary_journal(doomed_journal_id);
-			panel->update_for_deleted_ordinary_entries(doomed_entry_ids);
-		}
-		else
-		{
-			DraftJournal* const dj = dynamic_cast<DraftJournal*>(m_journal);
-			assert (dj);
-			panel->update_for_deleted_draft_journal(doomed_journal_id);
-			panel->update_for_deleted_draft_entries(doomed_entry_ids);
-		}
 	}
 	return;
 }
@@ -811,8 +789,52 @@ TransactionCtrl::post_journal()
 bool
 TransactionCtrl::remove_journal()
 {
+	if (!m_journal || !m_journal->has_id())
+	{
+		// WARNING This might be dead code.
+#	ifndef NDEBUG
+		if (m_journal)
+		{
+			vector<Entry> const& entries = m_journal->entries();
+			for (vector<Entry>::size_type i = 0; i != entries.size(); ++i)
+			{
+				assert (!entries[i].has_id());
+			}
+		}
+#	endif
+		return true;
+	}
 	assert (m_journal);
+	PersistentJournal::Id const doomed_journal_id = m_journal->id();
+	bool const is_draft =
+		journal_id_is_draft(database_connection(), doomed_journal_id);
+	vector<Entry::Id> doomed_entry_ids;
+	vector<Entry> const& doomed_entries = m_journal->entries();
+	vector<Entry>::const_iterator it = doomed_entries.begin();
+	vector<Entry>::const_iterator const end = doomed_entries.end();
+	for ( ; it != end; ++it) doomed_entry_ids.push_back(it->id());
 	m_journal->remove();
+	assert (!m_journal->has_id());
+	wxEventType event_type(0);
+	if (is_draft)
+	{
+		PersistentObjectEvent::notify_doomed_draft_entries
+		(	this,
+			doomed_entry_ids
+		);
+		event_type = PHATBOOKS_DRAFT_JOURNAL_DELETED_EVENT;
+	}
+	else
+	{
+		PersistentObjectEvent::notify_doomed_ordinary_entries
+		(	this,
+			doomed_entry_ids
+		);
+		event_type = PHATBOOKS_ORDINARY_JOURNAL_DELETED_EVENT;
+	}
+	assert (event_type != static_cast<wxEventType>(0));
+	PersistentObjectEvent::fire(this, event_type, doomed_journal_id);
+
 	return true;
 }
 

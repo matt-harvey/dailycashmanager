@@ -59,6 +59,18 @@ public:
 	);
 
 	/**
+	 * Convenience function to fire a PersistentObjectEvent with which
+	 * an existing-or-just-deleted PhatbooksPersistentObject is associated.
+	 * Here we pass the object's id() to the third parameter, rather than
+	 * the object itself.
+	 */
+	static void fire
+	(	wxWindow* p_originator,
+		wxEventType p_event_type,
+		int p_po_id
+	);
+
+	/**
 	 * Convenience function to fire one or more PersistentObjectEvents
 	 * notifying that Entries that had ids \e p_doomed_ids, are now deleted.
 	 * Use for Entries that were associated with a a DraftJournal.
@@ -134,7 +146,8 @@ BEGIN_DECLARE_EVENT_TYPES()
 	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_EDITING_EVENT, -1)
 	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_CREATED_EVENT, -1)
 	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_EDITED_EVENT, -1)
-	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_DELETED_EVENT, -1)
+	DECLARE_EVENT_TYPE(PHATBOOKS_DRAFT_JOURNAL_DELETED_EVENT, -1)
+	DECLARE_EVENT_TYPE(PHATBOOKS_ORDINARY_JOURNAL_DELETED_EVENT, -1)
 
 	/**
 	 * And for Entries.
@@ -206,8 +219,14 @@ typedef
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_JOURNAL_DELETED(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_JOURNAL_DELETED_EVENT, id, -1, \
+#define PHATBOOKS_EVT_DRAFT_JOURNAL_DELETED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_DRAFT_JOURNAL_DELETED_EVENT, id, -1, \
+    (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
+	(wxNotifyEventFunction) \
+	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
+
+#define PHATBOOKS_EVT_ORDINARY_JOURNAL_DELETED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_ORDINARY_JOURNAL_DELETED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
