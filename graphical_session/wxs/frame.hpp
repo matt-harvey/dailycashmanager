@@ -73,10 +73,17 @@ private:
 	void on_menu_edit_draft_journal(wxCommandEvent& event);
 	void on_menu_edit_budget(wxCommandEvent& event);
 
-	// Event handlers - other - captures Account editing request
-	// fired from lower down the window hierarchy.
+	// Event handlers - other - handle PersistentObject editing requests
+	// fired.
 	void on_account_editing_requested(PersistentObjectEvent& event);	
 	void on_journal_editing_requested(PersistentObjectEvent& event);
+
+	// Event handlers - other - handle notifications re. edited,
+	// created or deleted PersistentObjects.
+	void on_account_created_event(PersistentObjectEvent& event);
+	void on_account_edited_event(PersistentObjectEvent& event);
+	void on_journal_created_event(PersistentObjectEvent& event);
+	void on_journal_edited_event(PersistentObjectEvent& event);
 
 	// The actual function which conducts Account editing.
 	void edit_account(Account& p_account);

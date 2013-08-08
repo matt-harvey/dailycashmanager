@@ -49,6 +49,22 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	(	wxID_ANY,
 		Frame::on_journal_editing_requested
 	)
+	PHATBOOKS_EVT_ACCOUNT_CREATED
+	(	wxID_ANY,
+		Frame::on_account_created_event
+	)
+	PHATBOOKS_EVT_ACCOUNT_EDITED
+	(	wxID_ANY,
+		Frame::on_account_edited_event
+	)
+	PHATBOOKS_EVT_JOURNAL_CREATED
+	(	wxID_ANY,
+		Frame::on_journal_created_event
+	)
+	PHATBOOKS_EVT_JOURNAL_EDITED
+	(	wxID_ANY,
+		Frame::on_journal_edited_event
+	)
 END_EVENT_TABLE()
 
 Frame::Frame
@@ -459,13 +475,81 @@ Frame::on_journal_editing_requested(PersistentObjectEvent& event)
 	PersistentJournal::Id const journal_id = value(maybe_id);
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
-		DraftJournal journal(m_database_connection, value(maybe_id));
+		DraftJournal journal(m_database_connection, journal_id);
 		edit_journal(journal);
 	}
 	else
 	{
-		OrdinaryJournal journal(m_database_connection, value(maybe_id));
+		OrdinaryJournal journal(m_database_connection, journal_id);
 		edit_journal(journal);
+	}
+	return;
+}
+
+void
+Frame::on_account_created_event(PersistentObjectEvent& event)
+{
+	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_po_id();
+	assert (maybe_id);
+	Account const account(m_database_connection, value(maybe_id));
+	m_top_panel->update_for_new(account);
+	return;
+}
+
+void
+Frame::on_account_edited_event(PersistentObjectEvent& event)
+{
+	// TODO This will obliterate any contents of the TransactionCtrl.
+	// Do we want this? We probably \e do want it to update the
+	// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
+	// we don't really want it to obliterate everything else.
+	JEWEL_DEBUG_LOG_LOCATION;	
+	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_po_id();
+	assert (maybe_id);
+	Account const account(m_database_connection, value(maybe_id));
+	JEWEL_DEBUG_LOG_LOCATION;	
+	m_top_panel->update_for_amended(account);
+	JEWEL_DEBUG_LOG_LOCATION;	
+	return;
+}
+
+void
+Frame::on_journal_created_event(PersistentObjectEvent& event)
+{
+	assert (m_top_panel);
+	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_po_id();
+	assert (maybe_id);
+	PersistentJournal::Id const journal_id = value(maybe_id);
+	if (journal_id_is_draft(m_database_connection, journal_id))
+	{
+		DraftJournal journal(m_database_connection, journal_id);
+		m_top_panel->update_for_new(journal);
+	}
+	else
+	{
+		OrdinaryJournal journal(m_database_connection, journal_id);
+		m_top_panel->update_for_new(journal);
+	}
+	return;
+}
+
+void
+Frame::on_journal_edited_event(PersistentObjectEvent& event)
+{
+	// WARNING Repeats code from on_journal_created_event(...).
+	assert (m_top_panel);
+	optional<PersistentObjectEvent::Id> const maybe_id = event.maybe_po_id();
+	assert (maybe_id);
+	PersistentJournal::Id const journal_id = value(maybe_id);
+	if (journal_id_is_draft(m_database_connection, journal_id))
+	{
+		DraftJournal journal(m_database_connection, journal_id);
+		m_top_panel->update_for_amended(journal);
+	}
+	else
+	{
+		OrdinaryJournal journal(m_database_connection, journal_id);
+		m_top_panel->update_for_amended(journal);
 	}
 	return;
 }
@@ -506,14 +590,7 @@ Frame::edit_account(Account& p_account)
 		p_account,
 		super_type(p_account.account_type())
 	);
-	if (account_dialog.ShowModal() == wxID_OK)
-	{
-		// TODO This will obliterate any contents of the TransactionCtrl.
-		// Do we want this? We probably \e do want it to update the
-		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
-		// we don't really want it to obliterate everything else.
-		m_top_panel->update_for_amended(p_account);
-	}
+	account_dialog.ShowModal();
 	return;
 }
 

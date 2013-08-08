@@ -24,6 +24,7 @@
 #include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "persistent_journal.hpp"
+#include "persistent_object_event.hpp"
 #include "repeater.hpp"
 #include "sizing.hpp"
 #include "top_panel.hpp"
@@ -648,8 +649,14 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 	{
 		if (is_balanced())
 		{
-			if (m_journal) save_existing_journal();
-			else post_journal();
+			if (m_journal)
+			{
+				save_existing_journal();
+			}
+			else
+			{
+				post_journal();
+			}
 		}
 		else
 		{
@@ -772,9 +779,11 @@ TransactionCtrl::post_journal()
 		assert (dj.is_balanced());
 		dj.save();
 		JEWEL_DEBUG_LOG << "Posted Journal:\n\n" << dj << endl;
-		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
-		assert (panel);
-		panel->update_for_new(dj);
+		PersistentObjectEvent::fire
+		(	this,
+			PHATBOOKS_JOURNAL_CREATED_EVENT,
+			dj
+		);
 		return true;
 	}
 	else
@@ -787,9 +796,11 @@ TransactionCtrl::post_journal()
 		assert (oj.is_balanced());
 		oj.save();
 		JEWEL_DEBUG_LOG << "Posted journal:\n\n" << oj << endl;
-		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
-		assert (panel);
-		panel->update_for_new(oj);
+		PersistentObjectEvent::fire
+		(	this,
+			PHATBOOKS_JOURNAL_CREATED_EVENT,
+			oj
+		);
 		return true;
 	}
 	assert (false);
@@ -945,9 +956,11 @@ TransactionCtrl::save_existing_journal()
 		assert (dj->is_balanced());
 		dj->save();
 		JEWEL_DEBUG_LOG << "Saved Journal:\n\n" << *dj << endl;
-		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
-		assert (panel);
-		panel->update_for_amended(*dj);
+		PersistentObjectEvent::fire
+		(	this,
+			PHATBOOKS_JOURNAL_EDITED_EVENT,
+			*dj
+		);
 		return true;
 	}
 	else
@@ -967,9 +980,11 @@ TransactionCtrl::save_existing_journal()
 		assert (oj->is_balanced());
 		oj->save();
 		JEWEL_DEBUG_LOG << "Saved Journal:\n\n" << *oj << endl;
-		TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
-		assert (panel);
-		panel->update_for_amended(*oj);
+		PersistentObjectEvent::fire
+		(	this,
+			PHATBOOKS_JOURNAL_EDITED_EVENT,
+			*oj
+		);
 		return true;
 	}
 	assert (false);

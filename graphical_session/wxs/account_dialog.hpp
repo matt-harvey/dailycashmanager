@@ -55,7 +55,7 @@ class AccountDialog: public wxDialog, private boost::noncopyable
 public:
 
 	/**
-	 * @param p_parent parent Frame.
+	 * @param p_parent parent Window. <em>Should not be null.</em>
 	 *
 	 * @param p_account the Account the editing and possible saving of which
 	 * will be facilitated via this widget. If p_account does not have an

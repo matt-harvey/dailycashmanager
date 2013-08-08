@@ -233,6 +233,7 @@ ReconciliationEntryListCtrl::do_process_removal_for_summary(long p_row)
 		item.SetId(p_row);
 		item.SetColumn(reconciled_col_num());
 		GetItem(item);
+		// TODO HIGH PRIORITY This assertion can fail!
 		assert (item.GetText() == wxString("N"));
 		// as we don't allow user to delete reconciled Entries.
 		// so we don't need to adjust m_reconciled_closing_balance here.

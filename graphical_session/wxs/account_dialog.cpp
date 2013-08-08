@@ -4,6 +4,7 @@
 #include "account_type_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "ordinary_journal.hpp"
+#include "persistent_object_event.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "sizing.hpp"
 #include <boost/noncopyable.hpp>
@@ -114,6 +115,7 @@ AccountDialog::AccountDialog
 	m_opening_amount_ctrl(0),
 	m_account(p_account)
 {
+	assert (p_parent);  // precondition
 	if
 	(	m_account.has_id() &&
 		(super_type(m_account.account_type()) != p_account_super_type)
@@ -377,6 +379,27 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 
 	m_account = temp;
 	transaction.commit();
+
+	// Notify window higher in the hierarchy that they need to update for
+	// changed Account and new OridinaryJournal.
+	JEWEL_DEBUG_LOG_LOCATION;
+	JEWEL_DEBUG_LOG << "p_is_new_account: " << p_is_new_account << endl;
+	assert (GetParent());
+	PersistentObjectEvent::fire
+	(	GetParent(),
+		(	p_is_new_account?
+			PHATBOOKS_ACCOUNT_CREATED_EVENT:
+			PHATBOOKS_ACCOUNT_EDITED_EVENT
+		),
+		m_account
+	);
+	JEWEL_DEBUG_LOG_LOCATION;
+	PersistentObjectEvent::fire
+	(	GetParent(),
+		PHATBOOKS_JOURNAL_CREATED_EVENT,
+		objnl
+	);
+	JEWEL_DEBUG_LOG_LOCATION;
 
 	return true;
 }
