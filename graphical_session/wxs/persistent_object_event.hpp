@@ -23,14 +23,31 @@ public:
 	 * PhatbooksPersistentObject to which this event pertains.
 	 */
 	PersistentObjectEvent
+	(	wxEventType p_event_type,
+		int p_event_id,
+		Id p_po_id
+	);
+
+	/**
+	 * This constructor should be used in case the p_po_id is
+	 * irrelevant for the particular wxEventType passed to
+	 * \e p_event_type.
+	 */
+	PersistentObjectEvent
 	(	wxEventType p_event_type = wxEVT_NULL,
-		int p_event_id = 0,
-		boost::optional<Id> p_maybe_po_id = boost::optional<Id>()
+		int p_event_id = 0
 	);
 
 	PersistentObjectEvent(PersistentObjectEvent const& rhs);
 
-	boost::optional<Id> maybe_po_id() const;
+	/**
+	 * @returns the id of the PhatbooksPersistentObject with which
+	 * this event is associated.
+	 * 
+	 * @throws jewel::UninitializedOptionalException in case there
+	 * is no such id associated with this event.
+	 */
+	Id po_id() const;
 
     /**
 	 * Required for sending with wxPostEvent().
@@ -112,12 +129,18 @@ BEGIN_DECLARE_EVENT_TYPES()
 	/**
 	 * Fire to signify that we want the user to be given the opportunity
 	 * to create an Account.
+	 *
+	 * Note when creating or firing this type of event, the \e p_po_id
+	 * parameter is irrelevant.
 	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_CREATING_EVENT, -1)
 
 	/**
 	 * Fire to signify that we want the user to be given the opportunity
 	 * to edit an Account.
+	 *
+	 * Note when creating or firing this type of event, the \e p_po_id
+	 * parameter is irrelevant.
 	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_EDITING_EVENT, -1)
 

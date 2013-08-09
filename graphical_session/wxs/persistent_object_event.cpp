@@ -1,11 +1,13 @@
 #include "persistent_object_event.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
+#include <jewel/optional.hpp>
 #include <wx/event.h>
 #include <wx/window.h>
 #include <vector>
 
 using boost::optional;
+using jewel::value;
 using std::vector;
 
 // for debugging
@@ -38,11 +40,20 @@ IMPLEMENT_DYNAMIC_CLASS(PersistentObjectEvent, wxCommandEvent)
 PersistentObjectEvent::PersistentObjectEvent
 (	wxEventType p_event_type,
 	int p_event_id,
-	boost::optional<Id> p_maybe_po_id
+	Id p_po_id
 ):
 	wxCommandEvent(p_event_type, p_event_id),
-	m_maybe_po_id(p_maybe_po_id)
+	m_maybe_po_id(p_po_id)
 {
+}
+
+PersistentObjectEvent::PersistentObjectEvent
+(	wxEventType p_event_type,
+	int p_event_id
+):
+	wxCommandEvent(p_event_type, p_event_id)
+{
+	assert (!m_maybe_po_id);
 }
 
 PersistentObjectEvent::PersistentObjectEvent
@@ -53,10 +64,10 @@ PersistentObjectEvent::PersistentObjectEvent
 {
 }
 
-optional<PersistentObjectEvent::Id>
-PersistentObjectEvent::maybe_po_id() const
+PersistentObjectEvent::Id
+PersistentObjectEvent::po_id() const
 {
-	return m_maybe_po_id;
+	return value(m_maybe_po_id);
 }
 
 wxEvent*
