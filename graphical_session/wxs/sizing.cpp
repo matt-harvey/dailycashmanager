@@ -29,6 +29,12 @@ large_width()
 	return medium_width() * 2 + standard_gap();
 }
 
+int
+extra_large_width()
+{
+	return medium_width() * 3 + standard_gap() * 2;
+}
+
 int scrollbar_width_allowance()
 {
 	// TODO Use conditional compilation to adapt this to different platforms.

@@ -38,6 +38,13 @@ int medium_width();
 int large_width();
 
 /**
+ * @returns a standardized "extra large" width suitable, for example,
+ * for a wxTextCtrl for entering a comment that's a bit longer than
+ * what would fit if one that is \e large_width() wide.
+ */
+int extra_large_width();
+
+/**
  * @returns a width that is supposed to be as wide as, or slightly wider than,
  * a vertical scrollbar.
  */

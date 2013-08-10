@@ -159,7 +159,7 @@ AccountDialog::AccountDialog
 		wxID_ANY,
 		name_tmp,
 		wxDefaultPosition,
-		wxSize(450, wxDefaultSize.y)
+		wxSize(extra_large_width(), wxDefaultSize.y)
 	);
 	m_top_sizer->Add(m_name_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 3));
 
@@ -249,7 +249,7 @@ AccountDialog::AccountDialog
 	m_opening_amount_ctrl = new DecimalTextCtrl
 	(	this,
 		wxID_ANY,
-		wxSize(m_name_ctrl->GetSize().x / 2.0, wxDefaultSize.y),
+		wxSize(medium_width(), wxDefaultSize.y),
 		m_account.database_connection().default_commodity().precision(),
 		false
 	);
@@ -266,7 +266,7 @@ AccountDialog::AccountDialog
 		wxID_CANCEL,
 		wxString("&Cancel"),
 		wxDefaultPosition,
-		wxSize(wxDefaultSize.x, m_name_ctrl->GetSize().y),
+		wxSize(medium_width(), m_name_ctrl->GetSize().y),
 		wxALIGN_RIGHT  // WARNING Doesn't seem to work
 	);
 	m_top_sizer->Add
@@ -280,7 +280,7 @@ AccountDialog::AccountDialog
 		wxID_OK,
 		wxString("&Save"),
 		wxDefaultPosition,
-		wxSize(wxDefaultSize.x, m_name_ctrl->GetSize().y)
+		wxSize(medium_width(), m_name_ctrl->GetSize().y)
 	);
 	m_top_sizer->Add
 	(	m_ok_button,
