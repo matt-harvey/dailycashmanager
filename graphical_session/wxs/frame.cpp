@@ -17,6 +17,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "top_panel.hpp"
 #include <jewel/on_windows.hpp>
+#include <wx/event.h>
 #include <wx/menu.h>
 #include <wx/string.h>
 #include <wx/icon.h>
@@ -37,6 +38,46 @@ namespace gui
 {
 
 BEGIN_EVENT_TABLE(Frame, wxFrame)
+	EVT_MENU
+	(	wxID_EXIT,
+		Frame::on_menu_quit
+	)
+	EVT_MENU
+	(	s_new_bs_account_id,
+		Frame::on_menu_new_bs_account
+	)
+	EVT_MENU
+	(	s_new_pl_account_id,
+		Frame::on_menu_new_pl_account
+	)
+	EVT_MENU
+	(	s_new_transaction_id,
+		Frame::on_menu_new_transaction
+	)
+	EVT_MENU
+	(	s_edit_bs_account_id,
+		Frame::on_menu_edit_bs_account
+	)
+	EVT_MENU
+	(	s_edit_pl_account_id,
+		Frame::on_menu_edit_pl_account
+	)
+	EVT_MENU
+	(	s_edit_ordinary_journal_id,
+		Frame::on_menu_edit_ordinary_journal
+	)
+	EVT_MENU
+	(	s_edit_draft_journal_id,
+		Frame::on_menu_edit_draft_journal
+	)
+	EVT_MENU
+	(	s_edit_budget_id,
+		Frame::on_menu_edit_budget
+	)
+	EVT_MENU
+	(	wxID_ABOUT,
+		Frame::on_menu_about
+	)
 	PHATBOOKS_EVT_ACCOUNT_EDITING
 	(	wxID_ANY,
 		Frame::on_account_editing_requested
@@ -198,58 +239,6 @@ Frame::Frame
 
 	SetMenuBar(m_menu_bar);
 
-	// Connect events to menus
-	Connect
-	(	wxID_EXIT,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_menu_quit)
-	);
-	Connect
-	(	s_new_bs_account_id,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_menu_new_bs_account)
-	);
-	Connect
-	(	s_new_pl_account_id,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_menu_new_pl_account)
-	);
-	Connect
-	(	s_new_transaction_id,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_menu_new_transaction)
-	);
-	Connect
-	(	s_edit_bs_account_id,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_menu_edit_bs_account)
-	);
-	Connect
-	(	s_edit_pl_account_id,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_menu_edit_pl_account)
-	);
-	Connect
-	(	s_edit_ordinary_journal_id,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_menu_edit_ordinary_journal)
-	);
-	Connect
-	(	s_edit_draft_journal_id,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_menu_edit_draft_journal)
-	);
-	Connect
-	(	s_edit_budget_id,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_menu_edit_budget)
-	);
-	Connect
-	(	wxID_ABOUT,
-		wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler(Frame::on_menu_about)
-	);
-
 #	if JEWEL_ON_WINDOWS
 		Maximize();
 #	endif
@@ -327,6 +316,7 @@ Frame::on_menu_new_transaction(wxCommandEvent& event)
 	selected_balance_sheet_accounts(balance_sheet_accounts);
 	vector<Account> pl_accounts;
 	selected_pl_accounts(pl_accounts);
+	// m_top_panel->SetFocus();  // WARNING This doesn't seem to have any effect
 	m_top_panel->
 		configure_transaction_ctrl(balance_sheet_accounts, pl_accounts);
 	return;

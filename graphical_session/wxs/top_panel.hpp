@@ -224,6 +224,8 @@ TopPanel::configure_transaction_ctrl(JournalType& p_journal)
 		old = 0;
 	}
 	Layout();
+	assert (m_transaction_ctrl);
+	// m_transaction_ctrl->SetFocus();  // WARNING This doesn't seem to have any effect
 	return;
 }
 

@@ -17,7 +17,7 @@
 // between the Phatbooks file extension and the Phatbooks application.
 // See CMake book, page. 162.
 
-// TODO (For GUI). Users expect double clicking to "open" an item, and
+// TODO (For GUI). Users will probably expect
 // right-clicking to cause a context-dependent menu to pop up.
 
 // TODO HIGH PRIORITY. Things have gotten messy such that we should
