@@ -189,7 +189,9 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	wxStaticText* description_label = new wxStaticText
 	(	this,
 		wxID_ANY,
-		wxString("Description")
+		wxString("Description"),
+		wxDefaultPosition,
+		wxSize(large_width(), wxDefaultSize.y)
 	);
 	m_top_sizer->Add
 	(	description_label,
