@@ -2,6 +2,7 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
+#include "budget_panel.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "ordinary_journal.hpp"
 #include "persistent_object_event.hpp"
@@ -114,6 +115,7 @@ AccountDialog::AccountDialog
 	m_account_type_ctrl(0),
 	m_description_ctrl(0),
 	m_opening_amount_ctrl(0),
+	m_budget_panel(0),
 	m_account(p_account)
 {
 	assert (p_parent);  // precondition
@@ -276,7 +278,7 @@ AccountDialog::AccountDialog
 	wxStaticText* dummy = new wxStaticText(this, wxID_ANY, wxEmptyString);
 	m_top_sizer->Add(dummy, wxGBPosition(m_current_row, standard_border()));
 
-	configure_bottom_controls();
+	configure_budget_panel();
 	configure_buttons();
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -285,18 +287,28 @@ AccountDialog::AccountDialog
 }
 
 void
-AccountDialog::configure_bottom_controls()
+AccountDialog::configure_budget_panel()
 {
+	++m_current_row;
+	assert (!m_budget_panel);
 	if (account_super_type() == account_super_type::balance_sheet)
 	{
 		// There are no "bottom controls" for balance sheet Accounts.
 		return;
 	}
+	if (m_account == m_account.database_connection().balancing_account())
+	{
+		// Cannot edit budgets for the budget balancing Account.
+		return;
+	}
 	assert (account_super_type() == account_super_type::pl);
-
-	// TODO HIGH PRIORITY Implement - put BudgetItem configuration widgets in
-	// here and then abolish BudgetDialog.
-
+	m_budget_panel = new BudgetPanel(this, m_account);
+	m_top_sizer->Add
+	(	m_budget_panel,
+		wxGBPosition(m_current_row, 1),
+		wxGBSpan(1, 4)
+	);
+	++m_current_row;
 	return;
 }
 
@@ -346,7 +358,10 @@ AccountDialog::on_ok_button_click(wxCommandEvent& event)
 	(void)event;  // Silence compiler re. unused parameter.
 	if (update_account_from_dialog(!m_account.has_id()))
 	{
-		EndModal(wxID_OK);
+		if (m_budget_panel && m_budget_panel->process_confirmation())
+		{
+			EndModal(wxID_OK);
+		}
 	}
 	return;
 }

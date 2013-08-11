@@ -2,6 +2,7 @@
 #define GUARD_account_dialog_hpp
 
 #include "account_type.hpp"
+#include "budget_panel.hpp"
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -50,12 +51,11 @@ class DecimalTextCtrl;
  * @todo HIGH PRIORITY Make it so the user cannot proceed if there are
  * duplicate Account names (tested case-insensitively).
  *
- * @todo Make it so that the user can't change the AccountSuperType of an
- * existing Account.
- *
  * @todo Make it so that when setting up a new Account, if the user
  * changes AccountSuperType, it causes the BudgetDialog part of the
  * controls to appear or disappear accordingly.
+ *
+ * @todo Fix alignment of BudgetPanel within AcountDialog.
  */
 class AccountDialog: public wxDialog, private boost::noncopyable
 {
@@ -84,7 +84,7 @@ private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
 
-	void configure_bottom_controls();
+	void configure_budget_panel();
 	void configure_buttons();
 
 	account_super_type::AccountSuperType account_super_type() const;
@@ -106,6 +106,7 @@ private:
 	AccountTypeCtrl* m_account_type_ctrl;
 	wxTextCtrl* m_description_ctrl;
 	DecimalTextCtrl* m_opening_amount_ctrl;
+	BudgetPanel* m_budget_panel;
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;
 

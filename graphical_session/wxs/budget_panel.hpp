@@ -1,5 +1,5 @@
-#ifndef GUARD_budget_dialog_hpp
-#define GUARD_budget_dialog_hpp
+#ifndef GUARD_budget_panel_hpp
+#define GUARD_budget_panel_hpp
 
 #include "account.hpp"
 #include "budget_item.hpp"
@@ -7,10 +7,10 @@
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <wx/button.h>
-#include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/msgdlg.h>
+#include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/window.h>
@@ -28,7 +28,6 @@ namespace gui
 
 class AccountCtrl;
 class DecimalTextCtrl;
-class Frame;
 
 // End forward declarations
 
@@ -43,7 +42,7 @@ class Frame;
  * BudgetItems via AccountDialog rather than having to open this
  * separate dialog.
  */
-class BudgetDialog: public wxDialog, private boost::noncopyable
+class BudgetPanel: public wxPanel, private boost::noncopyable
 {
 public:
 
@@ -56,13 +55,13 @@ public:
 	 * of p_account.database_connection() - as the user should not be enabled
 	 * to edit the balancing account's budget directly.
 	 */
-	BudgetDialog(Frame* p_parent, Account const& p_account);
+	BudgetPanel(wxWindow* p_parent, Account const& p_account);
+
+	bool process_confirmation();
 
 private:
 	void on_pop_item_button_click(wxCommandEvent& event);
 	void on_push_item_button_click(wxCommandEvent& event);
-	void on_ok_button_click(wxCommandEvent& event);
-	void on_cancel_button_click(wxCommandEvent& event);
 
 	/**
 	 * This is triggered by DecimalTextCtrl::on_kill_focus(...).
@@ -75,11 +74,9 @@ private:
 
 	/**
 	 * Updates budget summary text at top of Dialog, on the basis
-	 * what is currently shown in the BudgetDialog itself, regardless
+	 * what is currently shown in the BudgetPanel itself, regardless
 	 * of what is in the database. The budget summary text encompasses
 	 * both the amount and frequency.
-	 *
-	 * @todo Is this actually called anywhere?
 	 */
 	void update_budget_summary();
 
@@ -109,13 +106,6 @@ private:
 	 */
 	void pop_item_component();
 
-	void detach_bottom_row_widgets_from_sizer();
-	void add_bottom_row_widgets_to_sizer();
-
-	void move_bottom_row_widgets_after_in_tab_order
-	(	wxWindow* p_tab_predecessor
-	);
-
 	PhatbooksDatabaseConnection& database_connection() const;
 
 	static int const s_pop_item_button_id = wxID_HIGHEST + 1;
@@ -124,7 +114,7 @@ private:
 	/**
 	 * @returns string describing the standardized budget frequency for
 	 * database_connection() on the basis of what is currently saved in the
-	 * \e database, regardless of what is currently shown in the BudgetDialog
+	 * \e database, regardless of what is currently shown in the BudgetPanel
 	 * itself.
 	 */
 	wxString initial_summary_amount_text();
@@ -132,7 +122,7 @@ private:
 	/**
 	 * @returns string describing the budget amount for m_account on the basis
 	 * of what is currently saved in the \e database, regardless of what
-	 * is currently shown in the BudgetDialog itself.
+	 * is currently shown in the BudgetPanel itself.
 	 */
 	wxString initial_summary_frequency_text();
 
@@ -143,18 +133,16 @@ private:
 	wxStaticText* m_summary_frequency_text;
 	wxButton* m_pop_item_button;
 	wxButton* m_push_item_button;
-	wxButton* m_cancel_button;
-	wxButton* m_ok_button;
 
 	/**
 	 * Like FrequencyCtrl, but change of selection causes parent
-	 * BudgetDialog to update its summary text.
+	 * BudgetPanel to update its summary text.
 	 */
 	class SpecialFrequencyCtrl: public FrequencyCtrl
 	{
 	public:
 		SpecialFrequencyCtrl
-		(	BudgetDialog* p_parent,
+		(	BudgetPanel* p_parent,
 			wxWindowID p_id,
 			wxSize const& p_size,
 			PhatbooksDatabaseConnection& p_database_connection
@@ -200,8 +188,6 @@ private:
 	 * Used to prompt the user for an offsetting budget adjustment to
 	 * an Account other than the one whose BudgetItems have just been
 	 * edited, to encourage balance budget.
-	 *
-	 * @todo HIGH PRIORITY Implement this.
 	 */
 	class BalancingDialog: public wxDialog
 	{
@@ -262,10 +248,10 @@ private:
 
 	DECLARE_EVENT_TABLE()
 
-};  // class BudgetDialog
+};  // class BudgetPanel
 
 
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_budget_dialog_hpp
+#endif  // GUARD_budget_panel_hpp

@@ -7,7 +7,6 @@
 #include "application.hpp"
 #include "app.hpp"
 #include "b_string.hpp"
-#include "budget_dialog.hpp"
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
 #include "draft_journal.hpp"
@@ -69,10 +68,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU
 	(	s_edit_draft_journal_id,
 		Frame::on_menu_edit_draft_journal
-	)
-	EVT_MENU
-	(	s_edit_budget_id,
-		Frame::on_menu_edit_budget
 	)
 	EVT_MENU
 	(	wxID_ABOUT,
@@ -220,12 +215,6 @@ Frame::Frame
 	(	s_edit_draft_journal_id,
 		wxString("Edit selected &recurring transaction"),
 		wxString("Edit an exising recurring transaction")
-	);
-	m_edit_menu->Append
-	(	s_edit_budget_id,
-		wxString("Edit budget"),
-		wxString("Edit budget for selected ") +
-			pl_account_concept_name
 	);
 	m_menu_bar->Append(m_edit_menu, wxString("&Edit"));
 
@@ -414,49 +403,6 @@ Frame::on_menu_edit_draft_journal(wxCommandEvent& event)
 	}
 	assert (journals.size() >= 1);
 	edit_journal(journals[0]);
-	return;
-}
-
-void
-Frame::on_menu_edit_budget(wxCommandEvent& event)
-{
-	(void)event;  // Silence compiler warning re. unused parameter.
-	vector<Account> accounts;
-	selected_pl_accounts(accounts);
-	if (accounts.empty())
-	{
-		// TODO HIGH PRIORITY Deal with this in a more user-friendly
-		// way. For now, we just do this.
-		wxString msg("To edit the budget for ");
-		wxString const concept_name = bstring_to_wx
-		(	account_concept_name
-			(	account_super_type::pl,
-				false,
-				true
-			)
-		);
-		msg += concept_name;
-		msg += wxString(", ");
-		msg += concept_name;
-		msg += wxString(" must first be selected in the main window.");
-		wxMessageBox(msg);
-		return;
-	}
-	assert (accounts.size() >= 1);
-	Account account = accounts[0];
-	if (account == m_database_connection.balancing_account())
-	{
-		wxString msg("Budgets for the \"");
-		msg += bstring_to_wx(account.name());
-		msg += wxString("\" ");
-		msg += bstring_to_wx(account_concept_name(account_super_type::pl));
-		msg += wxString(" cannot be edited directly.");
-		wxMessageBox(msg);
-		return;
-	}
-	assert (super_type(account.account_type()) == account_super_type::pl);
-	BudgetDialog budget_dialog(this, account);
-	budget_dialog.ShowModal();
 	return;
 }
 

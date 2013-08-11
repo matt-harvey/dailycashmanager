@@ -181,7 +181,7 @@ set (gui_files
 	 graphical_session/wxs/app.cpp
 	 graphical_session/wxs/balance_sheet_report.cpp
 	 graphical_session/wxs/bs_account_entry_list_ctrl.cpp
-	 graphical_session/wxs/budget_dialog.cpp
+	 graphical_session/wxs/budget_panel.cpp
 	 graphical_session/wxs/date_ctrl.cpp
 	 graphical_session/wxs/date_validator.cpp
 	 graphical_session/wxs/decimal_renderer.cpp

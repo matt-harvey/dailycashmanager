@@ -1,4 +1,4 @@
-#include "budget_dialog.hpp"
+#include "budget_panel.hpp"
 #include "account.hpp"
 #include "account_ctrl.hpp"
 #include "account_reader.hpp"
@@ -25,6 +25,7 @@
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
+#include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/window.h>
@@ -36,9 +37,10 @@ using jewel::value;
 using sqloxx::DatabaseTransaction;
 using std::vector;
 
-#include <jewel/debug_log.hpp>
-#include <iostream>
-using std::endl;
+// for debugging
+	#include <jewel/debug_log.hpp>
+	#include <iostream>
+	using std::endl;
 
 namespace phatbooks
 {
@@ -47,45 +49,35 @@ namespace gui
 
 // Begin event tables
 
-BEGIN_EVENT_TABLE(BudgetDialog, wxDialog)
+BEGIN_EVENT_TABLE(BudgetPanel, wxPanel)
 	EVT_BUTTON
 	(	s_pop_item_button_id,
-		BudgetDialog::on_pop_item_button_click
+		BudgetPanel::on_pop_item_button_click
 	)
 	EVT_BUTTON
 	(	s_push_item_button_id,
-		BudgetDialog::on_push_item_button_click
-	)
-	EVT_BUTTON
-	(	wxID_OK,
-		BudgetDialog::on_ok_button_click
-	)
-	EVT_BUTTON
-	(	wxID_CANCEL,
-		BudgetDialog::on_cancel_button_click
+		BudgetPanel::on_push_item_button_click
 	)
 END_EVENT_TABLE()
 
-BEGIN_EVENT_TABLE(BudgetDialog::SpecialFrequencyCtrl, FrequencyCtrl)
-	EVT_TEXT(wxID_ANY, BudgetDialog::SpecialFrequencyCtrl::on_text_change)
+BEGIN_EVENT_TABLE(BudgetPanel::SpecialFrequencyCtrl, FrequencyCtrl)
+	EVT_TEXT(wxID_ANY, BudgetPanel::SpecialFrequencyCtrl::on_text_change)
 END_EVENT_TABLE()
 
-BEGIN_EVENT_TABLE(BudgetDialog::BalancingDialog, wxDialog)
-	EVT_BUTTON(wxID_NO, BudgetDialog::BalancingDialog::on_no_button_click)
-	EVT_BUTTON(wxID_YES, BudgetDialog::BalancingDialog::on_yes_button_click)
+BEGIN_EVENT_TABLE(BudgetPanel::BalancingDialog, wxDialog)
+	EVT_BUTTON(wxID_NO, BudgetPanel::BalancingDialog::on_no_button_click)
+	EVT_BUTTON(wxID_YES, BudgetPanel::BalancingDialog::on_yes_button_click)
 END_EVENT_TABLE()
 
 // End event tables
 
 
-BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
-	wxDialog(p_parent, wxID_ANY, wxEmptyString),
+BudgetPanel::BudgetPanel(wxWindow* p_parent, Account const& p_account):
+	wxPanel(p_parent, wxID_ANY),
 	m_next_row(0),
 	m_top_sizer(0),
 	m_summary_amount_text(0),
 	m_summary_frequency_text(0),
-	m_cancel_button(0),
-	m_ok_button(0),
 	m_account(p_account)
 {
 	assert (m_account.has_id());  // assert precondition
@@ -95,7 +87,7 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	if (p_account == p_account.database_connection().balancing_account())
 	{
 		throw BudgetEditingException
-		(	"Cannot use BudgetDialog to edit budgets for the budget "
+		(	"Cannot use BudgetPanel to edit budgets for the budget "
 			"balancing Account."
 		);
 	}
@@ -105,20 +97,9 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 	SetSizer(m_top_sizer);	
 
 	// Row 0
-	wxStaticText* account_label = new wxStaticText
-	(	this,
-		wxID_ANY,
-		bstring_to_wx(m_account.name()),
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
-	);
-	m_top_sizer->Add
-	(	account_label,
-		wxGBPosition(m_next_row, 1),
-		wxGBSpan(1, 2),
-		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
-	);
+	JEWEL_DEBUG_LOG << "initial_summary_amount_text(): "
+	                << initial_summary_amount_text()
+					<< endl;
 	m_summary_amount_text = new wxStaticText
 	(	this,
 		wxID_ANY,
@@ -235,45 +216,27 @@ BudgetDialog::BudgetDialog(Frame* p_parent, Account const& p_account):
 		}
 	}
 
-	// Final row
-	m_cancel_button = new wxButton
-	(	this,
-		wxID_CANCEL,
-		wxString("&Cancel"),
-		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.y)
-	);
-	m_ok_button = new wxButton
-	(	this,
-		wxID_OK,
-		wxString("&Save"),
-		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.y)
-	);
-	m_ok_button->SetDefault();  // Enter key will now trigger "Save" button
-
-	add_bottom_row_widgets_to_sizer();
-
 	// "Admin"
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
-	Fit();
-	CentreOnScreen();
-	Layout();
+	GetParent()->Fit();
+
+	update_budget_summary();  // Not sure why this is necessary here.
 }
 
 void
-BudgetDialog::on_pop_item_button_click(wxCommandEvent& event)
+BudgetPanel::on_pop_item_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter.
 	pop_item_component();
-	Fit();
-	Layout();
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	GetParent()->Fit();
 	return;
 }
 
 void
-BudgetDialog::on_push_item_button_click(wxCommandEvent& event)
+BudgetPanel::on_push_item_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
 	BudgetItem budget_item(database_connection());
@@ -282,23 +245,16 @@ BudgetDialog::on_push_item_button_click(wxCommandEvent& event)
 	budget_item.set_amount(Decimal(0, m_account.commodity().precision()));
 	budget_item.set_frequency(Frequency(1, interval_type::days));
 	push_item_component(budget_item);
-	Fit();
-	Layout();
-	return;
-}
-
-void
-BudgetDialog::on_cancel_button_click(wxCommandEvent& event)
-{
-	(void)event;  // Silence compiler re. unused parameter.
-	EndModal(wxID_CANCEL);
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	GetParent()->Fit();
 	return;
 }
 
 bool
-BudgetDialog::TransferDataToWindow()
+BudgetPanel::TransferDataToWindow()
 {
-	if (!wxDialog::TransferDataToWindow())
+	if (!wxPanel::TransferDataToWindow())
 	{
 		return false;
 	}
@@ -335,35 +291,38 @@ BudgetDialog::TransferDataToWindow()
 	}
 
 	// Update the budget summary text on the basis of what's now in the
-	// BudgetDialog.
+	// BudgetPanel.
 	update_budget_summary();
 
 	return true;
 }
 
-void
-BudgetDialog::on_ok_button_click(wxCommandEvent& event)
+bool
+BudgetPanel::process_confirmation()
 {
-	(void)event;  // Silence compiler re. unused parameter.
 	if
 	(	Validate() && TransferDataFromWindow() && update_budgets_from_dialog()
 	)
 	{
 		prompt_to_balance();
-		EndModal(wxID_OK);
+		return true;
 	}
-	return;
+	return false;
 }
 
 void
-BudgetDialog::update_budget_summary()
+BudgetPanel::update_budget_summary()
 {
+	JEWEL_DEBUG_LOG << "Entered BudgetPanel::update_budget_summary()"
+	                << endl;
+
 	// WARNING This is inefficient.
 	vector<BudgetItem> budget_items = make_budget_items();
 	assert (m_summary_amount_text);
 	vector<BudgetItem>::const_iterator it = budget_items.begin();
 	if (budget_items.empty())
 	{
+		JEWEL_DEBUG_LOG_LOCATION;
 		m_summary_amount_text->SetLabelText
 		(	finformat_wx
 			(	Decimal(0, m_account.commodity().precision()),
@@ -373,6 +332,7 @@ BudgetDialog::update_budget_summary()
 	}
 	else
 	{
+		JEWEL_DEBUG_LOG_LOCATION;
 		assert (budget_items.end() - it > 0);
 		m_summary_amount_text->SetLabelText
 		(	finformat_wx
@@ -385,14 +345,14 @@ BudgetDialog::update_budget_summary()
 }
 
 bool
-BudgetDialog::update_budgets_from_dialog()
+BudgetPanel::update_budgets_from_dialog()
 {
 	DatabaseTransaction transaction(database_connection());
 
 	typedef vector<BudgetItem> ItemVec;
 
 	// Make m_budget_items match the BudgetItems implied by
-	// m_budget_item_components (what is shown in the BudgetDialog).
+	// m_budget_item_components (what is shown in the BudgetPanel).
 	// Bare scope
 	{
 		ItemVec const items_new = make_budget_items();
@@ -441,7 +401,7 @@ BudgetDialog::update_budgets_from_dialog()
 	assert (GetParent());
 	assert (m_account.has_id());
 	PersistentObjectEvent::fire
-	(	GetParent(),
+	(	GetParent()->GetParent(),  // WARNING This sucks
 		PHATBOOKS_BUDGET_EDITED_EVENT,
 		m_account.id()
 	);
@@ -450,15 +410,9 @@ BudgetDialog::update_budgets_from_dialog()
 }
 
 void
-BudgetDialog::push_item_component(BudgetItem const& p_budget_item)
+BudgetPanel::push_item_component(BudgetItem const& p_budget_item)
 {
 	assert (p_budget_item.account() == m_account);
-
-	if (m_cancel_button)
-	{
-		assert (m_ok_button);
-		detach_bottom_row_widgets_from_sizer();
-	}
 
 	BudgetItemComponent budget_item_component = {0, 0, 0};
 	budget_item_component.description_ctrl = new wxTextCtrl
@@ -506,29 +460,17 @@ BudgetDialog::push_item_component(BudgetItem const& p_budget_item)
 
 	++m_next_row;
 
-	if (m_cancel_button)
-	{
-		assert (m_ok_button);
-		add_bottom_row_widgets_to_sizer();
-		move_bottom_row_widgets_after_in_tab_order
-		(	budget_item_component.frequency_ctrl
-		);
-	}
-
 	return;
 }
 
 void
-BudgetDialog::pop_item_component()
+BudgetPanel::pop_item_component()
 {
-	assert (m_cancel_button);
-	assert (m_ok_button);
 	if (m_budget_item_components.empty())
 	{
 		return;
 	}
 	assert (m_budget_item_components.size() >= 1);
-	detach_bottom_row_widgets_from_sizer();
 
 	// Bare scope
 	{
@@ -547,19 +489,23 @@ BudgetDialog::pop_item_component()
 
 	m_budget_item_components.pop_back();
 	--m_next_row;
-	add_bottom_row_widgets_to_sizer();
 	update_budget_summary();
 	return;
 }
 
 wxString
-BudgetDialog::initial_summary_amount_text()
+BudgetPanel::initial_summary_amount_text()
 {
+	JEWEL_DEBUG_LOG << "Entered BudgetPanel::initial_summary_amount_text()"
+	                << endl;
+	JEWEL_DEBUG_LOG << "finformat_wx(m_account.budget(), locale()):"
+	                << finformat_wx(m_account.budget(), locale())
+					<< endl;
 	return finformat_wx(m_account.budget(), locale());
 }
 
 wxString
-BudgetDialog::initial_summary_frequency_text()
+BudgetPanel::initial_summary_frequency_text()
 {
 	return
 		std8_to_wx
@@ -570,45 +516,13 @@ BudgetDialog::initial_summary_frequency_text()
 }
 
 PhatbooksDatabaseConnection&
-BudgetDialog::database_connection() const
+BudgetPanel::database_connection() const
 {
 	return m_account.database_connection();
 }
 
-void
-BudgetDialog::detach_bottom_row_widgets_from_sizer()
-{
-	assert (m_cancel_button);
-	assert (m_ok_button);
-	m_top_sizer->Detach(m_cancel_button);
-	m_top_sizer->Detach(m_ok_button);
-	--m_next_row;
-	return;
-}
-
-void
-BudgetDialog::move_bottom_row_widgets_after_in_tab_order
-(	wxWindow* p_tab_predecessor
-)
-{
-	m_cancel_button->MoveAfterInTabOrder(p_tab_predecessor);
-	m_ok_button->MoveAfterInTabOrder(m_cancel_button);
-	return;
-}
-
-void
-BudgetDialog::add_bottom_row_widgets_to_sizer()
-{
-	assert (m_cancel_button);
-	assert (m_ok_button);
-	m_top_sizer->Add(m_cancel_button, wxGBPosition(m_next_row, 1));
-	m_top_sizer->Add(m_ok_button, wxGBPosition(m_next_row, 4));
-	++m_next_row;
-	return;
-}
-
 vector<BudgetItem>
-BudgetDialog::make_budget_items() const
+BudgetPanel::make_budget_items() const
 {
 	vector<BudgetItem> ret;
 	vector<BudgetItem>::size_type i = 0;
@@ -636,7 +550,7 @@ BudgetDialog::make_budget_items() const
 }
 
 void
-BudgetDialog::prompt_to_balance()
+BudgetPanel::prompt_to_balance()
 {
 	Account const balancing_account =
 		database_connection().balancing_account();
@@ -706,8 +620,8 @@ BudgetDialog::prompt_to_balance()
 	return;
 }
 
-BudgetDialog::SpecialFrequencyCtrl::SpecialFrequencyCtrl
-(	BudgetDialog* p_parent,
+BudgetPanel::SpecialFrequencyCtrl::SpecialFrequencyCtrl
+(	BudgetPanel* p_parent,
 	wxWindowID p_id,
 	wxSize const& p_size,
 	PhatbooksDatabaseConnection& p_database_connection
@@ -717,17 +631,17 @@ BudgetDialog::SpecialFrequencyCtrl::SpecialFrequencyCtrl
 }
 
 void
-BudgetDialog::SpecialFrequencyCtrl::on_text_change(wxCommandEvent& event)
+BudgetPanel::SpecialFrequencyCtrl::on_text_change(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	BudgetDialog* const budget_dialog =
-		dynamic_cast<BudgetDialog*>(GetParent());
+	BudgetPanel* const budget_dialog =
+		dynamic_cast<BudgetPanel*>(GetParent());
 	assert (budget_dialog);
 	budget_dialog->update_budget_summary();
 	return;
 }	
 
-BudgetDialog::SignWarning::SignWarning
+BudgetPanel::SignWarning::SignWarning
 (	wxWindow* p_parent,
 	account_type::AccountType p_account_type
 ):
@@ -741,7 +655,7 @@ BudgetDialog::SignWarning::SignWarning
 }
 
 wxString
-BudgetDialog::SignWarning::get_message
+BudgetPanel::SignWarning::get_message
 (	account_type::AccountType p_account_type
 )
 {
@@ -765,7 +679,7 @@ BudgetDialog::SignWarning::get_message
 	);
 }
 
-BudgetDialog::BalancingDialog::BalancingDialog
+BudgetPanel::BalancingDialog::BalancingDialog
 (	wxWindow* p_parent,
 	jewel::Decimal const& p_imbalance,
 	boost::optional<Account> const& p_maybe_account,
@@ -863,7 +777,7 @@ BudgetDialog::BalancingDialog::BalancingDialog
 }
 		
 void
-BudgetDialog::BalancingDialog::on_no_button_click(wxCommandEvent& event)
+BudgetPanel::BalancingDialog::on_no_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter
 	EndModal(wxID_NO);
@@ -871,7 +785,7 @@ BudgetDialog::BalancingDialog::on_no_button_click(wxCommandEvent& event)
 }
 
 void
-BudgetDialog::BalancingDialog::on_yes_button_click(wxCommandEvent& event)
+BudgetPanel::BalancingDialog::on_yes_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter
 	update_budgets_from_dialog(m_account_ctrl->account());
@@ -880,7 +794,7 @@ BudgetDialog::BalancingDialog::on_yes_button_click(wxCommandEvent& event)
 }
 
 void
-BudgetDialog::BalancingDialog::update_budgets_from_dialog
+BudgetPanel::BalancingDialog::update_budgets_from_dialog
 (	Account const& p_target
 )
 {
@@ -919,7 +833,7 @@ BudgetDialog::BalancingDialog::update_budgets_from_dialog
 }
 
 bool
-BudgetDialog::BalancingDialog::budget_is_balanced() const
+BudgetPanel::BalancingDialog::budget_is_balanced() const
 {
 	return
 		m_database_connection.balancing_account().budget() ==
