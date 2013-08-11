@@ -108,6 +108,7 @@ AccountDialog::AccountDialog
 	account_super_type::AccountSuperType p_account_super_type
 ):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
+	m_current_row(0),
 	m_top_sizer(0),
 	m_name_ctrl(0),
 	m_account_type_ctrl(0),
@@ -127,11 +128,8 @@ AccountDialog::AccountDialog
 			"constructor."
 		);
 	}
-
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
-
-	int row = 0;
 
 	// Row 0
 	
@@ -145,7 +143,7 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	name_ctrl_label,
-		wxGBPosition(row, 1),
+		wxGBPosition(m_current_row, 1),
 		wxDefaultSpan,
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
@@ -161,9 +159,13 @@ AccountDialog::AccountDialog
 		wxDefaultPosition,
 		wxSize(extra_large_width(), wxDefaultSize.y)
 	);
-	m_top_sizer->Add(m_name_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 3));
+	m_top_sizer->Add
+	(	m_name_ctrl,
+		wxGBPosition(m_current_row, 2),
+		wxGBSpan(1, 3)
+	);
 
-	++row;
+	++m_current_row;
 
 	// Row 1
 
@@ -177,7 +179,7 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	account_type_ctrl_label,
-		wxGBPosition(row, 1),
+		wxGBPosition(m_current_row, 1),
 		wxDefaultSpan,
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
@@ -192,10 +194,13 @@ AccountDialog::AccountDialog
 	{	
 		m_account_type_ctrl->set_account_type(m_account.account_type());
 	}
-	m_top_sizer->
-		Add(m_account_type_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 3));
+	m_top_sizer->Add
+	(	m_account_type_ctrl,
+		wxGBPosition(m_current_row, 2),
+		wxGBSpan(1, 3)
+	);
 
-	++row;
+	++m_current_row;
 
 	// Row 2
 	
@@ -209,7 +214,7 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	description_label,
-		wxGBPosition(row, 1),
+		wxGBPosition(m_current_row, 1),
 		wxDefaultSpan,
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
@@ -225,10 +230,13 @@ AccountDialog::AccountDialog
 		wxDefaultPosition,
 		m_name_ctrl->GetSize()
 	);
-	m_top_sizer->
-		Add(m_description_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 3));
+	m_top_sizer->Add
+	(	m_description_ctrl,
+		wxGBPosition(m_current_row, 2),
+		wxGBSpan(1, 3)
+	);
 
-	++row;
+	++m_current_row;
 
 	// Row 3
 	
@@ -242,7 +250,7 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	opening_amount_ctrl_label,
-		wxGBPosition(row, 1),
+		wxGBPosition(m_current_row, 1),
 		wxDefaultSpan,
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
@@ -258,9 +266,43 @@ AccountDialog::AccountDialog
 		m_opening_amount_ctrl->
 			set_amount(m_account.friendly_opening_balance());
 	}
-	m_top_sizer->
-		Add(m_opening_amount_ctrl, wxGBPosition(row, 2), wxGBSpan(1, 1));
+	m_top_sizer->Add
+	(	m_opening_amount_ctrl,
+		wxGBPosition(m_current_row, 2),
+		wxGBSpan(1, 1)
+	);
+	
+	// Hack to add some space to right.
+	wxStaticText* dummy = new wxStaticText(this, wxID_ANY, wxEmptyString);
+	m_top_sizer->Add(dummy, wxGBPosition(m_current_row, standard_border()));
 
+	configure_bottom_controls();
+	configure_buttons();
+	m_top_sizer->Fit(this);
+	m_top_sizer->SetSizeHints(this);
+	CentreOnScreen();
+	Layout();
+}
+
+void
+AccountDialog::configure_bottom_controls()
+{
+	if (account_super_type() == account_super_type::balance_sheet)
+	{
+		// There are no "bottom controls" for balance sheet Accounts.
+		return;
+	}
+	assert (account_super_type() == account_super_type::pl);
+
+	// TODO HIGH PRIORITY Implement - put BudgetItem configuration widgets in
+	// here and then abolish BudgetDialog.
+
+	return;
+}
+
+void
+AccountDialog::configure_buttons()
+{
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,
@@ -271,7 +313,7 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	m_cancel_button,
-		wxGBPosition(row, 3),
+		wxGBPosition(m_current_row, 3),
 		wxDefaultSpan,
 		wxALIGN_RIGHT  // WARNING Doesn't seem to work
 	);
@@ -284,19 +326,18 @@ AccountDialog::AccountDialog
 	);
 	m_top_sizer->Add
 	(	m_ok_button,
-		wxGBPosition(row, 4),
+		wxGBPosition(m_current_row, 4),
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
+	return;
+}
 
-	// Hack to add some space to right.
-	wxStaticText* dummy = new wxStaticText(this, wxID_ANY, wxEmptyString);
-	m_top_sizer->Add(dummy, wxGBPosition(row, standard_border()));
-
-	m_top_sizer->Fit(this);
-	m_top_sizer->SetSizeHints(this);
-	CentreOnScreen();
-	Layout();
+account_super_type::AccountSuperType
+AccountDialog::account_super_type() const
+{
+	assert (m_account_type_ctrl);
+	return super_type(m_account_type_ctrl->account_type());
 }
 
 void

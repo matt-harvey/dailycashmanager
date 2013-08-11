@@ -49,6 +49,13 @@ class DecimalTextCtrl;
  *
  * @todo HIGH PRIORITY Make it so the user cannot proceed if there are
  * duplicate Account names (tested case-insensitively).
+ *
+ * @todo Make it so that the user can't change the AccountSuperType of an
+ * existing Account.
+ *
+ * @todo Make it so that when setting up a new Account, if the user
+ * changes AccountSuperType, it causes the BudgetDialog part of the
+ * controls to appear or disappear accordingly.
  */
 class AccountDialog: public wxDialog, private boost::noncopyable
 {
@@ -77,6 +84,11 @@ private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
 
+	void configure_bottom_controls();
+	void configure_buttons();
+
+	account_super_type::AccountSuperType account_super_type() const;
+
 	/**
 	 * Updates m_account based on the data entered by the user.
 	 *
@@ -88,6 +100,7 @@ private:
 	 */
 	bool update_account_from_dialog(bool p_is_new_account);
 
+	int m_current_row;
 	wxGridBagSizer* m_top_sizer;
 	wxTextCtrl* m_name_ctrl;
 	AccountTypeCtrl* m_account_type_ctrl;
