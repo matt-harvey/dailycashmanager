@@ -144,7 +144,7 @@ AccountDialog::AccountDialog
 		wxID_ANY,
 		account_name_ctrl_label_string(p_account_super_type),
 		wxDefaultPosition,
-		wxDefaultSize,
+		wxSize(medium_width(), wxDefaultSize.GetY()),
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
@@ -180,7 +180,7 @@ AccountDialog::AccountDialog
 		wxID_ANY,
 		account_type_ctrl_label_string(p_account_super_type),
 		wxDefaultPosition,
-		wxDefaultSize,
+		wxSize(medium_width(), wxDefaultSize.GetY()),
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
@@ -215,7 +215,7 @@ AccountDialog::AccountDialog
 		wxID_ANY,
 		account_description_label_string(p_account_super_type),
 		wxDefaultPosition,
-		wxDefaultSize,
+		wxSize(medium_width(), wxDefaultSize.GetY()),
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
@@ -251,7 +251,7 @@ AccountDialog::AccountDialog
 		wxID_ANY,
 		opening_amount_label_string(p_account_super_type),
 		wxDefaultPosition,
-		wxDefaultSize,
+		wxSize(medium_width(), wxDefaultSize.GetY()),
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
@@ -356,7 +356,7 @@ AccountDialog::configure_buttons()
 	(	m_ok_button,
 		wxGBPosition(m_current_row, 4),
 		wxDefaultSpan,
-		wxALIGN_RIGHT
+		wxALIGN_LEFT
 	);
 	return;
 }

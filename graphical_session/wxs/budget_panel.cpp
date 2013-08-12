@@ -108,7 +108,7 @@ BudgetPanel::BudgetPanel(wxWindow* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	m_summary_amount_text,
-		wxGBPosition(m_next_row, 3),
+		wxGBPosition(m_next_row, 2),
 		wxDefaultSpan,
 		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
 	);
@@ -122,7 +122,7 @@ BudgetPanel::BudgetPanel(wxWindow* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	m_summary_frequency_text,
-		wxGBPosition(m_next_row, 4),
+		wxGBPosition(m_next_row, 3),
 		wxGBSpan(1, 2),
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
@@ -143,7 +143,7 @@ BudgetPanel::BudgetPanel(wxWindow* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	m_pop_item_button,
-		wxGBPosition(m_next_row, 3),
+		wxGBPosition(m_next_row, 2),
 		wxDefaultSpan,
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
@@ -157,7 +157,7 @@ BudgetPanel::BudgetPanel(wxWindow* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	m_push_item_button,
-		wxGBPosition(m_next_row, 4),
+		wxGBPosition(m_next_row, 3),
 		wxDefaultSpan,
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
@@ -174,7 +174,7 @@ BudgetPanel::BudgetPanel(wxWindow* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	description_label,
-		wxGBPosition(m_next_row, 1),
+		wxGBPosition(m_next_row, 0),
 		wxGBSpan(1, 2)
 	);
 	wxStaticText* amount_label = new wxStaticText
@@ -184,7 +184,7 @@ BudgetPanel::BudgetPanel(wxWindow* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	amount_label,
-		wxGBPosition(m_next_row, 3)
+		wxGBPosition(m_next_row, 2)
 	);
 	wxStaticText* frequency_label = new wxStaticText
 	(	this,
@@ -193,7 +193,7 @@ BudgetPanel::BudgetPanel(wxWindow* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	frequency_label,
-		wxGBPosition(m_next_row, 4)
+		wxGBPosition(m_next_row, 3)
 	);
 
 	++m_next_row;
@@ -312,23 +312,16 @@ void
 BudgetPanel::update_budget_summary()
 {
 	// WARNING This is inefficient.
-	vector<BudgetItem> budget_items = make_budget_items();
 	assert (m_summary_amount_text);
-	vector<BudgetItem>::const_iterator it = budget_items.begin();
-	if (budget_items.empty())
+	Decimal new_total = zero();
+	vector<BudgetItem> budget_items = make_budget_items();
+	if (!budget_items.empty())
 	{
-		m_summary_amount_text->SetLabelText(finformat_wx(zero(), locale()));
+		new_total =
+			normalized_total(budget_items.begin(), budget_items.end());
 	}
-	else
-	{
-		assert (budget_items.end() - it > 0);
-		m_summary_amount_text->SetLabelText
-		(	finformat_wx
-			(	normalized_total(it, budget_items.end()),
-				locale()
-			)
-		);
-	}
+	m_summary_amount_text->
+		SetLabelText(finformat_wx(new_total, locale(), false));
 	return;
 }
 
@@ -414,7 +407,7 @@ BudgetPanel::push_item_component(BudgetItem const& p_budget_item)
 	);
 	m_top_sizer->Add
 	(	budget_item_component.description_ctrl,
-		wxGBPosition(m_next_row, 1),
+		wxGBPosition(m_next_row, 0),
 		wxGBSpan(1, 2)
 	);
 	wxSize const desc_size =
@@ -430,7 +423,7 @@ BudgetPanel::push_item_component(BudgetItem const& p_budget_item)
 	budget_item_component.amount_ctrl->set_amount(amount);
 	m_top_sizer->Add
 	(	budget_item_component.amount_ctrl,
-		wxGBPosition(m_next_row, 3),
+		wxGBPosition(m_next_row, 2),
 		wxGBSpan(1, 1)
 	);
 	budget_item_component.frequency_ctrl = new SpecialFrequencyCtrl
@@ -443,7 +436,7 @@ BudgetPanel::push_item_component(BudgetItem const& p_budget_item)
 	budget_item_component.frequency_ctrl->set_frequency(maybe_frequency);
 	m_top_sizer->Add
 	(	budget_item_component.frequency_ctrl,
-		wxGBPosition(m_next_row, 4),
+		wxGBPosition(m_next_row, 3),
 		wxGBSpan(1, 2)
 	);
 	m_budget_item_components.push_back(budget_item_component);
