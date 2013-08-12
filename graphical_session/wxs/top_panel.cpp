@@ -391,6 +391,8 @@ TopPanel::update_for_new(Account const& p_saved_object)
 	m_transaction_panel->update_for_new(p_saved_object);
 	m_reconciliation_panel->update_for_new(p_saved_object);
 	m_report_panel->update_for_new(p_saved_object);
+	// TODO This will kill the existing contents of the TransactionCtrl.
+	// Do we really want to do this?
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -431,6 +433,8 @@ TopPanel::update_for_amended(Account const& p_saved_object)
 	m_transaction_panel->update_for_amended(p_saved_object);
 	m_reconciliation_panel->update_for_amended(p_saved_object);
 	m_report_panel->update_for_new(p_saved_object);
+	// TODO This will kill the existing contents of the TransactionCtrl.
+	// Do we really want to do this?
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;

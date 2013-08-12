@@ -24,6 +24,7 @@
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
+#include <wx/wupdlock.h>
 #include <wx/window.h>
 #include <utility>
 #include <vector>
@@ -236,9 +237,7 @@ EntryListPanel::selected_entries(vector<Entry>& out)
 void
 EntryListPanel::configure_entry_list_ctrl()
 {
-#	if JEWEL_ON_WINDOWS
-	Freeze();  // Stop flickering
-#	endif
+	wxWindowUpdateLocker const update_locker(this);
 
 	if (m_client_size_aux < 100)  // WARNING Ugly hack
 	{
@@ -311,10 +310,6 @@ EntryListPanel::configure_entry_list_ctrl()
 	// Layout();
 	
 	m_entry_list_ctrl->scroll_to_bottom();
-
-#	if JEWEL_ON_WINDOWS
-	Thaw();
-#	endif
 
 	return;
 }

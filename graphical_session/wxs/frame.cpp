@@ -20,6 +20,7 @@
 #include <wx/menu.h>
 #include <wx/string.h>
 #include <wx/icon.h>
+#include <wx/wupdlock.h>
 #include <wx/wx.h>
 #include <vector>
 
@@ -269,14 +270,7 @@ Frame::on_menu_new_bs_account(wxCommandEvent& event)
 		account,
 		account_super_type::balance_sheet
 	);
-	if (account_dialog.ShowModal() == wxID_OK)
-	{
-		// TODO This will obliterate any contents of the TransactionCtrl.
-		// Do we want this? We probably \e do want it to update the
-		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
-		// we don't really want it to obliterate everything else.
-		m_top_panel->update_for_new(account);
-	}
+	account_dialog.ShowModal();
 	return;
 }
 
@@ -286,14 +280,7 @@ Frame::on_menu_new_pl_account(wxCommandEvent& event)
 	(void)event;  // Silence compiler warning re. unused parameter.
 	Account account(m_database_connection);
 	AccountDialog account_dialog(this, account, account_super_type::pl);
-	if (account_dialog.ShowModal() == wxID_OK)
-	{
-		// TODO This will obliterate any contents of the TransactionCtrl.
-		// Do we want this? We probably \e do want it to update the
-		// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
-		// we don't really want it to obliterate everything else.
-		m_top_panel->update_for_new(account);
-	}
+	account_dialog.ShowModal();
 	return;
 }
 
@@ -434,6 +421,7 @@ Frame::on_journal_editing_requested(PersistentObjectEvent& event)
 void
 Frame::on_account_created_event(PersistentObjectEvent& event)
 {
+	wxWindowUpdateLocker const update_locker(this);
 	Account const account(m_database_connection, event.po_id());
 	m_top_panel->update_for_new(account);
 	return;
@@ -442,6 +430,7 @@ Frame::on_account_created_event(PersistentObjectEvent& event)
 void
 Frame::on_account_edited_event(PersistentObjectEvent& event)
 {
+	wxWindowUpdateLocker const update_locker(this);
 	// TODO This will obliterate any contents of the TransactionCtrl.
 	// Do we want this? We probably \e do want it to update the
 	// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
@@ -454,6 +443,7 @@ Frame::on_account_edited_event(PersistentObjectEvent& event)
 void
 Frame::on_journal_created_event(PersistentObjectEvent& event)
 {
+	wxWindowUpdateLocker const update_locker(this);
 	assert (m_top_panel);
 	PersistentJournal::Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
@@ -472,6 +462,7 @@ Frame::on_journal_created_event(PersistentObjectEvent& event)
 void
 Frame::on_journal_edited_event(PersistentObjectEvent& event)
 {
+	wxWindowUpdateLocker const update_locker(this);
 	// WARNING Repeats code from on_journal_created_event(...).
 	assert (m_top_panel);
 	PersistentJournal::Id const journal_id = event.po_id();
@@ -491,6 +482,7 @@ Frame::on_journal_edited_event(PersistentObjectEvent& event)
 void
 Frame::on_draft_journal_deleted_event(PersistentObjectEvent& event)
 {
+	wxWindowUpdateLocker const update_locker(this);
 	assert (m_top_panel);
 	m_top_panel->update_for_deleted_draft_journal(event.po_id());
 	return;
@@ -499,6 +491,7 @@ Frame::on_draft_journal_deleted_event(PersistentObjectEvent& event)
 void
 Frame::on_ordinary_journal_deleted_event(PersistentObjectEvent& event)
 {
+	wxWindowUpdateLocker const update_locker(this);
 	assert (m_top_panel);
 	m_top_panel->update_for_deleted_ordinary_journal(event.po_id());
 	return;
@@ -510,6 +503,7 @@ Frame::on_draft_entry_deleted_event(PersistentObjectEvent& event)
 	// TODO The chain of functions that are now called (via m_top_panel)
 	// expect a vector. This is now just pointlessly wasteful given
 	// what we are now processing one event at a time!
+	wxWindowUpdateLocker const update_locker(this);
 	static vector<Entry::Id> doomed_ids(1, 0);
 	assert (doomed_ids.size() == 1);
 	doomed_ids[0] = event.po_id();
@@ -524,6 +518,7 @@ Frame::on_ordinary_entry_deleted_event(PersistentObjectEvent& event)
 	// TODO The chain of functions that are now called (via m_top_panel)
 	// a vector. This is now just pointlessly wasteful given
 	// what we are now processing one event at a time!
+	wxWindowUpdateLocker const update_locker(this);
 	static vector<Entry::Id> doomed_ids(1, 0);
 	assert (doomed_ids.size() == 1);
 	doomed_ids[0] = event.po_id();
@@ -535,6 +530,7 @@ Frame::on_ordinary_entry_deleted_event(PersistentObjectEvent& event)
 void
 Frame::on_budget_edited_event(PersistentObjectEvent& event)
 {
+	wxWindowUpdateLocker const update_locker(this);
 	Account account(m_database_connection, event.po_id());
 	assert (m_top_panel);
 	m_top_panel->update_for_amended_budget(account);
