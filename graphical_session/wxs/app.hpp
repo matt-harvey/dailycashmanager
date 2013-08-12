@@ -25,8 +25,7 @@ class Frame;
 // end forward declarations
 
 
-class App:
-	public wxApp
+class App: public wxApp
 {
 public:
 	App();
@@ -50,7 +49,6 @@ public:
 	wxLocale const& locale() const;
 
 	PhatbooksDatabaseConnection& database_connection();
-
 
 private:
 	boost::filesystem::path elicit_existing_filepath();

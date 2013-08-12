@@ -58,7 +58,15 @@ public:
 	(	transaction_type::TransactionType p_transaction_type
 	);
 	void set_comment(BString const& p_comment);
+
+	/**
+	 * The fulcrum is the position, in the series of Entries, that is
+	 * one after the position of the final "source" Entry, and which is
+	 * the position of the first "destination" Entry. This affects how
+	 * the Journal is displayed in the GUI.
+	 */
 	void set_fulcrum(size_t p_fulcrum);
+
 	void push_entry(Entry& entry);
 	void remove_entry(Entry& entry);
 	void clear_entries();
@@ -69,7 +77,15 @@ public:
 	bool is_actual() const;
 
 	transaction_type::TransactionType transaction_type() const;
+
+	/**
+	 * The fulcrum is the position, in the series of Entries, that is
+	 * one after the position of the final "source" Entry, and which is
+	 * the position of the first "destination" Entry. This affects how
+	 * the Journal is displayed in the GUI.
+	 */
 	size_t fulcrum() const;
+
 	jewel::Decimal balance() const;
 
 

@@ -54,6 +54,10 @@ class DecimalTextCtrl;
  * duplicate Account names (tested case-insensitively).
  *
  * @todo Fix alignment of BudgetPanel within AcountDialog.
+ *
+ * @todo Enable user to delete an Account, but only if it's one for
+ * which no Entries have been made, and for which the opening balance
+ * is nil.
  */
 class AccountDialog: public wxDialog, private boost::noncopyable
 {

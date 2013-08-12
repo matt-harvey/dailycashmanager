@@ -23,6 +23,9 @@ namespace gui
 /**
  * Displays a list of Accounts and their balances, and, optionally
  * the daily budget associated with each Account.
+ *
+ * @todo Enable user to hide an Account; but also enable them to toggle
+ * showing all Accounts including the hidden ones, if they so desire.
  */
 class AccountListCtrl: public wxListCtrl
 {
