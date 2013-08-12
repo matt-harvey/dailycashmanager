@@ -64,7 +64,6 @@ BudgetItemImpl::BudgetItemImpl
 	PersistentObject(p_identity_map),
 	m_data(new BudgetItemData)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 }
 
 BudgetItemImpl::BudgetItemImpl
@@ -74,8 +73,6 @@ BudgetItemImpl::BudgetItemImpl
 	PersistentObject(p_identity_map, p_id),
 	m_data(new BudgetItemData)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
-	JEWEL_DEBUG_LOG << "p_id: " << p_id << endl;
 }
 
 
@@ -307,7 +304,6 @@ BudgetItemImpl::do_remove()
 BudgetItemImpl::BudgetItemData::BudgetItemData():
 	m_account(0)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 }
 
 BudgetItemImpl::BudgetItemData::~BudgetItemData()
@@ -322,7 +318,6 @@ BudgetItemImpl::BudgetItemData::BudgetItemData(BudgetItemData const& rhs):
 	m_frequency(rhs.m_frequency),
 	m_amount(rhs.m_amount)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	if (rhs.m_account)
 	{
 		m_account = new Account(rhs.account());
@@ -337,7 +332,6 @@ BudgetItemImpl::BudgetItemData::account() const
 		return *m_account;
 	}
 	assert (!m_account);
-	JEWEL_DEBUG_LOG_LOCATION;
 	throw UninitializedOptionalException
 	(	"BudgetItemImpl::BudgetItemData::m_account is null."
 	);
@@ -346,21 +340,18 @@ BudgetItemImpl::BudgetItemData::account() const
 BString
 BudgetItemImpl::BudgetItemData::description() const
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	return value(m_description);
 }
 
 Frequency
 BudgetItemImpl::BudgetItemData::frequency() const
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	return value(m_frequency);
 }
 
 Decimal
 BudgetItemImpl::BudgetItemData::amount() const
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	return value(m_amount);
 }
 
@@ -381,7 +372,6 @@ BudgetItemImpl::BudgetItemData::set_account(Account const& p_account)
 void
 BudgetItemImpl::BudgetItemData::set_description(BString const& p_description)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	m_description = p_description;
 	return;
 }
@@ -389,7 +379,6 @@ BudgetItemImpl::BudgetItemData::set_description(BString const& p_description)
 void
 BudgetItemImpl::BudgetItemData::set_frequency(Frequency const& p_frequency)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	m_frequency = p_frequency;
 	return;
 }

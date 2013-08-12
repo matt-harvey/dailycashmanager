@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "pl_account_entry_list_ctrl.hpp"
 #include "filtered_entry_list_ctrl.hpp"
 #include "entry.hpp"

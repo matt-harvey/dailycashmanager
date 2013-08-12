@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_draft_journal_list_ctrl_hpp
 #define GUARD_draft_journal_list_ctrl_hpp
 

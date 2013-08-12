@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_reconciliation_list_panel
 #define GUARD_reconciliation_list_panel
 

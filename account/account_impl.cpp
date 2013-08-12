@@ -360,7 +360,6 @@ vector<BudgetItem>
 AccountImpl::budget_items()
 {
 	load();
-	JEWEL_DEBUG_LOG_LOCATION;
 	vector<BudgetItem> ret;
 	SQLStatement s
 	(	database_connection(),
@@ -374,7 +373,6 @@ AccountImpl::budget_items()
 		BudgetItem bi(database_connection(), s.extract<BudgetItem::Id>(0));
 		ret.push_back(bi);
 	}
-	JEWEL_DEBUG_LOG_LOCATION;
 	return ret;
 }
 

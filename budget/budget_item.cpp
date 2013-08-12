@@ -160,43 +160,30 @@ normalized_total
 	vector<BudgetItem>::const_iterator const& e
 )
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	assert (e - b > 0);  // Assert precondition.
-	JEWEL_DEBUG_LOG_LOCATION;
 	PhatbooksDatabaseConnection& dbc = b->database_connection();
-	JEWEL_DEBUG_LOG_LOCATION;
 	Commodity commodity(dbc);
 	// WARNING Temporary hack - if Accounts can ever have Commodities other
 	// than the default Commodity, then this will no longer work.
 	try
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
 		commodity = b->account().commodity();
-		JEWEL_DEBUG_LOG_LOCATION;
 	}
 	catch (jewel::UninitializedOptionalException&)
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
 		commodity = dbc.default_commodity();
-		JEWEL_DEBUG_LOG_LOCATION;
 	}
 	Decimal::places_type const prec = commodity.precision();
-	JEWEL_DEBUG_LOG_LOCATION;
 	Decimal ret(0, prec);
-	JEWEL_DEBUG_LOG_LOCATION;
 	for ( ; b != e; ++b)
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
 		assert
 		(	b->database_connection().supports_budget_frequency
 			(	b->frequency()
 			)
 		);
-		JEWEL_DEBUG_LOG_LOCATION;
 		ret += convert_to_canonical(b->frequency(), b->amount());
-		JEWEL_DEBUG_LOG_LOCATION;
 	}
-	JEWEL_DEBUG_LOG_LOCATION;
 	return round(convert_from_canonical(dbc.budget_frequency(), ret), prec);
 }
 

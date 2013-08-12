@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "budget_panel.hpp"
 #include "account.hpp"
 #include "account_ctrl.hpp"
@@ -80,7 +82,6 @@ BudgetPanel::BudgetPanel(wxWindow* p_parent, Account const& p_account):
 	m_summary_frequency_text(0),
 	m_account(p_account)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	assert (m_budget_items.empty());
 	assert (p_parent);
 
@@ -224,7 +225,6 @@ BudgetPanel::BudgetPanel(wxWindow* p_parent, Account const& p_account):
 void
 BudgetPanel::on_pop_item_button_click(wxCommandEvent& event)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	(void)event;  // silence compiler re. unused parameter.
 	pop_item_component();
 	m_top_sizer->Fit(this);
@@ -236,83 +236,60 @@ BudgetPanel::on_pop_item_button_click(wxCommandEvent& event)
 void
 BudgetPanel::on_push_item_button_click(wxCommandEvent& event)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	(void)event;  // Silence compiler re. unused parameter.
-	JEWEL_DEBUG_LOG_LOCATION;
 	BudgetItem budget_item(database_connection());
-	JEWEL_DEBUG_LOG_LOCATION;
 	budget_item.set_account(m_account);
-	JEWEL_DEBUG_LOG_LOCATION;
 	budget_item.set_description(BString(""));
-	JEWEL_DEBUG_LOG_LOCATION;
 	budget_item.set_amount(zero());
-	JEWEL_DEBUG_LOG_LOCATION;
 	budget_item.set_frequency(Frequency(1, interval_type::days));
-	JEWEL_DEBUG_LOG_LOCATION;
 	push_item_component(budget_item);
-	JEWEL_DEBUG_LOG_LOCATION;
 	m_top_sizer->Fit(this);
-	JEWEL_DEBUG_LOG_LOCATION;
 	m_top_sizer->SetSizeHints(this);
-	JEWEL_DEBUG_LOG_LOCATION;
 	GetParent()->Fit();
-	JEWEL_DEBUG_LOG_LOCATION;
 	return;
 }
 
 bool
 BudgetPanel::TransferDataToWindow()
 {
-	JEWEL_DEBUG_LOG << "Entered BudgetPanel::TransferDataToWindow()." << endl;
 	if (!wxPanel::TransferDataToWindow())
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
 		return false;
 	}
-	JEWEL_DEBUG_LOG_LOCATION;
 	// Make sure there are no unusual signs
 	// (+ for revenue Accounts or - for expense Accounts) and warn the
 	// user in case there are, giving them the opportunity to correct it.	
 	vector<BudgetItemComponent>::size_type i = 0;
-	JEWEL_DEBUG_LOG_LOCATION;
 	vector<BudgetItemComponent>::size_type const sz =
 		m_budget_item_components.size();
-	JEWEL_DEBUG_LOG_LOCATION;
 	account_type::AccountType const account_type = m_account.account_type();
 
 	// Set precision of "zero" for more efficient comparisons.
 	Decimal const z = zero();
 	for ( ; i != sz; ++i)
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
 		DecimalTextCtrl* const amount_ctrl =
 			m_budget_item_components[i].amount_ctrl;
 		Decimal const amount = amount_ctrl->amount();
-		JEWEL_DEBUG_LOG_LOCATION;
 		if
 		(	((amount > z) && (account_type == account_type::revenue)) ||
 			((amount < z) && (account_type == account_type::expense))
 		)
 		{
-			JEWEL_DEBUG_LOG_LOCATION;
 			SignWarning warning(this, account_type);
 			int const result = warning.ShowModal();
 			assert ((result == wxID_YES) || (result == wxID_NO));
 			if (result == wxID_YES)
 			{
-				JEWEL_DEBUG_LOG_LOCATION;
 				// TODO Deal with tiny possibility of overflow here?
 				amount_ctrl->set_amount(-amount);
 			}
 		}
 	}
-	JEWEL_DEBUG_LOG_LOCATION;
 
 	// Update the budget summary text on the basis of what's now in the
 	// BudgetPanel.
-	JEWEL_DEBUG_LOG_LOCATION;
 	update_budget_summary();
-	JEWEL_DEBUG_LOG_LOCATION;
 
 	return true;
 }
@@ -320,18 +297,14 @@ BudgetPanel::TransferDataToWindow()
 bool
 BudgetPanel::process_confirmation()
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	assert (m_account.has_id());
 	if
 	(	Validate() && TransferDataFromWindow() && update_budgets_from_dialog()
 	)
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
 		prompt_to_balance();
-		JEWEL_DEBUG_LOG_LOCATION;
 		return true;
 	}
-	JEWEL_DEBUG_LOG_LOCATION;
 	return false;
 }
 
@@ -339,30 +312,23 @@ void
 BudgetPanel::update_budget_summary()
 {
 	// WARNING This is inefficient.
-	JEWEL_DEBUG_LOG_LOCATION;
 	vector<BudgetItem> budget_items = make_budget_items();
 	assert (m_summary_amount_text);
 	vector<BudgetItem>::const_iterator it = budget_items.begin();
-	JEWEL_DEBUG_LOG_LOCATION;
 	if (budget_items.empty())
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
 		m_summary_amount_text->SetLabelText(finformat_wx(zero(), locale()));
 	}
 	else
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
 		assert (budget_items.end() - it > 0);
-		JEWEL_DEBUG_LOG_LOCATION;
 		m_summary_amount_text->SetLabelText
 		(	finformat_wx
 			(	normalized_total(it, budget_items.end()),
 				locale()
 			)
 		);
-		JEWEL_DEBUG_LOG_LOCATION;
 	}
-	JEWEL_DEBUG_LOG_LOCATION;
 	return;
 }
 
@@ -437,7 +403,6 @@ BudgetPanel::push_item_component(BudgetItem const& p_budget_item)
 {
 	assert (p_budget_item.account() == m_account);
 
-	JEWEL_DEBUG_LOG_LOCATION;
 
 	BudgetItemComponent budget_item_component = {0, 0, 0};
 	budget_item_component.description_ctrl = new wxTextCtrl
@@ -462,7 +427,6 @@ BudgetPanel::push_item_component(BudgetItem const& p_budget_item)
 		amount.places(),
 		false
 	);
-	JEWEL_DEBUG_LOG_LOCATION;
 	budget_item_component.amount_ctrl->set_amount(amount);
 	m_top_sizer->Add
 	(	budget_item_component.amount_ctrl,
@@ -486,7 +450,6 @@ BudgetPanel::push_item_component(BudgetItem const& p_budget_item)
 
 	++m_next_row;
 
-	JEWEL_DEBUG_LOG_LOCATION;
 
 	return;
 }

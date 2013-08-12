@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "account_dialog.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
@@ -468,7 +470,6 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		PHATBOOKS_JOURNAL_CREATED_EVENT,
 		objnl
 	);
-	JEWEL_DEBUG_LOG_LOCATION;
 	return true;
 }
 

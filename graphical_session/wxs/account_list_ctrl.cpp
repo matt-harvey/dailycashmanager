@@ -44,7 +44,6 @@ AccountListCtrl::create_balance_sheet_account_list
 	PhatbooksDatabaseConnection& dbc
 )
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	BalanceSheetAccountReader const reader(dbc);
 	AccountListCtrl* ret = new AccountListCtrl
 	(	parent,
@@ -62,7 +61,6 @@ AccountListCtrl::create_pl_account_list
 	PhatbooksDatabaseConnection& dbc
 )
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	PLAccountReader const reader(dbc);
 	AccountListCtrl* ret = new AccountListCtrl
 	(	parent,
@@ -94,7 +92,6 @@ AccountListCtrl::AccountListCtrl
 	m_show_daily_budget(p_show_daily_budget),
 	m_database_connection(p_database_connection)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	update(p_reader, p_left_column_title);
 }
 
@@ -136,7 +133,6 @@ AccountListCtrl::on_item_activated(wxListEvent& event)
 void
 AccountListCtrl::update(bool balance_sheet)
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	if (balance_sheet)
 	{
 		BalanceSheetAccountReader const reader(m_database_connection);
@@ -169,7 +165,6 @@ AccountListCtrl::update
 	wxString const& p_left_column_title
 )
 {
-	JEWEL_DEBUG_LOG_LOCATION;
 	// Remember which rows are selected currently
 	vector<size_t> selected_rows;
 	size_t const lim = GetItemCount();
@@ -240,10 +235,8 @@ AccountListCtrl::update
 	SetColumnWidth(s_name_col, max(GetColumnWidth(s_name_col), 200));
 	SetColumnWidth(s_balance_col, wxLIST_AUTOSIZE);
 	SetColumnWidth(s_balance_col, max(GetColumnWidth(s_balance_col), 90));
-	JEWEL_DEBUG_LOG_LOCATION;
 	if (m_show_daily_budget)
 	{
-		JEWEL_DEBUG_LOG_LOCATION;
 		SetColumnWidth(s_budget_col, wxLIST_AUTOSIZE);
 		SetColumnWidth(s_budget_col, max(GetColumnWidth(s_budget_col), 90));
 	}

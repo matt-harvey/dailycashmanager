@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "gridded_scrolled_panel.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"

@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_multi_account_panel_hpp
 #define GUARD_multi_account_panel_hpp
 

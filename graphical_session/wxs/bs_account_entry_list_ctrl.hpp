@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_bs_account_entry_list_ctrl_hpp
 #define GUARD_bs_account_entry_list_ctrl_hpp
 

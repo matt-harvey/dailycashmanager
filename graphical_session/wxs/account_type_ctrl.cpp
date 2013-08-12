@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "account_type_ctrl.hpp"
 #include "account_dialog.hpp"
 #include "account_type.hpp"

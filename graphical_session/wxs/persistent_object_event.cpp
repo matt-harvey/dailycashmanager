@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "persistent_object_event.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
