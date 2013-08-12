@@ -6,6 +6,7 @@
 #include "account_type_ctrl.hpp"
 #include "budget_panel.hpp"
 #include "decimal_text_ctrl.hpp"
+#include "frame.hpp"
 #include "ordinary_journal.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -14,6 +15,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
+#include <wx/app.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -464,13 +466,15 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		PHATBOOKS_ACCOUNT_CREATED_EVENT:
 		PHATBOOKS_ACCOUNT_EDITED_EVENT
 	);
+	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
+	assert (frame);
 	PersistentObjectEvent::fire
-	(	GetParent(),  // can't use "this" here, or event is missed
+	(	frame,  // can't use "this", or event is missed
 		event_type,
 		m_account
 	);
 	PersistentObjectEvent::fire
-	(	GetParent(),  // can't use "this" here, or event is missed
+	(	frame,  // can't use "this", or event is missed
 		PHATBOOKS_JOURNAL_CREATED_EVENT,
 		objnl
 	);

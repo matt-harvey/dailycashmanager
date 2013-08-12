@@ -104,6 +104,7 @@ bool App::OnInit()
 	update_repeaters(database_connection());
 
 	Frame* frame = new Frame(app_name, database_connection());
+	SetTopWindow(frame);
 	frame->Show(true);
 
 	// Start the event loop

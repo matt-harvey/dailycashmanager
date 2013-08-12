@@ -23,6 +23,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
+#include <wx/app.h>
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -380,10 +381,12 @@ BudgetPanel::update_budgets_from_dialog()
 
 	transaction.commit();
 
-	assert (GetParent());
 	assert (m_account.has_id());
+
+	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
+	assert (frame);
 	PersistentObjectEvent::fire
-	(	GetParent()->GetParent(),  // WARNING This sucks
+	(	frame,
 		PHATBOOKS_BUDGET_EDITED_EVENT,
 		m_account.id()
 	);
@@ -627,10 +630,10 @@ void
 BudgetPanel::SpecialFrequencyCtrl::on_text_change(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	BudgetPanel* const budget_dialog =
+	BudgetPanel* const budget_panel =
 		dynamic_cast<BudgetPanel*>(GetParent());
-	assert (budget_dialog);
-	budget_dialog->update_budget_summary();
+	assert (budget_panel);
+	budget_panel->update_budget_summary();
 	return;
 }	
 
@@ -798,6 +801,10 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 	BudgetItemReader reader(m_database_connection);
 	BudgetItemReader::iterator it = reader.begin();
 	BudgetItemReader::iterator const end = reader.end();
+
+	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
+	assert (frame);
+
 	for ( ; it != end; ++it)
 	{
 		// If there is already a "general offsetting BudgetItem" for
@@ -811,8 +818,9 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 			it->set_amount(it->amount() + m_imbalance);
 			it->save();
 			assert (budget_is_balanced());
+			
 			PersistentObjectEvent::fire
-			(	GetParent()->GetParent()->GetParent(),  // WARNING This sucks
+			(	frame,  // don't use "this", or event will be missed
 				PHATBOOKS_BUDGET_EDITED_EVENT,
 				p_target.id()
 			);
@@ -827,12 +835,14 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 	adjusting_item.set_frequency(target_frequency);
 	adjusting_item.set_amount(m_imbalance);
 	adjusting_item.save();
+
 	PersistentObjectEvent::fire
-	(	GetParent()->GetParent()->GetParent(),  // WARNING This sucks
+	(	frame,  // don't use "this", or event will be missed
 		PHATBOOKS_BUDGET_EDITED_EVENT,
 		p_target.id()
 	);
 	assert (budget_is_balanced());
+
 	return;
 }
 

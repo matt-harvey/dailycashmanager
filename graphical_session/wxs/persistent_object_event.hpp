@@ -42,6 +42,8 @@ public:
 
 	PersistentObjectEvent(PersistentObjectEvent const& rhs);
 
+	virtual ~PersistentObjectEvent();
+
 	/**
 	 * @returns the id of the PhatbooksPersistentObject with which
 	 * this event is associated.
