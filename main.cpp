@@ -20,13 +20,6 @@
 // TODO (For GUI). Users will probably expect
 // right-clicking to cause a context-dependent menu to pop up.
 
-// TODO HIGH PRIORITY. Things have gotten messy such that we should
-// use wxEvent mechanism to update for changes in PhatbooksPersistentObjects.
-// Create event classses that inherit (directly or indirectly) from
-// wxEvent and fire off events when objects change. The firer then
-// won't have to worry about just which of its ancestor widgets needs to
-// be updated.
-
 // TODO The application should automatically create a zipped backup
 // file so that the session can be recovered if something goes wrong.
 
@@ -73,7 +66,6 @@
 #include "application.hpp"
 #include "b_string.hpp"
 #include "graphical_session.hpp"
-#include "text_session.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <tclap/CmdLine.h>
 #include <wx/log.h>
@@ -91,7 +83,6 @@ using phatbooks::BString;
 using phatbooks::bstring_to_std8;
 using phatbooks::bstring_to_wx;
 using phatbooks::gui::GraphicalSession;
-using phatbooks::tui::TextSession;
 using std::cerr;
 using std::clog;
 using std::cout;
@@ -99,10 +90,7 @@ using std::endl;
 using std::string;
 using TCLAP::ArgException;
 using TCLAP::CmdLine;
-using TCLAP::SwitchArg;
 using TCLAP::UnlabeledValueArg;
-
-
 
 int main(int argc, char** argv)
 {
@@ -130,14 +118,7 @@ int main(int argc, char** argv)
 		}
 
 		// Process command line arguments
-		BString const application_name = Application::application_name();
-		CmdLine cmd(bstring_to_std8(application_name));
-		SwitchArg gui_switch
-		(	"c",
-			"console",
-			"Run in console mode (rather than graphical mode)",
-			cmd
-		);
+		CmdLine cmd(bstring_to_std8(Application::application_name()));
 		UnlabeledValueArg<string> filepath_arg
 		(	"FILE",
 			"File to open or create",
@@ -147,44 +128,27 @@ int main(int argc, char** argv)
 		);
 		cmd.add(filepath_arg);
 		cmd.parse(argc, argv);
-		bool const using_console_mode = gui_switch.getValue();
 		string const filepath_str = filepath_arg.getValue();
-		if (!using_console_mode)
-		{
-			GraphicalSession graphical_session;
-			if (another_is_running)
-			{
-				// We tell the GraphicalSession of an existing instance
-				// so that it can this session with a graphical
-				// message box, which it can only do after wxWidgets'
-				// initialization code has run.
-				graphical_session.notify_existing_application_instance();
-			}
-			// Note phatbooks::Session currently requires a std::string to
-			// be passed here.
-			// TODO This may require a wstring or BString if we want to
-			// support non-ASCII filenames on Windows. We would need to
-			// change the interface with phatbooks::Session.
-			if (filepath_str.empty())
-			{
-				return graphical_session.run();
-			}
-			assert (!filepath_str.empty());
-			return graphical_session.run(filepath_str);
-		}
-		assert (using_console_mode);
+		GraphicalSession graphical_session;
 		if (another_is_running)
 		{
-			cout << application_name << " is already running" << endl;
-			return 1;
+			// We tell the GraphicalSession of an existing instance
+			// so that it can this session with a graphical
+			// message box, which it can only do after wxWidgets'
+			// initialization code has run.
+			graphical_session.notify_existing_application_instance();
 		}
-		TextSession text_session;
+		// Note phatbooks::Session currently requires a std::string to
+		// be passed here.
+		// TODO This may require a wstring or BString if we want to
+		// support non-ASCII filenames on Windows. We would need to
+		// change the interface with phatbooks::Session.
 		if (filepath_str.empty())
 		{
-			return text_session.run();
+			return graphical_session.run();
 		}
 		assert (!filepath_str.empty());
-		return text_session.run(filepath_str);
+		return graphical_session.run(filepath_str);
 	}
 	catch (ArgException& e)
 	{

@@ -21,7 +21,6 @@ set (immediate_directories
 	 output_aux
 	 phatbooks_database_connection
 	 phatbooks_persistent_object
-	 text_session
 	 repeater
 	 session
 	 transaction_type)
@@ -50,7 +49,6 @@ if (WIN32)
 		 boost_regex-mgw46-mt-1_53
 		 boost_system-mgw46-mt-1_53
 		 jewel
-		 consolixx
 		 UnitTest++
 		 sqloxx
 	     wxmsw29u
@@ -125,10 +123,6 @@ else ()
 	                #-D_LARGE_FILES
 					-D__WXGTK__)
 endif ()
-
-
-set (tui_files
-	 text_session/text_session.cpp)
 
 set (main_files
 	 account/account.cpp
@@ -232,7 +226,6 @@ add_executable(
 	phatbooks
 	main.cpp
 	${main_files}
-	${tui_files}
 	${gui_files}
 	${windows_resources}
 )

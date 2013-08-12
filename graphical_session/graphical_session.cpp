@@ -90,7 +90,8 @@ int
 GraphicalSession::do_run(string const& filepath_str)
 {
 	// TODO Validate the filepath here first - similar to what
-	// we do in TextSession::do_run(...).
+	// we did in TextSession::do_run(...) (see branches/tui_branch in
+	// repository).
 	
 	// TODO There is code duplicated between here and the
 	// other form of do_run
