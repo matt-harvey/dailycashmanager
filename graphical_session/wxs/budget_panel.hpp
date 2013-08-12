@@ -41,9 +41,10 @@ class DecimalTextCtrl;
  * @todo Make the "-" button look disabled unless there is more than
  * one BudgetItemComponent.
  *
- * @todo Improve the appearance of BudgetPanel, especially as it appears
- * within AccountDialog. Possibly move m_summary_text to a more "squared"
- * location within the window.
+ * @todo Move the "daily top-up summary" down to be on the same row
+ * as "Cancel" and "Save" buttons... but these buttons are actually
+ * not in BudgetPanel, but are in the parent AccountDialog. So this
+ * will require some careful refactoring to achieve.
  */
 class BudgetPanel: public wxPanel, private boost::noncopyable
 {
@@ -129,18 +130,11 @@ private:
 	 */
 	wxString initial_summary_amount_text();
 
-	/**
-	 * @returns string describing the budget amount for m_account on the basis
-	 * of what is currently saved in the \e database, regardless of what
-	 * is currently shown in the BudgetPanel itself.
-	 */
-	wxString initial_summary_frequency_text();
-
 	size_t m_next_row;
 
 	wxGridBagSizer* m_top_sizer;
+	wxStaticText* m_summary_label;
 	wxStaticText* m_summary_amount_text;
-	wxStaticText* m_summary_frequency_text;
 	wxButton* m_pop_item_button;
 	wxButton* m_push_item_button;
 

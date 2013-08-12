@@ -330,6 +330,7 @@ AccountDialog::configure_budget_panel()
 	);
 
 	++m_current_row;
+	++m_current_row;
 
 	return;
 }

@@ -80,8 +80,8 @@ BudgetPanel::BudgetPanel(AccountDialog* p_parent, Account const& p_account):
 	wxPanel(p_parent, wxID_ANY),
 	m_next_row(0),
 	m_top_sizer(0),
+	m_summary_label(0),
 	m_summary_amount_text(0),
-	m_summary_frequency_text(0),
 	m_account(p_account)
 {
 	assert (p_parent);  // precondition
@@ -100,6 +100,24 @@ BudgetPanel::BudgetPanel(AccountDialog* p_parent, Account const& p_account):
 	SetSizer(m_top_sizer);	
 
 	// Row 0
+	assert
+	(	database_connection().budget_frequency() ==
+		Frequency(1, interval_type::days)
+	);
+	m_summary_label = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString("Daily top-up"),
+		wxDefaultPosition,
+		wxSize(medium_width(), wxDefaultSize.y),
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+	);
+	m_top_sizer->Add
+	(	m_summary_label,
+		wxGBPosition(m_next_row, 0),
+		wxDefaultSpan,
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+	);
 	m_summary_amount_text = new wxStaticText
 	(	this,
 		wxID_ANY,
@@ -110,23 +128,9 @@ BudgetPanel::BudgetPanel(AccountDialog* p_parent, Account const& p_account):
 	);
 	m_top_sizer->Add
 	(	m_summary_amount_text,
-		wxGBPosition(m_next_row, 2),
+		wxGBPosition(m_next_row, 1),
 		wxDefaultSpan,
 		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
-	);
-	m_summary_frequency_text = new wxStaticText
-	(	this,
-		wxID_ANY,
-		initial_summary_frequency_text(),
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
-	);
-	m_top_sizer->Add
-	(	m_summary_frequency_text,
-		wxGBPosition(m_next_row, 3),
-		wxGBSpan(1, 2),
-		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 
 	++m_next_row;
@@ -135,6 +139,20 @@ BudgetPanel::BudgetPanel(AccountDialog* p_parent, Account const& p_account):
 	++m_next_row;
 
 	// Next row
+	wxStaticText* budget_items_label = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString("BUDGET ITEMS"),
+		wxDefaultPosition,
+		wxSize(medium_width(), wxDefaultSize.y),
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+	);
+	m_top_sizer->Add
+	(	budget_items_label,
+		wxGBPosition(m_next_row, 0),
+		wxDefaultSpan,
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+	);
 	m_pop_item_button = new wxButton
 	(	this,
 		s_pop_item_button_id,
@@ -488,17 +506,6 @@ BudgetPanel::initial_summary_amount_text()
 		m_account.has_id()?
 		finformat_wx(m_account.budget(), locale()):
 		finformat_wx(zero(), locale());
-}
-
-wxString
-BudgetPanel::initial_summary_frequency_text()
-{
-	return
-		std8_to_wx
-		(	frequency_description
-			(	database_connection().budget_frequency()
-			)
-		);
 }
 
 PhatbooksDatabaseConnection&
