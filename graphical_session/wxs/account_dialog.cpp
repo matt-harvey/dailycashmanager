@@ -295,7 +295,6 @@ AccountDialog::AccountDialog
 void
 AccountDialog::configure_budget_panel()
 {
-	++m_current_row;
 	assert (!m_budget_panel);
 	if (account_super_type() == account_super_type::balance_sheet)
 	{
@@ -309,6 +308,9 @@ AccountDialog::configure_budget_panel()
 	}
 	assert (account_super_type() == account_super_type::pl);
 	
+	++m_current_row;
+	++m_current_row;
+
 	// Make sure m_account has an AccountType.
 	assert (m_account_type_ctrl);
 	try
@@ -326,7 +328,9 @@ AccountDialog::configure_budget_panel()
 		wxGBPosition(m_current_row, 1),
 		wxGBSpan(1, 4)
 	);
+
 	++m_current_row;
+
 	return;
 }
 

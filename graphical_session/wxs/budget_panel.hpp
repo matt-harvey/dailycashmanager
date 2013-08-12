@@ -29,6 +29,7 @@ namespace gui
 {
 
 class AccountCtrl;
+class AccountDialog;
 class DecimalTextCtrl;
 
 // End forward declarations
@@ -40,9 +41,9 @@ class DecimalTextCtrl;
  * @todo Make the "-" button look disabled unless there is more than
  * one BudgetItemComponent.
  *
- * @todo It's probably more user-friendly if the user can edit
- * BudgetItems via AccountDialog rather than having to open this
- * separate dialog.
+ * @todo Improve the appearance of BudgetPanel, especially as it appears
+ * within AccountDialog. Possibly move m_summary_text to a more "squared"
+ * location within the window.
  */
 class BudgetPanel: public wxPanel, private boost::noncopyable
 {
@@ -57,7 +58,7 @@ public:
 	 *
 	 * \e Precondition: \e p_account must have an AccountType.
 	 */
-	BudgetPanel(wxWindow* p_parent, Account const& p_account);
+	BudgetPanel(AccountDialog* p_parent, Account const& p_account);
 
 	/**
 	 * \e Precondition: \e m_account must have an ID before this is called.

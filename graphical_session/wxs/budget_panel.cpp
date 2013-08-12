@@ -3,6 +3,7 @@
 #include "budget_panel.hpp"
 #include "account.hpp"
 #include "account_ctrl.hpp"
+#include "account_dialog.hpp"
 #include "account_reader.hpp"
 #include "account_type.hpp"
 #include "b_string.hpp"
@@ -75,7 +76,7 @@ END_EVENT_TABLE()
 // End event tables
 
 
-BudgetPanel::BudgetPanel(wxWindow* p_parent, Account const& p_account):
+BudgetPanel::BudgetPanel(AccountDialog* p_parent, Account const& p_account):
 	wxPanel(p_parent, wxID_ANY),
 	m_next_row(0),
 	m_top_sizer(0),
@@ -83,8 +84,8 @@ BudgetPanel::BudgetPanel(wxWindow* p_parent, Account const& p_account):
 	m_summary_frequency_text(0),
 	m_account(p_account)
 {
+	assert (p_parent);  // precondition
 	assert (m_budget_items.empty());
-	assert (p_parent);
 
 	if (p_account == p_account.database_connection().balancing_account())
 	{
