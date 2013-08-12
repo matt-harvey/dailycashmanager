@@ -374,7 +374,11 @@ AccountDialog::on_ok_button_click(wxCommandEvent& event)
 	(void)event;  // Silence compiler re. unused parameter.
 	if (update_account_from_dialog(!m_account.has_id()))
 	{
-		if (m_budget_panel && m_budget_panel->process_confirmation())
+		if (!m_budget_panel)
+		{
+			EndModal(wxID_OK);
+		}
+		else if (m_budget_panel->process_confirmation())
 		{
 			EndModal(wxID_OK);
 		}
