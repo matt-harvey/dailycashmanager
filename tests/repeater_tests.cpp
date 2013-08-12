@@ -54,6 +54,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	repeater1.set_frequency(Frequency(3, interval_type::days));
 	repeater1.set_next_date(date(3012, 5, 30));
 	dj.push_repeater(repeater1);
+	dj.set_fulcrum(1);
 	dj.save();
 
 	CHECK_EQUAL(repeater1.next_date(), date(3012, 5, 30));
@@ -172,6 +173,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	repeater1.set_next_date(date(3012, 7, 30));
 	dj1.push_repeater(repeater1);
 
+	dj1.set_fulcrum(1);
 	dj1.save();
 
 	Repeater repeater1b = repeater1;
@@ -180,11 +182,21 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	CHECK_EQUAL(oj1b.comment(), BString("journal to test repeater"));
 	CHECK_EQUAL(oj1b.date(), date(3012, 7, 30));
 	CHECK_EQUAL(repeater1.next_date(), date(3012, 8, 13));
+	CHECK_EQUAL
+	(	oj1b.transaction_type(),
+		transaction_type::generic_transaction
+	);
+	CHECK_EQUAL(oj1b.fulcrum(), 1);
 
 	OrdinaryJournal const oj1c = oj1b;
 	CHECK_EQUAL(oj1c.date(), date(3012, 7, 30));
 	CHECK_EQUAL(oj1c.comment(), "journal to test repeater");
 	CHECK_EQUAL(oj1c.entries().size(), unsigned(2));
+	CHECK_EQUAL
+	(	oj1c.transaction_type(),
+		transaction_type::generic_transaction
+	);
+	CHECK_EQUAL(oj1c.fulcrum(), 1);
 
 	repeater1b.fire_next();
 	repeater1b.fire_next();

@@ -49,6 +49,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	entry1b.set_whether_reconciled(false);
 	entry1b.set_amount(Decimal("-0.99"));
 	journal1.push_entry(entry1b);
+	journal1.set_fulcrum(1);
 	OrdinaryJournal oj1(dbc);
 	oj1.set_date(date(3000, 1, 5));
 	oj1.mimic(journal1);
@@ -56,6 +57,11 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	CHECK_EQUAL(oj1.is_actual(), true);
 	CHECK_EQUAL(oj1.comment(), "igloo");
 	CHECK_EQUAL(oj1.entries().size(), size_t(2));
+	CHECK_EQUAL
+	(	oj1.transaction_type(),
+		transaction_type::generic_transaction
+	);
+	CHECK_EQUAL(oj1.fulcrum(), 1);
 	oj1.save();
 	CHECK(!oj1.entries().empty());
 
@@ -85,6 +91,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	dj2.set_transaction_type(transaction_type::envelope_transaction);
 	dj2.set_comment("steam engine");
 	dj2.set_name("some journal");
+	dj2.set_fulcrum(1);
 	
 	Entry entry2a(dbc);
 	entry2a.set_account(Account(dbc, "food"));
@@ -99,6 +106,10 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	CHECK_EQUAL(oj1.comment(), "steam engine");
 	CHECK_EQUAL(oj1.entries().size(), size_t(1));
 	CHECK_EQUAL(oj1.date(), date(3000, 1, 5));
+	CHECK_EQUAL
+	(	oj1.transaction_type(),
+		transaction_type::envelope_transaction
+	);
 	oj1.save();
 	vector<Entry>::const_iterator it2 =
 		oj1.entries().begin();
@@ -149,6 +160,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	OrdinaryJournal journal1(dbc);
 	journal1.set_transaction_type(transaction_type::generic_transaction);
 	journal1.set_comment("igloo");
+	journal1.set_fulcrum(1);
 
 	Entry entry1a(dbc);
 	entry1a.set_account(Account(dbc, "cash"));
