@@ -10,6 +10,7 @@
 #include "sizing.hpp"
 #include <boost/noncopyable.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -24,6 +25,7 @@
 #include <cassert>
 
 using jewel::Decimal;
+using jewel::UninitializedOptionalException;
 using sqloxx::DatabaseTransaction;
 
 // For debugging
@@ -302,6 +304,18 @@ AccountDialog::configure_budget_panel()
 		return;
 	}
 	assert (account_super_type() == account_super_type::pl);
+	
+	// Make sure m_account has an AccountType.
+	assert (m_account_type_ctrl);
+	try
+	{
+		account_type::AccountType dummy = m_account.account_type();
+		(void)dummy;  // silence compiler re. unused variable
+	}
+	catch (UninitializedOptionalException&)
+	{
+		m_account.set_account_type(m_account_type_ctrl->account_type());
+	}
 	m_budget_panel = new BudgetPanel(this, m_account);
 	m_top_sizer->Add
 	(	m_budget_panel,
@@ -454,7 +468,7 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		PHATBOOKS_JOURNAL_CREATED_EVENT,
 		objnl
 	);
-
+	JEWEL_DEBUG_LOG_LOCATION;
 	return true;
 }
 

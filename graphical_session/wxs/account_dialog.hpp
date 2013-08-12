@@ -51,10 +51,6 @@ class DecimalTextCtrl;
  * @todo HIGH PRIORITY Make it so the user cannot proceed if there are
  * duplicate Account names (tested case-insensitively).
  *
- * @todo Make it so that when setting up a new Account, if the user
- * changes AccountSuperType, it causes the BudgetDialog part of the
- * controls to appear or disappear accordingly.
- *
  * @todo Fix alignment of BudgetPanel within AcountDialog.
  */
 class AccountDialog: public wxDialog, private boost::noncopyable

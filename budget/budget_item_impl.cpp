@@ -14,6 +14,7 @@
 
 using jewel::clear;
 using jewel::Decimal;
+using jewel::UninitializedOptionalException;
 using jewel::value;
 using sqloxx::IdentityMap;
 using sqloxx::SQLStatement;
@@ -63,6 +64,7 @@ BudgetItemImpl::BudgetItemImpl
 	PersistentObject(p_identity_map),
 	m_data(new BudgetItemData)
 {
+	JEWEL_DEBUG_LOG_LOCATION;
 }
 
 BudgetItemImpl::BudgetItemImpl
@@ -72,6 +74,8 @@ BudgetItemImpl::BudgetItemImpl
 	PersistentObject(p_identity_map, p_id),
 	m_data(new BudgetItemData)
 {
+	JEWEL_DEBUG_LOG_LOCATION;
+	JEWEL_DEBUG_LOG << "p_id: " << p_id << endl;
 }
 
 
@@ -121,7 +125,7 @@ void
 BudgetItemImpl::set_description(BString const& p_description)
 {
 	load();
-	m_data->description = bstring_to_std8(p_description);
+	m_data->set_description(p_description);
 	return;
 }
 
@@ -129,7 +133,7 @@ void
 BudgetItemImpl::set_account(Account const& p_account)
 {
 	load();
-	m_data->account_id = p_account.id();
+	m_data->set_account(p_account);
 	return;
 }
 
@@ -137,7 +141,7 @@ void
 BudgetItemImpl::set_frequency(Frequency const& p_frequency)
 {
 	load();
-	m_data->frequency = p_frequency;
+	m_data->set_frequency(p_frequency);
 	return;
 }
 
@@ -145,7 +149,7 @@ void
 BudgetItemImpl::set_amount(Decimal const& p_amount)
 {
 	load();
-	m_data->amount = p_amount;
+	m_data->set_amount(p_amount);
 	return;
 }
 
@@ -153,31 +157,28 @@ BString
 BudgetItemImpl::description()
 {
 	load();
-	return value(m_data->description);
+	return m_data->description();
 }
 
 Account
 BudgetItemImpl::account()
 {
 	load();
-	return Account
-	(	database_connection(),
-		value(m_data->account_id)
-	);
+	return m_data->account();
 }
 
 Frequency
 BudgetItemImpl::frequency()
 {
 	load();
-	return value(m_data->frequency);
+	return m_data->frequency();
 }
 
 Decimal
 BudgetItemImpl::amount()
 {
 	load();
-	return value(m_data->amount);
+	return m_data->amount();
 }
 
 void
@@ -206,29 +207,33 @@ BudgetItemImpl::do_load()
 	(	statement.extract<Decimal::int_type>(4),
 		acct.commodity().precision()
 	);
-	temp.m_data->account_id = acct_id;
-	temp.m_data->description = std8_to_bstring(statement.extract<string>(1));
+	temp.m_data->set_account(Account(database_connection(), acct_id));
+	temp.m_data->
+		set_description(std8_to_bstring(statement.extract<string>(1)));
 	using interval_type::IntervalType;
-	temp.m_data->frequency = Frequency
-	(	statement.extract<int>(2),
-		static_cast<IntervalType>(statement.extract<int>(3))
+	temp.m_data->set_frequency
+	(	Frequency
+		(	statement.extract<int>(2),
+			static_cast<IntervalType>(statement.extract<int>(3))
+		)
 	);
-	temp.m_data->amount = amt;
+	temp.m_data->set_amount(amt);
 	swap(temp);
 }
 
 void
 BudgetItemImpl::process_saving_statement(SQLStatement& statement)
 {
-	statement.bind(":account_id", value(m_data->account_id));
+	assert (m_data->account().has_id());
+	statement.bind(":account_id", m_data->account().id());
 	statement.bind
 	(	":description",
-		bstring_to_std8(value(m_data->description))
+		bstring_to_std8(m_data->description())
 	);
-	Frequency const freq = value(m_data->frequency);
+	Frequency const freq = m_data->frequency();
 	statement.bind(":interval_units", freq.num_steps());
 	statement.bind(":interval_type_id", freq.step_type());
-	statement.bind(":amount", m_data->amount->intval());
+	statement.bind(":amount", m_data->amount().intval());
 	statement.step_final();
 	return;
 }
@@ -282,10 +287,7 @@ BudgetItemImpl::do_save_new()
 void
 BudgetItemImpl::do_ghostify()
 {
-	clear(m_data->account_id);
-	clear(m_data->description);
-	clear(m_data->frequency);
-	clear(m_data->amount);
+	m_data->clear();
 	return;
 }
 
@@ -300,6 +302,117 @@ BudgetItemImpl::do_remove()
 	statement.step_final();
 	BudgetAttorney::regenerate(database_connection());
 	return;
+}
+
+BudgetItemImpl::BudgetItemData::BudgetItemData():
+	m_account(0)
+{
+	JEWEL_DEBUG_LOG_LOCATION;
+}
+
+BudgetItemImpl::BudgetItemData::~BudgetItemData()
+{
+	delete m_account;
+	m_account = 0;
+}
+
+BudgetItemImpl::BudgetItemData::BudgetItemData(BudgetItemData const& rhs):
+	m_account(0),
+	m_description(rhs.m_description),
+	m_frequency(rhs.m_frequency),
+	m_amount(rhs.m_amount)
+{
+	JEWEL_DEBUG_LOG_LOCATION;
+	if (rhs.m_account)
+	{
+		m_account = new Account(rhs.account());
+	}
+}
+
+Account
+BudgetItemImpl::BudgetItemData::account() const
+{
+	if (m_account)
+	{
+		return *m_account;
+	}
+	assert (!m_account);
+	JEWEL_DEBUG_LOG_LOCATION;
+	throw UninitializedOptionalException
+	(	"BudgetItemImpl::BudgetItemData::m_account is null."
+	);
+}
+
+BString
+BudgetItemImpl::BudgetItemData::description() const
+{
+	JEWEL_DEBUG_LOG_LOCATION;
+	return value(m_description);
+}
+
+Frequency
+BudgetItemImpl::BudgetItemData::frequency() const
+{
+	JEWEL_DEBUG_LOG_LOCATION;
+	return value(m_frequency);
+}
+
+Decimal
+BudgetItemImpl::BudgetItemData::amount() const
+{
+	JEWEL_DEBUG_LOG_LOCATION;
+	return value(m_amount);
+}
+
+void
+BudgetItemImpl::BudgetItemData::set_account(Account const& p_account)
+{
+	Account* tmp = new Account(p_account);
+	if (m_account)
+	{
+		delete m_account;
+		m_account = 0;
+	}
+	assert (!m_account);
+	m_account = tmp;
+	return;
+}
+
+void
+BudgetItemImpl::BudgetItemData::set_description(BString const& p_description)
+{
+	JEWEL_DEBUG_LOG_LOCATION;
+	m_description = p_description;
+	return;
+}
+
+void
+BudgetItemImpl::BudgetItemData::set_frequency(Frequency const& p_frequency)
+{
+	JEWEL_DEBUG_LOG_LOCATION;
+	m_frequency = p_frequency;
+	return;
+}
+
+void
+BudgetItemImpl::BudgetItemData::set_amount(Decimal const& p_amount)
+{
+	m_amount = p_amount;
+	return;
+}
+
+void
+BudgetItemImpl::BudgetItemData::clear()
+{
+	using jewel::clear;
+	if (m_account)
+	{
+		delete m_account;
+		m_account = 0;
+	}
+	clear(m_description);
+	clear(m_frequency);
+	clear(m_amount);
 }
 
 }  // namespace phatbooks

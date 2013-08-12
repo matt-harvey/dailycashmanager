@@ -81,6 +81,8 @@ public:
 
 	/**
 	 * Set the Account with which this BudgetItem will be associated.
+	 * \e p_account need not have an ID when this is called; however, it
+	 * should have an ID by the time the BudgetItem is first saved.
 	 */
 	void set_account(Account const& p_account);
 

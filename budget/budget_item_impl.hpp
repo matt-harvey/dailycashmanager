@@ -17,8 +17,11 @@
 namespace phatbooks
 {
 
+// begin forward declarations
 
-class Account;  // forward declaration
+class Account;
+
+// end forward declarations
 
 
 class BudgetItemImpl:
@@ -97,15 +100,30 @@ private:
 	boost::scoped_ptr<BudgetItemData> m_data;
 };
 
-
-struct BudgetItemImpl::BudgetItemData
+// TODO We could provide a member swap function optimized for the fact that
+// the m_account member is heap-allocated.
+class BudgetItemImpl::BudgetItemData
 {
-	boost::optional<Id> account_id;
-	boost::optional<BString> description;
-	boost::optional<Frequency> frequency;
-	boost::optional<jewel::Decimal> amount;
+public:
+	BudgetItemData();
+	~BudgetItemData();
+	BudgetItemData(BudgetItemData const& rhs);
+	Account account() const;
+	BString description() const;
+	Frequency frequency() const;
+	jewel::Decimal amount() const;
+	void set_account(Account const& p_account);
+	void set_description(BString const& p_description);
+	void set_frequency(Frequency const& p_frequency);
+	void set_amount(jewel::Decimal const& p_amount);
+	void clear();
+private:
+	BudgetItemData& operator=(BudgetItemData const& rhs);  // unimplemented
+	Account* m_account;  // pointer, to avoid having to #include "account.hpp"
+	boost::optional<BString> m_description;
+	boost::optional<Frequency> m_frequency;
+	boost::optional<jewel::Decimal> m_amount;
 };
-
 
 }  // namespace phatbooks
 

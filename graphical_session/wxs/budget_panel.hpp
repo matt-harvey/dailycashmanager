@@ -49,14 +49,17 @@ public:
 	/**
 	 * @param p_parent parent window. <em>This should not be null.</em>
 	 *
-	 * @param p_account must have id.
-	 *
 	 * @throws BudgetEditingException if p_account is the balancing_account()
 	 * of p_account.database_connection() - as the user should not be enabled
 	 * to edit the balancing account's budget directly.
+	 *
+	 * \e Precondition: \e p_account must have an AccountType.
 	 */
 	BudgetPanel(wxWindow* p_parent, Account const& p_account);
 
+	/**
+	 * \e Precondition: \e m_account must have an ID before this is called.
+	 */
 	bool process_confirmation();
 
 private:
@@ -86,6 +89,8 @@ private:
 	 *
 	 * @returns true if an only if the BudgetItems for m_account are
 	 * successfully updated and saved.
+	 *
+	 * \e Precondition: \e m_account must have an id before this is called.
 	 */
 	bool update_budgets_from_dialog();
 
@@ -107,6 +112,8 @@ private:
 	void pop_item_component();
 
 	PhatbooksDatabaseConnection& database_connection() const;
+
+	jewel::Decimal zero() const;
 
 	static int const s_pop_item_button_id = wxID_HIGHEST + 1;
 	static int const s_push_item_button_id = s_pop_item_button_id + 1;
@@ -218,7 +225,7 @@ private:
 	private:
 		void on_no_button_click(wxCommandEvent& event);
 		void on_yes_button_click(wxCommandEvent& event);
-		void update_budgets_from_dialog(Account const& p_account);
+		void update_budgets_from_dialog(Account& p_account);
 		bool budget_is_balanced() const;
 		wxGridBagSizer* m_top_sizer;
 		AccountCtrl* m_account_ctrl;
