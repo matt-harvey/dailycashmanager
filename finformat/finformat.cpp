@@ -124,26 +124,33 @@ namespace
 				if (pad) ret.push_back(CharT(' '));
 			}
 		}
-		// special case of smallest possible m_intval - as we cannot take the
-		// absolute value below
-		else if (intval == numeric_limits<Decimal::int_type>::min())
-		{
-			// TODO HIGH PRIORITY Fix this.
-			assert (false);
-		}
 		else
 		{
 			// Our starting point is the string of digits representing the
 			// absolute value of the underlying integer.
 			ostringstream tempstream;
 			tempstream.imbue(locale::classic());
-			tempstream << std::abs(intval);
-			wxString const wxtemp =
-				bstring_to_wx(std8_to_bstring((tempstream.str())));
+			wxString wxtemp;
+			if (intval == numeric_limits<Decimal::int_type>::min())
+			{
+				// Special case as we can't use std::abs here without
+				// overflow.
+				tempstream << intval;
+				wxtemp = std8_to_wx(tempstream.str());
+				wxString::const_iterator it = wxtemp.begin();
+				assert (*it == CharT('-'));
+				++it;
+				wxtemp = wxString(it, wxtemp.end());
+			}
+			else
+			{
+				tempstream << std::abs(intval);
+				wxtemp = std8_to_wx(tempstream.str());
+			}
 
 			// Write the fractional part
-			wxString::const_reverse_iterator const rend = wxtemp.rend();
-			wxString::const_reverse_iterator rit = wxtemp.rbegin();
+			wxString::reverse_iterator const rend = wxtemp.rend();
+			wxString::reverse_iterator rit = wxtemp.rbegin();
 			wxString::size_type digits_written = 0;
 			for
 			(	;
