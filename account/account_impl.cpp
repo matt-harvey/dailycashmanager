@@ -171,6 +171,15 @@ AccountImpl::~AccountImpl()
 bool
 AccountImpl::exists
 (	PhatbooksDatabaseConnection& p_database_connection,
+	Id p_id
+)
+{
+	return PersistentObject::exists(p_database_connection, p_id);
+}
+
+bool
+AccountImpl::exists
+(	PhatbooksDatabaseConnection& p_database_connection,
 	BString const& p_name
 )
 {
@@ -190,7 +199,6 @@ AccountImpl::exists
 	}
 	return false;
 }
-
 
 bool
 AccountImpl::no_user_pl_accounts_saved
@@ -460,7 +468,7 @@ AccountImpl::process_saving_statement(SQLStatement& statement)
 void
 AccountImpl::do_save_existing()
 {
-	BalanceCacheAttorney::mark_as_stale(database_connection());
+	BalanceCacheAttorney::mark_as_stale(database_connection(), id());
 	SQLStatement updater
 	(	database_connection(),
 		"update accounts set "
@@ -479,7 +487,7 @@ AccountImpl::do_save_existing()
 void
 AccountImpl::do_save_new()
 {
-	BalanceCacheAttorney::mark_as_stale(database_connection());
+	BalanceCacheAttorney::mark_as_stale(database_connection(), id());
 	SQLStatement inserter
 	(	database_connection(),
 		"insert into accounts(account_type_id, name, description, "
@@ -500,7 +508,7 @@ AccountImpl::do_remove()
 		(	"Budget balancing account cannot be deleted."
 		);
 	}
-	BalanceCacheAttorney::mark_as_stale(database_connection());
+	BalanceCacheAttorney::mark_as_stale(database_connection(), id());
 	string const statement_text =
 		"delete from " + primary_table_name() + " where " +
 		primary_key_name() + " = :p";

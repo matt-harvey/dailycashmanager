@@ -7,6 +7,7 @@
 #include "balance_cache.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "phatbooks_persistent_object.hpp"
 #include "entry/entry_reader.hpp"
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -38,13 +39,10 @@ using std::vector;
 using std::endl;
 // End debugging stuff
 
-
-
 namespace phatbooks
 {
 
 BOOST_STATIC_ASSERT((boost::is_same<Account::Id, AccountImpl::Id>::value));
-
 
 void
 BalanceCache::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -63,7 +61,6 @@ BalanceCache::BalanceCache
 	m_map_is_stale(true)
 {
 }
-
 
 Decimal
 BalanceCache::technical_balance(AccountImpl::Id p_account_id)
@@ -145,7 +142,6 @@ BalanceCache::mark_as_stale()
 	m_map_is_stale = true;
 }
 
-
 void
 BalanceCache::mark_as_stale(AccountImpl::Id p_account_id)
 {
@@ -168,43 +164,50 @@ BalanceCache::refresh()
 	// the entire cache, or whether it's quicker just to update for the
 	// stale accounts. (Either way, we end
 	// up with totally refreshed cache at the end - this is
-	// purely an optimization decision.)
-
-	// TODO Figure out the best value for fulcrum.
-
+	// purely an optimization decision.) The exact size of the optimal
+	// fulcrum here is an educated guess made after some casual
+	// experimentation. There is scope for further optimization if
+	// required, by tweaking this fulcum figure.
+	
 	static vector<AccountImpl::Id>::size_type const fulcrum = 5;
-	vector<AccountImpl::Id> stale_account_ids;
-	SQLStatement statement
-	(	m_database_connection,
-		"select account_id from accounts"
-	);
-	Map::const_iterator const map_end = m_map->end();
-	while (statement.step() && (stale_account_ids.size() != fulcrum))
-	{
-		// TODO HIGH PRIORITY. What if an Account has been
-		// removed from the database? This loop needs won't find these!
-		// They will stay in the cache.
-		AccountImpl::Id const account_id =
-			statement.extract<AccountImpl::Id>(0);
-		Map::const_iterator location_in_cache = m_map->find(account_id);
-		if ((location_in_cache == map_end) || !(location_in_cache->second))
-		{
-			// Either this AccountImpl::Id is not in the cache at all,
-			// or it's in there but marked as stale.
-			stale_account_ids.push_back(account_id);
-		}
-	}
-	assert (stale_account_ids.size() <= fulcrum);
-	if (stale_account_ids.size() == fulcrum)
+	
+	if (m_map_is_stale)
 	{
 		refresh_all();
+		m_map_is_stale = false;
 	}
 	else
 	{
-		assert (stale_account_ids.size() < fulcrum);
-		refresh_targetted(stale_account_ids);
+		vector<AccountImpl::Id> stale_account_ids;
+		SQLStatement statement
+		(	m_database_connection,
+			"select account_id from accounts"
+		);
+		Map::const_iterator const map_end = m_map->end();
+		while (statement.step() && (stale_account_ids.size() != fulcrum))
+		{
+			AccountImpl::Id const account_id =
+				statement.extract<AccountImpl::Id>(0);
+			Map::const_iterator location_in_cache = m_map->find(account_id);
+			if ((location_in_cache == map_end) || !location_in_cache->second)
+			{
+				// Either this AccountImpl::Id is not in the cache at all,
+				// or it's in there but marked as stale.
+				stale_account_ids.push_back(account_id);
+			}
+		}
+		assert (stale_account_ids.size() <= fulcrum);
+		if (stale_account_ids.size() == fulcrum)
+		{
+			refresh_all();
+		}
+		else
+		{
+			assert (stale_account_ids.size() < fulcrum);
+			refresh_targetted(stale_account_ids);
+		}
 	}
-	m_map_is_stale = false;
+	assert (!m_map_is_stale);
 	return;
 }
 
@@ -266,6 +269,23 @@ BalanceCache::refresh_all()
 				Decimal(it->second, account.commodity().precision());
 		}
 	}
+
+	// Look for m_map elements for which the second is in an uninitialized
+	// state. These must be the ones for which the Account has been deleted
+	// from the database. These should then be removed from m_map.
+	for (Map::iterator it = map_elect.begin(); it != map_elect.end(); ++it)
+	{
+		if (!it->second)
+		{
+			assert (!Account::exists(m_database_connection, it->first));
+			map_elect.erase(it);
+		}
+		else
+		{
+			assert (Account::exists(m_database_connection, it->first));
+		}
+	}
+
 	assert (map_elect.size() == working_map.size());
 	assert (map_elect_ptr->size() == map_elect.size());
 	using std::swap;
@@ -304,9 +324,32 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 			}
 			catch (ValueTypeException&)
 			{
-				// There are no entries to sum
-				(*m_map)[account_id] =
-					Decimal(0, account.commodity().precision());
+				// There are no entries to sum.
+				if
+				(	Account::exists
+					(	m_database_connection,
+						account_id
+					)
+				)
+				{
+					(*m_map)[account_id] =
+						Decimal(0, account.commodity().precision());
+				}
+				else
+				{
+					// Account no longer exists in database, so should
+					// be removed from the cache.
+
+					// TODO Test whether this really is reached after removing
+					// an Account from database. Note the removal of an
+					// Account from the database cannot possibly have occurred
+					// in the first place if there are any Entries in the
+					// database that have this as their Account (due to the
+					// foreign key constraints in the database); so that's why
+					// should \e should be reached as expected.
+					Map::iterator doomed_iter = m_map->find(account_id);
+					m_map->erase(doomed_iter);
+				}
 			}
 			statement.step_final();
 		}

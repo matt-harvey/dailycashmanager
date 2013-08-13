@@ -167,7 +167,7 @@ public:
 		friend class CommodityImpl;
 		friend class EntryImpl;
 	private:
-		// Mark whole balance cache as stale
+		// Mark whole balance cache as stale.
 		static void mark_as_stale
 		(	PhatbooksDatabaseConnection const& p_database_connection
 		);

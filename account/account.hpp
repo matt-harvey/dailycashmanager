@@ -89,6 +89,17 @@ public:
 		BString const& p_name
 	);
 
+	static bool exists
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		Id p_id
+	)
+	{
+		return PhatbooksPersistentObject::exists
+		(	p_database_connection,
+			p_id
+		);
+	}
+
 	/**
 	 * @returns \e true if and only if \e p_name is the name of an Account
 	 * stored in the database, matched case insensitively.

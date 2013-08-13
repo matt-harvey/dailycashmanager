@@ -98,6 +98,11 @@ public:
 
 	static bool exists
 	(	PhatbooksDatabaseConnection& p_database_connection,
+		Id p_id
+	);
+
+	static bool exists
+	(	PhatbooksDatabaseConnection& p_database_connection,
 		BString const& p_name
 	);
 
