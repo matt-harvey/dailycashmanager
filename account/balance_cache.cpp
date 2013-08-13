@@ -325,12 +325,7 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 			catch (ValueTypeException&)
 			{
 				// There are no entries to sum.
-				if
-				(	Account::exists
-					(	m_database_connection,
-						account_id
-					)
-				)
+				if (Account::exists(m_database_connection, account_id))
 				{
 					(*m_map)[account_id] =
 						Decimal(0, account.commodity().precision());
@@ -348,7 +343,10 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 					// foreign key constraints in the database); so that's why
 					// should \e should be reached as expected.
 					Map::iterator doomed_iter = m_map->find(account_id);
-					m_map->erase(doomed_iter);
+					if (doomed_iter != m_map->end())  // TODO Is this check necessary?
+					{
+						m_map->erase(doomed_iter);
+					}
 				}
 			}
 			statement.step_final();
@@ -357,10 +355,6 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 		{
 			// There is always a result row even if it has null.
 			assert (false);
-
-			// But we do this anyway.
-			(*m_map)[account_id] =
-				Decimal(0, account.commodity().precision());
 		}
 	}
 	return;
