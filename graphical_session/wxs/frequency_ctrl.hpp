@@ -27,9 +27,6 @@ namespace gui
 /**
  * Widget for the the user to select a Frequency (for a DraftJournal), or
  * else to select no Frequency (for an OrdinaryJournal).
- *
- * @todo HIGH PRIORITY Ensure that the "every month" and "last day of month"
- * options work sensibly in relation to the date entered in the date control.
  */
 class FrequencyCtrl: public wxComboBox, private boost::noncopyable
 {

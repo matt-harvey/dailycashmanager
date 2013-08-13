@@ -713,7 +713,7 @@ TransactionCtrl::post_journal()
 				assert (next_date.day() > 28);
 				wxMessageBox
 				(	"Next date for this recurring transaction must be "
-					"the 29th of the month or earlier."
+					"the 28th of the month or earlier."
 				);
 				return false;
 			}
