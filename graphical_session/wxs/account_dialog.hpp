@@ -57,7 +57,10 @@ class DecimalTextCtrl;
  *
  * @todo Enable user to delete an Account, but only if it's one for
  * which no Entries have been made, and for which the opening balance
- * is nil.
+ * is nil, and where, after the proposed deletion, it will still be
+ * the case that there is at least one balance sheet Account, at least
+ * one revenue Account and at least one expense Account (because this
+ * will ensure all TransactionTypes are still available).
  */
 class AccountDialog: public wxDialog, private boost::noncopyable
 {

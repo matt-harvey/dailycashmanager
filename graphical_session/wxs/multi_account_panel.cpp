@@ -18,6 +18,7 @@
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/msgdlg.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
@@ -74,12 +75,14 @@ MultiAccountPanel::MultiAccountPanel
 	wxSize const& p_size,
 	PhatbooksDatabaseConnection& p_database_connection,
 	account_super_type::AccountSuperType p_account_super_type,
-	Commodity const& p_commodity
+	Commodity const& p_commodity,
+	size_t p_minimum_num_rows
 ):
 	GriddedScrolledPanel(p_parent, p_size, p_database_connection),
 	m_account_super_type(p_account_super_type),
 	m_commodity(p_commodity),
-	m_summary_amount_text(0)
+	m_summary_amount_text(0),
+	m_minimum_num_rows(p_minimum_num_rows)
 {
 	// Row of total text etc.
 	wxString summary_label("Total");
@@ -128,6 +131,11 @@ MultiAccountPanel::MultiAccountPanel
 	{
 		push_row(*it);
 	}
+	while (num_rows() < m_minimum_num_rows)
+	{
+		push_row();
+	}
+	assert (num_rows() >= p_minimum_num_rows);
 
 	// "Admin"
 	FitInside();
@@ -149,21 +157,21 @@ MultiAccountPanel::required_width()
 		scrollbar_width_allowance();
 }
 
-void
+bool
 MultiAccountPanel::push_row()
 {
 	Account account = blank_account();
-	push_row(account);
-	return;
+	return push_row(account);
 }
 
-void
+bool
 MultiAccountPanel::pop_row()
 {
-	if (m_account_name_boxes.empty())
+	if (m_account_name_boxes.size() <= m_minimum_num_rows)
 	{
-		return;
+		return false;
 	}
+	assert (m_account_name_boxes.size() > 1);
 #	ifndef NDEBUG
 		vector<wxTextCtrl*>::size_type const sz = m_account_name_boxes.size();
 		assert (sz > 0);
@@ -171,16 +179,13 @@ MultiAccountPanel::pop_row()
 		assert (sz == m_description_boxes.size());
 		assert (sz == m_opening_balance_boxes.size());
 #	endif
-
 	pop_widget_from(m_opening_balance_boxes);
 	pop_widget_from(m_description_boxes);
 	pop_widget_from(m_account_type_boxes);
 	pop_widget_from(m_account_name_boxes);
-
 	decrement_row();
-
 	FitInside();
-	return;
+	return true;
 }
 
 Decimal
@@ -206,6 +211,34 @@ MultiAccountPanel::update_summary()
 	return;
 }
 
+size_t
+MultiAccountPanel::num_rows() const
+{
+	size_t const sz = m_account_name_boxes.size();
+	assert (sz == m_account_type_boxes.size());
+	assert (sz == m_description_boxes.size());
+	assert (sz == m_opening_balance_boxes.size());
+	return m_account_name_boxes.size();
+}
+
+bool
+MultiAccountPanel::account_type_is_selected
+(	account_type::AccountType p_account_type
+) const
+{
+	vector<AccountTypeCtrl*>::size_type i = 0;
+	vector<AccountTypeCtrl*>::size_type const sz =
+		m_account_type_boxes.size();
+	for ( ; i != sz; ++i)
+	{
+		if (m_account_type_boxes[i]->account_type() == p_account_type)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 Account
 MultiAccountPanel::blank_account()
 {
@@ -221,7 +254,7 @@ MultiAccountPanel::blank_account()
 	return ret;
 }
 
-void
+bool
 MultiAccountPanel::push_row(Account& p_account)
 {
 	int const row = current_row();
@@ -279,7 +312,7 @@ MultiAccountPanel::push_row(Account& p_account)
 
 	FitInside();
 
-	return;
+	return true;
 }
 
 void

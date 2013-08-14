@@ -21,6 +21,7 @@
 #include "sizing.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
+#include <jewel/array_utilities.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
@@ -45,6 +46,7 @@
 #include <wx/wizard.h>
 #include <cassert>
 #include <map>
+#include <sstream>
 #include <set>
 #include <string>
 #include <vector>
@@ -54,6 +56,7 @@ using jewel::Decimal;
 using jewel::value;
 using sqloxx::DatabaseTransaction;
 using std::map;
+using std::ostringstream;
 using std::set;
 using std::string;
 using std::vector;
@@ -458,10 +461,7 @@ SetupWizard::FilepathValidator::Clone() const
 }
 
 
-
 /*** SetupWizard::FilepathPage ***/
-
-
 
 BEGIN_EVENT_TABLE(SetupWizard::FilepathPage, wxWizardPageSimple)
 	EVT_BUTTON
@@ -473,8 +473,6 @@ BEGIN_EVENT_TABLE(SetupWizard::FilepathPage, wxWizardPageSimple)
 		SetupWizard::FilepathPage::on_wizard_page_changing
 	)
 END_EVENT_TABLE()
-
-
 
 SetupWizard::FilepathPage::FilepathPage
 (	SetupWizard* parent,
@@ -730,6 +728,7 @@ SetupWizard::AccountPage::AccountPage
 ):
 	wxWizardPageSimple(p_parent),
 	m_account_super_type(p_account_super_type),
+	m_min_num_accounts(1),
 	m_current_row(0),
 	m_database_connection(p_database_connection),
 	m_top_sizer(0),
@@ -872,13 +871,16 @@ SetupWizard::AccountPage::render_account_view()
 		wxSize(MultiAccountPanel::required_width(), size.y * 14),
 		database_connection(),
 		m_account_super_type,
-		commodity
+		commodity,
+		m_min_num_accounts
 	);
 	top_sizer().Add
 	(	m_multi_account_panel,
 		wxGBPosition(current_row(), 0),
 		wxGBSpan(1, 5)
 	);
+
+	refresh_pop_row_button_state();
 
 	// Add an empty row at bottom. This is a hack to prevent the scrolled
 	// area from dropping off the bottom. Unclear on why this was happening -
@@ -893,6 +895,39 @@ SetupWizard::AccountPage::render_account_view()
 	);
 	top_sizer().Add(dummy2, wxGBPosition(current_row(), 0));
 
+	return;
+}
+
+void
+SetupWizard::AccountPage::refresh_pop_row_button_state()
+{
+	assert (m_multi_account_panel);
+	assert (m_multi_account_panel->num_rows() >= m_min_num_accounts);
+	assert (m_pop_row_button);
+	if (m_multi_account_panel->num_rows() > m_min_num_accounts)
+	{
+		m_pop_row_button->Enable();
+		m_pop_row_button->SetToolTip(0);
+	}
+	else
+	{
+		assert (m_multi_account_panel->num_rows() == m_min_num_accounts);
+		m_pop_row_button->Disable();
+		ostringstream oss;
+		oss << m_min_num_accounts;
+		wxString const min_rows_string = std8_to_wx(oss.str());
+		wxString acc_concept = bstring_to_wx
+		(	account_concept_name(m_account_super_type)
+		);
+		if (m_min_num_accounts != 1) acc_concept += wxString("s");
+		m_pop_row_button->SetToolTip
+		(	wxString("You will need at least ") +
+			min_rows_string +
+			wxString(" ") +
+			acc_concept +
+			wxString(" to start off with.")
+		);
+	}
 	return;
 }
 
@@ -942,9 +977,34 @@ SetupWizard::AccountPage::account_types_valid
 (	wxString& error_message
 ) const
 {
-	// This used to do something but now we are guaranteed that AccountTypes
-	// will be valid, given the way MultiAccountPanel works.
-	(void)error_message;  // silence compiler re. unused parameter
+	using account_type::AccountType;
+	if (m_account_super_type == account_super_type::balance_sheet)
+	{
+		assert (m_multi_account_panel);
+		assert (m_min_num_accounts >= 1);
+		assert (m_multi_account_panel->num_rows() >= 1);
+		return true;
+	}
+	assert (m_account_super_type == account_super_type::pl);
+	account_type::AccountType const atypes[] =
+	{	account_type::revenue,
+		account_type::expense
+	};
+	account_type::AccountType const* it = jewel::begin(atypes);
+	account_type::AccountType const* const end = jewel::end(atypes);
+	for ( ; it != end; ++it)
+	{
+		if (!m_multi_account_panel->account_type_is_selected(*it))
+		{
+			error_message =
+				wxString("You need at least one ") +
+				bstring_to_wx(account_type_to_string(*it)) +
+				wxString(" ") +
+				bstring_to_wx(account_concept_name(m_account_super_type)) +
+				wxString(" to start off with.");
+			return false;
+		}
+	}
 	return true;
 }
 
@@ -954,6 +1014,7 @@ SetupWizard::AccountPage::on_pop_row_button_click(wxCommandEvent& event)
 	(void)event;  // silence compiler re. unused variable
 	assert (m_multi_account_panel);
 	m_multi_account_panel->pop_row();
+	refresh_pop_row_button_state();
 	return;
 }
 
@@ -963,6 +1024,7 @@ SetupWizard::AccountPage::on_push_row_button_click(wxCommandEvent& event)
 	(void)event;  // silence compiler re. unused variable
 	assert (m_multi_account_panel);
 	m_multi_account_panel->push_row();
+	refresh_pop_row_button_state();
 	return;
 }
 

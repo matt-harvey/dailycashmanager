@@ -45,6 +45,10 @@ namespace gui
  * @todo We need to ensure that a the database connection has a default
  * Commodity, or else, we need to pass a Commodity separately to the
  * MultiAccountPanel constructor.
+ *
+ * @param Is the minimum number of rows such that the user will be
+ * prevented from reducing the number of row to less than this number.
+ * (Each row represents an Account.)
  */
 class MultiAccountPanel: public GriddedScrolledPanel
 {
@@ -54,7 +58,8 @@ public:
 		wxSize const& p_size,
 		PhatbooksDatabaseConnection& p_database_connection,
 		account_super_type::AccountSuperType p_account_super_type,
-		Commodity const& p_commodity
+		Commodity const& p_commodity,
+		size_t p_minimum_num_rows
 	);
 		
 	virtual ~MultiAccountPanel();
@@ -105,17 +110,33 @@ public:
 	 * Add a new row with blank text boxes, and zero (rounded to precision
 	 * of the Commodity of the MultiAccountPanel) in the opening balance
 	 * boxes.
+	 * 
+	 * @returns \e true (assuming no exeption thrown) (never returns false).
+	 * This returns a truth value rather than \e void, for consistency with
+	 * \e pop_row().
 	 */
-	void push_row();
+	bool push_row();
 
 	/**
-	 * Remove the bottom displayed row. Does nothing if there are no rows
-	 * left.
+	 * Removes the bottom Account row and returns true, provided the
+	 * minimum number of rows would not be maintained; otherwise, does
+	 * nothing and returns false.
 	 */
-	void pop_row();
+	bool pop_row();
 
 	void update_summary();
 
+	size_t num_rows() const;
+
+	/**
+	 * @returns \e true if and only if the user has selected this
+	 * AccountType in at least one row (which may or may not be a row in
+	 * which a non-empty Account name has been entered).
+	 */
+	bool account_type_is_selected
+	(	account_type::AccountType p_account_type
+	) const;
+	
 private:
 
 	jewel::Decimal summary_amount() const;
@@ -146,9 +167,10 @@ private:
 	/**
 	 * Add a row to the display showing details for p_account. Be warned
 	 * that this will set \e p_account.commodity() to m_commodity, even
-	 * if \e p_account already has a Commodity set.
+	 * if \e p_account already has a Commodity set. Always returns \e true
+	 * (returns \e bool for consistency with \e pop_row()).
 	 */
-	void push_row(Account& p_account);
+	bool push_row(Account& p_account);
 
 	template <typename T> void pop_widget_from(std::vector<T>& p_vec);
 	
@@ -156,6 +178,8 @@ private:
 	Commodity m_commodity;
 
 	wxStaticText* m_summary_amount_text;
+	
+	size_t m_minimum_num_rows;
 
 	std::vector<wxTextCtrl*> m_account_name_boxes;
 	std::vector<AccountTypeCtrl*> m_account_type_boxes;

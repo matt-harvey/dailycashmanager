@@ -275,12 +275,14 @@ private:
 	void render_main_text();
 	void render_buttons();
 	void render_account_view();
+	void refresh_pop_row_button_state();
 	wxString main_text() const;
 
 	static unsigned int const s_pop_row_button_id = wxID_HIGHEST + 1;
 	static unsigned int const s_push_row_button_id = s_pop_row_button_id + 1;
 
 	account_super_type::AccountSuperType m_account_super_type;
+	size_t const m_min_num_accounts;
 	int m_current_row;
 	wxButton* m_pop_row_button;
 	wxButton* m_push_row_button;
