@@ -56,8 +56,11 @@ AccountCtrl::AccountCtrl
 		wxCB_SORT
 	),
 	m_exclude_balancing_account(p_exclude_balancing_account),
-	m_database_connection(p_database_connection)
+	m_database_connection(p_database_connection),
+	m_available_account_types(p_account_types)
+
 {
+	assert (m_account_map.empty());
 	// TODO Factor out stuff that's common between this and AccountCtrl::reset(...).
 	using account_type::AccountType;
 	wxArrayString valid_account_names;
@@ -65,8 +68,10 @@ AccountCtrl::AccountCtrl
 	Account const balancing_account =
 		m_database_connection.balancing_account();
 	AccountReader reader(m_database_connection);
-	vector<AccountType>::const_iterator atit = p_account_types.begin();
-	vector<AccountType>::const_iterator const atend = p_account_types.end();
+	vector<AccountType>::const_iterator atit =
+		m_available_account_types.begin();
+	vector<AccountType>::const_iterator const atend =
+		m_available_account_types.end();
 	for ( ; atit != atend; ++atit)
 	{
 		AccountReader::const_iterator arit = reader.begin();
@@ -112,6 +117,7 @@ AccountCtrl::reset
 	bool p_exclude_balancing_account
 )
 {
+	m_available_account_types = p_account_types;
 	using account_type::AccountType;
 	using account_type::AccountType;
 	m_account_map.clear();
@@ -120,8 +126,10 @@ AccountCtrl::reset
 	Account const balancing_account =
 		m_database_connection.balancing_account();
 	AccountReader reader(m_database_connection);
-	vector<AccountType>::const_iterator atit = p_account_types.begin();
-	vector<AccountType>::const_iterator const atend = p_account_types.end();
+	vector<AccountType>::const_iterator atit =
+		m_available_account_types.begin();
+	vector<AccountType>::const_iterator const atend =
+		m_available_account_types.end();
 	for ( ; atit != atend; ++atit)
 	{
 		AccountReader::const_iterator arit = reader.begin();
@@ -171,37 +179,22 @@ AccountCtrl::account()
 		dynamic_cast<StringSetValidator const*>(GetValidator());
 	assert (validator);
 	*/
-	JEWEL_DEBUG_LOG << "AccountCtrl::GetValue(): " << GetValue() << endl;
 	return Account(m_database_connection, m_account_map.at(GetValue()));
 }
 
 void
 AccountCtrl::update_for_new(Account const& p_account)
 {
-	// TODO HIGH PRIORITY Implement this.
+	(void)p_account;  // silence compiler re. unused parameter
+	refresh();
+	return;
 }
 
 void
 AccountCtrl::update_for_amended(Account const& p_account)
 {
-	// WARNING This is clunky and inefficient
 	(void)p_account;  // silence compiler re. unused parameter
-	using account_type::AccountType;
-	Account const selected_account = account();
-	size_t i = 0;
-	size_t const sz = GetCount();
-	set<AccountType> atypes;
-	for ( ; i != sz; ++i)
-	{
-		Account const acct
-		(	m_database_connection,
-			m_account_map.at(GetString(i))
-		);
-		atypes.insert(acct.account_type());
-	}
-	vector<AccountType> atypes_vec(atypes.begin(), atypes.end());
-	reset(atypes_vec, m_exclude_balancing_account);
-	SetValue(bstring_to_wx(selected_account.name()));
+	refresh();
 	return;
 }
 
@@ -217,6 +210,14 @@ AccountCtrl::on_kill_focus(wxFocusEvent& event)
 	return;
 }
 
+void
+AccountCtrl::refresh()
+{
+	Account const selected_account = account();
+	reset(m_available_account_types, m_exclude_balancing_account);
+	set_account(selected_account);
+	return;
+}
 
 }  // namespace gui
 }  // namespace phatbooks

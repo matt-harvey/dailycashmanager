@@ -100,11 +100,15 @@ public:
 private:
 	void on_kill_focus(wxFocusEvent& event);
 
+	void refresh();
+
 	bool m_exclude_balancing_account;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 	typedef std::map<wxString, Account::Id> AccountMap;
 	AccountMap m_account_map;
+
+	std::vector<account_type::AccountType> m_available_account_types;
 
 	DECLARE_EVENT_TABLE()
 
