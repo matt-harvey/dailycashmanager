@@ -487,7 +487,7 @@ AccountImpl::do_save_existing()
 void
 AccountImpl::do_save_new()
 {
-	BalanceCacheAttorney::mark_as_stale(database_connection(), id());
+	BalanceCacheAttorney::mark_as_stale(database_connection());
 	SQLStatement inserter
 	(	database_connection(),
 		"insert into accounts(account_type_id, name, description, "
