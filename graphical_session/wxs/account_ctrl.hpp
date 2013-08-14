@@ -31,8 +31,6 @@ namespace gui
 /**
  * Widget by means of which the user is enabled to select an
  * \e existing Account.
- *
- * @todo HIGH PRIORITY The template constructors no longer need be templates.
  */
 class AccountCtrl: public wxComboBox, private boost::noncopyable
 {
@@ -56,8 +54,6 @@ public:
 	 * All Accounts in the given range must have IDs.
 	 *
 	 * @todo Guard against \e p_account_types being empty.
-	 *
-	 * @todo HIGH PRIORITY Reimplement for this new constructor.
 	 */
 	AccountCtrl
 	(	wxWindow* p_parent,
