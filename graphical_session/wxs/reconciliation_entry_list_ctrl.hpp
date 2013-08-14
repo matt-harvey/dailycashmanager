@@ -29,15 +29,11 @@ namespace gui
 {
 
 /**
- * @todo What about effect on opening balance etc. of an Entry being deleted
+ * @todo HIGH PRIORITY What about effect on opening balance etc. of an Entry
+ * being deleted
  * that is prior to the min_date? This shouldn't matter because the user
  * shouldn't be able to edit an Entry that is reconciled; and if it is
  * unreconciled it will be in the list... but make sure this is OK.
- *
- * @todo HIGH PRIORITY In ReconciliationPanel, and in
- * ReconciliationEntryListCtrl, we need to update rows for changes in
- * reconciliation status when required. This should be done separately
- * from the way we update for Journal amendments.
  */
 class ReconciliationEntryListCtrl: public FilteredEntryListCtrl
 {
