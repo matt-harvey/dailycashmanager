@@ -7,7 +7,6 @@
 #include "application.hpp"
 #include "b_string.hpp"
 #include "client_data.hpp"
-#include "decimal_renderer.hpp"
 #include "filename_validation.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
