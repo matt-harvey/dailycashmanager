@@ -4,7 +4,7 @@
 #define GUARD_entry_ctrl_hpp
 
 #include "account.hpp"
-#include "account_reader.hpp"
+#include "account_type.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "entry.hpp"
 #include "transaction_type.hpp"
@@ -101,7 +101,7 @@ private:
 
 	friend class EntryDecimalTextCtrl;
 
-	void configure_account_reader();
+	void configure_available_account_types();
 	void configure_top_row(bool p_include_split_button);
 	void pop_row();
 	void push_row
@@ -132,7 +132,7 @@ private:
 
 	bool m_is_source;
 	transaction_type::TransactionType m_transaction_type;
-	AccountReaderBase* m_account_reader;
+	std::vector<account_type::AccountType>* m_available_account_types;
 
 	wxSize m_text_ctrl_size;
 

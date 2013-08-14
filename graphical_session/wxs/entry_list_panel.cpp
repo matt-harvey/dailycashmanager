@@ -26,11 +26,15 @@
 #include <wx/stattext.h>
 #include <wx/wupdlock.h>
 #include <wx/window.h>
+#include <algorithm>
+#include <iterator>
 #include <utility>
 #include <vector>
 
 using boost::optional;
 using jewel::value;
+using std::back_inserter;
+using std::remove_copy;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -105,28 +109,31 @@ EntryListPanel::EntryListPanel
 
 	if (include_pl_accounts)
 	{
-		ImpureAccountReader const reader(m_database_connection);
-		assert (!reader.empty());  // TODO What if this fails?
+		using account_type::AccountType;
+		vector<AccountType> const& all_account_types = account_types();
+		vector<AccountType> impure_account_types;
+		remove_copy
+		(	all_account_types.begin(),
+			all_account_types.end(),
+			back_inserter(impure_account_types),
+			account_type::pure_envelope
+		);
 		m_account_ctrl = new AccountCtrl
 		(	this,
 			s_account_ctrl_id,
-			*(reader.begin()),
 			wxSize(large_width(), wxDefaultSize.y),
-			reader.begin(),
-			reader.end()
+			impure_account_types,
+			m_database_connection
 		);
 	}
 	else
 	{
-		BalanceSheetAccountReader const reader(m_database_connection);
-		assert (!reader.empty());  // TODO What if this fails
 		m_account_ctrl = new AccountCtrl
 		(	this,
 			s_account_ctrl_id,
-			*(reader.begin()),
 			wxSize(large_width(), wxDefaultSize.y),
-			reader.begin(),
-			reader.end()
+			account_types(account_super_type::balance_sheet),
+			m_database_connection
 		);
 	}
 	int const std_height = m_account_ctrl->GetSize().GetHeight();
@@ -424,6 +431,7 @@ EntryListPanel::postconfigure_summary()
 Account
 EntryListPanel::selected_account() const
 {
+	assert (m_account_ctrl);
 	return m_account_ctrl->account();
 }
 

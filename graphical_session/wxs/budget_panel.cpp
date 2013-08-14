@@ -749,25 +749,20 @@ BudgetPanel::BalancingDialog::BalancingDialog
 		wxALIGN_CENTRE
 	);
 
-
 	++row;
 
-	PLAccountReader account_reader(m_database_connection);
-	assert (!account_reader.empty());
-	Account const suggested_account =
-	(	p_maybe_account?
-		value(p_maybe_account):
-		*account_reader.begin()
-	);
 	m_account_ctrl = new AccountCtrl
 	(	this,
 		wxID_ANY,
-		suggested_account,
 		wxSize(large_width(), wxDefaultSize.y),
-		account_reader.begin(),
-		account_reader.end(),
+		account_types(account_super_type::pl),
+		m_database_connection,
 		true  // Exclude balancing Account (which would be useless)
 	);
+	if (p_maybe_account)
+	{
+		m_account_ctrl->set_account(value(p_maybe_account));
+	}
 	m_top_sizer->Add
 	(	m_account_ctrl,
 		wxGBPosition(row, 1),

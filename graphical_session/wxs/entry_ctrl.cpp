@@ -69,7 +69,7 @@ EntryCtrl::EntryCtrl
 	m_database_connection(p_database_connection),
 	m_is_source(p_is_source),
 	m_transaction_type(p_transaction_type),
-	m_account_reader(0),
+	m_available_account_types(0),
 	m_text_ctrl_size(p_text_ctrl_size),
 	m_top_sizer(0),
 	m_side_descriptor(0),
@@ -91,7 +91,7 @@ EntryCtrl::EntryCtrl
 	configure_top_row(multiple_entries);
 
 	// Subsequent rows
-	configure_account_reader();
+	configure_available_account_types();
 	vector<Account>::const_iterator it = p_accounts.begin();
 	vector<Account>::const_iterator const end = p_accounts.end();
 	optional<Decimal> const maybe_previous_row_amount;
@@ -125,7 +125,7 @@ EntryCtrl::EntryCtrl
 	m_database_connection(p_database_connection),
 	m_is_source(p_is_source),
 	m_transaction_type(p_transaction_type),
-	m_account_reader(0),
+	m_available_account_types(0),
 	m_text_ctrl_size(p_text_ctrl_size),
 	m_top_sizer(0),
 	m_side_descriptor(0),
@@ -149,7 +149,7 @@ EntryCtrl::EntryCtrl
 
 	// Subsequent rows
 
-	configure_account_reader();
+	configure_available_account_types();
 	optional<Decimal> maybe_previous_row_amount;
 	for (vector<Entry>::size_type i = 0; i != sz; ++i)
 	{
@@ -178,27 +178,30 @@ EntryCtrl::EntryCtrl
 
 EntryCtrl::~EntryCtrl()
 {
-	delete m_account_reader;
-	m_account_reader = 0;
+	delete m_available_account_types;
+	m_available_account_types = 0;
 }
 
 void
-EntryCtrl::configure_account_reader()
+EntryCtrl::configure_available_account_types()
 {
+	// TODO Make this exception safe.
+	if (m_available_account_types)
+	{
+		delete m_available_account_types;
+		m_available_account_types = 0;
+	}
+	assert (!m_available_account_types);
 	if (m_is_source)
 	{
-		assert (!m_account_reader);
-		m_account_reader = create_source_account_reader
-		(	m_database_connection,
-			m_transaction_type
+		m_available_account_types = new vector<account_type::AccountType>
+		(	source_account_types(m_transaction_type)
 		);
 	}
 	else
 	{
-		assert (!m_account_reader);
-		m_account_reader = create_destination_account_reader
-		(	m_database_connection,
-			m_transaction_type
+		m_available_account_types = new vector<account_type::AccountType>
+		(	destination_account_types(m_transaction_type)
 		);
 	}
 	return;
@@ -254,41 +257,17 @@ EntryCtrl::refresh_for_transaction_type
 	}
 	assert (p_transaction_type != m_transaction_type);
 	m_transaction_type = p_transaction_type;
-
-	delete m_account_reader;
-	m_account_reader = 0;
-
-	if (m_is_source)
-	{
-		assert (!m_account_reader);
-		m_account_reader = create_source_account_reader
-		(	m_database_connection,
-			m_transaction_type
-		);
-	}
-	else
-	{
-		assert (!m_account_reader);
-		m_account_reader = create_destination_account_reader
-		(	m_database_connection,
-			m_transaction_type
-		);
-	}
+	configure_available_account_types();
 	for
 	(	vector<AccountCtrl*>::size_type i = 0;
 		i != m_account_name_boxes.size();
 		++i
 	)
 	{
-		assert (m_account_reader);
-		m_account_name_boxes[i]->
-			set(m_account_reader->begin(), m_account_reader->end());
+		m_account_name_boxes[i]->reset(*m_available_account_types);
 	}
-
 	m_side_descriptor->SetLabel(side_description());
-
 	Layout();
-
 	return;
 }
 
@@ -469,11 +448,11 @@ EntryCtrl::push_row
 	AccountCtrl* account_name_box = new AccountCtrl
 	(	this,
 		wxID_ANY,
-		p_account,
 		m_text_ctrl_size,
-		m_account_reader->begin(),
-		m_account_reader->end()
+		*m_available_account_types,
+		m_database_connection
 	);
+	account_name_box->set_account(p_account);
 	m_top_sizer->Add(account_name_box, wxGBPosition(m_current_row, 0));
 	m_account_name_boxes.push_back(account_name_box);
 	wxTextCtrl* comment_ctrl = new wxTextCtrl
