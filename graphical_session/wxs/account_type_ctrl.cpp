@@ -16,6 +16,22 @@ namespace phatbooks
 namespace gui
 {
 
+namespace
+{
+	wxString default_account_type_string
+	(	account_super_type::AccountSuperType p_account_super_type
+	)
+	{
+		assert (!account_types(p_account_super_type).empty());
+		account_type::AccountType const default_account_type =
+			account_types(p_account_super_type)[0];
+		assert (default_account_type != account_type::equity);
+		return bstring_to_wx(account_type_to_string(default_account_type));
+	}
+
+}  // end anonymous namespace
+
+
 AccountTypeCtrl::AccountTypeCtrl
 (	wxWindow* p_parent,
 	wxWindowID p_id,
@@ -26,7 +42,7 @@ AccountTypeCtrl::AccountTypeCtrl
 	wxComboBox
 	(	p_parent,
 		p_id,
-		wxEmptyString,  // TODO HIGH PRIORITY Needs to be an AccountType name
+		default_account_type_string(p_account_super_type),
 		wxDefaultPosition,
 		p_size,
 		wxArrayString(),
