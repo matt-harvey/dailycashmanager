@@ -23,9 +23,13 @@ namespace
 	)
 	{
 		assert (!account_types(p_account_super_type).empty());
-		account_type::AccountType const default_account_type =
+		account_type::AccountType default_account_type =
 			account_types(p_account_super_type)[0];
-		assert (default_account_type != account_type::equity);
+		if (default_account_type == account_type::equity)
+		{
+			assert (account_types(p_account_super_type).size() > 1);
+			default_account_type = account_types(p_account_super_type)[1];
+		}
 		return bstring_to_wx(account_type_to_string(default_account_type));
 	}
 
