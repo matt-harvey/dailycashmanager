@@ -55,61 +55,13 @@ AccountCtrl::AccountCtrl
 		wxArrayString(),	
 		wxCB_SORT
 	),
-	m_exclude_balancing_account(p_exclude_balancing_account),
-	m_database_connection(p_database_connection),
-	m_available_account_types(p_account_types)
-
+	m_database_connection(p_database_connection)
 {
-	assert (m_account_map.empty());
-	// TODO Factor out stuff that's common between this and AccountCtrl::reset(...).
-	using account_type::AccountType;
-	wxArrayString valid_account_names;
-	assert (valid_account_names.IsEmpty());
-	Account const balancing_account =
-		m_database_connection.balancing_account();
-	AccountReader reader(m_database_connection);
-	vector<AccountType>::const_iterator atit =
-		m_available_account_types.begin();
-	vector<AccountType>::const_iterator const atend =
-		m_available_account_types.end();
-	for ( ; atit != atend; ++atit)
-	{
-		AccountReader::const_iterator arit = reader.begin();
-		AccountReader::const_iterator const arend = reader.end();
-		for ( ; arit != arend; ++arit)
-		{
-			if (arit->account_type() == *atit)
-			{
-				if (m_exclude_balancing_account && *arit == balancing_account)
-				{
-					// Then don't include it.
-				}
-				else
-				{
-					wxString const name_wx = bstring_to_wx(arit->name());
-					valid_account_names.Add(name_wx);  // remembers as valid
-					Append(name_wx);  // adds to combobox
-
-					// Remember the Account associated with this name (comes
-					// in handy when we have to update for a change in Account
-					// name).
-					m_account_map[name_wx] = arit->id();
-				}
-			}
-		}
-	}
-	assert (!reader.empty());  // TODO What if this fails?
-	StringSetValidator validator
-	(	bstring_to_wx(reader.begin()->name()),
-		valid_account_names,
-		bstring_to_wx(account_concepts_phrase())
-	);
-	SetValidator(validator);
-	AutoComplete(valid_account_names);
-	assert (!valid_account_names.IsEmpty());
-	SetValue(valid_account_names[0]);
+	assert (m_available_account_types.empty());
+	reset(p_account_types, p_exclude_balancing_account);
+	assert (m_exclude_balancing_account == p_exclude_balancing_account);
+	assert (m_available_account_types == p_account_types);
 }
-
 
 void
 AccountCtrl::reset
@@ -117,19 +69,15 @@ AccountCtrl::reset
 	bool p_exclude_balancing_account
 )
 {
-	m_available_account_types = p_account_types;
-	using account_type::AccountType;
-	using account_type::AccountType;
-	m_account_map.clear();
+	typedef vector<account_type::AccountType> ATypeVec;
 	m_exclude_balancing_account = p_exclude_balancing_account;
+	m_available_account_types = p_account_types;
+	m_account_map.clear();
 	wxArrayString valid_account_names;
-	Account const balancing_account =
-		m_database_connection.balancing_account();
+	Account const balancing_acct = m_database_connection.balancing_account();
 	AccountReader reader(m_database_connection);
-	vector<AccountType>::const_iterator atit =
-		m_available_account_types.begin();
-	vector<AccountType>::const_iterator const atend =
-		m_available_account_types.end();
+	ATypeVec::const_iterator atit = m_available_account_types.begin();
+	ATypeVec::const_iterator const atend = m_available_account_types.end();
 	for ( ; atit != atend; ++atit)
 	{
 		AccountReader::const_iterator arit = reader.begin();
@@ -138,7 +86,7 @@ AccountCtrl::reset
 		{
 			if (arit->account_type() == *atit)
 			{
-				if (m_exclude_balancing_account && *arit == balancing_account)
+				if (m_exclude_balancing_account && (*arit == balancing_acct))
 				{
 					// Then don't include it
 				}
@@ -146,6 +94,10 @@ AccountCtrl::reset
 				{
 					wxString const name_wx = bstring_to_wx(arit->name());
 					valid_account_names.Add(name_wx);
+
+					// Remember the Account associated with this name (comes
+					// in handy when we have to update for a change in Account
+					// name).
 					m_account_map[name_wx] = arit->id();
 				}
 			}
