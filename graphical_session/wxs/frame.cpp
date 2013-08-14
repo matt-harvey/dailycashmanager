@@ -309,8 +309,6 @@ Frame::on_menu_edit_bs_account(wxCommandEvent& event)
 	selected_balance_sheet_accounts(accounts);
 	if (accounts.empty())
 	{
-		// TODO HIGH PRIORITY Deal with this in a more user-friendly
-		// way. For now, we just do this.
 		wxMessageBox
 		(	"Account to edit must first be selected in main window."
 		);
@@ -334,8 +332,6 @@ Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 	selected_pl_accounts(accounts);
 	if (accounts.empty())
 	{
-		// TODO HIGH PRIORITY Deal with this in a more user-friendly
-		// way. For now, we just do this.
 		wxString const concept_name =
 			bstring_to_wx(account_concept_name(account_super_type::pl, true));
 		wxMessageBox
