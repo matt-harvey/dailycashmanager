@@ -38,9 +38,6 @@ class TransactionCtrl;
 /**
  * Top level panel intended as immediate child of Frame.
  *
- * @todo HIGH PRIORITY m_reports_page to be updated for new/amended/deleted
- * Journals, Accounts, etc. etc..
- *
  * @todo The various "update_for_..." functions each contain calls to
  * analogous "update_for_..." functions for each of the sub-widgets
  * in TopPanel. This makes for repetitive code. We could probably streamline
