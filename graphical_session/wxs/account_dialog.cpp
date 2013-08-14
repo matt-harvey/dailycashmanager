@@ -201,6 +201,18 @@ AccountDialog::AccountDialog
 	if (m_account.has_id())
 	{	
 		m_account_type_ctrl->set_account_type(m_account.account_type());
+
+		// Things are just simpler if we prevent the user from changing the
+		// AccountType of an existing Account. Suppose we allowed the
+		// AccountType to be changed. Then the user could make it so that,
+		// say, there are no expense Accounts. Then the TransactionCtrl
+		// would become such that it is no longer possible to create
+		// a Journal of transaction_type::expenditure_transaction. This
+		// means we might have to update the TransactionTypeCtrl as well
+		// as the AccountCtrls within the TransactionCtrl. We avoid this
+		// complexity by making it impossible for the user to change the
+		// AccountType, thus...
+		m_account_type_ctrl->Disable();
 	}
 	m_top_sizer->Add
 	(	m_account_type_ctrl,
