@@ -18,7 +18,12 @@ namespace gui
 class DateValidator: public wxValidator
 {
 public:
-	DateValidator(boost::gregorian::date const& p_date, bool p_allow_blank);
+	DateValidator
+	(	boost::gregorian::date const& p_date,
+		bool p_allow_blank,
+		boost::optional<boost::gregorian::date> const& p_min_date =
+			boost::optional<boost::gregorian::date>()
+	);
 	DateValidator(DateValidator const& rhs);
 
 	/**
@@ -35,6 +40,7 @@ public:
 private:
 	bool m_allow_blank;
 	boost::optional<boost::gregorian::date> m_date;
+	boost::optional<boost::gregorian::date> m_min_date;
 
 };  // class DateValidator
 

@@ -32,7 +32,8 @@ DateCtrl::DateCtrl
 	unsigned int p_id,
 	wxSize const& p_size,
 	gregorian::date const& p_date,
-	bool p_allow_blank
+	bool p_allow_blank,
+	optional<gregorian::date> const& p_min_date
 ):
 	wxTextCtrl
 	(	p_parent,
@@ -41,7 +42,7 @@ DateCtrl::DateCtrl
 		wxDefaultPosition,
 		p_size,
 		wxALIGN_RIGHT,
-		DateValidator(p_date, p_allow_blank)
+		DateValidator(p_date, p_allow_blank, p_min_date)
 	)
 {
 }

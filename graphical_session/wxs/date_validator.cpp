@@ -30,17 +30,20 @@ namespace gui
 
 DateValidator::DateValidator
 (	gregorian::date const& p_date,
-	bool p_allow_blank
+	bool p_allow_blank,
+	optional<gregorian::date> const& p_min_date
 ):
 	m_allow_blank(p_allow_blank),
-	m_date(p_date)
+	m_date(p_date),
+	m_min_date(p_min_date)
 {
 }
 
 DateValidator::DateValidator(DateValidator const& rhs):
 	wxValidator(),
 	m_allow_blank(rhs.m_allow_blank),
-	m_date(rhs.m_date)
+	m_date(rhs.m_date),
+	m_min_date(rhs.m_min_date)
 {
 }
 
@@ -69,6 +72,18 @@ DateValidator::Validate(wxWindow* WXUNUSED(parent))
 			date_text +
 			wxString("\" ") +
 			wxString("is not recognised as a date.")
+		);
+		return false;
+	}
+	assert (temp);
+	if (m_min_date && (value(temp) < value(m_min_date)))
+	{
+		// TODO This message doesn't actually explain to the user
+		// why they can't enter a date that is this early.
+		wxMessageBox
+		(	wxString("Date should not be earlier than ") +
+			date_format_wx(value(m_min_date)) +
+			wxString(".")
 		);
 		return false;
 	}
@@ -103,6 +118,7 @@ DateValidator::TransferToWindow()
 		return true;
 	}
 	assert (m_date);
+	assert (!m_min_date || (m_date >= value(m_min_date)));
 	text_ctrl->SetValue(date_format_wx(value(m_date)));
 	return true;
 }

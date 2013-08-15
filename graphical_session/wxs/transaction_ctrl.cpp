@@ -217,7 +217,10 @@ TransactionCtrl::TransactionCtrl
 	m_date_ctrl = new DateCtrl
 	(	this,
 		wxID_ANY,
-		text_box_size
+		text_box_size,
+		today(),
+		false,
+		database_connection().entity_creation_date()	
 	);
 	top_sizer().Add(m_date_ctrl, wxGBPosition(current_row(), 3));
 
@@ -506,7 +509,9 @@ TransactionCtrl::configure_for_journal_editing()
 	(	this,
 		wxID_ANY,
 		text_box_size,
-		date
+		date,
+		false,
+		database_connection().entity_creation_date()
 	);
 	top_sizer().Add(m_date_ctrl, wxGBPosition(current_row(), 3));
 

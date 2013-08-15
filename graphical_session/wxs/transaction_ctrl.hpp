@@ -53,9 +53,6 @@ class TopPanel;
  * to prevent this from happening at all, or else to warn the user
  * that the reconciliations will be out of whack.
  *
- * @todo HIGH PRIORITY Intercept the situation where user sets date earlier
- * than entity creation date. Currently this just throws and crashes.
- *
  * @todo When user creates or amended an Account, the TransactionCtrl should
  * be updated seamlessly, rather than being recreated from scratch.
  *

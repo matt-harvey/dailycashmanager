@@ -25,12 +25,33 @@ namespace gui
 class DateCtrl: public wxTextCtrl
 {
 public:
+
+	/**
+	 * @param p_parent parent window
+	 *
+	 * @param p_id window id
+	 *
+	 * @param p_size size
+	 *
+	 * @param p_date the date which will be initially displayed in the
+	 * DateCtrl
+	 *
+	 * @param p_allow_blank Pass this \e true if and only if the user will
+	 * be permitted to leave the DateCtrl blank
+	 *
+	 * @param p_min_date If this parameter is passed a date (or an initialized
+	 * boost::optional<boost::gregorian::date>), then the user will not be
+	 * permitted to enter a date earlier than that date. An error message
+	 * will be displayed to the user if an attempt is made to do so.
+	 */
 	DateCtrl
 	(	wxWindow* p_parent,
 		unsigned int p_id,
 		wxSize const& p_size,
 		boost::gregorian::date const& p_date = today(),
-		bool p_allow_blank = false
+		bool p_allow_blank = false,
+		boost::optional<boost::gregorian::date> const& p_min_date =
+			boost::optional<boost::gregorian::date>()
 	);
 
 	/**
