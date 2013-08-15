@@ -58,6 +58,13 @@ namespace
 	{
 		return 4;
 	}
+	wxString reconciliation_status_mark(bool p_is_reconciled)
+	{
+		return
+			p_is_reconciled?
+			wxString("\u2714"):  // TODO HIGH PRIORITY Check that this "thick check" mark displays properly on Windows.
+			wxString();
+	}
 
 }  // end anonymous namespace
 
@@ -107,7 +114,7 @@ ReconciliationEntryListCtrl::do_set_non_date_columns
 	SetItem
 	(	p_row,
 		reconciled_col_num(),
-		(p_entry.is_reconciled()? wxString("Y"): wxString("N"))
+		reconciliation_status_mark(p_entry.is_reconciled())
 	);
 	assert (num_columns() == 4);
 	return;
@@ -236,7 +243,7 @@ ReconciliationEntryListCtrl::do_process_removal_for_summary(long p_row)
 		item.SetColumn(reconciled_col_num());
 		GetItem(item);
 		// TODO HIGH PRIORITY This assertion can fail!
-		assert (item.GetText() == wxString("N"));
+		assert (item.GetText() == reconciliation_status_mark(false));
 		// as we don't allow user to delete reconciled Entries.
 		// so we don't need to adjust m_reconciled_closing_balance here.
 #	endif
@@ -256,7 +263,7 @@ ReconciliationEntryListCtrl::on_item_right_click(wxListEvent& event)
 	Entry entry(database_connection(), entry_id);
 	bool const old_reconciliation_status = entry.is_reconciled();
 	entry.set_whether_reconciled(!old_reconciliation_status);
-	SetItem(pos, col, entry.is_reconciled()? wxString("Y"): wxString("N"));
+	SetItem(pos, col, reconciliation_status_mark(entry.is_reconciled()));
 	if (entry.is_reconciled())
 	{
 		m_reconciled_closing_balance += entry.amount();
