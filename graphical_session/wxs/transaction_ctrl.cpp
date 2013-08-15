@@ -735,9 +735,6 @@ TransactionCtrl::post_journal()
 		repeater.set_next_date(next_date);
 		repeater.set_frequency(freq);
 
-		// TODO HIGH PRIORITY This can stuff up the next date is
-		// invalid for the selected Frequency. Make sure this works
-		// OK.
 		dj.push_repeater(repeater);
 	
 		// Get a name for the DraftJournal
