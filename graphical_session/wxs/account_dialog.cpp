@@ -423,22 +423,28 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		wx_to_bstring(m_name_ctrl->GetValue().Trim());
 	if (Account::exists(temp.database_connection(), prospective_name))
 	{
-		bool const name_matches =
-		(	bstring_to_wx(m_account.name()).Lower() ==
-			bstring_to_wx(prospective_name).Lower()
-		);
-		if (m_account.has_id() && name_matches)
+		bool clashes = true;
+		if (!p_is_new_account)
 		{
-			// Then everything's OK, the user has just kept the original
-			// name.
+			if
+			(	bstring_to_wx(m_account.name()).Lower() ==
+				bstring_to_wx(prospective_name).Lower()
+			)
+			{
+				// Then everything's OK, the user has just kept the original
+				// name, or else has changed the case.
+				clashes = false;
+			}
 		}
-		else
+		if (clashes)
 		{
 			wxMessageBox
 			(	wxString("There is already ") +
 				bstring_to_wx(account_concepts_phrase(true)) +
 				wxString(" with this name.")
 			);
+			assert (m_name_ctrl);
+			m_name_ctrl->SetFocus();
 			return false;
 		}
 	}
@@ -447,7 +453,7 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		wxMessageBox("Name cannot be blank.");
 		return false;
 	}
-	temp.set_name(m_name_ctrl->GetValue());
+	temp.set_name(prospective_name);
 	temp.set_account_type(m_account_type_ctrl->account_type());
 	temp.set_description(m_description_ctrl->GetValue());
 		

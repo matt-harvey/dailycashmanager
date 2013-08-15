@@ -29,10 +29,10 @@ namespace phatbooks
  * Phatbooks extension will later be added.
  *
  * @returns \e true if and only if this filename may be used to identify
- * a Phatbooks database file. An error message is stored in \e message if
- * and only if \e false is returned.
+ * a Phatbooks database file. An error message will be assigned to \e message
+ * if and only if \e false is returned.
  *
- * @todo HIGH PRIORITY Testing.
+ * @todo Testing.
  */
 bool is_valid_filename
 (	std::string const& s,

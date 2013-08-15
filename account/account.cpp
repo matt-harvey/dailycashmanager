@@ -325,7 +325,7 @@ BString account_concept_name
 
 BString account_concepts_phrase(bool p_include_article)
 {
-	static BString const ret =
+	BString const ret =
 		account_concept_name
 		(	account_super_type::balance_sheet,
 			false,

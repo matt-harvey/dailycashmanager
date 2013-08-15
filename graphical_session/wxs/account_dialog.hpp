@@ -50,9 +50,6 @@ class DecimalTextCtrl;
  * to the user that "Opening balance" refers to balance at entity start
  * date.
  *
- * @todo HIGH PRIORITY Make it so the user cannot proceed if there are
- * duplicate Account names (tested case-insensitively).
- *
  * @todo Fix alignment of BudgetPanel within AcountDialog.
  *
  * @todo Enable user to delete an Account, but only if it's one for
@@ -60,7 +57,9 @@ class DecimalTextCtrl;
  * is nil, and where, after the proposed deletion, it will still be
  * the case that there is at least one balance sheet Account, at least
  * one revenue Account and at least one expense Account (because this
- * will ensure all TransactionTypes are still available).
+ * will ensure all TransactionTypes are still available). If and when I
+ * enable this, I will need to implement update_for_deleted(Account::Id)
+ * for all relevant widget classes, including AccountCtrl.
  */
 class AccountDialog: public wxDialog, private boost::noncopyable
 {
