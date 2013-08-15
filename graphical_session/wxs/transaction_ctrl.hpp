@@ -141,6 +141,9 @@ private:
 	void on_delete_button_click(wxCommandEvent& event);
 	void on_ok_button_click(wxCommandEvent& event);
 
+	void disable_editing();
+	void enable_editing(bool p_enable = true);
+
 	// Adds some blank space to the right to allow space for vertical
 	// scrollbar.
 	void add_dummy_column();

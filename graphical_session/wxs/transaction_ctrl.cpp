@@ -19,6 +19,7 @@
 #include "frequency.hpp"
 #include "frequency_ctrl.hpp"
 #include "gridded_scrolled_panel.hpp"
+#include "journal.hpp"
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
 #include "locale.hpp"
@@ -47,6 +48,7 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
+#include <wx/wupdlock.h>
 #include <algorithm>
 #include <cassert>
 #include <iostream>
@@ -95,6 +97,25 @@ END_EVENT_TABLE()
 // We have used a simple custom class, DateCtrl here instead, to avoid
 // these problems. Might later add a button to pop up a wxCalendarCtrl
 // if the user wants one.
+
+namespace
+{
+	bool contains_reconciled_entry(Journal const& p_journal)
+	{
+		vector<Entry> const& entries = p_journal.entries();
+		vector<Entry>::const_iterator it = entries.begin();
+		vector<Entry>::const_iterator const end = entries.end();
+		for ( ; it != end; ++it)
+		{
+			if (it->has_id() && it->is_reconciled())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+}  // end anonymous namespace
 
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
@@ -388,6 +409,8 @@ TransactionCtrl::configure_top_controls
 void
 TransactionCtrl::configure_for_journal_editing()
 {
+	wxWindowUpdateLocker const update_locker(this);
+
 	assert (m_journal);
 	transaction_type::TransactionType const initial_transaction_type
 		= m_journal->transaction_type();
@@ -554,6 +577,25 @@ TransactionCtrl::configure_for_journal_editing()
 
 	increment_row();
 
+	// If there are any reconciled Entries in the Journal, then
+	// make it impossible for the user to edit it.
+	//
+	// TODO HIGH PRIORITY - explain to the user what we have done here,
+	// why we have done it, and how they can find a way around it.
+	//
+	// TODO HIGH PRIORITY - make it so that TransactionCtrl will be updated
+	// accordingly as Entries change reconciliation status via
+	// ReconciliationEntryListCtrl.
+	//
+	// TODO HIGH PRIORITY - refine this. We are disabling much more than
+	// we need to here.
+	
+	assert (m_journal);
+	if (contains_reconciled_entry(*m_journal))
+	{
+		disable_editing();
+	}
+
 	// "Admin"
 	top_sizer().Fit(this);
 	top_sizer().SetSizeHints(this);
@@ -669,6 +711,28 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 		}
 	}
 	return;
+}
+
+void
+TransactionCtrl::disable_editing()
+{
+	enable_editing(false);
+	return;
+}
+
+void
+TransactionCtrl::enable_editing(bool p_enable)
+{
+	wxWindowUpdateLocker const update_locker(this);
+	wxWindowList& children = GetChildren();
+	wxWindowList::iterator it = children.begin();
+	wxWindowList::iterator const end = children.end();
+	for ( ; it != end; ++it)
+	{
+		// wxWindowList actually stores pointers to pointers...
+		(*it)->Enable(p_enable);
+	}
+	m_cancel_button->Enable();
 }
 
 bool
