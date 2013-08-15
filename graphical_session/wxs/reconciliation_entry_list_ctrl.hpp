@@ -65,13 +65,10 @@ private:
 
 	jewel::Decimal amount_for_row(long p_row) const;
 
-	// This duplicates FilteredEntryListCtrl, but is done for ease and
-	// efficiency to avoid having to deference an optional.
+	// This duplicates FilteredEntryListCtrl, but is done for convenience and
+	// efficiency to avoid having to dereference an optional.
+	boost::gregorian::date max_date() const;
 	boost::gregorian::date m_max_date;
-	boost::gregorian::date max_date() const
-	{
-		return m_max_date;
-	}
 
 	std::vector<SummaryDatum>* m_summary_data;
 	jewel::Decimal m_closing_balance;
@@ -81,6 +78,7 @@ private:
 
 };  // class ReconciliationEntryListCtrl
 
+	
 }  // namespace gui
 }  // namespace phatbooks
 

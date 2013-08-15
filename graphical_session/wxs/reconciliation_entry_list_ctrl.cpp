@@ -284,6 +284,11 @@ ReconciliationEntryListCtrl::amount_for_row(long p_row) const
 	return ret;
 }
 
+boost::gregorian::date
+ReconciliationEntryListCtrl::max_date() const
+{
+	return m_max_date;
+}
 
 }  // namespace gui
 }  // namespace phatbooks
