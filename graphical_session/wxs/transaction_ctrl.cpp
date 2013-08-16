@@ -604,6 +604,13 @@ TransactionCtrl::configure_for_journal_editing()
 	if (contains_reconciled)
 	{
 		// TODO We should have tooltip explaining why disabled.
+		// TODO HIGH PRIORITY If contains_reconciled is true, then
+		// we need to disable ALL split and unsplit buttons (in
+		// both EntryGroupCtrls), otherwise when the IDs of the Entries
+		// get "realigned" on saving, this can mess up the integrity
+		// of which Entry is the reconciled one. We can possibly fix
+		// this by consulting EntryGroupCtrl::EntryRow::entry, but it would
+		// be tricky.
 		assert (m_delete_button);
 		m_delete_button->Disable();
 		m_transaction_type_ctrl->Disable();

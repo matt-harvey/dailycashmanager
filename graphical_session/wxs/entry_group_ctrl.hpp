@@ -149,17 +149,15 @@ private:
 	wxButton* m_unsplit_button;
 	wxButton* m_split_button;
 
-	friend struct EntryRow;
-
-	// TODO HIGH PRIORITY Refactor EntryGroupCtrl to make use of this.
 	struct EntryRow
 	{
-		EntryRow::EntryRow(Entry const& p_entry);
+		EntryRow(Entry const& p_entry);
 		AccountCtrl* account_ctrl;
 		wxTextCtrl* comment_ctrl;
 		EntryDecimalTextCtrl* amount_ctrl;
 		Entry entry;
 	};
+	friend struct EntryRow;
 
 	std::vector<EntryRow> m_entry_rows;
 

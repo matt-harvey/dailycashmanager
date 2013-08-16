@@ -16,6 +16,7 @@
 #include "window_utilities.hpp"
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <jewel/array_utilities.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/button.h>
@@ -30,6 +31,7 @@
 using boost::optional;
 using boost::scoped_ptr;
 using jewel::Decimal;
+using jewel::num_elements;
 using jewel::value;
 using std::set;
 using std::vector;
@@ -80,9 +82,7 @@ EntryGroupCtrl::EntryGroupCtrl
 	m_split_button(0),
 	m_current_row(0)
 {
-	assert (m_account_name_boxes.empty());
-	assert (m_comment_boxes.empty());
-	assert (m_amount_boxes.empty());
+	assert (m_entry_rows.empty());
 	assert_transaction_type_validity(m_transaction_type);
 	
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
@@ -120,7 +120,7 @@ EntryGroupCtrl::EntryGroupCtrl
 	{
 		Entry entry = entries[i];
 		push_row(entry, maybe_previous_row_amount, multiple_entries);
-		if (i == 0) maybe_previous_row_amount = amount;
+		if (i == 0) maybe_previous_row_amount = entry.amount();
 	}
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -243,7 +243,8 @@ EntryGroupCtrl::make_entries() const
 	for (Size i = 0; i != sz; ++i)
 	{
 		EntryRow const& entry_row = m_entry_rows[i];
-		Entry entry = entry_row.entry;
+		Entry entry(m_database_connection);
+		entry.mimic(entry_row.entry);
 		entry.set_account(entry_row.account_ctrl->account());
 		entry.set_comment(wx_to_bstring(entry_row.comment_ctrl->GetValue()));
 
@@ -299,7 +300,7 @@ Decimal
 EntryGroupCtrl::total_amount() const
 {
 	assert (!m_entry_rows.empty());
-	if (!m_entry_rows[0].account_ctrl)
+	if (!m_entry_rows[0].amount_ctrl)
 	{
 		return primary_amount();
 	}
@@ -318,15 +319,14 @@ void
 EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
-	Account const account =
-		m_account_name_boxes.at(m_account_name_boxes.size() - 1)->account();
+	Account const account = m_entry_rows.back().account_ctrl->account();
 	Entry entry(m_database_connection);
 	entry.set_account(account);
 	entry.set_whether_reconciled(false);
 	entry.set_comment(BString());
 	entry.set_amount(Decimal(0, account.commodity().precision()));
 	push_row(entry, optional<Decimal>(), true);
-	assert (m_entry_rows.empty());
+	assert (!m_entry_rows.empty());
 	autobalance(m_entry_rows.back().amount_ctrl);
 	return;
 }
@@ -354,7 +354,7 @@ EntryGroupCtrl::pop_row()
 	}
 	assert (m_entry_rows.size() > 1);
 	EntryRow& doomed_entry_row = m_entry_rows.back();
-	wxWindow* const doomed_windows =
+	wxWindow* const doomed_windows[] =
 	{	doomed_entry_row.account_ctrl,
 		doomed_entry_row.comment_ctrl,
 		doomed_entry_row.amount_ctrl
@@ -368,6 +368,7 @@ EntryGroupCtrl::pop_row()
 			doomed_window->Destroy();
 		}
 	}
+	m_entry_rows.pop_back();
 	if (m_entry_rows.size() == 1)
 	{
 		// Rearrange things to destroy m_unsplit_button, and move
@@ -383,7 +384,6 @@ EntryGroupCtrl::pop_row()
 		m_top_sizer->Add(m_split_button, wxGBPosition(1, 3));
 		m_entry_rows.back().comment_ctrl->MoveBeforeInTabOrder(m_split_button);
 	}
-	m_entry_rows.pop_back();
 	--m_current_row;
 	adjust_layout_for_new_number_of_rows();
 	return;
@@ -495,8 +495,9 @@ EntryGroupCtrl::push_row
 				}
 				m_top_sizer->
 					Add(prev_amount_ctrl, wxGBPosition(1, 3));
-				prev_amount_ctrl->MoveBeforeInTabOrder(account_name_box);  // WARNING
-				m_entry_rows.back().account_ctrl = prev_amount_ctrl;
+				prev_amount_ctrl->
+					MoveBeforeInTabOrder(m_entry_rows.back().account_ctrl);
+				m_entry_rows.back().amount_ctrl = prev_amount_ctrl;
 			}
 			m_unsplit_button->MoveBeforeInTabOrder(m_split_button);
 		}
@@ -574,21 +575,18 @@ EntryGroupCtrl::reflect_reconciliation_statuses()
 {
 	bool ret = false;
 	vector<int>::size_type i = 0;
-	vector<int>::size_type const sz = m_reconciliation_statuses.size();
-	assert (sz == num_rows());
+	vector<int>::size_type const sz = m_entry_rows.size();
 	for ( ; i != sz; ++i)
 	{
+		EntryRow const& entry_row = m_entry_rows[i];
 		vector<wxWindow*> window_vec;
-		assert (i < m_entry_rows.size());
-		window_vec.push_back(m_entry_rows[i].account_ctrl);
-		assert (i < m_comment_boxes.size());
-		window_vec.push_back(m_comment_boxes[i]);
-		if (i < m_amount_boxes.size())
+		window_vec.push_back(entry_row.account_ctrl);
+		window_vec.push_back(entry_row.comment_ctrl);
+		if (entry_row.amount_ctrl)
 		{
-			window_vec.push_back(m_amount_boxes[i]);
+			window_vec.push_back(entry_row.amount_ctrl);
 		}
-		bool const reconciled =
-			static_cast<bool>(m_reconciliation_statuses[i]);
+		bool const reconciled = entry_row.entry.is_reconciled();
 		if (reconciled)
 		{
 			ret = true;
@@ -613,7 +611,7 @@ EntryGroupCtrl::reflect_reconciliation_statuses()
 	// "Unsplit" button. If there's only one row, then we should disable
 	// the "Split" button (and there will be on unsplit button).
 	bool const final_row_reconciled =
-		static_cast<bool>(m_reconciliation_statuses.back());
+		m_entry_rows.back().entry.is_reconciled();
 	if (m_unsplit_button)
 	{
 		assert (num_rows() >= 2);
@@ -689,12 +687,11 @@ EntryGroupCtrl::EntryDecimalTextCtrl::on_left_double_click(wxMouseEvent& event)
 	return;
 }
 
-void
 EntryGroupCtrl::EntryRow::EntryRow(Entry const& p_entry):
-	entry(p_entry),
 	account_ctrl(0),
 	comment_ctrl(0),
-	amount_ctrl(0)
+	amount_ctrl(0),
+	entry(p_entry)
 {
 }
 
