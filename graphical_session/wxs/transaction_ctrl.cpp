@@ -185,44 +185,64 @@ TransactionCtrl::TransactionCtrl
 
 	// Rows for entering Entry details
 
-	vector<Account> source_accounts;
+	typedef vector<Account> AccVec;
+	AccVec source_accounts;
 	source_accounts.push_back(account_x);
-	vector<Account> destination_accounts;
+	AccVec destination_accounts;
 	destination_accounts.push_back(account_y);
+
+	ProtoJournal proto_journal;
+	proto_journal.set_transaction_type(initial_transaction_type);
+	proto_journal.set_comment(BString());
+	proto_journal.set_fulcrum(source_accounts.size());
+
+	AccVec const* const account_vectors[] =
+	{	&source_accounts,
+		&destination_accounts
+	};
+	for (size_t i = 0; i != num_elements(account_vectors); ++i)
+	{
+		AccVec::const_iterator acc_it = account_vectors[i]->begin();
+		AccVec::const_iterator const acc_end = account_vectors[i]->end();
+		for ( ; acc_it != acc_end; ++acc_it)
+		{
+			Entry entry(database_connection());
+			entry.set_account(*acc_it);
+			entry.set_comment(BString());
+			entry.set_amount(Decimal(0, acc_it->commodity().precision()));
+			entry.set_whether_reconciled(false);
+			proto_journal.push_entry(entry);
+		}
+	}
 
 	assert (text_box_size.x == medium_width());
 
 	m_source_entry_ctrl = new EntryGroupCtrl
 	(	this,
-		source_accounts,
-		database_connection(),
-		initial_transaction_type,
 		text_box_size,
-		transaction_side::source
+		proto_journal,
+		transaction_side::source,
+		database_connection()
 	);
 	m_destination_entry_ctrl = new EntryGroupCtrl
 	(	this,
-		destination_accounts,
-		database_connection(),
-		initial_transaction_type,
 		text_box_size,
-		transaction_side::destination
+		proto_journal,
+		transaction_side::destination,
+		database_connection()
 	);
 	top_sizer().Add
 	(	m_source_entry_ctrl,
 		wxGBPosition(current_row(), 0),
 		wxGBSpan(1, 4)
 	);
-
 	increment_row();
 	increment_row();
-
 	top_sizer().Add
 	(	m_destination_entry_ctrl,
 		wxGBPosition(current_row(), 0),
 		wxGBSpan(1, 4)
 	);
-	
 	increment_row();
 	increment_row();
 
@@ -436,50 +456,34 @@ TransactionCtrl::configure_for_journal_editing()
 		available_transaction_types
 	);
 
-	vector<Entry> const& entries = m_journal->entries();
-	vector<Entry>::size_type const fulcrum = m_journal->fulcrum();
-	vector<Entry>::size_type i = 0;
-	vector<Entry>::size_type const sz = entries.size();
-	vector<Entry> source_entries;
-	vector<Entry> destination_entries;
-	for ( ; i != fulcrum; ++i) source_entries.push_back(entries[i]);
-	assert (i == fulcrum);
-	for ( ; i != sz; ++i) destination_entries.push_back(entries[i]);
-
 	assert (text_box_size.x == medium_width());
 
 	m_source_entry_ctrl = new EntryGroupCtrl
 	(	this,
-		source_entries,
-		database_connection(),
-		initial_transaction_type,
 		text_box_size,
-		transaction_side::source
+		*m_journal,
+		transaction_side::source,
+		database_connection()
 	);
 	m_destination_entry_ctrl = new EntryGroupCtrl
 	(	this,
-		destination_entries,
-		database_connection(),
-		initial_transaction_type,
 		text_box_size,
-		transaction_side::destination
+		*m_journal,
+		transaction_side::destination,
+		database_connection()
 	);
-
 	top_sizer().Add
 	(	m_source_entry_ctrl,
 		wxGBPosition(current_row(), 0),
 		wxGBSpan(1, 4)
 	);
-
 	increment_row();
 	increment_row();
-
 	top_sizer().Add
 	(	m_destination_entry_ctrl,
 		wxGBPosition(current_row(), 0),
 		wxGBSpan(1, 4)
 	);
-	
 	increment_row();
 	increment_row();
 

@@ -7,6 +7,7 @@
 #include "decimal_text_ctrl.hpp"
 #include "entry.hpp"
 #include "finformat.hpp"
+#include "journal.hpp"
 #include "locale.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
@@ -62,16 +63,15 @@ END_EVENT_TABLE()
 
 EntryGroupCtrl::EntryGroupCtrl
 (	TransactionCtrl* p_parent,
-	vector<Account> const& p_accounts,
-	PhatbooksDatabaseConnection& p_database_connection,
-	transaction_type::TransactionType p_transaction_type,
 	wxSize const& p_text_ctrl_size,
-	transaction_side::TransactionSide p_transaction_side
+	Journal const& p_journal,
+	transaction_side::TransactionSide p_transaction_side,
+	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxPanel(p_parent),
 	m_database_connection(p_database_connection),
 	m_transaction_side(p_transaction_side),
-	m_transaction_type(p_transaction_type),
+	m_transaction_type(p_journal.transaction_type()),
 	m_available_account_types(0),
 	m_text_ctrl_size(p_text_ctrl_size),
 	m_top_sizer(0),
@@ -84,79 +84,41 @@ EntryGroupCtrl::EntryGroupCtrl
 	assert (m_comment_boxes.empty());
 	assert (m_amount_boxes.empty());
 	assert_transaction_type_validity(m_transaction_type);
-
+	
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 
-	bool const multiple_entries = (p_accounts.size() > 1);
-
-	// Row 0
-	configure_top_row(multiple_entries);
-
-	// Subsequent rows
-	configure_available_account_types();
-	vector<Account>::const_iterator it = p_accounts.begin();
-	vector<Account>::const_iterator const end = p_accounts.end();
-	optional<Decimal> const maybe_previous_row_amount;
-	for ( ; it != end; ++it)
+	// TODO There should really be a function somewhere in the business
+	// layer which gives us a vector of Entries for a given Journal
+	// and TransactionSide.
+	vector<Entry> const& all_entries = p_journal.entries();
+	vector<Entry>::const_iterator fulcrum_it = all_entries.begin();
+	for (vector<Entry>::size_type i = 0; i != p_journal.fulcrum(); ++i)
 	{
-		push_row
-		(	*it,
-			wxEmptyString,
-			Decimal(0, it->commodity().precision()),
-			maybe_previous_row_amount,
-			false,
-			multiple_entries
-		);
+		++fulcrum_it;
 	}
-	m_top_sizer->Fit(this);
-	m_top_sizer->SetSizeHints(this);
-	// Fit();
-	// Layout();
-	GetParent()->Fit();
-}
+	vector<Entry> entries;
+	switch (m_transaction_side)
+	{
+	case transaction_side::source:
+		entries.assign(all_entries.begin(), fulcrum_it);
+		break;
+	case transaction_side::destination:
+		entries.assign(fulcrum_it, all_entries.end());
+		break;
+	default:
+		assert (false);
+	}
 
-EntryGroupCtrl::EntryGroupCtrl
-(	TransactionCtrl* p_parent,
-	std::vector<Entry> const& p_entries,
-	PhatbooksDatabaseConnection& p_database_connection,
-	transaction_type::TransactionType p_transaction_type,
-	wxSize const& p_text_ctrl_size,
-	transaction_side::TransactionSide p_transaction_side
-):
-	wxPanel(p_parent),
-	m_database_connection(p_database_connection),
-	m_transaction_side(p_transaction_side),
-	m_transaction_type(p_transaction_type),
-	m_available_account_types(0),
-	m_text_ctrl_size(p_text_ctrl_size),
-	m_top_sizer(0),
-	m_side_descriptor(0),
-	m_unsplit_button(0),
-	m_split_button(0),
-	m_current_row(0)
-{
-	assert (m_account_name_boxes.empty());
-	assert (m_comment_boxes.empty());
-	assert (m_amount_boxes.empty());
-	assert_transaction_type_validity(m_transaction_type);
-
-	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
-	SetSizer(m_top_sizer);
-
-	vector<Entry>::size_type const sz = p_entries.size();
-	bool const multiple_entries = (sz > 1);
-
-	// Row 0
+	bool const multiple_entries = (entries.size() > 1);
 	configure_top_row(multiple_entries);
 
-	// Subsequent rows
+	configure_available_account_types();	
 
-	configure_available_account_types();
 	optional<Decimal> maybe_previous_row_amount;
-	for (vector<Entry>::size_type i = 0; i != sz; ++i)
+	for (vector<Entry>::size_type i = 0; i != entries.size(); ++i)
 	{
-		Entry const& entry = p_entries[i];
+		Entry const& entry = entries[i];
 		Decimal amount = (is_source()? -entry.amount(): entry.amount());
 		if (m_transaction_type == transaction_type::envelope_transaction)
 		{

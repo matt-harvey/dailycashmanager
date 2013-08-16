@@ -27,6 +27,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class Journal;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -51,22 +52,19 @@ class TransactionCtrl;
 class EntryGroupCtrl: public wxPanel, private boost::noncopyable
 {
 public:
-	EntryGroupCtrl
-	(	TransactionCtrl* p_parent,
-		std::vector<Account> const& p_accounts,
-		PhatbooksDatabaseConnection& p_database_connection,
-		transaction_type::TransactionType p_transaction_type,
-		wxSize const& p_text_ctrl_size,
-		transaction_side::TransactionSide p_transaction_side
-	);
 
+	/**
+	 * Precondition: p_journal should have all the basic attributes of a
+	 * ProtoJournal initialized. Also all the
+	 * Entries in p_journal must be have all their attributes initialized,
+	 * except they may or may not have an ID.
+	 */
 	EntryGroupCtrl
 	(	TransactionCtrl* p_parent,
-		std::vector<Entry> const& p_entries,
-		PhatbooksDatabaseConnection& p_database_connection,
-		transaction_type::TransactionType p_transaction_type,
 		wxSize const& p_text_ctrl_size,
-		transaction_side::TransactionSide p_transaction_side
+		Journal const& p_journal,
+		transaction_side::TransactionSide p_transaction_side,
+		PhatbooksDatabaseConnection& p_database_connection
 	);
 
 	~EntryGroupCtrl();
