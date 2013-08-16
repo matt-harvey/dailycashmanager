@@ -29,6 +29,7 @@
 #include "repeater.hpp"
 #include "sizing.hpp"
 #include "top_panel.hpp"
+#include "transaction_side.hpp"
 #include "transaction_type_ctrl.hpp"
 #include "transaction_type.hpp"
 #include <boost/optional.hpp>
@@ -197,7 +198,7 @@ TransactionCtrl::TransactionCtrl
 		database_connection(),
 		initial_transaction_type,
 		text_box_size,
-		true
+		transaction_side::source
 	);
 	m_destination_entry_ctrl = new EntryCtrl
 	(	this,
@@ -205,7 +206,7 @@ TransactionCtrl::TransactionCtrl
 		database_connection(),
 		initial_transaction_type,
 		text_box_size,
-		false
+		transaction_side::destination
 	);
 	top_sizer().Add
 	(	m_source_entry_ctrl,
@@ -453,7 +454,7 @@ TransactionCtrl::configure_for_journal_editing()
 		database_connection(),
 		initial_transaction_type,
 		text_box_size,
-		true
+		transaction_side::source
 	);
 	m_destination_entry_ctrl = new EntryCtrl
 	(	this,
@@ -461,7 +462,7 @@ TransactionCtrl::configure_for_journal_editing()
 		database_connection(),
 		initial_transaction_type,
 		text_box_size,
-		false
+		transaction_side::destination
 	);
 
 	top_sizer().Add

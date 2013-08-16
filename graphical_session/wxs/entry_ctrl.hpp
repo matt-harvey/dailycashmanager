@@ -7,6 +7,7 @@
 #include "account_type.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "entry.hpp"
+#include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
@@ -56,7 +57,7 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection,
 		transaction_type::TransactionType p_transaction_type,
 		wxSize const& p_text_ctrl_size,
-		bool p_is_source
+		transaction_side::TransactionSide p_transaction_side
 	);
 
 	EntryCtrl
@@ -65,7 +66,7 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection,
 		transaction_type::TransactionType p_transaction_type,
 		wxSize const& p_text_ctrl_size,
-		bool p_is_source
+		transaction_side::TransactionSide p_transaction_side
 	);
 
 	~EntryCtrl();
@@ -127,6 +128,8 @@ private:
 	void on_unsplit_button_click(wxCommandEvent& event);
 	void on_split_button_click(wxCommandEvent& event);
 
+	bool is_source() const;
+
 	/**
 	 * Adjusts the amount in \e p_target on the basis of
 	 * such that the EntryCtrl becomes balanced.
@@ -142,7 +145,7 @@ private:
 	static unsigned int const s_unsplit_button_id = wxID_HIGHEST + 1;
 	static unsigned int const s_split_button_id = s_unsplit_button_id + 1;
 
-	bool m_is_source;
+	transaction_side::TransactionSide m_transaction_side;
 	transaction_type::TransactionType m_transaction_type;
 	std::vector<account_type::AccountType>* m_available_account_types;
 

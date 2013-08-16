@@ -8,6 +8,7 @@
 #include "entry.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
+#include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include "transaction_ctrl.hpp"
 #include "sizing.hpp"
@@ -65,11 +66,11 @@ EntryCtrl::EntryCtrl
 	PhatbooksDatabaseConnection& p_database_connection,
 	transaction_type::TransactionType p_transaction_type,
 	wxSize const& p_text_ctrl_size,
-	bool p_is_source
+	transaction_side::TransactionSide p_transaction_side
 ):
 	wxPanel(p_parent),
 	m_database_connection(p_database_connection),
-	m_is_source(p_is_source),
+	m_transaction_side(p_transaction_side),
 	m_transaction_type(p_transaction_type),
 	m_available_account_types(0),
 	m_text_ctrl_size(p_text_ctrl_size),
@@ -121,11 +122,11 @@ EntryCtrl::EntryCtrl
 	PhatbooksDatabaseConnection& p_database_connection,
 	transaction_type::TransactionType p_transaction_type,
 	wxSize const& p_text_ctrl_size,
-	bool p_is_source
+	transaction_side::TransactionSide p_transaction_side
 ):
 	wxPanel(p_parent),
 	m_database_connection(p_database_connection),
-	m_is_source(p_is_source),
+	m_transaction_side(p_transaction_side),
 	m_transaction_type(p_transaction_type),
 	m_available_account_types(0),
 	m_text_ctrl_size(p_text_ctrl_size),
@@ -156,7 +157,7 @@ EntryCtrl::EntryCtrl
 	for (vector<Entry>::size_type i = 0; i != sz; ++i)
 	{
 		Entry const& entry = p_entries[i];
-		Decimal amount = (m_is_source? -entry.amount(): entry.amount());
+		Decimal amount = (is_source()? -entry.amount(): entry.amount());
 		if (m_transaction_type == transaction_type::envelope_transaction)
 		{
 			amount = -amount;
@@ -194,7 +195,7 @@ EntryCtrl::configure_available_account_types()
 		m_available_account_types = 0;
 	}
 	assert (!m_available_account_types);
-	if (m_is_source)
+	if (is_source())
 	{
 		m_available_account_types = new vector<account_type::AccountType>
 		(	source_account_types(m_transaction_type)
@@ -314,7 +315,7 @@ EntryCtrl::make_entries() const
 		{
 			amount = -amount;
 		}
-		if (m_is_source)
+		if (is_source())
 		{
 			amount = -amount;
 		}
@@ -381,6 +382,12 @@ EntryCtrl::on_split_button_click(wxCommandEvent& event)
 	assert (!m_amount_boxes.empty());
 	autobalance(m_amount_boxes.back());
 	return;
+}
+
+bool
+EntryCtrl::is_source() const
+{
+	return m_transaction_side == transaction_side::source;
 }
 
 void
@@ -584,17 +591,17 @@ EntryCtrl::side_description() const
 	{
 	case transaction_type::expenditure_transaction:  // fall through
 	case transaction_type::revenue_transaction:
-		if (m_is_source) source_super_types(m_transaction_type, super_types);
+		if (is_source()) source_super_types(m_transaction_type, super_types);
 		else destination_super_types(m_transaction_type, super_types);
 		assert(super_types.size() == 1);
 		ret += account_concept_name(*(super_types.begin()), true);
 		break;
 	case transaction_type::balance_sheet_transaction: // fall through
 	case transaction_type::envelope_transaction:  // fall through
-		ret += (m_is_source? wxString("Source"): wxString("Destination"));
+		ret += (is_source()? wxString("Source"): wxString("Destination"));
 		break;
 	case transaction_type::generic_transaction:
-		ret += (m_is_source? wxString("CR"): wxString("DR"));
+		ret += (is_source()? wxString("CR"): wxString("DR"));
 		break;
 	default:
 		assert (false);

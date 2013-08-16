@@ -23,6 +23,7 @@ set (immediate_directories
 	 phatbooks_persistent_object
 	 repeater
 	 session
+	 transaction_side
 	 transaction_type)
 
 # add_definitions(-DPHATBOOKS_DISALLOW_DASH_FOR_ZERO)
