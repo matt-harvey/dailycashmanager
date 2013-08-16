@@ -45,6 +45,13 @@ namespace phatbooks
  * in regards to the \e planned purpose to which the wealth will be put. For
  * example, allocating $100.00 of one's earnings to planned expenditure on
  * food represents a budget transaction.
+ *
+ * @todo HIGH PRIORITY The "fulcrum" mechanism for keeping track of which
+ * Entries are "source" and which are "destination", is quite fragile, and
+ * is resulting in difficulties when dealing with splitting/unsplitting
+ * within gui::TransactionCtrl. It would be better if the source/destination
+ * status were simply stored as a boolean flag within each Entry. This should
+ * make it much easier to manage things within gui::TransactionCtrl.
  */
 class Journal
 {
