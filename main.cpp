@@ -13,6 +13,8 @@
  */
 
 
+// TODO HIGH PRIORITY Tooltips aren't showing on Windows.
+
 // TODO Make the installer create an association on the user's system
 // between the Phatbooks file extension and the Phatbooks application.
 // See CMake book, page. 162.
