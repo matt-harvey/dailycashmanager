@@ -94,6 +94,9 @@ public:
 	 * @param p_database_connection database connection. Must be the same
 	 * one that the Accounts in p_balance_sheet_accounts and
 	 * p_pl_accounts are associated with.
+	 * 
+	 * @todo HIGH PRIORITY Boundary around comment boxes and date box looks
+	 * wrong under certain circumstances under Windows.
 	 */
 	TransactionCtrl
 	(	TopPanel* p_parent,
