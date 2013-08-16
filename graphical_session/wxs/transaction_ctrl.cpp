@@ -651,7 +651,7 @@ TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 	TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
 	assert (panel);
 	panel->configure_transaction_ctrl();
-	panel->configure_draft_journal_list_ctrl();
+	// panel->configure_draft_journal_list_ctrl();
 	return;
 }
 

@@ -13,6 +13,7 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/optional.hpp>
 #include <wx/filedlg.h>
+#include <wx/tooltip.h>
 #include <wx/wx.h>
 
 // For debugging
@@ -105,6 +106,7 @@ bool App::OnInit()
 	Frame* frame = new Frame(app_name, database_connection());
 	SetTopWindow(frame);
 	frame->Show(true);
+	wxToolTip::Enable(true);
 
 	// Start the event loop
 	return true;

@@ -21,6 +21,7 @@
 #include <wx/sizer.h>
 #include <wx/string.h>
 #include <wx/window.h>
+#include <wx/wupdlock.h>
 #include <cassert>
 #include <vector>
 
@@ -237,6 +238,7 @@ TopPanel::configure_transaction_ctrl
 	vector<Account> p_pl_accounts
 )
 {
+	wxWindowUpdateLocker window_update_locker(this);
 	if (p_balance_sheet_accounts.size() + p_pl_accounts.size() < unsigned(2))
 	{
 		if (p_balance_sheet_accounts.empty())
