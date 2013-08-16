@@ -113,10 +113,7 @@ private:
 	void configure_top_row(bool p_include_split_button);
 	void pop_row();
 	void push_row
-	(	Account const& p_account,
-		wxString const& p_comment,
-		jewel::Decimal const& p_amount,
-		bool p_is_reconciled,
+	(	Entry const& p_entry,
 		boost::optional<jewel::Decimal> const& p_previous_row_amount,
 		bool p_multiple_entries
 	);
@@ -133,8 +130,6 @@ private:
 	 * such that the EntryGroupCtrl becomes balanced.
 	 */
 	void autobalance(EntryDecimalTextCtrl* p_target);
-
-	template <typename T> void pop_widget_from(std::vector<T>& p_vec);
 
 	size_t num_rows() const;
 
@@ -154,30 +149,25 @@ private:
 	wxButton* m_unsplit_button;
 	wxButton* m_split_button;
 
-	std::vector<AccountCtrl*> m_account_name_boxes;
-	std::vector<wxTextCtrl*> m_comment_boxes;
-	std::vector<EntryDecimalTextCtrl*> m_amount_boxes;
-	std::vector<int> m_reconciliation_statuses;  // avoid vector<bool>
+	friend struct EntryRow;
+
+	// TODO HIGH PRIORITY Refactor EntryGroupCtrl to make use of this.
+	struct EntryRow
+	{
+		EntryRow::EntryRow(Entry const& p_entry);
+		AccountCtrl* account_ctrl;
+		wxTextCtrl* comment_ctrl;
+		EntryDecimalTextCtrl* amount_ctrl;
+		Entry entry;
+	};
+
+	std::vector<EntryRow> m_entry_rows;
 
 	size_t m_current_row;
 
 	DECLARE_EVENT_TABLE()
 
 };  // class EntryGroupCtrl
-
-// TODO This duplicates code also contained in MultiAccountPanel. Factor
-// out if there's a clean way to do it.
-template <typename T>
-void
-EntryGroupCtrl::pop_widget_from(std::vector<T>& p_vec)
-{
-	T doomed_elem = p_vec.back();
-	m_top_sizer->Detach(doomed_elem);
-	doomed_elem->Destroy();
-	doomed_elem = 0;
-	p_vec.pop_back();
-	return;
-}
 
 
 }  // namespace gui

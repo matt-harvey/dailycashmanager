@@ -118,20 +118,8 @@ EntryGroupCtrl::EntryGroupCtrl
 	optional<Decimal> maybe_previous_row_amount;
 	for (vector<Entry>::size_type i = 0; i != entries.size(); ++i)
 	{
-		Entry const& entry = entries[i];
-		Decimal amount = (is_source()? -entry.amount(): entry.amount());
-		if (m_transaction_type == transaction_type::envelope_transaction)
-		{
-			amount = -amount;
-		}
-		push_row
-		(	entry.account(),
-			bstring_to_wx(entry.comment()),
-			amount,
-			entry.is_reconciled(),
-			maybe_previous_row_amount,
-			multiple_entries
-		);
+		Entry entry = entries[i];
+		push_row(entry, maybe_previous_row_amount, multiple_entries);
 		if (i == 0) maybe_previous_row_amount = amount;
 	}
 	m_top_sizer->Fit(this);
@@ -224,12 +212,12 @@ EntryGroupCtrl::refresh_for_transaction_type
 	m_transaction_type = p_transaction_type;
 	configure_available_account_types();
 	for
-	(	vector<AccountCtrl*>::size_type i = 0;
-		i != m_account_name_boxes.size();
+	(	vector<EntryRow>::size_type i = 0;
+		i != m_entry_rows.size();
 		++i
 	)
 	{
-		m_account_name_boxes[i]->reset(*m_available_account_types);
+		m_entry_rows[i].account_ctrl->reset(*m_available_account_types);
 	}
 	m_side_descriptor->SetLabel(side_description());
 	Layout();
@@ -248,30 +236,21 @@ EntryGroupCtrl::primary_amount() const
 vector<Entry>
 EntryGroupCtrl::make_entries() const
 {
-	assert (m_account_name_boxes.size() == m_comment_boxes.size());
-	assert (m_comment_boxes.size() >= m_amount_boxes.size());
-	assert (m_amount_boxes.size() <= m_account_name_boxes.size());
 	typedef std::vector<Entry>::size_type Size;
-	Size const sz = m_account_name_boxes.size();
+	Size const sz = m_entry_rows.size();
 
 	vector<Entry> ret;
 	for (Size i = 0; i != sz; ++i)
 	{
-		Entry entry(m_database_connection);
-
-		assert (m_account_name_boxes[i]);
-		entry.set_account(m_account_name_boxes[i]->account());
-
-		assert (m_comment_boxes[i]);
-		entry.set_comment(wx_to_bstring(m_comment_boxes[i]->GetValue()));
+		EntryRow const& entry_row = m_entry_rows[i];
+		Entry entry = entry_row.entry;
+		entry.set_account(entry_row.account_ctrl->account());
+		entry.set_comment(wx_to_bstring(entry_row.comment_ctrl->GetValue()));
 
 		Decimal amount = primary_amount();
-		if (m_amount_boxes.size() != 0)
+		if (entry_row.amount_ctrl)
 		{
-			assert (m_amount_boxes.size() == sz);
-			assert (sz > 1);
-			assert (m_amount_boxes[i]);
-			amount = m_amount_boxes[i]->amount();
+			amount = entry_row.amount_ctrl->amount();
 		}
 		if (!transaction_type_is_actual(m_transaction_type))
 		{
@@ -282,9 +261,11 @@ EntryGroupCtrl::make_entries() const
 			amount = -amount;
 		}
 		entry.set_amount(amount);
-		entry.set_whether_reconciled(m_reconciliation_statuses[i]);
+	
+		// Leave reconciliation status as as, as user cannot change it
+		// via TransactionCtrl / EntryGroupCtrl.
+
 		ret.push_back(entry);
-		assert (!entry.has_id());
 	}
 	assert (ret.size() == sz);
 	return ret;
@@ -293,21 +274,20 @@ EntryGroupCtrl::make_entries() const
 bool
 EntryGroupCtrl::is_all_zero() const
 {
-	if (m_amount_boxes.empty())
+	assert (!m_entry_rows.empty());
+	Decimal const zero(0, 0);
+	if (m_entry_rows.size() == 1)
 	{
-		// WARNING Tightly coupled!
-		TransactionCtrl const* const transaction_ctrl =
-			dynamic_cast<TransactionCtrl const*>(GetParent());
-		assert (transaction_ctrl);
-		return transaction_ctrl->primary_amount() == Decimal(0, 0);
+		return primary_amount() == zero;
 	}
 	for
-	(	vector<EntryDecimalTextCtrl*>::size_type i = 0;
-		i != m_amount_boxes.size();
+	(	vector<EntryRow>::size_type i = 0;
+		i != m_entry_rows.size();
 		++i
 	)
 	{
-		if (m_amount_boxes[i]->amount() != Decimal(0, 0))
+		assert (m_entry_rows[i].amount_ctrl);
+		if (m_entry_rows[i].amount_ctrl->amount() != zero)
 		{
 			return false;
 		}
@@ -318,16 +298,18 @@ EntryGroupCtrl::is_all_zero() const
 Decimal
 EntryGroupCtrl::total_amount() const
 {
-	if (m_amount_boxes.empty())
+	assert (!m_entry_rows.empty());
+	if (!m_entry_rows[0].account_ctrl)
 	{
 		return primary_amount();
 	}
-	vector<EntryDecimalTextCtrl*>::size_type const sz = m_amount_boxes.size();
+	vector<EntryRow>::size_type const sz = m_entry_rows.size();
 	assert (sz >= 2);
 	Decimal ret(0, 0);
-	for (vector<EntryDecimalTextCtrl*>::size_type i = 0; i != sz; ++i)
+	for (vector<EntryRow>::size_type i = 0; i != sz; ++i)
 	{
-		ret += m_amount_boxes[i]->amount();
+		assert (m_entry_rows[i].amount_ctrl);
+		ret += m_entry_rows[i].amount_ctrl->amount();
 	}
 	return ret;
 }
@@ -338,11 +320,14 @@ EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 	(void)event;  // Silence compiler warning re. unused parameter.
 	Account const account =
 		m_account_name_boxes.at(m_account_name_boxes.size() - 1)->account();
-	Decimal const amount(0, account.commodity().precision());
-	optional<Decimal> const maybe_prev_amount;
-	push_row(account, wxEmptyString, amount, false, maybe_prev_amount, true);
-	assert (!m_amount_boxes.empty());
-	autobalance(m_amount_boxes.back());
+	Entry entry(m_database_connection);
+	entry.set_account(account);
+	entry.set_whether_reconciled(false);
+	entry.set_comment(BString());
+	entry.set_amount(Decimal(0, account.commodity().precision()));
+	push_row(entry, optional<Decimal>(), true);
+	assert (m_entry_rows.empty());
+	autobalance(m_entry_rows.back().amount_ctrl);
 	return;
 }
 
@@ -363,81 +348,85 @@ EntryGroupCtrl::on_unsplit_button_click(wxCommandEvent& event)
 void
 EntryGroupCtrl::pop_row()
 {
-	if (m_account_name_boxes.size() == 1)
+	if (m_entry_rows.size() == 1)
 	{
 		return;
 	}
-	assert (m_account_name_boxes.size() > 1);
-
-#	ifndef NDEBUG
-		vector<AccountCtrl*>::size_type const sz =
-			m_account_name_boxes.size();
-		assert (sz > 0);
-		assert (sz == m_comment_boxes.size());
-		assert (sz == m_amount_boxes.size());
-		assert (sz == m_reconciliation_statuses.size());
-#	endif
-
-	pop_widget_from(m_account_name_boxes);
-	pop_widget_from(m_comment_boxes);
-	pop_widget_from(m_amount_boxes);
-	m_reconciliation_statuses.pop_back();
-
-	if (m_account_name_boxes.size() == 1)
+	assert (m_entry_rows.size() > 1);
+	EntryRow& doomed_entry_row = m_entry_rows.back();
+	wxWindow* const doomed_windows =
+	{	doomed_entry_row.account_ctrl,
+		doomed_entry_row.comment_ctrl,
+		doomed_entry_row.amount_ctrl
+	};
+	for (size_t i = 0; i != num_elements(doomed_windows); ++i)
+	{
+		wxWindow* doomed_window = doomed_windows[i];
+		if (doomed_window)
+		{
+			m_top_sizer->Detach(doomed_window);
+			doomed_window->Destroy();
+		}
+	}
+	if (m_entry_rows.size() == 1)
 	{
 		// Rearrange things to destroy m_unsplit_button, and move
 		// m_split_button to its "inline" position, in place of the remaining
 		// EntryDecimalAmountCtrl.
-		pop_widget_from(m_amount_boxes);
+		m_top_sizer->Detach(m_entry_rows.back().amount_ctrl);
+		m_entry_rows.back().amount_ctrl->Destroy();
+		m_entry_rows.back().amount_ctrl = 0;
 		m_top_sizer->Detach(m_unsplit_button);
 		m_unsplit_button->Destroy();
 		m_unsplit_button = 0;
 		m_top_sizer->Detach(m_split_button);
 		m_top_sizer->Add(m_split_button, wxGBPosition(1, 3));
-		m_comment_boxes.back()->MoveBeforeInTabOrder(m_split_button);
+		m_entry_rows.back().comment_ctrl->MoveBeforeInTabOrder(m_split_button);
 	}
-	
+	m_entry_rows.pop_back();
 	--m_current_row;
-
 	adjust_layout_for_new_number_of_rows();
 	return;
 }
 
 void
 EntryGroupCtrl::push_row
-(	Account const& p_account,
-	wxString const& p_comment,
-	Decimal const& p_amount,
-	bool p_is_reconciled,
+(	Entry const& p_entry,
 	optional<Decimal> const& p_previous_row_amount,
 	bool p_multiple_entries
 )
 {
-	// WARNING This is quite messy.
+	// TODO HIGH PRIORITY Finish redoing below.
 
-	AccountCtrl* account_name_box = new AccountCtrl
+	// EntryRow
+	EntryRow entry_row(p_entry);
+
+	// Account name widget
+	entry_row.account_ctrl = new AccountCtrl
 	(	this,
 		wxID_ANY,
 		m_text_ctrl_size,
 		*m_available_account_types,
 		m_database_connection
 	);
-	account_name_box->set_account(p_account);
-	m_top_sizer->Add(account_name_box, wxGBPosition(m_current_row, 0));
-	m_account_name_boxes.push_back(account_name_box);
-	wxTextCtrl* comment_ctrl = new wxTextCtrl
+	entry_row.account_ctrl->set_account(p_entry.account());
+	m_top_sizer->
+		Add(entry_row.account_ctrl, wxGBPosition(m_current_row, 0));
+
+	// Comment widget
+	entry_row.comment_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
-		p_comment,
+		bstring_to_wx(p_entry.comment()),
 		wxDefaultPosition,
 		wxSize(m_text_ctrl_size.x * 2 + standard_gap(), m_text_ctrl_size.y),
 		wxALIGN_LEFT
 	);
-	m_top_sizer->
-		Add(comment_ctrl, wxGBPosition(m_current_row, 1), wxGBSpan(1, 2));
-	m_comment_boxes.push_back(comment_ctrl);
-
-	m_reconciliation_statuses.push_back(static_cast<int>(p_is_reconciled));
+	m_top_sizer->Add
+	(	entry_row.comment_ctrl,
+		wxGBPosition(m_current_row, 1),
+		wxGBSpan(1, 2)
+	);
 
 	// If there is only one Account then there is only one "Entry line",
 	// and that Entry line will also house the "Split" button. There will
@@ -455,11 +444,12 @@ EntryGroupCtrl::push_row
 			m_text_ctrl_size
 		);
 		m_top_sizer->Add(m_split_button, wxGBPosition(m_current_row, 3));
+		assert (entry_row.amount_ctrl == 0);
 	}
 	else
 	{
 		assert (p_multiple_entries);
-		EntryDecimalTextCtrl* amount_ctrl = new EntryDecimalTextCtrl
+		entry_row.amount_ctrl = new EntryDecimalTextCtrl
 		(	this,
 			m_text_ctrl_size
 		);
@@ -482,12 +472,13 @@ EntryGroupCtrl::push_row
 				wxDefaultSpan,
 				wxALIGN_RIGHT
 			);
-			if (m_amount_boxes.empty())
+			assert (!m_entry_rows.empty());
+			if (!m_entry_rows.back().amount_ctrl)
 			{
 				m_top_sizer->Detach(m_split_button);
 				m_top_sizer->Add(m_split_button, wxGBPosition(0, 3));
-				assert (!m_account_name_boxes.empty());
-				m_split_button->MoveBeforeInTabOrder(m_account_name_boxes[0]);
+				m_split_button->
+					MoveBeforeInTabOrder(m_entry_rows[0].account_ctrl);
 				EntryDecimalTextCtrl* prev_amount_ctrl =
 					new EntryDecimalTextCtrl
 					(	this,
@@ -504,16 +495,22 @@ EntryGroupCtrl::push_row
 				}
 				m_top_sizer->
 					Add(prev_amount_ctrl, wxGBPosition(1, 3));
-				prev_amount_ctrl->MoveBeforeInTabOrder(account_name_box);
-				assert (m_amount_boxes.empty());
-				m_amount_boxes.push_back(prev_amount_ctrl);
+				prev_amount_ctrl->MoveBeforeInTabOrder(account_name_box);  // WARNING
+				m_entry_rows.back().account_ctrl = prev_amount_ctrl;
 			}
 			m_unsplit_button->MoveBeforeInTabOrder(m_split_button);
 		}
-		amount_ctrl->set_amount(p_amount);
-		m_top_sizer->Add(amount_ctrl, wxGBPosition(m_current_row, 3));
-		m_amount_boxes.push_back(amount_ctrl);
+		Decimal amount = (is_source()? -p_entry.amount(): p_entry.amount());
+		if (m_transaction_type == transaction_type::envelope_transaction)
+		{
+			amount = -amount;
+		}
+		entry_row.amount_ctrl->set_amount(amount);
+		m_top_sizer->
+			Add(entry_row.amount_ctrl, wxGBPosition(m_current_row, 3));
 	}
+
+	m_entry_rows.push_back(entry_row);
 
 	++m_current_row;
 
@@ -582,8 +579,8 @@ EntryGroupCtrl::reflect_reconciliation_statuses()
 	for ( ; i != sz; ++i)
 	{
 		vector<wxWindow*> window_vec;
-		assert (i < m_account_name_boxes.size());
-		window_vec.push_back(m_account_name_boxes[i]);
+		assert (i < m_entry_rows.size());
+		window_vec.push_back(m_entry_rows[i].account_ctrl);
 		assert (i < m_comment_boxes.size());
 		window_vec.push_back(m_comment_boxes[i]);
 		if (i < m_amount_boxes.size())
@@ -654,11 +651,7 @@ EntryGroupCtrl::autobalance(EntryDecimalTextCtrl* p_target)
 size_t
 EntryGroupCtrl::num_rows() const
 {
-	assert (m_account_name_boxes.size() == m_comment_boxes.size());
-	assert (m_comment_boxes.size() == m_reconciliation_statuses.size());
-	assert (m_reconciliation_statuses.size() == m_account_name_boxes.size());
-	assert (m_amount_boxes.size() <= m_reconciliation_statuses.size());
-	return m_account_name_boxes.size();
+	return m_entry_rows.size();
 }
 
 EntryGroupCtrl::EntryDecimalTextCtrl::EntryDecimalTextCtrl
@@ -694,6 +687,15 @@ EntryGroupCtrl::EntryDecimalTextCtrl::on_left_double_click(wxMouseEvent& event)
 	assert (parent);
 	parent->autobalance(this);
 	return;
+}
+
+void
+EntryGroupCtrl::EntryRow::EntryRow(Entry const& p_entry):
+	entry(p_entry),
+	account_ctrl(0),
+	comment_ctrl(0),
+	amount_ctrl(0)
+{
 }
 
 
