@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_entry_ctrl_hpp
-#define GUARD_entry_ctrl_hpp
+#ifndef GUARD_entry_group_ctrl_hpp
+#define GUARD_entry_group_ctrl_hpp
 
 #include "account.hpp"
 #include "account_type.hpp"
@@ -48,10 +48,10 @@ class TransactionCtrl;
  * @todo Document better the concept of a "transaction" versus that of a
  * Journal.
  */
-class EntryCtrl: public wxPanel, private boost::noncopyable
+class EntryGroupCtrl: public wxPanel, private boost::noncopyable
 {
 public:
-	EntryCtrl
+	EntryGroupCtrl
 	(	TransactionCtrl* p_parent,
 		std::vector<Account> const& p_accounts,
 		PhatbooksDatabaseConnection& p_database_connection,
@@ -60,7 +60,7 @@ public:
 		transaction_side::TransactionSide p_transaction_side
 	);
 
-	EntryCtrl
+	EntryGroupCtrl
 	(	TransactionCtrl* p_parent,
 		std::vector<Entry> const& p_entries,
 		PhatbooksDatabaseConnection& p_database_connection,
@@ -69,7 +69,7 @@ public:
 		transaction_side::TransactionSide p_transaction_side
 	);
 
-	~EntryCtrl();
+	~EntryGroupCtrl();
 
 	void refresh_for_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
@@ -81,7 +81,7 @@ public:
 
 	/**
 	 * @returns a vector of newly created Entries (WITHOUT ids), based
-	 * on the data currently in the EntryCtrl. The Entries will not
+	 * on the data currently in the EntryGroupCtrl. The Entries will not
 	 * be associated with any Journal.
 	 */
 	std::vector<Entry> make_entries() const;
@@ -102,7 +102,7 @@ private:
 	class EntryDecimalTextCtrl: public DecimalTextCtrl
 	{
 	public:
-		EntryDecimalTextCtrl(EntryCtrl* p_parent, wxSize const& p_size);
+		EntryDecimalTextCtrl(EntryGroupCtrl* p_parent, wxSize const& p_size);
 		virtual ~EntryDecimalTextCtrl();
 	private:
 		void on_left_double_click(wxMouseEvent& event);
@@ -132,7 +132,7 @@ private:
 
 	/**
 	 * Adjusts the amount in \e p_target on the basis of
-	 * such that the EntryCtrl becomes balanced.
+	 * such that the EntryGroupCtrl becomes balanced.
 	 */
 	void autobalance(EntryDecimalTextCtrl* p_target);
 
@@ -165,13 +165,13 @@ private:
 
 	DECLARE_EVENT_TABLE()
 
-};  // class EntryCtrl
+};  // class EntryGroupCtrl
 
 // TODO This duplicates code also contained in MultiAccountPanel. Factor
 // out if there's a clean way to do it.
 template <typename T>
 void
-EntryCtrl::pop_widget_from(std::vector<T>& p_vec)
+EntryGroupCtrl::pop_widget_from(std::vector<T>& p_vec)
 {
 	T doomed_elem = p_vec.back();
 	m_top_sizer->Detach(doomed_elem);
@@ -185,4 +185,4 @@ EntryCtrl::pop_widget_from(std::vector<T>& p_vec)
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_entry_ctrl_hpp
+#endif  // GUARD_entry_group_ctrl_hpp

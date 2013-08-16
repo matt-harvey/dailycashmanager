@@ -31,7 +31,7 @@ namespace gui
 
 class AccountCtrl;
 class DateCtrl;
-class EntryCtrl;
+class EntryGroupCtrl;
 class FrequencyCtrl;
 class TopPanel;
 
@@ -187,8 +187,8 @@ private:
 
 	TransactionTypeCtrl* m_transaction_type_ctrl;
 
-	EntryCtrl* m_source_entry_ctrl;	
-	EntryCtrl* m_destination_entry_ctrl;
+	EntryGroupCtrl* m_source_entry_ctrl;	
+	EntryGroupCtrl* m_destination_entry_ctrl;
 
 	DecimalTextCtrl* m_primary_amount_ctrl;
 	FrequencyCtrl* m_frequency_ctrl;

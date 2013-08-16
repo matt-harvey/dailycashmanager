@@ -1,6 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "entry_ctrl.hpp"
+#include "entry_group_ctrl.hpp"
 #include "account.hpp"
 #include "account_ctrl.hpp"
 #include "account_reader.hpp"
@@ -43,24 +43,24 @@ namespace phatbooks
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(EntryCtrl, wxPanel)
+BEGIN_EVENT_TABLE(EntryGroupCtrl, wxPanel)
 	EVT_BUTTON
 	(	s_unsplit_button_id,
-		EntryCtrl::on_unsplit_button_click
+		EntryGroupCtrl::on_unsplit_button_click
 	)
 	EVT_BUTTON
 	(	s_split_button_id,
-		EntryCtrl::on_split_button_click
+		EntryGroupCtrl::on_split_button_click
 	)
 END_EVENT_TABLE()
 
-BEGIN_EVENT_TABLE(EntryCtrl::EntryDecimalTextCtrl, DecimalTextCtrl)
+BEGIN_EVENT_TABLE(EntryGroupCtrl::EntryDecimalTextCtrl, DecimalTextCtrl)
 	EVT_LEFT_DCLICK
-	(	EntryCtrl::EntryDecimalTextCtrl::on_left_double_click
+	(	EntryGroupCtrl::EntryDecimalTextCtrl::on_left_double_click
 	)
 END_EVENT_TABLE()
 
-EntryCtrl::EntryCtrl
+EntryGroupCtrl::EntryGroupCtrl
 (	TransactionCtrl* p_parent,
 	vector<Account> const& p_accounts,
 	PhatbooksDatabaseConnection& p_database_connection,
@@ -116,7 +116,7 @@ EntryCtrl::EntryCtrl
 	GetParent()->Fit();
 }
 
-EntryCtrl::EntryCtrl
+EntryGroupCtrl::EntryGroupCtrl
 (	TransactionCtrl* p_parent,
 	std::vector<Entry> const& p_entries,
 	PhatbooksDatabaseConnection& p_database_connection,
@@ -179,14 +179,14 @@ EntryCtrl::EntryCtrl
 	GetParent()->Fit();
 }
 
-EntryCtrl::~EntryCtrl()
+EntryGroupCtrl::~EntryGroupCtrl()
 {
 	delete m_available_account_types;
 	m_available_account_types = 0;
 }
 
 void
-EntryCtrl::configure_available_account_types()
+EntryGroupCtrl::configure_available_account_types()
 {
 	// TODO Make this exception safe.
 	if (m_available_account_types)
@@ -211,7 +211,7 @@ EntryCtrl::configure_available_account_types()
 }
 
 void
-EntryCtrl::configure_top_row(bool p_include_split_button)
+EntryGroupCtrl::configure_top_row(bool p_include_split_button)
 {
 	assert (m_current_row == 0);
 	m_side_descriptor = new wxStaticText(this, wxID_ANY, side_description());
@@ -248,7 +248,7 @@ EntryCtrl::configure_top_row(bool p_include_split_button)
 }
 
 void
-EntryCtrl::refresh_for_transaction_type
+EntryGroupCtrl::refresh_for_transaction_type
 (	transaction_type::TransactionType p_transaction_type
 )
 {
@@ -275,7 +275,7 @@ EntryCtrl::refresh_for_transaction_type
 }
 
 Decimal
-EntryCtrl::primary_amount() const
+EntryGroupCtrl::primary_amount() const
 {
 	TransactionCtrl const* const parent =
 		dynamic_cast<TransactionCtrl const*>(GetParent());
@@ -284,7 +284,7 @@ EntryCtrl::primary_amount() const
 }
 
 vector<Entry>
-EntryCtrl::make_entries() const
+EntryGroupCtrl::make_entries() const
 {
 	assert (m_account_name_boxes.size() == m_comment_boxes.size());
 	assert (m_comment_boxes.size() >= m_amount_boxes.size());
@@ -329,7 +329,7 @@ EntryCtrl::make_entries() const
 }
 
 bool
-EntryCtrl::is_all_zero() const
+EntryGroupCtrl::is_all_zero() const
 {
 	if (m_amount_boxes.empty())
 	{
@@ -354,7 +354,7 @@ EntryCtrl::is_all_zero() const
 }
 
 Decimal
-EntryCtrl::total_amount() const
+EntryGroupCtrl::total_amount() const
 {
 	if (m_amount_boxes.empty())
 	{
@@ -371,7 +371,7 @@ EntryCtrl::total_amount() const
 }
 
 void
-EntryCtrl::on_split_button_click(wxCommandEvent& event)
+EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
 	Account const account =
@@ -385,13 +385,13 @@ EntryCtrl::on_split_button_click(wxCommandEvent& event)
 }
 
 bool
-EntryCtrl::is_source() const
+EntryGroupCtrl::is_source() const
 {
 	return m_transaction_side == transaction_side::source;
 }
 
 void
-EntryCtrl::on_unsplit_button_click(wxCommandEvent& event)
+EntryGroupCtrl::on_unsplit_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
 	pop_row();
@@ -399,7 +399,7 @@ EntryCtrl::on_unsplit_button_click(wxCommandEvent& event)
 }
 
 void
-EntryCtrl::pop_row()
+EntryGroupCtrl::pop_row()
 {
 	if (m_account_name_boxes.size() == 1)
 	{
@@ -442,7 +442,7 @@ EntryCtrl::pop_row()
 }
 
 void
-EntryCtrl::push_row
+EntryGroupCtrl::push_row
 (	Account const& p_account,
 	wxString const& p_comment,
 	Decimal const& p_amount,
@@ -561,7 +561,7 @@ EntryCtrl::push_row
 }
 
 void
-EntryCtrl::adjust_layout_for_new_number_of_rows()
+EntryGroupCtrl::adjust_layout_for_new_number_of_rows()
 {
 	Layout();  // Must call this.
 	
@@ -581,7 +581,7 @@ EntryCtrl::adjust_layout_for_new_number_of_rows()
 }
 
 wxString
-EntryCtrl::side_description() const
+EntryGroupCtrl::side_description() const
 {
 	// WARNING This is pretty inefficient. But it probably doesn't
 	// matter.
@@ -611,7 +611,7 @@ EntryCtrl::side_description() const
 }
 
 bool
-EntryCtrl::reflect_reconciliation_statuses()
+EntryGroupCtrl::reflect_reconciliation_statuses()
 {
 	bool ret = false;
 	vector<int>::size_type i = 0;
@@ -670,7 +670,7 @@ EntryCtrl::reflect_reconciliation_statuses()
 }
 
 void
-EntryCtrl::autobalance(EntryDecimalTextCtrl* p_target)
+EntryGroupCtrl::autobalance(EntryDecimalTextCtrl* p_target)
 {
 	assert (p_target);
 	Decimal const orig_total = total_amount();
@@ -690,7 +690,7 @@ EntryCtrl::autobalance(EntryDecimalTextCtrl* p_target)
 }
 
 size_t
-EntryCtrl::num_rows() const
+EntryGroupCtrl::num_rows() const
 {
 	assert (m_account_name_boxes.size() == m_comment_boxes.size());
 	assert (m_comment_boxes.size() == m_reconciliation_statuses.size());
@@ -699,8 +699,8 @@ EntryCtrl::num_rows() const
 	return m_account_name_boxes.size();
 }
 
-EntryCtrl::EntryDecimalTextCtrl::EntryDecimalTextCtrl
-(	EntryCtrl* p_parent,
+EntryGroupCtrl::EntryDecimalTextCtrl::EntryDecimalTextCtrl
+(	EntryGroupCtrl* p_parent,
 	wxSize const& p_size
 ):
 	DecimalTextCtrl
@@ -720,15 +720,15 @@ EntryCtrl::EntryDecimalTextCtrl::EntryDecimalTextCtrl
 	);
 }
 
-EntryCtrl::EntryDecimalTextCtrl::~EntryDecimalTextCtrl()
+EntryGroupCtrl::EntryDecimalTextCtrl::~EntryDecimalTextCtrl()
 {
 }
 
 void
-EntryCtrl::EntryDecimalTextCtrl::on_left_double_click(wxMouseEvent& event)
+EntryGroupCtrl::EntryDecimalTextCtrl::on_left_double_click(wxMouseEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter
-	EntryCtrl* const parent = dynamic_cast<EntryCtrl*>(GetParent());
+	EntryGroupCtrl* const parent = dynamic_cast<EntryGroupCtrl*>(GetParent());
 	assert (parent);
 	parent->autobalance(this);
 	return;

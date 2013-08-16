@@ -13,7 +13,7 @@
 #include "draft_journal.hpp"
 #include "draft_journal_naming_dialog.hpp"
 #include "entry.hpp"
-#include "entry_ctrl.hpp"
+#include "entry_group_ctrl.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
 #include "frequency.hpp"
@@ -192,7 +192,7 @@ TransactionCtrl::TransactionCtrl
 
 	assert (text_box_size.x == medium_width());
 
-	m_source_entry_ctrl = new EntryCtrl
+	m_source_entry_ctrl = new EntryGroupCtrl
 	(	this,
 		source_accounts,
 		database_connection(),
@@ -200,7 +200,7 @@ TransactionCtrl::TransactionCtrl
 		text_box_size,
 		transaction_side::source
 	);
-	m_destination_entry_ctrl = new EntryCtrl
+	m_destination_entry_ctrl = new EntryGroupCtrl
 	(	this,
 		destination_accounts,
 		database_connection(),
@@ -448,7 +448,7 @@ TransactionCtrl::configure_for_journal_editing()
 
 	assert (text_box_size.x == medium_width());
 
-	m_source_entry_ctrl = new EntryCtrl
+	m_source_entry_ctrl = new EntryGroupCtrl
 	(	this,
 		source_entries,
 		database_connection(),
@@ -456,7 +456,7 @@ TransactionCtrl::configure_for_journal_editing()
 		text_box_size,
 		transaction_side::source
 	);
-	m_destination_entry_ctrl = new EntryCtrl
+	m_destination_entry_ctrl = new EntryGroupCtrl
 	(	this,
 		destination_entries,
 		database_connection(),
@@ -585,7 +585,7 @@ TransactionCtrl::configure_for_journal_editing()
 	// TODO HIGH PRIORITY - make it so that TransactionCtrl will be updated
 	// accordingly as Entries change reconciliation status via
 	// ReconciliationEntryListCtrl.
-	EntryCtrl* const entry_controls[] =
+	EntryGroupCtrl* const entry_controls[] =
 	{	m_source_entry_ctrl,
 		m_destination_entry_ctrl
 	};
@@ -758,7 +758,7 @@ TransactionCtrl::post_journal()
 	journal.set_transaction_type(ttype);
 
 	size_t const num_entry_controls = 2;
-	EntryCtrl const* const entry_controls[num_entry_controls] =
+	EntryGroupCtrl const* const entry_controls[num_entry_controls] =
 	{	m_source_entry_ctrl,
 		m_destination_entry_ctrl
 	};
@@ -931,7 +931,7 @@ TransactionCtrl::save_existing_journal()
 	// Start with the original Entries.
 	Vec entries = m_journal->entries();
 
-	// Via the EntryCtrl, additional Entries might have been inserted into,
+	// Via the EntryGroupCtrl, additional Entries might have been inserted into,
 	// or removed from, the source Entries, the destination Entries, or both.
 	Vec doomed_entries;
 
@@ -1112,7 +1112,7 @@ bool
 TransactionCtrl::is_balanced() const
 {
 	Decimal const primary_amt = primary_amount();
-	EntryCtrl const* const entry_controls[] =
+	EntryGroupCtrl const* const entry_controls[] =
 		{ m_source_entry_ctrl, m_destination_entry_ctrl };
 	for (size_t i = 0; i != num_elements(entry_controls); ++i)
 	{
