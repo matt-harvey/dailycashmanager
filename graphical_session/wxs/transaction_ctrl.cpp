@@ -100,6 +100,7 @@ END_EVENT_TABLE()
 
 namespace
 {
+	// TODO Is this being used?
 	bool contains_reconciled_entry(Journal const& p_journal)
 	{
 		vector<Entry> const& entries = p_journal.entries();
@@ -580,20 +581,29 @@ TransactionCtrl::configure_for_journal_editing()
 	// If there are any reconciled Entries in the Journal, then
 	// make it impossible for the user to edit it.
 	//
-	// TODO HIGH PRIORITY - explain to the user what we have done here,
-	// why we have done it, and how they can find a way around it.
-	//
 	// TODO HIGH PRIORITY - make it so that TransactionCtrl will be updated
 	// accordingly as Entries change reconciliation status via
 	// ReconciliationEntryListCtrl.
-	//
-	// TODO HIGH PRIORITY - refine this. We are disabling much more than
-	// we need to here.
-	
-	assert (m_journal);
-	if (contains_reconciled_entry(*m_journal))
+	EntryCtrl* const entry_controls[] =
+	{	m_source_entry_ctrl,
+		m_destination_entry_ctrl
+	};
+	bool contains_reconciled = false;
+	for (size_t j = 0; j != num_elements(entry_controls); ++j)
 	{
-		disable_editing();
+		if (entry_controls[j]->reflect_reconciliation_statuses())
+		{
+			contains_reconciled = true;
+		}
+	}
+	if (contains_reconciled)
+	{
+		// TODO We should have tooltip explaining why disabled.
+		assert (m_delete_button);
+		m_delete_button->Disable();
+		m_transaction_type_ctrl->Disable();
+		m_date_ctrl->Disable();
+		m_primary_amount_ctrl->Disable();
 	}
 
 	// "Admin"
@@ -713,6 +723,7 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 	return;
 }
 
+/*
 void
 TransactionCtrl::disable_editing()
 {
@@ -734,6 +745,7 @@ TransactionCtrl::enable_editing(bool p_enable)
 	}
 	m_cancel_button->Enable();
 }
+*/
 
 bool
 TransactionCtrl::post_journal()

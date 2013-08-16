@@ -11,6 +11,7 @@
 #include "transaction_type.hpp"
 #include "transaction_ctrl.hpp"
 #include "sizing.hpp"
+#include "window_utilities.hpp"
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -31,9 +32,10 @@ using jewel::value;
 using std::set;
 using std::vector;
 
-#include <jewel/debug_log.hpp>
-#include <iostream>
-using std::endl;
+// for debugging
+	#include <jewel/debug_log.hpp>
+	#include <iostream>
+	using std::endl;
 
 namespace phatbooks
 {
@@ -429,7 +431,6 @@ EntryCtrl::pop_row()
 	--m_current_row;
 
 	adjust_layout_for_new_number_of_rows();
-
 	return;
 }
 
@@ -566,6 +567,8 @@ EntryCtrl::adjust_layout_for_new_number_of_rows()
 	// GetParent()->GetSizer()->RecalcSizes();  // Do not call this.
 	parent->FitInside();
 	// parent->Fit();  // Do not call this.
+	
+	reflect_reconciliation_statuses();
 
 	return;
 }
@@ -600,6 +603,65 @@ EntryCtrl::side_description() const
 	return ret;
 }
 
+bool
+EntryCtrl::reflect_reconciliation_statuses()
+{
+	bool ret = false;
+	vector<int>::size_type i = 0;
+	vector<int>::size_type const sz = m_reconciliation_statuses.size();
+	assert (sz == num_rows());
+	for ( ; i != sz; ++i)
+	{
+		vector<wxWindow*> window_vec;
+		assert (i < m_account_name_boxes.size());
+		window_vec.push_back(m_account_name_boxes[i]);
+		assert (i < m_comment_boxes.size());
+		window_vec.push_back(m_comment_boxes[i]);
+		if (i < m_amount_boxes.size())
+		{
+			window_vec.push_back(m_amount_boxes[i]);
+		}
+		bool const reconciled =
+			static_cast<bool>(m_reconciliation_statuses[i]);
+		if (reconciled)
+		{
+			ret = true;
+		}
+		vector<wxWindow*>::iterator it = window_vec.begin();
+		vector<wxWindow*>::iterator const end = window_vec.end();
+		for ( ; it != end; ++it)
+		{
+			assert (*it);
+			toggle_enabled
+			(	*it,
+				!reconciled,
+				wxString
+				(	"This transaction line has been marked as reconciled, and"
+					" so cannot be edited. To review reconciliations, go to "
+					"the reconciliations tab."
+				)
+			);
+		}
+	}
+	// If the last Entry row is reconciled, then we must disable the
+	// "Unsplit" button. If there's only one row, then we should disable
+	// the "Split" button (and there will be on unsplit button).
+	bool const final_row_reconciled =
+		static_cast<bool>(m_reconciliation_statuses.back());
+	if (m_unsplit_button)
+	{
+		assert (num_rows() >= 2);
+		toggle_enabled(m_unsplit_button, !final_row_reconciled);
+	}
+	else
+	{
+		assert (num_rows() == 1);
+		assert (m_split_button);
+		toggle_enabled(m_split_button, !final_row_reconciled);
+	}
+	return ret;
+}
+
 void
 EntryCtrl::autobalance(EntryDecimalTextCtrl* p_target)
 {
@@ -618,6 +680,16 @@ EntryCtrl::autobalance(EntryDecimalTextCtrl* p_target)
 	assert (primary_amount() == orig_primary_amount);
 	assert (total_amount() == primary_amount());
 	return;
+}
+
+size_t
+EntryCtrl::num_rows() const
+{
+	assert (m_account_name_boxes.size() == m_comment_boxes.size());
+	assert (m_comment_boxes.size() == m_reconciliation_statuses.size());
+	assert (m_reconciliation_statuses.size() == m_account_name_boxes.size());
+	assert (m_amount_boxes.size() <= m_reconciliation_statuses.size());
+	return m_account_name_boxes.size();
 }
 
 EntryCtrl::EntryDecimalTextCtrl::EntryDecimalTextCtrl

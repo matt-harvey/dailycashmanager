@@ -87,6 +87,15 @@ public:
 
 	bool is_all_zero() const;
 
+	/**
+	 * Go through each row. If that row corresponds to an entry which
+	 * is reconciled, then disable it and set a tooltip explaining why it
+	 * is disabled. Otherwise enable it and remove any tooltip. Returns
+	 * \e true if at least one Entry is reconciled; otherwise, returns
+	 * \e false.
+	 */
+	bool reflect_reconciliation_statuses();
+
 private:
 
 	class EntryDecimalTextCtrl: public DecimalTextCtrl
@@ -114,6 +123,7 @@ private:
 	);
 	void adjust_layout_for_new_number_of_rows();
 	wxString side_description() const;
+
 	void on_unsplit_button_click(wxCommandEvent& event);
 	void on_split_button_click(wxCommandEvent& event);
 
@@ -124,6 +134,8 @@ private:
 	void autobalance(EntryDecimalTextCtrl* p_target);
 
 	template <typename T> void pop_widget_from(std::vector<T>& p_vec);
+
+	size_t num_rows() const;
 
 	PhatbooksDatabaseConnection& m_database_connection;
 
@@ -140,6 +152,7 @@ private:
 	wxStaticText* m_side_descriptor;
 	wxButton* m_unsplit_button;
 	wxButton* m_split_button;
+
 	std::vector<AccountCtrl*> m_account_name_boxes;
 	std::vector<wxTextCtrl*> m_comment_boxes;
 	std::vector<EntryDecimalTextCtrl*> m_amount_boxes;
