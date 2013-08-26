@@ -315,7 +315,6 @@ ProtoJournal::do_save_existing_journal_core
 	return;
 }
 
-
 void
 ProtoJournal::do_load_journal_core
 (	PhatbooksDatabaseConnection& dbc,

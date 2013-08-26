@@ -245,7 +245,6 @@ OrdinaryJournal::OrdinaryJournal
 {
 }
 
-
 void
 OrdinaryJournal::do_output(ostream& os) const
 {

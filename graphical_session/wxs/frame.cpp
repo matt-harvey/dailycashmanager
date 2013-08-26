@@ -11,6 +11,15 @@
 #include "icon.xpm"
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
+
+// WARNING begin temp
+#include "draft_journal_reader.hpp"
+#include "entry.hpp"
+#include "ordinary_journal_reader.hpp"
+#include <sqloxx/database_transaction.hpp>
+using sqloxx::DatabaseTransaction;
+// WARNING end temp
+
 #include "persistent_journal.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -74,6 +83,14 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	(	wxID_ABOUT,
 		Frame::on_menu_about
 	)
+
+	// WARNING begin temp
+	EVT_MENU
+	(	s_setup_entry_sides_id,
+		Frame::on_menu_setup_entry_sides
+	)
+	// WARNING end temp
+	
 	PHATBOOKS_EVT_ACCOUNT_EDITING
 	(	wxID_ANY,
 		Frame::on_account_editing_requested
@@ -216,6 +233,10 @@ Frame::Frame
 	(	s_edit_draft_journal_id,
 		wxString("Edit selected &recurring transaction"),
 		wxString("Edit an exising recurring transaction")
+	);
+	m_edit_menu->Append
+	(	s_setup_entry_sides_id,
+		wxString("CONFIGURE ENTRY TRANSACTION SIDES")
 	);
 	m_menu_bar->Append(m_edit_menu, wxString("&Edit"));
 
@@ -388,6 +409,69 @@ Frame::on_menu_edit_draft_journal(wxCommandEvent& event)
 	edit_journal(journals[0]);
 	return;
 }
+
+// WARNING begin temp
+void
+Frame::on_menu_setup_entry_sides(wxCommandEvent& event)
+{
+	(void)event;  // Silence compiler re. unused parameter.
+
+	DatabaseTransaction db_transaction(m_database_connection);
+
+	OrdinaryJournalReader oj_reader(m_database_connection);
+	DraftJournalReader dj_reader(m_database_connection);
+
+	// bare scope
+	{
+		OrdinaryJournalReader::iterator it = oj_reader.begin();
+		OrdinaryJournalReader::iterator const end = oj_reader.end();
+		for ( ; it != end; ++it)
+		{
+			vector<Entry> entries = it->entries();
+			vector<Entry>::size_type i = 0;
+			vector<Entry>::size_type const f = it->fulcrum();
+			vector<Entry>::size_type sz = entries.size();
+			assert (f <= sz);
+			for ( ; i != f; ++i)
+			{
+				entries[i].set_transaction_side(transaction_side::source);	
+			}
+			for ( ; i != sz; ++i)
+			{
+				entries[i].set_transaction_side(transaction_side::destination);
+			}
+			it->save();
+		}
+	}
+
+	// bare scope
+	{
+		DraftJournalReader::iterator it = dj_reader.begin();
+		DraftJournalReader::iterator const end = dj_reader.end();
+		for ( ; it != end; ++it)
+		{
+			vector<Entry> entries = it->entries();
+			vector<Entry>::size_type i = 0;
+			vector<Entry>::size_type const f = it->fulcrum();
+			vector<Entry>::size_type sz = entries.size();
+			assert (f <= sz);
+			for ( ; i != f; ++i)
+			{
+				entries[i].set_transaction_side(transaction_side::source);	
+			}
+			for ( ; i != sz; ++i)
+			{
+				entries[i].set_transaction_side(transaction_side::destination);
+			}
+			it->save();
+		}
+	}
+
+	db_transaction.commit();
+
+	return;
+}
+// WARNING end temp
 
 void
 Frame::on_account_editing_requested(PersistentObjectEvent& event)

@@ -72,6 +72,9 @@ private:
 	void on_menu_edit_ordinary_journal(wxCommandEvent& event);
 	void on_menu_edit_draft_journal(wxCommandEvent& event);
 
+	// WARNING temp
+	void on_menu_setup_entry_sides(wxCommandEvent& event);
+
 	// Event handlers - other - handle PersistentObject editing requests
 	// fired.
 	void on_account_editing_requested(PersistentObjectEvent& event);	
@@ -104,6 +107,9 @@ private:
 	static int const s_edit_pl_account_id = s_edit_bs_account_id + 1;
 	static int const s_edit_ordinary_journal_id = s_edit_pl_account_id + 1;
 	static int const s_edit_draft_journal_id = s_edit_ordinary_journal_id + 1;
+
+	// WARNING temp
+	static int const s_setup_entry_sides_id = s_edit_draft_journal_id + 1;
 
 	PhatbooksDatabaseConnection& m_database_connection;
 

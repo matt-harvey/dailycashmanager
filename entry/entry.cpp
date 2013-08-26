@@ -36,8 +36,6 @@ namespace gregorian = boost::gregorian;
 namespace phatbooks
 {
 
-
-
 class Account;
 
 void
@@ -46,7 +44,6 @@ Entry::setup_tables(PhatbooksDatabaseConnection& dbc)
 	EntryImpl::setup_tables(dbc);
 	return;
 }
-
 
 Entry::Entry
 (	PhatbooksDatabaseConnection& p_database_connection
@@ -157,14 +154,12 @@ Entry::date() const
 	return journal<OrdinaryJournal>().date();
 }
 
-
 void
 Entry::mimic(Entry const& rhs)
 {
 	impl().mimic(rhs.impl());
 	return;
 }
-
 
 Entry::Entry(sqloxx::Handle<EntryImpl> const& p_handle):
 	PhatbooksPersistentObject(p_handle)
