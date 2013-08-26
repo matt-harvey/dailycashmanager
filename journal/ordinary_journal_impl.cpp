@@ -79,14 +79,6 @@ OrdinaryJournalImpl::set_comment(BString const& p_comment)
 }
 
 void
-OrdinaryJournalImpl::set_fulcrum(size_t p_fulcrum)
-{
-	load();
-	ProtoJournal::set_fulcrum(p_fulcrum);
-	return;
-}
-
-void
 OrdinaryJournalImpl::push_entry(Entry& entry)
 {
 	load();
@@ -119,13 +111,6 @@ OrdinaryJournalImpl::comment()
 {
 	load();
 	return ProtoJournal::comment();
-}
-
-size_t
-OrdinaryJournalImpl::fulcrum()
-{
-	load();
-	return ProtoJournal::fulcrum();
 }
 
 vector<Entry> const&

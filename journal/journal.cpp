@@ -4,6 +4,7 @@
 #include "column_creation.hpp"
 #include "journal.hpp"
 #include "entry.hpp"
+#include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include <consolixx/table.hpp>
 #include <jewel/debug_log.hpp>
@@ -22,8 +23,6 @@ using std::endl;
 using std::ostream;
 using std::string;
 using std::vector;
-
-
 
 
 namespace phatbooks
@@ -61,13 +60,6 @@ void
 Journal::set_comment(BString const& p_comment)
 {
 	do_set_comment(p_comment);
-	return;
-}
-
-void
-Journal::set_fulcrum(size_t p_fulcrum)
-{
-	do_set_fulcrum(p_fulcrum);
 	return;
 }
 
@@ -116,12 +108,6 @@ Journal::transaction_type() const
 	return do_get_transaction_type();
 }
 
-size_t
-Journal::fulcrum() const
-{
-	return do_get_fulcrum();
-}
-
 Decimal
 Journal::balance() const
 {
@@ -144,9 +130,16 @@ Journal::primary_amount() const
 {
 	Decimal total(0, 0);
 	vector<Entry> const& entry_vec = entries();
-	vector<Entry>::size_type i = fulcrum();
+	vector<Entry>::size_type i = 0;
 	vector<Entry>::size_type const sz = entry_vec.size();
-	for ( ; i != sz; ++i) total += entry_vec[i].amount();
+	for ( ; i != sz; ++i)
+	{
+		Entry const& entry = entry_vec[i];
+		if (entry.transaction_side() == transaction_side::destination)
+		{
+			total += entry.amount();
+		}
+	}
 	return is_actual()? total: -total;
 }
 

@@ -86,14 +86,6 @@ public:
 	void set_comment(BString const& p_comment);
 
 	/**
-	 * Set "fulcrum" for Journal. The fulcrum is the point at which the
-	 * notional "source" Entries end and the "destination" Entries
-	 * begin. This is important for display purposes in the UI.
-	 * If there is exactly 1 source Entry, then the fulcrum will be 1.
-	 */
-	void set_fulcrum(size_t p_fulcrum);
-
-	/**
 	 * Add an Entry to the Journal.
 	 *
 	 * @todo Figure out throwing behaviour. Should it check that
@@ -102,8 +94,6 @@ public:
 	void push_entry(Entry& entry);
 
 	void remove_entry(Entry& entry);
-
-	size_t fulcrum();
 
 	transaction_type::TransactionType transaction_type();
 

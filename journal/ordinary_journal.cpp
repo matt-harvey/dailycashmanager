@@ -10,6 +10,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
+#include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
@@ -105,6 +106,7 @@ OrdinaryJournal::create_opening_balance_journal
 	primary_entry.set_comment("Opening balance entry");
 	primary_entry.set_amount(primary_entry_amount);
 	primary_entry.set_whether_reconciled(true);
+	primary_entry.set_transaction_side(transaction_side::source);
 	ret.push_entry(primary_entry);
 
 	Entry balancing_entry(dbc);
@@ -112,6 +114,7 @@ OrdinaryJournal::create_opening_balance_journal
 	balancing_entry.set_comment("Opening balance entry");
 	balancing_entry.set_amount(-primary_entry_amount);
 	balancing_entry.set_whether_reconciled(false);
+	balancing_entry.set_transaction_side(transaction_side::destination);
 	ret.push_entry(balancing_entry);
 
 	ret.set_comment("Opening balance adjustment");
@@ -128,7 +131,6 @@ OrdinaryJournal::create_opening_balance_journal
 	// round to what would be expected by the user here; but this probably
 	// doesn't matter, as the user should never see the opening balance
 	// Journals directly.
-	ret.set_fulcrum(1);
 	ret.set_date_unrestricted
 	(	dbc.opening_balance_journal_date()
 	);
@@ -154,13 +156,6 @@ void
 OrdinaryJournal::do_set_comment(BString const& p_comment)
 {
 	impl().set_comment(p_comment);
-	return;
-}
-
-void
-OrdinaryJournal::do_set_fulcrum(size_t p_fulcrum)
-{
-	impl().set_fulcrum(p_fulcrum);
 	return;
 }
 
@@ -203,12 +198,6 @@ BString
 OrdinaryJournal::do_get_comment() const
 {
 	return impl().comment();
-}
-
-size_t
-OrdinaryJournal::do_get_fulcrum() const
-{
-	return impl().fulcrum();
 }
 
 vector<Entry> const&

@@ -45,13 +45,6 @@ namespace phatbooks
  * in regards to the \e planned purpose to which the wealth will be put. For
  * example, allocating $100.00 of one's earnings to planned expenditure on
  * food represents a budget transaction.
- *
- * @todo HIGH PRIORITY The "fulcrum" mechanism for keeping track of which
- * Entries are "source" and which are "destination", is quite fragile, and
- * is resulting in difficulties when dealing with splitting/unsplitting
- * within gui::TransactionCtrl. It would be better if the source/destination
- * status were simply stored as a boolean flag within each Entry. This should
- * make it much easier to manage things within gui::TransactionCtrl.
  */
 class Journal
 {
@@ -66,14 +59,6 @@ public:
 	);
 	void set_comment(BString const& p_comment);
 
-	/**
-	 * The fulcrum is the position, in the series of Entries, that is
-	 * one after the position of the final "source" Entry, and which is
-	 * the position of the first "destination" Entry. This affects how
-	 * the Journal is displayed in the GUI.
-	 */
-	void set_fulcrum(size_t p_fulcrum);
-
 	void push_entry(Entry& entry);
 	void remove_entry(Entry& entry);
 	void clear_entries();
@@ -84,14 +69,6 @@ public:
 	bool is_actual() const;
 
 	transaction_type::TransactionType transaction_type() const;
-
-	/**
-	 * The fulcrum is the position, in the series of Entries, that is
-	 * one after the position of the final "source" Entry, and which is
-	 * the position of the first "destination" Entry. This affects how
-	 * the Journal is displayed in the GUI.
-	 */
-	size_t fulcrum() const;
 
 	jewel::Decimal balance() const;
 
@@ -108,10 +85,8 @@ public:
 	bool is_balanced() const;
 
 	/**
-	 * @returns a Decimal being the sum of all the Entry amounts after the
-	 * fulcrum. This will generally be a positive number, assuming the
-	 * "source" Account/s will before the "fulcrum", and the "destination"
-	 * Accounts/s after.
+	 * @returns a Decimal being the sum of the amounts of all the
+	 * "destination" Entries in the Journal.
 	 */
 	jewel::Decimal primary_amount() const;
 
@@ -128,14 +103,12 @@ private:
 	(	transaction_type::TransactionType p_transaction_type
 	) = 0;
 	virtual void do_set_comment(BString const& p_comment) = 0;
-	virtual void do_set_fulcrum(size_t p_fulcrum) = 0;
 	virtual void do_push_entry(Entry& entry) = 0;
 	virtual void do_remove_entry(Entry& entry) = 0;
 	virtual void do_clear_entries() = 0;
 	virtual BString do_get_comment() const = 0;
 	virtual transaction_type::TransactionType
 		do_get_transaction_type() const = 0;
-	virtual size_t do_get_fulcrum() const = 0;
 
 	static void output_journal_aux(std::ostream& os, Journal const& oj);
 	

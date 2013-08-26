@@ -81,7 +81,6 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	instrument.set_name("AMALGAMATED BUDGET JOURNAL");
 	instrument.set_comment("");
 	instrument.set_transaction_type(transaction_type::envelope_transaction);
-	instrument.set_fulcrum(0);
 	Repeater repeater(dbc);
 	repeater.set_frequency(Frequency(1, interval_type::days));
 	repeater.set_next_date(gregorian::day_clock::local_day());
@@ -404,13 +403,13 @@ AmalgamatedBudget::regenerate_instrument()
 		balancing_entry.set_amount
 		(	-round(imbalance, ba.commodity().precision())
 		);
+		balancing_entry.set_transaction_side(transaction_side::destination);
 		fresh_journal.push_entry(balancing_entry);
 		assert (fresh_journal.is_balanced());
 	}
 	// WARNING The source and destination are the opposite way
 	// round to usual here. But it probably doesn't matter, as
 	// the user won't be seeing this Journal anyway.
-	fresh_journal.set_fulcrum(fresh_journal.entries().size());
 	m_instrument->mimic(fresh_journal);
 	m_instrument->save();
 
@@ -484,6 +483,7 @@ AmalgamatedBudget::reflect_entries(DraftJournal& p_journal)
 			entry.set_comment("");
 			entry.set_amount(-(it->second));
 			entry.set_whether_reconciled(false);
+			entry.set_transaction_side(transaction_side::source);
 			p_journal.push_entry(entry);
 		}
 	}

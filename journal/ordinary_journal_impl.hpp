@@ -74,11 +74,6 @@ public:
 	void set_comment(BString const& p_comment);
 
 	/**
-	 * @todo Document.
-	 */
-	void set_fulcrum(size_t p_fulcrum);
-
-	/**
 	 * @todo Figure out throwing behaviour.
 	 */
 	void push_entry(Entry& entry);
@@ -92,11 +87,6 @@ public:
 	 * extreme circumstances.
 	 */
 	BString comment();
-
-	/**
-	 * @todo Document.
-	 */
-	size_t fulcrum();
 
 	std::vector<Entry> const& entries();
 

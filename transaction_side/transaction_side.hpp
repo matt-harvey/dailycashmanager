@@ -9,10 +9,10 @@ namespace transaction_side
 	/**
 	 * Represents the notion of a particular side of a
 	 * Journal, being either the "source" or the "destination"
-	 * side. The source side contains those Entries that are
-	 * before the Journal::fulcrum(); and the destination side
-	 * contains those Entries that at or later than the Journal::fulcrum()
-	 * point.
+	 * side. "Source" transactions are usually CR and "destination"
+	 * usually DR; but this need not always be the case. In particular,
+	 * the signs may be the other way around in case we are reversing a
+	 * previous transaction.
 	 */
 	enum TransactionSide
 	{

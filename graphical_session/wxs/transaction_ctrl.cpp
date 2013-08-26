@@ -194,7 +194,6 @@ TransactionCtrl::TransactionCtrl
 	ProtoJournal proto_journal;
 	proto_journal.set_transaction_type(initial_transaction_type);
 	proto_journal.set_comment(BString());
-	proto_journal.set_fulcrum(source_accounts.size());
 
 	AccVec const* const account_vectors[] =
 	{	&source_accounts,
@@ -698,6 +697,7 @@ void
 TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
+	JEWEL_DEBUG_LOG_LOCATION;
 	assert (m_source_entry_ctrl);
 	assert (m_destination_entry_ctrl);
 	if (Validate() && TransferDataFromWindow())
@@ -706,11 +706,15 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 		{
 			if (m_journal)
 			{
+				JEWEL_DEBUG_LOG_LOCATION;
 				save_existing_journal();
+				JEWEL_DEBUG_LOG_LOCATION;
 			}
 			else
 			{
+				JEWEL_DEBUG_LOG_LOCATION;
 				post_journal();
+				JEWEL_DEBUG_LOG_LOCATION;
 			}
 		}
 		else
@@ -740,6 +744,7 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 			wxMessageBox(msg);
 		}
 	}
+	JEWEL_DEBUG_LOG_LOCATION;
 	return;
 }
 
@@ -784,10 +789,6 @@ TransactionCtrl::post_journal()
 	for (size_t i = 0; i != num_entry_controls; ++i)
 	{
 		vector<Entry> entries = entry_controls[i]->make_entries();
-		if (i == 0)
-		{
-			journal.set_fulcrum(entries.size());
-		}
 		for (vector<Entry>::size_type j = 0; j != entries.size(); ++j)
 		{
 			Entry entry = entries[j];
@@ -940,39 +941,51 @@ bool
 TransactionCtrl::save_existing_journal()
 {
 	assert (m_journal);
+	JEWEL_DEBUG_LOG_LOCATION;
 	assert (m_transaction_type_ctrl->transaction_type());
+	JEWEL_DEBUG_LOG_LOCATION;
 	transaction_type::TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
+	JEWEL_DEBUG_LOG_LOCATION;
 	m_journal->set_transaction_type(ttype);
+	JEWEL_DEBUG_LOG_LOCATION;
 
 	typedef vector<Entry> Vec;
 
 	// Start with the original Entries.
 	Vec entries = m_journal->entries();
+	JEWEL_DEBUG_LOG_LOCATION;
 
 	// Via the EntryGroupCtrl, additional Entries might have been inserted into,
 	// or removed from, the source Entries, the destination Entries, or both.
 	Vec doomed_entries;
+	JEWEL_DEBUG_LOG_LOCATION;
 
 	// Update entries with data from m_source_entry_ctrl and
 	// m_destination_entry_ctrl.
 	// Bare scope
 	{
 		Vec fresh_entries = m_source_entry_ctrl->make_entries();
-		m_journal->set_fulcrum(fresh_entries.size());
+		JEWEL_DEBUG_LOG_LOCATION;
 		Vec const fresh_destination_entries =
 			m_destination_entry_ctrl->make_entries();
+		JEWEL_DEBUG_LOG_LOCATION;
 		copy
 		(	fresh_destination_entries.begin(),
 			fresh_destination_entries.end(),
 			back_inserter(fresh_entries)
 		);
+		JEWEL_DEBUG_LOG_LOCATION;
 		Vec::size_type i = 0;
+		JEWEL_DEBUG_LOG_LOCATION;
 		Vec::size_type const sz = entries.size();
+		JEWEL_DEBUG_LOG_LOCATION;
 		for ( ; i != sz; ++i)
 		{
+			JEWEL_DEBUG_LOG_LOCATION;
 			if (i < fresh_entries.size())
 			{
+				JEWEL_DEBUG_LOG_LOCATION;
 				entries[i].mimic(fresh_entries[i]);
 				assert
 				(	entries[i].is_reconciled() ==
@@ -981,6 +994,7 @@ TransactionCtrl::save_existing_journal()
 			}
 			else
 			{
+				JEWEL_DEBUG_LOG_LOCATION;
 				doomed_entries.push_back(entries[i]);
 			}
 		}	

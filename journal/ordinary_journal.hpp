@@ -138,13 +138,11 @@ private:
 	(	transaction_type::TransactionType p_transaction_type
 	);
 	void do_set_comment(BString const& p_comment);
-	void do_set_fulcrum(size_t p_fulcrum);
 	void do_push_entry(Entry& entry);
 	void do_remove_entry(Entry& entry);
 	void do_clear_entries();
 	transaction_type::TransactionType do_get_transaction_type() const;
 	BString do_get_comment() const;
-	size_t do_get_fulcrum() const;
 	std::vector<Entry> const& do_get_entries() const;
 
 	// Virtual function inherited from Journal

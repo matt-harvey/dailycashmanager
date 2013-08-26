@@ -137,13 +137,6 @@ DraftJournal::do_set_comment(BString const& p_comment)
 }
 
 void
-DraftJournal::do_set_fulcrum(size_t p_fulcrum)
-{
-	impl().set_fulcrum(p_fulcrum);
-	return;
-}
-
-void
 DraftJournal::do_push_entry(Entry& entry)
 {
 	impl().push_entry(entry);
@@ -167,12 +160,6 @@ BString
 DraftJournal::do_get_comment() const
 {
 	return impl().comment();
-}
-
-size_t
-DraftJournal::do_get_fulcrum() const
-{
-	return impl().fulcrum();
 }
 
 BString
