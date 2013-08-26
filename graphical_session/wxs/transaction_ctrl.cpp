@@ -211,6 +211,14 @@ TransactionCtrl::TransactionCtrl
 			entry.set_comment(BString());
 			entry.set_amount(Decimal(0, acc_it->commodity().precision()));
 			entry.set_whether_reconciled(false);
+			if (i < source_accounts.size())
+			{
+				entry.set_transaction_side(transaction_side::source);
+			}
+			else
+			{
+				entry.set_transaction_side(transaction_side::destination);
+			}
 			proto_journal.push_entry(entry);
 		}
 	}

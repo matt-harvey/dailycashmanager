@@ -91,30 +91,20 @@ EntryGroupCtrl::EntryGroupCtrl
 	// TODO There should really be a function somewhere in the business
 	// layer which gives us a vector of Entries for a given Journal
 	// and TransactionSide.
-	vector<Entry> const& all_entries = p_journal.entries();
-	vector<Entry>::const_iterator fulcrum_it = all_entries.begin();
-	for (vector<Entry>::size_type i = 0; i != p_journal.fulcrum(); ++i)
-	{
-		++fulcrum_it;
-	}
 	vector<Entry> entries;
-	switch (m_transaction_side)
+	vector<Entry> const& all_entries = p_journal.entries();
+	vector<Entry>::const_iterator it = all_entries.begin();
+	vector<Entry>::const_iterator const end = all_entries.end();
+	for ( ; it != end; ++it)
 	{
-	case transaction_side::source:
-		entries.assign(all_entries.begin(), fulcrum_it);
-		break;
-	case transaction_side::destination:
-		entries.assign(fulcrum_it, all_entries.end());
-		break;
-	default:
-		assert (false);
+		if (it->transaction_side() == m_transaction_side)
+		{
+			entries.push_back(*it);
+		}
 	}
-
 	bool const multiple_entries = (entries.size() > 1);
 	configure_top_row(multiple_entries);
-
 	configure_available_account_types();	
-
 	optional<Decimal> maybe_previous_row_amount;
 	for (vector<Entry>::size_type i = 0; i != entries.size(); ++i)
 	{
@@ -265,6 +255,8 @@ EntryGroupCtrl::make_entries() const
 	
 		// Leave reconciliation status as as, as user cannot change it
 		// via TransactionCtrl / EntryGroupCtrl.
+
+		entry.set_transaction_side(m_transaction_side);
 
 		ret.push_back(entry);
 	}
