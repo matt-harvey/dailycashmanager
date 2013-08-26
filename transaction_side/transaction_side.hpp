@@ -16,8 +16,10 @@ namespace transaction_side
 	 */
 	enum TransactionSide
 	{
-		source,
-		destination
+		source = 0,
+		destination,
+		num_transaction_sides  // do not insert enumerators below here
+
 	};
 
 };  // namespace transaction_side

@@ -19,6 +19,7 @@
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "b_string.hpp"
+#include "transaction_side.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -47,6 +48,26 @@ namespace phatbooks
 
 void EntryImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
+	dbc.execute_sql
+	(	"create table transaction_sides"
+		"("
+			"transaction_side_id integer primary key"
+		");"
+	);
+	using transaction_side::TransactionSide;
+	for
+	(	int i = 0;
+		i != static_cast<int>(transaction_side::num_transaction_sides);
+		++i
+	)
+	{
+		SQLStatement statement
+		(	dbc,
+			"insert into transaction_sides(transaction_side_id) values(:p)"
+		);
+		statement.bind(":p", i);
+		statement.step_final();
+	}
 	dbc.execute_sql
 	(	"create table entries"
 		"("
