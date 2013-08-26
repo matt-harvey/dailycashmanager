@@ -7,6 +7,7 @@
 #include "entry_impl.hpp"
 #include "finformat.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include "transaction_side.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -109,6 +110,13 @@ public:
 	void set_whether_reconciled(bool p_is_reconciled);
 
 	/**
+	 * Set the TransactionSide for the Entry (see documentation for
+	 * transaction_side::TransactionSide).
+	 */
+	void set_transaction_side
+	(	transaction_side::TransactionSide p_transaction_side);
+
+	/**
 	 * @returns Entry comment, i.e. descriptive text generally entered by
 	 * the user.
 	 */
@@ -132,7 +140,9 @@ public:
 	Account account() const;
 
 	bool is_reconciled() const;
-	
+
+	transaction_side::TransactionSide transaction_side() const;
+
 	/**
 	 * @returns the journal to which this Entry is attached.
 	 *

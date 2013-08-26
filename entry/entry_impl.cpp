@@ -76,7 +76,8 @@ void EntryImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"comment text, "
 			"account_id not null references accounts, "
 			"amount integer not null, "
-			"is_reconciled not null references booleans"
+			"is_reconciled not null references booleans, "
+			"transaction_side_id not null references transaction_sides"
 		");"
 	);
 	dbc.execute_sql
@@ -156,6 +157,15 @@ EntryImpl::set_whether_reconciled(bool p_is_reconciled)
 	return;
 }
 
+void
+EntryImpl::set_transaction_side
+(	transaction_side::TransactionSide p_transaction_side
+)
+{
+	load();
+	m_data->transaction_side = p_transaction_side;
+}
+
 Account
 EntryImpl::account()
 {
@@ -185,6 +195,13 @@ EntryImpl::is_reconciled()
 	return value(m_data->is_reconciled);
 }
 
+transaction_side::TransactionSide
+EntryImpl::transaction_side()
+{
+	load();
+	return value(m_data->transaction_side);
+}
+
 void
 EntryImpl::swap(EntryImpl& rhs)
 {
@@ -208,7 +225,8 @@ EntryImpl::do_load()
 	EntryImpl temp(*this);
 	SQLStatement statement
 	(	database_connection(),
-		"select account_id, comment, amount, journal_id, is_reconciled "
+		"select account_id, comment, amount, journal_id, is_reconciled, "
+		"transaction_side_id "
 		" from entries where "
 		"entry_id = :p"
 	);
@@ -229,6 +247,10 @@ EntryImpl::do_load()
 	temp.m_data->journal_id = statement.extract<Id>(3);
 	temp.m_data->is_reconciled =
 		static_cast<bool>(statement.extract<int>(4));
+	temp.m_data->transaction_side =
+		static_cast<transaction_side::TransactionSide>
+		(	statement.extract<int>(5)
+		);
 	
 	swap(temp);
 	return;
@@ -246,6 +268,7 @@ EntryImpl::process_saving_statement(SQLStatement& statement)
 	(	":is_reconciled",
 		static_cast<int>(value(m_data->is_reconciled))
 	);
+	statement.bind(":transaction_side_id", value(m_data->transaction_side));
 	statement.step_final();
 	return;
 }
@@ -281,7 +304,8 @@ EntryImpl::do_save_existing()
 		"comment = :comment, "
 		"account_id = :account_id, "
 		"amount = :amount, "
-		"is_reconciled = :is_reconciled "
+		"is_reconciled = :is_reconciled, "
+		"transaction_side_id = :transaction_side_id "
 		"where entry_id = :entry_id"
 	);
 	updater.bind(":entry_id", id());
@@ -305,7 +329,8 @@ EntryImpl::do_save_new()
 			"comment, "
 			"account_id, "
 			"amount, "
-			"is_reconciled"
+			"is_reconciled, "
+			"transaction_side_id"
 		") "
 		"values"
 		"("
@@ -313,7 +338,8 @@ EntryImpl::do_save_new()
 			":comment, "
 			":account_id, "
 			":amount, "
-			":is_reconciled"
+			":is_reconciled, "
+			":transaction_side_id"
 		")"
 	);
 	process_saving_statement(inserter);
@@ -328,6 +354,7 @@ EntryImpl::do_ghostify()
 	clear(m_data->comment);
 	clear(m_data->amount);
 	clear(m_data->is_reconciled);
+	clear(m_data->transaction_side);
 	return;
 }
 
@@ -376,6 +403,7 @@ EntryImpl::mimic(EntryImpl& rhs)
 	temp.set_comment(rhs.comment());
 	temp.set_amount(rhs.amount());
 	temp.set_whether_reconciled(rhs.is_reconciled());
+	temp.set_transaction_side(rhs.transaction_side());
 	swap(temp);
 	return;
 }

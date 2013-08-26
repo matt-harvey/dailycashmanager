@@ -18,6 +18,7 @@
 #include "account.hpp"
 #include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "transaction_side.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -73,6 +74,10 @@ public:
 	
 	void set_whether_reconciled(bool p_is_reconciled);
 
+	void set_transaction_side
+	(	transaction_side::TransactionSide p_transaction_side
+	);
+
 	/**
 	 * Does not throw except possibly \c std::bad_alloc in
 	 * extreme circumstances.
@@ -89,6 +94,8 @@ public:
 	Account account();
 
 	bool is_reconciled();
+
+	transaction_side::TransactionSide transaction_side();
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
@@ -140,6 +147,7 @@ struct EntryImpl::EntryData
 	boost::optional<BString> comment;
 	boost::optional<jewel::Decimal> amount;
 	boost::optional<bool> is_reconciled;
+	boost::optional<transaction_side::TransactionSide> transaction_side;
 };
 
 

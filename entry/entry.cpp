@@ -9,6 +9,7 @@
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include "b_string.hpp"
+#include "transaction_side.hpp"
 #include <boost/lexical_cast.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -62,7 +63,6 @@ Entry::Entry
 {
 }
 
-
 Entry
 Entry::create_unchecked
 (	PhatbooksDatabaseConnection& p_database_connection,
@@ -76,7 +76,6 @@ Entry::create_unchecked
 		)
 	);
 }
-
 
 void
 Entry::set_journal_id(Journal::Id p_journal_id)
@@ -113,6 +112,15 @@ Entry::set_whether_reconciled(bool p_is_reconciled)
 	return;
 }
 
+void
+Entry::set_transaction_side
+(	transaction_side::TransactionSide p_transaction_side
+)
+{
+	impl().set_transaction_side(p_transaction_side);
+	return;
+}
+
 BString
 Entry::comment() const
 {
@@ -135,6 +143,12 @@ bool
 Entry::is_reconciled() const
 {
 	return impl().is_reconciled();
+}
+
+transaction_side::TransactionSide
+Entry::transaction_side() const
+{
+	return impl().transaction_side();
 }
 
 gregorian::date
