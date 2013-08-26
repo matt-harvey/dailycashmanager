@@ -64,6 +64,7 @@ using jewel::value;
 using std::back_inserter;
 using std::copy;
 using std::endl;
+using std::find;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
