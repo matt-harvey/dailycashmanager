@@ -233,8 +233,7 @@ EntryGroupCtrl::make_entries() const
 	for (Size i = 0; i != sz; ++i)
 	{
 		EntryRow const& entry_row = m_entry_rows[i];
-		Entry entry(m_database_connection);
-		entry.mimic(entry_row.entry);
+		Entry entry = entry_row.entry;
 		entry.set_account(entry_row.account_ctrl->account());
 		entry.set_comment(wx_to_bstring(entry_row.comment_ctrl->GetValue()));
 
@@ -256,7 +255,7 @@ EntryGroupCtrl::make_entries() const
 		// Leave reconciliation status as as, as user cannot change it
 		// via TransactionCtrl / EntryGroupCtrl.
 
-		entry.set_transaction_side(m_transaction_side);
+		assert (entry.transaction_side() == m_transaction_side);
 
 		ret.push_back(entry);
 	}
@@ -317,6 +316,7 @@ EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 	entry.set_whether_reconciled(false);
 	entry.set_comment(BString());
 	entry.set_amount(Decimal(0, account.commodity().precision()));
+	entry.set_transaction_side(m_transaction_side);
 	push_row(entry, optional<Decimal>(), true);
 	assert (!m_entry_rows.empty());
 	autobalance(m_entry_rows.back().amount_ctrl);

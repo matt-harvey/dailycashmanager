@@ -697,7 +697,6 @@ void
 TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	JEWEL_DEBUG_LOG_LOCATION;
 	assert (m_source_entry_ctrl);
 	assert (m_destination_entry_ctrl);
 	if (Validate() && TransferDataFromWindow())
@@ -706,15 +705,11 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 		{
 			if (m_journal)
 			{
-				JEWEL_DEBUG_LOG_LOCATION;
 				save_existing_journal();
-				JEWEL_DEBUG_LOG_LOCATION;
 			}
 			else
 			{
-				JEWEL_DEBUG_LOG_LOCATION;
 				post_journal();
-				JEWEL_DEBUG_LOG_LOCATION;
 			}
 		}
 		else
@@ -744,7 +739,6 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 			wxMessageBox(msg);
 		}
 	}
-	JEWEL_DEBUG_LOG_LOCATION;
 	return;
 }
 
@@ -940,102 +934,57 @@ TransactionCtrl::remove_journal()
 bool
 TransactionCtrl::save_existing_journal()
 {
+	// TODO There is probably a simpler and more efficient way to do
+	// this.
 	assert (m_journal);
-	JEWEL_DEBUG_LOG_LOCATION;
 	assert (m_transaction_type_ctrl->transaction_type());
-	JEWEL_DEBUG_LOG_LOCATION;
 	transaction_type::TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
-	JEWEL_DEBUG_LOG_LOCATION;
 	m_journal->set_transaction_type(ttype);
-	JEWEL_DEBUG_LOG_LOCATION;
 
 	typedef vector<Entry> Vec;
 
 	// Start with the original Entries.
-	Vec entries = m_journal->entries();
-	JEWEL_DEBUG_LOG_LOCATION;
+	Vec old_entries = m_journal->entries();
 
-	// Via the EntryGroupCtrl, additional Entries might have been inserted into,
-	// or removed from, the source Entries, the destination Entries, or both.
+	// Via the EntryGroupCtrl, additional Entries might have been inserted
+	// into, or removed from, the source Entries, the destination Entries,
+	// or both.
 	Vec doomed_entries;
-	JEWEL_DEBUG_LOG_LOCATION;
 
-	// Update entries with data from m_source_entry_ctrl and
-	// m_destination_entry_ctrl.
-	// Bare scope
+	Vec current_entries = m_source_entry_ctrl->make_entries();
+	Vec const current_destination_entries =
+		m_destination_entry_ctrl->make_entries();
+	copy
+	(	current_destination_entries.begin(),
+		current_destination_entries.end(),
+		back_inserter(current_entries)
+	);
+
+	for (vector<Entry>::size_type i = 0; i != old_entries.size(); ++i)
 	{
-		Vec fresh_entries = m_source_entry_ctrl->make_entries();
-		JEWEL_DEBUG_LOG_LOCATION;
-		Vec const fresh_destination_entries =
-			m_destination_entry_ctrl->make_entries();
-		JEWEL_DEBUG_LOG_LOCATION;
-		copy
-		(	fresh_destination_entries.begin(),
-			fresh_destination_entries.end(),
-			back_inserter(fresh_entries)
-		);
-		JEWEL_DEBUG_LOG_LOCATION;
-		Vec::size_type i = 0;
-		JEWEL_DEBUG_LOG_LOCATION;
-		Vec::size_type const sz = entries.size();
-		JEWEL_DEBUG_LOG_LOCATION;
-		for ( ; i != sz; ++i)
+		Entry const old_entry = old_entries[i];
+		vector<Entry>::const_iterator const location =
+			find(current_entries.begin(), current_entries.end(), old_entry);
+		if (location == current_entries.end())
 		{
-			JEWEL_DEBUG_LOG_LOCATION;
-			if (i < fresh_entries.size())
-			{
-				JEWEL_DEBUG_LOG_LOCATION;
-				entries[i].mimic(fresh_entries[i]);
-				assert
-				(	entries[i].is_reconciled() ==
-					fresh_entries[i].is_reconciled()
-				);
-			}
-			else
-			{
-				JEWEL_DEBUG_LOG_LOCATION;
-				doomed_entries.push_back(entries[i]);
-			}
-		}	
-		for ( ; i < fresh_entries.size(); ++i)
-		{
-			assert (i >= entries.size());
-			entries.push_back(fresh_entries[i]);
+			doomed_entries.push_back(old_entry);
 		}
 	}
 	// Clear the existing entries from journal, then reinsert all the updated
 	// entries, then remove the doomed entries.
 	m_journal->clear_entries();
-	// Bare scope
+	for (vector<Entry>::size_type i = 0; i != current_entries.size(); ++i)
 	{
-		Vec::size_type i = 0;
-		Vec::size_type sz = entries.size();
-#		ifndef NDEBUG
-			Entry::Id test_id = 0;
-#		endif
-		for ( ; i != sz; ++i)
-		{
-#			ifndef NDEBUG
-				if (entries[i].has_id())
-				{
-					assert (entries[i].id() > test_id);
-					test_id = entries[i].id();
-				}
-#			endif
-			m_journal->push_entry(entries[i]);
-		}
+		m_journal->push_entry(current_entries[i]);
 	}
+	assert (m_journal->entries().size() == current_entries.size());
 	vector<Entry::Id> doomed_entry_ids;
-	// Bare scope
+	for (vector<Entry>::size_type i = 0; i != doomed_entries.size(); ++i)
 	{
-		Vec::size_type i = 0;
-		Vec::size_type const sz = doomed_entries.size();
-		for ( ; i != sz; ++i)
-		{
-			m_journal->remove_entry(doomed_entries[i]);
-			doomed_entry_ids.push_back(doomed_entries[i].id());
-		}
+		m_journal->push_entry(doomed_entries[i]);  // Is this necessary?
+		m_journal->remove_entry(doomed_entries[i]);
+		doomed_entry_ids.push_back(doomed_entries[i].id());
 	}
 		
 	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
