@@ -333,11 +333,14 @@ EntryListCtrl::process_push_candidate_entry(Entry const& p_entry)
 }
 
 void
-EntryListCtrl::process_insertion_candidate_entry(Entry const& p_entry)
+EntryListCtrl::process_insertion_candidate_entry
+(	Entry const& p_entry,
+	long p_row
+)
 {
 	assert (p_entry.has_id());
 	do_process_candidate_entry_for_summary(p_entry);
-	if (do_approve_entry(p_entry)) insert_entry(p_entry);
+	if (do_approve_entry(p_entry)) insert_entry(p_entry, p_row);
 	return;
 }
 
@@ -387,8 +390,6 @@ EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
 void
 EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 {
-	// WARNING This has the potential to cause serious flicker.
-	// Under Windows we could do freeze/thaw.
 	if (!p_journal.is_actual())
 	{
 		return;
@@ -399,11 +400,26 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 	wxString const wx_date_string = date_format_wx(p_journal.date());
 	for ( ; it != end; ++it)
 	{
-		// TODO This causes each Entry to go to the end of its "date block"
-		// even if it was ALREADY THERE at the beginning. This could bewilder
-		// users.
-		remove_if_present(it->id());
-		process_insertion_candidate_entry(*it);
+		long updated_pos = -1;
+		assert (it->has_id());
+		IdSet::const_iterator const jt = m_id_set.find(it->id());
+		if (jt != m_id_set.end())
+		{
+			long const pos = FindItem(-1, it->id());
+			assert
+			(	GetItemData(pos) ==
+				static_cast<unsigned long>(it->id())
+			);
+			gregorian::date const old_date = date_displayed(pos);
+			do_process_removal_for_summary(pos);
+			DeleteItem(pos);
+			m_id_set.erase(jt);
+			if (old_date == it->date())
+			{
+				updated_pos = pos;	
+			}
+		}
+		process_insertion_candidate_entry(*it, updated_pos);
 	}
 	set_column_widths();
 	return;
@@ -538,10 +554,11 @@ EntryListCtrl::push_back_entry(Entry const& p_entry)
 }
 
 void
-EntryListCtrl::insert_entry(Entry const& p_entry)
+EntryListCtrl::insert_entry(Entry const& p_entry, long p_row)
 {
 	gregorian::date const date = p_entry.date();
-	long const pos = row_for_date(date);
+	assert (p_row >= -1);
+	long const pos = ((p_row == -1)? row_for_date(date): p_row);
 	InsertItem(pos, date_format_wx(date));
 	do_set_non_date_columns(pos, p_entry);
 	Entry::Id const id = p_entry.id();

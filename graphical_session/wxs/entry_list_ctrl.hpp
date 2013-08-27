@@ -188,10 +188,19 @@ private:
 	void insert_date_column();
 	void populate();
 	void process_push_candidate_entry(Entry const& p_entry);
-	void process_insertion_candidate_entry(Entry const& p_entry);
 
-	// This inserts in correct date order
-	void insert_entry(Entry const& p_entry);
+	// If p_row is set to -1 (as it is by default) and the candidate Entry
+	// is "approved", then the row it will be inserted into will be determined
+	// automatically; otherwise, the row will be given by p_row.
+	void process_insertion_candidate_entry
+	(	Entry const& p_entry,
+		long p_row = -1
+	);
+
+	// This inserts in correct date order (if p_row is -1) or at an explicitly
+	// specified row (if p_row is non-negative). If p_row is less than -1,
+	// then behaviour is undefined.
+	void insert_entry(Entry const& p_entry, long p_row = -1);
 	
 	void remove_if_present(Entry::Id p_entry_id);
 
