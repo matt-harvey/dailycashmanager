@@ -118,6 +118,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	(	wxID_ANY,
 		Frame::on_budget_edited_event
 	)
+	PHATBOOKS_EVT_RECONCILIATION_STATUS
+	(	wxID_ANY,
+		Frame::on_reconciliation_status_event
+	)
 END_EVENT_TABLE()
 
 Frame::Frame
@@ -531,6 +535,15 @@ Frame::on_budget_edited_event(PersistentObjectEvent& event)
 	assert (m_top_panel);
 	m_top_panel->update_for_amended_budget(account);
 	return;
+}
+
+void
+Frame::on_reconciliation_status_event(PersistentObjectEvent& event)
+{
+	wxWindowUpdateLocker const update_locker(this);
+	Entry const entry(m_database_connection, event.po_id());
+	assert (m_top_panel);
+	m_top_panel->update_for_reconciliation_status(entry);
 }
 
 void

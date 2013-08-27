@@ -6,6 +6,7 @@
 #include "finformat.hpp"
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
+#include "persistent_object_event.hpp"
 #include "reconciliation_status_marker.hpp"
 #include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -269,6 +270,15 @@ ReconciliationEntryListCtrl::on_item_right_click(wxListEvent& event)
 		m_reconciled_closing_balance -= entry.amount();
 	}
 	entry.save();
+
+	assert (entry.has_id());
+	assert (entry.id() == entry_id);
+	PersistentObjectEvent::fire
+	(	this,
+		PHATBOOKS_RECONCILIATION_STATUS_EVENT,
+		entry_id
+	);
+
 	ReconciliationListPanel* parent =
 		dynamic_cast<ReconciliationListPanel*>(GetParent());
 	assert (parent);

@@ -453,6 +453,14 @@ TopPanel::update_for_amended_budget(Account const& p_account)
 }
 
 void
+TopPanel::update_for_reconciliation_status(Entry const& p_entry)
+{
+	assert (m_transaction_ctrl);
+	m_transaction_ctrl->update_for_reconciliation_status(p_entry);
+	return;
+}
+
+void
 TopPanel::update_for_deleted_ordinary_journal(OrdinaryJournal::Id p_doomed_id)
 {
 	(void)p_doomed_id;  // Silence compiler re. unused parameter.

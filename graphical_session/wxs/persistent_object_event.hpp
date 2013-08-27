@@ -190,6 +190,11 @@ BEGIN_DECLARE_EVENT_TYPES()
 	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_BUDGET_EDITED_EVENT, -1)
 
+	/**
+	 * To notify of a change in the reconciliation status of an Entry.
+	 */
+	DECLARE_EVENT_TYPE(PHATBOOKS_RECONCILIATION_STATUS_EVENT, -1)
+
 END_DECLARE_EVENT_TYPES()
 
 
@@ -283,6 +288,13 @@ typedef
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
+
+#define PHATBOOKS_EVT_RECONCILIATION_STATUS(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_RECONCILIATION_STATUS_EVENT, id, -1, \
+    (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
+	(wxNotifyEventFunction) \
+	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
+
 
 
 

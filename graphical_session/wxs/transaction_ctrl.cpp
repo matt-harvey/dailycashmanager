@@ -596,38 +596,7 @@ TransactionCtrl::configure_for_journal_editing()
 
 	// If there are any reconciled Entries in the Journal, then
 	// make it impossible for the user to edit it.
-	//
-	// TODO HIGH PRIORITY - make it so that TransactionCtrl will be updated
-	// accordingly as Entries change reconciliation status via
-	// ReconciliationEntryListCtrl.
-	EntryGroupCtrl* const entry_controls[] =
-	{	m_source_entry_ctrl,
-		m_destination_entry_ctrl
-	};
-	bool contains_reconciled = false;
-	for (size_t j = 0; j != num_elements(entry_controls); ++j)
-	{
-		if (entry_controls[j]->reflect_reconciliation_statuses())
-		{
-			contains_reconciled = true;
-		}
-	}
-	if (contains_reconciled)
-	{
-		// TODO We should have tooltip explaining why disabled.
-		// TODO HIGH PRIORITY If contains_reconciled is true, then
-		// we need to disable ALL split and unsplit buttons (in
-		// both EntryGroupCtrls), otherwise when the IDs of the Entries
-		// get "realigned" on saving, this can mess up the integrity
-		// of which Entry is the reconciled one. We can possibly fix
-		// this by consulting EntryGroupCtrl::EntryRow::entry, but it would
-		// be tricky.
-		assert (m_delete_button);
-		m_delete_button->Disable();
-		m_transaction_type_ctrl->Disable();
-		m_date_ctrl->Disable();
-		m_primary_amount_ctrl->Disable();
-	}
+	reflect_reconciliation_statuses();
 
 	// "Admin"
 	top_sizer().Fit(this);
@@ -652,6 +621,14 @@ Decimal
 TransactionCtrl::primary_amount() const
 {
 	return m_primary_amount_ctrl->amount();
+}
+
+void
+TransactionCtrl::update_for_reconciliation_status(Entry const& p_entry)
+{
+	(void)p_entry;  // silence compiler re. unused parameter
+	reflect_reconciliation_statuses();
+	return;
 }
 
 void
@@ -746,29 +723,37 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 	return;
 }
 
-/*
 void
-TransactionCtrl::disable_editing()
+TransactionCtrl::reflect_reconciliation_statuses()
 {
-	enable_editing(false);
+	EntryGroupCtrl* const entry_controls[] =
+	{	m_source_entry_ctrl,
+		m_destination_entry_ctrl
+	};
+	bool contains_reconciled = false;
+	for (size_t i = 0; i != num_elements(entry_controls); ++i)
+	{
+		if (entry_controls[i]->reflect_reconciliation_statuses())
+		{
+			contains_reconciled = true;
+		}
+	}
+	wxWindow* const general_controls[] =
+	{	m_delete_button,
+		m_transaction_type_ctrl,
+		m_date_ctrl,
+		m_primary_amount_ctrl
+	};
+	for (size_t i = 0; i != num_elements(general_controls); ++i)
+	{
+		wxWindow* control = general_controls[i];
+		if (control)
+		{
+			control->Enable(!contains_reconciled);
+		}
+	}
 	return;
 }
-
-void
-TransactionCtrl::enable_editing(bool p_enable)
-{
-	wxWindowUpdateLocker const update_locker(this);
-	wxWindowList& children = GetChildren();
-	wxWindowList::iterator it = children.begin();
-	wxWindowList::iterator const end = children.end();
-	for ( ; it != end; ++it)
-	{
-		// wxWindowList actually stores pointers to pointers...
-		(*it)->Enable(p_enable);
-	}
-	m_cancel_button->Enable();
-}
-*/
 
 bool
 TransactionCtrl::post_journal()

@@ -22,6 +22,7 @@ namespace phatbooks
 // Begin forward declarations
 
 class DraftJournal;
+class Entry;
 class OrdinaryJournal;
 class PersistentJournal;
 class PhatbooksDatabaseConnection;
@@ -138,16 +139,19 @@ public:
 	);
 
 	jewel::Decimal primary_amount() const;
+
+	/**
+	 * Update to reflect possible change in reconciliation status
+	 * of \e p_entry.
+	 */
+	void update_for_reconciliation_status(Entry const& p_entry);
 	
 private:
 	void on_cancel_button_click(wxCommandEvent& event);
 	void on_delete_button_click(wxCommandEvent& event);
 	void on_ok_button_click(wxCommandEvent& event);
 
-	/*
-	void disable_editing();
-	void enable_editing(bool p_enable = true);
-	*/
+	void reflect_reconciliation_statuses();
 
 	// Adds some blank space to the right to allow space for vertical
 	// scrollbar.

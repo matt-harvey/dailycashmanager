@@ -133,6 +133,18 @@ public:
 	void update_for_amended_budget(Account const& p_account);
 
 	/**
+	 * Update the display to reflect the current state of \e p_entry
+	 * with respect just to whether it is reconciled.
+	 *
+	 * WARNING This is messy and "coupled", but: this intentionally does
+	 * \e not update the
+	 * ReconciliationListPanel / ReconciliationEntryListCtrl, as it
+	 * is assumed these are the \e source of the change - we don't update
+	 * these \e again, on pain of circularity.
+	 */
+	void update_for_reconciliation_status(Entry const& p_entry);
+
+	/**
 	 * Configure the TransactionCtrl to reflect the currently selected
 	 * Accounts (if any).
 	 *

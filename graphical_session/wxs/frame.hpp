@@ -88,6 +88,7 @@ private:
 	void on_draft_entry_deleted_event(PersistentObjectEvent& event);
 	void on_ordinary_entry_deleted_event(PersistentObjectEvent& event);
 	void on_budget_edited_event(PersistentObjectEvent& event);
+	void on_reconciliation_status_event(PersistentObjectEvent& event);
 
 	// The actual function which conducts Account editing.
 	void edit_account(Account& p_account);
