@@ -94,6 +94,8 @@ using TCLAP::ArgException;
 using TCLAP::CmdLine;
 using TCLAP::UnlabeledValueArg;
 
+#include <jewel/decimal.hpp>
+
 int main(int argc, char** argv)
 {
 	try

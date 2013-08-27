@@ -35,6 +35,7 @@
 #include <boost/optional.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/unordered_set.hpp>
 #include <jewel/array_utilities.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
@@ -58,6 +59,7 @@
 
 using boost::optional;
 using boost::scoped_ptr;
+using boost::unordered_set;
 using jewel::num_elements;
 using jewel::Decimal;
 using jewel::value;
@@ -65,6 +67,7 @@ using std::back_inserter;
 using std::copy;
 using std::endl;
 using std::find;
+using std::set;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -776,12 +779,11 @@ TransactionCtrl::post_journal()
 		value(m_transaction_type_ctrl->transaction_type());
 	journal.set_transaction_type(ttype);
 
-	size_t const num_entry_controls = 2;
-	EntryGroupCtrl const* const entry_controls[num_entry_controls] =
+	EntryGroupCtrl const* const entry_controls[] =
 	{	m_source_entry_ctrl,
 		m_destination_entry_ctrl
 	};
-	for (size_t i = 0; i != num_entry_controls; ++i)
+	for (size_t i = 0; i != num_elements(entry_controls); ++i)
 	{
 		vector<Entry> entries = entry_controls[i]->make_entries();
 		for (vector<Entry>::size_type j = 0; j != entries.size(); ++j)
@@ -935,61 +937,49 @@ TransactionCtrl::remove_journal()
 bool
 TransactionCtrl::save_existing_journal()
 {
-	// TODO There is probably a simpler and more efficient way to do
-	// this.
 	assert (m_journal);
 	assert (m_transaction_type_ctrl->transaction_type());
 	transaction_type::TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
 	m_journal->set_transaction_type(ttype);
 
-	typedef vector<Entry> Vec;
-
-	// Start with the original Entries.
-	Vec old_entries = m_journal->entries();
-
-	// Via the EntryGroupCtrl, additional Entries might have been inserted
-	// into, or removed from, the source Entries, the destination Entries,
-	// or both.
-	Vec doomed_entries;
-
-	Vec current_entries = m_source_entry_ctrl->make_entries();
-	Vec const current_destination_entries =
-		m_destination_entry_ctrl->make_entries();
-	copy
-	(	current_destination_entries.begin(),
-		current_destination_entries.end(),
-		back_inserter(current_entries)
-	);
-
+	// We need to collect the ids of the removed entries so the
+	// GUI can be updated for their removal. We start out assuming all
+	// the original entries are "doomed". We will erase from the "doomed"
+	// IDs as we verify that each Entry is still present in the edited
+	// Journal.
+	unordered_set<Entry::Id> doomed;
+	vector<Entry> const old_entries = m_journal->entries();
 	for (vector<Entry>::size_type i = 0; i != old_entries.size(); ++i)
 	{
-		Entry const old_entry = old_entries[i];
-		vector<Entry>::const_iterator const location =
-			find(current_entries.begin(), current_entries.end(), old_entry);
-		if (location == current_entries.end())
+		assert (old_entries[i].has_id());
+		doomed.insert(old_entries[i].id());
+	}
+
+	// Clear the existing Entries from Journal, then reinsert the updated
+	// Entries. As each "surviving" Entry is reinserted, we erase its Id from
+	// the "doomed" Entry::Ids.
+	m_journal->clear_entries();
+	EntryGroupCtrl const* const entry_controls[] =
+	{	m_source_entry_ctrl,
+		m_destination_entry_ctrl
+	};
+	for (size_t i = 0; i != num_elements(entry_controls); ++i)
+	{
+		vector<Entry> entries = entry_controls[i]->make_entries();
+		for (vector<Entry>::size_type j = 0; j != entries.size(); ++j)
 		{
-			doomed_entries.push_back(old_entry);
+			Entry entry = entries[j];
+			m_journal->push_entry(entry);
+			if (entry.has_id()) doomed.erase(entry.id());
 		}
 	}
-	// Clear the existing entries from journal, then reinsert all the updated
-	// entries, then remove the doomed entries.
-	m_journal->clear_entries();
-	for (vector<Entry>::size_type i = 0; i != current_entries.size(); ++i)
-	{
-		m_journal->push_entry(current_entries[i]);
-	}
-	assert (m_journal->entries().size() == current_entries.size());
-	vector<Entry::Id> doomed_entry_ids;
-	for (vector<Entry>::size_type i = 0; i != doomed_entries.size(); ++i)
-	{
-		m_journal->push_entry(doomed_entries[i]);  // Is this necessary?
-		m_journal->remove_entry(doomed_entries[i]);
-		doomed_entry_ids.push_back(doomed_entries[i].id());
-	}
-		
-	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
 
+	// We now need to put the ids of the removed entries in a vector so the
+	// GUI can be updated for their removal.
+	vector<Entry::Id> const doomed_entry_ids(doomed.begin(), doomed.end());
+
+	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
 	if (maybe_frequency)
 	{
 		DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal);
