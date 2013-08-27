@@ -388,8 +388,6 @@ EntryGroupCtrl::push_row
 	bool p_multiple_entries
 )
 {
-	// TODO HIGH PRIORITY Finish redoing below.
-
 	// EntryRow
 	EntryRow entry_row(p_entry);
 
