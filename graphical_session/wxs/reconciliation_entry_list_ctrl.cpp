@@ -229,18 +229,20 @@ ReconciliationEntryListCtrl::do_process_candidate_entry_for_summary
 void
 ReconciliationEntryListCtrl::do_process_removal_for_summary(long p_row)
 {
+	// Item is in the visible list so must be removed from m_closing_balance
 	Decimal const amount = amount_for_row(p_row);
 	m_closing_balance -= amount;
-#	ifndef NDEBUG
-		wxListItem item;
-		item.SetId(p_row);
-		item.SetColumn(reconciled_col_num());
-		GetItem(item);
-		// TODO HIGH PRIORITY This assertion can fail!
-		assert (item.GetText() == reconciliation_status_marker(false));
-		// as we don't allow user to delete reconciled Entries.
-		// so we don't need to adjust m_reconciled_closing_balance here.
-#	endif
+
+	// Check whether the item is marked as reconciled in the visible list.
+	// If it is, then its removal should impact m_reconciled_closing_balance.
+	wxListItem item;
+	item.SetId(p_row);
+	item.SetColumn(reconciled_col_num());
+	GetItem(item);
+	if (item.GetText() == reconciliation_status_marker(true))
+	{
+		m_reconciled_closing_balance -= amount;	
+	}
 	return;	
 }
 
