@@ -65,6 +65,9 @@
 // but we're not actually handling these exceptions for the user. The
 // program would just crash.
 
+// TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
+// i.e. laptop.
+
 #include "application.hpp"
 #include "b_string.hpp"
 #include "graphical_session.hpp"
