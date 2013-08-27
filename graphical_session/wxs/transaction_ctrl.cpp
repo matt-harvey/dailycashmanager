@@ -949,7 +949,7 @@ TransactionCtrl::save_existing_journal()
 	// IDs as we verify that each Entry is still present in the edited
 	// Journal.
 	unordered_set<Entry::Id> doomed;
-	vector<Entry> const old_entries = m_journal->entries();
+	vector<Entry> const& old_entries = m_journal->entries();
 	for (vector<Entry>::size_type i = 0; i != old_entries.size(); ++i)
 	{
 		assert (old_entries[i].has_id());
