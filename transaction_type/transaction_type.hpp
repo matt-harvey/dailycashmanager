@@ -4,6 +4,7 @@
 #define GUARD_transaction_type_hpp
 
 #include "b_string.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <cassert>
 #include <set>
 #include <vector>
@@ -56,6 +57,14 @@ available_transaction_types
 (	PhatbooksDatabaseConnection& p_database_connection
 );
 
+/**
+ * @todo Document.
+ */
+transaction_type::TransactionType
+commonest_actual_transaction_type_since
+(	PhatbooksDatabaseConnection& p_database_connection,
+	boost::gregorian::date const& p_min_date
+);
 
 /**
  * @returns a natural language verb or or other phrase corresponding to
@@ -81,8 +90,7 @@ transaction_type_from_verb(BString const& p_phrase);
  * @returns true if and only if p_transaction_type is a type of actual
  * transaction, as opposed to budget transaction.
  */
-bool
-transaction_type_is_actual
+bool transaction_type_is_actual
 (	transaction_type::TransactionType p_transaction_type
 );
 

@@ -5,8 +5,11 @@
 #include "account_reader.hpp"
 #include "account_type.hpp"
 #include "b_string.hpp"
+#include "date.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <cassert>
 #include <map>
 #include <set>
@@ -14,6 +17,8 @@
 
 // TODO The implementations of the various functions defined in this file
 // seem more complicated than they should be.
+
+namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
@@ -26,6 +31,7 @@ using transaction_type::balance_sheet_transaction;
 using transaction_type::envelope_transaction;
 using transaction_type::generic_transaction;
 using transaction_type::num_transaction_types;
+using sqloxx::SQLStatement;
 using std::set;
 using std::vector;
 
@@ -177,6 +183,59 @@ available_transaction_types
 			}
 		}			
 	}
+	return ret;
+}
+
+TransactionType
+commonest_actual_transaction_type_since
+(	PhatbooksDatabaseConnection& p_database_connection,
+	gregorian::date const& p_min_date
+)
+{
+	typedef map<TransactionType, size_t> Map;
+	Map map;
+	vector<TransactionType> const& ttypes = transaction_types();
+	for (vector<TransactionType>::size_type i = 0; i != ttypes.size(); ++i)
+	{
+		map[ttypes[i]] = 0;
+	}
+	SQLStatement statement
+	(	p_database_connection,
+		"select transaction_type_id, count(transaction_type_id) from "
+		"journals join ordinary_journal_detail using(journal_id) where "
+		"date >= :min_date group by transaction_type_id"
+	);
+	statement.bind(":min_date", julian_int(p_min_date));
+	while (statement.step())
+	{
+		TransactionType const ttype =
+			static_cast<TransactionType>(statement.extract<int>(0));
+		size_t const count =
+			static_cast<size_t>(statement.extract<int>(1));
+		map[ttype] = count;
+	}
+	Map::const_iterator it = map.begin();
+	Map::const_iterator const end = map.end();
+	TransactionType ret = it->first;
+	size_t max = it->second;
+	for ( ; it != end; ++it)
+	{
+		TransactionType const ttype = it->first;
+		size_t const count = it->second;
+		if (!transaction_type_is_actual(ret))
+		{
+			ret = ttype;
+			max = count;
+		}
+		if (transaction_type_is_actual(ttype) && (count > max))
+		{
+			ret = ttype;
+			max = count;
+		}
+	}
+	// TODO To be correct, should we throw here rather than do an
+	// assert.
+	assert (transaction_type_is_actual(ret));
 	return ret;
 }
 
