@@ -6,15 +6,18 @@
 #include "account_reader.hpp"
 #include "b_string.hpp"
 #include "commodity.hpp"
+#include "entry_reader.hpp"
 #include "finformat.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "b_string.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 #include <consolixx/alignment.hpp>
 #include <consolixx/column.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -25,11 +28,12 @@ using phatbooks::account_super_type::AccountSuperType;
 using sqloxx::Handle;
 using boost::shared_ptr;
 using jewel::Decimal;
+using std::map;
 using std::string;
 using std::vector;
 
 namespace alignment = consolixx::alignment;
-
+namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
@@ -336,5 +340,34 @@ BString account_concepts_phrase(bool p_include_article)
 	return ret;
 }
 
+void actual_account_usage_map
+(	PhatbooksDatabaseConnection& p_database_connection,
+	gregorian::date const& p_min_date,
+	map<Account::Id, size_t>& out
+)
+{
+	// TODO Make this more efficient.
+	AccountReader const a_reader(p_database_connection);
+	AccountReader::const_iterator a_it = a_reader.begin();
+	AccountReader::const_iterator const a_end = a_reader.end();
+	for ( ; a_it != a_end; ++a_it)
+	{
+		out[a_it->id()] = 0;
+	}
+
+	ActualOrdinaryEntryReader const e_reader(p_database_connection);
+	ActualOrdinaryEntryReader::const_iterator e_it = e_reader.begin();
+	ActualOrdinaryEntryReader::const_iterator const e_end = e_reader.end();
+	for ( ; e_it != e_end; ++e_it)
+	{
+		if (e_it->date() >= p_min_date)
+		{
+			++out[e_it->account().id()];
+		}
+	}
+
+	return;
+}
+	
 
 }   // namespace phatbooks

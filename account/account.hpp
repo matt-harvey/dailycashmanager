@@ -8,10 +8,12 @@
 #include "b_string.hpp"
 #include "budget_item.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -318,6 +320,22 @@ BString account_concept_name
  * be either "an" or "a" depending on the returned string.
  */
 BString account_concepts_phrase(bool p_include_article = false);
+
+/**
+ * Populates \e out with data indicating, for each Account::Id, the
+ * number of <em>actual, ordinary</em> Entries using the corresponding
+ * Account, dated on or after \e p_min_date.
+ *
+ * @todo Could have a potentially more efficient version of this function
+ * which instead of taking a PhatbooksDatabaseConnection&, takes a pair
+ * of Entry iterators (which could then be re-used from an existing
+ * ActualOrdinaryEntryReader).
+ */
+void actual_account_usage_map
+(	PhatbooksDatabaseConnection& p_database_connection,
+	boost::gregorian::date const& p_min_date,
+	std::map<Account::Id, size_t>& out
+);
 
 }  // namespace phatbooks
 
