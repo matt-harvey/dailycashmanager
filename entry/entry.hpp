@@ -158,8 +158,6 @@ public:
 	 * @returns the posting date of the Entry, assuming it is associated
 	 * with an OrdinaryJournal. If it is associated with another kind of
 	 * Journal, then behaviour is undefined.
-	 *
-	 * Note this function is a bit slow.
 	 */
 	boost::gregorian::date date() const;
 

@@ -83,7 +83,19 @@ account_types(account_super_type::AccountSuperType p_account_super_type)
 	}
 	assert (false);
 }
-		
+
+vector<account_super_type::AccountSuperType> const&
+account_super_types()
+{
+	static vector<account_super_type::AccountSuperType> ret;
+	if (ret.empty())
+	{
+		ret.push_back(account_super_type::balance_sheet);
+		ret.push_back(account_super_type::pl);
+	}
+	assert (!ret.empty());
+	return ret;
+}
 
 vector<BString> const&
 account_type_names()

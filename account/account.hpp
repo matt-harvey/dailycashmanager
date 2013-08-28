@@ -8,7 +8,6 @@
 #include "b_string.hpp"
 #include "budget_item.hpp"
 #include "phatbooks_persistent_object.hpp"
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/general_typedefs.hpp>
@@ -322,20 +321,14 @@ BString account_concept_name
 BString account_concepts_phrase(bool p_include_article = false);
 
 /**
- * Populates \e out with data indicating, for each Account::Id, the
- * number of <em>actual, ordinary</em> Entries using the corresponding
- * Account, dated on or after \e p_min_date.
- *
- * @todo Could have a potentially more efficient version of this function
- * which instead of taking a PhatbooksDatabaseConnection&, takes a pair
- * of Entry iterators (which could then be re-used from an existing
- * ActualOrdinaryEntryReader).
+ * @returns a map which indicates, for each AccountSuperType,
+ * the Account of that AccountSuperType which has the largest number of
+ * ActualOrdinaryEntries (however, the budget balancing Account is
+ * never included, nor are any pure_envelope Accounts).
  */
-void actual_account_usage_map
-(	PhatbooksDatabaseConnection& p_database_connection,
-	boost::gregorian::date const& p_min_date,
-	std::map<Account::Id, size_t>& out
-);
+std::map<account_super_type::AccountSuperType, Account::Id>
+favourite_accounts(PhatbooksDatabaseConnection& p_database_connection);
+
 
 }  // namespace phatbooks
 

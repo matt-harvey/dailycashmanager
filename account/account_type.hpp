@@ -49,6 +49,9 @@ super_type(account_type::AccountType p_account_type);
 std::vector<account_type::AccountType> const&
 account_types();
 
+std::vector<account_super_type::AccountSuperType> const&
+account_super_types();
+
 std::vector<account_type::AccountType> const&
 account_types(account_super_type::AccountSuperType p_account_super_type);
 

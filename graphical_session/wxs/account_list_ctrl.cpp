@@ -118,7 +118,7 @@ void
 AccountListCtrl::on_item_activated(wxListEvent& event)
 {
 	wxString const account_name = GetItemText(event.GetIndex());
-	Account account(m_database_connection, account_name);
+	Account account(m_database_connection, wx_to_bstring(account_name));
 
 	// Fire an Account editing request. This will be handled higher up
 	// the window hierarchy.
@@ -260,6 +260,23 @@ AccountListCtrl::default_account() const
 	return ret;
 }
 
+void
+AccountListCtrl::select_only(Account const& p_account)
+{
+	assert (p_account.has_id());  // precondition	
+
+	// WARNING This is quite inefficient, but probably doesn't matter.
+	size_t const sz = GetItemCount();	
+	for (size_t i = 0; i != sz; ++i)
+	{
+		BString const account_name = wx_to_bstring(GetItemText(i));
+		Account const account(m_database_connection, account_name);
+		long const filter = (wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+		long const flags = ((account == p_account)? filter: 0);
+		SetItemState(i, flags, filter);
+	}
+	return;
+}
 
 
 }  // namespace gui

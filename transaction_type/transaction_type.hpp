@@ -58,15 +58,6 @@ available_transaction_types
 );
 
 /**
- * @todo Document.
- */
-transaction_type::TransactionType
-commonest_actual_transaction_type_since
-(	PhatbooksDatabaseConnection& p_database_connection,
-	boost::gregorian::date const& p_min_date
-);
-
-/**
  * @returns a natural language verb or or other phrase corresponding to
  * a p_tranaction_type; for example, "Spend".
  */

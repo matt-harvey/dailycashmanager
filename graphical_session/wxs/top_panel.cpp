@@ -18,6 +18,7 @@
 #include "transaction_ctrl.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
+#include <map>
 #include <boost/optional.hpp>
 #include <jewel/array_utilities.hpp>
 #include <jewel/decimal.hpp>
@@ -35,6 +36,7 @@ using boost::optional;
 using jewel::Decimal;
 using jewel::num_elements;
 using jewel::value;
+using std::map;
 using std::vector;
 
 
@@ -136,9 +138,6 @@ TopPanel::TopPanel
 // what is "update", and when each such function gets called (i.e. once, or
 // every update, or...?).
 
-// TODO The TransactionCtrl and the DraftJournalListCtrl swap places in the
-// display when updated. Need to fix.
-
 void
 TopPanel::configure_account_lists()
 {
@@ -161,6 +160,21 @@ TopPanel::configure_account_lists()
 	(	m_pl_account_list,
 		wxSizerFlags(3).Expand().
 			Border(wxNORTH | wxSOUTH | wxWEST, standard_border())
+	);
+	map<account_super_type::AccountSuperType, Account::Id> const fav_accts =
+		favourite_accounts(m_database_connection);
+	assert (fav_accts.size() == 2);
+	m_bs_account_list->select_only
+	(	Account
+		(	m_database_connection,
+			fav_accts.at(account_super_type::balance_sheet)
+		)
+	);
+	m_pl_account_list->select_only
+	(	Account
+		(	m_database_connection,
+			fav_accts.at(account_super_type::pl)
+		)
 	);
 	m_notebook_page_accounts->SetSizer(page_1_sizer);
 	page_1_sizer->Fit(m_notebook_page_accounts);

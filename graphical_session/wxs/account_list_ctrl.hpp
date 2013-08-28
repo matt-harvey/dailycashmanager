@@ -81,6 +81,14 @@ public:
 	 */
 	boost::optional<Account> default_account() const;
 
+	/**
+	 * Causes \e p_account to be selected, if it is present, and causes
+	 * all other Accounts in the list to be deselected.
+	 *
+	 * Precondition: \e p_account must have an Id.
+	 */
+	void select_only(Account const& p_account);
+
 private:
 
 	AccountListCtrl

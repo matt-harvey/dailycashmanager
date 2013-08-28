@@ -11,7 +11,6 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "b_string.hpp"
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 #include <consolixx/alignment.hpp>
 #include <consolixx/column.hpp>
@@ -32,12 +31,54 @@ using std::map;
 using std::string;
 using std::vector;
 
+// for debugging
+#include <jewel/debug_log.hpp>
+#include <iostream>
+using std::endl;
+
+
 namespace alignment = consolixx::alignment;
-namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
 
+namespace
+{
+	/**
+	 * Populates \e out with data indicating, for each Account::Id, the
+	 * number of <em>actual, ordinary</em> Entries using the corresponding
+	 * Account.
+	 *
+	 * @todo Could have a potentially more efficient version of this function
+	 * which instead of taking a PhatbooksDatabaseConnection&, takes a pair
+	 * of Entry iterators (which could then be re-used from an existing
+	 * ActualOrdinaryEntryReader).
+	 */
+	void actual_account_usage_map
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		map<Account::Id, size_t>& out
+	)
+	{
+		AccountReader const a_reader(p_database_connection);
+		AccountReader::const_iterator a_it = a_reader.begin();
+		AccountReader::const_iterator const a_end = a_reader.end();
+		for ( ; a_it != a_end; ++a_it)
+		{
+			out[a_it->id()] = 0;
+		}
+
+		ActualOrdinaryEntryReader const e_reader(p_database_connection);
+		ActualOrdinaryEntryReader::const_iterator e_it = e_reader.begin();
+		ActualOrdinaryEntryReader::const_iterator const e_end = e_reader.end();
+		for ( ; e_it != e_end; ++e_it)
+		{
+			++out[e_it->account().id()];
+		}
+
+		return;
+	}
+
+}  // end anonymous namespace
 
 
 void
@@ -340,34 +381,48 @@ BString account_concepts_phrase(bool p_include_article)
 	return ret;
 }
 
-void actual_account_usage_map
-(	PhatbooksDatabaseConnection& p_database_connection,
-	gregorian::date const& p_min_date,
-	map<Account::Id, size_t>& out
-)
+map<account_super_type::AccountSuperType, Account::Id>
+favourite_accounts(PhatbooksDatabaseConnection& p_database_connection)
 {
-	// TODO Make this more efficient.
-	AccountReader const a_reader(p_database_connection);
-	AccountReader::const_iterator a_it = a_reader.begin();
-	AccountReader::const_iterator const a_end = a_reader.end();
-	for ( ; a_it != a_end; ++a_it)
+	map<account_super_type::AccountSuperType, Account::Id> ret;
+	map<account_super_type::AccountSuperType, size_t> max_counts;
+	map<Account::Id, size_t> account_map;
+	actual_account_usage_map(p_database_connection, account_map);
+	vector<account_super_type::AccountSuperType> const& super_types =
+		account_super_types();
+	for
+	(	vector<account_super_type::AccountSuperType>::size_type i = 0;
+		i != super_types.size();
+		++i
+	)
 	{
-		out[a_it->id()] = 0;
+		max_counts[super_types[i]] = 0;
 	}
-
-	ActualOrdinaryEntryReader const e_reader(p_database_connection);
-	ActualOrdinaryEntryReader::const_iterator e_it = e_reader.begin();
-	ActualOrdinaryEntryReader::const_iterator const e_end = e_reader.end();
-	for ( ; e_it != e_end; ++e_it)
+	map<Account::Id, size_t>::const_iterator it = account_map.begin();
+	map<Account::Id, size_t>::const_iterator const end = account_map.end();
+	Account const balancing_acct = p_database_connection.balancing_account();
+	for ( ; it != end; ++it)
 	{
-		if (e_it->date() >= p_min_date)
+		Account const account(p_database_connection, it->first);
+		size_t const count = it->second;
+		account_super_type::AccountSuperType const stype =
+			super_type(account.account_type());
+		if
+		(	(	(account_map[account.id()] >= max_counts[stype]) ||
+				(ret[stype] == balancing_acct.id())
+			)
+			&&
+			(	(account != balancing_acct)
+			)
+		)
 		{
-			++out[e_it->account().id()];
+			assert (account.has_id());
+			assert (it->first == account.id());
+			ret[stype] = account.id();
+			max_counts[stype] = count;
 		}
 	}
-
-	return;
+	return ret;
 }
-	
 
 }   // namespace phatbooks
