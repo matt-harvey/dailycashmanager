@@ -26,6 +26,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "persistent_journal.hpp"
 #include "persistent_object_event.hpp"
+#include "proto_journal.hpp"
 #include "repeater.hpp"
 #include "sizing.hpp"
 #include "top_panel.hpp"
@@ -123,14 +124,17 @@ namespace
 
 }  // end anonymous namespace
 
+
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
 	wxSize const& p_size,
-	vector<Account> const& p_balance_sheet_accounts,
-	vector<Account> const& p_pl_accounts,
-	PhatbooksDatabaseConnection& p_database_connection
+	OrdinaryJournal const& p_journal
 ):
-	GriddedScrolledPanel(p_parent, p_size, p_database_connection),
+	GriddedScrolledPanel
+	(	p_parent,
+		p_size,
+		p_journal.database_connection()
+	),
 	m_transaction_type_ctrl(0),
 	m_source_entry_ctrl(0),
 	m_destination_entry_ctrl(0),
@@ -142,106 +146,77 @@ TransactionCtrl::TransactionCtrl
 	m_ok_button(0),
 	m_journal(0)
 {
-	assert (!p_balance_sheet_accounts.empty() || !p_pl_accounts.empty());
-	assert (p_balance_sheet_accounts.size() + p_pl_accounts.size() >= 2);
-	
-	// Figure out the natural TransactionType given the Accounts we have
-	// been passed. We will use this to initialize the TransactionTypeCtrl.
-	Account account_x(database_connection());
-	Account account_y(p_database_connection);
-	if (p_balance_sheet_accounts.empty())
-	{
-		assert (p_pl_accounts.size() >= 2);
-		account_x = p_pl_accounts[0];
-		account_y = p_pl_accounts[1];
-	}
-	else if (p_pl_accounts.empty())
-	{
-		assert (p_balance_sheet_accounts.size() >= 2);
-		account_x = p_balance_sheet_accounts[0];
-		account_y = p_balance_sheet_accounts[1];
-	}
-	else
-	{
-		assert (!p_balance_sheet_accounts.empty());
-		assert (!p_pl_accounts.empty());
-		account_x = p_balance_sheet_accounts[0];
-		account_y = p_pl_accounts[0];
-	}
-	if (account_y.account_type() == account_type::revenue)
-	{
-		using std::swap;
-		swap(account_x, account_y);
-	}
-	assert (account_x.has_id());
-	assert (account_y.has_id());
+	m_journal = new OrdinaryJournal(p_journal);
+	configure_for_journal_editing();
+}
 
-	transaction_type::TransactionType const initial_transaction_type =
-		natural_transaction_type(account_x, account_y);
-	assert_transaction_type_validity(initial_transaction_type);
+TransactionCtrl::TransactionCtrl
+(	TopPanel* p_parent,
+	wxSize const& p_size,
+	DraftJournal const& p_journal
+):
+	GriddedScrolledPanel
+	(	p_parent,
+		p_size,
+		p_journal.database_connection()
+	),
+	m_transaction_type_ctrl(0),
+	m_source_entry_ctrl(0),
+	m_destination_entry_ctrl(0),
+	m_primary_amount_ctrl(0),
+	m_frequency_ctrl(0),
+	m_date_ctrl(0),
+	m_cancel_button(0),
+	m_ok_button(0),
+	m_journal(0)
+{
+	m_journal = new DraftJournal(p_journal);
+	configure_for_journal_editing();
+}
+
+TransactionCtrl::TransactionCtrl
+(	TopPanel* p_parent,
+	wxSize const& p_size,
+	ProtoJournal const& p_journal,
+	PhatbooksDatabaseConnection& p_database_connection
+):
+	GriddedScrolledPanel
+	(	p_parent,
+		p_size,
+		p_database_connection
+	),
+	m_transaction_type_ctrl(0),
+	m_source_entry_ctrl(0),
+	m_destination_entry_ctrl(0),
+	m_primary_amount_ctrl(0),
+	m_frequency_ctrl(0),
+	m_date_ctrl(0),
+	m_cancel_button(0),
+	m_ok_button(0),
+	m_journal(0)
+{
 	wxSize text_box_size;
 	configure_top_controls
-	(	initial_transaction_type,
+	(	p_journal.transaction_type(),
 		text_box_size,
 		Decimal(0, database_connection().default_commodity().precision()),
 		available_transaction_types(database_connection())
 	);
-
-	// Rows for entering Entry details
-
-	typedef vector<Account> AccVec;
-	AccVec source_accounts;
-	source_accounts.push_back(account_x);
-	AccVec destination_accounts;
-	destination_accounts.push_back(account_y);
-
-	ProtoJournal proto_journal;
-	proto_journal.set_transaction_type(initial_transaction_type);
-	proto_journal.set_comment(BString());
-
-	AccVec const* const account_vectors[] =
-	{	&source_accounts,
-		&destination_accounts
-	};
-	for (size_t i = 0; i != num_elements(account_vectors); ++i)
-	{
-		AccVec::const_iterator acc_it = account_vectors[i]->begin();
-		AccVec::const_iterator const acc_end = account_vectors[i]->end();
-		for ( ; acc_it != acc_end; ++acc_it)
-		{
-			Entry entry(database_connection());
-			entry.set_account(*acc_it);
-			entry.set_comment(BString());
-			entry.set_amount(Decimal(0, acc_it->commodity().precision()));
-			entry.set_whether_reconciled(false);
-			if (i < source_accounts.size())
-			{
-				entry.set_transaction_side(transaction_side::source);
-			}
-			else
-			{
-				entry.set_transaction_side(transaction_side::destination);
-			}
-			proto_journal.push_entry(entry);
-		}
-	}
-
-	assert (text_box_size.x == medium_width());
-
 	m_source_entry_ctrl = new EntryGroupCtrl
 	(	this,
 		text_box_size,
-		proto_journal,
+		p_journal,
 		transaction_side::source,
 		database_connection()
 	);
 	m_destination_entry_ctrl = new EntryGroupCtrl
 	(	this,
 		text_box_size,
-		proto_journal,
+		p_journal,
 		transaction_side::destination,
 		database_connection()
 	);
+	assert (text_box_size.x == medium_width());
 	top_sizer().Add
 	(	m_source_entry_ctrl,
 		wxGBPosition(current_row(), 0),
@@ -311,63 +286,6 @@ TransactionCtrl::TransactionCtrl
 	top_sizer().SetSizeHints(this);
 	FitInside();
 	Layout();
-}
-
-TransactionCtrl::TransactionCtrl
-(	TopPanel* p_parent,
-	wxSize const& p_size,
-	OrdinaryJournal const& p_journal
-):
-	GriddedScrolledPanel
-	(	p_parent,
-		p_size,
-		p_journal.database_connection()
-	),
-	m_transaction_type_ctrl(0),
-	m_source_entry_ctrl(0),
-	m_destination_entry_ctrl(0),
-	m_primary_amount_ctrl(0),
-	m_frequency_ctrl(0),
-	m_date_ctrl(0),
-	m_cancel_button(0),
-	m_delete_button(0),
-	m_ok_button(0),
-	m_journal(0)
-{
-	// TODO Make it so that, given this is an existing Journal we don't allow the user
-	// to edit the TransactionType (or else maybe they can only change the
-	// TransactionType to transaction_type::generic_transaction).
-
-	// TODO Make it so that, given this is an existing Journal, the user cannot change
-	// the Journal from OrdinaryJournal to DraftJournal or vice versa. This would
-	// involve restricting the options available in the FrequencyCtrl.
-
-	m_journal = new OrdinaryJournal(p_journal);
-	configure_for_journal_editing();
-}
-
-TransactionCtrl::TransactionCtrl
-(	TopPanel* p_parent,
-	wxSize const& p_size,
-	DraftJournal const& p_journal
-):
-	GriddedScrolledPanel
-	(	p_parent,
-		p_size,
-		p_journal.database_connection()
-	),
-	m_transaction_type_ctrl(0),
-	m_source_entry_ctrl(0),
-	m_destination_entry_ctrl(0),
-	m_primary_amount_ctrl(0),
-	m_frequency_ctrl(0),
-	m_date_ctrl(0),
-	m_cancel_button(0),
-	m_ok_button(0),
-	m_journal(0)
-{
-	m_journal = new DraftJournal(p_journal);
-	configure_for_journal_editing();
 }
 
 TransactionCtrl::~TransactionCtrl()

@@ -6,15 +6,21 @@
 #include "account_type.hpp"
 #include "draft_journal_list_ctrl.hpp"
 #include "draft_journal_reader.hpp"
+#include "entry.hpp"
 #include "entry_list_panel.hpp"
 #include "frame.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "proto_journal.hpp"
 #include "reconciliation_list_panel.hpp"
 #include "report_panel.hpp"
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
+#include "transaction_side.hpp"
+#include "transaction_type.hpp"
 #include <boost/optional.hpp>
+#include <jewel/array_utilities.hpp>
+#include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/notebook.h>
 #include <wx/panel.h>
@@ -26,6 +32,8 @@
 #include <vector>
 
 using boost::optional;
+using jewel::Decimal;
+using jewel::num_elements;
 using jewel::value;
 using std::vector;
 
@@ -267,11 +275,66 @@ TopPanel::configure_transaction_ctrl
 		m_right_column_sizer->Detach(m_transaction_ctrl);
 		old = m_transaction_ctrl;
 	}
+
+	ProtoJournal proto_journal;
+
+	// TODO Move this next bit into a separate function
+	// bare scope
+	{
+		Account account_x(m_database_connection);
+		Account account_y(m_database_connection);
+		if (p_balance_sheet_accounts.empty())
+		{
+			assert (p_pl_accounts.size() >= 2);
+			account_x = p_pl_accounts[0];
+			account_y = p_pl_accounts[1];
+		}
+		else if (p_pl_accounts.empty())
+		{
+			assert (p_balance_sheet_accounts.size() >= 2);
+			account_x = p_balance_sheet_accounts[0];
+			account_y = p_balance_sheet_accounts[1];
+		}
+		else
+		{
+			assert (!p_balance_sheet_accounts.empty());
+			assert (!p_pl_accounts.empty());
+			account_x = p_balance_sheet_accounts[0];
+			account_y = p_pl_accounts[0];
+		}
+		if (account_y.account_type() == account_type::revenue)
+		{
+			using std::swap;
+			swap(account_x, account_y);
+		}
+		assert (account_x.has_id());
+		assert (account_y.has_id());
+		transaction_type::TransactionType const initial_transaction_type =
+			natural_transaction_type(account_x, account_y);
+		assert_transaction_type_validity(initial_transaction_type);
+		proto_journal.set_transaction_type(initial_transaction_type);
+		Account const accounts[] = {account_x, account_y};
+		for (size_t i = 0; i != num_elements(accounts); ++i)
+		{
+			Account const& account = accounts[i];
+			Entry entry(m_database_connection);
+			entry.set_account(account);
+			entry.set_comment(BString());
+			entry.set_transaction_side
+			(	(i == 0)?
+				transaction_side::source:
+				transaction_side::destination
+			);
+			entry.set_amount(Decimal(0, account.commodity().precision()));
+			entry.set_whether_reconciled(false);
+			proto_journal.push_entry(entry);	
+		}
+	}
+
 	m_transaction_ctrl = new TransactionCtrl
 	(	this,
 		wxSize(GetClientSize().x, 10000),
-		p_balance_sheet_accounts,
-		p_pl_accounts,
+		proto_journal,
 		m_database_connection
 	);
 	m_right_column_sizer->Insert

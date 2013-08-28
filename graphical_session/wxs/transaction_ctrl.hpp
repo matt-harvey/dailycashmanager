@@ -25,6 +25,7 @@ class DraftJournal;
 class Entry;
 class OrdinaryJournal;
 class PersistentJournal;
+class ProtoJournal;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -60,52 +61,13 @@ class TopPanel;
  * @todo It's not obvious to the user that the TransactionCtrl actually is
  * for creating new transactions (rather than for, say, filtering the
  * information that is displayed to the left).
+ *
+ * @todo HIGH PRIORITY Boundary around comment boxes and date box looks
+ * wrong under certain circumstances under Windows.
  */
 class TransactionCtrl: public GriddedScrolledPanel
 {
 public:
-	
-	/**
-	 * All Accounts in p_accounts should be associated with the same
-	 * PhatbooksDatabaseConnection.
-	 *
-	 * Note, with the vectors of Accounts passed to p_balance_sheet_accounts
-	 * and p_pl_accounts, not every Account in these vectors will necessarily
-	 * be used. If both vectors are non-empty then only the 0th Account
-	 * in each vector will be used. If one of the vectors is empty,
-	 * then the front 2 Accounts in the other vector will be used, and that's
-	 * all.
-	 *
-	 * @todo This constructor is entirely non-obvious in the way it
-	 * behaves. Instead of passing two vectors, we would expect to pass two
-	 * Accounts, one the source Account and the other the destination
-	 * Account.
-	 *
-	 * @param p_parent parent panel
-	 *
-	 * @param p_balance_sheet_accounts a sequence of Accounts
-	 * all of which must be balance sheet Accounts (i.e. of
-	 * account_super_type::balance_sheet). May be empty providing
-	 * p_pl_accounts has at least 2 elements.
-	 *
-	 * @param p_pl_accounts a sequence of Accounts all of which
-	 * must be P&L Accounts (i.e. of account_super_type::pl). May be empty
-	 * providing p_balance_sheet_accounts has at least 2 elements.
-	 *
-	 * @param p_database_connection database connection. Must be the same
-	 * one that the Accounts in p_balance_sheet_accounts and
-	 * p_pl_accounts are associated with.
-	 * 
-	 * @todo HIGH PRIORITY Boundary around comment boxes and date box looks
-	 * wrong under certain circumstances under Windows.
-	 */
-	TransactionCtrl
-	(	TopPanel* p_parent,
-		wxSize const& p_size,
-		std::vector<Account> const& p_balance_sheet_accounts,
-		std::vector<Account> const& p_pl_accounts,
-		PhatbooksDatabaseConnection& p_database_connection
-	);
 
 	/**
 	 * Create a TransactionCtrl to allow the user to edit an
@@ -125,6 +87,18 @@ public:
 	(	TopPanel* p_parent,
 		wxSize const& p_size,
 		DraftJournal const& p_journal
+	);
+
+	/**
+	 * Create a TransactionCtrl to allow the user to edit a
+	 * ProtoJournal (which they will then be able to convert into
+	 * a PersistentJournal and save).
+	 */
+	TransactionCtrl
+	(	TopPanel* p_parent,
+		wxSize const& p_size,
+		ProtoJournal const& p_journal,
+		PhatbooksDatabaseConnection& p_database_connection
 	);
 
 	~TransactionCtrl();
