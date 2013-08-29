@@ -19,6 +19,7 @@
 #include "budget_item.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "visibility.hpp"
 #include <boost/static_assert.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
@@ -28,9 +29,6 @@
 #include <algorithm>
 #include <string>
 #include <vector>
-
-
-
 
 
 namespace phatbooks
@@ -137,6 +135,8 @@ public:
 
 	BString description();
 
+	visibility::Visibility visibility();
+
 	jewel::Decimal technical_balance();
 
 	jewel::Decimal friendly_balance();
@@ -156,6 +156,8 @@ public:
 	void set_commodity(Commodity const& p_commodity);
 
 	void set_description(BString const& p_description);
+
+	void set_visibility(visibility::Visibility p_visibility);
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
@@ -190,6 +192,7 @@ private:
 		boost::optional<Commodity> commodity;
 		boost::optional<account_type::AccountType> account_type;
 		boost::optional<BString> description;
+		boost::optional<visibility::Visibility> visibility;
 	};
 
 	boost::scoped_ptr<AccountData> m_data;

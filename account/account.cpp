@@ -10,6 +10,7 @@
 #include "finformat.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include "visibility.hpp"
 #include "b_string.hpp"
 #include <boost/shared_ptr.hpp>
 #include <consolixx/alignment.hpp>
@@ -217,6 +218,12 @@ Account::description() const
 	return impl().description();
 }
 
+visibility::Visibility
+Account::visibility() const
+{
+	return impl().visibility();
+}
+
 Decimal
 Account::budget() const
 {
@@ -280,6 +287,14 @@ Account::set_description(BString const& p_description)
 	impl().set_description(p_description);
 	return;
 }
+
+void
+Account::set_visibility(visibility::Visibility p_visibility)
+{
+	impl().set_visibility(p_visibility);
+	return;
+}
+
 
 // AugmentedAccount
 

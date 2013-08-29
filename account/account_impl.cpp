@@ -19,6 +19,7 @@
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "visibility.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -47,8 +48,6 @@ using std::vector;
 #endif
 
 
-
-
 namespace phatbooks
 {
 
@@ -66,6 +65,26 @@ typedef
 void
 AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
+	dbc.execute_sql
+	(	"create table visibilities"
+		"("
+			"visibility_id integer primary key"
+		");"
+	);
+	using visibility::Visibility;
+	for
+	(	int i = 0;
+		i != static_cast<int>(visibility::num_visibilities);
+		++i
+	)
+	{
+		SQLStatement statement
+		(	dbc,
+			"insert into visibilities(visibility_id) values(:p)"
+		);
+		statement.bind(":p", i);
+		statement.step_final();
+	}
 	dbc.execute_sql
 	(	"create table account_types(account_type_id integer primary key)"
 	);
@@ -99,7 +118,8 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"account_type_id not null references account_types, "
 			"name text not null unique, "
 			"description text, "
-			"commodity_id references commodities"
+			"commodity_id references commodities, "
+			"visibility_id references visibilities"
 		"); "
 	);
 
@@ -293,6 +313,12 @@ AccountImpl::description()
 	return value(m_data->description);
 }
 
+visibility::Visibility
+AccountImpl::visibility()
+{
+	load();
+	return value(m_data->visibility);
+}
 
 namespace
 {
@@ -417,6 +443,14 @@ AccountImpl::set_description(BString const& p_description)
 }
 
 void
+AccountImpl::set_visibility(visibility::Visibility p_visibility)
+{
+	load();
+	m_data->visibility = p_visibility;
+	return;
+}
+
+void
 AccountImpl::swap(AccountImpl& rhs)
 {
 	swap_base_internals(rhs);
@@ -430,7 +464,8 @@ AccountImpl::do_load()
 {
 	SQLStatement statement
 	(	database_connection(),
-		"select name, commodity_id, account_type_id, description "
+		"select name, commodity_id, account_type_id, "
+		"description, visibility_id "
 		"from accounts where account_id = :p"
 	);
 	statement.bind(":p", id());
@@ -444,6 +479,8 @@ AccountImpl::do_load()
 	temp.m_data->account_type =
 		static_cast<AccountType>(statement.extract<int>(2));
 	temp.m_data->description = std8_to_bstring(statement.extract<string>(3));
+	temp.m_data->visibility =
+		static_cast<visibility::Visibility>(statement.extract<int>(4));
 	swap(temp);
 	return;
 }
@@ -461,6 +498,10 @@ AccountImpl::process_saving_statement(SQLStatement& statement)
 		bstring_to_std8(value(m_data->description))
 	);
 	statement.bind(":commodity_id", value(m_data->commodity).id());
+	statement.bind
+	(	":visibility_id",
+		static_cast<int>(value(m_data->visibility))
+	);
 	statement.step_final();
 	return;
 }
@@ -475,7 +516,8 @@ AccountImpl::do_save_existing()
 		"name = :name, "
 		"commodity_id = :commodity_id, "
 		"account_type_id = :account_type_id, "
-		"description = :description "
+		"description = :description, "
+		"visibility_id = :visibility_id "
 		"where account_id = :account_id"
 	);
 	updater.bind(":account_id", id());
@@ -490,9 +532,22 @@ AccountImpl::do_save_new()
 	BalanceCacheAttorney::mark_as_stale(database_connection());
 	SQLStatement inserter
 	(	database_connection(),
-		"insert into accounts(account_type_id, name, description, "
-		"commodity_id) values(:account_type_id, :name, :description, "
-		":commodity_id)"
+		"insert into accounts"
+		"("
+			"account_type_id, "
+			"name, "
+			"description, "
+			"commodity_id, "
+			"visibility_id"
+		") "
+		"values"
+		"("
+			":account_type_id, "
+			":name, "
+			":description, "
+			":commodity_id, "
+			":visibility_id"
+		")"
 	);
 	process_saving_statement(inserter);
 	BudgetAttorney::regenerate(database_connection());
@@ -534,6 +589,7 @@ AccountImpl::do_ghostify()
 	clear(m_data->commodity);
 	clear(m_data->account_type);
 	clear(m_data->description);
+	clear(m_data->visibility);
 	return;
 }
 

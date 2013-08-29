@@ -6,6 +6,7 @@
 #include "b_string.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "visibility.hpp"
 #include <cassert>
 #include <utility>
 #include <vector>
@@ -105,6 +106,7 @@ make_default_accounts
 		// if it is able to create the Accounts first.
 
 		account.set_description(BString(""));
+		account.set_visibility(visibility::visible);
 		vec.push_back(account);
 	}
 	return;

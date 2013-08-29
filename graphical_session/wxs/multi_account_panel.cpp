@@ -14,6 +14,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "setup_wizard.hpp"
 #include "sizing.hpp"
+#include "visibility.hpp"
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -247,6 +248,7 @@ MultiAccountPanel::blank_account()
 	assert (empty_string.empty());
 	ret.set_name(empty_string);
 	ret.set_description(empty_string);
+	ret.set_visibility(visibility::visible);
 	vector<account_type::AccountType> const& atypes =
 		account_types(m_account_super_type);
 	assert (!atypes.empty());
@@ -368,6 +370,7 @@ MultiAccountPanel::selected_augmented_accounts
 		assert (super_type(account_type) == m_account_super_type);
 		account.set_account_type(account_type);
 		account.set_description(m_description_boxes[i]->GetValue());
+		account.set_visibility(visibility::visible);
 		account.set_commodity(m_commodity);
 
 		// TODO Make sure it is clear to the user which way round the

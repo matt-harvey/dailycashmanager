@@ -11,6 +11,7 @@
 #include "persistent_object_event.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "sizing.hpp"
+#include "visibility.hpp"
 #include <boost/noncopyable.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -456,6 +457,10 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	temp.set_name(prospective_name);
 	temp.set_account_type(m_account_type_ctrl->account_type());
 	temp.set_description(m_description_ctrl->GetValue());
+
+	// TODO HIGH PRIORITY Give user opportunity to toggle the visibility
+	// of the Account.
+	temp.set_visibility(visibility::visible);
 		
 	if (p_is_new_account)
 	{

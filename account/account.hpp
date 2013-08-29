@@ -8,6 +8,7 @@
 #include "b_string.hpp"
 #include "budget_item.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include "visibility.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/general_typedefs.hpp>
@@ -182,6 +183,12 @@ public:
 	BString description() const;
 
 	/**
+	 * @returns the visibility of account (whether it is visible or hidden
+	 * from user).
+	 */
+	visibility::Visibility visibility() const;
+
+	/**
 	 * @returns "technical" account balance, which is
 	 * positive for debit balances and negative for
 	 * credit balances. For P&L accounts this
@@ -242,6 +249,7 @@ public:
 
 	void set_description(BString const& p_description);
 
+	void set_visibility(visibility::Visibility p_visibility);
 
 private:
 	Account(sqloxx::Handle<AccountImpl> const& p_handle);

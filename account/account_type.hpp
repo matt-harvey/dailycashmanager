@@ -22,7 +22,7 @@ namespace account_type
 		equity,
 		revenue,
 		expense,
-		pure_envelope
+		pure_envelope,
 	};
 }  // namespace account_type
 

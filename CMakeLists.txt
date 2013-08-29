@@ -24,7 +24,8 @@ set (immediate_directories
 	 repeater
 	 session
 	 transaction_side
-	 transaction_type)
+	 transaction_type
+	 visibility)
 
 # add_definitions(-DPHATBOOKS_DISALLOW_DASH_FOR_ZERO)
 

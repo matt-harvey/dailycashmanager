@@ -19,6 +19,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "sizing.hpp"
+#include "visibility.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <jewel/array_utilities.hpp>
@@ -314,6 +315,7 @@ SetupWizard::configure_accounts()
 		{
 			it->account.set_commodity(selected_currency());
 			it->account.set_description(BString(""));
+			it->account.set_visibility(visibility::visible);
 			it->account.save();
 			assert 
 			(	it->technical_opening_balance.places() ==

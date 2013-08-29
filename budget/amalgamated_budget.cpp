@@ -12,6 +12,7 @@
 #include "phatbooks_exceptions.hpp"
 #include "repeater.hpp"
 #include "transaction_type.hpp"
+#include "visibility.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/static_assert.hpp>
@@ -91,6 +92,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	balancing_account.set_account_type(account_type::pure_envelope);
 	balancing_account.set_name("Budget imbalance");
 	balancing_account.set_description("");
+	balancing_account.set_visibility(visibility::visible);
 	Commodity const balancing_account_commodity = dbc.default_commodity();
 	balancing_account.set_commodity(balancing_account_commodity);
 	balancing_account.save();
