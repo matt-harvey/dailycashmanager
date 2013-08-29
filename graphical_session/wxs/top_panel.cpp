@@ -529,8 +529,10 @@ TopPanel::update_for_amended(Account const& p_saved_object)
 	m_reconciliation_panel->update_for_amended(p_saved_object);
 	m_report_panel->update_for_new(p_saved_object);
 
-	// TODO This will kill the existing contents of the TransactionCtrl.
-	// Do we really want to do this?
+	// TODO HIGH PRIORITY This will kill the existing contents of the
+	// TransactionCtrl. We shouldn't do this. We should just update it.
+	// (Also, is there anything else that does this to TransactionCtrl but
+	// shouldn't?)
 	
 	// TODO We should still make sure that if the Account has changed
 	// name or visibility, we CAREFULLY update the AccountCtrls within
