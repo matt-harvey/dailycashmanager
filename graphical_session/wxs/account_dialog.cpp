@@ -361,7 +361,7 @@ AccountDialog::configure_bottom_row()
 	m_visibility_ctrl = new wxCheckBox
 	(	this,
 		wxID_ANY,
-		wxString("&Show in lists"),
+		wxString("&Show in list"),
 		wxDefaultPosition,
 		wxSize(medium_width(), m_name_ctrl->GetSize().y),
 		wxALIGN_RIGHT
