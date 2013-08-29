@@ -225,7 +225,29 @@ namespace
 		}
 		return wret;
 	}
-	
+
+	void split_plus_minus(wxString const& p_string, vector<wxString>& out)
+	{
+		wxString current_slice;
+		wxString::const_iterator it = p_string.begin();
+		wxString::const_iterator const end = p_string.end();
+		for ( ; it != end; ++it)
+		{
+			wxChar const wx_char = *it;
+			if ((wx_char == wxChar('+')) || (wx_char == wxChar('-')))
+			{
+				out.push_back(current_slice);
+				current_slice.clear();
+			}
+			if (*it != wxChar(' '))
+			{
+				current_slice.Append(*it);
+			}
+		}
+		out.push_back(current_slice);
+		return;
+	}
+
 }  // end anonymous namespace
 
 
@@ -277,7 +299,8 @@ wxString finformat_wx_nopad
 	return aux_finformat_wx(decimal, loc, false, dash_for_zero);
 }
 
-jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc)
+jewel::Decimal
+wx_to_decimal(wxString wxs, wxLocale const& loc, bool allow_parens)
 {
 	wxs = wxs.Trim();
 	typedef wxChar CharT;
@@ -312,7 +335,7 @@ jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc)
 	// We first convert wxs into a canonical form in which there are no
 	// thousands separators, negativity is indicated only by a minus
 	// sign, and the decimal point is '.'.
-	if ( (wxs[0] == open_paren) && (wxs[wxs.Len() - 1] == close_paren) )
+	if (allow_parens && (wxs[0] == open_paren) && (wxs.Last() == close_paren))
 	{
 		wxs[0] = minus_sign;  // Replace left parenthesis with minus sign
 		wxs.RemoveLast();  // Drop right parenthesis
@@ -326,7 +349,24 @@ jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc)
 	string s = wx_to_std8(wxs);
 	Decimal const ret(s);
 	return ret;
+}
 
+Decimal
+wx_to_simple_sum(wxString wxs, wxLocale const& loc)
+{
+	vector<wxString> vec;
+	split_plus_minus(wxs, vec);
+	Decimal total(0, 0);
+	vector<wxString>::const_iterator it = vec.begin();
+	vector<wxString>::const_iterator const end = vec.end();
+	for ( ; it != end; ++it)
+	{
+		if (!it->IsEmpty())
+		{
+			total += wx_to_decimal(*it, loc, false);
+		}
+	}
+	return total;
 }
 
 

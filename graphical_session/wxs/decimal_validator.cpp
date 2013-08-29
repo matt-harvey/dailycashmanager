@@ -71,12 +71,23 @@ DecimalValidator::Validate(wxWindow* WXUNUSED(parent))
 		);
 		return true;
 	}
-	catch (jewel::Exception& e)
+	catch (jewel::Exception&)
 	{
-		// We don't display an error message here. We just return false,
-		// without updating m_decimal.
-		return false;
+		try
+		{
+			Decimal const raw_sum =
+				wx_to_simple_sum(wxString(text_ctrl->GetValue()), locale());
+			m_decimal = round(raw_sum, m_precision);
+			return true;
+		}
+		catch (jewel::Exception&)
+		{
+			// We don't display an error message here. We just return false,
+			// without updating m_decimal.
+			return false;
+		}
 	}
+	assert (false);
 }
 
 bool

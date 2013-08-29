@@ -107,8 +107,9 @@ wxString finformat_wx_nopad
  * Assuming a locale of loc, convert a wxString to a jewel::Decimal.
  *
  * This is a fairly tolerant conversion and will accept strings
- * either with or without thousands separators, or with either
- * parentheses or the minus sign as a minus indicator.
+ * either with or without thousands separators. If \e allow_parens is
+ * passed \e true, then it will accept parentheses used as a negative
+ * sign. (It always accepts '-' as the minus sign.)
  * The symbols that are accepted for the thousands separator and
  * decimal point depend on the wxLocale passed to \e loc.
  *
@@ -122,7 +123,20 @@ wxString finformat_wx_nopad
  * dash is never used for zero, even if \e dash_for_zero is
  * passed \e true.
  */
-jewel::Decimal wx_to_decimal(wxString wxs, wxLocale const& loc);
+jewel::Decimal wx_to_decimal
+(	wxString wxs,
+	wxLocale const& loc,
+	bool allow_parens = true
+);
+
+/**
+ * This is similar to \e wx_to_decimal, except that: (a) negative must be
+ * indicated with a minus sign, not with parentheses, and (b) a simple
+ * arithmetic expression will be processed, and the resulting sum
+ * returned, providing '+' and '-' are the only operators used, and
+ * there are no parentheses.
+ */
+jewel::Decimal wx_to_simple_sum(wxString wxs, wxLocale const& loc);
 
 
 }  // namespace phatbooks

@@ -24,10 +24,6 @@ namespace gui
  * DecimalValidator directly into DecimalTextCtrl, and then abolish
  * DecimalValidator?
  *
- * @todo Enable the user to enter simple sums as well as just a single
- * amount. The simple sums should be calculated on validation, and then
- * the result displayed.
- *
  * @todo If the user's input is invalid and the DecimalTextCtrl therefore
  * reverts to its previous contents, then the user should be made aware
  * that this has occurred, rather than it happening silently. This could
