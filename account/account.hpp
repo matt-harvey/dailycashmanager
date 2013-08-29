@@ -27,14 +27,6 @@ class PhatbooksDatabaseConnection;
 /**
  * Represents an account - which could be either a balance sheet
  * or a P&L account.
- *
- * @todo Provide a mechanism for user to hide an Account if they so
- * choose (or to delete it, providing it has no Entries in it). The
- * user should still be able to access and unhide the Account later.
- * (In the TUI they should be able to see all Accounts in the detailed
- * Account list, with a Column indicating for each whether it is
- * visible or hidden). The user should probably not be able to hide Accounts
- * that have a non-zero balance, though.
  */
 class Account: public PhatbooksPersistentObject<AccountImpl>
 {
