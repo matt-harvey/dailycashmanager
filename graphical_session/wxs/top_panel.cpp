@@ -150,17 +150,6 @@ TopPanel::configure_account_lists()
 	(	m_notebook_page_accounts,
 		m_database_connection
 	);
-	wxBoxSizer* page_1_sizer = new wxBoxSizer(wxHORIZONTAL);
-	page_1_sizer->Add
-	(	m_bs_account_list,
-		wxSizerFlags(2).Expand().
-			Border(wxNORTH | wxSOUTH | wxWEST, standard_border())
-	);
-	page_1_sizer->Add
-	(	m_pl_account_list,
-		wxSizerFlags(3).Expand().
-			Border(wxNORTH | wxSOUTH | wxWEST, standard_border())
-	);
 	map<account_super_type::AccountSuperType, Account::Id> const fav_accts =
 		favourite_accounts(m_database_connection);
 	assert (fav_accts.size() == 2);
@@ -175,6 +164,17 @@ TopPanel::configure_account_lists()
 		(	m_database_connection,
 			fav_accts.at(account_super_type::pl)
 		)
+	);
+	wxBoxSizer* page_1_sizer = new wxBoxSizer(wxHORIZONTAL);
+	page_1_sizer->Add
+	(	m_bs_account_list,
+		wxSizerFlags(2).Expand().
+			Border(wxNORTH | wxSOUTH | wxWEST, standard_border())
+	);
+	page_1_sizer->Add
+	(	m_pl_account_list,
+		wxSizerFlags(3).Expand().
+			Border(wxNORTH | wxSOUTH | wxWEST, standard_border())
 	);
 	m_notebook_page_accounts->SetSizer(page_1_sizer);
 	page_1_sizer->Fit(m_notebook_page_accounts);
