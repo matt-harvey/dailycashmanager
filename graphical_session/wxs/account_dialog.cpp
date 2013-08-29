@@ -366,7 +366,8 @@ AccountDialog::configure_bottom_row()
 		wxSize(medium_width(), m_name_ctrl->GetSize().y),
 		wxALIGN_RIGHT
 	);
-	m_visibility_ctrl->SetValue(true);
+	m_visibility_ctrl->
+		SetValue(m_account.visibility() == visibility::visible);
 	m_top_sizer->Add
 	(	m_visibility_ctrl,
 		wxGBPosition(m_current_row, 2),
