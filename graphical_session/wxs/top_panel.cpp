@@ -73,7 +73,7 @@ TopPanel::TopPanel
 	m_right_column_sizer(0),
 	m_bs_account_list(0),
 	m_pl_account_list(0),
-	m_transaction_panel(0),
+	m_entry_list_panel(0),
 	m_reconciliation_panel(0),
 	m_report_panel(0),
 	m_transaction_ctrl(0),
@@ -188,13 +188,13 @@ void
 TopPanel::configure_entry_list()
 {
 	assert (m_notebook_page_transactions);
-	assert (!m_transaction_panel);
-	m_transaction_panel = new EntryListPanel
+	assert (!m_entry_list_panel);
+	m_entry_list_panel = new EntryListPanel
 	(	m_notebook_page_transactions,
 		m_database_connection
 	);
 	wxBoxSizer* page_2_sizer = new wxBoxSizer(wxHORIZONTAL);
-	page_2_sizer->Add(m_transaction_panel, wxSizerFlags(1).Expand());
+	page_2_sizer->Add(m_entry_list_panel, wxSizerFlags(1).Expand());
 	m_notebook_page_transactions->SetSizer(page_2_sizer);
 	page_2_sizer->Fit(m_notebook_page_transactions);
 	page_2_sizer->SetSizeHints(m_notebook_page_transactions);
@@ -393,6 +393,23 @@ TopPanel::configure_draft_journal_list_ctrl()
 	return;
 }
 
+bool
+TopPanel::toggle_show_hidden_accounts
+(	account_super_type::AccountSuperType p_account_super_type
+)
+{
+	switch (p_account_super_type)
+	{
+	case account_super_type::balance_sheet:
+		return m_bs_account_list->toggle_showing_hidden();
+	case account_super_type::pl:
+		return m_pl_account_list->toggle_showing_hidden();
+	default:
+		assert (false);
+	}
+	assert (false);
+}
+
 void
 TopPanel::selected_balance_sheet_accounts(vector<Account>& out) const
 {
@@ -415,7 +432,7 @@ TopPanel::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 	wxWindow* const page = m_notebook->GetCurrentPage();
 	if (page == static_cast<wxWindow*>(m_notebook_page_transactions))
 	{
-		m_transaction_panel->selected_entries(entries);
+		m_entry_list_panel->selected_entries(entries);
 	}
 	else if (page == static_cast<wxWindow*>(m_notebook_page_reconciliations))
 	{
@@ -440,9 +457,9 @@ TopPanel::selected_draft_journals(vector<DraftJournal>& out) const
 void
 TopPanel::update_for_new(OrdinaryJournal const& p_saved_object)
 {
-	m_bs_account_list->update(true);
-	m_pl_account_list->update(false);
-	m_transaction_panel->update_for_new(p_saved_object);
+	m_bs_account_list->update();
+	m_pl_account_list->update();
+	m_entry_list_panel->update_for_new(p_saved_object);
 	m_reconciliation_panel->update_for_new(p_saved_object);
 	m_report_panel->update_for_new(p_saved_object);
 	configure_transaction_ctrl();
@@ -454,8 +471,8 @@ void
 TopPanel::update_for_new(DraftJournal const& p_saved_object)
 {
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
-	// m_bs_account_list->update(true);  // No point doing this here.
-	// m_pl_account_list->update(false); // No point doing this here.
+	// m_bs_account_list->update();  // No point doing this here.
+	// m_pl_account_list->update(); // No point doing this here.
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -464,10 +481,9 @@ TopPanel::update_for_new(DraftJournal const& p_saved_object)
 void
 TopPanel::update_for_new(Account const& p_saved_object)
 {
-	(void)p_saved_object;  // Silence compiler re. unused parameter.
-	m_bs_account_list->update(true);
-	m_pl_account_list->update(false);
-	m_transaction_panel->update_for_new(p_saved_object);
+	m_bs_account_list->update();
+	m_pl_account_list->update();
+	m_entry_list_panel->update_for_new(p_saved_object);
 	m_reconciliation_panel->update_for_new(p_saved_object);
 	m_report_panel->update_for_new(p_saved_object);
 	// TODO This will kill the existing contents of the TransactionCtrl.
@@ -480,9 +496,9 @@ TopPanel::update_for_new(Account const& p_saved_object)
 void
 TopPanel::update_for_amended(OrdinaryJournal const& p_saved_object)
 {
-	m_bs_account_list->update(true);
-	m_pl_account_list->update(false);
-	m_transaction_panel->update_for_amended(p_saved_object);
+	m_bs_account_list->update();
+	m_pl_account_list->update();
+	m_entry_list_panel->update_for_amended(p_saved_object);
 	m_reconciliation_panel->update_for_amended(p_saved_object);
 	m_report_panel->update_for_new(p_saved_object);
 	configure_transaction_ctrl();
@@ -494,9 +510,9 @@ void
 TopPanel::update_for_amended(DraftJournal const& p_saved_object)
 {
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
-	m_bs_account_list->update(true);
-	m_pl_account_list->update(false);
-	// m_transaction_panel->update_for_amended(p_saved_object);  // Does not apply for DraftJournal.
+	m_bs_account_list->update();
+	m_pl_account_list->update();
+	// m_entry_list_panel->update_for_amended(p_saved_object);  // Does not apply for DraftJournal.
 	// m_reconciliation_panel->update_for_amended(p_saved_object);  // Does not apply for
 	// DraftJournal.
 	configure_transaction_ctrl();
@@ -507,9 +523,9 @@ TopPanel::update_for_amended(DraftJournal const& p_saved_object)
 void
 TopPanel::update_for_amended(Account const& p_saved_object)
 {
-	m_bs_account_list->update(true);
-	m_pl_account_list->update(false);
-	m_transaction_panel->update_for_amended(p_saved_object);
+	m_bs_account_list->update();
+	m_pl_account_list->update();
+	m_entry_list_panel->update_for_amended(p_saved_object);
 	m_reconciliation_panel->update_for_amended(p_saved_object);
 	m_report_panel->update_for_new(p_saved_object);
 	// TODO This will kill the existing contents of the TransactionCtrl.
@@ -524,7 +540,7 @@ TopPanel::update_for_amended_budget(Account const& p_account)
 {
 	(void)p_account;  // Silence compiler re. unused parameter.
 	assert (super_type(p_account.account_type()) == account_super_type::pl);
-	m_pl_account_list->update(false);
+	m_pl_account_list->update();
 	// TODO Do we need to update ReportPanel for amended budget?
 	return;
 }
@@ -541,8 +557,8 @@ void
 TopPanel::update_for_deleted_ordinary_journal(OrdinaryJournal::Id p_doomed_id)
 {
 	(void)p_doomed_id;  // Silence compiler re. unused parameter.
-	m_bs_account_list->update(true);
-	m_pl_account_list->update(false);
+	m_bs_account_list->update();
+	m_pl_account_list->update();
 	configure_transaction_ctrl();
 	configure_draft_journal_list_ctrl();
 	return;
@@ -562,7 +578,7 @@ TopPanel::update_for_deleted_ordinary_entries
 (	vector<Entry::Id> const& p_doomed_ids
 )
 {
-	m_transaction_panel->update_for_deleted(p_doomed_ids);
+	m_entry_list_panel->update_for_deleted(p_doomed_ids);
 	m_reconciliation_panel->update_for_deleted(p_doomed_ids);
 	m_report_panel->update_for_deleted(p_doomed_ids);
 	return;

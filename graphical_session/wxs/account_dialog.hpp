@@ -7,6 +7,7 @@
 #include "budget_panel.hpp"
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
+#include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -89,7 +90,7 @@ private:
 	void on_cancel_button_click(wxCommandEvent& event);
 
 	void configure_budget_panel();
-	void configure_buttons();
+	void configure_bottom_row();
 
 	account_super_type::AccountSuperType account_super_type() const;
 
@@ -111,6 +112,7 @@ private:
 	wxTextCtrl* m_description_ctrl;
 	DecimalTextCtrl* m_opening_amount_ctrl;
 	BudgetPanel* m_budget_panel;
+	wxCheckBox* m_visibility_ctrl;
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;
 

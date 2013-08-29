@@ -4,6 +4,7 @@
 #define GUARD_top_panel_hpp
 
 #include "account.hpp"
+#include "account_type.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
@@ -177,6 +178,14 @@ public:
 
 	void configure_draft_journal_list_ctrl();
 
+	/**
+	 * @returns \e true if and only if we will now be showing
+	 * hidden Accounts of AccountSuperType \e p_account_super_type.
+	 */
+	bool toggle_show_hidden_accounts
+	(	account_super_type::AccountSuperType p_account_super_type
+	);
+
 private:
 
 	void configure_account_lists();
@@ -194,7 +203,7 @@ private:
 	wxBoxSizer* m_right_column_sizer;
 	AccountListCtrl* m_bs_account_list;
 	AccountListCtrl* m_pl_account_list;
-	EntryListPanel* m_transaction_panel;
+	EntryListPanel* m_entry_list_panel;
 	ReconciliationListPanel* m_reconciliation_panel;
 	ReportPanel* m_report_panel;
 	TransactionCtrl* m_transaction_ctrl;

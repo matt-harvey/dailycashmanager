@@ -362,7 +362,8 @@ bool is_not_pure_envelope(Account const& account)
 BString account_concept_name
 (	account_super_type::AccountSuperType p_account_super_type,
 	bool p_capitalize,
-	bool p_include_article
+	bool p_include_article,
+	bool p_pluralize
 )
 {
 	BString ret;
@@ -379,6 +380,10 @@ BString account_concept_name
 		break;
 	default:
 		assert (false);
+	}
+	if (p_pluralize)
+	{
+		ret += wxString("s");
 	}
 	return ret;
 }

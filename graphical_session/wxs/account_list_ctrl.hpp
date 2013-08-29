@@ -5,6 +5,7 @@
 
 #include "account.hpp"
 #include "account_reader.hpp"
+#include "account_type.hpp"
 #include <boost/optional.hpp>
 #include <wx/event.h>
 #include <wx/listctrl.h>
@@ -23,9 +24,6 @@ namespace gui
 /**
  * Displays a list of Accounts and their balances, and, optionally
  * the daily budget associated with each Account.
- *
- * @todo Enable user to hide an Account; but also enable them to toggle
- * showing all Accounts including the hidden ones, if they so desire.
  */
 class AccountListCtrl: public wxListCtrl
 {
@@ -68,11 +66,10 @@ public:
 
 	/**
 	 * Redraw AccountListCtrl on the basis of what is currently in the
-	 * database.
-	 *
-	 * @todo Should be using inheritance here rather than this boolean flag.
+	 * database, showing whichever AccountSuperType is currently being
+	 * shown.
 	 */
-	void update(bool balance_sheet);
+	void update();
 
 	/**
 	 * @returns an optional containing an Account that may be considered as
@@ -89,14 +86,31 @@ public:
 	 */
 	void select_only(Account const& p_account);
 
+	/**
+	 * Toggle whether hidden Accounts are shown.
+	 * 
+	 * @returns \e true if and only if, after the function has been executed,
+	 * hidden Accounts will be shown.
+	 */
+	bool toggle_showing_hidden();
+
 private:
+
+	/**
+	 * Redraw AccountListCtrl on the basis of what is currently in the
+	 * database, showing Accounts of \e p_account_super_type only.
+	 *
+	 * @todo Should be using inheritance here rather than this
+	 * AccountSuperType flag.
+	 */
+	void update(account_super_type::AccountSuperType p_account_super_type);
 
 	AccountListCtrl
 	(	wxWindow* p_parent,
 		AccountReaderBase const& p_reader,
 		PhatbooksDatabaseConnection& p_database_connection,
-		bool p_show_daily_budget,
-		wxString const& p_left_column_title
+		wxString const& p_left_column_title,
+		account_super_type::AccountSuperType p_account_super_type
 	);
 
 	void on_item_activated(wxListEvent& event);
@@ -106,7 +120,10 @@ private:
 		wxString const& p_left_column_title
 	);
 
-	bool m_show_daily_budget;
+	bool showing_daily_budget() const;
+
+	bool m_show_hidden;
+	account_super_type::AccountSuperType m_account_super_type;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 	static int const s_name_col = 0;
@@ -116,6 +133,16 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
+
+// INLINE FUNCTION IMPLEMENTATIONS
+
+inline
+void
+AccountListCtrl::update()
+{
+	update(m_account_super_type);
+	return;
+}
 
 
 }  // namespace gui

@@ -71,6 +71,14 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 		Frame::on_menu_edit_draft_journal
 	)
 	EVT_MENU
+	(	s_toggle_bs_account_show_hidden_id,
+		Frame::on_menu_view_toggle_bs_account_show_hidden
+	)
+	EVT_MENU
+	(	s_toggle_pl_account_show_hidden_id,
+		Frame::on_menu_view_toggle_pl_account_show_hidden
+	)
+	EVT_MENU
 	(	wxID_ABOUT,
 		Frame::on_menu_about
 	)
@@ -124,6 +132,28 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	)
 END_EVENT_TABLE()
 
+
+namespace
+{
+	wxString instruction_to_show_hidden
+	(	account_super_type::AccountSuperType p_account_super_type,
+		bool p_show_hidden
+	)
+	{
+		wxString ret = (p_show_hidden? "Show": "Hide");
+		ret += " hidden ";
+		ret += account_concept_name
+		(	p_account_super_type,
+			false,
+			false,
+			true
+		);
+		return ret;
+	}
+
+}  // end anonymous namespace
+
+
 Frame::Frame
 (	wxString const& title,
 	PhatbooksDatabaseConnection& p_database_connection
@@ -162,6 +192,7 @@ Frame::Frame
 	m_file_menu = new wxMenu;
 	m_new_menu = new wxMenu;
 	m_edit_menu = new wxMenu;
+	m_view_menu = new wxMenu;
 	m_help_menu = new wxMenu;
 
 	// Configure "file" menu
@@ -203,7 +234,7 @@ Frame::Frame
 	m_edit_menu->Append
 	(	s_edit_bs_account_id,
 		wxString("Edit selected &") + balance_sheet_account_concept_name,
-		wxString("Edit an exising asset or liability account")
+		wxString("Edit an existing asset or liability account")
 	);
 	m_edit_menu->Append
 	(	s_edit_pl_account_id,
@@ -222,6 +253,25 @@ Frame::Frame
 		wxString("Edit an exising recurring transaction")
 	);
 	m_menu_bar->Append(m_edit_menu, wxString("&Edit"));
+	
+	// Configure "view" menu
+	m_view_menu->Append
+	(	s_toggle_bs_account_show_hidden_id,
+		instruction_to_show_hidden
+		(	account_super_type::balance_sheet,
+			true
+		),
+		wxEmptyString
+	);
+	m_view_menu->Append
+	(	s_toggle_pl_account_show_hidden_id,
+		instruction_to_show_hidden
+		(	account_super_type::pl,
+			true
+		),
+		wxEmptyString
+	);
+	m_menu_bar->Append(m_view_menu, wxString("&View"));
 
 	// Configure "help" menu
 	m_help_menu->Append
@@ -238,7 +288,6 @@ Frame::Frame
 #	endif
 
 	m_top_panel = new TopPanel(this, m_database_connection);
-
 }
 	
 void
@@ -390,6 +439,44 @@ Frame::on_menu_edit_draft_journal(wxCommandEvent& event)
 	}
 	assert (journals.size() >= 1);
 	edit_journal(journals[0]);
+	return;
+}
+
+void
+Frame::on_menu_view_toggle_bs_account_show_hidden(wxCommandEvent& event)
+{
+	// TODO Factor out code duplicated here and in
+	// on_menu_view_toggle_pl_account_show_hidden(...).
+	account_super_type::AccountSuperType const stype =
+		account_super_type::balance_sheet;
+	
+	bool const showing_hidden =
+		m_top_panel->toggle_show_hidden_accounts(stype);
+	bool const next_toggle_will_show_hidden = !showing_hidden;
+	wxString const instruction_for_menu = instruction_to_show_hidden
+	(	stype,
+		next_toggle_will_show_hidden
+	);
+	m_view_menu->SetLabel(event.GetId(), instruction_for_menu);
+
+	return;
+}
+
+void
+Frame::on_menu_view_toggle_pl_account_show_hidden(wxCommandEvent& event)
+{
+	account_super_type::AccountSuperType const stype =
+		account_super_type::pl;
+
+	bool const showing_hidden =
+		m_top_panel->toggle_show_hidden_accounts(stype);
+	bool const next_toggle_will_show_hidden = !showing_hidden;
+	wxString const instruction_for_menu = instruction_to_show_hidden
+	(	stype,
+		next_toggle_will_show_hidden
+	);
+	m_view_menu->SetLabel(event.GetId(), instruction_for_menu);
+
 	return;
 }
 

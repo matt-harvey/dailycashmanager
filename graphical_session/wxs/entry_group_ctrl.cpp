@@ -376,7 +376,6 @@ EntryGroupCtrl::pop_row()
 		m_top_sizer->Add(m_split_button, wxGBPosition(1, 3));
 		m_split_button->
 			MoveAfterInTabOrder(m_entry_rows.back().comment_ctrl);
-		// m_entry_rows.back().comment_ctrl->MoveBeforeInTabOrder(m_split_button);
 	}
 	--m_current_row;
 	adjust_layout_for_new_number_of_rows();

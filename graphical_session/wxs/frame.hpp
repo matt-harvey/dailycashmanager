@@ -71,6 +71,8 @@ private:
 	void on_menu_edit_pl_account(wxCommandEvent& event);
 	void on_menu_edit_ordinary_journal(wxCommandEvent& event);
 	void on_menu_edit_draft_journal(wxCommandEvent& event);
+	void on_menu_view_toggle_bs_account_show_hidden(wxCommandEvent& event);
+	void on_menu_view_toggle_pl_account_show_hidden(wxCommandEvent& event);
 
 	// Event handlers - other - handle PersistentObject editing requests
 	// fired.
@@ -105,6 +107,10 @@ private:
 	static int const s_edit_pl_account_id = s_edit_bs_account_id + 1;
 	static int const s_edit_ordinary_journal_id = s_edit_pl_account_id + 1;
 	static int const s_edit_draft_journal_id = s_edit_ordinary_journal_id + 1;
+	static int const s_toggle_bs_account_show_hidden_id =
+		s_edit_draft_journal_id + 1;
+	static int const s_toggle_pl_account_show_hidden_id =
+		s_toggle_bs_account_show_hidden_id + 1;
 
 	PhatbooksDatabaseConnection& m_database_connection;
 
@@ -112,6 +118,7 @@ private:
 	wxMenu* m_file_menu;
 	wxMenu* m_new_menu;
 	wxMenu* m_edit_menu;
+	wxMenu* m_view_menu;
 	wxMenu* m_help_menu;
 
 	TopPanel* m_top_panel;

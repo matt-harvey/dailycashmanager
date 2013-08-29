@@ -310,11 +310,15 @@ std::vector<account_type::AccountType> pl_account_types();
  * @p_include_article - set to \e true to include an indefinite
  * article before the returned string (this can be important as it could
  * be either "an" or "a" depending on the returned string.
+ *
+ * @todo The parameters should be rolled into a single bitset or
+ * integral flag, to make it more comprehensible at the calling site.
  */
 BString account_concept_name
 (	account_super_type::AccountSuperType p_account_super_type,
 	bool p_capitalize = false,
-	bool p_include_article = false
+	bool p_include_article = false,
+	bool p_pluralize = false
 );
 
 /**

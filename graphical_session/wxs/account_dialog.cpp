@@ -18,6 +18,7 @@
 #include <sqloxx/database_transaction.hpp>
 #include <wx/app.h>
 #include <wx/button.h>
+#include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -123,6 +124,9 @@ AccountDialog::AccountDialog
 	m_description_ctrl(0),
 	m_opening_amount_ctrl(0),
 	m_budget_panel(0),
+	m_visibility_ctrl(0),
+	m_cancel_button(0),
+	m_ok_button(0),
 	m_account(p_account)
 {
 	assert (p_parent);  // precondition
@@ -298,7 +302,10 @@ AccountDialog::AccountDialog
 	m_top_sizer->Add(dummy, wxGBPosition(m_current_row, standard_border()));
 
 	configure_budget_panel();
-	configure_buttons();
+
+	++m_current_row;
+
+	configure_bottom_row();
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
 	CentreOnScreen();
@@ -343,14 +350,30 @@ AccountDialog::configure_budget_panel()
 	);
 
 	++m_current_row;
-	++m_current_row;
 
 	return;
 }
 
 void
-AccountDialog::configure_buttons()
+AccountDialog::configure_bottom_row()
 {
+	assert (!m_visibility_ctrl);
+	m_visibility_ctrl = new wxCheckBox
+	(	this,
+		wxID_ANY,
+		wxString("&Show in lists"),
+		wxDefaultPosition,
+		wxSize(medium_width(), m_name_ctrl->GetSize().y),
+		wxALIGN_RIGHT
+	);
+	m_visibility_ctrl->SetValue(true);
+	m_top_sizer->Add
+	(	m_visibility_ctrl,
+		wxGBPosition(m_current_row, 2),
+		wxDefaultSpan,
+		wxALIGN_RIGHT
+	);
+
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,
@@ -457,10 +480,11 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	temp.set_name(prospective_name);
 	temp.set_account_type(m_account_type_ctrl->account_type());
 	temp.set_description(m_description_ctrl->GetValue());
-
-	// TODO HIGH PRIORITY Give user opportunity to toggle the visibility
-	// of the Account.
-	temp.set_visibility(visibility::visible);
+	temp.set_visibility
+	(	m_visibility_ctrl->GetValue()?
+		visibility::visible:
+		visibility::hidden
+	);
 		
 	if (p_is_new_account)
 	{

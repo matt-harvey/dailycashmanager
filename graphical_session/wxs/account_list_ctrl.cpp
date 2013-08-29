@@ -5,6 +5,7 @@
 #include "account.hpp"
 #include "account_dialog.hpp"
 #include "account_reader.hpp"
+#include "account_type.hpp"
 #include "b_string.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
@@ -49,8 +50,8 @@ AccountListCtrl::create_balance_sheet_account_list
 	(	parent,
 		reader,
 		dbc,
-		false,
-		wxString("Account")
+		wxString("Account"),
+		account_super_type::balance_sheet
 	);
 	return ret;
 }
@@ -66,8 +67,8 @@ AccountListCtrl::create_pl_account_list
 	(	parent,
 		reader,
 		dbc,
-		true,
-		bstring_to_wx(account_concept_name(account_super_type::pl, true))
+		bstring_to_wx(account_concept_name(account_super_type::pl, true)),
+		account_super_type::pl
 	);
 	return ret;
 }
@@ -76,8 +77,8 @@ AccountListCtrl::AccountListCtrl
 (	wxWindow* p_parent,
 	AccountReaderBase const& p_reader,
 	PhatbooksDatabaseConnection& p_database_connection,
-	bool p_show_daily_budget,
-	wxString const& p_left_column_title
+	wxString const& p_left_column_title,
+	account_super_type::AccountSuperType p_account_super_type
 ):
 	wxListCtrl
 	(	p_parent,
@@ -89,7 +90,8 @@ AccountListCtrl::AccountListCtrl
 		),
 		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
 	),
-	m_show_daily_budget(p_show_daily_budget),
+	m_show_hidden(false),
+	m_account_super_type(p_account_super_type),
 	m_database_connection(p_database_connection)
 {
 	update(p_reader, p_left_column_title);
@@ -131,18 +133,17 @@ AccountListCtrl::on_item_activated(wxListEvent& event)
  }
 
 void
-AccountListCtrl::update(bool balance_sheet)
+AccountListCtrl::update
+(	account_super_type::AccountSuperType p_account_super_type
+)
 {
-	if (balance_sheet)
+	if (p_account_super_type == account_super_type::balance_sheet)
 	{
 		BalanceSheetAccountReader const reader(m_database_connection);
 		update
 		(	reader,
 			bstring_to_wx
-			(	account_concept_name
-				(	account_super_type::balance_sheet,
-					true
-				)
+			(	account_concept_name(p_account_super_type, true)
 			)
 		);
 	}
@@ -152,7 +153,7 @@ AccountListCtrl::update(bool balance_sheet)
 		update
 		(	reader,
 			bstring_to_wx
-			(	account_concept_name(account_super_type::pl, true)
+			(	account_concept_name(p_account_super_type, true)
 			)
 		);
 	}
@@ -168,6 +169,7 @@ AccountListCtrl::update
 	// Remember which rows are selected currently
 	vector<size_t> selected_rows;
 	size_t const lim = GetItemCount();
+	// Remember which rows are selected currently
 	for (size_t j = 0 ; j != lim; ++j)
 	{
 		if (GetItemState(j, wxLIST_STATE_SELECTED))
@@ -175,6 +177,7 @@ AccountListCtrl::update
 			selected_rows.push_back(j);
 		}
 	}
+	// Remember which rows are selected currently
 
 	// Now (re)draw
 	ClearAll();
@@ -184,10 +187,11 @@ AccountListCtrl::update
 		wxString("Balance"),
 		wxLIST_FORMAT_RIGHT
 	);
-	if (m_show_daily_budget)
+	if (showing_daily_budget())
 	{
 		InsertColumn(s_budget_col, "Daily top-up", wxLIST_FORMAT_RIGHT);
 	}
+	// Remember which rows are selected currently
 
 	AccountReader::size_type i = 0;
 
@@ -195,29 +199,35 @@ AccountListCtrl::update
 	(	AccountReader::const_iterator it = p_reader.begin(),
 			end = p_reader.end();
 		it != end;
-		++it, ++i
+		++it
 	)
 	{
-		// Insert item, with string for Column 0
-		InsertItem(i, bstring_to_wx(it->name()));
-	
-		// The item may change position due to e.g. sorting, so store the
-		// original index in the item's data
-		SetItemData(i, i);
-
-		// Insert the balance string
-		SetItem
-		(	i,
-			s_balance_col,
-			finformat_wx(it->friendly_balance(), locale())
-		);
-
-		if (m_show_daily_budget)
+		if (m_show_hidden || (it->visibility() == visibility::visible))
 		{
-			// Insert budget string
-			SetItem(i, s_budget_col, finformat_wx(it->budget(), locale()));
+			// Insert item, with string for Column 0
+			InsertItem(i, bstring_to_wx(it->name()));
+		
+			// TODO Do a static assert to ensure second param will fit the id.
+			assert (it->has_id());
+			SetItemData(i, it->id());
+
+			// Insert the balance string
+			SetItem
+			(	i,
+				s_balance_col,
+				finformat_wx(it->friendly_balance(), locale())
+			);
+
+			if (showing_daily_budget())
+			{
+				// Insert budget string
+				SetItem(i, s_budget_col, finformat_wx(it->budget(), locale()));
+			}
+
+			++i;
 		}
 	}
+	// Remember which rows are selected currently
 
 	// Reinstate the selections we remembered
 	size_t const sel_sz = selected_rows.size();
@@ -235,14 +245,21 @@ AccountListCtrl::update
 	SetColumnWidth(s_name_col, max(GetColumnWidth(s_name_col), 200));
 	SetColumnWidth(s_balance_col, wxLIST_AUTOSIZE);
 	SetColumnWidth(s_balance_col, max(GetColumnWidth(s_balance_col), 90));
-	if (m_show_daily_budget)
+	if (showing_daily_budget())
 	{
 		SetColumnWidth(s_budget_col, wxLIST_AUTOSIZE);
 		SetColumnWidth(s_budget_col, max(GetColumnWidth(s_budget_col), 90));
 	}
+
 	Layout();
 
 	return;
+}
+
+bool
+AccountListCtrl::showing_daily_budget() const
+{
+	return m_account_super_type == account_super_type::pl;
 }
 
 optional<Account>
@@ -277,6 +294,15 @@ AccountListCtrl::select_only(Account const& p_account)
 	}
 	return;
 }
+
+bool
+AccountListCtrl::toggle_showing_hidden()
+{
+	m_show_hidden = !m_show_hidden;
+	update(m_account_super_type);
+	return m_show_hidden;
+}
+
 
 
 }  // namespace gui
