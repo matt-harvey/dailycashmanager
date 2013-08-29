@@ -374,7 +374,9 @@ EntryGroupCtrl::pop_row()
 		m_unsplit_button = 0;
 		m_top_sizer->Detach(m_split_button);
 		m_top_sizer->Add(m_split_button, wxGBPosition(1, 3));
-		m_entry_rows.back().comment_ctrl->MoveBeforeInTabOrder(m_split_button);
+		m_split_button->
+			MoveAfterInTabOrder(m_entry_rows.back().comment_ctrl);
+		// m_entry_rows.back().comment_ctrl->MoveBeforeInTabOrder(m_split_button);
 	}
 	--m_current_row;
 	adjust_layout_for_new_number_of_rows();
@@ -486,7 +488,7 @@ EntryGroupCtrl::push_row
 				m_top_sizer->
 					Add(prev_amount_ctrl, wxGBPosition(1, 3));
 				prev_amount_ctrl->
-					MoveBeforeInTabOrder(m_entry_rows.back().account_ctrl);
+					MoveBeforeInTabOrder(entry_row.account_ctrl);
 				m_entry_rows.back().amount_ctrl = prev_amount_ctrl;
 			}
 			m_unsplit_button->MoveBeforeInTabOrder(m_split_button);
