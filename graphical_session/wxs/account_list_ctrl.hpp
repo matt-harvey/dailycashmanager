@@ -24,6 +24,10 @@ namespace gui
 /**
  * Displays a list of Accounts and their balances, and, optionally
  * the daily budget associated with each Account.
+ *
+ * @todo When a new Account is created, if that Account is inserted
+ * above the currently selected Account, then the Account that is
+ * selected will shift by 1.
  */
 class AccountListCtrl: public wxListCtrl
 {
