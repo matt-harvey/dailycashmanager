@@ -19,6 +19,7 @@
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "phrase_flags.hpp"
 #include "sizing.hpp"
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>

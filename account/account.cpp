@@ -10,8 +10,10 @@
 #include "finformat.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include "phrase_flags.hpp"
 #include "visibility.hpp"
 #include "b_string.hpp"
+#include "phrase_flags.hpp"
 #include <boost/shared_ptr.hpp>
 #include <consolixx/alignment.hpp>
 #include <consolixx/column.hpp>
@@ -361,43 +363,53 @@ bool is_not_pure_envelope(Account const& account)
 
 BString account_concept_name
 (	account_super_type::AccountSuperType p_account_super_type,
-	bool p_capitalize,
-	bool p_include_article,
-	bool p_pluralize
+	phrase_flags::PhraseFlags p_phrase_flags
 )
 {
 	BString ret;
 	assert (ret.IsEmpty());
+	if (p_phrase_flags & phrase_flags::include_article)
+	{
+		ret += BString("an ");
+	}
 	switch (p_account_super_type)
 	{
 	case account_super_type::balance_sheet:
-		if (p_include_article) ret += BString("an ");
-		ret += (p_capitalize? BString("Account"): BString("account"));
+		ret +=
+		(	(p_phrase_flags & phrase_flags::capitalize)?
+			BString("Account"):
+			BString("account")
+		);
 		break;
 	case account_super_type::pl:
-		if (p_include_article) ret += BString("an ");
-		ret += (p_capitalize? BString("Envelope"): BString("envelope"));
+		ret +=
+		(	(p_phrase_flags & phrase_flags::capitalize)?
+			BString("Envelope"):
+			BString("envelope")
+		);
 		break;
 	default:
 		assert (false);
 	}
-	if (p_pluralize)
+	if (p_phrase_flags & phrase_flags::pluralize)
 	{
 		ret += wxString("s");
 	}
 	return ret;
 }
 
-BString account_concepts_phrase(bool p_include_article)
+BString account_concepts_phrase(phrase_flags::PhraseFlags p_phrase_flags)
 {
-	BString const ret =
+	BString ret =
 		account_concept_name
 		(	account_super_type::balance_sheet,
-			false,
-			p_include_article
+			p_phrase_flags
 		) +
 		BString(" or ") +
-		account_concept_name(account_super_type::pl);
+		account_concept_name
+		(	account_super_type::pl,
+			(p_phrase_flags & ~phrase_flags::include_article)
+		);
 	return ret;
 }
 

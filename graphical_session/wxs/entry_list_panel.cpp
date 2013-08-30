@@ -12,6 +12,7 @@
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phrase_flags.hpp"
 #include "reconciliation_entry_list_ctrl.hpp"
 #include "sizing.hpp"
 #include "summary_datum.hpp"
@@ -84,7 +85,10 @@ EntryListPanel::EntryListPanel
 
 	wxString account_label_text(" ");
 	account_label_text += bstring_to_wx
-	(	account_concept_name(account_super_type::balance_sheet, true)
+	(	account_concept_name
+		(	account_super_type::balance_sheet,
+			phrase_flags::capitalize
+		)
 	);
 	if (include_pl_accounts)
 	{

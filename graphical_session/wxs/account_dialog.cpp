@@ -10,6 +10,7 @@
 #include "ordinary_journal.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "phrase_flags.hpp"
 #include "sizing.hpp"
 #include "visibility.hpp"
 #include <boost/noncopyable.hpp>
@@ -63,7 +64,9 @@ namespace
 	(	account_super_type::AccountSuperType p_account_super_type
 	)
 	{
-		return account_concept_name(p_account_super_type, true);
+		return account_concept_name
+		(	p_account_super_type, phrase_flags::capitalize
+		);
 	}
 
 	wxString account_name_ctrl_label_string
@@ -465,7 +468,9 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		{
 			wxMessageBox
 			(	wxString("There is already ") +
-				bstring_to_wx(account_concepts_phrase(true)) +
+				bstring_to_wx
+				(	account_concepts_phrase(phrase_flags::include_article)
+				) +
 				wxString(" with this name.")
 			);
 			assert (m_name_ctrl);

@@ -8,6 +8,7 @@
 #include "b_string.hpp"
 #include "budget_item.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include "phrase_flags.hpp"
 #include "visibility.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -232,7 +233,6 @@ public:
 	 */
 	std::vector<BudgetItem> budget_items() const;
 
-
 	void set_account_type(AccountType p_account_type);
 
 	void set_name(BString const& p_name);
@@ -296,21 +296,12 @@ std::vector<account_type::AccountType> pl_account_types();
  * to the \e user the "thing" which they are creating in this
  * particular MultiAccountPanel.
  *
- * @p_capitalize - set to \e true to capitalize the first letter of
- * returned string.
- *
- * @p_include_article - set to \e true to include an indefinite
- * article before the returned string (this can be important as it could
- * be either "an" or "a" depending on the returned string.
- *
- * @todo The parameters should be rolled into a single bitset or
- * integral flag, to make it more comprehensible at the calling site.
+ * Relevant flags in \e phrase_flags: \e capitalize, \e include_article and
+ * \e pluralize.
  */
 BString account_concept_name
 (	account_super_type::AccountSuperType p_account_super_type,
-	bool p_capitalize = false,
-	bool p_include_article = false,
-	bool p_pluralize = false
+	phrase_flags::PhraseFlags p_phrase_flags = phrase_flags::none
 );
 
 /**
@@ -318,11 +309,12 @@ BString account_concept_name
  * of the different possible "account concepts" (e.g. this might
  * return something like "account or category").
  *
- * @p_include_article - set to \e true to include an indefinite
- * article before the returned string (this can be important as it could
- * be either "an" or "a" depending on the returned string.
+ * Relevant flags in \e phrase_flags: \e capitalize, \e include_article and
+ * \e pluralize.
  */
-BString account_concepts_phrase(bool p_include_article = false);
+BString account_concepts_phrase
+(	phrase_flags::PhraseFlags p_phrase_flags = phrase_flags::none
+);
 
 /**
  * @returns a map which indicates, for each AccountSuperType,

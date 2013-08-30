@@ -14,6 +14,7 @@
 #include "persistent_journal.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phrase_flags.hpp"
 #include "top_panel.hpp"
 #include <jewel/on_windows.hpp>
 #include <wx/event.h>
@@ -144,9 +145,7 @@ namespace
 		ret += " hidden ";
 		ret += account_concept_name
 		(	p_account_super_type,
-			false,
-			false,
-			true
+			phrase_flags::pluralize
 		);
 		return ret;
 	}

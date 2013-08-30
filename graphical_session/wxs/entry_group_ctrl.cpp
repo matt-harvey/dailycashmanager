@@ -9,6 +9,7 @@
 #include "finformat.hpp"
 #include "journal.hpp"
 #include "locale.hpp"
+#include "phrase_flags.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include "transaction_ctrl.hpp"
@@ -545,7 +546,10 @@ EntryGroupCtrl::side_description() const
 		if (is_source()) source_super_types(m_transaction_type, super_types);
 		else destination_super_types(m_transaction_type, super_types);
 		assert(super_types.size() == 1);
-		ret += account_concept_name(*(super_types.begin()), true);
+		ret += account_concept_name
+		(	*(super_types.begin()),
+			phrase_flags::capitalize
+		);
 		break;
 	case transaction_type::balance_sheet_transaction: // fall through
 	case transaction_type::envelope_transaction:  // fall through

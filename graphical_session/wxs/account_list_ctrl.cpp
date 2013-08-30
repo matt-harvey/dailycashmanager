@@ -12,6 +12,7 @@
 #include "top_panel.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phrase_flags.hpp"
 #include <boost/optional.hpp>
 #include <wx/event.h>
 #include <wx/listctrl.h>
@@ -63,11 +64,12 @@ AccountListCtrl::create_pl_account_list
 )
 {
 	PLAccountReader const reader(dbc);
+	phrase_flags::PhraseFlags const flags = phrase_flags::capitalize;
 	AccountListCtrl* ret = new AccountListCtrl
 	(	parent,
 		reader,
 		dbc,
-		bstring_to_wx(account_concept_name(account_super_type::pl, true)),
+		bstring_to_wx(account_concept_name(account_super_type::pl, flags)),
 		account_super_type::pl
 	);
 	return ret;
@@ -137,13 +139,14 @@ AccountListCtrl::update
 (	account_super_type::AccountSuperType p_account_super_type
 )
 {
+	phrase_flags::PhraseFlags const flags = phrase_flags::capitalize;
 	if (p_account_super_type == account_super_type::balance_sheet)
 	{
 		BalanceSheetAccountReader const reader(m_database_connection);
 		update
 		(	reader,
 			bstring_to_wx
-			(	account_concept_name(p_account_super_type, true)
+			(	account_concept_name(p_account_super_type, flags)
 			)
 		);
 	}
@@ -153,7 +156,7 @@ AccountListCtrl::update
 		update
 		(	reader,
 			bstring_to_wx
-			(	account_concept_name(p_account_super_type, true)
+			(	account_concept_name(p_account_super_type, flags)
 			)
 		);
 	}
