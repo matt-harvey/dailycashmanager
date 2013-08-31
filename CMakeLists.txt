@@ -21,7 +21,7 @@ set (immediate_directories
 	 output_aux
 	 phatbooks_database_connection
 	 phatbooks_persistent_object
-	 phrase_flags
+	 string_flags
 	 repeater
 	 session
 	 transaction_side

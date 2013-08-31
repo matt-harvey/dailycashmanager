@@ -18,7 +18,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
-#include "phrase_flags.hpp"
+#include "string_flags.hpp"
 #include "sizing.hpp"
 #include "visibility.hpp"
 #include <boost/filesystem.hpp>

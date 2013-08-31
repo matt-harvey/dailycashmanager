@@ -4,44 +4,68 @@
 #define GUARD_finformat_hpp
 
 #include "b_string.hpp"
+#include "string_flags.hpp"
 #include <jewel/decimal_fwd.hpp>
+#include <jewel/flag_set.hpp>
 #include <wx/intl.h>
 #include <string>
 
 namespace phatbooks
 {
 
+/**
+ * May be used in some of the below functions to manage boolean
+ * options. See \e jewel::FlagSet for interface.
+ */
+typedef
+	jewel::FlagSet
+	<	string_flags::StringFlags,
+		string_flags::hard_align_right
+	>
+	BasicDecimalFormatFlags;
+
+/**
+ * May be used in some of the below functions to manage boolean
+ * options. See \e jewel::FlagSet for interface.
+ */
+typedef
+	jewel::FlagSet
+	<	string_flags::StringFlags,
+		string_flags::dash_for_zero | string_flags::hard_align_right,
+		string_flags::dash_for_zero  // default
+	>
+	DecimalFormatFlags;
+
+/**
+ * May be used in some of the below functions to manage boolean
+ * options. See \e jewel::FlagSet for interface.
+ */
+typedef
+	jewel::FlagSet
+	<	string_flags::StringFlags,
+		string_flags::allow_negative_parens,
+		string_flags::allow_negative_parens  // default
+	>
+	DecimalParsingFlags;
+
 
 /**
  * @returns decimal formatted as a std::string with parentheses to
  * indicate negative, if it's negative.
  *
- * Note the string will have an extra space added to the end if it's
- * positive. This helps line things up in tables etc..
- * Also if it's zero, it will be converted to the string "-",
- * followed by a number of spaces equal to decimal.places(), followed
- * again by an additional space to assist with alignment.
+ * Unless \e p_flags has
+ * \e string_flags::hard_align_right set, then for non-negative
+ * numbers an extra space will be placed to the right to line
+ * things up better in columns.
  *
- * @param decimal the Decimal to be formatted.
+ * Also if it's zero, it will be converted to the string "-",
+ * followed by a number of spaces equal to decimal.places(),
+ * followed (unless flagged otherwise per above) by an extra space
+ * for alignment.
  */
 std::string finformat_std8
-(	jewel::Decimal const& decimal
-);
-
-/**
- * @returns decimal formatted as a BString, with parentheses to
- * indicate negative, if it's negative.
- *
- * Note the string will have an extra space added to the end if it's
- * positive. This helps line things up in tables etc..
- * Also if it's zero, it will be converted to the string "-",
- * followed by a number of spaces equal to decimal.places(), followed
- * again by an additional space to assist with alignment.
- *
- * @param decimal the Decimal to be formatted.
- */
-BString finformat_bstring
-(	jewel::Decimal const& decimal
+(	jewel::Decimal const& decimal,
+	BasicDecimalFormatFlags p_flags = BasicDecimalFormatFlags()
 );
 
 /**
@@ -51,65 +75,35 @@ BString finformat_bstring
  * the \e loc parameter, in relation to the wxLocaleCategory
  * wxLOCALE_CAT_MONEY.
  *
- * Note the string will have a space added to the end if it's
- * positive. This helps line things up in tables etc..
+ * Unless \e p_flags has
+ * \e string_flags::hard_align_right set, then for non-negative
+ * numbers an extra space will be placed to the right to line
+ * things up better in columns.
+ *
  * Also if it's zero, it will be converted to the string "-",
- * followed by a number of spaces equal to decimal.places().
+ * followed by a number of spaces equal to decimal.places(),
+ * followed (unless flagged otherwise per above) by an extra space
+ * for alignment. However, zero will be printed "normally" if
+ * \e string_flags::dash_for_zero is unset in p_flags.
  *
  * If PHATBOOKS_DISALLOW_DASH_FOR_ZERO is defined, then
- * dash is never used for zero, even if \e dash_for_zero is
- * passed \e true.
- *
- * @param decimal the Decimal to be formatted.
- *
- * @param loc the wxLocale according which we want to
- * Decimal to be formatted.
- *
- * @param print zero as '-' character.
+ * dash is never used for zero, regardless of the contents
+ * of \e p_flags.
  *
  * @todo Testing.
  */
 wxString finformat_wx
 (	jewel::Decimal const& decimal,
 	wxLocale const& loc,
-	bool dash_for_zero = true
+	DecimalFormatFlags p_flags = DecimalFormatFlags()
 );
-
-
-/**
- * Functions named finformat...nopad are like the finformat...
- * functions without "nopad", except they do not add an extra
- * space to the right when formatting non-negative numbers.
- *
- * If PHATBOOKS_DISALLOW_DASH_FOR_ZERO is defined, then
- * dash is never used for zero, even if \e dash_for_zero is
- * passed \e true.
-
- * @{
- */
-std::string finformat_std8_nopad
-(	jewel::Decimal const& decimal
-);
-
-BString finformat_bstring_nopad
-(	jewel::Decimal const& decimal
-);
-
-wxString finformat_wx_nopad
-(	jewel::Decimal const& decimal,
-	wxLocale const& loc,
-	bool dash_for_zero = true
-);
-/** }@ */
 
 
 /**
  * Assuming a locale of loc, convert a wxString to a jewel::Decimal.
  *
  * This is a fairly tolerant conversion and will accept strings
- * either with or without thousands separators. If \e allow_parens is
- * passed \e true, then it will accept parentheses used as a negative
- * sign. (It always accepts '-' as the minus sign.)
+ * either with or without thousands separators.
  * The symbols that are accepted for the thousands separator and
  * decimal point depend on the wxLocale passed to \e loc.
  *
@@ -120,13 +114,13 @@ wxString finformat_wx_nopad
  * A string that is just a dash will be interpreted as Decimal(0, 0).
  *
  * If PHATBOOKS_DISALLOW_DASH_FOR_ZERO is defined, then
- * dash is never used for zero, even if \e dash_for_zero is
- * passed \e true.
+ * dash is never used for zero, regardless of the contents
+ * of \e p_flags.
  */
 jewel::Decimal wx_to_decimal
 (	wxString wxs,
 	wxLocale const& loc,
-	bool allow_parens = true
+	DecimalParsingFlags p_flags = DecimalParsingFlags()
 );
 
 /**

@@ -619,6 +619,10 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 			{	m_source_entry_ctrl->total_amount() - primary_amount(),
 				m_destination_entry_ctrl->total_amount() - primary_amount()
 			};
+			DecimalFormatFlags const flags =
+				DecimalFormatFlags().
+					clear(string_flags::dash_for_zero).
+					set(string_flags::hard_align_right);
 			for (size_t i = 0; i != num_elements(imbalances); ++i)
 			{
 				Decimal const& imbalance = imbalances[i];
@@ -631,7 +635,7 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 						wxString("destination ")
 					);
 					msg += "amounts differs from main transaction amount by ";
-					msg += finformat_wx_nopad(imbalance, locale(), false);
+					msg += finformat_wx(imbalance, locale(), flags);
 					msg += ".";
 				}
 			}

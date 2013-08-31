@@ -72,7 +72,11 @@ BSAccountEntryListCtrl::do_set_non_date_columns
 	SetItem
 	(	p_row,
 		amount_col_num(),
-		finformat_wx(p_entry.amount(), locale(), false)
+		finformat_wx
+		(	p_entry.amount(),
+			locale(),
+			DecimalFormatFlags().clear(string_flags::dash_for_zero)
+		)
 	);
 	assert (num_columns() == 3);
 	return;

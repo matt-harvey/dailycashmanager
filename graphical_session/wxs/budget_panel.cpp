@@ -19,7 +19,7 @@
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
-#include "phrase_flags.hpp"
+#include "string_flags.hpp"
 #include "sizing.hpp"
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
@@ -341,8 +341,13 @@ BudgetPanel::update_budget_summary()
 		new_total =
 			normalized_total(budget_items.begin(), budget_items.end());
 	}
-	m_summary_amount_text->
-		SetLabelText(finformat_wx(new_total, locale(), false));
+	m_summary_amount_text->SetLabelText
+	(	finformat_wx
+		(	new_total,
+			locale(),
+			DecimalFormatFlags().clear(string_flags::dash_for_zero)
+		)
+	);
 	return;
 }
 
@@ -704,7 +709,11 @@ BudgetPanel::BalancingDialog::BalancingDialog
 	int row = 0;
 
 	wxString text("Budget is now out of balance by an amount of ");
-	text += finformat_wx(p_imbalance, locale(), false);
+	text += finformat_wx
+	(	p_imbalance,
+		locale(),
+		DecimalFormatFlags().clear(string_flags::dash_for_zero)
+	);
 	text += wxString(".");
 	wxStaticText* const imbalance_message = new wxStaticText
 	(	this,

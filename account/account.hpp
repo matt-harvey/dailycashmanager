@@ -8,7 +8,7 @@
 #include "b_string.hpp"
 #include "budget_item.hpp"
 #include "phatbooks_persistent_object.hpp"
-#include "phrase_flags.hpp"
+#include "string_flags.hpp"
 #include "visibility.hpp"
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
@@ -299,10 +299,10 @@ std::vector<account_type::AccountType> pl_account_types();
  */
 typedef
 	jewel::FlagSet
-	<	phrase_flags::PhraseFlags,
-		phrase_flags::capitalize |
-		phrase_flags::include_article |
-		phrase_flags::pluralize
+	<	string_flags::StringFlags,
+		string_flags::capitalize |
+		string_flags::include_article |
+		string_flags::pluralize
 	>
 	AccountPhraseFlags;
 

@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "finformat.hpp"
+#include "string_flags.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
 #include <wx/intl.h>
@@ -38,194 +39,6 @@ namespace phatbooks
 
 namespace
 {
-
-	string aux_finformat_std8(Decimal const& decimal, bool pad)
-	{
-		static Decimal const zero = Decimal(0, 0);
-		ostringstream oss;
-
-		// WARNING This doesn't format properly on Windows. It just ignores
-		// the thousands separators.
-		oss.imbue(locale(""));
-		oss << decimal;
-		string ret(oss.str());
-		if (ret[0] == '-')
-		{
-			assert (decimal < zero);
-			ret[0] = '(';
-			ret.push_back(')');
-		}
-		else if (decimal > zero)
-		{
-			if (pad) ret.push_back(' ');
-		}
-		else if (decimal == zero)
-		{
-			ret = "-" + string(decimal.places() + (pad? 1: 0), ' ');
-		}
-		else
-		{
-			assert (false);
-		}
-		return ret;
-	}
-
-	BString aux_finformat_bstring(jewel::Decimal const& decimal, bool pad)
-	{
-		return std8_to_bstring(aux_finformat_std8(decimal, pad));
-	}
-
-	wxString aux_finformat_wx
-	(	jewel::Decimal const& decimal,
-		wxLocale const& loc,
-		bool pad,
-		bool dash_for_zero
-	)
-	{
-#		if PHATBOOKS_DISALLOW_DASH_FOR_ZERO
-			dash_for_zero = false;
-#		endif   // PHATBOOKS_DISALLOW_DASH_FOR_ZERO
-
-		// TODO Make this cleaner and more efficient.
-		Decimal::places_type const places = decimal.places();
-		Decimal::int_type const intval = decimal.intval();
-		typedef wxChar CharT;
-		CharT const zeroc = wxChar('0');
-		wxString const decimal_point_s = loc.GetInfo
-		(	wxLOCALE_DECIMAL_POINT,
-			wxLOCALE_CAT_MONEY
-		);
-		wxString const thousands_sep_s = loc.GetInfo
-		(	wxLOCALE_THOUSANDS_SEP,
-			wxLOCALE_CAT_MONEY
-		);
-		// TODO Are the following assertions always going to be true? No,
-		// they are not...
-		assert (decimal_point_s.size() == 1);
-		assert (thousands_sep_s.size() == 1);
-		CharT const decimal_point = decimal_point_s[0];
-		CharT const thousand_sep = thousands_sep_s[0];
-		// We will build it backwards.
-		deque<CharT> ret;
-		assert (ret.empty());
-		// Special case of zero
-		if (dash_for_zero && (intval == 0))
-		{
-			ret.push_back(CharT('-'));
-			if (places > 0)
-			{
-				for (deque<CharT>::size_type i = 0; i != places; ++i)
-				{
-					ret.push_back(CharT(' '));
-				}
-				// wxWidgets font alignment hack to make it look good
-				// with variable width font.
-				ret.push_back(CharT(' '));
-				if (pad) ret.push_back(CharT(' '));
-			}
-		}
-		else
-		{
-			// Our starting point is the string of digits representing the
-			// absolute value of the underlying integer.
-			ostringstream tempstream;
-			tempstream.imbue(locale::classic());
-			wxString wxtemp;
-			if (intval == numeric_limits<Decimal::int_type>::min())
-			{
-				// Special case as we can't use std::abs here without
-				// overflow.
-				tempstream << intval;
-				wxtemp = std8_to_wx(tempstream.str());
-				wxString::const_iterator it = wxtemp.begin();
-				assert (*it == CharT('-'));
-				++it;
-				wxtemp = wxString(it, wxtemp.end());
-			}
-			else
-			{
-				tempstream << std::abs(intval);
-				wxtemp = std8_to_wx(tempstream.str());
-			}
-
-			// Write the fractional part
-			wxString::reverse_iterator const rend = wxtemp.rend();
-			wxString::reverse_iterator rit = wxtemp.rbegin();
-			wxString::size_type digits_written = 0;
-			for
-			(	;
-				(digits_written != places) && (rit != rend);
-				++rit, ++digits_written
-			)
-			{
-				ret.push_front(*rit);
-			}
-			// Deal with any "filler zerooes" required in the fractional
-			// part
-			while (digits_written != places)
-			{
-				ret.push_front(zeroc);
-				++digits_written;
-			}
-			// Write the decimal point if required
-			if (places != 0) ret.push_front(decimal_point);
-
-			// Write the whole part
-
-			// Assume the grouping of digits is normal "threes".
-			// TODO Is this a safe assumption? There doesn't seem to
-			// be an equivalent of grouping() for wxLocale.
-			static vector<wxString::size_type> const grouping(1, 3);
-			vector<wxString::size_type>::const_iterator grouping_it =
-				grouping.begin();
-			vector<wxString::size_type>::const_iterator last_group_datum =
-				grouping.end() - 1;
-			wxString::size_type digits_written_this_group = 0;
-			for
-			(	;
-				rit != rend;
-				++rit, ++digits_written, ++digits_written_this_group
-			)
-			{
-				if
-				(	digits_written_this_group ==
-					static_cast<wxString::size_type>(*grouping_it)
-				)
-				{
-					ret.push_front(thousand_sep);
-					digits_written_this_group = 0;
-					if (grouping_it != last_group_datum) ++grouping_it;
-				}
-				ret.push_front(*rit);
-			}
-			// Write a leading zero if required
-			if (digits_written == places)
-			{
-				ret.push_front(zeroc);
-			}
-		}
-		// Indicate negative if required
-		if (intval < 0)
-		{
-			ret.push_front(CharT('('));
-			ret.push_back(CharT(')'));
-		}
-		else if (pad)
-		{
-			ret.push_back(CharT(' '));
-		}
-		wxString wret;
-		for
-		(	deque<CharT>::const_iterator dit = ret.begin(), dend = ret.end();
-			dit != dend;
-			++dit
-		)
-		{
-			wret.Append(*dit);
-		}
-		return wret;
-	}
-
 	void split_plus_minus(wxString const& p_string, vector<wxString>& out)
 	{
 		wxString current_slice;
@@ -251,63 +64,211 @@ namespace
 }  // end anonymous namespace
 
 
-
-
-std::string finformat_std8
-(	jewel::Decimal const& decimal
+string finformat_std8
+(	Decimal const& decimal,
+	BasicDecimalFormatFlags p_flags
 )
 {
-	return aux_finformat_std8(decimal, true);
+	static Decimal const zero = Decimal(0, 0);
+	bool const pad = !p_flags.test(string_flags::hard_align_right);
+	ostringstream oss;
+
+	// WARNING This doesn't format properly on Windows. It just ignores
+	// the thousands separators.
+	oss.imbue(locale(""));
+	oss << decimal;
+	string ret(oss.str());
+	if (ret[0] == '-')
+	{
+		assert (decimal < zero);
+		ret[0] = '(';
+		ret.push_back(')');
+	}
+	else if (decimal > zero)
+	{
+		if (pad) ret.push_back(' ');
+	}
+	else if (decimal == zero)
+	{
+		ret = "-" + string(decimal.places() + (pad? 1: 0), ' ');
+	}
+	else
+	{
+		assert (false);
+	}
+	return ret;
 }
 
-BString finformat_bstring
-(	jewel::Decimal const& decimal
-)
-{
-	return aux_finformat_bstring(decimal, true);
-}
 
 wxString finformat_wx
 (	jewel::Decimal const& decimal,
 	wxLocale const& loc,
-	bool dash_for_zero
+	DecimalFormatFlags p_flags
 )
 {
-	return aux_finformat_wx(decimal, loc, true, dash_for_zero);
-}
+#	if PHATBOOKS_DISALLOW_DASH_FOR_ZERO
+		bool const dash_for_zero = false;
+#	else
+		bool const dash_for_zero = p_flags.test(string_flags::dash_for_zero);
+#	endif
 
-std::string finformat_std8_nopad
-(	jewel::Decimal const& decimal
-)
-{
-	return aux_finformat_std8(decimal, false);
-}
+	bool const pad = !p_flags.test(string_flags::hard_align_right);
 
-BString finformat_bstring_nopad
-(	jewel::Decimal const& decimal
-)
-{
-	return aux_finformat_bstring(decimal, false);
-}
+	// TODO Make this cleaner and more efficient.
+	Decimal::places_type const places = decimal.places();
+	Decimal::int_type const intval = decimal.intval();
+	typedef wxChar CharT;
+	static CharT const zeroc = wxChar('0');
+	wxString const decimal_point_s = loc.GetInfo
+	(	wxLOCALE_DECIMAL_POINT,
+		wxLOCALE_CAT_MONEY
+	);
+	wxString const thousands_sep_s = loc.GetInfo
+	(	wxLOCALE_THOUSANDS_SEP,
+		wxLOCALE_CAT_MONEY
+	);
+	// TODO Are the following assertions always going to be true? No,
+	// they are not...
+	assert (decimal_point_s.size() == 1);
+	assert (thousands_sep_s.size() == 1);
+	CharT const decimal_point = decimal_point_s[0];
+	CharT const thousand_sep = thousands_sep_s[0];
+	// We will build it backwards.
+	deque<CharT> ret;
+	assert (ret.empty());
+	// Special case of zero
+	if (dash_for_zero && (intval == 0))
+	{
+		ret.push_back(CharT('-'));
+		if (places > 0)
+		{
+			for (deque<CharT>::size_type i = 0; i != places; ++i)
+			{
+				ret.push_back(CharT(' '));
+			}
+			// wxWidgets font alignment hack to make it look good
+			// with variable width font.
+			ret.push_back(CharT(' '));
+			if (pad) ret.push_back(CharT(' '));
+		}
+	}
+	else
+	{
+		// Our starting point is the string of digits representing the
+		// absolute value of the underlying integer.
+		ostringstream tempstream;
+		tempstream.imbue(locale::classic());
+		wxString wxtemp;
+		if (intval == numeric_limits<Decimal::int_type>::min())
+		{
+			// Special case as we can't use std::abs here without
+			// overflow.
+			tempstream << intval;
+			wxtemp = std8_to_wx(tempstream.str());
+			wxString::const_iterator it = wxtemp.begin();
+			assert (*it == CharT('-'));
+			++it;
+			wxtemp = wxString(it, wxtemp.end());
+		}
+		else
+		{
+			tempstream << std::abs(intval);
+			wxtemp = std8_to_wx(tempstream.str());
+		}
 
-wxString finformat_wx_nopad
-(	jewel::Decimal const& decimal,
-	wxLocale const& loc,
-	bool dash_for_zero
-)
-{
-	return aux_finformat_wx(decimal, loc, false, dash_for_zero);
+		// Write the fractional part
+		wxString::reverse_iterator const rend = wxtemp.rend();
+		wxString::reverse_iterator rit = wxtemp.rbegin();
+		wxString::size_type digits_written = 0;
+		for
+		(	;
+			(digits_written != places) && (rit != rend);
+			++rit, ++digits_written
+		)
+		{
+			ret.push_front(*rit);
+		}
+		// Deal with any "filler zerooes" required in the fractional
+		// part
+		while (digits_written != places)
+		{
+			ret.push_front(zeroc);
+			++digits_written;
+		}
+		// Write the decimal point if required
+		if (places != 0) ret.push_front(decimal_point);
+
+		// Write the whole part
+
+		// Assume the grouping of digits is normal "threes".
+		// TODO Is this a safe assumption? There doesn't seem to
+		// be an equivalent of grouping() for wxLocale.
+		static vector<wxString::size_type> const grouping(1, 3);
+		vector<wxString::size_type>::const_iterator grouping_it =
+			grouping.begin();
+		vector<wxString::size_type>::const_iterator last_group_datum =
+			grouping.end() - 1;
+		wxString::size_type digits_written_this_group = 0;
+		for
+		(	;
+			rit != rend;
+			++rit, ++digits_written, ++digits_written_this_group
+		)
+		{
+			if
+			(	digits_written_this_group ==
+				static_cast<wxString::size_type>(*grouping_it)
+			)
+			{
+				ret.push_front(thousand_sep);
+				digits_written_this_group = 0;
+				if (grouping_it != last_group_datum) ++grouping_it;
+			}
+			ret.push_front(*rit);
+		}
+		// Write a leading zero if required
+		if (digits_written == places)
+		{
+			ret.push_front(zeroc);
+		}
+	}
+	// Indicate negative if required
+	if (intval < 0)
+	{
+		ret.push_front(CharT('('));
+		ret.push_back(CharT(')'));
+	}
+	else if (pad)
+	{
+		ret.push_back(CharT(' '));
+	}
+	wxString wret;
+	for
+	(	deque<CharT>::const_iterator dit = ret.begin(), dend = ret.end();
+		dit != dend;
+		++dit
+	)
+	{
+		wret.Append(*dit);
+	}
+	return wret;
 }
 
 jewel::Decimal
-wx_to_decimal(wxString wxs, wxLocale const& loc, bool allow_parens)
+wx_to_decimal
+(	wxString wxs,
+	wxLocale const& loc,
+	DecimalParsingFlags p_flags
+)
 {
+	bool const allow_parens =
+		p_flags.test(string_flags::allow_negative_parens);
 	wxs = wxs.Trim();
 	typedef wxChar CharT;
 	typedef wxString::size_type sz_t;
-	CharT const open_paren = wxChar('(');
-	CharT const close_paren = wxChar(')');
-	CharT const minus_sign = wxChar('-');
+	static CharT const open_paren = wxChar('(');
+	static CharT const close_paren = wxChar(')');
+	static CharT const minus_sign = wxChar('-');
 	wxString const decimal_point_s = loc.GetInfo
 	(	wxLOCALE_DECIMAL_POINT,
 		wxLOCALE_CAT_MONEY
@@ -363,7 +324,12 @@ wx_to_simple_sum(wxString wxs, wxLocale const& loc)
 	{
 		if (!it->IsEmpty())
 		{
-			total += wx_to_decimal(*it, loc, false);
+			total += wx_to_decimal
+			(	*it,
+				loc,
+				DecimalParsingFlags().
+					clear(string_flags::allow_negative_parens)
+			);
 		}
 	}
 	return total;

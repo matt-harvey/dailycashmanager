@@ -32,7 +32,7 @@ DecimalTextCtrl::DecimalTextCtrl
 	unsigned int p_id,
 	wxSize const& p_size,
 	Decimal::places_type p_precision,
-	bool p_print_dash_for_zero
+	bool p_print_dash_for_zero  // TODO Would be cleaner with a FlagSet here.
 ):
 	wxTextCtrl
 	(	p_parent,
@@ -40,7 +40,10 @@ DecimalTextCtrl::DecimalTextCtrl
 		finformat_wx
 		(	Decimal(0, p_precision),
 			locale(),
-			p_print_dash_for_zero
+			(	p_print_dash_for_zero?
+				DecimalFormatFlags():
+				DecimalFormatFlags().clear(string_flags::dash_for_zero)
+			)
 		),
 		wxDefaultPosition,
 		p_size,
@@ -73,8 +76,16 @@ DecimalTextCtrl::set_amount(Decimal const& p_amount)
 		validator->set_precision(prec);
 	}
 	assert (p_amount.places() == m_precision);
-	wxString const amount_string =
-		finformat_wx(p_amount, locale(), m_print_dash_for_zero);
+	DecimalFormatFlags flags;
+	if (!m_print_dash_for_zero)
+	{
+		flags.clear(string_flags::dash_for_zero);
+	}
+	wxString const amount_string = finformat_wx
+	(	p_amount,
+		locale(),
+		flags
+	);
 	SetValue(amount_string);
 
 	// TODO This really sucks. We are validating the entire parent

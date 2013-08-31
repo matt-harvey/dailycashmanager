@@ -107,10 +107,15 @@ GriddedScrolledPanel::display_decimal
 	bool p_dash_for_zero
 )
 {
+	DecimalFormatFlags flags =
+	(	p_dash_for_zero?
+		DecimalFormatFlags().set(string_flags::dash_for_zero):
+		DecimalFormatFlags().clear(string_flags::dash_for_zero)
+	);
 	wxStaticText* text = new wxStaticText
 	(	this,
 		wxID_ANY,
-		finformat_wx(p_decimal, locale(), p_dash_for_zero),
+		finformat_wx(p_decimal, locale(), flags),
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxALIGN_RIGHT

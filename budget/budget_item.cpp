@@ -138,7 +138,12 @@ BudgetItem::output_budget_item_aux(ostream& os, BudgetItem const& bi)
 		// lexical cast to avoid unwanted formatting
 		os << " ID " + lexical_cast<string>(bi.id());
 	}
-	os << ": " << finformat_std8_nopad(bi.amount()) << " ";
+	os << ": "
+	   << finformat_std8
+	   	  	(	bi.amount(),
+		  		BasicDecimalFormatFlags().set(string_flags::hard_align_right)
+			)
+	   << " ";
 	os << frequency_description(bi.frequency(), "per");
 	if (!bi.description().empty())
 	{

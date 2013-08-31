@@ -12,7 +12,7 @@
 #include "top_panel.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "phrase_flags.hpp"
+#include "string_flags.hpp"
 #include <boost/optional.hpp>
 #include <wx/event.h>
 #include <wx/listctrl.h>
@@ -71,7 +71,7 @@ AccountListCtrl::create_pl_account_list
 		bstring_to_wx
 		(	account_concept_name
 			(	account_super_type::pl,
-				AccountPhraseFlags().set(phrase_flags::capitalize)
+				AccountPhraseFlags().set(string_flags::capitalize)
 			)
 		),
 		account_super_type::pl
@@ -144,7 +144,7 @@ AccountListCtrl::update
 )
 {
 	AccountPhraseFlags const flags =
-		AccountPhraseFlags().set(phrase_flags::capitalize);
+		AccountPhraseFlags().set(string_flags::capitalize);
 	if (p_account_super_type == account_super_type::balance_sheet)
 	{
 		BalanceSheetAccountReader const reader(m_database_connection);

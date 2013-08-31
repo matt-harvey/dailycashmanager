@@ -12,7 +12,7 @@
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "phrase_flags.hpp"
+#include "string_flags.hpp"
 #include "reconciliation_entry_list_ctrl.hpp"
 #include "sizing.hpp"
 #include "summary_datum.hpp"
@@ -87,7 +87,7 @@ EntryListPanel::EntryListPanel
 	account_label_text += bstring_to_wx
 	(	account_concept_name
 		(	account_super_type::balance_sheet,
-			AccountPhraseFlags().set(phrase_flags::capitalize)
+			AccountPhraseFlags().set(string_flags::capitalize)
 		)
 	);
 	if (include_pl_accounts)
@@ -424,7 +424,11 @@ EntryListPanel::postconfigure_summary()
 			(	summary_data[i].label() + wxString(":")
 			);
 			m_summary_data_text_items[i]->SetLabel
-			(	finformat_wx(summary_data[i].amount(), locale(), false)
+			(	finformat_wx
+				(	summary_data[i].amount(),
+					locale(),
+					DecimalFormatFlags().clear(string_flags::dash_for_zero)
+				)
 			);
 		}
 	}

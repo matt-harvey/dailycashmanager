@@ -106,8 +106,9 @@ DecimalValidator::TransferToWindow()
 	{
 		return false;
 	}
-	text_ctrl->
-		SetValue(finformat_wx(m_decimal, locale(), m_print_dash_for_zero));
+	DecimalFormatFlags flags;
+	if (!m_print_dash_for_zero) flags.clear(string_flags::dash_for_zero);
+	text_ctrl->SetValue(finformat_wx(m_decimal, locale(), flags));
 	return true;
 }
 

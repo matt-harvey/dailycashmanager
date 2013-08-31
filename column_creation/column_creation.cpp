@@ -192,6 +192,10 @@ namespace
 		return ret;
 	}
 
+	string finformat_std8_aux(Decimal const& p_decimal)
+	{
+		return finformat_std8(p_decimal);
+	}
 
 }  // end anonymous namespace
 		
@@ -269,7 +273,7 @@ create_entry_amount_column()
 	(	entry_col_aux_amount,
 		"Amount",
 		alignment::right,
-		finformat_std8
+		finformat_std8_aux
 	);
 }
 
@@ -280,7 +284,7 @@ create_entry_reversed_amount_column()
 	(	entry_col_aux_reversed_amount,
 		"Amount",
 		alignment::right,
-		finformat_std8
+		finformat_std8_aux
 	);
 }
 
@@ -292,7 +296,7 @@ create_entry_accumulating_amount_column(Decimal const& p_seed)
 		p_seed,
 		"Amount",
 		alignment::right,
-		finformat_std8
+		finformat_std8_aux
 	);
 }
 
@@ -304,7 +308,7 @@ create_entry_accumulating_reversed_amount_column(Decimal const& p_seed)
 		p_seed,
 		"Amount",
 		alignment::right,
-		finformat_std8
+		finformat_std8_aux
 	);
 }
 
@@ -317,7 +321,7 @@ create_entry_running_total_amount_column(Decimal const& p_seed)
 			p_seed,
 			"Balance",
 			alignment::right,
-			finformat_std8
+			finformat_std8_aux
 		);
 	ret->suppress_footer();
 	return ret;
@@ -334,7 +338,7 @@ create_entry_running_total_reconciled_amount_column
 			p_seed,
 			"Reconciled balance",
 			alignment::right,
-			finformat_std8
+			finformat_std8_aux
 		);
 	ret->suppress_footer();
 	return ret;
@@ -392,7 +396,7 @@ create_account_friendly_balance_column()
 	(	account_col_aux_friendly_balance,
 		"Balance",
 		alignment::right,
-		finformat_std8
+		finformat_std8_aux
 	);
 }
 
@@ -404,7 +408,7 @@ create_account_accumulating_friendly_balance_column()
 		Decimal(0, 0),
 		"Balance",
 		alignment::right,
-		finformat_std8
+		finformat_std8_aux
 	);
 }
 
@@ -420,7 +424,7 @@ create_account_budget_column
 		Decimal(0, 0),
 		"Budget/" + bstring_to_std8(phrase(frequency.step_type(), false)),
 		alignment::right,
-		finformat_std8
+		finformat_std8_aux
 	);
 }
 
@@ -431,7 +435,7 @@ create_account_friendly_opening_balance_column()
 	(	account_col_aux_friendly_opening_balance,
 		"Opening balance",
 		alignment::right,
-		finformat_std8
+		finformat_std8_aux
 	);
 }
 

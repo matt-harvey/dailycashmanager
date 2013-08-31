@@ -10,10 +10,10 @@
 #include "finformat.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
-#include "phrase_flags.hpp"
+#include "string_flags.hpp"
 #include "visibility.hpp"
 #include "b_string.hpp"
-#include "phrase_flags.hpp"
+#include "string_flags.hpp"
 #include <boost/shared_ptr.hpp>
 #include <consolixx/alignment.hpp>
 #include <consolixx/column.hpp>
@@ -368,11 +368,11 @@ BString account_concept_name
 {
 	BString ret;
 	assert (ret.IsEmpty());
-	if (p_phrase_flag_set.test(phrase_flags::include_article))
+	if (p_phrase_flag_set.test(string_flags::include_article))
 	{
 		ret += BString("an ");
 	}
-	bool const capitalize = p_phrase_flag_set.test(phrase_flags::capitalize);
+	bool const capitalize = p_phrase_flag_set.test(string_flags::capitalize);
 	switch (p_account_super_type)
 	{
 	case account_super_type::balance_sheet:
@@ -392,7 +392,7 @@ BString account_concept_name
 	default:
 		assert (false);
 	}
-	if (p_phrase_flag_set.test(phrase_flags::pluralize))
+	if (p_phrase_flag_set.test(string_flags::pluralize))
 	{
 		ret += wxString("s");
 	}
@@ -408,7 +408,7 @@ BString account_concepts_phrase
 		p_phrase_flag_set
 	);
 	ret += BString(" or ");
-	p_phrase_flag_set.clear(phrase_flags::include_article);
+	p_phrase_flag_set.clear(string_flags::include_article);
 	ret += account_concept_name
 	(	account_super_type::pl,
 		p_phrase_flag_set

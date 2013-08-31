@@ -12,7 +12,7 @@
 #include "gridded_scrolled_panel.hpp"
 #include "make_default_accounts.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "phrase_flags.hpp"
+#include "string_flags.hpp"
 #include "setup_wizard.hpp"
 #include "sizing.hpp"
 #include "visibility.hpp"
@@ -106,7 +106,7 @@ MultiAccountPanel::MultiAccountPanel
 	increment_row();
 
 	// Row of column headings
-	AccountPhraseFlags const flags = AccountPhraseFlags().set(phrase_flags::capitalize);
+	AccountPhraseFlags const flags = AccountPhraseFlags().set(string_flags::capitalize);
 	wxString const account_name_label =
 		wxString(" ") +
 		bstring_to_wx(account_concept_name(m_account_super_type, flags)) +
@@ -208,8 +208,13 @@ MultiAccountPanel::summary_amount() const
 void
 MultiAccountPanel::update_summary()
 {
-	m_summary_amount_text->
-		SetLabel(finformat_wx(summary_amount(), locale(), false));
+	m_summary_amount_text->SetLabel
+	(	finformat_wx
+		(	summary_amount(),
+			locale(),
+			DecimalFormatFlags().clear(string_flags::dash_for_zero)
+		)
+	);
 	Layout();  // This is essential.
 	return;
 }
@@ -399,7 +404,7 @@ MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 	set<wxString> account_names;
 	vector<wxTextCtrl*>::size_type i = 0;
 	vector<wxTextCtrl*>::size_type const sz = m_account_name_boxes.size();
-	AccountPhraseFlags const flags = AccountPhraseFlags().set(phrase_flags::capitalize);
+	AccountPhraseFlags const flags = AccountPhraseFlags().set(string_flags::capitalize);
 	for ( ; i != sz; ++i)
 	{
 		wxString const name =
