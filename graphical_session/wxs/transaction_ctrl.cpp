@@ -166,6 +166,7 @@ TransactionCtrl::TransactionCtrl
 	m_frequency_ctrl(0),
 	m_date_ctrl(0),
 	m_cancel_button(0),
+	m_delete_button(0),
 	m_ok_button(0),
 	m_journal(0)
 {
@@ -191,6 +192,7 @@ TransactionCtrl::TransactionCtrl
 	m_frequency_ctrl(0),
 	m_date_ctrl(0),
 	m_cancel_button(0),
+	m_delete_button(0),
 	m_ok_button(0),
 	m_journal(0)
 {

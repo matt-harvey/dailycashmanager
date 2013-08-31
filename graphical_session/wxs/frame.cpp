@@ -629,6 +629,7 @@ Frame::on_reconciliation_status_event(PersistentObjectEvent& event)
 	Entry const entry(m_database_connection, event.po_id());
 	assert (m_top_panel);
 	m_top_panel->update_for_reconciliation_status(entry);
+	return;
 }
 
 void
