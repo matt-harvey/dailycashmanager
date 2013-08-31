@@ -145,7 +145,7 @@ namespace
 		ret += " hidden ";
 		ret += account_concept_name
 		(	p_account_super_type,
-			phrase_flags::pluralize
+			PhraseFlagSet().set(phrase_flags::pluralize)
 		);
 		return ret;
 	}
@@ -384,8 +384,12 @@ Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 	selected_pl_accounts(accounts);
 	if (accounts.empty())
 	{
-		wxString const concept_name =
-			bstring_to_wx(account_concept_name(account_super_type::pl, true));
+		wxString const concept_name = bstring_to_wx
+		(	account_concept_name
+			(	account_super_type::pl,
+				PhraseFlagSet().set(phrase_flags::capitalize)
+			)
+		);
 		wxMessageBox
 		(	concept_name +
 			wxString(" to edit must first be selected in main window.")

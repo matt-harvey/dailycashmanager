@@ -106,7 +106,7 @@ MultiAccountPanel::MultiAccountPanel
 	increment_row();
 
 	// Row of column headings
-	phrase_flags::PhraseFlags const flags = phrase_flags::capitalize;
+	PhraseFlagSet const flags = PhraseFlagSet().set(phrase_flags::capitalize);
 	wxString const account_name_label =
 		wxString(" ") +
 		bstring_to_wx(account_concept_name(m_account_super_type, flags)) +
@@ -399,7 +399,7 @@ MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 	set<wxString> account_names;
 	vector<wxTextCtrl*>::size_type i = 0;
 	vector<wxTextCtrl*>::size_type const sz = m_account_name_boxes.size();
-	phrase_flags::PhraseFlags const flags = phrase_flags::capitalize;
+	PhraseFlagSet const flags = PhraseFlagSet().set(phrase_flags::capitalize);
 	for ( ; i != sz; ++i)
 	{
 		wxString const name =

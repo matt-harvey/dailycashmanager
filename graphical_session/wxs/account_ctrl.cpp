@@ -5,8 +5,9 @@
 #include "account_reader.hpp"
 #include "account_type.hpp"
 #include "b_string.hpp"
-#include "string_set_validator.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phrase_flags.hpp"
+#include "string_set_validator.hpp"
 #include <wx/combobox.h>
 #include <wx/event.h>
 #include <cassert>

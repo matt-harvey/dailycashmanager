@@ -363,27 +363,28 @@ bool is_not_pure_envelope(Account const& account)
 
 BString account_concept_name
 (	account_super_type::AccountSuperType p_account_super_type,
-	phrase_flags::PhraseFlags p_phrase_flags
+	PhraseFlagSet p_phrase_flag_set
 )
 {
 	BString ret;
 	assert (ret.IsEmpty());
-	if (p_phrase_flags & phrase_flags::include_article)
+	if (p_phrase_flag_set.test(phrase_flags::include_article))
 	{
 		ret += BString("an ");
 	}
+	bool const capitalize = p_phrase_flag_set.test(phrase_flags::capitalize);
 	switch (p_account_super_type)
 	{
 	case account_super_type::balance_sheet:
 		ret +=
-		(	(p_phrase_flags & phrase_flags::capitalize)?
+		(	capitalize?
 			BString("Account"):
 			BString("account")
 		);
 		break;
 	case account_super_type::pl:
 		ret +=
-		(	(p_phrase_flags & phrase_flags::capitalize)?
+		(	capitalize?
 			BString("Envelope"):
 			BString("envelope")
 		);
@@ -391,25 +392,27 @@ BString account_concept_name
 	default:
 		assert (false);
 	}
-	if (p_phrase_flags & phrase_flags::pluralize)
+	if (p_phrase_flag_set.test(phrase_flags::pluralize))
 	{
 		ret += wxString("s");
 	}
 	return ret;
 }
 
-BString account_concepts_phrase(phrase_flags::PhraseFlags p_phrase_flags)
+BString account_concepts_phrase
+(	PhraseFlagSet p_phrase_flag_set
+)
 {
-	BString ret =
-		account_concept_name
-		(	account_super_type::balance_sheet,
-			p_phrase_flags
-		) +
-		BString(" or ") +
-		account_concept_name
-		(	account_super_type::pl,
-			(p_phrase_flags & ~phrase_flags::include_article)
-		);
+	BString ret = account_concept_name
+	(	account_super_type::balance_sheet,
+		p_phrase_flag_set
+	);
+	ret += BString(" or ");
+	p_phrase_flag_set.clear(phrase_flags::include_article);
+	ret += account_concept_name
+	(	account_super_type::pl,
+		p_phrase_flag_set
+	);
 	return ret;
 }
 

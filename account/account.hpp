@@ -295,25 +295,19 @@ std::vector<account_type::AccountType> pl_account_types();
  * @returns "account", "category" or some such string to describe
  * to the \e user the "thing" which they are creating in this
  * particular MultiAccountPanel.
- *
- * Relevant flags in \e phrase_flags: \e capitalize, \e include_article and
- * \e pluralize.
  */
 BString account_concept_name
 (	account_super_type::AccountSuperType p_account_super_type,
-	phrase_flags::PhraseFlags p_phrase_flags = phrase_flags::none
+	PhraseFlagSet p_phrase_flag_set = PhraseFlagSet()
 );
 
 /**
  * @returns a string of the form "X or Y", where "X" and "Y" are the names
  * of the different possible "account concepts" (e.g. this might
  * return something like "account or category").
- *
- * Relevant flags in \e phrase_flags: \e capitalize, \e include_article and
- * \e pluralize.
  */
 BString account_concepts_phrase
-(	phrase_flags::PhraseFlags p_phrase_flags = phrase_flags::none
+(	PhraseFlagSet p_phrase_flag_set = PhraseFlagSet()
 );
 
 /**

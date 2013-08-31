@@ -64,12 +64,16 @@ AccountListCtrl::create_pl_account_list
 )
 {
 	PLAccountReader const reader(dbc);
-	phrase_flags::PhraseFlags const flags = phrase_flags::capitalize;
 	AccountListCtrl* ret = new AccountListCtrl
 	(	parent,
 		reader,
 		dbc,
-		bstring_to_wx(account_concept_name(account_super_type::pl, flags)),
+		bstring_to_wx
+		(	account_concept_name
+			(	account_super_type::pl,
+				PhraseFlagSet().set(phrase_flags::capitalize)
+			)
+		),
 		account_super_type::pl
 	);
 	return ret;
@@ -139,7 +143,8 @@ AccountListCtrl::update
 (	account_super_type::AccountSuperType p_account_super_type
 )
 {
-	phrase_flags::PhraseFlags const flags = phrase_flags::capitalize;
+	PhraseFlagSet const flags =
+		PhraseFlagSet().set(phrase_flags::capitalize);
 	if (p_account_super_type == account_super_type::balance_sheet)
 	{
 		BalanceSheetAccountReader const reader(m_database_connection);
