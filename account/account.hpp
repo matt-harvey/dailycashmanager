@@ -291,6 +291,22 @@ bool is_not_pure_envelope(Account const& account);
 std::vector<account_type::AccountType> balance_sheet_account_types();
 std::vector<account_type::AccountType> pl_account_types();
 
+
+/**
+ * Type used to pass options to \e account_concept_name and
+ * \e account_concepts_phrase functions. For interface, see
+ * documentation for \e jewel::FlagSet, in the Jewel library.
+ */
+typedef
+	jewel::FlagSet
+	<	phrase_flags::PhraseFlags,
+		phrase_flags::capitalize |
+		phrase_flags::include_article |
+		phrase_flags::pluralize
+	>
+	AccountPhraseFlags;
+
+
 /**
  * @returns "account", "category" or some such string to describe
  * to the \e user the "thing" which they are creating in this
@@ -298,7 +314,7 @@ std::vector<account_type::AccountType> pl_account_types();
  */
 BString account_concept_name
 (	account_super_type::AccountSuperType p_account_super_type,
-	PhraseFlagSet p_phrase_flag_set = PhraseFlagSet()
+	AccountPhraseFlags p_phrase_flag_set = AccountPhraseFlags()
 );
 
 /**
@@ -307,7 +323,7 @@ BString account_concept_name
  * return something like "account or category").
  */
 BString account_concepts_phrase
-(	PhraseFlagSet p_phrase_flag_set = PhraseFlagSet()
+(	AccountPhraseFlags p_phrase_flag_set = AccountPhraseFlags()
 );
 
 /**

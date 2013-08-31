@@ -15,22 +15,13 @@ namespace phrase_flags
 {
 	enum PhraseFlags
 	{
-		capitalize = (1 << 0),
-		include_article = (1 << 1),
-		pluralize = (1 << 2)
+		capitalize			= (1 << 0),
+		include_article		= (1 << 1),
+		pluralize			= (1 << 2)
 	};
 
 }  // namespace phrase_flags
 
-
-typedef
-	jewel::FlagSet
-	<	phrase_flags::PhraseFlags,
-		phrase_flags::capitalize |
-		phrase_flags::include_article |
-		phrase_flags::pluralize
-	>
-	PhraseFlagSet;
 
 
 }  // namespace phatbooks

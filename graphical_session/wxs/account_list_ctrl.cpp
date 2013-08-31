@@ -71,7 +71,7 @@ AccountListCtrl::create_pl_account_list
 		bstring_to_wx
 		(	account_concept_name
 			(	account_super_type::pl,
-				PhraseFlagSet().set(phrase_flags::capitalize)
+				AccountPhraseFlags().set(phrase_flags::capitalize)
 			)
 		),
 		account_super_type::pl
@@ -143,8 +143,8 @@ AccountListCtrl::update
 (	account_super_type::AccountSuperType p_account_super_type
 )
 {
-	PhraseFlagSet const flags =
-		PhraseFlagSet().set(phrase_flags::capitalize);
+	AccountPhraseFlags const flags =
+		AccountPhraseFlags().set(phrase_flags::capitalize);
 	if (p_account_super_type == account_super_type::balance_sheet)
 	{
 		BalanceSheetAccountReader const reader(m_database_connection);

@@ -145,7 +145,7 @@ namespace
 		ret += " hidden ";
 		ret += account_concept_name
 		(	p_account_super_type,
-			PhraseFlagSet().set(phrase_flags::pluralize)
+			AccountPhraseFlags().set(phrase_flags::pluralize)
 		);
 		return ret;
 	}
@@ -387,7 +387,7 @@ Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 		wxString const concept_name = bstring_to_wx
 		(	account_concept_name
 			(	account_super_type::pl,
-				PhraseFlagSet().set(phrase_flags::capitalize)
+				AccountPhraseFlags().set(phrase_flags::capitalize)
 			)
 		);
 		wxMessageBox

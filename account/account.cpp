@@ -363,7 +363,7 @@ bool is_not_pure_envelope(Account const& account)
 
 BString account_concept_name
 (	account_super_type::AccountSuperType p_account_super_type,
-	PhraseFlagSet p_phrase_flag_set
+	AccountPhraseFlags p_phrase_flag_set
 )
 {
 	BString ret;
@@ -400,7 +400,7 @@ BString account_concept_name
 }
 
 BString account_concepts_phrase
-(	PhraseFlagSet p_phrase_flag_set
+(	AccountPhraseFlags p_phrase_flag_set
 )
 {
 	BString ret = account_concept_name

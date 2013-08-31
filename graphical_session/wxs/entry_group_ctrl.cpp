@@ -548,7 +548,7 @@ EntryGroupCtrl::side_description() const
 		assert(super_types.size() == 1);
 		ret += account_concept_name
 		(	*(super_types.begin()),
-			PhraseFlagSet().set(phrase_flags::capitalize)
+			AccountPhraseFlags().set(phrase_flags::capitalize)
 		);
 		break;
 	case transaction_type::balance_sheet_transaction: // fall through

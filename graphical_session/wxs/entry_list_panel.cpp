@@ -87,7 +87,7 @@ EntryListPanel::EntryListPanel
 	account_label_text += bstring_to_wx
 	(	account_concept_name
 		(	account_super_type::balance_sheet,
-			PhraseFlagSet().set(phrase_flags::capitalize)
+			AccountPhraseFlags().set(phrase_flags::capitalize)
 		)
 	);
 	if (include_pl_accounts)

@@ -66,7 +66,7 @@ namespace
 	{
 		return account_concept_name
 		(	p_account_super_type,
-			PhraseFlagSet().set(phrase_flags::capitalize)
+			AccountPhraseFlags().set(phrase_flags::capitalize)
 		);
 	}
 
@@ -475,7 +475,7 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 			(	wxString("There is already ") +
 				bstring_to_wx
 				(	account_concepts_phrase
-					(	PhraseFlagSet().set(phrase_flags::include_article)
+					(	AccountPhraseFlags().set(phrase_flags::include_article)
 					)
 				) +
 				wxString(" with this name.")
