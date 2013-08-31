@@ -77,16 +77,8 @@ UnfilteredEntryListCtrl::do_set_non_date_columns
 	Entry const& p_entry
 )
 {
-	SetItem
-	(	p_row,
-		account_col_num(),
-		bstring_to_wx(p_entry.account().name())
-	);
-	SetItem
-	(	p_row,
-		comment_col_num(),
-		bstring_to_wx(p_entry.comment())
-	);
+	SetItem(p_row, account_col_num(), p_entry.account().name());
+	SetItem(p_row, comment_col_num(), p_entry.comment());
 	SetItem
 	(	p_row,
 		amount_col_num(),
@@ -137,7 +129,7 @@ UnfilteredEntryListCtrl::do_update_for_amended(Account const& p_account)
 {
 	size_t i = 0;
 	size_t const lim = GetItemCount();
-	wxString const name = bstring_to_wx(p_account.name());
+	wxString const name = p_account.name();
 	for ( ; i != lim; ++i)
 	{
 		Entry const entry(database_connection(), GetItemData(i));

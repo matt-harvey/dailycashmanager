@@ -4,7 +4,6 @@
 #include "account.hpp"
 #include "account_ctrl.hpp"
 #include "account_reader.hpp"
-#include "b_string.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
 #include "entry.hpp"
@@ -25,6 +24,7 @@
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
+#include <wx/string.h>
 #include <wx/wupdlock.h>
 #include <wx/window.h>
 #include <algorithm>
@@ -84,18 +84,14 @@ EntryListPanel::EntryListPanel
 	++m_next_row;  // To leave some space at top.
 
 	wxString account_label_text(" ");
-	account_label_text += bstring_to_wx
-	(	account_concept_name
-		(	account_super_type::balance_sheet,
-			AccountPhraseFlags().set(string_flags::capitalize)
-		)
+	account_label_text += account_concept_name
+	(	account_super_type::balance_sheet,
+		AccountPhraseFlags().set(string_flags::capitalize)
 	);
 	if (include_pl_accounts)
 	{
 		account_label_text += wxString(" or ");
-		account_label_text += bstring_to_wx
-		(	account_concept_name(account_super_type::pl)
-		);
+		account_label_text += account_concept_name(account_super_type::pl);
 	}
 	account_label_text += wxString(":");
 	wxStaticText* account_label =

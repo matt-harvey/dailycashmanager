@@ -96,11 +96,7 @@ ReconciliationEntryListCtrl::do_set_non_date_columns
 	Entry const& p_entry
 )
 {
-	SetItem
-	(	p_row,
-		comment_col_num(),
-		bstring_to_wx(p_entry.comment())
-	);
+	SetItem(p_row, comment_col_num(), p_entry.comment());
 	SetItem
 	(	p_row,
 		amount_col_num(),

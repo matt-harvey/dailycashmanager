@@ -3,7 +3,7 @@
 #ifndef GUARD_ordinary_journal_impl_hpp
 #define GUARD_ordinary_journal_impl_hpp
 
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "date.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -71,7 +71,7 @@ public:
 	 * Does not throw, except possibly \c std::bad_alloc in extreme
 	 * circumstances.
 	 */
-	void set_comment(BString const& p_comment);
+	void set_comment(wxString const& p_comment);
 
 	/**
 	 * @todo Figure out throwing behaviour.
@@ -86,7 +86,7 @@ public:
 	 * Does not throw, except perhaps \c std::bad_alloc in
 	 * extreme circumstances.
 	 */
-	BString comment();
+	wxString comment();
 
 	std::vector<Entry> const& entries();
 

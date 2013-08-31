@@ -3,13 +3,13 @@
 #ifndef GUARD_journal_hpp
 #define GUARD_journal_hpp
 
-#include "b_string.hpp"
 #include "entry.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "transaction_type.hpp"
 #include <consolixx/table.hpp>
 #include <jewel/decimal_fwd.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <wx/string.h>
 #include <ostream>
 #include <vector>
 #include <string>
@@ -57,14 +57,14 @@ public:
 	void set_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
 	);
-	void set_comment(BString const& p_comment);
+	void set_comment(wxString const& p_comment);
 
 	void push_entry(Entry& entry);
 	void remove_entry(Entry& entry);
 	void clear_entries();
 
 	std::vector<Entry> const& entries() const;
-	BString comment() const;
+	wxString comment() const;
 
 	bool is_actual() const;
 
@@ -102,11 +102,11 @@ private:
 	virtual void do_set_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
 	) = 0;
-	virtual void do_set_comment(BString const& p_comment) = 0;
+	virtual void do_set_comment(wxString const& p_comment) = 0;
 	virtual void do_push_entry(Entry& entry) = 0;
 	virtual void do_remove_entry(Entry& entry) = 0;
 	virtual void do_clear_entries() = 0;
-	virtual BString do_get_comment() const = 0;
+	virtual wxString do_get_comment() const = 0;
 	virtual transaction_type::TransactionType
 		do_get_transaction_type() const = 0;
 

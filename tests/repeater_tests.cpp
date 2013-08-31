@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "account.hpp"
-#include "b_string.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "frequency.hpp"
@@ -13,6 +12,7 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
+#include <wx/string.h>
 #include <vector>
 
 namespace gregorian = boost::gregorian;
@@ -151,11 +151,11 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	DraftJournal dj1(dbc);
 	dj1.set_transaction_type(transaction_type::generic_transaction);
 	dj1.set_comment("journal to test repeater");
-	dj1.set_name(BString("Test"));  // BString is optional
+	dj1.set_name(wxString("Test"));  // wxString is optional
 	
 	Entry entry1a(dbc);
 	entry1a.set_account(Account(dbc, "cash"));
-	entry1a.set_comment(BString("Test entry")); // BString is optional
+	entry1a.set_comment(wxString("Test entry")); // wxString is optional
 	entry1a.set_amount(Decimal("-1090.95"));
 	entry1a.set_whether_reconciled(false);
 	dj1.push_entry(entry1a);
@@ -177,7 +177,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	Repeater repeater1b = repeater1;
 	OrdinaryJournal const oj1b = repeater1b.fire_next();
 	CHECK_EQUAL(oj1b.comment(), "journal to test repeater");
-	CHECK_EQUAL(oj1b.comment(), BString("journal to test repeater"));
+	CHECK_EQUAL(oj1b.comment(), wxString("journal to test repeater"));
 	CHECK_EQUAL(oj1b.date(), date(3012, 7, 30));
 	CHECK_EQUAL(repeater1.next_date(), date(3012, 8, 13));
 	CHECK_EQUAL

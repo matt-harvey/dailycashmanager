@@ -4,12 +4,12 @@
 #include "account.hpp"
 #include "account_reader.hpp"
 #include "account_type.hpp"
-#include "b_string.hpp"
 #include "date.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <sqloxx/sql_statement.hpp>
+#include <wx/string.h>
 #include <cassert>
 #include <map>
 #include <set>
@@ -68,25 +68,25 @@ namespace
 		return ret;	
 	}
 
-	BString expenditure_verb()
+	wxString expenditure_verb()
 	{
-		return BString("Spend");
+		return wxString("Spend");
 	}
-	BString revenue_verb()
+	wxString revenue_verb()
 	{
-		return BString("Earn");
+		return wxString("Earn");
 	}
-	BString balance_sheet_verb()
+	wxString balance_sheet_verb()
 	{
-		return BString("Account transfer");
+		return wxString("Account transfer");
 	}
-	BString envelope_verb()
+	wxString envelope_verb()
 	{
-		return BString("Envelope transfer");
+		return wxString("Envelope transfer");
 	}
-	BString generic_verb()
+	wxString generic_verb()
 	{
-		return BString("Generic");
+		return wxString("Generic");
 	}
 
 }  // End anonymous namespace
@@ -186,7 +186,7 @@ available_transaction_types
 	return ret;
 }
 
-BString
+wxString
 transaction_type_to_verb(TransactionType p_transaction_type)
 {
 	switch (p_transaction_type)
@@ -207,9 +207,9 @@ transaction_type_to_verb(TransactionType p_transaction_type)
 }
 
 TransactionType
-transaction_type_from_verb(BString const& p_phrase)
+transaction_type_from_verb(wxString const& p_phrase)
 {
-	typedef map<BString, TransactionType> Dict;
+	typedef map<wxString, TransactionType> Dict;
 	static Dict dict;
 	static bool calculated_already = false;
 	if (!calculated_already)
@@ -231,7 +231,7 @@ transaction_type_from_verb(BString const& p_phrase)
 	if (it == dict.end())
 	{
 		throw InvalidTransactionTypeException
-		(	"BString passed to transaction_type_from_verb does not "
+		(	"wxString passed to transaction_type_from_verb does not "
 			"correspond to any TransactionType."
 		);
 	}

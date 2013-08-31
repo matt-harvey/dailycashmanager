@@ -3,11 +3,11 @@
 #ifndef GUARD_budget_item_hpp
 #define GUARD_budget_item_hpp
 
-#include "b_string.hpp"
 #include "budget_item_impl.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
+#include <wx/string.h>
 #include <ostream>
 #include <vector>
 
@@ -77,7 +77,7 @@ public:
 	/**
 	 * Set a description to be associated with the BudgetItem.
 	 */
-	void set_description(BString const& p_description);
+	void set_description(wxString const& p_description);
 
 	/**
 	 * Set the Account with which this BudgetItem will be associated.
@@ -98,7 +98,7 @@ public:
 	void set_amount(jewel::Decimal const& p_amount);
 
 	// Getters...
-	BString description() const;
+	wxString description() const;
 	Account account() const;
 	Frequency frequency() const;
 	jewel::Decimal amount() const;

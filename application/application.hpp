@@ -3,10 +3,10 @@
 #ifndef GUARD_application_hpp
 #define GUARD_application_hpp
 
-#include "b_string.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <wx/config.h>
+#include <wx/string.h>
 
 namespace phatbooks
 {
@@ -25,19 +25,19 @@ public:
 	 * @returns name of the application as presented to the
 	 * user.
 	 */
-	static BString application_name();
+	static wxString application_name();
 
 	/**
 	 * @returns filename extension to be used with files
 	 * belonging to this application. Includes
 	 * the '.'.
 	 */
-	static BString filename_extension();
+	static wxString filename_extension();
 
 	/**
 	 * @returns the name of the vendor of the application.
 	 */
-	static BString vendor_name();
+	static wxString vendor_name();
 
 	/**
 	 * @returns the filepath of the application file last opened by the

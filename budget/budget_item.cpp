@@ -3,11 +3,12 @@
 #include "budget_item.hpp"
 #include "account.hpp"
 #include "budget_item_impl.hpp"
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "finformat.hpp"
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include "string_conv.hpp"
 #include <boost/lexical_cast.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -66,7 +67,7 @@ BudgetItem::create_unchecked
 }
 
 void
-BudgetItem::set_description(BString const& p_description)
+BudgetItem::set_description(wxString const& p_description)
 {
 	impl().set_description(p_description);
 	return;
@@ -93,7 +94,7 @@ BudgetItem::set_amount(jewel::Decimal const& p_amount)
 	return;
 }
 
-BString
+wxString
 BudgetItem::description() const
 {
 	return impl().description();
@@ -147,7 +148,7 @@ BudgetItem::output_budget_item_aux(ostream& os, BudgetItem const& bi)
 	os << frequency_description(bi.frequency(), "per");
 	if (!bi.description().empty())
 	{
-		os << " (" << bstring_to_std8(bi.description()) << ")";
+		os << " (" << wx_to_std8(bi.description()) << ")";
 	}
 	return;
 }

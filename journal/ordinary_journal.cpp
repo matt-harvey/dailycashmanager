@@ -2,7 +2,6 @@
 
 #include "ordinary_journal.hpp"
 #include "account.hpp"
-#include "b_string.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
 #include "entry.hpp"
@@ -18,6 +17,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/output_aux.hpp>
 #include <sqloxx/handle.hpp>
+#include <wx/string.h>
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
@@ -153,7 +153,7 @@ OrdinaryJournal::do_set_transaction_type
 }
 
 void
-OrdinaryJournal::do_set_comment(BString const& p_comment)
+OrdinaryJournal::do_set_comment(wxString const& p_comment)
 {
 	impl().set_comment(p_comment);
 	return;
@@ -194,7 +194,7 @@ OrdinaryJournal::do_get_transaction_type() const
 	return impl().transaction_type();
 }
 
-BString
+wxString
 OrdinaryJournal::do_get_comment() const
 {
 	return impl().comment();
@@ -228,7 +228,7 @@ OrdinaryJournal::do_clear_entries()
 }
 
 OrdinaryJournal::OrdinaryJournal
-(	sqloxx::Handle<OrdinaryJournalImpl> const& p_handle
+(	Handle<OrdinaryJournalImpl> const& p_handle
 ):
 	PhatbooksPersistentObject(p_handle)
 {

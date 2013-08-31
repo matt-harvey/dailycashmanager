@@ -69,7 +69,7 @@
 // i.e. laptop.
 
 #include "application.hpp"
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "graphical_session.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <tclap/CmdLine.h>
@@ -84,10 +84,8 @@
 
 using boost::scoped_ptr;
 using phatbooks::Application;
-using phatbooks::BString;
-using phatbooks::bstring_to_std8;
-using phatbooks::bstring_to_wx;
 using phatbooks::gui::GraphicalSession;
+using phatbooks::wx_to_std8;
 using std::cerr;
 using std::clog;
 using std::cout;
@@ -109,10 +107,9 @@ int main(int argc, char** argv)
 
 		// Prevent multiple instances run by the same user
 		bool another_is_running = false;
-		wxString const app_name_wx =
-			bstring_to_wx(Application::application_name());
+		wxString const app_name = Application::application_name();
 		wxString const instance_identifier =
-			app_name_wx +
+			app_name +
 			wxString::Format("-%s", wxGetUserId().c_str());
 		scoped_ptr<wxSingleInstanceChecker> const m_checker
 		(	new wxSingleInstanceChecker(instance_identifier)
@@ -124,7 +121,7 @@ int main(int argc, char** argv)
 		}
 
 		// Process command line arguments
-		CmdLine cmd(bstring_to_std8(Application::application_name()));
+		CmdLine cmd(wx_to_std8(Application::application_name()));
 		UnlabeledValueArg<string> filepath_arg
 		(	"FILE",
 			"File to open or create",
@@ -146,7 +143,7 @@ int main(int argc, char** argv)
 		}
 		// Note phatbooks::Session currently requires a std::string to
 		// be passed here.
-		// TODO This may require a wstring or BString if we want to
+		// TODO This may require a wstring or wxString if we want to
 		// support non-ASCII filenames on Windows. We would need to
 		// change the interface with phatbooks::Session.
 		if (filepath_str.empty())

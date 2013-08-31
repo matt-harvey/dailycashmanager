@@ -4,7 +4,6 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
-#include "b_string.hpp"
 #include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "finformat.hpp"
@@ -109,7 +108,7 @@ MultiAccountPanel::MultiAccountPanel
 	AccountPhraseFlags const flags = AccountPhraseFlags().set(string_flags::capitalize);
 	wxString const account_name_label =
 		wxString(" ") +
-		bstring_to_wx(account_concept_name(m_account_super_type, flags)) +
+		account_concept_name(m_account_super_type, flags) +
 		wxString(" name:");
 	display_text(account_name_label, 0);
 	display_text(wxString(" Type:"), 1);
@@ -251,7 +250,7 @@ Account
 MultiAccountPanel::blank_account()
 {
 	Account ret(database_connection());
-	BString const empty_string;
+	wxString const empty_string;
 	assert (empty_string.empty());
 	ret.set_name(empty_string);
 	ret.set_description(empty_string);
@@ -272,7 +271,7 @@ MultiAccountPanel::push_row(Account& p_account)
 	wxTextCtrl* account_name_box = new wxTextCtrl
 	(	this,
 		wxID_ANY,
-		bstring_to_wx(p_account.name()),
+		p_account.name(),
 		wxDefaultPosition,
 		wxSize(medium_width(), wxDefaultSize.y),
 		wxALIGN_LEFT
@@ -369,9 +368,7 @@ MultiAccountPanel::selected_augmented_accounts
 			m_commodity
 		);
 		Account& account = augmented_account.account;
-		account.set_name
-		(	wx_to_bstring(m_account_name_boxes[i]->GetValue().Trim())
-		);
+		account.set_name(m_account_name_boxes[i]->GetValue().Trim());
 		account_type::AccountType const account_type =
 			m_account_type_boxes[i]->account_type();
 		assert (super_type(account_type) == m_account_super_type);
@@ -412,9 +409,7 @@ MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 		if (name.IsEmpty())
 		{
 			p_error_message =
-				bstring_to_wx
-				(	account_concept_name(m_account_super_type, flags)
-				) +
+				account_concept_name(m_account_super_type, flags) +
 				wxString(" name is blank");
 			return false;
 		}

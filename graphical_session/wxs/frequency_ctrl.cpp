@@ -5,10 +5,12 @@
 #include "interval_type.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "string_conv.hpp"
 #include <boost/optional.hpp>
 #include <jewel/optional.hpp>
 #include <wx/combobox.h>
 #include <wx/gdicmn.h>
+#include <wx/string.h>
 #include <wx/window.h>
 #include <wx/windowid.h>
 #include <vector>

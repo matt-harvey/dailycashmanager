@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "draft_journal_list_ctrl.hpp"
-#include "b_string.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_reader.hpp"
@@ -9,8 +8,10 @@
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
+#include "string_conv.hpp"
 #include <wx/event.h>
 #include <wx/listctrl.h>
+#include <wx/string.h>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -109,7 +110,7 @@ DraftJournalListCtrl::update(UserDraftJournalReader const& p_reader)
 	for ( ; it != end; ++it, ++i)
 	{
 		// Insert item, with string for Column 0
-		InsertItem(i, bstring_to_wx(it->name()));
+		InsertItem(i, it->name());
 		
 		// The item may change position due to e.g. sorting, so store the
 		// Journal ID in the item's data

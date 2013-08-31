@@ -3,13 +3,13 @@
 #ifndef GUARD_commodity_hpp
 #define GUARD_commodity_hpp
 
-#include "b_string.hpp"
 #include "commodity_impl.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
+#include <wx/string.h>
 
 namespace phatbooks
 {
@@ -77,7 +77,7 @@ public:
 
 	Commodity
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		BString const& p_abbreviation
+		wxString const& p_abbreviation
 	);
 
 	/**
@@ -86,7 +86,7 @@ public:
 	 */
 	static bool exists_with_abbreviation
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		BString const& p_abbreviation
+		wxString const& p_abbreviation
 	);
 
 	/**
@@ -95,7 +95,7 @@ public:
 	 */
 	static bool exists_with_name
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		BString const& p_name
+		wxString const& p_name
 	);
 
 	/**
@@ -104,17 +104,17 @@ public:
 	 * the abbreviation for ordinary stock in National Australia Bank
 	 * Limited.
 	 */
-	BString abbreviation() const;
+	wxString abbreviation() const;
 
 	/**
 	 * Get the full name of the commodity. E.g. "Australian dollars".
 	 */
-	BString name() const;
+	wxString name() const;
 
 	/**
 	 * Get the description of the commodity, e.g. "notes and coins".
 	 */
-	BString description() const;
+	wxString description() const;
 
 	/**
 	 * Get the number of decimal places of precision for the commodity
@@ -129,9 +129,9 @@ public:
 	 */
 	jewel::Decimal multiplier_to_base() const;
 
-	void set_abbreviation(BString const& p_abbreviation);
-	void set_name(BString const& p_name);
-	void set_description(BString const& p_description);
+	void set_abbreviation(wxString const& p_abbreviation);
+	void set_name(wxString const& p_name);
+	void set_description(wxString const& p_description);
 	void set_precision(int p_precision);
 	void set_multiplier_to_base(jewel::Decimal const& p_multiplier_to_base);
 

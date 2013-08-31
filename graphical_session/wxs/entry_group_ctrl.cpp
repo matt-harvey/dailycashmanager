@@ -236,7 +236,7 @@ EntryGroupCtrl::make_entries() const
 		EntryRow const& entry_row = m_entry_rows[i];
 		Entry entry = entry_row.entry;
 		entry.set_account(entry_row.account_ctrl->account());
-		entry.set_comment(wx_to_bstring(entry_row.comment_ctrl->GetValue()));
+		entry.set_comment(entry_row.comment_ctrl->GetValue());
 
 		Decimal amount = primary_amount();
 		if (entry_row.amount_ctrl)
@@ -315,7 +315,7 @@ EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 	Entry entry(m_database_connection);
 	entry.set_account(account);
 	entry.set_whether_reconciled(false);
-	entry.set_comment(BString());
+	entry.set_comment(wxString());
 	entry.set_amount(Decimal(0, account.commodity().precision()));
 	entry.set_transaction_side(m_transaction_side);
 	push_row(entry, optional<Decimal>(), true);
@@ -409,7 +409,7 @@ EntryGroupCtrl::push_row
 	entry_row.comment_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
-		bstring_to_wx(p_entry.comment()),
+		p_entry.comment(),
 		wxDefaultPosition,
 		wxSize(m_text_ctrl_size.x * 2 + standard_gap(), m_text_ctrl_size.y),
 		wxALIGN_LEFT

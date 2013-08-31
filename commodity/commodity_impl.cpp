@@ -2,10 +2,10 @@
 
 #include "commodity_impl.hpp"
 #include "balance_cache.hpp"
-#include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "commodity.hpp"
+#include "string_conv.hpp"
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -15,6 +15,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <wx/string.h>
 #include <algorithm>
 #include <cassert>
 #include <iostream>  // for debug logging
@@ -74,14 +75,14 @@ void CommodityImpl::setup_tables
 CommodityImpl::Id
 CommodityImpl::id_for_abbreviation
 (	PhatbooksDatabaseConnection& dbc,
-	BString const& p_abbreviation
+	wxString const& p_abbreviation
 )
 {
 	SQLStatement statement
 	(	dbc,
 		"select commodity_id from commodities where abbreviation = :p"
 	);
-	statement.bind(":p", bstring_to_std8(p_abbreviation));
+	statement.bind(":p", wx_to_std8(p_abbreviation));
 	statement.step();
 	Id const ret = statement.extract<Id>(0);
 	statement.step_final();
@@ -129,14 +130,14 @@ CommodityImpl::~CommodityImpl()
 bool
 CommodityImpl::exists_with_abbreviation
 (	PhatbooksDatabaseConnection& p_database_connection,
-	BString const& p_abbreviation
+	wxString const& p_abbreviation
 )
 {
 	SQLStatement statement
 	(	p_database_connection,
 		"select abbreviation from commodities where abbreviation = :p"
 	);
-	statement.bind(":p", bstring_to_std8(p_abbreviation));
+	statement.bind(":p", wx_to_std8(p_abbreviation));
 	return statement.step();
 }
 
@@ -144,14 +145,14 @@ CommodityImpl::exists_with_abbreviation
 bool
 CommodityImpl::exists_with_name
 (	PhatbooksDatabaseConnection& p_database_connection,
-	BString const& p_name
+	wxString const& p_name
 )
 {
 	SQLStatement statement
 	(	p_database_connection,
 		"select name from commodities where name = :p"
 	);
-	statement.bind(":p", bstring_to_std8(p_name));
+	statement.bind(":p", wx_to_std8(p_name));
 	return statement.step();
 }
 
@@ -178,9 +179,9 @@ void CommodityImpl::do_load()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	temp.m_data->abbreviation = std8_to_bstring(statement.extract<string>(0));
-	temp.m_data->name = std8_to_bstring(statement.extract<string>(1));
-	temp.m_data->description = std8_to_bstring(statement.extract<string>(2));
+	temp.m_data->abbreviation = std8_to_wx(statement.extract<string>(0));
+	temp.m_data->name = std8_to_wx(statement.extract<string>(1));
+	temp.m_data->description = std8_to_wx(statement.extract<string>(2));
 	temp.m_data->precision = statement.extract<int>(3);
 	temp.m_data->multiplier_to_base = Decimal
 	(	statement.extract<Decimal::int_type>(4),
@@ -195,12 +196,12 @@ void CommodityImpl::process_saving_statement(SQLStatement& statement)
 {
 	statement.bind
 	(	":abbreviation",
-		bstring_to_std8(value(m_data->abbreviation))
+		wx_to_std8(value(m_data->abbreviation))
 	);
-	statement.bind(":name", bstring_to_std8(value(m_data->name)));
+	statement.bind(":name", wx_to_std8(value(m_data->name)));
 	statement.bind
 	(	":description",
-		bstring_to_std8(value(m_data->description))
+		wx_to_std8(value(m_data->description))
 	);
 	statement.bind(":precision", value(m_data->precision));
 	Decimal m = value(m_data->multiplier_to_base);
@@ -259,19 +260,19 @@ void CommodityImpl::do_ghostify()
 	return;
 }
 
-BString CommodityImpl::abbreviation()
+wxString CommodityImpl::abbreviation()
 {
 	load();
 	return value(m_data->abbreviation);
 }
 
-BString CommodityImpl::name()
+wxString CommodityImpl::name()
 {
 	load();
 	return value(m_data->name);
 }
 
-BString CommodityImpl::description()
+wxString CommodityImpl::description()
 {
 	load();
 	return value(m_data->description);
@@ -289,21 +290,21 @@ jewel::Decimal CommodityImpl::multiplier_to_base()
 	return value(m_data->multiplier_to_base);
 }
 
-void CommodityImpl::set_abbreviation(BString const& p_abbreviation)
+void CommodityImpl::set_abbreviation(wxString const& p_abbreviation)
 {
 	load();
 	m_data->abbreviation = p_abbreviation;
 	return;
 }
 
-void CommodityImpl::set_name(BString const& p_name)
+void CommodityImpl::set_name(wxString const& p_name)
 {
 	load();
 	m_data->name = p_name;
 	return;
 }
 
-void CommodityImpl::set_description(BString const& p_description)
+void CommodityImpl::set_description(wxString const& p_description)
 {
 	load();
 	m_data->description = p_description;

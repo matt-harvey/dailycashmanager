@@ -2,9 +2,11 @@
 
 #include "frequency.hpp"
 #include "interval_type.hpp"
+#include "string_conv.hpp"
 #include <boost/lexical_cast.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
+#include <wx/string.h>
 #include <string>
 
 using boost::lexical_cast;
@@ -45,11 +47,11 @@ frequency_description(Frequency const& frequency, string const& first_word)
     {
 		ret += lexical_cast<string>(num_steps);
 		ret += " ";
-		ret += bstring_to_std8(phrase(frequency.step_type(), true));
+		ret += wx_to_std8(phrase(frequency.step_type(), true));
 	}
 	else
 	{
-		ret += bstring_to_std8(phrase(frequency.step_type(), false));
+		ret += wx_to_std8(phrase(frequency.step_type(), false));
 	}
 	return ret;
 }

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "application.hpp"
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <jewel/on_windows.hpp>
@@ -32,22 +32,22 @@ namespace
 }  // end anonymous namespace
 
 
-BString
+wxString
 Application::application_name()
 {
-	return "Phatbooks";
+	return wxString("Phatbooks");
 }
 
-BString
+wxString
 Application::filename_extension()
 {
-	return ".phat";
+	return wxString(".phat");
 }
 
-BString
+wxString
 Application::vendor_name()
 {
-	return "Phatbooks";
+	return wxString("Phatbooks");
 }
 
 optional<filesystem::path>
@@ -57,7 +57,7 @@ Application::last_opened_file()
 	wxString wx_path;
 	if (config().Read(config_location_for_last_opened_file(), &wx_path))
 	{
-		string const s_path = bstring_to_std8(wx_to_bstring(wx_path));
+		string const s_path = wx_to_std8(wx_path);
 		assert (!s_path.empty());
 		ret = filesystem::path(s_path);
 	}
@@ -77,7 +77,7 @@ Application::set_last_opened_file(filesystem::path const& p_path)
 	assert (filesystem::absolute(p_path) == p_path);
 
 	string const s_path = p_path.string();
-	wxString const wx_path = bstring_to_wx(std8_to_bstring(s_path));
+	wxString const wx_path = std8_to_wx(s_path);
 	config().Write(config_location_for_last_opened_file(), wx_path);
 	config().Flush();
 	return;
@@ -116,8 +116,8 @@ Application::config()
 	if (!conf)
 	{
 		conf = new wxConfig
-		(	bstring_to_wx(application_name()),
-			bstring_to_wx(vendor_name())
+		(	application_name(),
+			vendor_name()
 		);
 	}
 	assert (conf);

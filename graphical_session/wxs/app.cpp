@@ -2,17 +2,18 @@
 
 #include "app.hpp"
 #include "application.hpp"
-#include "b_string.hpp"
 #include "date.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include "setup_wizard.hpp"
+#include "string_conv.hpp"
 #include "welcome_dialog.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/optional.hpp>
 #include <wx/filedlg.h>
+#include <wx/string.h>
 #include <wx/tooltip.h>
 #include <wx/wx.h>
 
@@ -51,7 +52,7 @@ App::App():
 
 bool App::OnInit()
 {
-	wxString const app_name = bstring_to_wx(Application::application_name());
+	wxString const app_name = Application::application_name();
 
 	if (m_existing_application_instance_notified)
 	{
@@ -150,8 +151,7 @@ namespace
 {
 	wxString filepath_wildcard()
 	{
-		return wxString("*") +
-			bstring_to_wx(Application::filename_extension());
+		return wxString("*") + Application::filename_extension();
 	}
 
 }  // end anonymous namespace
@@ -175,10 +175,8 @@ App::elicit_existing_filepath()
 	)
 	{
 		filesystem::path const fp = value(last_opened);
-		default_directory =
-			bstring_to_wx(std8_to_bstring(fp.parent_path().string()));
-		default_filename =
-			bstring_to_wx(std8_to_bstring(fp.filename().string()));
+		default_directory = std8_to_wx(fp.parent_path().string());
+		default_filename = std8_to_wx(fp.filename().string());
 	}
 	wxFileDialog file_dialog
 	(	0,
@@ -192,9 +190,7 @@ App::elicit_existing_filepath()
 	if (file_dialog.ShowModal() == wxID_OK)
 	{
 		wxString const filepath_wxs = file_dialog.GetPath();
-		ret = filesystem::path
-		(	bstring_to_std8(wx_to_bstring(filepath_wxs))
-		);
+		ret = filesystem::path(wx_to_std8(filepath_wxs));
 	}
 	else
 	{

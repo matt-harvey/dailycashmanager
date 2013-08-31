@@ -6,7 +6,6 @@
 #include "account_list_ctrl.hpp"
 #include "application.hpp"
 #include "app.hpp"
-#include "b_string.hpp"
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
 #include "draft_journal.hpp"
@@ -202,12 +201,10 @@ Frame::Frame
 	);
 	m_menu_bar->Append(m_file_menu, wxString("&File"));
 
-	wxString const balance_sheet_account_concept_name = bstring_to_wx
-	(	account_concept_name(account_super_type::balance_sheet)
-	);
-	wxString const pl_account_concept_name = bstring_to_wx
-	(	account_concept_name(account_super_type::pl)
-	);
+	wxString const balance_sheet_account_concept_name =
+		account_concept_name(account_super_type::balance_sheet);
+	wxString const pl_account_concept_name =
+		account_concept_name(account_super_type::pl);
 
 	// Configure "new" menu
 	m_new_menu->Append
@@ -297,7 +294,7 @@ Frame::on_menu_about(wxCommandEvent& event)
 	wxString msg;
 	msg.Printf
 	(	"Hello and welcome to %s",
-		bstring_to_wx(Application::application_name())
+		Application::application_name()
 	);
 	wxMessageBox(msg);
 	return;
@@ -384,11 +381,9 @@ Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 	selected_pl_accounts(accounts);
 	if (accounts.empty())
 	{
-		wxString const concept_name = bstring_to_wx
-		(	account_concept_name
-			(	account_super_type::pl,
-				AccountPhraseFlags().set(string_flags::capitalize)
-			)
+		wxString const concept_name = account_concept_name
+		(	account_super_type::pl,
+			AccountPhraseFlags().set(string_flags::capitalize)
 		);
 		wxMessageBox
 		(	concept_name +

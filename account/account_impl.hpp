@@ -15,7 +15,6 @@
 
 
 #include "account_type.hpp"
-#include "b_string.hpp"
 #include "budget_item.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -26,6 +25,7 @@
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
 #include <boost/scoped_ptr.hpp>	
+#include <wx/string.h>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -84,7 +84,7 @@ public:
 	 */
 	static Id id_for_name
 	(	PhatbooksDatabaseConnection& dbc,
-		BString const& p_name
+		wxString const& p_name
 	);
 
 	/**
@@ -101,7 +101,7 @@ public:
 
 	static bool exists
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		BString const& p_name
+		wxString const& p_name
 	);
 
 	static bool no_user_pl_accounts_saved
@@ -125,7 +125,7 @@ public:
 
 	~AccountImpl();
 
-	BString name();
+	wxString name();
 
 	Commodity commodity();
 
@@ -133,7 +133,7 @@ public:
 
 	AccountSuperType account_super_type();
 
-	BString description();
+	wxString description();
 
 	visibility::Visibility visibility();
 
@@ -151,11 +151,11 @@ public:
 
 	void set_account_type(AccountType p_account_type);
 
-	void set_name(BString const& p_name);
+	void set_name(wxString const& p_name);
 
 	void set_commodity(Commodity const& p_commodity);
 
-	void set_description(BString const& p_description);
+	void set_description(wxString const& p_description);
 
 	void set_visibility(visibility::Visibility p_visibility);
 
@@ -166,7 +166,7 @@ public:
 	void swap(AccountImpl& rhs);
 
 	// These are tied to SQLoxx API and must be std::string, not
-	// BString.
+	// wxString.
 	static std::string primary_table_name();
 	static std::string exclusive_table_name();
 	static std::string primary_key_name();
@@ -188,18 +188,15 @@ private:
 
 	struct AccountData
 	{
-		boost::optional<BString> name;
+		boost::optional<wxString> name;
 		boost::optional<Commodity> commodity;
 		boost::optional<account_type::AccountType> account_type;
-		boost::optional<BString> description;
+		boost::optional<wxString> description;
 		boost::optional<visibility::Visibility> visibility;
 	};
 
 	boost::scoped_ptr<AccountData> m_data;
 };
-
-
-
 
 
 }  // namespace phatbooks

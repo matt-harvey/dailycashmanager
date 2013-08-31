@@ -18,7 +18,7 @@ class PhatbooksDatabaseConnection;
  * @returns a vector of "suggested default Accounts" that might be presented
  * to the user as a starting point when setting up a new Phatbooks file.
  * The Accounts will all names and AccountTypes initialized, and will have
- * an empty BString as their description. They will \e not have their
+ * an empty wxString as their description. They will \e not have their
  * Commodity initialized though - this must be done before the Accounts
  * are saved.
  *

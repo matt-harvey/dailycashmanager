@@ -3,8 +3,8 @@
 #ifndef GUARD_interval_type_hpp
 #define GUARD_interval_type_hpp
 
-#include "b_string.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <wx/string.h>
 
 namespace phatbooks
 {
@@ -42,7 +42,7 @@ enum IntervalType
  * E.g. "days", "month", etc.. The phrase is plural if and
  * only if \e is_plural is true.
  */
-BString phrase(interval_type::IntervalType x, bool is_plural);
+wxString phrase(interval_type::IntervalType x, bool is_plural);
 
 /**
  * @returns \e true if and only if \e p_date can occur within

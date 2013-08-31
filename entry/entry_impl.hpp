@@ -16,7 +16,6 @@
 
 
 #include "account.hpp"
-#include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_side.hpp"
 #include <boost/noncopyable.hpp>
@@ -26,6 +25,7 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
+#include <wx/string.h>
 #include <string>
 
 
@@ -68,7 +68,7 @@ public:
 
 	void set_account(Account const& p_account);
 
-	void set_comment(BString const& p_comment);
+	void set_comment(wxString const& p_comment);
 
 	void set_amount(jewel::Decimal const& p_amount);
 	
@@ -82,7 +82,7 @@ public:
 	 * Does not throw except possibly \c std::bad_alloc in
 	 * extreme circumstances.
 	 */
-	BString comment();
+	wxString comment();
 
 	/**
 	 * @returns EntryImpl amount (+ve for debits, -ve for credits).
@@ -144,7 +144,7 @@ struct EntryImpl::EntryData
 {
 	boost::optional<Id> journal_id;
 	boost::optional<Account> account;
-	boost::optional<BString> comment;
+	boost::optional<wxString> comment;
 	boost::optional<jewel::Decimal> amount;
 	boost::optional<bool> is_reconciled;
 	boost::optional<transaction_side::TransactionSide> transaction_side;

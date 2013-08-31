@@ -9,11 +9,11 @@
 #include "proto_journal.hpp"
 #include "repeater_impl.hpp"
 #include "repeater_reader.hpp"
-#include "b_string.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <wx/string.h>
 #include <list>
 #include <string>
 #include <vector>

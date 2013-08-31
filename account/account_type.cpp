@@ -1,9 +1,9 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "account_type.hpp"
-#include "b_string.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <jewel/debug_log.hpp>
+#include <wx/string.h>
 #include <iostream>
 #include <map>
 #include <vector>
@@ -97,10 +97,10 @@ account_super_types()
 	return ret;
 }
 
-vector<BString> const&
+vector<wxString> const&
 account_type_names()
 {
-	static vector<BString> ret;
+	static vector<wxString> ret;
 	if (ret.empty())
 	{
 		ret.reserve(6);
@@ -116,7 +116,7 @@ account_type_names()
 }
 
 
-BString
+wxString
 account_type_to_string(account_type::AccountType p_account_type)
 {
 	size_t const index = static_cast<size_t>(p_account_type) - 1;
@@ -125,16 +125,16 @@ account_type_to_string(account_type::AccountType p_account_type)
 
 
 account_type::AccountType
-string_to_account_type(BString const& p_string)
+string_to_account_type(wxString const& p_string)
 {
 	static bool calculated_already = false;
-	static map<BString, account_type::AccountType> dict;
+	static map<wxString, account_type::AccountType> dict;
 	if (!calculated_already)
 	{
-		vector<BString> const names = account_type_names();
+		vector<wxString> const names = account_type_names();
 		int i = 1;
 		for
-		(	vector<BString>::const_iterator it = names.begin();
+		(	vector<wxString>::const_iterator it = names.begin();
 			it != names.end();
 			++it, ++i
 		)
@@ -143,7 +143,7 @@ string_to_account_type(BString const& p_string)
 		}
 		calculated_already = true;
 	}
-	map<BString, account_type::AccountType>::const_iterator jt =
+	map<wxString, account_type::AccountType>::const_iterator jt =
 		dict.find(p_string);
 	if (jt == dict.end())
 	{

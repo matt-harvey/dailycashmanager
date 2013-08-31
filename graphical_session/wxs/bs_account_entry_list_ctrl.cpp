@@ -67,7 +67,7 @@ BSAccountEntryListCtrl::do_set_non_date_columns
 	SetItem
 	(	p_row,
 		comment_col_num(),
-		bstring_to_wx(p_entry.comment())
+		p_entry.comment()
 	);
 	SetItem
 	(	p_row,

@@ -6,7 +6,6 @@ set (immediate_directories
      .
 	 account
 	 application
-	 b_string
 	 budget
 	 column_creation
 	 commodity
@@ -21,6 +20,7 @@ set (immediate_directories
 	 output_aux
 	 phatbooks_database_connection
 	 phatbooks_persistent_object
+	 string_conv
 	 string_flags
 	 repeater
 	 session
@@ -135,7 +135,6 @@ set (main_files
 	 account/balance_cache.cpp
 	 account/make_default_accounts.cpp
 	 application/application.cpp
-	 b_string/b_string.cpp
 	 budget/amalgamated_budget.cpp
 	 budget/budget_item.cpp
 	 budget/budget_item_impl.cpp

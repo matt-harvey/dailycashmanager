@@ -2,8 +2,10 @@
 
 #include "filename_validation.hpp"
 #include "application.hpp"
+#include "string_conv.hpp"
 #include <boost/regex.hpp>
 #include <jewel/on_windows.hpp>
+#include <wx/string.h>
 #include <cassert>
 #include <string>
 #include <vector>
@@ -43,6 +45,7 @@ namespace
 		default:
 			return false;
 		}
+		assert (false);
 	}
 
 	/**
@@ -130,7 +133,7 @@ namespace
 	bool is_prohibited_phatbooks_filename(string const& s, string& message)
 	{
 		string const extension = filename_extension(s);
-		if (extension != bstring_to_std8(Application::filename_extension()))
+		if (extension != wx_to_std8(Application::filename_extension()))
 		{
 			message =
 				"Filename must have extension " +

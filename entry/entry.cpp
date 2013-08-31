@@ -1,6 +1,5 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "b_string.hpp"
 #include "entry.hpp"
 #include "entry_impl.hpp"
 #include "finformat.hpp"
@@ -8,7 +7,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "transaction_side.hpp"
 #include <boost/lexical_cast.hpp>
 #include <boost/static_assert.hpp>
@@ -18,6 +17,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/handle.hpp>
+#include <wx/string.h>
 #include <string>
 #include <vector>
 
@@ -89,7 +89,7 @@ Entry::set_account(Account const& p_account)
 }
 
 void
-Entry::set_comment(BString const& p_comment)
+Entry::set_comment(wxString const& p_comment)
 {
 	impl().set_comment(p_comment);
 	return;
@@ -118,7 +118,7 @@ Entry::set_transaction_side
 	return;
 }
 
-BString
+wxString
 Entry::comment() const
 {
 	return impl().comment();

@@ -4,7 +4,6 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "app.hpp"
-#include "b_string.hpp"
 #include "bs_account_entry_list_ctrl.hpp"
 #include "date.hpp"
 #include "entry.hpp"
@@ -23,6 +22,7 @@
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
 #include <wx/event.h>
+#include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <wx/progdlg.h>
 #include <wx/scrolwin.h>

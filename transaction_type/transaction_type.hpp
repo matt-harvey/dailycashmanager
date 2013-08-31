@@ -3,8 +3,8 @@
 #ifndef GUARD_transaction_type_hpp
 #define GUARD_transaction_type_hpp
 
-#include "b_string.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <wx/string.h>
 #include <cassert>
 #include <set>
 #include <vector>
@@ -61,7 +61,7 @@ available_transaction_types
  * @returns a natural language verb or or other phrase corresponding to
  * a p_tranaction_type; for example, "Spend".
  */
-BString
+wxString
 transaction_type_to_verb
 (	transaction_type::TransactionType p_transaction_type
 );
@@ -75,7 +75,7 @@ transaction_type_to_verb
  * any TransactionType.
  */
 transaction_type::TransactionType
-transaction_type_from_verb(BString const& p_phrase);
+transaction_type_from_verb(wxString const& p_phrase);
 
 /**
  * @returns true if and only if p_transaction_type is a type of actual

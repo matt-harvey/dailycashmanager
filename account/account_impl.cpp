@@ -14,7 +14,7 @@
 #include "account.hpp"
 #include "account_reader.hpp"
 #include "account_type.hpp"
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "budget_item.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -28,6 +28,7 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <wx/string.h>
 #include <algorithm>
 #include <cassert>
 #include <string>
@@ -88,9 +89,9 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 	dbc.execute_sql
 	(	"create table account_types(account_type_id integer primary key)"
 	);
-	vector<BString>::size_type const num_account_types =
+	vector<wxString>::size_type const num_account_types =
 		account_type_names().size();
-	for (vector<BString>::size_type i = 1; i <= num_account_types; ++i)
+	for (vector<wxString>::size_type i = 1; i <= num_account_types; ++i)
 	{
 		SQLStatement statement
 		(	dbc,	
@@ -130,7 +131,7 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 AccountImpl::Id
 AccountImpl::id_for_name
 (	PhatbooksDatabaseConnection& dbc,
-	BString const& name
+	wxString const& name
 )
 {
 	// This is a crude linear search, but should be fast enough
@@ -138,15 +139,15 @@ AccountImpl::id_for_name
 	// We do it this way as we need to match case-insensitively,
 	// and in a way that respects locale. So we do the string matching
 	// in the application code rather than in SQL.
-	BString const target = to_lower(name);
+	wxString const target = name.Lower();
 	SQLStatement statement
 	(	dbc,
 		"select account_id, name from accounts"
 	);
 	while (statement.step())
 	{
-		BString const candidate =
-			to_lower(std8_to_bstring(statement.extract<string>(1)));
+		wxString const candidate =
+			std8_to_wx(statement.extract<string>(1)).Lower();
 		if (candidate == target)
 		{
 			return statement.extract<AccountImpl::Id>(0);
@@ -200,18 +201,18 @@ AccountImpl::exists
 bool
 AccountImpl::exists
 (	PhatbooksDatabaseConnection& p_database_connection,
-	BString const& p_name
+	wxString const& p_name
 )
 {
-	BString const target = to_lower(p_name);
+	wxString const target = p_name.Lower();
 	SQLStatement statement
 	(	p_database_connection,
 		"select name from accounts"
 	);
 	while (statement.step())
 	{
-		BString const candidate =
-			to_lower(std8_to_bstring(statement.extract<string>(0)));
+		wxString const candidate =
+			std8_to_wx(statement.extract<string>(0)).Lower();
 		if (candidate == target)
 		{
 			return true;
@@ -292,7 +293,7 @@ AccountImpl::account_super_type()
 	return super_type(account_type());
 }
 
-BString
+wxString
 AccountImpl::name()
 {
 	load();
@@ -306,7 +307,7 @@ AccountImpl::commodity()
 	return value(m_data->commodity);
 }
 
-BString
+wxString
 AccountImpl::description()
 {
 	load();
@@ -419,7 +420,7 @@ AccountImpl::set_account_type(AccountType p_account_type)
 }
 
 void
-AccountImpl::set_name(BString const& p_name)
+AccountImpl::set_name(wxString const& p_name)
 {
 	load();
 	m_data->name = p_name;
@@ -435,7 +436,7 @@ AccountImpl::set_commodity(Commodity const& p_commodity)
 }
 
 void
-AccountImpl::set_description(BString const& p_description)
+AccountImpl::set_description(wxString const& p_description)
 {
 	load();
 	m_data->description = p_description;
@@ -471,14 +472,14 @@ AccountImpl::do_load()
 	statement.bind(":p", id());
 	statement.step();
 	AccountImpl temp(*this);
-	temp.m_data->name = std8_to_bstring(statement.extract<string>(0));
+	temp.m_data->name = std8_to_wx(statement.extract<string>(0));
 	temp.m_data->commodity = Commodity
 	(	database_connection(),
 		statement.extract<Id>(1)
 	);
 	temp.m_data->account_type =
 		static_cast<AccountType>(statement.extract<int>(2));
-	temp.m_data->description = std8_to_bstring(statement.extract<string>(3));
+	temp.m_data->description = std8_to_wx(statement.extract<string>(3));
 	temp.m_data->visibility =
 		static_cast<visibility::Visibility>(statement.extract<int>(4));
 	swap(temp);
@@ -492,10 +493,10 @@ AccountImpl::process_saving_statement(SQLStatement& statement)
 	(	":account_type_id",
 		static_cast<int>(value(m_data->account_type))
 	);
-	statement.bind(":name", bstring_to_std8(value(m_data->name)));
+	statement.bind(":name", wx_to_std8(value(m_data->name)));
 	statement.bind
 	(	":description",
-		bstring_to_std8(value(m_data->description))
+		wx_to_std8(value(m_data->description))
 	);
 	statement.bind(":commodity_id", value(m_data->commodity).id());
 	statement.bind

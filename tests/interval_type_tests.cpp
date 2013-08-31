@@ -1,8 +1,8 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "b_string.hpp"
 #include "interval_type.hpp"
 #include <UnitTest++/UnitTest++.h>
+#include <wx/string.h>
 
 
 namespace phatbooks
@@ -13,7 +13,7 @@ namespace test
 TEST(test_interval_type_phrase)
 {
 	CHECK_EQUAL(phrase(interval_type::days, false), "day");
-	CHECK_EQUAL(phrase(interval_type::weeks, false), BString("week"));
+	CHECK_EQUAL(phrase(interval_type::weeks, false), wxString("week"));
 	CHECK_EQUAL(phrase(interval_type::weeks, false), "week");
 	CHECK_EQUAL(phrase(interval_type::weeks, false), L"week");
 	CHECK_EQUAL(phrase(interval_type::months, false), "month");
@@ -26,7 +26,7 @@ TEST(test_interval_type_phrase)
 	CHECK_EQUAL(phrase(interval_type::months, true), "months");
 	CHECK_EQUAL
 	(	phrase(interval_type::month_ends, true),
-		BString("months, on the last day of the month")
+		wxString("months, on the last day of the month")
 	);
 }
 

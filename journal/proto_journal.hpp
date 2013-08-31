@@ -14,7 +14,6 @@
  */
 
 
-#include "b_string.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -24,6 +23,7 @@
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <wx/string.h>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -117,17 +117,17 @@ private:
 	virtual void do_set_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
 	);
-	virtual void do_set_comment(BString const& p_comment);
+	virtual void do_set_comment(wxString const& p_comment);
 	virtual void do_push_entry(Entry& entry);
 	virtual void do_remove_entry(Entry& entry);
 	virtual void do_clear_entries();
-	virtual BString do_get_comment() const;
+	virtual wxString do_get_comment() const;
 	virtual transaction_type::TransactionType do_get_transaction_type() const;
 
 	struct ProtoJournalData
 	{
 		boost::optional<transaction_type::TransactionType> transaction_type;
-		boost::optional<BString> comment;
+		boost::optional<wxString> comment;
 		std::vector<Entry> entries;
 	};
 	boost::scoped_ptr<ProtoJournalData> m_data;

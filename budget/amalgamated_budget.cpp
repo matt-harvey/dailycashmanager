@@ -54,9 +54,9 @@ BOOST_STATIC_ASSERT((boost::is_same<Account::Id, AccountImpl::Id>::value));
 namespace
 {
 	// Identifies which (if any) is the balancing Entry, in the instrument.
-	BString balancing_entry_comment()
+	wxString balancing_entry_comment()
 	{
-		return BString("Balancing entry");
+		return wxString("Balancing entry");
 	}
 
 }  // end anonymous namespace
@@ -526,7 +526,7 @@ AmalgamatedBudget::instrument_balancing_amount() const
 	Decimal ret(0, m_database_connection.default_commodity().precision());
 	vector<Entry>::const_iterator it = entries.begin();
 	vector<Entry>::const_iterator const end = entries.end();
-	BString const balancing_entry_marker = balancing_entry_comment();
+	wxString const balancing_entry_marker = balancing_entry_comment();
 	for ( ; it != end; ++it)
 	{
 		if (it->comment() == balancing_entry_marker)

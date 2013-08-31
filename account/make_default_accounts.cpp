@@ -3,10 +3,10 @@
 #include "make_default_accounts.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
-#include "b_string.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "visibility.hpp"
+#include <wx/string.h>
 #include <cassert>
 #include <utility>
 #include <vector>
@@ -48,34 +48,34 @@ make_default_accounts
 	account_type::AccountType p_account_type
 )
 {
-	vector<BString> names;
+	vector<wxString> names;
 
 	// First we fill a vector with the Account names.
 	switch (p_account_type)
 	{
 	case account_type::asset:
-		names.push_back(BString("Cash"));
-		names.push_back(BString("Cheque account"));
+		names.push_back(wxString("Cash"));
+		names.push_back(wxString("Cheque account"));
 		break;
 	case account_type::liability:
-		names.push_back(BString("Credit card"));
+		names.push_back(wxString("Credit card"));
 		break;
 	case account_type::equity:
 		// There are no default equity Accounts.
 		break;
 	case account_type::revenue:
-		names.push_back(BString("Salary"));
-		names.push_back(BString("Interest received"));
+		names.push_back(wxString("Salary"));
+		names.push_back(wxString("Interest received"));
 		break;
 	case account_type::expense:
 		names.reserve(7);
-		names.push_back(BString("Food"));
-		names.push_back(BString("Household supplies"));
-		names.push_back(BString("Rent"));
-		names.push_back(BString("Electricity"));
-		names.push_back(BString("Gas"));
-		names.push_back(BString("Interest paid"));
-		names.push_back(BString("Recreation"));
+		names.push_back(wxString("Food"));
+		names.push_back(wxString("Household supplies"));
+		names.push_back(wxString("Rent"));
+		names.push_back(wxString("Electricity"));
+		names.push_back(wxString("Gas"));
+		names.push_back(wxString("Interest paid"));
+		names.push_back(wxString("Recreation"));
 		// TODO Do we want a "mortgage" Account among the defaults?
 		// The correct accounting for mortgage repayments is fairly complex.
 		// How would we present it to the user? Would we just cheat and treat
@@ -90,7 +90,7 @@ make_default_accounts
 	// Now we use this information to populate vec with actual Accounts
 	// (but note we don't save them - saving them will be at the discretion
 	// of the user, and will be done in client code closer to the UI).
-	for (vector<BString>::size_type i = 0; i != names.size(); ++i)
+	for (vector<wxString>::size_type i = 0; i != names.size(); ++i)
 	{
 		Account account(p_database_connection);
 		account.set_name(names[i]);
@@ -105,7 +105,7 @@ make_default_accounts
 		// PhatbooksDatabaseConnection. It is easier for certain client code
 		// if it is able to create the Accounts first.
 
-		account.set_description(BString(""));
+		account.set_description(wxString(""));
 		account.set_visibility(visibility::visible);
 		vec.push_back(account);
 	}

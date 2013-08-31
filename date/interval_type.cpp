@@ -1,9 +1,9 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "b_string.hpp"
 #include "date.hpp"
 #include "interval_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <wx/string.h>
 #include <cassert>
 
 namespace gregorian = boost::gregorian;
@@ -12,23 +12,23 @@ namespace gregorian = boost::gregorian;
 namespace phatbooks
 {
 
-BString
+wxString
 phrase(interval_type::IntervalType x, bool is_plural)
 {
-	BString const number_marker = is_plural? BString("s"): BString("");
+	wxString const number_marker = is_plural? wxString("s"): wxString("");
 	switch (x)
 	{
 	case interval_type::days:
-		return BString("day") + number_marker;
+		return wxString("day") + number_marker;
 	case interval_type::weeks:
-		return BString("week") + number_marker;
+		return wxString("week") + number_marker;
 	case interval_type::months:
-		return BString("month") + number_marker;
+		return wxString("month") + number_marker;
 	case interval_type::month_ends:
 		return
-			BString("month") +
+			wxString("month") +
 			number_marker +
-			BString(", on the last day of the month");
+			wxString(", on the last day of the month");
 	default:
 		assert (false);		
 	}

@@ -167,7 +167,7 @@ AccountDialog::AccountDialog
 	wxString name_tmp = wxEmptyString;
 	if (m_account.has_id())
 	{
-		name_tmp = bstring_to_wx(p_account.name());
+		name_tmp = p_account.name();
 	}
 	m_name_ctrl = new wxTextCtrl
 	(	this,
@@ -250,7 +250,7 @@ AccountDialog::AccountDialog
 	wxString description_tmp = wxEmptyString;
 	if (m_account.has_id())
 	{
-		description_tmp = bstring_to_wx(p_account.description());
+		description_tmp = p_account.description();
 	}
 	m_description_ctrl = new wxTextCtrl
 	(	this,
@@ -452,17 +452,13 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	DatabaseTransaction transaction(m_account.database_connection());
 
 	Account temp = m_account;
-	BString const prospective_name =
-		wx_to_bstring(m_name_ctrl->GetValue().Trim());
+	wxString const prospective_name = m_name_ctrl->GetValue().Trim();
 	if (Account::exists(temp.database_connection(), prospective_name))
 	{
 		bool clashes = true;
 		if (!p_is_new_account)
 		{
-			if
-			(	bstring_to_wx(m_account.name()).Lower() ==
-				bstring_to_wx(prospective_name).Lower()
-			)
+			if (m_account.name().Lower() == prospective_name.Lower())
 			{
 				// Then everything's OK, the user has just kept the original
 				// name, or else has changed the case.
@@ -473,10 +469,8 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		{
 			wxMessageBox
 			(	wxString("There is already ") +
-				bstring_to_wx
-				(	account_concepts_phrase
-					(	AccountPhraseFlags().set(string_flags::include_article)
-					)
+				account_concepts_phrase
+				(	AccountPhraseFlags().set(string_flags::include_article)
 				) +
 				wxString(" with this name.")
 			);

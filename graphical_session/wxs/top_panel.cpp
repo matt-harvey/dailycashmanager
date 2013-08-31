@@ -335,7 +335,7 @@ TopPanel::configure_transaction_ctrl
 			Account const& account = accounts[i];
 			Entry entry(m_database_connection);
 			entry.set_account(account);
-			entry.set_comment(BString());
+			entry.set_comment(wxString());
 			entry.set_transaction_side
 			(	(i == 0)?
 				transaction_side::source:

@@ -3,11 +3,11 @@
 #ifndef GUARD_finformat_hpp
 #define GUARD_finformat_hpp
 
-#include "b_string.hpp"
 #include "string_flags.hpp"
 #include <jewel/decimal_fwd.hpp>
 #include <jewel/flag_set.hpp>
 #include <wx/intl.h>
+#include <wx/string.h>
 #include <string>
 
 namespace phatbooks

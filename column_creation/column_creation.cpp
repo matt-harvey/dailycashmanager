@@ -5,8 +5,8 @@
 #include "entry.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
-#include "b_string.hpp"
 #include "ordinary_journal.hpp"
+#include "string_conv.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
@@ -16,6 +16,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/optional.hpp>
+#include <wx/string.h>
 #include <string>
 
 using boost::lexical_cast;
@@ -76,16 +77,16 @@ namespace
 		assert (!id);
 		return "N/A";
 	}
-	BString entry_col_aux_account_name(Entry const& entry)
+	wxString entry_col_aux_account_name(Entry const& entry)
 	{
 		return entry.account().name();
 	}
-	BString entry_col_aux_comment(Entry const& entry)
+	wxString entry_col_aux_comment(Entry const& entry)
 	{
 		return entry.comment();
 	}
 #	ifdef PHATBOOKS_EXPOSE_COMMODITY
-		BString entry_col_aux_commodity_abbreviation(Entry const& entry)
+		wxString entry_col_aux_commodity_abbreviation(Entry const& entry)
 		{
 			return entry.account().commodity().abbreviation();
 		}
@@ -145,7 +146,7 @@ namespace
 	{
 		return p_is_reconciled? "y": "n";
 	}
-	BString account_col_aux_name(Account const& account)
+	wxString account_col_aux_name(Account const& account)
 	{
 		return account.name();
 	}
@@ -159,9 +160,9 @@ namespace
 	(	account_type::AccountType type
 	)
 	{
-		return bstring_to_std8(account_type_to_string(type));
+		return wx_to_std8(account_type_to_string(type));
 	}
-	BString account_col_aux_description(Account const& account)
+	wxString account_col_aux_description(Account const& account)
 	{
 		return account.description();
 	}
@@ -230,37 +231,37 @@ create_entry_id_column()
 	);
 }
 
-PlainColumn<Entry, BString>*
+PlainColumn<Entry, wxString>*
 create_entry_account_name_column()
 {
-	return new PlainColumn<Entry, BString>
+	return new PlainColumn<Entry, wxString>
 	(	entry_col_aux_account_name,
 		"Account",
 		alignment::left,
-		bstring_to_std8
+		wx_to_std8
 	);
 }
 
-PlainColumn<Entry, BString>*
+PlainColumn<Entry, wxString>*
 create_entry_comment_column()
 {
-	return new PlainColumn<Entry, BString>
+	return new PlainColumn<Entry, wxString>
 	(	entry_col_aux_comment,
 		"Comment",
 		alignment::left,
-		bstring_to_std8
+		wx_to_std8
 	);
 }
 
 #ifdef PHATBOOKS_EXPOSE_COMMODITY
-	PlainColumn<Entry, BString>*
+	PlainColumn<Entry, wxString>*
 	create_entry_commodity_abbreviation_column()
 	{
-		return new PlainColumn<Entry, BString>
+		return new PlainColumn<Entry, wxString>
 		(	entry_col_aux_commodity_abbreviation,
 			"Commodity",
 			alignment::left,
-			bstring_to_std8
+			wx_to_std8
 		);
 	}
 #endif  // PHATBOOKS_EXPOSE_COMMODITY
@@ -356,14 +357,14 @@ create_entry_reconciliation_status_column()
 }
 
 
-PlainColumn<Account, BString>*
+PlainColumn<Account, wxString>*
 create_account_name_column()
 {
-	return new PlainColumn<Account, BString>
+	return new PlainColumn<Account, wxString>
 	(	account_col_aux_name,
 		"Account",
 		alignment::left,
-		bstring_to_std8
+		wx_to_std8
 	);
 }
 
@@ -378,14 +379,14 @@ create_account_type_column()
 	);
 }
 
-PlainColumn<Account, BString>*
+PlainColumn<Account, wxString>*
 create_account_description_column()
 {
-	return new PlainColumn<Account, BString>
+	return new PlainColumn<Account, wxString>
 	(	account_col_aux_description,
 		"Description",
 		alignment::left,
-		bstring_to_std8
+		wx_to_std8
 	);
 }
 
@@ -422,7 +423,7 @@ create_account_budget_column
 	return new AccumulatingColumn<Account, Decimal>
 	(	account_col_aux_budget,
 		Decimal(0, 0),
-		"Budget/" + bstring_to_std8(phrase(frequency.step_type(), false)),
+		"Budget/" + wx_to_std8(phrase(frequency.step_type(), false)),
 		alignment::right,
 		finformat_std8_aux
 	);

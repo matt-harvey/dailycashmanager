@@ -6,12 +6,12 @@
 #include "interval_type.hpp"
 #include "phatbooks_tests_common.hpp"
 #include "repeater.hpp"
+#include "frequency.hpp"
+#include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
-#include "b_string.hpp"
-#include "frequency.hpp"
-#include "transaction_type.hpp"
+#include <wx/string.h>
 
 namespace gregorian = boost::gregorian;
 
@@ -33,13 +33,13 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 
 	Entry entry1(dbc);
 	entry1.set_account(Account(dbc, "cash"));
-	BString const test_comment("test");
+	wxString const test_comment("test");
 	entry1.set_comment(test_comment);
 	entry1.set_amount(Decimal("0.00"));
 	entry1.set_whether_reconciled(false);
 	dj1.push_entry(entry1);
 
-	BString target = BString("");
+	wxString target = wxString("");
 	CHECK_EQUAL(dj1.repeater_description(), "");
 
 	Repeater repeater1a(dbc);
@@ -47,7 +47,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	repeater1a.set_next_date(date(2524, 9, 15));
 	dj1.push_repeater(repeater1a);
 
-	target = BString
+	target = wxString
 	(	"This transaction is automatically recorded every month, "
 		"with the next recording due on 2524-Sep-15."
 	);
@@ -58,7 +58,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	repeater1b.set_next_date(date(3950, 9, 12));
 	dj1.push_repeater(repeater1b);
 
-	target = BString
+	target = wxString
 	(	"This transaction is automatically recorded every month, "
 		"with the next recording due on 2524-Sep-15.\n"
 		"In addition, this transaction is automatically recorded every "

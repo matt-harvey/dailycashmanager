@@ -3,7 +3,6 @@
 #ifndef GUARD_budget_item_impl_hpp
 #define GUARD_budget_item_impl_hpp
 
-#include "b_string.hpp"
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/optional.hpp>
@@ -54,11 +53,11 @@ public:
 
 	~BudgetItemImpl();
 
-	void set_description(BString const& p_description);
+	void set_description(wxString const& p_description);
 	void set_account(Account const& p_account);
 	void set_frequency(Frequency const& p_frequency);
 	void set_amount(jewel::Decimal const& p_amount);
-	BString description();
+	wxString description();
 	Account account();
 	Frequency frequency();
 	jewel::Decimal amount();
@@ -109,18 +108,18 @@ public:
 	~BudgetItemData();
 	BudgetItemData(BudgetItemData const& rhs);
 	Account account() const;
-	BString description() const;
+	wxString description() const;
 	Frequency frequency() const;
 	jewel::Decimal amount() const;
 	void set_account(Account const& p_account);
-	void set_description(BString const& p_description);
+	void set_description(wxString const& p_description);
 	void set_frequency(Frequency const& p_frequency);
 	void set_amount(jewel::Decimal const& p_amount);
 	void clear();
 private:
 	BudgetItemData& operator=(BudgetItemData const& rhs);  // unimplemented
 	Account* m_account;  // pointer, to avoid having to #include "account.hpp"
-	boost::optional<BString> m_description;
+	boost::optional<wxString> m_description;
 	boost::optional<Frequency> m_frequency;
 	boost::optional<jewel::Decimal> m_amount;
 };

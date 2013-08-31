@@ -15,10 +15,10 @@
 
 #include "entry_impl.hpp"
 #include "account.hpp"
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "transaction_side.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
@@ -28,6 +28,7 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <wx/string.h>
 #include <string>
 
 using sqloxx::SQLStatement;
@@ -133,7 +134,7 @@ EntryImpl::set_account(Account const& p_account)
 
 
 void
-EntryImpl::set_comment(BString const& p_comment)
+EntryImpl::set_comment(wxString const& p_comment)
 {
 	load();
 	m_data->comment = p_comment;
@@ -173,7 +174,7 @@ EntryImpl::account()
 	return value(m_data->account);
 }
 
-BString
+wxString
 EntryImpl::comment()
 {
 	load();
@@ -242,7 +243,7 @@ EntryImpl::do_load()
 	);
 
 	temp.m_data->account = acct;
-	temp.m_data->comment = std8_to_bstring(statement.extract<string>(1));
+	temp.m_data->comment = std8_to_wx(statement.extract<string>(1));
 	temp.m_data->amount = amt;
 	temp.m_data->journal_id = statement.extract<Id>(3);
 	temp.m_data->is_reconciled =
@@ -261,7 +262,7 @@ void
 EntryImpl::process_saving_statement(SQLStatement& statement)
 {
 	statement.bind(":journal_id", value(m_data->journal_id));
-	statement.bind(":comment", bstring_to_std8(value(m_data->comment)));
+	statement.bind(":comment", wx_to_std8(value(m_data->comment)));
 	statement.bind(":account_id", value(m_data->account).id());
 	statement.bind(":amount", m_data->amount->intval());
 	statement.bind

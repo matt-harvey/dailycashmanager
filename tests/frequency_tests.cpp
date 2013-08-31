@@ -92,7 +92,7 @@ TEST(test_frequency_phrase_description)
 	(	typeid(frequency_description(frequency1)) ==
 		typeid(std::string)
 	);
-	CHECK_EQUAL(frequency_description(frequency1), BString("per day"));
+	CHECK_EQUAL(frequency_description(frequency1), wxString("per day"));
 
 	Frequency const frequency2(12, interval_type::days);
 	CHECK_EQUAL(frequency_description(frequency2), "per 12 days");
@@ -125,7 +125,7 @@ TEST(test_frequency_phrase_description)
 	);
 	CHECK_EQUAL
 	(	frequency_description(frequency9),
-		BString("per 10 months, on the last day of the month")
+		wxString("per 10 months, on the last day of the month")
 	);
 }
 

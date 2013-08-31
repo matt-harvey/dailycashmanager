@@ -2,6 +2,7 @@
 
 #include "make_currencies.hpp"
 #include "commodity.hpp"
+#include "string_conv.hpp"
 #include <wx/string.h>
 #include <cassert>
 #include <string>
@@ -23,9 +24,9 @@ namespace
 	)
 	{
 		Commodity ret(p_database_connection);
-		ret.set_name(wx_to_bstring(p_name));
-		ret.set_abbreviation(std8_to_bstring(p_abbreviation));
-		ret.set_description(BString(""));
+		ret.set_name(p_name);
+		ret.set_abbreviation(std8_to_wx(p_abbreviation));
+		ret.set_description(wxString(""));
 		ret.set_precision(p_precision);
 		return ret;
 	}

@@ -2,10 +2,10 @@
 
 #include "graphical_session.hpp"
 #include "application.hpp"
-#include "b_string.hpp"
 #include "wxs/app.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
+#include <wx/string.h>
 #include <string>
 
 using boost::shared_ptr;
@@ -55,7 +55,7 @@ GraphicalSession::do_run()
 
 	pApp->set_database_connection(dbc);
 	wxApp::SetInstance(pApp);
-	BString const app_name = Application::application_name();
+	wxString const app_name = Application::application_name();
 
 	// The argv array required by wxEntryStart must be an array
 	// of wchar_t*. We produce these as follows.
@@ -115,7 +115,7 @@ GraphicalSession::do_run(string const& filepath_str)
 
 	pApp->set_database_connection(dbc);
 	wxApp::SetInstance(pApp);
-	BString const app_name = Application::application_name();	
+	wxString const app_name = Application::application_name();	
 
 	// The argv array required by wxEntryStart must be an
 	// array of wchar_t*. We produce these as follows.

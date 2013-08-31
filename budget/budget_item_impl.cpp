@@ -2,14 +2,15 @@
 
 #include "budget_item_impl.hpp"
 #include "account.hpp"
-#include "b_string.hpp"
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "string_conv.hpp"
 #include <boost/static_assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sql_statement.hpp>
+#include <wx/string.h>
 #include <string>
 
 using jewel::clear;
@@ -119,7 +120,7 @@ BudgetItemImpl::BudgetItemImpl(BudgetItemImpl const& rhs):
 }
 
 void
-BudgetItemImpl::set_description(BString const& p_description)
+BudgetItemImpl::set_description(wxString const& p_description)
 {
 	load();
 	m_data->set_description(p_description);
@@ -150,7 +151,7 @@ BudgetItemImpl::set_amount(Decimal const& p_amount)
 	return;
 }
 
-BString
+wxString
 BudgetItemImpl::description()
 {
 	load();
@@ -206,7 +207,7 @@ BudgetItemImpl::do_load()
 	);
 	temp.m_data->set_account(Account(database_connection(), acct_id));
 	temp.m_data->
-		set_description(std8_to_bstring(statement.extract<string>(1)));
+		set_description(std8_to_wx(statement.extract<string>(1)));
 	using interval_type::IntervalType;
 	temp.m_data->set_frequency
 	(	Frequency
@@ -225,7 +226,7 @@ BudgetItemImpl::process_saving_statement(SQLStatement& statement)
 	statement.bind(":account_id", m_data->account().id());
 	statement.bind
 	(	":description",
-		bstring_to_std8(m_data->description())
+		wx_to_std8(m_data->description())
 	);
 	Frequency const freq = m_data->frequency();
 	statement.bind(":interval_units", freq.num_steps());
@@ -337,7 +338,7 @@ BudgetItemImpl::BudgetItemData::account() const
 	);
 }
 
-BString
+wxString
 BudgetItemImpl::BudgetItemData::description() const
 {
 	return value(m_description);
@@ -370,7 +371,7 @@ BudgetItemImpl::BudgetItemData::set_account(Account const& p_account)
 }
 
 void
-BudgetItemImpl::BudgetItemData::set_description(BString const& p_description)
+BudgetItemImpl::BudgetItemData::set_description(wxString const& p_description)
 {
 	m_description = p_description;
 	return;

@@ -3,12 +3,12 @@
 #ifndef GUARD_draft_journal_naming_dialog_hpp
 #define GUARD_draft_journal_naming_dialog_hpp
 
-#include "b_string.hpp"
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/sizer.h>
+#include <wx/string.h>
 #include <wx/textctrl.h>
 
 namespace phatbooks
@@ -39,11 +39,11 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
-	BString draft_journal_name() const;
+	wxString draft_journal_name() const;
 
 private:
 
-	void set_draft_journal_name(BString const& p_name);
+	void set_draft_journal_name(wxString const& p_name);
 
 	void on_ok_button_click(wxCommandEvent& event);
 
@@ -51,7 +51,7 @@ private:
 	wxTextCtrl* m_name_ctrl;
 	wxButton* m_ok_button;
 	PhatbooksDatabaseConnection& m_database_connection;
-	BString m_draft_journal_name;
+	wxString m_draft_journal_name;
 
 	DECLARE_EVENT_TABLE()
 

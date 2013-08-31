@@ -44,7 +44,7 @@ WelcomeDialog::WelcomeDialog
 	(	0,
 		wxID_ANY,
 		wxString("Welcome to ") +
-			bstring_to_wx(Application::application_name()) +
+			Application::application_name() +
 			wxString("!"),
 		wxDefaultPosition,
 		wxSize(wxDefaultSize.x * 2, wxDefaultSize.y * 2),
@@ -71,7 +71,7 @@ void
 WelcomeDialog::configure_buttons()
 {
 	wxString const file_descriptor = 
-		bstring_to_wx(Application::application_name()) + wxString(" file");
+		Application::application_name() + wxString(" file");
 	m_top_sizer->AddStretchSpacer();
 	// TODO The below code ensures the buttons are the same width, but is
 	// dependent on the relative length of the strings in each button. This

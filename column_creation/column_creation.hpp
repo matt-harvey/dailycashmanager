@@ -65,17 +65,17 @@ create_entry_id_column();
  * Creates a column that shows the name of the account of
  * each Entry.
  */
-consolixx::PlainColumn<Entry, BString>*
+consolixx::PlainColumn<Entry, wxString>*
 create_entry_account_name_column();
 
 /**
  * Creates a column that shows the comment of each Entry.
  */
-consolixx::PlainColumn<Entry, BString>*
+consolixx::PlainColumn<Entry, wxString>*
 create_entry_comment_column();
 
 #ifdef PHATBOOKS_EXPOSE_COMMODITY
-	consolixx::PlainColumn<Entry, BString>*
+	consolixx::PlainColumn<Entry, wxString>*
 	create_entry_commodity_abbreviation_column();
 #endif
 
@@ -147,7 +147,7 @@ create_entry_reconciliation_status_column();
 /**
  * Creates a column showing the name of an Account.
  */
-consolixx::PlainColumn<Account, BString>*
+consolixx::PlainColumn<Account, wxString>*
 create_account_name_column();
 
 /**
@@ -159,7 +159,7 @@ create_account_type_column();
 /**
  * Creates a column showing the description of an Account.
  */
-consolixx::PlainColumn<Account, BString>*
+consolixx::PlainColumn<Account, wxString>*
 create_account_description_column();
 
 /**

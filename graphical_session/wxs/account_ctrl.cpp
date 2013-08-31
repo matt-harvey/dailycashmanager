@@ -4,12 +4,12 @@
 #include "account.hpp"
 #include "account_reader.hpp"
 #include "account_type.hpp"
-#include "b_string.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_flags.hpp"
 #include "string_set_validator.hpp"
 #include <wx/combobox.h>
 #include <wx/event.h>
+#include <wx/string.h>
 #include <cassert>
 #include <set>
 
@@ -34,7 +34,7 @@ namespace
 {
 	bool compare_account_names(Account const& lhs, Account const& rhs)
 	{
-		return bstring_to_wx(lhs.name()) < bstring_to_wx(rhs.name());
+		return lhs.name() < rhs.name();
 	}
 }  // end anonymous namespace
 
@@ -93,7 +93,7 @@ AccountCtrl::reset
 				}
 				else
 				{
-					wxString const name_wx = bstring_to_wx(arit->name());
+					wxString const name_wx = arit->name();
 					valid_account_names.Add(name_wx);
 
 					// Remember the Account associated with this name (comes
@@ -108,7 +108,7 @@ AccountCtrl::reset
 	StringSetValidator validator
 	(	valid_account_names[0],
 		valid_account_names,
-		bstring_to_wx(account_concepts_phrase())
+		account_concepts_phrase()
 	);
 	Set(valid_account_names);
 	SetValidator(validator);
@@ -120,7 +120,7 @@ AccountCtrl::reset
 void
 AccountCtrl::set_account(Account const& p_account)
 {
-	SetValue(bstring_to_wx(p_account.name()));
+	SetValue(p_account.name());
 	return;
 }
 

@@ -178,7 +178,7 @@ PLReport::display_body()
 		for ( ; it != end; ++it)
 		{
 			Account const account(database_connection(), it->first);
-			wxString const name = bstring_to_wx(account.name());
+			wxString const name = account.name();
 			switch (account.account_type())
 			{
 			case account_type::revenue:
@@ -233,7 +233,7 @@ PLReport::display_body()
 		list<wxString>::const_iterator const end = names->end();
 		for ( ; it != end; ++it)
 		{
-			Account const account(database_connection(), wx_to_bstring(*it));
+			Account const account(database_connection(), *it);
 			Map::const_iterator const jt = m_map.find(account.id());
 			assert (jt != m_map.end());
 			Decimal const& b =

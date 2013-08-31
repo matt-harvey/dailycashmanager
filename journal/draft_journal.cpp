@@ -1,6 +1,5 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "b_string.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
 #include "draft_journal_reader.hpp"
@@ -12,6 +11,7 @@
 #include <sqloxx/handle.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <wx/string.h>
 #include <iostream>
 #include <ostream>
 #include <string>
@@ -67,7 +67,7 @@ DraftJournal::create_unchecked
 bool
 DraftJournal::exists
 (	PhatbooksDatabaseConnection& p_database_connection,
-	BString const& p_name
+	wxString const& p_name
 )
 {
 	return DraftJournalImpl::exists
@@ -87,7 +87,7 @@ DraftJournal::no_user_draft_journals_saved
 }
 
 void
-DraftJournal::set_name(BString const& p_name)
+DraftJournal::set_name(wxString const& p_name)
 {
 	impl().set_name(p_name);
 	return;
@@ -130,7 +130,7 @@ DraftJournal::do_set_transaction_type
 }
 
 void
-DraftJournal::do_set_comment(BString const& p_comment)
+DraftJournal::do_set_comment(wxString const& p_comment)
 {
 	impl().set_comment(p_comment);
 	return;
@@ -156,13 +156,13 @@ DraftJournal::do_get_transaction_type() const
 	return impl().transaction_type();
 }
 
-BString
+wxString
 DraftJournal::do_get_comment() const
 {
 	return impl().comment();
 }
 
-BString
+wxString
 DraftJournal::name() const
 {
 	return impl().name();
@@ -180,14 +180,14 @@ DraftJournal::repeaters() const
 	return impl().repeaters();
 }
 
-BString
+wxString
 DraftJournal::repeater_description() const
 {
 	return impl().repeater_description();
 }
 
 DraftJournal::DraftJournal
-(	sqloxx::Handle<DraftJournalImpl> const& p_handle
+(	Handle<DraftJournalImpl> const& p_handle
 ):
 	PhatbooksPersistentObject(p_handle)
 {

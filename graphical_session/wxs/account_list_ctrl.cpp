@@ -6,7 +6,6 @@
 #include "account_dialog.hpp"
 #include "account_reader.hpp"
 #include "account_type.hpp"
-#include "b_string.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
 #include "top_panel.hpp"
@@ -67,11 +66,9 @@ AccountListCtrl::create_pl_account_list
 	(	parent,
 		reader,
 		dbc,
-		bstring_to_wx
-		(	account_concept_name
-			(	account_super_type::pl,
-				AccountPhraseFlags().set(string_flags::capitalize)
-			)
+		account_concept_name
+		(	account_super_type::pl,
+			AccountPhraseFlags().set(string_flags::capitalize)
 		),
 		account_super_type::pl
 	);
@@ -113,7 +110,7 @@ AccountListCtrl::selected_accounts(set<Account::Id>& out) const
 		{
 			Account const account
 			(	m_database_connection,
-				wx_to_bstring(GetItemText(i))
+				GetItemText(i)
 			);
 			if (account.has_id())
 			{
@@ -127,8 +124,7 @@ AccountListCtrl::selected_accounts(set<Account::Id>& out) const
 void
 AccountListCtrl::on_item_activated(wxListEvent& event)
 {
-	wxString const account_name = GetItemText(event.GetIndex());
-	Account account(m_database_connection, wx_to_bstring(account_name));
+	Account account(m_database_connection, GetItemText(event.GetIndex()));
 
 	// Fire an Account editing request. This will be handled higher up
 	// the window hierarchy.
@@ -152,9 +148,7 @@ AccountListCtrl::update
 		BalanceSheetAccountReader const reader(m_database_connection);
 		update
 		(	reader,
-			bstring_to_wx
-			(	account_concept_name(p_account_super_type, flags)
-			)
+			account_concept_name(p_account_super_type, flags)
 		);
 	}
 	else
@@ -162,9 +156,7 @@ AccountListCtrl::update
 		PLAccountReader const reader(m_database_connection);
 		update
 		(	reader,
-			bstring_to_wx
-			(	account_concept_name(p_account_super_type, flags)
-			)
+			account_concept_name(p_account_super_type, flags)
 		);
 	}
 	return;
@@ -205,7 +197,7 @@ AccountListCtrl::update
 		if (m_show_hidden || (it->visibility() == visibility::visible))
 		{
 			// Insert item, with string for Column 0
-			InsertItem(i, bstring_to_wx(it->name()));
+			InsertItem(i, it->name());
 		
 			// TODO Do a static assert to ensure second param will fit the id.
 			assert (it->has_id());
@@ -234,7 +226,7 @@ AccountListCtrl::update
 		// TODO Make this more efficient
 		Account const account
 		(	m_database_connection,
-			wx_to_bstring(GetItemText(j))
+			GetItemText(j)
 		);
 		assert (account.has_id());
 		if (selected.find(account.id()) != selected.end())
@@ -278,7 +270,7 @@ AccountListCtrl::default_account() const
 		assert (GetItemCount() > 0);
 		ret = Account
 		(	m_database_connection,
-			wx_to_bstring(GetItemText(GetTopItem()))
+			GetItemText(GetTopItem())
 		);
 	}
 	return ret;
@@ -293,8 +285,7 @@ AccountListCtrl::select_only(Account const& p_account)
 	size_t const sz = GetItemCount();	
 	for (size_t i = 0; i != sz; ++i)
 	{
-		BString const account_name = wx_to_bstring(GetItemText(i));
-		Account const account(m_database_connection, account_name);
+		Account const account(m_database_connection, GetItemText(i));
 		long const filter = (wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 		long const flags = ((account == p_account)? filter: 0);
 		SetItemState(i, flags, filter);

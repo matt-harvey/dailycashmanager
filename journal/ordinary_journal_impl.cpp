@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "ordinary_journal_impl.hpp"
-#include "b_string.hpp"
 #include "draft_journal.hpp"
 #include "date.hpp"
 #include "entry.hpp"
@@ -21,6 +20,7 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <wx/string.h>
 #include <string>
 #include <vector>
 
@@ -71,7 +71,7 @@ OrdinaryJournalImpl::set_transaction_type
 }
 
 void
-OrdinaryJournalImpl::set_comment(BString const& p_comment)
+OrdinaryJournalImpl::set_comment(wxString const& p_comment)
 {
 	load();
 	ProtoJournal::set_comment(p_comment);
@@ -106,7 +106,7 @@ OrdinaryJournalImpl::transaction_type()
 	return ProtoJournal::transaction_type();
 }
 
-BString
+wxString
 OrdinaryJournalImpl::comment()
 {
 	load();

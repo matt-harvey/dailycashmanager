@@ -6,7 +6,6 @@
 #include "account_dialog.hpp"
 #include "account_reader.hpp"
 #include "account_type.hpp"
-#include "b_string.hpp"
 #include "budget_item.hpp"
 #include "budget_item_reader.hpp"
 #include "decimal_text_ctrl.hpp"
@@ -260,7 +259,7 @@ BudgetPanel::on_push_item_button_click(wxCommandEvent& event)
 	(void)event;  // Silence compiler re. unused parameter.
 	BudgetItem budget_item(database_connection());
 	budget_item.set_account(m_account);
-	budget_item.set_description(BString(""));
+	budget_item.set_description(wxString(""));
 	budget_item.set_amount(zero());
 	budget_item.set_frequency(Frequency(1, interval_type::days));
 	push_item_component(budget_item);
@@ -429,7 +428,7 @@ BudgetPanel::push_item_component(BudgetItem const& p_budget_item)
 	budget_item_component.description_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
-		bstring_to_wx(p_budget_item.description()),
+		p_budget_item.description(),
 		wxDefaultPosition,
 		wxSize(large_width(), wxDefaultSize.y)
 	);
@@ -747,7 +746,7 @@ BudgetPanel::BalancingDialog::BalancingDialog
 	(	this,
 		wxID_YES,
 		wxString("&Offset to ") +
-			bstring_to_wx(account_concept_name(account_super_type::pl)) +
+			account_concept_name(account_super_type::pl) +
 			wxString(" below"),
 		wxDefaultPosition,
 		wxSize(large_width(), wxDefaultSize.y)
@@ -808,7 +807,7 @@ BudgetPanel::BalancingDialog::on_no_button_click(wxCommandEvent& event)
 void
 BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 {
-	BString const offsetting_item_description("Offsetting budget adjustment");
+	wxString const offsetting_item_description("Offsetting budget adjustment");
 	Frequency const target_frequency =
 		m_database_connection.budget_frequency();
 	BudgetItemReader reader(m_database_connection);

@@ -93,14 +93,14 @@ DraftJournalNamingDialog::DraftJournalNamingDialog
 	CentreOnScreen();
 }
 
-BString
+wxString
 DraftJournalNamingDialog::draft_journal_name() const
 {
 	return m_draft_journal_name;
 }
 
 void
-DraftJournalNamingDialog::set_draft_journal_name(BString const& p_name)
+DraftJournalNamingDialog::set_draft_journal_name(wxString const& p_name)
 {
 	m_draft_journal_name = p_name;
 	return;
@@ -118,11 +118,11 @@ DraftJournalNamingDialog::on_ok_button_click(wxCommandEvent& event)
 		return;
 	}
 	assert (!trimmed_name.IsEmpty());
-	BString const name = wx_to_bstring(trimmed_name);
+	wxString const name = trimmed_name;
 	if (DraftJournal::exists(m_database_connection, name))
 	{
 		wxString msg("A transaction named \"");
-		msg += bstring_to_wx(name);
+		msg += name;
 		msg += wxString("\" already exists.");
 		wxMessageBox(msg);
 		return;

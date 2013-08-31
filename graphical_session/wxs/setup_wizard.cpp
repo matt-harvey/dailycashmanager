@@ -5,7 +5,6 @@
 #include "account_type.hpp"
 #include "app.hpp"
 #include "application.hpp"
-#include "b_string.hpp"
 #include "client_data.hpp"
 #include "filename_validation.hpp"
 #include "finformat.hpp"
@@ -18,6 +17,7 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "string_conv.hpp"
 #include "string_flags.hpp"
 #include "sizing.hpp"
 #include "visibility.hpp"
@@ -79,16 +79,6 @@ namespace gui
 
 namespace
 {
-	wxString const wx_app_name()
-	{
-		return bstring_to_wx(Application::application_name());
-	}
-
-	wxString const wx_extension()
-	{
-		return bstring_to_wx(Application::filename_extension());
-	}
-
 	filesystem::path wx_to_boost_filepath
 	(	wxString const& wx_directory,
 		wxString const& wx_filename
@@ -107,20 +97,20 @@ namespace
 	{
 		filesystem::path const path(wx_to_std8(s));
 		if
-		(	std8_to_bstring(path.extension().string()) ==
+		(	std8_to_wx(path.extension().string()) ==
 			Application::filename_extension()
 		)
 		{
 			return s;
 		}
-		return s + wxString(bstring_to_wx(Application::filename_extension()));
+		return s + Application::filename_extension();
 	}
 
 	wxString without_extension(wxString const& s)
 	{
 		filesystem::path const path(wx_to_std8(s));
 		if
-		(	std8_to_bstring(path.extension().string()) ==
+		(	std8_to_wx(path.extension().string()) ==
 			Application::filename_extension()
 		)
 		{
@@ -163,7 +153,7 @@ SetupWizard::SetupWizard
 	wxWizard
 	(	0,
 		wxID_ANY,
-		wx_app_name() + wxString(" Setup Wizard"),
+		Application::application_name() + wxString(" Setup Wizard"),
 		wxBitmap(icon_xpm),  // TODO Put a proper image here
 		wxDefaultPosition,
 		wxDEFAULT_DIALOG_STYLE | wxFULL_REPAINT_ON_RESIZE
@@ -307,7 +297,7 @@ SetupWizard::configure_accounts()
 	DatabaseTransaction transaction(m_database_connection);
 	for ( ; it != end; ++it)
 	{
-		wxString const name_wx = bstring_to_wx(it->account.name()).Trim();	
+		wxString const name_wx = it->account.name().Trim();
 		if (name_wx.IsEmpty())
 		{
 			// TODO React accordingly...
@@ -315,7 +305,7 @@ SetupWizard::configure_accounts()
 		else
 		{
 			it->account.set_commodity(selected_currency());
-			it->account.set_description(BString(""));
+			it->account.set_description(wxString(""));
 			it->account.set_visibility(visibility::visible);
 			it->account.save();
 			assert 
@@ -557,7 +547,7 @@ SetupWizard::FilepathPage::FilepathPage
 
 	// Fifth row
 	m_top_sizer->Add(m_filename_row_sizer);
-	wxString const ext = wx_extension();
+	wxString const ext = Application::filename_extension();
 	m_filename_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
@@ -605,11 +595,12 @@ SetupWizard::FilepathPage::FilepathPage
 	);
 	for (vector<Commodity>::size_type i = 0; i != m_currencies.size(); ++i)
 	{
-		Commodity const commodity = m_currencies[i];
-		wxString const name = bstring_to_wx(commodity.name());
-		wxString const abb = bstring_to_wx(commodity.abbreviation());
+		Commodity const& commodity = m_currencies[i];
 		unsigned int const item_index = m_currency_box->Append
-		(	name + wxString(" (") + abb + wxString(")")
+		(	commodity.name() +
+			wxString(" (") +
+			commodity.abbreviation() +
+			wxString(")")
 		);
 		ClientData<Commodity>* const data =
 			new ClientData<Commodity>(commodity);
@@ -817,8 +808,7 @@ SetupWizard::AccountPage::render_main_text()
 void
 SetupWizard::AccountPage::render_buttons()
 {
-	wxString const concept_name =
-		bstring_to_wx(account_concept_name(m_account_super_type));
+	wxString const concept_name = account_concept_name(m_account_super_type);
 	m_pop_row_button = new wxButton
 	(	this,
 		s_pop_row_button_id,
@@ -919,15 +909,15 @@ SetupWizard::AccountPage::refresh_pop_row_button_state()
 		ostringstream oss;
 		oss << m_min_num_accounts;
 		wxString const min_rows_string = std8_to_wx(oss.str());
-		wxString acc_concept = bstring_to_wx
-		(	account_concept_name(m_account_super_type)
-		);
-		if (m_min_num_accounts != 1) acc_concept += wxString("s");
+		if (m_min_num_accounts != 1)
+		{
+			account_concept_name(m_account_super_type) += wxString("s");
+		}
 		m_pop_row_button->SetToolTip
 		(	wxString("You will need at least ") +
 			min_rows_string +
 			wxString(" ") +
-			acc_concept +
+			account_concept_name(m_account_super_type) +
 			wxString(" to start off with.")
 		);
 	}
@@ -1001,9 +991,9 @@ SetupWizard::AccountPage::account_types_valid
 		{
 			error_message =
 				wxString("You need at least one ") +
-				bstring_to_wx(account_type_to_string(*it)) +
+				account_type_to_string(*it) +
 				wxString(" ") +
-				bstring_to_wx(account_concept_name(m_account_super_type)) +
+				account_concept_name(m_account_super_type) +
 				wxString(" to start off with.");
 			return false;
 		}

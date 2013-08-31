@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "transaction_type_ctrl.hpp"
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_set_validator.hpp"
 #include "transaction_ctrl.hpp"
@@ -11,6 +11,7 @@
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
 #include <wx/gdicmn.h>
+#include <wx/string.h>
 #include <wx/window.h>
 #include <wx/windowid.h>
 #include <vector>
@@ -56,9 +57,7 @@ TransactionTypeCtrl::TransactionTypeCtrl
 	wxComboBox
 	(	p_parent,
 		p_id,
-		bstring_to_wx
-		(	transaction_type_to_verb(static_cast<TransactionType>(0))
-		),
+		transaction_type_to_verb(static_cast<TransactionType>(0)),
 		wxDefaultPosition,
 		p_size,
 		wxArrayString(),
@@ -78,9 +77,7 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		m_transaction_types.end();
 	for ( ; it != end; ++it)
 	{
-		wxString const verb = bstring_to_wx
-		(	transaction_type_to_verb(*it)
-		);
+		wxString const verb = transaction_type_to_verb(*it);
 		Append(verb);  // add to combobox
 	}
 	SetSelection(0);  // In effort to avoid apparent bug in Windows.
@@ -93,7 +90,7 @@ TransactionTypeCtrl::transaction_type() const
 	if (GetSelection() >= 0)
 	{
 		transaction_type::TransactionType const ttype =
-			transaction_type_from_verb(wx_to_bstring(GetValue()));
+			transaction_type_from_verb(GetValue());
 		assert_transaction_type_validity(ttype);
 		ret = ttype;
 	}

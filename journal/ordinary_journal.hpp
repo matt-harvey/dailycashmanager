@@ -3,7 +3,6 @@
 #ifndef GUARD_ordinary_journal_hpp
 #define GUARD_ordinary_journal_hpp
 
-#include "b_string.hpp"
 #include "entry.hpp"
 #include "persistent_journal.hpp"
 #include "phatbooks_persistent_object.hpp"
@@ -15,6 +14,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/noncopyable.hpp>
 #include <jewel/decimal.hpp>
+#include <wx/string.h>
 #include <iostream>
 #include <ostream>
 #include <vector>
@@ -137,12 +137,12 @@ private:
 	void do_set_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
 	);
-	void do_set_comment(BString const& p_comment);
+	void do_set_comment(wxString const& p_comment);
 	void do_push_entry(Entry& entry);
 	void do_remove_entry(Entry& entry);
 	void do_clear_entries();
 	transaction_type::TransactionType do_get_transaction_type() const;
-	BString do_get_comment() const;
+	wxString do_get_comment() const;
 	std::vector<Entry> const& do_get_entries() const;
 
 	// Virtual function inherited from Journal

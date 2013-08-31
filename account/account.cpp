@@ -4,7 +4,7 @@
 #include "account_type.hpp"
 #include "account_impl.hpp"
 #include "account_reader.hpp"
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "commodity.hpp"
 #include "entry_reader.hpp"
 #include "finformat.hpp"
@@ -12,13 +12,13 @@
 #include "phatbooks_persistent_object.hpp"
 #include "string_flags.hpp"
 #include "visibility.hpp"
-#include "b_string.hpp"
 #include "string_flags.hpp"
 #include <boost/shared_ptr.hpp>
 #include <consolixx/alignment.hpp>
 #include <consolixx/column.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
+#include <wx/string.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -110,7 +110,7 @@ Account::Account
 
 Account::Account
 (	PhatbooksDatabaseConnection& p_database_connection,
-	BString const& p_name
+	wxString const& p_name
 ):
 	PhatbooksPersistentObject
 	(	p_database_connection,
@@ -146,7 +146,7 @@ Account::~Account()
 bool
 Account::exists
 (	PhatbooksDatabaseConnection& p_database_connection,
-	BString const& p_name
+	wxString const& p_name
 )
 {
 	return AccountImpl::exists
@@ -190,7 +190,7 @@ Account::none_saved_with_account_super_type
 }
 
 
-BString
+wxString
 Account::name() const
 {
 	return impl().name();
@@ -214,7 +214,7 @@ Account::account_super_type() const
 	return impl().account_super_type();
 }
 
-BString
+wxString
 Account::description() const
 {
 	return impl().description();
@@ -270,7 +270,7 @@ Account::set_account_type(AccountType p_account_type)
 }
 
 void
-Account::set_name(BString const& p_name)
+Account::set_name(wxString const& p_name)
 {
 	impl().set_name(p_name);
 	return;
@@ -284,7 +284,7 @@ Account::set_commodity(Commodity const& p_commodity)
 }
 
 void
-Account::set_description(BString const& p_description)
+Account::set_description(wxString const& p_description)
 {
 	impl().set_description(p_description);
 	return;
@@ -361,16 +361,16 @@ bool is_not_pure_envelope(Account const& account)
 	return account.account_type() != account_type::pure_envelope;
 }
 
-BString account_concept_name
+wxString account_concept_name
 (	account_super_type::AccountSuperType p_account_super_type,
 	AccountPhraseFlags p_phrase_flag_set
 )
 {
-	BString ret;
+	wxString ret;
 	assert (ret.IsEmpty());
 	if (p_phrase_flag_set.test(string_flags::include_article))
 	{
-		ret += BString("an ");
+		ret += wxString("an ");
 	}
 	bool const capitalize = p_phrase_flag_set.test(string_flags::capitalize);
 	switch (p_account_super_type)
@@ -378,15 +378,15 @@ BString account_concept_name
 	case account_super_type::balance_sheet:
 		ret +=
 		(	capitalize?
-			BString("Account"):
-			BString("account")
+			wxString("Account"):
+			wxString("account")
 		);
 		break;
 	case account_super_type::pl:
 		ret +=
 		(	capitalize?
-			BString("Envelope"):
-			BString("envelope")
+			wxString("Envelope"):
+			wxString("envelope")
 		);
 		break;
 	default:
@@ -399,15 +399,15 @@ BString account_concept_name
 	return ret;
 }
 
-BString account_concepts_phrase
+wxString account_concepts_phrase
 (	AccountPhraseFlags p_phrase_flag_set
 )
 {
-	BString ret = account_concept_name
+	wxString ret = account_concept_name
 	(	account_super_type::balance_sheet,
 		p_phrase_flag_set
 	);
-	ret += BString(" or ");
+	ret += wxString(" or ");
 	p_phrase_flag_set.clear(string_flags::include_article);
 	ret += account_concept_name
 	(	account_super_type::pl,

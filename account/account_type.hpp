@@ -3,7 +3,7 @@
 #ifndef GUARD_account_type_hpp
 #define GUARD_account_type_hpp
 
-#include "b_string.hpp"
+#include <wx/string.h>
 #include <vector>
 
 namespace phatbooks
@@ -55,10 +55,10 @@ account_super_types();
 std::vector<account_type::AccountType> const&
 account_types(account_super_type::AccountSuperType p_account_super_type);
 
-std::vector<BString> const&
+std::vector<wxString> const&
 account_type_names();
 
-BString
+wxString
 account_type_to_string(account_type::AccountType p_account_type);
 
 /**
@@ -66,7 +66,7 @@ account_type_to_string(account_type::AccountType p_account_type);
  * AccountType that corresponds to this string.
  */
 account_type::AccountType
-string_to_account_type(BString const& p_string);
+string_to_account_type(wxString const& p_string);
 
 
 

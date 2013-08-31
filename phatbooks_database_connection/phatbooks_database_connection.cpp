@@ -16,8 +16,7 @@
 #include "account_impl.hpp"
 #include "account_reader.hpp"
 #include "amalgamated_budget.hpp"
-// #include "application.hpp"
-#include "b_string.hpp"
+#include "application.hpp"
 #include "budget_item.hpp"
 #include "budget_item_impl.hpp"
 #include "commodity_impl.hpp"
@@ -38,7 +37,6 @@
 #include "proto_journal.hpp"
 #include "repeater.hpp"
 #include "repeater_reader.hpp"
-#include "b_string.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/identity_map.hpp>

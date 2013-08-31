@@ -5,7 +5,6 @@
 #include "account_ctrl.hpp"
 #include "account_reader.hpp"
 #include "account_type.hpp"
-#include "b_string.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"

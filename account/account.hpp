@@ -5,7 +5,6 @@
 
 #include "account_impl.hpp"
 #include "account_type.hpp"
-#include "b_string.hpp"
 #include "budget_item.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "string_flags.hpp"
@@ -14,6 +13,7 @@
 #include <jewel/decimal.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
+#include <wx/string.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -81,7 +81,7 @@ public:
 	 */
 	Account
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		BString const& p_name
+		wxString const& p_name
 	);
 
 	static bool exists
@@ -112,7 +112,7 @@ public:
 	 */
 	static bool exists
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		BString const& p_name
+		wxString const& p_name
 	);
 
 	/**
@@ -153,7 +153,7 @@ public:
 	/**
 	 * @ returns name of account
 	 */
-	BString name() const;
+	wxString name() const;
 
 	/**
 	 * @ returns native Commodity of this account
@@ -173,7 +173,7 @@ public:
 	/**
 	 * @ returns description of account.
 	 */
-	BString description() const;
+	wxString description() const;
 
 	/**
 	 * @returns the visibility of account (whether it is visible or hidden
@@ -235,11 +235,11 @@ public:
 
 	void set_account_type(AccountType p_account_type);
 
-	void set_name(BString const& p_name);
+	void set_name(wxString const& p_name);
 
 	void set_commodity(Commodity const& p_commodity);
 
-	void set_description(BString const& p_description);
+	void set_description(wxString const& p_description);
 
 	void set_visibility(visibility::Visibility p_visibility);
 
@@ -312,7 +312,7 @@ typedef
  * to the \e user the "thing" which they are creating in this
  * particular MultiAccountPanel.
  */
-BString account_concept_name
+wxString account_concept_name
 (	account_super_type::AccountSuperType p_account_super_type,
 	AccountPhraseFlags p_phrase_flag_set = AccountPhraseFlags()
 );
@@ -322,7 +322,7 @@ BString account_concept_name
  * of the different possible "account concepts" (e.g. this might
  * return something like "account or category").
  */
-BString account_concepts_phrase
+wxString account_concepts_phrase
 (	AccountPhraseFlags p_phrase_flag_set = AccountPhraseFlags()
 );
 

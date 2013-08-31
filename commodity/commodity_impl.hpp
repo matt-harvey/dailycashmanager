@@ -67,7 +67,7 @@ public:
 	 */
 	static Id id_for_abbreviation
 	(	PhatbooksDatabaseConnection& dbc,
-		BString const& p_abbreviation
+		wxString const& p_abbreviation
 	);
 
 	explicit
@@ -82,29 +82,29 @@ public:
 
 	static bool exists_with_abbreviation
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		BString const& p_abbreviation
+		wxString const& p_abbreviation
 	);
 
 	static bool exists_with_name
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		BString const& p_name
+		wxString const& p_name
 	);
 
-	BString abbreviation();
+	wxString abbreviation();
 
-	BString name();
+	wxString name();
 
-	BString description();
+	wxString description();
 
 	int precision();
 
 	jewel::Decimal multiplier_to_base();
 
-	void set_abbreviation(BString const& p_abbreviation);
+	void set_abbreviation(wxString const& p_abbreviation);
 
-	void set_name(BString const& p_name);
+	void set_name(wxString const& p_name);
 
-	void set_description(BString const& p_description);
+	void set_description(wxString const& p_description);
 
 	void set_precision(int p_precision);
 
@@ -142,9 +142,9 @@ private:
 
 struct CommodityImpl::CommodityData
 {
-	boost::optional<BString> abbreviation;
-	boost::optional<BString> name;
-	boost::optional<BString> description;
+	boost::optional<wxString> abbreviation;
+	boost::optional<wxString> name;
+	boost::optional<wxString> description;
 	boost::optional<int> precision;
 	boost::optional<jewel::Decimal> multiplier_to_base;
 };

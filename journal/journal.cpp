@@ -1,6 +1,5 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "b_string.hpp"
 #include "column_creation.hpp"
 #include "journal.hpp"
 #include "entry.hpp"
@@ -10,6 +9,7 @@
 #include <jewel/debug_log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/output_aux.hpp>
+#include <wx/string.h>
 #include <iostream>
 #include <ostream>
 #include <numeric>
@@ -57,7 +57,7 @@ Journal::set_transaction_type
 }
 
 void
-Journal::set_comment(BString const& p_comment)
+Journal::set_comment(wxString const& p_comment)
 {
 	do_set_comment(p_comment);
 	return;
@@ -90,7 +90,7 @@ Journal::entries() const
 	return do_get_entries();
 }
 
-BString
+wxString
 Journal::comment() const
 {
 	return do_get_comment();
@@ -185,7 +185,7 @@ Journal::output_core_journal_header(ostream& os) const
 	if (is_actual()) os << "ACTUAL TRANSACTION";
 	else os << "BUDGET TRANSACTION";
 	os << endl;
-	if (!comment().empty()) os << bstring_to_std8(comment()) << endl;
+	if (!comment().empty()) os << wx_to_std8(comment()) << endl;
 	os << endl;
 	return;
 }

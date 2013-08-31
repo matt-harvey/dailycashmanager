@@ -13,14 +13,13 @@
 
 
 
-#include "b_string.hpp"
 #include "proto_journal.hpp"
 #include "account.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "transaction_type.hpp"
 #include <consolixx/table.hpp>
 #include <jewel/output_aux.hpp>
@@ -33,6 +32,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
+#include <wx/string.h>
 #include <algorithm>
 #include <iterator>
 #include <ostream>
@@ -153,7 +153,7 @@ ProtoJournal::do_set_transaction_type
 }
 
 void
-ProtoJournal::do_set_comment(BString const& p_comment)
+ProtoJournal::do_set_comment(wxString const& p_comment)
 {
 	m_data->comment = p_comment;
 	return;
@@ -181,7 +181,7 @@ ProtoJournal::do_remove_entry(Entry& entry)
 }
 		
 
-BString
+wxString
 ProtoJournal::do_get_comment() const
 {
 	return value(m_data->comment);
@@ -225,7 +225,7 @@ ProtoJournal::do_save_new_journal_core
 	(	":transaction_type_id",
 		static_cast<int>(value(m_data->transaction_type))
 	);
-	statement.bind(":comment", bstring_to_std8(value(m_data->comment)));
+	statement.bind(":comment", wx_to_std8(value(m_data->comment)));
 	statement.step_final();
 	typedef vector<Entry>::iterator EntryIter;
 	EntryIter const endpoint = m_data->entries.end();
@@ -260,7 +260,7 @@ ProtoJournal::do_save_existing_journal_core
 	(	":transaction_type_id",
 		static_cast<int>(value(m_data->transaction_type))
 	);
-	updater.bind(":comment", bstring_to_std8(value(m_data->comment)));
+	updater.bind(":comment", wx_to_std8(value(m_data->comment)));
 	updater.bind(":id", id);
 	updater.step_final();
 	typedef vector<Entry>::iterator EntryIter;
@@ -328,7 +328,7 @@ ProtoJournal::do_load_journal_core
 		static_cast<transaction_type::TransactionType>
 		(	statement.extract<int>(0)
 		);
-	temp.m_data->comment = std8_to_bstring(statement.extract<string>(1));
+	temp.m_data->comment = std8_to_wx(statement.extract<string>(1));
 	swap(temp);	
 	return;
 }

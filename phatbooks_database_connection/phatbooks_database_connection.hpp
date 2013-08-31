@@ -15,7 +15,6 @@
 
 
 #include "account_type.hpp"
-#include "b_string.hpp"
 #include "frequency.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/filesystem.hpp>

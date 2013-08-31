@@ -2,9 +2,11 @@
 
 #include "finformat.hpp"
 #include "string_flags.hpp"
+#include "string_conv.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
 #include <wx/intl.h>
+#include <wx/string.h>
 #include <algorithm>
 #include <cassert>
 #include <deque>

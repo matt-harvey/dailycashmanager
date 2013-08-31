@@ -3,7 +3,6 @@
 #include "balance_sheet_report.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
-#include "b_string.hpp"
 #include "entry_reader.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "report.hpp"
@@ -13,6 +12,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/gdicmn.h>
+#include <wx/string.h>
 #include <wx/window.h>
 #include <list>
 #include <vector>
@@ -136,7 +136,7 @@ BalanceSheetReport::display_body()
 		for ( ; it != end; ++it)
 		{
 			Account const account(database_connection(), it->first);
-			wxString const name = bstring_to_wx(account.name());
+			wxString const name = account.name();
 			switch (account.account_type())
 			{
 			case account_type::asset:
@@ -197,7 +197,7 @@ BalanceSheetReport::display_body()
 		list<wxString>::const_iterator const end = names->end();
 		for ( ; it != end; ++it)
 		{
-			Account const account(database_connection(), wx_to_bstring(*it));
+			Account const account(database_connection(), *it);
 			BalanceMap::const_iterator const jt =
 				m_balance_map.find(account.id());
 			assert (jt != m_balance_map.end());

@@ -3,15 +3,15 @@
 #ifndef GUARD_draft_journal_hpp
 #define GUARD_draft_journal_hpp
 
-#include "b_string.hpp"
 #include "draft_journal_impl.hpp"
 #include "persistent_journal.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"
+#include <boost/shared_ptr.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
-#include <boost/shared_ptr.hpp>
+#include <wx/string.h>
 #include <ostream>
 #include <vector>
 
@@ -96,7 +96,7 @@ public:
 	 */
 	static bool exists
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		BString const& p_name
+		wxString const& p_name
 	);
 
 	/**
@@ -111,9 +111,9 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
-	void set_name(BString const& p_name);
+	void set_name(wxString const& p_name);
 	void push_repeater(Repeater& repeater);
-	BString name() const;
+	wxString name() const;
 
 	/**
 	 * @returns a verbal description of the automatic postings associated
@@ -121,7 +121,7 @@ public:
 	 *
 	 * @todo Test.
 	 */
-	BString repeater_description() const;
+	wxString repeater_description() const;
 
 	/**
 	 * Take on the attributes of \e rhs, where these exist and are
@@ -144,11 +144,11 @@ private:
 	void do_set_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
 	);
-	void do_set_comment(BString const& p_comment);
+	void do_set_comment(wxString const& p_comment);
 	void do_push_entry(Entry& entry);
 	void do_remove_entry(Entry& entry);
 	void do_clear_entries();
-	BString do_get_comment() const;
+	wxString do_get_comment() const;
 	transaction_type::TransactionType do_get_transaction_type() const;
 	
 	// Redefine impure virtual function inherited from Journal

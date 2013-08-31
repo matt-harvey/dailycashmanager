@@ -1,6 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
 
@@ -10,7 +10,7 @@
 	#include "draft_journal_reader.hpp"
 #endif
 
-#include "b_string.hpp"
+#include "string_conv.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -23,10 +23,11 @@
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
-#include <cassert>
-#include <iostream>  // for debug logging
 #include <jewel/debug_log.hpp>
 #include <jewel/optional.hpp>
+#include <wx/string.h>
+#include <cassert>
+#include <iostream>  // for debug logging
 #include <string>
 #include <vector>
 
@@ -79,7 +80,7 @@ DraftJournalImpl::set_transaction_type
 }
 
 void
-DraftJournalImpl::set_comment(BString const& p_comment)
+DraftJournalImpl::set_comment(wxString const& p_comment)
 {
 	load();
 	ProtoJournal::set_comment(p_comment);
@@ -113,7 +114,7 @@ DraftJournalImpl::transaction_type()
 	return ProtoJournal::transaction_type();
 }
 
-BString
+wxString
 DraftJournalImpl::comment()
 {
 	load();
@@ -184,18 +185,18 @@ DraftJournalImpl::~DraftJournalImpl()
 bool
 DraftJournalImpl::exists
 (	PhatbooksDatabaseConnection& p_database_connection,
-	BString const& p_name
+	wxString const& p_name
 )
 {
-	BString const target = to_lower(p_name);
+	wxString const target = p_name.Lower();
 	SQLStatement statement
 	(	p_database_connection,
 		"select name from draft_journal_detail"
 	);
 	while (statement.step())
 	{
-		BString const candidate =
-			to_lower(std8_to_bstring(statement.extract<string>(0)));
+		wxString const candidate =
+			std8_to_wx(statement.extract<string>(0)).Lower();
 		if (candidate == target)
 		{
 			return true;
@@ -257,7 +258,7 @@ DraftJournalImpl::no_user_draft_journals_saved
 }
 
 void
-DraftJournalImpl::set_name(BString const& p_name)
+DraftJournalImpl::set_name(wxString const& p_name)
 {
 	load();
 	m_dj_data->name = p_name;
@@ -278,7 +279,7 @@ DraftJournalImpl::push_repeater(Repeater& repeater)
 }
 
 
-BString
+wxString
 DraftJournalImpl::name()
 {
 	load();
@@ -320,7 +321,7 @@ DraftJournalImpl::do_load()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	temp.m_dj_data->name = std8_to_bstring(statement.extract<string>(0));
+	temp.m_dj_data->name = std8_to_wx(statement.extract<string>(0));
 	SQLStatement repeater_finder
 	(	database_connection(),
 		"select repeater_id from repeaters where journal_id = :p"
@@ -351,7 +352,7 @@ DraftJournalImpl::do_save_new()
 		"values(:journal_id, :name)"
 	);
 	statement.bind(":journal_id", journal_id);
-	statement.bind(":name", bstring_to_std8(value(m_dj_data->name)));
+	statement.bind(":name", wx_to_std8(value(m_dj_data->name)));
 	statement.step_final();
 	
 	typedef vector<Repeater>::iterator RepIter;
@@ -374,7 +375,7 @@ DraftJournalImpl::do_save_existing()
 		"journal_id = :journal_id"
 	);
 	updater.bind(":journal_id", id());
-	updater.bind(":name", bstring_to_std8(value(m_dj_data->name)));
+	updater.bind(":name", wx_to_std8(value(m_dj_data->name)));
 	updater.step_final();
 
 	typedef vector<Repeater>::iterator RepIter;
@@ -481,57 +482,57 @@ DraftJournalImpl::clear_entries()
 	return;
 }
 
-BString
+wxString
 DraftJournalImpl::repeater_description()
 {
 	load();
 	if (m_dj_data->repeaters.empty())
 	{
-		return BString("");
+		return wxString("");
 	}
 	assert (!m_dj_data->repeaters.empty());
-	BString ret("This transaction is automatically recorded ");
+	wxString ret("This transaction is automatically recorded ");
 	vector<Repeater>::const_iterator it = m_dj_data->repeaters.begin();
-	ret += std8_to_bstring(frequency_description(it->frequency(), "every"));
-	ret += BString(", with the next recording due on ");
+	ret += std8_to_wx(frequency_description(it->frequency(), "every"));
+	ret += wxString(", with the next recording due on ");
 	gregorian::date next_date = it->next_date();
 
 	// TODO Make this locale-sensitive (obviously I have to make the
 	// messages locale-sensitive as well in due course, but the
 	// date may be harder to spot than all the English strings, so
 	// flagging it explicitly with this comment).
-	ret += std8_to_bstring(lexical_cast<string>(next_date));
+	ret += std8_to_wx(lexical_cast<string>(next_date));
 
-	ret += BString(".");
+	ret += wxString(".");
 	if (m_dj_data->repeaters.size() > 1)
 	{
 		++it;
 		for ( ; it != m_dj_data->repeaters.end(); ++it)
 		{
-			ret += BString
+			ret += wxString
 			(	"\nIn addition, this transaction is automatically recorded "
 			);
-			ret += std8_to_bstring
+			ret += std8_to_wx
 			(	frequency_description(it->frequency(), "every")
 			);
-			ret += BString(", with the next recording due on ");
+			ret += wxString(", with the next recording due on ");
 			gregorian::date const next_date_this_cycle = it->next_date();
 			
 			// TODO See previous comment re. internationalization.
-			ret += std8_to_bstring(lexical_cast<string>(next_date_this_cycle));
+			ret += std8_to_wx(lexical_cast<string>(next_date_this_cycle));
 
-			ret += BString(".");
+			ret += wxString(".");
 			if (next_date_this_cycle < next_date)
 			{
 				next_date = next_date_this_cycle;
 			}
 		}
-		ret += BString("\nThis transaction will next be recorded on ");
+		ret += wxString("\nThis transaction will next be recorded on ");
 
 		// TODO See previous comment re. internationalization
-		ret += BString(lexical_cast<string>(next_date));
+		ret += wxString(lexical_cast<string>(next_date));
 
-		ret += BString(".");
+		ret += wxString(".");
 	}
 	return ret;
 }	
