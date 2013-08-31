@@ -73,26 +73,26 @@ as follows.
 		later - be already encoded in the form that it will finally be presented in
 		at the GUI layer. This enables us to leverage the caching that we have already
 		put in place, to avoid having to convert between string formats more often
-		that necessary. This all strongly points to using BString as our format
-		at the Business Layer. Some notes re. BString in wxWidgets 2.9:
-			-	BString in wxWidgets version 2.9 is different to 2.8. We have
+		that necessary. This all strongly points to using wxString as our format
+		at the Business Layer. Some notes re. wxString in wxWidgets 2.9:
+			-	wxString in wxWidgets version 2.9 is different to 2.8. We have
 			    installed 2.9 on both Linux and Windows and are going to be building
 				our application with 2.9.
-			-	To initialize a BString with string literals, you can use either
+			-	To initialize a wxString with string literals, you can use either
 				wide or narrow string literals directly (i.e. either L"hello"
 				or "hello" will work).
-			-	BString::char_type and BString::value_type are both wxUniChar.
-				Thus a BString represents a sequence of Unicode codepoints. This is
+			-	wxString::char_type and wxString::value_type are both wxUniChar.
+				Thus a wxString represents a sequence of Unicode codepoints. This is
 				good. You can iterate over them, and you can also index into them
 				to pull out individual codepoints.
-			-	On Windows, a BString embodies a UTF-16-encoded string. On Linux,
+			-	On Windows, a wxString embodies a UTF-16-encoded string. On Linux,
 			    it embodies either a UTF-32-encoded string, or a UTF-8-encoded string,
 				depending on the wxWidgets build configuration. We have chosen the
 				UTF-8 configuration, to minimize the size of the object cache.
-				For clients of BString, however, this is all much of a muchness, since
+				For clients of wxString, however, this is all much of a muchness, since
 				regardless of what kind of encoding it uses internally, it is always
 				conceptually a "string of Unicode codepoints".
-			-	If we want to print a BString to standard output, using a standard
+			-	If we want to print a wxString to standard output, using a standard
 				library stream, we need to use std::cout in Linux, assuming we want
 				non-ASCII characters to appear. (In Windows this will make
 				non-ASCII characters disappear, but then we don't care about
@@ -103,14 +103,14 @@ as follows.
 			-	The TUI Face
 				-	In Linux, the only way (but see below) we can write the the console in
 					a Unicode friendly
-				    way is by writing to std::cout. This is easy to do though. The BString
+				    way is by writing to std::cout. This is easy to do though. The wxString
 					can be written directly to std::cout and it just works, including with
 					non-ASCII characters.
 					Having said this, we have already got all the TUI code working
 					with std::string, including moderately complex stuff like
 					consolixx::Table. It is probably better to retain std::string
 					as the string class to use in these routines. Where convenient, though
-					we can write BString directly to std::cout too.
+					we can write wxString directly to std::cout too.
 				-	In Windows, it's difficult to write non-ASCII characters to the console.
 					So difficult that, in fact, I don't think I could be bothered trying to make
 					it work at this point. (OK, I HAVE tried to make it work, using hints
@@ -121,24 +121,24 @@ as follows.
 					myself to only dealing in ASCII when in Windows console mode anyway.
 				-	In conclusion, the string type to use for the TUI Face, both on Linux and
 					Windows, is std::string, while also being able to write
-					BString straight to std::cout where convenient.
+					wxString straight to std::cout where convenient.
 			- The GUI Face
-				-	There is only one choice here, really, and that is BString. The functions
-					for displaying strings in windows etc. generally take BString, or at least,
+				-	There is only one choice here, really, and that is wxString. The functions
+					for displaying strings in windows etc. generally take wxString, or at least,
 					that is their obvious, well-documented interface.
-					I have verified that if you just pass BString to the
+					I have verified that if you just pass wxString to the
 					widget-related functions as stated in the wxWidgets documentation, then
 					non-ASCII characters are displayed properly, both in Linux and in Windows.
 
 In conclusion:
 	
 	- The Database Layer: use UTF-8 encoded std::string.
-	- The Business Layer: use BString.
+	- The Business Layer: use wxString.
 	- The Presentation Layer:
 		- The TUI Face: use std::string, std::cin and std::cout, on both Windows and Linux.
-		  However, we can permit ourselves to write BString straight to std::cout
+		  However, we can permit ourselves to write wxString straight to std::cout
 		  where convenient.
-		- The GUI Face: use BString on both Windows and Linux.
+		- The GUI Face: use wxString on both Windows and Linux.
 
 						
 
