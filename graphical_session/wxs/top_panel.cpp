@@ -30,6 +30,7 @@
 #include <wx/window.h>
 #include <wx/wupdlock.h>
 #include <cassert>
+#include <set>
 #include <vector>
 
 using boost::optional;
@@ -37,6 +38,7 @@ using jewel::Decimal;
 using jewel::num_elements;
 using jewel::value;
 using std::map;
+using std::set;
 using std::vector;
 
 
@@ -413,14 +415,32 @@ TopPanel::toggle_show_hidden_accounts
 void
 TopPanel::selected_balance_sheet_accounts(vector<Account>& out) const
 {
-	m_bs_account_list->selected_accounts(out);
+	set<Account::Id> selected_ids;
+	m_bs_account_list->selected_accounts(selected_ids);
+	for
+	(	set<Account::Id>::const_iterator it = selected_ids.begin();
+		it != selected_ids.end();
+		++it
+	)
+	{
+		out.push_back(Account(m_database_connection, *it));
+	}
 	return;
 }
 
 void
 TopPanel::selected_pl_accounts(vector<Account>& out) const
 {
-	m_pl_account_list->selected_accounts(out);
+	set<Account::Id> selected_ids;
+	m_pl_account_list->selected_accounts(selected_ids);
+	for
+	(	set<Account::Id>::const_iterator it = selected_ids.begin();
+		it != selected_ids.end();
+		++it
+	)
+	{
+		out.push_back(Account(m_database_connection, *it));
+	}
 	return;
 }
 

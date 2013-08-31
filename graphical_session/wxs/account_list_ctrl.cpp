@@ -20,12 +20,11 @@
 #include <wx/string.h>
 #include <algorithm>
 #include <cassert>
-#include <vector>
+#include <set>
 
 using boost::optional;
 using std::max;
-using std::vector;
-
+using std::set;
 
 namespace phatbooks
 {
@@ -104,7 +103,7 @@ AccountListCtrl::AccountListCtrl
 }
 
 void
-AccountListCtrl::selected_accounts(vector<Account>& out)
+AccountListCtrl::selected_accounts(set<Account::Id>& out) const
 {
 	size_t i = 0;
 	size_t const lim = GetItemCount();
@@ -116,7 +115,10 @@ AccountListCtrl::selected_accounts(vector<Account>& out)
 			(	m_database_connection,
 				wx_to_bstring(GetItemText(i))
 			);
-			out.push_back(account);
+			if (account.has_id())
+			{
+				out.insert(account.id());
+			}
 		}
 	}
 	return;
@@ -175,17 +177,8 @@ AccountListCtrl::update
 )
 {
 	// Remember which rows are selected currently
-	vector<size_t> selected_rows;
-	size_t const lim = GetItemCount();
-	// Remember which rows are selected currently
-	for (size_t j = 0 ; j != lim; ++j)
-	{
-		if (GetItemState(j, wxLIST_STATE_SELECTED))
-		{
-			selected_rows.push_back(j);
-		}
-	}
-	// Remember which rows are selected currently
+	set<Account::Id> selected;
+	selected_accounts(selected);
 
 	// Now (re)draw
 	ClearAll();
@@ -199,7 +192,6 @@ AccountListCtrl::update
 	{
 		InsertColumn(s_budget_col, "Daily top-up", wxLIST_FORMAT_RIGHT);
 	}
-	// Remember which rows are selected currently
 
 	AccountReader::size_type i = 0;
 
@@ -235,17 +227,24 @@ AccountListCtrl::update
 			++i;
 		}
 	}
-	// Remember which rows are selected currently
 
 	// Reinstate the selections we remembered
-	size_t const sel_sz = selected_rows.size();
-	for (size_t k = 0; k != sel_sz; ++k)
+	for (size_t j = 0, lim = GetItemCount(); j != lim; ++j)
 	{
-		SetItemState
-		(	selected_rows[k],
-			wxLIST_STATE_SELECTED,
-			wxLIST_STATE_SELECTED
+		// TODO Make this more efficient
+		Account const account
+		(	m_database_connection,
+			wx_to_bstring(GetItemText(j))
 		);
+		assert (account.has_id());
+		if (selected.find(account.id()) != selected.end())
+		{
+			SetItemState
+			(	j,
+				wxLIST_STATE_SELECTED,
+				wxLIST_STATE_SELECTED
+			);
+		}
 	}
 
 	// Configure column widths

@@ -11,7 +11,7 @@
 #include <wx/listctrl.h>
 #include <wx/string.h>
 #include <wx/wx.h>
-#include <vector>
+#include <set>
 
 namespace phatbooks
 {
@@ -24,11 +24,6 @@ namespace gui
 /**
  * Displays a list of Accounts and their balances, and, optionally
  * the daily budget associated with each Account.
- *
- * @todo HIGH PRIORITY When a new Account is created and that Account is
- * inserted above the currently selected Account, or if visibility of
- * hidden Accounts is toggled where the appearing/disappearing Accounts are
- * above the current selection, then the selection will change.
  */
 class AccountListCtrl: public wxListCtrl
 {
@@ -64,10 +59,11 @@ public:
 	);
 
 	/**
-	 * Populates \e out with all and only the currently selected Accounts in
-	 * the AccountListCtrl.
+	 * Populates \e out with the Ids of all and only the currently selected
+	 * Accounts in the AccountListCtrl. If an Account in the list does not
+	 * have an Id, then it will not be placed in \e out.
 	 */
-	void selected_accounts(std::vector<Account>& out);
+	void selected_accounts(std::set<Account::Id>& out) const;
 
 	/**
 	 * Redraw AccountListCtrl on the basis of what is currently in the
