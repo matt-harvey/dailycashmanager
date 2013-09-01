@@ -283,8 +283,6 @@ OrdinaryJournalImpl::do_save_new()
 	statement.bind(":date", value(m_date));
 	statement.step_final();
 
-	JEWEL_DEBUG_LOG << "New OrdinaryJournal saved: " << *this << endl;
-
 	return;
 }
 

@@ -229,10 +229,15 @@ create_destination_account_reader
 	case transaction_type::generic_transaction:
 		return new ImpureAccountReader(p_database_connection);
 	default:
-		JEWEL_DEBUG_LOG << "Unexpected TransactionType passed to "
-		                << "create_destination_account_reader "
-						<< static_cast<int>(p_transaction_type)
-						<< endl;
+		JEWEL_LOG
+		(	jewel::Log::error,
+			"Unexpected TransactionType passed to "
+			"create_destination_account_reader: "
+		);
+		JEWEL_LOG_VALUE
+		(	jewel::Log::error,
+			static_cast<int>(p_transaction_type)
+		);
 		assert (false);
 	}
 	assert (false);
