@@ -97,6 +97,8 @@
 #include <wx/string.h>
 #include <wx/utils.h>
 #include <cassert>
+#include <cstdlib>
+#include <exception>
 #include <ios>
 #include <iostream>
 #include <string>
@@ -105,24 +107,44 @@ using boost::scoped_ptr;
 using phatbooks::Application;
 using phatbooks::gui::GraphicalSession;
 using phatbooks::wx_to_std8;
+using std::abort;
 using std::cerr;
 using std::clog;
 using std::cout;
 using std::endl;
 using std::string;
+using std::set_terminate;
 using TCLAP::ArgException;
 using TCLAP::CmdLine;
 using TCLAP::UnlabeledValueArg;
 
+void flush_standard_output_streams()
+{
+	cerr.flush();
+	clog.flush();
+	cout.flush();
+	return;
+}
+
+void my_terminate_handler()
+{
+	// TODO HIGH PRIORITY This seems like a good idea, but is there
+	// a hidden catch? (Custom terminate handling should not be done
+	// lightly...)
+	// flush_standard_output_streams();
+	abort();
+}	
 
 int main(int argc, char** argv)
 {
 	try
 	{
-		// Enable exceptions on standard streams
+		std::set_terminate(my_terminate_handler);
+
+		// Enable exceptions on standard output streams.
 		cout.exceptions(std::ios::badbit | std::ios::failbit);
-		cerr.exceptions(std::ios::badbit | std::ios::failbit);
 		clog.exceptions(std::ios::badbit | std::ios::failbit);
+		cerr.exceptions(std::ios::badbit | std::ios::failbit);
 
 		// Prevent multiple instances run by the same user
 		bool another_is_running = false;
@@ -175,12 +197,15 @@ int main(int argc, char** argv)
 	catch (ArgException& e)
 	{
 		cerr << "error: " << e.error() << " for arg " << e.argId() << endl;
+		flush_standard_output_streams();
 		return 1;
 	}
 	// This seems pointless but is necessary to guarantee the stack is fully
-	// unwound if an exception is thrown.
+	// unwound if an exception is thrown (not JUST to flush the standard
+	// output streams).
 	catch (...)
 	{
+		flush_standard_output_streams();
 		throw;
 	}
 }
