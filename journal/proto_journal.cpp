@@ -63,7 +63,7 @@ using std::remove_copy;
 using std::string;
 using std::vector;
 
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <iostream>
 using std::endl;
 

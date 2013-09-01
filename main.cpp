@@ -91,6 +91,8 @@
 #include "string_conv.hpp"
 #include "graphical_session.hpp"
 #include <boost/scoped_ptr.hpp>
+#include <jewel/assert.hpp>
+#include <jewel/log.hpp>
 #include <tclap/CmdLine.h>
 #include <wx/log.h>
 #include <wx/snglinst.h>
@@ -104,6 +106,7 @@
 #include <string>
 
 using boost::scoped_ptr;
+using jewel::Log;
 using phatbooks::Application;
 using phatbooks::gui::GraphicalSession;
 using phatbooks::wx_to_std8;

@@ -18,7 +18,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/optional.hpp>
 #include <boost/static_assert.hpp>
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>

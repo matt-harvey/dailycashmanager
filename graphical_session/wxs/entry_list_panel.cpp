@@ -42,7 +42,7 @@ namespace gregorian = boost::gregorian;
 
 
 // For debugging
-	#include <jewel/debug_log.hpp>
+	#include <jewel/log.hpp>
 	#include <iostream>
 	using std::endl;
 

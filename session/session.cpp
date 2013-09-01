@@ -15,7 +15,7 @@
 #include <string>
 
 #ifdef DEBUG
-#	include <jewel/debug_log.hpp>
+#	include <jewel/log.hpp>
 #	include <iostream>
 #endif
 

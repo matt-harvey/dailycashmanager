@@ -23,7 +23,7 @@
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/string.h>
 #include <cassert>

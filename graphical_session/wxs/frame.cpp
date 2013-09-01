@@ -26,7 +26,7 @@
 
 using std::vector;
 
-#include <jewel/debug_log.hpp>  // for debugging / testing
+#include <jewel/log.hpp>  // for debugging / testing
 #include <iostream>  // for debugging / testing
 using std::cout;     // for debugging / testing
 using std::endl;     // for debubbing / testing

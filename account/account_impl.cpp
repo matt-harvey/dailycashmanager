@@ -25,7 +25,7 @@
 #include <sqloxx/sql_statement.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/string.h>

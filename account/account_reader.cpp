@@ -4,13 +4,11 @@
 #include "account_type.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_type.hpp"
+#include <jewel/log.hpp>
 #include <sqloxx/reader.hpp>
 #include <cassert>
 
-#include <jewel/debug_log.hpp>
-#include <iostream>
-using std::endl;
-
+using jewel::Log;
 
 namespace phatbooks
 {
@@ -229,13 +227,12 @@ create_destination_account_reader
 	case transaction_type::generic_transaction:
 		return new ImpureAccountReader(p_database_connection);
 	default:
-		JEWEL_LOG
-		(	jewel::Log::error,
-			"Unexpected TransactionType passed to "
-			"create_destination_account_reader: "
+		JEWEL_LOG_MESSAGE
+		(	Log::error,
+			"Unexpected TransactionType passed to create_destination_account_reader: "
 		);
 		JEWEL_LOG_VALUE
-		(	jewel::Log::error,
+		(	Log::error,
 			static_cast<int>(p_transaction_type)
 		);
 		assert (false);

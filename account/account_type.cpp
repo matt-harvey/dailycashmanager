@@ -2,7 +2,7 @@
 
 #include "account_type.hpp"
 #include "phatbooks_exceptions.hpp"
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <wx/string.h>
 #include <iostream>
 #include <map>

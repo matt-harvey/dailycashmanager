@@ -36,7 +36,7 @@ using std::vector;
 namespace gregorian = boost::gregorian;
 
 // For debugging only
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <iostream>
 using std::endl;
 // End debugging stuff

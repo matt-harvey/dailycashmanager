@@ -12,7 +12,7 @@
 #include <boost/optional.hpp>
 #include <consolixx/alignment.hpp>
 #include <consolixx/column.hpp>
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/optional.hpp>

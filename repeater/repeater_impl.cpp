@@ -25,14 +25,14 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/checked_arithmetic.hpp>
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <algorithm>
 #include <cassert>
 #include <string>
 #include <vector>
 
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 
 namespace gregorian = boost::gregorian;
 

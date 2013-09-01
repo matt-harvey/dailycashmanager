@@ -8,7 +8,7 @@
 #include "phatbooks_exceptions.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <vector>

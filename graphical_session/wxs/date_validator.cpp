@@ -6,7 +6,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <boost/exception/all.hpp>
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/datetime.h>
 #include <wx/intl.h>

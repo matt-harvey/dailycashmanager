@@ -37,7 +37,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/unordered_set.hpp>
 #include <jewel/array_utilities.hpp>
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>

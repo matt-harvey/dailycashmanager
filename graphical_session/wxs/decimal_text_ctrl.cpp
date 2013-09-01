@@ -5,7 +5,7 @@
 #include "finformat.hpp"
 #include "locale.hpp"
 #include "phatbooks_exceptions.hpp"
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
