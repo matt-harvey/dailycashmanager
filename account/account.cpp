@@ -87,6 +87,7 @@ namespace
 void
 Account::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
+	JEWEL_LOG_TRACE();
 	AccountImpl::setup_tables(dbc);
 	return;
 }

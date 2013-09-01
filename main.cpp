@@ -101,6 +101,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <exception>
+#include <fstream>
 #include <ios>
 #include <iostream>
 #include <string>
@@ -115,6 +116,7 @@ using std::cerr;
 using std::clog;
 using std::cout;
 using std::endl;
+using std::ofstream;
 using std::string;
 using std::set_terminate;
 using TCLAP::ArgException;
@@ -138,10 +140,29 @@ void my_terminate_handler()
 	abort();
 }	
 
+void configure_logging()
+{
+	Log::set_threshold(Log::trace);
+	string const log_name =
+		"/tmp/" + wx_to_std8(Application::application_name()) + ".log";
+	
+	// TODO HIGH PRIORITY This seems to suck. Can we get away with it?
+	// Probably the jewel::Log should make this more manageable.
+	ofstream* f = new ofstream(log_name.c_str());  // deliberate memory leak
+
+	Log::set_stream(f);
+
+	return;
+}
+
 int main(int argc, char** argv)
 {
 	try
 	{
+		configure_logging();
+
+		JEWEL_LOG_TRACE();
+
 		std::set_terminate(my_terminate_handler);
 
 		// Enable exceptions on standard output streams.
