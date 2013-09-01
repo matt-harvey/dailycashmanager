@@ -288,6 +288,32 @@ EntryGroupCtrl::is_all_zero() const
 	return true;
 }
 
+void
+EntryGroupCtrl::update_for_new(Account const& p_saved_object)
+{
+	vector<EntryRow>::iterator it = m_entry_rows.begin();
+	vector<EntryRow>::iterator const end = m_entry_rows.end();
+	for ( ; it != end; ++it)
+	{
+		assert (it->account_ctrl);
+		it->account_ctrl->update_for_new(p_saved_object);
+	}
+	return;
+}
+
+void
+EntryGroupCtrl::update_for_amended(Account const& p_saved_object)
+{
+	vector<EntryRow>::iterator it = m_entry_rows.begin();
+	vector<EntryRow>::iterator const end = m_entry_rows.end();
+	for ( ; it != end; ++it)
+	{
+		assert (it->account_ctrl);
+		it->account_ctrl->update_for_amended(p_saved_object);
+	}
+	return;
+}
+
 Decimal
 EntryGroupCtrl::total_amount() const
 {

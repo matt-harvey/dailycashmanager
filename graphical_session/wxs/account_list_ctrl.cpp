@@ -110,12 +110,10 @@ AccountListCtrl::selected_accounts(set<Account::Id>& out) const
 		{
 			Account const account
 			(	m_database_connection,
-				GetItemText(i)
+				GetItemData(i)
 			);
-			if (account.has_id())
-			{
-				out.insert(account.id());
-			}
+			assert (account.has_id());
+			out.insert(account.id());
 		}
 	}
 	return;
@@ -124,7 +122,7 @@ AccountListCtrl::selected_accounts(set<Account::Id>& out) const
 void
 AccountListCtrl::on_item_activated(wxListEvent& event)
 {
-	Account account(m_database_connection, GetItemText(event.GetIndex()));
+	Account account(m_database_connection, GetItemData(event.GetIndex()));
 
 	// Fire an Account editing request. This will be handled higher up
 	// the window hierarchy.
@@ -213,7 +211,11 @@ AccountListCtrl::update
 			if (showing_daily_budget())
 			{
 				// Insert budget string
-				SetItem(i, s_budget_col, finformat_wx(it->budget(), locale()));
+				SetItem
+				(	i,
+					s_budget_col,
+					finformat_wx(it->budget(), locale())
+				);
 			}
 
 			++i;
@@ -223,10 +225,9 @@ AccountListCtrl::update
 	// Reinstate the selections we remembered
 	for (size_t j = 0, lim = GetItemCount(); j != lim; ++j)
 	{
-		// TODO Make this more efficient
 		Account const account
 		(	m_database_connection,
-			GetItemText(j)
+			GetItemData(j)
 		);
 		assert (account.has_id());
 		if (selected.find(account.id()) != selected.end())
@@ -270,7 +271,7 @@ AccountListCtrl::default_account() const
 		assert (GetItemCount() > 0);
 		ret = Account
 		(	m_database_connection,
-			GetItemText(GetTopItem())
+			GetItemData(GetTopItem())
 		);
 	}
 	return ret;
@@ -281,11 +282,10 @@ AccountListCtrl::select_only(Account const& p_account)
 {
 	assert (p_account.has_id());  // precondition	
 
-	// WARNING This is quite inefficient, but probably doesn't matter.
 	size_t const sz = GetItemCount();	
 	for (size_t i = 0; i != sz; ++i)
 	{
-		Account const account(m_database_connection, GetItemText(i));
+		Account const account(m_database_connection, GetItemData(i));
 		long const filter = (wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 		long const flags = ((account == p_account)? filter: 0);
 		SetItemState(i, flags, filter);

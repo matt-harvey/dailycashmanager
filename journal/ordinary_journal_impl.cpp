@@ -21,6 +21,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/string.h>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -31,6 +32,7 @@ using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
 using sqloxx::SQLStatement;
+using std::endl;
 using std::string;
 using std::vector;
 
@@ -280,6 +282,9 @@ OrdinaryJournalImpl::do_save_new()
 	statement.bind(":journal_id", journal_id);
 	statement.bind(":date", value(m_date));
 	statement.step_final();
+
+	JEWEL_DEBUG_LOG << "New OrdinaryJournal saved: " << *this << endl;
+
 	return;
 }
 

@@ -115,6 +115,17 @@ public:
 	jewel::Decimal primary_amount() const;
 
 	/**
+	 * Update to reflect newly created Account.
+	 */
+	void update_for_new(Account const& p_saved_object);
+
+	/**
+	 * Update to reflect Account having been amended (and the changes having
+	 * been saved).
+	 */
+	void update_for_amended(Account const& p_saved_object);
+
+	/**
 	 * Update to reflect possible change in reconciliation status
 	 * of \e p_entry.
 	 */
@@ -124,6 +135,9 @@ private:
 	void on_cancel_button_click(wxCommandEvent& event);
 	void on_delete_button_click(wxCommandEvent& event);
 	void on_ok_button_click(wxCommandEvent& event);
+
+	// TODO This is gross.
+	void tell_top_panel_to_configure_transaction_ctrl();
 
 	void reflect_reconciliation_statuses();
 

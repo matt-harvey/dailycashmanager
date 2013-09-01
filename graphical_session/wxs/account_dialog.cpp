@@ -512,13 +512,22 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	(	temp,
 		opening_amount
 	);
-	objnl.save();
+	if (objnl.primary_amount() != Decimal(0, 0))
+	{
+		objnl.save();
+	}
+	else
+	{
+		// The user has not changed the opening balance - and objnl can
+		// be ignored - do nothing here.
+	}
 
 	m_account = temp;
 	transaction.commit();
 
 	// Notify window higher in the hierarchy that they need to update for
-	// changed Account and new OridinaryJournal.
+	// changed Account and if we needed the opening balance journal,
+	// the new OrdinaryJournal.
 	assert (GetParent());
 	wxEventType const event_type =
 	(	p_is_new_account?
@@ -532,11 +541,15 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		event_type,
 		m_account
 	);
-	PersistentObjectEvent::fire
-	(	frame,  // can't use "this", or event is missed
-		PHATBOOKS_JOURNAL_CREATED_EVENT,
-		objnl
-	);
+	if (objnl.has_id())
+	{
+		// then we must have saved objnl, so...
+		PersistentObjectEvent::fire
+		(	frame,  // can't use "this", or event is missed
+			PHATBOOKS_JOURNAL_CREATED_EVENT,
+			objnl
+		);
+	}
 	return true;
 }
 

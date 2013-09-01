@@ -543,6 +543,26 @@ TransactionCtrl::primary_amount() const
 }
 
 void
+TransactionCtrl::update_for_new(Account const& p_saved_object)
+{
+	assert (m_source_entry_ctrl);
+	m_source_entry_ctrl->update_for_new(p_saved_object);
+	assert (m_destination_entry_ctrl);
+	m_destination_entry_ctrl->update_for_new(p_saved_object);
+	return;
+}
+
+void
+TransactionCtrl::update_for_amended(Account const& p_saved_object)
+{
+	assert (m_source_entry_ctrl);
+	m_source_entry_ctrl->update_for_amended(p_saved_object);
+	assert (m_destination_entry_ctrl);
+	m_destination_entry_ctrl->update_for_amended(p_saved_object);
+	return;
+}
+
+void
 TransactionCtrl::update_for_reconciliation_status(Entry const& p_entry)
 {
 	(void)p_entry;  // silence compiler re. unused parameter
@@ -567,10 +587,7 @@ void
 TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
-	assert (panel);
-	panel->configure_transaction_ctrl();
-	// panel->configure_draft_journal_list_ctrl();
+	tell_top_panel_to_configure_transaction_ctrl();
 	return;
 }
 
@@ -588,7 +605,10 @@ TransactionCtrl::on_delete_button_click(wxCommandEvent& event)
 	int const result = confirmation.ShowModal();
 	if (result == wxID_YES)
 	{
-		remove_journal();
+		if (remove_journal())
+		{
+			tell_top_panel_to_configure_transaction_ctrl();
+		}
 	}
 	return;
 }
@@ -603,13 +623,18 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 	{
 		if (is_balanced())
 		{
+			bool actioned = false;
 			if (m_journal)
 			{
-				save_existing_journal();
+				actioned = save_existing_journal();
 			}
 			else
 			{
-				post_journal();
+				actioned = post_journal();
+			}
+			if (actioned)
+			{
+				tell_top_panel_to_configure_transaction_ctrl();
 			}
 		}
 		else
@@ -643,6 +668,18 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 			wxMessageBox(msg);
 		}
 	}
+	return;
+}
+
+void
+TransactionCtrl::tell_top_panel_to_configure_transaction_ctrl()
+{
+	TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
+	assert (panel);
+	// TODO HIGH PRIORITY The next line may destroy "this"! This
+	// may not matter, but it's horrible. We should just reset all
+	// the widgets within the TransactionCtrl instead.
+	panel->configure_transaction_ctrl();
 	return;
 }
 
@@ -760,8 +797,7 @@ TransactionCtrl::post_journal()
 
 		assert (dj.is_balanced());
 		dj.save();
-		JEWEL_DEBUG_LOG << "Posted Journal:\n\n" << dj << endl;
-		// Note the next line may destroy "this"!
+
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_CREATED_EVENT,
@@ -778,8 +814,7 @@ TransactionCtrl::post_journal()
 		oj.set_date(value(m_date_ctrl->date()));
 		assert (oj.is_balanced());
 		oj.save();
-		JEWEL_DEBUG_LOG << "Posted journal:\n\n" << oj << endl;
-		// Note the next line may destroy "this"!
+
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_CREATED_EVENT,
@@ -944,12 +979,11 @@ TransactionCtrl::save_existing_journal()
 		}
 		assert (dj->is_balanced());
 		dj->save();
-		JEWEL_DEBUG_LOG << "Saved Journal:\n\n" << *dj << endl;
+	
 		PersistentObjectEvent::notify_doomed_draft_entries
 		(	this,
 			doomed_entry_ids
 		);
-		// Note the next line may destroy "this"!
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_EDITED_EVENT,
@@ -965,20 +999,13 @@ TransactionCtrl::save_existing_journal()
 		assert (m_date_ctrl->date());
 		oj->set_date(value(m_date_ctrl->date()));
 	
-		// WARNING temp debug
-		if (!oj->is_balanced())
-		{
-			JEWEL_DEBUG_LOG << "Unbalanced Journal:\n\n" << *oj << endl;
-		}
-
 		assert (oj->is_balanced());
 		oj->save();
-		JEWEL_DEBUG_LOG << "Saved Journal:\n\n" << *oj << endl;
+
 		PersistentObjectEvent::notify_doomed_ordinary_entries
 		(	this,
 			doomed_entry_ids
 		);
-		// Note the next line may destroy "this"!
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_EDITED_EVENT,

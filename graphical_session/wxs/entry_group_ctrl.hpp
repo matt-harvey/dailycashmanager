@@ -86,6 +86,10 @@ public:
 
 	bool is_all_zero() const;
 
+	void update_for_new(Account const& p_saved_object);
+
+	void update_for_amended(Account const& p_saved_object);
+
 	/**
 	 * Go through each row. If that row corresponds to an entry which
 	 * is reconciled, then disable it and set a tooltip explaining why it

@@ -15,6 +15,25 @@
 
 // TODO HIGH PRIORITY Tooltips aren't showing on Windows.
 
+// TODO It must be easy for the user to send in an error report.
+// One way is to implement "proper core dumping" on crash. An easy
+// way is to have a logging statement at the beginning of, like,
+// every function, that logs the source filepath and the line number,
+// writing these to a logging stream (which need only be flushed at
+// intervals). There could be runtime switch that turns logging on or
+// off, which the user could switch on or off via a config file or in
+// preferences in the GUI (though the config file might be necessary in
+// the case the application is crashing on startup and the user can't even
+// access the preferences). There could also be a preprocessor switch to
+// disable this logging completely to avoid even having to check the switch.
+// We could turn off the preprocessor switch on some future release
+// if it ever became a performance problem. A nice side effect of this
+// approach is that it would also assist me in everyday debugging. (But
+// can this ever be better than just using GDB? Yes - because GDB so
+// often gives poor information because, for example, some library
+// is missing or etc.. If I have manual logging, then I KNOW it will
+// print to log, and also it means I can enable or disable 
+
 // TODO Make the installer create an association on the user's system
 // between the Phatbooks file extension and the Phatbooks application.
 // See CMake book, page. 162.

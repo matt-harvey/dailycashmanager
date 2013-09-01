@@ -64,10 +64,10 @@ private:
 	// Event handlers - menu selections
 	void on_menu_quit(wxCommandEvent& event);
 	void on_menu_about(wxCommandEvent& event);
-	void on_menu_new_bs_account(wxCommandEvent& event);
+	void on_menu_new_bs_account(wxCommandEvent& event); 
 	void on_menu_new_pl_account(wxCommandEvent& event);
 	void on_menu_new_transaction(wxCommandEvent& event);
-	void on_menu_edit_bs_account(wxCommandEvent& event);
+	void on_menu_edit_bs_account(wxCommandEvent& event); 
 	void on_menu_edit_pl_account(wxCommandEvent& event);
 	void on_menu_edit_ordinary_journal(wxCommandEvent& event);
 	void on_menu_edit_draft_journal(wxCommandEvent& event);

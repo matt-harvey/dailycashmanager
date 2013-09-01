@@ -516,10 +516,6 @@ void
 Frame::on_account_edited_event(PersistentObjectEvent& event)
 {
 	wxWindowUpdateLocker const update_locker(this);
-	// TODO This will obliterate any contents of the TransactionCtrl.
-	// Do we want this? We probably \e do want it to update the
-	// AccountTypeCtrl and AccountCtrls in the TransactionCtrl; but
-	// we don't really want it to obliterate everything else.
 	Account const account(m_database_connection, event.po_id());
 	m_top_panel->update_for_amended(account);
 	return;

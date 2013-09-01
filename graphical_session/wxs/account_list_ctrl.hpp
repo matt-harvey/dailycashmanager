@@ -24,6 +24,13 @@ namespace gui
 /**
  * Displays a list of Accounts and their balances, and, optionally
  * the daily budget associated with each Account.
+ *
+ * NOTE The implementation of this class assumes we will never
+ * allow Accounts to be deleted. It is unlikely this assumption will
+ * be broken - especially as we do allow users to hide Acccounts - and
+ * especially as an Account with any Entries or BudgetItems could
+ * never be deleted due to database constraints - but it is worth bearing in
+ * mind.
  */
 class AccountListCtrl: public wxListCtrl
 {

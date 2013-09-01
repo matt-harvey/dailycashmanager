@@ -69,10 +69,10 @@ public:
 	 * Accounts with AccountTypes given by p_account_types.
 	 * However, if p_exclude_balancing_account is \e true, then
 	 * the Account returned by
-	 * m_database_connection.balancing_account() will not
+	 * <em>m_database_connection.balancing_account()</em> will \e not
 	 * appear in the Combobox, even if it is in the range provided.
 	 *
-	 * All Accounts in the range must have IDs.
+	 * All Accounts in the range must have Ids.
 	 */
 	void reset
 	(	std::vector<account_type::AccountType> const& p_account_types,
