@@ -145,13 +145,8 @@ void configure_logging()
 	Log::set_threshold(Log::trace);
 	string const log_name =
 		"/tmp/" + wx_to_std8(Application::application_name()) + ".log";
-	
-	// TODO HIGH PRIORITY This seems to suck. Can we get away with it?
-	// Probably the jewel::Log should make this more manageable.
-	ofstream* f = new ofstream(log_name.c_str());  // deliberate memory leak
-
-	Log::set_stream(f);
-
+	ofstream* f = new ofstream(log_name.c_str());
+	Log::set_stream(f);  // Note Log will take care of the memory.
 	return;
 }
 
@@ -165,10 +160,15 @@ int main(int argc, char** argv)
 
 		std::set_terminate(my_terminate_handler);
 
-		// Enable exceptions on standard output streams.
-		cout.exceptions(std::ios::badbit | std::ios::failbit);
-		clog.exceptions(std::ios::badbit | std::ios::failbit);
-		cerr.exceptions(std::ios::badbit | std::ios::failbit);
+		// Enable exceptions on standard output streams....
+		// On second thought, let's not do this. What if some distant
+		// library function writes to std::cerr for example in its
+		// destructor, for some reason, relying on this action being
+		// exception-safe? Let's keep the standard behaviour
+		// (i.e. let's comment out the below).
+		// cout.exceptions(std::ios::badbit | std::ios::failbit);
+		// clog.exceptions(std::ios::badbit | std::ios::failbit);
+		// cerr.exceptions(std::ios::badbit | std::ios::failbit);
 
 		// Prevent multiple instances run by the same user
 		bool another_is_running = false;
