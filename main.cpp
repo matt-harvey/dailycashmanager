@@ -145,8 +145,7 @@ void configure_logging()
 	Log::set_threshold(Log::trace);
 	string const log_name =
 		"/tmp/" + wx_to_std8(Application::application_name()) + ".log";
-	ofstream* f = new ofstream(log_name.c_str());
-	Log::set_stream(f);  // Note Log will take care of the memory.
+	Log::set_filepath(log_name);
 	return;
 }
 
