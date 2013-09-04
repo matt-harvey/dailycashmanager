@@ -125,14 +125,18 @@ using TCLAP::UnlabeledValueArg;
 
 void flush_standard_output_streams()
 {
+	JEWEL_LOG_MESSAGE(Log::info, "Flushing standard output streams.");
 	cerr.flush();
 	clog.flush();
 	cout.flush();
+	JEWEL_LOG_MESSAGE(Log::info, "Flushed standard output streams.");
 	return;
 }
 
 void my_terminate_handler()
 {
+	JEWEL_LOG_MESSAGE(Log::error, "Entered terminate handler.");
+
 	// TODO HIGH PRIORITY This seems like a good idea, but is there
 	// a hidden catch? (Custom terminate handling should not be done
 	// lightly...)
@@ -154,10 +158,12 @@ int main(int argc, char** argv)
 	try
 	{
 		configure_logging();
-
-		JEWEL_LOG_TRACE();
-
+		JEWEL_LOG_MESSAGE(Log::info, "Configured logging.");
 		std::set_terminate(my_terminate_handler);
+		JEWEL_LOG_MESSAGE
+		(	Log::info,
+			"Terminate handler has been set to my_terminate_handler."
+		);
 
 		// Enable exceptions on standard output streams....
 		// On second thought, let's not do this. What if some distant
@@ -170,6 +176,7 @@ int main(int argc, char** argv)
 		// cerr.exceptions(std::ios::badbit | std::ios::failbit);
 
 		// Prevent multiple instances run by the same user
+		JEWEL_LOG_TRACE();
 		bool another_is_running = false;
 		wxString const app_name = Application::application_name();
 		wxString const instance_identifier =
@@ -185,6 +192,7 @@ int main(int argc, char** argv)
 		}
 
 		// Process command line arguments
+		JEWEL_LOG_TRACE();
 		CmdLine cmd(wx_to_std8(Application::application_name()));
 		UnlabeledValueArg<string> filepath_arg
 		(	"FILE",
@@ -219,16 +227,37 @@ int main(int argc, char** argv)
 	}
 	catch (ArgException& e)
 	{
+		JEWEL_LOG_MESSAGE(Log::error, "ArgException e caught in main.");
+		JEWEL_LOG_VALUE(Log::error, e.error());
+		JEWEL_LOG_VALUE(Log::error, e.argId());
 		cerr << "error: " << e.error() << " for arg " << e.argId() << endl;
 		flush_standard_output_streams();
 		return 1;
 	}
-	// This seems pointless but is necessary to guarantee the stack is fully
-	// unwound if an exception is thrown (not JUST to flush the standard
-	// output streams).
+
+#	ifndef JEWEL_DISABLE_LOGGING
+	// If we have disabled logging, then we DON'T want to handle
+	// std::exception here, because the standard message printed to
+	// will no longer display the specific type of the exception.
+	catch (std::exception& e)
+	{
+		JEWEL_LOG_MESSAGE(Log::error, "std::exception e caught in main.");
+		JEWEL_LOG_VALUE(Log::error, typeid(e).name());
+		JEWEL_LOG_VALUE(Log::error, e.what());
+		flush_standard_output_streams();
+		JEWEL_LOG_MESSAGE(Log::error, "Rethrowing e.");
+		throw e;
+	}
+#	endif  // JEWEL_DISABLE_LOGGING
+
+	// This is necessary to guarantee the stack is fully unwound no
+	// matter what exception is thrown - we're not ONLY doing it
+	// for the logging and flushing.
 	catch (...)
 	{
+		JEWEL_LOG_MESSAGE(Log::error, "Unknown exception caught in main.");
 		flush_standard_output_streams();
+		JEWEL_LOG_MESSAGE(Log::error, "Rethrowing unknown exception.");
 		throw;
 	}
 }

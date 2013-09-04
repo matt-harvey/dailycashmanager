@@ -15,6 +15,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "string_flags.hpp"
 #include "top_panel.hpp"
+#include <jewel/log.hpp>
 #include <jewel/on_windows.hpp>
 #include <wx/event.h>
 #include <wx/menu.h>
@@ -25,11 +26,6 @@
 #include <vector>
 
 using std::vector;
-
-#include <jewel/log.hpp>  // for debugging / testing
-#include <iostream>  // for debugging / testing
-using std::cout;     // for debugging / testing
-using std::endl;     // for debubbing / testing
 
 
 namespace phatbooks
@@ -178,6 +174,8 @@ Frame::Frame
 	m_help_menu(0),
 	m_top_panel(0)
 {
+	JEWEL_LOG_TRACE();
+
 	// Set the frame icon
 	// TODO I should use SetIcons to associate several icons of
 	// different sizes with the Window. This avoids possible ugliness from
@@ -186,6 +184,7 @@ Frame::Frame
 	SetIcon(wxIcon(icon_xpm));
 
 	// Create menus
+	JEWEL_LOG_TRACE();
 	m_menu_bar = new wxMenuBar;
 	m_file_menu = new wxMenu;
 	m_new_menu = new wxMenu;
@@ -194,6 +193,7 @@ Frame::Frame
 	m_help_menu = new wxMenu;
 
 	// Configure "file" menu
+	JEWEL_LOG_TRACE();
 	m_file_menu->Append
 	(	wxID_EXIT,
 		wxString("E&xit\tAlt-X"),
@@ -207,6 +207,7 @@ Frame::Frame
 		account_concept_name(account_super_type::pl);
 
 	// Configure "new" menu
+	JEWEL_LOG_TRACE();
 	m_new_menu->Append
 	(	s_new_bs_account_id,
 		wxString("New &") + balance_sheet_account_concept_name,
@@ -227,6 +228,7 @@ Frame::Frame
 	m_menu_bar->Append(m_new_menu, wxString("&New"));
 
 	// Configure "edit" menu
+	JEWEL_LOG_TRACE();
 	m_edit_menu->Append
 	(	s_edit_bs_account_id,
 		wxString("Edit selected &") + balance_sheet_account_concept_name,
@@ -251,6 +253,7 @@ Frame::Frame
 	m_menu_bar->Append(m_edit_menu, wxString("&Edit"));
 	
 	// Configure "view" menu
+	JEWEL_LOG_TRACE();
 	m_view_menu->Append
 	(	s_toggle_bs_account_show_hidden_id,
 		instruction_to_show_hidden
@@ -270,6 +273,7 @@ Frame::Frame
 	m_menu_bar->Append(m_view_menu, wxString("&View"));
 
 	// Configure "help" menu
+	JEWEL_LOG_TRACE();
 	m_help_menu->Append
 	(	wxID_ABOUT,
 		wxString("&About...\tF1"),
@@ -284,11 +288,13 @@ Frame::Frame
 #	endif
 
 	m_top_panel = new TopPanel(this, m_database_connection);
+	JEWEL_LOG_TRACE();
 }
 	
 void
 Frame::on_menu_about(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
 	// TODO Put better message here
 	wxString msg;
@@ -303,6 +309,7 @@ Frame::on_menu_about(wxCommandEvent& event)
 void
 Frame::on_menu_quit(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	// Destroy the frame
 	Close();
 	(void)event;  // Silence compiler warning re. unused parameter.
@@ -312,6 +319,7 @@ Frame::on_menu_quit(wxCommandEvent& event)
 void
 Frame::on_menu_new_bs_account(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
 	Account account(m_database_connection);
 	AccountDialog account_dialog
@@ -326,6 +334,7 @@ Frame::on_menu_new_bs_account(wxCommandEvent& event)
 void
 Frame::on_menu_new_pl_account(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
 	Account account(m_database_connection);
 	AccountDialog account_dialog(this, account, account_super_type::pl);
@@ -336,6 +345,7 @@ Frame::on_menu_new_pl_account(wxCommandEvent& event)
 void
 Frame::on_menu_new_transaction(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
 	vector<Account> balance_sheet_accounts;
 	selected_balance_sheet_accounts(balance_sheet_accounts);
@@ -350,6 +360,8 @@ Frame::on_menu_new_transaction(wxCommandEvent& event)
 void
 Frame::on_menu_edit_bs_account(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
+
 	// TODO Factor out repeated code in the various member functions
 	// that invoke an AccountDialog.
 
@@ -376,6 +388,7 @@ Frame::on_menu_edit_bs_account(wxCommandEvent& event)
 void
 Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler re. unused parameter.
 	vector<Account> accounts;
 	selected_pl_accounts(accounts);
@@ -404,6 +417,7 @@ Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 void
 Frame::on_menu_edit_ordinary_journal(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
 	vector<OrdinaryJournal> journals;
 	selected_ordinary_journals(journals);
@@ -423,6 +437,7 @@ Frame::on_menu_edit_ordinary_journal(wxCommandEvent& event)
 void
 Frame::on_menu_edit_draft_journal(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
 	vector<DraftJournal> journals;
 	selected_draft_journals(journals);
@@ -443,6 +458,8 @@ Frame::on_menu_edit_draft_journal(wxCommandEvent& event)
 void
 Frame::on_menu_view_toggle_bs_account_show_hidden(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
+
 	// TODO Factor out code duplicated here and in
 	// on_menu_view_toggle_pl_account_show_hidden(...).
 	account_super_type::AccountSuperType const stype =
@@ -463,6 +480,8 @@ Frame::on_menu_view_toggle_bs_account_show_hidden(wxCommandEvent& event)
 void
 Frame::on_menu_view_toggle_pl_account_show_hidden(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
+
 	account_super_type::AccountSuperType const stype =
 		account_super_type::pl;
 
@@ -481,6 +500,8 @@ Frame::on_menu_view_toggle_pl_account_show_hidden(wxCommandEvent& event)
 void
 Frame::on_account_editing_requested(PersistentObjectEvent& event)
 {
+	JEWEL_LOG_TRACE();
+
 	Account account(m_database_connection, event.po_id());
 	edit_account(account);
 	return;
@@ -489,6 +510,8 @@ Frame::on_account_editing_requested(PersistentObjectEvent& event)
 void
 Frame::on_journal_editing_requested(PersistentObjectEvent& event)
 {
+	JEWEL_LOG_TRACE();
+
 	PersistentJournal::Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
@@ -506,6 +529,7 @@ Frame::on_journal_editing_requested(PersistentObjectEvent& event)
 void
 Frame::on_account_created_event(PersistentObjectEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
 	Account const account(m_database_connection, event.po_id());
 	m_top_panel->update_for_new(account);
@@ -515,6 +539,7 @@ Frame::on_account_created_event(PersistentObjectEvent& event)
 void
 Frame::on_account_edited_event(PersistentObjectEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
 	Account const account(m_database_connection, event.po_id());
 	m_top_panel->update_for_amended(account);
@@ -524,6 +549,7 @@ Frame::on_account_edited_event(PersistentObjectEvent& event)
 void
 Frame::on_journal_created_event(PersistentObjectEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
 	assert (m_top_panel);
 	PersistentJournal::Id const journal_id = event.po_id();
@@ -543,6 +569,7 @@ Frame::on_journal_created_event(PersistentObjectEvent& event)
 void
 Frame::on_journal_edited_event(PersistentObjectEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
 	// WARNING Repeats code from on_journal_created_event(...).
 	assert (m_top_panel);
@@ -563,6 +590,7 @@ Frame::on_journal_edited_event(PersistentObjectEvent& event)
 void
 Frame::on_draft_journal_deleted_event(PersistentObjectEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
 	assert (m_top_panel);
 	m_top_panel->update_for_deleted_draft_journal(event.po_id());
@@ -572,6 +600,7 @@ Frame::on_draft_journal_deleted_event(PersistentObjectEvent& event)
 void
 Frame::on_ordinary_journal_deleted_event(PersistentObjectEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
 	assert (m_top_panel);
 	m_top_panel->update_for_deleted_ordinary_journal(event.po_id());
@@ -581,6 +610,7 @@ Frame::on_ordinary_journal_deleted_event(PersistentObjectEvent& event)
 void
 Frame::on_draft_entry_deleted_event(PersistentObjectEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	// TODO The chain of functions that are now called (via m_top_panel)
 	// expect a vector. This is now just pointlessly wasteful given
 	// what we are now processing one event at a time!
@@ -596,6 +626,7 @@ Frame::on_draft_entry_deleted_event(PersistentObjectEvent& event)
 void
 Frame::on_ordinary_entry_deleted_event(PersistentObjectEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	// TODO The chain of functions that are now called (via m_top_panel)
 	// a vector. This is now just pointlessly wasteful given
 	// what we are now processing one event at a time!
@@ -611,6 +642,7 @@ Frame::on_ordinary_entry_deleted_event(PersistentObjectEvent& event)
 void
 Frame::on_budget_edited_event(PersistentObjectEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
 	Account account(m_database_connection, event.po_id());
 	assert (m_top_panel);
@@ -621,6 +653,7 @@ Frame::on_budget_edited_event(PersistentObjectEvent& event)
 void
 Frame::on_reconciliation_status_event(PersistentObjectEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
 	Entry const entry(m_database_connection, event.po_id());
 	assert (m_top_panel);
@@ -631,6 +664,7 @@ Frame::on_reconciliation_status_event(PersistentObjectEvent& event)
 void
 Frame::selected_balance_sheet_accounts(vector<Account>& out) const
 {
+	JEWEL_LOG_TRACE();
 	m_top_panel->selected_balance_sheet_accounts(out);
 	return;
 }
@@ -638,6 +672,7 @@ Frame::selected_balance_sheet_accounts(vector<Account>& out) const
 void
 Frame::selected_pl_accounts(vector<Account>& out) const
 {
+	JEWEL_LOG_TRACE();
 	m_top_panel->selected_pl_accounts(out);
 	return;
 }
@@ -645,6 +680,7 @@ Frame::selected_pl_accounts(vector<Account>& out) const
 void
 Frame::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 {
+	JEWEL_LOG_TRACE();
 	m_top_panel->selected_ordinary_journals(out);
 	return;
 }
@@ -652,6 +688,7 @@ Frame::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 void
 Frame::selected_draft_journals(vector<DraftJournal>& out) const
 {
+	JEWEL_LOG_TRACE();
 	m_top_panel->selected_draft_journals(out);
 	return;
 }
@@ -659,6 +696,7 @@ Frame::selected_draft_journals(vector<DraftJournal>& out) const
 void
 Frame::edit_account(Account& p_account)
 {
+	JEWEL_LOG_TRACE();
 	AccountDialog account_dialog
 	(	this,
 		p_account,

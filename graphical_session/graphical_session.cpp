@@ -5,6 +5,7 @@
 #include "wxs/app.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/log.hpp>
 #include <wx/string.h>
 #include <string>
 
@@ -22,15 +23,18 @@ namespace gui
 GraphicalSession::GraphicalSession():
 	m_existing_application_instance_notified(false)
 {
+	JEWEL_LOG_TRACE();
 }
 
 GraphicalSession::~GraphicalSession()
 {
+	JEWEL_LOG_TRACE();
 }
 
 void
 GraphicalSession::notify_existing_application_instance()
 {
+	JEWEL_LOG_TRACE();
 	m_existing_application_instance_notified = true;
 	return;
 }
@@ -38,6 +42,8 @@ GraphicalSession::notify_existing_application_instance()
 int
 GraphicalSession::do_run()
 {
+	JEWEL_LOG_TRACE();
+
 	shared_ptr<PhatbooksDatabaseConnection> dbc
 	(	new PhatbooksDatabaseConnection
 	);
@@ -82,6 +88,9 @@ GraphicalSession::do_run()
 	}
 	wxTheApp->OnExit();
 	wxEntryCleanup();
+
+	JEWEL_LOG_TRACE();
+
 	return 0;
 }
 
@@ -89,6 +98,8 @@ GraphicalSession::do_run()
 int
 GraphicalSession::do_run(string const& filepath_str)
 {
+	JEWEL_LOG_TRACE();
+
 	// TODO Validate the filepath here first - similar to what
 	// we did in TextSession::do_run(...) (see branches/tui_branch in
 	// repository).
@@ -137,6 +148,9 @@ GraphicalSession::do_run(string const& filepath_str)
 	wxTheApp->OnRun();
 	wxTheApp->OnExit();
 	wxEntryCleanup();
+
+	JEWEL_LOG_TRACE();
+
 	return 0;
 }
 

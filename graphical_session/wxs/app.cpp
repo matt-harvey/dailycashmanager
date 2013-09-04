@@ -11,20 +11,17 @@
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/filedlg.h>
 #include <wx/string.h>
 #include <wx/tooltip.h>
 #include <wx/wx.h>
 
-// For debugging
-#include <jewel/log.hpp>
-#include <iostream>
-using std::endl;
-
 
 using boost::optional;
 using boost::shared_ptr;
+using jewel::Log;
 using jewel::value;
 namespace filesystem = boost::filesystem;
 
@@ -44,14 +41,16 @@ The wxPanel might seem pointless, but apparently if you don't use
 it you get into all kinds of problems.
 */
 
-App::App():
-	m_existing_application_instance_notified(false)
+App::App(): m_existing_application_instance_notified(false)
 {
+	JEWEL_LOG_TRACE();
 }
 
 
 bool App::OnInit()
 {
+	JEWEL_LOG_TRACE();
+
 	wxString const app_name = Application::application_name();
 
 	if (m_existing_application_instance_notified)
@@ -110,6 +109,7 @@ bool App::OnInit()
 	wxToolTip::Enable(true);
 
 	// Start the event loop
+	JEWEL_LOG_MESSAGE(Log::info, "Starting wxWidgets event loop.");
 	return true;
 }
 
@@ -124,6 +124,7 @@ App::set_database_connection
 (	shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 )
 {
+	JEWEL_LOG_TRACE();
 	m_database_connection = p_database_connection;
 	return;
 }
@@ -131,6 +132,7 @@ App::set_database_connection
 void
 App::notify_existing_application_instance()
 {
+	JEWEL_LOG_TRACE();
 	m_existing_application_instance_notified = true;
 }
 
@@ -142,6 +144,7 @@ App::database_connection()
 
 int App::OnExit()
 {
+	JEWEL_LOG_TRACE();
 	// Any cleanup code here.
 	return 0;
 }
@@ -161,6 +164,8 @@ namespace
 filesystem::path
 App::elicit_existing_filepath()
 {
+	JEWEL_LOG_TRACE();
+
 	filesystem::path ret;
 	assert (ret.empty());
 	wxString default_directory = wxEmptyString;
@@ -194,6 +199,11 @@ App::elicit_existing_filepath()
 	}
 	else
 	{
+		JEWEL_LOG_MESSAGE
+		(	Log::warning,
+			"In App::elicit_existing_filepath, "
+				"file_dialog.ShowModal() != wxID_OK."
+		);
 		// TODO Then what?
 	}
 	return ret;
