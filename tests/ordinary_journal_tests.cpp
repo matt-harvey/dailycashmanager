@@ -6,6 +6,7 @@
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/log.hpp>
@@ -41,6 +42,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	entry1a.set_comment("igloo entry a");
 	entry1a.set_whether_reconciled(true);
 	entry1a.set_amount(Decimal("0.99"));
+	entry1a.set_transaction_side(transaction_side::source);
 	journal1.push_entry(entry1a);
 
 	Entry entry1b(dbc);
@@ -48,6 +50,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	entry1b.set_comment("igloo entry b");
 	entry1b.set_whether_reconciled(false);
 	entry1b.set_amount(Decimal("-0.99"));
+	entry1b.set_transaction_side(transaction_side::destination);
 	journal1.push_entry(entry1b);
 	OrdinaryJournal oj1(dbc);
 	oj1.set_date(date(3000, 1, 5));
@@ -76,6 +79,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 			CHECK_EQUAL(it1->comment(), "igloo entry a");
 			CHECK_EQUAL(it1->amount(), Decimal("0.99"));
 			CHECK_EQUAL(it1->is_reconciled(), true);
+			CHECK_EQUAL(it1->transaction_side(), transaction_side::source);
 		}
 		else
 		{
@@ -83,6 +87,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 			CHECK_EQUAL(it1->is_reconciled(), false);
 			CHECK_EQUAL(it1->amount(), Decimal("-0.99"));
 			CHECK_EQUAL(it1->comment(), "igloo entry b");
+			CHECK_EQUAL(it1->transaction_side(), transaction_side::destination);
 		}
 	}
 	DraftJournal dj2(dbc);
@@ -95,6 +100,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	entry2a.set_comment("steam");
 	entry2a.set_amount(Decimal("0"));
 	entry2a.set_whether_reconciled(false);
+	entry2a.set_transaction_side(transaction_side::source);
 	dj2.push_entry(entry2a);
 	
 	oj1.mimic(dj2);
@@ -115,6 +121,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		CHECK_EQUAL(it2->account().id(), Account(dbc, "food").id());
 		CHECK_EQUAL(it2->comment(), "steam");
 		CHECK_EQUAL(it2->is_reconciled(), false);
+		CHECK_EQUAL(it2->transaction_side(), transaction_side::source);
 	}
 
 	/* No longer providing mimic of OrdinaryJournal, so test commented out.
@@ -163,6 +170,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	entry1a.set_comment("igloo entry a");
 	entry1a.set_whether_reconciled(true);
 	entry1a.set_amount(Decimal("-10.99"));
+	entry1a.set_transaction_side(transaction_side::source);
 	journal1.push_entry(entry1a);
 	CHECK_THROW(journal1.save(), UnbalancedJournalException);
 
@@ -171,6 +179,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	entry1b.set_comment("igloo entry b");
 	entry1b.set_whether_reconciled(false);
 	entry1b.set_amount(Decimal("50.09"));
+	entry1b.set_transaction_side(transaction_side::destination);
 	journal1.push_entry(entry1b);
 	journal1.set_date(date(3000, 1, 5));
 
@@ -191,6 +200,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	entry1c.set_comment("Ummm");
 	entry1c.set_whether_reconciled(true);
 	entry1c.set_amount(Decimal(0, 0));
+	entry1c.set_transaction_side(transaction_side::destination);
 	journal1b.push_entry(entry1c);
 	CHECK(journal1b.is_balanced());
 	CHECK(journal1.is_balanced());

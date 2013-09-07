@@ -7,6 +7,7 @@
 #include "interval_type.hpp"
 #include "phatbooks_tests_common.hpp"
 #include "repeater.hpp"
+#include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
@@ -41,6 +42,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	entry1.set_comment("Test entry");
 	entry1.set_amount(Decimal("-0.95"));
 	entry1.set_whether_reconciled(false);
+	entry1.set_transaction_side(transaction_side::source);
 	dj.push_entry(entry1);
 	
 	Entry entry2(dbc);
@@ -48,6 +50,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	entry2.set_comment("Test entry");
 	entry2.set_amount(Decimal("0.95"));
 	entry2.set_whether_reconciled(false);
+	entry2.set_transaction_side(transaction_side::destination);
 	dj.push_entry(entry2);
 
 	Repeater repeater1(dbc);
@@ -158,6 +161,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	entry1a.set_comment(wxString("Test entry")); // wxString is optional
 	entry1a.set_amount(Decimal("-1090.95"));
 	entry1a.set_whether_reconciled(false);
+	entry1a.set_transaction_side(transaction_side::source);
 	dj1.push_entry(entry1a);
 	
 	Entry entry1b(dbc);
@@ -165,6 +169,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	entry1b.set_comment("Test entry");
 	entry1b.set_amount(Decimal("1090.95"));
 	entry1b.set_whether_reconciled(false);
+	entry1b.set_transaction_side(transaction_side::destination);
 	dj1.push_entry(entry1b);
 
 	Repeater repeater1(dbc);
