@@ -66,7 +66,7 @@ TransactionTypeCtrl::TransactionTypeCtrl
 	m_transaction_types(p_transaction_types),
 	m_database_connection(p_database_connection)
 {
-	assert (!m_transaction_types.empty());
+	JEWEL_ASSERT (!m_transaction_types.empty());
 	// TODO We need a mechanism whereby, if additional TransactionTypes
 	// become available after the TransactionTypeCtrl has been
 	// constructed, the TransactionTypeCtrl is notified and updates
@@ -113,7 +113,7 @@ TransactionTypeCtrl::set_transaction_type
 		}
 		if (i == static_cast<int>(transaction_type::num_transaction_types))
 		{
-			assert (false);
+			JEWEL_HARD_ASSERT (false);
 			return;
 		}
 	}
@@ -140,7 +140,7 @@ TransactionTypeCtrl::on_change(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused param.
 	TransactionCtrl* parent = dynamic_cast<TransactionCtrl*>(GetParent());
-	assert(parent);
+	JEWEL_ASSERT (parent);
 	optional<transaction_type::TransactionType> const maybe_ttype =
 		transaction_type();
 	if (!maybe_ttype)

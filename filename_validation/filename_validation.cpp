@@ -4,9 +4,9 @@
 #include "application.hpp"
 #include "string_conv.hpp"
 #include <boost/regex.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/on_windows.hpp>
 #include <wx/string.h>
-#include <cassert>
 #include <string>
 #include <vector>
 
@@ -45,7 +45,7 @@ namespace
 		default:
 			return false;
 		}
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 
 	/**
@@ -117,8 +117,8 @@ namespace
 		{
 			return "";
 		}
-		assert (rev != s.begin());
-		assert (*rev == '.');
+		JEWEL_ASSERT (rev != s.begin());
+		JEWEL_ASSERT (*rev == '.');
 		return string(rev, s.end());
 	}
 
@@ -167,7 +167,7 @@ is_valid_filename
 		}
 		return !is_prohibited_phatbooks_filename(s, message);
 	}
-	assert (!extension_is_explicit);
+	JEWEL_ASSERT (!extension_is_explicit);
 	return !is_generally_prohibited_filename(s, message);
 }
 

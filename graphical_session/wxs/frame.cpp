@@ -15,6 +15,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "string_flags.hpp"
 #include "top_panel.hpp"
+#include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/on_windows.hpp>
 #include <wx/event.h>
@@ -375,9 +376,9 @@ Frame::on_menu_edit_bs_account(wxCommandEvent& event)
 		);
 		return;
 	}
-	assert (accounts.size() >= 1);
+	JEWEL_ASSERT (accounts.size() >= 1);
 	Account account = accounts[0];
-	assert
+	JEWEL_ASSERT
 	(	super_type(account.account_type()) ==
 		account_super_type::balance_sheet
 	);
@@ -404,9 +405,9 @@ Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 		);
 		return;
 	}
-	assert (accounts.size() >= 1);
+	JEWEL_ASSERT (accounts.size() >= 1);
 	Account account = accounts[0];
-	assert
+	JEWEL_ASSERT
 	(	super_type(account.account_type()) ==
 		account_super_type::pl
 	);
@@ -429,7 +430,7 @@ Frame::on_menu_edit_ordinary_journal(wxCommandEvent& event)
 		wxMessageBox("No transaction is currently selected.");	
 		return;	
 	}
-	assert (journals.size() >= 1);
+	JEWEL_ASSERT (journals.size() >= 1);
 	edit_journal(journals[0]);
 	return;
 }
@@ -450,7 +451,7 @@ Frame::on_menu_edit_draft_journal(wxCommandEvent& event)
 		wxMessageBox("No recurring transaction is currently selected.");
 		return;
 	}
-	assert (journals.size() >= 1);
+	JEWEL_ASSERT (journals.size() >= 1);
 	edit_journal(journals[0]);
 	return;
 }
@@ -551,7 +552,7 @@ Frame::on_journal_created_event(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
-	assert (m_top_panel);
+	JEWEL_ASSERT (m_top_panel);
 	PersistentJournal::Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
@@ -572,7 +573,7 @@ Frame::on_journal_edited_event(PersistentObjectEvent& event)
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
 	// WARNING Repeats code from on_journal_created_event(...).
-	assert (m_top_panel);
+	JEWEL_ASSERT (m_top_panel);
 	PersistentJournal::Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
@@ -592,7 +593,7 @@ Frame::on_draft_journal_deleted_event(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
-	assert (m_top_panel);
+	JEWEL_ASSERT (m_top_panel);
 	m_top_panel->update_for_deleted_draft_journal(event.po_id());
 	return;
 }
@@ -602,7 +603,7 @@ Frame::on_ordinary_journal_deleted_event(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
-	assert (m_top_panel);
+	JEWEL_ASSERT (m_top_panel);
 	m_top_panel->update_for_deleted_ordinary_journal(event.po_id());
 	return;
 }
@@ -616,9 +617,9 @@ Frame::on_draft_entry_deleted_event(PersistentObjectEvent& event)
 	// what we are now processing one event at a time!
 	wxWindowUpdateLocker const update_locker(this);
 	static vector<Entry::Id> doomed_ids(1, 0);
-	assert (doomed_ids.size() == 1);
+	JEWEL_ASSERT (doomed_ids.size() == 1);
 	doomed_ids[0] = event.po_id();
-	assert (m_top_panel);
+	JEWEL_ASSERT (m_top_panel);
 	m_top_panel->update_for_deleted_draft_entries(doomed_ids);
 	return;
 }
@@ -632,9 +633,9 @@ Frame::on_ordinary_entry_deleted_event(PersistentObjectEvent& event)
 	// what we are now processing one event at a time!
 	wxWindowUpdateLocker const update_locker(this);
 	static vector<Entry::Id> doomed_ids(1, 0);
-	assert (doomed_ids.size() == 1);
+	JEWEL_ASSERT (doomed_ids.size() == 1);
 	doomed_ids[0] = event.po_id();
-	assert (m_top_panel);
+	JEWEL_ASSERT (m_top_panel);
 	m_top_panel->update_for_deleted_ordinary_entries(doomed_ids);
 	return;
 }
@@ -645,7 +646,7 @@ Frame::on_budget_edited_event(PersistentObjectEvent& event)
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
 	Account account(m_database_connection, event.po_id());
-	assert (m_top_panel);
+	JEWEL_ASSERT (m_top_panel);
 	m_top_panel->update_for_amended_budget(account);
 	return;
 }
@@ -656,7 +657,7 @@ Frame::on_reconciliation_status_event(PersistentObjectEvent& event)
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
 	Entry const entry(m_database_connection, event.po_id());
-	assert (m_top_panel);
+	JEWEL_ASSERT (m_top_panel);
 	m_top_panel->update_for_reconciliation_status(entry);
 	return;
 }

@@ -19,10 +19,10 @@
 #include "date.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <wx/datetime.h>
 #include <wx/intl.h>
 #include <wx/string.h>
-#include <cassert>
 #include <limits>
 
 using boost::optional;
@@ -86,11 +86,11 @@ julian_int(gregorian::date p_date)
 	}
 
 	// gregorian::date is never earlier than min_valid_gregorian.
-	assert (p_date >= min_valid_gregorian);
+	JEWEL_ASSERT (p_date >= min_valid_gregorian);
 
 	gregorian::date_duration const interval = p_date - epoch_grg;
 	DateRep const ret = epoch_date_rep + interval.days();
-	assert (is_valid_date(ret));
+	JEWEL_ASSERT (is_valid_date(ret));
 	return ret;
 }
 
@@ -113,8 +113,8 @@ boost_date_from_julian_int(DateRep julian_int)
 	gregorian::date_duration const
 		interval(julian_int - epoch_date_rep);
 	gregorian::date const ret = epoch_grg + interval;
-	assert (ret >= min_valid_gregorian);
-	assert (!ret.is_not_a_date());
+	JEWEL_ASSERT (ret >= min_valid_gregorian);
+	JEWEL_ASSERT (!ret.is_not_a_date());
 	return ret;
 }
 
@@ -129,8 +129,8 @@ namespace
 {
 	wxDateTime boost_to_wx_date(gregorian::date const& p_date)
 	{
-		assert (static_cast<int>(wxDateTime::Jan) == 0);
-		assert (static_cast<int>(wxDateTime::Dec) == 11);
+		JEWEL_ASSERT (static_cast<int>(wxDateTime::Jan) == 0);
+		JEWEL_ASSERT (static_cast<int>(wxDateTime::Dec) == 11);
 		return wxDateTime
 		(	p_date.day(),
 			static_cast<wxDateTime::Month>(p_date.month() - 1),
@@ -162,7 +162,7 @@ parse_date(wxString const& p_string, wxLocale const& p_locale)
 	wxLocaleInfo const formats[] =
 		{wxLOCALE_SHORT_DATE_FMT, wxLOCALE_LONG_DATE_FMT};
 	size_t const num_formats = sizeof(formats) / sizeof(formats[0]);
-	assert (num_formats > 0);
+	JEWEL_ASSERT (num_formats > 0);
 	for (size_t i = 0; i != num_formats; ++i)
 	{
 		date_wx.ParseFormat
@@ -200,18 +200,18 @@ month_end_for_date(gregorian::date const& p_date)
 	{
 		temp_month = 1;
 		++temp_year;
-		assert (temp_month == 1);
-		assert (temp_year == p_date.year() + 1);
+		JEWEL_ASSERT (temp_month == 1);
+		JEWEL_ASSERT (temp_year == p_date.year() + 1);
 	}
 	gregorian::date ret(temp_year, temp_month, temp_day);
 	ret -= gregorian::date_duration(1);
-	assert
+	JEWEL_ASSERT
 	(	( (ret.day() == 28) && (ret.month() == 2) ) ||
 		( (ret.day() == 29) && (ret.month() == 2) ) ||
 		  (ret.day() == 30) ||
 		  (ret.day() == 31)
 	);
-	assert (ret.year() == p_date.year());
+	JEWEL_ASSERT (ret.year() == p_date.year());
 	return ret;
 }
 

@@ -4,9 +4,9 @@
 #include "account_type.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_type.hpp"
+#include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <sqloxx/reader.hpp>
-#include <cassert>
 
 using jewel::Log;
 
@@ -48,12 +48,15 @@ namespace
 #		ifndef NDEBUG
 			account_type::AccountType acctype =
 				static_cast<account_type::AccountType>(begin_pl - 1);
-			assert(super_type(acctype) == account_super_type::balance_sheet);
+			JEWEL_ASSERT
+			(	super_type(acctype) ==
+				account_super_type::balance_sheet
+			);
 
 			acctype = static_cast<account_type::AccountType>(begin_pl);
-			assert (super_type(acctype) == account_super_type::pl);
+			JEWEL_ASSERT (super_type(acctype) == account_super_type::pl);
 
-			assert
+			JEWEL_ASSERT
 			(	account_super_type::balance_sheet != account_super_type::pl
 			);
 #		else
@@ -67,7 +70,7 @@ namespace
 	{
 #		ifndef NDEBUG
 			int const rev_int = static_cast<int>(account_type::revenue);
-			assert (n == rev_int);
+			JEWEL_ASSERT (n == rev_int);
 #		else
 			(void)n;  // Silence compiler re. unused parameter.
 #		endif
@@ -78,7 +81,7 @@ namespace
 	{
 #		ifndef NDEBUG
 			int const exp_int = static_cast<int>(account_type::expense);
-			assert (n == exp_int);
+			JEWEL_ASSERT (n == exp_int);
 #		else
 			(void)n;  // Silence compiler re. unused parameter.
 #		endif
@@ -89,7 +92,7 @@ namespace
 	{
 #		ifndef NDEBUG
 			int const pe_int = static_cast<int>(account_type::pure_envelope);
-			assert (n == pe_int);
+			JEWEL_ASSERT (n == pe_int);
 #		else
 			(void)n;  // Silence compiler re. unused parameter.
 #		endif
@@ -203,9 +206,9 @@ create_source_account_reader
 	case transaction_type::generic_transaction:
 		return new ImpureAccountReader(p_database_connection);
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
-	assert (false);
+	JEWEL_HARD_ASSERT (false);
 }
 
 AccountReaderBase*
@@ -235,9 +238,9 @@ create_destination_account_reader
 		(	Log::error,
 			static_cast<int>(p_transaction_type)
 		);
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
-	assert (false);
+	JEWEL_HARD_ASSERT (false);
 }
 
 

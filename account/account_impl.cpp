@@ -25,12 +25,12 @@
 #include <sqloxx/sql_statement.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/string.h>
 #include <algorithm>
-#include <cassert>
 #include <string>
 #include <vector>
 
@@ -108,7 +108,7 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 		);
 		checker.step();
 		Id const maxi = checker.extract<Id>(0);
-		assert (maxi == 6);
+		JEWEL_ASSERT (maxi == 6);
 		checker.step_final();
 #	endif
 
@@ -231,12 +231,12 @@ AccountImpl::no_user_pl_accounts_saved
 	{
 		return true;
 	}
-	assert (reader.size() > 0);
+	JEWEL_ASSERT (reader.size() > 0);
 	if (reader.size() > 1)
 	{
 		return false;
 	}
-	assert (reader.size() == 1);
+	JEWEL_ASSERT (reader.size() == 1);
 	Account const sole_account = *(reader.begin());
 	return (sole_account == p_database_connection.balancing_account());
 }
@@ -338,7 +338,7 @@ namespace
 		case account_super_type::pl:
 			return round(d * Decimal(-1, 0), d.places());
 		default:
-			assert (false);
+			JEWEL_HARD_ASSERT (false);
 		}
 	}
 }  // end anonymous namespace
@@ -402,7 +402,7 @@ AccountImpl::budget_items()
 		"account_id = :p"
 	);
 	s.bind(":p", id());
-	assert (ret.empty());
+	JEWEL_ASSERT (ret.empty());
 	while (s.step())
 	{
 		BudgetItem bi(database_connection(), s.extract<BudgetItem::Id>(0));

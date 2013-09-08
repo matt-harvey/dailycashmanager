@@ -21,6 +21,7 @@
 #include "string_flags.hpp"
 #include "sizing.hpp"
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
@@ -84,8 +85,8 @@ BudgetPanel::BudgetPanel(AccountDialog* p_parent, Account const& p_account):
 	m_summary_amount_text(0),
 	m_account(p_account)
 {
-	assert (p_parent);  // precondition
-	assert (m_budget_items.empty());
+	JEWEL_ASSERT (p_parent);  // precondition
+	JEWEL_ASSERT (m_budget_items.empty());
 
 	if (p_account == p_account.database_connection().balancing_account())
 	{
@@ -94,13 +95,13 @@ BudgetPanel::BudgetPanel(AccountDialog* p_parent, Account const& p_account):
 			"balancing Account."
 		);
 	}
-	assert (m_account != database_connection().balancing_account());
+	JEWEL_ASSERT (m_account != database_connection().balancing_account());
 
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);	
 
 	// Row 0
-	assert
+	JEWEL_ASSERT
 	(	database_connection().budget_frequency() ==
 		Frequency(1, interval_type::days)
 	);
@@ -298,7 +299,7 @@ BudgetPanel::TransferDataToWindow()
 		{
 			SignWarning warning(this, account_type);
 			int const result = warning.ShowModal();
-			assert ((result == wxID_YES) || (result == wxID_NO));
+			JEWEL_ASSERT ((result == wxID_YES) || (result == wxID_NO));
 			if (result == wxID_YES)
 			{
 				// TODO Deal with tiny possibility of overflow here?
@@ -317,7 +318,7 @@ BudgetPanel::TransferDataToWindow()
 bool
 BudgetPanel::process_confirmation()
 {
-	assert (m_account.has_id());
+	JEWEL_ASSERT (m_account.has_id());
 	if
 	(	Validate() && TransferDataFromWindow() && update_budgets_from_dialog()
 	)
@@ -332,7 +333,7 @@ void
 BudgetPanel::update_budget_summary()
 {
 	// WARNING This is inefficient.
-	assert (m_summary_amount_text);
+	JEWEL_ASSERT (m_summary_amount_text);
 	Decimal new_total = zero();
 	vector<BudgetItem> budget_items = make_budget_items();
 	if (!budget_items.empty())
@@ -353,7 +354,7 @@ BudgetPanel::update_budget_summary()
 bool
 BudgetPanel::update_budgets_from_dialog()
 {
-	assert (m_account.has_id());
+	JEWEL_ASSERT (m_account.has_id());
 	DatabaseTransaction transaction(database_connection());
 
 	typedef vector<BudgetItem> ItemVec;
@@ -368,14 +369,14 @@ BudgetPanel::update_budgets_from_dialog()
 		ItemVec::size_type i = 0;
 		for ( ; (i != num_items_old) && (i != num_items_new); ++i)
 		{
-			assert (i < m_budget_items.size());
-			assert (i < m_budget_item_components.size());
+			JEWEL_ASSERT (i < m_budget_items.size());
+			JEWEL_ASSERT (i < m_budget_item_components.size());
 			m_budget_items[i].mimic(items_new[i]);
 		}
-		assert ((i == num_items_old) || (i == num_items_new));
+		JEWEL_ASSERT ((i == num_items_old) || (i == num_items_new));
 		if (num_items_old < num_items_new)
 		{
-			assert (i == num_items_old);
+			JEWEL_ASSERT (i == num_items_old);
 			for ( ; i != num_items_new; ++i)
 			{
 				m_budget_items.push_back(items_new[i]);
@@ -383,16 +384,16 @@ BudgetPanel::update_budgets_from_dialog()
 		}
 		else
 		{
-			assert (num_items_new <= num_items_old);
-			assert (num_items_old == m_budget_items.size());
+			JEWEL_ASSERT (num_items_new <= num_items_old);
+			JEWEL_ASSERT (num_items_old == m_budget_items.size());
 			while (m_budget_items.size() != num_items_new)
 			{
-				assert (m_budget_items.size() > num_items_new);	
+				JEWEL_ASSERT (m_budget_items.size() > num_items_new);	
 				BudgetItem doomed_item = m_budget_items.back();
 				m_budget_items.pop_back();
 				doomed_item.remove();
 			}
-			assert (m_budget_items.size() == num_items_new);
+			JEWEL_ASSERT (m_budget_items.size() == num_items_new);
 		}
 	}
 	// Save the amended m_budget_items
@@ -405,10 +406,10 @@ BudgetPanel::update_budgets_from_dialog()
 
 	transaction.commit();
 
-	assert (m_account.has_id());
+	JEWEL_ASSERT (m_account.has_id());
 
 	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
-	assert (frame);
+	JEWEL_ASSERT (frame);
 	PersistentObjectEvent::fire
 	(	frame,
 		PHATBOOKS_BUDGET_EDITED_EVENT,
@@ -421,7 +422,7 @@ BudgetPanel::update_budgets_from_dialog()
 void
 BudgetPanel::push_item_component(BudgetItem const& p_budget_item)
 {
-	assert (p_budget_item.account() == m_account);
+	JEWEL_ASSERT (p_budget_item.account() == m_account);
 
 
 	BudgetItemComponent budget_item_component = {0, 0, 0};
@@ -481,7 +482,7 @@ BudgetPanel::pop_item_component()
 	{
 		return;
 	}
-	assert (m_budget_item_components.size() >= 1);
+	JEWEL_ASSERT (m_budget_item_components.size() >= 1);
 
 	// Bare scope
 	{
@@ -543,18 +544,18 @@ BudgetPanel::make_budget_items() const
 		budget_item.set_account(m_account);
 		budget_item.set_description(component.description_ctrl->GetValue());
 		budget_item.set_amount(component.amount_ctrl->amount());
-		assert (component.frequency_ctrl->frequency());
+		JEWEL_ASSERT (component.frequency_ctrl->frequency());
 		budget_item.set_frequency
 		(	value(component.frequency_ctrl->frequency())
 		);
-		assert
+		JEWEL_ASSERT
 		(	database_connection().supports_budget_frequency
 			(	budget_item.frequency()
 			)
 		);
 		ret.push_back(budget_item);
 	}
-	assert (ret.size() == m_budget_item_components.size());
+	JEWEL_ASSERT (ret.size() == m_budget_item_components.size());
 	return ret;
 }
 
@@ -571,7 +572,7 @@ BudgetPanel::prompt_to_balance()
 	}
 	if (!Account::no_user_pl_accounts_saved(database_connection()))
 	{
-		assert (imbalance != z);
+		JEWEL_ASSERT (imbalance != z);
 		account_type::AccountType const account_type =
 			m_account.account_type();
 		optional<Account> maybe_target_account;	
@@ -645,7 +646,7 @@ BudgetPanel::SpecialFrequencyCtrl::on_text_change(wxCommandEvent& event)
 	(void)event;  // Silence compiler re. unused parameter.
 	BudgetPanel* const budget_panel =
 		dynamic_cast<BudgetPanel*>(GetParent());
-	assert (budget_panel);
+	JEWEL_ASSERT (budget_panel);
 	budget_panel->update_budget_summary();
 	return;
 }	
@@ -668,7 +669,7 @@ BudgetPanel::SignWarning::get_message
 (	account_type::AccountType p_account_type
 )
 {
-	assert
+	JEWEL_ASSERT
 	(	(p_account_type == account_type::revenue) ||
 		(p_account_type == account_type::expense)
 	);
@@ -680,7 +681,7 @@ BudgetPanel::SignWarning::get_message
 			"a negative number?"
 		);
 	}
-	assert (p_account_type == account_type::expense);
+	JEWEL_ASSERT (p_account_type == account_type::expense);
 	return wxString
 	(	"Budget amounts for expense categories should usually be "
 		"a positive. Do you want to change this amount to "
@@ -788,9 +789,9 @@ void
 BudgetPanel::BalancingDialog::on_yes_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter
-	assert (m_account_ctrl);
+	JEWEL_ASSERT (m_account_ctrl);
 	Account account = m_account_ctrl->account();
-	assert (account.has_id());
+	JEWEL_ASSERT (account.has_id());
 	update_budgets_from_dialog(account);
 	EndModal(wxID_OK);
 	return;
@@ -815,7 +816,7 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 	BudgetItemReader::iterator const end = reader.end();
 
 	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
-	assert (frame);
+	JEWEL_ASSERT (frame);
 
 	for ( ; it != end; ++it)
 	{
@@ -829,7 +830,7 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 		{
 			it->set_amount(it->amount() + m_imbalance);
 			it->save();
-			assert (budget_is_balanced());
+			JEWEL_ASSERT (budget_is_balanced());
 			
 			PersistentObjectEvent::fire
 			(	frame,  // don't use "this", or event will be missed
@@ -853,7 +854,7 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 		PHATBOOKS_BUDGET_EDITED_EVENT,
 		p_target.id()
 	);
-	assert (budget_is_balanced());
+	JEWEL_ASSERT (budget_is_balanced());
 
 	return;
 }

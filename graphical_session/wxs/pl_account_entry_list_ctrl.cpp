@@ -7,6 +7,7 @@
 #include "ordinary_journal.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 
@@ -78,7 +79,7 @@ PLAccountEntryListCtrl::do_set_non_date_columns
 			DecimalFormatFlags().clear(string_flags::dash_for_zero)
 		)
 	);
-	assert (num_columns() == 3);
+	JEWEL_ASSERT (num_columns() == 3);
 	return;
 }
 
@@ -92,7 +93,7 @@ PLAccountEntryListCtrl::verb() const
 	case account_type::expense:
 		return wxString("spent");
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 }
 
@@ -109,7 +110,7 @@ PLAccountEntryListCtrl::do_insert_non_date_columns()
 		wxString("Amount ") + verb(),
 		wxLIST_FORMAT_RIGHT
 	);
-	assert (num_columns() == 3);
+	JEWEL_ASSERT (num_columns() == 3);
 	return;
 }
 

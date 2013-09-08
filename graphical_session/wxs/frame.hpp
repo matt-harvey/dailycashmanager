@@ -7,6 +7,7 @@
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
 #include "top_panel.hpp"
+#include <jewel/assert.hpp>
 #include <wx/menu.h>
 #include <wx/wx.h>
 #include <wx/string.h>
@@ -133,7 +134,7 @@ template <typename JournalType>
 void
 Frame::edit_journal(JournalType& p_journal)
 {
-	assert (m_top_panel);
+	JEWEL_ASSERT (m_top_panel);
 	// m_top_panel->SetFocus();  // WARNING This doesn't seem to have any effect
 	m_top_panel->configure_transaction_ctrl(p_journal);
 	// TODO Bring the focus into the TransactionCtrl so the user can start

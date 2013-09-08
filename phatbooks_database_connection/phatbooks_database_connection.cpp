@@ -46,10 +46,10 @@
 #include <boost/filesystem.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
-#include <cassert>
 #include <iostream>
 #include <list>
 #include <stdexcept>
@@ -199,7 +199,7 @@ PhatbooksDatabaseConnection::do_setup()
 {
 	if (!tables_are_configured())
 	{
-		assert (m_permanent_entity_data);
+		JEWEL_ASSERT (m_permanent_entity_data);
 		if (!m_permanent_entity_data->default_commodity_is_set())
 		{
 			// Then we create a "default default commodity".	
@@ -210,7 +210,7 @@ PhatbooksDatabaseConnection::do_setup()
 			commodity.set_precision(2);
 			commodity.set_multiplier_to_base(Decimal("1"));
 			set_default_commodity(commodity);
-			assert (m_permanent_entity_data->default_commodity_is_set());
+			JEWEL_ASSERT (m_permanent_entity_data->default_commodity_is_set());
 		}
 
 		DatabaseTransaction transaction(*this);
@@ -230,7 +230,7 @@ PhatbooksDatabaseConnection::do_setup()
 		mark_tables_as_configured();
 		transaction.commit();
 	}
-	assert (tables_are_configured());
+	JEWEL_ASSERT (tables_are_configured());
 	load_creation_date();
 	load_default_commodity();
 	perform_integrity_checks();
@@ -276,7 +276,7 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 		m_entry_map->disable_caching();
 		break;	
 	case 10: default:
-		assert (level > 0);
+		JEWEL_ASSERT (level > 0);
 		m_commodity_map->enable_caching();
 		m_account_map->enable_caching();
 		m_budget_item_map->enable_caching();
@@ -309,7 +309,7 @@ PhatbooksDatabaseConnection::set_default_commodity
 (	Commodity const& p_commodity
 )
 {
-	assert (m_permanent_entity_data);
+	JEWEL_ASSERT (m_permanent_entity_data);
 
 	// TODO Make this atomic
 	m_permanent_entity_data->set_default_commodity(p_commodity);
@@ -533,7 +533,7 @@ PhatbooksDatabaseConnection::PermanentEntityData::default_commodity() const
 	{
 		throw std::logic_error("Default commodity has not been set.");
 	}
-	assert (m_default_commodity);
+	JEWEL_ASSERT (m_default_commodity);
 	return *m_default_commodity;
 }
 
@@ -640,8 +640,8 @@ PhatbooksDatabaseConnection::perform_integrity_checks()
 			total_opening_balances += it->technical_opening_balance();
 			total_balances += it->technical_balance();
 		}
-		assert (total_opening_balances == Decimal(0, 0));
-		assert (total_balances == Decimal(0, 0));
+		JEWEL_ASSERT (total_opening_balances == Decimal(0, 0));
+		JEWEL_ASSERT (total_balances == Decimal(0, 0));
 		
 		// Check journal dates are OK
 		OrdinaryJournalReader const oj_reader(*this);
@@ -651,7 +651,7 @@ PhatbooksDatabaseConnection::perform_integrity_checks()
 			++it
 		)
 		{
-			assert (it->date() >= opening_balance_journal_date());
+			JEWEL_ASSERT (it->date() >= opening_balance_journal_date());
 		}
 
 #	endif

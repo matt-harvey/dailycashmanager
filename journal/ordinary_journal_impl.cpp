@@ -17,6 +17,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -188,10 +189,10 @@ OrdinaryJournalImpl::set_date(gregorian::date const& p_date)
 			"set_date function."
 		);
 	}
-	assert (p_date != database_connection().opening_balance_journal_date());
+	JEWEL_ASSERT (p_date != database_connection().opening_balance_journal_date());
 	load();
 	set_date_unrestricted(p_date);
-	assert
+	JEWEL_ASSERT
 	(	boost_date_from_julian_int(value(m_date)) >=
 		database_connection().entity_creation_date()
 	);

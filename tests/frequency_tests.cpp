@@ -4,9 +4,9 @@
 #include "amalgamated_budget.hpp"
 #include "interval_type.hpp"
 #include "phatbooks_tests_common.hpp"
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
-#include <cassert>
 #include <iostream>
 #include <typeinfo>
 #include <vector>
@@ -351,7 +351,7 @@ TEST(frequency_test_convert_to_and_from_canonical)
 		{
 			Decimal const amount = amounts[i];
 			Frequency const freq = frequencies[j];
-			assert (AmalgamatedBudget::supports_frequency(freq));
+			JEWEL_ASSERT (AmalgamatedBudget::supports_frequency(freq));
 			Decimal const res_a = convert_to_canonical(freq, amount);
 			Decimal const res_b = convert_from_canonical(freq, res_a);
 			CHECK_EQUAL(res_b, amount);

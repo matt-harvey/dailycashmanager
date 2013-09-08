@@ -6,8 +6,8 @@
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "visibility.hpp"
+#include <jewel/assert.hpp>
 #include <wx/string.h>
-#include <cassert>
 #include <utility>
 #include <vector>
 
@@ -85,7 +85,7 @@ make_default_accounts
 		// There are no default pure_envelope Accounts.
 		break;
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 	// Now we use this information to populate vec with actual Accounts
 	// (but note we don't save them - saving them will be at the discretion

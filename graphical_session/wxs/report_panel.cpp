@@ -11,6 +11,7 @@
 #include "report.hpp"
 #include "sizing.hpp"
 #include "string_set_validator.hpp"
+#include <jewel/assert.hpp>
 #include <wx/button.h>
 #include <wx/combobox.h>
 #include <wx/event.h>
@@ -74,7 +75,7 @@ ReportPanel::ReportPanel
 void
 ReportPanel::configure_top()
 {
-	assert (m_top_sizer);
+	JEWEL_ASSERT (m_top_sizer);
 
 	// Labels
 	wxStaticText* report_type_label =
@@ -107,13 +108,13 @@ ReportPanel::configure_top()
 	{
 		m_report_type_ctrl->Append(report_type_names[i]);
 	}
-	assert (!report_type_names.IsEmpty());
+	JEWEL_ASSERT (!report_type_names.IsEmpty());
 	m_report_type_ctrl->SetValue(report_type_names[0]);
 	m_top_sizer->Add(m_report_type_ctrl, wxGBPosition(m_next_row, 1));
 
 	// WARNING There is duplicated code between here and EntryListPanel,
 	// and also to some extent between here and ReconciliationPanel.
-	assert (m_report_type_ctrl);
+	JEWEL_ASSERT (m_report_type_ctrl);
 	int const std_height = m_report_type_ctrl->GetSize().GetHeight();
 
 	// Date range boxes
@@ -159,13 +160,13 @@ ReportPanel::configure_bottom()
 	// whole new Report, calling a generate() or regenerate() method
 	// on the existing Report?
 	
-	assert (m_top_sizer);
+	JEWEL_ASSERT (m_top_sizer);
 	if (m_client_size_aux < 100)  // WARNING Ugly hack
 	{
 		m_client_size_aux = GetClientSize().GetY();
 	}
 	int const num_extra_rows = 2;
-	assert (m_min_date_ctrl);
+	JEWEL_ASSERT (m_min_date_ctrl);
 	int height_aux =
 		m_client_size_aux -
 		m_min_date_ctrl->GetSize().GetY() * num_extra_rows -
@@ -212,20 +213,20 @@ ReportPanel::configure_bottom()
 account_super_type::AccountSuperType
 ReportPanel::selected_account_super_type() const
 {
-	assert (m_report_type_ctrl);
+	JEWEL_ASSERT (m_report_type_ctrl);
 	wxString const report_name = m_report_type_ctrl->GetValue();
 	if (report_name == balance_sheet_report_name())
 	{
 		return account_super_type::balance_sheet;
 	}
-	assert (report_name == pl_report_name());
+	JEWEL_ASSERT (report_name == pl_report_name());
 	return account_super_type::pl;
 }
 
 void
 ReportPanel::update_for_new(OrdinaryJournal const& p_journal)
 {
-	assert (m_report);
+	JEWEL_ASSERT (m_report);
 	m_report->update_for_new(p_journal);
 	return;
 }
@@ -233,7 +234,7 @@ ReportPanel::update_for_new(OrdinaryJournal const& p_journal)
 void
 ReportPanel::update_for_amended(OrdinaryJournal const& p_journal)
 {
-	assert (m_report);
+	JEWEL_ASSERT (m_report);
 	m_report->update_for_amended(p_journal);
 	return;
 }
@@ -241,7 +242,7 @@ ReportPanel::update_for_amended(OrdinaryJournal const& p_journal)
 void
 ReportPanel::update_for_new(Account const& p_account)
 {
-	assert (m_report);
+	JEWEL_ASSERT (m_report);
 	m_report->update_for_new(p_account);
 	return;
 }
@@ -249,7 +250,7 @@ ReportPanel::update_for_new(Account const& p_account)
 void
 ReportPanel::update_for_amended(Account const& p_account)
 {
-	assert (m_report);
+	JEWEL_ASSERT (m_report);
 	m_report->update_for_amended(p_account);
 	return;
 }
@@ -257,7 +258,7 @@ ReportPanel::update_for_amended(Account const& p_account)
 void
 ReportPanel::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
 {
-	assert (m_report);
+	JEWEL_ASSERT (m_report);
 	m_report->update_for_deleted(p_doomed_ids);
 	return;
 }

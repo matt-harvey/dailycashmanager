@@ -17,6 +17,7 @@
 #include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
 #include <wx/button.h>
@@ -189,7 +190,7 @@ EntryListPanel::on_refresh_button_click(wxCommandEvent& event)
 void
 EntryListPanel::update_for_new(OrdinaryJournal const& p_journal)
 {
-	assert (m_entry_list_ctrl);
+	JEWEL_ASSERT (m_entry_list_ctrl);
 	m_entry_list_ctrl->update_for_new(p_journal);
 	postconfigure_summary();
 	return;
@@ -198,7 +199,7 @@ EntryListPanel::update_for_new(OrdinaryJournal const& p_journal)
 void
 EntryListPanel::update_for_amended(OrdinaryJournal const& p_journal)
 {
-	assert (m_entry_list_ctrl);
+	JEWEL_ASSERT (m_entry_list_ctrl);
 	m_entry_list_ctrl->update_for_amended(p_journal);
 	postconfigure_summary();
 	return;
@@ -207,7 +208,7 @@ EntryListPanel::update_for_amended(OrdinaryJournal const& p_journal)
 void
 EntryListPanel::update_for_new(Account const& p_account)
 {
-	assert (m_entry_list_ctrl);
+	JEWEL_ASSERT (m_entry_list_ctrl);
 	m_entry_list_ctrl->update_for_new(p_account);
 	m_account_ctrl->update_for_new(p_account);
 	postconfigure_summary();
@@ -217,7 +218,7 @@ EntryListPanel::update_for_new(Account const& p_account)
 void
 EntryListPanel::update_for_amended(Account const& p_account)
 {
-	assert (m_entry_list_ctrl);
+	JEWEL_ASSERT (m_entry_list_ctrl);
 	m_entry_list_ctrl->update_for_amended(p_account);
 	m_account_ctrl->update_for_amended(p_account);
 	postconfigure_summary();
@@ -227,7 +228,7 @@ EntryListPanel::update_for_amended(Account const& p_account)
 void
 EntryListPanel::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 {
-	assert (m_entry_list_ctrl);
+	JEWEL_ASSERT (m_entry_list_ctrl);
 	m_entry_list_ctrl->update_for_deleted(p_doomed_ids);
 	postconfigure_summary();
 	return;
@@ -236,7 +237,7 @@ EntryListPanel::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 void
 EntryListPanel::selected_entries(vector<Entry>& out)
 {
-	assert (m_entry_list_ctrl);
+	JEWEL_ASSERT (m_entry_list_ctrl);
 	m_entry_list_ctrl->selected_entries(out);
 	return;
 }
@@ -264,8 +265,8 @@ EntryListPanel::configure_entry_list_ctrl()
 	EntryListCtrl* temp = 0;
 	if (m_support_reconciliations)
 	{
-		assert (selected_min_date());
-		assert (selected_max_date());
+		JEWEL_ASSERT (selected_min_date());
+		JEWEL_ASSERT (selected_max_date());
 		temp = EntryListCtrl::create_reconciliation_entry_list
 		(	this,
 			wxSize
@@ -326,8 +327,8 @@ EntryListPanel::preconfigure_summary()
 {
 	if (m_support_reconciliations)
 	{
-		assert (m_summary_label_text_items.empty());
-		assert (m_summary_data_text_items.empty());
+		JEWEL_ASSERT (m_summary_label_text_items.empty());
+		JEWEL_ASSERT (m_summary_data_text_items.empty());
 
 		wxSize const size(wxDefaultSize.x, m_text_ctrl_height);
 
@@ -402,18 +403,18 @@ EntryListPanel::preconfigure_summary()
 void
 EntryListPanel::postconfigure_summary()
 {
-	assert
+	JEWEL_ASSERT
 	(	m_summary_label_text_items.size() ==
 		m_summary_data_text_items.size()
 	);
 	if (m_support_reconciliations)
 	{
-		assert (m_entry_list_ctrl);
+		JEWEL_ASSERT (m_entry_list_ctrl);
 		vector<SummaryDatum> const& summary_data =
 			m_entry_list_ctrl->summary_data();
 		vector<SummaryDatum>::size_type i = 0;
 		vector<SummaryDatum>::size_type const sz = summary_data.size();
-		assert (sz == m_summary_label_text_items.size());
+		JEWEL_ASSERT (sz == m_summary_label_text_items.size());
 		for ( ; i != sz; ++i)
 		{
 			m_summary_label_text_items[i]->SetLabel
@@ -435,7 +436,7 @@ EntryListPanel::postconfigure_summary()
 Account
 EntryListPanel::selected_account() const
 {
-	assert (m_account_ctrl);
+	JEWEL_ASSERT (m_account_ctrl);
 	return m_account_ctrl->account();
 }
 

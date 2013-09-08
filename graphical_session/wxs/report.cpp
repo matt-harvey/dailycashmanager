@@ -61,7 +61,7 @@ Report::create
 		);
 		break;
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 	return temp;
 }

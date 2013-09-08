@@ -3,6 +3,7 @@
 #include "entry_reader.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_type.hpp"
+#include <jewel/assert.hpp>
 
 namespace phatbooks
 {
@@ -30,11 +31,11 @@ ActualOrdinaryEntryReader::ActualOrdinaryEntryReader
 				static_cast<transaction_type::TransactionType>(i);
 			if (ttype == target_non_actual_type)
 			{
-				assert (!transaction_type_is_actual(ttype));
+				JEWEL_ASSERT (!transaction_type_is_actual(ttype));
 			}
 			else
 			{
-				assert (transaction_type_is_actual(ttype));
+				JEWEL_ASSERT (transaction_type_is_actual(ttype));
 			}
 		}
 #	endif

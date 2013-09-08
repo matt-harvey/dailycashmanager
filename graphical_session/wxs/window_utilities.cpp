@@ -1,9 +1,9 @@
 #include "window_utilities.hpp"
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/optional.hpp>
 #include <wx/string.h>
 #include <wx/window.h>
-#include <cassert>
 
 using boost::optional;
 using jewel::value;
@@ -20,7 +20,7 @@ toggle_enabled
 	optional<wxString> const& p_tooltip_if_disabled
 )
 {
-	assert (p_window);
+	JEWEL_ASSERT (p_window);
 	if (p_enable)
 	{
 		p_window->Enable();

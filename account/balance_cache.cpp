@@ -13,13 +13,13 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/unordered_map.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <algorithm>
-#include <cassert>
 #include <vector>
 
 using boost::optional;
@@ -78,7 +78,7 @@ BalanceCache::technical_balance(AccountImpl::Id p_account_id)
 		// and the earlier call to refresh() should have
 		// inserted a cache entry for that AccountImpl. Thus at this
 		// point there must be a cache entry for p_account_id.
-		assert (it != m_map->end());
+		JEWEL_ASSERT (it != m_map->end());
 		optional<Decimal> const cache_entry(it->second);	
 		if (cache_entry)
 		{
@@ -131,7 +131,7 @@ BalanceCache::technical_opening_balance(AccountImpl::Id p_account_id)
 	{
 		// There should be a result row even if there are no entries
 		// to sum
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 	return ret;
 }
@@ -151,7 +151,7 @@ BalanceCache::mark_as_stale(AccountImpl::Id p_account_id)
 		m_map_is_stale = true;
 		return;
 	}
-	assert (it != m_map->end());
+	JEWEL_ASSERT (it != m_map->end());
 	clear(it->second);
 	return;
 }
@@ -196,18 +196,18 @@ BalanceCache::refresh()
 				stale_account_ids.push_back(account_id);
 			}
 		}
-		assert (stale_account_ids.size() <= fulcrum);
+		JEWEL_ASSERT (stale_account_ids.size() <= fulcrum);
 		if (stale_account_ids.size() == fulcrum)
 		{
 			refresh_all();
 		}
 		else
 		{
-			assert (stale_account_ids.size() < fulcrum);
+			JEWEL_ASSERT (stale_account_ids.size() < fulcrum);
 			refresh_targetted(stale_account_ids);
 		}
 	}
-	assert (!m_map_is_stale);
+	JEWEL_ASSERT (!m_map_is_stale);
 	return;
 }
 
@@ -216,7 +216,7 @@ BalanceCache::refresh_all()
 {
 	typedef unordered_map<AccountImpl::Id, Decimal::int_type> WorkingMap;
 	WorkingMap working_map;
-	assert (working_map.empty());
+	JEWEL_ASSERT (working_map.empty());
 	SQLStatement accounts_scanner
 	(	m_database_connection,
 		"select account_id from accounts"
@@ -255,7 +255,7 @@ BalanceCache::refresh_all()
 	}
 	scoped_ptr<Map> map_elect_ptr(new Map);	
 	Map& map_elect = *map_elect_ptr;
-	assert (map_elect.empty());
+	JEWEL_ASSERT (map_elect.empty());
 
 	// Bare scope
 	{
@@ -277,17 +277,17 @@ BalanceCache::refresh_all()
 	{
 		if (!it->second)
 		{
-			assert (!Account::exists(m_database_connection, it->first));
+			JEWEL_ASSERT (!Account::exists(m_database_connection, it->first));
 			map_elect.erase(it);
 		}
 		else
 		{
-			assert (Account::exists(m_database_connection, it->first));
+			JEWEL_ASSERT (Account::exists(m_database_connection, it->first));
 		}
 	}
 
-	assert (map_elect.size() == working_map.size());
-	assert (map_elect_ptr->size() == map_elect.size());
+	JEWEL_ASSERT (map_elect.size() == working_map.size());
+	JEWEL_ASSERT (map_elect_ptr->size() == map_elect.size());
 	using std::swap;
 	swap(m_map, map_elect_ptr);
 	return;
@@ -354,7 +354,7 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 		else
 		{
 			// There is always a result row even if it has null.
-			assert (false);
+			JEWEL_HARD_ASSERT (false);
 		}
 	}
 	return;

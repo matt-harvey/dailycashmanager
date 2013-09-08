@@ -4,11 +4,11 @@
 #include "string_conv.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
 #include <wx/config.h>
 #include <wx/string.h>
-#include <cassert>
 #include <cstdlib>
 #include <string>
 
@@ -58,13 +58,13 @@ Application::last_opened_file()
 	if (config().Read(config_location_for_last_opened_file(), &wx_path))
 	{
 		string const s_path = wx_to_std8(wx_path);
-		assert (!s_path.empty());
+		JEWEL_ASSERT (!s_path.empty());
 		ret = filesystem::path(s_path);
 	}
 	else
 	{
-		assert (wx_path.IsEmpty());
-		assert (!ret);
+		JEWEL_ASSERT (wx_path.IsEmpty());
+		JEWEL_ASSERT (!ret);
 	}
 	return ret;
 }
@@ -74,7 +74,7 @@ void
 Application::set_last_opened_file(filesystem::path const& p_path)
 {
 	// Assert precondition
-	assert (filesystem::absolute(p_path) == p_path);
+	JEWEL_ASSERT (filesystem::absolute(p_path) == p_path);
 
 	string const s_path = p_path.string();
 	wxString const wx_path = std8_to_wx(s_path);
@@ -105,7 +105,7 @@ Application::default_directory()
 			ret = filesystem::absolute(home);
 		}
 	}
-	assert (!ret || (filesystem::absolute(value(ret)) == value(ret)));
+	JEWEL_ASSERT (!ret || (filesystem::absolute(value(ret)) == value(ret)));
 	return ret;
 }
 
@@ -120,7 +120,7 @@ Application::config()
 			vendor_name()
 		);
 	}
-	assert (conf);
+	JEWEL_ASSERT (conf);
 	return *conf;
 }
 

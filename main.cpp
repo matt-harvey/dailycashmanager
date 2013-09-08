@@ -98,7 +98,6 @@
 #include <wx/snglinst.h>
 #include <wx/string.h>
 #include <wx/utils.h>
-#include <cassert>
 #include <cstdlib>
 #include <exception>
 #include <fstream>
@@ -222,7 +221,7 @@ int main(int argc, char** argv)
 		{
 			return graphical_session.run();
 		}
-		assert (!filepath_str.empty());
+		JEWEL_ASSERT (!filepath_str.empty());
 		return graphical_session.run(filepath_str);
 	}
 	catch (ArgException& e)

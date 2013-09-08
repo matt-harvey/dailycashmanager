@@ -7,10 +7,10 @@
 #include "phatbooks_database_connection.hpp"
 #include "string_flags.hpp"
 #include "string_set_validator.hpp"
+#include <jewel/assert.hpp>
 #include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/string.h>
-#include <cassert>
 #include <set>
 
 using std::set;
@@ -58,10 +58,10 @@ AccountCtrl::AccountCtrl
 	),
 	m_database_connection(p_database_connection)
 {
-	assert (m_available_account_types.empty());
+	JEWEL_ASSERT (m_available_account_types.empty());
 	reset(p_account_types, p_exclude_balancing_account);
-	assert (m_exclude_balancing_account == p_exclude_balancing_account);
-	assert (m_available_account_types == p_account_types);
+	JEWEL_ASSERT (m_exclude_balancing_account == p_exclude_balancing_account);
+	JEWEL_ASSERT (m_available_account_types == p_account_types);
 }
 
 void
@@ -104,7 +104,7 @@ AccountCtrl::reset
 			}
 		}
 	}
-	assert (!valid_account_names.IsEmpty());  // TODO Can this fail?
+	JEWEL_ASSERT (!valid_account_names.IsEmpty());  // TODO Can this fail?
 	StringSetValidator validator
 	(	valid_account_names[0],
 		valid_account_names,
@@ -130,7 +130,7 @@ AccountCtrl::account()
 	/*
 	StringSetValidator const* const validator =
 		dynamic_cast<StringSetValidator const*>(GetValidator());
-	assert (validator);
+	JEWEL_ASSERT (validator);
 	*/
 	return Account(m_database_connection, m_account_map.at(GetValue()));
 }

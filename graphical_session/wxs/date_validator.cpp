@@ -6,6 +6,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <boost/exception/all.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/datetime.h>
@@ -13,7 +14,6 @@
 #include <wx/msgdlg.h>
 #include <wx/textctrl.h>
 #include <wx/validate.h>
-#include <cassert>
 #include <iostream>
 
 using boost::optional;
@@ -51,7 +51,7 @@ bool
 DateValidator::Validate(wxWindow* WXUNUSED(parent))
 {
 	// TODO Make this more accepting of different formats.
-	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	wxTextCtrl const* const text_ctrl =
 		dynamic_cast<wxTextCtrl*>(GetWindow());
 	if (!text_ctrl)
@@ -75,7 +75,7 @@ DateValidator::Validate(wxWindow* WXUNUSED(parent))
 		);
 		return false;
 	}
-	assert (temp);
+	JEWEL_ASSERT (temp);
 	if (m_min_date && (value(temp) < value(m_min_date)))
 	{
 		// TODO This message doesn't actually explain to the user
@@ -94,14 +94,14 @@ DateValidator::Validate(wxWindow* WXUNUSED(parent))
 bool
 DateValidator::TransferFromWindow()
 {
-	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	return true;
 }
 
 bool
 DateValidator::TransferToWindow()
 {
-	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	wxTextCtrl* const text_ctrl = dynamic_cast<wxTextCtrl*>(GetWindow());
 	if (!text_ctrl)
 	{
@@ -113,12 +113,12 @@ DateValidator::TransferToWindow()
 		{
 			return false;
 		}
-		assert (m_allow_blank && !m_date);
+		JEWEL_ASSERT (m_allow_blank && !m_date);
 		text_ctrl->SetValue(wxEmptyString);
 		return true;
 	}
-	assert (m_date);
-	assert (!m_min_date || (m_date >= value(m_min_date)));
+	JEWEL_ASSERT (m_date);
+	JEWEL_ASSERT (!m_min_date || (m_date >= value(m_min_date)));
 	text_ctrl->SetValue(date_format_wx(value(m_date)));
 	return true;
 }

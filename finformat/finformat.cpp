@@ -3,12 +3,12 @@
 #include "finformat.hpp"
 #include "string_flags.hpp"
 #include "string_conv.hpp"
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
 #include <wx/intl.h>
 #include <wx/string.h>
 #include <algorithm>
-#include <cassert>
 #include <deque>
 #include <limits>
 #include <locale>
@@ -82,7 +82,7 @@ string finformat_std8
 	string ret(oss.str());
 	if (ret[0] == '-')
 	{
-		assert (decimal < zero);
+		JEWEL_ASSERT (decimal < zero);
 		ret[0] = '(';
 		ret.push_back(')');
 	}
@@ -96,7 +96,7 @@ string finformat_std8
 	}
 	else
 	{
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 	return ret;
 }
@@ -131,13 +131,13 @@ wxString finformat_wx
 	);
 	// TODO Are the following assertions always going to be true? No,
 	// they are not...
-	assert (decimal_point_s.size() == 1);
-	assert (thousands_sep_s.size() == 1);
+	JEWEL_ASSERT (decimal_point_s.size() == 1);
+	JEWEL_ASSERT (thousands_sep_s.size() == 1);
 	CharT const decimal_point = decimal_point_s[0];
 	CharT const thousand_sep = thousands_sep_s[0];
 	// We will build it backwards.
 	deque<CharT> ret;
-	assert (ret.empty());
+	JEWEL_ASSERT (ret.empty());
 	// Special case of zero
 	if (dash_for_zero && (intval == 0))
 	{
@@ -168,7 +168,7 @@ wxString finformat_wx
 			tempstream << intval;
 			wxtemp = std8_to_wx(tempstream.str());
 			wxString::const_iterator it = wxtemp.begin();
-			assert (*it == CharT('-'));
+			JEWEL_ASSERT (*it == CharT('-'));
 			++it;
 			wxtemp = wxString(it, wxtemp.end());
 		}
@@ -281,15 +281,15 @@ wx_to_decimal
 	);
 	// TODO Are the following assertions always going to be true? No,
 	// they are not...
-	assert (decimal_point_s.size() == 1);
-	assert (thousands_sep_s.size() == 1);
+	JEWEL_ASSERT (decimal_point_s.size() == 1);
+	JEWEL_ASSERT (thousands_sep_s.size() == 1);
 	if (wxs.IsEmpty())
 	{
 		// TODO Should probably throw an exception here, rather
 		// than creating a Decimal initialized to zero.
 		return Decimal(0, 0);
 	}
-	assert (wxs.Len() >= 1);
+	JEWEL_ASSERT (wxs.Len() >= 1);
 	if (wxs.Len() == 1 && wxs[0] == minus_sign)
 	{
 		return Decimal(0, 0);

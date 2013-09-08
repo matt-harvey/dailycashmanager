@@ -14,6 +14,7 @@
 #include "sizing.hpp"
 #include "visibility.hpp"
 #include <boost/noncopyable.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
@@ -29,7 +30,6 @@
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <wx/window.h>
-#include <cassert>
 
 using jewel::Decimal;
 using jewel::UninitializedOptionalException;
@@ -107,9 +107,9 @@ namespace
 		case account_super_type::pl:
 			return wxString("Initial budget allocation");
 		default:
-			assert (false);
+			JEWEL_HARD_ASSERT (false);
 		}
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 	
 }  // end anonymous namespace
@@ -133,7 +133,7 @@ AccountDialog::AccountDialog
 	m_ok_button(0),
 	m_account(p_account)
 {
-	assert (p_parent);  // precondition
+	JEWEL_ASSERT (p_parent);  // precondition
 	if
 	(	m_account.has_id() &&
 		(super_type(m_account.account_type()) != p_account_super_type)
@@ -319,7 +319,7 @@ AccountDialog::AccountDialog
 void
 AccountDialog::configure_budget_panel()
 {
-	assert (!m_budget_panel);
+	JEWEL_ASSERT (!m_budget_panel);
 	if (account_super_type() == account_super_type::balance_sheet)
 	{
 		// There are no "bottom controls" for balance sheet Accounts.
@@ -330,13 +330,13 @@ AccountDialog::configure_budget_panel()
 		// Cannot edit budgets for the budget balancing Account.
 		return;
 	}
-	assert (account_super_type() == account_super_type::pl);
+	JEWEL_ASSERT (account_super_type() == account_super_type::pl);
 	
 	++m_current_row;
 	++m_current_row;
 
 	// Make sure m_account has an AccountType.
-	assert (m_account_type_ctrl);
+	JEWEL_ASSERT (m_account_type_ctrl);
 	try
 	{
 		account_type::AccountType dummy = m_account.account_type();
@@ -361,7 +361,7 @@ AccountDialog::configure_budget_panel()
 void
 AccountDialog::configure_bottom_row()
 {
-	assert (!m_visibility_ctrl);
+	JEWEL_ASSERT (!m_visibility_ctrl);
 	m_visibility_ctrl = new wxCheckBox
 	(	this,
 		wxID_ANY,
@@ -416,7 +416,7 @@ AccountDialog::configure_bottom_row()
 account_super_type::AccountSuperType
 AccountDialog::account_super_type() const
 {
-	assert (m_account_type_ctrl);
+	JEWEL_ASSERT (m_account_type_ctrl);
 	return super_type(m_account_type_ctrl->account_type());
 }
 
@@ -474,7 +474,7 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 				) +
 				wxString(" with this name.")
 			);
-			assert (m_name_ctrl);
+			JEWEL_ASSERT (m_name_ctrl);
 			m_name_ctrl->SetFocus();
 			return false;
 		}
@@ -528,14 +528,14 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	// Notify window higher in the hierarchy that they need to update for
 	// changed Account and if we needed the opening balance journal,
 	// the new OrdinaryJournal.
-	assert (GetParent());
+	JEWEL_ASSERT (GetParent());
 	wxEventType const event_type =
 	(	p_is_new_account?
 		PHATBOOKS_ACCOUNT_CREATED_EVENT:
 		PHATBOOKS_ACCOUNT_EDITED_EVENT
 	);
 	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
-	assert (frame);
+	JEWEL_ASSERT (frame);
 	PersistentObjectEvent::fire
 	(	frame,  // can't use "this", or event is missed
 		event_type,

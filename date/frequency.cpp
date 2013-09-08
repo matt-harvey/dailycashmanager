@@ -97,21 +97,21 @@ namespace
 	{
 		static Decimal const ret =
 			days_per_canonical_interval() / days_per_week();
-		assert (round(ret, 0) == ret);
+		JEWEL_ASSERT (round(ret, 0) == ret);
 		return ret;
 	}
 	Decimal const years_per_canonical_interval()
 	{
 		static Decimal const ret =
 			days_per_canonical_interval() / days_per_year();
-		assert (round(ret, 0) == ret);
+		JEWEL_ASSERT (round(ret, 0) == ret);
 		return ret;
 	}
 	Decimal const months_per_canonical_interval()
 	{
 		static Decimal const ret =
 			years_per_canonical_interval() * months_per_year();
-		assert (round(ret, 0) == ret);
+		JEWEL_ASSERT (round(ret, 0) == ret);
 		return ret;
 	}
 
@@ -120,7 +120,7 @@ namespace
 
 Frequency const canonical_frequency()
 {
-	assert
+	JEWEL_ASSERT
 	(	round(days_per_canonical_interval(), 0) ==
 		days_per_canonical_interval()
 	);
@@ -145,7 +145,7 @@ convert_to_annual(Frequency const& p_frequency, Decimal const& p_amount)
 	case interval_type::month_ends:
 		return p_amount * months_per_year() / steps;
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 }
 
@@ -163,7 +163,7 @@ convert_from_annual(Frequency const& p_frequency, Decimal const& p_amount)
 	case interval_type::month_ends:
 		return p_amount	* steps / months_per_year();
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 }
 
@@ -181,7 +181,7 @@ convert_to_canonical(Frequency const& p_frequency, Decimal const& p_amount)
 	case interval_type::month_ends:
 		return p_amount * months_per_canonical_interval() / steps;
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 }
 
@@ -199,7 +199,7 @@ convert_from_canonical(Frequency const& p_frequency, Decimal const& p_amount)
 	case interval_type::month_ends:
 		return p_amount * steps / months_per_canonical_interval();
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 }
 

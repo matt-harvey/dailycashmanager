@@ -4,6 +4,7 @@
 #include "account_dialog.hpp"
 #include "account_type.hpp"
 #include "phatbooks_exceptions.hpp"
+#include <jewel/assert.hpp>
 #include <wx/combobox.h>
 #include <wx/string.h>
 #include <wx/window.h>
@@ -22,12 +23,12 @@ namespace
 	(	account_super_type::AccountSuperType p_account_super_type
 	)
 	{
-		assert (!account_types(p_account_super_type).empty());
+		JEWEL_ASSERT (!account_types(p_account_super_type).empty());
 		account_type::AccountType default_account_type =
 			account_types(p_account_super_type)[0];
 		if (default_account_type == account_type::equity)
 		{
-			assert (account_types(p_account_super_type).size() > 1);
+			JEWEL_ASSERT (account_types(p_account_super_type).size() > 1);
 			default_account_type = account_types(p_account_super_type)[1];
 		}
 		return account_type_to_string(default_account_type);
@@ -73,7 +74,7 @@ AccountTypeCtrl::AccountTypeCtrl
 account_type::AccountType
 AccountTypeCtrl::account_type() const
 {
-	assert (!GetValue().IsEmpty());
+	JEWEL_ASSERT (!GetValue().IsEmpty());
 	return string_to_account_type(GetValue());
 }
 
@@ -87,7 +88,7 @@ AccountTypeCtrl::set_account_type(account_type::AccountType p_account_type)
 			"AccountTypeCtrl."
 		);
 	}
-	assert (m_account_super_type == super_type(p_account_type));
+	JEWEL_ASSERT (m_account_super_type == super_type(p_account_type));
 	SetValue(account_type_to_string(p_account_type));
 	return;
 }

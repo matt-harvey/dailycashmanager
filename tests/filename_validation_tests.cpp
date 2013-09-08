@@ -2,7 +2,7 @@
 
 #include "filename_validation.hpp"
 #include <UnitTest++/UnitTest++.h>
-#include <cassert>
+#include <jewel/assert.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -73,7 +73,7 @@ TEST(test_is_valid_filename_re_generally_bad_filenames)
 	nul_containing_string_2.push_back('b');
 	nul_containing_string_2.push_back('\0');
 	nul_containing_string_2.push_back('c');
-	assert (nul_containing_string_2.size() == 4);
+	JEWEL_ASSERT (nul_containing_string_2.size() == 4);
 	CHECK(!is_valid_filename(nul_containing_string_2, message));
 	CHECK(!is_valid_filename(nul_containing_string_2, message, true));
 	CHECK(!is_valid_filename(nul_containing_string_2, message, false));

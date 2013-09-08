@@ -24,11 +24,11 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <algorithm>
-#include <cassert>
 #include <string>
 #include <vector>
 
@@ -132,7 +132,7 @@ RepeaterImpl::set_next_date(boost::gregorian::date const& p_next_date)
 			"earlier than the entity creation date."
 		);
 	}
-	assert (p_next_date >= database_connection().entity_creation_date());
+	JEWEL_ASSERT (p_next_date >= database_connection().entity_creation_date());
 	load();
 	m_data->next_date = julian_int(p_next_date);
 	return;
@@ -175,7 +175,7 @@ RepeaterImpl::next_date(vector<gregorian::date>::size_type n)
 	{
 		throw UnsafeArithmeticException("Unsafe multiplication.");
 	}
-	assert (!multiplication_is_unsafe(units, n));
+	JEWEL_ASSERT (!multiplication_is_unsafe(units, n));
 	Size const steps = units * n;
 	switch (freq.step_type())
 	{
@@ -186,13 +186,13 @@ RepeaterImpl::next_date(vector<gregorian::date>::size_type n)
 		ret += gregorian::weeks(steps);
 		break;
 	case interval_type::month_ends:
-		assert ( (next_date(0) + date_duration(1)).day() == 1);
+		JEWEL_ASSERT ( (next_date(0) + date_duration(1)).day() == 1);
 		// FALL THROUGH
 	case interval_type::months:
 		ret += gregorian::months(steps);
 		break;
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 	return ret;
 }
@@ -203,7 +203,7 @@ RepeaterImpl::firings_till(gregorian::date const& limit)
 	load();
 	using gregorian::date;
 	boost::shared_ptr<vector<date> > ret(new vector<date>);
-	assert (ret->empty());
+	JEWEL_ASSERT (ret->empty());
 	date d = next_date(0);
 	typedef vector<gregorian::date>::size_type Size;
 	for (Size i = 0; d <= limit; d = next_date(++i))

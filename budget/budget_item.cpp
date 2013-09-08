@@ -10,6 +10,7 @@
 #include "phatbooks_persistent_object.hpp"
 #include "string_conv.hpp"
 #include <boost/lexical_cast.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <jewel/output_aux.hpp>
@@ -166,7 +167,7 @@ normalized_total
 	vector<BudgetItem>::const_iterator const& e
 )
 {
-	assert (e - b > 0);  // Assert precondition.
+	JEWEL_ASSERT (e - b > 0);  // Assert precondition.
 	PhatbooksDatabaseConnection& dbc = b->database_connection();
 	Commodity commodity(dbc);
 	// WARNING Temporary hack - if Accounts can ever have Commodities other
@@ -183,7 +184,7 @@ normalized_total
 	Decimal ret(0, prec);
 	for ( ; b != e; ++b)
 	{
-		assert
+		JEWEL_ASSERT
 		(	b->database_connection().supports_budget_frequency
 			(	b->frequency()
 			)

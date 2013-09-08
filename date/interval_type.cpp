@@ -3,8 +3,8 @@
 #include "date.hpp"
 #include "interval_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <jewel/assert.hpp>
 #include <wx/string.h>
-#include <cassert>
 
 namespace gregorian = boost::gregorian;
 
@@ -30,7 +30,7 @@ phrase(interval_type::IntervalType x, bool is_plural)
 			number_marker +
 			wxString(", on the last day of the month");
 	default:
-		assert (false);		
+		JEWEL_HARD_ASSERT (false);		
 	}
 }
 
@@ -51,9 +51,9 @@ is_valid_date_for_interval_type
 	case interval_type::month_ends:
 		return p_date == month_end_for_date(p_date);
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
-	assert (false);
+	JEWEL_HARD_ASSERT (false);
 }
 		
 

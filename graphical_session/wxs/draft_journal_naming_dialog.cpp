@@ -5,6 +5,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
+#include <jewel/assert.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -117,7 +118,7 @@ DraftJournalNamingDialog::on_ok_button_click(wxCommandEvent& event)
 		wxMessageBox("Transaction name cannot be blank.");
 		return;
 	}
-	assert (!trimmed_name.IsEmpty());
+	JEWEL_ASSERT (!trimmed_name.IsEmpty());
 	wxString const name = trimmed_name;
 	if (DraftJournal::exists(m_database_connection, name))
 	{
@@ -127,7 +128,7 @@ DraftJournalNamingDialog::on_ok_button_click(wxCommandEvent& event)
 		wxMessageBox(msg);
 		return;
 	}
-	assert (!DraftJournal::exists(m_database_connection, name));
+	JEWEL_ASSERT (!DraftJournal::exists(m_database_connection, name));
 	set_draft_journal_name(name);
 	EndModal(wxID_OK);
 	return;

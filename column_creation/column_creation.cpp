@@ -12,6 +12,7 @@
 #include <boost/optional.hpp>
 #include <consolixx/alignment.hpp>
 #include <consolixx/column.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/exception.hpp>
@@ -55,7 +56,7 @@ namespace
 			(	"Journal does not have id."
 			);
 		}
-		assert (journal.has_id());
+		JEWEL_ASSERT (journal.has_id());
 		return journal.id();
 	}
 	gregorian::date entry_col_aux_ordinary_journal_date(Entry const& entry)
@@ -74,7 +75,7 @@ namespace
 		{
 			return lexical_cast<string>(value(id));
 		}
-		assert (!id);
+		JEWEL_ASSERT (!id);
 		return "N/A";
 	}
 	wxString entry_col_aux_account_name(Entry const& entry)
@@ -419,7 +420,7 @@ create_account_budget_column
 )
 {
 	Frequency const frequency = p_database_connection.budget_frequency();
-	assert (frequency.num_steps() == 1);
+	JEWEL_ASSERT (frequency.num_steps() == 1);
 	return new AccumulatingColumn<Account, Decimal>
 	(	account_col_aux_budget,
 		Decimal(0, 0),

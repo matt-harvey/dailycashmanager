@@ -6,6 +6,7 @@
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <jewel/assert.hpp>
 #include <wx/window.h>
 #include <wx/gdicmn.h>
 
@@ -88,7 +89,7 @@ UnfilteredEntryListCtrl::do_set_non_date_columns
 			DecimalFormatFlags().clear(string_flags::dash_for_zero)
 		)
 	);
-	assert (num_columns() == 4);
+	JEWEL_ASSERT (num_columns() == 4);
 	return;
 }
 

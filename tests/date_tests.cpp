@@ -4,9 +4,8 @@
 #include "interval_type.hpp"
 #include "phatbooks_tests_common.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <jewel/assert.hpp>
 #include <UnitTest++/UnitTest++.h>
-#include <cassert>
-
 
 namespace gregorian = boost::gregorian;
 
@@ -25,7 +24,7 @@ TEST(test_is_valid_date_for_interval_type)
 			gregorian::date const first(y, m, 1);
 			gregorian::date const last =
 				first - gregorian::date_duration(1);
-			assert (last.day() >= 28);
+			JEWEL_ASSERT (last.day() >= 28);
 			CHECK
 			(	is_valid_date_for_interval_type
 				(	last,
@@ -38,8 +37,8 @@ TEST(test_is_valid_date_for_interval_type)
 				prev -= gregorian::date_duration(1)
 			)
 			{
-				assert (prev.day() >= 28);
-				assert (prev.day() <= 31);
+				JEWEL_ASSERT (prev.day() >= 28);
+				JEWEL_ASSERT (prev.day() <= 31);
 				CHECK
 				(	!is_valid_date_for_interval_type
 					(	prev,

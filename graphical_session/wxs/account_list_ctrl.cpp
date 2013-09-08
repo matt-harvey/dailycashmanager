@@ -13,12 +13,12 @@
 #include "phatbooks_database_connection.hpp"
 #include "string_flags.hpp"
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <wx/event.h>
 #include <wx/listctrl.h>
 #include <wx/notebook.h>
 #include <wx/string.h>
 #include <algorithm>
-#include <cassert>
 #include <set>
 
 using boost::optional;
@@ -112,7 +112,7 @@ AccountListCtrl::selected_accounts(set<Account::Id>& out) const
 			(	m_database_connection,
 				GetItemData(i)
 			);
-			assert (account.has_id());
+			JEWEL_ASSERT (account.has_id());
 			out.insert(account.id());
 		}
 	}
@@ -198,7 +198,7 @@ AccountListCtrl::update
 			InsertItem(i, it->name());
 		
 			// TODO Do a static assert to ensure second param will fit the id.
-			assert (it->has_id());
+			JEWEL_ASSERT (it->has_id());
 			SetItemData(i, it->id());
 
 			// Insert the balance string
@@ -229,7 +229,7 @@ AccountListCtrl::update
 		(	m_database_connection,
 			GetItemData(j)
 		);
-		assert (account.has_id());
+		JEWEL_ASSERT (account.has_id());
 		if (selected.find(account.id()) != selected.end())
 		{
 			SetItemState
@@ -268,7 +268,7 @@ AccountListCtrl::default_account() const
 	optional<Account> ret;
 	if (GetItemCount() != 0)
 	{
-		assert (GetItemCount() > 0);
+		JEWEL_ASSERT (GetItemCount() > 0);
 		ret = Account
 		(	m_database_connection,
 			GetItemData(GetTopItem())
@@ -280,7 +280,7 @@ AccountListCtrl::default_account() const
 void
 AccountListCtrl::select_only(Account const& p_account)
 {
-	assert (p_account.has_id());  // precondition	
+	JEWEL_ASSERT (p_account.has_id());  // precondition	
 
 	size_t const sz = GetItemCount();	
 	for (size_t i = 0; i != sz; ++i)

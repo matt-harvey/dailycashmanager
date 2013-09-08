@@ -9,6 +9,7 @@
 #include "report_panel.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/gdicmn.h>
@@ -50,7 +51,7 @@ BalanceSheetReport::BalanceSheetReport
 		p_maybe_max_date
 	)
 {
-	assert (m_balance_map.empty());
+	JEWEL_ASSERT (m_balance_map.empty());
 }
 
 void
@@ -69,7 +70,7 @@ BalanceSheetReport::refresh_map()
 {
 	// TODO Can we just ignore equity Accounts here?
 	m_balance_map.clear();
-	assert (m_balance_map.empty());
+	JEWEL_ASSERT (m_balance_map.empty());
 	optional<gregorian::date> const maybe_max_d = maybe_max_date();
 	gregorian::date const min_d = min_date();
 	typedef ActualOrdinaryEntryReader ReaderT;
@@ -93,7 +94,7 @@ BalanceSheetReport::refresh_map()
 			m_balance_map[account_id] = balance_datum;
 			jt = m_balance_map.find(account_id);
 		}
-		assert (jt != m_balance_map.end());
+		JEWEL_ASSERT (jt != m_balance_map.end());
 		gregorian::date const date = it->date();
 		if (maybe_max_d && (date > value(maybe_max_d)))
 		{
@@ -149,7 +150,7 @@ BalanceSheetReport::display_body()
 				equity_names.push_back(name);
 				break;
 			default:
-				assert (false);
+				JEWEL_HARD_ASSERT (false);
 			}
 		}
 		asset_names.sort();
@@ -164,7 +165,7 @@ BalanceSheetReport::display_body()
 	section_account_types.push_back(account_type::asset);
 	// WARNING Assuming no Equity Account.
 	section_account_types.push_back(account_type::liability);
-	assert (section_titles.size() == section_account_types.size());
+	JEWEL_ASSERT (section_titles.size() == section_account_types.size());
 
 	Decimal const zero
 	(	0,
@@ -187,7 +188,7 @@ BalanceSheetReport::display_body()
 			names = &liability_names;
 			break;
 		default:
-			assert (false);
+			JEWEL_HARD_ASSERT (false);
 		}
 		display_text(section_titles.at(i), 1);
 		
@@ -200,7 +201,7 @@ BalanceSheetReport::display_body()
 			Account const account(database_connection(), *it);
 			BalanceMap::const_iterator const jt =
 				m_balance_map.find(account.id());
-			assert (jt != m_balance_map.end());
+			JEWEL_ASSERT (jt != m_balance_map.end());
 			BalanceDatum const& datum = jt->second;
 			Decimal const& ob = datum.opening_balance;
 			Decimal const& cb = datum.closing_balance;

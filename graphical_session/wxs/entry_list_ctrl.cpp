@@ -19,6 +19,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
 #include <wx/event.h>
@@ -117,9 +118,9 @@ EntryListCtrl::create_actual_ordinary_entry_list
 		);
 		break;
 	default:
-		assert (false);  // Execution never reaches here.
+		JEWEL_HARD_ASSERT (false);  // Execution never reaches here.
 	}
-	assert (ret);
+	JEWEL_ASSERT (ret);
 	initialize(ret);
 	return ret;
 }
@@ -133,7 +134,7 @@ EntryListCtrl::create_reconciliation_entry_list
 	gregorian::date const& p_max_date
 )
 {
-	assert
+	JEWEL_ASSERT
 	(	super_type(p_account.account_type()) ==
 		account_super_type::balance_sheet
 	);
@@ -200,7 +201,7 @@ EntryListCtrl::populate()
 			process_push_candidate_entry(*it);
 			if (i % progress_scaling_factor == 0)
 			{
-				assert (progress <= progress_max);
+				JEWEL_ASSERT (progress <= progress_max);
 				progress_dialog.Update(progress);
 				++progress;
 			}
@@ -246,12 +247,12 @@ EntryListCtrl::adjust_comment_column_to_fit()
 gregorian::date
 EntryListCtrl::date_displayed(long p_row) const
 {
-	assert (date_col_num() == 0);
+	JEWEL_ASSERT (date_col_num() == 0);
 	optional<gregorian::date> const maybe_date = parse_date
 	(	GetItemText(p_row),
 		locale()
 	);
-	assert (maybe_date);
+	JEWEL_ASSERT (maybe_date);
 	return value(maybe_date);
 }
 
@@ -268,8 +269,8 @@ EntryListCtrl::row_for_date(gregorian::date const& p_date) const
 		// No Entries displayed
 		return 0;		
 	}
-	assert (max == num_rows);
-	assert (max > 0);
+	JEWEL_ASSERT (max == num_rows);
+	JEWEL_ASSERT (max > 0);
 	if (date_displayed(max - 1) <= p_date)
 	{
 		// Very end
@@ -278,7 +279,7 @@ EntryListCtrl::row_for_date(gregorian::date const& p_date) const
 	// Date is neither first nor last... find it using binary search.
 	while (true)
 	{
-		assert (min < max);
+		JEWEL_ASSERT (min < max);
 		long guess = (min + max) / 2;
 		if (guess == min)
 		{
@@ -290,9 +291,9 @@ EntryListCtrl::row_for_date(gregorian::date const& p_date) const
 			return guess;
 		}
 		gregorian::date const date = date_displayed(guess);
-		assert (guess > 0);
+		JEWEL_ASSERT (guess > 0);
 		gregorian::date const predecessor_date = date_displayed(guess - 1);
-		assert (predecessor_date <= date);
+		JEWEL_ASSERT (predecessor_date <= date);
 		if ((predecessor_date <= p_date) && (p_date <= date))
 		{
 			// Find end of contiguous rows showing this date
@@ -302,15 +303,15 @@ EntryListCtrl::row_for_date(gregorian::date const& p_date) const
 			}
 			return guess;
 		}
-		assert ((p_date < predecessor_date) || (date < p_date));
+		JEWEL_ASSERT ((p_date < predecessor_date) || (date < p_date));
 		if (p_date < predecessor_date)
 		{
-			assert (guess < max);
+			JEWEL_ASSERT (guess < max);
 			max = guess;
 		}
 		else if (date < p_date)
 		{
-			assert (guess > min);
+			JEWEL_ASSERT (guess > min);
 			min = guess;
 		}
 	}
@@ -326,7 +327,7 @@ EntryListCtrl::set_column_widths()
 void
 EntryListCtrl::process_push_candidate_entry(Entry const& p_entry)
 {
-	assert (p_entry.has_id());
+	JEWEL_ASSERT (p_entry.has_id());
 	do_process_candidate_entry_for_summary(p_entry);
 	if (do_approve_entry(p_entry)) push_back_entry(p_entry);
 	return;
@@ -338,7 +339,7 @@ EntryListCtrl::process_insertion_candidate_entry
 	long p_row
 )
 {
-	assert (p_entry.has_id());
+	JEWEL_ASSERT (p_entry.has_id());
 	do_process_candidate_entry_for_summary(p_entry);
 	if (do_approve_entry(p_entry)) insert_entry(p_entry, p_row);
 	return;
@@ -394,19 +395,19 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 	{
 		return;
 	}
-	assert (p_journal.is_actual());
+	JEWEL_ASSERT (p_journal.is_actual());
 	vector<Entry>::const_iterator it = p_journal.entries().begin();
 	vector<Entry>::const_iterator const end = p_journal.entries().end();
 	wxString const wx_date_string = date_format_wx(p_journal.date());
 	for ( ; it != end; ++it)
 	{
 		long updated_pos = -1;
-		assert (it->has_id());
+		JEWEL_ASSERT (it->has_id());
 		IdSet::const_iterator const jt = m_id_set.find(it->id());
 		if (jt != m_id_set.end())
 		{
 			long const pos = FindItem(-1, it->id());
-			assert
+			JEWEL_ASSERT
 			(	GetItemData(pos) ==
 				static_cast<unsigned long>(it->id())
 			);
@@ -505,7 +506,7 @@ vector<SummaryDatum> const&
 EntryListCtrl::do_get_summary_data() const
 {
 	static const vector<SummaryDatum> ret;
-	assert (ret.empty());
+	JEWEL_ASSERT (ret.empty());
 	return ret;
 }
 
@@ -541,7 +542,7 @@ void
 EntryListCtrl::push_back_entry(Entry const& p_entry)
 {
 	long const i = GetItemCount();
-	assert (date_col_num() == 0);
+	JEWEL_ASSERT (date_col_num() == 0);
 	InsertItem(i, date_format_wx(p_entry.date()));
 	do_set_non_date_columns(i, p_entry);
 
@@ -557,7 +558,7 @@ void
 EntryListCtrl::insert_entry(Entry const& p_entry, long p_row)
 {
 	gregorian::date const date = p_entry.date();
-	assert (p_row >= -1);
+	JEWEL_ASSERT (p_row >= -1);
 	long const pos = ((p_row == -1)? row_for_date(date): p_row);
 	InsertItem(pos, date_format_wx(date));
 	do_set_non_date_columns(pos, p_entry);
@@ -574,7 +575,7 @@ EntryListCtrl::remove_if_present(Entry::Id p_entry_id)
 	if (it != m_id_set.end())
 	{
 		long const pos = FindItem(-1, p_entry_id);
-		assert (GetItemData(pos) == static_cast<unsigned long>(p_entry_id));
+		JEWEL_ASSERT (GetItemData(pos) == static_cast<unsigned long>(p_entry_id));
 		do_process_removal_for_summary(pos);
 		DeleteItem(pos);
 		m_id_set.erase(it);

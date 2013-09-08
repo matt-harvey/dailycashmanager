@@ -15,6 +15,7 @@
 #include "setup_wizard.hpp"
 #include "sizing.hpp"
 #include "visibility.hpp"
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -23,7 +24,6 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
-#include <cassert>
 #include <numeric>
 #include <set>
 #include <vector>
@@ -52,7 +52,7 @@ namespace
 	)
 	{
 		vector<Account> ret;
-		assert (ret.empty());
+		JEWEL_ASSERT (ret.empty());
 		typedef vector<account_type::AccountType> ATypeVec;
 		ATypeVec const& account_types =
 			phatbooks::account_types(p_account_super_type);
@@ -137,7 +137,7 @@ MultiAccountPanel::MultiAccountPanel
 	{
 		push_row();
 	}
-	assert (num_rows() >= p_minimum_num_rows);
+	JEWEL_ASSERT (num_rows() >= p_minimum_num_rows);
 
 	// "Admin"
 	FitInside();
@@ -173,13 +173,13 @@ MultiAccountPanel::pop_row()
 	{
 		return false;
 	}
-	assert (m_account_name_boxes.size() > 1);
+	JEWEL_ASSERT (m_account_name_boxes.size() > 1);
 #	ifndef NDEBUG
 		vector<wxTextCtrl*>::size_type const sz = m_account_name_boxes.size();
-		assert (sz > 0);
-		assert (sz == m_account_type_boxes.size());
-		assert (sz == m_description_boxes.size());
-		assert (sz == m_opening_balance_boxes.size());
+		JEWEL_ASSERT (sz > 0);
+		JEWEL_ASSERT (sz == m_account_type_boxes.size());
+		JEWEL_ASSERT (sz == m_description_boxes.size());
+		JEWEL_ASSERT (sz == m_opening_balance_boxes.size());
 #	endif
 	pop_widget_from(m_opening_balance_boxes);
 	pop_widget_from(m_description_boxes);
@@ -197,10 +197,10 @@ MultiAccountPanel::summary_amount() const
 	{
 		return total_amount();
 	}
-	assert (m_account_super_type == account_super_type::pl);
+	JEWEL_ASSERT (m_account_super_type == account_super_type::pl);
 	SetupWizard::AccountPage const* const parent =
 		dynamic_cast<SetupWizard::AccountPage const*>(GetParent());
-	assert (parent);
+	JEWEL_ASSERT (parent);
 	return parent->total_balance_sheet_amount() - total_amount();
 }
 
@@ -222,9 +222,9 @@ size_t
 MultiAccountPanel::num_rows() const
 {
 	size_t const sz = m_account_name_boxes.size();
-	assert (sz == m_account_type_boxes.size());
-	assert (sz == m_description_boxes.size());
-	assert (sz == m_opening_balance_boxes.size());
+	JEWEL_ASSERT (sz == m_account_type_boxes.size());
+	JEWEL_ASSERT (sz == m_description_boxes.size());
+	JEWEL_ASSERT (sz == m_opening_balance_boxes.size());
 	return m_account_name_boxes.size();
 }
 
@@ -251,13 +251,13 @@ MultiAccountPanel::blank_account()
 {
 	Account ret(database_connection());
 	wxString const empty_string;
-	assert (empty_string.empty());
+	JEWEL_ASSERT (empty_string.empty());
 	ret.set_name(empty_string);
 	ret.set_description(empty_string);
 	ret.set_visibility(visibility::visible);
 	vector<account_type::AccountType> const& atypes =
 		account_types(m_account_super_type);
-	assert (!atypes.empty());
+	JEWEL_ASSERT (!atypes.empty());
 	ret.set_account_type(atypes.at(0));
 	return ret;
 }
@@ -331,7 +331,7 @@ MultiAccountPanel::set_commodity(Commodity const& p_commodity)
 	{
 		return;
 	}
-	assert (precision != m_commodity.precision());
+	JEWEL_ASSERT (precision != m_commodity.precision());
 	vector<SpecialDecimalTextCtrl*>::size_type i = 0;
 	vector<SpecialDecimalTextCtrl*>::size_type const sz =
 		m_opening_balance_boxes.size();
@@ -357,9 +357,9 @@ MultiAccountPanel::selected_augmented_accounts
 #	endif
 	vector<AugmentedAccount>::size_type const sz =
 		m_account_name_boxes.size();
-	assert (m_account_type_boxes.size() == sz);
-	assert (m_description_boxes.size() == sz);
-	assert (m_opening_balance_boxes.size() == sz);
+	JEWEL_ASSERT (m_account_type_boxes.size() == sz);
+	JEWEL_ASSERT (m_description_boxes.size() == sz);
+	JEWEL_ASSERT (m_opening_balance_boxes.size() == sz);
 	vector<AugmentedAccount>::size_type i = 0;
 	for ( ; i != sz; ++i)
 	{
@@ -371,7 +371,7 @@ MultiAccountPanel::selected_augmented_accounts
 		account.set_name(m_account_name_boxes[i]->GetValue().Trim());
 		account_type::AccountType const account_type =
 			m_account_type_boxes[i]->account_type();
-		assert (super_type(account_type) == m_account_super_type);
+		JEWEL_ASSERT (super_type(account_type) == m_account_super_type);
 		account.set_account_type(account_type);
 		account.set_description(m_description_boxes[i]->GetValue());
 		account.set_visibility(visibility::visible);
@@ -386,11 +386,11 @@ MultiAccountPanel::selected_augmented_accounts
 			m_opening_balance_boxes[i]->amount()
 		);
 
-		assert (!account.has_id());
+		JEWEL_ASSERT (!account.has_id());
 		out.push_back(augmented_account);
 	}
 #	ifndef NDEBUG
-		assert (out.size() == original_size + sz);
+		JEWEL_ASSERT (out.size() == original_size + sz);
 #	endif
 	return;
 }
@@ -462,7 +462,7 @@ MultiAccountPanel::SpecialDecimalTextCtrl::do_on_kill_focus
 	GetParent()->TransferDataToWindow();
 	MultiAccountPanel* const parent =
 		dynamic_cast<MultiAccountPanel*>(GetParent());	
-	assert (parent);
+	JEWEL_ASSERT (parent);
 	parent->update_summary();
 	event.Skip();
 	return;

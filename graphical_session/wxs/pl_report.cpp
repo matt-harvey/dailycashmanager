@@ -10,6 +10,7 @@
 #include "report_panel.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/gdicmn.h>
@@ -104,7 +105,7 @@ PLReport::refresh_map()
 	// TODO There is a lot of duplicated code between here and
 	// BalanceSheetReport::refresh_map().
 	m_map.clear();
-	assert (m_map.empty());
+	JEWEL_ASSERT (m_map.empty());
 	optional<gregorian::date> const maybe_max_d = maybe_max_date();
 	gregorian::date const min_d = min_date();
 	Decimal const zero
@@ -130,14 +131,14 @@ PLReport::refresh_map()
 		Map::iterator jt = m_map.find(account_id);
 		if (jt == m_map.end())
 		{
-			assert
+			JEWEL_ASSERT
 			(	database_connection().default_commodity() ==
 				account.commodity()
 			);
 			m_map[account_id] = zero;
 			jt = m_map.find(account_id);
 		}
-		assert (jt != m_map.end());
+		JEWEL_ASSERT (jt != m_map.end());
 		gregorian::date const date = it->date();
 		if (maybe_max_d && (date > value(maybe_max_d)))
 		{
@@ -188,7 +189,7 @@ PLReport::display_body()
 				expense_names.push_back(name);
 				break;
 			default:
-				assert (false);
+				JEWEL_HARD_ASSERT (false);
 			}
 		}
 		revenue_names.sort();
@@ -200,7 +201,7 @@ PLReport::display_body()
 	vector<account_type::AccountType> section_account_types;
 	section_account_types.push_back(account_type::revenue);
 	section_account_types.push_back(account_type::expense);
-	assert (section_titles.size() == section_account_types.size());
+	JEWEL_ASSERT (section_titles.size() == section_account_types.size());
 
 	Decimal const zero
 	(	0,
@@ -223,7 +224,7 @@ PLReport::display_body()
 			names = &expense_names;
 			break;
 		default:
-			assert (false);
+			JEWEL_HARD_ASSERT (false);
 		}
 		display_text(section_titles.at(i), 1);
 
@@ -235,7 +236,7 @@ PLReport::display_body()
 		{
 			Account const account(database_connection(), *it);
 			Map::const_iterator const jt = m_map.find(account.id());
-			assert (jt != m_map.end());
+			JEWEL_ASSERT (jt != m_map.end());
 			Decimal const& b =
 			(	(account_type == account_type::expense)?
 				jt->second:

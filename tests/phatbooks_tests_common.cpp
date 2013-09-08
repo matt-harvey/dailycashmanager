@@ -8,7 +8,7 @@
 #include "visibility.hpp"
 #include <boost/filesystem.hpp>
 #include <jewel/decimal.hpp>
-#include <cassert>
+#include <jewel/assert.hpp>
 #include <cstdlib>
 #include <iostream>
 
@@ -101,16 +101,16 @@ TestFixture::TestFixture():
 	pdbc->set_caching_level(10);
 	setup_test_commodities(*pdbc);
 	setup_test_accounts(*pdbc);
-	assert (pdbc->is_valid());
+	JEWEL_ASSERT (pdbc->is_valid());
 }
 
 
 TestFixture::~TestFixture()
 {
-	assert (pdbc->is_valid());
+	JEWEL_ASSERT (pdbc->is_valid());
 	delete pdbc;
 	filesystem::remove(db_filepath);
-	assert (!file_exists(db_filepath));
+	JEWEL_ASSERT (!file_exists(db_filepath));
 }
 
 

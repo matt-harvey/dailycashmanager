@@ -11,6 +11,7 @@
 #include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/listctrl.h>
@@ -111,7 +112,7 @@ ReconciliationEntryListCtrl::do_set_non_date_columns
 		reconciled_col_num(),
 		reconciliation_status_marker(p_entry.is_reconciled())
 	);
-	assert (num_columns() == 4);
+	JEWEL_ASSERT (num_columns() == 4);
 	return;
 }
 
@@ -133,7 +134,7 @@ ReconciliationEntryListCtrl::do_insert_non_date_columns()
 		wxString("Reconciled?"),
 		wxLIST_FORMAT_RIGHT
 	);
-	assert (num_columns() == 4);
+	JEWEL_ASSERT (num_columns() == 4);
 	return;
 }
 
@@ -153,16 +154,16 @@ ReconciliationEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 	{
 		// We include unreconciled Entries even if they're prior to the
 		// min_date(), providing they're not later than max_date().
-		assert (date <= max_date());
-		assert
+		JEWEL_ASSERT (date <= max_date());
+		JEWEL_ASSERT
 		(	(date > database_connection().opening_balance_journal_date()) ||
 			p_entry.is_reconciled()
 		);
 		return !p_entry.is_reconciled();
 	}
-	assert (p_entry.account() == account());
-	assert (date >= min_date());
-	assert (date <= max_date());
+	JEWEL_ASSERT (p_entry.account() == account());
+	JEWEL_ASSERT (date >= min_date());
+	JEWEL_ASSERT (date <= max_date());
 	return true;
 }
 
@@ -181,7 +182,7 @@ ReconciliationEntryListCtrl::do_get_num_columns() const
 vector<SummaryDatum> const&
 ReconciliationEntryListCtrl::do_get_summary_data() const
 {
-	assert (!m_summary_data->empty());
+	JEWEL_ASSERT (!m_summary_data->empty());
 	m_summary_data->at(0).set_amount(m_closing_balance);
 	m_summary_data->at(1).set_amount(m_reconciled_closing_balance);
 	return *m_summary_data;
@@ -193,7 +194,7 @@ ReconciliationEntryListCtrl::do_initialize_summary_data()
 	m_closing_balance = Decimal(0, account().commodity().precision());
 	m_reconciled_closing_balance =
 		Decimal(0, account().commodity().precision());
-	assert (!m_summary_data);
+	JEWEL_ASSERT (!m_summary_data);
 	m_summary_data = new std::vector<SummaryDatum>;
 	SummaryDatum a
 	(	wxString("Closing balance"),
@@ -217,7 +218,7 @@ ReconciliationEntryListCtrl::do_process_candidate_entry_for_summary
 	{
 		return;
 	}
-	assert (p_entry.account() == account());
+	JEWEL_ASSERT (p_entry.account() == account());
 	jewel::Decimal const amount = p_entry.amount();
 	if (p_entry.date() <= max_date())
 	{
@@ -253,9 +254,9 @@ ReconciliationEntryListCtrl::on_item_right_click(wxListEvent& event)
 	int const col = reconciled_col_num();
 	Entry::Id const entry_id = event.GetData();	
 	long const pos = event.GetIndex();
-	assert (FindItem(-1, entry_id) == pos);
-	assert (entry_id >= 0);
-	assert (GetItemData(pos) == static_cast<size_t>(entry_id));
+	JEWEL_ASSERT (FindItem(-1, entry_id) == pos);
+	JEWEL_ASSERT (entry_id >= 0);
+	JEWEL_ASSERT (GetItemData(pos) == static_cast<size_t>(entry_id));
 
 	Entry entry(database_connection(), entry_id);
 	bool const old_reconciliation_status = entry.is_reconciled();
@@ -271,8 +272,8 @@ ReconciliationEntryListCtrl::on_item_right_click(wxListEvent& event)
 	}
 	entry.save();
 
-	assert (entry.has_id());
-	assert (entry.id() == entry_id);
+	JEWEL_ASSERT (entry.has_id());
+	JEWEL_ASSERT (entry.id() == entry_id);
 	PersistentObjectEvent::fire
 	(	this,
 		PHATBOOKS_RECONCILIATION_STATUS_EVENT,
@@ -281,7 +282,7 @@ ReconciliationEntryListCtrl::on_item_right_click(wxListEvent& event)
 
 	ReconciliationListPanel* parent =
 		dynamic_cast<ReconciliationListPanel*>(GetParent());
-	assert (parent);
+	JEWEL_ASSERT (parent);
 	parent->postconfigure_summary();
 	return;
 }

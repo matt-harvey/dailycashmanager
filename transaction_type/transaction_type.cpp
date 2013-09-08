@@ -8,9 +8,9 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <jewel/assert.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <wx/string.h>
-#include <cassert>
 #include <map>
 #include <set>
 #include <vector>
@@ -110,7 +110,7 @@ transaction_types()
 		}
 		initialized = true;
 	}
-	assert (ret.size() == static_cast<size_t>(num_transaction_types));
+	JEWEL_ASSERT (ret.size() == static_cast<size_t>(num_transaction_types));
 	return ret;
 }
 
@@ -154,8 +154,8 @@ available_transaction_types
 					}
 				}
 			}
-			assert (transaction_type_support >= 0);
-			assert (transaction_type_support <= 1);
+			JEWEL_ASSERT (transaction_type_support >= 0);
+			JEWEL_ASSERT (transaction_type_support <= 1);
 
 			// Bare scope
 			{
@@ -174,8 +174,8 @@ available_transaction_types
 					}
 				}
 			}
-			assert (transaction_type_support >= 0);
-			assert (transaction_type_support <= 2);
+			JEWEL_ASSERT (transaction_type_support >= 0);
+			JEWEL_ASSERT (transaction_type_support <= 2);
 		
 			if (transaction_type_support == 2)
 			{
@@ -202,7 +202,7 @@ transaction_type_to_verb(TransactionType p_transaction_type)
 	case generic_transaction:
 		return generic_verb();
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 }
 
@@ -214,7 +214,7 @@ transaction_type_from_verb(wxString const& p_phrase)
 	static bool calculated_already = false;
 	if (!calculated_already)
 	{
-		assert (dict.empty());
+		JEWEL_ASSERT (dict.empty());
 		dict[expenditure_verb()] = expenditure_transaction;
 		dict[revenue_verb()] = revenue_transaction;
 		dict[balance_sheet_verb()] = balance_sheet_transaction;
@@ -222,8 +222,8 @@ transaction_type_from_verb(wxString const& p_phrase)
 		dict[generic_verb()] = generic_transaction;
 		calculated_already = true;
 	}
-	assert (!dict.empty());
-	assert
+	JEWEL_ASSERT (!dict.empty());
+	JEWEL_ASSERT
 	(	dict.size() ==
 		static_cast<Dict::size_type>(num_transaction_types)
 	);
@@ -235,7 +235,7 @@ transaction_type_from_verb(wxString const& p_phrase)
 			"correspond to any TransactionType."
 		);
 	}
-	assert (it != dict.end());
+	JEWEL_ASSERT (it != dict.end());
 	return it->second;
 }
 
@@ -263,7 +263,7 @@ source_account_types
 				++i
 			)
 			{
-				assert (ret_array[i].empty());
+				JEWEL_ASSERT (ret_array[i].empty());
 			}
 #		endif
 
@@ -297,8 +297,8 @@ source_account_types
 #	ifndef NDEBUG
 		vector<account_type::AccountType> const& debug_ret =
 			ret_array[static_cast<size_t>(p_transaction_type)];
-		assert (!debug_ret.empty());
-		assert (initialized);
+		JEWEL_ASSERT (!debug_ret.empty());
+		JEWEL_ASSERT (initialized);
 #	endif
 
 	return ret_array[static_cast<size_t>(p_transaction_type)];
@@ -355,7 +355,7 @@ destination_account_types
 				++i
 			)
 			{
-				assert (ret_array[i].empty());
+				JEWEL_ASSERT (ret_array[i].empty());
 			}
 #		endif
 
@@ -389,8 +389,8 @@ destination_account_types
 #	ifndef NDEBUG
 		vector<account_type::AccountType> const& debug_ret =
 			ret_array[static_cast<size_t>(p_transaction_type)];
-		assert (!debug_ret.empty());
-		assert (initialized);
+		JEWEL_ASSERT (!debug_ret.empty());
+		JEWEL_ASSERT (initialized);
 #	endif
 
 	return ret_array[static_cast<size_t>(p_transaction_type)];
@@ -420,9 +420,9 @@ natural_transaction_type(Account const& account_x, Account const& account_y)
 		case account_type::pure_envelope:
 			return generic_transaction;
 		default:
-			assert (false);
+			JEWEL_HARD_ASSERT (false);
 		}
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	case account_type::equity:
 		return generic_transaction;
 	case account_type::revenue:
@@ -438,9 +438,9 @@ natural_transaction_type(Account const& account_x, Account const& account_y)
 		case account_type::pure_envelope:
 			return envelope_transaction;
 		default:
-			assert (false);
+			JEWEL_HARD_ASSERT (false);
 		}
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	case account_type::expense:
 		switch (account_type_y)
 		{
@@ -454,16 +454,16 @@ natural_transaction_type(Account const& account_x, Account const& account_y)
 		case account_type::pure_envelope:
 			return envelope_transaction;
 		default:
-			assert (false);
+			JEWEL_HARD_ASSERT (false);
 		}
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	case account_type::pure_envelope:
 		return envelope_transaction;
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 
-	assert (false);
+	JEWEL_HARD_ASSERT (false);
 }
 
 }  // namespace phatbooks

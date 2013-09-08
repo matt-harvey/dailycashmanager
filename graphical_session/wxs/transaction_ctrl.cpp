@@ -37,6 +37,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/unordered_set.hpp>
 #include <jewel/array_utilities.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/on_windows.hpp>
@@ -52,7 +53,6 @@
 #include <wx/textctrl.h>
 #include <wx/wupdlock.h>
 #include <algorithm>
-#include <cassert>
 #include <iostream>
 #include <iterator>
 #include <vector>
@@ -217,7 +217,7 @@ TransactionCtrl::TransactionCtrl
 		transaction_side::destination,
 		database_connection()
 	);
-	assert (text_box_size.x == medium_width());
+	JEWEL_ASSERT (text_box_size.x == medium_width());
 	top_sizer().Add
 	(	m_source_entry_ctrl,
 		wxGBPosition(current_row(), 0),
@@ -363,10 +363,10 @@ TransactionCtrl::configure_for_journal_editing()
 {
 	wxWindowUpdateLocker const update_locker(this);
 
-	assert (m_journal);
+	JEWEL_ASSERT (m_journal);
 	transaction_type::TransactionType const initial_transaction_type
 		= m_journal->transaction_type();
-	assert_transaction_type_validity(initial_transaction_type);
+	JEWEL_ASSERT(initial_transaction_type);
 	wxSize text_box_size;
 	vector<transaction_type::TransactionType> available_transaction_types;
 	available_transaction_types.push_back(initial_transaction_type);
@@ -386,7 +386,7 @@ TransactionCtrl::configure_for_journal_editing()
 		available_transaction_types
 	);
 
-	assert (text_box_size.x == medium_width());
+	JEWEL_ASSERT (text_box_size.x == medium_width());
 
 	m_source_entry_ctrl = new EntryGroupCtrl
 	(	this,
@@ -423,8 +423,8 @@ TransactionCtrl::configure_for_journal_editing()
 	bool const is_ordinary = static_cast<bool>(oj);
 	DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal);
 	bool const is_draft = static_cast<bool>(dj);
-	assert (!(is_ordinary && is_draft));
-	assert (is_ordinary || is_draft);
+	JEWEL_ASSERT (!(is_ordinary && is_draft));
+	JEWEL_ASSERT (is_ordinary || is_draft);
 
 	// Date and Frequency controls
 	m_frequency_ctrl = new FrequencyCtrl
@@ -444,7 +444,7 @@ TransactionCtrl::configure_for_journal_editing()
 		// Repeaters, or with more than 1 Repeater. This next bit only works
 		// if that remains true, AND non-GUI-created DraftJournals are never
 		// accessed from the GUI!
-		assert (dj->repeaters().size() == 1);
+		JEWEL_ASSERT (dj->repeaters().size() == 1);
 		maybe_frequency = dj->repeaters().at(0).frequency();
 	}	
 	m_frequency_ctrl->set_frequency(maybe_frequency);
@@ -456,12 +456,12 @@ TransactionCtrl::configure_for_journal_editing()
 		// Repeaters, or with more than 1 Repeater. This next bit only works
 		// if that remains true, AND non-GUI-created DraftJournals are never
 		// accessed from the GUI!
-		assert (dj->repeaters().size() == 1);
+		JEWEL_ASSERT (dj->repeaters().size() == 1);
 		date = dj->repeaters().at(0).next_date();
 	}
 	else
 	{
-		assert (is_ordinary);
+		JEWEL_ASSERT (is_ordinary);
 		date = oj->date();
 	}
 	m_date_ctrl = new DateCtrl
@@ -545,9 +545,9 @@ TransactionCtrl::primary_amount() const
 void
 TransactionCtrl::update_for_new(Account const& p_saved_object)
 {
-	assert (m_source_entry_ctrl);
+	JEWEL_ASSERT (m_source_entry_ctrl);
 	m_source_entry_ctrl->update_for_new(p_saved_object);
-	assert (m_destination_entry_ctrl);
+	JEWEL_ASSERT (m_destination_entry_ctrl);
 	m_destination_entry_ctrl->update_for_new(p_saved_object);
 	return;
 }
@@ -555,9 +555,9 @@ TransactionCtrl::update_for_new(Account const& p_saved_object)
 void
 TransactionCtrl::update_for_amended(Account const& p_saved_object)
 {
-	assert (m_source_entry_ctrl);
+	JEWEL_ASSERT (m_source_entry_ctrl);
 	m_source_entry_ctrl->update_for_amended(p_saved_object);
-	assert (m_destination_entry_ctrl);
+	JEWEL_ASSERT (m_destination_entry_ctrl);
 	m_destination_entry_ctrl->update_for_amended(p_saved_object);
 	return;
 }
@@ -595,7 +595,7 @@ void
 TransactionCtrl::on_delete_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	assert (m_journal);
+	JEWEL_ASSERT (m_journal);
 	wxMessageDialog confirmation
 	(	this,
 		wxString("Are you sure you want to delete this entire transaction?"),
@@ -617,8 +617,8 @@ void
 TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	assert (m_source_entry_ctrl);
-	assert (m_destination_entry_ctrl);
+	JEWEL_ASSERT (m_source_entry_ctrl);
+	JEWEL_ASSERT (m_destination_entry_ctrl);
 	if (Validate() && TransferDataFromWindow())
 	{
 		if (is_balanced())
@@ -675,7 +675,7 @@ void
 TransactionCtrl::tell_top_panel_to_configure_transaction_ctrl()
 {
 	TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
-	assert (panel);
+	JEWEL_ASSERT (panel);
 	// TODO HIGH PRIORITY The next line may destroy "this"! This
 	// may not matter, but it's horrible. We should just reset all
 	// the widgets within the TransactionCtrl instead.
@@ -719,7 +719,7 @@ bool
 TransactionCtrl::post_journal()
 {
 	ProtoJournal journal;
-	assert (m_transaction_type_ctrl->transaction_type());
+	JEWEL_ASSERT (m_transaction_type_ctrl->transaction_type());
 	transaction_type::TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
 	journal.set_transaction_type(ttype);
@@ -745,7 +745,7 @@ TransactionCtrl::post_journal()
 		DraftJournal dj(database_connection());
 		dj.mimic(journal);
 		Repeater repeater(database_connection());
-		assert (m_date_ctrl->date());
+		JEWEL_ASSERT (m_date_ctrl->date());
 		gregorian::date const next_date = value(m_date_ctrl->date());
 		Frequency const freq = value(maybe_frequency);
 
@@ -754,7 +754,7 @@ TransactionCtrl::post_journal()
 		{
 			if (freq.step_type() == interval_type::months)
 			{
-				assert (next_date.day() > 28);
+				JEWEL_ASSERT (next_date.day() > 28);
 				wxMessageBox
 				(	"Next date for this recurring transaction must be "
 					"the 28th of the month or earlier."
@@ -766,8 +766,8 @@ TransactionCtrl::post_journal()
 				// TODO If interval_type is month_end, use month_end_for_date
 				// function to generate and suggest using the last day of the
 				// month instead of the entered date.
-				assert (freq.step_type() == interval_type::month_ends);
-				assert (month_end_for_date(next_date) != next_date);
+				JEWEL_ASSERT (freq.step_type() == interval_type::month_ends);
+				JEWEL_ASSERT (month_end_for_date(next_date) != next_date);
 				wxMessageBox
 				(	"Date must be the last day of the month."
 				);
@@ -775,7 +775,7 @@ TransactionCtrl::post_journal()
 			}
 		}
 
-		assert (is_valid_date_for_interval_type(next_date, freq.step_type()));
+		JEWEL_ASSERT (is_valid_date_for_interval_type(next_date, freq.step_type()));
 		repeater.set_next_date(next_date);
 		repeater.set_frequency(freq);
 
@@ -795,7 +795,7 @@ TransactionCtrl::post_journal()
 			return false;
 		}
 
-		assert (dj.is_balanced());
+		JEWEL_ASSERT (dj.is_balanced());
 		dj.save();
 
 		PersistentObjectEvent::fire
@@ -807,12 +807,12 @@ TransactionCtrl::post_journal()
 	}
 	else
 	{
-		assert (!maybe_frequency);
+		JEWEL_ASSERT (!maybe_frequency);
 		OrdinaryJournal oj(database_connection());
 		oj.mimic(journal);
-		assert (m_date_ctrl->date());
+		JEWEL_ASSERT (m_date_ctrl->date());
 		oj.set_date(value(m_date_ctrl->date()));
-		assert (oj.is_balanced());
+		JEWEL_ASSERT (oj.is_balanced());
 		oj.save();
 
 		PersistentObjectEvent::fire
@@ -822,7 +822,7 @@ TransactionCtrl::post_journal()
 		);
 		return true;
 	}
-	assert (false);
+	JEWEL_HARD_ASSERT (false);
 }
 
 bool
@@ -837,13 +837,13 @@ TransactionCtrl::remove_journal()
 			vector<Entry> const& entries = m_journal->entries();
 			for (vector<Entry>::size_type i = 0; i != entries.size(); ++i)
 			{
-				assert (!entries[i].has_id());
+				JEWEL_ASSERT (!entries[i].has_id());
 			}
 		}
 #	endif
 		return true;
 	}
-	assert (m_journal);
+	JEWEL_ASSERT (m_journal);
 	PersistentJournal::Id const doomed_journal_id = m_journal->id();
 	bool const is_draft =
 		journal_id_is_draft(database_connection(), doomed_journal_id);
@@ -853,7 +853,7 @@ TransactionCtrl::remove_journal()
 	vector<Entry>::const_iterator const end = doomed_entries.end();
 	for ( ; it != end; ++it) doomed_entry_ids.push_back(it->id());
 	m_journal->remove();
-	assert (!m_journal->has_id());
+	JEWEL_ASSERT (!m_journal->has_id());
 	wxEventType event_type(0);
 	if (is_draft)
 	{
@@ -871,7 +871,7 @@ TransactionCtrl::remove_journal()
 		);
 		event_type = PHATBOOKS_ORDINARY_JOURNAL_DELETED_EVENT;
 	}
-	assert (event_type != static_cast<wxEventType>(0));
+	JEWEL_ASSERT (event_type != static_cast<wxEventType>(0));
 	PersistentObjectEvent::fire(this, event_type, doomed_journal_id);
 
 	return true;
@@ -880,8 +880,8 @@ TransactionCtrl::remove_journal()
 bool
 TransactionCtrl::save_existing_journal()
 {
-	assert (m_journal);
-	assert (m_transaction_type_ctrl->transaction_type());
+	JEWEL_ASSERT (m_journal);
+	JEWEL_ASSERT (m_transaction_type_ctrl->transaction_type());
 	transaction_type::TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
 	m_journal->set_transaction_type(ttype);
@@ -895,7 +895,7 @@ TransactionCtrl::save_existing_journal()
 	vector<Entry> const& old_entries = m_journal->entries();
 	for (vector<Entry>::size_type i = 0; i != old_entries.size(); ++i)
 	{
-		assert (old_entries[i].has_id());
+		JEWEL_ASSERT (old_entries[i].has_id());
 		doomed.insert(old_entries[i].id());
 	}
 
@@ -926,8 +926,8 @@ TransactionCtrl::save_existing_journal()
 	if (maybe_frequency)
 	{
 		DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal);
-		assert (dj);
-		assert (m_date_ctrl->date());
+		JEWEL_ASSERT (dj);
+		JEWEL_ASSERT (m_date_ctrl->date());
 		gregorian::date const next_date = value(m_date_ctrl->date());
 		Frequency const freq = value(maybe_frequency);
 		
@@ -937,7 +937,7 @@ TransactionCtrl::save_existing_journal()
 		{
 			if (freq.step_type() == interval_type::months)
 			{
-				assert (next_date.day() > 28);
+				JEWEL_ASSERT (next_date.day() > 28);
 				wxMessageBox
 				(	"Next date for this recurring transaction must be "
 					"the 28th of the month or earlier."
@@ -949,8 +949,8 @@ TransactionCtrl::save_existing_journal()
 				// TODO If interval_type is month_end, use month_end_for_date
 				// function to generate and suggest using the last day of the
 				// month instead of the entered date.
-				assert (freq.step_type() == interval_type::month_ends);
-				assert (month_end_for_date(next_date) != next_date);
+				JEWEL_ASSERT (freq.step_type() == interval_type::month_ends);
+				JEWEL_ASSERT (month_end_for_date(next_date) != next_date);
 				wxMessageBox
 				(	"Date must be the last day of the month."
 				);
@@ -958,7 +958,7 @@ TransactionCtrl::save_existing_journal()
 			}
 		}
 
-		assert (is_valid_date_for_interval_type(next_date, freq.step_type()));
+		JEWEL_ASSERT (is_valid_date_for_interval_type(next_date, freq.step_type()));
 		
 		if (dj->repeaters().empty())
 		{
@@ -971,13 +971,13 @@ TransactionCtrl::save_existing_journal()
 		{
 			// WARNING Does this work? It's like I'm circumventing the
 			// constness of DraftJournal::repeaters().
-			assert (!dj->repeaters().empty());
+			JEWEL_ASSERT (!dj->repeaters().empty());
 			Repeater old_repeater = dj->repeaters()[0];
 			old_repeater.set_next_date(next_date);
 			old_repeater.set_frequency(freq);
 			old_repeater.save();
 		}
-		assert (dj->is_balanced());
+		JEWEL_ASSERT (dj->is_balanced());
 		dj->save();
 	
 		PersistentObjectEvent::notify_doomed_draft_entries
@@ -993,13 +993,13 @@ TransactionCtrl::save_existing_journal()
 	}
 	else
 	{
-		assert (!maybe_frequency);
+		JEWEL_ASSERT (!maybe_frequency);
 		OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal);
-		assert (oj);
-		assert (m_date_ctrl->date());
+		JEWEL_ASSERT (oj);
+		JEWEL_ASSERT (m_date_ctrl->date());
 		oj->set_date(value(m_date_ctrl->date()));
 	
-		assert (oj->is_balanced());
+		JEWEL_ASSERT (oj->is_balanced());
 		oj->save();
 
 		PersistentObjectEvent::notify_doomed_ordinary_entries
@@ -1013,7 +1013,7 @@ TransactionCtrl::save_existing_journal()
 		);
 		return true;
 	}
-	assert (false);
+	JEWEL_HARD_ASSERT (false);
 }
 
 bool
@@ -1028,7 +1028,7 @@ TransactionCtrl::is_balanced() const
 		{
 			return false;
 		}
-		assert (entry_controls[i]->primary_amount() == primary_amt);
+		JEWEL_ASSERT (entry_controls[i]->primary_amount() == primary_amt);
 	}
 	return true;
 }

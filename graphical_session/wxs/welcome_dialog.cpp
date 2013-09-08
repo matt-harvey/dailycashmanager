@@ -3,11 +3,11 @@
 #include "welcome_dialog.hpp"
 #include "application.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <jewel/assert.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
 #include <wx/string.h>
-#include <cassert>
 #include <cmath>
 
 using std::max;
@@ -98,11 +98,11 @@ WelcomeDialog::configure_buttons()
 		wxDefaultPosition,
 		m_existing_file_button->GetSize()
 	);
-	assert
+	JEWEL_ASSERT
 	(	m_new_file_button->GetSize() ==
 		m_existing_file_button->GetSize()
 	);
-	assert
+	JEWEL_ASSERT
 	(	m_cancel_button->GetSize() ==
 		m_existing_file_button->GetSize()
 	);
@@ -134,7 +134,7 @@ WelcomeDialog::configure_buttons()
 void
 WelcomeDialog::on_existing_file_button_click(wxCommandEvent& event)
 {
-	assert (!m_user_wants_new_file);
+	JEWEL_ASSERT (!m_user_wants_new_file);
 	EndModal(wxID_OK);
 	(void)event;  // Silence compiler warning about unused parameter.
 	return;
@@ -154,7 +154,7 @@ WelcomeDialog::on_new_file_button_click(wxCommandEvent& event)
 void
 WelcomeDialog::on_cancel_button_click(wxCommandEvent& event)
 {
-	assert (!m_user_wants_new_file);
+	JEWEL_ASSERT (!m_user_wants_new_file);
 	EndModal(wxID_CANCEL);
 	(void)event;  // Silence compiler warning about unused parameter.
 	return;

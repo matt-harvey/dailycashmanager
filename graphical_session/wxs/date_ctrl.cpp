@@ -6,6 +6,7 @@
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <wx/datetime.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -13,7 +14,6 @@
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <wx/window.h>
-#include <cassert>
 
 using boost::optional;
 namespace gregorian = boost::gregorian;
@@ -52,7 +52,7 @@ DateCtrl::date()
 {
 	DateValidator const* const validator =
 		dynamic_cast<DateValidator const*>(GetValidator());
-	assert (validator);
+	JEWEL_ASSERT (validator);
 	return validator->date();
 }
 

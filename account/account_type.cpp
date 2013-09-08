@@ -31,7 +31,7 @@ super_type(account_type::AccountType p_account_type)
 	case account_type::pure_envelope:
 		return account_super_type::pl;
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 }
 
@@ -49,7 +49,7 @@ account_types()
 		ret.push_back(account_type::expense);
 		ret.push_back(account_type::pure_envelope);
 	}
-	assert (ret.size() == 6);
+	JEWEL_ASSERT (ret.size() == 6);
 	return ret;
 }
 
@@ -79,9 +79,9 @@ account_types(account_super_type::AccountSuperType p_account_super_type)
 	case account_super_type::balance_sheet:
 		return bs_ret;
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
-	assert (false);
+	JEWEL_HARD_ASSERT (false);
 }
 
 vector<account_super_type::AccountSuperType> const&
@@ -93,7 +93,7 @@ account_super_types()
 		ret.push_back(account_super_type::balance_sheet);
 		ret.push_back(account_super_type::pl);
 	}
-	assert (!ret.empty());
+	JEWEL_ASSERT (!ret.empty());
 	return ret;
 }
 
@@ -111,7 +111,7 @@ account_type_names()
 		ret.push_back("Expense");
 		ret.push_back("Pure envelope");
 	}
-	assert (ret.size() == 6);
+	JEWEL_ASSERT (ret.size() == 6);
 	return ret;
 }
 
@@ -151,7 +151,7 @@ string_to_account_type(wxString const& p_string)
 		(	"String does not identify AccountType"
 		);
 	}
-	assert (jt != dict.end());
+	JEWEL_ASSERT (jt != dict.end());
 	return jt->second;
 }
 

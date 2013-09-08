@@ -24,6 +24,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <jewel/array_utilities.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
@@ -46,7 +47,6 @@
 #include <wx/variant.h>
 #include <wx/window.h>
 #include <wx/wizard.h>
-#include <cassert>
 #include <map>
 #include <sstream>
 #include <set>
@@ -163,7 +163,7 @@ SetupWizard::SetupWizard
 	m_balance_sheet_account_page(0),
 	m_pl_account_page(0)
 {
-	assert (!m_database_connection.is_valid());
+	JEWEL_ASSERT (!m_database_connection.is_valid());
 	m_filepath_page = new FilepathPage(this, m_database_connection);
 	m_balance_sheet_account_page = new AccountPage
 	(	this,
@@ -223,14 +223,14 @@ SetupWizard::selected_currency() const
 Decimal
 SetupWizard::total_opening_balance() const
 {
-	assert (m_balance_sheet_account_page);
+	JEWEL_ASSERT (m_balance_sheet_account_page);
 	return m_balance_sheet_account_page->total_amount();
 }
 
 void
 SetupWizard::set_assumed_currency(Commodity const& p_commodity)
 {
-	assert (m_balance_sheet_account_page);	
+	JEWEL_ASSERT (m_balance_sheet_account_page);	
 	m_balance_sheet_account_page->set_commodity(p_commodity);
 	m_pl_account_page->set_commodity(p_commodity);
 	return;
@@ -254,8 +254,8 @@ SetupWizard::render_account_pages()
 	// the currency that is selected may infuence the degree of
 	// precision, and hence the spacing of the "zero dash" on the
 	// AccountPage(s).
-	assert (m_balance_sheet_account_page);
-	assert (m_pl_account_page);
+	JEWEL_ASSERT (m_balance_sheet_account_page);
+	JEWEL_ASSERT (m_pl_account_page);
 	m_balance_sheet_account_page->render();
 	m_pl_account_page->render();
 	return;
@@ -273,8 +273,8 @@ SetupWizard::configure_default_commodity()
 void
 SetupWizard::create_file()
 {
-	assert (m_filepath_page);
-	assert (m_filepath_page->selected_filepath());
+	JEWEL_ASSERT (m_filepath_page);
+	JEWEL_ASSERT (m_filepath_page->selected_filepath());
 	m_database_connection.open(value(m_filepath_page->selected_filepath()));
 	return;
 }
@@ -282,7 +282,7 @@ SetupWizard::create_file()
 void
 SetupWizard::delete_file()
 {
-	assert (m_filepath_page);
+	JEWEL_ASSERT (m_filepath_page);
 	boost::filesystem::remove(value(m_filepath_page->selected_filepath()));
 	return;
 }
@@ -308,7 +308,7 @@ SetupWizard::configure_accounts()
 			it->account.set_description(wxString(""));
 			it->account.set_visibility(visibility::visible);
 			it->account.save();
-			assert 
+			JEWEL_ASSERT 
 			(	it->technical_opening_balance.places() ==
 				selected_currency().precision()
 			);
@@ -347,7 +347,7 @@ SetupWizard::FilepathValidator::FilepathValidator
 bool
 SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 {
-	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	wxTextCtrl const* const text_ctrl =
 		dynamic_cast<wxTextCtrl*>(GetWindow());	
 	if (!text_ctrl)
@@ -357,12 +357,12 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 	wxString const wx_filename = with_extension(text_ctrl->GetValue());
 	FilepathPage* page =
 		dynamic_cast<FilepathPage*>(text_ctrl->GetParent());
-	assert (page);
+	JEWEL_ASSERT (page);
 	if (!page)
 	{
 		return false;
 	}
-	assert (page->m_directory_ctrl);
+	JEWEL_ASSERT (page->m_directory_ctrl);
 	wxString const wx_directory	= page->m_directory_ctrl->GetValue();
 	filesystem::path const path =
 		wx_to_boost_filepath(wx_directory, wx_filename);
@@ -384,7 +384,7 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 		if (!filename_is_valid)
 		{
 			wxString const message = std8_to_wx(filename_error_message);
-			assert (!message.IsEmpty());
+			JEWEL_ASSERT (!message.IsEmpty());
 			wxMessageBox(message);
 		}
 		if (!directory_exists)
@@ -410,7 +410,7 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 bool
 SetupWizard::FilepathValidator::TransferFromWindow()
 {
-	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	if (m_filepath)
 	{
 		FilepathPage const* const page =
@@ -429,7 +429,7 @@ SetupWizard::FilepathValidator::TransferFromWindow()
 bool
 SetupWizard::FilepathValidator::TransferToWindow()
 {
-	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	if (m_filepath)
 	{
 		wxTextCtrl* const text_ctrl =
@@ -506,7 +506,7 @@ SetupWizard::FilepathPage::FilepathPage
 	if (maybe_directory)
 	{
 		default_directory = std8_to_wx(value(maybe_directory).string());
-		assert (!m_selected_filepath);
+		JEWEL_ASSERT (!m_selected_filepath);
 		m_selected_filepath = new filesystem::path(value(maybe_directory));
 	}
 	// TODO We should make this a static text field or something that
@@ -646,7 +646,7 @@ SetupWizard::FilepathPage::selected_currency() const
 	unsigned int const index = m_currency_box->GetSelection();
 	typedef ClientData<Commodity> Data;
 	Data* data = dynamic_cast<Data*>(m_currency_box->GetClientObject(index));
-	assert (data != 0);
+	JEWEL_ASSERT (data != 0);
 	return data->data();
 }
 
@@ -661,7 +661,7 @@ SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 	}
 	else
 	{
-		assert (filesystem::absolute(default_path) == default_path);
+		JEWEL_ASSERT (filesystem::absolute(default_path) == default_path);
 	}
 	wxDirDialog directory_dialog
 	(	this,
@@ -687,7 +687,7 @@ SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 {
 	(void)event;  // Silence compiler warning about unused parameter
 	SetupWizard* const parent = dynamic_cast<SetupWizard*>(GetParent());
-	assert (parent);
+	JEWEL_ASSERT (parent);
 	parent->set_assumed_currency(selected_currency());
 	return;
 }
@@ -766,7 +766,7 @@ SetupWizard::AccountPage::set_commodity
 (	Commodity const& p_commodity
 )
 {
-	assert (m_multi_account_panel);
+	JEWEL_ASSERT (m_multi_account_panel);
 	m_multi_account_panel->set_commodity(p_commodity);
 	return;
 }
@@ -778,7 +778,7 @@ SetupWizard::AccountPage::total_amount() const
 	{
 		return m_multi_account_panel->total_amount();
 	}
-	assert (!m_multi_account_panel);
+	JEWEL_ASSERT (!m_multi_account_panel);
 	return Decimal(0, 0);
 }
 
@@ -894,9 +894,9 @@ SetupWizard::AccountPage::render_account_view()
 void
 SetupWizard::AccountPage::refresh_pop_row_button_state()
 {
-	assert (m_multi_account_panel);
-	assert (m_multi_account_panel->num_rows() >= m_min_num_accounts);
-	assert (m_pop_row_button);
+	JEWEL_ASSERT (m_multi_account_panel);
+	JEWEL_ASSERT (m_multi_account_panel->num_rows() >= m_min_num_accounts);
+	JEWEL_ASSERT (m_pop_row_button);
 	if (m_multi_account_panel->num_rows() > m_min_num_accounts)
 	{
 		m_pop_row_button->Enable();
@@ -904,7 +904,10 @@ SetupWizard::AccountPage::refresh_pop_row_button_state()
 	}
 	else
 	{
-		assert (m_multi_account_panel->num_rows() == m_min_num_accounts);
+		JEWEL_ASSERT
+		(	m_multi_account_panel->num_rows() ==
+			m_min_num_accounts
+		);
 		m_pop_row_button->Disable();
 		ostringstream oss;
 		oss << m_min_num_accounts;
@@ -939,7 +942,7 @@ SetupWizard::AccountPage::parent() const
 wxGridBagSizer&
 SetupWizard::AccountPage::top_sizer()
 {
-	assert (m_top_sizer);
+	JEWEL_ASSERT (m_top_sizer);
 	return *m_top_sizer;
 }
 
@@ -961,7 +964,7 @@ SetupWizard::AccountPage::account_names_valid
 (	wxString& error_message
 ) const
 {
-	assert (m_multi_account_panel);
+	JEWEL_ASSERT (m_multi_account_panel);
 	return m_multi_account_panel->account_names_valid(error_message);
 }
 
@@ -973,12 +976,12 @@ SetupWizard::AccountPage::account_types_valid
 	using account_type::AccountType;
 	if (m_account_super_type == account_super_type::balance_sheet)
 	{
-		assert (m_multi_account_panel);
-		assert (m_min_num_accounts >= 1);
-		assert (m_multi_account_panel->num_rows() >= 1);
+		JEWEL_ASSERT (m_multi_account_panel);
+		JEWEL_ASSERT (m_min_num_accounts >= 1);
+		JEWEL_ASSERT (m_multi_account_panel->num_rows() >= 1);
 		return true;
 	}
-	assert (m_account_super_type == account_super_type::pl);
+	JEWEL_ASSERT (m_account_super_type == account_super_type::pl);
 	account_type::AccountType const atypes[] =
 	{	account_type::revenue,
 		account_type::expense
@@ -1005,7 +1008,7 @@ void
 SetupWizard::AccountPage::on_pop_row_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused variable
-	assert (m_multi_account_panel);
+	JEWEL_ASSERT (m_multi_account_panel);
 	m_multi_account_panel->pop_row();
 	refresh_pop_row_button_state();
 	return;
@@ -1015,7 +1018,7 @@ void
 SetupWizard::AccountPage::on_push_row_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused variable
-	assert (m_multi_account_panel);
+	JEWEL_ASSERT (m_multi_account_panel);
 	m_multi_account_panel->push_row();
 	refresh_pop_row_button_state();
 	return;
@@ -1027,7 +1030,7 @@ SetupWizard::AccountPage::on_wizard_page_changing
 )
 {
 	wxString error_message;
-	assert (error_message.IsEmpty());
+	JEWEL_ASSERT (error_message.IsEmpty());
 	if
 	(	!account_names_valid(error_message) ||
 		!account_types_valid(error_message)
@@ -1037,8 +1040,8 @@ SetupWizard::AccountPage::on_wizard_page_changing
 		event.Veto();
 		return;
 	}
-	assert (account_names_valid(error_message));
-	assert (account_types_valid(error_message));
+	JEWEL_ASSERT (account_names_valid(error_message));
+	JEWEL_ASSERT (account_types_valid(error_message));
 	return;
 }
 
@@ -1048,7 +1051,7 @@ SetupWizard::AccountPage::on_wizard_page_changed
 )
 {
 	(void)event;  // silence compiler re. unused parameter
-	assert (m_multi_account_panel);
+	JEWEL_ASSERT (m_multi_account_panel);
 	m_multi_account_panel->update_summary();
 	m_multi_account_panel->SetFocus();
 	return;
@@ -1075,7 +1078,7 @@ SetupWizard::AccountPage::main_text() const
 		);
 		break;
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 	ret += wxString
 	(	" \n\nNote, you can always add to or change these later, so it "

@@ -16,10 +16,10 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/static_assert.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <algorithm>
-#include <cassert>
 #include <numeric>
 #include <ostream>
 #include <utility>
@@ -140,7 +140,7 @@ AmalgamatedBudget::load() const
 	{
 		return;
 	}
-	assert (!m_is_loaded);
+	JEWEL_ASSERT (!m_is_loaded);
 	load_balancing_account();
 	load_instrument();
 	load_map();
@@ -153,7 +153,7 @@ Frequency
 AmalgamatedBudget::frequency() const
 {
 	load();
-	assert (m_frequency.num_steps() == 1);
+	JEWEL_ASSERT (m_frequency.num_steps() == 1);
 	return m_frequency;
 }
 
@@ -171,7 +171,7 @@ AmalgamatedBudget::budget(AccountImpl::Id p_account_id) const
 {
 	load();
 	Map::const_iterator it = m_map->find(p_account_id);
-	assert (it != m_map->end());
+	JEWEL_ASSERT (it != m_map->end());
 	Decimal ret = it->second;
 	if (p_account_id == balancing_account().id())
 	{
@@ -257,7 +257,7 @@ AmalgamatedBudget::supports_frequency(Frequency const& p_frequency)
 	case interval_type::month_ends:
 		return false;
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 }
 
@@ -265,7 +265,7 @@ Account
 AmalgamatedBudget::balancing_account() const
 {
 	load();
-	assert (m_balancing_account != 0);
+	JEWEL_ASSERT (m_balancing_account != 0);
 	return *m_balancing_account;
 }
 
@@ -304,8 +304,8 @@ AmalgamatedBudget::regenerate()
 void
 AmalgamatedBudget::load_map() const
 {
-	assert (!m_is_loaded);
-	assert (m_map->empty());
+	JEWEL_ASSERT (!m_is_loaded);
+	JEWEL_ASSERT (m_map->empty());
 	generate_map();
 	return;
 }
@@ -315,7 +315,7 @@ void
 AmalgamatedBudget::generate_map() const
 {
 	scoped_ptr<Map> map_elect(new Map);
-	assert (map_elect->empty());
+	JEWEL_ASSERT (map_elect->empty());
 
 	SQLStatement account_selector
 	(	m_database_connection,
@@ -352,7 +352,7 @@ AmalgamatedBudget::generate_map() const
 			raw_amount
 		);
 		Map::iterator tmit = map_elect->find(account_id);
-		assert (tmit != map_elect->end());	
+		JEWEL_ASSERT (tmit != map_elect->end());	
 		tmit->second += canonical_amount;
 	}
 	// Now convert to desired frequency
@@ -407,7 +407,7 @@ AmalgamatedBudget::regenerate_instrument()
 		);
 		balancing_entry.set_transaction_side(transaction_side::destination);
 		fresh_journal.push_entry(balancing_entry);
-		assert (fresh_journal.is_balanced());
+		JEWEL_ASSERT (fresh_journal.is_balanced());
 	}
 	// WARNING The source and destination are the opposite way
 	// round to usual here. But it probably doesn't matter, as
@@ -426,7 +426,7 @@ AmalgamatedBudget::load_balancing_account() const
 		"select balancing_account_id from amalgamated_budget_data"
 	);
 	bool check = statement.step();
-	assert (check);
+	JEWEL_ASSERT (check);
 	if (m_balancing_account)
 	{
 		delete m_balancing_account;
@@ -512,7 +512,7 @@ AmalgamatedBudget::reflect_repeater(DraftJournal& p_journal)
 	Repeater new_repeater(m_database_connection);
 	new_repeater.set_frequency(m_frequency);
 	new_repeater.set_next_date(gregorian::day_clock::local_day());
-	assert (p_journal.repeaters().empty());
+	JEWEL_ASSERT (p_journal.repeaters().empty());
 	p_journal.push_repeater(new_repeater);
 	return;
 }
@@ -521,7 +521,7 @@ Decimal
 AmalgamatedBudget::instrument_balancing_amount() const
 {
 	load();
-	assert (m_instrument);
+	JEWEL_ASSERT (m_instrument);
 	vector<Entry> const& entries = m_instrument->entries();
 	Decimal ret(0, m_database_connection.default_commodity().precision());
 	vector<Entry>::const_iterator it = entries.begin();
@@ -538,9 +538,9 @@ AmalgamatedBudget::instrument_balancing_amount() const
 #	ifndef NDEBUG
 	if (!entries.empty())
 	{
-		assert (m_instrument->repeaters().size() == 1);
+		JEWEL_ASSERT (m_instrument->repeaters().size() == 1);
 		Repeater const repeater = m_instrument->repeaters()[0];
-		assert (repeater.frequency() == frequency());
+		JEWEL_ASSERT (repeater.frequency() == frequency());
 	}
 #	endif
 

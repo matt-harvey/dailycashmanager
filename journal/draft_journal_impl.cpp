@@ -23,10 +23,10 @@
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/string.h>
-#include <cassert>
 #include <iostream>  // for debug logging
 #include <string>
 #include <vector>
@@ -231,7 +231,7 @@ DraftJournalImpl::no_user_draft_journals_saved
 	bool const draft_journals_exist = statement.step();
 	if (!draft_journals_exist)
 	{
-		assert (udjr.empty());
+		JEWEL_ASSERT (udjr.empty());
 		return true;
 	}
 	DraftJournal const dj
@@ -241,18 +241,18 @@ DraftJournalImpl::no_user_draft_journals_saved
 	bool const multiple_draft_journals_exist = statement.step();
 	if (multiple_draft_journals_exist)
 	{
-		assert (!udjr.empty());
+		JEWEL_ASSERT (!udjr.empty());
 		return false;
 	}
-	assert (draft_journals_exist && !multiple_draft_journals_exist);
+	JEWEL_ASSERT (draft_journals_exist && !multiple_draft_journals_exist);
 	if (dj == p_database_connection.budget_instrument())
 	{
-		assert (udjr.empty());
+		JEWEL_ASSERT (udjr.empty());
 		return true;
 	}
 	else
 	{
-		assert (!udjr.empty());
+		JEWEL_ASSERT (!udjr.empty());
 		return false;
 	}
 }
@@ -490,7 +490,7 @@ DraftJournalImpl::repeater_description()
 	{
 		return wxString("");
 	}
-	assert (!m_dj_data->repeaters.empty());
+	JEWEL_ASSERT (!m_dj_data->repeaters.empty());
 	wxString ret("This transaction is automatically recorded ");
 	vector<Repeater>::const_iterator it = m_dj_data->repeaters.begin();
 	ret += std8_to_wx(frequency_description(it->frequency(), "every"));

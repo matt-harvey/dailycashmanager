@@ -6,6 +6,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"
 #include <boost/static_assert.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/identity_map.hpp>
@@ -222,7 +223,7 @@ BudgetItemImpl::do_load()
 void
 BudgetItemImpl::process_saving_statement(SQLStatement& statement)
 {
-	assert (m_data->account().has_id());
+	JEWEL_ASSERT (m_data->account().has_id());
 	statement.bind(":account_id", m_data->account().id());
 	statement.bind
 	(	":description",
@@ -332,7 +333,7 @@ BudgetItemImpl::BudgetItemData::account() const
 	{
 		return *m_account;
 	}
-	assert (!m_account);
+	JEWEL_ASSERT (!m_account);
 	throw UninitializedOptionalException
 	(	"BudgetItemImpl::BudgetItemData::m_account is null."
 	);
@@ -365,7 +366,7 @@ BudgetItemImpl::BudgetItemData::set_account(Account const& p_account)
 		delete m_account;
 		m_account = 0;
 	}
-	assert (!m_account);
+	JEWEL_ASSERT (!m_account);
 	m_account = tmp;
 	return;
 }

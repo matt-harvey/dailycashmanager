@@ -29,6 +29,9 @@ set (immediate_directories
 	 visibility)
 
 # add_definitions(-DPHATBOOKS_DISALLOW_DASH_FOR_ZERO)
+add_definitions(-DJEWEL_ENABLE_LOGGING
+			    -DJEWEL_ENABLE_ASSERTION_LOGGING
+				-DJEWEL_ENABLE_EXCEPTION_LOGGING)
 
 if (WIN32)
 	include_directories (${immediate_directories}

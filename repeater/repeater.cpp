@@ -13,6 +13,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/assert.hpp>
 #include <wx/string.h>
 #include <list>
 #include <string>
@@ -184,14 +185,14 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 #				endif
 				if (oj.has_id())
 				{
-					assert(dj != bi || !dj.entries().empty());
+					JEWEL_ASSERT (dj != bi || !dj.entries().empty());
 					auto_posted_journals->push_back(oj);
 				}
 				else
 				{
-					assert (dj == bi);
-					assert (dj.entries().empty());
-					assert (oj.entries().empty());
+					JEWEL_ASSERT (dj == bi);
+					JEWEL_ASSERT (dj.entries().empty());
+					JEWEL_ASSERT (oj.entries().empty());
 				}
 			}
 		}

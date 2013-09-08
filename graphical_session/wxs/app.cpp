@@ -11,6 +11,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/filedlg.h>
@@ -93,9 +94,9 @@ bool App::OnInit()
 			return false;
 		}
 	}
-	assert (database_connection().is_valid());
+	JEWEL_ASSERT (database_connection().is_valid());
 	using filesystem::absolute;
-	assert
+	JEWEL_ASSERT
 	(	absolute(database_connection().filepath()) ==
 		database_connection().filepath()
 	);
@@ -167,7 +168,7 @@ App::elicit_existing_filepath()
 	JEWEL_LOG_TRACE();
 
 	filesystem::path ret;
-	assert (ret.empty());
+	JEWEL_ASSERT (ret.empty());
 	wxString default_directory = wxEmptyString;
 	wxString default_filename = wxEmptyString;
 

@@ -5,6 +5,7 @@
 #include "finformat.hpp"
 #include "locale.hpp"
 #include "phatbooks_exceptions.hpp"
+#include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/event.h>
@@ -71,11 +72,11 @@ DecimalTextCtrl::set_amount(Decimal const& p_amount)
 	{
 		DecimalValidator* const validator =
 			dynamic_cast<DecimalValidator*>(GetValidator());	
-		assert (validator);
+		JEWEL_ASSERT (validator);
 		m_precision = prec;
 		validator->set_precision(prec);
 	}
-	assert (p_amount.places() == m_precision);
+	JEWEL_ASSERT (p_amount.places() == m_precision);
 	DecimalFormatFlags flags;
 	if (!m_print_dash_for_zero)
 	{
@@ -104,7 +105,7 @@ DecimalTextCtrl::amount()
 {
 	DecimalValidator const* const validator =
 		dynamic_cast<DecimalValidator const*>(GetValidator());
-	assert (validator);
+	JEWEL_ASSERT (validator);
 	return validator->decimal();
 }
 

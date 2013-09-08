@@ -3,8 +3,8 @@
 #include "make_currencies.hpp"
 #include "commodity.hpp"
 #include "string_conv.hpp"
+#include <jewel/assert.hpp>
 #include <wx/string.h>
-#include <cassert>
 #include <string>
 #include <vector>
 
@@ -37,7 +37,7 @@ namespace
 void
 make_currencies(PhatbooksDatabaseConnection& dbc, vector<Commodity>& vec)
 {
-	assert (vec.empty());  // precondition
+	JEWEL_ASSERT (vec.empty());  // precondition
 	vec.reserve(200);
 	// currency.inl contains repetitive code generated from a csv
 	// file via a script.

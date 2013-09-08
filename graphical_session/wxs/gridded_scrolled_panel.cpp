@@ -5,6 +5,7 @@
 #include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sizing.hpp"
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
@@ -12,7 +13,6 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/window.h>
-#include <cassert>
 
 
 namespace phatbooks
@@ -52,7 +52,7 @@ GriddedScrolledPanel::~GriddedScrolledPanel()
 wxGridBagSizer&
 GriddedScrolledPanel::top_sizer()
 {
-	assert (m_top_sizer);
+	JEWEL_ASSERT (m_top_sizer);
 	return *m_top_sizer;
 }
 

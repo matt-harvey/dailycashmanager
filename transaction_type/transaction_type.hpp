@@ -4,8 +4,8 @@
 #define GUARD_transaction_type_hpp
 
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <jewel/assert.hpp>
 #include <wx/string.h>
-#include <cassert>
 #include <set>
 #include <vector>
 
@@ -155,8 +155,8 @@ assert_transaction_type_validity
 		int const ttype_as_int = static_cast<int>(p_transaction_type);
 		int const num_ttypes_as_int =
 			static_cast<int>(transaction_type::num_transaction_types);
-		assert (ttype_as_int >= 0);
-		assert (ttype_as_int < num_ttypes_as_int);
+		JEWEL_ASSERT (ttype_as_int >= 0);
+		JEWEL_ASSERT (ttype_as_int < num_ttypes_as_int);
 #	endif  // NDEBUG
 }
 

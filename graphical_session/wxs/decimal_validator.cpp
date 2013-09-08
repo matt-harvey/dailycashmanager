@@ -4,13 +4,13 @@
 #include "app.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
 #include <jewel/exception.hpp>
 #include <wx/msgdlg.h>
 #include <wx/textctrl.h>
 #include <wx/valtext.h>
-#include <cassert>
 
 using jewel::Decimal;
 using jewel::round;
@@ -56,7 +56,7 @@ DecimalValidator::set_precision(jewel::Decimal::places_type p_precision)
 bool
 DecimalValidator::Validate(wxWindow* WXUNUSED(parent))
 {
-	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	wxTextCtrl const* const text_ctrl =
 		dynamic_cast<wxTextCtrl*>(GetWindow());
 	if (!text_ctrl)
@@ -87,20 +87,20 @@ DecimalValidator::Validate(wxWindow* WXUNUSED(parent))
 			return false;
 		}
 	}
-	assert (false);
+	JEWEL_HARD_ASSERT (false);
 }
 
 bool
 DecimalValidator::TransferFromWindow()
 {
-	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	return true;
 }
 
 bool
 DecimalValidator::TransferToWindow()
 {
-	assert (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	wxTextCtrl* const text_ctrl = dynamic_cast<wxTextCtrl*>(GetWindow());
 	if (!text_ctrl)
 	{

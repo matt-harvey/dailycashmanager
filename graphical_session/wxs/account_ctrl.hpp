@@ -6,12 +6,12 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include <boost/noncopyable.hpp>
+#include <jewel/assert.hpp>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/string.h>
 #include <wx/window.h>
-#include <cassert>
 #include <map>
 #include <vector>
 

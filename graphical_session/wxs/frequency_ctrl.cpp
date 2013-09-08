@@ -7,6 +7,7 @@
 #include "phatbooks_exceptions.hpp"
 #include "string_conv.hpp"
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/optional.hpp>
 #include <wx/combobox.h>
 #include <wx/gdicmn.h>
@@ -52,7 +53,7 @@ namespace
 			ret.push_back(Frequency(6, interval_type::month_ends));
 			ret.push_back(Frequency(12, interval_type::month_ends));
 		}
-		assert (!ret.empty());
+		JEWEL_ASSERT (!ret.empty());
 		return ret;
 	}
 
@@ -85,7 +86,7 @@ FrequencyCtrl::FrequencyCtrl
 	m_supports_ordinary_journal(p_supports_ordinary_journal),
 	m_supports_draft_journal(p_supports_draft_journal)
 {
-	assert (m_frequencies.empty());
+	JEWEL_ASSERT (m_frequencies.empty());
 	if (supports_ordinary_journal())
 	{
 		Append(once_off_string());
@@ -98,7 +99,7 @@ FrequencyCtrl::FrequencyCtrl
 			available_frequencies().end();
 		if (supports_budget_item())
 		{
-			assert (!supports_draft_journal());
+			JEWEL_ASSERT (!supports_draft_journal());
 			for ( ; it != end; ++it)
 			{
 				if (m_database_connection.supports_budget_frequency(*it))
@@ -110,7 +111,7 @@ FrequencyCtrl::FrequencyCtrl
 		}
 		else
 		{
-			assert (supports_draft_journal());
+			JEWEL_ASSERT (supports_draft_journal());
 			for ( ; it != end; ++it)
 			{
 				wxString wxs = wxString("Record ");
@@ -133,11 +134,11 @@ FrequencyCtrl::frequency() const
 	{
 		if (index == 0)
 		{
-			assert (GetValue() == once_off_string());
-			assert (!ret);
+			JEWEL_ASSERT (GetValue() == once_off_string());
+			JEWEL_ASSERT (!ret);
 			return ret;
 		}
-		assert (index >= 1);
+		JEWEL_ASSERT (index >= 1);
 		index -= 1;
 	}
 	ret = m_frequencies[index];
@@ -168,7 +169,7 @@ FrequencyCtrl::set_frequency(optional<Frequency> const& p_maybe_frequency)
 				);
 			}
 		}
-		assert (supports_draft_journal() || supports_budget_item());
+		JEWEL_ASSERT (supports_draft_journal() || supports_budget_item());
 		vector<Frequency>::const_iterator it = m_frequencies.begin();
 		vector<Frequency>::const_iterator const end = m_frequencies.end();
 		vector<Frequency>::size_type i = (supports_ordinary_journal()? 1: 0);
@@ -180,16 +181,16 @@ FrequencyCtrl::set_frequency(optional<Frequency> const& p_maybe_frequency)
 				return;
 			}
 		}
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
-	assert (!p_maybe_frequency);
+	JEWEL_ASSERT (!p_maybe_frequency);
 	if (!supports_ordinary_journal())
 	{
 		throw InvalidFrequencyException
 		(	"FrequencyCtrl does not support \"once-off\" selection."
 		);
 	}
-	assert (supports_ordinary_journal());
+	JEWEL_ASSERT (supports_ordinary_journal());
 	SetSelection(0);
 	return;
 }

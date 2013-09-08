@@ -9,6 +9,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include "string_conv.hpp"
+#include <jewel/assert.hpp>
 #include <wx/event.h>
 #include <wx/listctrl.h>
 #include <wx/string.h>
@@ -115,7 +116,7 @@ DraftJournalListCtrl::update(UserDraftJournalReader const& p_reader)
 		// The item may change position due to e.g. sorting, so store the
 		// Journal ID in the item's data
 		// TODO Do a static assert to ensure second param will fit the id.
-		assert (it->has_id());
+		JEWEL_ASSERT (it->has_id());
 		SetItemData(i, it->id());
 
 		// Set the frequency and next-date columns.
@@ -136,7 +137,7 @@ DraftJournalListCtrl::update(UserDraftJournalReader const& p_reader)
 		{
 			wxString frequency_description("Multiple cycles");
 			wxString next_date_string("Multiple cycles");
-			assert (repeaters.size() >= 1);
+			JEWEL_ASSERT (repeaters.size() >= 1);
 			if (repeaters.size() == 1)
 			{
 				frequency_description = std8_to_wx

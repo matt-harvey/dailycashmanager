@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "string_set_validator.hpp"
+#include <jewel/assert.hpp>
 #include <wx/arrstr.h>
 #include <wx/msgdlg.h>
 #include <wx/string.h>
@@ -37,7 +38,7 @@ StringSetValidator::Validate(wxWindow* WXUNUSED(wxparent))
 {
 	wxTextEntry const* const text_entry =
 		dynamic_cast<wxTextEntry*>(GetWindow());
-	assert (text_entry);
+	JEWEL_ASSERT (text_entry);
 	wxString const candidate_text(text_entry->GetValue());
 	int position = wxNOT_FOUND;
 	if ((position = m_valid_strings.Index(candidate_text)) == wxNOT_FOUND)
@@ -50,7 +51,7 @@ StringSetValidator::Validate(wxWindow* WXUNUSED(wxparent))
 		);
 		return false;
 	}
-	assert (position != wxNOT_FOUND);
+	JEWEL_ASSERT (position != wxNOT_FOUND);
 	m_text = candidate_text;
 	return true;
 }
@@ -58,7 +59,7 @@ StringSetValidator::Validate(wxWindow* WXUNUSED(wxparent))
 bool
 StringSetValidator::TransferFromWindow()
 {
-	assert (dynamic_cast<wxTextEntry*>(GetWindow()));
+	JEWEL_ASSERT (dynamic_cast<wxTextEntry*>(GetWindow()));
 	return true;
 }
 
@@ -66,7 +67,7 @@ bool
 StringSetValidator::TransferToWindow()
 {
 	wxTextEntry* const text_entry = dynamic_cast<wxTextEntry*>(GetWindow());
-	assert (text_entry);
+	JEWEL_ASSERT (text_entry);
 	text_entry->SetValue(m_text);
 	return true;
 }

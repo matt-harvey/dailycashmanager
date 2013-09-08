@@ -7,6 +7,7 @@
 #include "ordinary_journal.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/optional.hpp>
 
 using boost::optional;
@@ -78,7 +79,7 @@ BSAccountEntryListCtrl::do_set_non_date_columns
 			DecimalFormatFlags().clear(string_flags::dash_for_zero)
 		)
 	);
-	assert (num_columns() == 3);
+	JEWEL_ASSERT (num_columns() == 3);
 	return;
 }
 
@@ -95,7 +96,7 @@ BSAccountEntryListCtrl::do_insert_non_date_columns()
 		wxString("Amount"),
 		wxLIST_FORMAT_RIGHT
 	);
-	assert (num_columns() == 3);
+	JEWEL_ASSERT (num_columns() == 3);
 	return;
 }
 

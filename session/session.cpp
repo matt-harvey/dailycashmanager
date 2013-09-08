@@ -9,8 +9,8 @@
 #include "session.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/assert.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
-#include <cassert>
 #include <list>
 #include <string>
 
@@ -46,14 +46,14 @@ Session::Session():
 		(	"Exceeded maximum number of instances of phatbooks::Session."
 		);
 	}
-	assert (s_num_instances <= s_max_instances);
+	JEWEL_ASSERT (s_num_instances <= s_max_instances);
 }
 
 
 Session::~Session()
 {
-	assert (s_num_instances > 0);
-	assert (s_num_instances <= s_max_instances);
+	JEWEL_ASSERT (s_num_instances > 0);
+	JEWEL_ASSERT (s_num_instances <= s_max_instances);
 	--s_num_instances;
 }
 

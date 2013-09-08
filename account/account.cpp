@@ -368,7 +368,7 @@ wxString account_concept_name
 )
 {
 	wxString ret;
-	assert (ret.IsEmpty());
+	JEWEL_ASSERT (ret.IsEmpty());
 	if (p_phrase_flag_set.test(string_flags::include_article))
 	{
 		ret += wxString("an ");
@@ -391,7 +391,7 @@ wxString account_concept_name
 		);
 		break;
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 	if (p_phrase_flag_set.test(string_flags::pluralize))
 	{
@@ -452,8 +452,8 @@ favourite_accounts(PhatbooksDatabaseConnection& p_database_connection)
 			)
 		)
 		{
-			assert (account.has_id());
-			assert (it->first == account.id());
+			JEWEL_ASSERT (account.has_id());
+			JEWEL_ASSERT (it->first == account.id());
 			ret[stype] = account.id();
 			max_counts[stype] = count;
 		}

@@ -3,6 +3,7 @@
 #include "persistent_object_event.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/optional.hpp>
 #include <wx/event.h>
 #include <wx/window.h>
@@ -56,7 +57,7 @@ PersistentObjectEvent::PersistentObjectEvent
 ):
 	wxCommandEvent(p_event_type, p_event_id)
 {
-	assert (!m_maybe_po_id);
+	JEWEL_ASSERT (!m_maybe_po_id);
 }
 
 PersistentObjectEvent::PersistentObjectEvent
@@ -102,7 +103,7 @@ PersistentObjectEvent::fire
 	PhatbooksPersistentObjectBase& p_object
 )
 {
-	assert (p_object.has_id());  // precondition
+	JEWEL_ASSERT (p_object.has_id());  // precondition
 	fire(p_originator, p_event_type, p_object.id());
 	return;
 }
@@ -155,7 +156,7 @@ PersistentObjectEvent::notify_many
 	vector<PersistentObjectEvent::Id> const& p_po_ids
 )
 {
-	assert (p_originator);
+	JEWEL_ASSERT (p_originator);
 	vector<Id>::const_iterator it = p_po_ids.begin();
 	vector<Id>::const_iterator const end = p_po_ids.end();
 	for ( ; it != end; ++it) fire(p_originator, p_event_type, *it);

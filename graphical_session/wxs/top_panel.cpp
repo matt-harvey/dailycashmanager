@@ -21,6 +21,7 @@
 #include <map>
 #include <boost/optional.hpp>
 #include <jewel/array_utilities.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/notebook.h>
@@ -29,7 +30,6 @@
 #include <wx/string.h>
 #include <wx/window.h>
 #include <wx/wupdlock.h>
-#include <cassert>
 #include <set>
 #include <vector>
 
@@ -143,7 +143,7 @@ TopPanel::TopPanel
 void
 TopPanel::configure_account_lists()
 {
-	assert (m_notebook_page_accounts);
+	JEWEL_ASSERT (m_notebook_page_accounts);
 	m_bs_account_list = AccountListCtrl::create_balance_sheet_account_list
 	(	m_notebook_page_accounts,
 		m_database_connection
@@ -154,7 +154,7 @@ TopPanel::configure_account_lists()
 	);
 	map<account_super_type::AccountSuperType, Account::Id> const fav_accts =
 		favourite_accounts(m_database_connection);
-	assert (fav_accts.size() == 2);
+	JEWEL_ASSERT (fav_accts.size() == 2);
 	m_bs_account_list->select_only
 	(	Account
 		(	m_database_connection,
@@ -189,8 +189,8 @@ TopPanel::configure_account_lists()
 void
 TopPanel::configure_entry_list()
 {
-	assert (m_notebook_page_transactions);
-	assert (!m_entry_list_panel);
+	JEWEL_ASSERT (m_notebook_page_transactions);
+	JEWEL_ASSERT (!m_entry_list_panel);
 	m_entry_list_panel = new EntryListPanel
 	(	m_notebook_page_transactions,
 		m_database_connection
@@ -208,8 +208,8 @@ TopPanel::configure_entry_list()
 void
 TopPanel::configure_reconciliation_page()
 {
-	assert (m_notebook_page_reconciliations);
-	assert (!m_reconciliation_panel);
+	JEWEL_ASSERT (m_notebook_page_reconciliations);
+	JEWEL_ASSERT (!m_reconciliation_panel);
 	m_reconciliation_panel = new ReconciliationListPanel
 	(	m_notebook_page_reconciliations,
 		m_database_connection,
@@ -228,8 +228,8 @@ TopPanel::configure_reconciliation_page()
 void
 TopPanel::configure_report_page()
 {
-	assert (m_notebook_page_reports);
-	assert (!m_report_panel);
+	JEWEL_ASSERT (m_notebook_page_reports);
+	JEWEL_ASSERT (!m_report_panel);
 	m_report_panel =
 		new ReportPanel(m_notebook_page_reports, m_database_connection);
 	wxBoxSizer* page_4_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -246,8 +246,8 @@ TopPanel::configure_report_page()
 void
 TopPanel::configure_transaction_ctrl()
 {
-	assert (m_top_sizer);
-	assert (m_right_column_sizer);
+	JEWEL_ASSERT (m_top_sizer);
+	JEWEL_ASSERT (m_right_column_sizer);
 	vector<Account> balance_sheet_accounts;
 	selected_balance_sheet_accounts(balance_sheet_accounts);
 	vector<Account> pl_accounts;
@@ -285,7 +285,7 @@ TopPanel::configure_transaction_ctrl
 		}
 	}
 	TransactionCtrl* old = 0;
-	assert (m_right_column_sizer);
+	JEWEL_ASSERT (m_right_column_sizer);
 	if (m_transaction_ctrl)
 	{
 		m_right_column_sizer->Detach(m_transaction_ctrl);
@@ -301,20 +301,20 @@ TopPanel::configure_transaction_ctrl
 		Account account_y(m_database_connection);
 		if (p_balance_sheet_accounts.empty())
 		{
-			assert (p_pl_accounts.size() >= 2);
+			JEWEL_ASSERT (p_pl_accounts.size() >= 2);
 			account_x = p_pl_accounts[0];
 			account_y = p_pl_accounts[1];
 		}
 		else if (p_pl_accounts.empty())
 		{
-			assert (p_balance_sheet_accounts.size() >= 2);
+			JEWEL_ASSERT (p_balance_sheet_accounts.size() >= 2);
 			account_x = p_balance_sheet_accounts[0];
 			account_y = p_balance_sheet_accounts[1];
 		}
 		else
 		{
-			assert (!p_balance_sheet_accounts.empty());
-			assert (!p_pl_accounts.empty());
+			JEWEL_ASSERT (!p_balance_sheet_accounts.empty());
+			JEWEL_ASSERT (!p_pl_accounts.empty());
 			account_x = p_balance_sheet_accounts[0];
 			account_y = p_pl_accounts[0];
 		}
@@ -323,8 +323,8 @@ TopPanel::configure_transaction_ctrl
 			using std::swap;
 			swap(account_x, account_y);
 		}
-		assert (account_x.has_id());
-		assert (account_y.has_id());
+		JEWEL_ASSERT (account_x.has_id());
+		JEWEL_ASSERT (account_y.has_id());
 		transaction_type::TransactionType const initial_transaction_type =
 			natural_transaction_type(account_x, account_y);
 		assert_transaction_type_validity(initial_transaction_type);
@@ -372,7 +372,7 @@ void
 TopPanel::configure_draft_journal_list_ctrl()
 {
 	DraftJournalListCtrl* old = 0;
-	assert (m_right_column_sizer);
+	JEWEL_ASSERT (m_right_column_sizer);
 	if (m_draft_journal_list)
 	{
 		m_right_column_sizer->Detach(m_draft_journal_list);
@@ -407,9 +407,9 @@ TopPanel::toggle_show_hidden_accounts
 	case account_super_type::pl:
 		return m_pl_account_list->toggle_showing_hidden();
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
-	assert (false);
+	JEWEL_HARD_ASSERT (false);
 }
 
 void
@@ -448,7 +448,7 @@ void
 TopPanel::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 {
 	vector<Entry> entries;
-	assert (m_notebook);
+	JEWEL_ASSERT (m_notebook);
 	wxWindow* const page = m_notebook->GetCurrentPage();
 	if (page == static_cast<wxWindow*>(m_notebook_page_transactions))
 	{
@@ -562,7 +562,7 @@ void
 TopPanel::update_for_amended_budget(Account const& p_account)
 {
 	(void)p_account;  // Silence compiler re. unused parameter.
-	assert (super_type(p_account.account_type()) == account_super_type::pl);
+	JEWEL_ASSERT (super_type(p_account.account_type()) == account_super_type::pl);
 	m_pl_account_list->update();
 	// TODO Do we need to update ReportPanel for amended budget?
 	return;
@@ -571,7 +571,7 @@ TopPanel::update_for_amended_budget(Account const& p_account)
 void
 TopPanel::update_for_reconciliation_status(Entry const& p_entry)
 {
-	assert (m_transaction_ctrl);
+	JEWEL_ASSERT (m_transaction_ctrl);
 	m_transaction_ctrl->update_for_reconciliation_status(p_entry);
 	return;
 }

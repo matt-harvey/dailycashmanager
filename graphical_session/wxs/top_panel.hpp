@@ -11,6 +11,7 @@
 #include "reconciliation_list_panel.hpp"
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
+#include <jewel/assert.hpp>
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -219,7 +220,7 @@ void
 TopPanel::configure_transaction_ctrl(JournalType& p_journal)
 {
 	TransactionCtrl* old = 0;
-	assert (m_right_column_sizer);
+	JEWEL_ASSERT (m_right_column_sizer);
 	if (m_transaction_ctrl)
 	{
 		m_right_column_sizer->Detach(m_transaction_ctrl);
@@ -242,7 +243,7 @@ TopPanel::configure_transaction_ctrl(JournalType& p_journal)
 		old = 0;
 	}
 	Layout();
-	assert (m_transaction_ctrl);
+	JEWEL_ASSERT (m_transaction_ctrl);
 	// m_transaction_ctrl->SetFocus();  // WARNING This doesn't seem to have any effect
 	return;
 }

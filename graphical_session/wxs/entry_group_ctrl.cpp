@@ -18,6 +18,7 @@
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/array_utilities.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/button.h>
@@ -25,7 +26,6 @@
 #include <wx/gdicmn.h>
 #include <wx/panel.h>
 #include <wx/string.h>
-#include <cassert>
 #include <set>
 #include <vector>
 
@@ -83,7 +83,7 @@ EntryGroupCtrl::EntryGroupCtrl
 	m_split_button(0),
 	m_current_row(0)
 {
-	assert (m_entry_rows.empty());
+	JEWEL_ASSERT (m_entry_rows.empty());
 	assert_transaction_type_validity(m_transaction_type);
 	
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
@@ -135,7 +135,7 @@ EntryGroupCtrl::configure_available_account_types()
 		delete m_available_account_types;
 		m_available_account_types = 0;
 	}
-	assert (!m_available_account_types);
+	JEWEL_ASSERT (!m_available_account_types);
 	if (is_source())
 	{
 		m_available_account_types = new vector<account_type::AccountType>
@@ -154,7 +154,7 @@ EntryGroupCtrl::configure_available_account_types()
 void
 EntryGroupCtrl::configure_top_row(bool p_include_split_button)
 {
-	assert (m_current_row == 0);
+	JEWEL_ASSERT (m_current_row == 0);
 	m_side_descriptor = new wxStaticText(this, wxID_ANY, side_description());
 	m_top_sizer->Add(m_side_descriptor, wxGBPosition(m_current_row, 0));
 
@@ -184,7 +184,7 @@ EntryGroupCtrl::configure_top_row(bool p_include_split_button)
 		m_top_sizer->Add(m_split_button, wxGBPosition(m_current_row, 3));
 	}
 	++m_current_row;
-	assert (m_current_row == 1);
+	JEWEL_ASSERT (m_current_row == 1);
 	return;
 }
 
@@ -199,7 +199,7 @@ EntryGroupCtrl::refresh_for_transaction_type
 		// Do nothing
 		return;
 	}
-	assert (p_transaction_type != m_transaction_type);
+	JEWEL_ASSERT (p_transaction_type != m_transaction_type);
 	m_transaction_type = p_transaction_type;
 	configure_available_account_types();
 	for
@@ -220,7 +220,7 @@ EntryGroupCtrl::primary_amount() const
 {
 	TransactionCtrl const* const parent =
 		dynamic_cast<TransactionCtrl const*>(GetParent());
-	assert (parent);
+	JEWEL_ASSERT (parent);
 	return parent->primary_amount();
 }
 
@@ -256,18 +256,18 @@ EntryGroupCtrl::make_entries() const
 		// Leave reconciliation status as as, as user cannot change it
 		// via TransactionCtrl / EntryGroupCtrl.
 
-		assert (entry.transaction_side() == m_transaction_side);
+		JEWEL_ASSERT (entry.transaction_side() == m_transaction_side);
 
 		ret.push_back(entry);
 	}
-	assert (ret.size() == sz);
+	JEWEL_ASSERT (ret.size() == sz);
 	return ret;
 }
 
 bool
 EntryGroupCtrl::is_all_zero() const
 {
-	assert (!m_entry_rows.empty());
+	JEWEL_ASSERT (!m_entry_rows.empty());
 	Decimal const zero(0, 0);
 	if (m_entry_rows.size() == 1)
 	{
@@ -279,7 +279,7 @@ EntryGroupCtrl::is_all_zero() const
 		++i
 	)
 	{
-		assert (m_entry_rows[i].amount_ctrl);
+		JEWEL_ASSERT (m_entry_rows[i].amount_ctrl);
 		if (m_entry_rows[i].amount_ctrl->amount() != zero)
 		{
 			return false;
@@ -295,7 +295,7 @@ EntryGroupCtrl::update_for_new(Account const& p_saved_object)
 	vector<EntryRow>::iterator const end = m_entry_rows.end();
 	for ( ; it != end; ++it)
 	{
-		assert (it->account_ctrl);
+		JEWEL_ASSERT (it->account_ctrl);
 		it->account_ctrl->update_for_new(p_saved_object);
 	}
 	return;
@@ -308,7 +308,7 @@ EntryGroupCtrl::update_for_amended(Account const& p_saved_object)
 	vector<EntryRow>::iterator const end = m_entry_rows.end();
 	for ( ; it != end; ++it)
 	{
-		assert (it->account_ctrl);
+		JEWEL_ASSERT (it->account_ctrl);
 		it->account_ctrl->update_for_amended(p_saved_object);
 	}
 	return;
@@ -317,17 +317,17 @@ EntryGroupCtrl::update_for_amended(Account const& p_saved_object)
 Decimal
 EntryGroupCtrl::total_amount() const
 {
-	assert (!m_entry_rows.empty());
+	JEWEL_ASSERT (!m_entry_rows.empty());
 	if (!m_entry_rows[0].amount_ctrl)
 	{
 		return primary_amount();
 	}
 	vector<EntryRow>::size_type const sz = m_entry_rows.size();
-	assert (sz >= 2);
+	JEWEL_ASSERT (sz >= 2);
 	Decimal ret(0, 0);
 	for (vector<EntryRow>::size_type i = 0; i != sz; ++i)
 	{
-		assert (m_entry_rows[i].amount_ctrl);
+		JEWEL_ASSERT (m_entry_rows[i].amount_ctrl);
 		ret += m_entry_rows[i].amount_ctrl->amount();
 	}
 	return ret;
@@ -345,7 +345,7 @@ EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 	entry.set_amount(Decimal(0, account.commodity().precision()));
 	entry.set_transaction_side(m_transaction_side);
 	push_row(entry, optional<Decimal>(), true);
-	assert (!m_entry_rows.empty());
+	JEWEL_ASSERT (!m_entry_rows.empty());
 	autobalance(m_entry_rows.back().amount_ctrl);
 	return;
 }
@@ -371,7 +371,7 @@ EntryGroupCtrl::pop_row()
 	{
 		return;
 	}
-	assert (m_entry_rows.size() > 1);
+	JEWEL_ASSERT (m_entry_rows.size() > 1);
 	EntryRow& doomed_entry_row = m_entry_rows.back();
 	wxWindow* const doomed_windows[] =
 	{	doomed_entry_row.account_ctrl,
@@ -462,11 +462,11 @@ EntryGroupCtrl::push_row
 			m_text_ctrl_size
 		);
 		m_top_sizer->Add(m_split_button, wxGBPosition(m_current_row, 3));
-		assert (entry_row.amount_ctrl == 0);
+		JEWEL_ASSERT (entry_row.amount_ctrl == 0);
 	}
 	else
 	{
-		assert (p_multiple_entries);
+		JEWEL_ASSERT (p_multiple_entries);
 		entry_row.amount_ctrl = new EntryDecimalTextCtrl
 		(	this,
 			m_text_ctrl_size
@@ -490,7 +490,7 @@ EntryGroupCtrl::push_row
 				wxDefaultSpan,
 				wxALIGN_RIGHT
 			);
-			assert (!m_entry_rows.empty());
+			JEWEL_ASSERT (!m_entry_rows.empty());
 			if (!m_entry_rows.back().amount_ctrl)
 			{
 				m_top_sizer->Detach(m_split_button);
@@ -544,7 +544,7 @@ EntryGroupCtrl::adjust_layout_for_new_number_of_rows()
 	Layout();  // Must call this.
 	
 	TransactionCtrl* parent = dynamic_cast<TransactionCtrl*>(GetParent());
-	assert (parent);
+	JEWEL_ASSERT (parent);
 
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -571,7 +571,7 @@ EntryGroupCtrl::side_description() const
 	case transaction_type::revenue_transaction:
 		if (is_source()) source_super_types(m_transaction_type, super_types);
 		else destination_super_types(m_transaction_type, super_types);
-		assert(super_types.size() == 1);
+		JEWEL_ASSERT(super_types.size() == 1);
 		ret += account_concept_name
 		(	*(super_types.begin()),
 			AccountPhraseFlags().set(string_flags::capitalize)
@@ -585,7 +585,7 @@ EntryGroupCtrl::side_description() const
 		ret += (is_source()? wxString("CR"): wxString("DR"));
 		break;
 	default:
-		assert (false);
+		JEWEL_HARD_ASSERT (false);
 	}
 	ret += ":";
 	return ret;
@@ -616,7 +616,7 @@ EntryGroupCtrl::reflect_reconciliation_statuses()
 		vector<wxWindow*>::iterator const end = window_vec.end();
 		for ( ; it != end; ++it)
 		{
-			assert (*it);
+			JEWEL_ASSERT (*it);
 			toggle_enabled
 			(	*it,
 				!reconciled,
@@ -635,13 +635,13 @@ EntryGroupCtrl::reflect_reconciliation_statuses()
 		m_entry_rows.back().entry.is_reconciled();
 	if (m_unsplit_button)
 	{
-		assert (num_rows() >= 2);
+		JEWEL_ASSERT (num_rows() >= 2);
 		toggle_enabled(m_unsplit_button, !final_row_reconciled);
 	}
 	else
 	{
-		assert (num_rows() == 1);
-		assert (m_split_button);
+		JEWEL_ASSERT (num_rows() == 1);
+		JEWEL_ASSERT (m_split_button);
 		toggle_enabled(m_split_button, !final_row_reconciled);
 	}
 	return ret;
@@ -650,7 +650,7 @@ EntryGroupCtrl::reflect_reconciliation_statuses()
 void
 EntryGroupCtrl::autobalance(EntryDecimalTextCtrl* p_target)
 {
-	assert (p_target);
+	JEWEL_ASSERT (p_target);
 	Decimal const orig_total = total_amount();
 	Decimal const orig_primary_amount = primary_amount();
 	if (orig_total != orig_primary_amount)
@@ -658,12 +658,12 @@ EntryGroupCtrl::autobalance(EntryDecimalTextCtrl* p_target)
 		Decimal const orig_target_amount = p_target->amount();
 		Decimal const required_increment = orig_primary_amount - orig_total;
 		p_target->set_amount(orig_target_amount + required_increment);
-		assert (p_target->amount().places() == orig_target_amount.places());
+		JEWEL_ASSERT (p_target->amount().places() == orig_target_amount.places());
 	}
 
 	// Postconditions
-	assert (primary_amount() == orig_primary_amount);
-	assert (total_amount() == primary_amount());
+	JEWEL_ASSERT (primary_amount() == orig_primary_amount);
+	JEWEL_ASSERT (total_amount() == primary_amount());
 	return;
 }
 
@@ -703,7 +703,7 @@ EntryGroupCtrl::EntryDecimalTextCtrl::on_left_double_click(wxMouseEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter
 	EntryGroupCtrl* const parent = dynamic_cast<EntryGroupCtrl*>(GetParent());
-	assert (parent);
+	JEWEL_ASSERT (parent);
 	parent->autobalance(this);
 	return;
 }
