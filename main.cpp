@@ -92,6 +92,7 @@
 #include "graphical_session.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <tclap/CmdLine.h>
 #include <wx/log.h>
@@ -99,6 +100,7 @@
 #include <wx/string.h>
 #include <wx/utils.h>
 #include <cstdlib>
+#include <cstring>
 #include <exception>
 #include <fstream>
 #include <ios>
@@ -117,6 +119,7 @@ using std::cout;
 using std::endl;
 using std::ofstream;
 using std::string;
+using std::strlen;
 using std::set_terminate;
 using TCLAP::ArgException;
 using TCLAP::CmdLine;
@@ -234,10 +237,50 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-#	ifndef JEWEL_DISABLE_LOGGING
+
+#	ifdef JEWEL_ENABLE_LOGGING
 	// If we have disabled logging, then we DON'T want to handle
-	// std::exception here, because the standard message printed to
+	// jewel::Exception or std::exception here, because the standard message
+	// printed to std::cerr
 	// will no longer display the specific type of the exception.
+
+	// TODO Even if we haven't enabled logging, we could still catch
+	// jewel::Exception and explicitly print the info to std::cerr.
+
+	catch (jewel::Exception& e)
+	{
+		JEWEL_LOG_MESSAGE
+		(	Log::error,
+			"jewel::Exception e caught in main."
+		);
+		if (strlen(e.type()) != 0)
+		{
+			JEWEL_LOG_VALUE(Log::error, e.type());
+		}
+		else
+		{
+			JEWEL_LOG_VALUE(Log::error, typeid(e).name());
+		}
+		if (strlen(e.message()) != 0)
+		{
+			JEWEL_LOG_VALUE(Log::error, e.message());
+		}
+		if (strlen(e.function()) != 0)
+		{
+			JEWEL_LOG_VALUE(Log::error, e.function());
+		}
+		if (strlen(e.filepath()) != 0)
+		{
+			JEWEL_LOG_VALUE(Log::error, e.filepath());
+		}
+		if (e.line() >= 0)
+		{
+			JEWEL_LOG_VALUE(Log::error, e.line());
+		}
+		flush_standard_output_streams();
+		JEWEL_LOG_MESSAGE(Log::error, "Rethrowing e.");
+		throw e;
+	}
 	catch (std::exception& e)
 	{
 		JEWEL_LOG_MESSAGE(Log::error, "std::exception e caught in main.");
@@ -248,6 +291,7 @@ int main(int argc, char** argv)
 		throw e;
 	}
 #	endif  // JEWEL_DISABLE_LOGGING
+
 
 	// This is necessary to guarantee the stack is fully unwound no
 	// matter what exception is thrown - we're not ONLY doing it
