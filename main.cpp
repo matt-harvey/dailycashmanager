@@ -106,6 +106,7 @@
 #include <ios>
 #include <iostream>
 #include <string>
+#include <typeinfo>
 
 using boost::scoped_ptr;
 using jewel::Log;
@@ -154,6 +155,8 @@ void configure_logging()
 	Log::set_filepath(log_name);
 	return;
 }
+
+JEWEL_DERIVED_EXCEPTION(Whatever, jewel::Exception);
 
 int main(int argc, char** argv)
 {
@@ -236,46 +239,18 @@ int main(int argc, char** argv)
 		flush_standard_output_streams();
 		return 1;
 	}
-
-
-#	ifdef JEWEL_ENABLE_LOGGING
-	// If we have disabled logging, then we DON'T want to handle
-	// jewel::Exception or std::exception here, because the standard message
-	// printed to std::cerr
-	// will no longer display the specific type of the exception.
-
-	// TODO Even if we haven't enabled logging, we could still catch
-	// jewel::Exception and explicitly print the info to std::cerr.
-
 	catch (jewel::Exception& e)
 	{
 		JEWEL_LOG_MESSAGE
 		(	Log::error,
 			"jewel::Exception e caught in main."
 		);
-		if (strlen(e.type()) != 0)
-		{
-			JEWEL_LOG_VALUE(Log::error, e.type());
-		}
-		else
+		JEWEL_LOG_VALUE(Log::error, e);
+		cerr << e << endl;
+		if (strlen(e.type()) == 0)
 		{
 			JEWEL_LOG_VALUE(Log::error, typeid(e).name());
-		}
-		if (strlen(e.message()) != 0)
-		{
-			JEWEL_LOG_VALUE(Log::error, e.message());
-		}
-		if (strlen(e.function()) != 0)
-		{
-			JEWEL_LOG_VALUE(Log::error, e.function());
-		}
-		if (strlen(e.filepath()) != 0)
-		{
-			JEWEL_LOG_VALUE(Log::error, e.filepath());
-		}
-		if (e.line() >= 0)
-		{
-			JEWEL_LOG_VALUE(Log::error, e.line());
+			cerr << "typeid(e).name(): " << typeid(e).name() << '\n' << endl;
 		}
 		flush_standard_output_streams();
 		JEWEL_LOG_MESSAGE(Log::error, "Rethrowing e.");
@@ -286,12 +261,13 @@ int main(int argc, char** argv)
 		JEWEL_LOG_MESSAGE(Log::error, "std::exception e caught in main.");
 		JEWEL_LOG_VALUE(Log::error, typeid(e).name());
 		JEWEL_LOG_VALUE(Log::error, e.what());
+		cerr << "EXCEPTION:" << endl;
+		cerr << "typeid(e).name(): " << typeid(e).name() << endl;
+		cerr << "e.what(): " << e.what() << endl;
 		flush_standard_output_streams();
 		JEWEL_LOG_MESSAGE(Log::error, "Rethrowing e.");
 		throw;
 	}
-#	endif  // JEWEL_DISABLE_LOGGING
-
 
 	// This is necessary to guarantee the stack is fully unwound no
 	// matter what exception is thrown - we're not ONLY doing it
@@ -299,6 +275,7 @@ int main(int argc, char** argv)
 	catch (...)
 	{
 		JEWEL_LOG_MESSAGE(Log::error, "Unknown exception caught in main.");
+		cerr << "Unknown exception caught in main." << endl;
 		flush_standard_output_streams();
 		JEWEL_LOG_MESSAGE(Log::error, "Rethrowing unknown exception.");
 		throw;
