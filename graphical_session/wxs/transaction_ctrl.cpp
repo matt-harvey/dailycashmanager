@@ -366,7 +366,7 @@ TransactionCtrl::configure_for_journal_editing()
 	JEWEL_ASSERT (m_journal);
 	transaction_type::TransactionType const initial_transaction_type
 		= m_journal->transaction_type();
-	JEWEL_ASSERT(initial_transaction_type);
+	assert_transaction_type_validity(initial_transaction_type);
 	wxSize text_box_size;
 	vector<transaction_type::TransactionType> available_transaction_types;
 	available_transaction_types.push_back(initial_transaction_type);
