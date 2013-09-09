@@ -47,6 +47,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -544,8 +545,9 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_creation_date
 {
 	if (m_creation_date && (p_date != value(m_creation_date)))
 	{
-		throw EntityCreationDateException
-		(	"Entity creation date cannot be changed once set."
+		JEWEL_THROW
+		(	EntityCreationDateException,
+			"Entity creation date cannot be changed once set."
 		);
 	}
 	m_creation_date = p_date;
@@ -559,8 +561,9 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
 {
 	if (p_commodity.multiplier_to_base() != Decimal(1, 0))
 	{
-		throw InvalidDefaultCommodityException
-		(	"Default Commodity has multiplier_to_base that is not equal "
+		JEWEL_THROW
+		(	InvalidDefaultCommodityException,
+			"Default Commodity has multiplier_to_base that is not equal "
 			"to Decimal(1, 0)."
 		);
 	}

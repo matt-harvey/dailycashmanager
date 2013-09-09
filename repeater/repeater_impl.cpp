@@ -26,6 +26,7 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/checked_arithmetic.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <algorithm>
@@ -127,8 +128,9 @@ RepeaterImpl::set_next_date(boost::gregorian::date const& p_next_date)
 {
 	if (p_next_date < database_connection().entity_creation_date())
 	{
-		throw InvalidRepeaterDateException
-		(	"Next firing date of RepeaterImpl cannot be set to a date "
+		JEWEL_THROW
+		(	InvalidRepeaterDateException,
+			"Next firing date of RepeaterImpl cannot be set to a date "
 			"earlier than the entity creation date."
 		);
 	}
@@ -173,7 +175,7 @@ RepeaterImpl::next_date(vector<gregorian::date>::size_type n)
 	Size const units = freq.num_steps();
 	if (multiplication_is_unsafe(units, n))
 	{
-		throw UnsafeArithmeticException("Unsafe multiplication.");
+		JEWEL_THROW(UnsafeArithmeticException, "Unsafe multiplication.");
 	}
 	JEWEL_ASSERT (!multiplication_is_unsafe(units, n));
 	Size const steps = units * n;

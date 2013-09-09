@@ -8,6 +8,7 @@
 #include <boost/static_assert.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -334,8 +335,9 @@ BudgetItemImpl::BudgetItemData::account() const
 		return *m_account;
 	}
 	JEWEL_ASSERT (!m_account);
-	throw UninitializedOptionalException
-	(	"BudgetItemImpl::BudgetItemData::m_account is null."
+	JEWEL_THROW
+	(	UninitializedOptionalException,
+		"BudgetItemImpl::BudgetItemData::m_account is null."
 	);
 }
 

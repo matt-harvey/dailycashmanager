@@ -152,8 +152,9 @@ FrequencyCtrl::set_frequency(optional<Frequency> const& p_maybe_frequency)
 	{
 		if (!supports_draft_journal() && !supports_budget_item())
 		{
-			throw InvalidFrequencyException
-			(	"FrequencyCtrl does not support recurring transaction "
+			JEWEL_THROW
+			(	InvalidFrequencyException,
+				"FrequencyCtrl does not support recurring transaction "
 				"Frequencies."
 			);
 		}
@@ -162,8 +163,9 @@ FrequencyCtrl::set_frequency(optional<Frequency> const& p_maybe_frequency)
 		{
 			if (freq.step_type() == interval_type::month_ends)
 			{
-				throw InvalidFrequencyException
-				(	"FrequencyCtrl does not support interval_type::month_ends"
+				JEWEL_THROW
+				(	InvalidFrequencyException,
+					"FrequencyCtrl does not support interval_type::month_ends"
 					", as it is not calibrated to support DraftJournal "
 					"Repeater Frequencies."
 				);
@@ -186,8 +188,9 @@ FrequencyCtrl::set_frequency(optional<Frequency> const& p_maybe_frequency)
 	JEWEL_ASSERT (!p_maybe_frequency);
 	if (!supports_ordinary_journal())
 	{
-		throw InvalidFrequencyException
-		(	"FrequencyCtrl does not support \"once-off\" selection."
+		JEWEL_THROW
+		(	InvalidFrequencyException,
+			"FrequencyCtrl does not support \"once-off\" selection."
 		);
 	}
 	JEWEL_ASSERT (supports_ordinary_journal());

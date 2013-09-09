@@ -26,6 +26,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -153,8 +154,9 @@ AccountImpl::id_for_name
 			return statement.extract<AccountImpl::Id>(0);
 		}
 	}
-	throw InvalidAccountNameException
-	(	"There is no AccountImpl with the passed name."
+	JEWEL_THROW
+	(	InvalidAccountNameException,
+		"There is no AccountImpl with the passed name."
 	);
 }
 
@@ -560,8 +562,9 @@ AccountImpl::do_remove()
 {
 	if (id() == database_connection().balancing_account().id())
 	{
-		throw PreservedRecordDeletionException
-		(	"Budget balancing account cannot be deleted."
+		JEWEL_THROW
+		(	PreservedRecordDeletionException,
+			"Budget balancing account cannot be deleted."
 		);
 	}
 	BalanceCacheAttorney::mark_as_stale(database_connection(), id());

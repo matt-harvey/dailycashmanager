@@ -208,8 +208,9 @@ ProtoJournal::do_save_new_journal_core
 {
 	if (!is_balanced())
 	{
-		throw UnbalancedJournalException
-		(	"Cannot save journal core in unbalanced state."
+		JEWEL_THROW
+		(	UnbalancedJournalException,
+			"Cannot save journal core in unbalanced state."
 		);
 	}
 	Id const journal_id = next_auto_key
@@ -245,8 +246,9 @@ ProtoJournal::do_save_existing_journal_core
 {
 	if (!is_balanced())
 	{
-		throw UnbalancedJournalException
-		(	"Cannot save journal core in unbalanced state."
+		JEWEL_THROW
+		(	UnbalancedJournalException,
+			"Cannot save journal core in unbalanced state."
 		);
 	}
 	SQLStatement updater

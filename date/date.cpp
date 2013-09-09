@@ -20,6 +20,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <wx/datetime.h>
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -105,8 +106,9 @@ boost_date_from_julian_int(DateRep julian_int)
 	}
 	if (!is_valid_date(julian_int))
 	{
-		throw DateConversionException
-		(	"boost_date_from_julian_int is not designed to handle dates "
+		JEWEL_THROW
+		(	DateConversionException,
+			"boost_date_from_julian_int is not designed to handle dates "
 			"earlier than year 1 CE."
 		);
 	}

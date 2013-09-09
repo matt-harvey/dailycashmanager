@@ -2,6 +2,7 @@
 
 #include "account_type.hpp"
 #include "phatbooks_exceptions.hpp"
+#include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <wx/string.h>
 #include <iostream>
@@ -147,8 +148,9 @@ string_to_account_type(wxString const& p_string)
 		dict.find(p_string);
 	if (jt == dict.end())
 	{
-		throw InvalidAccountTypeStringException
-		(	"String does not identify AccountType"
+		JEWEL_THROW
+		(	InvalidAccountTypeStringException,
+			"String does not identify AccountType"
 		);
 	}
 	JEWEL_ASSERT (jt != dict.end());

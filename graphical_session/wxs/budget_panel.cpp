@@ -23,6 +23,7 @@
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <wx/app.h>
@@ -90,8 +91,9 @@ BudgetPanel::BudgetPanel(AccountDialog* p_parent, Account const& p_account):
 
 	if (p_account == p_account.database_connection().balancing_account())
 	{
-		throw BudgetEditingException
-		(	"Cannot use BudgetPanel to edit budgets for the budget "
+		JEWEL_THROW
+		(	BudgetEditingException,
+			"Cannot use BudgetPanel to edit budgets for the budget "
 			"balancing Account."
 		);
 	}

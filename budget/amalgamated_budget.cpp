@@ -341,8 +341,9 @@ AmalgamatedBudget::generate_map() const
 		Frequency const raw_frequency = it->frequency();
 		if (!AmalgamatedBudget::supports_frequency(raw_frequency))
 		{
-			throw InvalidFrequencyException
-			(	"Frequency not supported by AmalgamatedBudget."
+			JEWEL_THROW
+			(	InvalidFrequencyException,
+				"Frequency not supported by AmalgamatedBudget."
 			);
 		}
 		AccountImpl::Id const account_id = it->account().id();

@@ -16,6 +16,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -246,8 +247,9 @@ BalanceCache::refresh_all()
 			amount_intval = statement.extract<Decimal::int_type>(1);
 			if (addition_is_unsafe(working_map[account_id], amount_intval))
 			{
-				throw UnsafeArithmeticException
-				(	"Unsafe addition while refreshing BalanceCache."
+				JEWEL_THROW
+				(	UnsafeArithmeticException,
+					"Unsafe addition while refreshing BalanceCache."
 				);
 			}
 			working_map[account_id] += amount_intval;

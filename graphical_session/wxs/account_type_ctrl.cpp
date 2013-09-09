@@ -5,6 +5,7 @@
 #include "account_type.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <wx/combobox.h>
 #include <wx/string.h>
 #include <wx/window.h>
@@ -83,8 +84,9 @@ AccountTypeCtrl::set_account_type(account_type::AccountType p_account_type)
 {
 	if (super_type(p_account_type) != m_account_super_type)
 	{
-		throw InvalidAccountTypeException
-		(	"AccountType is invalid given the AccountSuperType of this "
+		JEWEL_THROW
+		(	InvalidAccountTypeException,
+			"AccountType is invalid given the AccountSuperType of this "
 			"AccountTypeCtrl."
 		);
 	}

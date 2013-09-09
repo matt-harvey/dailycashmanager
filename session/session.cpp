@@ -10,6 +10,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <list>
 #include <string>
@@ -42,8 +43,9 @@ Session::Session():
 	if (s_num_instances > s_max_instances)
 	{
 		--s_num_instances;
-		throw TooManySessions
-		(	"Exceeded maximum number of instances of phatbooks::Session."
+		JEWEL_THROW
+		(	TooManySessions,
+			"Exceeded maximum number of instances of phatbooks::Session."
 		);
 	}
 	JEWEL_ASSERT (s_num_instances <= s_max_instances);
@@ -70,7 +72,7 @@ Session::run(string const& filepath_str)
 {
 	if (filepath_str.empty())
 	{
-		throw InvalidFilename("Filename is empty string.");
+		JEWEL_THROW(InvalidFilename, "Filename is empty string.");
 	}	
 	return do_run(filepath_str);
 }

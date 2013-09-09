@@ -9,6 +9,7 @@
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <wx/string.h>
 #include <map>
@@ -230,8 +231,9 @@ transaction_type_from_verb(wxString const& p_phrase)
 	Dict::const_iterator const it = dict.find(p_phrase);
 	if (it == dict.end())
 	{
-		throw InvalidTransactionTypeException
-		(	"wxString passed to transaction_type_from_verb does not "
+		JEWEL_THROW
+		(	InvalidTransactionTypeException,
+			"wxString passed to transaction_type_from_verb does not "
 			"correspond to any TransactionType."
 		);
 	}

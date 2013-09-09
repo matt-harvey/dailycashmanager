@@ -24,6 +24,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/string.h>
@@ -435,8 +436,9 @@ DraftJournalImpl::do_remove()
 {
 	if (id() == database_connection().budget_instrument().id())
 	{
-		throw PreservedRecordDeletionException
-		(	"Budget instrument DraftJournalImpl cannot be deleted."
+		JEWEL_THROW
+		(	PreservedRecordDeletionException,
+			"Budget instrument DraftJournalImpl cannot be deleted."
 		);
 	}
 	// TODO Confirm exception-safety of whole remove() function, once

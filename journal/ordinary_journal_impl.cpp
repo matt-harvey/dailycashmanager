@@ -18,6 +18,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -183,8 +184,9 @@ OrdinaryJournalImpl::set_date(gregorian::date const& p_date)
 {
 	if (p_date < database_connection().entity_creation_date())
 	{
-		throw InvalidJournalDateException
-		(	"Date of OrdinaryJournalImpl cannot be set to a date "
+		JEWEL_THROW
+		(	InvalidJournalDateException,
+			"Date of OrdinaryJournalImpl cannot be set to a date "
 			"earlier than the entity creation date, using the "
 			"set_date function."
 		);

@@ -279,7 +279,7 @@ int main(int argc, char** argv)
 		}
 		flush_standard_output_streams();
 		JEWEL_LOG_MESSAGE(Log::error, "Rethrowing e.");
-		throw e;
+		throw;
 	}
 	catch (std::exception& e)
 	{
@@ -288,7 +288,7 @@ int main(int argc, char** argv)
 		JEWEL_LOG_VALUE(Log::error, e.what());
 		flush_standard_output_streams();
 		JEWEL_LOG_MESSAGE(Log::error, "Rethrowing e.");
-		throw e;
+		throw;
 	}
 #	endif  // JEWEL_DISABLE_LOGGING
 

@@ -16,6 +16,7 @@
 #include <boost/noncopyable.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <wx/app.h>
@@ -139,8 +140,9 @@ AccountDialog::AccountDialog
 		(super_type(m_account.account_type()) != p_account_super_type)
 	)
 	{
-		throw InvalidAccountTypeException
-		(	"AccountType of Account passed to AccountDialog constructor does "
+		JEWEL_THROW
+		(	InvalidAccountTypeException,
+			"AccountType of Account passed to AccountDialog constructor does "
 			"not belong to the AccountSuperType passed to the same "
 			"constructor."
 		);

@@ -52,8 +52,9 @@ namespace
 		OrdinaryJournal const journal = entry.journal<OrdinaryJournal>();
 		if (!journal.has_id())
 		{
-			throw UninitializedOptionalException
-			(	"Journal does not have id."
+			JEWEL_THROW
+			(	UninitializedOptionalException,
+				"Journal does not have id."
 			);
 		}
 		JEWEL_ASSERT (journal.has_id());
