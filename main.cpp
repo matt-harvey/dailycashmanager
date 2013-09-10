@@ -88,27 +88,6 @@
 // i.e. laptop.
 
 
-// WARNING begin temp
-#include "account.hpp"
-#include "entry.hpp"
-#include "entry_reader.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "../sqloxx/table_iterator.hpp"
-#include <jewel/stopwatch.hpp>
-#include <sqloxx/sql_statement.hpp>
-#include <string>
-#include <vector>
-using jewel::Stopwatch;
-using phatbooks::PhatbooksDatabaseConnection;
-using phatbooks::Account;
-using phatbooks::ActualOrdinaryEntryReader;
-using phatbooks::Entry;
-using sqloxx::SQLStatement;
-using sqloxx::TableIterator;
-using std::string;
-using std::vector;
-// WARNING end temp
-
 #include "application.hpp"
 #include "string_conv.hpp"
 #include "graphical_session.hpp"
@@ -177,8 +156,6 @@ void configure_logging()
 	Log::set_filepath(log_name);
 	return;
 }
-
-JEWEL_DERIVED_EXCEPTION(Whatever, jewel::Exception);
 
 int main(int argc, char** argv)
 {
