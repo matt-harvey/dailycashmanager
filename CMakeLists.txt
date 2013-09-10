@@ -155,7 +155,7 @@ set (main_files
 	 finformat/finformat.cpp
 	 journal/draft_journal.cpp
 	 journal/draft_journal_impl.cpp
-	 journal/draft_journal_reader.cpp
+	 journal/draft_journal_table_iterator.cpp
 	 journal/journal.cpp
 	 journal/proto_journal.cpp
 	 journal/ordinary_journal.cpp

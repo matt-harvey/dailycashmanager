@@ -3,7 +3,7 @@
 #include "draft_journal_list_ctrl.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
-#include "draft_journal_reader.hpp"
+#include "draft_journal_table_iterator.hpp"
 #include "frequency.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -36,7 +36,8 @@ END_EVENT_TABLE()
 DraftJournalListCtrl::DraftJournalListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	UserDraftJournalReader const& p_reader,
+	UserDraftJournalTableIterator p_beg,
+	UserDraftJournalTableIterator p_end,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxListCtrl
@@ -48,7 +49,7 @@ DraftJournalListCtrl::DraftJournalListCtrl
 	),
 	m_database_connection(p_database_connection)
 {
-	update(p_reader);
+	update(p_beg, p_end);
 }
 
 void
@@ -86,7 +87,10 @@ DraftJournalListCtrl::on_item_activated(wxListEvent& event)
 }
 
 void
-DraftJournalListCtrl::update(UserDraftJournalReader const& p_reader)
+DraftJournalListCtrl::update
+(	UserDraftJournalTableIterator p_beg,
+	UserDraftJournalTableIterator p_end
+)
 {
 	// Remember which rows are selected currently
 	vector<size_t> selected_rows;
@@ -105,19 +109,17 @@ DraftJournalListCtrl::update(UserDraftJournalReader const& p_reader)
 	InsertColumn(s_frequency_col, "Frequency", wxLIST_FORMAT_LEFT);
 	InsertColumn(s_next_date_col, "Next date", wxLIST_FORMAT_RIGHT);
 	
-	UserDraftJournalReader::size_type i = 0;	
-	UserDraftJournalReader::const_iterator it = p_reader.begin();
-	UserDraftJournalReader::const_iterator const end = p_reader.end();
-	for ( ; it != end; ++it, ++i)
+	size_t i = 0;	
+	for ( ; p_beg != p_end; ++p_beg, ++i)
 	{
 		// Insert item, with string for Column 0
-		InsertItem(i, it->name());
+		InsertItem(i, p_beg->name());
 		
 		// The item may change position due to e.g. sorting, so store the
 		// Journal ID in the item's data
 		// TODO Do a static assert to ensure second param will fit the id.
-		JEWEL_ASSERT (it->has_id());
-		SetItemData(i, it->id());
+		JEWEL_ASSERT (p_beg->has_id());
+		SetItemData(i, p_beg->id());
 
 		// Set the frequency and next-date columns.
 
@@ -126,7 +128,7 @@ DraftJournalListCtrl::update(UserDraftJournalReader const& p_reader)
 		// just going to rule that out by making it impossible for the user
 		// to create such DraftJournals?
 
-		vector<Repeater> const& repeaters = it->repeaters();
+		vector<Repeater> const& repeaters = p_beg->repeaters();
 
 		if (repeaters.empty())
 		{

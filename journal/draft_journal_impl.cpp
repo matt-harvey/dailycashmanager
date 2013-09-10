@@ -3,19 +3,13 @@
 #include "string_conv.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
-
-#ifndef NDEBUG
-	// We only need this to support some
-	// assertions.
-	#include "draft_journal_reader.hpp"
-#endif
-
-#include "string_conv.hpp"
+#include "draft_journal_table_iterator.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
+#include "string_conv.hpp"
 #include "transaction_type.hpp"
 #include <sqloxx/sql_statement.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -28,7 +22,6 @@
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/string.h>
-#include <iostream>  // for debug logging
 #include <string>
 #include <vector>
 
@@ -44,13 +37,8 @@ using jewel::value;
 using std::vector;
 using std::string;
 
-// For debug logging:
-using std::endl;
-
 namespace phatbooks
 {
-
-
 
 string
 DraftJournalImpl::primary_table_name()
@@ -211,51 +199,9 @@ DraftJournalImpl::no_user_draft_journals_saved
 (	PhatbooksDatabaseConnection& p_database_connection
 )
 {
-#	ifndef NDEBUG
-		// We could just examine this directly; but it seems
-		// inefficient to load the whole reader when we only
-		// need to step through at most 2 rows to find
-		// whether to return true or false. So we have
-		// the reader here only to provide a cross-check for debug
-		// builds.
-		UserDraftJournalReader const udjr(p_database_connection);
-#	endif
-
-	// We could have examined the AmalgamatedBudget data table
-	// directly here (per code in UserDraftJournalReader), but
-	// we don't want this function to have knowledge of how
-	// AmalgamatedBudget stores it data.
-	SQLStatement statement
-	(	p_database_connection,
-		"select journal_id from draft_journal_detail"
-	);
-	bool const draft_journals_exist = statement.step();
-	if (!draft_journals_exist)
-	{
-		JEWEL_ASSERT (udjr.empty());
-		return true;
-	}
-	DraftJournal const dj
-	(	p_database_connection,
-		statement.extract<DraftJournal::Id>(0)
-	);
-	bool const multiple_draft_journals_exist = statement.step();
-	if (multiple_draft_journals_exist)
-	{
-		JEWEL_ASSERT (!udjr.empty());
-		return false;
-	}
-	JEWEL_ASSERT (draft_journals_exist && !multiple_draft_journals_exist);
-	if (dj == p_database_connection.budget_instrument())
-	{
-		JEWEL_ASSERT (udjr.empty());
-		return true;
-	}
-	else
-	{
-		JEWEL_ASSERT (!udjr.empty());
-		return false;
-	}
+	return
+		UserDraftJournalTableIterator(p_database_connection) ==
+		(UserDraftJournalTableIterator());
 }
 
 void

@@ -4,6 +4,7 @@
 #define GUARD_draft_journal_list_ctrl_hpp
 
 #include "draft_journal.hpp"
+#include "draft_journal_table_iterator.hpp"
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
@@ -15,7 +16,6 @@ namespace phatbooks
 // Begin forward declarations
 
 class PhatbooksDatabaseConnection;
-class UserDraftJournalReader;
 
 // End forward declarations
 
@@ -29,7 +29,8 @@ public:
 	DraftJournalListCtrl
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		UserDraftJournalReader const& p_reader,
+		UserDraftJournalTableIterator p_beg,
+		UserDraftJournalTableIterator p_end,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
@@ -43,7 +44,10 @@ private:
 
 	void on_item_activated(wxListEvent& event);
 
-	void update(UserDraftJournalReader const& p_reader);
+	void update
+	(	UserDraftJournalTableIterator p_beg,
+		UserDraftJournalTableIterator p_end
+	);
 
 	static int const s_name_col = 0;
 	static int const s_frequency_col = s_name_col + 1;

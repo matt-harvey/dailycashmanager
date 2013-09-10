@@ -5,7 +5,7 @@
 #include "account_list_ctrl.hpp"
 #include "account_type.hpp"
 #include "draft_journal_list_ctrl.hpp"
-#include "draft_journal_reader.hpp"
+#include "draft_journal_table_iterator.hpp"
 #include "entry.hpp"
 #include "entry_list_panel.hpp"
 #include "frame.hpp"
@@ -378,11 +378,11 @@ TopPanel::configure_draft_journal_list_ctrl()
 		m_right_column_sizer->Detach(m_draft_journal_list);
 		old = m_draft_journal_list;
 	}
-	UserDraftJournalReader const reader(m_database_connection);
 	m_draft_journal_list = new DraftJournalListCtrl
 	(	this,
 		wxDefaultSize,
-		reader,
+		UserDraftJournalTableIterator(m_database_connection),
+		(UserDraftJournalTableIterator()),
 		m_database_connection
 	);
 	m_right_column_sizer->Add(m_draft_journal_list, wxSizerFlags(1).Expand());
