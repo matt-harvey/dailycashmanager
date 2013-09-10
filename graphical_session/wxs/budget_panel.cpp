@@ -7,7 +7,7 @@
 #include "account_reader.hpp"
 #include "account_type.hpp"
 #include "budget_item.hpp"
-#include "budget_item_reader.hpp"
+#include "budget_item_table_iterator.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
@@ -224,9 +224,8 @@ BudgetPanel::BudgetPanel(AccountDialog* p_parent, Account const& p_account):
 	// Next row
 	// Bare scope
 	{
-		BudgetItemReader const reader(database_connection());
-		BudgetItemReader::const_iterator it = reader.begin();
-		BudgetItemReader::const_iterator const end = reader.end();
+		BudgetItemTableIterator it(database_connection());
+		BudgetItemTableIterator const end;
 		for ( ; it != end; ++it)
 		{
 			if (it->account() == m_account)
@@ -813,14 +812,15 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 	wxString const offsetting_item_description("Offsetting budget adjustment");
 	Frequency const target_frequency =
 		m_database_connection.budget_frequency();
-	BudgetItemReader reader(m_database_connection);
-	BudgetItemReader::iterator it = reader.begin();
-	BudgetItemReader::iterator const end = reader.end();
 
 	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
 	JEWEL_ASSERT (frame);
 
-	for ( ; it != end; ++it)
+	for
+	(	BudgetItemTableIterator it(m_database_connection), end;
+		it != end;
+		++it
+	)
 	{
 		// If there is already a "general offsetting BudgetItem" for
 		// the target Account, then roll it into that.
@@ -830,8 +830,9 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 			(it->frequency() == target_frequency)
 		)
 		{
-			it->set_amount(it->amount() + m_imbalance);
-			it->save();
+			BudgetItem bi(*it);
+			bi.set_amount(bi.amount() + m_imbalance);
+			bi.save();
 			JEWEL_ASSERT (budget_is_balanced());
 			
 			PersistentObjectEvent::fire
@@ -842,6 +843,7 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 			return;
 		}
 	}
+
 	// There was not already a "general offsetting BudgetItem" for
 	// the target Account, so we create a new BudgetItem.
 	BudgetItem adjusting_item(m_database_connection);

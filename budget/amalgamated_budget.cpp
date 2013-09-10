@@ -4,7 +4,7 @@
 #include "account.hpp"
 #include "account_impl.hpp"
 #include "account_type.hpp"
-#include "budget_item_reader.hpp"
+#include "budget_item_table_iterator.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "frequency.hpp"
@@ -329,13 +329,11 @@ AmalgamatedBudget::generate_map() const
 		(*map_elect)[account_id] =
 			Decimal(0, account.commodity().precision());
 	}
-	BudgetItemReader budget_item_reader(m_database_connection);
-	BudgetItemReader::const_iterator const beg = budget_item_reader.begin();
-	BudgetItemReader::const_iterator const end = budget_item_reader.end();
 	
 	// First we calculate budgets amalgamated on the basis of
 	// the canonical frequency
-	BudgetItemReader::const_iterator it = beg;
+	BudgetItemTableIterator it(m_database_connection);
+	BudgetItemTableIterator const end;
 	for ( ; it != end; ++it)
 	{
 		Frequency const raw_frequency = it->frequency();
