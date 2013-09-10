@@ -5,6 +5,7 @@
 
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
+#include <string>
 
 /**
  * @file phatbooks_database_connection.hpp
@@ -87,6 +88,10 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
+	static std::string primary_table_name();
+	static std::string exclusive_table_name();
+	static std::string primary_key_name();
+
 protected:
 	PhatbooksPersistentObject
 	(	PhatbooksDatabaseConnection& p_database_connection
@@ -152,7 +157,6 @@ PhatbooksPersistentObject<Impl>::PhatbooksPersistentObject
 {
 }
 
-
 template <typename Impl>
 inline
 bool
@@ -172,6 +176,30 @@ PhatbooksPersistentObject<Impl>::none_saved
 )
 {
 	return Impl::none_saved(p_database_connection);
+}
+
+template <typename Impl>
+inline
+std::string
+PhatbooksPersistentObject<Impl>::primary_table_name()
+{
+	return Impl::primary_table_name();
+}
+
+template <typename Impl>
+inline
+std::string
+PhatbooksPersistentObject<Impl>::exclusive_table_name()
+{
+	return Impl::exclusive_table_name();
+}
+
+template <typename Impl>
+inline
+std::string
+PhatbooksPersistentObject<Impl>::primary_key_name()
+{
+	return Impl::primary_key_name();
 }
 
 template <typename Impl>
