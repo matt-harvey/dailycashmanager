@@ -816,8 +816,14 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
 	JEWEL_ASSERT (frame);
 
+	// Copy first into a vector. (Uneasy about modifying database contents
+	// while in the process of reading with a TableIterator.)
+	vector<BudgetItem> vec
+	(	BudgetItemTableIterator(m_database_connection),
+		(BudgetItemTableIterator())
+	);
 	for
-	(	BudgetItemTableIterator it(m_database_connection), end;
+	(	vector<BudgetItem>::iterator it = vec.begin(), end = vec.end();
 		it != end;
 		++it
 	)
