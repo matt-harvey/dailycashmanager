@@ -4,7 +4,7 @@
 #include "app.hpp"
 #include "account.hpp"
 #include "account_dialog.hpp"
-#include "account_reader.hpp"
+#include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
@@ -44,12 +44,9 @@ AccountListCtrl::create_balance_sheet_account_list
 	PhatbooksDatabaseConnection& dbc
 )
 {
-	BalanceSheetAccountReader const reader(dbc);
 	AccountListCtrl* ret = new AccountListCtrl
 	(	parent,
-		reader,
 		dbc,
-		wxString("Account"),
 		account_super_type::balance_sheet
 	);
 	return ret;
@@ -61,15 +58,9 @@ AccountListCtrl::create_pl_account_list
 	PhatbooksDatabaseConnection& dbc
 )
 {
-	PLAccountReader const reader(dbc);
 	AccountListCtrl* ret = new AccountListCtrl
 	(	parent,
-		reader,
 		dbc,
-		account_concept_name
-		(	account_super_type::pl,
-			AccountPhraseFlags().set(string_flags::capitalize)
-		),
 		account_super_type::pl
 	);
 	return ret;
@@ -77,9 +68,7 @@ AccountListCtrl::create_pl_account_list
 
 AccountListCtrl::AccountListCtrl
 (	wxWindow* p_parent,
-	AccountReaderBase const& p_reader,
 	PhatbooksDatabaseConnection& p_database_connection,
-	wxString const& p_left_column_title,
 	account_super_type::AccountSuperType p_account_super_type
 ):
 	wxListCtrl
@@ -96,7 +85,7 @@ AccountListCtrl::AccountListCtrl
 	m_account_super_type(p_account_super_type),
 	m_database_connection(p_database_connection)
 {
-	update(p_reader, p_left_column_title);
+	update();
 }
 
 void
@@ -135,36 +124,7 @@ AccountListCtrl::on_item_activated(wxListEvent& event)
  }
 
 void
-AccountListCtrl::update
-(	account_super_type::AccountSuperType p_account_super_type
-)
-{
-	AccountPhraseFlags const flags =
-		AccountPhraseFlags().set(string_flags::capitalize);
-	if (p_account_super_type == account_super_type::balance_sheet)
-	{
-		BalanceSheetAccountReader const reader(m_database_connection);
-		update
-		(	reader,
-			account_concept_name(p_account_super_type, flags)
-		);
-	}
-	else
-	{
-		PLAccountReader const reader(m_database_connection);
-		update
-		(	reader,
-			account_concept_name(p_account_super_type, flags)
-		);
-	}
-	return;
-}
-
-void
-AccountListCtrl::update
-(	AccountReaderBase const& p_reader,
-	wxString const& p_left_column_title
-)
+AccountListCtrl::update()
 {
 	// Remember which rows are selected currently
 	set<Account::Id> selected;
@@ -172,7 +132,14 @@ AccountListCtrl::update
 
 	// Now (re)draw
 	ClearAll();
-	InsertColumn(s_name_col, p_left_column_title, wxLIST_FORMAT_LEFT);
+	InsertColumn
+	(	s_name_col,
+		account_concept_name
+		(	m_account_super_type,
+			AccountPhraseFlags().set(string_flags::capitalize)
+		),
+		wxLIST_FORMAT_LEFT
+	);
 	InsertColumn
 	(	s_balance_col,
 		wxString("Balance"),
@@ -183,16 +150,17 @@ AccountListCtrl::update
 		InsertColumn(s_budget_col, "Daily top-up", wxLIST_FORMAT_RIGHT);
 	}
 
-	AccountReader::size_type i = 0;
-
-	for
-	(	AccountReader::const_iterator it = p_reader.begin(),
-			end = p_reader.end();
-		it != end;
-		++it
-	)
+	size_t i = 0;
+	AccountTableIterator it = make_type_name_ordered_account_table_iterator
+	(	m_database_connection
+	);
+	AccountTableIterator const end;
+	for ( ; it != end; ++it)
 	{
-		if (m_show_hidden || (it->visibility() == visibility::visible))
+		if
+		(	(super_type(it->account_type()) == m_account_super_type) &&
+			(m_show_hidden || (it->visibility() == visibility::visible))
+		)	
 		{
 			// Insert item, with string for Column 0
 			InsertItem(i, it->name());
@@ -297,7 +265,7 @@ bool
 AccountListCtrl::toggle_showing_hidden()
 {
 	m_show_hidden = !m_show_hidden;
-	update(m_account_super_type);
+	update();
 	return m_show_hidden;
 }
 

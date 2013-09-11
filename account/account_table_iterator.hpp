@@ -7,11 +7,27 @@
 namespace phatbooks
 {
 
-
 typedef
 	sqloxx::TableIterator<Account, PhatbooksDatabaseConnection>
 	AccountTableIterator;
 
+/**
+ * @returns an AccountTableIterator that iterates over all Accounts
+ * ordered by name.
+ */
+AccountTableIterator
+make_name_ordered_account_table_iterator
+(	PhatbooksDatabaseConnection& p_database_connection
+);
+
+/**
+ * @returns an AccountTableIterator that iterates over all Accounts,
+ * ordered first by AccountType, then by name.
+ */
+AccountTableIterator
+make_type_name_ordered_account_table_iterator
+(	PhatbooksDatabaseConnection& p_database_connection
+);
 
 }  // namespace phatbooks
 

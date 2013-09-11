@@ -13,6 +13,7 @@
 #include <wx/string.h>
 #include <wx/window.h>
 #include <map>
+#include <set>
 #include <vector>
 
 namespace phatbooks
@@ -96,6 +97,8 @@ public:
 private:
 	void on_kill_focus(wxFocusEvent& event);
 
+	void reset();
+
 	void refresh();
 
 	bool m_exclude_balancing_account;
@@ -104,7 +107,7 @@ private:
 	typedef std::map<wxString, Account::Id> AccountMap;
 	AccountMap m_account_map;
 
-	std::vector<account_type::AccountType> m_available_account_types;
+	std::set<account_type::AccountType> m_available_account_types;
 
 	DECLARE_EVENT_TABLE()
 

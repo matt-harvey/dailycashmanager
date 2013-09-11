@@ -2,7 +2,7 @@
 
 #include "transaction_type.hpp"
 #include "account.hpp"
-#include "account_reader.hpp"
+#include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "date.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -47,23 +47,17 @@ namespace
 	(	PhatbooksDatabaseConnection& p_database_connection
 	)
 	{
-		AccountReader reader(p_database_connection);
 		AccountTypeSet ret;
 		vector<account_type::AccountType>::size_type const num_account_types =
-		account_types().size();
-
-		// Bare scope
+			account_types().size();
+		AccountTableIterator it(p_database_connection);
+		AccountTableIterator const end;
+		for ( ; it != end; ++it)
 		{
-			AccountReaderBase::const_iterator it = reader.begin();
-			AccountReaderBase::const_iterator const end = reader.end();
-			for
-			(	;   
-				(it != end) &&
-					(ret.size() != num_account_types);
-				++it
-			)
+			ret.insert(it->account_type());
+			if (ret.size() == num_account_types)
 			{
-				ret.insert(it->account_type());
+				break;
 			}
 		}
 		return ret;	

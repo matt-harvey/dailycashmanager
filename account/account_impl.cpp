@@ -12,7 +12,7 @@
 
 #include "account_impl.hpp"
 #include "account.hpp"
-#include "account_reader.hpp"
+#include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "string_conv.hpp"
 #include "budget_item.hpp"
@@ -41,6 +41,7 @@ using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
 using sqloxx::SQLStatement;
+using std::find_if;
 using std::string;
 using std::vector;
 
@@ -128,7 +129,6 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 	return;
 }
 
-
 AccountImpl::Id
 AccountImpl::id_for_name
 (	PhatbooksDatabaseConnection& dbc,
@@ -160,7 +160,6 @@ AccountImpl::id_for_name
 	);
 }
 
-
 AccountImpl::AccountImpl
 (	IdentityMap& p_identity_map	
 ):
@@ -168,7 +167,6 @@ AccountImpl::AccountImpl
 	m_data(new AccountData)
 {
 }
-
 
 AccountImpl::AccountImpl
 (	IdentityMap& p_identity_map,	
@@ -179,13 +177,11 @@ AccountImpl::AccountImpl
 {
 }
 
-
 AccountImpl::AccountImpl(AccountImpl const& rhs):
 	PersistentObject(rhs),
 	m_data(new AccountData(*(rhs.m_data)))
 {
 }
-
 
 AccountImpl::~AccountImpl()
 {
@@ -228,19 +224,24 @@ AccountImpl::no_user_pl_accounts_saved
 (	PhatbooksDatabaseConnection& p_database_connection
 )
 {
-	PLAccountReader const reader(p_database_connection);
-	if (reader.empty())
+	AccountTableIterator it(p_database_connection);
+	AccountTableIterator const end;
+	if (it == end)
 	{
 		return true;
 	}
-	JEWEL_ASSERT (reader.size() > 0);
-	if (reader.size() > 1)
+	Account const bal_account = p_database_connection.balancing_account();
+	for ( ; it != end; ++it)
 	{
-		return false;
+		if
+		(	(super_type(it->account_type()) == account_super_type::pl) &&
+			(*it != bal_account)
+		)
+		{
+			return false;
+		}
 	}
-	JEWEL_ASSERT (reader.size() == 1);
-	Account const sole_account = *(reader.begin());
-	return (sole_account == p_database_connection.balancing_account());
+	return true;
 }
 
 bool

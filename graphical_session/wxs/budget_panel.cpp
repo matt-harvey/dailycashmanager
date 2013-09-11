@@ -4,7 +4,7 @@
 #include "account.hpp"
 #include "account_ctrl.hpp"
 #include "account_dialog.hpp"
-#include "account_reader.hpp"
+#include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "budget_item.hpp"
 #include "budget_item_table_iterator.hpp"
@@ -591,34 +591,28 @@ BudgetPanel::prompt_to_balance()
 			// an revenue or pure_envelope Account that already has a
 			// negative entry, and that is the Account we offer as
 			// the "default" offsetting Account to the user.
-			RevenueAccountReader const ra_reader(database_connection());
-			RevenueAccountReader::const_iterator ra_it =
-				ra_reader.begin();
-			RevenueAccountReader::const_iterator const ra_end =
-				ra_reader.end();
-			PureEnvelopeAccountReader const pe_reader(database_connection());
-			PureEnvelopeAccountReader::const_iterator pe_it =
-				pe_reader.begin();
-			PureEnvelopeAccountReader::const_iterator const pe_end =
-				pe_reader.end();
-			for ( ; ra_it != ra_end; ++ra_it)
+			AccountTableIterator it(database_connection());
+			AccountTableIterator const end;
+			for ( ; it != end; ++it)
 			{
-				if ((ra_it->budget() < z) && (*ra_it != balancing_account))
+				account_type::AccountType const atype = it->account_type();
+				if
+				(	(	(atype == account_type::revenue) ||
+						(atype == account_type::pure_envelope)
+					)
+					&&
+					(	it->budget() < z
+					) 
+					&&
+					(	*it != balancing_account
+					)
+				)
 				{
-					maybe_target_account = *ra_it;
-					goto out;
-				}
-			}
-			for ( ; pe_it != pe_end; ++pe_it)
-			{
-				if ((pe_it->budget() < z) && (*pe_it != balancing_account))
-				{
-					maybe_target_account = *pe_it;
-					goto out;
+					maybe_target_account = *it;
+					break;
 				}
 			}
 		}
-		out:
 		BalancingDialog balancing_dialog
 		(	this,
 			imbalance,

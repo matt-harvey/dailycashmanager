@@ -2,7 +2,7 @@
 
 #include "account_ctrl.hpp"
 #include "account.hpp"
-#include "account_reader.hpp"
+#include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_flags.hpp"
@@ -12,6 +12,7 @@
 #include <wx/event.h>
 #include <wx/string.h>
 #include <set>
+#include <vector>
 
 using std::set;
 using std::vector;
@@ -61,7 +62,6 @@ AccountCtrl::AccountCtrl
 	JEWEL_ASSERT (m_available_account_types.empty());
 	reset(p_account_types, p_exclude_balancing_account);
 	JEWEL_ASSERT (m_exclude_balancing_account == p_exclude_balancing_account);
-	JEWEL_ASSERT (m_available_account_types == p_account_types);
 }
 
 void
@@ -70,37 +70,46 @@ AccountCtrl::reset
 	bool p_exclude_balancing_account
 )
 {
-	typedef vector<account_type::AccountType> ATypeVec;
+	m_available_account_types = set<account_type::AccountType>
+	(	p_account_types.begin(),
+		p_account_types.end()
+	);
 	m_exclude_balancing_account = p_exclude_balancing_account;
-	m_available_account_types = p_account_types;
+	reset();
+}
+
+void
+AccountCtrl::reset()
+{
+	typedef vector<account_type::AccountType> ATypeVec;
 	m_account_map.clear();
 	wxArrayString valid_account_names;
 	Account const balancing_acct = m_database_connection.balancing_account();
-	AccountReader reader(m_database_connection);
-	ATypeVec::const_iterator atit = m_available_account_types.begin();
-	ATypeVec::const_iterator const atend = m_available_account_types.end();
-	for ( ; atit != atend; ++atit)
+	vector<Account> avec
+	(	AccountTableIterator(m_database_connection),
+		(AccountTableIterator())
+	);
+	AccountTableIterator it(m_database_connection);
+	AccountTableIterator const end;
+	for ( ; it != end; ++it)
 	{
-		AccountReader::const_iterator arit = reader.begin();
-		AccountReader::const_iterator const arend = reader.end();
-		for ( ; arit != arend; ++arit)
+		if
+		(	m_available_account_types.find(it->account_type()) !=
+			m_available_account_types.end()
+		)
 		{
-			if (arit->account_type() == *atit)
+			if (m_exclude_balancing_account && (*it == balancing_acct))
 			{
-				if (m_exclude_balancing_account && (*arit == balancing_acct))
-				{
-					// Then don't include it
-				}
-				else
-				{
-					wxString const name_wx = arit->name();
-					valid_account_names.Add(name_wx);
+				// Then don't include it
+			}
+			else
+			{
+				valid_account_names.Add(it->name());
 
-					// Remember the Account associated with this name (comes
-					// in handy when we have to update for a change in Account
-					// name).
-					m_account_map[name_wx] = arit->id();
-				}
+				// Remember the Account associated with this name (comes
+				// in handy when we have to update for a change in Account
+				// name).
+				m_account_map[it->name()] = it->id();
 			}
 		}
 	}
@@ -167,7 +176,7 @@ void
 AccountCtrl::refresh()
 {
 	Account const selected_account = account();
-	reset(m_available_account_types, m_exclude_balancing_account);
+	reset();
 	set_account(selected_account);
 	return;
 }

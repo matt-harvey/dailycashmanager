@@ -4,7 +4,7 @@
 #define GUARD_account_list_ctrl_hpp
 
 #include "account.hpp"
-#include "account_reader.hpp"
+#include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include <boost/optional.hpp>
 #include <wx/event.h>
@@ -104,34 +104,18 @@ public:
 
 private:
 
-	/**
-	 * Redraw AccountListCtrl on the basis of what is currently in the
-	 * database, showing Accounts of \e p_account_super_type only.
-	 *
-	 * @todo Should be using inheritance here rather than this
-	 * AccountSuperType flag.
-	 */
-	void update(account_super_type::AccountSuperType p_account_super_type);
-
 	AccountListCtrl
 	(	wxWindow* p_parent,
-		AccountReaderBase const& p_reader,
 		PhatbooksDatabaseConnection& p_database_connection,
-		wxString const& p_left_column_title,
 		account_super_type::AccountSuperType p_account_super_type
 	);
 
 	void on_item_activated(wxListEvent& event);
 
-	void update
-	(	AccountReaderBase const& p_reader,
-		wxString const& p_left_column_title
-	);
-
 	bool showing_daily_budget() const;
 
 	bool m_show_hidden;
-	account_super_type::AccountSuperType m_account_super_type;
+	account_super_type::AccountSuperType const m_account_super_type;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 	static int const s_name_col = 0;
@@ -140,17 +124,6 @@ private:
 
 	DECLARE_EVENT_TABLE()
 };
-
-
-// INLINE FUNCTION IMPLEMENTATIONS
-
-inline
-void
-AccountListCtrl::update()
-{
-	update(m_account_super_type);
-	return;
-}
 
 
 }  // namespace gui
