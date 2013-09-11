@@ -36,7 +36,6 @@
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
-#include "repeater_reader.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/identity_map.hpp>

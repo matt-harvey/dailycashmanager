@@ -8,7 +8,7 @@
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include "repeater_impl.hpp"
-#include "repeater_reader.hpp"
+#include "repeater_table_iterator.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
@@ -159,16 +159,17 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 	shared_ptr<list<OrdinaryJournal> > auto_posted_journals
 	(	new list<OrdinaryJournal>
 	);
+	// Read into a vector first - uneasy about reading and writing
+	// at the same time.
+	RepeaterTableIterator rtit(dbc);
+	RepeaterTableIterator const rtend;
+	vector<Repeater> vec(rtit, rtend);
 
-	RepeaterReader repeater_reader(dbc);
-	// Anonymous scope
+	// Bare scope
 	{
-		RepeaterReader::const_iterator const end = repeater_reader.end();
-		for
-		(	RepeaterReader::iterator it = repeater_reader.begin();
-			it != end;
-			++it
-		)
+		vector<Repeater>::iterator it = vec.begin();
+		vector<Repeater>::iterator const end = vec.end();
+		for ( ; it != end; ++it)
 		{
 			while (it->next_date() <= d)
 			{

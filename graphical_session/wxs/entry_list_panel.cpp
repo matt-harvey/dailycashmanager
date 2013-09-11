@@ -3,7 +3,6 @@
 #include "entry_list_panel.hpp"
 #include "account.hpp"
 #include "account_ctrl.hpp"
-#include "account_reader.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
 #include "entry.hpp"

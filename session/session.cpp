@@ -4,7 +4,6 @@
 #include "ordinary_journal.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "repeater.hpp"
-#include "repeater_reader.hpp"
 #include "session.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/shared_ptr.hpp>
