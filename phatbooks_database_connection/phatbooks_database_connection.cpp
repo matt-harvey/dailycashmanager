@@ -14,7 +14,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "account.hpp"
 #include "account_impl.hpp"
-#include "account_reader.hpp"
+#include "account_table_iterator.hpp"
 #include "amalgamated_budget.hpp"
 #include "application.hpp"
 #include "budget_item.hpp"
@@ -26,13 +26,13 @@
 #include "entry_impl.hpp"
 #include "ordinary_journal.hpp"
 #include "ordinary_journal_impl.hpp"
+#include "ordinary_journal_table_iterator.hpp"
 #include "repeater_impl.hpp"
 #include "balance_cache.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
-#include "ordinary_journal_reader.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
@@ -56,11 +56,6 @@
 #include <stdexcept>
 #include <string>
 
-#ifdef DEBUG
-	#include <iostream>
-	using std::endl;
-#endif
-
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::Decimal;
@@ -68,10 +63,8 @@ using jewel::value;
 using sqloxx::DatabaseConnection;
 using sqloxx::DatabaseTransaction;
 using sqloxx::IdentityMap;
-using sqloxx::Reader;
 using sqloxx::SQLStatement;
 using sqloxx::SQLiteException;
-using std::endl;
 using std::list;
 using std::logic_error;
 using std::runtime_error;
@@ -631,14 +624,9 @@ PhatbooksDatabaseConnection::perform_integrity_checks()
 #	ifndef NDEBUG
 
 		// Check integrity of Account balances
-		AccountReader const account_reader(*this);
 		Decimal total_opening_balances;
 		Decimal total_balances;
-		for
-		(	AccountReader::const_iterator it = account_reader.begin();
-			it != account_reader.end();
-			++it
-		)
+		for (AccountTableIterator it(*this), end ; it != end; ++it)
 		{
 			total_opening_balances += it->technical_opening_balance();
 			total_balances += it->technical_balance();
@@ -647,12 +635,7 @@ PhatbooksDatabaseConnection::perform_integrity_checks()
 		JEWEL_ASSERT (total_balances == Decimal(0, 0));
 		
 		// Check journal dates are OK
-		OrdinaryJournalReader const oj_reader(*this);
-		for
-		(	OrdinaryJournalReader::const_iterator it = oj_reader.begin();
-			it != oj_reader.end();
-			++it
-		)
+		for (OrdinaryJournalTableIterator it(*this), end ; it != end; ++it)
 		{
 			JEWEL_ASSERT (it->date() >= opening_balance_journal_date());
 		}

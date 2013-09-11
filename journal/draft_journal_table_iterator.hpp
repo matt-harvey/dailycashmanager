@@ -22,7 +22,8 @@ typedef
 class UserDraftJournalTableIterator: public DraftJournalTableIterator
 {
 public:
-	explicit DraftJournalTableIterator
+	UserDraftJournalTableIterator();
+	explicit UserDraftJournalTableIterator
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 };

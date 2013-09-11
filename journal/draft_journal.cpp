@@ -2,7 +2,6 @@
 
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
-#include "draft_journal_reader.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"

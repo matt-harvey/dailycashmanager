@@ -134,6 +134,7 @@ set (main_files
 	 account/account.cpp
 	 account/account_impl.cpp
 	 account/account_reader.cpp
+	 account/account_table_iterator.cpp
 	 account/account_type.cpp
 	 account/balance_cache.cpp
 	 account/make_default_accounts.cpp
@@ -160,7 +161,6 @@ set (main_files
 	 journal/proto_journal.cpp
 	 journal/ordinary_journal.cpp
 	 journal/ordinary_journal_impl.cpp
-	 journal/ordinary_journal_reader.cpp
 	 journal/persistent_journal.cpp
 	 session/session.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
