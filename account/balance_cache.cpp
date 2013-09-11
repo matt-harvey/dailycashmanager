@@ -8,7 +8,6 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "phatbooks_persistent_object.hpp"
-#include "entry/entry_reader.hpp"
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/static_assert.hpp>
@@ -228,9 +227,10 @@ BalanceCache::refresh_all()
 	}
 	
 	// It has been established that this is faster than using SQL
-	// SUM and GROUP to sum Account totals. Note also that we have
-	// chosen not to use an OrdinaryEntryReader here: we don't want
-	// to load all the non-actual Entries into memory.
+	// SUM and GROUP to sum Account totals.
+	//
+	// TODO LOW PRIORITY Would it be simpler, and almost as fast, to use
+	// an EntryTableIterator here?
 
 	// Bare scope
 	{

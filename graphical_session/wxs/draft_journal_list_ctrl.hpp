@@ -29,8 +29,8 @@ public:
 	DraftJournalListCtrl
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		UserDraftJournalTableIterator p_beg,
-		UserDraftJournalTableIterator p_end,
+		DraftJournalTableIterator p_beg,
+		DraftJournalTableIterator p_end,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
@@ -45,8 +45,8 @@ private:
 	void on_item_activated(wxListEvent& event);
 
 	void update
-	(	UserDraftJournalTableIterator p_beg,
-		UserDraftJournalTableIterator p_end
+	(	DraftJournalTableIterator p_beg,
+		DraftJournalTableIterator p_end
 	);
 
 	static int const s_name_col = 0;

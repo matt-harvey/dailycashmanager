@@ -151,7 +151,7 @@ set (main_files
 	 date/interval_type.cpp
 	 entry/entry.cpp
 	 entry/entry_impl.cpp
-	 entry/entry_reader.cpp
+	 entry/entry_table_iterator.cpp
 	 filename_validation/filename_validation.cpp
 	 finformat/finformat.cpp
 	 journal/draft_journal.cpp

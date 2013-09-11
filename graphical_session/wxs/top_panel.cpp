@@ -381,8 +381,10 @@ TopPanel::configure_draft_journal_list_ctrl()
 	m_draft_journal_list = new DraftJournalListCtrl
 	(	this,
 		wxDefaultSize,
-		UserDraftJournalTableIterator(m_database_connection),
-		(UserDraftJournalTableIterator()),
+		make_name_ordered_user_draft_journal_table_iterator
+		(	m_database_connection
+		),
+		(DraftJournalTableIterator()),
 		m_database_connection
 	);
 	m_right_column_sizer->Add(m_draft_journal_list, wxSizerFlags(1).Expand());

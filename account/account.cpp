@@ -3,10 +3,10 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "account_impl.hpp"
-#include "account_reader.hpp"
+#include "account_table_iterator.hpp"
 #include "string_conv.hpp"
 #include "commodity.hpp"
-#include "entry_reader.hpp"
+#include "entry_table_iterator.hpp"
 #include "finformat.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
@@ -51,32 +51,22 @@ namespace
 	 * Populates \e out with data indicating, for each Account::Id, the
 	 * number of <em>actual, ordinary</em> Entries using the corresponding
 	 * Account.
-	 *
-	 * @todo Could have a potentially more efficient version of this function
-	 * which instead of taking a PhatbooksDatabaseConnection&, takes a pair
-	 * of Entry iterators (which could then be re-used from an existing
-	 * ActualOrdinaryEntryReader).
 	 */
 	void actual_account_usage_map
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		map<Account::Id, size_t>& out
 	)
 	{
-		AccountReader const a_reader(p_database_connection);
-		AccountReader::const_iterator a_it = a_reader.begin();
-		AccountReader::const_iterator const a_end = a_reader.end();
-		for ( ; a_it != a_end; ++a_it)
-		{
-			out[a_it->id()] = 0;
-		}
+		AccountTableIterator a_it(p_database_connection);
+		AccountTableIterator const a_end;
+		for ( ; a_it != a_end; ++a_it) out[a_it->id()] = 0;
 
-		ActualOrdinaryEntryReader const e_reader(p_database_connection);
-		ActualOrdinaryEntryReader::const_iterator e_it = e_reader.begin();
-		ActualOrdinaryEntryReader::const_iterator const e_end = e_reader.end();
-		for ( ; e_it != e_end; ++e_it)
-		{
-			++out[e_it->account().id()];
-		}
+		EntryTableIterator e_it =
+			make_date_ordered_actual_ordinary_entry_table_iterator
+			(	p_database_connection
+			);
+		EntryTableIterator const e_end;
+		for ( ; e_it != e_end; ++e_it) ++out[e_it->account().id()];
 
 		return;
 	}

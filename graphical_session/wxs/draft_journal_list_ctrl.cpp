@@ -36,8 +36,8 @@ END_EVENT_TABLE()
 DraftJournalListCtrl::DraftJournalListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	UserDraftJournalTableIterator p_beg,
-	UserDraftJournalTableIterator p_end,
+	DraftJournalTableIterator p_beg,
+	DraftJournalTableIterator p_end,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxListCtrl
@@ -88,8 +88,8 @@ DraftJournalListCtrl::on_item_activated(wxListEvent& event)
 
 void
 DraftJournalListCtrl::update
-(	UserDraftJournalTableIterator p_beg,
-	UserDraftJournalTableIterator p_end
+(	DraftJournalTableIterator p_beg,
+	DraftJournalTableIterator p_end
 )
 {
 	// Remember which rows are selected currently

@@ -8,21 +8,18 @@ namespace phatbooks
 {
 
 
-UserDraftJournalTableIterator::UserDraftJournalTableIterator
+DraftJournalTableIterator
+make_name_ordered_user_draft_journal_table_iterator
 (	PhatbooksDatabaseConnection& p_database_connection
-):
-	DraftJournalTableIterator
+)
+{
+	return DraftJournalTableIterator
 	(	p_database_connection,
 		"select journal_id from draft_journal_detail "
 		"left join amalgamated_budget_data using(journal_id) "
 		"where amalgamated_budget_data.journal_id is null "
 		"order by name"
-	)
-{
-}
-
-UserDraftJournalTableIterator::UserDraftJournalTableIterator()
-{
+	);
 }
 
 

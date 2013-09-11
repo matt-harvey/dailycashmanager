@@ -7,7 +7,7 @@
 #include "bs_account_entry_list_ctrl.hpp"
 #include "date.hpp"
 #include "entry.hpp"
-#include "entry_reader.hpp"
+#include "entry_table_iterator.hpp"
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
 #include "persistent_object_event.hpp"
@@ -27,12 +27,15 @@
 #include <wx/gdicmn.h>
 #include <wx/progdlg.h>
 #include <wx/scrolwin.h>
+#include <utility>
 #include <vector>
 #include <string>
 
 using boost::lexical_cast;
 using boost::optional;
 using jewel::value;
+using std::make_pair;
+using std::pair;
 using std::string;
 using std::vector;
 
@@ -179,16 +182,19 @@ EntryListCtrl::insert_date_column()
 void
 EntryListCtrl::populate()
 {
-	boost::scoped_ptr<EntryReader> const reader(do_make_entry_reader());
-	EntryReader::const_iterator it = reader->begin();
-	EntryReader::const_iterator const end = reader->end();
+
+	pair<EntryTableIterator, EntryTableIterator> iterators =
+		do_make_entry_table_iterators();
+	EntryTableIterator it = iterators.first;
+	EntryTableIterator end = iterators.second;
 	if (do_require_progress_log())
 	{
-		EntryReader::size_type i = 0;
-		EntryReader::size_type progress = 0;
-		EntryReader::size_type const progress_scaling_factor = 32;
-		EntryReader::size_type const progress_max =
-			reader->size() / progress_scaling_factor;
+		vector<Entry> vec(it, end);
+		vector<Entry>::size_type j = 0;
+		vector<Entry>::size_type progress = 0;
+		vector<Entry>::size_type const progress_scaling_factor = 32;
+		vector<Entry>::size_type const progress_max =
+			vec.size() / progress_scaling_factor;
 		wxProgressDialog progress_dialog
 		(	wxEmptyString,
 			"Loading transactions...",
@@ -196,10 +202,12 @@ EntryListCtrl::populate()
 			this,
 			wxPD_APP_MODAL | wxPD_AUTO_HIDE | wxRESIZE_BORDER
 		);
-		for ( ; it != end; ++it, ++i)
+		vector<Entry>::iterator jt = vec.begin();
+		vector<Entry>::iterator const jend = vec.end();
+		for ( ; jt != jend; ++jt, ++j)
 		{
-			process_push_candidate_entry(*it);
-			if (i % progress_scaling_factor == 0)
+			process_push_candidate_entry(*jt);
+			if (j % progress_scaling_factor == 0)
 			{
 				JEWEL_ASSERT (progress <= progress_max);
 				progress_dialog.Update(progress);
@@ -496,10 +504,15 @@ EntryListCtrl::scrollbar_width_allowance() const
 	return 50;
 }
 
-EntryReader*
-EntryListCtrl::do_make_entry_reader() const
+pair<EntryTableIterator, EntryTableIterator>
+EntryListCtrl::do_make_entry_table_iterators()
 {
-	return new ActualOrdinaryEntryReader(m_database_connection);
+	EntryTableIterator beg =
+		make_date_ordered_actual_ordinary_entry_table_iterator
+		(	database_connection()
+		);
+	EntryTableIterator const end;
+	return make_pair(beg, end);
 }
 
 vector<SummaryDatum> const&

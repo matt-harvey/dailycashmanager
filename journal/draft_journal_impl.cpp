@@ -199,9 +199,12 @@ DraftJournalImpl::no_user_draft_journals_saved
 (	PhatbooksDatabaseConnection& p_database_connection
 )
 {
-	return
-		UserDraftJournalTableIterator(p_database_connection) ==
-		(UserDraftJournalTableIterator());
+	DraftJournalTableIterator const it =
+		make_name_ordered_user_draft_journal_table_iterator
+		(	p_database_connection
+		);
+	DraftJournalTableIterator const end;
+	return it == end;
 }
 
 void

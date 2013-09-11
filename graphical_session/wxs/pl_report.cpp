@@ -4,7 +4,7 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "date.hpp"
-#include "entry_reader.hpp"
+#include "entry_table_iterator.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "report.hpp"
 #include "report_panel.hpp"
@@ -112,10 +112,12 @@ PLReport::refresh_map()
 	(	0,
 		database_connection().default_commodity().precision()
 	);
-	typedef ActualOrdinaryEntryReader ReaderT;
-	ReaderT const reader(database_connection());
-	ReaderT::const_iterator it = reader.begin();
-	ReaderT::const_iterator const end = reader.end();
+
+	EntryTableIterator it =
+		make_date_ordered_actual_ordinary_entry_table_iterator
+		(	database_connection()
+		);
+	EntryTableIterator const end;	
 	for ( ; it != end; ++it)
 	{
 		Account const account = it->account();

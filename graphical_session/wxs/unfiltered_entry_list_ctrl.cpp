@@ -2,7 +2,6 @@
 
 #include "unfiltered_entry_list_ctrl.hpp"
 #include "entry_list_ctrl.hpp"
-#include "entry_reader.hpp"
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"

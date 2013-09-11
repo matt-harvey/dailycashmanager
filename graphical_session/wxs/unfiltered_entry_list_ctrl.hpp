@@ -4,7 +4,6 @@
 #define GUARD_unfiltered_entry_list_ctrl_hpp
 
 #include "entry_list_ctrl.hpp"
-#include "entry_reader.hpp"
 #include <wx/window.h>
 #include <wx/gdicmn.h>
 

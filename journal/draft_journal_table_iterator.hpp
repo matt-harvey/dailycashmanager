@@ -15,18 +15,16 @@ typedef
 	sqloxx::TableIterator<DraftJournal, PhatbooksDatabaseConnection>
 	DraftJournalTableIterator;
 
+
 /**
- * Reads all DraftJournals except "system" DraftJournals which it is not
- * intended for the user to edit directly. Orders the results by name.
+ * @returns DraftJournalTableIterator that reads all DraftJournals in
+ * order by name, except those which are "system" DraftJournal which
+ * are not intended for the user to edit directly.
  */
-class UserDraftJournalTableIterator: public DraftJournalTableIterator
-{
-public:
-	UserDraftJournalTableIterator();
-	explicit UserDraftJournalTableIterator
-	(	PhatbooksDatabaseConnection& p_database_connection
-	);
-};
+DraftJournalTableIterator
+make_name_ordered_user_draft_journal_table_iterator
+(	PhatbooksDatabaseConnection& p_database_connection
+);
 
 
 

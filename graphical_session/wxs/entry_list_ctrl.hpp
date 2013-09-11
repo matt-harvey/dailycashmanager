@@ -5,8 +5,8 @@
 
 
 #include "account.hpp"
-#include "entry_reader.hpp"
 #include "entry.hpp"
+#include "entry_table_iterator.hpp"
 #include "reconciliation_list_panel.hpp"
 #include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -16,6 +16,7 @@
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
+#include <utility>
 #include <vector>
 
 namespace phatbooks
@@ -163,14 +164,19 @@ private:
 	void on_item_activated(wxListEvent& event);
 
 	/**
-	 * Should return a pointer to an EntryReader which reads Entries from
-	 * database_connection() associated with OrdinaryJournals
-	 * (not DraftJournals). By default this returns a pointer to an
-	 * ActualOrdinaryEntryReader. The base class EntryListCtrl will take
-	 * care of managing the memory of the returned pointer. The reader should
-	 * also read Entries in date order - or things could get messy.
+	 * Should return a pair of EntryTableIterators, via
+	 * which Entries will be read from database_connection().
+	 * These should mark the beginning, and one-past-the-end, of
+	 * a date-ordered sequence of \e ordinary Entries
+	 * (Entries associated with OrdinaryJournals, not DraftJournals).
+	 * By default, this produces a pair of iterators which will
+	 * encompass a date-ordered sequence of all the
+	 * \e actual (i.e. non-budget) ordinary Entries in the
+	 * database.
 	 */
-	virtual EntryReader* do_make_entry_reader() const;
+	virtual
+		std::pair<EntryTableIterator, EntryTableIterator>
+		do_make_entry_table_iterators();
 
 	virtual std::vector<SummaryDatum> const& do_get_summary_data() const;
 	virtual void do_initialize_summary_data();
