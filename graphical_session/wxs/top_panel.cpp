@@ -144,13 +144,15 @@ void
 TopPanel::configure_account_lists()
 {
 	JEWEL_ASSERT (m_notebook_page_accounts);
-	m_bs_account_list = AccountListCtrl::create_balance_sheet_account_list
+	m_bs_account_list = new AccountListCtrl
 	(	m_notebook_page_accounts,
-		m_database_connection
+		m_database_connection,
+		account_super_type::balance_sheet
 	);
-	m_pl_account_list = AccountListCtrl::create_pl_account_list
+	m_pl_account_list = new AccountListCtrl
 	(	m_notebook_page_accounts,
-		m_database_connection
+		m_database_connection,
+		account_super_type::pl
 	);
 	map<account_super_type::AccountSuperType, Account::Id> const fav_accts =
 		favourite_accounts(m_database_connection);

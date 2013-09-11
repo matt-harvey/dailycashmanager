@@ -37,32 +37,17 @@ class AccountListCtrl: public wxListCtrl
 public:
 
 	/**
-	 * @returns a pointer to a heap-allocated AccountListCtrl, listing
-	 * all and only the balance sheet accounts stored in \e dbc.
-	 * The client does not need to take care of the memory - the memory
-	 * is taken care of by the parent window.
-	 *
-	 * The name of each balance sheet Account is shown along with its balance.
+	 * @returns a widget that lists all and only the Accounts stored
+	 * in p_database_connection that are of AccountSuperType
+	 * p_account_super_type. The Accounts are listed in order by
+	 * AccountType and then by name. The widget displays, in two
+	 * columns, the name and the balance (i.e. \e friendly_balance())
+	 * of each Account.
 	 */
-	static AccountListCtrl* create_balance_sheet_account_list
-	(	wxWindow* parent,
-		PhatbooksDatabaseConnection& dbc
-	);
-		
-	/**
-	 * @returns a pointer to a heap-allocated AccountListCtrl, listing
-	 * all and only the profit-and-loss accounts stored in \e dbc.
-	 * The client does not need to take care of the memory - the memory
-	 * is taken care of by the parent window.
-	 *
-	 * The name of each P&L Account is shown along with its envelope
-	 * balance and daily budget allocation.
-	 *
-	 * @todo Implement display of daily budget allocation.
-	 */
-	static AccountListCtrl* create_pl_account_list
-	(	wxWindow* parent,
-		PhatbooksDatabaseConnection& dbc
+	AccountListCtrl
+	(	wxWindow* p_parent,
+		PhatbooksDatabaseConnection& p_database_connection,
+		account_super_type::AccountSuperType p_account_super_type
 	);
 
 	/**
@@ -103,12 +88,6 @@ public:
 	bool toggle_showing_hidden();
 
 private:
-
-	AccountListCtrl
-	(	wxWindow* p_parent,
-		PhatbooksDatabaseConnection& p_database_connection,
-		account_super_type::AccountSuperType p_account_super_type
-	);
 
 	void on_item_activated(wxListEvent& event);
 

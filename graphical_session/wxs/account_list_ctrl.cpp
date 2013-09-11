@@ -38,34 +38,6 @@ BEGIN_EVENT_TABLE(AccountListCtrl, wxListCtrl)
 	)
 END_EVENT_TABLE()
 
-AccountListCtrl*
-AccountListCtrl::create_balance_sheet_account_list
-(	wxWindow* parent,
-	PhatbooksDatabaseConnection& dbc
-)
-{
-	AccountListCtrl* ret = new AccountListCtrl
-	(	parent,
-		dbc,
-		account_super_type::balance_sheet
-	);
-	return ret;
-}
-
-AccountListCtrl*
-AccountListCtrl::create_pl_account_list
-(	wxWindow* parent,
-	PhatbooksDatabaseConnection& dbc
-)
-{
-	AccountListCtrl* ret = new AccountListCtrl
-	(	parent,
-		dbc,
-		account_super_type::pl
-	);
-	return ret;
-}
-
 AccountListCtrl::AccountListCtrl
 (	wxWindow* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection,
