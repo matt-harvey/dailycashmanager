@@ -64,7 +64,7 @@ DateValidator::Validate(wxWindow* WXUNUSED(parent))
 		clear(m_date);		
 		return true;
 	}
-	optional<gregorian::date> temp = parse_date(date_text, locale());
+	optional<gregorian::date> temp = parse_date(date_text);
 	if (!temp)
 	{
 		wxMessageBox

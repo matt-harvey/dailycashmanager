@@ -109,10 +109,10 @@ date_format_wx(boost::gregorian::date const& p_date);
  * using current wxLocale. The returned optional is uninitialized if
  * p_string cannot be successfully parsed as a date.
  * 
- * @todo Make this more accepting of different formats.
+ * @todo HIGH PRIORITY Make this more accepting of different formats.
  */
 boost::optional<boost::gregorian::date>
-parse_date(wxString const& p_string, wxLocale const& p_locale);
+parse_date(wxString const& p_string);
 
 /**
  * @returns the date that is the last day of the month in which p_date

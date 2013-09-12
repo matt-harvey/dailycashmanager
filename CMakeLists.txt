@@ -146,6 +146,7 @@ set (main_files
 	 commodity/commodity_impl.cpp
 	 currency/make_currencies.cpp
 	 date/date.cpp
+	 date/date_parser.cpp
 	 date/frequency.cpp
 	 date/interval_type.cpp
 	 entry/entry.cpp

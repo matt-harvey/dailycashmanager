@@ -14,11 +14,11 @@
  */
 
 
-
-
 #include "date.hpp"
+#include "date_parser.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/array_utilities.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <wx/datetime.h>
@@ -27,6 +27,7 @@
 #include <limits>
 
 using boost::optional;
+using jewel::num_elements;
 using std::numeric_limits;
 
 namespace gregorian = boost::gregorian;
@@ -156,40 +157,13 @@ date_format_wx(gregorian::date const& p_date)
 }
 
 optional<gregorian::date>
-parse_date(wxString const& p_string, wxLocale const& p_locale)
+parse_date(wxString const& p_string)
 {
-	optional<gregorian::date> ret;
-	wxString::const_iterator parsed_to_position;
-	wxDateTime date_wx;
-	wxLocaleInfo const formats[] =
-		{wxLOCALE_SHORT_DATE_FMT, wxLOCALE_LONG_DATE_FMT};
-	size_t const num_formats = sizeof(formats) / sizeof(formats[0]);
-	JEWEL_ASSERT (num_formats > 0);
-	for (size_t i = 0; i != num_formats; ++i)
-	{
-		date_wx.ParseFormat
-		(	p_string,
-			p_locale.GetInfo(formats[i]),
-			&parsed_to_position
-		);
-		if (parsed_to_position == p_string.end())
-		{
-			// Parsing was successful
-			int year = date_wx.GetYear();
-			if (year < 100) year += 2000;
-			int const month = static_cast<int>(date_wx.GetMonth()) + 1;
-			int const day = date_wx.GetDay();
-			try
-			{
-				ret = gregorian::date(year, month, day);
-				return ret;
-			}
-			catch (boost::exception&)
-			{
-			}
-		}
-	}
-	return ret;
+	DateParser const parser
+	(	wxLocale::GetInfo(wxLOCALE_SHORT_DATE_FMT),
+		wxLocale::GetInfo(wxLOCALE_LONG_DATE_FMT)
+	);
+	return parser.parse(p_string);
 }
 
 gregorian::date

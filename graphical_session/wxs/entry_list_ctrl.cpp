@@ -256,10 +256,7 @@ gregorian::date
 EntryListCtrl::date_displayed(long p_row) const
 {
 	JEWEL_ASSERT (date_col_num() == 0);
-	optional<gregorian::date> const maybe_date = parse_date
-	(	GetItemText(p_row),
-		locale()
-	);
+	optional<gregorian::date> const maybe_date = parse_date(GetItemText(p_row));
 	JEWEL_ASSERT (maybe_date);
 	return value(maybe_date);
 }
