@@ -21,15 +21,15 @@ namespace
 	bool is_format_char(char c)
 	{
 		static char const chars_a[] =
-		{	a, A, b, h, B, c, C, d, D, F, g, G, H,
-			I, j, m, M, p, r, R, S, T, u, U, V, w,
-			W, x, X, y, Y, z, Z
+		{	'a', 'A', 'b', 'h', 'B', 'c', 'C', 'd', 'D', 'F', 'g', 'G', 'H',
+			'I', 'j', 'm', 'M', 'p', 'r', 'R', 'S', 'T', 'u', 'U', 'V', 'w',
+			'W', 'x', 'X', 'y', 'Y', 'z', 'Z'
 		};
 		static unordered_set<char> const chars
 		(	jewel::begin(chars_a),
 			jewel::end(chars_a)
 		);
-		return chars.find(a) != chars.end();
+		return chars.find(c) != chars.end();
 	}
 
 
