@@ -13,7 +13,6 @@
 #include <limits>
 #include <locale>
 #include <ostream>
-#include <stdexcept>  // WARNING tmp
 #include <string>
 #include <vector>
 
@@ -26,7 +25,6 @@ using std::locale;
 using std::numeric_limits;
 using std::ostringstream;
 using std::string;
-using std::terminate;  // WARNING tmp
 using std::vector;
 
 

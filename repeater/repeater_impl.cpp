@@ -134,7 +134,10 @@ RepeaterImpl::set_next_date(boost::gregorian::date const& p_next_date)
 			"earlier than the entity creation date."
 		);
 	}
-	JEWEL_ASSERT (p_next_date >= database_connection().entity_creation_date());
+	JEWEL_ASSERT
+	(	p_next_date >=
+		database_connection().entity_creation_date()
+	);
 	load();
 	m_data->next_date = julian_int(p_next_date);
 	return;

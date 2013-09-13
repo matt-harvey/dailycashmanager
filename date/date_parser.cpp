@@ -141,6 +141,16 @@ namespace
 		return separator;
 	}
 
+	namespace date_component
+	{
+		enum DateComponent
+		{
+			day,
+			month,
+			year
+		};
+	}
+
 }  // end anonymous namespace
 
 
@@ -217,11 +227,11 @@ DateParser::tolerant_parse(wxString const& p_string) const
 		vector<wxString> format_fields;
 		split(target_fields, p_string, (lambda::_1 == sep));
 		split(format_fields, p_string, (lambda::_1 == sep));
-		if ((target_fields.size() != 3) || (format_fields.size() != 3))
+		if ((target_fields.size() > 3) || (format_fields.size() != 3))
 		{
 			continue;
 		}
-		JEWEL_ASSERT (target_fields.size() == 3);
+		JEWEL_ASSERT (target_fields.size() <= 3);
 		JEWEL_ASSERT (format_fields.size() == 3);
 		// TODO HIGH PRIORITY...
 	}

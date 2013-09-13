@@ -207,7 +207,7 @@ OrdinaryJournalImpl::set_date_unrestricted
 	OrdinaryJournalSignature const& p_signature
 )
 {
-	// Silence compiler warning re. unused parameter. The Signature
+	// Silence compiler re. unused parameter. The Signature
 	// is there to provide access control only; we don't actually
 	// want to use this parameter for anything inside the function
 	// body.

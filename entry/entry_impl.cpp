@@ -12,7 +12,6 @@
  */
 
 
-
 #include "entry_impl.hpp"
 #include "account.hpp"
 #include "string_conv.hpp"

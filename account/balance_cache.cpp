@@ -299,7 +299,7 @@ BalanceCache::refresh_all()
 void
 BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 {
-	// TODO Is this exception safe?
+	// TODO Is this exception-safe?
 	typedef vector<AccountImpl::Id> IdVec;
 	IdVec::const_iterator it = p_targets.begin();
 	IdVec::const_iterator const end = p_targets.end();

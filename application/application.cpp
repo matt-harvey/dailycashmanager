@@ -115,10 +115,7 @@ Application::config()
 	static wxConfig* conf = 0;
 	if (!conf)
 	{
-		conf = new wxConfig
-		(	application_name(),
-			vendor_name()
-		);
+		conf = new wxConfig(application_name(), vendor_name());
 	}
 	JEWEL_ASSERT (conf);
 	return *conf;

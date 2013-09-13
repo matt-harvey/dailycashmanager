@@ -64,11 +64,6 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		wxString const& p_name
 	);
-
-	static bool no_user_draft_journals_saved
-	(	PhatbooksDatabaseConnection& p_database_connection
-	);
-
 	
 	/**
 	 * @todo Document.

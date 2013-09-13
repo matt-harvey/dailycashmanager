@@ -3,7 +3,6 @@
 #include "string_conv.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
-#include "draft_journal_table_iterator.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -192,19 +191,6 @@ DraftJournalImpl::exists
 		}
 	}
 	return false;
-}
-
-bool
-DraftJournalImpl::no_user_draft_journals_saved
-(	PhatbooksDatabaseConnection& p_database_connection
-)
-{
-	DraftJournalTableIterator const it =
-		make_name_ordered_user_draft_journal_table_iterator
-		(	p_database_connection
-		);
-	DraftJournalTableIterator const end;
-	return it == end;
 }
 
 void
