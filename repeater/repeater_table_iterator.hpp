@@ -1,5 +1,5 @@
-#ifndef GUARD_repeater_table_iterator_hpp
-#define GUARD_repeater_table_iterator_hpp
+#ifndef GUARD_repeater_table_iterator_hpp_8880911641233094
+#define GUARD_repeater_table_iterator_hpp_8880911641233094
 
 #include "repeater.hpp"
 #include <sqloxx/table_iterator.hpp>
@@ -13,4 +13,4 @@ typedef
 
 }  // namespace phatbooks
 
-#endif  // GUARD_repeater_table_iterator_hpp
+#endif  // GUARD_repeater_table_iterator_hpp_8880911641233094

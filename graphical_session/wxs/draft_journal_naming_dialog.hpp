@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_draft_journal_naming_dialog_hpp
-#define GUARD_draft_journal_naming_dialog_hpp
+#ifndef GUARD_draft_journal_naming_dialog_hpp_17749934977735363
+#define GUARD_draft_journal_naming_dialog_hpp_17749934977735363
 
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
@@ -60,4 +60,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_draft_journal_naming_dialog_hpp
+#endif  // GUARD_draft_journal_naming_dialog_hpp_17749934977735363

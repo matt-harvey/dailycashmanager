@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_journal_hpp
-#define GUARD_journal_hpp
+#ifndef GUARD_journal_hpp_6157822681664407
+#define GUARD_journal_hpp_6157822681664407
 
 #include "entry.hpp"
 #include "phatbooks_persistent_object.hpp"
@@ -127,4 +127,4 @@ operator<<(std::ostream& os, Journal const& oj);
 }  // namespace phatbooks
 
 
-#endif  // GUARD_journal_hpp
+#endif  // GUARD_journal_hpp_6157822681664407

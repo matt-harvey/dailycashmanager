@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_session_hpp
-#define GUARD_session_hpp
+#ifndef GUARD_session_hpp_36949449096317144
+#define GUARD_session_hpp_36949449096317144
 
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -64,4 +64,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_session_hpp
+#endif  // GUARD_session_hpp_36949449096317144

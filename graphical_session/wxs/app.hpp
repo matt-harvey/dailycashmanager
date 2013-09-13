@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_app_hpp
-#define GUARD_app_hpp
+#ifndef GUARD_app_hpp_19666019230925488
+#define GUARD_app_hpp_19666019230925488
 
 #include "frame.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -63,4 +63,4 @@ DECLARE_APP(App)
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_app_hpp
+#endif  // GUARD_app_hpp_19666019230925488

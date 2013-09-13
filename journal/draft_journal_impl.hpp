@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_draft_journal_impl_hpp
-#define GUARD_draft_journal_impl_hpp
+#ifndef GUARD_draft_journal_impl_hpp_8602723767330276
+#define GUARD_draft_journal_impl_hpp_8602723767330276
 
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
@@ -170,4 +170,4 @@ struct DraftJournalImpl::DraftJournalData
 }  // namespace phatbooks
 
 
-#endif  // GUARD_draft_journal_impl_hpp
+#endif  // GUARD_draft_journal_impl_hpp_8602723767330276

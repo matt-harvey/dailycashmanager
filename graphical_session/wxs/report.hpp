@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_report_hpp
-#define GUARD_report_hpp
+#ifndef GUARD_report_hpp_0032136221431259167
+#define GUARD_report_hpp_0032136221431259167
 
 #include "account_type.hpp"
 #include "entry.hpp"
@@ -86,4 +86,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_report_hpp
+#endif  // GUARD_report_hpp_0032136221431259167

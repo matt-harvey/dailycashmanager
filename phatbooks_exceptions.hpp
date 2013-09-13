@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_phatbooks_exceptions_hpp
-#define GUARD_phatbooks_exceptions_hpp
+#ifndef GUARD_phatbooks_exceptions_hpp_9435394075436235
+#define GUARD_phatbooks_exceptions_hpp_9435394075436235
 
 #include <jewel/exception.hpp>
 
@@ -197,5 +197,5 @@ JEWEL_DERIVED_EXCEPTION(InvalidTransactionTypeException, PhatbooksException);
 
 }  // namespace phatbooks
 
-#endif  // GUARD_phatbooks_exceptions_hpp
+#endif  // GUARD_phatbooks_exceptions_hpp_9435394075436235
 

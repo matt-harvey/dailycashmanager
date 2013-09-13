@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_graphical_session_hpp
-#define GUARD_graphical_session_hpp
+#ifndef GUARD_graphical_session_hpp_08719753897152727
+#define GUARD_graphical_session_hpp_08719753897152727
 
 #include "session.hpp"
 #include <string>
@@ -60,4 +60,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_graphical_session_hpp
+#endif  // GUARD_graphical_session_hpp_08719753897152727

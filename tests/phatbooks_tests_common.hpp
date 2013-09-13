@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_phatbooks_tests_common_hpp
-#define GUARD_phatbooks_tests_common_hpp
+#ifndef GUARD_phatbooks_tests_common_hpp_7922174706087529
+#define GUARD_phatbooks_tests_common_hpp_7922174706087529
 
 #include "phatbooks_database_connection.hpp"
 #include <boost/filesystem.hpp>
@@ -44,4 +44,4 @@ struct TestFixture
 }  // namespace phatbooks
 
 
-#endif  // GUARD_phatbooks_tests_common_hpp
+#endif  // GUARD_phatbooks_tests_common_hpp_7922174706087529

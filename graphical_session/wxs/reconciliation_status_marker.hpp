@@ -1,5 +1,5 @@
-#ifndef GUARD_reconciliation_status_marker_hpp
-#define GUARD_reconciliation_status_marker_hpp
+#ifndef GUARD_reconciliation_status_marker_hpp_7863317401084731
+#define GUARD_reconciliation_status_marker_hpp_7863317401084731
 
 #include <wx/string.h>
 
@@ -22,4 +22,4 @@ wxString reconciliation_status_marker(bool p_is_reconciled);
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_reconciliation_status_marker_hpp
+#endif  // GUARD_reconciliation_status_marker_hpp_7863317401084731

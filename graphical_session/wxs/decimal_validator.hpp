@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_decimal_validator_hpp
-#define GUARD_decimal_validator_hpp
+#ifndef GUARD_decimal_validator_hpp_503944817233805
+#define GUARD_decimal_validator_hpp_503944817233805
 
 #include <jewel/decimal.hpp>
 #include <wx/intl.h>
@@ -49,4 +49,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_decimal_validator_hpp
+#endif  // GUARD_decimal_validator_hpp_503944817233805

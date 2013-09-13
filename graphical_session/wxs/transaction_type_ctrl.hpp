@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_transaction_type_ctrl_hpp
-#define GUARD_transaction_type_ctrl_hpp
+#ifndef GUARD_transaction_type_ctrl_hpp_8775560031074826
+#define GUARD_transaction_type_ctrl_hpp_8775560031074826
 
 #include "transaction_type.hpp"
 #include <boost/noncopyable.hpp>
@@ -78,4 +78,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_transaction_type_ctrl_hpp
+#endif  // GUARD_transaction_type_ctrl_hpp_8775560031074826

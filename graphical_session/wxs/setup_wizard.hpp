@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_setup_wizard_hpp
-#define GUARD_setup_wizard_hpp
+#ifndef GUARD_setup_wizard_hpp_8623281646810137
+#define GUARD_setup_wizard_hpp_8623281646810137
 
 #include "account.hpp"
 #include "account_type.hpp"
@@ -299,4 +299,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_setup_wizard_hpp
+#endif  // GUARD_setup_wizard_hpp_8623281646810137

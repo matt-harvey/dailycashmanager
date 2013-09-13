@@ -1,5 +1,5 @@
-#ifndef GUARD_window_utilities_hpp
-#define GUARD_window_utilities_hpp
+#ifndef GUARD_window_utilities_hpp_5290374944587413
+#define GUARD_window_utilities_hpp_5290374944587413
 
 #include <boost/optional.hpp>
 #include <wx/string.h>
@@ -33,4 +33,4 @@ void toggle_enabled
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_window_utilities_hpp
+#endif  // GUARD_window_utilities_hpp_5290374944587413

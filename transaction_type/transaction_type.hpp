@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_transaction_type_hpp
-#define GUARD_transaction_type_hpp
+#ifndef GUARD_transaction_type_hpp_36120869003292577
+#define GUARD_transaction_type_hpp_36120869003292577
 
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/assert.hpp>
@@ -163,4 +163,4 @@ assert_transaction_type_validity
 
 }  // namespace phatbooks
 
-#endif  // GUARD_transaction_type_hpp
+#endif  // GUARD_transaction_type_hpp_36120869003292577

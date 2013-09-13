@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_commodity_impl_hpp
-#define GUARD_commodity_impl_hpp
+#ifndef GUARD_commodity_impl_hpp_9343820716880178
+#define GUARD_commodity_impl_hpp_9343820716880178
 
 /** \file commodity_impl.hpp
  *
@@ -153,4 +153,4 @@ struct CommodityImpl::CommodityData
 
 }  // namespace phatbooks
 
-#endif  // GUARD_commodity_impl_hpp
+#endif  // GUARD_commodity_impl_hpp_9343820716880178

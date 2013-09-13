@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_frequency_hpp
-#define GUARD_frequency_hpp
+#ifndef GUARD_frequency_hpp_6254867355457912
+#define GUARD_frequency_hpp_6254867355457912
 
 #include "interval_type.hpp"
 #include <jewel/decimal.hpp>
@@ -129,4 +129,4 @@ bool operator==(Frequency const& lhs, Frequency const& rhs);
 }  // namespace phatbooks
 
 
-#endif  // GUARD_frequency_hpp
+#endif  // GUARD_frequency_hpp_6254867355457912

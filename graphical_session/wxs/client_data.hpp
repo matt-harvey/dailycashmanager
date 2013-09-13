@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_client_data_hpp
-#define GUARD_client_data_hpp
+#ifndef GUARD_client_data_hpp_1960609588753716
+#define GUARD_client_data_hpp_1960609588753716
 
 #include <wx/clntdata.h>
 
@@ -53,4 +53,4 @@ ClientData<T>::data() const
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_client_data_hpp
+#endif  // GUARD_client_data_hpp_1960609588753716

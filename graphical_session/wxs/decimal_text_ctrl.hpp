@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_decimal_text_ctrl_hpp
-#define GUARD_decimal_text_ctrl_hpp
+#ifndef GUARD_decimal_text_ctrl_hpp_19653581837030865
+#define GUARD_decimal_text_ctrl_hpp_19653581837030865
 
 #include <jewel/decimal.hpp>
 #include <wx/event.h>
@@ -69,4 +69,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_decimal_text_ctrl_hpp
+#endif  // GUARD_decimal_text_ctrl_hpp_19653581837030865

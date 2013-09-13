@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_summary_datum_hpp
-#define GUARD_summary_datum_hpp
+#ifndef GUARD_summary_datum_hpp_35246402786693726
+#define GUARD_summary_datum_hpp_35246402786693726
 
 #include <jewel/decimal.hpp>
 #include <wx/string.h>
@@ -36,4 +36,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_summary_datum_hpp
+#endif  // GUARD_summary_datum_hpp_35246402786693726

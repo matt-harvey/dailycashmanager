@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_filename_validation_hpp
-#define GUARD_filename_validation_hpp
+#ifndef GUARD_filename_validation_hpp_29534295773848096
+#define GUARD_filename_validation_hpp_29534295773848096
 
 #include <string>
 
@@ -45,4 +45,4 @@ bool is_valid_filename
 }  // namespace phatbooks
 
 
-#endif  // GUARD_filename_validation_hpp
+#endif  // GUARD_filename_validation_hpp_29534295773848096

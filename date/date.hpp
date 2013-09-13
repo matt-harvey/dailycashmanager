@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_date_hpp
-#define GUARD_date_hpp
+#ifndef GUARD_date_hpp_43289257373329837
+#define GUARD_date_hpp_43289257373329837
 
 /** \file date.hpp
  *
@@ -124,4 +124,4 @@ month_end_for_date(boost::gregorian::date const& p_date);
 }  // namespace phatbooks
 
 
-#endif  // GUARD_date_hpp
+#endif  // GUARD_date_hpp_43289257373329837

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_frame_hpp
-#define GUARD_frame_hpp
+#ifndef GUARD_frame_hpp_873675392881816
+#define GUARD_frame_hpp_873675392881816
 
 #include "account.hpp"
 #include "draft_journal.hpp"
@@ -146,4 +146,4 @@ Frame::edit_journal(JournalType& p_journal)
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_frame_hpp
+#endif  // GUARD_frame_hpp_873675392881816

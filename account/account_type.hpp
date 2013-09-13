@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_account_type_hpp
-#define GUARD_account_type_hpp
+#ifndef GUARD_account_type_hpp_5090496337549061
+#define GUARD_account_type_hpp_5090496337549061
 
 #include <wx/string.h>
 #include <vector>
@@ -72,6 +72,6 @@ string_to_account_type(wxString const& p_string);
 
 }  // namespace phatbooks
 
-#endif  // GUARD_account_type_hpp
+#endif  // GUARD_account_type_hpp_5090496337549061
 
 

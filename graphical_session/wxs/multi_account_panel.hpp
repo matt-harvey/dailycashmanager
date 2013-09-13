@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_multi_account_panel_hpp
-#define GUARD_multi_account_panel_hpp
+#ifndef GUARD_multi_account_panel_hpp_2678521416465995
+#define GUARD_multi_account_panel_hpp_2678521416465995
 
 #include "account.hpp"
 #include "account_type.hpp"
@@ -207,4 +207,4 @@ MultiAccountPanel::pop_widget_from(std::vector<T>& p_vec)
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_multi_account_panel_hpp
+#endif  // GUARD_multi_account_panel_hpp_2678521416465995

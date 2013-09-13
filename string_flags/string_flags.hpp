@@ -1,5 +1,5 @@
-#ifndef GUARD_string_flags_hpp
-#define GUARD_string_flags_hpp
+#ifndef GUARD_string_flags_hpp_04174686784006044
+#define GUARD_string_flags_hpp_04174686784006044
 
 #include <jewel/flag_set.hpp>
 
@@ -31,4 +31,4 @@ namespace string_flags
 
 }  // namespace phatbooks
 
-#endif  // GUARD_string_flags_hpp
+#endif  // GUARD_string_flags_hpp_04174686784006044

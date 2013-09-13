@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_report_panel_hpp
-#define GUARD_report_panel_hpp
+#ifndef GUARD_report_panel_hpp_8629163596140763
+#define GUARD_report_panel_hpp_8629163596140763
 
 #include "entry.hpp"
 #include <boost/noncopyable.hpp>
@@ -87,4 +87,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_report_panel_hpp
+#endif  // GUARD_report_panel_hpp_8629163596140763

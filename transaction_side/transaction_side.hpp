@@ -1,5 +1,5 @@
-#ifndef GUARD_transaction_side_hpp
-#define GUARD_transaction_side_hpp
+#ifndef GUARD_transaction_side_hpp_6396077878957651
+#define GUARD_transaction_side_hpp_6396077878957651
 
 namespace phatbooks
 {
@@ -25,4 +25,4 @@ namespace transaction_side
 
 }  // namespace phatbooks
 
-#endif  // GUARD_transaction_side_hpp
+#endif  // GUARD_transaction_side_hpp_6396077878957651

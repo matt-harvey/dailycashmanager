@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_draft_journal_list_ctrl_hpp
-#define GUARD_draft_journal_list_ctrl_hpp
+#ifndef GUARD_draft_journal_list_ctrl_hpp_9173440862993449
+#define GUARD_draft_journal_list_ctrl_hpp_9173440862993449
 
 #include "draft_journal.hpp"
 #include "draft_journal_table_iterator.hpp"
@@ -62,4 +62,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_draft_journal_list_ctrl_hpp
+#endif  // GUARD_draft_journal_list_ctrl_hpp_9173440862993449

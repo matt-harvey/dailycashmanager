@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_make_currencies_hpp
-#define GUARD_make_currencies_hpp
+#ifndef GUARD_make_currencies_hpp_7990285213100857
+#define GUARD_make_currencies_hpp_7990285213100857
 
 #include "commodity.hpp"
 #include <vector>
@@ -61,4 +61,4 @@ make_currencies
 
 }  // namespace phatbooks
 
-#endif  // GUARD_make_currencies_hpp
+#endif  // GUARD_make_currencies_hpp_7990285213100857

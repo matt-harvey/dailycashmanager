@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_entry_group_ctrl_hpp
-#define GUARD_entry_group_ctrl_hpp
+#ifndef GUARD_entry_group_ctrl_hpp_08374422745953511
+#define GUARD_entry_group_ctrl_hpp_08374422745953511
 
 #include "account.hpp"
 #include "account_type.hpp"
@@ -175,4 +175,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_entry_group_ctrl_hpp
+#endif  // GUARD_entry_group_ctrl_hpp_08374422745953511

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_entry_list_panel_hpp
-#define GUARD_entry_list_panel_hpp
+#ifndef GUARD_entry_list_panel_hpp_3556466034407013
+#define GUARD_entry_list_panel_hpp_3556466034407013
 
 #include "entry.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -110,4 +110,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_entry_list_panel_hpp
+#endif  // GUARD_entry_list_panel_hpp_3556466034407013

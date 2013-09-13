@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_persistent_journal_hpp
-#define GUARD_persistent_journal_hpp
+#ifndef GUARD_persistent_journal_hpp_46241805630848654
+#define GUARD_persistent_journal_hpp_46241805630848654
 
 #include "entry.hpp"
 #include "journal.hpp"
@@ -50,4 +50,4 @@ journal_id_is_draft(PhatbooksDatabaseConnection& dbc, PersistentJournal::Id);
 }  // namespace phatbooks
 
 
-#endif  // GUARD_persistent_journal_hpp
+#endif  // GUARD_persistent_journal_hpp_46241805630848654

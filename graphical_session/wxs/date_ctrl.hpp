@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_date_ctrl_hpp
-#define GUARD_date_ctrl_hpp
+#ifndef GUARD_date_ctrl_hpp_9775690613210057
+#define GUARD_date_ctrl_hpp_9775690613210057
 
 #include "date.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -74,4 +74,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_date_ctrl_hpp
+#endif  // GUARD_date_ctrl_hpp_9775690613210057

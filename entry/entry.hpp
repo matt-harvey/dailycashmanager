@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_entry_hpp
-#define GUARD_entry_hpp
+#ifndef GUARD_entry_hpp_3389501093602507
+#define GUARD_entry_hpp_3389501093602507
 
 #include "entry_impl.hpp"
 #include "finformat.hpp"
@@ -185,4 +185,4 @@ Entry::journal() const
 }  // namespace phatbooks
 
 
-#endif  // GUARD_entry_hpp
+#endif  // GUARD_entry_hpp_3389501093602507

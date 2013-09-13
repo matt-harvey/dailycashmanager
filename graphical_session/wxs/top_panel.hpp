@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_top_panel_hpp
-#define GUARD_top_panel_hpp
+#ifndef GUARD_top_panel_hpp_7915960996372607
+#define GUARD_top_panel_hpp_7915960996372607
 
 #include "account.hpp"
 #include "account_type.hpp"
@@ -253,4 +253,4 @@ TopPanel::configure_transaction_ctrl(JournalType& p_journal)
 }  // namespace phatbooks
 
 
-#endif  // GUARD_top_panel_hpp
+#endif  // GUARD_top_panel_hpp_7915960996372607

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_interval_type_hpp
-#define GUARD_interval_type_hpp
+#ifndef GUARD_interval_type_hpp_5555643181109635
+#define GUARD_interval_type_hpp_5555643181109635
 
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <wx/string.h>
@@ -62,4 +62,4 @@ bool is_valid_date_for_interval_type
 }  // namespace phatbooks
 
 
-#endif  // GUARD_interval_type_hpp
+#endif  // GUARD_interval_type_hpp_5555643181109635

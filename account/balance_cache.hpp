@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_balance_cache_hpp
-#define GUARD_balance_cache_hpp
+#ifndef GUARD_balance_cache_hpp_3730216051326234
+#define GUARD_balance_cache_hpp_3730216051326234
 
 #include "account_impl.hpp"
 #include <boost/optional.hpp>
@@ -96,4 +96,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_balance_cache_hpp
+#endif  // GUARD_balance_cache_hpp_3730216051326234

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_sizing_hpp
-#define GUARD_sizing_hpp
+#ifndef GUARD_sizing_hpp_3696029835239067
+#define GUARD_sizing_hpp_3696029835239067
 
 
 /**
@@ -55,4 +55,4 @@ int scrollbar_width_allowance();
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_sizing_hpp
+#endif  // GUARD_sizing_hpp_3696029835239067

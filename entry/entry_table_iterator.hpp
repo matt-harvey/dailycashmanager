@@ -1,5 +1,5 @@
-#ifndef GUARD_entry_table_iterator_hpp
-#define GUARD_entry_table_iterator_hpp
+#ifndef GUARD_entry_table_iterator_hpp_09390961802280956
+#define GUARD_entry_table_iterator_hpp_09390961802280956
 
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -24,4 +24,4 @@ make_date_ordered_actual_ordinary_entry_table_iterator
 
 }  // namespace phatbooks
 
-#endif  // GUARD_entry_table_iterator_hpp
+#endif  // GUARD_entry_table_iterator_hpp_09390961802280956

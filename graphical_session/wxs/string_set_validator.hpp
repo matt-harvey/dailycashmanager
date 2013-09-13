@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_string_set_validator_hpp
-#define GUARD_string_set_validator_hpp
+#ifndef GUARD_string_set_validator_hpp_5293149675844773
+#define GUARD_string_set_validator_hpp_5293149675844773
 
 #include <wx/arrstr.h>
 #include <wx/string.h>
@@ -61,4 +61,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_string_set_validator_hpp
+#endif  // GUARD_string_set_validator_hpp_5293149675844773

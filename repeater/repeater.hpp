@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_repeater_hpp
-#define GUARD_repeater_hpp
+#ifndef GUARD_repeater_hpp_1481954204608665
+#define GUARD_repeater_hpp_1481954204608665
 
 #include "date.hpp"
 #include "draft_journal.hpp"
@@ -188,4 +188,4 @@ update_repeaters
 
 }  // namespace phatbooks
 
-#endif  // GUARD_repeater_hpp
+#endif  // GUARD_repeater_hpp_1481954204608665

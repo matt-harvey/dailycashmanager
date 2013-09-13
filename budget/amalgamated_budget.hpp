@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_amalgamated_budget_hpp
-#define GUARD_amalgamated_budget_hpp
+#ifndef GUARD_amalgamated_budget_hpp_5997503626159161
+#define GUARD_amalgamated_budget_hpp_5997503626159161
 
 #include "account_impl.hpp"
 #include "draft_journal.hpp"
@@ -184,4 +184,4 @@ private:
 
 }  // namespace phatbooks
 
-#endif  // GUARD_amalgamated_budget_hpp
+#endif  // GUARD_amalgamated_budget_hpp_5997503626159161

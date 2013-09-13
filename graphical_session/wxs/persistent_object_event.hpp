@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_persistent_object_event_hpp
-#define GUARD_persistent_object_event_hpp
+#ifndef GUARD_persistent_object_event_hpp_011347359517285303
+#define GUARD_persistent_object_event_hpp_011347359517285303
 
 #include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
@@ -303,4 +303,4 @@ typedef
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_persistent_object_event_hpp
+#endif  // GUARD_persistent_object_event_hpp_011347359517285303

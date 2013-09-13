@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_draft_journal_table_iterator_hpp
-#define GUARD_draft_journal_table_iterator_hpp
+#ifndef GUARD_draft_journal_table_iterator_hpp_8254837704941089
+#define GUARD_draft_journal_table_iterator_hpp_8254837704941089
 
 #include "draft_journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -30,4 +30,4 @@ make_name_ordered_user_draft_journal_table_iterator
 
 }  // namespace phatbooks
 
-#endif  // GUARD_draft_journal_table_iterator_hpp
+#endif  // GUARD_draft_journal_table_iterator_hpp_8254837704941089

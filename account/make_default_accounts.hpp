@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_make_default_accounts_hpp
-#define GUARD_make_default_accounts_hpp
+#ifndef GUARD_make_default_accounts_hpp_29520491757206846
+#define GUARD_make_default_accounts_hpp_29520491757206846
 
 #include "account.hpp"
 #include "account_type.hpp"
@@ -58,4 +58,4 @@ void make_default_accounts
 
 }  // namespace phatbooks
 
-#endif  // GUARD_make_default_accounts_hpp
+#endif  // GUARD_make_default_accounts_hpp_29520491757206846

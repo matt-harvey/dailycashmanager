@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_column_creation_hpp
-#define GUARD_column_creation_hpp
+#ifndef GUARD_column_creation_hpp_8290907106497747
+#define GUARD_column_creation_hpp_8290907106497747
 
 #include "entry.hpp"
 #include "account.hpp"
@@ -201,4 +201,4 @@ create_account_friendly_opening_balance_column();
 }  // namespace phatbooks
 
 
-#endif  // GUARD_column_creation_hpp
+#endif  // GUARD_column_creation_hpp_8290907106497747

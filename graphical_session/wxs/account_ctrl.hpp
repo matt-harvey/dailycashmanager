@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_account_ctrl_hpp
-#define GUARD_account_ctrl_hpp
+#ifndef GUARD_account_ctrl_hpp_7150714070140717
+#define GUARD_account_ctrl_hpp_7150714070140717
 
 #include "account.hpp"
 #include "account_type.hpp"
@@ -116,4 +116,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_account_ctrl_hpp
+#endif  // GUARD_account_ctrl_hpp_7150714070140717

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_account_dialog_hpp
-#define GUARD_account_dialog_hpp
+#ifndef GUARD_account_dialog_hpp_4068064533205733
+#define GUARD_account_dialog_hpp_4068064533205733
 
 #include "account_type.hpp"
 #include "budget_panel.hpp"
@@ -125,4 +125,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_account_dialog_hpp
+#endif  // GUARD_account_dialog_hpp_4068064533205733

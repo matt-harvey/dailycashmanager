@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_gridded_scrolled_panel_hpp
-#define GUARD_gridded_scrolled_panel_hpp
+#ifndef GUARD_gridded_scrolled_panel_hpp_8020584330903638
+#define GUARD_gridded_scrolled_panel_hpp_8020584330903638
 
 #include <jewel/decimal_fwd.hpp>
 #include <boost/noncopyable.hpp>
@@ -111,4 +111,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_gridded_scrolled_panel_hpp
+#endif  // GUARD_gridded_scrolled_panel_hpp_8020584330903638

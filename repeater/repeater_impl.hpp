@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_repeater_impl_hpp
-#define GUARD_repeater_impl_hpp
+#ifndef GUARD_repeater_impl_hpp_7204316857831701
+#define GUARD_repeater_impl_hpp_7204316857831701
 
 /** \file repeater_impl.hpp
  *
@@ -158,4 +158,4 @@ struct RepeaterImpl::RepeaterData
 
 }  // namespace phatbooks
 
-#endif  // GUARD_repeater_impl_hpp
+#endif  // GUARD_repeater_impl_hpp_7204316857831701

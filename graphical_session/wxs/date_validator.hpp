@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_date_validator_hpp
-#define GUARD_date_validator_hpp
+#ifndef GUARD_date_validator_hpp_1494637937981001
+#define GUARD_date_validator_hpp_1494637937981001
 
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -47,4 +47,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_date_validator_hpp
+#endif  // GUARD_date_validator_hpp_1494637937981001

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_ordinary_journal_hpp
-#define GUARD_ordinary_journal_hpp
+#ifndef GUARD_ordinary_journal_hpp_8344533833835522
+#define GUARD_ordinary_journal_hpp_8344533833835522
 
 #include "entry.hpp"
 #include "persistent_journal.hpp"
@@ -172,4 +172,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_ordinary_journal_hpp
+#endif  // GUARD_ordinary_journal_hpp_8344533833835522

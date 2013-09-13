@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_phatbooks_persistent_object_hpp
-#define GUARD_phatbooks_persistent_object_hpp
+#ifndef GUARD_phatbooks_persistent_object_hpp_3741174640013452
+#define GUARD_phatbooks_persistent_object_hpp_3741174640013452
 
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -288,4 +288,4 @@ PhatbooksPersistentObject<Impl>::do_ghostify()
 
 }  // namespace phatbooks
 
-#endif  // GUARD_phatbooks_persistent_object_hpp
+#endif  // GUARD_phatbooks_persistent_object_hpp_3741174640013452

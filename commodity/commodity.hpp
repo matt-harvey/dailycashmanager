@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_commodity_hpp
-#define GUARD_commodity_hpp
+#ifndef GUARD_commodity_hpp_15947886051585844
+#define GUARD_commodity_hpp_15947886051585844
 
 #include "commodity_impl.hpp"
 #include "phatbooks_persistent_object.hpp"
@@ -144,4 +144,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_commodity_hpp
+#endif  // GUARD_commodity_hpp_15947886051585844

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_proto_journal_hpp
-#define GUARD_proto_journal_hpp
+#ifndef GUARD_proto_journal_hpp_2501613862114779
+#define GUARD_proto_journal_hpp_2501613862114779
 
 /** \file proto_journal.hpp
  *
@@ -137,4 +137,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_proto_journal_hpp
+#endif  // GUARD_proto_journal_hpp_2501613862114779

@@ -1,5 +1,5 @@
-#ifndef GUARD_visibility_hpp
-#define GUARD_visibility_hpp
+#ifndef GUARD_visibility_hpp_6967687740441266
+#define GUARD_visibility_hpp_6967687740441266
 
 namespace phatbooks
 {
@@ -25,4 +25,4 @@ enum Visibility
 
 }  // namespace phatbooks
 
-#endif  // GUARD_visibility_hpp
+#endif  // GUARD_visibility_hpp_6967687740441266

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_application_hpp
-#define GUARD_application_hpp
+#ifndef GUARD_application_hpp_5927853596363148
+#define GUARD_application_hpp_5927853596363148
 
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
@@ -76,4 +76,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_application_hpp
+#endif  // GUARD_application_hpp_5927853596363148

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_unfiltered_entry_list_ctrl_hpp
-#define GUARD_unfiltered_entry_list_ctrl_hpp
+#ifndef GUARD_unfiltered_entry_list_ctrl_hpp_2315717079823705
+#define GUARD_unfiltered_entry_list_ctrl_hpp_2315717079823705
 
 #include "entry_list_ctrl.hpp"
 #include <wx/window.h>
@@ -53,4 +53,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_unfiltered_entry_list_ctrl_hpp
+#endif  // GUARD_unfiltered_entry_list_ctrl_hpp_2315717079823705

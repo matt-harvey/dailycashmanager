@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_budget_panel_hpp
-#define GUARD_budget_panel_hpp
+#ifndef GUARD_budget_panel_hpp_749080240143966
+#define GUARD_budget_panel_hpp_749080240143966
 
 #include "account.hpp"
 #include "budget_item.hpp"
@@ -258,4 +258,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_budget_panel_hpp
+#endif  // GUARD_budget_panel_hpp_749080240143966

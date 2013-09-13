@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_balance_sheet_report_hpp
-#define GUARD_balance_sheet_report_hpp
+#ifndef GUARD_balance_sheet_report_hpp_8005432485605326
+#define GUARD_balance_sheet_report_hpp_8005432485605326
 
 #include "report.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -61,4 +61,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_balance_sheet_report_hpp
+#endif  // GUARD_balance_sheet_report_hpp_8005432485605326

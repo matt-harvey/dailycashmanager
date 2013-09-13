@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_reconciliation_entry_list_ctrl_hpp
-#define GUARD_reconciliation_entry_list_ctrl_hpp
+#ifndef GUARD_reconciliation_entry_list_ctrl_hpp_7164053319564114
+#define GUARD_reconciliation_entry_list_ctrl_hpp_7164053319564114
 
 #include "filtered_entry_list_ctrl.hpp"
 #include "reconciliation_list_panel.hpp"
@@ -84,4 +84,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_reconciliation_entry_list_ctrl_hpp
+#endif  // GUARD_reconciliation_entry_list_ctrl_hpp_7164053319564114

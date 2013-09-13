@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_string_conv_hpp
-#define GUARD_string_conv_hpp
+#ifndef GUARD_string_conv_hpp_06682258568090507
+#define GUARD_string_conv_hpp_06682258568090507
 
 #include <wx/string.h>
 #include <string>
@@ -40,4 +40,4 @@ wx_to_std8(wxString const& wxs)
 
 }  // namespace phatbooks
 
-#endif  // GUARD_string_conv_hpp
+#endif  // GUARD_string_conv_hpp_06682258568090507

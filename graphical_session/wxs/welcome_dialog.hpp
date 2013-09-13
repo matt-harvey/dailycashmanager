@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_welcome_dialog_hpp
-#define GUARD_welcome_dialog_hpp
+#ifndef GUARD_welcome_dialog_hpp_920675095599459
+#define GUARD_welcome_dialog_hpp_920675095599459
 
 #include <boost/noncopyable.hpp>
 #include <wx/button.h>
@@ -59,4 +59,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_welcome_dialog_hpp
+#endif  // GUARD_welcome_dialog_hpp_920675095599459

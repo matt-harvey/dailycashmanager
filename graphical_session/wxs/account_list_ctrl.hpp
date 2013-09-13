@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_account_list_ctrl_hpp
-#define GUARD_account_list_ctrl_hpp
+#ifndef GUARD_account_list_ctrl_hpp_4892309124065707
+#define GUARD_account_list_ctrl_hpp_4892309124065707
 
 #include "account.hpp"
 #include "account_table_iterator.hpp"
@@ -110,4 +110,4 @@ private:
 
 
 
-#endif  // GUARD_account_list_ctrl_hpp
+#endif  // GUARD_account_list_ctrl_hpp_4892309124065707

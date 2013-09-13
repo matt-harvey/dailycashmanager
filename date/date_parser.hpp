@@ -1,5 +1,5 @@
-#ifndef GUARD_date_parser_hpp
-#define GUARD_date_parser_hpp
+#ifndef GUARD_date_parser_hpp_5151682568318994
+#define GUARD_date_parser_hpp_5151682568318994
 
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -46,4 +46,4 @@ private:
 
 }  // namespace phatbooks
 
-#endif  // GUARD_date_parser_hpp
+#endif  // GUARD_date_parser_hpp_5151682568318994

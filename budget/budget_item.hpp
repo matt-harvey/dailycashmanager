@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_budget_item_hpp
-#define GUARD_budget_item_hpp
+#ifndef GUARD_budget_item_hpp_0043444857021535215
+#define GUARD_budget_item_hpp_0043444857021535215
 
 #include "budget_item_impl.hpp"
 #include "phatbooks_persistent_object.hpp"
@@ -145,4 +145,4 @@ normalized_total
 
 }  // namespace phatbooks
 
-#endif  // GUARD_budget_item_hpp
+#endif  // GUARD_budget_item_hpp_0043444857021535215

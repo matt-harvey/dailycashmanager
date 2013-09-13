@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_frequency_ctrl_hpp
-#define GUARD_frequency_ctrl_hpp
+#ifndef GUARD_frequency_ctrl_hpp_5481597355325519
+#define GUARD_frequency_ctrl_hpp_5481597355325519
 
 #include "frequency.hpp"
 #include <boost/noncopyable.hpp>
@@ -104,4 +104,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_frequency_ctrl_hpp
+#endif  // GUARD_frequency_ctrl_hpp_5481597355325519

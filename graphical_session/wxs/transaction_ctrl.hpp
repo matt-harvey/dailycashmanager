@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_transaction_ctrl_hpp
-#define GUARD_transaction_ctrl_hpp
+#ifndef GUARD_transaction_ctrl_hpp_6244141914064131
+#define GUARD_transaction_ctrl_hpp_6244141914064131
 
 #include "account.hpp"
 #include "decimal_text_ctrl.hpp"
@@ -210,4 +210,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_transaction_ctrl_hpp
+#endif  // GUARD_transaction_ctrl_hpp_6244141914064131

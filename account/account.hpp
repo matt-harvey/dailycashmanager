@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_account_hpp
-#define GUARD_account_hpp
+#ifndef GUARD_account_hpp_7530966385980586
+#define GUARD_account_hpp_7530966385980586
 
 #include "account_impl.hpp"
 #include "account_type.hpp"
@@ -338,4 +338,4 @@ favourite_accounts(PhatbooksDatabaseConnection& p_database_connection);
 
 }  // namespace phatbooks
 
-#endif  // GUARD_account_hpp
+#endif  // GUARD_account_hpp_7530966385980586

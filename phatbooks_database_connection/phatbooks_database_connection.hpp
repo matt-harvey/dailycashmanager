@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_phatbooks_database_connection_hpp
-#define GUARD_phatbooks_database_connection_hpp
+#ifndef GUARD_phatbooks_database_connection_hpp_19608494974490487
+#define GUARD_phatbooks_database_connection_hpp_19608494974490487
 
 /** \file phatbooks_database_connection.hpp
  *
@@ -359,4 +359,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_phatbooks_database_connection_hpp
+#endif  // GUARD_phatbooks_database_connection_hpp_19608494974490487

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_finformat_hpp
-#define GUARD_finformat_hpp
+#ifndef GUARD_finformat_hpp_5275738907640678
+#define GUARD_finformat_hpp_5275738907640678
 
 #include "string_flags.hpp"
 #include <jewel/decimal_fwd.hpp>
@@ -136,4 +136,4 @@ jewel::Decimal wx_to_simple_sum(wxString wxs, wxLocale const& loc);
 }  // namespace phatbooks
 
 
-#endif  // GUARD_finformat_hpp
+#endif  // GUARD_finformat_hpp_5275738907640678

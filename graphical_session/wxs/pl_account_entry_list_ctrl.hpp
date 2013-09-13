@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_pl_account_entry_list_ctrl_hpp
-#define GUARD_pl_account_entry_list_ctrl_hpp
+#ifndef GUARD_pl_account_entry_list_ctrl_hpp_025696059700891404
+#define GUARD_pl_account_entry_list_ctrl_hpp_025696059700891404
 
 #include "filtered_entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -56,4 +56,4 @@ private:
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_pl_account_entry_list_ctrl_hpp
+#endif  // GUARD_pl_account_entry_list_ctrl_hpp_025696059700891404

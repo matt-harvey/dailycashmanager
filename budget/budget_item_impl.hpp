@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_budget_item_impl_hpp
-#define GUARD_budget_item_impl_hpp
+#ifndef GUARD_budget_item_impl_hpp_6804927558081656
+#define GUARD_budget_item_impl_hpp_6804927558081656
 
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -127,4 +127,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_budget_item_impl_hpp
+#endif  // GUARD_budget_item_impl_hpp_6804927558081656

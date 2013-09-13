@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_locale_hpp
-#define GUARD_locale_hpp
+#ifndef GUARD_locale_hpp_4724053314292828
+#define GUARD_locale_hpp_4724053314292828
 
 #include <wx/intl.h>
 
@@ -20,4 +20,4 @@ wxLocale const& locale();
 }  // namespace gui
 }  // namespace phatbooks
 
-#endif  // GUARD_locale_hpp
+#endif  // GUARD_locale_hpp_4724053314292828
