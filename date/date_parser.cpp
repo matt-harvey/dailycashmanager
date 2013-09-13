@@ -1,18 +1,41 @@
 #include "date_parser.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <boost/unordered_set.hpp>
 #include <jewel/array_utilities.hpp>
 #include <wx/datetime.h>
 #include <wx/intl.h>
 #include <wx/string.h>
 
 using boost::optional;
+using boost::unordered_set;
 using jewel::num_elements;
 
 namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
+
+namespace
+{
+	bool is_format_char(char c)
+	{
+		static char const chars_a[] =
+		{	a, A, b, h, B, c, C, d, D, F, g, G, H,
+			I, j, m, M, p, r, R, S, T, u, U, V, w,
+			W, x, X, y, Y, z, Z
+		};
+		static unordered_set<char> const chars
+		(	jewel::begin(chars_a),
+			jewel::end(chars_a)
+		);
+		return chars.find(a) != chars.end();
+	}
+
+
+
+}  // end anonymous namespace
+
 
 DateParser::DateParser
 (	wxString const& p_short_format,
@@ -70,6 +93,9 @@ DateParser::tolerant_parse(wxString const& p_string) const
 {
 	optional<gregorian::date> ret;
 	// TODO HIGH PRIORITY Implement this.
+	
+	
+
 	return ret;
 }
 
