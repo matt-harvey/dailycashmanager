@@ -222,7 +222,7 @@ int main(int argc, char** argv)
 		CmdLine cmd(wx_to_std8(Application::application_name()));
 		UnlabeledValueArg<string> filepath_arg
 		(	"FILE",
-			"File to open or create",
+			"File to open",
 			false,
 			"",
 			"string"
@@ -230,6 +230,14 @@ int main(int argc, char** argv)
 		cmd.add(filepath_arg);
 		cmd.parse(argc, argv);
 		string const filepath_str = filepath_arg.getValue();
+		if (!filepath_str.empty() && !filesystem::exists(filepath_str))
+		{
+			cerr << "File does not exist.\n"
+			     << "To create a new file using the GUI, run with no command "
+				 << "line arguments."
+				 << endl;
+			return 1;
+		}
 		GraphicalSession graphical_session;
 		if (another_is_running)
 		{
