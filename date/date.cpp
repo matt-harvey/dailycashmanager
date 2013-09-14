@@ -163,7 +163,7 @@ parse_date(wxString const& p_string)
 	(	wxLocale::GetInfo(wxLOCALE_SHORT_DATE_FMT),
 		wxLocale::GetInfo(wxLOCALE_LONG_DATE_FMT)
 	);
-	return parser.parse(p_string);
+	return parser.parse(p_string, true);
 }
 
 gregorian::date

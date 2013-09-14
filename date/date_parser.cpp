@@ -1,23 +1,36 @@
 #include "date_parser.hpp"
+#include "date.hpp"
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lambda/lambda.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
+#include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <jewel/array_utilities.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/log.hpp>
+#include <jewel/optional.hpp>
 #include <wx/datetime.h>
 #include <wx/intl.h>
 #include <wx/string.h>
+#include <algorithm>
+#include <iterator>
 #include <string>
 #include <vector>
 
 using boost::algorithm::split;
+using boost::lexical_cast;
 using boost::optional;
+using boost::unordered_map;
 using boost::unordered_set;
+using jewel::Log;
 using jewel::num_elements;
+using jewel::value;
+using std::back_inserter;
 using std::find;
 using std::string;
+using std::transform;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -34,7 +47,7 @@ namespace
 	bool is_date_time_format_char(char c)
 	{
 		static char const chars_a[] =
-		{	'a', 'A', 'b', 'B', 'c', 'D', 'H', 'I', 'j', 'm', 'M', 'P',
+		{	'a', 'A', 'b', 'B', 'c', 'd', 'H', 'I', 'j', 'm', 'M', 'P',
 			'S', 'U', 'w', 'W', 'x', 'X', 'y', 'Y', 'Z'
 		};
 		static unordered_set<char> const chars
@@ -52,7 +65,7 @@ namespace
 	bool is_ordinary_date_format_char(char c)
 	{
 		static char const chars_a[] =
-		{	'D',  // day of the month (01-31)
+		{	'd',  // day of the month (01-31)
 			'm',  // month (01-12)
 			'y',  // year in century (00-99)
 			'Y',  // year
@@ -79,6 +92,8 @@ namespace
 		// Analyse the string; if at any point we find anything inconsistent
 		// with "ordinary date format", then we return an uninitialized
 		// optional.
+		JEWEL_LOG_TRACE();
+		JEWEL_LOG_VALUE(Log::info, str);
 		optional<char> separator;
 		wxString::const_iterator it = str.begin();
 		wxString::const_iterator const end = str.end();
@@ -141,14 +156,38 @@ namespace
 		return separator;
 	}
 
-	namespace date_component
+	enum DateComponentType
 	{
-		enum DateComponent
+		day_component,
+		month_component,
+		year_component
+	};
+
+	optional<DateComponentType> maybe_date_component_type(char c)
+	{
+		optional<DateComponentType> ret;
+		switch (c)
 		{
-			day,
-			month,
-			year
-		};
+		case 'd':
+			ret = day_component;
+			break;
+		case 'm':
+			ret = month_component;
+			break;
+		case 'y':  // fall through
+		case 'Y':
+			ret = year_component;
+			break;
+		}
+		return ret;
+	}
+
+	// Should only call if we know the last character of s is such as
+	// to return an initialized optional when passed to date_component_type.
+	DateComponentType date_component_type(wxString const s)
+	{
+		JEWEL_ASSERT (!s.IsEmpty());
+		return value(maybe_date_component_type(static_cast<char>(s.Last())));
 	}
 
 }  // end anonymous namespace
@@ -208,6 +247,9 @@ DateParser::parse(wxString const& p_string, bool p_be_tolerant) const
 optional<gregorian::date>
 DateParser::tolerant_parse(wxString const& p_string) const
 {
+	// TODO Make this clearer and simpler and better commented.
+	// TODO HIGH PRIORITY Test this with some different format strings.
+	JEWEL_LOG_TRACE();
 	optional<gregorian::date> ret;
 	wxString const* formats[] =
 	{	&m_short_format,
@@ -219,21 +261,139 @@ DateParser::tolerant_parse(wxString const& p_string) const
 		optional<char> const maybe_sep = separating_char(format);
 		if (!maybe_sep)
 		{
+			JEWEL_LOG_TRACE();
 			continue;
 		}
 		JEWEL_ASSERT (maybe_sep);
 		char const sep = *maybe_sep;
+		JEWEL_LOG_VALUE(Log::info, sep);
 		vector<wxString> target_fields;
 		vector<wxString> format_fields;
 		split(target_fields, p_string, (lambda::_1 == sep));
-		split(format_fields, p_string, (lambda::_1 == sep));
+		split(format_fields, format, (lambda::_1 == sep));
 		if ((target_fields.size() > 3) || (format_fields.size() != 3))
 		{
 			continue;
 		}
 		JEWEL_ASSERT (target_fields.size() <= 3);
 		JEWEL_ASSERT (format_fields.size() == 3);
-		// TODO HIGH PRIORITY...
+#		ifndef NDEBUG
+			for (size_t k = 0; k != format_fields.size(); ++k)
+			{
+				JEWEL_LOG_VALUE(Log::trace, format_fields[k]);
+			}
+#		endif
+		vector<DateComponentType> component_types;
+		transform
+		(	format_fields.begin(),
+			format_fields.end(),
+			back_inserter(component_types),
+			date_component_type
+		);
+		JEWEL_ASSERT (component_types.size() == 3);
+
+		unordered_map<DateComponentType, int> components;				
+
+		// bare scope
+		{
+			vector<wxString>::size_type j = 0;
+			vector<wxString>::size_type const szj = target_fields.size();
+			for ( ; j != szj; ++j)
+			{
+				wxString field = target_fields[j];
+				if ((*(field.begin()) == '0') && (field.size() > 1))
+				{
+					field = wxString(field.begin() + 1, field.end());
+				}
+				int val = -1;
+				try
+				{
+					val = lexical_cast<int>(field);
+				}
+				catch (boost::bad_lexical_cast&)
+				{
+					break;
+				}
+				JEWEL_ASSERT (val >= 0);
+				JEWEL_ASSERT (j < 3);
+				DateComponentType component_type = component_types[j];
+				if (target_fields.size() == 1)
+				{
+					component_type = day_component;	
+				}
+				if (target_fields.size() == 2)
+				{
+					bool day_before_month = false;
+					for (size_t n = 0; n != component_types.size(); ++n)
+					{
+						if (component_types[n] == day_component)
+						{
+							day_before_month = true;
+							break;
+						}
+						if (component_types[n] == month_component)
+						{
+							day_before_month = false;
+							break;
+						}
+					}
+					if (j == 0)
+					{
+						component_type =
+						(	day_before_month?
+							day_component:
+							month_component
+						);
+					}
+					else if (j == 1)
+					{
+						component_type =
+						(	day_before_month?
+							month_component:
+							day_component
+						);
+					}
+				}
+				components[component_type] = val;	
+			}	
+		}  // end bare scope
+
+		if (components.find(month_component) == components.end())
+		{
+			if (components.find(year_component) != components.end())
+			{
+				continue;
+			}
+			components[month_component] = today().month();
+		}
+		if (components.find(year_component) == components.end())
+		{
+			components[year_component] = today().year();
+		}
+		if (components.size() != 3)
+		{
+			continue;
+		}
+		if (components.at(year_component) < 100)
+		{
+			components[year_component] += 2000;
+		}
+		try
+		{
+			JEWEL_LOG_TRACE();
+			JEWEL_ASSERT (components.size() == 3);
+			ret = gregorian::date
+			(	components.at(year_component),
+				components.at(month_component),
+				components.at(day_component)
+			);
+			break;
+		}
+		catch (boost::exception&)
+		{
+			JEWEL_ASSERT (!ret);
+			continue;
+		}
 	}
 	return ret;
 }
