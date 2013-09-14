@@ -74,10 +74,12 @@
 #include "application.hpp"
 #include "string_conv.hpp"
 #include "graphical_session.hpp"
+#include <boost/filesystem.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
+#include <jewel/on_windows.hpp>
 #include <tclap/CmdLine.h>
 #include <wx/log.h>
 #include <wx/snglinst.h>
@@ -103,6 +105,7 @@ using std::clog;
 using std::cout;
 using std::endl;
 using std::ofstream;
+using std::set_terminate;
 using std::string;
 using std::strlen;
 using std::set_terminate;
@@ -110,35 +113,70 @@ using TCLAP::ArgException;
 using TCLAP::CmdLine;
 using TCLAP::UnlabeledValueArg;
 
-void flush_standard_output_streams()
-{
-	JEWEL_LOG_MESSAGE(Log::info, "Flushing standard output streams.");
-	cerr.flush();
-	clog.flush();
-	cout.flush();
-	JEWEL_LOG_MESSAGE(Log::info, "Flushed standard output streams.");
-	return;
-}
+namespace filesystem = boost::filesystem;
 
-void my_terminate_handler()
+namespace
 {
-	JEWEL_LOG_MESSAGE(Log::error, "Entered terminate handler.");
 
-	// TODO HIGH PRIORITY This seems like a good idea, but is there
-	// a hidden catch? (Custom terminate handling should not be done
-	// lightly...)
-	// flush_standard_output_streams();
-	abort();
-}	
+	void flush_standard_output_streams()
+	{
+		JEWEL_LOG_MESSAGE(Log::info, "Flushing standard output streams.");
+		cerr.flush();
+		clog.flush();
+		cout.flush();
+		JEWEL_LOG_MESSAGE(Log::info, "Flushed standard output streams.");
+		return;
+	}
 
-void configure_logging()
-{
-	Log::set_threshold(Log::trace);
-	string const log_name =
-		"/tmp/" + wx_to_std8(Application::application_name()) + ".log";
-	Log::set_filepath(log_name);
-	return;
-}
+	void my_terminate_handler()
+	{
+		JEWEL_LOG_MESSAGE(Log::error, "Entered terminate handler.");
+
+		// TODO HIGH PRIORITY This seems like a good idea, but is there
+		// a hidden catch? (Custom terminate handling should not be done
+		// lightly...)
+		// flush_standard_output_streams();
+		abort();
+	}	
+
+	bool ensure_dir_exists(string const& p_directory)
+	{
+		if (filesystem::exists(p_directory))
+		{
+			return true;
+		}
+		return filesystem::create_directory(p_directory);
+	}
+
+	void configure_logging()
+	{
+		Log::set_threshold(Log::trace);
+#		ifdef JEWEL_ON_WINDOWS
+			// TODO What if this directory doesn't exist? Will it be created?
+			// Do we need to create it in the installer?
+			string const a("C:\\ProgramData\\");
+			string const b("Phatbooks\\");
+			string const c("logs\\");
+			bool ok = ensure_dir_exists(a);
+			if (ok) ok = ensure_dir_exists(a + b);
+			if (ok) ok = ensure_dir_exists(a + b + c);
+			if (!ok)
+			{
+				cerr << "Could not create log file." << endl;
+				return;
+			}
+			string const log_dir = a + b + c;
+#		else
+			string const log_dir = "/tmp/";
+#		endif  // JEWEL_ON_WINDOWS
+		string const log_name = 
+			log_dir + wx_to_std8(Application::application_name()) + ".log";
+		Log::set_filepath(log_name);
+		return;
+	}
+
+}  // end anonymous namespace
+
 
 int main(int argc, char** argv)
 {
@@ -147,7 +185,7 @@ int main(int argc, char** argv)
 	{
 		configure_logging();
 		JEWEL_LOG_MESSAGE(Log::info, "Configured logging.");
-		std::set_terminate(my_terminate_handler);
+		set_terminate(my_terminate_handler);
 		JEWEL_LOG_MESSAGE
 		(	Log::info,
 			"Terminate handler has been set to my_terminate_handler."
