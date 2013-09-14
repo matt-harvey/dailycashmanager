@@ -108,8 +108,6 @@ date_format_wx(boost::gregorian::date const& p_date);
  * @returns an optional initialized with a date based on parsing p_string
  * using current wxLocale. The returned optional is uninitialized if
  * p_string cannot be successfully parsed as a date.
- * 
- * @todo HIGH PRIORITY Make this more accepting of different formats.
  */
 boost::optional<boost::gregorian::date>
 parse_date(wxString const& p_string);
