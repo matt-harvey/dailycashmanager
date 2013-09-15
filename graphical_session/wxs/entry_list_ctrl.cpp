@@ -6,6 +6,7 @@
 #include "app.hpp"
 #include "bs_account_entry_list_ctrl.hpp"
 #include "date.hpp"
+#include "date_parser.hpp"
 #include "entry.hpp"
 #include "entry_table_iterator.hpp"
 #include "locale.hpp"
@@ -253,10 +254,11 @@ EntryListCtrl::adjust_comment_column_to_fit()
 }
 
 gregorian::date
-EntryListCtrl::date_displayed(long p_row) const
+EntryListCtrl::date_displayed(long p_row, DateParser const& p_parser) const
 {
 	JEWEL_ASSERT (date_col_num() == 0);
-	optional<gregorian::date> const maybe_date = parse_date(GetItemText(p_row));
+	optional<gregorian::date> const maybe_date =
+		p_parser.parse(GetItemText(p_row));
 	JEWEL_ASSERT (maybe_date);
 	return value(maybe_date);
 }
@@ -276,7 +278,8 @@ EntryListCtrl::row_for_date(gregorian::date const& p_date) const
 	}
 	JEWEL_ASSERT (max == num_rows);
 	JEWEL_ASSERT (max > 0);
-	if (date_displayed(max - 1) <= p_date)
+	DateParser const parser;
+	if (date_displayed(max - 1, parser) <= p_date)
 	{
 		// Very end
 		return max;
@@ -289,20 +292,20 @@ EntryListCtrl::row_for_date(gregorian::date const& p_date) const
 		if (guess == min)
 		{
 			// Find end of contiguous rows showing this date
-			while ((date_displayed(guess) == p_date) && (guess != num_rows))
+			while ((date_displayed(guess, parser) == p_date) && (guess != num_rows))
 			{
 				++guess;
 			}
 			return guess;
 		}
-		gregorian::date const date = date_displayed(guess);
+		gregorian::date const date = date_displayed(guess, parser);
 		JEWEL_ASSERT (guess > 0);
-		gregorian::date const predecessor_date = date_displayed(guess - 1);
+		gregorian::date const predecessor_date = date_displayed(guess - 1, parser);
 		JEWEL_ASSERT (predecessor_date <= date);
 		if ((predecessor_date <= p_date) && (p_date <= date))
 		{
 			// Find end of contiguous rows showing this date
-			while ((date_displayed(guess) == p_date) && (guess != num_rows))
+			while ((date_displayed(guess, parser) == p_date) && (guess != num_rows))
 			{
 				++guess;
 			}
@@ -404,6 +407,7 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 	vector<Entry>::const_iterator it = p_journal.entries().begin();
 	vector<Entry>::const_iterator const end = p_journal.entries().end();
 	wxString const wx_date_string = date_format_wx(p_journal.date());
+	DateParser const parser;
 	for ( ; it != end; ++it)
 	{
 		long updated_pos = -1;
@@ -416,7 +420,7 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 			(	GetItemData(pos) ==
 				static_cast<unsigned long>(it->id())
 			);
-			gregorian::date const old_date = date_displayed(pos);
+			gregorian::date const old_date = date_displayed(pos, parser);
 			do_process_removal_for_summary(pos);
 			DeleteItem(pos);
 			m_id_set.erase(jt);

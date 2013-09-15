@@ -24,6 +24,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class DateParser;
 class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
@@ -142,7 +143,12 @@ protected:
 	int date_col_num() const;
 	void autosize_column_widths();
 	void adjust_comment_column_to_fit();
-	boost::gregorian::date date_displayed(long p_row) const;
+
+	boost::gregorian::date date_displayed
+	(	long p_row,
+		DateParser const& p_parser
+	) const;
+
 	long row_for_date(boost::gregorian::date const& p_date) const;
 	PhatbooksDatabaseConnection& database_connection();
 	PhatbooksDatabaseConnection const& database_connection() const;

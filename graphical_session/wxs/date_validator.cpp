@@ -2,6 +2,7 @@
 
 #include "date_validator.hpp"
 #include "date.hpp"
+#include "date_parser.hpp"
 #include "locale.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -64,7 +65,8 @@ DateValidator::Validate(wxWindow* WXUNUSED(parent))
 		clear(m_date);		
 		return true;
 	}
-	optional<gregorian::date> temp = parse_date(date_text);
+	DateParser const parser;
+	optional<gregorian::date> temp = parser.parse(date_text, true);
 	if (!temp)
 	{
 		wxMessageBox

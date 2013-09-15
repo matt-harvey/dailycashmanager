@@ -4,6 +4,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <wx/datetime.h>
+#include <wx/intl.h>
 #include <wx/string.h>
 
 namespace phatbooks
@@ -13,12 +14,24 @@ class DateParser
 {
 public:
 
-	DateParser(wxString const& p_short_format, wxString const& p_long_format);
+	/**
+	 * Create DateParser with two underlying formats which guide what
+	 * strings it will be able successfully to parse. These format
+	 * strings are of the type that would be accepted by the std::strftime
+	 * function.
+	 */
+	explicit DateParser
+	(	wxString const& p_short_format =
+			wxLocale::GetInfo(wxLOCALE_SHORT_DATE_FMT),
+		wxString const& p_long_format =
+			wxLocale::GetInfo(wxLOCALE_LONG_DATE_FMT)
+	);
 
 	/**
 	 * If p_be_tolerant is passed \e true, then the DateParser will
 	 * be relatively forgiving even if p_string does not strictly comply
-	 * with these formats.
+	 * with these formats. Note "tolerant parsing" is significantly slower
+	 * than "narrow parsing".
 	 * 
 	 * @returns an optional initialized with the resulting date, or
 	 * uninitialized if parsing was unsuccessful.

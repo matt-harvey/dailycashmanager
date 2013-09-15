@@ -22,7 +22,6 @@
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <wx/datetime.h>
-#include <wx/intl.h>
 #include <wx/string.h>
 #include <limits>
 
@@ -154,16 +153,6 @@ date_format_wx(gregorian::date const& p_date)
 {
 	wxDateTime const wxdt = boost_to_wx_date(p_date);
 	return wxdt.FormatDate();
-}
-
-optional<gregorian::date>
-parse_date(wxString const& p_string)
-{
-	DateParser const parser
-	(	wxLocale::GetInfo(wxLOCALE_SHORT_DATE_FMT),
-		wxLocale::GetInfo(wxLOCALE_LONG_DATE_FMT)
-	);
-	return parser.parse(p_string, true);
 }
 
 gregorian::date
