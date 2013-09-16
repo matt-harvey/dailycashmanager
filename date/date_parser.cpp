@@ -47,6 +47,8 @@ namespace
 	// Returns true if and only if c is one of the special characters that
 	// can appear in a strftime format string representing a field date or
 	// time field.
+	// TODO There characters under the C++11 standard in addition to the
+	// below.
 	bool is_date_time_format_char(char c)
 	{
 		static char const chars_a[] =
