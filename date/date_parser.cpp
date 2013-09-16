@@ -62,6 +62,40 @@ namespace
 		return chars.find(c) != chars.end();
 	}
 
+	enum DateComponentType
+	{
+		day_component,
+		month_component,
+		year_component
+	};
+
+	unordered_map<char, DateComponentType> const&
+	ordinary_date_format_chars_map()
+	{
+		typedef unordered_map<char, DateComponentType> Map;
+		static Map ret;
+		if (ret.empty())
+		{
+			ret['d'] = day_component;   // day of month (01-31)
+			ret['m'] = month_component; // month (01-12)
+			ret['y'] = year_component;  // year in century (00-99)
+			ret['Y'] = year_component;  // full year
+#			ifndef NDEBUG
+				// bare scope
+				{
+					Map::const_iterator it = ret.begin();
+					Map::const_iterator const end = ret.end();
+					for ( ; it != end; ++it)
+					{
+						JEWEL_ASSERT (is_date_time_format_char(it->first));
+					}
+				}
+#			endif  // NDEBUG
+		}
+		JEWEL_ASSERT (!ret.empty());
+		return ret;
+	}
+
 	// Returns true if and only if c is one of the special characters that
 	// can appear in a strftime format string representing a field in a tm
 	// struct, which is a date field and not a time field, and which
@@ -69,14 +103,9 @@ namespace
 	// month, or the year.
 	bool is_ordinary_date_format_char(char c)
 	{
-		static char const chars_a[] =
-		{	'd',  // day of the month (01-31)
-			'm',  // month (01-12)
-			'y',  // year in century (00-99)
-			'Y',  // year
-		};
-		char const* const e = jewel::end(chars_a);
-		return find(jewel::begin(chars_a), e, c) != e;
+		unordered_map<char, DateComponentType> const& map =
+			ordinary_date_format_chars_map();
+		return map.find(c) != map.end();
 	}
 
 	// Examines a strftime-like date format string. If the string is an
@@ -161,13 +190,6 @@ namespace
 		return separator;
 	}
 
-	enum DateComponentType
-	{
-		day_component,
-		month_component,
-		year_component
-	};
-
 	optional<DateComponentType> maybe_date_component_type(char c)
 	{
 		optional<DateComponentType> ret;
@@ -184,6 +206,7 @@ namespace
 			ret = year_component;
 			break;
 		}
+		JEWEL_ASSERT (static_cast<bool>(ret) == is_ordinary_date_format_char(c));
 		return ret;
 	}
 

@@ -35,8 +35,6 @@ public:
 	 * 
 	 * @returns an optional initialized with the resulting date, or
 	 * uninitialized if parsing was unsuccessful.
-	 *
-	 * @todo HIGH PRIORITY Write tests for "tolerant" parsing.
 	 */
 	boost::optional<boost::gregorian::date> parse
 	(	wxString const& p_string,
