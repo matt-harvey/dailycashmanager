@@ -21,9 +21,9 @@ public:
 	 * function.
 	 */
 	explicit DateParser
-	(	wxString const& p_short_format =
+	(	wxString const& p_primary_format =
 			wxLocale::GetInfo(wxLOCALE_SHORT_DATE_FMT),
-		wxString const& p_long_format =
+		wxString const& p_secondary_format =
 			wxLocale::GetInfo(wxLOCALE_LONG_DATE_FMT)
 	);
 
@@ -35,6 +35,8 @@ public:
 	 * 
 	 * @returns an optional initialized with the resulting date, or
 	 * uninitialized if parsing was unsuccessful.
+	 *
+	 * @todo HIGH PRIORITY Write tests for "tolerant" parsing.
 	 */
 	boost::optional<boost::gregorian::date> parse
 	(	wxString const& p_string,
@@ -49,11 +51,11 @@ private:
 
 	// Original wxString extracted from wxLocale. But we want to be more
 	// tolerant than this.
-	wxString const m_short_format;
+	wxString const m_primary_format;
 
 	// Original wxString extracted from wxLocale. But we want to be more
 	// tolerant than this.
-	wxString const m_long_format;
+	wxString const m_secondary_format;
 
 };  // class DateParser
 

@@ -339,11 +339,11 @@ namespace
 
 
 DateParser::DateParser
-(	wxString const& p_short_format,
-	wxString const& p_long_format
+(	wxString const& p_primary_format,
+	wxString const& p_secondary_format
 ):
-	m_short_format(p_short_format),
-	m_long_format(p_long_format)
+	m_primary_format(p_primary_format),
+	m_secondary_format(p_secondary_format)
 {
 }
 
@@ -355,8 +355,8 @@ DateParser::parse(wxString const& p_string, bool p_be_tolerant) const
 	wxDateTime date_wx;
 	
 	wxString const* formats[] =
-	{	&m_short_format,
-		&m_long_format
+	{	&m_primary_format,
+		&m_secondary_format
 	};
 	for (size_t i = 0; i != num_elements(formats); ++i)
 	{
@@ -394,8 +394,9 @@ DateParser::tolerant_parse(wxString const& p_string) const
 {
 	// TODO HIGH PRIORITY Test this with some different format strings.
 	JEWEL_LOG_TRACE();
-	optional<gregorian::date> ret = tolerant_parse_aux(p_string, m_short_format);
-	return (ret? ret: tolerant_parse_aux(p_string, m_long_format));
+	optional<gregorian::date> const ret =
+		tolerant_parse_aux(p_string, m_primary_format);
+	return (ret? ret: tolerant_parse_aux(p_string, m_secondary_format));
 }
 
 
