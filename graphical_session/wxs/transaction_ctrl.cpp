@@ -968,8 +968,6 @@ TransactionCtrl::save_existing_journal()
 		}
 		else
 		{
-			// WARNING Does this work? It's like I'm circumventing the
-			// constness of DraftJournal::repeaters().
 			JEWEL_ASSERT (!dj->repeaters().empty());
 			Repeater old_repeater = dj->repeaters()[0];
 			old_repeater.set_next_date(next_date);
