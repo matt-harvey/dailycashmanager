@@ -205,6 +205,8 @@ namespace
 		case 'Y':
 			ret = year_component;
 			break;
+		default:
+			;  // do nothing and fall through
 		}
 		JEWEL_ASSERT (static_cast<bool>(ret) == is_ordinary_date_format_char(c));
 		return ret;

@@ -257,7 +257,7 @@ EntryListPanel::configure_entry_list_ctrl()
 		standard_gap() * (num_extra_rows + 1) -
 		standard_border() * 2;
 
-#	if JEWEL_ON_WINDOWS
+#	ifdef JEWEL_ON_WINDOWS
 		height_aux -= standard_gap() * (num_extra_rows + 1);
 #	endif
 

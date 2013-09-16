@@ -10,7 +10,7 @@ namespace gui
 wxString
 reconciliation_status_marker(bool p_is_reconciled)
 {
-#if JEWEL_ON_WINDOWS
+#ifdef JEWEL_ON_WINDOWS
 	// TODO Provide a nicer looking symbol for use on Windows. We should
 	// probably use a graphic rather than a string if we can, and then the
 	// same graphic should work on all platforms.

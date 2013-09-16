@@ -158,7 +158,7 @@ Frame::Frame
 		wxID_ANY,
 		title,
 		wxDefaultPosition,
-#		if JEWEL_ON_WINDOWS
+#		ifdef JEWEL_ON_WINDOWS
 			wxDefaultSize
 #		else
 			wxSize
@@ -284,7 +284,7 @@ Frame::Frame
 
 	SetMenuBar(m_menu_bar);
 
-#	if JEWEL_ON_WINDOWS
+#	ifdef JEWEL_ON_WINDOWS
 		Maximize();
 #	endif
 

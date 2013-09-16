@@ -106,7 +106,7 @@ wxString finformat_wx
 	DecimalFormatFlags p_flags
 )
 {
-#	if PHATBOOKS_DISALLOW_DASH_FOR_ZERO
+#	ifdef PHATBOOKS_DISALLOW_DASH_FOR_ZERO
 		bool const dash_for_zero = false;
 #	else
 		bool const dash_for_zero = p_flags.test(string_flags::dash_for_zero);

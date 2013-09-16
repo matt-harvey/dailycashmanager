@@ -88,7 +88,7 @@ optional<filesystem::path>
 Application::default_directory()
 {
 	optional<filesystem::path> ret;
-#	if JEWEL_ON_WINDOWS
+#	ifdef JEWEL_ON_WINDOWS
 	char const* win_home_drive = getenv("HOMEDRIVE");
 	char const* win_home_path = getenv("HOMEPATH");
 	if (win_home_drive && win_home_path)
