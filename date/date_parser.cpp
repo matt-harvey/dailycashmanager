@@ -208,7 +208,10 @@ namespace
 		default:
 			;  // do nothing and fall through
 		}
-		JEWEL_ASSERT (static_cast<bool>(ret) == is_ordinary_date_format_char(c));
+		JEWEL_ASSERT
+		(	static_cast<bool>(ret) ==
+			is_ordinary_date_format_char(c)
+		);
 		return ret;
 	}
 
@@ -417,7 +420,6 @@ DateParser::parse(wxString const& p_string, bool p_be_tolerant) const
 optional<gregorian::date>
 DateParser::tolerant_parse(wxString const& p_string) const
 {
-	// TODO HIGH PRIORITY Test this with some different format strings.
 	JEWEL_LOG_TRACE();
 	optional<gregorian::date> const ret =
 		tolerant_parse_aux(p_string, m_primary_format);
