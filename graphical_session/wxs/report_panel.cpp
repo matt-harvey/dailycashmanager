@@ -197,6 +197,7 @@ ReportPanel::configure_bottom()
 		temp = 0;
 		--m_next_row;
 	}
+	JEWEL_ASSERT (m_report);
 	m_report->generate();
 	m_top_sizer->
 		Add(m_report, wxGBPosition(m_next_row, 1), wxGBSpan(1, 4));
@@ -226,40 +227,35 @@ ReportPanel::selected_account_super_type() const
 void
 ReportPanel::update_for_new(OrdinaryJournal const& p_journal)
 {
-	JEWEL_ASSERT (m_report);
-	m_report->update_for_new(p_journal);
+	if (m_report) m_report->update_for_new(p_journal);
 	return;
 }
 
 void
 ReportPanel::update_for_amended(OrdinaryJournal const& p_journal)
 {
-	JEWEL_ASSERT (m_report);
-	m_report->update_for_amended(p_journal);
+	if (m_report) m_report->update_for_amended(p_journal);
 	return;
 }
 
 void
 ReportPanel::update_for_new(Account const& p_account)
 {
-	JEWEL_ASSERT (m_report);
-	m_report->update_for_new(p_account);
+	if (m_report) m_report->update_for_new(p_account);
 	return;
 }
 
 void
 ReportPanel::update_for_amended(Account const& p_account)
 {
-	JEWEL_ASSERT (m_report);
-	m_report->update_for_amended(p_account);
+	if (m_report) m_report->update_for_amended(p_account);
 	return;
 }
 
 void
 ReportPanel::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
 {
-	JEWEL_ASSERT (m_report);
-	m_report->update_for_deleted(p_doomed_ids);
+	if (m_report) m_report->update_for_deleted(p_doomed_ids);
 	return;
 }
 

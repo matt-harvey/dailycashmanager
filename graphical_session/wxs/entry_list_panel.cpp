@@ -58,6 +58,15 @@ BEGIN_EVENT_TABLE(EntryListPanel, wxPanel)
 END_EVENT_TABLE()
 
 
+namespace
+{
+	wxString reconciliation_hint()
+	{
+		return wxString("(Right-click item to toggle whether reconciled.)");
+	}
+
+}  // end anonymous namespace
+
 EntryListPanel::EntryListPanel
 (	wxWindow* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection,
@@ -73,6 +82,7 @@ EntryListPanel::EntryListPanel
 	m_min_date_ctrl(0),
 	m_max_date_ctrl(0),
 	m_refresh_button(0),
+	m_reconciliation_hint(0),
 	m_entry_list_ctrl(0),
 	m_database_connection(p_database_connection)
 {
@@ -195,8 +205,7 @@ EntryListPanel::on_refresh_button_click(wxCommandEvent& event)
 void
 EntryListPanel::update_for_new(OrdinaryJournal const& p_journal)
 {
-	JEWEL_ASSERT (m_entry_list_ctrl);
-	m_entry_list_ctrl->update_for_new(p_journal);
+	if (m_entry_list_ctrl) m_entry_list_ctrl->update_for_new(p_journal);
 	postconfigure_summary();
 	return;
 }
@@ -204,8 +213,7 @@ EntryListPanel::update_for_new(OrdinaryJournal const& p_journal)
 void
 EntryListPanel::update_for_amended(OrdinaryJournal const& p_journal)
 {
-	JEWEL_ASSERT (m_entry_list_ctrl);
-	m_entry_list_ctrl->update_for_amended(p_journal);
+	if (m_entry_list_ctrl) m_entry_list_ctrl->update_for_amended(p_journal);
 	postconfigure_summary();
 	return;
 }
@@ -213,8 +221,7 @@ EntryListPanel::update_for_amended(OrdinaryJournal const& p_journal)
 void
 EntryListPanel::update_for_new(Account const& p_account)
 {
-	JEWEL_ASSERT (m_entry_list_ctrl);
-	m_entry_list_ctrl->update_for_new(p_account);
+	if (m_entry_list_ctrl) m_entry_list_ctrl->update_for_new(p_account);
 	m_account_ctrl->update_for_new(p_account);
 	postconfigure_summary();
 	return;
@@ -223,8 +230,7 @@ EntryListPanel::update_for_new(Account const& p_account)
 void
 EntryListPanel::update_for_amended(Account const& p_account)
 {
-	JEWEL_ASSERT (m_entry_list_ctrl);
-	m_entry_list_ctrl->update_for_amended(p_account);
+	if (m_entry_list_ctrl) m_entry_list_ctrl->update_for_amended(p_account);
 	m_account_ctrl->update_for_amended(p_account);
 	postconfigure_summary();
 	return;
@@ -233,8 +239,10 @@ EntryListPanel::update_for_amended(Account const& p_account)
 void
 EntryListPanel::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 {
-	JEWEL_ASSERT (m_entry_list_ctrl);
-	m_entry_list_ctrl->update_for_deleted(p_doomed_ids);
+	if (m_entry_list_ctrl)
+	{
+		m_entry_list_ctrl->update_for_deleted(p_doomed_ids);
+	}
 	postconfigure_summary();
 	return;
 }
@@ -242,8 +250,7 @@ EntryListPanel::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 void
 EntryListPanel::selected_entries(vector<Entry>& out)
 {
-	JEWEL_ASSERT (m_entry_list_ctrl);
-	m_entry_list_ctrl->selected_entries(out);
+	if (m_entry_list_ctrl) m_entry_list_ctrl->selected_entries(out);
 	return;
 }
 
@@ -308,6 +315,7 @@ EntryListPanel::configure_entry_list_ctrl()
 		temp = 0;
 		--m_next_row;
 	}
+	JEWEL_ASSERT (m_entry_list_ctrl);
 	m_top_sizer->Add
 	(	m_entry_list_ctrl,
 		wxGBPosition(m_next_row, 1),
@@ -360,14 +368,15 @@ EntryListPanel::preconfigure_summary()
 
 		++m_next_row;
 
-		wxStaticText* hint = new wxStaticText
+		JEWEL_ASSERT (!m_reconciliation_hint);
+		m_reconciliation_hint = new wxStaticText
 		(	this,
 			wxID_ANY,
-			wxString("(Right-click item to toggle whether reconciled.)"),
+			wxString(),
 			wxDefaultPosition,
 			size
 		);
-		m_top_sizer->Add(hint, wxGBPosition(m_next_row, 1));
+		m_top_sizer->Add(m_reconciliation_hint, wxGBPosition(m_next_row, 1));
 
 		wxStaticText* closing_balance_amount = new wxStaticText
 		(	this,
@@ -408,13 +417,13 @@ EntryListPanel::preconfigure_summary()
 void
 EntryListPanel::postconfigure_summary()
 {
+	wxWindowUpdateLocker locker(this);
 	JEWEL_ASSERT
 	(	m_summary_label_text_items.size() ==
 		m_summary_data_text_items.size()
 	);
-	if (m_support_reconciliations)
+	if ((m_support_reconciliations != 0) && (m_entry_list_ctrl != 0))
 	{
-		JEWEL_ASSERT (m_entry_list_ctrl);
 		vector<SummaryDatum> const& summary_data =
 			m_entry_list_ctrl->summary_data();
 		vector<SummaryDatum>::size_type i = 0;
@@ -433,6 +442,7 @@ EntryListPanel::postconfigure_summary()
 				)
 			);
 		}
+		m_reconciliation_hint->SetLabel(reconciliation_hint());
 	}
 	Layout();
 	return;

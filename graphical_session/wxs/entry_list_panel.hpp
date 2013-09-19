@@ -98,6 +98,7 @@ private:
 	DateCtrl* m_min_date_ctrl;
 	DateCtrl* m_max_date_ctrl;
 	wxButton* m_refresh_button;
+	wxStaticText* m_reconciliation_hint;
 	EntryListCtrl* m_entry_list_ctrl;
 	std::vector<wxStaticText*> m_summary_label_text_items;
 	std::vector<wxStaticText*> m_summary_data_text_items;
