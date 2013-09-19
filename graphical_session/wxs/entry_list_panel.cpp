@@ -31,6 +31,7 @@
 #include <iterator>
 #include <utility>
 #include <vector>
+#include <wx/wupdlock.h>
 
 using boost::optional;
 using jewel::value;
@@ -157,7 +158,7 @@ EntryListPanel::EntryListPanel
 	m_refresh_button = new wxButton
 	(	this,
 		s_refresh_button_id,
-		wxString("&Refresh"),
+		wxString("&Run"),
 		wxDefaultPosition,
 		m_max_date_ctrl->GetSize()
 	);
@@ -167,8 +168,11 @@ EntryListPanel::EntryListPanel
 	++m_next_row;
 
 	preconfigure_summary();
+
+	/*
 	configure_entry_list_ctrl();
 	postconfigure_summary();
+	*/
 
 	// "Admin"
 	m_top_sizer->Fit(this);
@@ -181,8 +185,10 @@ void
 EntryListPanel::on_refresh_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
+	wxWindowUpdateLocker window_update_locker(this);
 	configure_entry_list_ctrl();
 	postconfigure_summary();
+	JEWEL_ASSERT (m_refresh_button);
 	return;
 }
 

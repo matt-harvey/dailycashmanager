@@ -64,7 +64,7 @@ ReportPanel::ReportPanel
 	++m_next_row;
 	
 	configure_top();
-	configure_bottom();
+	// configure_bottom();  Don't run till user clicks.
 	
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -268,6 +268,8 @@ ReportPanel::on_run_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
 	configure_bottom();
+	JEWEL_ASSERT (m_run_button);
+	m_run_button->SetLabel("&Refresh");
 	return;
 }
 

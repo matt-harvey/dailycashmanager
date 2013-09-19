@@ -40,6 +40,9 @@ class Report;
  * simpliciter as "Closing balance" and "Movement", and use a
  * \e nil amount for the "Opening balance" column. This can be written
  * into the code for initializing the m_balance_map.
+ *
+ * @todo HIGH PRIORITY Make it so this only runs when "Run" is clicked, not
+ * automatically on creation.
  */
 class ReportPanel: public wxPanel, private boost::noncopyable
 {
