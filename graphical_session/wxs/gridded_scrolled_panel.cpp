@@ -76,6 +76,13 @@ GriddedScrolledPanel::decrement_row()
 	return;
 }
 
+void
+GriddedScrolledPanel::set_row(int p_row)
+{
+	m_current_row = p_row;
+	return;
+}
+
 wxStaticText*
 GriddedScrolledPanel::display_text
 (	wxString const& p_text,

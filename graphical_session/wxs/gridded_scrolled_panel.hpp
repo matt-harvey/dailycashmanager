@@ -66,6 +66,7 @@ protected:
 	int current_row() const;
 	void increment_row();
 	void decrement_row();
+	void set_row(int p_row);
 
 	/**
 	 * Display wxString using a wxStaticText at the position given

@@ -130,14 +130,15 @@ public:
 	 * of \e p_entry.
 	 */
 	void update_for_reconciliation_status(Entry const& p_entry);
-	
+
+	// Reset everything in TransactionCtrl to create and edit a new
+	// ProtoJournal.
+	void reset();
+
 private:
 	void on_cancel_button_click(wxCommandEvent& event);
 	void on_delete_button_click(wxCommandEvent& event);
 	void on_ok_button_click(wxCommandEvent& event);
-
-	// TODO This is gross.
-	void tell_top_panel_to_configure_transaction_ctrl();
 
 	void reflect_reconciliation_statuses();
 
@@ -154,7 +155,15 @@ private:
 			p_available_transaction_types
 	);
 
-	void configure_for_journal_editing();
+	// Clear all contents.
+	void clear_all();
+
+	// Assumes current contents are all clear.
+	void configure_for_editing_proto_journal(ProtoJournal const& p_journal);
+
+	// Assume current contents are all clear except for m_journal, which
+	// must have been initialized.
+	void configure_for_editing_persistent_journal();
 
 	/**
 	 * @returns true if and only if journal was actually posted.

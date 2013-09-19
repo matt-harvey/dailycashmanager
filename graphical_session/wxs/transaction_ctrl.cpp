@@ -145,7 +145,7 @@ TransactionCtrl::TransactionCtrl
 	m_journal(0)
 {
 	m_journal = new OrdinaryJournal(p_journal);
-	configure_for_journal_editing();
+	configure_for_editing_persistent_journal();
 }
 
 TransactionCtrl::TransactionCtrl
@@ -170,7 +170,7 @@ TransactionCtrl::TransactionCtrl
 	m_journal(0)
 {
 	m_journal = new DraftJournal(p_journal);
-	configure_for_journal_editing();
+	configure_for_editing_persistent_journal();
 }
 
 TransactionCtrl::TransactionCtrl
@@ -194,6 +194,93 @@ TransactionCtrl::TransactionCtrl
 	m_delete_button(0),
 	m_ok_button(0),
 	m_journal(0)
+{
+	configure_for_editing_proto_journal(p_journal);
+}
+
+TransactionCtrl::~TransactionCtrl()
+{
+	delete m_journal;
+	m_journal = 0;
+	// wxWidgets takes care of deleting the other pointer members
+}
+
+void
+TransactionCtrl::configure_top_controls
+(	transaction_type::TransactionType p_transaction_type,
+	wxSize& p_text_box_size,
+	Decimal const& p_primary_amount,
+	vector<transaction_type::TransactionType> const&
+		p_available_transaction_types
+)
+{
+	// Add some space to the right to provide room for scrollbar
+	add_dummy_column();
+
+	// Leave enough blank space at the top so that the first row
+	// of proper widgets lines up with the "bar" at the top of
+	// the panels to the left.
+	// TODO Tweak this for different platforms, using conditional
+	// compilation.
+	increment_row();
+	increment_row();
+
+	wxStaticText* dummy = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxSize(0, 0)
+	);
+	top_sizer().Add(dummy, wxGBPosition(current_row(), 0));
+
+	increment_row();
+	
+	m_transaction_type_ctrl = new TransactionTypeCtrl
+	(	this,
+		s_transaction_type_ctrl_id,
+		wxSize(medium_width(), wxDefaultSize.y),
+		database_connection(),
+		p_available_transaction_types
+	);
+	m_transaction_type_ctrl->set_transaction_type(p_transaction_type);
+	p_text_box_size = m_transaction_type_ctrl->GetSize();
+	top_sizer().Add(m_transaction_type_ctrl, wxGBPosition(current_row(), 0));
+
+	m_primary_amount_ctrl = new DecimalTextCtrl
+	(	this,
+		s_primary_amount_ctrl_id,
+		p_text_box_size,
+		database_connection().default_commodity().precision(),
+		false
+	);
+	m_primary_amount_ctrl->set_amount(p_primary_amount);
+	top_sizer().Add
+	(	m_primary_amount_ctrl,
+		wxGBPosition(current_row(), 3),
+		wxDefaultSpan,
+		wxALIGN_RIGHT
+	);
+	increment_row();
+	increment_row();
+
+	return;
+}
+
+void
+TransactionCtrl::clear_all()
+{
+	delete m_journal;
+	m_journal = 0;
+	DestroyChildren();
+	set_row(0);
+	return;
+}
+
+void
+TransactionCtrl::configure_for_editing_proto_journal
+(	ProtoJournal const& p_journal
+)
 {
 	wxSize text_box_size;
 	configure_top_controls
@@ -288,77 +375,8 @@ TransactionCtrl::TransactionCtrl
 	Layout();
 }
 
-TransactionCtrl::~TransactionCtrl()
-{
-	delete m_journal;
-	m_journal = 0;
-	// wxWidgets takes care of deleting the other pointer members
-}
-
 void
-TransactionCtrl::configure_top_controls
-(	transaction_type::TransactionType p_transaction_type,
-	wxSize& p_text_box_size,
-	Decimal const& p_primary_amount,
-	vector<transaction_type::TransactionType> const&
-		p_available_transaction_types
-)
-{
-	// Add some space to the right to provide room for scrollbar
-	add_dummy_column();
-
-	// Leave enough blank space at the top so that the first row
-	// of proper widgets lines up with the "bar" at the top of
-	// the panels to the left.
-	// TODO Tweak this for different platforms, using conditional
-	// compilation.
-	increment_row();
-	increment_row();
-
-	wxStaticText* dummy = new wxStaticText
-	(	this,
-		wxID_ANY,
-		wxEmptyString,
-		wxDefaultPosition,
-		wxSize(0, 0)
-	);
-	top_sizer().Add(dummy, wxGBPosition(current_row(), 0));
-
-	increment_row();
-	
-	m_transaction_type_ctrl = new TransactionTypeCtrl
-	(	this,
-		s_transaction_type_ctrl_id,
-		wxSize(medium_width(), wxDefaultSize.y),
-		database_connection(),
-		p_available_transaction_types
-	);
-	m_transaction_type_ctrl->set_transaction_type(p_transaction_type);
-	p_text_box_size = m_transaction_type_ctrl->GetSize();
-	top_sizer().Add(m_transaction_type_ctrl, wxGBPosition(current_row(), 0));
-
-	m_primary_amount_ctrl = new DecimalTextCtrl
-	(	this,
-		s_primary_amount_ctrl_id,
-		p_text_box_size,
-		database_connection().default_commodity().precision(),
-		false
-	);
-	m_primary_amount_ctrl->set_amount(p_primary_amount);
-	top_sizer().Add
-	(	m_primary_amount_ctrl,
-		wxGBPosition(current_row(), 3),
-		wxDefaultSpan,
-		wxALIGN_RIGHT
-	);
-	increment_row();
-	increment_row();
-
-	return;
-}
-
-void
-TransactionCtrl::configure_for_journal_editing()
+TransactionCtrl::configure_for_editing_persistent_journal()
 {
 	wxWindowUpdateLocker const update_locker(this);
 
@@ -586,7 +604,7 @@ void
 TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	tell_top_panel_to_configure_transaction_ctrl();
+	reset();
 	return;
 }
 
@@ -606,7 +624,7 @@ TransactionCtrl::on_delete_button_click(wxCommandEvent& event)
 	{
 		if (remove_journal())
 		{
-			tell_top_panel_to_configure_transaction_ctrl();
+			reset();
 		}
 	}
 	return;
@@ -633,7 +651,7 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 			}
 			if (actioned)
 			{
-				tell_top_panel_to_configure_transaction_ctrl();
+				reset();
 			}
 		}
 		else
@@ -671,14 +689,15 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 }
 
 void
-TransactionCtrl::tell_top_panel_to_configure_transaction_ctrl()
+TransactionCtrl::reset()
 {
-	TopPanel* const panel = dynamic_cast<TopPanel*>(GetParent());
-	JEWEL_ASSERT (panel);
-	// TODO HIGH PRIORITY The next line may destroy "this"! This
-	// may not matter, but it's horrible. We should just reset all
-	// the widgets within the TransactionCtrl instead.
-	panel->configure_transaction_ctrl();
+	wxWindowUpdateLocker window_update_locker(this);
+	TopPanel* const parent = dynamic_cast<TopPanel*>(GetParent());
+	JEWEL_ASSERT (parent);
+	ProtoJournal const proto_journal = parent->make_proto_journal();
+	clear_all();
+	configure_for_editing_proto_journal(proto_journal);
+	parent->Layout();
 	return;
 }
 
@@ -950,9 +969,7 @@ TransactionCtrl::save_existing_journal()
 				// month instead of the entered date.
 				JEWEL_ASSERT (freq.step_type() == interval_type::month_ends);
 				JEWEL_ASSERT (month_end_for_date(next_date) != next_date);
-				wxMessageBox
-				(	"Date must be the last day of the month."
-				);
+				wxMessageBox("Date must be the last day of the month.");
 				return false;
 			}
 		}

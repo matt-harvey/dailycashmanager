@@ -23,6 +23,7 @@ namespace phatbooks
 // Begin forward declarations
 
 class PhatbooksDatabaseConnection;
+class ProtoJournal;
 
 namespace gui
 {
@@ -147,6 +148,14 @@ public:
 	void update_for_reconciliation_status(Entry const& p_entry);
 
 	/**
+	 * @returns a ProtoJournal containing two Entries, with blank
+	 * comments, and with Accounts based either on the
+	 * most commonly used Accounts in the database, or on Accounts
+	 * currently selected by the user in the EntryListCtrls.
+	 */
+	ProtoJournal make_proto_journal() const;
+
+	/**
 	 * Configure the TransactionCtrl to reflect the currently selected
 	 * Accounts (if any).
 	 *
@@ -161,21 +170,6 @@ public:
 	 */
 	template <typename JournalType>
 	void configure_transaction_ctrl(JournalType& p_journal);
-
-	/**
-	 * Configure the TransactionCtrl to reflect the Accounts passed in the
-	 * parameters.
-	 *
-	 * @param p_balance_sheet_accounts a possibly empty sequence of Accounts
-	 * of account_super_type::balance_sheet.
-	 *
-	 * @param p_pl_accounts a possibly empty sequence of Accounts of
-	 * account_super_type::pl.
-	 */
-	void configure_transaction_ctrl
-	(	std::vector<Account> p_balance_sheet_accounts,
-		std::vector<Account> p_pl_accounts
-	);
 
 	void configure_draft_journal_list_ctrl();
 

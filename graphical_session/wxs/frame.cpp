@@ -353,8 +353,7 @@ Frame::on_menu_new_transaction(wxCommandEvent& event)
 	vector<Account> pl_accounts;
 	selected_pl_accounts(pl_accounts);
 	// m_top_panel->SetFocus();  // WARNING This doesn't seem to have any effect
-	m_top_panel->
-		configure_transaction_ctrl(balance_sheet_accounts, pl_accounts);
+	m_top_panel->configure_transaction_ctrl();
 	return;
 }
 

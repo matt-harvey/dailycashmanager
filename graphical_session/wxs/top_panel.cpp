@@ -245,80 +245,58 @@ TopPanel::configure_report_page()
 	return;
 }
 
-void
-TopPanel::configure_transaction_ctrl()
+ProtoJournal
+TopPanel::make_proto_journal() const
 {
-	JEWEL_ASSERT (m_top_sizer);
-	JEWEL_ASSERT (m_right_column_sizer);
 	vector<Account> balance_sheet_accounts;
-	selected_balance_sheet_accounts(balance_sheet_accounts);
 	vector<Account> pl_accounts;
+	selected_balance_sheet_accounts(balance_sheet_accounts);
 	selected_pl_accounts(pl_accounts);
-	configure_transaction_ctrl(balance_sheet_accounts, pl_accounts);
-	return;
-}
-
-void
-TopPanel::configure_transaction_ctrl
-(	vector<Account> p_balance_sheet_accounts,
-	vector<Account> p_pl_accounts
-)
-{
-	wxWindowUpdateLocker window_update_locker(this);
-	if (p_balance_sheet_accounts.size() + p_pl_accounts.size() < unsigned(2))
+	if (balance_sheet_accounts.size() + pl_accounts.size() < unsigned(2))
 	{
-		if (p_balance_sheet_accounts.empty())
+		if (balance_sheet_accounts.empty())
 		{
 			optional<Account> const maybe_bs_account =
 				m_bs_account_list->default_account();
 			if (maybe_bs_account)
 			{
-				p_balance_sheet_accounts.push_back(value(maybe_bs_account));
+				balance_sheet_accounts.push_back(value(maybe_bs_account));
 			}
 		}
-		if (p_pl_accounts.empty())
+		if (pl_accounts.empty())
 		{
 			optional<Account> const maybe_pl_account =
 				m_pl_account_list->default_account();
 			if (maybe_pl_account)
 			{
-				p_pl_accounts.push_back(value(maybe_pl_account));
+				pl_accounts.push_back(value(maybe_pl_account));
 			}
 		}
 	}
-	TransactionCtrl* old = 0;
-	JEWEL_ASSERT (m_right_column_sizer);
-	if (m_transaction_ctrl)
-	{
-		m_right_column_sizer->Detach(m_transaction_ctrl);
-		old = m_transaction_ctrl;
-	}
+	ProtoJournal ret;
 
-	ProtoJournal proto_journal;
-
-	// TODO Move this next bit into a separate function
 	// bare scope
 	{
 		Account account_x(m_database_connection);
 		Account account_y(m_database_connection);
-		if (p_balance_sheet_accounts.empty())
+		if (balance_sheet_accounts.empty())
 		{
-			JEWEL_ASSERT (p_pl_accounts.size() >= 2);
-			account_x = p_pl_accounts[0];
-			account_y = p_pl_accounts[1];
+			JEWEL_ASSERT (pl_accounts.size() >= 2);
+			account_x = pl_accounts[0];
+			account_y = pl_accounts[1];
 		}
-		else if (p_pl_accounts.empty())
+		else if (pl_accounts.empty())
 		{
-			JEWEL_ASSERT (p_balance_sheet_accounts.size() >= 2);
-			account_x = p_balance_sheet_accounts[0];
-			account_y = p_balance_sheet_accounts[1];
+			JEWEL_ASSERT (balance_sheet_accounts.size() >= 2);
+			account_x = balance_sheet_accounts[0];
+			account_y = balance_sheet_accounts[1];
 		}
 		else
 		{
-			JEWEL_ASSERT (!p_balance_sheet_accounts.empty());
-			JEWEL_ASSERT (!p_pl_accounts.empty());
-			account_x = p_balance_sheet_accounts[0];
-			account_y = p_pl_accounts[0];
+			JEWEL_ASSERT (!balance_sheet_accounts.empty());
+			JEWEL_ASSERT (!pl_accounts.empty());
+			account_x = balance_sheet_accounts[0];
+			account_y = pl_accounts[0];
 		}
 		if (account_y.account_type() == account_type::revenue)
 		{
@@ -330,7 +308,7 @@ TopPanel::configure_transaction_ctrl
 		transaction_type::TransactionType const initial_transaction_type =
 			natural_transaction_type(account_x, account_y);
 		assert_transaction_type_validity(initial_transaction_type);
-		proto_journal.set_transaction_type(initial_transaction_type);
+		ret.set_transaction_type(initial_transaction_type);
 		Account const accounts[] = {account_x, account_y};
 		for (size_t i = 0; i != num_elements(accounts); ++i)
 		{
@@ -345,28 +323,39 @@ TopPanel::configure_transaction_ctrl
 			);
 			entry.set_amount(Decimal(0, account.commodity().precision()));
 			entry.set_whether_reconciled(false);
-			proto_journal.push_entry(entry);	
+			ret.push_entry(entry);	
 		}
 	}
+	return ret;
+}
 
-	m_transaction_ctrl = new TransactionCtrl
-	(	this,
-		wxSize(GetClientSize().x, 10000),
-		proto_journal,
-		m_database_connection
-	);
-	m_right_column_sizer->Insert
-	(	0,
-		m_transaction_ctrl,
-		wxSizerFlags(6).Expand().
-			Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
-	);
-	if (old)
+void
+TopPanel::configure_transaction_ctrl()
+{
+	JEWEL_ASSERT (m_top_sizer);
+	JEWEL_ASSERT (m_right_column_sizer);
+	if (m_transaction_ctrl)
 	{
-		old->Destroy();
-		old = 0;
+		m_transaction_ctrl->reset();
 	}
-	Layout();
+	else
+	{
+		wxWindowUpdateLocker window_update_locker(this);
+		ProtoJournal proto_journal = make_proto_journal();
+		m_transaction_ctrl = new TransactionCtrl
+		(	this,
+			wxSize(GetClientSize().x, 10000),
+			proto_journal,
+			m_database_connection
+		);
+		m_right_column_sizer->Insert
+		(	0,
+			m_transaction_ctrl,
+			wxSizerFlags(6).Expand().
+				Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
+		);
+		Layout();
+	}
 	return;
 }
 
