@@ -265,7 +265,6 @@ wx_to_decimal
 		p_flags.test(string_flags::allow_negative_parens);
 	wxs = wxs.Trim();
 	typedef wxChar CharT;
-	typedef wxString::size_type sz_t;
 	static CharT const open_paren = wxChar('(');
 	static CharT const close_paren = wxChar(')');
 	static CharT const minus_sign = wxChar('-');
@@ -288,7 +287,7 @@ wx_to_decimal
 		return Decimal(0, 0);
 	}
 	JEWEL_ASSERT (wxs.Len() >= 1);
-	if (wxs.Len() == 1 && wxs[0] == minus_sign)
+	if ((wxs.Len() == 1) && (*(wxs.begin()) == minus_sign))
 	{
 		return Decimal(0, 0);
 	}

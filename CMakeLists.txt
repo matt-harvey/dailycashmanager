@@ -75,8 +75,8 @@ if (WIN32)
 		 opengl32)
 else ()
 	include_directories(${immediate_directories}
-						/usr/local/include/wx-2.9
-						/usr/local/lib/wx/include/gtk2-unicode-static-2.9)
+						SYSTEM /usr/local/include/wx-2.9
+						SYSTEM /usr/local/lib/wx/include/gtk2-unicode-static-2.9)
 	link_directories(/usr/local/lib)
 	set (libraries
 		 boost_date_time

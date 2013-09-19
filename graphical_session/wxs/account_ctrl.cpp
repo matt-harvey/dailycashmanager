@@ -81,7 +81,6 @@ AccountCtrl::reset
 void
 AccountCtrl::reset()
 {
-	typedef vector<account_type::AccountType> ATypeVec;
 	m_account_map.clear();
 	wxArrayString valid_account_names;
 	Account const balancing_acct = m_database_connection.balancing_account();
