@@ -14,6 +14,7 @@
 #include "account.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
+#include "date.hpp"
 #include "string_conv.hpp"
 #include "budget_item.hpp"
 #include "commodity.hpp"
@@ -32,6 +33,7 @@
 #include <jewel/optional.hpp>
 #include <wx/string.h>
 #include <algorithm>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -42,6 +44,7 @@ using jewel::Decimal;
 using jewel::value;
 using sqloxx::SQLStatement;
 using std::find_if;
+using std::map;
 using std::string;
 using std::vector;
 
@@ -615,6 +618,98 @@ string
 AccountImpl::primary_key_name()
 {
 	return "account_id";
+}
+
+void
+favourite_accounts
+(	PhatbooksDatabaseConnection& p_database_connection,
+	std::map<account_super_type::AccountSuperType, AccountImpl::Id>& out
+)
+{
+	// TODO Code is duplicated between here and "entry_table_iterator.cpp".
+#	ifndef NDEBUG
+		// Ensure we are picking all and only the
+		// actual transactions.
+		int const target_non_actual_type = 3;
+		int i = 0;
+		int const lim =
+			static_cast<int>(transaction_type::num_transaction_types);
+		for ( ; i != lim; ++i)
+		{
+			transaction_type::TransactionType const ttype =
+				static_cast<transaction_type::TransactionType>(i);
+			if (ttype == target_non_actual_type)
+			{
+				JEWEL_ASSERT (!transaction_type_is_actual(ttype));
+			}
+			else
+			{
+				JEWEL_ASSERT (transaction_type_is_actual(ttype));
+			}
+		}
+#	endif
+
+	map<Account::Id, size_t> account_map;
+	AccountTableIterator a_it(p_database_connection);
+	AccountTableIterator a_end;
+	for ( ; a_it != a_end; ++a_it)
+	{
+		JEWEL_ASSERT (a_it->has_id());
+		account_map[a_it->id()] = 0;
+	}
+	SQLStatement selector
+	(	p_database_connection,
+		"select account_id, count(journal_id) from "
+		"("
+			"select account_id, journal_id from entries join "
+			"ordinary_journal_detail using(journal_id) join journals "
+			"using(journal_id) where transaction_type_id != 3 and "
+			"date >= :min_date order by date"
+		") "
+		"group by account_id;"
+	);
+	selector.bind(":min_date", julian_int(today()) - 30);
+	while (selector.step())
+	{
+		account_map[selector.extract<Account::Id>(0)] =
+			selector.extract<long long>(1);
+	}
+	map<account_super_type::AccountSuperType, size_t> max_counts;
+	vector<account_super_type::AccountSuperType> const& super_types =
+		account_super_types();
+	for
+	(	vector<account_super_type::AccountSuperType>::size_type i = 0;
+		i != super_types.size();
+		++i
+	)
+	{
+		max_counts[super_types[i]] = 0;
+	}
+	map<Account::Id, size_t>::const_iterator it = account_map.begin();
+	map<Account::Id, size_t>::const_iterator const end = account_map.end();
+	Account const balancing_acct = p_database_connection.balancing_account();
+	for ( ; it != end; ++it)
+	{
+		Account const account(p_database_connection, it->first);
+		size_t const count = it->second;
+		account_super_type::AccountSuperType const stype =
+			super_type(account.account_type());
+		if
+		(	(	(account_map[account.id()] >= max_counts[stype]) ||
+				(out[stype] == balancing_acct.id())
+			)
+			&&
+			(	(account != balancing_acct)
+			)
+		)
+		{
+			JEWEL_ASSERT (account.has_id());
+			JEWEL_ASSERT (it->first == account.id());
+			out[stype] = account.id();
+			max_counts[stype] = count;
+		}
+	}
+	return;
 }
 
 

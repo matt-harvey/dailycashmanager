@@ -58,6 +58,7 @@
 using boost::numeric_cast;
 using boost::shared_ptr;
 using jewel::Decimal;
+using jewel::Log;
 using jewel::value;
 using sqloxx::DatabaseConnection;
 using sqloxx::DatabaseTransaction;
@@ -190,6 +191,7 @@ PhatbooksDatabaseConnection::load_default_commodity()
 void
 PhatbooksDatabaseConnection::do_setup()
 {
+	JEWEL_LOG_TRACE();
 	if (!tables_are_configured())
 	{
 		JEWEL_ASSERT (m_permanent_entity_data);
@@ -248,6 +250,7 @@ PhatbooksDatabaseConnection::opening_balance_journal_date() const
 void
 PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 {
+	JEWEL_LOG_TRACE();
 	switch (level)
 	{
 	case 0: case 1: case 2: case 3: case 4:
@@ -279,6 +282,8 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 		m_entry_map->enable_caching();
 		break;
 	}
+	JEWEL_LOG_MESSAGE(Log::info, "Caching level has been set.");
+	JEWEL_LOG_VALUE(Log::info, level);
 	return;
 }
 

@@ -4,6 +4,7 @@
 #include "account_type.hpp"
 #include "account_impl.hpp"
 #include "account_table_iterator.hpp"
+#include "date.hpp"
 #include "string_conv.hpp"
 #include "commodity.hpp"
 #include "entry_table_iterator.hpp"
@@ -44,35 +45,6 @@ namespace alignment = consolixx::alignment;
 
 namespace phatbooks
 {
-
-namespace
-{
-	/**
-	 * Populates \e out with data indicating, for each Account::Id, the
-	 * number of <em>actual, ordinary</em> Entries using the corresponding
-	 * Account.
-	 */
-	void actual_account_usage_map
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		map<Account::Id, size_t>& out
-	)
-	{
-		AccountTableIterator a_it(p_database_connection);
-		AccountTableIterator const a_end;
-		for ( ; a_it != a_end; ++a_it) out[a_it->id()] = 0;
-
-		EntryTableIterator e_it =
-			make_date_ordered_actual_ordinary_entry_table_iterator
-			(	p_database_connection
-			);
-		EntryTableIterator const e_end;
-		for ( ; e_it != e_end; ++e_it) ++out[e_it->account().id()];
-
-		return;
-	}
-
-}  // end anonymous namespace
-
 
 void
 Account::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -411,43 +383,7 @@ map<account_super_type::AccountSuperType, Account::Id>
 favourite_accounts(PhatbooksDatabaseConnection& p_database_connection)
 {
 	map<account_super_type::AccountSuperType, Account::Id> ret;
-	map<account_super_type::AccountSuperType, size_t> max_counts;
-	map<Account::Id, size_t> account_map;
-	actual_account_usage_map(p_database_connection, account_map);
-	vector<account_super_type::AccountSuperType> const& super_types =
-		account_super_types();
-	for
-	(	vector<account_super_type::AccountSuperType>::size_type i = 0;
-		i != super_types.size();
-		++i
-	)
-	{
-		max_counts[super_types[i]] = 0;
-	}
-	map<Account::Id, size_t>::const_iterator it = account_map.begin();
-	map<Account::Id, size_t>::const_iterator const end = account_map.end();
-	Account const balancing_acct = p_database_connection.balancing_account();
-	for ( ; it != end; ++it)
-	{
-		Account const account(p_database_connection, it->first);
-		size_t const count = it->second;
-		account_super_type::AccountSuperType const stype =
-			super_type(account.account_type());
-		if
-		(	(	(account_map[account.id()] >= max_counts[stype]) ||
-				(ret[stype] == balancing_acct.id())
-			)
-			&&
-			(	(account != balancing_acct)
-			)
-		)
-		{
-			JEWEL_ASSERT (account.has_id());
-			JEWEL_ASSERT (it->first == account.id());
-			ret[stype] = account.id();
-			max_counts[stype] = count;
-		}
-	}
+	favourite_accounts(p_database_connection, ret);
 	return ret;
 }
 

@@ -33,10 +33,8 @@ int Session::s_num_instances = 0;
 // have ALREADY created as part of the Session constructor.
 // The whole Session hierarchy, and the interaction between
 // GraphicalSession and App, is a bit of a mess.
-Session::Session():
-	m_database_connection(new PhatbooksDatabaseConnection)
+Session::Session()
 {
-	database_connection().set_caching_level(s_default_caching_level);
 	++s_num_instances;
 	if (s_num_instances > s_max_instances)
 	{
@@ -74,15 +72,6 @@ Session::run(string const& filepath_str)
 	}	
 	return do_run(filepath_str);
 }
-
-
-PhatbooksDatabaseConnection&
-Session::database_connection() const
-{
-	return *m_database_connection;
-}
-
-
 
 
 

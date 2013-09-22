@@ -102,6 +102,8 @@ bool App::OnInit()
 	);
 	Application::set_last_opened_file(database_connection().filepath());
 
+	database_connection().set_caching_level(5);
+
 	update_repeaters(database_connection());
 
 	Frame* frame = new Frame(app_name, database_connection());

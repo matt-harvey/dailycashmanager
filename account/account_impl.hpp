@@ -27,6 +27,7 @@
 #include <boost/scoped_ptr.hpp>	
 #include <wx/string.h>
 #include <algorithm>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -198,6 +199,12 @@ private:
 	boost::scoped_ptr<AccountData> m_data;
 };
 
+
+void
+favourite_accounts
+(	PhatbooksDatabaseConnection& p_database_connection,
+	std::map<account_super_type::AccountSuperType, AccountImpl::Id>& out
+);
 
 }  // namespace phatbooks
 

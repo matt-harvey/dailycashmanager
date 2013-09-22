@@ -20,8 +20,7 @@ class PhatbooksDatabaseConnection;
  * May be inherited by a class representing a more specific kind
  * of session, e.g. a console session or a GUI session.
  */
-class Session:
-	boost::noncopyable
+class Session: boost::noncopyable
 {
 public:
 
@@ -49,13 +48,9 @@ public:
 	 */
 	int run(std::string const& filepath_str);
 
-protected:
-	PhatbooksDatabaseConnection& database_connection() const;
-
 private:
 	virtual int do_run() = 0;
 	virtual int do_run(std::string const& filepath_str) = 0;
-	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	static int const s_max_instances = 1;
 	static int const s_default_caching_level = 10;
 	static int s_num_instances;
