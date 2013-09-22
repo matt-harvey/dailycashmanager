@@ -11,9 +11,6 @@
 namespace phatbooks
 {
 
-// Forward declaration
-class OrdinaryJournal;
-class PhatbooksDatabaseConnection;
 
 /**
  * Phatbooks user session base class.

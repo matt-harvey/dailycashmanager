@@ -1,7 +1,5 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "phatbooks_database_connection.hpp"
-#include "ordinary_journal.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "repeater.hpp"
 #include "session.hpp"
@@ -9,19 +7,17 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
+#include <jewel/log.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <list>
 #include <string>
 
-#ifdef DEBUG
-#	include <jewel/log.hpp>
-#	include <iostream>
-#endif
-
 using boost::shared_ptr;
+using jewel::Log;
 using sqloxx::InvalidFilename;
 using std::list;
 using std::string;
+
 namespace gregorian = boost::gregorian;
 
 namespace phatbooks
