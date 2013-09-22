@@ -13,10 +13,11 @@
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/unordered_set.hpp>
+#include <sqloxx/sql_statement_fwd.hpp>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
-#include <utility>
+#include <memory>
 #include <vector>
 
 namespace phatbooks
@@ -48,18 +49,6 @@ class ReconciliationEntryListCtrl;
 class EntryListCtrl: public wxListCtrl, private boost::noncopyable
 {
 public:
-
-	/**
-	 * @returns a pointer to a heap-allocated EntryListCtrl, listing
-	 * all and only the \e actual (non-budget) OrdinaryEntries stored in \e
-	 * dbc. The client does not need to take care of the memory - the memory
-	 * is taken care of by the parent window.
-	 */
-	static EntryListCtrl* create_actual_ordinary_entry_list
-	(	wxWindow* parent,
-		wxSize const& p_size,
-		PhatbooksDatabaseConnection& dbc
-	);
 
 	/**
 	 * @returns a pointer to a heap-allocated EntryListCtrl, listing
@@ -165,24 +154,13 @@ private:
 	virtual void do_set_column_widths() = 0;
 	virtual int do_get_num_columns() const = 0;
 	virtual int do_get_comment_col_num() const = 0;
+	virtual std::auto_ptr<sqloxx::SQLStatement>
+		do_create_entry_selector() = 0;
+
 	virtual void do_update_for_amended(Account const& p_account);
 
 	void on_item_activated(wxListEvent& event);
 
-	/**
-	 * Should return a pair of EntryTableIterators, via
-	 * which Entries will be read from database_connection().
-	 * These should mark the beginning, and one-past-the-end, of
-	 * a date-ordered sequence of \e ordinary Entries
-	 * (Entries associated with OrdinaryJournals, not DraftJournals).
-	 * By default, this produces a pair of iterators which will
-	 * encompass a date-ordered sequence of all the
-	 * \e actual (i.e. non-budget) ordinary Entries in the
-	 * database.
-	 */
-	virtual
-		std::pair<EntryTableIterator, EntryTableIterator>
-		do_make_entry_table_iterators();
 
 	virtual std::vector<SummaryDatum> const& do_get_summary_data() const;
 	virtual void do_initialize_summary_data();

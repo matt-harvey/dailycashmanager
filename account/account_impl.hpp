@@ -24,6 +24,7 @@
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
+#include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>	
 #include <wx/string.h>
 #include <algorithm>
@@ -34,7 +35,6 @@
 
 namespace phatbooks
 {
-
 
 
 namespace detail
@@ -205,6 +205,7 @@ favourite_accounts
 (	PhatbooksDatabaseConnection& p_database_connection,
 	std::map<account_super_type::AccountSuperType, AccountImpl::Id>& out
 );
+
 
 }  // namespace phatbooks
 

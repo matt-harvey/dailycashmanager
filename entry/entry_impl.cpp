@@ -14,37 +14,39 @@
 
 #include "entry_impl.hpp"
 #include "account.hpp"
+#include "date.hpp"
 #include "string_conv.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"
 #include "transaction_side.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <sqloxx/sql_statement.hpp>
+#include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/string.h>
+#include <memory>
 #include <string>
 
 using sqloxx::SQLStatement;
+using boost::optional;
 using boost::shared_ptr;
 using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
+using std::auto_ptr;
 using std::string;
 
-#ifdef DEBUG
-	#include <iomanip>
-	#include <iostream>
-#endif
+namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
-
 
 void EntryImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
@@ -408,7 +410,60 @@ EntryImpl::mimic(EntryImpl& rhs)
 	return;
 }
 	
-	
+auto_ptr<SQLStatement>
+create_date_ordered_actual_ordinary_entry_selector_aux
+(	PhatbooksDatabaseConnection& p_database_connection,
+	optional<gregorian::date> const& p_maybe_min_date,
+	optional<gregorian::date> const& p_maybe_max_date,
+	optional<Account> const& p_maybe_account
+)
+{
+	// TODO Factor out duplicated code between here and
+	// "entry_table_iterator.cpp".
+#	ifndef NDEBUG
+		// Ensure we are picking all and only the
+		// actual transactions.
+		int const target_non_actual_type = 3;
+		int i = 0;
+		int const lim =
+			static_cast<int>(transaction_type::num_transaction_types);
+		for ( ; i != lim; ++i)
+		{
+			transaction_type::TransactionType const ttype =
+				static_cast<transaction_type::TransactionType>(i);
+			if (ttype == target_non_actual_type)
+			{
+				JEWEL_ASSERT (!transaction_type_is_actual(ttype));
+			}
+			else
+			{
+				JEWEL_ASSERT (transaction_type_is_actual(ttype));
+			}
+		}
+#	endif
+
+	string text =
+		"select entry_id from entries join ordinary_journal_detail "
+		"using(journal_id) join journals using(journal_id) where "
+		"transaction_type_id != 3";
+	if (p_maybe_min_date) text += " and date >= :min_date";
+	if (p_maybe_max_date) text += " and date <= :max_date";
+	if (p_maybe_account) text += " and account_id = :account_id";
+	auto_ptr<SQLStatement> ret(new SQLStatement(p_database_connection, text));
+	if (p_maybe_min_date)
+	{
+		ret->bind(":min_date", julian_int(*p_maybe_min_date));
+	}
+	if (p_maybe_max_date)
+	{
+		ret->bind(":max_date", julian_int(*p_maybe_max_date));
+	}
+	if (p_maybe_account && p_maybe_account->has_id())
+	{
+		ret->bind(":account_id", p_maybe_account->id());
+	}
+	return ret;
+}
 
 
 }  // namespace phatbooks

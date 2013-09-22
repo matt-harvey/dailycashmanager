@@ -48,10 +48,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-#ifdef DEBUG
-	#include <iomanip>
-	#include <iostream>
-#endif
+namespace gregorian = boost::gregorian;
 
 
 namespace phatbooks

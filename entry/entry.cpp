@@ -17,7 +17,9 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/handle.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <wx/string.h>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -28,6 +30,8 @@ using jewel::Decimal;
 using jewel::UninitializedOptionalException;
 using jewel::value;
 using sqloxx::Handle;
+using sqloxx::SQLStatement;
+using std::auto_ptr;
 using std::string;
 using std::vector;
 
@@ -164,6 +168,21 @@ Entry::mimic(Entry const& rhs)
 Entry::Entry(sqloxx::Handle<EntryImpl> const& p_handle):
 	PhatbooksPersistentObject(p_handle)
 {
+}
+	
+auto_ptr<SQLStatement>
+create_date_ordered_actual_ordinary_entry_selector
+(	PhatbooksDatabaseConnection& p_database_connection,
+	optional<gregorian::date> const& p_maybe_min_date,
+	optional<gregorian::date> const& p_maybe_max_date,
+	optional<Account> const& p_maybe_account
+)
+{
+	return create_date_ordered_actual_ordinary_entry_selector_aux
+	(	p_database_connection,
+		p_maybe_min_date,
+		p_maybe_max_date
+	);
 }
 
 }  // namespace phatbooks

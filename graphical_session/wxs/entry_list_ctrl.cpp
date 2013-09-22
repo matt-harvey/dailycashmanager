@@ -21,6 +21,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/log.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
 #include <wx/event.h>
@@ -28,22 +29,17 @@
 #include <wx/gdicmn.h>
 #include <wx/progdlg.h>
 #include <wx/scrolwin.h>
-#include <utility>
 #include <vector>
 #include <string>
 
 using boost::lexical_cast;
 using boost::optional;
 using jewel::value;
-using std::make_pair;
+using sqloxx::SQLStatement;
+using std::auto_ptr;
 using std::pair;
 using std::string;
 using std::vector;
-
-// For debugging
-	#include <jewel/log.hpp>
-	#include <iostream>
-	using std::endl;
 
 namespace gregorian = boost::gregorian;
 
@@ -73,22 +69,6 @@ EntryListCtrl::EntryListCtrl
 	),
 	m_database_connection(p_database_connection)
 {
-}
-
-EntryListCtrl*
-EntryListCtrl::create_actual_ordinary_entry_list
-(	wxWindow* p_parent,
-	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection
-)
-{
-	EntryListCtrl* ret = new UnfilteredEntryListCtrl
-	(	p_parent,
-		p_size,
-		p_database_connection
-	);
-	initialize(ret);
-	return ret;
 }
 
 EntryListCtrl*
@@ -183,46 +163,15 @@ EntryListCtrl::insert_date_column()
 void
 EntryListCtrl::populate()
 {
-
-	pair<EntryTableIterator, EntryTableIterator> iterators =
-		do_make_entry_table_iterators();
-	EntryTableIterator it = iterators.first;
-	EntryTableIterator end = iterators.second;
-	if (do_require_progress_log())
+	auto_ptr<SQLStatement> statement = do_create_entry_selector();
+	while (statement->step())
 	{
-		vector<Entry> vec(it, end);
-		vector<Entry>::size_type j = 0;
-		vector<Entry>::size_type progress = 0;
-		vector<Entry>::size_type const progress_scaling_factor = 32;
-		vector<Entry>::size_type const progress_max =
-			vec.size() / progress_scaling_factor;
-		wxProgressDialog progress_dialog
-		(	wxEmptyString,
-			"Loading transactions...",
-			progress_max,
-			this,
-			wxPD_APP_MODAL | wxPD_AUTO_HIDE | wxRESIZE_BORDER
+		process_push_candidate_entry
+		(	Entry
+			(	database_connection(),
+				statement->extract<Entry::Id>(0)
+			)
 		);
-		vector<Entry>::iterator jt = vec.begin();
-		vector<Entry>::iterator const jend = vec.end();
-		for ( ; jt != jend; ++jt, ++j)
-		{
-			process_push_candidate_entry(*jt);
-			if (j % progress_scaling_factor == 0)
-			{
-				JEWEL_ASSERT (progress <= progress_max);
-				progress_dialog.Update(progress);
-				++progress;
-			}
-		}
-		progress_dialog.Destroy();
-	}
-	else
-	{
-		for ( ; it != end; ++it)
-		{
-			process_push_candidate_entry(*it);
-		}
 	}
 	return;
 }
@@ -505,17 +454,6 @@ EntryListCtrl::scrollbar_width_allowance() const
 	return 50;
 }
 
-pair<EntryTableIterator, EntryTableIterator>
-EntryListCtrl::do_make_entry_table_iterators()
-{
-	EntryTableIterator beg =
-		make_date_ordered_actual_ordinary_entry_table_iterator
-		(	database_connection()
-		);
-	EntryTableIterator const end;
-	return make_pair(beg, end);
-}
-
 vector<SummaryDatum> const&
 EntryListCtrl::do_get_summary_data() const
 {
@@ -589,7 +527,10 @@ EntryListCtrl::remove_if_present(Entry::Id p_entry_id)
 	if (it != m_id_set.end())
 	{
 		long const pos = FindItem(-1, p_entry_id);
-		JEWEL_ASSERT (GetItemData(pos) == static_cast<unsigned long>(p_entry_id));
+		JEWEL_ASSERT
+		(	GetItemData(pos) ==
+			static_cast<unsigned long>(p_entry_id)
+		);
 		do_process_removal_for_summary(pos);
 		DeleteItem(pos);
 		m_id_set.erase(it);

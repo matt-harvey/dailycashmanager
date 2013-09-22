@@ -8,7 +8,9 @@
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <sqloxx/sql_statement_fwd.hpp>
 #include <wx/window.h>
+#include <memory>
 
 namespace phatbooks
 {
@@ -47,6 +49,7 @@ private:
 	virtual void do_set_column_widths();
 	virtual int do_get_num_columns() const = 0;
 	virtual int do_get_comment_col_num() const = 0;
+	virtual std::auto_ptr<sqloxx::SQLStatement> do_create_entry_selector();
 	
 	Account const m_account;
 	boost::gregorian::date m_min_date;

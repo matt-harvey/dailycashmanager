@@ -13,7 +13,9 @@
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
+#include <sqloxx/sql_statement_fwd.hpp>
 #include <wx/string.h>
+#include <memory>
 #include <string>
 
 namespace phatbooks
@@ -180,6 +182,24 @@ Entry::journal() const
 {
 	return impl().journal<PersistentJournalType>();
 }
+
+/**
+ * @returns an auto_ptr to a heap-allocated SQLStatement from which
+ * entry_id may be selected from the first result column. Contains
+ * only Entries that belong to actual (i.e. non-budget)
+ * Journals that are OrdinaryJournals (i.e. not DraftJournals).
+ * Filtering may optionally be performed by Account and/or date.
+ */
+std::auto_ptr<sqloxx::SQLStatement>
+create_date_ordered_actual_ordinary_entry_selector
+(	PhatbooksDatabaseConnection& p_database_connection,
+	boost::optional<boost::gregorian::date> const& p_maybe_min_date =
+		boost::optional<boost::gregorian::date>(),
+	boost::optional<boost::gregorian::date> const& p_maybe_max_date =
+		boost::optional<boost::gregorian::date>(),
+	boost::optional<Account> const& p_maybe_account =
+		boost::optional<Account>()
+);
 
 
 }  // namespace phatbooks
