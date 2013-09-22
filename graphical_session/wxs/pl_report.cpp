@@ -13,6 +13,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
 #include <list>
@@ -21,6 +22,8 @@
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::SQLStatement;
+using std::auto_ptr;
 using std::list;
 using std::vector;
 
@@ -113,14 +116,19 @@ PLReport::refresh_map()
 		database_connection().default_commodity().precision()
 	);
 
-	EntryTableIterator it =
-		make_date_ordered_actual_ordinary_entry_table_iterator
-		(	database_connection()
+	auto_ptr<SQLStatement> statement =
+		create_date_ordered_actual_ordinary_entry_selector
+		(	database_connection(),
+			min_date(),
+			maybe_max_date()
 		);
-	EntryTableIterator const end;	
-	for ( ; it != end; ++it)
+	while (statement->step())
 	{
-		Account const account = it->account();
+		Entry const entry
+		(	database_connection(),
+			statement->extract<Entry::Id>(0)
+		);
+		Account const account = entry.account();
 		account_type::AccountType const atype = account.account_type();
 		if
 		(	(atype != account_type::revenue) &&
@@ -141,15 +149,10 @@ PLReport::refresh_map()
 			jt = m_map.find(account_id);
 		}
 		JEWEL_ASSERT (jt != m_map.end());
-		gregorian::date const date = it->date();
-		if (maybe_max_d && (date > value(maybe_max_d)))
-		{
-			break;
-		}
-		if (date >= min_d)
-		{
-			jt->second += it->amount();
-		}
+		gregorian::date const date = entry.date();
+		JEWEL_ASSERT (!maybe_max_d || (date > value(maybe_max_d)))
+		JEWEL_ASSERT (date >= min_d);
+		jt->second += entry.amount();
 	}
 	return;
 }

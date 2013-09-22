@@ -74,6 +74,10 @@ BalanceSheetReport::refresh_map()
 	optional<gregorian::date> const maybe_max_d = maybe_max_date();
 	gregorian::date const min_d = min_date();
 
+	// TODO We simply use the opening balance and current balance
+	// of each Account, to optimize for the special but probably common
+	// case where the min and max date are both blank.
+
 	EntryTableIterator it =
 		make_date_ordered_actual_ordinary_entry_table_iterator
 		(	database_connection()
