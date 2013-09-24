@@ -16,6 +16,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <wx/bitmap.h>
+#include <wx/colour.h>
 #include <wx/imaglist.h>
 #include <wx/listctrl.h>
 #include <vector>
@@ -89,8 +90,8 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 {
 	JEWEL_LOG_TRACE();
 	m_image_list = new wxImageList(0, 0);
-	m_image_list->Add(wxBitmap(blank_xpm));  // must be 0th image
-	m_image_list->Add(wxBitmap(tick_xpm));   // must be 1st image
+	m_image_list->Add(wxBitmap(blank_xpm), *wxWHITE);  // must be 0th image
+	m_image_list->Add(wxBitmap(tick_xpm), *wxWHITE);   // must be 1st image
 	SetImageList(m_image_list, wxIMAGE_LIST_SMALL);
 }
 
@@ -144,7 +145,7 @@ ReconciliationEntryListCtrl::do_insert_non_date_columns()
 	InsertColumn
 	(	reconciled_col_num(),
 		wxString("Reconciled?"),
-		wxLIST_FORMAT_RIGHT
+		wxLIST_FORMAT_LEFT
 	);
 	JEWEL_ASSERT (num_columns() == 4);
 	return;
