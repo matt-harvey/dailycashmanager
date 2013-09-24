@@ -1,19 +1,22 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "reconciliation_entry_list_ctrl.hpp"
+#include "blank.xpm"
 #include "entry.hpp"
 #include "filtered_entry_list_ctrl.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
 #include "persistent_object_event.hpp"
-#include "reconciliation_status_marker.hpp"
 #include "summary_datum.hpp"
+#include "tick.xpm"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <wx/bitmap.h>
+#include <wx/imaglist.h>
 #include <wx/listctrl.h>
 #include <vector>
 
@@ -21,11 +24,6 @@ using boost::optional;
 using jewel::Decimal;
 using jewel::value;
 using std::vector;
-
-// For debugging
-	#include <jewel/log.hpp>
-	#include <iostream>
-	using std::endl;
 
 namespace gregorian = boost::gregorian;
 
@@ -61,6 +59,11 @@ namespace
 	{
 		return 4;
 	}
+	enum
+	{
+		blank_image_index = 0,  // to mark unreconciled Entries
+		tick_image_index = 1    // to mark reconciled Entries
+	};
 
 }  // end anonymous namespace
 
@@ -81,14 +84,23 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 	m_max_date(p_max_date),
 	m_summary_data(0),
 	m_closing_balance(0, p_account.commodity().precision()),
-	m_reconciled_closing_balance(0, p_account.commodity().precision())
+	m_reconciled_closing_balance(0, p_account.commodity().precision()),
+	m_image_list(0)
 {
+	JEWEL_LOG_TRACE();
+	m_image_list = new wxImageList(0, 0);
+	m_image_list->Add(wxBitmap(blank_xpm));  // must be 0th image
+	m_image_list->Add(wxBitmap(tick_xpm));   // must be 1st image
+	SetImageList(m_image_list, wxIMAGE_LIST_SMALL);
 }
 
 ReconciliationEntryListCtrl::~ReconciliationEntryListCtrl()
 {
 	delete m_summary_data;
 	m_summary_data = 0;
+
+	delete m_image_list;
+	m_image_list = 0;
 }
 
 void
@@ -107,10 +119,10 @@ ReconciliationEntryListCtrl::do_set_non_date_columns
 			DecimalFormatFlags().clear(string_flags::dash_for_zero)
 		)
 	);
-	SetItem
+	SetItemColumnImage
 	(	p_row,
 		reconciled_col_num(),
-		reconciliation_status_marker(p_entry.is_reconciled())
+		p_entry.is_reconciled()? tick_image_index: blank_image_index
 	);
 	JEWEL_ASSERT (num_columns() == 4);
 	return;
@@ -241,7 +253,7 @@ ReconciliationEntryListCtrl::do_process_removal_for_summary(long p_row)
 	item.SetId(p_row);
 	item.SetColumn(reconciled_col_num());
 	GetItem(item);
-	if (item.GetText() == reconciliation_status_marker(true))
+	if (item.GetImage() == tick_image_index)
 	{
 		m_reconciled_closing_balance -= amount;	
 	}
@@ -261,7 +273,13 @@ ReconciliationEntryListCtrl::on_item_right_click(wxListEvent& event)
 	Entry entry(database_connection(), entry_id);
 	bool const old_reconciliation_status = entry.is_reconciled();
 	entry.set_whether_reconciled(!old_reconciliation_status);
-	SetItem(pos, col, reconciliation_status_marker(entry.is_reconciled()));
+	
+	SetItemColumnImage
+	(	pos,
+		col,
+		entry.is_reconciled()? tick_image_index: blank_image_index
+	);
+	
 	if (entry.is_reconciled())
 	{
 		m_reconciled_closing_balance += entry.amount();

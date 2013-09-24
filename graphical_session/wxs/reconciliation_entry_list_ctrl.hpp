@@ -10,6 +10,7 @@
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/gdicmn.h>
+#include <wx/imaglist.h>
 #include <wx/listctrl.h>
 #include <wx/window.h>
 
@@ -75,6 +76,8 @@ private:
 	std::vector<SummaryDatum>* m_summary_data;
 	jewel::Decimal m_closing_balance;
 	jewel::Decimal m_reconciled_closing_balance;
+
+	wxImageList* m_image_list;
 
 	DECLARE_EVENT_TABLE()
 

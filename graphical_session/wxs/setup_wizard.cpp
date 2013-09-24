@@ -29,6 +29,7 @@
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <wx/arrstr.h>
+#include <wx/bitmap.h>
 #include <wx/button.h>
 #include <wx/combobox.h>
 #include <wx/dataview.h>

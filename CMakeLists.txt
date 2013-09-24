@@ -15,7 +15,7 @@ set (immediate_directories
 	 filename_validation
 	 finformat
 	 graphical_session
-	 icon
+	 images
 	 journal
 	 output_aux
 	 phatbooks_database_connection
@@ -198,7 +198,6 @@ set (gui_files
 	 graphical_session/wxs/pl_account_entry_list_ctrl.cpp
 	 graphical_session/wxs/pl_report.cpp
 	 graphical_session/wxs/reconciliation_entry_list_ctrl.cpp
-	 graphical_session/wxs/reconciliation_status_marker.cpp
 	 graphical_session/wxs/report.cpp
 	 graphical_session/wxs/report_panel.cpp
 	 graphical_session/wxs/setup_wizard.cpp
@@ -260,9 +259,9 @@ if (WIN32)
 	set (CPACK_PACKAGE_VERSION_MAJOR "1")
 	set (CPACK_PACKAGE_VERSION_MINOR "0")
 	set (CPACK_PACKAGE_VERSION_PATCH "0")
-	set (CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\icon\\\\icon.ico")
-	set (CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\icon\\\\icon.ico")
-	set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\icon\\\\icon.ico")
+	set (CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon.ico")
+	set (CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon.ico")
+	set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon.ico")
 	set (CPACK_NSIS_INSTALLED_ICON_NAME "phatbooks.exe")
 	set (CPACK_NSIS_MENU_LINKS "phatbooks.exe" "${application_name}")  # Put a link to the application executable in the Shortcuts menu.
 	set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}\\\\licence.txt")
