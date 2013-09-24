@@ -131,11 +131,6 @@ namespace
 	void my_terminate_handler()
 	{
 		JEWEL_LOG_MESSAGE(Log::error, "Entered terminate handler.");
-
-		// TODO HIGH PRIORITY This seems like a good idea, but is there
-		// a hidden catch? (Custom terminate handling should not be done
-		// lightly...)
-		// flush_standard_output_streams();
 		abort();
 	}	
 
