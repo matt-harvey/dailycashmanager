@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "entry_table_iterator.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_type.hpp"

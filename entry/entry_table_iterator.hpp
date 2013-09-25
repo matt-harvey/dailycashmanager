@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_entry_table_iterator_hpp_09390961802280956
 #define GUARD_entry_table_iterator_hpp_09390961802280956
 

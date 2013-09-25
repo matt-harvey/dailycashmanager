@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_date_parser_hpp_5151682568318994
 #define GUARD_date_parser_hpp_5151682568318994
 

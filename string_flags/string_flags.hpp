@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_string_flags_hpp_04174686784006044
 #define GUARD_string_flags_hpp_04174686784006044
 

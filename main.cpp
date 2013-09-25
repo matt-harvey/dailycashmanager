@@ -15,14 +15,14 @@
 
 // TODO HIGH PRIORITY Tooltips aren't showing on Windows.
 
-// TODO Make it so the user can toggle logging level via the GUI.
+// TODO Make it so the user can toggle logging level via the GUI?
 
-// TODO Make the installer create an association on the user's system
-// between the Phatbooks file extension and the Phatbooks application.
+// TODO HIGH PRIORITY Make the installer create an association on the user's
+// system between the Phatbooks file extension and the Phatbooks application.
 // See CMake book, page. 162.
 
-// TODO (For GUI). Users will probably expect
-// right-clicking to cause a context-dependent menu to pop up.
+// TODO Users will probably expect right-clicking to cause a context-dependent
+// menu to pop up.
 
 // TODO The application should automatically create a zipped backup
 // file so that the session can be recovered if something goes wrong.
@@ -42,10 +42,10 @@
 
 // TODO Write the licence.
 
-// TODO Ensure that option for the user to lauch directly from the
+// TODO Ensure that the option for the user to lauch directly from the
 // installer, works correctly.
 
-// TODO Create a decent icon for the application. We want this
+// TODO HIGH PRIORITY Create a decent icon for the application. We want this
 // in both .ico form (for Windows executable icon) and .xpm
 // form (for icon for Frame). Note, when I exported my
 // "token icon" using GIMP to .ico format, and later used this
@@ -55,11 +55,13 @@
 // large in-windows icon in the CPack/NSIS installer, the icon
 // wasn't showing at all.
 
+// TODO HIGH PRIORITY Create a better name for the application.
+
 // TODO On Fedora, recompile and install wxWidgets with an additional
 // configure flag, viz. --with-gnomeprint (sp?).
 
-// TODO Set the version number in a single location and find a way
-// to ensure this is reflected consistently everywhere it appears
+// TODO HIGH PRIORITY Set the version number in a single location and find a
+// way to ensure this is reflected consistently everywhere it appears
 // (website, installer, licence text etc.).
 
 // TODO We need a proper solution to the potential for integer overflow.

@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_visibility_hpp_6967687740441266
 #define GUARD_visibility_hpp_6967687740441266
 

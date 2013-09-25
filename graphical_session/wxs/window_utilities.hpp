@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_window_utilities_hpp_5290374944587413
 #define GUARD_window_utilities_hpp_5290374944587413
 

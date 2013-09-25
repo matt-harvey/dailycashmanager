@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef GUARD_transaction_side_hpp_6396077878957651
 #define GUARD_transaction_side_hpp_6396077878957651
 

@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "date_parser.hpp"
 #include "date.hpp"
 #include <boost/algorithm/string.hpp>
