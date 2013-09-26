@@ -165,7 +165,9 @@ ReconciliationEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 		// We include unreconciled Entries even if they're prior to the
 		// min_date().
 		JEWEL_ASSERT
-		(	(date > database_connection().opening_balance_journal_date()) ||
+		(	(	p_entry.date() >
+				database_connection().opening_balance_journal_date()
+			) ||
 			p_entry.is_reconciled()
 		);
 		return !p_entry.is_reconciled();

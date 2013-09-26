@@ -20,6 +20,7 @@
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
+#include "transaction_type.hpp"
 #include "visibility.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>

@@ -1,2 +1,2 @@
-phatbooks ICON "icon/icon.ico"
+phatbooks ICON "images/icon.ico"
 #include <wx/msw/wx.rc>

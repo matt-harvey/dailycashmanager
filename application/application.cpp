@@ -76,8 +76,8 @@ Application::set_last_opened_file(filesystem::path const& p_path)
 	// Assert precondition
 	JEWEL_ASSERT (filesystem::absolute(p_path) == p_path);
 
-	string const s_path = p_path.string();
-	wxString const wx_path = std8_to_wx(s_path);
+	string const s_path(p_path.string());
+	wxString const wx_path(std8_to_wx(s_path));
 	config().Write(config_location_for_last_opened_file(), wx_path);
 	config().Flush();
 	return;
@@ -88,17 +88,17 @@ optional<filesystem::path>
 Application::default_directory()
 {
 	optional<filesystem::path> ret;
-#	ifdef JEWEL_ON_WINDOWS
+#  ifdef JEWEL_ON_WINDOWS
 	char const* win_home_drive = getenv("HOMEDRIVE");
 	char const* win_home_path = getenv("HOMEPATH");
 	if (win_home_drive && win_home_path)
 	{
 		string const home_str =
 			string(win_home_drive) + string(win_home_path);
-#	else
+#  else
 	if (char const* home_str = getenv("HOME"))  // assignment deliberate
 	{
-#	endif
+#  endif
 		filesystem::path const home(home_str);
 		if (filesystem::exists(filesystem::status(home)))
 		{

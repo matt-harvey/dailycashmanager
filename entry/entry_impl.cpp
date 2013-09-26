@@ -20,6 +20,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"
 #include "transaction_side.hpp"
+#include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
