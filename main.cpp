@@ -72,6 +72,12 @@
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.
 
+// TODO Make it so that if the program crashes, a dialog is displayed which
+// preferably allows the user to email the log file and an optional
+// user-supplied message to "help desk" with a single mouse click from
+// the window itself; or, if not, at least tells the user
+// where the log file is and gets recommends they email a particular
+// email address with the log file attached.
 
 #include "application.hpp"
 #include "string_conv.hpp"
