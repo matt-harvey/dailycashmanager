@@ -166,9 +166,6 @@ EntryListCtrl::populate()
 	auto_ptr<SQLStatement> statement = do_create_entry_selector();
 	while (statement->step())
 	{
-		// TODO There is redundancy here in the case of
-		// FilteredEntryListCtrl, which already has checked date range
-		// and selected Account.
 		process_push_candidate_entry
 		(	Entry
 			(	database_connection(),

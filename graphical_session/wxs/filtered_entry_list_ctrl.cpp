@@ -91,9 +91,10 @@ FilteredEntryListCtrl::do_require_progress_log() const
 bool
 FilteredEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 {
-	return
-		(p_entry.account() == m_account) &&
-		lies_within(p_entry.date(), m_min_date, m_maybe_max_date);
+	(void)p_entry;  // silence compiler re. unused parameter.
+	JEWEL_ASSERT (p_entry.account() == m_account);
+	JEWEL_ASSERT (lies_within(p_entry.date(), m_min_date, m_maybe_max_date));
+	return true;
 }
 
 void

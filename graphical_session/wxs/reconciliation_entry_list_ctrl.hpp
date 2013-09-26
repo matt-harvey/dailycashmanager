@@ -9,10 +9,12 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
+#include <sqloxx/sql_statement_fwd.hpp>
 #include <wx/gdicmn.h>
 #include <wx/imaglist.h>
 #include <wx/listctrl.h>
 #include <wx/window.h>
+#include <memory>
 
 
 namespace phatbooks
@@ -63,6 +65,8 @@ private:
 	virtual void do_initialize_summary_data();
 	virtual void do_process_candidate_entry_for_summary(Entry const& p_entry);
 	virtual void do_process_removal_for_summary(long p_row);
+
+	virtual std::auto_ptr<sqloxx::SQLStatement> do_create_entry_selector();
 
 	void on_item_right_click(wxListEvent& event);
 

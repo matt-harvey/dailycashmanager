@@ -15,15 +15,19 @@
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <wx/bitmap.h>
 #include <wx/colour.h>
 #include <wx/imaglist.h>
 #include <wx/listctrl.h>
+#include <memory>
 #include <vector>
 
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::SQLStatement;
+using std::auto_ptr;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -154,29 +158,18 @@ ReconciliationEntryListCtrl::do_insert_non_date_columns()
 bool
 ReconciliationEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 {
-	if (p_entry.account() != account())
-	{
-		return false;
-	}
-	gregorian::date const date = p_entry.date();
-	if (date > max_date())
-	{
-		return false;
-	}
-	if (date < min_date())
+	JEWEL_ASSERT (p_entry.account() == account());
+	JEWEL_ASSERT (p_entry.date() <= max_date());
+	if (p_entry.date() < min_date())
 	{
 		// We include unreconciled Entries even if they're prior to the
-		// min_date(), providing they're not later than max_date().
-		JEWEL_ASSERT (date <= max_date());
+		// min_date().
 		JEWEL_ASSERT
 		(	(date > database_connection().opening_balance_journal_date()) ||
 			p_entry.is_reconciled()
 		);
 		return !p_entry.is_reconciled();
 	}
-	JEWEL_ASSERT (p_entry.account() == account());
-	JEWEL_ASSERT (date >= min_date());
-	JEWEL_ASSERT (date <= max_date());
 	return true;
 }
 
@@ -227,17 +220,11 @@ ReconciliationEntryListCtrl::do_process_candidate_entry_for_summary
 (	Entry const& p_entry
 )
 {
-	if (p_entry.account() != account())
-	{
-		return;
-	}
 	JEWEL_ASSERT (p_entry.account() == account());
+	JEWEL_ASSERT (p_entry.date() <= max_date());
 	jewel::Decimal const amount = p_entry.amount();
-	if (p_entry.date() <= max_date())
-	{
-		m_closing_balance += amount;
-		if (p_entry.is_reconciled()) m_reconciled_closing_balance += amount;
-	}
+	m_closing_balance += amount;
+	if (p_entry.is_reconciled()) m_reconciled_closing_balance += amount;
 	return;
 }
 
@@ -321,6 +308,17 @@ boost::gregorian::date
 ReconciliationEntryListCtrl::max_date() const
 {
 	return m_max_date;
+}
+
+auto_ptr<SQLStatement>
+ReconciliationEntryListCtrl::do_create_entry_selector()
+{
+	return create_date_ordered_actual_ordinary_entry_selector
+	(	database_connection(),
+		optional<gregorian::date>(),
+		max_date(),
+		account()
+	);
 }
 
 }  // namespace gui
