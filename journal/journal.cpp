@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "column_creation.hpp"
 #include "journal.hpp"
+#include "column_creation.hpp"
 #include "entry.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"

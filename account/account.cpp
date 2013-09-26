@@ -15,8 +15,6 @@
 #include "visibility.hpp"
 #include "string_flags.hpp"
 #include <boost/shared_ptr.hpp>
-#include <consolixx/alignment.hpp>
-#include <consolixx/column.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/string.h>
@@ -24,8 +22,6 @@
 #include <string>
 #include <vector>
 
-using consolixx::AccumulatingColumn;
-using consolixx::PlainColumn;
 using phatbooks::account_type::AccountType;
 using phatbooks::account_super_type::AccountSuperType;
 using sqloxx::Handle;
@@ -35,13 +31,6 @@ using std::map;
 using std::string;
 using std::vector;
 
-// for debugging
-#include <jewel/log.hpp>
-#include <iostream>
-using std::endl;
-
-
-namespace alignment = consolixx::alignment;
 
 namespace phatbooks
 {
