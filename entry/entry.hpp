@@ -184,13 +184,13 @@ Entry::journal() const
 }
 
 /**
- * @returns an auto_ptr to a heap-allocated SQLStatement from which
+ * @returns an unique_ptr to a heap-allocated SQLStatement from which
  * entry_id may be selected from the first result column. Contains
  * only Entries that belong to actual (i.e. non-budget)
  * Journals that are OrdinaryJournals (i.e. not DraftJournals).
  * Filtering may optionally be performed by Account and/or date.
  */
-std::auto_ptr<sqloxx::SQLStatement>
+std::unique_ptr<sqloxx::SQLStatement>
 create_date_ordered_actual_ordinary_entry_selector
 (	PhatbooksDatabaseConnection& p_database_connection,
 	boost::optional<boost::gregorian::date> const& p_maybe_min_date =

@@ -154,7 +154,7 @@ private:
 	virtual void do_set_column_widths() = 0;
 	virtual int do_get_num_columns() const = 0;
 	virtual int do_get_comment_col_num() const = 0;
-	virtual std::auto_ptr<sqloxx::SQLStatement>
+	virtual std::unique_ptr<sqloxx::SQLStatement>
 		do_create_entry_selector() = 0;
 
 	virtual void do_update_for_amended(Account const& p_account);

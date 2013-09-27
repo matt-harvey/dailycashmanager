@@ -34,6 +34,7 @@
 #include <wx/string.h>
 #include <memory>
 #include <string>
+#include <utility>
 
 using sqloxx::SQLStatement;
 using boost::optional;
@@ -41,8 +42,9 @@ using boost::shared_ptr;
 using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
-using std::auto_ptr;
+using std::move;
 using std::string;
+using std::unique_ptr;
 
 namespace gregorian = boost::gregorian;
 
@@ -411,7 +413,7 @@ EntryImpl::mimic(EntryImpl& rhs)
 	return;
 }
 	
-auto_ptr<SQLStatement>
+unique_ptr<SQLStatement>
 create_date_ordered_actual_ordinary_entry_selector_aux
 (	PhatbooksDatabaseConnection& p_database_connection,
 	optional<gregorian::date> const& p_maybe_min_date,
@@ -450,7 +452,9 @@ create_date_ordered_actual_ordinary_entry_selector_aux
 	if (p_maybe_min_date) text += " and date >= :min_date";
 	if (p_maybe_max_date) text += " and date <= :max_date";
 	if (p_maybe_account) text += " and account_id = :account_id";
-	auto_ptr<SQLStatement> ret(new SQLStatement(p_database_connection, text));
+	unique_ptr<SQLStatement> ret
+	(	new SQLStatement(p_database_connection, text)
+	);
 	if (p_maybe_min_date)
 	{
 		ret->bind(":min_date", julian_int(*p_maybe_min_date));
@@ -463,7 +467,7 @@ create_date_ordered_actual_ordinary_entry_selector_aux
 	{
 		ret->bind(":account_id", p_maybe_account->id());
 	}
-	return ret;
+	return move(ret);
 }
 
 

@@ -36,9 +36,9 @@ using boost::lexical_cast;
 using boost::optional;
 using jewel::value;
 using sqloxx::SQLStatement;
-using std::auto_ptr;
 using std::pair;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -163,7 +163,7 @@ EntryListCtrl::insert_date_column()
 void
 EntryListCtrl::populate()
 {
-	auto_ptr<SQLStatement> statement = do_create_entry_selector();
+	unique_ptr<SQLStatement> statement = do_create_entry_selector();
 	while (statement->step())
 	{
 		process_push_candidate_entry

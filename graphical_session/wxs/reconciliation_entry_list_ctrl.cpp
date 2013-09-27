@@ -21,13 +21,15 @@
 #include <wx/imaglist.h>
 #include <wx/listctrl.h>
 #include <memory>
+#include <utility>
 #include <vector>
 
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
 using sqloxx::SQLStatement;
-using std::auto_ptr;
+using std::move;
+using std::unique_ptr;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -324,15 +326,18 @@ ReconciliationEntryListCtrl::max_date() const
 	return m_max_date;
 }
 
-auto_ptr<SQLStatement>
+unique_ptr<SQLStatement>
 ReconciliationEntryListCtrl::do_create_entry_selector()
 {
-	return create_date_ordered_actual_ordinary_entry_selector
-	(	database_connection(),
-		optional<gregorian::date>(),
-		max_date(),
-		account()
+	unique_ptr<SQLStatement> ret
+	(	create_date_ordered_actual_ordinary_entry_selector
+		(	database_connection(),
+			optional<gregorian::date>(),
+			max_date(),
+			account()
+		)
 	);
+	return move(ret);
 }
 
 }  // namespace gui

@@ -11,12 +11,14 @@
 #include <sqloxx/sql_statement.hpp>
 #include <wx/window.h>
 #include <memory>
+#include <utility>
 
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
 using sqloxx::SQLStatement;
-using std::auto_ptr;
+using std::move;
+using std::unique_ptr;
 
 namespace gregorian = boost::gregorian;
 
@@ -107,15 +109,18 @@ FilteredEntryListCtrl::do_set_column_widths()
 	return;
 }
 
-auto_ptr<SQLStatement>
+unique_ptr<SQLStatement>
 FilteredEntryListCtrl::do_create_entry_selector()
 {
-	return create_date_ordered_actual_ordinary_entry_selector
-	(	database_connection(),
-		m_min_date,
-		m_maybe_max_date,
-		m_account
+	unique_ptr<SQLStatement> ret
+	(	create_date_ordered_actual_ordinary_entry_selector
+		(	database_connection(),
+			m_min_date,
+			m_maybe_max_date,
+			m_account
+		)
 	);
+	return move(ret);
 }
 
 }  // namespace gui

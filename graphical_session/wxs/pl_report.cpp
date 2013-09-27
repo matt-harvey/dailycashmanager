@@ -23,7 +23,7 @@ using boost::optional;
 using jewel::Decimal;
 using jewel::value;
 using sqloxx::SQLStatement;
-using std::auto_ptr;
+using std::unique_ptr;
 using std::list;
 using std::vector;
 
@@ -116,7 +116,7 @@ PLReport::refresh_map()
 		database_connection().default_commodity().precision()
 	);
 
-	auto_ptr<SQLStatement> statement =
+	unique_ptr<SQLStatement> statement =
 		create_date_ordered_actual_ordinary_entry_selector
 		(	database_connection(),
 			min_date(),

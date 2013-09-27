@@ -66,7 +66,7 @@ private:
 	virtual void do_process_candidate_entry_for_summary(Entry const& p_entry);
 	virtual void do_process_removal_for_summary(long p_row);
 
-	virtual std::auto_ptr<sqloxx::SQLStatement> do_create_entry_selector();
+	virtual std::unique_ptr<sqloxx::SQLStatement> do_create_entry_selector();
 
 	void on_item_right_click(wxListEvent& event);
 

@@ -21,6 +21,7 @@
 #include <wx/string.h>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 using boost::lexical_cast;
@@ -31,7 +32,8 @@ using jewel::UninitializedOptionalException;
 using jewel::value;
 using sqloxx::Handle;
 using sqloxx::SQLStatement;
-using std::auto_ptr;
+using std::move;
+using std::unique_ptr;
 using std::string;
 using std::vector;
 
@@ -170,7 +172,7 @@ Entry::Entry(sqloxx::Handle<EntryImpl> const& p_handle):
 {
 }
 	
-auto_ptr<SQLStatement>
+unique_ptr<SQLStatement>
 create_date_ordered_actual_ordinary_entry_selector
 (	PhatbooksDatabaseConnection& p_database_connection,
 	optional<gregorian::date> const& p_maybe_min_date,
@@ -178,12 +180,14 @@ create_date_ordered_actual_ordinary_entry_selector
 	optional<Account> const& p_maybe_account
 )
 {
-	return create_date_ordered_actual_ordinary_entry_selector_aux
-	(	p_database_connection,
-		p_maybe_min_date,
-		p_maybe_max_date,
-		p_maybe_account
-	);
+	unique_ptr<SQLStatement> ret =
+		create_date_ordered_actual_ordinary_entry_selector_aux
+		(	p_database_connection,
+			p_maybe_min_date,
+			p_maybe_max_date,
+			p_maybe_account
+		);
+	return move(ret);
 }
 
 }  // namespace phatbooks
