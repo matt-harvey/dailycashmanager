@@ -676,12 +676,12 @@ favourite_accounts
 	vector<account_super_type::AccountSuperType> const& super_types =
 		account_super_types();
 	for
-	(	vector<account_super_type::AccountSuperType>::size_type i = 0;
-		i != super_types.size();
-		++i
+	(	vector<account_super_type::AccountSuperType>::size_type j = 0;
+		j != super_types.size();
+		++j
 	)
 	{
-		max_counts[super_types[i]] = 0;
+		max_counts[super_types[j]] = 0;
 	}
 	map<Account::Id, size_t>::const_iterator it = account_map.begin();
 	map<Account::Id, size_t>::const_iterator const end = account_map.end();

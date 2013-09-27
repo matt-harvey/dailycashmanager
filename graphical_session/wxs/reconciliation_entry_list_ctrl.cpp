@@ -158,8 +158,14 @@ ReconciliationEntryListCtrl::do_insert_non_date_columns()
 bool
 ReconciliationEntryListCtrl::do_approve_entry(Entry const& p_entry) const
 {
-	JEWEL_ASSERT (p_entry.account() == account());
-	JEWEL_ASSERT (p_entry.date() <= max_date());
+	if (p_entry.account() != account())
+	{
+		return false;
+	}
+	if (p_entry.date() > max_date())
+	{
+		return false;
+	}
 	if (p_entry.date() < min_date())
 	{
 		// We include unreconciled Entries even if they're prior to the
@@ -222,8 +228,14 @@ ReconciliationEntryListCtrl::do_process_candidate_entry_for_summary
 (	Entry const& p_entry
 )
 {
-	JEWEL_ASSERT (p_entry.account() == account());
-	JEWEL_ASSERT (p_entry.date() <= max_date());
+	if (p_entry.account() != account())
+	{	
+		return;
+	}
+	if (p_entry.date() > max_date())
+	{
+		return;
+	}
 	jewel::Decimal const amount = p_entry.amount();
 	m_closing_balance += amount;
 	if (p_entry.is_reconciled()) m_reconciled_closing_balance += amount;
