@@ -9,7 +9,6 @@
 #include <boost/optional.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
-#include <jewel/array_utilities.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
@@ -28,9 +27,10 @@ using boost::optional;
 using boost::unordered_map;
 using boost::unordered_set;
 using jewel::Log;
-using jewel::num_elements;
 using jewel::value;
 using std::back_inserter;
+using std::begin;
+using std::end;
 using std::find;
 using std::find_first_of;
 using std::out_of_range;
@@ -57,10 +57,7 @@ namespace
 		{	'a', 'A', 'b', 'B', 'c', 'd', 'H', 'I', 'j', 'm', 'M', 'P',
 			'S', 'U', 'w', 'W', 'x', 'X', 'y', 'Y', 'Z'
 		};
-		static unordered_set<char> const chars
-		(	jewel::begin(chars_a),
-			jewel::end(chars_a)
-		);
+		static unordered_set<char> const chars(begin(chars_a), end(chars_a));
 		return chars.find(c) != chars.end();
 	}
 
@@ -315,8 +312,8 @@ namespace
 					DateComponentType const first = *find_first_of
 					(	component_types.begin(),
 						component_types.end(),
-						jewel::begin(day_and_month),
-						jewel::end(day_and_month)
+						begin(day_and_month),
+						end(day_and_month)
 					);
 					switch (j)
 					{
@@ -384,15 +381,15 @@ DateParser::parse(wxString const& p_string, bool p_be_tolerant) const
 	wxString::const_iterator parsed_to_position;
 	wxDateTime date_wx;
 	
-	wxString const* formats[] =
+	wxString const* const formats[] =
 	{	&m_primary_format,
 		&m_secondary_format
 	};
-	for (size_t i = 0; i != num_elements(formats); ++i)
+	for (wxString const* const format: formats)
 	{
 		date_wx.ParseFormat
 		(	p_string,
-			*(formats[i]),
+			*(format),
 			&parsed_to_position
 		);
 		if (parsed_to_position == p_string.end())

@@ -18,9 +18,7 @@
 #include "transaction_ctrl.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
-#include <map>
 #include <boost/optional.hpp>
-#include <jewel/array_utilities.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -30,21 +28,20 @@
 #include <wx/string.h>
 #include <wx/window.h>
 #include <wx/wupdlock.h>
+#include <iterator>
+#include <map>
 #include <set>
 #include <vector>
 
 using boost::optional;
 using jewel::Decimal;
-using jewel::num_elements;
 using jewel::value;
+using std::begin;
+using std::end;
 using std::map;
 using std::set;
 using std::vector;
 
-
-#include <jewel/log.hpp>
-#include <iostream>
-using std::endl;
 
 
 
@@ -310,7 +307,11 @@ TopPanel::make_proto_journal() const
 		assert_transaction_type_validity(initial_transaction_type);
 		ret.set_transaction_type(initial_transaction_type);
 		Account const accounts[] = {account_x, account_y};
-		for (size_t i = 0; i != num_elements(accounts); ++i)
+		for
+		(	size_t i = 0;
+			i != static_cast<size_t>(end(accounts) - begin(accounts));
+			++i
+		)
 		{
 			Account const& account = accounts[i];
 			Entry entry(m_database_connection);

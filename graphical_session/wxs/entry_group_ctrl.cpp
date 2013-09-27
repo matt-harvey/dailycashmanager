@@ -16,7 +16,6 @@
 #include "window_utilities.hpp"
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <jewel/array_utilities.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -31,7 +30,6 @@
 using boost::optional;
 using boost::scoped_ptr;
 using jewel::Decimal;
-using jewel::num_elements;
 using jewel::value;
 using std::set;
 using std::vector;
@@ -377,9 +375,8 @@ EntryGroupCtrl::pop_row()
 		doomed_entry_row.comment_ctrl,
 		doomed_entry_row.amount_ctrl
 	};
-	for (size_t i = 0; i != num_elements(doomed_windows); ++i)
+	for (wxWindow* doomed_window: doomed_windows)
 	{
-		wxWindow* doomed_window = doomed_windows[i];
 		if (doomed_window)
 		{
 			m_top_sizer->Detach(doomed_window);

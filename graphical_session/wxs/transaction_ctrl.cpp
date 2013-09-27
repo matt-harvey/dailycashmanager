@@ -35,7 +35,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/unordered_set.hpp>
-#include <jewel/array_utilities.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
@@ -59,12 +58,12 @@
 using boost::optional;
 using boost::scoped_ptr;
 using boost::unordered_set;
-using jewel::num_elements;
 using jewel::Decimal;
 using jewel::value;
 using std::back_inserter;
+using std::begin;
 using std::copy;
-using std::endl;
+using std::end;
 using std::find;
 using std::set;
 using std::vector;
@@ -666,7 +665,11 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 				DecimalFormatFlags().
 					clear(string_flags::dash_for_zero).
 					set(string_flags::hard_align_right);
-			for (size_t i = 0; i != num_elements(imbalances); ++i)
+			for
+			(	size_t i = 0;
+				i != static_cast<size_t>(end(imbalances) - begin(imbalances));
+				++i
+			)
 			{
 				Decimal const& imbalance = imbalances[i];
 				if (imbalance != Decimal(0, 0))
@@ -709,9 +712,9 @@ TransactionCtrl::reflect_reconciliation_statuses()
 		m_destination_entry_ctrl
 	};
 	bool contains_reconciled = false;
-	for (size_t i = 0; i != num_elements(entry_controls); ++i)
+	for (EntryGroupCtrl* control: entry_controls)
 	{
-		if (entry_controls[i]->reflect_reconciliation_statuses())
+		if (control->reflect_reconciliation_statuses())
 		{
 			contains_reconciled = true;
 		}
@@ -722,9 +725,8 @@ TransactionCtrl::reflect_reconciliation_statuses()
 		m_date_ctrl,
 		m_primary_amount_ctrl
 	};
-	for (size_t i = 0; i != num_elements(general_controls); ++i)
+	for (wxWindow* control: general_controls)
 	{
-		wxWindow* control = general_controls[i];
 		if (control)
 		{
 			control->Enable(!contains_reconciled);
@@ -746,14 +748,10 @@ TransactionCtrl::post_journal()
 	{	m_source_entry_ctrl,
 		m_destination_entry_ctrl
 	};
-	for (size_t i = 0; i != num_elements(entry_controls); ++i)
+	for (EntryGroupCtrl const* const control: entry_controls)
 	{
-		vector<Entry> entries = entry_controls[i]->make_entries();
-		for (vector<Entry>::size_type j = 0; j != entries.size(); ++j)
-		{
-			Entry entry = entries[j];
-			journal.push_entry(entry);
-		}
+		vector<Entry> entries = control->make_entries();
+		for (Entry entry: entries) journal.push_entry(entry);
 	}
 	journal.set_comment("");
 
@@ -925,12 +923,11 @@ TransactionCtrl::save_existing_journal()
 	{	m_source_entry_ctrl,
 		m_destination_entry_ctrl
 	};
-	for (size_t i = 0; i != num_elements(entry_controls); ++i)
+	for (EntryGroupCtrl const* const control: entry_controls)
 	{
-		vector<Entry> entries = entry_controls[i]->make_entries();
-		for (vector<Entry>::size_type j = 0; j != entries.size(); ++j)
+		vector<Entry> entries = control->make_entries();
+		for (Entry entry: entries)
 		{
-			Entry entry = entries[j];
 			m_journal->push_entry(entry);
 			if (entry.has_id()) doomed.erase(entry.id());
 		}
@@ -1036,13 +1033,13 @@ TransactionCtrl::is_balanced() const
 	Decimal const primary_amt = primary_amount();
 	EntryGroupCtrl const* const entry_controls[] =
 		{ m_source_entry_ctrl, m_destination_entry_ctrl };
-	for (size_t i = 0; i != num_elements(entry_controls); ++i)
+	for (EntryGroupCtrl const* const control: entry_controls)
 	{
-		if (entry_controls[i]->total_amount() != primary_amt)
+		if (control->total_amount() != primary_amt)
 		{
 			return false;
 		}
-		JEWEL_ASSERT (entry_controls[i]->primary_amount() == primary_amt);
+		JEWEL_ASSERT (control->primary_amount() == primary_amt);
 	}
 	return true;
 }

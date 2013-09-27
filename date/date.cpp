@@ -18,7 +18,6 @@
 #include "date_parser.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
-#include <jewel/array_utilities.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <wx/datetime.h>
@@ -26,7 +25,6 @@
 #include <limits>
 
 using boost::optional;
-using jewel::num_elements;
 using std::numeric_limits;
 
 namespace gregorian = boost::gregorian;

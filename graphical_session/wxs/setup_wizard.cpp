@@ -23,7 +23,6 @@
 #include "visibility.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
-#include <jewel/array_utilities.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
@@ -987,15 +986,13 @@ SetupWizard::AccountPage::account_types_valid
 	{	account_type::revenue,
 		account_type::expense
 	};
-	account_type::AccountType const* it = jewel::begin(atypes);
-	account_type::AccountType const* const end = jewel::end(atypes);
-	for ( ; it != end; ++it)
+	for (account_type::AccountType atype: atypes)
 	{
-		if (!m_multi_account_panel->account_type_is_selected(*it))
+		if (!m_multi_account_panel->account_type_is_selected(atype))
 		{
 			error_message =
 				wxString("You need at least one ") +
-				account_type_to_string(*it) +
+				account_type_to_string(atype) +
 				wxString(" ") +
 				account_concept_name(m_account_super_type) +
 				wxString(" to start off with.");
