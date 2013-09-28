@@ -16,7 +16,6 @@
 
 #include "phatbooks_database_connection.hpp"
 #include <boost/optional.hpp>
-#include <boost/static_assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/general_typedefs.hpp>
@@ -47,7 +46,10 @@ class CommodityImpl:
 public:
 
 	// Other classes rely on the below static assertion being true.
-	BOOST_STATIC_ASSERT((boost::is_same<Id, sqloxx::Id>::value));
+	static_assert
+	(	boost::is_same<Id, sqloxx::Id>::value,
+		"CommodityImpl::Id needs to be the same type as sqloxx::Id."
+	);
 
 	typedef sqloxx::PersistentObject
 		<	CommodityImpl,

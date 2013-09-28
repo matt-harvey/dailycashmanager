@@ -9,7 +9,6 @@
 #include "phatbooks_exceptions.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
-#include <boost/static_assert.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/decimal.hpp>
@@ -42,7 +41,10 @@ using std::endl;
 namespace phatbooks
 {
 
-BOOST_STATIC_ASSERT((boost::is_same<Account::Id, AccountImpl::Id>::value));
+static_assert
+(	boost::is_same<Account::Id, AccountImpl::Id>::value,
+	"Account::Id needs to be the same type as AccountImpl::Id."
+);
 
 void
 BalanceCache::setup_tables(PhatbooksDatabaseConnection& dbc)

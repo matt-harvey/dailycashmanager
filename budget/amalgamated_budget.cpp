@@ -14,7 +14,6 @@
 #include "transaction_type.hpp"
 #include "visibility.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/static_assert.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -47,7 +46,10 @@ namespace phatbooks
 {
 
 
-BOOST_STATIC_ASSERT((boost::is_same<Account::Id, AccountImpl::Id>::value));
+static_assert
+(	boost::is_same<Account::Id, AccountImpl::Id>::value,
+	"Account::Id needs to be the same type as AccountImpl::Id."
+);
 
 
 namespace

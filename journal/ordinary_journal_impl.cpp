@@ -15,8 +15,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/optional.hpp>
-#include <boost/static_assert.hpp>
-#include <boost/type_traits.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
@@ -26,6 +24,7 @@
 #include <wx/string.h>
 #include <iostream>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 using boost::numeric_cast;
@@ -36,6 +35,7 @@ using jewel::Signature;
 using jewel::value;
 using sqloxx::SQLStatement;
 using std::endl;
+using std::is_same;
 using std::string;
 using std::vector;
 
@@ -264,7 +264,10 @@ OrdinaryJournalImpl::do_load()
 	// If this assertion ever fails, it's a reminder that the exception-safety
 	// of loading here MAY depend on m_date being of a native, non-throwing
 	// type.
-	BOOST_STATIC_ASSERT((boost::is_same<DateRep, int>::value));
+	static_assert
+	(	is_same<DateRep, int>::value,
+		"DateRep needs to be int."
+	);
 	temp.m_date = numeric_cast<DateRep>(statement.extract<long long>(0));
 	swap(temp);
 	return;

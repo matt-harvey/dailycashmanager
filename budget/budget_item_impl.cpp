@@ -5,7 +5,6 @@
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"
-#include <boost/static_assert.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/exception.hpp>
@@ -34,7 +33,10 @@ namespace phatbooks
 {
 
 
-BOOST_STATIC_ASSERT((boost::is_same<Account::Id, BudgetItem::Id>::value));
+static_assert
+(	boost::is_same<Account::Id, BudgetItem::Id>::value,
+	"Account::Id needs to be the same type as BudgetItem::Id."
+);
 
 
 typedef

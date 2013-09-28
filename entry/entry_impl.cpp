@@ -204,7 +204,6 @@ EntryImpl::swap(EntryImpl& rhs)
 	return;
 }
 
-
 EntryImpl::EntryImpl(EntryImpl const& rhs):
 	PersistentObject(rhs),
 	m_data(new EntryData(*(rhs.m_data)))
@@ -255,7 +254,6 @@ EntryImpl::do_load()
 	return;
 }
 
-
 void
 EntryImpl::process_saving_statement(SQLStatement& statement)
 {
@@ -271,7 +269,6 @@ EntryImpl::process_saving_statement(SQLStatement& statement)
 	statement.step_final();
 	return;
 }
-
 
 void
 EntryImpl::do_save_existing()
@@ -371,9 +368,6 @@ EntryImpl::do_remove()
 	statement.bind(":p", id());
 	statement.step_final();
 }
-
-
-
 
 std::string
 EntryImpl::primary_table_name()
