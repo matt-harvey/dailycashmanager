@@ -87,7 +87,7 @@ public:
 	// copy assignment and move assignment are all as synthesised
 	// by the compiler.
 
-	// TODO Compiling this with "= default" evokes a compiler bug
+	// TODO Compiling this with "= default" invokes a compiler bug
 	// in GCC 4.8.1 under Fedora (at least). Run it again, and file
 	// bug report.
 	virtual ~PhatbooksPersistentObject()

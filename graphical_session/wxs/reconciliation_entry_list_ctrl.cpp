@@ -95,6 +95,8 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 	m_image_list(nullptr)
 {
 	JEWEL_LOG_TRACE();
+
+	// TODO HIGH PRIORITY Images aren't showing under MSW.
 	m_image_list = new wxImageList(0, 0);
 	m_image_list->Add(wxBitmap(blank_xpm), *wxWHITE);  // must be 0th image
 	m_image_list->Add(wxBitmap(tick_xpm), *wxWHITE);   // must be 1st image
