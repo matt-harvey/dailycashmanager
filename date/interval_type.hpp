@@ -24,7 +24,7 @@ namespace phatbooks
  * The class PhatbooksDatabaseConnection relies on the
  * numbering shown here.
  */
-enum class IntervalType
+enum class IntervalType: unsigned char
 {
 	days = 1,
 	weeks,

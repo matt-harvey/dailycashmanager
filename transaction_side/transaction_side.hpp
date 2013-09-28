@@ -14,7 +14,7 @@ namespace phatbooks
  * the signs may be the other way around in case we are reversing a
  * previous transaction.
  */
-enum class TransactionSide
+enum class TransactionSide: unsigned char
 {
 	source = 0,
 	destination,

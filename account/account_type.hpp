@@ -9,7 +9,7 @@
 namespace phatbooks
 {
 
-enum class AccountType
+enum class AccountType: unsigned char
 {
 	// enum order is significant, as the database contains
 	// a table with primary keys in this order.
@@ -30,7 +30,7 @@ enum class AccountType
  * AccountSuperTypes. The account_types table should then contain the
  * information about which AccountType maps to which AccountSuperType.
  */
-enum class AccountSuperType
+enum class AccountSuperType: unsigned char
 {
 	balance_sheet,
 	pl  			// Profit and loss

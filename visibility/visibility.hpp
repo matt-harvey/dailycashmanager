@@ -10,7 +10,7 @@ namespace phatbooks
  * Represents information about whether some item, e.g. an Account,
  * is hidden or visible.
  */
-enum class Visibility
+enum class Visibility: unsigned char
 {
 	hidden = 0,
 	visible,

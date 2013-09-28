@@ -26,7 +26,7 @@ class PhatbooksDatabaseConnection;
  * "amount spent", "amount earned" or "amount transferred" when
  * requesting the transaction amount from the user.
  */
-enum class TransactionType
+enum class TransactionType: unsigned char
 {
 	expenditure = 0,
 	revenue,

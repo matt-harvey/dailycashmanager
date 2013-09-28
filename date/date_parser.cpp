@@ -61,7 +61,7 @@ namespace
 		return chars.find(c) != chars.end();
 	}
 
-	enum class DateComponentType
+	enum class DateComponentType: unsigned char
 	{
 		day,
 		month,
