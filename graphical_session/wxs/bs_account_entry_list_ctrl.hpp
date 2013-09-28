@@ -24,7 +24,7 @@ namespace gui
 
 /**
  * A FilteredEntryListCtrl where the Account is of
- * account_super_type::balance_sheet.
+ * AccountSuperType::balance_sheet.
  */
 class BSAccountEntryListCtrl: public FilteredEntryListCtrl
 {

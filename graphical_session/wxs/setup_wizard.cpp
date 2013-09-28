@@ -125,7 +125,7 @@ namespace
 	void make_default_augmented_accounts
 	(	PhatbooksDatabaseConnection& dbc,
 		vector<AugmentedAccount>& vec,
-		account_type::AccountType p_account_type,
+		AccountType p_account_type,
 		Decimal::places_type precision
 	)
 	{
@@ -167,12 +167,12 @@ SetupWizard::SetupWizard
 	m_filepath_page = new FilepathPage(this, m_database_connection);
 	m_balance_sheet_account_page = new AccountPage
 	(	this,
-		account_super_type::balance_sheet,
+		AccountSuperType::balance_sheet,
 		m_database_connection
 	);
 	m_pl_account_page = new AccountPage
 	(	this,
-		account_super_type::pl,
+		AccountSuperType::pl,
 		m_database_connection
 	);
 	render_account_pages();
@@ -712,7 +712,7 @@ END_EVENT_TABLE()
 
 SetupWizard::AccountPage::AccountPage
 (	SetupWizard* p_parent,
-	account_super_type::AccountSuperType p_account_super_type,
+	AccountSuperType p_account_super_type,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxWizardPageSimple(p_parent),
@@ -964,20 +964,19 @@ SetupWizard::AccountPage::account_types_valid
 (	wxString& error_message
 ) const
 {
-	using account_type::AccountType;
-	if (m_account_super_type == account_super_type::balance_sheet)
+	if (m_account_super_type == AccountSuperType::balance_sheet)
 	{
 		JEWEL_ASSERT (m_multi_account_panel);
 		JEWEL_ASSERT (m_min_num_accounts >= 1);
 		JEWEL_ASSERT (m_multi_account_panel->num_rows() >= 1);
 		return true;
 	}
-	JEWEL_ASSERT (m_account_super_type == account_super_type::pl);
-	account_type::AccountType const atypes[] =
-	{	account_type::revenue,
-		account_type::expense
+	JEWEL_ASSERT (m_account_super_type == AccountSuperType::pl);
+	AccountType const atypes[] =
+	{	AccountType::revenue,
+		AccountType::expense
 	};
-	for (account_type::AccountType atype: atypes)
+	for (AccountType atype: atypes)
 	{
 		if (!m_multi_account_panel->account_type_is_selected(atype))
 		{
@@ -1052,14 +1051,14 @@ SetupWizard::AccountPage::main_text() const
 	wxString ret(" ");
 	switch (m_account_super_type)
 	{
-	case account_super_type::balance_sheet:
+	case AccountSuperType::balance_sheet:
 		ret += wxString
 		(	"Enter your assets (\"what you own\") and liabilities "
 			"(\"what you owe\"), along with the current balances of "
 			"each. "
 		);
 		break;
-	case account_super_type::pl:
+	case AccountSuperType::pl:
 		ret += wxString
 		(	"Enter some revenue and expenditure categories, along with "
 			"the amount of funds you want to allocate to each of "

@@ -17,7 +17,7 @@ namespace phatbooks
 namespace test
 {
 
-typedef vector<account_type::AccountType> Vec;
+typedef vector<AccountType> Vec;
 typedef Vec::size_type Size;
 
 TEST(TestSourceAccountTypesExpenditureTransaction)
@@ -30,10 +30,10 @@ TEST(TestSourceAccountTypesExpenditureTransaction)
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
 	{
-		CHECK_EQUAL(account_types_cpy[i], account_types_ref[i]);
+		CHECK(account_types_cpy[i] == account_types_ref[i]);
 		CHECK
-		(	(account_types_ref[i] == account_type::asset) ||
-			(account_types_ref[i] == account_type::liability)
+		(	(account_types_ref[i] == AccountType::asset) ||
+			(account_types_ref[i] == AccountType::liability)
 		);
 	}
 }
@@ -48,8 +48,8 @@ TEST(TestDestinationAccountTypesExpenditureTransaction)
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(1));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
 	{
-		CHECK_EQUAL(account_types_cpy[i], account_types_ref[i]);
-		CHECK(account_types_ref[i] == account_type::expense);
+		CHECK(account_types_cpy[i] == account_types_ref[i]);
+		CHECK(account_types_ref[i] == AccountType::expense);
 	}
 }
 
@@ -63,8 +63,8 @@ TEST(TestSourceAccountTypesRevenueTransaction)
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(1));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
 	{
-		CHECK_EQUAL(account_types_cpy[i], account_types_ref[i]);
-		CHECK(account_types_ref[i] == account_type::revenue);
+		CHECK(account_types_cpy[i] == account_types_ref[i]);
+		CHECK(account_types_ref[i] == AccountType::revenue);
 	}
 }
 
@@ -78,10 +78,10 @@ TEST(TestDestinationAccountTypesRevenueTransaction)
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
 	{
-		CHECK_EQUAL(account_types_cpy[i], account_types_ref[i]);
+		CHECK(account_types_cpy[i] == account_types_ref[i]);
 		CHECK
-		(	(account_types_ref[i] == account_type::asset) ||
-			(account_types_ref[i] == account_type::liability)
+		(	(account_types_ref[i] == AccountType::asset) ||
+			(account_types_ref[i] == AccountType::liability)
 		);
 	}
 }
@@ -98,10 +98,10 @@ TEST(TestSourceAccountTypesBalanceSheetTransaction)
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
 	{
-		CHECK_EQUAL(account_types_cpy[i], account_types_ref[i]);
+		CHECK(account_types_cpy[i] == account_types_ref[i]);
 		CHECK
-		(	(account_types_ref[i] == account_type::asset) ||
-			(account_types_ref[i] == account_type::liability)
+		(	(account_types_ref[i] == AccountType::asset) ||
+			(account_types_ref[i] == AccountType::liability)
 		);
 	}
 }
@@ -118,10 +118,10 @@ TEST(TestDestinationAccountTypesBalanceSheetTransaction)
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
 	{
-		CHECK_EQUAL(account_types_cpy[i], account_types_ref[i]);
+		CHECK(account_types_cpy[i] == account_types_ref[i]);
 		CHECK
-		(	(account_types_ref[i] == account_type::asset) ||
-			(account_types_ref[i] == account_type::liability)
+		(	(account_types_ref[i] == AccountType::asset) ||
+			(account_types_ref[i] == AccountType::liability)
 		);
 	}
 }
@@ -136,11 +136,11 @@ TEST(TestSourceAccountTypesEnvelopeTransaction)
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(3));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
 	{
-		CHECK_EQUAL(account_types_cpy[i], account_types_ref[i]);
+		CHECK(account_types_cpy[i] == account_types_ref[i]);
 		CHECK
-		(	(account_types_ref[i] == account_type::revenue) ||
-			(account_types_ref[i] == account_type::expense) ||
-			(account_types_ref[i] == account_type::pure_envelope)
+		(	(account_types_ref[i] == AccountType::revenue) ||
+			(account_types_ref[i] == AccountType::expense) ||
+			(account_types_ref[i] == AccountType::pure_envelope)
 		);
 	}
 }
@@ -155,11 +155,11 @@ TEST(TestDestinationAccountTypesEnvelopeTransaction)
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(3));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
 	{
-		CHECK_EQUAL(account_types_cpy[i], account_types_ref[i]);
+		CHECK(account_types_cpy[i] == account_types_ref[i]);
 		CHECK
-		(	(account_types_ref[i] == account_type::revenue) ||
-			(account_types_ref[i] == account_type::expense) ||
-			(account_types_ref[i] == account_type::pure_envelope)
+		(	(account_types_ref[i] == AccountType::revenue) ||
+			(account_types_ref[i] == AccountType::expense) ||
+			(account_types_ref[i] == AccountType::pure_envelope)
 		);
 	}
 }
@@ -174,14 +174,14 @@ TEST(TestSourceAccountTypesGenericTransaction)
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(6));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
 	{
-		CHECK_EQUAL(account_types_cpy[i], account_types_ref[i]);
+		CHECK(account_types_cpy[i] == account_types_ref[i]);
 		CHECK
-		(	(account_types_ref[i] == account_type::revenue) ||
-			(account_types_ref[i] == account_type::expense) ||
-			(account_types_ref[i] == account_type::pure_envelope) ||
-			(account_types_ref[i] == account_type::asset) ||
-			(account_types_ref[i] == account_type::liability) ||
-			(account_types_ref[i] == account_type::equity)
+		(	(account_types_ref[i] == AccountType::revenue) ||
+			(account_types_ref[i] == AccountType::expense) ||
+			(account_types_ref[i] == AccountType::pure_envelope) ||
+			(account_types_ref[i] == AccountType::asset) ||
+			(account_types_ref[i] == AccountType::liability) ||
+			(account_types_ref[i] == AccountType::equity)
 		);
 	}
 }
@@ -196,14 +196,14 @@ TEST(TestDestinationAccountTypesGenericTransaction)
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(6));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
 	{
-		CHECK_EQUAL(account_types_cpy[i], account_types_ref[i]);
+		CHECK(account_types_cpy[i] == account_types_ref[i]);
 		CHECK
-		(	(account_types_ref[i] == account_type::revenue) ||
-			(account_types_ref[i] == account_type::expense) ||
-			(account_types_ref[i] == account_type::pure_envelope) ||
-			(account_types_ref[i] == account_type::asset) ||
-			(account_types_ref[i] == account_type::liability) ||
-			(account_types_ref[i] == account_type::equity)
+		(	(account_types_ref[i] == AccountType::revenue) ||
+			(account_types_ref[i] == AccountType::expense) ||
+			(account_types_ref[i] == AccountType::pure_envelope) ||
+			(account_types_ref[i] == AccountType::asset) ||
+			(account_types_ref[i] == AccountType::liability) ||
+			(account_types_ref[i] == AccountType::equity)
 		);
 	}
 }

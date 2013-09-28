@@ -34,7 +34,7 @@ class DecimalTextCtrl;
  *
  * @todo We don't want the user to be able to choose the Equity
  * AccountType. Also, we don't want the user to be able to change a
- * P&L Account to account_type::pure_envelope if it has actual
+ * P&L Account to AccountType::pure_envelope if it has actual
  * transactions recorded against it. In fact, if the user is editing
  * an existing Account, it probably doesn't make a lot of sense to allow
  * them to change the existing AccountType at all. It would be only very
@@ -81,7 +81,7 @@ public:
 	AccountDialog
 	(	wxWindow* p_parent,
 		Account& p_account,
-		account_super_type::AccountSuperType p_account_super_type
+		AccountSuperType p_account_super_type
 	);
 
 	AccountDialog(AccountDialog const&) = delete;
@@ -98,7 +98,7 @@ private:
 	void configure_budget_panel();
 	void configure_bottom_row();
 
-	account_super_type::AccountSuperType account_super_type() const;
+	AccountSuperType account_super_type() const;
 
 	/**
 	 * Updates m_account based on the data entered by the user.

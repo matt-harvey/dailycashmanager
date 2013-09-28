@@ -96,13 +96,13 @@ EntryListPanel::EntryListPanel
 
 	wxString account_label_text(" ");
 	account_label_text += account_concept_name
-	(	account_super_type::balance_sheet,
+	(	AccountSuperType::balance_sheet,
 		AccountPhraseFlags().set(string_flags::capitalize)
 	);
 	if (include_pl_accounts)
 	{
 		account_label_text += wxString(" or ");
-		account_label_text += account_concept_name(account_super_type::pl);
+		account_label_text += account_concept_name(AccountSuperType::pl);
 	}
 	account_label_text += wxString(":");
 	wxStaticText* account_label =
@@ -120,14 +120,13 @@ EntryListPanel::EntryListPanel
 
 	if (include_pl_accounts)
 	{
-		using account_type::AccountType;
 		vector<AccountType> const& all_account_types = account_types();
 		vector<AccountType> impure_account_types;
 		remove_copy
 		(	all_account_types.begin(),
 			all_account_types.end(),
 			back_inserter(impure_account_types),
-			account_type::pure_envelope
+			AccountType::pure_envelope
 		);
 		m_account_ctrl = new AccountCtrl
 		(	this,
@@ -143,7 +142,7 @@ EntryListPanel::EntryListPanel
 		(	this,
 			s_account_ctrl_id,
 			wxSize(large_width(), wxDefaultSize.y),
-			account_types(account_super_type::balance_sheet),
+			account_types(AccountSuperType::balance_sheet),
 			m_database_connection
 		);
 	}

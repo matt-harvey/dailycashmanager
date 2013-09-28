@@ -229,7 +229,7 @@ AccountImpl::no_user_pl_accounts_saved
 	for ( ; it != end; ++it)
 	{
 		if
-		(	(super_type(it->account_type()) == account_super_type::pl) &&
+		(	(super_type(it->account_type()) == AccountSuperType::pl) &&
 			(*it != bal_account)
 		)
 		{
@@ -242,7 +242,7 @@ AccountImpl::no_user_pl_accounts_saved
 bool
 AccountImpl::none_saved_with_account_type
 (	PhatbooksDatabaseConnection& p_database_connection,
-	account_type::AccountType p_account_type
+	AccountType p_account_type
 )
 {
 	SQLStatement statement
@@ -257,7 +257,7 @@ AccountImpl::none_saved_with_account_type
 bool
 AccountImpl::none_saved_with_account_super_type
 (	PhatbooksDatabaseConnection& p_database_connection,
-	account_super_type::AccountSuperType p_account_super_type
+	AccountSuperType p_account_super_type
 )
 {
 	SQLStatement statement
@@ -277,14 +277,14 @@ AccountImpl::none_saved_with_account_super_type
 }
 
 
-AccountImpl::AccountType
+AccountType
 AccountImpl::account_type()
 {
 	load();
 	return value(m_data->account_type);
 }
 
-AccountImpl::AccountSuperType
+AccountSuperType
 AccountImpl::account_super_type()
 {
 	load();
@@ -326,14 +326,14 @@ namespace
 	// account_super_type() ast.
 	Decimal technical_to_friendly
 	(	Decimal const& d,
-		account_super_type::AccountSuperType ast
+		AccountSuperType ast
 	)
 	{
 		switch (ast)
 		{
-		case account_super_type::balance_sheet:
+		case AccountSuperType::balance_sheet:
 			return d;
-		case account_super_type::pl:
+		case AccountSuperType::pl:
 			return round(d * Decimal(-1, 0), d.places());
 		default:
 			JEWEL_HARD_ASSERT (false);
@@ -615,7 +615,7 @@ AccountImpl::primary_key_name()
 void
 favourite_accounts
 (	PhatbooksDatabaseConnection& p_database_connection,
-	std::map<account_super_type::AccountSuperType, AccountImpl::Id>& out
+	std::map<AccountSuperType, AccountImpl::Id>& out
 )
 {
 	// TODO Code is duplicated between here and "entry_table_iterator.cpp".
@@ -666,8 +666,8 @@ favourite_accounts
 		account_map[selector.extract<Account::Id>(0)] =
 			selector.extract<long long>(1);
 	}
-	map<account_super_type::AccountSuperType, size_t> max_counts;
-	for (account_super_type::AccountSuperType ast: account_super_types())
+	map<AccountSuperType, size_t> max_counts;
+	for (AccountSuperType ast: account_super_types())
 	{
 		max_counts[ast] = 0;
 	}
@@ -676,7 +676,7 @@ favourite_accounts
 	{
 		Account const account(p_database_connection, account_map_elem.first);
 		size_t const count = account_map_elem.second;
-		account_super_type::AccountSuperType const stype =
+		AccountSuperType const stype =
 			super_type(account.account_type());
 		if
 		(	(	(account_map[account.id()] >= max_counts[stype]) ||

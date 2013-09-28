@@ -41,7 +41,7 @@ END_EVENT_TABLE()
 AccountListCtrl::AccountListCtrl
 (	wxWindow* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection,
-	account_super_type::AccountSuperType p_account_super_type
+	AccountSuperType p_account_super_type
 ):
 	wxListCtrl
 	(	p_parent,
@@ -199,7 +199,7 @@ AccountListCtrl::update()
 bool
 AccountListCtrl::showing_daily_budget() const
 {
-	return m_account_super_type == account_super_type::pl;
+	return m_account_super_type == AccountSuperType::pl;
 }
 
 optional<Account>

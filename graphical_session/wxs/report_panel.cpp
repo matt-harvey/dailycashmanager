@@ -211,17 +211,17 @@ ReportPanel::configure_bottom()
 	return;
 }
 
-account_super_type::AccountSuperType
+AccountSuperType
 ReportPanel::selected_account_super_type() const
 {
 	JEWEL_ASSERT (m_report_type_ctrl);
 	wxString const report_name = m_report_type_ctrl->GetValue();
 	if (report_name == balance_sheet_report_name())
 	{
-		return account_super_type::balance_sheet;
+		return AccountSuperType::balance_sheet;
 	}
 	JEWEL_ASSERT (report_name == pl_report_name());
-	return account_super_type::pl;
+	return AccountSuperType::pl;
 }
 
 void

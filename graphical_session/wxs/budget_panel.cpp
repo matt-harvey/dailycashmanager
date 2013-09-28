@@ -281,7 +281,7 @@ BudgetPanel::TransferDataToWindow()
 	// Make sure there are no unusual signs
 	// (+ for revenue Accounts or - for expense Accounts) and warn the
 	// user in case there are, giving them the opportunity to correct it.	
-	account_type::AccountType const account_type = m_account.account_type();
+	AccountType const account_type = m_account.account_type();
 
 	// Set precision of "zero" for more efficient comparisons.
 	Decimal const z = zero();
@@ -290,8 +290,8 @@ BudgetPanel::TransferDataToWindow()
 		DecimalTextCtrl* const amount_ctrl = elem.amount_ctrl;
 		Decimal const amount = amount_ctrl->amount();
 		if
-		(	((amount > z) && (account_type == account_type::revenue)) ||
-			((amount < z) && (account_type == account_type::expense))
+		(	((amount > z) && (account_type == AccountType::revenue)) ||
+			((amount < z) && (account_type == AccountType::expense))
 		)
 		{
 			SignWarning warning(this, account_type);
@@ -566,12 +566,12 @@ BudgetPanel::prompt_to_balance()
 	if (!Account::no_user_pl_accounts_saved(database_connection()))
 	{
 		JEWEL_ASSERT (imbalance != z);
-		account_type::AccountType const account_type =
+		AccountType const account_type =
 			m_account.account_type();
 		optional<Account> maybe_target_account;	
 		if
-		(	(   (account_type == account_type::expense) ||
-			    (account_type == account_type::pure_envelope)    )
+		(	(   (account_type == AccountType::expense) ||
+			    (account_type == AccountType::pure_envelope)    )
 			      &&
 			(   imbalance < z  )
 		)
@@ -587,10 +587,10 @@ BudgetPanel::prompt_to_balance()
 			AccountTableIterator const end;
 			for ( ; it != end; ++it)
 			{
-				account_type::AccountType const atype = it->account_type();
+				AccountType const atype = it->account_type();
 				if
-				(	(	(atype == account_type::revenue) ||
-						(atype == account_type::pure_envelope)
+				(	(	(atype == AccountType::revenue) ||
+						(atype == AccountType::pure_envelope)
 					)
 					&&
 					(	it->budget() < z
@@ -640,7 +640,7 @@ BudgetPanel::SpecialFrequencyCtrl::on_text_change(wxCommandEvent& event)
 
 BudgetPanel::SignWarning::SignWarning
 (	wxWindow* p_parent,
-	account_type::AccountType p_account_type
+	AccountType p_account_type
 ):
 	wxMessageDialog
 	(	p_parent,
@@ -653,14 +653,14 @@ BudgetPanel::SignWarning::SignWarning
 
 wxString
 BudgetPanel::SignWarning::get_message
-(	account_type::AccountType p_account_type
+(	AccountType p_account_type
 )
 {
 	JEWEL_ASSERT
-	(	(p_account_type == account_type::revenue) ||
-		(p_account_type == account_type::expense)
+	(	(p_account_type == AccountType::revenue) ||
+		(p_account_type == AccountType::expense)
 	);
-	if (p_account_type == account_type::revenue)
+	if (p_account_type == AccountType::revenue)
 	{
 		return wxString
 		(	"Budget amounts for revenue categories should usually be "
@@ -668,7 +668,7 @@ BudgetPanel::SignWarning::get_message
 			"a negative number?"
 		);
 	}
-	JEWEL_ASSERT (p_account_type == account_type::expense);
+	JEWEL_ASSERT (p_account_type == AccountType::expense);
 	return wxString
 	(	"Budget amounts for expense categories should usually be "
 		"a positive. Do you want to change this amount to "
@@ -734,7 +734,7 @@ BudgetPanel::BalancingDialog::BalancingDialog
 	(	this,
 		wxID_YES,
 		wxString("&Offset to ") +
-			account_concept_name(account_super_type::pl) +
+			account_concept_name(AccountSuperType::pl) +
 			wxString(" below"),
 		wxDefaultPosition,
 		wxSize(large_width(), wxDefaultSize.y)
@@ -752,7 +752,7 @@ BudgetPanel::BalancingDialog::BalancingDialog
 	(	this,
 		wxID_ANY,
 		wxSize(large_width(), wxDefaultSize.y),
-		account_types(account_super_type::pl),
+		account_types(AccountSuperType::pl),
 		m_database_connection,
 		true  // Exclude balancing Account (which would be useless)
 	);

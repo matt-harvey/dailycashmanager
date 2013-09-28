@@ -82,7 +82,7 @@ EntryListCtrl::create_actual_ordinary_entry_list
 	EntryListCtrl* ret = 0;
 	switch (super_type(p_account.account_type()))
 	{
-	case account_super_type::balance_sheet:
+	case AccountSuperType::balance_sheet:
 		ret = new BSAccountEntryListCtrl
 		(	p_parent,
 			p_size,
@@ -91,7 +91,7 @@ EntryListCtrl::create_actual_ordinary_entry_list
 			p_maybe_max_date
 		);
 		break;
-	case account_super_type::pl:
+	case AccountSuperType::pl:
 		ret = new PLAccountEntryListCtrl
 		(	p_parent,
 			p_size,
@@ -119,7 +119,7 @@ EntryListCtrl::create_reconciliation_entry_list
 {
 	JEWEL_ASSERT
 	(	super_type(p_account.account_type()) ==
-		account_super_type::balance_sheet
+		AccountSuperType::balance_sheet
 	);
 	ReconciliationEntryListCtrl* ret = new ReconciliationEntryListCtrl
 	(	p_parent,

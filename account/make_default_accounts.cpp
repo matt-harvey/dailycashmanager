@@ -32,7 +32,7 @@ make_default_accounts
 	vector<Account>& vec
 )
 {
-	for (account_type::AccountType atype: account_types())
+	for (AccountType atype: account_types())
 	{
 		make_default_accounts(p_database_connection, vec, atype);
 	}
@@ -43,7 +43,7 @@ void
 make_default_accounts
 (	PhatbooksDatabaseConnection& p_database_connection,
 	vector<Account>& vec,
-	account_type::AccountType p_account_type
+	AccountType p_account_type
 )
 {
 	vector<wxString> names;
@@ -51,21 +51,21 @@ make_default_accounts
 	// First we fill a vector with the Account names.
 	switch (p_account_type)
 	{
-	case account_type::asset:
+	case AccountType::asset:
 		names.push_back(wxString("Cash"));
 		names.push_back(wxString("Cheque account"));
 		break;
-	case account_type::liability:
+	case AccountType::liability:
 		names.push_back(wxString("Credit card"));
 		break;
-	case account_type::equity:
+	case AccountType::equity:
 		// There are no default equity Accounts.
 		break;
-	case account_type::revenue:
+	case AccountType::revenue:
 		names.push_back(wxString("Salary"));
 		names.push_back(wxString("Interest received"));
 		break;
-	case account_type::expense:
+	case AccountType::expense:
 		names.reserve(7);
 		names.push_back(wxString("Food"));
 		names.push_back(wxString("Household supplies"));
@@ -79,7 +79,7 @@ make_default_accounts
 		// How would we present it to the user? Would we just cheat and treat
 		// it as an expense?
 		break;
-	case account_type::pure_envelope:
+	case AccountType::pure_envelope:
 		// There are no default pure_envelope Accounts.
 		break;
 	default:

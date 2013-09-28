@@ -32,8 +32,6 @@ class PhatbooksDatabaseConnection;
 class Account: public PhatbooksPersistentObject<AccountImpl>
 {
 public:
-	typedef account_type::AccountType AccountType;
-	typedef account_super_type::AccountSuperType AccountSuperType;
 	typedef
 		PhatbooksPersistentObject<AccountImpl>
 		PhatbooksPersistentObject;
@@ -139,7 +137,7 @@ public:
 	 */
 	static bool none_saved_with_account_type
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		account_type::AccountType p_account_type
+		AccountType p_account_type
 	);
 
 	/**
@@ -149,7 +147,7 @@ public:
 	 */
 	static bool none_saved_with_account_super_type
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		account_super_type::AccountSuperType p_account_super_type
+		AccountSuperType p_account_super_type
 	);
 
 	static void setup_tables();
@@ -292,8 +290,8 @@ bool is_expense(Account const& account);
 bool is_revenue(Account const& account);
 bool is_pl_account(Account const& account);
 bool is_not_pure_envelope(Account const& account);
-std::vector<account_type::AccountType> balance_sheet_account_types();
-std::vector<account_type::AccountType> pl_account_types();
+std::vector<AccountType> balance_sheet_account_types();
+std::vector<AccountType> pl_account_types();
 
 
 /**
@@ -317,7 +315,7 @@ typedef
  * particular MultiAccountPanel.
  */
 wxString account_concept_name
-(	account_super_type::AccountSuperType p_account_super_type,
+(	AccountSuperType p_account_super_type,
 	AccountPhraseFlags p_phrase_flag_set = AccountPhraseFlags()
 );
 
@@ -336,7 +334,7 @@ wxString account_concepts_phrase
  * ActualOrdinaryEntries (however, the budget balancing Account is
  * never included, nor are any pure_envelope Accounts).
  */
-std::map<account_super_type::AccountSuperType, Account::Id>
+std::map<AccountSuperType, Account::Id>
 favourite_accounts(PhatbooksDatabaseConnection& p_database_connection);
 
 

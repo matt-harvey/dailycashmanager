@@ -24,7 +24,7 @@ namespace gui
 {
 
 /**
- * A FilteredEntryListCtrl where the Account is of account_super_type::pl.
+ * A FilteredEntryListCtrl where the Account is of AccountSuperType::pl.
  */
 class PLAccountEntryListCtrl: public FilteredEntryListCtrl
 {

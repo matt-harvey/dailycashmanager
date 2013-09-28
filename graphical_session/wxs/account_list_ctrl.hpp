@@ -47,7 +47,7 @@ public:
 	AccountListCtrl
 	(	wxWindow* p_parent,
 		PhatbooksDatabaseConnection& p_database_connection,
-		account_super_type::AccountSuperType p_account_super_type
+		AccountSuperType p_account_super_type
 	);
 
 	AccountListCtrl(AccountListCtrl const&) = delete;
@@ -100,7 +100,7 @@ private:
 	bool showing_daily_budget() const;
 
 	bool m_show_hidden;
-	account_super_type::AccountSuperType const m_account_super_type;
+	AccountSuperType const m_account_super_type;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 	static int const s_name_col = 0;

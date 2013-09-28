@@ -179,8 +179,8 @@ private:
 	 * what is expected for individual BudgetItems. Gives user
 	 * the opportunity to correct the sign.
 	 *
-	 * Should only be used with account_type::revenue and
-	 * account_type::expense. These are the only AccountTypes
+	 * Should only be used with AccountType::revenue and
+	 * AccountType::expense. These are the only AccountTypes
 	 * for which a particular sign is expected.
 	 */
 	class SignWarning: public wxMessageDialog
@@ -188,10 +188,10 @@ private:
 	public:
 		SignWarning
 		(	wxWindow* p_parent,
-			account_type::AccountType p_account_type
+			AccountType p_account_type
 		);
 	private:
-		static wxString get_message(account_type::AccountType p_account_type);
+		static wxString get_message(AccountType p_account_type);
 	};
 
 	/**

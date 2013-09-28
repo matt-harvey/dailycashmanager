@@ -112,7 +112,7 @@ OrdinaryJournal::create_opening_balance_journal
 	ret.push_entry(balancing_entry);
 
 	ret.set_comment("Opening balance adjustment");
-	if (p_account.account_super_type() == account_super_type::balance_sheet)
+	if (p_account.account_super_type() == AccountSuperType::balance_sheet)
 	{
 		ret.set_transaction_type(transaction_type::generic_transaction);
 	}

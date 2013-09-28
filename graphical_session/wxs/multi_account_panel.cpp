@@ -48,15 +48,15 @@ namespace
 {
 	vector<Account> suggested_accounts
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		account_super_type::AccountSuperType p_account_super_type
+		AccountSuperType p_account_super_type
 	)
 	{
 		vector<Account> ret;
 		JEWEL_ASSERT (ret.empty());
-		typedef vector<account_type::AccountType> ATypeVec;
+		typedef vector<AccountType> ATypeVec;
 		ATypeVec const& account_types =
 			phatbooks::account_types(p_account_super_type);
-		for (account_type::AccountType atype: account_types)
+		for (AccountType atype: account_types)
 		{
 			make_default_accounts(p_database_connection, ret, atype);
 		}
@@ -73,7 +73,7 @@ MultiAccountPanel::MultiAccountPanel
 (	SetupWizard::AccountPage* p_parent,
 	wxSize const& p_size,
 	PhatbooksDatabaseConnection& p_database_connection,
-	account_super_type::AccountSuperType p_account_super_type,
+	AccountSuperType p_account_super_type,
 	Commodity const& p_commodity,
 	size_t p_minimum_num_rows
 ):
@@ -85,7 +85,7 @@ MultiAccountPanel::MultiAccountPanel
 {
 	// Row of total text etc.
 	wxString summary_label("Total");
-	if (m_account_super_type == account_super_type::pl)
+	if (m_account_super_type == AccountSuperType::pl)
 	{
 		summary_label += wxString(" to allocate");
 	}
@@ -185,11 +185,11 @@ MultiAccountPanel::pop_row()
 Decimal
 MultiAccountPanel::summary_amount() const
 {
-	if (m_account_super_type == account_super_type::balance_sheet)
+	if (m_account_super_type == AccountSuperType::balance_sheet)
 	{
 		return total_amount();
 	}
-	JEWEL_ASSERT (m_account_super_type == account_super_type::pl);
+	JEWEL_ASSERT (m_account_super_type == AccountSuperType::pl);
 	SetupWizard::AccountPage const* const parent =
 		dynamic_cast<SetupWizard::AccountPage const*>(GetParent());
 	JEWEL_ASSERT (parent);
@@ -222,7 +222,7 @@ MultiAccountPanel::num_rows() const
 
 bool
 MultiAccountPanel::account_type_is_selected
-(	account_type::AccountType p_account_type
+(	AccountType p_account_type
 ) const
 {
 	for (AccountTypeCtrl* const ctrl: m_account_type_boxes)
@@ -244,7 +244,7 @@ MultiAccountPanel::blank_account()
 	ret.set_name(empty_string);
 	ret.set_description(empty_string);
 	ret.set_visibility(visibility::visible);
-	vector<account_type::AccountType> const& atypes =
+	vector<AccountType> const& atypes =
 		account_types(m_account_super_type);
 	JEWEL_ASSERT (!atypes.empty());
 	ret.set_account_type(atypes.at(0));
@@ -355,7 +355,7 @@ MultiAccountPanel::selected_augmented_accounts
 		);
 		Account& account = augmented_account.account;
 		account.set_name(m_account_name_boxes[i]->GetValue().Trim());
-		account_type::AccountType const account_type =
+		AccountType const account_type =
 			m_account_type_boxes[i]->account_type();
 		JEWEL_ASSERT (super_type(account_type) == m_account_super_type);
 		account.set_account_type(account_type);
@@ -364,10 +364,10 @@ MultiAccountPanel::selected_augmented_accounts
 		account.set_commodity(m_commodity);
 
 		// TODO Make sure it is clear to the user which way round the
-		// signs are supposed to go, especially for account_type::liability
+		// signs are supposed to go, especially for AccountType::liability
 		// (where the user should normally enter a negative number).
 		augmented_account.technical_opening_balance =
-		(	m_account_super_type == account_super_type::pl?
+		(	m_account_super_type == AccountSuperType::pl?
 			-m_opening_balance_boxes[i]->amount():
 			m_opening_balance_boxes[i]->amount()
 		);

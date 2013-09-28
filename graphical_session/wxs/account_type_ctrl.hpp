@@ -32,7 +32,7 @@ public:
 		wxWindowID p_id,
 		wxSize const& p_size,
 		PhatbooksDatabaseConnection& p_database_connection,
-		account_super_type::AccountSuperType p_account_super_type
+		AccountSuperType p_account_super_type
 	);
 
 	AccountTypeCtrl(AccountTypeCtrl const&) = delete;
@@ -42,17 +42,17 @@ public:
 
 	~AccountTypeCtrl() = default;
 
-	account_type::AccountType account_type() const;
+	AccountType account_type() const;
 
 	/**
 	 * @throws InvalidAccountTypeException if p_account_type
 	 * does not have m_account_super_type as it AccountSuperType.
 	 */
-	void set_account_type(account_type::AccountType p_account_type);
+	void set_account_type(AccountType p_account_type);
 
 private:
 
-	account_super_type::AccountSuperType m_account_super_type;
+	AccountSuperType m_account_super_type;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 };  // class AccountTypeCtrl

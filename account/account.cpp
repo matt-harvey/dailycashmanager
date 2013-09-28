@@ -21,8 +21,8 @@
 #include <string>
 #include <vector>
 
-using phatbooks::account_type::AccountType;
-using phatbooks::account_super_type::AccountSuperType;
+using phatbooks::AccountType;
+using phatbooks::AccountSuperType;
 using sqloxx::Handle;
 using jewel::Decimal;
 using std::map;
@@ -113,7 +113,7 @@ Account::no_user_pl_accounts_saved
 bool
 Account::none_saved_with_account_type
 (	PhatbooksDatabaseConnection& p_database_connection,
-	account_type::AccountType p_account_type
+	AccountType p_account_type
 )
 {
 	return AccountImpl::none_saved_with_account_type
@@ -125,7 +125,7 @@ Account::none_saved_with_account_type
 bool
 Account::none_saved_with_account_super_type
 (	PhatbooksDatabaseConnection& p_database_connection,
-	account_super_type::AccountSuperType p_account_super_type
+	AccountSuperType p_account_super_type
 )
 {
 	return AccountImpl::none_saved_with_account_super_type
@@ -271,8 +271,8 @@ bool is_asset_or_liability(Account const& account)
 {
 	switch (account.account_type())
 	{
-	case account_type::asset:
-	case account_type::liability:
+	case AccountType::asset:
+	case AccountType::liability:
 		return true;
 	default:
 		return false;
@@ -282,32 +282,32 @@ bool is_asset_or_liability(Account const& account)
 bool is_balance_sheet_account(Account const& account)
 {
 	return account.account_super_type() ==
-		account_super_type::balance_sheet;
+		AccountSuperType::balance_sheet;
 }
 
 bool is_expense(Account const& account)
 {
-	return account.account_type() == account_type::expense;
+	return account.account_type() == AccountType::expense;
 }
 
 bool is_revenue(Account const& account)
 {
-	return account.account_type() == account_type::revenue;
+	return account.account_type() == AccountType::revenue;
 }
 
 bool is_pl_account(Account const& account)
 {
-	return account.account_super_type() == account_super_type::pl;
+	return account.account_super_type() == AccountSuperType::pl;
 }
 
 
 bool is_not_pure_envelope(Account const& account)
 {
-	return account.account_type() != account_type::pure_envelope;
+	return account.account_type() != AccountType::pure_envelope;
 }
 
 wxString account_concept_name
-(	account_super_type::AccountSuperType p_account_super_type,
+(	AccountSuperType p_account_super_type,
 	AccountPhraseFlags p_phrase_flag_set
 )
 {
@@ -320,14 +320,14 @@ wxString account_concept_name
 	bool const capitalize = p_phrase_flag_set.test(string_flags::capitalize);
 	switch (p_account_super_type)
 	{
-	case account_super_type::balance_sheet:
+	case AccountSuperType::balance_sheet:
 		ret +=
 		(	capitalize?
 			wxString("Account"):
 			wxString("account")
 		);
 		break;
-	case account_super_type::pl:
+	case AccountSuperType::pl:
 		ret +=
 		(	capitalize?
 			wxString("Envelope"):
@@ -349,22 +349,22 @@ wxString account_concepts_phrase
 )
 {
 	wxString ret = account_concept_name
-	(	account_super_type::balance_sheet,
+	(	AccountSuperType::balance_sheet,
 		p_phrase_flag_set
 	);
 	ret += wxString(" or ");
 	p_phrase_flag_set.clear(string_flags::include_article);
 	ret += account_concept_name
-	(	account_super_type::pl,
+	(	AccountSuperType::pl,
 		p_phrase_flag_set
 	);
 	return ret;
 }
 
-map<account_super_type::AccountSuperType, Account::Id>
+map<AccountSuperType, Account::Id>
 favourite_accounts(PhatbooksDatabaseConnection& p_database_connection)
 {
-	map<account_super_type::AccountSuperType, Account::Id> ret;
+	map<AccountSuperType, Account::Id> ret;
 	favourite_accounts(p_database_connection, ret);
 	return ret;
 }

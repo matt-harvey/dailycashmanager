@@ -90,7 +90,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	instrument.save();
 
 	Account balancing_account(dbc);
-	balancing_account.set_account_type(account_type::pure_envelope);
+	balancing_account.set_account_type(AccountType::pure_envelope);
 	balancing_account.set_name("Budget imbalance");
 	balancing_account.set_description("");
 	balancing_account.set_visibility(visibility::visible);

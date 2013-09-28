@@ -21,13 +21,13 @@ namespace gui
 namespace
 {
 	wxString default_account_type_string
-	(	account_super_type::AccountSuperType p_account_super_type
+	(	AccountSuperType p_account_super_type
 	)
 	{
 		JEWEL_ASSERT (!account_types(p_account_super_type).empty());
-		account_type::AccountType default_account_type =
+		AccountType default_account_type =
 			account_types(p_account_super_type)[0];
-		if (default_account_type == account_type::equity)
+		if (default_account_type == AccountType::equity)
 		{
 			JEWEL_ASSERT (account_types(p_account_super_type).size() > 1);
 			default_account_type = account_types(p_account_super_type)[1];
@@ -43,7 +43,7 @@ AccountTypeCtrl::AccountTypeCtrl
 	wxWindowID p_id,
 	wxSize const& p_size,
 	PhatbooksDatabaseConnection& p_database_connection,
-	account_super_type::AccountSuperType p_account_super_type
+	AccountSuperType p_account_super_type
 ):
 	wxComboBox
 	(	p_parent,
@@ -57,12 +57,12 @@ AccountTypeCtrl::AccountTypeCtrl
 	m_account_super_type(p_account_super_type),
 	m_database_connection(p_database_connection)
 {
-	typedef vector<account_type::AccountType> ATypeVec;
+	typedef vector<AccountType> ATypeVec;
 	ATypeVec const& atypes = account_types(m_account_super_type);
-	for (account_type::AccountType const elem: atypes)
+	for (AccountType const elem: atypes)
 	{
-		// WARNING Hack to stop users from accessing account_type::equity.
-		if (elem != account_type::equity)
+		// WARNING Hack to stop users from accessing AccountType::equity.
+		if (elem != AccountType::equity)
 		{
 			Append(account_type_to_string(elem));
 		}
@@ -70,7 +70,7 @@ AccountTypeCtrl::AccountTypeCtrl
 	SetSelection(0);  // In effort to avoid apparent bug in Windows
 }
 
-account_type::AccountType
+AccountType
 AccountTypeCtrl::account_type() const
 {
 	JEWEL_ASSERT (!GetValue().IsEmpty());
@@ -78,7 +78,7 @@ AccountTypeCtrl::account_type() const
 }
 
 void
-AccountTypeCtrl::set_account_type(account_type::AccountType p_account_type)
+AccountTypeCtrl::set_account_type(AccountType p_account_type)
 {
 	if (super_type(p_account_type) != m_account_super_type)
 	{

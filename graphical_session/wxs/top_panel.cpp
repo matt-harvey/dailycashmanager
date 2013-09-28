@@ -144,26 +144,26 @@ TopPanel::configure_account_lists()
 	m_bs_account_list = new AccountListCtrl
 	(	m_notebook_page_accounts,
 		m_database_connection,
-		account_super_type::balance_sheet
+		AccountSuperType::balance_sheet
 	);
 	m_pl_account_list = new AccountListCtrl
 	(	m_notebook_page_accounts,
 		m_database_connection,
-		account_super_type::pl
+		AccountSuperType::pl
 	);
-	map<account_super_type::AccountSuperType, Account::Id> const fav_accts =
+	map<AccountSuperType, Account::Id> const fav_accts =
 		favourite_accounts(m_database_connection);
 	JEWEL_ASSERT (fav_accts.size() == 2);
 	m_bs_account_list->select_only
 	(	Account
 		(	m_database_connection,
-			fav_accts.at(account_super_type::balance_sheet)
+			fav_accts.at(AccountSuperType::balance_sheet)
 		)
 	);
 	m_pl_account_list->select_only
 	(	Account
 		(	m_database_connection,
-			fav_accts.at(account_super_type::pl)
+			fav_accts.at(AccountSuperType::pl)
 		)
 	);
 	wxBoxSizer* page_1_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -295,7 +295,7 @@ TopPanel::make_proto_journal() const
 			account_x = balance_sheet_accounts[0];
 			account_y = pl_accounts[0];
 		}
-		if (account_y.account_type() == account_type::revenue)
+		if (account_y.account_type() == AccountType::revenue)
 		{
 			using std::swap;
 			swap(account_x, account_y);
@@ -391,14 +391,14 @@ TopPanel::configure_draft_journal_list_ctrl()
 
 bool
 TopPanel::toggle_show_hidden_accounts
-(	account_super_type::AccountSuperType p_account_super_type
+(	AccountSuperType p_account_super_type
 )
 {
 	switch (p_account_super_type)
 	{
-	case account_super_type::balance_sheet:
+	case AccountSuperType::balance_sheet:
 		return m_bs_account_list->toggle_showing_hidden();
-	case account_super_type::pl:
+	case AccountSuperType::pl:
 		return m_pl_account_list->toggle_showing_hidden();
 	default:
 		JEWEL_HARD_ASSERT (false);
@@ -546,7 +546,7 @@ void
 TopPanel::update_for_amended_budget(Account const& p_account)
 {
 	(void)p_account;  // Silence compiler re. unused parameter.
-	JEWEL_ASSERT (super_type(p_account.account_type()) == account_super_type::pl);
+	JEWEL_ASSERT (super_type(p_account.account_type()) == AccountSuperType::pl);
 	m_pl_account_list->update();
 	// TODO Do we need to update ReportPanel for amended budget?
 	return;

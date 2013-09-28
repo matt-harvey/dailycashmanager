@@ -86,9 +86,9 @@ BalanceSheetReport::refresh_map()
 	for ( ; it != end; ++it)
 	{
 		Account const account = it->account();
-		account_super_type::AccountSuperType const s_type =
+		AccountSuperType const s_type =
 			super_type(account.account_type());
-		if (s_type != account_super_type::balance_sheet)
+		if (s_type != AccountSuperType::balance_sheet)
 		{
 			continue;
 		}
@@ -142,13 +142,13 @@ BalanceSheetReport::display_body()
 		wxString const name = account.name();
 		switch (account.account_type())
 		{
-		case account_type::asset:
+		case AccountType::asset:
 			asset_names.push_back(name);
 			break;
-		case account_type::liability:
+		case AccountType::liability:
 			liability_names.push_back(name);
 			break;
-		case account_type::equity:
+		case AccountType::equity:
 			equity_names.push_back(name);
 			break;
 		default:
@@ -163,10 +163,10 @@ BalanceSheetReport::display_body()
 	section_titles.push_back(wxString("ASSETS"));
 	// WARNING Assuming no Equity Account.
 	section_titles.push_back(wxString("LIABILITIES"));
-	vector<account_type::AccountType> section_account_types;
-	section_account_types.push_back(account_type::asset);
+	vector<AccountType> section_account_types;
+	section_account_types.push_back(AccountType::asset);
 	// WARNING Assuming no Equity Account.
-	section_account_types.push_back(account_type::liability);
+	section_account_types.push_back(AccountType::liability);
 	JEWEL_ASSERT (section_titles.size() == section_account_types.size());
 
 	Decimal const zero
@@ -183,10 +183,10 @@ BalanceSheetReport::display_body()
 		list<wxString>* names = 0;
 		switch(section_account_types.at(i))
 		{
-		case account_type::asset:
+		case AccountType::asset:
 			names = &asset_names;
 			break;
-		case account_type::liability:
+		case AccountType::liability:
 			names = &liability_names;
 			break;
 		default:

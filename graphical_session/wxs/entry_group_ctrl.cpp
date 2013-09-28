@@ -122,7 +122,7 @@ EntryGroupCtrl::configure_available_account_types()
 	if (is_source())
 	{
 		m_available_account_types.reset
-		(	new vector<account_type::AccountType>
+		(	new vector<AccountType>
 			(	source_account_types(m_transaction_type)
 			)
 		);
@@ -130,7 +130,7 @@ EntryGroupCtrl::configure_available_account_types()
 	else
 	{
 		m_available_account_types.reset
-		(	new vector<account_type::AccountType>
+		(	new vector<AccountType>
 			(	destination_account_types(m_transaction_type)
 			)
 		);
@@ -538,7 +538,7 @@ EntryGroupCtrl::side_description() const
 	// WARNING This is pretty inefficient. But it probably doesn't
 	// matter.
 	wxString ret(" ");
-	set<account_super_type::AccountSuperType> super_types;
+	set<AccountSuperType> super_types;
 	switch (m_transaction_type)
 	{
 	case transaction_type::expenditure_transaction:  // fall through

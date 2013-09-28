@@ -44,7 +44,7 @@ AccountCtrl::AccountCtrl
 (	wxWindow* p_parent,
 	unsigned int p_id,
 	wxSize const& p_size,
-	vector<account_type::AccountType> const& p_account_types,
+	vector<AccountType> const& p_account_types,
 	PhatbooksDatabaseConnection& p_database_connection,
 	bool p_exclude_balancing_account
 ):
@@ -66,11 +66,11 @@ AccountCtrl::AccountCtrl
 
 void
 AccountCtrl::reset
-(	vector<account_type::AccountType> const& p_account_types,
+(	vector<AccountType> const& p_account_types,
 	bool p_exclude_balancing_account
 )
 {
-	m_available_account_types = set<account_type::AccountType>
+	m_available_account_types = set<AccountType>
 	(	p_account_types.begin(),
 		p_account_types.end()
 	);

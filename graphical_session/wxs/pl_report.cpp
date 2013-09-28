@@ -125,10 +125,10 @@ PLReport::refresh_map()
 			statement->extract<Entry::Id>(0)
 		);
 		Account const account = entry.account();
-		account_type::AccountType const atype = account.account_type();
+		AccountType const atype = account.account_type();
 		if
-		(	(atype != account_type::revenue) &&
-			(atype != account_type::expense)
+		(	(atype != AccountType::revenue) &&
+			(atype != AccountType::expense)
 		)
 		{
 			continue;
@@ -181,10 +181,10 @@ PLReport::display_body()
 			wxString const name = account.name();
 			switch (account.account_type())
 			{
-			case account_type::revenue:
+			case AccountType::revenue:
 				revenue_names.push_back(name);
 				break;
-			case account_type::expense:
+			case AccountType::expense:
 				expense_names.push_back(name);
 				break;
 			default:
@@ -197,9 +197,9 @@ PLReport::display_body()
 	vector<wxString> section_titles;
 	section_titles.push_back(wxString("REVENUE"));
 	section_titles.push_back(wxString("EXPENSE"));
-	vector<account_type::AccountType> section_account_types;
-	section_account_types.push_back(account_type::revenue);
-	section_account_types.push_back(account_type::expense);
+	vector<AccountType> section_account_types;
+	section_account_types.push_back(AccountType::revenue);
+	section_account_types.push_back(AccountType::expense);
 	JEWEL_ASSERT (section_titles.size() == section_account_types.size());
 
 	Decimal const zero
@@ -212,14 +212,14 @@ PLReport::display_body()
 		// WARNING This relies on every Account having the same Commodity
 		Decimal total = zero;
 		list<wxString>* names = 0;
-		account_type::AccountType const account_type =
+		AccountType const account_type =
 			section_account_types.at(i);
 		switch (account_type)
 		{
-		case account_type::revenue:
+		case AccountType::revenue:
 			names = &revenue_names;
 			break;
-		case account_type::expense:
+		case AccountType::expense:
 			names = &expense_names;
 			break;
 		default:
@@ -236,7 +236,7 @@ PLReport::display_body()
 			Map::const_iterator const jt = m_map.find(account.id());
 			JEWEL_ASSERT (jt != m_map.end());
 			Decimal const& b =
-			(	(account_type == account_type::expense)?
+			(	(account_type == AccountType::expense)?
 				jt->second:
 				-(jt->second)
 			);
@@ -259,7 +259,7 @@ PLReport::display_body()
 		display_mean(3, total, count_for_mean);		
 		
 		net_revenue +=
-		(	(account_type == account_type::revenue)?
+		(	(account_type == AccountType::revenue)?
 			total:
 			-total
 		);

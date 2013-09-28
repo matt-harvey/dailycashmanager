@@ -56,7 +56,7 @@ END_EVENT_TABLE()
 namespace
 {
 	wxString account_super_type_string
-	(	account_super_type::AccountSuperType p_account_super_type
+	(	AccountSuperType p_account_super_type
 	)
 	{
 		return account_concept_name
@@ -66,7 +66,7 @@ namespace
 	}
 
 	wxString account_name_ctrl_label_string
-	(	account_super_type::AccountSuperType p_account_super_type
+	(	AccountSuperType p_account_super_type
 	)
 	{
 		return
@@ -75,7 +75,7 @@ namespace
 	}
 
 	wxString account_type_ctrl_label_string
-	(	account_super_type::AccountSuperType p_account_super_type
+	(	AccountSuperType p_account_super_type
 	)
 	{
 		return
@@ -84,7 +84,7 @@ namespace
 	}
 
 	wxString account_description_label_string
-	(	account_super_type::AccountSuperType p_account_super_type
+	(	AccountSuperType p_account_super_type
 	)
 	{
 		(void)p_account_super_type;  // silence compiler re. unused param.
@@ -92,14 +92,14 @@ namespace
 	}
 
 	wxString opening_amount_label_string
-	(	account_super_type::AccountSuperType p_account_super_type
+	(	AccountSuperType p_account_super_type
 	)
 	{
 		switch (p_account_super_type)
 		{
-		case account_super_type::balance_sheet:
+		case AccountSuperType::balance_sheet:
 			return wxString("Opening balance");
-		case account_super_type::pl:
+		case AccountSuperType::pl:
 			return wxString("Initial budget allocation");
 		default:
 			JEWEL_HARD_ASSERT (false);
@@ -113,7 +113,7 @@ namespace
 AccountDialog::AccountDialog
 (	wxWindow* p_parent,
 	Account& p_account,
-	account_super_type::AccountSuperType p_account_super_type
+	AccountSuperType p_account_super_type
 ):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
 	m_current_row(0),
@@ -316,7 +316,7 @@ void
 AccountDialog::configure_budget_panel()
 {
 	JEWEL_ASSERT (!m_budget_panel);
-	if (account_super_type() == account_super_type::balance_sheet)
+	if (account_super_type() == AccountSuperType::balance_sheet)
 	{
 		// There are no "bottom controls" for balance sheet Accounts.
 		return;
@@ -326,7 +326,7 @@ AccountDialog::configure_budget_panel()
 		// Cannot edit budgets for the budget balancing Account.
 		return;
 	}
-	JEWEL_ASSERT (account_super_type() == account_super_type::pl);
+	JEWEL_ASSERT (account_super_type() == AccountSuperType::pl);
 	
 	++m_current_row;
 	++m_current_row;
@@ -335,7 +335,7 @@ AccountDialog::configure_budget_panel()
 	JEWEL_ASSERT (m_account_type_ctrl);
 	try
 	{
-		account_type::AccountType dummy = m_account.account_type();
+		AccountType dummy = m_account.account_type();
 		(void)dummy;  // silence compiler re. unused variable
 	}
 	catch (UninitializedOptionalException&)
@@ -409,7 +409,7 @@ AccountDialog::configure_bottom_row()
 	return;
 }
 
-account_super_type::AccountSuperType
+AccountSuperType
 AccountDialog::account_super_type() const
 {
 	JEWEL_ASSERT (m_account_type_ctrl);
@@ -499,7 +499,7 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	temp.save();
 	
 	Decimal opening_amount = m_opening_amount_ctrl->amount();
-	if (super_type(temp.account_type()) == account_super_type::pl)
+	if (super_type(temp.account_type()) == AccountSuperType::pl)
 	{
 		// TODO Handle small possibility of overflow here.
 		opening_amount = -opening_amount;

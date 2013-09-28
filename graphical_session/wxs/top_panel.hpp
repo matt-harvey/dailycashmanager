@@ -137,7 +137,7 @@ public:
 	 * BudgetItems pertaining to p_account have been added, deleted
 	 * and/or amended.
 	 * 
-	 * Precondition: p_account should be of account_super_type::pl.
+	 * Precondition: p_account should be of AccountSuperType::pl.
 	 */
 	void update_for_amended_budget(Account const& p_account);
 
@@ -184,7 +184,7 @@ public:
 	 * hidden Accounts of AccountSuperType \e p_account_super_type.
 	 */
 	bool toggle_show_hidden_accounts
-	(	account_super_type::AccountSuperType p_account_super_type
+	(	AccountSuperType p_account_super_type
 	);
 
 private:

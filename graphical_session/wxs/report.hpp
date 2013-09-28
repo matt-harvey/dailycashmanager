@@ -57,7 +57,7 @@ public:
 	static Report* create
 	(	ReportPanel* p_parent,
 		wxSize const& p_size,
-		account_super_type::AccountSuperType p_account_super_type,
+		AccountSuperType p_account_super_type,
 		PhatbooksDatabaseConnection& p_database_connection,
 		boost::optional<boost::gregorian::date> const& p_maybe_min_date =
 			boost::optional<boost::gregorian::date>(),

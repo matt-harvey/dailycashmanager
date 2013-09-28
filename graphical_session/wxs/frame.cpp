@@ -133,7 +133,7 @@ END_EVENT_TABLE()
 namespace
 {
 	wxString instruction_to_show_hidden
-	(	account_super_type::AccountSuperType p_account_super_type,
+	(	AccountSuperType p_account_super_type,
 		bool p_show_hidden
 	)
 	{
@@ -203,9 +203,9 @@ Frame::Frame
 	m_menu_bar->Append(m_file_menu, wxString("&File"));
 
 	wxString const balance_sheet_account_concept_name =
-		account_concept_name(account_super_type::balance_sheet);
+		account_concept_name(AccountSuperType::balance_sheet);
 	wxString const pl_account_concept_name =
-		account_concept_name(account_super_type::pl);
+		account_concept_name(AccountSuperType::pl);
 
 	// Configure "new" menu
 	JEWEL_LOG_TRACE();
@@ -258,7 +258,7 @@ Frame::Frame
 	m_view_menu->Append
 	(	s_toggle_bs_account_show_hidden_id,
 		instruction_to_show_hidden
-		(	account_super_type::balance_sheet,
+		(	AccountSuperType::balance_sheet,
 			true
 		),
 		wxEmptyString
@@ -266,7 +266,7 @@ Frame::Frame
 	m_view_menu->Append
 	(	s_toggle_pl_account_show_hidden_id,
 		instruction_to_show_hidden
-		(	account_super_type::pl,
+		(	AccountSuperType::pl,
 			true
 		),
 		wxEmptyString
@@ -326,7 +326,7 @@ Frame::on_menu_new_bs_account(wxCommandEvent& event)
 	AccountDialog account_dialog
 	(	this,
 		account,
-		account_super_type::balance_sheet
+		AccountSuperType::balance_sheet
 	);
 	account_dialog.ShowModal();
 	return;
@@ -338,7 +338,7 @@ Frame::on_menu_new_pl_account(wxCommandEvent& event)
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
 	Account account(m_database_connection);
-	AccountDialog account_dialog(this, account, account_super_type::pl);
+	AccountDialog account_dialog(this, account, AccountSuperType::pl);
 	account_dialog.ShowModal();
 	return;
 }
@@ -379,7 +379,7 @@ Frame::on_menu_edit_bs_account(wxCommandEvent& event)
 	Account account = accounts[0];
 	JEWEL_ASSERT
 	(	super_type(account.account_type()) ==
-		account_super_type::balance_sheet
+		AccountSuperType::balance_sheet
 	);
 	edit_account(account);
 	return;
@@ -395,7 +395,7 @@ Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 	if (accounts.empty())
 	{
 		wxString const concept_name = account_concept_name
-		(	account_super_type::pl,
+		(	AccountSuperType::pl,
 			AccountPhraseFlags().set(string_flags::capitalize)
 		);
 		wxMessageBox
@@ -408,7 +408,7 @@ Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 	Account account = accounts[0];
 	JEWEL_ASSERT
 	(	super_type(account.account_type()) ==
-		account_super_type::pl
+		AccountSuperType::pl
 	);
 	edit_account(account);
 	return;
@@ -462,8 +462,8 @@ Frame::on_menu_view_toggle_bs_account_show_hidden(wxCommandEvent& event)
 
 	// TODO Factor out code duplicated here and in
 	// on_menu_view_toggle_pl_account_show_hidden(...).
-	account_super_type::AccountSuperType const stype =
-		account_super_type::balance_sheet;
+	AccountSuperType const stype =
+		AccountSuperType::balance_sheet;
 	
 	bool const showing_hidden =
 		m_top_panel->toggle_show_hidden_accounts(stype);
@@ -482,8 +482,8 @@ Frame::on_menu_view_toggle_pl_account_show_hidden(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 
-	account_super_type::AccountSuperType const stype =
-		account_super_type::pl;
+	AccountSuperType const stype =
+		AccountSuperType::pl;
 
 	bool const showing_hidden =
 		m_top_panel->toggle_show_hidden_accounts(stype);

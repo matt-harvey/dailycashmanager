@@ -33,7 +33,7 @@ Report*
 Report::create
 (	ReportPanel* p_parent,
 	wxSize const& p_size,
-	account_super_type::AccountSuperType p_account_super_type,
+	AccountSuperType p_account_super_type,
 	PhatbooksDatabaseConnection& p_database_connection,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date
@@ -42,7 +42,7 @@ Report::create
 	Report* temp = 0;
 	switch (p_account_super_type)
 	{
-	case account_super_type::balance_sheet:
+	case AccountSuperType::balance_sheet:
 		temp = new BalanceSheetReport
 		(	p_parent,
 			p_size,
@@ -51,7 +51,7 @@ Report::create
 			p_maybe_max_date
 		);
 		break;
-	case account_super_type::pl:
+	case AccountSuperType::pl:
 		temp = new PLReport
 		(	p_parent,
 			p_size,

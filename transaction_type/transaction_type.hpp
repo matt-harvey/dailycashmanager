@@ -106,7 +106,7 @@ namespace phatbooks
  * @returns a vector of AccountTypes appropriate for a given
  * TransactionType's \e source Account.
  */
-std::vector<account_type::AccountType> const&
+std::vector<AccountType> const&
 source_account_types
 (	transaction_type::TransactionType p_transaction_type
 );
@@ -115,7 +115,7 @@ source_account_types
  * @returns a vector of AccountTypes appropriate for a given
  * TransactionType's \e destination Account.
  */
-std::vector<account_type::AccountType> const&
+std::vector<AccountType> const&
 destination_account_types
 (	transaction_type::TransactionType p_transaction_type
 );
@@ -123,13 +123,13 @@ destination_account_types
 void
 source_super_types
 (	transaction_type::TransactionType p_transaction_type,
-	std::set<account_super_type::AccountSuperType>& out
+	std::set<AccountSuperType>& out
 );
 
 void
 destination_super_types
 (	transaction_type::TransactionType p_transaction_type,
-	std::set<account_super_type::AccountSuperType>& out
+	std::set<AccountSuperType>& out
 );
 
 

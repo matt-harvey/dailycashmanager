@@ -59,7 +59,7 @@ public:
 	(	wxWindow* p_parent,
 		unsigned int p_id,
 		wxSize const& p_size,
-		std::vector<account_type::AccountType> const& p_account_types,
+		std::vector<AccountType> const& p_account_types,
 		PhatbooksDatabaseConnection& p_database_connection,
 		bool p_exclude_balancing_account = false
 	);
@@ -82,7 +82,7 @@ public:
 	 * All Accounts in the range must have Ids.
 	 */
 	void reset
-	(	std::vector<account_type::AccountType> const& p_account_types,
+	(	std::vector<AccountType> const& p_account_types,
 		bool p_exclude_balancing_account = false
 	);
 
@@ -113,7 +113,7 @@ private:
 	typedef std::map<wxString, Account::Id> AccountMap;
 	AccountMap m_account_map;
 
-	std::set<account_type::AccountType> m_available_account_types;
+	std::set<AccountType> m_available_account_types;
 
 	DECLARE_EVENT_TABLE()
 

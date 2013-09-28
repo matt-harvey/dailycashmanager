@@ -51,7 +51,7 @@ void make_default_accounts
 void make_default_accounts
 (	PhatbooksDatabaseConnection& p_database_connection,
 	std::vector<Account>& vec,
-	account_type::AccountType p_account_type
+	AccountType p_account_type
 );
 
 

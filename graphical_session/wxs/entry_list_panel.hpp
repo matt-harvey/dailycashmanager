@@ -39,7 +39,7 @@ class EntryListCtrl;
  *
  * @todo Do we want the user to be able to view non-actual transactions?
  * If we do, then, among other things, the AccountCtrl will need to allow
- * the user to select Accounts of account_type::pure_envelope.
+ * the user to select Accounts of AccountType::pure_envelope.
  *
  * @todo EntryListCtrl has zero height until such time as user
  * first clicks "Refresh". Various attempted workarounds for this

@@ -57,12 +57,8 @@ public:
 		"AccountImpl::Id needs to be the same type as sqloxx::Id"
 	);
 
-	typedef account_type::AccountType AccountType;
-	typedef account_super_type::AccountSuperType AccountSuperType;
-
 	typedef sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
-
 
 	/**
 	 * Sets up tables in the database required for the persistence of
@@ -107,12 +103,12 @@ public:
 
 	static bool none_saved_with_account_type
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		account_type::AccountType p_account_type
+		AccountType p_account_type
 	);
 
 	static bool none_saved_with_account_super_type
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		account_super_type::AccountSuperType p_account_super_type
+		AccountSuperType p_account_super_type
 	);
 
 	/**
@@ -191,7 +187,7 @@ private:
 	{
 		boost::optional<wxString> name;
 		boost::optional<Commodity> commodity;
-		boost::optional<account_type::AccountType> account_type;
+		boost::optional<AccountType> account_type;
 		boost::optional<wxString> description;
 		boost::optional<visibility::Visibility> visibility;
 	};
@@ -203,7 +199,7 @@ private:
 void
 favourite_accounts
 (	PhatbooksDatabaseConnection& p_database_connection,
-	std::map<account_super_type::AccountSuperType, AccountImpl::Id>& out
+	std::map<AccountSuperType, AccountImpl::Id>& out
 );
 
 

@@ -66,7 +66,7 @@ private:
 	void configure_top();
 	void configure_bottom();
 
-	account_super_type::AccountSuperType selected_account_super_type() const;
+	AccountSuperType selected_account_super_type() const;
 
 	static int const s_min_date_ctrl_id = wxID_HIGHEST + 1;
 	static int const s_max_date_ctrl_id = s_min_date_ctrl_id + 1;

@@ -57,7 +57,7 @@ public:
 	(	SetupWizard::AccountPage* p_parent,
 		wxSize const& p_size,
 		PhatbooksDatabaseConnection& p_database_connection,
-		account_super_type::AccountSuperType p_account_super_type,
+		AccountSuperType p_account_super_type,
 		Commodity const& p_commodity,
 		size_t p_minimum_num_rows
 	);
@@ -138,7 +138,7 @@ public:
 	 * which a non-empty Account name has been entered).
 	 */
 	bool account_type_is_selected
-	(	account_type::AccountType p_account_type
+	(	AccountType p_account_type
 	) const;
 	
 private:
@@ -178,7 +178,7 @@ private:
 
 	template <typename T> void pop_widget_from(std::vector<T>& p_vec);
 	
-	account_super_type::AccountSuperType m_account_super_type;
+	AccountSuperType m_account_super_type;
 	Commodity m_commodity;
 
 	wxStaticText* m_summary_amount_text;

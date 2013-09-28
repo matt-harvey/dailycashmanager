@@ -165,7 +165,7 @@ JEWEL_DERIVED_EXCEPTION(DefaultAccountGeneratorException, PhatbooksException);
 
 /**
  * Exception to be thrown when a string does not correspond to any
- * account_type::AccountType, but purports to do so.
+ * AccountType, but purports to do so.
  */
 JEWEL_DERIVED_EXCEPTION
 (	InvalidAccountTypeStringException,

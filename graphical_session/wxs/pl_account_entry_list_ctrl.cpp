@@ -55,7 +55,7 @@ PLAccountEntryListCtrl::PLAccountEntryListCtrl
 		p_maybe_min_date,
 		p_maybe_max_date
 	),
-	m_reverse_signs(p_account.account_type() == account_type::revenue)
+	m_reverse_signs(p_account.account_type() == AccountType::revenue)
 {
 }
 
@@ -84,9 +84,9 @@ PLAccountEntryListCtrl::verb() const
 {
 	switch (account().account_type())
 	{
-	case account_type::revenue:
+	case AccountType::revenue:
 		return wxString("earned");
-	case account_type::expense:
+	case AccountType::expense:
 		return wxString("spent");
 	default:
 		JEWEL_HARD_ASSERT (false);
