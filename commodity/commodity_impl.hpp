@@ -80,7 +80,12 @@ public:
 	 	Id p_id
 	);
 
-	~CommodityImpl();
+	// copy constructor is private
+	
+	CommodityImpl(CommodityImpl&&) = delete;
+	CommodityImpl& operator=(CommodityImpl const&) = delete;
+	CommodityImpl& operator=(CommodityImpl&&) = delete;
+	~CommodityImpl() = default;
 
 	static bool exists_with_abbreviation
 	(	PhatbooksDatabaseConnection& p_database_connection,

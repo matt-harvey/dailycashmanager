@@ -64,11 +64,10 @@ public:
 	);
 
 	// Note copy constructor is private
-	// Note move constructor is private
 
+	EntryImpl(EntryImpl&&) = delete;
 	EntryImpl& operator=(EntryImpl const&) = delete;
 	EntryImpl& operator=(EntryImpl&&) = delete;
-
 	~EntryImpl() = default;
 
 	void set_journal_id(Id p_journal_id);
@@ -133,11 +132,6 @@ private:
 	 */
 	EntryImpl(EntryImpl const& rhs);
 
-	/**
-	 * Move constructor - implemented, but deliberately private
-	 */
-	EntryImpl(EntryImpl&& rhs);
-	
 	void do_load();
 	void do_save_existing();
 	void do_save_new();

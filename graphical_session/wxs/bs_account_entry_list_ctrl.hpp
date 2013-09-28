@@ -37,7 +37,11 @@ public:
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);
 
-	virtual ~BSAccountEntryListCtrl();
+	BSAccountEntryListCtrl(BSAccountEntryListCtrl const&) = delete;
+	BSAccountEntryListCtrl(BSAccountEntryListCtrl&&) = delete;
+	BSAccountEntryListCtrl& operator=(BSAccountEntryListCtrl const&) = delete;
+	BSAccountEntryListCtrl& operator=(BSAccountEntryListCtrl&&) = delete;
+	virtual ~BSAccountEntryListCtrl() = default;
 
 private:
 	virtual void do_set_non_date_columns(long p_row, Entry const& p_entry);

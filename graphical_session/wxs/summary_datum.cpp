@@ -6,6 +6,7 @@
 #include <utility>
 
 using jewel::Decimal;
+using std::move;
 
 namespace phatbooks
 {
@@ -18,21 +19,19 @@ SummaryDatum::SummaryDatum(wxString const& p_label, Decimal const& p_amount):
 {
 }
 
-SummaryDatum::SummaryDatum(SummaryDatum const& rhs):
-	m_label(rhs.m_label),
-	m_amount(rhs.m_amount)
-{
-}
-
 SummaryDatum&
 SummaryDatum::operator=(SummaryDatum const& rhs)
 {
-	SummaryDatum temp(rhs);
-	if (this != &rhs)
-	{
-		m_label = rhs.m_label;  // Might throw
-		m_amount = rhs.m_amount;  // Can't throw
-	}
+	m_label = rhs.m_label;  // might throw
+	m_amount = rhs.m_amount;  // can't throw
+	return *this;
+}
+
+SummaryDatum&
+SummaryDatum::operator=(SummaryDatum&& rhs)
+{
+	m_label = move(rhs.m_label);
+	m_amount = move(rhs.m_amount);
 	return *this;
 }
 

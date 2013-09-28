@@ -28,12 +28,12 @@
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <vector>
-
-#include <jewel/log.hpp>
 
 namespace gregorian = boost::gregorian;
 
@@ -43,6 +43,7 @@ using boost::numeric_cast;
 using jewel::clear;
 using jewel::multiplication_is_unsafe;
 using jewel::value;
+using std::is_same;
 using std::shared_ptr;
 using std::string;
 using std::vector;
@@ -50,9 +51,15 @@ using std::vector;
 // for debug logging
 using std::endl;
 
-
 namespace phatbooks
 {
+
+
+static_assert
+(	is_same<DraftJournal::Id, sqloxx::Id>::value,
+	"DraftJournal::Id must be same type as sqloxx::Id."
+);
+
 
 void
 RepeaterImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -94,7 +101,6 @@ RepeaterImpl::RepeaterImpl
 {
 }
 
-
 RepeaterImpl::RepeaterImpl
 (	IdentityMap& p_identity_map,	
 	Id p_id
@@ -104,15 +110,6 @@ RepeaterImpl::RepeaterImpl
 {
 }
 
-
-RepeaterImpl::~RepeaterImpl()
-{
-	/* If m_data is smart pointer, this is unnecessary.
-	delete m_data;
-	m_data = 0;
-	*/
-}
-
 void
 RepeaterImpl::set_frequency(Frequency const& p_frequency)
 {
@@ -120,8 +117,6 @@ RepeaterImpl::set_frequency(Frequency const& p_frequency)
 	m_data->frequency = p_frequency;
 	return;
 }
-
-
 
 void
 RepeaterImpl::set_next_date(boost::gregorian::date const& p_next_date)

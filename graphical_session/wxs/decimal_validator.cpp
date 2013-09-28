@@ -31,14 +31,6 @@ DecimalValidator::DecimalValidator
 {
 }
 
-DecimalValidator::DecimalValidator(DecimalValidator const& rhs):
-	wxTextValidator(),
-	m_print_dash_for_zero(rhs.m_print_dash_for_zero),
-	m_precision(rhs.m_precision),
-	m_decimal(rhs.m_decimal)
-{
-}
-
 Decimal
 DecimalValidator::decimal() const
 {

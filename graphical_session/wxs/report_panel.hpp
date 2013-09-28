@@ -52,7 +52,6 @@ public:
 	ReportPanel(ReportPanel&&) = delete;
 	ReportPanel& operator=(ReportPanel const&) = delete;
 	ReportPanel& operator=(ReportPanel&&) = delete;
-
 	virtual ~ReportPanel() = default;
 
 	void update_for_new(OrdinaryJournal const& p_journal);

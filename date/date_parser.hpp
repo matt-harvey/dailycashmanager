@@ -29,6 +29,12 @@ public:
 			wxLocale::GetInfo(wxLOCALE_LONG_DATE_FMT)
 	);
 
+	DateParser(DateParser const&) = default;
+	DateParser(DateParser&&) = default;
+	DateParser& operator=(DateParser const&) = default;
+	DateParser& operator=(DateParser&&) = default;
+	~DateParser() = default;
+
 	/**
 	 * If p_be_tolerant is passed \e true, then the DateParser will
 	 * be relatively forgiving even if p_string does not strictly comply

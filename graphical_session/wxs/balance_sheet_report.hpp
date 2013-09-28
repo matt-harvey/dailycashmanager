@@ -36,7 +36,11 @@ public:
 		boost::optional<boost::gregorian::date> p_maybe_max_date
 	);
 
-	virtual ~BalanceSheetReport();
+	BalanceSheetReport(BalanceSheetReport const&) = delete;
+	BalanceSheetReport(BalanceSheetReport&&) = delete;
+	BalanceSheetReport& operator=(BalanceSheetReport const&) = delete;
+	BalanceSheetReport& operator=(BalanceSheetReport&&) = delete;
+	virtual ~BalanceSheetReport() = default;
 
 private:
 	virtual void do_generate();
@@ -47,8 +51,13 @@ private:
 
 	struct BalanceDatum
 	{
-		BalanceDatum();
-		BalanceDatum(Account const& p_account);
+		BalanceDatum() = default;
+		explicit BalanceDatum(Account const& p_account);
+		BalanceDatum(BalanceDatum const&) = default;
+		BalanceDatum(BalanceDatum&&) = default;
+		BalanceDatum& operator=(BalanceDatum const&) = default;
+		BalanceDatum& operator=(BalanceDatum&&) = default;
+		~BalanceDatum() = default;
 		jewel::Decimal opening_balance;
 		jewel::Decimal closing_balance;
 	};

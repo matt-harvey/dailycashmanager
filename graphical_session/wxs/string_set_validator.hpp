@@ -39,6 +39,12 @@ public:
 
 	StringSetValidator(StringSetValidator const& rhs);
 
+	StringSetValidator(StringSetValidator&&) = delete;
+	StringSetValidator& operator=(StringSetValidator const&) = delete;
+	StringSetValidator& operator=(StringSetValidator&&) = delete;
+
+	~StringSetValidator() = default;
+
 	/**
 	 * @param parent should point to an instance of wxTextEntry.
 	 */

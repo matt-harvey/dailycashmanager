@@ -19,14 +19,18 @@ class SummaryDatum
 {
 public:
 	SummaryDatum(wxString const& p_label, jewel::Decimal const& p_amount);
-	SummaryDatum(SummaryDatum const& rhs);
+	SummaryDatum(SummaryDatum const&) = default;
+	SummaryDatum(SummaryDatum&&) = default;
 	SummaryDatum& operator=(SummaryDatum const& rhs);
+	SummaryDatum& operator=(SummaryDatum&& rhs);
+	~SummaryDatum() = default;
 
 	wxString label() const;
 	jewel::Decimal amount() const;
 	void set_amount(jewel::Decimal const& p_amount);
 
 private:
+
 	wxString m_label;
 	jewel::Decimal m_amount;
 

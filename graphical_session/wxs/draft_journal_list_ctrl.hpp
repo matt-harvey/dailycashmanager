@@ -34,6 +34,12 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
+	DraftJournalListCtrl(DraftJournalListCtrl const&) = delete;
+	DraftJournalListCtrl(DraftJournalListCtrl&&) = delete;
+	DraftJournalListCtrl& operator=(DraftJournalListCtrl const&) = delete;
+	DraftJournalListCtrl& operator=(DraftJournalListCtrl&&) = delete;
+	~DraftJournalListCtrl() = default;
+
 	/**
 	 * Populates \e out with all the DraftJournals currently
 	 * selected by the user in the DraftJournalListCtrl.

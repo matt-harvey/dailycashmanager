@@ -63,6 +63,12 @@ public:
 		Id p_id
 	);
 
+	OrdinaryJournal(OrdinaryJournal const&) = default;
+	OrdinaryJournal(OrdinaryJournal&&) = default;
+	OrdinaryJournal& operator=(OrdinaryJournal const&) = default;
+	OrdinaryJournal& operator=(OrdinaryJournal&&) = default;
+	~OrdinaryJournal() = default;
+	
 	/**
 	 * @returns an OrdinaryJournal theoretically corresponding to one that
 	 * has been saved to the database with id \e p_id. However, this

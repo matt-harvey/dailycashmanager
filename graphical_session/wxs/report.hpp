@@ -40,8 +40,20 @@ class ReportPanel;
 class Report: public GriddedScrolledPanel
 {
 public:
-	virtual ~Report();
 
+	// Constructor is private - client code should user static "create"
+	// function.
+	
+	Report(Report const&) = delete;
+	Report(Report&&) = delete;
+	Report& operator=(Report const&) = delete;
+	Report& operator=(Report&&) = delete;
+	virtual ~Report() = default;
+
+	/**
+	 * @returns a pointer to a heap-allocated Report. Caller will be
+	 * responsible for memory.
+	 */
 	static Report* create
 	(	ReportPanel* p_parent,
 		wxSize const& p_size,

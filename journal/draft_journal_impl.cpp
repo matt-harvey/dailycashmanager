@@ -161,13 +161,6 @@ DraftJournalImpl::DraftJournalImpl
 {
 }
 
-
-
-DraftJournalImpl::~DraftJournalImpl()
-{
-}
-
-
 bool
 DraftJournalImpl::exists
 (	PhatbooksDatabaseConnection& p_database_connection,

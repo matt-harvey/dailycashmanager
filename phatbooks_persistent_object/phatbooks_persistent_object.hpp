@@ -49,8 +49,13 @@ class PhatbooksPersistentObjectBase
 {
 public:
 	typedef sqloxx::Id Id;
+	
+	// Default constructor, copy constructor, move constructor,
+	// copy assignment and move assignment are all as synthesised
+	// by the compiler.
 
-	virtual ~PhatbooksPersistentObjectBase();
+	virtual ~PhatbooksPersistentObjectBase() = default;
+
 	void save();
 	Id id() const;
 	PhatbooksDatabaseConnection& database_connection() const;
@@ -77,7 +82,18 @@ class PhatbooksPersistentObject:
 	virtual public PhatbooksPersistentObjectBase
 {
 public:
-	virtual ~PhatbooksPersistentObject();
+
+	// Default constructor, copy constructor, move constructor,
+	// copy assignment and move assignment are all as synthesised
+	// by the compiler.
+
+	// TODO Compiling this with "= default" evokes a compiler bug
+	// in GCC 4.8.1 under Fedora (at least). Run it again, and file
+	// bug report.
+	virtual ~PhatbooksPersistentObject()
+	{
+	}
+
 	bool operator==(PhatbooksPersistentObject const& rhs) const;
 	bool operator!=(PhatbooksPersistentObject const& rhs) const;
 	static bool exists
@@ -125,11 +141,6 @@ private:
 
 namespace phatbooks
 {
-
-template <typename Impl>
-PhatbooksPersistentObject<Impl>::~PhatbooksPersistentObject()
-{
-}
 
 template <typename Impl>
 PhatbooksPersistentObject<Impl>::PhatbooksPersistentObject

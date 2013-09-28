@@ -15,6 +15,7 @@
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <memory>
 
 namespace phatbooks
 {
@@ -101,7 +102,11 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
-	~TransactionCtrl();
+	TransactionCtrl(TransactionCtrl const&) = delete;
+	TransactionCtrl(TransactionCtrl&&) = delete;
+	TransactionCtrl& operator=(TransactionCtrl const&) = delete;
+	TransactionCtrl& operator=(TransactionCtrl&&) = delete;
+	~TransactionCtrl() = default;
 
 	/**
 	 * Refresh the selections available in the AccountCtrls in the
@@ -210,7 +215,7 @@ private:
 	static unsigned int const s_min_entry_row_id =
 		s_delete_button_id + 1;
 
-	PersistentJournal* m_journal;
+	std::unique_ptr<PersistentJournal> m_journal;
 
 	DECLARE_EVENT_TABLE()
 

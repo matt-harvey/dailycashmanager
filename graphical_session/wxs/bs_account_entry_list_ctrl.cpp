@@ -55,10 +55,6 @@ BSAccountEntryListCtrl::BSAccountEntryListCtrl
 {
 }
 
-BSAccountEntryListCtrl::~BSAccountEntryListCtrl()
-{
-}
-
 void
 BSAccountEntryListCtrl::do_set_non_date_columns
 (	long p_row,

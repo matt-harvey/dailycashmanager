@@ -154,6 +154,12 @@ public:
 	FilepathValidator(boost::filesystem::path* p_filepath);
 	FilepathValidator(FilepathValidator const& rhs);
 
+	FilepathValidator(FilepathValidator&&) = delete;
+	FilepathValidator& operator=(FilepathValidator const&) = delete;
+	FilepathValidator& operator=(FilepathValidator&&) = delete;
+
+	virtual ~FilepathValidator() = default;
+
 	/*** Functions inherited from wxValidator virtuals ***/
 
 	/**

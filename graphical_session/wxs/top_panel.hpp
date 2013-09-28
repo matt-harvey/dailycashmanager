@@ -64,6 +64,12 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
+	TopPanel(TopPanel const&) = delete;
+	TopPanel(TopPanel&&) = delete;
+	TopPanel& operator=(TopPanel const&) = delete;
+	TopPanel& operator=(TopPanel&&) = delete;
+	~TopPanel() = default;
+
 	/**
 	 * Populates \e out with all the balance sheet Accounts currently
 	 * selected by the user in the main window.

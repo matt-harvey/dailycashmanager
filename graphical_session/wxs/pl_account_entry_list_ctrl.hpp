@@ -37,7 +37,11 @@ public:
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);
 
-	virtual ~PLAccountEntryListCtrl();
+	PLAccountEntryListCtrl(PLAccountEntryListCtrl const&) = delete;
+	PLAccountEntryListCtrl(PLAccountEntryListCtrl&&) = delete;
+	PLAccountEntryListCtrl& operator=(PLAccountEntryListCtrl const&) = delete;
+	PLAccountEntryListCtrl& operator=(PLAccountEntryListCtrl&&) = delete;
+	virtual ~PLAccountEntryListCtrl() = default;
 
 private:
 

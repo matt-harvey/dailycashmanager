@@ -5,6 +5,7 @@
 
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
+#include "repeater.hpp"
 #include "transaction_type.hpp"
 #include <sqloxx/persistent_object.hpp>
 #include <boost/optional.hpp>
@@ -17,7 +18,6 @@ namespace phatbooks
 {
 
 class Entry;
-class Repeater;
 
 /**
  * Implementation class for DraftJournal. Note multiple DraftJournal instances
@@ -50,15 +50,20 @@ public:
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
-	explicit
-	DraftJournalImpl(IdentityMap& p_identity_map);
+	explicit DraftJournalImpl(IdentityMap& p_identity_map);
 
 	DraftJournalImpl
 	(	IdentityMap& p_identity_map,
 		Id p_id
 	);
 
-	~DraftJournalImpl();
+	// copy constructor is private
+
+	DraftJournalImpl(DraftJournalImpl&&) = delete;
+	DraftJournalImpl& operator=(DraftJournalImpl const&) = delete;
+	DraftJournalImpl& operator=(DraftJournalImpl&&) = delete;
+
+	~DraftJournalImpl() = default;
 
 	static bool exists
 	(	PhatbooksDatabaseConnection& p_database_connection,

@@ -60,10 +60,6 @@ DecimalTextCtrl::DecimalTextCtrl
 {
 }
 
-DecimalTextCtrl::~DecimalTextCtrl()
-{
-}
-
 void
 DecimalTextCtrl::set_amount(Decimal const& p_amount)
 {

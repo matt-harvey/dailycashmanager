@@ -51,10 +51,6 @@ PLReport::PLReport
 {
 }
 
-PLReport::~PLReport()
-{
-}
-
 void
 PLReport::do_generate()
 {

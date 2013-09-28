@@ -42,12 +42,6 @@ The wxPanel might seem pointless, but apparently if you don't use
 it you get into all kinds of problems.
 */
 
-App::App(): m_existing_application_instance_notified(false)
-{
-	JEWEL_LOG_TRACE();
-}
-
-
 bool App::OnInit()
 {
 	JEWEL_LOG_TRACE();

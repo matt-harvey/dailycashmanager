@@ -64,13 +64,9 @@ public:
 	);
 
 	Account(Account const&) = default;
-
 	Account(Account&&) = default;
-
 	Account& operator=(Account const&) = default;
-
 	Account& operator=(Account&&) = default;
-
 	~Account() = default;
 
 	/**

@@ -36,6 +36,12 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
+	Frame(Frame const&) = delete;
+	Frame(Frame&&) = delete;
+	Frame& operator=(Frame const&) = delete;
+	Frame& operator=(Frame&&) = delete;
+	~Frame() = default;
+
 	/**
 	 * Populates \e out with all the balance sheet Accounts currently
 	 * selected by the user in the main window.

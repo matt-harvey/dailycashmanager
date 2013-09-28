@@ -23,7 +23,11 @@ class ClientData: public wxClientData
 {
 public:
 	ClientData(T const& p_data);
-	virtual ~ClientData();
+	ClientData(ClientData const&) = default;
+	ClientData(ClientData&&) = default;
+	ClientData& operator=(ClientData const&) = default;
+	ClientData& operator=(ClientData&&) = default;
+	virtual ~ClientData() = default;
 	T data() const;
 private:
 	T const m_data;
@@ -35,11 +39,6 @@ template <typename T>
 ClientData<T>::ClientData(T const& p_data):
 	wxClientData(),
 	m_data(p_data)
-{
-}
-
-template <typename T>
-ClientData<T>::~ClientData()
 {
 }
 

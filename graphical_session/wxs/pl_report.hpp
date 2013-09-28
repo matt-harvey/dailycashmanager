@@ -36,7 +36,11 @@ public:
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);
 
-	virtual ~PLReport();
+	PLReport(PLReport const&) = delete;
+	PLReport(PLReport&&) = delete;
+	PLReport& operator=(PLReport const&) = delete;
+	PLReport& operator=(PLReport&&) = delete;
+	virtual ~PLReport() = default;
 
 private:
 	virtual void do_generate();

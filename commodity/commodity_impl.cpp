@@ -115,17 +115,6 @@ CommodityImpl::CommodityImpl
 {
 }
 
-
-CommodityImpl::~CommodityImpl()
-{
-	/* If m_data is a smart pointer, this is not required.
-	delete m_data;
-	m_data = 0;
-	*/
-}
-
-
-
 bool
 CommodityImpl::exists_with_abbreviation
 (	PhatbooksDatabaseConnection& p_database_connection,

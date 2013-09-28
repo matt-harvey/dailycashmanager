@@ -24,7 +24,11 @@ public:
 		bool p_print_dash_for_zero = true
 	);
 
-	DecimalValidator(DecimalValidator const& rhs);
+	DecimalValidator(DecimalValidator const&) = default;
+	DecimalValidator(DecimalValidator&&) = default;
+	DecimalValidator& operator=(DecimalValidator const&) = default;
+	DecimalValidator& operator=(DecimalValidator&&) = default;
+	~DecimalValidator() = default;
 
 	/**
 	 * @param parent should point to an instance of wxTextCtrl.

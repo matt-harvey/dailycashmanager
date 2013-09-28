@@ -36,7 +36,11 @@ public:
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);
 
-	virtual ~FilteredEntryListCtrl();
+	FilteredEntryListCtrl(FilteredEntryListCtrl const&) = delete;
+	FilteredEntryListCtrl(FilteredEntryListCtrl&&) = delete;
+	FilteredEntryListCtrl& operator=(FilteredEntryListCtrl const&) = delete;
+	FilteredEntryListCtrl& operator=(FilteredEntryListCtrl&&) = delete;
+	virtual ~FilteredEntryListCtrl() = default;
 
 protected:
 	Account const& account() const;

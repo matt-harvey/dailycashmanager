@@ -44,9 +44,10 @@ public:
 
 	ProtoJournal();
 	ProtoJournal(ProtoJournal const& rhs);
-	// TODO Do we need a virtual destructor here? I don't think we do,
-	// but confirm.
-	virtual ~ProtoJournal();
+	ProtoJournal(ProtoJournal&&) = default;
+	ProtoJournal& operator=(ProtoJournal const&) = delete;
+	ProtoJournal& operator=(ProtoJournal&&) = delete;
+	virtual ~ProtoJournal() = default;
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 	static std::string primary_table_name();
@@ -104,7 +105,6 @@ protected:
 		PhatbooksDatabaseConnection& dbc,
 		boost::optional<Id> id
 	);
-
 
 private:
 

@@ -75,6 +75,12 @@ public:
 		Id p_id
 	);
 
+	DraftJournal(DraftJournal const&) = default;
+	DraftJournal(DraftJournal&&) = default;
+	DraftJournal& operator=(DraftJournal const&) = default;
+	DraftJournal& operator=(DraftJournal&&) = default;
+	virtual ~DraftJournal() = default;
+
 	/**
 	 * @returns a DraftJournal by id from the datbase. Does not check
 	 * whether there actually is a DraftJournal with this id. As a result
@@ -134,7 +140,6 @@ public:
 	bool has_repeaters() const;
 
 	void clear_repeaters();
-
 	
 private:
 

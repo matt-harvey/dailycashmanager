@@ -24,7 +24,13 @@ public:
 		boost::optional<boost::gregorian::date> const& p_min_date =
 			boost::optional<boost::gregorian::date>()
 	);
+
 	DateValidator(DateValidator const& rhs);
+
+	DateValidator(DateValidator&&) = delete;
+	DateValidator& operator=(DateValidator const&) = delete;
+	DateValidator& operator=(DateValidator&&) = delete;
+	~DateValidator() = default;
 
 	/**
 	 * @param parent should point to an instance of a wxTextCtrl.

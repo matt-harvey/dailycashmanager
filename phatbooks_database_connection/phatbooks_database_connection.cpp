@@ -76,16 +76,16 @@ namespace phatbooks
 
 PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	DatabaseConnection(),
-	m_permanent_entity_data(0),
-	m_balance_cache(0),
-	m_budget(0),
-	m_account_map(0),
-	m_budget_item_map(0),
-	m_commodity_map(0),
-	m_entry_map(0),
-	m_ordinary_journal_map(0),
-	m_draft_journal_map(0),
-	m_repeater_map(0)
+	m_permanent_entity_data(nullptr),
+	m_balance_cache(nullptr),
+	m_budget(nullptr),
+	m_account_map(nullptr),
+	m_budget_item_map(nullptr),
+	m_commodity_map(nullptr),
+	m_entry_map(nullptr),
+	m_ordinary_journal_map(nullptr),
+	m_draft_journal_map(nullptr),
+	m_repeater_map(nullptr)
 {
 	typedef PhatbooksDatabaseConnection PDC;
 	m_permanent_entity_data = new PermanentEntityData;
@@ -119,39 +119,39 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 	// order of deletion of the IdentityMaps.
 
 	delete m_balance_cache;
-	m_balance_cache = 0;
+	m_balance_cache = nullptr;
 
 	delete m_budget;
-	m_budget = 0;
+	m_budget = nullptr;
 
 	// Must be deleted before m_entry_map and before m_repeater_map
 	delete m_draft_journal_map;
-	m_draft_journal_map = 0;
+	m_draft_journal_map = nullptr;
 
 	// Must be deleted before m_entry_map
 	delete m_ordinary_journal_map;
-	m_ordinary_journal_map = 0;
+	m_ordinary_journal_map = nullptr;
 
 	delete m_repeater_map;
-	m_repeater_map = 0;
+	m_repeater_map = nullptr;
 
 	// Must be deleted before m_account_map
 	delete m_entry_map; 
-	m_entry_map = 0;
+	m_entry_map = nullptr;
 
 	// Must be deleted before m_account_map
 	delete m_budget_item_map;
-	m_budget_item_map = 0;
+	m_budget_item_map = nullptr;
 
 	// Must be deleted before m_commodity_map
 	delete m_account_map;
-	m_account_map = 0;
+	m_account_map = nullptr;
 
 	delete m_permanent_entity_data;
-	m_permanent_entity_data = 0;
+	m_permanent_entity_data = nullptr;
 
 	delete m_commodity_map;
-	m_commodity_map = 0;
+	m_commodity_map = nullptr;
 }
 
 void
@@ -203,7 +203,9 @@ PhatbooksDatabaseConnection::do_setup()
 			commodity.set_precision(2);
 			commodity.set_multiplier_to_base(Decimal("1"));
 			set_default_commodity(commodity);
-			JEWEL_ASSERT (m_permanent_entity_data->default_commodity_is_set());
+			JEWEL_ASSERT
+			(	m_permanent_entity_data->default_commodity_is_set()
+			);
 		}
 
 		DatabaseTransaction transaction(*this);
@@ -348,8 +350,6 @@ PhatbooksDatabaseConnection::save_default_commodity()
 	statement.bind(":p", default_commodity().id());
 	statement.step_final();
 }
-
-
 
 void
 PhatbooksDatabaseConnection::setup_entity_table()
@@ -497,18 +497,6 @@ BudgetAttorney::budget
 
 // PermanentEntityData
 
-
-PhatbooksDatabaseConnection::PermanentEntityData::PermanentEntityData():
-	m_default_commodity(0)
-{
-}
-
-PhatbooksDatabaseConnection::PermanentEntityData::~PermanentEntityData()
-{
-	delete m_default_commodity;
-	m_default_commodity = 0;
-}
-
 gregorian::date
 PhatbooksDatabaseConnection::PermanentEntityData::creation_date() const
 {
@@ -519,7 +507,7 @@ bool
 PhatbooksDatabaseConnection::
 PermanentEntityData::default_commodity_is_set() const
 {
-	return m_default_commodity != 0;
+	return static_cast<bool>(m_default_commodity);
 }
 
 Commodity
@@ -562,8 +550,7 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
 			"to Decimal(1, 0)."
 		);
 	}
-	if (m_default_commodity) *m_default_commodity = p_commodity;
-	else m_default_commodity = new Commodity(p_commodity);
+	m_default_commodity.reset(new Commodity(p_commodity));
 	return;
 }
 		

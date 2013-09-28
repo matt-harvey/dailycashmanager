@@ -89,25 +89,16 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 		optional<gregorian::date>(p_max_date)
 	),
 	m_max_date(p_max_date),
-	m_summary_data(0),
+	m_summary_data(nullptr),
 	m_closing_balance(0, p_account.commodity().precision()),
 	m_reconciled_closing_balance(0, p_account.commodity().precision()),
-	m_image_list(0)
+	m_image_list(nullptr)
 {
 	JEWEL_LOG_TRACE();
 	m_image_list = new wxImageList(0, 0);
 	m_image_list->Add(wxBitmap(blank_xpm), *wxWHITE);  // must be 0th image
 	m_image_list->Add(wxBitmap(tick_xpm), *wxWHITE);   // must be 1st image
-	SetImageList(m_image_list, wxIMAGE_LIST_SMALL);
-}
-
-ReconciliationEntryListCtrl::~ReconciliationEntryListCtrl()
-{
-	delete m_summary_data;
-	m_summary_data = 0;
-
-	delete m_image_list;
-	m_image_list = 0;
+	AssignImageList(m_image_list, wxIMAGE_LIST_SMALL);
 }
 
 void
@@ -198,6 +189,7 @@ ReconciliationEntryListCtrl::do_get_num_columns() const
 vector<SummaryDatum> const&
 ReconciliationEntryListCtrl::do_get_summary_data() const
 {
+	JEWEL_ASSERT (m_summary_data);
 	JEWEL_ASSERT (!m_summary_data->empty());
 	m_summary_data->at(0).set_amount(m_closing_balance);
 	m_summary_data->at(1).set_amount(m_reconciled_closing_balance);
@@ -211,7 +203,7 @@ ReconciliationEntryListCtrl::do_initialize_summary_data()
 	m_reconciled_closing_balance =
 		Decimal(0, account().commodity().precision());
 	JEWEL_ASSERT (!m_summary_data);
-	m_summary_data = new std::vector<SummaryDatum>;
+	m_summary_data.reset(new std::vector<SummaryDatum>);
 	SummaryDatum a
 	(	wxString("Closing balance"),
 		m_closing_balance

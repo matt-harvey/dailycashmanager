@@ -61,8 +61,12 @@ public:
 		Commodity const& p_commodity,
 		size_t p_minimum_num_rows
 	);
-		
-	virtual ~MultiAccountPanel();
+	
+	MultiAccountPanel(MultiAccountPanel const&) = delete;
+	MultiAccountPanel(MultiAccountPanel&&) = delete;
+	MultiAccountPanel& operator=(MultiAccountPanel const&) = delete;
+	MultiAccountPanel& operator=(MultiAccountPanel&&) = delete;
+	virtual ~MultiAccountPanel() = default;
 
 	/**
 	 * @returns the width required to fit all the widgets in a

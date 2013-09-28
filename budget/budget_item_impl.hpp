@@ -52,7 +52,12 @@ public:
 		Id p_id
 	);
 
-	~BudgetItemImpl();
+	// copy constructor is private
+	
+	BudgetItemImpl(BudgetItemImpl&&) = delete;
+	BudgetItemImpl& operator=(BudgetItemImpl const&) = delete;
+	BudgetItemImpl& operator=(BudgetItemImpl&&) = delete;
+	~BudgetItemImpl() = default;
 
 	void set_description(wxString const& p_description);
 	void set_account(Account const& p_account);

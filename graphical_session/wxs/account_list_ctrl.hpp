@@ -50,6 +50,12 @@ public:
 		account_super_type::AccountSuperType p_account_super_type
 	);
 
+	AccountListCtrl(AccountListCtrl const&) = delete;
+	AccountListCtrl(AccountListCtrl&&) = delete;
+	AccountListCtrl& operator=(AccountListCtrl const&) = delete;
+	AccountListCtrl& operator=(AccountListCtrl&&) = delete;
+	virtual ~AccountListCtrl() = default;
+
 	/**
 	 * Populates \e out with the Ids of all and only the currently selected
 	 * Accounts in the AccountListCtrl. If an Account in the list does not

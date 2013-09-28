@@ -65,10 +65,6 @@ PersistentObjectEvent::PersistentObjectEvent
 {
 }
 
-PersistentObjectEvent::~PersistentObjectEvent()
-{
-}
-
 PersistentObjectEvent::Id
 PersistentObjectEvent::po_id() const
 {

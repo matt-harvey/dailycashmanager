@@ -16,12 +16,16 @@ namespace phatbooks
 namespace gui
 {
 
-class GraphicalSession:
-	public Session  // phatbooks::Session
+class GraphicalSession: public Session
 {
 public:
-	GraphicalSession();
-	virtual ~GraphicalSession();
+
+	GraphicalSession() = default;
+	GraphicalSession(GraphicalSession const&) = delete;
+	GraphicalSession(GraphicalSession&&) = delete;
+	GraphicalSession& operator=(GraphicalSession const&) = delete;
+	GraphicalSession& operator=(GraphicalSession&&) = delete;
+	virtual ~GraphicalSession() = default;
 
 	/**
 	 * Notify session of existing application instance (which could
@@ -51,7 +55,7 @@ private:
 	 */
 	int do_run(std::string const& filepath_str);
 
-	bool m_existing_application_instance_notified;
+	bool m_existing_application_instance_notified = false;
 };
 
 

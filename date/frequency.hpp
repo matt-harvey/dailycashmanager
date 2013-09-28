@@ -25,6 +25,12 @@ public:
 	 */
 	Frequency(int p_num_steps, interval_type::IntervalType p_step_type);
 
+	Frequency(Frequency const&) = default;
+	Frequency(Frequency&&) = default;
+	Frequency& operator=(Frequency const&) = default;
+	Frequency& operator=(Frequency&&) = default;
+	~Frequency() = default;
+
 	/**
 	 * @returns the number of "units" between each event, where the
 	 * size of a "unit" is given by step_type().

@@ -20,16 +20,6 @@ namespace phatbooks
 namespace gui
 {
 
-GraphicalSession::GraphicalSession():
-	m_existing_application_instance_notified(false)
-{
-	JEWEL_LOG_TRACE();
-}
-
-GraphicalSession::~GraphicalSession()
-{
-	JEWEL_LOG_TRACE();
-}
 
 void
 GraphicalSession::notify_existing_application_instance()

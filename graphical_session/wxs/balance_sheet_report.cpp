@@ -241,16 +241,6 @@ BalanceSheetReport::display_body()
 	return;
 }
 
-BalanceSheetReport::~BalanceSheetReport()
-{
-}
-
-BalanceSheetReport::BalanceDatum::BalanceDatum():
-	opening_balance(0, 0),
-	closing_balance(0, 0)
-{
-}
-
 BalanceSheetReport::BalanceDatum::BalanceDatum(Account const& p_account):
 	opening_balance(0, p_account.commodity().precision()),
 	closing_balance(0, p_account.commodity().precision())

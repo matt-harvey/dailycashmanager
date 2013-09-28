@@ -95,22 +95,14 @@ ProtoJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 
-ProtoJournal::ProtoJournal():
-	m_data(new ProtoJournalData)
+ProtoJournal::ProtoJournal(): m_data(new ProtoJournalData)
 {
 }
 
 ProtoJournal::ProtoJournal(ProtoJournal const& rhs):
+	Journal(),
 	m_data(new ProtoJournalData(*(rhs.m_data)))
 {
-}
-
-ProtoJournal::~ProtoJournal()
-{
-	/* If m_data is a smart pointer, this is not required.
-	delete m_data;
-	m_data = 0;
-	*/
 }
 
 vector<Entry> const& 

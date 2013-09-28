@@ -15,10 +15,6 @@ namespace phatbooks
 {
 	
 
-PersistentJournal::~PersistentJournal()
-{
-}
-
 bool
 has_entry_with_id(PersistentJournal const& journal, Entry::Id entry_id)
 {

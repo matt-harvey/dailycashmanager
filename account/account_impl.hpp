@@ -126,7 +126,12 @@ public:
 	 */
 	AccountImpl(IdentityMap& p_identity_map, Id p_id);
 
-	~AccountImpl();
+	// copy constructor is private
+
+	AccountImpl(AccountImpl&&) = delete;
+	AccountImpl& operator=(AccountImpl const&) = delete;
+	AccountImpl& operator=(AccountImpl&&) = delete;
+	~AccountImpl() = default;
 
 	wxString name();
 
@@ -175,7 +180,6 @@ public:
 	static std::string primary_key_name();
 
 private:
-
 
 	/**
 	 * Copy constructor - implemented, but deliberately private.

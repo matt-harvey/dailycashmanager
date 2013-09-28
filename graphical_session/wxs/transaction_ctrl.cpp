@@ -130,18 +130,17 @@ TransactionCtrl::TransactionCtrl
 		p_size,
 		p_journal.database_connection()
 	),
-	m_transaction_type_ctrl(0),
-	m_source_entry_ctrl(0),
-	m_destination_entry_ctrl(0),
-	m_primary_amount_ctrl(0),
-	m_frequency_ctrl(0),
-	m_date_ctrl(0),
-	m_cancel_button(0),
-	m_delete_button(0),
-	m_ok_button(0),
-	m_journal(0)
+	m_transaction_type_ctrl(nullptr),
+	m_source_entry_ctrl(nullptr),
+	m_destination_entry_ctrl(nullptr),
+	m_primary_amount_ctrl(nullptr),
+	m_frequency_ctrl(nullptr),
+	m_date_ctrl(nullptr),
+	m_cancel_button(nullptr),
+	m_delete_button(nullptr),
+	m_ok_button(nullptr),
+	m_journal(new OrdinaryJournal(p_journal))
 {
-	m_journal = new OrdinaryJournal(p_journal);
 	configure_for_editing_persistent_journal();
 }
 
@@ -155,18 +154,17 @@ TransactionCtrl::TransactionCtrl
 		p_size,
 		p_journal.database_connection()
 	),
-	m_transaction_type_ctrl(0),
-	m_source_entry_ctrl(0),
-	m_destination_entry_ctrl(0),
-	m_primary_amount_ctrl(0),
-	m_frequency_ctrl(0),
-	m_date_ctrl(0),
-	m_cancel_button(0),
-	m_delete_button(0),
-	m_ok_button(0),
-	m_journal(0)
+	m_transaction_type_ctrl(nullptr),
+	m_source_entry_ctrl(nullptr),
+	m_destination_entry_ctrl(nullptr),
+	m_primary_amount_ctrl(nullptr),
+	m_frequency_ctrl(nullptr),
+	m_date_ctrl(nullptr),
+	m_cancel_button(nullptr),
+	m_delete_button(nullptr),
+	m_ok_button(nullptr),
+	m_journal(new DraftJournal(p_journal))
 {
-	m_journal = new DraftJournal(p_journal);
 	configure_for_editing_persistent_journal();
 }
 
@@ -181,25 +179,18 @@ TransactionCtrl::TransactionCtrl
 		p_size,
 		p_database_connection
 	),
-	m_transaction_type_ctrl(0),
-	m_source_entry_ctrl(0),
-	m_destination_entry_ctrl(0),
-	m_primary_amount_ctrl(0),
-	m_frequency_ctrl(0),
-	m_date_ctrl(0),
-	m_cancel_button(0),
-	m_delete_button(0),
-	m_ok_button(0),
-	m_journal(0)
+	m_transaction_type_ctrl(nullptr),
+	m_source_entry_ctrl(nullptr),
+	m_destination_entry_ctrl(nullptr),
+	m_primary_amount_ctrl(nullptr),
+	m_frequency_ctrl(nullptr),
+	m_date_ctrl(nullptr),
+	m_cancel_button(nullptr),
+	m_delete_button(nullptr),
+	m_ok_button(nullptr),
+	m_journal(nullptr)
 {
 	configure_for_editing_proto_journal(p_journal);
-}
-
-TransactionCtrl::~TransactionCtrl()
-{
-	delete m_journal;
-	m_journal = 0;
-	// wxWidgets takes care of deleting the other pointer members
 }
 
 void
@@ -267,8 +258,7 @@ TransactionCtrl::configure_top_controls
 void
 TransactionCtrl::clear_all()
 {
-	delete m_journal;
-	m_journal = 0;
+	m_journal.reset();
 	DestroyChildren();
 	set_row(0);
 	return;
@@ -433,9 +423,9 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 
 	// TODO Factor out code duplicated with other constructor.
 
-	OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal);
+	OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal.get());
 	bool const is_ordinary = static_cast<bool>(oj);
-	DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal);
+	DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal.get());
 	bool const is_draft = static_cast<bool>(dj);
 	JEWEL_ASSERT (!(is_ordinary && is_draft));
 	JEWEL_ASSERT (is_ordinary || is_draft);
@@ -938,7 +928,7 @@ TransactionCtrl::save_existing_journal()
 	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
 	if (maybe_frequency)
 	{
-		DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal);
+		DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal.get());
 		JEWEL_ASSERT (dj);
 		JEWEL_ASSERT (m_date_ctrl->date());
 		gregorian::date const next_date = value(m_date_ctrl->date());
@@ -1003,7 +993,7 @@ TransactionCtrl::save_existing_journal()
 	else
 	{
 		JEWEL_ASSERT (!maybe_frequency);
-		OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal);
+		OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal.get());
 		JEWEL_ASSERT (oj);
 		JEWEL_ASSERT (m_date_ctrl->date());
 		oj->set_date(value(m_date_ctrl->date()));

@@ -25,8 +25,8 @@
 #include <sqloxx/identity_map_fwd.hpp>
 #include <jewel/decimal.hpp>
 #include <list>
+#include <memory>
 #include <string>
-
 
 
 namespace phatbooks
@@ -73,7 +73,16 @@ public:
 	 * default constructor for sqloxx::DatabaseConnection.
 	 */
 	PhatbooksDatabaseConnection();
-	
+
+	PhatbooksDatabaseConnection(PhatbooksDatabaseConnection const&) = delete;
+	PhatbooksDatabaseConnection(PhatbooksDatabaseConnection&&) = delete;
+	PhatbooksDatabaseConnection& operator=
+	(	PhatbooksDatabaseConnection const&
+	) = delete;
+	PhatbooksDatabaseConnection& operator=
+	(	PhatbooksDatabaseConnection&&
+	) = delete;
+
 	~PhatbooksDatabaseConnection();
 
 	/**
@@ -164,6 +173,8 @@ public:
 		friend class AccountImpl;
 		friend class CommodityImpl;
 		friend class EntryImpl;
+		BalanceCacheAttorney() = delete;
+		~BalanceCacheAttorney() = delete;
 	private:
 		// Mark whole balance cache as stale.
 		static void mark_as_stale
@@ -210,6 +221,8 @@ public:
 		friend class AccountImpl;
 		friend class BudgetItemImpl;
 		friend class PhatbooksDatabaseConnection;
+		BudgetAttorney() = delete;
+		~BudgetAttorney() = delete;
 	private:
 		// Regenerate the AmalgamatedBudget, and its associated
 		// "instrument" DraftJournal, on the basis of the currently
@@ -284,13 +297,14 @@ private:
 	class PermanentEntityData
 	{
 	public:
-		PermanentEntityData();
-		~PermanentEntityData();
-
+		PermanentEntityData() = default;
+		PermanentEntityData(PermanentEntityData const&) = delete;
+		PermanentEntityData(PermanentEntityData&&) = delete;
+		PermanentEntityData& operator=(PermanentEntityData const&) = delete;
+		PermanentEntityData& operator=(PermanentEntityData&&) = delete;
+		~PermanentEntityData() = default;
 		boost::gregorian::date creation_date() const;
-
 		bool default_commodity_is_set() const;
-
 		Commodity default_commodity() const;
 		
 		/**
@@ -304,11 +318,7 @@ private:
 
 	private:
 		boost::optional<boost::gregorian::date> m_creation_date;
-
-		// A raw pointer is used here to avoid having to #include
-		// commodity.hpp.
-		Commodity* m_default_commodity;
-
+		std::unique_ptr<Commodity> m_default_commodity;
 	};
 
 	/**
@@ -329,6 +339,9 @@ private:
 	 */
 	void save_default_commodity();
 
+	// Using raw pointers here rather than smart pointers, as we want
+	// to be able easily to verify within the body of the destructor, the
+	// order of deletion of pointer members.
 	
 	PermanentEntityData* m_permanent_entity_data;
 

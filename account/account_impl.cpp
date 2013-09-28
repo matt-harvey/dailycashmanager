@@ -182,10 +182,6 @@ AccountImpl::AccountImpl(AccountImpl const& rhs):
 {
 }
 
-AccountImpl::~AccountImpl()
-{
-}
-
 bool
 AccountImpl::exists
 (	PhatbooksDatabaseConnection& p_database_connection,

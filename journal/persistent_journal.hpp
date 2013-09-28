@@ -21,7 +21,12 @@ class PersistentJournal:
 {
 public:
 	typedef PhatbooksPersistentObjectBase::Id Id;
-	virtual ~PersistentJournal();
+	PersistentJournal() = default;
+	PersistentJournal(PersistentJournal const&) = default;
+	PersistentJournal(PersistentJournal&&) = default;
+	PersistentJournal& operator=(PersistentJournal const&) = default;
+	PersistentJournal& operator=(PersistentJournal&&) = default;
+	virtual ~PersistentJournal() = default;
 };
 
 

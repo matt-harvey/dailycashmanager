@@ -16,7 +16,6 @@
 
 #include "date.hpp"
 #include "frequency.hpp"
-#include "draft_journal.hpp"
 #include "interval_type.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -24,6 +23,7 @@
 #include <sqloxx/persistent_object.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <memory>
 #include <string>
 #include <vector>
@@ -32,8 +32,7 @@
 namespace phatbooks
 {
 
-
-
+class DraftJournal;
 
 /**
  * Provides implementation for Repeater. Multiple Repeater instances may
@@ -43,6 +42,10 @@ namespace phatbooks
  * @todo The nomenclature here is a bit inconsistent. We should adopt
  * a nomenclature that is consistent across Frequency, IntervalType
  * and Repeater, in regards to "step type" and "num steps".
+ *
+ * Note, sqloxx::Id is used here in place of DraftJournal::Id, to avoid
+ * circular #includes. static_assert in source file checks they are
+ * the same type.
  */
 class RepeaterImpl:
 	public sqloxx::PersistentObject<RepeaterImpl, PhatbooksDatabaseConnection>
@@ -61,23 +64,23 @@ public:
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
-	explicit
-	RepeaterImpl
-	(	IdentityMap& p_identity_map
-	);
+	explicit RepeaterImpl(IdentityMap& p_identity_map);
 
-	RepeaterImpl
-	(	IdentityMap& p_identity_map,	
-		Id p_id
-	);
+	RepeaterImpl(IdentityMap& p_identity_map, Id p_id);
 
-	~RepeaterImpl();
+	// copy constructor is private
+
+	RepeaterImpl(RepeaterImpl&&) = delete;
+	RepeaterImpl& operator=(RepeaterImpl const&) = delete;
+	RepeaterImpl& operator=(RepeaterImpl&&) = delete;
+
+	~RepeaterImpl() = default;
 
 	void set_frequency(Frequency const& p_frequency);
 
 	void set_next_date(boost::gregorian::date const& p_next_date);
 
-	void set_journal_id(DraftJournal::Id p_journal_id);
+	void set_journal_id(sqloxx::Id p_journal_id);
 		
 	Frequency frequency();
 
@@ -112,7 +115,6 @@ public:
 	 */
 	OrdinaryJournal fire_next();
 	
-
 	DraftJournal draft_journal();
 
 	void swap(RepeaterImpl& rhs);
@@ -148,7 +150,7 @@ struct RepeaterImpl::RepeaterData
 {
 	boost::optional<Frequency> frequency;
 	boost::optional<DateRep> next_date;
-	boost::optional<DraftJournal::Id> journal_id;
+	boost::optional<sqloxx::Id> journal_id;
 };
 
 

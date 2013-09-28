@@ -52,7 +52,16 @@ public:
 		boost::gregorian::date const& p_max_date
 	);
 
-	virtual ~ReconciliationEntryListCtrl();
+	ReconciliationEntryListCtrl(ReconciliationEntryListCtrl const&) = delete;
+	ReconciliationEntryListCtrl(ReconciliationEntryListCtrl&&) = delete;
+	ReconciliationEntryListCtrl& operator=
+	(	ReconciliationEntryListCtrl const&
+	) = delete;
+	ReconciliationEntryListCtrl& operator=
+	(	ReconciliationEntryListCtrl&&
+	) = delete;
+
+	virtual ~ReconciliationEntryListCtrl() = default;
 
 private:
 	virtual void do_set_non_date_columns(long p_row, Entry const& p_entry);
@@ -77,7 +86,7 @@ private:
 	boost::gregorian::date max_date() const;
 	boost::gregorian::date m_max_date;
 
-	std::vector<SummaryDatum>* m_summary_data;
+	std::unique_ptr<std::vector<SummaryDatum> > m_summary_data;
 	jewel::Decimal m_closing_balance;
 	jewel::Decimal m_reconciled_closing_balance;
 

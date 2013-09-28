@@ -50,8 +50,13 @@ class Journal
 public:
 
 	typedef PhatbooksPersistentObjectBase::Id Id;
-		
-	virtual ~Journal();
+	
+	Journal() = default;
+	Journal(Journal const&) = default;
+	Journal(Journal&&) = default;
+	Journal& operator=(Journal const&) = default;
+	Journal& operator=(Journal&&) = default;
+	virtual ~Journal() = default;
 
 	void set_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
@@ -70,7 +75,6 @@ public:
 	transaction_type::TransactionType transaction_type() const;
 
 	jewel::Decimal balance() const;
-
 
 	/**
 	 * @returns true if and only if the journal balances, i.e. the total

@@ -42,7 +42,11 @@ public:
 		bool p_print_dash_for_zero = true
 	);
 
-	virtual ~DecimalTextCtrl();
+	DecimalTextCtrl(DecimalTextCtrl const&) = delete;
+	DecimalTextCtrl(DecimalTextCtrl&&) = delete;
+	DecimalTextCtrl& operator=(DecimalTextCtrl const&) = delete;
+	DecimalTextCtrl& operator=(DecimalTextCtrl&&) = delete;
+	virtual ~DecimalTextCtrl() = default;
 
 	/**
 	 * WARNING As a side-effect of calling this function, the

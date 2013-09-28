@@ -34,10 +34,6 @@ namespace
 }  // end anonymous namespace
 
 
-Journal::~Journal()
-{
-}
-
 void
 Journal::set_transaction_type
 (	transaction_type::TransactionType p_transaction_type

@@ -42,7 +42,11 @@ public:
 
 	PersistentObjectEvent(PersistentObjectEvent const& rhs);
 
-	virtual ~PersistentObjectEvent();
+	PersistentObjectEvent(PersistentObjectEvent&& rhs) = delete;
+	PersistentObjectEvent& operator=(PersistentObjectEvent const&) = delete;
+	PersistentObjectEvent& operator=(PersistentObjectEvent&&) = delete;
+
+	virtual ~PersistentObjectEvent() = default;
 
 	/**
 	 * @returns the id of the PhatbooksPersistentObject with which

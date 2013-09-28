@@ -80,12 +80,6 @@ BudgetItemImpl::BudgetItemImpl
 {
 }
 
-
-BudgetItemImpl::~BudgetItemImpl()
-{
-}
-
-
 std::string
 BudgetItemImpl::primary_table_name()
 {

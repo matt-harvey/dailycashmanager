@@ -4,7 +4,6 @@
 #define GUARD_repeater_hpp_1481954204608665
 
 #include "date.hpp"
-#include "draft_journal.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
 #include "ordinary_journal.hpp"
@@ -84,6 +83,12 @@ public:
 		Id p_id
 	);
 
+	Repeater(Repeater const&) = default;
+	Repeater(Repeater&&) = default;
+	Repeater& operator=(Repeater const&) = default;
+	Repeater& operator=(Repeater&&) = default;
+	~Repeater() = default;
+
 	/**
 	 * @returns a Repeater (purportedly) identified by id in the
 	 * database. This function is a relatively fast way to get a
@@ -108,8 +113,11 @@ public:
 	 * \e DraftJournal::push_repeater(...). The DraftJournal class
 	 * takes care of assigning the correct journal id to Repeaters,
 	 * without client code needing to do this directly.
+	 * Using sqloxx::Id instead of DraftJournal::Id as type, but
+	 * these are the same type, as static_assert-ed in source file.
+	 * (Avoiding circular #includes.)
 	 */
-	void set_journal_id(DraftJournal::Id p_journal_id);
+	void set_journal_id(sqloxx::Id p_journal_id);
 
 	/**
 	 * Set the date when the Repeater will next fire.

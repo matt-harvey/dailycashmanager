@@ -16,7 +16,6 @@
 #include "pl_account_entry_list_ctrl.hpp"
 #include "reconciliation_entry_list_ctrl.hpp"
 #include "summary_datum.hpp"
-#include "unfiltered_entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>

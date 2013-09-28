@@ -112,7 +112,13 @@ public:
 		Id p_id
 	);
 
-	~OrdinaryJournalImpl();
+	// copy constructor is private
+	
+	OrdinaryJournalImpl(OrdinaryJournalImpl&&) = delete;
+	OrdinaryJournalImpl& operator=(OrdinaryJournalImpl const&) = delete;
+	OrdinaryJournalImpl& operator=(OrdinaryJournalImpl&&) = delete;
+
+	~OrdinaryJournalImpl() = default;
 
 	/**
 	 * Can throw InvalidJournalDateException, if we attempt to

@@ -175,11 +175,6 @@ OrdinaryJournalImpl::OrdinaryJournalImpl(OrdinaryJournalImpl const& rhs):
 {
 }
 
-
-OrdinaryJournalImpl::~OrdinaryJournalImpl()
-{
-}
-
 void
 OrdinaryJournalImpl::set_date(gregorian::date const& p_date)
 {

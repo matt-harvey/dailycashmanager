@@ -54,6 +54,12 @@ public:
 			boost::optional<boost::gregorian::date>()
 	);
 
+	DateCtrl(DateCtrl const&) = delete;
+	DateCtrl(DateCtrl&&) = delete;
+	DateCtrl& operator=(DateCtrl const&) = delete;
+	DateCtrl& operator=(DateCtrl&&) = delete;
+	~DateCtrl() = default;
+
 	/**
 	 * @returns a boost::optional initialized with the date in the
 	 * control, or uninitialized if the control does not show

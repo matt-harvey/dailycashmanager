@@ -210,13 +210,6 @@ EntryImpl::EntryImpl(EntryImpl const& rhs):
 {
 }
 
-EntryImpl::EntryImpl(EntryImpl&& rhs):
-	PersistentObject(move(rhs)),
-	m_data(move(rhs.m_data))
-{
-	rhs.m_data = nullptr;
-}
-
 void
 EntryImpl::do_load()
 {

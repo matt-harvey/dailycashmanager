@@ -68,10 +68,6 @@ FilteredEntryListCtrl::FilteredEntryListCtrl
 	}
 }
 
-FilteredEntryListCtrl::~FilteredEntryListCtrl()
-{
-}
-
 Account const&
 FilteredEntryListCtrl::account() const
 {
