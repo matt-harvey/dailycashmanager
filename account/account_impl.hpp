@@ -36,12 +36,6 @@ namespace phatbooks
 {
 
 
-namespace detail
-{
-	class AccountData;
-}
-
-
 
 /**
  * Implements Account.
