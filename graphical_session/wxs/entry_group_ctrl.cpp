@@ -63,7 +63,7 @@ EntryGroupCtrl::EntryGroupCtrl
 (	TransactionCtrl* p_parent,
 	wxSize const& p_text_ctrl_size,
 	Journal const& p_journal,
-	transaction_side::TransactionSide p_transaction_side,
+	TransactionSide p_transaction_side,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxPanel(p_parent),
@@ -177,7 +177,7 @@ EntryGroupCtrl::configure_top_row(bool p_include_split_button)
 
 void
 EntryGroupCtrl::refresh_for_transaction_type
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 )
 {
 	assert_transaction_type_validity(p_transaction_type);
@@ -328,7 +328,7 @@ EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 bool
 EntryGroupCtrl::is_source() const
 {
-	return m_transaction_side == transaction_side::source;
+	return m_transaction_side == TransactionSide::source;
 }
 
 void
@@ -494,7 +494,7 @@ EntryGroupCtrl::push_row
 			m_unsplit_button->MoveBeforeInTabOrder(m_split_button);
 		}
 		Decimal amount = (is_source()? -p_entry.amount(): p_entry.amount());
-		if (m_transaction_type == transaction_type::envelope_transaction)
+		if (m_transaction_type == TransactionType::envelope)
 		{
 			amount = -amount;
 		}
@@ -541,8 +541,8 @@ EntryGroupCtrl::side_description() const
 	set<AccountSuperType> super_types;
 	switch (m_transaction_type)
 	{
-	case transaction_type::expenditure_transaction:  // fall through
-	case transaction_type::revenue_transaction:
+	case TransactionType::expenditure:  // fall through
+	case TransactionType::revenue:
 		if (is_source()) source_super_types(m_transaction_type, super_types);
 		else destination_super_types(m_transaction_type, super_types);
 		JEWEL_ASSERT(super_types.size() == 1);
@@ -551,11 +551,11 @@ EntryGroupCtrl::side_description() const
 			AccountPhraseFlags().set(string_flags::capitalize)
 		);
 		break;
-	case transaction_type::balance_sheet_transaction: // fall through
-	case transaction_type::envelope_transaction:  // fall through
+	case TransactionType::balance_sheet: // fall through
+	case TransactionType::envelope:  // fall through
 		ret += (is_source()? wxString("Source"): wxString("Destination"));
 		break;
-	case transaction_type::generic_transaction:
+	case TransactionType::generic:
 		ret += (is_source()? wxString("CR"): wxString("DR"));
 		break;
 	default:

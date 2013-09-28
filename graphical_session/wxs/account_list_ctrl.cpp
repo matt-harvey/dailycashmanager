@@ -131,7 +131,7 @@ AccountListCtrl::update()
 	{
 		if
 		(	(super_type(it->account_type()) == m_account_super_type) &&
-			(m_show_hidden || (it->visibility() == visibility::visible))
+			(m_show_hidden || (it->visibility() == Visibility::visible))
 		)	
 		{
 			// Insert item, with string for Column 0

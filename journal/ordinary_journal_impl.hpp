@@ -63,7 +63,7 @@ public:
 	 * @todo Document
 	 */
 	void set_transaction_type
-	(	transaction_type::TransactionType p_transaction_type
+	(	TransactionType p_transaction_type
 	);
 
 	/**
@@ -79,7 +79,7 @@ public:
 
 	void remove_entry(Entry& entry);
 
-	transaction_type::TransactionType transaction_type();
+	TransactionType transaction_type();
 
 	/**
 	 * Does not throw, except perhaps \c std::bad_alloc in

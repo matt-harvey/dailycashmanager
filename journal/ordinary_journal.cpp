@@ -100,7 +100,7 @@ OrdinaryJournal::create_opening_balance_journal
 	primary_entry.set_comment("Opening balance entry");
 	primary_entry.set_amount(primary_entry_amount);
 	primary_entry.set_whether_reconciled(true);
-	primary_entry.set_transaction_side(transaction_side::source);
+	primary_entry.set_transaction_side(TransactionSide::source);
 	ret.push_entry(primary_entry);
 
 	Entry balancing_entry(dbc);
@@ -108,17 +108,17 @@ OrdinaryJournal::create_opening_balance_journal
 	balancing_entry.set_comment("Opening balance entry");
 	balancing_entry.set_amount(-primary_entry_amount);
 	balancing_entry.set_whether_reconciled(false);
-	balancing_entry.set_transaction_side(transaction_side::destination);
+	balancing_entry.set_transaction_side(TransactionSide::destination);
 	ret.push_entry(balancing_entry);
 
 	ret.set_comment("Opening balance adjustment");
 	if (p_account.account_super_type() == AccountSuperType::balance_sheet)
 	{
-		ret.set_transaction_type(transaction_type::generic_transaction);
+		ret.set_transaction_type(TransactionType::generic);
 	}
 	else
 	{
-		ret.set_transaction_type(transaction_type::envelope_transaction);
+		ret.set_transaction_type(TransactionType::envelope);
 	}
 
 	// WARNING The source and destination Accounts are the opposite way
@@ -139,7 +139,7 @@ OrdinaryJournal::date() const
 
 void
 OrdinaryJournal::do_set_transaction_type
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 )
 {
 	impl().set_transaction_type(p_transaction_type);
@@ -182,7 +182,7 @@ OrdinaryJournal::do_remove_entry(Entry& entry)
 	return;
 }
 
-transaction_type::TransactionType
+TransactionType
 OrdinaryJournal::do_get_transaction_type() const
 {
 	return impl().transaction_type();

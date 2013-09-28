@@ -212,7 +212,7 @@ AccountDialog::AccountDialog
 		// AccountType to be changed. Then the user could make it so that,
 		// say, there are no expense Accounts. Then the TransactionCtrl
 		// would become such that it is no longer possible to create
-		// a Journal of transaction_type::expenditure_transaction. This
+		// a Journal of TransactionType::expenditure_transaction. This
 		// means we might have to update the TransactionTypeCtrl as well
 		// as the AccountCtrls within the TransactionCtrl. We avoid this
 		// complexity by making it impossible for the user to change the
@@ -366,12 +366,12 @@ AccountDialog::configure_bottom_row()
 		wxSize(medium_width(), m_name_ctrl->GetSize().y),
 		wxALIGN_RIGHT
 	);
-	visibility::Visibility visibility = visibility::visible;
+	Visibility visibility = Visibility::visible;
 	if (m_account.has_id())
 	{
 		visibility = m_account.visibility();
 	}
-	m_visibility_ctrl->SetValue(visibility == visibility::visible);
+	m_visibility_ctrl->SetValue(visibility == Visibility::visible);
 	m_top_sizer->Add
 	(	m_visibility_ctrl,
 		wxGBPosition(m_current_row, 2),
@@ -485,8 +485,8 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	temp.set_description(m_description_ctrl->GetValue());
 	temp.set_visibility
 	(	m_visibility_ctrl->GetValue()?
-		visibility::visible:
-		visibility::hidden
+		Visibility::visible:
+		Visibility::hidden
 	);
 		
 	if (p_is_new_account)

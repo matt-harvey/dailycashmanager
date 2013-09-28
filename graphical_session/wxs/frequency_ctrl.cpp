@@ -35,23 +35,23 @@ namespace
 		if (ret.empty())
 		{
 			ret.reserve(14);
-			ret.push_back(Frequency(1, interval_type::days));
-			ret.push_back(Frequency(1, interval_type::weeks));
-			ret.push_back(Frequency(2, interval_type::weeks));
-			ret.push_back(Frequency(3, interval_type::weeks));
-			ret.push_back(Frequency(4, interval_type::weeks));
-			ret.push_back(Frequency(1, interval_type::months));
-			ret.push_back(Frequency(2, interval_type::months));
-			ret.push_back(Frequency(3, interval_type::months));
-			ret.push_back(Frequency(4, interval_type::months));
-			ret.push_back(Frequency(6, interval_type::months));
-			ret.push_back(Frequency(12, interval_type::months));
-			ret.push_back(Frequency(1, interval_type::month_ends));
-			ret.push_back(Frequency(2, interval_type::month_ends));
-			ret.push_back(Frequency(3, interval_type::month_ends));
-			ret.push_back(Frequency(4, interval_type::month_ends));
-			ret.push_back(Frequency(6, interval_type::month_ends));
-			ret.push_back(Frequency(12, interval_type::month_ends));
+			ret.push_back(Frequency(1, IntervalType::days));
+			ret.push_back(Frequency(1, IntervalType::weeks));
+			ret.push_back(Frequency(2, IntervalType::weeks));
+			ret.push_back(Frequency(3, IntervalType::weeks));
+			ret.push_back(Frequency(4, IntervalType::weeks));
+			ret.push_back(Frequency(1, IntervalType::months));
+			ret.push_back(Frequency(2, IntervalType::months));
+			ret.push_back(Frequency(3, IntervalType::months));
+			ret.push_back(Frequency(4, IntervalType::months));
+			ret.push_back(Frequency(6, IntervalType::months));
+			ret.push_back(Frequency(12, IntervalType::months));
+			ret.push_back(Frequency(1, IntervalType::month_ends));
+			ret.push_back(Frequency(2, IntervalType::month_ends));
+			ret.push_back(Frequency(3, IntervalType::month_ends));
+			ret.push_back(Frequency(4, IntervalType::month_ends));
+			ret.push_back(Frequency(6, IntervalType::month_ends));
+			ret.push_back(Frequency(12, IntervalType::month_ends));
 		}
 		JEWEL_ASSERT (!ret.empty());
 		return ret;
@@ -157,11 +157,11 @@ FrequencyCtrl::set_frequency(optional<Frequency> const& p_maybe_frequency)
 		Frequency const freq = value(p_maybe_frequency);
 		if (!supports_draft_journal())
 		{
-			if (freq.step_type() == interval_type::month_ends)
+			if (freq.step_type() == IntervalType::month_ends)
 			{
 				JEWEL_THROW
 				(	InvalidFrequencyException,
-					"FrequencyCtrl does not support interval_type::month_ends"
+					"FrequencyCtrl does not support IntervalType::month_ends"
 					", as it is not calibrated to support DraftJournal "
 					"Repeater Frequencies."
 				);

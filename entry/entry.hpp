@@ -118,10 +118,10 @@ public:
 
 	/**
 	 * Set the TransactionSide for the Entry (see documentation for
-	 * transaction_side::TransactionSide).
+	 * TransactionSide).
 	 */
 	void set_transaction_side
-	(	transaction_side::TransactionSide p_transaction_side);
+	(	TransactionSide p_transaction_side);
 
 	/**
 	 * @returns Entry comment, i.e. descriptive text generally entered by
@@ -148,7 +148,7 @@ public:
 
 	bool is_reconciled() const;
 
-	transaction_side::TransactionSide transaction_side() const;
+	TransactionSide transaction_side() const;
 
 	/**
 	 * @returns the journal to which this Entry is attached.

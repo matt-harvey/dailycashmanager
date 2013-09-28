@@ -25,32 +25,32 @@ namespace test
 
 TEST(test_frequency_constructors_assignment_num_steps_and_step_type)
 {
-	Frequency const freq1(76, interval_type::days);
-	Frequency const freq2(50, interval_type::weeks);
-	Frequency const freq3(-3, interval_type::months);
-	Frequency const freq4(0, interval_type::month_ends);
+	Frequency const freq1(76, IntervalType::days);
+	Frequency const freq2(50, IntervalType::weeks);
+	Frequency const freq3(-3, IntervalType::months);
+	Frequency const freq4(0, IntervalType::month_ends);
 
-	Frequency const freq5(1, interval_type::days);
-	Frequency const freq6(-1, interval_type::weeks);
-	Frequency const freq7(-5014, interval_type::months);
-	Frequency const freq8(0, interval_type::month_ends);
+	Frequency const freq5(1, IntervalType::days);
+	Frequency const freq6(-1, IntervalType::weeks);
+	Frequency const freq7(-5014, IntervalType::months);
+	Frequency const freq8(0, IntervalType::month_ends);
 
 	CHECK_EQUAL(freq1.num_steps(), 76);
-	CHECK_EQUAL(freq1.step_type(), interval_type::days);
+	CHECK(freq1.step_type() == IntervalType::days);
 	CHECK_EQUAL(freq2.num_steps(), 50);
-	CHECK_EQUAL(freq2.step_type(), interval_type::weeks);
+	CHECK(freq2.step_type() == IntervalType::weeks);
 	CHECK_EQUAL(freq3.num_steps(), -3);
-	CHECK_EQUAL(freq3.step_type(), interval_type::months);
+	CHECK(freq3.step_type() == IntervalType::months);
 	CHECK_EQUAL(freq4.num_steps(), 0);
-	CHECK_EQUAL(freq4.step_type(), interval_type::month_ends);
+	CHECK(freq4.step_type() == IntervalType::month_ends);
 
-	CHECK_EQUAL(freq5.step_type(), interval_type::days);
+	CHECK(freq5.step_type() == IntervalType::days);
 	CHECK_EQUAL(freq5.num_steps(), 1);
-	CHECK_EQUAL(freq6.step_type(), interval_type::weeks);
+	CHECK(freq6.step_type() == IntervalType::weeks);
 	CHECK_EQUAL(freq6.num_steps(), -1);
-	CHECK_EQUAL(freq7.step_type(), interval_type::months);
+	CHECK(freq7.step_type() == IntervalType::months);
 	CHECK_EQUAL(freq7.num_steps(), -5014);
-	CHECK_EQUAL(freq8.step_type(), interval_type::month_ends);
+	CHECK(freq8.step_type() == IntervalType::month_ends);
 	CHECK_EQUAL(freq8.num_steps(), 0);
 
 	Frequency const freq1a(freq1);
@@ -64,21 +64,21 @@ TEST(test_frequency_constructors_assignment_num_steps_and_step_type)
 	Frequency const freq8a(freq8);
 
 	CHECK_EQUAL(freq1a.num_steps(), 76);
-	CHECK_EQUAL(freq1a.step_type(), interval_type::days);
+	CHECK(freq1a.step_type() == IntervalType::days);
 	CHECK_EQUAL(freq2a.num_steps(), 50);
-	CHECK_EQUAL(freq2a.step_type(), interval_type::weeks);
+	CHECK(freq2a.step_type() == IntervalType::weeks);
 	CHECK_EQUAL(freq3a.num_steps(), -3);
-	CHECK_EQUAL(freq3a.step_type(), interval_type::months);
+	CHECK(freq3a.step_type() == IntervalType::months);
 	CHECK_EQUAL(freq4a.num_steps(), 0);
-	CHECK_EQUAL(freq4a.step_type(), interval_type::month_ends);
+	CHECK(freq4a.step_type() == IntervalType::month_ends);
 
-	CHECK_EQUAL(freq5a.step_type(), interval_type::days);
+	CHECK(freq5a.step_type() == IntervalType::days);
 	CHECK_EQUAL(freq5a.num_steps(), 1);
-	CHECK_EQUAL(freq6a.step_type(), interval_type::weeks);
+	CHECK(freq6a.step_type() == IntervalType::weeks);
 	CHECK_EQUAL(freq6a.num_steps(), -1);
-	CHECK_EQUAL(freq7a.step_type(), interval_type::months);
+	CHECK(freq7a.step_type() == IntervalType::months);
 	CHECK_EQUAL(freq7a.num_steps(), -5014);
-	CHECK_EQUAL(freq8a.step_type(), interval_type::month_ends);
+	CHECK(freq8a.step_type() == IntervalType::month_ends);
 	CHECK_EQUAL(freq8a.num_steps(), 0);
 }
 
@@ -86,7 +86,7 @@ TEST(test_frequency_constructors_assignment_num_steps_and_step_type)
 
 TEST(test_frequency_phrase_description)
 {
-	Frequency const frequency1(1, interval_type::days);
+	Frequency const frequency1(1, IntervalType::days);
 	CHECK_EQUAL(frequency_description(frequency1, "every"), "every day");
 	CHECK
 	(	typeid(frequency_description(frequency1)) ==
@@ -94,31 +94,31 @@ TEST(test_frequency_phrase_description)
 	);
 	CHECK_EQUAL(frequency_description(frequency1), wxString("per day"));
 
-	Frequency const frequency2(12, interval_type::days);
+	Frequency const frequency2(12, IntervalType::days);
 	CHECK_EQUAL(frequency_description(frequency2), "per 12 days");
 
-	Frequency const frequency3(1, interval_type::weeks);
+	Frequency const frequency3(1, IntervalType::weeks);
 	CHECK_EQUAL(frequency_description(frequency3, "every"), "every week");
 	
-	Frequency const frequency4(2, interval_type::weeks);
+	Frequency const frequency4(2, IntervalType::weeks);
 	CHECK_EQUAL(frequency_description(frequency4, " !! "), " !!  2 weeks");
 
-	Frequency const frequency5(3, interval_type::months);
+	Frequency const frequency5(3, IntervalType::months);
 	CHECK_EQUAL(frequency_description(frequency5), "per 3 months");
 
-	Frequency const frequency6(1, interval_type::months);
+	Frequency const frequency6(1, IntervalType::months);
 	CHECK_EQUAL(frequency_description(frequency6), "per month");
 
-	Frequency const frequency7(12, interval_type::months);
+	Frequency const frequency7(12, IntervalType::months);
 	CHECK_EQUAL(frequency_description(frequency7), "per 12 months");
 
-	Frequency const frequency8(1, interval_type::month_ends);
+	Frequency const frequency8(1, IntervalType::month_ends);
 	CHECK_EQUAL
 	(	frequency_description(frequency8, "every"),
 		"every month, on the last day of the month"
 	);
 
-	Frequency const frequency9(10, interval_type::month_ends);
+	Frequency const frequency9(10, IntervalType::month_ends);
 	CHECK_EQUAL
 	(	frequency_description(frequency9, "every"),
 		"every 10 months, on the last day of the month"
@@ -132,20 +132,20 @@ TEST(test_frequency_phrase_description)
 
 TEST(test_frequency_convert_to_annual)
 {
-	Frequency const freq_1_days(1, interval_type::days);
-	Frequency const freq_5_days(5, interval_type::days);
-	Frequency const freq_4732_days(4732, interval_type::days);
-	Frequency const freq_1_weeks(1, interval_type::weeks);
-	Frequency const freq_340_weeks(340, interval_type::weeks);
-	Frequency const freq_2_weeks(2, interval_type::weeks);
-	Frequency const freq_1_months(1, interval_type::months);
-	Frequency const freq_5_months(5, interval_type::months);
-	Frequency const freq_6049_months(6049, interval_type::months);
-	Frequency const freq_1_month_ends(1, interval_type::month_ends);
-	Frequency const freq_5_month_ends(5, interval_type::month_ends);
+	Frequency const freq_1_days(1, IntervalType::days);
+	Frequency const freq_5_days(5, IntervalType::days);
+	Frequency const freq_4732_days(4732, IntervalType::days);
+	Frequency const freq_1_weeks(1, IntervalType::weeks);
+	Frequency const freq_340_weeks(340, IntervalType::weeks);
+	Frequency const freq_2_weeks(2, IntervalType::weeks);
+	Frequency const freq_1_months(1, IntervalType::months);
+	Frequency const freq_5_months(5, IntervalType::months);
+	Frequency const freq_6049_months(6049, IntervalType::months);
+	Frequency const freq_1_month_ends(1, IntervalType::month_ends);
+	Frequency const freq_5_month_ends(5, IntervalType::month_ends);
 	
-	Frequency const freq_12_months(12, interval_type::months);
-	Frequency const freq_12_month_ends(12, interval_type::month_ends);
+	Frequency const freq_12_months(12, IntervalType::months);
+	Frequency const freq_12_month_ends(12, IntervalType::month_ends);
 
 	CHECK_EQUAL
 	(	convert_to_annual(freq_1_days, Decimal("100")),
@@ -252,72 +252,72 @@ TEST(frequency_test_convert_from_annual)
 {
 	CHECK_EQUAL
 	(	convert_from_annual
-		(	Frequency(1, interval_type::days),
+		(	Frequency(1, IntervalType::days),
 			Decimal("365.25")
 		),
 		Decimal("1")
 	);
 	Decimal const res_a = convert_from_annual
-	(	Frequency(15, interval_type::days),
+	(	Frequency(15, IntervalType::days),
 		Decimal("98.05")
 	);
 	CHECK(res_a > Decimal("4.0266940"));
 	CHECK(res_a < Decimal("4.0266941"));
 	Decimal const res_b = convert_from_annual
-	(	Frequency(2, interval_type::weeks),
+	(	Frequency(2, IntervalType::weeks),
 		Decimal("4000")
 	);
 	CHECK(res_b > Decimal("153.3196"));
 	CHECK(res_b < Decimal("153.3197"));
 	Decimal const res_c = convert_from_annual
-	(	Frequency(1249, interval_type::weeks),
+	(	Frequency(1249, IntervalType::weeks),
 		Decimal("-9000.78")
 	);
 	CHECK(res_c < Decimal("-215451.935"));
 	CHECK(res_c > Decimal("-215451.936"));
 	Decimal const res_d = convert_from_annual
-	(	Frequency(19, interval_type::months),
+	(	Frequency(19, IntervalType::months),
 		Decimal(".0001001")
 	);
 	CHECK(res_d > Decimal("0.0001584"));
 	CHECK(res_d < Decimal("0.0001585"));
 	Decimal const res_e = convert_from_annual
-	(	Frequency(1, interval_type::months),
+	(	Frequency(1, IntervalType::months),
 		Decimal("-3")
 	);
 	CHECK_EQUAL(res_e, Decimal("-0.25"));
 	Decimal const res_f = convert_from_annual
-	(	Frequency(3, interval_type::months),
+	(	Frequency(3, IntervalType::months),
 		Decimal("0")
 	);
 	CHECK_EQUAL(res_f, Decimal("0"));
 	Decimal const res_g = convert_from_annual
-	(	Frequency(5000, interval_type::month_ends),
+	(	Frequency(5000, IntervalType::month_ends),
 		Decimal("19.26898")
 	);
 	CHECK(res_g > Decimal("8028.74166"));
 	CHECK(res_g < Decimal("8028.74167"));
 	Decimal const res_h = convert_from_annual
-	(	Frequency(5, interval_type::month_ends),
+	(	Frequency(5, IntervalType::month_ends),
 		Decimal("20000000")
 	);
 	CHECK(res_h > Decimal("8333333.33"));
 	CHECK(res_h < Decimal("8333333.34"));
 	Decimal const amt_a("-999.9200001");
 	Decimal const res_i = convert_from_annual
-	(	Frequency(12, interval_type::month_ends),
+	(	Frequency(12, IntervalType::month_ends),
 		amt_a
 	);
 	CHECK_EQUAL(res_i, amt_a);
 	Decimal const amt_b("0");
 	Decimal const res_j = convert_from_annual
-	(	Frequency(12, interval_type::months),
+	(	Frequency(12, IntervalType::months),
 		amt_b
 	);
 	CHECK_EQUAL(res_j, amt_b);
 	Decimal const amt_c("60000000");
 	Decimal const res_k = convert_from_annual
-	(	Frequency(12, interval_type::month_ends),
+	(	Frequency(12, IntervalType::month_ends),
 		amt_c
 	);
 	CHECK_EQUAL(res_k, amt_c);

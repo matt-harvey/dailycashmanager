@@ -61,11 +61,11 @@ namespace
 		return chars.find(c) != chars.end();
 	}
 
-	enum DateComponentType
+	enum class DateComponentType
 	{
-		day_component,
-		month_component,
-		year_component
+		day,
+		month,
+		year
 	};
 
 	map<char, DateComponentType> const&
@@ -75,10 +75,10 @@ namespace
 		static Map ret;
 		if (ret.empty())
 		{
-			ret['d'] = day_component;   // day of month (01-31)
-			ret['m'] = month_component; // month (01-12)
-			ret['y'] = year_component;  // year in century (00-99)
-			ret['Y'] = year_component;  // full year
+			ret['d'] = DateComponentType::day;   // day of month (01-31)
+			ret['m'] = DateComponentType::month; // month (01-12)
+			ret['y'] = DateComponentType::year;  // year in century (00-99)
+			ret['Y'] = DateComponentType::year;  // full year
 #			ifndef NDEBUG
 				for (auto const& elem: ret)
 				{
@@ -190,14 +190,14 @@ namespace
 		switch (c)
 		{
 		case 'd':
-			ret = day_component;
+			ret = DateComponentType::day;
 			break;
 		case 'm':
-			ret = month_component;
+			ret = DateComponentType::month;
 			break;
 		case 'y':  // fall through
 		case 'Y':
-			ret = year_component;
+			ret = DateComponentType::year;
 			break;
 		default:
 			;  // do nothing and fall through
@@ -222,15 +222,15 @@ namespace
 		switch (out.size())
 		{
 		case 0:
-			out[day_component] = today().day();
+			out[DateComponentType::day] = today().day();
 			goto fill_month;
 		case 1:
-			if (out.find(day_component) == out.end()) return;
-			fill_month: out[month_component] = today().month();
+			if (out.find(DateComponentType::day) == out.end()) return;
+			fill_month: out[DateComponentType::month] = today().month();
 			goto fill_year;
 		case 2:
-			if (out.find(month_component) == out.end()) return;
-			fill_year: out[year_component] = today().year();
+			if (out.find(DateComponentType::month) == out.end()) return;
+			fill_year: out[DateComponentType::year] = today().year();
 			// fall through
 		default:
 			return;
@@ -296,13 +296,13 @@ namespace
 				DateComponentType component_type = component_types[j];
 				if (target_fields.size() == 1)
 				{
-					component_type = day_component;	
+					component_type = DateComponentType::day;	
 				}
 				else if (target_fields.size() == 2)
 				{
 					DateComponentType const day_and_month[] =
-					{	day_component,
-						month_component
+					{	DateComponentType::day,
+						DateComponentType::month
 					};
 					DateComponentType const first = *find_first_of
 					(	component_types.begin(),
@@ -317,9 +317,9 @@ namespace
 						break;
 					case 1:
 						component_type =
-						(	(first == day_component)?
-							month_component:
-							day_component
+						(	(first == DateComponentType::day)?
+							DateComponentType::month:
+							DateComponentType::day
 						);
 						break;
 					default:
@@ -335,9 +335,9 @@ namespace
 		{
 			return optional<gregorian::date>();
 		}
-		if (components.at(year_component) < 100)
+		if (components.at(DateComponentType::year) < 100)
 		{
-			components[year_component] += 2000;
+			components[DateComponentType::year] += 2000;
 		}
 		try
 		{
@@ -345,9 +345,9 @@ namespace
 			JEWEL_ASSERT (components.size() == 3);
 			return optional<gregorian::date>
 			(	gregorian::date
-				(	components.at(year_component),
-					components.at(month_component),
-					components.at(day_component)
+				(	components.at(DateComponentType::year),
+					components.at(DateComponentType::month),
+					components.at(DateComponentType::day)
 				)
 			);
 		}

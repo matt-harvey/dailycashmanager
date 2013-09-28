@@ -19,12 +19,11 @@ make_date_ordered_actual_ordinary_entry_table_iterator
 		int const target_non_actual_type = 3;
 		int i = 0;
 		int const lim =
-			static_cast<int>(transaction_type::num_transaction_types);
+			static_cast<int>(TransactionType::num_transaction_types);
 		for ( ; i != lim; ++i)
 		{
-			transaction_type::TransactionType const ttype =
-				static_cast<transaction_type::TransactionType>(i);
-			if (ttype == target_non_actual_type)
+			TransactionType const ttype = static_cast<TransactionType>(i);
+			if (ttype == static_cast<TransactionType>(target_non_actual_type))
 			{
 				JEWEL_ASSERT (!transaction_type_is_actual(ttype));
 			}

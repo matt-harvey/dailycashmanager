@@ -36,7 +36,7 @@ namespace
 
 void
 Journal::set_transaction_type
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 )
 {
 	do_set_transaction_type(p_transaction_type);
@@ -89,7 +89,7 @@ Journal::is_actual() const
 	return transaction_type_is_actual(transaction_type());
 }
 
-transaction_type::TransactionType
+TransactionType
 Journal::transaction_type() const
 {
 	return do_get_transaction_type();
@@ -118,7 +118,7 @@ Journal::primary_amount() const
 	Decimal total(0, 0);
 	for (Entry const& entry: entries())
 	{
-		if (entry.transaction_side() == transaction_side::destination)
+		if (entry.transaction_side() == TransactionSide::destination)
 		{
 			total += entry.amount();
 		}

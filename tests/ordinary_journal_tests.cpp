@@ -34,7 +34,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
 	ProtoJournal journal1;
-	journal1.set_transaction_type(transaction_type::generic_transaction);
+	journal1.set_transaction_type(TransactionType::generic);
 	journal1.set_comment("igloo");
 
 	Entry entry1a(dbc);
@@ -42,7 +42,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	entry1a.set_comment("igloo entry a");
 	entry1a.set_whether_reconciled(true);
 	entry1a.set_amount(Decimal("0.99"));
-	entry1a.set_transaction_side(transaction_side::source);
+	entry1a.set_transaction_side(TransactionSide::source);
 	journal1.push_entry(entry1a);
 
 	Entry entry1b(dbc);
@@ -50,7 +50,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	entry1b.set_comment("igloo entry b");
 	entry1b.set_whether_reconciled(false);
 	entry1b.set_amount(Decimal("-0.99"));
-	entry1b.set_transaction_side(transaction_side::destination);
+	entry1b.set_transaction_side(TransactionSide::destination);
 	journal1.push_entry(entry1b);
 	OrdinaryJournal oj1(dbc);
 	oj1.set_date(date(3000, 1, 5));
@@ -59,9 +59,9 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	CHECK_EQUAL(oj1.is_actual(), true);
 	CHECK_EQUAL(oj1.comment(), "igloo");
 	CHECK_EQUAL(oj1.entries().size(), size_t(2));
-	CHECK_EQUAL
-	(	oj1.transaction_type(),
-		transaction_type::generic_transaction
+	CHECK
+	(	oj1.transaction_type() ==
+		TransactionType::generic
 	);
 	oj1.save();
 	CHECK(!oj1.entries().empty());
@@ -74,7 +74,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 			CHECK_EQUAL(entry.comment(), "igloo entry a");
 			CHECK_EQUAL(entry.amount(), Decimal("0.99"));
 			CHECK_EQUAL(entry.is_reconciled(), true);
-			CHECK_EQUAL(entry.transaction_side(), transaction_side::source);
+			CHECK(entry.transaction_side() == TransactionSide::source);
 		}
 		else
 		{
@@ -82,14 +82,14 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 			CHECK_EQUAL(entry.is_reconciled(), false);
 			CHECK_EQUAL(entry.amount(), Decimal("-0.99"));
 			CHECK_EQUAL(entry.comment(), "igloo entry b");
-			CHECK_EQUAL
-			(	entry.transaction_side(),
-				transaction_side::destination
+			CHECK
+			(	entry.transaction_side() ==
+				TransactionSide::destination
 			);
 		}
 	}
 	DraftJournal dj2(dbc);
-	dj2.set_transaction_type(transaction_type::envelope_transaction);
+	dj2.set_transaction_type(TransactionType::envelope);
 	dj2.set_comment("steam engine");
 	dj2.set_name("some journal");
 	
@@ -98,7 +98,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	entry2a.set_comment("steam");
 	entry2a.set_amount(Decimal("0"));
 	entry2a.set_whether_reconciled(false);
-	entry2a.set_transaction_side(transaction_side::source);
+	entry2a.set_transaction_side(TransactionSide::source);
 	dj2.push_entry(entry2a);
 	
 	oj1.mimic(dj2);
@@ -107,9 +107,9 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	CHECK_EQUAL(oj1.comment(), "steam engine");
 	CHECK_EQUAL(oj1.entries().size(), size_t(1));
 	CHECK_EQUAL(oj1.date(), date(3000, 1, 5));
-	CHECK_EQUAL
-	(	oj1.transaction_type(),
-		transaction_type::envelope_transaction
+	CHECK
+	(	oj1.transaction_type() ==
+		TransactionType::envelope
 	);
 	oj1.save();
 	for (Entry const& entry: oj1.entries())
@@ -117,7 +117,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		CHECK_EQUAL(entry.account().id(), Account(dbc, "food").id());
 		CHECK_EQUAL(entry.comment(), "steam");
 		CHECK_EQUAL(entry.is_reconciled(), false);
-		CHECK_EQUAL(entry.transaction_side(), transaction_side::source);
+		CHECK(entry.transaction_side() == TransactionSide::source);
 	}
 }
 
@@ -127,7 +127,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
 	OrdinaryJournal journal1(dbc);
-	journal1.set_transaction_type(transaction_type::generic_transaction);
+	journal1.set_transaction_type(TransactionType::generic);
 	journal1.set_comment("igloo");
 
 	Entry entry1a(dbc);
@@ -135,7 +135,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	entry1a.set_comment("igloo entry a");
 	entry1a.set_whether_reconciled(true);
 	entry1a.set_amount(Decimal("-10.99"));
-	entry1a.set_transaction_side(transaction_side::source);
+	entry1a.set_transaction_side(TransactionSide::source);
 	journal1.push_entry(entry1a);
 	CHECK_THROW(journal1.save(), UnbalancedJournalException);
 
@@ -144,7 +144,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	entry1b.set_comment("igloo entry b");
 	entry1b.set_whether_reconciled(false);
 	entry1b.set_amount(Decimal("50.09"));
-	entry1b.set_transaction_side(transaction_side::destination);
+	entry1b.set_transaction_side(TransactionSide::destination);
 	journal1.push_entry(entry1b);
 	journal1.set_date(date(3000, 1, 5));
 
@@ -165,7 +165,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	entry1c.set_comment("Ummm");
 	entry1c.set_whether_reconciled(true);
 	entry1c.set_amount(Decimal(0, 0));
-	entry1c.set_transaction_side(transaction_side::destination);
+	entry1c.set_transaction_side(TransactionSide::destination);
 	journal1b.push_entry(entry1c);
 	CHECK(journal1b.is_balanced());
 	CHECK(journal1.is_balanced());

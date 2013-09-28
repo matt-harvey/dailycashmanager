@@ -30,9 +30,6 @@ using std::vector;
 namespace phatbooks
 {
 
-using transaction_type::num_transaction_types;
-using transaction_type::TransactionType;
-
 namespace gui
 {
 
@@ -52,7 +49,7 @@ TransactionTypeCtrl::TransactionTypeCtrl
 	wxWindowID p_id,
 	wxSize const& p_size,
 	PhatbooksDatabaseConnection& p_database_connection,
-	vector<transaction_type::TransactionType> const& p_transaction_types
+	vector<TransactionType> const& p_transaction_types
 ):
 	wxComboBox
 	(	p_parent,
@@ -79,13 +76,13 @@ TransactionTypeCtrl::TransactionTypeCtrl
 	SetSelection(0);  // In effort to avoid apparent bug in Windows.
 }
 
-optional<transaction_type::TransactionType>
+optional<TransactionType>
 TransactionTypeCtrl::transaction_type() const
 {
-	optional<transaction_type::TransactionType> ret;
+	optional<TransactionType> ret;
 	if (GetSelection() >= 0)
 	{
-		transaction_type::TransactionType const ttype =
+		TransactionType const ttype =
 			transaction_type_from_verb(GetValue());
 		assert_transaction_type_validity(ttype);
 		ret = ttype;
@@ -95,19 +92,19 @@ TransactionTypeCtrl::transaction_type() const
 
 void
 TransactionTypeCtrl::set_transaction_type
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 )
 {
 	for (int i = 0; ; ++i)
 	{
-		transaction_type::TransactionType const ttype =
+		TransactionType const ttype =
 			m_transaction_types[i];
 		if (ttype == p_transaction_type)
 		{
 			SetSelection(i);
 			return;
 		}
-		if (i == static_cast<int>(transaction_type::num_transaction_types))
+		if (i == static_cast<int>(TransactionType::num_transaction_types))
 		{
 			JEWEL_HARD_ASSERT (false);
 			return;
@@ -137,7 +134,7 @@ TransactionTypeCtrl::on_change(wxCommandEvent& event)
 	(void)event;  // silence compiler re. unused param.
 	TransactionCtrl* parent = dynamic_cast<TransactionCtrl*>(GetParent());
 	JEWEL_ASSERT (parent);
-	optional<transaction_type::TransactionType> const maybe_ttype =
+	optional<TransactionType> const maybe_ttype =
 		transaction_type();
 	if (!maybe_ttype)
 	{

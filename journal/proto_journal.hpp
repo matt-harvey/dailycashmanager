@@ -113,18 +113,18 @@ private:
 	// I'm pretty sure they \e don't.
 	virtual std::vector<Entry> const& do_get_entries() const;
 	virtual void do_set_transaction_type
-	(	transaction_type::TransactionType p_transaction_type
+	(	TransactionType p_transaction_type
 	);
 	virtual void do_set_comment(wxString const& p_comment);
 	virtual void do_push_entry(Entry& entry);
 	virtual void do_remove_entry(Entry& entry);
 	virtual void do_clear_entries();
 	virtual wxString do_get_comment() const;
-	virtual transaction_type::TransactionType do_get_transaction_type() const;
+	virtual TransactionType do_get_transaction_type() const;
 
 	struct ProtoJournalData
 	{
-		boost::optional<transaction_type::TransactionType> transaction_type;
+		boost::optional<TransactionType> transaction_type;
 		boost::optional<wxString> comment;
 		std::vector<Entry> entries;
 	};

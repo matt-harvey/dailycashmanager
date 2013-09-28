@@ -302,7 +302,7 @@ TopPanel::make_proto_journal() const
 		}
 		JEWEL_ASSERT (account_x.has_id());
 		JEWEL_ASSERT (account_y.has_id());
-		transaction_type::TransactionType const initial_transaction_type =
+		TransactionType const initial_transaction_type =
 			natural_transaction_type(account_x, account_y);
 		assert_transaction_type_validity(initial_transaction_type);
 		ret.set_transaction_type(initial_transaction_type);
@@ -319,8 +319,8 @@ TopPanel::make_proto_journal() const
 			entry.set_comment(wxString());
 			entry.set_transaction_side
 			(	(i == 0)?
-				transaction_side::source:
-				transaction_side::destination
+				TransactionSide::source:
+				TransactionSide::destination
 			);
 			entry.set_amount(Decimal(0, account.commodity().precision()));
 			entry.set_whether_reconciled(false);

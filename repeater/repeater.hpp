@@ -58,8 +58,6 @@ public:
 		PhatbooksPersistentObject;
 	typedef PhatbooksPersistentObjectBase::Id Id;
 
-	typedef interval_type::IntervalType IntervalType;
-
 	/**
 	 * Sets up tables in the database required for the persistence
 	 * of Repeater objects.

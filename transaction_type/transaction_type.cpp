@@ -25,13 +25,6 @@ namespace phatbooks
 {
 
 using std::map;
-using transaction_type::TransactionType;
-using transaction_type::expenditure_transaction;
-using transaction_type::revenue_transaction;
-using transaction_type::balance_sheet_transaction;
-using transaction_type::envelope_transaction;
-using transaction_type::generic_transaction;
-using transaction_type::num_transaction_types;
 using sqloxx::SQLStatement;
 using std::set;
 using std::vector;
@@ -97,7 +90,8 @@ transaction_types()
 	static bool initialized = false;
 	if (!initialized)
 	{
-		size_t const sz = static_cast<size_t>(num_transaction_types);
+		size_t const sz =
+			static_cast<size_t>(TransactionType::num_transaction_types);
 		ret.reserve(sz);
 		for (size_t i = 0; i != sz; ++i)
 		{
@@ -105,7 +99,10 @@ transaction_types()
 		}
 		initialized = true;
 	}
-	JEWEL_ASSERT (ret.size() == static_cast<size_t>(num_transaction_types));
+	JEWEL_ASSERT
+	(	ret.size() ==
+		static_cast<size_t>(TransactionType::num_transaction_types)
+	);
 	return ret;
 }
 
@@ -170,15 +167,15 @@ transaction_type_to_verb(TransactionType p_transaction_type)
 {
 	switch (p_transaction_type)
 	{
-	case expenditure_transaction:
+	case TransactionType::expenditure:
 		return expenditure_verb();
-	case revenue_transaction:
+	case TransactionType::revenue:
 		return revenue_verb();
-	case balance_sheet_transaction:
+	case TransactionType::balance_sheet:
 		return balance_sheet_verb();
-	case envelope_transaction:
+	case TransactionType::envelope:
 		return envelope_verb();
-	case generic_transaction:
+	case TransactionType::generic:
 		return generic_verb();
 	default:
 		JEWEL_HARD_ASSERT (false);
@@ -194,17 +191,17 @@ transaction_type_from_verb(wxString const& p_phrase)
 	if (!calculated_already)
 	{
 		JEWEL_ASSERT (dict.empty());
-		dict[expenditure_verb()] = expenditure_transaction;
-		dict[revenue_verb()] = revenue_transaction;
-		dict[balance_sheet_verb()] = balance_sheet_transaction;
-		dict[envelope_verb()] = envelope_transaction;
-		dict[generic_verb()] = generic_transaction;
+		dict[expenditure_verb()] = TransactionType::expenditure;
+		dict[revenue_verb()] = TransactionType::revenue;
+		dict[balance_sheet_verb()] = TransactionType::balance_sheet;
+		dict[envelope_verb()] = TransactionType::envelope;
+		dict[generic_verb()] = TransactionType::generic;
 		calculated_already = true;
 	}
 	JEWEL_ASSERT (!dict.empty());
 	JEWEL_ASSERT
 	(	dict.size() ==
-		static_cast<Dict::size_type>(num_transaction_types)
+		static_cast<Dict::size_type>(TransactionType::num_transaction_types)
 	);
 	Dict::const_iterator const it = dict.find(p_phrase);
 	if (it == dict.end())
@@ -222,16 +219,16 @@ transaction_type_from_verb(wxString const& p_phrase)
 bool
 transaction_type_is_actual(TransactionType p_transaction_type)
 {
-	return p_transaction_type != envelope_transaction;
+	return p_transaction_type != TransactionType::envelope;
 }
 
 vector<AccountType> const&
 source_account_types
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 )
 {
 	static vector<AccountType>
-		ret_array[static_cast<size_t>(num_transaction_types)];
+		ret_array[static_cast<size_t>(TransactionType::num_transaction_types)];
 	static bool initialized = false;
 
 	if (!initialized)
@@ -239,7 +236,7 @@ source_account_types
 #		ifndef NDEBUG
 			for
 			(	size_t i = 0;
-				i != static_cast<size_t>(num_transaction_types);
+				i != static_cast<size_t>(TransactionType::num_transaction_types);
 				++i
 			)
 			{
@@ -247,28 +244,28 @@ source_account_types
 			}
 #		endif
 
-		ret_array[static_cast<size_t>(expenditure_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::expenditure)].
 			push_back(AccountType::asset);
-		ret_array[static_cast<size_t>(expenditure_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::expenditure)].
 			push_back(AccountType::liability);
 
-		ret_array[static_cast<size_t>(revenue_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::revenue)].
 			push_back(AccountType::revenue);
 
-		ret_array[static_cast<size_t>(balance_sheet_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::balance_sheet)].
 			push_back(AccountType::asset);
-		ret_array[static_cast<size_t>(balance_sheet_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::balance_sheet)].
 			push_back(AccountType::liability);
 
-		ret_array[static_cast<size_t>(envelope_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::envelope)].
 			push_back(AccountType::revenue);
-		ret_array[static_cast<size_t>(envelope_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::envelope)].
 			push_back(AccountType::expense);
-		ret_array[static_cast<size_t>(envelope_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::envelope)].
 			push_back(AccountType::pure_envelope);
 
 		// Generic transaction - can handle all AccountTypes;
-		ret_array[static_cast<size_t>(generic_transaction)] = account_types();
+		ret_array[static_cast<size_t>(TransactionType::generic)] = account_types();
 	
 		// Now we're initialized.
 		initialized = true;
@@ -287,7 +284,7 @@ source_account_types
 
 void
 source_super_types
-(	transaction_type::TransactionType p_transaction_type,
+(	TransactionType p_transaction_type,
 	set<AccountSuperType>& out
 )
 {
@@ -303,7 +300,7 @@ source_super_types
 
 void
 destination_super_types
-(	transaction_type::TransactionType p_transaction_type,
+(	TransactionType p_transaction_type,
 	set<AccountSuperType>& out
 )
 {
@@ -319,11 +316,11 @@ destination_super_types
 
 vector<AccountType> const&
 destination_account_types
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 )
 {
 	static vector<AccountType>
-		ret_array[static_cast<size_t>(num_transaction_types)];
+		ret_array[static_cast<size_t>(TransactionType::num_transaction_types)];
 	static bool initialized = false;
 
 	if (!initialized)
@@ -331,7 +328,7 @@ destination_account_types
 #		ifndef NDEBUG
 			for
 			(	size_t i = 0;
-				i != static_cast<size_t>(num_transaction_types);
+				i != static_cast<size_t>(TransactionType::num_transaction_types);
 				++i
 			)
 			{
@@ -339,28 +336,28 @@ destination_account_types
 			}
 #		endif
 
-		ret_array[static_cast<size_t>(expenditure_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::expenditure)].
 			push_back(AccountType::expense);
 
-		ret_array[static_cast<size_t>(revenue_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::revenue)].
 			push_back(AccountType::asset);
-		ret_array[static_cast<size_t>(revenue_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::revenue)].
 			push_back(AccountType::liability);
 
-		ret_array[static_cast<size_t>(balance_sheet_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::balance_sheet)].
 			push_back(AccountType::asset);
-		ret_array[static_cast<size_t>(balance_sheet_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::balance_sheet)].
 			push_back(AccountType::liability);
 
-		ret_array[static_cast<size_t>(envelope_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::envelope)].
 			push_back(AccountType::revenue);
-		ret_array[static_cast<size_t>(envelope_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::envelope)].
 			push_back(AccountType::expense);
-		ret_array[static_cast<size_t>(envelope_transaction)].
+		ret_array[static_cast<size_t>(TransactionType::envelope)].
 			push_back(AccountType::pure_envelope);
 
 		// Generic transaction - can handle all AccountTypes;
-		ret_array[static_cast<size_t>(generic_transaction)] = account_types();
+		ret_array[static_cast<size_t>(TransactionType::generic)] = account_types();
 	
 		// Now we're initialized.
 		initialized = true;
@@ -390,33 +387,33 @@ natural_transaction_type(Account const& account_x, Account const& account_y)
 		{
 		case AccountType::asset:  // fallthrough
 		case AccountType::liability:
-			return balance_sheet_transaction;
+			return TransactionType::balance_sheet;
 		case AccountType::equity:
-			return generic_transaction;
+			return TransactionType::generic;
 		case AccountType::revenue:
-			return revenue_transaction;
+			return TransactionType::revenue;
 		case AccountType::expense:
-			return expenditure_transaction;
+			return TransactionType::expenditure;
 		case AccountType::pure_envelope:
-			return generic_transaction;
+			return TransactionType::generic;
 		default:
 			JEWEL_HARD_ASSERT (false);
 		}
 		JEWEL_HARD_ASSERT (false);
 	case AccountType::equity:
-		return generic_transaction;
+		return TransactionType::generic;
 	case AccountType::revenue:
 		switch (account_type_y)
 		{
 		case AccountType::asset:  // fallthrough
 		case AccountType::liability:
-			return revenue_transaction;
+			return TransactionType::revenue;
 		case AccountType::equity:
-			return generic_transaction;
+			return TransactionType::generic;
 		case AccountType::revenue:  // fallthrough
 		case AccountType::expense:  // fallthrough
 		case AccountType::pure_envelope:
-			return envelope_transaction;
+			return TransactionType::envelope;
 		default:
 			JEWEL_HARD_ASSERT (false);
 		}
@@ -426,19 +423,19 @@ natural_transaction_type(Account const& account_x, Account const& account_y)
 		{
 		case AccountType::asset:  // fallthrough
 		case AccountType::liability:	
-			return expenditure_transaction;
+			return TransactionType::expenditure;
 		case AccountType::equity:
-			return generic_transaction;
+			return TransactionType::generic;
 		case AccountType::revenue:  // fallthrough
 		case AccountType::expense:  // fallthrough
 		case AccountType::pure_envelope:
-			return envelope_transaction;
+			return TransactionType::envelope;
 		default:
 			JEWEL_HARD_ASSERT (false);
 		}
 		JEWEL_HARD_ASSERT (false);
 	case AccountType::pure_envelope:
-		return envelope_transaction;
+		return TransactionType::envelope;
 	default:
 		JEWEL_HARD_ASSERT (false);
 	}

@@ -146,14 +146,14 @@ private:
 	// Define pure virtual functions inherited from Journal
 	std::vector<Entry> const& do_get_entries() const;
 	void do_set_transaction_type
-	(	transaction_type::TransactionType p_transaction_type
+	(	TransactionType p_transaction_type
 	);
 	void do_set_comment(wxString const& p_comment);
 	void do_push_entry(Entry& entry);
 	void do_remove_entry(Entry& entry);
 	void do_clear_entries();
 	wxString do_get_comment() const;
-	transaction_type::TransactionType do_get_transaction_type() const;
+	TransactionType do_get_transaction_type() const;
 	
 	DraftJournal(sqloxx::Handle<DraftJournalImpl> const& p_handle);
 

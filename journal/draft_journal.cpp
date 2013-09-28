@@ -123,7 +123,7 @@ DraftJournal::do_clear_entries()
 
 void
 DraftJournal::do_set_transaction_type
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 )
 {
 	impl().set_transaction_type(p_transaction_type);
@@ -151,7 +151,7 @@ DraftJournal::do_remove_entry(Entry& entry)
 	return;
 }
 
-transaction_type::TransactionType
+TransactionType
 DraftJournal::do_get_transaction_type() const
 {
 	return impl().transaction_type();

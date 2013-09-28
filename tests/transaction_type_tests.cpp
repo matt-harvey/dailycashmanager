@@ -23,9 +23,9 @@ typedef Vec::size_type Size;
 TEST(TestSourceAccountTypesExpenditureTransaction)
 {
 	Vec const& account_types_ref =
-		source_account_types(transaction_type::expenditure_transaction);
+		source_account_types(TransactionType::expenditure);
 	Vec const account_types_cpy =
-		source_account_types(transaction_type::expenditure_transaction);
+		source_account_types(TransactionType::expenditure);
 	CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
@@ -41,9 +41,9 @@ TEST(TestSourceAccountTypesExpenditureTransaction)
 TEST(TestDestinationAccountTypesExpenditureTransaction)
 {
 	Vec const& account_types_ref =
-		destination_account_types(transaction_type::expenditure_transaction);
+		destination_account_types(TransactionType::expenditure);
 	Vec const account_types_cpy =
-		destination_account_types(transaction_type::expenditure_transaction);
+		destination_account_types(TransactionType::expenditure);
 	CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(1));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
@@ -56,9 +56,9 @@ TEST(TestDestinationAccountTypesExpenditureTransaction)
 TEST(TestSourceAccountTypesRevenueTransaction)
 {
 	Vec const& account_types_ref =
-		source_account_types(transaction_type::revenue_transaction);
+		source_account_types(TransactionType::revenue);
 	Vec const account_types_cpy =
-		source_account_types(transaction_type::revenue_transaction);
+		source_account_types(TransactionType::revenue);
 	CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(1));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
@@ -71,9 +71,9 @@ TEST(TestSourceAccountTypesRevenueTransaction)
 TEST(TestDestinationAccountTypesRevenueTransaction)
 {
 	Vec const& account_types_ref =
-		destination_account_types(transaction_type::revenue_transaction);
+		destination_account_types(TransactionType::revenue);
 	Vec const account_types_cpy =
-		destination_account_types(transaction_type::revenue_transaction);
+		destination_account_types(TransactionType::revenue);
 	CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
@@ -89,10 +89,10 @@ TEST(TestDestinationAccountTypesRevenueTransaction)
 TEST(TestSourceAccountTypesBalanceSheetTransaction)
 {
 	Vec const& account_types_ref = source_account_types
-	(	transaction_type::balance_sheet_transaction
+	(	TransactionType::balance_sheet
 	);
 	Vec const account_types_cpy = source_account_types
-	(	transaction_type::balance_sheet_transaction
+	(	TransactionType::balance_sheet
 	);
 	CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
@@ -109,10 +109,10 @@ TEST(TestSourceAccountTypesBalanceSheetTransaction)
 TEST(TestDestinationAccountTypesBalanceSheetTransaction)
 {
 	Vec const& account_types_ref = destination_account_types
-	(	transaction_type::balance_sheet_transaction
+	(	TransactionType::balance_sheet
 	);
 	Vec const account_types_cpy = destination_account_types
-	(	transaction_type::balance_sheet_transaction
+	(	TransactionType::balance_sheet
 	);
 	CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
@@ -129,9 +129,9 @@ TEST(TestDestinationAccountTypesBalanceSheetTransaction)
 TEST(TestSourceAccountTypesEnvelopeTransaction)
 {
 	Vec const& account_types_ref =
-		source_account_types(transaction_type::envelope_transaction);
+		source_account_types(TransactionType::envelope);
 	Vec const account_types_cpy =
-		source_account_types(transaction_type::envelope_transaction);
+		source_account_types(TransactionType::envelope);
 	CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(3));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
@@ -148,9 +148,9 @@ TEST(TestSourceAccountTypesEnvelopeTransaction)
 TEST(TestDestinationAccountTypesEnvelopeTransaction)
 {
 	Vec const& account_types_ref =
-		destination_account_types(transaction_type::envelope_transaction);
+		destination_account_types(TransactionType::envelope);
 	Vec const account_types_cpy =
-		destination_account_types(transaction_type::envelope_transaction);
+		destination_account_types(TransactionType::envelope);
 	CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(3));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
@@ -167,9 +167,9 @@ TEST(TestDestinationAccountTypesEnvelopeTransaction)
 TEST(TestSourceAccountTypesGenericTransaction)
 {
 	Vec const& account_types_ref =
-		source_account_types(transaction_type::generic_transaction);
+		source_account_types(TransactionType::generic);
 	Vec const account_types_cpy =
-		source_account_types(transaction_type::generic_transaction);
+		source_account_types(TransactionType::generic);
 	CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(6));
 	for (Size i = 0; i != account_types_ref.size(); ++i)
@@ -189,9 +189,9 @@ TEST(TestSourceAccountTypesGenericTransaction)
 TEST(TestDestinationAccountTypesGenericTransaction)
 {
 	Vec const& account_types_ref =
-		destination_account_types(transaction_type::generic_transaction);
+		destination_account_types(TransactionType::generic);
 	Vec const account_types_cpy =
-		destination_account_types(transaction_type::generic_transaction);
+		destination_account_types(TransactionType::generic);
 	CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
 	CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(6));
 	for (Size i = 0; i != account_types_ref.size(); ++i)

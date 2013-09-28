@@ -81,7 +81,7 @@ public:
 	void set_whether_reconciled(bool p_is_reconciled);
 
 	void set_transaction_side
-	(	transaction_side::TransactionSide p_transaction_side
+	(	TransactionSide p_transaction_side
 	);
 
 	/**
@@ -101,7 +101,7 @@ public:
 
 	bool is_reconciled();
 
-	transaction_side::TransactionSide transaction_side();
+	TransactionSide transaction_side();
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
@@ -153,7 +153,7 @@ struct EntryImpl::EntryData
 	boost::optional<wxString> comment;
 	boost::optional<jewel::Decimal> amount;
 	boost::optional<bool> is_reconciled;
-	boost::optional<transaction_side::TransactionSide> transaction_side;
+	boost::optional<TransactionSide> transaction_side;
 };
 
 

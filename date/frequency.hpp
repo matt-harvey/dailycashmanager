@@ -23,7 +23,7 @@ public:
 	 * doesn't rule out zero anyway.) Then write tests to ensure
 	 * it throws as expected.
 	 */
-	Frequency(int p_num_steps, interval_type::IntervalType p_step_type);
+	Frequency(int p_num_steps, IntervalType p_step_type);
 
 	Frequency(Frequency const&) = default;
 	Frequency(Frequency&&) = default;
@@ -42,11 +42,11 @@ public:
 	 * between each event. In other words, this is the "unit of
 	 * measure" in which we are measuring the Frequency.
 	 */
-	interval_type::IntervalType step_type() const;
+	IntervalType step_type() const;
 
 private:
 	int m_num_steps;
-	interval_type::IntervalType m_step_type;
+	IntervalType m_step_type;
 };
 
 // Free-standing functions
@@ -77,7 +77,7 @@ frequency_description
  * @returns an amount that is equivalent to p_amount, but in
  * annual terms, rather than in terms of p_frequency. E.g. if
  * p_amount is Decimal("10") and p_frequency is
- * Frequency(2, interval_type::month), then 
+ * Frequency(2, IntervalType::month), then 
  * the returned value would be Decimal("60").
  *
  * @todo Document circumstances under which this can throw.
@@ -92,7 +92,7 @@ convert_to_annual
  * @returns an amount in terms of the frequency
  * given by p_frequency, assuming p_amount is in annual
  * terms. For example, suppose p_amount is Decimal("520"), and
- * p_frequency is Frequency(1, interval_type::week); then
+ * p_frequency is Frequency(1, IntervalType::week); then
  * the returned value would be Decimal("10").
  *
  * @todo Document circumstances under which this can throw.

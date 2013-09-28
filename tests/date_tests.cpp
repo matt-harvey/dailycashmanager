@@ -28,7 +28,7 @@ TEST(test_is_valid_date_for_interval_type)
 			CHECK
 			(	is_valid_date_for_interval_type
 				(	last,
-					interval_type::month_ends
+					IntervalType::month_ends
 				)
 			);
 			for
@@ -42,7 +42,7 @@ TEST(test_is_valid_date_for_interval_type)
 				CHECK
 				(	!is_valid_date_for_interval_type
 					(	prev,
-						interval_type::months
+						IntervalType::months
 					)
 				);
 			}
@@ -52,19 +52,19 @@ TEST(test_is_valid_date_for_interval_type)
 				CHECK
 				(	is_valid_date_for_interval_type
 					(	dt,
-						interval_type::days
+						IntervalType::days
 					)
 				);
 				CHECK
 				(	is_valid_date_for_interval_type
 					(	dt,
-						interval_type::weeks
+						IntervalType::weeks
 					)
 				);
 				CHECK
 				(	is_valid_date_for_interval_type
 					(	dt,
-						interval_type::months
+						IntervalType::months
 					)
 				);
 			}

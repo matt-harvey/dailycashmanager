@@ -133,7 +133,7 @@ public:
 
 	wxString description();
 
-	visibility::Visibility visibility();
+	Visibility visibility();
 
 	jewel::Decimal technical_balance();
 
@@ -155,7 +155,7 @@ public:
 
 	void set_description(wxString const& p_description);
 
-	void set_visibility(visibility::Visibility p_visibility);
+	void set_visibility(Visibility p_visibility);
 
 	/**
 	 * @todo Provide non-member swap and specialized std::swap per
@@ -189,7 +189,7 @@ private:
 		boost::optional<Commodity> commodity;
 		boost::optional<AccountType> account_type;
 		boost::optional<wxString> description;
-		boost::optional<visibility::Visibility> visibility;
+		boost::optional<Visibility> visibility;
 	};
 
 	std::unique_ptr<AccountData> m_data;

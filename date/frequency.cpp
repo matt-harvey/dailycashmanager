@@ -19,7 +19,7 @@ namespace phatbooks
 
 Frequency::Frequency
 (	int p_num_steps,
-	interval_type::IntervalType p_step_type
+	IntervalType p_step_type
 ):
 	m_num_steps(p_num_steps),
 	m_step_type(p_step_type)
@@ -32,7 +32,7 @@ Frequency::num_steps() const
 	return m_num_steps;
 }
 
-interval_type::IntervalType
+IntervalType
 Frequency::step_type() const
 {
 	return m_step_type;
@@ -126,7 +126,7 @@ Frequency const canonical_frequency()
 	);
 	static Frequency const ret
 	(	round(days_per_canonical_interval(), 0).intval(),
-		interval_type::days
+		IntervalType::days
 	);
 	return ret;
 }
@@ -137,12 +137,12 @@ convert_to_annual(Frequency const& p_frequency, Decimal const& p_amount)
 	Decimal const steps(p_frequency.num_steps(), 0);
 	switch (p_frequency.step_type())
 	{
-	case interval_type::days:
+	case IntervalType::days:
 		return p_amount * days_per_year() / steps;
-	case interval_type::weeks:
+	case IntervalType::weeks:
 		return p_amount * days_per_year() / days_per_week() / steps;
-	case interval_type::months:  // fall through
-	case interval_type::month_ends:
+	case IntervalType::months:  // fall through
+	case IntervalType::month_ends:
 		return p_amount * months_per_year() / steps;
 	default:
 		JEWEL_HARD_ASSERT (false);
@@ -155,12 +155,12 @@ convert_from_annual(Frequency const& p_frequency, Decimal const& p_amount)
 	Decimal const steps(p_frequency.num_steps(), 0);
 	switch (p_frequency.step_type())
 	{
-	case interval_type::days:
+	case IntervalType::days:
 		return p_amount * steps / days_per_year();
-	case interval_type::weeks:
+	case IntervalType::weeks:
 		return p_amount * steps * days_per_week() / days_per_year();
-	case interval_type::months:  // fall through
-	case interval_type::month_ends:
+	case IntervalType::months:  // fall through
+	case IntervalType::month_ends:
 		return p_amount	* steps / months_per_year();
 	default:
 		JEWEL_HARD_ASSERT (false);
@@ -173,12 +173,12 @@ convert_to_canonical(Frequency const& p_frequency, Decimal const& p_amount)
 	Decimal const steps(p_frequency.num_steps(), 0);
 	switch (p_frequency.step_type())
 	{
-	case interval_type::days:
+	case IntervalType::days:
 		return p_amount * days_per_canonical_interval() / steps;
-	case interval_type::weeks:
+	case IntervalType::weeks:
 		return p_amount * weeks_per_canonical_interval() / steps;
-	case interval_type::months:  // fall through
-	case interval_type::month_ends:
+	case IntervalType::months:  // fall through
+	case IntervalType::month_ends:
 		return p_amount * months_per_canonical_interval() / steps;
 	default:
 		JEWEL_HARD_ASSERT (false);
@@ -191,12 +191,12 @@ convert_from_canonical(Frequency const& p_frequency, Decimal const& p_amount)
 	Decimal const steps(p_frequency.num_steps(), 0);
 	switch (p_frequency.step_type())
 	{
-	case interval_type::days:
+	case IntervalType::days:
 		return p_amount * steps / days_per_canonical_interval();
-	case interval_type::weeks:
+	case IntervalType::weeks:
 		return p_amount * steps / weeks_per_canonical_interval();
-	case interval_type::months:  // fall through
-	case interval_type::month_ends:
+	case IntervalType::months:  // fall through
+	case IntervalType::month_ends:
 		return p_amount * steps / months_per_canonical_interval();
 	default:
 		JEWEL_HARD_ASSERT (false);

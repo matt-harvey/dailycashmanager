@@ -27,7 +27,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 	DraftJournal dj1(dbc);
-	dj1.set_transaction_type(transaction_type::generic_transaction);
+	dj1.set_transaction_type(TransactionType::generic);
 	dj1.set_comment("draft journal to test repeater_description");
 	dj1.set_name("test");
 
@@ -43,7 +43,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	CHECK_EQUAL(dj1.repeater_description(), "");
 
 	Repeater repeater1a(dbc);
-	repeater1a.set_frequency(Frequency(1, interval_type::months));
+	repeater1a.set_frequency(Frequency(1, IntervalType::months));
 	repeater1a.set_next_date(date(2524, 9, 15));
 	dj1.push_repeater(repeater1a);
 
@@ -54,7 +54,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	CHECK_EQUAL(dj1.repeater_description(), target);
 
 	Repeater repeater1b(dbc);
-	repeater1b.set_frequency(Frequency(3, interval_type::days));
+	repeater1b.set_frequency(Frequency(3, IntervalType::days));
 	repeater1b.set_next_date(date(3950, 9, 12));
 	dj1.push_repeater(repeater1b);
 

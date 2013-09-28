@@ -82,9 +82,9 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	DraftJournal instrument(dbc);
 	instrument.set_name("AMALGAMATED BUDGET JOURNAL");
 	instrument.set_comment("");
-	instrument.set_transaction_type(transaction_type::envelope_transaction);
+	instrument.set_transaction_type(TransactionType::envelope);
 	Repeater repeater(dbc);
-	repeater.set_frequency(Frequency(1, interval_type::days));
+	repeater.set_frequency(Frequency(1, IntervalType::days));
 	repeater.set_next_date(gregorian::day_clock::local_day());
 	instrument.push_repeater(repeater);
 	instrument.save();
@@ -93,7 +93,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	balancing_account.set_account_type(AccountType::pure_envelope);
 	balancing_account.set_name("Budget imbalance");
 	balancing_account.set_description("");
-	balancing_account.set_visibility(visibility::visible);
+	balancing_account.set_visibility(Visibility::visible);
 	Commodity const balancing_account_commodity = dbc.default_commodity();
 	balancing_account.set_commodity(balancing_account_commodity);
 	balancing_account.save();
@@ -116,7 +116,7 @@ AmalgamatedBudget::AmalgamatedBudget
 ):
 	m_is_loaded(false),
 	m_database_connection(p_database_connection),
-	m_frequency(1, interval_type::days),
+	m_frequency(1, IntervalType::days),
 	m_map(new Map),
 	m_instrument(nullptr),
 	m_balancing_account(nullptr)
@@ -203,16 +203,16 @@ AmalgamatedBudget::generate_supported_frequencies(vector<Frequency>& vec)
 	// AmalgamatedBudget::supports_frequency. If this
 	// changes, that must change too.
 	vec.reserve(10);
-	vec.push_back(Frequency(1, interval_type::days));
-	vec.push_back(Frequency(1, interval_type::weeks));
-	vec.push_back(Frequency(2, interval_type::weeks));
-	vec.push_back(Frequency(4, interval_type::weeks));
-	vec.push_back(Frequency(1, interval_type::months));
-	vec.push_back(Frequency(2, interval_type::months));
-	vec.push_back(Frequency(3, interval_type::months));
-	vec.push_back(Frequency(4, interval_type::months));
-	vec.push_back(Frequency(6, interval_type::months));
-	vec.push_back(Frequency(12, interval_type::months));
+	vec.push_back(Frequency(1, IntervalType::days));
+	vec.push_back(Frequency(1, IntervalType::weeks));
+	vec.push_back(Frequency(2, IntervalType::weeks));
+	vec.push_back(Frequency(4, IntervalType::weeks));
+	vec.push_back(Frequency(1, IntervalType::months));
+	vec.push_back(Frequency(2, IntervalType::months));
+	vec.push_back(Frequency(3, IntervalType::months));
+	vec.push_back(Frequency(4, IntervalType::months));
+	vec.push_back(Frequency(6, IntervalType::months));
+	vec.push_back(Frequency(12, IntervalType::months));
 	return;
 }
 
@@ -224,9 +224,9 @@ AmalgamatedBudget::supports_frequency(Frequency const& p_frequency)
 	// that must change too.
 	switch (p_frequency.step_type())
 	{
-	case interval_type::days:
+	case IntervalType::days:
 		return p_frequency.num_steps() == 1;
-	case interval_type::weeks:
+	case IntervalType::weeks:
 		switch (p_frequency.num_steps())
 		{
 		case 1: case 2:	return true;
@@ -234,7 +234,7 @@ AmalgamatedBudget::supports_frequency(Frequency const& p_frequency)
 		case 4:			return true;
 		default: 		return false;
 		}
-	case interval_type::months:
+	case IntervalType::months:
 		switch (p_frequency.num_steps())
 		{
 		case 1: case 2: case 3: case 4:				return true;
@@ -244,7 +244,7 @@ AmalgamatedBudget::supports_frequency(Frequency const& p_frequency)
 		case 12:									return true;	
 		default:									return false;
 		}
-	case interval_type::month_ends:
+	case IntervalType::month_ends:
 		return false;
 	default:
 		JEWEL_HARD_ASSERT (false);
@@ -391,7 +391,7 @@ AmalgamatedBudget::regenerate_instrument()
 		balancing_entry.set_amount
 		(	-round(imbalance, ba.commodity().precision())
 		);
-		balancing_entry.set_transaction_side(transaction_side::destination);
+		balancing_entry.set_transaction_side(TransactionSide::destination);
 		fresh_journal.push_entry(balancing_entry);
 		JEWEL_ASSERT (fresh_journal.is_balanced());
 	}
@@ -460,7 +460,7 @@ AmalgamatedBudget::reflect_entries(DraftJournal& p_journal)
 			entry.set_comment("");
 			entry.set_amount(-(elem.second));
 			entry.set_whether_reconciled(false);
-			entry.set_transaction_side(transaction_side::source);
+			entry.set_transaction_side(TransactionSide::source);
 			p_journal.push_entry(entry);
 		}
 	}

@@ -181,7 +181,7 @@ public:
 	 * @returns the visibility of account (whether it is visible or hidden
 	 * from user).
 	 */
-	visibility::Visibility visibility() const;
+	Visibility visibility() const;
 
 	/**
 	 * @returns "technical" account balance, which is
@@ -243,7 +243,7 @@ public:
 
 	void set_description(wxString const& p_description);
 
-	void set_visibility(visibility::Visibility p_visibility);
+	void set_visibility(Visibility p_visibility);
 
 private:
 	Account(sqloxx::Handle<AccountImpl> const& p_handle);

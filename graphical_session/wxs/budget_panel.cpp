@@ -105,7 +105,7 @@ BudgetPanel::BudgetPanel(AccountDialog* p_parent, Account const& p_account):
 	// Row 0
 	JEWEL_ASSERT
 	(	database_connection().budget_frequency() ==
-		Frequency(1, interval_type::days)
+		Frequency(1, IntervalType::days)
 	);
 	m_summary_label = new wxStaticText
 	(	this,
@@ -263,7 +263,7 @@ BudgetPanel::on_push_item_button_click(wxCommandEvent& event)
 	budget_item.set_account(m_account);
 	budget_item.set_description(wxString(""));
 	budget_item.set_amount(zero());
-	budget_item.set_frequency(Frequency(1, interval_type::days));
+	budget_item.set_frequency(Frequency(1, IntervalType::days));
 	push_item_component(budget_item);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);

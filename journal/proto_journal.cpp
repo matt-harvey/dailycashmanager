@@ -68,10 +68,9 @@ ProtoJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"transaction_type_id integer primary key"
 		");"
 	);
-	using transaction_type::TransactionType;
 	for
 	(	int i = 0;
-		i != static_cast<int>(transaction_type::num_transaction_types);
+		i != static_cast<int>(TransactionType::num_transaction_types);
 		++i
 	)
 	{
@@ -113,7 +112,7 @@ ProtoJournal::do_get_entries() const
 
 void
 ProtoJournal::do_set_transaction_type
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 )
 {
 	m_data->transaction_type = p_transaction_type;
@@ -155,7 +154,7 @@ ProtoJournal::do_get_comment() const
 	return value(m_data->comment);
 }
 
-transaction_type::TransactionType
+TransactionType
 ProtoJournal::do_get_transaction_type() const
 {
 	return value(m_data->transaction_type);
@@ -292,7 +291,7 @@ ProtoJournal::do_load_journal_core
 		temp.m_data->entries.push_back(entry);
 	}
 	temp.m_data->transaction_type =
-		static_cast<transaction_type::TransactionType>
+		static_cast<TransactionType>
 		(	statement.extract<int>(0)
 		);
 	temp.m_data->comment = std8_to_wx(statement.extract<string>(1));

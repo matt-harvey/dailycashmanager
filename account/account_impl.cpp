@@ -73,10 +73,9 @@ AccountImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"visibility_id integer primary key"
 		");"
 	);
-	using visibility::Visibility;
 	for
 	(	int i = 0;
-		i != static_cast<int>(visibility::num_visibilities);
+		i != static_cast<int>(Visibility::num_visibilities);
 		++i
 	)
 	{
@@ -312,7 +311,7 @@ AccountImpl::description()
 	return value(m_data->description);
 }
 
-visibility::Visibility
+Visibility
 AccountImpl::visibility()
 {
 	load();
@@ -442,7 +441,7 @@ AccountImpl::set_description(wxString const& p_description)
 }
 
 void
-AccountImpl::set_visibility(visibility::Visibility p_visibility)
+AccountImpl::set_visibility(Visibility p_visibility)
 {
 	load();
 	m_data->visibility = p_visibility;
@@ -479,7 +478,7 @@ AccountImpl::do_load()
 		static_cast<AccountType>(statement.extract<int>(2));
 	temp.m_data->description = std8_to_wx(statement.extract<string>(3));
 	temp.m_data->visibility =
-		static_cast<visibility::Visibility>(statement.extract<int>(4));
+		static_cast<Visibility>(statement.extract<int>(4));
 	swap(temp);
 	return;
 }
@@ -625,12 +624,11 @@ favourite_accounts
 		int const target_non_actual_type = 3;
 		int i = 0;
 		int const lim =
-			static_cast<int>(transaction_type::num_transaction_types);
+			static_cast<int>(TransactionType::num_transaction_types);
 		for ( ; i != lim; ++i)
 		{
-			transaction_type::TransactionType const ttype =
-				static_cast<transaction_type::TransactionType>(i);
-			if (ttype == target_non_actual_type)
+			TransactionType const ttype = static_cast<TransactionType>(i);
+			if (ttype == static_cast<TransactionType>(target_non_actual_type))
 			{
 				JEWEL_ASSERT (!transaction_type_is_actual(ttype));
 			}

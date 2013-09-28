@@ -13,18 +13,18 @@ namespace phatbooks
 {
 
 wxString
-phrase(interval_type::IntervalType x, bool is_plural)
+phrase(IntervalType x, bool is_plural)
 {
 	wxString const number_marker = is_plural? wxString("s"): wxString("");
 	switch (x)
 	{
-	case interval_type::days:
+	case IntervalType::days:
 		return wxString("day") + number_marker;
-	case interval_type::weeks:
+	case IntervalType::weeks:
 		return wxString("week") + number_marker;
-	case interval_type::months:
+	case IntervalType::months:
 		return wxString("month") + number_marker;
-	case interval_type::month_ends:
+	case IntervalType::month_ends:
 		return
 			wxString("month") +
 			number_marker +
@@ -37,18 +37,18 @@ phrase(interval_type::IntervalType x, bool is_plural)
 bool
 is_valid_date_for_interval_type
 (	gregorian::date const& p_date,
-	interval_type::IntervalType p_interval_type
+	IntervalType p_interval_type
 )
 {
 	switch (p_interval_type)
 	{
-	case interval_type::days:
+	case IntervalType::days:
 		return true;
-	case interval_type::weeks:
+	case IntervalType::weeks:
 		return true;
-	case interval_type::months:
+	case IntervalType::months:
 		return p_date.day() <= 28;
-	case interval_type::month_ends:
+	case IntervalType::month_ends:
 		return p_date == month_end_for_date(p_date);
 	default:
 		JEWEL_HARD_ASSERT (false);

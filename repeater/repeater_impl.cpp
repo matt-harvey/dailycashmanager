@@ -179,16 +179,16 @@ RepeaterImpl::next_date(vector<gregorian::date>::size_type n)
 	Size const steps = units * n;
 	switch (freq.step_type())
 	{
-	case interval_type::days:
+	case IntervalType::days:
 		ret += gregorian::date_duration(steps);
 		break;
-	case interval_type::weeks:
+	case IntervalType::weeks:
 		ret += gregorian::weeks(steps);
 		break;
-	case interval_type::month_ends:
+	case IntervalType::month_ends:
 		JEWEL_ASSERT ( (next_date(0) + date_duration(1)).day() == 1);
 		// FALL THROUGH
-	case interval_type::months:
+	case IntervalType::months:
 		ret += gregorian::months(steps);
 		break;
 	default:
@@ -296,7 +296,7 @@ RepeaterImpl::do_load()
 	RepeaterImpl temp(*this);
 	temp.m_data->frequency = Frequency
 	(	statement.extract<int>(0),
-		static_cast<interval_type::IntervalType>(statement.extract<int>(1))
+		static_cast<IntervalType>(statement.extract<int>(1))
 	);
 	temp.m_data->next_date =
 		numeric_cast<DateRep>(statement.extract<long long>(2));

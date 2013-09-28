@@ -63,7 +63,7 @@ public:
 	(	TransactionCtrl* p_parent,
 		wxSize const& p_text_ctrl_size,
 		Journal const& p_journal,
-		transaction_side::TransactionSide p_transaction_side,
+		TransactionSide p_transaction_side,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
@@ -75,7 +75,7 @@ public:
 	~EntryGroupCtrl() = default;
 
 	void refresh_for_transaction_type
-	(	transaction_type::TransactionType p_transaction_type
+	(	TransactionType p_transaction_type
 	);
 
 	jewel::Decimal primary_amount() const;
@@ -147,8 +147,8 @@ private:
 	static unsigned int const s_unsplit_button_id = wxID_HIGHEST + 1;
 	static unsigned int const s_split_button_id = s_unsplit_button_id + 1;
 
-	transaction_side::TransactionSide m_transaction_side;
-	transaction_type::TransactionType m_transaction_type;
+	TransactionSide m_transaction_side;
+	TransactionType m_transaction_type;
 
 	wxSize m_text_ctrl_size;
 

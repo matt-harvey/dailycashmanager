@@ -43,7 +43,7 @@ public:
 		wxWindowID p_id,
 		wxSize const& p_size,
 		PhatbooksDatabaseConnection& p_database_connection,
-		std::vector<transaction_type::TransactionType> const&
+		std::vector<TransactionType> const&
 			p_transaction_types
 	);
 
@@ -60,21 +60,21 @@ public:
 	 * we are in Windows and the underlying wxComboBox is in a
 	 * transitional state.
 	 */
-	boost::optional<transaction_type::TransactionType>
+	boost::optional<TransactionType>
 	transaction_type() const;
 
 	/**
 	 * Sets the TransactionType displayed in the control.
 	 */
 	void set_transaction_type
-	(	transaction_type::TransactionType p_transaction_type
+	(	TransactionType p_transaction_type
 	);
 
 private:
 	void on_kill_focus(wxFocusEvent& event);
 	void on_change(wxCommandEvent& event);
 
-	std::vector<transaction_type::TransactionType> m_transaction_types;
+	std::vector<TransactionType> m_transaction_types;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE()

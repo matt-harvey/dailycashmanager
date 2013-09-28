@@ -115,7 +115,7 @@ Entry::set_whether_reconciled(bool p_is_reconciled)
 
 void
 Entry::set_transaction_side
-(	transaction_side::TransactionSide p_transaction_side
+(	TransactionSide p_transaction_side
 )
 {
 	impl().set_transaction_side(p_transaction_side);
@@ -146,7 +146,7 @@ Entry::is_reconciled() const
 	return impl().is_reconciled();
 }
 
-transaction_side::TransactionSide
+TransactionSide
 Entry::transaction_side() const
 {
 	return impl().transaction_side();

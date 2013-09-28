@@ -104,7 +104,7 @@ make_default_accounts
 		// if it is able to create the Accounts first.
 
 		account.set_description(wxString(""));
-		account.set_visibility(visibility::visible);
+		account.set_visibility(Visibility::visible);
 		vec.push_back(account);
 	}
 	return;

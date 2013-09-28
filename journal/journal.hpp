@@ -59,7 +59,7 @@ public:
 	virtual ~Journal() = default;
 
 	void set_transaction_type
-	(	transaction_type::TransactionType p_transaction_type
+	(	TransactionType p_transaction_type
 	);
 	void set_comment(wxString const& p_comment);
 
@@ -72,7 +72,7 @@ public:
 
 	bool is_actual() const;
 
-	transaction_type::TransactionType transaction_type() const;
+	TransactionType transaction_type() const;
 
 	jewel::Decimal balance() const;
 
@@ -96,14 +96,14 @@ public:
 private:
 	virtual std::vector<Entry> const& do_get_entries() const = 0;
 	virtual void do_set_transaction_type
-	(	transaction_type::TransactionType p_transaction_type
+	(	TransactionType p_transaction_type
 	) = 0;
 	virtual void do_set_comment(wxString const& p_comment) = 0;
 	virtual void do_push_entry(Entry& entry) = 0;
 	virtual void do_remove_entry(Entry& entry) = 0;
 	virtual void do_clear_entries() = 0;
 	virtual wxString do_get_comment() const = 0;
-	virtual transaction_type::TransactionType
+	virtual TransactionType
 		do_get_transaction_type() const = 0;
 };
 	

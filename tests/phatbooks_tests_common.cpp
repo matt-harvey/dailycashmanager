@@ -76,7 +76,7 @@ void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
 	cash.set_name("cash");
 	cash.set_commodity(Commodity(dbc, "AUD"));
 	cash.set_description("notes and coins");
-	cash.set_visibility(visibility::visible);
+	cash.set_visibility(Visibility::visible);
 	cash.save();
 
 	Account food(dbc);
@@ -84,7 +84,7 @@ void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
 	food.set_name("food");
 	food.set_commodity(Commodity(dbc, "AUD"));
 	food.set_description("food and drink");
-	food.set_visibility(visibility::visible);
+	food.set_visibility(Visibility::visible);
 	food.save();
 
 	return;

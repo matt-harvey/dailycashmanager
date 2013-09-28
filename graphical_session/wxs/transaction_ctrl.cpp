@@ -195,10 +195,10 @@ TransactionCtrl::TransactionCtrl
 
 void
 TransactionCtrl::configure_top_controls
-(	transaction_type::TransactionType p_transaction_type,
+(	TransactionType p_transaction_type,
 	wxSize& p_text_box_size,
 	Decimal const& p_primary_amount,
-	vector<transaction_type::TransactionType> const&
+	vector<TransactionType> const&
 		p_available_transaction_types
 )
 {
@@ -280,14 +280,14 @@ TransactionCtrl::configure_for_editing_proto_journal
 	(	this,
 		text_box_size,
 		p_journal,
-		transaction_side::source,
+		TransactionSide::source,
 		database_connection()
 	);
 	m_destination_entry_ctrl = new EntryGroupCtrl
 	(	this,
 		text_box_size,
 		p_journal,
-		transaction_side::destination,
+		TransactionSide::destination,
 		database_connection()
 	);
 	JEWEL_ASSERT (text_box_size.x == medium_width());
@@ -368,20 +368,18 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	wxWindowUpdateLocker const update_locker(this);
 
 	JEWEL_ASSERT (m_journal);
-	transaction_type::TransactionType const initial_transaction_type
+	TransactionType const initial_transaction_type
 		= m_journal->transaction_type();
 	assert_transaction_type_validity(initial_transaction_type);
 	wxSize text_box_size;
-	vector<transaction_type::TransactionType> available_transaction_types;
+	vector<TransactionType> available_transaction_types;
 	available_transaction_types.push_back(initial_transaction_type);
-	using transaction_type::envelope_transaction;
-	using transaction_type::generic_transaction;
 	if
-	(	(initial_transaction_type != envelope_transaction) &&
-		(initial_transaction_type != generic_transaction)
+	(	(initial_transaction_type != TransactionType::envelope) &&
+		(initial_transaction_type != TransactionType::generic)
 	)
 	{
-		available_transaction_types.push_back(generic_transaction);
+		available_transaction_types.push_back(TransactionType::generic);
 	}
 	configure_top_controls
 	(	initial_transaction_type,
@@ -396,14 +394,14 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	(	this,
 		text_box_size,
 		*m_journal,
-		transaction_side::source,
+		TransactionSide::source,
 		database_connection()
 	);
 	m_destination_entry_ctrl = new EntryGroupCtrl
 	(	this,
 		text_box_size,
 		*m_journal,
-		transaction_side::destination,
+		TransactionSide::destination,
 		database_connection()
 	);
 	top_sizer().Add
@@ -530,7 +528,7 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 
 void
 TransactionCtrl::refresh_for_transaction_type
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 )
 {
 	m_source_entry_ctrl->
@@ -728,7 +726,7 @@ TransactionCtrl::post_journal()
 {
 	ProtoJournal journal;
 	JEWEL_ASSERT (m_transaction_type_ctrl->transaction_type());
-	transaction_type::TransactionType const ttype =
+	TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
 	journal.set_transaction_type(ttype);
 
@@ -756,7 +754,7 @@ TransactionCtrl::post_journal()
 		// Ensure valid combination of Frequency and next posting date.
 		if (!is_valid_date_for_interval_type(next_date, freq.step_type()))
 		{
-			if (freq.step_type() == interval_type::months)
+			if (freq.step_type() == IntervalType::months)
 			{
 				JEWEL_ASSERT (next_date.day() > 28);
 				wxMessageBox
@@ -770,7 +768,7 @@ TransactionCtrl::post_journal()
 				// TODO If interval_type is month_end, use month_end_for_date
 				// function to generate and suggest using the last day of the
 				// month instead of the entered date.
-				JEWEL_ASSERT (freq.step_type() == interval_type::month_ends);
+				JEWEL_ASSERT (freq.step_type() == IntervalType::month_ends);
 				JEWEL_ASSERT (month_end_for_date(next_date) != next_date);
 				wxMessageBox
 				(	"Date must be the last day of the month."
@@ -886,7 +884,7 @@ TransactionCtrl::save_existing_journal()
 {
 	JEWEL_ASSERT (m_journal);
 	JEWEL_ASSERT (m_transaction_type_ctrl->transaction_type());
-	transaction_type::TransactionType const ttype =
+	TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
 	m_journal->set_transaction_type(ttype);
 
@@ -938,7 +936,7 @@ TransactionCtrl::save_existing_journal()
 		// TODO Factor out duplicated code between this and post_journal().
 		if (!is_valid_date_for_interval_type(next_date, freq.step_type()))
 		{
-			if (freq.step_type() == interval_type::months)
+			if (freq.step_type() == IntervalType::months)
 			{
 				JEWEL_ASSERT (next_date.day() > 28);
 				wxMessageBox
@@ -952,7 +950,7 @@ TransactionCtrl::save_existing_journal()
 				// TODO If interval_type is month_end, use month_end_for_date
 				// function to generate and suggest using the last day of the
 				// month instead of the entered date.
-				JEWEL_ASSERT (freq.step_type() == interval_type::month_ends);
+				JEWEL_ASSERT (freq.step_type() == IntervalType::month_ends);
 				JEWEL_ASSERT (month_end_for_date(next_date) != next_date);
 				wxMessageBox("Date must be the last day of the month.");
 				return false;

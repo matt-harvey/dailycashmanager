@@ -19,32 +19,28 @@ class PhatbooksDatabaseConnection;
 
 // End forward declarations
 
-namespace transaction_type
+/**
+ * Different types of "transactions" (i.e., Journals), as they appear
+ * to the \e user. This affects the way we present Journal-related
+ * information to the user, for example whether we use the words
+ * "amount spent", "amount earned" or "amount transferred" when
+ * requesting the transaction amount from the user.
+ */
+enum class TransactionType
 {
-	/**
-	 * Different types of "transactions" (i.e., Journals), as they appear
-	 * to the \e user. This affects the way we present Journal-related
-	 * information to the user, for example whether we use the words
-	 * "amount spent", "amount earned" or "amount transferred" when
-	 * requesting the transaction amount from the user.
-	 */
-	enum TransactionType
-	{
-		expenditure_transaction = 0,
-		revenue_transaction,
-		balance_sheet_transaction,
-		envelope_transaction,
-		generic_transaction,
-		num_transaction_types  // do not insert enumerators below here
-	};
-
-}  // namespace transaction_type
+	expenditure = 0,
+	revenue,
+	balance_sheet,
+	envelope,
+	generic,
+	num_transaction_types  // do not insert enumerators below here
+};
 
 
 /**
  * @returns a vector of all the TransactionTypes.
  */
-std::vector<transaction_type::TransactionType> const&
+std::vector<TransactionType> const&
 transaction_types();
 
 /**
@@ -52,7 +48,7 @@ transaction_types();
  * there exist, saved in p_database_connection, Accounts of the
  * requisite AccountTypes for that TransactionType.
  */
-std::vector<transaction_type::TransactionType>
+std::vector<TransactionType>
 available_transaction_types
 (	PhatbooksDatabaseConnection& p_database_connection
 );
@@ -63,7 +59,7 @@ available_transaction_types
  */
 wxString
 transaction_type_to_verb
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 );
 
 /**
@@ -74,7 +70,7 @@ transaction_type_to_verb
  * @throws InvalidTransactionTypeException if p_phrase does not correspond to
  * any TransactionType.
  */
-transaction_type::TransactionType
+TransactionType
 transaction_type_from_verb(wxString const& p_phrase);
 
 /**
@@ -82,7 +78,7 @@ transaction_type_from_verb(wxString const& p_phrase);
  * transaction, as opposed to budget transaction.
  */
 bool transaction_type_is_actual
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 );
 
 /**
@@ -91,7 +87,7 @@ bool transaction_type_is_actual
  * does nothing.
  */
 void assert_transaction_type_validity
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 );
 
 }  // namespace phatbooks
@@ -108,7 +104,7 @@ namespace phatbooks
  */
 std::vector<AccountType> const&
 source_account_types
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 );
 
 /**
@@ -117,18 +113,18 @@ source_account_types
  */
 std::vector<AccountType> const&
 destination_account_types
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 );
 
 void
 source_super_types
-(	transaction_type::TransactionType p_transaction_type,
+(	TransactionType p_transaction_type,
 	std::set<AccountSuperType>& out
 );
 
 void
 destination_super_types
-(	transaction_type::TransactionType p_transaction_type,
+(	TransactionType p_transaction_type,
 	std::set<AccountSuperType>& out
 );
 
@@ -139,7 +135,7 @@ destination_super_types
  * if one is an expense Account and the other is an asset Account,
  * then it would be natural to assume we have an expenditure_transaction.
  */
-transaction_type::TransactionType
+TransactionType
 natural_transaction_type(Account const& account_x, Account const& account_y);
 
 
@@ -148,13 +144,13 @@ natural_transaction_type(Account const& account_x, Account const& account_y);
 inline
 void
 assert_transaction_type_validity
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 )
 {
 #	ifndef NDEBUG
 		int const ttype_as_int = static_cast<int>(p_transaction_type);
 		int const num_ttypes_as_int =
-			static_cast<int>(transaction_type::num_transaction_types);
+			static_cast<int>(TransactionType::num_transaction_types);
 		JEWEL_ASSERT (ttype_as_int >= 0);
 		JEWEL_ASSERT (ttype_as_int < num_ttypes_as_int);
 #	endif  // NDEBUG

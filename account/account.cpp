@@ -165,7 +165,7 @@ Account::description() const
 	return impl().description();
 }
 
-visibility::Visibility
+Visibility
 Account::visibility() const
 {
 	return impl().visibility();
@@ -236,7 +236,7 @@ Account::set_description(wxString const& p_description)
 }
 
 void
-Account::set_visibility(visibility::Visibility p_visibility)
+Account::set_visibility(Visibility p_visibility)
 {
 	impl().set_visibility(p_visibility);
 	return;

@@ -7,23 +7,15 @@ namespace phatbooks
 {
 
 /**
- * Houses Visibility enum.
- */
-namespace visibility
-{
-
-/**
  * Represents information about whether some item, e.g. an Account,
  * is hidden or visible.
  */
-enum Visibility
+enum class Visibility
 {
 	hidden = 0,
 	visible,
 	num_visibilities  // do not add enumerators below here
 };
-
-}  // namespace visibility
 
 }  // namespace phatbooks
 

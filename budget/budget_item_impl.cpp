@@ -206,7 +206,6 @@ BudgetItemImpl::do_load()
 	temp.m_data->set_account(Account(database_connection(), acct_id));
 	temp.m_data->
 		set_description(std8_to_wx(statement.extract<string>(1)));
-	using interval_type::IntervalType;
 	temp.m_data->set_frequency
 	(	Frequency
 		(	statement.extract<int>(2),
@@ -228,7 +227,7 @@ BudgetItemImpl::process_saving_statement(SQLStatement& statement)
 	);
 	Frequency const freq = m_data->frequency();
 	statement.bind(":interval_units", freq.num_steps());
-	statement.bind(":interval_type_id", freq.step_type());
+	statement.bind(":interval_type_id", static_cast<int>(freq.step_type()));
 	statement.bind(":amount", m_data->amount().intval());
 	statement.step_final();
 	return;

@@ -67,7 +67,7 @@ OrdinaryJournalImpl::primary_key_name()
 
 void
 OrdinaryJournalImpl::set_transaction_type
-(	transaction_type::TransactionType p_transaction_type
+(	TransactionType p_transaction_type
 )
 {
 	load();
@@ -104,7 +104,7 @@ OrdinaryJournalImpl::remove_entry(Entry& entry)
 	return;
 }
 
-transaction_type::TransactionType
+TransactionType
 OrdinaryJournalImpl::transaction_type()
 {
 	load();

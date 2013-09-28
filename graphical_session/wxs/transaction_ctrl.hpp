@@ -114,7 +114,7 @@ public:
 	 * to match p_transaction_type.
 	 */
 	void refresh_for_transaction_type
-	(	transaction_type::TransactionType p_transaction_type
+	(	TransactionType p_transaction_type
 	);
 
 	jewel::Decimal primary_amount() const;
@@ -153,10 +153,10 @@ private:
 
 	// Places size of "standard text box" in p_text_box_size.
 	void configure_top_controls
-	(	transaction_type::TransactionType p_transaction_type,
+	(	TransactionType p_transaction_type,
 		wxSize& p_text_box_size,
 		jewel::Decimal const& p_primary_amount,
-		std::vector<transaction_type::TransactionType> const&
+		std::vector<TransactionType> const&
 			p_available_transaction_types
 	);
 

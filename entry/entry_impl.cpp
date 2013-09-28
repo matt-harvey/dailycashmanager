@@ -57,10 +57,9 @@ void EntryImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"transaction_side_id integer primary key"
 		");"
 	);
-	using transaction_side::TransactionSide;
 	for
 	(	int i = 0;
-		i != static_cast<int>(transaction_side::num_transaction_sides);
+		i != static_cast<int>(TransactionSide::num_transaction_sides);
 		++i
 	)
 	{
@@ -152,7 +151,7 @@ EntryImpl::set_whether_reconciled(bool p_is_reconciled)
 
 void
 EntryImpl::set_transaction_side
-(	transaction_side::TransactionSide p_transaction_side
+(	TransactionSide p_transaction_side
 )
 {
 	load();
@@ -188,7 +187,7 @@ EntryImpl::is_reconciled()
 	return value(m_data->is_reconciled);
 }
 
-transaction_side::TransactionSide
+TransactionSide
 EntryImpl::transaction_side()
 {
 	load();
@@ -239,7 +238,7 @@ EntryImpl::do_load()
 	temp.m_data->is_reconciled =
 		static_cast<bool>(statement.extract<int>(4));
 	temp.m_data->transaction_side =
-		static_cast<transaction_side::TransactionSide>
+		static_cast<TransactionSide>
 		(	statement.extract<int>(5)
 		);
 	
@@ -258,7 +257,10 @@ EntryImpl::process_saving_statement(SQLStatement& statement)
 	(	":is_reconciled",
 		static_cast<int>(value(m_data->is_reconciled))
 	);
-	statement.bind(":transaction_side_id", value(m_data->transaction_side));
+	statement.bind
+	(	":transaction_side_id",
+		static_cast<int>(value(m_data->transaction_side))
+	);
 	statement.step_final();
 	return;
 }
@@ -410,12 +412,11 @@ create_date_ordered_actual_ordinary_entry_selector_aux
 		int const target_non_actual_type = 3;
 		int i = 0;
 		int const lim =
-			static_cast<int>(transaction_type::num_transaction_types);
+			static_cast<int>(TransactionType::num_transaction_types);
 		for ( ; i != lim; ++i)
 		{
-			transaction_type::TransactionType const ttype =
-				static_cast<transaction_type::TransactionType>(i);
-			if (ttype == target_non_actual_type)
+			TransactionType const ttype = static_cast<TransactionType>(i);
+			if (ttype == static_cast<TransactionType>(target_non_actual_type))
 			{
 				JEWEL_ASSERT (!transaction_type_is_actual(ttype));
 			}

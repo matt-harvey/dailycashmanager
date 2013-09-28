@@ -243,7 +243,7 @@ MultiAccountPanel::blank_account()
 	JEWEL_ASSERT (empty_string.empty());
 	ret.set_name(empty_string);
 	ret.set_description(empty_string);
-	ret.set_visibility(visibility::visible);
+	ret.set_visibility(Visibility::visible);
 	vector<AccountType> const& atypes =
 		account_types(m_account_super_type);
 	JEWEL_ASSERT (!atypes.empty());
@@ -360,7 +360,7 @@ MultiAccountPanel::selected_augmented_accounts
 		JEWEL_ASSERT (super_type(account_type) == m_account_super_type);
 		account.set_account_type(account_type);
 		account.set_description(m_description_boxes[i]->GetValue());
-		account.set_visibility(visibility::visible);
+		account.set_visibility(Visibility::visible);
 		account.set_commodity(m_commodity);
 
 		// TODO Make sure it is clear to the user which way round the
