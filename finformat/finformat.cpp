@@ -42,19 +42,16 @@ namespace
 	void split_plus_minus(wxString const& p_string, vector<wxString>& out)
 	{
 		wxString current_slice;
-		wxString::const_iterator it = p_string.begin();
-		wxString::const_iterator const end = p_string.end();
-		for ( ; it != end; ++it)
+		for (wxChar const wx_char: p_string)
 		{
-			wxChar const wx_char = *it;
 			if ((wx_char == wxChar('+')) || (wx_char == wxChar('-')))
 			{
 				out.push_back(current_slice);
 				current_slice.clear();
 			}
-			if (*it != wxChar(' '))
+			if (wx_char != wxChar(' '))
 			{
-				current_slice.Append(*it);
+				current_slice.Append(wx_char);
 			}
 		}
 		out.push_back(current_slice);
@@ -243,14 +240,7 @@ wxString finformat_wx
 		ret.push_back(CharT(' '));
 	}
 	wxString wret;
-	for
-	(	deque<CharT>::const_iterator dit = ret.begin(), dend = ret.end();
-		dit != dend;
-		++dit
-	)
-	{
-		wret.Append(*dit);
-	}
+	for (CharT const& elem: ret) wret.Append(elem);
 	return wret;
 }
 

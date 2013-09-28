@@ -5,7 +5,6 @@
 
 #include "account_type.hpp"
 #include "budget_panel.hpp"
-#include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/checkbox.h>
 #include <wx/dialog.h>
@@ -62,7 +61,7 @@ class DecimalTextCtrl;
  * enable this, I will need to implement update_for_deleted(Account::Id)
  * for all relevant widget classes, including AccountCtrl.
  */
-class AccountDialog: public wxDialog, private boost::noncopyable
+class AccountDialog: public wxDialog
 {
 public:
 
@@ -84,6 +83,13 @@ public:
 		Account& p_account,
 		account_super_type::AccountSuperType p_account_super_type
 	);
+
+	AccountDialog(AccountDialog const&) = delete;
+	AccountDialog(AccountDialog&&) = delete;
+	AccountDialog& operator=(AccountDialog const&) = delete;
+	AccountDialog& operator=(AccountDialog&&) = delete;
+
+	virtual ~AccountDialog() = default;
 
 private:
 	void on_ok_button_click(wxCommandEvent& event);

@@ -7,8 +7,6 @@
 #include <boost/lambda/lambda.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
@@ -18,14 +16,14 @@
 #include <algorithm>
 #include <exception>
 #include <iterator>
+#include <map>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 using boost::algorithm::split;
 using boost::lexical_cast;
 using boost::optional;
-using boost::unordered_map;
-using boost::unordered_set;
 using jewel::Log;
 using jewel::value;
 using std::back_inserter;
@@ -33,9 +31,11 @@ using std::begin;
 using std::end;
 using std::find;
 using std::find_first_of;
+using std::map;
 using std::out_of_range;
 using std::string;
 using std::transform;
+using std::unordered_set;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -68,10 +68,10 @@ namespace
 		year_component
 	};
 
-	unordered_map<char, DateComponentType> const&
+	map<char, DateComponentType> const&
 	ordinary_date_format_chars_map()
 	{
-		typedef unordered_map<char, DateComponentType> Map;
+		typedef map<char, DateComponentType> Map;
 		static Map ret;
 		if (ret.empty())
 		{
@@ -80,14 +80,9 @@ namespace
 			ret['y'] = year_component;  // year in century (00-99)
 			ret['Y'] = year_component;  // full year
 #			ifndef NDEBUG
-				// bare scope
+				for (auto const& elem: ret)
 				{
-					Map::const_iterator it = ret.begin();
-					Map::const_iterator const end = ret.end();
-					for ( ; it != end; ++it)
-					{
-						JEWEL_ASSERT (is_date_time_format_char(it->first));
-					}
+					JEWEL_ASSERT (is_date_time_format_char(elem.first));
 				}
 #			endif  // NDEBUG
 		}
@@ -102,7 +97,7 @@ namespace
 	// month, or the year.
 	bool is_ordinary_date_format_char(char c)
 	{
-		unordered_map<char, DateComponentType> const& map =
+		map<char, DateComponentType> const& map =
 			ordinary_date_format_chars_map();
 		return map.find(c) != map.end();
 	}
@@ -222,7 +217,7 @@ namespace
 		return value(maybe_date_component_type(static_cast<char>(s.Last())));
 	}
 
-	void fill_missing_components(unordered_map<DateComponentType, int>& out)
+	void fill_missing_components(map<DateComponentType, int>& out)
 	{
 		switch (out.size())
 		{
@@ -274,7 +269,7 @@ namespace
 			date_component_type
 		);
 		JEWEL_ASSERT (component_types.size() == 3);
-		unordered_map<DateComponentType, int> components;
+		map<DateComponentType, int> components;
 		
 		// bare scope
 		{

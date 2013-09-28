@@ -71,13 +71,9 @@ TransactionTypeCtrl::TransactionTypeCtrl
 	// become available after the TransactionTypeCtrl has been
 	// constructed, the TransactionTypeCtrl is notified and updates
 	// itself accordingly.
-	vector<TransactionType>::const_iterator it =
-		m_transaction_types.begin();
-	vector<TransactionType>::const_iterator const end =
-		m_transaction_types.end();
-	for ( ; it != end; ++it)
+	for (TransactionType const& elem: m_transaction_types)
 	{
-		wxString const verb = transaction_type_to_verb(*it);
+		wxString const verb = transaction_type_to_verb(elem);
 		Append(verb);  // add to combobox
 	}
 	SetSelection(0);  // In effort to avoid apparent bug in Windows.

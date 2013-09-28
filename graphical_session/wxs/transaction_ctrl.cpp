@@ -34,7 +34,6 @@
 #include <boost/optional.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <boost/unordered_set.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
@@ -53,11 +52,11 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <unordered_set>
 #include <vector>
 
 using boost::optional;
 using boost::scoped_ptr;
-using boost::unordered_set;
 using jewel::Decimal;
 using jewel::value;
 using std::back_inserter;
@@ -66,6 +65,7 @@ using std::copy;
 using std::end;
 using std::find;
 using std::set;
+using std::unordered_set;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -850,10 +850,9 @@ TransactionCtrl::remove_journal()
 #	ifndef NDEBUG
 		if (m_journal)
 		{
-			vector<Entry> const& entries = m_journal->entries();
-			for (vector<Entry>::size_type i = 0; i != entries.size(); ++i)
+			for (Entry const& entry: m_journal->entries())
 			{
-				JEWEL_ASSERT (!entries[i].has_id());
+				JEWEL_ASSERT (!entry.has_id());
 			}
 		}
 #	endif
@@ -865,9 +864,10 @@ TransactionCtrl::remove_journal()
 		journal_id_is_draft(database_connection(), doomed_journal_id);
 	vector<Entry::Id> doomed_entry_ids;
 	vector<Entry> const& doomed_entries = m_journal->entries();
-	vector<Entry>::const_iterator it = doomed_entries.begin();
-	vector<Entry>::const_iterator const end = doomed_entries.end();
-	for ( ; it != end; ++it) doomed_entry_ids.push_back(it->id());
+	for (Entry const& entry: doomed_entries)
+	{
+		doomed_entry_ids.push_back(entry.id());
+	}
 	m_journal->remove();
 	JEWEL_ASSERT (!m_journal->has_id());
 	wxEventType event_type(0);
@@ -909,10 +909,10 @@ TransactionCtrl::save_existing_journal()
 	// Journal.
 	unordered_set<Entry::Id> doomed;
 	vector<Entry> const& old_entries = m_journal->entries();
-	for (vector<Entry>::size_type i = 0; i != old_entries.size(); ++i)
+	for (Entry const& entry: old_entries)
 	{
-		JEWEL_ASSERT (old_entries[i].has_id());
-		doomed.insert(old_entries[i].id());
+		JEWEL_ASSERT (entry.has_id());
+		doomed.insert(entry.id());
 	}
 
 	// Clear the existing Entries from Journal, then reinsert the updated

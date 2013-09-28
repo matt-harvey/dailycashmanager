@@ -10,14 +10,13 @@
 #include "reconciliation_list_panel.hpp"
 #include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
-#include <boost/unordered_set.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/listctrl.h>
 #include <memory>
+#include <unordered_set>
 #include <vector>
 
 namespace phatbooks
@@ -46,7 +45,7 @@ class ReconciliationEntryListCtrl;
  *
  * @todo Better document the interface with derived classes.
  */
-class EntryListCtrl: public wxListCtrl, private boost::noncopyable
+class EntryListCtrl: public wxListCtrl
 {
 public:
 
@@ -86,7 +85,12 @@ public:
 		boost::gregorian::date const& p_max_date
 	);
 
-	virtual ~EntryListCtrl();
+	EntryListCtrl(EntryListCtrl const&) = delete;
+	EntryListCtrl(EntryListCtrl&&) = delete;
+	EntryListCtrl& operator=(EntryListCtrl const&) = delete;
+	EntryListCtrl& operator=(EntryListCtrl&&) = delete;
+
+	virtual ~EntryListCtrl() = default;
 
 	/**
 	 * Update displayed entries to reflect that a \e p_journal has been newly
@@ -198,7 +202,7 @@ private:
 	void push_back_entry(Entry const& p_entry);
 
 	// To remember which Entries have been added.
-	typedef boost::unordered_set<Entry::Id> IdSet;
+	typedef std::unordered_set<Entry::Id> IdSet;
 	IdSet m_id_set;
 
 	PhatbooksDatabaseConnection& m_database_connection;

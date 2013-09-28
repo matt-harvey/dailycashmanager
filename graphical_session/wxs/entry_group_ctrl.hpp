@@ -9,7 +9,6 @@
 #include "entry.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/button.h>
@@ -19,6 +18,7 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
+#include <memory>
 #include <vector>
 
 namespace phatbooks
@@ -49,7 +49,7 @@ class TransactionCtrl;
  * @todo Document better the concept of a "transaction" versus that of a
  * Journal.
  */
-class EntryGroupCtrl: public wxPanel, private boost::noncopyable
+class EntryGroupCtrl: public wxPanel
 {
 public:
 
@@ -67,7 +67,12 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
-	~EntryGroupCtrl();
+	EntryGroupCtrl(EntryGroupCtrl const&) = delete;
+	EntryGroupCtrl(EntryGroupCtrl&&) = delete;
+	EntryGroupCtrl& operator=(EntryGroupCtrl const&) = delete;
+	EntryGroupCtrl& operator=(EntryGroupCtrl&&) = delete;
+	
+	~EntryGroupCtrl() = default;
 
 	void refresh_for_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
@@ -144,9 +149,11 @@ private:
 
 	transaction_side::TransactionSide m_transaction_side;
 	transaction_type::TransactionType m_transaction_type;
-	std::vector<account_type::AccountType>* m_available_account_types;
 
 	wxSize m_text_ctrl_size;
+
+	typedef std::vector<account_type::AccountType> ATypeVec;
+	std::unique_ptr<ATypeVec> m_available_account_types;
 
 	wxGridBagSizer* m_top_sizer;
 	wxStaticText* m_side_descriptor;

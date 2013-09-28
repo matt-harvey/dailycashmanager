@@ -673,23 +673,15 @@ favourite_accounts
 			selector.extract<long long>(1);
 	}
 	map<account_super_type::AccountSuperType, size_t> max_counts;
-	vector<account_super_type::AccountSuperType> const& super_types =
-		account_super_types();
-	for
-	(	vector<account_super_type::AccountSuperType>::size_type j = 0;
-		j != super_types.size();
-		++j
-	)
+	for (account_super_type::AccountSuperType ast: account_super_types())
 	{
-		max_counts[super_types[j]] = 0;
+		max_counts[ast] = 0;
 	}
-	map<Account::Id, size_t>::const_iterator it = account_map.begin();
-	map<Account::Id, size_t>::const_iterator const end = account_map.end();
 	Account const balancing_acct = p_database_connection.balancing_account();
-	for ( ; it != end; ++it)
+	for (auto const& account_map_elem: account_map)
 	{
-		Account const account(p_database_connection, it->first);
-		size_t const count = it->second;
+		Account const account(p_database_connection, account_map_elem.first);
+		size_t const count = account_map_elem.second;
 		account_super_type::AccountSuperType const stype =
 			super_type(account.account_type());
 		if
@@ -702,7 +694,7 @@ favourite_accounts
 		)
 		{
 			JEWEL_ASSERT (account.has_id());
-			JEWEL_ASSERT (it->first == account.id());
+			JEWEL_ASSERT (account_map_elem.first == account.id());
 			out[stype] = account.id();
 			max_counts[stype] = count;
 		}

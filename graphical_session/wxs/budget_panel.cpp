@@ -281,17 +281,13 @@ BudgetPanel::TransferDataToWindow()
 	// Make sure there are no unusual signs
 	// (+ for revenue Accounts or - for expense Accounts) and warn the
 	// user in case there are, giving them the opportunity to correct it.	
-	vector<BudgetItemComponent>::size_type i = 0;
-	vector<BudgetItemComponent>::size_type const sz =
-		m_budget_item_components.size();
 	account_type::AccountType const account_type = m_account.account_type();
 
 	// Set precision of "zero" for more efficient comparisons.
 	Decimal const z = zero();
-	for ( ; i != sz; ++i)
+	for (BudgetItemComponent const& elem: m_budget_item_components)
 	{
-		DecimalTextCtrl* const amount_ctrl =
-			m_budget_item_components[i].amount_ctrl;
+		DecimalTextCtrl* const amount_ctrl = elem.amount_ctrl;
 		Decimal const amount = amount_ctrl->amount();
 		if
 		(	((amount > z) && (account_type == account_type::revenue)) ||
@@ -399,10 +395,9 @@ BudgetPanel::update_budgets_from_dialog()
 	}
 	// Save the amended m_budget_items
 	// Bare scope
+	for (BudgetItem& elem: m_budget_items)
 	{
-		ItemVec::iterator it = m_budget_items.begin();
-		ItemVec::iterator const end = m_budget_items.end();
-		for ( ; it != end; ++it) it->save();
+		elem.save();
 	}
 
 	transaction.commit();
@@ -536,11 +531,8 @@ vector<BudgetItem>
 BudgetPanel::make_budget_items() const
 {
 	vector<BudgetItem> ret;
-	vector<BudgetItem>::size_type i = 0;
-	vector<BudgetItem>::size_type const sz = m_budget_item_components.size();
-	for ( ; i != sz; ++i)
+	for (BudgetItemComponent const& component: m_budget_item_components)
 	{
-		BudgetItemComponent const& component = m_budget_item_components.at(i);
 		BudgetItem budget_item(database_connection());
 		budget_item.set_account(m_account);
 		budget_item.set_description(component.description_ctrl->GetValue());
@@ -816,23 +808,18 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 	(	BudgetItemTableIterator(m_database_connection),
 		(BudgetItemTableIterator())
 	);
-	for
-	(	vector<BudgetItem>::iterator it = vec.begin(), end = vec.end();
-		it != end;
-		++it
-	)
+	for (BudgetItem& elem: vec)
 	{
 		// If there is already a "general offsetting BudgetItem" for
 		// the target Account, then roll it into that.
 		if
-		(	(it->account() == p_target) &&
-			(it->description() == offsetting_item_description) &&
-			(it->frequency() == target_frequency)
+		(	(elem.account() == p_target) &&
+			(elem.description() == offsetting_item_description) &&
+			(elem.frequency() == target_frequency)
 		)
 		{
-			BudgetItem bi(*it);
-			bi.set_amount(bi.amount() + m_imbalance);
-			bi.save();
+			elem.set_amount(elem.amount() + m_imbalance);
+			elem.save();
 			JEWEL_ASSERT (budget_is_balanced());
 			
 			PersistentObjectEvent::fire

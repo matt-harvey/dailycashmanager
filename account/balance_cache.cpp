@@ -9,9 +9,7 @@
 #include "phatbooks_exceptions.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/unordered_map.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/decimal.hpp>
@@ -20,17 +18,19 @@
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <algorithm>
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
 using boost::optional;
-using boost::scoped_ptr;
-using boost::unordered_map;
 using jewel::addition_is_unsafe;
 using jewel::Decimal;
 using jewel::clear;
 using jewel::value;
 using sqloxx::SQLStatement;
 using sqloxx::ValueTypeException;
+using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 // For debugging only
@@ -255,21 +255,16 @@ BalanceCache::refresh_all()
 			working_map[account_id] += amount_intval;
 		}
 	}
-	scoped_ptr<Map> map_elect_ptr(new Map);	
+	unique_ptr<Map> map_elect_ptr(new Map);	
 	Map& map_elect = *map_elect_ptr;
 	JEWEL_ASSERT (map_elect.empty());
 
-	// Bare scope
+	for (auto const& working_map_elem: working_map)
 	{
-		WorkingMap::const_iterator it = working_map.begin();
-		WorkingMap::const_iterator const end = working_map.end();
-		for ( ; it != end; ++it)
-		{
-			AccountImpl::Id const account_id = it->first;
-			Account const account(m_database_connection, account_id);
-			map_elect[account_id] =
-				Decimal(it->second, account.commodity().precision());
-		}
+		AccountImpl::Id const account_id = working_map_elem.first;
+		Account const account(m_database_connection, account_id);
+		map_elect[account_id] =
+			Decimal(working_map_elem.second, account.commodity().precision());
 	}
 
 	// Look for m_map elements for which the second is in an uninitialized
@@ -300,12 +295,8 @@ void
 BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 {
 	// TODO Is this exception-safe?
-	typedef vector<AccountImpl::Id> IdVec;
-	IdVec::const_iterator it = p_targets.begin();
-	IdVec::const_iterator const end = p_targets.end();
-	for ( ; it != end; ++it)
+	for (auto const account_id: p_targets)
 	{
-		AccountImpl::Id const account_id = *it;
 		Account const account(m_database_connection, account_id);
 		SQLStatement statement
 		(	m_database_connection,

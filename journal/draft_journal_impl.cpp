@@ -15,13 +15,13 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/unordered_set.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/string.h>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace gregorian = boost::gregorian;
@@ -30,9 +30,9 @@ using sqloxx::SQLStatement;
 using boost::lexical_cast;
 using boost::optional;
 using boost::shared_ptr;
-using boost::unordered_set;
 using jewel::clear;
 using jewel::value;
+using std::unordered_set;
 using std::vector;
 using std::string;
 
@@ -291,12 +291,10 @@ DraftJournalImpl::do_save_new()
 	statement.bind(":name", wx_to_std8(value(m_dj_data->name)));
 	statement.step_final();
 	
-	typedef vector<Repeater>::iterator RepIter;
-	RepIter const endpoint = m_dj_data->repeaters.end();
-	for (RepIter it = m_dj_data->repeaters.begin(); it != endpoint; ++it)
+	for (Repeater& repeater: m_dj_data->repeaters)
 	{
-		it->set_journal_id(journal_id);
-		it->save();
+		repeater.set_journal_id(journal_id);
+		repeater.save();
 	}
 	return;
 }
@@ -314,13 +312,11 @@ DraftJournalImpl::do_save_existing()
 	updater.bind(":name", wx_to_std8(value(m_dj_data->name)));
 	updater.step_final();
 
-	typedef vector<Repeater>::iterator RepIter;
-	RepIter const endpoint = m_dj_data->repeaters.end();
 	unordered_set<Repeater::Id> saved_repeater_ids;
-	for (RepIter it = m_dj_data->repeaters.begin(); it != endpoint; ++it)
+	for (Repeater& repeater: m_dj_data->repeaters)
 	{
-		it->save();
-		saved_repeater_ids.insert(it->id());
+		repeater.save();
+		saved_repeater_ids.insert(repeater.id());
 	}
 	// Now remove any repeaters in the database with this DraftJournalImpl's
 	// journal_id, that no longer exist in the in-memory DraftJournalImpl
@@ -356,11 +352,9 @@ DraftJournalImpl::do_ghostify()
 {
 	do_ghostify_journal_core();
 	clear(m_dj_data->name);
-	typedef vector<Repeater>::iterator RepIter;
-	RepIter endpoint = m_dj_data->repeaters.end();
-	for (RepIter it = m_dj_data->repeaters.begin(); it != endpoint; ++it)
+	for (Repeater& repeater: m_dj_data->repeaters)
 	{
-		it->ghostify();
+		repeater.ghostify();
 	}
 	m_dj_data->repeaters.clear();
 	return;
@@ -507,10 +501,10 @@ DraftJournalImpl::mimic(DraftJournalImpl& rhs)
 	vector<Repeater> const& rreps = rhs.repeaters();
 	if (!rreps.empty())
 	{
-		for (It it = rreps.begin(), end = rreps.end(); it != end; ++it)
+		for (Repeater const& rrep: rreps)
 		{
 			Repeater repeater(database_connection());
-			repeater.mimic(*it);
+			repeater.mimic(rrep);
 			if (t_id) repeater.set_journal_id(value(t_id));
 			temp.m_dj_data->repeaters.push_back(repeater);
 		}

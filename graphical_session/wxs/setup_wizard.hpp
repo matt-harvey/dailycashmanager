@@ -7,7 +7,6 @@
 #include "account_type.hpp"
 #include "commodity.hpp"
 #include <boost/filesystem.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <wx/button.h>
 #include <wx/combobox.h>
@@ -23,6 +22,7 @@
 #include <wx/validate.h>
 #include <wx/window.h>
 #include <wx/wizard.h>
+#include <memory>
 #include <vector>
 
 namespace phatbooks
@@ -68,7 +68,14 @@ public:
 	 * reason we are calling the wizard...).
 	 */
 	SetupWizard(PhatbooksDatabaseConnection& p_database_connection);
-	
+
+	SetupWizard(SetupWizard const&) = delete;
+	SetupWizard(SetupWizard&&) = delete;
+	SetupWizard& operator=(SetupWizard const&) = delete;
+	SetupWizard& operator=(SetupWizard&&) = delete;
+
+	~SetupWizard() = default;
+
 	void run();
 
 	/**
@@ -181,9 +188,7 @@ private:
  * data with the items using SetItemData etc., than using crude mapping from
  * strings etc..
  */
-class SetupWizard::FilepathPage:
-	public wxWizardPageSimple,
-	private boost::noncopyable
+class SetupWizard::FilepathPage: public wxWizardPageSimple
 {
 public:
 	friend class FilepathValidator;
@@ -192,7 +197,13 @@ public:
 	(	SetupWizard* parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
-	~FilepathPage();
+	FilepathPage(FilepathPage const&) = delete;
+	FilepathPage(FilepathPage&&) = delete;
+	FilepathPage& operator=(FilepathPage const&) = delete;
+	FilepathPage& operator=(FilepathPage&&) = delete;
+
+	virtual ~FilepathPage() = default;
+
 	boost::optional<boost::filesystem::path> selected_filepath() const;
 	Commodity selected_currency() const;
 private:
@@ -210,7 +221,7 @@ private:
 	wxTextCtrl* m_filename_ctrl;
 	wxComboBox* m_currency_box;
 
-	boost::filesystem::path* m_selected_filepath;
+	std::unique_ptr<boost::filesystem::path> m_selected_filepath;
 
 	static int const s_directory_button_id = wxID_HIGHEST + 1;
 
@@ -224,9 +235,7 @@ private:
  * Abstract base class - more specific Account page types derive
  * from this.
  */
-class SetupWizard::AccountPage:
-	public wxWizardPageSimple,
-	private boost::noncopyable
+class SetupWizard::AccountPage: public wxWizardPageSimple
 {
 public:
 	AccountPage
@@ -235,7 +244,12 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
-	virtual ~AccountPage();
+	AccountPage(AccountPage const&) = delete;
+	AccountPage(AccountPage&&) = delete;
+	AccountPage& operator=(AccountPage const&) = delete;
+	AccountPage& operator=(AccountPage&&) = delete;
+
+	virtual ~AccountPage() = default;
 
 	void render();
 

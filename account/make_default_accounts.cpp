@@ -32,11 +32,9 @@ make_default_accounts
 	vector<Account>& vec
 )
 {
-	typedef vector<account_type::AccountType> Vec;
-	Vec const atypes = account_types();
-	for (Vec::const_iterator it = atypes.begin(); it != atypes.end(); ++it)
+	for (account_type::AccountType atype: account_types())
 	{
-		make_default_accounts(p_database_connection, vec, *it);
+		make_default_accounts(p_database_connection, vec, atype);
 	}
 	return;
 }
@@ -90,10 +88,10 @@ make_default_accounts
 	// Now we use this information to populate vec with actual Accounts
 	// (but note we don't save them - saving them will be at the discretion
 	// of the user, and will be done in client code closer to the UI).
-	for (vector<wxString>::size_type i = 0; i != names.size(); ++i)
+	for (wxString const& name: names)
 	{
 		Account account(p_database_connection);
-		account.set_name(names[i]);
+		account.set_name(name);
 		account.set_account_type(p_account_type);
 
 		// Note Commodity is left uninitialized. This is a bit odd.

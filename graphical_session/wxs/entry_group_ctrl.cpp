@@ -72,15 +72,16 @@ EntryGroupCtrl::EntryGroupCtrl
 	m_database_connection(p_database_connection),
 	m_transaction_side(p_transaction_side),
 	m_transaction_type(p_journal.transaction_type()),
-	m_available_account_types(0),
 	m_text_ctrl_size(p_text_ctrl_size),
-	m_top_sizer(0),
-	m_side_descriptor(0),
-	m_unsplit_button(0),
-	m_split_button(0),
+	m_available_account_types(nullptr),
+	m_top_sizer(nullptr),
+	m_side_descriptor(nullptr),
+	m_unsplit_button(nullptr),
+	m_split_button(nullptr),
 	m_current_row(0)
 {
 	JEWEL_ASSERT (m_entry_rows.empty());
+	JEWEL_ASSERT (!m_available_account_types);
 	assert_transaction_type_validity(m_transaction_type);
 	
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
@@ -91,18 +92,17 @@ EntryGroupCtrl::EntryGroupCtrl
 	// and TransactionSide.
 	vector<Entry> entries;
 	vector<Entry> const& all_entries = p_journal.entries();
-	vector<Entry>::const_iterator it = all_entries.begin();
-	vector<Entry>::const_iterator const end = all_entries.end();
-	for ( ; it != end; ++it)
+	for (Entry const& entry: all_entries)
 	{
-		if (it->transaction_side() == m_transaction_side)
+		if (entry.transaction_side() == m_transaction_side)
 		{
-			entries.push_back(*it);
+			entries.push_back(entry);
 		}
 	}
 	bool const multiple_entries = (entries.size() > 1);
 	configure_top_row(multiple_entries);
 	configure_available_account_types();	
+	JEWEL_ASSERT (m_available_account_types);
 	optional<Decimal> maybe_previous_row_amount;
 	for (vector<Entry>::size_type i = 0; i != entries.size(); ++i)
 	{
@@ -117,32 +117,24 @@ EntryGroupCtrl::EntryGroupCtrl
 	GetParent()->Fit();
 }
 
-EntryGroupCtrl::~EntryGroupCtrl()
-{
-	delete m_available_account_types;
-	m_available_account_types = 0;
-}
-
 void
 EntryGroupCtrl::configure_available_account_types()
 {
 	// TODO Make this exception safe.
-	if (m_available_account_types)
-	{
-		delete m_available_account_types;
-		m_available_account_types = 0;
-	}
-	JEWEL_ASSERT (!m_available_account_types);
 	if (is_source())
 	{
-		m_available_account_types = new vector<account_type::AccountType>
-		(	source_account_types(m_transaction_type)
+		m_available_account_types.reset
+		(	new vector<account_type::AccountType>
+			(	source_account_types(m_transaction_type)
+			)
 		);
 	}
 	else
 	{
-		m_available_account_types = new vector<account_type::AccountType>
-		(	destination_account_types(m_transaction_type)
+		m_available_account_types.reset
+		(	new vector<account_type::AccountType>
+			(	destination_account_types(m_transaction_type)
+			)
 		);
 	}
 	return;
@@ -199,13 +191,9 @@ EntryGroupCtrl::refresh_for_transaction_type
 	JEWEL_ASSERT (p_transaction_type != m_transaction_type);
 	m_transaction_type = p_transaction_type;
 	configure_available_account_types();
-	for
-	(	vector<EntryRow>::size_type i = 0;
-		i != m_entry_rows.size();
-		++i
-	)
+	for (EntryRow& row: m_entry_rows)
 	{
-		m_entry_rows[i].account_ctrl->reset(*m_available_account_types);
+		row.account_ctrl->reset(*m_available_account_types);
 	}
 	m_side_descriptor->SetLabel(side_description());
 	Layout();
@@ -270,14 +258,10 @@ EntryGroupCtrl::is_all_zero() const
 	{
 		return primary_amount() == zero;
 	}
-	for
-	(	vector<EntryRow>::size_type i = 0;
-		i != m_entry_rows.size();
-		++i
-	)
+	for (EntryRow const& row: m_entry_rows)
 	{
-		JEWEL_ASSERT (m_entry_rows[i].amount_ctrl);
-		if (m_entry_rows[i].amount_ctrl->amount() != zero)
+		JEWEL_ASSERT (row.amount_ctrl);
+		if (row.amount_ctrl->amount() != zero)
 		{
 			return false;
 		}
@@ -288,12 +272,10 @@ EntryGroupCtrl::is_all_zero() const
 void
 EntryGroupCtrl::update_for_new(Account const& p_saved_object)
 {
-	vector<EntryRow>::iterator it = m_entry_rows.begin();
-	vector<EntryRow>::iterator const end = m_entry_rows.end();
-	for ( ; it != end; ++it)
+	for (EntryRow& row: m_entry_rows)
 	{
-		JEWEL_ASSERT (it->account_ctrl);
-		it->account_ctrl->update_for_new(p_saved_object);
+		JEWEL_ASSERT (row.account_ctrl);
+		row.account_ctrl->update_for_new(p_saved_object);
 	}
 	return;
 }
@@ -301,12 +283,10 @@ EntryGroupCtrl::update_for_new(Account const& p_saved_object)
 void
 EntryGroupCtrl::update_for_amended(Account const& p_saved_object)
 {
-	vector<EntryRow>::iterator it = m_entry_rows.begin();
-	vector<EntryRow>::iterator const end = m_entry_rows.end();
-	for ( ; it != end; ++it)
+	for (EntryRow& row: m_entry_rows)
 	{
-		JEWEL_ASSERT (it->account_ctrl);
-		it->account_ctrl->update_for_amended(p_saved_object);
+		JEWEL_ASSERT (row.account_ctrl);
+		row.account_ctrl->update_for_amended(p_saved_object);
 	}
 	return;
 }
@@ -591,30 +571,25 @@ bool
 EntryGroupCtrl::reflect_reconciliation_statuses()
 {
 	bool ret = false;
-	vector<int>::size_type i = 0;
-	vector<int>::size_type const sz = m_entry_rows.size();
-	for ( ; i != sz; ++i)
+	for (EntryRow const& row: m_entry_rows)
 	{
-		EntryRow const& entry_row = m_entry_rows[i];
 		vector<wxWindow*> window_vec;
-		window_vec.push_back(entry_row.account_ctrl);
-		window_vec.push_back(entry_row.comment_ctrl);
-		if (entry_row.amount_ctrl)
+		window_vec.push_back(row.account_ctrl);
+		window_vec.push_back(row.comment_ctrl);
+		if (row.amount_ctrl)
 		{
-			window_vec.push_back(entry_row.amount_ctrl);
+			window_vec.push_back(row.amount_ctrl);
 		}
-		bool const reconciled = entry_row.entry.is_reconciled();
+		bool const reconciled = row.entry.is_reconciled();
 		if (reconciled)
 		{
 			ret = true;
 		}
-		vector<wxWindow*>::iterator it = window_vec.begin();
-		vector<wxWindow*>::iterator const end = window_vec.end();
-		for ( ; it != end; ++it)
+		for (wxWindow* window: window_vec)
 		{
-			JEWEL_ASSERT (*it);
+			JEWEL_ASSERT (window);
 			toggle_enabled
-			(	*it,
+			(	window,
 				!reconciled,
 				wxString
 				(	"This transaction line has been marked as reconciled, and"

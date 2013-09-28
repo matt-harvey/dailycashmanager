@@ -4,7 +4,6 @@
 #define GUARD_transaction_type_ctrl_hpp_8775560031074826
 
 #include "transaction_type.hpp"
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <wx/combobox.h>
 #include <wx/event.h>
@@ -28,7 +27,7 @@ namespace gui
 /**
  * Widget to enable the user to select a TransactionType.
  */
-class TransactionTypeCtrl: public wxComboBox, private boost::noncopyable
+class TransactionTypeCtrl: public wxComboBox
 {
 public:
 
@@ -47,6 +46,13 @@ public:
 		std::vector<transaction_type::TransactionType> const&
 			p_transaction_types
 	);
+
+	TransactionTypeCtrl(TransactionTypeCtrl const&) = delete;
+	TransactionTypeCtrl(TransactionTypeCtrl&&) = delete;
+	TransactionTypeCtrl& operator=(TransactionTypeCtrl const&) = delete;
+	TransactionTypeCtrl& operator=(TransactionTypeCtrl&&) = delete;
+
+	virtual ~TransactionTypeCtrl() = default;
 
 	/**
 	 * @returns the currently selected TransactionType, wrapped in a

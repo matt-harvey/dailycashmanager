@@ -5,7 +5,6 @@
 
 #include "entry.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -50,7 +49,7 @@ class EntryListCtrl;
  * ReconciliationEntryList, and use that with EntryListPanel to enable
  * users to perform Account reconciliations.
  */
-class EntryListPanel: public wxPanel, private boost::noncopyable
+class EntryListPanel: public wxPanel
 {
 public:
 	EntryListPanel
@@ -58,6 +57,13 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection,
 		bool p_support_reconciliations = false
 	);
+
+	EntryListPanel(EntryListPanel const&) = delete;
+	EntryListPanel(EntryListPanel&&) = delete;
+	EntryListPanel& operator=(EntryListPanel const&) = delete;
+	EntryListPanel& operator=(EntryListPanel&&) = delete;
+
+	virtual ~EntryListPanel() = default;
 
 	void update_for_new(OrdinaryJournal const& p_journal);
 	void update_for_amended(OrdinaryJournal const& p_journal);

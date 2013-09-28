@@ -122,62 +122,46 @@ available_transaction_types
 	AccountTypeSet const avail_account_types =
 		available_account_types(p_database_connection);
 
-	// Bare scope
+	TTypeVec const& ttypes = transaction_types();
+	for (TransactionType const ttype: ttypes)
 	{
-		TTypeVec::size_type sz = transaction_types().size();
-		for (TTypeVec::size_type i = 0; i != sz; ++i)
+		int transaction_type_support = 0;
+		AccountTypeSet::const_iterator const aset_end =
+			avail_account_types.end();
+
+		// See if has got at least one of source AccountTypes
+		// for this TransactionType.
+		ATypeVec const& savec = source_account_types(ttype);
+		for (account_type::AccountType const atype: savec)
 		{
-			int transaction_type_support = 0;
-			AccountTypeSet::const_iterator const aset_end =
-				avail_account_types.end();
-			TransactionType const ttype = transaction_types()[i];
+			if (avail_account_types.find(atype) != aset_end)
+			{
+				++transaction_type_support;
+				break;
+			}
+		}
+		JEWEL_ASSERT (transaction_type_support >= 0);
+		JEWEL_ASSERT (transaction_type_support <= 1);
 
-			// Bare scope
+		// See if it has got at least one of the destination
+		// AccountTypes for this TransactionType.
+		ATypeVec const& davec = destination_account_types(ttype);
+		for (account_type::AccountType const atype: davec)
+		{
+			if (avail_account_types.find(atype) != aset_end)
 			{
-				// See if has got at least one of source AccountTypes
-				// for this TransactionType.
-				ATypeVec::const_iterator avec_it =
-					source_account_types(ttype).begin();
-				ATypeVec::const_iterator const avec_end =
-					source_account_types(ttype).end();
-				for ( ; avec_it != avec_end; ++avec_it)
-				{
-					if (avail_account_types.find(*avec_it) != aset_end)
-					{
-						++transaction_type_support;
-						break;
-					}
-				}
+				++transaction_type_support;
+				break;
 			}
-			JEWEL_ASSERT (transaction_type_support >= 0);
-			JEWEL_ASSERT (transaction_type_support <= 1);
-
-			// Bare scope
-			{
-				// See if it has got at least one of the destination
-				// AccountTypes for this TransactionType.
-				ATypeVec::const_iterator avec_it =
-					destination_account_types(ttype).begin();
-				ATypeVec::const_iterator const avec_end =
-					destination_account_types(ttype).end();
-				for ( ; avec_it != avec_end; ++avec_it)
-				{
-					if (avail_account_types.find(*avec_it) != aset_end)
-					{
-						++transaction_type_support;
-						break;
-					}
-				}
-			}
-			JEWEL_ASSERT (transaction_type_support >= 0);
-			JEWEL_ASSERT (transaction_type_support <= 2);
-		
-			if (transaction_type_support == 2)
-			{
-				ret.push_back(ttype);
-			}
-		}			
-	}
+		}
+		JEWEL_ASSERT (transaction_type_support >= 0);
+		JEWEL_ASSERT (transaction_type_support <= 2);
+	
+		if (transaction_type_support == 2)
+		{
+			ret.push_back(ttype);
+		}
+	}			
 	return ret;
 }
 
@@ -310,10 +294,10 @@ source_super_types
 	// WARNING This is pretty inefficient. But it probably doesn't matter.
 	vector<account_type::AccountType> const& atypes =
 		source_account_types(p_transaction_type);
-	vector<account_type::AccountType>::const_iterator it = atypes.begin();
-	vector<account_type::AccountType>::const_iterator const end =
-		atypes.end();
-	for ( ; it != end; ++it) out.insert(super_type(*it));	
+	for (account_type::AccountType const atype: atypes)
+	{
+		out.insert(super_type(atype));
+	}
 	return;
 }
 
@@ -326,10 +310,10 @@ destination_super_types
 	// WARNING This is pretty inefficient. But it probably doesn't matter.
 	vector<account_type::AccountType> const& atypes =
 		destination_account_types(p_transaction_type);
-	vector<account_type::AccountType>::const_iterator it = atypes.begin();
-	vector<account_type::AccountType>::const_iterator const end =
-		atypes.end();
-	for ( ; it != end; ++it) out.insert(super_type(*it));	
+	for (account_type::AccountType const atype: atypes)
+	{
+		out.insert(super_type(atype));
+	}
 	return;
 }
 

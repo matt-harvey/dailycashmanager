@@ -328,18 +328,15 @@ EntryListCtrl::on_item_activated(wxListEvent& event)
 	return;
 }
 
-EntryListCtrl::~EntryListCtrl()
-{
-}
-
 void
 EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
 {
 	if (p_journal.is_actual())
 	{
-		vector<Entry>::const_iterator it = p_journal.entries().begin();
-		vector<Entry>::const_iterator const end = p_journal.entries().end();
-		for ( ; it != end; ++it) process_insertion_candidate_entry(*it);
+		for (Entry const& entry: p_journal.entries())
+		{
+			process_insertion_candidate_entry(entry);
+		}
 	}
 	set_column_widths();
 	return;
@@ -353,32 +350,30 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 		return;
 	}
 	JEWEL_ASSERT (p_journal.is_actual());
-	vector<Entry>::const_iterator it = p_journal.entries().begin();
-	vector<Entry>::const_iterator const end = p_journal.entries().end();
 	wxString const wx_date_string = date_format_wx(p_journal.date());
 	DateParser const parser;
-	for ( ; it != end; ++it)
+	for (Entry const& entry: p_journal.entries())
 	{
 		long updated_pos = -1;
-		JEWEL_ASSERT (it->has_id());
-		IdSet::const_iterator const jt = m_id_set.find(it->id());
+		JEWEL_ASSERT (entry.has_id());
+		IdSet::const_iterator const jt = m_id_set.find(entry.id());
 		if (jt != m_id_set.end())
 		{
-			long const pos = FindItem(-1, it->id());
+			long const pos = FindItem(-1, entry.id());
 			JEWEL_ASSERT
 			(	GetItemData(pos) ==
-				static_cast<unsigned long>(it->id())
+				static_cast<unsigned long>(entry.id())
 			);
 			gregorian::date const old_date = date_displayed(pos, parser);
 			do_process_removal_for_summary(pos);
 			DeleteItem(pos);
 			m_id_set.erase(jt);
-			if (old_date == it->date())
+			if (old_date == entry.date())
 			{
 				updated_pos = pos;	
 			}
 		}
-		process_insertion_candidate_entry(*it, updated_pos);
+		process_insertion_candidate_entry(entry, updated_pos);
 	}
 	set_column_widths();
 	return;
@@ -402,9 +397,10 @@ EntryListCtrl::update_for_amended(Account const& p_account)
 void
 EntryListCtrl::update_for_deleted(vector<Entry::Id> const& p_doomed_ids)
 {
-	vector<Entry::Id>::const_iterator it = p_doomed_ids.begin();
-	vector<Entry::Id>::const_iterator const end = p_doomed_ids.end();
-	for ( ; it != end; ++it) remove_if_present(*it);
+	for (Entry::Id const doomed_id: p_doomed_ids)
+	{
+		remove_if_present(doomed_id);
+	}
 	return;
 }
 

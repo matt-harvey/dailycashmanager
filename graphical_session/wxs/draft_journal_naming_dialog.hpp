@@ -3,7 +3,6 @@
 #ifndef GUARD_draft_journal_naming_dialog_hpp_17749934977735363
 #define GUARD_draft_journal_naming_dialog_hpp_17749934977735363
 
-#include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -30,7 +29,7 @@ class TransactionCtrl;
  * Widget for extracting a name from the user, for a DraftJournal created
  * via the GUI.
  */
-class DraftJournalNamingDialog: public wxDialog, private boost::noncopyable
+class DraftJournalNamingDialog: public wxDialog
 {
 public:
 	
@@ -38,6 +37,14 @@ public:
 	(	TransactionCtrl* p_parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
+
+	DraftJournalNamingDialog(DraftJournalNamingDialog const&) = delete;
+	DraftJournalNamingDialog(DraftJournalNamingDialog&&) = delete;
+	DraftJournalNamingDialog& operator=(DraftJournalNamingDialog const&)
+		= delete;
+	DraftJournalNamingDialog& operator=(DraftJournalNamingDialog&&) = delete;
+
+	virtual ~DraftJournalNamingDialog() = default;
 
 	wxString draft_journal_name() const;
 

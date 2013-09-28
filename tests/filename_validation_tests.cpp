@@ -49,11 +49,8 @@ TEST(test_is_valid_filename_re_generally_bad_filenames)
 		"even_with_extension?.phat",
 		"that_won>t_save_you.phat"
 	};
-	std::size_t const num_generally_bad_filenames =
-		sizeof(generally_bad_filenames) / sizeof(generally_bad_filenames[0]);
-	for (std::size_t i = 0; i != num_generally_bad_filenames; ++i)
+	for (char const* bad_name: generally_bad_filenames)
 	{
-		string const bad_name(generally_bad_filenames[i]);
 		string message;
 		CHECK(!is_valid_filename(bad_name, message));
 		CHECK(!is_valid_filename(bad_name, message, true));
@@ -105,12 +102,8 @@ TEST(test_is_valid_filename_re_generally_good_filenames)
 		"so_is_thisp.hat",
 		"and_this.phat."
 	};
-	std::size_t const num_generally_good_filenames =
-		sizeof(generally_good_filenames) /
-		sizeof(generally_good_filenames[0]);
-	for (std::size_t i = 0; i != num_generally_good_filenames; ++i)
+	for (char const* good_name: generally_good_filenames)
 	{
-		string const good_name(generally_good_filenames[i]);
 		string message;
 
 		// Good generally
@@ -137,12 +130,8 @@ TEST(test_is_valid_filename_re_good_phatbooks_filenames)
 		"'.phat",
 		"we-are-tolerant-of-hyphens.phat"
 	};
-	std::size_t const num_good_phatbooks_filenames =
-		sizeof(good_phatbooks_filenames) /
-		sizeof(good_phatbooks_filenames[0]);
-	for (std::size_t i = 0; i != num_good_phatbooks_filenames; ++i)
+	for (char const* good_name: good_phatbooks_filenames)
 	{
-		string const good_name(good_phatbooks_filenames[i]);
 		string message;
 
 		// Good generally

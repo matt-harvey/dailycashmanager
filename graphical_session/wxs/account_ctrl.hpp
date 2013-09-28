@@ -5,7 +5,6 @@
 
 #include "account.hpp"
 #include "account_type.hpp"
-#include <boost/noncopyable.hpp>
 #include <jewel/assert.hpp>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
@@ -33,7 +32,7 @@ namespace gui
  * Widget by means of which the user is enabled to select an
  * \e existing Account.
  */
-class AccountCtrl: public wxComboBox, private boost::noncopyable
+class AccountCtrl: public wxComboBox
 {
 public:
 
@@ -64,6 +63,13 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection,
 		bool p_exclude_balancing_account = false
 	);
+
+	AccountCtrl(AccountCtrl const&) = delete;
+	AccountCtrl(AccountCtrl&&) = delete;
+	AccountCtrl& operator=(AccountCtrl const&) = delete;
+	AccountCtrl& operator=(AccountCtrl&&) = delete;
+
+	virtual ~AccountCtrl() = default;
 
 	/**
 	 * Reset the selections available in the Combobox, to all the

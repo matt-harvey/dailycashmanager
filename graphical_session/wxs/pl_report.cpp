@@ -179,11 +179,9 @@ PLReport::display_body()
 
 	// Bare scope
 	{
-		Map::const_iterator it = m_map.begin();
-		Map::const_iterator const end = m_map.end();
-		for ( ; it != end; ++it)
+		for (auto const& elem: m_map)
 		{
-			Account const account(database_connection(), it->first);
+			Account const account(database_connection(), elem.first);
 			wxString const name = account.name();
 			switch (account.account_type())
 			{
@@ -235,11 +233,10 @@ PLReport::display_body()
 
 		increment_row();
 
-		list<wxString>::const_iterator it = names->begin();
-		list<wxString>::const_iterator const end = names->end();
-		for ( ; it != end; ++it)
+		JEWEL_ASSERT (names);
+		for (wxString const& name: *names)
 		{
-			Account const account(database_connection(), *it);
+			Account const account(database_connection(), name);
 			Map::const_iterator const jt = m_map.find(account.id());
 			JEWEL_ASSERT (jt != m_map.end());
 			Decimal const& b =
@@ -251,7 +248,7 @@ PLReport::display_body()
 			// Only show Accounts with non-zero balances
 			if (b != zero)
 			{
-				display_text(*it, 1);
+				display_text(name, 1);
 				display_decimal(b, 2);
 				total += b;
 

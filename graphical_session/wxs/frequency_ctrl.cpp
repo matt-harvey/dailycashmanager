@@ -93,32 +93,28 @@ FrequencyCtrl::FrequencyCtrl
 	}
 	if (supports_draft_journal() || supports_budget_item())
 	{
-		vector<Frequency>::const_iterator it =
-			available_frequencies().begin();
-		vector<Frequency>::const_iterator const end =
-			available_frequencies().end();
 		if (supports_budget_item())
 		{
 			JEWEL_ASSERT (!supports_draft_journal());
-			for ( ; it != end; ++it)
+			for (Frequency const& freq: available_frequencies())
 			{
-				if (m_database_connection.supports_budget_frequency(*it))
+				if (m_database_connection.supports_budget_frequency(freq))
 				{
-					Append(std8_to_wx(frequency_description(*it)));
-					m_frequencies.push_back(*it);
+					Append(std8_to_wx(frequency_description(freq)));
+					m_frequencies.push_back(freq);
 				}
 			}
 		}
 		else
 		{
 			JEWEL_ASSERT (supports_draft_journal());
-			for ( ; it != end; ++it)
+			for (Frequency const& freq: available_frequencies())
 			{
 				wxString wxs = wxString("Record ");
-				wxs += std8_to_wx(frequency_description(*it, "every"));
+				wxs += std8_to_wx(frequency_description(freq, "every"));
 				wxs += ", starting";
 				Append(wxs);
-				m_frequencies.push_back(*it);
+				m_frequencies.push_back(freq);
 			}
 		}
 	}

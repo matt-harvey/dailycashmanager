@@ -9,11 +9,12 @@
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"
-#include <sqloxx/identity_map.hpp>
-#include <sqloxx/persistent_object.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/signature.hpp>
+#include <sqloxx/identity_map.hpp>
+#include <sqloxx/persistent_object.hpp>
 #include <string>
 #include <vector>
 
@@ -26,7 +27,6 @@ namespace phatbooks
 
 class DraftJournal;
 class OrdinaryJournal;
-class OrdinaryJournalSignature;
 
 // End forward declarations
 
@@ -127,7 +127,7 @@ public:
 	 */
 	void set_date_unrestricted
 	(	boost::gregorian::date const& p_date,
-		OrdinaryJournalSignature const& p_signature
+		jewel::Signature<OrdinaryJournal> const& p_signature
 	);
 
 	/**

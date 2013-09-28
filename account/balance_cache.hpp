@@ -5,10 +5,9 @@
 
 #include "account_impl.hpp"
 #include <boost/optional.hpp>
-#include <boost/noncopyable.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/unordered_map.hpp>
 #include <jewel/decimal_fwd.hpp>
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
 
@@ -45,14 +44,20 @@ class PhatbooksDatabaseConnection;
  *
  * @todo Testing.
  */
-class BalanceCache:
-	public boost::noncopyable
+class BalanceCache
 {
 public:
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	BalanceCache(PhatbooksDatabaseConnection& p_database_connection);
+
+	BalanceCache(BalanceCache const&) = delete;
+	BalanceCache(BalanceCache&&) = delete;
+	BalanceCache& operator=(BalanceCache const&) = delete;
+	BalanceCache& operator=(BalanceCache&&) = delete;
+
+	~BalanceCache() = default;
 
 	// Retrieve the technical balance for a particular AccountImpl.
 	// For an explanation of the concept of a "technical balance",
@@ -71,11 +76,10 @@ public:
 	// Mark a particular AccountImpl's cache entry as stale
 	void mark_as_stale(AccountImpl::Id p_account_id); 
 
-
 private:
 
 	typedef
-		boost::unordered_map
+		std::unordered_map
 		<	AccountImpl::Id,
 			boost::optional<jewel::Decimal>
 		>
@@ -86,7 +90,7 @@ private:
 	void refresh_targetted(std::vector<AccountImpl::Id> const& p_targets);
 
 	PhatbooksDatabaseConnection& m_database_connection;
-	boost::scoped_ptr<Map> m_map;
+	std::unique_ptr<Map> m_map;
 	bool m_map_is_stale;
 
 };

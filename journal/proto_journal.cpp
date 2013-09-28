@@ -22,6 +22,8 @@
 #include "string_conv.hpp"
 #include "transaction_type.hpp"
 #include <consolixx/table.hpp>
+#include <jewel/assert.hpp>
+#include <jewel/log.hpp>
 #include <jewel/output_aux.hpp>
 #include <sqloxx/next_auto_key.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -31,13 +33,13 @@
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/unordered_set.hpp>
 #include <wx/string.h>
 #include <algorithm>
 #include <iterator>
 #include <ostream>
 #include <sstream>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace alignment = consolixx::alignment;
@@ -48,7 +50,6 @@ using boost::numeric_cast;
 using boost::optional;
 using boost::scoped_ptr;
 using boost::shared_ptr;
-using boost::unordered_set;
 using consolixx::Table;
 using jewel::clear;
 using jewel::Decimal;
@@ -61,11 +62,8 @@ using std::ostream;
 using std::ostringstream;
 using std::remove_copy;
 using std::string;
+using std::unordered_set;
 using std::vector;
-
-#include <jewel/log.hpp>
-#include <iostream>
-using std::endl;
 
 
 namespace phatbooks
@@ -228,12 +226,10 @@ ProtoJournal::do_save_new_journal_core
 	);
 	statement.bind(":comment", wx_to_std8(value(m_data->comment)));
 	statement.step_final();
-	typedef vector<Entry>::iterator EntryIter;
-	EntryIter const endpoint = m_data->entries.end();
-	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
+	for (Entry& entry: m_data->entries)
 	{
-		it->set_journal_id(journal_id);
-		it->save();
+		entry.set_journal_id(journal_id);
+		entry.save();
 	}
 	return journal_id;
 }
@@ -265,13 +261,12 @@ ProtoJournal::do_save_existing_journal_core
 	updater.bind(":comment", wx_to_std8(value(m_data->comment)));
 	updater.bind(":id", id);
 	updater.step_final();
-	typedef vector<Entry>::iterator EntryIter;
-	EntryIter const endpoint = m_data->entries.end();
 	unordered_set<Entry::Id> saved_entry_ids;
-	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
+	for (Entry& entry: m_data->entries)
 	{
-		it->save();
-		saved_entry_ids.insert(it->id());
+		entry.save();
+		JEWEL_ASSERT (entry.has_id());
+		saved_entry_ids.insert(entry.id());
 	}
 	// Remove any entries in the database with this journal's journal_id, that
 	// no longer exist in the in-memory journal
@@ -340,11 +335,9 @@ ProtoJournal::do_ghostify_journal_core()
 {
 	clear(m_data->transaction_type);
 	clear(m_data->comment);
-	typedef vector<Entry>::iterator EntryIter;
-	EntryIter endpoint = m_data->entries.end();
-	for (EntryIter it = m_data->entries.begin(); it != endpoint; ++it)
+	for (Entry& entry: m_data->entries)
 	{
-		it->ghostify();
+		entry.ghostify();
 	}
 	m_data->entries.clear();
 	return;
@@ -379,17 +372,12 @@ ProtoJournal::mimic_core
 	set_transaction_type(rhs.transaction_type());
 	set_comment(rhs.comment());
 	clear_entries();
-	typedef vector<Entry>::const_iterator It;
-	vector<Entry> const& rentries = rhs.entries();
-	if (!rentries.empty())
+	for (Entry const& rentry: rhs.entries())
 	{
-		for (It it = rentries.begin(), end = rentries.end(); it != end; ++it)
-		{
-			Entry entry(dbc);
-			entry.mimic(*it);
-			if (id) entry.set_journal_id(value(id));
-			push_entry(entry);
-		}
+		Entry entry(dbc);
+		entry.mimic(rentry);
+		if (id) entry.set_journal_id(value(id));
+		push_entry(entry);
 	}
 	return;
 }

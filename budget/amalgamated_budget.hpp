@@ -8,11 +8,10 @@
 #include "interval_type.hpp"
 #include "frequency.hpp"
 #include "phatbooks_exceptions.hpp"
-#include <boost/noncopyable.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/unordered_map.hpp>
 #include <jewel/decimal.hpp>
+#include <memory>
 #include <ostream>
+#include <unordered_map>
 #include <vector>
 
 
@@ -30,7 +29,7 @@ class Account;
  * per Account, and has a single frequency shared by all
  * the items in the AmalgamatedBudget.
  */
-class AmalgamatedBudget: boost::noncopyable
+class AmalgamatedBudget
 {
 public:
 
@@ -38,7 +37,12 @@ public:
 
 	AmalgamatedBudget(PhatbooksDatabaseConnection& p_database_connection);
 
-	~AmalgamatedBudget();
+	AmalgamatedBudget(AmalgamatedBudget const&) = delete;
+	AmalgamatedBudget(AmalgamatedBudget&&) = delete;
+	AmalgamatedBudget& operator=(AmalgamatedBudget const&) = delete;
+	AmalgamatedBudget& operator=(AmalgamatedBudget&&) = delete;
+
+	~AmalgamatedBudget() = default;
 
 	/**
 	 * @returns the Frequency of the AmalgamatedBudget. This
@@ -101,7 +105,7 @@ public:
 
 private:
 
-	typedef boost::unordered_map<AccountImpl::Id, jewel::Decimal> Map;
+	typedef std::unordered_map<AccountImpl::Id, jewel::Decimal> Map;
 
 	void regenerate_map();
 
@@ -166,15 +170,15 @@ private:
 	bool mutable m_is_loaded;
 	PhatbooksDatabaseConnection& m_database_connection;
 	Frequency m_frequency;
-	mutable boost::scoped_ptr<Map> m_map;
+	mutable std::unique_ptr<Map> m_map;
 
 	// The DraftJournal that "effects" the AmalgamatedBudget
-	mutable DraftJournal* m_instrument; 
+	mutable std::unique_ptr<DraftJournal> m_instrument; 
 
 	// The the Account such that, when regenerating m_instrument, if the
 	// journal is not otherwise balanced, any imbalance overflows
 	// to this Account.
-	mutable Account* m_balancing_account;
+	mutable std::unique_ptr<Account> m_balancing_account;
 
 };
 

@@ -411,13 +411,9 @@ TopPanel::selected_balance_sheet_accounts(vector<Account>& out) const
 {
 	set<Account::Id> selected_ids;
 	m_bs_account_list->selected_accounts(selected_ids);
-	for
-	(	set<Account::Id>::const_iterator it = selected_ids.begin();
-		it != selected_ids.end();
-		++it
-	)
+	for (Account::Id const selected_id: selected_ids)
 	{
-		out.push_back(Account(m_database_connection, *it));
+		out.push_back(Account(m_database_connection, selected_id));
 	}
 	return;
 }
@@ -427,13 +423,9 @@ TopPanel::selected_pl_accounts(vector<Account>& out) const
 {
 	set<Account::Id> selected_ids;
 	m_pl_account_list->selected_accounts(selected_ids);
-	for
-	(	set<Account::Id>::const_iterator it = selected_ids.begin();
-		it != selected_ids.end();
-		++it
-	)
+	for (Account::Id const selected_id: selected_ids)
 	{
-		out.push_back(Account(m_database_connection, *it));
+		out.push_back(Account(m_database_connection, selected_id));
 	}
 	return;
 }
@@ -452,11 +444,9 @@ TopPanel::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 	{
 		m_reconciliation_panel->selected_entries(entries);
 	}
-	vector<Entry>::const_iterator it = entries.begin();
-	vector<Entry>::const_iterator const end = entries.end();
-	for ( ; it != end; ++it)
+	for (Entry const& entry: entries)
 	{
-		out.push_back(it->journal<OrdinaryJournal>());
+		out.push_back(entry.journal<OrdinaryJournal>());
 	}
 	return;
 }

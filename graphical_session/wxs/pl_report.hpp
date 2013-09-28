@@ -7,9 +7,9 @@
 #include "report.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
-#include <boost/unordered_map.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/gdicmn.h>
+#include <unordered_map>
 
 namespace phatbooks
 {
@@ -60,7 +60,7 @@ private:
 
 	void display_body();
 
-	typedef boost::unordered_map<Account::Id, jewel::Decimal> Map;
+	typedef std::unordered_map<Account::Id, jewel::Decimal> Map;
 	Map m_map;
 
 };  // class PLReport

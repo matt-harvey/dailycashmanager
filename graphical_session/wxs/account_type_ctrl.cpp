@@ -59,14 +59,12 @@ AccountTypeCtrl::AccountTypeCtrl
 {
 	typedef vector<account_type::AccountType> ATypeVec;
 	ATypeVec const& atypes = account_types(m_account_super_type);
-	ATypeVec::const_iterator it = atypes.begin();
-	ATypeVec::const_iterator const end = atypes.end();
-	for ( ; it != end; ++it)
+	for (account_type::AccountType const elem: atypes)
 	{
 		// WARNING Hack to stop users from accessing account_type::equity.
-		if (*it != account_type::equity)
+		if (elem != account_type::equity)
 		{
-			Append(account_type_to_string(*it));
+			Append(account_type_to_string(elem));
 		}
 	}	
 	SetSelection(0);  // In effort to avoid apparent bug in Windows

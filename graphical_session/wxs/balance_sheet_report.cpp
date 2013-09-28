@@ -136,33 +136,29 @@ BalanceSheetReport::display_body()
 	list<wxString> equity_names;
 	list<wxString> liability_names;
 
-	// Bare scope
+	for (auto const& elem: m_balance_map)
 	{
-		BalanceMap::const_iterator it = m_balance_map.begin();
-		BalanceMap::const_iterator const end = m_balance_map.end();
-		for ( ; it != end; ++it)
+		Account const account(database_connection(), elem.first);
+		wxString const name = account.name();
+		switch (account.account_type())
 		{
-			Account const account(database_connection(), it->first);
-			wxString const name = account.name();
-			switch (account.account_type())
-			{
-			case account_type::asset:
-				asset_names.push_back(name);
-				break;
-			case account_type::liability:
-				liability_names.push_back(name);
-				break;
-			case account_type::equity:
-				equity_names.push_back(name);
-				break;
-			default:
-				JEWEL_HARD_ASSERT (false);
-			}
+		case account_type::asset:
+			asset_names.push_back(name);
+			break;
+		case account_type::liability:
+			liability_names.push_back(name);
+			break;
+		case account_type::equity:
+			equity_names.push_back(name);
+			break;
+		default:
+			JEWEL_HARD_ASSERT (false);
 		}
-		asset_names.sort();
-		equity_names.sort();
-		liability_names.sort();
 	}
+	asset_names.sort();
+	equity_names.sort();
+	liability_names.sort();
+
 	vector<wxString> section_titles;
 	section_titles.push_back(wxString("ASSETS"));
 	// WARNING Assuming no Equity Account.
@@ -200,11 +196,10 @@ BalanceSheetReport::display_body()
 		
 		increment_row();
 
-		list<wxString>::const_iterator it = names->begin();
-		list<wxString>::const_iterator const end = names->end();
-		for ( ; it != end; ++it)
+		JEWEL_ASSERT (names);
+		for (wxString const& name: *names)
 		{
-			Account const account(database_connection(), *it);
+			Account const account(database_connection(), name);
 			BalanceMap::const_iterator const jt =
 				m_balance_map.find(account.id());
 			JEWEL_ASSERT (jt != m_balance_map.end());
@@ -215,7 +210,7 @@ BalanceSheetReport::display_body()
 			// Only show Accounts with non-zero balances
 			if ((ob != zero) || (cb != zero))
 			{
-				display_text(*it, 1);
+				display_text(name, 1);
 				display_decimal(ob, 2);
 				display_decimal(cb - ob, 3);
 				display_decimal(cb, 4);

@@ -56,11 +56,9 @@ namespace
 		typedef vector<account_type::AccountType> ATypeVec;
 		ATypeVec const& account_types =
 			phatbooks::account_types(p_account_super_type);
-		ATypeVec::const_iterator it = account_types.begin();
-		ATypeVec::const_iterator const end = account_types.end();
-		for ( ; it != end; ++it)
+		for (account_type::AccountType atype: account_types)
 		{
-			make_default_accounts(p_database_connection, ret, *it);
+			make_default_accounts(p_database_connection, ret, atype);
 		}
 		return ret;
 	}
@@ -127,11 +125,9 @@ MultiAccountPanel::MultiAccountPanel
 	m_account_type_boxes.reserve(sz);
 	m_description_boxes.reserve(sz);
 	m_opening_balance_boxes.reserve(sz);
-	vector<Account>::iterator it = sugg_accounts.begin();
-	vector<Account>::iterator const end = sugg_accounts.end();
-	for ( ; it != end; ++it)
+	for (Account& account: sugg_accounts)
 	{
-		push_row(*it);
+		push_row(account);
 	}
 	while (num_rows() < m_minimum_num_rows)
 	{
@@ -233,12 +229,9 @@ MultiAccountPanel::account_type_is_selected
 (	account_type::AccountType p_account_type
 ) const
 {
-	vector<AccountTypeCtrl*>::size_type i = 0;
-	vector<AccountTypeCtrl*>::size_type const sz =
-		m_account_type_boxes.size();
-	for ( ; i != sz; ++i)
+	for (AccountTypeCtrl* const ctrl: m_account_type_boxes)
 	{
-		if (m_account_type_boxes[i]->account_type() == p_account_type)
+		if (ctrl->account_type() == p_account_type)
 		{
 			return true;
 		}
@@ -332,15 +325,12 @@ MultiAccountPanel::set_commodity(Commodity const& p_commodity)
 		return;
 	}
 	JEWEL_ASSERT (precision != m_commodity.precision());
-	vector<SpecialDecimalTextCtrl*>::size_type i = 0;
-	vector<SpecialDecimalTextCtrl*>::size_type const sz =
-		m_opening_balance_boxes.size();
-	for ( ; i != sz; ++i)
+	for (SpecialDecimalTextCtrl* ctrl: m_opening_balance_boxes)
 	{
 		// TODO Handle potential Decimal exception here on rounding.
-		Decimal const old_amount = m_opening_balance_boxes[i]->amount();
+		Decimal const old_amount = ctrl->amount();
 		Decimal const new_amount = round(old_amount, precision);
-		m_opening_balance_boxes[i]->set_amount(new_amount);
+		ctrl->set_amount(new_amount);
 	}
 	m_commodity = p_commodity;
 	return;
@@ -399,13 +389,11 @@ bool
 MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 {
 	set<wxString> account_names;
-	vector<wxTextCtrl*>::size_type i = 0;
-	vector<wxTextCtrl*>::size_type const sz = m_account_name_boxes.size();
-	AccountPhraseFlags const flags = AccountPhraseFlags().set(string_flags::capitalize);
-	for ( ; i != sz; ++i)
+	AccountPhraseFlags const flags =
+		AccountPhraseFlags().set(string_flags::capitalize);
+	for (wxTextCtrl* const box: m_account_name_boxes)
 	{
-		wxString const name =
-			m_account_name_boxes[i]->GetValue().Trim().Lower();
+		wxString const name = box->GetValue().Trim().Lower();
 		if (name.IsEmpty())
 		{
 			p_error_message =

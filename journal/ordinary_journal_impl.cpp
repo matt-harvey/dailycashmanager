@@ -4,6 +4,7 @@
 #include "draft_journal.hpp"
 #include "date.hpp"
 #include "entry.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"
@@ -22,6 +23,7 @@
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <jewel/signature.hpp>
 #include <wx/string.h>
 #include <iostream>
 #include <string>
@@ -32,6 +34,7 @@ using boost::optional;
 using boost::shared_ptr;
 using jewel::clear;
 using jewel::Decimal;
+using jewel::Signature;
 using jewel::value;
 using sqloxx::SQLStatement;
 using std::endl;
@@ -204,7 +207,7 @@ OrdinaryJournalImpl::set_date(gregorian::date const& p_date)
 void
 OrdinaryJournalImpl::set_date_unrestricted
 (	gregorian::date const& p_date,
-	OrdinaryJournalSignature const& p_signature
+	Signature<OrdinaryJournal> const& p_signature
 )
 {
 	// Silence compiler re. unused parameter. The Signature

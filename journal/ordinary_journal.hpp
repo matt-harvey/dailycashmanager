@@ -12,7 +12,6 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/noncopyable.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/string.h>
 #include <iostream>
@@ -152,21 +151,6 @@ private:
 };
 
 
-
-/**
- * Used for access control. Similar to jewel::Signature (which we can't use
- * here as we are eschewing C++11).
- */
-class OrdinaryJournalSignature:
-	private boost::noncopyable
-{
-public:
-	friend class OrdinaryJournal;
-private:
-	OrdinaryJournalSignature()
-	{
-	}
-};
 
 
 }  // namespace phatbooks

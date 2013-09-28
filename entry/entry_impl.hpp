@@ -19,9 +19,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "transaction_side.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/general_typedefs.hpp>
@@ -65,7 +63,13 @@ public:
 		Id p_id
 	);
 
-	~EntryImpl();
+	// Note copy constructor is private
+	// Note move constructor is private
+
+	EntryImpl& operator=(EntryImpl const&) = delete;
+	EntryImpl& operator=(EntryImpl&&) = delete;
+
+	~EntryImpl() = default;
 
 	void set_journal_id(Id p_journal_id);
 
@@ -128,6 +132,11 @@ private:
 	 * Copy constructor - implemented, but deliberately private
 	 */
 	EntryImpl(EntryImpl const& rhs);
+
+	/**
+	 * Move constructor - implemented, but deliberately private
+	 */
+	EntryImpl(EntryImpl&& rhs);
 	
 	void do_load();
 	void do_save_existing();
@@ -138,7 +147,7 @@ private:
 
 	struct EntryData;
 
-	boost::scoped_ptr<EntryData> m_data;
+	std::unique_ptr<EntryData> m_data;
 
 };
 

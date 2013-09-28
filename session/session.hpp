@@ -3,9 +3,6 @@
 #ifndef GUARD_session_hpp_36949449096317144
 #define GUARD_session_hpp_36949449096317144
 
-#include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
-#include <list>
 #include <string>
 
 namespace phatbooks
@@ -17,7 +14,7 @@ namespace phatbooks
  * May be inherited by a class representing a more specific kind
  * of session, e.g. a console session or a GUI session.
  */
-class Session: boost::noncopyable
+class Session
 {
 public:
 
@@ -32,6 +29,12 @@ public:
 	 * Session.
 	 */
 	Session();
+
+	Session(Session const&) = delete;
+	Session(Session&&) = delete;
+	Session& operator=(Session const&) = delete;
+	Session& operator=(Session&&) = delete;
+
 	virtual ~Session();
 
 	/**

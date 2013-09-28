@@ -3,7 +3,6 @@
 #ifndef GUARD_welcome_dialog_hpp_920675095599459
 #define GUARD_welcome_dialog_hpp_920675095599459
 
-#include <boost/noncopyable.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
@@ -20,11 +19,18 @@ namespace gui
 
 // End forward declarations
 
-class WelcomeDialog: public wxDialog, private boost::noncopyable
+class WelcomeDialog: public wxDialog
 {
 public:
 
 	WelcomeDialog(PhatbooksDatabaseConnection& p_database_connection);
+
+	WelcomeDialog(WelcomeDialog const&) = delete;
+	WelcomeDialog(WelcomeDialog&&) = delete;
+	WelcomeDialog& operator=(WelcomeDialog const&) = delete;
+	WelcomeDialog& operator=(WelcomeDialog&&) = delete;
+
+	virtual ~WelcomeDialog() = default;
 
 	bool user_wants_new_file() const;
 

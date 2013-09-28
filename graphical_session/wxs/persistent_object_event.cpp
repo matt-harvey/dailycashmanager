@@ -4,6 +4,7 @@
 #include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/event.h>
 #include <wx/window.h>
@@ -13,10 +14,6 @@ using boost::optional;
 using jewel::value;
 using std::vector;
 
-// for debugging
-	#include <jewel/log.hpp>
-	#include <iostream>
-	using std::endl;
 
 namespace phatbooks
 {
@@ -157,9 +154,10 @@ PersistentObjectEvent::notify_many
 )
 {
 	JEWEL_ASSERT (p_originator);
-	vector<Id>::const_iterator it = p_po_ids.begin();
-	vector<Id>::const_iterator const end = p_po_ids.end();
-	for ( ; it != end; ++it) fire(p_originator, p_event_type, *it);
+	for (Id const elem: p_po_ids)
+	{
+		fire(p_originator, p_event_type, elem);
+	}
 	return;
 	
 }

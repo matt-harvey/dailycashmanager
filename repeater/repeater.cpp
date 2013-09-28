@@ -164,37 +164,31 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 	RepeaterTableIterator rtit(dbc);
 	RepeaterTableIterator const rtend;
 	vector<Repeater> vec(rtit, rtend);
-
-	// Bare scope
+	for (Repeater& repeater: vec)
 	{
-		vector<Repeater>::iterator it = vec.begin();
-		vector<Repeater>::iterator const end = vec.end();
-		for ( ; it != end; ++it)
+		while (repeater.next_date() <= d)
 		{
-			while (it->next_date() <= d)
-			{
-				OrdinaryJournal const oj = it->fire_next();
-				// In the special case where oj is dbc.budget_instrument(),
-				// and is
-				// devoid of entries, firing it does not cause any
-				// OrdinaryJournal to be posted, but simply advances
-				// the next posting date. In this case the returned
-				// OrdinaryJournal will have no id.
+			OrdinaryJournal const oj = repeater.fire_next();
+			// In the special case where oj is dbc.budget_instrument(),
+			// and is
+			// devoid of entries, firing it does not cause any
+			// OrdinaryJournal to be posted, but simply advances
+			// the next posting date. In this case the returned
+			// OrdinaryJournal will have no id.
 #				ifndef NDEBUG
-					DraftJournal const dj = it->draft_journal();
-					DraftJournal const bi = dbc.budget_instrument();
+				DraftJournal const dj = repeater.draft_journal();
+				DraftJournal const bi = dbc.budget_instrument();
 #				endif
-				if (oj.has_id())
-				{
-					JEWEL_ASSERT (dj != bi || !dj.entries().empty());
-					auto_posted_journals->push_back(oj);
-				}
-				else
-				{
-					JEWEL_ASSERT (dj == bi);
-					JEWEL_ASSERT (dj.entries().empty());
-					JEWEL_ASSERT (oj.entries().empty());
-				}
+			if (oj.has_id())
+			{
+				JEWEL_ASSERT (dj != bi || !dj.entries().empty());
+				auto_posted_journals->push_back(oj);
+			}
+			else
+			{
+				JEWEL_ASSERT (dj == bi);
+				JEWEL_ASSERT (dj.entries().empty());
+				JEWEL_ASSERT (oj.entries().empty());
 			}
 		}
 	}

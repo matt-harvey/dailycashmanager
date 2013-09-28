@@ -34,7 +34,7 @@ GriddedScrolledPanel::GriddedScrolledPanel
 		(p_horizontal_scrolling_enabled? (wxVSCROLL | wxHSCROLL): wxVSCROLL)
 	),
 	m_current_row(0),
-	m_top_sizer(0),
+	m_top_sizer(nullptr),
 	m_database_connection(p_database_connection)
 {
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
@@ -43,10 +43,6 @@ GriddedScrolledPanel::GriddedScrolledPanel
 	int const horizontal_scrolling_rate =
 		(p_horizontal_scrolling_enabled? standard_scrolling_increment: 0);
 	SetScrollRate(horizontal_scrolling_rate, standard_scrolling_increment);
-}
-
-GriddedScrolledPanel::~GriddedScrolledPanel()
-{
 }
 
 wxGridBagSizer&

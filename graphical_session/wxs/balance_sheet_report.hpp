@@ -6,9 +6,9 @@
 #include "report.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
-#include <boost/unordered_map.hpp>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
+#include <unordered_map>
 
 namespace phatbooks
 {
@@ -53,7 +53,7 @@ private:
 		jewel::Decimal closing_balance;
 	};
 
-	typedef boost::unordered_map<Account::Id, BalanceDatum> BalanceMap;
+	typedef std::unordered_map<Account::Id, BalanceDatum> BalanceMap;
 	BalanceMap m_balance_map;
 
 };  // class BalanceSheetReport

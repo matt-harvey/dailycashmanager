@@ -16,6 +16,7 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/output_aux.hpp>
+#include <jewel/signature.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/string.h>
 #include <ostream>
@@ -28,6 +29,7 @@ using boost::lexical_cast;
 using boost::shared_ptr;
 using jewel::Decimal;
 using jewel::output_aux;
+using jewel::Signature;
 using sqloxx::Handle;
 using std::ios_base;
 using std::ostream;
@@ -169,7 +171,7 @@ OrdinaryJournal::set_date(boost::gregorian::date const& p_date)
 void
 OrdinaryJournal::set_date_unrestricted(boost::gregorian::date const& p_date)
 {
-	OrdinaryJournalSignature const signature;
+	Signature<OrdinaryJournal> const signature;
 	impl().set_date_unrestricted(p_date, signature);
 	return;
 }

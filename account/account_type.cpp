@@ -134,13 +134,10 @@ string_to_account_type(wxString const& p_string)
 	{
 		vector<wxString> const names = account_type_names();
 		int i = 1;
-		for
-		(	vector<wxString>::const_iterator it = names.begin();
-			it != names.end();
-			++it, ++i
-		)
+		for (wxString const& name: names)
 		{
-			dict[*it] = static_cast<account_type::AccountType>(i);
+			dict[name] = static_cast<account_type::AccountType>(i);
+			++i;
 		}
 		calculated_already = true;
 	}

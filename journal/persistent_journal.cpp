@@ -40,14 +40,9 @@ PersistentJournal::do_output(ostream& os) const
 bool
 has_entry_with_id(PersistentJournal const& journal, Entry::Id entry_id)
 {
-	for
-	(	vector<Entry>::const_iterator it = journal.entries().begin(),
-			end = journal.entries().end();
-		it != end;
-		++it
-	)
+	for (Entry const& entry: journal.entries())
 	{
-		if (it->has_id() && (it->id() == entry_id))
+		if (entry.has_id() && (entry.id() == entry_id))
 		{
 			return true;
 		}

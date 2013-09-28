@@ -129,12 +129,8 @@ Decimal
 Journal::primary_amount() const
 {
 	Decimal total(0, 0);
-	vector<Entry> const& entry_vec = entries();
-	vector<Entry>::size_type i = 0;
-	vector<Entry>::size_type const sz = entry_vec.size();
-	for ( ; i != sz; ++i)
+	for (Entry const& entry: entries())
 	{
-		Entry const& entry = entry_vec[i];
 		if (entry.transaction_side() == transaction_side::destination)
 		{
 			total += entry.amount();

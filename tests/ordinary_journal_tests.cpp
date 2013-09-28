@@ -66,28 +66,26 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	oj1.save();
 	CHECK(!oj1.entries().empty());
 
-	for
-	(	vector<Entry>::const_iterator it1 = oj1.entries().begin(),
-		  end = oj1.entries().end();
-		it1 != end;
-		++it1
-	)
+	for (Entry const& entry: oj1.entries())
 	{
-		CHECK(it1->id() == 1 || it1->id() == 2);
-		if (it1->account() == Account(dbc, "cash"))
+		CHECK(entry.id() == 1 || entry.id() == 2);
+		if (entry.account() == Account(dbc, "cash"))
 		{
-			CHECK_EQUAL(it1->comment(), "igloo entry a");
-			CHECK_EQUAL(it1->amount(), Decimal("0.99"));
-			CHECK_EQUAL(it1->is_reconciled(), true);
-			CHECK_EQUAL(it1->transaction_side(), transaction_side::source);
+			CHECK_EQUAL(entry.comment(), "igloo entry a");
+			CHECK_EQUAL(entry.amount(), Decimal("0.99"));
+			CHECK_EQUAL(entry.is_reconciled(), true);
+			CHECK_EQUAL(entry.transaction_side(), transaction_side::source);
 		}
 		else
 		{
-			CHECK(it1->account() == Account(dbc, "food"));
-			CHECK_EQUAL(it1->is_reconciled(), false);
-			CHECK_EQUAL(it1->amount(), Decimal("-0.99"));
-			CHECK_EQUAL(it1->comment(), "igloo entry b");
-			CHECK_EQUAL(it1->transaction_side(), transaction_side::destination);
+			CHECK(entry.account() == Account(dbc, "food"));
+			CHECK_EQUAL(entry.is_reconciled(), false);
+			CHECK_EQUAL(entry.amount(), Decimal("-0.99"));
+			CHECK_EQUAL(entry.comment(), "igloo entry b");
+			CHECK_EQUAL
+			(	entry.transaction_side(),
+				transaction_side::destination
+			);
 		}
 	}
 	DraftJournal dj2(dbc);
@@ -114,46 +112,13 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		transaction_type::envelope_transaction
 	);
 	oj1.save();
-	vector<Entry>::const_iterator it2 =
-		oj1.entries().begin();
-	for ( ; it2 != oj1.entries().end(); ++it2)
+	for (Entry const& entry: oj1.entries())
 	{
-		CHECK_EQUAL(it2->account().id(), Account(dbc, "food").id());
-		CHECK_EQUAL(it2->comment(), "steam");
-		CHECK_EQUAL(it2->is_reconciled(), false);
-		CHECK_EQUAL(it2->transaction_side(), transaction_side::source);
+		CHECK_EQUAL(entry.account().id(), Account(dbc, "food").id());
+		CHECK_EQUAL(entry.comment(), "steam");
+		CHECK_EQUAL(entry.is_reconciled(), false);
+		CHECK_EQUAL(entry.transaction_side(), transaction_side::source);
 	}
-
-	/* No longer providing mimic of OrdinaryJournal, so test commented out.
-	OrdinaryJournal oj2(dbc);
-	oj2.set_transaction_type(transaction_type::generic_transaction);
-	oj2.set_comment("random");
-	oj2.set_date(date(2010, 11, 30));
-	
-	Entry entry2b(dbc);
-	entry2b.set_account(Account(dbc, "cash"));
-	entry2b.set_comment("random entry");
-	entry2b.set_amount(Decimal("2055.90"));
-	entry2b.set_whether_reconciled(false);
-	oj2.push_entry(entry2b);
-	Entry entry2c(dbc);
-	entry2c.mimic(entry2b);
-	entry2c.set_amount(Decimal("-2055.90"));
-	oj2.push_entry(entry2c); 
-	
-	oj2.save();
-	
-	oj2.mimic(oj1);
-	oj2.save();
-
-	OrdinaryJournal oj2b(dbc, 2);
-	CHECK_EQUAL(oj2b.id(), 2);
-	CHECK_EQUAL(oj2b.comment(), "steam engine");
-	CHECK_EQUAL(oj2b.entries().size(), size_t(1));
-	CHECK_EQUAL(oj2b.date(), date(2000, 1, 5));
-	vector<Entry>::const_iterator it2b = oj2b.entries().begin();
-	CHECK_EQUAL(it2b->amount(), Decimal("0"));
-	*/
 }
 
 

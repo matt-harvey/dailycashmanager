@@ -132,9 +132,9 @@ namespace
 		vector<Account> accounts;
 		make_default_accounts(dbc, accounts, p_account_type);
 		Decimal const zero(0, precision);
-		for (vector<Account>::size_type i = 0; i != accounts.size(); ++i)
+		for (Account const& account: accounts)
 		{
-			AugmentedAccount const augmented_account(accounts[i], zero);
+			AugmentedAccount const augmented_account(account, zero);
 			vec.push_back(augmented_account);
 		}
 		return;
@@ -292,30 +292,28 @@ SetupWizard::configure_accounts()
 {
 	vector<AugmentedAccount> augmented_accounts;
 	selected_augmented_accounts(augmented_accounts);
-	vector<AugmentedAccount>::iterator it = augmented_accounts.begin();
-	vector<AugmentedAccount>::iterator const end = augmented_accounts.end();
 	DatabaseTransaction transaction(m_database_connection);
-	for ( ; it != end; ++it)
+	for (AugmentedAccount& aug_acc: augmented_accounts)
 	{
-		wxString const name_wx = it->account.name().Trim();
+		wxString const name_wx = aug_acc.account.name().Trim();
 		if (name_wx.IsEmpty())
 		{
 			// TODO React accordingly...
 		}
 		else
 		{
-			it->account.set_commodity(selected_currency());
-			it->account.set_description(wxString(""));
-			it->account.set_visibility(visibility::visible);
-			it->account.save();
+			aug_acc.account.set_commodity(selected_currency());
+			aug_acc.account.set_description(wxString(""));
+			aug_acc.account.set_visibility(visibility::visible);
+			aug_acc.account.save();
 			JEWEL_ASSERT 
-			(	it->technical_opening_balance.places() ==
+			(	aug_acc.technical_opening_balance.places() ==
 				selected_currency().precision()
 			);
 			OrdinaryJournal opening_balance_journal
 			(	OrdinaryJournal::create_opening_balance_journal
-				(	it->account,
-					it->technical_opening_balance
+				(	aug_acc.account,
+					aug_acc.technical_opening_balance
 				)
 			);
 			opening_balance_journal.save();
@@ -473,13 +471,13 @@ SetupWizard::FilepathPage::FilepathPage
 ):
 	wxWizardPageSimple(parent),
 	m_currencies(make_currencies(p_database_connection)),
-	m_top_sizer(0),
-	m_filename_row_sizer(0),
-	m_directory_row_sizer(0),
-	m_directory_ctrl(0),
-	m_directory_button(0),
-	m_filename_ctrl(0),
-	m_selected_filepath(0)
+	m_top_sizer(nullptr),
+	m_filename_row_sizer(nullptr),
+	m_directory_row_sizer(nullptr),
+	m_directory_ctrl(nullptr),
+	m_directory_button(nullptr),
+	m_filename_ctrl(nullptr),
+	m_selected_filepath(nullptr)
 {
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
 	m_filename_row_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -507,7 +505,9 @@ SetupWizard::FilepathPage::FilepathPage
 	{
 		default_directory = std8_to_wx(value(maybe_directory).string());
 		JEWEL_ASSERT (!m_selected_filepath);
-		m_selected_filepath = new filesystem::path(value(maybe_directory));
+		m_selected_filepath.reset
+		(	new filesystem::path(value(maybe_directory))
+		);
 	}
 	// TODO We should make this a static text field or something that
 	// is obviously noneditable so the user doesn't feel frustrated when
@@ -555,7 +555,7 @@ SetupWizard::FilepathPage::FilepathPage
 		wxDefaultPosition,
 		wxDLG_UNIT(this, dlg_unit_size),
 		0,  // style
-		FilepathValidator(m_selected_filepath)
+		FilepathValidator(m_selected_filepath.release())
 	);
 	m_filename_row_sizer->Add(m_filename_ctrl, wxSizerFlags(1).Expand());
 	wxStaticText* extension_text = new wxStaticText
@@ -593,9 +593,8 @@ SetupWizard::FilepathPage::FilepathPage
 		0,
 		wxCB_DROPDOWN | wxCB_SORT | wxCB_READONLY
 	);
-	for (vector<Commodity>::size_type i = 0; i != m_currencies.size(); ++i)
+	for (Commodity const& commodity: m_currencies)
 	{
-		Commodity const& commodity = m_currencies[i];
 		unsigned int const item_index = m_currency_box->Append
 		(	commodity.name() +
 			wxString(" (") +
@@ -623,10 +622,6 @@ SetupWizard::FilepathPage::FilepathPage
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	Layout();
-}
-
-SetupWizard::FilepathPage::~FilepathPage()
-{
 }
 
 optional<filesystem::path>
@@ -725,13 +720,9 @@ SetupWizard::AccountPage::AccountPage
 	m_min_num_accounts(1),
 	m_current_row(0),
 	m_database_connection(p_database_connection),
-	m_top_sizer(0),
-	m_multi_account_panel(0),
+	m_top_sizer(nullptr),
+	m_multi_account_panel(nullptr),
 	m_parent(*p_parent)
-{
-}
-
-SetupWizard::AccountPage::~AccountPage()
 {
 }
 

@@ -4,18 +4,14 @@
 #include "repeater.hpp"
 #include "session.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
-#include <list>
 #include <string>
 
-using boost::shared_ptr;
 using jewel::Log;
 using sqloxx::InvalidFilename;
-using std::list;
 using std::string;
 
 namespace gregorian = boost::gregorian;

@@ -6,7 +6,6 @@
 #include "account.hpp"
 #include "budget_item.hpp"
 #include "frequency_ctrl.hpp"
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -46,7 +45,7 @@ class DecimalTextCtrl;
  * not in BudgetPanel, but are in the parent AccountDialog. So this
  * will require some careful refactoring to achieve.
  */
-class BudgetPanel: public wxPanel, private boost::noncopyable
+class BudgetPanel: public wxPanel
 {
 public:
 
@@ -60,6 +59,13 @@ public:
 	 * \e Precondition: \e p_account must have an AccountType.
 	 */
 	BudgetPanel(AccountDialog* p_parent, Account const& p_account);
+
+	BudgetPanel(BudgetPanel const&) = delete;
+	BudgetPanel(BudgetPanel&&) = delete;
+	BudgetPanel& operator=(BudgetPanel const&) = delete;
+	BudgetPanel& operator=(BudgetPanel&&) = delete;
+	
+	virtual ~BudgetPanel() = default;
 
 	/**
 	 * \e Precondition: \e m_account must have an ID before this is called.

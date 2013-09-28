@@ -4,7 +4,6 @@
 #define GUARD_gridded_scrolled_panel_hpp_8020584330903638
 
 #include <jewel/decimal_fwd.hpp>
-#include <boost/noncopyable.hpp>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
 #include <wx/scrolwin.h>
@@ -34,9 +33,7 @@ namespace gui
  * This is a general purpose widget class which will typically be inherited
  * by more customized widget classes.
  */
-class GriddedScrolledPanel:
-	public wxScrolledWindow,
-	private boost::noncopyable
+class GriddedScrolledPanel: public wxScrolledWindow
 {
 public:
 
@@ -52,7 +49,12 @@ public:
 		bool p_horizontal_scrolling_enabled = false
 	);
 
-	virtual ~GriddedScrolledPanel();
+	GriddedScrolledPanel(GriddedScrolledPanel const&) = delete;
+	GriddedScrolledPanel(GriddedScrolledPanel&&) = delete;
+	GriddedScrolledPanel& operator=(GriddedScrolledPanel const&) = delete;
+	GriddedScrolledPanel& operator=(GriddedScrolledPanel&&) = delete;
+
+	virtual ~GriddedScrolledPanel() = default;
 
 protected:
 

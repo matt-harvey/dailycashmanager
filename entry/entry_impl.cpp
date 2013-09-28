@@ -109,16 +109,6 @@ EntryImpl::EntryImpl
 {
 }
 
-
-EntryImpl::~EntryImpl()
-{
-	/* If m_data is a smart pointer, this is not required.
-	delete m_data;
-	m_data = 0;
-	*/
-}
-
-
 void
 EntryImpl::set_journal_id(Id p_journal_id)
 {
@@ -222,7 +212,13 @@ EntryImpl::EntryImpl(EntryImpl const& rhs):
 	m_data(new EntryData(*(rhs.m_data)))
 {
 }
-	
+
+EntryImpl::EntryImpl(EntryImpl&& rhs):
+	PersistentObject(move(rhs)),
+	m_data(move(rhs.m_data))
+{
+	rhs.m_data = nullptr;
+}
 
 void
 EntryImpl::do_load()

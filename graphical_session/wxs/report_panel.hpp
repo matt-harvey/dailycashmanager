@@ -4,7 +4,6 @@
 #define GUARD_report_panel_hpp_8629163596140763
 
 #include "entry.hpp"
-#include <boost/noncopyable.hpp>
 #include <wx/combobox.h>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -41,13 +40,20 @@ class Report;
  * \e nil amount for the "Opening balance" column. This can be written
  * into the code for initializing the m_balance_map.
  */
-class ReportPanel: public wxPanel, private boost::noncopyable
+class ReportPanel: public wxPanel
 {
 public:
 	ReportPanel
 	(	wxWindow* p_parent,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
+
+	ReportPanel(ReportPanel const&) = delete;
+	ReportPanel(ReportPanel&&) = delete;
+	ReportPanel& operator=(ReportPanel const&) = delete;
+	ReportPanel& operator=(ReportPanel&&) = delete;
+
+	virtual ~ReportPanel() = default;
 
 	void update_for_new(OrdinaryJournal const& p_journal);
 	void update_for_amended(OrdinaryJournal const& p_journal);

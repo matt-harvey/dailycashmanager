@@ -14,7 +14,6 @@
 #include "transaction_type.hpp"
 #include "visibility.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <boost/static_assert.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
@@ -25,12 +24,12 @@
 #include <utility>
 #include <vector>
 
-using boost::scoped_ptr;
 using jewel::Decimal;
 using sqloxx::SQLStatement;
 using std::accumulate;
 using std::ostream;
 using std::pair;
+using std::unique_ptr;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
@@ -117,21 +116,10 @@ AmalgamatedBudget::AmalgamatedBudget
 	m_database_connection(p_database_connection),
 	m_frequency(1, interval_type::days),
 	m_map(new Map),
-	m_instrument(0),
-	m_balancing_account(0)
+	m_instrument(nullptr),
+	m_balancing_account(nullptr)
 {
 }
-
-
-AmalgamatedBudget::~AmalgamatedBudget()
-{
-	delete m_instrument;
-	m_instrument = 0;
-
-	delete m_balancing_account;
-	m_balancing_account = 0;
-}
-
 
 void
 AmalgamatedBudget::load() const
@@ -314,7 +302,7 @@ AmalgamatedBudget::load_map() const
 void
 AmalgamatedBudget::generate_map() const
 {
-	scoped_ptr<Map> map_elect(new Map);
+	unique_ptr<Map> map_elect(new Map);
 	JEWEL_ASSERT (map_elect->empty());
 
 	SQLStatement account_selector
@@ -355,15 +343,12 @@ AmalgamatedBudget::generate_map() const
 		tmit->second += canonical_amount;
 	}
 	// Now convert to desired frequency
-	for 
-	(	Map::iterator mit = map_elect->begin(), mend = map_elect->end();
-		mit != mend;
-		++mit
-	)
+	for (auto& entry: *map_elect)
 	{
-		mit->second = round
-		(	convert_from_canonical(m_frequency, mit->second),
-			Account(m_database_connection, mit->first).commodity().precision()
+		entry.second = round
+		(	convert_from_canonical(m_frequency, entry.second),
+			Account(m_database_connection, entry.first).
+				commodity().precision()
 		);
 	}
 	using std::swap;
@@ -426,14 +411,11 @@ AmalgamatedBudget::load_balancing_account() const
 	);
 	bool check = statement.step();
 	JEWEL_ASSERT (check);
-	if (m_balancing_account)
-	{
-		delete m_balancing_account;
-		m_balancing_account = 0;
-	}
-	m_balancing_account = new Account
-	(	m_database_connection,
-		statement.extract<Account::Id>(0)
+	m_balancing_account.reset
+	(	new Account
+		(	m_database_connection,
+			statement.extract<Account::Id>(0)
+		)
 	);
 	statement.step_final();
 	return;
@@ -449,14 +431,11 @@ AmalgamatedBudget::load_instrument() const
 		"select journal_id from amalgamated_budget_data"
 	);
 	statement.step();
-	if (m_instrument)
-	{
-		delete m_instrument;
-		m_instrument = 0;
-	}
-	m_instrument = new DraftJournal
-	(	m_database_connection,
-		statement.extract<DraftJournal::Id>(0)
+	m_instrument.reset
+	(	new DraftJournal
+		(	m_database_connection,
+			statement.extract<DraftJournal::Id>(0)
+		)
 	);
 	statement.step_final();
 	return;
@@ -468,21 +447,16 @@ AmalgamatedBudget::reflect_entries(DraftJournal& p_journal)
 {
 	load();
 	p_journal.clear_entries();
-	Map const& map = *m_map;
-	for
-	(	Map::const_iterator it = map.begin(), end = map.end();
-		it != end;
-		++it
-	)
+	for (auto const& elem: *m_map)
 	{
-		if (it->second != Decimal(0, 0))
+		if (elem.second != Decimal(0, 0))
 		{
 			Entry entry(m_database_connection);
 			entry.set_account
-			(	Account(m_database_connection, it->first)
+			(	Account(m_database_connection, elem.first)
 			);
 			entry.set_comment("");
-			entry.set_amount(-(it->second));
+			entry.set_amount(-(elem.second));
 			entry.set_whether_reconciled(false);
 			entry.set_transaction_side(transaction_side::source);
 			p_journal.push_entry(entry);
@@ -521,16 +495,14 @@ AmalgamatedBudget::instrument_balancing_amount() const
 {
 	load();
 	JEWEL_ASSERT (m_instrument);
-	vector<Entry> const& entries = m_instrument->entries();
 	Decimal ret(0, m_database_connection.default_commodity().precision());
-	vector<Entry>::const_iterator it = entries.begin();
-	vector<Entry>::const_iterator const end = entries.end();
 	wxString const balancing_entry_marker = balancing_entry_comment();
-	for ( ; it != end; ++it)
+	vector<Entry> const& entries = m_instrument->entries();
+	for (Entry const& entry: entries)
 	{
-		if (it->comment() == balancing_entry_marker)
+		if (entry.comment() == balancing_entry_marker)
 		{
-			ret -= it->amount();
+			ret -= entry.amount();
 		}
 	}
 
