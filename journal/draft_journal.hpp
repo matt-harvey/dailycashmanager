@@ -150,9 +150,6 @@ private:
 	wxString do_get_comment() const;
 	transaction_type::TransactionType do_get_transaction_type() const;
 	
-	// Redefine impure virtual function inherited from Journal
-	void do_output(std::ostream& os) const;
-
 	DraftJournal(sqloxx::Handle<DraftJournalImpl> const& p_handle);
 
 };

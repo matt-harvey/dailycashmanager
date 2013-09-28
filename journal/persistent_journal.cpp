@@ -1,15 +1,12 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "persistent_journal.hpp"
-#include "column_creation.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
-#include <consolixx/table.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <ostream>
 #include <vector>
 
-using consolixx::Table;
 using sqloxx::SQLStatement;
 using std::ostream;
 using std::vector;
@@ -21,21 +18,6 @@ namespace phatbooks
 PersistentJournal::~PersistentJournal()
 {
 }
-
-void
-PersistentJournal::do_output(ostream& os) const
-{
-	using column_creation::create_entry_id_column;
-	Journal::output_core_journal_header(os);
-	Table<Entry> table;
-	Table<Entry>::ColumnPtr const id_column(create_entry_id_column());
-	table.push_column(id_column);
-	push_core_journal_columns(table);
-	table.populate(entries().begin(), entries().end());
-	os << table;
-	return;
-}
-
 
 bool
 has_entry_with_id(PersistentJournal const& journal, Entry::Id entry_id)

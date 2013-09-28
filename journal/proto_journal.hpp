@@ -111,7 +111,6 @@ private:
 	// Implement virtual functions inherited from Journal
 	// todo Figure out whether these need to be virtual here.
 	// I'm pretty sure they \e don't.
-	virtual void do_output(std::ostream& os) const;
 	virtual std::vector<Entry> const& do_get_entries() const;
 	virtual void do_set_transaction_type
 	(	transaction_type::TransactionType p_transaction_type

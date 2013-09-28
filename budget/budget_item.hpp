@@ -120,17 +120,8 @@ private:
 
 	BudgetItem(sqloxx::Handle<BudgetItemImpl> const& p_handle);	
 
-	static void
-	output_budget_item_aux(std::ostream& os, BudgetItem const& bi);
-	
-	friend
-	std::ostream& operator<<(std::ostream& os, BudgetItem const& bi);
-
 };
 
-
-std::ostream&
-operator<<(std::ostream& os, BudgetItem const& bi);
 
 /**
  * @p_budget_items is a vector of BudgetItems which are assumed to be all

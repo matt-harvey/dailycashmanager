@@ -144,9 +144,6 @@ private:
 	wxString do_get_comment() const;
 	std::vector<Entry> const& do_get_entries() const;
 
-	// Virtual function inherited from Journal
-	void do_output(std::ostream& os) const;
-
 	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);
 };
 

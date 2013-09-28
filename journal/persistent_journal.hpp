@@ -22,8 +22,6 @@ class PersistentJournal:
 public:
 	typedef PhatbooksPersistentObjectBase::Id Id;
 	virtual ~PersistentJournal();
-protected:
-	void do_output(std::ostream& os) const;
 };
 
 

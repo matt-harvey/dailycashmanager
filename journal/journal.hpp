@@ -6,7 +6,6 @@
 #include "entry.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "transaction_type.hpp"
-#include <consolixx/table.hpp>
 #include <jewel/decimal_fwd.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <wx/string.h>
@@ -90,14 +89,7 @@ public:
 	 */
 	jewel::Decimal primary_amount() const;
 
-protected:
-	void push_core_journal_columns
-	(	consolixx::Table<Entry>& table
-	) const;
-	void output_core_journal_header(std::ostream& os) const;
-
 private:
-	virtual void do_output(std::ostream& os) const = 0;
 	virtual std::vector<Entry> const& do_get_entries() const = 0;
 	virtual void do_set_transaction_type
 	(	transaction_type::TransactionType p_transaction_type
@@ -109,21 +101,8 @@ private:
 	virtual wxString do_get_comment() const = 0;
 	virtual transaction_type::TransactionType
 		do_get_transaction_type() const = 0;
-
-	static void output_journal_aux(std::ostream& os, Journal const& oj);
-	
-	friend
-	std::ostream& operator<<(std::ostream& os, Journal const& oj);
 };
 	
-
-
-std::ostream&
-operator<<(std::ostream& os, Journal const& oj);
-
-
-
-
 }  // namespace phatbooks
 
 

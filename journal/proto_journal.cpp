@@ -21,10 +21,8 @@
 #include "phatbooks_exceptions.hpp"
 #include "string_conv.hpp"
 #include "transaction_type.hpp"
-#include <consolixx/table.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
-#include <jewel/output_aux.hpp>
 #include <sqloxx/next_auto_key.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <jewel/decimal.hpp>
@@ -40,16 +38,12 @@
 #include <unordered_set>
 #include <vector>
 
-namespace alignment = consolixx::alignment;
-
 using sqloxx::next_auto_key;
 using sqloxx::SQLStatement;
 using boost::numeric_cast;
 using boost::optional;
-using consolixx::Table;
 using jewel::clear;
 using jewel::Decimal;
-using jewel::output_aux;
 using jewel::value;
 using std::back_inserter;
 using std::ios_base;
@@ -118,18 +112,6 @@ ProtoJournal::~ProtoJournal()
 	m_data = 0;
 	*/
 }
-
-void
-ProtoJournal::do_output(ostream& os) const
-{
-	Journal::output_core_journal_header(os);
-	Table<Entry> table;
-	push_core_journal_columns(table);
-	table.populate(entries().begin(), entries().end());
-	os << table;
-	return;
-}
-
 
 vector<Entry> const& 
 ProtoJournal::do_get_entries() const

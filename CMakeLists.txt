@@ -7,7 +7,6 @@ set (immediate_directories
 	 account
 	 application
 	 budget
-	 column_creation
 	 commodity
 	 currency
 	 date
@@ -89,7 +88,6 @@ else ()
 		 jewel 
 		 m
 		 z
-		 consolixx
 		 pthread
 		 UnitTest++
 		 sqloxx
@@ -141,7 +139,6 @@ set (main_files
 	 budget/amalgamated_budget.cpp
 	 budget/budget_item.cpp
 	 budget/budget_item_impl.cpp
-	 column_creation/column_creation.cpp
 	 commodity/commodity.cpp
 	 commodity/commodity_impl.cpp
 	 currency/make_currencies.cpp

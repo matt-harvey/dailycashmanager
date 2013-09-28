@@ -14,7 +14,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <jewel/decimal.hpp>
-#include <jewel/output_aux.hpp>
+#include <jewel/log.hpp>
 #include <jewel/signature.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/string.h>
@@ -26,7 +26,6 @@
 
 using boost::lexical_cast;
 using jewel::Decimal;
-using jewel::output_aux;
 using jewel::Signature;
 using sqloxx::Handle;
 using std::ios_base;
@@ -34,11 +33,6 @@ using std::ostream;
 using std::ostringstream;
 using std::string;
 using std::vector;
-
-// For debugging
-	#include <jewel/log.hpp>
-	#include <iostream>
-	using std::endl;
 
 namespace phatbooks
 {
@@ -233,22 +227,6 @@ OrdinaryJournal::OrdinaryJournal
 	PhatbooksPersistentObject(p_handle)
 {
 }
-
-void
-OrdinaryJournal::do_output(ostream& os) const
-{
-	os << date() << " ";
-	// lexical_cast here avoids unwanted formatting
-	os << "ORDINARY JOURNAL ";
-	if (has_id())
-	{
-		os << "ID " << lexical_cast<string>(id()) << " ";
-	}
-	PersistentJournal::do_output(os);
-	return;
-}
-
-
 
 
 

@@ -208,20 +208,6 @@ DraftJournal::mimic(DraftJournal const& rhs)
 	return;
 }
 
-void
-DraftJournal::do_output(ostream& os) const
-{
-	os << "DRAFT JOURNAL ";
-	if (has_id())
-	{
-		os << "ID " << lexical_cast<string>(id()) << " ";
-	}
-	os << "NAME " << name() << " ";
-	PersistentJournal::do_output(os);
-	os << endl << repeater_description() << endl;
-	return;
-}
-
 
 
 }  // namespace phatbooks

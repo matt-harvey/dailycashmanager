@@ -13,7 +13,6 @@
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
-#include <jewel/output_aux.hpp>
 #include <sqloxx/handle.hpp>
 #include <iostream>
 #include <ostream>
@@ -129,36 +128,6 @@ BudgetItem::mimic(BudgetItem const& rhs)
 BudgetItem::BudgetItem(sqloxx::Handle<BudgetItemImpl> const& p_handle):
 	PhatbooksPersistentObject(p_handle)
 {
-}
-
-void
-BudgetItem::output_budget_item_aux(ostream& os, BudgetItem const& bi)
-{
-	os << "BUDGET ITEM";
-	if (bi.has_id())
-	{
-		// lexical cast to avoid unwanted formatting
-		os << " ID " + lexical_cast<string>(bi.id());
-	}
-	os << ": "
-	   << finformat_std8
-	   	  	(	bi.amount(),
-		  		BasicDecimalFormatFlags().set(string_flags::hard_align_right)
-			)
-	   << " ";
-	os << frequency_description(bi.frequency(), "per");
-	if (!bi.description().empty())
-	{
-		os << " (" << wx_to_std8(bi.description()) << ")";
-	}
-	return;
-}
-
-ostream&
-operator<<(ostream& os, BudgetItem const& bi)
-{
-	jewel::output_aux(os, bi, BudgetItem::output_budget_item_aux);
-	return os;
 }
 
 Decimal

@@ -1,14 +1,11 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "journal.hpp"
-#include "column_creation.hpp"
 #include "entry.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
-#include <consolixx/table.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
-#include <jewel/output_aux.hpp>
 #include <wx/string.h>
 #include <iostream>
 #include <ostream>
@@ -16,7 +13,6 @@
 #include <string>
 #include <vector>
 
-using consolixx::Table;
 using jewel::Decimal;
 using std::accumulate;
 using std::endl;
@@ -27,11 +23,6 @@ using std::vector;
 
 namespace phatbooks
 {
-
-using column_creation::create_entry_accumulating_amount_column;
-using column_creation::create_entry_accumulating_reversed_amount_column;
-using column_creation::create_entry_account_name_column;
-using column_creation::create_entry_comment_column;
 
 
 namespace
@@ -137,68 +128,6 @@ Journal::primary_amount() const
 		}
 	}
 	return is_actual()? total: -total;
-}
-
-void
-Journal::push_core_journal_columns(Table<Entry>& table) const
-{
-	typedef Table<Entry>::ColumnPtr ColumnPtr;
-	ColumnPtr const name_column(create_entry_account_name_column());
-	table.push_column(name_column);
-	ColumnPtr const comment_column(create_entry_comment_column());
-	table.push_column(comment_column);
-#	ifdef PHATBOOKS_EXPOSE_COMMODITY
-		using column_creation::create_entry_commodity_abbreviation_column;
-		ColumnPtr const commodity_column
-		(	create_entry_commodity_abbreviation_column()
-		);
-		table.push_column(commodity_column);
-#	endif
-	bool const change_signs = !is_actual();
-	if (change_signs)
-	{
-		ColumnPtr const reversed_amount_column
-		(	create_entry_accumulating_reversed_amount_column()
-		);
-		table.push_column(reversed_amount_column);
-	}
-	else
-	{
-		ColumnPtr const amount_column
-		(	create_entry_accumulating_amount_column()
-		);
-		table.push_column(amount_column);
-	}
-	return;
-}
-	
-
-void
-Journal::output_core_journal_header(ostream& os) const
-{
-	// TODO Incorporate transaction_type() into output.
-	namespace alignment	= consolixx::alignment;
-	if (is_actual()) os << "ACTUAL TRANSACTION";
-	else os << "BUDGET TRANSACTION";
-	os << endl;
-	if (!comment().empty()) os << wx_to_std8(comment()) << endl;
-	os << endl;
-	return;
-}
-
-void
-Journal::output_journal_aux(ostream& os, Journal const& journal)
-{
-	journal.do_output(os);
-	return;
-}
-
-
-ostream&
-operator<<(ostream& os, Journal const& journal)
-{
-	jewel::output_aux(os, journal, Journal::output_journal_aux);
-	return os;
 }
 
 
