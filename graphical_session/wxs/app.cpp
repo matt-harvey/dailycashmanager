@@ -10,7 +10,6 @@
 #include "welcome_dialog.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
@@ -18,12 +17,13 @@
 #include <wx/string.h>
 #include <wx/tooltip.h>
 #include <wx/wx.h>
-
+#include <memory>
 
 using boost::optional;
-using boost::shared_ptr;
 using jewel::Log;
 using jewel::value;
+using std::shared_ptr;
+
 namespace filesystem = boost::filesystem;
 
 namespace phatbooks

@@ -21,9 +21,8 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <wx/string.h>
+#include <memory>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -130,7 +129,7 @@ private:
 		boost::optional<wxString> comment;
 		std::vector<Entry> entries;
 	};
-	boost::scoped_ptr<ProtoJournalData> m_data;
+	std::unique_ptr<ProtoJournalData> m_data;
 };
 
 

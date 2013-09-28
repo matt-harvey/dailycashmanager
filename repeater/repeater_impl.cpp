@@ -23,13 +23,13 @@
 #include <sqloxx/sql_statement.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -40,10 +40,10 @@ namespace gregorian = boost::gregorian;
 using sqloxx::DatabaseTransaction;
 using sqloxx::SQLStatement;
 using boost::numeric_cast;
-using boost::shared_ptr;
 using jewel::clear;
 using jewel::multiplication_is_unsafe;
 using jewel::value;
+using std::shared_ptr;
 using std::string;
 using std::vector;
 
@@ -207,7 +207,7 @@ RepeaterImpl::firings_till(gregorian::date const& limit)
 {
 	load();
 	using gregorian::date;
-	boost::shared_ptr<vector<date> > ret(new vector<date>);
+	shared_ptr<vector<date> > ret(new vector<date>);
 	JEWEL_ASSERT (ret->empty());
 	date d = next_date(0);
 	typedef vector<gregorian::date>::size_type Size;

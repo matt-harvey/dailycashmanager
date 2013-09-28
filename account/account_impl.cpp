@@ -26,7 +26,6 @@
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <boost/numeric/conversion/cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
@@ -39,7 +38,6 @@
 #include <vector>
 
 using boost::numeric_cast;
-using boost::shared_ptr;
 using jewel::clear;
 using jewel::Decimal;
 using jewel::value;

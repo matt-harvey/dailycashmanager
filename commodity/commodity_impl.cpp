@@ -39,7 +39,6 @@ using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
 using boost::numeric_cast;
-using boost::shared_ptr;
 using std::endl;  // for debug logging
 using std::exception;
 using std::string;

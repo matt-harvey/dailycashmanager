@@ -14,7 +14,6 @@
 #include "string_flags.hpp"
 #include "visibility.hpp"
 #include "string_flags.hpp"
-#include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/string.h>
@@ -25,7 +24,6 @@
 using phatbooks::account_type::AccountType;
 using phatbooks::account_super_type::AccountSuperType;
 using sqloxx::Handle;
-using boost::shared_ptr;
 using jewel::Decimal;
 using std::map;
 using std::string;

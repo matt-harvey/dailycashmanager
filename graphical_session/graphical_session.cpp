@@ -4,12 +4,12 @@
 #include "application.hpp"
 #include "wxs/app.hpp"
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/log.hpp>
 #include <wx/string.h>
+#include <memory>
 #include <string>
 
-using boost::shared_ptr;
+using std::shared_ptr;
 using std::string;
 using std::wstring;
 

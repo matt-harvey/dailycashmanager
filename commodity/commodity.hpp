@@ -7,7 +7,6 @@
 #include "phatbooks_persistent_object.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/string.h>
 

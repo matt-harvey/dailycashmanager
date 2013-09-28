@@ -33,7 +33,6 @@
 #include "transaction_type.hpp"
 #include <boost/optional.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
@@ -56,7 +55,6 @@
 #include <vector>
 
 using boost::optional;
-using boost::scoped_ptr;
 using jewel::Decimal;
 using jewel::value;
 using std::back_inserter;

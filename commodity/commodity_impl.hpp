@@ -15,7 +15,6 @@
 
 
 #include "phatbooks_database_connection.hpp"
-#include <boost/scoped_ptr.hpp>
 #include <boost/optional.hpp>
 #include <boost/static_assert.hpp>
 #include <jewel/log.hpp>
@@ -24,6 +23,7 @@
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
+#include <memory>
 #include <string>
 
 
@@ -137,7 +137,7 @@ private:
 	void process_saving_statement(sqloxx::SQLStatement& statement);
 
 	struct CommodityData;
-	boost::scoped_ptr<CommodityData> m_data;
+	std::unique_ptr<CommodityData> m_data;
 };
 
 struct CommodityImpl::CommodityData

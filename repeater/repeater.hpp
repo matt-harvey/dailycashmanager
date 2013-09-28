@@ -14,7 +14,7 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -123,7 +123,7 @@ public:
 	 * Find the firings that are due to occur for this Repeater
 	 * up till and including \e limit.
 	 */
-	boost::shared_ptr<std::vector<boost::gregorian::date> >
+	std::shared_ptr<std::vector<boost::gregorian::date> >
 	firings_till(boost::gregorian::date const& limit);
 
 	/**
@@ -175,11 +175,11 @@ private:
 
 /**
  * Bring Repeaters up to date (thereby posting auto posted journals),
- * returning a boost::shared_ptr to a list containing the resulting
+ * returning a shared_ptr to a list containing the resulting
  * OrdinaryJournals, sorted by the order in which they have been
  * posted, from earliest to latest.
  */
-boost::shared_ptr<std::list<OrdinaryJournal> >
+std::shared_ptr<std::list<OrdinaryJournal> >
 update_repeaters
 (	PhatbooksDatabaseConnection& dbc,
 	boost::gregorian::date d = today()

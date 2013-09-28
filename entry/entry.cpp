@@ -13,7 +13,6 @@
 #include <boost/static_assert.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/handle.hpp>
@@ -26,7 +25,6 @@
 
 using boost::lexical_cast;
 using boost::optional;
-using boost::shared_ptr;
 using jewel::Decimal;
 using jewel::UninitializedOptionalException;
 using jewel::value;

@@ -12,19 +12,19 @@
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <wx/string.h>
 #include <list>
+#include <memory>
 #include <string>
 #include <vector>
 
 namespace gregorian = boost::gregorian;
 
 using boost::lexical_cast;
-using boost::shared_ptr;
 using sqloxx::Handle;
 using std::list;
+using std::shared_ptr;
 using std::string;
 using std::vector;
 

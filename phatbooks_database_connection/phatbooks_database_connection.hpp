@@ -23,7 +23,6 @@
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map_fwd.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <list>
 #include <string>

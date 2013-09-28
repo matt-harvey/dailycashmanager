@@ -5,10 +5,8 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <sqloxx/handle.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 
-using boost::shared_ptr;
 using jewel::Decimal;
 using sqloxx::Handle;
 using sqloxx::SQLStatement;

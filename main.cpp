@@ -83,7 +83,6 @@
 #include "string_conv.hpp"
 #include "graphical_session.hpp"
 #include <boost/filesystem.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
@@ -102,7 +101,6 @@
 #include <string>
 #include <typeinfo>
 
-using boost::scoped_ptr;
 using jewel::Log;
 using phatbooks::Application;
 using phatbooks::gui::GraphicalSession;
@@ -117,6 +115,7 @@ using std::set_terminate;
 using std::string;
 using std::strlen;
 using std::set_terminate;
+using std::unique_ptr;
 using TCLAP::ArgException;
 using TCLAP::CmdLine;
 using TCLAP::UnlabeledValueArg;
@@ -211,7 +210,7 @@ int main(int argc, char** argv)
 		wxString const instance_identifier =
 			app_name +
 			wxString::Format("-%s", wxGetUserId().c_str());
-		scoped_ptr<wxSingleInstanceChecker> const m_checker
+		unique_ptr<wxSingleInstanceChecker> const m_checker
 		(	new wxSingleInstanceChecker(instance_identifier)
 		);
 		if (m_checker->IsAnotherRunning())

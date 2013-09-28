@@ -13,7 +13,6 @@
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/output_aux.hpp>
 #include <jewel/signature.hpp>
@@ -26,7 +25,6 @@
 #include <vector>
 
 using boost::lexical_cast;
-using boost::shared_ptr;
 using jewel::Decimal;
 using jewel::output_aux;
 using jewel::Signature;

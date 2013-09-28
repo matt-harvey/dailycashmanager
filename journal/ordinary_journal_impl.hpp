@@ -11,7 +11,6 @@
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/signature.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>

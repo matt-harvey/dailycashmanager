@@ -25,10 +25,10 @@
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
 #include <boost/optional.hpp>
-#include <boost/scoped_ptr.hpp>	
 #include <wx/string.h>
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -196,7 +196,7 @@ private:
 		boost::optional<visibility::Visibility> visibility;
 	};
 
-	boost::scoped_ptr<AccountData> m_data;
+	std::unique_ptr<AccountData> m_data;
 };
 
 

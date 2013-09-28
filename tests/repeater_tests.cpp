@@ -10,17 +10,17 @@
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <wx/string.h>
+#include <memory>
 #include <vector>
 
 namespace gregorian = boost::gregorian;
 
-using boost::shared_ptr;
 using jewel::Decimal;
 using gregorian::date;
+using std::shared_ptr;
 using std::vector;
 
 namespace phatbooks

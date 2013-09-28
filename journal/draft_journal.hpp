@@ -8,7 +8,6 @@
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"
-#include <boost/shared_ptr.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/string.h>

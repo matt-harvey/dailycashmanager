@@ -10,14 +10,12 @@
 #include "transaction_type.hpp"
 #include <sqloxx/handle.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <wx/string.h>
 #include <iostream>
 #include <ostream>
 #include <string>
 
 using boost::lexical_cast;
-using boost::shared_ptr;
 using std::endl;
 using std::ostream;
 using std::string;

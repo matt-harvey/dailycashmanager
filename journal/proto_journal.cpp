@@ -31,8 +31,6 @@
 #include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/optional.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <wx/string.h>
 #include <algorithm>
 #include <iterator>
@@ -48,8 +46,6 @@ using sqloxx::next_auto_key;
 using sqloxx::SQLStatement;
 using boost::numeric_cast;
 using boost::optional;
-using boost::scoped_ptr;
-using boost::shared_ptr;
 using consolixx::Table;
 using jewel::clear;
 using jewel::Decimal;

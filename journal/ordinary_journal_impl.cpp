@@ -15,7 +15,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <jewel/assert.hpp>
@@ -31,7 +30,6 @@
 
 using boost::numeric_cast;
 using boost::optional;
-using boost::shared_ptr;
 using jewel::clear;
 using jewel::Decimal;
 using jewel::Signature;

@@ -9,12 +9,12 @@
 #include "phatbooks_persistent_object.hpp"
 #include "string_flags.hpp"
 #include "visibility.hpp"
-#include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/string.h>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -274,12 +274,12 @@ struct AugmentedAccount
 
 // This has to be std::string as it interfaces with Consolixx
 // which requires it to be std::string
-boost::shared_ptr<std::vector<std::string> >
+std::shared_ptr<std::vector<std::string> >
 make_account_row(Account const& account);
 
 // This has to be std::string as it interfaces with Consolixx
 // which requires it to be std::string
-boost::shared_ptr<std::vector<std::string> >
+std::shared_ptr<std::vector<std::string> >
 make_detailed_account_row(Account const& account);
 
 bool is_asset_or_liability(Account const& account);

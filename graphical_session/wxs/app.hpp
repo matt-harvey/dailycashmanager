@@ -6,9 +6,9 @@
 #include "frame.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
 #include <wx/intl.h>
 #include <wx/wx.h>
+#include <memory>
 
 namespace phatbooks
 {
@@ -35,7 +35,7 @@ public:
 	virtual int OnExit();
 
 	void set_database_connection
-	(	boost::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
+	(	std::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 	);
 
 	/**
@@ -52,7 +52,7 @@ public:
 
 private:
 	boost::filesystem::path elicit_existing_filepath();
-	boost::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
+	std::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	wxLocale m_locale;
 	bool m_existing_application_instance_notified;
 };

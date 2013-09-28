@@ -44,7 +44,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/numeric/conversion/cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
@@ -56,7 +55,6 @@
 #include <string>
 
 using boost::numeric_cast;
-using boost::shared_ptr;
 using jewel::Decimal;
 using jewel::Log;
 using jewel::value;

@@ -10,6 +10,7 @@
 #include <jewel/optional.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
+#include <memory>
 #include <string>
 
 
@@ -96,7 +97,7 @@ private:
 
 	struct BudgetItemData;
 
-	boost::scoped_ptr<BudgetItemData> m_data;
+	std::unique_ptr<BudgetItemData> m_data;
 };
 
 // TODO We could provide a member swap function optimized for the fact that

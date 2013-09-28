@@ -11,7 +11,6 @@
 #include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
 #include <wx/string.h>

@@ -24,8 +24,7 @@
 #include <sqloxx/persistent_object.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -102,7 +101,7 @@ public:
 	 * list of firings occur in chronological order from
 	 * soonest to latest.
 	 */
-	boost::shared_ptr<std::vector<boost::gregorian::date> >
+	std::shared_ptr<std::vector<boost::gregorian::date> >
 	firings_till(boost::gregorian::date const& limit);
 
 	/**
@@ -141,7 +140,7 @@ private:
 
 	struct RepeaterData;
 
-	boost::scoped_ptr<RepeaterData> m_data;
+	std::unique_ptr<RepeaterData> m_data;
 };
 
 

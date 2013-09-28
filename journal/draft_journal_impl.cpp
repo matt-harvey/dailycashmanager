@@ -14,7 +14,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
@@ -29,7 +28,6 @@ namespace gregorian = boost::gregorian;
 using sqloxx::SQLStatement;
 using boost::lexical_cast;
 using boost::optional;
-using boost::shared_ptr;
 using jewel::clear;
 using jewel::value;
 using std::unordered_set;
@@ -497,7 +495,6 @@ DraftJournalImpl::mimic(DraftJournalImpl& rhs)
 	temp.mimic_core(rhs, database_connection(), t_id);
 	temp.set_name(rhs.name());
 	temp.clear_repeaters();
-	typedef vector<Repeater>::const_iterator It;
 	vector<Repeater> const& rreps = rhs.repeaters();
 	if (!rreps.empty())
 	{

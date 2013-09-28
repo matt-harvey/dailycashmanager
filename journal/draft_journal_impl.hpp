@@ -8,8 +8,8 @@
 #include "transaction_type.hpp"
 #include <sqloxx/persistent_object.hpp>
 #include <boost/optional.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <wx/string.h>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -151,7 +151,7 @@ private:
 
 	struct DraftJournalData;
 
-	boost::scoped_ptr<DraftJournalData> m_dj_data;
+	std::unique_ptr<DraftJournalData> m_dj_data;
 };
 
 
