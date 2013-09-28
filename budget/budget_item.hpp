@@ -63,6 +63,12 @@ public:
 		Id p_id
 	);
 
+	BudgetItem(BudgetItem const&) = default;
+	BudgetItem(BudgetItem&&) = default;
+	BudgetItem& operator=(BudgetItem const&) = default;
+	BudgetItem& operator=(BudgetItem&&) = default;
+	~BudgetItem() = default;
+
 	/**
 	 * @returns the BudgetItem identified by \e id in the database; but
 	 * does not check whether there is actually a BudgetItem with thid id.

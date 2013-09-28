@@ -4,7 +4,6 @@
 #define GUARD_account_type_ctrl_hpp_7303785568710317
 
 #include "account_type.hpp"
-#include <boost/noncopyable.hpp>
 #include <wx/combobox.h>
 #include <wx/gdicmn.h>
 #include <wx/windowid.h>
@@ -25,7 +24,7 @@ namespace gui
 /**
  * Widget from which user can select an AccountType.
  */
-class AccountTypeCtrl: public wxComboBox, private boost::noncopyable
+class AccountTypeCtrl: public wxComboBox
 {
 public:
 	AccountTypeCtrl
@@ -35,6 +34,13 @@ public:
 		PhatbooksDatabaseConnection& p_database_connection,
 		account_super_type::AccountSuperType p_account_super_type
 	);
+
+	AccountTypeCtrl(AccountTypeCtrl const&) = delete;
+	AccountTypeCtrl(AccountTypeCtrl&&) = delete;
+	AccountTypeCtrl& operator=(AccountTypeCtrl const&) = delete;
+	AccountTypeCtrl& operator=(AccountTypeCtrl&&) = delete;
+
+	~AccountTypeCtrl() = default;
 
 	account_type::AccountType account_type() const;
 

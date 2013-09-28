@@ -66,6 +66,12 @@ public:
 		Id p_id
 	);
 
+	Entry(Entry const&) = default;
+	Entry(Entry&&) = default;
+	Entry& operator=(Entry const&) = default;
+	Entry& operator=(Entry&&) = default;
+	~Entry() = default;
+
 	/**
 	 * @returns the Entry identified by \e id in the database; but does
 	 * not check whether there is actually an Entry with this id. Thus

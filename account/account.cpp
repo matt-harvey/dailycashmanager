@@ -88,11 +88,6 @@ Account::create_unchecked
 	);
 }
 
-Account::~Account()
-{
-}
-
-
 bool
 Account::exists
 (	PhatbooksDatabaseConnection& p_database_connection,

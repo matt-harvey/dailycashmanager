@@ -63,6 +63,16 @@ public:
 		Id p_id
 	);
 
+	Account(Account const&) = default;
+
+	Account(Account&&) = default;
+
+	Account& operator=(Account const&) = default;
+
+	Account& operator=(Account&&) = default;
+
+	~Account() = default;
+
 	/**
 	 * Get an Account by id from the database (fast,
 	 * unchecked form).
@@ -147,8 +157,6 @@ public:
 	);
 
 	static void setup_tables();
-
-	~Account();
 
 	/**
 	 * @ returns name of account

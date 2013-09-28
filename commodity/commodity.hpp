@@ -65,6 +65,12 @@ public:
 		Id p_id
 	);
 
+	Commodity(Commodity const&) = default;
+	Commodity(Commodity&&) = default;
+	Commodity& operator=(Commodity const&) = default;
+	Commodity& operator=(Commodity&&) = default;
+	~Commodity() = default;
+
 	/**
 	 * Faster way of creating a Commodity, but does not check
 	 * whether id exists.
