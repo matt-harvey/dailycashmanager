@@ -143,6 +143,7 @@ namespace phatbooks
 {
 
 template <typename Impl>
+inline
 PhatbooksPersistentObject<Impl>::PhatbooksPersistentObject
 (	PhatbooksDatabaseConnection& p_database_connection
 ):
@@ -151,6 +152,7 @@ PhatbooksPersistentObject<Impl>::PhatbooksPersistentObject
 }
 
 template <typename Impl>
+inline
 PhatbooksPersistentObject<Impl>::PhatbooksPersistentObject
 (	PhatbooksDatabaseConnection& p_database_connection,
 	Id p_id
@@ -250,6 +252,7 @@ PhatbooksPersistentObject<Impl>::operator!=
 }
 
 template <typename Impl>
+inline
 void
 PhatbooksPersistentObject<Impl>::do_save()
 {
@@ -258,6 +261,7 @@ PhatbooksPersistentObject<Impl>::do_save()
 }
 
 template <typename Impl>
+inline
 typename PhatbooksPersistentObject<Impl>::Id
 PhatbooksPersistentObject<Impl>::do_get_id() const
 {
@@ -265,6 +269,7 @@ PhatbooksPersistentObject<Impl>::do_get_id() const
 }
 
 template <typename Impl>
+inline
 PhatbooksDatabaseConnection&
 PhatbooksPersistentObject<Impl>::do_get_database_connection() const
 {
@@ -272,6 +277,7 @@ PhatbooksPersistentObject<Impl>::do_get_database_connection() const
 }
 
 template <typename Impl>
+inline
 bool
 PhatbooksPersistentObject<Impl>::does_have_id() const
 {
@@ -279,6 +285,7 @@ PhatbooksPersistentObject<Impl>::does_have_id() const
 }
 
 template <typename Impl>
+inline
 void
 PhatbooksPersistentObject<Impl>::do_remove()
 {
@@ -287,6 +294,7 @@ PhatbooksPersistentObject<Impl>::do_remove()
 }
 
 template <typename Impl>
+inline
 void
 PhatbooksPersistentObject<Impl>::do_ghostify()
 {
