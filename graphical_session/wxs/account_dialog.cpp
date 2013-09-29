@@ -5,7 +5,7 @@
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
 #include "budget_panel.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "frame.hpp"
 #include "ordinary_journal.hpp"
@@ -284,7 +284,7 @@ AccountDialog::AccountDialog
 	(	this,
 		wxID_ANY,
 		wxSize(medium_width(), wxDefaultSize.y),
-		m_account->database_connection().default_commodity().precision(),
+		m_account->database_connection().default_commodity()->precision(),
 		false
 	);
 	if (m_account->has_id())

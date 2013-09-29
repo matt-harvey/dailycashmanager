@@ -3,7 +3,7 @@
 #include "pl_report.hpp"
 #include "account_handle.hpp"
 #include "account_type.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "date.hpp"
 #include "entry_handle.hpp"
 #include "entry_table_iterator.hpp"
@@ -111,7 +111,7 @@ PLReport::refresh_map()
 	gregorian::date const min_d = min_date();
 	Decimal const zero
 	(	0,
-		database_connection().default_commodity().precision()
+		database_connection().default_commodity()->precision()
 	);
 
 	unique_ptr<SQLStatement> statement =
@@ -206,7 +206,7 @@ PLReport::display_body()
 
 	Decimal const zero
 	(	0,
-		database_connection().default_commodity().precision()
+		database_connection().default_commodity()->precision()
 	);
 	Decimal net_revenue = zero;
 	for (vector<wxString>::size_type i = 0; i != section_titles.size(); ++i)

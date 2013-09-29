@@ -3,7 +3,7 @@
 #include "budget_item.hpp"
 #include "account_handle.hpp"
 #include "budget_item_impl.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "string_conv.hpp"
 #include "finformat.hpp"
 #include "frequency.hpp"
@@ -140,7 +140,7 @@ normalized_total
 {
 	JEWEL_ASSERT (e - b > 0);  // Assert precondition.
 	PhatbooksDatabaseConnection& dbc = b->database_connection();
-	Commodity commodity(dbc);
+	CommodityHandle commodity(dbc);
 	// WARNING Temporary hack - if Accounts can ever have Commodities other
 	// than the default Commodity, then this will no longer work.
 	try
@@ -151,7 +151,7 @@ normalized_total
 	{
 		commodity = dbc.default_commodity();
 	}
-	Decimal::places_type const prec = commodity.precision();
+	Decimal::places_type const prec = commodity->precision();
 	Decimal ret(0, prec);
 	for ( ; b != e; ++b)
 	{

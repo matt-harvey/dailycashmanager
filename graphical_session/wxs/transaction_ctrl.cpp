@@ -4,7 +4,7 @@
 #include "account_handle.hpp"
 #include "account_ctrl.hpp"
 #include "account_type.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"
@@ -239,7 +239,7 @@ TransactionCtrl::configure_top_controls
 	(	this,
 		s_primary_amount_ctrl_id,
 		p_text_box_size,
-		database_connection().default_commodity().precision(),
+		database_connection().default_commodity()->precision(),
 		false
 	);
 	m_primary_amount_ctrl->set_amount(p_primary_amount);
@@ -273,7 +273,7 @@ TransactionCtrl::configure_for_editing_proto_journal
 	configure_top_controls
 	(	p_journal.transaction_type(),
 		text_box_size,
-		Decimal(0, database_connection().default_commodity().precision()),
+		Decimal(0, database_connection().default_commodity()->precision()),
 		available_transaction_types(database_connection())
 	);
 	m_source_entry_ctrl = new EntryGroupCtrl

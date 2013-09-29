@@ -2,7 +2,7 @@
 
 #include "account_handle.hpp"
 #include "account.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "date.hpp"
 #include "entry_handle.hpp"
 #include "balance_cache.hpp"
@@ -109,7 +109,7 @@ BalanceCache::technical_opening_balance(sqloxx::Id p_account_id)
 	);
 	statement.bind(":account_id", p_account_id);
 	AccountHandle const account(m_database_connection, p_account_id);
-	Decimal::places_type const places = account->commodity().precision();
+	Decimal::places_type const places = account->commodity()->precision();
 	Decimal ret(0, places);
 	if (statement.step())
 	{
@@ -261,8 +261,10 @@ BalanceCache::refresh_all()
 	{
 		sqloxx::Id const account_id = working_map_elem.first;
 		AccountHandle const account(m_database_connection, account_id);
-		map_elect[account_id] =
-			Decimal(working_map_elem.second, account->commodity().precision());
+		map_elect[account_id] = Decimal
+		(	working_map_elem.second,
+			account->commodity()->precision()
+		);
 	}
 
 	// Look for m_map elements for which the second is in an uninitialized
@@ -310,7 +312,7 @@ BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 			{
 				(*m_map)[account_id] = Decimal
 				(	statement.extract<Decimal::int_type>(0),
-					account->commodity().precision()
+					account->commodity()->precision()
 				);
 			}
 			catch (ValueTypeException&)
@@ -319,7 +321,7 @@ BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 				if (Account::exists(m_database_connection, account_id))
 				{
 					(*m_map)[account_id] =
-						Decimal(0, account->commodity().precision());
+						Decimal(0, account->commodity()->precision());
 				}
 				else
 				{

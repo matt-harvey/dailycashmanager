@@ -3,7 +3,7 @@
 #include "entry_group_ctrl.hpp"
 #include "account_handle.hpp"
 #include "account_ctrl.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "entry_handle.hpp"
 #include "finformat.hpp"
@@ -318,7 +318,7 @@ EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 	entry->set_account(account);
 	entry->set_whether_reconciled(false);
 	entry->set_comment(wxString());
-	entry->set_amount(Decimal(0, account->commodity().precision()));
+	entry->set_amount(Decimal(0, account->commodity()->precision()));
 	entry->set_transaction_side(m_transaction_side);
 	push_row(entry, optional<Decimal>(), true);
 	JEWEL_ASSERT (!m_entry_rows.empty());

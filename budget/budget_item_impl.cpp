@@ -2,7 +2,7 @@
 
 #include "budget_item_impl.hpp"
 #include "account_handle.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"
@@ -198,7 +198,7 @@ BudgetItemImpl::do_load()
 	AccountHandle const acct(database_connection(), acct_id);
 	Decimal const amt
 	(	statement.extract<Decimal::int_type>(4),
-		acct->commodity().precision()
+		acct->commodity()->precision()
 	);
 	temp.m_data->set_account(AccountHandle(database_connection(), acct_id));
 	temp.m_data->

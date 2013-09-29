@@ -18,7 +18,7 @@
 #include "date.hpp"
 #include "string_conv.hpp"
 #include "budget_item.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "transaction_type.hpp"
@@ -303,7 +303,7 @@ Account::name()
 	return value(m_data->name);
 }
 
-Commodity
+CommodityHandle
 Account::commodity()
 {
 	load();
@@ -431,7 +431,7 @@ Account::set_name(wxString const& p_name)
 }
 
 void
-Account::set_commodity(Commodity const& p_commodity)
+Account::set_commodity(CommodityHandle const& p_commodity)
 {
 	load();
 	m_data->commodity = p_commodity;
@@ -476,7 +476,7 @@ Account::do_load()
 	statement.step();
 	Account temp(*this);
 	temp.m_data->name = std8_to_wx(statement.extract<string>(0));
-	temp.m_data->commodity = Commodity
+	temp.m_data->commodity = CommodityHandle
 	(	database_connection(),
 		statement.extract<Id>(1)
 	);
@@ -501,7 +501,7 @@ Account::process_saving_statement(SQLStatement& statement)
 	(	":description",
 		wx_to_std8(value(m_data->description))
 	);
-	statement.bind(":commodity_id", value(m_data->commodity).id());
+	statement.bind(":commodity_id", value(m_data->commodity)->id());
 	statement.bind
 	(	":visibility_id",
 		static_cast<int>(value(m_data->visibility))

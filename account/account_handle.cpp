@@ -2,7 +2,7 @@
 
 #include "account_handle.hpp"
 #include "account_table_iterator.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <jewel/decimal.hpp>
 
@@ -15,10 +15,10 @@ namespace phatbooks
 
 AugmentedAccount::AugmentedAccount
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Commodity const& p_commodity
+	CommodityHandle const& p_commodity
 ):
 	account(p_database_connection),
-	technical_opening_balance(0, p_commodity.precision())
+	technical_opening_balance(0, p_commodity->precision())
 {
 }
 

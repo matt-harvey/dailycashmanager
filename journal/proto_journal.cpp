@@ -15,7 +15,7 @@
 
 #include "proto_journal.hpp"
 #include "account_handle.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "entry_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"

@@ -15,6 +15,7 @@
 
 
 #include "account_type.hpp"
+#include "commodity_handle_fwd.hpp"
 #include "frequency.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/filesystem.hpp>
@@ -40,7 +41,6 @@ class Account;
 class BalanceCache;
 class BudgetItemImpl;
 class Commodity;
-class CommodityImpl;
 class DraftJournal;
 class DraftJournalImpl;
 class Entry;
@@ -130,10 +130,10 @@ public:
 	sqloxx::Handle<Account> balancing_account() const;
 
 	/**
-	 * @returns the default Commodity for the entity represented by
+	 * @returns a handle to the default Commodity for the entity represented by
 	 * the PhatbooksDatabaseConnection.
 	 */
-	Commodity default_commodity() const;
+	CommodityHandle default_commodity() const;
 
 	/**
 	 * Set the default commodity for the entity to p_commodity. If this
@@ -148,7 +148,7 @@ public:
 	 * @throws jewel::UninitializedOptionalException if p_commodity
 	 * does not have an initialized multiplier_to_base.
 	 */
-	void set_default_commodity(Commodity const& p_commodity);
+	void set_default_commodity(CommodityHandle const& p_commodity);
 
 	/**
 	 * @returns the DraftJournal that serves as the "instrument"
@@ -170,7 +170,7 @@ public:
 	{
 	public:
 		friend class Account;
-		friend class CommodityImpl;
+		friend class Commodity;
 		friend class Entry;
 		BalanceCacheAttorney() = delete;
 		~BalanceCacheAttorney() = delete;
@@ -289,7 +289,7 @@ private:
 		~PermanentEntityData() = default;
 		boost::gregorian::date creation_date() const;
 		bool default_commodity_is_set() const;
-		Commodity default_commodity() const;
+		CommodityHandle default_commodity() const;
 		
 		/**
 		 * @throws EntityCreationDateException if we try to set
@@ -298,11 +298,11 @@ private:
 		 */
 		void set_creation_date(boost::gregorian::date const& p_date);
 
-		void set_default_commodity(Commodity const& p_commodity);
+		void set_default_commodity(CommodityHandle const& p_commodity);
 
 	private:
 		boost::optional<boost::gregorian::date> m_creation_date;
-		std::unique_ptr<Commodity> m_default_commodity;
+		std::unique_ptr<CommodityHandle> m_default_commodity;
 	};
 
 	/**
@@ -336,7 +336,7 @@ private:
 		m_account_map;
 	sqloxx::IdentityMap<BudgetItemImpl, PhatbooksDatabaseConnection>*
 		m_budget_item_map;
-	sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>*
+	sqloxx::IdentityMap<Commodity, PhatbooksDatabaseConnection>*
 		m_commodity_map;
 	sqloxx::IdentityMap<Entry, PhatbooksDatabaseConnection>*
 		m_entry_map;

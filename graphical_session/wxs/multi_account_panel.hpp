@@ -6,7 +6,7 @@
 #include "account_handle.hpp"
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include "setup_wizard.hpp"
@@ -28,7 +28,6 @@ namespace phatbooks
 
 // begin forward declarations
 
-class Commodity;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -58,7 +57,7 @@ public:
 		wxSize const& p_size,
 		PhatbooksDatabaseConnection& p_database_connection,
 		AccountSuperType p_account_super_type,
-		Commodity const& p_commodity,
+		CommodityHandle const& p_commodity,
 		size_t p_minimum_num_rows
 	);
 	
@@ -74,7 +73,7 @@ public:
 	 */
 	static int required_width();
 
-	void set_commodity(Commodity const& p_commodity);
+	void set_commodity(CommodityHandle const& p_commodity);
 
 	/**
 	 * Populates \e out with AugmentedAccounts corresponding to what has
@@ -179,7 +178,7 @@ private:
 	template <typename T> void pop_widget_from(std::vector<T>& p_vec);
 	
 	AccountSuperType m_account_super_type;
-	Commodity m_commodity;
+	CommodityHandle m_commodity;
 
 	wxStaticText* m_summary_amount_text;
 	

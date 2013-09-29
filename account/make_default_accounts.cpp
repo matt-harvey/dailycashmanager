@@ -3,7 +3,7 @@
 #include "make_default_accounts.hpp"
 #include "account_handle.hpp"
 #include "account_type.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "visibility.hpp"
 #include <jewel/assert.hpp>

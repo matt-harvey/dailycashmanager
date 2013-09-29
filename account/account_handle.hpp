@@ -4,12 +4,12 @@
 #define GUARD_account_handle_hpp_7530966385980586
 
 #include "account.hpp"
+#include "commodity_handle_fwd.hpp"
 #include <sqloxx/handle.hpp>
 
 namespace phatbooks
 {
 
-class Commodity;
 class PhatbooksDatabaseConnection;
 
 typedef sqloxx::Handle<Account> AccountHandle;
@@ -25,7 +25,7 @@ struct AugmentedAccount
 {
 	AugmentedAccount
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Commodity const& p_commodity
+		CommodityHandle const& p_commodity
 	);
 	AugmentedAccount
 	(	AccountHandle const& p_account,

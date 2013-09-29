@@ -1,22 +1,35 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_commodity_hpp_15947886051585844
-#define GUARD_commodity_hpp_15947886051585844
+#ifndef GUARD_commodity_hpp_9343820716880178
+#define GUARD_commodity_hpp_9343820716880178
 
-#include "commodity_impl.hpp"
-#include "phatbooks_persistent_object.hpp"
+/** \file commodity.hpp
+ *
+ * \brief Header file pertaining to Commodity class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
+#include "phatbooks_database_connection.hpp"
+#include <jewel/log.hpp>
+#include <jewel/decimal_fwd.hpp>
 #include <sqloxx/general_typedefs.hpp>
-#include <sqloxx/handle.hpp>
-#include <jewel/decimal.hpp>
-#include <wx/string.h>
+#include <sqloxx/identity_map.hpp>
+#include <sqloxx/persistent_object.hpp>
+#include <sqloxx/sql_statement_fwd.hpp>
+#include <memory>
+#include <string>
+
 
 namespace phatbooks
 {
 
-class PhatbooksDatabaseConnection;
 
-
-/*
+/**
  * Class representing commodities, where a commodity is anything of
  * value that can be counted in undifferentiated units, e.g. a particular
  * currency, units in a particular fund, shares in a particular trust,
@@ -31,56 +44,67 @@ class PhatbooksDatabaseConnection;
  * That part of the Commodity functionality that has already been
  * written, is for the time being being hidden by the preprocessor.
  * To unhide it, define PHATBOOKS_EXPOSE_COMMODITY.
+ *
+ * @todo Are copy constructor and assignment operator exception-safe?
  */
-class Commodity: public PhatbooksPersistentObject<CommodityImpl>
+class Commodity:
+	public sqloxx::PersistentObject
+	<	Commodity,
+		PhatbooksDatabaseConnection
+	>
 {
+
 public:
 
-	typedef
-		PhatbooksPersistentObject<CommodityImpl>
-		PhatbooksPersistentObject;
-	
+	typedef sqloxx::PersistentObject
+		<	Commodity,
+			PhatbooksDatabaseConnection
+		>
+		PersistentObject;
+
+	typedef sqloxx::IdentityMap<Commodity, PhatbooksDatabaseConnection>
+		IdentityMap;
+
 	/**
-	 * Sets up tables required in the database for the persistence
-	 * of CommodityImpl objects.
+	 * Set up tables required in the database for the persistence of
+	 * Commodity objects.
 	 */
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
-	 * Initialize a "draft" Commodity, that will not correspond to
-	 * any particular object in the database.
+	 * Return the id of the Commodity with abbreviation p_abbreviation.
 	 */
-	explicit Commodity
-	(	PhatbooksDatabaseConnection& p_database_connection
-	);
-
-	/**
-	 * Throws if no such id.
-	 */
-	Commodity
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		sqloxx::Id p_id
-	);
-
-	Commodity(Commodity const&) = default;
-	Commodity(Commodity&&) = default;
-	Commodity& operator=(Commodity const&) = default;
-	Commodity& operator=(Commodity&&) = default;
-	~Commodity() = default;
-
-	/**
-	 * Faster way of creating a Commodity, but does not check
-	 * whether id exists.
-	 */
-	static Commodity create_unchecked
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		sqloxx::Id p_id
-	);
-
-	Commodity
-	(	PhatbooksDatabaseConnection& p_database_connection,
+	static sqloxx::Id id_for_abbreviation
+	(	PhatbooksDatabaseConnection& dbc,
 		wxString const& p_abbreviation
 	);
+
+	/**
+	 * Construct a fresh Commodity, not yet persisted to the database.
+	 *
+	 * Not to be called except via Handle class.
+	 */
+	explicit Commodity(IdentityMap& p_identity_map);
+
+	/**
+	 * Construct Commodity already persisted to database with Id of
+	 * p_id.
+	 *
+	 * Throws if no such Id.
+	 *
+	 * Not to be called except via Handle class.
+	 */
+	Commodity
+	(	IdentityMap& p_identity_map,	
+	 	sqloxx::Id p_id
+	);
+
+	// copy constructor is private
+	
+	Commodity(Commodity&&) = delete;
+	Commodity& operator=(Commodity const&) = delete;
+	Commodity& operator=(Commodity&&) = delete;
+	~Commodity();
 
 	/**
 	 * @returns \c true if and only if \c p_abbreviation is the abbreviation
@@ -102,48 +126,73 @@ public:
 
 	/**
 	 * Get the abbreviation of the commodity. E.g "AUD" might be
-	 * the abbreviation for Australian dollars, or "NAB.AX" might be
-	 * the abbreviation for ordinary stock in National Australia Bank
-	 * Limited.
+	 * the abbreviation for Australian dollars.
 	 */
-	wxString abbreviation() const;
+	wxString abbreviation();
 
 	/**
 	 * Get the full name of the commodity. E.g. "Australian dollars".
 	 */
-	wxString name() const;
+	wxString name();
 
 	/**
 	 * Get the description of the commodity, e.g. "notes and coins".
 	 */
-	wxString description() const;
+	wxString description();
 
 	/**
 	 * Get the number of decimal places of precision for the commodity
 	 * to which quantities of the commodity are stored.
 	 */
-	int precision() const;
+	int precision();
 
 	/**
 	 * Get the multiplier by which 1 unit of the commodity should
 	 * be mulitiplied, to be translated into 1 unit of the base commodity
 	 * of the entity.
 	 */
-	jewel::Decimal multiplier_to_base() const;
+	jewel::Decimal multiplier_to_base();
 
 	void set_abbreviation(wxString const& p_abbreviation);
+
 	void set_name(wxString const& p_name);
+
 	void set_description(wxString const& p_description);
+
 	void set_precision(int p_precision);
+
 	void set_multiplier_to_base(jewel::Decimal const& p_multiplier_to_base);
 
+	/**
+	 * @todo Provide non-member swap and specialized std::swap per
+	 * "Effective C++".
+	 */
+	void swap(Commodity& rhs);
+
+	// These need to return std::string as they involve the SQLoxx API
+	static std::string primary_table_name();
+	static std::string exclusive_table_name();
+	static std::string primary_key_name();
 private:
-	Commodity(sqloxx::Handle<CommodityImpl> const& p_handle);
 
+	/**
+	 * Copy constructor - implemented, but deliberately private.
+	 */
+	Commodity(Commodity const& rhs);
+
+	// Defining pure virtual functions inherited from PersistentObject
+	void do_load();
+	void do_save_existing();
+	void do_save_new();
+	void do_ghostify();
+
+	// Other functions
+	void process_saving_statement(sqloxx::SQLStatement& statement);
+
+	struct CommodityData;
+	std::unique_ptr<CommodityData> m_data;
 };
-
 
 }  // namespace phatbooks
 
-
-#endif  // GUARD_commodity_hpp_15947886051585844
+#endif  // GUARD_commodity_hpp_9343820716880178

@@ -2,7 +2,7 @@
 
 #include "ordinary_journal.hpp"
 #include "account_handle.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
 #include "entry_handle.hpp"
@@ -92,7 +92,7 @@ OrdinaryJournal::create_opening_balance_journal
 	Decimal const old_opening_balance =
 		p_account->has_id()?
 		p_account->technical_opening_balance():
-		Decimal(0, p_account->commodity().precision());
+		Decimal(0, p_account->commodity()->precision());
 	Decimal const primary_entry_amount =
 		p_desired_opening_balance - old_opening_balance;
 

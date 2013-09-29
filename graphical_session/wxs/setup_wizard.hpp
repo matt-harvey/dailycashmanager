@@ -5,7 +5,7 @@
 
 #include "account_handle.hpp"
 #include "account_type.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <wx/button.h>
@@ -86,9 +86,9 @@ public:
 	 */
 	static wxSize standard_text_box_size();
 	
-	Commodity selected_currency() const;
+	CommodityHandle selected_currency() const;
 
-	void set_assumed_currency(Commodity const& p_commodity);		
+	void set_assumed_currency(CommodityHandle const& p_commodity);		
 
 	jewel::Decimal total_opening_balance() const;
 
@@ -211,13 +211,13 @@ public:
 	virtual ~FilepathPage() = default;
 
 	boost::optional<boost::filesystem::path> selected_filepath() const;
-	Commodity selected_currency() const;
+	CommodityHandle selected_currency() const;
 private:
 
 	void on_directory_button_click(wxCommandEvent& event);
 	void on_wizard_page_changing(wxWizardEvent& event);
 
-	std::vector<Commodity> const m_currencies;
+	std::vector<CommodityHandle> const m_currencies;
 
 	wxBoxSizer* m_top_sizer;
 	wxBoxSizer* m_filename_row_sizer;
@@ -263,7 +263,7 @@ public:
 	(	std::vector<AugmentedAccount>& out
 	) const;
 
-	void set_commodity(Commodity const& p_commodity);
+	void set_commodity(CommodityHandle const& p_commodity);
 
 	jewel::Decimal total_amount() const;
 

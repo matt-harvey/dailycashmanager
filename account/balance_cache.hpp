@@ -23,9 +23,9 @@ class PhatbooksDatabaseConnection;
 // Account should make the whole map
 // stale (to keep things simple, as in any case Account operations would
 // be relatively rare).
-// CommodityImpl - any database-affecting operations on any CommodityImpl
+// Commodity - any database-affecting operations on any Commodity
 // should make the whole
-// map stale (to keep things simple, as in any case CommodityImpl operations
+// map stale (to keep things simple, as in any case Commodity operations
 // would be relatively rare).
 // Entry - whenever an Entry is operated on that has a particular
 // Account

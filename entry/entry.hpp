@@ -54,11 +54,18 @@ public:
 	 */
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 	
+	/**
+	 * Construct a fresh Entry, not yet persisted to database.
+	 *
+	 * Not to be called except via Handle class.
+	 */
 	explicit Entry(IdentityMap& p_identity_map);
 
 	/**
 	 * Get an Entry by id from the database. Throws if there is no
 	 * Entry with this id.
+	 *
+	 * Not to be called except via Handle class.
 	 */
 	Entry(IdentityMap& p_identity_map, sqloxx::Id p_id);
 

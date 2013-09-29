@@ -4,7 +4,7 @@
 #include "account_handle.hpp"
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
@@ -74,7 +74,7 @@ MultiAccountPanel::MultiAccountPanel
 	wxSize const& p_size,
 	PhatbooksDatabaseConnection& p_database_connection,
 	AccountSuperType p_account_super_type,
-	Commodity const& p_commodity,
+	CommodityHandle const& p_commodity,
 	size_t p_minimum_num_rows
 ):
 	GriddedScrolledPanel(p_parent, p_size, p_database_connection),
@@ -313,14 +313,14 @@ MultiAccountPanel::push_row(AccountHandle const& p_account)
 }
 
 void
-MultiAccountPanel::set_commodity(Commodity const& p_commodity)
+MultiAccountPanel::set_commodity(CommodityHandle const& p_commodity)
 {
-	Decimal::places_type const precision = p_commodity.precision();
-	if (precision == m_commodity.precision())
+	Decimal::places_type const precision = p_commodity->precision();
+	if (precision == m_commodity->precision())
 	{
 		return;
 	}
-	JEWEL_ASSERT (precision != m_commodity.precision());
+	JEWEL_ASSERT (precision != m_commodity->precision());
 	for (SpecialDecimalTextCtrl* ctrl: m_opening_balance_boxes)
 	{
 		// TODO Handle potential Decimal exception here on rounding.
@@ -414,7 +414,7 @@ MultiAccountPanel::total_amount() const
 	return accumulate
 	(	m_opening_balance_boxes.begin(),
 		m_opening_balance_boxes.end(),
-		Decimal(0, m_commodity.precision()),
+		Decimal(0, m_commodity->precision()),
 		total_amount_aux
 	);
 }
@@ -427,7 +427,7 @@ MultiAccountPanel::SpecialDecimalTextCtrl::SpecialDecimalTextCtrl
 	(	p_parent,
 		wxID_ANY,
 		p_size,
-		p_parent->m_commodity.precision(),
+		p_parent->m_commodity->precision(),
 		false
 	)
 {

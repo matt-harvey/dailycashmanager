@@ -3,7 +3,7 @@
 
 #include "account.hpp"
 #include "account_type.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "visibility.hpp"
 #include <boost/optional.hpp>
 #include <wx/string.h>
@@ -14,7 +14,7 @@ namespace phatbooks
 struct Account::AccountData
 {
 	boost::optional<wxString> name;
-	boost::optional<Commodity> commodity;
+	boost::optional<CommodityHandle> commodity;
 	boost::optional<AccountType> account_type;
 	boost::optional<wxString> description;
 	boost::optional<Visibility> visibility;

@@ -2,7 +2,7 @@
 
 #include "reconciliation_entry_list_ctrl.hpp"
 #include "blank.xpm"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "entry.hpp"
 #include "entry_handle.hpp"
 #include "filtered_entry_list_ctrl.hpp"
@@ -92,8 +92,8 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 	),
 	m_max_date(p_max_date),
 	m_summary_data(nullptr),
-	m_closing_balance(0, p_account->commodity().precision()),
-	m_reconciled_closing_balance(0, p_account->commodity().precision()),
+	m_closing_balance(0, p_account->commodity()->precision()),
+	m_reconciled_closing_balance(0, p_account->commodity()->precision()),
 	m_image_list(nullptr)
 {
 	JEWEL_LOG_TRACE();
@@ -203,9 +203,9 @@ ReconciliationEntryListCtrl::do_get_summary_data() const
 void
 ReconciliationEntryListCtrl::do_initialize_summary_data()
 {
-	m_closing_balance = Decimal(0, account()->commodity().precision());
+	m_closing_balance = Decimal(0, account()->commodity()->precision());
 	m_reconciled_closing_balance =
-		Decimal(0, account()->commodity().precision());
+		Decimal(0, account()->commodity()->precision());
 	JEWEL_ASSERT (!m_summary_data);
 	m_summary_data.reset(new std::vector<SummaryDatum>);
 	SummaryDatum a

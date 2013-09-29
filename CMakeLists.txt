@@ -140,7 +140,6 @@ set (main_files
 	 budget/budget_item.cpp
 	 budget/budget_item_impl.cpp
 	 commodity/commodity.cpp
-	 commodity/commodity_impl.cpp
 	 currency/make_currencies.cpp
 	 date/date.cpp
 	 date/date_parser.cpp

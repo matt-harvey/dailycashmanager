@@ -4,7 +4,7 @@
 #include "account_handle.hpp"
 #include "account_list_ctrl.hpp"
 #include "account_type.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "draft_journal_list_ctrl.hpp"
 #include "draft_journal_table_iterator.hpp"
 #include "entry_handle.hpp"
@@ -324,7 +324,7 @@ TopPanel::make_proto_journal() const
 				TransactionSide::source:
 				TransactionSide::destination
 			);
-			entry->set_amount(Decimal(0, account->commodity().precision()));
+			entry->set_amount(Decimal(0, account->commodity()->precision()));
 			entry->set_whether_reconciled(false);
 			ret.push_entry(entry);	
 		}

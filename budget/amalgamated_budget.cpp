@@ -5,7 +5,7 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "budget_item_table_iterator.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "draft_journal.hpp"
 #include "entry_handle.hpp"
 #include "frequency.hpp"
@@ -85,7 +85,8 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	balancing_account->set_name("Budget imbalance");
 	balancing_account->set_description("");
 	balancing_account->set_visibility(Visibility::visible);
-	Commodity const balancing_account_commodity = dbc.default_commodity();
+	CommodityHandle const balancing_account_commodity =
+		dbc.default_commodity();
 	balancing_account->set_commodity(balancing_account_commodity);
 	balancing_account->save();
 
@@ -307,7 +308,7 @@ AmalgamatedBudget::generate_map() const
 		Id const account_id = account_selector.extract<Id>(0);
 		AccountHandle const account(m_database_connection, account_id);
 		(*map_elect)[account_id] =
-			Decimal(0, account->commodity().precision());
+			Decimal(0, account->commodity()->precision());
 	}
 	
 	// First we calculate budgets amalgamated on the basis of
@@ -340,7 +341,7 @@ AmalgamatedBudget::generate_map() const
 		slot.second = round
 		(	convert_from_canonical(m_frequency, slot.second),
 			AccountHandle(m_database_connection, slot.first)->
-				commodity().precision()
+				commodity()->precision()
 		);
 	}
 	using std::swap;
@@ -379,7 +380,7 @@ AmalgamatedBudget::regenerate_instrument()
 		balancing_entry->set_comment(balancing_entry_comment());
 		balancing_entry->set_whether_reconciled(false);
 		balancing_entry->set_amount
-		(	-round(imbalance, ba->commodity().precision())
+		(	-round(imbalance, ba->commodity()->precision())
 		);
 		balancing_entry->set_transaction_side(TransactionSide::destination);
 		fresh_journal.push_entry(balancing_entry);
@@ -487,7 +488,7 @@ AmalgamatedBudget::instrument_balancing_amount() const
 {
 	load();
 	JEWEL_ASSERT (m_instrument);
-	Decimal ret(0, m_database_connection.default_commodity().precision());
+	Decimal ret(0, m_database_connection.default_commodity()->precision());
 	wxString const balancing_entry_marker = balancing_entry_comment();
 	vector<EntryHandle> const& entries = m_instrument->entries();
 	for (EntryHandle const& entry: entries)

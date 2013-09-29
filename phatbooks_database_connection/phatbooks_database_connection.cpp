@@ -19,7 +19,8 @@
 #include "application.hpp"
 #include "budget_item.hpp"
 #include "budget_item_impl.hpp"
-#include "commodity_impl.hpp"
+#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
@@ -29,7 +30,7 @@
 #include "ordinary_journal_table_iterator.hpp"
 #include "repeater_impl.hpp"
 #include "balance_cache.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "entry_handle.hpp"
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
@@ -95,7 +96,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	m_budget = new AmalgamatedBudget(*this);
 	m_account_map = new IdentityMap<Account, PDC>(*this);
 	m_budget_item_map = new IdentityMap<BudgetItemImpl, PDC>(*this);
-	m_commodity_map = new IdentityMap<CommodityImpl, PDC>(*this);
+	m_commodity_map = new IdentityMap<Commodity, PDC>(*this);
 	m_entry_map = new IdentityMap<Entry, PDC>(*this);
 	m_ordinary_journal_map = new IdentityMap<OrdinaryJournalImpl, PDC>(*this);
 	m_draft_journal_map = new IdentityMap<DraftJournalImpl, PDC>(*this);
@@ -179,7 +180,7 @@ PhatbooksDatabaseConnection::load_default_commodity()
 		"select default_commodity_id from entity_data"
 	);
 	statement.step();
-	Commodity commodity
+	CommodityHandle commodity
 	(	*this,
 		statement.extract<Id>(0)
 	);
@@ -198,12 +199,12 @@ PhatbooksDatabaseConnection::do_setup()
 		if (!m_permanent_entity_data->default_commodity_is_set())
 		{
 			// Then we create a "default default commodity".	
-			Commodity commodity(*this);
-			commodity.set_abbreviation("default commodity abbreviation");
-			commodity.set_name("default commodity name");
-			commodity.set_description("default commodity description");
-			commodity.set_precision(2);
-			commodity.set_multiplier_to_base(Decimal("1"));
+			CommodityHandle commodity(*this);
+			commodity->set_abbreviation("default commodity abbreviation");
+			commodity->set_name("default commodity name");
+			commodity->set_description("default commodity description");
+			commodity->set_precision(2);
+			commodity->set_multiplier_to_base(Decimal("1"));
 			set_default_commodity(commodity);
 			JEWEL_ASSERT
 			(	m_permanent_entity_data->default_commodity_is_set()
@@ -297,7 +298,7 @@ PhatbooksDatabaseConnection::balancing_account() const
 }
 
 
-Commodity
+CommodityHandle
 PhatbooksDatabaseConnection::default_commodity() const
 {
 	return m_permanent_entity_data->default_commodity();
@@ -306,7 +307,7 @@ PhatbooksDatabaseConnection::default_commodity() const
 
 void
 PhatbooksDatabaseConnection::set_default_commodity
-(	Commodity const& p_commodity
+(	CommodityHandle const& p_commodity
 )
 {
 	JEWEL_ASSERT (m_permanent_entity_data);
@@ -344,12 +345,12 @@ void
 PhatbooksDatabaseConnection::save_default_commodity()
 {
 	// TODO Make this atomic
-	default_commodity().save();
+	default_commodity()->save();
 	SQLStatement statement
 	(	*this,
 		"update entity_data set default_commodity_id = :p"
 	);
-	statement.bind(":p", default_commodity().id());
+	statement.bind(":p", default_commodity()->id());
 	statement.step_final();
 }
 
@@ -512,7 +513,7 @@ PermanentEntityData::default_commodity_is_set() const
 	return static_cast<bool>(m_default_commodity);
 }
 
-Commodity
+CommodityHandle
 PhatbooksDatabaseConnection::PermanentEntityData::default_commodity() const
 {
 	if (!default_commodity_is_set())
@@ -541,10 +542,10 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_creation_date
 
 void
 PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
-(	Commodity const& p_commodity
+(	CommodityHandle const& p_commodity
 )
 {
-	if (p_commodity.multiplier_to_base() != Decimal(1, 0))
+	if (p_commodity->multiplier_to_base() != Decimal(1, 0))
 	{
 		JEWEL_THROW
 		(	InvalidDefaultCommodityException,
@@ -552,7 +553,7 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
 			"to Decimal(1, 0)."
 		);
 	}
-	m_default_commodity.reset(new Commodity(p_commodity));
+	m_default_commodity.reset(new CommodityHandle(p_commodity));
 	return;
 }
 		
@@ -581,8 +582,8 @@ PhatbooksDatabaseConnection::identity_map<Entry>()
 }
 
 template <>
-sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<CommodityImpl>()
+sqloxx::IdentityMap<Commodity, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<Commodity>()
 {
 	return *m_commodity_map;
 }

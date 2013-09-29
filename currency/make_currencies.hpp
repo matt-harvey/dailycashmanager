@@ -3,7 +3,7 @@
 #ifndef GUARD_make_currencies_hpp_7990285213100857
 #define GUARD_make_currencies_hpp_7990285213100857
 
-#include "commodity.hpp"
+#include "commodity_handle_fwd.hpp"
 #include <vector>
 
 
@@ -15,7 +15,7 @@ class PhatbooksDatabaseConnection;
 
 /**
  * @returns a vector of almost all major currencies in the world, as
- * Commodity objects in a std::vector (where the Australian dollar, for
+ * CommodityHandle objects in a std::vector (where the Australian dollar, for
  * example, is a major currency but the Australian cent is not). Each
  * Commodity will have as its
  * abbreviation the three-letter ISO symbol of the currency it
@@ -40,7 +40,7 @@ class PhatbooksDatabaseConnection;
  * Do we want to allow for this, and store some currencies in amounts
  * less precise than their official precision?
  */
-std::vector<Commodity>
+std::vector<CommodityHandle>
 make_currencies(PhatbooksDatabaseConnection& p_database_connection);
 
 
@@ -55,7 +55,7 @@ make_currencies(PhatbooksDatabaseConnection& p_database_connection);
 void
 make_currencies
 (	PhatbooksDatabaseConnection& p_database_connection,	
-	std::vector<Commodity>& vec
+	std::vector<CommodityHandle>& vec
 );
 
 

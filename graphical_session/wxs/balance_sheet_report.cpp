@@ -3,7 +3,7 @@
 #include "balance_sheet_report.hpp"
 #include "account_handle.hpp"
 #include "account_type.hpp"
-#include "commodity.hpp"
+#include "commodity_handle.hpp"
 #include "entry_table_iterator.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "report.hpp"
@@ -172,7 +172,7 @@ BalanceSheetReport::display_body()
 
 	Decimal const zero
 	(	0,
-		database_connection().default_commodity().precision()
+		database_connection().default_commodity()->precision()
 	);
 	Decimal net_assets_opening = zero;
 	Decimal net_assets_closing = zero;
@@ -243,8 +243,8 @@ BalanceSheetReport::display_body()
 }
 
 BalanceSheetReport::BalanceDatum::BalanceDatum(AccountHandle const& p_account):
-	opening_balance(0, p_account->commodity().precision()),
-	closing_balance(0, p_account->commodity().precision())
+	opening_balance(0, p_account->commodity()->precision()),
+	closing_balance(0, p_account->commodity()->precision())
 {
 }
 
