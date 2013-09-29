@@ -3,6 +3,7 @@
 #include "budget_item.hpp"
 #include "account_handle.hpp"
 #include "budget_item_impl.hpp"
+#include "commodity.hpp"
 #include "string_conv.hpp"
 #include "finformat.hpp"
 #include "frequency.hpp"

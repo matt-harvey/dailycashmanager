@@ -14,9 +14,7 @@
  */
 
 
-#include "account_type.hpp"
-#include "budget_item.hpp"
-#include "commodity.hpp"
+#include "account_type_fwd.hpp"
 #include "date.hpp"
 #include "finformat.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -38,6 +36,13 @@
 
 namespace phatbooks
 {
+
+// begin forward declarations
+
+class BudgetItem;
+class Commodity;
+
+// end forward declarations
 
 /**
  * Represents an account - which could be either a balance sheet account,
@@ -148,7 +153,7 @@ public:
 	Account(Account&&) = delete;
 	Account& operator=(Account const&) = delete;
 	Account& operator=(Account&&) = delete;
-	~Account() = default;
+	~Account();
 
 	wxString name();
 
@@ -250,14 +255,7 @@ private:
 	void do_remove();
 	void process_saving_statement(sqloxx::SQLStatement& statement);
 
-	struct AccountData
-	{
-		boost::optional<wxString> name;
-		boost::optional<Commodity> commodity;
-		boost::optional<AccountType> account_type;
-		boost::optional<wxString> description;
-		boost::optional<Visibility> visibility;
-	};
+	struct AccountData;
 
 	std::unique_ptr<AccountData> m_data;
 };

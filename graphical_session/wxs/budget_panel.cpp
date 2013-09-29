@@ -8,6 +8,7 @@
 #include "account_type.hpp"
 #include "budget_item.hpp"
 #include "budget_item_table_iterator.hpp"
+#include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"

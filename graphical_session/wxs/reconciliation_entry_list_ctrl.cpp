@@ -2,6 +2,7 @@
 
 #include "reconciliation_entry_list_ctrl.hpp"
 #include "blank.xpm"
+#include "commodity.hpp"
 #include "entry.hpp"
 #include "entry_handle.hpp"
 #include "filtered_entry_list_ctrl.hpp"

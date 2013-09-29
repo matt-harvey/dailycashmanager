@@ -4,6 +4,7 @@
 #include "account_handle.hpp"
 #include "account_ctrl.hpp"
 #include "account_type.hpp"
+#include "commodity.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"

@@ -2,6 +2,7 @@
 
 #include "account_handle.hpp"
 #include "account.hpp"
+#include "commodity.hpp"
 #include "date.hpp"
 #include "entry_handle.hpp"
 #include "balance_cache.hpp"

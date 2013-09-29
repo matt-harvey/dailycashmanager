@@ -11,6 +11,7 @@
  */
 
 #include "account.hpp"
+#include "account_data.hpp"
 #include "account_handle.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
@@ -183,6 +184,8 @@ Account::Account(Account const& rhs):
 	m_data(new AccountData(*(rhs.m_data)))
 {
 }
+
+Account::~Account() = default;
 
 bool
 Account::exists

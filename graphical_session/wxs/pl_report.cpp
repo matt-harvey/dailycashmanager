@@ -3,6 +3,7 @@
 #include "pl_report.hpp"
 #include "account_handle.hpp"
 #include "account_type.hpp"
+#include "commodity.hpp"
 #include "date.hpp"
 #include "entry_handle.hpp"
 #include "entry_table_iterator.hpp"

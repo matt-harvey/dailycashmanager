@@ -2,6 +2,7 @@
 
 #include "ordinary_journal.hpp"
 #include "account_handle.hpp"
+#include "commodity.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
 #include "entry_handle.hpp"

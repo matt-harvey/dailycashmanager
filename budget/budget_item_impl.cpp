@@ -2,6 +2,7 @@
 
 #include "budget_item_impl.hpp"
 #include "account_handle.hpp"
+#include "commodity.hpp"
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"

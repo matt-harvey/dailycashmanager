@@ -5,6 +5,7 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "budget_item_table_iterator.hpp"
+#include "commodity.hpp"
 #include "draft_journal.hpp"
 #include "entry_handle.hpp"
 #include "frequency.hpp"

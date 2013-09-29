@@ -3,6 +3,7 @@
 #include "entry_group_ctrl.hpp"
 #include "account_handle.hpp"
 #include "account_ctrl.hpp"
+#include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "entry_handle.hpp"
 #include "finformat.hpp"
