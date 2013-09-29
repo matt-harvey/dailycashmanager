@@ -4,20 +4,7 @@
 #define GUARD_account_handle_hpp_7530966385980586
 
 #include "account.hpp"
-#include "account_type.hpp"
-#include "budget_item.hpp"
-#include "phatbooks_persistent_object.hpp"
-#include "string_flags.hpp"
-#include "visibility.hpp"
-#include <jewel/decimal.hpp>
-#include <boost/strong_typedef.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/string.h>
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
 
 namespace phatbooks
 {
