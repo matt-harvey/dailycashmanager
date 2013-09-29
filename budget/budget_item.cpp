@@ -13,6 +13,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <iostream>
 #include <ostream>
@@ -46,7 +47,7 @@ BudgetItem::BudgetItem(PhatbooksDatabaseConnection& p_database_connection):
 	
 BudgetItem::BudgetItem
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id
+	sqloxx::Id p_id
 ):
 	PhatbooksPersistentObject(p_database_connection, p_id)
 {
@@ -55,7 +56,7 @@ BudgetItem::BudgetItem
 BudgetItem
 BudgetItem::create_unchecked
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id
+	sqloxx::Id p_id
 )
 {
 	return BudgetItem

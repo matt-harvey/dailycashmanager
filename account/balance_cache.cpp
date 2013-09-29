@@ -3,7 +3,7 @@
 #include "account_handle.hpp"
 #include "account.hpp"
 #include "date.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "balance_cache.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -41,11 +41,6 @@ using std::endl;
 namespace phatbooks
 {
 
-static_assert
-(	boost::is_same<sqloxx::Id, Account::Id>::value,
-	"sqloxx::Id needs to be the same type as Account::Id."
-);
-
 void
 BalanceCache::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
@@ -65,7 +60,7 @@ BalanceCache::BalanceCache
 }
 
 Decimal
-BalanceCache::technical_balance(Account::Id p_account_id)
+BalanceCache::technical_balance(sqloxx::Id p_account_id)
 {
 	if (m_map_is_stale)
 	{
@@ -96,7 +91,7 @@ BalanceCache::technical_balance(Account::Id p_account_id)
 }
 
 Decimal
-BalanceCache::technical_opening_balance(Account::Id p_account_id)
+BalanceCache::technical_opening_balance(sqloxx::Id p_account_id)
 {
 	// We don't actually do any caching of opening balances, since
 	// they are quick to calculate. (We would expect only a small number
@@ -145,7 +140,7 @@ BalanceCache::mark_as_stale()
 }
 
 void
-BalanceCache::mark_as_stale(Account::Id p_account_id)
+BalanceCache::mark_as_stale(sqloxx::Id p_account_id)
 {
 	Map::iterator const it = m_map->find(p_account_id);
 	if (it == m_map->end())
@@ -171,7 +166,7 @@ BalanceCache::refresh()
 	// experimentation. There is scope for further optimization if
 	// required, by tweaking this fulcum figure.
 	
-	static vector<Account::Id>::size_type const fulcrum = 5;
+	static vector<sqloxx::Id>::size_type const fulcrum = 5;
 	
 	if (m_map_is_stale)
 	{
@@ -180,7 +175,7 @@ BalanceCache::refresh()
 	}
 	else
 	{
-		vector<Account::Id> stale_account_ids;
+		vector<sqloxx::Id> stale_account_ids;
 		SQLStatement statement
 		(	m_database_connection,
 			"select account_id from accounts"
@@ -188,12 +183,12 @@ BalanceCache::refresh()
 		Map::const_iterator const map_end = m_map->end();
 		while (statement.step() && (stale_account_ids.size() != fulcrum))
 		{
-			Account::Id const account_id =
-				statement.extract<Account::Id>(0);
+			sqloxx::Id const account_id =
+				statement.extract<sqloxx::Id>(0);
 			Map::const_iterator location_in_cache = m_map->find(account_id);
 			if ((location_in_cache == map_end) || !location_in_cache->second)
 			{
-				// Either this Account::Id is not in the cache at all,
+				// Either this sqloxx::Id is not in the cache at all,
 				// or it's in there but marked as stale.
 				stale_account_ids.push_back(account_id);
 			}
@@ -216,7 +211,7 @@ BalanceCache::refresh()
 void
 BalanceCache::refresh_all()
 {
-	typedef unordered_map<Account::Id, Decimal::int_type> WorkingMap;
+	typedef unordered_map<sqloxx::Id, Decimal::int_type> WorkingMap;
 	WorkingMap working_map;
 	JEWEL_ASSERT (working_map.empty());
 	SQLStatement accounts_scanner
@@ -225,7 +220,7 @@ BalanceCache::refresh_all()
 	);
 	while (accounts_scanner.step())
 	{
-		working_map[accounts_scanner.extract<Account::Id>(0)] = 0;
+		working_map[accounts_scanner.extract<sqloxx::Id>(0)] = 0;
 	}
 	
 	// It has been established that this is faster than using SQL
@@ -241,11 +236,11 @@ BalanceCache::refresh_all()
 			"select account_id, amount from entries join "
 			"ordinary_journal_detail using(journal_id)"
 		);
-		Account::Id account_id;
+		sqloxx::Id account_id;
 		Decimal::int_type amount_intval;
 		while (statement.step())
 		{
-			account_id = statement.extract<Account::Id>(0);
+			account_id = statement.extract<sqloxx::Id>(0);
 			amount_intval = statement.extract<Decimal::int_type>(1);
 			if (addition_is_unsafe(working_map[account_id], amount_intval))
 			{
@@ -263,7 +258,7 @@ BalanceCache::refresh_all()
 
 	for (auto const& working_map_elem: working_map)
 	{
-		Account::Id const account_id = working_map_elem.first;
+		sqloxx::Id const account_id = working_map_elem.first;
 		AccountHandle const account(m_database_connection, account_id);
 		map_elect[account_id] =
 			Decimal(working_map_elem.second, account->commodity().precision());
@@ -294,7 +289,7 @@ BalanceCache::refresh_all()
 
 
 void
-BalanceCache::refresh_targetted(vector<Account::Id> const& p_targets)
+BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 {
 	// TODO Is this exception-safe?
 	for (auto const account_id: p_targets)

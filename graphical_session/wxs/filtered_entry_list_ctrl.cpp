@@ -2,7 +2,7 @@
 
 #include "filtered_entry_list_ctrl.hpp"
 #include "account_handle.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -87,12 +87,11 @@ FilteredEntryListCtrl::do_require_progress_log() const
 }
 
 bool
-FilteredEntryListCtrl::do_approve_entry(Entry const& p_entry) const
+FilteredEntryListCtrl::do_approve_entry(EntryHandle const& p_entry) const
 {
-	(void)p_entry;  // silence compiler re. unused parameter.
 	return
-	(	(p_entry.account() == m_account) &&
-		lies_within(p_entry.date(), m_min_date, m_maybe_max_date)
+	(	(p_entry->account() == m_account) &&
+		lies_within(p_entry->date(), m_min_date, m_maybe_max_date)
 	);
 	return true;
 }

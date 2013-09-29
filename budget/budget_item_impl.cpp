@@ -19,6 +19,7 @@ using jewel::clear;
 using jewel::Decimal;
 using jewel::UninitializedOptionalException;
 using jewel::value;
+using sqloxx::Id;
 using sqloxx::IdentityMap;
 using sqloxx::SQLStatement;
 using std::string;
@@ -32,12 +33,6 @@ using std::endl;
 
 namespace phatbooks
 {
-
-
-static_assert
-(	boost::is_same<sqloxx::Id, BudgetItem::Id>::value,
-	"sqloxx::Id needs to be the same type as BudgetItem::Id."
-);
 
 
 typedef
@@ -74,7 +69,7 @@ BudgetItemImpl::BudgetItemImpl
 
 BudgetItemImpl::BudgetItemImpl
 (	IdentityMap& p_identity_map,
-	Id p_id
+	sqloxx::Id p_id
 ):
 	PersistentObject(p_identity_map, p_id),
 	m_data(new BudgetItemData)

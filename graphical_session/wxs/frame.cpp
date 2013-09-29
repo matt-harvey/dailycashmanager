@@ -18,6 +18,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/on_windows.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <wx/event.h>
 #include <wx/menu.h>
 #include <wx/string.h>
@@ -26,8 +27,8 @@
 #include <wx/wx.h>
 #include <vector>
 
+using sqloxx::Id;
 using std::vector;
-
 
 namespace phatbooks
 {
@@ -512,7 +513,7 @@ Frame::on_journal_editing_requested(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
 
-	PersistentJournal::Id const journal_id = event.po_id();
+	Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
 		DraftJournal journal(m_database_connection, journal_id);
@@ -552,7 +553,7 @@ Frame::on_journal_created_event(PersistentObjectEvent& event)
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
 	JEWEL_ASSERT (m_top_panel);
-	PersistentJournal::Id const journal_id = event.po_id();
+	Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
 		DraftJournal const journal(m_database_connection, journal_id);
@@ -573,7 +574,7 @@ Frame::on_journal_edited_event(PersistentObjectEvent& event)
 	wxWindowUpdateLocker const update_locker(this);
 	// WARNING Repeats code from on_journal_created_event(...).
 	JEWEL_ASSERT (m_top_panel);
-	PersistentJournal::Id const journal_id = event.po_id();
+	Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
 		DraftJournal const journal(m_database_connection, journal_id);
@@ -615,7 +616,7 @@ Frame::on_draft_entry_deleted_event(PersistentObjectEvent& event)
 	// expect a vector. This is now just pointlessly wasteful given
 	// what we are now processing one event at a time!
 	wxWindowUpdateLocker const update_locker(this);
-	static vector<Entry::Id> doomed_ids(1, 0);
+	static vector<Id> doomed_ids(1, 0);
 	JEWEL_ASSERT (doomed_ids.size() == 1);
 	doomed_ids[0] = event.po_id();
 	JEWEL_ASSERT (m_top_panel);
@@ -631,7 +632,7 @@ Frame::on_ordinary_entry_deleted_event(PersistentObjectEvent& event)
 	// a vector. This is now just pointlessly wasteful given
 	// what we are now processing one event at a time!
 	wxWindowUpdateLocker const update_locker(this);
-	static vector<Entry::Id> doomed_ids(1, 0);
+	static vector<Id> doomed_ids(1, 0);
 	JEWEL_ASSERT (doomed_ids.size() == 1);
 	doomed_ids[0] = event.po_id();
 	JEWEL_ASSERT (m_top_panel);
@@ -655,7 +656,7 @@ Frame::on_reconciliation_status_event(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
-	Entry const entry(m_database_connection, event.po_id());
+	EntryHandle const entry(m_database_connection, event.po_id());
 	JEWEL_ASSERT (m_top_panel);
 	m_top_panel->update_for_reconciliation_status(entry);
 	return;

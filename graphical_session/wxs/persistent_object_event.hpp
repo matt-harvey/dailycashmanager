@@ -5,6 +5,7 @@
 
 #include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <wx/event.h>
 #include <wx/window.h>
 
@@ -16,7 +17,6 @@ namespace gui
 class PersistentObjectEvent: public wxCommandEvent
 {
 public:
-	typedef PhatbooksPersistentObjectBase::Id Id;
 
 	/**
 	 * @param p_event_id is the wxWidgets event id.
@@ -27,7 +27,7 @@ public:
 	PersistentObjectEvent
 	(	wxEventType p_event_type,
 		int p_event_id,
-		Id p_po_id
+		sqloxx::Id p_po_id
 	);
 
 	/**
@@ -55,7 +55,7 @@ public:
 	 * @throws jewel::UninitializedOptionalException in case there
 	 * is no such id associated with this event.
 	 */
-	Id po_id() const;
+	sqloxx::Id po_id() const;
 
     /**
 	 * Required for sending with wxPostEvent().
@@ -102,7 +102,7 @@ public:
 	 */
 	static void notify_doomed_draft_entries
 	(	wxWindow* p_originator,
-		std::vector<Id> const& p_doomed_ids
+		std::vector<sqloxx::Id> const& p_doomed_ids
 	);
 	
 	/**
@@ -112,7 +112,7 @@ public:
 	 */
 	static void notify_doomed_ordinary_entries
 	(	wxWindow* p_originator,
-		std::vector<Id> const& p_doomed_ids
+		std::vector<sqloxx::Id> const& p_doomed_ids
 	);
 
 private:
@@ -120,10 +120,10 @@ private:
 	static void notify_many
 	(	wxWindow* p_originator,
 		wxEventType p_event_type,
-		std::vector<Id> const& p_po_ids
+		std::vector<sqloxx::Id> const& p_po_ids
 	);
 
-	boost::optional<Id> m_maybe_po_id;	
+	boost::optional<sqloxx::Id> m_maybe_po_id;	
 
 	DECLARE_DYNAMIC_CLASS(PersistentObjectEvent)
 };

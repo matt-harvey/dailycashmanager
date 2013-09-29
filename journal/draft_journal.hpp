@@ -4,6 +4,7 @@
 #define GUARD_draft_journal_hpp_5978357519944365
 
 #include "draft_journal_impl.hpp"
+#include "entry_handle_fwd.hpp"
 #include "persistent_journal.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
@@ -17,7 +18,6 @@
 namespace phatbooks
 {
 
-class Entry;
 class PhatbooksDatabaseConnection;
 class Repeater;
 
@@ -50,7 +50,6 @@ public:
 	typedef
 		PhatbooksPersistentObject<DraftJournalImpl>
 		PhatbooksPersistentObject;
-	typedef PhatbooksPersistentObjectBase::Id Id;
 
 	/**
 	 * Create the tables required for the persistence of DraftJournal
@@ -72,7 +71,7 @@ public:
 	 */
 	DraftJournal
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	DraftJournal(DraftJournal const&) = default;
@@ -90,7 +89,7 @@ public:
 	 */
 	static DraftJournal create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	/**
@@ -144,13 +143,13 @@ public:
 private:
 
 	// Define pure virtual functions inherited from Journal
-	std::vector<Entry> const& do_get_entries() const;
+	std::vector<EntryHandle> const& do_get_entries() const;
 	void do_set_transaction_type
 	(	TransactionType p_transaction_type
 	);
 	void do_set_comment(wxString const& p_comment);
-	void do_push_entry(Entry& entry);
-	void do_remove_entry(Entry& entry);
+	void do_push_entry(EntryHandle const& entry);
+	void do_remove_entry(EntryHandle const& entry);
 	void do_clear_entries();
 	wxString do_get_comment() const;
 	TransactionType do_get_transaction_type() const;

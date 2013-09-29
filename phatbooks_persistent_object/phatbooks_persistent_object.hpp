@@ -48,7 +48,6 @@ class PhatbooksDatabaseConnection;
 class PhatbooksPersistentObjectBase
 {
 public:
-	typedef sqloxx::Id Id;
 	
 	// Default constructor, copy constructor, move constructor,
 	// copy assignment and move assignment are all as synthesised
@@ -57,7 +56,7 @@ public:
 	virtual ~PhatbooksPersistentObjectBase() = default;
 
 	void save();
-	Id id() const;
+	sqloxx::Id id() const;
 	PhatbooksDatabaseConnection& database_connection() const;
 	bool has_id() const;
 	void remove();
@@ -68,7 +67,7 @@ private:
 	// PhatbooksPersistentObject<...> and should \e not be redefined
 	// by the business classes.
 	virtual void do_save() = 0;
-	virtual Id do_get_id() const = 0;
+	virtual sqloxx::Id do_get_id() const = 0;
 	virtual PhatbooksDatabaseConnection& do_get_database_connection() const=0;
 	virtual bool does_have_id() const = 0;
 	virtual void do_remove() = 0;
@@ -98,7 +97,7 @@ public:
 	bool operator!=(PhatbooksPersistentObject const& rhs) const;
 	static bool exists
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
+		sqloxx::Id p_id
 	);
 	static bool none_saved
 	(	PhatbooksDatabaseConnection& p_database_connection
@@ -114,7 +113,7 @@ protected:
 	);
 	PhatbooksPersistentObject
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
+		sqloxx::Id p_id
 	);
 	PhatbooksPersistentObject(sqloxx::Handle<Impl> const& p_handle);
 	Impl& impl();
@@ -122,7 +121,7 @@ protected:
 
 private:
 	void do_save();
-	Id do_get_id() const;
+	sqloxx::Id do_get_id() const;
 	PhatbooksDatabaseConnection& do_get_database_connection() const;
 	bool does_have_id() const;
 	void do_remove();
@@ -155,7 +154,7 @@ template <typename Impl>
 inline
 PhatbooksPersistentObject<Impl>::PhatbooksPersistentObject
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id
+	sqloxx::Id p_id
 ):
 	m_impl(sqloxx::Handle<Impl>(p_database_connection, p_id))
 {
@@ -175,7 +174,7 @@ inline
 bool
 PhatbooksPersistentObject<Impl>::exists
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id
+	sqloxx::Id p_id
 )
 {
 	return Impl::exists(p_database_connection, p_id);
@@ -262,7 +261,7 @@ PhatbooksPersistentObject<Impl>::do_save()
 
 template <typename Impl>
 inline
-typename PhatbooksPersistentObject<Impl>::Id
+sqloxx::Id
 PhatbooksPersistentObject<Impl>::do_get_id() const
 {
 	return m_impl->id();

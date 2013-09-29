@@ -6,12 +6,13 @@
 #include "account_handle.hpp"
 #include "account_type.hpp"
 #include "draft_journal.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "ordinary_journal.hpp"
 #include "reconciliation_list_panel.hpp"
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
 #include <jewel/assert.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -123,13 +124,13 @@ public:
 	 * p_doomed_id (or the objects with p_doomed_ids) have just
 	 * been removed from the database.
 	 */
-	void update_for_deleted_ordinary_journal(OrdinaryJournal::Id p_doomed_id);
-	void update_for_deleted_draft_journal(DraftJournal::Id p_doomed_id);
+	void update_for_deleted_ordinary_journal(sqloxx::Id p_doomed_id);
+	void update_for_deleted_draft_journal(sqloxx::Id p_doomed_id);
 	void update_for_deleted_ordinary_entries
-	(	std::vector<Entry::Id> const& p_doomed_ids
+	(	std::vector<sqloxx::Id> const& p_doomed_ids
 	);
 	void update_for_deleted_draft_entries
-	(	std::vector<Entry::Id> const& p_doomed_ids
+	(	std::vector<sqloxx::Id> const& p_doomed_ids
 	);
 
 	/**
@@ -151,7 +152,7 @@ public:
 	 * is assumed these are the \e source of the change - we don't update
 	 * these \e again, on pain of circularity.
 	 */
-	void update_for_reconciliation_status(Entry const& p_entry);
+	void update_for_reconciliation_status(EntryHandle const& p_entry);
 
 	/**
 	 * @returns a ProtoJournal containing two Entries, with blank

@@ -3,11 +3,12 @@
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
 #include "draft_journal_table_iterator.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <boost/lexical_cast.hpp>
 #include <wx/string.h>
@@ -20,6 +21,7 @@ using std::endl;
 using std::ostream;
 using std::string;
 using std::vector;
+using sqloxx::Id;
 using sqloxx::Handle;
 
 namespace phatbooks
@@ -138,14 +140,14 @@ DraftJournal::do_set_comment(wxString const& p_comment)
 }
 
 void
-DraftJournal::do_push_entry(Entry& entry)
+DraftJournal::do_push_entry(EntryHandle const& entry)
 {
 	impl().push_entry(entry);
 	return;
 }
 
 void
-DraftJournal::do_remove_entry(Entry& entry)
+DraftJournal::do_remove_entry(EntryHandle const& entry)
 {
 	impl().remove_entry(entry);
 	return;
@@ -169,7 +171,7 @@ DraftJournal::name() const
 	return impl().name();
 }
 
-vector<Entry> const&
+vector<EntryHandle> const&
 DraftJournal::do_get_entries() const
 {
 	return impl().entries();

@@ -10,7 +10,7 @@ set (immediate_directories
 	 commodity
 	 currency
 	 date
-	 entry
+	 entry 
 	 filename_validation
 	 finformat
 	 graphical_session
@@ -147,7 +147,6 @@ set (main_files
 	 date/frequency.cpp
 	 date/interval_type.cpp
 	 entry/entry.cpp
-	 entry/entry_impl.cpp
 	 entry/entry_table_iterator.cpp
 	 filename_validation/filename_validation.cpp
 	 finformat/finformat.cpp

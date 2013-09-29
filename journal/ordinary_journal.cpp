@@ -4,7 +4,7 @@
 #include "account_handle.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
@@ -16,6 +16,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/log.hpp>
 #include <jewel/signature.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/string.h>
 #include <ostream>
@@ -28,6 +29,7 @@ using boost::lexical_cast;
 using jewel::Decimal;
 using jewel::Signature;
 using sqloxx::Handle;
+using sqloxx::Id;
 using std::ios_base;
 using std::ostream;
 using std::ostringstream;
@@ -95,20 +97,20 @@ OrdinaryJournal::create_opening_balance_journal
 
 	OrdinaryJournal ret(dbc);
 
-	Entry primary_entry(dbc);
-	primary_entry.set_account(p_account);
-	primary_entry.set_comment("Opening balance entry");
-	primary_entry.set_amount(primary_entry_amount);
-	primary_entry.set_whether_reconciled(true);
-	primary_entry.set_transaction_side(TransactionSide::source);
+	EntryHandle const primary_entry(dbc);
+	primary_entry->set_account(p_account);
+	primary_entry->set_comment("Opening balance entry");
+	primary_entry->set_amount(primary_entry_amount);
+	primary_entry->set_whether_reconciled(true);
+	primary_entry->set_transaction_side(TransactionSide::source);
 	ret.push_entry(primary_entry);
 
-	Entry balancing_entry(dbc);
-	balancing_entry.set_account(balancing_account);
-	balancing_entry.set_comment("Opening balance entry");
-	balancing_entry.set_amount(-primary_entry_amount);
-	balancing_entry.set_whether_reconciled(false);
-	balancing_entry.set_transaction_side(TransactionSide::destination);
+	EntryHandle const balancing_entry(dbc);
+	balancing_entry->set_account(balancing_account);
+	balancing_entry->set_comment("Opening balance entry");
+	balancing_entry->set_amount(-primary_entry_amount);
+	balancing_entry->set_whether_reconciled(false);
+	balancing_entry->set_transaction_side(TransactionSide::destination);
 	ret.push_entry(balancing_entry);
 
 	ret.set_comment("Opening balance adjustment");
@@ -169,14 +171,14 @@ OrdinaryJournal::set_date_unrestricted(boost::gregorian::date const& p_date)
 }
 
 void
-OrdinaryJournal::do_push_entry(Entry& entry)
+OrdinaryJournal::do_push_entry(EntryHandle const& entry)
 {
 	impl().push_entry(entry);
 	return;
 }
 
 void
-OrdinaryJournal::do_remove_entry(Entry& entry)
+OrdinaryJournal::do_remove_entry(EntryHandle const& entry)
 {
 	impl().remove_entry(entry);
 	return;
@@ -194,7 +196,7 @@ OrdinaryJournal::do_get_comment() const
 	return impl().comment();
 }
 
-vector<Entry> const&
+vector<EntryHandle> const&
 OrdinaryJournal::do_get_entries() const
 {
 	return impl().entries();

@@ -62,32 +62,32 @@ public:
 	// Retrieve the technical balance for a particular Account.
 	// For an explanation of the concept of a "technical balance",
 	// see the documentation for Account::technical_balance().
-	jewel::Decimal technical_balance(Account::Id p_account_id);
+	jewel::Decimal technical_balance(sqloxx::Id p_account_id);
 
 	// Retrieve the technical opening balance for a particular
 	// Account.
 	// For an explanation of the concept of a "technical opening balance",
 	// see the documentation for Account::technical_opening_balance().
-	jewel::Decimal technical_opening_balance(Account::Id p_account_id);
+	jewel::Decimal technical_opening_balance(sqloxx::Id p_account_id);
 
 	// Mark the cache as a whole as stale
 	void mark_as_stale();
 	
 	// Mark a particular Account's cache entry as stale
-	void mark_as_stale(Account::Id p_account_id); 
+	void mark_as_stale(sqloxx::Id p_account_id); 
 
 private:
 
 	typedef
 		std::unordered_map
-		<	Account::Id,
+		<	sqloxx::Id,
 			boost::optional<jewel::Decimal>
 		>
 		Map;
 		
 	void refresh();
 	void refresh_all();
-	void refresh_targetted(std::vector<Account::Id> const& p_targets);
+	void refresh_targetted(std::vector<sqloxx::Id> const& p_targets);
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	std::unique_ptr<Map> m_map;

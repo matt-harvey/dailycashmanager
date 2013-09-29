@@ -13,6 +13,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <jewel/assert.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <wx/string.h>
 #include <list>
 #include <memory>
@@ -23,6 +24,7 @@ namespace gregorian = boost::gregorian;
 
 using boost::lexical_cast;
 using sqloxx::Handle;
+using sqloxx::Id;
 using std::list;
 using std::shared_ptr;
 using std::string;
@@ -78,7 +80,7 @@ Repeater::set_frequency(Frequency p_frequency)
 }
 
 void
-Repeater::set_journal_id(DraftJournal::Id p_journal_id)
+Repeater::set_journal_id(Id p_journal_id)
 {
 	impl().set_journal_id(p_journal_id);
 	return;

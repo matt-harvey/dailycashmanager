@@ -32,8 +32,7 @@ class PhatbooksDatabaseConnection;
  * written, is for the time being being hidden by the preprocessor.
  * To unhide it, define PHATBOOKS_EXPOSE_COMMODITY.
  */
-class Commodity:
-	public PhatbooksPersistentObject<CommodityImpl>
+class Commodity: public PhatbooksPersistentObject<CommodityImpl>
 {
 public:
 
@@ -41,8 +40,6 @@ public:
 		PhatbooksPersistentObject<CommodityImpl>
 		PhatbooksPersistentObject;
 	
-	typedef PhatbooksPersistentObject::Id Id;
-
 	/**
 	 * Sets up tables required in the database for the persistence
 	 * of CommodityImpl objects.
@@ -62,7 +59,7 @@ public:
 	 */
 	Commodity
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	Commodity(Commodity const&) = default;
@@ -77,7 +74,7 @@ public:
 	 */
 	static Commodity create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	Commodity

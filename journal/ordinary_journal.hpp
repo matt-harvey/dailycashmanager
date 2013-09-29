@@ -3,16 +3,16 @@
 #ifndef GUARD_ordinary_journal_hpp_8344533833835522
 #define GUARD_ordinary_journal_hpp_8344533833835522
 
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "persistent_journal.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"
-#include <sqloxx/general_typedefs.hpp>
-#include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/decimal.hpp>
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/string.h>
 #include <iostream>
 #include <ostream>
@@ -41,8 +41,6 @@ public:
 		PhatbooksPersistentObject<OrdinaryJournalImpl>
 		PhatbooksPersistentObject;
 	
-	typedef PhatbooksPersistentObject::Id Id;
-
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
@@ -60,7 +58,7 @@ public:
 	 */
 	OrdinaryJournal
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	OrdinaryJournal(OrdinaryJournal const&) = default;
@@ -80,7 +78,7 @@ public:
 	 */
 	static OrdinaryJournal create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection, 
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	/**
@@ -143,12 +141,12 @@ private:
 	(	TransactionType p_transaction_type
 	);
 	void do_set_comment(wxString const& p_comment);
-	void do_push_entry(Entry& entry);
-	void do_remove_entry(Entry& entry);
+	void do_push_entry(EntryHandle const& entry);
+	void do_remove_entry(EntryHandle const& entry);
 	void do_clear_entries();
 	TransactionType do_get_transaction_type() const;
 	wxString do_get_comment() const;
-	std::vector<Entry> const& do_get_entries() const;
+	std::vector<EntryHandle> const& do_get_entries() const;
 
 	OrdinaryJournal(sqloxx::Handle<OrdinaryJournalImpl> const& p_handle);
 };

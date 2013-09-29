@@ -5,6 +5,7 @@
 
 #include "account_handle.hpp"
 #include "decimal_text_ctrl.hpp"
+#include "entry_handle_fwd.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include "transaction_type_ctrl.hpp"
 #include "transaction_type.hpp"
@@ -23,7 +24,6 @@ namespace phatbooks
 // Begin forward declarations
 
 class DraftJournal;
-class Entry;
 class OrdinaryJournal;
 class PersistentJournal;
 class ProtoJournal;
@@ -134,7 +134,7 @@ public:
 	 * Update to reflect possible change in reconciliation status
 	 * of \e p_entry.
 	 */
-	void update_for_reconciliation_status(Entry const& p_entry);
+	void update_for_reconciliation_status(EntryHandle const& p_entry);
 
 	// Reset everything in TransactionCtrl to create and edit a new
 	// ProtoJournal.

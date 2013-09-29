@@ -4,6 +4,7 @@
 #define GUARD_reconciliation_entry_list_ctrl_hpp_7164053319564114
 
 #include "account_handle_fwd.hpp"
+#include "entry_handle_fwd.hpp"
 #include "filtered_entry_list_ctrl.hpp"
 #include "reconciliation_list_panel.hpp"
 #include "summary_datum.hpp"
@@ -20,12 +21,6 @@
 
 namespace phatbooks
 {
-
-// Begin forward declarations
-
-class Entry;
-
-// End forward declarations
 
 
 namespace gui
@@ -64,15 +59,15 @@ public:
 	virtual ~ReconciliationEntryListCtrl() = default;
 
 private:
-	virtual void do_set_non_date_columns(long p_row, Entry const& p_entry);
+	virtual void do_set_non_date_columns(long p_row, EntryHandle const& p_entry);
 	virtual void do_insert_non_date_columns();
-	virtual bool do_approve_entry(Entry const& p_entry) const;
+	virtual bool do_approve_entry(EntryHandle const& p_entry) const;
 	virtual int do_get_comment_col_num() const;
 	virtual int do_get_num_columns() const;
 
 	virtual std::vector<SummaryDatum> const& do_get_summary_data() const;
 	virtual void do_initialize_summary_data();
-	virtual void do_process_candidate_entry_for_summary(Entry const& p_entry);
+	virtual void do_process_candidate_entry_for_summary(EntryHandle const& p_entry);
 	virtual void do_process_removal_for_summary(long p_row);
 
 	virtual std::unique_ptr<sqloxx::SQLStatement> do_create_entry_selector();

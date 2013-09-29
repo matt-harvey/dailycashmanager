@@ -4,7 +4,7 @@
 #include "account_handle.hpp"
 #include "account_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "finformat.hpp"
 #include "journal.hpp"
 #include "locale.hpp"
@@ -88,11 +88,11 @@ EntryGroupCtrl::EntryGroupCtrl
 	// TODO There should really be a function somewhere in the business
 	// layer which gives us a vector of Entries for a given Journal
 	// and TransactionSide.
-	vector<Entry> entries;
-	vector<Entry> const& all_entries = p_journal.entries();
-	for (Entry const& entry: all_entries)
+	vector<EntryHandle> entries;
+	vector<EntryHandle> const& all_entries = p_journal.entries();
+	for (EntryHandle const& entry: all_entries)
 	{
-		if (entry.transaction_side() == m_transaction_side)
+		if (entry->transaction_side() == m_transaction_side)
 		{
 			entries.push_back(entry);
 		}
@@ -102,11 +102,11 @@ EntryGroupCtrl::EntryGroupCtrl
 	configure_available_account_types();	
 	JEWEL_ASSERT (m_available_account_types);
 	optional<Decimal> maybe_previous_row_amount;
-	for (vector<Entry>::size_type i = 0; i != entries.size(); ++i)
+	for (vector<EntryHandle>::size_type i = 0; i != entries.size(); ++i)
 	{
-		Entry entry = entries[i];
+		EntryHandle const entry = entries[i];
 		push_row(entry, maybe_previous_row_amount, multiple_entries);
-		if (i == 0) maybe_previous_row_amount = entry.amount();
+		if (i == 0) maybe_previous_row_amount = entry->amount();
 	}
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -207,19 +207,19 @@ EntryGroupCtrl::primary_amount() const
 	return parent->primary_amount();
 }
 
-vector<Entry>
+vector<EntryHandle>
 EntryGroupCtrl::make_entries() const
 {
-	typedef std::vector<Entry>::size_type Size;
+	typedef std::vector<EntryHandle>::size_type Size;
 	Size const sz = m_entry_rows.size();
 
-	vector<Entry> ret;
+	vector<EntryHandle> ret;
 	for (Size i = 0; i != sz; ++i)
 	{
 		EntryRow const& entry_row = m_entry_rows[i];
-		Entry entry = entry_row.entry;
-		entry.set_account(entry_row.account_ctrl->account());
-		entry.set_comment(entry_row.comment_ctrl->GetValue());
+		EntryHandle const entry = entry_row.entry;
+		entry->set_account(entry_row.account_ctrl->account());
+		entry->set_comment(entry_row.comment_ctrl->GetValue());
 
 		Decimal amount = primary_amount();
 		if (entry_row.amount_ctrl)
@@ -234,12 +234,12 @@ EntryGroupCtrl::make_entries() const
 		{
 			amount = -amount;
 		}
-		entry.set_amount(amount);
+		entry->set_amount(amount);
 	
 		// Leave reconciliation status as as, as user cannot change it
 		// via TransactionCtrl / EntryGroupCtrl.
 
-		JEWEL_ASSERT (entry.transaction_side() == m_transaction_side);
+		JEWEL_ASSERT (entry->transaction_side() == m_transaction_side);
 
 		ret.push_back(entry);
 	}
@@ -313,12 +313,12 @@ EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
 	AccountHandle const account = m_entry_rows.back().account_ctrl->account();
-	Entry entry(m_database_connection);
-	entry.set_account(account);
-	entry.set_whether_reconciled(false);
-	entry.set_comment(wxString());
-	entry.set_amount(Decimal(0, account->commodity().precision()));
-	entry.set_transaction_side(m_transaction_side);
+	EntryHandle const entry(m_database_connection);
+	entry->set_account(account);
+	entry->set_whether_reconciled(false);
+	entry->set_comment(wxString());
+	entry->set_amount(Decimal(0, account->commodity().precision()));
+	entry->set_transaction_side(m_transaction_side);
 	push_row(entry, optional<Decimal>(), true);
 	JEWEL_ASSERT (!m_entry_rows.empty());
 	autobalance(m_entry_rows.back().amount_ctrl);
@@ -385,7 +385,7 @@ EntryGroupCtrl::pop_row()
 
 void
 EntryGroupCtrl::push_row
-(	Entry const& p_entry,
+(	EntryHandle const& p_entry,
 	optional<Decimal> const& p_previous_row_amount,
 	bool p_multiple_entries
 )
@@ -401,7 +401,7 @@ EntryGroupCtrl::push_row
 		*m_available_account_types,
 		m_database_connection
 	);
-	entry_row.account_ctrl->set_account(p_entry.account());
+	entry_row.account_ctrl->set_account(p_entry->account());
 	m_top_sizer->
 		Add(entry_row.account_ctrl, wxGBPosition(m_current_row, 0));
 
@@ -409,7 +409,7 @@ EntryGroupCtrl::push_row
 	entry_row.comment_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
-		p_entry.comment(),
+		p_entry->comment(),
 		wxDefaultPosition,
 		wxSize(m_text_ctrl_size.x * 2 + standard_gap(), m_text_ctrl_size.y),
 		wxALIGN_LEFT
@@ -493,7 +493,7 @@ EntryGroupCtrl::push_row
 			}
 			m_unsplit_button->MoveBeforeInTabOrder(m_split_button);
 		}
-		Decimal amount = (is_source()? -p_entry.amount(): p_entry.amount());
+		Decimal amount = (is_source()? -p_entry->amount(): p_entry->amount());
 		if (m_transaction_type == TransactionType::envelope)
 		{
 			amount = -amount;
@@ -578,7 +578,7 @@ EntryGroupCtrl::reflect_reconciliation_statuses()
 		{
 			window_vec.push_back(row.amount_ctrl);
 		}
-		bool const reconciled = row.entry.is_reconciled();
+		bool const reconciled = row.entry->is_reconciled();
 		if (reconciled)
 		{
 			ret = true;
@@ -601,7 +601,7 @@ EntryGroupCtrl::reflect_reconciliation_statuses()
 	// "Unsplit" button. If there's only one row, then we should disable
 	// the "Split" button (and there will be on unsplit button).
 	bool const final_row_reconciled =
-		m_entry_rows.back().entry.is_reconciled();
+		m_entry_rows.back().entry->is_reconciled();
 	if (m_unsplit_button)
 	{
 		JEWEL_ASSERT (num_rows() >= 2);
@@ -677,7 +677,7 @@ EntryGroupCtrl::EntryDecimalTextCtrl::on_left_double_click(wxMouseEvent& event)
 	return;
 }
 
-EntryGroupCtrl::EntryRow::EntryRow(Entry const& p_entry):
+EntryGroupCtrl::EntryRow::EntryRow(EntryHandle const& p_entry):
 	account_ctrl(0),
 	comment_ctrl(0),
 	amount_ctrl(0),

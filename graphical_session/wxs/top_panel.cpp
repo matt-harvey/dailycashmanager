@@ -6,7 +6,7 @@
 #include "account_type.hpp"
 #include "draft_journal_list_ctrl.hpp"
 #include "draft_journal_table_iterator.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "entry_list_panel.hpp"
 #include "frame.hpp"
 #include "ordinary_journal.hpp"
@@ -22,6 +22,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -314,16 +315,16 @@ TopPanel::make_proto_journal() const
 		)
 		{
 			AccountHandle const& account = accounts[i];
-			Entry entry(m_database_connection);
-			entry.set_account(account);
-			entry.set_comment(wxString());
-			entry.set_transaction_side
+			EntryHandle entry(m_database_connection);
+			entry->set_account(account);
+			entry->set_comment(wxString());
+			entry->set_transaction_side
 			(	(i == 0)?
 				TransactionSide::source:
 				TransactionSide::destination
 			);
-			entry.set_amount(Decimal(0, account->commodity().precision()));
-			entry.set_whether_reconciled(false);
+			entry->set_amount(Decimal(0, account->commodity().precision()));
+			entry->set_whether_reconciled(false);
 			ret.push_entry(entry);	
 		}
 	}
@@ -433,7 +434,7 @@ TopPanel::selected_pl_accounts(vector<AccountHandle>& out) const
 void
 TopPanel::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 {
-	vector<Entry> entries;
+	vector<EntryHandle> entries;
 	JEWEL_ASSERT (m_notebook);
 	wxWindow* const page = m_notebook->GetCurrentPage();
 	if (page == static_cast<wxWindow*>(m_notebook_page_transactions))
@@ -444,9 +445,9 @@ TopPanel::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 	{
 		m_reconciliation_panel->selected_entries(entries);
 	}
-	for (Entry const& entry: entries)
+	for (EntryHandle const& entry: entries)
 	{
-		out.push_back(entry.journal<OrdinaryJournal>());
+		out.push_back(entry->journal<OrdinaryJournal>());
 	}
 	return;
 }
@@ -553,7 +554,7 @@ TopPanel::update_for_amended_budget(AccountHandle const& p_account)
 }
 
 void
-TopPanel::update_for_reconciliation_status(Entry const& p_entry)
+TopPanel::update_for_reconciliation_status(EntryHandle const& p_entry)
 {
 	JEWEL_ASSERT (m_transaction_ctrl);
 	m_transaction_ctrl->update_for_reconciliation_status(p_entry);
@@ -561,7 +562,7 @@ TopPanel::update_for_reconciliation_status(Entry const& p_entry)
 }
 
 void
-TopPanel::update_for_deleted_ordinary_journal(OrdinaryJournal::Id p_doomed_id)
+TopPanel::update_for_deleted_ordinary_journal(sqloxx::Id p_doomed_id)
 {
 	(void)p_doomed_id;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update();
@@ -572,7 +573,7 @@ TopPanel::update_for_deleted_ordinary_journal(OrdinaryJournal::Id p_doomed_id)
 }
 
 void
-TopPanel::update_for_deleted_draft_journal(DraftJournal::Id p_doomed_id)
+TopPanel::update_for_deleted_draft_journal(sqloxx::Id p_doomed_id)
 {
 	(void)p_doomed_id;  // Silence compiler re. unused parameter.
 	// configure_transaction_ctrl();  // Don't do this!
@@ -582,7 +583,7 @@ TopPanel::update_for_deleted_draft_journal(DraftJournal::Id p_doomed_id)
 
 void
 TopPanel::update_for_deleted_ordinary_entries
-(	vector<Entry::Id> const& p_doomed_ids
+(	vector<sqloxx::Id> const& p_doomed_ids
 )
 {
 	m_entry_list_panel->update_for_deleted(p_doomed_ids);
@@ -593,7 +594,7 @@ TopPanel::update_for_deleted_ordinary_entries
 
 void
 TopPanel::update_for_deleted_draft_entries
-(	vector<Entry::Id> const& p_doomed_ids
+(	vector<sqloxx::Id> const& p_doomed_ids
 )
 {
 	(void)p_doomed_ids;  // Silence compiler re. unused parameter

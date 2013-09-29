@@ -10,8 +10,9 @@
 #include "decimal_validator.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_naming_dialog.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "entry_group_ctrl.hpp"
+#include "entry_handle.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
 #include "frequency.hpp"
@@ -38,6 +39,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/combobox.h>
@@ -57,6 +59,7 @@
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::Id;
 using std::back_inserter;
 using std::begin;
 using std::copy;
@@ -101,15 +104,11 @@ END_EVENT_TABLE()
 
 namespace
 {
-	// TODO Is this being used?
 	bool contains_reconciled_entry(Journal const& p_journal)
 	{
-		vector<Entry> const& entries = p_journal.entries();
-		vector<Entry>::const_iterator it = entries.begin();
-		vector<Entry>::const_iterator const end = entries.end();
-		for ( ; it != end; ++it)
+		for (EntryHandle const& entry: p_journal.entries())
 		{
-			if (it->has_id() && it->is_reconciled())
+			if (entry->has_id() && entry->is_reconciled())
 			{
 				return true;
 			}
@@ -565,7 +564,7 @@ TransactionCtrl::update_for_amended(AccountHandle const& p_saved_object)
 }
 
 void
-TransactionCtrl::update_for_reconciliation_status(Entry const& p_entry)
+TransactionCtrl::update_for_reconciliation_status(EntryHandle const& p_entry)
 {
 	(void)p_entry;  // silence compiler re. unused parameter
 	reflect_reconciliation_statuses();
@@ -736,8 +735,8 @@ TransactionCtrl::post_journal()
 	};
 	for (EntryGroupCtrl const* const control: entry_controls)
 	{
-		vector<Entry> entries = control->make_entries();
-		for (Entry entry: entries) journal.push_entry(entry);
+		vector<EntryHandle> entries = control->make_entries();
+		for (EntryHandle entry: entries) journal.push_entry(entry);
 	}
 	journal.set_comment("");
 
@@ -836,23 +835,23 @@ TransactionCtrl::remove_journal()
 #	ifndef NDEBUG
 		if (m_journal)
 		{
-			for (Entry const& entry: m_journal->entries())
+			for (EntryHandle const& entry: m_journal->entries())
 			{
-				JEWEL_ASSERT (!entry.has_id());
+				JEWEL_ASSERT (!entry->has_id());
 			}
 		}
 #	endif
 		return true;
 	}
 	JEWEL_ASSERT (m_journal);
-	PersistentJournal::Id const doomed_journal_id = m_journal->id();
+	Id const doomed_journal_id = m_journal->id();
 	bool const is_draft =
 		journal_id_is_draft(database_connection(), doomed_journal_id);
-	vector<Entry::Id> doomed_entry_ids;
-	vector<Entry> const& doomed_entries = m_journal->entries();
-	for (Entry const& entry: doomed_entries)
+	vector<Id> doomed_entry_ids;
+	vector<EntryHandle> const& doomed_entries = m_journal->entries();
+	for (EntryHandle const& entry: doomed_entries)
 	{
-		doomed_entry_ids.push_back(entry.id());
+		doomed_entry_ids.push_back(entry->id());
 	}
 	m_journal->remove();
 	JEWEL_ASSERT (!m_journal->has_id());
@@ -893,17 +892,17 @@ TransactionCtrl::save_existing_journal()
 	// the original entries are "doomed". We will erase from the "doomed"
 	// IDs as we verify that each Entry is still present in the edited
 	// Journal.
-	unordered_set<Entry::Id> doomed;
-	vector<Entry> const& old_entries = m_journal->entries();
-	for (Entry const& entry: old_entries)
+	unordered_set<Id> doomed;
+	vector<EntryHandle> const& old_entries = m_journal->entries();
+	for (EntryHandle const& entry: old_entries)
 	{
-		JEWEL_ASSERT (entry.has_id());
-		doomed.insert(entry.id());
+		JEWEL_ASSERT (entry->has_id());
+		doomed.insert(entry->id());
 	}
 
 	// Clear the existing Entries from Journal, then reinsert the updated
 	// Entries. As each "surviving" Entry is reinserted, we erase its Id from
-	// the "doomed" Entry::Ids.
+	// the "doomed" Ids.
 	m_journal->clear_entries();
 	EntryGroupCtrl const* const entry_controls[] =
 	{	m_source_entry_ctrl,
@@ -911,17 +910,17 @@ TransactionCtrl::save_existing_journal()
 	};
 	for (EntryGroupCtrl const* const control: entry_controls)
 	{
-		vector<Entry> entries = control->make_entries();
-		for (Entry entry: entries)
+		vector<EntryHandle> entries = control->make_entries();
+		for (EntryHandle entry: entries)
 		{
 			m_journal->push_entry(entry);
-			if (entry.has_id()) doomed.erase(entry.id());
+			if (entry->has_id()) doomed.erase(entry->id());
 		}
 	}
 
 	// We now need to put the ids of the removed entries in a vector so the
 	// GUI can be updated for their removal.
-	vector<Entry::Id> const doomed_entry_ids(doomed.begin(), doomed.end());
+	vector<Id> const doomed_entry_ids(doomed.begin(), doomed.end());
 
 	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
 	if (maybe_frequency)

@@ -3,6 +3,7 @@
 #ifndef GUARD_pl_account_entry_list_ctrl_hpp_025696059700891404
 #define GUARD_pl_account_entry_list_ctrl_hpp_025696059700891404
 
+#include "entry_handle_fwd.hpp"
 #include "filtered_entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -13,12 +14,6 @@
 
 namespace phatbooks
 {
-
-// Begin forward declarations
-
-class Entry;
-
-// End forward declarations
 
 namespace gui
 {
@@ -45,13 +40,13 @@ public:
 
 private:
 
-	virtual void do_set_non_date_columns(long p_row, Entry const& p_entry);
+	virtual void do_set_non_date_columns(long p_row, EntryHandle const& p_entry);
 	virtual void do_insert_non_date_columns();
 	virtual int do_get_comment_col_num() const;
 	virtual int do_get_num_columns() const;
 
 	wxString verb() const;
-	jewel::Decimal friendly_amount(Entry const& p_entry) const;
+	jewel::Decimal friendly_amount(EntryHandle const& p_entry) const;
 
 	bool const m_reverse_signs;
 

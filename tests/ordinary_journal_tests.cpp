@@ -2,7 +2,7 @@
 
 #include "phatbooks_tests_common.hpp"
 #include "draft_journal.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -37,20 +37,20 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	journal1.set_transaction_type(TransactionType::generic);
 	journal1.set_comment("igloo");
 
-	Entry entry1a(dbc);
-	entry1a.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
-	entry1a.set_comment("igloo entry a");
-	entry1a.set_whether_reconciled(true);
-	entry1a.set_amount(Decimal("0.99"));
-	entry1a.set_transaction_side(TransactionSide::source);
+	EntryHandle entry1a(dbc);
+	entry1a->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
+	entry1a->set_comment("igloo entry a");
+	entry1a->set_whether_reconciled(true);
+	entry1a->set_amount(Decimal("0.99"));
+	entry1a->set_transaction_side(TransactionSide::source);
 	journal1.push_entry(entry1a);
 
-	Entry entry1b(dbc);
-	entry1b.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
-	entry1b.set_comment("igloo entry b");
-	entry1b.set_whether_reconciled(false);
-	entry1b.set_amount(Decimal("-0.99"));
-	entry1b.set_transaction_side(TransactionSide::destination);
+	EntryHandle entry1b(dbc);
+	entry1b->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
+	entry1b->set_comment("igloo entry b");
+	entry1b->set_whether_reconciled(false);
+	entry1b->set_amount(Decimal("-0.99"));
+	entry1b->set_transaction_side(TransactionSide::destination);
 	journal1.push_entry(entry1b);
 	OrdinaryJournal oj1(dbc);
 	oj1.set_date(date(3000, 1, 5));
@@ -66,24 +66,24 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	oj1.save();
 	CHECK(!oj1.entries().empty());
 
-	for (Entry const& entry: oj1.entries())
+	for (EntryHandle const& entry: oj1.entries())
 	{
-		CHECK(entry.id() == 1 || entry.id() == 2);
-		if (entry.account() == AccountHandle(dbc, Account::id_for_name(dbc, "cash")))
+		CHECK(entry->id() == 1 || entry->id() == 2);
+		if (entry->account() == AccountHandle(dbc, Account::id_for_name(dbc, "cash")))
 		{
-			CHECK_EQUAL(entry.comment(), "igloo entry a");
-			CHECK_EQUAL(entry.amount(), Decimal("0.99"));
-			CHECK_EQUAL(entry.is_reconciled(), true);
-			CHECK(entry.transaction_side() == TransactionSide::source);
+			CHECK_EQUAL(entry->comment(), "igloo entry a");
+			CHECK_EQUAL(entry->amount(), Decimal("0.99"));
+			CHECK_EQUAL(entry->is_reconciled(), true);
+			CHECK(entry->transaction_side() == TransactionSide::source);
 		}
 		else
 		{
-			CHECK(entry.account() == AccountHandle(dbc, Account::id_for_name(dbc, "food")));
-			CHECK_EQUAL(entry.is_reconciled(), false);
-			CHECK_EQUAL(entry.amount(), Decimal("-0.99"));
-			CHECK_EQUAL(entry.comment(), "igloo entry b");
+			CHECK(entry->account() == AccountHandle(dbc, Account::id_for_name(dbc, "food")));
+			CHECK_EQUAL(entry->is_reconciled(), false);
+			CHECK_EQUAL(entry->amount(), Decimal("-0.99"));
+			CHECK_EQUAL(entry->comment(), "igloo entry b");
 			CHECK
-			(	entry.transaction_side() ==
+			(	entry->transaction_side() ==
 				TransactionSide::destination
 			);
 		}
@@ -93,12 +93,12 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	dj2.set_comment("steam engine");
 	dj2.set_name("some journal");
 	
-	Entry entry2a(dbc);
-	entry2a.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
-	entry2a.set_comment("steam");
-	entry2a.set_amount(Decimal("0"));
-	entry2a.set_whether_reconciled(false);
-	entry2a.set_transaction_side(TransactionSide::source);
+	EntryHandle entry2a(dbc);
+	entry2a->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
+	entry2a->set_comment("steam");
+	entry2a->set_amount(Decimal("0"));
+	entry2a->set_whether_reconciled(false);
+	entry2a->set_transaction_side(TransactionSide::source);
 	dj2.push_entry(entry2a);
 	
 	oj1.mimic(dj2);
@@ -112,12 +112,12 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		TransactionType::envelope
 	);
 	oj1.save();
-	for (Entry const& entry: oj1.entries())
+	for (EntryHandle const& entry: oj1.entries())
 	{
-		CHECK_EQUAL(entry.account()->id(), AccountHandle(dbc, Account::id_for_name(dbc, "food"))->id());
-		CHECK_EQUAL(entry.comment(), "steam");
-		CHECK_EQUAL(entry.is_reconciled(), false);
-		CHECK(entry.transaction_side() == TransactionSide::source);
+		CHECK_EQUAL(entry->account()->id(), AccountHandle(dbc, Account::id_for_name(dbc, "food"))->id());
+		CHECK_EQUAL(entry->comment(), "steam");
+		CHECK_EQUAL(entry->is_reconciled(), false);
+		CHECK(entry->transaction_side() == TransactionSide::source);
 	}
 }
 
@@ -130,27 +130,27 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	journal1.set_transaction_type(TransactionType::generic);
 	journal1.set_comment("igloo");
 
-	Entry entry1a(dbc);
-	entry1a.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
-	entry1a.set_comment("igloo entry a");
-	entry1a.set_whether_reconciled(true);
-	entry1a.set_amount(Decimal("-10.99"));
-	entry1a.set_transaction_side(TransactionSide::source);
+	EntryHandle entry1a(dbc);
+	entry1a->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
+	entry1a->set_comment("igloo entry a");
+	entry1a->set_whether_reconciled(true);
+	entry1a->set_amount(Decimal("-10.99"));
+	entry1a->set_transaction_side(TransactionSide::source);
 	journal1.push_entry(entry1a);
 	CHECK_THROW(journal1.save(), UnbalancedJournalException);
 
-	Entry entry1b(dbc);
-	entry1b.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
-	entry1b.set_comment("igloo entry b");
-	entry1b.set_whether_reconciled(false);
-	entry1b.set_amount(Decimal("50.09"));
-	entry1b.set_transaction_side(TransactionSide::destination);
+	EntryHandle entry1b(dbc);
+	entry1b->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
+	entry1b->set_comment("igloo entry b");
+	entry1b->set_whether_reconciled(false);
+	entry1b->set_amount(Decimal("50.09"));
+	entry1b->set_transaction_side(TransactionSide::destination);
 	journal1.push_entry(entry1b);
 	journal1.set_date(date(3000, 1, 5));
 
 	CHECK(!journal1.is_balanced());
 	CHECK_THROW(journal1.save(), UnbalancedJournalException);
-	entry1b.set_amount(Decimal("10.99"));
+	entry1b->set_amount(Decimal("10.99"));
 	CHECK(journal1.is_balanced());
 
 	journal1.save();
@@ -160,18 +160,18 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	OrdinaryJournal journal1b(dbc, 2);
 
 	CHECK(journal1b.is_balanced());
-	Entry entry1c(dbc);
-	entry1c.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
-	entry1c.set_comment("Ummm");
-	entry1c.set_whether_reconciled(true);
-	entry1c.set_amount(Decimal(0, 0));
-	entry1c.set_transaction_side(TransactionSide::destination);
+	EntryHandle entry1c(dbc);
+	entry1c->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
+	entry1c->set_comment("Ummm");
+	entry1c->set_whether_reconciled(true);
+	entry1c->set_amount(Decimal(0, 0));
+	entry1c->set_transaction_side(TransactionSide::destination);
 	journal1b.push_entry(entry1c);
 	CHECK(journal1b.is_balanced());
 	CHECK(journal1.is_balanced());
 	journal1b.save();
 	
-	entry1c.set_amount(Decimal("0.0000001"));
+	entry1c->set_amount(Decimal("0.0000001"));
 	CHECK_EQUAL(journal1.is_balanced(), false);
 	CHECK(!journal1b.is_balanced());
 }

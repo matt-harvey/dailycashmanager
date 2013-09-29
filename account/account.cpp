@@ -22,15 +22,15 @@
 #include "phatbooks_exceptions.hpp"
 #include "transaction_type.hpp"
 #include "visibility.hpp"
-#include <sqloxx/general_typedefs.hpp>
-#include <sqloxx/identity_map.hpp>
-#include <sqloxx/sql_statement.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/identity_map.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <wx/string.h>
 #include <algorithm>
 #include <map>
@@ -42,6 +42,7 @@ using boost::numeric_cast;
 using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::Id;
 using sqloxx::SQLStatement;
 using std::find_if;
 using std::map;
@@ -129,7 +130,7 @@ Account::setup_tables(PhatbooksDatabaseConnection& dbc)
 	return;
 }
 
-Account::Id
+sqloxx::Id
 Account::id_for_name
 (	PhatbooksDatabaseConnection& dbc,
 	wxString const& name
@@ -151,7 +152,7 @@ Account::id_for_name
 			std8_to_wx(statement.extract<string>(1)).Lower();
 		if (candidate == target)
 		{
-			return statement.extract<Account::Id>(0);
+			return statement.extract<sqloxx::Id>(0);
 		}
 	}
 	JEWEL_THROW
@@ -404,7 +405,7 @@ Account::budget_items()
 	JEWEL_ASSERT (ret.empty());
 	while (s.step())
 	{
-		BudgetItem bi(database_connection(), s.extract<BudgetItem::Id>(0));
+		BudgetItem bi(database_connection(), s.extract<Id>(0));
 		ret.push_back(bi);
 	}
 	return ret;
@@ -613,7 +614,7 @@ Account::primary_key_name()
 	return "account_id";
 }
 
-map<AccountSuperType, Account::Id>
+map<AccountSuperType, sqloxx::Id>
 favourite_accounts(PhatbooksDatabaseConnection& p_database_connection)
 {
 	// TODO Code is duplicated between here and "entry_table_iterator.cpp".

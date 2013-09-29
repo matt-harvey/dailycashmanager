@@ -16,19 +16,20 @@
 #include "proto_journal.hpp"
 #include "account_handle.hpp"
 #include "commodity.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "string_conv.hpp"
 #include "transaction_type.hpp"
+#include <boost/numeric/conversion/cast.hpp>
+#include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
+#include <jewel/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/next_auto_key.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <jewel/decimal.hpp>
-#include <jewel/optional.hpp>
-#include <boost/numeric/conversion/cast.hpp>
-#include <boost/optional.hpp>
 #include <wx/string.h>
 #include <algorithm>
 #include <iterator>
@@ -38,6 +39,7 @@
 #include <unordered_set>
 #include <vector>
 
+using sqloxx::Id;
 using sqloxx::next_auto_key;
 using sqloxx::SQLStatement;
 using boost::numeric_cast;
@@ -104,7 +106,7 @@ ProtoJournal::ProtoJournal(ProtoJournal const& rhs):
 {
 }
 
-vector<Entry> const& 
+vector<EntryHandle> const& 
 ProtoJournal::do_get_entries() const
 {
 	return m_data->entries;
@@ -127,16 +129,16 @@ ProtoJournal::do_set_comment(wxString const& p_comment)
 }
 
 void
-ProtoJournal::do_push_entry(Entry& entry)
+ProtoJournal::do_push_entry(EntryHandle const& entry)
 {
 	m_data->entries.push_back(entry);
 	return;
 }
 
 void
-ProtoJournal::do_remove_entry(Entry& entry)
+ProtoJournal::do_remove_entry(EntryHandle const& entry)
 {
-	vector<Entry> temp = m_data->entries;
+	vector<EntryHandle> temp = m_data->entries;
 	m_data->entries.clear();
 	remove_copy
 	(	temp.begin(),
@@ -168,7 +170,7 @@ ProtoJournal::swap(ProtoJournal& rhs)
 	return;
 }
 
-ProtoJournal::Id
+sqloxx::Id
 ProtoJournal::do_save_new_journal_core
 (	PhatbooksDatabaseConnection& dbc
 )
@@ -180,9 +182,9 @@ ProtoJournal::do_save_new_journal_core
 			"Cannot save journal core in unbalanced state."
 		);
 	}
-	Id const journal_id = next_auto_key
+	sqloxx::Id const journal_id = next_auto_key
 	<	PhatbooksDatabaseConnection,
-		Id
+		sqloxx::Id
 	>	(dbc, "journals");
 	SQLStatement statement
 	(	dbc,
@@ -195,10 +197,10 @@ ProtoJournal::do_save_new_journal_core
 	);
 	statement.bind(":comment", wx_to_std8(value(m_data->comment)));
 	statement.step_final();
-	for (Entry& entry: m_data->entries)
+	for (EntryHandle& entry: m_data->entries)
 	{
-		entry.set_journal_id(journal_id);
-		entry.save();
+		entry->set_journal_id(journal_id);
+		entry->save();
 	}
 	return journal_id;
 }
@@ -206,7 +208,7 @@ ProtoJournal::do_save_new_journal_core
 void
 ProtoJournal::do_save_existing_journal_core
 (	PhatbooksDatabaseConnection& dbc,
-	ProtoJournal::Id id
+	sqloxx::Id id
 )
 {
 	if (!is_balanced())
@@ -230,12 +232,12 @@ ProtoJournal::do_save_existing_journal_core
 	updater.bind(":comment", wx_to_std8(value(m_data->comment)));
 	updater.bind(":id", id);
 	updater.step_final();
-	unordered_set<Entry::Id> saved_entry_ids;
-	for (Entry& entry: m_data->entries)
+	unordered_set<sqloxx::Id> saved_entry_ids;
+	for (EntryHandle const& entry: m_data->entries)
 	{
-		entry.save();
-		JEWEL_ASSERT (entry.has_id());
-		saved_entry_ids.insert(entry.id());
+		entry->save();
+		JEWEL_ASSERT (entry->has_id());
+		saved_entry_ids.insert(entry->id());
 	}
 	// Remove any entries in the database with this journal's journal_id, that
 	// no longer exist in the in-memory journal
@@ -244,17 +246,17 @@ ProtoJournal::do_save_existing_journal_core
 		"select entry_id from entries where journal_id = :journal_id"
 	);
 	entry_finder.bind(":journal_id", id);
-	unordered_set<Entry::Id>::const_iterator const saved_entries_end =
+	unordered_set<sqloxx::Id>::const_iterator const saved_entries_end =
 		saved_entry_ids.end();
 	while (entry_finder.step())
 	{
-		Entry::Id const entry_id = entry_finder.extract<Entry::Id>(0);
+		sqloxx::Id const entry_id = entry_finder.extract<sqloxx::Id>(0);
 		if (saved_entry_ids.find(entry_id) == saved_entries_end)
 		{
-			Entry doomed_entry(dbc, entry_id);
+			EntryHandle const doomed_entry(dbc, entry_id);
 			// This entry is in the database but no longer in the in-memory
 			// journal, so should be deleted.
-			doomed_entry.remove();
+			doomed_entry->remove();
 			// Note it's OK even if the last entry is deleted. Another
 			// entry will never be reassigned its id - SQLite makes sure
 			// of that - providing we let SQLite assign all the ids
@@ -267,7 +269,7 @@ ProtoJournal::do_save_existing_journal_core
 void
 ProtoJournal::do_load_journal_core
 (	PhatbooksDatabaseConnection& dbc,
-	ProtoJournal::Id id
+	sqloxx::Id id
 )
 {
 	SQLStatement statement
@@ -286,8 +288,8 @@ ProtoJournal::do_load_journal_core
 	entry_finder.bind(":jid", id);
 	while (entry_finder.step())
 	{
-		Entry::Id const entr_id = entry_finder.extract<Entry::Id>(0);
-		Entry entry(dbc, entr_id);
+		sqloxx::Id const entr_id = entry_finder.extract<sqloxx::Id>(0);
+		EntryHandle const entry(dbc, entr_id);
 		temp.m_data->entries.push_back(entry);
 	}
 	temp.m_data->transaction_type =
@@ -304,9 +306,9 @@ ProtoJournal::do_ghostify_journal_core()
 {
 	clear(m_data->transaction_type);
 	clear(m_data->comment);
-	for (Entry& entry: m_data->entries)
+	for (EntryHandle const& entry: m_data->entries)
 	{
-		entry.ghostify();
+		entry->ghostify();
 	}
 	m_data->entries.clear();
 	return;
@@ -341,11 +343,11 @@ ProtoJournal::mimic_core
 	set_transaction_type(rhs.transaction_type());
 	set_comment(rhs.comment());
 	clear_entries();
-	for (Entry const& rentry: rhs.entries())
+	for (EntryHandle const& rentry: rhs.entries())
 	{
-		Entry entry(dbc);
-		entry.mimic(rentry);
-		if (id) entry.set_journal_id(value(id));
+		EntryHandle const entry(dbc);
+		entry->mimic(*rentry);
+		if (id) entry->set_journal_id(value(id));
 		push_entry(entry);
 	}
 	return;

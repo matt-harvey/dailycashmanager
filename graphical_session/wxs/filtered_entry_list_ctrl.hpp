@@ -4,7 +4,7 @@
 #define GUARD_filtered_entry_list_ctrl_hpp_790944654397175
 
 #include "account_handle.hpp"
-#include "entry.hpp"
+#include "entry_handle_fwd.hpp"
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -49,7 +49,7 @@ protected:
 private:
 	virtual bool do_require_progress_log() const;
 	virtual void do_insert_non_date_columns() = 0;
-	virtual bool do_approve_entry(Entry const& p_entry) const;
+	virtual bool do_approve_entry(EntryHandle const& p_entry) const;
 	virtual void do_set_column_widths();
 	virtual int do_get_num_columns() const = 0;
 	virtual int do_get_comment_col_num() const = 0;

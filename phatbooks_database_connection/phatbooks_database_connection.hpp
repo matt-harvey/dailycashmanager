@@ -179,14 +179,6 @@ public:
 		static void mark_as_stale
 		(	PhatbooksDatabaseConnection const& p_database_connection
 		);
-		// Mark a particular Account in the balance cache as stale
-		// NOTE: Ideally we should have Account::Id here, or perhaps
-		// sqloxx::Id (rather than sqloxx::Id). However this cannot be
-		// achieved without #including either account_handle.hpp or account.hpp.
-		// Doing this results in circular #includes. It is simpler just to use
-		// sqloxx::Id here. A static assertion has been placed in
-		// account.hpp, to ensure that Account::Id is always the same
-		// type as sqloxx::Id anyway.
 		static void mark_as_stale
 		(	PhatbooksDatabaseConnection const& p_database_connection,
 			sqloxx::Id p_account_id
@@ -232,13 +224,6 @@ public:
 		// Retrieve the amalgamated budget for a given Account,
 		// expressed in terms of the standard Frequency of the
 		// AmalgamatedBudget for this PhatbooksDatabaseConnection.
-		// NOTE: Ideally we should have Account::Id here, or perhaps
-		// sqloxx::Id (rather than sqloxx::Id). However this cannot be
-		// achieved without #including either account_handle.hpp or account.hpp.
-		// Doing this results in circular #includes. It is simpler just to use
-		// sqloxx::Id here. A static assertion has been placed in
-		// account.hpp, to ensure that Account::Id is always the same
-		// type as sqloxx::Id anyway.
 		static jewel::Decimal budget
 		(	PhatbooksDatabaseConnection const& p_database_connection,
 			sqloxx::Id p_account_id

@@ -43,6 +43,7 @@ using boost::numeric_cast;
 using jewel::clear;
 using jewel::multiplication_is_unsafe;
 using jewel::value;
+using sqloxx::Id;
 using std::is_same;
 using std::shared_ptr;
 using std::string;
@@ -54,11 +55,6 @@ using std::endl;
 namespace phatbooks
 {
 
-
-static_assert
-(	is_same<DraftJournal::Id, sqloxx::Id>::value,
-	"DraftJournal::Id must be same type as sqloxx::Id."
-);
 
 
 void
@@ -140,7 +136,7 @@ RepeaterImpl::set_next_date(boost::gregorian::date const& p_next_date)
 
 
 void
-RepeaterImpl::set_journal_id(DraftJournal::Id p_journal_id)
+RepeaterImpl::set_journal_id(Id p_journal_id)
 {
 	load();
 	m_data->journal_id = p_journal_id;
@@ -300,7 +296,7 @@ RepeaterImpl::do_load()
 	);
 	temp.m_data->next_date =
 		numeric_cast<DateRep>(statement.extract<long long>(2));
-	temp.m_data->journal_id = statement.extract<DraftJournal::Id>(3);
+	temp.m_data->journal_id = statement.extract<Id>(3);
 	swap(temp);
 	return;
 }

@@ -4,7 +4,7 @@
 #include "account_handle.hpp"
 #include "account_type.hpp"
 #include "balance_sheet_report.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "finformat.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include "locale.hpp"
@@ -131,7 +131,7 @@ Report::update_for_amended(AccountHandle const& p_account)
 }
 
 void
-Report::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
+Report::update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids)
 {
 	(void)p_doomed_ids;
 	return;

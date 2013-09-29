@@ -56,7 +56,6 @@ public:
 	typedef
 		PhatbooksPersistentObject<RepeaterImpl>
 		PhatbooksPersistentObject;
-	typedef PhatbooksPersistentObjectBase::Id Id;
 
 	/**
 	 * Sets up tables in the database required for the persistence
@@ -78,7 +77,7 @@ public:
 	 */
 	Repeater
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	Repeater(Repeater const&) = default;
@@ -96,7 +95,7 @@ public:
 	 */
 	static Repeater create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 

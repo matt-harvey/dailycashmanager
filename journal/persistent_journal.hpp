@@ -3,9 +3,10 @@
 #ifndef GUARD_persistent_journal_hpp_46241805630848654
 #define GUARD_persistent_journal_hpp_46241805630848654
 
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "journal.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include <sqloxx/general_typedefs.hpp>
 #include <ostream>
 
 namespace phatbooks
@@ -20,7 +21,6 @@ class PersistentJournal:
 	virtual public PhatbooksPersistentObjectBase
 {
 public:
-	typedef PhatbooksPersistentObjectBase::Id Id;
 	PersistentJournal() = default;
 	PersistentJournal(PersistentJournal const&) = default;
 	PersistentJournal(PersistentJournal&&) = default;
@@ -31,19 +31,19 @@ public:
 
 
 bool
-has_entry_with_id(PersistentJournal const& journal, Entry::Id entry_id);
+has_entry_with_id(PersistentJournal const& journal, sqloxx::Id entry_id);
 
 bool
-journal_id_exists(PhatbooksDatabaseConnection& dbc, PersistentJournal::Id);
+journal_id_exists(PhatbooksDatabaseConnection& dbc, sqloxx::Id);
 
-PersistentJournal::Id
+sqloxx::Id
 max_journal_id(PhatbooksDatabaseConnection& dbc);
 
-PersistentJournal::Id
+sqloxx::Id
 min_journal_id(PhatbooksDatabaseConnection& dbc);
 
 bool
-journal_id_is_draft(PhatbooksDatabaseConnection& dbc, PersistentJournal::Id);
+journal_id_is_draft(PhatbooksDatabaseConnection& dbc, sqloxx::Id);
 
 
 

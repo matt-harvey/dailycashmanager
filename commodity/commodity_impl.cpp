@@ -7,6 +7,7 @@
 #include "commodity.hpp"
 #include "string_conv.hpp"
 #include <sqloxx/database_transaction.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
@@ -32,17 +33,16 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
-
-using sqloxx::DatabaseTransaction;
-using sqloxx::SQLStatement;
+using boost::numeric_cast;
 using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
-using boost::numeric_cast;
+using sqloxx::DatabaseTransaction;
+using sqloxx::Id;
+using sqloxx::SQLStatement;
 using std::endl;  // for debug logging
 using std::exception;
 using std::string;
-
 
 namespace phatbooks
 {
@@ -71,7 +71,7 @@ void CommodityImpl::setup_tables
 	return;
 }
 
-CommodityImpl::Id
+Id
 CommodityImpl::id_for_abbreviation
 (	PhatbooksDatabaseConnection& dbc,
 	wxString const& p_abbreviation

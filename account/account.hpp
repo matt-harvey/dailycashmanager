@@ -51,14 +51,6 @@ public:
 	
 	typedef sqloxx::PersistentObject<Account, PhatbooksDatabaseConnection>
 		PersistentObject;
-	
-	typedef typename PersistentObject::Id Id;
-
-	// Other classes rely on the below static assertion being true.
-	static_assert
-	(	boost::is_same<Id, sqloxx::Id>::value,
-		"Account::Id needs to be the same type as sqloxx::Id"
-	);
 
 	typedef sqloxx::IdentityMap<Account, PhatbooksDatabaseConnection>
 		IdentityMap;
@@ -78,7 +70,7 @@ public:
 	 * @throws InvalidAccountNameException if there is no Account
 	 * named p_name (this is tested case insensitively).
 	 */
-	static Id id_for_name
+	static sqloxx::Id id_for_name
 	(	PhatbooksDatabaseConnection& dbc,
 		wxString const& p_name
 	);
@@ -92,7 +84,7 @@ public:
 
 	static bool exists
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	/**
@@ -149,7 +141,7 @@ public:
 	/**
 	 * Get an Account by id from database.
 	 */
-	Account(IdentityMap& p_identity_map, Id p_id);
+	Account(IdentityMap& p_identity_map, sqloxx::Id p_id);
 
 	// copy constructor is private
 
@@ -312,7 +304,7 @@ wxString account_concepts_phrase
  * ActualOrdinaryEntries (however, the budget balancing Account is
  * never included, nor are any pure_envelope Accounts).
  */
-std::map<AccountSuperType, Account::Id>
+std::map<AccountSuperType, sqloxx::Id>
 favourite_accounts(PhatbooksDatabaseConnection& p_database_connection);
 
 

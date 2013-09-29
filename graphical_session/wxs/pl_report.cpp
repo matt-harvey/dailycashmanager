@@ -4,6 +4,7 @@
 #include "account_handle.hpp"
 #include "account_type.hpp"
 #include "date.hpp"
+#include "entry_handle.hpp"
 #include "entry_table_iterator.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "report.hpp"
@@ -120,11 +121,11 @@ PLReport::refresh_map()
 		);
 	while (statement->step())
 	{
-		Entry const entry
+		EntryHandle const entry
 		(	database_connection(),
-			statement->extract<Entry::Id>(0)
+			statement->extract<sqloxx::Id>(0)
 		);
-		AccountHandle const account = entry.account();
+		AccountHandle const account = entry->account();
 		AccountType const atype = account->account_type();
 		if
 		(	(atype != AccountType::revenue) &&
@@ -145,10 +146,10 @@ PLReport::refresh_map()
 			jt = m_map.find(account_id);
 		}
 		JEWEL_ASSERT (jt != m_map.end());
-		gregorian::date const date = entry.date();
+		gregorian::date const date = entry->date();
 		JEWEL_ASSERT (!maybe_max_d || (date > value(maybe_max_d)))
 		JEWEL_ASSERT (date >= min_d);
-		jt->second += entry.amount();
+		jt->second += entry->amount();
 	}
 	return;
 }

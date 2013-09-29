@@ -6,12 +6,14 @@
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <wx/event.h>
 #include <wx/window.h>
 #include <vector>
 
 using boost::optional;
 using jewel::value;
+using sqloxx::Id;
 using std::vector;
 
 
@@ -65,7 +67,7 @@ PersistentObjectEvent::PersistentObjectEvent
 {
 }
 
-PersistentObjectEvent::Id
+Id
 PersistentObjectEvent::po_id() const
 {
 	return value(m_maybe_po_id);
@@ -105,7 +107,7 @@ void
 PersistentObjectEvent::fire
 (	wxWindow* p_originator,
 	wxEventType p_event_type,
-	PersistentObjectEvent::Id p_po_id
+	Id p_po_id
 )
 {
 	PersistentObjectEvent event(p_event_type, wxID_ANY, p_po_id);
@@ -146,7 +148,7 @@ void
 PersistentObjectEvent::notify_many
 (	wxWindow* p_originator,
 	wxEventType p_event_type,
-	vector<PersistentObjectEvent::Id> const& p_po_ids
+	vector<Id> const& p_po_ids
 )
 {
 	JEWEL_ASSERT (p_originator);

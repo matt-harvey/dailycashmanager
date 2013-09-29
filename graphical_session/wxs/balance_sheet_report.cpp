@@ -85,7 +85,7 @@ BalanceSheetReport::refresh_map()
 	EntryTableIterator const end;	
 	for ( ; it != end; ++it)
 	{
-		AccountHandle const account = it->account();
+		AccountHandle const account = (*it)->account();
 		AccountSuperType const s_type =
 			super_type(account->account_type());
 		if (s_type != AccountSuperType::balance_sheet)
@@ -101,12 +101,12 @@ BalanceSheetReport::refresh_map()
 			jt = m_balance_map.find(account_id);
 		}
 		JEWEL_ASSERT (jt != m_balance_map.end());
-		gregorian::date const date = it->date();
+		gregorian::date const date = (*it)->date();
 		if (maybe_max_d && (date > value(maybe_max_d)))
 		{
 			break;
 		}
-		Decimal const amount = it->amount();
+		Decimal const amount = (*it)->amount();
 		jt->second.closing_balance += amount;
 		if (date < min_d)
 		{

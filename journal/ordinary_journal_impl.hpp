@@ -5,13 +5,14 @@
 
 #include "string_conv.hpp"
 #include "date.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/signature.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <string>
@@ -47,8 +48,6 @@ public:
 		>
 		PersistentObject;
 
-	typedef typename PersistentObject::Id Id;
-
 	typedef sqloxx::IdentityMap
 		<	OrdinaryJournalImpl,
 			PhatbooksDatabaseConnection
@@ -75,9 +74,9 @@ public:
 	/**
 	 * @todo Figure out throwing behaviour.
 	 */
-	void push_entry(Entry& entry);
+	void push_entry(EntryHandle const& entry);
 
-	void remove_entry(Entry& entry);
+	void remove_entry(EntryHandle const& entry);
 
 	TransactionType transaction_type();
 
@@ -87,7 +86,7 @@ public:
 	 */
 	wxString comment();
 
-	std::vector<Entry> const& entries();
+	std::vector<EntryHandle> const& entries();
 
 	/**
 	 * Create the tables required for the persistence of
@@ -109,7 +108,7 @@ public:
 	 */
 	OrdinaryJournalImpl
 	(	IdentityMap& p_identity_map,	
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	// copy constructor is private

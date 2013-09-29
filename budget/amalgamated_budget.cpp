@@ -6,7 +6,7 @@
 #include "account_type.hpp"
 #include "budget_item_table_iterator.hpp"
 #include "draft_journal.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -16,6 +16,8 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/log.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <algorithm>
 #include <numeric>
@@ -24,6 +26,7 @@
 #include <vector>
 
 using jewel::Decimal;
+using sqloxx::Id;
 using sqloxx::SQLStatement;
 using std::accumulate;
 using std::ostream;
@@ -33,23 +36,10 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-// For debugging only
-#include <jewel/log.hpp>
-#include <iostream>
-using std::endl;
-// End debugging stuff
-
-
-
 
 namespace phatbooks
 {
 
-
-static_assert
-(	boost::is_same<sqloxx::Id, Account::Id>::value,
-	"sqloxx::Id needs to be the same type as Account::Id."
-);
 
 
 namespace
@@ -157,7 +147,7 @@ AmalgamatedBudget::set_frequency(Frequency const& p_frequency)
 }
 
 Decimal
-AmalgamatedBudget::budget(Account::Id p_account_id) const
+AmalgamatedBudget::budget(sqloxx::Id p_account_id) const
 {
 	load();
 	Map::const_iterator it = m_map->find(p_account_id);
@@ -175,7 +165,7 @@ namespace
 {
 	Decimal map_entry_accumulation_aux
 	(	Decimal const& dec,
-		pair<Account::Id, Decimal> const& rhs
+		pair<Id, Decimal> const& rhs
 	)
 	{
 		return dec + rhs.second;
@@ -313,8 +303,7 @@ AmalgamatedBudget::generate_map() const
 	);
 	while (account_selector.step())
 	{
-		Account::Id const account_id =
-			account_selector.extract<Account::Id>(0);
+		Id const account_id = account_selector.extract<Id>(0);
 		AccountHandle const account(m_database_connection, account_id);
 		(*map_elect)[account_id] =
 			Decimal(0, account->commodity().precision());
@@ -334,7 +323,7 @@ AmalgamatedBudget::generate_map() const
 				"Frequency not supported by AmalgamatedBudget."
 			);
 		}
-		Account::Id const account_id = it->account()->id();
+		Id const account_id = it->account()->id();
 		jewel::Decimal const raw_amount = it->amount();
 		jewel::Decimal const canonical_amount = convert_to_canonical
 		(	raw_frequency,
@@ -345,11 +334,11 @@ AmalgamatedBudget::generate_map() const
 		tmit->second += canonical_amount;
 	}
 	// Now convert to desired frequency
-	for (auto& entry: *map_elect)
+	for (auto& slot: *map_elect)
 	{
-		entry.second = round
-		(	convert_from_canonical(m_frequency, entry.second),
-			AccountHandle(m_database_connection, entry.first)->
+		slot.second = round
+		(	convert_from_canonical(m_frequency, slot.second),
+			AccountHandle(m_database_connection, slot.first)->
 				commodity().precision()
 		);
 	}
@@ -384,14 +373,14 @@ AmalgamatedBudget::regenerate_instrument()
 	if (imbalance != Decimal(0, 0))
 	{
 		AccountHandle const ba = balancing_account();
-		Entry balancing_entry(m_database_connection);
-		balancing_entry.set_account(ba);
-		balancing_entry.set_comment(balancing_entry_comment());
-		balancing_entry.set_whether_reconciled(false);
-		balancing_entry.set_amount
+		EntryHandle const balancing_entry(m_database_connection);
+		balancing_entry->set_account(ba);
+		balancing_entry->set_comment(balancing_entry_comment());
+		balancing_entry->set_whether_reconciled(false);
+		balancing_entry->set_amount
 		(	-round(imbalance, ba->commodity().precision())
 		);
-		balancing_entry.set_transaction_side(TransactionSide::destination);
+		balancing_entry->set_transaction_side(TransactionSide::destination);
 		fresh_journal.push_entry(balancing_entry);
 		JEWEL_ASSERT (fresh_journal.is_balanced());
 	}
@@ -416,7 +405,7 @@ AmalgamatedBudget::load_balancing_account() const
 	m_balancing_account.reset
 	(	new AccountHandle
 		(	m_database_connection,
-			statement.extract<sqloxx::Id>(0)
+			statement.extract<Id>(0)
 		)
 	);
 	statement.step_final();
@@ -436,7 +425,7 @@ AmalgamatedBudget::load_instrument() const
 	m_instrument.reset
 	(	new DraftJournal
 		(	m_database_connection,
-			statement.extract<DraftJournal::Id>(0)
+			statement.extract<Id>(0)
 		)
 	);
 	statement.step_final();
@@ -453,14 +442,14 @@ AmalgamatedBudget::reflect_entries(DraftJournal& p_journal)
 	{
 		if (elem.second != Decimal(0, 0))
 		{
-			Entry entry(m_database_connection);
-			entry.set_account
+			EntryHandle const entry(m_database_connection);
+			entry->set_account
 			(	AccountHandle(m_database_connection, elem.first)
 			);
-			entry.set_comment("");
-			entry.set_amount(-(elem.second));
-			entry.set_whether_reconciled(false);
-			entry.set_transaction_side(TransactionSide::source);
+			entry->set_comment("");
+			entry->set_amount(-(elem.second));
+			entry->set_whether_reconciled(false);
+			entry->set_transaction_side(TransactionSide::source);
 			p_journal.push_entry(entry);
 		}
 	}
@@ -499,12 +488,12 @@ AmalgamatedBudget::instrument_balancing_amount() const
 	JEWEL_ASSERT (m_instrument);
 	Decimal ret(0, m_database_connection.default_commodity().precision());
 	wxString const balancing_entry_marker = balancing_entry_comment();
-	vector<Entry> const& entries = m_instrument->entries();
-	for (Entry const& entry: entries)
+	vector<EntryHandle> const& entries = m_instrument->entries();
+	for (EntryHandle const& entry: entries)
 	{
-		if (entry.comment() == balancing_entry_marker)
+		if (entry->comment() == balancing_entry_marker)
 		{
-			ret -= entry.amount();
+			ret -= entry->amount();
 		}
 	}
 

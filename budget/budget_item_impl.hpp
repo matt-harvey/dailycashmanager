@@ -36,8 +36,6 @@ public:
 	typedef
 		sqloxx::PersistentObject<BudgetItemImpl, PhatbooksDatabaseConnection>
 		PersistentObject;
-	
-	typedef typename PersistentObject::Id Id;
 
 	typedef
 		sqloxx::IdentityMap<BudgetItemImpl, PhatbooksDatabaseConnection>
@@ -50,7 +48,7 @@ public:
 
 	BudgetItemImpl
 	(	IdentityMap& p_identity_map,
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	// copy constructor is private

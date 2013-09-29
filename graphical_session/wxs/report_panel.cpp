@@ -5,7 +5,7 @@
 #include "account_type.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "report.hpp"
@@ -253,7 +253,7 @@ ReportPanel::update_for_amended(AccountHandle const& p_account)
 }
 
 void
-ReportPanel::update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids)
+ReportPanel::update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids)
 {
 	if (m_report) m_report->update_for_deleted(p_doomed_ids);
 	return;

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "journal.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include <jewel/log.hpp>
@@ -27,9 +27,9 @@ namespace phatbooks
 
 namespace
 {
-	Decimal entry_accumulation_aux(Decimal const& dec, Entry const& entry)
+	Decimal entry_accumulation_aux(Decimal const& dec, EntryHandle const& entry)
 	{
-		return dec + entry.amount();
+		return dec + entry->amount();
 	}
 }  // end anonymous namespace
 
@@ -51,14 +51,14 @@ Journal::set_comment(wxString const& p_comment)
 }
 
 void
-Journal::push_entry(Entry& entry)
+Journal::push_entry(EntryHandle const& entry)
 {
 	do_push_entry(entry);
 	return;
 }
 
 void
-Journal::remove_entry(Entry& entry)
+Journal::remove_entry(EntryHandle const& entry)
 {
 	do_remove_entry(entry);
 	return;
@@ -71,7 +71,7 @@ Journal::clear_entries()
 	return;
 }
 
-std::vector<Entry> const&
+std::vector<EntryHandle> const&
 Journal::entries() const
 {
 	return do_get_entries();
@@ -116,11 +116,11 @@ Decimal
 Journal::primary_amount() const
 {
 	Decimal total(0, 0);
-	for (Entry const& entry: entries())
+	for (EntryHandle const& entry: entries())
 	{
-		if (entry.transaction_side() == TransactionSide::destination)
+		if (entry->transaction_side() == TransactionSide::destination)
 		{
-			total += entry.amount();
+			total += entry->amount();
 		}
 	}
 	return is_actual()? total: -total;

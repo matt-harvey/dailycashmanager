@@ -5,7 +5,7 @@
 
 
 #include "account_handle.hpp"
-#include "entry.hpp"
+#include "entry_handle_fwd.hpp"
 #include "entry_table_iterator.hpp"
 #include "reconciliation_list_panel.hpp"
 #include "summary_datum.hpp"
@@ -114,12 +114,13 @@ public:
 	 * (as in Entry::id()) in p_doomed_ids have been deleted from the
 	 * database.
 	 */
-	void update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids);
+	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
 
 	/**
-	 * Populates \e out with the currently selected Entries (if any).
+	 * Populates \e out with handles to the currently selected Entries
+	 * (if any).
 	 */
-	void selected_entries(std::vector<Entry>& out);
+	void selected_entries(std::vector<EntryHandle>& out);
 
 	void scroll_to_bottom();
 
@@ -150,10 +151,10 @@ private:
 
 	virtual bool do_require_progress_log() const = 0;
 	virtual void do_insert_non_date_columns() = 0;
-	virtual bool do_approve_entry(Entry const& p_entry) const = 0;
+	virtual bool do_approve_entry(EntryHandle const& p_entry) const = 0;
 	virtual void do_set_non_date_columns
 	(	long p_row,
-		Entry const& p_entry
+		EntryHandle const& p_entry
 	) = 0;
 	virtual void do_set_column_widths() = 0;
 	virtual int do_get_num_columns() const = 0;
@@ -168,7 +169,7 @@ private:
 
 	virtual std::vector<SummaryDatum> const& do_get_summary_data() const;
 	virtual void do_initialize_summary_data();
-	virtual void do_process_candidate_entry_for_summary(Entry const& p_entry);
+	virtual void do_process_candidate_entry_for_summary(EntryHandle const& p_entry);
 	virtual void do_process_removal_for_summary(long p_row);
 
 	void set_column_widths();
@@ -181,28 +182,28 @@ private:
 	void insert_columns();
 	void insert_date_column();
 	void populate();
-	void process_push_candidate_entry(Entry const& p_entry);
+	void process_push_candidate_entry(EntryHandle const& p_entry);
 
 	// If p_row is set to -1 (as it is by default) and the candidate Entry
 	// is "approved", then the row it will be inserted into will be determined
 	// automatically; otherwise, the row will be given by p_row.
 	void process_insertion_candidate_entry
-	(	Entry const& p_entry,
+	(	EntryHandle const& p_entry,
 		long p_row = -1
 	);
 
 	// This inserts in correct date order (if p_row is -1) or at an explicitly
 	// specified row (if p_row is non-negative). If p_row is less than -1,
 	// then behaviour is undefined.
-	void insert_entry(Entry const& p_entry, long p_row = -1);
+	void insert_entry(EntryHandle const& p_entry, long p_row = -1);
 	
-	void remove_if_present(Entry::Id p_entry_id);
+	void remove_if_present(sqloxx::Id p_entry_id);
 
 	// This doesn't take care of sorting by date
-	void push_back_entry(Entry const& p_entry);
+	void push_back_entry(EntryHandle const& p_entry);
 
 	// To remember which Entries have been added.
-	typedef std::unordered_set<Entry::Id> IdSet;
+	typedef std::unordered_set<sqloxx::Id> IdSet;
 	IdSet m_id_set;
 
 	PhatbooksDatabaseConnection& m_database_connection;

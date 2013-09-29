@@ -3,7 +3,7 @@
 #ifndef GUARD_journal_hpp_6157822681664407
 #define GUARD_journal_hpp_6157822681664407
 
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "transaction_type.hpp"
 #include <jewel/decimal_fwd.hpp>
@@ -49,8 +49,6 @@ class Journal
 {
 public:
 
-	typedef PhatbooksPersistentObjectBase::Id Id;
-	
 	Journal() = default;
 	Journal(Journal const&) = default;
 	Journal(Journal&&) = default;
@@ -63,11 +61,11 @@ public:
 	);
 	void set_comment(wxString const& p_comment);
 
-	void push_entry(Entry& entry);
-	void remove_entry(Entry& entry);
+	void push_entry(EntryHandle const& entry);
+	void remove_entry(EntryHandle const& entry);
 	void clear_entries();
 
-	std::vector<Entry> const& entries() const;
+	std::vector<EntryHandle> const& entries() const;
 	wxString comment() const;
 
 	bool is_actual() const;
@@ -94,13 +92,13 @@ public:
 	jewel::Decimal primary_amount() const;
 
 private:
-	virtual std::vector<Entry> const& do_get_entries() const = 0;
+	virtual std::vector<EntryHandle> const& do_get_entries() const = 0;
 	virtual void do_set_transaction_type
 	(	TransactionType p_transaction_type
 	) = 0;
 	virtual void do_set_comment(wxString const& p_comment) = 0;
-	virtual void do_push_entry(Entry& entry) = 0;
-	virtual void do_remove_entry(Entry& entry) = 0;
+	virtual void do_push_entry(EntryHandle const& entry) = 0;
+	virtual void do_remove_entry(EntryHandle const& entry) = 0;
 	virtual void do_clear_entries() = 0;
 	virtual wxString do_get_comment() const = 0;
 	virtual TransactionType

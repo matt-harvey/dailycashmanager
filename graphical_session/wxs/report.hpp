@@ -5,7 +5,7 @@
 
 #include "account_handle_fwd.hpp"
 #include "account_type.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -69,7 +69,7 @@ public:
 	void update_for_amended(OrdinaryJournal const& p_journal);
 	void update_for_new(AccountHandle const& p_account);
 	void update_for_amended(AccountHandle const& p_account);
-	void update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids);
+	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
 
 	void generate();
 

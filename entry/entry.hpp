@@ -1,103 +1,86 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_entry_hpp_3389501093602507
-#define GUARD_entry_hpp_3389501093602507
+#ifndef GUARD_entry_hpp_7344880177334361
+#define GUARD_entry_hpp_7344880177334361
 
-#include "entry_impl.hpp"
-#include "finformat.hpp"
-#include "phatbooks_persistent_object.hpp"
+/** \file entry_handle.hpp
+ *
+ * \brief Header file pertaining to EntryImpl class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
+
+#include "account_handle.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "transaction_side.hpp"
-#include <sqloxx/general_typedefs.hpp>
-#include <sqloxx/handle.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
-#include <sqloxx/handle.hpp>
+#include <jewel/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
 #include <wx/string.h>
 #include <memory>
 #include <string>
 
+
 namespace phatbooks
 {
-
-class Account;
-class PhatbooksDatabaseConnection;
-
-
-
 
 /**
  * Class representing an accounting entry, i.e. a single line in a journal,
  * i.e. a single change in the balance of an account.
  */
-class Entry:
-	public PhatbooksPersistentObject<EntryImpl>
+class EntryImpl:
+	public sqloxx::PersistentObject<EntryImpl, PhatbooksDatabaseConnection>
 {
 public:
-	
-	typedef
-		PhatbooksPersistentObject<EntryImpl>
-		PhatbooksPersistentObject;
-	
-	typedef
-		PhatbooksPersistentObjectBase::Id Id;
 
+	typedef sqloxx::PersistentObject<EntryImpl, PhatbooksDatabaseConnection>
+		PersistentObject;
+
+	typedef sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>
+		IdentityMap;
+	
 	/*
 	 * Set up tables in the database required for the persistence of
 	 * Entry objects.
 	 */
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
-
-	/**
-	 * Initialize a "raw" Entry, that will not yet correspond to any
-	 * particular object in the database, and will not yet be associated
-	 * with any particular Journal.
-	 */
-	explicit Entry
-	(	PhatbooksDatabaseConnection& p_database_connection
-	);
+	
+	explicit EntryImpl(IdentityMap& p_identity_map);
 
 	/**
 	 * Get an Entry by id from the database. Throws if there is no
 	 * Entry with this id.
 	 */
-	Entry
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
-	);
+	EntryImpl(IdentityMap& p_identity_map, sqloxx::Id p_id);
 
-	Entry(Entry const&) = default;
-	Entry(Entry&&) = default;
-	Entry& operator=(Entry const&) = default;
-	Entry& operator=(Entry&&) = default;
-	~Entry() = default;
+	// Note copy constructor is private
 
-	/**
-	 * @returns the Entry identified by \e id in the database; but does
-	 * not check whether there is actually an Entry with this id. Thus
-	 * it is faster than the checked constructor, but should only be used
-	 * if you already know there is an Entry with the given id.
-	 */
-	static Entry create_unchecked
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
-	);
-	
+	EntryImpl(EntryImpl&&) = delete;
+	EntryImpl& operator=(EntryImpl const&) = delete;
+	EntryImpl& operator=(EntryImpl&&) = delete;
+	~EntryImpl() = default;
+
 	/**
 	 * Sets the journal_id for the EntryImpl. Note this should \e not
 	 * normally be called. The usual way to associate an EntryImpl with a
 	 * Journal (or DraftJournal or OrdinaryJournal) is for the EntryImpl
 	 * to be added to the Journal via its push_entry(...) method.
 	 */
-	void set_journal_id(Id p_journal_id);
+	void set_journal_id(sqloxx::Id p_journal_id);
 
-	/**
-	 * Set the Account with which this Entry is associated.
-	 */
-	void set_account(sqloxx::Handle<Account> const& p_account);
+	void set_account(AccountHandle const& p_account);
+
 	void set_comment(wxString const& p_comment);
-	
+
 	/**
 	 * Set the amount of the EntryImpl. The amount should be: a positive number
 	 * for an actual debit; a negative number for an actual credit; a
@@ -122,16 +105,20 @@ public:
 	 * TransactionSide).
 	 */
 	void set_transaction_side
-	(	TransactionSide p_transaction_side);
+	(	TransactionSide p_transaction_side
+	);
 
 	/**
-	 * @returns Entry comment, i.e. descriptive text generally entered by
-	 * the user.
+	 * @returns comment, i.e. descriptive text generally entered by the user.
+	 *
+	 * Does not throw except possibly \c std::bad_alloc in
+	 * extreme circumstances.
 	 */
-	wxString comment() const;
+	wxString comment();
 
 	/**
-	 * @returns amount of Entry (+ve for debits, -ve for credits).
+	 * @returns EntryImpl amount (+ve for debits, -ve for credits).
+	 *
 	 * Note that, when the Account of the Entry is a P&L account,
 	 * if we consider this P&L account from the point of view of a
 	 * budgeting envelope, the \e amount() will be -ve if the Entry
@@ -139,20 +126,45 @@ public:
 	 * available funds in the envelope,
 	 * and +ve if the Entry \e decreases the available funds in an
 	 * envelope.
+	 *
+	 * @todo Verify throwing behaviour.
 	 */
-	jewel::Decimal amount() const;
+	jewel::Decimal amount();
+
+	AccountHandle account();
+
+	bool is_reconciled();
+
+	TransactionSide transaction_side();
 
 	/**
-	 * @returns handle to the Account that the Entry affects.
+	 * @todo Provide non-member swap and specialized std::swap per
+	 * "Effective C++".
 	 */
-	sqloxx::Handle<Account> account() const;
+	void swap(EntryImpl& rhs);
 
-	bool is_reconciled() const;
-
-	TransactionSide transaction_side() const;
+	// Keep as std::string, for consistency with sqloxx
+	static std::string primary_table_name();
+	static std::string exclusive_table_name();
+	static std::string primary_key_name();
 
 	/**
-	 * @returns the journal to which this Entry is attached.
+	 * Copy attributes of rhs to *this, but do \e not copy:\n
+	 * \e id,\n
+	 * \e database_connection, or \n
+	 * \e journal_id.
+	 */
+	void mimic(EntryImpl& rhs);
+
+	/**
+	 * @returns the posting date of the Entry, assuming it is associated
+	 * with an OrdinaryJournal. If it is associated with another kind of
+	 * Journal, then behaviour is undefined.
+	 */
+	boost::gregorian::date date();
+
+	/**
+	 * @returns the journal to which this EntryImpl is attached.
 	 *
 	 * Note the PersistentJournalType must be known by the client, and must
 	 * be specified as a template parameter. PersistentJournalType can ONLY
@@ -160,37 +172,54 @@ public:
 	 * is undefined.
 	 */
 	template <typename PersistentJournalType>
-	PersistentJournalType journal() const;
-
-	/**
-	 * @returns the posting date of the Entry, assuming it is associated
-	 * with an OrdinaryJournal. If it is associated with another kind of
-	 * Journal, then behaviour is undefined.
-	 */
-	boost::gregorian::date date() const;
-
-	/**
-	 * Copy attributes of rhs to *this, but do \e not copy:\n
-	 * \e id,\n
-	 * \e database_connection, or\n
-	 * \e journal_id.
-	 */
-	void mimic(Entry const& rhs);
+	PersistentJournalType journal();
 
 private:
-	Entry(sqloxx::Handle<EntryImpl> const& p_handle);
+
+	/**
+	 * Copy constructor - implemented, but deliberately private
+	 */
+	EntryImpl(EntryImpl const& rhs);
+
+	void do_load();
+	void do_save_existing();
+	void do_save_new();
+	void do_ghostify();
+	void do_remove();
+	void process_saving_statement(sqloxx::SQLStatement& statement);
+
+	struct EntryData;
+
+	std::unique_ptr<EntryData> m_data;
+
+};
+
+
+struct EntryImpl::EntryData
+{
+	boost::optional<sqloxx::Id> journal_id;
+	boost::optional<AccountHandle> account;
+	boost::optional<wxString> comment;
+	boost::optional<jewel::Decimal> amount;
+	boost::optional<bool> is_reconciled;
+	boost::optional<TransactionSide> transaction_side;
 };
 
 
 template <typename PersistentJournalType>
 PersistentJournalType
-Entry::journal() const
+EntryImpl::journal()
 {
-	return impl().journal<PersistentJournalType>();
+	load();
+	return PersistentJournalType
+	(	database_connection(),
+		jewel::value(m_data->journal_id)
+	);
 }
 
+
 /**
- * @returns an unique_ptr to a heap-allocated SQLStatement from which
+ * @returns a unique_ptr to a heap-allocated SQLStatement from which
  * entry_id may be selected from the first result column. Contains
  * only Entries that belong to actual (i.e. non-budget)
  * Journals that are OrdinaryJournals (i.e. not DraftJournals).
@@ -203,12 +232,10 @@ create_date_ordered_actual_ordinary_entry_selector
 		boost::optional<boost::gregorian::date>(),
 	boost::optional<boost::gregorian::date> const& p_maybe_max_date =
 		boost::optional<boost::gregorian::date>(),
-	boost::optional<sqloxx::Handle<Account> > const& p_maybe_account =
-		boost::optional<sqloxx::Handle<Account> >()
+	boost::optional<AccountHandle> const& p_maybe_account =
+		boost::optional<AccountHandle>()
 );
-
 
 }  // namespace phatbooks
 
-
-#endif  // GUARD_entry_hpp_3389501093602507
+#endif  // GUARD_entry_hpp_7344880177334361

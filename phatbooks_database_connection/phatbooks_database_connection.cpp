@@ -23,14 +23,14 @@
 #include "date.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
-#include "entry_impl.hpp"
+#include "entry.hpp"
 #include "ordinary_journal.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "ordinary_journal_table_iterator.hpp"
 #include "repeater_impl.hpp"
 #include "balance_cache.hpp"
 #include "commodity.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -38,6 +38,7 @@
 #include "repeater.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/database_transaction.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -60,6 +61,7 @@ using jewel::Log;
 using jewel::value;
 using sqloxx::DatabaseConnection;
 using sqloxx::DatabaseTransaction;
+using sqloxx::Id;
 using sqloxx::IdentityMap;
 using sqloxx::SQLStatement;
 using sqloxx::SQLiteException;
@@ -179,7 +181,7 @@ PhatbooksDatabaseConnection::load_default_commodity()
 	statement.step();
 	Commodity commodity
 	(	*this,
-		statement.extract<Commodity::Id>(0)
+		statement.extract<Id>(0)
 	);
 	m_permanent_entity_data->set_default_commodity(commodity);
 	return;
@@ -220,7 +222,7 @@ PhatbooksDatabaseConnection::do_setup()
 		Repeater::setup_tables(*this);
 		BudgetItem::setup_tables(*this);
 		AmalgamatedBudget::setup_tables(*this);
-		Entry::setup_tables(*this);
+		EntryImpl::setup_tables(*this);
 		BalanceCache::setup_tables(*this);
 		mark_tables_as_configured();
 		transaction.commit();
@@ -436,7 +438,7 @@ BalanceCacheAttorney::mark_as_stale
 void
 BalanceCacheAttorney::mark_as_stale
 (	PhatbooksDatabaseConnection const& p_database_connection,
-	Account::Id p_account_id
+	sqloxx::Id p_account_id
 )
 {
 	p_database_connection.m_balance_cache->mark_as_stale
@@ -448,7 +450,7 @@ BalanceCacheAttorney::mark_as_stale
 Decimal
 BalanceCacheAttorney::technical_balance
 (	PhatbooksDatabaseConnection const& p_database_connection,
-	Account::Id p_account_id
+	sqloxx::Id p_account_id
 )
 {
 	return p_database_connection.m_balance_cache->technical_balance
@@ -459,7 +461,7 @@ BalanceCacheAttorney::technical_balance
 Decimal
 BalanceCacheAttorney::technical_opening_balance
 (	PhatbooksDatabaseConnection const& p_database_connection,
-	Account::Id p_account_id
+	sqloxx::Id p_account_id
 )
 {
 	return p_database_connection.m_balance_cache->technical_opening_balance
@@ -487,7 +489,7 @@ BudgetAttorney::regenerate
 Decimal
 BudgetAttorney::budget
 (	PhatbooksDatabaseConnection const& p_database_connection,
-	Account::Id p_account_id
+	sqloxx::Id p_account_id
 )
 {
 	return p_database_connection.m_budget->budget(p_account_id);

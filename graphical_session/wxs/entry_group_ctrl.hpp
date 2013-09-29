@@ -6,7 +6,7 @@
 #include "account_handle.hpp"
 #include "account_type.hpp"
 #include "decimal_text_ctrl.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include <boost/optional.hpp>
@@ -83,11 +83,11 @@ public:
 	jewel::Decimal total_amount() const;
 
 	/**
-	 * @returns a vector of newly created Entries (WITHOUT ids), based
-	 * on the data currently in the EntryGroupCtrl. The Entries will not
+	 * @returns a vector of handles to newly created Entries (WITHOUT ids),
+	 * based on the data currently in the EntryGroupCtrl. The Entries will not
 	 * be associated with any Journal.
 	 */
-	std::vector<Entry> make_entries() const;
+	std::vector<EntryHandle> make_entries() const;
 
 	bool is_all_zero() const;
 
@@ -122,7 +122,7 @@ private:
 	void configure_top_row(bool p_include_split_button);
 	void pop_row();
 	void push_row
-	(	Entry const& p_entry,
+	(	EntryHandle const& p_entry,
 		boost::optional<jewel::Decimal> const& p_previous_row_amount,
 		bool p_multiple_entries
 	);
@@ -162,11 +162,11 @@ private:
 
 	struct EntryRow
 	{
-		EntryRow(Entry const& p_entry);
+		EntryRow(EntryHandle const& p_entry);
 		AccountCtrl* account_ctrl;
 		wxTextCtrl* comment_ctrl;
 		EntryDecimalTextCtrl* amount_ctrl;
-		Entry entry;
+		EntryHandle entry;
 	};
 	friend struct EntryRow;
 

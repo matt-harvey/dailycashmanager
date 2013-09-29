@@ -4,6 +4,7 @@
 #include "commodity_impl.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <jewel/decimal.hpp>
 
@@ -31,7 +32,7 @@ Commodity::Commodity
 
 Commodity::Commodity
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id
+	sqloxx::Id p_id
 ):
 	PhatbooksPersistentObject(p_database_connection, p_id)
 {
@@ -41,7 +42,7 @@ Commodity::Commodity
 Commodity
 Commodity::create_unchecked
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id
+	sqloxx::Id p_id
 )
 {
 	return Commodity

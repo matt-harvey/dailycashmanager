@@ -3,7 +3,7 @@
 #ifndef GUARD_entry_table_iterator_hpp_09390961802280956
 #define GUARD_entry_table_iterator_hpp_09390961802280956
 
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/table_iterator.hpp>
 
@@ -11,7 +11,7 @@ namespace phatbooks
 {
 
 typedef
-	sqloxx::TableIterator<Entry, PhatbooksDatabaseConnection>
+	sqloxx::TableIterator<EntryHandle, PhatbooksDatabaseConnection>
 	EntryTableIterator;
 
 /**

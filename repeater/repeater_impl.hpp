@@ -57,8 +57,6 @@ public:
 		PhatbooksDatabaseConnection
 	>	PersistentObject;
 
-	typedef typename PersistentObject::Id Id;	
-
 	typedef sqloxx::IdentityMap<RepeaterImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
 
@@ -66,7 +64,7 @@ public:
 
 	explicit RepeaterImpl(IdentityMap& p_identity_map);
 
-	RepeaterImpl(IdentityMap& p_identity_map, Id p_id);
+	RepeaterImpl(IdentityMap& p_identity_map, sqloxx::Id p_id);
 
 	// copy constructor is private
 

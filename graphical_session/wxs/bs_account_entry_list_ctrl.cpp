@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "bs_account_entry_list_ctrl.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "filtered_entry_list_ctrl.hpp"
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
@@ -58,19 +58,19 @@ BSAccountEntryListCtrl::BSAccountEntryListCtrl
 void
 BSAccountEntryListCtrl::do_set_non_date_columns
 (	long p_row,
-	Entry const& p_entry
+	EntryHandle const& p_entry
 )
 {
 	SetItem
 	(	p_row,
 		comment_col_num(),
-		p_entry.comment()
+		p_entry->comment()
 	);
 	SetItem
 	(	p_row,
 		amount_col_num(),
 		finformat_wx
-		(	p_entry.amount(),
+		(	p_entry->amount(),
 			locale(),
 			DecimalFormatFlags().clear(string_flags::dash_for_zero)
 		)

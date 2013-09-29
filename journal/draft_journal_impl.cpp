@@ -3,14 +3,13 @@
 #include "string_conv.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
 #include "string_conv.hpp"
 #include "transaction_type.hpp"
-#include <sqloxx/sql_statement.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
@@ -18,6 +17,8 @@
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/sql_statement.hpp>
 #include <wx/string.h>
 #include <string>
 #include <unordered_set>
@@ -25,11 +26,12 @@
 
 namespace gregorian = boost::gregorian;
 
-using sqloxx::SQLStatement;
 using boost::lexical_cast;
 using boost::optional;
 using jewel::clear;
 using jewel::value;
+using sqloxx::Id;
+using sqloxx::SQLStatement;
 using std::unordered_set;
 using std::vector;
 using std::string;
@@ -74,19 +76,19 @@ DraftJournalImpl::set_comment(wxString const& p_comment)
 }
 
 void
-DraftJournalImpl::push_entry(Entry& entry)
+DraftJournalImpl::push_entry(EntryHandle const& entry)
 {
 	load();
 	if (has_id())
 	{
-		entry.set_journal_id(id());
+		entry->set_journal_id(id());
 	}
 	ProtoJournal::push_entry(entry);
 	return;
 }
 
 void
-DraftJournalImpl::remove_entry(Entry& entry)
+DraftJournalImpl::remove_entry(EntryHandle const& entry)
 {
 	load();
 	ProtoJournal::remove_entry(entry);
@@ -107,7 +109,7 @@ DraftJournalImpl::comment()
 	return ProtoJournal::comment();
 }
 
-vector<Entry> const&
+vector<EntryHandle> const&
 DraftJournalImpl::entries()
 {
 	load();
@@ -256,8 +258,7 @@ DraftJournalImpl::do_load()
 	repeater_finder.bind(":p", id());
 	while (repeater_finder.step())
 	{
-		Repeater::Id const rep_id =
-			repeater_finder.extract<Repeater::Id>(0);
+		Id const rep_id = repeater_finder.extract<Id>(0);
 		Repeater repeater(database_connection(), rep_id);
 		temp.m_dj_data->repeaters.push_back(repeater);
 	}
@@ -303,7 +304,7 @@ DraftJournalImpl::do_save_existing()
 	updater.bind(":name", wx_to_std8(value(m_dj_data->name)));
 	updater.step_final();
 
-	unordered_set<Repeater::Id> saved_repeater_ids;
+	unordered_set<Id> saved_repeater_ids;
 	for (Repeater& repeater: m_dj_data->repeaters)
 	{
 		repeater.save();
@@ -316,12 +317,11 @@ DraftJournalImpl::do_save_existing()
 		"select repeater_id from repeaters where journal_id = :journal_id"
 	);
 	repeater_finder.bind(":journal_id", id());
-	unordered_set<Repeater::Id>::const_iterator const saved_repeaters_end =
+	unordered_set<Id>::const_iterator const saved_repeaters_end =
 		saved_repeater_ids.end();
 	while (repeater_finder.step())
 	{
-		Repeater::Id const repeater_id
-			= repeater_finder.extract<Repeater::Id>(0);
+		Id const repeater_id = repeater_finder.extract<Id>(0);
 		if (saved_repeater_ids.find(repeater_id) == saved_repeaters_end)
 		{
 			// This repeater is in the database but no longer in the in-memory

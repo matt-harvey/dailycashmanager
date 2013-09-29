@@ -14,13 +14,13 @@
  */
 
 
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_type.hpp"
-#include <sqloxx/general_typedefs.hpp>
-#include <jewel/decimal.hpp>
 #include <boost/optional.hpp>
+#include <jewel/decimal.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <wx/string.h>
 #include <memory>
 #include <ostream>
@@ -64,13 +64,13 @@ protected:
 	// Other
 	void do_load_journal_core
 	(	PhatbooksDatabaseConnection& dbc,
-		Id id
+		sqloxx::Id id
 	);
 	void do_save_existing_journal_core
 	(	PhatbooksDatabaseConnection& dbc,
-		Id id
+		sqloxx::Id id
 	);
-	Id do_save_new_journal_core
+	sqloxx::Id do_save_new_journal_core
 	(	PhatbooksDatabaseConnection& dbc
 	);
 	void do_ghostify_journal_core();
@@ -103,7 +103,7 @@ protected:
 	void mimic_core
 	(	Journal const& rhs,
 		PhatbooksDatabaseConnection& dbc,
-		boost::optional<Id> id
+		boost::optional<sqloxx::Id> id
 	);
 
 private:
@@ -111,13 +111,13 @@ private:
 	// Implement virtual functions inherited from Journal
 	// todo Figure out whether these need to be virtual here.
 	// I'm pretty sure they \e don't.
-	virtual std::vector<Entry> const& do_get_entries() const;
+	virtual std::vector<EntryHandle> const& do_get_entries() const;
 	virtual void do_set_transaction_type
 	(	TransactionType p_transaction_type
 	);
 	virtual void do_set_comment(wxString const& p_comment);
-	virtual void do_push_entry(Entry& entry);
-	virtual void do_remove_entry(Entry& entry);
+	virtual void do_push_entry(EntryHandle const& entry);
+	virtual void do_remove_entry(EntryHandle const& entry);
 	virtual void do_clear_entries();
 	virtual wxString do_get_comment() const;
 	virtual TransactionType do_get_transaction_type() const;
@@ -126,7 +126,7 @@ private:
 	{
 		boost::optional<TransactionType> transaction_type;
 		boost::optional<wxString> comment;
-		std::vector<Entry> entries;
+		std::vector<EntryHandle> entries;
 	};
 	std::unique_ptr<ProtoJournalData> m_data;
 };

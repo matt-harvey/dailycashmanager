@@ -4,7 +4,7 @@
 #define GUARD_report_panel_hpp_8629163596140763
 
 #include "account_handle_fwd.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include <wx/combobox.h>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -51,7 +51,7 @@ public:
 	void update_for_amended(OrdinaryJournal const& p_journal);
 	void update_for_new(AccountHandle const& p_account);
 	void update_for_amended(AccountHandle const& p_account);
-	void update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids);
+	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
 
 private:
 	void on_run_button_click(wxCommandEvent& event);

@@ -3,6 +3,7 @@
 #include "reconciliation_entry_list_ctrl.hpp"
 #include "blank.xpm"
 #include "entry.hpp"
+#include "entry_handle.hpp"
 #include "filtered_entry_list_ctrl.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
@@ -106,15 +107,15 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 void
 ReconciliationEntryListCtrl::do_set_non_date_columns
 (	long p_row,
-	Entry const& p_entry
+	EntryHandle const& p_entry
 )
 {
-	SetItem(p_row, comment_col_num(), p_entry.comment());
+	SetItem(p_row, comment_col_num(), p_entry->comment());
 	SetItem
 	(	p_row,
 		amount_col_num(),
 		finformat_wx
-		(	p_entry.amount(),
+		(	p_entry->amount(),
 			locale(),
 			DecimalFormatFlags().clear(string_flags::dash_for_zero)
 		)
@@ -122,7 +123,7 @@ ReconciliationEntryListCtrl::do_set_non_date_columns
 	SetItemColumnImage
 	(	p_row,
 		reconciled_col_num(),
-		p_entry.is_reconciled()? tick_image_index: blank_image_index
+		p_entry->is_reconciled()? tick_image_index: blank_image_index
 	);
 	JEWEL_ASSERT (num_columns() == 4);
 	return;
@@ -151,27 +152,27 @@ ReconciliationEntryListCtrl::do_insert_non_date_columns()
 }
 
 bool
-ReconciliationEntryListCtrl::do_approve_entry(Entry const& p_entry) const
+ReconciliationEntryListCtrl::do_approve_entry(EntryHandle const& p_entry) const
 {
-	if (p_entry.account() != account())
+	if (p_entry->account() != account())
 	{
 		return false;
 	}
-	if (p_entry.date() > max_date())
+	if (p_entry->date() > max_date())
 	{
 		return false;
 	}
-	if (p_entry.date() < min_date())
+	if (p_entry->date() < min_date())
 	{
 		// We include unreconciled Entries even if they're prior to the
 		// min_date().
 		JEWEL_ASSERT
-		(	(	p_entry.date() >
+		(	(	p_entry->date() >
 				database_connection().opening_balance_journal_date()
 			) ||
-			p_entry.is_reconciled()
+			p_entry->is_reconciled()
 		);
-		return !p_entry.is_reconciled();
+		return !p_entry->is_reconciled();
 	}
 	return true;
 }
@@ -221,20 +222,20 @@ ReconciliationEntryListCtrl::do_initialize_summary_data()
 
 void
 ReconciliationEntryListCtrl::do_process_candidate_entry_for_summary
-(	Entry const& p_entry
+(	EntryHandle const& p_entry
 )
 {
-	if (p_entry.account() != account())
+	if (p_entry->account() != account())
 	{	
 		return;
 	}
-	if (p_entry.date() > max_date())
+	if (p_entry->date() > max_date())
 	{
 		return;
 	}
-	jewel::Decimal const amount = p_entry.amount();
+	jewel::Decimal const amount = p_entry->amount();
 	m_closing_balance += amount;
-	if (p_entry.is_reconciled()) m_reconciled_closing_balance += amount;
+	if (p_entry->is_reconciled()) m_reconciled_closing_balance += amount;
 	return;
 }
 
@@ -262,34 +263,34 @@ void
 ReconciliationEntryListCtrl::on_item_right_click(wxListEvent& event)
 {
 	int const col = reconciled_col_num();
-	Entry::Id const entry_id = event.GetData();	
+	sqloxx::Id const entry_id = event.GetData();	
 	long const pos = event.GetIndex();
 	JEWEL_ASSERT (FindItem(-1, entry_id) == pos);
 	JEWEL_ASSERT (entry_id >= 0);
 	JEWEL_ASSERT (GetItemData(pos) == static_cast<size_t>(entry_id));
 
-	Entry entry(database_connection(), entry_id);
-	bool const old_reconciliation_status = entry.is_reconciled();
-	entry.set_whether_reconciled(!old_reconciliation_status);
+	EntryHandle entry(database_connection(), entry_id);
+	bool const old_reconciliation_status = entry->is_reconciled();
+	entry->set_whether_reconciled(!old_reconciliation_status);
 	
 	SetItemColumnImage
 	(	pos,
 		col,
-		entry.is_reconciled()? tick_image_index: blank_image_index
+		entry->is_reconciled()? tick_image_index: blank_image_index
 	);
 	
-	if (entry.is_reconciled())
+	if (entry->is_reconciled())
 	{
-		m_reconciled_closing_balance += entry.amount();
+		m_reconciled_closing_balance += entry->amount();
 	}
 	else
 	{
-		m_reconciled_closing_balance -= entry.amount();
+		m_reconciled_closing_balance -= entry->amount();
 	}
-	entry.save();
+	entry->save();
 
-	JEWEL_ASSERT (entry.has_id());
-	JEWEL_ASSERT (entry.id() == entry_id);
+	JEWEL_ASSERT (entry->has_id());
+	JEWEL_ASSERT (entry->id() == entry_id);
 	PersistentObjectEvent::fire
 	(	this,
 		PHATBOOKS_RECONCILIATION_STATUS_EVENT,

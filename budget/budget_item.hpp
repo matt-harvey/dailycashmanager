@@ -6,6 +6,7 @@
 #include "budget_item_impl.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include <jewel/decimal.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/string.h>
 #include <ostream>
@@ -37,9 +38,6 @@ public:
 		PhatbooksPersistentObject<BudgetItemImpl>
 		PhatbooksPersistentObject;
 	
-	typedef
-		PhatbooksPersistentObjectBase::Id Id;
-	
 	/**
 	 * Set up tables in the database required for the persistence of
 	 * BudgetItem objects.
@@ -60,7 +58,7 @@ public:
 	 */
 	BudgetItem
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	BudgetItem(BudgetItem const&) = default;
@@ -77,7 +75,7 @@ public:
 	 */
 	static BudgetItem create_unchecked
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	/**

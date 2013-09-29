@@ -3,10 +3,12 @@
 #ifndef GUARD_draft_journal_impl_hpp_8602723767330276
 #define GUARD_draft_journal_impl_hpp_8602723767330276
 
+#include "entry_handle_fwd.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
 #include "transaction_type.hpp"
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <boost/optional.hpp>
 #include <wx/string.h>
@@ -16,8 +18,6 @@
 
 namespace phatbooks
 {
-
-class Entry;
 
 /**
  * Implementation class for DraftJournal. Note multiple DraftJournal instances
@@ -38,8 +38,6 @@ public:
 		>
 		PersistentObject;
 
-	typedef typename PersistentObject::Id Id;
-
 	typedef
 		sqloxx::IdentityMap<DraftJournalImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
@@ -54,7 +52,7 @@ public:
 
 	DraftJournalImpl
 	(	IdentityMap& p_identity_map,
-		Id p_id
+		sqloxx::Id p_id
 	);
 
 	// copy constructor is private
@@ -91,9 +89,9 @@ public:
 	 * @todo Figure out throwing behaviour. Should it check that
 	 * the account exists? Etc. Etc.
 	 */
-	void push_entry(Entry& entry);
+	void push_entry(EntryHandle const& entry);
 
-	void remove_entry(Entry& entry);
+	void remove_entry(EntryHandle const& entry);
 
 	TransactionType transaction_type();
 
@@ -105,7 +103,7 @@ public:
 	 */
 	wxString comment();
 
-	std::vector<Entry> const& entries();
+	std::vector<EntryHandle> const& entries();
 
 	void set_name(wxString const& p_name);
 	

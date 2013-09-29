@@ -3,7 +3,7 @@
 #include "ordinary_journal_impl.hpp"
 #include "draft_journal.hpp"
 #include "date.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
@@ -33,6 +33,7 @@ using jewel::clear;
 using jewel::Decimal;
 using jewel::Signature;
 using jewel::value;
+using sqloxx::Id;
 using sqloxx::SQLStatement;
 using std::endl;
 using std::is_same;
@@ -84,12 +85,12 @@ OrdinaryJournalImpl::set_comment(wxString const& p_comment)
 }
 
 void
-OrdinaryJournalImpl::push_entry(Entry& entry)
+OrdinaryJournalImpl::push_entry(EntryHandle const& entry)
 {
 	load();
 	if (has_id())
 	{
-		entry.set_journal_id(id());
+		entry->set_journal_id(id());
 	}
 	ProtoJournal::push_entry(entry);
 	return;
@@ -97,7 +98,7 @@ OrdinaryJournalImpl::push_entry(Entry& entry)
 
 
 void
-OrdinaryJournalImpl::remove_entry(Entry& entry)
+OrdinaryJournalImpl::remove_entry(EntryHandle const& entry)
 {
 	load();
 	ProtoJournal::remove_entry(entry);
@@ -118,7 +119,7 @@ OrdinaryJournalImpl::comment()
 	return ProtoJournal::comment();
 }
 
-vector<Entry> const&
+vector<EntryHandle> const&
 OrdinaryJournalImpl::entries()
 {
 	load();

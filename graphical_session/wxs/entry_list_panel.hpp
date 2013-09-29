@@ -4,7 +4,7 @@
 #define GUARD_entry_list_panel_hpp_3556466034407013
 
 #include "account_handle_fwd.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <wx/button.h>
@@ -69,8 +69,8 @@ public:
 	void update_for_amended(OrdinaryJournal const& p_journal);
 	void update_for_new(AccountHandle const& p_account);
 	void update_for_amended(AccountHandle const& p_account);
-	void update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids);
-	void selected_entries(std::vector<Entry>& out);
+	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
+	void selected_entries(std::vector<EntryHandle>& out);
 
 	// WARNING Hack... This should be private, but we need to call it from
 	// TopPanel to ensure EntryListCtrl is properly sized, AFTER the

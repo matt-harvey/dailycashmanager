@@ -3,7 +3,7 @@
 #include "account_handle.hpp"
 #include "account.hpp"
 #include "draft_journal.hpp"
-#include "entry.hpp"
+#include "entry_handle.hpp"
 #include "interval_type.hpp"
 #include "phatbooks_tests_common.hpp"
 #include "repeater.hpp"
@@ -32,12 +32,12 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	dj1.set_comment("draft journal to test repeater_description");
 	dj1.set_name("test");
 
-	Entry entry1(dbc);
-	entry1.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
+	EntryHandle entry1(dbc);
+	entry1->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
 	wxString const test_comment("test");
-	entry1.set_comment(test_comment);
-	entry1.set_amount(Decimal("0.00"));
-	entry1.set_whether_reconciled(false);
+	entry1->set_comment(test_comment);
+	entry1->set_amount(Decimal("0.00"));
+	entry1->set_whether_reconciled(false);
 	dj1.push_entry(entry1);
 
 	wxString target = wxString("");

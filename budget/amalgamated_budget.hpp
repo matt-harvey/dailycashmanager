@@ -55,7 +55,7 @@ public:
 	 * @returns the amalgamated budget for the given Account, at the
 	 * Frequency returned by frequency().
 	 */
-	jewel::Decimal budget(Account::Id p_account_id) const;
+	jewel::Decimal budget(sqloxx::Id p_account_id) const;
 
 	/**
 	 * @returns the sum of all the Account budgets in AmalgamatedBudget,
@@ -103,7 +103,7 @@ public:
 
 private:
 
-	typedef std::unordered_map<Account::Id, jewel::Decimal> Map;
+	typedef std::unordered_map<sqloxx::Id, jewel::Decimal> Map;
 
 	void regenerate_map();
 

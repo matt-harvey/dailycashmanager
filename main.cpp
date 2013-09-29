@@ -79,6 +79,10 @@
 // where the log file is and gets recommends they email a particular
 // email address with the log file attached.
 
+// TODO HIGH PRIORITY - MUST DO FIRST - Continue refactoring to
+// get rid of "outer layer" of wrapper business classes, like I did
+// with Account.
+
 #include "application.hpp"
 #include "string_conv.hpp"
 #include "graphical_session.hpp"

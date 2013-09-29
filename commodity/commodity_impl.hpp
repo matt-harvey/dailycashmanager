@@ -45,19 +45,11 @@ class CommodityImpl:
 
 public:
 
-	// Other classes rely on the below static assertion being true.
-	static_assert
-	(	boost::is_same<Id, sqloxx::Id>::value,
-		"CommodityImpl::Id needs to be the same type as sqloxx::Id."
-	);
-
 	typedef sqloxx::PersistentObject
 		<	CommodityImpl,
 			PhatbooksDatabaseConnection
 		>
 		PersistentObject;
-
-	typedef typename PersistentObject::Id Id;
 
 	typedef sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>
 		IdentityMap;
@@ -67,7 +59,7 @@ public:
 	/**
 	 * Return the id of the CommodityImpl with abbreviation p_abbreviation.
 	 */
-	static Id id_for_abbreviation
+	static sqloxx::Id id_for_abbreviation
 	(	PhatbooksDatabaseConnection& dbc,
 		wxString const& p_abbreviation
 	);
@@ -77,7 +69,7 @@ public:
 
 	CommodityImpl
 	(	IdentityMap& p_identity_map,	
-	 	Id p_id
+	 	sqloxx::Id p_id
 	);
 
 	// copy constructor is private
