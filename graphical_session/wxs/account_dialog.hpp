@@ -3,6 +3,7 @@
 #ifndef GUARD_account_dialog_hpp_4068064533205733
 #define GUARD_account_dialog_hpp_4068064533205733
 
+#include "account_handle_fwd.hpp"
 #include "account_type.hpp"
 #include "budget_panel.hpp"
 #include <wx/button.h>
@@ -17,8 +18,6 @@ namespace phatbooks
 {
 
 // Begin forward declarations
-
-class Account;
 
 namespace gui
 {
@@ -58,7 +57,7 @@ class DecimalTextCtrl;
  * the case that there is at least one balance sheet Account, at least
  * one revenue Account and at least one expense Account (because this
  * will ensure all TransactionTypes are still available). If and when I
- * enable this, I will need to implement update_for_deleted(Account::Id)
+ * enable this, I will need to implement update_for_deleted(sqloxx::Id)
  * for all relevant widget classes, including AccountCtrl.
  */
 class AccountDialog: public wxDialog
@@ -80,7 +79,7 @@ public:
 	 */
 	AccountDialog
 	(	wxWindow* p_parent,
-		Account& p_account,
+		AccountHandle const& p_account,
 		AccountSuperType p_account_super_type
 	);
 
@@ -122,7 +121,7 @@ private:
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;
 
-	Account& m_account;
+	AccountHandle m_account;
 
 	DECLARE_EVENT_TABLE()
 

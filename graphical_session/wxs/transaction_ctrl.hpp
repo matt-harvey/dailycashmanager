@@ -3,7 +3,7 @@
 #ifndef GUARD_transaction_ctrl_hpp_6244141914064131
 #define GUARD_transaction_ctrl_hpp_6244141914064131
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include "transaction_type_ctrl.hpp"
@@ -122,13 +122,13 @@ public:
 	/**
 	 * Update to reflect newly created Account.
 	 */
-	void update_for_new(Account const& p_saved_object);
+	void update_for_new(AccountHandle const& p_saved_object);
 
 	/**
 	 * Update to reflect Account having been amended (and the changes having
 	 * been saved).
 	 */
-	void update_for_amended(Account const& p_saved_object);
+	void update_for_amended(AccountHandle const& p_saved_object);
 
 	/**
 	 * Update to reflect possible change in reconciliation status

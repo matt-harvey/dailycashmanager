@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "report_panel.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
@@ -239,14 +239,14 @@ ReportPanel::update_for_amended(OrdinaryJournal const& p_journal)
 }
 
 void
-ReportPanel::update_for_new(Account const& p_account)
+ReportPanel::update_for_new(AccountHandle const& p_account)
 {
 	if (m_report) m_report->update_for_new(p_account);
 	return;
 }
 
 void
-ReportPanel::update_for_amended(Account const& p_account)
+ReportPanel::update_for_amended(AccountHandle const& p_account)
 {
 	if (m_report) m_report->update_for_amended(p_account);
 	return;

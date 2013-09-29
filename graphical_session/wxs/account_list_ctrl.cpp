@@ -2,7 +2,7 @@
 
 #include "account_list_ctrl.hpp"
 #include "app.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_dialog.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
@@ -61,7 +61,7 @@ AccountListCtrl::AccountListCtrl
 }
 
 void
-AccountListCtrl::selected_accounts(set<Account::Id>& out) const
+AccountListCtrl::selected_accounts(set<sqloxx::Id>& out) const
 {
 	size_t i = 0;
 	size_t const lim = GetItemCount();
@@ -69,12 +69,12 @@ AccountListCtrl::selected_accounts(set<Account::Id>& out) const
 	{
 		if (GetItemState(i, wxLIST_STATE_SELECTED))
 		{
-			Account const account
+			AccountHandle const account
 			(	m_database_connection,
 				GetItemData(i)
 			);
-			JEWEL_ASSERT (account.has_id());
-			out.insert(account.id());
+			JEWEL_ASSERT (account->has_id());
+			out.insert(account->id());
 		}
 	}
 	return;
@@ -83,7 +83,7 @@ AccountListCtrl::selected_accounts(set<Account::Id>& out) const
 void
 AccountListCtrl::on_item_activated(wxListEvent& event)
 {
-	Account account(m_database_connection, GetItemData(event.GetIndex()));
+	AccountHandle account(m_database_connection, GetItemData(event.GetIndex()));
 
 	// Fire an Account editing request. This will be handled higher up
 	// the window hierarchy.
@@ -99,7 +99,7 @@ void
 AccountListCtrl::update()
 {
 	// Remember which rows are selected currently
-	set<Account::Id> selected;
+	set<sqloxx::Id> selected;
 	selected_accounts(selected);
 
 	// Now (re)draw
@@ -130,22 +130,22 @@ AccountListCtrl::update()
 	for ( ; it != end; ++it)
 	{
 		if
-		(	(super_type(it->account_type()) == m_account_super_type) &&
-			(m_show_hidden || (it->visibility() == Visibility::visible))
+		(	(super_type((*it)->account_type()) == m_account_super_type) &&
+			(m_show_hidden || ((*it)->visibility() == Visibility::visible))
 		)	
 		{
 			// Insert item, with string for Column 0
-			InsertItem(i, it->name());
+			InsertItem(i, (*it)->name());
 		
 			// TODO Do a static assert to ensure second param will fit the id.
-			JEWEL_ASSERT (it->has_id());
-			SetItemData(i, it->id());
+			JEWEL_ASSERT ((*it)->has_id());
+			SetItemData(i, (*it)->id());
 
 			// Insert the balance string
 			SetItem
 			(	i,
 				s_balance_col,
-				finformat_wx(it->friendly_balance(), locale())
+				finformat_wx((*it)->friendly_balance(), locale())
 			);
 
 			if (showing_daily_budget())
@@ -154,7 +154,7 @@ AccountListCtrl::update()
 				SetItem
 				(	i,
 					s_budget_col,
-					finformat_wx(it->budget(), locale())
+					finformat_wx((*it)->budget(), locale())
 				);
 			}
 
@@ -165,12 +165,12 @@ AccountListCtrl::update()
 	// Reinstate the selections we remembered
 	for (size_t j = 0, lim = GetItemCount(); j != lim; ++j)
 	{
-		Account const account
+		AccountHandle const account
 		(	m_database_connection,
 			GetItemData(j)
 		);
-		JEWEL_ASSERT (account.has_id());
-		if (selected.find(account.id()) != selected.end())
+		JEWEL_ASSERT (account->has_id());
+		if (selected.find(account->id()) != selected.end())
 		{
 			SetItemState
 			(	j,
@@ -202,14 +202,14 @@ AccountListCtrl::showing_daily_budget() const
 	return m_account_super_type == AccountSuperType::pl;
 }
 
-optional<Account>
+optional<AccountHandle>
 AccountListCtrl::default_account() const
 {
-	optional<Account> ret;
+	optional<AccountHandle> ret;
 	if (GetItemCount() != 0)
 	{
 		JEWEL_ASSERT (GetItemCount() > 0);
-		ret = Account
+		ret = AccountHandle
 		(	m_database_connection,
 			GetItemData(GetTopItem())
 		);
@@ -218,14 +218,14 @@ AccountListCtrl::default_account() const
 }
 
 void
-AccountListCtrl::select_only(Account const& p_account)
+AccountListCtrl::select_only(AccountHandle const& p_account)
 {
-	JEWEL_ASSERT (p_account.has_id());  // precondition	
+	JEWEL_ASSERT (p_account->has_id());  // precondition	
 
 	size_t const sz = GetItemCount();	
 	for (size_t i = 0; i != sz; ++i)
 	{
-		Account const account(m_database_connection, GetItemData(i));
+		AccountHandle const account(m_database_connection, GetItemData(i));
 		long const filter = (wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 		long const flags = ((account == p_account)? filter: 0);
 		SetItemState(i, flags, filter);

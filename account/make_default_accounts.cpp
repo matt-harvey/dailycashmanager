@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "make_default_accounts.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -18,10 +18,10 @@ using std::vector;
 namespace phatbooks
 {
 
-vector<Account>
+vector<AccountHandle>
 make_default_accounts(PhatbooksDatabaseConnection& p_database_connection)
 {
-	vector<Account> ret;
+	vector<AccountHandle> ret;
 	make_default_accounts(p_database_connection, ret);
 	return ret;
 }
@@ -29,7 +29,7 @@ make_default_accounts(PhatbooksDatabaseConnection& p_database_connection)
 void
 make_default_accounts
 (	PhatbooksDatabaseConnection& p_database_connection,
-	vector<Account>& vec
+	vector<AccountHandle>& vec
 )
 {
 	for (AccountType atype: account_types())
@@ -42,13 +42,13 @@ make_default_accounts
 void
 make_default_accounts
 (	PhatbooksDatabaseConnection& p_database_connection,
-	vector<Account>& vec,
+	vector<AccountHandle>& vec,
 	AccountType p_account_type
 )
 {
 	vector<wxString> names;
 
-	// First we fill a vector with the Account names.
+	// First we fill a vector with the AccountHandle names.
 	switch (p_account_type)
 	{
 	case AccountType::asset:
@@ -85,14 +85,14 @@ make_default_accounts
 	default:
 		JEWEL_HARD_ASSERT (false);
 	}
-	// Now we use this information to populate vec with actual Accounts
+	// Now we use this information to populate vec with actual AccountHandles
 	// (but note we don't save them - saving them will be at the discretion
 	// of the user, and will be done in client code closer to the UI).
 	for (wxString const& name: names)
 	{
-		Account account(p_database_connection);
-		account.set_name(name);
-		account.set_account_type(p_account_type);
+		AccountHandle account(p_database_connection);
+		account->set_name(name);
+		account->set_account_type(p_account_type);
 
 		// Note Commodity is left uninitialized. This is a bit odd.
 		// Previously we set the Commodity for all these Accounts to
@@ -103,8 +103,8 @@ make_default_accounts
 		// PhatbooksDatabaseConnection. It is easier for certain client code
 		// if it is able to create the Accounts first.
 
-		account.set_description(wxString(""));
-		account.set_visibility(Visibility::visible);
+		account->set_description(wxString(""));
+		account->set_visibility(Visibility::visible);
 		vec.push_back(account);
 	}
 	return;

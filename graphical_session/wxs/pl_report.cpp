@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "pl_report.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "date.hpp"
 #include "entry_table_iterator.hpp"
@@ -124,8 +124,8 @@ PLReport::refresh_map()
 		(	database_connection(),
 			statement->extract<Entry::Id>(0)
 		);
-		Account const account = entry.account();
-		AccountType const atype = account.account_type();
+		AccountHandle const account = entry.account();
+		AccountType const atype = account->account_type();
 		if
 		(	(atype != AccountType::revenue) &&
 			(atype != AccountType::expense)
@@ -133,13 +133,13 @@ PLReport::refresh_map()
 		{
 			continue;
 		}
-		Account::Id const account_id = account.id();
+		sqloxx::Id const account_id = account->id();
 		Map::iterator jt = m_map.find(account_id);
 		if (jt == m_map.end())
 		{
 			JEWEL_ASSERT
 			(	database_connection().default_commodity() ==
-				account.commodity()
+				account->commodity()
 			);
 			m_map[account_id] = zero;
 			jt = m_map.find(account_id);
@@ -177,9 +177,9 @@ PLReport::display_body()
 	{
 		for (auto const& elem: m_map)
 		{
-			Account const account(database_connection(), elem.first);
-			wxString const name = account.name();
-			switch (account.account_type())
+			AccountHandle const account(database_connection(), elem.first);
+			wxString const name = account->name();
+			switch (account->account_type())
 			{
 			case AccountType::revenue:
 				revenue_names.push_back(name);
@@ -232,8 +232,8 @@ PLReport::display_body()
 		JEWEL_ASSERT (names);
 		for (wxString const& name: *names)
 		{
-			Account const account(database_connection(), name);
-			Map::const_iterator const jt = m_map.find(account.id());
+			AccountHandle const account(database_connection(), Account::id_for_name(database_connection(), name));
+			Map::const_iterator const jt = m_map.find(account->id());
 			JEWEL_ASSERT (jt != m_map.end());
 			Decimal const& b =
 			(	(account_type == AccountType::expense)?

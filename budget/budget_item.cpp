@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "budget_item.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "budget_item_impl.hpp"
 #include "string_conv.hpp"
 #include "finformat.hpp"
@@ -74,7 +74,7 @@ BudgetItem::set_description(wxString const& p_description)
 }
 
 void
-BudgetItem::set_account(Account const& p_account)
+BudgetItem::set_account(AccountHandle const& p_account)
 {
 	impl().set_account(p_account);
 	return;
@@ -100,7 +100,7 @@ BudgetItem::description() const
 	return impl().description();
 }
 
-Account
+AccountHandle
 BudgetItem::account() const
 {
 	return impl().account();
@@ -143,7 +143,7 @@ normalized_total
 	// than the default Commodity, then this will no longer work.
 	try
 	{
-		commodity = b->account().commodity();
+		commodity = b->account()->commodity();
 	}
 	catch (jewel::UninitializedOptionalException&)
 	{

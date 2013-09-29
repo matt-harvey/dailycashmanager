@@ -3,7 +3,7 @@
 #ifndef GUARD_setup_wizard_hpp_8623281646810137
 #define GUARD_setup_wizard_hpp_8623281646810137
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
 #include <boost/filesystem.hpp>

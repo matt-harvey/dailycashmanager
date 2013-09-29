@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
+#include "account_handle.hpp"
 #include "account.hpp"
-#include "account_impl.hpp"
 #include "date.hpp"
 #include "entry.hpp"
 #include "balance_cache.hpp"
@@ -42,8 +42,8 @@ namespace phatbooks
 {
 
 static_assert
-(	boost::is_same<Account::Id, AccountImpl::Id>::value,
-	"Account::Id needs to be the same type as AccountImpl::Id."
+(	boost::is_same<sqloxx::Id, Account::Id>::value,
+	"sqloxx::Id needs to be the same type as Account::Id."
 );
 
 void
@@ -65,7 +65,7 @@ BalanceCache::BalanceCache
 }
 
 Decimal
-BalanceCache::technical_balance(AccountImpl::Id p_account_id)
+BalanceCache::technical_balance(Account::Id p_account_id)
 {
 	if (m_map_is_stale)
 	{
@@ -75,10 +75,10 @@ BalanceCache::technical_balance(AccountImpl::Id p_account_id)
 	{
 		Map::iterator const it = m_map->find(p_account_id);
 
-		// If a new AccountImpl has been added, then the AccountImpl
+		// If a new Account has been added, then the Account
 		// class should have marked the map as a whole as stale,
 		// and the earlier call to refresh() should have
-		// inserted a cache entry for that AccountImpl. Thus at this
+		// inserted a cache entry for that Account. Thus at this
 		// point there must be a cache entry for p_account_id.
 		JEWEL_ASSERT (it != m_map->end());
 		optional<Decimal> const cache_entry(it->second);	
@@ -96,7 +96,7 @@ BalanceCache::technical_balance(AccountImpl::Id p_account_id)
 }
 
 Decimal
-BalanceCache::technical_opening_balance(AccountImpl::Id p_account_id)
+BalanceCache::technical_opening_balance(Account::Id p_account_id)
 {
 	// We don't actually do any caching of opening balances, since
 	// they are quick to calculate. (We would expect only a small number
@@ -112,8 +112,8 @@ BalanceCache::technical_opening_balance(AccountImpl::Id p_account_id)
 		julian_int(m_database_connection.opening_balance_journal_date())
 	);
 	statement.bind(":account_id", p_account_id);
-	Account const account(m_database_connection, p_account_id);
-	Decimal::places_type const places = account.commodity().precision();
+	AccountHandle const account(m_database_connection, p_account_id);
+	Decimal::places_type const places = account->commodity().precision();
 	Decimal ret(0, places);
 	if (statement.step())
 	{
@@ -145,7 +145,7 @@ BalanceCache::mark_as_stale()
 }
 
 void
-BalanceCache::mark_as_stale(AccountImpl::Id p_account_id)
+BalanceCache::mark_as_stale(Account::Id p_account_id)
 {
 	Map::iterator const it = m_map->find(p_account_id);
 	if (it == m_map->end())
@@ -171,7 +171,7 @@ BalanceCache::refresh()
 	// experimentation. There is scope for further optimization if
 	// required, by tweaking this fulcum figure.
 	
-	static vector<AccountImpl::Id>::size_type const fulcrum = 5;
+	static vector<Account::Id>::size_type const fulcrum = 5;
 	
 	if (m_map_is_stale)
 	{
@@ -180,7 +180,7 @@ BalanceCache::refresh()
 	}
 	else
 	{
-		vector<AccountImpl::Id> stale_account_ids;
+		vector<Account::Id> stale_account_ids;
 		SQLStatement statement
 		(	m_database_connection,
 			"select account_id from accounts"
@@ -188,12 +188,12 @@ BalanceCache::refresh()
 		Map::const_iterator const map_end = m_map->end();
 		while (statement.step() && (stale_account_ids.size() != fulcrum))
 		{
-			AccountImpl::Id const account_id =
-				statement.extract<AccountImpl::Id>(0);
+			Account::Id const account_id =
+				statement.extract<Account::Id>(0);
 			Map::const_iterator location_in_cache = m_map->find(account_id);
 			if ((location_in_cache == map_end) || !location_in_cache->second)
 			{
-				// Either this AccountImpl::Id is not in the cache at all,
+				// Either this Account::Id is not in the cache at all,
 				// or it's in there but marked as stale.
 				stale_account_ids.push_back(account_id);
 			}
@@ -216,7 +216,7 @@ BalanceCache::refresh()
 void
 BalanceCache::refresh_all()
 {
-	typedef unordered_map<AccountImpl::Id, Decimal::int_type> WorkingMap;
+	typedef unordered_map<Account::Id, Decimal::int_type> WorkingMap;
 	WorkingMap working_map;
 	JEWEL_ASSERT (working_map.empty());
 	SQLStatement accounts_scanner
@@ -225,7 +225,7 @@ BalanceCache::refresh_all()
 	);
 	while (accounts_scanner.step())
 	{
-		working_map[accounts_scanner.extract<AccountImpl::Id>(0)] = 0;
+		working_map[accounts_scanner.extract<Account::Id>(0)] = 0;
 	}
 	
 	// It has been established that this is faster than using SQL
@@ -241,11 +241,11 @@ BalanceCache::refresh_all()
 			"select account_id, amount from entries join "
 			"ordinary_journal_detail using(journal_id)"
 		);
-		AccountImpl::Id account_id;
+		Account::Id account_id;
 		Decimal::int_type amount_intval;
 		while (statement.step())
 		{
-			account_id = statement.extract<AccountImpl::Id>(0);
+			account_id = statement.extract<Account::Id>(0);
 			amount_intval = statement.extract<Decimal::int_type>(1);
 			if (addition_is_unsafe(working_map[account_id], amount_intval))
 			{
@@ -263,10 +263,10 @@ BalanceCache::refresh_all()
 
 	for (auto const& working_map_elem: working_map)
 	{
-		AccountImpl::Id const account_id = working_map_elem.first;
-		Account const account(m_database_connection, account_id);
+		Account::Id const account_id = working_map_elem.first;
+		AccountHandle const account(m_database_connection, account_id);
 		map_elect[account_id] =
-			Decimal(working_map_elem.second, account.commodity().precision());
+			Decimal(working_map_elem.second, account->commodity().precision());
 	}
 
 	// Look for m_map elements for which the second is in an uninitialized
@@ -294,12 +294,12 @@ BalanceCache::refresh_all()
 
 
 void
-BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
+BalanceCache::refresh_targetted(vector<Account::Id> const& p_targets)
 {
 	// TODO Is this exception-safe?
 	for (auto const account_id: p_targets)
 	{
-		Account const account(m_database_connection, account_id);
+		AccountHandle const account(m_database_connection, account_id);
 		SQLStatement statement
 		(	m_database_connection,
 			"select sum(amount) from entries join ordinary_journal_detail "
@@ -314,7 +314,7 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 			{
 				(*m_map)[account_id] = Decimal
 				(	statement.extract<Decimal::int_type>(0),
-					account.commodity().precision()
+					account->commodity().precision()
 				);
 			}
 			catch (ValueTypeException&)
@@ -323,7 +323,7 @@ BalanceCache::refresh_targetted(vector<AccountImpl::Id> const& p_targets)
 				if (Account::exists(m_database_connection, account_id))
 				{
 					(*m_map)[account_id] =
-						Decimal(0, account.commodity().precision());
+						Decimal(0, account->commodity().precision());
 				}
 				else
 				{

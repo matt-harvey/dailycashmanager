@@ -3,7 +3,7 @@
 #ifndef GUARD_entry_group_ctrl_hpp_08374422745953511
 #define GUARD_entry_group_ctrl_hpp_08374422745953511
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "entry.hpp"
@@ -91,9 +91,9 @@ public:
 
 	bool is_all_zero() const;
 
-	void update_for_new(Account const& p_saved_object);
+	void update_for_new(AccountHandle const& p_saved_object);
 
-	void update_for_amended(Account const& p_saved_object);
+	void update_for_amended(AccountHandle const& p_saved_object);
 
 	/**
 	 * Go through each row. If that row corresponds to an entry which

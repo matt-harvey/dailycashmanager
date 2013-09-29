@@ -3,7 +3,7 @@
 #ifndef GUARD_top_panel_hpp_7915960996372607
 #define GUARD_top_panel_hpp_7915960996372607
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
@@ -71,16 +71,16 @@ public:
 	~TopPanel() = default;
 
 	/**
-	 * Populates \e out with all the balance sheet Accounts currently
+	 * Populates \e out with handles to all the balance sheet Accounts currently
 	 * selected by the user in the main window.
 	 */
-	void selected_balance_sheet_accounts(std::vector<Account>& out) const;
+	void selected_balance_sheet_accounts(std::vector<AccountHandle>& out) const;
 
 	/**
-	 * Populates \e out with all the P&L Accounts currently selected
+	 * Populates \e out with handles to all the P&L Accounts currently selected
 	 * by the user in the main window.
 	 */
-	void selected_pl_accounts(std::vector<Account>& out) const;
+	void selected_pl_accounts(std::vector<AccountHandle>& out) const;
 
 	/**
 	 * Populates \e out with all the OrdinaryJournals currently
@@ -101,7 +101,7 @@ public:
 	 */
 	void update_for_new(DraftJournal const& p_saved_object);
 	void update_for_new(OrdinaryJournal const& p_saved_object);
-	void update_for_new(Account const& p_saved_object);
+	void update_for_new(AccountHandle const& p_saved_object);
 
 	/**
 	 * Update the display to reflect current state of database, after
@@ -116,7 +116,7 @@ public:
 	 */
 	void update_for_amended(DraftJournal const& p_saved_object);
 	void update_for_amended(OrdinaryJournal const& p_saved_object);
-	void update_for_amended(Account const& p_saved_object);
+	void update_for_amended(AccountHandle const& p_saved_object);
 
 	/**
 	 * Update the display to reflect that the object with
@@ -139,7 +139,7 @@ public:
 	 * 
 	 * Precondition: p_account should be of AccountSuperType::pl.
 	 */
-	void update_for_amended_budget(Account const& p_account);
+	void update_for_amended_budget(AccountHandle const& p_account);
 
 	/**
 	 * Update the display to reflect the current state of \e p_entry

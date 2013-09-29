@@ -3,7 +3,7 @@
 #ifndef GUARD_filtered_entry_list_ctrl_hpp_790944654397175
 #define GUARD_filtered_entry_list_ctrl_hpp_790944654397175
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "entry.hpp"
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -23,7 +23,7 @@ namespace gui
  *
  * Shows only \e actual (non-budget) and ordinary (non-draft) Entries.
  *
- * @todo Need to override do_update_for_amended(Account const& p_account).
+ * @todo HIGH PRIORITY Need to override do_update_for_amended(AccountHandle const& p_account).
  */
 class FilteredEntryListCtrl: public EntryListCtrl
 {
@@ -31,7 +31,7 @@ public:
 	FilteredEntryListCtrl
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		Account const& p_account,
+		AccountHandle const& p_account,
 		boost::optional<boost::gregorian::date> const& p_maybe_min_date,
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);
@@ -43,7 +43,7 @@ public:
 	virtual ~FilteredEntryListCtrl() = default;
 
 protected:
-	Account const& account() const;
+	AccountHandle const& account() const;
 	boost::gregorian::date min_date() const;
 
 private:
@@ -55,7 +55,7 @@ private:
 	virtual int do_get_comment_col_num() const = 0;
 	virtual std::unique_ptr<sqloxx::SQLStatement> do_create_entry_selector();
 	
-	Account const m_account;
+	AccountHandle const m_account;
 	boost::gregorian::date m_min_date;
 	boost::optional<boost::gregorian::date> const m_maybe_max_date;
 

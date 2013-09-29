@@ -1,6 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "frequency.hpp"
@@ -38,7 +38,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	dj.set_name("Test");
 	
 	Entry entry1(dbc);
-	entry1.set_account(Account(dbc, "cash"));
+	entry1.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
 	entry1.set_comment("Test entry");
 	entry1.set_amount(Decimal("-0.95"));
 	entry1.set_whether_reconciled(false);
@@ -46,7 +46,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	dj.push_entry(entry1);
 	
 	Entry entry2(dbc);
-	entry2.set_account(Account(dbc, "food"));
+	entry2.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
 	entry2.set_comment("Test entry");
 	entry2.set_amount(Decimal("0.95"));
 	entry2.set_whether_reconciled(false);
@@ -157,7 +157,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	dj1.set_name(wxString("Test"));  // wxString is optional
 	
 	Entry entry1a(dbc);
-	entry1a.set_account(Account(dbc, "cash"));
+	entry1a.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
 	entry1a.set_comment(wxString("Test entry")); // wxString is optional
 	entry1a.set_amount(Decimal("-1090.95"));
 	entry1a.set_whether_reconciled(false);
@@ -165,7 +165,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	dj1.push_entry(entry1a);
 	
 	Entry entry1b(dbc);
-	entry1b.set_account(Account(dbc, "food"));
+	entry1b.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
 	entry1b.set_comment("Test entry");
 	entry1b.set_amount(Decimal("1090.95"));
 	entry1b.set_whether_reconciled(false);

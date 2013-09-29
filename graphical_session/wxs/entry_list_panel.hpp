@@ -3,6 +3,7 @@
 #ifndef GUARD_entry_list_panel_hpp_3556466034407013
 #define GUARD_entry_list_panel_hpp_3556466034407013
 
+#include "account_handle_fwd.hpp"
 #include "entry.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -19,7 +20,6 @@ namespace phatbooks
 
 // Begin forward declarations
 
-class Account;
 class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
@@ -67,8 +67,8 @@ public:
 
 	void update_for_new(OrdinaryJournal const& p_journal);
 	void update_for_amended(OrdinaryJournal const& p_journal);
-	void update_for_new(Account const& p_account);
-	void update_for_amended(Account const& p_account);
+	void update_for_new(AccountHandle const& p_account);
+	void update_for_amended(AccountHandle const& p_account);
 	void update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids);
 	void selected_entries(std::vector<Entry>& out);
 
@@ -83,7 +83,7 @@ private:
 	void preconfigure_summary();
 
 	void on_refresh_button_click(wxCommandEvent& event);
-	Account selected_account() const;
+	AccountHandle selected_account() const;
 	boost::optional<boost::gregorian::date> selected_min_date() const;
 	boost::optional<boost::gregorian::date> selected_max_date() const;
 	

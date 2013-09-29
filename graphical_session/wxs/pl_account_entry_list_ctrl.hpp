@@ -32,7 +32,7 @@ public:
 	PLAccountEntryListCtrl
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		Account const& p_account,
+		AccountHandle const& p_account,
 		boost::optional<boost::gregorian::date> const& p_maybe_min_date,
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);

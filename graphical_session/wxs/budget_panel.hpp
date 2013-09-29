@@ -3,7 +3,7 @@
 #ifndef GUARD_budget_panel_hpp_749080240143966
 #define GUARD_budget_panel_hpp_749080240143966
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "budget_item.hpp"
 #include "frequency_ctrl.hpp"
 #include <boost/optional.hpp>
@@ -58,7 +58,7 @@ public:
 	 *
 	 * \e Precondition: \e p_account must have an AccountType.
 	 */
-	BudgetPanel(AccountDialog* p_parent, Account const& p_account);
+	BudgetPanel(AccountDialog* p_parent, AccountHandle const& p_account);
 
 	BudgetPanel(BudgetPanel const&) = delete;
 	BudgetPanel(BudgetPanel&&) = delete;
@@ -222,13 +222,13 @@ private:
 		BalancingDialog
 		(	wxWindow* p_parent,
 			jewel::Decimal const& p_imbalance,
-			boost::optional<Account> const& p_maybe_target,
+			boost::optional<AccountHandle> const& p_maybe_target,
 			PhatbooksDatabaseConnection& p_database_connection
 		);
 	private:
 		void on_no_button_click(wxCommandEvent& event);
 		void on_yes_button_click(wxCommandEvent& event);
-		void update_budgets_from_dialog(Account& p_account);
+		void update_budgets_from_dialog(AccountHandle const& p_account);
 		bool budget_is_balanced() const;
 		wxGridBagSizer* m_top_sizer;
 		AccountCtrl* m_account_ctrl;
@@ -253,7 +253,7 @@ private:
 	
 	std::vector<BudgetItemComponent> m_budget_item_components;
 
-	Account const& m_account;
+	AccountHandle const& m_account;
 	std::vector<BudgetItem> m_budget_items;
 
 	DECLARE_EVENT_TABLE()

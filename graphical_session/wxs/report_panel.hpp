@@ -3,6 +3,7 @@
 #ifndef GUARD_report_panel_hpp_8629163596140763
 #define GUARD_report_panel_hpp_8629163596140763
 
+#include "account_handle_fwd.hpp"
 #include "entry.hpp"
 #include <wx/combobox.h>
 #include <wx/button.h>
@@ -17,7 +18,6 @@ namespace phatbooks
 
 // Begin forward declarations
 
-class Account;
 class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
@@ -32,13 +32,6 @@ class Report;
 /**
  * Panel for holding date-filtered balance sheet and profit-and-loss
  * reports.
- *
- * @todo We can make things more straightforward and speed start-up times
- * by having the date boxes start out blank. We can then have
- * BalanceSheetReport initially just use the balance() of each Account
- * simpliciter as "Closing balance" and "Movement", and use a
- * \e nil amount for the "Opening balance" column. This can be written
- * into the code for initializing the m_balance_map.
  */
 class ReportPanel: public wxPanel
 {
@@ -56,8 +49,8 @@ public:
 
 	void update_for_new(OrdinaryJournal const& p_journal);
 	void update_for_amended(OrdinaryJournal const& p_journal);
-	void update_for_new(Account const& p_account);
-	void update_for_amended(Account const& p_account);
+	void update_for_new(AccountHandle const& p_account);
+	void update_for_amended(AccountHandle const& p_account);
 	void update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids);
 
 private:

@@ -38,7 +38,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	journal1.set_comment("igloo");
 
 	Entry entry1a(dbc);
-	entry1a.set_account(Account(dbc, "cash"));
+	entry1a.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
 	entry1a.set_comment("igloo entry a");
 	entry1a.set_whether_reconciled(true);
 	entry1a.set_amount(Decimal("0.99"));
@@ -46,7 +46,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	journal1.push_entry(entry1a);
 
 	Entry entry1b(dbc);
-	entry1b.set_account(Account(dbc, "food"));
+	entry1b.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
 	entry1b.set_comment("igloo entry b");
 	entry1b.set_whether_reconciled(false);
 	entry1b.set_amount(Decimal("-0.99"));
@@ -69,7 +69,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	for (Entry const& entry: oj1.entries())
 	{
 		CHECK(entry.id() == 1 || entry.id() == 2);
-		if (entry.account() == Account(dbc, "cash"))
+		if (entry.account() == AccountHandle(dbc, Account::id_for_name(dbc, "cash")))
 		{
 			CHECK_EQUAL(entry.comment(), "igloo entry a");
 			CHECK_EQUAL(entry.amount(), Decimal("0.99"));
@@ -78,7 +78,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		}
 		else
 		{
-			CHECK(entry.account() == Account(dbc, "food"));
+			CHECK(entry.account() == AccountHandle(dbc, Account::id_for_name(dbc, "food")));
 			CHECK_EQUAL(entry.is_reconciled(), false);
 			CHECK_EQUAL(entry.amount(), Decimal("-0.99"));
 			CHECK_EQUAL(entry.comment(), "igloo entry b");
@@ -94,7 +94,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	dj2.set_name("some journal");
 	
 	Entry entry2a(dbc);
-	entry2a.set_account(Account(dbc, "food"));
+	entry2a.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
 	entry2a.set_comment("steam");
 	entry2a.set_amount(Decimal("0"));
 	entry2a.set_whether_reconciled(false);
@@ -114,7 +114,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	oj1.save();
 	for (Entry const& entry: oj1.entries())
 	{
-		CHECK_EQUAL(entry.account().id(), Account(dbc, "food").id());
+		CHECK_EQUAL(entry.account()->id(), AccountHandle(dbc, Account::id_for_name(dbc, "food"))->id());
 		CHECK_EQUAL(entry.comment(), "steam");
 		CHECK_EQUAL(entry.is_reconciled(), false);
 		CHECK(entry.transaction_side() == TransactionSide::source);
@@ -131,7 +131,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	journal1.set_comment("igloo");
 
 	Entry entry1a(dbc);
-	entry1a.set_account(Account(dbc, "cash"));
+	entry1a.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
 	entry1a.set_comment("igloo entry a");
 	entry1a.set_whether_reconciled(true);
 	entry1a.set_amount(Decimal("-10.99"));
@@ -140,7 +140,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	CHECK_THROW(journal1.save(), UnbalancedJournalException);
 
 	Entry entry1b(dbc);
-	entry1b.set_account(Account(dbc, "food"));
+	entry1b.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
 	entry1b.set_comment("igloo entry b");
 	entry1b.set_whether_reconciled(false);
 	entry1b.set_amount(Decimal("50.09"));
@@ -161,7 +161,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 
 	CHECK(journal1b.is_balanced());
 	Entry entry1c(dbc);
-	entry1c.set_account(Account(dbc, "food"));
+	entry1c.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
 	entry1c.set_comment("Ummm");
 	entry1c.set_whether_reconciled(true);
 	entry1c.set_amount(Decimal(0, 0));

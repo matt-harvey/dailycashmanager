@@ -3,7 +3,7 @@
 #ifndef GUARD_multi_account_panel_hpp_2678521416465995
 #define GUARD_multi_account_panel_hpp_2678521416465995
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
 #include "commodity.hpp"
@@ -160,13 +160,13 @@ private:
 	friend class SpecialDecimalTextCtrl;
 
 	/**
-	 * @returns a newly created Account with Commodity not set but
-	 * with text fields set to the empty string. The returned Account will
+	 * @returns a handle to a newly created Account with Commodity not set but
+	 * with text fields set to the empty string. The Account
 	 * not have been saved to the database (so will not have an ID).
-	 * Account type will be set to an AccountType belonging to
+	 * Account AccountType will be set to an AccountType belonging to
 	 * \e m_account_super_type.
 	 */
-	Account blank_account();
+	AccountHandle blank_account();
 
 	/**
 	 * Add a row to the display showing details for p_account. Be warned
@@ -174,7 +174,7 @@ private:
 	 * if \e p_account already has a Commodity set. Always returns \e true
 	 * (returns \e bool for consistency with \e pop_row()).
 	 */
-	bool push_row(Account& p_account);
+	bool push_row(AccountHandle const& p_account);
 
 	template <typename T> void pop_widget_from(std::vector<T>& p_vec);
 	

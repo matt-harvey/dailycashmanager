@@ -1,8 +1,8 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "amalgamated_budget.hpp"
+#include "account_handle.hpp"
 #include "account.hpp"
-#include "account_impl.hpp"
 #include "account_type.hpp"
 #include "budget_item_table_iterator.hpp"
 #include "draft_journal.hpp"
@@ -47,8 +47,8 @@ namespace phatbooks
 
 
 static_assert
-(	boost::is_same<Account::Id, AccountImpl::Id>::value,
-	"Account::Id needs to be the same type as AccountImpl::Id."
+(	boost::is_same<sqloxx::Id, Account::Id>::value,
+	"sqloxx::Id needs to be the same type as Account::Id."
 );
 
 
@@ -89,14 +89,14 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	instrument.push_repeater(repeater);
 	instrument.save();
 
-	Account balancing_account(dbc);
-	balancing_account.set_account_type(AccountType::pure_envelope);
-	balancing_account.set_name("Budget imbalance");
-	balancing_account.set_description("");
-	balancing_account.set_visibility(Visibility::visible);
+	AccountHandle balancing_account(dbc);
+	balancing_account->set_account_type(AccountType::pure_envelope);
+	balancing_account->set_name("Budget imbalance");
+	balancing_account->set_description("");
+	balancing_account->set_visibility(Visibility::visible);
 	Commodity const balancing_account_commodity = dbc.default_commodity();
-	balancing_account.set_commodity(balancing_account_commodity);
-	balancing_account.save();
+	balancing_account->set_commodity(balancing_account_commodity);
+	balancing_account->save();
 
 	SQLStatement statement
 	(	dbc,
@@ -105,7 +105,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 		"values(:journal_id, :balancing_account_id)"
 	);
 	statement.bind(":journal_id", instrument.id());
-	statement.bind(":balancing_account_id", balancing_account.id());
+	statement.bind(":balancing_account_id", balancing_account->id());
 	statement.step_final();
 
 	return;
@@ -157,13 +157,13 @@ AmalgamatedBudget::set_frequency(Frequency const& p_frequency)
 }
 
 Decimal
-AmalgamatedBudget::budget(AccountImpl::Id p_account_id) const
+AmalgamatedBudget::budget(Account::Id p_account_id) const
 {
 	load();
 	Map::const_iterator it = m_map->find(p_account_id);
 	JEWEL_ASSERT (it != m_map->end());
 	Decimal ret = it->second;
-	if (p_account_id == balancing_account().id())
+	if (p_account_id == balancing_account()->id())
 	{
 		ret += instrument_balancing_amount();	
 	}
@@ -175,7 +175,7 @@ namespace
 {
 	Decimal map_entry_accumulation_aux
 	(	Decimal const& dec,
-		pair<AccountImpl::Id, Decimal> const& rhs
+		pair<Account::Id, Decimal> const& rhs
 	)
 	{
 		return dec + rhs.second;
@@ -251,7 +251,7 @@ AmalgamatedBudget::supports_frequency(Frequency const& p_frequency)
 	}
 }
 
-Account
+AccountHandle
 AmalgamatedBudget::balancing_account() const
 {
 	load();
@@ -275,7 +275,7 @@ AmalgamatedBudget::regenerate()
 	// So if amalgamated_budget_data has not been created yet,
 	// we simply return. It is expected this will only happen on
 	// initial setup of the database (due to calling of
-	// regenerate() by hook in AccountImpl saving method, when
+	// regenerate() by hook in Account saving method, when
 	// balancing account is first saved).
 	SQLStatement statement
 	(	m_database_connection,
@@ -313,11 +313,11 @@ AmalgamatedBudget::generate_map() const
 	);
 	while (account_selector.step())
 	{
-		AccountImpl::Id const account_id =
-			account_selector.extract<AccountImpl::Id>(0);
-		Account const account(m_database_connection, account_id);
+		Account::Id const account_id =
+			account_selector.extract<Account::Id>(0);
+		AccountHandle const account(m_database_connection, account_id);
 		(*map_elect)[account_id] =
-			Decimal(0, account.commodity().precision());
+			Decimal(0, account->commodity().precision());
 	}
 	
 	// First we calculate budgets amalgamated on the basis of
@@ -334,7 +334,7 @@ AmalgamatedBudget::generate_map() const
 				"Frequency not supported by AmalgamatedBudget."
 			);
 		}
-		AccountImpl::Id const account_id = it->account().id();
+		Account::Id const account_id = it->account()->id();
 		jewel::Decimal const raw_amount = it->amount();
 		jewel::Decimal const canonical_amount = convert_to_canonical
 		(	raw_frequency,
@@ -349,7 +349,7 @@ AmalgamatedBudget::generate_map() const
 	{
 		entry.second = round
 		(	convert_from_canonical(m_frequency, entry.second),
-			Account(m_database_connection, entry.first).
+			AccountHandle(m_database_connection, entry.first)->
 				commodity().precision()
 		);
 	}
@@ -383,13 +383,13 @@ AmalgamatedBudget::regenerate_instrument()
 	Decimal const imbalance = fresh_journal.balance();
 	if (imbalance != Decimal(0, 0))
 	{
-		Account const ba = balancing_account();
+		AccountHandle const ba = balancing_account();
 		Entry balancing_entry(m_database_connection);
 		balancing_entry.set_account(ba);
 		balancing_entry.set_comment(balancing_entry_comment());
 		balancing_entry.set_whether_reconciled(false);
 		balancing_entry.set_amount
-		(	-round(imbalance, ba.commodity().precision())
+		(	-round(imbalance, ba->commodity().precision())
 		);
 		balancing_entry.set_transaction_side(TransactionSide::destination);
 		fresh_journal.push_entry(balancing_entry);
@@ -414,9 +414,9 @@ AmalgamatedBudget::load_balancing_account() const
 	bool check = statement.step();
 	JEWEL_ASSERT (check);
 	m_balancing_account.reset
-	(	new Account
+	(	new AccountHandle
 		(	m_database_connection,
-			statement.extract<Account::Id>(0)
+			statement.extract<sqloxx::Id>(0)
 		)
 	);
 	statement.step_final();
@@ -455,7 +455,7 @@ AmalgamatedBudget::reflect_entries(DraftJournal& p_journal)
 		{
 			Entry entry(m_database_connection);
 			entry.set_account
-			(	Account(m_database_connection, elem.first)
+			(	AccountHandle(m_database_connection, elem.first)
 			);
 			entry.set_comment("");
 			entry.set_amount(-(elem.second));

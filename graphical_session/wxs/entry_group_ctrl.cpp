@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "entry_group_ctrl.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "entry.hpp"
@@ -268,7 +268,7 @@ EntryGroupCtrl::is_all_zero() const
 }
 
 void
-EntryGroupCtrl::update_for_new(Account const& p_saved_object)
+EntryGroupCtrl::update_for_new(AccountHandle const& p_saved_object)
 {
 	for (EntryRow& row: m_entry_rows)
 	{
@@ -279,7 +279,7 @@ EntryGroupCtrl::update_for_new(Account const& p_saved_object)
 }
 
 void
-EntryGroupCtrl::update_for_amended(Account const& p_saved_object)
+EntryGroupCtrl::update_for_amended(AccountHandle const& p_saved_object)
 {
 	for (EntryRow& row: m_entry_rows)
 	{
@@ -312,12 +312,12 @@ void
 EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
-	Account const account = m_entry_rows.back().account_ctrl->account();
+	AccountHandle const account = m_entry_rows.back().account_ctrl->account();
 	Entry entry(m_database_connection);
 	entry.set_account(account);
 	entry.set_whether_reconciled(false);
 	entry.set_comment(wxString());
-	entry.set_amount(Decimal(0, account.commodity().precision()));
+	entry.set_amount(Decimal(0, account->commodity().precision()));
 	entry.set_transaction_side(m_transaction_side);
 	push_row(entry, optional<Decimal>(), true);
 	JEWEL_ASSERT (!m_entry_rows.empty());

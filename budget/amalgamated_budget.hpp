@@ -3,7 +3,8 @@
 #ifndef GUARD_amalgamated_budget_hpp_5997503626159161
 #define GUARD_amalgamated_budget_hpp_5997503626159161
 
-#include "account_impl.hpp"
+#include "account_handle_fwd.hpp"
+#include "account.hpp"
 #include "draft_journal.hpp"
 #include "interval_type.hpp"
 #include "frequency.hpp"
@@ -19,9 +20,6 @@
 
 namespace phatbooks
 {
-
-
-class Account;
 
 
 /**
@@ -57,7 +55,7 @@ public:
 	 * @returns the amalgamated budget for the given Account, at the
 	 * Frequency returned by frequency().
 	 */
-	jewel::Decimal budget(AccountImpl::Id p_account_id) const;
+	jewel::Decimal budget(Account::Id p_account_id) const;
 
 	/**
 	 * @returns the sum of all the Account budgets in AmalgamatedBudget,
@@ -85,14 +83,14 @@ public:
 	static bool supports_frequency(Frequency const& p_frequency);
 
 	/**
-	 * @returns the Account such, that if the AmalgamatedBudget
-	 * is not otherwise "balanced", any imbalanced is reconciled
+	 * @returns a handle to the Account such that if the AmalgamatedBudget
+	 * is not otherwise "balanced", any imbalance is reconciled
 	 * to this Account.
 	 *
 	 * @throws UninitializedBalancingAccountException if
 	 * balancing account is uninitialized.
 	 */
-	Account balancing_account() const;
+	AccountHandle balancing_account() const;
 
 	/**
 	 * @returns the DraftJournal that serves as the "instrument"
@@ -105,7 +103,7 @@ public:
 
 private:
 
-	typedef std::unordered_map<AccountImpl::Id, jewel::Decimal> Map;
+	typedef std::unordered_map<Account::Id, jewel::Decimal> Map;
 
 	void regenerate_map();
 
@@ -173,12 +171,14 @@ private:
 	mutable std::unique_ptr<Map> m_map;
 
 	// The DraftJournal that "effects" the AmalgamatedBudget
+	// TODO Do we really need a unique_ptr around this?
 	mutable std::unique_ptr<DraftJournal> m_instrument; 
 
-	// The the Account such that, when regenerating m_instrument, if the
+	// Represents the Account such that, when regenerating m_instrument, if the
 	// journal is not otherwise balanced, any imbalance overflows
 	// to this Account.
-	mutable std::unique_ptr<Account> m_balancing_account;
+	// TODO Do we really need a unique_ptr around this?
+	mutable std::unique_ptr<AccountHandle> m_balancing_account;
 
 };
 

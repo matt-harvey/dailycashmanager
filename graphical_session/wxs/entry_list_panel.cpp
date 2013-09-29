@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "entry_list_panel.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_ctrl.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
@@ -218,7 +218,7 @@ EntryListPanel::update_for_amended(OrdinaryJournal const& p_journal)
 }
 
 void
-EntryListPanel::update_for_new(Account const& p_account)
+EntryListPanel::update_for_new(AccountHandle const& p_account)
 {
 	if (m_entry_list_ctrl) m_entry_list_ctrl->update_for_new(p_account);
 	m_account_ctrl->update_for_new(p_account);
@@ -227,7 +227,7 @@ EntryListPanel::update_for_new(Account const& p_account)
 }
 
 void
-EntryListPanel::update_for_amended(Account const& p_account)
+EntryListPanel::update_for_amended(AccountHandle const& p_account)
 {
 	if (m_entry_list_ctrl) m_entry_list_ctrl->update_for_amended(p_account);
 	m_account_ctrl->update_for_amended(p_account);
@@ -447,7 +447,7 @@ EntryListPanel::postconfigure_summary()
 	return;
 }
 
-Account
+AccountHandle
 EntryListPanel::selected_account() const
 {
 	JEWEL_ASSERT (m_account_ctrl);

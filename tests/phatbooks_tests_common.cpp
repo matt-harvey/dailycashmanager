@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "phatbooks_tests_common.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -71,21 +71,21 @@ void setup_test_commodities(PhatbooksDatabaseConnection& dbc)
 
 void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
 {
-	Account cash(dbc);
-	cash.set_account_type(AccountType::asset);
-	cash.set_name("cash");
-	cash.set_commodity(Commodity(dbc, "AUD"));
-	cash.set_description("notes and coins");
-	cash.set_visibility(Visibility::visible);
-	cash.save();
+	AccountHandle cash(dbc);
+	cash->set_account_type(AccountType::asset);
+	cash->set_name("cash");
+	cash->set_commodity(Commodity(dbc, "AUD"));
+	cash->set_description("notes and coins");
+	cash->set_visibility(Visibility::visible);
+	cash->save();
 
-	Account food(dbc);
-	food.set_account_type(AccountType::expense);
-	food.set_name("food");
-	food.set_commodity(Commodity(dbc, "AUD"));
-	food.set_description("food and drink");
-	food.set_visibility(Visibility::visible);
-	food.save();
+	AccountHandle food(dbc);
+	food->set_account_type(AccountType::expense);
+	food->set_name("food");
+	food->set_commodity(Commodity(dbc, "AUD"));
+	food->set_description("food and drink");
+	food->set_visibility(Visibility::visible);
+	food->save();
 
 	return;
 }

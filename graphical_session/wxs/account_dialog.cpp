@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "account_dialog.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
 #include "budget_panel.hpp"
@@ -112,7 +112,7 @@ namespace
 
 AccountDialog::AccountDialog
 (	wxWindow* p_parent,
-	Account& p_account,
+	AccountHandle const& p_account,
 	AccountSuperType p_account_super_type
 ):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
@@ -130,8 +130,8 @@ AccountDialog::AccountDialog
 {
 	JEWEL_ASSERT (p_parent);  // precondition
 	if
-	(	m_account.has_id() &&
-		(super_type(m_account.account_type()) != p_account_super_type)
+	(	m_account->has_id() &&
+		(super_type(m_account->account_type()) != p_account_super_type)
 	)
 	{
 		JEWEL_THROW
@@ -161,9 +161,9 @@ AccountDialog::AccountDialog
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	wxString name_tmp = wxEmptyString;
-	if (m_account.has_id())
+	if (m_account->has_id())
 	{
-		name_tmp = p_account.name();
+		name_tmp = p_account->name();
 	}
 	m_name_ctrl = new wxTextCtrl
 	(	this,
@@ -200,15 +200,15 @@ AccountDialog::AccountDialog
 	(	this,
 		wxID_ANY,
 		m_name_ctrl->GetSize(),
-		m_account.database_connection(),
+		m_account->database_connection(),
 		p_account_super_type
 	);
-	if (m_account.has_id())
+	if (m_account->has_id())
 	{	
-		m_account_type_ctrl->set_account_type(m_account.account_type());
+		m_account_type_ctrl->set_account_type(m_account->account_type());
 
 		// Things are just simpler if we prevent the user from changing the
-		// AccountType of an existing Account. Suppose we allowed the
+		// AccountType of an existing AccountHandle. Suppose we allowed the
 		// AccountType to be changed. Then the user could make it so that,
 		// say, there are no expense Accounts. Then the TransactionCtrl
 		// would become such that it is no longer possible to create
@@ -244,9 +244,9 @@ AccountDialog::AccountDialog
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	wxString description_tmp = wxEmptyString;
-	if (m_account.has_id())
+	if (m_account->has_id())
 	{
-		description_tmp = p_account.description();
+		description_tmp = p_account->description();
 	}
 	m_description_ctrl = new wxTextCtrl
 	(	this,
@@ -283,13 +283,13 @@ AccountDialog::AccountDialog
 	(	this,
 		wxID_ANY,
 		wxSize(medium_width(), wxDefaultSize.y),
-		m_account.database_connection().default_commodity().precision(),
+		m_account->database_connection().default_commodity().precision(),
 		false
 	);
-	if (m_account.has_id())
+	if (m_account->has_id())
 	{
 		m_opening_amount_ctrl->
-			set_amount(m_account.friendly_opening_balance());
+			set_amount(m_account->friendly_opening_balance());
 	}
 	m_top_sizer->Add
 	(	m_opening_amount_ctrl,
@@ -321,9 +321,9 @@ AccountDialog::configure_budget_panel()
 		// There are no "bottom controls" for balance sheet Accounts.
 		return;
 	}
-	if (m_account == m_account.database_connection().balancing_account())
+	if (m_account == m_account->database_connection().balancing_account())
 	{
-		// Cannot edit budgets for the budget balancing Account.
+		// Cannot edit budgets for the budget balancing AccountHandle.
 		return;
 	}
 	JEWEL_ASSERT (account_super_type() == AccountSuperType::pl);
@@ -335,12 +335,12 @@ AccountDialog::configure_budget_panel()
 	JEWEL_ASSERT (m_account_type_ctrl);
 	try
 	{
-		AccountType dummy = m_account.account_type();
+		AccountType dummy = m_account->account_type();
 		(void)dummy;  // silence compiler re. unused variable
 	}
 	catch (UninitializedOptionalException&)
 	{
-		m_account.set_account_type(m_account_type_ctrl->account_type());
+		m_account->set_account_type(m_account_type_ctrl->account_type());
 	}
 	m_budget_panel = new BudgetPanel(this, m_account);
 	m_top_sizer->Add
@@ -367,9 +367,9 @@ AccountDialog::configure_bottom_row()
 		wxALIGN_RIGHT
 	);
 	Visibility visibility = Visibility::visible;
-	if (m_account.has_id())
+	if (m_account->has_id())
 	{
-		visibility = m_account.visibility();
+		visibility = m_account->visibility();
 	}
 	m_visibility_ctrl->SetValue(visibility == Visibility::visible);
 	m_top_sizer->Add
@@ -420,7 +420,7 @@ void
 AccountDialog::on_ok_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	if (update_account_from_dialog(!m_account.has_id()))
+	if (update_account_from_dialog(!m_account->has_id()))
 	{
 		if (!m_budget_panel)
 		{
@@ -445,16 +445,16 @@ AccountDialog::on_cancel_button_click(wxCommandEvent& event)
 bool
 AccountDialog::update_account_from_dialog(bool p_is_new_account)
 {
-	DatabaseTransaction transaction(m_account.database_connection());
+	DatabaseTransaction transaction(m_account->database_connection());
 
-	Account temp = m_account;
+	AccountHandle temp = m_account;
 	wxString const prospective_name = m_name_ctrl->GetValue().Trim();
-	if (Account::exists(temp.database_connection(), prospective_name))
+	if (Account::exists(temp->database_connection(), Account::id_for_name(temp->database_connection(), prospective_name)))
 	{
 		bool clashes = true;
 		if (!p_is_new_account)
 		{
-			if (m_account.name().Lower() == prospective_name.Lower())
+			if (m_account->name().Lower() == prospective_name.Lower())
 			{
 				// Then everything's OK, the user has just kept the original
 				// name, or else has changed the case.
@@ -480,10 +480,10 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		wxMessageBox("Name cannot be blank.");
 		return false;
 	}
-	temp.set_name(prospective_name);
-	temp.set_account_type(m_account_type_ctrl->account_type());
-	temp.set_description(m_description_ctrl->GetValue());
-	temp.set_visibility
+	temp->set_name(prospective_name);
+	temp->set_account_type(m_account_type_ctrl->account_type());
+	temp->set_description(m_description_ctrl->GetValue());
+	temp->set_visibility
 	(	m_visibility_ctrl->GetValue()?
 		Visibility::visible:
 		Visibility::hidden
@@ -491,15 +491,15 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		
 	if (p_is_new_account)
 	{
-		temp.set_commodity
-		(	m_account.database_connection().default_commodity()
+		temp->set_commodity
+		(	m_account->database_connection().default_commodity()
 		);
 	}
 
-	temp.save();
+	temp->save();
 	
 	Decimal opening_amount = m_opening_amount_ctrl->amount();
-	if (super_type(temp.account_type()) == AccountSuperType::pl)
+	if (super_type(temp->account_type()) == AccountSuperType::pl)
 	{
 		// TODO Handle small possibility of overflow here.
 		opening_amount = -opening_amount;
@@ -522,7 +522,7 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	transaction.commit();
 
 	// Notify window higher in the hierarchy that they need to update for
-	// changed Account and if we needed the opening balance journal,
+	// changed AccountHandle and if we needed the opening balance journal,
 	// the new OrdinaryJournal.
 	JEWEL_ASSERT (GetParent());
 	wxEventType const event_type =

@@ -4,7 +4,7 @@
 #define GUARD_entry_list_ctrl_hpp_03525603377970682
 
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "entry.hpp"
 #include "entry_table_iterator.hpp"
 #include "reconciliation_list_panel.hpp"
@@ -64,7 +64,7 @@ public:
 	static EntryListCtrl* create_actual_ordinary_entry_list
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		Account const& p_account,
+		AccountHandle const& p_account,
 		boost::optional<boost::gregorian::date> const& p_maybe_min_date =
 			boost::optional<boost::gregorian::date>(),
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date =
@@ -75,12 +75,12 @@ public:
 	 * @returns a pointer to a heap-allocated EntryListCtrl, especially
 	 * designed to facilitate balance sheet Account reconciliations.
 	 *
-	 * \e p_account should be a balance sheet Account.
+	 * \e p_account should be handle to a balance sheet Account.
 	 */
 	static ReconciliationEntryListCtrl* create_reconciliation_entry_list
 	(	ReconciliationListPanel* p_parent,
 		wxSize const& p_size,
-		Account const& p_account,
+		AccountHandle const& p_account,
 		boost::gregorian::date const& p_min_date,
 		boost::gregorian::date const& p_max_date
 	);
@@ -105,9 +105,9 @@ public:
 	 */
 	void update_for_amended(OrdinaryJournal const& p_journal);
 
-	void update_for_amended(Account const& p_account);
+	void update_for_amended(AccountHandle const& p_account);
 
-	void update_for_new(Account const& p_account);
+	void update_for_new(AccountHandle const& p_account);
 
 	/**
 	 * Update displayed entries to reflect that the Entries with IDs
@@ -161,7 +161,7 @@ private:
 	virtual std::unique_ptr<sqloxx::SQLStatement>
 		do_create_entry_selector() = 0;
 
-	virtual void do_update_for_amended(Account const& p_account);
+	virtual void do_update_for_amended(AccountHandle const& p_account);
 
 	void on_item_activated(wxListEvent& event);
 

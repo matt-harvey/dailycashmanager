@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "setup_wizard.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "app.hpp"
 #include "application.hpp"
@@ -129,10 +129,10 @@ namespace
 		Decimal::places_type precision
 	)
 	{
-		vector<Account> accounts;
+		vector<AccountHandle> accounts;
 		make_default_accounts(dbc, accounts, p_account_type);
 		Decimal const zero(0, precision);
-		for (Account const& account: accounts)
+		for (AccountHandle const& account: accounts)
 		{
 			AugmentedAccount const augmented_account(account, zero);
 			vec.push_back(augmented_account);
@@ -295,17 +295,17 @@ SetupWizard::configure_accounts()
 	DatabaseTransaction transaction(m_database_connection);
 	for (AugmentedAccount& aug_acc: augmented_accounts)
 	{
-		wxString const name_wx = aug_acc.account.name().Trim();
+		wxString const name_wx = aug_acc.account->name().Trim();
 		if (name_wx.IsEmpty())
 		{
 			// TODO React accordingly...
 		}
 		else
 		{
-			aug_acc.account.set_commodity(selected_currency());
-			aug_acc.account.set_description(wxString(""));
-			aug_acc.account.set_visibility(Visibility::visible);
-			aug_acc.account.save();
+			aug_acc.account->set_commodity(selected_currency());
+			aug_acc.account->set_description(wxString(""));
+			aug_acc.account->set_visibility(Visibility::visible);
+			aug_acc.account->save();
 			JEWEL_ASSERT 
 			(	aug_acc.technical_opening_balance.places() ==
 				selected_currency().precision()

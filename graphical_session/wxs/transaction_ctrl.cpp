@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "transaction_ctrl.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_ctrl.hpp"
 #include "account_type.hpp"
 #include "date.hpp"
@@ -545,7 +545,7 @@ TransactionCtrl::primary_amount() const
 }
 
 void
-TransactionCtrl::update_for_new(Account const& p_saved_object)
+TransactionCtrl::update_for_new(AccountHandle const& p_saved_object)
 {
 	JEWEL_ASSERT (m_source_entry_ctrl);
 	m_source_entry_ctrl->update_for_new(p_saved_object);
@@ -555,7 +555,7 @@ TransactionCtrl::update_for_new(Account const& p_saved_object)
 }
 
 void
-TransactionCtrl::update_for_amended(Account const& p_saved_object)
+TransactionCtrl::update_for_amended(AccountHandle const& p_saved_object)
 {
 	JEWEL_ASSERT (m_source_entry_ctrl);
 	m_source_entry_ctrl->update_for_amended(p_saved_object);

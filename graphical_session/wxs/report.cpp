@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "report.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "balance_sheet_report.hpp"
 #include "entry.hpp"
@@ -117,14 +117,14 @@ Report::update_for_amended(OrdinaryJournal const& p_journal)
 }
 
 void
-Report::update_for_new(Account const& p_account)
+Report::update_for_new(AccountHandle const& p_account)
 {
 	(void)p_account;  // silence compiler re. unused parameter.
 	return;
 }
 
 void
-Report::update_for_amended(Account const& p_account)
+Report::update_for_amended(AccountHandle const& p_account)
 {
 	(void)p_account;  // silence compiler re. unused parameter.
 	return;

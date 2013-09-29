@@ -90,7 +90,7 @@ public:
 	 * \e p_account need not have an ID when this is called; however, it
 	 * should have an ID by the time the BudgetItem is first saved.
 	 */
-	void set_account(Account const& p_account);
+	void set_account(sqloxx::Handle<Account> const& p_account);
 
 	/**
 	 * Set the Frequency with which the BudgetItem is expected to
@@ -105,7 +105,7 @@ public:
 
 	// Getters...
 	wxString description() const;
-	Account account() const;
+	sqloxx::Handle<Account> account() const;
 	Frequency frequency() const;
 	jewel::Decimal amount() const;
 

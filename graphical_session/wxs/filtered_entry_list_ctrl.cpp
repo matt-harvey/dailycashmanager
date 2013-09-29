@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "filtered_entry_list_ctrl.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "entry.hpp"
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -46,14 +46,14 @@ namespace
 FilteredEntryListCtrl::FilteredEntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	Account const& p_account,
+	AccountHandle const& p_account,
 	boost::optional<gregorian::date> const& p_maybe_min_date,
 	boost::optional<gregorian::date> const& p_maybe_max_date
 ):
-	EntryListCtrl(p_parent, p_size, p_account.database_connection()),
+	EntryListCtrl(p_parent, p_size, p_account->database_connection()),
 	m_account(p_account),
 	m_min_date
-	(	p_account.database_connection().opening_balance_journal_date() +
+	(	p_account->database_connection().opening_balance_journal_date() +
 		gregorian::date_duration(1)
 	),
 	m_maybe_max_date(p_maybe_max_date)
@@ -68,7 +68,7 @@ FilteredEntryListCtrl::FilteredEntryListCtrl
 	}
 }
 
-Account const&
+AccountHandle const&
 FilteredEntryListCtrl::account() const
 {
 	return m_account;

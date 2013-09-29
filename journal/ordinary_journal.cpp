@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "ordinary_journal.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_impl.hpp"
 #include "entry.hpp"
@@ -75,7 +75,7 @@ OrdinaryJournal::create_unchecked
 
 OrdinaryJournal
 OrdinaryJournal::create_opening_balance_journal
-(	Account const& p_account,
+(	AccountHandle const& p_account,
 	Decimal const& p_desired_opening_balance
 )
 {
@@ -84,12 +84,12 @@ OrdinaryJournal::create_opening_balance_journal
 	// a static function to return an OrdinaryJournal, which we create using
 	// "high level", OrdinaryJournal-level functions; so it seems
 	// appropriate to implement it here.
-	PhatbooksDatabaseConnection& dbc = p_account.database_connection();
-	Account const balancing_account = dbc.balancing_account();
+	PhatbooksDatabaseConnection& dbc = p_account->database_connection();
+	AccountHandle const balancing_account = dbc.balancing_account();
 	Decimal const old_opening_balance =
-		p_account.has_id()?
-		p_account.technical_opening_balance():
-		Decimal(0, p_account.commodity().precision());
+		p_account->has_id()?
+		p_account->technical_opening_balance():
+		Decimal(0, p_account->commodity().precision());
 	Decimal const primary_entry_amount =
 		p_desired_opening_balance - old_opening_balance;
 
@@ -112,7 +112,7 @@ OrdinaryJournal::create_opening_balance_journal
 	ret.push_entry(balancing_entry);
 
 	ret.set_comment("Opening balance adjustment");
-	if (p_account.account_super_type() == AccountSuperType::balance_sheet)
+	if (p_account->account_super_type() == AccountSuperType::balance_sheet)
 	{
 		ret.set_transaction_type(TransactionType::generic);
 	}

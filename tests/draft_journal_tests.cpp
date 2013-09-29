@@ -1,5 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
+#include "account_handle.hpp"
 #include "account.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
@@ -32,7 +33,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	dj1.set_name("test");
 
 	Entry entry1(dbc);
-	entry1.set_account(Account(dbc, "cash"));
+	entry1.set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
 	wxString const test_comment("test");
 	entry1.set_comment(test_comment);
 	entry1.set_amount(Decimal("0.00"));

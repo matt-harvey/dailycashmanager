@@ -104,7 +104,7 @@ public:
 	 * will be marked as \e reconciled.
 	 */
 	static OrdinaryJournal create_opening_balance_journal
-	(	Account const& p_account,
+	(	AccountHandle const& p_account,
 		jewel::Decimal const& p_desired_opening_balance
 	);
 

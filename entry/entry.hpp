@@ -12,6 +12,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
 #include <wx/string.h>
 #include <memory>
@@ -94,7 +95,7 @@ public:
 	/**
 	 * Set the Account with which this Entry is associated.
 	 */
-	void set_account(Account const& p_account);
+	void set_account(sqloxx::Handle<Account> const& p_account);
 	void set_comment(wxString const& p_comment);
 	
 	/**
@@ -142,9 +143,9 @@ public:
 	jewel::Decimal amount() const;
 
 	/**
-	 * @returns the Account that the Entry affects.
+	 * @returns handle to the Account that the Entry affects.
 	 */
-	Account account() const;
+	sqloxx::Handle<Account> account() const;
 
 	bool is_reconciled() const;
 
@@ -202,8 +203,8 @@ create_date_ordered_actual_ordinary_entry_selector
 		boost::optional<boost::gregorian::date>(),
 	boost::optional<boost::gregorian::date> const& p_maybe_max_date =
 		boost::optional<boost::gregorian::date>(),
-	boost::optional<Account> const& p_maybe_account =
-		boost::optional<Account>()
+	boost::optional<sqloxx::Handle<Account> > const& p_maybe_account =
+		boost::optional<sqloxx::Handle<Account> >()
 );
 
 

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "balance_sheet_report.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "entry_table_iterator.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -85,14 +85,14 @@ BalanceSheetReport::refresh_map()
 	EntryTableIterator const end;	
 	for ( ; it != end; ++it)
 	{
-		Account const account = it->account();
+		AccountHandle const account = it->account();
 		AccountSuperType const s_type =
-			super_type(account.account_type());
+			super_type(account->account_type());
 		if (s_type != AccountSuperType::balance_sheet)
 		{
 			continue;
 		}
-		Account::Id const account_id = account.id();
+		sqloxx::Id const account_id = account->id();
 		BalanceMap::iterator jt = m_balance_map.find(account_id);
 		if (jt == m_balance_map.end())
 		{
@@ -138,9 +138,9 @@ BalanceSheetReport::display_body()
 
 	for (auto const& elem: m_balance_map)
 	{
-		Account const account(database_connection(), elem.first);
-		wxString const name = account.name();
-		switch (account.account_type())
+		AccountHandle const account(database_connection(), elem.first);
+		wxString const name = account->name();
+		switch (account->account_type())
 		{
 		case AccountType::asset:
 			asset_names.push_back(name);
@@ -199,9 +199,9 @@ BalanceSheetReport::display_body()
 		JEWEL_ASSERT (names);
 		for (wxString const& name: *names)
 		{
-			Account const account(database_connection(), name);
+			AccountHandle const account(database_connection(), Account::id_for_name(database_connection(), name));
 			BalanceMap::const_iterator const jt =
-				m_balance_map.find(account.id());
+				m_balance_map.find(account->id());
 			JEWEL_ASSERT (jt != m_balance_map.end());
 			BalanceDatum const& datum = jt->second;
 			Decimal const& ob = datum.opening_balance;
@@ -241,9 +241,9 @@ BalanceSheetReport::display_body()
 	return;
 }
 
-BalanceSheetReport::BalanceDatum::BalanceDatum(Account const& p_account):
-	opening_balance(0, p_account.commodity().precision()),
-	closing_balance(0, p_account.commodity().precision())
+BalanceSheetReport::BalanceDatum::BalanceDatum(AccountHandle const& p_account):
+	opening_balance(0, p_account->commodity().precision()),
+	closing_balance(0, p_account->commodity().precision())
 {
 }
 

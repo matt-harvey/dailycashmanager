@@ -3,7 +3,7 @@
 #ifndef GUARD_account_ctrl_hpp_7150714070140717
 #define GUARD_account_ctrl_hpp_7150714070140717
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include <jewel/assert.hpp>
 #include <wx/arrstr.h>
@@ -46,7 +46,7 @@ public:
 	 * @param p_account_types the AccountTypes we want represented in the
 	 * AccountCtrl. This must not be empty.
 	 *
-	 * @param p_exclude_balancing_account If \e true, then the Account
+	 * @param p_exclude_balancing_account If \e true, then the AccountHandle
 	 * returned by
 	 * p_account.database_connection().balancing_account() will not
 	 * appear in the Combobox, even if it is in the range provided.
@@ -75,7 +75,7 @@ public:
 	 * Reset the selections available in the Combobox, to all the
 	 * Accounts with AccountTypes given by p_account_types.
 	 * However, if p_exclude_balancing_account is \e true, then
-	 * the Account returned by
+	 * the AccountHandle returned by
 	 * <em>m_database_connection.balancing_account()</em> will \e not
 	 * appear in the Combobox, even if it is in the range provided.
 	 *
@@ -87,18 +87,18 @@ public:
 	);
 
 	/**
-	 * @returns currently selected Account.
+	 * @returns currently selected AccountHandle.
 	 *
 	 * Unfortunately this can't currently be const because the
 	 * wxWindow::GetValidator() function used in the implementation, is
 	 * not const.
 	 */
-	Account	account();
+	AccountHandle account();
 
-	void set_account(Account const& p_account);
+	void set_account(AccountHandle const& p_account);
 
-	void update_for_new(Account const& p_account);
-	void update_for_amended(Account const& p_account);
+	void update_for_new(AccountHandle const& p_account);
+	void update_for_amended(AccountHandle const& p_account);
 
 private:
 	void on_kill_focus(wxFocusEvent& event);
@@ -110,7 +110,7 @@ private:
 	bool m_exclude_balancing_account;
 	PhatbooksDatabaseConnection& m_database_connection;
 
-	typedef std::map<wxString, Account::Id> AccountMap;
+	typedef std::map<wxString, sqloxx::Id> AccountMap;
 	AccountMap m_account_map;
 
 	std::set<AccountType> m_available_account_types;

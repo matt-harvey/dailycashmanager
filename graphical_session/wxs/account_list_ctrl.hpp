@@ -3,7 +3,7 @@
 #ifndef GUARD_account_list_ctrl_hpp_4892309124065707
 #define GUARD_account_list_ctrl_hpp_4892309124065707
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include <boost/optional.hpp>
@@ -61,7 +61,7 @@ public:
 	 * Accounts in the AccountListCtrl. If an Account in the list does not
 	 * have an Id, then it will not be placed in \e out.
 	 */
-	void selected_accounts(std::set<Account::Id>& out) const;
+	void selected_accounts(std::set<sqloxx::Id>& out) const;
 
 	/**
 	 * Redraw AccountListCtrl on the basis of what is currently in the
@@ -71,11 +71,11 @@ public:
 	void update();
 
 	/**
-	 * @returns an optional containing an Account that may be considered as
-	 * the default Account in the AccountListCtrl; except that, if the
-	 * AccountListCtrl is empty, returns an uninitialized optional.
+	 * @returns an optional containing a handle to what may be
+	 * considered the default Account in the AccountListCtrl; except that, if
+	 * the AccountListCtrl is empty, returns an uninitialized optional.
 	 */
-	boost::optional<Account> default_account() const;
+	boost::optional<AccountHandle> default_account() const;
 
 	/**
 	 * Causes \e p_account to be selected, if it is present, and causes
@@ -83,7 +83,7 @@ public:
 	 *
 	 * Precondition: \e p_account must have an Id.
 	 */
-	void select_only(Account const& p_account);
+	void select_only(AccountHandle const& p_account);
 
 	/**
 	 * Toggle whether hidden Accounts are shown.

@@ -44,7 +44,7 @@ namespace
 PLAccountEntryListCtrl::PLAccountEntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	Account const& p_account,
+	AccountHandle const& p_account,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date
 ):
@@ -55,7 +55,7 @@ PLAccountEntryListCtrl::PLAccountEntryListCtrl
 		p_maybe_min_date,
 		p_maybe_max_date
 	),
-	m_reverse_signs(p_account.account_type() == AccountType::revenue)
+	m_reverse_signs(p_account->account_type() == AccountType::revenue)
 {
 }
 
@@ -82,7 +82,7 @@ PLAccountEntryListCtrl::do_set_non_date_columns
 wxString
 PLAccountEntryListCtrl::verb() const
 {
-	switch (account().account_type())
+	switch (account()->account_type())
 	{
 	case AccountType::revenue:
 		return wxString("earned");

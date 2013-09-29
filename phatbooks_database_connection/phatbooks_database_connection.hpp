@@ -22,6 +22,7 @@
 #include <boost/optional.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <sqloxx/identity_map_fwd.hpp>
 #include <jewel/decimal.hpp>
 #include <list>
@@ -36,7 +37,6 @@ namespace phatbooks
 
 class AmalgamatedBudget;
 class Account;
-class AccountImpl;
 class BalanceCache;
 class BudgetItemImpl;
 class Commodity;
@@ -124,10 +124,10 @@ public:
 	void set_caching_level(unsigned int level);
 
 	/**
-	 * @returns the Account to which budget imbalances are reconciled
+	 * @returns the sqloxx::Handle<Account> to which budget imbalances are reconciled
 	 * in the budget_instrument().
 	 */
-	Account balancing_account() const;
+	sqloxx::Handle<Account> balancing_account() const;
 
 	/**
 	 * @returns the default Commodity for the entity represented by
@@ -164,13 +164,12 @@ public:
 	DraftJournal budget_instrument() const;
 	
 	/**
-	 * Class to provide restricted access to cache holding
-	 * Account balances.
+	 * Class to provide restricted access to cache holding Account balances.
 	 */
 	class BalanceCacheAttorney
 	{
 	public:
-		friend class AccountImpl;
+		friend class Account;
 		friend class CommodityImpl;
 		friend class EntryImpl;
 		BalanceCacheAttorney() = delete;
@@ -181,12 +180,12 @@ public:
 		(	PhatbooksDatabaseConnection const& p_database_connection
 		);
 		// Mark a particular Account in the balance cache as stale
-		// NOTE: Ideally we should have AccountImpl::Id here, or perhaps
-		// Account::Id (rather than sqloxx::Id). However this cannot be
-		// achieved without #including either account.hpp or account_impl.hpp.
+		// NOTE: Ideally we should have Account::Id here, or perhaps
+		// sqloxx::Id (rather than sqloxx::Id). However this cannot be
+		// achieved without #including either account_handle.hpp or account.hpp.
 		// Doing this results in circular #includes. It is simpler just to use
 		// sqloxx::Id here. A static assertion has been placed in
-		// account_impl.hpp, to ensure that AccountImpl::Id is always the same
+		// account.hpp, to ensure that Account::Id is always the same
 		// type as sqloxx::Id anyway.
 		static void mark_as_stale
 		(	PhatbooksDatabaseConnection const& p_database_connection,
@@ -218,7 +217,7 @@ public:
 	class BudgetAttorney
 	{
 	public:
-		friend class AccountImpl;
+		friend class Account;
 		friend class BudgetItemImpl;
 		friend class PhatbooksDatabaseConnection;
 		BudgetAttorney() = delete;
@@ -233,12 +232,12 @@ public:
 		// Retrieve the amalgamated budget for a given Account,
 		// expressed in terms of the standard Frequency of the
 		// AmalgamatedBudget for this PhatbooksDatabaseConnection.
-		// NOTE: Ideally we should have AccountImpl::Id here, or perhaps
-		// Account::Id (rather than sqloxx::Id). However this cannot be
-		// achieved without #including either account.hpp or account_impl.hpp.
+		// NOTE: Ideally we should have Account::Id here, or perhaps
+		// sqloxx::Id (rather than sqloxx::Id). However this cannot be
+		// achieved without #including either account_handle.hpp or account.hpp.
 		// Doing this results in circular #includes. It is simpler just to use
 		// sqloxx::Id here. A static assertion has been placed in
-		// account_impl.hpp, to ensure that AccountImpl::Id is always the same
+		// account.hpp, to ensure that Account::Id is always the same
 		// type as sqloxx::Id anyway.
 		static jewel::Decimal budget
 		(	PhatbooksDatabaseConnection const& p_database_connection,
@@ -348,7 +347,7 @@ private:
 	BalanceCache* m_balance_cache;
 	AmalgamatedBudget* m_budget;
 
-	sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>*
+	sqloxx::IdentityMap<Account, PhatbooksDatabaseConnection>*
 		m_account_map;
 	sqloxx::IdentityMap<BudgetItemImpl, PhatbooksDatabaseConnection>*
 		m_budget_item_map;

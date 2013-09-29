@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "entry.hpp"
+#include "account_handle_fwd.hpp"
 #include "entry_impl.hpp"
 #include "finformat.hpp"
 #include "ordinary_journal.hpp"
@@ -40,7 +41,6 @@ namespace gregorian = boost::gregorian;
 namespace phatbooks
 {
 
-class Account;
 
 void
 Entry::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -86,7 +86,7 @@ Entry::set_journal_id(Journal::Id p_journal_id)
 }
 
 void
-Entry::set_account(Account const& p_account)
+Entry::set_account(AccountHandle const& p_account)
 {
 	impl().set_account(p_account);
 	return;
@@ -134,7 +134,7 @@ Entry::amount() const
 	return impl().amount();
 }
 
-Account
+AccountHandle
 Entry::account() const
 {
 	return impl().account();
@@ -175,7 +175,7 @@ create_date_ordered_actual_ordinary_entry_selector
 (	PhatbooksDatabaseConnection& p_database_connection,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date,
-	optional<Account> const& p_maybe_account
+	optional<AccountHandle> const& p_maybe_account
 )
 {
 	unique_ptr<SQLStatement> ret =

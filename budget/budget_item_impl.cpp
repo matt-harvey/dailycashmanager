@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "budget_item_impl.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"
@@ -9,6 +9,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <wx/string.h>
@@ -34,8 +35,8 @@ namespace phatbooks
 
 
 static_assert
-(	boost::is_same<Account::Id, BudgetItem::Id>::value,
-	"Account::Id needs to be the same type as BudgetItem::Id."
+(	boost::is_same<sqloxx::Id, BudgetItem::Id>::value,
+	"sqloxx::Id needs to be the same type as BudgetItem::Id."
 );
 
 
@@ -126,7 +127,7 @@ BudgetItemImpl::set_description(wxString const& p_description)
 }
 
 void
-BudgetItemImpl::set_account(Account const& p_account)
+BudgetItemImpl::set_account(AccountHandle const& p_account)
 {
 	load();
 	m_data->set_account(p_account);
@@ -156,7 +157,7 @@ BudgetItemImpl::description()
 	return m_data->description();
 }
 
-Account
+AccountHandle
 BudgetItemImpl::account()
 {
 	load();
@@ -197,13 +198,13 @@ BudgetItemImpl::do_load()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	Account::Id const acct_id =  statement.extract<Account::Id>(0);
-	Account const acct(database_connection(), acct_id);
+	sqloxx::Id const acct_id =  statement.extract<sqloxx::Id>(0);
+	AccountHandle const acct(database_connection(), acct_id);
 	Decimal const amt
 	(	statement.extract<Decimal::int_type>(4),
-		acct.commodity().precision()
+		acct->commodity().precision()
 	);
-	temp.m_data->set_account(Account(database_connection(), acct_id));
+	temp.m_data->set_account(AccountHandle(database_connection(), acct_id));
 	temp.m_data->
 		set_description(std8_to_wx(statement.extract<string>(1)));
 	temp.m_data->set_frequency
@@ -219,8 +220,8 @@ BudgetItemImpl::do_load()
 void
 BudgetItemImpl::process_saving_statement(SQLStatement& statement)
 {
-	JEWEL_ASSERT (m_data->account().has_id());
-	statement.bind(":account_id", m_data->account().id());
+	JEWEL_ASSERT (m_data->account()->has_id());
+	statement.bind(":account_id", m_data->account()->id());
 	statement.bind
 	(	":description",
 		wx_to_std8(m_data->description())
@@ -318,11 +319,11 @@ BudgetItemImpl::BudgetItemData::BudgetItemData(BudgetItemData const& rhs):
 {
 	if (rhs.m_account)
 	{
-		m_account = new Account(rhs.account());
+		m_account = new AccountHandle(rhs.account());
 	}
 }
 
-Account
+AccountHandle
 BudgetItemImpl::BudgetItemData::account() const
 {
 	if (m_account)
@@ -355,9 +356,9 @@ BudgetItemImpl::BudgetItemData::amount() const
 }
 
 void
-BudgetItemImpl::BudgetItemData::set_account(Account const& p_account)
+BudgetItemImpl::BudgetItemData::set_account(AccountHandle const& p_account)
 {
-	Account* tmp = new Account(p_account);
+	AccountHandle* tmp = new AccountHandle(p_account);
 	if (m_account)
 	{
 		delete m_account;

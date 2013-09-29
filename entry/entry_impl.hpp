@@ -15,7 +15,7 @@
 
 
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_side.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -72,7 +72,7 @@ public:
 
 	void set_journal_id(Id p_journal_id);
 
-	void set_account(Account const& p_account);
+	void set_account(AccountHandle const& p_account);
 
 	void set_comment(wxString const& p_comment);
 
@@ -97,7 +97,7 @@ public:
 	 */
 	jewel::Decimal amount();
 
-	Account account();
+	AccountHandle account();
 
 	bool is_reconciled();
 
@@ -149,7 +149,7 @@ private:
 struct EntryImpl::EntryData
 {
 	boost::optional<Id> journal_id;
-	boost::optional<Account> account;
+	boost::optional<AccountHandle> account;
 	boost::optional<wxString> comment;
 	boost::optional<jewel::Decimal> amount;
 	boost::optional<bool> is_reconciled;
@@ -183,8 +183,8 @@ create_date_ordered_actual_ordinary_entry_selector_aux
 		boost::optional<boost::gregorian::date>(),
 	boost::optional<boost::gregorian::date> const& p_maybe_max_date =
 		boost::optional<boost::gregorian::date>(),
-	boost::optional<Account> const& p_maybe_account =
-		boost::optional<Account>()
+	boost::optional<AccountHandle> const& p_maybe_account =
+		boost::optional<AccountHandle>()
 );
 
 }  // namespace phatbooks

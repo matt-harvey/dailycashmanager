@@ -8,6 +8,7 @@
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
 #include <memory>
@@ -60,11 +61,11 @@ public:
 	~BudgetItemImpl() = default;
 
 	void set_description(wxString const& p_description);
-	void set_account(Account const& p_account);
+	void set_account(sqloxx::Handle<Account> const& p_account);
 	void set_frequency(Frequency const& p_frequency);
 	void set_amount(jewel::Decimal const& p_amount);
 	wxString description();
-	Account account();
+	sqloxx::Handle<Account> account();
 	Frequency frequency();
 	jewel::Decimal amount();
 
@@ -113,18 +114,18 @@ public:
 	BudgetItemData();
 	~BudgetItemData();
 	BudgetItemData(BudgetItemData const& rhs);
-	Account account() const;
+	sqloxx::Handle<Account> account() const;
 	wxString description() const;
 	Frequency frequency() const;
 	jewel::Decimal amount() const;
-	void set_account(Account const& p_account);
+	void set_account(sqloxx::Handle<Account> const& p_account);
 	void set_description(wxString const& p_description);
 	void set_frequency(Frequency const& p_frequency);
 	void set_amount(jewel::Decimal const& p_amount);
 	void clear();
 private:
 	BudgetItemData& operator=(BudgetItemData const& rhs);  // unimplemented
-	Account* m_account;  // pointer, to avoid having to #include "account.hpp"
+	sqloxx::Handle<Account>* m_account;
 	boost::optional<wxString> m_description;
 	boost::optional<Frequency> m_frequency;
 	boost::optional<jewel::Decimal> m_amount;

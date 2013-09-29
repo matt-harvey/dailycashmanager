@@ -1,41 +1,67 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_account_hpp_7530966385980586
-#define GUARD_account_hpp_7530966385980586
+#ifndef GUARD_account_hpp_5971945187063862
+#define GUARD_account_hpp_5971945187063862
 
-#include "account_impl.hpp"
+/** \file account_handle.hpp
+ *
+ * \brief Header file pertaining to Account class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
+
 #include "account_type.hpp"
 #include "budget_item.hpp"
-#include "phatbooks_persistent_object.hpp"
+#include "commodity.hpp"
+#include "date.hpp"
+#include "finformat.hpp"
+#include "phatbooks_database_connection.hpp"
+#include "string_conv.hpp"
 #include "string_flags.hpp"
 #include "visibility.hpp"
-#include <jewel/decimal.hpp>
 #include <sqloxx/general_typedefs.hpp>
-#include <sqloxx/handle.hpp>
+#include <sqloxx/identity_map.hpp>
+#include <sqloxx/persistent_object.hpp>
+#include <sqloxx/sql_statement_fwd.hpp>
+#include <boost/optional.hpp>
 #include <wx/string.h>
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
+
 namespace phatbooks
 {
 
-class Commodity;
-class PhatbooksDatabaseConnection;
-
-
 /**
- * Represents an account - which could be either a balance sheet
- * or a P&L account.
+ * Represents an account - which could be either a balance sheet account,
+ * or an P&L account. The latter is equivalent to an "envelope" or
+ * "category".
  */
-class Account: public PhatbooksPersistentObject<AccountImpl>
+class Account:
+	public sqloxx::PersistentObject<Account, PhatbooksDatabaseConnection>
 {
 public:
-	typedef
-		PhatbooksPersistentObject<AccountImpl>
-		PhatbooksPersistentObject;
-	typedef PhatbooksPersistentObjectBase::Id Id;
+	
+	typedef sqloxx::PersistentObject<Account, PhatbooksDatabaseConnection>
+		PersistentObject;
+	
+	typedef typename PersistentObject::Id Id;
+
+	// Other classes rely on the below static assertion being true.
+	static_assert
+	(	boost::is_same<Id, sqloxx::Id>::value,
+		"Account::Id needs to be the same type as sqloxx::Id"
+	);
+
+	typedef sqloxx::IdentityMap<Account, PhatbooksDatabaseConnection>
+		IdentityMap;
 
 	/**
 	 * Sets up tables in the database required for the persistence of
@@ -44,60 +70,30 @@ public:
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
+	 * @returns the Id of the Account with name p_name, matched
+	 * case insensitively. If
+	 * there are multiple such Account, then it is undefined
+	 * which Id will be returned, but one will be.
+	 *
+	 * @throws InvalidAccountNameException if there is no Account
+	 * named p_name (this is tested case insensitively).
+	 */
+	static Id id_for_name
+	(	PhatbooksDatabaseConnection& dbc,
+		wxString const& p_name
+	);
+
+	/**
 	 * Initialize a "draft" account, that will not correspond to any
 	 * particular object in the database.
 	 */
 	explicit
-	Account
-	(	PhatbooksDatabaseConnection& p_database_connection
-	);
-
-	/**
-	 * Get an Account by id from database. Throws if no
-	 * such id.
-	 */
-	Account
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
-	);
-
-	Account(Account const&) = default;
-	Account(Account&&) = default;
-	Account& operator=(Account const&) = default;
-	Account& operator=(Account&&) = default;
-	~Account() = default;
-
-	/**
-	 * Get an Account by id from the database (fast,
-	 * unchecked form).
-	 */
-	static Account create_unchecked
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		Id p_id
-	);
-
-	/**
-	 * Get an Account by name from the database, with the name
-	 * matched case insensitively.
-	 *
-	 * @throws InvalidAccountNameException if there is no AccountImpl
-	 * named p_name (matched case insensitively).
-	 */
-	Account
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		wxString const& p_name
-	);
+	Account(IdentityMap& p_identity_map);
 
 	static bool exists
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		Id p_id
-	)
-	{
-		return PhatbooksPersistentObject::exists
-		(	p_database_connection,
-			p_id
-		);
-	}
+	);
 
 	/**
 	 * @returns \e true if and only if \e p_name is the name of an Account
@@ -141,47 +137,38 @@ public:
 	);
 
 	/**
-	 * @returns \e true if and only if there \e no instances of Account
+	 * @returns \e true if and only if there are \e no instances of Account
 	 * with account super type \e p_account_super_type saved in the database
-	 * connected to be p_database_connection.
+	 * connection to by p_database_connection.
 	 */
 	static bool none_saved_with_account_super_type
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		AccountSuperType p_account_super_type
 	);
 
-	static void setup_tables();
-
 	/**
-	 * @ returns name of account
+	 * Get an Account by id from database.
 	 */
-	wxString name() const;
+	Account(IdentityMap& p_identity_map, Id p_id);
 
-	/**
-	 * @ returns native Commodity of this account
-	 */
-	Commodity commodity() const;
+	// copy constructor is private
 
-	/**
-	 * @ returns AccountType of account.
-	 */
-	AccountType account_type() const;
+	Account(Account&&) = delete;
+	Account& operator=(Account const&) = delete;
+	Account& operator=(Account&&) = delete;
+	~Account() = default;
 
-	/**
-	 * @returns AccountSuperType of account.
-	 */
-	AccountSuperType account_super_type() const;
+	wxString name();
 
-	/**
-	 * @ returns description of account.
-	 */
-	wxString description() const;
+	Commodity commodity();
 
-	/**
-	 * @returns the visibility of account (whether it is visible or hidden
-	 * from user).
-	 */
-	Visibility visibility() const;
+	AccountType account_type();
+
+	AccountSuperType account_super_type();
+
+	wxString description();
+
+	Visibility visibility();
 
 	/**
 	 * @returns "technical" account balance, which is
@@ -193,14 +180,14 @@ public:
 	 * that more funds have been spend than were
 	 * available.
 	 */
-	jewel::Decimal technical_balance() const;
+	jewel::Decimal technical_balance();
 
 	/**
 	 * @returns "user friendly" account balance, which, for
 	 * P&L accounts only, has the signs reversed relative to
 	 * technical_balance().
 	 */
-	jewel::Decimal friendly_balance() const;
+	jewel::Decimal friendly_balance();
 
 	/**
 	 * @returns "technical" opening balance of Account.
@@ -209,16 +196,16 @@ public:
 	 * of difference between "technical" and "friendly"
 	 * balance.
 	 */
-	jewel::Decimal technical_opening_balance() const;
+	jewel::Decimal technical_opening_balance();
 
 	/**
-	 * @returns "user-friendly" opening balance of Account.
+	 * @returns "user-friendly" opening balance of Account,
 	 * See documentation for technical_balance() and
 	 * friendly_balance(), for explanation
 	 * of difference between "technical" and "friendly"
 	 * balance.
 	 */
-	jewel::Decimal friendly_opening_balance() const;
+	jewel::Decimal friendly_opening_balance();
 
 	/**
 	 * @returns the amount of the recurring budget for
@@ -227,13 +214,13 @@ public:
 	 * E.g. if the standard Frequency is daily, then
 	 * then a budget() of 100.00 implies 100.00/day.
 	 */
-	jewel::Decimal budget() const;
+	jewel::Decimal budget();
 
 	/**
 	 * @returns a std::vector containing all and only
 	 * the saved BudgetItems for this Account.
 	 */
-	std::vector<BudgetItem> budget_items() const;
+	std::vector<BudgetItem> budget_items();
 
 	void set_account_type(AccountType p_account_type);
 
@@ -245,54 +232,46 @@ public:
 
 	void set_visibility(Visibility p_visibility);
 
+	/**
+	 * @todo Provide non-member swap and specialized std::swap per
+	 * "Effective C++".
+	 */
+	void swap(Account& rhs);
+
+	// These are tied to SQLoxx API and must be std::string, not
+	// wxString.
+	static std::string primary_table_name();
+	static std::string exclusive_table_name();
+	static std::string primary_key_name();
+
 private:
-	Account(sqloxx::Handle<AccountImpl> const& p_handle);
+
+	/**
+	 * Copy constructor - implemented, but deliberately private.
+	 */
+	Account(Account const& rhs);
+
+	void do_load();
+	void do_save_existing();
+	void do_save_new();
+	void do_ghostify();
+	void do_remove();
+	void process_saving_statement(sqloxx::SQLStatement& statement);
+
+	struct AccountData
+	{
+		boost::optional<wxString> name;
+		boost::optional<Commodity> commodity;
+		boost::optional<AccountType> account_type;
+		boost::optional<wxString> description;
+		boost::optional<Visibility> visibility;
+	};
+
+	std::unique_ptr<AccountData> m_data;
 };
 
 
-/**
- * Represents an Account together with an amount representing
- * its onpening balance. This is simply a convenient way of
- * grouping these two pieces of information together; hence a
- * struct.
- */
-struct AugmentedAccount
-{
-	AugmentedAccount
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		Commodity const& p_commodity
-	);
-	AugmentedAccount
-	(	Account const& p_account,
-		jewel::Decimal const& p_technical_opening_balance
-	);
-	Account account;
-	jewel::Decimal technical_opening_balance;
-};
-
-
-/* Free functions ********************************************/
-
-
-// This has to be std::string as it interfaces with Consolixx
-// which requires it to be std::string
-std::shared_ptr<std::vector<std::string> >
-make_account_row(Account const& account);
-
-// This has to be std::string as it interfaces with Consolixx
-// which requires it to be std::string
-std::shared_ptr<std::vector<std::string> >
-make_detailed_account_row(Account const& account);
-
-bool is_asset_or_liability(Account const& account);
-bool is_balance_sheet_account(Account const& account);
-bool is_expense(Account const& account);
-bool is_revenue(Account const& account);
-bool is_pl_account(Account const& account);
-bool is_not_pure_envelope(Account const& account);
-std::vector<AccountType> balance_sheet_account_types();
-std::vector<AccountType> pl_account_types();
-
+// NON-MEMBER FUNCTIONS
 
 /**
  * Type used to pass options to \e account_concept_name and
@@ -307,7 +286,6 @@ typedef
 		string_flags::pluralize
 	>
 	AccountPhraseFlags;
-
 
 /**
  * @returns "account", "category" or some such string to describe
@@ -340,4 +318,5 @@ favourite_accounts(PhatbooksDatabaseConnection& p_database_connection);
 
 }  // namespace phatbooks
 
-#endif  // GUARD_account_hpp_7530966385980586
+
+#endif  // GUARD_account_hpp_5971945187063862

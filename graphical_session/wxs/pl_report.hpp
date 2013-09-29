@@ -3,7 +3,7 @@
 #ifndef GUARD_pl_report_hpp_03798236466850264
 #define GUARD_pl_report_hpp_03798236466850264
 
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "report.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -64,7 +64,7 @@ private:
 
 	void display_body();
 
-	typedef std::unordered_map<Account::Id, jewel::Decimal> Map;
+	typedef std::unordered_map<sqloxx::Id, jewel::Decimal> Map;
 	Map m_map;
 
 };  // class PLReport

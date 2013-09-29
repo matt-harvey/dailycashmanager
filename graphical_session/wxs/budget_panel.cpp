@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "budget_panel.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_ctrl.hpp"
 #include "account_dialog.hpp"
 #include "account_table_iterator.hpp"
@@ -78,7 +78,7 @@ END_EVENT_TABLE()
 // End event tables
 
 
-BudgetPanel::BudgetPanel(AccountDialog* p_parent, Account const& p_account):
+BudgetPanel::BudgetPanel(AccountDialog* p_parent, AccountHandle const& p_account):
 	wxPanel(p_parent, wxID_ANY),
 	m_next_row(0),
 	m_top_sizer(0),
@@ -89,7 +89,7 @@ BudgetPanel::BudgetPanel(AccountDialog* p_parent, Account const& p_account):
 	JEWEL_ASSERT (p_parent);  // precondition
 	JEWEL_ASSERT (m_budget_items.empty());
 
-	if (p_account == p_account.database_connection().balancing_account())
+	if (p_account == p_account->database_connection().balancing_account())
 	{
 		JEWEL_THROW
 		(	BudgetEditingException,
@@ -281,7 +281,7 @@ BudgetPanel::TransferDataToWindow()
 	// Make sure there are no unusual signs
 	// (+ for revenue Accounts or - for expense Accounts) and warn the
 	// user in case there are, giving them the opportunity to correct it.	
-	AccountType const account_type = m_account.account_type();
+	AccountType const account_type = m_account->account_type();
 
 	// Set precision of "zero" for more efficient comparisons.
 	Decimal const z = zero();
@@ -315,7 +315,7 @@ BudgetPanel::TransferDataToWindow()
 bool
 BudgetPanel::process_confirmation()
 {
-	JEWEL_ASSERT (m_account.has_id());
+	JEWEL_ASSERT (m_account->has_id());
 	if
 	(	Validate() && TransferDataFromWindow() && update_budgets_from_dialog()
 	)
@@ -351,7 +351,7 @@ BudgetPanel::update_budget_summary()
 bool
 BudgetPanel::update_budgets_from_dialog()
 {
-	JEWEL_ASSERT (m_account.has_id());
+	JEWEL_ASSERT (m_account->has_id());
 	DatabaseTransaction transaction(database_connection());
 
 	typedef vector<BudgetItem> ItemVec;
@@ -402,14 +402,14 @@ BudgetPanel::update_budgets_from_dialog()
 
 	transaction.commit();
 
-	JEWEL_ASSERT (m_account.has_id());
+	JEWEL_ASSERT (m_account->has_id());
 
 	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
 	JEWEL_ASSERT (frame);
 	PersistentObjectEvent::fire
 	(	frame,
 		PHATBOOKS_BUDGET_EDITED_EVENT,
-		m_account.id()
+		m_account->id()
 	);
 
 	return true;
@@ -505,23 +505,23 @@ wxString
 BudgetPanel::initial_summary_amount_text()
 {
 	return
-		m_account.has_id()?
-		finformat_wx(m_account.budget(), locale()):
+		m_account->has_id()?
+		finformat_wx(m_account->budget(), locale()):
 		finformat_wx(zero(), locale());
 }
 
 PhatbooksDatabaseConnection&
 BudgetPanel::database_connection() const
 {
-	return m_account.database_connection();
+	return m_account->database_connection();
 }
 
 Decimal
 BudgetPanel::zero() const
 {
 	Commodity const commodity =
-	(	m_account.has_id()?
-		m_account.commodity():
+	(	m_account->has_id()?
+		m_account->commodity():
 		database_connection().default_commodity()
 	);
 	return Decimal(0, commodity.precision());
@@ -555,9 +555,9 @@ BudgetPanel::make_budget_items() const
 void
 BudgetPanel::prompt_to_balance()
 {
-	Account const balancing_account =
+	AccountHandle const balancing_account =
 		database_connection().balancing_account();
-	Decimal const imbalance = balancing_account.budget();
+	Decimal const imbalance = balancing_account->budget();
 	Decimal const z = zero();
 	if (imbalance == z)
 	{
@@ -567,8 +567,8 @@ BudgetPanel::prompt_to_balance()
 	{
 		JEWEL_ASSERT (imbalance != z);
 		AccountType const account_type =
-			m_account.account_type();
-		optional<Account> maybe_target_account;	
+			m_account->account_type();
+		optional<AccountHandle> maybe_target_account;	
 		if
 		(	(   (account_type == AccountType::expense) ||
 			    (account_type == AccountType::pure_envelope)    )
@@ -587,13 +587,13 @@ BudgetPanel::prompt_to_balance()
 			AccountTableIterator const end;
 			for ( ; it != end; ++it)
 			{
-				AccountType const atype = it->account_type();
+				AccountType const atype = (*it)->account_type();
 				if
 				(	(	(atype == AccountType::revenue) ||
 						(atype == AccountType::pure_envelope)
 					)
 					&&
-					(	it->budget() < z
+					(	(*it)->budget() < z
 					) 
 					&&
 					(	*it != balancing_account
@@ -679,7 +679,7 @@ BudgetPanel::SignWarning::get_message
 BudgetPanel::BalancingDialog::BalancingDialog
 (	wxWindow* p_parent,
 	jewel::Decimal const& p_imbalance,
-	boost::optional<Account> const& p_maybe_account,
+	boost::optional<AccountHandle> const& p_maybe_account,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
@@ -777,8 +777,8 @@ BudgetPanel::BalancingDialog::on_yes_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter
 	JEWEL_ASSERT (m_account_ctrl);
-	Account account = m_account_ctrl->account();
-	JEWEL_ASSERT (account.has_id());
+	AccountHandle account = m_account_ctrl->account();
+	JEWEL_ASSERT (account->has_id());
 	update_budgets_from_dialog(account);
 	EndModal(wxID_OK);
 	return;
@@ -793,7 +793,7 @@ BudgetPanel::BalancingDialog::on_no_button_click(wxCommandEvent& event)
 }
 
 void
-BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
+BudgetPanel::BalancingDialog::update_budgets_from_dialog(AccountHandle const& p_target)
 {
 	wxString const offsetting_item_description("Offsetting budget adjustment");
 	Frequency const target_frequency =
@@ -825,7 +825,7 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 			PersistentObjectEvent::fire
 			(	frame,  // don't use "this", or event will be missed
 				PHATBOOKS_BUDGET_EDITED_EVENT,
-				p_target.id()
+				p_target->id()
 			);
 			return;
 		}
@@ -843,7 +843,7 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(Account& p_target)
 	PersistentObjectEvent::fire
 	(	frame,  // don't use "this", or event will be missed
 		PHATBOOKS_BUDGET_EDITED_EVENT,
-		p_target.id()
+		p_target->id()
 	);
 	JEWEL_ASSERT (budget_is_balanced());
 
@@ -854,7 +854,7 @@ bool
 BudgetPanel::BalancingDialog::budget_is_balanced() const
 {
 	return
-		m_database_connection.balancing_account().budget() ==
+		m_database_connection.balancing_account()->budget() ==
 		Decimal(0, 0);
 }
 

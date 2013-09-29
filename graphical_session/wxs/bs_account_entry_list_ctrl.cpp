@@ -41,7 +41,7 @@ namespace
 BSAccountEntryListCtrl::BSAccountEntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	Account const& p_account,
+	AccountHandle const& p_account,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date
 ):

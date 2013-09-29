@@ -12,8 +12,8 @@
  */
 
 #include "phatbooks_database_connection.hpp"
+#include "account_handle.hpp"
 #include "account.hpp"
-#include "account_impl.hpp"
 #include "account_table_iterator.hpp"
 #include "amalgamated_budget.hpp"
 #include "application.hpp"
@@ -91,7 +91,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	m_permanent_entity_data = new PermanentEntityData;
 	m_balance_cache = new BalanceCache(*this);
 	m_budget = new AmalgamatedBudget(*this);
-	m_account_map = new IdentityMap<AccountImpl, PDC>(*this);
+	m_account_map = new IdentityMap<Account, PDC>(*this);
 	m_budget_item_map = new IdentityMap<BudgetItemImpl, PDC>(*this);
 	m_commodity_map = new IdentityMap<CommodityImpl, PDC>(*this);
 	m_entry_map = new IdentityMap<EntryImpl, PDC>(*this);
@@ -288,7 +288,7 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 }
 
 
-Account
+AccountHandle
 PhatbooksDatabaseConnection::balancing_account() const
 {
 	return m_budget->balancing_account();
@@ -436,7 +436,7 @@ BalanceCacheAttorney::mark_as_stale
 void
 BalanceCacheAttorney::mark_as_stale
 (	PhatbooksDatabaseConnection const& p_database_connection,
-	AccountImpl::Id p_account_id
+	Account::Id p_account_id
 )
 {
 	p_database_connection.m_balance_cache->mark_as_stale
@@ -448,7 +448,7 @@ BalanceCacheAttorney::mark_as_stale
 Decimal
 BalanceCacheAttorney::technical_balance
 (	PhatbooksDatabaseConnection const& p_database_connection,
-	AccountImpl::Id p_account_id
+	Account::Id p_account_id
 )
 {
 	return p_database_connection.m_balance_cache->technical_balance
@@ -459,7 +459,7 @@ BalanceCacheAttorney::technical_balance
 Decimal
 BalanceCacheAttorney::technical_opening_balance
 (	PhatbooksDatabaseConnection const& p_database_connection,
-	AccountImpl::Id p_account_id
+	Account::Id p_account_id
 )
 {
 	return p_database_connection.m_balance_cache->technical_opening_balance
@@ -487,7 +487,7 @@ BudgetAttorney::regenerate
 Decimal
 BudgetAttorney::budget
 (	PhatbooksDatabaseConnection const& p_database_connection,
-	AccountImpl::Id p_account_id
+	Account::Id p_account_id
 )
 {
 	return p_database_connection.m_budget->budget(p_account_id);
@@ -558,8 +558,8 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
 // Getters for IdentityMaps
 
 template <>
-sqloxx::IdentityMap<AccountImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<AccountImpl>()
+sqloxx::IdentityMap<Account, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<Account>()
 {
 	return *m_account_map;
 }
@@ -617,8 +617,8 @@ PhatbooksDatabaseConnection::perform_integrity_checks()
 		Decimal total_balances;
 		for (AccountTableIterator it(*this), end ; it != end; ++it)
 		{
-			total_opening_balances += it->technical_opening_balance();
-			total_balances += it->technical_balance();
+			total_opening_balances += (*it)->technical_opening_balance();
+			total_balances += (*it)->technical_balance();
 		}
 		JEWEL_ASSERT (total_opening_balances == Decimal(0, 0));
 		JEWEL_ASSERT (total_balances == Decimal(0, 0));

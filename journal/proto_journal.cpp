@@ -14,7 +14,7 @@
 
 
 #include "proto_journal.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
 #include "phatbooks_database_connection.hpp"

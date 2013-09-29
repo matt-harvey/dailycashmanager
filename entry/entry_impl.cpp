@@ -13,7 +13,7 @@
 
 
 #include "entry_impl.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "date.hpp"
 #include "string_conv.hpp"
 #include "commodity.hpp"
@@ -116,7 +116,7 @@ EntryImpl::set_journal_id(Id p_journal_id)
 
 
 void
-EntryImpl::set_account(Account const& p_account)
+EntryImpl::set_account(AccountHandle const& p_account)
 {
 	load();
 	m_data->account = p_account;
@@ -158,7 +158,7 @@ EntryImpl::set_transaction_side
 	m_data->transaction_side = p_transaction_side;
 }
 
-Account
+AccountHandle
 EntryImpl::account()
 {
 	load();
@@ -222,13 +222,13 @@ EntryImpl::do_load()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	Account const acct
+	AccountHandle const acct
 	(	database_connection(),
-		statement.extract<Account::Id>(0)
+		statement.extract<sqloxx::Id>(0)
 	);
 	Decimal const amt
 	(	statement.extract<Decimal::int_type>(2),
-		acct.commodity().precision()
+		acct->commodity().precision()
 	);
 
 	temp.m_data->account = acct;
@@ -251,7 +251,7 @@ EntryImpl::process_saving_statement(SQLStatement& statement)
 {
 	statement.bind(":journal_id", value(m_data->journal_id));
 	statement.bind(":comment", wx_to_std8(value(m_data->comment)));
-	statement.bind(":account_id", value(m_data->account).id());
+	statement.bind(":account_id", value(m_data->account)->id());
 	statement.bind(":amount", m_data->amount->intval());
 	statement.bind
 	(	":is_reconciled",
@@ -277,14 +277,14 @@ EntryImpl::do_save_existing()
 	old_account_capturer.step();
 	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection(),
-		old_account_capturer.extract<Account::Id>(0)
+		old_account_capturer.extract<sqloxx::Id>(0)
 	);
 	old_account_capturer.step_final();
 
 	// And we also need to mark the new Account as stale
 	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection(),
-		account().id()
+		account()->id()
 	);
 
 	// And now we can update the Entry itself
@@ -310,7 +310,7 @@ EntryImpl::do_save_new()
 {
 	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection(),
-		account().id()
+		account()->id()
 	);
 	SQLStatement inserter
 	(	database_connection(),
@@ -354,7 +354,7 @@ EntryImpl::do_remove()
 {
 	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection(),
-		account().id()
+		account()->id()
 	);
 	std::string const statement_text =
 		"delete from " + primary_table_name() + " where " +
@@ -401,7 +401,7 @@ create_date_ordered_actual_ordinary_entry_selector_aux
 (	PhatbooksDatabaseConnection& p_database_connection,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date,
-	optional<Account> const& p_maybe_account
+	optional<AccountHandle> const& p_maybe_account
 )
 {
 	// TODO Factor out duplicated code between here and
@@ -445,9 +445,9 @@ create_date_ordered_actual_ordinary_entry_selector_aux
 	{
 		ret->bind(":max_date", julian_int(*p_maybe_max_date));
 	}
-	if (p_maybe_account && p_maybe_account->has_id())
+	if (p_maybe_account && (*p_maybe_account)->has_id())
 	{
-		ret->bind(":account_id", p_maybe_account->id());
+		ret->bind(":account_id", (*p_maybe_account)->id());
 	}
 	return move(ret);
 }

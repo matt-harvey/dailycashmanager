@@ -3,7 +3,7 @@
 #ifndef GUARD_balance_cache_hpp_3730216051326234
 #define GUARD_balance_cache_hpp_3730216051326234
 
-#include "account_impl.hpp"
+#include "account.hpp"
 #include <boost/optional.hpp>
 #include <jewel/decimal_fwd.hpp>
 #include <memory>
@@ -19,20 +19,20 @@ class PhatbooksDatabaseConnection;
 
 // WARNING
 // Class-by-class summary of what triggers staleness:
-// AccountImpl - any database-affecting operations on any
-// AccountImpl should make the whole map
-// stale (to keep things simple, as in any case AccountImpl operations would
+// Account - any database-affecting operations on any
+// Account should make the whole map
+// stale (to keep things simple, as in any case Account operations would
 // be relatively rare).
 // CommodityImpl - any database-affecting operations on any CommodityImpl
 // should make the whole
 // map stale (to keep things simple, as in any case CommodityImpl operations
 // would be relatively rare).
 // EntryImpl - whenever an EntryImpl is operated on that has a particular
-// AccountImpl
-// as its AccountImpl, the cache entry for that AccountImpl should be
+// Account
+// as its Account, the cache entry for that Account should be
 // marked as stale (if the operation affects the database).
 // Journal, DraftJournal and OrdinaryJournal - Any operations on these
-// that affect AccountImpl balances will do so only insofar as they involve
+// that affect Account balances will do so only insofar as they involve
 // operations on Entries. Therefore, Draft/Ordinary/Journal operations
 // as such do not need to trigger BalanceCache staleness.
 // Repeater. These contain only draft Entries so do not need to trigger
@@ -40,7 +40,7 @@ class PhatbooksDatabaseConnection;
 
 
 /**
- * Provides a cache for holding AccountImpl balances.
+ * Provides a cache for holding Account balances.
  *
  * @todo Testing.
  */
@@ -59,35 +59,35 @@ public:
 
 	~BalanceCache() = default;
 
-	// Retrieve the technical balance for a particular AccountImpl.
+	// Retrieve the technical balance for a particular Account.
 	// For an explanation of the concept of a "technical balance",
 	// see the documentation for Account::technical_balance().
-	jewel::Decimal technical_balance(AccountImpl::Id p_account_id);
+	jewel::Decimal technical_balance(Account::Id p_account_id);
 
 	// Retrieve the technical opening balance for a particular
-	// AccountImpl.
+	// Account.
 	// For an explanation of the concept of a "technical opening balance",
 	// see the documentation for Account::technical_opening_balance().
-	jewel::Decimal technical_opening_balance(AccountImpl::Id p_account_id);
+	jewel::Decimal technical_opening_balance(Account::Id p_account_id);
 
 	// Mark the cache as a whole as stale
 	void mark_as_stale();
 	
-	// Mark a particular AccountImpl's cache entry as stale
-	void mark_as_stale(AccountImpl::Id p_account_id); 
+	// Mark a particular Account's cache entry as stale
+	void mark_as_stale(Account::Id p_account_id); 
 
 private:
 
 	typedef
 		std::unordered_map
-		<	AccountImpl::Id,
+		<	Account::Id,
 			boost::optional<jewel::Decimal>
 		>
 		Map;
 		
 	void refresh();
 	void refresh_all();
-	void refresh_targetted(std::vector<AccountImpl::Id> const& p_targets);
+	void refresh_targetted(std::vector<Account::Id> const& p_targets);
 
 	PhatbooksDatabaseConnection& m_database_connection;
 	std::unique_ptr<Map> m_map;

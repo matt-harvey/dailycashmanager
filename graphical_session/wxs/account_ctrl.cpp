@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "account_ctrl.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -33,9 +33,9 @@ END_EVENT_TABLE()
 
 namespace
 {
-	bool compare_account_names(Account const& lhs, Account const& rhs)
+	bool compare_account_names(AccountHandle const& lhs, AccountHandle const& rhs)
 	{
-		return lhs.name() < rhs.name();
+		return lhs->name() < rhs->name();
 	}
 }  // end anonymous namespace
 
@@ -83,8 +83,8 @@ AccountCtrl::reset()
 {
 	m_account_map.clear();
 	wxArrayString valid_account_names;
-	Account const balancing_acct = m_database_connection.balancing_account();
-	vector<Account> avec
+	AccountHandle const balancing_acct = m_database_connection.balancing_account();
+	vector<AccountHandle> avec
 	(	AccountTableIterator(m_database_connection),
 		(AccountTableIterator())
 	);
@@ -93,7 +93,7 @@ AccountCtrl::reset()
 	for ( ; it != end; ++it)
 	{
 		if
-		(	m_available_account_types.find(it->account_type()) !=
+		(	m_available_account_types.find((*it)->account_type()) !=
 			m_available_account_types.end()
 		)
 		{
@@ -103,12 +103,12 @@ AccountCtrl::reset()
 			}
 			else
 			{
-				valid_account_names.Add(it->name());
+				valid_account_names.Add((*it)->name());
 
 				// Remember the Account associated with this name (comes
 				// in handy when we have to update for a change in Account
 				// name).
-				m_account_map[it->name()] = it->id();
+				m_account_map[(*it)->name()] = (*it)->id();
 			}
 		}
 	}
@@ -126,13 +126,13 @@ AccountCtrl::reset()
 }
 
 void
-AccountCtrl::set_account(Account const& p_account)
+AccountCtrl::set_account(AccountHandle const& p_account)
 {
-	SetValue(p_account.name());
+	SetValue(p_account->name());
 	return;
 }
 
-Account
+AccountHandle
 AccountCtrl::account()
 {
 	/*
@@ -140,11 +140,11 @@ AccountCtrl::account()
 		dynamic_cast<StringSetValidator const*>(GetValidator());
 	JEWEL_ASSERT (validator);
 	*/
-	return Account(m_database_connection, m_account_map.at(GetValue()));
+	return AccountHandle(m_database_connection, m_account_map.at(GetValue()));
 }
 
 void
-AccountCtrl::update_for_new(Account const& p_account)
+AccountCtrl::update_for_new(AccountHandle const& p_account)
 {
 	(void)p_account;  // silence compiler re. unused parameter
 	refresh();
@@ -152,7 +152,7 @@ AccountCtrl::update_for_new(Account const& p_account)
 }
 
 void
-AccountCtrl::update_for_amended(Account const& p_account)
+AccountCtrl::update_for_amended(AccountHandle const& p_account)
 {
 	(void)p_account;  // silence compiler re. unused parameter
 	refresh();
@@ -174,7 +174,7 @@ AccountCtrl::on_kill_focus(wxFocusEvent& event)
 void
 AccountCtrl::refresh()
 {
-	Account const selected_account = account();
+	AccountHandle const selected_account = account();
 	reset();
 	set_account(selected_account);
 	return;

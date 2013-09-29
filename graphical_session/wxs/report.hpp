@@ -3,6 +3,7 @@
 #ifndef GUARD_report_hpp_0032136221431259167
 #define GUARD_report_hpp_0032136221431259167
 
+#include "account_handle_fwd.hpp"
 #include "account_type.hpp"
 #include "entry.hpp"
 #include "gridded_scrolled_panel.hpp"
@@ -16,7 +17,6 @@ namespace phatbooks
 
 // Begin forward declarations
 
-class Account;
 class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
@@ -67,8 +67,8 @@ public:
 
 	void update_for_new(OrdinaryJournal const& p_journal);
 	void update_for_amended(OrdinaryJournal const& p_journal);
-	void update_for_new(Account const& p_account);
-	void update_for_amended(Account const& p_account);
+	void update_for_new(AccountHandle const& p_account);
+	void update_for_amended(AccountHandle const& p_account);
 	void update_for_deleted(std::vector<Entry::Id> const& p_doomed_ids);
 
 	void generate();

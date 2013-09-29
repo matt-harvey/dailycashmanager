@@ -3,6 +3,7 @@
 #ifndef GUARD_reconciliation_entry_list_ctrl_hpp_7164053319564114
 #define GUARD_reconciliation_entry_list_ctrl_hpp_7164053319564114
 
+#include "account_handle_fwd.hpp"
 #include "filtered_entry_list_ctrl.hpp"
 #include "reconciliation_list_panel.hpp"
 #include "summary_datum.hpp"
@@ -22,7 +23,6 @@ namespace phatbooks
 
 // Begin forward declarations
 
-class Account;
 class Entry;
 
 // End forward declarations
@@ -47,7 +47,7 @@ public:
 	ReconciliationEntryListCtrl
 	(	ReconciliationListPanel* p_parent,
 		wxSize const& p_size,
-		Account const& p_account,
+		AccountHandle const& p_account,
 		boost::gregorian::date const& p_min_date,
 		boost::gregorian::date const& p_max_date
 	);

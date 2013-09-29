@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "frame.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_dialog.hpp"
 #include "account_list_ctrl.hpp"
 #include "application.hpp"
@@ -322,7 +322,7 @@ Frame::on_menu_new_bs_account(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
-	Account account(m_database_connection);
+	AccountHandle account(m_database_connection);
 	AccountDialog account_dialog
 	(	this,
 		account,
@@ -337,7 +337,7 @@ Frame::on_menu_new_pl_account(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
-	Account account(m_database_connection);
+	AccountHandle account(m_database_connection);
 	AccountDialog account_dialog(this, account, AccountSuperType::pl);
 	account_dialog.ShowModal();
 	return;
@@ -348,9 +348,9 @@ Frame::on_menu_new_transaction(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
-	vector<Account> balance_sheet_accounts;
+	vector<AccountHandle> balance_sheet_accounts;
 	selected_balance_sheet_accounts(balance_sheet_accounts);
-	vector<Account> pl_accounts;
+	vector<AccountHandle> pl_accounts;
 	selected_pl_accounts(pl_accounts);
 	// m_top_panel->SetFocus();  // WARNING This doesn't seem to have any effect
 	m_top_panel->configure_transaction_ctrl();
@@ -366,7 +366,7 @@ Frame::on_menu_edit_bs_account(wxCommandEvent& event)
 	// that invoke an AccountDialog.
 
 	(void)event;  // Silence compiler re. unused parameter.
-	vector<Account> accounts;
+	vector<AccountHandle> accounts;
 	selected_balance_sheet_accounts(accounts);
 	if (accounts.empty())
 	{
@@ -376,9 +376,9 @@ Frame::on_menu_edit_bs_account(wxCommandEvent& event)
 		return;
 	}
 	JEWEL_ASSERT (accounts.size() >= 1);
-	Account account = accounts[0];
+	AccountHandle account = accounts[0];
 	JEWEL_ASSERT
-	(	super_type(account.account_type()) ==
+	(	super_type(account->account_type()) ==
 		AccountSuperType::balance_sheet
 	);
 	edit_account(account);
@@ -390,7 +390,7 @@ Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler re. unused parameter.
-	vector<Account> accounts;
+	vector<AccountHandle> accounts;
 	selected_pl_accounts(accounts);
 	if (accounts.empty())
 	{
@@ -405,9 +405,9 @@ Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 		return;
 	}
 	JEWEL_ASSERT (accounts.size() >= 1);
-	Account account = accounts[0];
+	AccountHandle account = accounts[0];
 	JEWEL_ASSERT
-	(	super_type(account.account_type()) ==
+	(	super_type(account->account_type()) ==
 		AccountSuperType::pl
 	);
 	edit_account(account);
@@ -502,7 +502,7 @@ Frame::on_account_editing_requested(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
 
-	Account account(m_database_connection, event.po_id());
+	AccountHandle account(m_database_connection, event.po_id());
 	edit_account(account);
 	return;
 }
@@ -531,7 +531,7 @@ Frame::on_account_created_event(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
-	Account const account(m_database_connection, event.po_id());
+	AccountHandle const account(m_database_connection, event.po_id());
 	m_top_panel->update_for_new(account);
 	return;
 }
@@ -541,7 +541,7 @@ Frame::on_account_edited_event(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
-	Account const account(m_database_connection, event.po_id());
+	AccountHandle const account(m_database_connection, event.po_id());
 	m_top_panel->update_for_amended(account);
 	return;
 }
@@ -644,7 +644,7 @@ Frame::on_budget_edited_event(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
-	Account account(m_database_connection, event.po_id());
+	AccountHandle account(m_database_connection, event.po_id());
 	JEWEL_ASSERT (m_top_panel);
 	m_top_panel->update_for_amended_budget(account);
 	return;
@@ -662,7 +662,7 @@ Frame::on_reconciliation_status_event(PersistentObjectEvent& event)
 }
 
 void
-Frame::selected_balance_sheet_accounts(vector<Account>& out) const
+Frame::selected_balance_sheet_accounts(vector<AccountHandle>& out) const
 {
 	JEWEL_LOG_TRACE();
 	m_top_panel->selected_balance_sheet_accounts(out);
@@ -670,7 +670,7 @@ Frame::selected_balance_sheet_accounts(vector<Account>& out) const
 }
 
 void
-Frame::selected_pl_accounts(vector<Account>& out) const
+Frame::selected_pl_accounts(vector<AccountHandle>& out) const
 {
 	JEWEL_LOG_TRACE();
 	m_top_panel->selected_pl_accounts(out);
@@ -694,13 +694,13 @@ Frame::selected_draft_journals(vector<DraftJournal>& out) const
 }
 
 void
-Frame::edit_account(Account& p_account)
+Frame::edit_account(AccountHandle const& p_account)
 {
 	JEWEL_LOG_TRACE();
 	AccountDialog account_dialog
 	(	this,
 		p_account,
-		super_type(p_account.account_type())
+		super_type(p_account->account_type())
 	);
 	account_dialog.ShowModal();
 	return;

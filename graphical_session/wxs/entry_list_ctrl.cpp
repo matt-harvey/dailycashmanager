@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "entry_list_ctrl.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "app.hpp"
 #include "bs_account_entry_list_ctrl.hpp"
@@ -74,13 +74,13 @@ EntryListCtrl*
 EntryListCtrl::create_actual_ordinary_entry_list
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	Account const& p_account,
+	AccountHandle const& p_account,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date
 )
 {
 	EntryListCtrl* ret = 0;
-	switch (super_type(p_account.account_type()))
+	switch (super_type(p_account->account_type()))
 	{
 	case AccountSuperType::balance_sheet:
 		ret = new BSAccountEntryListCtrl
@@ -112,13 +112,13 @@ ReconciliationEntryListCtrl*
 EntryListCtrl::create_reconciliation_entry_list
 (	ReconciliationListPanel* p_parent,
 	wxSize const& p_size,
-	Account const& p_account,
+	AccountHandle const& p_account,
 	gregorian::date const& p_min_date,
 	gregorian::date const& p_max_date
 )
 {
 	JEWEL_ASSERT
-	(	super_type(p_account.account_type()) ==
+	(	super_type(p_account->account_type()) ==
 		AccountSuperType::balance_sheet
 	);
 	ReconciliationEntryListCtrl* ret = new ReconciliationEntryListCtrl
@@ -302,7 +302,7 @@ EntryListCtrl::process_insertion_candidate_entry
 }
 
 void
-EntryListCtrl::do_update_for_amended(Account const& p_account)
+EntryListCtrl::do_update_for_amended(AccountHandle const& p_account)
 {
 	(void)p_account;  // Silence compiler re. unused variable
 	return;
@@ -379,7 +379,7 @@ EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
 }
 
 void
-EntryListCtrl::update_for_new(Account const& p_account)
+EntryListCtrl::update_for_new(AccountHandle const& p_account)
 {
 	(void)p_account;  // Silence compiler re. unused parameter.
 	// Nothing to do.
@@ -387,7 +387,7 @@ EntryListCtrl::update_for_new(Account const& p_account)
 }
 
 void
-EntryListCtrl::update_for_amended(Account const& p_account)
+EntryListCtrl::update_for_amended(AccountHandle const& p_account)
 {
 	do_update_for_amended(p_account);
 	return;

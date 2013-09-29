@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "multi_account_panel.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
 #include "commodity.hpp"
@@ -46,12 +46,12 @@ namespace gui
 
 namespace
 {
-	vector<Account> suggested_accounts
+	vector<AccountHandle> suggested_accounts
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		AccountSuperType p_account_super_type
 	)
 	{
-		vector<Account> ret;
+		vector<AccountHandle> ret;
 		JEWEL_ASSERT (ret.empty());
 		typedef vector<AccountType> ATypeVec;
 		ATypeVec const& account_types =
@@ -118,14 +118,14 @@ MultiAccountPanel::MultiAccountPanel
 
 	// Main body of MultiAccountPanel - a grid of fields where user
 	// can edit Account attributes and opening balances.
-	vector<Account> sugg_accounts =
+	vector<AccountHandle> sugg_accounts =
 		suggested_accounts(database_connection(), m_account_super_type);
-	vector<Account>::size_type const sz = sugg_accounts.size();
+	vector<AccountHandle>::size_type const sz = sugg_accounts.size();
 	m_account_name_boxes.reserve(sz);
 	m_account_type_boxes.reserve(sz);
 	m_description_boxes.reserve(sz);
 	m_opening_balance_boxes.reserve(sz);
-	for (Account& account: sugg_accounts)
+	for (AccountHandle& account: sugg_accounts)
 	{
 		push_row(account);
 	}
@@ -154,7 +154,7 @@ MultiAccountPanel::required_width()
 bool
 MultiAccountPanel::push_row()
 {
-	Account account = blank_account();
+	AccountHandle account = blank_account();
 	return push_row(account);
 }
 
@@ -235,32 +235,32 @@ MultiAccountPanel::account_type_is_selected
 	return false;
 }
 
-Account
+AccountHandle
 MultiAccountPanel::blank_account()
 {
-	Account ret(database_connection());
+	AccountHandle ret(database_connection());
 	wxString const empty_string;
 	JEWEL_ASSERT (empty_string.empty());
-	ret.set_name(empty_string);
-	ret.set_description(empty_string);
-	ret.set_visibility(Visibility::visible);
+	ret->set_name(empty_string);
+	ret->set_description(empty_string);
+	ret->set_visibility(Visibility::visible);
 	vector<AccountType> const& atypes =
 		account_types(m_account_super_type);
 	JEWEL_ASSERT (!atypes.empty());
-	ret.set_account_type(atypes.at(0));
+	ret->set_account_type(atypes.at(0));
 	return ret;
 }
 
 bool
-MultiAccountPanel::push_row(Account& p_account)
+MultiAccountPanel::push_row(AccountHandle const& p_account)
 {
 	int const row = current_row();
 
-	// Account name
+	// AccountHandle name
 	wxTextCtrl* account_name_box = new wxTextCtrl
 	(	this,
 		wxID_ANY,
-		p_account.name(),
+		p_account->name(),
 		wxDefaultPosition,
 		wxSize(medium_width(), wxDefaultSize.y),
 		wxALIGN_LEFT
@@ -270,7 +270,7 @@ MultiAccountPanel::push_row(Account& p_account)
 
 	int const height = account_name_box->GetSize().GetY();
 
-	// Account type
+	// AccountHandle type
 	AccountTypeCtrl* account_type_box = new AccountTypeCtrl
 	(	this,
 		wxID_ANY,
@@ -278,7 +278,7 @@ MultiAccountPanel::push_row(Account& p_account)
 		database_connection(),
 		m_account_super_type
 	);
-	account_type_box->set_account_type(p_account.account_type());
+	account_type_box->set_account_type(p_account->account_type());
 	top_sizer().Add(account_type_box, wxGBPosition(row, 1));
 	m_account_type_boxes.push_back(account_type_box);
 
@@ -286,7 +286,7 @@ MultiAccountPanel::push_row(Account& p_account)
 	wxTextCtrl* description_box = new wxTextCtrl
 	(	this,
 		wxID_ANY,
-		p_account.description(),
+		p_account->description(),
 		wxDefaultPosition,
 		wxSize(large_width(), height),
 		wxALIGN_LEFT
@@ -295,7 +295,7 @@ MultiAccountPanel::push_row(Account& p_account)
 		Add(description_box, wxGBPosition(row, 2), wxGBSpan(1, 2));
 	m_description_boxes.push_back(description_box);
 
-	p_account.set_commodity(m_commodity);
+	p_account->set_commodity(m_commodity);
 
 	// Opening balance
 	SpecialDecimalTextCtrl* opening_balance_box = new SpecialDecimalTextCtrl
@@ -353,15 +353,15 @@ MultiAccountPanel::selected_augmented_accounts
 		(	database_connection(),
 			m_commodity
 		);
-		Account& account = augmented_account.account;
-		account.set_name(m_account_name_boxes[i]->GetValue().Trim());
+		AccountHandle const& account = augmented_account.account;
+		account->set_name(m_account_name_boxes[i]->GetValue().Trim());
 		AccountType const account_type =
 			m_account_type_boxes[i]->account_type();
 		JEWEL_ASSERT (super_type(account_type) == m_account_super_type);
-		account.set_account_type(account_type);
-		account.set_description(m_description_boxes[i]->GetValue());
-		account.set_visibility(Visibility::visible);
-		account.set_commodity(m_commodity);
+		account->set_account_type(account_type);
+		account->set_description(m_description_boxes[i]->GetValue());
+		account->set_visibility(Visibility::visible);
+		account->set_commodity(m_commodity);
 
 		// TODO Make sure it is clear to the user which way round the
 		// signs are supposed to go, especially for AccountType::liability
@@ -372,7 +372,7 @@ MultiAccountPanel::selected_augmented_accounts
 			m_opening_balance_boxes[i]->amount()
 		);
 
-		JEWEL_ASSERT (!account.has_id());
+		JEWEL_ASSERT (!account->has_id());
 		out.push_back(augmented_account);
 	}
 #	ifndef NDEBUG

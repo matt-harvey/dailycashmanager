@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "transaction_type.hpp"
-#include "account.hpp"
+#include "account_handle.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "date.hpp"
@@ -47,7 +47,7 @@ namespace
 		AccountTableIterator const end;
 		for ( ; it != end; ++it)
 		{
-			ret.insert(it->account_type());
+			ret.insert((*it)->account_type());
 			if (ret.size() == num_account_types)
 			{
 				break;
@@ -374,10 +374,10 @@ destination_account_types
 }
 
 TransactionType
-natural_transaction_type(Account const& account_x, Account const& account_y)
+natural_transaction_type(AccountHandle const& account_x, AccountHandle const& account_y)
 {
-	AccountType const account_type_x = account_x.account_type();
-	AccountType const account_type_y = account_y.account_type();
+	AccountType const account_type_x = account_x->account_type();
+	AccountType const account_type_y = account_y->account_type();
 
 	switch (account_type_x)
 	{
