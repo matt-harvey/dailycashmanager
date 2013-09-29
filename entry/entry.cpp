@@ -13,8 +13,10 @@
 
 
 #include "entry.hpp"
+#include "entry_data.hpp"
 #include "account_handle.hpp"
 #include "date.hpp"
+#include "draft_journal.hpp"
 #include "string_conv.hpp"
 #include "commodity.hpp"
 #include "ordinary_journal.hpp"
@@ -107,6 +109,8 @@ Entry::Entry
 	m_data(new EntryData)
 {
 }
+
+Entry::~Entry() = default;
 
 void
 Entry::set_journal_id(Id p_journal_id)
@@ -401,7 +405,15 @@ Entry::mimic(Entry& rhs)
 gregorian::date
 Entry::date()
 {
-	return journal<OrdinaryJournal>().date();
+	OrdinaryJournal const oj(database_connection(), journal_id());
+	return oj.date();
+}
+
+sqloxx::Id
+Entry::journal_id()
+{
+	load();
+	return value(m_data->journal_id);
 }
 
 unique_ptr<SQLStatement>

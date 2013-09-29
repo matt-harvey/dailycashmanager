@@ -20,7 +20,7 @@
 #include "transaction_side.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
-#include <jewel/decimal.hpp>
+#include <jewel/decimal_fwd.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -67,7 +67,7 @@ public:
 	Entry(Entry&&) = delete;
 	Entry& operator=(Entry const&) = delete;
 	Entry& operator=(Entry&&) = delete;
-	~Entry() = default;
+	~Entry();
 
 	/**
 	 * Sets the journal_id for the Entry. Note this should \e not
@@ -131,6 +131,8 @@ public:
 	 */
 	jewel::Decimal amount();
 
+	sqloxx::Id journal_id();
+
 	AccountHandle account();
 
 	bool is_reconciled();
@@ -163,17 +165,6 @@ public:
 	 */
 	boost::gregorian::date date();
 
-	/**
-	 * @returns the journal to which this Entry is attached.
-	 *
-	 * Note the PersistentJournalType must be known by the client, and must
-	 * be specified as a template parameter. PersistentJournalType can ONLY
-	 * be either OrdinaryJournal or DraftJournal. Otherwise, behaviour
-	 * is undefined.
-	 */
-	template <typename PersistentJournalType>
-	PersistentJournalType journal();
-
 private:
 
 	/**
@@ -193,29 +184,6 @@ private:
 	std::unique_ptr<EntryData> m_data;
 
 };
-
-
-struct Entry::EntryData
-{
-	boost::optional<sqloxx::Id> journal_id;
-	boost::optional<AccountHandle> account;
-	boost::optional<wxString> comment;
-	boost::optional<jewel::Decimal> amount;
-	boost::optional<bool> is_reconciled;
-	boost::optional<TransactionSide> transaction_side;
-};
-
-
-template <typename PersistentJournalType>
-PersistentJournalType
-Entry::journal()
-{
-	load();
-	return PersistentJournalType
-	(	database_connection(),
-		jewel::value(m_data->journal_id)
-	);
-}
 
 
 /**

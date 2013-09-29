@@ -311,11 +311,14 @@ EntryListCtrl::do_update_for_amended(AccountHandle const& p_account)
 void
 EntryListCtrl::on_item_activated(wxListEvent& event)
 {
-	EntryHandle entry
+	EntryHandle const entry
 	(	database_connection(),
 		GetItemData(event.GetIndex())
 	);
-	OrdinaryJournal journal = entry->journal<OrdinaryJournal>();
+	OrdinaryJournal journal
+	(	database_connection(),
+		entry->journal_id()
+	);
 
 	// Fire a PersistentJournal editing request. This will be handled
 	// higher up the window hierarchy.

@@ -447,7 +447,11 @@ TopPanel::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 	}
 	for (EntryHandle const& entry: entries)
 	{
-		out.push_back(entry->journal<OrdinaryJournal>());
+		OrdinaryJournal oj
+		(	entry->database_connection(),
+			entry->journal_id()
+		);
+		out.push_back(oj);
 	}
 	return;
 }
