@@ -96,7 +96,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	m_account_map = new IdentityMap<Account, PDC>(*this);
 	m_budget_item_map = new IdentityMap<BudgetItemImpl, PDC>(*this);
 	m_commodity_map = new IdentityMap<CommodityImpl, PDC>(*this);
-	m_entry_map = new IdentityMap<EntryImpl, PDC>(*this);
+	m_entry_map = new IdentityMap<Entry, PDC>(*this);
 	m_ordinary_journal_map = new IdentityMap<OrdinaryJournalImpl, PDC>(*this);
 	m_draft_journal_map = new IdentityMap<DraftJournalImpl, PDC>(*this);
 	m_repeater_map = new IdentityMap<RepeaterImpl, PDC>(*this);
@@ -222,7 +222,7 @@ PhatbooksDatabaseConnection::do_setup()
 		Repeater::setup_tables(*this);
 		BudgetItem::setup_tables(*this);
 		AmalgamatedBudget::setup_tables(*this);
-		EntryImpl::setup_tables(*this);
+		Entry::setup_tables(*this);
 		BalanceCache::setup_tables(*this);
 		mark_tables_as_configured();
 		transaction.commit();
@@ -574,8 +574,8 @@ PhatbooksDatabaseConnection::identity_map<BudgetItemImpl>()
 }
 
 template <>
-sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<EntryImpl>()
+sqloxx::IdentityMap<Entry, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<Entry>()
 {
 	return *m_entry_map;
 }

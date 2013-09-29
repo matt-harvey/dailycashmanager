@@ -3,7 +3,7 @@
 
 /** \file entry_impl.cpp
  *
- * \brief Source file pertaining to EntryImpl class.
+ * \brief Source file pertaining to Entry class.
  *
  * \author Matthew Harvey
  * \date 04 July 2012.
@@ -51,7 +51,7 @@ namespace gregorian = boost::gregorian;
 namespace phatbooks
 {
 
-void EntryImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
+void Entry::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table transaction_sides"
@@ -90,7 +90,7 @@ void EntryImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 	return;
 }
 
-EntryImpl::EntryImpl
+Entry::Entry
 (	IdentityMap& p_identity_map
 ):
 	PersistentObject(p_identity_map),
@@ -99,7 +99,7 @@ EntryImpl::EntryImpl
 }
 
 
-EntryImpl::EntryImpl
+Entry::Entry
 (	IdentityMap& p_identity_map,
 	Id p_id
 ):
@@ -109,7 +109,7 @@ EntryImpl::EntryImpl
 }
 
 void
-EntryImpl::set_journal_id(Id p_journal_id)
+Entry::set_journal_id(Id p_journal_id)
 {
 	load();
 	m_data->journal_id = p_journal_id;
@@ -118,7 +118,7 @@ EntryImpl::set_journal_id(Id p_journal_id)
 
 
 void
-EntryImpl::set_account(AccountHandle const& p_account)
+Entry::set_account(AccountHandle const& p_account)
 {
 	load();
 	m_data->account = p_account;
@@ -127,7 +127,7 @@ EntryImpl::set_account(AccountHandle const& p_account)
 
 
 void
-EntryImpl::set_comment(wxString const& p_comment)
+Entry::set_comment(wxString const& p_comment)
 {
 	load();
 	m_data->comment = p_comment;
@@ -136,7 +136,7 @@ EntryImpl::set_comment(wxString const& p_comment)
 
 
 void
-EntryImpl::set_amount(Decimal const& p_amount)
+Entry::set_amount(Decimal const& p_amount)
 {
 	load();
 	m_data->amount = p_amount;
@@ -144,7 +144,7 @@ EntryImpl::set_amount(Decimal const& p_amount)
 }
 
 void
-EntryImpl::set_whether_reconciled(bool p_is_reconciled)
+Entry::set_whether_reconciled(bool p_is_reconciled)
 {
 	load();
 	m_data->is_reconciled = p_is_reconciled;
@@ -152,7 +152,7 @@ EntryImpl::set_whether_reconciled(bool p_is_reconciled)
 }
 
 void
-EntryImpl::set_transaction_side
+Entry::set_transaction_side
 (	TransactionSide p_transaction_side
 )
 {
@@ -161,14 +161,14 @@ EntryImpl::set_transaction_side
 }
 
 AccountHandle
-EntryImpl::account()
+Entry::account()
 {
 	load();
 	return value(m_data->account);
 }
 
 wxString
-EntryImpl::comment()
+Entry::comment()
 {
 	load();
 	return value(m_data->comment);
@@ -176,28 +176,28 @@ EntryImpl::comment()
 
 
 jewel::Decimal
-EntryImpl::amount()
+Entry::amount()
 {
 	load();
 	return value(m_data->amount);
 }
 
 bool
-EntryImpl::is_reconciled()
+Entry::is_reconciled()
 {
 	load();
 	return value(m_data->is_reconciled);
 }
 
 TransactionSide
-EntryImpl::transaction_side()
+Entry::transaction_side()
 {
 	load();
 	return value(m_data->transaction_side);
 }
 
 void
-EntryImpl::swap(EntryImpl& rhs)
+Entry::swap(Entry& rhs)
 {
 	swap_base_internals(rhs);
 	using std::swap;
@@ -205,16 +205,16 @@ EntryImpl::swap(EntryImpl& rhs)
 	return;
 }
 
-EntryImpl::EntryImpl(EntryImpl const& rhs):
+Entry::Entry(Entry const& rhs):
 	PersistentObject(rhs),
 	m_data(new EntryData(*(rhs.m_data)))
 {
 }
 
 void
-EntryImpl::do_load()
+Entry::do_load()
 {
-	EntryImpl temp(*this);
+	Entry temp(*this);
 	SQLStatement statement
 	(	database_connection(),
 		"select account_id, comment, amount, journal_id, is_reconciled, "
@@ -249,7 +249,7 @@ EntryImpl::do_load()
 }
 
 void
-EntryImpl::process_saving_statement(SQLStatement& statement)
+Entry::process_saving_statement(SQLStatement& statement)
 {
 	statement.bind(":journal_id", value(m_data->journal_id));
 	statement.bind(":comment", wx_to_std8(value(m_data->comment)));
@@ -268,7 +268,7 @@ EntryImpl::process_saving_statement(SQLStatement& statement)
 }
 
 void
-EntryImpl::do_save_existing()
+Entry::do_save_existing()
 {
 	// We need to get the old Account so we can mark it as stale
 	SQLStatement old_account_capturer
@@ -308,7 +308,7 @@ EntryImpl::do_save_existing()
 
 
 void
-EntryImpl::do_save_new()
+Entry::do_save_new()
 {
 	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection(),
@@ -340,7 +340,7 @@ EntryImpl::do_save_new()
 }
 
 void
-EntryImpl::do_ghostify()
+Entry::do_ghostify()
 {
 	clear(m_data->journal_id);
 	clear(m_data->account);
@@ -352,7 +352,7 @@ EntryImpl::do_ghostify()
 }
 
 void
-EntryImpl::do_remove()
+Entry::do_remove()
 {
 	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection(),
@@ -367,28 +367,28 @@ EntryImpl::do_remove()
 }
 
 std::string
-EntryImpl::primary_table_name()
+Entry::primary_table_name()
 {
 	return "entries";
 }
 
 std::string
-EntryImpl::exclusive_table_name()
+Entry::exclusive_table_name()
 {
 	return primary_table_name();
 }
 
 std::string
-EntryImpl::primary_key_name()
+Entry::primary_key_name()
 {
 	return "entry_id";
 }
 
 void
-EntryImpl::mimic(EntryImpl& rhs)
+Entry::mimic(Entry& rhs)
 {
 	load();
-	EntryImpl temp(*this);
+	Entry temp(*this);
 	temp.set_account(rhs.account());
 	temp.set_comment(rhs.comment());
 	temp.set_amount(rhs.amount());
@@ -399,7 +399,7 @@ EntryImpl::mimic(EntryImpl& rhs)
 }
 	
 gregorian::date
-EntryImpl::date()
+Entry::date()
 {
 	return journal<OrdinaryJournal>().date();
 }

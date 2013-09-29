@@ -27,7 +27,7 @@ class PhatbooksDatabaseConnection;
 // should make the whole
 // map stale (to keep things simple, as in any case CommodityImpl operations
 // would be relatively rare).
-// EntryImpl - whenever an EntryImpl is operated on that has a particular
+// Entry - whenever an Entry is operated on that has a particular
 // Account
 // as its Account, the cache entry for that Account should be
 // marked as stale (if the operation affects the database).

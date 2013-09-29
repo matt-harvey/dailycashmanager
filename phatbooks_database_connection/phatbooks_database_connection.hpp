@@ -43,7 +43,7 @@ class Commodity;
 class CommodityImpl;
 class DraftJournal;
 class DraftJournalImpl;
-class EntryImpl;
+class Entry;
 class OrdinaryJournal;
 class OrdinaryJournalImpl;
 class RepeaterImpl;
@@ -171,7 +171,7 @@ public:
 	public:
 		friend class Account;
 		friend class CommodityImpl;
-		friend class EntryImpl;
+		friend class Entry;
 		BalanceCacheAttorney() = delete;
 		~BalanceCacheAttorney() = delete;
 	private:
@@ -338,7 +338,7 @@ private:
 		m_budget_item_map;
 	sqloxx::IdentityMap<CommodityImpl, PhatbooksDatabaseConnection>*
 		m_commodity_map;
-	sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>*
+	sqloxx::IdentityMap<Entry, PhatbooksDatabaseConnection>*
 		m_entry_map;
 	sqloxx::IdentityMap<OrdinaryJournalImpl, PhatbooksDatabaseConnection>*
 		m_ordinary_journal_map;

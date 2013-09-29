@@ -7,7 +7,7 @@
 namespace phatbooks
 {
 
-typedef sqloxx::Handle<EntryImpl> EntryHandle;
+typedef sqloxx::Handle<Entry> EntryHandle;
 
 }  // namespace phatbooks
 

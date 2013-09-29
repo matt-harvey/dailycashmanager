@@ -5,7 +5,7 @@
 
 /** \file entry_handle.hpp
  *
- * \brief Header file pertaining to EntryImpl class.
+ * \brief Header file pertaining to Entry class.
  *
  * \author Matthew Harvey
  * \date 04 July 2012.
@@ -37,15 +37,15 @@ namespace phatbooks
  * Class representing an accounting entry, i.e. a single line in a journal,
  * i.e. a single change in the balance of an account.
  */
-class EntryImpl:
-	public sqloxx::PersistentObject<EntryImpl, PhatbooksDatabaseConnection>
+class Entry:
+	public sqloxx::PersistentObject<Entry, PhatbooksDatabaseConnection>
 {
 public:
 
-	typedef sqloxx::PersistentObject<EntryImpl, PhatbooksDatabaseConnection>
+	typedef sqloxx::PersistentObject<Entry, PhatbooksDatabaseConnection>
 		PersistentObject;
 
-	typedef sqloxx::IdentityMap<EntryImpl, PhatbooksDatabaseConnection>
+	typedef sqloxx::IdentityMap<Entry, PhatbooksDatabaseConnection>
 		IdentityMap;
 	
 	/*
@@ -54,25 +54,25 @@ public:
 	 */
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 	
-	explicit EntryImpl(IdentityMap& p_identity_map);
+	explicit Entry(IdentityMap& p_identity_map);
 
 	/**
 	 * Get an Entry by id from the database. Throws if there is no
 	 * Entry with this id.
 	 */
-	EntryImpl(IdentityMap& p_identity_map, sqloxx::Id p_id);
+	Entry(IdentityMap& p_identity_map, sqloxx::Id p_id);
 
 	// Note copy constructor is private
 
-	EntryImpl(EntryImpl&&) = delete;
-	EntryImpl& operator=(EntryImpl const&) = delete;
-	EntryImpl& operator=(EntryImpl&&) = delete;
-	~EntryImpl() = default;
+	Entry(Entry&&) = delete;
+	Entry& operator=(Entry const&) = delete;
+	Entry& operator=(Entry&&) = delete;
+	~Entry() = default;
 
 	/**
-	 * Sets the journal_id for the EntryImpl. Note this should \e not
-	 * normally be called. The usual way to associate an EntryImpl with a
-	 * Journal (or DraftJournal or OrdinaryJournal) is for the EntryImpl
+	 * Sets the journal_id for the Entry. Note this should \e not
+	 * normally be called. The usual way to associate an Entry with a
+	 * Journal (or DraftJournal or OrdinaryJournal) is for the Entry
 	 * to be added to the Journal via its push_entry(...) method.
 	 */
 	void set_journal_id(sqloxx::Id p_journal_id);
@@ -82,7 +82,7 @@ public:
 	void set_comment(wxString const& p_comment);
 
 	/**
-	 * Set the amount of the EntryImpl. The amount should be: a positive number
+	 * Set the amount of the Entry. The amount should be: a positive number
 	 * for an actual debit; a negative number for an actual credit; a
 	 * negative number for a budget entry that increases the available
 	 * funds in an expenditure envelope; and a positive number for a budget
@@ -117,7 +117,7 @@ public:
 	wxString comment();
 
 	/**
-	 * @returns EntryImpl amount (+ve for debits, -ve for credits).
+	 * @returns Entry amount (+ve for debits, -ve for credits).
 	 *
 	 * Note that, when the Account of the Entry is a P&L account,
 	 * if we consider this P&L account from the point of view of a
@@ -141,7 +141,7 @@ public:
 	 * @todo Provide non-member swap and specialized std::swap per
 	 * "Effective C++".
 	 */
-	void swap(EntryImpl& rhs);
+	void swap(Entry& rhs);
 
 	// Keep as std::string, for consistency with sqloxx
 	static std::string primary_table_name();
@@ -154,7 +154,7 @@ public:
 	 * \e database_connection, or \n
 	 * \e journal_id.
 	 */
-	void mimic(EntryImpl& rhs);
+	void mimic(Entry& rhs);
 
 	/**
 	 * @returns the posting date of the Entry, assuming it is associated
@@ -164,7 +164,7 @@ public:
 	boost::gregorian::date date();
 
 	/**
-	 * @returns the journal to which this EntryImpl is attached.
+	 * @returns the journal to which this Entry is attached.
 	 *
 	 * Note the PersistentJournalType must be known by the client, and must
 	 * be specified as a template parameter. PersistentJournalType can ONLY
@@ -179,7 +179,7 @@ private:
 	/**
 	 * Copy constructor - implemented, but deliberately private
 	 */
-	EntryImpl(EntryImpl const& rhs);
+	Entry(Entry const& rhs);
 
 	void do_load();
 	void do_save_existing();
@@ -195,7 +195,7 @@ private:
 };
 
 
-struct EntryImpl::EntryData
+struct Entry::EntryData
 {
 	boost::optional<sqloxx::Id> journal_id;
 	boost::optional<AccountHandle> account;
@@ -208,7 +208,7 @@ struct EntryImpl::EntryData
 
 template <typename PersistentJournalType>
 PersistentJournalType
-EntryImpl::journal()
+Entry::journal()
 {
 	load();
 	return PersistentJournalType
