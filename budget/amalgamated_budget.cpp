@@ -317,7 +317,8 @@ AmalgamatedBudget::generate_map() const
 	BudgetItemTableIterator const end;
 	for ( ; it != end; ++it)
 	{
-		Frequency const raw_frequency = it->frequency();
+		BudgetItemHandle const& budget_item = *it;
+		Frequency const raw_frequency = budget_item->frequency();
 		if (!AmalgamatedBudget::supports_frequency(raw_frequency))
 		{
 			JEWEL_THROW
@@ -325,8 +326,8 @@ AmalgamatedBudget::generate_map() const
 				"Frequency not supported by AmalgamatedBudget."
 			);
 		}
-		Id const account_id = it->account()->id();
-		jewel::Decimal const raw_amount = it->amount();
+		Id const account_id = budget_item->account()->id();
+		jewel::Decimal const raw_amount = budget_item->amount();
 		jewel::Decimal const canonical_amount = convert_to_canonical
 		(	raw_frequency,
 			raw_amount

@@ -4,7 +4,7 @@
 #define GUARD_budget_panel_hpp_749080240143966
 
 #include "account_handle.hpp"
-#include "budget_item.hpp"
+#include "budget_item_handle.hpp"
 #include "frequency_ctrl.hpp"
 #include <boost/optional.hpp>
 #include <wx/button.h>
@@ -112,7 +112,7 @@ private:
 	 * affect the underlying BudgetItems (to update these call
 	 * update_budgets_from_dialog()).
 	 */
-	void push_item_component(BudgetItem const& p_budget_item);
+	void push_item_component(BudgetItemHandle const& p_budget_item);
 
 	/**
 	 * Remove the last BudgetItemComponent and update the budget summary text
@@ -240,10 +240,10 @@ private:
 	};
 
 	/**
-	 * @returns a vector of newly created BudgetItems (WITHOUT ids),
+	 * @returns a vector of handles to newly created BudgetItems (WITHOUT ids),
 	 * based on the data currently in the BudgetItemComponent.
 	 */
-	std::vector<BudgetItem> make_budget_items() const;
+	std::vector<BudgetItemHandle> make_budget_items() const;
 
 	/**
 	 * Prompts user to select another Account to which to balance
@@ -254,7 +254,7 @@ private:
 	std::vector<BudgetItemComponent> m_budget_item_components;
 
 	AccountHandle const& m_account;
-	std::vector<BudgetItem> m_budget_items;
+	std::vector<BudgetItemHandle> m_budget_items;
 
 	DECLARE_EVENT_TABLE()
 

@@ -138,7 +138,7 @@ set (main_files
 	 application/application.cpp
 	 budget/amalgamated_budget.cpp
 	 budget/budget_item.cpp
-	 budget/budget_item_impl.cpp
+	 budget/budget_item_handle.cpp
 	 commodity/commodity.cpp
 	 currency/make_currencies.cpp
 	 date/date.cpp

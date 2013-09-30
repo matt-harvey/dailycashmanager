@@ -15,6 +15,7 @@
 
 
 #include "account_type_fwd.hpp"
+#include "budget_item_handle_fwd.hpp"
 #include "commodity_handle_fwd.hpp"
 #include "date.hpp"
 #include "finformat.hpp"
@@ -38,11 +39,6 @@
 namespace phatbooks
 {
 
-// begin forward declarations
-
-class BudgetItem;
-
-// end forward declarations
 
 /**
  * Represents an account - which could be either a balance sheet account,
@@ -88,8 +84,9 @@ public:
 	 * Initialize a "draft" Account, that will not correspond to any
 	 * particular object in the database.
 	 *
-	 * Client code cannot use this constructor - see class level
-	 * documentation for Account.
+	 * The Signature parameter ensures that this can only be called by
+	 * IdentityMap. Ordinary client code should use AccountHandle,
+	 * not Account.
 	 */
 	Account
 	(	IdentityMap& p_identity_map,
@@ -97,11 +94,11 @@ public:
 	);
 
 	/**
-	 * Get an Account by id from database. Throws if no such Id. Not be
-	 * called except via Handle class and IdentityMap class.
+	 * Get an Account by id from database.
 	 *
-	 * Client code cannot use this constructor - see class level
-	 * documentation for Account.
+	 * The Signature parameter esures that this can only be called
+	 * by IdentityMap. Ordinary client code should use AccountHandle,
+	 * not Account.
 	 */
 	Account
 	(	IdentityMap& p_identity_map,
@@ -235,7 +232,7 @@ public:
 	 * @returns a std::vector containing all and only
 	 * the saved BudgetItems for this Account.
 	 */
-	std::vector<BudgetItem> budget_items();
+	std::vector<BudgetItemHandle> budget_items();
 
 	void set_account_type(AccountType p_account_type);
 

@@ -6,7 +6,7 @@
 #include "account_dialog.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
-#include "budget_item.hpp"
+#include "budget_item_handle.hpp"
 #include "budget_item_table_iterator.hpp"
 #include "commodity_handle.hpp"
 #include "decimal_text_ctrl.hpp"
@@ -229,7 +229,7 @@ BudgetPanel::BudgetPanel(AccountDialog* p_parent, AccountHandle const& p_account
 		BudgetItemTableIterator const end;
 		for ( ; it != end; ++it)
 		{
-			if (it->account() == m_account)
+			if ((*it)->account() == m_account)
 		 	{
 			 	push_item_component(*it);
 				m_budget_items.push_back(*it);
@@ -260,11 +260,11 @@ void
 BudgetPanel::on_push_item_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	BudgetItem budget_item(database_connection());
-	budget_item.set_account(m_account);
-	budget_item.set_description(wxString(""));
-	budget_item.set_amount(zero());
-	budget_item.set_frequency(Frequency(1, IntervalType::days));
+	BudgetItemHandle const budget_item(database_connection());
+	budget_item->set_account(m_account);
+	budget_item->set_description(wxString(""));
+	budget_item->set_amount(zero());
+	budget_item->set_frequency(Frequency(1, IntervalType::days));
 	push_item_component(budget_item);
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -333,7 +333,7 @@ BudgetPanel::update_budget_summary()
 	// WARNING This is inefficient.
 	JEWEL_ASSERT (m_summary_amount_text);
 	Decimal new_total = zero();
-	vector<BudgetItem> budget_items = make_budget_items();
+	vector<BudgetItemHandle> budget_items = make_budget_items();
 	if (!budget_items.empty())
 	{
 		new_total =
@@ -355,7 +355,7 @@ BudgetPanel::update_budgets_from_dialog()
 	JEWEL_ASSERT (m_account->has_id());
 	DatabaseTransaction transaction(database_connection());
 
-	typedef vector<BudgetItem> ItemVec;
+	typedef vector<BudgetItemHandle> ItemVec;
 
 	// Make m_budget_items match the BudgetItems implied by
 	// m_budget_item_components (what is shown in the BudgetPanel).
@@ -369,7 +369,7 @@ BudgetPanel::update_budgets_from_dialog()
 		{
 			JEWEL_ASSERT (i < m_budget_items.size());
 			JEWEL_ASSERT (i < m_budget_item_components.size());
-			m_budget_items[i].mimic(items_new[i]);
+			m_budget_items[i]->mimic(*(items_new[i]));
 		}
 		JEWEL_ASSERT ((i == num_items_old) || (i == num_items_new));
 		if (num_items_old < num_items_new)
@@ -387,18 +387,18 @@ BudgetPanel::update_budgets_from_dialog()
 			while (m_budget_items.size() != num_items_new)
 			{
 				JEWEL_ASSERT (m_budget_items.size() > num_items_new);	
-				BudgetItem doomed_item = m_budget_items.back();
+				BudgetItemHandle const doomed_item = m_budget_items.back();
 				m_budget_items.pop_back();
-				doomed_item.remove();
+				doomed_item->remove();
 			}
 			JEWEL_ASSERT (m_budget_items.size() == num_items_new);
 		}
 	}
 	// Save the amended m_budget_items
 	// Bare scope
-	for (BudgetItem& elem: m_budget_items)
+	for (BudgetItemHandle const& elem: m_budget_items)
 	{
-		elem.save();
+		elem->save();
 	}
 
 	transaction.commit();
@@ -417,16 +417,16 @@ BudgetPanel::update_budgets_from_dialog()
 }
 
 void
-BudgetPanel::push_item_component(BudgetItem const& p_budget_item)
+BudgetPanel::push_item_component(BudgetItemHandle const& p_budget_item)
 {
-	JEWEL_ASSERT (p_budget_item.account() == m_account);
+	JEWEL_ASSERT (p_budget_item->account() == m_account);
 
 
 	BudgetItemComponent budget_item_component = {0, 0, 0};
 	budget_item_component.description_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
-		p_budget_item.description(),
+		p_budget_item->description(),
 		wxDefaultPosition,
 		wxSize(large_width(), wxDefaultSize.y)
 	);
@@ -437,7 +437,7 @@ BudgetPanel::push_item_component(BudgetItem const& p_budget_item)
 	);
 	wxSize const desc_size =
 		budget_item_component.description_ctrl->GetSize();
-	Decimal const amount = p_budget_item.amount();
+	Decimal const amount = p_budget_item->amount();
 	budget_item_component.amount_ctrl = new DecimalTextCtrl
 	(	this,
 		wxID_ANY,
@@ -457,7 +457,7 @@ BudgetPanel::push_item_component(BudgetItem const& p_budget_item)
 		wxSize(medium_width(), desc_size.y),
 		database_connection()
 	);
-	optional<Frequency> const maybe_frequency = p_budget_item.frequency();
+	optional<Frequency> const maybe_frequency = p_budget_item->frequency();
 	budget_item_component.frequency_ctrl->set_frequency(maybe_frequency);
 	m_top_sizer->Add
 	(	budget_item_component.frequency_ctrl,
@@ -528,23 +528,23 @@ BudgetPanel::zero() const
 	return Decimal(0, commodity->precision());
 }
 
-vector<BudgetItem>
+vector<BudgetItemHandle>
 BudgetPanel::make_budget_items() const
 {
-	vector<BudgetItem> ret;
+	vector<BudgetItemHandle> ret;
 	for (BudgetItemComponent const& component: m_budget_item_components)
 	{
-		BudgetItem budget_item(database_connection());
-		budget_item.set_account(m_account);
-		budget_item.set_description(component.description_ctrl->GetValue());
-		budget_item.set_amount(component.amount_ctrl->amount());
+		BudgetItemHandle const budget_item(database_connection());
+		budget_item->set_account(m_account);
+		budget_item->set_description(component.description_ctrl->GetValue());
+		budget_item->set_amount(component.amount_ctrl->amount());
 		JEWEL_ASSERT (component.frequency_ctrl->frequency());
-		budget_item.set_frequency
+		budget_item->set_frequency
 		(	value(component.frequency_ctrl->frequency())
 		);
 		JEWEL_ASSERT
 		(	database_connection().supports_budget_frequency
-			(	budget_item.frequency()
+			(	budget_item->frequency()
 			)
 		);
 		ret.push_back(budget_item);
@@ -805,22 +805,22 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(AccountHandle const& p_
 
 	// Copy first into a vector. (Uneasy about modifying database contents
 	// while in the process of reading with a TableIterator.)
-	vector<BudgetItem> vec
+	vector<BudgetItemHandle> vec
 	(	BudgetItemTableIterator(m_database_connection),
 		(BudgetItemTableIterator())
 	);
-	for (BudgetItem& elem: vec)
+	for (BudgetItemHandle const& elem: vec)
 	{
 		// If there is already a "general offsetting BudgetItem" for
 		// the target Account, then roll it into that.
 		if
-		(	(elem.account() == p_target) &&
-			(elem.description() == offsetting_item_description) &&
-			(elem.frequency() == target_frequency)
+		(	(elem->account() == p_target) &&
+			(elem->description() == offsetting_item_description) &&
+			(elem->frequency() == target_frequency)
 		)
 		{
-			elem.set_amount(elem.amount() + m_imbalance);
-			elem.save();
+			elem->set_amount(elem->amount() + m_imbalance);
+			elem->save();
 			JEWEL_ASSERT (budget_is_balanced());
 			
 			PersistentObjectEvent::fire
@@ -834,12 +834,12 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog(AccountHandle const& p_
 
 	// There was not already a "general offsetting BudgetItem" for
 	// the target Account, so we create a new BudgetItem.
-	BudgetItem adjusting_item(m_database_connection);
-	adjusting_item.set_description(offsetting_item_description);
-	adjusting_item.set_account(p_target);
-	adjusting_item.set_frequency(target_frequency);
-	adjusting_item.set_amount(m_imbalance);
-	adjusting_item.save();
+	BudgetItemHandle const adjusting_item(m_database_connection);
+	adjusting_item->set_description(offsetting_item_description);
+	adjusting_item->set_account(p_target);
+	adjusting_item->set_frequency(target_frequency);
+	adjusting_item->set_amount(m_imbalance);
+	adjusting_item->save();
 
 	PersistentObjectEvent::fire
 	(	frame,  // don't use "this", or event will be missed

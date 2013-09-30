@@ -99,8 +99,6 @@ public:
 	 * Construct Commodity already persisted to database with Id of
 	 * p_id.
 	 *
-	 * Throws if no such Id.
-	 *
 	 * Client code cannot call this constructor, as it is solely
 	 * for use by IdentityMap. This is enforced by the Signature
 	 * parameter.

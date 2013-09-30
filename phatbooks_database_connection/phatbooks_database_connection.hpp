@@ -39,7 +39,7 @@ namespace phatbooks
 class AmalgamatedBudget;
 class Account;
 class BalanceCache;
-class BudgetItemImpl;
+class BudgetItem;
 class Commodity;
 class DraftJournal;
 class DraftJournalImpl;
@@ -210,7 +210,7 @@ public:
 	{
 	public:
 		friend class Account;
-		friend class BudgetItemImpl;
+		friend class BudgetItem;
 		friend class PhatbooksDatabaseConnection;
 		BudgetAttorney() = delete;
 		~BudgetAttorney() = delete;
@@ -334,7 +334,7 @@ private:
 
 	sqloxx::IdentityMap<Account, PhatbooksDatabaseConnection>*
 		m_account_map;
-	sqloxx::IdentityMap<BudgetItemImpl, PhatbooksDatabaseConnection>*
+	sqloxx::IdentityMap<BudgetItem, PhatbooksDatabaseConnection>*
 		m_budget_item_map;
 	sqloxx::IdentityMap<Commodity, PhatbooksDatabaseConnection>*
 		m_commodity_map;

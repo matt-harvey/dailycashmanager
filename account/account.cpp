@@ -15,9 +15,9 @@
 #include "account_handle.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
+#include "budget_item_handle.hpp"
 #include "date.hpp"
 #include "string_conv.hpp"
-#include "budget_item.hpp"
 #include "commodity_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -398,11 +398,11 @@ Account::budget()
 	);
 }
 
-vector<BudgetItem>
+vector<BudgetItemHandle>
 Account::budget_items()
 {
 	load();
-	vector<BudgetItem> ret;
+	vector<BudgetItemHandle> ret;
 	SQLStatement s
 	(	database_connection(),
 		"select budget_item_id from budget_items where "
@@ -412,7 +412,7 @@ Account::budget_items()
 	JEWEL_ASSERT (ret.empty());
 	while (s.step())
 	{
-		BudgetItem bi(database_connection(), s.extract<Id>(0));
+		BudgetItemHandle const bi(database_connection(), s.extract<Id>(0));
 		ret.push_back(bi);
 	}
 	return ret;

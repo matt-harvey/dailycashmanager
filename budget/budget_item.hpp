@@ -1,43 +1,43 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_budget_item_hpp_0043444857021535215
-#define GUARD_budget_item_hpp_0043444857021535215
+#ifndef GUARD_budget_item_hpp_6804927558081656
+#define GUARD_budget_item_hpp_6804927558081656
 
-#include "budget_item_impl.hpp"
-#include "phatbooks_persistent_object.hpp"
-#include <jewel/decimal.hpp>
-#include <sqloxx/general_typedefs.hpp>
-#include <sqloxx/handle.hpp>
-#include <wx/string.h>
-#include <ostream>
-#include <vector>
+#include "account_handle_fwd.hpp"
+#include "phatbooks_database_connection.hpp"
+#include <jewel/decimal_fwd.hpp>
+#include <sqloxx/persistent_object.hpp>
+#include <sqloxx/sql_statement_fwd.hpp>
+#include <memory>
+#include <string>
 
 namespace phatbooks
 {
 
+// begin forward declarations
+
 class Account;
 class Frequency;
-class PhatbooksDatabaseConnection;
 
-/**
- * A BudgetItem represents a given item of recurring revenue or
- * expenditure, with a specific Account. For example, a
- * Christmas-related BudgetItem might recur annually, relate
- * to an Account called "gifts", and have an amount of $300.
- * BudgetItems are the "raw materials" from which
- * AmalgamatedBudgets are calculated.
- *
- * @todo Implement this.
- */
+// end forward declarations
+
+
 class BudgetItem:
-	public PhatbooksPersistentObject<BudgetItemImpl>
+	public sqloxx::PersistentObject
+	<	BudgetItem,
+		PhatbooksDatabaseConnection
+	>
 {
 public:
 	
 	typedef
-		PhatbooksPersistentObject<BudgetItemImpl>
-		PhatbooksPersistentObject;
-	
+		sqloxx::PersistentObject<BudgetItem, PhatbooksDatabaseConnection>
+		PersistentObject;
+
+	typedef
+		sqloxx::IdentityMap<BudgetItem, PhatbooksDatabaseConnection>
+		IdentityMap;
+
 	/**
 	 * Set up tables in the database required for the persistence of
 	 * BudgetItem objects.
@@ -45,38 +45,37 @@ public:
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
-	 * Iniitialize a "raw" BudgetItem, that will not yet correspond to
-	 * any particular object in the database.
-	 */
-	explicit BudgetItem
-	(	PhatbooksDatabaseConnection& p_database_connection
-	);
-
-	/**
-	 * Get an BudgetItem by id from the database. Throws if there is
-	 * no BudgetItem with this id.
+	 * Construct a "raw" BudgetItem, that will not yet be saved in the
+	 * database.
+	 *
+	 * The Signature parameter means that this can only be called from
+	 * IdentityMap. Ordinary client code should use BudgetItemHandle,
+	 * not BudgetItem directly.
 	 */
 	BudgetItem
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		sqloxx::Id p_id
+	(	IdentityMap& p_identity_map,
+		IdentityMap::Signature const& p_signature
 	);
-
-	BudgetItem(BudgetItem const&) = default;
-	BudgetItem(BudgetItem&&) = default;
-	BudgetItem& operator=(BudgetItem const&) = default;
-	BudgetItem& operator=(BudgetItem&&) = default;
-	~BudgetItem() = default;
 
 	/**
-	 * @returns the BudgetItem identified by \e id in the database; but
-	 * does not check whether there is actually a BudgetItem with thid id.
-	 * Thus it is faster than the checked constructor, but should only be
-	 * used if you already know there is a BudgetItem with the given id.
+	 * Get a BudgetItem by Id from the database.
+	 *
+	 * The Signature parameter means that this can only be called from
+	 * IdentityMap. Ordinary client code should use BudgetItemHandle,
+	 * not BudgetItem directly.
 	 */
-	static BudgetItem create_unchecked
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		sqloxx::Id p_id
+	BudgetItem
+	(	IdentityMap& p_identity_map,
+		sqloxx::Id p_id,
+		IdentityMap::Signature const& p_signature
 	);
+
+	// copy constructor is private
+	
+	BudgetItem(BudgetItem&&) = delete;
+	BudgetItem& operator=(BudgetItem const&) = delete;
+	BudgetItem& operator=(BudgetItem&&) = delete;
+	~BudgetItem();
 
 	/**
 	 * Set a description to be associated with the BudgetItem.
@@ -102,42 +101,51 @@ public:
 	void set_amount(jewel::Decimal const& p_amount);
 
 	// Getters...
-	wxString description() const;
-	sqloxx::Handle<Account> account() const;
-	Frequency frequency() const;
-	jewel::Decimal amount() const;
+	wxString description();
+	sqloxx::Handle<Account> account();
+	Frequency frequency();
+	jewel::Decimal amount();
+
+	/**
+	 * @todo Provide non-member swap and specialized std::swap per
+	 * "Effective C++".
+	 */
+	void swap(BudgetItem& rhs);
+
+	// Keep as std::string, for consistency with sqloxx
+	static std::string primary_table_name();
+	static std::string exclusive_table_name();
+	static std::string primary_key_name();
 
 	/**
 	 * Copy attributes of rhs to *this, but do \e not copy:\n
 	 * \e id, or\n
-	 * \e database_connection.
+	 * \e database_connection.\n
 	 */
-	void mimic(BudgetItem const& rhs);
+	void mimic(BudgetItem& rhs);
 
 private:
+	
+	/**
+	 * Copy constructor - implemented, but deliberately private.
+	 */
+	BudgetItem(BudgetItem const& rhs);
 
-	BudgetItem(sqloxx::Handle<BudgetItemImpl> const& p_handle);	
+	void do_load();
+	void do_save_existing();
+	void do_save_new();
+	void do_ghostify();
+	void do_remove();
+	void process_saving_statement(sqloxx::SQLStatement& statement);
 
+	struct BudgetItemData;
+
+	std::unique_ptr<BudgetItemData> m_data;
 };
 
-
-/**
- * @p_budget_items is a vector of BudgetItems which are assumed to be all
- * of the same PhatbooksDatabaseConnection and the same Account.
- *
- * @returns the amount that approximates, to the Account's native Commodity's
- * precision, the equivalent of normalizing and summing at
- * the PhatbooksDatabaseConnection's budget_frequency(), all the BudgetItems
- * in the range [b, e). Range should not be empty.
- */
-jewel::Decimal
-normalized_total
-(	std::vector<BudgetItem>::const_iterator b,
-	std::vector<BudgetItem>::const_iterator const& e
-);
 
 
 
 }  // namespace phatbooks
 
-#endif  // GUARD_budget_item_hpp_0043444857021535215
+#endif  // GUARD_budget_item_hpp_6804927558081656

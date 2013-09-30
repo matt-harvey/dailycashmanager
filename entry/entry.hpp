@@ -70,8 +70,7 @@ public:
 	);
 
 	/**
-	 * Get an Entry by id from the database. Throws if there is no
-	 * Entry with this id.
+	 * Get an Entry by Id from the database.
 	 *
 	 * Client cod cannot use this constructor - see class level
 	 * documentation for why.

@@ -17,8 +17,8 @@
 #include "account_table_iterator.hpp"
 #include "amalgamated_budget.hpp"
 #include "application.hpp"
+#include "budget_item_handle.hpp"
 #include "budget_item.hpp"
-#include "budget_item_impl.hpp"
 #include "commodity_handle.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
@@ -95,7 +95,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	m_balance_cache = new BalanceCache(*this);
 	m_budget = new AmalgamatedBudget(*this);
 	m_account_map = new IdentityMap<Account, PDC>(*this);
-	m_budget_item_map = new IdentityMap<BudgetItemImpl, PDC>(*this);
+	m_budget_item_map = new IdentityMap<BudgetItem, PDC>(*this);
 	m_commodity_map = new IdentityMap<Commodity, PDC>(*this);
 	m_entry_map = new IdentityMap<Entry, PDC>(*this);
 	m_ordinary_journal_map = new IdentityMap<OrdinaryJournalImpl, PDC>(*this);
@@ -568,8 +568,8 @@ PhatbooksDatabaseConnection::identity_map<Account>()
 }
 
 template <>
-sqloxx::IdentityMap<BudgetItemImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<BudgetItemImpl>()
+sqloxx::IdentityMap<BudgetItem, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<BudgetItem>()
 {
 	return *m_budget_item_map;
 }
