@@ -13,7 +13,6 @@
 
 
 #include "entry.hpp"
-#include "entry_data.hpp"
 #include "account_handle.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"

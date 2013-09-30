@@ -1,7 +1,7 @@
 #ifndef GUARD_account_fwd_hpp_44671615839317264
 #define GUARD_account_fwd_hpp_44671615839317264
 
-#include <sqloxx/handle.hpp>
+#include <sqloxx/handle_fwd.hpp>
 
 class Account;
 

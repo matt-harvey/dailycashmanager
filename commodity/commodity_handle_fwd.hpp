@@ -1,7 +1,7 @@
 #ifndef GUARD_commodity_handle_fwd_hpp_2357495954426702
 #define GUARD_commodity_handle_fwd_hpp_2357495954426702
 
-#include <sqloxx/handle.hpp>
+#include <sqloxx/handle_fwd.hpp>
 
 namespace phatbooks
 {

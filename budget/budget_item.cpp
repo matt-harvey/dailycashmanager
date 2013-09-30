@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "budget_item.hpp"
-#include "budget_item_data.hpp"
 #include "account_handle.hpp"
 #include "commodity_handle.hpp"
 #include "frequency.hpp"

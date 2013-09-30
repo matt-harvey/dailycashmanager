@@ -1,7 +1,7 @@
 #ifndef GUARD_repeater_handle_fwd_hpp_7319677740949987
 #define GUARD_repeater_handle_fwd_hpp_7319677740949987
 
-#include <sqloxx/handle.hpp>
+#include <sqloxx/handle_fwd.hpp>
 
 namespace phatbooks
 {
