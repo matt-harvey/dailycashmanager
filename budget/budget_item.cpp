@@ -7,6 +7,7 @@
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"
+#include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/log.hpp>
@@ -17,6 +18,7 @@
 #include <wx/string.h>
 #include <string>
 
+using boost::optional;
 using jewel::Decimal;
 using jewel::clear;
 using jewel::value;
@@ -32,7 +34,16 @@ namespace phatbooks
 typedef
 	PhatbooksDatabaseConnection::BudgetAttorney
 	BudgetAttorney;
-	
+
+
+struct BudgetItem::BudgetItemData
+{
+	optional<AccountHandle> account;
+	optional<wxString> description;
+	optional<Frequency> frequency;
+	optional<Decimal> amount;
+};
+
 void
 BudgetItem::setup_tables(PhatbooksDatabaseConnection& dbc)
 {

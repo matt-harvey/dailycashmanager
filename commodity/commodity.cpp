@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "commodity.hpp"
-#include "commodity_data.hpp"
 #include "balance_cache.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"
@@ -18,6 +17,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/optional.hpp>
 #include <wx/string.h>
 #include <algorithm>
 #include <iostream>  // for debug logging
@@ -35,6 +35,7 @@
  */
 
 using boost::numeric_cast;
+using boost::optional;
 using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
@@ -48,6 +49,15 @@ using std::string;
 namespace phatbooks
 {
 
+
+struct Commodity::CommodityData
+{
+	optional<wxString> abbreviation;
+	optional<wxString> name;
+	optional<wxString> description;
+	optional<int> precision;
+	optional<jewel::Decimal> multiplier_to_base;
+};
 
 
 void Commodity::setup_tables

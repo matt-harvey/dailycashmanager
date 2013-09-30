@@ -20,12 +20,12 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
-#include "repeater_data.hpp"
 #include "repeater_table_iterator.hpp"
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/exception.hpp>
@@ -42,6 +42,7 @@
 
 namespace gregorian = boost::gregorian;
 
+using boost::optional;
 using sqloxx::DatabaseTransaction;
 using sqloxx::SQLStatement;
 using boost::numeric_cast;
@@ -61,6 +62,14 @@ using std::endl;
 
 namespace phatbooks
 {
+
+
+struct Repeater::RepeaterData
+{
+	optional<Frequency> frequency;
+	optional<DateRep> next_date;
+	optional<Id> journal_id;
+};
 
 
 

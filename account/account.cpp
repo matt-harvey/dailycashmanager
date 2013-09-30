@@ -11,7 +11,6 @@
  */
 
 #include "account.hpp"
-#include "account_data.hpp"
 #include "account_handle.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
@@ -24,6 +23,7 @@
 #include "transaction_type.hpp"
 #include "visibility.hpp"
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
@@ -40,6 +40,7 @@
 #include <vector>
 
 using boost::numeric_cast;
+using boost::optional;
 using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
@@ -66,6 +67,15 @@ typedef
 	PhatbooksDatabaseConnection::BudgetAttorney
 	BudgetAttorney;
 
+
+struct Account::AccountData
+{
+	optional<wxString> name;
+	optional<CommodityHandle> commodity;
+	optional<AccountType> account_type;
+	optional<wxString> description;
+	optional<Visibility> visibility;
+};
 
 
 void

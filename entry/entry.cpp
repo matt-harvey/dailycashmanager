@@ -53,6 +53,20 @@ namespace gregorian = boost::gregorian;
 namespace phatbooks
 {
 
+
+struct Entry::EntryData
+{
+	optional<Id> journal_id;
+	optional<AccountHandle> account;
+	optional<wxString> comment;
+	optional<jewel::Decimal> amount;
+	optional<bool> is_reconciled;
+	optional<TransactionSide> transaction_side;
+};
+
+
+
+
 void Entry::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
