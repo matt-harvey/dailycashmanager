@@ -6,7 +6,7 @@
 #include "entry_handle_fwd.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
-#include "repeater.hpp"
+#include "repeater_handle.hpp"
 #include "transaction_type.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -48,11 +48,15 @@ public:
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
-	explicit DraftJournalImpl(IdentityMap& p_identity_map);
+	DraftJournalImpl
+	(	IdentityMap& p_identity_map,
+		IdentityMap::Signature const& p_signature
+	);
 
 	DraftJournalImpl
 	(	IdentityMap& p_identity_map,
-		sqloxx::Id p_id
+		sqloxx::Id p_id,
+		IdentityMap::Signature const& p_signature
 	);
 
 	// copy constructor is private
@@ -107,7 +111,7 @@ public:
 
 	void set_name(wxString const& p_name);
 	
-	void push_repeater(Repeater& repeater);
+	void push_repeater(RepeaterHandle const& repeater);
 	
 	wxString name();
 
@@ -126,7 +130,7 @@ public:
 	void mimic(ProtoJournal const& rhs);
 	void mimic(DraftJournalImpl& rhs);  // not const& rhs because loading required
 
-	std::vector<Repeater> const& repeaters();
+	std::vector<RepeaterHandle> const& repeaters();
 
 	bool has_repeaters();
 
@@ -161,7 +165,7 @@ private:
 struct DraftJournalImpl::DraftJournalData
 {
 	boost::optional<wxString> name;
-	std::vector<Repeater> repeaters;
+	std::vector<RepeaterHandle> repeaters;
 };
 
 

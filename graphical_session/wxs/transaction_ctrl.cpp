@@ -447,7 +447,7 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 		// if that remains true, AND non-GUI-created DraftJournals are never
 		// accessed from the GUI!
 		JEWEL_ASSERT (dj->repeaters().size() == 1);
-		maybe_frequency = dj->repeaters().at(0).frequency();
+		maybe_frequency = dj->repeaters().at(0)->frequency();
 	}	
 	m_frequency_ctrl->set_frequency(maybe_frequency);
 
@@ -459,7 +459,7 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 		// if that remains true, AND non-GUI-created DraftJournals are never
 		// accessed from the GUI!
 		JEWEL_ASSERT (dj->repeaters().size() == 1);
-		date = dj->repeaters().at(0).next_date();
+		date = dj->repeaters().at(0)->next_date();
 	}
 	else
 	{
@@ -746,7 +746,6 @@ TransactionCtrl::post_journal()
 	{
 		DraftJournal dj(database_connection());
 		dj.mimic(journal);
-		Repeater repeater(database_connection());
 		JEWEL_ASSERT (m_date_ctrl->date());
 		gregorian::date const next_date = value(m_date_ctrl->date());
 		Frequency const freq = value(maybe_frequency);
@@ -778,9 +777,9 @@ TransactionCtrl::post_journal()
 		}
 
 		JEWEL_ASSERT (is_valid_date_for_interval_type(next_date, freq.step_type()));
-		repeater.set_next_date(next_date);
-		repeater.set_frequency(freq);
-
+		RepeaterHandle const repeater(database_connection());
+		repeater->set_next_date(next_date);
+		repeater->set_frequency(freq);
 		dj.push_repeater(repeater);
 	
 		// Get a name for the DraftJournal
@@ -961,18 +960,18 @@ TransactionCtrl::save_existing_journal()
 		
 		if (dj->repeaters().empty())
 		{
-			Repeater repeater(database_connection());
-			repeater.set_next_date(next_date);
-			repeater.set_frequency(freq);
+			RepeaterHandle const repeater(database_connection());
+			repeater->set_next_date(next_date);
+			repeater->set_frequency(freq);
 			dj->push_repeater(repeater);
 		}
 		else
 		{
 			JEWEL_ASSERT (!dj->repeaters().empty());
-			Repeater old_repeater = dj->repeaters()[0];
-			old_repeater.set_next_date(next_date);
-			old_repeater.set_frequency(freq);
-			old_repeater.save();
+			RepeaterHandle const old_repeater = dj->repeaters()[0];
+			old_repeater->set_next_date(next_date);
+			old_repeater->set_frequency(freq);
+			old_repeater->save();
 		}
 		JEWEL_ASSERT (dj->is_balanced());
 		dj->save();

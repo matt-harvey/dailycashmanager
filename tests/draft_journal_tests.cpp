@@ -6,7 +6,7 @@
 #include "entry_handle.hpp"
 #include "interval_type.hpp"
 #include "phatbooks_tests_common.hpp"
-#include "repeater.hpp"
+#include "repeater_handle.hpp"
 #include "frequency.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -43,9 +43,9 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	wxString target = wxString("");
 	CHECK_EQUAL(dj1.repeater_description(), "");
 
-	Repeater repeater1a(dbc);
-	repeater1a.set_frequency(Frequency(1, IntervalType::months));
-	repeater1a.set_next_date(date(2524, 9, 15));
+	RepeaterHandle const repeater1a(dbc);
+	repeater1a->set_frequency(Frequency(1, IntervalType::months));
+	repeater1a->set_next_date(date(2524, 9, 15));
 	dj1.push_repeater(repeater1a);
 
 	target = wxString
@@ -54,9 +54,9 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	);
 	CHECK_EQUAL(dj1.repeater_description(), target);
 
-	Repeater repeater1b(dbc);
-	repeater1b.set_frequency(Frequency(3, IntervalType::days));
-	repeater1b.set_next_date(date(3950, 9, 12));
+	RepeaterHandle const repeater1b(dbc);
+	repeater1b->set_frequency(Frequency(3, IntervalType::days));
+	repeater1b->set_next_date(date(3950, 9, 12));
 	dj1.push_repeater(repeater1b);
 
 	target = wxString

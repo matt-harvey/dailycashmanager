@@ -161,7 +161,6 @@ set (main_files
 	 phatbooks_database_connection/phatbooks_database_connection.cpp
 	 phatbooks_persistent_object/phatbooks_persistent_object.cpp
 	 repeater/repeater.cpp
-	 repeater/repeater_impl.cpp
 	 transaction_type/transaction_type.cpp)
 
 set (gui_files

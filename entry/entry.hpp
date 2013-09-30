@@ -36,6 +36,10 @@ namespace phatbooks
 /**
  * Class representing an accounting entry, i.e. a single line in a journal,
  * i.e. a single change in the balance of an account.
+ * 
+ * Client code must deal with EntryHandles rather than with Entry
+ * objects directly. This is enforced via "Signature" parameters
+ * in the constructors for Account.
  */
 class Entry:
 	public sqloxx::PersistentObject<Entry, PhatbooksDatabaseConnection>
@@ -57,17 +61,26 @@ public:
 	/**
 	 * Construct a fresh Entry, not yet persisted to database.
 	 *
-	 * Not to be called except via Handle class.
+	 * Client code cannot use this constructor - see class level
+	 * documentation for why.
 	 */
-	explicit Entry(IdentityMap& p_identity_map);
+	Entry
+	(	IdentityMap& p_identity_map,
+		IdentityMap::Signature const& p_signature
+	);
 
 	/**
 	 * Get an Entry by id from the database. Throws if there is no
 	 * Entry with this id.
 	 *
-	 * Not to be called except via Handle class.
+	 * Client cod cannot use this constructor - see class level
+	 * documentation for why.
 	 */
-	Entry(IdentityMap& p_identity_map, sqloxx::Id p_id);
+	Entry
+	(	IdentityMap& p_identity_map,
+		sqloxx::Id p_id,
+		IdentityMap::Signature const& p_signature
+	);
 
 	// Note copy constructor is private
 

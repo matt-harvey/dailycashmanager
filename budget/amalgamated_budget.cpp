@@ -11,7 +11,7 @@
 #include "frequency.hpp"
 #include "interval_type.hpp"
 #include "phatbooks_exceptions.hpp"
-#include "repeater.hpp"
+#include "repeater_handle.hpp"
 #include "transaction_type.hpp"
 #include "visibility.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -74,9 +74,9 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	instrument.set_name("AMALGAMATED BUDGET JOURNAL");
 	instrument.set_comment("");
 	instrument.set_transaction_type(TransactionType::envelope);
-	Repeater repeater(dbc);
-	repeater.set_frequency(Frequency(1, IntervalType::days));
-	repeater.set_next_date(gregorian::day_clock::local_day());
+	RepeaterHandle const repeater(dbc);
+	repeater->set_frequency(Frequency(1, IntervalType::days));
+	repeater->set_next_date(gregorian::day_clock::local_day());
 	instrument.push_repeater(repeater);
 	instrument.save();
 
@@ -462,10 +462,10 @@ void
 AmalgamatedBudget::reflect_repeater(DraftJournal& p_journal)
 {
 	load();
-	vector<Repeater> const& old_repeaters = p_journal.repeaters();
+	vector<RepeaterHandle> const& old_repeaters = p_journal.repeaters();
 	if (old_repeaters.size() == 1)
 	{
-		Frequency const old_frequency = old_repeaters[0].frequency();
+		Frequency const old_frequency = old_repeaters[0]->frequency();
 		if 
 		(	old_frequency.step_type() == m_frequency.step_type() &&
 			old_frequency.num_steps() == m_frequency.num_steps()
@@ -475,9 +475,9 @@ AmalgamatedBudget::reflect_repeater(DraftJournal& p_journal)
 		}
 	}
 	p_journal.clear_repeaters();
-	Repeater new_repeater(m_database_connection);
-	new_repeater.set_frequency(m_frequency);
-	new_repeater.set_next_date(gregorian::day_clock::local_day());
+	RepeaterHandle const new_repeater(m_database_connection);
+	new_repeater->set_frequency(m_frequency);
+	new_repeater->set_next_date(gregorian::day_clock::local_day());
 	JEWEL_ASSERT (p_journal.repeaters().empty());
 	p_journal.push_repeater(new_repeater);
 	return;
@@ -503,8 +503,8 @@ AmalgamatedBudget::instrument_balancing_amount() const
 	if (!entries.empty())
 	{
 		JEWEL_ASSERT (m_instrument->repeaters().size() == 1);
-		Repeater const repeater = m_instrument->repeaters()[0];
-		JEWEL_ASSERT (repeater.frequency() == frequency());
+		RepeaterHandle const repeater = m_instrument->repeaters()[0];
+		JEWEL_ASSERT (repeater->frequency() == frequency());
 	}
 #	endif
 

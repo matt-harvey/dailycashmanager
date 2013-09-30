@@ -99,21 +99,25 @@ Commodity::Commodity(Commodity const& rhs):
 
 
 Commodity::Commodity
-(	IdentityMap& p_identity_map
+(	IdentityMap& p_identity_map,
+	IdentityMap::Signature const& p_signature
 ):
 	PersistentObject(p_identity_map),
 	m_data(new CommodityData)
 {
+	(void)p_signature;  // silence compiler re. unused parameter
 }
 
 
 Commodity::Commodity
 (	IdentityMap& p_identity_map,	
-	Id p_id
+	Id p_id,
+	IdentityMap::Signature const& p_signature
 ):
 	PersistentObject(p_identity_map, p_id),
 	m_data(new CommodityData)
 {
+	(void)p_signature;  // silence compiler. re. unused parameter
 }
 
 Commodity::~Commodity() = default;

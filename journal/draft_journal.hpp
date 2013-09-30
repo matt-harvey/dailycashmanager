@@ -8,6 +8,7 @@
 #include "persistent_journal.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
+#include "repeater_handle_fwd.hpp"
 #include "transaction_type.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -19,7 +20,6 @@ namespace phatbooks
 {
 
 class PhatbooksDatabaseConnection;
-class Repeater;
 
 /**
  * Represents an accounting journal that has not been posted, i.e. has
@@ -116,7 +116,7 @@ public:
 	);
 
 	void set_name(wxString const& p_name);
-	void push_repeater(Repeater& repeater);
+	void push_repeater(RepeaterHandle const& repeater);
 	wxString name() const;
 
 	/**
@@ -134,7 +134,7 @@ public:
 	void mimic(ProtoJournal const& rhs);
 	void mimic(DraftJournal const& rhs);
 
-	std::vector<Repeater> const& repeaters() const;
+	std::vector<RepeaterHandle> const& repeaters() const;
 
 	bool has_repeaters() const;
 

@@ -28,7 +28,7 @@
 #include "ordinary_journal.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "ordinary_journal_table_iterator.hpp"
-#include "repeater_impl.hpp"
+#include "repeater.hpp"
 #include "balance_cache.hpp"
 #include "commodity_handle.hpp"
 #include "entry_handle.hpp"
@@ -100,7 +100,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	m_entry_map = new IdentityMap<Entry, PDC>(*this);
 	m_ordinary_journal_map = new IdentityMap<OrdinaryJournalImpl, PDC>(*this);
 	m_draft_journal_map = new IdentityMap<DraftJournalImpl, PDC>(*this);
-	m_repeater_map = new IdentityMap<RepeaterImpl, PDC>(*this);
+	m_repeater_map = new IdentityMap<Repeater, PDC>(*this);
 }
 
 PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
@@ -603,8 +603,8 @@ PhatbooksDatabaseConnection::identity_map<DraftJournalImpl>()
 }
 
 template <>
-sqloxx::IdentityMap<phatbooks::RepeaterImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<RepeaterImpl>()
+sqloxx::IdentityMap<phatbooks::Repeater, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<Repeater>()
 {
 	return *m_repeater_map;
 }

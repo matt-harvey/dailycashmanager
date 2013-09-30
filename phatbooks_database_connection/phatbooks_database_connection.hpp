@@ -46,7 +46,7 @@ class DraftJournalImpl;
 class Entry;
 class OrdinaryJournal;
 class OrdinaryJournalImpl;
-class RepeaterImpl;
+class Repeater;
 
 // End forward declarations
 
@@ -344,7 +344,7 @@ private:
 		m_ordinary_journal_map;
 	sqloxx::IdentityMap<DraftJournalImpl, PhatbooksDatabaseConnection>*
 		m_draft_journal_map;
-	sqloxx::IdentityMap<RepeaterImpl, PhatbooksDatabaseConnection>*
+	sqloxx::IdentityMap<Repeater, PhatbooksDatabaseConnection>*
 		m_repeater_map;
 
 	void perform_integrity_checks();

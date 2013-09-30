@@ -37,6 +37,11 @@ namespace phatbooks
  * regarded as a commodity, of which there is only one unit in
  * existence.
  *
+ * Client code must deal with CommodityHandles rather than with
+ * Commodity instances directly. This is enforced via "Signature"
+ * parameters in the constructors for Commodity, which make it
+ * impossible for client code to call these constructors directly.
+ *
  * @todo The Commodity funcionality of Phatbooks should for the time
  * being remain completely hidden from the user - mainly because it
  * isn't properly implemented yet, because we can't deal with the
@@ -82,9 +87,13 @@ public:
 	/**
 	 * Construct a fresh Commodity, not yet persisted to the database.
 	 *
-	 * Not to be called except via Handle class.
+	 * Client code cannot call this constructor, as it is solely for
+	 * use by IdentityMap. This is enforced by the Signature parameter.
 	 */
-	explicit Commodity(IdentityMap& p_identity_map);
+	Commodity
+	(	IdentityMap& p_identity_map,
+		IdentityMap::Signature const& p_signature
+	);
 
 	/**
 	 * Construct Commodity already persisted to database with Id of
@@ -92,11 +101,14 @@ public:
 	 *
 	 * Throws if no such Id.
 	 *
-	 * Not to be called except via Handle class.
+	 * Client code cannot call this constructor, as it is solely
+	 * for use by IdentityMap. This is enforced by the Signature
+	 * parameter.
 	 */
 	Commodity
 	(	IdentityMap& p_identity_map,	
-	 	sqloxx::Id p_id
+	 	sqloxx::Id p_id,
+		IdentityMap::Signature const& p_signature
 	);
 
 	// copy constructor is private

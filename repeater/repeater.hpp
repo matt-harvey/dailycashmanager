@@ -1,28 +1,38 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_repeater_hpp_1481954204608665
-#define GUARD_repeater_hpp_1481954204608665
+#ifndef GUARD_repeater_impl_hpp_7204316857831701
+#define GUARD_repeater_impl_hpp_7204316857831701
+
+/** \file repeater.hpp
+ *
+ * \brief Header file pertaining to Repeater class.
+ *
+ * \author Matthew Harvey
+ * \date 04 July 2012.
+ *
+ * Copyright (c) 2012, Matthew Harvey. All rights reserved.
+ */
+
 
 #include "date.hpp"
-#include "frequency.hpp"
 #include "interval_type.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_persistent_object.hpp"
+#include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
-#include "repeater_impl.hpp"
-#include <sqloxx/general_typedefs.hpp>
-#include <sqloxx/handle.hpp>
+#include <sqloxx/persistent_object.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <memory>
+#include <list>
 #include <string>
 #include <vector>
+
 
 namespace phatbooks
 {
 
-
 class DraftJournal;
-
+class Frequency;
 
 /**
  * Instances of this class serve as "alarms" that "fire" at regular intervals.
@@ -48,85 +58,108 @@ class DraftJournal;
  *
  * @todo Should it be possible to have Repeaters that have reminders attached
  * them, as well as just transactions?
+ *
+ * @todo The nomenclature here is a bit inconsistent. We should adopt
+ * a nomenclature that is consistent across Frequency, IntervalType
+ * and Repeater, in regards to "step type" and "num steps".
+ *
+ * Client code should not deal with Repeater instances directly, but
+ * only ever via RepeaterHandle.
  */
 class Repeater:
-	public PhatbooksPersistentObject<RepeaterImpl>
+	public sqloxx::PersistentObject<Repeater, PhatbooksDatabaseConnection>
 {
 public:
-	typedef
-		PhatbooksPersistentObject<RepeaterImpl>
-		PhatbooksPersistentObject;
+	
+	typedef sqloxx::PersistentObject
+	<	Repeater,
+		PhatbooksDatabaseConnection
+	>	PersistentObject;
 
 	/**
 	 * Sets up tables in the database required for the persistence
 	 * of Repeater objects.
 	 */
+	typedef sqloxx::IdentityMap<Repeater, PhatbooksDatabaseConnection>
+		IdentityMap;
+
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
-	
-	/**
-	 * Construct a "raw" Repeater, that will not yet correspond to any
-	 * particular object in the database.
-	 */
-	explicit Repeater
-	(	PhatbooksDatabaseConnection& p_database_connection
-	);
 
 	/**
-	 * Get a Repeater by id from the database. Throws if there is not
-	 * Repeater with this id.
+	 * Construct a fresh Repeater with no Id, not yet persisted to the
+	 * database.
+	 *
+	 * Cannot be called except by IdentityMap. This is enforced by by
+	 * Signature parameter.
 	 */
 	Repeater
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		sqloxx::Id p_id
+	(	IdentityMap& p_identity_map,
+		IdentityMap::Signature const& p_signature
 	);
 
-	Repeater(Repeater const&) = default;
-	Repeater(Repeater&&) = default;
-	Repeater& operator=(Repeater const&) = default;
-	Repeater& operator=(Repeater&&) = default;
-	~Repeater() = default;
-
 	/**
-	 * @returns a Repeater (purportedly) identified by id in the
-	 * database. This function is a relatively fast way to get a
-	 * Repeater instance with an id; however it does not check whether
-	 * a Repeater with this id actually exists - this is the caller's
-	 * responsibility.
-	 */
-	static Repeater create_unchecked
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		sqloxx::Id p_id
-	);
-
-
-	void set_frequency(Frequency const p_frequency);
-
-	/**
-	 * Associated the Repeater with a particular DraftJournal, by
-	 * passing the id of the DraftJournal to \e p_journal_id.
-	 * This function should \e not normally be used. The usual way
-	 * to associate a Repeater with a DraftJournal is to pass a
-	 * \e shared_ptr to the Repeater to
-	 * \e DraftJournal::push_repeater(...). The DraftJournal class
-	 * takes care of assigning the correct journal id to Repeaters,
-	 * without client code needing to do this directly.
-	 * Using sqloxx::Id instead of DraftJournal::Id as type, but
-	 * these are the same type, as static_assert-ed in source file.
-	 * (Avoiding circular #includes.)
-	 */
-	void set_journal_id(sqloxx::Id p_journal_id);
-
-	/**
-	 * Set the date when the Repeater will next fire.
+	 * Get a Repeater by Id from the database.
 	 *
-	 * @throws InvalidRepeaterDateException if the date is earlier
-	 * than database_connection().entity_creation_date().
+	 * Cannot be called except by IdentityMap. This is enforced by the
+	 * Signature parameter.
 	 */
+	Repeater
+	(	IdentityMap& p_identity_map,
+		sqloxx::Id p_id,
+		IdentityMap::Signature const& p_signature
+	);
+
+	// copy constructor is private
+
+	Repeater(Repeater&&) = delete;
+	Repeater& operator=(Repeater const&) = delete;
+	Repeater& operator=(Repeater&&) = delete;
+
+	~Repeater();
+
+	void set_frequency(Frequency const& p_frequency);
+
 	void set_next_date(boost::gregorian::date const& p_next_date);
 
 	/**
-	 * Find the firings that are due to occur for this Repeater
-	 * up till and including \e limit.
+	 * Associate the Repeater with a particular DraftJournal, by
+	 * passing the id of the DraftJournal to \e p_journal_id.
+	 * This function should \e not normally be used. The usual way
+	 * to associate a Repeater with a DraftJournal is via
+	 * \e DraftJournal::push_repeater(...). The DraftJournal class
+	 * takes care of assigning the correct journal id to Repeaters,
+	 * without client code needing to do this directly.
+	 *
+	 * @todo Can this be made private?
+	 */
+	void set_journal_id(sqloxx::Id p_journal_id);
+		
+	Frequency frequency();
+
+	/**
+	 * Calling next_date() (which is equivalent to calling next_date(0)), will
+	 * return the date when the Repeater is next due to fire. Calling
+	 * next_date(1) will return the date when the Repeater is next due to
+	 * fire after \e that. Etc.
+	 *
+	 * @throws UnsafeArithmeticException in the extremely unlikely event of
+	 * arithmetic overflow during execution.
+	 *
+	 * @todo Could it throw anything else?
+	 */
+	boost::gregorian::date next_date
+	(	std::vector<boost::gregorian::date>::size_type n = 0
+	);
+
+	/**
+	 * @throws UnsafeArithmeticException in the extremely unlikely event of
+	 * arithmetic overflow during calculation.
+	 *
+	 * @todo Could it throw anything else?
+	 *
+	 * @returns a smart pointer to a vector into which the
+	 * list of firings occur in chronological order from
+	 * soonest to latest.
 	 */
 	std::shared_ptr<std::vector<boost::gregorian::date> >
 	firings_till(boost::gregorian::date const& limit);
@@ -145,23 +178,19 @@ public:
 	 * empty journal posting notifications in case they have not
 	 * yet set up any BudgetItems.
 	 *
-	 * @returns the just-posted OrdinaryJournal.
+	 * @todo Document exception safety.
+	 *
+	 * @todo Testing (but see tests already done...)
 	 */
 	OrdinaryJournal fire_next();
+	
+	DraftJournal draft_journal();
 
-	Frequency frequency() const;
+	void swap(Repeater& rhs);
 
-	/**
-	 * Calling next_date() (which is equivalent to calling next_date(0)), will
-	 * return the date when the Repeater is next due to fire. Calling
-	 * next_date(1) will return the date when the Repeater is next due to
-	 * fire after \e that. Etc.
-	 */
-	boost::gregorian::date next_date
-	(	std::vector<boost::gregorian::date>::size_type n = 0
-	) const;
-
-	DraftJournal draft_journal() const;
+	static std::string primary_table_name();
+	static std::string exclusive_table_name();
+	static std::string primary_key_name();
 
 	/**
 	 * Copy attributes of rhs to *this, but do \e not copy:\n
@@ -169,28 +198,40 @@ public:
 	 * 	\e database_connection, or\n
 	 * 	\e journal_id.
 	 */
-	void mimic(Repeater const& rhs);
+	void mimic(Repeater& rhs);
 
 private:
-	Repeater(sqloxx::Handle<RepeaterImpl> const& p_handle);
-};
 
+	Repeater(Repeater const& rhs);
+	void do_load();
+	void do_save_existing();
+	void do_save_new();
+	void do_ghostify();
+	void process_saving_statement(sqloxx::SQLStatement& statement);
+
+	struct RepeaterData;
+
+	std::unique_ptr<RepeaterData> m_data;
+};
 
 // Free functions
 
 /**
  * Bring Repeaters up to date (thereby posting auto posted journals),
- * returning a shared_ptr to a list containing the resulting
+ * returning a list containing the resulting
  * OrdinaryJournals, sorted by the order in which they have been
  * posted, from earliest to latest.
  */
-std::shared_ptr<std::list<OrdinaryJournal> >
+std::list<OrdinaryJournal>
 update_repeaters
 (	PhatbooksDatabaseConnection& dbc,
 	boost::gregorian::date d = today()
 );
 
 
+
+
+
 }  // namespace phatbooks
 
-#endif  // GUARD_repeater_hpp_1481954204608665
+#endif  // GUARD_repeater_impl_hpp_7204316857831701

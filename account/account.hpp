@@ -48,6 +48,10 @@ class BudgetItem;
  * Represents an account - which could be either a balance sheet account,
  * or an P&L account. The latter is equivalent to an "envelope" or
  * "category".
+ * 
+ * Client code must deal with AccountHandles rather than with Account
+ * objects directly. This is enforced via "Signature" parameters
+ * in the constructors for Account.
  */
 class Account:
 	public sqloxx::PersistentObject<Account, PhatbooksDatabaseConnection>
@@ -81,11 +85,29 @@ public:
 	);
 
 	/**
-	 * Initialize a "draft" account, that will not correspond to any
+	 * Initialize a "draft" Account, that will not correspond to any
 	 * particular object in the database.
+	 *
+	 * Client code cannot use this constructor - see class level
+	 * documentation for Account.
 	 */
-	explicit
-	Account(IdentityMap& p_identity_map);
+	Account
+	(	IdentityMap& p_identity_map,
+		IdentityMap::Signature const& p_signature
+	);
+
+	/**
+	 * Get an Account by id from database. Throws if no such Id. Not be
+	 * called except via Handle class and IdentityMap class.
+	 *
+	 * Client code cannot use this constructor - see class level
+	 * documentation for Account.
+	 */
+	Account
+	(	IdentityMap& p_identity_map,
+		sqloxx::Id p_id,
+		IdentityMap::Signature const& p_signature
+	);
 
 	static bool exists
 	(	PhatbooksDatabaseConnection& p_database_connection,
@@ -143,11 +165,6 @@ public:
 		AccountSuperType p_account_super_type
 	);
 
-	/**
-	 * Get an Account by id from database. Throws if no such Id. Not be
-	 * called except via Handle class.
-	 */
-	Account(IdentityMap& p_identity_map, sqloxx::Id p_id);
 
 	// copy constructor is private
 

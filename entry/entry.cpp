@@ -93,21 +93,25 @@ void Entry::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 Entry::Entry
-(	IdentityMap& p_identity_map
+(	IdentityMap& p_identity_map,
+	IdentityMap::Signature const& p_signature
 ):
 	PersistentObject(p_identity_map),
 	m_data(new EntryData)
 {
+	(void)p_signature;  // silence compiler re. unused param.
 }
 
 
 Entry::Entry
 (	IdentityMap& p_identity_map,
-	Id p_id
+	Id p_id,
+	IdentityMap::Signature const& p_signature
 ):
 	PersistentObject(p_identity_map, p_id),
 	m_data(new EntryData)
 {
+	(void)p_signature;  // silence compiler re. unused parameter
 }
 
 Entry::~Entry() = default;

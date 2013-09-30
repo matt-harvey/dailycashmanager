@@ -151,21 +151,25 @@ OrdinaryJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 
 OrdinaryJournalImpl::OrdinaryJournalImpl
-(	IdentityMap& p_identity_map
+(	IdentityMap& p_identity_map,
+	IdentityMap::Signature const& p_signature
 ):
 	OrdinaryJournalImpl::PersistentObject(p_identity_map),
 	ProtoJournal()
 {
+	(void)p_signature;  // silence compiler re. unused parameter
 }
 
 
 OrdinaryJournalImpl::OrdinaryJournalImpl
 (	IdentityMap& p_identity_map,
-	Id p_id
+	Id p_id,
+	IdentityMap::Signature const& p_signature
 ):
 	OrdinaryJournalImpl::PersistentObject(p_identity_map, p_id),
 	ProtoJournal()
 {
+	(void)p_signature;  // silence compiler re. unused parameter
 }
 	
 

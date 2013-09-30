@@ -7,6 +7,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_persistent_object.hpp"
 #include "proto_journal.hpp"
+#include "repeater_handle.hpp"
 #include "transaction_type.hpp"
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -97,7 +98,7 @@ DraftJournal::set_name(wxString const& p_name)
 }
 
 void
-DraftJournal::push_repeater(Repeater& repeater)
+DraftJournal::push_repeater(RepeaterHandle const& repeater)
 {
 	impl().push_repeater(repeater);
 	return;
@@ -177,7 +178,7 @@ DraftJournal::do_get_entries() const
 	return impl().entries();
 }
 
-vector<Repeater> const&
+vector<RepeaterHandle> const&
 DraftJournal::repeaters() const
 {
 	return impl().repeaters();

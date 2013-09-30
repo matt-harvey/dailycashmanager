@@ -7,7 +7,7 @@
 #include "frequency.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "repeater.hpp"
+#include "repeater_handle.hpp"
 #include "string_conv.hpp"
 #include <jewel/assert.hpp>
 #include <wx/event.h>
@@ -128,7 +128,7 @@ DraftJournalListCtrl::update
 		// just going to rule that out by making it impossible for the user
 		// to create such DraftJournals?
 
-		vector<Repeater> const& repeaters = p_beg->repeaters();
+		vector<RepeaterHandle> const& repeaters = p_beg->repeaters();
 
 		if (repeaters.empty())
 		{
@@ -144,12 +144,12 @@ DraftJournalListCtrl::update
 			{
 				frequency_description = std8_to_wx
 				(	phatbooks::frequency_description
-					(	repeaters[0].frequency(),
+					(	repeaters[0]->frequency(),
 						string("every")
 					)
 				);
 				next_date_string =
-					date_format_wx(repeaters[0].next_date());
+					date_format_wx(repeaters[0]->next_date());
 			}
 			SetItem(i, s_frequency_col, frequency_description);
 			SetItem(i, s_next_date_col, next_date_string);

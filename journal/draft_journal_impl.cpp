@@ -7,7 +7,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
-#include "repeater.hpp"
+#include "repeater_handle.hpp"
 #include "string_conv.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -122,7 +122,7 @@ DraftJournalImpl::entries()
 }
 
 
-vector<Repeater> const&
+vector<RepeaterHandle> const&
 DraftJournalImpl::repeaters()
 {
 	load();
@@ -144,23 +144,27 @@ DraftJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 
 DraftJournalImpl::DraftJournalImpl
-(	IdentityMap& p_identity_map
+(	IdentityMap& p_identity_map,
+	IdentityMap::Signature const& p_signature
 ):
 	DraftJournalImpl::PersistentObject(p_identity_map),
 	ProtoJournal(),
 	m_dj_data(new DraftJournalData)
 {
+	(void)p_signature;  // silence compiler re. unused parameter
 }
 
 
 DraftJournalImpl::DraftJournalImpl
 (	IdentityMap& p_identity_map,	
-	Id p_id
+	Id p_id,
+	IdentityMap::Signature const& p_signature
 ):
 	DraftJournalImpl::PersistentObject(p_identity_map, p_id),
 	ProtoJournal(),
 	m_dj_data(new DraftJournalData)
 {
+	(void)p_signature;  // silence compiler re. unused parameter
 }
 
 bool
@@ -196,12 +200,12 @@ DraftJournalImpl::set_name(wxString const& p_name)
 
 
 void
-DraftJournalImpl::push_repeater(Repeater& repeater)
+DraftJournalImpl::push_repeater(RepeaterHandle const& repeater)
 {
 	load();
 	if (has_id())
 	{
-		repeater.set_journal_id(id());
+		repeater->set_journal_id(id());
 	}
 	m_dj_data->repeaters.push_back(repeater);
 	return;
@@ -259,8 +263,9 @@ DraftJournalImpl::do_load()
 	while (repeater_finder.step())
 	{
 		Id const rep_id = repeater_finder.extract<Id>(0);
-		Repeater repeater(database_connection(), rep_id);
-		temp.m_dj_data->repeaters.push_back(repeater);
+		temp.m_dj_data->repeaters.push_back
+		(	RepeaterHandle(database_connection(), rep_id)
+		);
 	}
 	swap(temp);
 	return;
@@ -283,10 +288,10 @@ DraftJournalImpl::do_save_new()
 	statement.bind(":name", wx_to_std8(value(m_dj_data->name)));
 	statement.step_final();
 	
-	for (Repeater& repeater: m_dj_data->repeaters)
+	for (RepeaterHandle const& repeater: m_dj_data->repeaters)
 	{
-		repeater.set_journal_id(journal_id);
-		repeater.save();
+		repeater->set_journal_id(journal_id);
+		repeater->save();
 	}
 	return;
 }
@@ -305,10 +310,10 @@ DraftJournalImpl::do_save_existing()
 	updater.step_final();
 
 	unordered_set<Id> saved_repeater_ids;
-	for (Repeater& repeater: m_dj_data->repeaters)
+	for (RepeaterHandle const& repeater: m_dj_data->repeaters)
 	{
-		repeater.save();
-		saved_repeater_ids.insert(repeater.id());
+		repeater->save();
+		saved_repeater_ids.insert(repeater->id());
 	}
 	// Now remove any repeaters in the database with this DraftJournalImpl's
 	// journal_id, that no longer exist in the in-memory DraftJournalImpl
@@ -326,8 +331,8 @@ DraftJournalImpl::do_save_existing()
 		{
 			// This repeater is in the database but no longer in the in-memory
 			// DraftJournalImpl, and so should be deleted from the database.
-			Repeater doomed_repeater(database_connection(), repeater_id);
-			doomed_repeater.remove();
+			RepeaterHandle const doomed_repeater(database_connection(), repeater_id);
+			doomed_repeater->remove();
 			// Note it's OK even if the last repeater is deleted. Another
 			// repeater will never be reassigned its id - SQLite makes sure
 			// of that - providing we let SQLite assign all the ids
@@ -343,9 +348,9 @@ DraftJournalImpl::do_ghostify()
 {
 	do_ghostify_journal_core();
 	clear(m_dj_data->name);
-	for (Repeater& repeater: m_dj_data->repeaters)
+	for (RepeaterHandle const& repeater: m_dj_data->repeaters)
 	{
-		repeater.ghostify();
+		repeater->ghostify();
 	}
 	m_dj_data->repeaters.clear();
 	return;
@@ -414,10 +419,10 @@ DraftJournalImpl::repeater_description()
 	}
 	JEWEL_ASSERT (!m_dj_data->repeaters.empty());
 	wxString ret("This transaction is automatically recorded ");
-	vector<Repeater>::const_iterator it = m_dj_data->repeaters.begin();
-	ret += std8_to_wx(frequency_description(it->frequency(), "every"));
+	vector<RepeaterHandle>::const_iterator it = m_dj_data->repeaters.begin();
+	ret += std8_to_wx(frequency_description((*it)->frequency(), "every"));
 	ret += wxString(", with the next recording due on ");
-	gregorian::date next_date = it->next_date();
+	gregorian::date next_date = (*it)->next_date();
 
 	// TODO Make this locale-sensitive (obviously I have to make the
 	// messages locale-sensitive as well in due course, but the
@@ -435,10 +440,10 @@ DraftJournalImpl::repeater_description()
 			(	"\nIn addition, this transaction is automatically recorded "
 			);
 			ret += std8_to_wx
-			(	frequency_description(it->frequency(), "every")
+			(	frequency_description((*it)->frequency(), "every")
 			);
 			ret += wxString(", with the next recording due on ");
-			gregorian::date const next_date_this_cycle = it->next_date();
+			gregorian::date const next_date_this_cycle = (*it)->next_date();
 			
 			// TODO See previous comment re. internationalization.
 			ret += std8_to_wx(lexical_cast<string>(next_date_this_cycle));
@@ -488,14 +493,14 @@ DraftJournalImpl::mimic(DraftJournalImpl& rhs)
 	temp.mimic_core(rhs, database_connection(), t_id);
 	temp.set_name(rhs.name());
 	temp.clear_repeaters();
-	vector<Repeater> const& rreps = rhs.repeaters();
+	vector<RepeaterHandle> const& rreps = rhs.repeaters();
 	if (!rreps.empty())
 	{
-		for (Repeater const& rrep: rreps)
+		for (RepeaterHandle const& rrep: rreps)
 		{
-			Repeater repeater(database_connection());
-			repeater.mimic(rrep);
-			if (t_id) repeater.set_journal_id(value(t_id));
+			RepeaterHandle const repeater(database_connection());
+			repeater->mimic(*rrep);
+			if (t_id) repeater->set_journal_id(value(t_id));
 			temp.m_dj_data->repeaters.push_back(repeater);
 		}
 	}

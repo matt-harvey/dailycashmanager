@@ -44,11 +44,15 @@ public:
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	
-	explicit BudgetItemImpl(IdentityMap& p_identity_map);	
+	BudgetItemImpl
+	(	IdentityMap& p_identity_map,
+		IdentityMap::Signature const& p_signature
+	);
 
 	BudgetItemImpl
 	(	IdentityMap& p_identity_map,
-		sqloxx::Id p_id
+		sqloxx::Id p_id,
+		IdentityMap::Signature const& p_signature
 	);
 
 	// copy constructor is private

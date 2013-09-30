@@ -59,22 +59,25 @@ BudgetItemImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 	return;
 }
 	
-
 BudgetItemImpl::BudgetItemImpl
-(	IdentityMap& p_identity_map
+(	IdentityMap& p_identity_map,
+	IdentityMap::Signature const& p_signature
 ):
 	PersistentObject(p_identity_map),
 	m_data(new BudgetItemData)
 {
+	(void)p_signature;  // silence compiler re. unused parameter.
 }
 
 BudgetItemImpl::BudgetItemImpl
 (	IdentityMap& p_identity_map,
-	sqloxx::Id p_id
+	sqloxx::Id p_id,
+	IdentityMap::Signature const& p_signature
 ):
 	PersistentObject(p_identity_map, p_id),
 	m_data(new BudgetItemData)
 {
+	(void)p_signature;  // silence compiler re. unused parameter.
 }
 
 std::string

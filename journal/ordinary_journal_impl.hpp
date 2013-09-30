@@ -98,9 +98,9 @@ public:
 	 * Construct a "raw" OrdinaryJournalImpl, that will not yet
 	 * correspond to any particular object in the database
 	 */
-	explicit
 	OrdinaryJournalImpl
-	(	IdentityMap& p_identity_map	
+	(	IdentityMap& p_identity_map,
+		IdentityMap::Signature const& p_signature
 	);
 
 	/**
@@ -108,7 +108,8 @@ public:
 	 */
 	OrdinaryJournalImpl
 	(	IdentityMap& p_identity_map,	
-		sqloxx::Id p_id
+		sqloxx::Id p_id,
+		IdentityMap::Signature const& p_signature
 	);
 
 	// copy constructor is private
