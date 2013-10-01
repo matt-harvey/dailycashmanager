@@ -4,8 +4,8 @@
 #define GUARD_frame_hpp_873675392881816
 
 #include "account_handle.hpp"
-#include "draft_journal.hpp"
-#include "ordinary_journal.hpp"
+#include "draft_journal_handle_fwd.hpp"
+#include "ordinary_journal_handle_fwd.hpp"
 #include "top_panel.hpp"
 #include <jewel/assert.hpp>
 #include <wx/menu.h>
@@ -58,13 +58,13 @@ public:
 	 * Populates \e out with all the OrdinaryJournals currently
 	 * selected by the user in the main window.
 	 */
-	void selected_ordinary_journals(std::vector<OrdinaryJournal>& out) const;
+	void selected_ordinary_journals(std::vector<OrdinaryJournalHandle>& out) const;
 
 	/**
 	 * Populates \e out with all the DraftJournals currently
 	 * selected by the user in the main window.
 	 */
-	void selected_draft_journals(std::vector<DraftJournal>& out) const;
+	void selected_draft_journals(std::vector<DraftJournalHandle>& out) const;
 
 private:
 

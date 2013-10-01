@@ -5,12 +5,13 @@
 #include "account_list_ctrl.hpp"
 #include "account_type.hpp"
 #include "commodity_handle.hpp"
+#include "draft_journal_handle.hpp"
 #include "draft_journal_list_ctrl.hpp"
 #include "draft_journal_table_iterator.hpp"
 #include "entry_handle.hpp"
 #include "entry_list_panel.hpp"
 #include "frame.hpp"
-#include "ordinary_journal.hpp"
+#include "ordinary_journal_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "reconciliation_list_panel.hpp"
@@ -33,6 +34,7 @@
 #include <iterator>
 #include <map>
 #include <set>
+#include <utility>
 #include <vector>
 
 using boost::optional;
@@ -41,6 +43,7 @@ using jewel::value;
 using std::begin;
 using std::end;
 using std::map;
+using std::move;
 using std::set;
 using std::vector;
 
@@ -329,7 +332,7 @@ TopPanel::make_proto_journal() const
 			ret.push_entry(entry);	
 		}
 	}
-	return ret;
+	return move(ret);
 }
 
 void
@@ -433,7 +436,7 @@ TopPanel::selected_pl_accounts(vector<AccountHandle>& out) const
 }
 
 void
-TopPanel::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
+TopPanel::selected_ordinary_journals(vector<OrdinaryJournalHandle>& out) const
 {
 	vector<EntryHandle> entries;
 	JEWEL_ASSERT (m_notebook);
@@ -448,7 +451,7 @@ TopPanel::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 	}
 	for (EntryHandle const& entry: entries)
 	{
-		OrdinaryJournal oj
+		OrdinaryJournalHandle oj
 		(	entry->database_connection(),
 			entry->journal_id()
 		);
@@ -458,14 +461,14 @@ TopPanel::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 }
 
 void
-TopPanel::selected_draft_journals(vector<DraftJournal>& out) const
+TopPanel::selected_draft_journals(vector<DraftJournalHandle>& out) const
 {
 	m_draft_journal_list->selected_draft_journals(out);
 	return;
 }
 
 void
-TopPanel::update_for_new(OrdinaryJournal const& p_saved_object)
+TopPanel::update_for_new(OrdinaryJournalHandle const& p_saved_object)
 {
 	m_bs_account_list->update();
 	m_pl_account_list->update();
@@ -478,7 +481,7 @@ TopPanel::update_for_new(OrdinaryJournal const& p_saved_object)
 }
 
 void
-TopPanel::update_for_new(DraftJournal const& p_saved_object)
+TopPanel::update_for_new(DraftJournalHandle const& p_saved_object)
 {
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	// m_bs_account_list->update();  // No point doing this here.
@@ -502,7 +505,7 @@ TopPanel::update_for_new(AccountHandle const& p_saved_object)
 }
 
 void
-TopPanel::update_for_amended(OrdinaryJournal const& p_saved_object)
+TopPanel::update_for_amended(OrdinaryJournalHandle const& p_saved_object)
 {
 	m_bs_account_list->update();
 	m_pl_account_list->update();
@@ -515,7 +518,7 @@ TopPanel::update_for_amended(OrdinaryJournal const& p_saved_object)
 }
 
 void
-TopPanel::update_for_amended(DraftJournal const& p_saved_object)
+TopPanel::update_for_amended(DraftJournalHandle const& p_saved_object)
 {
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update();

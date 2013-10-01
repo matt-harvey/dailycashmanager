@@ -9,7 +9,8 @@
 #include "date_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
-#include "draft_journal.hpp"
+#include "draft_journal_impl.hpp"
+#include "draft_journal_handle.hpp"
 #include "draft_journal_naming_dialog.hpp"
 #include "entry_handle.hpp"
 #include "entry_group_ctrl.hpp"
@@ -20,7 +21,9 @@
 #include "frequency_ctrl.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include "journal.hpp"
-#include "ordinary_journal.hpp"
+#include "ordinary_journal_impl.hpp"
+#include "ordinary_journal_handle.hpp"
+#include "persistent_journal.hpp"
 #include "proto_journal.hpp"
 #include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -41,6 +44,7 @@
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/combobox.h>
@@ -60,6 +64,7 @@
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::Handle;
 using sqloxx::Id;
 using std::back_inserter;
 using std::begin;
@@ -105,7 +110,7 @@ END_EVENT_TABLE()
 
 namespace
 {
-	bool contains_reconciled_entry(Journal const& p_journal)
+	bool contains_reconciled_entry(Journal& p_journal)
 	{
 		for (EntryHandle const& entry: p_journal.entries())
 		{
@@ -123,12 +128,12 @@ namespace
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
 	wxSize const& p_size,
-	OrdinaryJournal const& p_journal
+	OrdinaryJournalHandle const& p_journal
 ):
 	GriddedScrolledPanel
 	(	p_parent,
 		p_size,
-		p_journal.database_connection()
+		p_journal->database_connection()
 	),
 	m_transaction_type_ctrl(nullptr),
 	m_source_entry_ctrl(nullptr),
@@ -139,20 +144,30 @@ TransactionCtrl::TransactionCtrl
 	m_cancel_button(nullptr),
 	m_delete_button(nullptr),
 	m_ok_button(nullptr),
-	m_journal(new OrdinaryJournal(p_journal))
+	m_journal(nullptr)
 {
+	JEWEL_ASSERT (p_journal->has_id());
+	
+	// TODO Make this nicer once facility is provided by sqloxx::Handle to do so.
+	Handle<PersistentJournal>* const j = new Handle<PersistentJournal>
+	(	Handle<PersistentJournal>::create<PhatbooksDatabaseConnection, OrdinaryJournalImpl>
+		(	p_journal->database_connection(),
+			p_journal->id()
+		)
+	);
+	m_journal.reset(j);
 	configure_for_editing_persistent_journal();
 }
 
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
 	wxSize const& p_size,
-	DraftJournal const& p_journal
+	DraftJournalHandle const& p_journal
 ):
 	GriddedScrolledPanel
 	(	p_parent,
 		p_size,
-		p_journal.database_connection()
+		p_journal->database_connection()
 	),
 	m_transaction_type_ctrl(nullptr),
 	m_source_entry_ctrl(nullptr),
@@ -163,15 +178,25 @@ TransactionCtrl::TransactionCtrl
 	m_cancel_button(nullptr),
 	m_delete_button(nullptr),
 	m_ok_button(nullptr),
-	m_journal(new DraftJournal(p_journal))
+	m_journal(nullptr)
 {
+	JEWEL_ASSERT (p_journal->has_id());
+
+	// TODO Make this nicer once facility is provided by sqloxx::Handle to do so.
+	Handle<PersistentJournal>* const j = new Handle<PersistentJournal>
+	(	Handle<PersistentJournal>::create<PhatbooksDatabaseConnection, DraftJournalImpl>
+		(	p_journal->database_connection(),
+			p_journal->id()
+		)
+	);
+	m_journal.reset(j);
 	configure_for_editing_persistent_journal();
 }
 
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
 	wxSize const& p_size,
-	ProtoJournal const& p_journal,
+	ProtoJournal& p_journal,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	GriddedScrolledPanel
@@ -266,7 +291,7 @@ TransactionCtrl::clear_all()
 
 void
 TransactionCtrl::configure_for_editing_proto_journal
-(	ProtoJournal const& p_journal
+(	ProtoJournal& p_journal
 )
 {
 	wxSize text_box_size;
@@ -369,7 +394,7 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 
 	JEWEL_ASSERT (m_journal);
 	TransactionType const initial_transaction_type
-		= m_journal->transaction_type();
+		= (*m_journal)->transaction_type();
 	assert_transaction_type_validity(initial_transaction_type);
 	wxSize text_box_size;
 	vector<TransactionType> available_transaction_types;
@@ -384,7 +409,7 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	configure_top_controls
 	(	initial_transaction_type,
 		text_box_size,
-		m_journal->primary_amount(),
+		(*m_journal)->primary_amount(),
 		available_transaction_types
 	);
 
@@ -393,14 +418,14 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	m_source_entry_ctrl = new EntryGroupCtrl
 	(	this,
 		text_box_size,
-		*m_journal,
+		**m_journal,
 		TransactionSide::source,
 		database_connection()
 	);
 	m_destination_entry_ctrl = new EntryGroupCtrl
 	(	this,
 		text_box_size,
-		*m_journal,
+		**m_journal,
 		TransactionSide::destination,
 		database_connection()
 	);
@@ -421,9 +446,9 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 
 	// TODO Factor out code duplicated with other constructor.
 
-	OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal.get());
+	OrdinaryJournalImpl* oj = dynamic_cast<OrdinaryJournalImpl*>(m_journal->get());
 	bool const is_ordinary = static_cast<bool>(oj);
-	DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal.get());
+	DraftJournalImpl* dj = dynamic_cast<DraftJournalImpl*>(m_journal->get());
 	bool const is_draft = static_cast<bool>(dj);
 	JEWEL_ASSERT (!(is_ordinary && is_draft));
 	JEWEL_ASSERT (is_ordinary || is_draft);
@@ -683,7 +708,7 @@ TransactionCtrl::reset()
 	wxWindowUpdateLocker window_update_locker(this);
 	TopPanel* const parent = dynamic_cast<TopPanel*>(GetParent());
 	JEWEL_ASSERT (parent);
-	ProtoJournal const proto_journal = parent->make_proto_journal();
+	ProtoJournal proto_journal = parent->make_proto_journal();
 	clear_all();
 	configure_for_editing_proto_journal(proto_journal);
 	parent->Layout();
@@ -744,8 +769,8 @@ TransactionCtrl::post_journal()
 	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
 	if (maybe_frequency)
 	{
-		DraftJournal dj(database_connection());
-		dj.mimic(journal);
+		DraftJournalHandle dj(database_connection());
+		dj->mimic(journal);
 		JEWEL_ASSERT (m_date_ctrl->date());
 		gregorian::date const next_date = value(m_date_ctrl->date());
 		Frequency const freq = value(maybe_frequency);
@@ -780,13 +805,13 @@ TransactionCtrl::post_journal()
 		RepeaterHandle const repeater(database_connection());
 		repeater->set_next_date(next_date);
 		repeater->set_frequency(freq);
-		dj.push_repeater(repeater);
+		dj->push_repeater(repeater);
 	
 		// Get a name for the DraftJournal
 		DraftJournalNamingDialog naming_ctrl(0, database_connection());
 		if (naming_ctrl.ShowModal() == wxID_OK)
 		{
-			dj.set_name(naming_ctrl.draft_journal_name());
+			dj->set_name(naming_ctrl.draft_journal_name());
 		}
 		else
 		{
@@ -796,30 +821,32 @@ TransactionCtrl::post_journal()
 			return false;
 		}
 
-		JEWEL_ASSERT (dj.is_balanced());
-		dj.save();
+		JEWEL_ASSERT (dj->is_balanced());
+		dj->save();
 
+		JEWEL_ASSERT (dj->has_id());
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_CREATED_EVENT,
-			dj
+			dj->id()
 		);
 		return true;
 	}
 	else
 	{
 		JEWEL_ASSERT (!maybe_frequency);
-		OrdinaryJournal oj(database_connection());
-		oj.mimic(journal);
+		OrdinaryJournalHandle const oj(database_connection());
+		oj->mimic(journal);
 		JEWEL_ASSERT (m_date_ctrl->date());
-		oj.set_date(value(m_date_ctrl->date()));
-		JEWEL_ASSERT (oj.is_balanced());
-		oj.save();
+		oj->set_date(value(m_date_ctrl->date()));
+		JEWEL_ASSERT (oj->is_balanced());
+		oj->save();
 
+		JEWEL_ASSERT (oj->has_id());
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_CREATED_EVENT,
-			oj
+			oj->id()
 		);
 		return true;
 	}
@@ -829,13 +856,13 @@ TransactionCtrl::post_journal()
 bool
 TransactionCtrl::remove_journal()
 {
-	if (!m_journal || !m_journal->has_id())
+	if (!m_journal || !(*m_journal)->has_id())
 	{
 		// WARNING This might be dead code.
 #	ifndef NDEBUG
 		if (m_journal)
 		{
-			for (EntryHandle const& entry: m_journal->entries())
+			for (EntryHandle const& entry: (*m_journal)->entries())
 			{
 				JEWEL_ASSERT (!entry->has_id());
 			}
@@ -844,17 +871,17 @@ TransactionCtrl::remove_journal()
 		return true;
 	}
 	JEWEL_ASSERT (m_journal);
-	Id const doomed_journal_id = m_journal->id();
+	Id const doomed_journal_id = (*m_journal)->id();
 	bool const is_draft =
 		journal_id_is_draft(database_connection(), doomed_journal_id);
 	vector<Id> doomed_entry_ids;
-	vector<EntryHandle> const& doomed_entries = m_journal->entries();
+	vector<EntryHandle> const& doomed_entries = (*m_journal)->entries();
 	for (EntryHandle const& entry: doomed_entries)
 	{
 		doomed_entry_ids.push_back(entry->id());
 	}
-	m_journal->remove();
-	JEWEL_ASSERT (!m_journal->has_id());
+	(*m_journal)->remove();
+	JEWEL_ASSERT (!(*m_journal)->has_id());
 	wxEventType event_type(0);
 	if (is_draft)
 	{
@@ -885,7 +912,7 @@ TransactionCtrl::save_existing_journal()
 	JEWEL_ASSERT (m_transaction_type_ctrl->transaction_type());
 	TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
-	m_journal->set_transaction_type(ttype);
+	(*m_journal)->set_transaction_type(ttype);
 
 	// We need to collect the ids of the removed entries so the
 	// GUI can be updated for their removal. We start out assuming all
@@ -893,7 +920,7 @@ TransactionCtrl::save_existing_journal()
 	// IDs as we verify that each Entry is still present in the edited
 	// Journal.
 	unordered_set<Id> doomed;
-	vector<EntryHandle> const& old_entries = m_journal->entries();
+	vector<EntryHandle> const& old_entries = (*m_journal)->entries();
 	for (EntryHandle const& entry: old_entries)
 	{
 		JEWEL_ASSERT (entry->has_id());
@@ -903,7 +930,7 @@ TransactionCtrl::save_existing_journal()
 	// Clear the existing Entries from Journal, then reinsert the updated
 	// Entries. As each "surviving" Entry is reinserted, we erase its Id from
 	// the "doomed" Ids.
-	m_journal->clear_entries();
+	(*m_journal)->clear_entries();
 	EntryGroupCtrl const* const entry_controls[] =
 	{	m_source_entry_ctrl,
 		m_destination_entry_ctrl
@@ -913,7 +940,7 @@ TransactionCtrl::save_existing_journal()
 		vector<EntryHandle> entries = control->make_entries();
 		for (EntryHandle entry: entries)
 		{
-			m_journal->push_entry(entry);
+			(*m_journal)->push_entry(entry);
 			if (entry->has_id()) doomed.erase(entry->id());
 		}
 	}
@@ -925,7 +952,7 @@ TransactionCtrl::save_existing_journal()
 	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
 	if (maybe_frequency)
 	{
-		DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal.get());
+		DraftJournalImpl* dj = dynamic_cast<DraftJournalImpl*>(m_journal->get());
 		JEWEL_ASSERT (dj);
 		JEWEL_ASSERT (m_date_ctrl->date());
 		gregorian::date const next_date = value(m_date_ctrl->date());
@@ -980,17 +1007,18 @@ TransactionCtrl::save_existing_journal()
 		(	this,
 			doomed_entry_ids
 		);
+		JEWEL_ASSERT (dj->has_id());
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_EDITED_EVENT,
-			*dj
+			dj->id()
 		);
 		return true;
 	}
 	else
 	{
 		JEWEL_ASSERT (!maybe_frequency);
-		OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal.get());
+		OrdinaryJournalImpl* oj = dynamic_cast<OrdinaryJournalImpl*>(m_journal->get());
 		JEWEL_ASSERT (oj);
 		JEWEL_ASSERT (m_date_ctrl->date());
 		oj->set_date(value(m_date_ctrl->date()));
@@ -1002,10 +1030,11 @@ TransactionCtrl::save_existing_journal()
 		(	this,
 			doomed_entry_ids
 		);
+		JEWEL_ASSERT (oj->has_id());
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_EDITED_EVENT,
-			*oj
+			oj->id()
 		);
 		return true;
 	}

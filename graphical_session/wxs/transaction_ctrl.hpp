@@ -5,12 +5,16 @@
 
 #include "account_handle.hpp"
 #include "decimal_text_ctrl.hpp"
+#include "draft_journal_handle_fwd.hpp"
 #include "entry_handle_fwd.hpp"
 #include "gridded_scrolled_panel.hpp"
+#include "ordinary_journal_handle_fwd.hpp"
+#include "persistent_journal.hpp"
 #include "transaction_type_ctrl.hpp"
 #include "transaction_type.hpp"
 #include <jewel/decimal_fwd.hpp>
 #include <jewel/on_windows.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -23,9 +27,6 @@ namespace phatbooks
 
 // Begin forward declarations
 
-class DraftJournal;
-class OrdinaryJournal;
-class PersistentJournal;
 class ProtoJournal;
 class PhatbooksDatabaseConnection;
 
@@ -77,7 +78,7 @@ public:
 	TransactionCtrl
 	(	TopPanel* p_parent,
 		wxSize const& p_size,
-		OrdinaryJournal const& p_journal
+		OrdinaryJournalHandle const& p_journal
 	);
 
 	/**
@@ -87,7 +88,7 @@ public:
 	TransactionCtrl
 	(	TopPanel* p_parent,
 		wxSize const& p_size,
-		DraftJournal const& p_journal
+		DraftJournalHandle const& p_journal
 	);
 
 	/**
@@ -98,7 +99,7 @@ public:
 	TransactionCtrl
 	(	TopPanel* p_parent,
 		wxSize const& p_size,
-		ProtoJournal const& p_journal,
+		ProtoJournal& p_journal,
 		PhatbooksDatabaseConnection& p_database_connection
 	);
 
@@ -164,7 +165,7 @@ private:
 	void clear_all();
 
 	// Assumes current contents are all clear.
-	void configure_for_editing_proto_journal(ProtoJournal const& p_journal);
+	void configure_for_editing_proto_journal(ProtoJournal& p_journal);
 
 	// Assume current contents are all clear except for m_journal, which
 	// must have been initialized.
@@ -215,7 +216,7 @@ private:
 	static unsigned int const s_min_entry_row_id =
 		s_delete_button_id + 1;
 
-	std::unique_ptr<PersistentJournal> m_journal;
+	std::unique_ptr<sqloxx::Handle<PersistentJournal> > m_journal;
 
 	DECLARE_EVENT_TABLE()
 

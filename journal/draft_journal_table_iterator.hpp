@@ -3,7 +3,7 @@
 #ifndef GUARD_draft_journal_table_iterator_hpp_8254837704941089
 #define GUARD_draft_journal_table_iterator_hpp_8254837704941089
 
-#include "draft_journal.hpp"
+#include "draft_journal_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <sqloxx/table_iterator.hpp>
 
@@ -12,7 +12,7 @@ namespace phatbooks
 
 
 typedef
-	sqloxx::TableIterator<DraftJournal, PhatbooksDatabaseConnection>
+	sqloxx::TableIterator<DraftJournalHandle, PhatbooksDatabaseConnection>
 	DraftJournalTableIterator;
 
 

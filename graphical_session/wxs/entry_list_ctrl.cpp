@@ -10,7 +10,7 @@
 #include "entry_handle.hpp"
 #include "entry_table_iterator.hpp"
 #include "locale.hpp"
-#include "ordinary_journal.hpp"
+#include "ordinary_journal_handle.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "pl_account_entry_list_ctrl.hpp"
@@ -315,27 +315,23 @@ EntryListCtrl::on_item_activated(wxListEvent& event)
 	(	database_connection(),
 		GetItemData(event.GetIndex())
 	);
-	OrdinaryJournal journal
-	(	database_connection(),
-		entry->journal_id()
-	);
 
 	// Fire a PersistentJournal editing request. This will be handled
 	// higher up the window hierarchy.
 	PersistentObjectEvent::fire
 	(	this,
 		PHATBOOKS_JOURNAL_EDITING_EVENT,
-		journal
+		entry->journal_id()
 	);
 	return;
 }
 
 void
-EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
+EntryListCtrl::update_for_new(OrdinaryJournalHandle const& p_journal)
 {
-	if (p_journal.is_actual())
+	if (p_journal->is_actual())
 	{
-		for (EntryHandle const& entry: p_journal.entries())
+		for (EntryHandle const& entry: p_journal->entries())
 		{
 			process_insertion_candidate_entry(entry);
 		}
@@ -345,16 +341,16 @@ EntryListCtrl::update_for_new(OrdinaryJournal const& p_journal)
 }
 
 void
-EntryListCtrl::update_for_amended(OrdinaryJournal const& p_journal)
+EntryListCtrl::update_for_amended(OrdinaryJournalHandle const& p_journal)
 {
-	if (!p_journal.is_actual())
+	if (!p_journal->is_actual())
 	{
 		return;
 	}
-	JEWEL_ASSERT (p_journal.is_actual());
-	wxString const wx_date_string = date_format_wx(p_journal.date());
+	JEWEL_ASSERT (p_journal->is_actual());
+	wxString const wx_date_string = date_format_wx(p_journal->date());
 	DateParser const parser;
-	for (EntryHandle const& entry: p_journal.entries())
+	for (EntryHandle const& entry: p_journal->entries())
 	{
 		long updated_pos = -1;
 		JEWEL_ASSERT (entry->has_id());

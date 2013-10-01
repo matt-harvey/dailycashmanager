@@ -8,7 +8,7 @@
 #include "finformat.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include "locale.hpp"
-#include "ordinary_journal.hpp"
+#include "ordinary_journal_handle.hpp"
 #include "pl_report.hpp"
 #include "report_panel.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -103,14 +103,14 @@ Report::maybe_max_date() const
 }
 
 void
-Report::update_for_new(OrdinaryJournal const& p_journal)
+Report::update_for_new(OrdinaryJournalHandle const& p_journal)
 {
 	(void)p_journal;  // silence compiler re. unused parameter.
 	return;
 }
 
 void
-Report::update_for_amended(OrdinaryJournal const& p_journal)
+Report::update_for_amended(OrdinaryJournalHandle const& p_journal)
 {
 	(void)p_journal;  // silence compiler re. unused parameter.
 	return;

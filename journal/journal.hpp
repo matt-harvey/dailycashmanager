@@ -4,7 +4,6 @@
 #define GUARD_journal_hpp_6157822681664407
 
 #include "entry_handle.hpp"
-#include "phatbooks_persistent_object.hpp"
 #include "transaction_type.hpp"
 #include <jewel/decimal_fwd.hpp>
 #include <sqloxx/general_typedefs.hpp>
@@ -49,12 +48,17 @@ class Journal
 {
 public:
 
-	Journal() = default;
-	Journal(Journal const&) = default;
-	Journal(Journal&&) = default;
-	Journal& operator=(Journal const&) = default;
-	Journal& operator=(Journal&&) = default;
-	virtual ~Journal() = default;
+	static std::string primary_table_name();
+	static std::string exclusive_table_name();
+	static std::string primary_key_name();
+
+	Journal();
+
+	Journal(Journal const& rhs);
+	Journal(Journal&&);
+	Journal& operator=(Journal const&) = delete;
+	Journal& operator=(Journal&&) = delete;
+	virtual ~Journal();
 
 	void set_transaction_type
 	(	TransactionType p_transaction_type
@@ -65,14 +69,14 @@ public:
 	void remove_entry(EntryHandle const& entry);
 	void clear_entries();
 
-	std::vector<EntryHandle> const& entries() const;
-	wxString comment() const;
+	std::vector<EntryHandle> const& entries();
+	wxString comment();
 
-	bool is_actual() const;
+	bool is_actual();
 
-	TransactionType transaction_type() const;
+	TransactionType transaction_type();
 
-	jewel::Decimal balance() const;
+	jewel::Decimal balance();
 
 	/**
 	 * @returns true if and only if the journal balances, i.e. the total
@@ -83,26 +87,66 @@ public:
 	 * It doesn't make sense to think of entries in a single journal as being
 	 * in different currencies. An entry must have its value frozen in time.
 	 */
-	bool is_balanced() const;
+	bool is_balanced();
 
 	/**
 	 * @returns a Decimal being the sum of the amounts of all the
 	 * "destination" Entries in the Journal.
 	 */
-	jewel::Decimal primary_amount() const;
+	jewel::Decimal primary_amount();
 
-private:
-	virtual std::vector<EntryHandle> const& do_get_entries() const = 0;
+
+protected:
+
+	virtual void swap(Journal& rhs);
+
+	virtual std::vector<EntryHandle> const& do_get_entries();
 	virtual void do_set_transaction_type
 	(	TransactionType p_transaction_type
-	) = 0;
-	virtual void do_set_comment(wxString const& p_comment) = 0;
-	virtual void do_push_entry(EntryHandle const& entry) = 0;
-	virtual void do_remove_entry(EntryHandle const& entry) = 0;
-	virtual void do_clear_entries() = 0;
-	virtual wxString do_get_comment() const = 0;
-	virtual TransactionType
-		do_get_transaction_type() const = 0;
+	);
+	virtual void do_set_comment(wxString const& p_comment);
+	virtual void do_push_entry(EntryHandle const& entry);
+	virtual void do_remove_entry(EntryHandle const& entry);
+	virtual void do_clear_entries();
+	virtual wxString do_get_comment();
+	virtual TransactionType do_get_transaction_type();
+
+	/**
+	 * Cause *this to take on the attributes of rhs that would be common
+	 * to all types of Journal.
+	 *
+	 * Thus, for example, where rhs is an OrdinaryJournal, *this does
+	 * \e not take on the \e date attribute of rhs, since ProtoJournal and
+	 * DraftJournal do not have a \e date attribute.
+	 * Note however that the \e id attribute is \e never taken from the
+	 * rhs.
+	 *
+	 * The \e lhs should pass its id and database connection to the
+	 * appropriate parameters in the function. The id should be wrapped
+	 * in a boost::optional (uninitialized if has_id returns false).
+	 *
+	 * The dbc and id parameters are required in order to initialize
+	 * the Entries as they are added to the lhs.
+	 *
+	 * Yes this is a bit messy.
+	 *
+	 * Note a \e deep, rather than shallow copy of the rhs Entries is made.
+	 *
+	 * Note this does \e not offer the strong guarantee by itself, but is
+	 * designed to be called from derived classes which can implement swap
+	 * etc.. to enable the strong guarantee.
+	 */
+	void mimic_core
+	(	Journal& rhs,
+		PhatbooksDatabaseConnection& dbc,
+		boost::optional<sqloxx::Id> id
+	);
+
+	void clear_core();
+
+private:
+	struct JournalData;
+	std::unique_ptr<JournalData> m_data;
 };
 	
 }  // namespace phatbooks

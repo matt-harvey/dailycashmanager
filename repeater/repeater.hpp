@@ -15,8 +15,9 @@
 
 
 #include "date.hpp"
+#include "draft_journal_handle_fwd.hpp"
 #include "interval_type.hpp"
-#include "ordinary_journal.hpp"
+#include "ordinary_journal_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include <sqloxx/persistent_object.hpp>
@@ -31,7 +32,6 @@
 namespace phatbooks
 {
 
-class DraftJournal;
 class Frequency;
 
 /**
@@ -182,9 +182,9 @@ public:
 	 *
 	 * @todo Testing (but see tests already done...)
 	 */
-	OrdinaryJournal fire_next();
+	OrdinaryJournalHandle fire_next();
 	
-	DraftJournal draft_journal();
+	DraftJournalHandle draft_journal();
 
 	void swap(Repeater& rhs);
 
@@ -222,7 +222,7 @@ private:
  * OrdinaryJournals, sorted by the order in which they have been
  * posted, from earliest to latest.
  */
-std::list<OrdinaryJournal>
+std::list<OrdinaryJournalHandle>
 update_repeaters
 (	PhatbooksDatabaseConnection& dbc,
 	boost::gregorian::date d = today()

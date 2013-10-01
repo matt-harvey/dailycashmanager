@@ -108,9 +108,9 @@ JEWEL_DERIVED_EXCEPTION(BudgetEditingException, PhatbooksException);
 
 /**
  * Exception to be thrown when there is an attempt made to delete the
- * persistent database record of a PhatbooksPersistentObject (or
- * derived class) instance, that should not be deleted from the
- * database.
+ * persistent database record of a sqloxx::PersistentObject (or derived
+ * class e.g. phatbooks::Journal)
+ * that should not be deleted from the database.
  */
 JEWEL_DERIVED_EXCEPTION(PreservedRecordDeletionException, PhatbooksException);
 

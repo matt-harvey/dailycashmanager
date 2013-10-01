@@ -2,7 +2,7 @@
 
 #include "draft_journal_list_ctrl.hpp"
 #include "date.hpp"
-#include "draft_journal.hpp"
+#include "draft_journal_handle.hpp"
 #include "draft_journal_table_iterator.hpp"
 #include "frequency.hpp"
 #include "persistent_object_event.hpp"
@@ -53,7 +53,7 @@ DraftJournalListCtrl::DraftJournalListCtrl
 }
 
 void
-DraftJournalListCtrl::selected_draft_journals(vector<DraftJournal>& out)
+DraftJournalListCtrl::selected_draft_journals(vector<DraftJournalHandle>& out)
 {
 	size_t i = 0;
 	size_t const lim = GetItemCount();
@@ -61,7 +61,7 @@ DraftJournalListCtrl::selected_draft_journals(vector<DraftJournal>& out)
 	{
 		if (GetItemState(i, wxLIST_STATE_SELECTED))
 		{
-			DraftJournal const dj(m_database_connection, GetItemData(i));
+			DraftJournalHandle const dj(m_database_connection, GetItemData(i));
 			out.push_back(dj);
 		}
 	}
@@ -71,17 +71,12 @@ DraftJournalListCtrl::selected_draft_journals(vector<DraftJournal>& out)
 void
 DraftJournalListCtrl::on_item_activated(wxListEvent& event)
 {
-	DraftJournal journal
-	(	m_database_connection,
-		GetItemData(event.GetIndex())
-	);
-	
 	// Fire a PersistentJournal editing request. This will be handled
 	// higher up the window hierarchy.
 	PersistentObjectEvent::fire
 	(	this,
 		PHATBOOKS_JOURNAL_EDITING_EVENT,
-		journal
+		GetItemData(event.GetIndex())
 	);
 	return;
 }
@@ -112,14 +107,16 @@ DraftJournalListCtrl::update
 	size_t i = 0;	
 	for ( ; p_beg != p_end; ++p_beg, ++i)
 	{
+		DraftJournalHandle const& dj = *p_beg;
+
 		// Insert item, with string for Column 0
-		InsertItem(i, p_beg->name());
+		InsertItem(i, dj->name());
 		
 		// The item may change position due to e.g. sorting, so store the
 		// Journal ID in the item's data
 		// TODO Do a static assert to ensure second param will fit the id.
-		JEWEL_ASSERT (p_beg->has_id());
-		SetItemData(i, p_beg->id());
+		JEWEL_ASSERT (dj->has_id());
+		SetItemData(i, dj->id());
 
 		// Set the frequency and next-date columns.
 
@@ -128,7 +125,7 @@ DraftJournalListCtrl::update
 		// just going to rule that out by making it impossible for the user
 		// to create such DraftJournals?
 
-		vector<RepeaterHandle> const& repeaters = p_beg->repeaters();
+		vector<RepeaterHandle> const& repeaters = dj->repeaters();
 
 		if (repeaters.empty())
 		{

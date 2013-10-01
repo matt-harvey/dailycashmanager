@@ -5,7 +5,7 @@
 
 #include "account_handle_fwd.hpp"
 #include "account.hpp"
-#include "draft_journal.hpp"
+#include "draft_journal_handle.hpp"
 #include "interval_type.hpp"
 #include "frequency.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -98,7 +98,7 @@ public:
 	 * distributions of budget amounts to budgeting envelopes
 	 * (Accounts).
 	 */
-	DraftJournal instrument() const;
+	DraftJournalHandle instrument() const;
 
 
 private:
@@ -152,7 +152,7 @@ private:
 	 * Entries in p_journal,
 	 * these are all cleared prior to the new Entries being pushed on.
 	 */
-	void reflect_entries(DraftJournal& p_journal);
+	void reflect_entries(DraftJournalHandle const& p_journal);
 
 	/**
 	 * Examines the Repeaters of p_journal. If there is exactly one
@@ -162,7 +162,7 @@ private:
 	 * RepeaterHandle) is
 	 * pushed onto p_journal, with \e today as its next_date().
 	 */
-	void reflect_repeater(DraftJournal& p_journal);
+	void reflect_repeater(DraftJournalHandle const& p_journal);
 
 	jewel::Decimal instrument_balancing_amount() const;
 
@@ -173,7 +173,7 @@ private:
 
 	// The DraftJournal that "effects" the AmalgamatedBudget
 	// TODO Do we really need a unique_ptr around this?
-	mutable std::unique_ptr<DraftJournal> m_instrument; 
+	mutable std::unique_ptr<DraftJournalHandle> m_instrument; 
 
 	// Represents the Account such that, when regenerating m_instrument, if the
 	// journal is not otherwise balanced, any imbalance overflows

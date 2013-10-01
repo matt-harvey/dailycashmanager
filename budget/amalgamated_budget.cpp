@@ -6,7 +6,7 @@
 #include "account_type.hpp"
 #include "budget_item_table_iterator.hpp"
 #include "commodity_handle.hpp"
-#include "draft_journal.hpp"
+#include "draft_journal_handle.hpp"
 #include "entry_handle.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
@@ -70,15 +70,15 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"references accounts"
 		")"
 	);
-	DraftJournal instrument(dbc);
-	instrument.set_name("AMALGAMATED BUDGET JOURNAL");
-	instrument.set_comment("");
-	instrument.set_transaction_type(TransactionType::envelope);
+	DraftJournalHandle const instrument(dbc);
+	instrument->set_name("AMALGAMATED BUDGET JOURNAL");
+	instrument->set_comment("");
+	instrument->set_transaction_type(TransactionType::envelope);
 	RepeaterHandle const repeater(dbc);
 	repeater->set_frequency(Frequency(1, IntervalType::days));
 	repeater->set_next_date(gregorian::day_clock::local_day());
-	instrument.push_repeater(repeater);
-	instrument.save();
+	instrument->push_repeater(repeater);
+	instrument->save();
 
 	AccountHandle balancing_account(dbc);
 	balancing_account->set_account_type(AccountType::pure_envelope);
@@ -96,7 +96,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 		"(journal_id, balancing_account_id) "
 		"values(:journal_id, :balancing_account_id)"
 	);
-	statement.bind(":journal_id", instrument.id());
+	statement.bind(":journal_id", instrument->id());
 	statement.bind(":balancing_account_id", balancing_account->id());
 	statement.step_final();
 
@@ -251,7 +251,7 @@ AmalgamatedBudget::balancing_account() const
 	return *m_balancing_account;
 }
 
-DraftJournal
+DraftJournalHandle
 AmalgamatedBudget::instrument() const
 {
 	load();
@@ -366,13 +366,13 @@ AmalgamatedBudget::regenerate_instrument()
 {
 	load();
 
-	DraftJournal fresh_journal(m_database_connection);
-	fresh_journal.mimic(*m_instrument);
+	DraftJournalHandle const fresh_journal(m_database_connection);
+	fresh_journal->mimic(**m_instrument);
 	reflect_entries(fresh_journal);
 	reflect_repeater(fresh_journal);
 
 	// Deal with imbalance
-	Decimal const imbalance = fresh_journal.balance();
+	Decimal const imbalance = fresh_journal->balance();
 	if (imbalance != Decimal(0, 0))
 	{
 		AccountHandle const ba = balancing_account();
@@ -384,14 +384,14 @@ AmalgamatedBudget::regenerate_instrument()
 		(	-round(imbalance, ba->commodity()->precision())
 		);
 		balancing_entry->set_transaction_side(TransactionSide::destination);
-		fresh_journal.push_entry(balancing_entry);
-		JEWEL_ASSERT (fresh_journal.is_balanced());
+		fresh_journal->push_entry(balancing_entry);
+		JEWEL_ASSERT (fresh_journal->is_balanced());
 	}
 	// WARNING The source and destination are the opposite way
 	// round to usual here. But it probably doesn't matter, as
 	// the user won't be seeing this Journal anyway.
-	m_instrument->mimic(fresh_journal);
-	m_instrument->save();
+	(*m_instrument)->mimic(*fresh_journal);
+	(*m_instrument)->save();
 
 	return;
 }
@@ -426,7 +426,7 @@ AmalgamatedBudget::load_instrument() const
 	);
 	statement.step();
 	m_instrument.reset
-	(	new DraftJournal
+	(	new DraftJournalHandle
 		(	m_database_connection,
 			statement.extract<Id>(0)
 		)
@@ -437,10 +437,10 @@ AmalgamatedBudget::load_instrument() const
 
 
 void
-AmalgamatedBudget::reflect_entries(DraftJournal& p_journal)
+AmalgamatedBudget::reflect_entries(DraftJournalHandle const& p_journal)
 {
 	load();
-	p_journal.clear_entries();
+	p_journal->clear_entries();
 	for (auto const& elem: *m_map)
 	{
 		if (elem.second != Decimal(0, 0))
@@ -453,17 +453,17 @@ AmalgamatedBudget::reflect_entries(DraftJournal& p_journal)
 			entry->set_amount(-(elem.second));
 			entry->set_whether_reconciled(false);
 			entry->set_transaction_side(TransactionSide::source);
-			p_journal.push_entry(entry);
+			p_journal->push_entry(entry);
 		}
 	}
 	return;
 }
 
 void
-AmalgamatedBudget::reflect_repeater(DraftJournal& p_journal)
+AmalgamatedBudget::reflect_repeater(DraftJournalHandle const& p_journal)
 {
 	load();
-	vector<RepeaterHandle> const& old_repeaters = p_journal.repeaters();
+	vector<RepeaterHandle> const& old_repeaters = p_journal->repeaters();
 	if (old_repeaters.size() == 1)
 	{
 		Frequency const old_frequency = old_repeaters[0]->frequency();
@@ -475,12 +475,12 @@ AmalgamatedBudget::reflect_repeater(DraftJournal& p_journal)
 			return;
 		}
 	}
-	p_journal.clear_repeaters();
+	p_journal->clear_repeaters();
 	RepeaterHandle const new_repeater(m_database_connection);
 	new_repeater->set_frequency(m_frequency);
 	new_repeater->set_next_date(gregorian::day_clock::local_day());
-	JEWEL_ASSERT (p_journal.repeaters().empty());
-	p_journal.push_repeater(new_repeater);
+	JEWEL_ASSERT (p_journal->repeaters().empty());
+	p_journal->push_repeater(new_repeater);
 	return;
 }
 
@@ -491,7 +491,7 @@ AmalgamatedBudget::instrument_balancing_amount() const
 	JEWEL_ASSERT (m_instrument);
 	Decimal ret(0, m_database_connection.default_commodity()->precision());
 	wxString const balancing_entry_marker = balancing_entry_comment();
-	vector<EntryHandle> const& entries = m_instrument->entries();
+	vector<EntryHandle> const& entries = (*m_instrument)->entries();
 	for (EntryHandle const& entry: entries)
 	{
 		if (entry->comment() == balancing_entry_marker)
@@ -503,8 +503,8 @@ AmalgamatedBudget::instrument_balancing_amount() const
 #	ifndef NDEBUG
 	if (!entries.empty())
 	{
-		JEWEL_ASSERT (m_instrument->repeaters().size() == 1);
-		RepeaterHandle const repeater = m_instrument->repeaters()[0];
+		JEWEL_ASSERT ((*m_instrument)->repeaters().size() == 1);
+		RepeaterHandle const repeater = (*m_instrument)->repeaters()[0];
 		JEWEL_ASSERT (repeater->frequency() == frequency());
 	}
 #	endif

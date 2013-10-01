@@ -15,10 +15,10 @@
 #include "entry.hpp"
 #include "account_handle.hpp"
 #include "date.hpp"
-#include "draft_journal.hpp"
+#include "draft_journal_handle.hpp"
 #include "string_conv.hpp"
 #include "commodity_handle.hpp"
-#include "ordinary_journal.hpp"
+#include "ordinary_journal_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"
 #include "transaction_side.hpp"
@@ -422,8 +422,8 @@ Entry::mimic(Entry& rhs)
 gregorian::date
 Entry::date()
 {
-	OrdinaryJournal const oj(database_connection(), journal_id());
-	return oj.date();
+	OrdinaryJournalHandle const oj(database_connection(), journal_id());
+	return oj->date();
 }
 
 sqloxx::Id

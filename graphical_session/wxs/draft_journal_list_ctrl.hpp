@@ -3,7 +3,6 @@
 #ifndef GUARD_draft_journal_list_ctrl_hpp_9173440862993449
 #define GUARD_draft_journal_list_ctrl_hpp_9173440862993449
 
-#include "draft_journal.hpp"
 #include "draft_journal_table_iterator.hpp"
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -44,7 +43,7 @@ public:
 	 * Populates \e out with all the DraftJournals currently
 	 * selected by the user in the DraftJournalListCtrl.
 	 */
-	void selected_draft_journals(std::vector<DraftJournal>& out);
+	void selected_draft_journals(std::vector<DraftJournalHandle>& out);
 
 private:
 

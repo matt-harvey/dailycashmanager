@@ -62,7 +62,7 @@ public:
 	EntryGroupCtrl
 	(	TransactionCtrl* p_parent,
 		wxSize const& p_text_ctrl_size,
-		Journal const& p_journal,
+		Journal& p_journal,
 		TransactionSide p_transaction_side,
 		PhatbooksDatabaseConnection& p_database_connection
 	);

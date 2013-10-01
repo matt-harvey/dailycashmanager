@@ -1,9 +1,11 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "string_conv.hpp"
-#include "draft_journal.hpp"
+#include "draft_journal_handle.hpp"
 #include "draft_journal_impl.hpp"
+#include "draft_journal_table_iterator.hpp"
 #include "entry_handle.hpp"
+#include "persistent_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
@@ -39,10 +41,17 @@ using std::string;
 namespace phatbooks
 {
 
+struct DraftJournalImpl::DraftJournalData
+{
+	boost::optional<wxString> name;
+	std::vector<RepeaterHandle> repeaters;
+};
+
+
 string
 DraftJournalImpl::primary_table_name()
 {
-	return ProtoJournal::primary_table_name();
+	return PersistentJournal::primary_table_name();
 }
 
 string
@@ -54,7 +63,7 @@ DraftJournalImpl::exclusive_table_name()
 string
 DraftJournalImpl::primary_key_name()
 {
-	return ProtoJournal::primary_key_name();
+	return Journal::primary_key_name();
 }
 
 void
@@ -63,7 +72,7 @@ DraftJournalImpl::set_transaction_type
 )
 {
 	load();
-	ProtoJournal::set_transaction_type(p_transaction_type);
+	Journal::set_transaction_type(p_transaction_type);
 	return;
 }
 
@@ -71,7 +80,7 @@ void
 DraftJournalImpl::set_comment(wxString const& p_comment)
 {
 	load();
-	ProtoJournal::set_comment(p_comment);
+	Journal::set_comment(p_comment);
 	return;
 }
 
@@ -83,7 +92,7 @@ DraftJournalImpl::push_entry(EntryHandle const& entry)
 	{
 		entry->set_journal_id(id());
 	}
-	ProtoJournal::push_entry(entry);
+	Journal::push_entry(entry);
 	return;
 }
 
@@ -91,7 +100,7 @@ void
 DraftJournalImpl::remove_entry(EntryHandle const& entry)
 {
 	load();
-	ProtoJournal::remove_entry(entry);
+	Journal::remove_entry(entry);
 	return;
 }
 
@@ -99,14 +108,14 @@ TransactionType
 DraftJournalImpl::transaction_type()
 {
 	load();
-	return ProtoJournal::transaction_type();
+	return Journal::transaction_type();
 }
 
 wxString
 DraftJournalImpl::comment()
 {
 	load();
-	return ProtoJournal::comment();
+	return Journal::comment();
 }
 
 vector<EntryHandle> const&
@@ -118,7 +127,7 @@ DraftJournalImpl::entries()
 	// truly consistent with the other optionals, it would fail
 	// by means of a failed assert (assuming I haven't wrapped the
 	// other optionals in some throwing construct...).
-	return ProtoJournal::entries();
+	return Journal::entries();
 }
 
 
@@ -142,30 +151,41 @@ DraftJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 	return;
 }
 
+bool
+DraftJournalImpl::no_user_draft_journals_saved
+(	PhatbooksDatabaseConnection& p_database_connection
+)
+{
+	DraftJournalTableIterator const it =
+		make_name_ordered_user_draft_journal_table_iterator
+		(	p_database_connection
+		);
+	DraftJournalTableIterator const end;
+	return it == end;
+}
 
 DraftJournalImpl::DraftJournalImpl
 (	IdentityMap& p_identity_map,
 	IdentityMap::Signature const& p_signature
 ):
-	DraftJournalImpl::PersistentObject(p_identity_map),
-	ProtoJournal(),
+	PersistentJournal(p_identity_map, p_signature),
 	m_dj_data(new DraftJournalData)
 {
 	(void)p_signature;  // silence compiler re. unused parameter
 }
-
 
 DraftJournalImpl::DraftJournalImpl
 (	IdentityMap& p_identity_map,	
 	Id p_id,
 	IdentityMap::Signature const& p_signature
 ):
-	DraftJournalImpl::PersistentObject(p_identity_map, p_id),
-	ProtoJournal(),
+	PersistentJournal(p_identity_map, p_id, p_signature),
 	m_dj_data(new DraftJournalData)
 {
 	(void)p_signature;  // silence compiler re. unused parameter
 }
+
+DraftJournalImpl::~DraftJournalImpl() = default;
 
 bool
 DraftJournalImpl::exists
@@ -221,8 +241,7 @@ DraftJournalImpl::name()
 
 
 DraftJournalImpl::DraftJournalImpl(DraftJournalImpl const& rhs):
-	DraftJournalImpl::PersistentObject(rhs),
-	ProtoJournal(rhs),
+	PersistentJournal(rhs),
 	m_dj_data(new DraftJournalData(*(rhs.m_dj_data)))
 {
 }
@@ -231,8 +250,7 @@ DraftJournalImpl::DraftJournalImpl(DraftJournalImpl const& rhs):
 void
 DraftJournalImpl::swap(DraftJournalImpl& rhs)
 {
-	swap_base_internals(rhs);
-	ProtoJournal::swap(rhs);
+	PersistentJournal::swap(rhs);
 	using std::swap;
 	swap(m_dj_data, rhs.m_dj_data);
 	return;
@@ -245,7 +263,7 @@ DraftJournalImpl::do_load()
 	DraftJournalImpl temp(*this);
 	
 	// Load the base part of temp.
-	temp.do_load_journal_core(database_connection(), id());
+	temp.do_load_journal_core();
 
 	// Load the derived, DraftJournalImpl part of the temp.
 	SQLStatement statement
@@ -275,8 +293,8 @@ DraftJournalImpl::do_load()
 void
 DraftJournalImpl::do_save_new()
 {
-	// Save the ProtoJournal part of the object
-	Id const journal_id = do_save_new_journal_core(database_connection());
+	// Save the PersistentJournal part of the object
+	Id const journal_id = do_save_new_journal_core();
 
 	// Save the derived, DraftJournalImpl part of the object
 	SQLStatement statement
@@ -299,7 +317,7 @@ DraftJournalImpl::do_save_new()
 void
 DraftJournalImpl::do_save_existing()
 {
-	do_save_existing_journal_core(database_connection(), id());
+	do_save_existing_journal_core();
 	SQLStatement updater
 	(	database_connection(),
 		"update draft_journal_detail set name = :name where "
@@ -359,7 +377,7 @@ DraftJournalImpl::do_ghostify()
 void
 DraftJournalImpl::do_remove()
 {
-	if (id() == database_connection().budget_instrument().id())
+	if (id() == database_connection().budget_instrument()->id())
 	{
 		JEWEL_THROW
 		(	PreservedRecordDeletionException,
@@ -405,7 +423,7 @@ void
 DraftJournalImpl::clear_entries()
 {
 	load();
-	ProtoJournal::clear_entries();
+	Journal::clear_entries();
 	return;
 }
 
@@ -466,7 +484,7 @@ DraftJournalImpl::repeater_description()
 			
 
 void
-DraftJournalImpl::mimic(ProtoJournal const& rhs)
+DraftJournalImpl::mimic(Journal& rhs)
 {
 	load();
 	DraftJournalImpl temp(*this);

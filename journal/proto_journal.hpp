@@ -42,93 +42,16 @@ class ProtoJournal: public Journal
 {
 public:
 
-	ProtoJournal();
-	ProtoJournal(ProtoJournal const& rhs);
+	ProtoJournal() = default;
 	ProtoJournal(ProtoJournal&&) = default;
-	ProtoJournal& operator=(ProtoJournal const&) = delete;
+	ProtoJournal& operator=(ProtoJournal const&) = default;
 	ProtoJournal& operator=(ProtoJournal&&) = delete;
 	virtual ~ProtoJournal() = default;
 
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
-	static std::string primary_table_name();
-	static std::string primary_key_name();
-	
 protected:
 
-	/**
-	 * @todo Provide non-member swap and specialized std::swap per
-	 * "Effective C++".
-	 */
-	virtual void swap(ProtoJournal& rhs);
+	ProtoJournal(ProtoJournal const& rhs) = default;
 
-	// Other
-	void do_load_journal_core
-	(	PhatbooksDatabaseConnection& dbc,
-		sqloxx::Id id
-	);
-	void do_save_existing_journal_core
-	(	PhatbooksDatabaseConnection& dbc,
-		sqloxx::Id id
-	);
-	sqloxx::Id do_save_new_journal_core
-	(	PhatbooksDatabaseConnection& dbc
-	);
-	void do_ghostify_journal_core();
-
-	/**
-	 * Cause *this to take on the attributes of rhs that would be common
-	 * to all types of Journal.
-	 *
-	 * Thus, for example, where rhs is an OrdinaryJournal, *this does
-	 * \e not take on the \e date attribute of rhs, since ProtoJournal and
-	 * DraftJournal do not have a \e date attribute.
-	 * Note however that the \e id attribute is \e never taken from the
-	 * rhs.
-	 *
-	 * The \e lhs should pass its id and database connection to the
-	 * appropriate parameters in the function. The id should be wrapped
-	 * in a boost::optional (uninitialized if has_id returns false).
-	 *
-	 * The dbc and id parameters are required in order to initialize
-	 * the Entries as they are added to the lhs.
-	 *
-	 * Yes this is a bit messy.
-	 *
-	 * Note a \e deep, rather than shallow copy of the rhs Entries is made.
-	 *
-	 * Note this does \e not offer the strong guarantee by itself, but is
-	 * designed to be called from derived classes which can implement swap
-	 * etc.. to enable the strong guarantee.
-	 */
-	void mimic_core
-	(	Journal const& rhs,
-		PhatbooksDatabaseConnection& dbc,
-		boost::optional<sqloxx::Id> id
-	);
-
-private:
-
-	// Implement virtual functions inherited from Journal
-	// todo Figure out whether these need to be virtual here.
-	// I'm pretty sure they \e don't.
-	virtual std::vector<EntryHandle> const& do_get_entries() const;
-	virtual void do_set_transaction_type
-	(	TransactionType p_transaction_type
-	);
-	virtual void do_set_comment(wxString const& p_comment);
-	virtual void do_push_entry(EntryHandle const& entry);
-	virtual void do_remove_entry(EntryHandle const& entry);
-	virtual void do_clear_entries();
-	virtual wxString do_get_comment() const;
-	virtual TransactionType do_get_transaction_type() const;
-
-	struct ProtoJournalData
-	{
-		boost::optional<TransactionType> transaction_type;
-		boost::optional<wxString> comment;
-		std::vector<EntryHandle> entries;
-	};
-	std::unique_ptr<ProtoJournalData> m_data;
 };
 
 

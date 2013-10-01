@@ -6,10 +6,11 @@
 #include "account_list_ctrl.hpp"
 #include "application.hpp"
 #include "app.hpp"
+#include "draft_journal_handle.hpp"
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
-#include "draft_journal.hpp"
-#include "ordinary_journal.hpp"
+#include "draft_journal_handle.hpp"
+#include "ordinary_journal_handle.hpp"
 #include "persistent_journal.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -420,7 +421,7 @@ Frame::on_menu_edit_ordinary_journal(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
-	vector<OrdinaryJournal> journals;
+	vector<OrdinaryJournalHandle> journals;
 	selected_ordinary_journals(journals);
 	if (journals.empty())
 	{
@@ -440,7 +441,7 @@ Frame::on_menu_edit_draft_journal(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
-	vector<DraftJournal> journals;
+	vector<DraftJournalHandle> journals;
 	selected_draft_journals(journals);
 	if (journals.empty())
 	{
@@ -516,12 +517,12 @@ Frame::on_journal_editing_requested(PersistentObjectEvent& event)
 	Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
-		DraftJournal journal(m_database_connection, journal_id);
+		DraftJournalHandle const journal(m_database_connection, journal_id);
 		edit_journal(journal);
 	}
 	else
 	{
-		OrdinaryJournal journal(m_database_connection, journal_id);
+		OrdinaryJournalHandle const journal(m_database_connection, journal_id);
 		edit_journal(journal);
 	}
 	return;
@@ -556,12 +557,12 @@ Frame::on_journal_created_event(PersistentObjectEvent& event)
 	Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
-		DraftJournal const journal(m_database_connection, journal_id);
+		DraftJournalHandle const journal(m_database_connection, journal_id);
 		m_top_panel->update_for_new(journal);
 	}
 	else
 	{
-		OrdinaryJournal const journal(m_database_connection, journal_id);
+		OrdinaryJournalHandle const journal(m_database_connection, journal_id);
 		m_top_panel->update_for_new(journal);
 	}
 	return;
@@ -577,12 +578,12 @@ Frame::on_journal_edited_event(PersistentObjectEvent& event)
 	Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
-		DraftJournal const journal(m_database_connection, journal_id);
+		DraftJournalHandle const journal(m_database_connection, journal_id);
 		m_top_panel->update_for_amended(journal);
 	}
 	else
 	{
-		OrdinaryJournal const journal(m_database_connection, journal_id);
+		OrdinaryJournalHandle const journal(m_database_connection, journal_id);
 		m_top_panel->update_for_amended(journal);
 	}
 	return;
@@ -679,7 +680,7 @@ Frame::selected_pl_accounts(vector<AccountHandle>& out) const
 }
 
 void
-Frame::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
+Frame::selected_ordinary_journals(vector<OrdinaryJournalHandle>& out) const
 {
 	JEWEL_LOG_TRACE();
 	m_top_panel->selected_ordinary_journals(out);
@@ -687,7 +688,7 @@ Frame::selected_ordinary_journals(vector<OrdinaryJournal>& out) const
 }
 
 void
-Frame::selected_draft_journals(vector<DraftJournal>& out) const
+Frame::selected_draft_journals(vector<DraftJournalHandle>& out) const
 {
 	JEWEL_LOG_TRACE();
 	m_top_panel->selected_draft_journals(out);

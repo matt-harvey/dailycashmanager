@@ -8,7 +8,6 @@
 #include "balance_cache.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
-#include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/checked_arithmetic.hpp>

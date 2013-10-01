@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "account_handle.hpp"
-#include "draft_journal.hpp"
+#include "draft_journal_handle.hpp"
 #include "entry_handle.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
@@ -32,10 +32,10 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
-	DraftJournal dj(dbc);
-	dj.set_transaction_type(TransactionType::generic);
-	dj.set_comment("draft journal to test repeater");
-	dj.set_name("Test");
+	DraftJournalHandle const dj(dbc);
+	dj->set_transaction_type(TransactionType::generic);
+	dj->set_comment("draft journal to test repeater");
+	dj->set_name("Test");
 	
 	EntryHandle entry1(dbc);
 	entry1->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
@@ -43,7 +43,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	entry1->set_amount(Decimal("-0.95"));
 	entry1->set_whether_reconciled(false);
 	entry1->set_transaction_side(TransactionSide::source);
-	dj.push_entry(entry1);
+	dj->push_entry(entry1);
 	
 	EntryHandle entry2(dbc);
 	entry2->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
@@ -51,13 +51,13 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	entry2->set_amount(Decimal("0.95"));
 	entry2->set_whether_reconciled(false);
 	entry2->set_transaction_side(TransactionSide::destination);
-	dj.push_entry(entry2);
+	dj->push_entry(entry2);
 
 	RepeaterHandle const repeater1(dbc);
 	repeater1->set_frequency(Frequency(3, IntervalType::days));
 	repeater1->set_next_date(date(3012, 5, 30));
-	dj.push_repeater(repeater1);
-	dj.save();
+	dj->push_repeater(repeater1);
+	dj->save();
 
 	CHECK_EQUAL(repeater1->next_date(), date(3012, 5, 30));
 	CHECK_EQUAL(repeater1->next_date(0), date(3012, 5, 30));
@@ -67,8 +67,8 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	RepeaterHandle const repeater2(dbc);
 	repeater2->set_frequency(Frequency(2, IntervalType::weeks));
 	repeater2->set_next_date(date(3012, 12, 31));
-	dj.push_repeater(repeater2);
-	dj.save();
+	dj->push_repeater(repeater2);
+	dj->save();
 
 	CHECK_EQUAL(repeater2->next_date(2), date(3013, 1, 28));
 	CHECK_EQUAL(repeater2->next_date(1), date(3013, 1, 14));
@@ -151,10 +151,10 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
-	DraftJournal dj1(dbc);
-	dj1.set_transaction_type(TransactionType::generic);
-	dj1.set_comment("journal to test repeater");
-	dj1.set_name(wxString("Test"));  // wxString is optional
+	DraftJournalHandle dj1(dbc);
+	dj1->set_transaction_type(TransactionType::generic);
+	dj1->set_comment("journal to test repeater");
+	dj1->set_name(wxString("Test"));  // wxString is optional
 	
 	EntryHandle entry1a(dbc);
 	entry1a->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
@@ -162,7 +162,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	entry1a->set_amount(Decimal("-1090.95"));
 	entry1a->set_whether_reconciled(false);
 	entry1a->set_transaction_side(TransactionSide::source);
-	dj1.push_entry(entry1a);
+	dj1->push_entry(entry1a);
 	
 	EntryHandle entry1b(dbc);
 	entry1b->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
@@ -170,46 +170,46 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	entry1b->set_amount(Decimal("1090.95"));
 	entry1b->set_whether_reconciled(false);
 	entry1b->set_transaction_side(TransactionSide::destination);
-	dj1.push_entry(entry1b);
+	dj1->push_entry(entry1b);
 
 	RepeaterHandle const repeater1(dbc);
 	repeater1->set_frequency(Frequency(2, IntervalType::weeks));
 	repeater1->set_next_date(date(3012, 7, 30));
-	dj1.push_repeater(repeater1);
+	dj1->push_repeater(repeater1);
 
-	dj1.save();
+	dj1->save();
 
 	RepeaterHandle const repeater1b = repeater1;
-	OrdinaryJournal const oj1b = repeater1b->fire_next();
-	CHECK_EQUAL(oj1b.comment(), "journal to test repeater");
-	CHECK_EQUAL(oj1b.comment(), wxString("journal to test repeater"));
-	CHECK_EQUAL(oj1b.date(), date(3012, 7, 30));
+	OrdinaryJournalHandle const oj1b = repeater1b->fire_next();
+	CHECK_EQUAL(oj1b->comment(), "journal to test repeater");
+	CHECK_EQUAL(oj1b->comment(), wxString("journal to test repeater"));
+	CHECK_EQUAL(oj1b->date(), date(3012, 7, 30));
 	CHECK_EQUAL(repeater1->next_date(), date(3012, 8, 13));
 	CHECK
-	(	oj1b.transaction_type() ==
+	(	oj1b->transaction_type() ==
 		TransactionType::generic
 	);
 
-	OrdinaryJournal const oj1c = oj1b;
-	CHECK_EQUAL(oj1c.date(), date(3012, 7, 30));
-	CHECK_EQUAL(oj1c.comment(), "journal to test repeater");
-	CHECK_EQUAL(oj1c.entries().size(), unsigned(2));
+	OrdinaryJournalHandle const oj1c = oj1b;
+	CHECK_EQUAL(oj1c->date(), date(3012, 7, 30));
+	CHECK_EQUAL(oj1c->comment(), "journal to test repeater");
+	CHECK_EQUAL(oj1c->entries().size(), unsigned(2));
 	CHECK
-	(	oj1c.transaction_type() ==
+	(	oj1c->transaction_type() ==
 		TransactionType::generic
 	);
 
 	repeater1b->fire_next();
 	repeater1b->fire_next();
 
-	OrdinaryJournal oj3(dbc, oj1c.id() + 1);
-	OrdinaryJournal oj4(dbc, oj1c.id() + 2);
+	OrdinaryJournalHandle oj3(dbc, oj1c->id() + 1);
+	OrdinaryJournalHandle oj4(dbc, oj1c->id() + 2);
 
-	CHECK_EQUAL(oj3.date(), date(3012, 8, 13));
-	CHECK_EQUAL(oj4.date(), date(3012, 8, 27));
-	CHECK_EQUAL(oj3.comment(), oj4.comment());
-	vector<EntryHandle>::const_iterator it3 = ++oj3.entries().begin();
-	vector<EntryHandle>::const_iterator it4 = ++oj4.entries().begin();
+	CHECK_EQUAL(oj3->date(), date(3012, 8, 13));
+	CHECK_EQUAL(oj4->date(), date(3012, 8, 27));
+	CHECK_EQUAL(oj3->comment(), oj4->comment());
+	vector<EntryHandle>::const_iterator it3 = ++oj3->entries().begin();
+	vector<EntryHandle>::const_iterator it4 = ++oj4->entries().begin();
 	CHECK_EQUAL((*it3)->amount(), (*it4)->amount());
 
 }

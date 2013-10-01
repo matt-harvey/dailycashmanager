@@ -3,7 +3,6 @@
 #ifndef GUARD_persistent_object_event_hpp_011347359517285303
 #define GUARD_persistent_object_event_hpp_011347359517285303
 
-#include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <wx/event.h>
@@ -22,7 +21,7 @@ public:
 	 * @param p_event_id is the wxWidgets event id.
 	 *
 	 * @param p_maybe_po_id may contain the id() of the
-	 * PhatbooksPersistentObject to which this event pertains.
+	 * sqloxx::PersistentObject to which this event pertains.
 	 */
 	PersistentObjectEvent
 	(	wxEventType p_event_type,
@@ -49,7 +48,7 @@ public:
 	virtual ~PersistentObjectEvent() = default;
 
 	/**
-	 * @returns the id of the PhatbooksPersistentObject with which
+	 * @returns the id of the sqloxx::PersistentObject with which
 	 * this event is associated.
 	 * 
 	 * @throws jewel::UninitializedOptionalException in case there
@@ -64,7 +63,7 @@ public:
 
 	/**
 	 * Convenience function to fire a PersistentObjectEvent with which
-	 * no existing PhatbooksPersistentObject is associated.
+	 * no existing sqloxx::PersistentObject is associated.
 	 */
 	static void fire
 	(	wxWindow* p_originator,
@@ -73,19 +72,7 @@ public:
 
 	/**
 	 * Convenience function to fire a PersistentObjectEvent with which
-	 * an existing PhatbooksPersistentObject is associated.
-	 *
-	 * Precondition: \e p_object must have an id.
-	 */
-	static void fire
-	(	wxWindow* p_originator,
-		wxEventType p_event_type,
-		PhatbooksPersistentObjectBase& p_object
-	);
-
-	/**
-	 * Convenience function to fire a PersistentObjectEvent with which
-	 * an existing-or-just-deleted PhatbooksPersistentObject is associated.
+	 * an existing-or-just-deleted sqloxx::PersistentObject is associated.
 	 * Here we pass the object's id() to the third parameter, rather than
 	 * the object itself.
 	 */

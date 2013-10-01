@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "draft_journal_naming_dialog.hpp"
-#include "draft_journal.hpp"
+#include "draft_journal_impl.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
@@ -120,7 +120,7 @@ DraftJournalNamingDialog::on_ok_button_click(wxCommandEvent& event)
 	}
 	JEWEL_ASSERT (!trimmed_name.IsEmpty());
 	wxString const name = trimmed_name;
-	if (DraftJournal::exists(m_database_connection, name))
+	if (DraftJournalImpl::exists(m_database_connection, name))
 	{
 		wxString msg("A transaction named \"");
 		msg += name;
@@ -128,7 +128,7 @@ DraftJournalNamingDialog::on_ok_button_click(wxCommandEvent& event)
 		wxMessageBox(msg);
 		return;
 	}
-	JEWEL_ASSERT (!DraftJournal::exists(m_database_connection, name));
+	JEWEL_ASSERT (!DraftJournalImpl::exists(m_database_connection, name));
 	set_draft_journal_name(name);
 	EndModal(wxID_OK);
 	return;

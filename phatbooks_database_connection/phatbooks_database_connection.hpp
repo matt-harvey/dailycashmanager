@@ -16,6 +16,7 @@
 
 #include "account_type.hpp"
 #include "commodity_handle_fwd.hpp"
+#include "draft_journal_handle_fwd.hpp"
 #include "frequency.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/filesystem.hpp>
@@ -41,11 +42,8 @@ class Account;
 class BalanceCache;
 class BudgetItem;
 class Commodity;
-class DraftJournal;
-class DraftJournalImpl;
 class Entry;
-class OrdinaryJournal;
-class OrdinaryJournalImpl;
+class PersistentJournal;
 class Repeater;
 
 // End forward declarations
@@ -161,7 +159,7 @@ public:
 	 * deleted, except via code in AmalgamatedBudget. This could
 	 * be achieved using a signature class for AmalgamatedBudget.
 	 */
-	DraftJournal budget_instrument() const;
+	DraftJournalHandle budget_instrument() const;
 	
 	/**
 	 * Class to provide restricted access to cache holding Account balances.
@@ -340,10 +338,8 @@ private:
 		m_commodity_map;
 	sqloxx::IdentityMap<Entry, PhatbooksDatabaseConnection>*
 		m_entry_map;
-	sqloxx::IdentityMap<OrdinaryJournalImpl, PhatbooksDatabaseConnection>*
-		m_ordinary_journal_map;
-	sqloxx::IdentityMap<DraftJournalImpl, PhatbooksDatabaseConnection>*
-		m_draft_journal_map;
+	sqloxx::IdentityMap<PersistentJournal, PhatbooksDatabaseConnection>*
+		m_journal_map;
 	sqloxx::IdentityMap<Repeater, PhatbooksDatabaseConnection>*
 		m_repeater_map;
 

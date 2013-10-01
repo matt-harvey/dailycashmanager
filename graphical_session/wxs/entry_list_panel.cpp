@@ -8,7 +8,7 @@
 #include "entry_handle.hpp"
 #include "entry_list_ctrl.hpp"
 #include "locale.hpp"
-#include "ordinary_journal.hpp"
+#include "ordinary_journal_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_flags.hpp"
 #include "reconciliation_entry_list_ctrl.hpp"
@@ -202,7 +202,7 @@ EntryListPanel::on_refresh_button_click(wxCommandEvent& event)
 }
 
 void
-EntryListPanel::update_for_new(OrdinaryJournal const& p_journal)
+EntryListPanel::update_for_new(OrdinaryJournalHandle const& p_journal)
 {
 	if (m_entry_list_ctrl) m_entry_list_ctrl->update_for_new(p_journal);
 	postconfigure_summary();
@@ -210,7 +210,7 @@ EntryListPanel::update_for_new(OrdinaryJournal const& p_journal)
 }
 
 void
-EntryListPanel::update_for_amended(OrdinaryJournal const& p_journal)
+EntryListPanel::update_for_amended(OrdinaryJournalHandle const& p_journal)
 {
 	if (m_entry_list_ctrl) m_entry_list_ctrl->update_for_amended(p_journal);
 	postconfigure_summary();

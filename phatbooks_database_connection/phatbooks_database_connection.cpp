@@ -22,18 +22,19 @@
 #include "commodity_handle.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
-#include "draft_journal.hpp"
+#include "draft_journal_handle.hpp"
 #include "draft_journal_impl.hpp"
 #include "entry.hpp"
-#include "ordinary_journal.hpp"
+#include "ordinary_journal_handle.hpp"
 #include "ordinary_journal_impl.hpp"
 #include "ordinary_journal_table_iterator.hpp"
 #include "repeater.hpp"
 #include "balance_cache.hpp"
 #include "commodity_handle.hpp"
 #include "entry_handle.hpp"
-#include "draft_journal.hpp"
-#include "ordinary_journal.hpp"
+#include "draft_journal_handle.hpp"
+#include "ordinary_journal_handle.hpp"
+#include "persistent_journal.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
@@ -86,8 +87,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	m_budget_item_map(nullptr),
 	m_commodity_map(nullptr),
 	m_entry_map(nullptr),
-	m_ordinary_journal_map(nullptr),
-	m_draft_journal_map(nullptr),
+	m_journal_map(nullptr),
 	m_repeater_map(nullptr)
 {
 	typedef PhatbooksDatabaseConnection PDC;
@@ -98,8 +98,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	m_budget_item_map = new IdentityMap<BudgetItem, PDC>(*this);
 	m_commodity_map = new IdentityMap<Commodity, PDC>(*this);
 	m_entry_map = new IdentityMap<Entry, PDC>(*this);
-	m_ordinary_journal_map = new IdentityMap<OrdinaryJournalImpl, PDC>(*this);
-	m_draft_journal_map = new IdentityMap<DraftJournalImpl, PDC>(*this);
+	m_journal_map = new IdentityMap<PersistentJournal, PDC>(*this);
 	m_repeater_map = new IdentityMap<Repeater, PDC>(*this);
 }
 
@@ -128,12 +127,8 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 	m_budget = nullptr;
 
 	// Must be deleted before m_entry_map and before m_repeater_map
-	delete m_draft_journal_map;
-	m_draft_journal_map = nullptr;
-
-	// Must be deleted before m_entry_map
-	delete m_ordinary_journal_map;
-	m_ordinary_journal_map = nullptr;
+	delete m_journal_map;
+	m_journal_map = nullptr;
 
 	delete m_repeater_map;
 	m_repeater_map = nullptr;
@@ -217,9 +212,9 @@ PhatbooksDatabaseConnection::do_setup()
 		setup_entity_table();
 		save_default_commodity();
 		Account::setup_tables(*this);
-		ProtoJournal::setup_tables(*this);
-		DraftJournal::setup_tables(*this);
-		OrdinaryJournal::setup_tables(*this);
+		PersistentJournal::setup_tables(*this);
+		DraftJournalImpl::setup_tables(*this);
+		OrdinaryJournalImpl::setup_tables(*this);
 		Repeater::setup_tables(*this);
 		BudgetItem::setup_tables(*this);
 		AmalgamatedBudget::setup_tables(*this);
@@ -261,8 +256,7 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 		m_account_map->disable_caching();
 		m_budget_item_map->disable_caching();
 		m_repeater_map->disable_caching();
-		m_draft_journal_map->disable_caching();
-		m_ordinary_journal_map->disable_caching();
+		m_journal_map->disable_caching();
 		m_entry_map->disable_caching();
 		break;
 	case 5: case 6: case 7: case 8: case 9:
@@ -270,8 +264,7 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 		m_account_map->enable_caching();
 		m_budget_item_map->disable_caching();
 		m_repeater_map->disable_caching();
-		m_draft_journal_map->disable_caching();
-		m_ordinary_journal_map->disable_caching();
+		m_journal_map->disable_caching();
 		m_entry_map->disable_caching();
 		break;	
 	case 10: default:
@@ -280,8 +273,7 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 		m_account_map->enable_caching();
 		m_budget_item_map->enable_caching();
 		m_repeater_map->enable_caching();
-		m_draft_journal_map->enable_caching();
-		m_ordinary_journal_map->enable_caching();
+		m_journal_map->enable_caching();
 		m_entry_map->enable_caching();
 		break;
 	}
@@ -322,7 +314,7 @@ PhatbooksDatabaseConnection::set_default_commodity
 }
 
 
-DraftJournal
+DraftJournalHandle
 PhatbooksDatabaseConnection::budget_instrument() const
 {
 	return m_budget->instrument();
@@ -589,17 +581,10 @@ PhatbooksDatabaseConnection::identity_map<Commodity>()
 }
 
 template <>
-sqloxx::IdentityMap<OrdinaryJournalImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<OrdinaryJournalImpl>()
+sqloxx::IdentityMap<phatbooks::PersistentJournal, PhatbooksDatabaseConnection>&
+PhatbooksDatabaseConnection::identity_map<PersistentJournal>()
 {
-	return *m_ordinary_journal_map;
-}
-
-template <>
-sqloxx::IdentityMap<phatbooks::DraftJournalImpl, PhatbooksDatabaseConnection>&
-PhatbooksDatabaseConnection::identity_map<DraftJournalImpl>()
-{
-	return *m_draft_journal_map;
+	return *m_journal_map;
 }
 
 template <>
@@ -629,7 +614,7 @@ PhatbooksDatabaseConnection::perform_integrity_checks()
 		// Check journal dates are OK
 		for (OrdinaryJournalTableIterator it(*this), end ; it != end; ++it)
 		{
-			JEWEL_ASSERT (it->date() >= opening_balance_journal_date());
+			JEWEL_ASSERT ((*it)->date() >= opening_balance_journal_date());
 		}
 
 #	endif

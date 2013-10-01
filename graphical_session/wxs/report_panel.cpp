@@ -6,7 +6,7 @@
 #include "date.hpp"
 #include "date_ctrl.hpp"
 #include "entry_handle.hpp"
-#include "ordinary_journal.hpp"
+#include "ordinary_journal_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "report.hpp"
 #include "sizing.hpp"
@@ -225,14 +225,14 @@ ReportPanel::selected_account_super_type() const
 }
 
 void
-ReportPanel::update_for_new(OrdinaryJournal const& p_journal)
+ReportPanel::update_for_new(OrdinaryJournalHandle const& p_journal)
 {
 	if (m_report) m_report->update_for_new(p_journal);
 	return;
 }
 
 void
-ReportPanel::update_for_amended(OrdinaryJournal const& p_journal)
+ReportPanel::update_for_amended(OrdinaryJournalHandle const& p_journal)
 {
 	if (m_report) m_report->update_for_amended(p_journal);
 	return;

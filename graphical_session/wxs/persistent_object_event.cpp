@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "persistent_object_event.hpp"
-#include "phatbooks_persistent_object.hpp"
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
@@ -88,18 +87,6 @@ PersistentObjectEvent::fire
 	PersistentObjectEvent event(p_event_type, wxID_ANY);
 	event.SetEventObject(p_originator);
 	p_originator->GetEventHandler()->ProcessEvent(event);
-	return;
-}
-
-void
-PersistentObjectEvent::fire
-(	wxWindow* p_originator,
-	wxEventType p_event_type,
-	PhatbooksPersistentObjectBase& p_object
-)
-{
-	JEWEL_ASSERT (p_object.has_id());  // precondition
-	fire(p_originator, p_event_type, p_object.id());
 	return;
 }
 

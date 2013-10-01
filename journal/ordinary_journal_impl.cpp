@@ -1,10 +1,11 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "ordinary_journal_impl.hpp"
-#include "draft_journal.hpp"
+#include "draft_journal_handle.hpp"
 #include "date.hpp"
 #include "entry_handle.hpp"
-#include "ordinary_journal.hpp"
+#include "ordinary_journal_handle.hpp"
+#include "persistent_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"
@@ -51,7 +52,7 @@ namespace phatbooks
 string
 OrdinaryJournalImpl::primary_table_name()
 {
-	return ProtoJournal::primary_table_name();
+	return PersistentJournal::primary_table_name();
 }
 
 string
@@ -63,7 +64,7 @@ OrdinaryJournalImpl::exclusive_table_name()
 string
 OrdinaryJournalImpl::primary_key_name()
 {
-	return ProtoJournal::primary_key_name();
+	return PersistentJournal::primary_key_name();
 }
 
 void
@@ -72,7 +73,7 @@ OrdinaryJournalImpl::set_transaction_type
 )
 {
 	load();
-	ProtoJournal::set_transaction_type(p_transaction_type);
+	Journal::set_transaction_type(p_transaction_type);
 	return;
 }
 
@@ -80,7 +81,7 @@ void
 OrdinaryJournalImpl::set_comment(wxString const& p_comment)
 {
 	load();
-	ProtoJournal::set_comment(p_comment);
+	Journal::set_comment(p_comment);
 	return;
 }
 
@@ -92,7 +93,7 @@ OrdinaryJournalImpl::push_entry(EntryHandle const& entry)
 	{
 		entry->set_journal_id(id());
 	}
-	ProtoJournal::push_entry(entry);
+	Journal::push_entry(entry);
 	return;
 }
 
@@ -101,7 +102,7 @@ void
 OrdinaryJournalImpl::remove_entry(EntryHandle const& entry)
 {
 	load();
-	ProtoJournal::remove_entry(entry);
+	Journal::remove_entry(entry);
 	return;
 }
 
@@ -109,14 +110,14 @@ TransactionType
 OrdinaryJournalImpl::transaction_type()
 {
 	load();
-	return ProtoJournal::transaction_type();
+	return Journal::transaction_type();
 }
 
 wxString
 OrdinaryJournalImpl::comment()
 {
 	load();
-	return ProtoJournal::comment();
+	return Journal::comment();
 }
 
 vector<EntryHandle> const&
@@ -128,10 +129,8 @@ OrdinaryJournalImpl::entries()
 	// truly consistent with the other optionals, it would fail
 	// by means of a failed assert (assuming I haven't wrapped the
 	// other optionals in some throwing construct...).
-	return ProtoJournal::entries();
+	return Journal::entries();
 }
-
-
 
 void
 OrdinaryJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -154,28 +153,21 @@ OrdinaryJournalImpl::OrdinaryJournalImpl
 (	IdentityMap& p_identity_map,
 	IdentityMap::Signature const& p_signature
 ):
-	OrdinaryJournalImpl::PersistentObject(p_identity_map),
-	ProtoJournal()
+	PersistentJournal(p_identity_map, p_signature)
 {
-	(void)p_signature;  // silence compiler re. unused parameter
 }
-
 
 OrdinaryJournalImpl::OrdinaryJournalImpl
 (	IdentityMap& p_identity_map,
 	Id p_id,
 	IdentityMap::Signature const& p_signature
 ):
-	OrdinaryJournalImpl::PersistentObject(p_identity_map, p_id),
-	ProtoJournal()
+	PersistentJournal(p_identity_map, p_id, p_signature)
 {
-	(void)p_signature;  // silence compiler re. unused parameter
 }
-	
-
+		
 OrdinaryJournalImpl::OrdinaryJournalImpl(OrdinaryJournalImpl const& rhs):
-	OrdinaryJournalImpl::PersistentObject(rhs),
-	ProtoJournal(rhs),
+	PersistentJournal(rhs),
 	m_date(rhs.m_date)
 {
 }
@@ -203,23 +195,6 @@ OrdinaryJournalImpl::set_date(gregorian::date const& p_date)
 }
 
 void
-OrdinaryJournalImpl::set_date_unrestricted
-(	gregorian::date const& p_date,
-	Signature<OrdinaryJournal> const& p_signature
-)
-{
-	// Silence compiler re. unused parameter. The Signature
-	// is there to provide access control only; we don't actually
-	// want to use this parameter for anything inside the function
-	// body.
-	(void)p_signature;
-
-	load();
-	set_date_unrestricted(p_date);
-	return;
-}
-
-void
 OrdinaryJournalImpl::set_date_unrestricted(gregorian::date const& p_date)
 {
 	load();
@@ -238,8 +213,7 @@ OrdinaryJournalImpl::date()
 void
 OrdinaryJournalImpl::swap(OrdinaryJournalImpl& rhs)
 {
-	swap_base_internals(rhs);
-	ProtoJournal::swap(rhs);
+	PersistentJournal::swap(rhs);
 	using std::swap;
 	swap(m_date, rhs.m_date);
 	return;
@@ -252,7 +226,7 @@ OrdinaryJournalImpl::do_load()
 	OrdinaryJournalImpl temp(*this);
 
 	// Load the Journal (base) part of temp.
-	temp.do_load_journal_core(database_connection(), id());
+	temp.do_load_journal_core();
 
 	// Load the derived, OrdinaryJournalImpl part of temp.
 	SQLStatement statement
@@ -278,7 +252,7 @@ void
 OrdinaryJournalImpl::do_save_new()
 {
 	// Save the Journal	(base) part of the object and record the id.
-	Id const journal_id = do_save_new_journal_core(database_connection());
+	Id const journal_id = do_save_new_journal_core();
 
 	// Save the derived, OrdinaryJournalImpl part of the object
 	SQLStatement statement
@@ -297,7 +271,7 @@ void
 OrdinaryJournalImpl::do_save_existing()
 {
 	// Save the Journal (base) part of the object
-	do_save_existing_journal_core(database_connection(), id());
+	do_save_existing_journal_core();
 
 	// Save the derived, OrdinaryJournalImpl part of the object
 	SQLStatement updater
@@ -347,7 +321,7 @@ OrdinaryJournalImpl::do_remove()
 
 
 void
-OrdinaryJournalImpl::mimic(Journal const& rhs)
+OrdinaryJournalImpl::mimic(Journal& rhs)
 {
 	load();
 	OrdinaryJournalImpl temp(*this);
@@ -363,7 +337,7 @@ void
 OrdinaryJournalImpl::clear_entries()
 {
 	load();
-	ProtoJournal::clear_entries();
+	Journal::clear_entries();
 	return;
 }
 

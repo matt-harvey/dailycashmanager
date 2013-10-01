@@ -15,8 +15,8 @@
 #include "repeater.hpp"
 #include "date.hpp"
 #include "frequency.hpp"
-#include "draft_journal.hpp"
-#include "ordinary_journal.hpp"
+#include "draft_journal_handle.hpp"
+#include "ordinary_journal_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
@@ -232,16 +232,16 @@ Repeater::firings_till(gregorian::date const& limit)
 }
 
 
-OrdinaryJournal
+OrdinaryJournalHandle
 Repeater::fire_next()
 {
 	load();
-	DraftJournal const dj = draft_journal();
-	OrdinaryJournal oj(database_connection());
+	DraftJournalHandle const dj = draft_journal();
+	OrdinaryJournalHandle const oj(database_connection());
 	gregorian::date const next_date_elect = next_date(1);
 	if 
 	(	dj == database_connection().budget_instrument() &&
-		dj.entries().empty()
+		dj->entries().empty()
 	)
 	{
 		// Special case - if we're dealing with the budget instrument
@@ -253,13 +253,13 @@ Repeater::fire_next()
 	}
 	else
 	{
-		oj.mimic(dj);
+		oj->mimic(*dj);
 		gregorian::date const old_next_date = next_date(0);
-		oj.set_date(old_next_date);
+		oj->set_date(old_next_date);
 		DatabaseTransaction transaction(database_connection());
 		try
 		{
-			oj.save();
+			oj->save();
 			set_next_date(next_date_elect);
 			save();
 			transaction.commit();
@@ -276,11 +276,11 @@ Repeater::fire_next()
 
 
 
-DraftJournal
+DraftJournalHandle
 Repeater::draft_journal()
 {
 	load();
-	return DraftJournal(database_connection(), value(m_data->journal_id));
+	return DraftJournalHandle(database_connection(), value(m_data->journal_id));
 }
 
 
@@ -417,17 +417,17 @@ Repeater::mimic(Repeater& rhs)
 namespace
 {
 	bool
-	is_earlier_than(OrdinaryJournal const& lhs, OrdinaryJournal const& rhs)
+	is_earlier_than(OrdinaryJournalHandle const& lhs, OrdinaryJournalHandle const& rhs)
 	{
-		return lhs.date() < rhs.date();
+		return lhs->date() < rhs->date();
 	}
 }  // End anonymous namespace
 
 
-list<OrdinaryJournal>
+list<OrdinaryJournalHandle>
 update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 {
-	list<OrdinaryJournal> auto_posted_journals;
+	list<OrdinaryJournalHandle> auto_posted_journals;
 	// Read into a vector first - uneasy about reading and writing
 	// at the same time.
 	RepeaterTableIterator const rtit(dbc);
@@ -437,7 +437,7 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 	{
 		while (repeater->next_date() <= d)
 		{
-			OrdinaryJournal const oj = repeater->fire_next();
+			OrdinaryJournalHandle const oj = repeater->fire_next();
 			// In the special case where oj is dbc.budget_instrument(),
 			// and is
 			// devoid of entries, firing it does not cause any
@@ -445,19 +445,19 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 			// the next posting date. In this case the returned
 			// OrdinaryJournal will have no id.
 #			ifndef NDEBUG
-				DraftJournal const dj = repeater->draft_journal();
-				DraftJournal const bi = dbc.budget_instrument();
+				DraftJournalHandle const dj = repeater->draft_journal();
+				DraftJournalHandle const bi = dbc.budget_instrument();
 #			endif
-			if (oj.has_id())
+			if (oj->has_id())
 			{
-				JEWEL_ASSERT (dj != bi || !dj.entries().empty());
+				JEWEL_ASSERT (dj != bi || !dj->entries().empty());
 				auto_posted_journals.push_back(oj);
 			}
 			else
 			{
 				JEWEL_ASSERT (dj == bi);
-				JEWEL_ASSERT (dj.entries().empty());
-				JEWEL_ASSERT (oj.entries().empty());
+				JEWEL_ASSERT (dj->entries().empty());
+				JEWEL_ASSERT (oj->entries().empty());
 			}
 		}
 	}

@@ -8,7 +8,7 @@
 #include "commodity_handle.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "frame.hpp"
-#include "ordinary_journal.hpp"
+#include "ordinary_journal_handle.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "string_flags.hpp"
@@ -505,13 +505,13 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		// TODO Handle small possibility of overflow here.
 		opening_amount = -opening_amount;
 	}
-	OrdinaryJournal objnl = OrdinaryJournal::create_opening_balance_journal
+	OrdinaryJournalHandle const objnl = create_opening_balance_journal
 	(	temp,
 		opening_amount
 	);
-	if (objnl.primary_amount() != Decimal(0, 0))
+	if (objnl->primary_amount() != Decimal(0, 0))
 	{
-		objnl.save();
+		objnl->save();
 	}
 	else
 	{
@@ -538,13 +538,13 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		event_type,
 		m_account
 	);
-	if (objnl.has_id())
+	if (objnl->has_id())
 	{
 		// then we must have saved objnl, so...
 		PersistentObjectEvent::fire
 		(	frame,  // can't use "this", or event is missed
 			PHATBOOKS_JOURNAL_CREATED_EVENT,
-			objnl
+			objnl->id()
 		);
 	}
 	return true;

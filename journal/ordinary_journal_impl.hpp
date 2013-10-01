@@ -3,6 +3,32 @@
 #ifndef GUARD_ordinary_journal_impl_hpp_6580145273627781
 #define GUARD_ordinary_journal_impl_hpp_6580145273627781
 
+
+#include "persistent_journal.hpp"
+#include <sqloxx/persistence_traits.hpp>
+
+
+// Begin forward declarations
+
+namespace phatbooks
+{
+
+class OrdinaryJournalImpl;
+
+}  // namespace phatbooks
+
+namespace sqloxx
+{
+
+template <>
+struct PersistenceTraits<phatbooks::OrdinaryJournalImpl>
+{
+	typedef phatbooks::PersistentJournal PrimaryT;
+};
+
+}  // namespace sqloxx
+
+
 #include "string_conv.hpp"
 #include "date.hpp"
 #include "entry_handle.hpp"
@@ -18,41 +44,21 @@
 #include <string>
 #include <vector>
 
-
-// Begin forward declarations
+// End forward declarations
 
 
 namespace phatbooks
 {
 
-class DraftJournal;
-class OrdinaryJournal;
-
-// End forward declarations
-
-
-
-class OrdinaryJournalImpl:
-	public sqloxx::PersistentObject
-	<	OrdinaryJournalImpl,
-		PhatbooksDatabaseConnection
-	>,
-	private ProtoJournal
+/**
+ * Represents an accounting journal that is, or will be, posted and
+ * thereby reflected as a change in the economic state of the accounting
+ * entity. The posting occurs when the \e save() method is called on the
+ * OrdinaryJournal.
+ */
+class OrdinaryJournalImpl: virtual public PersistentJournal
 {
 public:
-
-	typedef
-		sqloxx::PersistentObject
-		<	OrdinaryJournalImpl,
-			PhatbooksDatabaseConnection
-		>
-		PersistentObject;
-
-	typedef sqloxx::IdentityMap
-		<	OrdinaryJournalImpl,
-			PhatbooksDatabaseConnection
-		>
-		IdentityMap;
 
 	static std::string primary_table_name();
 	static std::string exclusive_table_name();
@@ -61,9 +67,7 @@ public:
 	/**
 	 * @todo Document
 	 */
-	void set_transaction_type
-	(	TransactionType p_transaction_type
-	);
+	void set_transaction_type(TransactionType p_transaction_type);
 
 	/**
 	 * Does not throw, except possibly \c std::bad_alloc in extreme
@@ -127,13 +131,10 @@ public:
 	void set_date(boost::gregorian::date const& p_date);
 
 	/**
-	 * Allows us to set to any date, but only OrdinaryJournal can
-	 * call it.
+	 * Allows us to set to any date. Should not normally be used by
+	 * client code.
 	 */
-	void set_date_unrestricted
-	(	boost::gregorian::date const& p_date,
-		jewel::Signature<OrdinaryJournal> const& p_signature
-	);
+	void set_date_unrestricted(boost::gregorian::date const& p_date);
 
 	/**
 	 * @todo Verify throwing behaviour and determine dependence on DateRep.
@@ -151,7 +152,7 @@ public:
 	 * applicable to OrdinaryJournalImpl; but do \e not take on the \e id
 	 * attribute of \e rhs, or the date.
 	 */
-	void mimic(Journal const& rhs);
+	void mimic(Journal& rhs);
 
 	void clear_entries();
 
@@ -162,18 +163,11 @@ private:
 	 */
 	OrdinaryJournalImpl(OrdinaryJournalImpl const& rhs);
 
-	/**
-	 * Signature-less version of the public function of the same name;
-	 * so that we can call it from within OrdinaryJournalImpl.
-	 */
-	void set_date_unrestricted(boost::gregorian::date const& p_date);
-
-	void do_load();
-	void do_save_existing();
-	void do_save_new();
-	void do_ghostify();
-	void do_remove();
-
+	void do_load() override;
+	void do_save_existing() override;
+	void do_save_new() override;
+	void do_ghostify() override;
+	void do_remove() override;
 
 	// Sole non-inherited data member. Note this is of a type where copying
 	// does not throw. If we ever add more data members here and/or change

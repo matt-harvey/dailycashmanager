@@ -5,9 +5,9 @@
 
 #include "account_handle.hpp"
 #include "account_type.hpp"
-#include "draft_journal.hpp"
+#include "draft_journal_handle_fwd.hpp"
 #include "entry_handle.hpp"
-#include "ordinary_journal.hpp"
+#include "ordinary_journal_handle.hpp"
 #include "reconciliation_list_panel.hpp"
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
@@ -87,21 +87,21 @@ public:
 	 * Populates \e out with all the OrdinaryJournals currently
 	 * selected by the user in the main window.
 	 */
-	void selected_ordinary_journals(std::vector<OrdinaryJournal>& out) const;
+	void selected_ordinary_journals(std::vector<OrdinaryJournalHandle>& out) const;
 
 	/**
 	 * Populates \e out with all the DraftJournals currently
 	 * selected by the user in the main window.
 	 */
-	void selected_draft_journals(std::vector<DraftJournal>& out) const;
+	void selected_draft_journals(std::vector<DraftJournalHandle>& out) const;
 
 	/**
 	 * Update the display to reflect current state of database, after
 	 * saving of p_saved_object, where p_saved_object is a newly saved
 	 * object that was not already in the database.
 	 */
-	void update_for_new(DraftJournal const& p_saved_object);
-	void update_for_new(OrdinaryJournal const& p_saved_object);
+	void update_for_new(DraftJournalHandle const& p_saved_object);
+	void update_for_new(OrdinaryJournalHandle const& p_saved_object);
 	void update_for_new(AccountHandle const& p_saved_object);
 
 	/**
@@ -115,8 +115,8 @@ public:
 	 * as TransactionCtrl does not support deletion of individual
 	 * Entries.
 	 */
-	void update_for_amended(DraftJournal const& p_saved_object);
-	void update_for_amended(OrdinaryJournal const& p_saved_object);
+	void update_for_amended(DraftJournalHandle const& p_saved_object);
+	void update_for_amended(OrdinaryJournalHandle const& p_saved_object);
 	void update_for_amended(AccountHandle const& p_saved_object);
 
 	/**
