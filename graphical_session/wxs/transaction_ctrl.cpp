@@ -150,7 +150,6 @@ TransactionCtrl::TransactionCtrl
 
 	JEWEL_ASSERT (p_journal->has_id());
 	
-	// TODO Make this nicer once facility is provided by sqloxx::Handle to do so.
 	Handle<PersistentJournal>* const j = new Handle<PersistentJournal>
 	(	Handle<PersistentJournal>::create<PhatbooksDatabaseConnection, OrdinaryJournal>
 		(	p_journal->database_connection(),
@@ -460,10 +459,8 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 
 	// TODO Factor out code duplicated with other constructor.
 
-	OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal->get());
-	bool const is_ordinary = static_cast<bool>(oj);
-	DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal->get());
-	bool const is_draft = static_cast<bool>(dj);
+	bool const is_ordinary = m_journal->has_dynamic_type<OrdinaryJournal>();
+	bool const is_draft = m_journal->has_dynamic_type<DraftJournal>();
 	JEWEL_ASSERT (!(is_ordinary && is_draft));
 	JEWEL_ASSERT (is_ordinary || is_draft);
 
@@ -485,8 +482,9 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 		// Repeaters, or with more than 1 Repeater. This next bit only works
 		// if that remains true, AND non-GUI-created DraftJournals are never
 		// accessed from the GUI!
-		JEWEL_ASSERT (dj->repeaters().size() == 1);
-		maybe_frequency = dj->repeaters().at(0)->frequency();
+		DraftJournal& dj_ref = dynamic_cast<DraftJournal&>(**m_journal);
+		JEWEL_ASSERT (dj_ref.repeaters().size() == 1);
+		maybe_frequency = dj_ref.repeaters().at(0)->frequency();
 	}	
 	m_frequency_ctrl->set_frequency(maybe_frequency);
 
@@ -497,13 +495,15 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 		// Repeaters, or with more than 1 Repeater. This next bit only works
 		// if that remains true, AND non-GUI-created DraftJournals are never
 		// accessed from the GUI!
-		JEWEL_ASSERT (dj->repeaters().size() == 1);
-		date = dj->repeaters().at(0)->next_date();
+		DraftJournal& dj_ref = dynamic_cast<DraftJournal&>(**m_journal);
+		JEWEL_ASSERT (dj_ref.repeaters().size() == 1);
+		date = dj_ref.repeaters().at(0)->next_date();
 	}
 	else
 	{
 		JEWEL_ASSERT (is_ordinary);
-		date = oj->date();
+		OrdinaryJournal& oj_ref = dynamic_cast<OrdinaryJournal&>(**m_journal);
+		date = oj_ref.date();
 	}
 	m_date_ctrl = new DateCtrl
 	(	this,
@@ -772,9 +772,11 @@ TransactionCtrl::reflect_reconciliation_statuses()
 	{
 		if (control)
 		{
+			JEWEL_LOG_TRACE();
 			control->Enable(!contains_reconciled);
 		}
 	}
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -994,8 +996,7 @@ TransactionCtrl::save_existing_journal()
 	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
 	if (maybe_frequency)
 	{
-		DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal->get());
-		JEWEL_ASSERT (dj);
+		DraftJournal& dj_ref = dynamic_cast<DraftJournal&>(**m_journal);
 		JEWEL_ASSERT (m_date_ctrl->date());
 		gregorian::date const next_date = value(m_date_ctrl->date());
 		Frequency const freq = value(maybe_frequency);
@@ -1027,33 +1028,33 @@ TransactionCtrl::save_existing_journal()
 
 		JEWEL_ASSERT (is_valid_date_for_interval_type(next_date, freq.step_type()));
 		
-		if (dj->repeaters().empty())
+		if (dj_ref.repeaters().empty())
 		{
 			RepeaterHandle const repeater(database_connection());
 			repeater->set_next_date(next_date);
 			repeater->set_frequency(freq);
-			dj->push_repeater(repeater);
+			dj_ref.push_repeater(repeater);
 		}
 		else
 		{
-			JEWEL_ASSERT (!dj->repeaters().empty());
-			RepeaterHandle const old_repeater = dj->repeaters()[0];
+			JEWEL_ASSERT (!dj_ref.repeaters().empty());
+			RepeaterHandle const old_repeater = dj_ref.repeaters()[0];
 			old_repeater->set_next_date(next_date);
 			old_repeater->set_frequency(freq);
 			old_repeater->save();
 		}
-		JEWEL_ASSERT (dj->is_balanced());
-		dj->save();
+		JEWEL_ASSERT (dj_ref.is_balanced());
+		dj_ref.save();
 	
 		PersistentObjectEvent::notify_doomed_draft_entries
 		(	this,
 			doomed_entry_ids
 		);
-		JEWEL_ASSERT (dj->has_id());
+		JEWEL_ASSERT (dj_ref.has_id());
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_EDITED_EVENT,
-			dj->id()
+			dj_ref.id()
 		);
 		JEWEL_LOG_TRACE();
 		return true;
@@ -1062,25 +1063,24 @@ TransactionCtrl::save_existing_journal()
 	{
 		JEWEL_LOG_TRACE();
 		JEWEL_ASSERT (!maybe_frequency);
-		OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal->get());
-		JEWEL_ASSERT (oj);
+		OrdinaryJournal& oj_ref = dynamic_cast<OrdinaryJournal&>(**m_journal);
 		JEWEL_ASSERT (m_date_ctrl->date());
-		oj->set_date(value(m_date_ctrl->date()));
+		oj_ref.set_date(value(m_date_ctrl->date()));
 	
-		JEWEL_ASSERT (oj->is_balanced());
+		JEWEL_ASSERT (oj_ref.is_balanced());
 		JEWEL_LOG_TRACE();
-		oj->save();
+		oj_ref.save();
 		JEWEL_LOG_TRACE();
 
 		PersistentObjectEvent::notify_doomed_ordinary_entries
 		(	this,
 			doomed_entry_ids
 		);
-		JEWEL_ASSERT (oj->has_id());
+		JEWEL_ASSERT (oj_ref.has_id());
 		PersistentObjectEvent::fire
 		(	this,
 			PHATBOOKS_JOURNAL_EDITED_EVENT,
-			oj->id()
+			oj_ref.id()
 		);
 		JEWEL_LOG_TRACE();
 		return true;

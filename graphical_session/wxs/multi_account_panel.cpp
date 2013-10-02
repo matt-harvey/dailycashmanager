@@ -80,7 +80,7 @@ MultiAccountPanel::MultiAccountPanel
 	GriddedScrolledPanel(p_parent, p_size, p_database_connection),
 	m_account_super_type(p_account_super_type),
 	m_commodity(p_commodity),
-	m_summary_amount_text(0),
+	m_summary_amount_text(nullptr),
 	m_minimum_num_rows(p_minimum_num_rows)
 {
 	// Row of total text etc.
