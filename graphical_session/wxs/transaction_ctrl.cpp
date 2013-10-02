@@ -140,13 +140,11 @@ TransactionCtrl::TransactionCtrl
 
 	JEWEL_ASSERT (p_journal->has_id());
 	
-	Handle<PersistentJournal>* const j = new Handle<PersistentJournal>
-	(	Handle<PersistentJournal>::create<PhatbooksDatabaseConnection, OrdinaryJournal>
+	m_journal = Handle<PersistentJournal>::
+		create<PhatbooksDatabaseConnection, OrdinaryJournal>
 		(	p_journal->database_connection(),
 			p_journal->id()
-		)
-	);
-	m_journal.reset(j);
+		);
 	configure_for_editing_persistent_journal();
 }
 
@@ -164,15 +162,11 @@ TransactionCtrl::TransactionCtrl
 	JEWEL_LOG_TRACE();
 
 	JEWEL_ASSERT (p_journal->has_id());
-
-	// TODO Make this nicer once facility is provided by sqloxx::Handle to do so.
-	Handle<PersistentJournal>* const j = new Handle<PersistentJournal>
-	(	Handle<PersistentJournal>::create<PhatbooksDatabaseConnection, DraftJournal>
+	m_journal = Handle<PersistentJournal>::
+		create<PhatbooksDatabaseConnection, DraftJournal>
 		(	p_journal->database_connection(),
 			p_journal->id()
-		)
-	);
-	m_journal.reset(j);
+		);
 	configure_for_editing_persistent_journal();
 }
 
@@ -262,7 +256,7 @@ TransactionCtrl::clear_all()
 {
 	JEWEL_LOG_TRACE();
 
-	m_journal.reset();
+	m_journal = Handle<PersistentJournal>();
 	DestroyChildren();
 	set_row(0);
 	return;
@@ -377,7 +371,7 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 
 	JEWEL_ASSERT (m_journal);
 	TransactionType const initial_transaction_type
-		= (*m_journal)->transaction_type();
+		= m_journal->transaction_type();
 	assert_transaction_type_validity(initial_transaction_type);
 	wxSize text_box_size;
 	vector<TransactionType> available_transaction_types;
@@ -392,7 +386,7 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	configure_top_controls
 	(	initial_transaction_type,
 		text_box_size,
-		(*m_journal)->primary_amount(),
+		m_journal->primary_amount(),
 		available_transaction_types
 	);
 
@@ -401,14 +395,14 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	m_source_entry_ctrl = new EntryGroupCtrl
 	(	this,
 		text_box_size,
-		**m_journal,
+		*m_journal,
 		TransactionSide::source,
 		database_connection()
 	);
 	m_destination_entry_ctrl = new EntryGroupCtrl
 	(	this,
 		text_box_size,
-		**m_journal,
+		*m_journal,
 		TransactionSide::destination,
 		database_connection()
 	);
@@ -429,8 +423,8 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 
 	// TODO Factor out code duplicated with other constructor.
 
-	bool const is_ordinary = m_journal->has_dynamic_type<OrdinaryJournal>();
-	bool const is_draft = m_journal->has_dynamic_type<DraftJournal>();
+	bool const is_ordinary = m_journal.has_dynamic_type<OrdinaryJournal>();
+	bool const is_draft = m_journal.has_dynamic_type<DraftJournal>();
 	JEWEL_ASSERT (!(is_ordinary && is_draft));
 	JEWEL_ASSERT (is_ordinary || is_draft);
 
@@ -452,7 +446,7 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 		// Repeaters, or with more than 1 Repeater. This next bit only works
 		// if that remains true, AND non-GUI-created DraftJournals are never
 		// accessed from the GUI!
-		DraftJournal& dj_ref = dynamic_cast<DraftJournal&>(**m_journal);
+		DraftJournal& dj_ref = dynamic_cast<DraftJournal&>(*m_journal);
 		JEWEL_ASSERT (dj_ref.repeaters().size() == 1);
 		maybe_frequency = dj_ref.repeaters().at(0)->frequency();
 	}	
@@ -465,14 +459,14 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 		// Repeaters, or with more than 1 Repeater. This next bit only works
 		// if that remains true, AND non-GUI-created DraftJournals are never
 		// accessed from the GUI!
-		DraftJournal& dj_ref = dynamic_cast<DraftJournal&>(**m_journal);
+		DraftJournal& dj_ref = dynamic_cast<DraftJournal&>(*m_journal);
 		JEWEL_ASSERT (dj_ref.repeaters().size() == 1);
 		date = dj_ref.repeaters().at(0)->next_date();
 	}
 	else
 	{
 		JEWEL_ASSERT (is_ordinary);
-		OrdinaryJournal& oj_ref = dynamic_cast<OrdinaryJournal&>(**m_journal);
+		OrdinaryJournal& oj_ref = dynamic_cast<OrdinaryJournal&>(*m_journal);
 		date = oj_ref.date();
 	}
 	m_date_ctrl = new DateCtrl
@@ -864,13 +858,13 @@ TransactionCtrl::remove_journal()
 {
 	JEWEL_LOG_TRACE();
 
-	if (!m_journal || !(*m_journal)->has_id())
+	if (!m_journal || !m_journal->has_id())
 	{
 		// WARNING This might be dead code.
 #	ifndef NDEBUG
 		if (m_journal)
 		{
-			for (EntryHandle const& entry: (*m_journal)->entries())
+			for (EntryHandle const& entry: m_journal->entries())
 			{
 				JEWEL_ASSERT (!entry->has_id());
 			}
@@ -879,17 +873,17 @@ TransactionCtrl::remove_journal()
 		return true;
 	}
 	JEWEL_ASSERT (m_journal);
-	Id const doomed_journal_id = (*m_journal)->id();
+	Id const doomed_journal_id = m_journal->id();
 	bool const is_draft =
 		journal_id_is_draft(database_connection(), doomed_journal_id);
 	vector<Id> doomed_entry_ids;
-	vector<EntryHandle> const& doomed_entries = (*m_journal)->entries();
+	vector<EntryHandle> const& doomed_entries = m_journal->entries();
 	for (EntryHandle const& entry: doomed_entries)
 	{
 		doomed_entry_ids.push_back(entry->id());
 	}
-	(*m_journal)->remove();
-	JEWEL_ASSERT (!(*m_journal)->has_id());
+	m_journal->remove();
+	JEWEL_ASSERT (!m_journal->has_id());
 	wxEventType event_type(0);
 	if (is_draft)
 	{
@@ -922,7 +916,7 @@ TransactionCtrl::save_existing_journal()
 	JEWEL_ASSERT (m_transaction_type_ctrl->transaction_type());
 	TransactionType const ttype =
 		value(m_transaction_type_ctrl->transaction_type());
-	(*m_journal)->set_transaction_type(ttype);
+	m_journal->set_transaction_type(ttype);
 
 	// We need to collect the ids of the removed entries so the
 	// GUI can be updated for their removal. We start out assuming all
@@ -930,7 +924,7 @@ TransactionCtrl::save_existing_journal()
 	// IDs as we verify that each Entry is still present in the edited
 	// Journal.
 	unordered_set<Id> doomed;
-	vector<EntryHandle> const& old_entries = (*m_journal)->entries();
+	vector<EntryHandle> const& old_entries = m_journal->entries();
 	for (EntryHandle const& entry: old_entries)
 	{
 		JEWEL_ASSERT (entry->has_id());
@@ -942,7 +936,7 @@ TransactionCtrl::save_existing_journal()
 	// Clear the existing Entries from Journal, then reinsert the updated
 	// Entries. As each "surviving" Entry is reinserted, we erase its Id from
 	// the "doomed" Ids.
-	(*m_journal)->clear_entries();
+	m_journal->clear_entries();
 	EntryGroupCtrl const* const entry_controls[] =
 	{	m_source_entry_ctrl,
 		m_destination_entry_ctrl
@@ -952,7 +946,7 @@ TransactionCtrl::save_existing_journal()
 		vector<EntryHandle> entries = control->make_entries();
 		for (EntryHandle entry: entries)
 		{
-			(*m_journal)->push_entry(entry);
+			m_journal->push_entry(entry);
 			if (entry->has_id()) doomed.erase(entry->id());
 		}
 	}
@@ -966,7 +960,7 @@ TransactionCtrl::save_existing_journal()
 	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
 	if (maybe_frequency)
 	{
-		DraftJournal& dj_ref = dynamic_cast<DraftJournal&>(**m_journal);
+		DraftJournal& dj_ref = dynamic_cast<DraftJournal&>(*m_journal);
 		JEWEL_ASSERT (m_date_ctrl->date());
 		gregorian::date const next_date = value(m_date_ctrl->date());
 		Frequency const freq = value(maybe_frequency);
@@ -1033,7 +1027,7 @@ TransactionCtrl::save_existing_journal()
 	{
 		JEWEL_LOG_TRACE();
 		JEWEL_ASSERT (!maybe_frequency);
-		OrdinaryJournal& oj_ref = dynamic_cast<OrdinaryJournal&>(**m_journal);
+		OrdinaryJournal& oj_ref = dynamic_cast<OrdinaryJournal&>(*m_journal);
 		JEWEL_ASSERT (m_date_ctrl->date());
 		oj_ref.set_date(value(m_date_ctrl->date()));
 	

@@ -216,7 +216,7 @@ private:
 	static unsigned int const s_min_entry_row_id =
 		s_delete_button_id + 1;
 
-	std::unique_ptr<sqloxx::Handle<PersistentJournal> > m_journal;
+	sqloxx::Handle<PersistentJournal> m_journal;
 
 	DECLARE_EVENT_TABLE()
 
