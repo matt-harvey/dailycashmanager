@@ -64,6 +64,7 @@
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::handle_cast;
 using sqloxx::Handle;
 using sqloxx::Id;
 using std::back_inserter;
@@ -134,16 +135,15 @@ TransactionCtrl::TransactionCtrl
 	(	p_parent,
 		p_size,
 		p_journal->database_connection()
-	)
+	),
+	m_journal(handle_cast<PersistentJournal>(p_journal))
 {
 	JEWEL_LOG_TRACE();
-
+	JEWEL_ASSERT (m_journal);
 	JEWEL_ASSERT (p_journal->has_id());
-	
-	m_journal = Handle<PersistentJournal>::create<OrdinaryJournal>
-	(	p_journal->database_connection(),
-		p_journal->id()
-	);
+	JEWEL_ASSERT (m_journal->has_id());
+	JEWEL_ASSERT (m_journal->id() == p_journal->id());
+	configure_for_editing_persistent_journal();
 	configure_for_editing_persistent_journal();
 }
 
@@ -156,15 +156,14 @@ TransactionCtrl::TransactionCtrl
 	(	p_parent,
 		p_size,
 		p_journal->database_connection()
-	)
+	),
+	m_journal(handle_cast<PersistentJournal>(p_journal))
 {
 	JEWEL_LOG_TRACE();
-
+	JEWEL_ASSERT (m_journal);
 	JEWEL_ASSERT (p_journal->has_id());
-	m_journal = Handle<PersistentJournal>::create<DraftJournal>
-	(	p_journal->database_connection(),
-		p_journal->id()
-	);
+	JEWEL_ASSERT (m_journal->has_id());
+	JEWEL_ASSERT (m_journal->id() == p_journal->id());
 	configure_for_editing_persistent_journal();
 }
 
@@ -181,7 +180,6 @@ TransactionCtrl::TransactionCtrl
 	)
 {
 	JEWEL_LOG_TRACE();
-
 	configure_for_editing_proto_journal(p_journal);
 }
 
@@ -420,9 +418,10 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	increment_row();
 
 	// TODO Factor out code duplicated with other constructor.
-
-	bool const is_ordinary = m_journal.has_dynamic_type<OrdinaryJournal>();
-	bool const is_draft = m_journal.has_dynamic_type<DraftJournal>();
+	auto const dj = sqloxx::handle_cast<DraftJournal>(m_journal);
+	auto const oj = sqloxx::handle_cast<OrdinaryJournal>(m_journal);
+	bool const is_ordinary = static_cast<bool>(oj);
+	bool const is_draft = static_cast<bool>(dj);
 	JEWEL_ASSERT (!(is_ordinary && is_draft));
 	JEWEL_ASSERT (is_ordinary || is_draft);
 
@@ -444,9 +443,10 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 		// Repeaters, or with more than 1 Repeater. This next bit only works
 		// if that remains true, AND non-GUI-created DraftJournals are never
 		// accessed from the GUI!
-		DraftJournal& dj_ref = dynamic_cast<DraftJournal&>(*m_journal);
-		JEWEL_ASSERT (dj_ref.repeaters().size() == 1);
-		maybe_frequency = dj_ref.repeaters().at(0)->frequency();
+		JEWEL_ASSERT (dj);
+		JEWEL_ASSERT (!oj);
+		JEWEL_ASSERT (dj->repeaters().size() == 1);
+		maybe_frequency = dj->repeaters().at(0)->frequency();
 	}	
 	m_frequency_ctrl->set_frequency(maybe_frequency);
 
@@ -457,15 +457,15 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 		// Repeaters, or with more than 1 Repeater. This next bit only works
 		// if that remains true, AND non-GUI-created DraftJournals are never
 		// accessed from the GUI!
-		DraftJournal& dj_ref = dynamic_cast<DraftJournal&>(*m_journal);
-		JEWEL_ASSERT (dj_ref.repeaters().size() == 1);
-		date = dj_ref.repeaters().at(0)->next_date();
+		JEWEL_ASSERT (dj);
+		JEWEL_ASSERT (dj->repeaters().size() == 1);
+		date = dj->repeaters().at(0)->next_date();
 	}
 	else
 	{
 		JEWEL_ASSERT (is_ordinary);
-		OrdinaryJournal& oj_ref = dynamic_cast<OrdinaryJournal&>(*m_journal);
-		date = oj_ref.date();
+		JEWEL_ASSERT (oj);
+		date = oj->date();
 	}
 	m_date_ctrl = new DateCtrl
 	(	this,
