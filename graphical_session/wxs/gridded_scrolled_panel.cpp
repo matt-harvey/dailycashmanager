@@ -33,8 +33,6 @@ GriddedScrolledPanel::GriddedScrolledPanel
 		p_size,
 		(p_horizontal_scrolling_enabled? (wxVSCROLL | wxHSCROLL): wxVSCROLL)
 	),
-	m_current_row(0),
-	m_top_sizer(nullptr),
 	m_database_connection(p_database_connection)
 {
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());

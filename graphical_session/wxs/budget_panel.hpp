@@ -136,13 +136,13 @@ private:
 	 */
 	wxString initial_summary_amount_text();
 
-	size_t m_next_row;
+	size_t m_next_row = 0;
 
-	wxGridBagSizer* m_top_sizer;
-	wxStaticText* m_summary_label;
-	wxStaticText* m_summary_amount_text;
-	wxButton* m_pop_item_button;
-	wxButton* m_push_item_button;
+	wxGridBagSizer* m_top_sizer = nullptr;
+	wxStaticText* m_summary_label = nullptr;
+	wxStaticText* m_summary_amount_text = nullptr;
+	wxButton* m_pop_item_button = nullptr;
+	wxButton* m_push_item_button = nullptr;
 
 	/**
 	 * Like FrequencyCtrl, but change of selection causes parent
@@ -169,9 +169,9 @@ private:
 	 */
 	struct BudgetItemComponent
 	{
-		wxTextCtrl* description_ctrl;
-		DecimalTextCtrl* amount_ctrl;
-		SpecialFrequencyCtrl* frequency_ctrl;
+		wxTextCtrl* description_ctrl = nullptr;
+		DecimalTextCtrl* amount_ctrl = nullptr;
+		SpecialFrequencyCtrl* frequency_ctrl = nullptr;
 	};
 
 	/**
@@ -230,10 +230,10 @@ private:
 		void on_yes_button_click(wxCommandEvent& event);
 		void update_budgets_from_dialog(AccountHandle const& p_account);
 		bool budget_is_balanced() const;
-		wxGridBagSizer* m_top_sizer;
-		AccountCtrl* m_account_ctrl;
-		wxButton* m_no_button;
-		wxButton* m_yes_button;
+		wxGridBagSizer* m_top_sizer = nullptr;
+		AccountCtrl* m_account_ctrl = nullptr;
+		wxButton* m_no_button = nullptr;
+		wxButton* m_yes_button = nullptr;
 		jewel::Decimal const m_imbalance;
 		PhatbooksDatabaseConnection& m_database_connection;
 		DECLARE_EVENT_TABLE()

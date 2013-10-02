@@ -196,20 +196,20 @@ private:
 	void configure_report_page();
 
 	PhatbooksDatabaseConnection& m_database_connection;
-	wxBoxSizer* m_top_sizer;
-	wxNotebook* m_notebook;
-	wxPanel* m_notebook_page_accounts;
-	wxPanel* m_notebook_page_transactions;
-	wxPanel* m_notebook_page_reconciliations;
-	wxPanel* m_notebook_page_reports;
-	wxBoxSizer* m_right_column_sizer;
-	AccountListCtrl* m_bs_account_list;
-	AccountListCtrl* m_pl_account_list;
-	EntryListPanel* m_entry_list_panel;
-	ReconciliationListPanel* m_reconciliation_panel;
-	ReportPanel* m_report_panel;
-	TransactionCtrl* m_transaction_ctrl;
-	DraftJournalListCtrl* m_draft_journal_list;
+	wxBoxSizer* m_top_sizer = nullptr;
+	wxNotebook* m_notebook = nullptr;
+	wxPanel* m_notebook_page_accounts = nullptr;
+	wxPanel* m_notebook_page_transactions = nullptr;
+	wxPanel* m_notebook_page_reconciliations = nullptr;
+	wxPanel* m_notebook_page_reports = nullptr;
+	wxBoxSizer* m_right_column_sizer = nullptr;
+	AccountListCtrl* m_bs_account_list = nullptr;
+	AccountListCtrl* m_pl_account_list = nullptr;
+	EntryListPanel* m_entry_list_panel = nullptr;
+	ReconciliationListPanel* m_reconciliation_panel = nullptr;
+	ReportPanel* m_report_panel = nullptr;
+	TransactionCtrl* m_transaction_ctrl = nullptr;
+	DraftJournalListCtrl* m_draft_journal_list = nullptr;
 };
 
 
@@ -220,7 +220,7 @@ template <typename JournalType>
 void
 TopPanel::configure_transaction_ctrl(JournalType& p_journal)
 {
-	TransactionCtrl* old = 0;
+	TransactionCtrl* old = nullptr;
 	JEWEL_ASSERT (m_right_column_sizer);
 	if (m_transaction_ctrl)
 	{
@@ -241,7 +241,7 @@ TopPanel::configure_transaction_ctrl(JournalType& p_journal)
 	if (old)
 	{
 		old->Destroy();
-		old = 0;
+		old = nullptr;
 	}
 	Layout();
 	JEWEL_ASSERT (m_transaction_ctrl);

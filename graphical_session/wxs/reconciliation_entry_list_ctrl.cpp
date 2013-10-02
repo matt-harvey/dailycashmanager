@@ -91,10 +91,8 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 		optional<gregorian::date>(p_max_date)
 	),
 	m_max_date(p_max_date),
-	m_summary_data(nullptr),
 	m_closing_balance(0, p_account->commodity()->precision()),
-	m_reconciled_closing_balance(0, p_account->commodity()->precision()),
-	m_image_list(nullptr)
+	m_reconciled_closing_balance(0, p_account->commodity()->precision())
 {
 	JEWEL_LOG_TRACE();
 

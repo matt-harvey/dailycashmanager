@@ -118,15 +118,6 @@ AccountDialog::AccountDialog
 ):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
 	m_current_row(0),
-	m_top_sizer(nullptr),
-	m_name_ctrl(nullptr),
-	m_account_type_ctrl(nullptr),
-	m_description_ctrl(nullptr),
-	m_opening_amount_ctrl(nullptr),
-	m_budget_panel(nullptr),
-	m_visibility_ctrl(nullptr),
-	m_cancel_button(nullptr),
-	m_ok_button(nullptr),
 	m_account(p_account)
 {
 	JEWEL_ASSERT (p_parent);  // precondition

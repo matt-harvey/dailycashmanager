@@ -67,21 +67,7 @@ TopPanel::TopPanel
 		wxDefaultSize,
 		wxFULL_REPAINT_ON_RESIZE
 	),
-	m_database_connection(p_database_connection),
-	m_top_sizer(nullptr),
-	m_notebook(nullptr),
-	m_notebook_page_accounts(nullptr),
-	m_notebook_page_transactions(nullptr),
-	m_notebook_page_reconciliations(nullptr),
-	m_notebook_page_reports(nullptr),
-	m_right_column_sizer(nullptr),
-	m_bs_account_list(nullptr),
-	m_pl_account_list(nullptr),
-	m_entry_list_panel(nullptr),
-	m_reconciliation_panel(nullptr),
-	m_report_panel(nullptr),
-	m_transaction_ctrl(nullptr),
-	m_draft_journal_list(nullptr)
+	m_database_connection(p_database_connection)
 {
 	m_top_sizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer(m_top_sizer);

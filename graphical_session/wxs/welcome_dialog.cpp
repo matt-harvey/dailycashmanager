@@ -50,12 +50,7 @@ WelcomeDialog::WelcomeDialog
 		wxSize(wxDefaultSize.x * 2, wxDefaultSize.y * 2),
 		wxRESIZE_BORDER
 	),
-	m_database_connection(p_database_connection),
-	m_user_wants_new_file(false),
-	m_top_sizer(nullptr),
-	m_existing_file_button(nullptr),
-	m_new_file_button(nullptr),
-	m_cancel_button(nullptr)
+	m_database_connection(p_database_connection)
 {
 	m_top_sizer = new wxGridSizer(7, 1, 0, 0);
 	SetSizer(m_top_sizer);

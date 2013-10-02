@@ -71,13 +71,7 @@ EntryGroupCtrl::EntryGroupCtrl
 	m_database_connection(p_database_connection),
 	m_transaction_side(p_transaction_side),
 	m_transaction_type(p_journal.transaction_type()),
-	m_text_ctrl_size(p_text_ctrl_size),
-	m_available_account_types(nullptr),
-	m_top_sizer(nullptr),
-	m_side_descriptor(nullptr),
-	m_unsplit_button(nullptr),
-	m_split_button(nullptr),
-	m_current_row(0)
+	m_text_ctrl_size(p_text_ctrl_size)
 {
 	JEWEL_ASSERT (m_entry_rows.empty());
 	JEWEL_ASSERT (!m_available_account_types);

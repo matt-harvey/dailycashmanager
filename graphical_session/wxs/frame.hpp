@@ -121,14 +121,14 @@ private:
 
 	PhatbooksDatabaseConnection& m_database_connection;
 
-	wxMenuBar* m_menu_bar;
-	wxMenu* m_file_menu;
-	wxMenu* m_new_menu;
-	wxMenu* m_edit_menu;
-	wxMenu* m_view_menu;
-	wxMenu* m_help_menu;
+	wxMenuBar* m_menu_bar = nullptr;
+	wxMenu* m_file_menu = nullptr;
+	wxMenu* m_new_menu = nullptr;
+	wxMenu* m_edit_menu = nullptr;
+	wxMenu* m_view_menu = nullptr;
+	wxMenu* m_help_menu = nullptr;
 
-	TopPanel* m_top_panel;
+	TopPanel* m_top_panel = nullptr;
 
 	DECLARE_EVENT_TABLE()
 };

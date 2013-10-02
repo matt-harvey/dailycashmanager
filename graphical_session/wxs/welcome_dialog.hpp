@@ -42,17 +42,17 @@ private:
 	void on_cancel_button_click(wxCommandEvent& event);
 
 	PhatbooksDatabaseConnection& m_database_connection;
-	bool m_user_wants_new_file;
-	wxGridSizer* m_top_sizer;
-	wxButton* m_existing_file_button;
-	wxButton* m_new_file_button;
+	bool m_user_wants_new_file = false;
+	wxGridSizer* m_top_sizer = nullptr;
+	wxButton* m_existing_file_button = nullptr;
+	wxButton* m_new_file_button = nullptr;
 
 	// TODO The cancel button looks ugly here. It would be better to have
 	// a close box at the top right; however this was not showing when
 	// I tried to add one using wxCLOSE_BOX style (at least not on
 	// Fedora with Gnome). Hence the cancel button. Perhaps on Windows,
 	// however, we can get the cancel button to work?
-	wxButton* m_cancel_button;
+	wxButton* m_cancel_button = nullptr;
 
 	static int const s_existing_file_button_id = wxID_HIGHEST + 1;
 	static int const s_new_file_button_id = wxID_HIGHEST + 2;

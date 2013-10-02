@@ -82,9 +82,6 @@ END_EVENT_TABLE()
 BudgetPanel::BudgetPanel(AccountDialog* p_parent, AccountHandle const& p_account):
 	wxPanel(p_parent, wxID_ANY),
 	m_next_row(0),
-	m_top_sizer(nullptr),
-	m_summary_label(nullptr),
-	m_summary_amount_text(nullptr),
 	m_account(p_account)
 {
 	JEWEL_ASSERT (p_parent);  // precondition
@@ -420,9 +417,7 @@ void
 BudgetPanel::push_item_component(BudgetItemHandle const& p_budget_item)
 {
 	JEWEL_ASSERT (p_budget_item->account() == m_account);
-
-
-	BudgetItemComponent budget_item_component = {0, 0, 0};
+	BudgetItemComponent budget_item_component;
 	budget_item_component.description_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
@@ -684,10 +679,6 @@ BudgetPanel::BalancingDialog::BalancingDialog
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
-	m_top_sizer(nullptr),
-	m_account_ctrl(nullptr),
-	m_no_button(nullptr),
-	m_yes_button(nullptr),
 	m_imbalance(p_imbalance),
 	m_database_connection(p_database_connection)
 {

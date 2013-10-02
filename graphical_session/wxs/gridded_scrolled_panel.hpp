@@ -105,8 +105,8 @@ protected:
 
 private:
 	
-	int m_current_row;
-	wxGridBagSizer* m_top_sizer;
+	int m_current_row = 0;
+	wxGridBagSizer* m_top_sizer = nullptr;
 	PhatbooksDatabaseConnection& m_database_connection;
 
 };  // class GriddedScrolledPanel

@@ -180,7 +180,7 @@ private:
 	AccountSuperType m_account_super_type;
 	CommodityHandle m_commodity;
 
-	wxStaticText* m_summary_amount_text;
+	wxStaticText* m_summary_amount_text = nullptr;
 	
 	size_t m_minimum_num_rows;
 

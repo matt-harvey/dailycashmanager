@@ -111,15 +111,15 @@ private:
 	bool update_account_from_dialog(bool p_is_new_account);
 
 	int m_current_row;
-	wxGridBagSizer* m_top_sizer;
-	wxTextCtrl* m_name_ctrl;
-	AccountTypeCtrl* m_account_type_ctrl;
-	wxTextCtrl* m_description_ctrl;
-	DecimalTextCtrl* m_opening_amount_ctrl;
-	BudgetPanel* m_budget_panel;
-	wxCheckBox* m_visibility_ctrl;
-	wxButton* m_cancel_button;
-	wxButton* m_ok_button;
+	wxGridBagSizer* m_top_sizer = nullptr;
+	wxTextCtrl* m_name_ctrl = nullptr;
+	AccountTypeCtrl* m_account_type_ctrl = nullptr;
+	wxTextCtrl* m_description_ctrl = nullptr;
+	DecimalTextCtrl* m_opening_amount_ctrl = nullptr;
+	BudgetPanel* m_budget_panel = nullptr;
+	wxCheckBox* m_visibility_ctrl = nullptr;
+	wxButton* m_cancel_button = nullptr;
+	wxButton* m_ok_button = nullptr;
 
 	AccountHandle m_account;
 

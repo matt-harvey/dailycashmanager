@@ -94,18 +94,18 @@ private:
 	static int const s_entry_list_ctrl_id = s_refresh_button_id + 1;
 
 	bool m_support_reconciliations;
-	int m_next_row;
+	int m_next_row = 0;
 
-	int m_client_size_aux;
-	int m_text_ctrl_height;
+	int m_client_size_aux = 0;
+	int m_text_ctrl_height = 0;
 
-	wxGridBagSizer* m_top_sizer;
-	AccountCtrl* m_account_ctrl;
-	DateCtrl* m_min_date_ctrl;
-	DateCtrl* m_max_date_ctrl;
-	wxButton* m_refresh_button;
-	wxStaticText* m_reconciliation_hint;
-	EntryListCtrl* m_entry_list_ctrl;
+	wxGridBagSizer* m_top_sizer = nullptr;
+	AccountCtrl* m_account_ctrl = nullptr;
+	DateCtrl* m_min_date_ctrl = nullptr;
+	DateCtrl* m_max_date_ctrl = nullptr;
+	wxButton* m_refresh_button = nullptr;
+	wxStaticText* m_reconciliation_hint = nullptr;
+	EntryListCtrl* m_entry_list_ctrl = nullptr;
 	std::vector<wxStaticText*> m_summary_label_text_items;
 	std::vector<wxStaticText*> m_summary_data_text_items;
 	PhatbooksDatabaseConnection& m_database_connection;

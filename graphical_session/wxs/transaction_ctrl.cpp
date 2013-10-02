@@ -134,17 +134,7 @@ TransactionCtrl::TransactionCtrl
 	(	p_parent,
 		p_size,
 		p_journal->database_connection()
-	),
-	m_transaction_type_ctrl(nullptr),
-	m_source_entry_ctrl(nullptr),
-	m_destination_entry_ctrl(nullptr),
-	m_primary_amount_ctrl(nullptr),
-	m_frequency_ctrl(nullptr),
-	m_date_ctrl(nullptr),
-	m_cancel_button(nullptr),
-	m_delete_button(nullptr),
-	m_ok_button(nullptr),
-	m_journal(nullptr)
+	)
 {
 	JEWEL_LOG_TRACE();
 
@@ -169,17 +159,7 @@ TransactionCtrl::TransactionCtrl
 	(	p_parent,
 		p_size,
 		p_journal->database_connection()
-	),
-	m_transaction_type_ctrl(nullptr),
-	m_source_entry_ctrl(nullptr),
-	m_destination_entry_ctrl(nullptr),
-	m_primary_amount_ctrl(nullptr),
-	m_frequency_ctrl(nullptr),
-	m_date_ctrl(nullptr),
-	m_cancel_button(nullptr),
-	m_delete_button(nullptr),
-	m_ok_button(nullptr),
-	m_journal(nullptr)
+	)
 {
 	JEWEL_LOG_TRACE();
 
@@ -206,17 +186,7 @@ TransactionCtrl::TransactionCtrl
 	(	p_parent,
 		p_size,
 		p_database_connection
-	),
-	m_transaction_type_ctrl(nullptr),
-	m_source_entry_ctrl(nullptr),
-	m_destination_entry_ctrl(nullptr),
-	m_primary_amount_ctrl(nullptr),
-	m_frequency_ctrl(nullptr),
-	m_date_ctrl(nullptr),
-	m_cancel_button(nullptr),
-	m_delete_button(nullptr),
-	m_ok_button(nullptr),
-	m_journal(nullptr)
+	)
 {
 	JEWEL_LOG_TRACE();
 

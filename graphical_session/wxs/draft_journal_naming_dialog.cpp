@@ -38,9 +38,6 @@ DraftJournalNamingDialog::DraftJournalNamingDialog
 		wxDefaultPosition,
 		wxDefaultSize
 	),
-	m_top_sizer(nullptr),
-	m_name_ctrl(nullptr),
-	m_ok_button(nullptr),
 	m_database_connection(p_database_connection),
 	m_draft_journal_name("")
 {
