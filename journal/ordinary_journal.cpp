@@ -1,6 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "ordinary_journal_impl.hpp"
+#include "ordinary_journal.hpp"
 #include "draft_journal_handle.hpp"
 #include "date.hpp"
 #include "entry_handle.hpp"
@@ -50,25 +50,25 @@ namespace phatbooks
 
 
 string
-OrdinaryJournalImpl::primary_table_name()
+OrdinaryJournal::primary_table_name()
 {
 	return PersistentJournal::primary_table_name();
 }
 
 string
-OrdinaryJournalImpl::exclusive_table_name()
+OrdinaryJournal::exclusive_table_name()
 {
 	return "ordinary_journal_detail";
 }
 
 string
-OrdinaryJournalImpl::primary_key_name()
+OrdinaryJournal::primary_key_name()
 {
 	return PersistentJournal::primary_key_name();
 }
 
 void
-OrdinaryJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
+OrdinaryJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table ordinary_journal_detail"
@@ -83,7 +83,7 @@ OrdinaryJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 	return;
 }
 
-OrdinaryJournalImpl::OrdinaryJournalImpl
+OrdinaryJournal::OrdinaryJournal
 (	IdentityMap& p_identity_map,
 	IdentityMap::Signature const& p_signature
 ):
@@ -91,7 +91,7 @@ OrdinaryJournalImpl::OrdinaryJournalImpl
 {
 }
 
-OrdinaryJournalImpl::OrdinaryJournalImpl
+OrdinaryJournal::OrdinaryJournal
 (	IdentityMap& p_identity_map,
 	Id p_id,
 	IdentityMap::Signature const& p_signature
@@ -100,20 +100,20 @@ OrdinaryJournalImpl::OrdinaryJournalImpl
 {
 }
 		
-OrdinaryJournalImpl::OrdinaryJournalImpl(OrdinaryJournalImpl const& rhs):
+OrdinaryJournal::OrdinaryJournal(OrdinaryJournal const& rhs):
 	PersistentJournal(rhs),
 	m_date(rhs.m_date)
 {
 }
 
 void
-OrdinaryJournalImpl::set_date(gregorian::date const& p_date)
+OrdinaryJournal::set_date(gregorian::date const& p_date)
 {
 	if (p_date < database_connection().entity_creation_date())
 	{
 		JEWEL_THROW
 		(	InvalidJournalDateException,
-			"Date of OrdinaryJournalImpl cannot be set to a date "
+			"Date of OrdinaryJournal cannot be set to a date "
 			"earlier than the entity creation date, using the "
 			"set_date function."
 		);
@@ -129,7 +129,7 @@ OrdinaryJournalImpl::set_date(gregorian::date const& p_date)
 }
 
 void
-OrdinaryJournalImpl::set_date_unrestricted(gregorian::date const& p_date)
+OrdinaryJournal::set_date_unrestricted(gregorian::date const& p_date)
 {
 	load();
 	m_date = julian_int(p_date);
@@ -137,14 +137,14 @@ OrdinaryJournalImpl::set_date_unrestricted(gregorian::date const& p_date)
 }
 
 gregorian::date
-OrdinaryJournalImpl::date()
+OrdinaryJournal::date()
 {
 	load();
 	return boost_date_from_julian_int(value(m_date));
 }
 
 void
-OrdinaryJournalImpl::swap(OrdinaryJournalImpl& rhs)
+OrdinaryJournal::swap(OrdinaryJournal& rhs)
 {
 	PersistentJournal::swap(rhs);
 	using std::swap;
@@ -153,14 +153,14 @@ OrdinaryJournalImpl::swap(OrdinaryJournalImpl& rhs)
 }
 
 void
-OrdinaryJournalImpl::do_load()
+OrdinaryJournal::do_load()
 {
-	OrdinaryJournalImpl temp(*this);
+	OrdinaryJournal temp(*this);
 
 	// Load the Journal (base) part of temp.
 	temp.do_load_journal_core();
 
-	// Load the derived, OrdinaryJournalImpl part of temp.
+	// Load the derived, OrdinaryJournal part of temp.
 	SQLStatement statement
 	(	database_connection(),
 		"select date from ordinary_journal_detail where journal_id = :p"
@@ -180,12 +180,12 @@ OrdinaryJournalImpl::do_load()
 }
 
 void
-OrdinaryJournalImpl::do_save_new()
+OrdinaryJournal::do_save_new()
 {
 	// Save the Journal	(base) part of the object and record the id.
 	Id const journal_id = do_save_new_journal_core();
 
-	// Save the derived, OrdinaryJournalImpl part of the object
+	// Save the derived, OrdinaryJournal part of the object
 	SQLStatement statement
 	(	database_connection(),
 		"insert into ordinary_journal_detail (journal_id, date) "
@@ -199,7 +199,7 @@ OrdinaryJournalImpl::do_save_new()
 }
 
 void
-OrdinaryJournalImpl::do_save_existing()
+OrdinaryJournal::do_save_existing()
 {
 	JEWEL_LOG_TRACE();
 
@@ -207,7 +207,7 @@ OrdinaryJournalImpl::do_save_existing()
 	do_save_existing_journal_core();
 	JEWEL_LOG_TRACE();
 
-	// Save the derived, OrdinaryJournalImpl part of the object
+	// Save the derived, OrdinaryJournal part of the object
 	SQLStatement updater
 	(	database_connection(),	
 		"update ordinary_journal_detail set date = :date "
@@ -221,7 +221,7 @@ OrdinaryJournalImpl::do_save_existing()
 }
 
 void
-OrdinaryJournalImpl::do_ghostify()
+OrdinaryJournal::do_ghostify()
 {
 	do_ghostify_journal_core();
 	clear(m_date);
@@ -229,7 +229,7 @@ OrdinaryJournalImpl::do_ghostify()
 }
 
 void
-OrdinaryJournalImpl::do_remove()
+OrdinaryJournal::do_remove()
 {
 	// TODO Confirm exception safety of total remove() function
 	// taking into account the below.
@@ -252,10 +252,10 @@ OrdinaryJournalImpl::do_remove()
 }
 
 void
-OrdinaryJournalImpl::mimic(Journal& rhs)
+OrdinaryJournal::mimic(Journal& rhs)
 {
 	load();
-	OrdinaryJournalImpl temp(*this);
+	OrdinaryJournal temp(*this);
 	optional<Id> t_id;
 	if (has_id()) t_id = id();
 	temp.mimic_core(rhs, database_connection(), t_id);

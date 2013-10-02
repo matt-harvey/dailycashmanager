@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_draft_journal_impl_hpp_8602723767330276
-#define GUARD_draft_journal_impl_hpp_8602723767330276
+#ifndef GUARD_draft_journal_hpp_8602723767330276
+#define GUARD_draft_journal_hpp_8602723767330276
 
 #include "persistent_journal.hpp"
 #include <sqloxx/persistence_traits.hpp>
@@ -9,7 +9,7 @@
 namespace phatbooks
 {
 
-class DraftJournalImpl;
+class DraftJournal;
 
 }  // namespace phatbooks
 
@@ -19,7 +19,7 @@ namespace sqloxx
 {
 
 template <>
-struct PersistenceTraits<phatbooks::DraftJournalImpl>
+struct PersistenceTraits<phatbooks::DraftJournal>
 {
 	typedef phatbooks::PersistentJournal PrimaryT;
 };
@@ -57,7 +57,7 @@ namespace phatbooks
  * A DraftJournal with Repeaters corresponds to a recurring transaction,
  * that is automatically posted by the application at specified intervals.
  */
-class DraftJournalImpl: virtual public PersistentJournal
+class DraftJournal: virtual public PersistentJournal
 {
 public:
 
@@ -92,7 +92,7 @@ public:
 	 *
 	 * Ordinary client code should use DraftJournalHandle, not DraftJournal.
 	 */
-	DraftJournalImpl
+	DraftJournal
 	(	IdentityMap& p_identity_map,
 		IdentityMap::Signature const& p_signature
 	);
@@ -105,7 +105,7 @@ public:
 	 *
 	 * Ordinary client code should use DraftJournalHandle, not DraftJournal.
 	 */
-	DraftJournalImpl
+	DraftJournal
 	(	IdentityMap& p_identity_map,
 		sqloxx::Id p_id,
 		IdentityMap::Signature const& p_signature
@@ -113,11 +113,11 @@ public:
 
 	// copy constructor is private
 
-	DraftJournalImpl(DraftJournalImpl&&) = delete;
-	DraftJournalImpl& operator=(DraftJournalImpl const&) = delete;
-	DraftJournalImpl& operator=(DraftJournalImpl&&) = delete;
+	DraftJournal(DraftJournal&&) = delete;
+	DraftJournal& operator=(DraftJournal const&) = delete;
+	DraftJournal& operator=(DraftJournal&&) = delete;
 
-	~DraftJournalImpl();
+	~DraftJournal();
 
 	static bool exists
 	(	PhatbooksDatabaseConnection& p_database_connection,
@@ -134,16 +134,16 @@ public:
 	 * @todo Provide non-member swap and specialized std::swap per
 	 * "Effective C++".
 	 */
-	void swap(DraftJournalImpl& rhs);
+	void swap(DraftJournal& rhs);
 
 	wxString repeater_description();
 
 	/**
 	 * Take on the attributes of \e rhs, where these exist and are
-	 * applicable to DraftJournalImpl.
+	 * applicable to DraftJournal.
 	 */
 	void mimic(Journal& rhs);
-	void mimic(DraftJournalImpl& rhs);  // not const& rhs because loading required
+	void mimic(DraftJournal& rhs);  // not const& rhs because loading required
 
 	std::vector<RepeaterHandle> const& repeaters();
 
@@ -156,7 +156,7 @@ private:
 	/**
 	 * Copy constructor - implemented, but deliberately private.
 	 */
-	DraftJournalImpl(DraftJournalImpl const& rhs);	
+	DraftJournal(DraftJournal const& rhs);	
 
 	void do_load();
 	void do_save_existing();
@@ -164,7 +164,7 @@ private:
 	void do_ghostify();
 
 	/**
-	 * Note if the DraftJournalImpl corresponds to the budget instrument
+	 * Note if the DraftJournal corresponds to the budget instrument
 	 * for database_connection(), then PreservedRecordDeletionException is
 	 * thrown.
 	 */
@@ -179,4 +179,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_draft_journal_impl_hpp_8602723767330276
+#endif  // GUARD_draft_journal_hpp_8602723767330276

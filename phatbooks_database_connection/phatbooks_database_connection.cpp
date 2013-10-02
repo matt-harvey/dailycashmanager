@@ -23,10 +23,10 @@
 #include "commodity.hpp"
 #include "date.hpp"
 #include "draft_journal_handle.hpp"
-#include "draft_journal_impl.hpp"
+#include "draft_journal.hpp"
 #include "entry.hpp"
 #include "ordinary_journal_handle.hpp"
-#include "ordinary_journal_impl.hpp"
+#include "ordinary_journal.hpp"
 #include "ordinary_journal_table_iterator.hpp"
 #include "repeater.hpp"
 #include "balance_cache.hpp"
@@ -213,8 +213,8 @@ PhatbooksDatabaseConnection::do_setup()
 		save_default_commodity();
 		Account::setup_tables(*this);
 		PersistentJournal::setup_tables(*this);
-		DraftJournalImpl::setup_tables(*this);
-		OrdinaryJournalImpl::setup_tables(*this);
+		DraftJournal::setup_tables(*this);
+		OrdinaryJournal::setup_tables(*this);
 		Repeater::setup_tables(*this);
 		BudgetItem::setup_tables(*this);
 		AmalgamatedBudget::setup_tables(*this);

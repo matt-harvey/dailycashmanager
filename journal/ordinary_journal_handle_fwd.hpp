@@ -6,9 +6,9 @@
 namespace phatbooks
 {
 
-class OrdinaryJournalImpl;
+class OrdinaryJournal;
 
-typedef sqloxx::Handle<OrdinaryJournalImpl> OrdinaryJournalHandle;
+typedef sqloxx::Handle<OrdinaryJournal> OrdinaryJournalHandle;
 
 
 }  // namespace phatbooks

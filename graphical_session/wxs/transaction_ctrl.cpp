@@ -9,7 +9,7 @@
 #include "date_ctrl.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
-#include "draft_journal_impl.hpp"
+#include "draft_journal.hpp"
 #include "draft_journal_handle.hpp"
 #include "draft_journal_naming_dialog.hpp"
 #include "entry_handle.hpp"
@@ -21,7 +21,7 @@
 #include "frequency_ctrl.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include "journal.hpp"
-#include "ordinary_journal_impl.hpp"
+#include "ordinary_journal.hpp"
 #include "ordinary_journal_handle.hpp"
 #include "persistent_journal.hpp"
 #include "proto_journal.hpp"
@@ -152,7 +152,7 @@ TransactionCtrl::TransactionCtrl
 	
 	// TODO Make this nicer once facility is provided by sqloxx::Handle to do so.
 	Handle<PersistentJournal>* const j = new Handle<PersistentJournal>
-	(	Handle<PersistentJournal>::create<PhatbooksDatabaseConnection, OrdinaryJournalImpl>
+	(	Handle<PersistentJournal>::create<PhatbooksDatabaseConnection, OrdinaryJournal>
 		(	p_journal->database_connection(),
 			p_journal->id()
 		)
@@ -188,7 +188,7 @@ TransactionCtrl::TransactionCtrl
 
 	// TODO Make this nicer once facility is provided by sqloxx::Handle to do so.
 	Handle<PersistentJournal>* const j = new Handle<PersistentJournal>
-	(	Handle<PersistentJournal>::create<PhatbooksDatabaseConnection, DraftJournalImpl>
+	(	Handle<PersistentJournal>::create<PhatbooksDatabaseConnection, DraftJournal>
 		(	p_journal->database_connection(),
 			p_journal->id()
 		)
@@ -460,9 +460,9 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 
 	// TODO Factor out code duplicated with other constructor.
 
-	OrdinaryJournalImpl* oj = dynamic_cast<OrdinaryJournalImpl*>(m_journal->get());
+	OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal->get());
 	bool const is_ordinary = static_cast<bool>(oj);
-	DraftJournalImpl* dj = dynamic_cast<DraftJournalImpl*>(m_journal->get());
+	DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal->get());
 	bool const is_draft = static_cast<bool>(dj);
 	JEWEL_ASSERT (!(is_ordinary && is_draft));
 	JEWEL_ASSERT (is_ordinary || is_draft);
@@ -994,7 +994,7 @@ TransactionCtrl::save_existing_journal()
 	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
 	if (maybe_frequency)
 	{
-		DraftJournalImpl* dj = dynamic_cast<DraftJournalImpl*>(m_journal->get());
+		DraftJournal* dj = dynamic_cast<DraftJournal*>(m_journal->get());
 		JEWEL_ASSERT (dj);
 		JEWEL_ASSERT (m_date_ctrl->date());
 		gregorian::date const next_date = value(m_date_ctrl->date());
@@ -1062,7 +1062,7 @@ TransactionCtrl::save_existing_journal()
 	{
 		JEWEL_LOG_TRACE();
 		JEWEL_ASSERT (!maybe_frequency);
-		OrdinaryJournalImpl* oj = dynamic_cast<OrdinaryJournalImpl*>(m_journal->get());
+		OrdinaryJournal* oj = dynamic_cast<OrdinaryJournal*>(m_journal->get());
 		JEWEL_ASSERT (oj);
 		JEWEL_ASSERT (m_date_ctrl->date());
 		oj->set_date(value(m_date_ctrl->date()));

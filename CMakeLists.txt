@@ -149,11 +149,11 @@ set (main_files
 	 entry/entry_table_iterator.cpp
 	 filename_validation/filename_validation.cpp
 	 finformat/finformat.cpp
-	 journal/draft_journal_impl.cpp
+	 journal/draft_journal.cpp
 	 journal/draft_journal_table_iterator.cpp
 	 journal/journal.cpp
+	 journal/ordinary_journal.cpp
 	 journal/ordinary_journal_handle.cpp
-	 journal/ordinary_journal_impl.cpp
 	 journal/persistent_journal.cpp
 	 session/session.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp

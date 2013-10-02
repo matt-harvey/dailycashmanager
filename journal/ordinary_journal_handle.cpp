@@ -5,7 +5,7 @@
 #include "commodity_handle.hpp"
 #include "draft_journal_handle.hpp"
 #include "entry_handle.hpp"
-#include "ordinary_journal_impl.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
@@ -25,7 +25,7 @@ using std::move;
 namespace phatbooks
 {
 
-typedef sqloxx::Handle<OrdinaryJournalImpl> OrdinaryJournalHandle;
+typedef sqloxx::Handle<OrdinaryJournal> OrdinaryJournalHandle;
 
 OrdinaryJournalHandle
 create_opening_balance_journal
@@ -34,7 +34,7 @@ create_opening_balance_journal
 )
 {
 	// Normally the implementation of OrdinaryJournal function is
-	// delegated to OrdinaryJournalImpl. But here, we are using
+	// delegated to OrdinaryJournal. But here, we are using
 	// a static function to return an OrdinaryJournal, which we create using
 	// "high level", OrdinaryJournal-level functions; so it seems
 	// appropriate to implement it here.

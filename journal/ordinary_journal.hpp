@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_ordinary_journal_impl_hpp_6580145273627781
-#define GUARD_ordinary_journal_impl_hpp_6580145273627781
+#ifndef GUARD_ordinary_journal_hpp_6580145273627781
+#define GUARD_ordinary_journal_hpp_6580145273627781
 
 
 #include "persistent_journal.hpp"
@@ -13,7 +13,7 @@
 namespace phatbooks
 {
 
-class OrdinaryJournalImpl;
+class OrdinaryJournal;
 
 }  // namespace phatbooks
 
@@ -21,7 +21,7 @@ namespace sqloxx
 {
 
 template <>
-struct PersistenceTraits<phatbooks::OrdinaryJournalImpl>
+struct PersistenceTraits<phatbooks::OrdinaryJournal>
 {
 	typedef phatbooks::PersistentJournal PrimaryT;
 };
@@ -56,7 +56,7 @@ namespace phatbooks
  * entity. The posting occurs when the \e save() method is called on the
  * OrdinaryJournal.
  */
-class OrdinaryJournalImpl: virtual public PersistentJournal
+class OrdinaryJournal: virtual public PersistentJournal
 {
 public:
 
@@ -66,23 +66,23 @@ public:
 
 	/**
 	 * Create the tables required for the persistence of
-	 * OrdinaryJournalImpl instances in a SQLite database.
+	 * OrdinaryJournal instances in a SQLite database.
 	 */
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 
 	/**
-	 * Construct a "raw" OrdinaryJournalImpl, that will not yet
+	 * Construct a "raw" OrdinaryJournal, that will not yet
 	 * correspond to any particular object in the database
 	 */
-	OrdinaryJournalImpl
+	OrdinaryJournal
 	(	IdentityMap& p_identity_map,
 		IdentityMap::Signature const& p_signature
 	);
 
 	/**
-	 * Get an OrdinaryJournalImpl by id from the database.
+	 * Get an OrdinaryJournal by id from the database.
 	 */
-	OrdinaryJournalImpl
+	OrdinaryJournal
 	(	IdentityMap& p_identity_map,	
 		sqloxx::Id p_id,
 		IdentityMap::Signature const& p_signature
@@ -90,11 +90,11 @@ public:
 
 	// copy constructor is private
 	
-	OrdinaryJournalImpl(OrdinaryJournalImpl&&) = delete;
-	OrdinaryJournalImpl& operator=(OrdinaryJournalImpl const&) = delete;
-	OrdinaryJournalImpl& operator=(OrdinaryJournalImpl&&) = delete;
+	OrdinaryJournal(OrdinaryJournal&&) = delete;
+	OrdinaryJournal& operator=(OrdinaryJournal const&) = delete;
+	OrdinaryJournal& operator=(OrdinaryJournal&&) = delete;
 
-	~OrdinaryJournalImpl() = default;
+	~OrdinaryJournal() = default;
 
 	/**
 	 * Can throw InvalidJournalDateException, if we attempt to
@@ -117,11 +117,11 @@ public:
 	 * @todo Provide non-member swap and specialized std::swap per
 	 * "Effective C++".
 	 */
-	void swap(OrdinaryJournalImpl& rhs);
+	void swap(OrdinaryJournal& rhs);
 
 	/**
 	 * Take on the attributes \e rhs, where these exist and are
-	 * applicable to OrdinaryJournalImpl; but do \e not take on the \e id
+	 * applicable to OrdinaryJournal; but do \e not take on the \e id
 	 * attribute of \e rhs, or the date.
 	 */
 	void mimic(Journal& rhs);
@@ -131,7 +131,7 @@ private:
 	/**
 	 * Copy constructor - implemented, but deliberately private.
 	 */
-	OrdinaryJournalImpl(OrdinaryJournalImpl const& rhs);
+	OrdinaryJournal(OrdinaryJournal const& rhs);
 
 	void do_load() override;
 	void do_save_existing() override;
@@ -153,4 +153,4 @@ private:
 }  // namespace phatbooks
 
 
-#endif  // GUARD_ordinary_journal_impl_hpp_6580145273627781
+#endif  // GUARD_ordinary_journal_hpp_6580145273627781

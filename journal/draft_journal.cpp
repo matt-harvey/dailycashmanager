@@ -1,8 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "string_conv.hpp"
+#include "draft_journal.hpp"
 #include "draft_journal_handle.hpp"
-#include "draft_journal_impl.hpp"
 #include "draft_journal_table_iterator.hpp"
 #include "entry_handle.hpp"
 #include "persistent_journal.hpp"
@@ -41,7 +40,7 @@ using std::string;
 namespace phatbooks
 {
 
-struct DraftJournalImpl::DraftJournalData
+struct DraftJournal::DraftJournalData
 {
 	boost::optional<wxString> name;
 	std::vector<RepeaterHandle> repeaters;
@@ -49,32 +48,32 @@ struct DraftJournalImpl::DraftJournalData
 
 
 string
-DraftJournalImpl::primary_table_name()
+DraftJournal::primary_table_name()
 {
 	return PersistentJournal::primary_table_name();
 }
 
 string
-DraftJournalImpl::exclusive_table_name()
+DraftJournal::exclusive_table_name()
 {
 	return "draft_journal_detail";
 }
 
 string
-DraftJournalImpl::primary_key_name()
+DraftJournal::primary_key_name()
 {
 	return Journal::primary_key_name();
 }
 
 vector<RepeaterHandle> const&
-DraftJournalImpl::repeaters()
+DraftJournal::repeaters()
 {
 	load();
 	return m_dj_data->repeaters;
 }
 
 void
-DraftJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
+DraftJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table draft_journal_detail"
@@ -87,7 +86,7 @@ DraftJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 bool
-DraftJournalImpl::no_user_draft_journals_saved
+DraftJournal::no_user_draft_journals_saved
 (	PhatbooksDatabaseConnection& p_database_connection
 )
 {
@@ -99,7 +98,7 @@ DraftJournalImpl::no_user_draft_journals_saved
 	return it == end;
 }
 
-DraftJournalImpl::DraftJournalImpl
+DraftJournal::DraftJournal
 (	IdentityMap& p_identity_map,
 	IdentityMap::Signature const& p_signature
 ):
@@ -109,7 +108,7 @@ DraftJournalImpl::DraftJournalImpl
 	(void)p_signature;  // silence compiler re. unused parameter
 }
 
-DraftJournalImpl::DraftJournalImpl
+DraftJournal::DraftJournal
 (	IdentityMap& p_identity_map,	
 	Id p_id,
 	IdentityMap::Signature const& p_signature
@@ -120,10 +119,10 @@ DraftJournalImpl::DraftJournalImpl
 	(void)p_signature;  // silence compiler re. unused parameter
 }
 
-DraftJournalImpl::~DraftJournalImpl() = default;
+DraftJournal::~DraftJournal() = default;
 
 bool
-DraftJournalImpl::exists
+DraftJournal::exists
 (	PhatbooksDatabaseConnection& p_database_connection,
 	wxString const& p_name
 )
@@ -146,7 +145,7 @@ DraftJournalImpl::exists
 }
 
 void
-DraftJournalImpl::set_name(wxString const& p_name)
+DraftJournal::set_name(wxString const& p_name)
 {
 	load();
 	m_dj_data->name = p_name;
@@ -154,7 +153,7 @@ DraftJournalImpl::set_name(wxString const& p_name)
 }
 
 void
-DraftJournalImpl::push_repeater(RepeaterHandle const& repeater)
+DraftJournal::push_repeater(RepeaterHandle const& repeater)
 {
 	load();
 	if (has_id())
@@ -166,20 +165,20 @@ DraftJournalImpl::push_repeater(RepeaterHandle const& repeater)
 }
 
 wxString
-DraftJournalImpl::name()
+DraftJournal::name()
 {
 	load();
 	return value(m_dj_data->name);
 }
 
-DraftJournalImpl::DraftJournalImpl(DraftJournalImpl const& rhs):
+DraftJournal::DraftJournal(DraftJournal const& rhs):
 	PersistentJournal(rhs),
 	m_dj_data(new DraftJournalData(*(rhs.m_dj_data)))
 {
 }
 
 void
-DraftJournalImpl::swap(DraftJournalImpl& rhs)
+DraftJournal::swap(DraftJournal& rhs)
 {
 	PersistentJournal::swap(rhs);
 	using std::swap;
@@ -188,14 +187,14 @@ DraftJournalImpl::swap(DraftJournalImpl& rhs)
 }
 
 void
-DraftJournalImpl::do_load()
+DraftJournal::do_load()
 {
-	DraftJournalImpl temp(*this);
+	DraftJournal temp(*this);
 	
 	// Load the base part of temp.
 	temp.do_load_journal_core();
 
-	// Load the derived, DraftJournalImpl part of the temp.
+	// Load the derived, DraftJournal part of the temp.
 	SQLStatement statement
 	(	database_connection(),
 		"select name from draft_journal_detail where journal_id = :p"
@@ -220,12 +219,12 @@ DraftJournalImpl::do_load()
 }
 
 void
-DraftJournalImpl::do_save_new()
+DraftJournal::do_save_new()
 {
 	// Save the PersistentJournal part of the object
 	Id const journal_id = do_save_new_journal_core();
 
-	// Save the derived, DraftJournalImpl part of the object
+	// Save the derived, DraftJournal part of the object
 	SQLStatement statement
 	(	database_connection(),
 		"insert into draft_journal_detail(journal_id, name) "
@@ -244,7 +243,7 @@ DraftJournalImpl::do_save_new()
 }
 
 void
-DraftJournalImpl::do_save_existing()
+DraftJournal::do_save_existing()
 {
 	do_save_existing_journal_core();
 	SQLStatement updater
@@ -262,8 +261,8 @@ DraftJournalImpl::do_save_existing()
 		repeater->save();
 		saved_repeater_ids.insert(repeater->id());
 	}
-	// Now remove any repeaters in the database with this DraftJournalImpl's
-	// journal_id, that no longer exist in the in-memory DraftJournalImpl
+	// Now remove any repeaters in the database with this DraftJournal's
+	// journal_id, that no longer exist in the in-memory DraftJournal
 	SQLStatement repeater_finder
 	(	database_connection(),
 		"select repeater_id from repeaters where journal_id = :journal_id"
@@ -277,7 +276,7 @@ DraftJournalImpl::do_save_existing()
 		if (saved_repeater_ids.find(repeater_id) == saved_repeaters_end)
 		{
 			// This repeater is in the database but no longer in the in-memory
-			// DraftJournalImpl, and so should be deleted from the database.
+			// DraftJournal, and so should be deleted from the database.
 			RepeaterHandle const doomed_repeater(database_connection(), repeater_id);
 			doomed_repeater->remove();
 			// Note it's OK even if the last repeater is deleted. Another
@@ -290,7 +289,7 @@ DraftJournalImpl::do_save_existing()
 }
 
 void
-DraftJournalImpl::do_ghostify()
+DraftJournal::do_ghostify()
 {
 	do_ghostify_journal_core();
 	clear(m_dj_data->name);
@@ -303,13 +302,13 @@ DraftJournalImpl::do_ghostify()
 }
 
 void
-DraftJournalImpl::do_remove()
+DraftJournal::do_remove()
 {
 	if (id() == database_connection().budget_instrument()->id())
 	{
 		JEWEL_THROW
 		(	PreservedRecordDeletionException,
-			"Budget instrument DraftJournalImpl cannot be deleted."
+			"Budget instrument DraftJournal cannot be deleted."
 		);
 	}
 	// TODO Confirm exception-safety of whole remove() function, once
@@ -333,14 +332,14 @@ DraftJournalImpl::do_remove()
 }
 
 bool
-DraftJournalImpl::has_repeaters()
+DraftJournal::has_repeaters()
 {
 	load();
 	return !(m_dj_data->repeaters.empty());
 }
 
 void
-DraftJournalImpl::clear_repeaters()
+DraftJournal::clear_repeaters()
 {
 	load();
 	(m_dj_data->repeaters).clear();
@@ -348,7 +347,7 @@ DraftJournalImpl::clear_repeaters()
 }
 
 wxString
-DraftJournalImpl::repeater_description()
+DraftJournal::repeater_description()
 {
 	load();
 	if (m_dj_data->repeaters.empty())
@@ -403,10 +402,10 @@ DraftJournalImpl::repeater_description()
 }	
 			
 void
-DraftJournalImpl::mimic(Journal& rhs)
+DraftJournal::mimic(Journal& rhs)
 {
 	load();
-	DraftJournalImpl temp(*this);
+	DraftJournal temp(*this);
 	optional<Id> t_id;
 	if (temp.has_id()) t_id = temp.id();
 	temp.mimic_core(rhs, database_connection(), t_id);
@@ -415,10 +414,10 @@ DraftJournalImpl::mimic(Journal& rhs)
 }
 
 void
-DraftJournalImpl::mimic(DraftJournalImpl& rhs)
+DraftJournal::mimic(DraftJournal& rhs)
 {
 	load();
-	DraftJournalImpl temp(*this);
+	DraftJournal temp(*this);
 
 	// Necessary as mimic_core will only treat rhs as Journal, and
 	// getters won't load.

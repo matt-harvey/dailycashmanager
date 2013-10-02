@@ -4,7 +4,7 @@
 #define GUARD_ordinary_journal_handle_hpp_8344533833835522
 
 #include "account_handle_fwd.hpp"
-#include "ordinary_journal_impl.hpp"
+#include "ordinary_journal.hpp"
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
 
@@ -12,7 +12,7 @@ namespace phatbooks
 {
 
 typedef
-	sqloxx::Handle<OrdinaryJournalImpl>
+	sqloxx::Handle<OrdinaryJournal>
 	OrdinaryJournalHandle;
 
 /**
