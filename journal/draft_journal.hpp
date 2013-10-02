@@ -158,17 +158,17 @@ private:
 	 */
 	DraftJournal(DraftJournal const& rhs);	
 
-	void do_load();
-	void do_save_existing();
-	void do_save_new();
-	void do_ghostify();
+	void do_load() override;
+	void do_save_existing() override;
+	void do_save_new() override;
+	void do_ghostify() override;
 
 	/**
 	 * Note if the DraftJournal corresponds to the budget instrument
 	 * for database_connection(), then PreservedRecordDeletionException is
 	 * thrown.
 	 */
-	void do_remove();
+	void do_remove() override;
 
 	struct DraftJournalData;
 

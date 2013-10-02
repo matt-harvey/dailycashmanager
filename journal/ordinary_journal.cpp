@@ -158,7 +158,7 @@ OrdinaryJournal::do_load()
 	OrdinaryJournal temp(*this);
 
 	// Load the Journal (base) part of temp.
-	temp.do_load_journal_core();
+	temp.load_journal_core();
 
 	// Load the derived, OrdinaryJournal part of temp.
 	SQLStatement statement
@@ -183,7 +183,7 @@ void
 OrdinaryJournal::do_save_new()
 {
 	// Save the Journal	(base) part of the object and record the id.
-	Id const journal_id = do_save_new_journal_core();
+	Id const journal_id = save_new_journal_core();
 
 	// Save the derived, OrdinaryJournal part of the object
 	SQLStatement statement
@@ -204,7 +204,7 @@ OrdinaryJournal::do_save_existing()
 	JEWEL_LOG_TRACE();
 
 	// Save the Journal (base) part of the object
-	do_save_existing_journal_core();
+	save_existing_journal_core();
 	JEWEL_LOG_TRACE();
 
 	// Save the derived, OrdinaryJournal part of the object
@@ -223,7 +223,7 @@ OrdinaryJournal::do_save_existing()
 void
 OrdinaryJournal::do_ghostify()
 {
-	do_ghostify_journal_core();
+	ghostify_journal_core();
 	clear(m_date);
 	return;
 }

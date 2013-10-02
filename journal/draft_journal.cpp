@@ -192,7 +192,7 @@ DraftJournal::do_load()
 	DraftJournal temp(*this);
 	
 	// Load the base part of temp.
-	temp.do_load_journal_core();
+	temp.load_journal_core();
 
 	// Load the derived, DraftJournal part of the temp.
 	SQLStatement statement
@@ -222,7 +222,7 @@ void
 DraftJournal::do_save_new()
 {
 	// Save the PersistentJournal part of the object
-	Id const journal_id = do_save_new_journal_core();
+	Id const journal_id = save_new_journal_core();
 
 	// Save the derived, DraftJournal part of the object
 	SQLStatement statement
@@ -245,7 +245,7 @@ DraftJournal::do_save_new()
 void
 DraftJournal::do_save_existing()
 {
-	do_save_existing_journal_core();
+	save_existing_journal_core();
 	SQLStatement updater
 	(	database_connection(),
 		"update draft_journal_detail set name = :name where "
@@ -291,7 +291,7 @@ DraftJournal::do_save_existing()
 void
 DraftJournal::do_ghostify()
 {
-	do_ghostify_journal_core();
+	ghostify_journal_core();
 	clear(m_dj_data->name);
 	for (RepeaterHandle const& repeater: m_dj_data->repeaters)
 	{

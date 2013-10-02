@@ -203,10 +203,10 @@ public:
 private:
 
 	Repeater(Repeater const& rhs);
-	void do_load();
-	void do_save_existing();
-	void do_save_new();
-	void do_ghostify();
+	void do_load() override;
+	void do_save_existing() override;
+	void do_save_new() override;
+	void do_ghostify() override;
 	void process_saving_statement(sqloxx::SQLStatement& statement);
 
 	struct RepeaterData;

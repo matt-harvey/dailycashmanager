@@ -43,7 +43,7 @@ public:
 	virtual ~PLReport() = default;
 
 private:
-	virtual void do_generate();
+	virtual void do_generate() override;
 
 	/**
 	 * @returns an initialized optional only if there is a max_date().

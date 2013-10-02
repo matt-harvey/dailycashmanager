@@ -255,7 +255,7 @@ private:
 	 * Currently client code needs to remember to call this after calling
 	 * open. This is error prone.
 	 */
-	void do_setup();
+	void do_setup() override;
 
 	void setup_entity_table();
 	bool tables_are_configured();

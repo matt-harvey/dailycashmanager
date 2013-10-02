@@ -153,7 +153,7 @@ private:
 		);
 		virtual ~SpecialDecimalTextCtrl();
 	private:
-		void do_on_kill_focus(wxFocusEvent& event);
+		void do_on_kill_focus(wxFocusEvent& event) override;
 	};
 
 	friend class SpecialDecimalTextCtrl;

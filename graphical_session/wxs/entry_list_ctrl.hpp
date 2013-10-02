@@ -166,7 +166,6 @@ private:
 
 	void on_item_activated(wxListEvent& event);
 
-
 	virtual std::vector<SummaryDatum> const& do_get_summary_data() const;
 	virtual void do_initialize_summary_data();
 	virtual void do_process_candidate_entry_for_summary(EntryHandle const& p_entry);

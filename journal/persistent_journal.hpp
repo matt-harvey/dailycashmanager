@@ -65,16 +65,10 @@ protected:
 
 	virtual void swap(PersistentJournal& rhs);
 
-	void do_load_journal_core();
-	void do_save_existing_journal_core();
-	sqloxx::Id do_save_new_journal_core();
-	void do_ghostify_journal_core();
-
-
-	// virtual void do_save_existing() override = 0;
-	// virtual void do_save_new() override;
-	// virtual void do_ghostify() override;
-	// virtual void do_remove() override;
+	void load_journal_core();
+	void save_existing_journal_core();
+	sqloxx::Id save_new_journal_core();
+	void ghostify_journal_core();
 
 	std::vector<EntryHandle> const& do_get_entries() override;
 	void do_set_transaction_type(TransactionType p_transaction_type) override;
@@ -83,7 +77,7 @@ protected:
 	void do_remove_entry(EntryHandle const& p_entry) override;
 	void do_clear_entries() override;
 	wxString do_get_comment() override;
-	TransactionType do_get_transaction_type();
+	TransactionType do_get_transaction_type() override;
 	
 };
 

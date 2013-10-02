@@ -112,7 +112,7 @@ PersistentJournal::swap(PersistentJournal& rhs)
 }
 
 Id
-PersistentJournal::do_save_new_journal_core()
+PersistentJournal::save_new_journal_core()
 {
 	if (!is_balanced())
 	{
@@ -145,7 +145,7 @@ PersistentJournal::do_save_new_journal_core()
 }
 
 void
-PersistentJournal::do_save_existing_journal_core()
+PersistentJournal::save_existing_journal_core()
 {
 	JEWEL_LOG_TRACE();
 	if (!is_balanced())
@@ -210,7 +210,7 @@ PersistentJournal::do_save_existing_journal_core()
 }
 
 void
-PersistentJournal::do_load_journal_core()
+PersistentJournal::load_journal_core()
 {
 	SQLStatement statement
 	(	database_connection(),
@@ -243,7 +243,7 @@ PersistentJournal::do_load_journal_core()
 }
 
 void
-PersistentJournal::do_ghostify_journal_core()
+PersistentJournal::ghostify_journal_core()
 {
 	for (EntryHandle const& entry: entries())
 	{

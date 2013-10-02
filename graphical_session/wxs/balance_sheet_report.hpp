@@ -43,7 +43,7 @@ public:
 	virtual ~BalanceSheetReport() = default;
 
 private:
-	virtual void do_generate();
+	virtual void do_generate() override;
 
 	void refresh_map();
 

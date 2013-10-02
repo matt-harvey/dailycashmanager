@@ -59,18 +59,18 @@ public:
 	virtual ~ReconciliationEntryListCtrl() = default;
 
 private:
-	virtual void do_set_non_date_columns(long p_row, EntryHandle const& p_entry);
-	virtual void do_insert_non_date_columns();
-	virtual bool do_approve_entry(EntryHandle const& p_entry) const;
-	virtual int do_get_comment_col_num() const;
-	virtual int do_get_num_columns() const;
+	virtual void do_set_non_date_columns(long p_row, EntryHandle const& p_entry) override;
+	virtual void do_insert_non_date_columns() override;
+	virtual bool do_approve_entry(EntryHandle const& p_entry) const override;
+	virtual int do_get_comment_col_num() const override;
+	virtual int do_get_num_columns() const override;
 
-	virtual std::vector<SummaryDatum> const& do_get_summary_data() const;
-	virtual void do_initialize_summary_data();
-	virtual void do_process_candidate_entry_for_summary(EntryHandle const& p_entry);
-	virtual void do_process_removal_for_summary(long p_row);
+	virtual std::vector<SummaryDatum> const& do_get_summary_data() const override;
+	virtual void do_initialize_summary_data() override;
+	virtual void do_process_candidate_entry_for_summary(EntryHandle const& p_entry) override;
+	virtual void do_process_removal_for_summary(long p_row) override;
 
-	virtual std::unique_ptr<sqloxx::SQLStatement> do_create_entry_selector();
+	virtual std::unique_ptr<sqloxx::SQLStatement> do_create_entry_selector() override;
 
 	void on_item_right_click(wxListEvent& event);
 

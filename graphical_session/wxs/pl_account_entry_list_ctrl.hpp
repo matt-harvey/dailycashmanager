@@ -40,10 +40,10 @@ public:
 
 private:
 
-	virtual void do_set_non_date_columns(long p_row, EntryHandle const& p_entry);
-	virtual void do_insert_non_date_columns();
-	virtual int do_get_comment_col_num() const;
-	virtual int do_get_num_columns() const;
+	virtual void do_set_non_date_columns(long p_row, EntryHandle const& p_entry) override;
+	virtual void do_insert_non_date_columns() override;
+	virtual int do_get_comment_col_num() const override;
+	virtual int do_get_num_columns() const override;
 
 	wxString verb() const;
 	jewel::Decimal friendly_amount(EntryHandle const& p_entry) const;

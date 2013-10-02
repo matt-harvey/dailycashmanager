@@ -47,13 +47,13 @@ protected:
 	boost::gregorian::date min_date() const;
 
 private:
-	virtual bool do_require_progress_log() const;
+	virtual bool do_require_progress_log() const override;
 	virtual void do_insert_non_date_columns() = 0;
-	virtual bool do_approve_entry(EntryHandle const& p_entry) const;
-	virtual void do_set_column_widths();
+	virtual bool do_approve_entry(EntryHandle const& p_entry) const override;
+	virtual void do_set_column_widths() override;
 	virtual int do_get_num_columns() const = 0;
 	virtual int do_get_comment_col_num() const = 0;
-	virtual std::unique_ptr<sqloxx::SQLStatement> do_create_entry_selector();
+	virtual std::unique_ptr<sqloxx::SQLStatement> do_create_entry_selector() override;
 	
 	AccountHandle const m_account;
 	boost::gregorian::date m_min_date;
