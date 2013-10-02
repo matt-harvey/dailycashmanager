@@ -144,7 +144,6 @@ TransactionCtrl::TransactionCtrl
 	JEWEL_ASSERT (m_journal->has_id());
 	JEWEL_ASSERT (m_journal->id() == p_journal->id());
 	configure_for_editing_persistent_journal();
-	configure_for_editing_persistent_journal();
 }
 
 TransactionCtrl::TransactionCtrl
@@ -188,8 +187,7 @@ TransactionCtrl::configure_top_controls
 (	TransactionType p_transaction_type,
 	wxSize& p_text_box_size,
 	Decimal const& p_primary_amount,
-	vector<TransactionType> const&
-		p_available_transaction_types
+	vector<TransactionType> const& p_available_transaction_types
 )
 {
 	JEWEL_LOG_TRACE();
