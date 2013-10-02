@@ -415,7 +415,6 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	increment_row();
 	increment_row();
 
-	// TODO Factor out code duplicated with other constructor.
 	auto const dj = sqloxx::handle_cast<DraftJournal>(m_journal);
 	auto const oj = sqloxx::handle_cast<OrdinaryJournal>(m_journal);
 	bool const is_ordinary = static_cast<bool>(oj);
