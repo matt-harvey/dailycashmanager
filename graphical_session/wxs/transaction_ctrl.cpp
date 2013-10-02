@@ -140,11 +140,10 @@ TransactionCtrl::TransactionCtrl
 
 	JEWEL_ASSERT (p_journal->has_id());
 	
-	m_journal = Handle<PersistentJournal>::
-		create<PhatbooksDatabaseConnection, OrdinaryJournal>
-		(	p_journal->database_connection(),
-			p_journal->id()
-		);
+	m_journal = Handle<PersistentJournal>::create<OrdinaryJournal>
+	(	p_journal->database_connection(),
+		p_journal->id()
+	);
 	configure_for_editing_persistent_journal();
 }
 
@@ -162,11 +161,10 @@ TransactionCtrl::TransactionCtrl
 	JEWEL_LOG_TRACE();
 
 	JEWEL_ASSERT (p_journal->has_id());
-	m_journal = Handle<PersistentJournal>::
-		create<PhatbooksDatabaseConnection, DraftJournal>
-		(	p_journal->database_connection(),
-			p_journal->id()
-		);
+	m_journal = Handle<PersistentJournal>::create<DraftJournal>
+	(	p_journal->database_connection(),
+		p_journal->id()
+	);
 	configure_for_editing_persistent_journal();
 }
 

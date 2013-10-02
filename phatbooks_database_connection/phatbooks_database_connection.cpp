@@ -90,16 +90,15 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	m_journal_map(nullptr),
 	m_repeater_map(nullptr)
 {
-	typedef PhatbooksDatabaseConnection PDC;
 	m_permanent_entity_data = new PermanentEntityData;
 	m_balance_cache = new BalanceCache(*this);
 	m_budget = new AmalgamatedBudget(*this);
-	m_account_map = new IdentityMap<Account, PDC>(*this);
-	m_budget_item_map = new IdentityMap<BudgetItem, PDC>(*this);
-	m_commodity_map = new IdentityMap<Commodity, PDC>(*this);
-	m_entry_map = new IdentityMap<Entry, PDC>(*this);
-	m_journal_map = new IdentityMap<PersistentJournal, PDC>(*this);
-	m_repeater_map = new IdentityMap<Repeater, PDC>(*this);
+	m_account_map = new IdentityMap<Account>(*this);
+	m_budget_item_map = new IdentityMap<BudgetItem>(*this);
+	m_commodity_map = new IdentityMap<Commodity>(*this);
+	m_entry_map = new IdentityMap<Entry>(*this);
+	m_journal_map = new IdentityMap<PersistentJournal>(*this);
+	m_repeater_map = new IdentityMap<Repeater>(*this);
 }
 
 PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
@@ -553,42 +552,42 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
 // Getters for IdentityMaps
 
 template <>
-sqloxx::IdentityMap<Account, PhatbooksDatabaseConnection>&
+sqloxx::IdentityMap<Account>&
 PhatbooksDatabaseConnection::identity_map<Account>()
 {
 	return *m_account_map;
 }
 
 template <>
-sqloxx::IdentityMap<BudgetItem, PhatbooksDatabaseConnection>&
+sqloxx::IdentityMap<BudgetItem>&
 PhatbooksDatabaseConnection::identity_map<BudgetItem>()
 {
 	return *m_budget_item_map;
 }
 
 template <>
-sqloxx::IdentityMap<Entry, PhatbooksDatabaseConnection>&
+sqloxx::IdentityMap<Entry>&
 PhatbooksDatabaseConnection::identity_map<Entry>()
 {
 	return *m_entry_map;
 }
 
 template <>
-sqloxx::IdentityMap<Commodity, PhatbooksDatabaseConnection>&
+sqloxx::IdentityMap<Commodity>&
 PhatbooksDatabaseConnection::identity_map<Commodity>()
 {
 	return *m_commodity_map;
 }
 
 template <>
-sqloxx::IdentityMap<phatbooks::PersistentJournal, PhatbooksDatabaseConnection>&
+sqloxx::IdentityMap<phatbooks::PersistentJournal>&
 PhatbooksDatabaseConnection::identity_map<PersistentJournal>()
 {
 	return *m_journal_map;
 }
 
 template <>
-sqloxx::IdentityMap<phatbooks::Repeater, PhatbooksDatabaseConnection>&
+sqloxx::IdentityMap<phatbooks::Repeater>&
 PhatbooksDatabaseConnection::identity_map<Repeater>()
 {
 	return *m_repeater_map;

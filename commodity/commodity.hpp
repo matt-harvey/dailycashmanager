@@ -67,8 +67,7 @@ public:
 		>
 		PersistentObject;
 
-	typedef sqloxx::IdentityMap<Commodity, PhatbooksDatabaseConnection>
-		IdentityMap;
+	typedef sqloxx::IdentityMap<Commodity> IdentityMap;
 
 	/**
 	 * Set up tables required in the database for the persistence of

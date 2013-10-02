@@ -29,19 +29,23 @@ class OrdinaryJournal;
 
 }  // namespace phatbooks
 
+// End forward declarations
+
+
+// Template specialization
+
 namespace sqloxx
 {
 
 template <>
 struct PersistenceTraits<phatbooks::OrdinaryJournal>
 {
-	typedef phatbooks::PersistentJournal PrimaryT;
+	typedef phatbooks::PersistentJournal Base;
 };
 
 }  // namespace sqloxx
 
 
-// End forward declarations
 
 
 namespace phatbooks
@@ -53,7 +57,7 @@ namespace phatbooks
  * entity. The posting occurs when the \e save() method is called on the
  * OrdinaryJournal.
  */
-class OrdinaryJournal: virtual public PersistentJournal
+class OrdinaryJournal: public PersistentJournal
 {
 public:
 

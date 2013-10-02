@@ -30,7 +30,7 @@ namespace sqloxx
 template <>
 struct PersistenceTraits<phatbooks::DraftJournal>
 {
-	typedef phatbooks::PersistentJournal PrimaryT;
+	typedef phatbooks::PersistentJournal Base;
 };
 
 }  // namespace sqloxx
@@ -53,7 +53,7 @@ namespace phatbooks
  * A DraftJournal with Repeaters corresponds to a recurring transaction,
  * that is automatically posted by the application at specified intervals.
  */
-class DraftJournal: virtual public PersistentJournal
+class DraftJournal: public PersistentJournal
 {
 public:
 

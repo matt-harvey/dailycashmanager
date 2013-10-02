@@ -230,7 +230,7 @@ public:
 	friend class BudgetAttorney;
 
 	template<typename T>
-	sqloxx::IdentityMap<T, PhatbooksDatabaseConnection>& identity_map();
+	sqloxx::IdentityMap<T>& identity_map();
 
 
 private:
@@ -324,24 +324,15 @@ private:
 	// Using raw pointers here rather than smart pointers, as we want
 	// to be able easily to verify within the body of the destructor, the
 	// order of deletion of pointer members.
-	
 	PermanentEntityData* m_permanent_entity_data;
-
 	BalanceCache* m_balance_cache;
 	AmalgamatedBudget* m_budget;
-
-	sqloxx::IdentityMap<Account, PhatbooksDatabaseConnection>*
-		m_account_map;
-	sqloxx::IdentityMap<BudgetItem, PhatbooksDatabaseConnection>*
-		m_budget_item_map;
-	sqloxx::IdentityMap<Commodity, PhatbooksDatabaseConnection>*
-		m_commodity_map;
-	sqloxx::IdentityMap<Entry, PhatbooksDatabaseConnection>*
-		m_entry_map;
-	sqloxx::IdentityMap<PersistentJournal, PhatbooksDatabaseConnection>*
-		m_journal_map;
-	sqloxx::IdentityMap<Repeater, PhatbooksDatabaseConnection>*
-		m_repeater_map;
+	sqloxx::IdentityMap<Account>* m_account_map;
+	sqloxx::IdentityMap<BudgetItem>* m_budget_item_map;
+	sqloxx::IdentityMap<Commodity>* m_commodity_map;
+	sqloxx::IdentityMap<Entry>* m_entry_map;
+	sqloxx::IdentityMap<PersistentJournal>* m_journal_map;
+	sqloxx::IdentityMap<Repeater>* m_repeater_map;
 
 	void perform_integrity_checks();
 

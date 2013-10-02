@@ -80,8 +80,7 @@ public:
 	 * Sets up tables in the database required for the persistence
 	 * of Repeater objects.
 	 */
-	typedef sqloxx::IdentityMap<Repeater, PhatbooksDatabaseConnection>
-		IdentityMap;
+	typedef sqloxx::IdentityMap<Repeater> IdentityMap;
 
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 

@@ -33,8 +33,7 @@ public:
 		PersistentObject;
 	
 	typedef
-		sqloxx::IdentityMap<PersistentJournal, PhatbooksDatabaseConnection>
-		IdentityMap;
+		sqloxx::IdentityMap<PersistentJournal> IdentityMap;
 	
 	static void setup_tables(PhatbooksDatabaseConnection& dbc);
 

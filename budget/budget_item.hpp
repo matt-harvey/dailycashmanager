@@ -35,8 +35,7 @@ public:
 		PersistentObject;
 
 	typedef
-		sqloxx::IdentityMap<BudgetItem, PhatbooksDatabaseConnection>
-		IdentityMap;
+		sqloxx::IdentityMap<BudgetItem> IdentityMap;
 
 	/**
 	 * Set up tables in the database required for the persistence of

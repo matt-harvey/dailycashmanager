@@ -57,8 +57,7 @@ public:
 	typedef sqloxx::PersistentObject<Account, PhatbooksDatabaseConnection>
 		PersistentObject;
 
-	typedef sqloxx::IdentityMap<Account, PhatbooksDatabaseConnection>
-		IdentityMap;
+	typedef sqloxx::IdentityMap<Account> IdentityMap;
 
 	/**
 	 * Sets up tables in the database required for the persistence of
