@@ -48,23 +48,10 @@ namespace gregorian = boost::gregorian;
 namespace phatbooks
 {
 
-
-string
-OrdinaryJournal::primary_table_name()
-{
-	return PersistentJournal::primary_table_name();
-}
-
 string
 OrdinaryJournal::exclusive_table_name()
 {
 	return "ordinary_journal_detail";
-}
-
-string
-OrdinaryJournal::primary_key_name()
-{
-	return PersistentJournal::primary_key_name();
 }
 
 void

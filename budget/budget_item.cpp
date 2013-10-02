@@ -85,15 +85,9 @@ BudgetItem::BudgetItem
 BudgetItem::~BudgetItem() = default;
 
 std::string
-BudgetItem::primary_table_name()
-{
-	return "budget_items";
-}
-
-std::string
 BudgetItem::exclusive_table_name()
 {
-	return primary_table_name();
+	return "budget_items";
 }
 
 std::string

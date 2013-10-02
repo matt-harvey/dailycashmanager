@@ -29,7 +29,7 @@ namespace phatbooks
 {
 
 string
-PersistentJournal::primary_table_name()
+PersistentJournal::exclusive_table_name()
 {
 	return "journals";
 }

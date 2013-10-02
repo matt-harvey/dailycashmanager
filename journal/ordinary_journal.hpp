@@ -3,10 +3,22 @@
 #ifndef GUARD_ordinary_journal_hpp_6580145273627781
 #define GUARD_ordinary_journal_hpp_6580145273627781
 
-
 #include "persistent_journal.hpp"
 #include <sqloxx/persistence_traits.hpp>
-
+#include "string_conv.hpp"
+#include "date.hpp"
+#include "entry_handle.hpp"
+#include "phatbooks_database_connection.hpp"
+#include "proto_journal.hpp"
+#include "transaction_type.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
+#include <jewel/signature.hpp>
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/identity_map.hpp>
+#include <sqloxx/persistent_object.hpp>
+#include <string>
+#include <vector>
 
 // Begin forward declarations
 
@@ -29,21 +41,6 @@ struct PersistenceTraits<phatbooks::OrdinaryJournal>
 }  // namespace sqloxx
 
 
-#include "string_conv.hpp"
-#include "date.hpp"
-#include "entry_handle.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "proto_journal.hpp"
-#include "transaction_type.hpp"
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/optional.hpp>
-#include <jewel/signature.hpp>
-#include <sqloxx/general_typedefs.hpp>
-#include <sqloxx/identity_map.hpp>
-#include <sqloxx/persistent_object.hpp>
-#include <string>
-#include <vector>
-
 // End forward declarations
 
 
@@ -60,9 +57,7 @@ class OrdinaryJournal: virtual public PersistentJournal
 {
 public:
 
-	static std::string primary_table_name();
 	static std::string exclusive_table_name();
-	static std::string primary_key_name();
 
 	/**
 	 * Create the tables required for the persistence of

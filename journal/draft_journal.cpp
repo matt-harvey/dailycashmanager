@@ -46,23 +46,10 @@ struct DraftJournal::DraftJournalData
 	std::vector<RepeaterHandle> repeaters;
 };
 
-
-string
-DraftJournal::primary_table_name()
-{
-	return PersistentJournal::primary_table_name();
-}
-
 string
 DraftJournal::exclusive_table_name()
 {
 	return "draft_journal_detail";
-}
-
-string
-DraftJournal::primary_key_name()
-{
-	return Journal::primary_key_name();
 }
 
 vector<RepeaterHandle> const&

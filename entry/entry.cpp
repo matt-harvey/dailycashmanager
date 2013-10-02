@@ -406,15 +406,9 @@ Entry::do_remove()
 }
 
 std::string
-Entry::primary_table_name()
-{
-	return "entries";
-}
-
-std::string
 Entry::exclusive_table_name()
 {
-	return primary_table_name();
+	return "entries";
 }
 
 std::string

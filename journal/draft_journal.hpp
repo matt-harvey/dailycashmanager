@@ -5,6 +5,17 @@
 
 #include "persistent_journal.hpp"
 #include <sqloxx/persistence_traits.hpp>
+#include "entry_handle_fwd.hpp"
+#include "phatbooks_database_connection.hpp"
+#include "proto_journal.hpp"
+#include "repeater_handle_fwd.hpp"
+#include "transaction_type.hpp"
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/persistent_object.hpp>
+#include <wx/string.h>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace phatbooks
 {
@@ -12,8 +23,6 @@ namespace phatbooks
 class DraftJournal;
 
 }  // namespace phatbooks
-
-
 
 namespace sqloxx
 {
@@ -26,19 +35,6 @@ struct PersistenceTraits<phatbooks::DraftJournal>
 
 }  // namespace sqloxx
 
-
-
-#include "entry_handle_fwd.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "proto_journal.hpp"
-#include "repeater_handle_fwd.hpp"
-#include "transaction_type.hpp"
-#include <sqloxx/general_typedefs.hpp>
-#include <sqloxx/persistent_object.hpp>
-#include <wx/string.h>
-#include <memory>
-#include <string>
-#include <vector>
 
 namespace phatbooks
 {
@@ -61,9 +57,7 @@ class DraftJournal: virtual public PersistentJournal
 {
 public:
 
-	static std::string primary_table_name();
 	static std::string exclusive_table_name();
-	static std::string primary_key_name();
 
 	/**
 	 * Create the tables required for the persistence of DraftJournal

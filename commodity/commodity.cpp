@@ -332,15 +332,9 @@ void Commodity::set_multiplier_to_base
 	return;
 }
 
-
-std::string Commodity::primary_table_name()
-{
-	return "commodities";
-}
-
 std::string Commodity::exclusive_table_name()
 {
-	return primary_table_name();
+	return "commodities";
 }
 
 std::string Commodity::primary_key_name()

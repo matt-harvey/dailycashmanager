@@ -188,7 +188,6 @@ public:
 
 	void swap(Repeater& rhs);
 
-	static std::string primary_table_name();
 	static std::string exclusive_table_name();
 	static std::string primary_key_name();
 

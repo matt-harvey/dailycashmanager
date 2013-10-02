@@ -381,17 +381,10 @@ Repeater::do_ghostify()
 	return;
 }
 
-
-string
-Repeater::primary_table_name()
-{
-	return "repeaters";
-}
-
 string
 Repeater::exclusive_table_name()
 {
-	return primary_table_name();
+	return "repeaters";
 }
 
 string

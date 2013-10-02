@@ -47,25 +47,6 @@ namespace
 	}
 }  // end anonymous namespace
 
-
-std::string
-Journal::primary_table_name()
-{
-	return "journals";
-}
-
-std::string
-Journal::exclusive_table_name()
-{
-	return "journals";
-}
-
-std::string
-Journal::primary_key_name()
-{
-	return "journal_id";
-}
-
 Journal::Journal(): m_data(new JournalData)
 {
 }

@@ -612,17 +612,10 @@ Account::do_ghostify()
 	return;
 }
 
-
-string
-Account::primary_table_name()
-{
-	return "accounts";
-}
-
 string
 Account::exclusive_table_name()
 {
-	return primary_table_name();
+	return "accounts";
 }
 
 string

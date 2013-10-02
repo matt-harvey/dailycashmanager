@@ -180,7 +180,6 @@ public:
 	void swap(Commodity& rhs);
 
 	// These need to return std::string as they involve the SQLoxx API
-	static std::string primary_table_name();
 	static std::string exclusive_table_name();
 	static std::string primary_key_name();
 private:
