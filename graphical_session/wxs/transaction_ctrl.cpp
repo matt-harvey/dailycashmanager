@@ -868,9 +868,8 @@ TransactionCtrl::remove_journal()
 		return true;
 	}
 	JEWEL_ASSERT (m_journal);
-	Id const doomed_journal_id = m_journal->id();
 	bool const is_draft =
-		journal_id_is_draft(database_connection(), doomed_journal_id);
+		static_cast<bool>(handle_cast<DraftJournal>(m_journal));
 	vector<Id> doomed_entry_ids;
 	vector<EntryHandle> const& doomed_entries = m_journal->entries();
 	for (EntryHandle const& entry: doomed_entries)
@@ -897,7 +896,7 @@ TransactionCtrl::remove_journal()
 		event_type = PHATBOOKS_ORDINARY_JOURNAL_DELETED_EVENT;
 	}
 	JEWEL_ASSERT (event_type != static_cast<wxEventType>(0));
-	PersistentObjectEvent::fire(this, event_type, doomed_journal_id);
+	PersistentObjectEvent::fire(this, event_type, m_journal->id());
 
 	return true;
 }
