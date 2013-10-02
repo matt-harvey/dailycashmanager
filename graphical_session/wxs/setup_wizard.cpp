@@ -5,6 +5,7 @@
 #include "account_type.hpp"
 #include "app.hpp"
 #include "application.hpp"
+#include "augmented_account.hpp"
 #include "client_data.hpp"
 #include "filename_validation.hpp"
 #include "finformat.hpp"

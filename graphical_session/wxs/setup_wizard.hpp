@@ -3,7 +3,6 @@
 #ifndef GUARD_setup_wizard_hpp_8623281646810137
 #define GUARD_setup_wizard_hpp_8623281646810137
 
-#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "commodity_handle.hpp"
 #include <boost/filesystem.hpp>
@@ -30,6 +29,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class AugmentedAccount;
 class PhatbooksDatabaseConnection;
 
 namespace gui

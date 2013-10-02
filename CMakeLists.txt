@@ -130,9 +130,9 @@ endif ()
 
 set (main_files
 	 account/account.cpp
-	 account/account_handle.cpp
 	 account/account_table_iterator.cpp
 	 account/account_type.cpp
+	 account/augmented_account.cpp
 	 account/balance_cache.cpp
 	 account/make_default_accounts.cpp
 	 application/application.cpp

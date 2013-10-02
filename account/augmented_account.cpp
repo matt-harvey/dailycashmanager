@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "account_handle.hpp"
-#include "account_table_iterator.hpp"
+#include "augmented_account.hpp"
 #include "commodity_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <jewel/decimal.hpp>

@@ -28,6 +28,7 @@ namespace phatbooks
 
 // begin forward declarations
 
+class AugmentedAccount;
 class PhatbooksDatabaseConnection;
 
 namespace gui
