@@ -68,71 +68,6 @@ OrdinaryJournalImpl::primary_key_name()
 }
 
 void
-OrdinaryJournalImpl::set_transaction_type
-(	TransactionType p_transaction_type
-)
-{
-	load();
-	Journal::set_transaction_type(p_transaction_type);
-	return;
-}
-
-void
-OrdinaryJournalImpl::set_comment(wxString const& p_comment)
-{
-	load();
-	Journal::set_comment(p_comment);
-	return;
-}
-
-void
-OrdinaryJournalImpl::push_entry(EntryHandle const& entry)
-{
-	load();
-	if (has_id())
-	{
-		entry->set_journal_id(id());
-	}
-	Journal::push_entry(entry);
-	return;
-}
-
-
-void
-OrdinaryJournalImpl::remove_entry(EntryHandle const& entry)
-{
-	load();
-	Journal::remove_entry(entry);
-	return;
-}
-
-TransactionType
-OrdinaryJournalImpl::transaction_type()
-{
-	load();
-	return Journal::transaction_type();
-}
-
-wxString
-OrdinaryJournalImpl::comment()
-{
-	load();
-	return Journal::comment();
-}
-
-vector<EntryHandle> const&
-OrdinaryJournalImpl::entries()
-{
-	load();
-	// WARNING Should this fail if m_entries is empty? This would
-	// be the same behaviour then as the other "optionals". To be
-	// truly consistent with the other optionals, it would fail
-	// by means of a failed assert (assuming I haven't wrapped the
-	// other optionals in some throwing construct...).
-	return Journal::entries();
-}
-
-void
 OrdinaryJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
 	dbc.execute_sql
@@ -147,7 +82,6 @@ OrdinaryJournalImpl::setup_tables(PhatbooksDatabaseConnection& dbc)
 	);
 	return;
 }
-
 
 OrdinaryJournalImpl::OrdinaryJournalImpl
 (	IdentityMap& p_identity_map,
@@ -209,7 +143,6 @@ OrdinaryJournalImpl::date()
 	return boost_date_from_julian_int(value(m_date));
 }
 
-
 void
 OrdinaryJournalImpl::swap(OrdinaryJournalImpl& rhs)
 {
@@ -218,7 +151,6 @@ OrdinaryJournalImpl::swap(OrdinaryJournalImpl& rhs)
 	swap(m_date, rhs.m_date);
 	return;
 }
-
 
 void
 OrdinaryJournalImpl::do_load()
@@ -247,7 +179,6 @@ OrdinaryJournalImpl::do_load()
 	return;
 }
 
-
 void
 OrdinaryJournalImpl::do_save_new()
 {
@@ -270,8 +201,11 @@ OrdinaryJournalImpl::do_save_new()
 void
 OrdinaryJournalImpl::do_save_existing()
 {
+	JEWEL_LOG_TRACE();
+
 	// Save the Journal (base) part of the object
 	do_save_existing_journal_core();
+	JEWEL_LOG_TRACE();
 
 	// Save the derived, OrdinaryJournalImpl part of the object
 	SQLStatement updater
@@ -282,9 +216,9 @@ OrdinaryJournalImpl::do_save_existing()
 	updater.bind(":date", value(m_date));
 	updater.bind(":journal_id", id());
 	updater.step_final();
+	JEWEL_LOG_TRACE();
 	return;
 }
-
 
 void
 OrdinaryJournalImpl::do_ghostify()
@@ -293,7 +227,6 @@ OrdinaryJournalImpl::do_ghostify()
 	clear(m_date);
 	return;
 }
-
 
 void
 OrdinaryJournalImpl::do_remove()
@@ -318,8 +251,6 @@ OrdinaryJournalImpl::do_remove()
 	return;
 }
 
-
-
 void
 OrdinaryJournalImpl::mimic(Journal& rhs)
 {
@@ -331,16 +262,6 @@ OrdinaryJournalImpl::mimic(Journal& rhs)
 	swap(temp);
 	return;
 }
-
-
-void
-OrdinaryJournalImpl::clear_entries()
-{
-	load();
-	Journal::clear_entries();
-	return;
-}
-
 
 
 }  // namespace phatbooks

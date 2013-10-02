@@ -4,6 +4,8 @@
 #include "entry_handle.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <jewel/exception.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/next_auto_key.hpp>
 #include <sqloxx/general_typedefs.hpp>
@@ -13,6 +15,7 @@
 #include <unordered_set>
 #include <vector>
 
+using jewel::Log;
 using jewel::value;
 using sqloxx::next_auto_key;
 using sqloxx::Id;
@@ -144,6 +147,7 @@ PersistentJournal::do_save_new_journal_core()
 void
 PersistentJournal::do_save_existing_journal_core()
 {
+	JEWEL_LOG_TRACE();
 	if (!is_balanced())
 	{
 		JEWEL_THROW
@@ -168,10 +172,15 @@ PersistentJournal::do_save_existing_journal_core()
 	unordered_set<sqloxx::Id> saved_entry_ids;
 	for (EntryHandle const& entry: Journal::do_get_entries())
 	{
+		JEWEL_LOG_TRACE();
 		entry->save();
+		JEWEL_LOG_TRACE();
 		JEWEL_ASSERT (entry->has_id());
+		JEWEL_LOG_TRACE();
 		saved_entry_ids.insert(entry->id());
+		JEWEL_LOG_TRACE();
 	}
+	JEWEL_LOG_TRACE();
 	// Remove any entries in the database with this journal's journal_id, that
 	// no longer exist in the in-memory journal
 	SQLStatement entry_finder
@@ -196,6 +205,7 @@ PersistentJournal::do_save_existing_journal_core()
 			// automatically.
 		}
 	}
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -271,6 +281,10 @@ PersistentJournal::do_push_entry(EntryHandle const& p_entry)
 {
 	load();
 	Journal::do_push_entry(p_entry);
+	if (has_id())
+	{
+		p_entry->set_journal_id(id());
+	}
 	return;
 }
 
@@ -350,10 +364,7 @@ journal_id_is_draft
 	Id id
 )
 {
-	if (!journal_id_exists(dbc, id))
-	{
-		throw std::runtime_error("Journal with id does not exist.");
-	}
+	JEWEL_ASSERT (journal_id_exists(dbc, id));
 	SQLStatement s
 	(	dbc,
 		"select journal_id from draft_journal_detail where "

@@ -10,6 +10,7 @@
 #include "repeater_handle.hpp"
 #include "string_conv.hpp"
 #include <jewel/assert.hpp>
+#include <jewel/log.hpp>
 #include <wx/event.h>
 #include <wx/listctrl.h>
 #include <wx/string.h>
@@ -17,6 +18,7 @@
 #include <string>
 #include <vector>
 
+using jewel::Log;
 using std::max;
 using std::string;
 using std::vector;
@@ -71,12 +73,16 @@ DraftJournalListCtrl::selected_draft_journals(vector<DraftJournalHandle>& out)
 void
 DraftJournalListCtrl::on_item_activated(wxListEvent& event)
 {
+	JEWEL_LOG_TRACE();
+
 	// Fire a PersistentJournal editing request. This will be handled
 	// higher up the window hierarchy.
+	sqloxx::Id const journal_id = GetItemData(event.GetIndex());
+	JEWEL_LOG_VALUE(Log::info, journal_id);
 	PersistentObjectEvent::fire
 	(	this,
 		PHATBOOKS_JOURNAL_EDITING_EVENT,
-		GetItemData(event.GetIndex())
+		journal_id
 	);
 	return;
 }

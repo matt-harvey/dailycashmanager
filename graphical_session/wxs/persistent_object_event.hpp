@@ -34,7 +34,7 @@ public:
 	 * irrelevant for the particular wxEventType passed to
 	 * \e p_event_type.
 	 */
-	PersistentObjectEvent
+	explicit PersistentObjectEvent
 	(	wxEventType p_event_type = wxEVT_NULL,
 		int p_event_id = 0
 	);
@@ -79,7 +79,7 @@ public:
 	static void fire
 	(	wxWindow* p_originator,
 		wxEventType p_event_type,
-		int p_po_id
+		sqloxx::Id p_po_id
 	);
 
 	/**
@@ -142,17 +142,23 @@ BEGIN_DECLARE_EVENT_TYPES()
 	/**
 	 * Fire to signifiy that the user has just created (and saved) an
 	 * Account.
+	 *
+	 * Pass Account Id to the event constructor.
 	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_CREATED_EVENT, -1)
 
 	/**
 	 * Fire to signify that the user has just edited an Account
 	 * (and saved the changes).
+	 *
+	 * Pass Account Id to the constructor.
 	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_EDITED_EVENT, -1)
 
 	/**
 	 * Fire to indicated that the user has just deleted an Account.
+	 *
+	 * Pass old Account Id to the constructor.
 	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_DELETED_EVENT, -1)
 
@@ -183,6 +189,8 @@ BEGIN_DECLARE_EVENT_TYPES()
 
 	/**
 	 * To notify of a change in the reconciliation status of an Entry.
+	 * 
+	 * Pass Entry Id to the event constructor.
 	 */
 	DECLARE_EVENT_TYPE(PHATBOOKS_RECONCILIATION_STATUS_EVENT, -1)
 

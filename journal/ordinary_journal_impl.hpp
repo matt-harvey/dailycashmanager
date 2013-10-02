@@ -65,34 +65,6 @@ public:
 	static std::string primary_key_name();
 
 	/**
-	 * @todo Document
-	 */
-	void set_transaction_type(TransactionType p_transaction_type);
-
-	/**
-	 * Does not throw, except possibly \c std::bad_alloc in extreme
-	 * circumstances.
-	 */
-	void set_comment(wxString const& p_comment);
-
-	/**
-	 * @todo Figure out throwing behaviour.
-	 */
-	void push_entry(EntryHandle const& entry);
-
-	void remove_entry(EntryHandle const& entry);
-
-	TransactionType transaction_type();
-
-	/**
-	 * Does not throw, except perhaps \c std::bad_alloc in
-	 * extreme circumstances.
-	 */
-	wxString comment();
-
-	std::vector<EntryHandle> const& entries();
-
-	/**
 	 * Create the tables required for the persistence of
 	 * OrdinaryJournalImpl instances in a SQLite database.
 	 */
@@ -153,8 +125,6 @@ public:
 	 * attribute of \e rhs, or the date.
 	 */
 	void mimic(Journal& rhs);
-
-	void clear_entries();
 
 private:
 

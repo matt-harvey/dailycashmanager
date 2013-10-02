@@ -66,71 +66,6 @@ DraftJournalImpl::primary_key_name()
 	return Journal::primary_key_name();
 }
 
-void
-DraftJournalImpl::set_transaction_type
-(	TransactionType p_transaction_type
-)
-{
-	load();
-	Journal::set_transaction_type(p_transaction_type);
-	return;
-}
-
-void
-DraftJournalImpl::set_comment(wxString const& p_comment)
-{
-	load();
-	Journal::set_comment(p_comment);
-	return;
-}
-
-void
-DraftJournalImpl::push_entry(EntryHandle const& entry)
-{
-	load();
-	if (has_id())
-	{
-		entry->set_journal_id(id());
-	}
-	Journal::push_entry(entry);
-	return;
-}
-
-void
-DraftJournalImpl::remove_entry(EntryHandle const& entry)
-{
-	load();
-	Journal::remove_entry(entry);
-	return;
-}
-
-TransactionType
-DraftJournalImpl::transaction_type()
-{
-	load();
-	return Journal::transaction_type();
-}
-
-wxString
-DraftJournalImpl::comment()
-{
-	load();
-	return Journal::comment();
-}
-
-vector<EntryHandle> const&
-DraftJournalImpl::entries()
-{
-	load();
-	// WARNING Should this fail if m_entries is empty? This would
-	// be the same behaviour then as the other "optionals". To be
-	// truly consistent with the other optionals, it would fail
-	// by means of a failed assert (assuming I haven't wrapped the
-	// other optionals in some throwing construct...).
-	return Journal::entries();
-}
-
-
 vector<RepeaterHandle> const&
 DraftJournalImpl::repeaters()
 {
@@ -218,7 +153,6 @@ DraftJournalImpl::set_name(wxString const& p_name)
 	return;
 }
 
-
 void
 DraftJournalImpl::push_repeater(RepeaterHandle const& repeater)
 {
@@ -231,7 +165,6 @@ DraftJournalImpl::push_repeater(RepeaterHandle const& repeater)
 	return;
 }
 
-
 wxString
 DraftJournalImpl::name()
 {
@@ -239,13 +172,11 @@ DraftJournalImpl::name()
 	return value(m_dj_data->name);
 }
 
-
 DraftJournalImpl::DraftJournalImpl(DraftJournalImpl const& rhs):
 	PersistentJournal(rhs),
 	m_dj_data(new DraftJournalData(*(rhs.m_dj_data)))
 {
 }
-
 
 void
 DraftJournalImpl::swap(DraftJournalImpl& rhs)
@@ -255,7 +186,6 @@ DraftJournalImpl::swap(DraftJournalImpl& rhs)
 	swap(m_dj_data, rhs.m_dj_data);
 	return;
 }
-
 
 void
 DraftJournalImpl::do_load()
@@ -288,7 +218,6 @@ DraftJournalImpl::do_load()
 	swap(temp);
 	return;
 }
-
 
 void
 DraftJournalImpl::do_save_new()
@@ -360,7 +289,6 @@ DraftJournalImpl::do_save_existing()
 	return;
 }
 
-
 void
 DraftJournalImpl::do_ghostify()
 {
@@ -419,14 +347,6 @@ DraftJournalImpl::clear_repeaters()
 	return;
 }
 
-void
-DraftJournalImpl::clear_entries()
-{
-	load();
-	Journal::clear_entries();
-	return;
-}
-
 wxString
 DraftJournalImpl::repeater_description()
 {
@@ -482,7 +402,6 @@ DraftJournalImpl::repeater_description()
 	return ret;
 }	
 			
-
 void
 DraftJournalImpl::mimic(Journal& rhs)
 {
@@ -494,7 +413,6 @@ DraftJournalImpl::mimic(Journal& rhs)
 	swap(temp);
 	return;
 }
-
 
 void
 DraftJournalImpl::mimic(DraftJournalImpl& rhs)

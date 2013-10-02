@@ -83,14 +83,14 @@ AccountListCtrl::selected_accounts(set<sqloxx::Id>& out) const
 void
 AccountListCtrl::on_item_activated(wxListEvent& event)
 {
-	AccountHandle account(m_database_connection, GetItemData(event.GetIndex()));
+	sqloxx::Id const account_id = GetItemData(event.GetIndex());
 
 	// Fire an Account editing request. This will be handled higher up
 	// the window hierarchy.
 	PersistentObjectEvent::fire
 	(	this,
 		PHATBOOKS_ACCOUNT_EDITING_EVENT,
-		account
+		account_id
 	);
 	return;
  }

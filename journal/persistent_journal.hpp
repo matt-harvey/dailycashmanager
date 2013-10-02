@@ -97,6 +97,9 @@ max_journal_id(PhatbooksDatabaseConnection& dbc);
 sqloxx::Id
 min_journal_id(PhatbooksDatabaseConnection& dbc);
 
+/**
+ * Journal id must exist.
+ */
 bool
 journal_id_is_draft(PhatbooksDatabaseConnection& dbc, sqloxx::Id);
 

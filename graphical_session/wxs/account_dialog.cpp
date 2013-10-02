@@ -522,6 +522,8 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	m_account = temp;
 	transaction.commit();
 
+	JEWEL_ASSERT (m_account->has_id());
+
 	// Notify window higher in the hierarchy that they need to update for
 	// changed AccountHandle and if we needed the opening balance journal,
 	// the new OrdinaryJournal.
@@ -536,7 +538,7 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	PersistentObjectEvent::fire
 	(	frame,  // can't use "this", or event is missed
 		event_type,
-		m_account
+		m_account->id()
 	);
 	if (objnl->has_id())
 	{

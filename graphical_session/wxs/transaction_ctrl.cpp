@@ -146,6 +146,8 @@ TransactionCtrl::TransactionCtrl
 	m_ok_button(nullptr),
 	m_journal(nullptr)
 {
+	JEWEL_LOG_TRACE();
+
 	JEWEL_ASSERT (p_journal->has_id());
 	
 	// TODO Make this nicer once facility is provided by sqloxx::Handle to do so.
@@ -180,6 +182,8 @@ TransactionCtrl::TransactionCtrl
 	m_ok_button(nullptr),
 	m_journal(nullptr)
 {
+	JEWEL_LOG_TRACE();
+
 	JEWEL_ASSERT (p_journal->has_id());
 
 	// TODO Make this nicer once facility is provided by sqloxx::Handle to do so.
@@ -215,6 +219,8 @@ TransactionCtrl::TransactionCtrl
 	m_ok_button(nullptr),
 	m_journal(nullptr)
 {
+	JEWEL_LOG_TRACE();
+
 	configure_for_editing_proto_journal(p_journal);
 }
 
@@ -227,6 +233,8 @@ TransactionCtrl::configure_top_controls
 		p_available_transaction_types
 )
 {
+	JEWEL_LOG_TRACE();
+
 	// Add some space to the right to provide room for scrollbar
 	add_dummy_column();
 
@@ -283,6 +291,8 @@ TransactionCtrl::configure_top_controls
 void
 TransactionCtrl::clear_all()
 {
+	JEWEL_LOG_TRACE();
+
 	m_journal.reset();
 	DestroyChildren();
 	set_row(0);
@@ -294,6 +304,8 @@ TransactionCtrl::configure_for_editing_proto_journal
 (	ProtoJournal& p_journal
 )
 {
+	JEWEL_LOG_TRACE();
+
 	wxSize text_box_size;
 	configure_top_controls
 	(	p_journal.transaction_type(),
@@ -390,6 +402,8 @@ TransactionCtrl::configure_for_editing_proto_journal
 void
 TransactionCtrl::configure_for_editing_persistent_journal()
 {
+	JEWEL_LOG_TRACE();
+
 	wxWindowUpdateLocker const update_locker(this);
 
 	JEWEL_ASSERT (m_journal);
@@ -556,6 +570,8 @@ TransactionCtrl::refresh_for_transaction_type
 (	TransactionType p_transaction_type
 )
 {
+	JEWEL_LOG_TRACE();
+
 	m_source_entry_ctrl->
 		refresh_for_transaction_type(p_transaction_type);
 	m_destination_entry_ctrl->
@@ -572,6 +588,8 @@ TransactionCtrl::primary_amount() const
 void
 TransactionCtrl::update_for_new(AccountHandle const& p_saved_object)
 {
+	JEWEL_LOG_TRACE();
+
 	JEWEL_ASSERT (m_source_entry_ctrl);
 	m_source_entry_ctrl->update_for_new(p_saved_object);
 	JEWEL_ASSERT (m_destination_entry_ctrl);
@@ -582,6 +600,8 @@ TransactionCtrl::update_for_new(AccountHandle const& p_saved_object)
 void
 TransactionCtrl::update_for_amended(AccountHandle const& p_saved_object)
 {
+	JEWEL_LOG_TRACE();
+
 	JEWEL_ASSERT (m_source_entry_ctrl);
 	m_source_entry_ctrl->update_for_amended(p_saved_object);
 	JEWEL_ASSERT (m_destination_entry_ctrl);
@@ -592,6 +612,8 @@ TransactionCtrl::update_for_amended(AccountHandle const& p_saved_object)
 void
 TransactionCtrl::update_for_reconciliation_status(EntryHandle const& p_entry)
 {
+	JEWEL_LOG_TRACE();
+
 	(void)p_entry;  // silence compiler re. unused parameter
 	reflect_reconciliation_statuses();
 	return;
@@ -613,6 +635,8 @@ TransactionCtrl::add_dummy_column()
 void
 TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
+
 	(void)event;  // Silence compiler re. unused parameter.
 	reset();
 	return;
@@ -621,6 +645,8 @@ TransactionCtrl::on_cancel_button_click(wxCommandEvent& event)
 void
 TransactionCtrl::on_delete_button_click(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
+
 	(void)event;  // Silence compiler re. unused parameter.
 	JEWEL_ASSERT (m_journal);
 	wxMessageDialog confirmation
@@ -643,6 +669,8 @@ TransactionCtrl::on_delete_button_click(wxCommandEvent& event)
 void
 TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
+
 	(void)event;  // Silence compiler re. unused parameter.
 	JEWEL_ASSERT (m_source_entry_ctrl);
 	JEWEL_ASSERT (m_destination_entry_ctrl);
@@ -705,6 +733,8 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 void
 TransactionCtrl::reset()
 {
+	JEWEL_LOG_TRACE();
+
 	wxWindowUpdateLocker window_update_locker(this);
 	TopPanel* const parent = dynamic_cast<TopPanel*>(GetParent());
 	JEWEL_ASSERT (parent);
@@ -718,6 +748,8 @@ TransactionCtrl::reset()
 void
 TransactionCtrl::reflect_reconciliation_statuses()
 {
+	JEWEL_LOG_TRACE();
+
 	EntryGroupCtrl* const entry_controls[] =
 	{	m_source_entry_ctrl,
 		m_destination_entry_ctrl
@@ -749,6 +781,8 @@ TransactionCtrl::reflect_reconciliation_statuses()
 bool
 TransactionCtrl::post_journal()
 {
+	JEWEL_LOG_TRACE();
+
 	ProtoJournal journal;
 	JEWEL_ASSERT (m_transaction_type_ctrl->transaction_type());
 	TransactionType const ttype =
@@ -856,6 +890,8 @@ TransactionCtrl::post_journal()
 bool
 TransactionCtrl::remove_journal()
 {
+	JEWEL_LOG_TRACE();
+
 	if (!m_journal || !(*m_journal)->has_id())
 	{
 		// WARNING This might be dead code.
@@ -908,6 +944,8 @@ TransactionCtrl::remove_journal()
 bool
 TransactionCtrl::save_existing_journal()
 {
+	JEWEL_LOG_TRACE();
+
 	JEWEL_ASSERT (m_journal);
 	JEWEL_ASSERT (m_transaction_type_ctrl->transaction_type());
 	TransactionType const ttype =
@@ -927,6 +965,8 @@ TransactionCtrl::save_existing_journal()
 		doomed.insert(entry->id());
 	}
 
+	JEWEL_LOG_TRACE();
+
 	// Clear the existing Entries from Journal, then reinsert the updated
 	// Entries. As each "surviving" Entry is reinserted, we erase its Id from
 	// the "doomed" Ids.
@@ -944,6 +984,8 @@ TransactionCtrl::save_existing_journal()
 			if (entry->has_id()) doomed.erase(entry->id());
 		}
 	}
+
+	JEWEL_LOG_TRACE();
 
 	// We now need to put the ids of the removed entries in a vector so the
 	// GUI can be updated for their removal.
@@ -1013,10 +1055,12 @@ TransactionCtrl::save_existing_journal()
 			PHATBOOKS_JOURNAL_EDITED_EVENT,
 			dj->id()
 		);
+		JEWEL_LOG_TRACE();
 		return true;
 	}
 	else
 	{
+		JEWEL_LOG_TRACE();
 		JEWEL_ASSERT (!maybe_frequency);
 		OrdinaryJournalImpl* oj = dynamic_cast<OrdinaryJournalImpl*>(m_journal->get());
 		JEWEL_ASSERT (oj);
@@ -1024,7 +1068,9 @@ TransactionCtrl::save_existing_journal()
 		oj->set_date(value(m_date_ctrl->date()));
 	
 		JEWEL_ASSERT (oj->is_balanced());
+		JEWEL_LOG_TRACE();
 		oj->save();
+		JEWEL_LOG_TRACE();
 
 		PersistentObjectEvent::notify_doomed_ordinary_entries
 		(	this,
@@ -1036,6 +1082,7 @@ TransactionCtrl::save_existing_journal()
 			PHATBOOKS_JOURNAL_EDITED_EVENT,
 			oj->id()
 		);
+		JEWEL_LOG_TRACE();
 		return true;
 	}
 	JEWEL_HARD_ASSERT (false);

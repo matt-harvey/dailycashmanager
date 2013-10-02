@@ -123,43 +123,6 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		wxString const& p_name
 	);
-	
-	/**
-	 * @todo Document.
-	 */
-	void set_transaction_type
-	(	TransactionType p_transaction_type
-	);
-
-	/**
-	 * Set comment for journal
-	 *
-	 * Does not throw, except possibly \c std::bad_alloc in extreme
-	 * circumstances.
-	 */
-	void set_comment(wxString const& p_comment);
-
-	/**
-	 * Add an Entry to the Journal.
-	 *
-	 * @todo Figure out throwing behaviour. Should it check that
-	 * the account exists? Etc. Etc.
-	 */
-	void push_entry(EntryHandle const& entry);
-
-	void remove_entry(EntryHandle const& entry);
-
-	TransactionType transaction_type();
-
-	/**
-	 * @returns journal comment.
-	 *
-	 * Does not throw, except perhaps \c std::bad_alloc in
-	 * extreme circumstances.
-	 */
-	wxString comment();
-
-	std::vector<EntryHandle> const& entries();
 
 	void set_name(wxString const& p_name);
 	
@@ -187,7 +150,6 @@ public:
 	bool has_repeaters();
 
 	void clear_repeaters();
-	void clear_entries();
 
 private:
 
