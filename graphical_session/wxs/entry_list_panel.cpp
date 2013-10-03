@@ -74,7 +74,14 @@ EntryListPanel::EntryListPanel
 ):
 	wxPanel(p_parent, wxID_ANY),
 	m_support_reconciliations(p_support_reconciliations),
-	m_database_connection(p_database_connection)
+	m_database_connection(p_database_connection),
+	m_top_sizer(nullptr),
+	m_account_ctrl(nullptr),
+	m_min_date_ctrl(nullptr),
+	m_max_date_ctrl(nullptr),
+	m_refresh_button(nullptr),
+	m_reconciliation_hint(nullptr),
+	m_entry_list_ctrl(nullptr)
 {
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);

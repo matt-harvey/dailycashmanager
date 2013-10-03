@@ -160,9 +160,9 @@ SetupWizard::SetupWizard
 		wxDEFAULT_DIALOG_STYLE | wxFULL_REPAINT_ON_RESIZE
 	),
 	m_database_connection(p_database_connection),
-	m_filepath_page(0),
-	m_balance_sheet_account_page(0),
-	m_pl_account_page(0)
+	m_filepath_page(nullptr),
+	m_balance_sheet_account_page(nullptr),
+	m_pl_account_page(nullptr)
 {
 	JEWEL_ASSERT (!m_database_connection.is_valid());
 	m_filepath_page = new FilepathPage(this, m_database_connection);
@@ -470,7 +470,14 @@ SetupWizard::FilepathPage::FilepathPage
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxWizardPageSimple(parent),
-	m_currencies(make_currencies(p_database_connection))
+	m_currencies(make_currencies(p_database_connection)),
+	m_top_sizer(nullptr),
+	m_filename_row_sizer(nullptr),
+	m_directory_row_sizer(nullptr),
+	m_directory_ctrl(nullptr),
+	m_directory_button(nullptr),
+	m_filename_ctrl(nullptr),
+	m_currency_box(nullptr)
 {
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
 	m_filename_row_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -709,8 +716,14 @@ SetupWizard::AccountPage::AccountPage
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxWizardPageSimple(p_parent),
-	m_account_super_type(p_account_super_type),
 	m_database_connection(p_database_connection),
+	m_account_super_type(p_account_super_type),
+	m_min_num_accounts(1),
+	m_current_row(0),
+	m_pop_row_button(nullptr),
+	m_push_row_button(nullptr),
+	m_top_sizer(nullptr),
+	m_multi_account_panel(nullptr),
 	m_parent(*p_parent)
 {
 }

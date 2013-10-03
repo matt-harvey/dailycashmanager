@@ -78,10 +78,14 @@ END_EVENT_TABLE()
 
 // End event tables
 
-
 BudgetPanel::BudgetPanel(AccountDialog* p_parent, AccountHandle const& p_account):
 	wxPanel(p_parent, wxID_ANY),
 	m_next_row(0),
+	m_top_sizer(nullptr),
+	m_summary_label(nullptr),
+	m_summary_amount_text(nullptr),
+	m_pop_item_button(nullptr),
+	m_push_item_button(nullptr),
 	m_account(p_account)
 {
 	JEWEL_ASSERT (p_parent);  // precondition
@@ -679,6 +683,10 @@ BudgetPanel::BalancingDialog::BalancingDialog
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
+	m_top_sizer(nullptr),
+	m_account_ctrl(nullptr),
+	m_no_button(nullptr),
+	m_yes_button(nullptr),
 	m_imbalance(p_imbalance),
 	m_database_connection(p_database_connection)
 {

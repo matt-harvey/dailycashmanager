@@ -85,7 +85,7 @@ private:
 	jewel::Decimal m_closing_balance;
 	jewel::Decimal m_reconciled_closing_balance;
 
-	wxImageList* m_image_list = nullptr;
+	wxImageList* m_image_list;
 
 	DECLARE_EVENT_TABLE()
 

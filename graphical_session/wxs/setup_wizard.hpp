@@ -134,9 +134,9 @@ private:
 	void configure_accounts();
 
 	PhatbooksDatabaseConnection& m_database_connection;
-	FilepathPage* m_filepath_page = nullptr;
-	AccountPage* m_balance_sheet_account_page = nullptr;
-	AccountPage* m_pl_account_page = nullptr;
+	FilepathPage* m_filepath_page;
+	AccountPage* m_balance_sheet_account_page;
+	AccountPage* m_pl_account_page;
 	
 };  // SetupWizard
 
@@ -181,7 +181,7 @@ public:
 	wxObject* Clone() const; 
 
 private:
-	boost::filesystem::path* m_filepath = nullptr;
+	boost::filesystem::path* m_filepath;
 };
 
 
@@ -219,13 +219,13 @@ private:
 
 	std::vector<CommodityHandle> const m_currencies;
 
-	wxBoxSizer* m_top_sizer = nullptr;
-	wxBoxSizer* m_filename_row_sizer = nullptr;
-	wxBoxSizer* m_directory_row_sizer = nullptr;
-	wxTextCtrl* m_directory_ctrl = nullptr;
-	wxButton* m_directory_button = nullptr;
-	wxTextCtrl* m_filename_ctrl = nullptr;
-	wxComboBox* m_currency_box = nullptr;
+	wxBoxSizer* m_top_sizer;
+	wxBoxSizer* m_filename_row_sizer;
+	wxBoxSizer* m_directory_row_sizer;
+	wxTextCtrl* m_directory_ctrl;
+	wxButton* m_directory_button;
+	wxTextCtrl* m_filename_ctrl;
+	wxComboBox* m_currency_box;
 
 	std::unique_ptr<boost::filesystem::path> m_selected_filepath;
 
@@ -301,14 +301,14 @@ private:
 	static unsigned int const s_pop_row_button_id = wxID_HIGHEST + 1;
 	static unsigned int const s_push_row_button_id = s_pop_row_button_id + 1;
 
-	AccountSuperType m_account_super_type;
-	size_t const m_min_num_accounts = 1;
-	int m_current_row = 0;
-	wxButton* m_pop_row_button = nullptr;
-	wxButton* m_push_row_button = nullptr;
 	PhatbooksDatabaseConnection& m_database_connection;
-	wxGridBagSizer* m_top_sizer = nullptr;
-	MultiAccountPanel* m_multi_account_panel = nullptr;
+	AccountSuperType m_account_super_type;
+	size_t const m_min_num_accounts;
+	int m_current_row; 
+	wxButton* m_pop_row_button;
+	wxButton* m_push_row_button;
+	wxGridBagSizer* m_top_sizer;
+	MultiAccountPanel* m_multi_account_panel;
 	SetupWizard const& m_parent;
 
 	DECLARE_EVENT_TABLE()

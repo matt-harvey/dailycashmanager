@@ -169,7 +169,14 @@ Frame::Frame
 			)
 #		endif
 	),
-	m_database_connection(p_database_connection)
+	m_database_connection(p_database_connection),
+	m_menu_bar(nullptr),
+	m_file_menu(nullptr),
+	m_new_menu(nullptr),
+	m_edit_menu(nullptr),
+	m_view_menu(nullptr),
+	m_help_menu(nullptr),
+	m_top_panel(nullptr)
 {
 	JEWEL_LOG_TRACE();
 

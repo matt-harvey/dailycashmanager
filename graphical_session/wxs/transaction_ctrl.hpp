@@ -192,18 +192,16 @@ private:
 
 	int m_max_entry_row_id;
 
-	TransactionTypeCtrl* m_transaction_type_ctrl = nullptr;
-
-	EntryGroupCtrl* m_source_entry_ctrl = nullptr;
-	EntryGroupCtrl* m_destination_entry_ctrl = nullptr;
-
-	DecimalTextCtrl* m_primary_amount_ctrl = nullptr;
-	FrequencyCtrl* m_frequency_ctrl = nullptr;
-	DateCtrl* m_date_ctrl = nullptr;
-	
-	wxButton* m_cancel_button = nullptr;
-	wxButton* m_delete_button = nullptr;
-	wxButton* m_ok_button = nullptr;
+	TransactionTypeCtrl* m_transaction_type_ctrl;
+	EntryGroupCtrl* m_source_entry_ctrl;
+	EntryGroupCtrl* m_destination_entry_ctrl;
+	DecimalTextCtrl* m_primary_amount_ctrl;
+	FrequencyCtrl* m_frequency_ctrl;
+	DateCtrl* m_date_ctrl;
+	wxButton* m_cancel_button;
+	wxButton* m_delete_button;
+	wxButton* m_ok_button;
+	sqloxx::Handle<PersistentJournal> m_journal;
 
 	static unsigned int const s_date_ctrl_id =
 		wxID_HIGHEST + 1;
@@ -215,8 +213,6 @@ private:
 		s_transaction_type_ctrl_id + 1;
 	static unsigned int const s_min_entry_row_id =
 		s_delete_button_id + 1;
-
-	sqloxx::Handle<PersistentJournal> m_journal;
 
 	DECLARE_EVENT_TABLE()
 

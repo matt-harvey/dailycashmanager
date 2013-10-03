@@ -153,12 +153,12 @@ private:
 	wxSize m_text_ctrl_size;
 
 	typedef std::vector<AccountType> ATypeVec;
-	std::unique_ptr<ATypeVec> m_available_account_types = nullptr;
+	std::unique_ptr<ATypeVec> m_available_account_types;
 
-	wxGridBagSizer* m_top_sizer = nullptr;
-	wxStaticText* m_side_descriptor = nullptr;
-	wxButton* m_unsplit_button = nullptr;
-	wxButton* m_split_button = nullptr;
+	wxGridBagSizer* m_top_sizer;
+	wxStaticText* m_side_descriptor;
+	wxButton* m_unsplit_button;
+	wxButton* m_split_button;
 
 	struct EntryRow
 	{
@@ -172,7 +172,7 @@ private:
 
 	std::vector<EntryRow> m_entry_rows;
 
-	size_t m_current_row = 0;
+	size_t m_current_row;
 
 	DECLARE_EVENT_TABLE()
 

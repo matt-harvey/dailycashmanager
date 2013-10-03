@@ -43,6 +43,7 @@ namespace phatbooks
 namespace gui
 {
 
+
 BEGIN_EVENT_TABLE(EntryGroupCtrl, wxPanel)
 	EVT_BUTTON
 	(	s_unsplit_button_id,
@@ -71,7 +72,12 @@ EntryGroupCtrl::EntryGroupCtrl
 	m_database_connection(p_database_connection),
 	m_transaction_side(p_transaction_side),
 	m_transaction_type(p_journal.transaction_type()),
-	m_text_ctrl_size(p_text_ctrl_size)
+	m_text_ctrl_size(p_text_ctrl_size),
+	m_top_sizer(nullptr),
+	m_side_descriptor(nullptr),
+	m_unsplit_button(nullptr),
+	m_split_button(nullptr),
+	m_current_row(0)
 {
 	JEWEL_ASSERT (m_entry_rows.empty());
 	JEWEL_ASSERT (!m_available_account_types);
@@ -673,9 +679,9 @@ EntryGroupCtrl::EntryDecimalTextCtrl::on_left_double_click(wxMouseEvent& event)
 }
 
 EntryGroupCtrl::EntryRow::EntryRow(EntryHandle const& p_entry):
-	account_ctrl(0),
-	comment_ctrl(0),
-	amount_ctrl(0),
+	account_ctrl(nullptr),
+	comment_ctrl(nullptr),
+	amount_ctrl(nullptr),
 	entry(p_entry)
 {
 }

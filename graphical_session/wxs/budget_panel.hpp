@@ -136,14 +136,6 @@ private:
 	 */
 	wxString initial_summary_amount_text();
 
-	size_t m_next_row = 0;
-
-	wxGridBagSizer* m_top_sizer = nullptr;
-	wxStaticText* m_summary_label = nullptr;
-	wxStaticText* m_summary_amount_text = nullptr;
-	wxButton* m_pop_item_button = nullptr;
-	wxButton* m_push_item_button = nullptr;
-
 	/**
 	 * Like FrequencyCtrl, but change of selection causes parent
 	 * BudgetPanel to update its summary text.
@@ -169,9 +161,15 @@ private:
 	 */
 	struct BudgetItemComponent
 	{
-		wxTextCtrl* description_ctrl = nullptr;
-		DecimalTextCtrl* amount_ctrl = nullptr;
-		SpecialFrequencyCtrl* frequency_ctrl = nullptr;
+		BudgetItemComponent():
+			description_ctrl(nullptr),
+			amount_ctrl(nullptr),
+			frequency_ctrl(nullptr)
+		{
+		}
+		wxTextCtrl* description_ctrl;
+		DecimalTextCtrl* amount_ctrl;
+		SpecialFrequencyCtrl* frequency_ctrl;
 	};
 
 	/**
@@ -230,10 +228,10 @@ private:
 		void on_yes_button_click(wxCommandEvent& event);
 		void update_budgets_from_dialog(AccountHandle const& p_account);
 		bool budget_is_balanced() const;
-		wxGridBagSizer* m_top_sizer = nullptr;
-		AccountCtrl* m_account_ctrl = nullptr;
-		wxButton* m_no_button = nullptr;
-		wxButton* m_yes_button = nullptr;
+		wxGridBagSizer* m_top_sizer;
+		AccountCtrl* m_account_ctrl;
+		wxButton* m_no_button;
+		wxButton* m_yes_button;
 		jewel::Decimal const m_imbalance;
 		PhatbooksDatabaseConnection& m_database_connection;
 		DECLARE_EVENT_TABLE()
@@ -252,9 +250,14 @@ private:
 	void prompt_to_balance();
 	
 	std::vector<BudgetItemComponent> m_budget_item_components;
-
-	AccountHandle const& m_account;
 	std::vector<BudgetItemHandle> m_budget_items;
+	size_t m_next_row;
+	wxGridBagSizer* m_top_sizer;
+	wxStaticText* m_summary_label;
+	wxStaticText* m_summary_amount_text;
+	wxButton* m_pop_item_button;
+	wxButton* m_push_item_button;
+	AccountHandle const& m_account;
 
 	DECLARE_EVENT_TABLE()
 

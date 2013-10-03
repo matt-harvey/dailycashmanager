@@ -54,9 +54,9 @@ private:
 
 	void on_ok_button_click(wxCommandEvent& event);
 
-	wxFlexGridSizer* m_top_sizer = nullptr;
-	wxTextCtrl* m_name_ctrl = nullptr;
-	wxButton* m_ok_button = nullptr;
+	wxFlexGridSizer* m_top_sizer;
+	wxTextCtrl* m_name_ctrl;
+	wxButton* m_ok_button;
 	PhatbooksDatabaseConnection& m_database_connection;
 	wxString m_draft_journal_name;
 
