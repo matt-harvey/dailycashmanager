@@ -11,7 +11,7 @@ namespace phatbooks
 {
 
 typedef 
-	sqloxx::TableIterator<BudgetItemHandle, PhatbooksDatabaseConnection>
+	sqloxx::TableIterator<BudgetItemHandle>
 	BudgetItemTableIterator;
 
 }  // namespace phatbooks

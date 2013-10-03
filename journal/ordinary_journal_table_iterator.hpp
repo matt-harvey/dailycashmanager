@@ -10,7 +10,7 @@ namespace phatbooks
 {
 
 typedef
-	sqloxx::TableIterator<OrdinaryJournalHandle, PhatbooksDatabaseConnection>
+	sqloxx::TableIterator<OrdinaryJournalHandle>
 	OrdinaryJournalTableIterator;
 
 

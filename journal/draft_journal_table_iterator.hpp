@@ -12,7 +12,7 @@ namespace phatbooks
 
 
 typedef
-	sqloxx::TableIterator<DraftJournalHandle, PhatbooksDatabaseConnection>
+	sqloxx::TableIterator<DraftJournalHandle>
 	DraftJournalTableIterator;
 
 

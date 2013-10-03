@@ -90,7 +90,7 @@ make_default_accounts
 	// of the user, and will be done in client code closer to the UI).
 	for (wxString const& name: names)
 	{
-		AccountHandle account(p_database_connection);
+		AccountHandle const account(p_database_connection);
 		account->set_name(name);
 		account->set_account_type(p_account_type);
 

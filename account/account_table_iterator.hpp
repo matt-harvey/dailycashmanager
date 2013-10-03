@@ -10,7 +10,7 @@ namespace phatbooks
 {
 
 typedef
-	sqloxx::TableIterator<AccountHandle, PhatbooksDatabaseConnection>
+	sqloxx::TableIterator<AccountHandle>
 	AccountTableIterator;
 
 /**

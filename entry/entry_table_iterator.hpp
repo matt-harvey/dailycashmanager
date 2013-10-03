@@ -11,7 +11,7 @@ namespace phatbooks
 {
 
 typedef
-	sqloxx::TableIterator<EntryHandle, PhatbooksDatabaseConnection>
+	sqloxx::TableIterator<EntryHandle>
 	EntryTableIterator;
 
 /**

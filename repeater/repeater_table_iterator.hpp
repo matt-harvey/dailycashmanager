@@ -10,7 +10,7 @@ namespace phatbooks
 {
 
 typedef
-	sqloxx::TableIterator<RepeaterHandle, PhatbooksDatabaseConnection>
+	sqloxx::TableIterator<RepeaterHandle>
 	RepeaterTableIterator;
 
 }  // namespace phatbooks
