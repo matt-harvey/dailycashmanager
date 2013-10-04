@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "reconciliation_entry_list_ctrl.hpp"
-#include "blank.xpm"
 #include "commodity_handle.hpp"
 #include "entry.hpp"
 #include "entry_handle.hpp"
@@ -11,7 +10,6 @@
 #include "ordinary_journal_handle.hpp"
 #include "persistent_object_event.hpp"
 #include "summary_datum.hpp"
-#include "tick.xpm"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
