@@ -27,14 +27,13 @@ normalized_total
 )
 {
 	JEWEL_ASSERT (e - b > 0);  // Assert precondition.
-	BudgetItemHandle const& bi = *b;
-	PhatbooksDatabaseConnection& dbc = bi->database_connection();
+	PhatbooksDatabaseConnection& dbc = (*b)->database_connection();
 	CommodityHandle commodity(dbc);
 	// WARNING Temporary hack - if Accounts can ever have Commodities other
 	// than the default Commodity, then this will no longer work.
 	try
 	{
-		commodity = bi->account()->commodity();
+		commodity = (*b)->account()->commodity();
 	}
 	catch (jewel::UninitializedOptionalException&)
 	{
@@ -45,10 +44,10 @@ normalized_total
 	for ( ; b != e; ++b)
 	{
 		JEWEL_ASSERT
-		(	bi->database_connection().
-				supports_budget_frequency(bi->frequency())
+		(	(*b)->database_connection().
+				supports_budget_frequency((*b)->frequency())
 		);
-		ret += convert_to_canonical(bi->frequency(), bi->amount());
+		ret += convert_to_canonical((*b)->frequency(), (*b)->amount());
 	}
 	return move(round(convert_from_canonical(dbc.budget_frequency(), ret), prec));
 }

@@ -371,6 +371,7 @@ TransactionCtrl::configure_for_editing_proto_journal
 
 	// Note "Delete button" is not used unless we are editing an
 	// existing PersistentJournal.
+	JEWEL_ASSERT (m_delete_button == nullptr);
 
 	// Save/OK button
 	m_ok_button = new wxButton
