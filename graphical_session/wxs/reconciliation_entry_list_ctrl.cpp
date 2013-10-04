@@ -239,7 +239,11 @@ ReconciliationEntryListCtrl::do_process_removal_for_summary(long p_row)
 
 	// Check whether the item is marked as reconciled in the visible list.
 	// If it is, then its removal should impact m_reconciled_closing_balance.
-	if (GetItemText(reconciled_col_num()) != unreconciled_string())
+	wxListItem item;
+	item.SetId(p_row);
+	item.SetColumn(reconciled_col_num());
+	GetItem(item);
+	if (item.GetText() != unreconciled_string())
 	{
 		m_reconciled_closing_balance -= amount;
 	}
