@@ -93,10 +93,9 @@ private:
 	static int const s_entry_list_ctrl_id = s_refresh_button_id + 1;
 
 	bool m_support_reconciliations;
-	int m_next_row = 0;
-
-	int m_client_size_aux = 0;
-	int m_text_ctrl_height = 0;
+	int m_next_row;
+	int m_client_size_aux;
+	int m_text_ctrl_height;
 
 	wxGridBagSizer* m_top_sizer;
 	AccountCtrl* m_account_ctrl;

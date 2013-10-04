@@ -21,6 +21,15 @@ namespace gui
 {
 
 
+GraphicalSession::GraphicalSession():
+	m_existing_application_instance_notified(false)
+{
+}
+
+GraphicalSession::~GraphicalSession()
+{
+}
+
 void
 GraphicalSession::notify_existing_application_instance()
 {

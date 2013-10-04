@@ -20,7 +20,7 @@ class GraphicalSession: public Session
 {
 public:
 
-	GraphicalSession() = default;
+	GraphicalSession();
 	GraphicalSession(GraphicalSession const&) = delete;
 	GraphicalSession(GraphicalSession&&) = delete;
 	GraphicalSession& operator=(GraphicalSession const&) = delete;
@@ -55,15 +55,8 @@ private:
 	 */
 	int do_run(std::string const& filepath_str) override;
 
-	bool m_existing_application_instance_notified = false;
+	bool m_existing_application_instance_notified;
 };
-
-
-inline
-GraphicalSession::~GraphicalSession()
-{
-}
-
 
 }  // namesapce gui
 }  // namespace phatbooks

@@ -21,7 +21,6 @@
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
-#include <jewel/signature.hpp>
 #include <wx/string.h>
 #include <iostream>
 #include <string>
@@ -32,7 +31,6 @@ using boost::numeric_cast;
 using boost::optional;
 using jewel::clear;
 using jewel::Decimal;
-using jewel::Signature;
 using jewel::value;
 using sqloxx::Id;
 using sqloxx::SQLStatement;

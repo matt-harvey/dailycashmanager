@@ -70,6 +70,9 @@ private:
 
 };  // class DecimalTextCtrl
 
+
+// INLINE FUNCTION IMPLEMENTATIONS
+
 }  // namespace gui
 }  // namespace phatbooks
 

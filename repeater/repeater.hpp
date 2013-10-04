@@ -20,8 +20,8 @@
 #include "ordinary_journal_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
-#include <sqloxx/persistent_object.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <sqloxx/persistent_object.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <memory>
 #include <list>

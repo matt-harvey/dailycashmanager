@@ -193,7 +193,7 @@ private:
 };  // class MultiAccountPanel
 
 
-// IMPLEMENT MEMBER TEMPLATES
+// IMPLEMENT MEMBER TEMPLATES AND INLINE FUNCTIONS
 
 template <typename T>
 void

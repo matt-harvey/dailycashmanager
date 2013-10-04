@@ -74,6 +74,9 @@ EntryListPanel::EntryListPanel
 ):
 	wxPanel(p_parent, wxID_ANY),
 	m_support_reconciliations(p_support_reconciliations),
+	m_next_row(0),
+	m_client_size_aux(0),
+	m_text_ctrl_height(0),
 	m_top_sizer(nullptr),
 	m_account_ctrl(nullptr),
 	m_min_date_ctrl(nullptr),

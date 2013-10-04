@@ -3,6 +3,7 @@
 #include "app.hpp"
 #include "application.hpp"
 #include "date.hpp"
+#include "locale.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include "setup_wizard.hpp"
@@ -108,6 +109,10 @@ bool App::OnInit()
 	// Start the event loop
 	JEWEL_LOG_MESSAGE(Log::info, "Starting wxWidgets event loop.");
 	return true;
+}
+
+App::App(): m_existing_application_instance_notified(false)
+{
 }
 
 wxLocale const&

@@ -125,6 +125,7 @@ private:
 
 };  // class AccountDialog
 
+
 }  // namespace gui
 }  // namespace phatbooks
 

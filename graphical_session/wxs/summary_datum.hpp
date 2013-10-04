@@ -19,19 +19,19 @@ class SummaryDatum
 {
 public:
 	SummaryDatum(wxString const& p_label, jewel::Decimal const& p_amount);
-	SummaryDatum(SummaryDatum const&) = default;
-	SummaryDatum(SummaryDatum&&) = default;
-	SummaryDatum& operator=(SummaryDatum const& rhs);
-	SummaryDatum& operator=(SummaryDatum&& rhs);
-	~SummaryDatum() = default;
-
+	// synthesised copy constructor, copy assignment and destructor are OK
+	// ignore move constructor
+	// ignore move assignment
 	wxString label() const;
 	jewel::Decimal amount() const;
 	void set_amount(jewel::Decimal const& p_amount);
 
 private:
 
+	// declare m_label before m_amount to ensure synthesised assignment
+	// operator is exception-safe
 	wxString m_label;
+
 	jewel::Decimal m_amount;
 
 };  // class SummaryDatum

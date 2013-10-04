@@ -28,7 +28,7 @@ class Frame;
 class App: public wxApp
 {
 public:
-	App() = default;
+	App();
 	App(App const&) = delete;
 	App(App&&) = delete;
 	App& operator=(App const&) = delete;
@@ -59,7 +59,7 @@ private:
 	boost::filesystem::path elicit_existing_filepath();
 	std::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	wxLocale m_locale;
-	bool m_existing_application_instance_notified = false;
+	bool m_existing_application_instance_notified;
 };
 
 // Implements App& wxGetApp()
