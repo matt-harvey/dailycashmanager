@@ -68,11 +68,10 @@ namespace
 	{
 		return 4;
 	}
-	enum
+	wxString unreconciled_string()
 	{
-		blank_image_index = 0,  // to mark unreconciled Entries
-		tick_image_index = 1    // to mark reconciled Entries
-	};
+		return wxString();
+	}
 
 }  // end anonymous namespace
 
@@ -92,16 +91,9 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 	),
 	m_max_date(p_max_date),
 	m_closing_balance(0, p_account->commodity()->precision()),
-	m_reconciled_closing_balance(0, p_account->commodity()->precision()),
-	m_image_list(nullptr)
+	m_reconciled_closing_balance(0, p_account->commodity()->precision())
 {
 	JEWEL_LOG_TRACE();
-
-	// TODO HIGH PRIORITY Images aren't showing under MSW.
-	m_image_list = new wxImageList(0, 0);
-	m_image_list->Add(wxBitmap(blank_xpm), *wxWHITE);  // must be 0th image
-	m_image_list->Add(wxBitmap(tick_xpm), *wxWHITE);   // must be 1st image
-	AssignImageList(m_image_list, wxIMAGE_LIST_SMALL);
 }
 
 ReconciliationEntryListCtrl::~ReconciliationEntryListCtrl()
@@ -115,19 +107,16 @@ ReconciliationEntryListCtrl::do_set_non_date_columns
 )
 {
 	SetItem(p_row, comment_col_num(), p_entry->comment());
+	wxString const amount_text = finformat_wx
+	(	p_entry->amount(),
+		locale(),
+		DecimalFormatFlags().clear(string_flags::dash_for_zero)
+	);
+	SetItem(p_row, amount_col_num(), amount_text);
 	SetItem
 	(	p_row,
-		amount_col_num(),
-		finformat_wx
-		(	p_entry->amount(),
-			locale(),
-			DecimalFormatFlags().clear(string_flags::dash_for_zero)
-		)
-	);
-	SetItemColumnImage
-	(	p_row,
 		reconciled_col_num(),
-		p_entry->is_reconciled()? tick_image_index: blank_image_index
+		p_entry->is_reconciled()? amount_text: unreconciled_string()
 	);
 	JEWEL_ASSERT (num_columns() == 4);
 	return;
@@ -148,8 +137,8 @@ ReconciliationEntryListCtrl::do_insert_non_date_columns()
 	);
 	InsertColumn
 	(	reconciled_col_num(),
-		wxString("Reconciled?"),
-		wxLIST_FORMAT_LEFT
+		wxString("Reconciled"),
+		wxLIST_FORMAT_RIGHT
 	);
 	JEWEL_ASSERT (num_columns() == 4);
 	return;
@@ -252,13 +241,9 @@ ReconciliationEntryListCtrl::do_process_removal_for_summary(long p_row)
 
 	// Check whether the item is marked as reconciled in the visible list.
 	// If it is, then its removal should impact m_reconciled_closing_balance.
-	wxListItem item;
-	item.SetId(p_row);
-	item.SetColumn(reconciled_col_num());
-	GetItem(item);
-	if (item.GetImage() == tick_image_index)
+	if (GetItemText(reconciled_col_num()) != unreconciled_string())
 	{
-		m_reconciled_closing_balance -= amount;	
+		m_reconciled_closing_balance -= amount;
 	}
 	return;	
 }
@@ -273,14 +258,20 @@ ReconciliationEntryListCtrl::on_item_right_click(wxListEvent& event)
 	JEWEL_ASSERT (entry_id >= 0);
 	JEWEL_ASSERT (GetItemData(pos) == static_cast<size_t>(entry_id));
 
-	EntryHandle entry(database_connection(), entry_id);
+	EntryHandle const entry(database_connection(), entry_id);
 	bool const old_reconciliation_status = entry->is_reconciled();
 	entry->set_whether_reconciled(!old_reconciliation_status);
-	
-	SetItemColumnImage
+	Decimal const amount = entry->amount();
+	SetItem
 	(	pos,
 		col,
-		entry->is_reconciled()? tick_image_index: blank_image_index
+		entry->is_reconciled()?
+			finformat_wx
+			(	amount,
+				locale(),
+				DecimalFormatFlags().clear(string_flags::dash_for_zero)
+			):
+			unreconciled_string()
 	);
 	
 	if (entry->is_reconciled())
