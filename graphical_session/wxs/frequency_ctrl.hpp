@@ -65,8 +65,7 @@ public:
 	FrequencyCtrl(FrequencyCtrl&&) = delete;
 	FrequencyCtrl& operator=(FrequencyCtrl const&) = delete;
 	FrequencyCtrl& operator=(FrequencyCtrl&&) = delete;
-
-	virtual ~FrequencyCtrl() = default;
+	virtual ~FrequencyCtrl();
 
 	/**
 	 * If no Frequency is selected (i.e. "Once off" or equivalent is selected)

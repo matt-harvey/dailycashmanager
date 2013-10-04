@@ -68,8 +68,7 @@ public:
 	AccountCtrl(AccountCtrl&&) = delete;
 	AccountCtrl& operator=(AccountCtrl const&) = delete;
 	AccountCtrl& operator=(AccountCtrl&&) = delete;
-
-	virtual ~AccountCtrl() = default;
+	virtual ~AccountCtrl();
 
 	/**
 	 * Reset the selections available in the Combobox, to all the
@@ -118,6 +117,7 @@ private:
 	DECLARE_EVENT_TABLE()
 
 };  // class AccountCtrl
+
 
 }  // namespace gui
 }  // namespace phatbooks

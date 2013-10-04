@@ -66,7 +66,7 @@ public:
 	MultiAccountPanel(MultiAccountPanel&&) = delete;
 	MultiAccountPanel& operator=(MultiAccountPanel const&) = delete;
 	MultiAccountPanel& operator=(MultiAccountPanel&&) = delete;
-	virtual ~MultiAccountPanel() = default;
+	virtual ~MultiAccountPanel();
 
 	/**
 	 * @returns the width required to fit all the widgets in a

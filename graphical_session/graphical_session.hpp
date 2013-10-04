@@ -25,7 +25,7 @@ public:
 	GraphicalSession(GraphicalSession&&) = delete;
 	GraphicalSession& operator=(GraphicalSession const&) = delete;
 	GraphicalSession& operator=(GraphicalSession&&) = delete;
-	virtual ~GraphicalSession() = default;
+	virtual ~GraphicalSession();
 
 	/**
 	 * Notify session of existing application instance (which could
@@ -58,6 +58,11 @@ private:
 	bool m_existing_application_instance_notified = false;
 };
 
+
+inline
+GraphicalSession::~GraphicalSession()
+{
+}
 
 
 }  // namesapce gui

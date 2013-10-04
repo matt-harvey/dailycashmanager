@@ -646,9 +646,11 @@ TransactionCtrl::on_delete_button_click(wxCommandEvent& event)
 	{
 		if (remove_journal())
 		{
+			JEWEL_LOG_TRACE();
 			reset();
 		}
 	}
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -879,7 +881,6 @@ bool
 TransactionCtrl::remove_journal()
 {
 	JEWEL_LOG_TRACE();
-
 	if (!m_journal || !m_journal->has_id())
 	{
 		// WARNING This might be dead code.
@@ -903,6 +904,8 @@ TransactionCtrl::remove_journal()
 	{
 		doomed_entry_ids.push_back(entry->id());
 	}
+	JEWEL_ASSERT (m_journal->has_id());
+	Id const doomed_journal_id = m_journal->id();
 	m_journal->remove();
 	JEWEL_ASSERT (!m_journal->has_id());
 	wxEventType event_type(0);
@@ -923,8 +926,9 @@ TransactionCtrl::remove_journal()
 		event_type = PHATBOOKS_ORDINARY_JOURNAL_DELETED_EVENT;
 	}
 	JEWEL_ASSERT (event_type != static_cast<wxEventType>(0));
-	PersistentObjectEvent::fire(this, event_type, m_journal->id());
+	PersistentObjectEvent::fire(this, event_type, doomed_journal_id);
 
+	JEWEL_LOG_TRACE();
 	return true;
 }
 

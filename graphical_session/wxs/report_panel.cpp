@@ -72,6 +72,10 @@ ReportPanel::ReportPanel
 	Layout();
 }
 
+ReportPanel::~ReportPanel()
+{
+}
+
 void
 ReportPanel::configure_top()
 {

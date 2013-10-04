@@ -187,6 +187,10 @@ EntryListPanel::EntryListPanel
 	Layout();
 }
 
+EntryListPanel::~EntryListPanel()
+{
+}
+
 void
 EntryListPanel::on_refresh_button_click(wxCommandEvent& event)
 {

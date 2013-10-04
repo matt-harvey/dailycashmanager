@@ -12,7 +12,7 @@ namespace gui
 
 /**
  * Facilitates derivation from wxClientData where T is the class about
- * instances of we want to hold data. T must be copy-constructible.
+ * instances of which we want to hold data. T must be copy-constructible.
  *
  * (Pointers to instances of wxClientData may be associated with certain
  * controls in wxWidgets to assist in processing data associated with
@@ -27,7 +27,7 @@ public:
 	ClientData(ClientData&&) = default;
 	ClientData& operator=(ClientData const&) = default;
 	ClientData& operator=(ClientData&&) = default;
-	virtual ~ClientData() = default;
+	virtual ~ClientData();
 	T data() const;
 private:
 	T const m_data;
@@ -36,6 +36,7 @@ private:
 
 
 template <typename T>
+inline
 ClientData<T>::ClientData(T const& p_data):
 	wxClientData(),
 	m_data(p_data)
@@ -43,6 +44,13 @@ ClientData<T>::ClientData(T const& p_data):
 }
 
 template <typename T>
+inline
+ClientData<T>::~ClientData()
+{
+}
+
+template <typename T>
+inline
 T
 ClientData<T>::data() const
 {

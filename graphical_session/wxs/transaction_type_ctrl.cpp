@@ -76,6 +76,10 @@ TransactionTypeCtrl::TransactionTypeCtrl
 	SetSelection(0);  // In effort to avoid apparent bug in Windows.
 }
 
+TransactionTypeCtrl::~TransactionTypeCtrl()
+{
+}
+
 optional<TransactionType>
 TransactionTypeCtrl::transaction_type() const
 {

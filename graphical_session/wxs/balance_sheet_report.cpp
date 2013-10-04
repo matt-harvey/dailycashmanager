@@ -55,6 +55,10 @@ BalanceSheetReport::BalanceSheetReport
 	JEWEL_ASSERT (m_balance_map.empty());
 }
 
+BalanceSheetReport::~BalanceSheetReport()
+{
+}
+
 void
 BalanceSheetReport::do_generate()
 {

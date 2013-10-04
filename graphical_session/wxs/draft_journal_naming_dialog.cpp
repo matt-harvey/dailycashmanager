@@ -94,6 +94,10 @@ DraftJournalNamingDialog::DraftJournalNamingDialog
 	CentreOnScreen();
 }
 
+DraftJournalNamingDialog::~DraftJournalNamingDialog()
+{
+}
+
 wxString
 DraftJournalNamingDialog::draft_journal_name() const
 {

@@ -367,6 +367,7 @@ TopPanel::configure_transaction_ctrl()
 void
 TopPanel::configure_draft_journal_list_ctrl()
 {
+	JEWEL_LOG_TRACE();
 	DraftJournalListCtrl* old = 0;
 	JEWEL_ASSERT (m_right_column_sizer);
 	if (m_draft_journal_list)
@@ -386,10 +387,12 @@ TopPanel::configure_draft_journal_list_ctrl()
 	m_right_column_sizer->Add(m_draft_journal_list, wxSizerFlags(1).Expand());
 	if (old)
 	{
+		JEWEL_LOG_TRACE();
 		old->Destroy();
 		old = 0;
 	}
 	Layout();
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -582,6 +585,7 @@ TopPanel::update_for_deleted_ordinary_journal(sqloxx::Id p_doomed_id)
 void
 TopPanel::update_for_deleted_draft_journal(sqloxx::Id p_doomed_id)
 {
+	JEWEL_LOG_TRACE();
 	(void)p_doomed_id;  // Silence compiler re. unused parameter.
 	// configure_transaction_ctrl();  // Don't do this!
 	configure_draft_journal_list_ctrl();
@@ -604,12 +608,14 @@ TopPanel::update_for_deleted_draft_entries
 (	vector<sqloxx::Id> const& p_doomed_ids
 )
 {
+	JEWEL_LOG_TRACE();
 	(void)p_doomed_ids;  // Silence compiler re. unused parameter
 
 	// Nothing to do, as DraftJournal Entries are not displayed individually
 	// in the top panel (except possibly TransactionCtrl, but that can take
 	// care of itself). The deleted DraftJournal itself is processed via
 	// update_for_deleted_draft_journal.
+	JEWEL_LOG_TRACE();
 	return;
 }
 

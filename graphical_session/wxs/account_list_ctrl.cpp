@@ -60,6 +60,10 @@ AccountListCtrl::AccountListCtrl
 	update();
 }
 
+AccountListCtrl::~AccountListCtrl()
+{
+}
+
 void
 AccountListCtrl::selected_accounts(set<sqloxx::Id>& out) const
 {

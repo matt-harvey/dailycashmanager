@@ -121,6 +121,10 @@ FrequencyCtrl::FrequencyCtrl
 	SetSelection(0);
 }
 
+FrequencyCtrl::~FrequencyCtrl()
+{
+}
+
 optional<Frequency>
 FrequencyCtrl::frequency() const
 {

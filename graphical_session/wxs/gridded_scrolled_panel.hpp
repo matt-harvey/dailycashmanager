@@ -53,8 +53,7 @@ public:
 	GriddedScrolledPanel(GriddedScrolledPanel&&) = delete;
 	GriddedScrolledPanel& operator=(GriddedScrolledPanel const&) = delete;
 	GriddedScrolledPanel& operator=(GriddedScrolledPanel&&) = delete;
-
-	virtual ~GriddedScrolledPanel() = default;
+	virtual ~GriddedScrolledPanel();
 
 protected:
 

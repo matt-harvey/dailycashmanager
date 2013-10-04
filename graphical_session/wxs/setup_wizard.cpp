@@ -188,6 +188,10 @@ SetupWizard::SetupWizard
 	GetPageAreaSizer()->Add(m_filepath_page);
 }
 
+SetupWizard::~SetupWizard()
+{
+}
+
 void
 SetupWizard::run()
 {
@@ -339,6 +343,10 @@ SetupWizard::FilepathValidator::FilepathValidator
 ):
 	wxValidator(),
 	m_filepath(rhs.m_filepath)
+{
+}
+
+SetupWizard::FilepathValidator::~FilepathValidator()
 {
 }
 
@@ -623,6 +631,10 @@ SetupWizard::FilepathPage::FilepathPage
 	Layout();
 }
 
+SetupWizard::FilepathPage::~FilepathPage()
+{
+}
+
 optional<filesystem::path>
 SetupWizard::FilepathPage::selected_filepath() const
 {
@@ -725,6 +737,10 @@ SetupWizard::AccountPage::AccountPage
 	m_top_sizer(nullptr),
 	m_multi_account_panel(nullptr),
 	m_parent(*p_parent)
+{
+}
+
+SetupWizard::AccountPage::~AccountPage()
 {
 }
 

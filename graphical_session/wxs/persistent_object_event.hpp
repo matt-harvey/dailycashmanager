@@ -44,8 +44,7 @@ public:
 	PersistentObjectEvent(PersistentObjectEvent&& rhs) = delete;
 	PersistentObjectEvent& operator=(PersistentObjectEvent const&) = delete;
 	PersistentObjectEvent& operator=(PersistentObjectEvent&&) = delete;
-
-	virtual ~PersistentObjectEvent() = default;
+	virtual ~PersistentObjectEvent();
 
 	/**
 	 * @returns the id of the sqloxx::PersistentObject with which
@@ -114,6 +113,7 @@ private:
 
 	DECLARE_DYNAMIC_CLASS(PersistentObjectEvent)
 };
+
 
 
 /**

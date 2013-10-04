@@ -51,8 +51,7 @@ public:
 	TransactionTypeCtrl(TransactionTypeCtrl&&) = delete;
 	TransactionTypeCtrl& operator=(TransactionTypeCtrl const&) = delete;
 	TransactionTypeCtrl& operator=(TransactionTypeCtrl&&) = delete;
-
-	virtual ~TransactionTypeCtrl() = default;
+	virtual ~TransactionTypeCtrl();
 
 	/**
 	 * @returns the currently selected TransactionType, wrapped in a

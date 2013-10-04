@@ -66,9 +66,14 @@ PersistentObjectEvent::PersistentObjectEvent
 {
 }
 
+PersistentObjectEvent::~PersistentObjectEvent()
+{
+}
+
 Id
 PersistentObjectEvent::po_id() const
 {
+	JEWEL_LOG_TRACE();
 	return value(m_maybe_po_id);
 }
 

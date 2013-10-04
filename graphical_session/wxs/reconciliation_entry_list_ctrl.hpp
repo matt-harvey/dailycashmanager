@@ -55,8 +55,7 @@ public:
 	ReconciliationEntryListCtrl& operator=
 	(	ReconciliationEntryListCtrl&&
 	) = delete;
-
-	virtual ~ReconciliationEntryListCtrl() = default;
+	virtual ~ReconciliationEntryListCtrl();
 
 private:
 	virtual void do_set_non_date_columns(long p_row, EntryHandle const& p_entry) override;

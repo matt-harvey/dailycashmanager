@@ -141,6 +141,10 @@ MultiAccountPanel::MultiAccountPanel
 	// Layout();
 }
 
+MultiAccountPanel::~MultiAccountPanel()
+{
+}
+
 int
 MultiAccountPanel::required_width()
 {

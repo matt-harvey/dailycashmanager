@@ -313,6 +313,10 @@ AccountDialog::AccountDialog
 	Layout();
 }
 
+AccountDialog::~AccountDialog()
+{
+}
+
 void
 AccountDialog::configure_budget_panel()
 {

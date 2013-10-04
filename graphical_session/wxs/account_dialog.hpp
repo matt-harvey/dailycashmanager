@@ -87,8 +87,7 @@ public:
 	AccountDialog(AccountDialog&&) = delete;
 	AccountDialog& operator=(AccountDialog const&) = delete;
 	AccountDialog& operator=(AccountDialog&&) = delete;
-
-	virtual ~AccountDialog() = default;
+	virtual ~AccountDialog();
 
 private:
 	void on_ok_button_click(wxCommandEvent& event);

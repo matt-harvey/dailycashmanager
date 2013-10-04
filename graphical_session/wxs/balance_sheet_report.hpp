@@ -40,7 +40,7 @@ public:
 	BalanceSheetReport(BalanceSheetReport&&) = delete;
 	BalanceSheetReport& operator=(BalanceSheetReport const&) = delete;
 	BalanceSheetReport& operator=(BalanceSheetReport&&) = delete;
-	virtual ~BalanceSheetReport() = default;
+	virtual ~BalanceSheetReport();
 
 private:
 	virtual void do_generate() override;

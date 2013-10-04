@@ -73,8 +73,7 @@ public:
 	SetupWizard(SetupWizard&&) = delete;
 	SetupWizard& operator=(SetupWizard const&) = delete;
 	SetupWizard& operator=(SetupWizard&&) = delete;
-
-	~SetupWizard() = default;
+	~SetupWizard();
 
 	void run();
 
@@ -157,8 +156,7 @@ public:
 	FilepathValidator(FilepathValidator&&) = delete;
 	FilepathValidator& operator=(FilepathValidator const&) = delete;
 	FilepathValidator& operator=(FilepathValidator&&) = delete;
-
-	virtual ~FilepathValidator() = default;
+	virtual ~FilepathValidator();
 
 	/*** Functions inherited from wxValidator virtuals ***/
 
@@ -207,8 +205,7 @@ public:
 	FilepathPage(FilepathPage&&) = delete;
 	FilepathPage& operator=(FilepathPage const&) = delete;
 	FilepathPage& operator=(FilepathPage&&) = delete;
-
-	virtual ~FilepathPage() = default;
+	virtual ~FilepathPage();
 
 	boost::optional<boost::filesystem::path> selected_filepath() const;
 	CommodityHandle selected_currency() const;
@@ -255,7 +252,7 @@ public:
 	AccountPage& operator=(AccountPage const&) = delete;
 	AccountPage& operator=(AccountPage&&) = delete;
 
-	virtual ~AccountPage() = default;
+	virtual ~AccountPage();
 
 	void render();
 

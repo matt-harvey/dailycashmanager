@@ -64,6 +64,9 @@ WelcomeDialog::WelcomeDialog
 	CentreOnScreen();	
 }
 
+WelcomeDialog::~WelcomeDialog()
+{
+}
 
 void
 WelcomeDialog::configure_buttons()

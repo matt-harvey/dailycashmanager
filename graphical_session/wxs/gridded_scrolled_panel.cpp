@@ -45,6 +45,10 @@ GriddedScrolledPanel::GriddedScrolledPanel
 	SetScrollRate(horizontal_scrolling_rate, standard_scrolling_increment);
 }
 
+GriddedScrolledPanel::~GriddedScrolledPanel()
+{
+}
+
 wxGridBagSizer&
 GriddedScrolledPanel::top_sizer()
 {

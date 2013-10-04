@@ -40,7 +40,7 @@ public:
 	PLReport(PLReport&&) = delete;
 	PLReport& operator=(PLReport const&) = delete;
 	PLReport& operator=(PLReport&&) = delete;
-	virtual ~PLReport() = default;
+	virtual ~PLReport();
 
 private:
 	virtual void do_generate() override;

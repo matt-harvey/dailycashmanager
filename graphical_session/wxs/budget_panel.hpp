@@ -64,8 +64,7 @@ public:
 	BudgetPanel(BudgetPanel&&) = delete;
 	BudgetPanel& operator=(BudgetPanel const&) = delete;
 	BudgetPanel& operator=(BudgetPanel&&) = delete;
-	
-	virtual ~BudgetPanel() = default;
+	virtual ~BudgetPanel();
 
 	/**
 	 * \e Precondition: \e m_account must have an ID before this is called.

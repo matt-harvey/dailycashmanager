@@ -41,21 +41,25 @@ namespace phatbooks
 class ProtoJournal: public Journal
 {
 public:
-
 	ProtoJournal() = default;
 	ProtoJournal(ProtoJournal&&) = default;
 	ProtoJournal& operator=(ProtoJournal const&) = default;
 	ProtoJournal& operator=(ProtoJournal&&) = delete;
-	virtual ~ProtoJournal() = default;
+	virtual ~ProtoJournal();
 
 protected:
-
 	ProtoJournal(ProtoJournal const& rhs) = default;
 
 };
 
 
-}  // namespace phatbooks
+// IMPLEMENT INLINE FUNCTIONS
 
+inline
+ProtoJournal::~ProtoJournal()
+{
+}
+
+}  // namespace phatbooks
 
 #endif  // GUARD_proto_journal_hpp_2501613862114779

@@ -29,8 +29,7 @@ public:
 	WelcomeDialog(WelcomeDialog&&) = delete;
 	WelcomeDialog& operator=(WelcomeDialog const&) = delete;
 	WelcomeDialog& operator=(WelcomeDialog&&) = delete;
-
-	virtual ~WelcomeDialog() = default;
+	virtual ~WelcomeDialog();
 
 	bool user_wants_new_file() const;
 

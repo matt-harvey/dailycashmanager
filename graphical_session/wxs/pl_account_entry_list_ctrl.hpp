@@ -36,7 +36,7 @@ public:
 	PLAccountEntryListCtrl(PLAccountEntryListCtrl&&) = delete;
 	PLAccountEntryListCtrl& operator=(PLAccountEntryListCtrl const&) = delete;
 	PLAccountEntryListCtrl& operator=(PLAccountEntryListCtrl&&) = delete;
-	virtual ~PLAccountEntryListCtrl() = default;
+	virtual ~PLAccountEntryListCtrl();
 
 private:
 

@@ -70,6 +70,10 @@ EntryListCtrl::EntryListCtrl
 {
 }
 
+EntryListCtrl::~EntryListCtrl()
+{
+}
+
 EntryListCtrl*
 EntryListCtrl::create_actual_ordinary_entry_list
 (	wxWindow* p_parent,

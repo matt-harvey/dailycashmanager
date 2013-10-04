@@ -89,8 +89,7 @@ public:
 	EntryListCtrl(EntryListCtrl&&) = delete;
 	EntryListCtrl& operator=(EntryListCtrl const&) = delete;
 	EntryListCtrl& operator=(EntryListCtrl&&) = delete;
-
-	virtual ~EntryListCtrl() = default;
+	virtual ~EntryListCtrl();
 
 	/**
 	 * Update displayed entries to reflect that a \e p_journal has been newly

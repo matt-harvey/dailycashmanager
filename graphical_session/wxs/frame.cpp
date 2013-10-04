@@ -623,6 +623,7 @@ Frame::on_draft_entry_deleted_event(PersistentObjectEvent& event)
 	doomed_ids[0] = event.po_id();
 	JEWEL_ASSERT (m_top_panel);
 	m_top_panel->update_for_deleted_draft_entries(doomed_ids);
+	JEWEL_LOG_TRACE();
 	return;
 }
 

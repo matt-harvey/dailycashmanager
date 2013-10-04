@@ -46,7 +46,7 @@ public:
 	DecimalTextCtrl(DecimalTextCtrl&&) = delete;
 	DecimalTextCtrl& operator=(DecimalTextCtrl const&) = delete;
 	DecimalTextCtrl& operator=(DecimalTextCtrl&&) = delete;
-	virtual ~DecimalTextCtrl() = default;
+	virtual ~DecimalTextCtrl();
 
 	/**
 	 * WARNING As a side-effect of calling this function, the

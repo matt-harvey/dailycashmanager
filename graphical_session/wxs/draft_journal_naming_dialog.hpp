@@ -43,8 +43,7 @@ public:
 	DraftJournalNamingDialog& operator=(DraftJournalNamingDialog const&)
 		= delete;
 	DraftJournalNamingDialog& operator=(DraftJournalNamingDialog&&) = delete;
-
-	virtual ~DraftJournalNamingDialog() = default;
+	virtual ~DraftJournalNamingDialog();
 
 	wxString draft_journal_name() const;
 

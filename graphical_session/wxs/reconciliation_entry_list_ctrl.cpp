@@ -104,6 +104,10 @@ ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 	AssignImageList(m_image_list, wxIMAGE_LIST_SMALL);
 }
 
+ReconciliationEntryListCtrl::~ReconciliationEntryListCtrl()
+{
+}
+
 void
 ReconciliationEntryListCtrl::do_set_non_date_columns
 (	long p_row,

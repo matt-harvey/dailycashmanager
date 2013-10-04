@@ -40,7 +40,7 @@ public:
 	FilteredEntryListCtrl(FilteredEntryListCtrl&&) = delete;
 	FilteredEntryListCtrl& operator=(FilteredEntryListCtrl const&) = delete;
 	FilteredEntryListCtrl& operator=(FilteredEntryListCtrl&&) = delete;
-	virtual ~FilteredEntryListCtrl() = default;
+	virtual ~FilteredEntryListCtrl();
 
 protected:
 	AccountHandle const& account() const;

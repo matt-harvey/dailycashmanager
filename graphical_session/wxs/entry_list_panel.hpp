@@ -62,8 +62,7 @@ public:
 	EntryListPanel(EntryListPanel&&) = delete;
 	EntryListPanel& operator=(EntryListPanel const&) = delete;
 	EntryListPanel& operator=(EntryListPanel&&) = delete;
-
-	virtual ~EntryListPanel() = default;
+	virtual ~EntryListPanel(); 
 
 	void update_for_new(OrdinaryJournalHandle const& p_journal);
 	void update_for_amended(OrdinaryJournalHandle const& p_journal);

@@ -48,7 +48,7 @@ public:
 	Report(Report&&) = delete;
 	Report& operator=(Report const&) = delete;
 	Report& operator=(Report&&) = delete;
-	virtual ~Report() = default;
+	virtual ~Report();
 
 	/**
 	 * @returns a pointer to a heap-allocated Report. Caller will be
@@ -94,6 +94,12 @@ private:
 	boost::optional<boost::gregorian::date> m_maybe_max_date;
 
 };  // class Report
+
+
+inline
+Report::~Report()
+{
+}
 
 }  // namespace gui
 }  // namespace phatbooks

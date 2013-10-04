@@ -41,7 +41,7 @@ public:
 	BSAccountEntryListCtrl(BSAccountEntryListCtrl&&) = delete;
 	BSAccountEntryListCtrl& operator=(BSAccountEntryListCtrl const&) = delete;
 	BSAccountEntryListCtrl& operator=(BSAccountEntryListCtrl&&) = delete;
-	virtual ~BSAccountEntryListCtrl() = default;
+	virtual ~BSAccountEntryListCtrl();
 
 private:
 	virtual void do_set_non_date_columns(long p_row, EntryHandle const& p_entry) override;
@@ -50,6 +50,12 @@ private:
 	virtual int do_get_num_columns() const override;
 
 };  // class BSAccountEntryListCtrl
+
+
+inline
+BSAccountEntryListCtrl::~BSAccountEntryListCtrl()
+{
+}
 
 }  // namespace gui
 }  // namespace phatbooks

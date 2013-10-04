@@ -246,6 +246,10 @@ BudgetPanel::BudgetPanel(AccountDialog* p_parent, AccountHandle const& p_account
 	update_budget_summary();  // Not sure why this is necessary here.
 }
 
+BudgetPanel::~BudgetPanel()
+{
+}
+
 void
 BudgetPanel::on_pop_item_button_click(wxCommandEvent& event)
 {

@@ -54,7 +54,7 @@ public:
 	AccountListCtrl(AccountListCtrl&&) = delete;
 	AccountListCtrl& operator=(AccountListCtrl const&) = delete;
 	AccountListCtrl& operator=(AccountListCtrl&&) = delete;
-	virtual ~AccountListCtrl() = default;
+	virtual ~AccountListCtrl();
 
 	/**
 	 * Populates \e out with the Ids of all and only the currently selected

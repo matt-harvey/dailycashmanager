@@ -51,7 +51,9 @@ DraftJournalListCtrl::DraftJournalListCtrl
 	),
 	m_database_connection(p_database_connection)
 {
+	JEWEL_LOG_TRACE();
 	update(p_beg, p_end);
+	JEWEL_LOG_TRACE();
 }
 
 void
@@ -93,6 +95,7 @@ DraftJournalListCtrl::update
 	DraftJournalTableIterator p_end
 )
 {
+	JEWEL_LOG_TRACE();
 	// Remember which rows are selected currently
 	vector<size_t> selected_rows;
 	size_t const lim = GetItemCount();
@@ -103,6 +106,7 @@ DraftJournalListCtrl::update
 			selected_rows.push_back(j);
 		}
 	}
+	JEWEL_LOG_TRACE();
 
 	// Now (re)draw
 	ClearAll();
@@ -178,6 +182,7 @@ DraftJournalListCtrl::update
 
 	Layout();
 
+	JEWEL_LOG_TRACE();
 	return;
 }
 

@@ -64,6 +64,10 @@ AccountCtrl::AccountCtrl
 	JEWEL_ASSERT (m_exclude_balancing_account == p_exclude_balancing_account);
 }
 
+AccountCtrl::~AccountCtrl()
+{
+}
+
 void
 AccountCtrl::reset
 (	vector<AccountType> const& p_account_types,

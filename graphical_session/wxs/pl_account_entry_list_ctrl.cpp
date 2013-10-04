@@ -59,6 +59,10 @@ PLAccountEntryListCtrl::PLAccountEntryListCtrl
 {
 }
 
+PLAccountEntryListCtrl::~PLAccountEntryListCtrl()
+{
+}
+
 void
 PLAccountEntryListCtrl::do_set_non_date_columns
 (	long p_row,
