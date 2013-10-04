@@ -190,8 +190,6 @@ private:
 
 	bool is_balanced() const;
 
-	int m_max_entry_row_id;
-
 	TransactionTypeCtrl* m_transaction_type_ctrl;
 	EntryGroupCtrl* m_source_entry_ctrl;
 	EntryGroupCtrl* m_destination_entry_ctrl;

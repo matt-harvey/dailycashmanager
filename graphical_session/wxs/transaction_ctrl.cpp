@@ -276,9 +276,17 @@ void
 TransactionCtrl::clear_all()
 {
 	JEWEL_LOG_TRACE();
-
-	m_journal = Handle<PersistentJournal>();
 	DestroyChildren();
+	m_transaction_type_ctrl = nullptr;
+	m_source_entry_ctrl = nullptr;
+	m_destination_entry_ctrl = nullptr;
+	m_primary_amount_ctrl = nullptr;
+	m_frequency_ctrl = nullptr;
+	m_date_ctrl = nullptr;
+	m_cancel_button = nullptr;
+	m_delete_button = nullptr;
+	m_ok_button = nullptr;
+	m_journal = Handle<PersistentJournal>();
 	set_row(0);
 	return;
 }
@@ -745,6 +753,7 @@ TransactionCtrl::reflect_reconciliation_statuses()
 	bool contains_reconciled = false;
 	for (EntryGroupCtrl* control: entry_controls)
 	{
+		JEWEL_ASSERT (control);
 		if (control->reflect_reconciliation_statuses())
 		{
 			contains_reconciled = true;
@@ -1057,9 +1066,7 @@ TransactionCtrl::save_existing_journal()
 		oj_ref.set_date(value(m_date_ctrl->date()));
 	
 		JEWEL_ASSERT (oj_ref.is_balanced());
-		JEWEL_LOG_TRACE();
 		oj_ref.save();
-		JEWEL_LOG_TRACE();
 
 		PersistentObjectEvent::notify_doomed_ordinary_entries
 		(	this,
