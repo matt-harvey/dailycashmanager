@@ -15,17 +15,13 @@
 
 // TODO HIGH PRIORITY Tooltips aren't showing on Windows.
 
-// TODO Make it so the user can toggle logging level via the GUI?
-
 // TODO HIGH PRIORITY Make the installer create an association on the user's
 // system between the Phatbooks file extension and the Phatbooks application.
 // See CMake book, page. 162.
 
-// TODO Users will probably expect right-clicking to cause a context-dependent
-// menu to pop up.
-
-// TODO The application should automatically create a zipped backup
-// file so that the session can be recovered if something goes wrong.
+// TODO The application should automatically create a zipped backup file of
+// the database on startup so that the session can be recovered if something
+// goes wrong.
 
 // TODO The database file should perhaps have a checksum to guard
 // against its contents changing other than via the application.
@@ -57,9 +53,6 @@
 
 // TODO HIGH PRIORITY Create a better name for the application.
 
-// TODO On Fedora, recompile and install wxWidgets with an additional
-// configure flag, viz. --with-gnomeprint (sp?).
-
 // TODO HIGH PRIORITY Set the version number in a single location and find a
 // way to ensure this is reflected consistently everywhere it appears
 // (website, installer, licence text etc.).
@@ -67,7 +60,11 @@
 // TODO We need a proper solution to the potential for integer overflow.
 // Mostly we use jewel::Decimal arithmetic - which will throw if unsafe -
 // but we're not actually handling these exceptions for the user. The
-// program would just crash.
+// program would just crash. In particular, it is possible for the user
+// to post a journal which both causes the program to crash, and makes it
+// so that they can never open their file again, since the act of updating
+// the BalanceCache causes overflow. The user should be prompted to roll over
+// to a new file, before this situation can arise.
 
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.
@@ -78,10 +75,6 @@
 // the window itself; or, if not, at least tells the user
 // where the log file is and gets recommends they email a particular
 // email address with the log file attached.
-
-// TODO HIGH PRIORITY - MUST DO FIRST - Continue refactoring to
-// get rid of "outer layer" of wrapper business classes, like I did
-// with Account.
 
 #include "application.hpp"
 #include "string_conv.hpp"
@@ -118,8 +111,6 @@ using std::ofstream;
 using std::set_terminate;
 using std::string;
 using std::strlen;
-using std::set_terminate;
-using std::unique_ptr;
 using TCLAP::ArgException;
 using TCLAP::CmdLine;
 using TCLAP::UnlabeledValueArg;
@@ -158,8 +149,6 @@ namespace
 	{
 		Log::set_threshold(Log::trace);
 #		ifdef JEWEL_ON_WINDOWS
-			// TODO What if this directory doesn't exist? Will it be created?
-			// Do we need to create it in the installer?
 			string const a("C:\\ProgramData\\");
 			string const b("Phatbooks\\");
 			string const c("logs\\");
@@ -186,7 +175,6 @@ namespace
 
 int main(int argc, char** argv)
 {
-
 	try
 	{
 		configure_logging();
@@ -214,10 +202,8 @@ int main(int argc, char** argv)
 		wxString const instance_identifier =
 			app_name +
 			wxString::Format("-%s", wxGetUserId().c_str());
-		unique_ptr<wxSingleInstanceChecker> const m_checker
-		(	new wxSingleInstanceChecker(instance_identifier)
-		);
-		if (m_checker->IsAnotherRunning())
+		wxSingleInstanceChecker const checker(instance_identifier);
+		if (checker.IsAnotherRunning())
 		{
 			another_is_running = true;
 			// to which we will respond below
@@ -248,7 +234,7 @@ int main(int argc, char** argv)
 		if (another_is_running)
 		{
 			// We tell the GraphicalSession of an existing instance
-			// so that it can this session with a graphical
+			// so that it can end this session with a graphical
 			// message box, which it can only do after wxWidgets'
 			// initialization code has run.
 			graphical_session.notify_existing_application_instance();
