@@ -3,8 +3,8 @@
 #ifndef GUARD_amalgamated_budget_hpp_5997503626159161
 #define GUARD_amalgamated_budget_hpp_5997503626159161
 
-#include "account_handle_fwd.hpp"
 #include "account.hpp"
+#include "account_handle.hpp"
 #include "draft_journal_handle.hpp"
 #include "interval_type.hpp"
 #include "frequency.hpp"
@@ -169,15 +169,15 @@ private:
 	bool mutable m_is_loaded;
 	PhatbooksDatabaseConnection& m_database_connection;
 	Frequency m_frequency;
-	mutable std::unique_ptr<Map> m_map;
+	std::unique_ptr<Map> mutable m_map;
 
 	// The DraftJournal that "effects" the AmalgamatedBudget
-	mutable DraftJournalHandle m_instrument; 
+	DraftJournalHandle mutable m_instrument; 
 
-	// Represents the Account such that, when regenerating m_instrument, if the
-	// journal is not otherwise balanced, any imbalance overflows
+	// Represents the Account such that, when regenerating m_instrument, if
+	// the journal is not otherwise balanced, any imbalance overflows
 	// to this Account.
-	mutable AccountHandle m_balancing_account;
+	AccountHandle mutable m_balancing_account;
 
 };
 

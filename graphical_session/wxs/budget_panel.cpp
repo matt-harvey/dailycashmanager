@@ -25,6 +25,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/exception.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <wx/app.h>
@@ -40,6 +41,7 @@
 
 using boost::optional;
 using jewel::Decimal;
+using jewel::Log;
 using jewel::value;
 using sqloxx::DatabaseTransaction;
 using std::vector;
@@ -574,10 +576,8 @@ BudgetPanel::prompt_to_balance()
 			m_account->account_type();
 		optional<AccountHandle> maybe_target_account;	
 		if
-		(	(   (account_type == AccountType::expense) ||
-			    (account_type == AccountType::pure_envelope)    )
-			      &&
-			(   imbalance < z  )
+		(	(account_type == AccountType::expense) ||
+			(account_type == AccountType::pure_envelope)
 		)
 		{
 			// If m_account is an expense or pure_envelope Account, then
@@ -591,20 +591,21 @@ BudgetPanel::prompt_to_balance()
 			AccountTableIterator const end;
 			for ( ; it != end; ++it)
 			{
-				AccountType const atype = (*it)->account_type();
+				AccountHandle const& acc = *it;
+				AccountType const atype = acc->account_type();
 				if
 				(	(	(atype == AccountType::revenue) ||
 						(atype == AccountType::pure_envelope)
 					)
 					&&
-					(	(*it)->budget() < z
+					(	acc->budget() < z
 					) 
 					&&
-					(	*it != balancing_account
+					(	acc != balancing_account
 					)
 				)
 				{
-					maybe_target_account = *it;
+					maybe_target_account = acc;
 					break;
 				}
 			}
@@ -762,6 +763,7 @@ BudgetPanel::BalancingDialog::BalancingDialog
 	);
 	if (p_maybe_account)
 	{
+		JEWEL_LOG_VALUE(Log::info, value(p_maybe_account)->name());
 		m_account_ctrl->set_account(value(p_maybe_account));
 	}
 	m_top_sizer->Add

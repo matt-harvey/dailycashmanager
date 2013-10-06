@@ -59,7 +59,9 @@ StringSetValidator::Validate(wxWindow* WXUNUSED(wxparent))
 bool
 StringSetValidator::TransferFromWindow()
 {
-	JEWEL_ASSERT (dynamic_cast<wxTextEntry*>(GetWindow()));
+	wxTextEntry* const text_entry = dynamic_cast<wxTextEntry*>(GetWindow());
+	JEWEL_ASSERT (text_entry);	
+	m_text = text_entry->GetValue();
 	return true;
 }
 
@@ -78,13 +80,11 @@ StringSetValidator::Clone() const
 	return new StringSetValidator(*this);
 }
 
-/*
 wxString
 StringSetValidator::text() const
 {
 	return m_text;
 }
-*/
 
 
 

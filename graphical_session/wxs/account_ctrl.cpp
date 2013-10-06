@@ -8,19 +8,16 @@
 #include "string_flags.hpp"
 #include "string_set_validator.hpp"
 #include <jewel/assert.hpp>
+#include <jewel/log.hpp>
 #include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/string.h>
 #include <set>
 #include <vector>
 
+using jewel::Log;
 using std::set;
 using std::vector;
-
-// For debugging
-	#include <jewel/log.hpp>
-	#include <iostream>
-	using std::endl;
 
 namespace phatbooks
 {
@@ -132,18 +129,21 @@ AccountCtrl::reset()
 void
 AccountCtrl::set_account(AccountHandle const& p_account)
 {
+	JEWEL_LOG_VALUE(Log::info, p_account->name());
+	StringSetValidator* const validator =
+		dynamic_cast<StringSetValidator*>(GetValidator());
 	SetValue(p_account->name());
+	validator->TransferFromWindow();
 	return;
 }
 
 AccountHandle
 AccountCtrl::account()
 {
-	/*
 	StringSetValidator const* const validator =
 		dynamic_cast<StringSetValidator const*>(GetValidator());
 	JEWEL_ASSERT (validator);
-	*/
+	JEWEL_ASSERT (validator->text() == GetValue());
 	return AccountHandle(m_database_connection, m_account_map.at(GetValue()));
 }
 
@@ -178,7 +178,9 @@ AccountCtrl::on_kill_focus(wxFocusEvent& event)
 void
 AccountCtrl::refresh()
 {
+	JEWEL_LOG_TRACE();
 	AccountHandle const selected_account = account();
+	JEWEL_LOG_VALUE(Log::info, selected_account->name());
 	reset();
 	set_account(selected_account);
 	return;
