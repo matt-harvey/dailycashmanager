@@ -245,7 +245,7 @@ TopPanel::configure_transaction_ctrl(JournalType& p_journal)
 	}
 	Layout();
 	JEWEL_ASSERT (m_transaction_ctrl);
-	// m_transaction_ctrl->SetFocus();  // WARNING This doesn't seem to have any effect
+	// m_transaction_ctrl->SetFocus();  // This doesn't seem to have any effect
 	return;
 }
 

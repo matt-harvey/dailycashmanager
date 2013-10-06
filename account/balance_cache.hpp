@@ -17,7 +17,6 @@ namespace phatbooks
 class PhatbooksDatabaseConnection;
 // End forward declarations
 
-// WARNING
 // Class-by-class summary of what triggers staleness:
 // Account - any database-affecting operations on any
 // Account should make the whole map
@@ -28,8 +27,7 @@ class PhatbooksDatabaseConnection;
 // map stale (to keep things simple, as in any case Commodity operations
 // would be relatively rare).
 // Entry - whenever an Entry is operated on that has a particular
-// Account
-// as its Account, the cache entry for that Account should be
+// Account as its Account, the cache entry for that Account should be
 // marked as stale (if the operation affects the database).
 // Journal, DraftJournal and OrdinaryJournal - Any operations on these
 // that affect Account balances will do so only insofar as they involve

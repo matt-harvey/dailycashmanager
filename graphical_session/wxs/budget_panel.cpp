@@ -338,7 +338,7 @@ BudgetPanel::update_budget_summary()
 	// WARNING This is inefficient.
 	JEWEL_ASSERT (m_summary_amount_text);
 	Decimal new_total = zero();
-	vector<BudgetItemHandle> budget_items = make_budget_items();
+	vector<BudgetItemHandle> const budget_items = make_budget_items();
 	if (!budget_items.empty())
 	{
 		new_total =

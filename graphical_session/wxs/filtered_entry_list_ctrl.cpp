@@ -11,13 +11,11 @@
 #include <sqloxx/sql_statement.hpp>
 #include <wx/window.h>
 #include <memory>
-#include <utility>
 
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
 using sqloxx::SQLStatement;
-using std::move;
 using std::unique_ptr;
 
 namespace gregorian = boost::gregorian;
@@ -119,7 +117,7 @@ FilteredEntryListCtrl::do_create_entry_selector()
 			m_account
 		)
 	);
-	return move(ret);
+	return ret;
 }
 
 }  // namespace gui

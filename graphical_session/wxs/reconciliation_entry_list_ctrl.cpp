@@ -21,14 +21,12 @@
 #include <wx/imaglist.h>
 #include <wx/listctrl.h>
 #include <memory>
-#include <utility>
 #include <vector>
 
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
 using sqloxx::SQLStatement;
-using std::move;
 using std::unique_ptr;
 using std::vector;
 
@@ -329,7 +327,7 @@ ReconciliationEntryListCtrl::do_create_entry_selector()
 			account()
 		)
 	);
-	return move(ret);
+	return ret;
 }
 
 }  // namespace gui

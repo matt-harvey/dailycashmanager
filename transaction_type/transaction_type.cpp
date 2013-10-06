@@ -16,8 +16,8 @@
 #include <set>
 #include <vector>
 
-// TODO The implementations of the various functions defined in this file
-// seem more complicated than they should be.
+// TODO LOW PRIORITY The implementations of the various functions defined in
+// this file seem more complicated than they should be.
 
 namespace gregorian = boost::gregorian;
 
@@ -311,7 +311,6 @@ source_super_types
 	set<AccountSuperType>& out
 )
 {
-	// WARNING This is pretty inefficient. But it probably doesn't matter.
 	vector<AccountType> const& atypes =
 		source_account_types(p_transaction_type);
 	for (AccountType const atype: atypes)
@@ -327,7 +326,6 @@ destination_super_types
 	set<AccountSuperType>& out
 )
 {
-	// WARNING This is pretty inefficient. But it probably doesn't matter.
 	vector<AccountType> const& atypes =
 		destination_account_types(p_transaction_type);
 	for (AccountType const atype: atypes)

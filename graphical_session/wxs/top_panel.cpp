@@ -43,7 +43,6 @@ using jewel::value;
 using std::begin;
 using std::end;
 using std::map;
-using std::move;
 using std::set;
 using std::vector;
 
@@ -331,7 +330,7 @@ TopPanel::make_proto_journal() const
 			ret.push_entry(entry);	
 		}
 	}
-	return move(ret);
+	return ret;
 }
 
 void

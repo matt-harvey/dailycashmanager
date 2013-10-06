@@ -44,7 +44,6 @@ using jewel::Decimal;
 using jewel::value;
 using sqloxx::Id;
 using sqloxx::SQLStatement;
-using std::move;
 using std::ostringstream;
 using std::string;
 using std::unique_ptr;
@@ -478,7 +477,7 @@ create_date_ordered_actual_ordinary_entry_selector
 	{
 		ret->bind(":account_id", (*p_maybe_account)->id());
 	}
-	return move(ret);
+	return ret;
 }
 
 }  // namespace phatbooks

@@ -48,7 +48,6 @@ using sqloxx::Id;
 using sqloxx::SQLStatement;
 using std::find_if;
 using std::map;
-using std::move;
 using std::string;
 using std::vector;
 
@@ -685,7 +684,7 @@ favourite_accounts(PhatbooksDatabaseConnection& p_database_connection)
 			max_counts[stype] = count;
 		}
 	}
-	return move(ret);
+	return ret;
 }
 
 wxString account_concept_name

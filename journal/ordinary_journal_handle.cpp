@@ -15,12 +15,10 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/string.h>
-#include <utility>
 
 using jewel::Decimal;
 using sqloxx::Handle;
 using sqloxx::Id;
-using std::move;
 
 namespace phatbooks
 {
@@ -82,7 +80,7 @@ create_opening_balance_journal
 	ret->set_date_unrestricted
 	(	dbc.opening_balance_journal_date()
 	);
-	return move(ret);
+	return ret;
 }
 
 
