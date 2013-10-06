@@ -150,7 +150,6 @@ Repeater::set_next_date(boost::gregorian::date const& p_next_date)
 	return;
 }
 
-
 void
 Repeater::set_journal_id(Id p_journal_id)
 {

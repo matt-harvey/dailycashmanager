@@ -56,13 +56,6 @@ class Frequency;
  * prevent next_date from being set later than the 27th in the event the
  * interval_type is months (as opposed to month_ends).
  *
- * @todo Should it be possible to have Repeaters that have reminders attached
- * them, as well as just transactions?
- *
- * @todo The nomenclature here is a bit inconsistent. We should adopt
- * a nomenclature that is consistent across Frequency, IntervalType
- * and Repeater, in regards to "step type" and "num steps".
- *
  * Client code should not deal with Repeater instances directly, but
  * only ever via RepeaterHandle.
  */
