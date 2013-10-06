@@ -80,13 +80,6 @@ StringSetValidator::Clone() const
 	return new StringSetValidator(*this);
 }
 
-wxString
-StringSetValidator::text() const
-{
-	return m_text;
-}
-
-
 
 }  // namespace gui
 }  // namespace phatbooks

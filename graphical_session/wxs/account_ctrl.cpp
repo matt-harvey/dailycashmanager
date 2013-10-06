@@ -140,10 +140,8 @@ AccountCtrl::set_account(AccountHandle const& p_account)
 AccountHandle
 AccountCtrl::account()
 {
-	StringSetValidator const* const validator =
-		dynamic_cast<StringSetValidator const*>(GetValidator());
-	JEWEL_ASSERT (validator);
-	JEWEL_ASSERT (validator->text() == GetValue());
+	// Note it may NOT necessarily be the case at this point that
+	// GetValue() == validator->m_text.
 	return AccountHandle(m_database_connection, m_account_map.at(GetValue()));
 }
 

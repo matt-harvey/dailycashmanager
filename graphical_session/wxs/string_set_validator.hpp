@@ -54,8 +54,6 @@ public:
 	bool TransferToWindow();
 	wxObject* Clone() const;
 
-	wxString text() const;
-
 private:
 	wxString m_text;
 	wxArrayString m_valid_strings;
