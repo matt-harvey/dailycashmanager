@@ -160,12 +160,8 @@ ReportPanel::configure_top()
 void
 ReportPanel::configure_bottom()
 {
-	// TODO Can we make this a bit more efficient by, instead of creating a
-	// whole new Report, calling a generate() or regenerate() method
-	// on the existing Report?
-	
 	JEWEL_ASSERT (m_top_sizer);
-	if (m_client_size_aux < 100)  // WARNING Ugly hack
+	if (m_client_size_aux == 0)
 	{
 		m_client_size_aux = GetClientSize().GetY();
 	}
@@ -203,8 +199,7 @@ ReportPanel::configure_bottom()
 	}
 	JEWEL_ASSERT (m_report);
 	m_report->generate();
-	m_top_sizer->
-		Add(m_report, wxGBPosition(m_next_row, 1), wxGBSpan(1, 4));
+	m_top_sizer->Add(m_report, wxGBPosition(m_next_row, 1), wxGBSpan(1, 4));
 	// m_top_sizer->Fit(this);
 	// m_top_sizer->SetSizeHints(this);
 	// Fit();

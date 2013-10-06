@@ -153,6 +153,5 @@ Report::generate()
 	return;
 }
 
-
 }  // namespace gui
 }  // namespace phatbooks

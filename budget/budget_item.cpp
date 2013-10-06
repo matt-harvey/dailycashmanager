@@ -50,7 +50,6 @@ BudgetItem::setup_tables(PhatbooksDatabaseConnection& dbc)
 	(	"create table budget_items"
 		"("
 			"budget_item_id integer primary key autoincrement, "
-			// TODO Should account_id be unique here?
 			"account_id not null references accounts, "
 			"description text, "
 			"interval_units integer not null, "

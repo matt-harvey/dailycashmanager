@@ -34,6 +34,7 @@
 #include <jewel/optional.hpp>
 #include <wx/string.h>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <utility>
 
@@ -44,6 +45,7 @@ using jewel::value;
 using sqloxx::Id;
 using sqloxx::SQLStatement;
 using std::move;
+using std::ostringstream;
 using std::string;
 using std::unique_ptr;
 
@@ -453,38 +455,16 @@ create_date_ordered_actual_ordinary_entry_selector
 	optional<AccountHandle> const& p_maybe_account
 )
 {
-	// TODO Factor out duplicated code between here and
-	// "entry_table_iterator.cpp".
-#	ifndef NDEBUG
-		// Ensure we are picking all and only the
-		// actual transactions.
-		int const target_non_actual_type = 3;
-		int i = 0;
-		int const lim =
-			static_cast<int>(TransactionType::num_transaction_types);
-		for ( ; i != lim; ++i)
-		{
-			TransactionType const ttype = static_cast<TransactionType>(i);
-			if (ttype == static_cast<TransactionType>(target_non_actual_type))
-			{
-				JEWEL_ASSERT (!transaction_type_is_actual(ttype));
-			}
-			else
-			{
-				JEWEL_ASSERT (transaction_type_is_actual(ttype));
-			}
-		}
-#	endif
-
-	string text =
-		"select entry_id from entries join ordinary_journal_detail "
-		"using(journal_id) join journals using(journal_id) where "
-		"transaction_type_id != 3";
-	if (p_maybe_min_date) text += " and date >= :min_date";
-	if (p_maybe_max_date) text += " and date <= :max_date";
-	if (p_maybe_account) text += " and account_id = :account_id";
+	ostringstream oss;
+	oss << "select entry_id from entries join ordinary_journal_detail "
+		<< "using(journal_id) join journals using(journal_id) where "
+		<< "transaction_type_id != "
+		<< static_cast<int>(non_actual_transaction_type());
+	if (p_maybe_min_date) oss << " and date >= :min_date";
+	if (p_maybe_max_date) oss << " and date <= :max_date";
+	if (p_maybe_account) oss <<  " and account_id = :account_id";
 	unique_ptr<SQLStatement> ret
-	(	new SQLStatement(p_database_connection, text)
+	(	new SQLStatement(p_database_connection, oss.str())
 	);
 	if (p_maybe_min_date)
 	{

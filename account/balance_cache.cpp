@@ -112,8 +112,6 @@ BalanceCache::technical_opening_balance(sqloxx::Id p_account_id)
 	Decimal ret(0, places);
 	if (statement.step())
 	{
-		// TODO Catching exception here is a crappy way of telling
-		// whether there are no entries to sum.
 		try
 		{
 			ret = Decimal(statement.extract<Decimal::int_type>(0), places);

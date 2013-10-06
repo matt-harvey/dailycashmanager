@@ -90,6 +90,13 @@ void assert_transaction_type_validity
 (	TransactionType p_transaction_type
 );
 
+/**
+ * @returns a TransactionType which is non-actual, which is guaranteed to
+ * be the sole non-actual TransactionType;
+ */
+TransactionType non_actual_transaction_type();
+
+
 }  // namespace phatbooks
 
 
@@ -154,7 +161,9 @@ assert_transaction_type_validity
 		JEWEL_ASSERT (ttype_as_int >= 0);
 		JEWEL_ASSERT (ttype_as_int < num_ttypes_as_int);
 #	endif  // NDEBUG
+	return;
 }
+
 
 
 }  // namespace phatbooks

@@ -76,9 +76,6 @@ struct Repeater::RepeaterData
 void
 Repeater::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
-	// TODO IntervalType is now to be used by classes other
-	// than Repeater. The code for populating the interval_types
-	// table should be moved elsewhere.
 	dbc.execute_sql
 	(	"create table interval_types"
 		"("
@@ -89,9 +86,6 @@ Repeater::setup_tables(PhatbooksDatabaseConnection& dbc)
 		"insert into interval_types(interval_type_id) values(3); "
 		"insert into interval_types(interval_type_id) values(4);"
 	);
-	// TODO Should carefully swap the order of columns
-	// interval_units and interval_type_id, to reflect their
-	// usage.
 	dbc.execute_sql
 	(	"create table repeaters"
 		"("

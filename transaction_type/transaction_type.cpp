@@ -222,6 +222,29 @@ transaction_type_is_actual(TransactionType p_transaction_type)
 	return p_transaction_type != TransactionType::envelope;
 }
 
+TransactionType
+non_actual_transaction_type()
+{
+	TransactionType const ret = TransactionType::envelope;
+#	ifndef NDEBUG
+		int const lim =
+			static_cast<int>(TransactionType::num_transaction_types);
+		for (int i = 0 ; i != lim; ++i)
+		{
+			TransactionType const ttype = static_cast<TransactionType>(i);
+			if (ttype == ret)
+			{
+				JEWEL_ASSERT (!transaction_type_is_actual(ttype));
+			}
+			else
+			{
+				JEWEL_ASSERT (transaction_type_is_actual(ttype));
+			}
+		}
+#	endif  // NDEBUG
+	return ret;
+}
+
 vector<AccountType> const&
 source_account_types
 (	TransactionType p_transaction_type
@@ -442,5 +465,6 @@ natural_transaction_type(AccountHandle const& account_x, AccountHandle const& ac
 
 	JEWEL_HARD_ASSERT (false);
 }
+
 
 }  // namespace phatbooks
