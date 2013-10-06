@@ -96,11 +96,6 @@ private:
 };  // class Report
 
 
-inline
-Report::~Report()
-{
-}
-
 }  // namespace gui
 }  // namespace phatbooks
 

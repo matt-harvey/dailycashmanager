@@ -90,6 +90,10 @@ Report::Report
 	}
 }
 
+Report::~Report()
+{
+}
+
 gregorian::date
 Report::min_date() const
 {
