@@ -109,10 +109,10 @@ AmalgamatedBudget::AmalgamatedBudget
 	m_is_loaded(false),
 	m_database_connection(p_database_connection),
 	m_frequency(1, IntervalType::days),
-	m_map(new Map),
-	m_instrument(nullptr),
-	m_balancing_account(nullptr)
+	m_map(new Map)
 {
+	JEWEL_ASSERT (!m_instrument);
+	JEWEL_ASSERT (!m_balancing_account);
 }
 
 void
@@ -247,15 +247,15 @@ AccountHandle
 AmalgamatedBudget::balancing_account() const
 {
 	load();
-	JEWEL_ASSERT (m_balancing_account != 0);
-	return *m_balancing_account;
+	JEWEL_ASSERT (m_balancing_account);
+	return m_balancing_account;
 }
 
 DraftJournalHandle
 AmalgamatedBudget::instrument() const
 {
 	load();
-	return *m_instrument;
+	return m_instrument;
 }
 
 void
@@ -367,7 +367,7 @@ AmalgamatedBudget::regenerate_instrument()
 	load();
 
 	DraftJournalHandle const fresh_journal(m_database_connection);
-	fresh_journal->mimic(**m_instrument);
+	fresh_journal->mimic(*m_instrument);
 	reflect_entries(fresh_journal);
 	reflect_repeater(fresh_journal);
 
@@ -387,11 +387,11 @@ AmalgamatedBudget::regenerate_instrument()
 		fresh_journal->push_entry(balancing_entry);
 		JEWEL_ASSERT (fresh_journal->is_balanced());
 	}
-	// WARNING The source and destination are the opposite way
+	// WARNING the source and destination are the opposite way
 	// round to usual here. But it probably doesn't matter, as
 	// the user won't be seeing this Journal anyway.
-	(*m_instrument)->mimic(*fresh_journal);
-	(*m_instrument)->save();
+	m_instrument->mimic(*fresh_journal);
+	m_instrument->save();
 
 	return;
 }
@@ -405,11 +405,9 @@ AmalgamatedBudget::load_balancing_account() const
 	);
 	bool check = statement.step();
 	JEWEL_ASSERT (check);
-	m_balancing_account.reset
-	(	new AccountHandle
-		(	m_database_connection,
-			statement.extract<Id>(0)
-		)
+	m_balancing_account = AccountHandle
+	(	m_database_connection,
+		statement.extract<Id>(0)
 	);
 	statement.step_final();
 	return;
@@ -425,12 +423,8 @@ AmalgamatedBudget::load_instrument() const
 		"select journal_id from amalgamated_budget_data"
 	);
 	statement.step();
-	m_instrument.reset
-	(	new DraftJournalHandle
-		(	m_database_connection,
-			statement.extract<Id>(0)
-		)
-	);
+	m_instrument =
+		DraftJournalHandle(m_database_connection, statement.extract<Id>(0));
 	statement.step_final();
 	return;
 }
@@ -491,7 +485,7 @@ AmalgamatedBudget::instrument_balancing_amount() const
 	JEWEL_ASSERT (m_instrument);
 	Decimal ret(0, m_database_connection.default_commodity()->precision());
 	wxString const balancing_entry_marker = balancing_entry_comment();
-	vector<EntryHandle> const& entries = (*m_instrument)->entries();
+	vector<EntryHandle> const& entries = m_instrument->entries();
 	for (EntryHandle const& entry: entries)
 	{
 		if (entry->comment() == balancing_entry_marker)
@@ -503,8 +497,8 @@ AmalgamatedBudget::instrument_balancing_amount() const
 #	ifndef NDEBUG
 	if (!entries.empty())
 	{
-		JEWEL_ASSERT ((*m_instrument)->repeaters().size() == 1);
-		RepeaterHandle const repeater = (*m_instrument)->repeaters()[0];
+		JEWEL_ASSERT (m_instrument->repeaters().size() == 1);
+		RepeaterHandle const repeater = m_instrument->repeaters()[0];
 		JEWEL_ASSERT (repeater->frequency() == frequency());
 	}
 #	endif

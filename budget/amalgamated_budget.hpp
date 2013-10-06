@@ -172,14 +172,12 @@ private:
 	mutable std::unique_ptr<Map> m_map;
 
 	// The DraftJournal that "effects" the AmalgamatedBudget
-	// TODO Do we really need a unique_ptr around this?
-	mutable std::unique_ptr<DraftJournalHandle> m_instrument; 
+	mutable DraftJournalHandle m_instrument; 
 
 	// Represents the Account such that, when regenerating m_instrument, if the
 	// journal is not otherwise balanced, any imbalance overflows
 	// to this Account.
-	// TODO Do we really need a unique_ptr around this?
-	mutable std::unique_ptr<AccountHandle> m_balancing_account;
+	mutable AccountHandle m_balancing_account;
 
 };
 
