@@ -123,13 +123,11 @@ public:
 	/**
 	 * Associate the Repeater with a particular DraftJournal, by
 	 * passing the id of the DraftJournal to \e p_journal_id.
-	 * This function should \e not normally be used. The usual way
+	 * This function should \e not normally be called. The usual way
 	 * to associate a Repeater with a DraftJournal is via
 	 * \e DraftJournal::push_repeater(...). The DraftJournal class
 	 * takes care of assigning the correct journal id to Repeaters,
 	 * without client code needing to do this directly.
-	 *
-	 * @todo Can this be made private?
 	 */
 	void set_journal_id(sqloxx::Id p_journal_id);
 		

@@ -11,6 +11,7 @@
 
 using std::shared_ptr;
 using std::string;
+using std::wcscpy;
 using std::wstring;
 
 namespace phatbooks
@@ -66,11 +67,18 @@ GraphicalSession::do_run()
 	// of wchar_t*. We produce these as follows.
 	wstring const argv0_w(app_name.begin(), app_name.end());
 
-	// TODO Does this const_cast result in undefined behaviour?
-	wchar_t* argv0_wct = const_cast<wchar_t*>(argv0_w.c_str());
+	// We do all this to avoid a const_cast.
+	// The extra 1000 is a safeguard against the fact that
+	// wxEntryStart (below) may modify the contents of the pointers
+	// passed to it. wxWidgets documentation does not say what it might write.
+	// We don't want it writing off the end. Yes, this
+	// is a grotesque hack.
+	size_t buf_0_sz = argv0_w.size() + 1 + 1000;
+	wchar_t* buf_0 = new wchar_t[buf_0_sz];
+	wcscpy(buf_0, argv0_w.c_str());
 
 	// We now construct the arguments required by wxEntryStart.
-	wchar_t* argvs[] = { argv0_wct, 0 };
+	wchar_t* argvs[] = { buf_0, 0 };
 	int argca = 0;
 	while (argvs[argca] != 0) ++argca;
 
@@ -87,6 +95,9 @@ GraphicalSession::do_run()
 	}
 	wxTheApp->OnExit();
 	wxEntryCleanup();
+
+	delete[] buf_0;
+	buf_0 = nullptr;
 
 	JEWEL_LOG_TRACE();
 
@@ -132,12 +143,21 @@ GraphicalSession::do_run(string const& filepath_str)
 	wstring const argv0_w(app_name.begin(), app_name.end());
 	wstring const argv1_w(filepath_str.begin(), filepath_str.end());
 
-	// TODO Do these const_cast's result in undefined behaviour?
-	wchar_t* argv0_wct = const_cast<wchar_t*>(argv0_w.c_str());
-	wchar_t* argv1_wct = const_cast<wchar_t*>(argv1_w.c_str());
+	// We do all this to avoid a const_cast.
+	// The extra 1000 is a safeguard against the fact that
+	// wxEntryStart (below) may modify the contents of the pointers
+	// passed to it. wxWidgets documentation does not say what it might write.
+	// We don't want it writing off the end. Yes, this
+	// is a grotesque hack.
+	size_t buf_0_sz = argv0_w.size() + 1 + 1000;
+	size_t buf_1_sz = argv1_w.size() + 1 + 1000;
+	wchar_t* buf_0 = new wchar_t[buf_0_sz];
+	wchar_t* buf_1 = new wchar_t[buf_1_sz];
+	wcscpy(buf_0, argv0_w.c_str());
+	wcscpy(buf_1, argv1_w.c_str());
 
 	// We now construct the arguments required by wxEntryStart.
-	wchar_t* argvs[] = { argv0_wct, argv1_wct, 0 };
+	wchar_t* argvs[] = { buf_0, buf_1, 0 };
 	int argca = 0;
 	while (argvs[argca] != 0) ++argca;
 
@@ -148,6 +168,11 @@ GraphicalSession::do_run(string const& filepath_str)
 	wxTheApp->OnExit();
 	wxEntryCleanup();
 
+	delete[] buf_0;
+	buf_0 = nullptr;
+	delete[] buf_1;
+	buf_1 = nullptr;
+	
 	JEWEL_LOG_TRACE();
 
 	return 0;
