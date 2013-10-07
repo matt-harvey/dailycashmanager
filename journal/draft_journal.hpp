@@ -84,7 +84,8 @@ public:
 	 * The Signature parameter prevents this constructor from being
 	 * called except by IdentityMap.
 	 *
-	 * Ordinary client code should use DraftJournalHandle, not DraftJournal.
+	 * Ordinary client code should use sqloxx::Handle<DraftJournal>, not
+	 * DraftJournal directly.
 	 */
 	DraftJournal
 	(	IdentityMap& p_identity_map,
@@ -97,7 +98,8 @@ public:
 	 * The Signature parameter prevents this constructor from being
 	 * called except by IdentityMap.
 	 *
-	 * Ordinary client code should use DraftJournalHandle, not DraftJournal.
+	 * Ordinary client code should use sqloxx::Handle<DraftJournal>, not
+	 * DraftJournal directly.
 	 */
 	DraftJournal
 	(	IdentityMap& p_identity_map,

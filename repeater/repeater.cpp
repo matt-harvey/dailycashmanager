@@ -15,7 +15,7 @@
 #include "repeater.hpp"
 #include "date.hpp"
 #include "frequency.hpp"
-#include "draft_journal_handle.hpp"
+#include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -44,14 +44,14 @@
 namespace gregorian = boost::gregorian;
 
 using boost::optional;
-using sqloxx::DatabaseTransaction;
-using sqloxx::Handle;
-using sqloxx::SQLStatement;
 using boost::numeric_cast;
 using jewel::clear;
 using jewel::multiplication_is_unsafe;
 using jewel::value;
+using sqloxx::DatabaseTransaction;
+using sqloxx::Handle;
 using sqloxx::Id;
+using sqloxx::SQLStatement;
 using std::is_same;
 using std::list;
 using std::move;
@@ -227,7 +227,7 @@ Handle<OrdinaryJournal>
 Repeater::fire_next()
 {
 	load();
-	DraftJournalHandle const dj = draft_journal();
+	Handle<DraftJournal> const dj = draft_journal();
 	Handle<OrdinaryJournal> const oj(database_connection());
 	gregorian::date const next_date_elect = next_date(1);
 	if 
@@ -267,11 +267,14 @@ Repeater::fire_next()
 
 
 
-DraftJournalHandle
+Handle<DraftJournal>
 Repeater::draft_journal()
 {
 	load();
-	return DraftJournalHandle(database_connection(), value(m_data->journal_id));
+	return Handle<DraftJournal>
+	(	database_connection(),
+		value(m_data->journal_id)
+	);
 }
 
 
@@ -431,8 +434,8 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 			// the next posting date. In this case the returned
 			// OrdinaryJournal will have no id.
 #			ifndef NDEBUG
-				DraftJournalHandle const dj = repeater->draft_journal();
-				DraftJournalHandle const bi = dbc.budget_instrument();
+				Handle<DraftJournal> const dj = repeater->draft_journal();
+				Handle<DraftJournal> const bi = dbc.budget_instrument();
 #			endif
 			if (oj->has_id())
 			{

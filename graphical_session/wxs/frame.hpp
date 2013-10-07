@@ -3,7 +3,6 @@
 #ifndef GUARD_frame_hpp_873675392881816
 #define GUARD_frame_hpp_873675392881816
 
-#include "draft_journal_handle_fwd.hpp"
 #include "top_panel.hpp"
 #include <jewel/assert.hpp>
 #include <sqloxx/handle_fwd.hpp>
@@ -18,6 +17,7 @@ namespace phatbooks
 // Begin forward declarations
 
 class Account;
+class DraftJournal;
 class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
@@ -71,7 +71,9 @@ public:
 	 * Populates \e out with all the DraftJournals currently
 	 * selected by the user in the main window.
 	 */
-	void selected_draft_journals(std::vector<DraftJournalHandle>& out) const;
+	void selected_draft_journals
+	(	std::vector<sqloxx::Handle<DraftJournal> >& out
+	) const;
 
 private:
 

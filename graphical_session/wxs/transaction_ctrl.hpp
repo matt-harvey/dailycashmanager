@@ -5,7 +5,6 @@
 
 #include "account.hpp"
 #include "decimal_text_ctrl.hpp"
-#include "draft_journal_handle_fwd.hpp"
 #include "entry_handle_fwd.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include "persistent_journal.hpp"
@@ -26,6 +25,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class DraftJournal;
 class OrdinaryJournal;
 class ProtoJournal;
 class PhatbooksDatabaseConnection;
@@ -88,7 +88,7 @@ public:
 	TransactionCtrl
 	(	TopPanel* p_parent,
 		wxSize const& p_size,
-		DraftJournalHandle const& p_journal
+		sqloxx::Handle<DraftJournal> const& p_journal
 	);
 
 	/**

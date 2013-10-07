@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "account.hpp"
-#include "draft_journal_handle.hpp"
+#include "draft_journal.hpp"
 #include "entry_handle.hpp"
 #include "interval_type.hpp"
 #include "phatbooks_tests_common.hpp"
@@ -28,7 +28,7 @@ namespace test
 TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
-	DraftJournalHandle const dj1(dbc);
+	Handle<DraftJournal> const dj1(dbc);
 	dj1->set_transaction_type(TransactionType::generic);
 	dj1->set_comment("draft journal to test repeater_description");
 	dj1->set_name("test");

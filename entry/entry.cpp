@@ -3,7 +3,6 @@
 #include "entry.hpp"
 #include "account.hpp"
 #include "date.hpp"
-#include "draft_journal_handle.hpp"
 #include "string_conv.hpp"
 #include "commodity_handle.hpp"
 #include "ordinary_journal.hpp"

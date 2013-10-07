@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "draft_journal.hpp"
-#include "draft_journal_handle.hpp"
 #include "draft_journal_table_iterator.hpp"
 #include "entry_handle.hpp"
 #include "persistent_journal.hpp"

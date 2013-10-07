@@ -4,7 +4,6 @@
 #define GUARD_top_panel_hpp_7915960996372607
 
 #include "account_type.hpp"
-#include "draft_journal_handle_fwd.hpp"
 #include "entry_handle.hpp"
 #include "reconciliation_list_panel.hpp"
 #include "sizing.hpp"
@@ -23,6 +22,7 @@ namespace phatbooks
 // Begin forward declarations
 
 class Account;
+class DraftJournal;
 class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 class ProtoJournal;
@@ -98,14 +98,18 @@ public:
 	 * Populates \e out with all the DraftJournals currently
 	 * selected by the user in the main window.
 	 */
-	void selected_draft_journals(std::vector<DraftJournalHandle>& out) const;
+	void selected_draft_journals
+	(	std::vector<sqloxx::Handle<DraftJournal> >& out
+	) const;
 
 	/**
 	 * Update the display to reflect current state of database, after
 	 * saving of p_saved_object, where p_saved_object is a newly saved
 	 * object that was not already in the database.
 	 */
-	void update_for_new(DraftJournalHandle const& p_saved_object);
+	void update_for_new
+	(	sqloxx::Handle<DraftJournal> const& p_saved_object
+	);
 	void update_for_new
 	(	sqloxx::Handle<OrdinaryJournal> const& p_saved_object
 	);
@@ -122,7 +126,9 @@ public:
 	 * as TransactionCtrl does not support deletion of individual
 	 * Entries.
 	 */
-	void update_for_amended(DraftJournalHandle const& p_saved_object);
+	void update_for_amended
+	(	sqloxx::Handle<DraftJournal> const& p_saved_object
+	);
 	void update_for_amended
 	(	sqloxx::Handle<OrdinaryJournal> const& p_saved_object
 	);

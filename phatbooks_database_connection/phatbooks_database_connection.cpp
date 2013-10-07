@@ -22,7 +22,6 @@
 #include "commodity_handle.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
-#include "draft_journal_handle.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
@@ -31,7 +30,6 @@
 #include "balance_cache.hpp"
 #include "commodity_handle.hpp"
 #include "entry_handle.hpp"
-#include "draft_journal_handle.hpp"
 #include "persistent_journal.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
@@ -313,7 +311,7 @@ PhatbooksDatabaseConnection::set_default_commodity
 }
 
 
-DraftJournalHandle
+Handle<DraftJournal>
 PhatbooksDatabaseConnection::budget_instrument() const
 {
 	return m_budget->instrument();

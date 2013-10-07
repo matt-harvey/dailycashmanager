@@ -15,7 +15,6 @@
 
 
 #include "date.hpp"
-#include "draft_journal_handle_fwd.hpp"
 #include "interval_type.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -35,6 +34,7 @@ namespace phatbooks
 
 // begin forward declarations
 
+class DraftJournal;
 class Frequency;
 
 // end forward declarations
@@ -179,7 +179,7 @@ public:
 	 */
 	sqloxx::Handle<OrdinaryJournal> fire_next();
 	
-	DraftJournalHandle draft_journal();
+	sqloxx::Handle<DraftJournal> draft_journal();
 
 	void swap(Repeater& rhs);
 

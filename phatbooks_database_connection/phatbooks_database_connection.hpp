@@ -16,7 +16,6 @@
 
 #include "account_type.hpp"
 #include "commodity_handle_fwd.hpp"
-#include "draft_journal_handle_fwd.hpp"
 #include "frequency.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/filesystem.hpp>
@@ -42,6 +41,7 @@ class Account;
 class BalanceCache;
 class BudgetItem;
 class Commodity;
+class DraftJournal;
 class Entry;
 class PersistentJournal;
 class Repeater;
@@ -159,7 +159,7 @@ public:
 	 * deleted, except via code in AmalgamatedBudget. This could
 	 * be achieved using a signature class for AmalgamatedBudget.
 	 */
-	DraftJournalHandle budget_instrument() const;
+	sqloxx::Handle<DraftJournal> budget_instrument() const;
 	
 	/**
 	 * Class to provide restricted access to cache holding Account balances.

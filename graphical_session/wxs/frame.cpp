@@ -6,10 +6,9 @@
 #include "account_list_ctrl.hpp"
 #include "application.hpp"
 #include "app.hpp"
-#include "draft_journal_handle.hpp"
+#include "draft_journal.hpp"
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
-#include "draft_journal_handle.hpp"
 #include "ordinary_journal.hpp"
 #include "persistent_journal.hpp"
 #include "persistent_object_event.hpp"
@@ -444,7 +443,7 @@ Frame::on_menu_edit_draft_journal(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
-	vector<DraftJournalHandle> journals;
+	vector<Handle<DraftJournal> > journals;
 	selected_draft_journals(journals);
 	if (journals.empty())
 	{
@@ -520,7 +519,7 @@ Frame::on_journal_editing_requested(PersistentObjectEvent& event)
 	Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
-		DraftJournalHandle const journal(m_database_connection, journal_id);
+		Handle<DraftJournal> const journal(m_database_connection, journal_id);
 		edit_journal(journal);
 	}
 	else
@@ -560,7 +559,7 @@ Frame::on_journal_created_event(PersistentObjectEvent& event)
 	Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
-		DraftJournalHandle const journal(m_database_connection, journal_id);
+		Handle<DraftJournal> const journal(m_database_connection, journal_id);
 		m_top_panel->update_for_new(journal);
 	}
 	else
@@ -584,7 +583,7 @@ Frame::on_journal_edited_event(PersistentObjectEvent& event)
 	Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
-		DraftJournalHandle const journal(m_database_connection, journal_id);
+		Handle<DraftJournal> const journal(m_database_connection, journal_id);
 		m_top_panel->update_for_amended(journal);
 	}
 	else
@@ -698,7 +697,7 @@ Frame::selected_ordinary_journals(vector<Handle<OrdinaryJournal> >& out) const
 }
 
 void
-Frame::selected_draft_journals(vector<DraftJournalHandle>& out) const
+Frame::selected_draft_journals(vector<Handle<DraftJournal> >& out) const
 {
 	JEWEL_LOG_TRACE();
 	m_top_panel->selected_draft_journals(out);

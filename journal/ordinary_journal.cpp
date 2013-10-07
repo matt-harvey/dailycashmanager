@@ -2,7 +2,6 @@
 
 #include "ordinary_journal.hpp"
 #include "commodity.hpp"
-#include "draft_journal_handle.hpp"
 #include "date.hpp"
 #include "entry_handle.hpp"
 #include "ordinary_journal.hpp"

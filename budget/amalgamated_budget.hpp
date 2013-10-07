@@ -4,7 +4,7 @@
 #define GUARD_amalgamated_budget_hpp_5997503626159161
 
 #include "account.hpp"
-#include "draft_journal_handle.hpp"
+#include "draft_journal.hpp"
 #include "interval_type.hpp"
 #include "frequency.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -94,7 +94,7 @@ public:
 	 * distributions of budget amounts to budgeting envelopes
 	 * (Accounts).
 	 */
-	DraftJournalHandle instrument() const;
+	sqloxx::Handle<DraftJournal> instrument() const;
 
 
 private:
@@ -148,7 +148,7 @@ private:
 	 * Entries in p_journal,
 	 * these are all cleared prior to the new Entries being pushed on.
 	 */
-	void reflect_entries(DraftJournalHandle const& p_journal);
+	void reflect_entries(sqloxx::Handle<DraftJournal> const& p_journal);
 
 	/**
 	 * Examines the Repeaters of p_journal. If there is exactly one
@@ -158,7 +158,7 @@ private:
 	 * RepeaterHandle) is
 	 * pushed onto p_journal, with \e today as its next_date().
 	 */
-	void reflect_repeater(DraftJournalHandle const& p_journal);
+	void reflect_repeater(sqloxx::Handle<DraftJournal> const& p_journal);
 
 	jewel::Decimal instrument_balancing_amount() const;
 
@@ -168,7 +168,7 @@ private:
 	std::unique_ptr<Map> mutable m_map;
 
 	// The DraftJournal that "effects" the AmalgamatedBudget
-	DraftJournalHandle mutable m_instrument; 
+	sqloxx::Handle<DraftJournal> mutable m_instrument; 
 
 	// Represents the Account such that, when regenerating m_instrument, if
 	// the journal is not otherwise balanced, any imbalance overflows

@@ -5,7 +5,7 @@
 #include "account_list_ctrl.hpp"
 #include "account_type.hpp"
 #include "commodity_handle.hpp"
-#include "draft_journal_handle.hpp"
+#include "draft_journal.hpp"
 #include "draft_journal_list_ctrl.hpp"
 #include "draft_journal_table_iterator.hpp"
 #include "entry_handle.hpp"
@@ -463,7 +463,7 @@ TopPanel::selected_ordinary_journals
 }
 
 void
-TopPanel::selected_draft_journals(vector<DraftJournalHandle>& out) const
+TopPanel::selected_draft_journals(vector<Handle<DraftJournal> >& out) const
 {
 	m_draft_journal_list->selected_draft_journals(out);
 	return;
@@ -483,7 +483,7 @@ TopPanel::update_for_new(Handle<OrdinaryJournal> const& p_saved_object)
 }
 
 void
-TopPanel::update_for_new(DraftJournalHandle const& p_saved_object)
+TopPanel::update_for_new(Handle<DraftJournal> const& p_saved_object)
 {
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	// m_bs_account_list->update();  // No point doing this here.
@@ -520,7 +520,7 @@ TopPanel::update_for_amended(Handle<OrdinaryJournal> const& p_saved_object)
 }
 
 void
-TopPanel::update_for_amended(DraftJournalHandle const& p_saved_object)
+TopPanel::update_for_amended(Handle<DraftJournal> const& p_saved_object)
 {
 	(void)p_saved_object;  // Silence compiler re. unused parameter.
 	m_bs_account_list->update();

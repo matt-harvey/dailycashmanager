@@ -10,7 +10,6 @@
 #include "decimal_text_ctrl.hpp"
 #include "decimal_validator.hpp"
 #include "draft_journal.hpp"
-#include "draft_journal_handle.hpp"
 #include "draft_journal_naming_dialog.hpp"
 #include "entry_handle.hpp"
 #include "entry_group_ctrl.hpp"
@@ -157,7 +156,7 @@ TransactionCtrl::TransactionCtrl
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
 	wxSize const& p_size,
-	DraftJournalHandle const& p_journal
+	Handle<DraftJournal> const& p_journal
 ):
 	GriddedScrolledPanel
 	(	p_parent,
@@ -802,7 +801,7 @@ TransactionCtrl::post_journal()
 	optional<Frequency> const maybe_frequency = m_frequency_ctrl->frequency();
 	if (maybe_frequency)
 	{
-		DraftJournalHandle dj(database_connection());
+		Handle<DraftJournal> dj(database_connection());
 		dj->mimic(journal);
 		JEWEL_ASSERT (m_date_ctrl->date());
 		gregorian::date const next_date = value(m_date_ctrl->date());

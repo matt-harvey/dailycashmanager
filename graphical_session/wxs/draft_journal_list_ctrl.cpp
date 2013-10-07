@@ -2,7 +2,7 @@
 
 #include "draft_journal_list_ctrl.hpp"
 #include "date.hpp"
-#include "draft_journal_handle.hpp"
+#include "draft_journal.hpp"
 #include "draft_journal_table_iterator.hpp"
 #include "frequency.hpp"
 #include "persistent_object_event.hpp"
@@ -11,6 +11,7 @@
 #include "string_conv.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/event.h>
 #include <wx/listctrl.h>
 #include <wx/string.h>
@@ -19,6 +20,7 @@
 #include <vector>
 
 using jewel::Log;
+using sqloxx::Handle;
 using std::max;
 using std::string;
 using std::vector;
@@ -57,7 +59,9 @@ DraftJournalListCtrl::DraftJournalListCtrl
 }
 
 void
-DraftJournalListCtrl::selected_draft_journals(vector<DraftJournalHandle>& out)
+DraftJournalListCtrl::selected_draft_journals
+(	vector<Handle<DraftJournal> >& out
+)
 {
 	size_t i = 0;
 	size_t const lim = GetItemCount();
@@ -65,7 +69,10 @@ DraftJournalListCtrl::selected_draft_journals(vector<DraftJournalHandle>& out)
 	{
 		if (GetItemState(i, wxLIST_STATE_SELECTED))
 		{
-			DraftJournalHandle const dj(m_database_connection, GetItemData(i));
+			Handle<DraftJournal> const dj
+			(	m_database_connection,
+				GetItemData(i)
+			);
 			out.push_back(dj);
 		}
 	}
@@ -117,7 +124,7 @@ DraftJournalListCtrl::update
 	size_t i = 0;	
 	for ( ; p_beg != p_end; ++p_beg, ++i)
 	{
-		DraftJournalHandle const& dj = *p_beg;
+		Handle<DraftJournal> const& dj = *p_beg;
 
 		// Insert item, with string for Column 0
 		InsertItem(i, dj->name());

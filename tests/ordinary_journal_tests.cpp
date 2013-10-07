@@ -2,7 +2,7 @@
 
 #include "phatbooks_tests_common.hpp"
 #include "account.hpp"
-#include "draft_journal_handle.hpp"
+#include "draft_journal.hpp"
 #include "entry_handle.hpp"
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
@@ -85,7 +85,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 			);
 		}
 	}
-	DraftJournalHandle dj2(dbc);
+	Handle<DraftJournal> const dj2(dbc);
 	dj2->set_transaction_type(TransactionType::envelope);
 	dj2->set_comment("steam engine");
 	dj2->set_name("some journal");

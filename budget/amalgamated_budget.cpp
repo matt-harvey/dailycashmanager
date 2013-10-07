@@ -5,7 +5,7 @@
 #include "account_type.hpp"
 #include "budget_item_table_iterator.hpp"
 #include "commodity_handle.hpp"
-#include "draft_journal_handle.hpp"
+#include "draft_journal.hpp"
 #include "entry_handle.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
@@ -71,7 +71,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 			"references accounts"
 		")"
 	);
-	DraftJournalHandle const instrument(dbc);
+	Handle<DraftJournal> const instrument(dbc);
 	instrument->set_name("AMALGAMATED BUDGET JOURNAL");
 	instrument->set_comment("");
 	instrument->set_transaction_type(TransactionType::envelope);
@@ -252,7 +252,7 @@ AmalgamatedBudget::balancing_account() const
 	return m_balancing_account;
 }
 
-DraftJournalHandle
+Handle<DraftJournal>
 AmalgamatedBudget::instrument() const
 {
 	load();
@@ -367,7 +367,7 @@ AmalgamatedBudget::regenerate_instrument()
 {
 	load();
 
-	DraftJournalHandle const fresh_journal(m_database_connection);
+	Handle<DraftJournal> const fresh_journal(m_database_connection);
 	fresh_journal->mimic(*m_instrument);
 	reflect_entries(fresh_journal);
 	reflect_repeater(fresh_journal);
@@ -425,14 +425,14 @@ AmalgamatedBudget::load_instrument() const
 	);
 	statement.step();
 	m_instrument =
-		DraftJournalHandle(m_database_connection, statement.extract<Id>(0));
+		Handle<DraftJournal>(m_database_connection, statement.extract<Id>(0));
 	statement.step_final();
 	return;
 }
 
 
 void
-AmalgamatedBudget::reflect_entries(DraftJournalHandle const& p_journal)
+AmalgamatedBudget::reflect_entries(Handle<DraftJournal> const& p_journal)
 {
 	load();
 	p_journal->clear_entries();
@@ -455,7 +455,7 @@ AmalgamatedBudget::reflect_entries(DraftJournalHandle const& p_journal)
 }
 
 void
-AmalgamatedBudget::reflect_repeater(DraftJournalHandle const& p_journal)
+AmalgamatedBudget::reflect_repeater(Handle<DraftJournal> const& p_journal)
 {
 	load();
 	vector<RepeaterHandle> const& old_repeaters = p_journal->repeaters();

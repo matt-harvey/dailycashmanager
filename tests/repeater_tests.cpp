@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "account.hpp"
-#include "draft_journal_handle.hpp"
+#include "draft_journal.hpp"
 #include "entry_handle.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
@@ -35,7 +35,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
-	DraftJournalHandle const dj(dbc);
+	Handle<DraftJournal> const dj(dbc);
 	dj->set_transaction_type(TransactionType::generic);
 	dj->set_comment("draft journal to test repeater");
 	dj->set_name("Test");
@@ -154,7 +154,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
-	DraftJournalHandle dj1(dbc);
+	Handle<DraftJournal> const dj1(dbc);
 	dj1->set_transaction_type(TransactionType::generic);
 	dj1->set_comment("journal to test repeater");
 	dj1->set_name(wxString("Test"));  // wxString is optional
