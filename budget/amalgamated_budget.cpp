@@ -3,6 +3,7 @@
 #include "amalgamated_budget.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
+#include "budget_item.hpp"
 #include "budget_item_table_iterator.hpp"
 #include "commodity_handle.hpp"
 #include "draft_journal.hpp"
@@ -318,7 +319,7 @@ AmalgamatedBudget::generate_map() const
 	BudgetItemTableIterator const end;
 	for ( ; it != end; ++it)
 	{
-		BudgetItemHandle const& budget_item = *it;
+		Handle<BudgetItem> const& budget_item = *it;
 		Frequency const raw_frequency = budget_item->frequency();
 		if (!AmalgamatedBudget::supports_frequency(raw_frequency))
 		{

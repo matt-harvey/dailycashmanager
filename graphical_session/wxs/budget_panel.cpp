@@ -6,7 +6,7 @@
 #include "account_dialog.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
-#include "budget_item_handle.hpp"
+#include "budget_item.hpp"
 #include "budget_item_table_iterator.hpp"
 #include "commodity_handle.hpp"
 #include "decimal_text_ctrl.hpp"
@@ -267,7 +267,7 @@ void
 BudgetPanel::on_push_item_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
-	BudgetItemHandle const budget_item(database_connection());
+	Handle<BudgetItem> const budget_item(database_connection());
 	budget_item->set_account(m_account);
 	budget_item->set_description(wxString(""));
 	budget_item->set_amount(zero());
@@ -340,7 +340,7 @@ BudgetPanel::update_budget_summary()
 	// WARNING This is inefficient.
 	JEWEL_ASSERT (m_summary_amount_text);
 	Decimal new_total = zero();
-	vector<BudgetItemHandle> const budget_items = make_budget_items();
+	vector<Handle<BudgetItem> > const budget_items = make_budget_items();
 	if (!budget_items.empty())
 	{
 		new_total =
@@ -362,7 +362,7 @@ BudgetPanel::update_budgets_from_dialog()
 	JEWEL_ASSERT (m_account->has_id());
 	DatabaseTransaction transaction(database_connection());
 
-	typedef vector<BudgetItemHandle> ItemVec;
+	typedef vector<Handle<BudgetItem> > ItemVec;
 
 	// Make m_budget_items match the BudgetItems implied by
 	// m_budget_item_components (what is shown in the BudgetPanel).
@@ -394,7 +394,7 @@ BudgetPanel::update_budgets_from_dialog()
 			while (m_budget_items.size() != num_items_new)
 			{
 				JEWEL_ASSERT (m_budget_items.size() > num_items_new);	
-				BudgetItemHandle const doomed_item = m_budget_items.back();
+				Handle<BudgetItem> const doomed_item = m_budget_items.back();
 				m_budget_items.pop_back();
 				doomed_item->remove();
 			}
@@ -403,7 +403,7 @@ BudgetPanel::update_budgets_from_dialog()
 	}
 	// Save the amended m_budget_items
 	// Bare scope
-	for (BudgetItemHandle const& elem: m_budget_items)
+	for (Handle<BudgetItem> const& elem: m_budget_items)
 	{
 		elem->save();
 	}
@@ -424,7 +424,7 @@ BudgetPanel::update_budgets_from_dialog()
 }
 
 void
-BudgetPanel::push_item_component(BudgetItemHandle const& p_budget_item)
+BudgetPanel::push_item_component(Handle<BudgetItem> const& p_budget_item)
 {
 	JEWEL_ASSERT (p_budget_item->account() == m_account);
 	BudgetItemComponent budget_item_component;
@@ -533,13 +533,13 @@ BudgetPanel::zero() const
 	return Decimal(0, commodity->precision());
 }
 
-vector<BudgetItemHandle>
+vector<Handle<BudgetItem> >
 BudgetPanel::make_budget_items() const
 {
-	vector<BudgetItemHandle> ret;
+	vector<Handle<BudgetItem> > ret;
 	for (BudgetItemComponent const& component: m_budget_item_components)
 	{
-		BudgetItemHandle const budget_item(database_connection());
+		Handle<BudgetItem> const budget_item(database_connection());
 		budget_item->set_account(m_account);
 		budget_item->set_description(component.description_ctrl->GetValue());
 		budget_item->set_amount(component.amount_ctrl->amount());
@@ -812,11 +812,11 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog
 
 	// Copy first into a vector. (Uneasy about modifying database contents
 	// while in the process of reading with a TableIterator.)
-	vector<BudgetItemHandle> vec
+	vector<Handle<BudgetItem> > vec
 	(	BudgetItemTableIterator(m_database_connection),
 		(BudgetItemTableIterator())
 	);
-	for (BudgetItemHandle const& elem: vec)
+	for (Handle<BudgetItem> const& elem: vec)
 	{
 		// If there is already a "general offsetting BudgetItem" for
 		// the target Account, then roll it into that.
@@ -841,7 +841,7 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog
 
 	// There was not already a "general offsetting BudgetItem" for
 	// the target Account, so we create a new BudgetItem.
-	BudgetItemHandle const adjusting_item(m_database_connection);
+	Handle<BudgetItem> const adjusting_item(m_database_connection);
 	adjusting_item->set_description(offsetting_item_description);
 	adjusting_item->set_account(p_target);
 	adjusting_item->set_frequency(target_frequency);

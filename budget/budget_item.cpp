@@ -17,6 +17,7 @@
 #include <sqloxx/sql_statement.hpp>
 #include <wx/string.h>
 #include <string>
+#include <vector>
 
 using boost::optional;
 using jewel::Decimal;
@@ -28,6 +29,7 @@ using sqloxx::Id;
 using sqloxx::IdentityMap;
 using sqloxx::SQLStatement;
 using std::string;
+using std::vector;
 
 namespace phatbooks
 {
@@ -297,6 +299,38 @@ BudgetItem::do_remove()
 	statement.step_final();
 	BudgetAttorney::regenerate(database_connection());
 	return;
+}
+
+Decimal
+normalized_total
+(	vector<Handle<BudgetItem> >::const_iterator b,
+	vector<Handle<BudgetItem> >::const_iterator const& e
+)
+{
+	JEWEL_ASSERT (e - b > 0);  // Assert precondition.
+	PhatbooksDatabaseConnection& dbc = (*b)->database_connection();
+	CommodityHandle commodity(dbc);
+	// WARNING Temporary hack - if Accounts can ever have Commodities other
+	// than the default Commodity, then this will no longer work.
+	try
+	{
+		commodity = (*b)->account()->commodity();
+	}
+	catch (UninitializedOptionalException&)
+	{
+		commodity = dbc.default_commodity();
+	}
+	Decimal::places_type const prec = commodity->precision();
+	Decimal ret(0, prec);
+	for ( ; b != e; ++b)
+	{
+		JEWEL_ASSERT
+		(	(*b)->database_connection().
+				supports_budget_frequency((*b)->frequency())
+		);
+		ret += convert_to_canonical((*b)->frequency(), (*b)->amount());
+	}
+	return round(convert_from_canonical(dbc.budget_frequency(), ret), prec);
 }
 
 }  // namespace phatbooks

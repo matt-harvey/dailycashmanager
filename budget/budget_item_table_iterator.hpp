@@ -3,15 +3,16 @@
 #ifndef GUARD_budget_item_table_iterator_hpp_017771196094235032
 #define GUARD_budget_item_table_iterator_hpp_017771196094235032
 
-#include "budget_item_handle.hpp"
+#include "budget_item.hpp"
 #include "phatbooks_database_connection.hpp"
+#include <sqloxx/handle.hpp>
 #include <sqloxx/table_iterator.hpp>
 
 namespace phatbooks
 {
 
 typedef 
-	sqloxx::TableIterator<BudgetItemHandle>
+	sqloxx::TableIterator<sqloxx::Handle<BudgetItem> >
 	BudgetItemTableIterator;
 
 }  // namespace phatbooks

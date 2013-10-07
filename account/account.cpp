@@ -13,7 +13,7 @@
 #include "account.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
-#include "budget_item_handle.hpp"
+#include "budget_item.hpp"
 #include "date.hpp"
 #include "string_conv.hpp"
 #include "commodity_handle.hpp"
@@ -409,11 +409,11 @@ Account::budget()
 	);
 }
 
-vector<BudgetItemHandle>
+vector<Handle<BudgetItem> >
 Account::budget_items()
 {
 	load();
-	vector<BudgetItemHandle> ret;
+	vector<Handle<BudgetItem> > ret;
 	SQLStatement s
 	(	database_connection(),
 		"select budget_item_id from budget_items where "
@@ -423,7 +423,7 @@ Account::budget_items()
 	JEWEL_ASSERT (ret.empty());
 	while (s.step())
 	{
-		BudgetItemHandle const bi(database_connection(), s.extract<Id>(0));
+		Handle<BudgetItem> const bi(database_connection(), s.extract<Id>(0));
 		ret.push_back(bi);
 	}
 	return ret;

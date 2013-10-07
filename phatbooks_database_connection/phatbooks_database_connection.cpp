@@ -17,7 +17,6 @@
 #include "account_table_iterator.hpp"
 #include "amalgamated_budget.hpp"
 #include "application.hpp"
-#include "budget_item_handle.hpp"
 #include "budget_item.hpp"
 #include "commodity_handle.hpp"
 #include "commodity.hpp"

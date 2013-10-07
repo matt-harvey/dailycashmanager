@@ -10,6 +10,7 @@
 #include <sqloxx/sql_statement_fwd.hpp>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace phatbooks
 {
@@ -48,8 +49,8 @@ public:
 	 * database.
 	 *
 	 * The Signature parameter means that this can only be called from
-	 * IdentityMap. Ordinary client code should use BudgetItemHandle,
-	 * not BudgetItem directly.
+	 * IdentityMap. Ordinary client code should use
+	 * sqloxx::Handle<BudgetItem>, not BudgetItem directly.
 	 */
 	BudgetItem
 	(	IdentityMap& p_identity_map,
@@ -60,8 +61,8 @@ public:
 	 * Get a BudgetItem by Id from the database.
 	 *
 	 * The Signature parameter means that this can only be called from
-	 * IdentityMap. Ordinary client code should use BudgetItemHandle,
-	 * not BudgetItem directly.
+	 * IdentityMap. Ordinary client code should use
+	 * sqloxx::Handle<BudgetItem>, not BudgetItem directly.
 	 */
 	BudgetItem
 	(	IdentityMap& p_identity_map,
@@ -137,6 +138,21 @@ private:
 	std::unique_ptr<BudgetItemData> m_data;
 };
 
+
+/**
+ * @p_budget_items is a vector of Handles to BudgetItems which are assumed to
+ * be all of the same PhatbooksDatabaseConnection and the same Account.
+ *
+ * @returns the amount that approximates, to the Account's native Commodity's
+ * precision, the equivalent of normalizing and summing at
+ * the PhatbooksDatabaseConnection's budget_frequency(), all the BudgetItems
+ * in the range [b, e). Range should not be empty.
+ */
+jewel::Decimal
+normalized_total
+(	std::vector<sqloxx::Handle<BudgetItem> >::const_iterator b,
+	std::vector<sqloxx::Handle<BudgetItem> >::const_iterator const& e
+);
 
 
 

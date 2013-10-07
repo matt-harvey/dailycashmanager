@@ -15,7 +15,6 @@
 
 
 #include "account_type_fwd.hpp"
-#include "budget_item_handle_fwd.hpp"
 #include "commodity_handle_fwd.hpp"
 #include "date.hpp"
 #include "finformat.hpp"
@@ -24,6 +23,7 @@
 #include "string_flags.hpp"
 #include "visibility.hpp"
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
@@ -39,6 +39,11 @@
 namespace phatbooks
 {
 
+// begin forward declarations
+
+class BudgetItem;
+
+// end forward declarations
 
 /**
  * Represents an account - which could be either a balance sheet account,
@@ -231,7 +236,7 @@ public:
 	 * @returns a std::vector containing all and only
 	 * the saved BudgetItems for this Account.
 	 */
-	std::vector<BudgetItemHandle> budget_items();
+	std::vector<sqloxx::Handle<BudgetItem> > budget_items();
 
 	void set_account_type(AccountType p_account_type);
 
