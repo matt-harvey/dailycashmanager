@@ -4,13 +4,13 @@
 #define GUARD_draft_journal_hpp_8602723767330276
 
 #include "persistent_journal.hpp"
-#include <sqloxx/persistence_traits.hpp>
 #include "entry_handle_fwd.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
-#include "repeater_handle_fwd.hpp"
 #include "transaction_type.hpp"
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle_fwd.hpp>
+#include <sqloxx/persistence_traits.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <wx/string.h>
 #include <memory>
@@ -21,6 +21,7 @@ namespace phatbooks
 {
 
 class DraftJournal;
+class Repeater;
 
 }  // namespace phatbooks
 
@@ -122,7 +123,7 @@ public:
 
 	void set_name(wxString const& p_name);
 	
-	void push_repeater(RepeaterHandle const& repeater);
+	void push_repeater(sqloxx::Handle<Repeater> const& repeater);
 	
 	wxString name();
 
@@ -135,7 +136,7 @@ public:
 	void mimic(Journal& rhs);
 	void mimic(DraftJournal& rhs);  // not const& rhs because loading required
 
-	std::vector<RepeaterHandle> const& repeaters();
+	std::vector<sqloxx::Handle<Repeater> > const& repeaters();
 
 	bool has_repeaters();
 

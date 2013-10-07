@@ -155,7 +155,7 @@ private:
 	 * Repeater, and it reflects the same Frequency as the AmalgamatedBudget
 	 * Frequency, then that Repeater is left unchanged. Otherwise, all
 	 * Repeaters are cleared from p_journal, and a new Repeater (or rather,
-	 * RepeaterHandle) is
+	 * sqloxx::Handle<Repeater>) is
 	 * pushed onto p_journal, with \e today as its next_date().
 	 */
 	void reflect_repeater(sqloxx::Handle<DraftJournal> const& p_journal);

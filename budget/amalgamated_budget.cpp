@@ -11,7 +11,7 @@
 #include "frequency.hpp"
 #include "interval_type.hpp"
 #include "phatbooks_exceptions.hpp"
-#include "repeater_handle.hpp"
+#include "repeater.hpp"
 #include "transaction_type.hpp"
 #include "visibility.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -76,7 +76,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	instrument->set_name("AMALGAMATED BUDGET JOURNAL");
 	instrument->set_comment("");
 	instrument->set_transaction_type(TransactionType::envelope);
-	RepeaterHandle const repeater(dbc);
+	Handle<Repeater> const repeater(dbc);
 	repeater->set_frequency(Frequency(1, IntervalType::days));
 	repeater->set_next_date(gregorian::day_clock::local_day());
 	instrument->push_repeater(repeater);
@@ -459,7 +459,7 @@ void
 AmalgamatedBudget::reflect_repeater(Handle<DraftJournal> const& p_journal)
 {
 	load();
-	vector<RepeaterHandle> const& old_repeaters = p_journal->repeaters();
+	vector<Handle<Repeater> > const& old_repeaters = p_journal->repeaters();
 	if (old_repeaters.size() == 1)
 	{
 		Frequency const old_frequency = old_repeaters[0]->frequency();
@@ -472,7 +472,7 @@ AmalgamatedBudget::reflect_repeater(Handle<DraftJournal> const& p_journal)
 		}
 	}
 	p_journal->clear_repeaters();
-	RepeaterHandle const new_repeater(m_database_connection);
+	Handle<Repeater> const new_repeater(m_database_connection);
 	new_repeater->set_frequency(m_frequency);
 	new_repeater->set_next_date(gregorian::day_clock::local_day());
 	JEWEL_ASSERT (p_journal->repeaters().empty());
@@ -500,7 +500,7 @@ AmalgamatedBudget::instrument_balancing_amount() const
 	if (!entries.empty())
 	{
 		JEWEL_ASSERT (m_instrument->repeaters().size() == 1);
-		RepeaterHandle const repeater = m_instrument->repeaters()[0];
+		Handle<Repeater> const repeater = m_instrument->repeaters()[0];
 		JEWEL_ASSERT (repeater->frequency() == frequency());
 	}
 #	endif

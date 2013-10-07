@@ -833,8 +833,10 @@ TransactionCtrl::post_journal()
 			}
 		}
 
-		JEWEL_ASSERT (is_valid_date_for_interval_type(next_date, freq.step_type()));
-		RepeaterHandle const repeater(database_connection());
+		JEWEL_ASSERT
+		(	is_valid_date_for_interval_type(next_date, freq.step_type())
+		);
+		Handle<Repeater> const repeater(database_connection());
 		repeater->set_next_date(next_date);
 		repeater->set_frequency(freq);
 		dj->push_repeater(repeater);
@@ -1027,7 +1029,7 @@ TransactionCtrl::save_existing_journal()
 		
 		if (dj_ref.repeaters().empty())
 		{
-			RepeaterHandle const repeater(database_connection());
+			Handle<Repeater> const repeater(database_connection());
 			repeater->set_next_date(next_date);
 			repeater->set_frequency(freq);
 			dj_ref.push_repeater(repeater);
@@ -1035,7 +1037,7 @@ TransactionCtrl::save_existing_journal()
 		else
 		{
 			JEWEL_ASSERT (!dj_ref.repeaters().empty());
-			RepeaterHandle const old_repeater = dj_ref.repeaters()[0];
+			Handle<Repeater> const old_repeater = dj_ref.repeaters()[0];
 			old_repeater->set_next_date(next_date);
 			old_repeater->set_frequency(freq);
 			old_repeater->save();

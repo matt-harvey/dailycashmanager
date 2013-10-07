@@ -20,6 +20,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
+#include "repeater.hpp"
 #include "repeater_table_iterator.hpp"
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -421,8 +422,8 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 	// at the same time.
 	RepeaterTableIterator const rtit(dbc);
 	RepeaterTableIterator const rtend;
-	vector<RepeaterHandle> vec(rtit, rtend);
-	for (RepeaterHandle const& repeater: vec)
+	vector<Handle<Repeater> > vec(rtit, rtend);
+	for (Handle<Repeater> const& repeater: vec)
 	{
 		while (repeater->next_date() <= d)
 		{

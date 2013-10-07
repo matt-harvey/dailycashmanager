@@ -62,7 +62,7 @@ class Frequency;
  * interval_type is months (as opposed to month_ends).
  *
  * Client code should not deal with Repeater instances directly, but
- * only ever via RepeaterHandle.
+ * only ever via sqloxx::Handle<Repeater>.
  */
 class Repeater:
 	public sqloxx::PersistentObject<Repeater, PhatbooksDatabaseConnection>

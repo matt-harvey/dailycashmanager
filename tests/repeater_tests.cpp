@@ -7,7 +7,7 @@
 #include "interval_type.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_tests_common.hpp"
-#include "repeater_handle.hpp"
+#include "repeater.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -56,7 +56,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	entry2->set_transaction_side(TransactionSide::destination);
 	dj->push_entry(entry2);
 
-	RepeaterHandle const repeater1(dbc);
+	Handle<Repeater> const repeater1(dbc);
 	repeater1->set_frequency(Frequency(3, IntervalType::days));
 	repeater1->set_next_date(date(3012, 5, 30));
 	dj->push_repeater(repeater1);
@@ -67,7 +67,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	CHECK_EQUAL(repeater1->next_date(2), date(3012, 6, 5));
 	CHECK_EQUAL(repeater1->next_date(1), date(3012, 6, 2));
 
-	RepeaterHandle const repeater2(dbc);
+	Handle<Repeater> const repeater2(dbc);
 	repeater2->set_frequency(Frequency(2, IntervalType::weeks));
 	repeater2->set_next_date(date(3012, 12, 31));
 	dj->push_repeater(repeater2);
@@ -76,12 +76,12 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	CHECK_EQUAL(repeater2->next_date(2), date(3013, 1, 28));
 	CHECK_EQUAL(repeater2->next_date(1), date(3013, 1, 14));
 
-	RepeaterHandle const repeater3(dbc);
+	Handle<Repeater> const repeater3(dbc);
 	repeater3->set_frequency(Frequency(1, IntervalType::months));
 	repeater3->set_next_date(date(3014, 9, 20));
 	CHECK_EQUAL(repeater3->next_date(5), date(3015, 2, 20));
 
-	RepeaterHandle const repeater4(dbc);
+	Handle<Repeater> const repeater4(dbc);
 	repeater4->set_frequency(Frequency(1, IntervalType::month_ends));
 	repeater4->set_next_date(date(2996, 1, 31));
 	CHECK_EQUAL(repeater4->next_date(), date(2996, 1, 31));
@@ -90,18 +90,18 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	CHECK_EQUAL(repeater4->next_date(8), date(2996, 9, 30));
 	CHECK_EQUAL(repeater4->next_date(13), date(2997, 2, 28));
 
-	RepeaterHandle const repeater5(dbc);
+	Handle<Repeater> const repeater5(dbc);
 	repeater5->set_frequency(Frequency(1, IntervalType::days));
 	repeater5->set_next_date(date(2900, 2, 27));
 	CHECK_EQUAL(repeater5->next_date(1), date(2900, 2, 28));
 	CHECK_EQUAL(repeater5->next_date(2), date(2900, 3, 1));
 
-	RepeaterHandle const repeater6(dbc);
+	Handle<Repeater> const repeater6(dbc);
 	repeater6->set_frequency(Frequency(12, IntervalType::month_ends));
 	repeater6->set_next_date(date(3199, 2, 28));
 	CHECK_EQUAL(repeater6->next_date(1), date(3200, 2, 29));
 
-	// TODO Put something here to test retrieving a RepeaterHandle by
+	// TODO Put something here to test retrieving a Handle<Repeater> by
 	// ID. But note, there are "system Repeaters" floating
 	// around, possibly ones that have been saved and then
 	// deleted, and these make the ID non-obvious.
@@ -111,7 +111,7 @@ TEST_FIXTURE(TestFixture, test_repeater_firings_till)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
-	RepeaterHandle const repeater1(dbc);
+	Handle<Repeater> const repeater1(dbc);
 	repeater1->set_frequency(Frequency(5, IntervalType::days));
 	repeater1->set_next_date(date(3000, 5, 3));
 	shared_ptr<vector<date> > firings1 =
@@ -132,7 +132,7 @@ TEST_FIXTURE(TestFixture, test_repeater_firings_till)
 	CHECK_EQUAL((*firings1)[2], date(3000, 5, 13));
 	CHECK_EQUAL((*firings1)[3], date(3000, 5, 18));
 
-	RepeaterHandle const repeater2(dbc);
+	Handle<Repeater> const repeater2(dbc);
 	repeater2->set_frequency(Frequency(3, IntervalType::month_ends));
 	repeater2->set_next_date(date(3012, 12, 31));
 	shared_ptr<vector<date> > firings2;
@@ -175,14 +175,14 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	entry1b->set_transaction_side(TransactionSide::destination);
 	dj1->push_entry(entry1b);
 
-	RepeaterHandle const repeater1(dbc);
+	Handle<Repeater> const repeater1(dbc);
 	repeater1->set_frequency(Frequency(2, IntervalType::weeks));
 	repeater1->set_next_date(date(3012, 7, 30));
 	dj1->push_repeater(repeater1);
 
 	dj1->save();
 
-	RepeaterHandle const repeater1b = repeater1;
+	Handle<Repeater> const repeater1b = repeater1;
 	Handle<OrdinaryJournal> const oj1b = repeater1b->fire_next();
 	CHECK_EQUAL(oj1b->comment(), "journal to test repeater");
 	CHECK_EQUAL(oj1b->comment(), wxString("journal to test repeater"));

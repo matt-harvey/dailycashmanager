@@ -7,7 +7,7 @@
 #include "frequency.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
-#include "repeater_handle.hpp"
+#include "repeater.hpp"
 #include "string_conv.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
@@ -142,7 +142,7 @@ DraftJournalListCtrl::update
 		// just going to rule that out by making it impossible for the user
 		// to create such DraftJournals?
 
-		vector<RepeaterHandle> const& repeaters = dj->repeaters();
+		vector<Handle<Repeater> > const& repeaters = dj->repeaters();
 
 		if (repeaters.empty())
 		{
