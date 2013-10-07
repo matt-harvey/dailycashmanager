@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "top_panel.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_list_ctrl.hpp"
 #include "account_type.hpp"
 #include "commodity_handle.hpp"
@@ -25,6 +25,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -40,14 +41,12 @@
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::Handle;
 using std::begin;
 using std::end;
 using std::map;
 using std::set;
 using std::vector;
-
-
-
 
 namespace phatbooks
 {
@@ -158,13 +157,13 @@ TopPanel::configure_account_lists()
 		favourite_accounts(m_database_connection);
 	JEWEL_ASSERT (fav_accts.size() == 2);
 	m_bs_account_list->select_only
-	(	AccountHandle
+	(	Handle<Account>
 		(	m_database_connection,
 			fav_accts.at(AccountSuperType::balance_sheet)
 		)
 	);
 	m_pl_account_list->select_only
-	(	AccountHandle
+	(	Handle<Account>
 		(	m_database_connection,
 			fav_accts.at(AccountSuperType::pl)
 		)
@@ -248,15 +247,15 @@ TopPanel::configure_report_page()
 ProtoJournal
 TopPanel::make_proto_journal() const
 {
-	vector<AccountHandle> balance_sheet_accounts;
-	vector<AccountHandle> pl_accounts;
+	vector<Handle<Account> > balance_sheet_accounts;
+	vector<Handle<Account> > pl_accounts;
 	selected_balance_sheet_accounts(balance_sheet_accounts);
 	selected_pl_accounts(pl_accounts);
 	if (balance_sheet_accounts.size() + pl_accounts.size() < unsigned(2))
 	{
 		if (balance_sheet_accounts.empty())
 		{
-			optional<AccountHandle> const maybe_bs_account =
+			optional<Handle<Account> > const maybe_bs_account =
 				m_bs_account_list->default_account();
 			if (maybe_bs_account)
 			{
@@ -265,7 +264,7 @@ TopPanel::make_proto_journal() const
 		}
 		if (pl_accounts.empty())
 		{
-			optional<AccountHandle> const maybe_pl_account =
+			optional<Handle<Account> > const maybe_pl_account =
 				m_pl_account_list->default_account();
 			if (maybe_pl_account)
 			{
@@ -277,8 +276,8 @@ TopPanel::make_proto_journal() const
 
 	// bare scope
 	{
-		AccountHandle account_x(m_database_connection);
-		AccountHandle account_y(m_database_connection);
+		Handle<Account> account_x(m_database_connection);
+		Handle<Account> account_y(m_database_connection);
 		if (balance_sheet_accounts.empty())
 		{
 			JEWEL_ASSERT (pl_accounts.size() >= 2);
@@ -309,14 +308,14 @@ TopPanel::make_proto_journal() const
 			natural_transaction_type(account_x, account_y);
 		assert_transaction_type_validity(initial_transaction_type);
 		ret.set_transaction_type(initial_transaction_type);
-		AccountHandle const accounts[] = {account_x, account_y};
+		Handle<Account> const accounts[] = {account_x, account_y};
 		for
 		(	size_t i = 0;
 			i != static_cast<size_t>(end(accounts) - begin(accounts));
 			++i
 		)
 		{
-			AccountHandle const& account = accounts[i];
+			Handle<Account> const& account = accounts[i];
 			EntryHandle entry(m_database_connection);
 			entry->set_account(account);
 			entry->set_comment(wxString());
@@ -413,25 +412,25 @@ TopPanel::toggle_show_hidden_accounts
 }
 
 void
-TopPanel::selected_balance_sheet_accounts(vector<AccountHandle>& out) const
+TopPanel::selected_balance_sheet_accounts(vector<Handle<Account> >& out) const
 {
 	set<sqloxx::Id> selected_ids;
 	m_bs_account_list->selected_accounts(selected_ids);
 	for (sqloxx::Id const selected_id: selected_ids)
 	{
-		out.push_back(AccountHandle(m_database_connection, selected_id));
+		out.push_back(Handle<Account>(m_database_connection, selected_id));
 	}
 	return;
 }
 
 void
-TopPanel::selected_pl_accounts(vector<AccountHandle>& out) const
+TopPanel::selected_pl_accounts(vector<Handle<Account> >& out) const
 {
 	set<sqloxx::Id> selected_ids;
 	m_pl_account_list->selected_accounts(selected_ids);
 	for (sqloxx::Id const selected_id: selected_ids)
 	{
-		out.push_back(AccountHandle(m_database_connection, selected_id));
+		out.push_back(Handle<Account>(m_database_connection, selected_id));
 	}
 	return;
 }
@@ -493,7 +492,7 @@ TopPanel::update_for_new(DraftJournalHandle const& p_saved_object)
 }
 
 void
-TopPanel::update_for_new(AccountHandle const& p_saved_object)
+TopPanel::update_for_new(Handle<Account> const& p_saved_object)
 {
 	m_bs_account_list->update();
 	m_pl_account_list->update();
@@ -532,7 +531,7 @@ TopPanel::update_for_amended(DraftJournalHandle const& p_saved_object)
 }
 
 void
-TopPanel::update_for_amended(AccountHandle const& p_saved_object)
+TopPanel::update_for_amended(Handle<Account> const& p_saved_object)
 {
 	m_bs_account_list->update();
 	m_pl_account_list->update();
@@ -553,7 +552,7 @@ TopPanel::update_for_amended(AccountHandle const& p_saved_object)
 }
 	
 void
-TopPanel::update_for_amended_budget(AccountHandle const& p_account)
+TopPanel::update_for_amended_budget(Handle<Account> const& p_account)
 {
 	(void)p_account;  // Silence compiler re. unused parameter.
 	JEWEL_ASSERT (super_type(p_account->account_type()) == AccountSuperType::pl);

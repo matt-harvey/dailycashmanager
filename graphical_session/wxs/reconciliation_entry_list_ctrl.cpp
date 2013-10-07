@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "reconciliation_entry_list_ctrl.hpp"
+#include "account.hpp"
 #include "commodity_handle.hpp"
 #include "entry.hpp"
 #include "entry_handle.hpp"
@@ -15,6 +16,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <wx/bitmap.h>
 #include <wx/colour.h>
@@ -26,6 +28,7 @@
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::Handle;
 using sqloxx::SQLStatement;
 using std::unique_ptr;
 using std::vector;
@@ -74,7 +77,7 @@ namespace
 ReconciliationEntryListCtrl::ReconciliationEntryListCtrl
 (	ReconciliationListPanel* p_parent,
 	wxSize const& p_size,
-	AccountHandle const& p_account,
+	Handle<Account> const& p_account,
 	gregorian::date const& p_min_date,
 	gregorian::date const& p_max_date
 ):

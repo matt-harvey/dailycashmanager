@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "phatbooks_tests_common.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "commodity_handle.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -9,10 +9,12 @@
 #include <boost/filesystem.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/assert.hpp>
+#include <sqloxx/handle.hpp>
 #include <cstdlib>
 #include <iostream>
 
 using jewel::Decimal;
+using sqloxx::Handle;
 using std::abort;
 using std::cout;
 using std::cerr;
@@ -71,7 +73,7 @@ void setup_test_commodities(PhatbooksDatabaseConnection& dbc)
 
 void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
 {
-	AccountHandle cash(dbc);
+	Handle<Account> const cash(dbc);
 	cash->set_account_type(AccountType::asset);
 	cash->set_name("cash");
 	cash->set_commodity
@@ -81,7 +83,7 @@ void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
 	cash->set_visibility(Visibility::visible);
 	cash->save();
 
-	AccountHandle food(dbc);
+	Handle<Account> const food(dbc);
 	food->set_account_type(AccountType::expense);
 	food->set_name("food");
 	food->set_commodity

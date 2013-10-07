@@ -3,9 +3,9 @@
 #ifndef GUARD_budget_item_hpp_6804927558081656
 #define GUARD_budget_item_hpp_6804927558081656
 
-#include "account_handle_fwd.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <jewel/decimal_fwd.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
 #include <memory>

@@ -12,7 +12,7 @@
  */
 
 #include "phatbooks_database_connection.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account.hpp"
 #include "account_table_iterator.hpp"
 #include "amalgamated_budget.hpp"
@@ -41,6 +41,7 @@
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -63,6 +64,7 @@ using jewel::Log;
 using jewel::value;
 using sqloxx::DatabaseConnection;
 using sqloxx::DatabaseTransaction;
+using sqloxx::Handle;
 using sqloxx::Id;
 using sqloxx::IdentityMap;
 using sqloxx::SQLStatement;
@@ -282,7 +284,7 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 }
 
 
-AccountHandle
+Handle<Account>
 PhatbooksDatabaseConnection::balancing_account() const
 {
 	return m_budget->balancing_account();

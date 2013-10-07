@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "report.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "balance_sheet_report.hpp"
 #include "entry_handle.hpp"
@@ -16,11 +16,13 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/gdicmn.h>
 
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::Handle;
 
 namespace gregorian = boost::gregorian;
 
@@ -121,14 +123,14 @@ Report::update_for_amended(OrdinaryJournalHandle const& p_journal)
 }
 
 void
-Report::update_for_new(AccountHandle const& p_account)
+Report::update_for_new(Handle<Account> const& p_account)
 {
 	(void)p_account;  // silence compiler re. unused parameter.
 	return;
 }
 
 void
-Report::update_for_amended(AccountHandle const& p_account)
+Report::update_for_amended(Handle<Account> const& p_account)
 {
 	(void)p_account;  // silence compiler re. unused parameter.
 	return;

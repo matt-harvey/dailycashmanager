@@ -4,23 +4,19 @@
 #define GUARD_amalgamated_budget_hpp_5997503626159161
 
 #include "account.hpp"
-#include "account_handle.hpp"
 #include "draft_journal_handle.hpp"
 #include "interval_type.hpp"
 #include "frequency.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <jewel/decimal.hpp>
+#include <sqloxx/handle.hpp>
 #include <memory>
 #include <ostream>
 #include <unordered_map>
 #include <vector>
 
-
-
-
 namespace phatbooks
 {
-
 
 /**
  * An AmalgamatedBudget contains at most a single amount
@@ -90,7 +86,7 @@ public:
 	 * @throws UninitializedBalancingAccountException if
 	 * balancing account is uninitialized.
 	 */
-	AccountHandle balancing_account() const;
+	sqloxx::Handle<Account> balancing_account() const;
 
 	/**
 	 * @returns the DraftJournal that serves as the "instrument"
@@ -177,7 +173,7 @@ private:
 	// Represents the Account such that, when regenerating m_instrument, if
 	// the journal is not otherwise balanced, any imbalance overflows
 	// to this Account.
-	AccountHandle mutable m_balancing_account;
+	sqloxx::Handle<Account> mutable m_balancing_account;
 
 };
 

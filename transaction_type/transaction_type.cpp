@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "transaction_type.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "date.hpp"
@@ -10,6 +10,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <wx/string.h>
 #include <map>
@@ -25,11 +26,10 @@ namespace phatbooks
 {
 
 using std::map;
+using sqloxx::Handle;
 using sqloxx::SQLStatement;
 using std::set;
 using std::vector;
-
-
 
 // Anonymous namespace
 namespace
@@ -395,7 +395,10 @@ destination_account_types
 }
 
 TransactionType
-natural_transaction_type(AccountHandle const& account_x, AccountHandle const& account_y)
+natural_transaction_type
+(	Handle<Account> const& account_x,
+	Handle<Account> const& account_y
+)
 {
 	AccountType const account_type_x = account_x->account_type();
 	AccountType const account_type_y = account_y->account_type();

@@ -8,12 +8,19 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/decimal_fwd.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <wx/gdicmn.h>
 #include <wx/window.h>
 #include <wx/string.h>
 
 namespace phatbooks
 {
+
+// begin forward declarations
+
+class Account;
+
+// end forward declarations
 
 namespace gui
 {
@@ -27,7 +34,7 @@ public:
 	PLAccountEntryListCtrl
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		AccountHandle const& p_account,
+		sqloxx::Handle<Account> const& p_account,
 		boost::optional<boost::gregorian::date> const& p_maybe_min_date,
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);

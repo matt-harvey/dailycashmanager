@@ -2,7 +2,7 @@
 
 #include "account_list_ctrl.hpp"
 #include "app.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_dialog.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
@@ -14,6 +14,7 @@
 #include "string_flags.hpp"
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/event.h>
 #include <wx/listctrl.h>
 #include <wx/notebook.h>
@@ -22,6 +23,7 @@
 #include <set>
 
 using boost::optional;
+using sqloxx::Handle;
 using std::max;
 using std::set;
 
@@ -29,7 +31,6 @@ namespace phatbooks
 {
 namespace gui
 {
-
 
 BEGIN_EVENT_TABLE(AccountListCtrl, wxListCtrl)
 	EVT_LIST_ITEM_ACTIVATED
@@ -73,7 +74,7 @@ AccountListCtrl::selected_accounts(set<sqloxx::Id>& out) const
 	{
 		if (GetItemState(i, wxLIST_STATE_SELECTED))
 		{
-			AccountHandle const account
+			Handle<Account> const account
 			(	m_database_connection,
 				GetItemData(i)
 			);
@@ -169,7 +170,7 @@ AccountListCtrl::update()
 	// Reinstate the selections we remembered
 	for (size_t j = 0, lim = GetItemCount(); j != lim; ++j)
 	{
-		AccountHandle const account
+		Handle<Account> const account
 		(	m_database_connection,
 			GetItemData(j)
 		);
@@ -206,14 +207,14 @@ AccountListCtrl::showing_daily_budget() const
 	return m_account_super_type == AccountSuperType::pl;
 }
 
-optional<AccountHandle>
+optional<Handle<Account> >
 AccountListCtrl::default_account() const
 {
-	optional<AccountHandle> ret;
+	optional<Handle<Account> > ret;
 	if (GetItemCount() != 0)
 	{
 		JEWEL_ASSERT (GetItemCount() > 0);
-		ret = AccountHandle
+		ret = Handle<Account>
 		(	m_database_connection,
 			GetItemData(GetTopItem())
 		);
@@ -222,14 +223,14 @@ AccountListCtrl::default_account() const
 }
 
 void
-AccountListCtrl::select_only(AccountHandle const& p_account)
+AccountListCtrl::select_only(Handle<Account> const& p_account)
 {
 	JEWEL_ASSERT (p_account->has_id());  // precondition	
 
 	size_t const sz = GetItemCount();	
 	for (size_t i = 0; i != sz; ++i)
 	{
-		AccountHandle const account(m_database_connection, GetItemData(i));
+		Handle<Account> const account(m_database_connection, GetItemData(i));
 		long const filter = (wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 		long const flags = ((account == p_account)? filter: 0);
 		SetItemState(i, flags, filter);

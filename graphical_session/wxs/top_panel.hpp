@@ -3,7 +3,6 @@
 #ifndef GUARD_top_panel_hpp_7915960996372607
 #define GUARD_top_panel_hpp_7915960996372607
 
-#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "draft_journal_handle_fwd.hpp"
 #include "entry_handle.hpp"
@@ -13,6 +12,7 @@
 #include "transaction_ctrl.hpp"
 #include <jewel/assert.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -23,6 +23,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class Account;
 class PhatbooksDatabaseConnection;
 class ProtoJournal;
 
@@ -75,13 +76,15 @@ public:
 	 * Populates \e out with handles to all the balance sheet Accounts currently
 	 * selected by the user in the main window.
 	 */
-	void selected_balance_sheet_accounts(std::vector<AccountHandle>& out) const;
+	void selected_balance_sheet_accounts
+	(	std::vector<sqloxx::Handle<Account> >& out
+	) const;
 
 	/**
 	 * Populates \e out with handles to all the P&L Accounts currently selected
 	 * by the user in the main window.
 	 */
-	void selected_pl_accounts(std::vector<AccountHandle>& out) const;
+	void selected_pl_accounts(std::vector<sqloxx::Handle<Account> >& out) const;
 
 	/**
 	 * Populates \e out with all the OrdinaryJournals currently
@@ -102,7 +105,7 @@ public:
 	 */
 	void update_for_new(DraftJournalHandle const& p_saved_object);
 	void update_for_new(OrdinaryJournalHandle const& p_saved_object);
-	void update_for_new(AccountHandle const& p_saved_object);
+	void update_for_new(sqloxx::Handle<Account> const& p_saved_object);
 
 	/**
 	 * Update the display to reflect current state of database, after
@@ -117,7 +120,7 @@ public:
 	 */
 	void update_for_amended(DraftJournalHandle const& p_saved_object);
 	void update_for_amended(OrdinaryJournalHandle const& p_saved_object);
-	void update_for_amended(AccountHandle const& p_saved_object);
+	void update_for_amended(sqloxx::Handle<Account> const& p_saved_object);
 
 	/**
 	 * Update the display to reflect that the object with
@@ -140,7 +143,7 @@ public:
 	 * 
 	 * Precondition: p_account should be of AccountSuperType::pl.
 	 */
-	void update_for_amended_budget(AccountHandle const& p_account);
+	void update_for_amended_budget(sqloxx::Handle<Account> const& p_account);
 
 	/**
 	 * Update the display to reflect the current state of \e p_entry

@@ -3,9 +3,11 @@
 #ifndef GUARD_account_ctrl_hpp_7150714070140717
 #define GUARD_account_ctrl_hpp_7150714070140717
 
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include <jewel/assert.hpp>
+#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
 #include <wx/event.h>
@@ -46,8 +48,8 @@ public:
 	 * @param p_account_types the AccountTypes we want represented in the
 	 * AccountCtrl. This must not be empty.
 	 *
-	 * @param p_exclude_balancing_account If \e true, then the AccountHandle
-	 * returned by
+	 * @param p_exclude_balancing_account If \e true, then the
+	 * sqloxx::Handle<Account> returned by
 	 * p_account.database_connection().balancing_account() will not
 	 * appear in the Combobox, even if it is in the range provided.
 	 *
@@ -74,7 +76,7 @@ public:
 	 * Reset the selections available in the Combobox, to all the
 	 * Accounts with AccountTypes given by p_account_types.
 	 * However, if p_exclude_balancing_account is \e true, then
-	 * the AccountHandle returned by
+	 * the sqloxx::Handle<Account> returned by
 	 * <em>m_database_connection.balancing_account()</em> will \e not
 	 * appear in the Combobox, even if it is in the range provided.
 	 *
@@ -86,18 +88,18 @@ public:
 	);
 
 	/**
-	 * @returns currently selected AccountHandle.
+	 * @returns sqloxx::Handle to currently selected Account.
 	 *
 	 * Unfortunately this can't currently be const because the
 	 * wxWindow::GetValidator() function used in the implementation, is
 	 * not const.
 	 */
-	AccountHandle account();
+	sqloxx::Handle<Account> account();
 
-	void set_account(AccountHandle const& p_account);
+	void set_account(sqloxx::Handle<Account> const& p_account);
 
-	void update_for_new(AccountHandle const& p_account);
-	void update_for_amended(AccountHandle const& p_account);
+	void update_for_new(sqloxx::Handle<Account> const& p_account);
+	void update_for_amended(sqloxx::Handle<Account> const& p_account);
 
 private:
 	void on_kill_focus(wxFocusEvent& event);

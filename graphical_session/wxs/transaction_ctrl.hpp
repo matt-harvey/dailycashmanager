@@ -3,7 +3,7 @@
 #ifndef GUARD_transaction_ctrl_hpp_6244141914064131
 #define GUARD_transaction_ctrl_hpp_6244141914064131
 
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "draft_journal_handle_fwd.hpp"
 #include "entry_handle_fwd.hpp"
@@ -123,13 +123,13 @@ public:
 	/**
 	 * Update to reflect newly created Account.
 	 */
-	void update_for_new(AccountHandle const& p_saved_object);
+	void update_for_new(sqloxx::Handle<Account> const& p_saved_object);
 
 	/**
 	 * Update to reflect Account having been amended (and the changes having
 	 * been saved).
 	 */
-	void update_for_amended(AccountHandle const& p_saved_object);
+	void update_for_amended(sqloxx::Handle<Account> const& p_saved_object);
 
 	/**
 	 * Update to reflect possible change in reconciliation status

@@ -1,13 +1,14 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "filtered_entry_list_ctrl.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "entry_handle.hpp"
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <wx/window.h>
 #include <memory>
@@ -15,6 +16,7 @@
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::Handle;
 using sqloxx::SQLStatement;
 using std::unique_ptr;
 
@@ -44,7 +46,7 @@ namespace
 FilteredEntryListCtrl::FilteredEntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	AccountHandle const& p_account,
+	Handle<Account> const& p_account,
 	boost::optional<gregorian::date> const& p_maybe_min_date,
 	boost::optional<gregorian::date> const& p_maybe_max_date
 ):
@@ -70,7 +72,7 @@ FilteredEntryListCtrl::~FilteredEntryListCtrl()
 {
 }
 
-AccountHandle const&
+Handle<Account> const&
 FilteredEntryListCtrl::account() const
 {
 	return m_account;

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "multi_account_panel.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
 #include "augmented_account.hpp"
@@ -18,6 +18,7 @@
 #include "visibility.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -31,6 +32,7 @@
 
 using jewel::Decimal;
 using jewel::round;
+using sqloxx::Handle;
 using std::accumulate;
 using std::set;
 using std::vector;
@@ -47,12 +49,12 @@ namespace gui
 
 namespace
 {
-	vector<AccountHandle> suggested_accounts
+	vector<Handle<Account> > suggested_accounts
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		AccountSuperType p_account_super_type
 	)
 	{
-		vector<AccountHandle> ret;
+		vector<Handle<Account> > ret;
 		JEWEL_ASSERT (ret.empty());
 		typedef vector<AccountType> ATypeVec;
 		ATypeVec const& account_types =
@@ -119,14 +121,14 @@ MultiAccountPanel::MultiAccountPanel
 
 	// Main body of MultiAccountPanel - a grid of fields where user
 	// can edit Account attributes and opening balances.
-	vector<AccountHandle> sugg_accounts =
+	vector<Handle<Account> > sugg_accounts =
 		suggested_accounts(database_connection(), m_account_super_type);
-	vector<AccountHandle>::size_type const sz = sugg_accounts.size();
+	auto const sz = sugg_accounts.size();
 	m_account_name_boxes.reserve(sz);
 	m_account_type_boxes.reserve(sz);
 	m_description_boxes.reserve(sz);
 	m_opening_balance_boxes.reserve(sz);
-	for (AccountHandle& account: sugg_accounts)
+	for (auto const& account: sugg_accounts)
 	{
 		push_row(account);
 	}
@@ -159,7 +161,7 @@ MultiAccountPanel::required_width()
 bool
 MultiAccountPanel::push_row()
 {
-	AccountHandle account = blank_account();
+	Handle<Account> account = blank_account();
 	return push_row(account);
 }
 
@@ -240,10 +242,10 @@ MultiAccountPanel::account_type_is_selected
 	return false;
 }
 
-AccountHandle
+Handle<Account>
 MultiAccountPanel::blank_account()
 {
-	AccountHandle ret(database_connection());
+	Handle<Account> ret(database_connection());
 	wxString const empty_string;
 	JEWEL_ASSERT (empty_string.empty());
 	ret->set_name(empty_string);
@@ -257,11 +259,11 @@ MultiAccountPanel::blank_account()
 }
 
 bool
-MultiAccountPanel::push_row(AccountHandle const& p_account)
+MultiAccountPanel::push_row(Handle<Account> const& p_account)
 {
 	int const row = current_row();
 
-	// AccountHandle name
+	// Account name
 	wxTextCtrl* account_name_box = new wxTextCtrl
 	(	this,
 		wxID_ANY,
@@ -275,7 +277,7 @@ MultiAccountPanel::push_row(AccountHandle const& p_account)
 
 	int const height = account_name_box->GetSize().GetY();
 
-	// AccountHandle type
+	// Account type
 	AccountTypeCtrl* account_type_box = new AccountTypeCtrl
 	(	this,
 		wxID_ANY,
@@ -358,7 +360,7 @@ MultiAccountPanel::selected_augmented_accounts
 		(	database_connection(),
 			m_commodity
 		);
-		AccountHandle const& account = augmented_account.account;
+		Handle<Account> const& account = augmented_account.account;
 		account->set_name(m_account_name_boxes[i]->GetValue().Trim());
 		AccountType const account_type =
 			m_account_type_boxes[i]->account_type();

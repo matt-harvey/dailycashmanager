@@ -3,7 +3,7 @@
 #ifndef GUARD_account_hpp_5971945187063862
 #define GUARD_account_hpp_5971945187063862
 
-/** \file account_handle.hpp
+/** \file account.hpp
  *
  * \brief Header file pertaining to Account class.
  *
@@ -45,8 +45,8 @@ namespace phatbooks
  * or an P&L account. The latter is equivalent to an "envelope" or
  * "category".
  * 
- * Client code must deal with AccountHandles rather than with Account
- * objects directly. This is enforced via "Signature" parameters
+ * Client code must deal with sqloxx::Handle<Account>, rather than with
+ * Account objects directly. This is enforced via "Signature" parameters
  * in the constructors for Account.
  */
 class Account:
@@ -84,7 +84,7 @@ public:
 	 * particular object in the database.
 	 *
 	 * The Signature parameter ensures that this can only be called by
-	 * IdentityMap. Ordinary client code should use AccountHandle,
+	 * IdentityMap. Ordinary client code should use sqloxx::Handle<Account>,
 	 * not Account.
 	 */
 	Account
@@ -96,8 +96,8 @@ public:
 	 * Get an Account by id from database.
 	 *
 	 * The Signature parameter esures that this can only be called
-	 * by IdentityMap. Ordinary client code should use AccountHandle,
-	 * not Account.
+	 * by IdentityMap. Ordinary client code should use
+	 * sqloxx::Handle<Account>, not Account.
 	 */
 	Account
 	(	IdentityMap& p_identity_map,

@@ -1,6 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "bs_account_entry_list_ctrl.hpp"
+#include "account.hpp"
 #include "entry_handle.hpp"
 #include "filtered_entry_list_ctrl.hpp"
 #include "locale.hpp"
@@ -9,9 +10,11 @@
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/handle.hpp>
 
 using boost::optional;
 using jewel::value;
+using sqloxx::Handle;
 
 namespace gregorian = boost::gregorian;
 
@@ -41,7 +44,7 @@ namespace
 BSAccountEntryListCtrl::BSAccountEntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	AccountHandle const& p_account,
+	Handle<Account> const& p_account,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date
 ):

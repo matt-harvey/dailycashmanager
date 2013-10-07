@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "entry_group_ctrl.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_ctrl.hpp"
 #include "commodity_handle.hpp"
 #include "decimal_text_ctrl.hpp"
@@ -19,6 +19,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/button.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
@@ -30,6 +31,7 @@
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::Handle;
 using std::set;
 using std::vector;
 
@@ -269,7 +271,7 @@ EntryGroupCtrl::is_all_zero() const
 }
 
 void
-EntryGroupCtrl::update_for_new(AccountHandle const& p_saved_object)
+EntryGroupCtrl::update_for_new(Handle<Account> const& p_saved_object)
 {
 	for (EntryRow& row: m_entry_rows)
 	{
@@ -280,7 +282,7 @@ EntryGroupCtrl::update_for_new(AccountHandle const& p_saved_object)
 }
 
 void
-EntryGroupCtrl::update_for_amended(AccountHandle const& p_saved_object)
+EntryGroupCtrl::update_for_amended(Handle<Account> const& p_saved_object)
 {
 	for (EntryRow& row: m_entry_rows)
 	{
@@ -313,7 +315,8 @@ void
 EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
-	AccountHandle const account = m_entry_rows.back().account_ctrl->account();
+	Handle<Account> const account =
+		m_entry_rows.back().account_ctrl->account();
 	EntryHandle const entry(m_database_connection);
 	entry->set_account(account);
 	entry->set_whether_reconciled(false);

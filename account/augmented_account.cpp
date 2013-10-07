@@ -1,12 +1,14 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "augmented_account.hpp"
+#include "account.hpp"
 #include "commodity_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <jewel/decimal.hpp>
+#include <sqloxx/handle.hpp>
 
 using jewel::Decimal;
-
+using sqloxx::Handle;
 
 namespace phatbooks
 {
@@ -22,7 +24,7 @@ AugmentedAccount::AugmentedAccount
 }
 
 AugmentedAccount::AugmentedAccount
-(	AccountHandle const& p_account,
+(	Handle<Account> const& p_account,
 	jewel::Decimal const& p_technical_opening_balance
 ):
 	account(p_account),

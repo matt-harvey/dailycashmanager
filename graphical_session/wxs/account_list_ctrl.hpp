@@ -3,10 +3,10 @@
 #ifndef GUARD_account_list_ctrl_hpp_4892309124065707
 #define GUARD_account_list_ctrl_hpp_4892309124065707
 
-#include "account_handle.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include <boost/optional.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <wx/event.h>
 #include <wx/listctrl.h>
 #include <wx/string.h>
@@ -16,7 +16,12 @@
 namespace phatbooks
 {
 
+// begin forward declarations
+
+class Account;
 class PhatbooksDatabaseConnection;
+
+// end forward declarations
 
 namespace gui
 {
@@ -75,7 +80,7 @@ public:
 	 * considered the default Account in the AccountListCtrl; except that, if
 	 * the AccountListCtrl is empty, returns an uninitialized optional.
 	 */
-	boost::optional<AccountHandle> default_account() const;
+	boost::optional<sqloxx::Handle<Account> > default_account() const;
 
 	/**
 	 * Causes \e p_account to be selected, if it is present, and causes
@@ -83,7 +88,7 @@ public:
 	 *
 	 * Precondition: \e p_account must have an Id.
 	 */
-	void select_only(AccountHandle const& p_account);
+	void select_only(sqloxx::Handle<Account> const& p_account);
 
 	/**
 	 * Toggle whether hidden Accounts are shown.

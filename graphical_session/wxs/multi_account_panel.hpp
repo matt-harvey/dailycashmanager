@@ -3,7 +3,6 @@
 #ifndef GUARD_multi_account_panel_hpp_2678521416465995
 #define GUARD_multi_account_panel_hpp_2678521416465995
 
-#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
 #include "commodity_handle.hpp"
@@ -11,6 +10,8 @@
 #include "gridded_scrolled_panel.hpp"
 #include "setup_wizard.hpp"
 #include <jewel/decimal.hpp>
+#include <jewel/log.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -19,15 +20,12 @@
 #include <wx/textctrl.h>
 #include <vector>
 
-// for debugging
-	#include <jewel/log.hpp>
-	#include <iostream>
-
 namespace phatbooks
 {
 
 // begin forward declarations
 
+class Account;
 class AugmentedAccount;
 class PhatbooksDatabaseConnection;
 
@@ -166,7 +164,7 @@ private:
 	 * Account AccountType will be set to an AccountType belonging to
 	 * \e m_account_super_type.
 	 */
-	AccountHandle blank_account();
+	sqloxx::Handle<Account> blank_account();
 
 	/**
 	 * Add a row to the display showing details for p_account. Be warned
@@ -174,7 +172,7 @@ private:
 	 * if \e p_account already has a Commodity set. Always returns \e true
 	 * (returns \e bool for consistency with \e pop_row()).
 	 */
-	bool push_row(AccountHandle const& p_account);
+	bool push_row(sqloxx::Handle<Account> const& p_account);
 
 	template <typename T> void pop_widget_from(std::vector<T>& p_vec);
 	

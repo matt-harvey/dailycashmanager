@@ -3,10 +3,10 @@
 #ifndef GUARD_bs_account_entry_list_ctrl_hpp_5331693680645755
 #define GUARD_bs_account_entry_list_ctrl_hpp_5331693680645755
 
-#include "account_handle_fwd.hpp"
 #include "filtered_entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <wx/gdicmn.h>
 #include <wx/window.h>
 
@@ -15,6 +15,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class Account;
 class Entry;
 
 // End forward declarations
@@ -32,7 +33,7 @@ public:
 	BSAccountEntryListCtrl
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		AccountHandle const& p_account,
+		sqloxx::Handle<Account> const& p_account,
 		boost::optional<boost::gregorian::date> const& p_maybe_min_date,
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);

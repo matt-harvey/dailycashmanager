@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "entry_list_ctrl.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "app.hpp"
 #include "bs_account_entry_list_ctrl.hpp"
@@ -23,6 +23,7 @@
 #include <jewel/log.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/event.h>
 #include <wx/string.h>
 #include <wx/gdicmn.h>
@@ -34,6 +35,7 @@
 using boost::lexical_cast;
 using boost::optional;
 using jewel::value;
+using sqloxx::Handle;
 using sqloxx::SQLStatement;
 using std::pair;
 using std::string;
@@ -78,7 +80,7 @@ EntryListCtrl*
 EntryListCtrl::create_actual_ordinary_entry_list
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	AccountHandle const& p_account,
+	Handle<Account> const& p_account,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date
 )
@@ -116,7 +118,7 @@ ReconciliationEntryListCtrl*
 EntryListCtrl::create_reconciliation_entry_list
 (	ReconciliationListPanel* p_parent,
 	wxSize const& p_size,
-	AccountHandle const& p_account,
+	Handle<Account> const& p_account,
 	gregorian::date const& p_min_date,
 	gregorian::date const& p_max_date
 )
@@ -306,7 +308,7 @@ EntryListCtrl::process_insertion_candidate_entry
 }
 
 void
-EntryListCtrl::do_update_for_amended(AccountHandle const& p_account)
+EntryListCtrl::do_update_for_amended(Handle<Account> const& p_account)
 {
 	(void)p_account;  // Silence compiler re. unused variable
 	return;
@@ -382,7 +384,7 @@ EntryListCtrl::update_for_amended(OrdinaryJournalHandle const& p_journal)
 }
 
 void
-EntryListCtrl::update_for_new(AccountHandle const& p_account)
+EntryListCtrl::update_for_new(Handle<Account> const& p_account)
 {
 	(void)p_account;  // Silence compiler re. unused parameter.
 	// Nothing to do.
@@ -390,7 +392,7 @@ EntryListCtrl::update_for_new(AccountHandle const& p_account)
 }
 
 void
-EntryListCtrl::update_for_amended(AccountHandle const& p_account)
+EntryListCtrl::update_for_amended(Handle<Account> const& p_account)
 {
 	do_update_for_amended(p_account);
 	return;

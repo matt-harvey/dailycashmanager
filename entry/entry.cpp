@@ -13,7 +13,7 @@
 
 
 #include "entry.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "date.hpp"
 #include "draft_journal_handle.hpp"
 #include "string_conv.hpp"
@@ -42,6 +42,7 @@ using boost::optional;
 using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::Handle;
 using sqloxx::Id;
 using sqloxx::SQLStatement;
 using std::ostringstream;
@@ -57,7 +58,7 @@ namespace phatbooks
 struct Entry::EntryData
 {
 	optional<Id> journal_id;
-	optional<AccountHandle> account;
+	optional<Handle<Account> > account;
 	optional<wxString> comment;
 	optional<jewel::Decimal> amount;
 	optional<bool> is_reconciled;
@@ -140,7 +141,7 @@ Entry::set_journal_id(Id p_journal_id)
 
 
 void
-Entry::set_account(AccountHandle const& p_account)
+Entry::set_account(Handle<Account> const& p_account)
 {
 	load();
 	m_data->account = p_account;
@@ -182,7 +183,7 @@ Entry::set_transaction_side
 	m_data->transaction_side = p_transaction_side;
 }
 
-AccountHandle
+Handle<Account>
 Entry::account()
 {
 	load();
@@ -246,7 +247,7 @@ Entry::do_load()
 	);
 	statement.bind(":p", id());
 	statement.step();
-	AccountHandle const acct
+	Handle<Account> const acct
 	(	database_connection(),
 		statement.extract<sqloxx::Id>(0)
 	);
@@ -451,7 +452,7 @@ create_date_ordered_actual_ordinary_entry_selector
 (	PhatbooksDatabaseConnection& p_database_connection,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date,
-	optional<AccountHandle> const& p_maybe_account
+	optional<Handle<Account> > const& p_maybe_account
 )
 {
 	ostringstream oss;

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "budget_panel.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_ctrl.hpp"
 #include "account_dialog.hpp"
 #include "account_table_iterator.hpp"
@@ -28,6 +28,7 @@
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/app.h>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -44,12 +45,8 @@ using jewel::Decimal;
 using jewel::Log;
 using jewel::value;
 using sqloxx::DatabaseTransaction;
+using sqloxx::Handle;
 using std::vector;
-
-// for debugging
-	#include <jewel/log.hpp>
-	#include <iostream>
-	using std::endl;
 
 namespace phatbooks
 {
@@ -80,7 +77,10 @@ END_EVENT_TABLE()
 
 // End event tables
 
-BudgetPanel::BudgetPanel(AccountDialog* p_parent, AccountHandle const& p_account):
+BudgetPanel::BudgetPanel
+(	AccountDialog* p_parent,
+	Handle<Account> const& p_account
+):
 	wxPanel(p_parent, wxID_ANY),
 	m_next_row(0),
 	m_top_sizer(nullptr),
@@ -561,7 +561,7 @@ BudgetPanel::make_budget_items() const
 void
 BudgetPanel::prompt_to_balance()
 {
-	AccountHandle const balancing_account =
+	Handle<Account> const balancing_account =
 		database_connection().balancing_account();
 	Decimal const imbalance = balancing_account->budget();
 	Decimal const z = zero();
@@ -574,7 +574,7 @@ BudgetPanel::prompt_to_balance()
 		JEWEL_ASSERT (imbalance != z);
 		AccountType const account_type =
 			m_account->account_type();
-		optional<AccountHandle> maybe_target_account;	
+		optional<Handle<Account> > maybe_target_account;	
 		if
 		(	(account_type == AccountType::expense) ||
 			(account_type == AccountType::pure_envelope)
@@ -591,7 +591,7 @@ BudgetPanel::prompt_to_balance()
 			AccountTableIterator const end;
 			for ( ; it != end; ++it)
 			{
-				AccountHandle const& acc = *it;
+				Handle<Account> const& acc = *it;
 				AccountType const atype = acc->account_type();
 				if
 				(	(	(atype == AccountType::revenue) ||
@@ -684,7 +684,7 @@ BudgetPanel::SignWarning::get_message
 BudgetPanel::BalancingDialog::BalancingDialog
 (	wxWindow* p_parent,
 	jewel::Decimal const& p_imbalance,
-	boost::optional<AccountHandle> const& p_maybe_account,
+	boost::optional<Handle<Account> > const& p_maybe_account,
 	PhatbooksDatabaseConnection& p_database_connection
 ):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
@@ -783,7 +783,7 @@ BudgetPanel::BalancingDialog::on_yes_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter
 	JEWEL_ASSERT (m_account_ctrl);
-	AccountHandle account = m_account_ctrl->account();
+	Handle<Account> account = m_account_ctrl->account();
 	JEWEL_ASSERT (account->has_id());
 	update_budgets_from_dialog(account);
 	EndModal(wxID_OK);
@@ -799,7 +799,9 @@ BudgetPanel::BalancingDialog::on_no_button_click(wxCommandEvent& event)
 }
 
 void
-BudgetPanel::BalancingDialog::update_budgets_from_dialog(AccountHandle const& p_target)
+BudgetPanel::BalancingDialog::update_budgets_from_dialog
+(	Handle<Account> const& p_target
+)
 {
 	wxString const offsetting_item_description("Offsetting budget adjustment");
 	Frequency const target_frequency =

@@ -1,7 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "amalgamated_budget.hpp"
-#include "account_handle.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
 #include "budget_item_table_iterator.hpp"
@@ -19,6 +18,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/log.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <algorithm>
 #include <numeric>
@@ -27,6 +27,7 @@
 #include <vector>
 
 using jewel::Decimal;
+using sqloxx::Handle;
 using sqloxx::Id;
 using sqloxx::SQLStatement;
 using std::accumulate;
@@ -80,7 +81,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	instrument->push_repeater(repeater);
 	instrument->save();
 
-	AccountHandle balancing_account(dbc);
+	Handle<Account> const balancing_account(dbc);
 	balancing_account->set_account_type(AccountType::pure_envelope);
 	balancing_account->set_name("Budget imbalance");
 	balancing_account->set_description("");
@@ -243,7 +244,7 @@ AmalgamatedBudget::supports_frequency(Frequency const& p_frequency)
 	}
 }
 
-AccountHandle
+Handle<Account>
 AmalgamatedBudget::balancing_account() const
 {
 	load();
@@ -306,7 +307,7 @@ AmalgamatedBudget::generate_map() const
 	while (account_selector.step())
 	{
 		Id const account_id = account_selector.extract<Id>(0);
-		AccountHandle const account(m_database_connection, account_id);
+		Handle<Account> const account(m_database_connection, account_id);
 		(*map_elect)[account_id] =
 			Decimal(0, account->commodity()->precision());
 	}
@@ -341,7 +342,7 @@ AmalgamatedBudget::generate_map() const
 	{
 		slot.second = round
 		(	convert_from_canonical(m_frequency, slot.second),
-			AccountHandle(m_database_connection, slot.first)->
+			Handle<Account>(m_database_connection, slot.first)->
 				commodity()->precision()
 		);
 	}
@@ -375,7 +376,7 @@ AmalgamatedBudget::regenerate_instrument()
 	Decimal const imbalance = fresh_journal->balance();
 	if (imbalance != Decimal(0, 0))
 	{
-		AccountHandle const ba = balancing_account();
+		Handle<Account> const ba = balancing_account();
 		EntryHandle const balancing_entry(m_database_connection);
 		balancing_entry->set_account(ba);
 		balancing_entry->set_comment(balancing_entry_comment());
@@ -405,7 +406,7 @@ AmalgamatedBudget::load_balancing_account() const
 	);
 	bool check = statement.step();
 	JEWEL_ASSERT (check);
-	m_balancing_account = AccountHandle
+	m_balancing_account = Handle<Account>
 	(	m_database_connection,
 		statement.extract<Id>(0)
 	);
@@ -441,7 +442,7 @@ AmalgamatedBudget::reflect_entries(DraftJournalHandle const& p_journal)
 		{
 			EntryHandle const entry(m_database_connection);
 			entry->set_account
-			(	AccountHandle(m_database_connection, elem.first)
+			(	Handle<Account>(m_database_connection, elem.first)
 			);
 			entry->set_comment("");
 			entry->set_amount(-(elem.second));

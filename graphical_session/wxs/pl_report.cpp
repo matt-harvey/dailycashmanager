@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "pl_report.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "commodity_handle.hpp"
 #include "date.hpp"
@@ -15,6 +15,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
@@ -24,6 +25,7 @@
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::Handle;
 using sqloxx::SQLStatement;
 using std::unique_ptr;
 using std::list;
@@ -130,7 +132,7 @@ PLReport::refresh_map()
 		(	database_connection(),
 			statement->extract<sqloxx::Id>(0)
 		);
-		AccountHandle const account = entry->account();
+		Handle<Account> const account = entry->account();
 		AccountType const atype = account->account_type();
 		if
 		(	(atype != AccountType::revenue) &&
@@ -183,7 +185,7 @@ PLReport::display_body()
 	{
 		for (auto const& elem: m_map)
 		{
-			AccountHandle const account(database_connection(), elem.first);
+			Handle<Account> const account(database_connection(), elem.first);
 			wxString const name = account->name();
 			switch (account->account_type())
 			{
@@ -238,7 +240,10 @@ PLReport::display_body()
 		JEWEL_ASSERT (names);
 		for (wxString const& name: *names)
 		{
-			AccountHandle const account(database_connection(), Account::id_for_name(database_connection(), name));
+			Handle<Account> const account
+			(	database_connection(),
+				Account::id_for_name(database_connection(), name)
+			);
 			Map::const_iterator const jt = m_map.find(account->id());
 			JEWEL_ASSERT (jt != m_map.end());
 			Decimal const& b =

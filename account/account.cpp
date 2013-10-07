@@ -11,7 +11,6 @@
  */
 
 #include "account.hpp"
-#include "account_handle.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "budget_item_handle.hpp"
@@ -30,6 +29,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <wx/string.h>
@@ -44,6 +44,7 @@ using boost::optional;
 using jewel::clear;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::Handle;
 using sqloxx::Id;
 using sqloxx::SQLStatement;
 using std::find_if;
@@ -243,7 +244,8 @@ Account::no_user_pl_accounts_saved
 	{
 		return true;
 	}
-	AccountHandle const bal_account = p_database_connection.balancing_account();
+	Handle<Account> const bal_account =
+		p_database_connection.balancing_account();
 	for ( ; it != end; ++it)
 	{
 		if
@@ -658,11 +660,11 @@ favourite_accounts(PhatbooksDatabaseConnection& p_database_connection)
 	{
 		max_counts[ast] = 0;
 	}
-	AccountHandle const balancing_acct =
+	Handle<Account> const balancing_acct =
 		p_database_connection.balancing_account();
 	for (auto const& account_map_elem: account_map)
 	{
-		AccountHandle const account
+		Handle<Account> const account
 		(	p_database_connection,
 			account_map_elem.first
 		);

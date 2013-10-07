@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "budget_item.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "commodity_handle.hpp"
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -12,6 +12,7 @@
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <wx/string.h>
@@ -22,6 +23,7 @@ using jewel::Decimal;
 using jewel::clear;
 using jewel::value;
 using jewel::UninitializedOptionalException;
+using sqloxx::Handle;
 using sqloxx::Id;
 using sqloxx::IdentityMap;
 using sqloxx::SQLStatement;
@@ -37,7 +39,7 @@ typedef
 
 struct BudgetItem::BudgetItemData
 {
-	optional<AccountHandle> account;
+	optional<Handle<Account> > account;
 	optional<wxString> description;
 	optional<Frequency> frequency;
 	optional<Decimal> amount;
@@ -123,7 +125,7 @@ BudgetItem::set_description(wxString const& p_description)
 }
 
 void
-BudgetItem::set_account(AccountHandle const& p_account)
+BudgetItem::set_account(Handle<Account> const& p_account)
 {
 	load();
 	m_data->account = p_account;
@@ -153,7 +155,7 @@ BudgetItem::description()
 	return value(m_data->description);
 }
 
-AccountHandle
+Handle<Account>
 BudgetItem::account()
 {
 	load();
@@ -195,12 +197,12 @@ BudgetItem::do_load()
 	statement.bind(":p", id());
 	statement.step();
 	sqloxx::Id const acct_id =  statement.extract<sqloxx::Id>(0);
-	AccountHandle const acct(database_connection(), acct_id);
+	Handle<Account> const acct(database_connection(), acct_id);
 	Decimal const amt
 	(	statement.extract<Decimal::int_type>(4),
 		acct->commodity()->precision()
 	);
-	temp.m_data->account = AccountHandle(database_connection(), acct_id);
+	temp.m_data->account = Handle<Account>(database_connection(), acct_id);
 	temp.m_data->description = std8_to_wx(statement.extract<string>(1));
 	temp.m_data->frequency =
 	Frequency

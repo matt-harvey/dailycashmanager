@@ -3,10 +3,11 @@
 #ifndef GUARD_budget_panel_hpp_749080240143966
 #define GUARD_budget_panel_hpp_749080240143966
 
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "budget_item_handle.hpp"
 #include "frequency_ctrl.hpp"
 #include <boost/optional.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -58,7 +59,10 @@ public:
 	 *
 	 * \e Precondition: \e p_account must have an AccountType.
 	 */
-	BudgetPanel(AccountDialog* p_parent, AccountHandle const& p_account);
+	BudgetPanel
+	(	AccountDialog* p_parent,
+		sqloxx::Handle<Account> const& p_account
+	);
 
 	BudgetPanel(BudgetPanel const&) = delete;
 	BudgetPanel(BudgetPanel&&) = delete;
@@ -219,13 +223,17 @@ private:
 		BalancingDialog
 		(	wxWindow* p_parent,
 			jewel::Decimal const& p_imbalance,
-			boost::optional<AccountHandle> const& p_maybe_target,
+			boost::optional<sqloxx::Handle<Account> > const& p_maybe_target,
 			PhatbooksDatabaseConnection& p_database_connection
 		);
 	private:
 		void on_no_button_click(wxCommandEvent& event);
 		void on_yes_button_click(wxCommandEvent& event);
-		void update_budgets_from_dialog(AccountHandle const& p_account);
+
+		void update_budgets_from_dialog
+		(	sqloxx::Handle<Account> const& p_account
+		);
+
 		bool budget_is_balanced() const;
 		wxGridBagSizer* m_top_sizer;
 		AccountCtrl* m_account_ctrl;
@@ -256,7 +264,7 @@ private:
 	wxStaticText* m_summary_amount_text;
 	wxButton* m_pop_item_button;
 	wxButton* m_push_item_button;
-	AccountHandle const& m_account;
+	sqloxx::Handle<Account> const& m_account;
 
 	DECLARE_EVENT_TABLE()
 

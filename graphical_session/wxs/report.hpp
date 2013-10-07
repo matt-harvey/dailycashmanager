@@ -3,13 +3,13 @@
 #ifndef GUARD_report_hpp_0032136221431259167
 #define GUARD_report_hpp_0032136221431259167
 
-#include "account_handle_fwd.hpp"
 #include "account_type.hpp"
 #include "entry_handle.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include "ordinary_journal_handle_fwd.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <wx/gdicmn.h>
 #include <vector>
 
@@ -18,6 +18,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class Account;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -67,8 +68,8 @@ public:
 
 	void update_for_new(OrdinaryJournalHandle const& p_journal);
 	void update_for_amended(OrdinaryJournalHandle const& p_journal);
-	void update_for_new(AccountHandle const& p_account);
-	void update_for_amended(AccountHandle const& p_account);
+	void update_for_new(sqloxx::Handle<Account> const& p_account);
+	void update_for_amended(sqloxx::Handle<Account> const& p_account);
 	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
 
 	void generate();

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "balance_sheet_report.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "commodity_handle.hpp"
 #include "entry_table_iterator.hpp"
@@ -12,7 +12,9 @@
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
 #include <wx/window.h>
@@ -22,15 +24,11 @@
 using boost::optional;
 using jewel::Decimal;
 using jewel::value;
+using sqloxx::Handle;
 using std::list;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
-
-// For debugging
-	#include <jewel/log.hpp>
-	#include <iostream>
-	using std::endl;
 
 namespace phatbooks
 {
@@ -90,7 +88,7 @@ BalanceSheetReport::refresh_map()
 	EntryTableIterator const end;	
 	for ( ; it != end; ++it)
 	{
-		AccountHandle const account = (*it)->account();
+		Handle<Account> const account = (*it)->account();
 		AccountSuperType const s_type =
 			super_type(account->account_type());
 		if (s_type != AccountSuperType::balance_sheet)
@@ -143,7 +141,7 @@ BalanceSheetReport::display_body()
 
 	for (auto const& elem: m_balance_map)
 	{
-		AccountHandle const account(database_connection(), elem.first);
+		Handle<Account> const account(database_connection(), elem.first);
 		wxString const name = account->name();
 		switch (account->account_type())
 		{
@@ -204,7 +202,10 @@ BalanceSheetReport::display_body()
 		JEWEL_ASSERT (names);
 		for (wxString const& name: *names)
 		{
-			AccountHandle const account(database_connection(), Account::id_for_name(database_connection(), name));
+			Handle<Account> const account
+			(	database_connection(),
+				Account::id_for_name(database_connection(), name)
+			);
 			BalanceMap::const_iterator const jt =
 				m_balance_map.find(account->id());
 			JEWEL_ASSERT (jt != m_balance_map.end());
@@ -246,7 +247,9 @@ BalanceSheetReport::display_body()
 	return;
 }
 
-BalanceSheetReport::BalanceDatum::BalanceDatum(AccountHandle const& p_account):
+BalanceSheetReport::BalanceDatum::BalanceDatum
+(	Handle<Account> const& p_account
+):
 	opening_balance(0, p_account->commodity()->precision()),
 	closing_balance(0, p_account->commodity()->precision())
 {

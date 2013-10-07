@@ -3,11 +3,11 @@
 #ifndef GUARD_entry_list_panel_hpp_3556466034407013
 #define GUARD_entry_list_panel_hpp_3556466034407013
 
-#include "account_handle_fwd.hpp"
 #include "entry_handle.hpp"
 #include "ordinary_journal_handle_fwd.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -21,6 +21,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class Account;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -66,8 +67,8 @@ public:
 
 	void update_for_new(OrdinaryJournalHandle const& p_journal);
 	void update_for_amended(OrdinaryJournalHandle const& p_journal);
-	void update_for_new(AccountHandle const& p_account);
-	void update_for_amended(AccountHandle const& p_account);
+	void update_for_new(sqloxx::Handle<Account> const& p_account);
+	void update_for_amended(sqloxx::Handle<Account> const& p_account);
 	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
 	void selected_entries(std::vector<EntryHandle>& out);
 
@@ -82,7 +83,7 @@ private:
 	void preconfigure_summary();
 
 	void on_refresh_button_click(wxCommandEvent& event);
-	AccountHandle selected_account() const;
+	sqloxx::Handle<Account> selected_account() const;
 	boost::optional<boost::gregorian::date> selected_min_date() const;
 	boost::optional<boost::gregorian::date> selected_max_date() const;
 	

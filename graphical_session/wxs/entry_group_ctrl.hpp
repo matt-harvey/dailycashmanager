@@ -3,7 +3,6 @@
 #ifndef GUARD_entry_group_ctrl_hpp_08374422745953511
 #define GUARD_entry_group_ctrl_hpp_08374422745953511
 
-#include "account_handle.hpp"
 #include "account_type.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "entry_handle.hpp"
@@ -11,6 +10,7 @@
 #include "transaction_type.hpp"
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <wx/button.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
@@ -27,6 +27,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class Account;
 class Journal;
 class PhatbooksDatabaseConnection;
 
@@ -91,9 +92,9 @@ public:
 
 	bool is_all_zero() const;
 
-	void update_for_new(AccountHandle const& p_saved_object);
+	void update_for_new(sqloxx::Handle<Account> const& p_saved_object);
 
-	void update_for_amended(AccountHandle const& p_saved_object);
+	void update_for_amended(sqloxx::Handle<Account> const& p_saved_object);
 
 	/**
 	 * Go through each row. If that row corresponds to an entry which

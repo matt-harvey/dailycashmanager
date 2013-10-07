@@ -1,6 +1,5 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "account_handle.hpp"
 #include "account.hpp"
 #include "commodity_handle.hpp"
 #include "date.hpp"
@@ -13,7 +12,9 @@
 #include <jewel/checked_arithmetic.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/exception.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <algorithm>
@@ -26,17 +27,13 @@ using jewel::addition_is_unsafe;
 using jewel::Decimal;
 using jewel::clear;
 using jewel::value;
+using sqloxx::Handle;
+using sqloxx::Id;
 using sqloxx::SQLStatement;
 using sqloxx::ValueTypeException;
 using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
-
-// For debugging only
-#include <jewel/log.hpp>
-#include <iostream>
-using std::endl;
-// End debugging stuff
 
 namespace phatbooks
 {
@@ -107,7 +104,7 @@ BalanceCache::technical_opening_balance(sqloxx::Id p_account_id)
 		julian_int(m_database_connection.opening_balance_journal_date())
 	);
 	statement.bind(":account_id", p_account_id);
-	AccountHandle const account(m_database_connection, p_account_id);
+	Handle<Account> const account(m_database_connection, p_account_id);
 	Decimal::places_type const places = account->commodity()->precision();
 	Decimal ret(0, places);
 	if (statement.step())
@@ -256,8 +253,8 @@ BalanceCache::refresh_all()
 
 	for (auto const& working_map_elem: working_map)
 	{
-		sqloxx::Id const account_id = working_map_elem.first;
-		AccountHandle const account(m_database_connection, account_id);
+		Id const account_id = working_map_elem.first;
+		Handle<Account> const account(m_database_connection, account_id);
 		map_elect[account_id] = Decimal
 		(	working_map_elem.second,
 			account->commodity()->precision()
@@ -294,7 +291,7 @@ BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 	// TODO Is this exception-safe?
 	for (auto const account_id: p_targets)
 	{
-		AccountHandle const account(m_database_connection, account_id);
+		Handle<Account> const account(m_database_connection, account_id);
 		SQLStatement statement
 		(	m_database_connection,
 			"select sum(amount) from entries join ordinary_journal_detail "

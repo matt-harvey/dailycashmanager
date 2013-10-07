@@ -3,11 +3,11 @@
 #ifndef GUARD_frame_hpp_873675392881816
 #define GUARD_frame_hpp_873675392881816
 
-#include "account_handle.hpp"
 #include "draft_journal_handle_fwd.hpp"
 #include "ordinary_journal_handle_fwd.hpp"
 #include "top_panel.hpp"
 #include <jewel/assert.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <wx/menu.h>
 #include <wx/wx.h>
 #include <wx/string.h>
@@ -18,6 +18,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class Account;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -46,13 +47,17 @@ public:
 	 * Populates \e out with all the balance sheet Accounts currently
 	 * selected by the user in the main window.
 	 */
-	void selected_balance_sheet_accounts(std::vector<AccountHandle>& out) const;
+	void selected_balance_sheet_accounts
+	(	std::vector<sqloxx::Handle<Account> >& out
+	) const;
 
 	/**
 	 * Populates \e out with all the P&L Accounts currently selected
 	 * by the user in the main window.
 	 */
-	void selected_pl_accounts(std::vector<AccountHandle>& out) const;
+	void selected_pl_accounts
+	(	std::vector<sqloxx::Handle<Account> >& out
+	) const;
 
 	/**
 	 * Populates \e out with all the OrdinaryJournals currently
@@ -100,7 +105,7 @@ private:
 	void on_reconciliation_status_event(PersistentObjectEvent& event);
 
 	// The actual function which conducts Account editing.
-	void edit_account(AccountHandle const& p_account);
+	void edit_account(sqloxx::Handle<Account> const& p_account);
 
 	// The actual function which conducts Journal editing. JournalType
 	// must be either OrdinaryJournal or DraftJournal.

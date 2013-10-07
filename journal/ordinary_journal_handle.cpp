@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "ordinary_journal_handle.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "commodity_handle.hpp"
 #include "draft_journal_handle.hpp"
 #include "entry_handle.hpp"
@@ -27,7 +27,7 @@ typedef sqloxx::Handle<OrdinaryJournal> OrdinaryJournalHandle;
 
 OrdinaryJournalHandle
 create_opening_balance_journal
-(	AccountHandle const& p_account,
+(	Handle<Account> const& p_account,
 	Decimal const& p_desired_opening_balance
 )
 {
@@ -37,7 +37,7 @@ create_opening_balance_journal
 	// "high level", OrdinaryJournal-level functions; so it seems
 	// appropriate to implement it here.
 	PhatbooksDatabaseConnection& dbc = p_account->database_connection();
-	AccountHandle const balancing_account = dbc.balancing_account();
+	Handle<Account> const balancing_account = dbc.balancing_account();
 	Decimal const old_opening_balance =
 		p_account->has_id()?
 		p_account->technical_opening_balance():

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "setup_wizard.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "app.hpp"
 #include "application.hpp"
@@ -28,6 +28,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/arrstr.h>
 #include <wx/bitmap.h>
 #include <wx/button.h>
@@ -58,6 +59,7 @@ using boost::optional;
 using jewel::Decimal;
 using jewel::value;
 using sqloxx::DatabaseTransaction;
+using sqloxx::Handle;
 using std::map;
 using std::ostringstream;
 using std::set;
@@ -130,10 +132,10 @@ namespace
 		Decimal::places_type precision
 	)
 	{
-		vector<AccountHandle> accounts;
+		vector<Handle<Account> > accounts;
 		make_default_accounts(dbc, accounts, p_account_type);
 		Decimal const zero(0, precision);
-		for (AccountHandle const& account: accounts)
+		for (Handle<Account> const& account: accounts)
 		{
 			AugmentedAccount const augmented_account(account, zero);
 			vec.push_back(augmented_account);

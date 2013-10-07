@@ -3,9 +3,10 @@
 #ifndef GUARD_account_dialog_hpp_4068064533205733
 #define GUARD_account_dialog_hpp_4068064533205733
 
-#include "account_handle_fwd.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "budget_panel.hpp"
+#include <sqloxx/handle.hpp>
 #include <wx/button.h>
 #include <wx/checkbox.h>
 #include <wx/dialog.h>
@@ -79,7 +80,7 @@ public:
 	 */
 	AccountDialog
 	(	wxWindow* p_parent,
-		AccountHandle const& p_account,
+		sqloxx::Handle<Account> const& p_account,
 		AccountSuperType p_account_super_type
 	);
 
@@ -119,7 +120,7 @@ private:
 	wxCheckBox* m_visibility_ctrl;
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;
-	AccountHandle m_account;
+	sqloxx::Handle<Account> m_account;
 
 	DECLARE_EVENT_TABLE()
 

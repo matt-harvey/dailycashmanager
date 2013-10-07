@@ -1,6 +1,6 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "draft_journal_handle.hpp"
 #include "entry_handle.hpp"
 #include "frequency.hpp"
@@ -11,6 +11,7 @@
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/decimal.hpp>
+#include <sqloxx/handle.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <wx/string.h>
 #include <memory>
@@ -20,6 +21,7 @@ namespace gregorian = boost::gregorian;
 
 using jewel::Decimal;
 using gregorian::date;
+using sqloxx::Handle;
 using std::shared_ptr;
 using std::vector;
 
@@ -38,7 +40,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	dj->set_name("Test");
 	
 	EntryHandle entry1(dbc);
-	entry1->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
+	entry1->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "cash")));
 	entry1->set_comment("Test entry");
 	entry1->set_amount(Decimal("-0.95"));
 	entry1->set_whether_reconciled(false);
@@ -46,7 +48,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	dj->push_entry(entry1);
 	
 	EntryHandle entry2(dbc);
-	entry2->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
+	entry2->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "food")));
 	entry2->set_comment("Test entry");
 	entry2->set_amount(Decimal("0.95"));
 	entry2->set_whether_reconciled(false);
@@ -157,7 +159,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	dj1->set_name(wxString("Test"));  // wxString is optional
 	
 	EntryHandle entry1a(dbc);
-	entry1a->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "cash")));
+	entry1a->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "cash")));
 	entry1a->set_comment(wxString("Test entry")); // wxString is optional
 	entry1a->set_amount(Decimal("-1090.95"));
 	entry1a->set_whether_reconciled(false);
@@ -165,7 +167,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	dj1->push_entry(entry1a);
 	
 	EntryHandle entry1b(dbc);
-	entry1b->set_account(AccountHandle(dbc, Account::id_for_name(dbc, "food")));
+	entry1b->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "food")));
 	entry1b->set_comment("Test entry");
 	entry1b->set_amount(Decimal("1090.95"));
 	entry1b->set_whether_reconciled(false);

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "account_dialog.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
 #include "budget_panel.hpp"
@@ -19,6 +19,7 @@
 #include <jewel/exception.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/app.h>
 #include <wx/button.h>
 #include <wx/checkbox.h>
@@ -35,7 +36,7 @@
 using jewel::Decimal;
 using jewel::UninitializedOptionalException;
 using sqloxx::DatabaseTransaction;
-
+using sqloxx::Handle;
 
 namespace phatbooks
 {
@@ -113,7 +114,7 @@ namespace
 
 AccountDialog::AccountDialog
 (	wxWindow* p_parent,
-	AccountHandle const& p_account,
+	Handle<Account> const& p_account,
 	AccountSuperType p_account_super_type
 ):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
@@ -209,7 +210,7 @@ AccountDialog::AccountDialog
 		m_account_type_ctrl->set_account_type(m_account->account_type());
 
 		// Things are just simpler if we prevent the user from changing the
-		// AccountType of an existing AccountHandle. Suppose we allowed the
+		// AccountType of an existing Account. Suppose we allowed the
 		// AccountType to be changed. Then the user could make it so that,
 		// say, there are no expense Accounts. Then the TransactionCtrl
 		// would become such that it is no longer possible to create
@@ -328,7 +329,7 @@ AccountDialog::configure_budget_panel()
 	}
 	if (m_account == m_account->database_connection().balancing_account())
 	{
-		// Cannot edit budgets for the budget balancing AccountHandle.
+		// Cannot edit budgets for the budget balancing Account.
 		return;
 	}
 	JEWEL_ASSERT (account_super_type() == AccountSuperType::pl);
@@ -452,7 +453,7 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 {
 	DatabaseTransaction transaction(m_account->database_connection());
 
-	AccountHandle temp = m_account;
+	Handle<Account> temp = m_account;
 	wxString const prospective_name = m_name_ctrl->GetValue().Trim();
 	if (Account::exists(temp->database_connection(), Account::id_for_name(temp->database_connection(), prospective_name)))
 	{
@@ -529,7 +530,7 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	JEWEL_ASSERT (m_account->has_id());
 
 	// Notify window higher in the hierarchy that they need to update for
-	// changed AccountHandle and if we needed the opening balance journal,
+	// changed Account and if we needed the opening balance journal,
 	// the new OrdinaryJournal.
 	JEWEL_ASSERT (GetParent());
 	wxEventType const event_type =

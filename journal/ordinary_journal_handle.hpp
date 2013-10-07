@@ -3,13 +3,18 @@
 #ifndef GUARD_ordinary_journal_handle_hpp_8344533833835522
 #define GUARD_ordinary_journal_handle_hpp_8344533833835522
 
-#include "account_handle_fwd.hpp"
 #include "ordinary_journal.hpp"
 #include <jewel/decimal.hpp>
-#include <sqloxx/handle.hpp>
+#include <sqloxx/handle_fwd.hpp>
 
 namespace phatbooks
 {
+
+// begin forward declarations
+
+class Account;
+
+// end forward declarations
 
 typedef
 	sqloxx::Handle<OrdinaryJournal>
@@ -36,7 +41,7 @@ typedef
  * will be marked as \e reconciled.
  */
 OrdinaryJournalHandle create_opening_balance_journal
-(	AccountHandle const& p_account,
+(	sqloxx::Handle<Account> const& p_account,
 	jewel::Decimal const& p_desired_opening_balance
 );
 

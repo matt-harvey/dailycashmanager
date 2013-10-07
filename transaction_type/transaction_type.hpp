@@ -3,9 +3,9 @@
 #ifndef GUARD_transaction_type_hpp_36120869003292577
 #define GUARD_transaction_type_hpp_36120869003292577
 
-#include "account_handle_fwd.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/assert.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <wx/string.h>
 #include <set>
 #include <vector>
@@ -15,6 +15,7 @@ namespace phatbooks
 
 // Begin forward declarations
 
+class Account;
 class PhatbooksDatabaseConnection;
 
 // End forward declarations
@@ -142,8 +143,10 @@ destination_super_types
  * if one is an expense Account and the other is an asset Account,
  * then it would be natural to assume we have an expenditure_transaction.
  */
-TransactionType
-natural_transaction_type(AccountHandle const& account_x, AccountHandle const& account_y);
+TransactionType natural_transaction_type
+(	sqloxx::Handle<Account> const& account_x,
+	sqloxx::Handle<Account> const& account_y
+);
 
 
 // Inline implementations

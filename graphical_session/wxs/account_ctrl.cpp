@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "account_ctrl.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -9,6 +9,7 @@
 #include "string_set_validator.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/string.h>
@@ -16,6 +17,7 @@
 #include <vector>
 
 using jewel::Log;
+using sqloxx::Handle;
 using std::set;
 using std::vector;
 
@@ -30,7 +32,8 @@ END_EVENT_TABLE()
 
 namespace
 {
-	bool compare_account_names(AccountHandle const& lhs, AccountHandle const& rhs)
+	bool
+	compare_account_names(Handle<Account> const& lhs, Handle<Account> const& rhs)
 	{
 		return lhs->name() < rhs->name();
 	}
@@ -84,8 +87,9 @@ AccountCtrl::reset()
 {
 	m_account_map.clear();
 	wxArrayString valid_account_names;
-	AccountHandle const balancing_acct = m_database_connection.balancing_account();
-	vector<AccountHandle> avec
+	Handle<Account> const balancing_acct =
+		m_database_connection.balancing_account();
+	vector<Handle<Account> > avec
 	(	AccountTableIterator(m_database_connection),
 		(AccountTableIterator())
 	);
@@ -127,7 +131,7 @@ AccountCtrl::reset()
 }
 
 void
-AccountCtrl::set_account(AccountHandle const& p_account)
+AccountCtrl::set_account(Handle<Account> const& p_account)
 {
 	JEWEL_LOG_VALUE(Log::info, p_account->name());
 	StringSetValidator* const validator =
@@ -137,16 +141,19 @@ AccountCtrl::set_account(AccountHandle const& p_account)
 	return;
 }
 
-AccountHandle
+Handle<Account>
 AccountCtrl::account()
 {
 	// Note it may NOT necessarily be the case at this point that
 	// GetValue() == validator->m_text.
-	return AccountHandle(m_database_connection, m_account_map.at(GetValue()));
+	return Handle<Account>
+	(	m_database_connection,
+		m_account_map.at(GetValue())
+	);
 }
 
 void
-AccountCtrl::update_for_new(AccountHandle const& p_account)
+AccountCtrl::update_for_new(Handle<Account> const& p_account)
 {
 	(void)p_account;  // silence compiler re. unused parameter
 	refresh();
@@ -154,7 +161,7 @@ AccountCtrl::update_for_new(AccountHandle const& p_account)
 }
 
 void
-AccountCtrl::update_for_amended(AccountHandle const& p_account)
+AccountCtrl::update_for_amended(Handle<Account> const& p_account)
 {
 	(void)p_account;  // silence compiler re. unused parameter
 	refresh();
@@ -177,7 +184,7 @@ void
 AccountCtrl::refresh()
 {
 	JEWEL_LOG_TRACE();
-	AccountHandle const selected_account = account();
+	Handle<Account> const selected_account = account();
 	JEWEL_LOG_VALUE(Log::info, selected_account->name());
 	reset();
 	set_account(selected_account);

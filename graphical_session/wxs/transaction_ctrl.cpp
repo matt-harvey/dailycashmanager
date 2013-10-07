@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "transaction_ctrl.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_ctrl.hpp"
 #include "account_type.hpp"
 #include "commodity_handle.hpp"
@@ -581,7 +581,7 @@ TransactionCtrl::primary_amount() const
 }
 
 void
-TransactionCtrl::update_for_new(AccountHandle const& p_saved_object)
+TransactionCtrl::update_for_new(Handle<Account> const& p_saved_object)
 {
 	JEWEL_LOG_TRACE();
 
@@ -593,7 +593,7 @@ TransactionCtrl::update_for_new(AccountHandle const& p_saved_object)
 }
 
 void
-TransactionCtrl::update_for_amended(AccountHandle const& p_saved_object)
+TransactionCtrl::update_for_amended(Handle<Account> const& p_saved_object)
 {
 	JEWEL_LOG_TRACE();
 

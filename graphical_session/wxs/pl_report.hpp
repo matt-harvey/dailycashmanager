@@ -3,7 +3,6 @@
 #ifndef GUARD_pl_report_hpp_03798236466850264
 #define GUARD_pl_report_hpp_03798236466850264
 
-#include "account_handle.hpp"
 #include "report.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>

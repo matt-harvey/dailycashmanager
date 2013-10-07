@@ -3,10 +3,10 @@
 #ifndef GUARD_balance_sheet_report_hpp_8005432485605326
 #define GUARD_balance_sheet_report_hpp_8005432485605326
 
-#include "account_handle_fwd.hpp"
 #include "report.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
 #include <unordered_map>
@@ -16,6 +16,7 @@ namespace phatbooks
 
 // begin forward declarations
 
+class Account;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -52,7 +53,7 @@ private:
 	struct BalanceDatum
 	{
 		BalanceDatum() = default;
-		explicit BalanceDatum(AccountHandle const& p_account);
+		explicit BalanceDatum(sqloxx::Handle<Account> const& p_account);
 		BalanceDatum(BalanceDatum const&) = default;
 		BalanceDatum(BalanceDatum&&) = default;
 		BalanceDatum& operator=(BalanceDatum const&) = default;

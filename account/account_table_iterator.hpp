@@ -3,14 +3,15 @@
 #ifndef GUARD_account_table_iterator_hpp_048275898233184546
 #define GUARD_account_table_iterator_hpp_048275898233184546
 
-#include "account_handle.hpp"
+#include "account.hpp"
+#include <sqloxx/handle.hpp>
 #include <sqloxx/table_iterator.hpp>
 
 namespace phatbooks
 {
 
 typedef
-	sqloxx::TableIterator<AccountHandle>
+	sqloxx::TableIterator<sqloxx::Handle<Account> >
 	AccountTableIterator;
 
 /**

@@ -1,16 +1,18 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "make_default_accounts.hpp"
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "account_type.hpp"
 #include "commodity_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "visibility.hpp"
 #include <jewel/assert.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/string.h>
 #include <utility>
 #include <vector>
 
+using sqloxx::Handle;
 using std::make_pair;
 using std::pair;
 using std::vector;
@@ -18,10 +20,10 @@ using std::vector;
 namespace phatbooks
 {
 
-vector<AccountHandle>
+vector<Handle<Account> >
 make_default_accounts(PhatbooksDatabaseConnection& p_database_connection)
 {
-	vector<AccountHandle> ret;
+	vector<Handle<Account> > ret;
 	make_default_accounts(p_database_connection, ret);
 	return ret;
 }
@@ -29,7 +31,7 @@ make_default_accounts(PhatbooksDatabaseConnection& p_database_connection)
 void
 make_default_accounts
 (	PhatbooksDatabaseConnection& p_database_connection,
-	vector<AccountHandle>& vec
+	vector<Handle<Account> >& vec
 )
 {
 	for (AccountType atype: account_types())
@@ -42,13 +44,13 @@ make_default_accounts
 void
 make_default_accounts
 (	PhatbooksDatabaseConnection& p_database_connection,
-	vector<AccountHandle>& vec,
+	vector<Handle<Account> >& vec,
 	AccountType p_account_type
 )
 {
 	vector<wxString> names;
 
-	// First we fill a vector with the AccountHandle names.
+	// First we fill a vector with the Account names.
 	switch (p_account_type)
 	{
 	case AccountType::asset:
@@ -85,12 +87,14 @@ make_default_accounts
 	default:
 		JEWEL_HARD_ASSERT (false);
 	}
-	// Now we use this information to populate vec with actual AccountHandles
-	// (but note we don't save them - saving them will be at the discretion
-	// of the user, and will be done in client code closer to the UI).
+	// Now we use this information to populate vec with actual
+	// Handle<Account> instances
+	// (but note we don't save the Accounts - saving them will be at the
+	// discretion of the user, and will be done in client code closer to
+	// the UI).
 	for (wxString const& name: names)
 	{
-		AccountHandle const account(p_database_connection);
+		Handle<Account> const account(p_database_connection);
 		account->set_name(name);
 		account->set_account_type(p_account_type);
 

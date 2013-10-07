@@ -15,7 +15,7 @@
 
 
 
-#include "account_handle.hpp"
+#include "account.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_side.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -23,6 +23,7 @@
 #include <jewel/decimal_fwd.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
 #include <wx/string.h>
@@ -95,7 +96,7 @@ public:
 	 */
 	void set_journal_id(sqloxx::Id p_journal_id);
 
-	void set_account(AccountHandle const& p_account);
+	void set_account(sqloxx::Handle<Account> const& p_account);
 
 	void set_comment(wxString const& p_comment);
 
@@ -151,7 +152,7 @@ public:
 
 	sqloxx::Id journal_id();
 
-	AccountHandle account();
+	sqloxx::Handle<Account> account();
 
 	bool is_reconciled();
 
@@ -213,8 +214,8 @@ create_date_ordered_actual_ordinary_entry_selector
 		boost::optional<boost::gregorian::date>(),
 	boost::optional<boost::gregorian::date> const& p_maybe_max_date =
 		boost::optional<boost::gregorian::date>(),
-	boost::optional<AccountHandle> const& p_maybe_account =
-		boost::optional<AccountHandle>()
+	boost::optional<sqloxx::Handle<Account> > const& p_maybe_account =
+		boost::optional<sqloxx::Handle<Account> >()
 );
 
 }  // namespace phatbooks
