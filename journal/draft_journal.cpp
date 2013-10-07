@@ -294,7 +294,7 @@ DraftJournal::do_remove()
 	// Note this is wrapped in PersistentObject::remove, which
 	// (a) wraps it in a DatabaseTransaction, and
 	// (b) calls ghostify() if an exception is thrown.
-	// This makes it atomic as a whole.
+	// This makes it exception-safe as a whole.
 	if (id() == database_connection().budget_instrument()->id())
 	{
 		JEWEL_THROW
