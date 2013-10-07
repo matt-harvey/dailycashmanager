@@ -5,7 +5,6 @@
 #include "filtered_entry_list_ctrl.hpp"
 #include "entry_handle.hpp"
 #include "locale.hpp"
-#include "ordinary_journal_handle.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>

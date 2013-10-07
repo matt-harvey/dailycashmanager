@@ -11,7 +11,7 @@
 #include "entry_handle.hpp"
 #include "entry_list_panel.hpp"
 #include "frame.hpp"
-#include "ordinary_journal_handle.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "reconciliation_list_panel.hpp"
@@ -436,7 +436,9 @@ TopPanel::selected_pl_accounts(vector<Handle<Account> >& out) const
 }
 
 void
-TopPanel::selected_ordinary_journals(vector<OrdinaryJournalHandle>& out) const
+TopPanel::selected_ordinary_journals
+(	vector<Handle<OrdinaryJournal> >& out
+) const
 {
 	vector<EntryHandle> entries;
 	JEWEL_ASSERT (m_notebook);
@@ -451,7 +453,7 @@ TopPanel::selected_ordinary_journals(vector<OrdinaryJournalHandle>& out) const
 	}
 	for (EntryHandle const& entry: entries)
 	{
-		OrdinaryJournalHandle oj
+		Handle<OrdinaryJournal> const oj
 		(	entry->database_connection(),
 			entry->journal_id()
 		);
@@ -468,7 +470,7 @@ TopPanel::selected_draft_journals(vector<DraftJournalHandle>& out) const
 }
 
 void
-TopPanel::update_for_new(OrdinaryJournalHandle const& p_saved_object)
+TopPanel::update_for_new(Handle<OrdinaryJournal> const& p_saved_object)
 {
 	m_bs_account_list->update();
 	m_pl_account_list->update();
@@ -505,7 +507,7 @@ TopPanel::update_for_new(Handle<Account> const& p_saved_object)
 }
 
 void
-TopPanel::update_for_amended(OrdinaryJournalHandle const& p_saved_object)
+TopPanel::update_for_amended(Handle<OrdinaryJournal> const& p_saved_object)
 {
 	m_bs_account_list->update();
 	m_pl_account_list->update();

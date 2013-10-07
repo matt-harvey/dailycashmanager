@@ -17,10 +17,11 @@
 #include "date.hpp"
 #include "draft_journal_handle_fwd.hpp"
 #include "interval_type.hpp"
-#include "ordinary_journal_handle.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <memory>
@@ -32,7 +33,11 @@
 namespace phatbooks
 {
 
+// begin forward declarations
+
 class Frequency;
+
+// end forward declarations
 
 /**
  * Instances of this class serve as "alarms" that "fire" at regular intervals.
@@ -172,7 +177,7 @@ public:
 	 *
 	 * @todo Testing (but see tests already done...)
 	 */
-	OrdinaryJournalHandle fire_next();
+	sqloxx::Handle<OrdinaryJournal> fire_next();
 	
 	DraftJournalHandle draft_journal();
 
@@ -211,7 +216,7 @@ private:
  * OrdinaryJournals, sorted by the order in which they have been
  * posted, from earliest to latest.
  */
-std::list<OrdinaryJournalHandle>
+std::list<sqloxx::Handle<OrdinaryJournal> >
 update_repeaters
 (	PhatbooksDatabaseConnection& dbc,
 	boost::gregorian::date d = today()

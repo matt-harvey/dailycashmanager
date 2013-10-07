@@ -4,7 +4,6 @@
 #define GUARD_report_panel_hpp_8629163596140763
 
 #include "entry_handle.hpp"
-#include "ordinary_journal_handle_fwd.hpp"
 #include <sqloxx/handle_fwd.hpp>
 #include <wx/combobox.h>
 #include <wx/button.h>
@@ -20,6 +19,7 @@ namespace phatbooks
 // Begin forward declarations
 
 class Account;
+class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -48,8 +48,8 @@ public:
 	ReportPanel& operator=(ReportPanel&&) = delete;
 	virtual ~ReportPanel();
 
-	void update_for_new(OrdinaryJournalHandle const& p_journal);
-	void update_for_amended(OrdinaryJournalHandle const& p_journal);
+	void update_for_new(sqloxx::Handle<OrdinaryJournal> const& p_journal);
+	void update_for_amended(sqloxx::Handle<OrdinaryJournal> const& p_journal);
 	void update_for_new(sqloxx::Handle<Account> const& p_account);
 	void update_for_amended(sqloxx::Handle<Account> const& p_account);
 	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);

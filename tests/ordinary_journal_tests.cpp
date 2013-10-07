@@ -4,7 +4,7 @@
 #include "account.hpp"
 #include "draft_journal_handle.hpp"
 #include "entry_handle.hpp"
-#include "ordinary_journal_handle.hpp"
+#include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "transaction_side.hpp"
@@ -49,7 +49,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	entry1b->set_amount(Decimal("-0.99"));
 	entry1b->set_transaction_side(TransactionSide::destination);
 	journal1.push_entry(entry1b);
-	OrdinaryJournalHandle oj1(dbc);
+	Handle<OrdinaryJournal> const oj1(dbc);
 	oj1->set_date(date(3000, 1, 5));
 	oj1->mimic(journal1);
 	CHECK_EQUAL(oj1->date(), date(3000, 1, 5));
@@ -123,7 +123,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
-	OrdinaryJournalHandle journal1(dbc);
+	Handle<OrdinaryJournal> const journal1(dbc);
 	journal1->set_transaction_type(TransactionType::generic);
 	journal1->set_comment("igloo");
 
@@ -154,7 +154,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 
 	// We already have a system journal (the budget instrument) so
 	// we expect journal1b to have an id of 2, not 1.
-	OrdinaryJournalHandle journal1b(dbc, 2);
+	Handle<OrdinaryJournal> const journal1b(dbc, 2);
 
 	CHECK(journal1b->is_balanced());
 	EntryHandle entry1c(dbc);

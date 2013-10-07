@@ -8,7 +8,6 @@
 #include "filtered_entry_list_ctrl.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
-#include "ordinary_journal_handle.hpp"
 #include "persistent_object_event.hpp"
 #include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>

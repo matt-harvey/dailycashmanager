@@ -5,6 +5,7 @@
 #include "entry_handle.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_tests_common.hpp"
 #include "repeater_handle.hpp"
 #include "transaction_side.hpp"
@@ -182,7 +183,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	dj1->save();
 
 	RepeaterHandle const repeater1b = repeater1;
-	OrdinaryJournalHandle const oj1b = repeater1b->fire_next();
+	Handle<OrdinaryJournal> const oj1b = repeater1b->fire_next();
 	CHECK_EQUAL(oj1b->comment(), "journal to test repeater");
 	CHECK_EQUAL(oj1b->comment(), wxString("journal to test repeater"));
 	CHECK_EQUAL(oj1b->date(), date(3012, 7, 30));
@@ -192,7 +193,7 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 		TransactionType::generic
 	);
 
-	OrdinaryJournalHandle const oj1c = oj1b;
+	Handle<OrdinaryJournal> const oj1c = oj1b;
 	CHECK_EQUAL(oj1c->date(), date(3012, 7, 30));
 	CHECK_EQUAL(oj1c->comment(), "journal to test repeater");
 	CHECK_EQUAL(oj1c->entries().size(), unsigned(2));
@@ -204,8 +205,8 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	repeater1b->fire_next();
 	repeater1b->fire_next();
 
-	OrdinaryJournalHandle oj3(dbc, oj1c->id() + 1);
-	OrdinaryJournalHandle oj4(dbc, oj1c->id() + 2);
+	Handle<OrdinaryJournal> const oj3(dbc, oj1c->id() + 1);
+	Handle<OrdinaryJournal> const oj4(dbc, oj1c->id() + 2);
 
 	CHECK_EQUAL(oj3->date(), date(3012, 8, 13));
 	CHECK_EQUAL(oj4->date(), date(3012, 8, 27));

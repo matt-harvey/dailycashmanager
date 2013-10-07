@@ -10,7 +10,7 @@
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
 #include "draft_journal_handle.hpp"
-#include "ordinary_journal_handle.hpp"
+#include "ordinary_journal.hpp"
 #include "persistent_journal.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -424,7 +424,7 @@ Frame::on_menu_edit_ordinary_journal(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
-	vector<OrdinaryJournalHandle> journals;
+	vector<Handle<OrdinaryJournal> > journals;
 	selected_ordinary_journals(journals);
 	if (journals.empty())
 	{
@@ -525,7 +525,7 @@ Frame::on_journal_editing_requested(PersistentObjectEvent& event)
 	}
 	else
 	{
-		OrdinaryJournalHandle const journal(m_database_connection, journal_id);
+		Handle<OrdinaryJournal> const journal(m_database_connection, journal_id);
 		edit_journal(journal);
 	}
 	return;
@@ -565,7 +565,10 @@ Frame::on_journal_created_event(PersistentObjectEvent& event)
 	}
 	else
 	{
-		OrdinaryJournalHandle const journal(m_database_connection, journal_id);
+		Handle<OrdinaryJournal> const journal
+		(	m_database_connection,
+			journal_id
+		);
 		m_top_panel->update_for_new(journal);
 	}
 	return;
@@ -586,7 +589,10 @@ Frame::on_journal_edited_event(PersistentObjectEvent& event)
 	}
 	else
 	{
-		OrdinaryJournalHandle const journal(m_database_connection, journal_id);
+		Handle<OrdinaryJournal> const journal
+		(	m_database_connection,
+			journal_id
+		);
 		m_top_panel->update_for_amended(journal);
 	}
 	return;
@@ -684,7 +690,7 @@ Frame::selected_pl_accounts(vector<Handle<Account> >& out) const
 }
 
 void
-Frame::selected_ordinary_journals(vector<OrdinaryJournalHandle>& out) const
+Frame::selected_ordinary_journals(vector<Handle<OrdinaryJournal> >& out) const
 {
 	JEWEL_LOG_TRACE();
 	m_top_panel->selected_ordinary_journals(out);

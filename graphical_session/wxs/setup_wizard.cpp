@@ -15,7 +15,7 @@
 #include "make_currencies.hpp"
 #include "make_default_accounts.hpp"
 #include "multi_account_panel.hpp"
-#include "ordinary_journal_handle.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "string_conv.hpp"
@@ -317,7 +317,7 @@ SetupWizard::configure_accounts()
 			(	aug_acc.technical_opening_balance.places() ==
 				selected_currency()->precision()
 			);
-			OrdinaryJournalHandle const opening_balance_journal =
+			Handle<OrdinaryJournal> const opening_balance_journal =
 			create_opening_balance_journal
 			(	aug_acc.account,
 				aug_acc.technical_opening_balance

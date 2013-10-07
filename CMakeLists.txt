@@ -153,7 +153,6 @@ set (main_files
 	 journal/draft_journal_table_iterator.cpp
 	 journal/journal.cpp
 	 journal/ordinary_journal.cpp
-	 journal/ordinary_journal_handle.cpp
 	 journal/persistent_journal.cpp
 	 session/session.cpp
 	 phatbooks_database_connection/phatbooks_database_connection.cpp

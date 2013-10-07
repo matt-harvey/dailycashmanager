@@ -8,7 +8,7 @@
 #include "commodity_handle.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "frame.hpp"
-#include "ordinary_journal_handle.hpp"
+#include "ordinary_journal.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "string_flags.hpp"
@@ -510,7 +510,7 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		// TODO Handle small possibility of overflow here.
 		opening_amount = -opening_amount;
 	}
-	OrdinaryJournalHandle const objnl = create_opening_balance_journal
+	Handle<OrdinaryJournal> const objnl = create_opening_balance_journal
 	(	temp,
 		opening_amount
 	);

@@ -6,7 +6,6 @@
 
 #include "entry_handle_fwd.hpp"
 #include "entry_table_iterator.hpp"
-#include "ordinary_journal_handle_fwd.hpp"
 #include "reconciliation_list_panel.hpp"
 #include "summary_datum.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -27,6 +26,7 @@ namespace phatbooks
 
 class Account;
 class DateParser;
+class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
 namespace gui
@@ -96,14 +96,14 @@ public:
 	 * Update displayed entries to reflect that a \e p_journal has been newly
 	 * posted (having not previously existed in the database).
 	 */
-	void update_for_new(OrdinaryJournalHandle const& p_journal);
+	void update_for_new(sqloxx::Handle<OrdinaryJournal> const& p_journal);
 
 	/**
 	 * Update displayed entries to reflect that an already-saved
 	 * OrdinaryJournal p_journal has just been amended, and the amendments
 	 * saved.
 	 */
-	void update_for_amended(OrdinaryJournalHandle const& p_journal);
+	void update_for_amended(sqloxx::Handle<OrdinaryJournal> const& p_journal);
 
 	void update_for_amended(sqloxx::Handle<Account> const& p_account);
 

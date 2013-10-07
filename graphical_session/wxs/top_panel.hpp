@@ -6,7 +6,6 @@
 #include "account_type.hpp"
 #include "draft_journal_handle_fwd.hpp"
 #include "entry_handle.hpp"
-#include "ordinary_journal_handle.hpp"
 #include "reconciliation_list_panel.hpp"
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
@@ -24,6 +23,7 @@ namespace phatbooks
 // Begin forward declarations
 
 class Account;
+class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 class ProtoJournal;
 
@@ -90,7 +90,9 @@ public:
 	 * Populates \e out with all the OrdinaryJournals currently
 	 * selected by the user in the main window.
 	 */
-	void selected_ordinary_journals(std::vector<OrdinaryJournalHandle>& out) const;
+	void selected_ordinary_journals
+	(	std::vector<sqloxx::Handle<OrdinaryJournal> >& out
+	) const;
 
 	/**
 	 * Populates \e out with all the DraftJournals currently
@@ -104,7 +106,9 @@ public:
 	 * object that was not already in the database.
 	 */
 	void update_for_new(DraftJournalHandle const& p_saved_object);
-	void update_for_new(OrdinaryJournalHandle const& p_saved_object);
+	void update_for_new
+	(	sqloxx::Handle<OrdinaryJournal> const& p_saved_object
+	);
 	void update_for_new(sqloxx::Handle<Account> const& p_saved_object);
 
 	/**
@@ -119,7 +123,9 @@ public:
 	 * Entries.
 	 */
 	void update_for_amended(DraftJournalHandle const& p_saved_object);
-	void update_for_amended(OrdinaryJournalHandle const& p_saved_object);
+	void update_for_amended
+	(	sqloxx::Handle<OrdinaryJournal> const& p_saved_object
+	);
 	void update_for_amended(sqloxx::Handle<Account> const& p_saved_object);
 
 	/**

@@ -1,24 +1,12 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-
-/** \file entry_impl.cpp
- *
- * \brief Source file pertaining to Entry class.
- *
- * \author Matthew Harvey
- * \date 04 July 2012.
- *
- * Copyright (c) 2012, Matthew Harvey. All rights reserved.
- */
-
-
 #include "entry.hpp"
 #include "account.hpp"
 #include "date.hpp"
 #include "draft_journal_handle.hpp"
 #include "string_conv.hpp"
 #include "commodity_handle.hpp"
-#include "ordinary_journal_handle.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"
 #include "transaction_side.hpp"
@@ -436,7 +424,7 @@ Entry::mimic(Entry& rhs)
 gregorian::date
 Entry::date()
 {
-	OrdinaryJournalHandle const oj(database_connection(), journal_id());
+	Handle<OrdinaryJournal> const oj(database_connection(), journal_id());
 	return oj->date();
 }
 

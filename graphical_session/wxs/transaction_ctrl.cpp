@@ -22,7 +22,6 @@
 #include "gridded_scrolled_panel.hpp"
 #include "journal.hpp"
 #include "ordinary_journal.hpp"
-#include "ordinary_journal_handle.hpp"
 #include "persistent_journal.hpp"
 #include "proto_journal.hpp"
 #include "locale.hpp"
@@ -129,7 +128,7 @@ namespace
 TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
 	wxSize const& p_size,
-	OrdinaryJournalHandle const& p_journal
+	Handle<OrdinaryJournal> const& p_journal
 ):
 	GriddedScrolledPanel
 	(	p_parent,
@@ -869,7 +868,7 @@ TransactionCtrl::post_journal()
 	else
 	{
 		JEWEL_ASSERT (!maybe_frequency);
-		OrdinaryJournalHandle const oj(database_connection());
+		Handle<OrdinaryJournal> const oj(database_connection());
 		oj->mimic(journal);
 		JEWEL_ASSERT (m_date_ctrl->date());
 		oj->set_date(value(m_date_ctrl->date()));

@@ -10,7 +10,7 @@
 #include "entry_handle.hpp"
 #include "entry_table_iterator.hpp"
 #include "locale.hpp"
-#include "ordinary_journal_handle.hpp"
+#include "ordinary_journal.hpp"
 #include "persistent_object_event.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "pl_account_entry_list_ctrl.hpp"
@@ -333,7 +333,7 @@ EntryListCtrl::on_item_activated(wxListEvent& event)
 }
 
 void
-EntryListCtrl::update_for_new(OrdinaryJournalHandle const& p_journal)
+EntryListCtrl::update_for_new(Handle<OrdinaryJournal> const& p_journal)
 {
 	if (p_journal->is_actual())
 	{
@@ -347,7 +347,7 @@ EntryListCtrl::update_for_new(OrdinaryJournalHandle const& p_journal)
 }
 
 void
-EntryListCtrl::update_for_amended(OrdinaryJournalHandle const& p_journal)
+EntryListCtrl::update_for_amended(Handle<OrdinaryJournal> const& p_journal)
 {
 	if (!p_journal->is_actual())
 	{

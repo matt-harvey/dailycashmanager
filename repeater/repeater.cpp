@@ -16,7 +16,7 @@
 #include "date.hpp"
 #include "frequency.hpp"
 #include "draft_journal_handle.hpp"
-#include "ordinary_journal_handle.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "proto_journal.hpp"
@@ -32,6 +32,7 @@
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle.hpp>
 #include <algorithm>
 #include <list>
 #include <memory>
@@ -44,6 +45,7 @@ namespace gregorian = boost::gregorian;
 
 using boost::optional;
 using sqloxx::DatabaseTransaction;
+using sqloxx::Handle;
 using sqloxx::SQLStatement;
 using boost::numeric_cast;
 using jewel::clear;
@@ -57,12 +59,8 @@ using std::shared_ptr;
 using std::string;
 using std::vector;
 
-// for debug logging
-using std::endl;
-
 namespace phatbooks
 {
-
 
 struct Repeater::RepeaterData
 {
@@ -225,12 +223,12 @@ Repeater::firings_till(gregorian::date const& limit)
 }
 
 
-OrdinaryJournalHandle
+Handle<OrdinaryJournal>
 Repeater::fire_next()
 {
 	load();
 	DraftJournalHandle const dj = draft_journal();
-	OrdinaryJournalHandle const oj(database_connection());
+	Handle<OrdinaryJournal> const oj(database_connection());
 	gregorian::date const next_date_elect = next_date(1);
 	if 
 	(	dj == database_connection().budget_instrument() &&
@@ -402,18 +400,20 @@ Repeater::mimic(Repeater& rhs)
 
 namespace
 {
-	bool
-	is_earlier_than(OrdinaryJournalHandle const& lhs, OrdinaryJournalHandle const& rhs)
+	bool is_earlier_than
+	(	Handle<OrdinaryJournal> const& lhs,
+		Handle<OrdinaryJournal> const& rhs
+	)
 	{
 		return lhs->date() < rhs->date();
 	}
 }  // End anonymous namespace
 
 
-list<OrdinaryJournalHandle>
+list<Handle<OrdinaryJournal> >
 update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 {
-	list<OrdinaryJournalHandle> auto_posted_journals;
+	list<Handle<OrdinaryJournal> > auto_posted_journals;
 	// Read into a vector first - uneasy about reading and writing
 	// at the same time.
 	RepeaterTableIterator const rtit(dbc);
@@ -423,7 +423,7 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 	{
 		while (repeater->next_date() <= d)
 		{
-			OrdinaryJournalHandle const oj = repeater->fire_next();
+			Handle<OrdinaryJournal> const oj = repeater->fire_next();
 			// In the special case where oj is dbc.budget_instrument(),
 			// and is
 			// devoid of entries, firing it does not cause any

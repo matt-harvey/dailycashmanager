@@ -8,7 +8,7 @@
 #include "entry_handle.hpp"
 #include "entry_list_ctrl.hpp"
 #include "locale.hpp"
-#include "ordinary_journal_handle.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_flags.hpp"
 #include "reconciliation_entry_list_ctrl.hpp"
@@ -17,6 +17,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/log.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/handle.hpp>
@@ -42,13 +43,6 @@ using std::remove_copy;
 using std::vector;
 
 namespace gregorian = boost::gregorian;
-
-
-// For debugging
-	#include <jewel/log.hpp>
-	#include <iostream>
-	using std::endl;
-
 
 namespace phatbooks
 {
@@ -208,7 +202,7 @@ EntryListPanel::on_refresh_button_click(wxCommandEvent& event)
 }
 
 void
-EntryListPanel::update_for_new(OrdinaryJournalHandle const& p_journal)
+EntryListPanel::update_for_new(Handle<OrdinaryJournal> const& p_journal)
 {
 	if (m_entry_list_ctrl) m_entry_list_ctrl->update_for_new(p_journal);
 	postconfigure_summary();
@@ -216,7 +210,7 @@ EntryListPanel::update_for_new(OrdinaryJournalHandle const& p_journal)
 }
 
 void
-EntryListPanel::update_for_amended(OrdinaryJournalHandle const& p_journal)
+EntryListPanel::update_for_amended(Handle<OrdinaryJournal> const& p_journal)
 {
 	if (m_entry_list_ctrl) m_entry_list_ctrl->update_for_amended(p_journal);
 	postconfigure_summary();
