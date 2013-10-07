@@ -3,7 +3,7 @@
 #include "phatbooks_tests_common.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
-#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "visibility.hpp"
 #include <boost/filesystem.hpp>
@@ -51,7 +51,7 @@ void abort_if_exists(filesystem::path const& filepath)
 
 void setup_test_commodities(PhatbooksDatabaseConnection& dbc)
 {
-	CommodityHandle const australian_dollars(dbc);
+	Handle<Commodity> const australian_dollars(dbc);
 	australian_dollars->set_abbreviation("AUD");
 	australian_dollars->set_name("Australian dollars");
 	australian_dollars->set_description("Australian currency in dollars");
@@ -59,7 +59,7 @@ void setup_test_commodities(PhatbooksDatabaseConnection& dbc)
 	australian_dollars->set_multiplier_to_base(Decimal(1, 0));
 	australian_dollars->save();
 	
-	CommodityHandle const us_dollars(dbc);
+	Handle<Commodity> const us_dollars(dbc);
 	us_dollars->set_abbreviation("USD");
 	us_dollars->set_name("US dollars");
 	us_dollars->set_description("United States currency in dollars");
@@ -77,7 +77,7 @@ void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
 	cash->set_account_type(AccountType::asset);
 	cash->set_name("cash");
 	cash->set_commodity
-	(	CommodityHandle(dbc, Commodity::id_for_abbreviation(dbc, "AUD"))
+	(	Handle<Commodity>(dbc, Commodity::id_for_abbreviation(dbc, "AUD"))
 	);
 	cash->set_description("notes and coins");
 	cash->set_visibility(Visibility::visible);
@@ -87,7 +87,7 @@ void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
 	food->set_account_type(AccountType::expense);
 	food->set_name("food");
 	food->set_commodity
-	(	CommodityHandle(dbc, Commodity::id_for_abbreviation(dbc, "AUD"))
+	(	Handle<Commodity>(dbc, Commodity::id_for_abbreviation(dbc, "AUD"))
 	);
 	food->set_description("food and drink");
 	food->set_visibility(Visibility::visible);

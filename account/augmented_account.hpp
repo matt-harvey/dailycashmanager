@@ -2,13 +2,13 @@
 #define GUARD_augmented_account_hpp_15782473057407176
 
 #include "account.hpp"
-#include "commodity_handle_fwd.hpp"
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
 
 namespace phatbooks
 {
 
+class Commodity;
 class PhatbooksDatabaseConnection;
 
 /**
@@ -21,7 +21,7 @@ struct AugmentedAccount
 {
 	AugmentedAccount
 	(	PhatbooksDatabaseConnection& p_database_connection,
-		CommodityHandle const& p_commodity
+		sqloxx::Handle<Commodity> const& p_commodity
 	);
 	AugmentedAccount
 	(	sqloxx::Handle<Account> const& p_account,

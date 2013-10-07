@@ -18,7 +18,6 @@
 #include "amalgamated_budget.hpp"
 #include "application.hpp"
 #include "budget_item.hpp"
-#include "commodity_handle.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
 #include "draft_journal.hpp"
@@ -27,7 +26,6 @@
 #include "ordinary_journal_table_iterator.hpp"
 #include "repeater.hpp"
 #include "balance_cache.hpp"
-#include "commodity_handle.hpp"
 #include "entry_handle.hpp"
 #include "persistent_journal.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -171,7 +169,7 @@ PhatbooksDatabaseConnection::load_default_commodity()
 		"select default_commodity_id from entity_data"
 	);
 	statement.step();
-	CommodityHandle commodity
+	Handle<Commodity> const commodity
 	(	*this,
 		statement.extract<Id>(0)
 	);
@@ -190,7 +188,7 @@ PhatbooksDatabaseConnection::do_setup()
 		if (!m_permanent_entity_data->default_commodity_is_set())
 		{
 			// Then we create a "default default commodity".	
-			CommodityHandle commodity(*this);
+			Handle<Commodity> const commodity(*this);
 			commodity->set_abbreviation("default commodity abbreviation");
 			commodity->set_name("default commodity name");
 			commodity->set_description("default commodity description");
@@ -286,7 +284,7 @@ PhatbooksDatabaseConnection::balancing_account() const
 }
 
 
-CommodityHandle
+Handle<Commodity>
 PhatbooksDatabaseConnection::default_commodity() const
 {
 	return m_permanent_entity_data->default_commodity();
@@ -295,7 +293,7 @@ PhatbooksDatabaseConnection::default_commodity() const
 
 void
 PhatbooksDatabaseConnection::set_default_commodity
-(	CommodityHandle const& p_commodity
+(	Handle<Commodity> const& p_commodity
 )
 {
 	JEWEL_ASSERT (m_permanent_entity_data);
@@ -501,7 +499,7 @@ PermanentEntityData::default_commodity_is_set() const
 	return static_cast<bool>(m_default_commodity);
 }
 
-CommodityHandle
+Handle<Commodity>
 PhatbooksDatabaseConnection::PermanentEntityData::default_commodity() const
 {
 	if (!default_commodity_is_set())
@@ -530,7 +528,7 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_creation_date
 
 void
 PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
-(	CommodityHandle const& p_commodity
+(	Handle<Commodity> const& p_commodity
 )
 {
 	if (p_commodity->multiplier_to_base() != Decimal(1, 0))
@@ -541,7 +539,7 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
 			"to Decimal(1, 0)."
 		);
 	}
-	m_default_commodity.reset(new CommodityHandle(p_commodity));
+	m_default_commodity.reset(new Handle<Commodity>(p_commodity));
 	return;
 }
 		

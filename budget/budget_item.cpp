@@ -2,7 +2,7 @@
 
 #include "budget_item.hpp"
 #include "account.hpp"
-#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"
@@ -309,7 +309,7 @@ normalized_total
 {
 	JEWEL_ASSERT (e - b > 0);  // Assert precondition.
 	PhatbooksDatabaseConnection& dbc = (*b)->database_connection();
-	CommodityHandle commodity(dbc);
+	Handle<Commodity> commodity(dbc);
 	// WARNING Temporary hack - if Accounts can ever have Commodities other
 	// than the default Commodity, then this will no longer work.
 	try

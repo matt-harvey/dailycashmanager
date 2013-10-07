@@ -5,7 +5,7 @@
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
 #include "budget_panel.hpp"
-#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "frame.hpp"
 #include "ordinary_journal.hpp"

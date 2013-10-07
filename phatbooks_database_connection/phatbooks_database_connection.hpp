@@ -15,7 +15,6 @@
 
 
 #include "account_type.hpp"
-#include "commodity_handle_fwd.hpp"
 #include "frequency.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/filesystem.hpp>
@@ -131,7 +130,7 @@ public:
 	 * @returns a handle to the default Commodity for the entity represented by
 	 * the PhatbooksDatabaseConnection.
 	 */
-	CommodityHandle default_commodity() const;
+	sqloxx::Handle<Commodity> default_commodity() const;
 
 	/**
 	 * Set the default commodity for the entity to p_commodity. If this
@@ -146,7 +145,7 @@ public:
 	 * @throws jewel::UninitializedOptionalException if p_commodity
 	 * does not have an initialized multiplier_to_base.
 	 */
-	void set_default_commodity(CommodityHandle const& p_commodity);
+	void set_default_commodity(sqloxx::Handle<Commodity> const& p_commodity);
 
 	/**
 	 * @returns the DraftJournal that serves as the "instrument"
@@ -287,7 +286,7 @@ private:
 		~PermanentEntityData() = default;
 		boost::gregorian::date creation_date() const;
 		bool default_commodity_is_set() const;
-		CommodityHandle default_commodity() const;
+		sqloxx::Handle<Commodity> default_commodity() const;
 		
 		/**
 		 * @throws EntityCreationDateException if we try to set
@@ -296,11 +295,13 @@ private:
 		 */
 		void set_creation_date(boost::gregorian::date const& p_date);
 
-		void set_default_commodity(CommodityHandle const& p_commodity);
+		void set_default_commodity
+		(	sqloxx::Handle<Commodity> const& p_commodity
+		);
 
 	private:
 		boost::optional<boost::gregorian::date> m_creation_date;
-		std::unique_ptr<CommodityHandle> m_default_commodity;
+		std::unique_ptr<sqloxx::Handle<Commodity> > m_default_commodity;  // TODO Does this need to be wrapped in a unique_ptr?
 	};
 
 	/**

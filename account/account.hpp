@@ -15,7 +15,6 @@
 
 
 #include "account_type_fwd.hpp"
-#include "commodity_handle_fwd.hpp"
 #include "date.hpp"
 #include "finformat.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -42,6 +41,7 @@ namespace phatbooks
 // begin forward declarations
 
 class BudgetItem;
+class Commodity;
 
 // end forward declarations
 
@@ -176,7 +176,7 @@ public:
 
 	wxString name();
 
-	CommodityHandle commodity();
+	sqloxx::Handle<Commodity> commodity();
 
 	AccountType account_type();
 
@@ -242,7 +242,7 @@ public:
 
 	void set_name(wxString const& p_name);
 
-	void set_commodity(CommodityHandle const& p_commodity);
+	void set_commodity(sqloxx::Handle<Commodity> const& p_commodity);
 
 	void set_description(wxString const& p_description);
 

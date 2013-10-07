@@ -8,7 +8,7 @@
 #include "account_type.hpp"
 #include "budget_item.hpp"
 #include "budget_item_table_iterator.hpp"
-#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
@@ -525,7 +525,7 @@ BudgetPanel::database_connection() const
 Decimal
 BudgetPanel::zero() const
 {
-	CommodityHandle const commodity =
+	Handle<Commodity> const commodity =
 	(	m_account->has_id()?
 		m_account->commodity():
 		database_connection().default_commodity()

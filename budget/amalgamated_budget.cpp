@@ -5,7 +5,7 @@
 #include "account_type.hpp"
 #include "budget_item.hpp"
 #include "budget_item_table_iterator.hpp"
-#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "draft_journal.hpp"
 #include "entry_handle.hpp"
 #include "frequency.hpp"
@@ -87,7 +87,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	balancing_account->set_name("Budget imbalance");
 	balancing_account->set_description("");
 	balancing_account->set_visibility(Visibility::visible);
-	CommodityHandle const balancing_account_commodity =
+	Handle<Commodity> const balancing_account_commodity =
 		dbc.default_commodity();
 	balancing_account->set_commodity(balancing_account_commodity);
 	balancing_account->save();

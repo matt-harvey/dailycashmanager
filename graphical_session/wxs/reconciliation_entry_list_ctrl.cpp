@@ -2,7 +2,7 @@
 
 #include "reconciliation_entry_list_ctrl.hpp"
 #include "account.hpp"
-#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "entry.hpp"
 #include "entry_handle.hpp"
 #include "filtered_entry_list_ctrl.hpp"

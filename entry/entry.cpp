@@ -4,7 +4,7 @@
 #include "account.hpp"
 #include "date.hpp"
 #include "string_conv.hpp"
-#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"

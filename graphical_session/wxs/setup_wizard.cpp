@@ -7,6 +7,7 @@
 #include "application.hpp"
 #include "augmented_account.hpp"
 #include "client_data.hpp"
+#include "commodity.hpp"
 #include "filename_validation.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
@@ -221,7 +222,7 @@ SetupWizard::standard_text_box_size()
 	return wxSize(140, 12);
 }
 
-CommodityHandle
+Handle<Commodity>
 SetupWizard::selected_currency() const
 {
 	return m_filepath_page->selected_currency();
@@ -235,7 +236,7 @@ SetupWizard::total_opening_balance() const
 }
 
 void
-SetupWizard::set_assumed_currency(CommodityHandle const& p_commodity)
+SetupWizard::set_assumed_currency(Handle<Commodity> const& p_commodity)
 {
 	JEWEL_ASSERT (m_balance_sheet_account_page);	
 	m_balance_sheet_account_page->set_commodity(p_commodity);
@@ -271,7 +272,7 @@ SetupWizard::render_account_pages()
 void
 SetupWizard::configure_default_commodity()
 {
-	CommodityHandle const commodity = selected_currency();
+	Handle<Commodity> const commodity = selected_currency();
 	commodity->set_multiplier_to_base(Decimal(1, 0));
 	m_database_connection.set_default_commodity(commodity);
 	return;
@@ -603,7 +604,7 @@ SetupWizard::FilepathPage::FilepathPage
 		0,
 		wxCB_DROPDOWN | wxCB_SORT | wxCB_READONLY
 	);
-	for (CommodityHandle const& commodity: m_currencies)
+	for (Handle<Commodity> const& commodity: m_currencies)
 	{
 		unsigned int const item_index = m_currency_box->Append
 		(	commodity->name() +
@@ -611,7 +612,7 @@ SetupWizard::FilepathPage::FilepathPage
 			commodity->abbreviation() +
 			wxString(")")
 		);
-		auto const data = new ClientData<CommodityHandle>(commodity);
+		auto const data = new ClientData<Handle<Commodity> >(commodity);
 
 		// Note control will take care of memory management
 		// Note also that the association of each item with a particular
@@ -648,11 +649,11 @@ SetupWizard::FilepathPage::selected_filepath() const
 	return ret;
 }
 
-CommodityHandle
+Handle<Commodity>
 SetupWizard::FilepathPage::selected_currency() const
 {
 	unsigned int const index = m_currency_box->GetSelection();
-	auto const data = dynamic_cast<ClientData<CommodityHandle>* >
+	auto const data = dynamic_cast<ClientData<Handle<Commodity> >* >
 	(	m_currency_box->GetClientObject(index)
 	);
 	JEWEL_ASSERT (data != 0);
@@ -774,7 +775,7 @@ SetupWizard::AccountPage::selected_augmented_accounts
 
 void
 SetupWizard::AccountPage::set_commodity
-(	CommodityHandle const& p_commodity
+(	Handle<Commodity> const& p_commodity
 )
 {
 	JEWEL_ASSERT (m_multi_account_panel);
@@ -857,7 +858,7 @@ SetupWizard::AccountPage::render_account_view()
 	// Create the control for displaying Accounts
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
-	CommodityHandle const commodity = parent().selected_currency();
+	Handle<Commodity> const commodity = parent().selected_currency();
 
 	// Add dummy column to right to allow room for scrollbar.
 	wxStaticText* dummy = new wxStaticText

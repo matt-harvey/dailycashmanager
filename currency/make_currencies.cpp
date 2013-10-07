@@ -1,13 +1,15 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "make_currencies.hpp"
-#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "string_conv.hpp"
 #include <jewel/assert.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/string.h>
 #include <string>
 #include <vector>
 
+using sqloxx::Handle;
 using std::string;
 using std::vector;
 
@@ -16,14 +18,14 @@ namespace phatbooks
 
 namespace
 {
-	CommodityHandle make_currency
+	Handle<Commodity> make_currency
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		wxString const& p_name,  // So we can accept wide string literals
 		string const& p_abbreviation,
 		int p_precision
 	)
 	{
-		CommodityHandle const ret(p_database_connection);
+		Handle<Commodity> const ret(p_database_connection);
 		ret->set_name(p_name);
 		ret->set_abbreviation(std8_to_wx(p_abbreviation));
 		ret->set_description(wxString(""));
@@ -37,7 +39,7 @@ namespace
 void
 make_currencies
 (	PhatbooksDatabaseConnection& dbc,
-	vector<CommodityHandle>& vec
+	vector<Handle<Commodity> >& vec
 )
 {
 	JEWEL_ASSERT (vec.empty());  // precondition
@@ -49,10 +51,10 @@ make_currencies
 }
 
 
-vector<CommodityHandle>
+vector<Handle<Commodity> >
 make_currencies(PhatbooksDatabaseConnection& dbc)
 {
-	vector<CommodityHandle> ret;
+	vector<Handle<Commodity> > ret;
 	make_currencies(dbc, ret);
 	return ret;
 }

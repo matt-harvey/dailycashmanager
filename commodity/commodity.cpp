@@ -4,7 +4,6 @@
 #include "balance_cache.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "string_conv.hpp"
-#include "commodity_handle.hpp"
 #include "string_conv.hpp"
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/general_typedefs.hpp>

@@ -3,21 +3,22 @@
 #ifndef GUARD_make_currencies_hpp_7990285213100857
 #define GUARD_make_currencies_hpp_7990285213100857
 
-#include "commodity_handle_fwd.hpp"
+#include <sqloxx/handle_fwd.hpp>
 #include <vector>
 
 
 namespace phatbooks
 {
 
+class Commodity;
 class PhatbooksDatabaseConnection;
 
 
 /**
  * @returns a vector of almost all major currencies in the world, as
- * CommodityHandle objects in a std::vector (where the Australian dollar, for
- * example, is a major currency but the Australian cent is not). Each
- * Commodity will have as its
+ * sqloxx::Handle<Commodity> objects in a std::vector (where the Australian
+ * dollar, for example, is a major currency but the Australian cent is not).
+ * Each Commodity will have as its
  * abbreviation the three-letter ISO symbol of the currency it
  * represents (e.g. "AUD"); will have its name initialized to the
  * name of the corresponding currency, in a form such as e.g.
@@ -40,7 +41,7 @@ class PhatbooksDatabaseConnection;
  * Do we want to allow for this, and store some currencies in amounts
  * less precise than their official precision?
  */
-std::vector<CommodityHandle>
+std::vector<sqloxx::Handle<Commodity> >
 make_currencies(PhatbooksDatabaseConnection& p_database_connection);
 
 
@@ -55,7 +56,7 @@ make_currencies(PhatbooksDatabaseConnection& p_database_connection);
 void
 make_currencies
 (	PhatbooksDatabaseConnection& p_database_connection,	
-	std::vector<CommodityHandle>& vec
+	std::vector<sqloxx::Handle<Commodity> >& vec
 );
 
 

@@ -3,7 +3,7 @@
 #include "balance_sheet_report.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
-#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "entry_table_iterator.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "report.hpp"

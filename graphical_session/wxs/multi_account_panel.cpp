@@ -5,7 +5,7 @@
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
 #include "augmented_account.hpp"
-#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
@@ -77,7 +77,7 @@ MultiAccountPanel::MultiAccountPanel
 	wxSize const& p_size,
 	PhatbooksDatabaseConnection& p_database_connection,
 	AccountSuperType p_account_super_type,
-	CommodityHandle const& p_commodity,
+	Handle<Commodity> const& p_commodity,
 	size_t p_minimum_num_rows
 ):
 	GriddedScrolledPanel(p_parent, p_size, p_database_connection),
@@ -320,7 +320,7 @@ MultiAccountPanel::push_row(Handle<Account> const& p_account)
 }
 
 void
-MultiAccountPanel::set_commodity(CommodityHandle const& p_commodity)
+MultiAccountPanel::set_commodity(Handle<Commodity> const& p_commodity)
 {
 	Decimal::places_type const precision = p_commodity->precision();
 	if (precision == m_commodity->precision())

@@ -4,7 +4,7 @@
 #include "account.hpp"
 #include "account_list_ctrl.hpp"
 #include "account_type.hpp"
-#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_list_ctrl.hpp"
 #include "draft_journal_table_iterator.hpp"

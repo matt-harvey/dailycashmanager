@@ -16,7 +16,7 @@
 #include "budget_item.hpp"
 #include "date.hpp"
 #include "string_conv.hpp"
-#include "commodity_handle.hpp"
+#include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "transaction_type.hpp"
@@ -71,7 +71,7 @@ typedef
 struct Account::AccountData
 {
 	optional<wxString> name;
-	optional<CommodityHandle> commodity;
+	optional<Handle<Commodity> > commodity;
 	optional<AccountType> account_type;
 	optional<wxString> description;
 	optional<Visibility> visibility;
@@ -318,7 +318,7 @@ Account::name()
 	return value(m_data->name);
 }
 
-CommodityHandle
+Handle<Commodity>
 Account::commodity()
 {
 	load();
@@ -446,7 +446,7 @@ Account::set_name(wxString const& p_name)
 }
 
 void
-Account::set_commodity(CommodityHandle const& p_commodity)
+Account::set_commodity(Handle<Commodity> const& p_commodity)
 {
 	load();
 	m_data->commodity = p_commodity;
@@ -491,7 +491,7 @@ Account::do_load()
 	statement.step();
 	Account temp(*this);
 	temp.m_data->name = std8_to_wx(statement.extract<string>(0));
-	temp.m_data->commodity = CommodityHandle
+	temp.m_data->commodity = Handle<Commodity>
 	(	database_connection(),
 		statement.extract<Id>(1)
 	);

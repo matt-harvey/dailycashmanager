@@ -37,7 +37,7 @@ namespace phatbooks
  * regarded as a commodity, of which there is only one unit in
  * existence.
  *
- * Client code must deal with CommodityHandles rather than with
+ * Client code must deal with sqloxx::Handle<Commodity> rather than with
  * Commodity instances directly. This is enforced via "Signature"
  * parameters in the constructors for Commodity, which make it
  * impossible for client code to call these constructors directly.

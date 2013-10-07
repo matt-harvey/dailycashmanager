@@ -1,10 +1,10 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "account.hpp"
-#include "commodity_handle.hpp"
 #include "date.hpp"
 #include "entry_handle.hpp"
 #include "balance_cache.hpp"
+#include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/optional.hpp>
