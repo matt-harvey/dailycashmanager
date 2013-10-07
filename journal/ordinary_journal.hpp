@@ -140,7 +140,7 @@ private:
 	// Sole non-inherited data member. Note this is of a type where copying
 	// does not throw. If we ever add more data members here and/or change
 	// this one's type, it MAY be necessary to wrap this with pimpl to
-	// to preserve exception-safe laoding via copy-and-swap.
+	// to preserve exception-safe loading via copy-and-swap.
 	boost::optional<DateRep> m_date;
 };
 

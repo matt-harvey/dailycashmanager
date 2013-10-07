@@ -216,8 +216,10 @@ OrdinaryJournal::do_ghostify()
 void
 OrdinaryJournal::do_remove()
 {
-	// TODO Confirm exception safety of total remove() function
-	// taking into account the below.
+	// Note this is wrapped in PersistentObject::remove, which
+	// (a) wraps it in a DatabaseTransaction, and
+	// (b) calls ghostify() if an exception is thrown.
+	// This makes it atomic as a whole.
 	SQLStatement journal_detail_deleter
 	(	database_connection(),
 		"delete from ordinary_journal_detail where "

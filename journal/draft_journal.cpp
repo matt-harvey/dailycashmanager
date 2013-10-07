@@ -291,6 +291,10 @@ DraftJournal::do_ghostify()
 void
 DraftJournal::do_remove()
 {
+	// Note this is wrapped in PersistentObject::remove, which
+	// (a) wraps it in a DatabaseTransaction, and
+	// (b) calls ghostify() if an exception is thrown.
+	// This makes it atomic as a whole.
 	if (id() == database_connection().budget_instrument()->id())
 	{
 		JEWEL_THROW
@@ -298,8 +302,6 @@ DraftJournal::do_remove()
 			"Budget instrument DraftJournal cannot be deleted."
 		);
 	}
-	// TODO Confirm exception-safety of whole remove() function, once
-	// the below is taken into account.
 	SQLStatement journal_detail_deleter
 	(	database_connection(),
 		"delete from draft_journal_detail where journal_id = :p"
