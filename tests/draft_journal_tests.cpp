@@ -2,7 +2,7 @@
 
 #include "account.hpp"
 #include "draft_journal.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "interval_type.hpp"
 #include "phatbooks_tests_common.hpp"
 #include "frequency.hpp"
@@ -33,7 +33,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	dj1->set_comment("draft journal to test repeater_description");
 	dj1->set_name("test");
 
-	EntryHandle entry1(dbc);
+	Handle<Entry> const entry1(dbc);
 	entry1->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "cash")));
 	wxString const test_comment("test");
 	entry1->set_comment(test_comment);

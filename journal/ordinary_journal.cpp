@@ -3,7 +3,7 @@
 #include "ordinary_journal.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "ordinary_journal.hpp"
 #include "persistent_journal.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -274,7 +274,7 @@ create_opening_balance_journal
 
 	Handle<OrdinaryJournal> const ret(dbc);
 
-	EntryHandle const primary_entry(dbc);
+	Handle<Entry> const primary_entry(dbc);
 	primary_entry->set_account(p_account);
 	primary_entry->set_comment("Opening balance entry");
 	primary_entry->set_amount(primary_entry_amount);
@@ -282,7 +282,7 @@ create_opening_balance_journal
 	primary_entry->set_transaction_side(TransactionSide::source);
 	ret->push_entry(primary_entry);
 
-	EntryHandle const balancing_entry(dbc);
+	Handle<Entry> const balancing_entry(dbc);
 	balancing_entry->set_account(balancing_account);
 	balancing_entry->set_comment("Opening balance entry");
 	balancing_entry->set_amount(-primary_entry_amount);

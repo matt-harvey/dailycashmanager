@@ -14,7 +14,6 @@
  */
 
 
-#include "entry_handle.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_type.hpp"

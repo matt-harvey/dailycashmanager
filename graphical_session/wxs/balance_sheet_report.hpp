@@ -6,6 +6,7 @@
 #include "report.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <jewel/decimal.hpp>
 #include <sqloxx/handle_fwd.hpp>
 #include <wx/gdicmn.h>
 #include <wx/string.h>

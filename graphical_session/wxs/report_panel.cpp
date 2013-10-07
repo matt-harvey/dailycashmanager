@@ -5,7 +5,6 @@
 #include "account_type.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
-#include "entry_handle.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "report.hpp"

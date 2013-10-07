@@ -4,7 +4,6 @@
 #define GUARD_filtered_entry_list_ctrl_hpp_790944654397175
 
 #include "account.hpp"
-#include "entry_handle_fwd.hpp"
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -15,6 +14,13 @@
 
 namespace phatbooks
 {
+
+// begin forward declarations
+
+class Entry;
+
+// end forward declarations
+
 namespace gui
 {
 
@@ -49,13 +55,23 @@ protected:
 	boost::gregorian::date min_date() const;
 
 private:
+
 	virtual bool do_require_progress_log() const override;
+
 	virtual void do_insert_non_date_columns() = 0;
-	virtual bool do_approve_entry(EntryHandle const& p_entry) const override;
+
+	virtual bool do_approve_entry
+	(	sqloxx::Handle<Entry> const& p_entry
+	) const override;
+
 	virtual void do_set_column_widths() override;
+
 	virtual int do_get_num_columns() const = 0;
+
 	virtual int do_get_comment_col_num() const = 0;
-	virtual std::unique_ptr<sqloxx::SQLStatement> do_create_entry_selector() override;
+
+	virtual std::unique_ptr<sqloxx::SQLStatement>
+		do_create_entry_selector() override;
 	
 	sqloxx::Handle<Account> const m_account;
 	boost::gregorian::date m_min_date;

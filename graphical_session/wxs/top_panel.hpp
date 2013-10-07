@@ -4,7 +4,6 @@
 #define GUARD_top_panel_hpp_7915960996372607
 
 #include "account_type.hpp"
-#include "entry_handle.hpp"
 #include "reconciliation_list_panel.hpp"
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
@@ -23,6 +22,7 @@ namespace phatbooks
 
 class Account;
 class DraftJournal;
+class Entry;
 class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 class ProtoJournal;
@@ -167,7 +167,9 @@ public:
 	 * is assumed these are the \e source of the change - we don't update
 	 * these \e again, on pain of circularity.
 	 */
-	void update_for_reconciliation_status(EntryHandle const& p_entry);
+	void update_for_reconciliation_status
+	(	sqloxx::Handle<Entry> const& p_entry
+	);
 
 	/**
 	 * @returns a ProtoJournal containing two Entries, with blank

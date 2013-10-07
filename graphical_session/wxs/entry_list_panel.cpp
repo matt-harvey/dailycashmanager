@@ -5,7 +5,7 @@
 #include "account_ctrl.hpp"
 #include "date.hpp"
 #include "date_ctrl.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "entry_list_ctrl.hpp"
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
@@ -247,7 +247,7 @@ EntryListPanel::update_for_deleted(vector<sqloxx::Id> const& p_doomed_ids)
 }
 
 void
-EntryListPanel::selected_entries(vector<EntryHandle>& out)
+EntryListPanel::selected_entries(vector<Handle<Entry> >& out)
 {
 	if (m_entry_list_ctrl) m_entry_list_ctrl->selected_entries(out);
 	return;

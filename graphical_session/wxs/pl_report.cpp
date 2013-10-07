@@ -5,7 +5,7 @@
 #include "account_type.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "entry_table_iterator.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "report.hpp"
@@ -128,7 +128,7 @@ PLReport::refresh_map()
 		);
 	while (statement->step())
 	{
-		EntryHandle const entry
+		Handle<Entry> const entry
 		(	database_connection(),
 			statement->extract<sqloxx::Id>(0)
 		);

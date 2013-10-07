@@ -2,7 +2,6 @@
 
 #include "account.hpp"
 #include "date.hpp"
-#include "entry_handle.hpp"
 #include "balance_cache.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"

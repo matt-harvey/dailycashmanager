@@ -5,12 +5,12 @@
 
 #include "account_type.hpp"
 #include "decimal_text_ctrl.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
-#include <sqloxx/handle_fwd.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/button.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
@@ -88,7 +88,7 @@ public:
 	 * based on the data currently in the EntryGroupCtrl. The Entries will not
 	 * be associated with any Journal.
 	 */
-	std::vector<EntryHandle> make_entries() const;
+	std::vector<sqloxx::Handle<Entry> > make_entries() const;
 
 	bool is_all_zero() const;
 
@@ -123,7 +123,7 @@ private:
 	void configure_top_row(bool p_include_split_button);
 	void pop_row();
 	void push_row
-	(	EntryHandle const& p_entry,
+	(	sqloxx::Handle<Entry> const& p_entry,
 		boost::optional<jewel::Decimal> const& p_previous_row_amount,
 		bool p_multiple_entries
 	);
@@ -163,11 +163,11 @@ private:
 
 	struct EntryRow
 	{
-		EntryRow(EntryHandle const& p_entry);
+		EntryRow(sqloxx::Handle<Entry> const& p_entry);
 		AccountCtrl* account_ctrl;
 		wxTextCtrl* comment_ctrl;
 		EntryDecimalTextCtrl* amount_ctrl;
-		EntryHandle entry;
+		sqloxx::Handle<Entry> entry;
 	};
 	friend struct EntryRow;
 

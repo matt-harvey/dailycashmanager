@@ -3,10 +3,11 @@
 #ifndef GUARD_journal_hpp_6157822681664407
 #define GUARD_journal_hpp_6157822681664407
 
-#include "entry_handle.hpp"
 #include "transaction_type.hpp"
+#include <boost/optional.hpp>
 #include <jewel/decimal_fwd.hpp>
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <wx/string.h>
 #include <ostream>
 #include <vector>
@@ -15,6 +16,13 @@
 
 namespace phatbooks
 {
+
+// begin forward declarations
+
+class Entry;
+
+// end forward declarations
+
 
 /**
  * Abstract base Journal class.
@@ -61,11 +69,11 @@ public:
 	);
 	void set_comment(wxString const& p_comment);
 
-	void push_entry(EntryHandle const& entry);
-	void remove_entry(EntryHandle const& entry);
+	void push_entry(sqloxx::Handle<Entry> const& entry);
+	void remove_entry(sqloxx::Handle<Entry> const& entry);
 	void clear_entries();
 
-	std::vector<EntryHandle> const& entries();
+	std::vector<sqloxx::Handle<Entry> > const& entries();
 	wxString comment();
 
 	bool is_actual();
@@ -96,13 +104,13 @@ protected:
 
 	virtual void swap(Journal& rhs);
 
-	virtual std::vector<EntryHandle> const& do_get_entries();
+	virtual std::vector<sqloxx::Handle<Entry> > const& do_get_entries();
 	virtual void do_set_transaction_type
 	(	TransactionType p_transaction_type
 	);
 	virtual void do_set_comment(wxString const& p_comment);
-	virtual void do_push_entry(EntryHandle const& entry);
-	virtual void do_remove_entry(EntryHandle const& entry);
+	virtual void do_push_entry(sqloxx::Handle<Entry> const& entry);
+	virtual void do_remove_entry(sqloxx::Handle<Entry> const& entry);
 	virtual void do_clear_entries();
 	virtual wxString do_get_comment();
 	virtual TransactionType do_get_transaction_type();

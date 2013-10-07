@@ -3,9 +3,9 @@
 #ifndef GUARD_entry_list_panel_hpp_3556466034407013
 #define GUARD_entry_list_panel_hpp_3556466034407013
 
-#include "entry_handle.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle_fwd.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -21,6 +21,7 @@ namespace phatbooks
 // Begin forward declarations
 
 class Account;
+class Entry;
 class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
 
@@ -70,7 +71,7 @@ public:
 	void update_for_new(sqloxx::Handle<Account> const& p_account);
 	void update_for_amended(sqloxx::Handle<Account> const& p_account);
 	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
-	void selected_entries(std::vector<EntryHandle>& out);
+	void selected_entries(std::vector<sqloxx::Handle<Entry> >& out);
 
 	// WARNING Hack... This should be private, but we need to call it from
 	// TopPanel to ensure EntryListCtrl is properly sized, AFTER the

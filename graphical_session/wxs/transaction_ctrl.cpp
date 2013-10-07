@@ -11,9 +11,8 @@
 #include "decimal_validator.hpp"
 #include "draft_journal.hpp"
 #include "draft_journal_naming_dialog.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "entry_group_ctrl.hpp"
-#include "entry_handle.hpp"
 #include "finformat.hpp"
 #include "frame.hpp"
 #include "frequency.hpp"
@@ -111,7 +110,7 @@ namespace
 {
 	bool contains_reconciled_entry(Journal& p_journal)
 	{
-		for (EntryHandle const& entry: p_journal.entries())
+		for (Handle<Entry> const& entry: p_journal.entries())
 		{
 			if (entry->has_id() && entry->is_reconciled())
 			{
@@ -603,7 +602,9 @@ TransactionCtrl::update_for_amended(Handle<Account> const& p_saved_object)
 }
 
 void
-TransactionCtrl::update_for_reconciliation_status(EntryHandle const& p_entry)
+TransactionCtrl::update_for_reconciliation_status
+(	Handle<Entry> const& p_entry
+)
 {
 	JEWEL_LOG_TRACE();
 
@@ -793,8 +794,8 @@ TransactionCtrl::post_journal()
 	};
 	for (EntryGroupCtrl const* const control: entry_controls)
 	{
-		vector<EntryHandle> entries = control->make_entries();
-		for (EntryHandle entry: entries) journal.push_entry(entry);
+		vector<Handle<Entry> > entries = control->make_entries();
+		for (Handle<Entry> entry: entries) journal.push_entry(entry);
 	}
 	journal.set_comment("");
 
@@ -897,7 +898,7 @@ TransactionCtrl::remove_journal()
 #	ifndef NDEBUG
 		if (m_journal)
 		{
-			for (EntryHandle const& entry: m_journal->entries())
+			for (Handle<Entry> const& entry: m_journal->entries())
 			{
 				JEWEL_ASSERT (!entry->has_id());
 			}
@@ -909,8 +910,8 @@ TransactionCtrl::remove_journal()
 	bool const is_draft =
 		static_cast<bool>(handle_cast<DraftJournal>(m_journal));
 	vector<Id> doomed_entry_ids;
-	vector<EntryHandle> const& doomed_entries = m_journal->entries();
-	for (EntryHandle const& entry: doomed_entries)
+	vector<Handle<Entry> > const& doomed_entries = m_journal->entries();
+	for (Handle<Entry> const& entry: doomed_entries)
 	{
 		doomed_entry_ids.push_back(entry->id());
 	}
@@ -959,8 +960,8 @@ TransactionCtrl::save_existing_journal()
 	// IDs as we verify that each Entry is still present in the edited
 	// Journal.
 	unordered_set<Id> doomed;
-	vector<EntryHandle> const& old_entries = m_journal->entries();
-	for (EntryHandle const& entry: old_entries)
+	vector<Handle<Entry> > const& old_entries = m_journal->entries();
+	for (Handle<Entry> const& entry: old_entries)
 	{
 		JEWEL_ASSERT (entry->has_id());
 		doomed.insert(entry->id());
@@ -978,8 +979,8 @@ TransactionCtrl::save_existing_journal()
 	};
 	for (EntryGroupCtrl const* const control: entry_controls)
 	{
-		vector<EntryHandle> entries = control->make_entries();
-		for (EntryHandle entry: entries)
+		auto const entries = control->make_entries();
+		for (auto entry: entries)
 		{
 			m_journal->push_entry(entry);
 			if (entry->has_id()) doomed.erase(entry->id());

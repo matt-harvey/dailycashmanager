@@ -4,10 +4,10 @@
 #define GUARD_report_hpp_0032136221431259167
 
 #include "account_type.hpp"
-#include "entry_handle.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle_fwd.hpp>
 #include <wx/gdicmn.h>
 #include <vector>

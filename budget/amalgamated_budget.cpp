@@ -7,7 +7,7 @@
 #include "budget_item_table_iterator.hpp"
 #include "commodity.hpp"
 #include "draft_journal.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -378,7 +378,7 @@ AmalgamatedBudget::regenerate_instrument()
 	if (imbalance != Decimal(0, 0))
 	{
 		Handle<Account> const ba = balancing_account();
-		EntryHandle const balancing_entry(m_database_connection);
+		Handle<Entry> const balancing_entry(m_database_connection);
 		balancing_entry->set_account(ba);
 		balancing_entry->set_comment(balancing_entry_comment());
 		balancing_entry->set_whether_reconciled(false);
@@ -441,7 +441,7 @@ AmalgamatedBudget::reflect_entries(Handle<DraftJournal> const& p_journal)
 	{
 		if (elem.second != Decimal(0, 0))
 		{
-			EntryHandle const entry(m_database_connection);
+			Handle<Entry> const entry(m_database_connection);
 			entry->set_account
 			(	Handle<Account>(m_database_connection, elem.first)
 			);
@@ -487,8 +487,8 @@ AmalgamatedBudget::instrument_balancing_amount() const
 	JEWEL_ASSERT (m_instrument);
 	Decimal ret(0, m_database_connection.default_commodity()->precision());
 	wxString const balancing_entry_marker = balancing_entry_comment();
-	vector<EntryHandle> const& entries = m_instrument->entries();
-	for (EntryHandle const& entry: entries)
+	auto const& entries = m_instrument->entries();
+	for (auto const& entry: entries)
 	{
 		if (entry->comment() == balancing_entry_marker)
 		{

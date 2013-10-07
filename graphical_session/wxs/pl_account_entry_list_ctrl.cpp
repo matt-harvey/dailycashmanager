@@ -3,7 +3,7 @@
 #include "pl_account_entry_list_ctrl.hpp"
 #include "account.hpp"
 #include "filtered_entry_list_ctrl.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "locale.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -68,7 +68,7 @@ PLAccountEntryListCtrl::~PLAccountEntryListCtrl()
 void
 PLAccountEntryListCtrl::do_set_non_date_columns
 (	long p_row,
-	EntryHandle const& p_entry
+	Handle<Entry> const& p_entry
 )
 {
 	SetItem(p_row, comment_col_num(), p_entry->comment());
@@ -129,7 +129,7 @@ PLAccountEntryListCtrl::do_get_num_columns() const
 }
 
 jewel::Decimal
-PLAccountEntryListCtrl::friendly_amount(EntryHandle const& p_entry) const
+PLAccountEntryListCtrl::friendly_amount(Handle<Entry> const& p_entry) const
 {
 	return m_reverse_signs? -p_entry->amount(): p_entry->amount();
 }

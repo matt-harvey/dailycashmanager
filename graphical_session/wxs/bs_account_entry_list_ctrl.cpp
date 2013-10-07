@@ -2,7 +2,7 @@
 
 #include "bs_account_entry_list_ctrl.hpp"
 #include "account.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "filtered_entry_list_ctrl.hpp"
 #include "locale.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -60,7 +60,7 @@ BSAccountEntryListCtrl::BSAccountEntryListCtrl
 void
 BSAccountEntryListCtrl::do_set_non_date_columns
 (	long p_row,
-	EntryHandle const& p_entry
+	Handle<Entry> const& p_entry
 )
 {
 	SetItem

@@ -7,6 +7,7 @@
 #include "application.hpp"
 #include "app.hpp"
 #include "draft_journal.hpp"
+#include "entry.hpp"
 #include "entry_list_ctrl.hpp"
 #include "icon.xpm"
 #include "ordinary_journal.hpp"
@@ -666,7 +667,7 @@ Frame::on_reconciliation_status_event(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
-	EntryHandle const entry(m_database_connection, event.po_id());
+	Handle<Entry> const entry(m_database_connection, event.po_id());
 	JEWEL_ASSERT (m_top_panel);
 	m_top_panel->update_for_reconciliation_status(entry);
 	return;

@@ -3,14 +3,20 @@
 #ifndef GUARD_persistent_journal_hpp_46241805630848654
 #define GUARD_persistent_journal_hpp_46241805630848654
 
-#include "entry_handle.hpp"
 #include "journal.hpp"
 #include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/handle_fwd.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <ostream>
 
 namespace phatbooks
 {
+
+// begin forward declarations
+
+class Entry;
+
+// end forward declarations
 
 /**
  * Common abstract base class for subclasses of Journal that
@@ -69,11 +75,11 @@ protected:
 	sqloxx::Id save_new_journal_core();
 	void ghostify_journal_core();
 
-	std::vector<EntryHandle> const& do_get_entries() override;
+	std::vector<sqloxx::Handle<Entry> > const& do_get_entries() override;
 	void do_set_transaction_type(TransactionType p_transaction_type) override;
 	void do_set_comment(wxString const& p_comment) override;
-	void do_push_entry(EntryHandle const& p_entry) override;
-	void do_remove_entry(EntryHandle const& p_entry) override;
+	void do_push_entry(sqloxx::Handle<Entry> const& p_entry) override;
+	void do_remove_entry(sqloxx::Handle<Entry> const& p_entry) override;
 	void do_clear_entries() override;
 	wxString do_get_comment() override;
 	TransactionType do_get_transaction_type() override;

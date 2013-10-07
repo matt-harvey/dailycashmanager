@@ -4,7 +4,6 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "entry.hpp"
-#include "entry_handle.hpp"
 #include "filtered_entry_list_ctrl.hpp"
 #include "finformat.hpp"
 #include "locale.hpp"
@@ -101,7 +100,7 @@ ReconciliationEntryListCtrl::~ReconciliationEntryListCtrl()
 void
 ReconciliationEntryListCtrl::do_set_non_date_columns
 (	long p_row,
-	EntryHandle const& p_entry
+	Handle<Entry> const& p_entry
 )
 {
 	SetItem(p_row, comment_col_num(), p_entry->comment());
@@ -143,7 +142,9 @@ ReconciliationEntryListCtrl::do_insert_non_date_columns()
 }
 
 bool
-ReconciliationEntryListCtrl::do_approve_entry(EntryHandle const& p_entry) const
+ReconciliationEntryListCtrl::do_approve_entry
+(	Handle<Entry> const& p_entry
+) const
 {
 	if (p_entry->account() != account())
 	{
@@ -213,7 +214,7 @@ ReconciliationEntryListCtrl::do_initialize_summary_data()
 
 void
 ReconciliationEntryListCtrl::do_process_candidate_entry_for_summary
-(	EntryHandle const& p_entry
+(	Handle<Entry> const& p_entry
 )
 {
 	if (p_entry->account() != account())
@@ -260,7 +261,7 @@ ReconciliationEntryListCtrl::on_item_right_click(wxListEvent& event)
 	JEWEL_ASSERT (entry_id >= 0);
 	JEWEL_ASSERT (GetItemData(pos) == static_cast<size_t>(entry_id));
 
-	EntryHandle const entry(database_connection(), entry_id);
+	Handle<Entry> const entry(database_connection(), entry_id);
 	bool const old_reconciliation_status = entry->is_reconciled();
 	entry->set_whether_reconciled(!old_reconciliation_status);
 	Decimal const amount = entry->amount();

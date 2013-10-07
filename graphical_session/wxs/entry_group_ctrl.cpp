@@ -5,7 +5,7 @@
 #include "account_ctrl.hpp"
 #include "commodity.hpp"
 #include "decimal_text_ctrl.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "finformat.hpp"
 #include "journal.hpp"
 #include "locale.hpp"
@@ -91,9 +91,9 @@ EntryGroupCtrl::EntryGroupCtrl
 	// TODO There should really be a function somewhere in the business
 	// layer which gives us a vector of Entries for a given Journal
 	// and TransactionSide.
-	vector<EntryHandle> entries;
-	vector<EntryHandle> const& all_entries = p_journal.entries();
-	for (EntryHandle const& entry: all_entries)
+	vector<Handle<Entry> > entries;
+	vector<Handle<Entry> > const& all_entries = p_journal.entries();
+	for (auto const& entry: all_entries)
 	{
 		if (entry->transaction_side() == m_transaction_side)
 		{
@@ -105,9 +105,9 @@ EntryGroupCtrl::EntryGroupCtrl
 	configure_available_account_types();	
 	JEWEL_ASSERT (m_available_account_types);
 	optional<Decimal> maybe_previous_row_amount;
-	for (vector<EntryHandle>::size_type i = 0; i != entries.size(); ++i)
+	for (vector<Handle<Entry> >::size_type i = 0; i != entries.size(); ++i)
 	{
-		EntryHandle const entry = entries[i];
+		Handle<Entry> const entry = entries[i];
 		push_row(entry, maybe_previous_row_amount, multiple_entries);
 		if (i == 0) maybe_previous_row_amount = entry->amount();
 	}
@@ -210,17 +210,17 @@ EntryGroupCtrl::primary_amount() const
 	return parent->primary_amount();
 }
 
-vector<EntryHandle>
+vector<Handle<Entry> >
 EntryGroupCtrl::make_entries() const
 {
-	typedef std::vector<EntryHandle>::size_type Size;
+	typedef std::vector<Handle<Entry> >::size_type Size;
 	Size const sz = m_entry_rows.size();
 
-	vector<EntryHandle> ret;
+	vector<Handle<Entry> > ret;
 	for (Size i = 0; i != sz; ++i)
 	{
 		EntryRow const& entry_row = m_entry_rows[i];
-		EntryHandle const entry = entry_row.entry;
+		Handle<Entry> const entry = entry_row.entry;
 		entry->set_account(entry_row.account_ctrl->account());
 		entry->set_comment(entry_row.comment_ctrl->GetValue());
 
@@ -317,7 +317,7 @@ EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 	(void)event;  // Silence compiler warning re. unused parameter.
 	Handle<Account> const account =
 		m_entry_rows.back().account_ctrl->account();
-	EntryHandle const entry(m_database_connection);
+	Handle<Entry> const entry(m_database_connection);
 	entry->set_account(account);
 	entry->set_whether_reconciled(false);
 	entry->set_comment(wxString());
@@ -389,7 +389,7 @@ EntryGroupCtrl::pop_row()
 
 void
 EntryGroupCtrl::push_row
-(	EntryHandle const& p_entry,
+(	Handle<Entry> const& p_entry,
 	optional<Decimal> const& p_previous_row_amount,
 	bool p_multiple_entries
 )
@@ -681,7 +681,7 @@ EntryGroupCtrl::EntryDecimalTextCtrl::on_left_double_click(wxMouseEvent& event)
 	return;
 }
 
-EntryGroupCtrl::EntryRow::EntryRow(EntryHandle const& p_entry):
+EntryGroupCtrl::EntryRow::EntryRow(Handle<Entry> const& p_entry):
 	account_ctrl(nullptr),
 	comment_ctrl(nullptr),
 	amount_ctrl(nullptr),

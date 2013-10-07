@@ -8,7 +8,7 @@
 #include "draft_journal.hpp"
 #include "draft_journal_list_ctrl.hpp"
 #include "draft_journal_table_iterator.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "entry_list_panel.hpp"
 #include "frame.hpp"
 #include "ordinary_journal.hpp"
@@ -316,7 +316,7 @@ TopPanel::make_proto_journal() const
 		)
 		{
 			Handle<Account> const& account = accounts[i];
-			EntryHandle entry(m_database_connection);
+			Handle<Entry> const entry(m_database_connection);
 			entry->set_account(account);
 			entry->set_comment(wxString());
 			entry->set_transaction_side
@@ -440,7 +440,7 @@ TopPanel::selected_ordinary_journals
 (	vector<Handle<OrdinaryJournal> >& out
 ) const
 {
-	vector<EntryHandle> entries;
+	vector<Handle<Entry> > entries;
 	JEWEL_ASSERT (m_notebook);
 	wxWindow* const page = m_notebook->GetCurrentPage();
 	if (page == static_cast<wxWindow*>(m_notebook_page_transactions))
@@ -451,7 +451,7 @@ TopPanel::selected_ordinary_journals
 	{
 		m_reconciliation_panel->selected_entries(entries);
 	}
-	for (EntryHandle const& entry: entries)
+	for (Handle<Entry> const& entry: entries)
 	{
 		Handle<OrdinaryJournal> const oj
 		(	entry->database_connection(),
@@ -564,7 +564,7 @@ TopPanel::update_for_amended_budget(Handle<Account> const& p_account)
 }
 
 void
-TopPanel::update_for_reconciliation_status(EntryHandle const& p_entry)
+TopPanel::update_for_reconciliation_status(Handle<Entry> const& p_entry)
 {
 	JEWEL_ASSERT (m_transaction_ctrl);
 	m_transaction_ctrl->update_for_reconciliation_status(p_entry);

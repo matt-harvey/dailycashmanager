@@ -7,7 +7,6 @@
 #include <sqloxx/persistence_traits.hpp>
 #include "string_conv.hpp"
 #include "date.hpp"
-#include "entry_handle.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"

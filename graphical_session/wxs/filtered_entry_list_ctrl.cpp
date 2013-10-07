@@ -2,7 +2,7 @@
 
 #include "filtered_entry_list_ctrl.hpp"
 #include "account.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "entry_list_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -91,7 +91,7 @@ FilteredEntryListCtrl::do_require_progress_log() const
 }
 
 bool
-FilteredEntryListCtrl::do_approve_entry(EntryHandle const& p_entry) const
+FilteredEntryListCtrl::do_approve_entry(Handle<Entry> const& p_entry) const
 {
 	return
 	(	(p_entry->account() == m_account) &&

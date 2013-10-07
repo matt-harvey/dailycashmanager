@@ -3,7 +3,7 @@
 #include "phatbooks_tests_common.hpp"
 #include "account.hpp"
 #include "draft_journal.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
 #include "phatbooks_exceptions.hpp"
@@ -34,16 +34,18 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	journal1.set_transaction_type(TransactionType::generic);
 	journal1.set_comment("igloo");
 
-	EntryHandle entry1a(dbc);
-	entry1a->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "cash")));
+	Handle<Entry> entry1a(dbc);
+	entry1a->
+		set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "cash")));
 	entry1a->set_comment("igloo entry a");
 	entry1a->set_whether_reconciled(true);
 	entry1a->set_amount(Decimal("0.99"));
 	entry1a->set_transaction_side(TransactionSide::source);
 	journal1.push_entry(entry1a);
 
-	EntryHandle entry1b(dbc);
-	entry1b->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "food")));
+	Handle<Entry> const entry1b(dbc);
+	entry1b->
+		set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "food")));
 	entry1b->set_comment("igloo entry b");
 	entry1b->set_whether_reconciled(false);
 	entry1b->set_amount(Decimal("-0.99"));
@@ -63,7 +65,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	oj1->save();
 	CHECK(!oj1->entries().empty());
 
-	for (EntryHandle const& entry: oj1->entries())
+	for (Handle<Entry> const& entry: oj1->entries())
 	{
 		CHECK(entry->id() == 1 || entry->id() == 2);
 		if (entry->account() == Handle<Account>(dbc, Account::id_for_name(dbc, "cash")))
@@ -90,7 +92,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	dj2->set_comment("steam engine");
 	dj2->set_name("some journal");
 	
-	EntryHandle entry2a(dbc);
+	Handle<Entry> const entry2a(dbc);
 	entry2a->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "food")));
 	entry2a->set_comment("steam");
 	entry2a->set_amount(Decimal("0"));
@@ -109,7 +111,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 		TransactionType::envelope
 	);
 	oj1->save();
-	for (EntryHandle const& entry: oj1->entries())
+	for (Handle<Entry> const& entry: oj1->entries())
 	{
 		CHECK_EQUAL(entry->account()->id(), Handle<Account>(dbc, Account::id_for_name(dbc, "food"))->id());
 		CHECK_EQUAL(entry->comment(), "steam");
@@ -127,7 +129,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	journal1->set_transaction_type(TransactionType::generic);
 	journal1->set_comment("igloo");
 
-	EntryHandle entry1a(dbc);
+	Handle<Entry> const entry1a(dbc);
 	entry1a->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "cash")));
 	entry1a->set_comment("igloo entry a");
 	entry1a->set_whether_reconciled(true);
@@ -136,7 +138,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	journal1->push_entry(entry1a);
 	CHECK_THROW(journal1->save(), UnbalancedJournalException);
 
-	EntryHandle entry1b(dbc);
+	Handle<Entry> const entry1b(dbc);
 	entry1b->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "cash")));
 	entry1b->set_comment("igloo entry b");
 	entry1b->set_whether_reconciled(false);
@@ -157,7 +159,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	Handle<OrdinaryJournal> const journal1b(dbc, 2);
 
 	CHECK(journal1b->is_balanced());
-	EntryHandle entry1c(dbc);
+	Handle<Entry> const entry1c(dbc);
 	entry1c->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "food")));
 	entry1c->set_comment("Ummm");
 	entry1c->set_whether_reconciled(true);

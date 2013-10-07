@@ -14,6 +14,7 @@
 
 #include "repeater.hpp"
 #include "date.hpp"
+#include "entry.hpp"
 #include "frequency.hpp"
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"

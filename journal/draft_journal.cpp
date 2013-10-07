@@ -2,7 +2,6 @@
 
 #include "draft_journal.hpp"
 #include "draft_journal_table_iterator.hpp"
-#include "entry_handle.hpp"
 #include "persistent_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"

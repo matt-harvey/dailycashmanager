@@ -3,18 +3,6 @@
 #ifndef GUARD_entry_hpp_7344880177334361
 #define GUARD_entry_hpp_7344880177334361
 
-/** \file entry_handle.hpp
- *
- * \brief Header file pertaining to Entry class.
- *
- * \author Matthew Harvey
- * \date 04 July 2012.
- *
- * Copyright (c) 2012, Matthew Harvey. All rights reserved.
- */
-
-
-
 #include "account.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_side.hpp"
@@ -38,7 +26,7 @@ namespace phatbooks
  * Class representing an accounting entry, i.e. a single line in a journal,
  * i.e. a single change in the balance of an account.
  * 
- * Client code must deal with EntryHandles rather than with Entry
+ * Client code must deal with sqloxx::Handle<Entry> rather than with Entry
  * objects directly. This is enforced via "Signature" parameters
  * in the constructors for Account.
  */

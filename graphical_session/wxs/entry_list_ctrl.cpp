@@ -7,7 +7,7 @@
 #include "bs_account_entry_list_ctrl.hpp"
 #include "date.hpp"
 #include "date_parser.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "entry_table_iterator.hpp"
 #include "locale.hpp"
 #include "ordinary_journal.hpp"
@@ -172,7 +172,7 @@ EntryListCtrl::populate()
 	while (statement->step())
 	{
 		process_push_candidate_entry
-		(	EntryHandle
+		(	Handle<Entry>
 			(	database_connection(),
 				statement->extract<sqloxx::Id>(0)
 			)
@@ -287,7 +287,7 @@ EntryListCtrl::set_column_widths()
 }
 
 void
-EntryListCtrl::process_push_candidate_entry(EntryHandle const& p_entry)
+EntryListCtrl::process_push_candidate_entry(Handle<Entry> const& p_entry)
 {
 	JEWEL_ASSERT (p_entry->has_id());
 	do_process_candidate_entry_for_summary(p_entry);
@@ -297,7 +297,7 @@ EntryListCtrl::process_push_candidate_entry(EntryHandle const& p_entry)
 
 void
 EntryListCtrl::process_insertion_candidate_entry
-(	EntryHandle const& p_entry,
+(	Handle<Entry> const& p_entry,
 	long p_row
 )
 {
@@ -317,7 +317,7 @@ EntryListCtrl::do_update_for_amended(Handle<Account> const& p_account)
 void
 EntryListCtrl::on_item_activated(wxListEvent& event)
 {
-	EntryHandle const entry
+	Handle<Entry> const entry
 	(	database_connection(),
 		GetItemData(event.GetIndex())
 	);
@@ -337,7 +337,7 @@ EntryListCtrl::update_for_new(Handle<OrdinaryJournal> const& p_journal)
 {
 	if (p_journal->is_actual())
 	{
-		for (EntryHandle const& entry: p_journal->entries())
+		for (Handle<Entry> const& entry: p_journal->entries())
 		{
 			process_insertion_candidate_entry(entry);
 		}
@@ -356,7 +356,7 @@ EntryListCtrl::update_for_amended(Handle<OrdinaryJournal> const& p_journal)
 	JEWEL_ASSERT (p_journal->is_actual());
 	wxString const wx_date_string = date_format_wx(p_journal->date());
 	DateParser const parser;
-	for (EntryHandle const& entry: p_journal->entries())
+	for (Handle<Entry> const& entry: p_journal->entries())
 	{
 		long updated_pos = -1;
 		JEWEL_ASSERT (entry->has_id());
@@ -409,7 +409,7 @@ EntryListCtrl::update_for_deleted(vector<sqloxx::Id> const& p_doomed_ids)
 }
 
 void
-EntryListCtrl::selected_entries(vector<EntryHandle>& out)
+EntryListCtrl::selected_entries(vector<Handle<Entry> >& out)
 {
 	size_t i = 0;
 	size_t const lim = GetItemCount();
@@ -417,7 +417,7 @@ EntryListCtrl::selected_entries(vector<EntryHandle>& out)
 	{
 		if (GetItemState(i, wxLIST_STATE_SELECTED))
 		{
-			EntryHandle const entry(m_database_connection, GetItemData(i));
+			Handle<Entry> const entry(m_database_connection, GetItemData(i));
 			out.push_back(entry);
 		}
 	}
@@ -470,7 +470,9 @@ EntryListCtrl::do_initialize_summary_data()
 }
 
 void
-EntryListCtrl::do_process_candidate_entry_for_summary(EntryHandle const& p_entry)
+EntryListCtrl::do_process_candidate_entry_for_summary
+(	Handle<Entry> const& p_entry
+)
 {
 	(void)p_entry;  // Silence compiler re. unused parameter.
 	return;
@@ -491,7 +493,7 @@ EntryListCtrl::date_col_num() const
 }
 
 void
-EntryListCtrl::push_back_entry(EntryHandle const& p_entry)
+EntryListCtrl::push_back_entry(Handle<Entry> const& p_entry)
 {
 	long const i = GetItemCount();
 	JEWEL_ASSERT (date_col_num() == 0);
@@ -507,7 +509,7 @@ EntryListCtrl::push_back_entry(EntryHandle const& p_entry)
 }
 
 void
-EntryListCtrl::insert_entry(EntryHandle const& p_entry, long p_row)
+EntryListCtrl::insert_entry(Handle<Entry> const& p_entry, long p_row)
 {
 	gregorian::date const date = p_entry->date();
 	JEWEL_ASSERT (p_row >= -1);

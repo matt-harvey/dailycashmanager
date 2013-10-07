@@ -4,7 +4,6 @@
 #define GUARD_draft_journal_hpp_8602723767330276
 
 #include "persistent_journal.hpp"
-#include "entry_handle_fwd.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"

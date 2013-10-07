@@ -1,12 +1,13 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "persistent_journal.hpp"
-#include "entry_handle.hpp"
+#include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/handle.hpp>
 #include <sqloxx/next_auto_key.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -18,6 +19,7 @@
 using jewel::Log;
 using jewel::value;
 using sqloxx::next_auto_key;
+using sqloxx::Handle;
 using sqloxx::Id;
 using sqloxx::SQLStatement;
 using std::ostream;
@@ -136,7 +138,7 @@ PersistentJournal::save_new_journal_core()
 	);
 	statement.bind(":comment", wx_to_std8(Journal::do_get_comment()));
 	statement.step_final();
-	for (EntryHandle const entry: entries())
+	for (Handle<Entry> const entry: entries())
 	{
 		entry->set_journal_id(journal_id);
 		entry->save();
@@ -170,7 +172,7 @@ PersistentJournal::save_existing_journal_core()
 	updater.bind(":id", id());
 	updater.step_final();
 	unordered_set<sqloxx::Id> saved_entry_ids;
-	for (EntryHandle const& entry: Journal::do_get_entries())
+	for (Handle<Entry> const& entry: Journal::do_get_entries())
 	{
 		JEWEL_LOG_TRACE();
 		entry->save();
@@ -195,7 +197,7 @@ PersistentJournal::save_existing_journal_core()
 		sqloxx::Id const entry_id = entry_finder.extract<sqloxx::Id>(0);
 		if (saved_entry_ids.find(entry_id) == saved_entries_end)
 		{
-			EntryHandle const doomed_entry(database_connection(), entry_id);
+			Handle<Entry> const doomed_entry(database_connection(), entry_id);
 			// This entry is in the database but no longer in the in-memory
 			// journal, so should be deleted.
 			doomed_entry->remove();
@@ -229,7 +231,7 @@ PersistentJournal::load_journal_core()
 	while (entry_finder.step())
 	{
 		sqloxx::Id const entr_id = entry_finder.extract<sqloxx::Id>(0);
-		EntryHandle const entry(database_connection(), entr_id);
+		Handle<Entry> const entry(database_connection(), entr_id);
 		temp.push_entry(entry);
 	}
 	temp.set_transaction_type
@@ -245,7 +247,7 @@ PersistentJournal::load_journal_core()
 void
 PersistentJournal::ghostify_journal_core()
 {
-	for (EntryHandle const& entry: entries())
+	for (Handle<Entry> const& entry: entries())
 	{
 		entry->ghostify();
 	}
@@ -253,7 +255,7 @@ PersistentJournal::ghostify_journal_core()
 	return;
 }
 
-std::vector<EntryHandle> const&
+std::vector<Handle<Entry> > const&
 PersistentJournal::do_get_entries()
 {
 	load();
@@ -277,7 +279,7 @@ PersistentJournal::do_set_comment(wxString const& p_comment)
 }
 
 void
-PersistentJournal::do_push_entry(EntryHandle const& p_entry)
+PersistentJournal::do_push_entry(Handle<Entry> const& p_entry)
 {
 	load();
 	Journal::do_push_entry(p_entry);
@@ -289,7 +291,7 @@ PersistentJournal::do_push_entry(EntryHandle const& p_entry)
 }
 
 void
-PersistentJournal::do_remove_entry(EntryHandle const& p_entry)
+PersistentJournal::do_remove_entry(Handle<Entry> const& p_entry)
 {
 	load();
 	Journal::do_remove_entry(p_entry);
@@ -321,7 +323,7 @@ PersistentJournal::do_get_transaction_type()
 bool
 has_entry_with_id(PersistentJournal& journal, Id entry_id)
 {
-	for (EntryHandle const& entry: journal.entries())
+	for (Handle<Entry> const& entry: journal.entries())
 	{
 		if (entry->has_id() && (entry->id() == entry_id))
 		{

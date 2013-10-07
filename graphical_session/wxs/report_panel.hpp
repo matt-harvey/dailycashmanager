@@ -3,7 +3,8 @@
 #ifndef GUARD_report_panel_hpp_8629163596140763
 #define GUARD_report_panel_hpp_8629163596140763
 
-#include "entry_handle.hpp"
+#include "account_type.hpp"
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle_fwd.hpp>
 #include <wx/combobox.h>
 #include <wx/button.h>

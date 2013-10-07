@@ -4,7 +4,6 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "balance_sheet_report.hpp"
-#include "entry_handle.hpp"
 #include "finformat.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include "locale.hpp"
