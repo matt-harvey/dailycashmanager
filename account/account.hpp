@@ -243,18 +243,14 @@ public:
 
 	void set_visibility(Visibility p_visibility);
 
-	/**
-	 * @todo Provide non-member swap and specialized std::swap per
-	 * "Effective C++".
-	 */
-	void swap(Account& rhs);
-
 	// These are tied to SQLoxx API and must be std::string, not
 	// wxString.
 	static std::string exclusive_table_name();
 	static std::string primary_key_name();
 
 private:
+
+	void swap(Account& rhs);
 
 	/**
 	 * Copy constructor - implemented, but deliberately private.

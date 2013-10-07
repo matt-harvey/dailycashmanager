@@ -157,12 +157,6 @@ public:
 
 	TransactionSide transaction_side();
 
-	/**
-	 * @todo Provide non-member swap and specialized std::swap per
-	 * "Effective C++".
-	 */
-	void swap(Entry& rhs);
-
 	// Keep as std::string, for consistency with sqloxx
 	static std::string exclusive_table_name();
 	static std::string primary_key_name();
@@ -183,6 +177,8 @@ public:
 	boost::gregorian::date date();
 
 private:
+
+	void swap(Entry& rhs);
 
 	/**
 	 * Copy constructor - implemented, but deliberately private

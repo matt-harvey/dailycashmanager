@@ -124,12 +124,6 @@ public:
 	
 	wxString name();
 
-	/**
-	 * @todo Provide non-member swap and specialized std::swap per
-	 * "Effective C++".
-	 */
-	void swap(DraftJournal& rhs);
-
 	wxString repeater_description();
 
 	/**
@@ -146,6 +140,8 @@ public:
 	void clear_repeaters();
 
 private:
+
+	void swap(DraftJournal& rhs);
 
 	/**
 	 * Copy constructor - implemented, but deliberately private.

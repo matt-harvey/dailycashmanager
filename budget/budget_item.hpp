@@ -105,12 +105,6 @@ public:
 	Frequency frequency();
 	jewel::Decimal amount();
 
-	/**
-	 * @todo Provide non-member swap and specialized std::swap per
-	 * "Effective C++".
-	 */
-	void swap(BudgetItem& rhs);
-
 	// Keep as std::string, for consistency with sqloxx
 	static std::string exclusive_table_name();
 	static std::string primary_key_name();
@@ -124,6 +118,8 @@ public:
 
 private:
 	
+	void swap(BudgetItem& rhs);
+
 	/**
 	 * Copy constructor - implemented, but deliberately private.
 	 */

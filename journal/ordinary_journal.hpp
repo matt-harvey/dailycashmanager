@@ -112,12 +112,6 @@ public:
 	boost::gregorian::date date();
 
 	/**
-	 * @todo Provide non-member swap and specialized std::swap per
-	 * "Effective C++".
-	 */
-	void swap(OrdinaryJournal& rhs);
-
-	/**
 	 * Take on the attributes \e rhs, where these exist and are
 	 * applicable to OrdinaryJournal; but do \e not take on the \e id
 	 * attribute of \e rhs, or the date.
@@ -125,6 +119,8 @@ public:
 	void mimic(Journal& rhs);
 
 private:
+
+	void swap(OrdinaryJournal& rhs);
 
 	/**
 	 * Copy constructor - implemented, but deliberately private.
