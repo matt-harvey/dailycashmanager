@@ -162,7 +162,8 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	dj1->set_name(wxString("Test"));  // wxString is optional
 	
 	Handle<Entry> const entry1a(dbc);
-	entry1a->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "cash")));
+	entry1a->
+		set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "cash")));
 	entry1a->set_comment(wxString("Test entry")); // wxString is optional
 	entry1a->set_amount(Decimal("-1090.95"));
 	entry1a->set_whether_reconciled(false);
@@ -170,7 +171,8 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	dj1->push_entry(entry1a);
 	
 	Handle<Entry> const entry1b(dbc);
-	entry1b->set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "food")));
+	entry1b->
+		set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "food")));
 	entry1b->set_comment("Test entry");
 	entry1b->set_amount(Decimal("1090.95"));
 	entry1b->set_whether_reconciled(false);

@@ -88,7 +88,7 @@ PersistentJournal::PersistentJournal
 
 PersistentJournal::PersistentJournal
 (	IdentityMap& p_identity_map,
-	sqloxx::Id p_id,
+	Id p_id,
 	IdentityMap::Signature const& p_signature
 ):
 	PersistentObject(p_identity_map, p_id),
@@ -123,9 +123,9 @@ PersistentJournal::save_new_journal_core()
 			"Cannot save journal core in unbalanced state."
 		);
 	}
-	sqloxx::Id const journal_id = next_auto_key
+	Id const journal_id = next_auto_key
 	<	PhatbooksDatabaseConnection,
-		sqloxx::Id
+		Id
 	>	(database_connection(), primary_table_name());
 	SQLStatement statement
 	(	database_connection(),
@@ -171,7 +171,7 @@ PersistentJournal::save_existing_journal_core()
 	updater.bind(":comment", wx_to_std8(Journal::do_get_comment()));
 	updater.bind(":id", id());
 	updater.step_final();
-	unordered_set<sqloxx::Id> saved_entry_ids;
+	unordered_set<Id> saved_entry_ids;
 	for (Handle<Entry> const& entry: Journal::do_get_entries())
 	{
 		JEWEL_LOG_TRACE();
@@ -190,11 +190,11 @@ PersistentJournal::save_existing_journal_core()
 		"select entry_id from entries where journal_id = :journal_id"
 	);
 	entry_finder.bind(":journal_id", id());
-	unordered_set<sqloxx::Id>::const_iterator const saved_entries_end =
+	unordered_set<Id>::const_iterator const saved_entries_end =
 		saved_entry_ids.end();
 	while (entry_finder.step())
 	{
-		sqloxx::Id const entry_id = entry_finder.extract<sqloxx::Id>(0);
+		Id const entry_id = entry_finder.extract<Id>(0);
 		if (saved_entry_ids.find(entry_id) == saved_entries_end)
 		{
 			Handle<Entry> const doomed_entry(database_connection(), entry_id);
@@ -230,7 +230,7 @@ PersistentJournal::load_journal_core()
 	entry_finder.bind(":jid", id());
 	while (entry_finder.step())
 	{
-		sqloxx::Id const entr_id = entry_finder.extract<sqloxx::Id>(0);
+		Id const entr_id = entry_finder.extract<Id>(0);
 		Handle<Entry> const entry(database_connection(), entr_id);
 		temp.push_entry(entry);
 	}

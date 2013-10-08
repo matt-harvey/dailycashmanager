@@ -73,7 +73,7 @@ public:
 	/**
 	 * @returns the Id of the Account with name p_name, matched
 	 * case insensitively. If
-	 * there are multiple such Account, then it is undefined
+	 * there are multiple such Accounts, then it is undefined
 	 * which Id will be returned, but one will be.
 	 *
 	 * @throws InvalidAccountNameException if there is no Account
@@ -110,11 +110,6 @@ public:
 		IdentityMap::Signature const& p_signature
 	);
 
-	static bool exists
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		sqloxx::Id p_id
-	);
-
 	/**
 	 * @returns \e true if and only if \e p_name is the name of an Account
 	 * stored in the database, matched case insensitively.
@@ -133,6 +128,16 @@ public:
 	static bool exists
 	(	PhatbooksDatabaseConnection& p_database_connection,
 		wxString const& p_name
+	);
+
+	/**
+	 * Like PersistentObject::exists. Declaring as direct member of Account
+	 * so as to avoid overload issues with "exists" function that takes
+	 * wxString.
+	 */
+	static bool exists
+	(	PhatbooksDatabaseConnection& p_database_connection,
+		sqloxx::Id p_id
 	);
 
 	/**

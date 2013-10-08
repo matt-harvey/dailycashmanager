@@ -204,15 +204,6 @@ Account::~Account() = default;
 bool
 Account::exists
 (	PhatbooksDatabaseConnection& p_database_connection,
-	Id p_id
-)
-{
-	return PersistentObject::exists(p_database_connection, p_id);
-}
-
-bool
-Account::exists
-(	PhatbooksDatabaseConnection& p_database_connection,
 	wxString const& p_name
 )
 {
@@ -231,6 +222,15 @@ Account::exists
 		}
 	}
 	return false;
+}
+
+bool
+Account::exists
+(	PhatbooksDatabaseConnection& p_database_connection,
+	sqloxx::Id p_id
+)
+{
+	return PersistentObject::exists(p_database_connection, p_id);
 }
 
 bool

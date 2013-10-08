@@ -453,9 +453,9 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 {
 	DatabaseTransaction transaction(m_account->database_connection());
 
-	Handle<Account> temp = m_account;
+	Handle<Account> const temp = m_account;
 	wxString const prospective_name = m_name_ctrl->GetValue().Trim();
-	if (Account::exists(temp->database_connection(), Account::id_for_name(temp->database_connection(), prospective_name)))
+	if (Account::exists(temp->database_connection(), prospective_name))
 	{
 		bool clashes = true;
 		if (!p_is_new_account)
