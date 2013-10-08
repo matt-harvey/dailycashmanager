@@ -2,38 +2,13 @@ cmake_minimum_required (VERSION 2.6)
 
 project (phatbooks)
 
-set (immediate_directories
-     .
-	 account
-	 application
-	 budget
-	 commodity
-	 currency
-	 date
-	 entry 
-	 filename_validation
-	 finformat
-	 graphical_session
-	 images
-	 journal
-	 output_aux
-	 phatbooks_database_connection
-	 phatbooks_persistent_object
-	 string_conv
-	 string_flags
-	 repeater
-	 session
-	 transaction_side
-	 transaction_type
-	 visibility)
-
 # add_definitions(-DPHATBOOKS_DISALLOW_DASH_FOR_ZERO)
 add_definitions(-DJEWEL_ENABLE_LOGGING
 			    -DJEWEL_ENABLE_ASSERTION_LOGGING
 				-DJEWEL_ENABLE_EXCEPTION_LOGGING)
 
 if (WIN32)
-	include_directories (${immediate_directories}
+	include_directories (include
 	                     C:/Dev-Cpp
 						 C:/Dev-Cpp/include/common
 						 C:/include)
@@ -73,7 +48,7 @@ if (WIN32)
 		 odbc32
 		 opengl32)
 else ()
-	include_directories(${immediate_directories}
+	include_directories(include
 						SYSTEM /usr/local/include/wx-2.9
 						SYSTEM /usr/local/lib/wx/include/gtk2-unicode-static-2.9)
 	link_directories(/usr/local/lib)
@@ -129,75 +104,75 @@ else ()
 endif ()
 
 set (common_sources
-	 account/account.cpp
-	 account/account_table_iterator.cpp
-	 account/account_type.cpp
-	 account/augmented_account.cpp
-	 account/balance_cache.cpp
-	 account/make_default_accounts.cpp
-	 application/application.cpp
-	 budget/amalgamated_budget.cpp
-	 budget/budget_item.cpp
-	 commodity/commodity.cpp
-	 currency/make_currencies.cpp
-	 date/date.cpp
-	 date/date_parser.cpp
-	 date/frequency.cpp
-	 date/interval_type.cpp
-	 entry/entry.cpp
-	 entry/entry_table_iterator.cpp
-	 filename_validation/filename_validation.cpp
-	 finformat/finformat.cpp
-	 journal/draft_journal.cpp
-	 journal/draft_journal_table_iterator.cpp
-	 journal/journal.cpp
-	 journal/ordinary_journal.cpp
-	 journal/persistent_journal.cpp
-	 session/session.cpp
-	 phatbooks_database_connection/phatbooks_database_connection.cpp
-	 repeater/repeater.cpp
-	 transaction_type/transaction_type.cpp)
+	 src/account.cpp
+	 src/account_table_iterator.cpp
+	 src/account_type.cpp
+	 src/augmented_account.cpp
+	 src/balance_cache.cpp
+	 src/make_default_accounts.cpp
+	 src/application.cpp
+	 src/amalgamated_budget.cpp
+	 src/budget_item.cpp
+	 src/commodity.cpp
+	 src/make_currencies.cpp
+	 src/date.cpp
+	 src/date_parser.cpp
+	 src/frequency.cpp
+	 src/interval_type.cpp
+	 src/entry.cpp
+	 src/entry_table_iterator.cpp
+	 src/filename_validation.cpp
+	 src/finformat.cpp
+	 src/draft_journal.cpp
+	 src/draft_journal_table_iterator.cpp
+	 src/journal.cpp
+	 src/ordinary_journal.cpp
+	 src/persistent_journal.cpp
+	 src/session.cpp
+	 src/phatbooks_database_connection.cpp
+	 src/repeater.cpp
+	 src/transaction_type.cpp)
 
 set (gui_sources
-	 graphical_session/graphical_session.cpp
-	 graphical_session/wxs/account_ctrl.cpp
-	 graphical_session/wxs/account_dialog.cpp
-	 graphical_session/wxs/account_list_ctrl.cpp
-	 graphical_session/wxs/account_type_ctrl.cpp
-	 graphical_session/wxs/app.cpp
-	 graphical_session/wxs/balance_sheet_report.cpp
-	 graphical_session/wxs/bs_account_entry_list_ctrl.cpp
-	 graphical_session/wxs/budget_panel.cpp
-	 graphical_session/wxs/date_ctrl.cpp
-	 graphical_session/wxs/date_validator.cpp
-	 graphical_session/wxs/decimal_text_ctrl.cpp
-	 graphical_session/wxs/decimal_validator.cpp
-	 graphical_session/wxs/draft_journal_list_ctrl.cpp
-	 graphical_session/wxs/draft_journal_naming_dialog.cpp
-	 graphical_session/wxs/entry_group_ctrl.cpp
-	 graphical_session/wxs/entry_list_ctrl.cpp
-	 graphical_session/wxs/entry_list_panel.cpp
-	 graphical_session/wxs/filtered_entry_list_ctrl.cpp
-	 graphical_session/wxs/frame.cpp
-	 graphical_session/wxs/frequency_ctrl.cpp
-	 graphical_session/wxs/gridded_scrolled_panel.cpp
-	 graphical_session/wxs/locale.cpp
-	 graphical_session/wxs/multi_account_panel.cpp
-	 graphical_session/wxs/persistent_object_event.cpp
-	 graphical_session/wxs/pl_account_entry_list_ctrl.cpp
-	 graphical_session/wxs/pl_report.cpp
-	 graphical_session/wxs/reconciliation_entry_list_ctrl.cpp
-	 graphical_session/wxs/report.cpp
-	 graphical_session/wxs/report_panel.cpp
-	 graphical_session/wxs/setup_wizard.cpp
-	 graphical_session/wxs/sizing.cpp
-	 graphical_session/wxs/string_set_validator.cpp
-	 graphical_session/wxs/summary_datum.cpp
-	 graphical_session/wxs/top_panel.cpp
-	 graphical_session/wxs/transaction_ctrl.cpp
-	 graphical_session/wxs/transaction_type_ctrl.cpp
-	 graphical_session/wxs/welcome_dialog.cpp
-	 graphical_session/wxs/window_utilities.cpp)
+	 src/graphical_session.cpp
+	 src/account_ctrl.cpp
+	 src/account_dialog.cpp
+	 src/account_list_ctrl.cpp
+	 src/account_type_ctrl.cpp
+	 src/app.cpp
+	 src/balance_sheet_report.cpp
+	 src/bs_account_entry_list_ctrl.cpp
+	 src/budget_panel.cpp
+	 src/date_ctrl.cpp
+	 src/date_validator.cpp
+	 src/decimal_text_ctrl.cpp
+	 src/decimal_validator.cpp
+	 src/draft_journal_list_ctrl.cpp
+	 src/draft_journal_naming_dialog.cpp
+	 src/entry_group_ctrl.cpp
+	 src/entry_list_ctrl.cpp
+	 src/entry_list_panel.cpp
+	 src/filtered_entry_list_ctrl.cpp
+	 src/frame.cpp
+	 src/frequency_ctrl.cpp
+	 src/gridded_scrolled_panel.cpp
+	 src/locale.cpp
+	 src/multi_account_panel.cpp
+	 src/persistent_object_event.cpp
+	 src/pl_account_entry_list_ctrl.cpp
+	 src/pl_report.cpp
+	 src/reconciliation_entry_list_ctrl.cpp
+	 src/report.cpp
+	 src/report_panel.cpp
+	 src/setup_wizard.cpp
+	 src/sizing.cpp
+	 src/string_set_validator.cpp
+	 src/summary_datum.cpp
+	 src/top_panel.cpp
+	 src/transaction_ctrl.cpp
+	 src/transaction_type_ctrl.cpp
+	 src/welcome_dialog.cpp
+	 src/window_utilities.cpp)
 
 set (test_sources
 	 tests/test.cpp
@@ -214,7 +189,7 @@ set (test_sources
 
 add_library(phatbooks_common ${common_sources})
 
-add_executable(phatbooks main.cpp ${gui_sources} ${windows_resources})
+add_executable(phatbooks src/main.cpp ${gui_sources} ${windows_resources})
 target_link_libraries (phatbooks phatbooks_common ${libraries})
 
 add_executable (test ${test_sources})
