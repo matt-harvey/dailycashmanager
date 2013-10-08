@@ -128,7 +128,7 @@ else ()
 					-D__WXGTK__)
 endif ()
 
-set (main_files
+set (common_sources
 	 account/account.cpp
 	 account/account_table_iterator.cpp
 	 account/account_type.cpp
@@ -158,7 +158,7 @@ set (main_files
 	 repeater/repeater.cpp
 	 transaction_type/transaction_type.cpp)
 
-set (gui_files
+set (gui_sources
 	 graphical_session/graphical_session.cpp
 	 graphical_session/wxs/account_ctrl.cpp
 	 graphical_session/wxs/account_dialog.cpp
@@ -199,8 +199,7 @@ set (gui_files
 	 graphical_session/wxs/welcome_dialog.cpp
 	 graphical_session/wxs/window_utilities.cpp)
 
-set (test_files
-	 ${main_files}
+set (test_sources
 	 tests/test.cpp
 	 tests/date_parser_tests.cpp
 	 tests/date_tests.cpp
@@ -213,17 +212,13 @@ set (test_files
 	 tests/repeater_tests.cpp
 	 tests/transaction_type_tests.cpp)
 
-add_executable(
-	phatbooks
-	main.cpp
-	${main_files}
-	${gui_files}
-	${windows_resources}
-)
-target_link_libraries (phatbooks ${libraries})
+add_library(phatbooks_common ${common_sources})
 
-add_executable (phatbooks_test ${test_files})
-target_link_libraries (phatbooks_test ${libraries})
+add_executable(phatbooks main.cpp ${gui_sources} ${windows_resources})
+target_link_libraries (phatbooks phatbooks_common ${libraries})
+
+add_executable (test ${test_sources})
+target_link_libraries (test phatbooks_common ${libraries})
 
 if (WIN32)
 	
