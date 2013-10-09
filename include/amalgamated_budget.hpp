@@ -56,9 +56,6 @@ public:
 	/**
 	 * @returns the sum of all the Account budgets in AmalgamatedBudget,
 	 * at the Frequency returned by frequency().
-	 *
-	 * Note this is non-const only because it requires calling
-	 * load().
 	 */
 	jewel::Decimal balance() const;
 
