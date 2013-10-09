@@ -227,7 +227,12 @@ if (WIN32)
 	install(TARGETS phatbooks RUNTIME DESTINATION .)
 	include(CPack)
 else ()
-	install(TARGETS phatbooks RUNTIME DESTINATION /usr/local/bin)
+	install (
+		TARGETS
+			phatbooks
+		RUNTIME DESTINATION
+			"${CMAKE_INSTALL_PREFIX}/bin"
+	)
 endif ()
 
 					
