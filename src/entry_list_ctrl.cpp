@@ -23,6 +23,7 @@
 #include <jewel/log.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/event.h>
 #include <wx/string.h>
@@ -36,6 +37,7 @@ using boost::lexical_cast;
 using boost::optional;
 using jewel::value;
 using sqloxx::Handle;
+using sqloxx::Id;
 using sqloxx::SQLStatement;
 using std::pair;
 using std::string;
@@ -174,7 +176,7 @@ EntryListCtrl::populate()
 		process_push_candidate_entry
 		(	Handle<Entry>
 			(	database_connection(),
-				statement->extract<sqloxx::Id>(0)
+				statement->extract<Id>(0)
 			)
 		);
 	}

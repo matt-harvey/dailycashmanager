@@ -450,6 +450,7 @@ create_date_ordered_actual_ordinary_entry_selector
 	if (p_maybe_min_date) oss << " and date >= :min_date";
 	if (p_maybe_max_date) oss << " and date <= :max_date";
 	if (p_maybe_account) oss <<  " and account_id = :account_id";
+	oss << " order by date";
 	unique_ptr<SQLStatement> ret
 	(	new SQLStatement(p_database_connection, oss.str())
 	);

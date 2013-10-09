@@ -194,6 +194,7 @@ private:
  * only Entries that belong to actual (i.e. non-budget)
  * Journals that are OrdinaryJournals (i.e. not DraftJournals).
  * Filtering may optionally be performed by Account and/or date.
+ * Within the result set, Entries are ordered by date.
  */
 std::unique_ptr<sqloxx::SQLStatement>
 create_date_ordered_actual_ordinary_entry_selector
