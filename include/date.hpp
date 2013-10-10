@@ -1,19 +1,23 @@
-// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+/*
+ * This file is part of the Phatbooks project and is distributed under the
+ * terms of the license contained in the file LICENSE.txt distributed
+ * with this package.
+ * 
+ * Author: Matthew Harvey <matthew@matthewharvey.net>
+ *
+ * Copyright (c) 2012-2013, Matthew Harvey.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 
 #ifndef GUARD_date_hpp_43289257373329837
 #define GUARD_date_hpp_43289257373329837
-
-/** \file date.hpp
- *
- * \brief Header file for date-related code for use in Phatbooks
- * application.
- *
- * \author Matthew Harvey
- * \date 04 July 2012.
- *
- * Copyright (c) 2012, Matthew Harvey. All rights reserved.
- */
-
 
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>

@@ -1,13 +1,30 @@
-// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+/*
+ * This file is part of the Phatbooks project and is distributed under the
+ * terms of the license contained in the file LICENSE.txt distributed
+ * with this package.
+ * 
+ * Author: Matthew Harvey <matthew@matthewharvey.net>
+ *
+ * Copyright (c) 2012-2013, Matthew Harvey.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 
 #ifndef GUARD_phatbooks_exceptions_hpp_9435394075436235
 #define GUARD_phatbooks_exceptions_hpp_9435394075436235
 
 #include <jewel/exception.hpp>
 
-/** \file phatbooks_exceptions.hpp
+/** @file phatbooks_exceptions.hpp
  *
- * \brief Header file containing exception classes defined in the phatbooks
+ * @brief Header file containing exception classes defined in the phatbooks
  * namespace. These exceptions are for throwing by Phatbooks-specific
  * functions (although Phatbooks-specific functions need not throw \e only
  * these exceptions).
@@ -15,15 +32,6 @@
  * These exceptions are defined using the JEWEL_DERIVED_EXCEPTION macro from
  * the Jewel library. They all have \c jewel::Exception as a (direct or
  * indirect) base class.
- *
- * @todo Find out how to catch all exceptions in main and then produce a core
- * dump before aborting. This must be something that the user can then send
- * to a developer to enable error diagnosis.
- *
- * \author Matthew Harvey
- * \date 04 July 2012.
- *
- * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
 namespace phatbooks
