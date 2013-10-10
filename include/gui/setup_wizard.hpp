@@ -225,7 +225,10 @@ private:
 	wxTextCtrl* m_filename_ctrl;
 	wxComboBox* m_currency_box;
 
-	std::unique_ptr<boost::filesystem::path> m_selected_filepath;
+	// Things are simpler in the implementation if this is a raw pointer.
+	// Don't be tempted to change this to a smart pointer or a reference.
+	// Been there, tried that...
+	boost::filesystem::path* m_selected_filepath;
 
 	static int const s_directory_button_id = wxID_HIGHEST + 1;
 

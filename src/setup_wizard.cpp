@@ -380,6 +380,8 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 	wxString const wx_directory	= page->m_directory_ctrl->GetValue();
 	filesystem::path const path =
 		wx_to_boost_filepath(wx_directory, wx_filename);
+	JEWEL_LOG_VALUE(Log::info, wx_directory);
+	JEWEL_LOG_VALUE(Log::info, wx_filename);
 	string filename_error_message;
 	bool const filename_is_valid = is_valid_filename
 	(	wx_to_std8(wx_filename),
@@ -390,9 +392,10 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 		filesystem::exists(filesystem::status(path.parent_path()));
 	bool const filepath_already_exists = filesystem::exists(path);
 	bool const ret =
-		filename_is_valid &&
+	(	filename_is_valid &&
 		directory_exists &&
-		!filepath_already_exists;
+		!filepath_already_exists
+	);
 	if (!ret)
 	{
 		if (!filename_is_valid)
@@ -419,6 +422,7 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 	}
 	if (m_filepath)
 	{
+		JEWEL_LOG_TRACE();
 		*m_filepath = path;
 	}
 	return ret;
@@ -496,7 +500,8 @@ SetupWizard::FilepathPage::FilepathPage
 	m_directory_ctrl(nullptr),
 	m_directory_button(nullptr),
 	m_filename_ctrl(nullptr),
-	m_currency_box(nullptr)
+	m_currency_box(nullptr),
+	m_selected_filepath(nullptr)
 {
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
 	m_filename_row_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -524,9 +529,7 @@ SetupWizard::FilepathPage::FilepathPage
 	{
 		default_directory = std8_to_wx(value(maybe_directory).string());
 		JEWEL_ASSERT (!m_selected_filepath);
-		m_selected_filepath.reset
-		(	new filesystem::path(value(maybe_directory))
-		);
+		m_selected_filepath = new filesystem::path(value(maybe_directory));
 	}
 	// TODO We should make this a static text field or something that
 	// is obviously noneditable so the user doesn't feel frustrated when
@@ -574,7 +577,7 @@ SetupWizard::FilepathPage::FilepathPage
 		wxDefaultPosition,
 		wxDLG_UNIT(this, dlg_unit_size),
 		0,  // style
-		FilepathValidator(m_selected_filepath.get())
+		FilepathValidator(m_selected_filepath)
 	);
 	m_filename_row_sizer->Add(m_filename_ctrl, wxSizerFlags(1).Expand());
 	wxStaticText* extension_text = new wxStaticText
@@ -644,6 +647,8 @@ SetupWizard::FilepathPage::FilepathPage
 
 SetupWizard::FilepathPage::~FilepathPage()
 {
+	delete m_selected_filepath;
+	m_selected_filepath = nullptr;
 }
 
 optional<filesystem::path>
@@ -697,10 +702,16 @@ SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 		(	wx_directory,
 			with_extension(m_filename_ctrl->GetValue())
 		);
-		m_selected_filepath.reset(new filesystem::path(fp));
-		JEWEL_LOG_TRACE();
+		if (m_selected_filepath)
+		{
+			delete m_selected_filepath;
+			m_selected_filepath = nullptr;
+		}
+		m_selected_filepath = new filesystem::path(fp);
+		JEWEL_ASSERT (m_selected_filepath);
 	}
 	(void)event;  // Silence compiler warning about unused parameter.
+	JEWEL_LOG_TRACE();
 	return;
 }
 
