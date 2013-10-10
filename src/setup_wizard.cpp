@@ -26,6 +26,7 @@
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/handle.hpp>
@@ -59,6 +60,7 @@
 
 using boost::optional;
 using jewel::Decimal;
+using jewel::Log;
 using jewel::value;
 using sqloxx::DatabaseTransaction;
 using sqloxx::Handle;
@@ -89,12 +91,14 @@ namespace
 		wxString const& wx_filename
 	)
 	{
+		JEWEL_LOG_TRACE();
 		filesystem::path const directory =
 			filesystem::path(wx_to_std8(wx_directory));
 		filesystem::path const filename =
 			filesystem::path(wx_to_std8(wx_filename));
 		filesystem::path ret = directory;
 		ret /= filename;
+		JEWEL_LOG_TRACE();
 		return ret;
 	}
 
@@ -664,6 +668,7 @@ SetupWizard::FilepathPage::selected_currency() const
 void
 SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	wxString default_directory = m_directory_ctrl->GetValue();
 	filesystem::path const default_path(wx_to_std8(default_directory));
 	if (!filesystem::exists(filesystem::status(default_path)))
@@ -684,10 +689,13 @@ SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 	{
 		wxString const wx_directory = directory_dialog.GetPath();
 		m_directory_ctrl->ChangeValue(wx_directory);
-		*m_selected_filepath = wx_to_boost_filepath
+		JEWEL_LOG_TRACE();
+		filesystem::path const fp = wx_to_boost_filepath
 		(	wx_directory,
 			with_extension(m_filename_ctrl->GetValue())
 		);
+		m_selected_filepath.reset(new filesystem::path(fp));
+		JEWEL_LOG_TRACE();
 	}
 	(void)event;  // Silence compiler warning about unused parameter.
 	return;
