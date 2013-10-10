@@ -417,7 +417,10 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 		}
 		return false;
 	}
-	if (m_filepath) *m_filepath = path;
+	if (m_filepath)
+	{
+		*m_filepath = path;
+	}
 	return ret;
 }
 
@@ -571,7 +574,7 @@ SetupWizard::FilepathPage::FilepathPage
 		wxDefaultPosition,
 		wxDLG_UNIT(this, dlg_unit_size),
 		0,  // style
-		FilepathValidator(m_selected_filepath.release())
+		FilepathValidator(m_selected_filepath.get())
 	);
 	m_filename_row_sizer->Add(m_filename_ctrl, wxSizerFlags(1).Expand());
 	wxStaticText* extension_text = new wxStaticText
