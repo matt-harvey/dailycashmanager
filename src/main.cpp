@@ -16,6 +16,14 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+// TODO HIGH PRIORITY Go through all the classes inheriting from
+// sqloxx::PersistentObject<...> and ensure the do_save(...) functions in each
+// are atomic with respect to the in-memory objects (noting that Sqloxx
+// already ensures atomicity with respect to the database), and that they
+// conform to the restrictions detailed in the sqloxx::PersistentObject<...>
+// API documentation. (Note I have already done this for \e do_load(...)
+// functions.)
+
 // TODO HIGH PRIORITY Tooltips aren't showing on Windows.
 
 // TODO HIGH PRIORITY Make the installer create an association on the user's
