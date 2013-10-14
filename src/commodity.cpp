@@ -217,7 +217,10 @@ void Commodity::process_saving_statement(SQLStatement& statement)
 	statement.bind(":precision", value(m_data->precision));
 	Decimal m = value(m_data->multiplier_to_base);
 	statement.bind(":multiplier_to_base_intval", m.intval());
-	statement.bind(":multiplier_to_base_places", m.places());
+	statement.bind
+	(	":multiplier_to_base_places",
+		numeric_cast<int>(m.places())
+	);
 	statement.step_final();	
 	return;
 }
