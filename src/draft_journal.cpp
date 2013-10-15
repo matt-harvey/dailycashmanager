@@ -109,7 +109,6 @@ DraftJournal::DraftJournal
 	PersistentJournal(p_identity_map, p_signature),
 	m_dj_data(new DraftJournalData)
 {
-	(void)p_signature;  // silence compiler re. unused parameter
 }
 
 DraftJournal::DraftJournal
@@ -120,7 +119,6 @@ DraftJournal::DraftJournal
 	PersistentJournal(p_identity_map, p_id, p_signature),
 	m_dj_data(new DraftJournalData)
 {
-	(void)p_signature;  // silence compiler re. unused parameter
 }
 
 DraftJournal::~DraftJournal() = default;
