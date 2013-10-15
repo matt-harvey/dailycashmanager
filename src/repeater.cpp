@@ -184,8 +184,17 @@ Repeater::next_date(vector<gregorian::date>::size_type n)
 		return ret;
 	}
 	Frequency const freq = value(m_data->frequency);
-	// WARNING This conversion is potentially unsafe.
-	Size const units = freq.num_steps();
+
+	JEWEL_ASSERT
+	(	numeric_limits<decltype(freq.num_steps())>::max() <=
+		numeric_limits<Size>::max();
+	);
+	// Due to preconditions when setting number of steps in Frequency, we
+	// know that
+	JEWEL_ASSERT (freq.num_steps() <= 0);
+
+	// So we know that this won't throw.
+	Size const units = numeric_cast<Size>(freq.num_steps());
 	if (multiplication_is_unsafe(units, n))
 	{
 		JEWEL_THROW(UnsafeArithmeticException, "Unsafe multiplication.");

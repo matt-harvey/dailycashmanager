@@ -180,7 +180,7 @@ SetupWizard::SetupWizard
 	(	0,
 		wxID_ANY,
 		Application::application_name() + wxString(" Setup Wizard"),
-		wxBitmap(icon_xpm),  // TODO Put a proper image here
+		wxBitmap(icon_xpm),  // TODO HIGH PRIORITY Put a proper image here
 		wxDefaultPosition,
 		wxDEFAULT_DIALOG_STYLE | wxFULL_REPAINT_ON_RESIZE
 	),

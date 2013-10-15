@@ -144,7 +144,7 @@ AccountListCtrl::update()
 		InsertColumn(s_budget_col, "Daily top-up", wxLIST_FORMAT_RIGHT);
 	}
 
-	size_t i = 0;
+	long i = 0;  // because wxWidgets uses long
 	AccountTableIterator it = make_type_name_ordered_account_table_iterator
 	(	m_database_connection
 	);
@@ -159,8 +159,12 @@ AccountListCtrl::update()
 			// Insert item, with string for Column 0
 			InsertItem(i, (*it)->name());
 		
-			// TODO Do a static assert to ensure second param will fit the id.
 			JEWEL_ASSERT ((*it)->has_id());
+			static_assert
+			(	sizeof((*it)->id()) <= sizeof(i),
+				"Object Id is too wide to be safely passed to "
+				"SetItemData."
+			);
 			SetItemData(i, (*it)->id());
 
 			// Insert the balance string

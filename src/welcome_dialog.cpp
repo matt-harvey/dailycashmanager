@@ -91,12 +91,13 @@ WelcomeDialog::configure_buttons()
 	wxString const file_descriptor = 
 		Application::application_name() + wxString(" file");
 	m_top_sizer->AddStretchSpacer();
-	// TODO The below code ensures the buttons are the same width, but is
-	// dependent on the relative length of the strings in each button. This
-	// sucks; but the better way, viz. to call SetSize(...) to resize
+
+	// TODO LOW PRIORITY The below code ensures the buttons are the same width,
+	// but is dependent on the relative length of the strings in each button.
+	// This sucks; but the better way, viz. to call SetSize(...) to resize
 	// whichever is the smallest button after they have been created, doesn't
-	// seem to work. SetSize(...) doesn't seem to do anything. Need to find
-	// a better way.
+	// seem to work. SetSize(...) doesn't seem to do anything. Should find a
+	// better way.
 	m_existing_file_button = new wxButton
 	(	this,
 		s_existing_file_button_id,

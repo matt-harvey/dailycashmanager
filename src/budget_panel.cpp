@@ -358,7 +358,7 @@ BudgetPanel::process_confirmation()
 void
 BudgetPanel::update_budget_summary()
 {
-	// WARNING This is inefficient.
+	// This is inefficient, but it doesn't matter.
 	JEWEL_ASSERT (m_summary_amount_text);
 	Decimal new_total = zero();
 	vector<Handle<BudgetItem> > const budget_items = make_budget_items();
@@ -637,7 +637,6 @@ BudgetPanel::prompt_to_balance()
 			maybe_target_account,
 			database_connection()
 		);
-		// TODO Do we need to test return value below?
 		balancing_dialog.ShowModal();
 	}
 	return;

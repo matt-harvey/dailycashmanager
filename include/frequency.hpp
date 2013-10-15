@@ -35,9 +35,10 @@ class Frequency
 public:
 
 	/**
-	 * @todo int should be positive. Make it throw if it is not
+	 * @todo HIGH PRIORITY int should be positive. Make it throw if it is not
 	 * positive. (Should it be an unsigned int? Probably not - this
-	 * doesn't rule out zero anyway.) Then write tests to ensure
+	 * doesn't rule out zero anyway. Also remember we need to be sure
+	 * it will fit in SQLite 64-bit int type.) Then write tests to ensure
 	 * it throws as expected.
 	 */
 	Frequency(int p_num_steps, IntervalType p_step_type);

@@ -78,7 +78,7 @@ AccountTypeCtrl::AccountTypeCtrl
 	ATypeVec const& atypes = account_types(m_account_super_type);
 	for (AccountType const elem: atypes)
 	{
-		// WARNING Hack to stop users from accessing AccountType::equity.
+		// HACK to stop users from accessing AccountType::equity.
 		if (elem != AccountType::equity)
 		{
 			Append(account_type_to_string(elem));
