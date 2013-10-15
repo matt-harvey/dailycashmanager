@@ -120,10 +120,10 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	repeater6->set_next_date(date(3199, 2, 28));
 	CHECK_EQUAL(repeater6->next_date(1), date(3200, 2, 29));
 
-	// TODO Put something here to test retrieving a Handle<Repeater> by
-	// ID. But note, there are "system Repeaters" floating
+	// While we could put something here to test retrieving a Handle<Repeater>
+	// by ID, there are "system Repeaters" floating
 	// around, possibly ones that have been saved and then
-	// deleted, and these make the ID non-obvious.
+	// deleted, and these make the particular Id of each Repeater non-obvious.
 }
 
 TEST_FIXTURE(TestFixture, test_repeater_firings_till)

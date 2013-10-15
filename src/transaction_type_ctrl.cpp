@@ -81,10 +81,7 @@ TransactionTypeCtrl::TransactionTypeCtrl
 	m_database_connection(p_database_connection)
 {
 	JEWEL_ASSERT (!m_transaction_types.empty());
-	// TODO We need a mechanism whereby, if additional TransactionTypes
-	// become available after the TransactionTypeCtrl has been
-	// constructed, the TransactionTypeCtrl is notified and updates
-	// itself accordingly.
+
 	for (TransactionType const& elem: m_transaction_types)
 	{
 		wxString const verb = transaction_type_to_verb(elem);
@@ -136,9 +133,9 @@ TransactionTypeCtrl::set_transaction_type
 void
 TransactionTypeCtrl::on_kill_focus(wxFocusEvent& event)
 {
-	// TODO Make a class from which we can privately inherit, to capture
-	// this on_kill_focus behaviour, which is shared by several custom
-	// widget classes in phatbooks::gui.
+	// TODO LOW PRIORITY Make a class from which we can privately inherit,
+	// to capture this on_kill_focus behaviour, which is shared by several
+	// custom widget classes in phatbooks::gui.
 
 	// Unfortunately if we call Validate() and TransferDataToWindow()
 	// directly on the AccountCtrl, it doesn't work. We have to call

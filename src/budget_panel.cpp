@@ -324,7 +324,11 @@ BudgetPanel::TransferDataToWindow()
 			JEWEL_ASSERT ((result == wxID_YES) || (result == wxID_NO));
 			if (result == wxID_YES)
 			{
-				// TODO Deal with tiny possibility of overflow here?
+				// TODO MEDIUM PRIORITY There is a tiny possibility that
+				// this will throw DecimalUnaryMinusException. If this
+				// happens, the application will simply crash. This
+				// is extremely unlikely ever to occur, but still,
+				// crashing is not an acceptable reaction to this.
 				amount_ctrl->set_amount(-amount);
 			}
 		}

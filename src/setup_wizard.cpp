@@ -1025,6 +1025,15 @@ SetupWizard::AccountPage::account_types_valid
 (	wxString& error_message
 ) const
 {
+	// Forcing the user to create at least one balance sheet
+	// Account, at least revenue Account and at least one
+	// expense Account, means that all TransactionTypes can safely
+	// be made available from the outset. This means we don't have
+	// to bother with complex code to update TransactionTypeCtrl or
+	// etc. depending on which TransactionTypes are available at any
+	// given moment (assuming we also don't let the user delete
+	// Accounts or change the TransactionType of an Account once
+	// created).
 	if (m_account_super_type == AccountSuperType::balance_sheet)
 	{
 		JEWEL_ASSERT (m_multi_account_panel);

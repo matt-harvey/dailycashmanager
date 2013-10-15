@@ -43,6 +43,9 @@ namespace gui
 
 /**
  * Widget to enable the user to select a TransactionType.
+ *
+ * Note, there is no way to insert additional TransactionTypes
+ * into a TransactionTypeCtrl after it has been constructed.
  */
 class TransactionTypeCtrl: public wxComboBox
 {
@@ -60,8 +63,7 @@ public:
 		wxWindowID p_id,
 		wxSize const& p_size,
 		PhatbooksDatabaseConnection& p_database_connection,
-		std::vector<TransactionType> const&
-			p_transaction_types
+		std::vector<TransactionType> const& p_transaction_types
 	);
 
 	TransactionTypeCtrl(TransactionTypeCtrl const&) = delete;
