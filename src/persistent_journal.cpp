@@ -191,15 +191,10 @@ PersistentJournal::save_existing_journal_core()
 	unordered_set<Id> saved_entry_ids;
 	for (Handle<Entry> const& entry: Journal::do_get_entries())
 	{
-		JEWEL_LOG_TRACE();
 		entry->save();
-		JEWEL_LOG_TRACE();
 		JEWEL_ASSERT (entry->has_id());
-		JEWEL_LOG_TRACE();
 		saved_entry_ids.insert(entry->id());
-		JEWEL_LOG_TRACE();
 	}
-	JEWEL_LOG_TRACE();
 	// Remove any entries in the database with this journal's journal_id, that
 	// no longer exist in the in-memory journal
 	SQLStatement entry_finder
