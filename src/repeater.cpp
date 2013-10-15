@@ -40,6 +40,7 @@
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <algorithm>
+#include <limits>
 #include <list>
 #include <memory>
 #include <string>
@@ -61,6 +62,7 @@ using sqloxx::SQLStatement;
 using std::is_same;
 using std::list;
 using std::move;
+using std::numeric_limits;
 using std::shared_ptr;
 using std::string;
 using std::vector;
@@ -187,11 +189,11 @@ Repeater::next_date(vector<gregorian::date>::size_type n)
 
 	JEWEL_ASSERT
 	(	numeric_limits<decltype(freq.num_steps())>::max() <=
-		numeric_limits<Size>::max();
+		numeric_limits<Size>::max()
 	);
 	// Due to preconditions when setting number of steps in Frequency, we
 	// know that
-	JEWEL_ASSERT (freq.num_steps() <= 0);
+	JEWEL_ASSERT (freq.num_steps() >= 0);
 
 	// So we know that this won't throw.
 	Size const units = numeric_cast<Size>(freq.num_steps());
