@@ -130,6 +130,15 @@ PersistentJournal::swap(PersistentJournal& rhs)
 	return;
 }
 
+// TODO HIGH PRIORITY Throw if an attempt is made to save a
+// budget Journal that contains
+// an Entry with a balance sheet Account. Document this
+// in the API documentation. It is very important to enforce
+// this requirement. Should put assertions in places
+// where this requirement is especially important e.g.
+// balance and opening balance calculations.
+
+
 Id
 PersistentJournal::save_new_journal_core()
 {
