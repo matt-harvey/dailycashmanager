@@ -126,8 +126,6 @@ PLReport::display_mean
 void
 PLReport::refresh_map()
 {
-	// TODO There is a lot of duplicated code between here and
-	// BalanceSheetReport::refresh_map().
 	m_map.clear();
 	JEWEL_ASSERT (m_map.empty());
 	optional<gregorian::date> const maybe_max_d = maybe_max_date();

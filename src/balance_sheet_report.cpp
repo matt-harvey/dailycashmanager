@@ -19,6 +19,7 @@
 
 #include "gui/balance_sheet_report.hpp"
 #include "account.hpp"
+#include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
 #include "entry_table_iterator.hpp"
@@ -94,10 +95,35 @@ BalanceSheetReport::refresh_map()
 	optional<gregorian::date> const maybe_max_d = maybe_max_date();
 	gregorian::date const min_d = min_date();
 
-	// TODO We simply use the opening balance and current balance
-	// of each Account, to optimize for the special but probably common
+	// Special case: use the opening balance and current
+	// balance of each Account, to optimize for the special but probably common
 	// case where the min and max date are both blank.
+	gregorian::date const earliest_possible_date =
+		database_connection().opening_balance_journal_date() +
+			gregorian::date_duration(1);
+	JEWEL_ASSERT (min_d >= earliest_possible_date);
+	if ((min_d == earliest_possible_date) && (!maybe_max_d))
+	{
+		AccountTableIterator atit(database_connection());
+		AccountTableIterator const atend;
+		for ( ; atit != atend; ++atit)
+		{
+			Handle<Account> const& account = *atit;
+			if
+			(	super_type(account->account_type()) ==
+				AccountSuperType::balance_sheet
+			)
+			{
+				BalanceDatum datum;
+				datum.opening_balance = account->friendly_opening_balance();
+				datum.closing_balance = account->friendly_balance();
+				m_balance_map[account->id()] = datum;
+			}
+		}
+		return;
+	}
 
+	// General case
 	EntryTableIterator it =
 		make_date_ordered_actual_ordinary_entry_table_iterator
 		(	database_connection()

@@ -62,24 +62,16 @@ class TopPanel;
 /**
  * Dialog in which user creates a new transaction (i.e. Journal).
  *
- * @todo Ensure this can handle situation where insufficient default
- * Accounts are available.
+ * @todo HIGH PRIORITY Ensure this can handle situation where insufficient
+ * default Accounts are available.
  *
- * @todo When editing an existing transaction, if the user changes the
- * TransactionType, then the AccountCtrls are reset, and the user
+ * @todo HIGH PRIORITY When editing an existing transaction, if the user
+ * changes the TransactionType, then the AccountCtrls are reset, and the user
  * loses the existing Account information. Prevent this from occurring.
  *
- * @todo When user deletes a Journal where some or all of the Entries
- * in that Journal have already been reconciled, then we need either
- * to prevent this from happening at all, or else to warn the user
- * that the reconciliations will be out of whack.
- *
- * @todo When user creates or amended an Account, the TransactionCtrl should
- * be updated seamlessly, rather than being recreated from scratch.
- *
- * @todo It's not obvious to the user that the TransactionCtrl actually is
- * for creating new transactions (rather than for, say, filtering the
- * information that is displayed to the left).
+ * @todo MEDIUM PRIORITY It may not be obvious to the user that the
+ * TransactionCtrl actually is for creating new transactions (rather than for,
+ * say, filtering the information that is displayed to the left).
  *
  * @todo HIGH PRIORITY Boundary around comment boxes and date box looks
  * wrong under certain circumstances under Windows.

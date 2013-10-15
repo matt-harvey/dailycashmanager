@@ -63,18 +63,12 @@ class MultiAccountPanel;
  * Represents the wizard that is presented to GUI users when they first
  * start up the application.
  *
- * @todo Reinstate AccountPage - or rather pages - to offer user the chance
- * to set up Accounts and opening balances (with suggested defaults)
- * prior to first entering the main window. There should be page for
- * balance sheet Accounts, followed by a page for P&L Accounts
- * ("categories").
- *
- * @todo In the FilepathPage, the controls for the directory and the
- * filepath look like you can write in them, but actually you can't. This
- * misleads the user and is bad (which is pointed out in the "GUI Bloopers"
+ * @todo MEDIUM PRIORITY In the FilepathPage, the controls for the directory
+ * and the filepath look like you can write in them, but actually you can't.
+ * This misleads the user and is bad (which is pointed out in the "GUI Bloopers"
  * book). Fix it.
  *
- * @todo Ensure that Account names in m_pl_account_page do not
+ * @todo HIGH PRIORITY Ensure that Account names in m_pl_account_page do not
  * conflict with those in m_balance_sheet_account_page.
  */
 class SetupWizard: public wxWizard
@@ -286,10 +280,12 @@ public:
 	jewel::Decimal total_amount() const;
 
 	/**
-	 * @returns the total_amount() of the balance sheet AccountPage in the
-	 * same SetupWizard as this AccountPage.
-	 *
-	 * WARNING This is rather convoluted.
+	 * @returns the total_amount() of the <em>balance sheet</em>
+	 * AccountPage that is in the same SetupWizard as this AccountPage.
+	 * This may or may not be the same AccountPage as this one. (Whether
+	 * this is a "balance sheet AccountPage" is determined by
+	 * whether or not AccountSuperType::balance_sheet was passed
+	 * to the constructor.)
 	 */
 	jewel::Decimal total_balance_sheet_amount() const;
 
