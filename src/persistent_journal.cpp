@@ -151,7 +151,7 @@ PersistentJournal::save_new_journal_core()
 	);
 	statement.bind
 	(	":transaction_type_id",
-		static_cast<int>(static_cast<int>(Journal::do_get_transaction_type()))
+		static_cast<int>(Journal::do_get_transaction_type())
 	);
 	statement.bind(":comment", wx_to_std8(Journal::do_get_comment()));
 	statement.step_final();
