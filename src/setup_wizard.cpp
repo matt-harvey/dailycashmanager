@@ -277,13 +277,6 @@ SetupWizard::selected_augmented_accounts(vector<AugmentedAccount>& out) const
 void
 SetupWizard::render_account_pages()
 {
-	// TODO
-	// The call to render_account_pages() should cause
-	// the AccountPage(s) to be rendered, in light of whatever currency
-	// is currently selected on the previous page. This is because
-	// the currency that is selected may infuence the degree of
-	// precision, and hence the spacing of the "zero dash" on the
-	// AccountPage(s).
 	JEWEL_ASSERT (m_balance_sheet_account_page);
 	JEWEL_ASSERT (m_pl_account_page);
 	m_balance_sheet_account_page->render();
@@ -328,7 +321,7 @@ SetupWizard::configure_accounts()
 		wxString const name_wx = aug_acc.account->name().Trim();
 		if (name_wx.IsEmpty())
 		{
-			// TODO React accordingly...
+			// TODO Is there anything we need to do here?
 		}
 		else
 		{
@@ -354,7 +347,6 @@ SetupWizard::configure_accounts()
 
 
 /*** SetupWizard::FilepathValidator ***/
-
 
 SetupWizard::FilepathValidator::FilepathValidator
 (	filesystem::path* p_filepath

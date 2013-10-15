@@ -366,10 +366,12 @@ DraftJournal::repeater_description()
 	ret += wxString(", with the next recording due on ");
 	gregorian::date next_date = (*it)->next_date();
 
-	// TODO Make this locale-sensitive (obviously I have to make the
-	// messages locale-sensitive as well in due course, but the
+	// TODO LOW PRIORITY Make this locale-sensitive (obviously I have to make
+	// the messages locale-sensitive as well in due course, but the
 	// date may be harder to spot than all the English strings, so
 	// flagging it explicitly with this comment).
+	// This is low priority because in the current (GUI) version of
+	// Phatbooks, DraftJournal::repeater_description() is not even used.
 	ret += std8_to_wx(lexical_cast<string>(next_date));
 
 	ret += wxString(".");

@@ -57,9 +57,9 @@ namespace gui
  * panel in which the user can create and configure multiple Accounts,
  * with the types, descriptions and opening balances.
  *
- * @todo We need to ensure that a the database connection has a default
- * Commodity, or else, we need to pass a Commodity separately to the
- * MultiAccountPanel constructor.
+ * When first constructed, the MultiAccountPanel will contain a number
+ * of rows some or all of which will contain data for creating default
+ * "suggested" Accounts.
  *
  * @param Is the minimum number of rows such that the user will be
  * prevented from reducing the number of row to less than this number.

@@ -55,8 +55,6 @@ namespace phatbooks
  * That part of the Commodity functionality that has already been
  * written, is for the time being being hidden by the preprocessor.
  * To unhide it, define PHATBOOKS_EXPOSE_COMMODITY.
- *
- * @todo Are copy constructor and assignment operator exception-safe?
  */
 class Commodity:
 	public sqloxx::PersistentObject

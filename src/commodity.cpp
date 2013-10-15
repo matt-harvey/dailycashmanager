@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #include "commodity.hpp"
 #include "balance_cache.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -55,7 +54,6 @@ using std::string;
 namespace phatbooks
 {
 
-
 struct Commodity::CommodityData
 {
 	optional<wxString> abbreviation;
@@ -64,7 +62,6 @@ struct Commodity::CommodityData
 	optional<int> precision;
 	optional<jewel::Decimal> multiplier_to_base;
 };
-
 
 void Commodity::setup_tables
 (	PhatbooksDatabaseConnection& dbc
@@ -105,14 +102,11 @@ Commodity::id_for_abbreviation
 	return ret;
 }
 
-
-
 Commodity::Commodity(Commodity const& rhs):
 	PersistentObject(rhs),
 	m_data(new CommodityData(*(rhs.m_data)))
 {
 }
-
 
 Commodity::Commodity
 (	IdentityMap& p_identity_map,
@@ -123,7 +117,6 @@ Commodity::Commodity
 {
 	(void)p_signature;  // silence compiler re. unused parameter
 }
-
 
 Commodity::Commodity
 (	IdentityMap& p_identity_map,	
@@ -152,7 +145,6 @@ Commodity::exists_with_abbreviation
 	return statement.step();
 }
 
-
 bool
 Commodity::exists_with_name
 (	PhatbooksDatabaseConnection& p_database_connection,
@@ -167,8 +159,6 @@ Commodity::exists_with_name
 	return statement.step();
 }
 
-
-
 void
 Commodity::swap(Commodity& rhs)
 {
@@ -177,7 +167,6 @@ Commodity::swap(Commodity& rhs)
 	swap(m_data, rhs.m_data);
 	return;
 }
-
 
 void Commodity::do_load()
 {
@@ -202,7 +191,6 @@ void Commodity::do_load()
 	return;
 }
 
-
 void Commodity::process_saving_statement(SQLStatement& statement)
 {
 	statement.bind
@@ -225,7 +213,6 @@ void Commodity::process_saving_statement(SQLStatement& statement)
 	return;
 }
 
-
 void Commodity::do_save_existing()
 {
 	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
@@ -246,7 +233,6 @@ void Commodity::do_save_existing()
 	process_saving_statement(updater);
 	return;
 }
-	
 
 void Commodity::do_save_new()
 {
@@ -350,8 +336,5 @@ std::string Commodity::primary_key_name()
 {
 	return "commodity_id";
 }
-
-
-	
 
 }  // namespace phatbooks

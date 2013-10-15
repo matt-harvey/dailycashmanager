@@ -123,7 +123,8 @@ MultiAccountPanel::MultiAccountPanel
 	increment_row();
 
 	// Row of column headings
-	AccountPhraseFlags const flags = AccountPhraseFlags().set(string_flags::capitalize);
+	AccountPhraseFlags const flags =
+		AccountPhraseFlags().set(string_flags::capitalize);
 	wxString const account_name_label =
 		wxString(" ") +
 		account_concept_name(m_account_super_type, flags) +
