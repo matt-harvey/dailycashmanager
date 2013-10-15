@@ -100,9 +100,6 @@ protected:
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);
 
-	// TODO There is code here surrounding min and max dates that is shared
-	// with FilteredEntryListCtrl. We could factor this out using a protected
-	// base class.
 	boost::gregorian::date min_date() const;
 	boost::optional<boost::gregorian::date> maybe_max_date() const;
 

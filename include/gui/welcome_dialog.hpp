@@ -63,8 +63,8 @@ private:
 	wxButton* m_existing_file_button;
 	wxButton* m_new_file_button;
 
-	// TODO The cancel button looks ugly here. It would be better to have
-	// a close box at the top right; however this was not showing when
+	// TODO LOW PRIORITY The cancel button looks ugly here. It would be better
+	// to have a close box at the top right; however this was not showing when
 	// I tried to add one using wxCLOSE_BOX style (at least not on
 	// Fedora with Gnome). Hence the cancel button. Perhaps on Windows,
 	// however, we can get the cancel button to work?

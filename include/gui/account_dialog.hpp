@@ -67,9 +67,9 @@ class DecimalTextCtrl;
  * to the user that "Opening balance" refers to balance at entity start
  * date.
  *
- * @todo Fix alignment of BudgetPanel within AcountDialog.
+ * @todo Fix alignment of BudgetPanel within AccountDialog.
  *
- * @todo Enable user to delete an Account, but only if it's one for
+ * @todo LOW PRIORITY Enable user to delete an Account, but only if it's one for
  * which no Entries have been made, and for which the opening balance
  * is nil, and where, after the proposed deletion, it will still be
  * the case that there is at least one balance sheet Account, at least

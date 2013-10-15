@@ -155,9 +155,6 @@ private:
 /**
  * To facilitate validation of filepath entered in
  * SetupWizard::FilepathPage.
- *
- * @todo The implementation of this is rather messy. Make it
- * nicer.
  */
 class SetupWizard::FilepathValidator: public wxValidator
 {
