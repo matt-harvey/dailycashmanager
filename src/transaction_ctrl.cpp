@@ -112,7 +112,7 @@ BEGIN_EVENT_TABLE(TransactionCtrl, GriddedScrolledPanel)
 	)
 END_EVENT_TABLE()
 
-// WARNING There are bugs in wxWidgets' wxDatePickerCtrl under wxGTK.
+// NOTE There are bugs in wxWidgets' wxDatePickerCtrl under wxGTK.
 // Firstly, tab traversal gets stuck on that control.
 // Secondly, if we type a different date and then press "Enter" for OK,
 // the date that actually gets picked up as the transaction date always
@@ -120,7 +120,9 @@ END_EVENT_TABLE()
 // be an unresolved bug in wxWidgets.
 // Note adding wxTAB_TRAVERSAL to style does not seem to fix the problem.
 // We have used a simple custom class, DateCtrl here instead, to avoid
-// these problems. Might later add a button to pop up a wxCalendarCtrl
+// these problems.
+//
+// TODO LOW PRIORITY add a button to pop up a wxCalendarCtrl
 // if the user wants one.
 
 namespace
@@ -941,7 +943,10 @@ TransactionCtrl::remove_journal()
 	JEWEL_LOG_TRACE();
 	if (!m_journal || !m_journal->has_id())
 	{
-		// WARNING This might be dead code.
+		// TODO LOW PRIORITY Figure out if this is dead code. If it is,
+		// get rid of it and put an appropriate assertion, and document
+		// whatever preconditions (in this or other functions) the
+		// "deadness" relies on.
 #	ifndef NDEBUG
 		if (m_journal)
 		{

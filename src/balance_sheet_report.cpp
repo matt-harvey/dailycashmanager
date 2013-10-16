@@ -207,11 +207,12 @@ BalanceSheetReport::display_body()
 
 	vector<wxString> section_titles;
 	section_titles.push_back(wxString("ASSETS"));
-	// WARNING Assuming no Equity Account.
+
+	// TODO LOW PRIORITY Assuming no Equity Account. Do an assertion
+	// to this effect.
 	section_titles.push_back(wxString("LIABILITIES"));
 	vector<AccountType> section_account_types;
 	section_account_types.push_back(AccountType::asset);
-	// WARNING Assuming no Equity Account.
 	section_account_types.push_back(AccountType::liability);
 	JEWEL_ASSERT (section_titles.size() == section_account_types.size());
 
@@ -223,7 +224,8 @@ BalanceSheetReport::display_body()
 	Decimal net_assets_closing = zero;
 	for (vector<wxString>::size_type i = 0 ; i != section_titles.size(); ++i)
 	{
-		// WARNING This relies on every Account having the same Commodity.
+		// TODO LOW PRIORITY This relies on every Account having the same
+		// Commodity. Do an assertion to this effect.
 		Decimal opening_balance_total = zero;
 		Decimal closing_balance_total = zero;
 		list<wxString>* names = 0;

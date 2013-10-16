@@ -232,7 +232,9 @@ PLReport::display_body()
 	Decimal net_revenue = zero;
 	for (vector<wxString>::size_type i = 0; i != section_titles.size(); ++i)
 	{
-		// WARNING This relies on every Account having the same Commodity
+		// TODO LOW PRIORITY This relies on every Account having the same
+		// Commodity. Put an assertion to this effect (and document
+		// precondition), or else throw if this is not the case.
 		Decimal total = zero;
 		list<wxString>* names = 0;
 		AccountType const account_type =

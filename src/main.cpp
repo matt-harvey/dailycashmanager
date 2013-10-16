@@ -30,15 +30,15 @@
 // system between the Phatbooks file extension and the Phatbooks application.
 // See CMake book, page. 162.
 
-// TODO The application should automatically create a zipped backup file of
-// the database on startup so that the session can be recovered if something
-// goes wrong.
+// TODO HIGH PRIORITY Should the application should automatically create a
+// backup file of the database on startup so that the session can be
+// recovered if something goes wrong?
 
-// TODO The database file should perhaps have a checksum to guard
-// against its contents changing other than via the application.
+// TODO MEDIUM PRIORITY The database file should perhaps have a checksum to
+// guard against its contents changing other than via the application.
 
-// TODO Facilitate automatic checking for updates from user's
-// machine, as well as easy process for providing updates
+// TODO HIGH PRIORITY Facilitate automatic checking for updates from user's
+// machine, or at least provide an easy process for installing updates
 // via NSIS. It appears that the default configuration of CPack/NSIS is
 // such that updates will not overwrite existing files. Some manual NSIS
 // scripting may be required to enable this. Also take into account that
@@ -47,10 +47,10 @@
 // \e think that the default configuration under CPack does this
 // automatically).
 
-// TODO Write the licence.
+// TODO HIGH PRIORITY Write the licence.
 
-// TODO Ensure that the option for the user to lauch directly from the
-// installer, works correctly.
+// TODO HIGH PRIORITY Ensure that the option for the user to lauch directly from
+// the installer, works correctly.
 
 // TODO HIGH PRIORITY Create a decent icon for the application. We want this
 // in both .ico form (for Windows executable icon) and .xpm
@@ -68,9 +68,9 @@
 // way to ensure this is reflected consistently everywhere it appears
 // (website, installer, licence text etc.).
 
-// TODO We need a proper solution to the potential for integer overflow.
-// Mostly we use jewel::Decimal arithmetic - which will throw if unsafe -
-// but we're not actually handling these exceptions for the user. The
+// TODO HIGH PRIORITY We need a proper solution to the potential for integer
+// overflow. Mostly we use jewel::Decimal arithmetic - which will throw if
+// unsafe - but we're not actually handling these exceptions for the user. The
 // program would just crash. In particular, it is possible for the user
 // to post a journal which both causes the program to crash, and makes it
 // so that they can never open their file again, since the act of updating
@@ -80,7 +80,8 @@
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.
 
-// TODO Make it so that if the program crashes, a dialog is displayed which
+// TODO HIGH PRIORITY Make it so that if the program crashes, a dialog is
+// displayed which
 // preferably allows the user to email the log file and an optional
 // user-supplied message to "help desk" with a single mouse click from
 // the window itself; or, if not, at least tells the user
@@ -232,6 +233,10 @@ int main(int argc, char** argv)
 		);
 		cmd.add(filepath_arg);
 		cmd.parse(argc, argv);
+
+		// TODO MEDIUM PRIORITY This may require a wstring or wxString if we
+		// want to support non-ASCII filenames on Windows. We would need to
+		// change the interface with phatbooks::Session.
 		string const filepath_str = filepath_arg.getValue();
 		if (!filepath_str.empty() && !filesystem::exists(filepath_str))
 		{
@@ -252,9 +257,7 @@ int main(int argc, char** argv)
 		}
 		// Note phatbooks::Session currently requires a std::string to
 		// be passed here.
-		// TODO This may require a wstring or wxString if we want to
-		// support non-ASCII filenames on Windows. We would need to
-		// change the interface with phatbooks::Session.
+
 		if (filepath_str.empty())
 		{
 			return graphical_session.run();

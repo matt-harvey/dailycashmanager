@@ -375,7 +375,6 @@ Frame::on_menu_new_transaction(wxCommandEvent& event)
 	selected_balance_sheet_accounts(balance_sheet_accounts);
 	vector<Handle<Account> > pl_accounts;
 	selected_pl_accounts(pl_accounts);
-	// m_top_panel->SetFocus();  // WARNING This doesn't seem to have any effect
 	m_top_panel->configure_transaction_ctrl();
 	return;
 }
@@ -598,7 +597,9 @@ Frame::on_journal_edited_event(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	wxWindowUpdateLocker const update_locker(this);
-	// WARNING Repeats code from on_journal_created_event(...).
+
+	// TODO LOW PRIORITY Factor code duplicated from
+	// on_journal_created_event(...).
 	JEWEL_ASSERT (m_top_panel);
 	Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))

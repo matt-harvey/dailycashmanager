@@ -406,7 +406,7 @@ AmalgamatedBudget::regenerate_instrument()
 		fresh_journal->push_entry(balancing_entry);
 		JEWEL_ASSERT (fresh_journal->is_balanced());
 	}
-	// WARNING the source and destination are the opposite way
+	// WARNING LOW PRIORITY the source and destination are the opposite way
 	// round to usual here. But it probably doesn't matter, as
 	// the user won't be seeing this Journal anyway.
 	m_instrument->mimic(*fresh_journal);

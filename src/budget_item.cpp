@@ -327,8 +327,11 @@ normalized_total
 	JEWEL_ASSERT (e - b > 0);  // Assert precondition.
 	PhatbooksDatabaseConnection& dbc = (*b)->database_connection();
 	Handle<Commodity> commodity(dbc);
-	// WARNING Temporary hack - if Accounts can ever have Commodities other
-	// than the default Commodity, then this will no longer work.
+
+	// TODO LOW PRIORITY The below is a temporary hack - if Accounts can ever
+	// have Commodities other than the default Commodity, then this will no
+	// longer work. Either make this less hacky, or else at least do an
+	// assertion or throw if there are non-default Commodities.
 	try
 	{
 		commodity = (*b)->account()->commodity();

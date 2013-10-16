@@ -87,8 +87,8 @@ string finformat_std8
 	bool const pad = !p_flags.test(string_flags::hard_align_right);
 	ostringstream oss;
 
-	// WARNING This doesn't format properly on Windows. It just ignores
-	// the thousands separators.
+	// TODO MEDIUM PRIORITY This doesn't format properly on Windows.
+	// It just ignores the thousands separators.
 	oss.imbue(locale(""));
 	oss << decimal;
 	string ret(oss.str());
