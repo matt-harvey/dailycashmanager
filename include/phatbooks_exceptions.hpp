@@ -147,6 +147,12 @@ JEWEL_DERIVED_EXCEPTION(EntityCreationDateException, PhatbooksException);
 JEWEL_DERIVED_EXCEPTION(InvalidAccountNameException, PhatbooksException);
 
 /**
+ * Exception to be thrown when an Account or a range of Accounts
+ * is invalid in some context.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidAccountException, PhatbooksException);
+
+/**
  * Exception to be thrown when there is an attempt to name an Account with
  * a name that has already been used.
  */
@@ -181,7 +187,8 @@ JEWEL_DERIVED_EXCEPTION
 );
 
 /**
- * Exception to be thrown when an AccountType is invalid in a given context.
+ * Exception to be thrown when an AccountType or a range of AccountTypes
+ * is invalid in a given context.
  */
 JEWEL_DERIVED_EXCEPTION(InvalidAccountTypeException, PhatbooksException);
 

@@ -70,9 +70,10 @@ public:
 	 * p_account.database_connection().balancing_account() will not
 	 * appear in the Combobox, even if it is in the range provided.
 	 *
-	 * All Accounts in the given range must have IDs.
+	 * @throws InvalidAccountTypeException if p_account_types is empty.
 	 *
-	 * @todo Guard against \e p_account_types being empty.
+	 * @throws InvalidAccountException if p_account_types is non-empty, but
+	 * there are no Accounts with these AccountTypes in the database.
 	 */
 	AccountCtrl
 	(	wxWindow* p_parent,
@@ -97,7 +98,10 @@ public:
 	 * <em>m_database_connection.balancing_account()</em> will \e not
 	 * appear in the Combobox, even if it is in the range provided.
 	 *
-	 * All Accounts in the range must have Ids.
+	 * @throws InvalidAccountTypeException if p_account_types is empty.
+	 *
+	 * @throws InvalidAccountException if p_account_types is non-empty, but
+	 * there are no Accounts with these AccountTypes in the database.
 	 */
 	void reset
 	(	std::vector<AccountType> const& p_account_types,
@@ -113,6 +117,10 @@ public:
 	 */
 	sqloxx::Handle<Account> account();
 
+	/**
+	 * @throws InvalidAccountException if p_account is not
+	 * supported by the AccountCtrl.
+	 */
 	void set_account(sqloxx::Handle<Account> const& p_account);
 
 	void update_for_new(sqloxx::Handle<Account> const& p_account);

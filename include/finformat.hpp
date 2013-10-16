@@ -79,6 +79,8 @@ typedef
  * followed by a number of spaces equal to decimal.places(),
  * followed (unless flagged otherwise per above) by an extra space
  * for alignment.
+ *
+ * @todo HIGH PRIORITY tests
  */
 std::string finformat_std8
 (	jewel::Decimal const& decimal,
@@ -107,7 +109,7 @@ std::string finformat_std8
  * dash is never used for zero, regardless of the contents
  * of \e p_flags.
  *
- * @todo Testing.
+ * @todo HIGH PRIORITY tests
  */
 wxString finformat_wx
 (	jewel::Decimal const& decimal,
@@ -133,6 +135,8 @@ wxString finformat_wx
  * If PHATBOOKS_DISALLOW_DASH_FOR_ZERO is defined, then
  * dash is never used for zero, regardless of the contents
  * of \e p_flags.
+ *
+ * @todo HIGH PRIORITY tests
  */
 jewel::Decimal wx_to_decimal
 (	wxString wxs,
@@ -146,6 +150,8 @@ jewel::Decimal wx_to_decimal
  * arithmetic expression will be processed, and the resulting sum
  * returned, providing '+' and '-' are the only operators used, and
  * there are no parentheses.
+ *
+ * @todo HIGH PRIORITY tests
  */
 jewel::Decimal wx_to_simple_sum(wxString wxs, wxLocale const& loc);
 

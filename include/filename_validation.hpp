@@ -48,8 +48,6 @@ namespace phatbooks
  * @returns \e true if and only if this filename may be used to identify
  * a Phatbooks database file. An error message will be assigned to \e message
  * if and only if \e false is returned.
- *
- * @todo Testing.
  */
 bool is_valid_filename
 (	std::string const& s,

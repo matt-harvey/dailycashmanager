@@ -22,6 +22,7 @@
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "string_flags.hpp"
 #include "gui/string_set_validator.hpp"
 #include <jewel/assert.hpp>
@@ -32,11 +33,13 @@
 #include <wx/event.h>
 #include <wx/string.h>
 #include <set>
+#include <sstream>
 #include <vector>
 
 using jewel::Log;
 using sqloxx::Handle;
 using sqloxx::Id;
+using std::ostringstream;
 using std::set;
 using std::vector;
 
@@ -95,6 +98,13 @@ AccountCtrl::reset
 )
 {
 	JEWEL_LOG_TRACE();
+	if (p_account_types.empty())
+	{
+		JEWEL_THROW
+		(	InvalidAccountTypeException,
+			"Attempted to configure AccountCtrl with empty vector<AccountType>."
+		);
+	}
 	m_available_account_types = set<AccountType>
 	(	p_account_types.begin(),
 		p_account_types.end()
@@ -111,10 +121,6 @@ AccountCtrl::reset()
 	wxArrayString valid_account_names;
 	Handle<Account> const balancing_acct =
 		m_database_connection.balancing_account();
-	vector<Handle<Account> > avec
-	(	AccountTableIterator(m_database_connection),
-		(AccountTableIterator())
-	);
 	AccountTableIterator it(m_database_connection);
 	AccountTableIterator const end;
 	for ( ; it != end; ++it)
@@ -130,16 +136,25 @@ AccountCtrl::reset()
 			}
 			else
 			{
-				valid_account_names.Add((*it)->name());
+				wxString const name = (*it)->name();
+				valid_account_names.Add(name);
 
 				// Remember the Account associated with this name (comes
 				// in handy when we have to update for a change in Account
 				// name).
-				m_account_map[(*it)->name()] = (*it)->id();
+				m_account_map[name] = (*it)->id();
 			}
 		}
 	}
-	JEWEL_ASSERT (!valid_account_names.IsEmpty());  // TODO HIGH PRIORITY Can this fail?
+	if (m_account_map.empty())
+	{
+		JEWEL_THROW
+		(	InvalidAccountException,
+			"There are no saved Accounts with AccountTypes supported by "
+			"this AccountCtrl."
+		);
+	}
+	JEWEL_ASSERT (!valid_account_names.IsEmpty());
 	StringSetValidator validator
 	(	valid_account_names[0],
 		valid_account_names,
@@ -155,11 +170,22 @@ AccountCtrl::reset()
 void
 AccountCtrl::set_account(Handle<Account> const& p_account)
 {
-	JEWEL_LOG_VALUE(Log::info, p_account->name());
+	wxString const name = p_account->name();
+	JEWEL_LOG_VALUE(Log::info, name);
+	if (m_account_map.find(name) == m_account_map.end())
+	{
+		ostringstream oss;
+		oss << "Account with name \"" << name << "\" is not supported by this "
+			<< "AccountCtrl.";
+		char const* msg = oss.str().c_str();
+		JEWEL_THROW(InvalidAccountException, msg);
+	}
 	StringSetValidator* const validator =
 		dynamic_cast<StringSetValidator*>(GetValidator());
-	SetValue(p_account->name());
+	JEWEL_ASSERT (validator);
+	SetValue(name);
 	validator->TransferFromWindow();
+	JEWEL_LOG_TRACE();
 	return;
 }
 
