@@ -323,7 +323,6 @@ PhatbooksDatabaseConnection::default_commodity() const
 	return m_permanent_entity_data->default_commodity();
 }
 
-
 void
 PhatbooksDatabaseConnection::set_default_commodity
 (	Handle<Commodity> const& p_commodity
@@ -339,7 +338,6 @@ PhatbooksDatabaseConnection::set_default_commodity
 	}
 	return;
 }
-
 
 Handle<DraftJournal>
 PhatbooksDatabaseConnection::budget_instrument() const

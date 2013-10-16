@@ -31,8 +31,18 @@ namespace phatbooks
 /**
  * Class for encapsulating very general application-level
  * information.
- *
- * @todo Make sure we can't clobber an existing config file.
+ * 
+ * @todo MEDIUM PRIORITY When we are setting up
+ * the config file for the first time, there is a tiny chance that the user's
+ * system already has a file or registry entry named exactly
+ * the same as the config file/registry entry that we are setting
+ * up. If this happens wxWidgets crashes with a failed assertion
+ * (even on Release build). This isn't very satisfactory. It would be
+ * better to crash than proceed and clobber the file; however,
+ * it would be better still if it could adapt to the situation and
+ * proceed safely... for example, if the config file is not holding any
+ * critical information, then it could ignore it, adopt some reasonable
+ * default settings instead, and inform the user that that's what it did.
  */
 class Application
 {

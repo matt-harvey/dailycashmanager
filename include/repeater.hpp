@@ -176,9 +176,9 @@ public:
 	 * empty journal posting notifications in case they have not
 	 * yet set up any BudgetItems.
 	 *
-	 * @todo Document exception safety.
+	 * @todo HIGH PRIORITY Document exception safety.
 	 *
-	 * @todo Testing (but see tests already done...)
+	 * @todo HIGH PRIORITY Testing (but see tests already done...)
 	 */
 	sqloxx::Handle<OrdinaryJournal> fire_next();
 	

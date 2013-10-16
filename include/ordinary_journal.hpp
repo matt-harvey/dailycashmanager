@@ -123,9 +123,6 @@ public:
 	 */
 	void set_date_unrestricted(boost::gregorian::date const& p_date);
 
-	/**
-	 * @todo Verify throwing behaviour and determine dependence on DateRep.
-	 */
 	boost::gregorian::date date();
 
 	/**

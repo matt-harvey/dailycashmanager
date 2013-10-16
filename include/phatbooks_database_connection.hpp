@@ -40,6 +40,7 @@ namespace phatbooks
 // Begin forward declarations
 
 class AmalgamatedBudget;
+class AmalgamatedBudgetSignature;
 class Account;
 class BalanceCache;
 class BudgetItem;
@@ -119,14 +120,12 @@ public:
 	 * that are not cached under the new level, that were cached under the old
 	 * level, that are cached at the time the level changes, are emptied from
 	 * the cache.
-	 *
-	 * @todo Determinate and document throwing behaviour.
 	 */
 	void set_caching_level(unsigned int level);
 
 	/**
-	 * @returns the sqloxx::Handle<Account> to which budget imbalances are reconciled
-	 * in the budget_instrument().
+	 * @returns the sqloxx::Handle<Account> to which budget imbalances are
+	 * reconciled in the budget_instrument().
 	 */
 	sqloxx::Handle<Account> balancing_account() const;
 
@@ -158,9 +157,9 @@ public:
 	 * distributions of budget amounts to budgeting envelopes
 	 * (Accounts).
 	 *
-	 * @todo Prevent the budget instrument from being edited or
-	 * deleted, except via code in AmalgamatedBudget. This could
-	 * be achieved using a signature class for AmalgamatedBudget.
+	 * NOTE Client code should access this only with care. The
+	 * "instrument" should normally be modified / managed only
+	 * by AmalgamatedBudget.
 	 */
 	sqloxx::Handle<DraftJournal> budget_instrument() const;
 	

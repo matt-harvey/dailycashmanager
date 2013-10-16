@@ -129,13 +129,8 @@ Application::default_directory()
 wxConfig&
 Application::config()
 {
-	static wxConfig* conf = 0;
-	if (!conf)
-	{
-		conf = new wxConfig(application_name(), vendor_name());
-	}
-	JEWEL_ASSERT (conf);
-	return *conf;
+	static wxConfig conf(application_name(), vendor_name());
+	return conf;
 }
 
 
