@@ -157,25 +157,10 @@ public:
 	 *
 	 * @throws UnsafeArithmeticException in the extremely unlikely event of
 	 * arithmetic overflow during execution.
-	 *
-	 * @todo Could it throw anything else?
 	 */
 	boost::gregorian::date next_date
 	(	std::vector<boost::gregorian::date>::size_type n = 0
 	);
-
-	/**
-	 * @throws UnsafeArithmeticException in the extremely unlikely event of
-	 * arithmetic overflow during calculation.
-	 *
-	 * @todo Could it throw anything else?
-	 *
-	 * @returns a smart pointer to a vector into which the
-	 * list of firings occur in chronological order from
-	 * soonest to latest.
-	 */
-	std::shared_ptr<std::vector<boost::gregorian::date> >
-	firings_till(boost::gregorian::date const& limit);
 
 	/**
 	 * Post an OrdinaryJournal - based on this Repeater's DraftJournal -

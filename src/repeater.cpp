@@ -65,7 +65,6 @@ using std::list;
 using std::move;
 using std::numeric_limits;
 using std::ostringstream;
-using std::shared_ptr;
 using std::string;
 using std::vector;
 
@@ -256,22 +255,6 @@ Repeater::next_date(vector<gregorian::date>::size_type n)
 		break;
 	default:
 		JEWEL_HARD_ASSERT (false);
-	}
-	return ret;
-}
-
-shared_ptr<vector<gregorian::date> >
-Repeater::firings_till(gregorian::date const& limit)
-{
-	load();
-	using gregorian::date;
-	shared_ptr<vector<date> > ret(new vector<date>);
-	JEWEL_ASSERT (ret->empty());
-	date d = next_date(0);
-	typedef vector<gregorian::date>::size_type Size;
-	for (Size i = 0; d <= limit; d = next_date(++i))
-	{
-		ret->push_back(d);
 	}
 	return ret;
 }

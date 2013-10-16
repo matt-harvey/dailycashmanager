@@ -147,49 +147,6 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	// deleted, and these make the particular Id of each Repeater non-obvious.
 }
 
-TEST_FIXTURE(TestFixture, test_repeater_firings_till)
-{
-	PhatbooksDatabaseConnection& dbc = *pdbc;
-
-	Handle<Repeater> const repeater1(dbc);
-	repeater1->set_frequency(Frequency(5, IntervalType::days));
-	repeater1->set_next_date(date(3000, 5, 3));
-	shared_ptr<vector<date> > firings1 =
-		repeater1->firings_till(date(2999, 5, 2));
-	CHECK(firings1->empty());
-	firings1 = repeater1->firings_till(date(3000, 5, 4));
-	CHECK_EQUAL(firings1->size(), unsigned(1));
-	CHECK_EQUAL((*firings1)[0], date(3000, 5, 3));
-	firings1 = repeater1->firings_till(date(3000, 5, 2));
-	CHECK(firings1->empty());
-	firings1 = repeater1->firings_till(date(3000, 5, 3));
-	CHECK_EQUAL(firings1->size(), unsigned(1));
-	CHECK_EQUAL((*firings1)[0], date(3000, 5, 3));
-	firings1 = repeater1->firings_till(date(3000, 5, 20));
-	CHECK_EQUAL(firings1->size(), unsigned(4));
-	CHECK_EQUAL((*firings1)[0], date(3000, 5, 3));
-	CHECK_EQUAL((*firings1)[1], date(3000, 5, 8));
-	CHECK_EQUAL((*firings1)[2], date(3000, 5, 13));
-	CHECK_EQUAL((*firings1)[3], date(3000, 5, 18));
-
-	Handle<Repeater> const repeater2(dbc);
-	repeater2->set_frequency(Frequency(3, IntervalType::month_ends));
-	repeater2->set_next_date(date(3012, 12, 31));
-	shared_ptr<vector<date> > firings2;
-	firings2 = repeater2->firings_till(date(3012, 12, 30));
-	CHECK(firings2->empty());
-	firings2 = repeater2->firings_till(date(3013, 2, 28));
-	CHECK_EQUAL(firings2->size(), unsigned(1));
-	CHECK_EQUAL((*firings2)[0], date(3012, 12, 31));
-	firings2 = repeater2->firings_till(date(3013, 12, 31));
-	CHECK_EQUAL(firings2->size(), unsigned(5));
-	CHECK_EQUAL((*firings2)[4], date(3013, 12, 31));
-	CHECK_EQUAL((*firings2)[3], date(3013, 9, 30));
-	CHECK_EQUAL((*firings2)[2], date(3013, 6, 30));
-	CHECK_EQUAL((*firings2)[1], date(3013, 3, 31));
-	CHECK_EQUAL((*firings2)[0], date(3012, 12, 31));
-}
-
 TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
