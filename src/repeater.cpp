@@ -43,6 +43,7 @@
 #include <limits>
 #include <list>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -63,6 +64,7 @@ using std::is_same;
 using std::list;
 using std::move;
 using std::numeric_limits;
+using std::ostringstream;
 using std::shared_ptr;
 using std::string;
 using std::vector;
@@ -76,8 +78,6 @@ struct Repeater::RepeaterData
 	optional<DateRep> next_date;
 	optional<Id> journal_id;
 };
-
-
 
 void
 Repeater::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -132,6 +132,25 @@ void
 Repeater::set_frequency(Frequency const& p_frequency)
 {
 	load();
+	if (m_data->next_date)
+	{
+		auto const next =
+			boost_date_from_julian_int(*(m_data->next_date));
+		auto const interval = p_frequency.step_type();
+		if (!is_valid_date_for_interval_type(next, interval))
+		{
+			ostringstream oss;
+			oss << "Attempted to set Repeater Frequency to a Frequency "
+				<< "with a step_type() of "
+				<< "\"interval\""
+				<< ", however this is incompatible with the Repeater "
+				<< "next_date(), which has been set to "
+				<< next
+				<< ".";
+			char const* msg = oss.str().c_str();
+			JEWEL_THROW (InvalidFrequencyException, msg);
+		}
+	}
 	m_data->frequency = p_frequency;
 	return;
 }
@@ -152,6 +171,23 @@ Repeater::set_next_date(boost::gregorian::date const& p_next_date)
 		database_connection().entity_creation_date()
 	);
 	load();
+	if (m_data->frequency)
+	{
+		IntervalType const interval = m_data->frequency->step_type();
+		if (!is_valid_date_for_interval_type(p_next_date, interval))
+		{
+			ostringstream oss;
+			oss << "Attempted to set Repeater next_date() to "
+				<< p_next_date
+				<< ", however this is incompatible with the Frequency "
+				<< "that has already been set for the Repeater and has "
+				<< "a step_type() of "
+				<< interval
+				<< ".";
+			char const* msg = oss.str().c_str();
+			JEWEL_THROW (InvalidRepeaterDateException, msg);
+		}
+	}
 	m_data->next_date = julian_int(p_next_date);
 	return;
 }
@@ -239,7 +275,6 @@ Repeater::firings_till(gregorian::date const& limit)
 	return ret;
 }
 
-
 Handle<OrdinaryJournal>
 Repeater::fire_next()
 {
@@ -282,8 +317,6 @@ Repeater::fire_next()
 	return oj;
 }
 
-
-
 Handle<DraftJournal>
 Repeater::draft_journal()
 {
@@ -294,7 +327,6 @@ Repeater::draft_journal()
 	);
 }
 
-
 void
 Repeater::swap(Repeater& rhs)
 {
@@ -304,13 +336,11 @@ Repeater::swap(Repeater& rhs)
 	return;
 }
 
-
 Repeater::Repeater(Repeater const& rhs):
 	PersistentObject(rhs),
 	m_data(new RepeaterData(*(rhs.m_data)))
 {
 }
-
 
 void
 Repeater::do_load()
@@ -331,14 +361,25 @@ Repeater::do_load()
 		numeric_cast<DateRep>(statement.extract<long long>(2));
 	temp.m_data->journal_id = statement.extract<Id>(3);
 	swap(temp);
+	JEWEL_ASSERT
+	(	is_valid_date_for_interval_type
+		(	boost_date_from_julian_int(value(m_data->next_date)),
+			value(m_data->frequency).step_type()
+		)
+	);
 	return;
 }
-
 
 void
 Repeater::process_saving_statement(SQLStatement& statement)
 {
 	Frequency const freq = value(m_data->frequency);
+	JEWEL_ASSERT
+	(	is_valid_date_for_interval_type
+		(	boost_date_from_julian_int(value(m_data->next_date)),
+			freq.step_type()
+		)
+	);
 	statement.bind(":interval_units", freq.num_steps());
 	statement.bind
 	(	":interval_type_id",

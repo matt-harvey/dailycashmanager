@@ -62,11 +62,6 @@ class Frequency;
  * causes an OrdinaryJournal to be "cloned from" the DraftJournal, and then
  * posted.
  *
- * @todo Prevent next_date from being set to anything other than the last
- * day of the month in the event that the interval type is month_ends; and
- * prevent next_date from being set later than the 27th in the event the
- * interval_type is months (as opposed to month_ends).
- *
  * Client code should not deal with Repeater instances directly, but
  * only ever via sqloxx::Handle<Repeater>.
  */
@@ -120,8 +115,26 @@ public:
 
 	~Repeater();
 
+	/**
+	 * @throws InvalidFrequencyException in the event that the "next date"
+	 * has already been set for this Repeater and \e p_frequency is
+	 * incompatible with that "next date".
+	 *
+	 * @see \e is_valid_date_for_interval_type
+	 *
+	 * @todo HIGH PRIORITY Test exception throwing behaviour.
+	 */
 	void set_frequency(Frequency const& p_frequency);
 
+	/**
+	 * @throws InvalidRepeaterDateException in the event that the Frequency
+	 * has already been set for this Repeater and \e p_next_date
+	 * incompatible with that frequency.
+	 *
+	 * @see \e is_valid_date_for_interval_type
+	 *
+	 * @todo HIGH PRIORITY Test exception throwing behaviour.
+	 */
 	void set_next_date(boost::gregorian::date const& p_next_date);
 
 	/**

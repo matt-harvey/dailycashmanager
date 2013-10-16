@@ -22,6 +22,7 @@
 
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <wx/string.h>
+#include <ostream>
 
 namespace phatbooks
 {
@@ -70,6 +71,14 @@ bool is_valid_date_for_interval_type
 (	boost::gregorian::date const& p_date,
 	IntervalType p_interval_type
 );
+
+/**
+ * Output IntervalType as "user unfriendly string"
+ * suitable for developer-facing diagnostic messages.
+ */
+std::ostream&
+operator<<(std::ostream& os, IntervalType);
+
 
 }  // namespace phatbooks
 

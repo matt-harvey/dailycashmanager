@@ -22,9 +22,10 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/assert.hpp>
 #include <wx/string.h>
+#include <ostream>
 
+using std::ostream;
 namespace gregorian = boost::gregorian;
-
 
 namespace phatbooks
 {
@@ -73,6 +74,28 @@ is_valid_date_for_interval_type
 	JEWEL_HARD_ASSERT (false);
 }
 		
+ostream&
+operator<<(ostream& os, IntervalType p_interval_type)
+{
+	switch (p_interval_type)
+	{
+	case IntervalType::days:
+		os << "days";
+		break;
+	case IntervalType::weeks:
+		os << "weeks";
+		break;
+	case IntervalType::months:
+		os << "months";
+		break;
+	case IntervalType::month_ends:
+		os << "month_ends";
+		break;
+	default:
+		JEWEL_HARD_ASSERT (false);
+	}
+	return os;
+}
 
 
 }  // namespace phatbooks
