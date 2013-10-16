@@ -166,6 +166,7 @@ TransactionCtrl::TransactionCtrl
 	JEWEL_ASSERT (p_journal->has_id());
 	JEWEL_ASSERT (m_journal->has_id());
 	JEWEL_ASSERT (m_journal->id() == p_journal->id());
+	SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
 	configure_for_editing_persistent_journal();
 }
 
@@ -195,6 +196,7 @@ TransactionCtrl::TransactionCtrl
 	JEWEL_ASSERT (p_journal->has_id());
 	JEWEL_ASSERT (m_journal->has_id());
 	JEWEL_ASSERT (m_journal->id() == p_journal->id());
+	SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
 	configure_for_editing_persistent_journal();
 }
 
@@ -220,6 +222,7 @@ TransactionCtrl::TransactionCtrl
 	m_ok_button(nullptr)
 {
 	JEWEL_LOG_TRACE();
+	SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
 	configure_for_editing_proto_journal(p_journal);
 }
 
@@ -696,29 +699,40 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 
+	// TODO MEDIUM PRIORITY If the user hits enter while in an
+	// AccountCtrl containing an invalid Account name, then the "invalid account
+	// name" message comes up twice in succession, i.e. they have to click or
+	// Enter twice to get rid of it.
+
 	(void)event;  // Silence compiler re. unused parameter.
 	JEWEL_ASSERT (m_source_entry_ctrl);
 	JEWEL_ASSERT (m_destination_entry_ctrl);
 	if (Validate() && TransferDataFromWindow())
 	{
+		JEWEL_LOG_TRACE();
 		if (is_balanced())
 		{
+			JEWEL_LOG_TRACE();
 			bool actioned = false;
 			if (m_journal)
 			{
+				JEWEL_LOG_TRACE();
 				actioned = save_existing_journal();
 			}
 			else
 			{
+				JEWEL_LOG_TRACE();
 				actioned = post_journal();
 			}
 			if (actioned)
 			{
+				JEWEL_LOG_TRACE();
 				reset();
 			}
 		}
 		else
 		{
+			JEWEL_LOG_TRACE();
 			wxString msg = wxEmptyString;
 			msg += wxString("Cannot save unbalanced transaction.");
 			Decimal const imbalances[] =
@@ -749,9 +763,12 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 					msg += ".";
 				}
 			}
+			JEWEL_LOG_TRACE();
 			wxMessageBox(msg);
 		}
+		JEWEL_LOG_TRACE();
 	}
+	JEWEL_LOG_TRACE();
 	return;
 }
 

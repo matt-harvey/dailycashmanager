@@ -26,6 +26,7 @@
 #include "gui/string_set_validator.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/combobox.h>
 #include <wx/event.h>
@@ -35,6 +36,7 @@
 
 using jewel::Log;
 using sqloxx::Handle;
+using sqloxx::Id;
 using std::set;
 using std::vector;
 
@@ -76,6 +78,7 @@ AccountCtrl::AccountCtrl
 	),
 	m_database_connection(p_database_connection)
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (m_available_account_types.empty());
 	reset(p_account_types, p_exclude_balancing_account);
 	JEWEL_ASSERT (m_exclude_balancing_account == p_exclude_balancing_account);
@@ -91,6 +94,7 @@ AccountCtrl::reset
 	bool p_exclude_balancing_account
 )
 {
+	JEWEL_LOG_TRACE();
 	m_available_account_types = set<AccountType>
 	(	p_account_types.begin(),
 		p_account_types.end()
@@ -102,6 +106,7 @@ AccountCtrl::reset
 void
 AccountCtrl::reset()
 {
+	JEWEL_LOG_TRACE();
 	m_account_map.clear();
 	wxArrayString valid_account_names;
 	Handle<Account> const balancing_acct =
@@ -161,17 +166,21 @@ AccountCtrl::set_account(Handle<Account> const& p_account)
 Handle<Account>
 AccountCtrl::account()
 {
+	JEWEL_LOG_TRACE();
 	// Note it may NOT necessarily be the case at this point that
 	// GetValue() == validator->m_text.
-	return Handle<Account>
-	(	m_database_connection,
-		m_account_map.at(GetValue())
-	);
+	wxString const account_name = GetValue();
+	JEWEL_LOG_VALUE(Log::info, account_name);
+	Id const account_id = m_account_map.at(account_name);
+	auto const ret = Handle<Account>(m_database_connection, account_id);
+	JEWEL_LOG_TRACE();
+	return ret;
 }
 
 void
 AccountCtrl::update_for_new(Handle<Account> const& p_account)
 {
+	JEWEL_LOG_TRACE();
 	(void)p_account;  // silence compiler re. unused parameter
 	refresh();
 	return;
@@ -180,6 +189,7 @@ AccountCtrl::update_for_new(Handle<Account> const& p_account)
 void
 AccountCtrl::update_for_amended(Handle<Account> const& p_account)
 {
+	JEWEL_LOG_TRACE();
 	(void)p_account;  // silence compiler re. unused parameter
 	refresh();
 	return;
@@ -188,6 +198,7 @@ AccountCtrl::update_for_amended(Handle<Account> const& p_account)
 void
 AccountCtrl::on_kill_focus(wxFocusEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	// Unfortunately if we call Validate() and TransferDataToWindow()
 	// directly on the AccountCtrl, it doesn't work. We have to call
 	// through parent instead.

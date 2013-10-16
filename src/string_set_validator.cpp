@@ -53,6 +53,7 @@ StringSetValidator::StringSetValidator(StringSetValidator const& rhs):
 bool
 StringSetValidator::Validate(wxWindow* WXUNUSED(wxparent))
 {
+	JEWEL_LOG_TRACE();
 	wxTextEntry const* const text_entry =
 		dynamic_cast<wxTextEntry*>(GetWindow());
 	JEWEL_ASSERT (text_entry);
@@ -66,16 +67,19 @@ StringSetValidator::Validate(wxWindow* WXUNUSED(wxparent))
 			wxString("\" ") +
 			wxString("is not a valid ") + m_description_for_error_message
 		);
+		JEWEL_LOG_TRACE();
 		return false;
 	}
 	JEWEL_ASSERT (position != wxNOT_FOUND);
 	m_text = candidate_text;
+	JEWEL_LOG_TRACE();
 	return true;
 }
 
 bool
 StringSetValidator::TransferFromWindow()
 {
+	JEWEL_LOG_TRACE();
 	wxTextEntry* const text_entry = dynamic_cast<wxTextEntry*>(GetWindow());
 	JEWEL_ASSERT (text_entry);	
 	m_text = text_entry->GetValue();
@@ -85,6 +89,7 @@ StringSetValidator::TransferFromWindow()
 bool
 StringSetValidator::TransferToWindow()
 {
+	JEWEL_LOG_TRACE();
 	wxTextEntry* const text_entry = dynamic_cast<wxTextEntry*>(GetWindow());
 	JEWEL_ASSERT (text_entry);
 	text_entry->SetValue(m_text);
