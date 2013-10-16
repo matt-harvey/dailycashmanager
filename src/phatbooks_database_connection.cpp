@@ -45,6 +45,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
@@ -56,6 +57,7 @@
 #include <string>
 
 using boost::numeric_cast;
+using boost::optional;
 using jewel::Decimal;
 using jewel::Log;
 using jewel::value;
@@ -75,6 +77,33 @@ namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
+
+class PhatbooksDatabaseConnection::PermanentEntityData
+{
+public:
+	PermanentEntityData() = default;
+	PermanentEntityData(PermanentEntityData const&) = delete;
+	PermanentEntityData(PermanentEntityData&&) = delete;
+	PermanentEntityData& operator=(PermanentEntityData const&) = delete;
+	PermanentEntityData& operator=(PermanentEntityData&&) = delete;
+	~PermanentEntityData() = default;
+	gregorian::date creation_date() const;
+	bool default_commodity_is_set() const;
+	Handle<Commodity> default_commodity() const;
+	
+	/**
+	 * @throws EntityCreationDateException if we try to set
+	 * the entity creation date when it has already been
+	 * initialized to some other date.
+	 */
+	void set_creation_date(boost::gregorian::date const& p_date);
+
+	void set_default_commodity(Handle<Commodity> const& p_commodity);
+
+private:
+	boost::optional<boost::gregorian::date> m_creation_date;
+	sqloxx::Handle<Commodity> m_default_commodity;
+};
 
 
 PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
@@ -511,7 +540,7 @@ PhatbooksDatabaseConnection::PermanentEntityData::default_commodity() const
 		throw std::logic_error("Default commodity has not been set.");
 	}
 	JEWEL_ASSERT (m_default_commodity);
-	return *m_default_commodity;
+	return m_default_commodity;
 }
 
 void
@@ -535,7 +564,7 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
 (	Handle<Commodity> const& p_commodity
 )
 {
-	if (p_commodity->multiplier_to_base() != Decimal(1, 0))
+	if (p_commodity && (p_commodity->multiplier_to_base() != Decimal(1, 0)))
 	{
 		JEWEL_THROW
 		(	InvalidDefaultCommodityException,
@@ -543,7 +572,7 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
 			"to Decimal(1, 0)."
 		);
 	}
-	m_default_commodity.reset(new Handle<Commodity>(p_commodity));
+	m_default_commodity = p_commodity;
 	return;
 }
 		

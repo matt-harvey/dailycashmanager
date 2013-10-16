@@ -25,14 +25,12 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/optional.hpp>
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle_fwd.hpp>
 #include <sqloxx/identity_map_fwd.hpp>
 #include <jewel/decimal.hpp>
 #include <list>
-#include <memory>
 #include <string>
 
 
@@ -254,11 +252,6 @@ private:
 	 *
 	 * @throws SQLiteException or some derivative thereof, if setup is
 	 * unsuccessful.
-	 *
-	 * @todo Should this be automatically called by
-	 * DatabaseConnection::open(), via a private virtual method?
-	 * Currently client code needs to remember to call this after calling
-	 * open. This is error prone.
 	 */
 	void do_setup() override;
 
@@ -281,34 +274,7 @@ private:
 	 * must separately manage the persistence of this data to the
 	 * database.
 	 */
-	class PermanentEntityData
-	{
-	public:
-		PermanentEntityData() = default;
-		PermanentEntityData(PermanentEntityData const&) = delete;
-		PermanentEntityData(PermanentEntityData&&) = delete;
-		PermanentEntityData& operator=(PermanentEntityData const&) = delete;
-		PermanentEntityData& operator=(PermanentEntityData&&) = delete;
-		~PermanentEntityData() = default;
-		boost::gregorian::date creation_date() const;
-		bool default_commodity_is_set() const;
-		sqloxx::Handle<Commodity> default_commodity() const;
-		
-		/**
-		 * @throws EntityCreationDateException if we try to set
-		 * the entity creation date when it has already been
-		 * initialized to some other date.
-		 */
-		void set_creation_date(boost::gregorian::date const& p_date);
-
-		void set_default_commodity
-		(	sqloxx::Handle<Commodity> const& p_commodity
-		);
-
-	private:
-		boost::optional<boost::gregorian::date> m_creation_date;
-		std::unique_ptr<sqloxx::Handle<Commodity> > m_default_commodity;  // TODO Does this need to be wrapped in a unique_ptr?
-	};
+	class PermanentEntityData;
 
 	/**
 	 * Load creation date from the database into memory.
