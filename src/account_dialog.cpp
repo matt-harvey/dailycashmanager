@@ -408,13 +408,13 @@ AccountDialog::configure_bottom_row()
 		wxString("&Cancel"),
 		wxDefaultPosition,
 		wxSize(medium_width(), m_name_ctrl->GetSize().y),
-		wxALIGN_RIGHT  // WARNING Doesn't seem to work
+		wxALIGN_RIGHT
 	);
 	m_top_sizer->Add
 	(	m_cancel_button,
 		wxGBPosition(m_current_row, 3),
 		wxDefaultSpan,
-		wxALIGN_RIGHT  // WARNING Doesn't seem to work
+		wxALIGN_RIGHT
 	);
 	m_ok_button = new wxButton
 	(	this,

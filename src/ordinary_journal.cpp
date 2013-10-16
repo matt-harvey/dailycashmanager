@@ -317,10 +317,11 @@ create_opening_balance_journal
 		ret->set_transaction_type(TransactionType::envelope);
 	}
 
-	// WARNING The source and destination Accounts are the opposite way
-	// round to what would be expected by the user here; but this probably
-	// doesn't matter, as the user should never see the opening balance
-	// Journals directly.
+	// TODO LOW PRIORITY The source and destination Accounts are the opposite
+	// way round to what would be expected by the user here. This
+	// doesn't really matter, as the user should never see the opening balance
+	// Journals directly. However, it would be nicer if they were the normal
+	// way around.
 	ret->set_date_unrestricted
 	(	dbc.opening_balance_journal_date()
 	);

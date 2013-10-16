@@ -604,13 +604,6 @@ Account::do_remove()
 void
 Account::do_ghostify()
 {
-	// WARNING Is there any situation in which this should
-	// mark the balance cache as stale?
-	// I don't think so, but if there is,
-	// note that marking the balance cache
-	// as stale here might perhaps throw an exception (which is contrary
-	// to the Sqloxx API which requires do_ghostify() to be
-	// non-throwing).
 	clear(m_data->name);
 	clear(m_data->commodity);
 	clear(m_data->account_type);

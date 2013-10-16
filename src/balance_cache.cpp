@@ -304,7 +304,7 @@ BalanceCache::refresh_all()
 void
 BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 {
-	// TODO Is this exception-safe?
+	// TODO HIGH PRIORITY Is this exception-safe?
 	for (auto const account_id: p_targets)
 	{
 		Handle<Account> const account(m_database_connection, account_id);
@@ -316,8 +316,8 @@ BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 		statement.bind(":account_id", account_id);
 		if (statement.step())
 		{
-			// TODO Catching exception here is a crappy way of telling whether
-			// there are no entries to sum.
+			// TODO LOW PRIORITY Catching exception here is a crappy way of
+			// telling whether there are no entries to sum.
 			try
 			{
 				(*m_map)[account_id] = Decimal
@@ -338,15 +338,19 @@ BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 					// Account no longer exists in database, so should
 					// be removed from the cache.
 
-					// TODO Test whether this really is reached after removing
+					// TODO LOW PRIORITY If we even allow Accounts to be
+					// deleted, then here we should test whether this passage
+					// really is reached after removing
 					// an Account from database. Note the removal of an
-					// Account from the database cannot possibly have occurred
+					// Account from the database should not have occurred
 					// in the first place if there are any Entries in the
 					// database that have this as their Account (due to the
 					// foreign key constraints in the database); so that's why
-					// should \e should be reached as expected.
+					// this should \e should be reached as expected.
 					Map::iterator doomed_iter = m_map->find(account_id);
-					if (doomed_iter != m_map->end())  // TODO Is this check necessary?
+
+  					// TODO LOW PRIORITY Is this check necessary?
+					if (doomed_iter != m_map->end())
 					{
 						m_map->erase(doomed_iter);
 					}

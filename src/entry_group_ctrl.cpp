@@ -105,8 +105,8 @@ EntryGroupCtrl::EntryGroupCtrl
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 
-	// TODO There should really be a function somewhere in the business
-	// layer which gives us a vector of Entries for a given Journal
+	// TODO LOW PRIORITY There should really be a function somewhere in the
+	// business layer which gives us a vector of Entries for a given Journal
 	// and TransactionSide.
 	vector<Handle<Entry> > entries;
 	vector<Handle<Entry> > const& all_entries = p_journal.entries();
@@ -138,7 +138,7 @@ EntryGroupCtrl::EntryGroupCtrl
 void
 EntryGroupCtrl::configure_available_account_types()
 {
-	// TODO Make this exception safe.
+	// TODO HIGH PRIORITY Make this exception safe.
 	if (is_source())
 	{
 		m_available_account_types.reset
@@ -556,8 +556,6 @@ EntryGroupCtrl::adjust_layout_for_new_number_of_rows()
 wxString
 EntryGroupCtrl::side_description() const
 {
-	// WARNING This is pretty inefficient. But it probably doesn't
-	// matter.
 	wxString ret(" ");
 	set<AccountSuperType> super_types;
 	switch (m_transaction_type)
@@ -675,8 +673,8 @@ EntryGroupCtrl::EntryDecimalTextCtrl::EntryDecimalTextCtrl
 		false
 	)
 {
-	// TODO We should have an application-level setting where user can
-	// disable tooltips.
+	// TODO MEDIUM PRIORITY We should have an application-level setting where
+	// user can disable tooltips.
 	SetToolTip
 	(	wxString
 		(	"Double-click to balance transaction automatically to this line."

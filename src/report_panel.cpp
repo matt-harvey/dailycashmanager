@@ -135,8 +135,9 @@ ReportPanel::configure_top()
 	m_report_type_ctrl->SetValue(report_type_names[0]);
 	m_top_sizer->Add(m_report_type_ctrl, wxGBPosition(m_next_row, 1));
 
-	// WARNING There is duplicated code between here and EntryListPanel,
-	// and also to some extent between here and ReconciliationPanel.
+	// TODO LOW PRIORITY Factor out duplicated code between here and
+	// EntryListPanel - and perhaps also duplicated code between here and
+	// ReconciliationPanel.
 	JEWEL_ASSERT (m_report_type_ctrl);
 	int const std_height = m_report_type_ctrl->GetSize().GetHeight();
 

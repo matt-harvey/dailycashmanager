@@ -148,16 +148,18 @@ DraftJournalListCtrl::update
 		
 		// The item may change position due to e.g. sorting, so store the
 		// Journal ID in the item's data
-		// TODO Do a static assert to ensure second param will fit the id.
+		// TODO HIGH PRIORITY Do a static assert to ensure second param will fit
+		// the id.
 		JEWEL_ASSERT (dj->has_id());
 		SetItemData(i, dj->id());
 
 		// Set the frequency and next-date columns.
 
-		// TODO Deal properly with the case where the
-		// DraftJournal has a number of Repeaters that is not 1? Or are we
-		// just going to rule that out by making it impossible for the user
-		// to create such DraftJournals?
+		// TODO MEDIUM PRIORITY We are assuming here a DraftJournal cannot
+		// have a number of Repeaters that is not 1. For the moment this
+		// assumption is true, but it might not always be so. Put
+		// safeguards here against the possibility that the assumption
+		// might one day cease to hold.
 
 		vector<Handle<Repeater> > const& repeaters = dj->repeaters();
 

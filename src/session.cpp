@@ -38,10 +38,15 @@ namespace phatbooks
 
 int Session::s_num_instances = 0;
 
-// TODO This is ignoring the PhatbooksDatabaseConnection which we
-// have ALREADY created as part of the Session constructor.
-// The whole Session hierarchy, and the interaction between
-// GraphicalSession and App, is a bit of a mess.
+// TODO MEDIUM PRIORITY The whole Session hierarchy, and the interaction between
+// GraphicalSession and App, is needlessly complex, if we consider
+// that we no longer have a TUI interface, and the only class derived from
+// Session is now GraphicalSession. If we abandon the "wxWidgets-external"
+// application / initialization stuff, then we could abolish Session and
+// GraphicalSession classes, just use gui::App (inheriting from wxApp),
+// probably also abolish the confusingly-named phatbooks::Application class,
+// and significantly simplify the initialization code
+// that is currently spread between Session, GraphicalSession and App.
 Session::Session()
 {
 	++s_num_instances;

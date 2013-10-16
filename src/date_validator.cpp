@@ -68,7 +68,6 @@ DateValidator::DateValidator(DateValidator const& rhs):
 bool
 DateValidator::Validate(wxWindow* WXUNUSED(parent))
 {
-	// TODO Make this more accepting of different formats.
 	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	wxTextCtrl const* const text_ctrl =
 		dynamic_cast<wxTextCtrl*>(GetWindow());
@@ -97,8 +96,8 @@ DateValidator::Validate(wxWindow* WXUNUSED(parent))
 	JEWEL_ASSERT (temp);
 	if (m_min_date && (value(temp) < value(m_min_date)))
 	{
-		// TODO This message doesn't actually explain to the user
-		// why they can't enter a date that is this early.
+		// TODO MEDIUM PRIORITY This message doesn't actually explain to the
+		// user why they can't enter a date that is this early.
 		wxMessageBox
 		(	wxString("Date should not be earlier than ") +
 			date_format_wx(value(m_min_date)) +

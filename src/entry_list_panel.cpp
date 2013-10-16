@@ -275,7 +275,8 @@ EntryListPanel::configure_entry_list_ctrl()
 {
 	wxWindowUpdateLocker const update_locker(this);
 
-	if (m_client_size_aux < 100)  // WARNING Ugly hack
+	// TODO LOW PRIORITY This is an ugly hack. Make it nicer.
+	if (m_client_size_aux < 100)
 	{
 		m_client_size_aux = GetClientSize().GetY();
 	}
@@ -300,7 +301,8 @@ EntryListPanel::configure_entry_list_ctrl()
 			wxSize
 			(	large_width() + medium_width() * 3 + standard_gap() * 3,
 				height_aux - 
-					// WARNING - ugly - "tightly coupled"
+					// TODO LOW PRIORITY - this is ugly and
+					// "tightly coupled" - make it nicer
 					2 * m_text_ctrl_height - standard_gap() * 2
 			),
 			selected_account(),
