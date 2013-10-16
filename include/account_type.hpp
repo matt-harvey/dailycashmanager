@@ -26,6 +26,9 @@
 namespace phatbooks
 {
 
+/**
+ * Each saved Account belongs to a certain AccountType.
+ */
 enum class AccountType: unsigned char
 {
 	// enum order is significant, as the database contains
@@ -41,11 +44,8 @@ enum class AccountType: unsigned char
 };
 
 
-
 /**
- * @todo There should probably be a table in the database listing the
- * AccountSuperTypes. The account_types table should then contain the
- * information about which AccountType maps to which AccountSuperType.
+ * Each AccountType belongs to a certain AccountSuperType.
  */
 enum class AccountSuperType: unsigned char
 {

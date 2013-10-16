@@ -255,6 +255,14 @@ ReconciliationEntryListCtrl::do_process_candidate_entry_for_summary
 void
 ReconciliationEntryListCtrl::do_process_removal_for_summary(long p_row)
 {
+	// NOTE Re. the effect on displayed closing balance etc. (i.e.
+	// the stuff in m_summary_data) of an Entry being deleted
+	// that is prior to the min_date: this shouldn't matter because the user
+	// shouldn't be able to edit an Entry that is reconciled; and if it is
+	// unreconciled it will be in the list, and so will be captured by
+	// do_process_removal_for_summary(long); but be careful that we don't change
+	// things so as to break this.
+
 	// Item is in the visible list so must be removed from m_closing_balance
 	Decimal const amount = amount_for_row(p_row);
 	m_closing_balance -= amount;

@@ -35,13 +35,8 @@ namespace gui
  * A subclass of wxTextCtrl specifically for the entry and validation
  * of wxString representations of jewel::Decimal.
  *
- * @todo We are using DecimalValidator in the implementation of this.
- * But it seems like this is only creating complexity, without providing
- * any real benefit. Should I just move the behaviour we do require from
- * DecimalValidator directly into DecimalTextCtrl, and then abolish
- * DecimalValidator?
- *
- * @todo If the user's input is invalid and the DecimalTextCtrl therefore
+ * @todo HIGH PRIORITY If the user's input is invalid and the DecimalTextCtrl
+ * therefore
  * reverts to its previous contents, then the user should be made aware
  * that this has occurred, rather than it happening silently. This could
  * be achieved by ringing the system bell, by popping up a message, by

@@ -48,15 +48,6 @@ class Entry;
 namespace gui
 {
 
-/**
- * @todo WARNING What about the effect on displayed closing balance etc. (i.e.
- * the stuff in m_summary_data) of an Entry being deleted
- * that is prior to the min_date? This shouldn't matter because the user
- * shouldn't be able to edit an Entry that is reconciled; and if it is
- * unreconciled it will be in the list, and so will be captured by
- * do_process_removal_for_summary(long); but be careful that we don't change
- * things so as to break this.
- */
 class ReconciliationEntryListCtrl: public FilteredEntryListCtrl
 {
 public:

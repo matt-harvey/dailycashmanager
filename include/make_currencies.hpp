@@ -52,11 +52,13 @@ class PhatbooksDatabaseConnection;
  * this function will \e not cause the Commodities to be saved to the
  * database).
  *
- * @todo The Japanese yen is officially divided into 100 sen; but a single
- * sen is of minuscule value, and it in everyday life, divisions smaller
- * than 1 yen are not used. Perhaps this is the case with other currencies.
- * Do we want to allow for this, and store some currencies in amounts
- * less precise than their official precision?
+ * @todo HIGH PRIORITY The Japanese yen is officially divided into 100 sen;
+ * but a single sen is of minuscule value, and in everyday life, divisions
+ * smaller than 1 yen are not used. Perhaps this is the case with other
+ * currencies. Do we want to allow for this, and store some currencies in
+ * amounts less precise than their official precision? This needs to be
+ * decided on before releasing; changing it later may be hard, as users'
+ * database contents may depend on how this issue is resolved.
  */
 std::vector<sqloxx::Handle<Commodity> >
 make_currencies(PhatbooksDatabaseConnection& p_database_connection);
