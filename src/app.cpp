@@ -223,7 +223,7 @@ App::elicit_existing_filepath()
 			"In App::elicit_existing_filepath, "
 				"file_dialog.ShowModal() != wxID_OK."
 		);
-		// TODO Then what?
+		// TODO HIGH PRIORITY Then what?
 	}
 	return ret;
 }

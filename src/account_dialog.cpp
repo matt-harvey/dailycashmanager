@@ -524,7 +524,8 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 	Decimal opening_amount = m_opening_amount_ctrl->amount();
 	if (super_type(temp->account_type()) == AccountSuperType::pl)
 	{
-		// TODO Handle small possibility of overflow here.
+		// TODO MEDIUM PRIORITY Handle very small possibility of overflow here
+		// (currently it would just throw an exception and crash).
 		opening_amount = -opening_amount;
 	}
 	Handle<OrdinaryJournal> const objnl = create_opening_balance_journal

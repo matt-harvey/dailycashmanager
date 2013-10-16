@@ -102,7 +102,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 
 PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 {
-	// TODO This integrity of the objects in the cache - and the
+	// TODO MEDIUM PRIORITY This integrity of the objects in the cache - and the
 	// avoidance of invalid reads and writes (and thus of undefined
 	// behaviour) is crucially dependent on the order in which
 	// the IdentityMaps are destroyed (because objects in the
@@ -302,7 +302,7 @@ PhatbooksDatabaseConnection::set_default_commodity
 {
 	JEWEL_ASSERT (m_permanent_entity_data);
 
-	// TODO Make this atomic
+	// TODO HIGH PRIORITY Make this atomic
 	m_permanent_entity_data->set_default_commodity(p_commodity);
 	if (is_valid() && tables_are_configured())
 	{
@@ -334,7 +334,7 @@ PhatbooksDatabaseConnection::mark_tables_as_configured()
 void
 PhatbooksDatabaseConnection::save_default_commodity()
 {
-	// TODO Make this atomic
+	// TODO HIGH PRIORITY Make this atomic
 	default_commodity()->save();
 	SQLStatement statement
 	(	*this,
@@ -378,7 +378,7 @@ PhatbooksDatabaseConnection::setup_entity_table()
 bool
 PhatbooksDatabaseConnection::tables_are_configured()
 {
-	// TODO Make this nicer. 
+	// TODO LOW PRIORITY Make this nicer. 
 	try
 	{
 		execute_sql("select * from " + setup_flag);

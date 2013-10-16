@@ -212,7 +212,7 @@ Journal::do_push_entry(Handle<Entry> const& entry)
 void
 Journal::do_remove_entry(Handle<Entry> const& entry)
 {
-	// TODO Make sure this is exception-safe.
+	// TODO HIGH PRIORITY Make sure this is exception-safe.
 	vector<Handle<Entry> > temp = m_data->entries;
 	m_data->entries.clear();
 	remove_copy

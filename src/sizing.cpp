@@ -56,7 +56,8 @@ extra_large_width()
 
 int scrollbar_width_allowance()
 {
-	// TODO Use conditional compilation to adapt this to different platforms.
+	// TODO LOW PRIORITY Use conditional compilation to adapt this to
+	// different platforms.
 	return 20;
 }
 

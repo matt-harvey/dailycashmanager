@@ -469,7 +469,7 @@ EntryListCtrl::num_columns() const
 int
 EntryListCtrl::scrollbar_width_allowance() const
 {
-	// TODO Make this more precise
+	// TODO LOW PRIORITY Make this more precise
 	return 50;
 }
 
@@ -521,7 +521,8 @@ EntryListCtrl::push_back_entry(Handle<Entry> const& p_entry)
 
 	// The item may change position due to e.g. sorting, so store the
 	// Entry ID in the item's data
-	// TODO Do a static assert to ensure second param will fit the id.
+	// TODO HIGH PRIORITY Do a static assert to ensure second param will fit the
+	// id.
 	SetItemData(i, p_entry->id());
 	m_id_set.insert(p_entry->id());
 	return;

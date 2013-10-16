@@ -389,7 +389,7 @@ DraftJournal::repeater_description()
 			ret += wxString(", with the next recording due on ");
 			gregorian::date const next_date_this_cycle = (*it)->next_date();
 			
-			// TODO See previous comment re. internationalization.
+			// TODO LOW PRIORITY See previous comment re. internationalization.
 			ret += std8_to_wx(lexical_cast<string>(next_date_this_cycle));
 
 			ret += wxString(".");
@@ -400,7 +400,7 @@ DraftJournal::repeater_description()
 		}
 		ret += wxString("\nThis transaction will next be recorded on ");
 
-		// TODO See previous comment re. internationalization
+		// TODO LOW PRIORITY See previous comment re. internationalization
 		ret += wxString(lexical_cast<string>(next_date));
 
 		ret += wxString(".");

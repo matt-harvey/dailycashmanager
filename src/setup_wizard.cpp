@@ -321,7 +321,7 @@ SetupWizard::configure_accounts()
 		wxString const name_wx = aug_acc.account->name().Trim();
 		if (name_wx.IsEmpty())
 		{
-			// TODO Is there anything we need to do here?
+			// TODO HIGH PRIORITY Is there anything we need to do here?
 		}
 		else
 		{
@@ -540,9 +540,9 @@ SetupWizard::FilepathPage::FilepathPage
 		JEWEL_ASSERT (!m_selected_filepath);
 		m_selected_filepath = new filesystem::path(value(maybe_directory));
 	}
-	// TODO We should make this a static text field or something that
-	// is obviously noneditable so the user doesn't feel frustrated when
-	// they try to edit it.
+	// TODO MEDIUM PRIORITY We should make this a static text field or
+	// something that is obviously noneditable so the user doesn't feel
+	// frustrated when they try to edit it.
 	m_directory_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
@@ -550,7 +550,7 @@ SetupWizard::FilepathPage::FilepathPage
 		wxDefaultPosition,
 		wxDLG_UNIT(this, dlg_unit_size),
 		wxTE_READONLY,  // style
-		wxDefaultValidator  // TODO Not user-editable anyway
+		wxDefaultValidator  // not user-editable anyway...
 	);
 	m_directory_button = new wxButton
 	(	this,

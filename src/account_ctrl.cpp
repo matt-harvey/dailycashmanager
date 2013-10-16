@@ -134,7 +134,7 @@ AccountCtrl::reset()
 			}
 		}
 	}
-	JEWEL_ASSERT (!valid_account_names.IsEmpty());  // TODO Can this fail?
+	JEWEL_ASSERT (!valid_account_names.IsEmpty());  // TODO HIGH PRIORITY Can this fail?
 	StringSetValidator validator
 	(	valid_account_names[0],
 		valid_account_names,

@@ -239,8 +239,8 @@ TransactionCtrl::configure_top_controls
 	// Leave enough blank space at the top so that the first row
 	// of proper widgets lines up with the "bar" at the top of
 	// the panels to the left.
-	// TODO Tweak this for different platforms, using conditional
-	// compilation.
+	// TODO LOW PRIORITY Tweak this for different platforms, using
+	// conditional compilation?
 	increment_row();
 	increment_row();
 
@@ -486,10 +486,16 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	optional<Frequency> maybe_frequency;
 	if (is_draft)
 	{
-		// TODO From GUI user cannot possibly create a DraftJournal with no
+		// TODO MEDIUM PRIORITY From the GUI, user cannot possibly create a
+		// DraftJournal with no
 		// Repeaters, or with more than 1 Repeater. This next bit only works
 		// if that remains true, AND non-GUI-created DraftJournals are never
-		// accessed from the GUI!
+		// accessed from the GUI! We should guard against future changes
+		// breaking these assertions by putting code in Repeater and/or
+		// DraftJournal that actually prevents multiple Repeaters being
+		// added to a DraftJournal at that business-object level, and
+		// comment it to the effect that this is to protect the
+		// integrity of the GUI.
 		JEWEL_ASSERT (dj);
 		JEWEL_ASSERT (!oj);
 		JEWEL_ASSERT (dj->repeaters().size() == 1);
@@ -500,10 +506,16 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	gregorian::date date;
 	if (is_draft)
 	{
-		// TODO From GUI user cannot possibly create a DraftJournal with no
+		// TODO MEDIUM PRIORITY From the GUI, user cannot possibly create a
+		// DraftJournal with no
 		// Repeaters, or with more than 1 Repeater. This next bit only works
 		// if that remains true, AND non-GUI-created DraftJournals are never
-		// accessed from the GUI!
+		// accessed from the GUI! We should guard against future changes
+		// breaking these assertions by putting code in Repeater and/or
+		// DraftJournal that actually prevents multiple Repeaters being
+		// added to a DraftJournal at that business-object level, and
+		// comment it to the effect that this is to protect the
+		// integrity of the GUI.
 		JEWEL_ASSERT (dj);
 		JEWEL_ASSERT (dj->repeaters().size() == 1);
 		date = dj->repeaters().at(0)->next_date();
@@ -839,7 +851,8 @@ TransactionCtrl::post_journal()
 			}
 			else
 			{
-				// TODO If interval_type is month_end, use month_end_for_date
+				// TODO MEDIUM PRIORITY If interval_type is month_end, use
+				// month_end_for_date
 				// function to generate and suggest using the last day of the
 				// month instead of the entered date.
 				JEWEL_ASSERT (freq.step_type() == IntervalType::month_ends);
@@ -867,8 +880,8 @@ TransactionCtrl::post_journal()
 		}
 		else
 		{
-			// TODO What are circumstances in which this point might
-			// be reached? Is our error message adequate?
+			// TODO MEDIUM PRIORITY What are circumstances in which this point
+			// might be reached? Is our error message adequate?
 			wxMessageBox("Error naming recurring transaction.");
 			return false;
 		}
@@ -1019,7 +1032,8 @@ TransactionCtrl::save_existing_journal()
 		Frequency const freq = value(maybe_frequency);
 		
 		// Ensure valid combination of Frequency and next posting date
-		// TODO Factor out duplicated code between this and post_journal().
+		// TODO LOW PRIORITY Factor out duplicated code between this and
+		// post_journal().
 		if (!is_valid_date_for_interval_type(next_date, freq.step_type()))
 		{
 			if (freq.step_type() == IntervalType::months)
@@ -1033,7 +1047,8 @@ TransactionCtrl::save_existing_journal()
 			}
 			else
 			{
-				// TODO If interval_type is month_end, use month_end_for_date
+				// TODO MEDIUM PRIORITY If interval_type is month_end, use
+				// month_end_for_date
 				// function to generate and suggest using the last day of the
 				// month instead of the entered date.
 				JEWEL_ASSERT (freq.step_type() == IntervalType::month_ends);

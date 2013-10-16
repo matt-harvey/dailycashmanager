@@ -348,7 +348,8 @@ MultiAccountPanel::set_commodity(Handle<Commodity> const& p_commodity)
 	JEWEL_ASSERT (precision != m_commodity->precision());
 	for (SpecialDecimalTextCtrl* ctrl: m_opening_balance_boxes)
 	{
-		// TODO Handle potential Decimal exception here on rounding.
+		// TODO MEDIUM PRIORITY Handle potential Decimal exception here on
+		// rounding.
 		Decimal const old_amount = ctrl->amount();
 		Decimal const new_amount = round(old_amount, precision);
 		ctrl->set_amount(new_amount);
@@ -388,8 +389,8 @@ MultiAccountPanel::selected_augmented_accounts
 		account->set_visibility(Visibility::visible);
 		account->set_commodity(m_commodity);
 
-		// TODO Make sure it is clear to the user which way round the
-		// signs are supposed to go, especially for AccountType::liability
+		// TODO HIGH PRIORITY Make sure it is clear to the user which way round
+		// the signs are supposed to go, especially for AccountType::liability
 		// (where the user should normally enter a negative number).
 		augmented_account.technical_opening_balance =
 		(	m_account_super_type == AccountSuperType::pl?

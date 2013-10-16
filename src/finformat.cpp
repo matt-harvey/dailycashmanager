@@ -128,7 +128,7 @@ wxString finformat_wx
 
 	bool const pad = !p_flags.test(string_flags::hard_align_right);
 
-	// TODO Make this cleaner and more efficient.
+	// TODO LOW PRIORITY Make this cleaner and more efficient.
 	Decimal::places_type const places = decimal.places();
 	Decimal::int_type const intval = decimal.intval();
 	typedef wxChar CharT;
@@ -141,8 +141,8 @@ wxString finformat_wx
 	(	wxLOCALE_THOUSANDS_SEP,
 		wxLOCALE_CAT_MONEY
 	);
-	// TODO Are the following assertions always going to be true? No,
-	// they are not...
+	// TODO HIGH PRIORITY Are the following assertions always going to be true?
+	// No, they are not...
 	JEWEL_ASSERT (decimal_point_s.size() == 1);
 	JEWEL_ASSERT (thousands_sep_s.size() == 1);
 	CharT const decimal_point = decimal_point_s[0];
@@ -215,7 +215,7 @@ wxString finformat_wx
 		// Write the whole part
 
 		// Assume the grouping of digits is normal "threes".
-		// TODO Is this a safe assumption? There doesn't seem to
+		// TODO MEDIUM PRIORITY Is this a safe assumption? There doesn't seem to
 		// be an equivalent of grouping() for wxLocale.
 		static vector<wxString::size_type> const grouping(1, 3);
 		vector<wxString::size_type>::const_iterator grouping_it =
@@ -283,13 +283,13 @@ wx_to_decimal
 	(	wxLOCALE_THOUSANDS_SEP,
 		wxLOCALE_CAT_MONEY
 	);
-	// TODO Are the following assertions always going to be true? No,
-	// they are not...
+	// TODO HIGH PRIORITY Are the following assertions always going to be true?
+	// No, they are not...
 	JEWEL_ASSERT (decimal_point_s.size() == 1);
 	JEWEL_ASSERT (thousands_sep_s.size() == 1);
 	if (wxs.IsEmpty())
 	{
-		// TODO Should probably throw an exception here, rather
+		// TODO HIGH PRIORITY Should probably throw an exception here, rather
 		// than creating a Decimal initialized to zero.
 		return Decimal(0, 0);
 	}
@@ -309,7 +309,7 @@ wx_to_decimal
 	}
 	wxs.Replace(thousands_sep_s, wxEmptyString);
 
-	// TODO This will come unstuck if we ever make Decimal
+	// TODO HIGH PRIORITY This will come unstuck if we have made Decimal
 	// constructor-from-string sensitive to locale.
 	wxs.Replace(decimal_point_s, wxString("."));
 

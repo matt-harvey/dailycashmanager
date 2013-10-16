@@ -201,7 +201,7 @@ Frame::Frame
 	JEWEL_LOG_TRACE();
 
 	// Set the frame icon
-	// TODO I should use SetIcons to associate several icons of
+	// TODO MEDIUM PRIORITY I should use SetIcons to associate several icons of
 	// different sizes with the Window. This avoids possible ugliness from
 	// resizing of a single icon when different sizes are required in
 	// different situations.
@@ -320,7 +320,7 @@ Frame::on_menu_about(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
-	// TODO Put better message here
+	// TODO HIGH PRIORITY Put better message here
 	wxString msg;
 	msg.Printf
 	(	"Hello and welcome to %s",
@@ -385,8 +385,8 @@ Frame::on_menu_edit_bs_account(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 
-	// TODO Factor out repeated code in the various member functions
-	// that invoke an AccountDialog.
+	// TODO MEDIUM PRIORITY Factor out repeated code in the various member
+	// functions that invoke an AccountDialog.
 
 	(void)event;  // Silence compiler re. unused parameter.
 	vector<Handle<Account> > accounts;
@@ -446,9 +446,10 @@ Frame::on_menu_edit_ordinary_journal(wxCommandEvent& event)
 	selected_ordinary_journals(journals);
 	if (journals.empty())
 	{
-		// TODO It should be impossible for the user to even reach
-		// here, as the menu item to edit an ordinary transaction should
-		// be disabled unless an ordinary transaction is selected.
+		// TODO MEDIUM PRIORITY It should be impossible for the user even to
+		// reach here, as the menu item to edit an ordinary transaction should
+		// be disabled (as in, "greyed out") unless an ordinary transaction is
+		// selected.
 		wxMessageBox("No transaction is currently selected.");	
 		return;	
 	}
@@ -466,10 +467,10 @@ Frame::on_menu_edit_draft_journal(wxCommandEvent& event)
 	selected_draft_journals(journals);
 	if (journals.empty())
 	{
-		// TODO It should be impossible for the user to even reach
-		// here, as the menu item to edit a recurring transaction
-		// should be disabled unless a recurring transaction
-		// is selected.
+		// TODO MEDIUM PRIORITY It should be impossible for the user to even
+		// reach here, as the menu item to edit a recurring transaction
+		// should be disabled (as in "greyed out") unless a recurring
+		// transaction is selected.
 		wxMessageBox("No recurring transaction is currently selected.");
 		return;
 	}
@@ -483,7 +484,7 @@ Frame::on_menu_view_toggle_bs_account_show_hidden(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 
-	// TODO Factor out code duplicated here and in
+	// TODO MEDIUM PRIORITY Factor out code duplicated here and in
 	// on_menu_view_toggle_pl_account_show_hidden(...).
 	AccountSuperType const stype =
 		AccountSuperType::balance_sheet;
@@ -640,9 +641,9 @@ void
 Frame::on_draft_entry_deleted_event(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
-	// TODO The chain of functions that are now called (via m_top_panel)
-	// expect a vector. This is now just pointlessly wasteful given
-	// what we are now processing one event at a time!
+	// TODO LOW PRIORITY The chain of functions that are now called
+	// (via m_top_panel) expect a vector. This is now just pointlessly wasteful
+	// given what we are now processing one event at a time!
 	wxWindowUpdateLocker const update_locker(this);
 	static vector<Id> doomed_ids(1, 0);
 	JEWEL_ASSERT (doomed_ids.size() == 1);
@@ -657,8 +658,8 @@ void
 Frame::on_ordinary_entry_deleted_event(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
-	// TODO The chain of functions that are now called (via m_top_panel)
-	// a vector. This is now just pointlessly wasteful given
+	// TODO LOW PRIORITY The chain of functions that are now called
+	// (via m_top_panel) a vector. This is now just pointlessly wasteful given
 	// what we are now processing one event at a time!
 	wxWindowUpdateLocker const update_locker(this);
 	static vector<Id> doomed_ids(1, 0);

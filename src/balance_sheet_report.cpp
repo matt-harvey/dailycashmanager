@@ -89,7 +89,7 @@ BalanceSheetReport::do_generate()
 void
 BalanceSheetReport::refresh_map()
 {
-	// TODO Can we just ignore equity Accounts here?
+	// TODO MEDIUM PRIORITY Can we just ignore equity Accounts here?
 	m_balance_map.clear();
 	JEWEL_ASSERT (m_balance_map.empty());
 	optional<gregorian::date> const maybe_max_d = maybe_max_date();
@@ -168,7 +168,7 @@ BalanceSheetReport::display_body()
 	// Assume m_balance_map is up-to-date. Use its contents to display
 	// the report contents.
 	
-	// TODO Can we just ignore equity Accounts here?
+	// TODO MEDIUM PRIORITY Can we just ignore equity Accounts here?
 
 	increment_row();
 

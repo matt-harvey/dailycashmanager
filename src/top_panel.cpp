@@ -152,9 +152,9 @@ TopPanel::TopPanel
 	Layout();
 }
 
-// TODO We have no consistent convention here about what is "configure" and
-// what is "update", and when each such function gets called (i.e. once, or
-// every update, or...?).
+// TODO LOW PRIORITY We have no consistent convention here about what is named
+// "configure" and what is named "update", in relation to when each such
+// function gets called (i.e. once, or every update, or...?).
 
 void
 TopPanel::configure_account_lists()
@@ -558,8 +558,8 @@ TopPanel::update_for_amended(Handle<Account> const& p_saved_object)
 	m_reconciliation_panel->update_for_amended(p_saved_object);
 	m_report_panel->update_for_amended(p_saved_object);
 	
-	// TODO We should still make sure that if the Account has changed
-	// visibility, we CAREFULLY update the AccountCtrls within
+	// TODO HIGH PRIORITY We should still make sure that if the Account has
+	// changed visibility, we CAREFULLY update the AccountCtrls within
 	// TransactionCtrl accordingly - noting that we don't want to cause
 	// an Account to disappear from an AccountCtrl if it is the one
 	// that is currently selected.
@@ -576,7 +576,7 @@ TopPanel::update_for_amended_budget(Handle<Account> const& p_account)
 	(void)p_account;  // Silence compiler re. unused parameter.
 	JEWEL_ASSERT (super_type(p_account->account_type()) == AccountSuperType::pl);
 	m_pl_account_list->update();
-	// TODO Do we need to update ReportPanel for amended budget?
+	// TODO HIGH PRIORITY Do we need to update ReportPanel for amended budget?
 	return;
 }
 

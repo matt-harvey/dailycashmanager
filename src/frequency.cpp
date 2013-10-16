@@ -230,7 +230,7 @@ operator==(Frequency const& lhs, Frequency const& rhs)
 
 
 
-// TODO How to handle DecimalMultiplicationException and
+// TODO HIGH PRIORITY How to handle DecimalMultiplicationException and
 // DecimalDivisionException in the Frequency convertions
 // functions? Will they occur often?
 // The answer may be just to force the user not to input weird Frequencies

@@ -127,14 +127,15 @@ GraphicalSession::do_run(string const& filepath_str)
 {
 	JEWEL_LOG_TRACE();
 
-	// TODO Validate the filepath here first - similar to what
+	// TODO HIGH PRIORITY Validate the filepath here first - similar to what
 	// we did in TextSession::do_run(...) (see branches/tui_branch in
 	// repository).
 	
-	// TODO There is code duplicated between here and the
+	// TODO LOW PRIORITY There is code duplicated between here and the
 	// other form of do_run
 
-	// TODO Is this safe? We need to catch and handle if we can't open
+	// TODO HIGH PRIORITY Is this safe? We need to catch and handle if we can't
+	// open.
 	shared_ptr<PhatbooksDatabaseConnection> dbc
 	(	new PhatbooksDatabaseConnection
 	);

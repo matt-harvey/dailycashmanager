@@ -92,10 +92,10 @@ make_default_accounts
 		names.push_back(wxString("Gas"));
 		names.push_back(wxString("Interest paid"));
 		names.push_back(wxString("Recreation"));
-		// TODO Do we want a "mortgage" Account among the defaults?
-		// The correct accounting for mortgage repayments is fairly complex.
-		// How would we present it to the user? Would we just cheat and treat
-		// it as an expense?
+		// TODO MEDIUM PRIORITY Do we want a "mortgage" Account among the
+		// defaults? The correct accounting for mortgage repayments is fairly
+		// complex. How would we present it to the user? Would we just cheat and
+		// treat it as an expense?
 		break;
 	case AccountType::pure_envelope:
 		// There are no default pure_envelope Accounts.

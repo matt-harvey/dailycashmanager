@@ -50,7 +50,7 @@ DecimalTextCtrl::DecimalTextCtrl
 	unsigned int p_id,
 	wxSize const& p_size,
 	Decimal::places_type p_precision,
-	bool p_print_dash_for_zero  // TODO Would be cleaner with a FlagSet here.
+	bool p_print_dash_for_zero  // TODO LOW PRIORITY Would be cleaner with a FlagSet here.
 ):
 	wxTextCtrl
 	(	p_parent,
@@ -106,7 +106,7 @@ DecimalTextCtrl::set_amount(Decimal const& p_amount)
 	);
 	SetValue(amount_string);
 
-	// TODO This really sucks. We are validating the entire parent
+	// TODO LOW PRIORITY This really sucks. We are validating the entire parent
 	// window as a side-effect of setting the value of just one
 	// of its children. But if we call Validate() etc.. on
 	// DecimalTextCtrl directly it doesn't have any effect (for some

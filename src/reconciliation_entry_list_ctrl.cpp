@@ -55,8 +55,12 @@ namespace phatbooks
 namespace gui
 {
 
-// TODO We can use "EVT_LIST_ITEM_COL_CLICK" to activate this
-// on left click of the "Reconciled" column - which is more intuitive.
+// We could perhaps use "EVT_LIST_ITEM_COL_CLICK" to activate this
+// on left click of the "Reconciled" column - which is arguably more
+// intuitive. But note that double-left-clicking an item causes the
+// Journal to be opened in the TransactionCtrl. Using right click
+// prevents the user from accidentally double-clicking and opening
+// a Journal while they are rapidly clicking to reconcile transactions.
 BEGIN_EVENT_TABLE(ReconciliationEntryListCtrl, FilteredEntryListCtrl)
 	EVT_LIST_ITEM_RIGHT_CLICK
 	(	wxID_ANY,
