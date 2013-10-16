@@ -67,7 +67,6 @@
 #include <wx/variant.h>
 #include <wx/window.h>
 #include <wx/wizard.h>
-#include <map>
 #include <sstream>
 #include <set>
 #include <string>
@@ -81,7 +80,6 @@ using jewel::Log;
 using jewel::value;
 using sqloxx::DatabaseTransaction;
 using sqloxx::Handle;
-using std::map;
 using std::ostringstream;
 using std::set;
 using std::string;

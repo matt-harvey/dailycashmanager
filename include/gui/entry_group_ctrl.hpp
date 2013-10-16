@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_entry_group_ctrl_hpp_08374422745953511
 #define GUARD_entry_group_ctrl_hpp_08374422745953511
 
@@ -58,14 +57,9 @@ class TransactionCtrl;
 
 /**
  * Widget for entering details regarding a single "side" of a transaction.
- * This could comprise multiple Entries. A "side" usually represents
- * either all the credit Entries of a Journal, or all the debit Entries.
- * A side is either "source" (usually credit), or "destination"
- * (usually debit). However, the "source" and "destination" concepts may
- * not always correspond to debit and credit.
- *
- * @todo Document better the concept of a "transaction" versus that of a
- * Journal.
+ * This could comprise multiple Entries.
+ * 
+ * @see TransactionSide
  */
 class EntryGroupCtrl: public wxPanel
 {

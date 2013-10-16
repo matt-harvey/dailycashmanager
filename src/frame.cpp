@@ -453,7 +453,8 @@ Frame::on_menu_edit_ordinary_journal(wxCommandEvent& event)
 		return;	
 	}
 	JEWEL_ASSERT (journals.size() >= 1);
-	edit_journal(journals[0]);
+	Handle<OrdinaryJournal> const journal = journals[0];
+	edit_journal(journal);
 	return;
 }
 

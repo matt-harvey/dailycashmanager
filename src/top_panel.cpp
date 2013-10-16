@@ -326,11 +326,8 @@ TopPanel::make_proto_journal() const
 		assert_transaction_type_validity(initial_transaction_type);
 		ret.set_transaction_type(initial_transaction_type);
 		Handle<Account> const accounts[] = {account_x, account_y};
-		for
-		(	size_t i = 0;
-			i != static_cast<size_t>(end(accounts) - begin(accounts));
-			++i
-		)
+		auto const sz = static_cast<size_t>(end(accounts) - begin(accounts));
+		for (size_t i = 0; i != sz; ++i)
 		{
 			Handle<Account> const& account = accounts[i];
 			Handle<Entry> const entry(m_database_connection);
@@ -368,12 +365,10 @@ TopPanel::configure_transaction_ctrl()
 			proto_journal,
 			m_database_connection
 		);
-		m_right_column_sizer->Insert
-		(	0,
-			m_transaction_ctrl,
-			wxSizerFlags(6).Expand().
-				Border(wxNORTH | wxSOUTH | wxWEST | wxEAST, standard_border() * 2)
-		);
+		auto const sides = wxNORTH | wxSOUTH | wxWEST | wxEAST;
+		auto const bwidths = standard_border() * 2;
+		auto const flags = wxSizerFlags(6).Expand().Border(sides, bwidths);
+		m_right_column_sizer->Insert(0, m_transaction_ctrl, flags);
 		Layout();
 	}
 	return;
@@ -383,7 +378,7 @@ void
 TopPanel::configure_draft_journal_list_ctrl()
 {
 	JEWEL_LOG_TRACE();
-	DraftJournalListCtrl* old = 0;
+	DraftJournalListCtrl* old = nullptr;
 	JEWEL_ASSERT (m_right_column_sizer);
 	if (m_draft_journal_list)
 	{
@@ -404,7 +399,7 @@ TopPanel::configure_draft_journal_list_ctrl()
 	{
 		JEWEL_LOG_TRACE();
 		old->Destroy();
-		old = 0;
+		old = nullptr;
 	}
 	Layout();
 	JEWEL_LOG_TRACE();

@@ -196,10 +196,6 @@ private:
  * This is the first page the user sees when opening the application
  * without a file selected. This welcomes the user and prompts them to
  * select a file.
- *
- * @todo In currency selection box, it would probably be better to associate
- * data with the items using SetItemData etc., than using crude mapping from
- * strings etc..
  */
 class SetupWizard::FilepathPage: public wxWizardPageSimple
 {

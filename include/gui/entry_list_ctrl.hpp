@@ -54,14 +54,14 @@ class ReconciliationEntryListCtrl;
 // End forward declarations
 
 /**
- * Displays a list of Entries. Derived classes must defined various
+ * Displays a list of Entries. Derived classes must define various
  * pure virtual functions - and may override certain impure virtual functions
  * - to govern which Entries are displayed, and which columns of data are
  * displayed. However every EntryListCtrl will have the date of the Entry
  * showing in the first column, and should only ever show Entries from
  * OrdinaryJournals (not DraftJournals).
  *
- * @todo Better document the interface with derived classes.
+ * @todo LOW PRIORITY Better document the interface with derived classes.
  */
 class EntryListCtrl: public wxListCtrl
 {

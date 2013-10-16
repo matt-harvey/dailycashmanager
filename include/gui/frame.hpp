@@ -129,9 +129,10 @@ private:
 	void edit_account(sqloxx::Handle<Account> const& p_account);
 
 	// The actual function which conducts Journal editing. JournalType
-	// must be either OrdinaryJournal or DraftJournal.
+	// must be either sqloxx::Handle<OrdinaryJournal> or
+	// sqloxx::Handle<DraftJournal>.
 	template <typename JournalType>
-	void edit_journal(JournalType& p_journal);
+	void edit_journal(JournalType const& p_journal);
 
 	static int const s_new_bs_account_id = wxID_HIGHEST + 1;
 	static int const s_new_pl_account_id = s_new_bs_account_id + 1;
@@ -161,10 +162,18 @@ private:
 
 // IMPLEMENT MEMBER FUNCTION TEMPLATES
 
-template <typename JournalType>
+template <typename JournalHandleType>
 void
-Frame::edit_journal(JournalType& p_journal)
+Frame::edit_journal(JournalHandleType const& p_journal)
 {
+	using std::is_same;
+	using sqloxx::Handle;
+	static_assert
+	(	is_same<JournalHandleType, Handle<DraftJournal> >::value ||
+		is_same<JournalHandleType, Handle<OrdinaryJournal> >::value,
+		"Type passed to Frame::edit_journal other than " 
+		"sqloxx::Handle<DraftJournal> or sqloxx::Handle<OrdinaryJournal>."
+	);
 	JEWEL_ASSERT (m_top_panel);
 	// m_top_panel->SetFocus();  // This doesn't seem to have any effect...
 	m_top_panel->configure_transaction_ctrl(p_journal);

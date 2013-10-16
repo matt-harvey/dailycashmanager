@@ -30,6 +30,7 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
+#include <type_traits>
 #include <vector>
 
 namespace phatbooks
@@ -206,18 +207,18 @@ public:
 	/**
 	 * Configure the TransactionCtrl to reflect the currently selected
 	 * Accounts (if any).
-	 *
-	 * @todo What if fewer than 2 Accounts are selected?
 	 */
 	void configure_transaction_ctrl();
 
 	/**
 	 * Configure the TransactionCtrl to reflect an existing OrdinaryJournal
 	 * or DraftJournal.
-	 * \e JournalType should be either OrdinaryJournal or DraftJournal.
+	 * \e JournalType should be either sqloxx::Handle<OrdinaryJournal> or
+	 * sqloxx::Handle<DraftJournal>.
+	 * Compilation will break if this is not the case.
 	 */
 	template <typename JournalType>
-	void configure_transaction_ctrl(JournalType& p_journal);
+	void configure_transaction_ctrl(JournalType const& p_journal);
 
 	void configure_draft_journal_list_ctrl();
 
@@ -259,8 +260,14 @@ private:
 
 template <typename JournalType>
 void
-TopPanel::configure_transaction_ctrl(JournalType& p_journal)
+TopPanel::configure_transaction_ctrl(JournalType const& p_journal)
 {
+	static_assert
+	(	std::is_same<JournalType, sqloxx::Handle<DraftJournal> >::value ||
+		std::is_same<JournalType, sqloxx::Handle<OrdinaryJournal> >::value,
+		"Top::Panel::configure_transaction_ctrl was passed a type other than "
+		"sqloxx::Handle<DraftJournal> or sqloxx::Handle<OrdinaryJournal>."
+	);
 	TransactionCtrl* old = nullptr;
 	JEWEL_ASSERT (m_right_column_sizer);
 	if (m_transaction_ctrl)
