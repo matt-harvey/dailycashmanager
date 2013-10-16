@@ -139,6 +139,12 @@ DecimalTextCtrl::do_on_kill_focus(wxFocusEvent& event)
 	// Unfortunately if we call Validate() and TransferDataToWindow()
 	// directly on the DecimalTextCtrl, it doesn't work. We have to call
 	// through parent instead.
+	//
+	// NOTE BudgetPanel now relies on this behaviour, especially the call to
+	// GetParent()->TransferDataToWindow().
+	//
+	// TODO LOW PRIORITY The coupling between BudgetPanel and DecimalTextCtrl
+	// here is pretty ugly and feels fragile. Improve this.
 	GetParent()->Validate();
 	GetParent()->TransferDataToWindow();
 	event.Skip();

@@ -112,9 +112,12 @@ public:
 	 * funds in an expenditure envelope; and a positive number for a budget
 	 * entry that decreases the available funds in an expenditure envelope.
 	 *
-	 * @todo Should this method perform rounding to the number
+	 * NOTE This method does \e not perform rounding to the number
 	 * of decimal places required for the precision of the Account's
-	 * native Commodity?
+	 * native Commodity. It is the responsibility of the client to
+	 * ensure that the precision of \e p_amount is the same as the precision
+	 * of the native Commodity of the Account which was or will be set
+	 * as the Account for this Entry.
 	 */
 	void set_amount(jewel::Decimal const& p_amount);
 
@@ -150,8 +153,6 @@ public:
 	 * available funds in the envelope,
 	 * and +ve if the Entry \e decreases the available funds in an
 	 * envelope.
-	 *
-	 * @todo Verify throwing behaviour.
 	 */
 	jewel::Decimal amount();
 

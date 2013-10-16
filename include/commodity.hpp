@@ -48,13 +48,10 @@ namespace phatbooks
  * parameters in the constructors for Commodity, which make it
  * impossible for client code to call these constructors directly.
  *
- * @todo The Commodity funcionality of Phatbooks should for the time
- * being remain completely hidden from the user - mainly because it
- * isn't properly implemented yet, because we can't deal with the
+ * NOTE The Commodity funcionality of Phatbooks should for the time
+ * being remain almost entirely hidden from the user - mainly because we
+ * we can't currently deal with the
  * situation in which there is more than one commodity in the database.
- * That part of the Commodity functionality that has already been
- * written, is for the time being being hidden by the preprocessor.
- * To unhide it, define PHATBOOKS_EXPOSE_COMMODITY.
  */
 class Commodity:
 	public sqloxx::PersistentObject

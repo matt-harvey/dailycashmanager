@@ -166,11 +166,11 @@ void
 Frame::edit_journal(JournalType& p_journal)
 {
 	JEWEL_ASSERT (m_top_panel);
-	// m_top_panel->SetFocus();  // WARNING This doesn't seem to have any effect
+	// m_top_panel->SetFocus();  // This doesn't seem to have any effect...
 	m_top_panel->configure_transaction_ctrl(p_journal);
-	// TODO Bring the focus into the TransactionCtrl so the user can start
-	// populating the TransactionCtrl immediately without having to click
-	// into it.
+	// TODO MEDIUM PRIORITY Bring the focus into the TransactionCtrl so the user
+	// can start populating the TransactionCtrl immediately without having to
+	// click into it.
 	return;
 }
 

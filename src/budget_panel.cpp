@@ -307,8 +307,6 @@ BudgetPanel::TransferDataToWindow()
 	// (+ for revenue Accounts or - for expense Accounts) and warn the
 	// user in case there are, giving them the opportunity to correct it.	
 	AccountType const account_type = m_account->account_type();
-
-	// Set precision of "zero" for more efficient comparisons.
 	Decimal const z = zero();
 	for (BudgetItemComponent const& elem: m_budget_item_components)
 	{

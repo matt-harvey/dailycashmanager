@@ -66,7 +66,7 @@ public:
 	virtual ~DecimalTextCtrl();
 
 	/**
-	 * WARNING As a side-effect of calling this function, the
+	 * NOTE As a side-effect of calling this function, the
 	 * \e parent window of the DecimalTextCtrl will have
 	 * Validate() and TransferDataFromWindow() called on it.
 	 * This is an unfortunate workaround for odd behaviour whereby

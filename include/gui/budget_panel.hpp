@@ -55,11 +55,11 @@ class DecimalTextCtrl;
 /**
  * Dialog for user to configure BudgetItems for a given Account.
  *
- * @todo Make the "-" button look disabled unless there is more than
- * one BudgetItemComponent.
+ * @todo MEDIUM PRIORITY Make the "Remove item" button appear disabled if there
+ * aren't any BudgetItems to delete.
  *
- * @todo Move the "daily top-up summary" down to be on the same row
- * as "Cancel" and "Save" buttons... but these buttons are actually
+ * @todo MEDIUM PRIORITY Move the "daily top-up summary" down to be on the same
+ * row as "Cancel" and "Save" buttons... but these buttons are actually
  * not in BudgetPanel, but are in the parent AccountDialog. So this
  * will require some careful refactoring to achieve.
  */
@@ -99,9 +99,7 @@ private:
 	/**
 	 * This is triggered by DecimalTextCtrl::on_kill_focus(...).
 	 * We override with behaviour we need to set budget summary
-	 * text. WARNING How dodgy and indirect is this?
-	 *
-	 * @todo We also need SpecialFrequencyCtrl to trigger this...
+	 * text.
 	 */
 	virtual bool TransferDataToWindow();
 

@@ -56,17 +56,9 @@ class EntryListCtrl;
  * at the top to enable the user to filter the displayed Entries for a
  * particular Account and/or date range.
  *
- * @todo Do we want the user to be able to view non-actual transactions?
- * If we do, then, among other things, the AccountCtrl will need to allow
- * the user to select Accounts of AccountType::pure_envelope.
- *
- * @todo EntryListCtrl has zero height until such time as user
- * first clicks "Refresh". Various attempted workarounds for this
- * have been tried to no avail...
- *
- * @todo Make a subclass of FilteredEntryListCtrl called
- * ReconciliationEntryList, and use that with EntryListPanel to enable
- * users to perform Account reconciliations.
+ * @todo MEDIUM PRIORITY Do we want the user to be able to view non-actual
+ * transactions? If we do, then, among other things, the AccountCtrl will need
+ * to allow the user to select Accounts of AccountType::pure_envelope.
  */
 class EntryListPanel: public wxPanel
 {
@@ -90,9 +82,9 @@ public:
 	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
 	void selected_entries(std::vector<sqloxx::Handle<Entry> >& out);
 
-	// WARNING Hack... This should be private, but we need to call it from
-	// TopPanel to ensure EntryListCtrl is properly sized, AFTER the
-	// EntryListPanel has been constructed.
+	// TODO LOW PRIORITY This should really be private, but we need to call it
+	// from TopPanel to ensure EntryListCtrl is properly sized, AFTER the
+	// EntryListPanel has been constructed. Make this nicer.
 	void configure_entry_list_ctrl();
 
 	void postconfigure_summary();

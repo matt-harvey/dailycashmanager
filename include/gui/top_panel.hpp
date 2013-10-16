@@ -60,19 +60,19 @@ class TransactionCtrl;
 /**
  * Top level panel intended as immediate child of Frame.
  *
- * @todo The various "update_for_..." functions each contain calls to
- * analogous "update_for_..." functions for each of the sub-widgets
- * in TopPanel. This makes for repetitive code. We could probably streamline
+ * @todo LOW PRIORITY The various "update_for_..." functions each contain calls
+ * to analogous "update_for_..." functions for each of the sub-widgets
+ * in TopPanel. This makes for repetitive code. We could maybe streamline
  * this and make it more maintainable either by using wxWidgets' event
  * system, or else by having an abstract base class for the various
  * sub-widget classes, and then storing pointers to these in a vector
  * in TopPanel, and running through the vector calling "update_for_..." on
  * each.
  *
- * @todo Put some space between the two AccountListCtrls, or do some other
- * thing, to clearly indicate that these are conceptually separate controls,
- * and that one is not, say, a subset of the other. Put a similar kind of
- * "divider" between the envelope list and the TransactionCtrl to the right.
+ * @todo MEDIUM PRIORITY Put some space between the two AccountListCtrls, or do
+ * some other thing, to clearly indicate that these are conceptually separate
+ * controls, and that one is not, say, a subset of the other. Put a similar kind
+ * of "divider" between the envelope list and the TransactionCtrl to the right.
  */
 class TopPanel: public wxPanel
 {
@@ -138,10 +138,16 @@ public:
 	 * in the database, but has just been amended and the amendments
 	 * saved.
 	 *
-	 * @todo These assume no Entries have been deleted from the
-	 * Journal in question. This is assumption is correct only as long
-	 * as TransactionCtrl does not support deletion of individual
-	 * Entries.
+	 * NOTE these do not provide any information to TopPanel about any
+	 * Entries that have been deleted from a DraftJournal or
+	 * OrdinaryJournal represented by \e p_saved_object. Information
+	 * about deleted Entries should be provided to TopPanel separately
+	 * via update_for_deleted_ordinary_entries(...) or
+	 * update_for_deleted_draft_entries(...) (as appropriate) (which
+	 * may in turn be done via appropriate PersistentObjectEvent(s) rather
+	 * than by calling these functions directly). It is better to notify
+	 * re. the deleted Entries prior to notifying re. the (other) Journal
+	 * edits.
 	 */
 	void update_for_amended
 	(	sqloxx::Handle<DraftJournal> const& p_saved_object
@@ -178,15 +184,16 @@ public:
 	 * Update the display to reflect the current state of \e p_entry
 	 * with respect just to whether it is reconciled.
 	 *
-	 * WARNING This is messy and "coupled", but: this intentionally does
+	 * NOTE This is messy and "coupled", but: this intentionally does
 	 * \e not update the
 	 * ReconciliationListPanel / ReconciliationEntryListCtrl, as it
 	 * is assumed these are the \e source of the change - we don't update
 	 * these \e again, on pain of circularity.
+	 *
+	 * @todo LOW PRIORITY Make this less messy and "coupled" (see note
+	 * above).
 	 */
-	void update_for_reconciliation_status
-	(	sqloxx::Handle<Entry> const& p_entry
-	);
+	void update_for_reconciliation_status(sqloxx::Handle<Entry> const& p_entry);
 
 	/**
 	 * @returns a ProtoJournal containing two Entries, with blank

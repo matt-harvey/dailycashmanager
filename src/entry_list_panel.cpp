@@ -80,6 +80,7 @@ namespace
 
 }  // end anonymous namespace
 
+
 EntryListPanel::EntryListPanel
 (	wxWindow* p_parent,
 	PhatbooksDatabaseConnection& p_database_connection,
