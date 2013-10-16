@@ -142,8 +142,9 @@ Repeater::set_frequency(Frequency const& p_frequency)
 			ostringstream oss;
 			oss << "Attempted to set Repeater Frequency to a Frequency "
 				<< "with a step_type() of "
-				<< "\"interval\""
-				<< ", however this is incompatible with the Repeater "
+				<< "\""
+				<< interval
+				<< "\", however this is incompatible with the Repeater "
 				<< "next_date(), which has been set to "
 				<< next
 				<< ".";
@@ -181,9 +182,9 @@ Repeater::set_next_date(boost::gregorian::date const& p_next_date)
 				<< p_next_date
 				<< ", however this is incompatible with the Frequency "
 				<< "that has already been set for the Repeater and has "
-				<< "a step_type() of "
+				<< "a step_type() of \""
 				<< interval
-				<< ".";
+				<< "\".";
 			char const* msg = oss.str().c_str();
 			JEWEL_THROW (InvalidRepeaterDateException, msg);
 		}

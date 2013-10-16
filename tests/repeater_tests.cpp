@@ -23,6 +23,7 @@
 #include "frequency.hpp"
 #include "interval_type.hpp"
 #include "ordinary_journal.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "phatbooks_tests_common.hpp"
 #include "repeater.hpp"
 #include "transaction_side.hpp"
@@ -76,8 +77,16 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	dj->push_entry(entry2);
 
 	Handle<Repeater> const repeater1(dbc);
-	repeater1->set_frequency(Frequency(3, IntervalType::days));
 	repeater1->set_next_date(date(3012, 5, 30));
+	CHECK_THROW
+	(	repeater1->set_frequency(Frequency(3, IntervalType::month_ends)),
+		InvalidFrequencyException
+	);
+	CHECK_THROW
+	(	repeater1->set_frequency(Frequency(3, IntervalType::months)),
+		InvalidFrequencyException
+	);	
+	repeater1->set_frequency(Frequency(3, IntervalType::days));
 	dj->push_repeater(repeater1);
 	dj->save();
 
@@ -87,8 +96,12 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	CHECK_EQUAL(repeater1->next_date(1), date(3012, 6, 2));
 
 	Handle<Repeater> const repeater2(dbc);
-	repeater2->set_frequency(Frequency(2, IntervalType::weeks));
 	repeater2->set_next_date(date(3012, 12, 31));
+	repeater2->set_frequency(Frequency(2, IntervalType::weeks));
+	CHECK_THROW
+	(	repeater2->set_frequency(Frequency(2, IntervalType::months)),
+		InvalidFrequencyException
+	);
 	dj->push_repeater(repeater2);
 	dj->save();
 
@@ -97,12 +110,20 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 
 	Handle<Repeater> const repeater3(dbc);
 	repeater3->set_frequency(Frequency(1, IntervalType::months));
+	CHECK_THROW
+	(	repeater3->set_next_date(date(3014, 9, 29)),
+		InvalidRepeaterDateException
+	);
 	repeater3->set_next_date(date(3014, 9, 20));
 	CHECK_EQUAL(repeater3->next_date(5), date(3015, 2, 20));
 
 	Handle<Repeater> const repeater4(dbc);
 	repeater4->set_frequency(Frequency(1, IntervalType::month_ends));
 	repeater4->set_next_date(date(2996, 1, 31));
+	CHECK_THROW
+	(	repeater4->set_next_date(date(2996, 1, 30)),
+		InvalidRepeaterDateException
+	);
 	CHECK_EQUAL(repeater4->next_date(), date(2996, 1, 31));
 	CHECK_EQUAL(repeater4->next_date(1), date(2996, 2, 29));
 	CHECK_EQUAL(repeater4->next_date(6), date(2996, 7, 31));
@@ -116,8 +137,8 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 	CHECK_EQUAL(repeater5->next_date(2), date(2900, 3, 1));
 
 	Handle<Repeater> const repeater6(dbc);
-	repeater6->set_frequency(Frequency(12, IntervalType::month_ends));
 	repeater6->set_next_date(date(3199, 2, 28));
+	repeater6->set_frequency(Frequency(12, IntervalType::month_ends));
 	CHECK_EQUAL(repeater6->next_date(1), date(3200, 2, 29));
 
 	// While we could put something here to test retrieving a Handle<Repeater>
@@ -235,7 +256,6 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	vector<Handle<Entry> >::const_iterator it3 = ++oj3->entries().begin();
 	vector<Handle<Entry> >::const_iterator it4 = ++oj4->entries().begin();
 	CHECK_EQUAL((*it3)->amount(), (*it4)->amount());
-
 }
 
 

@@ -121,8 +121,6 @@ public:
 	 * incompatible with that "next date".
 	 *
 	 * @see \e is_valid_date_for_interval_type
-	 *
-	 * @todo HIGH PRIORITY Test exception throwing behaviour.
 	 */
 	void set_frequency(Frequency const& p_frequency);
 
@@ -131,9 +129,10 @@ public:
 	 * has already been set for this Repeater and \e p_next_date
 	 * incompatible with that frequency.
 	 *
-	 * @see \e is_valid_date_for_interval_type
+	 * @throws InvalidRepeaterDateException in the event that \e p_next_date
+	 * is earlier than the database_connection().entity_creation_date().
 	 *
-	 * @todo HIGH PRIORITY Test exception throwing behaviour.
+	 * @see \e is_valid_date_for_interval_type
 	 */
 	void set_next_date(boost::gregorian::date const& p_next_date);
 
