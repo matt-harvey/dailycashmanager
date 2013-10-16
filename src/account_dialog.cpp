@@ -117,7 +117,7 @@ namespace
 		switch (p_account_super_type)
 		{
 		case AccountSuperType::balance_sheet:
-			return wxString("Opening balance");
+			return wxString("Starting balance");
 		case AccountSuperType::pl:
 			return wxString("Initial budget allocation");
 		default:

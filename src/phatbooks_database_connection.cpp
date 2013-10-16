@@ -606,6 +606,14 @@ PhatbooksDatabaseConnection::perform_integrity_checks()
 			total_opening_balances += (*it)->technical_opening_balance();
 			total_balances += (*it)->technical_balance();
 		}
+		if (total_opening_balances != Decimal(0, 0))
+		{
+			JEWEL_LOG_VALUE(Log::error, total_opening_balances);
+		}
+		if (total_balances != Decimal(0, 0))
+		{
+			JEWEL_LOG_VALUE(Log::error, total_balances);
+		}
 		JEWEL_ASSERT (total_opening_balances == Decimal(0, 0));
 		JEWEL_ASSERT (total_balances == Decimal(0, 0));
 		

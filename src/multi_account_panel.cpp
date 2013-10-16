@@ -133,7 +133,7 @@ MultiAccountPanel::MultiAccountPanel
 	display_text(wxString(" Type:"), 1);
 	display_text(wxString(" Description:"), 2);
 	// Deliberately skipping column 3.
-	display_text(wxString(" Opening balance:"), 4);
+	display_text(wxString(" Starting balance:"), 4);
 
 	increment_row();
 

@@ -58,17 +58,6 @@ class DecimalTextCtrl;
  * rarely that the user would want to change this anyway; enabling them
  * to change it may just be confusing.
  *
- * @todo The concept of "Opening balance" could be quite confusing for
- * the user. The "Opening balance", on its current "business logic" meaning,
- * refers to the balance of an Account on the entity start date. However,
- * the user may think it is referring to the opening deposit into the
- * Account. We need to clarify this for the user. Either incorporate the
- * "opening deposit" concept into the AccountDialog, or else make it clear
- * to the user that "Opening balance" refers to balance at entity start
- * date.
- *
- * @todo Fix alignment of BudgetPanel within AccountDialog.
- *
  * @todo LOW PRIORITY Enable user to delete an Account, but only if it's one for
  * which no Entries have been made, and for which the opening balance
  * is nil, and where, after the proposed deletion, it will still be
