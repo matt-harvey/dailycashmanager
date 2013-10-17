@@ -19,10 +19,12 @@
 
 #include "frequency.hpp"
 #include "interval_type.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "string_conv.hpp"
 #include <boost/lexical_cast.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
+#include <jewel/exception.hpp>
 #include <wx/string.h>
 #include <string>
 
@@ -94,7 +96,6 @@ namespace
 
 }  // end anonymous namespace
 
-
 Frequency::Frequency
 (	int p_num_steps,
 	IntervalType p_step_type
@@ -102,6 +103,14 @@ Frequency::Frequency
 	m_num_steps(p_num_steps),
 	m_step_type(p_step_type)
 {
+	if (p_num_steps < 1)
+	{
+		JEWEL_THROW
+		(	InvalidFrequencyException,
+			"In Frequency constructor, p_num_steps passed a value less than 1."
+		);
+	}
+	JEWEL_ASSERT (p_num_steps > 0);
 }
 
 int

@@ -210,6 +210,7 @@ JEWEL_DERIVED_EXCEPTION(InvalidDateException, PhatbooksException);
  */
 JEWEL_DERIVED_EXCEPTION(InvalidTransactionTypeException, PhatbooksException);
 
+
 }  // namespace phatbooks
 
 #endif  // GUARD_phatbooks_exceptions_hpp_9435394075436235

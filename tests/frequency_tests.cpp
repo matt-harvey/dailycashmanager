@@ -20,6 +20,7 @@
 #include "frequency.hpp"
 #include "amalgamated_budget.hpp"
 #include "interval_type.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "phatbooks_tests_common.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
@@ -45,31 +46,31 @@ TEST(test_frequency_constructors_assignment_num_steps_and_step_type)
 {
 	Frequency const freq1(76, IntervalType::days);
 	Frequency const freq2(50, IntervalType::weeks);
-	Frequency const freq3(-3, IntervalType::months);
-	Frequency const freq4(0, IntervalType::month_ends);
+	Frequency const freq3(3, IntervalType::months);
+	Frequency const freq4(12, IntervalType::month_ends);
 
 	Frequency const freq5(1, IntervalType::days);
-	Frequency const freq6(-1, IntervalType::weeks);
-	Frequency const freq7(-5014, IntervalType::months);
-	Frequency const freq8(0, IntervalType::month_ends);
+	Frequency const freq6(1, IntervalType::weeks);
+	Frequency const freq7(5014, IntervalType::months);
+	Frequency const freq8(12, IntervalType::month_ends);
 
 	CHECK_EQUAL(freq1.num_steps(), 76);
 	CHECK(freq1.step_type() == IntervalType::days);
 	CHECK_EQUAL(freq2.num_steps(), 50);
 	CHECK(freq2.step_type() == IntervalType::weeks);
-	CHECK_EQUAL(freq3.num_steps(), -3);
+	CHECK_EQUAL(freq3.num_steps(), 3);
 	CHECK(freq3.step_type() == IntervalType::months);
-	CHECK_EQUAL(freq4.num_steps(), 0);
+	CHECK_EQUAL(freq4.num_steps(), 12);
 	CHECK(freq4.step_type() == IntervalType::month_ends);
 
 	CHECK(freq5.step_type() == IntervalType::days);
 	CHECK_EQUAL(freq5.num_steps(), 1);
 	CHECK(freq6.step_type() == IntervalType::weeks);
-	CHECK_EQUAL(freq6.num_steps(), -1);
+	CHECK_EQUAL(freq6.num_steps(), 1);
 	CHECK(freq7.step_type() == IntervalType::months);
-	CHECK_EQUAL(freq7.num_steps(), -5014);
+	CHECK_EQUAL(freq7.num_steps(), 5014);
 	CHECK(freq8.step_type() == IntervalType::month_ends);
-	CHECK_EQUAL(freq8.num_steps(), 0);
+	CHECK_EQUAL(freq8.num_steps(), 12);
 
 	Frequency const freq1a(freq1);
 	Frequency const freq2a = freq2;
@@ -85,19 +86,32 @@ TEST(test_frequency_constructors_assignment_num_steps_and_step_type)
 	CHECK(freq1a.step_type() == IntervalType::days);
 	CHECK_EQUAL(freq2a.num_steps(), 50);
 	CHECK(freq2a.step_type() == IntervalType::weeks);
-	CHECK_EQUAL(freq3a.num_steps(), -3);
+	CHECK_EQUAL(freq3a.num_steps(), 3);
 	CHECK(freq3a.step_type() == IntervalType::months);
-	CHECK_EQUAL(freq4a.num_steps(), 0);
+	CHECK_EQUAL(freq4a.num_steps(), 12);
 	CHECK(freq4a.step_type() == IntervalType::month_ends);
 
 	CHECK(freq5a.step_type() == IntervalType::days);
 	CHECK_EQUAL(freq5a.num_steps(), 1);
 	CHECK(freq6a.step_type() == IntervalType::weeks);
-	CHECK_EQUAL(freq6a.num_steps(), -1);
+	CHECK_EQUAL(freq6a.num_steps(), 1);
 	CHECK(freq7a.step_type() == IntervalType::months);
-	CHECK_EQUAL(freq7a.num_steps(), -5014);
+	CHECK_EQUAL(freq7a.num_steps(), 5014);
 	CHECK(freq8a.step_type() == IntervalType::month_ends);
-	CHECK_EQUAL(freq8a.num_steps(), 0);
+	CHECK_EQUAL(freq8a.num_steps(), 12);
+
+	CHECK_THROW
+	(	Frequency f(0, IntervalType::days),
+		InvalidFrequencyException
+	);
+	CHECK_THROW
+	(	Frequency f(-102, IntervalType::months),
+		InvalidFrequencyException
+	);
+	CHECK_THROW
+	(	Frequency f(-1, IntervalType::weeks),
+		InvalidFrequencyException
+	);
 }
 
 TEST(test_frequency_phrase_description)

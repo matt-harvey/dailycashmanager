@@ -35,11 +35,7 @@ class Frequency
 public:
 
 	/**
-	 * @todo HIGH PRIORITY int should be positive. Make it throw if it is not
-	 * positive. (Should it be an unsigned int? Probably not - this
-	 * doesn't rule out zero anyway. Also remember we need to be sure
-	 * it will fit in SQLite 64-bit int type.) Then write tests to ensure
-	 * it throws as expected.
+	 * @throws InvalidFrequencyException if p_num_steps is less than 1
 	 */
 	Frequency(int p_num_steps, IntervalType p_step_type);
 
