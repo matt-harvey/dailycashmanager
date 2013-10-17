@@ -69,7 +69,6 @@ using sqloxx::IdentityMap;
 using sqloxx::SQLStatement;
 using sqloxx::SQLiteException;
 using std::list;
-using std::logic_error;
 using std::runtime_error;
 using std::string;
 
@@ -77,6 +76,12 @@ namespace gregorian = boost::gregorian;
 
 namespace phatbooks
 {
+
+namespace
+{
+	string const setup_flag = "setup_flag_996149162";
+
+}  // end anonymous namespace
 
 class PhatbooksDatabaseConnection::PermanentEntityData
 {
@@ -104,7 +109,6 @@ private:
 	boost::optional<boost::gregorian::date> m_creation_date;
 	sqloxx::Handle<Commodity> m_default_commodity;
 };
-
 
 PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	DatabaseConnection(),
@@ -210,7 +214,6 @@ PhatbooksDatabaseConnection::load_default_commodity()
 	return;
 }
 
-
 void
 PhatbooksDatabaseConnection::do_setup()
 {
@@ -263,7 +266,6 @@ PhatbooksDatabaseConnection::entity_creation_date() const
 	return m_permanent_entity_data->creation_date();
 }
 
-
 gregorian::date
 PhatbooksDatabaseConnection::opening_balance_journal_date() const
 {
@@ -309,13 +311,11 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 	return;
 }
 
-
 Handle<Account>
 PhatbooksDatabaseConnection::balancing_account() const
 {
 	return m_budget->balancing_account();
 }
-
 
 Handle<Commodity>
 PhatbooksDatabaseConnection::default_commodity() const
@@ -329,12 +329,22 @@ PhatbooksDatabaseConnection::set_default_commodity
 )
 {
 	JEWEL_ASSERT (m_permanent_entity_data);
-
-	// TODO HIGH PRIORITY Make this atomic
-	m_permanent_entity_data->set_default_commodity(p_commodity);
-	if (is_valid() && tables_are_configured())
+	Handle<Commodity> const old_dc = default_commodity();
+	DatabaseTransaction dt(*this);
+	try
 	{
-		save_default_commodity();
+		m_permanent_entity_data->set_default_commodity(p_commodity);
+		if (is_valid() && tables_are_configured())
+		{
+			save_default_commodity();  // virtual" strong guarantee
+		}
+		dt.commit();
+	}
+	catch (...)
+	{
+		m_permanent_entity_data->set_default_commodity(old_dc);
+		dt.cancel();
+		throw;
 	}
 	return;
 }
@@ -343,12 +353,6 @@ Handle<DraftJournal>
 PhatbooksDatabaseConnection::budget_instrument() const
 {
 	return m_budget->instrument();
-}
-
-
-namespace
-{
-	string const setup_flag = "setup_flag_996149162";
 }
 
 void
@@ -361,14 +365,26 @@ PhatbooksDatabaseConnection::mark_tables_as_configured()
 void
 PhatbooksDatabaseConnection::save_default_commodity()
 {
-	// TODO HIGH PRIORITY Make this atomic
-	default_commodity()->save();
-	SQLStatement statement
-	(	*this,
-		"update entity_data set default_commodity_id = :p"
-	);
-	statement.bind(":p", default_commodity()->id());
-	statement.step_final();
+	Handle<Commodity> const dc = default_commodity();
+	DatabaseTransaction dt(*this);
+	try
+	{
+		dc->save();
+		SQLStatement statement
+		(	*this,
+			"update entity_data set default_commodity_id = :p"
+		);
+		statement.bind(":p", dc->id());
+		statement.step_final();
+		dt.commit();
+	}
+	catch (...)
+	{
+		if (dc->has_id()) dc->ghostify();	
+		dt.cancel();
+		throw;
+	}
+	return;
 }
 
 void
@@ -533,11 +549,6 @@ PermanentEntityData::default_commodity_is_set() const
 Handle<Commodity>
 PhatbooksDatabaseConnection::PermanentEntityData::default_commodity() const
 {
-	if (!default_commodity_is_set())
-	{
-		throw std::logic_error("Default commodity has not been set.");
-	}
-	JEWEL_ASSERT (m_default_commodity);
 	return m_default_commodity;
 }
 

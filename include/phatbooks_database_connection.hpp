@@ -147,6 +147,17 @@ public:
 	 *
 	 * @throws jewel::UninitializedOptionalException if p_commodity
 	 * does not have an initialized multiplier_to_base.
+	 *
+	 * If this throws an exception, then the database state will be as it was
+	 * prior to the function being called, and the in-memory state of the
+	 * PhatbooksDatabaseConnection and of the
+	 * default Commodity will be virtually as it was (as far as client code
+	 * is concerned).
+	 *
+	 * If this throws sqloxx::UnresolvedTransactionException (extremely
+	 * unlikely), then the program
+	 * should be gracefully exited prior to further SQL being executed on
+	 * the database connection.
 	 */
 	void set_default_commodity(sqloxx::Handle<Commodity> const& p_commodity);
 
@@ -290,6 +301,17 @@ private:
 	 * as calling save() on the default Commodity, this also stores in
 	 * the database the fact that \e this Commodity is the \e default
 	 * Commodity.
+	 *
+	 * If this throws an exception, then the database state will be as it was
+	 * prior to the function being called, and the in-memory state of the
+	 * PhatbooksDatabaseConnection and of the
+	 * default Commodity will be virtually as it was (as far as client code
+	 * is concerned).
+	 *
+	 * If this throws sqloxx::UnresolvedTransactionException (extremely
+	 * unlikely), then the program
+	 * should be gracefully exited prior to further SQL being executed on
+	 * the database connection.
 	 */
 	void save_default_commodity();
 
