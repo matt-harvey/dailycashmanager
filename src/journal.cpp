@@ -32,6 +32,7 @@
 #include <ostream>
 #include <numeric>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -42,6 +43,9 @@ using sqloxx::Handle;
 using sqloxx::Id;
 using std::accumulate;
 using std::endl;
+using std::is_nothrow_move_assignable;
+using std::is_nothrow_move_constructible;
+using std::is_same;
 using std::ostream;
 using std::string;
 using std::vector;
@@ -212,15 +216,22 @@ Journal::do_push_entry(Handle<Entry> const& entry)
 void
 Journal::do_remove_entry(Handle<Entry> const& entry)
 {
-	// TODO HIGH PRIORITY Make sure this is exception-safe.
-	vector<Handle<Entry> > temp = m_data->entries;
-	m_data->entries.clear();
+	vector<Handle<Entry> > temp;
 	remove_copy
-	(	temp.begin(),
-		temp.end(),
-		back_inserter(m_data->entries),
+	(	m_data->entries.begin(),
+		m_data->entries.end(),
+		back_inserter(temp),
 		entry
 	);
+	static_assert
+	(	is_nothrow_move_constructible<decltype(temp)>::value &&
+		is_nothrow_move_assignable<decltype(temp)>::value &&
+		is_same<decltype(temp), decltype(m_data->entries)>::value,
+		"In body of Journal::do_remove_entry, preconditions for nothrow "
+		"std::swap are not met."
+	);
+	using std::swap;
+	swap(m_data->entries, temp);
 	return;
 }
 

@@ -204,7 +204,64 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	CHECK(!journal1b->is_balanced());
 }
 
+TEST_FIXTURE(TestFixture, test_ordinary_journal_remove_entry)
+{
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+	Handle<OrdinaryJournal> const journal1(dbc);
+	journal1->set_transaction_type(TransactionType::generic);
+	journal1->set_comment("igloo");
 
+	Handle<Entry> const entry1a(dbc);
+	entry1a->
+		set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "cash")));
+	entry1a->set_comment("igloo entry a");
+	entry1a->set_whether_reconciled(true);
+	entry1a->set_amount(Decimal("-10.99"));
+	entry1a->set_transaction_side(TransactionSide::source);
+	journal1->push_entry(entry1a);
+
+	Handle<Entry> const entry1b(dbc);
+	entry1b->
+		set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "cash")));
+	entry1b->set_comment("igloo entry b");
+	entry1b->set_whether_reconciled(false);
+	entry1b->set_transaction_side(TransactionSide::destination);
+	journal1->push_entry(entry1b);
+	journal1->set_date(date(3000, 1, 5));
+	entry1b->set_amount(Decimal("10.99"));
+
+	JEWEL_ASSERT (journal1->is_balanced());
+	journal1->save();
+
+	Handle<OrdinaryJournal> const journal1b = journal1;
+	CHECK_EQUAL(journal1b->entries().size(), static_cast<size_t>(2));
+	journal1b->remove_entry(entry1a);
+	CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(1));
+	CHECK_EQUAL(journal1b->entries().size(), static_cast<size_t>(1));
+	journal1b->ghostify();
+	CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(2));
+	CHECK_EQUAL(journal1b->entries().size(), static_cast<size_t>(2));
+	journal1b->remove_entry(entry1a);
+	CHECK(!journal1b->is_balanced());
+	journal1b->entries().back()->set_amount(Decimal("0.00"));
+	CHECK(journal1b->is_balanced());
+	journal1->save();
+	CHECK_EQUAL(journal1b->entries().size(), static_cast<size_t>(1));
+	CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(1));
+
+	Handle<Entry> const entry1c(dbc);
+	Handle<Entry> const entry1d(dbc); 
+	journal1b->push_entry(entry1c);
+	entry1b->set_comment("b");
+	entry1c->set_comment("c");
+	entry1d->set_comment("d");
+	journal1b->push_entry(entry1d);
+	CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(3));
+	journal1->remove_entry(entry1c);
+	CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(2));
+	CHECK_EQUAL(journal1->entries().at(0)->comment(), "b");
+	CHECK_EQUAL(journal1->entries().at(1)->comment(), "d");
+}
 
 }  // namespace test
 }  // namespace phatbooks
