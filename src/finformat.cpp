@@ -113,7 +113,6 @@ string finformat_std8
 	return ret;
 }
 
-
 wxString finformat_wx
 (	jewel::Decimal const& decimal,
 	wxLocale const& loc,
@@ -141,12 +140,6 @@ wxString finformat_wx
 	(	wxLOCALE_THOUSANDS_SEP,
 		wxLOCALE_CAT_MONEY
 	);
-	// TODO HIGH PRIORITY Are the following assertions always going to be true?
-	// No, they are not...
-	JEWEL_ASSERT (decimal_point_s.size() == 1);
-	JEWEL_ASSERT (thousands_sep_s.size() == 1);
-	CharT const decimal_point = decimal_point_s[0];
-	CharT const thousand_sep = thousands_sep_s[0];
 	// We will build it backwards.
 	deque<CharT> ret;
 	JEWEL_ASSERT (ret.empty());
@@ -209,8 +202,15 @@ wxString finformat_wx
 			ret.push_front(zeroc);
 			++digits_written;
 		}
-		// Write the decimal point if required
-		if (places != 0) ret.push_front(decimal_point);
+		// Write the decimal point at front if required.
+		if (places != 0)
+		{
+			for (auto k = decimal_point_s.size(); k != 0; --k)
+			{
+				JEWEL_ASSERT (k >= 1);
+				ret.push_front(decimal_point_s[k - 1]);
+			}
+		}
 
 		// Write the whole part
 
@@ -234,7 +234,12 @@ wxString finformat_wx
 				static_cast<wxString::size_type>(*grouping_it)
 			)
 			{
-				ret.push_front(thousand_sep);
+				// Write thousands separator at front.
+				for (auto k = thousands_sep_s.size(); k != 0; --k)
+				{
+					JEWEL_ASSERT (k >= 1);
+					ret.push_front(thousands_sep_s[k - 1]);
+				}
 				digits_written_this_group = 0;
 				if (grouping_it != last_group_datum) ++grouping_it;
 			}
