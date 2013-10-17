@@ -79,7 +79,11 @@ namespace phatbooks
 
 namespace
 {
-	string const setup_flag = "setup_flag_996149162";
+	string const& setup_flag()
+	{
+		static string const ret = "setup_flag_996149162";
+		return ret;
+	}
 
 }  // end anonymous namespace
 
@@ -330,7 +334,6 @@ PhatbooksDatabaseConnection::set_default_commodity
 {
 	JEWEL_ASSERT (m_permanent_entity_data);
 	Handle<Commodity> const old_dc = default_commodity();
-	DatabaseTransaction dt(*this);
 	try
 	{
 		m_permanent_entity_data->set_default_commodity(p_commodity);
@@ -338,12 +341,10 @@ PhatbooksDatabaseConnection::set_default_commodity
 		{
 			save_default_commodity();  // virtual" strong guarantee
 		}
-		dt.commit();
 	}
 	catch (...)
 	{
 		m_permanent_entity_data->set_default_commodity(old_dc);
-		dt.cancel();
 		throw;
 	}
 	return;
@@ -358,7 +359,7 @@ PhatbooksDatabaseConnection::budget_instrument() const
 void
 PhatbooksDatabaseConnection::mark_tables_as_configured()
 {
-	execute_sql("create table " + setup_flag + "(dummy_column);");
+	execute_sql("create table " + setup_flag() + "(dummy_column);");
 	return;
 }
 
@@ -424,7 +425,7 @@ PhatbooksDatabaseConnection::tables_are_configured()
 	// TODO LOW PRIORITY Make this nicer. 
 	try
 	{
-		execute_sql("select * from " + setup_flag);
+		execute_sql("select * from " + setup_flag());
 		return true;
 	}
 	catch (SQLiteException&)
