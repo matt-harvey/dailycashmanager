@@ -25,11 +25,13 @@
 #include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <iostream>
+#include <string>
 #include <typeinfo>
 #include <vector>
 
 using std::cout;
 using std::endl;
+using std::string;
 using std::vector;
 using jewel::Decimal;
 
@@ -104,7 +106,7 @@ TEST(test_frequency_phrase_description)
 	CHECK_EQUAL(frequency_description(frequency1, "every"), "every day");
 	CHECK
 	(	typeid(frequency_description(frequency1)) ==
-		typeid(std::string)
+		typeid(string)
 	);
 	CHECK_EQUAL(frequency_description(frequency1), wxString("per day"));
 
@@ -151,32 +153,53 @@ TEST(frequency_test_convert_to_and_from_canonical)
 	// the "round trip" that we are testing here.
 	vector<Frequency> frequencies;
 	AmalgamatedBudget::generate_supported_frequencies(frequencies);
-	vector<Decimal> amounts;
-	amounts.push_back(Decimal("0"));
-	amounts.push_back(Decimal("1"));
-	amounts.push_back(Decimal("3"));
-	amounts.push_back(Decimal("2.50"));
-	amounts.push_back(Decimal("9.65"));
-	amounts.push_back(Decimal("-1"));
-	amounts.push_back(Decimal("-9.61"));
-	amounts.push_back(Decimal("0.0000015"));
-	amounts.push_back(Decimal("6980097228.02"));
-	amounts.push_back(Decimal("9.555555"));
-	amounts.push_back(Decimal("20000000.01"));
-	amounts.push_back(Decimal("-0.0000005"));
-	for (vector<Decimal>::size_type i = 0; i != amounts.size(); ++i)
+	char const* strings[] =
+	{	"1",		"3",			"2.50",			"9.65",
+		"-1",		"-9.61",		"0.0000015",	"6989900897.02",
+		"9.55555",	"200000000.01",	"0.00000005",	"-0.0978"
+	};
+	// Test accuracy of "round trip" conversions to and from the
+	// canonical frequency.
+	for (auto const& s: strings)
 	{
-		for (vector<Frequency>::size_type j = 0; j != frequencies.size(); ++j)
+		Decimal const orig_amount(s);
+		for (auto const& f: frequencies)
 		{
-			Decimal const amount = amounts[i];
-			Frequency const freq = frequencies[j];
-			JEWEL_ASSERT (AmalgamatedBudget::supports_frequency(freq));
-			Decimal const res_a = convert_to_canonical(freq, amount);
-			Decimal const res_b = convert_from_canonical(freq, res_a);
-			CHECK_EQUAL(res_b, amount);
+			JEWEL_ASSERT (AmalgamatedBudget::supports_frequency(f));
+			Decimal const res_a = convert_to_canonical(f, orig_amount);
+			Decimal const res_b = convert_from_canonical(f, res_a);
+			CHECK_EQUAL(res_b, orig_amount);
 		}
 	}
-	// TODO HIGH PRIORITY Write some more tests for Frequency conversions.
+
+	// Other ad hoc tests of conversion accuracy.
+
+	Decimal const a0("235.50");
+	Frequency const f0(3, IntervalType::months);
+	Decimal const a0i = convert_to_canonical(f0, a0);
+	Frequency const f0b(12, IntervalType::month_ends);
+	CHECK_EQUAL(convert_from_canonical(f0b, a0i), Decimal("942"));
+
+	Decimal const a1("-0.005");
+	Frequency const f1(2, IntervalType::weeks);
+	Decimal const a1i = convert_to_canonical(f1, a1);
+	Frequency const f1b(1, IntervalType::days);
+	CHECK_EQUAL
+	(	round(convert_from_canonical(f1b, a1i), 6),
+		Decimal("-0.000357")
+	);
+
+	Decimal const a2("6956");
+	Frequency const f2(10, IntervalType::days);
+	Decimal const a2i = convert_to_canonical(f2, a2);
+	Frequency const f2b(6, IntervalType::months);
+	CHECK_EQUAL(convert_from_canonical(f2b, a2i), Decimal("127033.95"));
+
+	Decimal const a3("-1");
+	Frequency const f3(1, IntervalType::weeks);
+	Decimal const a3i = convert_to_canonical(f3, a3);
+	Frequency const f3b(2, IntervalType::days);
+	CHECK_EQUAL(round(convert_from_canonical(f3b, a3i), 4), Decimal("-0.2857"));
 }
 
 }  // namespace test
