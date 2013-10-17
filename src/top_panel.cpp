@@ -570,8 +570,10 @@ TopPanel::update_for_amended_budget(Handle<Account> const& p_account)
 {
 	(void)p_account;  // Silence compiler re. unused parameter.
 	JEWEL_ASSERT (super_type(p_account->account_type()) == AccountSuperType::pl);
+	JEWEL_ASSERT (m_pl_account_list);
+	JEWEL_ASSERT (m_report_panel);
 	m_pl_account_list->update();
-	// TODO HIGH PRIORITY Do we need to update ReportPanel for amended budget?
+	m_report_panel->update_for_amended_budget(p_account);
 	return;
 }
 

@@ -272,6 +272,13 @@ ReportPanel::update_for_amended(Handle<Account> const& p_account)
 }
 
 void
+ReportPanel::update_for_amended_budget(Handle<Account> const& p_account)
+{
+	if (m_report) m_report->update_for_amended_budget(p_account);
+	return;
+}
+
+void
 ReportPanel::update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids)
 {
 	if (m_report) m_report->update_for_deleted(p_doomed_ids);

@@ -146,6 +146,13 @@ Report::update_for_new(Handle<Account> const& p_account)
 }
 
 void
+Report::update_for_amended_budget(Handle<Account> const& p_account)
+{
+	(void)p_account;  // silence compiler re. unused parameter
+	return;
+}
+
+void
 Report::update_for_amended(Handle<Account> const& p_account)
 {
 	(void)p_account;  // silence compiler re. unused parameter.

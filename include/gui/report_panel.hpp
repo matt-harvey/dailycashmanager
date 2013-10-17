@@ -70,6 +70,7 @@ public:
 	void update_for_amended(sqloxx::Handle<OrdinaryJournal> const& p_journal);
 	void update_for_new(sqloxx::Handle<Account> const& p_account);
 	void update_for_amended(sqloxx::Handle<Account> const& p_account);
+	void update_for_amended_budget(sqloxx::Handle<Account> const& p_account);
 	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
 
 private:
