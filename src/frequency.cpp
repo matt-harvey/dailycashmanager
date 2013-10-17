@@ -34,6 +34,67 @@ using std::string;
 namespace phatbooks
 {
 
+
+namespace
+{
+	Decimal const& days_per_year()
+	{
+		static Decimal const ret("365.25");
+		return ret;
+	}
+	Decimal const& days_per_week()
+	{
+		static Decimal const ret("7");
+		return ret;
+	}
+	Decimal const& months_per_year()
+	{
+		static Decimal const ret("12");
+		return ret;
+	}
+	Decimal const& days_per_month()
+	{
+		static Decimal const ret =
+			days_per_year() / months_per_year();
+		return ret;
+	}
+	bool is_whole(Decimal const& d)
+	{
+		return round(d, 0) == d;
+	}
+	Decimal const& days_per_canonical_interval()
+	{
+		// A number with that's wholly divisible
+		// by various commonly used Frequencies expressed
+		// in numbers of days.
+		static Decimal const ret(654528, 0);
+		return ret;
+	}
+	Decimal const& weeks_per_canonical_interval()
+	{
+		static Decimal const ret =
+			days_per_canonical_interval() / days_per_week();
+		JEWEL_ASSERT (round(ret, 0) == ret);
+		return ret;
+	}
+	Decimal const& years_per_canonical_interval()
+	{
+		static Decimal const ret =
+			days_per_canonical_interval() / days_per_year();
+		JEWEL_ASSERT (round(ret, 0) == ret);
+		return ret;
+	}
+	Decimal const& months_per_canonical_interval()
+	{
+		static Decimal const ret =
+			years_per_canonical_interval() * months_per_year();
+		JEWEL_ASSERT (round(ret, 0) == ret);
+		return ret;
+	}
+
+}  // end anonymous namespace
+
+
 Frequency::Frequency
 (	int p_num_steps,
 	IntervalType p_step_type
@@ -73,69 +134,8 @@ frequency_description(Frequency const& frequency, string const& first_word)
 	return ret;
 }
 
-
-
-namespace
-{
-	Decimal const days_per_year()
-	{
-		static Decimal const ret("365.25");
-		return ret;
-	}
-	Decimal const days_per_week()
-	{
-		static Decimal const ret("7");
-		return ret;
-	}
-	Decimal const months_per_year()
-	{
-		static Decimal const ret("12");
-		return ret;
-	}
-	Decimal const days_per_month()
-	{
-		static Decimal const ret =
-			days_per_year() / months_per_year();
-		return ret;
-	}
-	bool is_whole(Decimal const& d)
-	{
-		return round(d, 0) == d;
-	}
-	Decimal const days_per_canonical_interval()
-	{
-		// A number with that's wholly divisible
-		// by various commonly used Frequencies expressed
-		// in numbers of days.
-		static Decimal const ret(654528, 0);
-		return ret;
-	}
-	Decimal const weeks_per_canonical_interval()
-	{
-		static Decimal const ret =
-			days_per_canonical_interval() / days_per_week();
-		JEWEL_ASSERT (round(ret, 0) == ret);
-		return ret;
-	}
-	Decimal const years_per_canonical_interval()
-	{
-		static Decimal const ret =
-			days_per_canonical_interval() / days_per_year();
-		JEWEL_ASSERT (round(ret, 0) == ret);
-		return ret;
-	}
-	Decimal const months_per_canonical_interval()
-	{
-		static Decimal const ret =
-			years_per_canonical_interval() * months_per_year();
-		JEWEL_ASSERT (round(ret, 0) == ret);
-		return ret;
-	}
-
-}  // end anonymous namespace
-
-
-Frequency const canonical_frequency()
+Frequency const&
+canonical_frequency()
 {
 	JEWEL_ASSERT
 	(	round(days_per_canonical_interval(), 0) ==
@@ -146,42 +146,6 @@ Frequency const canonical_frequency()
 		IntervalType::days
 	);
 	return ret;
-}
-
-Decimal
-convert_to_annual(Frequency const& p_frequency, Decimal const& p_amount)
-{
-	Decimal const steps(p_frequency.num_steps(), 0);
-	switch (p_frequency.step_type())
-	{
-	case IntervalType::days:
-		return p_amount * days_per_year() / steps;
-	case IntervalType::weeks:
-		return p_amount * days_per_year() / days_per_week() / steps;
-	case IntervalType::months:  // fall through
-	case IntervalType::month_ends:
-		return p_amount * months_per_year() / steps;
-	default:
-		JEWEL_HARD_ASSERT (false);
-	}
-}
-
-Decimal
-convert_from_annual(Frequency const& p_frequency, Decimal const& p_amount)
-{
-	Decimal const steps(p_frequency.num_steps(), 0);
-	switch (p_frequency.step_type())
-	{
-	case IntervalType::days:
-		return p_amount * steps / days_per_year();
-	case IntervalType::weeks:
-		return p_amount * steps * days_per_week() / days_per_year();
-	case IntervalType::months:  // fall through
-	case IntervalType::month_ends:
-		return p_amount	* steps / months_per_year();
-	default:
-		JEWEL_HARD_ASSERT (false);
-	}
 }
 
 Decimal

@@ -76,7 +76,7 @@ private:
  * while minimizing rounding loss and the chance of overflow on
  * "round trip" conversions.
  */
-Frequency const canonical_frequency();
+Frequency const& canonical_frequency();
 
 /**
  * @returns an English adverbial phrase describing the Frequency.
@@ -85,40 +85,9 @@ Frequency const canonical_frequency();
  * get either "per 3 weeks" or "every 3 weeks", depending on
  * the string passed to the second parameter.
  */
-std::string
-frequency_description
+std::string frequency_description
 (	Frequency const& frequency,
 	std::string const& first_word = "per"
-);
-
-/**
- * @returns an amount that is equivalent to p_amount, but in
- * annual terms, rather than in terms of p_frequency. E.g. if
- * p_amount is Decimal("10") and p_frequency is
- * Frequency(2, IntervalType::month), then 
- * the returned value would be Decimal("60").
- *
- * @todo Document circumstances under which this can throw.
- */
-jewel::Decimal
-convert_to_annual
-(	Frequency const& p_frequency,
-	jewel::Decimal const& p_amount
-);
-
-/**
- * @returns an amount in terms of the frequency
- * given by p_frequency, assuming p_amount is in annual
- * terms. For example, suppose p_amount is Decimal("520"), and
- * p_frequency is Frequency(1, IntervalType::week); then
- * the returned value would be Decimal("10").
- *
- * @todo Document circumstances under which this can throw.
- */
-jewel::Decimal
-convert_from_annual
-(	Frequency const& p_frequency,
-	jewel::Decimal const& p_amount
 );
 
 /**
@@ -126,10 +95,9 @@ convert_from_annual
  * terms of canonical_frequency(), rather than in terms of p_frequency.
  * <em>C. f.</em> convert_to_annual.
  *
- * @todo Document circumstances under which this can throw.
+ * @todo HIGH PRIORITY Document circumstances under which this can throw.
  */
-jewel::Decimal
-convert_to_canonical
+jewel::Decimal convert_to_canonical
 (	Frequency const& p_frequency,
 	jewel::Decimal const& p_amount
 );
@@ -140,10 +108,9 @@ convert_to_canonical
  * the canonical_frequency().
  * <em>C. f.</em> convert_from_annual.
  *
- * @todo Document circumstances under which this can throw.
+ * @todo HIGH PRIORITY Document circumstances under which this can throw.
  */
-jewel::Decimal
-convert_from_canonical
+jewel::Decimal convert_from_canonical
 (	Frequency const& p_frequency,
 	jewel::Decimal const& p_amount
 );
