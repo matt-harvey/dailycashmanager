@@ -24,7 +24,7 @@
 // API documentation. (Note I have already done this for \e do_load(...)
 // functions.)
 
-// TODO HIGH PRIORITY Tooltips aren't showing on Windows.
+// TODO MEDIUM PRIORITY Tooltips aren't showing on Windows.
 
 // TODO HIGH PRIORITY Make the installer create an association on the user's
 // system between the Phatbooks file extension and the Phatbooks application.
@@ -47,7 +47,10 @@
 // \e think that the default configuration under CPack does this
 // automatically).
 
-// TODO HIGH PRIORITY Write the licence.
+// TODO HIGH PRIORITY Create the licence. Needs to go both in LICENSE.txt and
+// into the NSIS installer (can configure CMakeLists.txt to get the licence text
+// from LICENSE.txt). Take care when creating the license, especially re.
+// the third party libraries used in the project.
 
 // TODO HIGH PRIORITY Ensure that the option for the user to lauch directly from
 // the installer, works correctly.
@@ -86,7 +89,10 @@
 // user-supplied message to "help desk" with a single mouse click from
 // the window itself; or, if not, at least tells the user
 // where the log file is and gets recommends they email a particular
-// email address with the log file attached.
+// email address with the log file attached. An alternative to email
+// is just to use HTTP to send the logfile directly to a server (after
+// getting the user's permission). Could use the server to format an
+// email.
 
 #include "application.hpp"
 #include "string_conv.hpp"
