@@ -288,10 +288,6 @@ wx_to_decimal
 	(	wxLOCALE_THOUSANDS_SEP,
 		wxLOCALE_CAT_MONEY
 	);
-	// TODO HIGH PRIORITY Are the following assertions always going to be true?
-	// No, they are not...
-	JEWEL_ASSERT (decimal_point_s.size() == 1);
-	JEWEL_ASSERT (thousands_sep_s.size() == 1);
 	if (wxs.IsEmpty())
 	{
 		// TODO HIGH PRIORITY Should probably throw an exception here, rather
