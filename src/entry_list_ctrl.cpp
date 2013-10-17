@@ -47,8 +47,9 @@
 #include <wx/gdicmn.h>
 #include <wx/progdlg.h>
 #include <wx/scrolwin.h>
-#include <vector>
 #include <string>
+#include <type_traits>
+#include <vector>
 
 using boost::lexical_cast;
 using boost::optional;
@@ -56,6 +57,7 @@ using jewel::value;
 using sqloxx::Handle;
 using sqloxx::Id;
 using sqloxx::SQLStatement;
+using std::is_signed;
 using std::pair;
 using std::string;
 using std::unique_ptr;
@@ -514,15 +516,20 @@ EntryListCtrl::date_col_num() const
 void
 EntryListCtrl::push_back_entry(Handle<Entry> const& p_entry)
 {
-	long const i = GetItemCount();
+	auto const i = GetItemCount();
 	JEWEL_ASSERT (date_col_num() == 0);
 	InsertItem(i, date_format_wx(p_entry->date()));
 	do_set_non_date_columns(i, p_entry);
 
 	// The item may change position due to e.g. sorting, so store the
 	// Entry ID in the item's data
-	// TODO HIGH PRIORITY Do a static assert to ensure second param will fit the
-	// id.
+	static_assert
+	(	(sizeof(decltype(i)) >= sizeof(decltype(p_entry->id()))) &&
+		is_signed<decltype(i)>::value &&
+		is_signed<decltype(p_entry->id())>::value,
+		"Cannot safely fit values of type of p_entry->id() into the type "
+		"of i, in function EntryListCtrl::push_back_entry."
+	);
 	SetItemData(i, p_entry->id());
 	m_id_set.insert(p_entry->id());
 	return;

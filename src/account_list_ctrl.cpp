@@ -41,6 +41,7 @@
 
 using boost::optional;
 using sqloxx::Handle;
+using std::is_signed;
 using std::max;
 using std::set;
 
@@ -151,27 +152,31 @@ AccountListCtrl::update()
 	AccountTableIterator const end;
 	for ( ; it != end; ++it)
 	{
+		Handle<Account> const& account = *it;
 		if
-		(	(super_type((*it)->account_type()) == m_account_super_type) &&
-			(m_show_hidden || ((*it)->visibility() == Visibility::visible))
+		(	(super_type(account->account_type()) == m_account_super_type) &&
+			(m_show_hidden || (account->visibility() == Visibility::visible))
 		)	
 		{
 			// Insert item, with string for Column 0
-			InsertItem(i, (*it)->name());
+			InsertItem(i, account->name());
 		
-			JEWEL_ASSERT ((*it)->has_id());
+			JEWEL_ASSERT (account->has_id());
+			auto const id = account->id();
 			static_assert
-			(	sizeof((*it)->id()) <= sizeof(i),
+			(	(sizeof(id) <= sizeof(i)) &&
+				is_signed<decltype(id)>::value &&
+				is_signed<decltype(i)>::value,
 				"Object Id is too wide to be safely passed to "
 				"SetItemData."
 			);
-			SetItemData(i, (*it)->id());
+			SetItemData(i, id);
 
 			// Insert the balance string
 			SetItem
 			(	i,
 				s_balance_col,
-				finformat_wx((*it)->friendly_balance(), locale())
+				finformat_wx(account->friendly_balance(), locale())
 			);
 
 			if (showing_daily_budget())
@@ -180,7 +185,7 @@ AccountListCtrl::update()
 				SetItem
 				(	i,
 					s_budget_col,
-					finformat_wx((*it)->budget(), locale())
+					finformat_wx(account->budget(), locale())
 				);
 			}
 
