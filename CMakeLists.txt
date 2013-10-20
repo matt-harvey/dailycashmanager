@@ -175,7 +175,7 @@ set (gui_sources
 	 src/window_utilities.cpp)
 
 set (test_sources
-	 tests/test.cpp
+	 tests/account_tests.cpp
 	 tests/date_parser_tests.cpp
 	 tests/date_tests.cpp
 	 tests/draft_journal_tests.cpp
@@ -185,6 +185,7 @@ set (test_sources
 	 tests/ordinary_journal_tests.cpp
 	 tests/phatbooks_tests_common.cpp
 	 tests/repeater_tests.cpp
+	 tests/test.cpp
 	 tests/transaction_type_tests.cpp)
 
 add_library(phatbooks_common ${common_sources})
