@@ -176,7 +176,6 @@ public:
 		AccountSuperType p_account_super_type
 	);
 
-
 	// copy constructor is private
 
 	Account(Account&&) = delete;

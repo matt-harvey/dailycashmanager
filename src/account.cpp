@@ -214,10 +214,7 @@ Account::exists
 )
 {
 	wxString const target = p_name.Lower();
-	SQLStatement statement
-	(	p_database_connection,
-		"select name from accounts"
-	);
+	SQLStatement statement(p_database_connection, "select name from accounts");
 	while (statement.step())
 	{
 		wxString const candidate =
