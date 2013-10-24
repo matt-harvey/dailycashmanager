@@ -49,6 +49,7 @@ using boost::numeric_cast;
 using boost::optional;
 using jewel::clear;
 using jewel::Decimal;
+using jewel::Log;
 using jewel::value;
 using sqloxx::Handle;
 using sqloxx::Id;
@@ -64,6 +65,26 @@ namespace gregorian = boost::gregorian;
 namespace phatbooks
 {
 
+namespace
+{
+	// Convert a "technical balance" to a "friendly balance",
+	// where the balance is the balance of an Account with
+	// account_super_type() ast.
+	Decimal technical_to_friendly
+	(	Decimal const& d,
+		AccountSuperType ast
+	)
+	{
+		switch (ast)
+		{
+		case AccountSuperType::balance_sheet:
+			return d;
+		case AccountSuperType::pl:
+			return round(d * Decimal(-1, 0), d.places());
+		default:
+			JEWEL_HARD_ASSERT (false);
+		}
+	}
 
 typedef
 	PhatbooksDatabaseConnection::BalanceCacheAttorney
@@ -73,6 +94,7 @@ typedef
 	PhatbooksDatabaseConnection::BudgetAttorney
 	BudgetAttorney;
 
+}  // end anonymous namespace
 
 struct Account::AccountData
 {
@@ -82,7 +104,6 @@ struct Account::AccountData
 	optional<wxString> description;
 	optional<Visibility> visibility;
 };
-
 
 void
 Account::setup_tables(PhatbooksDatabaseConnection& dbc)
@@ -241,22 +262,26 @@ Account::no_user_pl_accounts_saved
 (	PhatbooksDatabaseConnection& p_database_connection
 )
 {
-	AccountTableIterator it(p_database_connection);
-	AccountTableIterator const end;
-	if (it == end)
-	{
-		return true;
-	}
-	Handle<Account> const bal_account =
+	SQLStatement statement
+	(	p_database_connection,
+		"select account_id, account_type_id from accounts"
+	);
+	Handle<Account> const balancing_account =
 		p_database_connection.balancing_account();
-	for ( ; it != end; ++it)
+	while (statement.step())
 	{
-		if
-		(	(super_type((*it)->account_type()) == AccountSuperType::pl) &&
-			(*it != bal_account)
-		)
+		AccountType const atype =
+			static_cast<AccountType>(statement.extract<int>(1));
+		if (super_type(atype) == AccountSuperType::pl)
 		{
-			return false;
+			Handle<Account> const account
+			(	p_database_connection,
+				statement.extract<Id>(0)
+			);
+			if (account != balancing_account)
+			{
+				return false;
+			}
 		}
 	}
 	return true;
@@ -299,7 +324,6 @@ Account::none_saved_with_account_super_type
 	return true;
 }
 
-
 AccountType
 Account::account_type()
 {
@@ -341,29 +365,6 @@ Account::visibility()
 	load();
 	return value(m_data->visibility);
 }
-
-namespace
-{
-	// Convert a "technical balance" to a "friendly balance",
-	// where the balance is the balance of an Account with
-	// account_super_type() ast.
-	Decimal technical_to_friendly
-	(	Decimal const& d,
-		AccountSuperType ast
-	)
-	{
-		switch (ast)
-		{
-		case AccountSuperType::balance_sheet:
-			return d;
-		case AccountSuperType::pl:
-			return round(d * Decimal(-1, 0), d.places());
-		default:
-			JEWEL_HARD_ASSERT (false);
-		}
-	}
-}  // end anonymous namespace
-
 
 Decimal
 Account::technical_balance()
@@ -597,10 +598,10 @@ Account::do_remove()
 	return;
 }
 
-
 void
 Account::do_ghostify()
 {
+	JEWEL_LOG_TRACE();
 	clear(m_data->name);
 	clear(m_data->commodity);
 	clear(m_data->account_type);

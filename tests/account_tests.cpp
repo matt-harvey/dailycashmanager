@@ -20,6 +20,7 @@
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_tests_common.hpp"
+#include <jewel/assert.hpp>
 #include <sqloxx/handle.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <wx/string.h>
@@ -72,6 +73,59 @@ TEST_FIXTURE(TestFixture, test_account_exists)
 	CHECK(!Account::exists(dbc, "gardening supplies"));
 	CHECK(Account::exists(dbc, "food"));
 }
+
+TEST_FIXTURE(TestFixture, test_no_user_pl_accounts_saved)
+{
+	JEWEL_LOG_TRACE();
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+
+	// These were saved to the database in TestFixture		
+	JEWEL_ASSERT(Account::exists(dbc, "cash"));
+	JEWEL_ASSERT(Account::exists(dbc, "cASh"));  // case-insensitive
+	JEWEL_ASSERT(Account::exists(dbc, "food"));
+	JEWEL_ASSERT(!Account::exists(dbc, "food "));  // but doesn't trim spaces
+
+	CHECK(!Account::no_user_pl_accounts_saved(dbc));
+	Handle<Account> const a0(dbc, Account::id_for_name(dbc, "food"));
+	a0->remove();
+	CHECK(Account::no_user_pl_accounts_saved(dbc));
+	Handle<Account> const a1(dbc);
+	a1->set_account_type(AccountType::revenue);
+	a1->set_name("salary");
+	a1->set_commodity(Handle<Commodity>(dbc, 1));
+	a1->set_description("salaries and wages received");
+	a1->set_visibility(Visibility::hidden);
+	CHECK(Account::no_user_pl_accounts_saved(dbc));
+	a1->save();
+	CHECK(!Account::no_user_pl_accounts_saved(dbc));
+	a1->remove();
+	CHECK(Account::no_user_pl_accounts_saved(dbc));
+
+	Handle<Account> const a2(dbc);
+	a2->set_account_type(AccountType::pure_envelope);
+	a2->set_name("fund - general");
+	a2->set_commodity(Handle<Commodity>(dbc, 1));
+	a2->set_description("");
+	a2->set_visibility(Visibility::visible);
+	CHECK(Account::no_user_pl_accounts_saved(dbc));
+	a2->save();
+	CHECK(!Account::no_user_pl_accounts_saved(dbc));
+	a2->set_account_type(AccountType::asset);
+	CHECK(!Account::no_user_pl_accounts_saved(dbc));
+	a2->save();
+	CHECK(Account::no_user_pl_accounts_saved(dbc));
+	a2->set_account_type(AccountType::liability);
+	a2->save();
+	CHECK(Account::no_user_pl_accounts_saved(dbc));
+	a2->set_account_type(AccountType::equity);
+	a2->save();
+	CHECK(Account::no_user_pl_accounts_saved(dbc));
+	a2->set_account_type(AccountType::expense);
+	CHECK(Account::no_user_pl_accounts_saved(dbc));
+	a2->save();
+	CHECK(!Account::no_user_pl_accounts_saved(dbc));
+}
+
 
 }  // namespace test
 }  // namespace phatbooks
