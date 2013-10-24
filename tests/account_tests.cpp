@@ -162,7 +162,34 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_name)
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_commodity)
 {
-	// TODO
+	JEWEL_LOG_TRACE();
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+	Handle<Commodity> const c1(dbc, Commodity::id_for_abbreviation(dbc, "AUD"));
+	Handle<Commodity> const c2(dbc, Commodity::id_for_abbreviation(dbc, "USD"));
+	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
+	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
+	Handle<Account> a3(dbc);
+
+	CHECK(a1->commodity() == c1);
+	CHECK(a2->commodity() == c1);
+	a3->set_commodity(c1);
+	CHECK(a3->commodity() == c1);
+
+	a1->set_commodity(c2);
+	CHECK(a1->commodity() == c2);
+	CHECK(a2->commodity() == c1);
+	a2->ghostify();
+	CHECK(a2->commodity() == c1);
+	a1->ghostify();
+	CHECK(a1->commodity() == c1);
+	a2->set_commodity(c2);
+	a2->save();
+	CHECK(a2->commodity() == c2);
+	CHECK(a2->commodity() != c1);
+	a3->set_commodity(c2);
+	CHECK(a3->commodity() == c2);
+	a3->set_commodity(c1);
+	CHECK(a3->commodity() == c1);
 }
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_type)
