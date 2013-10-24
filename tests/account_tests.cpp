@@ -169,6 +169,10 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_commodity)
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
 	Handle<Account> a3(dbc);
+	Id const aid1 = a1->id();
+	Id const aid2 = a2->id();
+	Handle<Account> const a1b(dbc, aid1);
+	Handle<Account> const a2b(dbc, aid2);
 
 	CHECK(a1->commodity() == c1);
 	CHECK(a2->commodity() == c1);
@@ -183,6 +187,8 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_commodity)
 	a1->ghostify();
 	CHECK(a1->commodity() == c1);
 	a2->set_commodity(c2);
+	CHECK(a1b->commodity() == a1->commodity());
+	CHECK(a2b->commodity() == a2->commodity());
 	a2->save();
 	CHECK(a2->commodity() == c2);
 	CHECK(a2->commodity() != c1);
@@ -190,6 +196,8 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_commodity)
 	CHECK(a3->commodity() == c2);
 	a3->set_commodity(c1);
 	CHECK(a3->commodity() == c1);
+	CHECK(a1b->commodity() == a1->commodity());
+	CHECK(a2b->commodity() == a2->commodity());
 }
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_type)
