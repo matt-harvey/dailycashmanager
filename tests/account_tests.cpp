@@ -281,30 +281,30 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_description)
 	Handle<Account> const a1b(dbc, aid1);
 	Handle<Account> const a2b(dbc, aid2);
 
-	CHECK(a1->description() == "notes and coins");
-	CHECK(a2->description() == "food and drink");
+	CHECK_EQUAL(a1->description(), "notes and coins");
+	CHECK_EQUAL(a2->description(), "food and drink");
 	a3->set_description("puma food");
-	CHECK(a3->description() == "puma food");
+	CHECK_EQUAL(a3->description(), "puma food");
 
 	a1->set_description("physical tokens of currency");
-	CHECK(a1->description() == "physical tokens of currency");
-	CHECK(a2->description() == "food and drink");
+	CHECK_EQUAL(a1->description(), "physical tokens of currency");
+	CHECK_EQUAL(a2->description(), "food and drink");
 	a2->ghostify();
-	CHECK(a2->description() == "food and drink");
+	CHECK_EQUAL(a2->description(), "food and drink");
 	a1->ghostify();
-	CHECK(a1->description() == "notes and coins");
+	CHECK_EQUAL(a1->description(), "notes and coins");
 	a2->set_description("comestibles");
-	CHECK(a1b->description() == a1->description());
-	CHECK(a2b->description() == a2->description());
+	CHECK_EQUAL(a1b->description(), a1->description());
+	CHECK_EQUAL(a2b->description(), a2->description());
 	a2->save();
-	CHECK(a2->description() == "comestibles");
-	CHECK(a2->description() != "Comestibles");
+	CHECK_EQUAL(a2->description(), wxString("comestibles"));
+	CHECK(a2->description() != wxString("Comestibles"));
 	a3->set_description(wxString("xyz"));
-	CHECK(a3->description() == wxString("xyz"));
+	CHECK_EQUAL(a3->description(), wxString("xyz"));
 	a3->set_description("");
-	CHECK(a3->description() == "");
-	CHECK(a1b->description() == a1->description());
-	CHECK(a2b->description() == a2->description());
+	CHECK_EQUAL(a3->description(), "");
+	CHECK_EQUAL(a1b->description(), a1->description());
+	CHECK_EQUAL(a2b->description(), a2->description());
 
 }
 
