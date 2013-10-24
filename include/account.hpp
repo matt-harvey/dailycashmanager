@@ -156,26 +156,6 @@ public:
 	(	PhatbooksDatabaseConnection& p_database_connection
 	);
 
-	/**
-	 * @returns \e true if and only if there are \e no instances of Account
-	 * with account type \e p_account_type saved in the database connected to
-	 * by p_database_connection.
-	 */
-	static bool none_saved_with_account_type
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		AccountType p_account_type
-	);
-
-	/**
-	 * @returns \e true if and only if there are \e no instances of Account
-	 * with account super type \e p_account_super_type saved in the database
-	 * connection to by p_database_connection.
-	 */
-	static bool none_saved_with_account_super_type
-	(	PhatbooksDatabaseConnection& p_database_connection,
-		AccountSuperType p_account_super_type
-	);
-
 	// copy constructor is private
 
 	Account(Account&&) = delete;

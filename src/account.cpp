@@ -287,43 +287,6 @@ Account::no_user_pl_accounts_saved
 	return true;
 }
 
-bool
-Account::none_saved_with_account_type
-(	PhatbooksDatabaseConnection& p_database_connection,
-	AccountType p_account_type
-)
-{
-	SQLStatement statement
-	(	p_database_connection,
-		"select account_type_id from accounts where "
-		"account_type_id = :p"
-	);
-	statement.bind(":p", static_cast<int>(p_account_type));
-	return !statement.step();
-}
-
-bool
-Account::none_saved_with_account_super_type
-(	PhatbooksDatabaseConnection& p_database_connection,
-	AccountSuperType p_account_super_type
-)
-{
-	SQLStatement statement
-	(	p_database_connection,
-		"select account_type_id from accounts"
-	);
-	while (statement.step())
-	{
-		AccountType const atype =
-			static_cast<AccountType>(statement.extract<int>(0));
-		if (super_type(atype) == p_account_super_type)
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
 AccountType
 Account::account_type()
 {
