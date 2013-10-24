@@ -21,11 +21,13 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_tests_common.hpp"
 #include <jewel/assert.hpp>
+#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <wx/string.h>
 
 using sqloxx::Handle;
+using sqloxx::Id;
 
 // TODO Put tests in here which exercise AmalgamatedBudget as well
 // as just Account.
@@ -126,6 +128,82 @@ TEST_FIXTURE(TestFixture, test_no_user_pl_accounts_saved)
 	CHECK(!Account::no_user_pl_accounts_saved(dbc));
 }
 
+TEST_FIXTURE(TestFixture, test_get_and_set_account_name)
+{
+	JEWEL_LOG_TRACE();
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
+	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
+	Id const id1 = a1->id();
+	Id const id2 = a2->id();
+	Handle<Account> a3(dbc);
+
+	CHECK_EQUAL(a1->name(), "cash");
+	CHECK(a1->name() != "Cash");
+	CHECK(a1->name() != "");
+	CHECK_EQUAL(a2->name(), "food");
+
+	a2->set_name("hello");
+	CHECK_EQUAL(a2->name(), "hello");
+	Handle<Account> const a1b(dbc, id1);
+	Handle<Account> const a2b(dbc, id2);
+	CHECK_EQUAL(a1b->name(), "cash");
+	CHECK_EQUAL(a2b->name(), "hello");
+	a2b->ghostify();
+	CHECK_EQUAL(a2->name(), "food");
+	
+	a3->set_name("hello");
+	CHECK_EQUAL(a3->name(), "hello");
+
+	a1->set_name("yep");
+	a1->save();
+	CHECK_EQUAL(a1->name(), "yep");
+}
+
+TEST_FIXTURE(TestFixture, test_get_and_set_account_commodity)
+{
+	// TODO
+}
+
+TEST_FIXTURE(TestFixture, test_get_and_set_account_type)
+{
+	// TODO
+}
+
+TEST_FIXTURE(TestFixture, test_account_super_type)
+{
+	// TODO
+}
+
+TEST_FIXTURE(TestFixture, test_get_and_set_account_description)
+{
+	// TODO
+}
+
+TEST_FIXTURE(TestFixture, test_get_and_set_account_visibility)
+{
+	// TODO
+}
+
+TEST_FIXTURE(TestFixture, test_account_technical_balance)
+{
+	// TODO
+}
+
+TEST_FIXTURE(TestFixture, test_account_friendly_balance)
+{
+	// TODO
+}
+
+TEST_FIXTURE(TestFixture, test_account_budget)
+{
+	// TODO
+}
+
+TEST_FIXTURE(TestFixture, test_account_budget_items)
+{
+	// TODO
+}
 
 }  // namespace test
 }  // namespace phatbooks
