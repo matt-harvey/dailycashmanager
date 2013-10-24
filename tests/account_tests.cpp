@@ -17,6 +17,7 @@
  */
 
 #include "account.hpp"
+#include "account_type.hpp"
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_tests_common.hpp"
@@ -202,7 +203,40 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_commodity)
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_type)
 {
-	// TODO
+	JEWEL_LOG_TRACE();
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
+	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
+	Handle<Account> a3(dbc);
+	Id const aid1 = a1->id();
+	Id const aid2 = a2->id();
+	Handle<Account> const a1b(dbc, aid1);
+	Handle<Account> const a2b(dbc, aid2);
+
+	CHECK(a1->account_type() == AccountType::asset);
+	CHECK(a2->account_type() == AccountType::expense);
+	a3->set_account_type(AccountType::liability);
+	CHECK(a3->account_type() == AccountType::liability);
+
+	a1->set_account_type(AccountType::revenue);
+	CHECK(a1->account_type() == AccountType::revenue);
+	CHECK(a2->account_type() == AccountType::expense);
+	a2->ghostify();
+	CHECK(a2->account_type() == AccountType::expense);
+	a1->ghostify();
+	CHECK(a1->account_type() == AccountType::asset);
+	a2->set_account_type(AccountType::pure_envelope);
+	CHECK(a1b->account_type() == a1->account_type());
+	CHECK(a2b->account_type() == a2->account_type());
+	a2->save();
+	CHECK(a2->account_type() == AccountType::pure_envelope);
+	CHECK(a2->account_type() != AccountType::expense);
+	a3->set_account_type(AccountType::equity);
+	CHECK(a3->account_type() == AccountType::equity);
+	a3->set_account_type(AccountType::asset);
+	CHECK(a3->account_type() == AccountType::asset);
+	CHECK(a1b->account_type() == a1->account_type());
+	CHECK(a2b->account_type() == a2->account_type());
 }
 
 TEST_FIXTURE(TestFixture, test_account_super_type)
