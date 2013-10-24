@@ -169,7 +169,7 @@ PLReport::refresh_map()
 		}
 		JEWEL_ASSERT (jt != m_map.end());
 		gregorian::date const date = entry->date();
-		JEWEL_ASSERT (!maybe_max_d || (date > value(maybe_max_d)))
+		JEWEL_ASSERT (!maybe_max_d || (date <= value(maybe_max_d)))
 		JEWEL_ASSERT (date >= min_d);
 		jt->second += entry->amount();
 	}
