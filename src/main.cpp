@@ -16,6 +16,12 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+// TODO HIGH PRIORITY Under KDE (at least on Mageia) the way I have set
+// up the widths of wxComboBox and wxTextCtrl and wxButton (in various
+// controls in which these feature), where they are
+// supposed to be the same height, they actually turn out to be slightly
+// different heights.
+
 // TODO HIGH PRIORITY Go through all the classes inheriting from
 // sqloxx::PersistentObject<...> and ensure the do_save(...) functions in each
 // are atomic with respect to the in-memory objects (noting that Sqloxx
