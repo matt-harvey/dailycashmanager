@@ -79,7 +79,6 @@ TEST_FIXTURE(TestFixture, test_account_exists)
 
 TEST_FIXTURE(TestFixture, test_no_user_pl_accounts_saved)
 {
-	JEWEL_LOG_TRACE();
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 
 	// These were saved to the database in TestFixture		
@@ -131,7 +130,6 @@ TEST_FIXTURE(TestFixture, test_no_user_pl_accounts_saved)
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_name)
 {
-	JEWEL_LOG_TRACE();
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
@@ -163,7 +161,6 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_name)
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_commodity)
 {
-	JEWEL_LOG_TRACE();
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 	Handle<Commodity> const c1(dbc, Commodity::id_for_abbreviation(dbc, "AUD"));
 	Handle<Commodity> const c2(dbc, Commodity::id_for_abbreviation(dbc, "USD"));
@@ -203,7 +200,6 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_commodity)
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_type)
 {
-	JEWEL_LOG_TRACE();
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
@@ -241,7 +237,6 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_type)
 
 TEST_FIXTURE(TestFixture, test_account_super_type)
 {
-	JEWEL_LOG_TRACE();
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
@@ -277,7 +272,40 @@ TEST_FIXTURE(TestFixture, test_account_super_type)
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_description)
 {
-	// TODO
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
+	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
+	Handle<Account> a3(dbc);
+	Id const aid1 = a1->id();
+	Id const aid2 = a2->id();
+	Handle<Account> const a1b(dbc, aid1);
+	Handle<Account> const a2b(dbc, aid2);
+
+	CHECK(a1->description() == "notes and coins");
+	CHECK(a2->description() == "food and drink");
+	a3->set_description("puma food");
+	CHECK(a3->description() == "puma food");
+
+	a1->set_description("physical tokens of currency");
+	CHECK(a1->description() == "physical tokens of currency");
+	CHECK(a2->description() == "food and drink");
+	a2->ghostify();
+	CHECK(a2->description() == "food and drink");
+	a1->ghostify();
+	CHECK(a1->description() == "notes and coins");
+	a2->set_description("comestibles");
+	CHECK(a1b->description() == a1->description());
+	CHECK(a2b->description() == a2->description());
+	a2->save();
+	CHECK(a2->description() == "comestibles");
+	CHECK(a2->description() != "Comestibles");
+	a3->set_description(wxString("xyz"));
+	CHECK(a3->description() == wxString("xyz"));
+	a3->set_description("");
+	CHECK(a3->description() == "");
+	CHECK(a1b->description() == a1->description());
+	CHECK(a2b->description() == a2->description());
+
 }
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_visibility)
