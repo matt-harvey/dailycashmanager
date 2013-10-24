@@ -241,7 +241,38 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_type)
 
 TEST_FIXTURE(TestFixture, test_account_super_type)
 {
-	// TODO
+	JEWEL_LOG_TRACE();
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
+	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
+	Handle<Account> a3(dbc);
+	Id const aid1 = a1->id();
+	Id const aid2 = a2->id();
+	Handle<Account> const a1b(dbc, aid1);
+	Handle<Account> const a2b(dbc, aid2);
+
+	CHECK(a1->account_super_type() == AccountSuperType::balance_sheet);
+	CHECK(a2->account_super_type() == AccountSuperType::pl);
+	a3->set_account_type(AccountType::liability);
+	CHECK(a3->account_super_type() == AccountSuperType::balance_sheet);
+
+	a1->set_account_type(AccountType::revenue);
+	CHECK(a1->account_super_type() == AccountSuperType::pl);
+	CHECK(a2->account_super_type() == AccountSuperType::pl);
+	a2->ghostify();
+	CHECK(a2->account_super_type() == AccountSuperType::pl);
+	a1->ghostify();
+	CHECK(a1->account_super_type() == AccountSuperType::balance_sheet);
+	a2->set_account_type(AccountType::pure_envelope);
+	CHECK(a1b->account_super_type() == a1->account_super_type());
+	CHECK(a2b->account_super_type() == a2->account_super_type());
+	a2->save();
+	CHECK(a2->account_super_type() == AccountSuperType::pl);
+	CHECK(a2->account_super_type() != AccountSuperType::balance_sheet);
+	a3->set_account_type(AccountType::equity);
+	CHECK(a3->account_super_type() == AccountSuperType::balance_sheet);
+	a3->set_account_type(AccountType::asset);
+	CHECK(a3->account_super_type() == AccountSuperType::balance_sheet);
 }
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_description)
