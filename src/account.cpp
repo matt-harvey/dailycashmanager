@@ -80,7 +80,7 @@ namespace
 		case AccountSuperType::balance_sheet:
 			return d;
 		case AccountSuperType::pl:
-			return round(d * Decimal(-1, 0), d.places());
+			return -d;
 		default:
 			JEWEL_HARD_ASSERT (false);
 		}
