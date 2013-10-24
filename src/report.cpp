@@ -40,6 +40,11 @@ using jewel::Decimal;
 using jewel::value;
 using sqloxx::Handle;
 
+// TODO MEDIUM PRIORITY On KDE (at least on Mageia), Report background colour
+// has glitches near the top of the panel, in case the report is large enough
+// that a scrollbar appears. The glitches only appear if the user scrolls down
+// then back up again.
+
 namespace gregorian = boost::gregorian;
 
 namespace phatbooks

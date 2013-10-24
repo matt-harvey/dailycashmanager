@@ -305,7 +305,6 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_description)
 	CHECK_EQUAL(a3->description(), "");
 	CHECK_EQUAL(a1b->description(), a1->description());
 	CHECK_EQUAL(a2b->description(), a2->description());
-
 }
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_visibility)
