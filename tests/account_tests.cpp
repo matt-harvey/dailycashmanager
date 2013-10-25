@@ -36,11 +36,13 @@
 #include <sqloxx/handle.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <wx/string.h>
+#include <vector>
 
 using jewel::Decimal;
 using sqloxx::DatabaseTransaction;
 using sqloxx::Handle;
 using sqloxx::Id;
+using std::vector;
 
 namespace gregorian = boost::gregorian;
 
@@ -480,7 +482,7 @@ TEST_FIXTURE(TestFixture, test_account_opening_balance)
 	CHECK_EQUAL(a1->friendly_opening_balance(), Decimal("7.01"));
 }
 
-TEST_FIXTURE(TestFixture, test_account_budget)
+TEST_FIXTURE(TestFixture, test_account_budget_and_budget_items)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
@@ -489,6 +491,9 @@ TEST_FIXTURE(TestFixture, test_account_budget)
 	CHECK_EQUAL(a1->budget(), Decimal("0.00"));
 	CHECK_EQUAL(a2->budget(), Decimal("0.00"));
 
+	vector<Handle<BudgetItem> > bis1;
+	CHECK(a1->budget_items() == bis1);
+
 	Handle<BudgetItem> const b1(dbc);
 	b1->set_description("");
 	b1->set_account(a1);
@@ -496,6 +501,7 @@ TEST_FIXTURE(TestFixture, test_account_budget)
 	b1->set_amount(Decimal("7.14"));
 	CHECK_EQUAL(a1->budget(), Decimal("0.00"));
 	b1->save();
+	bis1.push_back(b1);
 	CHECK_EQUAL(a1->budget(), Decimal("1.02"));
 
 	Handle<BudgetItem> const b1b(dbc);
@@ -504,9 +510,16 @@ TEST_FIXTURE(TestFixture, test_account_budget)
 	b1b->set_frequency(Frequency(12, IntervalType::months));
 	b1b->set_amount(Decimal("365.25"));
 	b1b->save();
+	bis1.push_back(b1b);
 	CHECK_EQUAL(a1->budget(), Decimal("2.02"));
+	CHECK(a1->budget_items() == bis1);
+
 	b1->remove();
 	CHECK_EQUAL(a1->budget(), Decimal("1.00"));
+
+	bis1.clear();
+	bis1.push_back(b1b);
+	CHECK(a1->budget_items() == bis1);
 
 	Handle<BudgetItem> const b2(dbc);
 	b2->set_description("asdfj");
@@ -519,11 +532,6 @@ TEST_FIXTURE(TestFixture, test_account_budget)
 	b1b->save();
 	CHECK_EQUAL(a1->budget(), Decimal("0.00"));
 	CHECK_EQUAL(a2->budget(), Decimal("1.35"));
-}
-
-TEST_FIXTURE(TestFixture, test_account_budget_items)
-{
-	// TODO
 }
 
 }  // namespace test

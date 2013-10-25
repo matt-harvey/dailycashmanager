@@ -223,7 +223,8 @@ public:
 
 	/**
 	 * @returns a std::vector containing all and only
-	 * the saved BudgetItems for this Account.
+	 * the saved BudgetItems for this Account, sorted in ascending order
+	 * by the Id of each BudgetItem.
 	 */
 	std::vector<sqloxx::Handle<BudgetItem> > budget_items();
 

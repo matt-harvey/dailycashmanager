@@ -384,7 +384,7 @@ Account::budget_items()
 	SQLStatement s
 	(	database_connection(),
 		"select budget_item_id from budget_items where "
-		"account_id = :p"
+		"account_id = :p order by budget_item_id"
 	);
 	s.bind(":p", id());
 	JEWEL_ASSERT (ret.empty());
