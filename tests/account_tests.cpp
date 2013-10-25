@@ -21,6 +21,7 @@
 #include "commodity.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_tests_common.hpp"
+#include "visibility.hpp"
 #include <jewel/assert.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
@@ -309,7 +310,35 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_description)
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_visibility)
 {
-	// TODO
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
+	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
+	Handle<Account> const a3(dbc);
+	Id const aid1 = a1->id();
+	Id const aid2 = a2->id();
+	Handle<Account> const a1b(dbc, aid1);
+	Handle<Account> const a2b(dbc, aid2);
+
+	CHECK(a1->visibility() == Visibility::visible);
+	CHECK(a2->visibility() == Visibility::visible);
+	a3->set_visibility(Visibility::hidden);
+	CHECK(a3->visibility() == Visibility::hidden);
+
+	a1->set_visibility(Visibility::hidden);
+	CHECK(a1->visibility() == Visibility::hidden);
+	CHECK(a2->visibility() == Visibility::visible);
+	a2->ghostify();
+	CHECK(a2->visibility() == Visibility::visible);
+	a1->ghostify();
+	CHECK(a1->visibility() == Visibility::visible);
+	a2->set_visibility(Visibility::hidden);
+	CHECK(a1b->visibility() == a1->visibility());
+	CHECK(a2b->visibility() == a2->visibility());
+	a2->save();
+	CHECK(a2->visibility() == Visibility::hidden);
+	CHECK(a2->visibility() != Visibility::visible);
+	a3->set_visibility(Visibility::visible);
+	CHECK(a3->visibility() == Visibility::visible);
 }
 
 TEST_FIXTURE(TestFixture, test_account_technical_balance)
