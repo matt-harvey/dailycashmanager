@@ -201,6 +201,11 @@ operator==(Frequency const& lhs, Frequency const& rhs)
 		(lhs.step_type() == rhs.step_type());
 }
 
+bool
+operator!=(Frequency const& lhs, Frequency const& rhs)
+{
+	return !(lhs == rhs);
+}
 
 
 // TODO HIGH PRIORITY How to handle DecimalMultiplicationException and

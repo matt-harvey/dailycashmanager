@@ -18,9 +18,12 @@
 
 #include "account.hpp"
 #include "account_type.hpp"
+#include "budget_item.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
 #include "entry.hpp"
+#include "frequency.hpp"
+#include "interval_type.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_tests_common.hpp"
@@ -479,7 +482,43 @@ TEST_FIXTURE(TestFixture, test_account_opening_balance)
 
 TEST_FIXTURE(TestFixture, test_account_budget)
 {
-	// TODO
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
+	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
+	JEWEL_ASSERT (dbc.budget_frequency() == Frequency(1, IntervalType::days));
+	CHECK_EQUAL(a1->budget(), Decimal("0.00"));
+	CHECK_EQUAL(a2->budget(), Decimal("0.00"));
+
+	Handle<BudgetItem> const b1(dbc);
+	b1->set_description("");
+	b1->set_account(a1);
+	b1->set_frequency(Frequency(1, IntervalType::weeks));
+	b1->set_amount(Decimal("7.14"));
+	CHECK_EQUAL(a1->budget(), Decimal("0.00"));
+	b1->save();
+	CHECK_EQUAL(a1->budget(), Decimal("1.02"));
+
+	Handle<BudgetItem> const b1b(dbc);
+	b1b->set_description("");
+	b1b->set_account(a1);
+	b1b->set_frequency(Frequency(12, IntervalType::months));
+	b1b->set_amount(Decimal("365.25"));
+	b1b->save();
+	CHECK_EQUAL(a1->budget(), Decimal("2.02"));
+	b1->remove();
+	CHECK_EQUAL(a1->budget(), Decimal("1.00"));
+
+	Handle<BudgetItem> const b2(dbc);
+	b2->set_description("asdfj");
+	b2->set_account(a2);
+	b2->set_frequency(Frequency(3, IntervalType::months));
+	b2->set_amount(Decimal("32.35"));
+	b2->save();
+	CHECK_EQUAL(a2->budget(), Decimal("0.35"));
+	b1b->set_account(a2);
+	b1b->save();
+	CHECK_EQUAL(a1->budget(), Decimal("0.00"));
+	CHECK_EQUAL(a2->budget(), Decimal("1.35"));
 }
 
 TEST_FIXTURE(TestFixture, test_account_budget_items)

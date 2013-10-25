@@ -111,7 +111,15 @@ jewel::Decimal convert_from_canonical
 	jewel::Decimal const& p_amount
 );
 
+/**
+ * @returns true if and only if \e lhs and \e rhs are equal both in num_steps()
+ * and in step_type(). "Equivalence" is not sufficient for equality. Thus
+ * <em>
+ * Frequency(7, IntervalType::days) != Frequency(1, IntervalType::weeks)
+ * </em>.
+ */
 bool operator==(Frequency const& lhs, Frequency const& rhs);
+bool operator!=(Frequency const& lhs, Frequency const& rhs);
 
 }  // namespace phatbooks
 
