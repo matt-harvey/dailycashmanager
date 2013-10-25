@@ -428,6 +428,53 @@ TEST_FIXTURE(TestFixture, test_account_balance)
 	CHECK_EQUAL(a2->technical_balance(), Decimal("605.30"));
 	CHECK_EQUAL(a1->friendly_balance(), Decimal("-605.30"));
 	CHECK_EQUAL(a2->friendly_balance(), Decimal("-605.30"));
+
+	Handle<OrdinaryJournal> const obj2 =
+		create_opening_balance_journal(a2, Decimal("-100.53"));
+	obj2->save();
+	CHECK_EQUAL(a2->technical_balance(), Decimal("504.77"));
+	CHECK_EQUAL(a2->friendly_balance(), Decimal("-504.77"));
+}
+
+TEST_FIXTURE(TestFixture, test_account_opening_balance)
+{
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+	Handle<Commodity> const c1(dbc, Commodity::id_for_abbreviation(dbc, "AUD"));
+	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
+	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
+	CHECK_EQUAL(a1->technical_opening_balance(), Decimal("0.00"));
+	CHECK_EQUAL(a1->friendly_opening_balance(), Decimal("0.00"));
+	CHECK_EQUAL(a2->technical_opening_balance(), Decimal(0, 0));
+	CHECK_EQUAL(a2->technical_opening_balance(), Decimal(0, 2));
+	CHECK_EQUAL(a2->technical_opening_balance(), Decimal("0.00"));
+	CHECK_EQUAL(a2->friendly_opening_balance(), Decimal("0.00"));
+	JEWEL_ASSERT (a1->commodity() == c1);
+	JEWEL_ASSERT (a2->commodity() == c1);
+	CHECK_EQUAL(a1->friendly_opening_balance().places(), c1->precision());
+	CHECK_EQUAL(a1->technical_opening_balance().places(), c1->precision());
+	CHECK_EQUAL(a2->friendly_opening_balance().places(), c1->precision());
+	CHECK_EQUAL(a2->technical_opening_balance().places(), c1->precision());
+
+	Handle<OrdinaryJournal> const obj1 =
+		create_opening_balance_journal(a1, Decimal("306.90"));
+	obj1->save();
+	CHECK_EQUAL(a1->technical_opening_balance(), Decimal("306.90"));
+	CHECK_EQUAL(a1->friendly_opening_balance(), Decimal("306.90"));
+	Handle<OrdinaryJournal> const obj2 =
+		create_opening_balance_journal(a2, Decimal("-50.00"));
+	CHECK_EQUAL(a2->technical_opening_balance(), Decimal("0.00"));
+	CHECK_EQUAL(a2->friendly_opening_balance(), Decimal("0.00"));
+	obj2->save();
+	CHECK_EQUAL(a2->technical_opening_balance(), Decimal("-50.00"));
+	CHECK_EQUAL(a2->friendly_opening_balance(), Decimal("50.00"));
+
+	Handle<OrdinaryJournal> const obj1b =
+		create_opening_balance_journal(a1, Decimal("7.01"));
+	CHECK_EQUAL(a1->technical_opening_balance(), Decimal("306.90"));
+	CHECK_EQUAL(a1->friendly_opening_balance(), Decimal("306.90"));
+	obj1b->save();
+	CHECK_EQUAL(a1->technical_opening_balance(), Decimal("7.01"));
+	CHECK_EQUAL(a1->friendly_opening_balance(), Decimal("7.01"));
 }
 
 TEST_FIXTURE(TestFixture, test_account_budget)

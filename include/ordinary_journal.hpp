@@ -156,7 +156,7 @@ private:
 
 
 /**
- * @returns a Handle to an OrdinaryJournal which, <em> if saved </em>,
+ * @returns a Handle to an OrdinaryJournal which, <em>if saved</em>,
  * will adjust the technical opening balance of p_account to become
  * p_desired_opening_balance. The journal will be an actual
  * (non-budget) journal if p_account is a balance sheet Account;
