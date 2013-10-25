@@ -357,8 +357,21 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_visibility)
 TEST_FIXTURE(TestFixture, test_account_balance)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
+	Handle<Commodity> const c1(dbc, Commodity::id_for_abbreviation(dbc, "AUD"));
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
+	CHECK_EQUAL(a1->technical_balance(), Decimal("0.00"));
+	CHECK_EQUAL(a1->friendly_balance(), Decimal("0.00"));
+	CHECK_EQUAL(a2->technical_balance(), Decimal(0, 0));
+	CHECK_EQUAL(a2->technical_balance(), Decimal(0, 2));
+	CHECK_EQUAL(a2->technical_balance(), Decimal("0.00"));
+	CHECK_EQUAL(a2->friendly_balance(), Decimal("0.00"));
+	JEWEL_ASSERT (a1->commodity() == c1);
+	JEWEL_ASSERT (a2->commodity() == c1);
+	CHECK_EQUAL(a1->friendly_balance().places(), c1->precision());
+	CHECK_EQUAL(a1->technical_balance().places(), c1->precision());
+	CHECK_EQUAL(a2->friendly_balance().places(), c1->precision());
+	CHECK_EQUAL(a2->technical_balance().places(), c1->precision());
 	
 	DatabaseTransaction dt(dbc);
 	for (size_t i = 0; i != 10; ++i)
