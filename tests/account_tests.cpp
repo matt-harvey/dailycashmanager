@@ -19,20 +19,33 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
+#include "date.hpp"
+#include "entry.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_tests_common.hpp"
 #include "visibility.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/decimal.hpp>
+#include <sqloxx/database_transaction.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <wx/string.h>
 
+using jewel::Decimal;
+using sqloxx::DatabaseTransaction;
 using sqloxx::Handle;
 using sqloxx::Id;
 
+namespace gregorian = boost::gregorian;
+
 // TODO Put tests in here which exercise AmalgamatedBudget as well
 // as just Account.
+
+// TODO LOW PRIORITY There is a lot of repeated setup code in these tests
+// which could be moved into phatbooks::test::TestFixture.
 
 namespace phatbooks
 {
@@ -341,14 +354,67 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_visibility)
 	CHECK(a3->visibility() == Visibility::visible);
 }
 
-TEST_FIXTURE(TestFixture, test_account_technical_balance)
+TEST_FIXTURE(TestFixture, test_account_balance)
 {
-	// TODO
-}
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
+	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
+	
+	DatabaseTransaction dt(dbc);
+	for (size_t i = 0; i != 10; ++i)
+	{
+		Handle<OrdinaryJournal> const oj0(dbc);
+		oj0->set_transaction_type(TransactionType::expenditure);
+		oj0->set_comment("");
+		
+		switch (i % 3)
+		{
+		case 0:
+			oj0->set_date(today() + gregorian::date_duration(10));
+			break;
+		case 1:
+			oj0->set_date(today() + gregorian::date_duration(306));
+			break;
+		case 2:
+			oj0->set_date(today());
+			break;
+		default:
+			JEWEL_HARD_ASSERT (false);
+		}
 
-TEST_FIXTURE(TestFixture, test_account_friendly_balance)
-{
-	// TODO
+		Handle<Entry> const e0(dbc);
+		e0->set_account(a1);
+		e0->set_comment("");
+		e0->set_whether_reconciled(false);
+		e0->set_amount(Decimal("-60.53"));
+		e0->set_transaction_side
+		(	i % 2?
+			TransactionSide::destination:
+			TransactionSide::source
+		);
+		oj0->push_entry(e0);
+
+		Handle<Entry> const e1(dbc);
+		e1->set_account(a2);
+		e1->set_comment("");
+		e1->set_whether_reconciled(false);
+		e1->set_amount(Decimal("60.53"));
+		e1->set_transaction_side
+		(	i % 2?
+			TransactionSide::source:
+			TransactionSide::destination
+		);
+		oj0->push_entry(e1);
+
+		JEWEL_ASSERT (oj0->is_balanced());
+		oj0->save();
+	}
+	dt.commit();
+
+	CHECK_EQUAL(a1->technical_balance(), Decimal("-605.30"));
+	CHECK_EQUAL(a2->technical_balance(), Decimal("605.30"));
+	CHECK_EQUAL(a1->friendly_balance(), Decimal("-605.30"));
+	CHECK_EQUAL(a2->friendly_balance(), Decimal("-605.30"));
 }
 
 TEST_FIXTURE(TestFixture, test_account_budget)

@@ -20,12 +20,11 @@
 #ifndef GUARD_ordinary_journal_hpp_6580145273627781
 #define GUARD_ordinary_journal_hpp_6580145273627781
 
-#include "persistent_journal.hpp"
-#include <sqloxx/persistence_traits.hpp>
-#include "string_conv.hpp"
 #include "date.hpp"
+#include "persistent_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
+#include "string_conv.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -33,6 +32,7 @@
 #include <sqloxx/handle.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
+#include <sqloxx/persistence_traits.hpp>
 #include <string>
 #include <vector>
 
