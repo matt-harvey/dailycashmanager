@@ -62,6 +62,11 @@ public:
 	static wxString application_name();
 
 	/**
+	 * @returns a string indicating the version number.
+	 */
+	static wxString version();
+
+	/**
 	 * @returns filename extension to be used with files
 	 * belonging to this application. Includes
 	 * the '.'.

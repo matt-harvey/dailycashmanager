@@ -56,6 +56,12 @@ Application::application_name()
 }
 
 wxString
+Application::version()
+{
+	return "1.0.0";
+}
+
+wxString
 Application::filename_extension()
 {
 	return wxString(".phat");

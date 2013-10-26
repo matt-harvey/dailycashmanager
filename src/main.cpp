@@ -235,7 +235,11 @@ int main(int argc, char** argv)
 
 		// Process command line arguments
 		JEWEL_LOG_TRACE();
-		CmdLine cmd(wx_to_std8(Application::application_name()));
+		CmdLine cmd
+		(	wx_to_std8(Application::application_name()),
+			' ',
+			wx_to_std8(Application::version())
+		);
 		UnlabeledValueArg<string> filepath_arg
 		(	"FILE",
 			"File to open",
