@@ -43,9 +43,6 @@ using sqloxx::Handle;
 using sqloxx::Id;
 using std::accumulate;
 using std::endl;
-using std::is_nothrow_move_assignable;
-using std::is_nothrow_move_constructible;
-using std::is_same;
 using std::ostream;
 using std::string;
 using std::vector;
@@ -223,13 +220,16 @@ Journal::do_remove_entry(Handle<Entry> const& entry)
 		back_inserter(temp),
 		entry
 	);
+	/* TODO LOW PRIORITY On GCC 4.6.1 (at least with MinGW), is_no_throw...
+	 * are not available.
 	static_assert
-	(	is_nothrow_move_constructible<decltype(temp)>::value &&
-		is_nothrow_move_assignable<decltype(temp)>::value &&
-		is_same<decltype(temp), decltype(m_data->entries)>::value,
+	(	std::is_nothrow_move_constructible<decltype(temp)>::value &&
+		std::is_nothrow_move_assignable<decltype(temp)>::value &&
+		std::is_same<decltype(temp), decltype(m_data->entries)>::value,
 		"In body of Journal::do_remove_entry, preconditions for nothrow "
 		"std::swap are not met."
 	);
+	*/
 	using std::swap;
 	swap(m_data->entries, temp);
 	return;
