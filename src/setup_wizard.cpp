@@ -98,7 +98,6 @@ namespace phatbooks
 namespace gui
 {
 
-
 namespace
 {
 	filesystem::path wx_to_boost_filepath
@@ -187,6 +186,7 @@ SetupWizard::SetupWizard
 	m_balance_sheet_account_page(nullptr),
 	m_pl_account_page(nullptr)
 {
+	JEWEL_ASSERT (m_account_names_already_taken.empty());
 	JEWEL_ASSERT (!m_database_connection.is_valid());
 	m_filepath_page = new FilepathPage(this, m_database_connection);
 	m_balance_sheet_account_page = new AccountPage
@@ -253,6 +253,25 @@ SetupWizard::total_opening_balance() const
 {
 	JEWEL_ASSERT (m_balance_sheet_account_page);
 	return m_balance_sheet_account_page->total_amount();
+}
+
+void
+SetupWizard::set_account_names_already_taken(set<wxString> const& p_names)
+{
+	m_account_names_already_taken.clear();
+	for (auto const& name: p_names)
+	{
+		JEWEL_LOG_MESSAGE(Log::info, "Recording Account name to SetupWizard.");
+		JEWEL_LOG_VALUE(Log::info, name);
+		m_account_names_already_taken.insert(name);
+	}
+	return;
+}
+
+set<wxString> const&
+SetupWizard::account_names_already_taken() const
+{
+	return m_account_names_already_taken;
 }
 
 void
@@ -831,6 +850,17 @@ SetupWizard::AccountPage::total_balance_sheet_amount() const
 }
 
 void
+SetupWizard::AccountPage::set_account_names_already_taken
+(	set<wxString> const& p_account_names_already_taken
+)
+{
+	JEWEL_ASSERT (m_multi_account_panel);
+	m_multi_account_panel->
+		set_account_names_already_taken(p_account_names_already_taken);
+	return;
+}
+
+void
 SetupWizard::AccountPage::render_main_text()
 {
 	int const width = medium_width() * 3 + standard_gap();
@@ -1090,6 +1120,12 @@ SetupWizard::AccountPage::on_wizard_page_changing
 	}
 	JEWEL_ASSERT (account_names_valid(error_message));
 	JEWEL_ASSERT (account_types_valid(error_message));
+	SetupWizard* p = dynamic_cast<SetupWizard*>(GetParent());
+	JEWEL_ASSERT (p);
+	JEWEL_ASSERT (m_multi_account_panel);
+	p->set_account_names_already_taken
+	(	m_multi_account_panel->selected_account_names()
+	);
 	return;
 }
 
@@ -1102,6 +1138,10 @@ SetupWizard::AccountPage::on_wizard_page_changed
 	JEWEL_ASSERT (m_multi_account_panel);
 	m_multi_account_panel->update_summary();
 	m_multi_account_panel->SetFocus();
+	SetupWizard* p = dynamic_cast<SetupWizard*>(GetParent());
+	JEWEL_ASSERT (p);
+	m_multi_account_panel->
+		set_account_names_already_taken(p->account_names_already_taken());
 	return;
 }
 

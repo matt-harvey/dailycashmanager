@@ -35,6 +35,7 @@
 #include "gui/sizing.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/log.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/button.h>
 #include <wx/event.h>
@@ -48,6 +49,7 @@
 #include <vector>
 
 using jewel::Decimal;
+using jewel::Log;
 using jewel::round;
 using sqloxx::Handle;
 using std::accumulate;
@@ -82,6 +84,7 @@ namespace
 		}
 		return ret;
 	}
+
 	Decimal total_amount_aux(Decimal const& dec, DecimalTextCtrl* ctrl)
 	{
 		return dec + ctrl->amount();
@@ -103,6 +106,8 @@ MultiAccountPanel::MultiAccountPanel
 	m_summary_amount_text(nullptr),
 	m_minimum_num_rows(p_minimum_num_rows)
 {
+	JEWEL_ASSERT (m_account_names_already_taken.empty());
+
 	// Row of total text etc.
 	wxString summary_label("Total");
 	if (m_account_super_type == AccountSuperType::pl)
@@ -407,9 +412,22 @@ MultiAccountPanel::selected_augmented_accounts
 	return;
 }
 
+set<wxString>
+MultiAccountPanel::selected_account_names() const
+{
+	set<wxString> ret;
+	size_t const sz = m_account_name_boxes.size();
+	for (size_t i = 0; i != sz; ++i)
+	{
+		ret.insert(m_account_name_boxes[i]->GetValue().Trim());	
+	}
+	return ret;
+}
+
 bool
 MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 {
+	JEWEL_LOG_TRACE();
 	set<wxString> account_names;
 	AccountPhraseFlags const flags =
 		AccountPhraseFlags().set(string_flags::capitalize);
@@ -423,15 +441,34 @@ MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 				wxString(" name is blank");
 			return false;
 		}
-		if (account_names.find(name) != account_names.end())
+		set<wxString> const* const account_name_sets[] =
+			{ &account_names, &m_account_names_already_taken };
+		for (auto account_name_set: account_name_sets)
 		{
-			p_error_message = wxString("Duplicate account name: ");
-			p_error_message += name;
-			return false;
+			JEWEL_LOG_TRACE();
+			if (account_name_set->find(name) != account_name_set->end())
+			{
+				p_error_message = wxString("Duplicate name: ");
+				p_error_message += name;
+				return false;
+			}
 		}
 		account_names.insert(name);
 	}
 	return true;
+}
+
+void
+MultiAccountPanel::set_account_names_already_taken
+(	set<wxString> const& p_account_names_already_taken
+)
+{
+	for (auto name: p_account_names_already_taken)
+	{
+		m_account_names_already_taken.insert(name.Trim().Lower());
+		JEWEL_LOG_VALUE(Log::info, name);
+	}
+	return;
 }
 
 Decimal

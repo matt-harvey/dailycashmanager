@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_setup_wizard_hpp_8623281646810137
 #define GUARD_setup_wizard_hpp_8623281646810137
 
@@ -40,6 +39,7 @@
 #include <wx/window.h>
 #include <wx/wizard.h>
 #include <memory>
+#include <set>
 #include <vector>
 
 namespace phatbooks
@@ -67,9 +67,6 @@ class MultiAccountPanel;
  * and the filepath look like you can write in them, but actually you can't.
  * This misleads the user and is bad (which is pointed out in the "GUI Bloopers"
  * book). Fix it.
- *
- * @todo HIGH PRIORITY Ensure that Account names in m_pl_account_page do not
- * conflict with those in m_balance_sheet_account_page.
  */
 class SetupWizard: public wxWizard
 {
@@ -103,6 +100,14 @@ public:
 
 	jewel::Decimal total_opening_balance() const;
 
+	/**
+	 * Set the total "Account names already recorded" to p_names. Used
+	 * to ensure Account names not reused between different pages.
+	 */
+	void set_account_names_already_taken(std::set<wxString> const& p_names);
+
+	std::set<wxString> const& account_names_already_taken() const;
+	
 	class AccountPage;
 
 private:
@@ -145,6 +150,7 @@ private:
 	void configure_accounts();
 
 	PhatbooksDatabaseConnection& m_database_connection;
+	std::set<wxString> m_account_names_already_taken;
 	FilepathPage* m_filepath_page;
 	AccountPage* m_balance_sheet_account_page;
 	AccountPage* m_pl_account_page;
@@ -282,6 +288,15 @@ public:
 	 */
 	jewel::Decimal total_balance_sheet_amount() const;
 
+	/**
+	 * Tell the AccountPage that the strings in the given set have already
+	 * been used for Account names in a previous AccountPage. Should only
+	 * be called after render() has been called.
+	 */
+	void set_account_names_already_taken
+	(	std::set<wxString> const& p_account_names_already_taken
+	);
+
 protected:
 	PhatbooksDatabaseConnection& database_connection() const;
 	SetupWizard const& parent() const;
@@ -303,6 +318,7 @@ private:
 	void render_buttons();
 	void render_account_view();
 	void refresh_pop_row_button_state();
+
 	wxString main_text() const;
 
 	static unsigned int const s_pop_row_button_id = wxID_HIGHEST + 1;

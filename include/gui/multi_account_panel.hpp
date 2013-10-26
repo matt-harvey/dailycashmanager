@@ -35,6 +35,7 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
+#include <set>
 #include <vector>
 
 namespace phatbooks
@@ -110,6 +111,8 @@ public:
 	(	std::vector<AugmentedAccount>& out
 	);
 
+	std::set<wxString> selected_account_names() const;
+	
 	/**
 	 * @return \e true if and only if the Account names entered in the
 	 * MultiAccountPanel are all unique (i.e. different from each other)
@@ -118,6 +121,15 @@ public:
 	 * placed inside \e error_message.
 	 */
 	bool account_names_valid(wxString& p_error_message) const;
+
+	/**
+	 * Inform the MultiAccountPanel that the Account names in the given
+	 * have already been used. The MultiAccountPanel will then take these
+	 * into account when validating candidate names for new Accounts.
+	 */
+	void set_account_names_already_taken
+	(	std::set<wxString> const& p_account_names_already_taken
+	);
 
 	/**
 	 * @returns the total of all the amounts entered in the
@@ -195,6 +207,7 @@ private:
 	
 	AccountSuperType m_account_super_type;
 	sqloxx::Handle<Commodity> m_commodity;
+	std::set<wxString> m_account_names_already_taken;
 
 	wxStaticText* m_summary_amount_text;
 	
