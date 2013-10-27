@@ -94,10 +94,15 @@ bool App::OnInit()
 			else
 			{
 				filesystem::path const filepath = elicit_existing_filepath();
-				if (!filepath.empty())
+				if (filepath.empty())
+				{
+					return false;
+				}
+				else
 				{
 					database_connection().open(filepath);
 				}
+
 			}
 		}
 		else
@@ -179,7 +184,6 @@ namespace
 }  // end anonymous namespace
 
 
-
 filesystem::path
 App::elicit_existing_filepath()
 {
@@ -223,7 +227,7 @@ App::elicit_existing_filepath()
 			"In App::elicit_existing_filepath, "
 				"file_dialog.ShowModal() != wxID_OK."
 		);
-		// TODO HIGH PRIORITY Then what?
+		JEWEL_ASSERT (ret.empty());
 	}
 	return ret;
 }
