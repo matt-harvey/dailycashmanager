@@ -56,8 +56,6 @@ class PhatbooksDatabaseConnection;
 
 /**
  * Provides a cache for holding Account balances.
- *
- * @todo HIGH PRIORITY Testing.
  */
 class BalanceCache
 {

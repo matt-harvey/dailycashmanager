@@ -40,6 +40,9 @@ class Frequency;
 // end forward declarations
 
 
+/**
+ * @todo HIGH PRIORITY Tests.
+ */
 class BudgetItem:
 	public sqloxx::PersistentObject
 	<	BudgetItem,

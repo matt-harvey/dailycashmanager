@@ -110,7 +110,6 @@ public:
 	 */
 	sqloxx::Handle<DraftJournal> instrument() const;
 
-
 private:
 
 	typedef std::unordered_map<sqloxx::Id, jewel::Decimal> Map;

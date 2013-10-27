@@ -46,7 +46,7 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-// TODO Put tests in here which exercise AmalgamatedBudget as well
+// TODO Put tests in here which exercise BalanceCache as well
 // as just Account.
 
 // TODO LOW PRIORITY There is a lot of repeated setup code in these tests
