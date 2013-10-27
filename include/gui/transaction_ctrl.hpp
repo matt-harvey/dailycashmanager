@@ -65,10 +65,6 @@ class TopPanel;
  * @todo HIGH PRIORITY Ensure this can handle situation where insufficient
  * default Accounts are available.
  *
- * @todo HIGH PRIORITY When editing an existing transaction, if the user
- * changes the TransactionType, then the AccountCtrls are reset, and the user
- * loses the existing Account information. Prevent this from occurring.
- *
  * @todo MEDIUM PRIORITY It may not be obvious to the user that the
  * TransactionCtrl actually is for creating new transactions (rather than for,
  * say, filtering the information that is displayed to the left).
