@@ -273,39 +273,46 @@ source_account_types
 
 	if (!initialized)
 	{
-#		ifndef NDEBUG
-			for
-			(	size_t i = 0;
-				i != static_cast<size_t>(TransactionType::num_transaction_types);
-				++i
-			)
-			{
-				JEWEL_ASSERT (ret_array[i].empty());
-			}
-#		endif
+		try
+		{
+	#		ifndef NDEBUG
+				size_t const sz =
+					static_cast<size_t>(TransactionType::num_transaction_types);
+				for (size_t i = 0; i != sz; ++i)
+				{
+					JEWEL_ASSERT (ret_array[i].empty());
+				}
+	#		endif
 
-		ret_array[static_cast<size_t>(TransactionType::expenditure)].
-			push_back(AccountType::asset);
-		ret_array[static_cast<size_t>(TransactionType::expenditure)].
-			push_back(AccountType::liability);
+			ret_array[static_cast<size_t>(TransactionType::expenditure)].
+				push_back(AccountType::asset);
+			ret_array[static_cast<size_t>(TransactionType::expenditure)].
+				push_back(AccountType::liability);
 
-		ret_array[static_cast<size_t>(TransactionType::revenue)].
-			push_back(AccountType::revenue);
+			ret_array[static_cast<size_t>(TransactionType::revenue)].
+				push_back(AccountType::revenue);
 
-		ret_array[static_cast<size_t>(TransactionType::balance_sheet)].
-			push_back(AccountType::asset);
-		ret_array[static_cast<size_t>(TransactionType::balance_sheet)].
-			push_back(AccountType::liability);
+			ret_array[static_cast<size_t>(TransactionType::balance_sheet)].
+				push_back(AccountType::asset);
+			ret_array[static_cast<size_t>(TransactionType::balance_sheet)].
+				push_back(AccountType::liability);
 
-		ret_array[static_cast<size_t>(TransactionType::envelope)].
-			push_back(AccountType::revenue);
-		ret_array[static_cast<size_t>(TransactionType::envelope)].
-			push_back(AccountType::expense);
-		ret_array[static_cast<size_t>(TransactionType::envelope)].
-			push_back(AccountType::pure_envelope);
+			ret_array[static_cast<size_t>(TransactionType::envelope)].
+				push_back(AccountType::revenue);
+			ret_array[static_cast<size_t>(TransactionType::envelope)].
+				push_back(AccountType::expense);
+			ret_array[static_cast<size_t>(TransactionType::envelope)].
+				push_back(AccountType::pure_envelope);
 
-		// Generic transaction - can handle all AccountTypes;
-		ret_array[static_cast<size_t>(TransactionType::generic)] = account_types();
+			// Generic transaction - can handle all AccountTypes;
+			ret_array[static_cast<size_t>(TransactionType::generic)] =
+				account_types();
+		}
+		catch (...)
+		{
+			for (auto& vec: ret_array) vec.clear();
+			throw;
+		}
 	
 		// Now we're initialized.
 		initialized = true;
