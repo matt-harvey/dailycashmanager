@@ -40,8 +40,10 @@ using std::copy;
 using std::deque;
 using std::locale;
 using std::numeric_limits;
+using std::numpunct;
 using std::ostringstream;
 using std::string;
+using std::use_facet;
 using std::vector;
 
 
@@ -254,8 +256,6 @@ wx_to_decimal
 	);
 	if (wxs.IsEmpty())
 	{
-		// TODO HIGH PRIORITY Should probably throw an exception here, rather
-		// than creating a Decimal initialized to zero.
 		return Decimal(0, 0);
 	}
 	JEWEL_ASSERT (wxs.Len() >= 1);
@@ -274,11 +274,15 @@ wx_to_decimal
 	}
 	wxs.Replace(thousands_sep_s, wxEmptyString);
 
-	// TODO HIGH PRIORITY This will come unstuck if we have made Decimal
-	// constructor-from-string sensitive to locale.
-	wxs.Replace(decimal_point_s, wxString("."));
+	// We need to get the std::locale (not wxLocale) related decimal point
+	// character, so that we can ensure the Decimal constructor-from-string
+	// sees that appropriate decimal point character.
+	locale const gloc;  // global locale
+	char const spot_char = use_facet<numpunct<char> >(gloc).decimal_point();
+	char const spot_str[] = { spot_char, '\0' };
+	wxs.Replace(decimal_point_s, wxString(spot_str));
 
-	string s = wx_to_std8(wxs);
+	string const s = wx_to_std8(wxs);
 	Decimal const ret(s);
 	return ret;
 }
