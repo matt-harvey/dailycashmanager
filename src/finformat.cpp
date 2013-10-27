@@ -77,42 +77,6 @@ namespace
 
 }  // end anonymous namespace
 
-
-string finformat_std8
-(	Decimal const& decimal,
-	BasicDecimalFormatFlags p_flags
-)
-{
-	static Decimal const zero = Decimal(0, 0);
-	bool const pad = !p_flags.test(string_flags::hard_align_right);
-	ostringstream oss;
-
-	// TODO MEDIUM PRIORITY This doesn't format properly on Windows.
-	// It just ignores the thousands separators.
-	oss.imbue(locale(""));
-	oss << decimal;
-	string ret(oss.str());
-	if (ret[0] == '-')
-	{
-		JEWEL_ASSERT (decimal < zero);
-		ret[0] = '(';
-		ret.push_back(')');
-	}
-	else if (decimal > zero)
-	{
-		if (pad) ret.push_back(' ');
-	}
-	else if (decimal == zero)
-	{
-		ret = "-" + string(decimal.places() + (pad? 1: 0), ' ');
-	}
-	else
-	{
-		JEWEL_HARD_ASSERT (false);
-	}
-	return ret;
-}
-
 wxString finformat_wx
 (	jewel::Decimal const& decimal,
 	wxLocale const& loc,

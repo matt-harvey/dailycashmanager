@@ -65,28 +65,6 @@ typedef
 	>
 	DecimalParsingFlags;
 
-
-/**
- * @returns decimal formatted as a std::string with parentheses to
- * indicate negative, if it's negative.
- *
- * Unless \e p_flags has
- * \e string_flags::hard_align_right set, then for non-negative
- * numbers an extra space will be placed to the right to line
- * things up better in columns.
- *
- * Also if it's zero, it will be converted to the string "-",
- * followed by a number of spaces equal to decimal.places(),
- * followed (unless flagged otherwise per above) by an extra space
- * for alignment.
- *
- * @todo HIGH PRIORITY tests
- */
-std::string finformat_std8
-(	jewel::Decimal const& decimal,
-	BasicDecimalFormatFlags p_flags = BasicDecimalFormatFlags()
-);
-
 /**
  * @returns decimal formatted as a wxString, with parentheses
  * to indicate negative, and with thousands separator and

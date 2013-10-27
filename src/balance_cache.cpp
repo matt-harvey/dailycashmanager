@@ -338,7 +338,7 @@ BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 					// Account no longer exists in database, so should
 					// be removed from the cache.
 
-					// TODO LOW PRIORITY If we even allow Accounts to be
+					// TODO LOW PRIORITY If we ever allow Accounts to be
 					// deleted, then here we should test whether this passage
 					// really is reached after removing
 					// an Account from database. Note the removal of an
