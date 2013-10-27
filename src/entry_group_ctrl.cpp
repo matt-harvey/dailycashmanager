@@ -138,7 +138,6 @@ EntryGroupCtrl::EntryGroupCtrl
 void
 EntryGroupCtrl::configure_available_account_types()
 {
-	// TODO HIGH PRIORITY Make this exception safe.
 	if (is_source())
 	{
 		m_available_account_types.reset
