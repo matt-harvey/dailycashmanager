@@ -42,6 +42,7 @@
 #include <wx/gdicmn.h>
 #include <wx/panel.h>
 #include <wx/string.h>
+#include <wx/wupdlock.h>
 #include <set>
 #include <vector>
 
@@ -199,10 +200,11 @@ EntryGroupCtrl::refresh_for_transaction_type
 (	TransactionType p_transaction_type
 )
 {
+	wxWindowUpdateLocker window_update_locker(this);
 	assert_transaction_type_validity(p_transaction_type);
 	if (p_transaction_type == m_transaction_type)
 	{
-		// Do nothing
+		// do nothing
 		return;
 	}
 	JEWEL_ASSERT (p_transaction_type != m_transaction_type);
@@ -210,7 +212,19 @@ EntryGroupCtrl::refresh_for_transaction_type
 	configure_available_account_types();
 	for (EntryRow& row: m_entry_rows)
 	{
+		auto const selected_account = row.account_ctrl->account();
 		row.account_ctrl->reset(*m_available_account_types);
+		try
+		{
+			// set it to the same Account again if we can
+			row.account_ctrl->set_account(selected_account);
+		}
+		catch (InvalidAccountException&)
+		{
+			// Do nothing - the same Account is no longer supported in this
+			// AccountCtrl given the new TransactionType - so just let it use
+			// the default Account selection.
+		}
 	}
 	m_side_descriptor->SetLabel(side_description());
 	Layout();

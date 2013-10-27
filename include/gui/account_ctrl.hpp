@@ -119,7 +119,8 @@ public:
 
 	/**
 	 * @throws InvalidAccountException if p_account is not
-	 * supported by the AccountCtrl.
+	 * supported by the AccountCtrl. If this happens, it will just
+	 * continue showing the Account it showed before this was called.
 	 */
 	void set_account(sqloxx::Handle<Account> const& p_account);
 
