@@ -127,9 +127,9 @@ GraphicalSession::do_run(string const& filepath_str)
 {
 	JEWEL_LOG_TRACE();
 
-	// TODO HIGH PRIORITY Validate the filepath here first - similar to what
-	// we did in TextSession::do_run(...) (see branches/tui_branch in
-	// repository).
+	// TODO NOTE We do NOT validate the filepath here. This function is only
+	// ever entered if we have an already-existing file which the
+	// user opens from the command line.
 	
 	// TODO LOW PRIORITY There is code duplicated between here and the
 	// other form of do_run

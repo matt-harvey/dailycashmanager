@@ -256,6 +256,9 @@ int main(int argc, char** argv)
 		string const filepath_str = filepath_arg.getValue();
 		if (!filepath_str.empty() && !filesystem::exists(filepath_str))
 		{
+			// NOTE The function GraphicalSession::do_run(std::string const&)
+			// relies on the fact that we exit here - we don't want to pass a
+			// non-existent filepath to that function.
 			cerr << "File does not exist.\n"
 			     << "To create a new file using the GUI, run with no command "
 				 << "line arguments."
