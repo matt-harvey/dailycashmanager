@@ -96,7 +96,6 @@ private:
 
 	// Event handlers - menu selections
 	void on_menu_quit(wxCommandEvent& event);
-	void on_menu_about(wxCommandEvent& event);
 	void on_menu_new_bs_account(wxCommandEvent& event); 
 	void on_menu_new_pl_account(wxCommandEvent& event);
 	void on_menu_new_transaction(wxCommandEvent& event);
@@ -153,7 +152,6 @@ private:
 	wxMenu* m_new_menu;
 	wxMenu* m_edit_menu;
 	wxMenu* m_view_menu;
-	wxMenu* m_help_menu;
 	TopPanel* m_top_panel;
 
 	DECLARE_EVENT_TABLE()
