@@ -336,11 +336,7 @@ SetupWizard::configure_accounts()
 	for (AugmentedAccount& aug_acc: augmented_accounts)
 	{
 		wxString const name_wx = aug_acc.account->name().Trim();
-		if (name_wx.IsEmpty())
-		{
-			// TODO HIGH PRIORITY Is there anything we need to do here?
-		}
-		else
+		if (!name_wx.IsEmpty())
 		{
 			aug_acc.account->set_commodity(selected_currency());
 			aug_acc.account->set_description(wxString(""));
