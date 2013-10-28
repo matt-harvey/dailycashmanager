@@ -160,7 +160,15 @@ canonical_frequency()
 Decimal
 convert_to_canonical(Frequency const& p_frequency, Decimal const& p_amount)
 {
-	Decimal const steps(p_frequency.num_steps(), 0);
+	auto const num_steps = p_frequency.num_steps();
+	static_assert
+	(	sizeof(Decimal::int_type) >= sizeof(num_steps),
+		"Potentially unsafe integral conversion."
+	);
+	Decimal const steps(num_steps, 0);  // will not throw
+
+	// The next part could throw DecimalMultiplicationException or
+	// DecimalDivisionException.
 	switch (p_frequency.step_type())
 	{
 	case IntervalType::days:
@@ -178,16 +186,28 @@ convert_to_canonical(Frequency const& p_frequency, Decimal const& p_amount)
 Decimal
 convert_from_canonical(Frequency const& p_frequency, Decimal const& p_amount)
 {
-	Decimal const steps(p_frequency.num_steps(), 0);
+	auto const num_steps = p_frequency.num_steps();
+	static_assert
+	(	sizeof(Decimal::int_type) >= sizeof(num_steps),
+		"Potentially unsafe integral conversion."
+	);
+	Decimal const steps(num_steps, 0);  // will not throw
+
+	// Might throw DecimalMultiplicationException.
+	Decimal const intermediate = p_amount * steps;
+
+	// The next part will throw jewel::DecimalDivisionException if and only if
+	// the number of significant digits in intermediate is
+	// equal to jewel::Decimal::maximum_precision().
 	switch (p_frequency.step_type())
 	{
 	case IntervalType::days:
-		return p_amount * steps / days_per_canonical_interval();
+		return intermediate / days_per_canonical_interval();
 	case IntervalType::weeks:
-		return p_amount * steps / weeks_per_canonical_interval();
+		return intermediate / weeks_per_canonical_interval();
 	case IntervalType::months:  // fall through
 	case IntervalType::month_ends:
-		return p_amount * steps / months_per_canonical_interval();
+		return intermediate / months_per_canonical_interval();
 	default:
 		JEWEL_HARD_ASSERT (false);
 	}

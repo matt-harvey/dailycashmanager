@@ -91,7 +91,8 @@ std::string frequency_description
  * terms of canonical_frequency(), rather than in terms of p_frequency.
  * <em>C. f.</em> convert_to_annual.
  *
- * @todo HIGH PRIORITY Document circumstances under which this can throw.
+ * If \e p_amount is very high, then this might throw either
+ * jewel::DecimalMultiplicationException or jewel::DecimalDivisionException.
  */
 jewel::Decimal convert_to_canonical
 (	Frequency const& p_frequency,
@@ -104,7 +105,8 @@ jewel::Decimal convert_to_canonical
  * the canonical_frequency().
  * <em>C. f.</em> convert_from_annual.
  *
- * @todo HIGH PRIORITY Document circumstances under which this can throw.
+ * If \e p_amount is very high, then this might throw either
+ * jewel::DecimalMultiplicationException or jewel::DecimalDivisionException.
  */
 jewel::Decimal convert_from_canonical
 (	Frequency const& p_frequency,
