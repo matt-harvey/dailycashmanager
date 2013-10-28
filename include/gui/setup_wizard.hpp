@@ -224,6 +224,7 @@ private:
 
 	void on_directory_button_click(wxCommandEvent& event);
 	void on_wizard_page_changing(wxWizardEvent& event);
+	void on_wizard_page_changed(wxWizardEvent& event);
 	void on_currency_selection_change(wxCommandEvent& event);
 	void on_precision_selection_change(wxCommandEvent& event);
 

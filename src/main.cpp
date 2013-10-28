@@ -100,10 +100,6 @@
 // getting the user's permission). Could use the server to format an
 // email.
 
-// TODO HIGH PRIORITY In SetupWizard, if user goes back into FilepathPage from
-// AccountPage, "Cash" Accounts etc. can cause error message to arise
-// incorrectly re. duplicate Account name.
-
 #include "application.hpp"
 #include "string_conv.hpp"
 #include "gui/graphical_session.hpp"

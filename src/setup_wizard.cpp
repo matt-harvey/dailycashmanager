@@ -509,6 +509,10 @@ BEGIN_EVENT_TABLE(SetupWizard::FilepathPage, wxWizardPageSimple)
 	(	wxID_ANY,
 		SetupWizard::FilepathPage::on_wizard_page_changing
 	)
+	EVT_WIZARD_PAGE_CHANGED
+	(	wxID_ANY,
+		SetupWizard::FilepathPage::on_wizard_page_changed
+	)
 	EVT_COMBOBOX
 	(	s_currency_box_id,
 		SetupWizard::FilepathPage::on_currency_selection_change
@@ -800,7 +804,22 @@ SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 	SetupWizard* const parent = dynamic_cast<SetupWizard*>(GetParent());
 	JEWEL_ASSERT (parent);
 	parent->set_assumed_currency(selected_currency());
-	JEWEL_LOG_VALUE(Log::info, static_cast<size_t>(selected_currency()->precision()));
+	return;
+}
+
+void
+SetupWizard::FilepathPage::on_wizard_page_changed(wxWizardEvent& event)
+{
+	(void)event;  // Silence compiler warning about unused parameter
+	SetupWizard* const parent = dynamic_cast<SetupWizard*>(GetParent());
+	JEWEL_ASSERT (parent);
+
+	// Important to do this in case user is entering the FilepathPage by
+	// turning backwards from AccountPages. We want to clear the
+	// Account names already taken so that false Account name duplication error
+	// messages aren't generated when the user turns back into the AccountPages.
+	set<wxString> account_names;  // empty
+	parent->set_account_names_already_taken(account_names);
 	return;
 }
 
