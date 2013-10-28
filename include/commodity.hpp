@@ -22,7 +22,7 @@
 
 #include "phatbooks_database_connection.hpp"
 #include <jewel/log.hpp>
-#include <jewel/decimal_fwd.hpp>
+#include <jewel/decimal.hpp>
 #include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -154,7 +154,7 @@ public:
 	 * Get the number of decimal places of precision for the commodity
 	 * to which quantities of the commodity are stored.
 	 */
-	int precision();
+	jewel::Decimal::places_type precision();
 
 	/**
 	 * Get the multiplier by which 1 unit of the commodity should
@@ -169,7 +169,7 @@ public:
 
 	void set_description(wxString const& p_description);
 
-	void set_precision(int p_precision);
+	void set_precision(jewel::Decimal::places_type p_precision);
 
 	void set_multiplier_to_base(jewel::Decimal const& p_multiplier_to_base);
 

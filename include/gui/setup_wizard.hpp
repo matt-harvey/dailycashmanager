@@ -224,6 +224,8 @@ private:
 
 	void on_directory_button_click(wxCommandEvent& event);
 	void on_wizard_page_changing(wxWizardEvent& event);
+	void on_currency_selection_change(wxCommandEvent& event);
+	void on_precision_selection_change(wxCommandEvent& event);
 
 	std::vector<sqloxx::Handle<Commodity> > const m_currencies;
 
@@ -234,6 +236,7 @@ private:
 	wxButton* m_directory_button;
 	wxTextCtrl* m_filename_ctrl;
 	wxComboBox* m_currency_box;
+	wxComboBox* m_precision_box;
 
 	// Things are simpler in the implementation if this is a raw pointer.
 	// Don't be tempted to change this to a smart pointer or a reference.
@@ -241,6 +244,8 @@ private:
 	boost::filesystem::path* m_selected_filepath;
 
 	static int const s_directory_button_id = wxID_HIGHEST + 1;
+	static int const s_currency_box_id = s_directory_button_id + 1;
+	static int const s_precision_box_id = s_currency_box_id + 1;
 
 	DECLARE_EVENT_TABLE()
 

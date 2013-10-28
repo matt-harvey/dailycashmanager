@@ -278,6 +278,7 @@ void
 SetupWizard::set_assumed_currency(Handle<Commodity> const& p_commodity)
 {
 	JEWEL_ASSERT (m_balance_sheet_account_page);	
+	JEWEL_LOG_VALUE(Log::info, static_cast<size_t>(p_commodity->precision()));
 	m_balance_sheet_account_page->set_commodity(p_commodity);
 	m_pl_account_page->set_commodity(p_commodity);
 	return;
@@ -508,6 +509,14 @@ BEGIN_EVENT_TABLE(SetupWizard::FilepathPage, wxWizardPageSimple)
 	(	wxID_ANY,
 		SetupWizard::FilepathPage::on_wizard_page_changing
 	)
+	EVT_COMBOBOX
+	(	s_currency_box_id,
+		SetupWizard::FilepathPage::on_currency_selection_change
+	)
+	EVT_COMBOBOX
+	(	s_precision_box_id,
+		SetupWizard::FilepathPage::on_precision_selection_change
+	)
 END_EVENT_TABLE()
 
 SetupWizard::FilepathPage::FilepathPage
@@ -523,6 +532,7 @@ SetupWizard::FilepathPage::FilepathPage
 	m_directory_button(nullptr),
 	m_filename_ctrl(nullptr),
 	m_currency_box(nullptr),
+	m_precision_box(nullptr),
 	m_selected_filepath(nullptr)
 {
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
@@ -629,7 +639,7 @@ SetupWizard::FilepathPage::FilepathPage
 	// Eighth row
 	m_currency_box = new wxComboBox
 	(	this,
-		wxID_ANY,
+		s_currency_box_id,
 		wxEmptyString,
 		wxDefaultPosition,
 		wxDLG_UNIT(this, dlg_unit_size),
@@ -637,6 +647,7 @@ SetupWizard::FilepathPage::FilepathPage
 		0,
 		wxCB_DROPDOWN | wxCB_SORT | wxCB_READONLY
 	);
+	size_t max_precision = 0;
 	for (Handle<Commodity> const& commodity: m_currencies)
 	{
 		unsigned int const item_index = m_currency_box->Append
@@ -645,6 +656,10 @@ SetupWizard::FilepathPage::FilepathPage
 			commodity->abbreviation() +
 			wxString(")")
 		);
+		if (commodity->precision() > max_precision)
+		{
+			max_precision = commodity->precision();
+		}
 		auto const data = new ClientData<Handle<Commodity> >(commodity);
 
 		// Note control will take care of memory management
@@ -656,8 +671,49 @@ SetupWizard::FilepathPage::FilepathPage
 	m_currency_box->SetSelection(0);
 	m_top_sizer->Add(m_currency_box);
 
+	// Ninth row
+	m_top_sizer->AddSpacer(m_directory_ctrl->GetSize().y);
+
+	// Tenth row
+	wxStaticText* precision_prompt = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString("Confirm the precision of your currency"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT
+	);
+	m_top_sizer->Add(precision_prompt);
+
+	// Eleventh row
+	wxArrayString precision_descriptions;
+	for (unsigned char i = 0; i != max_precision + 1; ++i)
+	{
+		precision_descriptions.Add
+		(	finformat_wx
+			(	Decimal(0, i),
+				locale(),
+				DecimalFormatFlags().clear(string_flags::dash_for_zero)
+			)
+		);
+	}
+	JEWEL_ASSERT (!precision_descriptions.IsEmpty());
+	m_precision_box = new wxComboBox
+	(	this,
+		s_precision_box_id,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDLG_UNIT(this, dlg_unit_size),
+		0,
+		0,
+		wxCB_DROPDOWN | wxCB_SORT | wxCB_READONLY
+	);
+	m_precision_box->Set(precision_descriptions);
+	m_precision_box->SetSelection(selected_currency()->precision());
+	m_top_sizer->Add(m_precision_box);
+
 	// Additional space at bottom
-	for (size_t i = 0; i != 5; ++i)
+	for (size_t i = 0; i != 3; ++i)
 	{
 		m_top_sizer->AddSpacer(m_directory_ctrl->GetSize().y);
 	}
@@ -744,10 +800,31 @@ SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 	SetupWizard* const parent = dynamic_cast<SetupWizard*>(GetParent());
 	JEWEL_ASSERT (parent);
 	parent->set_assumed_currency(selected_currency());
+	JEWEL_LOG_VALUE(Log::info, static_cast<size_t>(selected_currency()->precision()));
 	return;
 }
 
+void
+SetupWizard::FilepathPage::on_currency_selection_change(wxCommandEvent& event)
+{
+	JEWEL_LOG_TRACE();
+	JEWEL_ASSERT (m_precision_box);
+	m_precision_box->SetSelection(selected_currency()->precision());
+	event.Skip();
+	return;
+}
 
+void
+SetupWizard::FilepathPage::on_precision_selection_change(wxCommandEvent& event)
+{
+	JEWEL_LOG_TRACE();
+	JEWEL_ASSERT (m_currency_box);
+	JEWEL_ASSERT (m_precision_box);
+	auto const sc = selected_currency();
+	sc->set_precision(m_precision_box->GetSelection());
+	event.Skip();
+	return;
+}
 
 /*** SetupWizard::AccountPage ***/
 

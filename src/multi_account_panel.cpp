@@ -345,12 +345,8 @@ MultiAccountPanel::push_row(Handle<Account> const& p_account)
 void
 MultiAccountPanel::set_commodity(Handle<Commodity> const& p_commodity)
 {
+	m_commodity = p_commodity;
 	Decimal::places_type const precision = p_commodity->precision();
-	if (precision == m_commodity->precision())
-	{
-		return;
-	}
-	JEWEL_ASSERT (precision != m_commodity->precision());
 	for (SpecialDecimalTextCtrl* ctrl: m_opening_balance_boxes)
 	{
 		// TODO MEDIUM PRIORITY Handle potential Decimal exception here on
@@ -359,7 +355,6 @@ MultiAccountPanel::set_commodity(Handle<Commodity> const& p_commodity)
 		Decimal const new_amount = round(old_amount, precision);
 		ctrl->set_amount(new_amount);
 	}
-	m_commodity = p_commodity;
 	return;
 }
 

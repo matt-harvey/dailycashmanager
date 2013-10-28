@@ -59,7 +59,7 @@ struct Commodity::CommodityData
 	optional<wxString> abbreviation;
 	optional<wxString> name;
 	optional<wxString> description;
-	optional<int> precision;
+	optional<jewel::Decimal::places_type> precision;
 	optional<jewel::Decimal> multiplier_to_base;
 };
 
@@ -182,7 +182,8 @@ void Commodity::do_load()
 	temp.m_data->abbreviation = std8_to_wx(statement.extract<string>(0));
 	temp.m_data->name = std8_to_wx(statement.extract<string>(1));
 	temp.m_data->description = std8_to_wx(statement.extract<string>(2));
-	temp.m_data->precision = statement.extract<int>(3);
+	temp.m_data->precision =
+		numeric_cast<jewel::Decimal::places_type>(statement.extract<int>(3));
 	temp.m_data->multiplier_to_base = Decimal
 	(	statement.extract<Decimal::int_type>(4),
 		numeric_cast<Decimal::places_type>(statement.extract<int>(5))
@@ -202,7 +203,10 @@ void Commodity::process_saving_statement(SQLStatement& statement)
 	(	":description",
 		wx_to_std8(value(m_data->description))
 	);
-	statement.bind(":precision", value(m_data->precision));
+	statement.bind
+	(	":precision",
+		numeric_cast<int>(value(m_data->precision))
+	);
 	Decimal m = value(m_data->multiplier_to_base);
 	statement.bind(":multiplier_to_base_intval", m.intval());
 	statement.bind
@@ -278,7 +282,7 @@ wxString Commodity::description()
 	return value(m_data->description);
 }
 
-int Commodity::precision()
+Decimal::places_type Commodity::precision()
 {
 	load();
 	return value(m_data->precision);
@@ -311,7 +315,7 @@ void Commodity::set_description(wxString const& p_description)
 	return;
 }
 
-void Commodity::set_precision(int p_precision)
+void Commodity::set_precision(Decimal::places_type p_precision)
 {
 	load();
 	m_data->precision = p_precision;
