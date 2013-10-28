@@ -46,9 +46,6 @@ namespace gui
  * filtered by date.
  *
  * Shows only \e actual (non-budget) and ordinary (non-draft) Entries.
- *
- * @todo HIGH PRIORITY Need to override
- * do_update_for_amended(sqloxx::Handle<Account> const& p_account).
  */
 class FilteredEntryListCtrl: public EntryListCtrl
 {
@@ -89,7 +86,7 @@ private:
 
 	virtual std::unique_ptr<sqloxx::SQLStatement>
 		do_create_entry_selector() override;
-	
+
 	sqloxx::Handle<Account> const m_account;
 	boost::gregorian::date m_min_date;
 	boost::optional<boost::gregorian::date> const m_maybe_max_date;

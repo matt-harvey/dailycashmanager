@@ -20,7 +20,6 @@
 #ifndef GUARD_entry_list_ctrl_hpp_03525603377970682
 #define GUARD_entry_list_ctrl_hpp_03525603377970682
 
-
 #include "entry_table_iterator.hpp"
 #include "reconciliation_list_panel.hpp"
 #include "summary_datum.hpp"
