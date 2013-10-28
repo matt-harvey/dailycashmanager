@@ -39,9 +39,13 @@ class Frequency;
 
 // end forward declarations
 
-
 /**
- * @todo HIGH PRIORITY Tests.
+ * A BudgetItem represents a single component of the ongoing budget for a given
+ * Account. Each P&L Account may have 0, 1 or more BudgetItems. For example,
+ * a single BudgetItem for a "Banking fees" Account might embody an $50 credit
+ * card fee that recurs annually.
+ *
+ * For some tests that are relevant to BudgetItem, see the tests for Account.
  */
 class BudgetItem:
 	public sqloxx::PersistentObject
