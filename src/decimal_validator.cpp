@@ -82,17 +82,33 @@ DecimalValidator::Validate(wxWindow* WXUNUSED(parent))
 	}
 	catch (jewel::Exception&)
 	{
+		wxString const text(text_ctrl->GetValue());
 		try
 		{
-			Decimal const raw_sum =
-				wx_to_simple_sum(wxString(text_ctrl->GetValue()), locale());
+			Decimal const raw_sum = wx_to_simple_sum(text, locale());
 			m_decimal = round(raw_sum, m_precision);
 			return true;
 		}
+		catch (jewel::DecimalFromStringException&)
+		{
+			wxMessageBox
+			(	wxString("Could not interpret \"") + text + "\" as a number."
+			);
+			return false;
+		}
+		catch (jewel::DecimalException&)
+		{
+			wxMessageBox
+			(	wxString("Could not safely read \"") +
+				text +
+				"\" as a number. Number may be too large or contain " +
+				"unexpected characters."
+			);
+			return false;
+		}
 		catch (jewel::Exception&)
 		{
-			// We don't display an error message here. We just return false,
-			// without updating m_decimal.
+			wxMessageBox("There was an error reading the number you entered.");
 			return false;
 		}
 	}

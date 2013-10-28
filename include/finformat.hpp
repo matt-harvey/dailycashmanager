@@ -95,7 +95,6 @@ wxString finformat_wx
 	DecimalFormatFlags p_flags = DecimalFormatFlags()
 );
 
-
 /**
  * Assuming a locale of loc, convert a wxString to a jewel::Decimal.
  *

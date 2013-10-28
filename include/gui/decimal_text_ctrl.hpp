@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_decimal_text_ctrl_hpp_19653581837030865
 #define GUARD_decimal_text_ctrl_hpp_19653581837030865
 
@@ -34,14 +33,6 @@ namespace gui
 /**
  * A subclass of wxTextCtrl specifically for the entry and validation
  * of wxString representations of jewel::Decimal.
- *
- * @todo HIGH PRIORITY If the user's input is invalid and the DecimalTextCtrl
- * therefore
- * reverts to its previous contents, then the user should be made aware
- * that this has occurred, rather than it happening silently. This could
- * be achieved by ringing the system bell, by popping up a message, by
- * flashing the background or foreground colour in the DecimalTextCtrl,
- * or by some combination of these.
  */
 class DecimalTextCtrl: public wxTextCtrl
 {
@@ -81,9 +72,6 @@ private:
 	DECLARE_EVENT_TABLE()
 
 };  // class DecimalTextCtrl
-
-
-// INLINE FUNCTION IMPLEMENTATIONS
 
 }  // namespace gui
 }  // namespace phatbooks
