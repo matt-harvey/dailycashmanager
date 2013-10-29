@@ -21,6 +21,7 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
+#include "date.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "string_flags.hpp"
@@ -117,7 +118,7 @@ namespace
 		switch (p_account_super_type)
 		{
 		case AccountSuperType::balance_sheet:
-			return wxString("Starting balance");
+			return wxString("Initial balance");
 		case AccountSuperType::pl:
 			return wxString("Initial budget allocation");
 		default:
@@ -148,6 +149,9 @@ AccountDialog::AccountDialog
 	m_account(p_account)
 {
 	JEWEL_ASSERT (p_parent);  // precondition
+	
+	PhatbooksDatabaseConnection& dbc = m_account->database_connection();
+
 	if
 	(	m_account->has_id() &&
 		(super_type(m_account->account_type()) != p_account_super_type)
@@ -219,7 +223,7 @@ AccountDialog::AccountDialog
 	(	this,
 		wxID_ANY,
 		m_name_ctrl->GetSize(),
-		m_account->database_connection(),
+		dbc,
 		p_account_super_type
 	);
 	if (m_account->has_id())
@@ -302,7 +306,7 @@ AccountDialog::AccountDialog
 	(	this,
 		wxID_ANY,
 		wxSize(medium_width(), wxDefaultSize.y),
-		m_account->database_connection().default_commodity()->precision(),
+		dbc.default_commodity()->precision(),
 		false
 	);
 	if (m_account->has_id())
@@ -314,6 +318,22 @@ AccountDialog::AccountDialog
 	(	m_opening_amount_ctrl,
 		wxGBPosition(m_current_row, 2),
 		wxGBSpan(1, 1)
+	);
+
+	wxStaticText* opening_amount_date_label = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString(" at " ) +
+			date_format_wx(dbc.entity_creation_date()),
+		wxDefaultPosition,
+		wxSize(medium_width(), wxDefaultSize.GetY()),
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+	);
+	m_top_sizer->Add
+	(	opening_amount_date_label,
+		wxGBPosition(m_current_row, 3),
+		wxGBSpan(1, 2),
+		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 	
 	// Hack to add some space to right.

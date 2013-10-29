@@ -49,10 +49,6 @@ class DecimalTextCtrl;
  * Dialog to facilitate creation of new Accounts and editing of details
  * of existing Accounts.
  *
- * @todo HIGH PRIORITY When they create an Account, is it clear to the
- * user that the "starting balance" refers to the balance as at the
- * entity start date, as opposed to the opening deposit?
- *
  * @todo LOW PRIORITY Enable user to delete an Account, but only if it's one for
  * which no Entries have been made, and for which the opening balance
  * is nil, and where, after the proposed deletion, it will still be
