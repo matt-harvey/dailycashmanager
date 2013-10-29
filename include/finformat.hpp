@@ -45,17 +45,6 @@ namespace phatbooks
 typedef
 	jewel::FlagSet
 	<	string_flags::StringFlags,
-		string_flags::hard_align_right
-	>
-	BasicDecimalFormatFlags;
-
-/**
- * May be used in some of the below functions to manage boolean
- * options. See \e jewel::FlagSet for interface.
- */
-typedef
-	jewel::FlagSet
-	<	string_flags::StringFlags,
 		string_flags::dash_for_zero | string_flags::hard_align_right,
 		string_flags::dash_for_zero  // default
 	>

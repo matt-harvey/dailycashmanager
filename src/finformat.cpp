@@ -119,10 +119,6 @@ wxString finformat_wx
 			{
 				ret.push_back(CharT(' '));
 			}
-			// wxWidgets font alignment hack to make it look good
-			// with variable width font.
-			ret.push_back(CharT(' '));
-			if (pad) ret.push_back(CharT(' '));
 		}
 	}
 	else
