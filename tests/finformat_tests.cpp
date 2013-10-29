@@ -18,7 +18,10 @@
 
 #include "finformat.hpp"
 #include <jewel/decimal.hpp>
+#include <wx/app.h>
 #include <wx/intl.h>
+#include <wx/string.h>
+#include <UnitTest++/UnitTest++.h>
 
 using jewel::Decimal;
 
@@ -26,6 +29,41 @@ namespace phatbooks
 {
 namespace test
 {
+
+struct FinformatTestFixture
+{
+	FinformatTestFixture()
+	{
+		// We need this only to make sure we can use wxLocale.
+		wxApp* app = new wxApp;
+
+		(void)app;  // silence compiler warning re. unused parameter
+		loc.Init(wxLANGUAGE_DEFAULT, wxLOCALE_LOAD_DEFAULT);
+	}
+	wxLocale loc;
+};
+
+TEST_FIXTURE(FinformatTestFixture, test_finformat_wx)
+{
+	// TODO HIGH PRIORITY Write these tests, and make sure they're
+	// locale-neutral.
+	Decimal const d0(3001, 3);
+	wxString const wx0 = finformat_wx(d0, loc);
+}
+
+TEST_FIXTURE(FinformatTestFixture, test_wx_to_decimal)
+{
+	// TODO HIGH PRIORITY Write these tests, and make sure they're
+	// locale-neutral.
+}
+
+TEST_FIXTURE(FinformatTestFixture, test_wx_to_simple_sum)
+{
+	// TODO HIGH PRIORITY Write these tests, and make sure they're
+	// locale-neutral.
+}
+
+
 
 
 }  // namespace test

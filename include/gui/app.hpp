@@ -23,8 +23,8 @@
 #include "frame.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <boost/filesystem.hpp>
+#include <wx/app.h>
 #include <wx/intl.h>
-#include <wx/wx.h>
 #include <memory>
 
 namespace phatbooks
@@ -52,9 +52,9 @@ public:
 	App& operator=(App&&) = delete;
 	~App() = default;
 
-	virtual bool OnInit();
+	virtual bool OnInit() override;
 
-	virtual int OnExit();
+	virtual int OnExit() override;
 
 	void set_database_connection
 	(	std::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
