@@ -293,15 +293,12 @@ wx_to_simple_sum(wxString wxs, wxLocale const& loc)
 	vector<wxString>::const_iterator const end = vec.end();
 	for ( ; it != end; ++it)
 	{
-		if (!it->IsEmpty())
-		{
-			total += wx_to_decimal
-			(	*it,
-				loc,
-				DecimalParsingFlags().
-					clear(string_flags::allow_negative_parens)
-			);
-		}
+		total += wx_to_decimal
+		(	*it,
+			loc,
+			DecimalParsingFlags().
+				clear(string_flags::allow_negative_parens)
+		);
 	}
 	return total;
 }
