@@ -23,8 +23,8 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include <jewel/assert.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
+#include <sqloxx/id.hpp>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
 #include <wx/event.h>

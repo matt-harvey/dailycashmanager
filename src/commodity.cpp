@@ -22,8 +22,8 @@
 #include "string_conv.hpp"
 #include "string_conv.hpp"
 #include <sqloxx/database_transaction.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/identity_map.hpp>
+#include <sqloxx/id.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <sqloxx/sql_statement.hpp>

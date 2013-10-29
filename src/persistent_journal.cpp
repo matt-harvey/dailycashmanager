@@ -25,8 +25,8 @@
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/handle.hpp>
+#include <sqloxx/id.hpp>
 #include <sqloxx/next_auto_key.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <ostream>
 #include <string>

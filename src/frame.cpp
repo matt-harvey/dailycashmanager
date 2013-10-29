@@ -35,8 +35,8 @@
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/on_windows.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
+#include <sqloxx/id.hpp>
 #include <wx/event.h>
 #include <wx/menu.h>
 #include <wx/string.h>

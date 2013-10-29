@@ -41,8 +41,8 @@
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/optional.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
+#include <sqloxx/id.hpp>
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>

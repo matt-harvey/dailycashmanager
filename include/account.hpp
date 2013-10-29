@@ -26,8 +26,8 @@
 #include "string_conv.hpp"
 #include "string_flags.hpp"
 #include "visibility.hpp"
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle_fwd.hpp>
+#include <sqloxx/id.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>

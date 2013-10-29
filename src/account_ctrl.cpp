@@ -27,8 +27,8 @@
 #include "gui/string_set_validator.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
+#include <sqloxx/id.hpp>
 #include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/string.h>

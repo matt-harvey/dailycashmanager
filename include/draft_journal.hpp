@@ -24,8 +24,8 @@
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle_fwd.hpp>
+#include <sqloxx/id.hpp>
 #include <sqloxx/persistence_traits.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <wx/string.h>

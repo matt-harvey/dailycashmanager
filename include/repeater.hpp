@@ -27,8 +27,8 @@
 #include "proto_journal.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <sqloxx/handle.hpp>
+#include <sqloxx/id.hpp>
 #include <sqloxx/persistent_object.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <memory>
 #include <list>
 #include <string>

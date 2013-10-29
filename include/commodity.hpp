@@ -23,7 +23,7 @@
 #include "phatbooks_database_connection.hpp"
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
-#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/id.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>

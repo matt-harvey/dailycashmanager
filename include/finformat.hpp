@@ -16,6 +16,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/**
+ * @file finformat.hpp
+ *
+ * Utilities for formatting and parsing expressions involving jewel::Decimal.
+ */
 
 #ifndef GUARD_finformat_hpp_5275738907640678
 #define GUARD_finformat_hpp_5275738907640678
@@ -27,6 +32,9 @@
 #include <wx/string.h>
 #include <string>
 
+/**
+ * @namespace phatbooks
+ */
 namespace phatbooks
 {
 

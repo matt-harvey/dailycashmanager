@@ -22,7 +22,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
-#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/id.hpp>
 #include <wx/event.h>
 #include <wx/window.h>
 #include <vector>

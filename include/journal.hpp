@@ -23,8 +23,8 @@
 #include "transaction_type.hpp"
 #include <boost/optional.hpp>
 #include <jewel/decimal_fwd.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle_fwd.hpp>
+#include <sqloxx/id.hpp>
 #include <wx/string.h>
 #include <ostream>
 #include <vector>

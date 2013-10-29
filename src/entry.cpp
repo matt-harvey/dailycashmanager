@@ -29,8 +29,8 @@
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <sqloxx/database_connection.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
+#include <sqloxx/id.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <boost/optional.hpp>
 #include <jewel/log.hpp>

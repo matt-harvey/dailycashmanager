@@ -26,8 +26,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <sqloxx/database_connection.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle_fwd.hpp>
+#include <sqloxx/id.hpp>
 #include <sqloxx/identity_map_fwd.hpp>
 #include <jewel/decimal.hpp>
 #include <list>

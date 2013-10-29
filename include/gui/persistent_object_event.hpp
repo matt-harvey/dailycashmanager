@@ -21,7 +21,7 @@
 #define GUARD_persistent_object_event_hpp_011347359517285303
 
 #include <boost/optional.hpp>
-#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/id.hpp>
 #include <wx/event.h>
 #include <wx/window.h>
 

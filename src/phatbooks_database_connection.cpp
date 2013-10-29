@@ -37,8 +37,8 @@
 #include "repeater.hpp"
 #include <sqloxx/database_connection.hpp>
 #include <sqloxx/database_transaction.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
+#include <sqloxx/id.hpp>
 #include <sqloxx/identity_map.hpp>
 #include <sqloxx/sqloxx_exceptions.hpp>
 #include <sqloxx/sql_statement.hpp>

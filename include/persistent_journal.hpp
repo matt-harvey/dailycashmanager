@@ -21,8 +21,8 @@
 #define GUARD_persistent_journal_hpp_46241805630848654
 
 #include "journal.hpp"
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle_fwd.hpp>
+#include <sqloxx/id.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <ostream>
 

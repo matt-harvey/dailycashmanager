@@ -24,8 +24,8 @@
 #include "gridded_scrolled_panel.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle_fwd.hpp>
+#include <sqloxx/id.hpp>
 #include <wx/gdicmn.h>
 #include <vector>
 

@@ -27,8 +27,8 @@
 #include <boost/optional.hpp>
 #include <jewel/decimal_fwd.hpp>
 #include <jewel/optional.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
+#include <sqloxx/id.hpp>
 #include <sqloxx/persistent_object.hpp>
 #include <sqloxx/sql_statement_fwd.hpp>
 #include <wx/string.h>

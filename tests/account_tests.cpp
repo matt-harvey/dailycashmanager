@@ -32,8 +32,8 @@
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/database_transaction.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle.hpp>
+#include <sqloxx/id.hpp>
 #include <UnitTest++/UnitTest++.h>
 #include <wx/string.h>
 #include <vector>

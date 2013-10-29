@@ -25,7 +25,7 @@
 #include "transaction_type.hpp"
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
-#include <sqloxx/general_typedefs.hpp>
+#include <sqloxx/id.hpp>
 #include <wx/string.h>
 #include <memory>
 #include <ostream>

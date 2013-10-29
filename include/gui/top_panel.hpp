@@ -25,8 +25,8 @@
 #include "sizing.hpp"
 #include "transaction_ctrl.hpp"
 #include <jewel/assert.hpp>
-#include <sqloxx/general_typedefs.hpp>
 #include <sqloxx/handle_fwd.hpp>
+#include <sqloxx/id.hpp>
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
