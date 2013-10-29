@@ -34,10 +34,12 @@
 #include <wx/string.h>
 #include <algorithm>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 using jewel::Log;
 using sqloxx::Handle;
+using std::is_signed;
 using std::max;
 using std::string;
 using std::vector;
@@ -145,7 +147,7 @@ DraftJournalListCtrl::update
 	InsertColumn(s_frequency_col, "Frequency", wxLIST_FORMAT_LEFT);
 	InsertColumn(s_next_date_col, "Next date", wxLIST_FORMAT_RIGHT);
 	
-	size_t i = 0;	
+	long i = 0;  // because wxWidgets uses long
 	for ( ; p_beg != p_end; ++p_beg, ++i)
 	{
 		Handle<DraftJournal> const& dj = *p_beg;
@@ -155,9 +157,13 @@ DraftJournalListCtrl::update
 		
 		// The item may change position due to e.g. sorting, so store the
 		// Journal ID in the item's data
-		// TODO HIGH PRIORITY Do a static assert to ensure second param will fit
-		// the id.
 		JEWEL_ASSERT (dj->has_id());
+		static_assert
+		(	sizeof(long) >= sizeof(dj->id()) &&
+			is_signed<long>::value &&
+			is_signed<decltype(dj->id())>::value,
+			"Cannot safely fit Id into type required for SetItemData."
+		);
 		SetItemData(i, dj->id());
 
 		// Set the frequency and next-date columns.

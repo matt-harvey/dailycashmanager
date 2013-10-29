@@ -162,9 +162,9 @@ AccountListCtrl::update()
 			JEWEL_ASSERT (account->has_id());
 			auto const id = account->id();
 			static_assert
-			(	(sizeof(id) <= sizeof(i)) &&
+			(	(sizeof(id) <= sizeof(long)) &&
 				is_signed<decltype(id)>::value &&
-				is_signed<decltype(i)>::value,
+				is_signed<long>::value,
 				"Object Id is too wide to be safely passed to "
 				"SetItemData."
 			);

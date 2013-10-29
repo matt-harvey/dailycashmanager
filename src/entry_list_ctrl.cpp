@@ -524,8 +524,8 @@ EntryListCtrl::push_back_entry(Handle<Entry> const& p_entry)
 	// The item may change position due to e.g. sorting, so store the
 	// Entry ID in the item's data
 	static_assert
-	(	(sizeof(decltype(i)) >= sizeof(decltype(p_entry->id()))) &&
-		is_signed<decltype(i)>::value &&
+	(	(sizeof(long) >= sizeof(decltype(p_entry->id()))) &&
+		is_signed<long>::value &&
 		is_signed<decltype(p_entry->id())>::value,
 		"Cannot safely fit values of type of p_entry->id() into the type "
 		"of i, in function EntryListCtrl::push_back_entry."
