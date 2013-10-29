@@ -18,12 +18,14 @@
 
 #include "finformat.hpp"
 #include <jewel/decimal.hpp>
+#include <jewel/decimal_exceptions.hpp>
 #include <wx/app.h>
 #include <wx/intl.h>
 #include <wx/string.h>
 #include <UnitTest++/UnitTest++.h>
 
 using jewel::Decimal;
+using jewel::DecimalFromStringException;
 
 namespace phatbooks
 {
@@ -65,6 +67,32 @@ wxString finformat_wx_b
 	ret.Replace("S", ".");
 	ret.Replace("T", ",");
 	return ret;
+}
+
+/**
+ * A wrapper around wx_to_decimal in which the string passed to \e wxs must
+ * use "," and ".", respectively, for thousands separator (if any) and decimal
+ * point. The wrapper function then converts these to the thousands separator
+ * and decimal point used by locale loc, before passing to the underlying
+ * wx_to_decimal function. This enables us to test wx_to_decimal in a manner
+ * that is independent of the locale of the machine on which we are running the
+ * test.
+ */
+Decimal wx_to_decimal_b
+(	wxString wxs,
+	wxLocale const& loc,
+	DecimalParsingFlags p_flags = DecimalParsingFlags()
+)
+{
+	wxString const spot =
+		loc.GetInfo(wxLOCALE_DECIMAL_POINT, wxLOCALE_CAT_MONEY);
+	wxString const sep =
+		loc.GetInfo(wxLOCALE_THOUSANDS_SEP, wxLOCALE_CAT_MONEY);
+	wxs.Replace(".", "S");
+	wxs.Replace(",", "T");
+	wxs.Replace("S", spot);
+	wxs.Replace("T", sep);
+	return wx_to_decimal(wxs, loc, p_flags);
 }
 
 TEST_FIXTURE(FinformatTestFixture, test_finformat_wx)
@@ -150,8 +178,38 @@ TEST_FIXTURE(FinformatTestFixture, test_finformat_wx)
 
 TEST_FIXTURE(FinformatTestFixture, test_wx_to_decimal)
 {
-	// TODO HIGH PRIORITY Write these tests, and make sure they're
-	// locale-neutral.
+	using string_flags::allow_negative_parens;
+
+	CHECK_EQUAL(wx_to_decimal_b("", loc), Decimal(0, 0));
+	CHECK_EQUAL(wx_to_decimal_b("-", loc), Decimal(0, 0));
+	CHECK_EQUAL(wx_to_decimal_b("   ", loc), Decimal(0, 0));
+	CHECK_EQUAL(wx_to_decimal_b("   - ", loc), Decimal(0, 0));
+	CHECK_EQUAL(wx_to_decimal_b("", loc).places(), 0);
+	CHECK_EQUAL(wx_to_decimal_b("-", loc).places(), 0);
+	CHECK_EQUAL(wx_to_decimal_b("    ", loc).places(), 0);
+	CHECK_EQUAL(wx_to_decimal_b("   -  ", loc).places(), 0);
+
+	CHECK_EQUAL(wx_to_decimal_b("98", loc), Decimal(98, 0));
+	CHECK_EQUAL(wx_to_decimal_b("98", loc).places(), 0);
+	CHECK_EQUAL(wx_to_decimal_b(" 98.6986", loc), Decimal(986986, 4));
+	CHECK_EQUAL(wx_to_decimal_b("-0", loc), Decimal(0, 0));
+	CHECK_EQUAL(wx_to_decimal_b("0.0000", loc).places(), 4);
+	CHECK_EQUAL(wx_to_decimal_b("(6,915,768.23)", loc), Decimal(-691576823, 2));
+	CHECK_EQUAL(wx_to_decimal_b("   00000.68  ", loc), Decimal(68, 2));
+	CHECK_EQUAL(wx_to_decimal_b("-.590", loc), Decimal(-590, 3));
+	CHECK_EQUAL(wx_to_decimal_b("-.590", loc).places(), 3);
+
+	CHECK_EQUAL
+	(	wx_to_decimal_b("5", loc, DecimalParsingFlags().
+			clear(allow_negative_parens)),
+		Decimal(5, 0)
+	);
+	CHECK_THROW
+	(	wx_to_decimal_b("(5)", loc, DecimalParsingFlags().
+			clear(allow_negative_parens)),
+		DecimalFromStringException
+	);
+	CHECK_EQUAL(wx_to_decimal_b("-5", loc), Decimal(-5, 0));
 }
 
 TEST_FIXTURE(FinformatTestFixture, test_wx_to_simple_sum)

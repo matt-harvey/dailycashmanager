@@ -237,7 +237,7 @@ wx_to_decimal
 {
 	bool const allow_parens =
 		p_flags.test(string_flags::allow_negative_parens);
-	wxs = wxs.Trim();
+	wxs = wxs.Trim().Trim(false);  // trim both right and left.
 	typedef wxChar CharT;
 	static CharT const open_paren = wxChar('(');
 	static CharT const close_paren = wxChar(')');
