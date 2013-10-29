@@ -180,6 +180,7 @@ set (test_sources
 	 tests/date_tests.cpp
 	 tests/draft_journal_tests.cpp
 	 tests/filename_validation_tests.cpp
+	 tests/finformat_tests.cpp
 	 tests/frequency_tests.cpp
 	 tests/interval_type_tests.cpp
 	 tests/ordinary_journal_tests.cpp
