@@ -22,7 +22,6 @@
 
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
-#include <boost/optional.hpp>
 #include <sqloxx/handle_fwd.hpp>
 #include <wx/event.h>
 #include <wx/listctrl.h>
@@ -93,11 +92,11 @@ public:
 	void update();
 
 	/**
-	 * @returns an optional containing a handle to what may be
+	 * @returns a Handle to what may be
 	 * considered the default Account in the AccountListCtrl; except that, if
-	 * the AccountListCtrl is empty, returns an uninitialized optional.
+	 * the AccountListCtrl is empty, returns a null Handle.
 	 */
-	boost::optional<sqloxx::Handle<Account> > default_account() const;
+	sqloxx::Handle<Account> default_account() const;
 
 	/**
 	 * Causes \e p_account to be selected, if it is present, and causes

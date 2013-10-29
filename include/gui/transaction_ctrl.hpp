@@ -62,9 +62,6 @@ class TopPanel;
 /**
  * Dialog in which user creates a new transaction (i.e. Journal).
  *
- * @todo HIGH PRIORITY Ensure this can handle situation where insufficient
- * default Accounts are available.
- *
  * @todo MEDIUM PRIORITY It may not be obvious to the user that the
  * TransactionCtrl actually is for creating new transactions (rather than for,
  * say, filtering the information that is displayed to the left).
@@ -96,7 +93,13 @@ public:
 	/**
 	 * Create a TransactionCtrl to allow the user to edit a
 	 * ProtoJournal (which they will then be able to convert into
-	 * a PersistentJournal and save).
+	 * a PersistentJournal and save). \e p_journal should already
+	 * have all its attributes initialized, and should have all the
+	 * basic attributes of a ProtoJournal initialized, and all the Entries
+	 * in p_journal should also have all their attributes initialized,
+	 * before \e p_journal is passed to this function (with the exception
+	 * that \e p_journal and its Entries should not have Ids). \e p_journal
+	 * should have at least two Entries.
 	 */
 	TransactionCtrl
 	(	TopPanel* p_parent,

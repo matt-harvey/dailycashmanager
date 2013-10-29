@@ -29,7 +29,6 @@
 #include "gui/locale.hpp"
 #include "gui/persistent_object_event.hpp"
 #include "gui/top_panel.hpp"
-#include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/event.h>
@@ -39,7 +38,6 @@
 #include <algorithm>
 #include <set>
 
-using boost::optional;
 using sqloxx::Handle;
 using std::is_signed;
 using std::max;
@@ -233,17 +231,34 @@ AccountListCtrl::showing_daily_budget() const
 	return m_account_super_type == AccountSuperType::pl;
 }
 
-optional<Handle<Account> >
+Handle<Account>
 AccountListCtrl::default_account() const
 {
-	optional<Handle<Account> > ret;
+	Handle<Account> ret;
 	if (GetItemCount() != 0)
 	{
+		// Return the first Account that is actually showing in the
+		// control.
 		JEWEL_ASSERT (GetItemCount() > 0);
-		ret = Handle<Account>
-		(	m_database_connection,
-			GetItemData(GetTopItem())
+		ret = Handle<Account>(m_database_connection, GetItemData(GetTopItem()));
+	}
+	else
+	{
+		// Return the an Account of the AccountSuperType of this control,
+		// even though not showing in the control (because hidden).
+		AccountTableIterator it = make_type_name_ordered_account_table_iterator
+		(	m_database_connection
 		);
+		AccountTableIterator const end;
+		for ( ; it != end; ++it)
+		{
+			Handle<Account> const account = *it;
+			if (account->account_super_type() == m_account_super_type)
+			{
+				ret = account;
+				break;
+			}
+		}
 	}
 	return ret;
 }

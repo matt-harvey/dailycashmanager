@@ -272,21 +272,13 @@ TopPanel::make_proto_journal() const
 	{
 		if (balance_sheet_accounts.empty())
 		{
-			optional<Handle<Account> > const maybe_bs_account =
-				m_bs_account_list->default_account();
-			if (maybe_bs_account)
-			{
-				balance_sheet_accounts.push_back(value(maybe_bs_account));
-			}
+			auto const bs_account = m_bs_account_list->default_account();
+			if (bs_account) balance_sheet_accounts.push_back(bs_account);
 		}
 		if (pl_accounts.empty())
 		{
-			optional<Handle<Account> > const maybe_pl_account =
-				m_pl_account_list->default_account();
-			if (maybe_pl_account)
-			{
-				pl_accounts.push_back(value(maybe_pl_account));
-			}
+			auto const pl_account = m_pl_account_list->default_account();
+			if (pl_account) pl_accounts.push_back(pl_account);
 		}
 	}
 	ProtoJournal ret;
@@ -357,8 +349,15 @@ TopPanel::configure_transaction_ctrl()
 	}
 	else
 	{
-		wxWindowUpdateLocker window_update_locker(this);
+		wxWindowUpdateLocker const window_update_locker(this);
 		ProtoJournal proto_journal = make_proto_journal();
+
+		// NOTE This relies on our having forced the user to create at least
+		// one Account of each AccountSuperType when the database is first
+		// set up, and preventing the deletion of Accounts or the editing
+		// of their AccountType thereafter.
+		JEWEL_ASSERT (proto_journal.entries().size() >= 2);
+
 		m_transaction_ctrl = new TransactionCtrl
 		(	this,
 			wxSize(GetClientSize().x, 10000),
