@@ -779,7 +779,7 @@ TransactionCtrl::reset()
 {
 	JEWEL_LOG_TRACE();
 
-	wxWindowUpdateLocker window_update_locker(this);
+	wxWindowUpdateLocker const window_update_locker(this);
 	TopPanel* const parent = dynamic_cast<TopPanel*>(GetParent());
 	JEWEL_ASSERT (parent);
 	ProtoJournal proto_journal = parent->make_proto_journal();

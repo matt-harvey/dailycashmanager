@@ -505,7 +505,7 @@ void
 Frame::on_journal_editing_requested(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
-
+	wxWindowUpdateLocker const update_locker(this);
 	Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{

@@ -200,7 +200,7 @@ EntryGroupCtrl::refresh_for_transaction_type
 (	TransactionType p_transaction_type
 )
 {
-	wxWindowUpdateLocker window_update_locker(this);
+	wxWindowUpdateLocker const window_update_locker(this);
 	assert_transaction_type_validity(p_transaction_type);
 	if (p_transaction_type == m_transaction_type)
 	{
@@ -347,8 +347,8 @@ EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 	(void)event;  // Silence compiler warning re. unused parameter.
 
 	// To prevent display glitch on MSW
-	wxWindowUpdateLocker window_update_locker_a(GetParent());
-	wxWindowUpdateLocker window_update_locker_b(this);
+	wxWindowUpdateLocker const window_update_locker_a(GetParent());
+	wxWindowUpdateLocker const window_update_locker_b(this);
 
 	Handle<Account> const account =
 		m_entry_rows.back().account_ctrl->account();
