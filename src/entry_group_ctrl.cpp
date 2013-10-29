@@ -345,6 +345,11 @@ void
 EntryGroupCtrl::on_split_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler warning re. unused parameter.
+
+	// To prevent display glitch on MSW
+	wxWindowUpdateLocker window_update_locker_a(GetParent());
+	wxWindowUpdateLocker window_update_locker_b(this);
+
 	Handle<Account> const account =
 		m_entry_rows.back().account_ctrl->account();
 	Handle<Entry> const entry(m_database_connection);

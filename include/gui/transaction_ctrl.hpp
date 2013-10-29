@@ -68,9 +68,6 @@ class TopPanel;
  * @todo MEDIUM PRIORITY It may not be obvious to the user that the
  * TransactionCtrl actually is for creating new transactions (rather than for,
  * say, filtering the information that is displayed to the left).
- *
- * @todo HIGH PRIORITY Boundary around comment boxes and date box looks
- * wrong under certain circumstances under Windows.
  */
 class TransactionCtrl: public GriddedScrolledPanel
 {
