@@ -127,15 +127,18 @@ GraphicalSession::do_run(string const& filepath_str)
 {
 	JEWEL_LOG_TRACE();
 
-	// TODO NOTE We do NOT validate the filepath here. This function is only
-	// ever entered if we have an already-existing file which the
-	// user opens from the command line.
+	// TODO LOW PRIORITY We do NOT validate the filepath here. This function
+	// is only ever entered if we have an already-existing file which the
+	// user opens from the command line. This works OK, but it seems a bit
+	// improper somehow.
 	
 	// TODO LOW PRIORITY There is code duplicated between here and the
 	// other form of do_run
+	
+	// TODO LOW PRIORITY Make it so that if the file cannot be opened, an
+	// informative message is displayed to the user, rather than just crashing
+	// with an exception.
 
-	// TODO HIGH PRIORITY Is this safe? We need to catch and handle if we can't
-	// open.
 	shared_ptr<PhatbooksDatabaseConnection> dbc
 	(	new PhatbooksDatabaseConnection
 	);
