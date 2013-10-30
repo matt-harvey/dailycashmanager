@@ -177,8 +177,6 @@ public:
 	 * yet set up any BudgetItems.
 	 *
 	 * @todo HIGH PRIORITY Document exception safety.
-	 *
-	 * @todo HIGH PRIORITY Testing (but see tests already done...)
 	 */
 	sqloxx::Handle<OrdinaryJournal> fire_next();
 	

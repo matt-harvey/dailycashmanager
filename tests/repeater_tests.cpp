@@ -213,6 +213,33 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	vector<Handle<Entry> >::const_iterator it3 = ++oj3->entries().begin();
 	vector<Handle<Entry> >::const_iterator it4 = ++oj4->entries().begin();
 	CHECK_EQUAL((*it3)->amount(), (*it4)->amount());
+
+	repeater1b->set_next_date(date(3012, 10, 5));
+	repeater1b->set_frequency(Frequency(3, IntervalType::months));
+	repeater1b->save();
+
+	Handle<OrdinaryJournal> const oj5 = repeater1b->fire_next();
+	CHECK_EQUAL(oj5->date(), date(3012, 10, 5));
+	Handle<OrdinaryJournal> const oj6 = repeater1b->fire_next();
+	CHECK_EQUAL(oj6->date(), date(3013, 1, 5));
+
+	repeater1b->set_frequency(Frequency(1, IntervalType::days));
+	repeater1b->set_next_date(date(3013, 4, 30));
+	repeater1b->set_frequency(Frequency(2, IntervalType::month_ends));
+	dj1->save();
+
+	Handle<OrdinaryJournal> const oj7 = repeater1b->fire_next();
+	CHECK_EQUAL(oj7->date(), date(3013, 4, 30));
+	Handle<OrdinaryJournal> const oj8 = repeater1b->fire_next();
+	CHECK_EQUAL(oj8->date(), date(3013, 6, 30));
+	Handle<OrdinaryJournal> const oj9 = repeater1b->fire_next();
+	CHECK_EQUAL(oj9->date(), date(3013, 8, 31));
+	CHECK_EQUAL(repeater1b->next_date(), date(3013, 10, 31));
+
+	repeater1b->set_frequency(Frequency(3, IntervalType::days));
+	repeater1b->save();
+	CHECK_EQUAL(repeater1b->fire_next()->date(), date(3013, 10, 31));
+	CHECK_EQUAL(repeater1b->fire_next()->date(), date(3013, 11, 3));
 }
 
 
