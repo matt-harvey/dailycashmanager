@@ -22,6 +22,7 @@
 #include "commodity.hpp"
 #include "frequency.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "string_conv.hpp"
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
@@ -236,6 +237,7 @@ void
 BudgetItem::process_saving_statement(SQLStatement& statement)
 {
 	JEWEL_ASSERT (value(m_data->account)->has_id());
+	ensure_pl_only_budget();
 	statement.bind(":account_id", value(m_data->account)->id());
 	statement.bind
 	(	":description",
@@ -246,6 +248,29 @@ BudgetItem::process_saving_statement(SQLStatement& statement)
 	statement.bind(":interval_type_id", static_cast<int>(freq.step_type()));
 	statement.bind(":amount", value(m_data->amount).intval());
 	statement.step_final();
+	return;
+}
+
+void
+BudgetItem::ensure_pl_only_budget()
+{
+	Handle<Account> acct;
+	try
+	{
+		acct = account();
+	}
+	catch (UninitializedOptionalException&)
+	{
+		// do nothing - OK as Account not yet initalized
+		return;
+	}
+	if (acct->account_super_type() != AccountSuperType::pl)
+	{
+		JEWEL_THROW
+		(	InvalidBudgetItemException,
+			"Account of BudgetItem should be of AccountSuperType::pl."
+		);
+	}
 	return;
 }
 

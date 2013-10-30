@@ -485,41 +485,47 @@ TEST_FIXTURE(TestFixture, test_account_opening_balance)
 TEST_FIXTURE(TestFixture, test_account_budget_and_budget_items)
 {
 	PhatbooksDatabaseConnection& dbc = *pdbc;
-	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
+	Handle<Account> const a3(dbc);
+	a3->set_account_type(AccountType::revenue);
+	a3->set_name("Salary");
+	a3->set_commodity(dbc.default_commodity());
+	a3->set_description("");
+	a3->set_visibility(Visibility::visible);
+	a3->save();
 	JEWEL_ASSERT (dbc.budget_frequency() == Frequency(1, IntervalType::days));
-	CHECK_EQUAL(a1->budget(), Decimal("0.00"));
+	CHECK_EQUAL(a3->budget(), Decimal("0.00"));
 	CHECK_EQUAL(a2->budget(), Decimal("0.00"));
 
 	vector<Handle<BudgetItem> > bis1;
-	CHECK(a1->budget_items() == bis1);
+	CHECK(a3->budget_items() == bis1);
 
 	Handle<BudgetItem> const b1(dbc);
 	b1->set_description("");
-	b1->set_account(a1);
+	b1->set_account(a3);
 	b1->set_frequency(Frequency(1, IntervalType::weeks));
 	b1->set_amount(Decimal("7.14"));
-	CHECK_EQUAL(a1->budget(), Decimal("0.00"));
+	CHECK_EQUAL(a3->budget(), Decimal("0.00"));
 	b1->save();
 	bis1.push_back(b1);
-	CHECK_EQUAL(a1->budget(), Decimal("1.02"));
+	CHECK_EQUAL(a3->budget(), Decimal("1.02"));
 
 	Handle<BudgetItem> const b1b(dbc);
 	b1b->set_description("");
-	b1b->set_account(a1);
+	b1b->set_account(a3);
 	b1b->set_frequency(Frequency(12, IntervalType::months));
 	b1b->set_amount(Decimal("365.25"));
 	b1b->save();
 	bis1.push_back(b1b);
-	CHECK_EQUAL(a1->budget(), Decimal("2.02"));
-	CHECK(a1->budget_items() == bis1);
+	CHECK_EQUAL(a3->budget(), Decimal("2.02"));
+	CHECK(a3->budget_items() == bis1);
 
 	b1->remove();
-	CHECK_EQUAL(a1->budget(), Decimal("1.00"));
+	CHECK_EQUAL(a3->budget(), Decimal("1.00"));
 
 	bis1.clear();
 	bis1.push_back(b1b);
-	CHECK(a1->budget_items() == bis1);
+	CHECK(a3->budget_items() == bis1);
 
 	Handle<BudgetItem> const b2(dbc);
 	b2->set_description("asdfj");
@@ -530,7 +536,7 @@ TEST_FIXTURE(TestFixture, test_account_budget_and_budget_items)
 	CHECK_EQUAL(a2->budget(), Decimal("0.35"));
 	b1b->set_account(a2);
 	b1b->save();
-	CHECK_EQUAL(a1->budget(), Decimal("0.00"));
+	CHECK_EQUAL(a3->budget(), Decimal("0.00"));
 	CHECK_EQUAL(a2->budget(), Decimal("1.35"));
 }
 

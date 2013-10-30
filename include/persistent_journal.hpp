@@ -38,6 +38,13 @@ class Entry;
 /**
  * Common abstract base class for subclasses of Journal that
  * can be persisted to a database.
+ *
+ * NOTE, if an attempt is made to save a PersistentJournal with
+ * TransactionType::envelope (i.e. a budget journal) where at least one
+ * of the Entries in the PersistentJournal has an Account with
+ * account_super_type() that is not of AccountSuperType::pl, then,
+ * InvalidJournalException will be thrown. This is because we do not
+ * want any (non-zero) balance sheet budget amounts in the database.
  */
 class PersistentJournal:
 	public sqloxx::PersistentObject
@@ -100,7 +107,21 @@ protected:
 	void do_clear_entries() override;
 	wxString do_get_comment() override;
 	TransactionType do_get_transaction_type() override;
-	
+
+private:
+
+	/**
+	 * @throws InvalidJournalException if and only if the PersistentJournal
+	 * is a budget Journal that contains an Entry with a balance sheet
+	 * Account.
+	 */
+	void ensure_pl_only_budget();
+
+	/**
+	 * @returns true if and only if posting the Journal would cause arithmetic
+	 * overflow in Account balances.
+	 */
+	bool would_cause_overflow();
 };
 
 

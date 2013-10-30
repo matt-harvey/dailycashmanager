@@ -46,6 +46,11 @@ class Frequency;
  * card fee that recurs annually.
  *
  * For some tests that are relevant to BudgetItem, see the tests for Account.
+ *
+ * NOTE, if an attempt is made to save a BudgetItem with an Account that is
+ * not of AccountSuperType::pl, then
+ * InvalidBudgetItemException will be thrown. This is because we do not
+ * want any (non-zero) balance sheet budget amounts in the database.
  */
 class BudgetItem:
 	public sqloxx::PersistentObject
@@ -156,6 +161,12 @@ private:
 	void do_ghostify() override;
 	void do_remove() override;
 	void process_saving_statement(sqloxx::SQLStatement& statement);
+
+	/**
+	 * @throws InvalidBudgetItemException if and only if the Account
+	 * of the BudgetItem is not of AccountSuperType::pl.
+	 */
+	void ensure_pl_only_budget();
 
 	struct BudgetItemData;
 

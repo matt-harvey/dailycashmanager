@@ -45,6 +45,7 @@ using std::accumulate;
 using std::endl;
 using std::ostream;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 
@@ -282,6 +283,5 @@ Journal::clear_core()
 	do_clear_entries();
 	return;
 }
-
 
 }  // namespace phatbooks

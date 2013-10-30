@@ -18,9 +18,12 @@
 
 
 #include "persistent_journal.hpp"
+#include "account.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
+#include <jewel/decimal.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
@@ -30,16 +33,22 @@
 #include <sqloxx/sql_statement.hpp>
 #include <ostream>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
 using jewel::Log;
+using jewel::Decimal;
+using jewel::DecimalAdditionException;
+using jewel::DecimalRangeException;
+using jewel::UninitializedOptionalException;
 using jewel::value;
 using sqloxx::next_auto_key;
 using sqloxx::Handle;
 using sqloxx::Id;
 using sqloxx::SQLStatement;
 using std::ostream;
+using std::unordered_map;
 using std::unordered_set;
 using std::string;
 using std::vector;
@@ -130,18 +139,19 @@ PersistentJournal::swap(PersistentJournal& rhs)
 	return;
 }
 
-// TODO HIGH PRIORITY Throw if an attempt is made to save a
-// budget Journal that contains
-// an Entry with a balance sheet Account. Document this
-// in the API documentation. It is very important to enforce
-// this requirement. Should put assertions in places
-// where this requirement is especially important e.g.
-// balance and opening balance calculations.
-
-
 Id
 PersistentJournal::save_new_journal_core()
 {
+	JEWEL_LOG_TRACE();
+	ensure_pl_only_budget();
+	if (would_cause_overflow())
+	{
+		JEWEL_THROW
+		(	JournalOverflowException,
+			"Posting of PersistentJournal would cause overflow or precision "
+			"loss in Account balances."
+		);
+	}
 	if (!is_balanced())
 	{
 		JEWEL_THROW
@@ -176,6 +186,15 @@ void
 PersistentJournal::save_existing_journal_core()
 {
 	JEWEL_LOG_TRACE();
+	ensure_pl_only_budget();
+	if (would_cause_overflow())
+	{
+		JEWEL_THROW
+		(	JournalOverflowException,
+			"Posting of PersistentJournal would cause overflow or precision "
+			"loss in Account balances."
+		);
+	}
 	if (!is_balanced())
 	{
 		JEWEL_THROW
@@ -339,6 +358,70 @@ PersistentJournal::do_get_transaction_type()
 {
 	load();
 	return Journal::do_get_transaction_type();
+}
+
+void
+PersistentJournal::ensure_pl_only_budget()
+{
+	if (transaction_type() != TransactionType::envelope)
+	{
+		return;
+	}
+	JEWEL_ASSERT (transaction_type() == TransactionType::envelope);
+	for (auto const& entry: entries())
+	{
+		auto const ast = entry->account()->account_super_type();
+		if (ast != AccountSuperType::pl)
+		{
+			JEWEL_THROW
+			(	InvalidJournalException,
+				"Budget Journal contains an Entry to a non-P&L Account."
+			);
+		}
+	}
+	return;
+}
+
+bool
+PersistentJournal::would_cause_overflow()
+{
+	unordered_map<Id, Decimal> prospective_balances;
+	for (auto const& entry: entries())
+	{
+		Handle<Account> account;
+		try
+		{
+			account = entry->account();
+		}
+		catch (UninitializedOptionalException&)
+		{
+			// do nothing
+		}
+		if (static_cast<bool>(account) && account->has_id())
+		{
+			auto const aid = account->id();
+			if (prospective_balances.find(aid) == prospective_balances.end())
+			{
+				prospective_balances[aid] = account->technical_balance();
+			}
+			else
+			{
+				try
+				{
+					prospective_balances[aid] += entry->amount();	
+				}
+				catch (DecimalAdditionException&)
+				{
+					return true;
+				}
+				catch (DecimalRangeException&)
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 bool

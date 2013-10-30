@@ -79,11 +79,22 @@ JEWEL_DERIVED_EXCEPTION(UnsafeArithmeticException, PhatbooksException);
 JEWEL_DERIVED_EXCEPTION(PrecisionException, PhatbooksException);
 
 /**
+ * Exception to be thrown when a Journal is not valid in some context.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidJournalException, PhatbooksException);
+
+/**
  * Exception to be thrown when an action is attempted on a Journal (or
  * OrdinaryJournal or DraftJournal) which requires that Journal to be
  * in a balanced state, and that Journal is not in a balanced state.
  */
-JEWEL_DERIVED_EXCEPTION(UnbalancedJournalException, PhatbooksException);
+JEWEL_DERIVED_EXCEPTION(UnbalancedJournalException, InvalidJournalException);
+
+/**
+ * Exception to be thrown when a PersistentJournal is such that posting it
+ * would cause overflow or unacceptable precision loss in Account balances.
+ */
+JEWEL_DERIVED_EXCEPTION(JournalOverflowException, InvalidJournalException);
 
 /**
  * Exception to be thrown when an attempt is made to create an additional
@@ -113,6 +124,11 @@ JEWEL_DERIVED_EXCEPTION
  * in an invalid way.
  */
 JEWEL_DERIVED_EXCEPTION(BudgetEditingException, PhatbooksException);
+
+/**
+ * Exception to be thrown when a BudgetItem is invalid in some context.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidBudgetItemException, PhatbooksException);
 
 /**
  * Exception to be thrown when there is an attempt made to delete the
