@@ -176,7 +176,7 @@ public:
 	 * empty journal posting notifications in case they have not
 	 * yet set up any BudgetItems.
 	 *
-	 * @todo HIGH PRIORITY Document exception safety.
+	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	sqloxx::Handle<OrdinaryJournal> fire_next();
 	
