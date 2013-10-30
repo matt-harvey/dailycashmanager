@@ -300,14 +300,12 @@ BalanceCache::refresh_all()
 	return;
 }
 
-
 void
 BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 {
 	// TODO HIGH PRIORITY Is this exception-safe?
 	for (auto const account_id: p_targets)
 	{
-		Handle<Account> const account(m_database_connection, account_id);
 		SQLStatement statement
 		(	m_database_connection,
 			"select sum(amount) from entries join ordinary_journal_detail "
@@ -316,22 +314,25 @@ BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 		statement.bind(":account_id", account_id);
 		if (statement.step())
 		{
+			// NOTE If we can ever have multiple Commodities then this
+			// will need to be changed.
+			auto const precision =
+				m_database_connection.default_commodity()->precision();
+			auto& cache_entry = (*m_map)[account_id];
+
 			// TODO LOW PRIORITY Catching exception here is a crappy way of
 			// telling whether there are no entries to sum.
 			try
 			{
-				(*m_map)[account_id] = Decimal
-				(	statement.extract<Decimal::int_type>(0),
-					account->commodity()->precision()
-				);
+				auto const intval = statement.extract<Decimal::int_type>(0);
+				cache_entry = Decimal(intval, precision);
 			}
 			catch (ValueTypeException&)
 			{
 				// There are no entries to sum.
 				if (Account::exists(m_database_connection, account_id))
 				{
-					(*m_map)[account_id] =
-						Decimal(0, account->commodity()->precision());
+					cache_entry = Decimal(0, precision);
 				}
 				else
 				{

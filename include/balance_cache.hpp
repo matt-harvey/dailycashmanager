@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_balance_cache_hpp_3730216051326234
 #define GUARD_balance_cache_hpp_3730216051326234
 
@@ -27,12 +26,15 @@
 #include <unordered_map>
 #include <vector>
 
-
 namespace phatbooks
 {
 
+// begin forward declarations
+
 class PhatbooksDatabaseConnection;
-// End forward declarations
+
+// end forward declarations
+
 
 // Class-by-class summary of what triggers staleness:
 // Account - any database-affecting operations on any
