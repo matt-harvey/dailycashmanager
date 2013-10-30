@@ -58,9 +58,6 @@
 // from LICENSE.txt). Take care when creating the license, especially re.
 // the third party libraries used in the project.
 
-// TODO HIGH PRIORITY Ensure that the option for the user to lauch directly from
-// the installer, works correctly.
-
 // TODO HIGH PRIORITY Create a decent icon for the application. We want this
 // in both .ico form (for Windows executable icon) and .xpm
 // form (for icon for Frame). Note, when I exported my
