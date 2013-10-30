@@ -303,7 +303,9 @@ BalanceCache::refresh_all()
 void
 BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 {
-	// TODO HIGH PRIORITY Is this exception-safe?
+	unique_ptr<Map> map_elect_ptr(new Map(*m_map));
+	JEWEL_ASSERT (map_elect_ptr);
+	Map& map_elect = *map_elect_ptr;
 	for (auto const account_id: p_targets)
 	{
 		SQLStatement statement
@@ -318,21 +320,17 @@ BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 			// will need to be changed.
 			auto const precision =
 				m_database_connection.default_commodity()->precision();
-			auto& cache_entry = (*m_map)[account_id];
-
-			// TODO LOW PRIORITY Catching exception here is a crappy way of
-			// telling whether there are no entries to sum.
 			try
 			{
 				auto const intval = statement.extract<Decimal::int_type>(0);
-				cache_entry = Decimal(intval, precision);
+				map_elect[account_id] = Decimal(intval, precision);
 			}
 			catch (ValueTypeException&)
 			{
 				// There are no entries to sum.
 				if (Account::exists(m_database_connection, account_id))
 				{
-					cache_entry = Decimal(0, precision);
+					map_elect[account_id] = Decimal(0, precision);
 				}
 				else
 				{
@@ -348,13 +346,8 @@ BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 					// database that have this as their Account (due to the
 					// foreign key constraints in the database); so that's why
 					// this should \e should be reached as expected.
-					Map::iterator doomed_iter = m_map->find(account_id);
-
-  					// TODO LOW PRIORITY Is this check necessary?
-					if (doomed_iter != m_map->end())
-					{
-						m_map->erase(doomed_iter);
-					}
+					Map::iterator doomed = map_elect.find(account_id);
+					if (doomed != map_elect.end()) map_elect.erase(doomed);
 				}
 			}
 			statement.step_final();
@@ -365,6 +358,8 @@ BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 			JEWEL_HARD_ASSERT (false);
 		}
 	}
+	using std::swap;
+	swap(m_map, map_elect_ptr);
 	return;
 }
 
