@@ -74,11 +74,6 @@ public:
 	static wxString filename_extension();
 
 	/**
-	 * @returns the name of the vendor of the application.
-	 */
-	static wxString vendor_name();
-
-	/**
 	 * @returns the filepath of the application file last opened by the
 	 * user, stored in a boost::optional. The returned optional
 	 * is uninitialized if the user has yet to open an application file,
@@ -108,6 +103,11 @@ public:
 
 private:
 	
+	/**
+	 * @returns the name of the vendor of the application.
+	 */
+	static wxString vendor_name();
+
 	static wxConfig& config();
 
 };

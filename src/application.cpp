@@ -48,7 +48,6 @@ namespace
 
 }  // end anonymous namespace
 
-
 wxString
 Application::application_name()
 {
@@ -92,7 +91,6 @@ Application::last_opened_file()
 	return ret;
 }
 
-
 void
 Application::set_last_opened_file(filesystem::path const& p_path)
 {
@@ -105,7 +103,6 @@ Application::set_last_opened_file(filesystem::path const& p_path)
 	config().Flush();
 	return;
 }
-
 
 optional<filesystem::path>
 Application::default_directory()

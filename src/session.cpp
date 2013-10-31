@@ -39,11 +39,13 @@ namespace phatbooks
 
 using gui::App;
 
-// TODO MEDIUM PRIORITY
+// TODO HIGH PRIORITY
 // There are currently the following three classes: Session,
 // Application and App. This is left over from when a TUI interface was
-// previously provided via TextSession. However we could now probably
-// reduce these to a single class (App).
+// previously provided via TextSession. However we should now be able to
+// reduce these to a single class, deriving from wxApp. We should also be
+// able to do all our command line parsing using wxWidgets facilities,
+// within the App class. We can then remove the dependency on TCLAP.
 
 int Session::s_num_instances = 0;
 
