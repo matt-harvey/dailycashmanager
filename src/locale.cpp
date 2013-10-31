@@ -18,7 +18,7 @@
 
 
 #include "gui/locale.hpp"
-#include "gui/app.hpp"
+#include "app.hpp"
 #include <wx/intl.h>
 
 namespace phatbooks

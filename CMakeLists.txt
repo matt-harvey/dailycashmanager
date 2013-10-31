@@ -107,6 +107,7 @@ set (common_sources
 	 src/account.cpp
 	 src/account_table_iterator.cpp
 	 src/account_type.cpp
+	 src/app.cpp
 	 src/augmented_account.cpp
 	 src/balance_cache.cpp
 	 src/make_default_accounts.cpp
@@ -130,15 +131,14 @@ set (common_sources
 	 src/persistent_journal.cpp
 	 src/phatbooks_database_connection.cpp
 	 src/repeater.cpp
+	 src/session.cpp
 	 src/transaction_type.cpp)
 
 set (gui_sources
-	 src/session.cpp
 	 src/account_ctrl.cpp
 	 src/account_dialog.cpp
 	 src/account_list_ctrl.cpp
 	 src/account_type_ctrl.cpp
-	 src/app.cpp
 	 src/balance_sheet_report.cpp
 	 src/bs_account_entry_list_ctrl.cpp
 	 src/budget_panel.cpp

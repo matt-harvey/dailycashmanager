@@ -18,6 +18,7 @@
 
 
 #include "gui/account_list_ctrl.hpp"
+#include "app.hpp"
 #include "account.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
@@ -25,7 +26,6 @@
 #include "phatbooks_database_connection.hpp"
 #include "string_flags.hpp"
 #include "gui/account_dialog.hpp"
-#include "gui/app.hpp"
 #include "gui/locale.hpp"
 #include "gui/persistent_object_event.hpp"
 #include "gui/top_panel.hpp"

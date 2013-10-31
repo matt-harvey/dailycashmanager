@@ -19,6 +19,7 @@
 
 #include "gui/frame.hpp"
 #include "account.hpp"
+#include "app.hpp"
 #include "application.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
@@ -28,7 +29,6 @@
 #include "string_flags.hpp"
 #include "gui/account_dialog.hpp"
 #include "gui/account_list_ctrl.hpp"
-#include "gui/app.hpp"
 #include "gui/entry_list_ctrl.hpp"
 #include "gui/persistent_object_event.hpp"
 #include "gui/top_panel.hpp"

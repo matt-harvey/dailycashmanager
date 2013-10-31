@@ -17,7 +17,7 @@
  */
 
 
-#include "gui/app.hpp"
+#include "app.hpp"
 #include "application.hpp"
 #include "date.hpp"
 #include "phatbooks_database_connection.hpp"
@@ -45,8 +45,6 @@ using std::shared_ptr;
 namespace filesystem = boost::filesystem;
 
 namespace phatbooks
-{
-namespace gui
 {
 
 namespace
@@ -92,12 +90,12 @@ bool App::OnInit()
 		// Then the database connection has not been opened.
 		// We need to prompt the user either (a) to open an existing
 		// file, or (b) to create a new file via the wizard.
-		WelcomeDialog welcome_dialog(database_connection());
+		gui::WelcomeDialog welcome_dialog(database_connection());
 		if (welcome_dialog.ShowModal() == wxID_OK)
 		{
 			if (welcome_dialog.user_wants_new_file())
 			{
-				SetupWizard setup_wizard(database_connection());
+				gui::SetupWizard setup_wizard(database_connection());
 				setup_wizard.run();
 			}
 			else
@@ -132,7 +130,7 @@ bool App::OnInit()
 
 	update_repeaters(database_connection());
 
-	Frame* frame = new Frame(app_name, database_connection());
+	gui::Frame* frame = new gui::Frame(app_name, database_connection());
 	SetTopWindow(frame);
 	frame->Show(true);
 	wxToolTip::Enable(true);
@@ -230,6 +228,4 @@ App::elicit_existing_filepath()
 	return ret;
 }
 
-
-}  // namespace gui
 }  // namespace phatbooks

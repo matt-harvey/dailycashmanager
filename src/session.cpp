@@ -17,9 +17,9 @@
  */
 
 #include "session.hpp"
+#include "app.hpp"
 #include "application.hpp"
 #include "phatbooks_exceptions.hpp"
-#include "gui/app.hpp"
 #include <boost/filesystem.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
@@ -36,8 +36,6 @@ using std::wstring;
 
 namespace phatbooks
 {
-
-using gui::App;
 
 // TODO HIGH PRIORITY
 // There are currently the following three classes: Session,

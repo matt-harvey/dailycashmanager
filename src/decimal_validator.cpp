@@ -18,8 +18,8 @@
 
 
 #include "gui/decimal_validator.hpp"
+#include "app.hpp"
 #include "finformat.hpp"
-#include "gui/app.hpp"
 #include "gui/locale.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>

@@ -29,7 +29,7 @@ namespace gui
 
 /**
  * Convenience function returning a reference to the current wxLocale.
- * Instance of phatbooks::gui::App should have been initialized before
+ * Instance of phatbooks::App should have been initialized before
  * calling this function, or behaviour will be undefined.
  */
 wxLocale const& locale();

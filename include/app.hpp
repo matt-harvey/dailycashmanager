@@ -20,8 +20,8 @@
 #ifndef GUARD_app_hpp_19666019230925488
 #define GUARD_app_hpp_19666019230925488
 
-#include "frame.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "gui/frame.hpp"
 #include <boost/filesystem.hpp>
 #include <wx/app.h>
 #include <wx/intl.h>
@@ -38,6 +38,8 @@ namespace gui
 {
 
 class Frame;
+
+}  // namespace gui
 
 // end forward declarations
 
@@ -82,7 +84,6 @@ private:
 // Implements App& wxGetApp()
 DECLARE_APP(App)
 
-}  // namespace gui
 }  // namespace phatbooks
 
 #endif  // GUARD_app_hpp_19666019230925488
