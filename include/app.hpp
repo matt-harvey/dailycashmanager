@@ -69,14 +69,6 @@ public:
 	static wxString filename_extension();
 
 	/**
-	 * @returns the filepath of the application file last opened by the
-	 * user, stored in a boost::optional. The returned optional
-	 * is uninitialized if the user has yet to open an application file,
-	 * or if the last opened file cannot be found.
-	 */
-	static boost::optional<boost::filesystem::path> last_opened_file();
-
-	/**
 	 * @returns the default directory in which application files
 	 * should be saved unless specified otherwise by the user. This
 	 * would generally correspond to the user's home directory. If
@@ -87,14 +79,6 @@ public:
 	 * will be an absolute filepath.
 	 */
 	static boost::optional<boost::filesystem::path> default_directory();
-
-	/**
-	 * Record a filepath as being the last application file opened by the
-	 * user.
-	 *
-	 * Precondition: p_path should be an absolute path.
-	 */
-	static void set_last_opened_file(boost::filesystem::path const& p_path);
 
 	virtual bool OnInit() override;
 
@@ -122,6 +106,22 @@ private:
 	 * @returns the name of the vendor of the application.
 	 */
 	static wxString vendor_name();
+
+	/**
+	 * @returns the filepath of the application file last opened by the
+	 * user, stored in a boost::optional. The returned optional
+	 * is uninitialized if the user has yet to open an application file,
+	 * or if the last opened file cannot be found.
+	 */
+	static boost::optional<boost::filesystem::path> last_opened_file();
+
+	/**
+	 * Record a filepath as being the last application file opened by the
+	 * user.
+	 *
+	 * Precondition: p_path should be an absolute path.
+	 */
+	static void set_last_opened_file(boost::filesystem::path const& p_path);
 
 	static wxConfig& config();
 	boost::filesystem::path elicit_existing_filepath();
