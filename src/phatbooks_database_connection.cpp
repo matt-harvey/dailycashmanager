@@ -21,7 +21,7 @@
 #include "account.hpp"
 #include "account_table_iterator.hpp"
 #include "amalgamated_budget.hpp"
-#include "application.hpp"
+#include "app.hpp"
 #include "balance_cache.hpp"
 #include "budget_item.hpp"
 #include "commodity.hpp"

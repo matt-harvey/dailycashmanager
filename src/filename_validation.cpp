@@ -18,7 +18,7 @@
 
 
 #include "filename_validation.hpp"
-#include "application.hpp"
+#include "app.hpp"
 #include "string_conv.hpp"
 #include <boost/regex.hpp>
 #include <jewel/assert.hpp>
@@ -150,11 +150,11 @@ namespace
 	bool is_prohibited_phatbooks_filename(string const& s, string& message)
 	{
 		string const extension = filename_extension(s);
-		if (extension != wx_to_std8(Application::filename_extension()))
+		if (extension != wx_to_std8(App::filename_extension()))
 		{
 			message =
 				"Filename must have extension " +
-				Application::filename_extension() +
+				App::filename_extension() +
 				".";
 			return true;
 		}
@@ -177,7 +177,7 @@ is_valid_filename
 {
 	if (extension_is_explicit)
 	{
-		if (s == Application::filename_extension())
+		if (s == App::filename_extension())
 		{
 			message = "Filename cannot consist solely of extension.";
 			return false;

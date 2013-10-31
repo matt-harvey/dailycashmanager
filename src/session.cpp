@@ -18,7 +18,6 @@
 
 #include "session.hpp"
 #include "app.hpp"
-#include "application.hpp"
 #include "phatbooks_exceptions.hpp"
 #include <boost/filesystem.hpp>
 #include <jewel/assert.hpp>
@@ -38,8 +37,8 @@ namespace phatbooks
 {
 
 // TODO HIGH PRIORITY
-// There are currently the following three classes: Session,
-// Application and App. This is left over from when a TUI interface was
+// There are currently the following classes: Session and App. This is left
+// over from when a TUI interface was
 // previously provided via TextSession. However we should now be able to
 // reduce these to a single class, deriving from wxApp. We should also be
 // able to do all our command line parsing using wxWidgets facilities,
@@ -99,7 +98,7 @@ Session::run()
 
 	app->set_database_connection(dbc);
 	wxApp::SetInstance(app);
-	wxString const app_name = Application::application_name();
+	wxString const app_name = App::application_name();
 
 	// The argv array required by wxEntryStart must be an array
 	// of wchar_t*. We produce these as follows.
@@ -183,7 +182,7 @@ Session::run(string const& filepath_str)
 
 	app->set_database_connection(dbc);
 	wxApp::SetInstance(app);
-	wxString const app_name = Application::application_name();	
+	wxString const app_name = App::application_name();	
 
 	// The argv array required by wxEntryStart must be an
 	// array of wchar_t*. We produce these as follows.

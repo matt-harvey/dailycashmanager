@@ -102,7 +102,7 @@
 // getting the user's permission). Could use the server to format an
 // email. Use third party library, wxCrashReport?
 
-#include "application.hpp"
+#include "app.hpp"
 #include "session.hpp"
 #include "string_conv.hpp"
 #include <boost/filesystem.hpp>
@@ -125,7 +125,7 @@
 #include <typeinfo>
 
 using jewel::Log;
-using phatbooks::Application;
+using phatbooks::App;
 using phatbooks::Session;
 using phatbooks::wx_to_std8;
 using std::abort;
@@ -191,7 +191,7 @@ namespace
 			string const log_dir = "/tmp/";
 #		endif  // JEWEL_ON_WINDOWS
 		string const log_name = 
-			log_dir + wx_to_std8(Application::application_name()) + ".log";
+			log_dir + wx_to_std8(App::application_name()) + ".log";
 		Log::set_filepath(log_name);
 		return;
 	}
@@ -224,7 +224,7 @@ int main(int argc, char** argv)
 		// Prevent multiple instances run by the same user
 		JEWEL_LOG_TRACE();
 		bool another_is_running = false;
-		wxString const app_name = Application::application_name();
+		wxString const app_name = App::application_name();
 		wxString const instance_identifier =
 			app_name +
 			wxString::Format("-%s", wxGetUserId().c_str());
@@ -238,9 +238,9 @@ int main(int argc, char** argv)
 		// Process command line arguments
 		JEWEL_LOG_TRACE();
 		CmdLine cmd
-		(	wx_to_std8(Application::application_name()),
+		(	wx_to_std8(App::application_name()),
 			' ',
-			wx_to_std8(Application::version())
+			wx_to_std8(App::version())
 		);
 		UnlabeledValueArg<string> filepath_arg
 		(	"FILE",

@@ -18,7 +18,7 @@
 
 
 #include "gui/welcome_dialog.hpp"
-#include "application.hpp"
+#include "app.hpp"
 #include "phatbooks_database_connection.hpp"
 #include <jewel/assert.hpp>
 #include <wx/button.h>
@@ -33,7 +33,6 @@ namespace phatbooks
 {
 namespace gui
 {
-
 
 BEGIN_EVENT_TABLE(WelcomeDialog, wxDialog)
 	EVT_BUTTON
@@ -58,9 +57,7 @@ WelcomeDialog::WelcomeDialog
 	wxDialog
 	(	0,
 		wxID_ANY,
-		wxString("Welcome to ") +
-			Application::application_name() +
-			wxString("!"),
+		wxString("Welcome to ") + App::application_name() + wxString("!"),
 		wxDefaultPosition,
 		wxSize(wxDefaultSize.x * 2, wxDefaultSize.y * 2),
 		wxRESIZE_BORDER
@@ -88,8 +85,8 @@ WelcomeDialog::~WelcomeDialog()
 void
 WelcomeDialog::configure_buttons()
 {
-	wxString const file_descriptor = 
-		Application::application_name() + wxString(" file");
+	wxString const file_descriptor =
+		App::application_name() + wxString(" file");
 	m_top_sizer->AddStretchSpacer();
 
 	// TODO LOW PRIORITY The below code ensures the buttons are the same width,

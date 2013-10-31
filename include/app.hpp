@@ -23,8 +23,11 @@
 #include "phatbooks_database_connection.hpp"
 #include "gui/frame.hpp"
 #include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
 #include <wx/app.h>
+#include <wx/config.h>
 #include <wx/intl.h>
+#include <wx/string.h>
 #include <memory>
 
 namespace phatbooks
@@ -33,13 +36,6 @@ namespace phatbooks
 // begin forward declarations
 
 class PhatbooksDatabaseConnection;
-
-namespace gui
-{
-
-class Frame;
-
-}  // namespace gui
 
 // end forward declarations
 
@@ -53,6 +49,52 @@ public:
 	App& operator=(App const&) = delete;
 	App& operator=(App&&) = delete;
 	~App() = default;
+
+	/**
+	 * @returns name of the application as presented to the
+	 * user.
+	 */
+	static wxString application_name();
+
+	/**
+	 * @returns a string indicating the version number.
+	 */
+	static wxString version();
+
+	/**
+	 * @returns filename extension to be used with files
+	 * belonging to this application. Includes
+	 * the '.'.
+	 */
+	static wxString filename_extension();
+
+	/**
+	 * @returns the filepath of the application file last opened by the
+	 * user, stored in a boost::optional. The returned optional
+	 * is uninitialized if the user has yet to open an application file,
+	 * or if the last opened file cannot be found.
+	 */
+	static boost::optional<boost::filesystem::path> last_opened_file();
+
+	/**
+	 * @returns the default directory in which application files
+	 * should be saved unless specified otherwise by the user. This
+	 * would generally correspond to the user's home directory. If
+	 * an initialized optional is returned, then the directory is
+	 * guaranteed to exist at the time it is returned. If an uninitialized
+	 * optional is returned, then an existing default home directory could
+	 * not be determined. If initialized, then the value of the optional
+	 * will be an absolute filepath.
+	 */
+	static boost::optional<boost::filesystem::path> default_directory();
+
+	/**
+	 * Record a filepath as being the last application file opened by the
+	 * user.
+	 *
+	 * Precondition: p_path should be an absolute path.
+	 */
+	static void set_last_opened_file(boost::filesystem::path const& p_path);
 
 	virtual bool OnInit() override;
 
@@ -75,6 +117,13 @@ public:
 	PhatbooksDatabaseConnection& database_connection();
 
 private:
+
+	/**
+	 * @returns the name of the vendor of the application.
+	 */
+	static wxString vendor_name();
+
+	static wxConfig& config();
 	boost::filesystem::path elicit_existing_filepath();
 	std::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	wxLocale m_locale;

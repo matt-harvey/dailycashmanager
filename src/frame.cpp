@@ -20,7 +20,6 @@
 #include "gui/frame.hpp"
 #include "account.hpp"
 #include "app.hpp"
-#include "application.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "ordinary_journal.hpp"

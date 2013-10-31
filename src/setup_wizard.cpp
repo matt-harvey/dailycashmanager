@@ -21,7 +21,6 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "app.hpp"
-#include "application.hpp"
 #include "augmented_account.hpp"
 #include "commodity.hpp"
 #include "filename_validation.hpp"
@@ -119,23 +118,17 @@ namespace
 	wxString with_extension(wxString const& s)
 	{
 		filesystem::path const path(wx_to_std8(s));
-		if
-		(	std8_to_wx(path.extension().string()) ==
-			Application::filename_extension()
-		)
+		if (std8_to_wx(path.extension().string()) == App::filename_extension())
 		{
 			return s;
 		}
-		return s + Application::filename_extension();
+		return s + App::filename_extension();
 	}
 
 	wxString without_extension(wxString const& s)
 	{
 		filesystem::path const path(wx_to_std8(s));
-		if
-		(	std8_to_wx(path.extension().string()) ==
-			Application::filename_extension()
-		)
+		if (std8_to_wx(path.extension().string()) == App::filename_extension())
 		{
 			if (path.extension() != path)
 			{
@@ -176,7 +169,7 @@ SetupWizard::SetupWizard
 	wxWizard
 	(	0,
 		wxID_ANY,
-		Application::application_name() + wxString(" Setup Wizard"),
+		App::application_name() + wxString(" Setup Wizard"),
 		wxBitmap(icon_xpm),  // TODO HIGH PRIORITY Put a proper image here
 		wxDefaultPosition,
 		wxDEFAULT_DIALOG_STYLE | wxFULL_REPAINT_ON_RESIZE
@@ -559,8 +552,7 @@ SetupWizard::FilepathPage::FilepathPage
 	// Second row
 	m_top_sizer->Add(m_directory_row_sizer);
 	wxString default_directory = wxEmptyString;
-	optional<filesystem::path> const maybe_directory =
-		Application::default_directory();
+	optional<filesystem::path> const maybe_directory = App::default_directory();
 	if (maybe_directory)
 	{
 		default_directory = std8_to_wx(value(maybe_directory).string());
@@ -605,7 +597,7 @@ SetupWizard::FilepathPage::FilepathPage
 
 	// Fifth row
 	m_top_sizer->Add(m_filename_row_sizer);
-	wxString const ext = Application::filename_extension();
+	wxString const ext = App::filename_extension();
 	m_filename_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,

@@ -104,6 +104,7 @@ else ()
 endif ()
 
 set (common_sources
+	#non-gui stuff...
 	 src/account.cpp
 	 src/account_table_iterator.cpp
 	 src/account_type.cpp
@@ -111,7 +112,6 @@ set (common_sources
 	 src/augmented_account.cpp
 	 src/balance_cache.cpp
 	 src/make_default_accounts.cpp
-	 src/application.cpp
 	 src/amalgamated_budget.cpp
 	 src/budget_item.cpp
 	 src/commodity.cpp
@@ -132,9 +132,8 @@ set (common_sources
 	 src/phatbooks_database_connection.cpp
 	 src/repeater.cpp
 	 src/session.cpp
-	 src/transaction_type.cpp)
-
-set (gui_sources
+	 src/transaction_type.cpp
+	 #gui stuff...
 	 src/account_ctrl.cpp
 	 src/account_dialog.cpp
 	 src/account_list_ctrl.cpp
@@ -190,7 +189,7 @@ set (test_sources
 
 add_library(phatbooks_common ${common_sources})
 
-add_executable(phatbooks src/main.cpp ${gui_sources} ${windows_resources})
+add_executable(phatbooks src/main.cpp ${windows_resources})
 target_link_libraries (phatbooks phatbooks_common ${libraries})
 
 add_executable (test ${test_sources})

@@ -16,22 +16,22 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "application.hpp"
+#include "app.hpp"
 #include "string_conv.hpp"
 #include <UnitTest++/UnitTest++.h>
 #include <jewel/log.hpp>
 #include <string>
 
 using jewel::Log;
-using phatbooks::Application;
+using phatbooks::App;
 using phatbooks::wx_to_std8;
 using std::string;
 
 void configure_logging()
 {
 	Log::set_threshold(Log::trace);
-	string const log_name = 
-		 "./" + wx_to_std8(Application::application_name()) + "_test.log";
+	string const log_name =
+		"./" + wx_to_std8(App::application_name()) + "_test.log";
 	Log::set_filepath(log_name);
 	return;
 }
