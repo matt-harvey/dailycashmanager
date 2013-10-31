@@ -49,6 +49,15 @@ namespace phatbooks
 namespace gui
 {
 
+namespace
+{
+	wxString filepath_wildcard()
+	{
+		return wxString("*") + Application::filename_extension();
+	}
+
+}  // end anonymous namespace
+
 /*
 It seems you should almost always arrange things like this:
  wxFrame
@@ -172,17 +181,6 @@ int App::OnExit()
 	// Any cleanup code here.
 	return 0;
 }
-
-
-namespace
-{
-	wxString filepath_wildcard()
-	{
-		return wxString("*") + Application::filename_extension();
-	}
-
-}  // end anonymous namespace
-
 
 filesystem::path
 App::elicit_existing_filepath()

@@ -103,8 +103,8 @@
 // email. Use third party library, wxCrashReport?
 
 #include "application.hpp"
+#include "session.hpp"
 #include "string_conv.hpp"
-#include "gui/graphical_session.hpp"
 #include <boost/filesystem.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
@@ -126,7 +126,7 @@
 
 using jewel::Log;
 using phatbooks::Application;
-using phatbooks::gui::GraphicalSession;
+using phatbooks::Session;
 using phatbooks::wx_to_std8;
 using std::abort;
 using std::cerr;
@@ -258,7 +258,7 @@ int main(int argc, char** argv)
 		string const filepath_str = filepath_arg.getValue();
 		if (!filepath_str.empty() && !filesystem::exists(filepath_str))
 		{
-			// NOTE The function GraphicalSession::do_run(std::string const&)
+			// NOTE The function Session::do_run(std::string const&)
 			// relies on the fact that we exit here - we don't want to pass a
 			// non-existent filepath to that function.
 			cerr << "File does not exist.\n"
@@ -267,24 +267,24 @@ int main(int argc, char** argv)
 				 << endl;
 			return 1;
 		}
-		GraphicalSession graphical_session;
+		Session session;
 		if (another_is_running)
 		{
-			// We tell the GraphicalSession of an existing instance
+			// We tell the Session of an existing instance
 			// so that it can end this session with a graphical
 			// message box, which it can only do after wxWidgets'
 			// initialization code has run.
-			graphical_session.notify_existing_application_instance();
+			session.notify_existing_application_instance();
 		}
 		// Note phatbooks::Session currently requires a std::string to
 		// be passed here.
 
 		if (filepath_str.empty())
 		{
-			return graphical_session.run();
+			return session.run();
 		}
 		JEWEL_ASSERT (!filepath_str.empty());
-		return graphical_session.run(filepath_str);
+		return session.run(filepath_str);
 	}
 	catch (ArgException& e)
 	{

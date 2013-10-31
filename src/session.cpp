@@ -16,10 +16,10 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "session.hpp"
 #include "application.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "gui/app.hpp"
-#include "gui/graphical_session.hpp"
 #include <boost/filesystem.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
@@ -36,18 +36,18 @@ using std::wstring;
 
 namespace phatbooks
 {
-namespace gui
-{
+
+using gui::App;
 
 // TODO MEDIUM PRIORITY
-// There are currently the following three classes: GraphicalSession,
+// There are currently the following three classes: Session,
 // Application and App. This is left over from when a TUI interface was
 // previously provided via TextSession. However we could now probably
 // reduce these to a single class (App).
 
-int GraphicalSession::s_num_instances = 0;
+int Session::s_num_instances = 0;
 
-GraphicalSession::GraphicalSession():
+Session::Session():
 	m_existing_application_instance_notified(false)
 {
 	++s_num_instances;
@@ -62,7 +62,7 @@ GraphicalSession::GraphicalSession():
 	JEWEL_ASSERT (s_num_instances <= s_max_instances);
 }
 
-GraphicalSession::~GraphicalSession()
+Session::~Session()
 {
 	JEWEL_ASSERT (s_num_instances > 0);
 	JEWEL_ASSERT (s_num_instances <= s_max_instances);
@@ -70,7 +70,7 @@ GraphicalSession::~GraphicalSession()
 }
 
 void
-GraphicalSession::notify_existing_application_instance()
+Session::notify_existing_application_instance()
 {
 	JEWEL_LOG_TRACE();
 	m_existing_application_instance_notified = true;
@@ -78,7 +78,7 @@ GraphicalSession::notify_existing_application_instance()
 }
 
 int
-GraphicalSession::run()
+Session::run()
 {
 	JEWEL_LOG_TRACE();
 
@@ -90,15 +90,15 @@ GraphicalSession::run()
 	// we do this instead of using the IMPLEMENT_APP macro from
 	// wxWidgets, because we don't want IMPLEMENT_APP to provide us
 	// with a main function - we already have our own.
-	App* pApp = new App;
+	App* app = new App;
 	
 	if (m_existing_application_instance_notified)
 	{
-		pApp->notify_existing_application_instance();
+		app->notify_existing_application_instance();
 	}
 
-	pApp->set_database_connection(dbc);
-	wxApp::SetInstance(pApp);
+	app->set_database_connection(dbc);
+	wxApp::SetInstance(app);
 	wxString const app_name = Application::application_name();
 
 	// The argv array required by wxEntryStart must be an array
@@ -144,7 +144,7 @@ GraphicalSession::run()
 
 
 int
-GraphicalSession::run(string const& filepath_str)
+Session::run(string const& filepath_str)
 {
 	JEWEL_LOG_TRACE();
 
@@ -170,19 +170,19 @@ GraphicalSession::run(string const& filepath_str)
 	);
 	boost::filesystem::path const filepath(filepath_str);
 
-	App* pApp = new App;
+	App* app = new App;
 
 	if (m_existing_application_instance_notified)
 	{
-		pApp->notify_existing_application_instance();
+		app->notify_existing_application_instance();
 	}
 	else
 	{
 		dbc->open(filepath);
 	}
 
-	pApp->set_database_connection(dbc);
-	wxApp::SetInstance(pApp);
+	app->set_database_connection(dbc);
+	wxApp::SetInstance(app);
 	wxString const app_name = Application::application_name();	
 
 	// The argv array required by wxEntryStart must be an
@@ -225,6 +225,4 @@ GraphicalSession::run(string const& filepath_str)
 	return 0;
 }
 
-
-}  // namespace gui
 }  // namespace phatbooks

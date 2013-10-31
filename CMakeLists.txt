@@ -133,7 +133,7 @@ set (common_sources
 	 src/transaction_type.cpp)
 
 set (gui_sources
-	 src/graphical_session.cpp
+	 src/session.cpp
 	 src/account_ctrl.cpp
 	 src/account_dialog.cpp
 	 src/account_list_ctrl.cpp

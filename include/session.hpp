@@ -17,53 +17,47 @@
  */
 
 
-#ifndef GUARD_graphical_session_hpp_08719753897152727
-#define GUARD_graphical_session_hpp_08719753897152727
+#ifndef GUARD_session_hpp_08719753897152727
+#define GUARD_session_hpp_08719753897152727
 
 #include <string>
 
 namespace phatbooks
 {
 
-/**
- * Namespace specific to the graphical user interface for Phatbooks
- */
-namespace gui
-{
-
 // We eschew wxWidgets' macro-created main function, and
 // instead drive everything from our own main defined in main.cpp
-// at the top-level project directory, via our GraphicalSession class
-// (a subclass of phatbooks::Session). GraphicalSession is the top-level
+// at the top-level project directory, via our Session class
+// (a subclass of phatbooks::Session). Session is the top-level
 // "driver" of the GUI application.
 // However we still need to go through the motions of creating an "App"
 // class in which to contain all our wxWidgets-using code. The "App"
 // class is a separate class inheriting from wxApp. The App class
-// is invoked from within GraphicalSession. This is a somewhat
+// is invoked from within Session. This is a somewhat
 // convoluted initialization architecture, but was originally designed
 // to facilitate having both GUI and non-GUI interface running over
 // the same core business logic.
 
-class GraphicalSession
+class Session
 {
 public:
 	
 	/**
-	 * Only 1 GraphicalSession may be created, and this is non-copyable.
+	 * Only 1 Session may be created, and this is non-copyable.
 	 * So this is the "Singleton pattern" in this sense. However, the single
 	 * instance is \e not globally accessible via a static function: if we
 	 * require references to it in multiple places, we must explicitly pass
 	 * these around.
 	 *
-	 * @throw TooManySessions if we attempt to create a second GraphicalSession.
+	 * @throw TooManySessions if we attempt to create a second Session.
 	 */
-	GraphicalSession();
+	Session();
 
-	GraphicalSession(GraphicalSession const&) = delete;
-	GraphicalSession(GraphicalSession&&) = delete;
-	GraphicalSession& operator=(GraphicalSession const&) = delete;
-	GraphicalSession& operator=(GraphicalSession&&) = delete;
-	~GraphicalSession();
+	Session(Session const&) = delete;
+	Session(Session&&) = delete;
+	Session& operator=(Session const&) = delete;
+	Session& operator=(Session&&) = delete;
+	~Session();
 
 	/**
 	 * Notify session of existing application instance (which could
@@ -99,8 +93,6 @@ private:
 	bool m_existing_application_instance_notified;
 };
 
-}  // namesapce gui
 }  // namespace phatbooks
 
-
-#endif  // GUARD_graphical_session_hpp_08719753897152727
+#endif  // GUARD_session_hpp_08719753897152727
