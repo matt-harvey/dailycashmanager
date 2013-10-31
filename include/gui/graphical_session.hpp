@@ -20,9 +20,7 @@
 #ifndef GUARD_graphical_session_hpp_08719753897152727
 #define GUARD_graphical_session_hpp_08719753897152727
 
-#include "session.hpp"
 #include <string>
-
 
 namespace phatbooks
 {
@@ -46,16 +44,26 @@ namespace gui
 // to facilitate having both GUI and non-GUI interface running over
 // the same core business logic.
 
-class GraphicalSession: public Session
+class GraphicalSession
 {
 public:
-
+	
+	/**
+	 * Only 1 GraphicalSession may be created, and this is non-copyable.
+	 * So this is the "Singleton pattern" in this sense. However, the single
+	 * instance is \e not globally accessible via a static function: if we
+	 * require references to it in multiple places, we must explicitly pass
+	 * these around.
+	 *
+	 * @throw TooManySessions if we attempt to create a second GraphicalSession.
+	 */
 	GraphicalSession();
+
 	GraphicalSession(GraphicalSession const&) = delete;
 	GraphicalSession(GraphicalSession&&) = delete;
 	GraphicalSession& operator=(GraphicalSession const&) = delete;
 	GraphicalSession& operator=(GraphicalSession&&) = delete;
-	virtual ~GraphicalSession();
+	~GraphicalSession();
 
 	/**
 	 * Notify session of existing application instance (which could
@@ -65,25 +73,28 @@ public:
 	 */
 	void notify_existing_application_instance();
 
-private:
-
 	/**
-	 * Similar to do_run(std::string const&), but a filepath is not
-	 * provided. The user may open a file from within the Session.
+	 * Run a session in which the user chooses a file to open from
+	 * within the session.
 	 */
-	int do_run() override;
+	int run();
 
 	/**
-	 * Implements virtual function do_run, inherited from
-	 * phatbooks::Session.
-	 * 
+	 * Run a session in which the file to open is given by \e filepath_str.
+	 *
 	 * @param filename name of file to which a database connection
 	 * should be opened for the session.
 	 *
 	 * @returns \c 1 if there is some kind of error condition that is
 	 * not manifested as an exception; or \c 0 on successful completion.
 	 */
-	int do_run(std::string const& filepath_str) override;
+	int run(std::string const& filepath_str);
+
+private:
+
+	static int const s_max_instances = 1;
+	static int const s_default_caching_level = 10;
+	static int s_num_instances;
 
 	bool m_existing_application_instance_notified;
 };

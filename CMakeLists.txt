@@ -128,7 +128,6 @@ set (common_sources
 	 src/journal.cpp
 	 src/ordinary_journal.cpp
 	 src/persistent_journal.cpp
-	 src/session.cpp
 	 src/phatbooks_database_connection.cpp
 	 src/repeater.cpp
 	 src/transaction_type.cpp)

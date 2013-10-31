@@ -16,16 +16,19 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #include "application.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "gui/app.hpp"
 #include "gui/graphical_session.hpp"
 #include <boost/filesystem.hpp>
+#include <jewel/assert.hpp>
 #include <jewel/log.hpp>
+#include <sqloxx/sqloxx_exceptions.hpp>
 #include <wx/string.h>
 #include <memory>
 #include <string>
 
+using sqloxx::InvalidFilename;
 using std::shared_ptr;
 using std::string;
 using std::wcscpy;
@@ -33,19 +36,37 @@ using std::wstring;
 
 namespace phatbooks
 {
-
-
 namespace gui
 {
 
+// TODO MEDIUM PRIORITY
+// There are currently the following three classes: GraphicalSession,
+// Application and App. This is left over from when a TUI interface was
+// previously provided via TextSession. However we could now probably
+// reduce these to a single class (App).
+
+int GraphicalSession::s_num_instances = 0;
 
 GraphicalSession::GraphicalSession():
 	m_existing_application_instance_notified(false)
 {
+	++s_num_instances;
+	if (s_num_instances > s_max_instances)
+	{
+		--s_num_instances;
+		JEWEL_THROW
+		(	TooManySessions,
+			"Exceeded maximum number of instances of phatbooks::Session."
+		);
+	}
+	JEWEL_ASSERT (s_num_instances <= s_max_instances);
 }
 
 GraphicalSession::~GraphicalSession()
 {
+	JEWEL_ASSERT (s_num_instances > 0);
+	JEWEL_ASSERT (s_num_instances <= s_max_instances);
+	--s_num_instances;
 }
 
 void
@@ -57,7 +78,7 @@ GraphicalSession::notify_existing_application_instance()
 }
 
 int
-GraphicalSession::do_run()
+GraphicalSession::run()
 {
 	JEWEL_LOG_TRACE();
 
@@ -123,7 +144,7 @@ GraphicalSession::do_run()
 
 
 int
-GraphicalSession::do_run(string const& filepath_str)
+GraphicalSession::run(string const& filepath_str)
 {
 	JEWEL_LOG_TRACE();
 
@@ -133,11 +154,16 @@ GraphicalSession::do_run(string const& filepath_str)
 	// improper somehow.
 	
 	// TODO LOW PRIORITY There is code duplicated between here and the
-	// other form of do_run
+	// other form of run
 	
 	// TODO LOW PRIORITY Make it so that if the file cannot be opened, an
 	// informative message is displayed to the user, rather than just crashing
 	// with an exception.
+
+	if (filepath_str.empty())
+	{
+		JEWEL_THROW(InvalidFilename, "Filename is empty string.");
+	}
 
 	shared_ptr<PhatbooksDatabaseConnection> dbc
 	(	new PhatbooksDatabaseConnection
