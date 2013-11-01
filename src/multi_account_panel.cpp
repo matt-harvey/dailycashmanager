@@ -388,16 +388,11 @@ MultiAccountPanel::selected_augmented_accounts
 		account->set_description(m_description_boxes[i]->GetValue());
 		account->set_visibility(Visibility::visible);
 		account->set_commodity(m_commodity);
-
-		// TODO HIGH PRIORITY Make sure it is clear to the user which way round
-		// the signs are supposed to go, especially for AccountType::liability
-		// (where the user should normally enter a negative number).
 		augmented_account.technical_opening_balance =
 		(	m_account_super_type == AccountSuperType::pl?
 			-m_opening_balance_boxes[i]->amount():
 			m_opening_balance_boxes[i]->amount()
 		);
-
 		JEWEL_ASSERT (!account->has_id());
 		out.push_back(augmented_account);
 	}

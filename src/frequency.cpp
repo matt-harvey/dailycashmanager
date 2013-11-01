@@ -227,12 +227,4 @@ operator!=(Frequency const& lhs, Frequency const& rhs)
 	return !(lhs == rhs);
 }
 
-
-// TODO HIGH PRIORITY How to handle DecimalMultiplicationException and
-// DecimalDivisionException in the Frequency convertions
-// functions? Will they occur often?
-// The answer may be just to force the user not to input weird Frequencies
-// that we know could cause issues.
-
-
 }  // namespace phatbooks

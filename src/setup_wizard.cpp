@@ -1239,7 +1239,8 @@ SetupWizard::AccountPage::main_text() const
 		ret += wxString
 		(	"Enter your assets (\"what you own\") and liabilities "
 			"(\"what you owe\"), along with the current balances of "
-			"each. "
+			"each.\n\nAsset accounts normally have a positive balance, and "
+			"liabilities normally have a negative balance."
 		);
 		break;
 	case AccountSuperType::pl:
