@@ -62,7 +62,8 @@
 // on the icon appeared, and the background image became
 // transparent for some reason. Furthermore, when set as the
 // large in-windows icon in the CPack/NSIS installer, the icon
-// wasn't showing at all.
+// wasn't showing at all. Once decent icon is created, also make sure it is
+// pulled into the wxBitmap in SetupWizard.
 
 // TODO HIGH PRIORITY Create a better name for the application.
 
