@@ -36,11 +36,7 @@
 // system between the Phatbooks file extension and the Phatbooks application.
 // See CMake book, page. 162.
 
-// TODO HIGH PRIORITY Should the application should automatically create a
-// backup file of the database on startup so that the session can be
-// recovered if something goes wrong?
-
-// TODO MEDIUM PRIORITY The database file should perhaps have a checksum to
+/// TODO MEDIUM PRIORITY The database file should perhaps have a checksum to
 // guard against its contents changing other than via the application.
 
 // TODO HIGH PRIORITY Facilitate automatic checking for updates from user's
