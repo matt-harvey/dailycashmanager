@@ -46,9 +46,6 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-// TODO Put tests in here which exercise BalanceCache as well
-// as just Account.
-
 // TODO LOW PRIORITY There is a lot of repeated setup code in these tests
 // which could be moved into phatbooks::test::TestFixture.
 
@@ -359,8 +356,10 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_visibility)
 	CHECK(a3->visibility() == Visibility::visible);
 }
 
-TEST_FIXTURE(TestFixture, test_account_balance)
+TEST_FIXTURE(TestFixture, test_account_balance_1)
 {
+	// Changing the balance of a small number of Accounts.
+
 	PhatbooksDatabaseConnection& dbc = *pdbc;
 	Handle<Commodity> const c1(dbc, Commodity::id_for_abbreviation(dbc, "AUD"));
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
@@ -440,6 +439,120 @@ TEST_FIXTURE(TestFixture, test_account_balance)
 	CHECK_EQUAL(a2->technical_balance(), Decimal("504.77"));
 	CHECK_EQUAL(a2->friendly_balance(), Decimal("-504.77"));
 }
+
+TEST_FIXTURE(TestFixture, test_account_balance_2)
+{
+	// Changing the balance of a large number of Accounts.
+	
+	PhatbooksDatabaseConnection& dbc = *pdbc;
+	Handle<Commodity> const aud(dbc, Commodity::id_for_abbreviation(dbc, "AUD"));
+	Handle<Account> const cash(dbc, Account::id_for_name(dbc, "cash"));
+	Handle<Account> const food(dbc, Account::id_for_name(dbc, "food"));
+
+	Handle<Account> const credit_card(dbc);
+	credit_card->set_account_type(AccountType::liability);
+	credit_card->set_name("Credit card");
+	credit_card->set_commodity(aud);
+	credit_card->set_description("");
+	credit_card->set_visibility(Visibility::visible);
+	credit_card->save();
+
+	Handle<Account> const chequing(dbc);
+	chequing->set_account_type(AccountType::asset);
+	chequing->set_name("Chequing account");
+	chequing->set_commodity(aud);
+	chequing->set_description("");
+	chequing->set_visibility(Visibility::visible);
+	chequing->save();
+
+	Handle<Account> const household_supplies(dbc);
+	household_supplies->set_account_type(AccountType::expense);
+	household_supplies->set_name("Household supplies");
+	household_supplies->set_commodity(aud);
+	household_supplies->set_description("");
+	household_supplies->set_visibility(Visibility::visible);
+	household_supplies->save();
+
+	Handle<Account> const salary(dbc);
+	salary->set_account_type(AccountType::revenue);
+	salary->set_name("Salary");
+	salary->set_commodity(aud);
+	salary->set_description("Salary and wages income");
+	salary->set_visibility(Visibility::visible);
+	salary->save();
+
+	Handle<Account> const recreation(dbc);
+	recreation->set_account_type(AccountType::expense);
+	recreation->set_name("Recreation");
+	recreation->set_commodity(aud);
+	recreation->set_description("");
+	recreation->set_visibility(Visibility::visible);
+	recreation->save();
+
+	Handle<OrdinaryJournal> const oj0(dbc);
+	oj0->set_transaction_type(TransactionType::generic);
+	oj0->set_comment("test");
+	oj0->set_date(today() + gregorian::date_duration(100));
+	Handle<Entry> const cash_entry(dbc);
+	Handle<Entry> const food_entry(dbc);
+	Handle<Entry> const credit_card_entry(dbc);
+	Handle<Entry> const chequing_entry(dbc);
+	Handle<Entry> const household_supplies_entry(dbc);
+	Handle<Entry> const salary_entry(dbc);
+	Handle<Entry> const recreation_entry(dbc);
+	Handle<Entry> const entries[] =
+	{	cash_entry,
+		food_entry,
+		credit_card_entry,
+		chequing_entry,
+		household_supplies_entry,
+		salary_entry,
+		recreation_entry
+	};
+	for (auto const& entry: entries)
+	{
+		entry->set_comment("");
+		entry->set_whether_reconciled(false);
+		entry->set_amount(Decimal("798.25"));
+		entry->set_transaction_side(TransactionSide::destination);
+	}
+	cash_entry->set_account(cash);
+	food_entry->set_account(food);
+	credit_card_entry->set_account(credit_card);
+	chequing_entry->set_account(chequing);
+	household_supplies_entry->set_account(household_supplies);
+	salary_entry->set_account(salary);
+	recreation_entry->set_account(recreation);
+	salary_entry->set_transaction_side(TransactionSide::source);
+	salary_entry->set_amount(Decimal("-4789.50"));
+	for (auto const& entry: entries)
+	{
+		oj0->push_entry(entry);
+	}
+	oj0->save();
+
+	CHECK_EQUAL (cash->friendly_balance(), Decimal("798.25"));
+	CHECK_EQUAL (food->friendly_balance(), Decimal("-798.25"));
+	CHECK_EQUAL (credit_card->technical_balance(), Decimal("798.25"));
+	CHECK_EQUAL (chequing->friendly_balance(), Decimal("798.25"));
+	CHECK_EQUAL (household_supplies->technical_balance(), Decimal("798.25"));
+	CHECK_EQUAL (salary->friendly_balance(), Decimal("4789.50"));
+	CHECK_EQUAL (recreation->friendly_balance(), Decimal("-798.25"));
+
+	Handle<OrdinaryJournal> const oj1(dbc);
+	oj1->mimic(*oj0);
+	oj1->set_date(today() + gregorian::date_duration(129));
+	oj1->save();
+
+	CHECK_EQUAL (cash->friendly_balance(), Decimal("1596.50"));
+	CHECK_EQUAL (food->friendly_balance(), Decimal("-1596.50"));
+	CHECK_EQUAL (credit_card->friendly_balance(), Decimal("1596.50"));
+	CHECK_EQUAL (chequing->friendly_balance(), Decimal("1596.50"));
+	CHECK_EQUAL (household_supplies->friendly_balance(), Decimal("-1596.50"));
+	CHECK_EQUAL (salary->technical_balance(), Decimal("-9579.00"));
+	CHECK_EQUAL (recreation->technical_balance(), Decimal("1596.50"));
+}
+
 
 TEST_FIXTURE(TestFixture, test_account_opening_balance)
 {

@@ -118,11 +118,15 @@ private:
 	 */
 	static void set_last_opened_file(boost::filesystem::path const& p_path);
 
+	void make_backup(boost::filesystem::path const& p_original_filepath);
+	void destroy_backup();
+
 	static wxConfig& config();
 
 	boost::filesystem::path elicit_existing_filepath();
 
 	std::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
+	boost::optional<boost::filesystem::path> m_backup_filepath;
 	wxLocale m_locale;
 	bool m_existing_application_instance_notified;
 };

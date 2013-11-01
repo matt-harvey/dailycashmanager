@@ -45,6 +45,11 @@ class PersistentObjectEvent;
 
 // End forward declarations
 
+/**
+ * Main top-level widget for application. This in turn houses the TopPanel,
+ * which in turn houses almost everything else. This is a fairly conventional
+ * arrangement for wxWidgets applications.
+ */
 class Frame: public wxFrame
 {
 public:

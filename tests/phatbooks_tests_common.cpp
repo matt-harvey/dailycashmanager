@@ -39,12 +39,10 @@ using std::endl;
 
 namespace filesystem = boost::filesystem;
 
-
 namespace phatbooks
 {
 namespace test
 {
-
 
 bool file_exists(filesystem::path const& filepath)
 {
@@ -52,7 +50,6 @@ bool file_exists(filesystem::path const& filepath)
 	(	filesystem::status(filepath)
 	);
 }
-
 
 void abort_if_exists(filesystem::path const& filepath)
 {
@@ -64,7 +61,6 @@ void abort_if_exists(filesystem::path const& filepath)
 	}
 	return;
 }
-
 
 void setup_test_commodities(PhatbooksDatabaseConnection& dbc)
 {
@@ -86,7 +82,6 @@ void setup_test_commodities(PhatbooksDatabaseConnection& dbc)
 
 	return;
 }
-
 
 void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
 {
@@ -113,7 +108,6 @@ void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
 	return;
 }
 
-
 TestFixture::TestFixture():
 	db_filepath("Testfile_827787293.db"),
 	pdbc(0)
@@ -127,7 +121,6 @@ TestFixture::TestFixture():
 	JEWEL_ASSERT (pdbc->is_valid());
 }
 
-
 TestFixture::~TestFixture()
 {
 	JEWEL_ASSERT (pdbc->is_valid());
@@ -135,9 +128,6 @@ TestFixture::~TestFixture()
 	filesystem::remove(db_filepath);
 	JEWEL_ASSERT (!file_exists(db_filepath));
 }
-
-
-
 
 }  // namespace test
 }  // namespace phatbooks

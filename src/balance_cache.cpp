@@ -164,7 +164,6 @@ BalanceCache::mark_as_stale(sqloxx::Id p_account_id)
 	return;
 }
 
-
 void
 BalanceCache::refresh()
 {

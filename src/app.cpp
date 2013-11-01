@@ -71,17 +71,6 @@ namespace
 
 }  // end anonymous namespace
 
-/*
-It seems you should almost always arrange things like this:
- wxFrame
- 	wxPanel
-		a sizer...
-			everything else
-
-The wxPanel might seem pointless, but apparently if you don't use
-it you get into all kinds of problems.
-*/
-
 wxString
 App::application_name()
 {
@@ -157,6 +146,23 @@ App::default_directory()
 	return ret;
 }
 
+void
+App::make_backup(filesystem::path const& p_original_filepath)
+{
+	// TODO Create backup file. Then save absolute path to backup file
+	// to m_backup_filepath.
+}
+
+void
+App::destroy_backup()
+{
+	if (m_backup_filepath)
+	{
+		filesystem::remove(*m_backup_filepath);
+	}
+	return;
+}
+
 wxConfig&
 App::config()
 {
@@ -167,9 +173,7 @@ App::config()
 bool App::OnInit()
 {
 	JEWEL_LOG_TRACE();
-
-	wxString const app_name = App::application_name();
-
+	wxString const app_name = application_name();
 	if (m_existing_application_instance_notified)
 	{
 		wxLogError(app_name + wxString(" is already running."));
@@ -216,17 +220,12 @@ bool App::OnInit()
 		}
 	}
 	JEWEL_ASSERT (database_connection().is_valid());
-	using filesystem::absolute;
-	JEWEL_ASSERT
-	(	absolute(database_connection().filepath()) ==
-		database_connection().filepath()
-	);
-	App::set_last_opened_file(database_connection().filepath());
-
+	auto const filepath = database_connection().filepath();
+	JEWEL_ASSERT (filesystem::absolute(filepath) == filepath);
+	set_last_opened_file(filepath);
+	make_backup(filepath);
 	database_connection().set_caching_level(5);
-
 	update_repeaters(database_connection());
-
 	gui::Frame* frame = new gui::Frame(app_name, database_connection());
 	SetTopWindow(frame);
 	frame->Show(true);
@@ -239,6 +238,7 @@ bool App::OnInit()
 
 App::App(): m_existing_application_instance_notified(false)
 {
+	JEWEL_ASSERT (!m_backup_filepath);
 }
 
 wxLocale const&
@@ -273,7 +273,10 @@ App::database_connection()
 int App::OnExit()
 {
 	JEWEL_LOG_TRACE();
-	// Any cleanup code here.
+	// TODO Should only destroy the backup file if there were no errors.
+	// If there are errors, should retain the backup file, and draw the
+	// user's attention to the existence of the backup file.
+	destroy_backup();
 	return 0;
 }
 
@@ -288,7 +291,7 @@ App::elicit_existing_filepath()
 	wxString default_filename = wxEmptyString;
 
 	// Set the default path to the last opened file, if there is one
-	optional<filesystem::path> const last_opened = App::last_opened_file();
+	optional<filesystem::path> const last_opened = last_opened_file();
 	if
 	(	last_opened &&
 		filesystem::exists(filesystem::status(value(last_opened)))
