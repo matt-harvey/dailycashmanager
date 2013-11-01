@@ -45,12 +45,6 @@ using std::string;
 using std::vector;
 
 
-// TODO HIGH PRIORITY On KDE (at least under Mageia), the Frequency
-// column is too narrow. It appears to be sized just wide enough
-// for the column title, but does not appear to take the
-// contents of the column itself into account, when calculating the
-// required width.
-
 // TODO HIGH PRIORITY Are column widths OK under MSW? Including
 // when no contents?
 
@@ -219,7 +213,7 @@ DraftJournalListCtrl::update
 	// Configure column widths
 	SetColumnWidth(s_name_col, wxLIST_AUTOSIZE_USEHEADER);
 	SetColumnWidth(s_name_col, max(GetColumnWidth(s_name_col), 400));
-	SetColumnWidth(s_frequency_col, wxLIST_AUTOSIZE_USEHEADER);
+	SetColumnWidth(s_frequency_col, wxLIST_AUTOSIZE);
 	SetColumnWidth(s_next_date_col, wxLIST_AUTOSIZE);
 
 	Layout();

@@ -261,6 +261,7 @@ PhatbooksDatabaseConnection::do_setup()
 	load_creation_date();
 	load_default_commodity();
 	perform_integrity_checks();
+	JEWEL_LOG_TRACE();
 	return;
 }
 

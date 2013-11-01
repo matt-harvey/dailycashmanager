@@ -34,7 +34,7 @@ if (WIN32)
 	     wxmsw29u
 	     wxmsw29u_gl
 	     wxscintilla
-	     wxtiff
+		 wxtiff
          wxjpeg
 		 wxpng
 		 wxzlib
@@ -55,7 +55,7 @@ else ()
 	set (libraries
 		 boost_date_time
 		 boost_filesystem
-		 boost_locale-mt
+		 # boost_locale-mt
 		 c
 		 dl
 		 boost_regex
@@ -93,9 +93,10 @@ else ()
 		 Xxf86vm
 		 png
 		 wxregexu-2.9
-		 wxexpat-2.9
-		 wxtiff-2.9
-		 wxjpeg-2.9)
+		 # wxexpat-2.9
+		 # wxtiff-2.9
+		 # wxjpeg-2.9
+		)
 	set(windows_resources)  # Left empty
 
 	add_definitions(#-D_FILE_OFFSET_BITS=64
