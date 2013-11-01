@@ -64,6 +64,11 @@ namespace
 		return wxString("/General/LastOpenedFile");
 	}
 
+	wxString vendor_name()
+	{
+		return wxString("Phatbooks");
+	}
+
 }  // end anonymous namespace
 
 /*
@@ -93,12 +98,6 @@ wxString
 App::filename_extension()
 {
 	return wxString(".phat");
-}
-
-wxString
-App::vendor_name()
-{
-	return wxString("Phatbooks");
 }
 
 optional<filesystem::path>

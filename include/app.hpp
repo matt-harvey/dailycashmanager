@@ -103,11 +103,6 @@ public:
 private:
 
 	/**
-	 * @returns the name of the vendor of the application.
-	 */
-	static wxString vendor_name();
-
-	/**
 	 * @returns the filepath of the application file last opened by the
 	 * user, stored in a boost::optional. The returned optional
 	 * is uninitialized if the user has yet to open an application file,
@@ -124,7 +119,9 @@ private:
 	static void set_last_opened_file(boost::filesystem::path const& p_path);
 
 	static wxConfig& config();
+
 	boost::filesystem::path elicit_existing_filepath();
+
 	std::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	wxLocale m_locale;
 	bool m_existing_application_instance_notified;

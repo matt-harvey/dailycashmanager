@@ -46,8 +46,7 @@ namespace phatbooks
 
 int Session::s_num_instances = 0;
 
-Session::Session():
-	m_existing_application_instance_notified(false)
+Session::Session(): m_existing_application_instance_notified(false)
 {
 	++s_num_instances;
 	if (s_num_instances > s_max_instances)
