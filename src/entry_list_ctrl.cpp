@@ -70,6 +70,9 @@ namespace phatbooks
 namespace gui
 {
 
+// TODO HIGH PRIORITY Are column widths OK under MSW? Including when
+// no contents?
+
 BEGIN_EVENT_TABLE(EntryListCtrl, wxListCtrl)
 	EVT_LIST_ITEM_ACTIVATED
 	(	wxID_ANY,

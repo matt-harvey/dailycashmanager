@@ -43,6 +43,9 @@ using std::is_signed;
 using std::max;
 using std::set;
 
+// TODO HIGH PRIORITY Are column widths OK under MSW? Including when
+// no contents?
+
 namespace phatbooks
 {
 namespace gui
@@ -68,7 +71,7 @@ AccountListCtrl::AccountListCtrl
 		(	p_parent->GetClientSize().GetX() / 4,
 			p_parent->GetClientSize().GetY()
 		),
-		wxLC_REPORT | wxFULL_REPAINT_ON_RESIZE
+		wxLC_REPORT | wxLC_SINGLE_SEL | wxFULL_REPAINT_ON_RESIZE
 	),
 	m_show_hidden(false),
 	m_account_super_type(p_account_super_type),

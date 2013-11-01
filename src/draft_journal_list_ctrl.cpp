@@ -45,11 +45,14 @@ using std::string;
 using std::vector;
 
 
-// TODO MEDIUM PRIORITY On KDE (at least under Mageia), the Frequency
+// TODO HIGH PRIORITY On KDE (at least under Mageia), the Frequency
 // column is too narrow. It appears to be sized just wide enough
 // for the column title, but does not appear to take the
 // contents of the column itself into account, when calculating the
 // required width.
+
+// TODO HIGH PRIORITY Are column widths OK under MSW? Including
+// when no contents?
 
 namespace phatbooks
 {
