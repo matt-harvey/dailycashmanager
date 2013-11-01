@@ -80,8 +80,8 @@
 // from occurring in the case of saving a PersistentJournal that would cause
 // overflow.) The user should be prompted to roll over to a new file, before
 // this situation can arise, both in the case of BudgetItem and in the case
-// of PersistentJournal. (Also, what about Account opening balance changes that
-// might cause overflow? But these are always via the posting of a
+// of PersistentJournal. (Also, what about Account opening balance changes
+// that might cause overflow? But these are always via the posting of a
 // PersistentJournal, so...)
 
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
@@ -97,6 +97,9 @@
 // is just to use HTTP to send the logfile directly to a server (after
 // getting the user's permission). Could use the server to format an
 // email. Use third party library, wxCrashReport?
+
+// TODO MEDIUM PRIORITY Startup time under Windows is really slow, even when
+// compiled in Release mode.
 
 #include "app.hpp"
 #include "session.hpp"

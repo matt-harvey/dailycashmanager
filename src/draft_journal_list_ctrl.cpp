@@ -28,6 +28,7 @@
 #include "gui/persistent_object_event.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
+#include <jewel/on_windows.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/event.h>
 #include <wx/listctrl.h>
@@ -43,10 +44,6 @@ using std::is_signed;
 using std::max;
 using std::string;
 using std::vector;
-
-
-// TODO HIGH PRIORITY Are column widths OK under MSW? Including
-// when no contents?
 
 namespace phatbooks
 {
@@ -212,17 +209,24 @@ DraftJournalListCtrl::update
 
 	// Configure column widths
 	SetColumnWidth(s_name_col, wxLIST_AUTOSIZE);
-	// SetColumnWidth(s_name_col, max(GetColumnWidth(s_name_col), 400));
 	SetColumnWidth(s_frequency_col, wxLIST_AUTOSIZE);
 	SetColumnWidth(s_next_date_col, wxLIST_AUTOSIZE);
-
+#ifdef JEWEL_ON_WINDOWS
+		SetColumnWidth(s_name_col, std::max(GetColumnWidth(s_name_col), 150));
+		SetColumnWidth
+		(	s_frequency_col,
+			std::max(GetColumnWidth(s_frequency_col), 100)
+		);
+		SetColumnWidth
+		(	s_next_date_col,
+			std::max(GetColumnWidth(s_next_date_col), 75)
+		);
+#endif
 	Layout();
 
 	JEWEL_LOG_TRACE();
 	return;
 }
-
-
 
 }  // namespace gui
 }  // namespace phatbooks

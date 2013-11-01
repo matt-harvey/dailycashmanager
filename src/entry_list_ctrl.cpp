@@ -47,6 +47,7 @@
 #include <wx/gdicmn.h>
 #include <wx/progdlg.h>
 #include <wx/scrolwin.h>
+#include <algorithm>
 #include <string>
 #include <type_traits>
 #include <vector>
@@ -69,9 +70,6 @@ namespace phatbooks
 {
 namespace gui
 {
-
-// TODO HIGH PRIORITY Are column widths OK under MSW? Including when
-// no contents?
 
 BEGIN_EVENT_TABLE(EntryListCtrl, wxListCtrl)
 	EVT_LIST_ITEM_ACTIVATED
@@ -209,7 +207,15 @@ void
 EntryListCtrl::autosize_column_widths()
 {
 	int const num_cols = num_columns();
-	for (int i = 0; i != num_cols; ++i) SetColumnWidth(i, wxLIST_AUTOSIZE);
+	for (int i = 0; i != num_cols; ++i)
+	{
+		SetColumnWidth(i, wxLIST_AUTOSIZE);
+#		ifdef JEWEL_ON_WINDOWS
+			// Overcome glitch on Windows build where column headers
+			// are not taken into account in width calculation.
+			SetColumnWidth(i, std::max(GetColumnWidth(i), 75));
+#		endif
+	}
 	return;
 }
 
