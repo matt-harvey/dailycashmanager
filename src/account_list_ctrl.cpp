@@ -43,9 +43,6 @@ using std::is_signed;
 using std::max;
 using std::set;
 
-// TODO HIGH PRIORITY Are column widths OK under MSW? Including when
-// no contents?
-
 namespace phatbooks
 {
 namespace gui
