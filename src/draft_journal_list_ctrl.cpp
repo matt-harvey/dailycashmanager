@@ -211,8 +211,8 @@ DraftJournalListCtrl::update
 	}
 
 	// Configure column widths
-	SetColumnWidth(s_name_col, wxLIST_AUTOSIZE_USEHEADER);
-	SetColumnWidth(s_name_col, max(GetColumnWidth(s_name_col), 400));
+	SetColumnWidth(s_name_col, wxLIST_AUTOSIZE);
+	// SetColumnWidth(s_name_col, max(GetColumnWidth(s_name_col), 400));
 	SetColumnWidth(s_frequency_col, wxLIST_AUTOSIZE);
 	SetColumnWidth(s_next_date_col, wxLIST_AUTOSIZE);
 
