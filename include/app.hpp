@@ -85,10 +85,6 @@ public:
 
 	virtual int OnExit() override;
 
-	void set_database_connection
-	(	std::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
-	);
-
 	void set_database_filepath
 	(	boost::filesystem::path const& p_database_filepath
 	);
@@ -122,15 +118,15 @@ private:
 
 	boost::filesystem::path elicit_existing_filepath();
 
-	std::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
+	wxSingleInstanceChecker* m_single_instance_checker;
+	std::unique_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	boost::optional<boost::filesystem::path> m_database_filepath;
 	boost::optional<boost::filesystem::path> m_backup_filepath;
 	wxLocale m_locale;
-	wxSingleInstanceChecker* m_single_instance_checker;
 };
 
 // Implements App& wxGetApp()
-DECLARE_APP(App)
+wxDECLARE_APP(App);
 
 }  // namespace phatbooks
 
