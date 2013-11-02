@@ -119,7 +119,6 @@
 #include <jewel/on_windows.hpp>
 #include <tclap/CmdLine.h>
 #include <wx/log.h>
-#include <wx/snglinst.h>
 #include <wx/string.h>
 #include <wx/utils.h>
 #include <cstdlib>
@@ -248,6 +247,8 @@ int main(int argc, char** argv)
 		cmd.add(filepath_arg);
 		cmd.parse(argc, argv);
 
+		wxString const app_name = App::application_name();
+
 		// TODO MEDIUM PRIORITY This may require a wstring or wxString if we
 		// want to support non-ASCII filenames on Windows.
 		string const filepath_str = filepath_arg.getValue();
@@ -265,16 +266,6 @@ int main(int argc, char** argv)
 		);
 		App* app = new App;
 
-		// Prevent multiple instances run by the same user
-		wxString const app_name = App::application_name();
-		wxString const instance_identifier =
-			app_name +
-			wxString::Format("-%s", wxGetUserId().c_str());
-		wxSingleInstanceChecker const checker(instance_identifier);
-		if (checker.IsAnotherRunning())
-		{
-			app->notify_existing_application_instance();
-		}
 		app->set_database_connection(dbc);
 		wxApp::SetInstance(app);
 
@@ -302,10 +293,7 @@ int main(int argc, char** argv)
 		}
 		else
 		{
-			if (!checker.IsAnotherRunning())
-			{
-				dbc->open(boost::filesystem::path(filepath_str));
-			}
+			app->set_database_filepath(filepath_str);
 			wstring const argv1_w(filepath_str.begin(), filepath_str.end());
 			size_t buf_1_sz = argv1_w.size() + 1 + 1000;
 			JEWEL_ASSERT (!buf_1);

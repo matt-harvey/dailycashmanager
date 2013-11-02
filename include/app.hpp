@@ -27,6 +27,7 @@
 #include <wx/app.h>
 #include <wx/config.h>
 #include <wx/intl.h>
+#include <wx/snglinst.h>
 #include <wx/string.h>
 #include <memory>
 
@@ -88,7 +89,9 @@ public:
 	(	std::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 	);
 
-	void notify_existing_application_instance();
+	void set_database_filepath
+	(	boost::filesystem::path const& p_database_filepath
+	);
 
 	wxLocale const& locale() const;
 
@@ -120,9 +123,10 @@ private:
 	boost::filesystem::path elicit_existing_filepath();
 
 	std::shared_ptr<PhatbooksDatabaseConnection> m_database_connection;
+	boost::optional<boost::filesystem::path> m_database_filepath;
 	boost::optional<boost::filesystem::path> m_backup_filepath;
 	wxLocale m_locale;
-	bool m_existing_application_instance_notified;
+	wxSingleInstanceChecker* m_single_instance_checker;
 };
 
 // Implements App& wxGetApp()

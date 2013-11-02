@@ -34,6 +34,7 @@
 #include <jewel/optional.hpp>
 #include <wx/config.h>
 #include <wx/filedlg.h>
+#include <wx/snglinst.h>
 #include <wx/string.h>
 #include <wx/tooltip.h>
 #include <wx/wx.h>
@@ -174,7 +175,11 @@ bool App::OnInit()
 {
 	JEWEL_LOG_TRACE();
 	wxString const app_name = application_name();
-	if (m_existing_application_instance_notified)
+	wxString const instance_identifier =
+		app_name + wxString::Format("-%s", wxGetUserId().c_str());
+	m_single_instance_checker =
+		new wxSingleInstanceChecker(instance_identifier);
+	if (m_single_instance_checker->IsAnotherRunning())
 	{
 		wxLogError(app_name + wxString(" is already running."));
 		return false;
@@ -185,6 +190,10 @@ bool App::OnInit()
 	{
 		wxLogError("Could not initialize locale.");
 		return false;
+	}
+	if (m_database_filepath)
+	{
+		database_connection().open(*m_database_filepath);
 	}
 	while (!database_connection().is_valid())
 	{
@@ -236,7 +245,7 @@ bool App::OnInit()
 	return true;
 }
 
-App::App(): m_existing_application_instance_notified(false)
+App::App(): m_single_instance_checker(nullptr)
 {
 	JEWEL_ASSERT (!m_backup_filepath);
 }
@@ -258,9 +267,9 @@ App::set_database_connection
 }
 
 void
-App::notify_existing_application_instance()
+App::set_database_filepath(filesystem::path const& p_database_filepath)
 {
-	m_existing_application_instance_notified = true;
+	m_database_filepath = p_database_filepath;
 	return;
 }
 
@@ -277,6 +286,8 @@ int App::OnExit()
 	// If there are errors, should retain the backup file, and draw the
 	// user's attention to the existence of the backup file.
 	destroy_backup();
+	delete m_single_instance_checker;
+	m_single_instance_checker = nullptr;
 	return 0;
 }
 
