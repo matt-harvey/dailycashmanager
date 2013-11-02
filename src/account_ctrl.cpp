@@ -115,6 +115,7 @@ AccountCtrl::reset_for_account_types
 void
 AccountCtrl::reset(Handle<Account> const& p_preserved_account)
 {
+	// TODO LOW PRIORITY Tidy this up a bit.
 	JEWEL_LOG_TRACE();
 	m_account_map.clear();
 	wxArrayString valid_account_names;
