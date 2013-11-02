@@ -260,8 +260,8 @@ App::set_database_connection
 void
 App::notify_existing_application_instance()
 {
-	JEWEL_LOG_TRACE();
 	m_existing_application_instance_notified = true;
+	return;
 }
 
 PhatbooksDatabaseConnection&

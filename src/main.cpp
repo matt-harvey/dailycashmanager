@@ -20,7 +20,9 @@
 // up the widths of wxComboBox and wxTextCtrl and wxButton (in various
 // controls in which these feature), where they are
 // supposed to be the same height, they actually turn out to be slightly
-// different heights.
+// different heights. However even if I manually set them all to the same
+// hard-coded height number, they still seem to come out different heights
+// on KDE. It doesn't make a lot of sense.
 
 // TODO HIGH PRIORITY Go through all the classes inheriting from
 // sqloxx::PersistentObject<...> and ensure the do_save(...) functions in each
@@ -102,8 +104,13 @@
 // TODO MEDIUM PRIORITY Startup time under Windows is really slow, even when
 // compiled in Release mode.
 
+// TODO HIGH PRIORITY We no longer need our own main(), but can use standard
+// the wxWidgets mechanism for "generating" main() using App class. We can also
+// remove the dependency on TCLAP by using wxWidgets' command-line-processing
+// facilities. These changes would enable significantly tidier initialization
+// code.
+
 #include "app.hpp"
-#include "session.hpp"
 #include "string_conv.hpp"
 #include <boost/filesystem.hpp>
 #include <jewel/assert.hpp>
@@ -121,12 +128,13 @@
 #include <fstream>
 #include <ios>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <typeinfo>
 
 using jewel::Log;
 using phatbooks::App;
-using phatbooks::Session;
+using phatbooks::PhatbooksDatabaseConnection;
 using phatbooks::wx_to_std8;
 using std::abort;
 using std::cerr;
@@ -135,8 +143,10 @@ using std::cout;
 using std::endl;
 using std::ofstream;
 using std::set_terminate;
+using std::shared_ptr;
 using std::string;
 using std::strlen;
+using std::wstring;
 using TCLAP::ArgException;
 using TCLAP::CmdLine;
 using TCLAP::UnlabeledValueArg;
@@ -253,38 +263,108 @@ int main(int argc, char** argv)
 		cmd.parse(argc, argv);
 
 		// TODO MEDIUM PRIORITY This may require a wstring or wxString if we
-		// want to support non-ASCII filenames on Windows. We would need to
-		// change the interface with phatbooks::Session.
+		// want to support non-ASCII filenames on Windows.
 		string const filepath_str = filepath_arg.getValue();
 		if (!filepath_str.empty() && !filesystem::exists(filepath_str))
 		{
-			// NOTE The function Session::do_run(std::string const&)
-			// relies on the fact that we exit here - we don't want to pass a
-			// non-existent filepath to that function.
 			cerr << "File does not exist.\n"
 			     << "To create a new file using the GUI, run with no command "
 				 << "line arguments."
 				 << endl;
 			return 1;
 		}
-		Session session;
-		if (another_is_running)
-		{
-			// We tell the Session of an existing instance
-			// so that it can end this session with a graphical
-			// message box, which it can only do after wxWidgets'
-			// initialization code has run.
-			session.notify_existing_application_instance();
-		}
-		// Note phatbooks::Session currently requires a std::string to
-		// be passed here.
-
+		JEWEL_LOG_TRACE();
+		shared_ptr<PhatbooksDatabaseConnection> dbc
+		(	new PhatbooksDatabaseConnection
+		);
+		App* app = new App;
+		if (another_is_running) app->notify_existing_application_instance();
 		if (filepath_str.empty())
 		{
-			return session.run();
+			app->set_database_connection(dbc);
+			wxApp::SetInstance(app);
+
+			// The argv array required by wxEntryStart must be an array
+			// of wchar_t*. We produce these as follows.
+			wstring const argv0_w(app_name.begin(), app_name.end());
+
+			// We do all this to avoid a const_cast.
+			// The extra 1000 is a safeguard against the fact that
+			// wxEntryStart (below) may modify the contents of the pointers
+			// passed to it. wxWidgets documentation does not say what it might write.
+			// We don't want it writing off the end. Yes, this
+			// is a grotesque hack.
+			size_t buf_0_sz = argv0_w.size() + 1 + 1000;
+			wchar_t* buf_0 = new wchar_t[buf_0_sz];
+			wcscpy(buf_0, argv0_w.c_str());
+
+			// We now construct the arguments required by wxEntryStart.
+			wchar_t* argvs[] = { buf_0, 0 };
+			int argca = 0;
+			while (argvs[argca] != 0) ++argca;
+
+			// At last...
+			wxEntryStart(argca, argvs);
+			if (wxTheApp->OnInit())
+			{
+				wxTheApp->OnRun();
+			}
+			else
+			{
+				// User has cancelled rather than opening a file
+				// Nothing to do.
+			}
+			wxTheApp->OnExit();
+			wxEntryCleanup();
+
+			delete[] buf_0;
+			buf_0 = nullptr;
+
+			JEWEL_LOG_TRACE();
+			return 0;
 		}
 		JEWEL_ASSERT (!filepath_str.empty());
-		return session.run(filepath_str);
+		boost::filesystem::path const filepath(filepath_str);
+		if (!another_is_running) dbc->open(filepath);
+		app->set_database_connection(dbc);
+		wxApp::SetInstance(app);
+
+		// array of wchar_t*. We produce these as follows.
+		wstring const argv0_w(app_name.begin(), app_name.end());
+		wstring const argv1_w(filepath_str.begin(), filepath_str.end());
+
+		// We do all this to avoid a const_cast.
+		// The extra 1000 is a safeguard against the fact that
+		// wxEntryStart (below) may modify the contents of the pointers
+		// passed to it. wxWidgets documentation does not say what it might write.
+		// We don't want it writing off the end. Yes, this
+		// is a grotesque hack.
+		size_t buf_0_sz = argv0_w.size() + 1 + 1000;
+		size_t buf_1_sz = argv1_w.size() + 1 + 1000;
+		wchar_t* buf_0 = new wchar_t[buf_0_sz];
+		wchar_t* buf_1 = new wchar_t[buf_1_sz];
+		wcscpy(buf_0, argv0_w.c_str());
+		wcscpy(buf_1, argv1_w.c_str());
+
+		// We now construct the arguments required by wxEntryStart.
+		wchar_t* argvs[] = { buf_0, buf_1, 0 };
+		int argca = 0;
+		while (argvs[argca] != 0) ++argca;
+
+		// At last...
+		wxEntryStart(argca, argvs);
+		wxTheApp->OnInit();
+		wxTheApp->OnRun();
+		wxTheApp->OnExit();
+		wxEntryCleanup();
+
+		delete[] buf_0;
+		buf_0 = nullptr;
+		delete[] buf_1;
+		buf_1 = nullptr;
+		
+		JEWEL_LOG_TRACE();
+		return 0;
 	}
 	catch (ArgException& e)
 	{

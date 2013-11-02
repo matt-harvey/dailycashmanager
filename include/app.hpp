@@ -88,12 +88,6 @@ public:
 	(	std::shared_ptr<PhatbooksDatabaseConnection> p_database_connection
 	);
 
-	/**
-	 * Notify session of existing application instance (which could
-	 * be either a console or a graphical session), so that just after
-	 * the wxWidgets initialization code has run, it can display an
-	 * appropriate message box and abort.
-	 */
 	void notify_existing_application_instance();
 
 	wxLocale const& locale() const;

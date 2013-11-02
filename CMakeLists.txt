@@ -132,7 +132,6 @@ set (common_sources
 	 src/persistent_journal.cpp
 	 src/phatbooks_database_connection.cpp
 	 src/repeater.cpp
-	 src/session.cpp
 	 src/transaction_type.cpp
 	 #gui stuff...
 	 src/account_ctrl.cpp

@@ -97,13 +97,6 @@ JEWEL_DERIVED_EXCEPTION(UnbalancedJournalException, InvalidJournalException);
 JEWEL_DERIVED_EXCEPTION(JournalOverflowException, InvalidJournalException);
 
 /**
- * Exception to be thrown when an attempt is made to create an additional
- * instance of phatbooks::Session, after the maximum number of such
- * instances has already been reached.
- */
-JEWEL_DERIVED_EXCEPTION(TooManySessions, PhatbooksException);
-
-/**
  * Exception to be thrown when a Frequency is not supported or valid
  * in some context.
  */
