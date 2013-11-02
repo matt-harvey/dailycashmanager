@@ -231,20 +231,6 @@ int main(int argc, char** argv)
 		// clog.exceptions(std::ios::badbit | std::ios::failbit);
 		// cerr.exceptions(std::ios::badbit | std::ios::failbit);
 
-		// Prevent multiple instances run by the same user
-		JEWEL_LOG_TRACE();
-		bool another_is_running = false;
-		wxString const app_name = App::application_name();
-		wxString const instance_identifier =
-			app_name +
-			wxString::Format("-%s", wxGetUserId().c_str());
-		wxSingleInstanceChecker const checker(instance_identifier);
-		if (checker.IsAnotherRunning())
-		{
-			another_is_running = true;
-			// to which we will respond below
-		}
-
 		// Process command line arguments
 		JEWEL_LOG_TRACE();
 		CmdLine cmd
@@ -278,26 +264,36 @@ int main(int argc, char** argv)
 		(	new PhatbooksDatabaseConnection
 		);
 		App* app = new App;
-		if (another_is_running) app->notify_existing_application_instance();
+
+		// Prevent multiple instances run by the same user
+		wxString const app_name = App::application_name();
+		wxString const instance_identifier =
+			app_name +
+			wxString::Format("-%s", wxGetUserId().c_str());
+		wxSingleInstanceChecker const checker(instance_identifier);
+		if (checker.IsAnotherRunning())
+		{
+			app->notify_existing_application_instance();
+		}
+		app->set_database_connection(dbc);
+		wxApp::SetInstance(app);
+
+		// The argv array required by wxEntryStart must be an array
+		// of wchar_t*. We produce these as follows.
+		wstring const argv0_w(app_name.begin(), app_name.end());
+
+		// We do all this to avoid a const_cast.
+		// The extra 1000 is a safeguard against the fact that
+		// wxEntryStart (below) may modify the contents of the pointers
+		// passed to it. wxWidgets documentation does not say what it might write.
+		// We don't want it writing off the end. Yes, this
+		// is a grotesque hack.
+		size_t buf_0_sz = argv0_w.size() + 1 + 1000;
+		wchar_t* buf_0 = new wchar_t[buf_0_sz];
+		wcscpy(buf_0, argv0_w.c_str());
+
 		if (filepath_str.empty())
 		{
-			app->set_database_connection(dbc);
-			wxApp::SetInstance(app);
-
-			// The argv array required by wxEntryStart must be an array
-			// of wchar_t*. We produce these as follows.
-			wstring const argv0_w(app_name.begin(), app_name.end());
-
-			// We do all this to avoid a const_cast.
-			// The extra 1000 is a safeguard against the fact that
-			// wxEntryStart (below) may modify the contents of the pointers
-			// passed to it. wxWidgets documentation does not say what it might write.
-			// We don't want it writing off the end. Yes, this
-			// is a grotesque hack.
-			size_t buf_0_sz = argv0_w.size() + 1 + 1000;
-			wchar_t* buf_0 = new wchar_t[buf_0_sz];
-			wcscpy(buf_0, argv0_w.c_str());
-
 			// We now construct the arguments required by wxEntryStart.
 			wchar_t* argvs[] = { buf_0, 0 };
 			int argca = 0;
@@ -323,48 +319,38 @@ int main(int argc, char** argv)
 			JEWEL_LOG_TRACE();
 			return 0;
 		}
-		JEWEL_ASSERT (!filepath_str.empty());
-		boost::filesystem::path const filepath(filepath_str);
-		if (!another_is_running) dbc->open(filepath);
-		app->set_database_connection(dbc);
-		wxApp::SetInstance(app);
+		else
+		{
+			JEWEL_ASSERT (!filepath_str.empty());
+			if (!checker.IsAnotherRunning())
+			{
+				dbc->open(boost::filesystem::path(filepath_str));
+			}
+			wstring const argv1_w(filepath_str.begin(), filepath_str.end());
+			size_t buf_1_sz = argv1_w.size() + 1 + 1000;
+			wchar_t* buf_1 = new wchar_t[buf_1_sz];
+			wcscpy(buf_1, argv1_w.c_str());
 
-		// array of wchar_t*. We produce these as follows.
-		wstring const argv0_w(app_name.begin(), app_name.end());
-		wstring const argv1_w(filepath_str.begin(), filepath_str.end());
+			// We now construct the arguments required by wxEntryStart.
+			wchar_t* argvs[] = { buf_0, buf_1, 0 };
+			int argca = 0;
+			while (argvs[argca] != 0) ++argca;
 
-		// We do all this to avoid a const_cast.
-		// The extra 1000 is a safeguard against the fact that
-		// wxEntryStart (below) may modify the contents of the pointers
-		// passed to it. wxWidgets documentation does not say what it might write.
-		// We don't want it writing off the end. Yes, this
-		// is a grotesque hack.
-		size_t buf_0_sz = argv0_w.size() + 1 + 1000;
-		size_t buf_1_sz = argv1_w.size() + 1 + 1000;
-		wchar_t* buf_0 = new wchar_t[buf_0_sz];
-		wchar_t* buf_1 = new wchar_t[buf_1_sz];
-		wcscpy(buf_0, argv0_w.c_str());
-		wcscpy(buf_1, argv1_w.c_str());
+			// At last...
+			wxEntryStart(argca, argvs);
+			wxTheApp->OnInit();
+			wxTheApp->OnRun();
+			wxTheApp->OnExit();
+			wxEntryCleanup();
 
-		// We now construct the arguments required by wxEntryStart.
-		wchar_t* argvs[] = { buf_0, buf_1, 0 };
-		int argca = 0;
-		while (argvs[argca] != 0) ++argca;
-
-		// At last...
-		wxEntryStart(argca, argvs);
-		wxTheApp->OnInit();
-		wxTheApp->OnRun();
-		wxTheApp->OnExit();
-		wxEntryCleanup();
-
-		delete[] buf_0;
-		buf_0 = nullptr;
-		delete[] buf_1;
-		buf_1 = nullptr;
-		
-		JEWEL_LOG_TRACE();
-		return 0;
+			delete[] buf_0;
+			buf_0 = nullptr;
+			delete[] buf_1;
+			buf_1 = nullptr;
+			
+			JEWEL_LOG_TRACE();
+			return 0;
+		}
 	}
 	catch (ArgException& e)
 	{
