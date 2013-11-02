@@ -291,66 +291,49 @@ int main(int argc, char** argv)
 		size_t buf_0_sz = argv0_w.size() + 1 + 1000;
 		wchar_t* buf_0 = new wchar_t[buf_0_sz];
 		wcscpy(buf_0, argv0_w.c_str());
-
+		wchar_t* buf_1 = nullptr;
 		if (filepath_str.empty())
 		{
 			// We now construct the arguments required by wxEntryStart.
 			wchar_t* argvs[] = { buf_0, 0 };
 			int argca = 0;
 			while (argvs[argca] != 0) ++argca;
-
-			// At last...
 			wxEntryStart(argca, argvs);
-			if (wxTheApp->OnInit())
-			{
-				wxTheApp->OnRun();
-			}
-			else
-			{
-				// User has cancelled rather than opening a file
-				// Nothing to do.
-			}
-			wxTheApp->OnExit();
-			wxEntryCleanup();
-
-			delete[] buf_0;
-			buf_0 = nullptr;
-
-			JEWEL_LOG_TRACE();
-			return 0;
 		}
 		else
 		{
-			JEWEL_ASSERT (!filepath_str.empty());
 			if (!checker.IsAnotherRunning())
 			{
 				dbc->open(boost::filesystem::path(filepath_str));
 			}
 			wstring const argv1_w(filepath_str.begin(), filepath_str.end());
 			size_t buf_1_sz = argv1_w.size() + 1 + 1000;
-			wchar_t* buf_1 = new wchar_t[buf_1_sz];
+			JEWEL_ASSERT (!buf_1);
+			buf_1 = new wchar_t[buf_1_sz];
 			wcscpy(buf_1, argv1_w.c_str());
 
 			// We now construct the arguments required by wxEntryStart.
 			wchar_t* argvs[] = { buf_0, buf_1, 0 };
 			int argca = 0;
 			while (argvs[argca] != 0) ++argca;
-
-			// At last...
 			wxEntryStart(argca, argvs);
-			wxTheApp->OnInit();
-			wxTheApp->OnRun();
-			wxTheApp->OnExit();
-			wxEntryCleanup();
-
-			delete[] buf_0;
-			buf_0 = nullptr;
-			delete[] buf_1;
-			buf_1 = nullptr;
-			
-			JEWEL_LOG_TRACE();
-			return 0;
 		}
+		if (wxTheApp->OnInit())
+		{
+			wxTheApp->OnRun();
+		}
+		else
+		{
+			// User has cancelled rather than opening a file
+			// Nothing to do.
+		}
+		wxTheApp->OnExit();
+		wxEntryCleanup();
+		delete[] buf_0;
+		buf_0 = nullptr;
+		delete[] buf_1;
+		buf_1 = nullptr;
+		return 0;
 	}
 	catch (ArgException& e)
 	{
