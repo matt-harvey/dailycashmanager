@@ -61,7 +61,6 @@ namespace
 	}
 }  // end anonymous namespace
 
-
 AccountCtrl::AccountCtrl
 (	wxWindow* p_parent,
 	unsigned int p_id,
@@ -83,7 +82,7 @@ AccountCtrl::AccountCtrl
 {
 	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (m_available_account_types.empty());
-	reset(p_account_types, p_exclude_balancing_account);
+	reset_for_account_types(p_account_types, p_exclude_balancing_account);
 	JEWEL_ASSERT (m_exclude_balancing_account == p_exclude_balancing_account);
 }
 
@@ -92,7 +91,7 @@ AccountCtrl::~AccountCtrl()
 }
 
 void
-AccountCtrl::reset
+AccountCtrl::reset_for_account_types
 (	vector<AccountType> const& p_account_types,
 	bool p_exclude_balancing_account
 )
@@ -114,7 +113,7 @@ AccountCtrl::reset
 }
 
 void
-AccountCtrl::reset()
+AccountCtrl::reset(Handle<Account> const& p_preserved_account)
 {
 	JEWEL_LOG_TRACE();
 	m_account_map.clear();
@@ -125,24 +124,32 @@ AccountCtrl::reset()
 	AccountTableIterator const end;
 	for ( ; it != end; ++it)
 	{
+		Handle<Account> const& acc = *it;
 		if
-		(	m_available_account_types.find((*it)->account_type()) !=
-			m_available_account_types.end()
+		(	(	m_available_account_types.find(acc->account_type()) !=
+				m_available_account_types.end()
+			)	||
+			(	acc == p_preserved_account
+			)
 		)
 		{
-			if (m_exclude_balancing_account && (*it == balancing_acct))
+			if (m_exclude_balancing_account && (acc == balancing_acct))
 			{
 				// Then don't include it
 			}
-			else
+			else if
+			(	(acc->visibility() == Visibility::visible) ||
+				(acc == p_preserved_account)
+			)
 			{
-				wxString const name = (*it)->name();
+				wxString const name = acc->name();
 				valid_account_names.Add(name);
 
 				// Remember the Account associated with this name (comes
 				// in handy when we have to update for a change in Account
 				// name).
-				m_account_map[name] = (*it)->id();
+				JEWEL_ASSERT (acc->has_id());
+				m_account_map[name] = acc->id();
 			}
 		}
 	}
@@ -174,11 +181,14 @@ AccountCtrl::set_account(Handle<Account> const& p_account)
 	JEWEL_LOG_VALUE(Log::info, name);
 	if (m_account_map.find(name) == m_account_map.end())
 	{
+		reset(p_account);
+		/*
 		ostringstream oss;
 		oss << "Account with name \"" << name << "\" is not supported by this "
 			<< "AccountCtrl.";
 		char const* msg = oss.str().c_str();
 		JEWEL_THROW(InvalidAccountException, msg);
+		*/
 	}
 	StringSetValidator* const validator =
 		dynamic_cast<StringSetValidator*>(GetValidator());

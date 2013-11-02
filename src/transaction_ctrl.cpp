@@ -627,7 +627,6 @@ void
 TransactionCtrl::update_for_amended(Handle<Account> const& p_saved_object)
 {
 	JEWEL_LOG_TRACE();
-
 	JEWEL_ASSERT (m_source_entry_ctrl);
 	m_source_entry_ctrl->update_for_amended(p_saved_object);
 	JEWEL_ASSERT (m_destination_entry_ctrl);

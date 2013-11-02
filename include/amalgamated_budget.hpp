@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_amalgamated_budget_hpp_5997503626159161
 #define GUARD_amalgamated_budget_hpp_5997503626159161
 
@@ -189,8 +188,6 @@ private:
 	sqloxx::Handle<Account> mutable m_balancing_account;
 
 };
-
-
 
 }  // namespace phatbooks
 

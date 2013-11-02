@@ -49,7 +49,9 @@ namespace gui
 
 /**
  * Widget by means of which the user is enabled to select an
- * \e existing Account.
+ * \e existing Account. Normally only Accounts of Visibility::visible
+ * are shown; however, calling set_account(...) will cause the selected
+ * Account to be shown even if it is of Visibility::hidden.
  */
 class AccountCtrl: public wxComboBox
 {
@@ -103,7 +105,7 @@ public:
 	 * @throws InvalidAccountException if p_account_types is non-empty, but
 	 * there are no Accounts with these AccountTypes in the database.
 	 */
-	void reset
+	void reset_for_account_types
 	(	std::vector<AccountType> const& p_account_types,
 		bool p_exclude_balancing_account = false
 	);
@@ -118,9 +120,11 @@ public:
 	sqloxx::Handle<Account> account();
 
 	/**
-	 * @throws InvalidAccountException if p_account is not
-	 * supported by the AccountCtrl. If this happens, it will just
-	 * continue showing the Account it showed before this was called.
+	 * Sets displayed Account to p_account. If p_account is not already
+	 * available within the AccountCtrl, then this will add it to the
+	 * AccountCtrl. However if p_exclude_balancing_account was set
+	 * to \e true, and p_account is the balancing Account, then p_account will
+	 * never be added or shown regardless.
 	 */
 	void set_account(sqloxx::Handle<Account> const& p_account);
 
@@ -128,20 +132,28 @@ public:
 	void update_for_amended(sqloxx::Handle<Account> const& p_account);
 
 private:
+
 	void on_kill_focus(wxFocusEvent& event);
 
-	void reset();
+	/**
+	 * Reset the available Accounts in the AccountCtrl, by rereading the Account
+	 * details from the database. If \e p_preserve_account is non-null, always
+	 * include and display this Account, even if it is of Visibility::hidden.
+	 * However, if p_preserved_account is the balancing Account, and
+	 * p_exclude_balancing_account was set to \e true, then it will always
+	 * be excluded regardless.
+	 */
+	void reset
+	(	sqloxx::Handle<Account> const& p_preserve_account =
+			sqloxx::Handle<Account>()
+	);
 
 	void refresh();
-
 	bool m_exclude_balancing_account;
 	PhatbooksDatabaseConnection& m_database_connection;
-
 	typedef std::map<wxString, sqloxx::Id> AccountMap;
 	AccountMap m_account_map;
-
 	std::set<AccountType> m_available_account_types;
-
 	DECLARE_EVENT_TABLE()
 
 };  // class AccountCtrl

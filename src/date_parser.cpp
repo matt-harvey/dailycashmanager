@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #include "date_parser.hpp"
 #include "date.hpp"
 #include <boost/algorithm/string.hpp>
@@ -436,6 +435,5 @@ DateParser::tolerant_parse(wxString const& p_string) const
 		tolerant_parse_aux(p_string, m_primary_format);
 	return (ret? ret: tolerant_parse_aux(p_string, m_secondary_format));
 }
-
 
 }  // namespace phatbooks

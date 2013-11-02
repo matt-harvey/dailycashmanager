@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_transaction_ctrl_hpp_6244141914064131
 #define GUARD_transaction_ctrl_hpp_6244141914064131
 

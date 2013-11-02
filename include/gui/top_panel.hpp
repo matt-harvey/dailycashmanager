@@ -255,7 +255,6 @@ private:
 };
 
 
-
 // IMPLEMENT MEMBER FUNCTION TEMPLATE
 
 template <typename JournalType>

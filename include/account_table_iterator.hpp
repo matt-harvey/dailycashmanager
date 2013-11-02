@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_account_table_iterator_hpp_048275898233184546
 #define GUARD_account_table_iterator_hpp_048275898233184546
 

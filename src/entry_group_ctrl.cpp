@@ -213,7 +213,7 @@ EntryGroupCtrl::refresh_for_transaction_type
 	for (EntryRow& row: m_entry_rows)
 	{
 		auto const selected_account = row.account_ctrl->account();
-		row.account_ctrl->reset(*m_available_account_types);
+		row.account_ctrl->reset_for_account_types(*m_available_account_types);
 		try
 		{
 			// set it to the same Account again if we can

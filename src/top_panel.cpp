@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #include "gui/top_panel.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
@@ -551,15 +550,7 @@ TopPanel::update_for_amended(Handle<Account> const& p_saved_object)
 	m_entry_list_panel->update_for_amended(p_saved_object);
 	m_reconciliation_panel->update_for_amended(p_saved_object);
 	m_report_panel->update_for_amended(p_saved_object);
-	
-	// TODO HIGH PRIORITY We should still make sure that if the Account has
-	// changed visibility, we CAREFULLY update the AccountCtrls within
-	// TransactionCtrl accordingly - noting that we don't want to cause
-	// an Account to disappear from an AccountCtrl if it is the one
-	// that is currently selected.
-
 	m_transaction_ctrl->update_for_amended(p_saved_object);
-
 	configure_draft_journal_list_ctrl();
 	return;
 }
