@@ -150,6 +150,7 @@ set (common_sources
 	 src/entry_group_ctrl.cpp
 	 src/entry_list_ctrl.cpp
 	 src/entry_list_panel.cpp
+	 src/error_reporter.cpp
 	 src/filtered_entry_list_ctrl.cpp
 	 src/frame.cpp
 	 src/frequency_ctrl.cpp

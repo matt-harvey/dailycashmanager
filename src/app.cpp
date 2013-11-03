@@ -21,6 +21,7 @@
 #include "phatbooks_database_connection.hpp"
 #include "repeater.hpp"
 #include "string_conv.hpp"
+#include "gui/error_reporter.hpp"
 #include "gui/frame.hpp"
 #include "gui/locale.hpp"
 #include "gui/setup_wizard.hpp"
@@ -443,50 +444,21 @@ bool App::OnInit()
 		JEWEL_LOG_MESSAGE(Log::info, "Starting wxWidgets event loop.");
 		return true;
 	}
-	// TODO HIGH PRIORITY factor out code that is repeated between
-	// here and OnRun().
-	catch (jewel::Exception& e)
-	{
-		JEWEL_LOG_MESSAGE
-		(	Log::error,
-			"jewel::Exception e caught in main."
-		);
-		JEWEL_LOG_VALUE(Log::error, e);
-		ostringstream oss;
-		oss << e;
-		wxLogError(std8_to_wx(oss.str()));
-		if (strlen(e.type()) == 0)
-		{
-			JEWEL_LOG_VALUE(Log::error, typeid(e).name());
-			cerr << "typeid(e).name(): " << typeid(e).name() << '\n' << endl;
-		}
-		flush_standard_output_streams();
-		return false;
-	}
 	catch (std::exception& e)
 	{
-		JEWEL_LOG_MESSAGE(Log::error, "std::exception e caught in main.");
-		JEWEL_LOG_VALUE(Log::error, typeid(e).name());
-		JEWEL_LOG_VALUE(Log::error, e.what());
-		ostringstream oss;
-		oss << "EXCEPTION:" << endl;
-		oss << "typeid(e).name(): " << typeid(e).name() << endl;
-		oss << "e.what(): " << e.what() << endl;
-		wxLogError(std8_to_wx(oss.str()));
-		flush_standard_output_streams();
-		return false;
+		gui::ErrorReporter reporter(&e);
+		reporter.report();
 	}
-
 	// This is necessary to guarantee the stack is fully unwound no
 	// matter what exception is thrown - we're not ONLY doing it
 	// for the logging and flushing.
 	catch (...)
 	{
-		JEWEL_LOG_MESSAGE(Log::error, "Unknown exception caught in main.");
-		wxLogError("Unknown exception.");
-		flush_standard_output_streams();
-		return false;
+		gui::ErrorReporter reporter;
+		reporter.report();
 	}
+	flush_standard_output_streams();
+	return false;
 }
 
 wxLocale const&
@@ -523,48 +495,21 @@ int App::OnRun()
 		}
 		return ret;
 	}
-	catch (jewel::Exception& e)
-	{
-		JEWEL_LOG_MESSAGE
-		(	Log::error,
-			"jewel::Exception e caught in main."
-		);
-		JEWEL_LOG_VALUE(Log::error, e);
-		ostringstream oss;
-		oss << e;
-		wxLogError(std8_to_wx(oss.str()));
-		if (strlen(e.type()) == 0)
-		{
-			JEWEL_LOG_VALUE(Log::error, typeid(e).name());
-			cerr << "typeid(e).name(): " << typeid(e).name() << '\n' << endl;
-		}
-		flush_standard_output_streams();
-		return 1;
-	}
 	catch (std::exception& e)
 	{
-		JEWEL_LOG_MESSAGE(Log::error, "std::exception e caught in main.");
-		JEWEL_LOG_VALUE(Log::error, typeid(e).name());
-		JEWEL_LOG_VALUE(Log::error, e.what());
-		ostringstream oss;
-		oss << "EXCEPTION:" << endl;
-		oss << "typeid(e).name(): " << typeid(e).name() << endl;
-		oss << "e.what(): " << e.what() << endl;
-		wxLogError(std8_to_wx(oss.str()));
-		flush_standard_output_streams();
-		return 1;
+		gui::ErrorReporter reporter(&e);
+		reporter.report();
 	}
-
 	// This is necessary to guarantee the stack is fully unwound no
 	// matter what exception is thrown - we're not ONLY doing it
 	// for the logging and flushing.
 	catch (...)
 	{
-		JEWEL_LOG_MESSAGE(Log::error, "Unknown exception caught in main.");
-		wxLogError("Unknown exception.");
-		flush_standard_output_streams();
-		return 1;
+		gui::ErrorReporter reporter;
+		reporter.report();
 	}
+	flush_standard_output_streams();
+	return 1;
 }
 
 int App::OnExit()
