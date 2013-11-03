@@ -40,6 +40,7 @@
 #include <wx/string.h>
 #include <wx/tooltip.h>
 #include <wx/wx.h>
+#include <cstddef>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -254,7 +255,7 @@ App::make_backup(filesystem::path const& p_original_filepath)
 	JEWEL_ASSERT (*it == '.');
 	filesystem::path backup_filepath("");
 	JEWEL_LOG_TRACE();
-	for (unsigned char i = 1; i != UCHAR_MAX; ++i)
+	for (unsigned short i = 1; i != USHRT_MAX; ++i)
 	{
 		JEWEL_LOG_TRACE();
 		ostringstream oss;
@@ -395,10 +396,12 @@ bool App::OnInit()
 				{
 					gui::SetupWizard setup_wizard(database_connection());
 					setup_wizard.run();
+					m_database_filepath =
+						filesystem::absolute(m_database_connection->filepath());
 				}
 				else
 				{
-					filesystem::path const filepath = elicit_existing_filepath();
+					auto const filepath = elicit_existing_filepath();
 					if (filepath.empty())
 					{
 						return false;
@@ -406,7 +409,7 @@ bool App::OnInit()
 					else
 					{
 						m_database_filepath = filesystem::absolute(filepath);
-						database_connection().open(filepath);
+						database_connection().open(*m_database_filepath);
 					}
 				}
 			}
@@ -422,7 +425,10 @@ bool App::OnInit()
 		(	*m_database_filepath ==
 			filesystem::absolute(*m_database_filepath)
 		);
-		JEWEL_ASSERT (m_database_connection->filepath() == *m_database_filepath);
+		JEWEL_ASSERT
+		(	m_database_connection->filepath() ==
+			*m_database_filepath
+		);
 		set_last_opened_file(*m_database_filepath);
 		make_backup(*m_database_filepath);
 		database_connection().set_caching_level(5);
