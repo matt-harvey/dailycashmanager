@@ -385,6 +385,7 @@ PersistentJournal::ensure_pl_only_budget()
 bool
 PersistentJournal::would_cause_overflow()
 {
+	JEWEL_LOG_TRACE();
 	unordered_map<Id, Decimal> prospective_balances;
 	for (auto const& entry: entries())
 	{
@@ -404,23 +405,25 @@ PersistentJournal::would_cause_overflow()
 			{
 				prospective_balances[aid] = account->technical_balance();
 			}
-			else
+			try
 			{
-				try
-				{
-					prospective_balances[aid] += entry->amount();	
-				}
-				catch (DecimalAdditionException&)
-				{
-					return true;
-				}
-				catch (DecimalRangeException&)
-				{
-					return true;
-				}
+				JEWEL_LOG_TRACE();
+				prospective_balances[aid] += entry->amount();	
+				JEWEL_LOG_TRACE();
+			}
+			catch (DecimalAdditionException&)
+			{
+				JEWEL_LOG_TRACE();
+				return true;
+			}
+			catch (DecimalRangeException&)
+			{
+				JEWEL_LOG_TRACE();
+				return true;
 			}
 		}
 	}
+	JEWEL_LOG_TRACE();
 	return false;
 }
 
