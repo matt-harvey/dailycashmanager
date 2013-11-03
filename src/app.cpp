@@ -286,8 +286,8 @@ bool App::OnInit()
 		{
 			cmd_filename = cmd_parser.GetParam(0);
 
-			// under Windows, when invoking via a file in Explorer, we are passed
-			// the short form; so normalize and make the long form
+			// under Windows, when invoking via a file in Explorer, we are
+			// passed the short form; so normalize and make the long form
 			wxFileName fname(cmd_filename);
 			fname.Normalize
 			(	wxPATH_NORM_LONG |
@@ -296,8 +296,9 @@ bool App::OnInit()
 				wxPATH_NORM_ABSOLUTE
 			);
 			cmd_filename = fname.GetFullPath();
-			m_database_filepath =
-				filesystem::absolute(filesystem::path(wx_to_std8(cmd_filename)));
+			m_database_filepath = filesystem::absolute
+			(	filesystem::path(wx_to_std8(cmd_filename))
+			);
 		}
 		wxString const instance_identifier =
 			application_name() + wxString::Format("-%s", wxGetUserId().c_str());
@@ -317,7 +318,18 @@ bool App::OnInit()
 		}
 		if (m_database_filepath)
 		{
-			database_connection().open(*m_database_filepath);
+			if (filesystem::exists(*m_database_filepath))
+			{
+				database_connection().open(*m_database_filepath);
+			}
+			else
+			{
+				cerr << "File does not exist.\n"
+				     << "To create a new file using the GUI, run with no "
+					 << "command line arguments."
+					 << endl;
+				return false;
+			}
 		}
 		while (!database_connection().is_valid())
 		{
@@ -341,9 +353,9 @@ bool App::OnInit()
 					}
 					else
 					{
+						m_database_filepath = filesystem::absolute(filepath);
 						database_connection().open(filepath);
 					}
-
 				}
 			}
 			else
@@ -353,7 +365,6 @@ bool App::OnInit()
 			}
 		}
 		JEWEL_ASSERT (database_connection().is_valid());
-		m_database_filepath = database_connection().filepath();
 		JEWEL_ASSERT (m_database_filepath);
 		JEWEL_ASSERT
 		(	*m_database_filepath ==
