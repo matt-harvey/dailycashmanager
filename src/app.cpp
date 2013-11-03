@@ -245,6 +245,11 @@ App::default_directory()
 void
 App::make_backup(filesystem::path const& p_original_filepath)
 {
+	// TODO HIGH PRIORITY Somehow prompt the user to remove old backup
+	// files and/or revert to an old backup file, as appropriate. There is no
+	// point having backup files if all they do is accumulate unnoticed by
+	// the user.
+
 	JEWEL_LOG_TRACE();
 	string const original_filepath_str = p_original_filepath.string();
 	auto it = original_filepath_str.end();
