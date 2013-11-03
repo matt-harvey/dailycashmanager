@@ -125,12 +125,16 @@ namespace
 	{	{	wxCMD_LINE_SWITCH,
 			"h",
 			"help",
-			"displays help on the command line parameters"
+			"displays help on the command line parameters",
+			wxCMD_LINE_VAL_NONE,
+			0
 		},
 		{	wxCMD_LINE_SWITCH,
 			"v",
 			"version",
-			"print version"
+			"print version",
+			wxCMD_LINE_VAL_NONE,
+			0
 		},
 		{	wxCMD_LINE_PARAM,
 			nullptr,
@@ -139,7 +143,12 @@ namespace
 			wxCMD_LINE_VAL_STRING,
 			wxCMD_LINE_PARAM_OPTIONAL
 		},
-		{	wxCMD_LINE_NONE
+		{	wxCMD_LINE_NONE,
+			nullptr,
+			nullptr,
+			nullptr,
+			wxCMD_LINE_VAL_NONE,
+			0
 		}
 	};
 
