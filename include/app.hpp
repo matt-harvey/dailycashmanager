@@ -81,9 +81,9 @@ public:
 	 */
 	static boost::optional<boost::filesystem::path> default_directory();
 
-	virtual bool OnInit() override;
-
-	virtual int OnExit() override;
+	bool OnInit() override;
+	int OnRun() override;
+	int OnExit() override;
 
 	void set_database_filepath
 	(	boost::filesystem::path const& p_database_filepath

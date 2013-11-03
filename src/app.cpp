@@ -43,6 +43,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <string>
 
 using boost::optional;
@@ -53,6 +54,7 @@ using std::clog;
 using std::cout;
 using std::endl;
 using std::getenv;
+using std::ostringstream;
 using std::string;
 using std::unique_ptr;
 namespace filesystem = boost::filesystem;
@@ -153,6 +155,13 @@ namespace
 	};
 
 }  // end anonymous namespace
+
+App::App():
+	m_single_instance_checker(nullptr),
+	m_database_connection(new PhatbooksDatabaseConnection)
+{
+	JEWEL_ASSERT (!m_backup_filepath);
+}
 
 wxString
 App::application_name()
@@ -384,6 +393,8 @@ bool App::OnInit()
 		JEWEL_LOG_MESSAGE(Log::info, "Starting wxWidgets event loop.");
 		return true;
 	}
+	// TODO HIGH PRIORITY factor out code that is repeated between
+	// here and OnRun().
 	catch (jewel::Exception& e)
 	{
 		JEWEL_LOG_MESSAGE
@@ -391,14 +402,15 @@ bool App::OnInit()
 			"jewel::Exception e caught in main."
 		);
 		JEWEL_LOG_VALUE(Log::error, e);
-		cerr << e << endl;
+		ostringstream oss;
+		oss << e;
+		wxLogError(std8_to_wx(oss.str()));
 		if (strlen(e.type()) == 0)
 		{
 			JEWEL_LOG_VALUE(Log::error, typeid(e).name());
 			cerr << "typeid(e).name(): " << typeid(e).name() << '\n' << endl;
 		}
 		flush_standard_output_streams();
-		JEWEL_LOG_MESSAGE(Log::error, "Rethrowing e.");
 		return false;
 	}
 	catch (std::exception& e)
@@ -406,11 +418,12 @@ bool App::OnInit()
 		JEWEL_LOG_MESSAGE(Log::error, "std::exception e caught in main.");
 		JEWEL_LOG_VALUE(Log::error, typeid(e).name());
 		JEWEL_LOG_VALUE(Log::error, e.what());
-		cerr << "EXCEPTION:" << endl;
-		cerr << "typeid(e).name(): " << typeid(e).name() << endl;
-		cerr << "e.what(): " << e.what() << endl;
+		ostringstream oss;
+		oss << "EXCEPTION:" << endl;
+		oss << "typeid(e).name(): " << typeid(e).name() << endl;
+		oss << "e.what(): " << e.what() << endl;
+		wxLogError(std8_to_wx(oss.str()));
 		flush_standard_output_streams();
-		JEWEL_LOG_MESSAGE(Log::error, "Rethrowing e.");
 		return false;
 	}
 
@@ -420,18 +433,10 @@ bool App::OnInit()
 	catch (...)
 	{
 		JEWEL_LOG_MESSAGE(Log::error, "Unknown exception caught in main.");
-		cerr << "Unknown exception caught in main." << endl;
+		wxLogError("Unknown exception.");
 		flush_standard_output_streams();
-		JEWEL_LOG_MESSAGE(Log::error, "Rethrowing unknown exception.");
 		return false;
 	}
-}
-
-App::App():
-	m_single_instance_checker(nullptr),
-	m_database_connection(new PhatbooksDatabaseConnection)
-{
-	JEWEL_ASSERT (!m_backup_filepath);
 }
 
 wxLocale const&
@@ -451,6 +456,57 @@ PhatbooksDatabaseConnection&
 App::database_connection()
 {
 	return *m_database_connection;
+}
+
+int App::OnRun()
+{
+	try
+	{
+		wxApp::OnRun();
+	}
+	catch (jewel::Exception& e)
+	{
+		JEWEL_LOG_MESSAGE
+		(	Log::error,
+			"jewel::Exception e caught in main."
+		);
+		JEWEL_LOG_VALUE(Log::error, e);
+		ostringstream oss;
+		oss << e;
+		wxLogError(std8_to_wx(oss.str()));
+		if (strlen(e.type()) == 0)
+		{
+			JEWEL_LOG_VALUE(Log::error, typeid(e).name());
+			cerr << "typeid(e).name(): " << typeid(e).name() << '\n' << endl;
+		}
+		flush_standard_output_streams();
+		return 1;
+	}
+	catch (std::exception& e)
+	{
+		JEWEL_LOG_MESSAGE(Log::error, "std::exception e caught in main.");
+		JEWEL_LOG_VALUE(Log::error, typeid(e).name());
+		JEWEL_LOG_VALUE(Log::error, e.what());
+		ostringstream oss;
+		oss << "EXCEPTION:" << endl;
+		oss << "typeid(e).name(): " << typeid(e).name() << endl;
+		oss << "e.what(): " << e.what() << endl;
+		wxLogError(std8_to_wx(oss.str()));
+		flush_standard_output_streams();
+		return 1;
+	}
+
+	// This is necessary to guarantee the stack is fully unwound no
+	// matter what exception is thrown - we're not ONLY doing it
+	// for the logging and flushing.
+	catch (...)
+	{
+		JEWEL_LOG_MESSAGE(Log::error, "Unknown exception caught in main.");
+		wxLogError("Unknown exception.");
+		flush_standard_output_streams();
+		return 1;
+	}
+	return 0;
 }
 
 int App::OnExit()
