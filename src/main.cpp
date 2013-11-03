@@ -90,20 +90,6 @@
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.
 
-// TODO HIGH PRIORITY Make it so that if the program crashes, a dialog is
-// displayed which
-// preferably allows the user to email the log file and an optional
-// user-supplied message to "help desk" with a single mouse click from
-// the window itself; or, if not, at least tells the user
-// where the log file is and gets recommends they email a particular
-// email address with the log file attached. An alternative to email
-// is just to use HTTP to send the logfile directly to a server (after
-// getting the user's permission). Could use the server to format an
-// email. Use third party library, wxCrashReport? The error dialogue
-// that is displayed to the user should also tell the user about the
-// existence of the automatically-generated backup file. But note, the
-// backup file often will not be necessary...
-
 // TODO MEDIUM PRIORITY Startup time under Windows is really slow, even when
 // compiled in Release mode.
 

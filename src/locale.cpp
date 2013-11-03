@@ -19,6 +19,7 @@
 
 #include "gui/locale.hpp"
 #include "app.hpp"
+#include <jewel/assert.hpp>
 #include <wx/intl.h>
 
 namespace phatbooks
@@ -30,6 +31,7 @@ wxLocale const&
 locale()
 {
 	App* app = dynamic_cast<App*>(wxTheApp);
+	JEWEL_ASSERT (app);
 	return app->locale();
 }
 

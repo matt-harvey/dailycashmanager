@@ -16,11 +16,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_app_hpp_19666019230925488
 #define GUARD_app_hpp_19666019230925488
 
 #include "phatbooks_database_connection.hpp"
+#include "gui/error_reporter.hpp"
 #include "gui/frame.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
@@ -111,6 +111,8 @@ private:
 	 */
 	static void set_last_opened_file(boost::filesystem::path const& p_path);
 
+	void configure_logging();
+	
 	void make_backup(boost::filesystem::path const& p_original_filepath);
 
 	static wxConfig& config();
@@ -122,6 +124,7 @@ private:
 	std::unique_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	boost::optional<boost::filesystem::path> m_database_filepath;
 	boost::optional<boost::filesystem::path> m_backup_filepath;
+	gui::ErrorReporter m_error_reporter;
 	wxLocale m_locale;
 };
 

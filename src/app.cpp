@@ -86,31 +86,6 @@ namespace
 		return filesystem::create_directory(p_directory);
 	}
 
-	void configure_logging()
-	{
-		Log::set_threshold(Log::trace);
-#		ifdef JEWEL_ON_WINDOWS
-			string const a("C:\\ProgramData\\");
-			string const b("Phatbooks\\");
-			string const c("logs\\");
-			bool ok = ensure_dir_exists(a);
-			if (ok) ok = ensure_dir_exists(a + b);
-			if (ok) ok = ensure_dir_exists(a + b + c);
-			if (!ok)
-			{
-				cerr << "Could not create log file." << endl;
-				return;
-			}
-			string const log_dir = a + b + c;
-#		else
-			string const log_dir = "/tmp/";
-#		endif  // JEWEL_ON_WINDOWS
-		string const log_name = 
-			log_dir + wx_to_std8(App::application_name()) + ".log";
-		Log::set_filepath(log_name);
-		return;
-	}
-
 	wxString filepath_wildcard()
 	{
 		return wxString("*") + App::filename_extension();
@@ -214,6 +189,33 @@ App::set_last_opened_file(filesystem::path const& p_path)
 	wxString const wx_path(std8_to_wx(s_path));
 	config().Write(config_location_for_last_opened_file(), wx_path);
 	config().Flush();
+	return;
+}
+
+void
+App::configure_logging()
+{
+	Log::set_threshold(Log::trace);
+#		ifdef JEWEL_ON_WINDOWS
+		string const a("C:\\ProgramData\\");
+		string const b("Phatbooks\\");
+		string const c("logs\\");
+		bool ok = ensure_dir_exists(a);
+		if (ok) ok = ensure_dir_exists(a + b);
+		if (ok) ok = ensure_dir_exists(a + b + c);
+		if (!ok)
+		{
+			cerr << "Could not create log file." << endl;
+			return;
+		}
+		string const log_dir = a + b + c;
+#		else
+		string const log_dir = "/tmp/";
+#		endif  // JEWEL_ON_WINDOWS
+	string const log_path =
+		log_dir + wx_to_std8(App::application_name()) + ".log";
+	Log::set_filepath(log_path);
+	m_error_reporter.set_log_file_location(log_path);
 	return;
 }
 
@@ -451,16 +453,14 @@ bool App::OnInit()
 	}
 	catch (std::exception& e)
 	{
-		gui::ErrorReporter reporter(&e);
-		reporter.report();
+		m_error_reporter.report(&e);
 	}
 	// This is necessary to guarantee the stack is fully unwound no
 	// matter what exception is thrown - we're not ONLY doing it
 	// for the logging and flushing.
 	catch (...)
 	{
-		gui::ErrorReporter reporter;
-		reporter.report();
+		m_error_reporter.report();
 	}
 	flush_standard_output_streams();
 	return false;
@@ -502,16 +502,14 @@ int App::OnRun()
 	}
 	catch (std::exception& e)
 	{
-		gui::ErrorReporter reporter(&e);
-		reporter.report();
+		m_error_reporter.report(&e);
 	}
 	// This is necessary to guarantee the stack is fully unwound no
 	// matter what exception is thrown - we're not ONLY doing it
 	// for the logging and flushing.
 	catch (...)
 	{
-		gui::ErrorReporter reporter;
-		reporter.report();
+		m_error_reporter.report();
 	}
 	flush_standard_output_streams();
 	return 1;
