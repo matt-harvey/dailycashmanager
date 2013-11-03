@@ -99,7 +99,10 @@
 // email address with the log file attached. An alternative to email
 // is just to use HTTP to send the logfile directly to a server (after
 // getting the user's permission). Could use the server to format an
-// email. Use third party library, wxCrashReport?
+// email. Use third party library, wxCrashReport? The error dialogue
+// that is displayed to the user should also tell the user about the
+// existence of the automatically-generated backup file. But note, the
+// backup file often will not be necessary...
 
 // TODO MEDIUM PRIORITY Startup time under Windows is really slow, even when
 // compiled in Release mode.

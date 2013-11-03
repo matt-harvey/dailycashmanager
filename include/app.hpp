@@ -112,12 +112,12 @@ private:
 	static void set_last_opened_file(boost::filesystem::path const& p_path);
 
 	void make_backup(boost::filesystem::path const& p_original_filepath);
-	void destroy_backup();
 
 	static wxConfig& config();
 
 	boost::filesystem::path elicit_existing_filepath();
 
+	bool m_exiting_cleanly;
 	wxSingleInstanceChecker* m_single_instance_checker;
 	std::unique_ptr<PhatbooksDatabaseConnection> m_database_connection;
 	boost::optional<boost::filesystem::path> m_database_filepath;

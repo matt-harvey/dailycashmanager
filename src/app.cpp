@@ -47,6 +47,7 @@
 #include <string>
 
 using boost::optional;
+using jewel::clear;
 using jewel::Log;
 using jewel::value;
 using std::cerr;
@@ -157,6 +158,7 @@ namespace
 }  // end anonymous namespace
 
 App::App():
+	m_exiting_cleanly(false),
 	m_single_instance_checker(nullptr),
 	m_database_connection(new PhatbooksDatabaseConnection)
 {
@@ -241,19 +243,60 @@ App::default_directory()
 void
 App::make_backup(filesystem::path const& p_original_filepath)
 {
-	// TODO Create backup file. Then save absolute path to backup file
-	// to m_backup_filepath.
-}
-
-void
-App::destroy_backup()
-{
-	if (m_backup_filepath)
+	JEWEL_LOG_TRACE();
+	string const original_filepath_str = p_original_filepath.string();
+	auto it = original_filepath_str.end();
+	while (*it != '.')
 	{
-		filesystem::remove(*m_backup_filepath);
+		JEWEL_HARD_ASSERT (it != original_filepath_str.begin());
+		--it;
 	}
+	JEWEL_ASSERT (*it == '.');
+	filesystem::path backup_filepath("");
+	JEWEL_LOG_TRACE();
+	for (unsigned char i = 1; i != UCHAR_MAX; ++i)
+	{
+		JEWEL_LOG_TRACE();
+		ostringstream oss;
+		JEWEL_LOG_TRACE();
+		oss << string(original_filepath_str.begin(), it);
+		JEWEL_LOG_TRACE();
+		oss << "-backup";
+		JEWEL_LOG_TRACE();
+		if (i > 1) oss << "-" << i;
+		JEWEL_LOG_TRACE();
+		oss << string(it, original_filepath_str.end());
+		JEWEL_LOG_TRACE();
+		backup_filepath = filesystem::path(oss.str());
+		JEWEL_LOG_TRACE();
+		if (!filesystem::exists(backup_filepath))
+		{
+			JEWEL_LOG_TRACE();
+			break;
+		}
+	}
+	if (!backup_filepath.string().empty())
+	{
+		JEWEL_LOG_TRACE();
+		m_backup_filepath = backup_filepath;
+		try
+		{
+			filesystem::copy(p_original_filepath, backup_filepath);
+		}
+		catch (...)
+		{
+			clear(m_backup_filepath);
+			throw;
+		}
+	}
+	else
+	{
+		JEWEL_LOG_TRACE();
+	}
+	JEWEL_LOG_TRACE();
 	return;
 }
+
 
 wxConfig&
 App::config()
@@ -379,6 +422,7 @@ bool App::OnInit()
 		(	*m_database_filepath ==
 			filesystem::absolute(*m_database_filepath)
 		);
+		JEWEL_ASSERT (m_database_connection->filepath() == *m_database_filepath);
 		set_last_opened_file(*m_database_filepath);
 		make_backup(*m_database_filepath);
 		database_connection().set_caching_level(5);
@@ -462,7 +506,16 @@ int App::OnRun()
 {
 	try
 	{
-		wxApp::OnRun();
+		int const ret = wxApp::OnRun();
+		if (ret == 0)
+		{
+			m_exiting_cleanly = true;
+		}
+		else
+		{
+			m_exiting_cleanly = false;
+		}
+		return ret;
 	}
 	catch (jewel::Exception& e)
 	{
@@ -506,19 +559,18 @@ int App::OnRun()
 		flush_standard_output_streams();
 		return 1;
 	}
-	return 0;
 }
 
 int App::OnExit()
 {
 	JEWEL_LOG_TRACE();
-	// TODO Should only destroy the backup file if there were no errors.
-	// If there are errors, should retain the backup file, and draw the
-	// user's attention to the existence of the backup file.
-	destroy_backup();
+	if (m_backup_filepath && m_exiting_cleanly)
+	{
+		filesystem::remove(*m_backup_filepath);
+	}
 	delete m_single_instance_checker;
 	m_single_instance_checker = nullptr;
-	return 0;
+	return m_exiting_cleanly? 0: 1;
 }
 
 filesystem::path
