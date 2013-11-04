@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #include "account.hpp"
 #include "date.hpp"
 #include "balance_cache.hpp"
@@ -235,9 +234,6 @@ BalanceCache::refresh_all()
 	
 	// It has been established that this is faster than using SQL
 	// SUM and GROUP to sum Account totals.
-	//
-	// TODO LOW PRIORITY Would it be simpler, and almost as fast, to use
-	// an EntryTableIterator here?
 
 	// Bare scope
 	{

@@ -300,13 +300,11 @@ AmalgamatedBudget::load_map() const
 	return;
 }
 
-
 void
 AmalgamatedBudget::generate_map() const
 {
 	unique_ptr<Map> map_elect(new Map);
 	JEWEL_ASSERT (map_elect->empty());
-
 	SQLStatement account_selector
 	(	m_database_connection,
 		"select account_id from accounts"
@@ -318,7 +316,6 @@ AmalgamatedBudget::generate_map() const
 		(*map_elect)[account_id] =
 			Decimal(0, account->commodity()->precision());
 	}
-	
 	// First we calculate budgets amalgamated on the basis of
 	// the canonical frequency
 	BudgetItemTableIterator it(m_database_connection);
@@ -355,7 +352,6 @@ AmalgamatedBudget::generate_map() const
 	}
 	using std::swap;
 	swap(m_map, map_elect);
-
 	return;
 }
 
@@ -435,7 +431,6 @@ AmalgamatedBudget::load_instrument() const
 	return;
 }
 
-
 void
 AmalgamatedBudget::reflect_entries(Handle<DraftJournal> const& p_journal)
 {
@@ -499,16 +494,14 @@ AmalgamatedBudget::instrument_balancing_amount() const
 			ret -= entry->amount();
 		}
 	}
-
 #	ifndef NDEBUG
-	if (!entries.empty())
-	{
-		JEWEL_ASSERT (m_instrument->repeaters().size() == 1);
-		Handle<Repeater> const repeater = m_instrument->repeaters()[0];
-		JEWEL_ASSERT (repeater->frequency() == frequency());
-	}
+		if (!entries.empty())
+		{
+			JEWEL_ASSERT (m_instrument->repeaters().size() == 1);
+			Handle<Repeater> const repeater = m_instrument->repeaters()[0];
+			JEWEL_ASSERT (repeater->frequency() == frequency());
+		}
 #	endif
-
 	return ret;
 }
 
