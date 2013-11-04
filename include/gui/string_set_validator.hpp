@@ -65,11 +65,11 @@ public:
 	/**
 	 * @param parent should point to an instance of wxTextEntry.
 	 */
-	bool Validate(wxWindow* parent);
+	bool Validate(wxWindow* parent) override;
 
-	bool TransferFromWindow();
-	bool TransferToWindow();
-	wxObject* Clone() const;
+	bool TransferFromWindow() override;
+	bool TransferToWindow() override;
+	wxObject* Clone() const override;
 
 private:
 	wxString m_text;
