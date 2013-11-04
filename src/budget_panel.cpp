@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #include "gui/budget_panel.hpp"
 #include "account.hpp"
 #include "account_table_iterator.hpp"
@@ -342,14 +341,17 @@ BudgetPanel::TransferDataToWindow()
 bool
 BudgetPanel::process_confirmation()
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (m_account->has_id());
 	if
 	(	Validate() && TransferDataFromWindow() && update_budgets_from_dialog()
 	)
 	{
 		prompt_to_balance();
+		JEWEL_LOG_TRACE();
 		return true;
 	}
+	JEWEL_LOG_TRACE();
 	return false;
 }
 
@@ -378,6 +380,7 @@ BudgetPanel::update_budget_summary()
 bool
 BudgetPanel::update_budgets_from_dialog()
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (m_account->has_id());
 	DatabaseTransaction transaction(database_connection());
 
@@ -420,6 +423,8 @@ BudgetPanel::update_budgets_from_dialog()
 			JEWEL_ASSERT (m_budget_items.size() == num_items_new);
 		}
 	}
+	JEWEL_LOG_TRACE();
+
 	// Save the amended m_budget_items
 	// Bare scope
 	for (Handle<BudgetItem> const& elem: m_budget_items)
@@ -428,6 +433,7 @@ BudgetPanel::update_budgets_from_dialog()
 	}
 
 	transaction.commit();
+	JEWEL_LOG_TRACE();
 
 	JEWEL_ASSERT (m_account->has_id());
 
@@ -439,6 +445,7 @@ BudgetPanel::update_budgets_from_dialog()
 		m_account->id()
 	);
 
+	JEWEL_LOG_TRACE();
 	return true;
 }
 

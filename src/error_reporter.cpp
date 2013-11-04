@@ -97,7 +97,7 @@ ErrorReporter::report(std::exception* p_exception) const
 	// "No" to ignore. "Taking action" could mean either (a) saving a copy
 	// of the error log for later manual emailing to the developer, or
 	// (b) automatically sending the error log to some server via http
-	// (or something). Use the third party library wxCrashReport? Also,
+	// (or something). Also,
 	// tell the user about the existence of the automatically-generated
 	// backup file (after first verifying its existence), perhaps giving them
 	// the option to revert to this earlier file at the click of a mouse.

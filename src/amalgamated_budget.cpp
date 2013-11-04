@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #include "amalgamated_budget.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
@@ -56,11 +55,8 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-
 namespace phatbooks
 {
-
-
 
 namespace
 {
@@ -68,6 +64,14 @@ namespace
 	wxString balancing_entry_comment()
 	{
 		return wxString("Balancing entry");
+	}
+
+	Decimal map_entry_accumulation_aux
+	(	Decimal const& dec,
+		pair<Id, Decimal> const& rhs
+	)
+	{
+		return dec + rhs.second;
 	}
 
 }  // end anonymous namespace
@@ -149,7 +153,6 @@ AmalgamatedBudget::load() const
 	return;
 }
 
-
 Frequency
 AmalgamatedBudget::frequency() const
 {
@@ -180,20 +183,6 @@ AmalgamatedBudget::budget(sqloxx::Id p_account_id) const
 	}
 	return ret;
 }
-
-
-namespace
-{
-	Decimal map_entry_accumulation_aux
-	(	Decimal const& dec,
-		pair<Id, Decimal> const& rhs
-	)
-	{
-		return dec + rhs.second;
-	}
-
-}  // end anonymous namespace	
-
 
 Decimal
 AmalgamatedBudget::balance() const
@@ -370,7 +359,6 @@ AmalgamatedBudget::generate_map() const
 	return;
 }
 
-
 void
 AmalgamatedBudget::regenerate_map()
 {
@@ -378,7 +366,6 @@ AmalgamatedBudget::regenerate_map()
 	generate_map();
 	return;
 }
-
 
 void
 AmalgamatedBudget::regenerate_instrument()
@@ -525,7 +512,5 @@ AmalgamatedBudget::instrument_balancing_amount() const
 	return ret;
 }
 
-
 }  // namespace phatbooks
-
 

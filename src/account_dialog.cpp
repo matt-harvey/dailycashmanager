@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #include "gui/account_dialog.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
@@ -50,6 +49,7 @@
 #include <wx/string.h>
 #include <wx/textctrl.h>
 #include <wx/window.h>
+#include <stdexcept>
 
 using jewel::Decimal;
 using jewel::UninitializedOptionalException;
@@ -71,7 +71,6 @@ BEGIN_EVENT_TABLE(AccountDialog, wxDialog)
 		AccountDialog::on_cancel_button_click
 	)
 END_EVENT_TABLE()
-
 
 namespace
 {
@@ -128,7 +127,6 @@ namespace
 	}
 	
 }  // end anonymous namespace
-
 
 AccountDialog::AccountDialog
 (	wxWindow* p_parent,
@@ -488,83 +486,90 @@ AccountDialog::on_cancel_button_click(wxCommandEvent& event)
 bool
 AccountDialog::update_account_from_dialog(bool p_is_new_account)
 {
-	DatabaseTransaction transaction(m_account->database_connection());
-
-	Handle<Account> const temp = m_account;
-	wxString const prospective_name = m_name_ctrl->GetValue().Trim();
-	if (Account::exists(temp->database_connection(), prospective_name))
+	JEWEL_LOG_TRACE();
+	Handle<OrdinaryJournal> objnl;
+	try
 	{
-		bool clashes = true;
-		if (!p_is_new_account)
+		JEWEL_LOG_TRACE();
+		DatabaseTransaction transaction(m_account->database_connection());
+		wxString const prospective_name = m_name_ctrl->GetValue().Trim();
+		if (Account::exists(m_account->database_connection(), prospective_name))
 		{
-			if (m_account->name().Lower() == prospective_name.Lower())
+			bool clashes = true;
+			if (!p_is_new_account)
 			{
-				// Then everything's OK, the user has just kept the original
-				// name, or else has changed the case.
-				clashes = false;
+				if (m_account->name().Lower() == prospective_name.Lower())
+				{
+					// Then everything's OK, the user has just kept the original
+					// name, or else has changed the case.
+					clashes = false;
+				}
+			}
+			if (clashes)
+			{
+				wxMessageBox
+				(	wxString("There is already ") +
+					account_concepts_phrase
+					(	AccountPhraseFlags().set(string_flags::include_article)
+					) +
+					wxString(" with this name.")
+				);
+				JEWEL_ASSERT (m_name_ctrl);
+				m_name_ctrl->SetFocus();
+				return false;
 			}
 		}
-		if (clashes)
+		if (prospective_name.IsEmpty())
 		{
-			wxMessageBox
-			(	wxString("There is already ") +
-				account_concepts_phrase
-				(	AccountPhraseFlags().set(string_flags::include_article)
-				) +
-				wxString(" with this name.")
-			);
-			JEWEL_ASSERT (m_name_ctrl);
-			m_name_ctrl->SetFocus();
+			wxMessageBox("Name cannot be blank.");
 			return false;
 		}
-	}
-	if (prospective_name.IsEmpty())
-	{
-		wxMessageBox("Name cannot be blank.");
-		return false;
-	}
-	temp->set_name(prospective_name);
-	temp->set_account_type(m_account_type_ctrl->account_type());
-	temp->set_description(m_description_ctrl->GetValue());
-	temp->set_visibility
-	(	m_visibility_ctrl->GetValue()?
-		Visibility::visible:
-		Visibility::hidden
-	);
-		
-	if (p_is_new_account)
-	{
-		temp->set_commodity
-		(	m_account->database_connection().default_commodity()
+		JEWEL_LOG_TRACE();
+		m_account->set_name(prospective_name);
+		m_account->set_account_type(m_account_type_ctrl->account_type());
+		m_account->set_description(m_description_ctrl->GetValue());
+		m_account->set_visibility
+		(	m_visibility_ctrl->GetValue()?
+			Visibility::visible:
+			Visibility::hidden
 		);
+		if (p_is_new_account)
+		{
+			m_account->set_commodity
+			(	m_account->database_connection().default_commodity()
+			);
+		}
+		m_account->save();
+		JEWEL_LOG_TRACE();
+		Decimal opening_amount = m_opening_amount_ctrl->amount();
+		if (super_type(m_account->account_type()) == AccountSuperType::pl)
+		{
+			// TODO MEDIUM PRIORITY Handle very small possibility of overflow
+			// here (currently it would just throw an exception and crash).
+			opening_amount = -opening_amount;
+		}
+		objnl = create_opening_balance_journal
+		(	m_account,
+			opening_amount
+		);
+		if (objnl->primary_amount() != Decimal(0, 0))
+		{
+			objnl->save();
+		}
+		else
+		{
+			// The user has not changed the opening balance - and objnl can
+			// be ignored - do nothing here.
+		}
+		transaction.commit();
+		JEWEL_LOG_TRACE();
 	}
-
-	temp->save();
-	
-	Decimal opening_amount = m_opening_amount_ctrl->amount();
-	if (super_type(temp->account_type()) == AccountSuperType::pl)
+	catch (std::exception&)
 	{
-		// TODO MEDIUM PRIORITY Handle very small possibility of overflow here
-		// (currently it would just throw an exception and crash).
-		opening_amount = -opening_amount;
+		JEWEL_LOG_TRACE();
+		m_account->ghostify();
+		throw;
 	}
-	Handle<OrdinaryJournal> const objnl = create_opening_balance_journal
-	(	temp,
-		opening_amount
-	);
-	if (objnl->primary_amount() != Decimal(0, 0))
-	{
-		objnl->save();
-	}
-	else
-	{
-		// The user has not changed the opening balance - and objnl can
-		// be ignored - do nothing here.
-	}
-
-	m_account = temp;
-	transaction.commit();
-
 	JEWEL_ASSERT (m_account->has_id());
 
 	// Notify window higher in the hierarchy that they need to update for
@@ -583,7 +588,7 @@ AccountDialog::update_account_from_dialog(bool p_is_new_account)
 		event_type,
 		m_account->id()
 	);
-	if (objnl->has_id())
+	if (static_cast<bool>(objnl) && objnl->has_id())
 	{
 		// then we must have saved objnl, so...
 		PersistentObjectEvent::fire

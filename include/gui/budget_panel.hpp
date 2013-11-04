@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_budget_panel_hpp_749080240143966
 #define GUARD_budget_panel_hpp_749080240143966
 
@@ -101,7 +100,7 @@ private:
 	 * We override with behaviour we need to set budget summary
 	 * text.
 	 */
-	virtual bool TransferDataToWindow();
+	virtual bool TransferDataToWindow() override;
 
 	/**
 	 * Updates budget summary text at top of Dialog, on the basis

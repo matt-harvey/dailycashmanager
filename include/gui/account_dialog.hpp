@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_account_dialog_hpp_4068064533205733
 #define GUARD_account_dialog_hpp_4068064533205733
 
