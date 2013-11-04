@@ -241,10 +241,13 @@ BalanceCache::refresh_all()
 
 	// Bare scope
 	{
+		// Ordering by entry_id to decrease the likelihood of
+		// "intermediate overflow". Also, consider the effect on the integrity
+		// of PersistentJournal::would_cause_overflow().
 		SQLStatement statement
 		(	m_database_connection,
 			"select account_id, amount from entries join "
-			"ordinary_journal_detail using(journal_id)"
+			"ordinary_journal_detail using(journal_id) order by entry_id"
 		);
 		sqloxx::Id account_id;
 		Decimal::int_type amount_intval;
@@ -307,10 +310,15 @@ BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 	Map& map_elect = *map_elect_ptr;
 	for (auto const account_id: p_targets)
 	{
+		// Ordering by entry_id to decrease the likelihood of "intermediate
+		// overflow" during calculation. Also consider impact on integrity
+		// of PersistentJournal::would_cause_overflow().
+		// TODO LOW PRIORITY Find out whether there is any point in this
+		// ordering, given SQLite implementation.
 		SQLStatement statement
 		(	m_database_connection,
 			"select sum(amount) from entries join ordinary_journal_detail "
-			"using(journal_id) where account_id = :account_id"
+			"using(journal_id) where account_id = :account_id order by entry_id"
 		);
 		statement.bind(":account_id", account_id);
 		if (statement.step())
