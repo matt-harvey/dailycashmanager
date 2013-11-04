@@ -64,7 +64,8 @@ class Frequency;
  * only ever via sqloxx::Handle<Repeater>.
  *
  * @todo HIGH PRIORITY Deal with the case where the firing of a Repeater causes
- * a JournalOverflowException.
+ * a JournalOverflowException. This includes where the Repeater may be
+ * invisible to the user as such, due to its being the budget instrument.
  */
 class Repeater:
 	public sqloxx::PersistentObject<Repeater, PhatbooksDatabaseConnection>

@@ -209,8 +209,6 @@ public:
 
 	Frequency budget_frequency() const;
 
-	jewel::Decimal budget_balance() const;
-
 	bool supports_budget_frequency(Frequency const& p_frequency) const;
 
 	/**
@@ -244,7 +242,6 @@ public:
 
 	template<typename T>
 	sqloxx::IdentityMap<T>& identity_map();
-
 
 private:
 

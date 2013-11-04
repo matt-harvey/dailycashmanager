@@ -66,14 +66,6 @@ namespace
 		return wxString("Balancing entry");
 	}
 
-	Decimal map_entry_accumulation_aux
-	(	Decimal const& dec,
-		pair<Id, Decimal> const& rhs
-	)
-	{
-		return dec + rhs.second;
-	}
-
 }  // end anonymous namespace
 
 void
@@ -183,18 +175,6 @@ AmalgamatedBudget::budget(sqloxx::Id p_account_id) const
 	}
 	return ret;
 }
-
-Decimal
-AmalgamatedBudget::balance() const
-{
-	load();
-	return accumulate
-	(	m_map->begin(),
-		m_map->end(),
-		Decimal(0, 0),
-		map_entry_accumulation_aux
-	);
-}	
 
 void
 AmalgamatedBudget::generate_supported_frequencies(vector<Frequency>& vec)

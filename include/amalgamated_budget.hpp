@@ -70,12 +70,6 @@ public:
 	jewel::Decimal budget(sqloxx::Id p_account_id) const;
 
 	/**
-	 * @returns the sum of all the Account budgets in AmalgamatedBudget,
-	 * at the Frequency returned by frequency().
-	 */
-	jewel::Decimal balance() const;
-
-	/**
 	 * Regenerate the AmalgamatedBudget on the basis of the currently
 	 * saved BudgetItems.
 	 */

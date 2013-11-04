@@ -441,12 +441,6 @@ PhatbooksDatabaseConnection::budget_frequency() const
 	return m_budget->frequency();
 }
 
-Decimal
-PhatbooksDatabaseConnection::budget_balance() const
-{
-	return m_budget->balance();
-}
-
 bool
 PhatbooksDatabaseConnection::supports_budget_frequency
 (	Frequency const& p_frequency
@@ -521,7 +515,6 @@ BudgetAttorney::regenerate
 	return;
 }
 
-
 Decimal
 BudgetAttorney::budget
 (	PhatbooksDatabaseConnection const& p_database_connection,
@@ -530,7 +523,6 @@ BudgetAttorney::budget
 {
 	return p_database_connection.m_budget->budget(p_account_id);
 }
-
 
 
 // PermanentEntityData

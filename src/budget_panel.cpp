@@ -71,12 +71,6 @@ namespace phatbooks
 namespace gui
 {
 
-// TODO HIGH PRIORITY Deal with the (tiny) possibility that a
-// BudgetItem might be created or edited by the user in such a way that
-// it does NOT cause overflow in the summary text (and therefore is permitted
-// to be saved), but DOES cause overflow in the context of other BudgetItems
-// for other Accounts, when AmalgamatedBudget::balance() is called.
-
 // Begin event tables
 
 BEGIN_EVENT_TABLE(BudgetPanel, wxPanel)
@@ -383,10 +377,39 @@ BudgetPanel::process_confirmation()
 	JEWEL_ASSERT (m_account->has_id());
 	if (Validate() && TransferDataFromWindow())
 	{
-		update_budgets_from_dialog();
-		prompt_to_balance();
-		JEWEL_LOG_TRACE();
-		return true;
+		try
+		{
+			update_budgets_from_dialog();
+			prompt_to_balance();
+			JEWEL_LOG_TRACE();
+			return true;
+		}
+		catch (DecimalException&)
+		{
+			// TODO HIGH PRIORITY Enable user to recover here. It would
+			// be rare to end up here, however it would appear to be
+			// possible, in case a BudgetItem is created or edited in such way
+			// that, while it doesn't cause overflow itself (and therefore
+			// enables budget summary to be updated successfully before we get
+			// to this point), it nevertheless does cause overflow in the
+			// context of updating the budget instrument - which occurs in the
+			// above call to update_budgets_from_dialog() - causing
+			// DecimalException or JournalOverflowException to be thrown - or
+			// where there is a large budget imbalance already, and the user
+			// then chooses to
+			// offset this imbalance to a normal Account (not the balancing
+			// Account) - which may then cause a DecimalException to be thrown
+			// during calculation of the revised daily budget amount for
+			// that Account.
+			JEWEL_LOG_TRACE();
+			throw;	
+		}
+		catch (JournalOverflowException&)
+		{
+			// TODO HIGH PRIORITY See above.
+			JEWEL_LOG_TRACE();
+			throw;
+		}
 	}
 	JEWEL_LOG_TRACE();
 	return false;
