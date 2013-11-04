@@ -62,6 +62,11 @@ class DecimalTextCtrl;
  * row as "Cancel" and "Save" buttons... but these buttons are actually
  * not in BudgetPanel, but are in the parent AccountDialog. So this
  * will require some careful refactoring to achieve.
+ *
+ * @todo MEDIUM PRIORITY There is some messiness in the implementation of this
+ * class, especially to do with how the BudgetPanel responds when a
+ * FrequencyCtrl or DecimalTextCtrl is updated. There is scope for improvement,
+ * but it would probably require a ground-up refactor.
  */
 class BudgetPanel: public wxPanel
 {
@@ -93,6 +98,9 @@ public:
 	bool process_confirmation();
 
 private:
+
+	void revert_dialog_to_budgets();
+
 	void on_pop_item_button_click(wxCommandEvent& event);
 	void on_push_item_button_click(wxCommandEvent& event);
 
@@ -120,6 +128,11 @@ private:
 	 */
 	void update_budget_summary();
 
+	/**
+	 * @returns the old m_budget_items
+	 */
+	std::vector<sqloxx::Handle<BudgetItem> > update_budgets_from_dialog_without_saving();
+	
 	/**
 	 * Updates the BudgetItems for m_account based on the data entered
 	 * by the user, and saves changes to database.

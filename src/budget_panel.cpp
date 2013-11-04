@@ -343,6 +343,7 @@ BudgetPanel::TransferDataToWindow()
 	try
 	{
 		update_budget_summary();
+		update_budgets_from_dialog_without_saving();
 		JEWEL_LOG_TRACE();
 		return true;
 	}
@@ -385,6 +386,27 @@ BudgetPanel::process_confirmation()
 }
 
 void
+BudgetPanel::revert_dialog_to_budgets()
+{
+	// TODO MEDIUM PRIORITY Make it deal with case where m_budget_items.size() !=
+	// m_budget_item_components.size()? (Though at time of writing
+	// this is not called unless this is the case.)
+	JEWEL_HARD_ASSERT
+	(	m_budget_items.size() ==
+		m_budget_item_components.size()
+	);
+	for (size_t i = 0; i != m_budget_item_components.size(); ++i)
+	{
+		Handle<BudgetItem> item = m_budget_items[i];
+		BudgetItemComponent& component = m_budget_item_components[i];
+		component.description_ctrl->SetValue(item->description());
+		component.amount_ctrl->set_amount(item->amount());
+		component.frequency_ctrl->set_frequency(item->frequency());
+	}
+	return;
+}
+
+void
 BudgetPanel::update_budget_summary
 (	vector<Handle<BudgetItem> > const& p_budget_items
 )
@@ -417,14 +439,11 @@ BudgetPanel::update_budget_summary()
 	return;
 }
 
-bool
-BudgetPanel::update_budgets_from_dialog()
+vector<Handle<BudgetItem> >
+BudgetPanel::update_budgets_from_dialog_without_saving()
 {
-	JEWEL_LOG_TRACE();
-	JEWEL_ASSERT (m_account->has_id());
-	DatabaseTransaction transaction(database_connection());
-
 	typedef vector<Handle<BudgetItem> > ItemVec;
+	ItemVec const ret = m_budget_items;
 
 	// Make m_budget_items match the BudgetItems implied by
 	// m_budget_item_components (what is shown in the BudgetPanel).
@@ -464,6 +483,18 @@ BudgetPanel::update_budgets_from_dialog()
 		}
 	}
 	JEWEL_LOG_TRACE();
+	return ret;
+}
+
+bool
+BudgetPanel::update_budgets_from_dialog()
+{
+	JEWEL_LOG_TRACE();
+
+	JEWEL_ASSERT (m_account->has_id());
+	DatabaseTransaction transaction(database_connection());
+
+	update_budgets_from_dialog_without_saving();
 
 	// Save the amended m_budget_items
 	// Bare scope
@@ -701,10 +732,10 @@ BudgetPanel::SpecialFrequencyCtrl::on_text_change(wxCommandEvent& event)
 	BudgetPanel* const budget_panel =
 		dynamic_cast<BudgetPanel*>(GetParent());
 	JEWEL_ASSERT (budget_panel);
-
-	// TODO HIGH PRIORITY If this returns false, we need to revert to
-	// previous Frequency in the SpecialFrequencyCtrl.
-	budget_panel->TransferDataToWindow();
+	if (!budget_panel->TransferDataToWindow())
+	{
+		budget_panel->revert_dialog_to_budgets();
+	}
 	return;
 }
 
