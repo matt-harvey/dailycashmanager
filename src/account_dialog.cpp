@@ -353,6 +353,13 @@ AccountDialog::~AccountDialog()
 {
 }
 
+AccountType
+AccountDialog::selected_account_type() const
+{
+	JEWEL_ASSERT (m_account_type_ctrl);
+	return m_account_type_ctrl->account_type();
+}
+
 void
 AccountDialog::configure_budget_panel()
 {

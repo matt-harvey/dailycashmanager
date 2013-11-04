@@ -129,20 +129,21 @@ private:
 	void update_budget_summary();
 
 	/**
-	 * @returns the old m_budget_items
+	 * Updates the BudgetItems for m_account based on the data entered by
+	 * the user, but does not save the changes to database.
+	 *
+	 * @returns true if and only if the BudgetItems for m_account are
+	 * successfully updated.
 	 */
-	std::vector<sqloxx::Handle<BudgetItem> > update_budgets_from_dialog_without_saving();
+	void update_budgets_from_dialog_without_saving();
 	
 	/**
 	 * Updates the BudgetItems for m_account based on the data entered
 	 * by the user, and saves changes to database.
 	 *
-	 * @returns true if an only if the BudgetItems for m_account are
-	 * successfully updated and saved.
-	 *
-	 * \e Precondition: \e m_account must have an id before this is called.
+	 * Precondition: \e m_account must have an Id before this is called.
 	 */
-	bool update_budgets_from_dialog();
+	void update_budgets_from_dialog();
 
 	/**
 	 * p_budget_item should have all attributes initialized, except that

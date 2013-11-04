@@ -318,6 +318,10 @@ AmalgamatedBudget::generate_map() const
 	}
 	// First we calculate budgets amalgamated on the basis of
 	// the canonical frequency
+	// TODO MEDIUM PRIORITY We should read the BudgetItems from a container that
+	// orders them by Account. Then we could use BudgetItem::normalized_total.
+	// on subsections of the container. This would decrease code duplication
+	// between here and BudgetItem::normalized_total.
 	BudgetItemTableIterator it(m_database_connection);
 	BudgetItemTableIterator const end;
 	for ( ; it != end; ++it)

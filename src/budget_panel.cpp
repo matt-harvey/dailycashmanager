@@ -313,7 +313,9 @@ BudgetPanel::TransferDataToWindow()
 	// Make sure there are no unusual signs
 	// (+ for revenue Accounts or - for expense Accounts) and warn the
 	// user in case there are, giving them the opportunity to correct it.	
-	AccountType const account_type = m_account->account_type();
+	auto const parent = dynamic_cast<AccountDialog*>(GetParent());
+	JEWEL_ASSERT (parent);
+	auto const account_type = parent->selected_account_type();
 	Decimal const z = zero();
 	auto sz = m_budget_item_components.size();
 	vector<decltype(sz)> changed;
@@ -379,10 +381,9 @@ BudgetPanel::process_confirmation()
 {
 	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (m_account->has_id());
-	if
-	(	Validate() && TransferDataFromWindow() && update_budgets_from_dialog()
-	)
+	if (Validate() && TransferDataFromWindow())
 	{
+		update_budgets_from_dialog();
 		prompt_to_balance();
 		JEWEL_LOG_TRACE();
 		return true;
@@ -394,9 +395,9 @@ BudgetPanel::process_confirmation()
 void
 BudgetPanel::revert_dialog_to_budgets()
 {
-	// TODO MEDIUM PRIORITY Make it deal with case where m_budget_items.size() !=
-	// m_budget_item_components.size()? (Though at time of writing
-	// this is not called unless this is the case.)
+	// TODO MEDIUM PRIORITY Make it deal with case where m_budget_items.size()
+	// is not equal to m_budget_item_components.size()? (Though at time of
+	// writing this is not called unless this is the case.)
 	JEWEL_HARD_ASSERT
 	(	m_budget_items.size() ==
 		m_budget_item_components.size()
@@ -418,8 +419,6 @@ BudgetPanel::update_budget_summary
 )
 {
 	JEWEL_LOG_TRACE();
-
-	// This is inefficient, but it doesn't matter.
 	JEWEL_ASSERT (m_summary_amount_text);
 	Decimal new_total = zero();
 	if (!p_budget_items.empty())
@@ -445,75 +444,60 @@ BudgetPanel::update_budget_summary()
 	return;
 }
 
-vector<Handle<BudgetItem> >
+void
 BudgetPanel::update_budgets_from_dialog_without_saving()
 {
 	typedef vector<Handle<BudgetItem> > ItemVec;
-	ItemVec const ret = m_budget_items;
 
 	// Make m_budget_items match the BudgetItems implied by
 	// m_budget_item_components (what is shown in the BudgetPanel).
-	// Bare scope
+	ItemVec const items_new = make_budget_items();
+	ItemVec::size_type const num_items_old = m_budget_items.size();
+	ItemVec::size_type const num_items_new = items_new.size();
+	ItemVec::size_type i = 0;
+	for ( ; (i != num_items_old) && (i != num_items_new); ++i)
 	{
-		ItemVec const items_new = make_budget_items();
-		ItemVec::size_type const num_items_old = m_budget_items.size();
-		ItemVec::size_type const num_items_new = items_new.size();
-		ItemVec::size_type i = 0;
-		for ( ; (i != num_items_old) && (i != num_items_new); ++i)
+		JEWEL_ASSERT (i < m_budget_items.size());
+		JEWEL_ASSERT (i < m_budget_item_components.size());
+		m_budget_items[i]->mimic(*(items_new[i]));
+	}
+	JEWEL_ASSERT ((i == num_items_old) || (i == num_items_new));
+	if (num_items_old < num_items_new)
+	{
+		JEWEL_ASSERT (i == num_items_old);
+		for ( ; i != num_items_new; ++i)
 		{
-			JEWEL_ASSERT (i < m_budget_items.size());
-			JEWEL_ASSERT (i < m_budget_item_components.size());
-			m_budget_items[i]->mimic(*(items_new[i]));
-		}
-		JEWEL_ASSERT ((i == num_items_old) || (i == num_items_new));
-		if (num_items_old < num_items_new)
-		{
-			JEWEL_ASSERT (i == num_items_old);
-			for ( ; i != num_items_new; ++i)
-			{
-				m_budget_items.push_back(items_new[i]);
-			}
-		}
-		else
-		{
-			JEWEL_ASSERT (num_items_new <= num_items_old);
-			JEWEL_ASSERT (num_items_old == m_budget_items.size());
-			while (m_budget_items.size() != num_items_new)
-			{
-				JEWEL_ASSERT (m_budget_items.size() > num_items_new);	
-				Handle<BudgetItem> const doomed_item = m_budget_items.back();
-				m_budget_items.pop_back();
-				doomed_item->remove();
-			}
-			JEWEL_ASSERT (m_budget_items.size() == num_items_new);
+			m_budget_items.push_back(items_new[i]);
 		}
 	}
+	else
+	{
+		JEWEL_ASSERT (num_items_new <= num_items_old);
+		JEWEL_ASSERT (num_items_old == m_budget_items.size());
+		while (m_budget_items.size() != num_items_new)
+		{
+			JEWEL_ASSERT (m_budget_items.size() > num_items_new);	
+			Handle<BudgetItem> const doomed_item = m_budget_items.back();
+			m_budget_items.pop_back();
+			doomed_item->remove();
+		}
+		JEWEL_ASSERT (m_budget_items.size() == num_items_new);
+	}
 	JEWEL_LOG_TRACE();
-	return ret;
+	return;
 }
 
-bool
+void
 BudgetPanel::update_budgets_from_dialog()
 {
 	JEWEL_LOG_TRACE();
-
 	JEWEL_ASSERT (m_account->has_id());
 	DatabaseTransaction transaction(database_connection());
-
 	update_budgets_from_dialog_without_saving();
-
-	// Save the amended m_budget_items
-	// Bare scope
-	for (Handle<BudgetItem> const& elem: m_budget_items)
-	{
-		elem->save();
-	}
-
+	for (Handle<BudgetItem> const& elem: m_budget_items) elem->save();
 	transaction.commit();
 	JEWEL_LOG_TRACE();
-
 	JEWEL_ASSERT (m_account->has_id());
-
 	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
 	JEWEL_ASSERT (frame);
 	PersistentObjectEvent::fire
@@ -521,9 +505,8 @@ BudgetPanel::update_budgets_from_dialog()
 		PHATBOOKS_BUDGET_EDITED_EVENT,
 		m_account->id()
 	);
-
 	JEWEL_LOG_TRACE();
-	return true;
+	return;
 }
 
 void

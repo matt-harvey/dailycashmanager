@@ -86,6 +86,8 @@ public:
 	AccountDialog& operator=(AccountDialog&&) = delete;
 	virtual ~AccountDialog();
 
+	AccountType selected_account_type() const;
+	
 private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
