@@ -713,22 +713,31 @@ TransactionCtrl::on_ok_button_click(wxCommandEvent& event)
 		JEWEL_LOG_TRACE();
 		if (is_balanced())
 		{
-			JEWEL_LOG_TRACE();
-			bool actioned = false;
-			if (m_journal)
+			try
 			{
 				JEWEL_LOG_TRACE();
-				actioned = save_existing_journal();
+				bool actioned = false;
+				if (m_journal) actioned = save_existing_journal();
+				else actioned = post_journal();
+				if (actioned) reset();
 			}
-			else
+			catch (JournalOverflowException&)
 			{
-				JEWEL_LOG_TRACE();
-				actioned = post_journal();
-			}
-			if (actioned)
-			{
-				JEWEL_LOG_TRACE();
-				reset();
+				if (m_journal) m_journal->ghostify();  // this is probably unnecessary
+
+				// TODO MEDIUM PRIORITY Make this message more helpful.
+				// It might be that the transaction could be posted if
+				// the user rolled over to a new
+				// database. (And it would be good if there were an automatic
+				// way of rolling over.) But it may be that there is no way
+				// to accommodate the amount they want to post - even in a new
+				// database. If that's the case, this needs to be communicated
+				// honestly to the user.
+				wxMessageBox
+				(	"Transaction could not be saved. It may be that the amount "
+					"in the transaction is too large for it to be processed by "
+					"the application."
+				);
 			}
 		}
 		else

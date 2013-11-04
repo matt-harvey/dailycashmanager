@@ -73,20 +73,6 @@
 // way to ensure this is reflected consistently everywhere it appears
 // (website, installer, licence text etc.).
 
-// TODO HIGH PRIORITY We need a proper solution to the potential for integer
-// overflow. Mostly we use jewel::Decimal arithmetic - which will throw if
-// unsafe - but we're not actually handling these exceptions for the user. The
-// program would just crash. In particular, it may be possible for the user
-// to save a BudgetItem which both causes the program to crash, and makes it
-// so that they can never open their file again, since the act of updating
-// the AmalgamatedBudget causes overflow. (I have already prevented this
-// from occurring in the case of saving a PersistentJournal that would cause
-// overflow.) The user should be prompted to roll over to a new file, before
-// this situation can arise, both in the case of BudgetItem and in the case
-// of PersistentJournal. (Also, what about Account opening balance changes
-// that might cause overflow? But these are always via the posting of a
-// PersistentJournal, so...)
-
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.
 

@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_repeater_impl_hpp_7204316857831701
 #define GUARD_repeater_impl_hpp_7204316857831701
 
@@ -33,7 +32,6 @@
 #include <list>
 #include <string>
 #include <vector>
-
 
 namespace phatbooks
 {
@@ -64,6 +62,9 @@ class Frequency;
  *
  * Client code should not deal with Repeater instances directly, but
  * only ever via sqloxx::Handle<Repeater>.
+ *
+ * @todo HIGH PRIORITY Deal with the case where the firing of a Repeater causes
+ * a JournalOverflowException.
  */
 class Repeater:
 	public sqloxx::PersistentObject<Repeater, PhatbooksDatabaseConnection>

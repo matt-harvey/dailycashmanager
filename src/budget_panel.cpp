@@ -71,6 +71,12 @@ namespace phatbooks
 namespace gui
 {
 
+// TODO HIGH PRIORITY Deal with the (tiny) possibility that a
+// BudgetItem might be created or edited by the user in such a way that
+// it does NOT cause overflow in the summary text (and therefore is permitted
+// to be saved), but DOES cause overflow in the context of other BudgetItems
+// for other Accounts, when AmalgamatedBudget::balance() is called.
+
 // Begin event tables
 
 BEGIN_EVENT_TABLE(BudgetPanel, wxPanel)
