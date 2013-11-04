@@ -39,11 +39,9 @@ namespace phatbooks
 namespace gui
 {
 
-
 BEGIN_EVENT_TABLE(DecimalTextCtrl, wxTextCtrl)
 	EVT_KILL_FOCUS(DecimalTextCtrl::on_kill_focus)
 END_EVENT_TABLE()
-
 
 DecimalTextCtrl::DecimalTextCtrl
 (	wxWindow* p_parent,
@@ -140,13 +138,22 @@ DecimalTextCtrl::do_on_kill_focus(wxFocusEvent& event)
 	// directly on the DecimalTextCtrl, it doesn't work. We have to call
 	// through parent instead.
 	//
-	// NOTE BudgetPanel now relies on this behaviour, especially the call to
-	// GetParent()->TransferDataToWindow().
+	// NOTE BudgetPanel and MultiAccountPanel now rely on this behaviour,
+	// especially the call to GetParent()->TransferDataToWindow().
 	//
 	// TODO LOW PRIORITY The coupling between BudgetPanel and DecimalTextCtrl
-	// here is pretty ugly and feels fragile. Improve this.
-	GetParent()->Validate();
-	GetParent()->TransferDataToWindow();
+	// and MultiAccountPanel here is a bit ugly and feels fragile. Improve this.
+	auto const orig = amount();
+	if (!GetParent()->Validate())
+	{
+		set_amount(orig);
+		return;
+	}
+	if (!GetParent()->TransferDataToWindow())
+	{
+		set_amount(orig);
+		return;
+	}
 	event.Skip();
 	return;
 }

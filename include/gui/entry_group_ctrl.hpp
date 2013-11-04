@@ -40,7 +40,6 @@
 namespace phatbooks
 {
 
-
 // Begin forward declarations
 
 class Account;

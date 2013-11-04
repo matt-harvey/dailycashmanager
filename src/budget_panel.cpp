@@ -40,6 +40,7 @@
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/decimal_exceptions.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
@@ -58,6 +59,7 @@
 
 using boost::optional;
 using jewel::Decimal;
+using jewel::DecimalException;
 using jewel::Log;
 using jewel::value;
 using sqloxx::DatabaseTransaction;
@@ -261,7 +263,7 @@ BudgetPanel::BudgetPanel
 	m_top_sizer->SetSizeHints(this);
 	GetParent()->Fit();
 
-	update_budget_summary();  // Not sure why this is necessary here.
+	update_budget_summary(m_budget_items);  // Not sure why this is necessary here.
 }
 
 BudgetPanel::~BudgetPanel()
@@ -307,8 +309,11 @@ BudgetPanel::TransferDataToWindow()
 	// user in case there are, giving them the opportunity to correct it.	
 	AccountType const account_type = m_account->account_type();
 	Decimal const z = zero();
-	for (BudgetItemComponent const& elem: m_budget_item_components)
+	auto sz = m_budget_item_components.size();
+	vector<decltype(sz)> changed;
+	for (decltype(sz) i = 0; i != sz; ++i)
 	{
+		auto& elem = m_budget_item_components[i];
 		DecimalTextCtrl* const amount_ctrl = elem.amount_ctrl;
 		Decimal const amount = amount_ctrl->amount();
 		if
@@ -327,15 +332,39 @@ BudgetPanel::TransferDataToWindow()
 				// is extremely unlikely ever to occur, but still,
 				// crashing is not an acceptable reaction to this.
 				amount_ctrl->set_amount(-amount);
+				changed.push_back(i);
 			}
 		}
 	}
+	JEWEL_LOG_TRACE();
 
 	// Update the budget summary text on the basis of what's now in the
 	// BudgetPanel.
-	update_budget_summary();
-
-	return true;
+	try
+	{
+		update_budget_summary();
+		JEWEL_LOG_TRACE();
+		return true;
+	}
+	catch (DecimalException&)
+	{
+		wxMessageBox
+		(	"Cannot safely set this budget item to this amount or "
+			"frequency; amount may be too large to process safely."
+		);
+		JEWEL_LOG_TRACE();
+		/* TODO ???
+		// Undo what we did to the amount controls.
+		for (auto const j: changed)
+		{
+			auto& elem = m_budget_item_components[j];
+			auto const amount = elem.amount_ctrl->amount();
+			elem.amount_ctrl->set_amount(-amount);
+		}
+		*/
+		JEWEL_LOG_TRACE();
+		return false;
+	}
 }
 
 bool
@@ -356,16 +385,19 @@ BudgetPanel::process_confirmation()
 }
 
 void
-BudgetPanel::update_budget_summary()
+BudgetPanel::update_budget_summary
+(	vector<Handle<BudgetItem> > const& p_budget_items
+)
 {
+	JEWEL_LOG_TRACE();
+
 	// This is inefficient, but it doesn't matter.
 	JEWEL_ASSERT (m_summary_amount_text);
 	Decimal new_total = zero();
-	vector<Handle<BudgetItem> > const budget_items = make_budget_items();
-	if (!budget_items.empty())
+	if (!p_budget_items.empty())
 	{
 		new_total =
-			normalized_total(budget_items.begin(), budget_items.end());
+			normalized_total(p_budget_items.begin(), p_budget_items.end());
 	}
 	m_summary_amount_text->SetLabelText
 	(	finformat_wx
@@ -374,6 +406,14 @@ BudgetPanel::update_budget_summary()
 			DecimalFormatFlags().clear(string_flags::dash_for_zero)
 		)
 	);
+	JEWEL_LOG_TRACE();
+	return;
+}
+
+void
+BudgetPanel::update_budget_summary()
+{
+	update_budget_summary(make_budget_items());
 	return;
 }
 
@@ -496,10 +536,7 @@ BudgetPanel::push_item_component(Handle<BudgetItem> const& p_budget_item)
 		wxGBSpan(1, 2)
 	);
 	m_budget_item_components.push_back(budget_item_component);
-
 	++m_next_row;
-
-
 	return;
 }
 
@@ -664,9 +701,12 @@ BudgetPanel::SpecialFrequencyCtrl::on_text_change(wxCommandEvent& event)
 	BudgetPanel* const budget_panel =
 		dynamic_cast<BudgetPanel*>(GetParent());
 	JEWEL_ASSERT (budget_panel);
-	budget_panel->update_budget_summary();
+
+	// TODO HIGH PRIORITY If this returns false, we need to revert to
+	// previous Frequency in the SpecialFrequencyCtrl.
+	budget_panel->TransferDataToWindow();
 	return;
-}	
+}
 
 BudgetPanel::SignWarning::SignWarning
 (	wxWindow* p_parent,

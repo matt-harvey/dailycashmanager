@@ -265,6 +265,17 @@ MultiAccountPanel::account_type_is_selected
 	return false;
 }
 
+bool
+MultiAccountPanel::TransferDataToWindow()
+{
+	if (!GriddedScrolledPanel::TransferDataToWindow())
+	{
+		return false;
+	}
+	update_summary();
+	return true;
+}
+
 Handle<Account>
 MultiAccountPanel::blank_account()
 {
@@ -328,9 +339,12 @@ MultiAccountPanel::push_row(Handle<Account> const& p_account)
 	p_account->set_commodity(m_commodity);
 
 	// Opening balance
-	SpecialDecimalTextCtrl* opening_balance_box = new SpecialDecimalTextCtrl
+	DecimalTextCtrl* opening_balance_box = new DecimalTextCtrl
 	(	this,
-		wxSize(medium_width(), height)
+		wxID_ANY,
+		wxSize(medium_width(), height),
+		m_commodity->precision(),
+		false
 	);
 	top_sizer().Add(opening_balance_box, wxGBPosition(row, 4));
 	m_opening_balance_boxes.push_back(opening_balance_box);
@@ -347,7 +361,7 @@ MultiAccountPanel::set_commodity(Handle<Commodity> const& p_commodity)
 {
 	m_commodity = p_commodity;
 	Decimal::places_type const precision = p_commodity->precision();
-	for (SpecialDecimalTextCtrl* ctrl: m_opening_balance_boxes)
+	for (DecimalTextCtrl* ctrl: m_opening_balance_boxes)
 	{
 		// TODO MEDIUM PRIORITY Handle potential Decimal exception here on
 		// rounding.
@@ -471,40 +485,6 @@ MultiAccountPanel::total_amount() const
 		total_amount_aux
 	);
 }
-
-MultiAccountPanel::SpecialDecimalTextCtrl::SpecialDecimalTextCtrl
-(	MultiAccountPanel* p_parent,
-	wxSize const& p_size
-):
-	DecimalTextCtrl
-	(	p_parent,
-		wxID_ANY,
-		p_size,
-		p_parent->m_commodity->precision(),
-		false
-	)
-{
-}
-
-MultiAccountPanel::SpecialDecimalTextCtrl::~SpecialDecimalTextCtrl()
-{
-}
-
-void
-MultiAccountPanel::SpecialDecimalTextCtrl::do_on_kill_focus
-(	wxFocusEvent& event
-)
-{
-	GetParent()->Validate();
-	GetParent()->TransferDataToWindow();
-	MultiAccountPanel* const parent =
-		dynamic_cast<MultiAccountPanel*>(GetParent());	
-	JEWEL_ASSERT (parent);
-	parent->update_summary();
-	event.Skip();
-	return;
-}
-
 
 }  // namespace gui
 }  // namespace phatbooks

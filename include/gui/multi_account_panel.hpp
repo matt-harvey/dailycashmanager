@@ -170,21 +170,9 @@ public:
 	
 private:
 
+	virtual bool TransferDataToWindow() override;
+
 	jewel::Decimal summary_amount() const;
-
-	class SpecialDecimalTextCtrl: public DecimalTextCtrl
-	{
-	public:
-		SpecialDecimalTextCtrl
-		(	MultiAccountPanel* p_parent,
-			wxSize const& p_size
-		);
-		virtual ~SpecialDecimalTextCtrl();
-	private:
-		void do_on_kill_focus(wxFocusEvent& event) override;
-	};
-
-	friend class SpecialDecimalTextCtrl;
 
 	/**
 	 * @returns a handle to a newly created Account with Commodity not set but
@@ -216,7 +204,7 @@ private:
 	std::vector<wxTextCtrl*> m_account_name_boxes;
 	std::vector<AccountTypeCtrl*> m_account_type_boxes;
 	std::vector<wxTextCtrl*> m_description_boxes;
-	std::vector<SpecialDecimalTextCtrl*> m_opening_balance_boxes;
+	std::vector<DecimalTextCtrl*> m_opening_balance_boxes;
 
 };  // class MultiAccountPanel
 

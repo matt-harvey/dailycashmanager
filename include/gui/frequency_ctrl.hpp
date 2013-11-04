@@ -105,7 +105,7 @@ public:
 	 * InvalidFrequencyException if DraftJournals are not supported.
 	 */
 	void set_frequency(boost::optional<Frequency> const& p_maybe_frequency);
-
+	
 private:
 	bool supports_ordinary_journal() const;
 	bool supports_draft_journal() const;
@@ -116,7 +116,6 @@ private:
 	PhatbooksDatabaseConnection& m_database_connection;
 	bool const m_supports_ordinary_journal;
 	bool const m_supports_draft_journal;
-
 
 };  // class FrequencyCtrl
 

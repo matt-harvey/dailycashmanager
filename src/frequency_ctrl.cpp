@@ -42,8 +42,6 @@ namespace phatbooks
 namespace gui
 {
 
-
-// Anonymous namespace
 namespace
 {
 	vector<Frequency> const& available_frequencies()
@@ -80,7 +78,6 @@ namespace
 	}
 
 }  // end anonymous namespace
-
 
 FrequencyCtrl::FrequencyCtrl
 (	wxWindow* p_parent,

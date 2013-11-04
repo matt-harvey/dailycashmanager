@@ -21,6 +21,7 @@
 
 #include "account.hpp"
 #include "budget_item.hpp"
+#include "decimal_text_ctrl.hpp"
 #include "frequency_ctrl.hpp"
 #include <boost/optional.hpp>
 #include <sqloxx/handle.hpp>
@@ -104,9 +105,18 @@ private:
 
 	/**
 	 * Updates budget summary text at top of Dialog, on the basis
-	 * what is currently shown in the BudgetPanel itself, regardless
+	 * the BudgetItems passed to p_budget_items, regardless
 	 * of what is in the database. The budget summary text encompasses
 	 * both the amount and frequency.
+	 */
+	void update_budget_summary
+	(	std::vector<sqloxx::Handle<BudgetItem> > const& p_budget_items
+	);
+
+	/**
+	 * Updates budget summary text at top of Dialog, on the basis
+	 * of what is currently shown in the GUI, regardless of what is
+	 * in the database.
 	 */
 	void update_budget_summary();
 

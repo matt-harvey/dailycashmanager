@@ -349,6 +349,7 @@ normalized_total
 	vector<Handle<BudgetItem> >::const_iterator const& e
 )
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (e - b > 0);  // Assert precondition.
 	PhatbooksDatabaseConnection& dbc = (*b)->database_connection();
 	Handle<Commodity> commodity(dbc);
@@ -375,7 +376,9 @@ normalized_total
 		);
 		ret += convert_to_canonical((*b)->frequency(), (*b)->amount());
 	}
-	return round(convert_from_canonical(dbc.budget_frequency(), ret), prec);
+	ret = round(convert_from_canonical(dbc.budget_frequency(), ret), prec);
+	JEWEL_LOG_TRACE();
+	return ret;
 }
 
 }  // namespace phatbooks
