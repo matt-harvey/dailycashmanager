@@ -701,6 +701,12 @@ Frame::report_repeater_firing_results
 (	vector<RepeaterFiringResult> p_results
 )
 {
+	// TODO LOW PRIORITY This could be tidied up by making the
+	// stable_parition put the unsuccessful firings at the beginning,
+	// rather than the successful firings at the beginning. We could
+	// then put the wxMessageBox for the successful firings in the
+	// same block in which we examine the successful firings; and we
+	// could confine oss to this block.
 	JEWEL_LOG_TRACE();
 	if (p_results.empty())
 	{	
