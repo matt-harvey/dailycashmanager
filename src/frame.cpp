@@ -47,6 +47,7 @@
 #include <wx/wx.h>
 #include <algorithm>
 #include <sstream>
+#include <string>
 #include <vector>
 
 #include "../images/icon.xpm"
@@ -54,7 +55,9 @@
 using sqloxx::Handle;
 using sqloxx::Id;
 using std::ostringstream;
+using std::remove_if;
 using std::stable_partition;
+using std::string;
 using std::vector;
 
 namespace phatbooks
@@ -706,12 +709,32 @@ Frame::report_repeater_firing_results
 	}
 	JEWEL_LOG_TRACE();
 	ostringstream oss;
+	auto const end_all = p_results.end();
+	auto const end_normal = remove_if
+	(	p_results.begin(),
+		end_all,
+		[this](RepeaterFiringResult const& r)
+		{
+			Handle<DraftJournal> const dj
+			(	this->m_database_connection,
+				r.draft_journal_id
+			);
+			return dj == m_database_connection.budget_instrument();
+		}
+	);
 	auto const end_successful = stable_partition
 	(	p_results.begin(),
-		p_results.end(),
+		end_normal,
 		[](RepeaterFiringResult const& r){ return r.successful; }
 	);
-	auto const end_all = p_results.end();
+
+	// p_results is now ordered in three bands, as follows:
+	//  - firing attempts of non-budget-instrument DraftJournals that
+	//      were successful; then
+	//  - firing attemptes of non-budget-instrument DraftJournals that
+	//      were unsuccessful; then
+	//  - firing attempts of the budget instrument DraftJournal.
+
 	auto it = p_results.begin();
 	if (it != end_successful)
 	{
@@ -722,49 +745,95 @@ Frame::report_repeater_firing_results
 		    << "recorded since the last session:\n\n";
 		for ( ; it != end_successful; ++it)
 		{
+			Handle<DraftJournal> const dj
+			(	m_database_connection,
+				it->draft_journal_id
+			);
 			JEWEL_ASSERT (it->successful);
-			oss << "\"" << it->draft_journal_name << "\""
-			    << " was recorded on "
-			    << date_format_wx(it->firing_date);
+			oss << "\"" << dj->name() << "\""
+				<< " was recorded on "
+				<< date_format_wx(it->firing_date);
 			if (end_successful - it == 1) oss << ".\n";
 			else oss << ";\n";
 		}
 		oss << '\n';
 	}
-	if (it != end_all)
+	if (it != end_normal)
 	{
 		JEWEL_LOG_TRACE();
 		// TODO LOW PRIORITY Provide some more helpful information to
 		// the user on what to do about the transactions not being
 		// posted (though it's very unlikely this will ever occur for
 		// any given user).
-		if (end_all - it == 1)
+		ostringstream oss2;
+		if (end_normal - it == 1)
 		{
-			oss << "The following transaction was scheduled to be automatically"
-			    << " recorded, but wasn't. This is likely to be due "
-				<< "to the amount involved being too large to be safely "
-				<< "processed by the application:\n\n";
+			oss2 << "The following transaction was scheduled to be "
+			     << "automatically recorded, but wasn't. This is likely to be "
+				 << "due to the amount involved being too large to be safely "
+				 << "processed by the application:\n\n";
 		}
 		else
 		{
-			oss << "The following transactions were scheduled to be "
-			    << "automatically recorded, but weren't. This is likely to be "
-				<< "due to the amounts involved being too large to be safely "
-				<< "processed by the application:\n\n";
+			oss2 << "The following transactions were scheduled to be "
+			     << "automatically recorded, but weren't. This is likely to be "
+				 << "due to the amounts involved being too large to be safely "
+				 << "processed by the application:\n\n";
 		}
-		for ( ; it != end_all ; ++it)
+		for ( ; it != end_normal ; ++it)
 		{
+			Handle<DraftJournal> const dj
+			(	m_database_connection,
+				it->draft_journal_id
+			);
 			JEWEL_ASSERT (!it->successful);
-			oss << "\"" << it->draft_journal_name << "\""
-			    << " was not recorded, though it was next scheduled for "
-				<< date_format_wx(it->firing_date);
-			if (end_all - it == 1) oss << ".\n";
-			else oss << ";\n";
+			oss2 << "\"" << dj->name() << "\""
+			     << " was not recorded, though it was next scheduled for "
+				 << date_format_wx(it->firing_date);
+			if (end_normal - it == 1) oss2 << ".\n";
+			else oss2 << ";\n";
+		}
+		wxMessageBox
+		(	std8_to_wx(oss2.str()),
+			"WARNING",
+			wxOK | wxICON_EXCLAMATION
+		);
+	}
+	JEWEL_ASSERT (end_all >= end_normal);
+	JEWEL_ASSERT (it == end_normal);
+	if (it != end_all)
+	{
+		// Then we have budget instrument firing attempts to deal
+		// with.
+		for ( ; it != end_all; ++it)
+		{
+			Handle<DraftJournal> const dj
+			(	m_database_connection,
+				it->draft_journal_id
+			);
+			JEWEL_ASSERT (dj == m_database_connection.budget_instrument());
+
+			// for budget instrument, we only report unsuccessful firings
+			if (!it->successful)
+			{
+				wxMessageBox
+				(	"The regular top-up of envelopes with budget amounts "
+						"has not occurred.\nThis is likely due to some budget "
+						"amounts being too large for the application to "
+						"process safely.\n",
+					"WARNING",
+					wxOK | wxICON_EXCLAMATION
+				);
+			}
 		}
 	}
 	// TODO MEDIUM PRIORITY Make this message a bit nicer looking.
 	JEWEL_LOG_TRACE();
-	wxMessageBox(std8_to_wx(oss.str()));
+	string const message = oss.str();
+	if (!message.empty())
+	{
+		wxMessageBox(std8_to_wx(message));
+	}
 	JEWEL_LOG_TRACE();
 	return;
 }

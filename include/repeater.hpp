@@ -28,7 +28,6 @@
 #include <sqloxx/handle.hpp>
 #include <sqloxx/id.hpp>
 #include <sqloxx/persistent_object.hpp>
-#include <wx/string.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -62,12 +61,6 @@ class Frequency;
  *
  * Client code should not deal with Repeater instances directly, but
  * only ever via sqloxx::Handle<Repeater>.
- *
- * @todo HIGH PRIORITY Deal with the case where the firing of the
- * budget instrument causes a JournalOverflowException. We have already
- * dealt with this for the general case of a failed Repeater firing.
- * However, a budget instrument failure would not be captured by this
- * mechanism as it currently stands.
  */
 class Repeater:
 	public sqloxx::PersistentObject<Repeater, PhatbooksDatabaseConnection>
@@ -220,9 +213,9 @@ private:
 struct RepeaterFiringResult
 {
 	/**
-	 * The name of the DraftJournal which the Repeater relates to.
+	 * The Id of the DraftJournal which the Repeater relates to.
 	 */
-	wxString draft_journal_name;
+	sqloxx::Id draft_journal_id;
 
 	/**
 	 * The date on which the Repeater was fired (or, if unsuccessful, the

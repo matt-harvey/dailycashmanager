@@ -456,7 +456,7 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 		while (repeater->next_date() <= d)
 		{
 			RepeaterFiringResult firing_result =
-			{	repeater->draft_journal()->name(),
+			{	repeater->draft_journal()->id(),
 				repeater->next_date(),
 				false
 			};
