@@ -701,12 +701,6 @@ Frame::report_repeater_firing_results
 (	vector<RepeaterFiringResult> p_results
 )
 {
-	// TODO LOW PRIORITY This could be tidied up by making the
-	// stable_parition put the unsuccessful firings at the beginning,
-	// rather than the successful firings at the beginning. We could
-	// then put the wxMessageBox for the successful firings in the
-	// same block in which we examine the successful firings; and we
-	// could confine oss to this block.
 	JEWEL_LOG_TRACE();
 	if (p_results.empty())
 	{	
@@ -714,7 +708,6 @@ Frame::report_repeater_firing_results
 		return;
 	}
 	JEWEL_LOG_TRACE();
-	ostringstream oss;
 	auto const end_all = p_results.end();
 	auto const end_normal = remove_if
 	(	p_results.begin(),
@@ -745,6 +738,7 @@ Frame::report_repeater_firing_results
 	if (it != end_successful)
 	{
 		JEWEL_LOG_TRACE();
+		ostringstream oss;
 		oss << "The following transaction"
 		    << ((end_successful - it == 1)? " has": "s have")
 			<< " been automatically "
@@ -762,7 +756,9 @@ Frame::report_repeater_firing_results
 			if (end_successful - it == 1) oss << ".\n";
 			else oss << ";\n";
 		}
-		oss << '\n';
+		// TODO MEDIUM PRIORITY Make this message a bit nicer looking.
+		JEWEL_LOG_TRACE();
+		wxMessageBox(std8_to_wx(oss.str()));
 	}
 	if (it != end_normal)
 	{
@@ -832,13 +828,6 @@ Frame::report_repeater_firing_results
 				);
 			}
 		}
-	}
-	// TODO MEDIUM PRIORITY Make this message a bit nicer looking.
-	JEWEL_LOG_TRACE();
-	string const message = oss.str();
-	if (!message.empty())
-	{
-		wxMessageBox(std8_to_wx(message));
 	}
 	JEWEL_LOG_TRACE();
 	return;
