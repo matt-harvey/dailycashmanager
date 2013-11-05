@@ -20,11 +20,14 @@
 #include "gui/frame.hpp"
 #include "account.hpp"
 #include "app.hpp"
+#include "date.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
 #include "persistent_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "repeater.hpp"
+#include "string_conv.hpp"
 #include "string_flags.hpp"
 #include "gui/account_dialog.hpp"
 #include "gui/account_list_ctrl.hpp"
@@ -42,12 +45,16 @@
 #include <wx/icon.h>
 #include <wx/wupdlock.h>
 #include <wx/wx.h>
+#include <algorithm>
+#include <sstream>
 #include <vector>
 
 #include "../images/icon.xpm"
 
 using sqloxx::Handle;
 using sqloxx::Id;
+using std::ostringstream;
+using std::stable_partition;
 using std::vector;
 
 namespace phatbooks
@@ -455,18 +462,14 @@ Frame::on_menu_view_toggle_bs_account_show_hidden(wxCommandEvent& event)
 
 	// TODO MEDIUM PRIORITY Factor out code duplicated here and in
 	// on_menu_view_toggle_pl_account_show_hidden(...).
-	AccountSuperType const stype =
-		AccountSuperType::balance_sheet;
-	
-	bool const showing_hidden =
-		m_top_panel->toggle_show_hidden_accounts(stype);
+	auto const stype = AccountSuperType::balance_sheet;
+	bool const showing_hidden = m_top_panel->toggle_show_hidden_accounts(stype);
 	bool const next_toggle_will_show_hidden = !showing_hidden;
 	wxString const instruction_for_menu = instruction_to_show_hidden
 	(	stype,
 		next_toggle_will_show_hidden
 	);
 	m_view_menu->SetLabel(event.GetId(), instruction_for_menu);
-
 	return;
 }
 
@@ -474,19 +477,14 @@ void
 Frame::on_menu_view_toggle_pl_account_show_hidden(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
-
-	AccountSuperType const stype =
-		AccountSuperType::pl;
-
-	bool const showing_hidden =
-		m_top_panel->toggle_show_hidden_accounts(stype);
+	auto const stype = AccountSuperType::pl;
+	bool const showing_hidden = m_top_panel->toggle_show_hidden_accounts(stype);
 	bool const next_toggle_will_show_hidden = !showing_hidden;
 	wxString const instruction_for_menu = instruction_to_show_hidden
 	(	stype,
 		next_toggle_will_show_hidden
 	);
 	m_view_menu->SetLabel(event.GetId(), instruction_for_menu);
-
 	return;
 }
 
@@ -692,6 +690,82 @@ Frame::selected_draft_journals(vector<Handle<DraftJournal> >& out) const
 {
 	JEWEL_LOG_TRACE();
 	m_top_panel->selected_draft_journals(out);
+	return;
+}
+
+void
+Frame::report_repeater_firing_results
+(	vector<RepeaterFiringResult> p_results
+)
+{
+	JEWEL_LOG_TRACE();
+	if (p_results.empty())
+	{	
+		JEWEL_LOG_TRACE();
+		return;
+	}
+	JEWEL_LOG_TRACE();
+	ostringstream oss;
+	auto const end_successful = stable_partition
+	(	p_results.begin(),
+		p_results.end(),
+		[](RepeaterFiringResult const& r){ return r.successful; }
+	);
+	auto const end_all = p_results.end();
+	auto it = p_results.begin();
+	if (it != end_successful)
+	{
+		JEWEL_LOG_TRACE();
+		oss << "The following transaction"
+		    << ((end_successful - it == 1)? " has": "s have")
+			<< " been automatically "
+		    << "recorded since the last session:\n\n";
+		for ( ; it != end_successful; ++it)
+		{
+			JEWEL_ASSERT (it->successful);
+			oss << "\"" << it->draft_journal_name << "\""
+			    << " was recorded on "
+			    << date_format_wx(it->firing_date);
+			if (end_successful - it == 1) oss << ".\n";
+			else oss << ";\n";
+		}
+		oss << '\n';
+	}
+	if (it != end_all)
+	{
+		JEWEL_LOG_TRACE();
+		// TODO LOW PRIORITY Provide some more helpful information to
+		// the user on what to do about the transactions not being
+		// posted (though it's very unlikely this will ever occur for
+		// any given user).
+		if (end_all - it == 1)
+		{
+			oss << "The following transaction was scheduled to be automatically"
+			    << " recorded, but wasn't. This is likely to be due "
+				<< "to the amount involved being too large to be safely "
+				<< "processed by the application:\n\n";
+		}
+		else
+		{
+			oss << "The following transactions were scheduled to be "
+			    << "automatically recorded, but weren't. This is likely to be "
+				<< "due to the amounts involved being too large to be safely "
+				<< "processed by the application:\n\n";
+		}
+		for ( ; it != end_all ; ++it)
+		{
+			JEWEL_ASSERT (!it->successful);
+			oss << "\"" << it->draft_journal_name << "\""
+			    << " was not recorded, though it was next scheduled for "
+				<< date_format_wx(it->firing_date);
+			if (end_all - it == 1) oss << ".\n";
+			else oss << ";\n";
+		}
+	}
+	// TODO MEDIUM PRIORITY Make this message a bit nicer looking.
+	JEWEL_LOG_TRACE();
+	wxMessageBox(std8_to_wx(oss.str()));
+	JEWEL_LOG_TRACE();
 	return;
 }
 

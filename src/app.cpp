@@ -47,6 +47,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <vector>
 
 using boost::optional;
 using jewel::clear;
@@ -60,6 +61,7 @@ using std::getenv;
 using std::ostringstream;
 using std::string;
 using std::unique_ptr;
+using std::vector;
 namespace filesystem = boost::filesystem;
 
 namespace phatbooks
@@ -440,12 +442,14 @@ bool App::OnInit()
 		set_last_opened_file(*m_database_filepath);
 		make_backup(*m_database_filepath);
 		database_connection().set_caching_level(5);
-		update_repeaters(database_connection());
+		vector<RepeaterFiringResult> const repeater_firing_results =
+			update_repeaters(database_connection());
 		gui::Frame* frame =
 			new gui::Frame(application_name(), database_connection());
 		SetTopWindow(frame);
 		frame->Show(true);
 		wxToolTip::Enable(true);
+		frame->report_repeater_firing_results(repeater_firing_results);
 
 		// Start the event loop
 		JEWEL_LOG_MESSAGE(Log::info, "Starting wxWidgets event loop.");

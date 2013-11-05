@@ -41,7 +41,6 @@
 #include <sqloxx/id.hpp>
 #include <algorithm>
 #include <limits>
-#include <list>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -61,10 +60,10 @@ using sqloxx::Handle;
 using sqloxx::Id;
 using sqloxx::SQLStatement;
 using std::is_same;
-using std::list;
 using std::move;
 using std::numeric_limits;
 using std::ostringstream;
+using std::sort;
 using std::string;
 using std::vector;
 
@@ -443,10 +442,10 @@ Repeater::mimic(Repeater& rhs)
 
 // Implement free functions
 
-list<RepeaterFiringResult>
+vector<RepeaterFiringResult>
 update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 {
-	list<RepeaterFiringResult> ret;
+	vector<RepeaterFiringResult> ret;
 	// Read into a vector first - uneasy about reading and writing
 	// at the same time.
 	RepeaterTableIterator const rtit(dbc);
@@ -496,7 +495,7 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 			}
 		}
 	}
-	ret.sort();
+	sort(ret.begin(), ret.end());
 	return ret;
 }
 

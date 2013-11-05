@@ -30,7 +30,6 @@
 #include <sqloxx/persistent_object.hpp>
 #include <wx/string.h>
 #include <memory>
-#include <list>
 #include <string>
 #include <vector>
 
@@ -64,9 +63,11 @@ class Frequency;
  * Client code should not deal with Repeater instances directly, but
  * only ever via sqloxx::Handle<Repeater>.
  *
- * @todo HIGH PRIORITY Deal with the case where the firing of a Repeater causes
- * a JournalOverflowException. This includes where the Repeater may be
- * invisible to the user as such, due to its being the budget instrument.
+ * @todo HIGH PRIORITY Deal with the case where the firing of the
+ * budget instrument causes a JournalOverflowException. We have already
+ * dealt with this for the general case of a failed Repeater firing.
+ * However, a budget instrument failure would not be captured by this
+ * mechanism as it currently stands.
  */
 class Repeater:
 	public sqloxx::PersistentObject<Repeater, PhatbooksDatabaseConnection>
@@ -244,11 +245,11 @@ bool operator<
 
 /**
  * Attempts to bring Repeaters up to date (thereby posting auto posted
- * journals), returning a list of FiringResults, each of which conveys
- * the result of a single firing attempt. The list is sorted by date of
+ * journals), returning a sequence of FiringResults, each of which conveys
+ * the result of a single firing attempt. The sequence is sorted by date of
  * firing (or attempted firing).
  */
-std::list<RepeaterFiringResult> update_repeaters
+std::vector<RepeaterFiringResult> update_repeaters
 (	PhatbooksDatabaseConnection& dbc,
 	boost::gregorian::date d = today()
 );

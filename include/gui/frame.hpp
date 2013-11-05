@@ -16,10 +16,10 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_frame_hpp_873675392881816
 #define GUARD_frame_hpp_873675392881816
 
+#include "repeater.hpp"
 #include "top_panel.hpp"
 #include <jewel/assert.hpp>
 #include <sqloxx/handle_fwd.hpp>
@@ -96,6 +96,18 @@ public:
 	void selected_draft_journals
 	(	std::vector<sqloxx::Handle<DraftJournal> >& out
 	) const;
+
+	/**
+	 * Inform the Frame regarding the results of attempting
+	 * to fire Repeaters. The Frame then takes responsibility
+	 * for reporting these results to the user (or not) at a
+	 * suitable juncture (which may or may not be immediately).
+	 *
+	 * NOTE Passing by value is deliberate.
+	 */
+	void report_repeater_firing_results
+	(	std::vector<RepeaterFiringResult> p_results
+	);
 
 private:
 
