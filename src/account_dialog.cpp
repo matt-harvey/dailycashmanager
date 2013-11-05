@@ -426,7 +426,6 @@ AccountDialog::configure_bottom_row()
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
-
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,
@@ -467,18 +466,97 @@ AccountDialog::account_super_type() const
 void
 AccountDialog::on_ok_button_click(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler re. unused parameter.
-	if (update_account_from_dialog(!m_account->has_id()))
+	Handle<OrdinaryJournal> objnl;
+	wxString const prospective_name = m_name_ctrl->GetValue().Trim();
+	if (Account::exists(m_account->database_connection(), prospective_name))
 	{
-		if (!m_budget_panel)
+		bool clashes = true;
+		if (m_account->has_id())
 		{
-			EndModal(wxID_OK);
+			if (m_account->name().Lower() == prospective_name.Lower())
+			{
+				// Then everything's OK, the user has just kept the original
+				// name, or else has changed the case.
+				clashes = false;
+			}
 		}
-		else if (m_budget_panel->process_confirmation())
+		if (clashes)
 		{
-			EndModal(wxID_OK);
+			wxMessageBox
+			(	wxString("There is already ") +
+				account_concepts_phrase
+				(	AccountPhraseFlags().set(string_flags::include_article)
+				) +
+				wxString(" with this name.")
+			);
+			JEWEL_ASSERT (m_name_ctrl);
+			m_name_ctrl->SetFocus();
+			JEWEL_LOG_TRACE();
+			return;
 		}
 	}
+	if (prospective_name.IsEmpty())
+	{
+		wxMessageBox("Name cannot be blank.");
+		JEWEL_LOG_TRACE();
+		return;
+	}
+	JEWEL_LOG_TRACE();
+	m_account->set_name(prospective_name);
+	m_account->set_account_type(m_account_type_ctrl->account_type());
+	m_account->set_description(m_description_ctrl->GetValue());
+	m_account->set_visibility
+	(	m_visibility_ctrl->GetValue()?
+		Visibility::visible:
+		Visibility::hidden
+	);
+	if (!m_account->has_id())
+	{
+		m_account->set_commodity
+		(	m_account->database_connection().default_commodity()
+		);
+	}
+	wxEventType const event_type =
+	(	m_account->has_id()?
+		PHATBOOKS_ACCOUNT_EDITED_EVENT:
+		PHATBOOKS_ACCOUNT_CREATED_EVENT
+	);
+	m_account->save();
+	auto const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
+	JEWEL_ASSERT (frame);
+	PersistentObjectEvent::fire(frame, event_type, m_account->id());
+	JEWEL_LOG_TRACE();
+	Decimal opening_amount = m_opening_amount_ctrl->amount();
+	if (super_type(m_account->account_type()) == AccountSuperType::pl)
+	{
+		// TODO MEDIUM PRIORITY Handle very small possibility of overflow
+		// here (currently it would just throw an exception and crash).
+		opening_amount = -opening_amount;
+	}
+	objnl = create_opening_balance_journal
+	(	m_account,
+		opening_amount
+	);
+	if (objnl->primary_amount() != Decimal(0, 0))
+	{
+		objnl->save();
+		JEWEL_ASSERT (frame);
+		PersistentObjectEvent::fire
+		(	frame,
+			PHATBOOKS_JOURNAL_CREATED_EVENT,
+			objnl->id()
+		);
+	}
+	else
+	{
+		// The user has not changed the opening balance - and objnl can
+		// be ignored - do nothing here.
+	}
+	if (m_budget_panel) m_budget_panel->process_confirmation();
+	EndModal(wxID_OK);
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -488,123 +566,6 @@ AccountDialog::on_cancel_button_click(wxCommandEvent& event)
 	(void)event;  // Silence compiler re. unused parameter.
 	EndModal(wxID_CANCEL);
 	return;
-}
-
-bool
-AccountDialog::update_account_from_dialog(bool p_is_new_account)
-{
-	JEWEL_LOG_TRACE();
-	Handle<OrdinaryJournal> objnl;
-	try
-	{
-		JEWEL_LOG_TRACE();
-		DatabaseTransaction transaction(m_account->database_connection());
-		wxString const prospective_name = m_name_ctrl->GetValue().Trim();
-		if (Account::exists(m_account->database_connection(), prospective_name))
-		{
-			bool clashes = true;
-			if (!p_is_new_account)
-			{
-				if (m_account->name().Lower() == prospective_name.Lower())
-				{
-					// Then everything's OK, the user has just kept the original
-					// name, or else has changed the case.
-					clashes = false;
-				}
-			}
-			if (clashes)
-			{
-				wxMessageBox
-				(	wxString("There is already ") +
-					account_concepts_phrase
-					(	AccountPhraseFlags().set(string_flags::include_article)
-					) +
-					wxString(" with this name.")
-				);
-				JEWEL_ASSERT (m_name_ctrl);
-				m_name_ctrl->SetFocus();
-				return false;
-			}
-		}
-		if (prospective_name.IsEmpty())
-		{
-			wxMessageBox("Name cannot be blank.");
-			return false;
-		}
-		JEWEL_LOG_TRACE();
-		m_account->set_name(prospective_name);
-		m_account->set_account_type(m_account_type_ctrl->account_type());
-		m_account->set_description(m_description_ctrl->GetValue());
-		m_account->set_visibility
-		(	m_visibility_ctrl->GetValue()?
-			Visibility::visible:
-			Visibility::hidden
-		);
-		if (p_is_new_account)
-		{
-			m_account->set_commodity
-			(	m_account->database_connection().default_commodity()
-			);
-		}
-		m_account->save();
-		JEWEL_LOG_TRACE();
-		Decimal opening_amount = m_opening_amount_ctrl->amount();
-		if (super_type(m_account->account_type()) == AccountSuperType::pl)
-		{
-			// TODO MEDIUM PRIORITY Handle very small possibility of overflow
-			// here (currently it would just throw an exception and crash).
-			opening_amount = -opening_amount;
-		}
-		objnl = create_opening_balance_journal
-		(	m_account,
-			opening_amount
-		);
-		if (objnl->primary_amount() != Decimal(0, 0))
-		{
-			objnl->save();
-		}
-		else
-		{
-			// The user has not changed the opening balance - and objnl can
-			// be ignored - do nothing here.
-		}
-		transaction.commit();
-		JEWEL_LOG_TRACE();
-	}
-	catch (std::exception&)
-	{
-		JEWEL_LOG_TRACE();
-		m_account->ghostify();
-		throw;
-	}
-	JEWEL_ASSERT (m_account->has_id());
-
-	// Notify window higher in the hierarchy that they need to update for
-	// changed Account and if we needed the opening balance journal,
-	// the new OrdinaryJournal.
-	JEWEL_ASSERT (GetParent());
-	wxEventType const event_type =
-	(	p_is_new_account?
-		PHATBOOKS_ACCOUNT_CREATED_EVENT:
-		PHATBOOKS_ACCOUNT_EDITED_EVENT
-	);
-	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
-	JEWEL_ASSERT (frame);
-	PersistentObjectEvent::fire
-	(	frame,  // can't use "this", or event is missed
-		event_type,
-		m_account->id()
-	);
-	if (static_cast<bool>(objnl) && objnl->has_id())
-	{
-		// then we must have saved objnl, so...
-		PersistentObjectEvent::fire
-		(	frame,  // can't use "this", or event is missed
-			PHATBOOKS_JOURNAL_CREATED_EVENT,
-			objnl->id()
-		);
-	}
-	return true;
 }
 
 }  // namespace gui

@@ -37,6 +37,7 @@
 #include "gui/locale.hpp"
 #include "gui/persistent_object_event.hpp"
 #include "gui/sizing.hpp"
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
@@ -57,6 +58,7 @@
 #include <wx/window.h>
 #include <vector>
 
+using boost::numeric_cast;
 using boost::optional;
 using jewel::Decimal;
 using jewel::DecimalException;
@@ -94,6 +96,15 @@ BEGIN_EVENT_TABLE(BudgetPanel::BalancingDialog, wxDialog)
 END_EVENT_TABLE()
 
 // End event tables
+
+namespace
+{
+	int bad_code()
+	{
+		return numeric_cast<int>(wxID_HIGHEST + 1);
+	}
+
+}  // end anonymous namespace
 
 BudgetPanel::BudgetPanel
 (	AccountDialog* p_parent,
@@ -353,18 +364,19 @@ BudgetPanel::TransferDataToWindow()
 	{
 		wxMessageBox
 		(	"Cannot safely set this budget item to this amount or "
-			"frequency; amount may be too large to process safely."
+				"frequency; amount may be too large to process safely.",
+			"Message",
+			wxICON_EXCLAMATION | wxOK,
+			this
 		);
 		JEWEL_LOG_TRACE();
-		/* TODO ???
-		// Undo what we did to the amount controls.
+		// Undo what we did to the amount controls (if anything)
 		for (auto const j: changed)
 		{
 			auto& elem = m_budget_item_components[j];
 			auto const amount = elem.amount_ctrl->amount();
 			elem.amount_ctrl->set_amount(-amount);
 		}
-		*/
 		JEWEL_LOG_TRACE();
 		return false;
 	}
@@ -375,44 +387,45 @@ BudgetPanel::process_confirmation()
 {
 	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (m_account->has_id());
-	if (Validate() && TransferDataFromWindow())
+	if (!Validate())
 	{
-		try
-		{
-			update_budgets_from_dialog();
-			prompt_to_balance();
-			JEWEL_LOG_TRACE();
-			return true;
-		}
-		catch (DecimalException&)
-		{
-			// TODO HIGH PRIORITY Enable user to recover here. It would
-			// be rare to end up here, however it would appear to be
-			// possible, in case a BudgetItem is created or edited in such way
-			// that, while it doesn't cause overflow itself (and therefore
-			// enables budget summary to be updated successfully before we get
-			// to this point), it nevertheless does cause overflow in the
-			// context of updating the budget instrument - which occurs in the
-			// above call to update_budgets_from_dialog() - causing
-			// DecimalException or JournalOverflowException to be thrown - or
-			// where there is a large budget imbalance already, and the user
-			// then chooses to
-			// offset this imbalance to a normal Account (not the balancing
-			// Account) - which may then cause a DecimalException to be thrown
-			// during calculation of the revised daily budget amount for
-			// that Account.
-			JEWEL_LOG_TRACE();
-			throw;	
-		}
-		catch (JournalOverflowException&)
-		{
-			// TODO HIGH PRIORITY See above.
-			JEWEL_LOG_TRACE();
-			throw;
-		}
+		return false;
 	}
-	JEWEL_LOG_TRACE();
-	return false;
+	if (!TransferDataFromWindow())
+	{
+		return false;
+	}
+	try
+	{
+		update_budgets_from_dialog();
+	}
+	catch (jewel::Exception& e)
+	{
+		if
+		(	dynamic_cast<DecimalException*>(&e) ||
+			dynamic_cast<JournalOverflowException*>(&e)
+		)
+		{
+			// TODO MEDIUM PRIORITY Handle extremely rare case where we
+			// arrive here. This would be due to BudgetItem saving not
+			// causing overflow in and of itself, but overflow
+			// occurring when the budget instrument is regenerated, and
+			// the total imbalance calculation causing overflow.
+		}
+		throw;
+	}
+	if (prompt_to_balance())
+	{
+		JEWEL_LOG_TRACE();
+		JEWEL_ASSERT (m_account->has_id());
+		return true;
+	}
+	else
+	{
+		m_account->ghostify();  // TODO LOW PRIORITY this is prob. unnecessary
+		JEWEL_LOG_TRACE();
+		return false;	
+	}
 }
 
 void
@@ -517,10 +530,17 @@ BudgetPanel::update_budgets_from_dialog()
 	JEWEL_ASSERT (m_account->has_id());
 	DatabaseTransaction transaction(database_connection());
 	update_budgets_from_dialog_without_saving();
-	for (Handle<BudgetItem> const& elem: m_budget_items) elem->save();
+	try
+	{
+		for (auto const& elem: m_budget_items) elem->save();
+	}
+	catch (std::exception&)
+	{
+		for (auto const& elem: m_budget_items) elem->ghostify();
+		transaction.cancel();
+		return;
+	}
 	transaction.commit();
-	JEWEL_LOG_TRACE();
-	JEWEL_ASSERT (m_account->has_id());
 	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
 	JEWEL_ASSERT (frame);
 	PersistentObjectEvent::fire
@@ -664,22 +684,22 @@ BudgetPanel::make_budget_items() const
 	return ret;
 }
 
-void
+bool
 BudgetPanel::prompt_to_balance()
 {
+	JEWEL_LOG_TRACE();
 	Handle<Account> const balancing_account =
 		database_connection().balancing_account();
 	Decimal const imbalance = balancing_account->budget();
 	Decimal const z = zero();
 	if (imbalance == z)
 	{
-		return;
+		return true;
 	}
 	if (!Account::no_user_pl_accounts_saved(database_connection()))
 	{
 		JEWEL_ASSERT (imbalance != z);
-		AccountType const account_type =
-			m_account->account_type();
+		auto const account_type = m_account->account_type();
 		optional<Handle<Account> > maybe_target_account;	
 		if
 		(	(account_type == AccountType::expense) ||
@@ -722,9 +742,21 @@ BudgetPanel::prompt_to_balance()
 			maybe_target_account,
 			database_connection()
 		);
-		balancing_dialog.ShowModal();
+		if (balancing_dialog.ShowModal() == bad_code())
+		{
+			wxMessageBox
+			(	"Cannot offset imbalance to the requested envelope. This "
+					"is likely due to the amount of the imbalance being "
+					"too large to process safely. Imbalance has been left"
+					" as is.",
+				"Message",
+				wxICON_EXCLAMATION | wxOK,
+				this
+			);
+			return false;
+		}
 	}
-	return;
+	return true;
 }
 
 BudgetPanel::SpecialFrequencyCtrl::SpecialFrequencyCtrl
@@ -803,6 +835,7 @@ BudgetPanel::BalancingDialog::BalancingDialog
 	m_imbalance(p_imbalance),
 	m_database_connection(p_database_connection)
 {
+	JEWEL_LOG_TRACE();
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);	
 
@@ -893,7 +926,17 @@ BudgetPanel::BalancingDialog::on_yes_button_click(wxCommandEvent& event)
 	JEWEL_ASSERT (m_account_ctrl);
 	Handle<Account> account = m_account_ctrl->account();
 	JEWEL_ASSERT (account->has_id());
-	update_budgets_from_dialog(account);
+	try
+	{
+		update_budgets_from_dialog(account);
+		JEWEL_LOG_TRACE();
+	}
+	catch (std::exception&)
+	{
+		EndModal(bad_code());
+		JEWEL_LOG_TRACE();
+		return;
+	}
 	EndModal(wxID_OK);
 	return;
 }
@@ -911,11 +954,10 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog
 (	Handle<Account> const& p_target
 )
 {
+	JEWEL_LOG_TRACE();
 	wxString const offsetting_item_description("Offsetting budget adjustment");
-	Frequency const target_frequency =
-		m_database_connection.budget_frequency();
-
-	Frame* const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
+	auto const target_frequency = m_database_connection.budget_frequency();
+	auto const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
 	JEWEL_ASSERT (frame);
 
 	// Copy first into a vector. (Uneasy about modifying database contents
@@ -924,6 +966,7 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog
 	(	BudgetItemTableIterator(m_database_connection),
 		(BudgetItemTableIterator())
 	);
+	JEWEL_LOG_TRACE();
 	for (Handle<BudgetItem> const& elem: vec)
 	{
 		// If there is already a "general offsetting BudgetItem" for
@@ -935,7 +978,9 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog
 		)
 		{
 			elem->set_amount(elem->amount() + m_imbalance);
+			JEWEL_LOG_TRACE();
 			elem->save();
+			JEWEL_LOG_TRACE();
 			JEWEL_ASSERT (budget_is_balanced());
 			
 			PersistentObjectEvent::fire
@@ -943,9 +988,11 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog
 				PHATBOOKS_BUDGET_EDITED_EVENT,
 				p_target->id()
 			);
+			JEWEL_LOG_TRACE();
 			return;
 		}
 	}
+	JEWEL_LOG_TRACE();
 
 	// There was not already a "general offsetting BudgetItem" for
 	// the target Account, so we create a new BudgetItem.
@@ -955,6 +1002,7 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog
 	adjusting_item->set_frequency(target_frequency);
 	adjusting_item->set_amount(m_imbalance);
 	adjusting_item->save();
+	JEWEL_LOG_TRACE();
 
 	PersistentObjectEvent::fire
 	(	frame,  // don't use "this", or event will be missed
@@ -962,7 +1010,7 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog
 		p_target->id()
 	);
 	JEWEL_ASSERT (budget_is_balanced());
-
+	JEWEL_LOG_TRACE();
 	return;
 }
 

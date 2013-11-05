@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #include "gui/account_list_ctrl.hpp"
 #include "app.hpp"
 #include "account.hpp"
@@ -104,6 +103,7 @@ AccountListCtrl::selected_accounts(set<sqloxx::Id>& out) const
 void
 AccountListCtrl::on_item_activated(wxListEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	sqloxx::Id const account_id = GetItemData(event.GetIndex());
 
 	// Fire an Account editing request. This will be handled higher up
@@ -113,6 +113,7 @@ AccountListCtrl::on_item_activated(wxListEvent& event)
 		PHATBOOKS_ACCOUNT_EDITING_EVENT,
 		account_id
 	);
+	JEWEL_LOG_TRACE();
 	return;
  }
 

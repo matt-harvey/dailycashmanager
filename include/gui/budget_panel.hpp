@@ -291,8 +291,10 @@ private:
 	/**
 	 * Prompts user to select another Account to which to balance
 	 * the budget; but does nothing if the budget now balances.
+	 *
+	 * @returns true if nothing went wrong.
 	 */
-	void prompt_to_balance();
+	bool prompt_to_balance();
 	
 	std::vector<BudgetItemComponent> m_budget_item_components;
 	std::vector<sqloxx::Handle<BudgetItem> > m_budget_items;

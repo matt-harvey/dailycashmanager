@@ -97,17 +97,6 @@ private:
 
 	AccountSuperType account_super_type() const;
 
-	/**
-	 * Updates m_account based on the data entered by the user.
-	 *
-	 * @param p_is_new_account should be passed true if and only if
-	 * m_account does not have an id.
-	 *
-	 * @returns true if and only if m_account is successfully updated
-	 * and saved.
-	 */
-	bool update_account_from_dialog(bool p_is_new_account);
-
 	int m_current_row;
 	wxGridBagSizer* m_top_sizer;
 	wxTextCtrl* m_name_ctrl;

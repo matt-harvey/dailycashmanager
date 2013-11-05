@@ -277,6 +277,7 @@ BudgetItem::ensure_pl_only_budget()
 void
 BudgetItem::do_save_existing()
 {
+	JEWEL_LOG_TRACE();
 	SQLStatement updater
 	(	database_connection(),
 		"update budget_items set "
@@ -290,12 +291,14 @@ BudgetItem::do_save_existing()
 	updater.bind(":budget_item_id", id());
 	process_saving_statement(updater);
 	BudgetAttorney::regenerate(database_connection());
+	JEWEL_LOG_TRACE();
 	return;
 }
 
 void
 BudgetItem::do_save_new()
 {
+	JEWEL_LOG_TRACE();
 	SQLStatement inserter
 	(	database_connection(),
 		"insert into budget_items"
@@ -317,6 +320,7 @@ BudgetItem::do_save_new()
 	);
 	process_saving_statement(inserter);
 	BudgetAttorney::regenerate(database_connection());
+	JEWEL_LOG_TRACE();
 	return;
 }
 			

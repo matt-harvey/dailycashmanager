@@ -494,9 +494,9 @@ void
 Frame::on_account_editing_requested(PersistentObjectEvent& event)
 {
 	JEWEL_LOG_TRACE();
-
 	Handle<Account> const account(m_database_connection, event.po_id());
 	edit_account(account);
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -704,7 +704,9 @@ Frame::edit_account(Handle<Account> const& p_account)
 		p_account,
 		super_type(p_account->account_type())
 	);
+	JEWEL_LOG_TRACE();
 	account_dialog.ShowModal();
+	JEWEL_LOG_TRACE();
 	return;
 }
 

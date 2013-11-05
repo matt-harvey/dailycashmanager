@@ -249,6 +249,7 @@ AmalgamatedBudget::instrument() const
 void
 AmalgamatedBudget::regenerate()
 {
+	JEWEL_LOG_TRACE();
 	// If amalgamated_budget_data has not yet been populated, then
 	// proceeding here would cause the program to crash, as
 	// we wouldn't be able to load the balancing account id, etc..
@@ -268,6 +269,7 @@ AmalgamatedBudget::regenerate()
 		regenerate_instrument();
 		statement.step_final();
 	}
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -342,14 +344,17 @@ AmalgamatedBudget::generate_map() const
 void
 AmalgamatedBudget::regenerate_map()
 {
+	JEWEL_LOG_TRACE();
 	load();
 	generate_map();
+	JEWEL_LOG_TRACE();
 	return;
 }
 
 void
 AmalgamatedBudget::regenerate_instrument()
 {
+	JEWEL_LOG_TRACE();
 	load();
 
 	Handle<DraftJournal> const fresh_journal(m_database_connection);
@@ -379,6 +384,7 @@ AmalgamatedBudget::regenerate_instrument()
 	m_instrument->mimic(*fresh_journal);
 	m_instrument->save();
 
+	JEWEL_LOG_TRACE();
 	return;
 }
 
