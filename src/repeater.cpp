@@ -443,22 +443,10 @@ Repeater::mimic(Repeater& rhs)
 
 // Implement free functions
 
-namespace
-{
-	bool is_earlier_than
-	(	Handle<OrdinaryJournal> const& lhs,
-		Handle<OrdinaryJournal> const& rhs
-	)
-	{
-		return lhs->date() < rhs->date();
-	}
-}  // End anonymous namespace
-
-
-list<Handle<OrdinaryJournal> >
+list<RepeaterFiringResult>
 update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 {
-	list<Handle<OrdinaryJournal> > auto_posted_journals;
+	list<RepeaterFiringResult> ret;
 	// Read into a vector first - uneasy about reading and writing
 	// at the same time.
 	RepeaterTableIterator const rtit(dbc);
@@ -468,7 +456,21 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 	{
 		while (repeater->next_date() <= d)
 		{
-			Handle<OrdinaryJournal> const oj = repeater->fire_next();
+			RepeaterFiringResult firing_result =
+			{	repeater->draft_journal()->name(),
+				repeater->next_date(),
+				false
+			};
+			Handle<OrdinaryJournal> oj(repeater->database_connection());
+			try
+			{
+				oj = repeater->fire_next();
+			}
+			catch (JournalOverflowException&)
+			{
+				ret.push_back(firing_result);
+				break;
+			}
 			// In the special case where oj is dbc.budget_instrument(),
 			// and is
 			// devoid of entries, firing it does not cause any
@@ -481,8 +483,10 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 #			endif
 			if (oj->has_id())
 			{
+				firing_result.successful = true;
+				JEWEL_ASSERT (firing_result.firing_date == oj->date());
+				ret.push_back(firing_result);
 				JEWEL_ASSERT (dj != bi || !dj->entries().empty());
-				auto_posted_journals.push_back(oj);
 			}
 			else
 			{
@@ -492,8 +496,8 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 			}
 		}
 	}
-	auto_posted_journals.sort(is_earlier_than);
-	return move(auto_posted_journals);
+	ret.sort();
+	return ret;
 }
 
 

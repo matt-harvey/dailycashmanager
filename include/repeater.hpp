@@ -28,6 +28,7 @@
 #include <sqloxx/handle.hpp>
 #include <sqloxx/id.hpp>
 #include <sqloxx/persistent_object.hpp>
+#include <wx/string.h>
 #include <memory>
 #include <list>
 #include <string>
@@ -211,23 +212,55 @@ private:
 	std::unique_ptr<RepeaterData> m_data;
 };
 
+/**
+ * Used for conveying information about the result of an attempt to update
+ * a single Repeater one time.
+ */
+struct RepeaterFiringResult
+{
+	/**
+	 * The name of the DraftJournal which the Repeater relates to.
+	 */
+	wxString draft_journal_name;
+
+	/**
+	 * The date on which the Repeater was fired (or, if unsuccessful, the
+	 * date on which it was supposed to fire).
+	 */
+	boost::gregorian::date firing_date;
+
+	/**
+	 * true if and only if the firing attempt was successful
+	 */
+	bool successful;
+};
+
+bool operator<
+(	RepeaterFiringResult const& lhs,
+	RepeaterFiringResult const& rhs
+);
+
 // Free functions
 
 /**
- * Bring Repeaters up to date (thereby posting auto posted journals),
- * returning a list containing the resulting
- * OrdinaryJournals, sorted by the order in which they have been
- * posted, from earliest to latest.
+ * Attempts to bring Repeaters up to date (thereby posting auto posted
+ * journals), returning a list of FiringResults, each of which conveys
+ * the result of a single firing attempt. The list is sorted by date of
+ * firing (or attempted firing).
  */
-std::list<sqloxx::Handle<OrdinaryJournal> >
-update_repeaters
+std::list<RepeaterFiringResult> update_repeaters
 (	PhatbooksDatabaseConnection& dbc,
 	boost::gregorian::date d = today()
 );
 
+// Implement inline functions
 
-
-
+inline
+bool
+operator<(RepeaterFiringResult const& lhs, RepeaterFiringResult const& rhs)
+{
+	return lhs.firing_date < rhs.firing_date;
+}
 
 }  // namespace phatbooks
 
