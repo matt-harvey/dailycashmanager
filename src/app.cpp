@@ -36,6 +36,7 @@
 #include <wx/cmdline.h>
 #include <wx/config.h>
 #include <wx/filedlg.h>
+#include <wx/filename.h>
 #include <wx/log.h>
 #include <wx/snglinst.h>
 #include <wx/string.h>
