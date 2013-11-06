@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #include "gui/frame.hpp"
 #include "account.hpp"
 #include "app.hpp"
@@ -55,7 +54,6 @@
 using sqloxx::Handle;
 using sqloxx::Id;
 using std::ostringstream;
-using std::remove_if;
 using std::stable_partition;
 using std::string;
 using std::vector;
@@ -709,7 +707,7 @@ Frame::report_repeater_firing_results
 	}
 	JEWEL_LOG_TRACE();
 	auto const end_all = p_results.end();
-	auto const end_normal = remove_if
+	auto const end_normal = stable_partition
 	(	p_results.begin(),
 		end_all,
 		[this](RepeaterFiringResult const& r)
@@ -718,7 +716,7 @@ Frame::report_repeater_firing_results
 			(	this->m_database_connection,
 				r.draft_journal_id
 			);
-			return dj == m_database_connection.budget_instrument();
+			return dj != m_database_connection.budget_instrument();
 		}
 	);
 	auto const end_successful = stable_partition
