@@ -223,8 +223,8 @@ Repeater::next_date(vector<gregorian::date>::size_type n)
 	Frequency const freq = value(m_data->frequency);
 
 	JEWEL_ASSERT
-	(	numeric_limits<decltype(freq.num_steps())>::max() <=
-		numeric_limits<Size>::max()
+	(	numeric_cast<Size>(numeric_limits<decltype(freq.num_steps())>::max())
+			<= numeric_limits<Size>::max()
 	);
 	// Due to preconditions when setting number of steps in Frequency, we
 	// know that
