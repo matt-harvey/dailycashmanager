@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_account_list_ctrl_hpp_4892309124065707
 #define GUARD_account_list_ctrl_hpp_4892309124065707
 

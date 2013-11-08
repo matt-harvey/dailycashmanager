@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #include "gui/transaction_ctrl.hpp"
 #include "account.hpp"
 #include "account_type.hpp"

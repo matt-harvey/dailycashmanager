@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_phatbooks_exceptions_hpp_9435394075436235
 #define GUARD_phatbooks_exceptions_hpp_9435394075436235
 

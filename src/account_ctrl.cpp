@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #include "gui/account_ctrl.hpp"
 #include "account.hpp"
 #include "account_table_iterator.hpp"
@@ -117,22 +116,36 @@ AccountCtrl::reset(Handle<Account> const& p_preserved_account)
 {
 	// TODO LOW PRIORITY Tidy this up a bit.
 	JEWEL_LOG_TRACE();
-	m_account_map.clear();
-	wxArrayString valid_account_names;
 	Handle<Account> const balancing_acct =
 		m_database_connection.balancing_account();
+	if (m_exclude_balancing_account && (p_preserved_account == balancing_acct))
+	{
+		JEWEL_THROW
+		(	InvalidAccountException,
+			"Attempted to set AccountCtrl to the balancing Account when this "
+				"AccountCtrl has been configured to exclude the balancing "
+				"account."
+		);
+	}
+	if
+	(	p_preserved_account &&
+		!supports_account_type(p_preserved_account->account_type())
+	)
+	{
+		JEWEL_THROW
+		(	InvalidAccountException,
+			"Attempted to set AccountCtrl to the an Account of an AccountType "
+				"that is not supported by the AccountCtrl."
+		);
+	}	
+	m_account_map.clear();
+	wxArrayString valid_account_names;
 	AccountTableIterator it(m_database_connection);
 	AccountTableIterator const end;
 	for ( ; it != end; ++it)
 	{
 		Handle<Account> const& acc = *it;
-		if
-		(	(	m_available_account_types.find(acc->account_type()) !=
-				m_available_account_types.end()
-			)	||
-			(	acc == p_preserved_account
-			)
-		)
+		if (supports_account_type(acc->account_type()))
 		{
 			if (m_exclude_balancing_account && (acc == balancing_acct))
 			{
@@ -152,6 +165,10 @@ AccountCtrl::reset(Handle<Account> const& p_preserved_account)
 				JEWEL_ASSERT (acc->has_id());
 				m_account_map[name] = acc->id();
 			}
+		}
+		else
+		{
+			JEWEL_ASSERT (acc != p_preserved_account);
 		}
 	}
 	if (m_account_map.empty())
@@ -180,17 +197,12 @@ AccountCtrl::set_account(Handle<Account> const& p_account)
 {
 	wxString const name = p_account->name();
 	JEWEL_LOG_VALUE(Log::info, name);
-	if (m_account_map.find(name) == m_account_map.end())
-	{
-		reset(p_account);
-		/*
-		ostringstream oss;
-		oss << "Account with name \"" << name << "\" is not supported by this "
-			<< "AccountCtrl.";
-		char const* msg = oss.str().c_str();
-		JEWEL_THROW(InvalidAccountException, msg);
-		*/
-	}
+	if (m_account_map.find(name) == m_account_map.end()) reset(p_account);
+	JEWEL_ASSERT
+	(	!m_exclude_balancing_account || 
+		(p_account != m_database_connection.balancing_account())
+	);
+	JEWEL_ASSERT (supports_account_type(p_account->account_type()));
 	StringSetValidator* const validator =
 		dynamic_cast<StringSetValidator*>(GetValidator());
 	JEWEL_ASSERT (validator);
@@ -243,6 +255,14 @@ AccountCtrl::on_kill_focus(wxFocusEvent& event)
 	GetParent()->TransferDataToWindow();
 	event.Skip();
 	return;
+}
+
+bool
+AccountCtrl::supports_account_type(AccountType p_account_type)
+{
+	return
+		m_available_account_types.find(p_account_type) !=
+		m_available_account_types.end();
 }
 
 void

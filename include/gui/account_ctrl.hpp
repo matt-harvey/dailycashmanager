@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_account_ctrl_hpp_7150714070140717
 #define GUARD_account_ctrl_hpp_7150714070140717
 
@@ -45,7 +44,6 @@ namespace gui
 {
 
 // end forward declarations
-
 
 /**
  * Widget by means of which the user is enabled to select an
@@ -98,7 +96,7 @@ public:
 	 * However, if p_exclude_balancing_account is \e true, then
 	 * the sqloxx::Handle<Account> returned by
 	 * <em>m_database_connection.balancing_account()</em> will \e not
-	 * appear in the Combobox, even if it is in the range provided.
+	 * appear in the Combobox, even if its AccountType is in the range provided.
 	 *
 	 * @throws InvalidAccountTypeException if p_account_types is empty.
 	 *
@@ -122,26 +120,44 @@ public:
 	/**
 	 * Sets displayed Account to p_account. If p_account is not already
 	 * available within the AccountCtrl, then this will add it to the
-	 * AccountCtrl. However if p_exclude_balancing_account was set
-	 * to \e true, and p_account is the balancing Account, then p_account will
-	 * never be added or shown regardless.
+	 * AccountCtrl (even if it is of Visibility::hidden). \e But note
+	 * the exceptions below.
+	 *
+	 * @throws InvalidAccountException if p_account is not of an
+	 * AccountType that is supported by this AccountCtrl, or if
+	 * p_preserved_account is the balancing Account and
+	 * p_exclude_balancing_account was set to \e true.
 	 */
 	void set_account(sqloxx::Handle<Account> const& p_account);
 
 	void update_for_new(sqloxx::Handle<Account> const& p_account);
 	void update_for_amended(sqloxx::Handle<Account> const& p_account);
 
+
 private:
 
 	void on_kill_focus(wxFocusEvent& event);
 
 	/**
+	 * @returns \e true if and only if p_account_type is supported by the
+	 * AccountCtrl.
+	 */
+	bool supports_account_type(AccountType p_account_type);
+
+	/**
 	 * Reset the available Accounts in the AccountCtrl, by rereading the Account
 	 * details from the database. If \e p_preserve_account is non-null, always
-	 * include and display this Account, even if it is of Visibility::hidden.
+	 * include and display this Account, even if it is of Visibility::hidden
+	 * (but see exceptions below).
+	 *
 	 * However, if p_preserved_account is the balancing Account, and
 	 * p_exclude_balancing_account was set to \e true, then it will always
 	 * be excluded regardless.
+	 *
+	 * @throws InvalidAccountException if p_preserve_account is not of an
+	 * AccountType that is supported by this AccountCtrl, or if
+	 * p_preserved_account is the balancing Account and
+	 * p_exclude_balancing_account was set to \e true.
 	 */
 	void reset
 	(	sqloxx::Handle<Account> const& p_preserve_account =
