@@ -69,9 +69,9 @@
 
 // TODO HIGH PRIORITY Create a better name for the application.
 
-// TODO HIGH PRIORITY Set the version number in a single location and find a
-// way to ensure this is reflected consistently everywhere it appears
-// (website, installer, licence text etc.).
+// TODO MEDIUM PRIORITY Find a better way to keep version number in sync
+// between its appearance in "CMakeLists.txt" and in "app.cpp" - and, if
+// applicable, the website and other documentation.
 
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.

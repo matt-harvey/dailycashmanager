@@ -214,10 +214,14 @@ if (WIN32)
 	set (CPACK_PACKAGE_VENDOR "${application_name}")
 	set (CPACK_PACKAGE_FILE_NAME "${application_name} setup")
 	set (CPACK_PACKAGE_INSTALL_DIRECTORY "${application_name}")
-	set (CPACK_PACKAGE_VERSION "1.0.0")
+
+	# NOTE These version numbers must be kept in sync with those appearing in
+	# "app.cpp" (App::version() function).
 	set (CPACK_PACKAGE_VERSION_MAJOR "1")
 	set (CPACK_PACKAGE_VERSION_MINOR "0")
 	set (CPACK_PACKAGE_VERSION_PATCH "0")
+	set (CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+
 	set (CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon.ico")
 	set (CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon.ico")
 	set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon.ico")

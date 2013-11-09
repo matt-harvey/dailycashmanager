@@ -154,6 +154,8 @@ App::application_name()
 wxString
 App::version()
 {
+	// NOTE This must be kept in sync with the version number
+	// in CMakeLists.txt.
 	return "1.0.0";
 }
 
