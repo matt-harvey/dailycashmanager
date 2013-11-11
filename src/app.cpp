@@ -33,6 +33,7 @@
 #include <jewel/log.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
+#include <jewel/version.hpp>
 #include <wx/cmdline.h>
 #include <wx/config.h>
 #include <wx/filedlg.h>
@@ -54,6 +55,7 @@ using boost::optional;
 using jewel::clear;
 using jewel::Log;
 using jewel::value;
+using jewel::Version;
 using std::cerr;
 using std::clog;
 using std::cout;
@@ -148,15 +150,17 @@ App::App():
 wxString
 App::application_name()
 {
-	return wxString("Phatbooks");
+	return PHATBOOKS_APPLICATION_NAME;
 }
 
-wxString
+Version
 App::version()
 {
-	// NOTE This must be kept in sync with the version number
-	// in CMakeLists.txt.
-	return "1.0.0";
+	return Version
+	(	PHATBOOKS_VERSION_MAJOR,
+		PHATBOOKS_VERSION_MINOR,
+		PHATBOOKS_VERSION_PATCH
+	);
 }
 
 wxString

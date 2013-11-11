@@ -1,11 +1,27 @@
 cmake_minimum_required (VERSION 2.6)
 
-project (phatbooks)
+set (application_name "Phatbooks")
 
-# add_definitions(-DPHATBOOKS_DISALLOW_DASH_FOR_ZERO)
-add_definitions(-DJEWEL_ENABLE_LOGGING
-			    -DJEWEL_ENABLE_ASSERTION_LOGGING
-				-DJEWEL_ENABLE_EXCEPTION_LOGGING)
+project (${application_name})
+
+set (phatbooks_version_major_aux 1)
+set (phatbooks_version_minor_aux 0)
+set (phatbooks_version_patch_aux 0)
+
+set (CPACK_PACKAGE_VERSION_MAJOR "${phatbooks_version_major_aux}")
+set (CPACK_PACKAGE_VERSION_MINOR "${phatbooks_version_minor_aux}")
+set (CPACK_PACKAGE_VERSION_PATCH "${phatbooks_version_patch_aux}")
+set (CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+
+add_definitions(
+	-DJEWEL_ENABLE_LOGGING
+	-DJEWEL_ENABLE_ASSERTION_LOGGING
+	-DJEWEL_ENABLE_EXCEPTION_LOGGING
+	-DPHATBOOKS_APPLICATION_NAME="${application_name}"
+	-DPHATBOOKS_VERSION_MAJOR=${phatbooks_version_major_aux}
+	-DPHATBOOKS_VERSION_MINOR=${phatbooks_version_minor_aux}
+	-DPHATBOOKS_VERSION_PATCH=${phatbooks_version_patch_aux}
+)
 
 if (WIN32)
 	include_directories (include
@@ -207,20 +223,12 @@ if (WIN32)
 
 	# On Windows we use CPack to create a graphical installer
 	# Do "make package" (or "mingw32-make package") to create the installer.
-	set (application_name "Phatbooks")
 	set (CPACK_NSIS_EXECUTABLES_DIRECTORY ".")  # Required to ensure that application properly launches after installing if that option is selected.
 	set (CPACK_GENERATOR NSIS)
 	set (CPACK_NSIS_PACKAGE_NAME "${application_name}")
 	set (CPACK_PACKAGE_VENDOR "${application_name}")
 	set (CPACK_PACKAGE_FILE_NAME "${application_name} setup")
 	set (CPACK_PACKAGE_INSTALL_DIRECTORY "${application_name}")
-
-	# NOTE These version numbers must be kept in sync with those appearing in
-	# "app.cpp" (App::version() function).
-	set (CPACK_PACKAGE_VERSION_MAJOR "1")
-	set (CPACK_PACKAGE_VERSION_MINOR "0")
-	set (CPACK_PACKAGE_VERSION_PATCH "0")
-	set (CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 
 	set (CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon.ico")
 	set (CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon.ico")

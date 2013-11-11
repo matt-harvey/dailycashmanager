@@ -24,6 +24,7 @@
 #include "gui/frame.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
+#include <jewel/version.hpp>
 #include <wx/app.h>
 #include <wx/config.h>
 #include <wx/intl.h>
@@ -58,9 +59,9 @@ public:
 	static wxString application_name();
 
 	/**
-	 * @returns a string indicating the version number.
+	 * @returns a Version struct indicating the version.
 	 */
-	static wxString version();
+	static jewel::Version version();
 
 	/**
 	 * @returns filename extension to be used with files
