@@ -24,7 +24,7 @@
 #include "gui/frame.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
-#include <jewel/version.hpp>
+#include <jewel/version_fwd.hpp>
 #include <wx/app.h>
 #include <wx/config.h>
 #include <wx/intl.h>
