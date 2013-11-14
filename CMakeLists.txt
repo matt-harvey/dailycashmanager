@@ -1,27 +1,77 @@
-cmake_minimum_required (VERSION 2.6)
+###
+# Copyright 2012, 2013 Matthew Harvey
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+###
+
+# Preliminaries
+
+cmake_minimum_required (VERSION 2.8)
+
+# Set project and version
 
 set (application_name "Phatbooks")
-
 project (${application_name})
+set (version_major 1)
+set (version_minor 0)
+set (version_patch 0)
 
-set (phatbooks_version_major_aux 1)
-set (phatbooks_version_minor_aux 0)
-set (phatbooks_version_patch_aux 0)
+# Custom configuration options
 
-set (CPACK_PACKAGE_VERSION_MAJOR "${phatbooks_version_major_aux}")
-set (CPACK_PACKAGE_VERSION_MINOR "${phatbooks_version_minor_aux}")
-set (CPACK_PACKAGE_VERSION_PATCH "${phatbooks_version_patch_aux}")
-set (CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
-
-add_definitions(
-	-DJEWEL_ENABLE_LOGGING
-	-DJEWEL_ENABLE_ASSERTION_LOGGING
-	-DJEWEL_ENABLE_EXCEPTION_LOGGING
-	-DPHATBOOKS_APPLICATION_NAME="${application_name}"
-	-DPHATBOOKS_VERSION_MAJOR=${phatbooks_version_major_aux}
-	-DPHATBOOKS_VERSION_MINOR=${phatbooks_version_minor_aux}
-	-DPHATBOOKS_VERSION_PATCH=${phatbooks_version_patch_aux}
+option (
+	ENABLE_LOGGING
+	"Enable logging (ON/OFF)?"
+	ON
 )
+option (
+	ENABLE_ASSERTION_LOGGING
+	"Enable logging of assertion failures (ON/OFF)?"
+	ON
+)
+option (
+	ENABLE_EXCEPTION_LOGGING
+	"Enable logging of thrown exceptions (ON/OFF)?"
+	ON
+)
+
+# Definitions to be passed to the compiler
+
+add_definitions (
+	-DPHATBOOKS_APPLICATION_NAME="${application_name}"
+	-DPHATBOOKS_VERSION_MAJOR=${version_major}
+	-DPHATBOOKS_VERSION_MINOR=${version_minor}
+	-DPHATBOOKS_VERSION_PATCH=${version_patch}
+)
+if (ENABLE_LOGGING)
+	add_definitions (-DJEWEL_ENABLE_LOGGING)
+endif ()
+if (ENABLE_ASSERTION_LOGGING)
+	add_definitions (-DJEWEL_ENABLE_ASSERTION_LOGGING)
+endif ()
+if (ENABLE_EXCEPTION_LOGGING)
+	add_definitions (-DJEWEL_ENABLE_EXCEPTION_LOGGING)
+endif ()
+if (CMAKE_COMPILER_IS_GNUCXX)
+	add_definitions (-std=c++0x)
+endif ()
+
+### Reworking is up to here ###
+
+
+set (CPACK_PACKAGE_VERSION_MAJOR "${version_major}")
+set (CPACK_PACKAGE_VERSION_MINOR "${version_minor}")
+set (CPACK_PACKAGE_VERSION_PATCH "${version_patch}")
+set (CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 
 if (WIN32)
 	include_directories (include
