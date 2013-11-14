@@ -94,6 +94,15 @@ ErrorReporter::report(std::exception* p_exception) const
 		JEWEL_LOG_MESSAGE(Log::error, "Unknown exception.");
 		oss << "Unknown exception" << endl;
 	}
+	if (m_backup_db_file_location && m_db_file_location)
+	{
+		oss << "\nFor your information a backup copy of your file \""
+		    << m_db_file_location->filename()
+			<< "\" was taken at the beginning of the current session, "
+			<< "and has now been saved to the following location:\n"
+			<< *m_backup_db_file_location
+			<< endl;
+	}	
 	if (m_log_file_location)
 	{
 		filesystem::path log_filepath = *m_log_file_location;	
@@ -131,19 +140,13 @@ ErrorReporter::report(std::exception* p_exception) const
 		// filepath.
 		oss << "\n\nA detailed session log has been saved here:\n"
 		    << log_filepath
-		    << "\n\nIt is recommended to send a copy of this file to the "
+		    << "\n\nIt is recommended to send a copy of the log file to the "
 		    << "application developer for troubleshooting.\n"
 		    << endl;
 
 	}
-	// TODO HIGH PRIORITY Enable this user to click "Yes" to "take action", or
-	// "No" to ignore. "Taking action" could mean either (a) saving a copy
-	// of the error log for later manual emailing to the developer, or
-	// (b) automatically sending the error log to some server via http
-	// (or something). Also,
-	// tell the user about the existence of the automatically-generated
-	// backup file (after first verifying its existence), perhaps giving them
-	// the option to revert to this earlier file at the click of a mouse.
+	// TODO MEDIUM PRIORITY Enable this user to send a copy
+	// of the error log to the developer at the click of a mouse.
 
 	// NOTE wxLogError doesn't fit the message.
 	wxMessageBox(std8_to_wx(oss.str()), "Error", wxICON_EXCLAMATION | wxOK);
