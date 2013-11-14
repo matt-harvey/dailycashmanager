@@ -94,9 +94,9 @@ ErrorReporter::report(std::exception* p_exception) const
 	}
 	if (m_backup_db_file_location && m_db_file_location)
 	{
-		oss << "\nFor your information a backup copy of your file \""
+		oss << "\nFor your information a backup copy of your file "
 		    << m_db_file_location->filename()
-			<< "\" was taken at the beginning of the current session, "
+			<< " was taken at the beginning of the current session, "
 			<< "and has now been saved to the following location:\n"
 			<< *m_backup_db_file_location
 			<< endl;
