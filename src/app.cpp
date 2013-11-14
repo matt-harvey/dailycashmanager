@@ -17,8 +17,10 @@
  */
 
 #include "app.hpp"
+#include "backup.hpp"
 #include "date.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "repeater.hpp"
 #include "string_conv.hpp"
 #include "gui/error_reporter.hpp"
@@ -48,6 +50,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <stdexcept>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -57,6 +60,7 @@ using jewel::clear;
 using jewel::Log;
 using jewel::value;
 using jewel::Version;
+using std::bad_alloc;
 using std::cerr;
 using std::clog;
 using std::cout;
@@ -263,52 +267,25 @@ App::make_backup(filesystem::path const& p_original_filepath)
 	// files and/or revert to an old backup file, as appropriate. There is no
 	// point having backup files if all they do is accumulate unnoticed by
 	// the user.
-
-	// TODO MEDIUM PRIORITY Factor out the "unique filename creation" code that
-	// is duplicated between here and ErrorReporter (there we use it to create
-	// a uniquely-named copy of the logfile.
-
 	JEWEL_LOG_TRACE();
-	string const original_filepath_str = p_original_filepath.string();
-	auto it = original_filepath_str.end();
-	while (*it != '.')
+	try
 	{
-		JEWEL_HARD_ASSERT (it != original_filepath_str.begin());
-		--it;
+		m_backup_filepath = phatbooks::make_backup
+		(	filesystem::absolute(p_original_filepath),
+			filesystem::absolute(p_original_filepath.parent_path())
+		);
 	}
-	JEWEL_ASSERT (*it == '.');
-	filesystem::path backup_filepath("");
-	for (unsigned short i = 1; i != USHRT_MAX; ++i)
+	catch (UniqueNameException&)
 	{
-		JEWEL_LOG_TRACE();
-		ostringstream oss;
-		oss << string(original_filepath_str.begin(), it);
-		oss << "-backup-";
-		oss << posix_time::to_iso_string(now());
-		if (i > 1) oss << "-" << i;
-		oss << string(it, original_filepath_str.end());
-		backup_filepath = filesystem::path(oss.str());
-		if (!filesystem::exists(backup_filepath))
-		{
-			break;
-		}
+		// do nothing
 	}
-	if (!backup_filepath.string().empty())
+	catch (filesystem::filesystem_error&)
 	{
-		m_backup_filepath = backup_filepath;
-		try
-		{
-			filesystem::copy(p_original_filepath, backup_filepath);
-		}
-		catch (...)
-		{
-			clear(m_backup_filepath);
-			throw;
-		}
+		// do nothing
 	}
-	else
+	catch (bad_alloc&)
 	{
-		JEWEL_LOG_TRACE();
+		// do nothing
 	}
 	JEWEL_LOG_TRACE();
 	return;

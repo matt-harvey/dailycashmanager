@@ -18,7 +18,9 @@
 
 #include "gui/error_reporter.hpp"
 #include "app.hpp"
+#include "backup.hpp"
 #include "date.hpp"
+#include "phatbooks_exceptions.hpp"
 #include "string_conv.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -99,50 +101,30 @@ ErrorReporter::report(std::exception* p_exception) const
 		{
 			// Take a copy of the log file named after the current date and
 			// time and save in the same directory of the database file.
-			// (We do some gymnastics here to ensure we can't clobber an
-			// existing file.)
-			auto const db_file_directory = m_db_file_location->parent_path();
-			auto const log_file_name = m_log_file_location->filename();
-			string const log_file_name_str = log_file_name.string();
-			auto it = log_file_name_str.end();
-			while (*it != '.')
+			try
 			{
-				JEWEL_HARD_ASSERT (it != log_file_name_str.begin());
-				--it;
+				JEWEL_ASSERT
+				(	filesystem::absolute(log_filepath) ==
+					log_filepath
+				);
+				log_filepath = make_backup
+				(	log_filepath,
+					m_db_file_location->parent_path()
+				);
 			}
-			for (unsigned short i = 1; i != USHRT_MAX; ++i)
+			catch (UniqueNameException&)
 			{
-				ostringstream oss2;
-				oss2 << string(log_file_name_str.begin(), it)
-					<< "-"
-					<< posix_time::to_iso_string(now());
-				if (i > 1) oss2 << "-" << i;
-				oss2 << string(it, log_file_name_str.end());
-				filesystem::path const saved_log_filename(oss2.str());
-				filesystem::path const saved_log_filepath =
-					db_file_directory / saved_log_filename;
-				if (!filesystem::exists(saved_log_filepath))
-				{
-					JEWEL_ASSERT (m_log_file_location);
-					try
-					{
-						filesystem::copy
-						(	*m_log_file_location,
-							saved_log_filepath
-						);
-					}
-					catch (filesystem::filesystem_error&)
-					{
-						break;
-					}
-					catch (bad_alloc&)
-					{
-						break;
-					}
-					log_filepath = saved_log_filepath;
-					break;
-				}
+				// do nothing
 			}
+			catch (filesystem::filesystem_error&)
+			{
+				// do nothing
+			}
+			catch (bad_alloc&)
+			{
+				// do nothing
+			}
+			JEWEL_LOG_TRACE();
 		}
 		// log_filepath now corresponds to the copy of the log that we just
 		// made, or, if we couldn't make that copy, to the original logfile

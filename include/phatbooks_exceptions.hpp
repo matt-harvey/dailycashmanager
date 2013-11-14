@@ -218,6 +218,11 @@ JEWEL_DERIVED_EXCEPTION(InvalidDateException, PhatbooksException);
  */
 JEWEL_DERIVED_EXCEPTION(InvalidTransactionTypeException, PhatbooksException);
 
+/**
+ * Exception to be thrown when a unique name cannot be found for some operation
+ * which requires a unique name to be generated in order to succeed.
+ */
+JEWEL_DERIVED_EXCEPTION(UniqueNameException, PhatbooksException);
 
 }  // namespace phatbooks
 

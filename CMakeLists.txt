@@ -127,6 +127,7 @@ set (common_sources
 	 src/account_type.cpp
 	 src/app.cpp
 	 src/augmented_account.cpp
+	 src/backup.cpp
 	 src/balance_cache.cpp
 	 src/make_default_accounts.cpp
 	 src/amalgamated_budget.cpp
