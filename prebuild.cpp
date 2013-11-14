@@ -69,12 +69,28 @@ int main(int argc, char** argv)
 		cerr << "Error parsing CSV file in prebuild: too few rows." << endl;
 		return 1;
 	}
-	JEWEL_HARD_ASSERT(line == "Currency,Symbol,Precision");
+	if (line != "Currency,Symbol,Precision")
+	{
+		cerr << "Unexpected input from CSV file in prebuild: unexpected "
+		     << "column headers"
+			 << endl;
+		return 1;
+	}
 
 	// generate C++ code on the basis of CSV contents
 	for (string line; getline(infile, line); )
 	{
 		algorithm::split(row, line, [](char c){ return c == ','; });
+		string::size_type const expected_num_columns = 3;
+		if (line.size() != expected_num_columns)
+		{
+			cerr << "Unexpected input from CSV file in prebuild: unexpected "
+			     << "number of columns in record ("
+				 << "expected " << expected_num_columns
+				 << " but found" << line.size() ")."
+				 << endl;
+			return 1;
+		}
 		for (auto& cell: row) algorithm::trim(cell);
 		string const& name = row.at(0);
 		string const& abbreviation = row.at(1);
@@ -85,5 +101,6 @@ int main(int argc, char** argv)
 				<< precision
 				<< "));";
 	}
+
 	return 0;
 }
