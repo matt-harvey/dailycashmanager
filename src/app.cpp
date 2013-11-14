@@ -446,8 +446,15 @@ bool App::OnInit()
 		(	m_database_connection->filepath() ==
 			*m_database_filepath
 		);
+		JEWEL_ASSERT (filesystem::exists(*m_database_filepath));
 		set_last_opened_file(*m_database_filepath);
+		m_error_reporter.set_db_file_location(m_database_filepath->string());
 		make_backup(*m_database_filepath);
+		if (m_backup_filepath)
+		{
+			m_error_reporter.
+				set_backup_db_file_location(m_backup_filepath->string());
+		}
 		database_connection().set_caching_level(5);
 		vector<RepeaterFiringResult> const repeater_firing_results =
 			update_repeaters(database_connection());

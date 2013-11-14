@@ -21,6 +21,7 @@
 
 #include "phatbooks_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/optional.hpp>
 #include <wx/datetime.h>
 #include <wx/intl.h>
@@ -100,6 +101,12 @@ boost_date_from_julian_int(DateRep julian_int);
  */
 boost::gregorian::date
 today();
+
+/**
+ * @returns current local time.
+ */
+boost::posix_time::ptime
+now();
 
 /**
  * @returns a wxString representation of the p_date, formatted according

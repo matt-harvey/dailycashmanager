@@ -19,6 +19,7 @@
 #include "date.hpp"
 #include "date_parser.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
@@ -30,10 +31,10 @@ using boost::optional;
 using std::numeric_limits;
 
 namespace gregorian = boost::gregorian;
+namespace posix_time = boost::posix_time;
 
 namespace phatbooks
 {
-
 
 // Start anonymous namespace
 namespace
@@ -125,6 +126,12 @@ gregorian::date
 today()
 {
 	return gregorian::day_clock::local_day();
+}
+
+posix_time::ptime
+now()
+{
+	return posix_time::second_clock::local_time();
 }
 
 namespace

@@ -44,6 +44,8 @@ namespace gui
 
 ErrorReporter::ErrorReporter()
 {
+	JEWEL_ASSERT (m_db_file_location.empty());
+	JEWEL_ASSERT (m_backup_db_file_location.empty());
 	JEWEL_ASSERT (m_log_file_location.empty());
 }
 
@@ -90,7 +92,7 @@ ErrorReporter::report(std::exception* p_exception) const
 		oss << "A detailed session log is located in the following file:\n"
 		    << m_log_file_location
 		    << "\n\nIt is recommended to send a copy of the log file to the "
-		    << "application developer for troubleshooting."
+		    << "application developer for troubleshooting.\n"
 			<< endl;
 	}
 	// TODO HIGH PRIORITY Enable this user to click "Yes" to "take action", or
@@ -103,6 +105,20 @@ ErrorReporter::report(std::exception* p_exception) const
 	// the option to revert to this earlier file at the click of a mouse.
 	wxLogError(std8_to_wx(oss.str()));
 	return;
+}
+
+void
+ErrorReporter::set_db_file_location(string const& p_db_file_location)
+{
+	// TODO
+}
+
+void
+ErrorReporter::set_backup_db_file_location
+(	string const& p_backup_db_file_location
+)
+{
+	// TODO
 }
 
 void
