@@ -300,7 +300,7 @@ App::make_backup(filesystem::path const& p_original_filepath)
 		{
 			filesystem::copy(p_original_filepath, backup_filepath);
 		}
-		catch (...)  // TODO MEDIUM PRIORITY Make more specific
+		catch (...)
 		{
 			clear(m_backup_filepath);
 			throw;

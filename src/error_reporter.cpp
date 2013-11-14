@@ -35,6 +35,7 @@
 
 using boost::optional;
 using jewel::Log;
+using std::bad_alloc;
 using std::endl;
 using std::ostringstream;
 using std::string;
@@ -130,7 +131,11 @@ ErrorReporter::report(std::exception* p_exception) const
 							saved_log_filepath
 						);
 					}
-					catch (...)  // TODO MEDIUM PRIORITY Make more specific
+					catch (filesystem::filesystem_error&)
+					{
+						break;
+					}
+					catch (bad_alloc&)
 					{
 						break;
 					}
