@@ -107,7 +107,7 @@ BalanceSheetReport::refresh_map()
 		{
 			Handle<Account> const& account = *atit;
 			if
-			(	super_type(account->account_type()) ==
+			(	account->account_super_type() ==
 				AccountSuperType::balance_sheet
 			)
 			{
@@ -129,8 +129,7 @@ BalanceSheetReport::refresh_map()
 	for ( ; it != end; ++it)
 	{
 		Handle<Account> const account = (*it)->account();
-		AccountSuperType const s_type =
-			super_type(account->account_type());
+		AccountSuperType const s_type = account->account_super_type();
 		if (s_type != AccountSuperType::balance_sheet)
 		{
 			continue;

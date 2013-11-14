@@ -59,7 +59,6 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-
 namespace phatbooks
 {
 
@@ -84,13 +83,13 @@ namespace
 		}
 	}
 
-typedef
-	PhatbooksDatabaseConnection::BalanceCacheAttorney
-	BalanceCacheAttorney;
+	typedef
+		PhatbooksDatabaseConnection::BalanceCacheAttorney
+		BalanceCacheAttorney;
 
-typedef
-	PhatbooksDatabaseConnection::BudgetAttorney
-	BudgetAttorney;
+	typedef
+		PhatbooksDatabaseConnection::BudgetAttorney
+		BudgetAttorney;
 
 }  // end anonymous namespace
 
@@ -268,8 +267,7 @@ Account::no_user_pl_accounts_saved
 		p_database_connection.balancing_account();
 	while (statement.step())
 	{
-		AccountType const atype =
-			static_cast<AccountType>(statement.extract<int>(1));
+		auto const atype = static_cast<AccountType>(statement.extract<int>(1));
 		if (super_type(atype) == AccountSuperType::pl)
 		{
 			Handle<Account> const account
@@ -368,10 +366,7 @@ Decimal
 Account::budget()
 {
 	load();
-	return BudgetAttorney::budget
-	(	database_connection(),
-		id()
-	);
+	return BudgetAttorney::budget(database_connection(), id());
 }
 
 vector<Handle<BudgetItem> >
@@ -626,9 +621,8 @@ favourite_accounts(PhatbooksDatabaseConnection& p_database_connection)
 		(	p_database_connection,
 			account_map_elem.first
 		);
-		size_t const count = account_map_elem.second;
-		AccountSuperType const stype =
-			super_type(account->account_type());
+		auto const count = account_map_elem.second;
+		auto const stype = account->account_super_type();
 		if
 		(	(	(account_map[account->id()] >= max_counts[stype]) ||
 				(ret[stype] == balancing_acct->id())

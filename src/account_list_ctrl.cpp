@@ -151,7 +151,7 @@ AccountListCtrl::update()
 	{
 		Handle<Account> const& account = *it;
 		if
-		(	(super_type(account->account_type()) == m_account_super_type) &&
+		(	(account->account_super_type() == m_account_super_type) &&
 			(m_show_hidden || (account->visibility() == Visibility::visible))
 		)	
 		{

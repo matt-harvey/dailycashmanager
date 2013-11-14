@@ -21,7 +21,6 @@ namespace phatbooks
 {
 
 enum class AccountType: unsigned char;
-
 enum class AccountSuperType: unsigned char;
 
 }  // namespace phatbooks

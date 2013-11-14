@@ -37,7 +37,8 @@ namespace phatbooks
 filesystem::path
 make_backup
 (	filesystem::path const& p_original,
-	filesystem::path const& p_directory
+	filesystem::path const& p_directory,
+	string const& p_infix
 )
 {
 	JEWEL_LOG_TRACE();
@@ -64,7 +65,8 @@ make_backup
 	{
 		ostringstream oss;
 		oss << string(begin, it)
-			<< "-backup-"
+			<< p_infix
+			<< "-"
 			<< posix_time::to_iso_string(now());
 		if (i > 1) oss << "-" << i;
 		if (it != end) oss << string(it, end);

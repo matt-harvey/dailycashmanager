@@ -40,7 +40,6 @@ enum class AccountType: unsigned char
 	pure_envelope,
 };
 
-
 /**
  * Each AccountType belongs to a certain AccountSuperType.
  */
@@ -49,7 +48,6 @@ enum class AccountSuperType: unsigned char
 	balance_sheet,
 	pl  			// Profit and loss
 };
-
 
 AccountSuperType
 super_type(AccountType p_account_type);
@@ -76,10 +74,6 @@ account_type_to_string(AccountType p_account_type);
 AccountType
 string_to_account_type(wxString const& p_string);
 
-
-
 }  // namespace phatbooks
 
 #endif  // GUARD_account_type_hpp_5090496337549061
-
-

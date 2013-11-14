@@ -18,6 +18,7 @@
 #define GUARD_backup_hpp_7859126994320716
 
 #include <boost/filesystem.hpp>
+#include <string>
 
 namespace phatbooks
 {
@@ -28,9 +29,9 @@ namespace phatbooks
  * examples:
  *
  * If \e p_original is "something.xyz", and the backup was made at 1:05pm, local
- * time, on 10 May 2016, then the backup will be named
- * "something-backup-20130510T1305.xyz". If there is already a file with this
- * name at the given location, then it will be named
+ * time, on 10 May 2016, and \e p_infix is passed "-backup", then the backup
+ * will be named "something-backup-20130510T1305.xyz". If there is already a
+ * file with this name at the given location, then it will be named
  * "something-backup-20130510T1305-2.xyz". If there is already a file at \e this
  * location, then it will be named "something-backup-20130510-3.xyz". Etc.
  * The final number (e.g. "-3") that is appended to avoid duplicates, will never
@@ -54,7 +55,8 @@ namespace phatbooks
  */
 boost::filesystem::path make_backup
 (	boost::filesystem::path const& p_original,
-	boost::filesystem::path const& p_directory
+	boost::filesystem::path const& p_directory,
+	std::string const& p_infix = std::string()
 );
 
 }  // namespace phatbooks

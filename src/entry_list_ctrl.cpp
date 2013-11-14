@@ -105,7 +105,7 @@ EntryListCtrl::create_actual_ordinary_entry_list
 )
 {
 	EntryListCtrl* ret = 0;
-	switch (super_type(p_account->account_type()))
+	switch (p_account->account_super_type())
 	{
 	case AccountSuperType::balance_sheet:
 		ret = new BSAccountEntryListCtrl
@@ -143,7 +143,7 @@ EntryListCtrl::create_reconciliation_entry_list
 )
 {
 	JEWEL_ASSERT
-	(	super_type(p_account->account_type()) ==
+	(	p_account->account_super_type() ==
 		AccountSuperType::balance_sheet
 	);
 	ReconciliationEntryListCtrl* ret = new ReconciliationEntryListCtrl

@@ -31,7 +31,6 @@ using std::vector;
 namespace phatbooks
 {
 
-
 AccountSuperType
 super_type(AccountType p_account_type)
 {
@@ -130,14 +129,12 @@ account_type_names()
 	return ret;
 }
 
-
 wxString
 account_type_to_string(AccountType p_account_type)
 {
 	size_t const index = static_cast<size_t>(p_account_type) - 1;
 	return account_type_names()[index];
 }
-
 
 AccountType
 string_to_account_type(wxString const& p_string)
@@ -148,15 +145,14 @@ string_to_account_type(wxString const& p_string)
 	{
 		vector<wxString> const names = account_type_names();
 		int i = 1;
-		for (wxString const& name: names)
+		for (auto const& name: names)
 		{
 			dict[name] = static_cast<AccountType>(i);
 			++i;
 		}
 		calculated_already = true;
 	}
-	map<wxString, AccountType>::const_iterator jt =
-		dict.find(p_string);
+	auto const jt = dict.find(p_string);
 	if (jt == dict.end())
 	{
 		JEWEL_THROW
@@ -167,6 +163,5 @@ string_to_account_type(wxString const& p_string)
 	JEWEL_ASSERT (jt != dict.end());
 	return jt->second;
 }
-
 
 }  // namespace phatbooks

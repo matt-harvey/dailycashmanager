@@ -150,7 +150,7 @@ AccountDialog::AccountDialog
 
 	if
 	(	m_account->has_id() &&
-		(super_type(m_account->account_type()) != p_account_super_type)
+		(m_account->account_super_type() != p_account_super_type)
 	)
 	{
 		JEWEL_THROW
@@ -527,7 +527,7 @@ AccountDialog::on_ok_button_click(wxCommandEvent& event)
 	PersistentObjectEvent::fire(frame, event_type, m_account->id());
 	JEWEL_LOG_TRACE();
 	Decimal opening_amount = m_opening_amount_ctrl->amount();
-	if (super_type(m_account->account_type()) == AccountSuperType::pl)
+	if (m_account->account_super_type() == AccountSuperType::pl)
 	{
 		// TODO MEDIUM PRIORITY Handle very small possibility of overflow
 		// here (currently it would just throw an exception and crash).

@@ -266,7 +266,8 @@ App::make_backup(filesystem::path const& p_original_filepath)
 	{
 		m_backup_filepath = phatbooks::make_backup
 		(	filesystem::absolute(p_original_filepath),
-			filesystem::absolute(p_original_filepath.parent_path())
+			filesystem::absolute(p_original_filepath.parent_path()),
+			"-backup"
 		);
 	}
 	catch (UniqueNameException&)

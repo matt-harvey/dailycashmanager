@@ -557,7 +557,7 @@ void
 TopPanel::update_for_amended_budget(Handle<Account> const& p_account)
 {
 	(void)p_account;  // Silence compiler re. unused parameter.
-	JEWEL_ASSERT (super_type(p_account->account_type()) == AccountSuperType::pl);
+	JEWEL_ASSERT (p_account->account_super_type() == AccountSuperType::pl);
 	JEWEL_ASSERT (m_pl_account_list);
 	JEWEL_ASSERT (m_report_panel);
 	m_pl_account_list->update();

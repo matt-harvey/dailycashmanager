@@ -375,7 +375,7 @@ Frame::on_menu_edit_bs_account(wxCommandEvent& event)
 	JEWEL_ASSERT (accounts.size() >= 1);
 	Handle<Account> account = accounts[0];
 	JEWEL_ASSERT
-	(	super_type(account->account_type()) ==
+	(	account->account_super_type() ==
 		AccountSuperType::balance_sheet
 	);
 	edit_account(account);
@@ -403,10 +403,7 @@ Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 	}
 	JEWEL_ASSERT (accounts.size() >= 1);
 	Handle<Account> const account = accounts[0];
-	JEWEL_ASSERT
-	(	super_type(account->account_type()) ==
-		AccountSuperType::pl
-	);
+	JEWEL_ASSERT (account->account_super_type() == AccountSuperType::pl);
 	edit_account(account);
 	return;
 }
@@ -836,7 +833,7 @@ Frame::edit_account(Handle<Account> const& p_account)
 	AccountDialog account_dialog
 	(	this,
 		p_account,
-		super_type(p_account->account_type())
+		p_account->account_super_type()
 	);
 	JEWEL_LOG_TRACE();
 	account_dialog.ShowModal();

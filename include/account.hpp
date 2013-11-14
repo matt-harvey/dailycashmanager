@@ -307,8 +307,6 @@ wxString account_concepts_phrase
 std::map<AccountSuperType, sqloxx::Id>
 favourite_accounts(PhatbooksDatabaseConnection& p_database_connection);
 
-
 }  // namespace phatbooks
-
 
 #endif  // GUARD_account_hpp_5971945187063862
