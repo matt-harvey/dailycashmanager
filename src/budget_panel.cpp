@@ -52,6 +52,7 @@
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
+#include <wx/msgdlg.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/string.h>

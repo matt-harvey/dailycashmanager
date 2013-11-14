@@ -26,6 +26,7 @@
 #include "gui/locale.hpp"
 #include "gui/setup_wizard.hpp"
 #include "gui/welcome_dialog.hpp"
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
@@ -66,6 +67,7 @@ using std::string;
 using std::unique_ptr;
 using std::vector;
 namespace filesystem = boost::filesystem;
+namespace posix_time = boost::posix_time;
 
 namespace phatbooks
 {
@@ -224,7 +226,8 @@ App::configure_logging()
 	string const log_path =
 		log_dir + wx_to_std8(App::application_name()) + ".log";
 	Log::set_filepath(log_path);
-	m_error_reporter.set_log_file_location(log_path);
+	m_error_reporter.
+		set_log_file_location(filesystem::path(log_path));
 	return;
 }
 
@@ -261,6 +264,10 @@ App::make_backup(filesystem::path const& p_original_filepath)
 	// point having backup files if all they do is accumulate unnoticed by
 	// the user.
 
+	// TODO MEDIUM PRIORITY Factor out the "unique filename creation" code that
+	// is duplicated between here and ErrorReporter (there we use it to create
+	// a uniquely-named copy of the logfile.
+
 	JEWEL_LOG_TRACE();
 	string const original_filepath_str = p_original_filepath.string();
 	auto it = original_filepath_str.end();
@@ -271,37 +278,29 @@ App::make_backup(filesystem::path const& p_original_filepath)
 	}
 	JEWEL_ASSERT (*it == '.');
 	filesystem::path backup_filepath("");
-	JEWEL_LOG_TRACE();
 	for (unsigned short i = 1; i != USHRT_MAX; ++i)
 	{
 		JEWEL_LOG_TRACE();
 		ostringstream oss;
-		JEWEL_LOG_TRACE();
 		oss << string(original_filepath_str.begin(), it);
-		JEWEL_LOG_TRACE();
-		oss << "-backup";
-		JEWEL_LOG_TRACE();
+		oss << "-backup-";
+		oss << posix_time::to_iso_string(now());
 		if (i > 1) oss << "-" << i;
-		JEWEL_LOG_TRACE();
 		oss << string(it, original_filepath_str.end());
-		JEWEL_LOG_TRACE();
 		backup_filepath = filesystem::path(oss.str());
-		JEWEL_LOG_TRACE();
 		if (!filesystem::exists(backup_filepath))
 		{
-			JEWEL_LOG_TRACE();
 			break;
 		}
 	}
 	if (!backup_filepath.string().empty())
 	{
-		JEWEL_LOG_TRACE();
 		m_backup_filepath = backup_filepath;
 		try
 		{
 			filesystem::copy(p_original_filepath, backup_filepath);
 		}
-		catch (...)
+		catch (...)  // TODO MEDIUM PRIORITY Make more specific
 		{
 			clear(m_backup_filepath);
 			throw;
@@ -448,12 +447,11 @@ bool App::OnInit()
 		);
 		JEWEL_ASSERT (filesystem::exists(*m_database_filepath));
 		set_last_opened_file(*m_database_filepath);
-		m_error_reporter.set_db_file_location(m_database_filepath->string());
+		m_error_reporter.set_db_file_location(*m_database_filepath);
 		make_backup(*m_database_filepath);
 		if (m_backup_filepath)
 		{
-			m_error_reporter.
-				set_backup_db_file_location(m_backup_filepath->string());
+			m_error_reporter.set_backup_db_file_location(*m_backup_filepath);
 		}
 		database_connection().set_caching_level(5);
 		vector<RepeaterFiringResult> const repeater_firing_results =

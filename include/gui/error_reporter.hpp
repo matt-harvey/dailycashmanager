@@ -19,8 +19,9 @@
 #ifndef GUARD_error_reporter_hpp_24171430908223349
 #define GUARD_error_reporter_hpp_24171430908223349
 
+#include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
 #include <stdexcept>
-#include <string>
 
 namespace phatbooks
 {
@@ -44,14 +45,20 @@ public:
 	// client retains ownership of pointer
 	void report(std::exception* p_exception = nullptr) const;
 
-	void set_db_file_location(std::string const& p_log_file_location);
-	void set_backup_db_file_location(std::string const& p_log_file_location);
-	void set_log_file_location(std::string const& p_log_file_location);
+	void set_db_file_location
+	(	boost::filesystem::path const& p_log_file_location
+	);
+	void set_backup_db_file_location
+	(	boost::filesystem::path const& p_log_file_location
+	);
+	void set_log_file_location
+	(	boost::filesystem::path const& p_log_file_location
+	);
 
 private:
-	std::string m_db_file_location;
-	std::string m_backup_db_file_location;
-	std::string m_log_file_location;
+	boost::optional<boost::filesystem::path> m_db_file_location;
+	boost::optional<boost::filesystem::path> m_backup_db_file_location;
+	boost::optional<boost::filesystem::path> m_log_file_location;
 
 };  // class ErrorReporter
 
