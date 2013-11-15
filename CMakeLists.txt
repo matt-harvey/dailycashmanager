@@ -148,10 +148,15 @@ if (
 		${wxWidgets_LIBRARIES}
 		${extra_libraries}
 	)
+	if (WIN32)
+		set (prebuild_driver_path "${PROJECT_SOURCE_DIR}\\prebuild_driver.tcl")
+	else ()
+	 	set (prebuild_driver_path "${PROJECT_SOURCE_DIR}/prebuild_driver.tcl")
+	endif ()
 	add_custom_target (
 		prebuild
 		ALL
-		COMMAND ${TCL_SH} "${PROJECT_SOURCE_DIR}/prebuild_driver.tcl"
+		COMMAND ${TCL_TCLSH} ${prebuild_driver_path}
 	)
 
 	# Building the phatbooks_common library, which contains code used by both
@@ -281,7 +286,7 @@ if (
 	# Installation instructions
 	
 	if (WIN32)
-		set (installation_dir "${CMAKE_INSTALL_PREFIX}\\${application_name}")
+		set (installation_dir ${CMAKE_INSTALL_PREFIX})
 	else ()
 		set (installation_dir "${CMAKE_INSTALL_PREFIX}/bin")
 	endif ()
