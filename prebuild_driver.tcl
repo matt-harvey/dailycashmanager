@@ -4,17 +4,17 @@
 # required for currency.cpp, as file make_currencies.inl. It is
 # intended make_currencies.inl be #included in make_currencies.cpp.
 
-set infile [open currencies.csv r]
-set outfile [open [file join include make_currencies_inc.hpp] w]
+set infile [open "currencies.csv" "r"]
+set outfile [open [file join "include" "make_currencies_inc.hpp"] "w"]
 
 # Discard first line (headers)
 gets $infile line
 
-while {[gets $infile line]} {
+while {[gets $infile line] > 0} {
 	if {$line == {END}} {
 		break
 	}
-	set record [split $line ,]
+	set record [split $line ","]
 	puts -nonewline $outfile "\t\tvec.push_back(make_currency(dbc, "
 	puts -nonewline $outfile "L\"[string trim [lindex $record 0]]\", "
 	puts -nonewline $outfile "\"[string trim [lindex $record 1]]\", "

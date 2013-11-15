@@ -89,6 +89,7 @@ find_package (
 		xml
 		base
 )
+find_package (Tclsh 8.4)
 if (WIN32)
 	set (
 		extra_libraries
@@ -107,8 +108,23 @@ elseif (UNIX)
 		dl
 	)
 endif ()
+if (SQLOXX_LIBRARY-NOTFOUND)
+	message ("Could not find Sqloxx library.")
+endif ()
+if (JEWEL_LIBRARY-NOTFOUND)
+	message ("Could not find Jewel library.")
+endif ()
+if (UNIT_TEST_LIBRARY-NOTFOUND)
+	message ("Could not find UnitTest++ - cannot build tests.")
+endif ()
+if (NOT TCLSH_FOUND)
+	message ("Could not find Tclsh - cannot do pre-build code generation step.")
+endif ()
+
+# Build instructions
 
 if (
+	TCLSH_FOUND AND
 	Boost_FOUND AND
 	NOT SQLOXX_LIBRARY-NOTFOUND AND
 	NOT JEWEL_LIBRARY-NOTFOUND AND
@@ -132,13 +148,20 @@ if (
 		${wxWidgets_LIBRARIES}
 		${extra_libraries}
 	)
+	add_custom_target (
+		prebuild
+		ALL
+		COMMAND ${TCL_SH} "${PROJECT_SOURCE_DIR}/prebuild_driver.tcl"
+	)
+
+	# Building the phatbooks_common library, which contains code shared by both
+	# the main Phatbooks executable, and the test suite.
 
 	if (WIN32)
 		set (windows_resources windows_resources.rc)
 	else ()
 		set (windows_resources)  # left empty
 	endif ()
-
 	set (
 		common_sources
 		#non-gui stuff...
@@ -210,6 +233,10 @@ if (
 		src/welcome_dialog.cpp
 		src/window_utilities.cpp
 	)
+	add_library (phatbooks_common ${common_sources})
+	add_dependencies (phatbooks_common prebuild)
+
+	# Building the tests
 
 	set (
 		test_sources
@@ -227,17 +254,29 @@ if (
 		tests/test.cpp
 		tests/transaction_type_tests.cpp
 	)
-
-	add_library(phatbooks_common ${common_sources})
-	add_executable(phatbooks src/main.cpp ${windows_resources})
-	target_link_libraries (phatbooks phatbooks_common ${libraries})
-	add_executable (test ${test_sources})
+	add_executable (test_driver ${test_sources})
 	target_link_libraries (
-		test
+		test_driver
 		phatbooks_common
 		${libraries}
 		${UNIT_TEST_LIBRARY}
 	)
+	if (WIN32)
+		set (test_execution_command "${PROJECT_SOURCE_DIR}\\test_driver.exe")
+	else ()
+		set (test_execution_command "${PROJECT_SOURCE_DIR}/test_driver")
+	endif ()
+	add_custom_target (
+		test
+		ALL
+		COMMAND "${test_execution_command}"
+		DEPENDS test_driver
+	)
+
+	# Building the main Phatbooks executable
+
+	add_executable(phatbooks src/main.cpp ${windows_resources})
+	target_link_libraries (phatbooks phatbooks_common ${libraries})
 
 	set (CPACK_PACKAGE_VERSION_MAJOR "${version_major}")
 	set (CPACK_PACKAGE_VERSION_MINOR "${version_minor}")
