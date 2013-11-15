@@ -1,8 +1,8 @@
 #!/usr/bin/env tclsh
 
 # Scans currencies.csv and outputs the repetitive bit of code
-# required for currency.cpp, as file make_currencies.inl. It is
-# intended make_currencies.inl be #included in make_currencies.cpp.
+# required for currency.cpp, as file make_currencies_inc.hpp. It is
+# intended make_currencies_inc.hpp be #included in make_currencies.cpp.
 
 set infile [open "currencies.csv" "r"]
 set outfile [open [file join "include" "make_currencies_inc.hpp"] "w"]

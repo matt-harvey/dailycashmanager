@@ -154,7 +154,7 @@ if (
 		COMMAND ${TCL_SH} "${PROJECT_SOURCE_DIR}/prebuild_driver.tcl"
 	)
 
-	# Building the phatbooks_common library, which contains code shared by both
+	# Building the phatbooks_common library, which contains code used by both
 	# the main Phatbooks executable, and the test suite.
 
 	if (WIN32)
@@ -278,6 +278,24 @@ if (
 	add_executable(phatbooks src/main.cpp ${windows_resources})
 	target_link_libraries (phatbooks phatbooks_common ${libraries})
 
+	# Installation instructions
+	
+	if (WIN32)
+		set (installation_dir "${CMAKE_INSTALL_PREFIX}\\${application_name}")
+	else ()
+		set (installation_dir "${CMAKE_INSTALL_PREFIX}/bin")
+	endif ()
+
+	install (
+		TARGETS
+			phatbooks
+		RUNTIME DESTINATION
+			${installation_dir}
+	)
+
+	# Instructions to build package (source package on Unix-like system, or
+	# binary installation package on Windows)
+
 	set (CPACK_PACKAGE_VERSION_MAJOR "${version_major}")
 	set (CPACK_PACKAGE_VERSION_MINOR "${version_minor}")
 	set (CPACK_PACKAGE_VERSION_PATCH "${version_patch}")
@@ -285,7 +303,6 @@ if (
 		CPACK_PACKAGE_VERSION
 		"${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}"
 	)
-
 
 	if (WIN32)
 		
@@ -314,14 +331,48 @@ if (
 		set (CPACK_NSIS_MUI_FINISHPAGE_RUN "phatbooks.exe")  # Give user option to launch application immediately after installing.
 		install(TARGETS phatbooks RUNTIME DESTINATION .)
 		include(CPack)
+
 	else ()
-		install (
-			TARGETS
-				phatbooks
-			RUNTIME DESTINATION
-				"${CMAKE_INSTALL_PREFIX}/bin"
+
+		set (package_name "${application_name}-${version_major}.${version_minor}.${version_patch}-working")
+		set (tarball_name "${package_name}.tar.gz")
+		set (
+			packaged_items
+			images
+			src
+			tests
+			user_guide
+			prebuild_driver.tcl
+			CMakeLists.txt
+			Doxyfile
+			LICENSE
+			coding_style
+			currencies.csv
+			database_conventions
+			windows_resources.rc
 		)
+		add_custom_target (
+			package
+			COMMAND
+				mkdir ${package_name} &&
+				cp -r ${packaged_items} ${package_name} &&
+				tar -sczf ${tarball_name} ${package_name} &&
+				rm -rf ${package_name}
+			DEPENDS ${library_name} test
+		)
+		set_directory_properties (
+			PROPERTIES
+				ADDITIONAL_MAKE_CLEAN_FILES "${tarball_name}"
+		)
+
 	endif ()
+
+	# Building the documentation
+
+	add_custom_target (
+		docs
+		COMMAND doxygen Doxyfile
+	)
 
 endif ()					
 
