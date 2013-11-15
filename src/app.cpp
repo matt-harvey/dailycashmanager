@@ -105,6 +105,20 @@ namespace
 		return wxString("/General/LastOpenedFile");
 	}
 
+	bool logging_enabled()
+	{
+#		ifdef JEWEL_ENABLE_LOGGING
+			return true;
+#		endif
+#		ifdef JEWEL_ENABLE_ASSERTION_LOGGING
+			return true;
+#		endif
+#		ifdef JEWEL_ENABLE_EXCEPTION_LOGGING
+			return true;
+#		endif
+		return false;
+	}
+
 	wxString vendor_name()
 	{
 		return wxString("Phatbooks");
@@ -208,28 +222,31 @@ App::set_last_opened_file(filesystem::path const& p_path)
 void
 App::configure_logging()
 {
-	Log::set_threshold(Log::trace);
+	if (logging_enabled())
+	{
+		Log::set_threshold(Log::trace);
 #		ifdef JEWEL_ON_WINDOWS
-		string const a("C:\\ProgramData\\");
-		string const b("Phatbooks\\");
-		string const c("logs\\");
-		bool ok = ensure_dir_exists(a);
-		if (ok) ok = ensure_dir_exists(a + b);
-		if (ok) ok = ensure_dir_exists(a + b + c);
-		if (!ok)
-		{
-			cerr << "Could not create log file." << endl;
-			return;
-		}
-		string const log_dir = a + b + c;
+			string const a("C:\\ProgramData\\");
+			string const b("Phatbooks\\");
+			string const c("logs\\");
+			bool ok = ensure_dir_exists(a);
+			if (ok) ok = ensure_dir_exists(a + b);
+			if (ok) ok = ensure_dir_exists(a + b + c);
+			if (!ok)
+			{
+				cerr << "Could not create log file." << endl;
+				return;
+			}
+			string const log_dir = a + b + c;
 #		else
-		string const log_dir = "/tmp/";
+			string const log_dir = "/tmp/";
 #		endif  // JEWEL_ON_WINDOWS
-	string const log_path =
-		log_dir + wx_to_std8(App::application_name()) + ".log";
-	Log::set_filepath(log_path);
-	m_error_reporter.
-		set_log_file_location(filesystem::path(log_path));
+		string const log_path =
+			log_dir + wx_to_std8(App::application_name()) + ".log";
+		Log::set_filepath(log_path);
+		m_error_reporter.
+			set_log_file_location(filesystem::path(log_path));
+	}
 	return;
 }
 

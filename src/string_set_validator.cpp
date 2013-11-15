@@ -16,6 +16,7 @@
 
 #include "gui/string_set_validator.hpp"
 #include <jewel/assert.hpp>
+#include <jewel/log.hpp>
 #include <wx/arrstr.h>
 #include <wx/msgdlg.h>
 #include <wx/string.h>
@@ -26,7 +27,6 @@ namespace phatbooks
 {
 namespace gui
 {
-
 
 StringSetValidator::StringSetValidator
 (	wxString const& p_text,
