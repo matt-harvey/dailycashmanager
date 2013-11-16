@@ -167,7 +167,6 @@ TransactionCtrl::TransactionCtrl
 	JEWEL_ASSERT (m_journal->id() == p_journal->id());
 	SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
 	configure_for_editing_persistent_journal();
-	throw 1;  // TODO temp
 }
 
 TransactionCtrl::TransactionCtrl
