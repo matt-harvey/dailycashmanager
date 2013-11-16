@@ -42,8 +42,6 @@ and install the application, you will need:
 	- The Sqloxx C++ libraries (version 1.0.0 or later)
 
 	- wxWidgets
-
-To build and run the test suite, you will need:
 	
 	- UnitTest++ (known to work with version 1.4)
 
