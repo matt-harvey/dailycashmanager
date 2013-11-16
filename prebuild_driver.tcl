@@ -27,7 +27,6 @@ set outfile [open [file join "include" "make_currencies_inc.hpp"] "w"]
 # Discard comments and header row at top of file
 set start_found 0
 while {[gets $infile line] >= 0} {
-    puts $line
     if {[string equal $line "START"]} {
         set start_found 1
         break
