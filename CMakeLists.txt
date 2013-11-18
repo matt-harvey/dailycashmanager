@@ -62,7 +62,7 @@ if (ENABLE_EXCEPTION_LOGGING)
 	add_definitions (-DJEWEL_ENABLE_EXCEPTION_LOGGING)
 endif ()
 if (CMAKE_COMPILER_IS_GNUCXX)
-	add_definitions (-std=c++0x)
+	add_definitions (-std=gnu++0x)
 endif ()
 
 # Find dependencies
