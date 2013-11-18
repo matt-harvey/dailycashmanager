@@ -89,7 +89,7 @@ find_package (
 		core
 		xml
 		base
-	REQUIRED
+	# REQUIRED
 )
 find_package (Tclsh 8.4 REQUIRED)
 if (WIN32)
@@ -130,7 +130,7 @@ if (
 	Boost_FOUND AND
 	NOT SQLOXX_LIBRARY-NOTFOUND AND
 	NOT JEWEL_LIBRARY-NOTFOUND AND
-	wxWidgets_FOUND AND
+	# wxWidgets_FOUND AND
 	NOT UNIT_TEST_LIBRARY-NOTFOUND
 )
 	include (${wxWidgets_USE_FILE})
