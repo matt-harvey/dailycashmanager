@@ -276,27 +276,19 @@ void
 Entry::process_saving_statement(SQLStatement& statement)
 {
 	JEWEL_LOG_TRACE();
-
 	statement.bind(":journal_id", value(m_data->journal_id));
-	JEWEL_LOG_TRACE();
 	statement.bind(":comment", wx_to_std8(value(m_data->comment)));
-	JEWEL_LOG_TRACE();
 	statement.bind(":account_id", value(m_data->account)->id());
-	JEWEL_LOG_TRACE();
 	statement.bind(":amount", m_data->amount->intval());
-	JEWEL_LOG_TRACE();
 	statement.bind
 	(	":is_reconciled",
 		static_cast<int>(value(m_data->is_reconciled))
 	);
-	JEWEL_LOG_TRACE();
 	statement.bind
 	(	":transaction_side_id",
 		static_cast<int>(value(m_data->transaction_side))
 	);
-	JEWEL_LOG_TRACE();
 	statement.step_final();
-
 	JEWEL_LOG_TRACE();
 	return;
 }
