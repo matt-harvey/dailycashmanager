@@ -188,6 +188,7 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 void
 PhatbooksDatabaseConnection::load_creation_date()
 {
+	JEWEL_LOG_TRACE();
 	SQLStatement statement
 	(	*this,
 		"select creation_date from entity_data"
@@ -197,12 +198,14 @@ PhatbooksDatabaseConnection::load_creation_date()
 	(	boost_date_from_julian_int(statement.extract<DateRep>(0))
 	);
 	statement.step_final();  // Verify only one row
+	JEWEL_LOG_TRACE();
 	return;
 }
 
 void
 PhatbooksDatabaseConnection::load_default_commodity()
 {
+	JEWEL_LOG_TRACE();
 	SQLStatement statement
 	(	*this,
 		"select default_commodity_id from entity_data"
@@ -213,6 +216,7 @@ PhatbooksDatabaseConnection::load_default_commodity()
 		statement.extract<Id>(0)
 	);
 	m_permanent_entity_data->set_default_commodity(commodity);
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -627,6 +631,7 @@ void
 PhatbooksDatabaseConnection::perform_integrity_checks()
 {
 #	ifndef NDEBUG
+		JEWEL_LOG_TRACE();
 
 		// Check integrity of Account balances
 		Decimal total_opening_balances;
@@ -652,6 +657,7 @@ PhatbooksDatabaseConnection::perform_integrity_checks()
 		{
 			JEWEL_ASSERT ((*it)->date() >= opening_balance_journal_date());
 		}
+		JEWEL_LOG_TRACE();
 
 #	endif
 	return;

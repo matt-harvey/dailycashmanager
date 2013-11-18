@@ -60,6 +60,7 @@ ErrorReporter::~ErrorReporter() = default;
 void
 ErrorReporter::report(std::exception* p_exception) const
 {
+	JEWEL_LOG_TRACE();
 	ostringstream oss;
 	oss << "There has been an error. Details are as follows.\n\n";
 	std::exception* e_ptr = nullptr;
@@ -94,6 +95,7 @@ ErrorReporter::report(std::exception* p_exception) const
 	}
 	if (m_backup_db_file_location && m_db_file_location)
 	{
+		JEWEL_LOG_TRACE();
 		oss << "\nFor your information a backup copy of your file "
 		    << m_db_file_location->filename()
 			<< " was taken at the beginning of the current session, "
@@ -103,9 +105,12 @@ ErrorReporter::report(std::exception* p_exception) const
 	}	
 	if (m_log_file_location)
 	{
+		JEWEL_LOG_TRACE();
 		filesystem::path log_filepath = *m_log_file_location;	
 		if (m_db_file_location)
 		{
+			JEWEL_LOG_TRACE();
+
 			// Take a copy of the log file named after the current date and
 			// time and save in the same directory of the database file.
 			try
@@ -148,6 +153,7 @@ ErrorReporter::report(std::exception* p_exception) const
 
 	// NOTE wxLogError doesn't fit the message.
 	wxMessageBox(std8_to_wx(oss.str()), "Error", wxICON_EXCLAMATION | wxOK);
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -156,6 +162,7 @@ ErrorReporter::set_db_file_location
 (	filesystem::path const& p_db_file_location
 )
 {
+	JEWEL_LOG_TRACE();
 	m_db_file_location = p_db_file_location;
 	return;
 }
@@ -165,6 +172,7 @@ ErrorReporter::set_backup_db_file_location
 (	filesystem::path const& p_backup_db_file_location
 )
 {
+	JEWEL_LOG_TRACE();
 	m_backup_db_file_location = p_backup_db_file_location;
 	return;
 }
@@ -174,6 +182,7 @@ ErrorReporter::set_log_file_location
 (	filesystem::path const& p_log_file_location
 )
 {
+	JEWEL_LOG_TRACE();
 	m_log_file_location = p_log_file_location;
 	return;
 }

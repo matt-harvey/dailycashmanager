@@ -209,6 +209,8 @@ App::last_opened_file()
 void
 App::set_last_opened_file(filesystem::path const& p_path)
 {
+	JEWEL_LOG_TRACE();
+
 	// Assert precondition
 	JEWEL_ASSERT (filesystem::absolute(p_path) == p_path);
 
@@ -313,6 +315,7 @@ App::config()
 
 bool App::OnInit()
 {
+	JEWEL_LOG_TRACE();
 	try
 	{
 		configure_logging();
@@ -324,15 +327,18 @@ bool App::OnInit()
 		wxCmdLineParser cmd_parser(cmd_line_desc, argc, argv);
 		int res = cmd_parser.Parse(false);  // pass false to suppress auto Usage() message
 
+		JEWEL_LOG_TRACE();
 		// check if use asked for command line help
 		if ((res == -1) || (res > 0) || cmd_parser.Found("h"))
 		{
+			JEWEL_LOG_TRACE();
 			cmd_parser.Usage();
 			return false;
 		}
 		// check if user asked for version
 		if ((res == -1) || (res > 0) || cmd_parser.Found("v"))
 		{
+			JEWEL_LOG_TRACE();
 			cout << wx_to_std8(application_name())
 				 << " version "
 				 << version()
@@ -342,6 +348,7 @@ bool App::OnInit()
 		// check for filename
 		if (cmd_parser.GetParamCount() > 0)
 		{
+			JEWEL_LOG_TRACE();
 			cmd_filename = cmd_parser.GetParam(0);
 
 			// under Windows, when invoking via a file in Explorer, we are
@@ -358,6 +365,7 @@ bool App::OnInit()
 			(	filesystem::path(wx_to_std8(cmd_filename))
 			);
 		}
+		JEWEL_LOG_TRACE();
 		wxString const instance_identifier =
 			application_name() + wxString::Format("-%s", wxGetUserId().c_str());
 		m_single_instance_checker =
@@ -378,6 +386,7 @@ bool App::OnInit()
 		{
 			if (filesystem::exists(*m_database_filepath))
 			{
+				JEWEL_LOG_TRACE();
 				database_connection().open(*m_database_filepath);
 			}
 			else
@@ -391,6 +400,7 @@ bool App::OnInit()
 		}
 		while (!database_connection().is_valid())
 		{
+			JEWEL_LOG_TRACE();
 			// Then the database connection has not been opened.
 			// We need to prompt the user either (a) to open an existing
 			// file, or (b) to create a new file via the wizard.
@@ -413,17 +423,22 @@ bool App::OnInit()
 					}
 					else
 					{
+						JEWEL_LOG_TRACE();
 						m_database_filepath = filesystem::absolute(filepath);
+						JEWEL_LOG_TRACE();
 						database_connection().open(*m_database_filepath);
+						JEWEL_LOG_TRACE();
 					}
 				}
 			}
 			else
 			{
+				JEWEL_LOG_TRACE();
 				// User has cancelled rather than opening a file.
 				return false;
 			}
 		}
+		JEWEL_LOG_TRACE();
 		JEWEL_ASSERT (database_connection().is_valid());
 		JEWEL_ASSERT (m_database_filepath);
 		JEWEL_ASSERT
@@ -436,6 +451,7 @@ bool App::OnInit()
 		);
 		JEWEL_ASSERT (filesystem::exists(*m_database_filepath));
 		set_last_opened_file(*m_database_filepath);
+		JEWEL_LOG_TRACE();
 		m_error_reporter.set_db_file_location(*m_database_filepath);
 		make_backup(*m_database_filepath);
 		if (m_backup_filepath)
