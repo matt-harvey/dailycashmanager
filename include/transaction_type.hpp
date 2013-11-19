@@ -59,13 +59,18 @@ std::vector<TransactionType> const&
 transaction_types();
 
 /**
+ * @param p_include_non_actual set to true if and only if we want to
+ * include available non-actual (i.e., budget) TransactionTypes in the
+ * returned vector.
+ *
  * @returns a vector containing every TransactionType for which
  * there exist, saved in p_database_connection, Accounts of the
  * requisite AccountTypes for that TransactionType.
  */
 std::vector<TransactionType>
 available_transaction_types
-(	PhatbooksDatabaseConnection& p_database_connection
+(	PhatbooksDatabaseConnection& p_database_connection,
+	bool p_include_non_actual = true
 );
 
 /**

@@ -21,6 +21,7 @@
 #include "gui/string_set_validator.hpp"
 #include "gui/transaction_ctrl.hpp"
 #include <boost/optional.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
@@ -34,16 +35,8 @@ using boost::optional;
 using jewel::value;
 using std::vector;
 
-
-// For debugging
-	#include <jewel/log.hpp>
-	#include <iostream>
-	using std::endl;
-
-
 namespace phatbooks
 {
-
 namespace gui
 {
 
@@ -56,7 +49,6 @@ BEGIN_EVENT_TABLE(TransactionTypeCtrl, wxComboBox)
 		TransactionTypeCtrl::on_change
 	)
 END_EVENT_TABLE()
-
 
 TransactionTypeCtrl::TransactionTypeCtrl
 (	wxWindow* p_parent,
@@ -78,7 +70,6 @@ TransactionTypeCtrl::TransactionTypeCtrl
 	m_database_connection(p_database_connection)
 {
 	JEWEL_ASSERT (!m_transaction_types.empty());
-
 	for (TransactionType const& elem: m_transaction_types)
 	{
 		wxString const verb = transaction_type_to_verb(elem);
@@ -97,8 +88,7 @@ TransactionTypeCtrl::transaction_type() const
 	optional<TransactionType> ret;
 	if (GetSelection() >= 0)
 	{
-		TransactionType const ttype =
-			transaction_type_from_verb(GetValue());
+		TransactionType const ttype = transaction_type_from_verb(GetValue());
 		assert_transaction_type_validity(ttype);
 		ret = ttype;
 	}
@@ -106,14 +96,11 @@ TransactionTypeCtrl::transaction_type() const
 }
 
 void
-TransactionTypeCtrl::set_transaction_type
-(	TransactionType p_transaction_type
-)
+TransactionTypeCtrl::set_transaction_type(TransactionType p_transaction_type)
 {
 	for (int i = 0; ; ++i)
 	{
-		TransactionType const ttype =
-			m_transaction_types[i];
+		TransactionType const ttype = m_transaction_types[i];
 		if (ttype == p_transaction_type)
 		{
 			SetSelection(i);
@@ -149,8 +136,7 @@ TransactionTypeCtrl::on_change(wxCommandEvent& event)
 	(void)event;  // silence compiler re. unused param.
 	TransactionCtrl* parent = dynamic_cast<TransactionCtrl*>(GetParent());
 	JEWEL_ASSERT (parent);
-	optional<TransactionType> const maybe_ttype =
-		transaction_type();
+	optional<TransactionType> const maybe_ttype = transaction_type();
 	if (!maybe_ttype)
 	{
 		return;

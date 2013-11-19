@@ -96,7 +96,8 @@ public:
 	 * in p_journal should also have all their attributes initialized,
 	 * before \e p_journal is passed to this function (with the exception
 	 * that \e p_journal and its Entries should not have Ids). \e p_journal
-	 * should have at least two Entries.
+	 * should have at least two Entries. \e p_journal->transaction_type() should
+	 * \e not be TransactionType::envelope.
 	 */
 	TransactionCtrl
 	(	TopPanel* p_parent,
@@ -116,9 +117,7 @@ public:
 	 * TransactionCtrl, and the selection in the TransactionTypeCtrl,
 	 * to match p_transaction_type.
 	 */
-	void refresh_for_transaction_type
-	(	TransactionType p_transaction_type
-	);
+	void refresh_for_transaction_type(TransactionType p_transaction_type);
 
 	jewel::Decimal primary_amount() const;
 

@@ -308,9 +308,7 @@ TransactionCtrl::clear_all()
 }
 
 void
-TransactionCtrl::configure_for_editing_proto_journal
-(	ProtoJournal& p_journal
-)
+TransactionCtrl::configure_for_editing_proto_journal(ProtoJournal& p_journal)
 {
 	JEWEL_LOG_TRACE();
 
@@ -319,7 +317,7 @@ TransactionCtrl::configure_for_editing_proto_journal
 	(	p_journal.transaction_type(),
 		text_box_size,
 		Decimal(0, database_connection().default_commodity()->precision()),
-		available_transaction_types(database_connection())
+		available_transaction_types(database_connection(), false)
 	);
 	m_source_entry_ctrl = new EntryGroupCtrl
 	(	this,
@@ -412,23 +410,23 @@ void
 TransactionCtrl::configure_for_editing_persistent_journal()
 {
 	JEWEL_LOG_TRACE();
-
-	wxWindowUpdateLocker const update_locker(this);
-
 	JEWEL_ASSERT (m_journal);
 	TransactionType const initial_transaction_type
 		= m_journal->transaction_type();
+
+	// precondition
+	JEWEL_ASSERT (initial_transaction_type != TransactionType::envelope);
+
+	wxWindowUpdateLocker const update_locker(this);
 	assert_transaction_type_validity(initial_transaction_type);
 	wxSize text_box_size;
 	vector<TransactionType> available_transaction_types;
 	available_transaction_types.push_back(initial_transaction_type);
-	if
-	(	(initial_transaction_type != TransactionType::envelope) &&
-		(initial_transaction_type != TransactionType::generic)
-	)
+	if (initial_transaction_type != TransactionType::generic)
 	{
 		available_transaction_types.push_back(TransactionType::generic);
 	}
+	JEWEL_ASSERT (initial_transaction_type != TransactionType::envelope);
 	configure_top_controls
 	(	initial_transaction_type,
 		text_box_size,

@@ -122,7 +122,8 @@ transaction_types()
 
 vector<TransactionType>
 available_transaction_types
-(	PhatbooksDatabaseConnection& p_database_connection
+(	PhatbooksDatabaseConnection& p_database_connection,
+	bool p_include_non_actual
 )
 {
 	typedef vector<TransactionType> TTypeVec;
@@ -136,6 +137,10 @@ available_transaction_types
 	TTypeVec const& ttypes = transaction_types();
 	for (TransactionType const ttype: ttypes)
 	{
+		if (!p_include_non_actual && !transaction_type_is_actual(ttype))
+		{
+			continue;
+		}
 		int transaction_type_support = 0;
 		AccountTypeSet::const_iterator const aset_end =
 			avail_account_types.end();
