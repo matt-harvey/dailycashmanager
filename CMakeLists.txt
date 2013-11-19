@@ -217,6 +217,7 @@ if (
 		src/entry_group_ctrl.cpp
 		src/entry_list_ctrl.cpp
 		src/entry_list_panel.cpp
+		src/envelope_transfer_dialog.cpp
 		src/error_reporter.cpp
 		src/filtered_entry_list_ctrl.cpp
 		src/frame.cpp
