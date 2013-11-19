@@ -414,19 +414,20 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	TransactionType const initial_transaction_type
 		= m_journal->transaction_type();
 
-	// precondition
-	JEWEL_ASSERT (initial_transaction_type != TransactionType::envelope);
-
 	wxWindowUpdateLocker const update_locker(this);
 	assert_transaction_type_validity(initial_transaction_type);
 	wxSize text_box_size;
 	vector<TransactionType> available_transaction_types;
 	available_transaction_types.push_back(initial_transaction_type);
-	if (initial_transaction_type != TransactionType::generic)
+	switch (initial_transaction_type)
 	{
-		available_transaction_types.push_back(TransactionType::generic);
+		case TransactionType::generic:
+			break;
+		case TransactionType::envelope:
+			break;
+		default:
+			available_transaction_types.push_back(TransactionType::generic);
 	}
-	JEWEL_ASSERT (initial_transaction_type != TransactionType::envelope);
 	configure_top_controls
 	(	initial_transaction_type,
 		text_box_size,

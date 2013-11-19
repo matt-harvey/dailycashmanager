@@ -96,8 +96,7 @@ public:
 	 * in p_journal should also have all their attributes initialized,
 	 * before \e p_journal is passed to this function (with the exception
 	 * that \e p_journal and its Entries should not have Ids). \e p_journal
-	 * should have at least two Entries. \e p_journal->transaction_type() should
-	 * \e not be TransactionType::envelope.
+	 * should have at least two Entries.
 	 */
 	TransactionCtrl
 	(	TopPanel* p_parent,
