@@ -32,6 +32,7 @@
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/button.h>
@@ -50,16 +51,10 @@ using sqloxx::Handle;
 using std::set;
 using std::vector;
 
-// for debugging
-	#include <jewel/log.hpp>
-	#include <iostream>
-	using std::endl;
-
 namespace phatbooks
 {
 namespace gui
 {
-
 
 BEGIN_EVENT_TABLE(EntryGroupCtrl, wxPanel)
 	EVT_BUTTON
@@ -718,7 +713,6 @@ EntryGroupCtrl::EntryRow::EntryRow(Handle<Entry> const& p_entry):
 	entry(p_entry)
 {
 }
-
 
 }  // namespace gui
 }  // namespace phatbooks

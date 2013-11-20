@@ -45,7 +45,6 @@ void toggle_enabled
 		boost::optional<wxString>()
 );
 
-
 }  // namespace gui
 }  // namespace phatbooks
 

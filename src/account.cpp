@@ -696,5 +696,4 @@ wxString account_concepts_phrase
 	return ret;
 }
 
-
 }  // namespace phatbooks

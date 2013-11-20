@@ -16,6 +16,7 @@
 
 #include "gui/account_dialog.hpp"
 #include "account.hpp"
+#include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
 #include "date.hpp"
@@ -29,6 +30,7 @@
 #include "gui/frame.hpp"
 #include "gui/persistent_object_event.hpp"
 #include "gui/sizing.hpp"
+#include "gui/window_utilities.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/exception.hpp>
@@ -124,6 +126,37 @@ namespace
 		JEWEL_HARD_ASSERT (false);
 	}
 	
+	bool is_only_visible_account_of_its_account_type
+	(	Handle<Account> const& p_account
+	)
+	{
+		auto const at = p_account->account_type();
+		if (p_account->visibility() != Visibility::visible)
+		{
+			return false;
+		}
+		AccountTableIterator it(p_account->database_connection());
+		AccountTableIterator const end;
+		size_t count = 0;
+		for ( ; it != end; ++it)
+		{
+			Handle<Account> const& account = *it;
+			if
+			(	(account->account_type() == at) &&
+				(account->visibility() == Visibility::visible)
+			)
+			{
+				++count;
+			}
+			if (count > 1)
+			{
+				return false;
+			}
+		}
+		return count == 1;
+	}
+
+
 }  // end anonymous namespace
 
 AccountDialog::AccountDialog
@@ -180,10 +213,7 @@ AccountDialog::AccountDialog
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	wxString name_tmp = wxEmptyString;
-	if (m_account->has_id())
-	{
-		name_tmp = p_account->name();
-	}
+	if (m_account->has_id()) name_tmp = p_account->name();
 	m_name_ctrl = new wxTextCtrl
 	(	this,
 		wxID_ANY,
@@ -418,6 +448,17 @@ AccountDialog::configure_bottom_row()
 		visibility = m_account->visibility();
 	}
 	m_visibility_ctrl->SetValue(visibility == Visibility::visible);
+	if (m_account->has_id())
+	{
+		if (is_only_visible_account_of_its_account_type(m_account))
+		{
+			toggle_enabled(m_visibility_ctrl, false);
+			wxString msg("Cannot hide sole visible ");
+			msg += account_type_to_string(m_account->account_type());
+			msg += wxString(".");
+			m_visibility_ctrl->SetToolTip(msg);
+		}
+	}
 	m_top_sizer->Add
 	(	m_visibility_ctrl,
 		wxGBPosition(m_current_row, 2),
