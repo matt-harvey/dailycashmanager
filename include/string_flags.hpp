@@ -43,8 +43,6 @@ namespace string_flags
 
 }  // namespace string_flags
 
-
-
 }  // namespace phatbooks
 
 #endif  // GUARD_string_flags_hpp_04174686784006044

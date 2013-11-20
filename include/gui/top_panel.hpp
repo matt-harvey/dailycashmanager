@@ -202,6 +202,15 @@ public:
 	ProtoJournal make_proto_journal() const;
 
 	/**
+	 * @returns a ProtoJournal containing two Entries, with blank
+	 * comments, and with Accounts based either on the most commonly used
+	 * P&L Accounts in the database, or on Accounts currently selected by the
+	 * user in the EntryListCtrls, which are P&L Accounts. The ProtoJournal
+	 * will be of TransactionType::envelope.
+	 */
+	ProtoJournal make_proto_envelope_transfer() const;
+
+	/**
 	 * Configure the TransactionCtrl to reflect the currently selected
 	 * Accounts (if any).
 	 */

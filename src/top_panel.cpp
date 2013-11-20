@@ -335,6 +335,40 @@ TopPanel::make_proto_journal() const
 	return ret;
 }
 
+ProtoJournal
+TopPanel::make_proto_envelope_transfer() const
+{
+	JEWEL_LOG_TRACE();
+	ProtoJournal ret;
+	vector<Handle<Account> > pl_accounts;
+	selected_pl_accounts(pl_accounts);
+	while (pl_accounts.size() < unsigned(2))
+	{
+		auto const default_pl_account = m_pl_account_list->default_account();
+		JEWEL_ASSERT (default_pl_account);  // TODO Is this guaranteed?
+		pl_accounts.push_back(default_pl_account);
+	}
+	JEWEL_ASSERT (pl_accounts.size() >= 2);
+	for (size_t i = 0; i != 2; ++i)
+	{
+		Handle<Account> const account = pl_accounts[i];
+		Handle<Entry> const entry(m_database_connection);
+		entry->set_account(account);
+		entry->set_comment(wxString());
+		entry->set_transaction_side
+		(	(i == 0)?
+			TransactionSide::source:
+			TransactionSide::destination
+		);
+		entry->set_amount(Decimal(0, account->commodity()->precision()));
+		entry->set_whether_reconciled(false);
+		ret.push_entry(entry);
+	}
+	ret.set_comment(wxString());
+	JEWEL_ASSERT (ret.entries().size() == 2);
+	return ret;
+}
+
 void
 TopPanel::configure_transaction_ctrl()
 {

@@ -17,12 +17,27 @@
 #ifndef GUARD_envelope_transfer_dialog_hpp_5707053959233246
 #define GUARD_envelope_transfer_dialog_hpp_5707053959233246
 
+#include <wx/button.h>
 #include <wx/dialog.h>
+#include <wx/event.h>
+#include <wx/gbsizer.h>
+#include <wx/window.h>
 
 namespace phatbooks
 {
+
+// begin forward declarations
+
+class PhatbooksDatabaseConnection;
+class ProtoJournal;
+
 namespace gui
 {
+
+class AccountCtrl;
+class DecimalTextCtrl;
+
+// end forward declarations
 
 /**
  * @todo HIGH PRIORITY Finish this.
@@ -30,6 +45,18 @@ namespace gui
 class EnvelopeTransferDialog: public wxDialog
 {
 public:
+
+	/**
+	 * p_journal must have all its attributes already initialized and must have
+	 * exactly two Entries, and all the Entries' attributes should have
+	 * been initialized already. All the Entries' Accounts should be of
+	 * AccountSuperType::pl.
+	 */
+	EnvelopeTransferDialog
+	(	wxWindow* p_parent,
+		ProtoJournal& p_journal,
+		PhatbooksDatabaseConnection& p_database_connection
+	);
 	EnvelopeTransferDialog() = delete;
 	EnvelopeTransferDialog(EnvelopeTransferDialog const& rhs) = delete;
 	EnvelopeTransferDialog(EnvelopeTransferDialog&& rhs) = delete;
@@ -37,6 +64,22 @@ public:
 		delete;
 	EnvelopeTransferDialog& operator=(EnvelopeTransferDialog&& rhs) = delete;
 	virtual ~EnvelopeTransferDialog();
+
+private:
+
+	void on_ok_button_click(wxCommandEvent& event);
+	void on_cancel_button_click(wxCommandEvent& event);
+
+	wxGridBagSizer* m_top_sizer;
+	AccountCtrl* m_source_account_ctrl;
+	AccountCtrl* m_destination_account_ctrl;
+	DecimalTextCtrl* m_amount_ctrl;
+	wxButton* m_cancel_button;
+	wxButton* m_ok_button;
+	ProtoJournal& m_journal;
+	PhatbooksDatabaseConnection& m_database_connection;
+
+	DECLARE_EVENT_TABLE();
 
 };  // class EnvelopeTransferDialog
 

@@ -33,8 +33,8 @@ namespace phatbooks
 
 class Account;
 class DraftJournal;
-class OrdinaryJournal;
 class PhatbooksDatabaseConnection;
+class ProtoJournal;
 
 namespace gui
 {
@@ -114,6 +114,7 @@ private:
 	void on_menu_new_bs_account(wxCommandEvent& event); 
 	void on_menu_new_pl_account(wxCommandEvent& event);
 	void on_menu_new_transaction(wxCommandEvent& event);
+	void on_menu_new_envelope_transfer(wxCommandEvent& event);
 	void on_menu_edit_bs_account(wxCommandEvent& event); 
 	void on_menu_edit_pl_account(wxCommandEvent& event);
 	void on_menu_edit_ordinary_journal(wxCommandEvent& event);
@@ -148,10 +149,16 @@ private:
 	template <typename JournalType>
 	void edit_journal(JournalType const& p_journal);
 
+	// The actual function which conducts Journal editing, where the
+	// TransactionType is TransactionType::envelope, and the Journal
+	// is a ProtoJournal
+	void edit_envelope_transfer(ProtoJournal& p_journal);
+
 	static int const s_new_bs_account_id = wxID_HIGHEST + 1;
 	static int const s_new_pl_account_id = s_new_bs_account_id + 1;
 	static int const s_new_transaction_id = s_new_pl_account_id + 1;
-	static int const s_edit_bs_account_id = s_new_transaction_id + 1;
+	static int const s_new_envelope_transfer_id = s_new_transaction_id + 1;
+	static int const s_edit_bs_account_id = s_new_envelope_transfer_id + 1;
 	static int const s_edit_pl_account_id = s_edit_bs_account_id + 1;
 	static int const s_edit_ordinary_journal_id = s_edit_pl_account_id + 1;
 	static int const s_edit_draft_journal_id = s_edit_ordinary_journal_id + 1;

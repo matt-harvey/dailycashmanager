@@ -107,7 +107,7 @@ private:
 	wxButton* m_ok_button;
 	sqloxx::Handle<Account> m_account;
 
-	DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE();
 
 };  // class AccountDialog
 

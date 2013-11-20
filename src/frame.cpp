@@ -29,6 +29,7 @@
 #include "gui/account_dialog.hpp"
 #include "gui/account_list_ctrl.hpp"
 #include "gui/entry_list_ctrl.hpp"
+#include "gui/envelope_transfer_dialog.hpp"
 #include "gui/persistent_object_event.hpp"
 #include "gui/top_panel.hpp"
 #include <jewel/assert.hpp>
@@ -77,6 +78,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU
 	(	s_new_transaction_id,
 		Frame::on_menu_new_transaction
+	)
+	EVT_MENU
+	(	s_new_envelope_transfer_id,
+		Frame::on_menu_new_envelope_transfer
 	)
 	EVT_MENU
 	(	s_edit_bs_account_id,
@@ -152,7 +157,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	)
 END_EVENT_TABLE()
 
-
 namespace
 {
 	wxString instruction_to_show_hidden
@@ -170,7 +174,6 @@ namespace
 	}
 
 }  // end anonymous namespace
-
 
 Frame::Frame
 (	wxString const& title,
@@ -247,6 +250,11 @@ Frame::Frame
 	(	s_new_transaction_id,
 		wxString("New &transaction \tAlt-T"),
 		wxString("Record a new transaction")
+	);
+	m_new_menu->Append
+	(	s_new_envelope_transfer_id,
+		wxString("New en&velope transfer \tAlt-V"),
+		wxString("Transfer budget funds between envelopes")
 	);
 	m_menu_bar->Append(m_new_menu, wxString("&New"));
 
@@ -346,11 +354,20 @@ Frame::on_menu_new_transaction(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
-	vector<Handle<Account> > balance_sheet_accounts;
-	selected_balance_sheet_accounts(balance_sheet_accounts);
-	vector<Handle<Account> > pl_accounts;
-	selected_pl_accounts(pl_accounts);
 	m_top_panel->configure_transaction_ctrl();
+	return;
+}
+
+void
+Frame::on_menu_new_envelope_transfer(wxCommandEvent& event)
+{
+	JEWEL_LOG_TRACE();
+	(void)event;  // silence compiler re. unused parameter
+	JEWEL_ASSERT (m_top_panel);
+	ProtoJournal proto_journal = m_top_panel->make_proto_envelope_transfer();
+	JEWEL_ASSERT (proto_journal.entries().size() == 2);
+	edit_envelope_transfer(proto_journal);
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -367,9 +384,7 @@ Frame::on_menu_edit_bs_account(wxCommandEvent& event)
 	selected_balance_sheet_accounts(accounts);
 	if (accounts.empty())
 	{
-		wxMessageBox
-		(	"Account to edit must first be selected in main window."
-		);
+		wxMessageBox("Account to edit must first be selected in main window.");
 		return;
 	}
 	JEWEL_ASSERT (accounts.size() >= 1);
@@ -502,12 +517,18 @@ Frame::on_journal_editing_requested(PersistentObjectEvent& event)
 	Id const journal_id = event.po_id();
 	if (journal_id_is_draft(m_database_connection, journal_id))
 	{
-		Handle<DraftJournal> const journal(m_database_connection, journal_id);
+		Handle<DraftJournal> const journal
+		(	m_database_connection,
+			journal_id
+		);
 		edit_journal(journal);
 	}
 	else
 	{
-		Handle<OrdinaryJournal> const journal(m_database_connection, journal_id);
+		Handle<OrdinaryJournal> const journal
+		(	m_database_connection,
+			journal_id
+		);
 		edit_journal(journal);
 	}
 	return;
@@ -835,8 +856,21 @@ Frame::edit_account(Handle<Account> const& p_account)
 		p_account,
 		p_account->account_super_type()
 	);
-	JEWEL_LOG_TRACE();
 	account_dialog.ShowModal();
+	JEWEL_LOG_TRACE();
+	return;
+}
+
+void
+Frame::edit_envelope_transfer(ProtoJournal& p_journal)
+{
+	JEWEL_LOG_TRACE();
+	EnvelopeTransferDialog envelope_transfer_dialog
+	(	this,
+		p_journal,
+		m_database_connection
+	);
+	envelope_transfer_dialog.ShowModal();
 	JEWEL_LOG_TRACE();
 	return;
 }
