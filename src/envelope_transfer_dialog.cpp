@@ -112,7 +112,7 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 		*account_ctrl_ptr_ptr = new AccountCtrl
 		(	this,
 			wxID_ANY,
-			wxSize(medium_width(), wxDefaultSize.GetY()),
+			wxSize(large_width(), wxDefaultSize.GetY()),
 			available_account_types,
 			m_database_connection
 		);
@@ -126,8 +126,34 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 		++current_row;
 	}
 	
-	// TODO
-		
+	m_cancel_button = new wxButton
+	(	this,
+		wxID_CANCEL,
+		wxString("&Cancel"),
+		wxDefaultPosition,
+		wxSize(medium_width(), m_source_account_ctrl->GetSize().y),
+		wxALIGN_RIGHT
+	);
+	m_top_sizer->Add
+	(	m_cancel_button,
+		wxGBPosition(current_row, 2),
+		wxDefaultSpan,
+		wxALIGN_RIGHT
+	);
+	m_ok_button = new wxButton
+	(	this,
+		wxID_OK,
+		wxString("&OK"),
+		wxDefaultPosition,
+		wxSize(medium_width(), m_source_account_ctrl->GetSize().y)
+	);
+	m_top_sizer->Add
+	(	m_ok_button,
+		wxGBPosition(current_row, 3),
+		wxDefaultSpan,
+		wxALIGN_LEFT
+	);
+	return;
 }
 
 EnvelopeTransferDialog::~EnvelopeTransferDialog() = default;
