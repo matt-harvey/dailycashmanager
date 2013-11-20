@@ -340,7 +340,13 @@ TopPanel::make_proto_envelope_transfer() const
 {
 	ProtoJournal ret;
 	auto const default_pl_account = m_pl_account_list->default_account();
-	JEWEL_ASSERT (default_pl_account);  // TODO Is this guaranteed?
+
+	// NOTE This is guaranteed because m_pl_account_list cannot be
+	// empty due to restrictions on user hiding all the Accounts of any given
+	// AccountType, and SetupWizard forcing user to create Accounts such that
+	// each AccountListCtrl will contain at least one Account.
+	JEWEL_HARD_ASSERT (default_pl_account);
+
 	vector<Handle<Account> > const accounts
 	{	default_pl_account,
 		default_pl_account

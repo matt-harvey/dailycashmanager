@@ -147,9 +147,7 @@ public:
 	 * re. the deleted Entries prior to notifying re. the (other) Journal
 	 * edits.
 	 */
-	void update_for_amended
-	(	sqloxx::Handle<DraftJournal> const& p_saved_object
-	);
+	void update_for_amended(sqloxx::Handle<DraftJournal> const& p_saved_object);
 	void update_for_amended
 	(	sqloxx::Handle<OrdinaryJournal> const& p_saved_object
 	);

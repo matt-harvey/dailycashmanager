@@ -213,15 +213,36 @@ EnvelopeTransferDialog::~EnvelopeTransferDialog() = default;
 void
 EnvelopeTransferDialog::on_ok_button_click(wxCommandEvent& event)
 {
-	// TODO HIGH PRIORITY Address chance of overflow in 
-	// both update_proto_journal_from_dialog() and oj->save(), below.
 	JEWEL_LOG_TRACE();
 	(void)event;  // silence compiler re. unused parameter
+
+	// TODO MEDIUM PRIORITY Address tiny change of
+	// DecimalUnaryMinusException being thrown here.
 	update_proto_journal_from_dialog();
+
 	Handle<OrdinaryJournal> const oj(m_database_connection);
 	oj->mimic(m_journal);
 	oj->set_date(today());
-	oj->save();
+	try
+	{
+		oj->save();
+	}
+	catch (JournalOverflowException&)
+	{
+		// TODO MEDIUM PRIORITY Make this message more helpful.
+		// It might be that the transaction could be posted if
+		// the user rolled over to a new
+		// database. (And it would be good if there were an automatic
+		// way of rolling over.) But it may be that there is no way
+		// to accommodate the amount they want to post - even in a new
+		// database. If that's the case, this needs to be communicated
+		// honestly to the user.
+		wxMessageBox
+		(	"Transfer could not be saved. It may be that the amount "
+			"is too large for it to be processed by the application."
+		);
+		return;
+	}
 	auto const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
 	JEWEL_ASSERT (frame);
 	JEWEL_ASSERT (oj->has_id());
