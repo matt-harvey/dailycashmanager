@@ -57,7 +57,10 @@ class TopPanel;
 
 
 /**
- * Dialog in which user creates a new transaction (i.e. Journal).
+ * Dialog in which user creates a new PersistentJournal, or
+ * edits an existing PersistentJournal (but if the PersistentJournal is
+ * to be of TransactionType::envelope, then EnvelopeTransferDialog should
+ * be used instead).
  *
  * @todo MEDIUM PRIORITY It may not be obvious to the user that the
  * TransactionCtrl actually is for creating new transactions (rather than for,

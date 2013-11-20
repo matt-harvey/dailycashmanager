@@ -40,7 +40,8 @@ class DecimalTextCtrl;
 // end forward declarations
 
 /**
- * @todo HIGH PRIORITY Finish this.
+ * Dialog in which user creates a new PersistentJournal of
+ * TransactionType::envelope.
  */
 class EnvelopeTransferDialog: public wxDialog
 {
