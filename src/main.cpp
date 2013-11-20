@@ -60,9 +60,6 @@
 // TODO MEDIUM PRIORITY Startup time under Windows is really slow, even when
 // compiled in Release mode.
 
-// TODO HIGH PRIORITY Put the standard Apache License, Version 2.0 copyright
-// notice block at the top of files other than just ".hpp" and ".cpp" files.
-
 #include "app.hpp"
 #include <wx/app.h>
 
