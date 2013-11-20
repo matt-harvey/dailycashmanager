@@ -203,10 +203,9 @@ public:
 
 	/**
 	 * @returns a ProtoJournal containing two Entries, with blank
-	 * comments, and with Accounts based either on the most commonly used
-	 * P&L Accounts in the database, or on Accounts currently selected by the
-	 * user in the EntryListCtrls, which are P&L Accounts. The ProtoJournal
-	 * will be of TransactionType::envelope.
+	 * comments, and with Accounts already set to some default P&L
+	 * Account (client should not rely on any particular Account here).
+	 * The ProtoJournal will be of TransactionType::envelope.
 	 */
 	ProtoJournal make_proto_envelope_transfer() const;
 

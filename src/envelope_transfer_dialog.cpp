@@ -15,15 +15,23 @@
  */
 
 #include "gui/envelope_transfer_dialog.hpp"
+#include "gui/decimal_text_ctrl.hpp"
+#include "gui/frame.hpp"
+#include "gui/persistent_object_event.hpp"
 #include "account_type.hpp"
+#include "commodity.hpp"
+#include "date.hpp"
 #include "entry.hpp"
+#include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "proto_journal.hpp"
-#include "ordinary_journal.hpp"
 #include "transaction_side.hpp"
 #include "gui/account_ctrl.hpp"
 #include "gui/decimal_text_ctrl.hpp"
 #include "gui/sizing.hpp"
+#include <jewel/decimal.hpp>
+#include <jewel/log.hpp>
+#include <sqloxx/handle.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -32,6 +40,7 @@
 #include <wx/string.h>
 #include <wx/window.h>
 
+using sqloxx::Handle;
 using std::vector;
 
 namespace phatbooks
@@ -65,6 +74,7 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 	m_journal(p_journal),
 	m_database_connection(p_database_connection)
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (m_journal.entries().size() == 2);
 
 	int current_row = 0;
@@ -72,9 +82,42 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());	
 	SetSizer(m_top_sizer);
 
+	JEWEL_LOG_TRACE();
+	wxStaticText* amount_label = new wxStaticText
+	(	this,
+		wxID_ANY,
+		"Amount",
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+	);
+	m_top_sizer->Add
+	(	amount_label,
+		wxGBPosition(current_row, 1),
+		wxDefaultSpan,
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+	);
+	JEWEL_LOG_TRACE();
+	m_amount_ctrl = new DecimalTextCtrl
+	(	this,
+		wxID_ANY,
+		wxSize(medium_width(), wxDefaultSize.y),
+		m_database_connection.default_commodity()->precision(),
+		false
+	);
+	m_top_sizer->Add
+	(	m_amount_ctrl,
+		wxGBPosition(current_row, 2),
+		wxDefaultSpan,
+		wxALIGN_RIGHT
+	);
+	++current_row;
+	JEWEL_LOG_TRACE();
+
 	vector<AccountType> const available_account_types =
 		account_types(AccountSuperType::pl);
 
+	JEWEL_LOG_TRACE();
 	for (auto const& entry: m_journal.entries())
 	{
 		wxString account_label_string;
@@ -98,7 +141,7 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 			wxID_ANY,
 			account_label_string,
 			wxDefaultPosition,
-			wxSize(medium_width(), wxDefaultSize.GetY()),
+			wxDefaultSize,
 			wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 		);
 		m_top_sizer->Add
@@ -112,7 +155,7 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 		*account_ctrl_ptr_ptr = new AccountCtrl
 		(	this,
 			wxID_ANY,
-			wxSize(large_width(), wxDefaultSize.GetY()),
+			wxSize(large_width(), m_amount_ctrl->GetSize().y),
 			available_account_types,
 			m_database_connection
 		);
@@ -125,13 +168,13 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 		);
 		++current_row;
 	}
-	
+	JEWEL_LOG_TRACE();
 	m_cancel_button = new wxButton
 	(	this,
 		wxID_CANCEL,
 		wxString("&Cancel"),
 		wxDefaultPosition,
-		wxSize(medium_width(), m_source_account_ctrl->GetSize().y),
+		wxSize(medium_width(), m_amount_ctrl->GetSize().y),
 		wxALIGN_RIGHT
 	);
 	m_top_sizer->Add
@@ -140,12 +183,13 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
+	JEWEL_LOG_TRACE();
 	m_ok_button = new wxButton
 	(	this,
 		wxID_OK,
 		wxString("&OK"),
 		wxDefaultPosition,
-		wxSize(medium_width(), m_source_account_ctrl->GetSize().y)
+		wxSize(medium_width(), m_amount_ctrl->GetSize().y)
 	);
 	m_top_sizer->Add
 	(	m_ok_button,
@@ -153,7 +197,15 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 		wxDefaultSpan,
 		wxALIGN_LEFT
 	);
-	return;
+	JEWEL_LOG_TRACE();
+	wxStaticText* dummy = new wxStaticText(this, wxID_ANY, wxEmptyString);
+	m_top_sizer->Add(dummy, wxGBPosition(current_row, 4));
+	m_top_sizer->Fit(this);
+	JEWEL_LOG_TRACE();
+	m_top_sizer->SetSizeHints(this);
+	CentreOnScreen();
+	Layout();
+	JEWEL_LOG_TRACE();
 }
 
 EnvelopeTransferDialog::~EnvelopeTransferDialog() = default;
@@ -161,17 +213,55 @@ EnvelopeTransferDialog::~EnvelopeTransferDialog() = default;
 void
 EnvelopeTransferDialog::on_ok_button_click(wxCommandEvent& event)
 {
+	// TODO HIGH PRIORITY Address chance of overflow in 
+	// both update_proto_journal_from_dialog() and oj->save(), below.
+	JEWEL_LOG_TRACE();
 	(void)event;  // silence compiler re. unused parameter
-	// TODO
+	update_proto_journal_from_dialog();
+	Handle<OrdinaryJournal> const oj(m_database_connection);
+	oj->mimic(m_journal);
+	oj->set_date(today());
+	oj->save();
+	auto const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
+	JEWEL_ASSERT (frame);
+	JEWEL_ASSERT (oj->has_id());
+	PersistentObjectEvent::fire
+	(	frame,
+		PHATBOOKS_JOURNAL_CREATED_EVENT,
+		oj->id()
+	);
+	EndModal(wxID_OK);
+	JEWEL_LOG_TRACE();
+	return;
 }
 
 void
 EnvelopeTransferDialog::on_cancel_button_click(wxCommandEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	(void)event;  // silence compiler re. unused parameter
-	// TODO
+	EndModal(wxID_CANCEL);
+	JEWEL_LOG_TRACE();
+	return;
 }
 
+void
+EnvelopeTransferDialog::update_proto_journal_from_dialog() const
+{
+	JEWEL_LOG_TRACE();
+	JEWEL_ASSERT (m_journal.entries().size() == 2);
+	auto const se = m_journal.entries()[0];
+	auto const de = m_journal.entries()[1];
+	JEWEL_ASSERT (se->transaction_side() == TransactionSide::source);
+	JEWEL_ASSERT (de->transaction_side() == TransactionSide::destination);
+	se->set_account(m_source_account_ctrl->account());
+	de->set_account(m_destination_account_ctrl->account());
+	auto const amount = m_amount_ctrl->amount();
+	se->set_amount(amount);
+	de->set_amount(-amount);
+	JEWEL_LOG_TRACE();
+	return;
+}
 
 }  // namespace gui
 }  // namespace phatbooks

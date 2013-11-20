@@ -334,7 +334,7 @@ AccountDialog::AccountDialog
 	
 	// Hack to add some space to right.
 	wxStaticText* dummy = new wxStaticText(this, wxID_ANY, wxEmptyString);
-	m_top_sizer->Add(dummy, wxGBPosition(m_current_row, standard_border()));
+	m_top_sizer->Add(dummy, wxGBPosition(m_current_row, 5));
 
 	configure_budget_panel();
 

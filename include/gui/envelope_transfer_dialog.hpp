@@ -70,6 +70,8 @@ private:
 	void on_ok_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
 
+	void update_proto_journal_from_dialog() const;
+
 	wxGridBagSizer* m_top_sizer;
 	AccountCtrl* m_source_account_ctrl;
 	AccountCtrl* m_destination_account_ctrl;

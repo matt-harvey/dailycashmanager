@@ -338,20 +338,16 @@ TopPanel::make_proto_journal() const
 ProtoJournal
 TopPanel::make_proto_envelope_transfer() const
 {
-	JEWEL_LOG_TRACE();
 	ProtoJournal ret;
-	vector<Handle<Account> > pl_accounts;
-	selected_pl_accounts(pl_accounts);
-	while (pl_accounts.size() < unsigned(2))
+	auto const default_pl_account = m_pl_account_list->default_account();
+	JEWEL_ASSERT (default_pl_account);  // TODO Is this guaranteed?
+	vector<Handle<Account> > const accounts
+	{	default_pl_account,
+		default_pl_account
+	};
+	for (size_t i = 0; i != accounts.size(); ++i)
 	{
-		auto const default_pl_account = m_pl_account_list->default_account();
-		JEWEL_ASSERT (default_pl_account);  // TODO Is this guaranteed?
-		pl_accounts.push_back(default_pl_account);
-	}
-	JEWEL_ASSERT (pl_accounts.size() >= 2);
-	for (size_t i = 0; i != 2; ++i)
-	{
-		Handle<Account> const account = pl_accounts[i];
+		Handle<Account> const account = accounts[i];
 		Handle<Entry> const entry(m_database_connection);
 		entry->set_account(account);
 		entry->set_comment(wxString());
@@ -365,6 +361,7 @@ TopPanel::make_proto_envelope_transfer() const
 		ret.push_entry(entry);
 	}
 	ret.set_comment(wxString());
+	ret.set_transaction_type(TransactionType::envelope);
 	JEWEL_ASSERT (ret.entries().size() == 2);
 	return ret;
 }
