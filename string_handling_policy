@@ -15,7 +15,6 @@
 ###
 
 
-
 ***** Notes on string handling *****
 
 The need to make things work with Unicode, and across multiple platforms, and
