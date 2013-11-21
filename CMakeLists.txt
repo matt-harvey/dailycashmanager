@@ -62,7 +62,7 @@ if (ENABLE_EXCEPTION_LOGGING)
 	add_definitions (-DJEWEL_ENABLE_EXCEPTION_LOGGING)
 endif ()
 if (CMAKE_COMPILER_IS_GNUCXX)
-	add_definitions (-std=gnu++0x)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
 endif ()
 
 # Find dependencies
@@ -166,6 +166,11 @@ if (
 
 	if (WIN32)
 		set (windows_resources windows_resources.rc)
+		# Note -mwindows prevents console output (so we don't want it during
+		# development) but it also stops a console window from popping up when
+		# a GUI app is opened by double-clicking its icon. So in due course we
+		# will want to reinstate this flag.
+		set (CMAKE_CXX_FLAGS "-mwindows ${CMAKE_CXX_FLAGS}")
 	else ()
 		set (windows_resources)  # left empty
 	endif ()
@@ -314,12 +319,6 @@ if (
 
 	if (WIN32)
 		
-		# Note -mwindows prevents console output (so we don't want it during
-		# development) but it also stops a console window from popping up when
-		# a GUI app is opened by double-clicking its icon. So in due course we
-		# will want to reinstate this flag. But best done in CMakeCache.txt, otherwise
-		# things seem to get weird.
-		# set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -mwindows")
 
 		# On Windows we use CPack to create a graphical installer
 		# Do "make package" (or "mingw32-make package") to create the installer.
