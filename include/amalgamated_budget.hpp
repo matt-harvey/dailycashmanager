@@ -50,7 +50,7 @@ public:
 	AmalgamatedBudget& operator=(AmalgamatedBudget const&) = delete;
 	AmalgamatedBudget& operator=(AmalgamatedBudget&&) = delete;
 
-	~AmalgamatedBudget() = default;
+	~AmalgamatedBudget();
 
 	/**
 	 * @returns the Frequency of the AmalgamatedBudget. This

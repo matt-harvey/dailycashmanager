@@ -54,9 +54,11 @@ namespace phatbooks
 void
 BalanceCache::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
+	JEWEL_LOG_TRACE();
 	dbc.execute_sql
 	(	"create index entry_account_index on entries(account_id)"
 	);
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -67,6 +69,12 @@ BalanceCache::BalanceCache
 	m_map(new Map),
 	m_map_is_stale(true)
 {
+	JEWEL_LOG_TRACE();
+}
+
+BalanceCache::~BalanceCache()
+{
+	JEWEL_LOG_TRACE();
 }
 
 Decimal

@@ -124,6 +124,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	m_journal_map(nullptr),
 	m_repeater_map(nullptr)
 {
+	JEWEL_LOG_TRACE();
 	m_permanent_entity_data = new PermanentEntityData;
 	m_balance_cache = new BalanceCache(*this);
 	m_budget = new AmalgamatedBudget(*this);
@@ -133,10 +134,13 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	m_entry_map = new IdentityMap<Entry>(*this);
 	m_journal_map = new IdentityMap<PersistentJournal>(*this);
 	m_repeater_map = new IdentityMap<Repeater>(*this);
+	JEWEL_LOG_TRACE();
 }
 
 PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 {
+	JEWEL_LOG_TRACE();
+
 	// TODO MEDIUM PRIORITY This integrity of the objects in the cache - and the
 	// avoidance of invalid reads and writes (and thus of undefined
 	// behaviour) is crucially dependent on the order in which
@@ -183,6 +187,8 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 
 	delete m_commodity_map;
 	m_commodity_map = nullptr;
+
+	JEWEL_LOG_TRACE();
 }
 
 void

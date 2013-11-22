@@ -70,7 +70,7 @@ public:
 	BalanceCache& operator=(BalanceCache const&) = delete;
 	BalanceCache& operator=(BalanceCache&&) = delete;
 
-	~BalanceCache() = default;
+	~BalanceCache();
 
 	// Retrieve the technical balance for a particular Account.
 	// For an explanation of the concept of a "technical balance",

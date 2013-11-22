@@ -69,6 +69,7 @@ namespace
 void
 AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 {
+	JEWEL_LOG_TRACE();
 	dbc.execute_sql
 	(	"create index budget_item_account_index on budget_items(account_id)"
 	);
@@ -113,6 +114,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 	statement.bind(":balancing_account_id", balancing_account->id());
 	statement.step_final();
 
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -124,8 +126,15 @@ AmalgamatedBudget::AmalgamatedBudget
 	m_frequency(1, IntervalType::days),
 	m_map(new Map)
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (!m_instrument);
 	JEWEL_ASSERT (!m_balancing_account);
+	JEWEL_LOG_TRACE();
+}
+
+AmalgamatedBudget::~AmalgamatedBudget()
+{
+	JEWEL_LOG_TRACE();
 }
 
 void

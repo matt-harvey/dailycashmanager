@@ -93,9 +93,7 @@ public:
 	static wxSize standard_text_box_size();
 	
 	sqloxx::Handle<Commodity> selected_currency() const;
-
 	void set_assumed_currency(sqloxx::Handle<Commodity> const& p_commodity);
-
 	jewel::Decimal total_opening_balance() const;
 
 	/**
@@ -115,6 +113,7 @@ private:
 	) const;
 
 	class FilepathValidator;
+
 	class FilepathPage;
 
 	void render_account_pages();

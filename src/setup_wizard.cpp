@@ -176,6 +176,7 @@ SetupWizard::SetupWizard
 	m_balance_sheet_account_page(nullptr),
 	m_pl_account_page(nullptr)
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (m_account_names_already_taken.empty());
 	JEWEL_ASSERT (!m_database_connection.is_valid());
 	m_filepath_page = new FilepathPage(this, m_database_connection);
@@ -199,30 +200,39 @@ SetupWizard::SetupWizard
 		m_pl_account_page
 	);
 	GetPageAreaSizer()->Add(m_filepath_page);
+	JEWEL_LOG_TRACE();
 }
 
 SetupWizard::~SetupWizard()
 {
+	JEWEL_LOG_TRACE();
 }
 
 void
 SetupWizard::run()
 {
+	JEWEL_LOG_TRACE();
 	if (RunWizard(m_filepath_page))
 	{
+		JEWEL_LOG_TRACE();
 		// Then user completed Wizard rather than cancelling.
 		configure_default_commodity();
 		create_file();
 		try
 		{
+			JEWEL_LOG_TRACE();
 			configure_accounts();
 		}
 		catch (...)
 		{
+			JEWEL_LOG_TRACE();
 			delete_file();
+			JEWEL_LOG_TRACE();
 			throw;
 		}
+		JEWEL_LOG_TRACE();
 	}
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -285,6 +295,7 @@ SetupWizard::selected_augmented_accounts(vector<AugmentedAccount>& out) const
 void
 SetupWizard::render_account_pages()
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (m_balance_sheet_account_page);
 	JEWEL_ASSERT (m_pl_account_page);
 	m_balance_sheet_account_page->render();
@@ -295,6 +306,7 @@ SetupWizard::render_account_pages()
 void
 SetupWizard::configure_default_commodity()
 {
+	JEWEL_LOG_TRACE();
 	Handle<Commodity> const commodity = selected_currency();
 	commodity->set_multiplier_to_base(Decimal(1, 0));
 	m_database_connection.set_default_commodity(commodity);
@@ -304,6 +316,7 @@ SetupWizard::configure_default_commodity()
 void
 SetupWizard::create_file()
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (m_filepath_page);
 	JEWEL_ASSERT (m_filepath_page->selected_filepath());
 	m_database_connection.open(value(m_filepath_page->selected_filepath()));
@@ -313,8 +326,10 @@ SetupWizard::create_file()
 void
 SetupWizard::delete_file()
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (m_filepath_page);
 	boost::filesystem::remove(value(m_filepath_page->selected_filepath()));
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -374,11 +389,13 @@ SetupWizard::FilepathValidator::~FilepathValidator()
 bool
 SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	wxTextCtrl const* const text_ctrl =
 		dynamic_cast<wxTextCtrl*>(GetWindow());	
 	if (!text_ctrl)
 	{
+		JEWEL_LOG_TRACE();
 		return false;
 	}
 	wxString const wx_filename = with_extension(text_ctrl->GetValue());
@@ -387,6 +404,7 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 	JEWEL_ASSERT (page);
 	if (!page)
 	{
+		JEWEL_LOG_TRACE();
 		return false;
 	}
 	JEWEL_ASSERT (page->m_directory_ctrl);
@@ -431,6 +449,7 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 				wxString(".")
 			);
 		}
+		JEWEL_LOG_TRACE();
 		return false;
 	}
 	if (m_filepath)
@@ -438,12 +457,14 @@ SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 		JEWEL_LOG_TRACE();
 		*m_filepath = path;
 	}
+	JEWEL_LOG_TRACE();
 	return ret;
 }
 
 bool
 SetupWizard::FilepathValidator::TransferFromWindow()
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	if (m_filepath)
 	{
@@ -451,18 +472,21 @@ SetupWizard::FilepathValidator::TransferFromWindow()
 			dynamic_cast<FilepathPage*>(GetWindow()->GetParent());
 		if (!page)
 		{
+			JEWEL_LOG_TRACE();
 			return false;
 		}
 		optional<filesystem::path> const path =
 			page->selected_filepath();
 		if (path) *m_filepath = value(path);
 	}
+	JEWEL_LOG_TRACE();
 	return true;
 }
 
 bool
 SetupWizard::FilepathValidator::TransferToWindow()
 {
+	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
 	if (m_filepath)
 	{
@@ -470,6 +494,7 @@ SetupWizard::FilepathValidator::TransferToWindow()
 			dynamic_cast<wxTextCtrl*>(GetWindow());
 		if (!text_ctrl)
 		{
+			JEWEL_LOG_TRACE();
 			return false;
 		}
 		text_ctrl->SetValue
@@ -478,6 +503,7 @@ SetupWizard::FilepathValidator::TransferToWindow()
 			)
 		);
 	}
+	JEWEL_LOG_TRACE();
 	return true;
 }
 
@@ -529,6 +555,7 @@ SetupWizard::FilepathPage::FilepathPage
 	m_precision_box(nullptr),
 	m_selected_filepath(nullptr)
 {
+	JEWEL_LOG_TRACE();
 	m_top_sizer = new wxBoxSizer(wxVERTICAL);
 	m_filename_row_sizer = new wxBoxSizer(wxHORIZONTAL);
 	m_directory_row_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -714,10 +741,12 @@ SetupWizard::FilepathPage::FilepathPage
 	SetSizer(m_top_sizer);
 	m_top_sizer->Fit(this);
 	Layout();
+	JEWEL_LOG_TRACE();
 }
 
 SetupWizard::FilepathPage::~FilepathPage()
 {
+	JEWEL_LOG_TRACE();
 	delete m_selected_filepath;
 	m_selected_filepath = nullptr;
 }
@@ -725,9 +754,11 @@ SetupWizard::FilepathPage::~FilepathPage()
 optional<filesystem::path>
 SetupWizard::FilepathPage::selected_filepath() const
 {
+	JEWEL_LOG_TRACE();
 	optional<filesystem::path> ret;
 	if (m_selected_filepath)
 	{
+		JEWEL_LOG_TRACE();
 		ret = *m_selected_filepath;
 	}
 	return ret;
@@ -789,16 +820,19 @@ SetupWizard::FilepathPage::on_directory_button_click(wxCommandEvent& event)
 void
 SetupWizard::FilepathPage::on_wizard_page_changing(wxWizardEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning about unused parameter
 	SetupWizard* const parent = dynamic_cast<SetupWizard*>(GetParent());
 	JEWEL_ASSERT (parent);
 	parent->set_assumed_currency(selected_currency());
+	JEWEL_LOG_TRACE();
 	return;
 }
 
 void
 SetupWizard::FilepathPage::on_wizard_page_changed(wxWizardEvent& event)
 {
+	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning about unused parameter
 	SetupWizard* const parent = dynamic_cast<SetupWizard*>(GetParent());
 	JEWEL_ASSERT (parent);
@@ -809,6 +843,7 @@ SetupWizard::FilepathPage::on_wizard_page_changed(wxWizardEvent& event)
 	// messages aren't generated when the user turns back into the AccountPages.
 	set<wxString> account_names;  // empty
 	parent->set_account_names_already_taken(account_names);
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -819,6 +854,7 @@ SetupWizard::FilepathPage::on_currency_selection_change(wxCommandEvent& event)
 	JEWEL_ASSERT (m_precision_box);
 	m_precision_box->SetSelection(selected_currency()->precision());
 	event.Skip();
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -831,6 +867,7 @@ SetupWizard::FilepathPage::on_precision_selection_change(wxCommandEvent& event)
 	auto const sc = selected_currency();
 	sc->set_precision(m_precision_box->GetSelection());
 	event.Skip();
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -871,15 +908,18 @@ SetupWizard::AccountPage::AccountPage
 	m_multi_account_panel(nullptr),
 	m_parent(*p_parent)
 {
+	JEWEL_LOG_TRACE();
 }
 
 SetupWizard::AccountPage::~AccountPage()
 {
+	JEWEL_LOG_TRACE();
 }
 
 void
 SetupWizard::AccountPage::render()
 {
+	JEWEL_LOG_TRACE();
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 	increment_row();
@@ -892,6 +932,7 @@ SetupWizard::AccountPage::render()
 	m_top_sizer->Fit(this);
 	Fit();
 	Layout();
+	JEWEL_LOG_TRACE();
 }
 
 void
@@ -944,6 +985,7 @@ SetupWizard::AccountPage::set_account_names_already_taken
 void
 SetupWizard::AccountPage::render_main_text()
 {
+	JEWEL_LOG_TRACE();
 	int const width = medium_width() * 3 + standard_gap();
 	wxStaticText* text = new wxStaticText
 	(	this,
@@ -955,12 +997,14 @@ SetupWizard::AccountPage::render_main_text()
 	);
 	text->Wrap(width);
 	top_sizer().Add(text, wxGBPosition(current_row(), 0), wxGBSpan(2, 3));
+	JEWEL_LOG_TRACE();
 	return;
 }
 
 void
 SetupWizard::AccountPage::render_buttons()
 {
+	JEWEL_LOG_TRACE();
 	wxString const concept_name = account_concept_name(m_account_super_type);
 	m_pop_row_button = new wxButton
 	(	this,
@@ -990,12 +1034,15 @@ SetupWizard::AccountPage::render_buttons()
 		wxDefaultSpan,
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
+	JEWEL_LOG_TRACE();
 	return;
 }
 
 void
 SetupWizard::AccountPage::render_account_view()
 {
+	JEWEL_LOG_TRACE();
+
 	// Create the control for displaying Accounts
 	wxSize const size =
 		wxDLG_UNIT(this, SetupWizard::standard_text_box_size());
@@ -1041,6 +1088,7 @@ SetupWizard::AccountPage::render_account_view()
 	);
 	top_sizer().Add(dummy2, wxGBPosition(current_row(), 0));
 
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -1188,6 +1236,7 @@ SetupWizard::AccountPage::on_wizard_page_changing
 (	wxWizardEvent& event
 )
 {
+	JEWEL_LOG_TRACE();
 	wxString error_message;
 	JEWEL_ASSERT (error_message.IsEmpty());
 	if
@@ -1197,6 +1246,7 @@ SetupWizard::AccountPage::on_wizard_page_changing
 	{
 		wxMessageBox(error_message);
 		event.Veto();
+		JEWEL_LOG_TRACE();
 		return;
 	}
 	JEWEL_ASSERT (account_names_valid(error_message));
@@ -1207,6 +1257,7 @@ SetupWizard::AccountPage::on_wizard_page_changing
 	p->set_account_names_already_taken
 	(	m_multi_account_panel->selected_account_names()
 	);
+	JEWEL_LOG_TRACE();
 	return;
 }
 
@@ -1215,6 +1266,7 @@ SetupWizard::AccountPage::on_wizard_page_changed
 (	wxWizardEvent& event
 )
 {
+	JEWEL_LOG_TRACE();
 	(void)event;  // silence compiler re. unused parameter
 	JEWEL_ASSERT (m_multi_account_panel);
 	m_multi_account_panel->update_summary();
@@ -1223,6 +1275,7 @@ SetupWizard::AccountPage::on_wizard_page_changed
 	JEWEL_ASSERT (p);
 	m_multi_account_panel->
 		set_account_names_already_taken(p->account_names_already_taken());
+	JEWEL_LOG_TRACE();
 	return;
 }
 
