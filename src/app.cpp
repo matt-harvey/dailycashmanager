@@ -407,27 +407,38 @@ bool App::OnInit()
 			gui::WelcomeDialog welcome_dialog(database_connection());
 			if (welcome_dialog.ShowModal() == wxID_OK)
 			{
+				JEWEL_LOG_TRACE();
 				if (welcome_dialog.user_wants_new_file())
 				{
+					JEWEL_LOG_TRACE();
 					gui::SetupWizard setup_wizard(database_connection());
 					setup_wizard.run();
-					m_database_filepath =
-						filesystem::absolute(m_database_connection->filepath());
+					if (database_connection().is_valid())
+					{
+						JEWEL_LOG_TRACE();
+						auto const raw_fp = database_connection().filepath();
+						m_database_filepath = filesystem::absolute(raw_fp);
+					}
+					else
+					{
+						// User has cancelled during the wizard
+						JEWEL_LOG_TRACE();
+						return false;
+					}
 				}
 				else
 				{
 					auto const filepath = elicit_existing_filepath();
 					if (filepath.empty())
 					{
+						JEWEL_LOG_TRACE();
 						return false;
 					}
 					else
 					{
 						JEWEL_LOG_TRACE();
 						m_database_filepath = filesystem::absolute(filepath);
-						JEWEL_LOG_TRACE();
 						database_connection().open(*m_database_filepath);
-						JEWEL_LOG_TRACE();
 					}
 				}
 			}
