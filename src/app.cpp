@@ -184,7 +184,7 @@ App::version()
 wxString
 App::filename_extension()
 {
-	return wxString(".phat");
+	return wxString(PHATBOOKS_FILE_EXTENSION);
 }
 
 optional<filesystem::path>

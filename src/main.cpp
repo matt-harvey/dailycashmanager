@@ -24,10 +24,6 @@
 
 // TODO MEDIUM PRIORITY Tooltips aren't showing on Windows.
 
-// TODO HIGH PRIORITY Make the installer create an association on the user's
-// system between the Phatbooks file extension and the Phatbooks application.
-// See CMake book, page. 162.
-
 /// TODO MEDIUM PRIORITY The database file should perhaps have a checksum to
 // guard against its contents changing other than via the application.
 
