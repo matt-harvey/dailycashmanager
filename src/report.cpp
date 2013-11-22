@@ -31,6 +31,7 @@
 #include <jewel/optional.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/gdicmn.h>
+#include <wx/wupdlock.h>
 
 using boost::optional;
 using jewel::Decimal;
@@ -171,6 +172,7 @@ Report::update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids)
 void
 Report::generate()
 {
+	wxWindowUpdateLocker const window_update_locker(this);
 	do_generate();
 	// GetParent()->Layout();
 	// m_top_sizer->Fit(this);
