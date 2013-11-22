@@ -78,10 +78,11 @@ find_package (
 		locale
 		regex
 		system
+	REQUIRED
 )
-find_library (SQLOXX_LIBRARY sqloxx)
-find_library (JEWEL_LIBRARY jewel)
-find_library (UNIT_TEST_LIBRARY UnitTest++)
+find_library (SQLOXX_LIBRARY sqloxx REQUIRED)
+find_library (JEWEL_LIBRARY jewel REQUIRED)
+find_library (UNIT_TEST_LIBRARY UnitTest++ REQUIRED)
 find_package (
 	wxWidgets
 	COMPONENTS
@@ -91,8 +92,9 @@ find_package (
 		core
 		xml
 		base
+	REQUIRED
 )
-find_package (Tclsh 8.4)
+find_package (Tclsh 8.4 REQUIRED)
 if (WIN32)
 	set (
 		extra_libraries
