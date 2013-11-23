@@ -56,6 +56,14 @@
 // TODO MEDIUM PRIORITY Startup time under Windows is really slow, even when
 // compiled in Release mode.
 
+// TODO MEDIUM PRIORITY Give user the option to export to CSV.
+
+// TODO LOW PRIORITY Allow export/import to/from .qif (?) format.
+
+// TODO HIGH PRIORITY On Windows, at least on Windows 7, at least on some
+// machines, tab traversal is not working properly in SetupWizard, and you
+// can't traverse out of a wxComboBox using tab, for some reason.
+
 #include "app.hpp"
 #include <wx/app.h>
 
