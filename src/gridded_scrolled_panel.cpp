@@ -45,7 +45,8 @@ GriddedScrolledPanel::GriddedScrolledPanel
 		wxID_ANY,
 		wxDefaultPosition,
 		p_size,
-		(p_horizontal_scrolling_enabled? (wxVSCROLL | wxHSCROLL): wxVSCROLL)
+		(p_horizontal_scrolling_enabled? (wxVSCROLL | wxHSCROLL): wxVSCROLL) |
+			wxTAB_TRAVERSAL
 	),
 	m_current_row(0),
 	m_top_sizer(nullptr),
