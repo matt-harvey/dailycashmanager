@@ -31,6 +31,7 @@
 #include "string_flags.hpp"
 #include "visibility.hpp"
 #include "gui/client_data.hpp"
+#include "gui/combo_box.hpp"
 #include "gui/frame.hpp"
 #include "gui/locale.hpp"
 #include "gui/multi_account_panel.hpp"
@@ -46,7 +47,6 @@
 #include <wx/arrstr.h>
 #include <wx/bitmap.h>
 #include <wx/button.h>
-#include <wx/combobox.h>
 #include <wx/dataview.h>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
@@ -657,7 +657,7 @@ SetupWizard::FilepathPage::FilepathPage
 	m_top_sizer->Add(currency_prompt);
 
 	// Eighth row
-	m_currency_box = new wxComboBox
+	m_currency_box = new ComboBox
 	(	this,
 		s_currency_box_id,
 		wxEmptyString,
@@ -718,7 +718,7 @@ SetupWizard::FilepathPage::FilepathPage
 		);
 	}
 	JEWEL_ASSERT (!precision_descriptions.IsEmpty());
-	m_precision_box = new wxComboBox
+	m_precision_box = new ComboBox
 	(	this,
 		s_precision_box_id,
 		wxEmptyString,

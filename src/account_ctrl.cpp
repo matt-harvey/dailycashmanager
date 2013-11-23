@@ -21,12 +21,12 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "string_flags.hpp"
+#include "gui/combo_box.hpp"
 #include "gui/string_set_validator.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <sqloxx/handle.hpp>
 #include <sqloxx/id.hpp>
-#include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/string.h>
 #include <set>
@@ -45,7 +45,7 @@ namespace phatbooks
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(AccountCtrl, wxComboBox)
+BEGIN_EVENT_TABLE(AccountCtrl, ComboBox)
 	EVT_KILL_FOCUS(AccountCtrl::on_kill_focus)
 END_EVENT_TABLE()
 
@@ -66,7 +66,7 @@ AccountCtrl::AccountCtrl
 	PhatbooksDatabaseConnection& p_database_connection,
 	bool p_exclude_balancing_account
 ):
-	wxComboBox
+	ComboBox
 	(	p_parent,
 		p_id,
 		wxEmptyString,

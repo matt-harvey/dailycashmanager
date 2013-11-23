@@ -18,8 +18,8 @@
 #define GUARD_frequency_ctrl_hpp_5481597355325519
 
 #include "frequency.hpp"
+#include "gui/combo_box.hpp"
 #include <boost/optional.hpp>
-#include <wx/combobox.h>
 #include <wx/gdicmn.h>
 #include <wx/window.h>
 #include <wx/windowid.h>
@@ -41,7 +41,7 @@ namespace gui
  * Widget for the the user to select a Frequency (for a DraftJournal), or
  * else to select no Frequency (for an OrdinaryJournal).
  */
-class FrequencyCtrl: public wxComboBox
+class FrequencyCtrl: public ComboBox
 {
 public:
 

@@ -18,13 +18,13 @@
 #include "string_conv.hpp"
 #include "phatbooks_database_connection.hpp"
 #include "transaction_type.hpp"
+#include "gui/combo_box.hpp"
 #include "gui/string_set_validator.hpp"
 #include "gui/transaction_ctrl.hpp"
 #include <boost/optional.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <wx/arrstr.h>
-#include <wx/combobox.h>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
 #include <wx/window.h>
@@ -40,7 +40,7 @@ namespace phatbooks
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(TransactionTypeCtrl, wxComboBox)
+BEGIN_EVENT_TABLE(TransactionTypeCtrl, ComboBox)
 	EVT_KILL_FOCUS
 	(	TransactionTypeCtrl::on_kill_focus
 	)
@@ -57,7 +57,7 @@ TransactionTypeCtrl::TransactionTypeCtrl
 	PhatbooksDatabaseConnection& p_database_connection,
 	vector<TransactionType> const& p_transaction_types
 ):
-	wxComboBox
+	ComboBox
 	(	p_parent,
 		p_id,
 		transaction_type_to_verb(static_cast<TransactionType>(0)),

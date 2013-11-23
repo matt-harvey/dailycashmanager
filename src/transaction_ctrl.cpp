@@ -33,6 +33,7 @@
 #include "repeater.hpp"
 #include "transaction_side.hpp"
 #include "gui/account_ctrl.hpp"
+#include "gui/combo_box.hpp"
 #include "gui/date_ctrl.hpp"
 #include "gui/decimal_text_ctrl.hpp"
 #include "gui/decimal_validator.hpp"
@@ -58,7 +59,6 @@
 #include <sqloxx/id.hpp>
 #include <wx/arrstr.h>
 #include <wx/button.h>
-#include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
 #include <wx/gdicmn.h>

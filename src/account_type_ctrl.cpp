@@ -18,6 +18,7 @@
 #include "account_type.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "gui/account_dialog.hpp"
+#include "gui/combo_box.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <wx/combobox.h>
@@ -59,7 +60,7 @@ AccountTypeCtrl::AccountTypeCtrl
 	PhatbooksDatabaseConnection& p_database_connection,
 	AccountSuperType p_account_super_type
 ):
-	wxComboBox
+	ComboBox
 	(	p_parent,
 		p_id,
 		default_account_type_string(p_account_super_type),

@@ -19,11 +19,11 @@
 
 #include "account.hpp"
 #include "account_type.hpp"
+#include "gui/combo_box.hpp"
 #include <jewel/assert.hpp>
 #include <sqloxx/handle.hpp>
 #include <sqloxx/id.hpp>
 #include <wx/arrstr.h>
-#include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/string.h>
 #include <wx/window.h>
@@ -49,7 +49,7 @@ namespace gui
  * are shown; however, calling set_account(...) will cause the selected
  * Account to be shown even if it is of Visibility::hidden.
  */
-class AccountCtrl: public wxComboBox
+class AccountCtrl: public ComboBox
 {
 public:
 

@@ -18,7 +18,7 @@
 #define GUARD_account_type_ctrl_hpp_7303785568710317
 
 #include "account_type.hpp"
-#include <wx/combobox.h>
+#include "gui/combo_box.hpp"
 #include <wx/gdicmn.h>
 #include <wx/windowid.h>
 #include <wx/window.h>
@@ -38,7 +38,7 @@ namespace gui
 /**
  * Widget from which user can select an AccountType.
  */
-class AccountTypeCtrl: public wxComboBox
+class AccountTypeCtrl: public ComboBox
 {
 public:
 	AccountTypeCtrl

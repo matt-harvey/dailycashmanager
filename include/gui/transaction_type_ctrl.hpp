@@ -18,8 +18,8 @@
 #define GUARD_transaction_type_ctrl_hpp_8775560031074826
 
 #include "transaction_type.hpp"
+#include "gui/combo_box.hpp"
 #include <boost/optional.hpp>
-#include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/window.h>
@@ -44,7 +44,7 @@ namespace gui
  * Note, there is no way to insert additional TransactionTypes
  * into a TransactionTypeCtrl after it has been constructed.
  */
-class TransactionTypeCtrl: public wxComboBox
+class TransactionTypeCtrl: public ComboBox
 {
 public:
 
@@ -72,7 +72,7 @@ public:
 	/**
 	 * @returns the currently selected TransactionType, wrapped in a
 	 * boost::optional. This may be an uninitialized optional in case
-	 * we are in Windows and the underlying wxComboBox is in a
+	 * we are in Windows and the underlying ComboBox is in a
 	 * transitional state.
 	 */
 	boost::optional<TransactionType>

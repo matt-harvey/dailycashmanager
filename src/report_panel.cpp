@@ -20,6 +20,7 @@
 #include "date.hpp"
 #include "ordinary_journal.hpp"
 #include "phatbooks_database_connection.hpp"
+#include "gui/combo_box.hpp"
 #include "gui/date_ctrl.hpp"
 #include "gui/report.hpp"
 #include "gui/sizing.hpp"
@@ -27,7 +28,6 @@
 #include <jewel/assert.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/button.h>
-#include <wx/combobox.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
@@ -115,7 +115,7 @@ ReportPanel::configure_top()
 	wxArrayString report_type_names;
 	report_type_names.Add(balance_sheet_report_name());
 	report_type_names.Add(pl_report_name());
-	m_report_type_ctrl = new wxComboBox
+	m_report_type_ctrl = new ComboBox
 	(	this,
 		wxID_ANY,
 		report_type_names[0],

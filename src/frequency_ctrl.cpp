@@ -20,10 +20,10 @@
 #include "phatbooks_database_connection.hpp"
 #include "phatbooks_exceptions.hpp"
 #include "string_conv.hpp"
+#include "gui/combo_box.hpp"
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/optional.hpp>
-#include <wx/combobox.h>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
 #include <wx/window.h>
@@ -84,7 +84,7 @@ FrequencyCtrl::FrequencyCtrl
 	bool p_supports_ordinary_journal,
 	bool p_supports_draft_journal
 ):
-	wxComboBox
+	ComboBox
 	(	p_parent,
 		p_id,
 		once_off_string(),

@@ -23,7 +23,6 @@
 #include <boost/optional.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/button.h>
-#include <wx/combobox.h>
 #include <wx/dataview.h>
 #include <wx/filedlg.h>
 #include <wx/gbsizer.h>
@@ -51,6 +50,7 @@ class PhatbooksDatabaseConnection;
 namespace gui
 {
 
+class ComboBox;
 class Frame;
 class MultiAccountPanel;
 
@@ -86,7 +86,7 @@ public:
 
 	/**
 	 * @returns a standard size to be used for text controls
-	 * (wxTextCtrl, wxComboBox) in the pages of this wizard.
+	 * (wxTextCtrl, ComboBox) in the pages of this wizard.
 	 * The returned wxSize is intended to be used with wxDLG_UNIT macro
 	 * when initializing the controls' sizes.
 	 */
@@ -233,8 +233,8 @@ private:
 	wxTextCtrl* m_directory_ctrl;
 	wxButton* m_directory_button;
 	wxTextCtrl* m_filename_ctrl;
-	wxComboBox* m_currency_box;
-	wxComboBox* m_precision_box;
+	ComboBox* m_currency_box;
+	ComboBox* m_precision_box;
 
 	// Things are simpler in the implementation if this is a raw pointer.
 	// Don't be tempted to change this to a smart pointer or a reference.
