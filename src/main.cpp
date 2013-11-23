@@ -67,6 +67,8 @@
 // TODO MEDIUM PRIORITY Allow window borders to be dragged around, especially
 // for DraftJournalListCtrl. This make it easier for users on laptops.
 
+// TODO HIGH PRIORITY User guide.
+
 #include "app.hpp"
 #include <wx/app.h>
 
