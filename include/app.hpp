@@ -39,7 +39,6 @@ class PhatbooksDatabaseConnection;
 
 // end forward declarations
 
-
 class App: public wxApp
 {
 public:

@@ -27,10 +27,8 @@
 #include <memory>
 #include <string>
 
-
 namespace phatbooks
 {
-
 
 /**
  * Class representing commodities, where a commodity is anything of
