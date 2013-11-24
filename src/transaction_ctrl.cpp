@@ -32,6 +32,7 @@
 #include "proto_journal.hpp"
 #include "repeater.hpp"
 #include "transaction_side.hpp"
+#include "transaction_type.hpp"
 #include "gui/account_ctrl.hpp"
 #include "gui/combo_box.hpp"
 #include "gui/date_ctrl.hpp"
@@ -47,7 +48,6 @@
 #include "gui/sizing.hpp"
 #include "gui/top_panel.hpp"
 #include "gui/transaction_type_ctrl.hpp"
-#include "transaction_type.hpp"
 #include <boost/optional.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/assert.hpp>

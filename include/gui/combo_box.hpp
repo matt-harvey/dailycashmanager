@@ -4,6 +4,7 @@
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
 #include <wx/combobox.h>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
 #include <wx/validate.h>
@@ -51,6 +52,12 @@ public:
 	ComboBox& operator=(ComboBox const& rhs) = delete;
 	ComboBox& operator=(ComboBox&& rhs) = delete;
 	virtual ~ComboBox();
+
+private:
+
+	void on_char(wxKeyEvent& event);
+
+	DECLARE_EVENT_TABLE();
 
 };  // class ComboBox
 

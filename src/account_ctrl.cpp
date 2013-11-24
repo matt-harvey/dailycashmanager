@@ -51,8 +51,10 @@ END_EVENT_TABLE()
 
 namespace
 {
-	bool
-	compare_account_names(Handle<Account> const& lhs, Handle<Account> const& rhs)
+	bool compare_account_names
+	(	Handle<Account> const& lhs,
+		Handle<Account> const& rhs
+	)
 	{
 		return lhs->name() < rhs->name();
 	}

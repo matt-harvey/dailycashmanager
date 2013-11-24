@@ -121,6 +121,7 @@ namespace
 
 	wxString vendor_name()
 	{
+		// TODO HIGH PRIORITY This isn't the correct vendor name.
 		return wxString("Phatbooks");
 	}
 
@@ -229,7 +230,7 @@ App::configure_logging()
 		Log::set_threshold(Log::trace);
 #		ifdef JEWEL_ON_WINDOWS
 			string const a("C:\\ProgramData\\");
-			string const b("Phatbooks\\");
+			string const b = wx_to_std8(application_name()) + "\\";
 			string const c("logs\\");
 			bool ok = ensure_dir_exists(a);
 			if (ok) ok = ensure_dir_exists(a + b);
