@@ -60,14 +60,6 @@
 
 // TODO LOW PRIORITY Allow export/import to/from .qif (?) format.
 
-// TODO HIGH PRIORITY On Windows, at least on Windows 7, at least on some
-// machines, tab traversal is not working properly in SetupWizard, and you
-// can't traverse out of a wxComboBox using tab, for some reason. Have now
-// created phatbooks::gui::ComboBox class and substituted it for
-// wxComboBox class throughout; but still need to write event interception
-// code to handle tab key presses manually in ComboBox class, and hopefully
-// this will fix it.
-
 // TODO MEDIUM PRIORITY Allow window borders to be dragged around, especially
 // for DraftJournalListCtrl. This make it easier for users on laptops.
 

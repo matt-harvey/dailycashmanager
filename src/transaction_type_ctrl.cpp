@@ -64,7 +64,7 @@ TransactionTypeCtrl::TransactionTypeCtrl
 		wxDefaultPosition,
 		p_size,
 		wxArrayString(),
-		wxCB_READONLY | wxTAB_TRAVERSAL
+		wxCB_READONLY
 	),
 	m_transaction_types(p_transaction_types),
 	m_database_connection(p_database_connection)

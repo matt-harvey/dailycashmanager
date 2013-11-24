@@ -91,7 +91,7 @@ FrequencyCtrl::FrequencyCtrl
 		wxDefaultPosition,
 		p_size,
 		wxArrayString(),
-		wxCB_READONLY | wxTAB_TRAVERSAL
+		wxCB_READONLY
 	),
 	m_database_connection(p_database_connection),
 	m_supports_ordinary_journal(p_supports_ordinary_journal),

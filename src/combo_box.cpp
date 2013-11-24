@@ -77,26 +77,21 @@ ComboBox::~ComboBox()
 void
 ComboBox::on_char(wxKeyEvent& event)
 {
-	JEWEL_LOG_TRACE();
 	if (event.GetKeyCode() == WXK_TAB)
 	{
 		if (event.ShiftDown())
 		{
-			JEWEL_LOG_TRACE();
-			// TODO
+			Navigate(wxNavigationKeyEvent::IsBackward);
 		}
 		else
 		{
-			JEWEL_LOG_TRACE();
-			// TODO
+			Navigate(wxNavigationKeyEvent::IsForward);
 		}
 	}
 	else
 	{
-		JEWEL_LOG_TRACE();
 		event.Skip();
 	}
-	JEWEL_LOG_TRACE();
 	return;
 }
 

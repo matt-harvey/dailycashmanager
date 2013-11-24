@@ -67,7 +67,7 @@ AccountTypeCtrl::AccountTypeCtrl
 		wxDefaultPosition,
 		p_size,
 		wxArrayString(),
-		wxCB_READONLY | wxTAB_TRAVERSAL
+		wxCB_READONLY
 	),
 	m_account_super_type(p_account_super_type),
 	m_database_connection(p_database_connection)

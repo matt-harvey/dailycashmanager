@@ -75,7 +75,7 @@ AccountCtrl::AccountCtrl
 		wxDefaultPosition,
 		p_size,
 		wxArrayString(),	
-		wxCB_SORT | wxTAB_TRAVERSAL
+		wxCB_SORT
 	),
 	m_database_connection(p_database_connection)
 {
