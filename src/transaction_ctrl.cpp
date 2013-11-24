@@ -117,7 +117,9 @@ END_EVENT_TABLE()
 // be an unresolved bug in wxWidgets.
 // Note adding wxTAB_TRAVERSAL to style does not seem to fix the problem.
 // We have used a simple custom class, DateCtrl here instead, to avoid
-// these problems.
+// these problems. (We could possibly fix some of these issues in
+// wxDatePickerCtrl by inheriting and then intercepting key presses in our
+// custom class, similar to ComboBox / wxComboBox.)
 //
 // TODO LOW PRIORITY add a button to pop up a wxCalendarCtrl
 // if the user wants one.

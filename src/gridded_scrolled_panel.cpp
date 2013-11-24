@@ -28,7 +28,6 @@
 #include <wx/string.h>
 #include <wx/window.h>
 
-
 namespace phatbooks
 {
 namespace gui
@@ -45,8 +44,7 @@ GriddedScrolledPanel::GriddedScrolledPanel
 		wxID_ANY,
 		wxDefaultPosition,
 		p_size,
-		(p_horizontal_scrolling_enabled? (wxVSCROLL | wxHSCROLL): wxVSCROLL) |
-			wxTAB_TRAVERSAL
+		(p_horizontal_scrolling_enabled? (wxVSCROLL | wxHSCROLL): wxVSCROLL)
 	),
 	m_current_row(0),
 	m_top_sizer(nullptr),
