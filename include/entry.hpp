@@ -18,7 +18,7 @@
 #define GUARD_entry_hpp_7344880177334361
 
 #include "account.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "transaction_side.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
@@ -33,7 +33,7 @@
 #include <string>
 
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -45,11 +45,11 @@ namespace phatbooks
  * in the constructors for Account.
  */
 class Entry:
-	public sqloxx::PersistentObject<Entry, PhatbooksDatabaseConnection>
+	public sqloxx::PersistentObject<Entry, DcmDatabaseConnection>
 {
 public:
 
-	typedef sqloxx::PersistentObject<Entry, PhatbooksDatabaseConnection>
+	typedef sqloxx::PersistentObject<Entry, DcmDatabaseConnection>
 		PersistentObject;
 
 	typedef sqloxx::IdentityMap<Entry> IdentityMap;
@@ -58,7 +58,7 @@ public:
 	 * Set up tables in the database required for the persistence of
 	 * Entry objects.
 	 */
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	static void setup_tables(DcmDatabaseConnection& dbc);
 	
 	/**
 	 * Construct a fresh Entry, not yet persisted to database.
@@ -213,7 +213,7 @@ private:
  */
 std::unique_ptr<sqloxx::SQLStatement>
 create_date_ordered_actual_ordinary_entry_selector
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	boost::optional<boost::gregorian::date> const& p_maybe_min_date =
 		boost::optional<boost::gregorian::date>(),
 	boost::optional<boost::gregorian::date> const& p_maybe_max_date =
@@ -222,6 +222,6 @@ create_date_ordered_actual_ordinary_entry_selector
 		boost::optional<sqloxx::Handle<Account> >()
 );
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_entry_hpp_7344880177334361

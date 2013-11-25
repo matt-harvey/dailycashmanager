@@ -18,7 +18,7 @@
 #include "app.hpp"
 #include "backup.hpp"
 #include "date.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include "string_conv.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -43,7 +43,7 @@ using std::strlen;
 namespace filesystem = boost::filesystem;
 namespace posix_time = boost::posix_time;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -188,4 +188,4 @@ ErrorReporter::set_log_file_location
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

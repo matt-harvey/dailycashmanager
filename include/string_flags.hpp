@@ -19,7 +19,7 @@
 
 #include <jewel/flag_set.hpp>
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -43,6 +43,6 @@ namespace string_flags
 
 }  // namespace string_flags
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_string_flags_hpp_04174686784006044

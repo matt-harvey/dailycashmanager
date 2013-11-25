@@ -16,14 +16,14 @@
 
 #include "date.hpp"
 #include "interval_type.hpp"
-#include "phatbooks_tests_common.hpp"
+#include "dcm_tests_common.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/assert.hpp>
 #include <UnitTest++/UnitTest++.h>
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
@@ -122,4 +122,4 @@ TEST(test_month_end_for_date)
 }
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm

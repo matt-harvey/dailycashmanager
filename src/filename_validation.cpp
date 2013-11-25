@@ -28,7 +28,7 @@ using boost::regex;
 using boost::regex_match;
 using std::string;
 
-namespace phatbooks
+namespace dcm
 {
 
 namespace
@@ -137,14 +137,14 @@ namespace
 	}
 
 	/**
-	 * Filenames that are prohibited for use as Phatbooks files,
+	 * Filenames that are prohibited for use as DCM files,
 	 * due either to not having the right extension, or for other reasons.
 	 * Populate \e message with an error message if and only if the return
 	 * value is true.
 	 *
 	 * @returns \e true if and only if the filename is prohibited.
 	 */
-	bool is_prohibited_phatbooks_filename(string const& s, string& message)
+	bool is_prohibited_dcm_filename(string const& s, string& message)
 	{
 		string const extension = filename_extension(s);
 		if (extension != wx_to_std8(App::filename_extension()))
@@ -179,11 +179,11 @@ is_valid_filename
 			message = "Filename cannot consist solely of extension.";
 			return false;
 		}
-		return !is_prohibited_phatbooks_filename(s, message);
+		return !is_prohibited_dcm_filename(s, message);
 	}
 	JEWEL_ASSERT (!extension_is_explicit);
 	return !is_generally_prohibited_filename(s, message);
 }
 
 
-}  // namespace phatbooks
+}  // namespace dcm

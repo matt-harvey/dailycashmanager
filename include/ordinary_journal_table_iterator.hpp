@@ -21,7 +21,7 @@
 #include <sqloxx/handle.hpp>
 #include <sqloxx/table_iterator.hpp>
 
-namespace phatbooks
+namespace dcm
 {
 
 typedef
@@ -29,6 +29,6 @@ typedef
 	OrdinaryJournalTableIterator;
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_ordinary_journal_table_iterator_hpp_9057306944884969

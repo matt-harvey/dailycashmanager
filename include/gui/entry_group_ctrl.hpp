@@ -35,14 +35,14 @@
 #include <memory>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
 
 class Account;
 class Journal;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -73,7 +73,7 @@ public:
 		wxSize const& p_text_ctrl_size,
 		Journal& p_journal,
 		TransactionSide p_transaction_side,
-		PhatbooksDatabaseConnection& p_database_connection
+		DcmDatabaseConnection& p_database_connection
 	);
 
 	EntryGroupCtrl(EntryGroupCtrl const&) = delete;
@@ -151,7 +151,7 @@ private:
 
 	size_t num_rows() const;
 
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 
 	static unsigned int const s_unsplit_button_id = wxID_HIGHEST + 1;
 	static unsigned int const s_split_button_id = s_unsplit_button_id + 1;
@@ -189,6 +189,6 @@ private:
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_entry_group_ctrl_hpp_08374422745953511

@@ -29,7 +29,7 @@
 #include <wx/textctrl.h>
 #include <wx/window.h>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
@@ -113,6 +113,6 @@ private:
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_account_dialog_hpp_4068064533205733

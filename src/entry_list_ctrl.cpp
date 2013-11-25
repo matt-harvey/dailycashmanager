@@ -23,7 +23,7 @@
 #include "entry.hpp"
 #include "entry_table_iterator.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "gui/bs_account_entry_list_ctrl.hpp"
 #include "gui/locale.hpp"
 #include "gui/persistent_object_event.hpp"
@@ -63,7 +63,7 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -78,7 +78,7 @@ END_EVENT_TABLE()
 EntryListCtrl::EntryListCtrl
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	wxListCtrl
 	(	p_parent,
@@ -353,7 +353,7 @@ EntryListCtrl::on_item_activated(wxListEvent& event)
 	// higher up the window hierarchy.
 	PersistentObjectEvent::fire
 	(	this,
-		PHATBOOKS_JOURNAL_EDITING_EVENT,
+		DCM_JOURNAL_EDITING_EVENT,
 		entry->journal_id()
 	);
 	return;
@@ -573,17 +573,17 @@ EntryListCtrl::remove_if_present(sqloxx::Id p_entry_id)
 	return;
 }
 
-PhatbooksDatabaseConnection&
+DcmDatabaseConnection&
 EntryListCtrl::database_connection()
 {
 	return m_database_connection;
 }
 
-PhatbooksDatabaseConnection const&
+DcmDatabaseConnection const&
 EntryListCtrl::database_connection() const
 {
 	return m_database_connection;
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

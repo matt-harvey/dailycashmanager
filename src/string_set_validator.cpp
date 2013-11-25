@@ -23,7 +23,7 @@
 #include <wx/textentry.h>
 #include <wx/validate.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -101,4 +101,4 @@ StringSetValidator::Clone() const
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

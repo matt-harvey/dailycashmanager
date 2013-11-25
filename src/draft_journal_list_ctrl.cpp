@@ -19,7 +19,7 @@
 #include "draft_journal.hpp"
 #include "draft_journal_table_iterator.hpp"
 #include "frequency.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "repeater.hpp"
 #include "string_conv.hpp"
 #include "gui/persistent_object_event.hpp"
@@ -42,7 +42,7 @@ using std::max;
 using std::string;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -59,7 +59,7 @@ DraftJournalListCtrl::DraftJournalListCtrl
 	wxSize const& p_size,
 	DraftJournalTableIterator p_beg,
 	DraftJournalTableIterator p_end,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	wxListCtrl
 	(	p_parent,
@@ -107,7 +107,7 @@ DraftJournalListCtrl::on_item_activated(wxListEvent& event)
 	JEWEL_LOG_VALUE(Log::info, journal_id);
 	PersistentObjectEvent::fire
 	(	this,
-		PHATBOOKS_JOURNAL_EDITING_EVENT,
+		DCM_JOURNAL_EDITING_EVENT,
 		journal_id
 	);
 	return;
@@ -180,7 +180,7 @@ DraftJournalListCtrl::update
 			if (repeaters.size() == 1)
 			{
 				frequency_description = std8_to_wx
-				(	phatbooks::frequency_description
+				(	dcm::frequency_description
 					(	repeaters[0]->frequency(),
 						string("every")
 					)
@@ -226,4 +226,4 @@ DraftJournalListCtrl::update
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

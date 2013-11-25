@@ -16,7 +16,7 @@
 
 #include "gui/gridded_scrolled_panel.hpp"
 #include "finformat.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "gui/locale.hpp"
 #include "gui/sizing.hpp"
 #include <jewel/assert.hpp>
@@ -28,7 +28,7 @@
 #include <wx/string.h>
 #include <wx/window.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -36,7 +36,7 @@ namespace gui
 GriddedScrolledPanel::GriddedScrolledPanel
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection,
+	DcmDatabaseConnection& p_database_connection,
 	bool p_horizontal_scrolling_enabled
 ):
 	wxScrolledWindow
@@ -149,13 +149,13 @@ GriddedScrolledPanel::display_decimal
 	return text;
 }
 
-PhatbooksDatabaseConnection&
+DcmDatabaseConnection&
 GriddedScrolledPanel::database_connection()
 {
 	return m_database_connection;
 }
 
-PhatbooksDatabaseConnection const&
+DcmDatabaseConnection const&
 GriddedScrolledPanel::database_connection() const
 {
 	return m_database_connection;
@@ -163,4 +163,4 @@ GriddedScrolledPanel::database_connection() const
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

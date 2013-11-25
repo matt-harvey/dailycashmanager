@@ -21,7 +21,7 @@
 #include <sqloxx/handle.hpp>
 #include <sqloxx/table_iterator.hpp>
 
-namespace phatbooks
+namespace dcm
 {
 
 typedef
@@ -34,7 +34,7 @@ typedef
  */
 AccountTableIterator
 make_name_ordered_account_table_iterator
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 );
 
 /**
@@ -43,9 +43,9 @@ make_name_ordered_account_table_iterator
  */
 AccountTableIterator
 make_type_name_ordered_account_table_iterator
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 );
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_account_table_iterator_hpp_048275898233184546

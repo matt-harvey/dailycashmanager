@@ -26,7 +26,7 @@
 #include <wx/window.h>
 #include <wx/string.h>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
@@ -83,6 +83,6 @@ private:
 };  // class PLAccountEntryListCtrl
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_pl_account_entry_list_ctrl_hpp_025696059700891404

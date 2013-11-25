@@ -20,7 +20,7 @@
 #include "date.hpp"
 #include "interval_type.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "proto_journal.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <sqloxx/handle.hpp>
@@ -30,7 +30,7 @@
 #include <string>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
@@ -61,13 +61,13 @@ class Frequency;
  * only ever via sqloxx::Handle<Repeater>.
  */
 class Repeater:
-	public sqloxx::PersistentObject<Repeater, PhatbooksDatabaseConnection>
+	public sqloxx::PersistentObject<Repeater, DcmDatabaseConnection>
 {
 public:
 	
 	typedef sqloxx::PersistentObject
 	<	Repeater,
-		PhatbooksDatabaseConnection
+		DcmDatabaseConnection
 	>	PersistentObject;
 
 	/**
@@ -76,7 +76,7 @@ public:
 	 */
 	typedef sqloxx::IdentityMap<Repeater> IdentityMap;
 
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	static void setup_tables(DcmDatabaseConnection& dbc);
 
 	/**
 	 * Construct a fresh Repeater with no Id, not yet persisted to the
@@ -241,7 +241,7 @@ bool operator<
  * firing (or attempted firing).
  */
 std::vector<RepeaterFiringResult> update_repeaters
-(	PhatbooksDatabaseConnection& dbc,
+(	DcmDatabaseConnection& dbc,
 	boost::gregorian::date d = today()
 );
 
@@ -254,6 +254,6 @@ operator<(RepeaterFiringResult const& lhs, RepeaterFiringResult const& rhs)
 	return lhs.firing_date < rhs.firing_date;
 }
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_repeater_impl_hpp_7204316857831701

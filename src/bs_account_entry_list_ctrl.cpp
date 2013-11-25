@@ -31,7 +31,7 @@ using sqloxx::Handle;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -126,4 +126,4 @@ BSAccountEntryListCtrl::do_get_num_columns() const
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

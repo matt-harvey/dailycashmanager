@@ -21,12 +21,12 @@
 #include <wx/dialog.h>
 #include <wx/sizer.h>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
 
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -37,7 +37,7 @@ class WelcomeDialog: public wxDialog
 {
 public:
 
-	WelcomeDialog(PhatbooksDatabaseConnection& p_database_connection);
+	WelcomeDialog(DcmDatabaseConnection& p_database_connection);
 
 	WelcomeDialog(WelcomeDialog const&) = delete;
 	WelcomeDialog(WelcomeDialog&&) = delete;
@@ -54,7 +54,7 @@ private:
 	void on_new_file_button_click(wxCommandEvent& event);
 	void on_cancel_button_click(wxCommandEvent& event);
 
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 	bool m_user_wants_new_file;
 	wxGridSizer* m_top_sizer;
 	wxButton* m_existing_file_button;
@@ -76,6 +76,6 @@ private:
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_welcome_dialog_hpp_920675095599459

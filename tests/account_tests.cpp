@@ -23,8 +23,8 @@
 #include "frequency.hpp"
 #include "interval_type.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_tests_common.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_tests_common.hpp"
 #include "visibility.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/assert.hpp>
@@ -45,16 +45,16 @@ using std::vector;
 namespace gregorian = boost::gregorian;
 
 // TODO LOW PRIORITY There is a lot of repeated setup code in these tests
-// which could be moved into phatbooks::test::TestFixture.
+// which could be moved into dcm::test::TestFixture.
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
 
 TEST_FIXTURE(TestFixture, test_account_exists)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 
 	// These were saved to the database in TestFixture		
 	CHECK(Account::exists(dbc, "cash"));
@@ -93,7 +93,7 @@ TEST_FIXTURE(TestFixture, test_account_exists)
 
 TEST_FIXTURE(TestFixture, test_no_user_pl_accounts_saved)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 
 	// These were saved to the database in TestFixture		
 	JEWEL_ASSERT(Account::exists(dbc, "cash"));
@@ -144,7 +144,7 @@ TEST_FIXTURE(TestFixture, test_no_user_pl_accounts_saved)
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_name)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
 	Id const id1 = a1->id();
@@ -175,7 +175,7 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_name)
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_commodity)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<Commodity> const c1(dbc, Commodity::id_for_abbreviation(dbc, "AUD"));
 	Handle<Commodity> const c2(dbc, Commodity::id_for_abbreviation(dbc, "USD"));
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
@@ -214,7 +214,7 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_commodity)
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_type)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
 	Handle<Account> a3(dbc);
@@ -251,7 +251,7 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_type)
 
 TEST_FIXTURE(TestFixture, test_account_super_type)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
 	Handle<Account> a3(dbc);
@@ -286,7 +286,7 @@ TEST_FIXTURE(TestFixture, test_account_super_type)
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_description)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
 	Handle<Account> a3(dbc);
@@ -323,7 +323,7 @@ TEST_FIXTURE(TestFixture, test_get_and_set_account_description)
 
 TEST_FIXTURE(TestFixture, test_get_and_set_account_visibility)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
 	Handle<Account> const a3(dbc);
@@ -358,7 +358,7 @@ TEST_FIXTURE(TestFixture, test_account_balance_1)
 {
 	// Changing the balance of a small number of Accounts.
 
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<Commodity> const c1(dbc, Commodity::id_for_abbreviation(dbc, "AUD"));
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
@@ -442,7 +442,7 @@ TEST_FIXTURE(TestFixture, test_account_balance_2)
 {
 	// Changing the balance of a large number of Accounts.
 	
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<Commodity> const aud(dbc, Commodity::id_for_abbreviation(dbc, "AUD"));
 	Handle<Account> const cash(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const food(dbc, Account::id_for_name(dbc, "food"));
@@ -554,7 +554,7 @@ TEST_FIXTURE(TestFixture, test_account_balance_2)
 
 TEST_FIXTURE(TestFixture, test_account_opening_balance)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<Commodity> const c1(dbc, Commodity::id_for_abbreviation(dbc, "AUD"));
 	Handle<Account> const a1(dbc, Account::id_for_name(dbc, "cash"));
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
@@ -595,7 +595,7 @@ TEST_FIXTURE(TestFixture, test_account_opening_balance)
 
 TEST_FIXTURE(TestFixture, test_account_budget_and_budget_items)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<Account> const a2(dbc, Account::id_for_name(dbc, "food"));
 	Handle<Account> const a3(dbc);
 	a3->set_account_type(AccountType::revenue);
@@ -652,4 +652,4 @@ TEST_FIXTURE(TestFixture, test_account_budget_and_budget_items)
 }
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm

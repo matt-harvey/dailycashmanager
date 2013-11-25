@@ -19,12 +19,12 @@
 
 #include <string>
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
  * Tests validity of filename (not whole filepath), as to whether it can
- * serve as the name of a Phatbooks user database file.
+ * serve as the name of a DCM user database file.
  *
  * @param s the string that we want to test as to whether it is a valid
  * filename.
@@ -40,10 +40,10 @@ namespace phatbooks
  * \e extension_is_explicit is set to \e false, then "lkajsdf.las" will
  * be \e not be treated as if ".las" is an extension. Rather it will be tested
  * only as to whether it is a valid filename \e base, assuming the correct
- * Phatbooks extension will later be added.
+ * DCM extension will later be added.
  *
  * @returns \e true if and only if this filename may be used to identify
- * a Phatbooks database file. An error message will be assigned to \e message
+ * a DCM database file. An error message will be assigned to \e message
  * if and only if \e false is returned.
  */
 bool is_valid_filename
@@ -54,7 +54,7 @@ bool is_valid_filename
 
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_filename_validation_hpp_29534295773848096

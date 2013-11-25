@@ -16,7 +16,7 @@
 
 #include "commodity.hpp"
 #include "balance_cache.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "string_conv.hpp"
 #include "string_conv.hpp"
 #include <sqloxx/database_transaction.hpp>
@@ -49,7 +49,7 @@ using std::endl;  // for debug logging
 using std::exception;
 using std::string;
 
-namespace phatbooks
+namespace dcm
 {
 
 struct Commodity::CommodityData
@@ -62,7 +62,7 @@ struct Commodity::CommodityData
 };
 
 void Commodity::setup_tables
-(	PhatbooksDatabaseConnection& dbc
+(	DcmDatabaseConnection& dbc
 )
 {
 	// Create the table
@@ -85,7 +85,7 @@ void Commodity::setup_tables
 
 Id
 Commodity::id_for_abbreviation
-(	PhatbooksDatabaseConnection& dbc,
+(	DcmDatabaseConnection& dbc,
 	wxString const& p_abbreviation
 )
 {
@@ -131,7 +131,7 @@ Commodity::~Commodity() = default;
 
 bool
 Commodity::exists_with_abbreviation
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	wxString const& p_abbreviation
 )
 {
@@ -145,7 +145,7 @@ Commodity::exists_with_abbreviation
 
 bool
 Commodity::exists_with_name
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	wxString const& p_name
 )
 {
@@ -217,7 +217,7 @@ void Commodity::process_saving_statement(SQLStatement& statement)
 
 void Commodity::do_save_existing()
 {
-	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
+	DcmDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection()
 	);
 	SQLStatement updater
@@ -238,7 +238,7 @@ void Commodity::do_save_existing()
 
 void Commodity::do_save_new()
 {
-	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
+	DcmDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection()
 	);
 	SQLStatement inserter
@@ -339,4 +339,4 @@ std::string Commodity::primary_key_name()
 	return "commodity_id";
 }
 
-}  // namespace phatbooks
+}  // namespace dcm

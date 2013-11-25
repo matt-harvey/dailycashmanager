@@ -23,7 +23,7 @@
 #include <sqloxx/persistent_object.hpp>
 #include <ostream>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
@@ -46,7 +46,7 @@ class Entry;
 class PersistentJournal:
 	public sqloxx::PersistentObject
 	<	PersistentJournal,
-		PhatbooksDatabaseConnection
+		DcmDatabaseConnection
 	>,
 	public Journal
 {
@@ -55,14 +55,14 @@ public:
 	typedef
 		sqloxx::PersistentObject
 		<	PersistentJournal,
-			PhatbooksDatabaseConnection
+			DcmDatabaseConnection
 		>
 		PersistentObject;
 	
 	typedef
 		sqloxx::IdentityMap<PersistentJournal> IdentityMap;
 	
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	static void setup_tables(DcmDatabaseConnection& dbc);
 
 	static std::string exclusive_table_name();
 	static std::string primary_key_name();
@@ -126,23 +126,23 @@ bool
 has_entry_with_id(PersistentJournal& journal, sqloxx::Id entry_id);
 
 sqloxx::Id
-max_journal_id(PhatbooksDatabaseConnection& dbc);
+max_journal_id(DcmDatabaseConnection& dbc);
 
 sqloxx::Id
-min_journal_id(PhatbooksDatabaseConnection& dbc);
+min_journal_id(DcmDatabaseConnection& dbc);
 
 /**
  * Journal id must exist.
  */
 bool
-journal_id_is_draft(PhatbooksDatabaseConnection& dbc, sqloxx::Id);
+journal_id_is_draft(DcmDatabaseConnection& dbc, sqloxx::Id);
 
 
 
 
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_persistent_journal_hpp_46241805630848654

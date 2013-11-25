@@ -17,7 +17,7 @@
 #ifndef GUARD_transaction_side_hpp_6396077878957651
 #define GUARD_transaction_side_hpp_6396077878957651
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -35,7 +35,7 @@ enum class TransactionSide: unsigned char
 	num_transaction_sides  // do not insert enumerators below here
 };
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_transaction_side_hpp_6396077878957651

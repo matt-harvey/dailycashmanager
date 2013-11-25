@@ -20,7 +20,7 @@
 #include "account_type.hpp"
 #include "commodity.hpp"
 #include "entry_table_iterator.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "gui/report.hpp"
 #include "gui/report_panel.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -45,7 +45,7 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -53,7 +53,7 @@ namespace gui
 BalanceSheetReport::BalanceSheetReport
 (	ReportPanel* p_parent,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection,
+	DcmDatabaseConnection& p_database_connection,
 	optional<gregorian::date> p_maybe_min_date,
 	optional<gregorian::date> p_maybe_max_date
 ):
@@ -297,4 +297,4 @@ BalanceSheetReport::BalanceDatum::BalanceDatum
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

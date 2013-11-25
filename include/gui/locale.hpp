@@ -19,19 +19,19 @@
 
 #include <wx/intl.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
 
 /**
  * Convenience function returning a reference to the current wxLocale.
- * Instance of phatbooks::App should have been initialized before
+ * Instance of dcm::App should have been initialized before
  * calling this function, or behaviour will be undefined.
  */
 wxLocale const& locale();
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_locale_hpp_4724053314292828

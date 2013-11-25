@@ -18,7 +18,7 @@
 #define GUARD_draft_journal_hpp_8602723767330276
 
 #include "persistent_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"
 #include <sqloxx/handle_fwd.hpp>
@@ -30,27 +30,27 @@
 #include <string>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 class DraftJournal;
 class Repeater;
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 namespace sqloxx
 {
 
 template <>
-struct PersistenceTraits<phatbooks::DraftJournal>
+struct PersistenceTraits<dcm::DraftJournal>
 {
-	typedef phatbooks::PersistentJournal Base;
+	typedef dcm::PersistentJournal Base;
 };
 
 }  // namespace sqloxx
 
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -77,7 +77,7 @@ public:
 	 * Create the tables required for the persistence of DraftJournal
 	 * instances to the database.
 	 */
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	static void setup_tables(DcmDatabaseConnection& dbc);
 
 	/**
 	 * @returns \e true if the only DraftJournal
@@ -88,7 +88,7 @@ public:
 	 * function returns false.
 	 */
 	static bool no_user_draft_journals_saved
-	(	PhatbooksDatabaseConnection& p_database_connection
+	(	DcmDatabaseConnection& p_database_connection
 	);
 
 	/**
@@ -130,7 +130,7 @@ public:
 	~DraftJournal();
 
 	static bool exists
-	(	PhatbooksDatabaseConnection& p_database_connection,
+	(	DcmDatabaseConnection& p_database_connection,
 		wxString const& p_name
 	);
 
@@ -182,7 +182,7 @@ private:
 };
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_draft_journal_hpp_8602723767330276

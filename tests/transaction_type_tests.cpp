@@ -26,7 +26,7 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
@@ -223,4 +223,4 @@ TEST(TestDestinationAccountTypesGenericTransaction)
 }
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm

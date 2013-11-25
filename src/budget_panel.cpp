@@ -24,8 +24,8 @@
 #include "finformat.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_exceptions.hpp"
 #include "string_flags.hpp"
 #include "gui/account_ctrl.hpp"
 #include "gui/account_dialog.hpp"
@@ -67,7 +67,7 @@ using sqloxx::DatabaseTransaction;
 using sqloxx::Handle;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -544,7 +544,7 @@ BudgetPanel::update_budgets_from_dialog()
 	JEWEL_ASSERT (frame);
 	PersistentObjectEvent::fire
 	(	frame,
-		PHATBOOKS_BUDGET_EDITED_EVENT,
+		DCM_BUDGET_EDITED_EVENT,
 		m_account->id()
 	);
 	JEWEL_LOG_TRACE();
@@ -641,7 +641,7 @@ BudgetPanel::initial_summary_amount_text()
 		finformat_wx(zero(), locale());
 }
 
-PhatbooksDatabaseConnection&
+DcmDatabaseConnection&
 BudgetPanel::database_connection() const
 {
 	return m_account->database_connection();
@@ -762,7 +762,7 @@ BudgetPanel::SpecialFrequencyCtrl::SpecialFrequencyCtrl
 (	BudgetPanel* p_parent,
 	wxWindowID p_id,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	FrequencyCtrl(p_parent, p_id, p_size, p_database_connection)
 {
@@ -824,7 +824,7 @@ BudgetPanel::BalancingDialog::BalancingDialog
 (	wxWindow* p_parent,
 	jewel::Decimal const& p_imbalance,
 	boost::optional<Handle<Account> > const& p_maybe_account,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
 	m_top_sizer(nullptr),
@@ -984,7 +984,7 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog
 			
 			PersistentObjectEvent::fire
 			(	frame,  // don't use "this", or event will be missed
-				PHATBOOKS_BUDGET_EDITED_EVENT,
+				DCM_BUDGET_EDITED_EVENT,
 				p_target->id()
 			);
 			JEWEL_LOG_TRACE();
@@ -1005,7 +1005,7 @@ BudgetPanel::BalancingDialog::update_budgets_from_dialog
 
 	PersistentObjectEvent::fire
 	(	frame,  // don't use "this", or event will be missed
-		PHATBOOKS_BUDGET_EDITED_EVENT,
+		DCM_BUDGET_EDITED_EVENT,
 		p_target->id()
 	);
 	JEWEL_ASSERT (budget_is_balanced());
@@ -1022,4 +1022,4 @@ BudgetPanel::BalancingDialog::budget_is_balanced() const
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

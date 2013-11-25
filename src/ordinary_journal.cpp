@@ -20,7 +20,7 @@
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
 #include "persistent_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "transaction_type.hpp"
 #include <sqloxx/database_connection.hpp>
@@ -59,7 +59,7 @@ using std::vector;
 namespace gregorian = boost::gregorian;
 
 
-namespace phatbooks
+namespace dcm
 {
 
 string
@@ -69,7 +69,7 @@ OrdinaryJournal::exclusive_table_name()
 }
 
 void
-OrdinaryJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
+OrdinaryJournal::setup_tables(DcmDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table ordinary_journal_detail"
@@ -277,7 +277,7 @@ create_opening_balance_journal
 	// a static function to return an OrdinaryJournal, which we create using
 	// "high level", OrdinaryJournal-level functions; so it seems
 	// appropriate to implement it here.
-	PhatbooksDatabaseConnection& dbc = p_account->database_connection();
+	DcmDatabaseConnection& dbc = p_account->database_connection();
 	Handle<Account> const balancing_account = dbc.balancing_account();
 	Decimal const old_opening_balance =
 		p_account->has_id()?
@@ -326,6 +326,6 @@ create_opening_balance_journal
 }
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 

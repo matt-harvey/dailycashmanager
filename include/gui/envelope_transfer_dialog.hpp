@@ -23,12 +23,12 @@
 #include <wx/gbsizer.h>
 #include <wx/window.h>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
 
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 class ProtoJournal;
 
 namespace gui
@@ -56,7 +56,7 @@ public:
 	EnvelopeTransferDialog
 	(	wxWindow* p_parent,
 		ProtoJournal& p_journal,
-		PhatbooksDatabaseConnection& p_database_connection
+		DcmDatabaseConnection& p_database_connection
 	);
 	EnvelopeTransferDialog() = delete;
 	EnvelopeTransferDialog(EnvelopeTransferDialog const& rhs) = delete;
@@ -80,13 +80,13 @@ private:
 	wxButton* m_cancel_button;
 	wxButton* m_ok_button;
 	ProtoJournal& m_journal;
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE();
 
 };  // class EnvelopeTransferDialog
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_envelope_transfer_dialog_hpp_5707053959233246

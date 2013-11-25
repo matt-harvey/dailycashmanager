@@ -20,7 +20,7 @@
 #include <wx/string.h>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -74,6 +74,6 @@ account_type_to_string(AccountType p_account_type);
 AccountType
 string_to_account_type(wxString const& p_string);
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_account_type_hpp_5090496337549061

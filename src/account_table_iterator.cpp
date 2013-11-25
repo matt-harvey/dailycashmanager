@@ -16,12 +16,12 @@
 
 #include "account_table_iterator.hpp"
 
-namespace phatbooks
+namespace dcm
 {
 
 AccountTableIterator
 make_name_ordered_account_table_iterator
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 )
 {
 	return AccountTableIterator
@@ -32,7 +32,7 @@ make_name_ordered_account_table_iterator
 
 AccountTableIterator
 make_type_name_ordered_account_table_iterator
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 )
 {
 	return AccountTableIterator
@@ -45,4 +45,4 @@ make_type_name_ordered_account_table_iterator
 
 
 
-}  // namespace phatbooks
+}  // namespace dcm

@@ -34,7 +34,7 @@ using sqloxx::Handle;
 namespace gregorian = boost::gregorian;
 
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -150,4 +150,4 @@ PLAccountEntryListCtrl::friendly_amount(Handle<Entry> const& p_entry) const
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

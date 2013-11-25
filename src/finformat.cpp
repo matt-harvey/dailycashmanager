@@ -50,7 +50,7 @@ using std::vector;
 using std::endl;
 
 
-namespace phatbooks
+namespace dcm
 {
 
 namespace
@@ -82,7 +82,7 @@ wxString finformat_wx
 	DecimalFormatFlags p_flags
 )
 {
-#	ifdef PHATBOOKS_DISALLOW_DASH_FOR_ZERO
+#	ifdef DCM_DISALLOW_DASH_FOR_ZERO
 		bool const dash_for_zero = false;
 #	else
 		bool const dash_for_zero = p_flags.test(string_flags::dash_for_zero);
@@ -301,5 +301,5 @@ wx_to_simple_sum(wxString wxs, wxLocale const& loc)
 }
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 

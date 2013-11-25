@@ -24,12 +24,12 @@
 #include <unordered_map>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
 
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 // end forward declarations
 
@@ -61,9 +61,9 @@ class BalanceCache
 {
 public:
 
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	static void setup_tables(DcmDatabaseConnection& dbc);
 
-	BalanceCache(PhatbooksDatabaseConnection& p_database_connection);
+	BalanceCache(DcmDatabaseConnection& p_database_connection);
 
 	BalanceCache(BalanceCache const&) = delete;
 	BalanceCache(BalanceCache&&) = delete;
@@ -102,7 +102,7 @@ private:
 	void refresh_all();
 	void refresh_targetted(std::vector<sqloxx::Id> const& p_targets);
 
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 	std::unique_ptr<Map> m_map;
 	bool m_map_is_stale;
 
@@ -110,7 +110,7 @@ private:
 
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_balance_cache_hpp_3730216051326234

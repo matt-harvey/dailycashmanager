@@ -21,8 +21,8 @@
 #include <string>
 
 using jewel::Log;
-using phatbooks::App;
-using phatbooks::wx_to_std8;
+using dcm::App;
+using dcm::wx_to_std8;
 using std::string;
 
 void configure_logging()

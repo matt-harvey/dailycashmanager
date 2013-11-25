@@ -26,13 +26,13 @@
 #include <wx/string.h>
 #include <unordered_map>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
 
 class Account;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -47,7 +47,7 @@ public:
 	BalanceSheetReport
 	(	ReportPanel* p_parent,
 		wxSize const& p_size,
-		PhatbooksDatabaseConnection& p_database_connection,
+		DcmDatabaseConnection& p_database_connection,
 		boost::optional<boost::gregorian::date> p_maybe_min_date,
 		boost::optional<boost::gregorian::date> p_maybe_max_date
 	);
@@ -84,6 +84,6 @@ private:
 };  // class BalanceSheetReport
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_balance_sheet_report_hpp_8005432485605326

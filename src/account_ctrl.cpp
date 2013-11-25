@@ -18,8 +18,8 @@
 #include "account.hpp"
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_exceptions.hpp"
 #include "string_flags.hpp"
 #include "gui/combo_box.hpp"
 #include "gui/string_set_validator.hpp"
@@ -40,7 +40,7 @@ using std::ostringstream;
 using std::set;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -65,7 +65,7 @@ AccountCtrl::AccountCtrl
 	unsigned int p_id,
 	wxSize const& p_size,
 	vector<AccountType> const& p_account_types,
-	PhatbooksDatabaseConnection& p_database_connection,
+	DcmDatabaseConnection& p_database_connection,
 	bool p_exclude_balancing_account
 ):
 	ComboBox
@@ -277,4 +277,4 @@ AccountCtrl::refresh()
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

@@ -26,7 +26,7 @@ using boost::optional;
 using std::cout;
 using std::endl;
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
@@ -204,4 +204,4 @@ TEST(test_date_parser_tolerant_parse)
 
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm

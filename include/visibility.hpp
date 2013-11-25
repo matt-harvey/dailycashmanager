@@ -17,7 +17,7 @@
 #ifndef GUARD_visibility_hpp_6967687740441266
 #define GUARD_visibility_hpp_6967687740441266
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -31,6 +31,6 @@ enum class Visibility: unsigned char
 	num_visibilities  // do not add enumerators below here
 };
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_visibility_hpp_6967687740441266

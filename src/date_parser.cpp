@@ -55,7 +55,7 @@ using std::vector;
 namespace gregorian = boost::gregorian;
 namespace lambda = boost::lambda;
 
-namespace phatbooks
+namespace dcm
 {
 
 namespace
@@ -434,4 +434,4 @@ DateParser::tolerant_parse(wxString const& p_string) const
 	return (ret? ret: tolerant_parse_aux(p_string, m_secondary_format));
 }
 
-}  // namespace phatbooks
+}  // namespace dcm

@@ -26,13 +26,13 @@
 #include <wx/wx.h>
 #include <set>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
 
 class Account;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 // end forward declarations
 
@@ -64,7 +64,7 @@ public:
 	 */
 	AccountListCtrl
 	(	wxWindow* p_parent,
-		PhatbooksDatabaseConnection& p_database_connection,
+		DcmDatabaseConnection& p_database_connection,
 		AccountSuperType p_account_super_type
 	);
 
@@ -119,7 +119,7 @@ private:
 
 	bool m_show_hidden;
 	AccountSuperType const m_account_super_type;
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 
 	static int const s_name_col = 0;
 	static int const s_balance_col = s_name_col + 1;
@@ -130,7 +130,7 @@ private:
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 

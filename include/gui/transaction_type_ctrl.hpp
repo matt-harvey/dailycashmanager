@@ -26,12 +26,12 @@
 #include <wx/windowid.h>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
 
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 // End forward declarations
 
@@ -59,7 +59,7 @@ public:
 	(	wxWindow* p_parent,
 		wxWindowID p_id,
 		wxSize const& p_size,
-		PhatbooksDatabaseConnection& p_database_connection,
+		DcmDatabaseConnection& p_database_connection,
 		std::vector<TransactionType> const& p_transaction_types
 	);
 
@@ -90,13 +90,13 @@ private:
 	void on_change(wxCommandEvent& event);
 
 	std::vector<TransactionType> m_transaction_types;
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE()
 
 };  // class TransactionTypeCtrl
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_transaction_type_ctrl_hpp_8775560031074826

@@ -19,7 +19,7 @@
 
 #include <wx/clntdata.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -72,6 +72,6 @@ ClientData<T>::data() const
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_client_data_hpp_1960609588753716

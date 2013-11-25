@@ -24,23 +24,23 @@ At the same time, we must be able to work with our chosen GUI framework, wxWidge
 which requires that strings be in a particular format.
 
 The application can be broken horizontally into three Layers, as follows.
-	-	The Database Layer. In Phatbooks, the functions at this layer are all and
+	-	The Database Layer. In DCM, the functions at this layer are all and
 		only those in the sqloxx namespace. This is basically everything in the
 		Sqloxx library (which in turns is a wrapper around SQLite).
-	-	The Business Layer. In Phatbooks, the functions at this layer are all and
-		only those in the phatbooks namespace, that are NOT also in the tui or
+	-	The Business Layer. In DCM, the functions at this layer are all and
+		only those in the dcm namespace, that are NOT also in the tui or
 		gui namespace. Functions belonging to business classes such as
-		phatbooks::Account are typical examples of functions at the Business
+		dcm::Account are typical examples of functions at the Business
 		Layer. We need to decide, for those of these functions that accept or
 		return strings, what sort of strings they should accept and return.
-	-	The Presentation Layer. In Phatbooks, the functions at this layer all ond
-		only those in either the phatbooks::gui or the phatbooks::tui namespace.
+	-	The Presentation Layer. In DCM, the functions at this layer all ond
+		only those in either the dcm::gui or the dcm::tui namespace.
 		The presentation layer can be broken into two "Faces", as follows.
-			- The TUI Face - anything in the phatbooks::tui namespace, or the console
+			- The TUI Face - anything in the dcm::tui namespace, or the console
 					mode of the application. There are two "Subfaces":
 						- The Linux Subface.
 						- The Windows Subface.
-			- The GUI Face - anything in the phatbooks::gui namespace, or the GUI
+			- The GUI Face - anything in the dcm::gui namespace, or the GUI
 					mode of the application. There are two "Subfaces":
 						- The Linux Subface.
 						- The Windows Subface.
@@ -68,7 +68,7 @@ as follows.
 		things as strings of char. This entails UTF-8 format. At the SQLoxx level,
 		this entails passing std::string to the SQLoxx API - which, happily, is
 		already written to accept std::string and not std::wstring. Therefore, as
-		far as Phatbooks is concerned, it needs to pass UTF-8 encoded std::string
+		far as DCM is concerned, it needs to pass UTF-8 encoded std::string
 		to the SQLoxx API, and it needs to be prepared to received UTF-8 encoded
 		std::string from the SQLoxx API. (Note, it is possible to configure SQLite
 		with ICU support, so that, for example, you might sort strings by

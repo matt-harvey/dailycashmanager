@@ -17,7 +17,7 @@
 #ifndef GUARD_date_hpp_43289257373329837
 #define GUARD_date_hpp_43289257373329837
 
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/optional.hpp>
@@ -25,7 +25,7 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -120,7 +120,7 @@ date_format_wx(boost::gregorian::date const& p_date);
 boost::gregorian::date
 month_end_for_date(boost::gregorian::date const& p_date);
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_date_hpp_43289257373329837

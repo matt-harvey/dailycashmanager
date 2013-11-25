@@ -23,12 +23,12 @@
 #include <wx/windowid.h>
 #include <wx/window.h>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
 
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -45,7 +45,7 @@ public:
 	(	wxWindow* p_parent,
 		wxWindowID p_id,
 		wxSize const& p_size,
-		PhatbooksDatabaseConnection& p_database_connection,
+		DcmDatabaseConnection& p_database_connection,
 		AccountSuperType p_account_super_type
 	);
 
@@ -67,11 +67,11 @@ public:
 private:
 
 	AccountSuperType m_account_super_type;
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 
 };  // class AccountTypeCtrl
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_account_type_ctrl_hpp_7303785568710317

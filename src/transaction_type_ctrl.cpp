@@ -16,7 +16,7 @@
 
 #include "gui/transaction_type_ctrl.hpp"
 #include "string_conv.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "transaction_type.hpp"
 #include "gui/combo_box.hpp"
 #include "gui/string_set_validator.hpp"
@@ -35,7 +35,7 @@ using boost::optional;
 using jewel::value;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -54,7 +54,7 @@ TransactionTypeCtrl::TransactionTypeCtrl
 (	wxWindow* p_parent,
 	wxWindowID p_id,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection,
+	DcmDatabaseConnection& p_database_connection,
 	vector<TransactionType> const& p_transaction_types
 ):
 	ComboBox
@@ -119,7 +119,7 @@ TransactionTypeCtrl::on_kill_focus(wxFocusEvent& event)
 {
 	// TODO LOW PRIORITY Make a class from which we can privately inherit,
 	// to capture this on_kill_focus behaviour, which is shared by several
-	// custom widget classes in phatbooks::gui.
+	// custom widget classes in dcm::gui.
 
 	// Unfortunately if we call Validate() and TransferDataToWindow()
 	// directly on the AccountCtrl, it doesn't work. We have to call
@@ -148,4 +148,4 @@ TransactionTypeCtrl::on_change(wxCommandEvent& event)
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

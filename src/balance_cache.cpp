@@ -18,8 +18,8 @@
 #include "date.hpp"
 #include "balance_cache.hpp"
 #include "commodity.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_exceptions.hpp"
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/checked_arithmetic.hpp>
@@ -48,11 +48,11 @@ using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 
 void
-BalanceCache::setup_tables(PhatbooksDatabaseConnection& dbc)
+BalanceCache::setup_tables(DcmDatabaseConnection& dbc)
 {
 	JEWEL_LOG_TRACE();
 	dbc.execute_sql
@@ -63,7 +63,7 @@ BalanceCache::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 BalanceCache::BalanceCache
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 ):
 	m_database_connection(p_database_connection),
 	m_map(new Map),
@@ -372,4 +372,4 @@ BalanceCache::refresh_targetted(vector<sqloxx::Id> const& p_targets)
 	return;
 }
 
-}  // namespace phatbooks
+}  // namespace dcm

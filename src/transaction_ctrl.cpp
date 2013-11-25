@@ -27,7 +27,7 @@
 #include "ordinary_journal.hpp"
 #include "persistent_journal.hpp"
 #include "proto_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "persistent_journal.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
@@ -89,7 +89,7 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -205,7 +205,7 @@ TransactionCtrl::TransactionCtrl
 (	TopPanel* p_parent,
 	wxSize const& p_size,
 	ProtoJournal& p_journal,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	GriddedScrolledPanel
 	(	p_parent,
@@ -917,7 +917,7 @@ TransactionCtrl::post_journal()
 		JEWEL_ASSERT (dj->has_id());
 		PersistentObjectEvent::fire
 		(	this,
-			PHATBOOKS_JOURNAL_CREATED_EVENT,
+			DCM_JOURNAL_CREATED_EVENT,
 			dj->id()
 		);
 		return true;
@@ -935,7 +935,7 @@ TransactionCtrl::post_journal()
 		JEWEL_ASSERT (oj->has_id());
 		PersistentObjectEvent::fire
 		(	this,
-			PHATBOOKS_JOURNAL_CREATED_EVENT,
+			DCM_JOURNAL_CREATED_EVENT,
 			oj->id()
 		);
 		return true;
@@ -984,7 +984,7 @@ TransactionCtrl::remove_journal()
 		(	this,
 			doomed_entry_ids
 		);
-		event_type = PHATBOOKS_DRAFT_JOURNAL_DELETED_EVENT;
+		event_type = DCM_DRAFT_JOURNAL_DELETED_EVENT;
 	}
 	else
 	{
@@ -992,7 +992,7 @@ TransactionCtrl::remove_journal()
 		(	this,
 			doomed_entry_ids
 		);
-		event_type = PHATBOOKS_ORDINARY_JOURNAL_DELETED_EVENT;
+		event_type = DCM_ORDINARY_JOURNAL_DELETED_EVENT;
 	}
 	JEWEL_ASSERT (event_type != static_cast<wxEventType>(0));
 	PersistentObjectEvent::fire(this, event_type, doomed_journal_id);
@@ -1113,7 +1113,7 @@ TransactionCtrl::save_existing_journal()
 		JEWEL_ASSERT (dj_ref.has_id());
 		PersistentObjectEvent::fire
 		(	this,
-			PHATBOOKS_JOURNAL_EDITED_EVENT,
+			DCM_JOURNAL_EDITED_EVENT,
 			dj_ref.id()
 		);
 		JEWEL_LOG_TRACE();
@@ -1137,7 +1137,7 @@ TransactionCtrl::save_existing_journal()
 		JEWEL_ASSERT (oj_ref.has_id());
 		PersistentObjectEvent::fire
 		(	this,
-			PHATBOOKS_JOURNAL_EDITED_EVENT,
+			DCM_JOURNAL_EDITED_EVENT,
 			oj_ref.id()
 		);
 		JEWEL_LOG_TRACE();
@@ -1165,4 +1165,4 @@ TransactionCtrl::is_balanced() const
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

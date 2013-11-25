@@ -28,7 +28,7 @@ using std::string;
 using std::vector;
 
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
@@ -60,8 +60,8 @@ TEST(test_is_valid_filename_re_generally_bad_filenames)
 		"/or/this/one",
 		"D:\\this\\is\\not\\a_filename",
 		"uncool/",
-		"even_with_extension?.phat",
-		"that_won>t_save_you.phat"
+		"even_with_extension?.dcm",
+		"that_won>t_save_you.dcm"
 	};
 	for (char const* bad_name: generally_bad_filenames)
 	{
@@ -94,9 +94,9 @@ TEST(test_is_valid_filename_re_generally_bad_filenames)
 
 TEST(test_is_valid_filename_re_generally_good_filenames)
 {
-	// Note none of these have the right Phatbooks extension though.
+	// Note none of these have the right DailyCashManager extension though.
 	// We test that they are good generally filenames but can't
-	// serve as Phatbooks database files.
+	// serve as DailyCashManager database files.
 	const char* const generally_good_filenames[] =
 	{	"hello",
 		"something.with.lots.of.dots",
@@ -109,12 +109,12 @@ TEST(test_is_valid_filename_re_generally_good_filenames)
 		"but_extension_not_required",
 		"HOW_ARE_CAPITALS_EVEN_AN_ISSUE",
 		"spaces are fine          even    stupidly many  ",
-		"does_not_really_have_a.phat.extension",
-		".phat",   // Must have non-empty base
-		"nodotphat",
-		"badly_positioned_do.tphat",
+		"does_not_really_have_a.dcm.extension",
+		".dcm",   // Must have non-empty base
+		"nodotdcm",
+		"badly_positioned_do.tdcm",
 		"so_is_thisp.hat",
-		"and_this.phat."
+		"and_this.dcm."
 	};
 	for (char const* good_name: generally_good_filenames)
 	{
@@ -127,31 +127,31 @@ TEST(test_is_valid_filename_re_generally_good_filenames)
 			cout << good_name << endl;
 		}
 
-		// But doesn't have Phatbooks extension
+		// But doesn't have DailyCashManager extension
 		CHECK(!is_valid_filename(good_name, message, true));
 		CHECK(!is_valid_filename(good_name, message));
 	}
 }
 
 
-TEST(test_is_valid_filename_re_good_phatbooks_filenames)
+TEST(test_is_valid_filename_re_good_dcm_filenames)
 {
-	const char* const good_phatbooks_filenames[] =
-	{	"hello.phat",
-		"space are ok.phat",
-		"this is weird     .phat",
-		"------.phat",
-		"'.phat",
-		"we-are-tolerant-of-hyphens.phat"
+	const char* const good_dcm_filenames[] =
+	{	"hello.dcm",
+		"space are ok.dcm",
+		"this is weird     .dcm",
+		"------.dcm",
+		"'.dcm",
+		"we-are-tolerant-of-hyphens.dcm"
 	};
-	for (char const* good_name: good_phatbooks_filenames)
+	for (char const* good_name: good_dcm_filenames)
 	{
 		string message;
 
 		// Good generally
 		CHECK(is_valid_filename(good_name, message, false));
 
-		// Good as Phatbooks file, too
+		// Good as DailyCashManager file, too
 		CHECK(is_valid_filename(good_name, message, true));
 		CHECK(is_valid_filename);
 	}
@@ -159,4 +159,4 @@ TEST(test_is_valid_filename_re_good_phatbooks_filenames)
 
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm

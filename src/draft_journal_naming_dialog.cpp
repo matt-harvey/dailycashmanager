@@ -16,7 +16,7 @@
 
 #include "gui/draft_journal_naming_dialog.hpp"
 #include "draft_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "gui/sizing.hpp"
 #include "gui/transaction_ctrl.hpp"
 #include <jewel/assert.hpp>
@@ -29,7 +29,7 @@
 #include <wx/string.h>
 #include <wx/textctrl.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -43,7 +43,7 @@ END_EVENT_TABLE()
 
 DraftJournalNamingDialog::DraftJournalNamingDialog
 (	TransactionCtrl* p_parent,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	wxDialog
 	(	p_parent,
@@ -153,4 +153,4 @@ DraftJournalNamingDialog::on_ok_button_click(wxCommandEvent& event)
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

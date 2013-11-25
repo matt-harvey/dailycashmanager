@@ -72,4 +72,4 @@
 #include "app.hpp"
 #include <wx/app.h>
 
-wxIMPLEMENT_APP(phatbooks::App);
+wxIMPLEMENT_APP(dcm::App);

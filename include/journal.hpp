@@ -28,7 +28,7 @@
 #include <string>
 
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
@@ -156,7 +156,7 @@ protected:
 	 */
 	void mimic_core
 	(	Journal& rhs,
-		PhatbooksDatabaseConnection& dbc,
+		DcmDatabaseConnection& dbc,
 		boost::optional<sqloxx::Id> id
 	);
 
@@ -167,7 +167,7 @@ private:
 	std::unique_ptr<JournalData> m_data;
 };
 	
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_journal_hpp_6157822681664407

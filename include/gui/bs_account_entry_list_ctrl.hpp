@@ -24,7 +24,7 @@
 #include <wx/gdicmn.h>
 #include <wx/window.h>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
@@ -76,6 +76,6 @@ BSAccountEntryListCtrl::~BSAccountEntryListCtrl()
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_bs_account_entry_list_ctrl_hpp_5331693680645755

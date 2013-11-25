@@ -21,13 +21,13 @@
 #include <sqloxx/handle.hpp>
 #include <sqloxx/table_iterator.hpp>
 
-namespace phatbooks
+namespace dcm
 {
 
 typedef
 	sqloxx::TableIterator<sqloxx::Handle<Repeater> >
 	RepeaterTableIterator;
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_repeater_table_iterator_hpp_8880911641233094

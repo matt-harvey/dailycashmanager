@@ -23,7 +23,7 @@
 #include "date.hpp"
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "transaction_side.hpp"
 #include "gui/account_ctrl.hpp"
@@ -43,7 +43,7 @@
 using sqloxx::Handle;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -62,7 +62,7 @@ END_EVENT_TABLE()
 EnvelopeTransferDialog::EnvelopeTransferDialog
 (	wxWindow* p_parent,
 	ProtoJournal& p_journal,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	wxDialog(p_parent, wxID_ANY, wxEmptyString),
 	m_top_sizer(nullptr),
@@ -248,7 +248,7 @@ EnvelopeTransferDialog::on_ok_button_click(wxCommandEvent& event)
 	JEWEL_ASSERT (oj->has_id());
 	PersistentObjectEvent::fire
 	(	frame,
-		PHATBOOKS_JOURNAL_CREATED_EVENT,
+		DCM_JOURNAL_CREATED_EVENT,
 		oj->id()
 	);
 	EndModal(wxID_OK);
@@ -285,4 +285,4 @@ EnvelopeTransferDialog::update_proto_journal_from_dialog() const
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

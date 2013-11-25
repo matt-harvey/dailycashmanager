@@ -21,7 +21,7 @@
 #include <boost/optional.hpp>
 #include <wx/validate.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -65,6 +65,6 @@ private:
 };  // class DateValidator
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_date_validator_hpp_1494637937981001

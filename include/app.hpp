@@ -17,7 +17,7 @@
 #ifndef GUARD_app_hpp_19666019230925488
 #define GUARD_app_hpp_19666019230925488
 
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "gui/error_reporter.hpp"
 #include "gui/frame.hpp"
 #include <boost/filesystem.hpp>
@@ -30,12 +30,12 @@
 #include <wx/string.h>
 #include <memory>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
 
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 // end forward declarations
 
@@ -89,7 +89,7 @@ public:
 
 	wxLocale const& locale() const;
 
-	PhatbooksDatabaseConnection& database_connection();
+	DcmDatabaseConnection& database_connection();
 
 private:
 
@@ -119,7 +119,7 @@ private:
 
 	bool m_exiting_cleanly;
 	wxSingleInstanceChecker* m_single_instance_checker;
-	std::unique_ptr<PhatbooksDatabaseConnection> m_database_connection;
+	std::unique_ptr<DcmDatabaseConnection> m_database_connection;
 	boost::optional<boost::filesystem::path> m_database_filepath;
 	boost::optional<boost::filesystem::path> m_backup_filepath;
 	gui::ErrorReporter m_error_reporter;
@@ -129,6 +129,6 @@ private:
 // Implements App& wxGetApp()
 wxDECLARE_APP(App);
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_app_hpp_19666019230925488

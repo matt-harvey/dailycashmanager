@@ -27,14 +27,14 @@
 #include <wx/window.h>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
 
 class Account;
 class OrdinaryJournal;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -54,7 +54,7 @@ class ReportPanel: public wxPanel
 public:
 	ReportPanel
 	(	wxWindow* p_parent,
-		PhatbooksDatabaseConnection& p_database_connection
+		DcmDatabaseConnection& p_database_connection
 	);
 
 	ReportPanel(ReportPanel const&) = delete;
@@ -93,13 +93,13 @@ private:
 	DateCtrl* m_max_date_ctrl;
 	wxButton* m_run_button;
 	Report* m_report;
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE()
 
 };  // class ReportPanel
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_report_panel_hpp_8629163596140763

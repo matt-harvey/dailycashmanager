@@ -39,13 +39,13 @@
 #include <set>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
 
 class AugmentedAccount;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -74,7 +74,7 @@ public:
 	 * Precondition: p_database_connection is not valid (that's the whole
 	 * reason we are calling the wizard...).
 	 */
-	SetupWizard(PhatbooksDatabaseConnection& p_database_connection);
+	SetupWizard(DcmDatabaseConnection& p_database_connection);
 
 	SetupWizard(SetupWizard const&) = delete;
 	SetupWizard(SetupWizard&&) = delete;
@@ -146,7 +146,7 @@ private:
 	 */
 	void configure_accounts();
 
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 	std::set<wxString> m_account_names_already_taken;
 	FilepathPage* m_filepath_page;
 	AccountPage* m_balance_sheet_account_page;
@@ -207,7 +207,7 @@ public:
 
 	FilepathPage
 	(	SetupWizard* parent,
-		PhatbooksDatabaseConnection& p_database_connection
+		DcmDatabaseConnection& p_database_connection
 	);
 	FilepathPage(FilepathPage const&) = delete;
 	FilepathPage(FilepathPage&&) = delete;
@@ -261,7 +261,7 @@ public:
 	AccountPage
 	(	SetupWizard* p_parent,
 		AccountSuperType p_account_super_type,
-		PhatbooksDatabaseConnection& p_database_connection
+		DcmDatabaseConnection& p_database_connection
 	);
 
 	AccountPage(AccountPage const&) = delete;
@@ -301,7 +301,7 @@ public:
 	);
 
 protected:
-	PhatbooksDatabaseConnection& database_connection() const;
+	DcmDatabaseConnection& database_connection() const;
 	SetupWizard const& parent() const;
 	wxGridBagSizer& top_sizer();
 	int current_row() const;
@@ -327,7 +327,7 @@ private:
 	static unsigned int const s_pop_row_button_id = wxID_HIGHEST + 1;
 	static unsigned int const s_push_row_button_id = s_pop_row_button_id + 1;
 
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 	AccountSuperType m_account_super_type;
 	size_t const m_min_num_accounts;
 	int m_current_row; 
@@ -342,7 +342,7 @@ private:
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_setup_wizard_hpp_8623281646810137

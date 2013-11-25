@@ -31,7 +31,7 @@ using std::numeric_limits;
 namespace gregorian = boost::gregorian;
 namespace posix_time = boost::posix_time;
 
-namespace phatbooks
+namespace dcm
 {
 
 // Start anonymous namespace
@@ -48,6 +48,21 @@ namespace
 	
 	// boost::gregorian representation of POSIX epoch
 	static gregorian::date const epoch_grg(1970, 1, 1);
+
+	wxDateTime boost_to_wx_date(gregorian::date const& p_date)
+	{
+		JEWEL_ASSERT (static_cast<int>(wxDateTime::Jan) == 0);
+		JEWEL_ASSERT (static_cast<int>(wxDateTime::Dec) == 11);
+		return wxDateTime
+		(	p_date.day(),
+			static_cast<wxDateTime::Month>(p_date.month() - 1),
+			p_date.year(),
+			0,
+			0,
+			0,
+			0
+		);
+	}
 }
 // End anonymous namespace
 
@@ -132,27 +147,6 @@ now()
 	return posix_time::second_clock::local_time();
 }
 
-namespace
-{
-	wxDateTime boost_to_wx_date(gregorian::date const& p_date)
-	{
-		JEWEL_ASSERT (static_cast<int>(wxDateTime::Jan) == 0);
-		JEWEL_ASSERT (static_cast<int>(wxDateTime::Dec) == 11);
-		return wxDateTime
-		(	p_date.day(),
-			static_cast<wxDateTime::Month>(p_date.month() - 1),
-			p_date.year(),
-			0,
-			0,
-			0,
-			0
-		);
-	}
-
-
-}  // end anonymous namespace
-
-
 wxString
 date_format_wx(gregorian::date const& p_date)
 {
@@ -185,5 +179,4 @@ month_end_for_date(gregorian::date const& p_date)
 	return ret;
 }
 
-
-}  // namespace phatbooks
+}  // namespace dcm

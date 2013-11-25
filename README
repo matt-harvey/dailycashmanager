@@ -16,7 +16,7 @@ limitations under the License.
 
 *** OVERVIEW ***
 
-Phatbooks is graphical desktop application written in standard C++, using
+DailyCashManager is graphical desktop application written in standard C++, using
 C++11 features. It provides a means for individuals and households to
 keep a record of their financial transactions, and to manage their
 spending using the envelope budgeting system.
@@ -24,12 +24,12 @@ spending using the envelope budgeting system.
 
 *** DEPENDENCIES ***
 
-Phatbooks is written in standard C++, and utilizes some C++11 features. To build
-and install the application, you will need:
+DailyCashManager is written in standard C++, and utilizes some C++11 features.
+To build and install the application, you will need:
 
 	- A reasonably conformant C++ compiler and standard library implementation
-	  (Phatbooks has been successfully built with GCC 4.7.2 and with later
-	  versions; it has not been tested with other compilers)
+	  (DailyCashManager has been successfully built with GCC 4.7.2 and with
+	  later versions; it has not been tested with other compilers)
 
 	- A Tcl interpreter (known to work with version 8.6)
 
@@ -110,9 +110,9 @@ will then proceed. For your information, a list of the installed files will be
 saved in the file "install_manifest.txt", in the project root.
 
 If any tests fail, you are strongly encouraged to send the developer
-your test output, along with the file "Phatbooks_test.log" (which should appear
-in the project root), and the details of your system and build environment. (See
-"CONTACT" below for contact details.)
+your test output, along with the file "DailyCashManager_test.log" (which should
+appear in the project root), and the details of your system and build
+environment. (See "CONTACT" below for contact details.)
 
 
 *** DOCUMENTATION ***
@@ -129,8 +129,8 @@ web browser:
 	[project root]/html/index.html
 
 Almost all of the Doxygen markup is contained in the
-C++ headers; so an alternative source of information on the Phatbooks API, is
-simply to examine the headers directly.
+C++ headers; so an alternative source of information on the DailyCashManager
+API, is simply to examine the headers directly.
 
 
 *** OTHER BUILD TARGETS ***
@@ -154,7 +154,7 @@ TO BUILD THE LIBRARY WITHOUT INSTALLING OR TESTING
 
 At the project root, enter:
 
-	make phatbooks
+	make dailycashmanager
 
 
 TO BUILD AND RUN THE TEST SUITE WITHOUT INSTALLING
@@ -167,7 +167,7 @@ After the test driver executable is built, the tests will automatically be run
 and the results displayed.
 
 If any tests fail, you are strongly encouraged to send the developer
-your test output, along with the file "Phatbooks_test.log" (which should appear
+your test output, along with the file "DailyCashManager_test.log" (which should appear
 in the project root), and the details of your system and build environment. (See
 below for contact details.)
 

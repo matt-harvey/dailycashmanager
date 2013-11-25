@@ -19,7 +19,7 @@
 #include "account_type.hpp"
 #include "finformat.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "gui/balance_sheet_report.hpp"
 #include "gui/gridded_scrolled_panel.hpp"
 #include "gui/locale.hpp"
@@ -45,7 +45,7 @@ using sqloxx::Handle;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -55,7 +55,7 @@ Report::create
 (	ReportPanel* p_parent,
 	wxSize const& p_size,
 	AccountSuperType p_account_super_type,
-	PhatbooksDatabaseConnection& p_database_connection,
+	DcmDatabaseConnection& p_database_connection,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date
 )
@@ -90,7 +90,7 @@ Report::create
 Report::Report
 (	ReportPanel* p_parent,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection,
+	DcmDatabaseConnection& p_database_connection,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date
 ):
@@ -183,4 +183,4 @@ Report::generate()
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

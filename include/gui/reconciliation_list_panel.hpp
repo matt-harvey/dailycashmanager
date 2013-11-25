@@ -19,7 +19,7 @@
 
 #include "entry_list_panel.hpp"
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -27,6 +27,6 @@ namespace gui
 typedef EntryListPanel ReconciliationListPanel;
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_reconciliation_list_panel_hpp_19473405237995742

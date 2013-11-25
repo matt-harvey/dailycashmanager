@@ -24,7 +24,7 @@
  * Utilities for storing standard sizes used in widgets.
  */
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -67,6 +67,6 @@ int extra_large_width();
 int scrollbar_width_allowance();
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_sizing_hpp_3696029835239067

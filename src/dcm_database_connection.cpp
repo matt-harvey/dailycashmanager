@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "account.hpp"
 #include "account.hpp"
 #include "account_table_iterator.hpp"
@@ -30,7 +30,7 @@
 #include "ordinary_journal_table_iterator.hpp"
 #include "repeater.hpp"
 #include "persistent_journal.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
 #include <sqloxx/database_connection.hpp>
@@ -72,7 +72,7 @@ using std::string;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 
 namespace
@@ -85,7 +85,7 @@ namespace
 
 }  // end anonymous namespace
 
-class PhatbooksDatabaseConnection::PermanentEntityData
+class DcmDatabaseConnection::PermanentEntityData
 {
 public:
 	PermanentEntityData() = default;
@@ -112,7 +112,7 @@ private:
 	sqloxx::Handle<Commodity> m_default_commodity;
 };
 
-PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
+DcmDatabaseConnection::DcmDatabaseConnection():
 	DatabaseConnection(),
 	m_permanent_entity_data(nullptr),
 	m_balance_cache(nullptr),
@@ -137,7 +137,7 @@ PhatbooksDatabaseConnection::PhatbooksDatabaseConnection():
 	JEWEL_LOG_TRACE();
 }
 
-PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
+DcmDatabaseConnection::~DcmDatabaseConnection()
 {
 	JEWEL_LOG_TRACE();
 
@@ -192,7 +192,7 @@ PhatbooksDatabaseConnection::~PhatbooksDatabaseConnection()
 }
 
 void
-PhatbooksDatabaseConnection::load_creation_date()
+DcmDatabaseConnection::load_creation_date()
 {
 	JEWEL_LOG_TRACE();
 	SQLStatement statement
@@ -209,7 +209,7 @@ PhatbooksDatabaseConnection::load_creation_date()
 }
 
 void
-PhatbooksDatabaseConnection::load_default_commodity()
+DcmDatabaseConnection::load_default_commodity()
 {
 	JEWEL_LOG_TRACE();
 	SQLStatement statement
@@ -227,7 +227,7 @@ PhatbooksDatabaseConnection::load_default_commodity()
 }
 
 void
-PhatbooksDatabaseConnection::do_setup()
+DcmDatabaseConnection::do_setup()
 {
 	JEWEL_LOG_TRACE();
 	if (!tables_are_configured())
@@ -274,13 +274,13 @@ PhatbooksDatabaseConnection::do_setup()
 }
 
 gregorian::date
-PhatbooksDatabaseConnection::entity_creation_date() const
+DcmDatabaseConnection::entity_creation_date() const
 {
 	return m_permanent_entity_data->creation_date();
 }
 
 gregorian::date
-PhatbooksDatabaseConnection::opening_balance_journal_date() const
+DcmDatabaseConnection::opening_balance_journal_date() const
 {
 	gregorian::date const ret =
 		entity_creation_date() - gregorian::date_duration(1);
@@ -288,7 +288,7 @@ PhatbooksDatabaseConnection::opening_balance_journal_date() const
 }
 
 void
-PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
+DcmDatabaseConnection::set_caching_level(unsigned int level)
 {
 	JEWEL_LOG_TRACE();
 	switch (level)
@@ -325,19 +325,19 @@ PhatbooksDatabaseConnection::set_caching_level(unsigned int level)
 }
 
 Handle<Account>
-PhatbooksDatabaseConnection::balancing_account() const
+DcmDatabaseConnection::balancing_account() const
 {
 	return m_budget->balancing_account();
 }
 
 Handle<Commodity>
-PhatbooksDatabaseConnection::default_commodity() const
+DcmDatabaseConnection::default_commodity() const
 {
 	return m_permanent_entity_data->default_commodity();
 }
 
 void
-PhatbooksDatabaseConnection::set_default_commodity
+DcmDatabaseConnection::set_default_commodity
 (	Handle<Commodity> const& p_commodity
 )
 {
@@ -360,20 +360,20 @@ PhatbooksDatabaseConnection::set_default_commodity
 }
 
 Handle<DraftJournal>
-PhatbooksDatabaseConnection::budget_instrument() const
+DcmDatabaseConnection::budget_instrument() const
 {
 	return m_budget->instrument();
 }
 
 void
-PhatbooksDatabaseConnection::mark_tables_as_configured()
+DcmDatabaseConnection::mark_tables_as_configured()
 {
 	execute_sql("create table " + setup_flag() + "(dummy_column);");
 	return;
 }
 
 void
-PhatbooksDatabaseConnection::save_default_commodity()
+DcmDatabaseConnection::save_default_commodity()
 {
 	Handle<Commodity> const dc = default_commodity();
 	DatabaseTransaction dt(*this);
@@ -398,7 +398,7 @@ PhatbooksDatabaseConnection::save_default_commodity()
 }
 
 void
-PhatbooksDatabaseConnection::setup_entity_table()
+DcmDatabaseConnection::setup_entity_table()
 {
 	// Entity table represents entity level data
 	// for the database as a whole. It should only ever
@@ -429,7 +429,7 @@ PhatbooksDatabaseConnection::setup_entity_table()
 }
 
 bool
-PhatbooksDatabaseConnection::tables_are_configured()
+DcmDatabaseConnection::tables_are_configured()
 {
 	// TODO LOW PRIORITY Make this nicer. 
 	try
@@ -444,13 +444,13 @@ PhatbooksDatabaseConnection::tables_are_configured()
 }
 
 Frequency
-PhatbooksDatabaseConnection::budget_frequency() const
+DcmDatabaseConnection::budget_frequency() const
 {
 	return m_budget->frequency();
 }
 
 bool
-PhatbooksDatabaseConnection::supports_budget_frequency
+DcmDatabaseConnection::supports_budget_frequency
 (	Frequency const& p_frequency
 ) const
 {
@@ -460,13 +460,13 @@ PhatbooksDatabaseConnection::supports_budget_frequency
 // BalanceCacheAttorney
 
 typedef
-	PhatbooksDatabaseConnection::BalanceCacheAttorney
+	DcmDatabaseConnection::BalanceCacheAttorney
 	BalanceCacheAttorney;
 
 
 void
 BalanceCacheAttorney::mark_as_stale
-(	PhatbooksDatabaseConnection const& p_database_connection
+(	DcmDatabaseConnection const& p_database_connection
 )
 {
 	p_database_connection.m_balance_cache->mark_as_stale();
@@ -475,7 +475,7 @@ BalanceCacheAttorney::mark_as_stale
 
 void
 BalanceCacheAttorney::mark_as_stale
-(	PhatbooksDatabaseConnection const& p_database_connection,
+(	DcmDatabaseConnection const& p_database_connection,
 	sqloxx::Id p_account_id
 )
 {
@@ -487,7 +487,7 @@ BalanceCacheAttorney::mark_as_stale
 
 Decimal
 BalanceCacheAttorney::technical_balance
-(	PhatbooksDatabaseConnection const& p_database_connection,
+(	DcmDatabaseConnection const& p_database_connection,
 	sqloxx::Id p_account_id
 )
 {
@@ -498,7 +498,7 @@ BalanceCacheAttorney::technical_balance
 
 Decimal
 BalanceCacheAttorney::technical_opening_balance
-(	PhatbooksDatabaseConnection const& p_database_connection,
+(	DcmDatabaseConnection const& p_database_connection,
 	sqloxx::Id p_account_id
 )
 {
@@ -511,12 +511,12 @@ BalanceCacheAttorney::technical_opening_balance
 // BudgetAttorney
 
 typedef
-	PhatbooksDatabaseConnection::BudgetAttorney
+	DcmDatabaseConnection::BudgetAttorney
 	BudgetAttorney;
 
 void
 BudgetAttorney::regenerate
-(	PhatbooksDatabaseConnection const& p_database_connection
+(	DcmDatabaseConnection const& p_database_connection
 )
 {
 	p_database_connection.m_budget->regenerate();
@@ -525,7 +525,7 @@ BudgetAttorney::regenerate
 
 Decimal
 BudgetAttorney::budget
-(	PhatbooksDatabaseConnection const& p_database_connection,
+(	DcmDatabaseConnection const& p_database_connection,
 	sqloxx::Id p_account_id
 )
 {
@@ -536,26 +536,26 @@ BudgetAttorney::budget
 // PermanentEntityData
 
 gregorian::date
-PhatbooksDatabaseConnection::PermanentEntityData::creation_date() const
+DcmDatabaseConnection::PermanentEntityData::creation_date() const
 {
 	return value(m_creation_date);
 }
 
 bool
-PhatbooksDatabaseConnection::
+DcmDatabaseConnection::
 PermanentEntityData::default_commodity_is_set() const
 {
 	return static_cast<bool>(m_default_commodity);
 }
 
 Handle<Commodity>
-PhatbooksDatabaseConnection::PermanentEntityData::default_commodity() const
+DcmDatabaseConnection::PermanentEntityData::default_commodity() const
 {
 	return m_default_commodity;
 }
 
 void
-PhatbooksDatabaseConnection::PermanentEntityData::set_creation_date
+DcmDatabaseConnection::PermanentEntityData::set_creation_date
 (	boost::gregorian::date const& p_date
 )
 {
@@ -571,7 +571,7 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_creation_date
 }
 
 void
-PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
+DcmDatabaseConnection::PermanentEntityData::set_default_commodity
 (	Handle<Commodity> const& p_commodity
 )
 {
@@ -592,49 +592,49 @@ PhatbooksDatabaseConnection::PermanentEntityData::set_default_commodity
 
 template <>
 sqloxx::IdentityMap<Account>&
-PhatbooksDatabaseConnection::identity_map<Account>()
+DcmDatabaseConnection::identity_map<Account>()
 {
 	return *m_account_map;
 }
 
 template <>
 sqloxx::IdentityMap<BudgetItem>&
-PhatbooksDatabaseConnection::identity_map<BudgetItem>()
+DcmDatabaseConnection::identity_map<BudgetItem>()
 {
 	return *m_budget_item_map;
 }
 
 template <>
 sqloxx::IdentityMap<Entry>&
-PhatbooksDatabaseConnection::identity_map<Entry>()
+DcmDatabaseConnection::identity_map<Entry>()
 {
 	return *m_entry_map;
 }
 
 template <>
 sqloxx::IdentityMap<Commodity>&
-PhatbooksDatabaseConnection::identity_map<Commodity>()
+DcmDatabaseConnection::identity_map<Commodity>()
 {
 	return *m_commodity_map;
 }
 
 template <>
-sqloxx::IdentityMap<phatbooks::PersistentJournal>&
-PhatbooksDatabaseConnection::identity_map<PersistentJournal>()
+sqloxx::IdentityMap<dcm::PersistentJournal>&
+DcmDatabaseConnection::identity_map<PersistentJournal>()
 {
 	return *m_journal_map;
 }
 
 template <>
-sqloxx::IdentityMap<phatbooks::Repeater>&
-PhatbooksDatabaseConnection::identity_map<Repeater>()
+sqloxx::IdentityMap<dcm::Repeater>&
+DcmDatabaseConnection::identity_map<Repeater>()
 {
 	return *m_repeater_map;
 }
 
 
 void
-PhatbooksDatabaseConnection::perform_integrity_checks()
+DcmDatabaseConnection::perform_integrity_checks()
 {
 #	ifndef NDEBUG
 		JEWEL_LOG_TRACE();
@@ -671,7 +671,7 @@ PhatbooksDatabaseConnection::perform_integrity_checks()
 		
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 

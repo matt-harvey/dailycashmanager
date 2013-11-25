@@ -20,8 +20,8 @@
 #include "frequency.hpp"
 #include "draft_journal.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
 #include "repeater_table_iterator.hpp"
@@ -65,7 +65,7 @@ using std::sort;
 using std::string;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 
 struct Repeater::RepeaterData
@@ -76,7 +76,7 @@ struct Repeater::RepeaterData
 };
 
 void
-Repeater::setup_tables(PhatbooksDatabaseConnection& dbc)
+Repeater::setup_tables(DcmDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table interval_types"
@@ -441,7 +441,7 @@ Repeater::mimic(Repeater& rhs)
 // Implement free functions
 
 vector<RepeaterFiringResult>
-update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
+update_repeaters(DcmDatabaseConnection& dbc, gregorian::date d)
 {
 	vector<RepeaterFiringResult> ret;
 	// Read into a vector first - uneasy about reading and writing
@@ -499,4 +499,4 @@ update_repeaters(PhatbooksDatabaseConnection& dbc, gregorian::date d)
 
 
 
-}  // namespace phatbooks
+}  // namespace dcm

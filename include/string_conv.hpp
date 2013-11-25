@@ -20,7 +20,7 @@
 #include <wx/string.h>
 #include <string>
 
-namespace phatbooks
+namespace dcm
 {
 
 // DECLARATIONS
@@ -52,6 +52,6 @@ wx_to_std8(wxString const& wxs)
 	return std::string(wxs.utf8_str());
 }
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_string_conv_hpp_06682258568090507

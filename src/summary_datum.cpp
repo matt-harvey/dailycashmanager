@@ -22,7 +22,7 @@
 using jewel::Decimal;
 using std::move;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -54,4 +54,4 @@ SummaryDatum::set_amount(Decimal const& p_amount)
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

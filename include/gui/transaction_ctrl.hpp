@@ -33,7 +33,7 @@
 #include <wx/textctrl.h>
 #include <memory>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
@@ -42,7 +42,7 @@ class DraftJournal;
 class Entry;
 class OrdinaryJournal;
 class ProtoJournal;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -105,7 +105,7 @@ public:
 	(	TopPanel* p_parent,
 		wxSize const& p_size,
 		ProtoJournal& p_journal,
-		PhatbooksDatabaseConnection& p_database_connection
+		DcmDatabaseConnection& p_database_connection
 	);
 
 	TransactionCtrl(TransactionCtrl const&) = delete;
@@ -222,6 +222,6 @@ private:
 };  // class TransactionCtrl
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_transaction_ctrl_hpp_6244141914064131

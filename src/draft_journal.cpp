@@ -17,8 +17,8 @@
 #include "draft_journal.hpp"
 #include "draft_journal_table_iterator.hpp"
 #include "persistent_journal.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
 #include "string_conv.hpp"
@@ -51,7 +51,7 @@ using std::unordered_set;
 using std::vector;
 using std::string;
 
-namespace phatbooks
+namespace dcm
 {
 
 struct DraftJournal::DraftJournalData
@@ -74,7 +74,7 @@ DraftJournal::repeaters()
 }
 
 void
-DraftJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
+DraftJournal::setup_tables(DcmDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table draft_journal_detail"
@@ -88,7 +88,7 @@ DraftJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 bool
 DraftJournal::no_user_draft_journals_saved
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 )
 {
 	DraftJournalTableIterator const it =
@@ -122,7 +122,7 @@ DraftJournal::~DraftJournal() = default;
 
 bool
 DraftJournal::exists
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	wxString const& p_name
 )
 {
@@ -368,7 +368,7 @@ DraftJournal::repeater_description()
 	// date may be harder to spot than all the English strings, so
 	// flagging it explicitly with this comment).
 	// This is low priority because in the current (GUI) version of
-	// Phatbooks, DraftJournal::repeater_description() is not even used.
+	// DCM, DraftJournal::repeater_description() is not even used.
 	ret += std8_to_wx(lexical_cast<string>(next_date));
 
 	ret += wxString(".");
@@ -449,7 +449,7 @@ DraftJournal::mimic(DraftJournal& rhs)
 			
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 

@@ -19,7 +19,7 @@
 #include <jewel/assert.hpp>
 #include <wx/intl.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -33,4 +33,4 @@ locale()
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

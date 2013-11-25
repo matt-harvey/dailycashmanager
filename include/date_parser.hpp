@@ -23,7 +23,7 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 
-namespace phatbooks
+namespace dcm
 {
 
 class DateParser
@@ -79,6 +79,6 @@ private:
 
 };  // class DateParser
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_date_parser_hpp_5151682568318994

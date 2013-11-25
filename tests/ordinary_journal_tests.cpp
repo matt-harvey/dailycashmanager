@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include "phatbooks_tests_common.hpp"
+#include "dcm_tests_common.hpp"
 #include "account.hpp"
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -35,14 +35,14 @@ using jewel::Decimal;
 using sqloxx::Handle;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
 
 TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 
 	ProtoJournal journal1;
 	journal1.set_transaction_type(TransactionType::generic);
@@ -146,7 +146,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 
 TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 
 	Handle<OrdinaryJournal> const journal1(dbc);
 	journal1->set_transaction_type(TransactionType::generic);
@@ -203,7 +203,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 
 TEST_FIXTURE(TestFixture, test_ordinary_journal_remove_entry)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<OrdinaryJournal> const journal1(dbc);
 	journal1->set_transaction_type(TransactionType::generic);
 	journal1->set_comment("igloo");
@@ -261,4 +261,4 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_remove_entry)
 }
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm

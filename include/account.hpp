@@ -20,7 +20,7 @@
 #include "account_type_fwd.hpp"
 #include "date.hpp"
 #include "finformat.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "string_conv.hpp"
 #include "string_flags.hpp"
 #include "visibility.hpp"
@@ -37,7 +37,7 @@
 #include <string>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
@@ -57,11 +57,11 @@ class Commodity;
  * in the constructors for Account.
  */
 class Account:
-	public sqloxx::PersistentObject<Account, PhatbooksDatabaseConnection>
+	public sqloxx::PersistentObject<Account, DcmDatabaseConnection>
 {
 public:
 	
-	typedef sqloxx::PersistentObject<Account, PhatbooksDatabaseConnection>
+	typedef sqloxx::PersistentObject<Account, DcmDatabaseConnection>
 		PersistentObject;
 
 	typedef sqloxx::IdentityMap<Account> IdentityMap;
@@ -70,7 +70,7 @@ public:
 	 * Sets up tables in the database required for the persistence of
 	 * Account objects.
 	 */
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	static void setup_tables(DcmDatabaseConnection& dbc);
 
 	/**
 	 * @returns the Id of the Account with name p_name, matched
@@ -82,7 +82,7 @@ public:
 	 * named p_name (this is tested case insensitively).
 	 */
 	static sqloxx::Id id_for_name
-	(	PhatbooksDatabaseConnection& dbc,
+	(	DcmDatabaseConnection& dbc,
 		wxString const& p_name
 	);
 
@@ -128,7 +128,7 @@ public:
 	 * circumstances in which an exception might be thrown.
 	 */
 	static bool exists
-	(	PhatbooksDatabaseConnection& p_database_connection,
+	(	DcmDatabaseConnection& p_database_connection,
 		wxString const& p_name
 	);
 
@@ -138,7 +138,7 @@ public:
 	 * wxString.
 	 */
 	static bool exists
-	(	PhatbooksDatabaseConnection& p_database_connection,
+	(	DcmDatabaseConnection& p_database_connection,
 		sqloxx::Id p_id
 	);
 
@@ -150,7 +150,7 @@ public:
 	 * this function returns \e false.
 	 */
 	static bool no_user_pl_accounts_saved
-	(	PhatbooksDatabaseConnection& p_database_connection
+	(	DcmDatabaseConnection& p_database_connection
 	);
 
 	// copy constructor is private
@@ -304,8 +304,8 @@ wxString account_concepts_phrase
  * never included, nor are any pure_envelope Accounts).
  */
 std::map<AccountSuperType, sqloxx::Id>
-favourite_accounts(PhatbooksDatabaseConnection& p_database_connection);
+favourite_accounts(DcmDatabaseConnection& p_database_connection);
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_account_hpp_5971945187063862

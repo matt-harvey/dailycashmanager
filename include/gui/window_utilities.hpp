@@ -21,7 +21,7 @@
 #include <wx/string.h>
 #include <wx/window.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -46,6 +46,6 @@ void toggle_enabled
 );
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_window_utilities_hpp_5290374944587413

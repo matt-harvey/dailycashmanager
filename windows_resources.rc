@@ -14,5 +14,5 @@
 // limitations under the License.
 ////
 
-phatbooks ICON "images/icon.ico"
+dailycashmanager ICON "images/icon.ico"
 #include <wx/msw/wx.rc>

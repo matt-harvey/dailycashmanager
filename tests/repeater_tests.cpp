@@ -20,8 +20,8 @@
 #include "frequency.hpp"
 #include "interval_type.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_exceptions.hpp"
-#include "phatbooks_tests_common.hpp"
+#include "dcm_exceptions.hpp"
+#include "dcm_tests_common.hpp"
 #include "repeater.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
@@ -41,14 +41,14 @@ using sqloxx::Handle;
 using std::shared_ptr;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
 
 TEST_FIXTURE(TestFixture, test_repeater_next_date)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 
 	Handle<DraftJournal> const dj(dbc);
 	dj->set_transaction_type(TransactionType::generic);
@@ -146,7 +146,7 @@ TEST_FIXTURE(TestFixture, test_repeater_next_date)
 
 TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 
 	Handle<DraftJournal> const dj1(dbc);
 	dj1->set_transaction_type(TransactionType::generic);
@@ -245,4 +245,4 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm

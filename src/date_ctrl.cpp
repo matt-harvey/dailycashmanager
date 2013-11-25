@@ -15,7 +15,7 @@
  */
 
 #include "gui/date_ctrl.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include "gui/date_validator.hpp"
 #include "gui/locale.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -32,7 +32,7 @@
 using boost::optional;
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -83,4 +83,4 @@ DateCtrl::on_kill_focus(wxFocusEvent& event)
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

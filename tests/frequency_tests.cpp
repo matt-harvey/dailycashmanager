@@ -17,8 +17,8 @@
 #include "frequency.hpp"
 #include "amalgamated_budget.hpp"
 #include "interval_type.hpp"
-#include "phatbooks_exceptions.hpp"
-#include "phatbooks_tests_common.hpp"
+#include "dcm_exceptions.hpp"
+#include "dcm_tests_common.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <UnitTest++/UnitTest++.h>
@@ -34,7 +34,7 @@ using std::vector;
 using jewel::Decimal;
 
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
@@ -214,4 +214,4 @@ TEST(frequency_test_convert_to_and_from_canonical)
 }
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm

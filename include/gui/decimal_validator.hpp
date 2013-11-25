@@ -23,7 +23,7 @@
 
 
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -65,6 +65,6 @@ private:
 };  // class DecimalValidator
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_decimal_validator_hpp_503944817233805

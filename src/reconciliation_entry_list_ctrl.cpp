@@ -47,7 +47,7 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -317,7 +317,7 @@ ReconciliationEntryListCtrl::on_item_right_click(wxListEvent& event)
 	JEWEL_ASSERT (entry->id() == entry_id);
 	PersistentObjectEvent::fire
 	(	this,
-		PHATBOOKS_RECONCILIATION_STATUS_EVENT,
+		DCM_RECONCILIATION_STATUS_EVENT,
 		entry_id
 	);
 
@@ -360,4 +360,4 @@ ReconciliationEntryListCtrl::do_create_entry_selector()
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

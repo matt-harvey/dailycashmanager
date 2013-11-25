@@ -20,7 +20,7 @@
 #include "string_conv.hpp"
 #include "commodity.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "string_conv.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
@@ -52,7 +52,7 @@ using std::unique_ptr;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 
 
@@ -69,7 +69,7 @@ struct Entry::EntryData
 
 
 
-void Entry::setup_tables(PhatbooksDatabaseConnection& dbc)
+void Entry::setup_tables(DcmDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table transaction_sides"
@@ -305,14 +305,14 @@ Entry::do_save_existing()
 	);
 	old_account_capturer.bind(":p", id());
 	old_account_capturer.step();
-	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
+	DcmDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection(),
 		old_account_capturer.extract<sqloxx::Id>(0)
 	);
 	old_account_capturer.step_final();
 
 	// And we also need to mark the new Account as stale
-	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
+	DcmDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection(),
 		account()->id()
 	);
@@ -342,7 +342,7 @@ Entry::do_save_new()
 {
 	JEWEL_LOG_TRACE();
 
-	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
+	DcmDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection(),
 		account()->id()
 	);
@@ -388,7 +388,7 @@ Entry::do_ghostify()
 void
 Entry::do_remove()
 {
-	PhatbooksDatabaseConnection::BalanceCacheAttorney::mark_as_stale
+	DcmDatabaseConnection::BalanceCacheAttorney::mark_as_stale
 	(	database_connection(),
 		account()->id()
 	);
@@ -442,7 +442,7 @@ Entry::journal_id()
 
 unique_ptr<SQLStatement>
 create_date_ordered_actual_ordinary_entry_selector
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date,
 	optional<Handle<Account> > const& p_maybe_account
@@ -475,4 +475,4 @@ create_date_ordered_actual_ordinary_entry_selector
 	return ret;
 }
 
-}  // namespace phatbooks
+}  // namespace dcm

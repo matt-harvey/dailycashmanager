@@ -22,7 +22,7 @@
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
 #include "persistent_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "repeater.hpp"
 #include "string_conv.hpp"
 #include "string_flags.hpp"
@@ -57,7 +57,7 @@ using std::stable_partition;
 using std::string;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -107,51 +107,51 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	(	s_toggle_pl_account_show_hidden_id,
 		Frame::on_menu_view_toggle_pl_account_show_hidden
 	)
-	PHATBOOKS_EVT_ACCOUNT_EDITING
+	DCM_EVT_ACCOUNT_EDITING
 	(	wxID_ANY,
 		Frame::on_account_editing_requested
 	)
-	PHATBOOKS_EVT_JOURNAL_EDITING
+	DCM_EVT_JOURNAL_EDITING
 	(	wxID_ANY,
 		Frame::on_journal_editing_requested
 	)
-	PHATBOOKS_EVT_ACCOUNT_CREATED
+	DCM_EVT_ACCOUNT_CREATED
 	(	wxID_ANY,
 		Frame::on_account_created_event
 	)
-	PHATBOOKS_EVT_ACCOUNT_EDITED
+	DCM_EVT_ACCOUNT_EDITED
 	(	wxID_ANY,
 		Frame::on_account_edited_event
 	)
-	PHATBOOKS_EVT_JOURNAL_CREATED
+	DCM_EVT_JOURNAL_CREATED
 	(	wxID_ANY,
 		Frame::on_journal_created_event
 	)
-	PHATBOOKS_EVT_JOURNAL_EDITED
+	DCM_EVT_JOURNAL_EDITED
 	(	wxID_ANY,
 		Frame::on_journal_edited_event
 	)
-	PHATBOOKS_EVT_DRAFT_JOURNAL_DELETED
+	DCM_EVT_DRAFT_JOURNAL_DELETED
 	(	wxID_ANY,
 		Frame::on_draft_journal_deleted_event
 	)
-	PHATBOOKS_EVT_ORDINARY_JOURNAL_DELETED
+	DCM_EVT_ORDINARY_JOURNAL_DELETED
 	(	wxID_ANY,
 		Frame::on_ordinary_journal_deleted_event
 	)
-	PHATBOOKS_EVT_DRAFT_ENTRY_DELETED
+	DCM_EVT_DRAFT_ENTRY_DELETED
 	(	wxID_ANY,
 		Frame::on_draft_entry_deleted_event
 	)
-	PHATBOOKS_EVT_ORDINARY_ENTRY_DELETED
+	DCM_EVT_ORDINARY_ENTRY_DELETED
 	(	wxID_ANY,
 		Frame::on_ordinary_entry_deleted_event
 	)
-	PHATBOOKS_EVT_BUDGET_EDITED
+	DCM_EVT_BUDGET_EDITED
 	(	wxID_ANY,
 		Frame::on_budget_edited_event
 	)
-	PHATBOOKS_EVT_RECONCILIATION_STATUS
+	DCM_EVT_RECONCILIATION_STATUS
 	(	wxID_ANY,
 		Frame::on_reconciliation_status_event
 	)
@@ -177,7 +177,7 @@ namespace
 
 Frame::Frame
 (	wxString const& title,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	wxFrame
 	(	0,
@@ -876,4 +876,4 @@ Frame::edit_envelope_transfer(ProtoJournal& p_journal)
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

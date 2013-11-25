@@ -24,12 +24,12 @@
 #include <wx/gdicmn.h>
 #include <unordered_map>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
 
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -44,7 +44,7 @@ public:
 	PLReport
 	(	ReportPanel* p_parent,
 		wxSize const& p_size,
-		PhatbooksDatabaseConnection& p_database_connection,
+		DcmDatabaseConnection& p_database_connection,
 		boost::optional<boost::gregorian::date> const& p_maybe_min_date,
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);
@@ -83,6 +83,6 @@ private:
 };  // class PLReport
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_pl_report_hpp_03798236466850264

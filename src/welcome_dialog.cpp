@@ -16,7 +16,7 @@
 
 #include "gui/welcome_dialog.hpp"
 #include "app.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include <jewel/assert.hpp>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -26,7 +26,7 @@
 
 using std::max;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -49,7 +49,7 @@ END_EVENT_TABLE()
 
 
 WelcomeDialog::WelcomeDialog
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 ):
 	wxDialog
 	(	0,
@@ -181,5 +181,5 @@ WelcomeDialog::user_wants_new_file() const
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 

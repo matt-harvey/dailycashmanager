@@ -19,8 +19,8 @@
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "date.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_exceptions.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
@@ -36,7 +36,7 @@
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 
 using std::map;
@@ -51,7 +51,7 @@ namespace
 	typedef set<AccountType> AccountTypeSet;
 
 	AccountTypeSet available_account_types
-	(	PhatbooksDatabaseConnection& p_database_connection
+	(	DcmDatabaseConnection& p_database_connection
 	)
 	{
 		AccountTypeSet ret;
@@ -122,7 +122,7 @@ transaction_types()
 
 vector<TransactionType>
 available_transaction_types
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	bool p_include_non_actual
 )
 {
@@ -494,4 +494,4 @@ natural_transaction_type
 }
 
 
-}  // namespace phatbooks
+}  // namespace dcm

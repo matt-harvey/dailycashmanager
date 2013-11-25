@@ -20,7 +20,7 @@
 #include <boost/filesystem.hpp>
 #include <string>
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -41,7 +41,7 @@ namespace phatbooks
  *
  * @throws std::bad_alloc, in the unlikely event of memory allocation failure.
  *
- * @throws phatbooks::UniqueNameException if there are already SHRT_MAX
+ * @throws dcm::UniqueNameException if there are already SHRT_MAX
  * backups saved in the requested location with the requested "base
  * name" (\e extremely unlikely, as the "base name" for these purposes includes
  * the suffix indicating date and time).
@@ -59,6 +59,6 @@ boost::filesystem::path make_backup
 	std::string const& p_infix = std::string()
 );
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_backup_hpp_7859126994320716

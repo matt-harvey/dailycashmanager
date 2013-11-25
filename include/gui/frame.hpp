@@ -26,14 +26,14 @@
 #include <wx/string.h>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
 
 class Account;
 class DraftJournal;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 class ProtoJournal;
 
 namespace gui
@@ -54,7 +54,7 @@ public:
 
 	Frame
 	(	wxString const& title,
-		PhatbooksDatabaseConnection& p_database_connection
+		DcmDatabaseConnection& p_database_connection
 	);
 
 	Frame(Frame const&) = delete;
@@ -167,7 +167,7 @@ private:
 	static int const s_toggle_pl_account_show_hidden_id =
 		s_toggle_bs_account_show_hidden_id + 1;
 
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 
 	wxMenuBar* m_menu_bar;
 	wxMenu* m_file_menu;
@@ -204,6 +204,6 @@ Frame::edit_journal(JournalHandleType const& p_journal)
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_frame_hpp_873675392881816

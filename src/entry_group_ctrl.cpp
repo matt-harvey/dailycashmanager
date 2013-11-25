@@ -51,7 +51,7 @@ using sqloxx::Handle;
 using std::set;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -78,7 +78,7 @@ EntryGroupCtrl::EntryGroupCtrl
 	wxSize const& p_text_ctrl_size,
 	Journal& p_journal,
 	TransactionSide p_transaction_side,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	wxPanel(p_parent),
 	m_database_connection(p_database_connection),
@@ -715,4 +715,4 @@ EntryGroupCtrl::EntryRow::EntryRow(Handle<Entry> const& p_entry):
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

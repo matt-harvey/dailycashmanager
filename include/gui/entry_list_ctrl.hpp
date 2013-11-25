@@ -31,7 +31,7 @@
 #include <unordered_set>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
@@ -40,7 +40,7 @@ class Account;
 class Entry;
 class DateParser;
 class OrdinaryJournal;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -143,7 +143,7 @@ protected:
 	EntryListCtrl
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		PhatbooksDatabaseConnection& p_database_connection
+		DcmDatabaseConnection& p_database_connection
 	);
 
 	int num_columns() const;
@@ -157,8 +157,8 @@ protected:
 	) const;
 
 	long row_for_date(boost::gregorian::date const& p_date) const;
-	PhatbooksDatabaseConnection& database_connection();
-	PhatbooksDatabaseConnection const& database_connection() const;
+	DcmDatabaseConnection& database_connection();
+	DcmDatabaseConnection const& database_connection() const;
 
 private:
 
@@ -224,7 +224,7 @@ private:
 	typedef std::unordered_set<sqloxx::Id> IdSet;
 	IdSet m_id_set;
 
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE()
 
@@ -236,6 +236,6 @@ private:
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_entry_list_ctrl_hpp_03525603377970682

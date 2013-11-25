@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef GUARD_phatbooks_tests_common_hpp_7922174706087529
-#define GUARD_phatbooks_tests_common_hpp_7922174706087529
+#ifndef GUARD_dcm_tests_common_hpp_7922174706087529
+#define GUARD_dcm_tests_common_hpp_7922174706087529
 
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include <boost/filesystem.hpp>
 #include <iostream>
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
@@ -29,8 +29,8 @@ namespace test
 
 bool file_exists(boost::filesystem::path const& filepath);
 void abort_if_exists(boost::filesystem::path const& dbc);
-void setup_test_commodities(PhatbooksDatabaseConnection& dbc);
-void setup_test_accounts(PhatbooksDatabaseConnection& dbc);
+void setup_test_commodities(DcmDatabaseConnection& dbc);
+void setup_test_accounts(DcmDatabaseConnection& dbc);
 
 struct TestFixture
 {
@@ -44,7 +44,7 @@ struct TestFixture
 	boost::filesystem::path db_filepath;
 
 	// The connection to the database
-	PhatbooksDatabaseConnection* pdbc;
+	DcmDatabaseConnection* pdbc;
 };
 
 
@@ -55,7 +55,7 @@ struct TestFixture
 
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm
 
 
-#endif  // GUARD_phatbooks_tests_common_hpp_7922174706087529
+#endif  // GUARD_dcm_tests_common_hpp_7922174706087529

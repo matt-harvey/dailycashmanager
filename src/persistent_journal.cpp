@@ -18,8 +18,8 @@
 #include "account.hpp"
 #include "entry.hpp"
 #include "journal.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_exceptions.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
@@ -50,7 +50,7 @@ using std::unordered_set;
 using std::string;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 
 string
@@ -66,7 +66,7 @@ PersistentJournal::primary_key_name()
 }
 
 void
-PersistentJournal::setup_tables(PhatbooksDatabaseConnection& dbc)
+PersistentJournal::setup_tables(DcmDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table transaction_types"
@@ -157,7 +157,7 @@ PersistentJournal::save_new_journal_core()
 		);
 	}
 	Id const journal_id = next_auto_key
-	<	PhatbooksDatabaseConnection,
+	<	DcmDatabaseConnection,
 		Id
 	>	(database_connection(), primary_table_name());
 	SQLStatement statement
@@ -438,7 +438,7 @@ has_entry_with_id(PersistentJournal& journal, Id entry_id)
 }
 
 Id
-max_journal_id(PhatbooksDatabaseConnection& dbc)
+max_journal_id(DcmDatabaseConnection& dbc)
 {
 	SQLStatement s(dbc, "select max(journal_id) from journals");
 	s.step();
@@ -446,7 +446,7 @@ max_journal_id(PhatbooksDatabaseConnection& dbc)
 }
 
 Id
-min_journal_id(PhatbooksDatabaseConnection& dbc)
+min_journal_id(DcmDatabaseConnection& dbc)
 {
 	SQLStatement s(dbc, "select min(journal_id) from journals");
 	s.step();
@@ -454,7 +454,7 @@ min_journal_id(PhatbooksDatabaseConnection& dbc)
 }
 
 bool
-journal_id_exists(PhatbooksDatabaseConnection& dbc, Id id)
+journal_id_exists(DcmDatabaseConnection& dbc, Id id)
 {
 	SQLStatement s
 	(	dbc,
@@ -466,7 +466,7 @@ journal_id_exists(PhatbooksDatabaseConnection& dbc, Id id)
 
 bool
 journal_id_is_draft
-(	PhatbooksDatabaseConnection& dbc,
+(	DcmDatabaseConnection& dbc,
 	Id id
 )
 {
@@ -480,5 +480,5 @@ journal_id_is_draft
 	return s.step();
 }
 	
-}  // namespace phatbooks
+}  // namespace dcm
 

@@ -24,12 +24,12 @@
 #include <wx/string.h>
 #include <wx/textctrl.h>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
 
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -49,7 +49,7 @@ public:
 	
 	DraftJournalNamingDialog
 	(	TransactionCtrl* p_parent,
-		PhatbooksDatabaseConnection& p_database_connection
+		DcmDatabaseConnection& p_database_connection
 	);
 
 	DraftJournalNamingDialog(DraftJournalNamingDialog const&) = delete;
@@ -70,7 +70,7 @@ private:
 	wxFlexGridSizer* m_top_sizer;
 	wxTextCtrl* m_name_ctrl;
 	wxButton* m_ok_button;
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 	wxString m_draft_journal_name;
 
 	DECLARE_EVENT_TABLE()
@@ -78,6 +78,6 @@ private:
 };  // class DraftJournalNamingDialog
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_draft_journal_naming_dialog_hpp_17749934977735363

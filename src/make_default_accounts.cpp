@@ -17,7 +17,7 @@
 #include "make_default_accounts.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "visibility.hpp"
 #include <jewel/assert.hpp>
 #include <sqloxx/handle.hpp>
@@ -30,11 +30,11 @@ using std::make_pair;
 using std::pair;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 
 vector<Handle<Account> >
-make_default_accounts(PhatbooksDatabaseConnection& p_database_connection)
+make_default_accounts(DcmDatabaseConnection& p_database_connection)
 {
 	vector<Handle<Account> > ret;
 	make_default_accounts(p_database_connection, ret);
@@ -43,7 +43,7 @@ make_default_accounts(PhatbooksDatabaseConnection& p_database_connection)
 
 void
 make_default_accounts
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	vector<Handle<Account> >& vec
 )
 {
@@ -56,7 +56,7 @@ make_default_accounts
 
 void
 make_default_accounts
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	vector<Handle<Account> >& vec,
 	AccountType p_account_type
 )
@@ -117,7 +117,7 @@ make_default_accounts
 		// discovered this creates headaches for client code, as
 		// we then can't create these Accounts unless
 		// the default Commodity has already been set for this
-		// PhatbooksDatabaseConnection. It is easier for certain client code
+		// DcmDatabaseConnection. It is easier for certain client code
 		// if it is able to create the Accounts first.
 
 		account->set_description(wxString(""));
@@ -129,4 +129,4 @@ make_default_accounts
 
 
 
-}  // namespace phatbooks
+}  // namespace dcm

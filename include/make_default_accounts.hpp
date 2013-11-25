@@ -21,19 +21,19 @@
 #include <sqloxx/handle_fwd.hpp>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
 
 class Account;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 // end forward declarations
 
 /**
  * @returns a vector of handles to "suggested default Accounts" that might be
- * presented to the user as a starting point when setting up a new Phatbooks
+ * presented to the user as a starting point when setting up a new DCM
  * file. The Accounts will all names and AccountTypes initialized, and will 
  * have an empty wxString as their description. They will \e not have their
  * Commodity initialized though - this must be done before the Accounts
@@ -45,11 +45,11 @@ class PhatbooksDatabaseConnection;
  * saved to the database).
  */
 std::vector<sqloxx::Handle<Account> >
-make_default_accounts(PhatbooksDatabaseConnection& p_database_connection);
+make_default_accounts(DcmDatabaseConnection& p_database_connection);
 
 
 /**
- * Behaves like make_default_accounts(PhatbooksDatabaseConnection&), but
+ * Behaves like make_default_accounts(DcmDatabaseConnection&), but
  * instead of returning a vector, it populates the vector passed to \e vec.
  *
  * @param vec the vector which the function will populate with
@@ -57,7 +57,7 @@ make_default_accounts(PhatbooksDatabaseConnection& p_database_connection);
  * e\ vec - which need not be empty when passed to the function.
  */
 void make_default_accounts
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	std::vector<sqloxx::Handle<Account> >& vec
 );
 
@@ -68,12 +68,12 @@ void make_default_accounts
  * need not be empty when passed to the function.
  */
 void make_default_accounts
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	std::vector<sqloxx::Handle<Account> >& vec,
 	AccountType p_account_type
 );
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_make_default_accounts_hpp_29520491757206846

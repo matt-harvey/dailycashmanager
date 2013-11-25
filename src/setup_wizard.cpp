@@ -25,8 +25,8 @@
 #include "make_currencies.hpp"
 #include "make_default_accounts.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_exceptions.hpp"
 #include "string_conv.hpp"
 #include "string_flags.hpp"
 #include "visibility.hpp"
@@ -89,7 +89,7 @@ using std::endl;
 
 namespace filesystem = boost::filesystem;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -136,7 +136,7 @@ namespace
 	}
 
 	void make_default_augmented_accounts
-	(	PhatbooksDatabaseConnection& dbc,
+	(	DcmDatabaseConnection& dbc,
 		vector<AugmentedAccount>& vec,
 		AccountType p_account_type,
 		Decimal::places_type precision
@@ -161,7 +161,7 @@ namespace
 
 
 SetupWizard::SetupWizard
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 ):
 	wxWizard
 	(	0,
@@ -541,7 +541,7 @@ END_EVENT_TABLE()
 
 SetupWizard::FilepathPage::FilepathPage
 (	SetupWizard* parent,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	wxWizardPageSimple(parent),
 	m_currencies(make_currencies(p_database_connection)),
@@ -895,7 +895,7 @@ END_EVENT_TABLE()
 SetupWizard::AccountPage::AccountPage
 (	SetupWizard* p_parent,
 	AccountSuperType p_account_super_type,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	wxWizardPageSimple(p_parent),
 	m_database_connection(p_database_connection),
@@ -1128,7 +1128,7 @@ SetupWizard::AccountPage::refresh_pop_row_button_state()
 	return;
 }
 
-PhatbooksDatabaseConnection&
+DcmDatabaseConnection&
 SetupWizard::AccountPage::database_connection() const
 {
 	return m_database_connection;
@@ -1311,6 +1311,6 @@ SetupWizard::AccountPage::main_text() const
 }
 
 }  // namespace gui
-}  // namesapce phatbooks
+}  // namespace dcm
 
 

@@ -19,7 +19,7 @@
 
 #include "date.hpp"
 #include "persistent_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "proto_journal.hpp"
 #include "string_conv.hpp"
 #include "transaction_type.hpp"
@@ -35,12 +35,12 @@
 
 // Begin forward declarations
 
-namespace phatbooks
+namespace dcm
 {
 
 class OrdinaryJournal;
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 // End forward declarations
 
@@ -51,9 +51,9 @@ namespace sqloxx
 {
 
 template <>
-struct PersistenceTraits<phatbooks::OrdinaryJournal>
+struct PersistenceTraits<dcm::OrdinaryJournal>
 {
-	typedef phatbooks::PersistentJournal Base;
+	typedef dcm::PersistentJournal Base;
 };
 
 }  // namespace sqloxx
@@ -61,7 +61,7 @@ struct PersistenceTraits<phatbooks::OrdinaryJournal>
 
 
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -80,7 +80,7 @@ public:
 	 * Create the tables required for the persistence of
 	 * OrdinaryJournal instances in a SQLite database.
 	 */
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	static void setup_tables(DcmDatabaseConnection& dbc);
 
 	/**
 	 * Construct a "raw" OrdinaryJournal, that will not yet
@@ -180,7 +180,7 @@ sqloxx::Handle<OrdinaryJournal> create_opening_balance_journal
 			
 				
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_ordinary_journal_hpp_6580145273627781

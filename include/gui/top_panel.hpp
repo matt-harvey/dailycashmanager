@@ -30,7 +30,7 @@
 #include <type_traits>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
@@ -39,7 +39,7 @@ class Account;
 class DraftJournal;
 class Entry;
 class OrdinaryJournal;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 class ProtoJournal;
 
 namespace gui
@@ -78,7 +78,7 @@ public:
 
 	TopPanel
 	(	Frame* parent,
-		PhatbooksDatabaseConnection& p_database_connection
+		DcmDatabaseConnection& p_database_connection
 	);
 
 	TopPanel(TopPanel const&) = delete;
@@ -240,7 +240,7 @@ private:
 	void configure_reconciliation_page();
 	void configure_report_page();
 
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 	wxBoxSizer* m_top_sizer;
 	wxNotebook* m_notebook;
 	wxPanel* m_notebook_page_accounts;
@@ -301,7 +301,7 @@ TopPanel::configure_transaction_ctrl(JournalType const& p_journal)
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_top_panel_hpp_7915960996372607

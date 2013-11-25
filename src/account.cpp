@@ -21,8 +21,8 @@
 #include "date.hpp"
 #include "string_conv.hpp"
 #include "commodity.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_exceptions.hpp"
 #include "transaction_type.hpp"
 #include "visibility.hpp"
 #include <boost/numeric/conversion/cast.hpp>
@@ -59,7 +59,7 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 
 namespace
@@ -84,11 +84,11 @@ namespace
 	}
 
 	typedef
-		PhatbooksDatabaseConnection::BalanceCacheAttorney
+		DcmDatabaseConnection::BalanceCacheAttorney
 		BalanceCacheAttorney;
 
 	typedef
-		PhatbooksDatabaseConnection::BudgetAttorney
+		DcmDatabaseConnection::BudgetAttorney
 		BudgetAttorney;
 
 }  // end anonymous namespace
@@ -103,7 +103,7 @@ struct Account::AccountData
 };
 
 void
-Account::setup_tables(PhatbooksDatabaseConnection& dbc)
+Account::setup_tables(DcmDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table visibilities"
@@ -167,7 +167,7 @@ Account::setup_tables(PhatbooksDatabaseConnection& dbc)
 
 sqloxx::Id
 Account::id_for_name
-(	PhatbooksDatabaseConnection& dbc,
+(	DcmDatabaseConnection& dbc,
 	wxString const& name
 )
 {
@@ -227,7 +227,7 @@ Account::~Account() = default;
 
 bool
 Account::exists
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	wxString const& p_name
 )
 {
@@ -247,7 +247,7 @@ Account::exists
 
 bool
 Account::exists
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	sqloxx::Id p_id
 )
 {
@@ -256,7 +256,7 @@ Account::exists
 
 bool
 Account::no_user_pl_accounts_saved
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 )
 {
 	SQLStatement statement
@@ -579,7 +579,7 @@ Account::primary_key_name()
 }
 
 map<AccountSuperType, sqloxx::Id>
-favourite_accounts(PhatbooksDatabaseConnection& p_database_connection)
+favourite_accounts(DcmDatabaseConnection& p_database_connection)
 {
 	map<AccountSuperType, sqloxx::Id> ret;
 	map<sqloxx::Id, size_t> account_map;
@@ -696,4 +696,4 @@ wxString account_concepts_phrase
 	return ret;
 }
 
-}  // namespace phatbooks
+}  // namespace dcm

@@ -17,8 +17,8 @@
 #include "app.hpp"
 #include "backup.hpp"
 #include "date.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_exceptions.hpp"
 #include "repeater.hpp"
 #include "string_conv.hpp"
 #include "gui/error_reporter.hpp"
@@ -71,7 +71,7 @@ using std::vector;
 namespace filesystem = boost::filesystem;
 namespace posix_time = boost::posix_time;
 
-namespace phatbooks
+namespace dcm
 {
 
 namespace
@@ -122,7 +122,7 @@ namespace
 	wxString vendor_name()
 	{
 		// TODO HIGH PRIORITY This isn't the correct vendor name.
-		return wxString("Phatbooks");
+		return wxString(DCM_APPLICATION_NAME);
 	}
 
 	static const wxCmdLineEntryDesc cmd_line_desc[] =
@@ -161,7 +161,7 @@ namespace
 App::App():
 	m_exiting_cleanly(false),
 	m_single_instance_checker(nullptr),
-	m_database_connection(new PhatbooksDatabaseConnection)
+	m_database_connection(new DcmDatabaseConnection)
 {
 	JEWEL_ASSERT (!m_backup_filepath);
 }
@@ -169,23 +169,23 @@ App::App():
 wxString
 App::application_name()
 {
-	return PHATBOOKS_APPLICATION_NAME;
+	return DCM_APPLICATION_NAME;
 }
 
 Version
 App::version()
 {
 	return Version
-	(	PHATBOOKS_VERSION_MAJOR,
-		PHATBOOKS_VERSION_MINOR,
-		PHATBOOKS_VERSION_PATCH
+	(	DCM_VERSION_MAJOR,
+		DCM_VERSION_MINOR,
+		DCM_VERSION_PATCH
 	);
 }
 
 wxString
 App::filename_extension()
 {
-	return wxString(PHATBOOKS_FILE_EXTENSION);
+	return wxString(DCM_FILE_EXTENSION);
 }
 
 optional<filesystem::path>
@@ -284,7 +284,7 @@ App::make_backup(filesystem::path const& p_original_filepath)
 	JEWEL_LOG_TRACE();
 	try
 	{
-		m_backup_filepath = phatbooks::make_backup
+		m_backup_filepath = dcm::make_backup
 		(	filesystem::absolute(p_original_filepath),
 			filesystem::absolute(p_original_filepath.parent_path()),
 			"-backup"
@@ -512,7 +512,7 @@ App::set_database_filepath(filesystem::path const& p_database_filepath)
 	return;
 }
 
-PhatbooksDatabaseConnection&
+DcmDatabaseConnection&
 App::database_connection()
 {
 	return *m_database_connection;
@@ -607,4 +607,4 @@ App::elicit_existing_filepath()
 	return ret;
 }
 
-}  // namespace phatbooks
+}  // namespace dcm

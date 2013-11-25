@@ -18,8 +18,8 @@
 #include "account.hpp"
 #include "commodity.hpp"
 #include "frequency.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_exceptions.hpp"
 #include "string_conv.hpp"
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
@@ -46,11 +46,11 @@ using sqloxx::SQLStatement;
 using std::string;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 
 typedef
-	PhatbooksDatabaseConnection::BudgetAttorney
+	DcmDatabaseConnection::BudgetAttorney
 	BudgetAttorney;
 
 
@@ -63,7 +63,7 @@ struct BudgetItem::BudgetItemData
 };
 
 void
-BudgetItem::setup_tables(PhatbooksDatabaseConnection& dbc)
+BudgetItem::setup_tables(DcmDatabaseConnection& dbc)
 {
 	dbc.execute_sql
 	(	"create table budget_items"
@@ -352,7 +352,7 @@ normalized_total
 {
 	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (e - b > 0);  // Assert precondition.
-	PhatbooksDatabaseConnection& dbc = (*b)->database_connection();
+	DcmDatabaseConnection& dbc = (*b)->database_connection();
 	Handle<Commodity> commodity(dbc);
 
 	// TODO LOW PRIORITY The below is a temporary hack - if Accounts can ever
@@ -382,4 +382,4 @@ normalized_total
 	return ret;
 }
 
-}  // namespace phatbooks
+}  // namespace dcm

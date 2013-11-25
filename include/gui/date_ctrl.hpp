@@ -25,7 +25,7 @@
 #include <wx/textctrl.h>
 #include <wx/window.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -92,6 +92,6 @@ private:
 };  // class DateCtrl
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_date_ctrl_hpp_9775690613210057

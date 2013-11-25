@@ -23,7 +23,7 @@
 #include <wx/textctrl.h>
 #include <wx/window.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -72,6 +72,6 @@ private:
 };  // class DecimalTextCtrl
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_decimal_text_ctrl_hpp_19653581837030865

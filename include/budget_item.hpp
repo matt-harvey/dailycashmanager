@@ -17,7 +17,7 @@
 #ifndef GUARD_budget_item_hpp_6804927558081656
 #define GUARD_budget_item_hpp_6804927558081656
 
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include <jewel/decimal_fwd.hpp>
 #include <sqloxx/handle_fwd.hpp>
 #include <sqloxx/persistent_object.hpp>
@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
@@ -52,13 +52,13 @@ class Frequency;
 class BudgetItem:
 	public sqloxx::PersistentObject
 	<	BudgetItem,
-		PhatbooksDatabaseConnection
+		DcmDatabaseConnection
 	>
 {
 public:
 	
 	typedef
-		sqloxx::PersistentObject<BudgetItem, PhatbooksDatabaseConnection>
+		sqloxx::PersistentObject<BudgetItem, DcmDatabaseConnection>
 		PersistentObject;
 
 	typedef
@@ -68,7 +68,7 @@ public:
 	 * Set up tables in the database required for the persistence of
 	 * BudgetItem objects.
 	 */
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	static void setup_tables(DcmDatabaseConnection& dbc);
 
 	/**
 	 * Construct a "raw" BudgetItem, that will not yet be saved in the
@@ -173,11 +173,11 @@ private:
 
 /**
  * @p_budget_items is a vector of Handles to BudgetItems which are assumed to
- * be all of the same PhatbooksDatabaseConnection and the same Account.
+ * be all of the same DcmDatabaseConnection and the same Account.
  *
  * @returns the amount that approximates, to the Account's native Commodity's
  * precision, the equivalent of normalizing and summing at
- * the PhatbooksDatabaseConnection's budget_frequency(), all the BudgetItems
+ * the DcmDatabaseConnection's budget_frequency(), all the BudgetItems
  * in the range [b, e). Range should not be empty.
  */
 jewel::Decimal
@@ -188,6 +188,6 @@ normalized_total
 
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_budget_item_hpp_6804927558081656

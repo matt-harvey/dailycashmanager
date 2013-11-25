@@ -15,16 +15,14 @@
  */
 
 #include "draft_journal_table_iterator.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 
-
-namespace phatbooks
+namespace dcm
 {
-
 
 DraftJournalTableIterator
 make_name_ordered_user_draft_journal_table_iterator
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 )
 {
 	return DraftJournalTableIterator
@@ -36,6 +34,4 @@ make_name_ordered_user_draft_journal_table_iterator
 	);
 }
 
-
-
-}  // namespace phatbooks
+}  // namespace dcm

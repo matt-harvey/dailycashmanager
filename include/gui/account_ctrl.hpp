@@ -31,12 +31,12 @@
 #include <set>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
 
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -78,7 +78,7 @@ public:
 		unsigned int p_id,
 		wxSize const& p_size,
 		std::vector<AccountType> const& p_account_types,
-		PhatbooksDatabaseConnection& p_database_connection,
+		DcmDatabaseConnection& p_database_connection,
 		bool p_exclude_balancing_account = false
 	);
 
@@ -164,7 +164,7 @@ private:
 
 	void refresh();
 	bool m_exclude_balancing_account;
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 	typedef std::map<wxString, sqloxx::Id> AccountMap;
 	AccountMap m_account_map;
 	std::set<AccountType> m_available_account_types;
@@ -174,6 +174,6 @@ private:
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_account_ctrl_hpp_7150714070140717

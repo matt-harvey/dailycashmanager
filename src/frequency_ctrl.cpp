@@ -17,8 +17,8 @@
 #include "gui/frequency_ctrl.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
-#include "phatbooks_database_connection.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_database_connection.hpp"
+#include "dcm_exceptions.hpp"
 #include "string_conv.hpp"
 #include "gui/combo_box.hpp"
 #include <boost/optional.hpp>
@@ -34,7 +34,7 @@ using boost::optional;
 using jewel::value;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -80,7 +80,7 @@ FrequencyCtrl::FrequencyCtrl
 (	wxWindow* p_parent,
 	wxWindowID p_id,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection,
+	DcmDatabaseConnection& p_database_connection,
 	bool p_supports_ordinary_journal,
 	bool p_supports_draft_journal
 ):
@@ -228,4 +228,4 @@ FrequencyCtrl::supports_budget_item() const
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

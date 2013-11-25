@@ -16,7 +16,7 @@
 
 #include "frequency.hpp"
 #include "interval_type.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include "string_conv.hpp"
 #include <boost/lexical_cast.hpp>
 #include <jewel/decimal.hpp>
@@ -30,7 +30,7 @@ using jewel::Decimal;
 using jewel::DecimalMultiplicationException;
 using std::string;
 
-namespace phatbooks
+namespace dcm
 {
 
 
@@ -224,4 +224,4 @@ operator!=(Frequency const& lhs, Frequency const& rhs)
 	return !(lhs == rhs);
 }
 
-}  // namespace phatbooks
+}  // namespace dcm

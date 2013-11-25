@@ -18,7 +18,7 @@
 #include "draft_journal.hpp"
 #include "entry.hpp"
 #include "interval_type.hpp"
-#include "phatbooks_tests_common.hpp"
+#include "dcm_tests_common.hpp"
 #include "frequency.hpp"
 #include "repeater.hpp"
 #include "transaction_type.hpp"
@@ -34,14 +34,14 @@ using jewel::Decimal;
 using gregorian::date;
 using sqloxx::Handle;
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
 
 TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 {
-	PhatbooksDatabaseConnection& dbc = *pdbc;
+	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<DraftJournal> const dj1(dbc);
 	dj1->set_transaction_type(TransactionType::generic);
 	dj1->set_comment("draft journal to test repeater_description");
@@ -86,4 +86,4 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 }
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm

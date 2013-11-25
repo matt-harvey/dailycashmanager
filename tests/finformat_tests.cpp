@@ -26,7 +26,7 @@
 using jewel::Decimal;
 using jewel::DecimalFromStringException;
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
@@ -281,4 +281,4 @@ TEST_FIXTURE(FinformatTestFixture, test_wx_to_simple_sum)
 
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm

@@ -20,7 +20,7 @@
 #include <jewel/decimal.hpp>
 #include <wx/string.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -52,6 +52,6 @@ private:
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_summary_datum_hpp_35246402786693726

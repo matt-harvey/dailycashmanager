@@ -21,7 +21,7 @@
 #include <wx/string.h>
 #include <wx/validate.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -76,6 +76,6 @@ private:
 };  // class StringSetValidator
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_string_set_validator_hpp_5293149675844773

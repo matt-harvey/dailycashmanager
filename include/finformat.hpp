@@ -31,9 +31,9 @@
 #include <string>
 
 /**
- * @namespace phatbooks
+ * @namespace dcm
  */
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -78,7 +78,7 @@ typedef
  * for alignment. However, zero will be printed "normally" if
  * \e string_flags::dash_for_zero is unset in p_flags.
  *
- * If PHATBOOKS_DISALLOW_DASH_FOR_ZERO is defined, then
+ * If DCM_DISALLOW_DASH_FOR_ZERO is defined, then
  * dash is never used for zero, regardless of the contents
  * of \e p_flags.
  */
@@ -102,7 +102,7 @@ wxString finformat_wx
  *
  * A string that is just a dash will be interpreted as Decimal(0, 0).
  *
- * If PHATBOOKS_DISALLOW_DASH_FOR_ZERO is defined, then
+ * If DCM_DISALLOW_DASH_FOR_ZERO is defined, then
  * dash is never used for zero, regardless of the contents
  * of \e p_flags.
  */
@@ -122,7 +122,7 @@ jewel::Decimal wx_to_decimal
 jewel::Decimal wx_to_simple_sum(wxString wxs, wxLocale const& loc);
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_finformat_hpp_5275738907640678

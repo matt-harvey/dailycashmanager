@@ -16,7 +16,7 @@
 
 #include "gui/decimal_text_ctrl.hpp"
 #include "finformat.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include "gui/decimal_validator.hpp"
 #include "gui/locale.hpp"
 #include <jewel/assert.hpp>
@@ -31,7 +31,7 @@
 using jewel::Decimal;
 using std::endl;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -156,4 +156,4 @@ DecimalTextCtrl::do_on_kill_focus(wxFocusEvent& event)
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

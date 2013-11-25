@@ -21,11 +21,11 @@
 #include <vector>
 
 
-namespace phatbooks
+namespace dcm
 {
 
 class Commodity;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 
 /**
@@ -50,11 +50,11 @@ class PhatbooksDatabaseConnection;
  * database).
  */
 std::vector<sqloxx::Handle<Commodity> >
-make_currencies(PhatbooksDatabaseConnection& p_database_connection);
+make_currencies(DcmDatabaseConnection& p_database_connection);
 
 
 /**
- * Behaves like the make_currencies(PhatbooksDatabaseConnection&),
+ * Behaves like the make_currencies(DcmDatabaseConnection&),
  * but instead of returning a vector, it populates the vector
  * passed to \e vec.
  *
@@ -63,11 +63,11 @@ make_currencies(PhatbooksDatabaseConnection& p_database_connection);
  */
 void
 make_currencies
-(	PhatbooksDatabaseConnection& p_database_connection,	
+(	DcmDatabaseConnection& p_database_connection,	
 	std::vector<sqloxx::Handle<Commodity> >& vec
 );
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_make_currencies_hpp_7990285213100857

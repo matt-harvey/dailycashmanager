@@ -20,9 +20,9 @@ cmake_minimum_required (VERSION 2.8)
 
 # Set project and version
 
-set (application_name "Phatbooks")
-set (executable_stem_name "phatbooks")
-set (file_extension ".phat")
+set (application_name "DailyCashManager")
+set (executable_stem_name "dailycashmanager")
+set (file_extension ".dcm")
 project (${application_name})
 set (version_major 1)
 set (version_minor 0)
@@ -49,11 +49,11 @@ option (
 # Definitions to be passed to the compiler
 
 add_definitions (
-	-DPHATBOOKS_APPLICATION_NAME="${application_name}"
-	-DPHATBOOKS_FILE_EXTENSION="${file_extension}"
-	-DPHATBOOKS_VERSION_MAJOR=${version_major}
-	-DPHATBOOKS_VERSION_MINOR=${version_minor}
-	-DPHATBOOKS_VERSION_PATCH=${version_patch}
+	-DDCM_APPLICATION_NAME="${application_name}"
+	-DDCM_FILE_EXTENSION="${file_extension}"
+	-DDCM_VERSION_MAJOR=${version_major}
+	-DDCM_VERSION_MINOR=${version_minor}
+	-DDCM_VERSION_PATCH=${version_patch}
 )
 if (ENABLE_LOGGING)
 	add_definitions (-DJEWEL_ENABLE_LOGGING)
@@ -159,8 +159,8 @@ if (
 		COMMAND ${TCL_SH} "${PROJECT_SOURCE_DIR}/prebuild_driver.tcl"
 	)
 
-	# Building the phatbooks_common library, which contains code used by both
-	# the main Phatbooks executable, and the test suite.
+	# Building the dcm_common library, which contains code used by both
+	# the main executable, and the test suite.
 
 	if (WIN32)
 		set (windows_resources windows_resources.rc)
@@ -199,7 +199,7 @@ if (
 		src/journal.cpp
 		src/ordinary_journal.cpp
 		src/persistent_journal.cpp
-		src/phatbooks_database_connection.cpp
+		src/dcm_database_connection.cpp
 		src/repeater.cpp
 		src/transaction_type.cpp
 		#gui stuff...
@@ -244,8 +244,8 @@ if (
 		src/welcome_dialog.cpp
 		src/window_utilities.cpp
 	)
-	add_library (phatbooks_common ${common_sources})
-	add_dependencies (phatbooks_common prebuild)
+	add_library (dcm_common ${common_sources})
+	add_dependencies (dcm_common prebuild)
 
 	# Building the tests
 
@@ -260,7 +260,7 @@ if (
 		tests/frequency_tests.cpp
 		tests/interval_type_tests.cpp
 		tests/ordinary_journal_tests.cpp
-		tests/phatbooks_tests_common.cpp
+		tests/dcm_tests_common.cpp
 		tests/repeater_tests.cpp
 		tests/test.cpp
 		tests/transaction_type_tests.cpp
@@ -268,7 +268,7 @@ if (
 	add_executable (test_driver ${test_sources})
 	target_link_libraries (
 		test_driver
-		phatbooks_common
+		dcm_common
 		${libraries}
 		${UNIT_TEST_LIBRARY}
 	)
@@ -284,10 +284,10 @@ if (
 		DEPENDS test_driver
 	)
 
-	# Building the main Phatbooks executable
+	# Building the main executable
 
-	add_executable(phatbooks src/main.cpp ${windows_resources})
-	target_link_libraries (phatbooks phatbooks_common ${libraries})
+	add_executable(${executable_stem_name} src/main.cpp ${windows_resources})
+	target_link_libraries (${executable_stem_name} dcm_common ${libraries})
 
 	# Installation instructions
 	
@@ -299,7 +299,7 @@ if (
 
 	install (
 		TARGETS
-			phatbooks
+			${executable_stem_name}
 		RUNTIME DESTINATION
 			${installation_dir}
 	)
@@ -329,10 +329,10 @@ if (
 		set (CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon.ico")
 		set (CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon.ico")
 		set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon.ico")
-		set (CPACK_NSIS_INSTALLED_ICON_NAME "phatbooks.exe")
-		set (CPACK_NSIS_MENU_LINKS "phatbooks.exe" "${application_name}")  # Put a link to the application executable in the Shortcuts menu.
+		set (CPACK_NSIS_INSTALLED_ICON_NAME "${executable_stem_name}.exe")
+		set (CPACK_NSIS_MENU_LINKS "${executable_stem_name}.exe" "${application_name}")  # Put a link to the application executable in the Shortcuts menu.
 		set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}\\\\LICENSE")
-		set (CPACK_NSIS_MUI_FINISHPAGE_RUN "phatbooks.exe")  # Give user option to launch application immediately after installing.
+		set (CPACK_NSIS_MUI_FINISHPAGE_RUN "${executable_stem_name}.exe")  # Give user option to launch application immediately after installing.
 
 		# Create an association on the user's machine between the application
 		# file extension and the application
@@ -356,7 +356,7 @@ if (
 			"
 		)
 
-		install(TARGETS phatbooks RUNTIME DESTINATION .)
+		install(TARGETS ${executable_stem_name} RUNTIME DESTINATION .)
 		include(CPack)
 
 	else ()

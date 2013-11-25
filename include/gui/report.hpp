@@ -26,14 +26,14 @@
 #include <wx/gdicmn.h>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
 
 class Account;
 class OrdinaryJournal;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -77,7 +77,7 @@ public:
 	(	ReportPanel* p_parent,
 		wxSize const& p_size,
 		AccountSuperType p_account_super_type,
-		PhatbooksDatabaseConnection& p_database_connection,
+		DcmDatabaseConnection& p_database_connection,
 		boost::optional<boost::gregorian::date> const& p_maybe_min_date =
 			boost::optional<boost::gregorian::date>(),
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date =
@@ -97,7 +97,7 @@ protected:
 	Report
 	(	ReportPanel* p_parent,
 		wxSize const& p_size,
-		PhatbooksDatabaseConnection& p_database_connection,
+		DcmDatabaseConnection& p_database_connection,
 		boost::optional<boost::gregorian::date> const& p_maybe_min_date,
 		boost::optional<boost::gregorian::date> const& p_maybe_max_date
 	);
@@ -114,6 +114,6 @@ private:
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_report_hpp_0032136221431259167

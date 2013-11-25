@@ -25,12 +25,12 @@
 #include <wx/string.h>
 #include <wx/window.h>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
 
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -40,8 +40,8 @@ namespace gui
 /**
  * Represents a panel for which the sizing is controlled by a wxGridBagSizer,
  * for which has scrolling is enabled, and which is associated with a
- * PhatbooksDatabaseConnection. The class will always have
- * phatbooks::gui::standard_gap() incorporated into the sizing scheme
+ * DcmDatabaseConnection. The class will always have
+ * dcm::gui::standard_gap() incorporated into the sizing scheme
  * (see "sizing.hpp").
  *
  * This is a general purpose widget class which will typically be inherited
@@ -59,7 +59,7 @@ public:
 	GriddedScrolledPanel
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		PhatbooksDatabaseConnection& p_database_connection,
+		DcmDatabaseConnection& p_database_connection,
 		bool p_horizontal_scrolling_enabled = false
 	);
 
@@ -113,18 +113,18 @@ protected:
 		bool p_dash_for_zero = true
 	);
 
-	PhatbooksDatabaseConnection& database_connection();
-	PhatbooksDatabaseConnection const& database_connection() const;
+	DcmDatabaseConnection& database_connection();
+	DcmDatabaseConnection const& database_connection() const;
 
 private:
 	
 	int m_current_row;
 	wxGridBagSizer* m_top_sizer;
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 
 };  // class GriddedScrolledPanel
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_gridded_scrolled_panel_hpp_8020584330903638

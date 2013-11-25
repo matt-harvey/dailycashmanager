@@ -17,7 +17,7 @@
 #ifndef GUARD_commodity_hpp_9343820716880178
 #define GUARD_commodity_hpp_9343820716880178
 
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/id.hpp>
@@ -27,7 +27,7 @@
 #include <memory>
 #include <string>
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -43,7 +43,7 @@ namespace phatbooks
  * parameters in the constructors for Commodity, which make it
  * impossible for client code to call these constructors directly.
  *
- * NOTE The Commodity funcionality of Phatbooks should for the time
+ * NOTE The Commodity funcionality of DCM should for the time
  * being remain almost entirely hidden from the user - mainly because we
  * we can't currently deal with the
  * situation in which there is more than one commodity in the database.
@@ -51,7 +51,7 @@ namespace phatbooks
 class Commodity:
 	public sqloxx::PersistentObject
 	<	Commodity,
-		PhatbooksDatabaseConnection
+		DcmDatabaseConnection
 	>
 {
 
@@ -59,7 +59,7 @@ public:
 
 	typedef sqloxx::PersistentObject
 		<	Commodity,
-			PhatbooksDatabaseConnection
+			DcmDatabaseConnection
 		>
 		PersistentObject;
 
@@ -69,13 +69,13 @@ public:
 	 * Set up tables required in the database for the persistence of
 	 * Commodity objects.
 	 */
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	static void setup_tables(DcmDatabaseConnection& dbc);
 
 	/**
 	 * Return the id of the Commodity with abbreviation p_abbreviation.
 	 */
 	static sqloxx::Id id_for_abbreviation
-	(	PhatbooksDatabaseConnection& dbc,
+	(	DcmDatabaseConnection& dbc,
 		wxString const& p_abbreviation
 	);
 
@@ -116,7 +116,7 @@ public:
 	 * of a Commodity stored in the database.
 	 */
 	static bool exists_with_abbreviation
-	(	PhatbooksDatabaseConnection& p_database_connection,
+	(	DcmDatabaseConnection& p_database_connection,
 		wxString const& p_abbreviation
 	);
 
@@ -125,7 +125,7 @@ public:
 	 * stored in the database.
 	 */
 	static bool exists_with_name
-	(	PhatbooksDatabaseConnection& p_database_connection,
+	(	DcmDatabaseConnection& p_database_connection,
 		wxString const& p_name
 	);
 
@@ -194,6 +194,6 @@ private:
 	std::unique_ptr<CommodityData> m_data;
 };
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_commodity_hpp_9343820716880178

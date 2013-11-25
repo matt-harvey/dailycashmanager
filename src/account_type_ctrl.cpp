@@ -16,7 +16,7 @@
 
 #include "gui/account_type_ctrl.hpp"
 #include "account_type.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include "gui/account_dialog.hpp"
 #include "gui/combo_box.hpp"
 #include <jewel/assert.hpp>
@@ -28,7 +28,7 @@
 
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -57,7 +57,7 @@ AccountTypeCtrl::AccountTypeCtrl
 (	wxWindow* p_parent,
 	wxWindowID p_id,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection,
+	DcmDatabaseConnection& p_database_connection,
 	AccountSuperType p_account_super_type
 ):
 	ComboBox
@@ -110,4 +110,4 @@ AccountTypeCtrl::set_account_type(AccountType p_account_type)
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

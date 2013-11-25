@@ -24,7 +24,7 @@
 using std::ostream;
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 
 wxString
@@ -95,4 +95,4 @@ operator<<(ostream& os, IntervalType p_interval_type)
 }
 
 
-}  // namespace phatbooks
+}  // namespace dcm

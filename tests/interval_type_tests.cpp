@@ -19,7 +19,7 @@
 #include <wx/string.h>
 
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
@@ -50,4 +50,4 @@ TEST(test_interval_type_phrase)
 
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm

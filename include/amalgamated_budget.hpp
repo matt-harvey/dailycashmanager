@@ -21,7 +21,7 @@
 #include "draft_journal.hpp"
 #include "interval_type.hpp"
 #include "frequency.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
 #include <memory>
@@ -29,7 +29,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -41,9 +41,9 @@ class AmalgamatedBudget
 {
 public:
 
-	static void setup_tables(PhatbooksDatabaseConnection& dbc);
+	static void setup_tables(DcmDatabaseConnection& dbc);
 
-	AmalgamatedBudget(PhatbooksDatabaseConnection& p_database_connection);
+	AmalgamatedBudget(DcmDatabaseConnection& p_database_connection);
 
 	AmalgamatedBudget(AmalgamatedBudget const&) = delete;
 	AmalgamatedBudget(AmalgamatedBudget&&) = delete;
@@ -167,7 +167,7 @@ private:
 	jewel::Decimal instrument_balancing_amount() const;
 
 	bool mutable m_is_loaded;
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 	Frequency m_frequency;
 	std::unique_ptr<Map> mutable m_map;
 
@@ -181,6 +181,6 @@ private:
 
 };
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_amalgamated_budget_hpp_5997503626159161

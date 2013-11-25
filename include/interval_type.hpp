@@ -21,7 +21,7 @@
 #include <wx/string.h>
 #include <ostream>
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -36,7 +36,7 @@ namespace phatbooks
  * of the month.
  *
  * Note the numbering of the enumeration is significant.
- * The class PhatbooksDatabaseConnection relies on the
+ * The class DcmDatabaseConnection relies on the
  * numbering shown here.
  */
 enum class IntervalType: unsigned char
@@ -77,7 +77,7 @@ std::ostream&
 operator<<(std::ostream& os, IntervalType);
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_interval_type_hpp_5555643181109635

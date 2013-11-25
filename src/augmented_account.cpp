@@ -17,19 +17,19 @@
 #include "augmented_account.hpp"
 #include "account.hpp"
 #include "commodity.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
 
 using jewel::Decimal;
 using sqloxx::Handle;
 
-namespace phatbooks
+namespace dcm
 {
 
 
 AugmentedAccount::AugmentedAccount
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	Handle<Commodity> const& p_commodity
 ):
 	account(p_database_connection),
@@ -46,4 +46,4 @@ AugmentedAccount::AugmentedAccount
 {
 }
 
-}   // namespace phatbooks
+}   // namespace dcm

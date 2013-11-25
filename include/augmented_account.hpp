@@ -21,11 +21,11 @@
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
 
-namespace phatbooks
+namespace dcm
 {
 
 class Commodity;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 /**
  * Represents an Account, together with an amount
@@ -36,7 +36,7 @@ class PhatbooksDatabaseConnection;
 struct AugmentedAccount
 {
 	AugmentedAccount
-	(	PhatbooksDatabaseConnection& p_database_connection,
+	(	DcmDatabaseConnection& p_database_connection,
 		sqloxx::Handle<Commodity> const& p_commodity
 	);
 	AugmentedAccount
@@ -48,6 +48,6 @@ struct AugmentedAccount
 
 };  // struct AugmentedAccount
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_augmented_account_hpp_15782473057407176

@@ -16,7 +16,7 @@
 
 #include "gui/sizing.hpp"
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -59,4 +59,4 @@ int scrollbar_width_allowance()
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

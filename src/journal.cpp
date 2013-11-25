@@ -46,7 +46,7 @@ using std::unordered_map;
 using std::vector;
 
 
-namespace phatbooks
+namespace dcm
 {
 
 struct Journal::JournalData
@@ -255,7 +255,7 @@ Journal::do_get_transaction_type()
 void
 Journal::mimic_core
 (	Journal& rhs,
-	PhatbooksDatabaseConnection& dbc,
+	DcmDatabaseConnection& dbc,
 	optional<Id> id
 )
 {
@@ -281,4 +281,4 @@ Journal::clear_core()
 	return;
 }
 
-}  // namespace phatbooks
+}  // namespace dcm

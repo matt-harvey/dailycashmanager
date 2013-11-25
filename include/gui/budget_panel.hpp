@@ -33,12 +33,12 @@
 #include <wx/window.h>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
 
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -160,7 +160,7 @@ private:
 	 */
 	void pop_item_component();
 
-	PhatbooksDatabaseConnection& database_connection() const;
+	DcmDatabaseConnection& database_connection() const;
 
 	jewel::Decimal zero() const;
 
@@ -186,7 +186,7 @@ private:
 		(	BudgetPanel* p_parent,
 			wxWindowID p_id,
 			wxSize const& p_size,
-			PhatbooksDatabaseConnection& p_database_connection
+			DcmDatabaseConnection& p_database_connection
 		);
 	private:	
 		void on_text_change(wxCommandEvent& event);
@@ -260,7 +260,7 @@ private:
 		(	wxWindow* p_parent,
 			jewel::Decimal const& p_imbalance,
 			boost::optional<sqloxx::Handle<Account> > const& p_maybe_target,
-			PhatbooksDatabaseConnection& p_database_connection
+			DcmDatabaseConnection& p_database_connection
 		);
 	private:
 		void on_no_button_click(wxCommandEvent& event);
@@ -276,7 +276,7 @@ private:
 		wxButton* m_no_button;
 		wxButton* m_yes_button;
 		jewel::Decimal const m_imbalance;
-		PhatbooksDatabaseConnection& m_database_connection;
+		DcmDatabaseConnection& m_database_connection;
 		DECLARE_EVENT_TABLE()
 	};
 
@@ -310,6 +310,6 @@ private:
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_budget_panel_hpp_749080240143966

@@ -24,13 +24,13 @@
 #include <set>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
 
 class Account;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 // End forward declarations
 
@@ -69,7 +69,7 @@ transaction_types();
  */
 std::vector<TransactionType>
 available_transaction_types
-(	PhatbooksDatabaseConnection& p_database_connection,
+(	DcmDatabaseConnection& p_database_connection,
 	bool p_include_non_actual = true
 );
 
@@ -117,12 +117,12 @@ void assert_transaction_type_validity
 TransactionType non_actual_transaction_type();
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #include "account_type.hpp"
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -188,6 +188,6 @@ assert_transaction_type_validity
 
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_transaction_type_hpp_36120869003292577

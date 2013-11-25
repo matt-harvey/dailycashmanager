@@ -18,11 +18,11 @@
 #define GUARD_entry_table_iterator_hpp_09390961802280956
 
 #include "entry.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include <sqloxx/handle.hpp>
 #include <sqloxx/table_iterator.hpp>
 
-namespace phatbooks
+namespace dcm
 {
 
 typedef
@@ -36,9 +36,9 @@ typedef
  */
 EntryTableIterator
 make_date_ordered_actual_ordinary_entry_table_iterator
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 );
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_entry_table_iterator_hpp_09390961802280956

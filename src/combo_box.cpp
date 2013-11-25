@@ -9,7 +9,7 @@
 #include <wx/validate.h>
 #include <wx/window.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -96,4 +96,4 @@ ComboBox::on_char(wxKeyEvent& event)
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

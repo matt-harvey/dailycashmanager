@@ -38,7 +38,7 @@ using std::endl;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -151,4 +151,4 @@ DateValidator::date() const
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

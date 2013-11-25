@@ -27,13 +27,13 @@ using sqloxx::Handle;
 using std::string;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 
 namespace
 {
 	Handle<Commodity> make_currency
-	(	PhatbooksDatabaseConnection& p_database_connection,
+	(	DcmDatabaseConnection& p_database_connection,
 		wxString const& p_name,  // So we can accept wide string literals
 		string const& p_abbreviation,
 		int p_precision
@@ -52,7 +52,7 @@ namespace
 
 void
 make_currencies
-(	PhatbooksDatabaseConnection& dbc,
+(	DcmDatabaseConnection& dbc,
 	vector<Handle<Commodity> >& vec
 )
 {
@@ -66,7 +66,7 @@ make_currencies
 
 
 vector<Handle<Commodity> >
-make_currencies(PhatbooksDatabaseConnection& dbc)
+make_currencies(DcmDatabaseConnection& dbc)
 {
 	vector<Handle<Commodity> > ret;
 	make_currencies(dbc, ret);
@@ -75,4 +75,4 @@ make_currencies(PhatbooksDatabaseConnection& dbc)
 
 
 
-}  // namespace phatbooks
+}  // namespace dcm

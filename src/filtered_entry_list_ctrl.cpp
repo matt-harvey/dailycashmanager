@@ -36,7 +36,7 @@ using std::unique_ptr;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -137,4 +137,4 @@ FilteredEntryListCtrl::do_create_entry_selector()
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

@@ -16,7 +16,7 @@
 
 #include "backup.hpp"
 #include "date.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 #include <jewel/assert.hpp>
@@ -31,7 +31,7 @@ using std::string;
 namespace filesystem = boost::filesystem;
 namespace posix_time = boost::posix_time;
 
-namespace phatbooks
+namespace dcm
 {
 
 filesystem::path
@@ -89,4 +89,4 @@ make_backup
 	);
 }
 
-}  // namespace phatbooks
+}  // namespace dcm

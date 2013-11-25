@@ -21,7 +21,7 @@
 #include "commodity.hpp"
 #include "date.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include "string_flags.hpp"
 #include "visibility.hpp"
 #include "gui/account_type_ctrl.hpp"
@@ -56,7 +56,7 @@ using jewel::UninitializedOptionalException;
 using sqloxx::DatabaseTransaction;
 using sqloxx::Handle;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -179,7 +179,7 @@ AccountDialog::AccountDialog
 {
 	JEWEL_ASSERT (p_parent);  // precondition
 	
-	PhatbooksDatabaseConnection& dbc = m_account->database_connection();
+	DcmDatabaseConnection& dbc = m_account->database_connection();
 
 	if
 	(	m_account->has_id() &&
@@ -559,8 +559,8 @@ AccountDialog::on_ok_button_click(wxCommandEvent& event)
 	}
 	wxEventType const event_type =
 	(	m_account->has_id()?
-		PHATBOOKS_ACCOUNT_EDITED_EVENT:
-		PHATBOOKS_ACCOUNT_CREATED_EVENT
+		DCM_ACCOUNT_EDITED_EVENT:
+		DCM_ACCOUNT_CREATED_EVENT
 	);
 	m_account->save();
 	auto const frame = dynamic_cast<Frame*>(wxTheApp->GetTopWindow());
@@ -584,7 +584,7 @@ AccountDialog::on_ok_button_click(wxCommandEvent& event)
 		JEWEL_ASSERT (frame);
 		PersistentObjectEvent::fire
 		(	frame,
-			PHATBOOKS_JOURNAL_CREATED_EVENT,
+			DCM_JOURNAL_CREATED_EVENT,
 			objnl->id()
 		);
 	}
@@ -608,4 +608,4 @@ AccountDialog::on_cancel_button_click(wxCommandEvent& event)
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

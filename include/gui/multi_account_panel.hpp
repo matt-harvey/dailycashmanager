@@ -35,14 +35,14 @@
 #include <set>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
 
 class Account;
 class AugmentedAccount;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -69,7 +69,7 @@ public:
 	MultiAccountPanel
 	(	SetupWizard::AccountPage* p_parent,
 		wxSize const& p_size,
-		PhatbooksDatabaseConnection& p_database_connection,
+		DcmDatabaseConnection& p_database_connection,
 		AccountSuperType p_account_super_type,
 		sqloxx::Handle<Commodity> const& p_commodity,
 		size_t p_minimum_num_rows
@@ -222,6 +222,6 @@ MultiAccountPanel::pop_widget_from(std::vector<T>& p_vec)
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_multi_account_panel_hpp_2678521416465995

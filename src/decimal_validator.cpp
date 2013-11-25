@@ -29,7 +29,7 @@
 using jewel::Decimal;
 using jewel::round;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -143,4 +143,4 @@ DecimalValidator::Clone() const
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

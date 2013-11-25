@@ -15,7 +15,7 @@
  */
 
 #include "account_type.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <wx/string.h>
@@ -28,7 +28,7 @@ using std::endl;
 using std::map;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 
 AccountSuperType
@@ -164,4 +164,4 @@ string_to_account_type(wxString const& p_string)
 	return jt->second;
 }
 
-}  // namespace phatbooks
+}  // namespace dcm

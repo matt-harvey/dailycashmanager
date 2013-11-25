@@ -29,7 +29,7 @@
 #include <wx/window.h>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
@@ -37,7 +37,7 @@ namespace phatbooks
 class Account;
 class Entry;
 class OrdinaryJournal;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 namespace gui
 {
@@ -62,7 +62,7 @@ class EntryListPanel: public wxPanel
 public:
 	EntryListPanel
 	(	wxWindow* p_parent,
-		PhatbooksDatabaseConnection& p_database_connection,
+		DcmDatabaseConnection& p_database_connection,
 		bool p_support_reconciliations = false
 	);
 
@@ -114,13 +114,13 @@ private:
 	EntryListCtrl* m_entry_list_ctrl;
 	std::vector<wxStaticText*> m_summary_label_text_items;
 	std::vector<wxStaticText*> m_summary_data_text_items;
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE()
 
 };  // class EntryListPanel
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_entry_list_panel_hpp_3556466034407013

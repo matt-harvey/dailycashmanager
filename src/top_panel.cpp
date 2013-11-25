@@ -23,7 +23,7 @@
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include "gui/account_list_ctrl.hpp"
@@ -62,14 +62,14 @@ using std::map;
 using std::set;
 using std::vector;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
 
 TopPanel::TopPanel
 (	Frame* p_parent,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	wxPanel
 	(	p_parent,
@@ -659,5 +659,5 @@ TopPanel::update_for_deleted_draft_entries
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 

@@ -10,7 +10,7 @@
 #include <wx/validate.h>
 #include <wx/window.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -62,6 +62,6 @@ private:
 };  // class ComboBox
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_combo_box_hpp_04064646039188209

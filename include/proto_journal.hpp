@@ -18,7 +18,7 @@
 #define GUARD_proto_journal_hpp_2501613862114779
 
 #include "journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "transaction_type.hpp"
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
@@ -30,7 +30,7 @@
 #include <vector>
 
 
-namespace phatbooks
+namespace dcm
 {
 
 
@@ -62,6 +62,6 @@ ProtoJournal::~ProtoJournal()
 {
 }
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_proto_journal_hpp_2501613862114779

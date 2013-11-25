@@ -21,7 +21,7 @@
 #include <jewel/decimal.hpp>
 #include <string>
 
-namespace phatbooks
+namespace dcm
 {
 
 /**
@@ -63,7 +63,7 @@ private:
 // Free-standing functions
 
 /**
- * @returns a Frequency to be used in Phatbooks as the canonical
+ * @returns a Frequency to be used in DCM as the canonical
  * Frequency for storing certain information. This Frequency is designed
  * to allow for conversion to and from a range of other Frequencies
  * while minimizing rounding loss and the chance of overflow on
@@ -120,7 +120,7 @@ jewel::Decimal convert_from_canonical
 bool operator==(Frequency const& lhs, Frequency const& rhs);
 bool operator!=(Frequency const& lhs, Frequency const& rhs);
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
 #endif  // GUARD_frequency_hpp_6254867355457912

@@ -24,13 +24,13 @@
 #include <wx/listctrl.h>
 #include <vector>
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
 
 class DraftJournal;
-class PhatbooksDatabaseConnection;
+class DcmDatabaseConnection;
 
 // End forward declarations
 
@@ -46,7 +46,7 @@ public:
 		wxSize const& p_size,
 		DraftJournalTableIterator p_beg,
 		DraftJournalTableIterator p_end,
-		PhatbooksDatabaseConnection& p_database_connection
+		DcmDatabaseConnection& p_database_connection
 	);
 
 	DraftJournalListCtrl(DraftJournalListCtrl const&) = delete;
@@ -76,13 +76,13 @@ private:
 	static int const s_frequency_col = s_name_col + 1;
 	static int const s_next_date_col = s_frequency_col + 1;
 
-	PhatbooksDatabaseConnection& m_database_connection;
+	DcmDatabaseConnection& m_database_connection;
 
 	DECLARE_EVENT_TABLE()
 
 };  // class DraftJournalListCtrl
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_draft_journal_list_ctrl_hpp_9173440862993449

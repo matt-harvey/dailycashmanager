@@ -24,7 +24,7 @@
 #include "entry.hpp"
 #include "frequency.hpp"
 #include "interval_type.hpp"
-#include "phatbooks_exceptions.hpp"
+#include "dcm_exceptions.hpp"
 #include "repeater.hpp"
 #include "transaction_type.hpp"
 #include "visibility.hpp"
@@ -53,7 +53,7 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 
 namespace
@@ -67,7 +67,7 @@ namespace
 }  // end anonymous namespace
 
 void
-AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
+AmalgamatedBudget::setup_tables(DcmDatabaseConnection& dbc)
 {
 	JEWEL_LOG_TRACE();
 	dbc.execute_sql
@@ -119,7 +119,7 @@ AmalgamatedBudget::setup_tables(PhatbooksDatabaseConnection& dbc)
 }
 
 AmalgamatedBudget::AmalgamatedBudget
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 ):
 	m_is_loaded(false),
 	m_database_connection(p_database_connection),
@@ -502,5 +502,5 @@ AmalgamatedBudget::instrument_balancing_amount() const
 	return ret;
 }
 
-}  // namespace phatbooks
+}  // namespace dcm
 

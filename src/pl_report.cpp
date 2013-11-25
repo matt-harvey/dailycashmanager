@@ -21,7 +21,7 @@
 #include "date.hpp"
 #include "entry.hpp"
 #include "entry_table_iterator.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "gui/report.hpp"
 #include "gui/report_panel.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -47,7 +47,7 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -55,7 +55,7 @@ namespace gui
 PLReport::PLReport
 (	ReportPanel* p_parent,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection,
+	DcmDatabaseConnection& p_database_connection,
 	optional<gregorian::date> const& p_maybe_min_date,
 	optional<gregorian::date> const& p_maybe_max_date
 ):
@@ -305,4 +305,4 @@ PLReport::display_body()
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

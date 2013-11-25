@@ -21,7 +21,7 @@
 #include "commodity.hpp"
 #include "finformat.hpp"
 #include "make_default_accounts.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "string_flags.hpp"
 #include "visibility.hpp"
 #include "gui/account_type_ctrl.hpp"
@@ -58,7 +58,7 @@ using std::vector;
 	#include <iostream>
 	using std::endl;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -66,7 +66,7 @@ namespace gui
 namespace
 {
 	vector<Handle<Account> > suggested_accounts
-	(	PhatbooksDatabaseConnection& p_database_connection,
+	(	DcmDatabaseConnection& p_database_connection,
 		AccountSuperType p_account_super_type
 	)
 	{
@@ -74,7 +74,7 @@ namespace
 		JEWEL_ASSERT (ret.empty());
 		typedef vector<AccountType> ATypeVec;
 		ATypeVec const& account_types =
-			phatbooks::account_types(p_account_super_type);
+			dcm::account_types(p_account_super_type);
 		for (AccountType atype: account_types)
 		{
 			make_default_accounts(p_database_connection, ret, atype);
@@ -92,7 +92,7 @@ namespace
 MultiAccountPanel::MultiAccountPanel
 (	SetupWizard::AccountPage* p_parent,
 	wxSize const& p_size,
-	PhatbooksDatabaseConnection& p_database_connection,
+	DcmDatabaseConnection& p_database_connection,
 	AccountSuperType p_account_super_type,
 	Handle<Commodity> const& p_commodity,
 	size_t p_minimum_num_rows
@@ -484,4 +484,4 @@ MultiAccountPanel::total_amount() const
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

@@ -24,7 +24,7 @@
 using boost::optional;
 using jewel::value;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -54,4 +54,4 @@ toggle_enabled
 }
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

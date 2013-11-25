@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef GUARD_phatbooks_database_connection_hpp_19608494974490487
-#define GUARD_phatbooks_database_connection_hpp_19608494974490487
+#ifndef GUARD_dcm_database_connection_hpp_19608494974490487
+#define GUARD_dcm_database_connection_hpp_19608494974490487
 
 #include "account_type.hpp"
 #include "frequency.hpp"
@@ -31,7 +31,7 @@
 #include <string>
 
 
-namespace phatbooks
+namespace dcm
 {
 
 // Begin forward declarations
@@ -51,19 +51,19 @@ class Repeater;
 
 
 /**
- * Phatbooks-specific database connection class.
+ * DCM-specific database connection class.
  * See API documentation for sqloxx::DatabaseConnection,
  * for parts of API inherited from sqloxx::DatabaseConnection.
  *
- * A PhatbooksDatabaseConnection represents a connection to a
+ * A DcmDatabaseConnection represents a connection to a
  * particular database in which data is stored for a particular
  * accounting entity. Since there is only on accounting entity
  * per database - and there is no distinct "Entity" class in
- * the Phatbooks object model - we can generally treat
- * a PhatbooksDatabaseConnection as a proxy for the accounting
+ * the DCM object model - we can generally treat
+ * a DcmDatabaseConnection as a proxy for the accounting
  * entity itself.
  */
-class PhatbooksDatabaseConnection:
+class DcmDatabaseConnection:
 	public sqloxx::DatabaseConnection
 {
 public:
@@ -71,18 +71,18 @@ public:
 	 * Exhibits the same throwing behaviour (if any) as
 	 * default constructor for sqloxx::DatabaseConnection.
 	 */
-	PhatbooksDatabaseConnection();
+	DcmDatabaseConnection();
 
-	PhatbooksDatabaseConnection(PhatbooksDatabaseConnection const&) = delete;
-	PhatbooksDatabaseConnection(PhatbooksDatabaseConnection&&) = delete;
-	PhatbooksDatabaseConnection& operator=
-	(	PhatbooksDatabaseConnection const&
+	DcmDatabaseConnection(DcmDatabaseConnection const&) = delete;
+	DcmDatabaseConnection(DcmDatabaseConnection&&) = delete;
+	DcmDatabaseConnection& operator=
+	(	DcmDatabaseConnection const&
 	) = delete;
-	PhatbooksDatabaseConnection& operator=
-	(	PhatbooksDatabaseConnection&&
+	DcmDatabaseConnection& operator=
+	(	DcmDatabaseConnection&&
 	) = delete;
 
-	~PhatbooksDatabaseConnection();
+	~DcmDatabaseConnection();
 
 	/**
 	 * @returns the date on which the database was created. This notionally
@@ -128,7 +128,7 @@ public:
 
 	/**
 	 * @returns a handle to the default Commodity for the entity represented by
-	 * the PhatbooksDatabaseConnection.
+	 * the DcmDatabaseConnection.
 	 */
 	sqloxx::Handle<Commodity> default_commodity() const;
 
@@ -147,7 +147,7 @@ public:
 	 *
 	 * If this throws an exception, then the database state will be as it was
 	 * prior to the function being called, and the in-memory state of the
-	 * PhatbooksDatabaseConnection and of the
+	 * DcmDatabaseConnection and of the
 	 * default Commodity will be virtually as it was (as far as client code
 	 * is concerned).
 	 *
@@ -161,7 +161,7 @@ public:
 	/**
 	 * @returns the DraftJournal that serves as the "instrument"
 	 * by means of which the AmalgamatedBudget (for the accounting
-	 * entity represented by the PhatbooksDatabaseConnection) effects regular
+	 * entity represented by the DcmDatabaseConnection) effects regular
 	 * distributions of budget amounts to budgeting envelopes
 	 * (Accounts).
 	 *
@@ -185,20 +185,20 @@ public:
 	private:
 		// Mark whole balance cache as stale.
 		static void mark_as_stale
-		(	PhatbooksDatabaseConnection const& p_database_connection
+		(	DcmDatabaseConnection const& p_database_connection
 		);
 		static void mark_as_stale
-		(	PhatbooksDatabaseConnection const& p_database_connection,
+		(	DcmDatabaseConnection const& p_database_connection,
 			sqloxx::Id p_account_id
 		);
 		// Retrieve the technical_balance of an Account
 		static jewel::Decimal technical_balance
-		(	PhatbooksDatabaseConnection const& p_database_connection,
+		(	DcmDatabaseConnection const& p_database_connection,
 			sqloxx::Id p_account_id
 		);
 		// Retrieve the technical opening balance of an Account
 		static jewel::Decimal technical_opening_balance
-		(	PhatbooksDatabaseConnection const& p_database_connection,
+		(	DcmDatabaseConnection const& p_database_connection,
 			sqloxx::Id p_account_id
 		);
 	};
@@ -217,7 +217,7 @@ public:
 	public:
 		friend class Account;
 		friend class BudgetItem;
-		friend class PhatbooksDatabaseConnection;
+		friend class DcmDatabaseConnection;
 		BudgetAttorney() = delete;
 		~BudgetAttorney() = delete;
 	private:
@@ -225,13 +225,13 @@ public:
 		// "instrument" DraftJournal, on the basis of the currently
 		// saved BudgetItems.
 		static void regenerate
-		(	PhatbooksDatabaseConnection const& p_database_connection
+		(	DcmDatabaseConnection const& p_database_connection
 		);
 		// Retrieve the amalgamated budget for a given Account,
 		// expressed in terms of the standard Frequency of the
-		// AmalgamatedBudget for this PhatbooksDatabaseConnection.
+		// AmalgamatedBudget for this DcmDatabaseConnection.
 		static jewel::Decimal budget
-		(	PhatbooksDatabaseConnection const& p_database_connection,
+		(	DcmDatabaseConnection const& p_database_connection,
 			sqloxx::Id p_account_id
 		);
 	};
@@ -246,11 +246,11 @@ private:
 	 * Overrides sqloxx::DatabaseConnection::do_setup(). Will be called
 	 * as final step in execution of open().
 	 *
-	 * Creates tables required for Phatbooks, and inserts rows
+	 * Creates tables required for DCM, and inserts rows
 	 * into certain tables to provide application-level data where
 	 * required - if this has not already occurred (this step is
 	 * ignored if the database has already been configured for
-	 * Phatbooks).
+	 * DCM).
 	 *
 	 * Any "entity level" data is then loaded into memory where required.
 	 *
@@ -267,14 +267,14 @@ private:
 	 * Cache certain data relating to the accounting entity, where the
 	 * data is generally unchanging and stored permanently in the database -
 	 * we just load it here for (a) quick access, but also (b) so that
-	 * the getters for these data, in the PhatbooksDatabaseConnection itself -
+	 * the getters for these data, in the DcmDatabaseConnection itself -
 	 * can be const: we have to load them separately as we can't create a
 	 * SQLStatement
 	 * on a const DatabaseConnection. Se we load it separately
 	 * here as part of do_setup().
 	 *
 	 * Note an instance of PermanentEntityData has no connection to
-	 * a database; it is \e just a cache; the PhatbooksDatabaseConnection
+	 * a database; it is \e just a cache; the DcmDatabaseConnection
 	 * must separately manage the persistence of this data to the
 	 * database.
 	 */
@@ -298,7 +298,7 @@ private:
 	 *
 	 * If this throws an exception, then the database state will be as it was
 	 * prior to the function being called, and the in-memory state of the
-	 * PhatbooksDatabaseConnection and of the
+	 * DcmDatabaseConnection and of the
 	 * default Commodity will be virtually as it was (as far as client code
 	 * is concerned).
 	 *
@@ -324,10 +324,10 @@ private:
 
 	void perform_integrity_checks();
 
-};  // PhatbooksDatabaseConnection
+};  // DcmDatabaseConnection
 
 
-}  // namespace phatbooks
+}  // namespace dcm
 
 
-#endif  // GUARD_phatbooks_database_connection_hpp_19608494974490487
+#endif  // GUARD_dcm_database_connection_hpp_19608494974490487

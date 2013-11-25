@@ -21,7 +21,7 @@
 #include <boost/optional.hpp>
 #include <stdexcept>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -61,6 +61,6 @@ private:
 };  // class ErrorReporter
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_error_reporter_hpp_24171430908223349

@@ -19,7 +19,7 @@
 #include "account_type.hpp"
 #include "date.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "gui/combo_box.hpp"
 #include "gui/date_ctrl.hpp"
 #include "gui/report.hpp"
@@ -36,7 +36,7 @@
 
 using sqloxx::Handle;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -60,7 +60,7 @@ namespace
 
 ReportPanel::ReportPanel
 (	wxWindow* p_parent,
-	PhatbooksDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection
 ):
 	wxPanel(p_parent, wxID_ANY),
 	m_next_row(0),
@@ -294,4 +294,4 @@ ReportPanel::on_run_button_click(wxCommandEvent& event)
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

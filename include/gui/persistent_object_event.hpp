@@ -22,7 +22,7 @@
 #include <wx/event.h>
 #include <wx/window.h>
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -142,7 +142,7 @@ BEGIN_DECLARE_EVENT_TYPES()
 	 * Note when creating or firing this type of event, the \e p_po_id
 	 * parameter is irrelevant.
 	 */
-	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_CREATING_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_ACCOUNT_CREATING_EVENT, -1)
 
 	/**
 	 * Fire to signify that we want the user to be given the opportunity
@@ -151,7 +151,7 @@ BEGIN_DECLARE_EVENT_TYPES()
 	 * Note when creating or firing this type of event, the \e p_po_id
 	 * parameter is irrelevant.
 	 */
-	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_EDITING_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_ACCOUNT_EDITING_EVENT, -1)
 
 	/**
 	 * Fire to signifiy that the user has just created (and saved) an
@@ -159,7 +159,7 @@ BEGIN_DECLARE_EVENT_TYPES()
 	 *
 	 * Pass Account Id to the event constructor.
 	 */
-	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_CREATED_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_ACCOUNT_CREATED_EVENT, -1)
 
 	/**
 	 * Fire to signify that the user has just edited an Account
@@ -167,31 +167,31 @@ BEGIN_DECLARE_EVENT_TYPES()
 	 *
 	 * Pass Account Id to the constructor.
 	 */
-	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_EDITED_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_ACCOUNT_EDITED_EVENT, -1)
 
 	/**
 	 * Fire to indicated that the user has just deleted an Account.
 	 *
 	 * Pass old Account Id to the constructor.
 	 */
-	DECLARE_EVENT_TYPE(PHATBOOKS_ACCOUNT_DELETED_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_ACCOUNT_DELETED_EVENT, -1)
 
 	/**
 	 * The following are analogous to "_ACCOUNT" event types, but for
 	 * PersistentJournals.
 	 */
-	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_CREATING_EVENT, -1)
-	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_EDITING_EVENT, -1)
-	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_CREATED_EVENT, -1)
-	DECLARE_EVENT_TYPE(PHATBOOKS_JOURNAL_EDITED_EVENT, -1)
-	DECLARE_EVENT_TYPE(PHATBOOKS_DRAFT_JOURNAL_DELETED_EVENT, -1)
-	DECLARE_EVENT_TYPE(PHATBOOKS_ORDINARY_JOURNAL_DELETED_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_JOURNAL_CREATING_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_JOURNAL_EDITING_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_JOURNAL_CREATED_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_JOURNAL_EDITED_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_DRAFT_JOURNAL_DELETED_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_ORDINARY_JOURNAL_DELETED_EVENT, -1)
 
 	/**
 	 * And for Entries.
 	 */
-	DECLARE_EVENT_TYPE(PHATBOOKS_DRAFT_ENTRY_DELETED_EVENT, -1)
-	DECLARE_EVENT_TYPE(PHATBOOKS_ORDINARY_ENTRY_DELETED_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_DRAFT_ENTRY_DELETED_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_ORDINARY_ENTRY_DELETED_EVENT, -1)
 
 	/**
 	 * To notify of a change in the BudgetItems associated
@@ -199,14 +199,14 @@ BEGIN_DECLARE_EVENT_TYPES()
 	 * the id() of the \e Account that is relevant (not the id() of
 	 * the BudgetItems (if any)).
 	 */
-	DECLARE_EVENT_TYPE(PHATBOOKS_BUDGET_EDITED_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_BUDGET_EDITED_EVENT, -1)
 
 	/**
 	 * To notify of a change in the reconciliation status of an Entry.
 	 * 
 	 * Pass Entry Id to the event constructor.
 	 */
-	DECLARE_EVENT_TYPE(PHATBOOKS_RECONCILIATION_STATUS_EVENT, -1)
+	DECLARE_EVENT_TYPE(DCM_RECONCILIATION_STATUS_EVENT, -1)
 
 END_DECLARE_EVENT_TYPES()
 
@@ -218,92 +218,92 @@ typedef
 	void (wxEvtHandler::*PersistentObjectEventFunction)
 	(PersistentObjectEvent&);
 
-#define PHATBOOKS_EVT_ACCOUNT_CREATING(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_ACCOUNT_CREATING_EVENT, id, -1, \
+#define DCM_EVT_ACCOUNT_CREATING(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_ACCOUNT_CREATING_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_ACCOUNT_EDITING(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_ACCOUNT_EDITING_EVENT, id, -1, \
+#define DCM_EVT_ACCOUNT_EDITING(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_ACCOUNT_EDITING_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_ACCOUNT_CREATED(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_ACCOUNT_CREATED_EVENT, id, -1, \
+#define DCM_EVT_ACCOUNT_CREATED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_ACCOUNT_CREATED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_ACCOUNT_EDITED(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_ACCOUNT_EDITED_EVENT, id, -1, \
+#define DCM_EVT_ACCOUNT_EDITED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_ACCOUNT_EDITED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_ACCOUNT_DELETED(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_ACCOUNT_DELETED_EVENT, id, -1, \
+#define DCM_EVT_ACCOUNT_DELETED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_ACCOUNT_DELETED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_JOURNAL_CREATING(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_JOURNAL_CREATING_EVENT, id, -1, \
+#define DCM_EVT_JOURNAL_CREATING(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_JOURNAL_CREATING_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_JOURNAL_EDITING(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_JOURNAL_EDITING_EVENT, id, -1, \
+#define DCM_EVT_JOURNAL_EDITING(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_JOURNAL_EDITING_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_JOURNAL_CREATED(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_JOURNAL_CREATED_EVENT, id, -1, \
+#define DCM_EVT_JOURNAL_CREATED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_JOURNAL_CREATED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_JOURNAL_EDITED(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_JOURNAL_EDITED_EVENT, id, -1, \
+#define DCM_EVT_JOURNAL_EDITED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_JOURNAL_EDITED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_DRAFT_JOURNAL_DELETED(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_DRAFT_JOURNAL_DELETED_EVENT, id, -1, \
+#define DCM_EVT_DRAFT_JOURNAL_DELETED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_DRAFT_JOURNAL_DELETED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_ORDINARY_JOURNAL_DELETED(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_ORDINARY_JOURNAL_DELETED_EVENT, id, -1, \
+#define DCM_EVT_ORDINARY_JOURNAL_DELETED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_ORDINARY_JOURNAL_DELETED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_DRAFT_ENTRY_DELETED(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_DRAFT_ENTRY_DELETED_EVENT, id, -1, \
+#define DCM_EVT_DRAFT_ENTRY_DELETED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_DRAFT_ENTRY_DELETED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_ORDINARY_ENTRY_DELETED(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_ORDINARY_ENTRY_DELETED_EVENT, id, -1, \
+#define DCM_EVT_ORDINARY_ENTRY_DELETED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_ORDINARY_ENTRY_DELETED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_BUDGET_EDITED(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_BUDGET_EDITED_EVENT, id, -1, \
+#define DCM_EVT_BUDGET_EDITED(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_BUDGET_EDITED_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
 
-#define PHATBOOKS_EVT_RECONCILIATION_STATUS(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( PHATBOOKS_RECONCILIATION_STATUS_EVENT, id, -1, \
+#define DCM_EVT_RECONCILIATION_STATUS(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( DCM_RECONCILIATION_STATUS_EVENT, id, -1, \
     (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
 	(wxNotifyEventFunction) \
 	wxStaticCastEvent(PersistentObjectEventFunction, &fn), (wxObject*) NULL),
@@ -314,6 +314,6 @@ typedef
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_persistent_object_event_hpp_011347359517285303

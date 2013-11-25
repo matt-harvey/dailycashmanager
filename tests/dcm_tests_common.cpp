@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include "phatbooks_tests_common.hpp"
+#include "dcm_tests_common.hpp"
 #include "account.hpp"
 #include "account_type.hpp"
 #include "commodity.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "visibility.hpp"
 #include <boost/filesystem.hpp>
 #include <jewel/decimal.hpp>
@@ -36,7 +36,7 @@ using std::endl;
 
 namespace filesystem = boost::filesystem;
 
-namespace phatbooks
+namespace dcm
 {
 namespace test
 {
@@ -59,7 +59,7 @@ void abort_if_exists(filesystem::path const& filepath)
 	return;
 }
 
-void setup_test_commodities(PhatbooksDatabaseConnection& dbc)
+void setup_test_commodities(DcmDatabaseConnection& dbc)
 {
 	Handle<Commodity> const australian_dollars(dbc);
 	australian_dollars->set_abbreviation("AUD");
@@ -80,7 +80,7 @@ void setup_test_commodities(PhatbooksDatabaseConnection& dbc)
 	return;
 }
 
-void setup_test_accounts(PhatbooksDatabaseConnection& dbc)
+void setup_test_accounts(DcmDatabaseConnection& dbc)
 {
 	Handle<Account> const cash(dbc);
 	cash->set_account_type(AccountType::asset);
@@ -109,7 +109,7 @@ TestFixture::TestFixture():
 	db_filepath("Testfile_827787293.db"),
 	pdbc(0)
 {
-	pdbc = new PhatbooksDatabaseConnection;
+	pdbc = new DcmDatabaseConnection;
 	abort_if_exists(db_filepath);
 	pdbc->open(db_filepath);
 	pdbc->set_caching_level(10);
@@ -127,4 +127,4 @@ TestFixture::~TestFixture()
 }
 
 }  // namespace test
-}  // namespace phatbooks
+}  // namespace dcm

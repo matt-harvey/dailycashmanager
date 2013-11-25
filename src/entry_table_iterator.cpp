@@ -15,19 +15,19 @@
  */
 
 #include "entry_table_iterator.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "transaction_type.hpp"
 #include <jewel/assert.hpp>
 #include <sstream>
 
 using std::ostringstream;
 
-namespace phatbooks
+namespace dcm
 {
 
 EntryTableIterator
 make_date_ordered_actual_ordinary_entry_table_iterator
-(	PhatbooksDatabaseConnection& p_database_connection
+(	DcmDatabaseConnection& p_database_connection
 )
 {
 	ostringstream oss;
@@ -43,4 +43,4 @@ make_date_ordered_actual_ordinary_entry_table_iterator
 }
 
 
-}  // namespace phatbooks
+}  // namespace dcm

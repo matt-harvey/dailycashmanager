@@ -32,7 +32,7 @@
 #include <memory>
 
 
-namespace phatbooks
+namespace dcm
 {
 
 // begin forward declarations
@@ -116,6 +116,6 @@ private:
 
 	
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
 
 #endif  // GUARD_reconciliation_entry_list_ctrl_hpp_7164053319564114

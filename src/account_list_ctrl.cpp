@@ -20,7 +20,7 @@
 #include "account_table_iterator.hpp"
 #include "account_type.hpp"
 #include "finformat.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "string_flags.hpp"
 #include "gui/account_dialog.hpp"
 #include "gui/locale.hpp"
@@ -40,7 +40,7 @@ using std::is_signed;
 using std::max;
 using std::set;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -54,7 +54,7 @@ END_EVENT_TABLE()
 
 AccountListCtrl::AccountListCtrl
 (	wxWindow* p_parent,
-	PhatbooksDatabaseConnection& p_database_connection,
+	DcmDatabaseConnection& p_database_connection,
 	AccountSuperType p_account_super_type
 ):
 	wxListCtrl
@@ -108,7 +108,7 @@ AccountListCtrl::on_item_activated(wxListEvent& event)
 	// the window hierarchy.
 	PersistentObjectEvent::fire
 	(	this,
-		PHATBOOKS_ACCOUNT_EDITING_EVENT,
+		DCM_ACCOUNT_EDITING_EVENT,
 		account_id
 	);
 	JEWEL_LOG_TRACE();
@@ -289,4 +289,4 @@ AccountListCtrl::toggle_showing_hidden()
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm

@@ -19,7 +19,7 @@
 #include "date.hpp"
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
-#include "phatbooks_database_connection.hpp"
+#include "dcm_database_connection.hpp"
 #include "string_flags.hpp"
 #include "gui/account_ctrl.hpp"
 #include "gui/date_ctrl.hpp"
@@ -58,7 +58,7 @@ using std::vector;
 
 namespace gregorian = boost::gregorian;
 
-namespace phatbooks
+namespace dcm
 {
 namespace gui
 {
@@ -80,7 +80,7 @@ namespace
 
 EntryListPanel::EntryListPanel
 (	wxWindow* p_parent,
-	PhatbooksDatabaseConnection& p_database_connection,
+	DcmDatabaseConnection& p_database_connection,
 	bool p_support_reconciliations
 ):
 	wxPanel(p_parent, wxID_ANY),
@@ -486,4 +486,4 @@ EntryListPanel::selected_max_date() const
 
 
 }  // namespace gui
-}  // namespace phatbooks
+}  // namespace dcm
