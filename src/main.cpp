@@ -48,8 +48,6 @@
 // wasn't showing at all. Once decent icon is created, also make sure it is
 // pulled into the wxBitmap in SetupWizard.
 
-// TODO HIGH PRIORITY Create a better name for the application.
-
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.
 
