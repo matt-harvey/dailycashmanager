@@ -119,12 +119,6 @@ namespace
 		return false;
 	}
 
-	wxString vendor_name()
-	{
-		// TODO HIGH PRIORITY This isn't the correct vendor name.
-		return wxString(DCM_APPLICATION_NAME);
-	}
-
 	static const wxCmdLineEntryDesc cmd_line_desc[] =
 	{	{	wxCMD_LINE_SWITCH,
 			"h",
@@ -310,7 +304,7 @@ App::make_backup(filesystem::path const& p_original_filepath)
 wxConfig&
 App::config()
 {
-	static wxConfig conf(application_name(), vendor_name());
+	static wxConfig conf(application_name());
 	return conf;
 }
 
