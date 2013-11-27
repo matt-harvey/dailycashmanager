@@ -28,14 +28,11 @@
 // guard against its contents changing other than via the application.
 
 // TODO HIGH PRIORITY Facilitate automatic checking for updates from user's
-// machine, or at least provide an easy process for installing updates
-// via NSIS. It appears that the default configuration of CPack/NSIS is
-// such that updates will not overwrite existing files. Some manual NSIS
-// scripting may be required to enable this. Also take into account that
-// the user may have to restart their computer in the event that they have
-// files open while the installer (or "updater") is running (although I
-// \e think that the default configuration under CPack does this
-// automatically).
+// machine, or else provide an easy way for users to sign up to a mailing
+// list that keeps them informed about updates. Also note we had to manually
+// add "SetOverwrite on" to the CMake NSIS template file, to ensure the
+// generated installer will overwrite existing files when doing updates. This
+// is not ideal.
 
 // TODO HIGH PRIORITY Create a decent icon for the application. We want this
 // in both .ico form (for Windows executable icon) and .xpm
