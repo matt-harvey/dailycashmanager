@@ -55,8 +55,8 @@ locations:
 	Tcl:        http://tcl.tk
 	CMake: 		http://www.cmake.org
 	Boost:		http://www.boost.org
-	Jewel:      http://matthewharvey.net/projects/jewel
-	Sqloxx:		http://matthewharvey.net/projects/sqloxx
+	Jewel:      https://github.com/skybaboon/jewel
+	Sqloxx:		---> TODO: TO BE DETERMINED <---
 	UnitTest++:	http://unittest-cpp.sourceforge.net
 	Doxygen:	http://www.stack.nl/~dimitri/doxygen
 
