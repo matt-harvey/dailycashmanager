@@ -25,6 +25,7 @@
 #include <jewel/version_fwd.hpp>
 #include <wx/app.h>
 #include <wx/config.h>
+#include <wx/help.h>
 #include <wx/intl.h>
 #include <wx/snglinst.h>
 #include <wx/string.h>
@@ -119,6 +120,7 @@ private:
 
 	bool m_exiting_cleanly;
 	wxSingleInstanceChecker* m_single_instance_checker;
+	wxHelpController* m_help_controller;
 	std::unique_ptr<DcmDatabaseConnection> m_database_connection;
 	boost::optional<boost::filesystem::path> m_database_filepath;
 	boost::optional<boost::filesystem::path> m_backup_filepath;

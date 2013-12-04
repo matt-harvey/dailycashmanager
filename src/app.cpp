@@ -39,6 +39,8 @@
 #include <wx/config.h>
 #include <wx/filedlg.h>
 #include <wx/filename.h>
+#include <wx/fs_zip.h>
+#include <wx/help.h>
 #include <wx/log.h>
 #include <wx/snglinst.h>
 #include <wx/string.h>
@@ -155,6 +157,7 @@ namespace
 App::App():
 	m_exiting_cleanly(false),
 	m_single_instance_checker(nullptr),
+	m_help_controller(nullptr),
 	m_database_connection(new DcmDatabaseConnection)
 {
 	JEWEL_ASSERT (!m_backup_filepath);
@@ -300,7 +303,6 @@ App::make_backup(filesystem::path const& p_original_filepath)
 	return;
 }
 
-
 wxConfig&
 App::config()
 {
@@ -371,12 +373,26 @@ bool App::OnInit()
 			return false;
 		}
 
-		// Initialize locale
+		// initialize locale
 		if (!m_locale.Init(wxLANGUAGE_DEFAULT, wxLOCALE_LOAD_DEFAULT))
 		{
 			wxLogError("Could not initialize locale.");
 			return false;
 		}
+
+		// initialize the help system
+		wxFileSystem::AddHandler(new wxZipFSHandler);
+		m_help_controller = new wxHelpController;
+
+		// TODO HIGH PRIORITY help (".htb") needs to be installed to a
+		// suitable location (controlled in CMakeLists.txt) and then
+		// that location needs to be passed to the below commented-out
+		// function.
+		// m_help_controller->Initialize(help_filepath());
+	
+
+		// connect to database, prompting user for new or existing
+		// database if required
 		if (m_database_filepath)
 		{
 			if (filesystem::exists(*m_database_filepath))
@@ -549,6 +565,8 @@ int App::OnExit()
 	{
 		filesystem::remove(*m_backup_filepath);
 	}
+	delete m_help_controller;
+	m_help_controller = nullptr;
 	delete m_single_instance_checker;
 	m_single_instance_checker = nullptr;
 	return m_exiting_cleanly? 0: 1;
