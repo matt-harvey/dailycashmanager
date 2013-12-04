@@ -3,20 +3,29 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to DailyCashManager's documentation!
-============================================
+DailyCashManager User Guide
+===========================
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
+   Overview
+   Installation
+   Getting started
+   Creating an account
+   Creating an envelope
+   Editing an account
+   Editing an envelope
+   Entering a one-off transaction
+   Entering a recurring transaction
+   Editing a transaction
+   Deleting a transaction
+   Reviewing existing transactions
+   Reconciling bank statements
+   Reports
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. * :ref:`search`
 
