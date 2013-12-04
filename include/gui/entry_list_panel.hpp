@@ -21,7 +21,6 @@
 #include <boost/optional.hpp>
 #include <sqloxx/handle_fwd.hpp>
 #include <sqloxx/id.hpp>
-#include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
@@ -43,6 +42,7 @@ namespace gui
 {
 
 class AccountCtrl;
+class Button;
 class DateCtrl;
 class EntryListCtrl;
 
@@ -109,7 +109,7 @@ private:
 	AccountCtrl* m_account_ctrl;
 	DateCtrl* m_min_date_ctrl;
 	DateCtrl* m_max_date_ctrl;
-	wxButton* m_refresh_button;
+	Button* m_refresh_button;
 	wxStaticText* m_reconciliation_hint;
 	EntryListCtrl* m_entry_list_ctrl;
 	std::vector<wxStaticText*> m_summary_label_text_items;

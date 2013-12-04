@@ -17,10 +17,10 @@
 #include "gui/draft_journal_naming_dialog.hpp"
 #include "draft_journal.hpp"
 #include "dcm_database_connection.hpp"
+#include "gui/button.hpp"
 #include "gui/sizing.hpp"
 #include "gui/transaction_ctrl.hpp"
 #include <jewel/assert.hpp>
-#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
@@ -92,7 +92,7 @@ DraftJournalNamingDialog::DraftJournalNamingDialog
 	);
 	m_top_sizer->Add(m_name_ctrl);
 	
-	m_ok_button = new wxButton
+	m_ok_button = new Button
 	(	this,
 		wxID_OK,
 		wxString("&OK"),

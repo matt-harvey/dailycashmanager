@@ -25,6 +25,7 @@
 #include "string_flags.hpp"
 #include "visibility.hpp"
 #include "gui/account_type_ctrl.hpp"
+#include "gui/button.hpp"
 #include "gui/budget_panel.hpp"
 #include "gui/decimal_text_ctrl.hpp"
 #include "gui/frame.hpp"
@@ -38,7 +39,6 @@
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/app.h>
-#include <wx/button.h>
 #include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -465,7 +465,7 @@ AccountDialog::configure_bottom_row()
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
-	m_cancel_button = new wxButton
+	m_cancel_button = new Button
 	(	this,
 		wxID_CANCEL,
 		wxString("&Cancel"),
@@ -479,7 +479,7 @@ AccountDialog::configure_bottom_row()
 		wxDefaultSpan,
 		wxALIGN_RIGHT
 	);
-	m_ok_button = new wxButton
+	m_ok_button = new Button
 	(	this,
 		wxID_OK,
 		wxString("&Save"),

@@ -20,6 +20,7 @@
 #include "date.hpp"
 #include "ordinary_journal.hpp"
 #include "dcm_database_connection.hpp"
+#include "gui/button.hpp"
 #include "gui/combo_box.hpp"
 #include "gui/date_ctrl.hpp"
 #include "gui/report.hpp"
@@ -27,7 +28,6 @@
 #include "gui/string_set_validator.hpp"
 #include <jewel/assert.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
@@ -159,7 +159,7 @@ ReportPanel::configure_top()
 	m_top_sizer->Add(m_max_date_ctrl, wxGBPosition(m_next_row, 3));
 
 	// Refresh button
-	m_run_button = new wxButton
+	m_run_button = new Button
 	(	this,
 		s_run_button_id,
 		wxString("&Run"),

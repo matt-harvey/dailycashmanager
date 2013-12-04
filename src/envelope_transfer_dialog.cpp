@@ -27,12 +27,12 @@
 #include "proto_journal.hpp"
 #include "transaction_side.hpp"
 #include "gui/account_ctrl.hpp"
+#include "gui/button.hpp"
 #include "gui/decimal_text_ctrl.hpp"
 #include "gui/sizing.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/log.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -169,7 +169,7 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 		++current_row;
 	}
 	JEWEL_LOG_TRACE();
-	m_cancel_button = new wxButton
+	m_cancel_button = new Button
 	(	this,
 		wxID_CANCEL,
 		wxString("&Cancel"),
@@ -184,7 +184,7 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 		wxALIGN_RIGHT
 	);
 	JEWEL_LOG_TRACE();
-	m_ok_button = new wxButton
+	m_ok_button = new Button
 	(	this,
 		wxID_OK,
 		wxString("&OK"),

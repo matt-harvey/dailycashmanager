@@ -20,7 +20,6 @@
 #include "account_type.hpp"
 #include <sqloxx/handle_fwd.hpp>
 #include <sqloxx/id.hpp>
-#include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
@@ -39,6 +38,7 @@ class DcmDatabaseConnection;
 namespace gui
 {
 
+class Button;
 class ComboBox;
 class DateCtrl;
 class Report;
@@ -91,7 +91,7 @@ private:
 	ComboBox* m_report_type_ctrl;
 	DateCtrl* m_min_date_ctrl;
 	DateCtrl* m_max_date_ctrl;
-	wxButton* m_run_button;
+	Button* m_run_button;
 	Report* m_report;
 	DcmDatabaseConnection& m_database_connection;
 

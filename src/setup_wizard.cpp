@@ -30,6 +30,7 @@
 #include "string_conv.hpp"
 #include "string_flags.hpp"
 #include "visibility.hpp"
+#include "gui/button.hpp"
 #include "gui/client_data.hpp"
 #include "gui/combo_box.hpp"
 #include "gui/frame.hpp"
@@ -46,7 +47,6 @@
 #include <sqloxx/handle.hpp>
 #include <wx/arrstr.h>
 #include <wx/bitmap.h>
-#include <wx/button.h>
 #include <wx/dataview.h>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
@@ -595,7 +595,7 @@ SetupWizard::FilepathPage::FilepathPage
 		wxTE_READONLY,  // style
 		wxDefaultValidator  // not user-editable anyway...
 	);
-	m_directory_button = new wxButton
+	m_directory_button = new Button
 	(	this,
 		s_directory_button_id,
 		wxString("&Browse..."),
@@ -1006,7 +1006,7 @@ SetupWizard::AccountPage::render_buttons()
 {
 	JEWEL_LOG_TRACE();
 	wxString const concept_name = account_concept_name(m_account_super_type);
-	m_pop_row_button = new wxButton
+	m_pop_row_button = new Button
 	(	this,
 		s_pop_row_button_id,
 		wxString("Remove ") + concept_name,
@@ -1020,7 +1020,7 @@ SetupWizard::AccountPage::render_buttons()
 		wxDefaultSpan,
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
-	m_push_row_button = new wxButton
+	m_push_row_button = new Button
 	(	this,
 		s_push_row_button_id,
 		wxString("Add ") + concept_name,

@@ -22,7 +22,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/button.h>
 #include <wx/dataview.h>
 #include <wx/filedlg.h>
 #include <wx/gbsizer.h>
@@ -50,6 +49,7 @@ class DcmDatabaseConnection;
 namespace gui
 {
 
+class Button;
 class ComboBox;
 class Frame;
 class MultiAccountPanel;
@@ -231,7 +231,7 @@ private:
 	wxBoxSizer* m_filename_row_sizer;
 	wxBoxSizer* m_directory_row_sizer;
 	wxTextCtrl* m_directory_ctrl;
-	wxButton* m_directory_button;
+	Button* m_directory_button;
 	wxTextCtrl* m_filename_ctrl;
 	ComboBox* m_currency_box;
 	ComboBox* m_precision_box;
@@ -331,8 +331,8 @@ private:
 	AccountSuperType m_account_super_type;
 	size_t const m_min_num_accounts;
 	int m_current_row; 
-	wxButton* m_pop_row_button;
-	wxButton* m_push_row_button;
+	Button* m_pop_row_button;
+	Button* m_push_row_button;
 	wxGridBagSizer* m_top_sizer;
 	MultiAccountPanel* m_multi_account_panel;
 	SetupWizard const& m_parent;

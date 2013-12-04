@@ -22,6 +22,7 @@
 #include "dcm_database_connection.hpp"
 #include "string_flags.hpp"
 #include "gui/account_ctrl.hpp"
+#include "gui/button.hpp"
 #include "gui/date_ctrl.hpp"
 #include "gui/entry_list_ctrl.hpp"
 #include "gui/locale.hpp"
@@ -35,7 +36,6 @@
 #include <jewel/on_windows.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/panel.h>
@@ -175,7 +175,7 @@ EntryListPanel::EntryListPanel
 		allow_blank_dates
 	);
 	m_top_sizer->Add(m_max_date_ctrl, wxGBPosition(m_next_row, 3));
-	m_refresh_button = new wxButton
+	m_refresh_button = new Button
 	(	this,
 		s_refresh_button_id,
 		wxString("&Run"),
@@ -483,7 +483,5 @@ EntryListPanel::selected_max_date() const
 	return m_max_date_ctrl->date();
 }
 	
-
-
 }  // namespace gui
 }  // namespace dcm

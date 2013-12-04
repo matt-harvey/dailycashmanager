@@ -25,7 +25,6 @@
 #include <boost/optional.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/button.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
 #include <wx/panel.h>
@@ -48,6 +47,7 @@ namespace gui
 {
 
 class AccountCtrl;
+class Button;
 class TransactionCtrl;
 
 // End forward declarations
@@ -166,8 +166,8 @@ private:
 
 	wxGridBagSizer* m_top_sizer;
 	wxStaticText* m_side_descriptor;
-	wxButton* m_unsplit_button;
-	wxButton* m_split_button;
+	Button* m_unsplit_button;
+	Button* m_split_button;
 
 	struct EntryRow
 	{

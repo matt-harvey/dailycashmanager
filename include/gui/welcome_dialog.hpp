@@ -17,7 +17,6 @@
 #ifndef GUARD_welcome_dialog_hpp_920675095599459
 #define GUARD_welcome_dialog_hpp_920675095599459
 
-#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
 
@@ -30,6 +29,8 @@ class DcmDatabaseConnection;
 
 namespace gui
 {
+
+class Button;
 
 // End forward declarations
 
@@ -57,15 +58,15 @@ private:
 	DcmDatabaseConnection& m_database_connection;
 	bool m_user_wants_new_file;
 	wxGridSizer* m_top_sizer;
-	wxButton* m_existing_file_button;
-	wxButton* m_new_file_button;
+	Button* m_existing_file_button;
+	Button* m_new_file_button;
 
 	// TODO LOW PRIORITY The cancel button looks ugly here. It would be better
 	// to have a close box at the top right; however this was not showing when
 	// I tried to add one using wxCLOSE_BOX style (at least not on
 	// Fedora with Gnome). Hence the cancel button. Perhaps on Windows,
 	// however, we can get the cancel button to work?
-	wxButton* m_cancel_button;
+	Button* m_cancel_button;
 
 	static int const s_existing_file_button_id = wxID_HIGHEST + 1;
 	static int const s_new_file_button_id = wxID_HIGHEST + 2;

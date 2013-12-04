@@ -25,6 +25,7 @@
 #include "string_flags.hpp"
 #include "visibility.hpp"
 #include "gui/account_type_ctrl.hpp"
+#include "gui/button.hpp"
 #include "gui/decimal_text_ctrl.hpp"
 #include "gui/gridded_scrolled_panel.hpp"
 #include "gui/locale.hpp"
@@ -34,7 +35,6 @@
 #include <jewel/decimal.hpp>
 #include <jewel/log.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/msgdlg.h>

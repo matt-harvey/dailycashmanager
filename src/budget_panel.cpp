@@ -29,6 +29,7 @@
 #include "string_flags.hpp"
 #include "gui/account_ctrl.hpp"
 #include "gui/account_dialog.hpp"
+#include "gui/button.hpp"
 #include "gui/decimal_text_ctrl.hpp"
 #include "gui/frame.hpp"
 #include "gui/frequency_ctrl.hpp"
@@ -46,7 +47,6 @@
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/app.h>
-#include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
@@ -188,7 +188,7 @@ BudgetPanel::BudgetPanel
 		wxDefaultSpan,
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
-	m_pop_item_button = new wxButton
+	m_pop_item_button = new Button
 	(	this,
 		s_pop_item_button_id,
 		wxString("Remove item"),
@@ -202,7 +202,7 @@ BudgetPanel::BudgetPanel
 		wxDefaultSpan,
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
-	m_push_item_button = new wxButton
+	m_push_item_button = new Button
 	(	this,
 		s_push_item_button_id,
 		wxString("Add item"),
@@ -859,7 +859,7 @@ BudgetPanel::BalancingDialog::BalancingDialog
 
 	++row;
 
-	m_no_button = new wxButton
+	m_no_button = new Button
 	(	this,
 		wxID_NO,
 		wxString("&Leave unbalanced"),
@@ -875,7 +875,7 @@ BudgetPanel::BalancingDialog::BalancingDialog
 
 	++row;
 
-	m_yes_button = new wxButton
+	m_yes_button = new Button
 	(	this,
 		wxID_YES,
 		wxString("&Offset to ") +

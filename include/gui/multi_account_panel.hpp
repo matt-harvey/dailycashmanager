@@ -26,7 +26,6 @@
 #include <jewel/decimal.hpp>
 #include <jewel/log.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
@@ -46,6 +45,8 @@ class DcmDatabaseConnection;
 
 namespace gui
 {
+
+class Button;
 
 // end forward declarations
 

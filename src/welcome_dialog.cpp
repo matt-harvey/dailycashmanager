@@ -17,8 +17,8 @@
 #include "gui/welcome_dialog.hpp"
 #include "app.hpp"
 #include "dcm_database_connection.hpp"
+#include "gui/button.hpp"
 #include <jewel/assert.hpp>
-#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
 #include <wx/string.h>
@@ -92,19 +92,19 @@ WelcomeDialog::configure_buttons()
 	// whichever is the smallest button after they have been created, doesn't
 	// seem to work. SetSize(...) doesn't seem to do anything. Should find a
 	// better way.
-	m_existing_file_button = new wxButton
+	m_existing_file_button = new Button
 	(	this,
 		s_existing_file_button_id,
 		wxString("Open an &existing ") + file_descriptor
 	);
-	m_new_file_button = new wxButton
+	m_new_file_button = new Button
 	(	this,
 		s_new_file_button_id,
 		wxString("Create a &new ") + file_descriptor,
 		wxDefaultPosition,
 		m_existing_file_button->GetSize()
 	);
-	m_cancel_button = new wxButton
+	m_cancel_button = new Button
 	(	this,
 		wxID_CANCEL,
 		wxString("&Cancel"),

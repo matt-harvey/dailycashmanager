@@ -23,7 +23,6 @@
 #include "frequency_ctrl.hpp"
 #include <boost/optional.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/msgdlg.h>
@@ -44,6 +43,7 @@ namespace gui
 {
 
 class AccountCtrl;
+class Button;
 class AccountDialog;
 class DecimalTextCtrl;
 
@@ -273,8 +273,8 @@ private:
 		bool budget_is_balanced() const;
 		wxGridBagSizer* m_top_sizer;
 		AccountCtrl* m_account_ctrl;
-		wxButton* m_no_button;
-		wxButton* m_yes_button;
+		Button* m_no_button;
+		Button* m_yes_button;
 		jewel::Decimal const m_imbalance;
 		DcmDatabaseConnection& m_database_connection;
 		DECLARE_EVENT_TABLE()
@@ -300,8 +300,8 @@ private:
 	wxGridBagSizer* m_top_sizer;
 	wxStaticText* m_summary_label;
 	wxStaticText* m_summary_amount_text;
-	wxButton* m_pop_item_button;
-	wxButton* m_push_item_button;
+	Button* m_pop_item_button;
+	Button* m_push_item_button;
 	sqloxx::Handle<Account> const& m_account;
 
 	DECLARE_EVENT_TABLE()

@@ -17,7 +17,6 @@
 #ifndef GUARD_envelope_transfer_dialog_hpp_5707053959233246
 #define GUARD_envelope_transfer_dialog_hpp_5707053959233246
 
-#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -35,6 +34,7 @@ namespace gui
 {
 
 class AccountCtrl;
+class Button;
 class DecimalTextCtrl;
 
 // end forward declarations
@@ -77,8 +77,8 @@ private:
 	AccountCtrl* m_source_account_ctrl;
 	AccountCtrl* m_destination_account_ctrl;
 	DecimalTextCtrl* m_amount_ctrl;
-	wxButton* m_cancel_button;
-	wxButton* m_ok_button;
+	Button* m_cancel_button;
+	Button* m_ok_button;
 	ProtoJournal& m_journal;
 	DcmDatabaseConnection& m_database_connection;
 

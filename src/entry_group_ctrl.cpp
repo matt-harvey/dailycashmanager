@@ -24,6 +24,7 @@
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include "gui/account_ctrl.hpp"
+#include "gui/button.hpp"
 #include "gui/decimal_text_ctrl.hpp"
 #include "gui/locale.hpp"
 #include "gui/sizing.hpp"
@@ -35,7 +36,6 @@
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/button.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
 #include <wx/panel.h>
@@ -173,7 +173,7 @@ EntryGroupCtrl::configure_top_row(bool p_include_split_button)
 	{
 		// Note the order of construction of elements effects tab
 		// traversal.
-		m_split_button = new wxButton
+		m_split_button = new Button
 		(	this,
 			s_split_button_id,
 			wxString("Split"),
@@ -459,7 +459,7 @@ EntryGroupCtrl::push_row
 	// an amount_ctrl for each Entry.
 	if (!p_multiple_entries)
 	{
-		m_split_button = new wxButton
+		m_split_button = new Button
 		(	this,
 			s_split_button_id,
 			wxString("Split"),
@@ -482,7 +482,7 @@ EntryGroupCtrl::push_row
 			// doesn't have an amount box...
 			// The 0 Entry line now needs a EntryDecimalTextCtrl too, and
 			// we need to reposition m_split_button to make way for it.
-			m_unsplit_button = new wxButton
+			m_unsplit_button = new Button
 			(	this,
 				s_unsplit_button_id,
 				wxString("Unsplit"),

@@ -17,7 +17,6 @@
 #ifndef GUARD_draft_journal_naming_dialog_hpp_17749934977735363
 #define GUARD_draft_journal_naming_dialog_hpp_17749934977735363
 
-#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/sizer.h>
@@ -34,6 +33,7 @@ class DcmDatabaseConnection;
 namespace gui
 {
 
+class Button;
 class TransactionCtrl;
 
 // End forward declarations
@@ -69,7 +69,7 @@ private:
 
 	wxFlexGridSizer* m_top_sizer;
 	wxTextCtrl* m_name_ctrl;
-	wxButton* m_ok_button;
+	Button* m_ok_button;
 	DcmDatabaseConnection& m_database_connection;
 	wxString m_draft_journal_name;
 
