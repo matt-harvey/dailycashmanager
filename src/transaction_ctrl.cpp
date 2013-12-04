@@ -34,6 +34,7 @@
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include "gui/account_ctrl.hpp"
+#include "gui/button.hpp"
 #include "gui/combo_box.hpp"
 #include "gui/date_ctrl.hpp"
 #include "gui/decimal_text_ctrl.hpp"
@@ -58,7 +59,6 @@
 #include <sqloxx/handle.hpp>
 #include <sqloxx/id.hpp>
 #include <wx/arrstr.h>
-#include <wx/button.h>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
 #include <wx/gdicmn.h>
@@ -376,7 +376,7 @@ TransactionCtrl::configure_for_editing_proto_journal(ProtoJournal& p_journal)
 	increment_row();
 
 	// Cancel/Clear button
-	m_cancel_button = new wxButton
+	m_cancel_button = new Button
 	(	this,
 		wxID_CANCEL,
 		wxString("&Clear"),
@@ -390,7 +390,7 @@ TransactionCtrl::configure_for_editing_proto_journal(ProtoJournal& p_journal)
 	JEWEL_ASSERT (m_delete_button == nullptr);
 
 	// Save/OK button
-	m_ok_button = new wxButton
+	m_ok_button = new Button
 	(	this,
 		wxID_OK,
 		wxString("&Save"),
@@ -543,7 +543,7 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	increment_row();
 
 	// Cancel/Clear button
-	m_cancel_button = new wxButton
+	m_cancel_button = new Button
 	(	this,
 		wxID_CANCEL,
 		wxString("&Cancel"),
@@ -553,7 +553,7 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	top_sizer().Add(m_cancel_button, wxGBPosition(current_row(), 0));
 
 	// Save/OK button
-	m_ok_button = new wxButton
+	m_ok_button = new Button
 	(	this,
 		wxID_OK,
 		wxString("&Save changes"),
@@ -567,7 +567,7 @@ TransactionCtrl::configure_for_editing_persistent_journal()
 	increment_row();
 
 	// Delete button
-	m_delete_button = new wxButton
+	m_delete_button = new Button
 	(	this,
 		s_delete_button_id,
 		wxString("&Delete transaction"),

@@ -26,7 +26,6 @@
 #include <jewel/decimal_fwd.hpp>
 #include <jewel/on_windows.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/button.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
@@ -48,6 +47,7 @@ namespace gui
 {
 
 class AccountCtrl;
+class Button;
 class DateCtrl;
 class EntryGroupCtrl;
 class FrequencyCtrl;
@@ -201,9 +201,9 @@ private:
 	DecimalTextCtrl* m_primary_amount_ctrl;
 	FrequencyCtrl* m_frequency_ctrl;
 	DateCtrl* m_date_ctrl;
-	wxButton* m_cancel_button;
-	wxButton* m_delete_button;
-	wxButton* m_ok_button;
+	Button* m_cancel_button;
+	Button* m_delete_button;
+	Button* m_ok_button;
 	sqloxx::Handle<PersistentJournal> m_journal;
 
 	static unsigned int const s_date_ctrl_id =

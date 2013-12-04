@@ -210,6 +210,7 @@ if (
 		src/balance_sheet_report.cpp
 		src/bs_account_entry_list_ctrl.cpp
 		src/budget_panel.cpp
+		src/button.cpp
 		src/combo_box.cpp
 		src/date_ctrl.cpp
 		src/date_validator.cpp
