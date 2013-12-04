@@ -70,6 +70,7 @@
 // create a shortcut to the file on their Desktop (assuming they didn't
 // actually create the file in their desktop).
 
+
 #include "app.hpp"
 #include <wx/app.h>
 
