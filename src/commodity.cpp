@@ -160,7 +160,7 @@ Commodity::exists_with_name
 void
 Commodity::swap(Commodity& rhs)
 {
-	swap_base_internals(rhs);
+	PersistentObject::swap(rhs);
 	using std::swap;
 	swap(m_data, rhs.m_data);
 	return;

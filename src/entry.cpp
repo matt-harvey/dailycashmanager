@@ -223,7 +223,7 @@ Entry::transaction_side()
 void
 Entry::swap(Entry& rhs)
 {
-	swap_base_internals(rhs);
+	PersistentObject::swap(rhs);
 	using std::swap;
 	swap(m_data, rhs.m_data);
 	return;

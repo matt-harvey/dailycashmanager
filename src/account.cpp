@@ -432,7 +432,7 @@ Account::set_visibility(Visibility p_visibility)
 void
 Account::swap(Account& rhs)
 {
-	swap_base_internals(rhs);
+	PersistentObject::swap(rhs);
 	using std::swap;
 	swap(m_data, rhs.m_data);
 	return;

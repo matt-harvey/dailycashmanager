@@ -132,7 +132,7 @@ void
 PersistentJournal::swap(PersistentJournal& rhs)
 {
 	Journal::swap(rhs);
-	swap_base_internals(rhs);
+	PersistentObject::swap(rhs);
 	return;
 }
 
