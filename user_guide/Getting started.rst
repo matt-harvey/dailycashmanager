@@ -4,9 +4,13 @@ Getting started
 Running DailyCashManager
 ------------------------
 
-*On Windows*, double-click the DailyCashManager icon in the Start menu.
+*On Windows*
 
-*On Linux*, enter ``dailycashmanager`` at the command line.
+Double-click the DailyCashManager icon in the Start menu.
+
+*On Linux*
+
+Enter ``dailycashmanager`` at the command line.
 
 Creating a DailyCashManager file
 --------------------------------
@@ -17,7 +21,4 @@ store your data. A small panel will be displayed on startup, titled,
 
 Click on **Create a new DailyCashManager file** and
 you will be guided through the process of setting up your DCM file.
-
-
-
 

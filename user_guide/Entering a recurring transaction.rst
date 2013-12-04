@@ -1,2 +1,0 @@
-Entering a recurring transaction
-================================
