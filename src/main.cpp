@@ -58,7 +58,13 @@
 // TODO MEDIUM PRIORITY Allow window borders to be dragged around, especially
 // for DraftJournalListCtrl. This make it easier for users on laptops.
 
-// TODO HIGH PRIORITY User guide.
+// TODO HIGH PRIORITY User guide. Write it using Sphinx.
+
+// TODO HIGH PRIORITY Incorporate "make user_guide" into CMakeLists.txt with
+// target that runs Sphinx to make user guide and then compile into application.
+// The "make install" and "make package" targets also need to be adjusted
+// so that help files will be installed to appropriate locations on the target
+// system.
 
 // TODO MEDIUM PRIORITY When the user creates a new file, ask if they want to
 // create a shortcut to the file on their Desktop (assuming they didn't
