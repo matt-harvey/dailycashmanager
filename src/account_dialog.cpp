@@ -31,6 +31,7 @@
 #include "gui/frame.hpp"
 #include "gui/persistent_object_event.hpp"
 #include "gui/sizing.hpp"
+#include "gui/text_ctrl.hpp"
 #include "gui/window_utilities.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
@@ -47,7 +48,6 @@
 #include <wx/msgdlg.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
-#include <wx/textctrl.h>
 #include <wx/window.h>
 #include <stdexcept>
 
@@ -214,7 +214,7 @@ AccountDialog::AccountDialog
 	);
 	wxString name_tmp = wxEmptyString;
 	if (m_account->has_id()) name_tmp = p_account->name();
-	m_name_ctrl = new wxTextCtrl
+	m_name_ctrl = new TextCtrl
 	(	this,
 		wxID_ANY,
 		name_tmp,
@@ -297,7 +297,7 @@ AccountDialog::AccountDialog
 	{
 		description_tmp = p_account->description();
 	}
-	m_description_ctrl = new wxTextCtrl
+	m_description_ctrl = new TextCtrl
 	(	this,
 		wxID_ANY,
 		description_tmp,

@@ -21,7 +21,6 @@
 #include <wx/event.h>
 #include <wx/sizer.h>
 #include <wx/string.h>
-#include <wx/textctrl.h>
 
 namespace dcm
 {
@@ -34,6 +33,7 @@ namespace gui
 {
 
 class Button;
+class TextCtrl;
 class TransactionCtrl;
 
 // End forward declarations
@@ -68,7 +68,7 @@ private:
 	void on_ok_button_click(wxCommandEvent& event);
 
 	wxFlexGridSizer* m_top_sizer;
-	wxTextCtrl* m_name_ctrl;
+	TextCtrl* m_name_ctrl;
 	Button* m_ok_button;
 	DcmDatabaseConnection& m_database_connection;
 	wxString m_draft_journal_name;

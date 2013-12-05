@@ -30,7 +30,6 @@
 #include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
-#include <wx/textctrl.h>
 #include <memory>
 #include <vector>
 
@@ -48,6 +47,7 @@ namespace gui
 
 class AccountCtrl;
 class Button;
+class TextCtrl;
 class TransactionCtrl;
 
 // End forward declarations
@@ -173,7 +173,7 @@ private:
 	{
 		EntryRow(sqloxx::Handle<Entry> const& p_entry);
 		AccountCtrl* account_ctrl;
-		wxTextCtrl* comment_ctrl;
+		TextCtrl* comment_ctrl;
 		EntryDecimalTextCtrl* amount_ctrl;
 		sqloxx::Handle<Entry> entry;
 	};

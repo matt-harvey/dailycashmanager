@@ -37,6 +37,7 @@
 #include "gui/locale.hpp"
 #include "gui/multi_account_panel.hpp"
 #include "gui/sizing.hpp"
+#include "gui/text_ctrl.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
@@ -57,7 +58,6 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
-#include <wx/textctrl.h>
 #include <wx/treelist.h>
 #include <wx/validate.h>
 #include <wx/variant.h>
@@ -390,9 +390,9 @@ bool
 SetupWizard::FilepathValidator::Validate(wxWindow* WXUNUSED(parent))
 {
 	JEWEL_LOG_TRACE();
-	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
-	wxTextCtrl const* const text_ctrl =
-		dynamic_cast<wxTextCtrl*>(GetWindow());	
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(TextCtrl)));
+	TextCtrl const* const text_ctrl =
+		dynamic_cast<TextCtrl*>(GetWindow());	
 	if (!text_ctrl)
 	{
 		JEWEL_LOG_TRACE();
@@ -465,7 +465,7 @@ bool
 SetupWizard::FilepathValidator::TransferFromWindow()
 {
 	JEWEL_LOG_TRACE();
-	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(TextCtrl)));
 	if (m_filepath)
 	{
 		FilepathPage const* const page =
@@ -487,11 +487,11 @@ bool
 SetupWizard::FilepathValidator::TransferToWindow()
 {
 	JEWEL_LOG_TRACE();
-	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(TextCtrl)));
 	if (m_filepath)
 	{
-		wxTextCtrl* const text_ctrl =
-			dynamic_cast<wxTextCtrl*>(GetWindow());
+		TextCtrl* const text_ctrl =
+			dynamic_cast<TextCtrl*>(GetWindow());
 		if (!text_ctrl)
 		{
 			JEWEL_LOG_TRACE();
@@ -586,7 +586,7 @@ SetupWizard::FilepathPage::FilepathPage
 	// TODO MEDIUM PRIORITY We should make this a static text field or
 	// something that is obviously noneditable so the user doesn't feel
 	// frustrated when they try to edit it.
-	m_directory_ctrl = new wxTextCtrl
+	m_directory_ctrl = new TextCtrl
 	(	this,
 		wxID_ANY,
 		default_directory,
@@ -622,7 +622,7 @@ SetupWizard::FilepathPage::FilepathPage
 	// Fifth row
 	m_top_sizer->Add(m_filename_row_sizer);
 	wxString const ext = App::filename_extension();
-	m_filename_ctrl = new wxTextCtrl
+	m_filename_ctrl = new TextCtrl
 	(	this,
 		wxID_ANY,
 		wxString("MyBudget"),

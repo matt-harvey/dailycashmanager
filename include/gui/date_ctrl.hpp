@@ -18,11 +18,11 @@
 #define GUARD_date_ctrl_hpp_9775690613210057
 
 #include "date.hpp"
+#include "gui/text_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
-#include <wx/textctrl.h>
 #include <wx/window.h>
 
 namespace dcm
@@ -36,7 +36,7 @@ namespace gui
  * @param p_allow_blank should be set to true if and only if we will
  * permit the user to leave the DateCtrl blank.
  */
-class DateCtrl: public wxTextCtrl
+class DateCtrl: public TextCtrl
 {
 public:
 

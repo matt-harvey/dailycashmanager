@@ -18,6 +18,7 @@
 #include "date.hpp"
 #include "date_parser.hpp"
 #include "gui/locale.hpp"
+#include "gui/text_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <boost/exception/all.hpp>
@@ -27,7 +28,6 @@
 #include <wx/datetime.h>
 #include <wx/intl.h>
 #include <wx/msgdlg.h>
-#include <wx/textctrl.h>
 #include <wx/validate.h>
 #include <iostream>
 
@@ -65,9 +65,9 @@ DateValidator::DateValidator(DateValidator const& rhs):
 bool
 DateValidator::Validate(wxWindow* WXUNUSED(parent))
 {
-	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
-	wxTextCtrl const* const text_ctrl =
-		dynamic_cast<wxTextCtrl*>(GetWindow());
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(TextCtrl)));
+	TextCtrl const* const text_ctrl =
+		dynamic_cast<TextCtrl*>(GetWindow());
 	if (!text_ctrl)
 	{
 		return false;
@@ -109,15 +109,15 @@ DateValidator::Validate(wxWindow* WXUNUSED(parent))
 bool
 DateValidator::TransferFromWindow()
 {
-	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(TextCtrl)));
 	return true;
 }
 
 bool
 DateValidator::TransferToWindow()
 {
-	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(wxTextCtrl)));
-	wxTextCtrl* const text_ctrl = dynamic_cast<wxTextCtrl*>(GetWindow());
+	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(TextCtrl)));
+	TextCtrl* const text_ctrl = dynamic_cast<TextCtrl*>(GetWindow());
 	if (!text_ctrl)
 	{
 		return false;

@@ -437,7 +437,7 @@ EntryGroupCtrl::push_row
 		Add(entry_row.account_ctrl, wxGBPosition(m_current_row, 0));
 
 	// Comment widget
-	entry_row.comment_ctrl = new wxTextCtrl
+	entry_row.comment_ctrl = new TextCtrl
 	(	this,
 		wxID_ANY,
 		p_entry->comment(),

@@ -29,7 +29,6 @@
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
-#include <wx/textctrl.h>
 #include <memory>
 
 namespace dcm
@@ -51,6 +50,7 @@ class Button;
 class DateCtrl;
 class EntryGroupCtrl;
 class FrequencyCtrl;
+class TextCtrl;
 class TopPanel;
 
 // End forward declarations

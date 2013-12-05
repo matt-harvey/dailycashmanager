@@ -25,7 +25,6 @@
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
-#include <wx/textctrl.h>
 #include <wx/window.h>
 
 namespace dcm
@@ -39,6 +38,7 @@ namespace gui
 class AccountTypeCtrl;
 class Button;
 class DecimalTextCtrl;
+class TextCtrl;
 
 // End forward declarations
 
@@ -97,9 +97,9 @@ private:
 
 	int m_current_row;
 	wxGridBagSizer* m_top_sizer;
-	wxTextCtrl* m_name_ctrl;
+	TextCtrl* m_name_ctrl;
 	AccountTypeCtrl* m_account_type_ctrl;
-	wxTextCtrl* m_description_ctrl;
+	TextCtrl* m_description_ctrl;
 	DecimalTextCtrl* m_opening_amount_ctrl;
 	BudgetPanel* m_budget_panel;
 	wxCheckBox* m_visibility_ctrl;

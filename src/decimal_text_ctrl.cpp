@@ -19,12 +19,12 @@
 #include "dcm_exceptions.hpp"
 #include "gui/decimal_validator.hpp"
 #include "gui/locale.hpp"
+#include "gui/text_ctrl.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
-#include <wx/textctrl.h>
 #include <wx/window.h>
 #include <iostream>
 
@@ -36,7 +36,7 @@ namespace dcm
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(DecimalTextCtrl, wxTextCtrl)
+BEGIN_EVENT_TABLE(DecimalTextCtrl, TextCtrl)
 	EVT_KILL_FOCUS(DecimalTextCtrl::on_kill_focus)
 END_EVENT_TABLE()
 
@@ -47,7 +47,7 @@ DecimalTextCtrl::DecimalTextCtrl
 	Decimal::places_type p_precision,
 	bool p_print_dash_for_zero  // TODO LOW PRIORITY Would be cleaner with a FlagSet here.
 ):
-	wxTextCtrl
+	TextCtrl
 	(	p_parent,
 		p_id,
 		finformat_wx

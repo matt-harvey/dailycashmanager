@@ -47,7 +47,7 @@ public:
 	~DateValidator() = default;
 
 	/**
-	 * @param parent should point to an instance of a wxTextCtrl.
+	 * @param parent should point to an instance of a TextCtrl.
 	 */
 	bool Validate(wxWindow* parent) override;
 

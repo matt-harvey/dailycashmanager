@@ -31,6 +31,7 @@
 #include "gui/locale.hpp"
 #include "gui/setup_wizard.hpp"
 #include "gui/sizing.hpp"
+#include "gui/text_ctrl.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/log.hpp>
@@ -40,7 +41,6 @@
 #include <wx/msgdlg.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
-#include <wx/textctrl.h>
 #include <numeric>
 #include <set>
 #include <vector>
@@ -194,7 +194,7 @@ MultiAccountPanel::pop_row()
 	}
 	JEWEL_ASSERT (m_account_name_boxes.size() > 1);
 #	ifndef NDEBUG
-		vector<wxTextCtrl*>::size_type const sz = m_account_name_boxes.size();
+		vector<TextCtrl*>::size_type const sz = m_account_name_boxes.size();
 		JEWEL_ASSERT (sz > 0);
 		JEWEL_ASSERT (sz == m_account_type_boxes.size());
 		JEWEL_ASSERT (sz == m_description_boxes.size());
@@ -295,7 +295,7 @@ MultiAccountPanel::push_row(Handle<Account> const& p_account)
 	int const row = current_row();
 
 	// Account name
-	wxTextCtrl* account_name_box = new wxTextCtrl
+	TextCtrl* account_name_box = new TextCtrl
 	(	this,
 		wxID_ANY,
 		p_account->name(),
@@ -321,7 +321,7 @@ MultiAccountPanel::push_row(Handle<Account> const& p_account)
 	m_account_type_boxes.push_back(account_type_box);
 
 	// Description
-	wxTextCtrl* description_box = new wxTextCtrl
+	TextCtrl* description_box = new TextCtrl
 	(	this,
 		wxID_ANY,
 		p_account->description(),
@@ -432,7 +432,7 @@ MultiAccountPanel::account_names_valid(wxString& p_error_message) const
 	set<wxString> account_names;
 	AccountPhraseFlags const flags =
 		AccountPhraseFlags().set(string_flags::capitalize);
-	for (wxTextCtrl* const box: m_account_name_boxes)
+	for (TextCtrl* const box: m_account_name_boxes)
 	{
 		wxString const name = box->GetValue().Trim().Lower();
 		if (name.IsEmpty())

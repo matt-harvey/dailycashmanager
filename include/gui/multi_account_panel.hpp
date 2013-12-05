@@ -30,7 +30,6 @@
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
-#include <wx/textctrl.h>
 #include <set>
 #include <vector>
 
@@ -47,6 +46,7 @@ namespace gui
 {
 
 class Button;
+class TextCtrl;
 
 // end forward declarations
 
@@ -199,9 +199,9 @@ private:
 	
 	size_t m_minimum_num_rows;
 
-	std::vector<wxTextCtrl*> m_account_name_boxes;
+	std::vector<TextCtrl*> m_account_name_boxes;
 	std::vector<AccountTypeCtrl*> m_account_type_boxes;
-	std::vector<wxTextCtrl*> m_description_boxes;
+	std::vector<TextCtrl*> m_description_boxes;
 	std::vector<DecimalTextCtrl*> m_opening_balance_boxes;
 
 };  // class MultiAccountPanel

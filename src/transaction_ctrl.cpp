@@ -48,6 +48,7 @@
 #include "gui/persistent_object_event.hpp"
 #include "gui/sizing.hpp"
 #include "gui/top_panel.hpp"
+#include "gui/text_ctrl.hpp"
 #include "gui/transaction_type_ctrl.hpp"
 #include <boost/optional.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -64,7 +65,6 @@
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
-#include <wx/textctrl.h>
 #include <wx/wupdlock.h>
 #include <algorithm>
 #include <iostream>

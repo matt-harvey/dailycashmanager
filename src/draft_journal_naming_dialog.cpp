@@ -19,6 +19,7 @@
 #include "dcm_database_connection.hpp"
 #include "gui/button.hpp"
 #include "gui/sizing.hpp"
+#include "gui/text_ctrl.hpp"
 #include "gui/transaction_ctrl.hpp"
 #include <jewel/assert.hpp>
 #include <wx/dialog.h>
@@ -27,7 +28,6 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
-#include <wx/textctrl.h>
 
 namespace dcm
 {
@@ -83,7 +83,7 @@ DraftJournalNamingDialog::DraftJournalNamingDialog
 
 	m_top_sizer->AddSpacer(0);
 
-	m_name_ctrl = new wxTextCtrl
+	m_name_ctrl = new TextCtrl
 	(	this,
 		wxID_ANY,
 		wxEmptyString,

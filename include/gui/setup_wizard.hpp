@@ -19,6 +19,7 @@
 
 #include "account_type.hpp"
 #include "commodity.hpp"
+#include "gui/text_ctrl.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <sqloxx/handle.hpp>
@@ -29,7 +30,6 @@
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/string.h>
-#include <wx/textctrl.h>
 #include <wx/treelist.h>
 #include <wx/validate.h>
 #include <wx/window.h>
@@ -86,7 +86,7 @@ public:
 
 	/**
 	 * @returns a standard size to be used for text controls
-	 * (wxTextCtrl, ComboBox) in the pages of this wizard.
+	 * (TextCtrl, ComboBox) in the pages of this wizard.
 	 * The returned wxSize is intended to be used with wxDLG_UNIT macro
 	 * when initializing the controls' sizes.
 	 */
@@ -173,7 +173,7 @@ public:
 	/*** Functions inherited from wxValidator virtuals ***/
 
 	/**
-	 * @param parent should be passed the wxTextCtrl in
+	 * @param parent should be passed the TextCtrl in
 	 * a FilepathPage,
 	 * that contains the filename entered by the user.
 	 * Then validator then validates this by ensuring that:\n
@@ -230,9 +230,9 @@ private:
 	wxBoxSizer* m_top_sizer;
 	wxBoxSizer* m_filename_row_sizer;
 	wxBoxSizer* m_directory_row_sizer;
-	wxTextCtrl* m_directory_ctrl;
+	TextCtrl* m_directory_ctrl;
 	Button* m_directory_button;
-	wxTextCtrl* m_filename_ctrl;
+	TextCtrl* m_filename_ctrl;
 	ComboBox* m_currency_box;
 	ComboBox* m_precision_box;
 

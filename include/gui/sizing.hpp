@@ -49,13 +49,13 @@ int medium_width();
 
 /**
  * @returns a standardized "large" width suitable, for example, for
- * a wxTextCtrl for entering an Entry comment of a few words.
+ * a TextCtrl for entering an Entry comment of a few words.
  */
 int large_width();
 
 /**
  * @returns a standardized "extra large" width suitable, for example,
- * for a wxTextCtrl for entering a comment that's a bit longer than
+ * for a TextCtrl for entering a comment that's a bit longer than
  * what would fit if one that is \e large_width() wide.
  */
 int extra_large_width();

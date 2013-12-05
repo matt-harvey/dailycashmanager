@@ -45,7 +45,7 @@ public:
 	~DecimalValidator() = default;
 
 	/**
-	 * @param parent should point to an instance of wxTextCtrl.
+	 * @param parent should point to an instance of TextCtrl.
 	 */
 	bool Validate(wxWindow* parent) override;
 

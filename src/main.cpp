@@ -15,7 +15,7 @@
  */
 
 // TODO MEDIUM PRIORITY Under KDE (at least on Mageia) the way I have set
-// up the widths of wxComboBox and wxTextCtrl and wxButton (in various
+// up the widths of ComboBox and TextCtrl and wxButton (in various
 // controls in which these feature), where they are
 // supposed to be the same height, they actually turn out to be slightly
 // different heights. However even if I manually set them all to the same

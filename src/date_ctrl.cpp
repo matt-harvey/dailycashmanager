@@ -18,6 +18,7 @@
 #include "dcm_exceptions.hpp"
 #include "gui/date_validator.hpp"
 #include "gui/locale.hpp"
+#include "gui/text_ctrl.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
@@ -26,7 +27,6 @@
 #include <wx/gdicmn.h>
 #include <wx/intl.h>
 #include <wx/string.h>
-#include <wx/textctrl.h>
 #include <wx/window.h>
 
 using boost::optional;
@@ -37,7 +37,7 @@ namespace dcm
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(DateCtrl, wxTextCtrl)
+BEGIN_EVENT_TABLE(DateCtrl, TextCtrl)
 	EVT_KILL_FOCUS(DateCtrl::on_kill_focus)
 END_EVENT_TABLE()
 
@@ -49,7 +49,7 @@ DateCtrl::DateCtrl
 	bool p_allow_blank,
 	optional<gregorian::date> const& p_min_date
 ):
-	wxTextCtrl
+	TextCtrl
 	(	p_parent,
 		p_id,
 		date_format_wx(p_date),

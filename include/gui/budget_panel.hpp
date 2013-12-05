@@ -28,7 +28,6 @@
 #include <wx/msgdlg.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
-#include <wx/textctrl.h>
 #include <wx/window.h>
 #include <vector>
 
@@ -43,9 +42,10 @@ namespace gui
 {
 
 class AccountCtrl;
-class Button;
 class AccountDialog;
+class Button;
 class DecimalTextCtrl;
+class TextCtrl;
 
 // End forward declarations
 
@@ -206,7 +206,7 @@ private:
 			frequency_ctrl(nullptr)
 		{
 		}
-		wxTextCtrl* description_ctrl;
+		TextCtrl* description_ctrl;
 		DecimalTextCtrl* amount_ctrl;
 		SpecialFrequencyCtrl* frequency_ctrl;
 	};

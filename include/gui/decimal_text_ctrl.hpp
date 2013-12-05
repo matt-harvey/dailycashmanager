@@ -17,10 +17,10 @@
 #ifndef GUARD_decimal_text_ctrl_hpp_19653581837030865
 #define GUARD_decimal_text_ctrl_hpp_19653581837030865
 
+#include "gui/text_ctrl.hpp"
 #include <jewel/decimal.hpp>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
-#include <wx/textctrl.h>
 #include <wx/window.h>
 
 namespace dcm
@@ -29,10 +29,10 @@ namespace gui
 {
 
 /**
- * A subclass of wxTextCtrl specifically for the entry and validation
+ * A subclass of TextCtrl specifically for the entry and validation
  * of wxString representations of jewel::Decimal.
  */
-class DecimalTextCtrl: public wxTextCtrl
+class DecimalTextCtrl: public TextCtrl
 {
 public:
 	DecimalTextCtrl

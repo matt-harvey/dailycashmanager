@@ -556,7 +556,7 @@ BudgetPanel::push_item_component(Handle<BudgetItem> const& p_budget_item)
 {
 	JEWEL_ASSERT (p_budget_item->account() == m_account);
 	BudgetItemComponent budget_item_component;
-	budget_item_component.description_ctrl = new wxTextCtrl
+	budget_item_component.description_ctrl = new TextCtrl
 	(	this,
 		wxID_ANY,
 		p_budget_item->description(),
