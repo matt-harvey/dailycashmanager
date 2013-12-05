@@ -203,7 +203,7 @@ AccountDialog::AccountDialog
 		wxID_ANY,
 		account_name_ctrl_label_string(p_account_super_type),
 		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.GetY()),
+		wxDefaultSize,
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
@@ -236,7 +236,7 @@ AccountDialog::AccountDialog
 		wxID_ANY,
 		account_type_ctrl_label_string(p_account_super_type),
 		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.GetY()),
+		wxDefaultSize,
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
@@ -283,7 +283,7 @@ AccountDialog::AccountDialog
 		wxID_ANY,
 		account_description_label_string(p_account_super_type),
 		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.GetY()),
+		wxDefaultSize,
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
@@ -319,7 +319,7 @@ AccountDialog::AccountDialog
 		wxID_ANY,
 		opening_amount_label_string(p_account_super_type),
 		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.GetY()),
+		wxDefaultSize,
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
@@ -352,7 +352,7 @@ AccountDialog::AccountDialog
 		wxString(" at " ) +
 			date_format_wx(dbc.entity_creation_date()),
 		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.GetY()),
+		wxDefaultSize,
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
@@ -361,9 +361,35 @@ AccountDialog::AccountDialog
 		wxGBSpan(1, 2),
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
-	
+
+	++m_current_row;
+
+	// Next row - dummy text used to fix sizing issue. Don't be tempted
+	// to use non-wxDefaultSize on the other wxStaticText instances above
+	// this, as this was causing alignment issues on Windows previously.
+	wxStaticText* dummy_text = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxSize(medium_width(), 1),
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+	);
+	m_top_sizer->Add
+	(	dummy_text,
+		wxGBPosition(m_current_row, 1),
+		wxDefaultSpan,
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+	);
+
 	// Hack to add some space to right.
-	wxStaticText* dummy = new wxStaticText(this, wxID_ANY, wxEmptyString);
+	wxStaticText* dummy = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxSize(1, 1)
+	);
 	m_top_sizer->Add(dummy, wxGBPosition(m_current_row, 5));
 
 	configure_budget_panel();

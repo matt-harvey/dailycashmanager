@@ -144,14 +144,14 @@ BudgetPanel::BudgetPanel
 		wxID_ANY,
 		wxString("Daily top-up"),
 		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.y),
+		wxDefaultSize,
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
 	(	m_summary_label,
 		wxGBPosition(m_next_row, 0),
 		wxDefaultSpan,
-		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_summary_amount_text = new wxStaticText
 	(	this,
@@ -170,7 +170,23 @@ BudgetPanel::BudgetPanel
 
 	++m_next_row;
 	
-	// Next row - blank
+	// Next row - dummy text used to fix sizing issue. Don't be tempted
+	// to use non-wxDefaultSize on the other wxStaticText instances above
+	// this, as this was causing alignment issues on Windows previously.
+	wxStaticText* dummy_text = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxSize(medium_width(), wxDefaultSize.y),
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+	);
+	m_top_sizer->Add
+	(	dummy_text,
+		wxGBPosition(m_next_row, 0),
+		wxDefaultSpan,
+		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
+	);
 	++m_next_row;
 
 	// Next row
@@ -179,7 +195,7 @@ BudgetPanel::BudgetPanel
 		wxID_ANY,
 		wxString("BUDGET ITEMS"),
 		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.y),
+		wxDefaultSize,
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
 	m_top_sizer->Add
