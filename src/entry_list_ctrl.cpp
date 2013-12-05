@@ -210,7 +210,7 @@ EntryListCtrl::autosize_column_widths()
 #		ifdef JEWEL_ON_WINDOWS
 			// Overcome glitch on Windows build where column headers
 			// are not taken into account in width calculation.
-			SetColumnWidth(i, std::max(GetColumnWidth(i), 75));
+			SetColumnWidth(i, std::max(GetColumnWidth(i), 100));
 #		endif
 	}
 	return;
