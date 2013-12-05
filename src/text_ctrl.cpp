@@ -15,6 +15,7 @@
  */
 
 #include "gui/text_ctrl.hpp"
+#include <jewel/log.hpp>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
@@ -47,7 +48,7 @@ TextCtrl::TextCtrl
 		p_value,
 		p_pos,
 		p_size,
-		p_style,
+		p_style | wxWANTS_CHARS,
 		p_validator,
 		p_name
 	)
