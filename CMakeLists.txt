@@ -239,6 +239,7 @@ if (
 		src/sizing.cpp
 		src/string_set_validator.cpp
 		src/summary_datum.cpp
+		src/text_ctrl.cpp
 		src/top_panel.cpp
 		src/transaction_ctrl.cpp
 		src/transaction_type_ctrl.cpp

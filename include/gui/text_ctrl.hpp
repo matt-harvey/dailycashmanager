@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef GUARD_combo_box_hpp_04064646039188209
-#define GUARD_combo_box_hpp_04064646039188209
+#ifndef GUARD_text_ctrl_hpp_759744027983278
+#define GUARD_text_ctrl_hpp_759744027983278
 
-#include <wx/combobox.h>
-#include <wx/arrstr.h>
+#include <wx/textctrl.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
@@ -33,40 +32,29 @@ namespace gui
 /**
  * The sole purpose of this class's existence is to enable us to intercept
  * the tab key manually, since on Windows (at least on some machines), the
- * tab key was not being properly processed for tab traversal by wxComboBox
+ * tab key was not being properly processed for tab traversal by wxTextCtrl
  * itself.
  */
-class ComboBox: public wxComboBox
+class TextCtrl: public wxTextCtrl
 {
 public:
-	ComboBox
+
+	TextCtrl
 	(	wxWindow* p_parent,
 		wxWindowID p_id,
 		wxString const& p_value = "",
-		wxPoint const& p_position = wxDefaultPosition,
+		wxPoint const& p_pos = wxDefaultPosition,
 		wxSize const& p_size = wxDefaultSize,
-		int p_n = 0,
-		wxString const p_choices[] = nullptr,
 		long p_style = 0,
 		wxValidator const& p_validator = wxDefaultValidator,
-		wxString const& p_name = "comboBox"
+		wxString const& p_name = wxTextCtrlNameStr
 	);
-	ComboBox
-	(	wxWindow* p_parent,
-		wxWindowID p_id,
-		wxString const& p_value,
-		wxPoint const& p_pos,
-		wxSize const& p_size,
-		wxArrayString const& p_choices,
-		long p_style = 0,
-		wxValidator const& p_validator = wxDefaultValidator,
-		wxString const& p_name = "comboBox"
-	);
-	ComboBox(ComboBox const& rhs) = delete;
-	ComboBox(ComboBox&& rhs) = delete;
-	ComboBox& operator=(ComboBox const& rhs) = delete;
-	ComboBox& operator=(ComboBox&& rhs) = delete;
-	virtual ~ComboBox();
+
+	TextCtrl(TextCtrl const& rhs) = delete;
+	TextCtrl(TextCtrl&& rhs) = delete;
+	TextCtrl& operator=(TextCtrl const& rhs) = delete;
+	TextCtrl& operator=(TextCtrl&& rhs) = delete;
+	virtual ~TextCtrl();
 
 private:
 
@@ -74,9 +62,9 @@ private:
 
 	DECLARE_EVENT_TABLE();
 
-};  // class ComboBox
+};  // class TextCtrl
 
 }  // namespace gui
 }  // namespace dcm
 
-#endif  // GUARD_combo_box_hpp_04064646039188209
+#endif  // GUARD_text_ctrl_hpp_759744027983278
