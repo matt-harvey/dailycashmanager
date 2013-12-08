@@ -388,8 +388,9 @@ bool App::OnInit()
 		// suitable location (controlled in CMakeLists.txt) and then
 		// that location needs to be passed to the below commented-out
 		// function.
-		// m_help_controller->Initialize(help_filepath());
-	
+		wxString const help_file("/home/matthew/Workbench/versioned/dcm/user_guide/_build/htmlhelp/DailyCashManagerdoc.hhp");
+		m_help_controller->Initialize(help_file);
+		m_help_controller->AddBook(wxFileName(help_file));
 
 		// connect to database, prompting user for new or existing
 		// database if required

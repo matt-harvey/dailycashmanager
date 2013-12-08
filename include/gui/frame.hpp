@@ -121,6 +121,7 @@ private:
 	void on_menu_edit_draft_journal(wxCommandEvent& event);
 	void on_menu_view_toggle_bs_account_show_hidden(wxCommandEvent& event);
 	void on_menu_view_toggle_pl_account_show_hidden(wxCommandEvent& event);
+	void on_menu_help_contents(wxCommandEvent& event);
 
 	// Event handlers - other - handle PersistentObject editing requests
 	// fired.
@@ -174,6 +175,7 @@ private:
 	wxMenu* m_new_menu;
 	wxMenu* m_edit_menu;
 	wxMenu* m_view_menu;
+	wxMenu* m_help_menu;
 	TopPanel* m_top_panel;
 
 	DECLARE_EVENT_TABLE()

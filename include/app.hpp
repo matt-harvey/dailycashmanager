@@ -90,6 +90,16 @@ public:
 
 	wxLocale const& locale() const;
 
+	// TODO Do this properly.
+	void display_help_contents()
+	{
+		JEWEL_HARD_ASSERT (m_help_controller);
+		m_help_controller->LoadFile("htmlhelp");
+		// m_help_controller->DisplaySection("Overview");
+		m_help_controller->DisplayContents();
+		return;
+	}
+
 	DcmDatabaseConnection& database_connection();
 
 private:

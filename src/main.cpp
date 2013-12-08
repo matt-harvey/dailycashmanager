@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// TODO MEDIUM PRIORITY There is some flicker still when refreshing Report
+// tabs on Windows.
+
 // TODO MEDIUM PRIORITY Under KDE (at least on Mageia) the way I have set
 // up the widths of ComboBox and TextCtrl and wxButton (in various
 // controls in which these feature), where they are
@@ -44,6 +47,9 @@
 // large in-windows icon in the CPack/NSIS installer, the icon
 // wasn't showing at all. Once decent icon is created, also make sure it is
 // pulled into the wxBitmap in SetupWizard.
+
+// TODO HIGH PRIORITY Specifie in CMakeLists.txt the version of wxWidgets
+// that is required. State this in README as well.
 
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.

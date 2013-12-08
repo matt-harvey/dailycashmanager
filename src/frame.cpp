@@ -107,6 +107,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	(	s_toggle_pl_account_show_hidden_id,
 		Frame::on_menu_view_toggle_pl_account_show_hidden
 	)
+	EVT_MENU
+	(	wxID_HELP_CONTENTS,
+		Frame::on_menu_help_contents
+	)
 	DCM_EVT_ACCOUNT_EDITING
 	(	wxID_ANY,
 		Frame::on_account_editing_requested
@@ -199,6 +203,7 @@ Frame::Frame
 	m_new_menu(nullptr),
 	m_edit_menu(nullptr),
 	m_view_menu(nullptr),
+	m_help_menu(nullptr),
 	m_top_panel(nullptr)
 {
 	JEWEL_LOG_TRACE();
@@ -217,6 +222,7 @@ Frame::Frame
 	m_new_menu = new wxMenu;
 	m_edit_menu = new wxMenu;
 	m_view_menu = new wxMenu;
+	m_help_menu = new wxMenu;
 
 	// Configure "file" menu
 	JEWEL_LOG_TRACE();
@@ -302,6 +308,15 @@ Frame::Frame
 		wxEmptyString
 	);
 	m_menu_bar->Append(m_view_menu, wxString("&View"));
+
+	// Configure "help" menu
+	JEWEL_LOG_TRACE();
+	m_help_menu->Append
+	(	wxID_HELP_CONTENTS,
+		wxString("&Help...\tF1"),
+		wxString("Show help")
+	);
+	m_menu_bar->Append(m_help_menu, wxString("&Help"));
 
 	SetMenuBar(m_menu_bar);
 
@@ -496,6 +511,17 @@ Frame::on_menu_view_toggle_pl_account_show_hidden(wxCommandEvent& event)
 		next_toggle_will_show_hidden
 	);
 	m_view_menu->SetLabel(event.GetId(), instruction_for_menu);
+	return;
+}
+
+void
+Frame::on_menu_help_contents(wxCommandEvent& event)
+{
+	JEWEL_LOG_TRACE();
+	(void)event;  // silence compiler re. unused parameter.
+	auto app = dynamic_cast<App*>(wxTheApp);
+	JEWEL_ASSERT (app);
+	app->display_help_contents();
 	return;
 }
 

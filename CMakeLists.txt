@@ -48,6 +48,10 @@ option (
 
 # Definitions to be passed to the compiler
 
+# NOTE Adding definitions via "add_definitions" can cause problems
+# in recent versions of CMake, where these get passed to RC_FLAGS, if
+# the definitions are invalid for the RC compiler.
+
 add_definitions (
 	-DDCM_APPLICATION_NAME="${application_name}"
 	-DDCM_FILE_EXTENSION="${file_extension}"
