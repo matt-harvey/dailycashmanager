@@ -55,8 +55,8 @@ StringSetValidator::Validate(wxWindow* WXUNUSED(wxparent))
 		dynamic_cast<wxTextEntry*>(GetWindow());
 	JEWEL_ASSERT (text_entry);
 	wxString const candidate_text(text_entry->GetValue());
-	int position = wxNOT_FOUND;
-	if ((position = m_valid_strings.Index(candidate_text)) == wxNOT_FOUND)
+	int pos = wxNOT_FOUND;
+	if ((pos = m_valid_strings.Index(candidate_text, false)) == wxNOT_FOUND)
 	{
 		wxMessageBox
 		(	wxString("\"") +
@@ -67,8 +67,10 @@ StringSetValidator::Validate(wxWindow* WXUNUSED(wxparent))
 		JEWEL_LOG_TRACE();
 		return false;
 	}
-	JEWEL_ASSERT (position != wxNOT_FOUND);
-	m_text = candidate_text;
+	JEWEL_ASSERT (pos != wxNOT_FOUND);
+	JEWEL_ASSERT (pos >= 0);
+	JEWEL_ASSERT (static_cast<unsigned int>(pos) < m_valid_strings.GetCount());
+	m_text = m_valid_strings.Item(pos);
 	JEWEL_LOG_TRACE();
 	return true;
 }
