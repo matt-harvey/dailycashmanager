@@ -12,8 +12,8 @@ an account in the program for each account that you have in real life.
 Creating an account
 -------------------
 
-To create an account, click on the *New* in the menu bar at the top, and select
-*New account* from the drop-down menu. A small panel will appear near the centre
+To create an account, click on *New* in the menu bar at the top, and select
+*New account* from the resulting menu. A small panel will appear near the centre
 of the screen. Enter the name of the account (e.g. "Cheque account", or "Rewards
 saver", or "XYZ Bank Credit card").
 
@@ -58,8 +58,8 @@ editing panel (see `Editing an account`_), and unchecking *Show in list*.
 The account will then disappear from the list.
 
 If you later decide you want to show the account, you can re-check the
-*Show in list* box. To edit an account that is currently hidden, click
-*View* at the top of the main window, and select *Show hidden accounts*
+*Show in list* box, as follows To edit an account that is currently hidden,
+click *View* at the top of the main window, and select *Show hidden accounts*
 from the drop-down menu. This will cause the hidden accounts to be
 displayed in the *Account* list. Double-click the account that you want to
 "unhide" to bring up the account editing panel; then click *Show in list*,
