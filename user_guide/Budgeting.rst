@@ -55,11 +55,56 @@ automatically by DailyCashManager from the "Salary" envelope, into each of your
 expense envelopes, to set aside towards each category of expenditure. Let's now
 see how to set up your *budget items* to make this happen.
 
-Creating a budget item
-----------------------
+Creating and editing budget items
+---------------------------------
 
-Editing a budget item
----------------------
+A *budget item* represents a given expense or revenue item for which you want
+to set aside money in an envelope. Often you will just want to create a single
+budget item for a given envelope; but you can assign multiple budget items to
+a given envelope if you wish.
+
+For example, you might have an expense envelope called "Bank fees". Within this
+envelope, you record two different ongoing fees: a $2 monthly account fee; a
+$50.45 annual credit card fee. You would create one budget item for the
+monthly account fee, and another budget item for the credit card fee. You would
+do this as follows:
+
+- Open the envelope editing panel for "Bank fees", either by double-clicking
+  "Bank fees" in the *Envelope* list, or by selecting "Bank fees" in the
+  *Envelope* list and then selecting *Edit selected envelope* form the *Edit*
+  menu.
+- Within the envelope editing panel, click *Add item*. A new row will appear
+  under *BUDGET ITEMS*. Enter "Monthly account fee" in the *Description* box
+  and "2" in the *Amount* box, and select "per month" from the
+  *Frequency* box.
+- Click *Add item* again. This will produce another row of boxes. Enter
+  "Credit card fee" in the *Description* box and "50.45" in the *Amount* box,
+  and select "per 12 months" from the *Frequency* box.
+- Notice that just above the words "BUDGET ITEMS", the *Daily top up* amount
+  will read "0.20". This means that, in order to set aside enough money to cover
+  the two budget items you have entered, DailyCashManager will automatically
+  transfer an amount of $0.20 into the "Bank account" envelope every day. This
+  is calculated as follows: (2 * 12) + 50.45 / 365.25 = 0.20.
+- Click *Save*. Another window will now appear informing you that the
+  "Budget is now out of balance by an amount of (0.20)." This is saying that,
+  in order to transfer the $0.20 into the "Bank fees" envelope each day,
+  DailyCashManager needs transfer that $0.20 *from* some other envelope.
+  By default - and if you click *Leave unbalanced* this deafult will be
+  unchanged - the $0.20 is transferred from the envelope called "Budget
+  imbalance". This is an envelope which DailyCashManager creates automatically
+  to process unbalanced budget amounts. You *don't* normally want "Budget
+  imbalance" to have a balance other than *zero*. Instead of
+  clicking "Leave unbalanced", you should select some other envelope to draw
+  the $0.20 / day from - by selecting from the drop-down list at the bottom
+  of this panel - and then click *Offset to envelope below*. Commonly, you
+  would offset the $0.20 / day to your "Salary" envelope (or whatever is your
+  main source of ongoing income, e.g. "Pension", "Allowance" or etc..). This
+  means that every day, $0.20 will be transferred from your "Salary"
+  envelope to your "Bank fees" envelope, to provide for both your monthly
+  account fee and your annual credit card fee.
+- After clicking *Save*, the envelope editing panel will disappear. Notice
+  that in the *Envelope* list near the centre of the main window, there will
+  be a "0.20" in the *Daily top-up* column, next to "Bank fees".
 
 Targetted saving using pure envelopes
 -------------------------------------
