@@ -134,7 +134,23 @@ envelope, and spend it out of "Food".
 Transferring money between envelopes
 ------------------------------------
 
-TODO
+Sometimes you find that one envelope contains more than excess funds, while
+another contains a shortfall. If this occurs, you should review the budget
+items in each envelope to see whether the ongoing daily allocations to each
+are adequate, or inadequate, and edit these as required. However, as a one-off
+measure, you may want to reallocate funds from one envelope to another. This
+should be done sparingly - after all, if you always shift money around to
+wherever it is required to wherever you want it, you will defeat the purpose
+of budgeting entirely - but sometimes it does make sense to do this.
+
+To shift money between envelopes, select *New envelope transfer* from the
+*New* menu at the top of the main window. Enter the amount you want to transfer;
+select the envelope to transfer *from* in the *Source* box; and select the
+envelope you want to transfer the funds into, from the *Destination* box.
+Then click *OK* to proceed with the transfer, or *Cancel* to abort.
+
+On returning to the main window, you will notice that the balances of the
+affected envelopes have been updated accordingly.
 
 TODO Explain about initial budget allocations.
 
