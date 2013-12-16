@@ -124,7 +124,7 @@ on food. Accordingly, you could create a pure envelope called "Christmas food
 fund". You would create this in the same way as you would create any other
 envelope (see `Creating an envelope`_), except that in the envelope creation
 panel, instead of selecting *revenue* or *expense* from the *envelope type* box,
-you select *pure envelope*. You would then create a _`budget item` under this
+you select *pure envelope*. You would then create a `budget item`_ under this
 envelope, for allocating $100 per twelve months towards Christmas food
 expenditure. Then, when the week leading up to Christmas comes round (assuming
 you created this budget item one year before), you would transfer $100 out of

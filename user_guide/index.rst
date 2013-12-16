@@ -16,8 +16,8 @@ Contents:
    Getting started
    Accounts
    Envelopes
-   Budgeting
    Transactions
+   Budgeting
    Reconciliations
    Reports
 
