@@ -108,3 +108,37 @@ do this as follows:
 
 Targetted saving using pure envelopes
 -------------------------------------
+
+Usually when you create an envelope_, it will be either a *revenue* or an
+*expense* envelope. However, DailyCashManager provides for a third kind of
+envelope, called a *pure envelope*. A pure envelope is one from which it is
+not possible to record any *actual* transactions. Rather, you use it to
+accumulate funds towards some special goal or other, and then when the
+money is required to be spent on that goal, you transfer it out of the
+pure envelope, and into an ordinary expense envelope, and spend it from the
+expense envelope.
+
+For example, you might know that, on average, you spend $100 on food during
+the week leading up to Christmas, over and above your usual weekly spending
+on food. Accordingly, you could create a pure envelope called "Christmas food
+fund". You would create this in the same way as you would create any other
+envelope (see `Creating an envelope`_), except that in the envelope creation
+panel, instead of selecting *revenue* or *expense* from the *envelope type* box,
+you select *pure envelope*. You would then create a _`budget item` under this
+envelope, for allocating $100 per twelve months towards Christmas food
+expenditure. Then, when the week leading up to Christmas comes round (assuming
+you created this budget item one year before), you would transfer $100 out of
+the "Christmas food fund" pure envelope, and into your usual "Food" expense
+envelope, and spend it out of "Food".
+
+Transferring money between envelopes
+------------------------------------
+
+TODO
+
+TODO Explain about initial budget allocations.
+
+.. References
+.. _envelope: Envelopes.html
+.. _`Creating an envelope`: Envelopes.html#creating-an-envelope
+.. _`budget item`: Budgeting.html#creating-and-editing-budget-items
