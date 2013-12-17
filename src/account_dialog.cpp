@@ -119,7 +119,7 @@ namespace
 		case AccountSuperType::balance_sheet:
 			return wxString("Initial balance");
 		case AccountSuperType::pl:
-			return wxString("Initial budget allocation");
+			return wxString("Initial allocation");
 		default:
 			JEWEL_HARD_ASSERT (false);
 		}

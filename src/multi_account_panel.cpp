@@ -135,7 +135,17 @@ MultiAccountPanel::MultiAccountPanel
 	display_text(wxString(" Type:"), 1);
 	display_text(wxString(" Description:"), 2);
 	// Deliberately skipping column 3.
-	display_text(wxString(" Starting balance:"), 4);
+	switch (m_account_super_type)
+	{
+	case AccountSuperType::balance_sheet:
+		display_text(wxString(" Starting balance:"), 4);
+		break;
+	case AccountSuperType::pl:
+		display_text(wxString(" Initial allocation:"), 4);
+		break;
+	default:
+		JEWEL_HARD_ASSERT (false);
+	}
 
 	increment_row();
 
