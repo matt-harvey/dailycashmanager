@@ -173,8 +173,6 @@ Then click *OK* to proceed with the transfer, or *Cancel* to abort.
 On returning to the main window, you will notice that the balances of the
 affected envelopes have been updated accordingly.
 
-TODO Explain about initial budget allocations.
-
 Targetted saving using pure envelopes
 -------------------------------------
 

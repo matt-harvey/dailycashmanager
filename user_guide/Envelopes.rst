@@ -43,10 +43,17 @@ music and movies" in the *Description* box. This field is optional, and is
 simply for your own future reference to clarify what kind of transactions will
 fall under this envelope.
 
-You will see an *Initial budget allocation* box. For now, you can
-leave this as *0*. This is explained further in the `Budgeting`_ section.
-Similarly, the *BUDGET ITEMS* section of this panel is also explained under
-`Budgeting`_. For now, you can ignore this.
+You will see an *Initial budget allocation* box. This represents the initial
+amount that you want to make available for spending on this category, out of
+your initial total net assets (assets less liabilities), when your
+DailyCashManager file is first created. For example, suppose that when
+you create your file, you have $100 in cash, $200 in your bank
+account, and a credit card balance of $(50). Your initial total net assets are
+therefore $250 ($100 + $200 - $50). You will want to TODO
+
+For now, you can ignore the *BUDGET ITEMS* section of this panel. This is
+explained in detail under `Budgeting`_: see `Creating and editing budget
+items`_.
 
 Click *Save* at the bottom right to save the newly created envelope; or click
 *Cancel* to abort, discarding the new envelope.
@@ -88,3 +95,4 @@ from view.
 .. _`Targetted saving using pure envelopes`: Budgeting.html#targetted-saving-using-pure-envelopes
 .. _`pure envelope`: Budgeting.html#targetted-saving-using-pure-envelopes
 .. _`Budgeting`: Budgeting.html
+.. _`Creating and editing budget items`: Budgeting.html#creating-and-editing-budget-items

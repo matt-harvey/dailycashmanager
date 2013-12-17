@@ -22,3 +22,4 @@ store your data. A small panel will be displayed on startup, titled,
 Click on *Create a new DailyCashManager file* and
 you will be guided through the process of setting up your DCM file.
 
+TODO
