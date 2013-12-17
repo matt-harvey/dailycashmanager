@@ -43,13 +43,21 @@ music and movies" in the *Description* box. This field is optional, and is
 simply for your own future reference to clarify what kind of transactions will
 fall under this envelope.
 
-You will see an *Initial budget allocation* box. This represents the initial
+You will see an *Initial allocation* box. This represents the initial
 amount that you want to make available for spending on this category, out of
-your initial total net assets (assets less liabilities), when your
-DailyCashManager file is first created. For example, suppose that when
-you create your file, you have $100 in cash, $200 in your bank
+your initial total net assets (assets minus liabilities), i.e. your
+net assets when your DailyCashManager file is first created. For example,
+suppose that when you create your file, you have $100 in cash, $200 in your bank
 account, and a credit card balance of $(50). Your initial total net assets are
-therefore $250 ($100 + $200 - $50). You will want to TODO
+therefore $250 ($100 + $200 - $50). You might say that you want to allocate
+$50 of this towards "Food", $100 towards "Rent", and the remainder towards
+various other envelopes. You would set the *Initial allocation* to "Food" as
+$50, and to "Rent" as $100.
+
+Generally, if you are creating an envelope some time after you have already
+set up your DailyCashManager file, you should leave the *Initial allocation*
+at *zero*. Once your initial net wealth is allocated, there is nothing left
+to allocate.
 
 For now, you can ignore the *BUDGET ITEMS* section of this panel. This is
 explained in detail under `Budgeting`_: see `Creating and editing budget
