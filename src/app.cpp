@@ -324,6 +324,9 @@ App::make_backup(filesystem::path const& p_original_filepath)
 wxConfig&
 App::config()
 {
+	// NOTE in CMakeLists.txt under Windows we configure the uninstaller to
+	// delete the registry key that is hereby created, via
+	// CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS.
 	static wxConfig conf(application_name());
 	return conf;
 }
