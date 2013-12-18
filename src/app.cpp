@@ -180,6 +180,24 @@ App::version()
 }
 
 wxString
+App::legal_notice()
+{
+	// TODO The full text of the Apache License, Version 2.0 should be
+	// in the HTML help system somewhere; this should be reachable from this
+	// "About" dialog somehow.
+	return wxString
+	(	"Copyright 2013 Matthew Harvey\n\n"
+		"This application has been made available under the Apache License, "
+		"Version 2.0\n\n"
+		"Source code for this application is available under the Apache "
+		"License, Version 2.0, from:\n"
+		"https://github.com/skybaboon/dailycashmanager\n\n"
+		"For the text of the Apache License, Version 2.0 see:\n"
+		"http://www.apache.org/licenses/LICENSE-2.0\n"
+	);
+}
+
+wxString
 App::filename_extension()
 {
 	return wxString(DCM_FILE_EXTENSION);

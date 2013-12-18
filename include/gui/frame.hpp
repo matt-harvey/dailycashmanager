@@ -122,6 +122,7 @@ private:
 	void on_menu_view_toggle_bs_account_show_hidden(wxCommandEvent& event);
 	void on_menu_view_toggle_pl_account_show_hidden(wxCommandEvent& event);
 	void on_menu_help_contents(wxCommandEvent& event);
+	void on_menu_about(wxCommandEvent& event);
 
 	// Event handlers - other - handle PersistentObject editing requests
 	// fired.

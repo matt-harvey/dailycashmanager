@@ -61,6 +61,8 @@ public:
 	 */
 	static jewel::Version version();
 
+	static wxString legal_notice();
+
 	/**
 	 * @returns filename extension to be used with files
 	 * belonging to this application. Includes

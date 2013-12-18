@@ -35,6 +35,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
 #include <jewel/on_windows.hpp>
+#include <jewel/version.hpp>
 #include <sqloxx/handle.hpp>
 #include <sqloxx/id.hpp>
 #include <wx/event.h>
@@ -44,6 +45,7 @@
 #include <wx/wupdlock.h>
 #include <wx/wx.h>
 #include <algorithm>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -52,6 +54,7 @@
 
 using sqloxx::Handle;
 using sqloxx::Id;
+using std::endl;
 using std::ostringstream;
 using std::stable_partition;
 using std::string;
@@ -110,6 +113,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU
 	(	wxID_HELP_CONTENTS,
 		Frame::on_menu_help_contents
+	)
+	EVT_MENU
+	(	wxID_ABOUT,
+		Frame::on_menu_about
 	)
 	DCM_EVT_ACCOUNT_EDITING
 	(	wxID_ANY,
@@ -315,6 +322,11 @@ Frame::Frame
 	(	wxID_HELP_CONTENTS,
 		wxString("&Help...\tF1"),
 		wxString("Show help")
+	);
+	m_help_menu->Append
+	(	wxID_ABOUT,
+		wxString("About"),
+		wxString("Show information about this application")
 	);
 	m_menu_bar->Append(m_help_menu, wxString("&Help"));
 
@@ -522,6 +534,23 @@ Frame::on_menu_help_contents(wxCommandEvent& event)
 	auto app = dynamic_cast<App*>(wxTheApp);
 	JEWEL_ASSERT (app);
 	app->display_help_contents();
+	return;
+}
+
+void
+Frame::on_menu_about(wxCommandEvent& event)
+{
+	JEWEL_LOG_TRACE();
+	(void)event;  // silence compiler re. unused parameter
+	ostringstream oss;
+	oss << wx_to_std8(App::application_name())
+	    << " v"
+		<< App::version()
+		<< "\n\n"
+		<< wx_to_std8(App::legal_notice())
+	    << "\n"
+		<< endl;
+	wxMessageBox(std8_to_wx(oss.str()));
 	return;
 }
 
