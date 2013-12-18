@@ -548,9 +548,11 @@ Frame::on_menu_about(wxCommandEvent& event)
 		<< App::version()
 		<< "\n\n"
 		<< wx_to_std8(App::legal_notice())
-	    << "\n"
-		<< endl;
-	wxMessageBox(std8_to_wx(oss.str()));
+	    << endl;
+	wxMessageBox
+	(	std8_to_wx(oss.str()),
+		wxString("About ") + App::application_name()
+	);
 	return;
 }
 
