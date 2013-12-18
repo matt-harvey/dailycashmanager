@@ -345,20 +345,23 @@ if (
 		set (file_description_word "${application_name}File")
 		set (
 			CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-				WriteRegStr HKCR '${file_extension}' '' '${file_description_word}' 
-				WriteRegStr HKCR '${file_description_word}' '' '${application_name} File' 
-				WriteRegStr HKCR '${file_description_word}\\\\shell' '' 'open' 
-				WriteRegStr HKCR '${file_description_word}\\\\DefaultIcon' '' '$INSTDIR\\\\${executable_stem_name}.exe, 0' 
-				WriteRegStr HKCR '${file_description_word}\\\\shell\\\\open\\\\command' '' '$INSTDIR\\\\${executable_stem_name}.exe \\\"%1\\\"' 
-				WriteRegStr HKCR '${file_description_word}\\\\shell\\\\edit' '' 'Edit ${application_name} File' 
-				WriteRegStr HKCR '${file_description_word}\\\\shell\\\\edit\\\\command' '' '$INSTDIR\\\\${executable_stem_name}.exe \\\"%1\\\"' 
+				WriteRegStr HKEY_CLASSES_ROOT '${file_extension}' '' '${file_description_word}' 
+				WriteRegStr HKEY_CLASSES_ROOT '${file_description_word}' '' '${application_name} File' 
+				WriteRegStr HKEY_CLASSES_ROOT '${file_description_word}\\\\shell' '' 'open' 
+				WriteRegStr HKEY_CLASSES_ROOT '${file_description_word}\\\\DefaultIcon' '' '$INSTDIR\\\\${executable_stem_name}.exe, 0' 
+				WriteRegStr HKEY_CLASSES_ROOT '${file_description_word}\\\\shell\\\\open\\\\command' '' '$INSTDIR\\\\${executable_stem_name}.exe \\\"%1\\\"' 
+				WriteRegStr HKEY_CLASSES_ROOT '${file_description_word}\\\\shell\\\\edit' '' 'Edit ${application_name} File' 
+				WriteRegStr HKEY_CLASSES_ROOT '${file_description_word}\\\\shell\\\\edit\\\\command' '' '$INSTDIR\\\\${executable_stem_name}.exe \\\"%1\\\"' 
 				System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)' 
 			"
 		)
+		# NOTE we here we also delete the application name registry key as this is
+		# the one created by wxConfig.
 		set (
 			CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS " 
-				DeleteRegKey HKCR '${file_extension}' 
-				DeleteRegKey HKCR '${file_description_word}' 
+				DeleteRegKey HKEY_CLASSES_ROOT '${file_extension}' 
+				DeleteRegKey HKEY_CLASSES_ROOT '${file_description_word}' 
+				DeleteRegKey HKEY_CURRENT_USER 'Software\\\\${application_name}'
 			"
 		)
 
