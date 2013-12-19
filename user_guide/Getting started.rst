@@ -87,9 +87,47 @@ the button at the top right, labelled *Add envelope* in this case, or the
 *Description* field is entirely optional.
 
 As for the *Initial allocation* box, this is to contain the amount of funds you
-want to allocate to this envelope initially, for budgeting purposes.
+want to allocate to this envelope initially, for budgeting purposes. As a rule
+of thumb, you should allocate to each envelope enough money to cover the most
+that you would normally spend on that category in a single transaction. For
+example, if you usually spend at most 50.00 on food "in one hit", you should
+initially allocate about 50.00 to the "Food" envelope. This is only a rough
+guide however. If you are not expecting to spend from this envelope for another
+few weeks or months, then probably don't need to allocate this full amount. For
+example, if you spend about 600.00 every 3 months on electricity, and you're
+not expecting your next electricity bill for another month, then you would
+only need to allocate about 400.00 to "Electricity" to begin with. When you
+set up budget items (you can read about this under `Budgeting`_), if you
+allocate 600.00 per 3 months to this envelope, this will ensure that the
+envelope balance reaches the targetted 600.00 by the time the electricity bill
+arrives.
 
-TODO
+Note the *Total to allocate* number at the top right of the wizard page. This
+represents the total amount of your wealth (assets accounts minus liability
+accounts), minus the amount you have allocated to envelopes so far. This number
+will be reduced as you allocate money to the envelopes.
+Any amount that you don't allocate will remain in the *Budget imbalance*
+envelope. This is envelope that is automatically created for you by
+DailyCashManager.
+
+After allocating what you think you need to your envelopes, if your
+*Budget imbalance* is a positive number, this
+means you have more money than you need to meet your immediate requirements.
+You might want to create a *pure envelope* called "Retirement savings" or
+"Car savings" or the like, to save for some longer term goal, and shift
+your budget imbalance amount to this (see
+`Targetted saving using pure envelopes`_).
+
+On the other hand, if your *Budget imbalance* is negative (indicated by
+parentheses e.g. "(100.00)"), this suggests that you don't have sufficient net
+assets to cover your immediate expenditure requirements. See if you can
+realistically reduce some of your envelope allocations to bring the *Budget
+imbalance* down to nil. If you can't realistically do this, you can still
+leave the budget imbalance negative, but aim over time to reduce the *Budget
+imbalance* to 0, by allocating regular funds into the *Budget imbalance* by
+setting a budget item for the *Budget imbalance* envelope (see `Creating and
+editing budget items`_).
+
 
 Opening an existing DailyCashManager file
 -----------------------------------------
@@ -101,3 +139,6 @@ two ways to open an existing DCM file:
 
 TODO
 
+.. _`Budgeting`: Budgeting.html
+.. _`Targetted saving using pure envelopes`: Budgeting.html#targetted-saving-using-pure-envelopes
+.. _`Creating and editing budget items`: Budgeting.html#creating-and-editing-budget-items
