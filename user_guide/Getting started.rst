@@ -128,16 +128,21 @@ imbalance* to 0, by allocating regular funds into the *Budget imbalance* by
 setting a budget item for the *Budget imbalance* envelope (see `Creating and
 editing budget items`_).
 
-
 Opening an existing DailyCashManager file
 -----------------------------------------
 
 Generally you will only want one DCM file to record all your transactions and
 budgets. In your first session, you will create your DCM file. In subsequent
 sessions, you will simply open your existing DCM file. There are
-two ways to open an existing DCM file:
+several ways to open an existing DCM file:
 
-TODO
+- In Windows, double click directly on your DCM file.
+- In Windows, double click the DailyCashManager icon in the Start Menu, then
+  select *Open existing DailyCashManager file* and follow the prompts.
+- In Linux, type ``dailycashmanager [FILE]`` at the command line (where
+  ``[FILE]`` is the path to your DCM file.
+- In Linux, type ``dailycashmanager`` at the command line, select *Open existing
+  DailyCashManager file*, and follow the prompts.
 
 .. _`Budgeting`: Budgeting.html
 .. _`Targetted saving using pure envelopes`: Budgeting.html#targetted-saving-using-pure-envelopes

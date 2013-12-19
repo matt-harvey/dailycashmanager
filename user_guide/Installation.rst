@@ -12,6 +12,6 @@ This will start a graphical installer; then simply follow the prompts.
 *On Linux*
 
 Currently to install DCM on Linux, the application must be compiled from
-source. Uncompress the tarball or zipball, and "cd" into the resulting
-source directory. Follow the instructions in README to build, test
+source. Uncompress the tarball or zipball, and ``cd`` into the resulting
+source directory. Follow the instructions in README.rst to build, test
 and install the application.
