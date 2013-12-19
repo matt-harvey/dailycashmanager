@@ -55,7 +55,25 @@ to the next page of the wizard.
 Setting up accounts
 ...................
 
-TODO
+The next page asks you to enter you assets and liabilities, with the current
+balances of each. An asset represents an amount of money that you "own" -
+such as a chequing account or savings account - and a liability represents
+an amount that you "owe" - such as a credit card balance or loan. The wizard
+provides you with some suggested asset and liability accounts to get you
+started; however you can and should edit these to match the accounts that you
+actually have. You can edit the *Account name*, *Type*, *Description* and
+*Starting balance* boxes directly. The *Description* is optional; you can enter
+description of the account here for your own benefit if you feel the need.
+The *Starting balance* box contains the current amount of money in the account;
+in the case of a liability such as a credit card, this should normally be a
+negative number. If you want to add additional accounts, click the *Add account*
+button at the top right and a new row will be created for you to populate with
+the details of the additional account. You can add as many other accounts as you
+like. To remove accounts that you don't need, click the *Remove account* button;
+this removes whatever account is at the bottom of the page.
+
+When you've finished configuring your accounts, click *Next* at the bottom
+right, to advance to the next page of the wizard.
 
 Setting up envelopes
 ....................
