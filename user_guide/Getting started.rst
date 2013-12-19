@@ -78,6 +78,17 @@ right, to advance to the next page of the wizard.
 Setting up envelopes
 ....................
 
+The next page asks you to enter some revenue and expenditure categories. These
+will form the initial "envelopes" that you use to classify your transactions.
+As with the account setup page, you can add or remove envelopes by clicking
+the button at the top right, labelled *Add envelope* in this case, or the
+*Remove envelope* button, respectively. You can edit the boxes for the
+*Name*, *Type* and *Description* of each envelope directly. The
+*Description* field is entirely optional.
+
+As for the *Initial allocation* box, this is to contain the amount of funds you
+want to allocate to this envelope initially, for budgeting purposes.
+
 TODO
 
 Opening an existing DailyCashManager file
