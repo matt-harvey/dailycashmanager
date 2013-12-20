@@ -68,7 +68,7 @@
 #include <string>
 #include <vector>
 
-#include "../images/icon.xpm"
+#include "../images/icon_48_48.xpm"
 
 using boost::optional;
 using jewel::Decimal;
@@ -167,7 +167,7 @@ SetupWizard::SetupWizard
 	(	0,
 		wxID_ANY,
 		App::application_name() + wxString(" Setup Wizard"),
-		wxBitmap(icon_xpm),
+		wxBitmap(icon_48_48_xpm),
 		wxDefaultPosition,
 		wxDEFAULT_DIALOG_STYLE | wxFULL_REPAINT_ON_RESIZE
 	),

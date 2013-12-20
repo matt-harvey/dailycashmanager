@@ -50,7 +50,7 @@
 #include <string>
 #include <vector>
 
-#include "../images/icon.xpm"
+#include "../images/icon_48_48.xpm"
 
 using sqloxx::Handle;
 using sqloxx::Id;
@@ -220,7 +220,7 @@ Frame::Frame
 	// different sizes with the Window. This avoids possible ugliness from
 	// resizing of a single icon when different sizes are required in
 	// different situations.
-	SetIcon(wxIcon(icon_xpm));
+	SetIcon(wxIcon(icon_48_48_xpm));
 
 	// Create menus
 	JEWEL_LOG_TRACE();
