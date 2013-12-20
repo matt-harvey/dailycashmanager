@@ -73,6 +73,13 @@ Example 3 - you withdraw $100 in cash from your "XYZ Bank savings" account:
   optional memo.
 - Select "Record once only, on", enter the date and click *Save*.
 
+Note that when entering the date of a one-off transaction, you can enter a past
+date, leave it as today's date, or enter a future date. Regardless of what date
+you enter (even if you enter a future date), the corresponding account and
+envelope balances will be update immediately. (This is unlike a recurring
+transaction, which is not actually recorded until the "Next date" is reached -
+see `below`_.)
+
 Generic transactions
 ....................
 
@@ -118,11 +125,47 @@ Generic transactions can save a bit of time, but if you don't feel like using
 this feature, there is no need to do so; just split any complicated transactions
 like this into their component parts, and enter these separately.
 
-Creating a recurring transaction
---------------------------------
+Recurring transactions
+----------------------
 
-Split transactions
-------------------
+Sometimes you will have a certain transaction that occurs again and again, with
+the same amount, at set intervals. For example, you might get paid a $1000
+wage every 2 weeks; or you might have $250 in rent deducted from you bank
+account every week. It would be tedious to have to remember to enter these
+transactions manually every time they occur. To avoid this tedium,
+DailyCashManager supports recurring transactions. You only have to enter the
+transaction once, as a recurring transaction, and then DailyCashManager will
+automatically record the transaction for you at the appropriate intervals
+thereafter.
+
+To create a recurring transaction, begin by entering the transaction as you
+normally would. For example, for the $250 rent transaction, you would select
+the *Spend* transaction type, enter "250" in the amount box, select your
+bank account from the *Account* box, and select "Rent" from the *Envelope*
+box.
+
+Before hitting *Save*, however, you need to select the recurring
+transaction interval from the large box near the bottom left of the
+transaction panel (the one that reads "Record once only, on"). Select the
+required interval from the drop down list. In this case, you would select
+"Record every week, starting".
+
+Finally, in the date box near the bottom right, enter the date when the
+recurring transaction will *next* occur. Hit *Save* as usual to save
+the transaction. You will be prompted to enter a unique name for the
+recurring transaction. You might simply enter "Rent payment" here; it's up
+to you what you enter here - it's just so you can easily identify the
+transaction later on. Click *OK* to confirm. You will notice that your new
+recurring transaction is now recorded in the *Recurring transaction* list at the
+bottom right of the main window, with the date you entered recorded in the
+*Next date* column.
+
+The first time you open your DCM file on or after the *Next date* for this
+transaction, DailyCashManager will automatically record this transaction
+for you; a message box will appear at that time, informing you that the
+transaction has been recorded. The transaction will continue to be recorded
+automatically at the intervals you specify, until you either delete it (or
+edit it to record at some other interval).
 
 Editing a transaction
 ---------------------
@@ -130,5 +173,11 @@ Editing a transaction
 Deleting a transaction
 ----------------------
 
+Split transactions
+------------------
+
 Handy shortcuts
 ---------------
+
+.. references
+.. _`below`: Transactions.html#recurring-transactions
