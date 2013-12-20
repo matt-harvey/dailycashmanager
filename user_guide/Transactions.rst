@@ -11,7 +11,7 @@ Entering a one-off transaction
 
 Most of the time you will be entering a single transaction. This is a matter
 of entering the transaction details in the transaction panel at the top right
-of the main window.
+of the main window (*not* the *Transactions* tab at the top left).
 
 This is best illustrated using examples.
 
@@ -170,14 +170,77 @@ edit it to record at some other interval).
 Editing a transaction
 ---------------------
 
+You can edit a transaction after you have already saved it.
+
+First you need to select the transaction you want to edit:
+
+- To select a one-off transaction for editing, click the *Transactions* tab near
+  the top left of the main window (between the *Balances* and *Reconciliations*
+  tabs). From the *Account or envelope* box, select one of the accounts or
+  envelopes you know was involved in the transaction you want to edit. Then
+  enter a date range in the *From* and *To* boxes (you can leave these blank to
+  view all transactions regardless of date). Then click *Run*. A list of
+  transactions, involving the selected account or envelope, will be displayed in
+  the large panel below. Locate the transaction you want to edit in this list.
+  You can edit this transaction either by double-clicking it, or else by
+  selecting it and then choosing *Edit selected ordinary transaction* from the
+  *Edit* menu. This will cause the full detail of the selected transaction to
+  appear in the transaction panel to the right.
+- To edit a recurring transaction, locate it in the *Recurring transaction*
+  list at the bottom right of the main window. Either double-click it, or
+  else select it and then choose *Edit selected recurring transaction* from the
+  *Edit* menu. This will cause the full detail of the selected transaction to
+  appear in the transaction panel above.
+
+Once the desired transaction is selected and appears in the transaction
+panel, you can edit it as you see fit. Simply change the contents of the date,
+amount, *Account*, *Memo* or other boxes as desired; then click *Save* to save
+your changes.
+
+To preserve the integrity of your DCM file, there are certain aspects of the
+transaction you won't be able edit; for example, you can't change a *Spend*
+transaction to an *Earn* transaction. Also, if some or all lines in the
+transaction have been reconciled (see `Reconciliations`_), those lines, as well
+as some other aspects of the transaction such as the date, will be greyed out
+and impossible to edit. This is to preserve the integrity of the reconciliation.
+(Don't worry if you don't know what this means right now.) Most aspects of the
+transaction can be edited however.
+
+If you decide to abandon your changes and revert to the earlier saved version
+of the transaction, simply click *Cancel* (near the bottom left of the
+transaction panel, above the *Delete transaction* button). This will cause
+the transaction panel to return to its default blank state, ready for a new
+transaction to be entered; the transaction you had selected for editing will
+still be there in your DCM file, unchanged, in the same state it was in when
+you selected it; but it will no longer be showing in the transaction panel.
+
+Note that if you edit a recurring transaction, it won't cause any changes to
+instances of that recurring transaction that have already been posted; it will
+change only the behaviour of that recurring transaction from that point on.
+
 Deleting a transaction
 ----------------------
+
+To delete a transaction entirely, whether a one-off transaction or a recurring
+transaction, first select the transaction for editing as explained
+`above`_. Then, click the *Delete transaction* at the bottom right of the
+transaction panel. A message box will appear asking if you are sure you want
+to delete the entire transaction. Click *Yes* to confirm deletion (or *No* to
+abort the deletion and be returned to the transaction panel). Once the
+transaction is deleted, account and envelope balances will be updated
+accordingly: the balances will be as if the deleted transaction had
+never occurred.
 
 Split transactions
 ------------------
 
+TODO
+
 Handy shortcuts
 ---------------
 
+TODO
+
 .. references
 .. _`below`: Transactions.html#recurring-transactions
+.. _`above`: Transactions.html#editing-a-transaction
