@@ -76,6 +76,47 @@ Example 3 - you withdraw $100 in cash from your "XYZ Bank savings" account:
 Generic transactions
 ....................
 
+In addition to the transaction types *Spend*, *Earn* and *Account transfer*,
+there is a fourth transaction type, *Generic*. You might never feel the need
+to use this category; and if you don't that's fine. It is provided to enable
+you to enter complicated transactions that don't fit neatly into any of the
+other categories. When you select the *Generic* transaction type, you will
+notice that the account and envelope selection boxes are labelled *CR* and *DR*.
+These refer to the concept of accounting credits and debits. You will also
+notice that both for the *CR* and the *DR* row, you can select *any* account
+or envelope (other than pure envelopes) in either row. You can think of the *CR*
+row is the equivalent of the "source" row - and the *DR* row as the
+"destination" row. An example will help to clarify.
+
+Suppose you withdraw $200 from your "XYZ Bank savings" account using an
+automatic teller machine (ATM), and in the process of doing so, you incur a $2
+transaction fee. This transaction has characteristics both of an *Account
+transfer* transaction (since you are transferring money from your bank account
+to the "Cash" account) and of a *Spend* transaction (since you are spending $2
+on the transaction fee). If you wanted to, you could break this down into two
+separate transactions, and enter these separately (the $200 transfer, and the
+$2 expenditure on bank fees). However, there is faster way of entering this
+transaction, using the *Generic* transaction type, as follows:
+
+- Select *Generic* from the transaction type box.
+- Enter "202" in the amount box at the top right. This corresponds to the
+  total amount deducted from your bank account in the course of this
+  transaction.
+- In the *CR* box, select "XYZ Bank savings".
+- In the second row, select "Cash", then click the *Split* button to the
+  right (see `Split transactions`_ for more explanation on this).
+- There will now be two rows in the bottom half of the transaction control,
+  both with "Cash" selected in the *DR* control. In the first of these
+  rows, enter "200" in the amount box, representing the $200 cash you physically
+  withdrew from the ATM. In the very bottom row, select "Bank fees" from the
+  *DR* box, and enter "2" in the amount box to the right. If you can like you
+  can enter text into the "Memo" boxes. E.g., you might enter "ATM fee" in
+  the very bottom row, and "ATM withdrawal" in the middle row.
+- Enter the date and click *Save*, as usual.
+
+Generic transactions can save a bit of time, but if you don't feel like using
+this feature, there is no need to do so; just split any complicated transactions
+like this into their component parts, and enter these separately.
 
 Creating a recurring transaction
 --------------------------------
