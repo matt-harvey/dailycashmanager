@@ -34,7 +34,6 @@ namespace posix_time = boost::posix_time;
 namespace dcm
 {
 
-// Start anonymous namespace
 namespace
 {
 	// Integral Julian representation of 1 Jan 1400 CE (12:01am)
@@ -63,9 +62,8 @@ namespace
 			0
 		);
 	}
-}
-// End anonymous namespace
 
+}  // end anonymous namespace
 
 bool
 is_valid_date(DateRep date)
@@ -78,7 +76,6 @@ null_date_rep()
 {
 	return DateRep(0);
 }
-
 
 DateRep
 earliest_date_rep()

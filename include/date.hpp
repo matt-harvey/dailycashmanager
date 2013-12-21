@@ -49,28 +49,24 @@ typedef int DateRep;
  * numbers lower than this will return false when passed to this
  * function.
  */
-bool
-is_valid_date(DateRep date);
+bool is_valid_date(DateRep date);
 
 /**
  * Returns a DateType instance that is "null" in value, meaning that
  * it doesn't represent any particular date. This is equivalent
  * to \c DateRep(0).
  */
-DateRep
-null_date_rep();
+DateRep null_date_rep();
 
 /**
  * Returns the earliest possible DateRep.
  */
-DateRep
-earliest_date_rep();
+DateRep earliest_date_rep();
 
 /**
  * Returns the latest possible DateRep.
  */
-DateRep
-latest_date_rep();
+DateRep latest_date_rep();
 
 /**
  * Returns an integer representing the Julian Day representation of a
@@ -78,8 +74,7 @@ latest_date_rep();
  *
  * Returns DateRep(0) if p_date is not a valid date.
  */
-DateRep
-julian_int(boost::gregorian::date p_date);
+DateRep julian_int(boost::gregorian::date p_date);
 
 /**
  * @returns the boost::gregorian::date representation of an integral
@@ -91,34 +86,29 @@ julian_int(boost::gregorian::date p_date);
  * @throws DateConversionException if the returned date would be earlier
  * than 1 Jan. CE. This avoids certain complications.
  */
-boost::gregorian::date
-boost_date_from_julian_int(DateRep julian_int);
+boost::gregorian::date boost_date_from_julian_int(DateRep julian_int);
 
 /**
  * @returns Today's date, local time.
  */
-boost::gregorian::date
-today();
+boost::gregorian::date today();
 
 /**
  * @returns current local time.
  */
-boost::posix_time::ptime
-now();
+boost::posix_time::ptime now();
 
 /**
  * @returns a wxString representation of the p_date, formatted according
  * to the current wxLocale.
  */
-wxString
-date_format_wx(boost::gregorian::date const& p_date);
+wxString date_format_wx(boost::gregorian::date const& p_date);
 
 /**
  * @returns the date that is the last day of the month in which p_date
  * is situated.
  */
-boost::gregorian::date
-month_end_for_date(boost::gregorian::date const& p_date);
+boost::gregorian::date month_end_for_date(boost::gregorian::date const& p_date);
 
 }  // namespace dcm
 
