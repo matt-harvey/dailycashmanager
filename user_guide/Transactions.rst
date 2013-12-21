@@ -257,7 +257,49 @@ than entering the number manually.
 Handy shortcuts
 ---------------
 
-TODO
+Entering transactions is the action you will find yourself performing most
+frequently when using DailyCashManager. There are some tricks you can use to
+make the process of recording transactions quicker and easier.
+
+Automatic balancing of split transactions
+.........................................
+
+Suppose you have entered "100.52" in the main amount box of the transaction
+panel, for some *Expense* transaction. You then split the *Envelope* row into
+two, and select "Food" for one row and "Household supplies" for the other row.
+Say you spent 80.53 on food, and the remainder, 19.99, on household supplies.
+You enter "80.53" in the "Food" row. Now, you could enter "19.99" manually in
+the "Household supplies" row. But calculating this number may involve adding
+several items from your receipt, or else performing a calculation
+(100.52 - 80.53 = 19.99) to work out how much you spent on household supplies.
+To avoid the bother of performing a calculation, you can simply double-click
+in the amount box of the "Household supplies" row, and DailyCashManager will
+calculate the 19.99 for you, and populate the cell with this figure.
+
+In general, whenever you have a split transaction, and you want to populate
+one of the amount cells with whatever is the "remaining" amount of the
+total transaction amount that has not yet been entered, simply double-click
+on the cell you want to populate, and the remaining amount will be calculated
+and inserted into the cell automatically.
+
+Performing simple calculations within an amount cell
+....................................................
+
+DailyCashManager can act as a primitive calculator. Suppose you spent
+100.52 at the supermarket, but your receipt includes many items, some of
+which fall under "Food", and others of which fall under "Household supplies".
+If you wanted to, you could create a split transaction with a separate row
+for every single item on the receipt. But this would be a bit laborious.
+Instead, you decide to enter all the "Food" items in one row, and all the
+"Household supplies" items in another row. But to do this you need to add up
+the cost of all the food items. Instead of getting out a calculator, you
+can add the cost of the food items directly, within the amount box for the
+"Food" row. Suppose there are three food items, costing 1.52, 19.89 and 5.03.
+Simply type "1.52+19.89+5.03" into the amount cell for this row, then hit
+tab or click outside the cell. Then the result, "26.44", will automatically
+appear in the cell. You can also perform subtractions, e.g. by typing
+"80.89-38.60" in the cell. Note, however, that you can't do multiplication
+or division, and you can't use parentheses in calculations.
 
 .. references
 .. _`below`: Transactions.html#recurring-transactions
