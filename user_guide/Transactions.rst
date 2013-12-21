@@ -167,6 +167,26 @@ transaction has been recorded. The transaction will continue to be recorded
 automatically at the intervals you specify, until you either delete it (or
 edit it to record at some other interval).
 
+Setting a recurring transaction to record on the last day of the month
+......................................................................
+
+To avoid confusion, DailyCashManager has two different types of "monthly"
+frequencies. Normally if you want a transaction to be recorded every month (or
+every 2 months or etc.), you would select "Record every month, starting" (or
+"Record every 2 months, starting", or etc.) from the frequency selection list.
+However, suppose you want to record a transaction on the *last* day of every
+month; and suppose the next date that you want the transaction to be recorded
+on is 30 April 2014. If you were simply to specify that you wanted this
+transaction to be recorded every month, this would entail that you want it
+to be recorded on the *30th* of each month; but that's not want you want at
+all; because the last day of May, for example, is the 31st, not the 30th. To
+avoid this confusion, DailyCashManager prevents you from entering a simple
+"every month" transaction with the 29th, 30th or 31st as the next recording
+date. If you want a tranaction to be recorded on the last day of each month
+(which might be the 30th, 31st, 28th or 29th, depending on the month in
+question), select "Record every month, on the last day of the month, starting"
+from the frequency box, and this will have the desired effect.
+
 Editing a transaction
 ---------------------
 
