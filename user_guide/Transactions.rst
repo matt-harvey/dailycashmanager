@@ -321,6 +321,14 @@ appear in the cell. You can also perform subtractions, e.g. by typing
 "80.89-38.60" in the cell. Note, however, that you can't do multiplication
 or division, and you can't use parentheses in calculations.
 
+Entering dates
+..............
+
+If you only enter a single number in the date box, e.g. "23", this will be
+interpreted as meaning "the 23rd of the current month". Similarly, if you enter
+the date and month, but omit the year, this will be interpreted as if you had
+simply entered the current year.
+
 .. references
 .. _`below`: Transactions.html#recurring-transactions
 .. _`above`: Transactions.html#editing-a-transaction
