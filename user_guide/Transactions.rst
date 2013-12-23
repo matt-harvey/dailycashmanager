@@ -187,33 +187,33 @@ date. If you want a tranaction to be recorded on the last day of each month
 question), select "Record every month, on the last day of the month, starting"
 from the frequency box, and this will have the desired effect.
 
-Editing a transaction
----------------------
+Viewing or editing a transaction
+--------------------------------
 
-You can edit a transaction after you have already saved it.
+You can view or edit a transaction after you have already saved it.
 
-First you need to select the transaction you want to edit:
+First you need to select the transaction you want to view or edit:
 
 - To select a one-off transaction for editing, click the *Transactions* tab near
   the top left of the main window (between the *Balances* and *Reconciliations*
   tabs). From the *Account or envelope* box, select one of the accounts or
-  envelopes you know was involved in the transaction you want to edit. Then
+  envelopes you know was involved in the transaction you are interested in. Then
   enter a date range in the *From* and *To* boxes (you can leave these blank to
   view all transactions regardless of date). Then click *Run*. A list of
   transactions, involving the selected account or envelope, will be displayed in
   the large panel below. Locate the transaction you want to edit in this list.
-  You can edit this transaction either by double-clicking it, or else by
+  You can view this transaction either by double-clicking it, or else by
   selecting it and then choosing *Edit selected ordinary transaction* from the
   *Edit* menu. This will cause the full detail of the selected transaction to
   appear in the transaction panel to the right.
-- To edit a recurring transaction, locate it in the *Recurring transaction*
-  list at the bottom right of the main window. Either double-click it, or
-  else select it and then choose *Edit selected recurring transaction* from the
-  *Edit* menu. This will cause the full detail of the selected transaction to
-  appear in the transaction panel above.
+- To view or edit a recurring transaction, locate it in the *Recurring
+  transaction* list at the bottom right of the main window. Either double-click
+  it, or else select it and then choose *Edit selected recurring transaction*
+  from the *Edit* menu. This will cause the full detail of the selected
+  transaction to appear in the transaction panel above.
 
 Once the desired transaction is selected and appears in the transaction
-panel, you can edit it as you see fit. Simply change the contents of the date,
+panel, you can edit if desired. Simply change the contents of the date,
 amount, *Account*, *Memo* or other boxes as desired; then click *Save* to save
 your changes.
 
@@ -278,7 +278,7 @@ Handy shortcuts
 ---------------
 
 Entering transactions is the action you will find yourself performing most
-frequently when using DailyCashManager. There are some tricks you can use to
+frequently when using DailyCashManager. There are some shortcuts you can use to
 make the process of recording transactions quicker and easier.
 
 Automatic balancing of split transactions
@@ -331,5 +331,5 @@ simply entered the current year.
 
 .. references
 .. _`below`: Transactions.html#recurring-transactions
-.. _`above`: Transactions.html#editing-a-transaction
+.. _`above`: Transactions.html#viewing-or-editing-a-transaction
 .. _`Reconciliations`: Reconciliations.html

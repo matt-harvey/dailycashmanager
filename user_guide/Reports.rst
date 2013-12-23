@@ -75,8 +75,3 @@ Note that the *Income and expenditure* report will not be automatically updated
 if you record, edit or delete any transactions after you have run it. You should
 *Refresh* the report each time you want to view it, to ensure it reflects the
 current state of the DCM file.
-
-Transaction lists
------------------
-
-TODO
