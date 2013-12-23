@@ -332,3 +332,4 @@ simply entered the current year.
 .. references
 .. _`below`: Transactions.html#recurring-transactions
 .. _`above`: Transactions.html#editing-a-transaction
+.. _`Reconciliations`: Reconciliations.html
