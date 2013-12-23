@@ -329,6 +329,26 @@ interpreted as meaning "the 23rd of the current month". Similarly, if you enter
 the date and month, but omit the year, this will be interpreted as if you had
 simply entered the current year.
 
+Selecting accounts and envelopes from the *Account* and *Envelope* lists
+........................................................................
+
+If you select one account *and* one envelope in the *Account* and *Envelope*
+lists (the large ones near the left and middle of the main window,
+respectively), and then click *Clear* in the transaction panel, the
+transaction panel will be partially populated with a transaction that is
+appropriate for the select account and envelope. For example, if you
+click once on "Cash" in the *Account* list, and then click once on "Food"
+in the *Envelope* list, and then click *Clear*, then the transaction type
+control in the transaction panel will be automatically set to *Spend*, the
+*Account* box will be set to "Cash" and the *Envelope* box will be set to
+"Food". This saves you having to select (or type) the name of the account and
+the envelope from the drop-down lists in the transaction panel. This can save
+some effort when quickly entering a simple transaction; but be aware that
+clicking the *Clear* button causes whatever details are currently entered in
+the transaction panel to be lost. (Clicking *Clear* doesn't actually delete
+any already-saved transaction, but simply clears out the contents of the
+transaction panel, ready for a new transaction to be entered.)
+
 .. references
 .. _`below`: Transactions.html#recurring-transactions
 .. _`above`: Transactions.html#viewing-or-editing-a-transaction
