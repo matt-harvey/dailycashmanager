@@ -9,9 +9,10 @@ DCM file.
 Entering a one-off transaction
 ------------------------------
 
-Most of the time you will be entering a single transaction. This is a matter
-of entering the transaction details in the transaction panel at the top right
-of the main window (*not* the *Transactions* tab at the top left).
+Most of the time you will be entering a single transaction. This is a matter of
+entering the transaction details in the *transaction panel*. The *transaction
+panel* is the large area at the top right of the main window. (This is distinct
+from the *Transactions* tab at the top left.)
 
 This is best illustrated using examples.
 
@@ -30,9 +31,9 @@ Example 1 - you spend 30.95 from your credit card on a meal at a restaurant:
   as is.
 - There should be a box near the bottom right of the transaction panel,
   containing today's date. If you are entering the transaction on the same day
-  on which the transaction occurred (generally a good idea), you can
-  leave this as is; otherwise, manually enter the date the transaction actually
-  occurred in this box.
+  the the transaction occurred (generally a good idea), you can leave this as
+  is; otherwise, manually enter the date the transaction actually occurred in
+  this box.
 - At the bottom right of the transaction panel, click *Save* to confirm and save
   the transaction; or click *Clear* if you want to abandon this transaction
   entry and start again.
@@ -47,14 +48,14 @@ account:
   *Account*. Enter an optional memo in the row next to the *Account* box. For
   example, you might enter the name of your employer.
 - In the next row, select "Salary" from the box labelled *Envelope*. Enter an
-  optional memo: you might enter the time period that this pay was for, for
-  example; or you might simply leave this blank.
+  optional memo: you might enter the pay number, for example; or you might
+  simply leave this blank.
 - In the next row, there should be a box containing the text, "Record once only,
   on". This means you are entering a single, one-off transaction. Leave this
   as is.
 - There should be a box near the bottom right of the transaction panel,
   containing today's date. If you are entering the transaction on the same
-  day on which the transaction occurred (generally a good idea), you can leave
+  day that the transaction occurred (generally a good idea), you can leave
   this as is; otherwise, manually enter the date the transaction actually
   occurred in this box.
 - At the bottom right of the transaction panel, click *Save* to confirm and save
@@ -65,7 +66,7 @@ Example 3 - you withdraw 100.00 in cash from your "XYZ Bank savings" account:
 
 - Select *Account transfer* from the transaction type box at the top left of the
   transaction panel.
-- Enter "100" into tha amount box at the top right of the transaction panel.
+- Enter "100" into the amount box at the top right of the transaction panel.
 - In the next row, select "XYZ Bank savings" from the box labelled *Source*.
   Enter an optional memo in the row next to the *Source* box (for example, you
   might enter "withdraw cash at bank ATM").
@@ -113,12 +114,13 @@ transaction, using the *Generic* transaction type, as follows:
 - In the second row, select "Cash", then click the *Split* button to the
   right (see `Split transactions`_ for more explanation on this).
 - There will now be two rows in the bottom half of the transaction control,
-  both with "Cash" selected in the *DR* control. In the first of these
-  rows, enter "200" in the amount box, representing the 200.00 cash you
-  physically withdrew from the ATM. In the very bottom row, select "Bank fees"
-  from the *DR* box, and enter "2" in the amount box to the right. If you can
-  like you can enter text into the "Memo" boxes. E.g., you might enter "ATM fee"
-  in the very bottom row, and "ATM withdrawal" in the middle row.
+  both with "Cash" showing in the *DR* box. In the first of these rows, enter
+  "200" in the amount box, representing the 200.00 cash you physically withdrew
+  from the ATM. Leave this first row as "Cash". Then in the bottom row, select
+  "Bank fees" from the *DR* box, and enter "2" in the amount box to the right.
+  If you can like you can enter text into the "Memo" boxes. E.g., you might
+  enter "ATM fee" in the very bottom row, and "ATM withdrawal" in the middle
+  row.
 - Enter the date and click *Save*, as usual.
 
 Generic transactions can save a bit of time, but if you don't feel like using
@@ -133,38 +135,34 @@ the same amount, at set intervals. For example, you might get paid a 1000.00
 wage every 2 weeks; or you might have 250.00 in rent deducted from you bank
 account every week. It would be tedious to have to remember to enter these
 transactions manually every time they occur. To avoid this tedium,
-DailyCashManager supports recurring transactions. You only have to enter the
-transaction once, as a recurring transaction, and then DailyCashManager will
-automatically record the transaction for you at the appropriate intervals
-thereafter.
+DailyCashManager supports the concept of recurring transactions. You only have
+to enter a recurring transaction once, and DailyCashManager will automatically
+record the transaction for you at the appropriate intervals thereafter.
 
 To create a recurring transaction, begin by entering the transaction as you
-normally would. For example, for the 250.00 rent transaction, you would select
-the *Spend* transaction type, enter "250" in the amount box, select your
-bank account from the *Account* box, and select "Rent" from the *Envelope*
-box.
+normally would. For example, for the 250.00 weekly rent payment, you would
+select the *Spend* transaction type, enter "250" in the amount box, select your
+bank account from the *Account* box, and select "Rent" from the *Envelope* box.
 
-Before hitting *Save*, however, you need to select the recurring
-transaction interval from the large box near the bottom left of the
-transaction panel (the one that reads "Record once only, on"). Select the
-required interval from the drop down list. In this case, you would select
-"Record every week, starting".
+Before hitting *Save*, however, you need to select the recurring transaction
+interval from the large box near the bottom left of the transaction panel (the
+one that normally reads "Record once only, on"). In this case, you would
+select "Record every week, starting".
 
 Finally, in the date box near the bottom right, enter the date when the
-recurring transaction will *next* occur. Hit *Save* as usual to save
-the transaction. You will be prompted to enter a unique name for the
-recurring transaction. You might simply enter "Rent payment" here; it's up
-to you what you enter here - it's just so you can easily identify the
-transaction later on. Click *OK* to confirm. You will notice that your new
-recurring transaction is now recorded in the *Recurring transaction* list at the
-bottom right of the main window, with the date you entered recorded in the
-*Next date* column.
+recurring transaction will *next* occur. Hit *Save* as usual to save the
+transaction. You will be prompted to enter a unique name for the recurring
+transaction. You might simply enter "Rent payment" here; it's up to you what
+you enter - this is just so that you can easily identify the transaction later
+on. Click *OK* to confirm. You will notice that your new recurring transaction
+is now recorded in the *Recurring transaction* list at the bottom right of the
+main window, with the date you entered recorded in the *Next date* column.
 
-The first time you open your DCM file on or after the *Next date* for this
-transaction, DailyCashManager will automatically record this transaction
-for you; a message box will appear at that time, informing you that the
-transaction has been recorded. The transaction will continue to be recorded
-automatically at the intervals you specify, until you either delete it (or
+The first time you open your DCM file *on or after* the *Next date* for this
+transaction, you will find that DailyCashManager has automatically recorded
+this transaction for you; a message box will appear at that time, informing you
+that the transaction has been recorded. The transaction will continue to be
+recorded automatically at the intervals you specify, until you delete it (or
 edit it to record at some other interval).
 
 Setting a recurring transaction to record on the last day of the month
@@ -175,14 +173,14 @@ frequencies. Normally if you want a transaction to be recorded every month (or
 every 2 months or etc.), you would select "Record every month, starting" (or
 "Record every 2 months, starting", or etc.) from the frequency selection list.
 However, suppose you want to record a transaction on the *last* day of every
-month; and suppose the next date that you want the transaction to be recorded
-on is 30 April 2014. If you were simply to specify that you wanted this
+month. Suppose the next date that you want the transaction to be recorded
+on is 30 April 2014, say. If you were simply to specify that you wanted this
 transaction to be recorded every month, this would entail that you want it
 to be recorded on the *30th* of each month; but that's not want you want at
 all; because the last day of May, for example, is the 31st, not the 30th. To
 avoid this confusion, DailyCashManager prevents you from entering a simple
 "every month" transaction with the 29th, 30th or 31st as the next recording
-date. If you want a tranaction to be recorded on the last day of each month
+date. If you want a transaction to be recorded on the last day of each month
 (which might be the 30th, 31st, 28th or 29th, depending on the month in
 question), select "Record every month, on the last day of the month, starting"
 from the frequency box, and this will have the desired effect.
