@@ -23,8 +23,8 @@ well-tried financial strategy that involves allocating your money, as you earn
 it, into different "envelopes", to save for different categories of expenditure.
 Traditional envelope budgeting would involve physically placing cash into
 physical envelopes out of your "paycheck" each time you were paid. If you knew
-you spent on average $1000 a year, say, on electricity bills, and if you were
-paid monthly, you would have put $83.33 per month into the "Electricity"
+you spent on average 1000.00 a year, say, on electricity bills, and if you were
+paid monthly, you would have put 83.33 per month into the "Electricity"
 envelope. Then when the electicity bill arrived, there would be a bunch of money
 sitting in the electricity envelope, set aside just for the purpose of paying
 the electricity bill. You would remove the amount of the bill from the
@@ -43,14 +43,14 @@ or expenditure. And instead of allocating a blob of cash into each envelope
 with each paycheck, DailyCashManager allocates a small, steady amount of
 money to each envelope, on a *daily* basis.
 
-Let's say you receive $1000 cash, paid into your "XYZ Bank saving" bank account.
-You would enter a revenue transaction in DailyCashManager, with "XYZ Bank
-saving" as the account, and "Salary" as the envelope. The balance of "XYZ Bank
-saving" would increase by $1000, and the balance of "Salary" would also increase
-by $1000.
+Let's say you receive 1000.00 cash, paid into your "XYZ Bank saving" bank
+account. You would enter a revenue transaction in DailyCashManager, with "XYZ
+Bank saving" as the account, and "Salary" as the envelope. The balance of "XYZ
+Bank saving" would increase by 1000.00, and the balance of "Salary" would also
+increase by 1000.00.
 
 Each day thereafter - depending on how you have set up your *budget items*
-(which is explained below) - a small amount of that $1000 would be transferred
+(which is explained below) - a small amount of that 1000.00 would be transferred
 automatically by DailyCashManager from the "Salary" envelope, into each of your
 expense envelopes, to set aside towards each category of expenditure. Let's now
 see how to set up your *budget items* to make this happen.
@@ -64,8 +64,8 @@ budget item for a given envelope; but you can assign multiple budget items to
 a given envelope if you wish.
 
 For example, you might have an expense envelope called "Bank fees". Within this
-envelope, you record two different ongoing fees: a $2 monthly account fee; a
-$50.45 annual credit card fee. You would create one budget item for the
+envelope, you record two different ongoing fees: a 2.00 monthly account fee; a
+50.45 annual credit card fee. You would create one budget item for the
 monthly account fee, and another budget item for the credit card fee. You would
 do this as follows:
 
@@ -83,23 +83,23 @@ do this as follows:
 - Notice that just above the words "BUDGET ITEMS", the *Daily top up* amount
   will read "0.20". This means that, in order to set aside enough money to cover
   the two budget items you have entered, DailyCashManager will automatically
-  transfer an amount of $0.20 into the "Bank account" envelope every day. This
+  transfer an amount of 0.20 into the "Bank account" envelope every day. This
   is calculated as follows: (2 * 12) + 50.45 / 365.25 = 0.20.
 - Click *Save*. Another window will now appear informing you that the
   "Budget is now out of balance by an amount of (0.20)." This is saying that,
-  in order to transfer the $0.20 into the "Bank fees" envelope each day,
-  DailyCashManager needs transfer that $0.20 *from* some other envelope.
+  in order to transfer the 0.20 into the "Bank fees" envelope each day,
+  DailyCashManager needs transfer that 0.20 *from* some other envelope.
   By default - and if you click *Leave unbalanced* this deafult will be
-  unchanged - the $0.20 is transferred from the envelope called "Budget
+  unchanged - the 0.20 is transferred from the envelope called "Budget
   imbalance". This is an envelope which DailyCashManager creates automatically
   to process unbalanced budget amounts. You *don't* normally want "Budget
   imbalance" to have a balance other than *zero*. Instead of
   clicking "Leave unbalanced", you should select some other envelope to draw
-  the $0.20 / day from - by selecting from the drop-down list at the bottom
+  the 0.20 / day from - by selecting from the drop-down list at the bottom
   of this panel - and then click *Offset to envelope below*. Commonly, you
-  would offset the $0.20 / day to your "Salary" envelope (or whatever is your
+  would offset the 0.20 / day to your "Salary" envelope (or whatever is your
   main source of ongoing income, e.g. "Pension", "Allowance" or etc..). This
-  means that every day, $0.20 will be transferred from your "Salary"
+  means that every day, 0.20 will be transferred from your "Salary"
   envelope to your "Bank fees" envelope, to provide for both your monthly
   account fee and your annual credit card fee.
 - After clicking *Save*, the envelope editing panel will disappear. Notice
@@ -185,16 +185,16 @@ money is required to be spent on that goal, you transfer it out of the
 pure envelope, and into an ordinary expense envelope, and spend it from the
 expense envelope.
 
-For example, you might know that, on average, you spend $100 on food during
+For example, you might know that, on average, you spend 100.00 on food during
 the week leading up to Christmas, over and above your usual weekly spending
 on food. Accordingly, you could create a pure envelope called "Christmas food
 fund". You would create this in the same way as you would create any other
 envelope (see `Creating an envelope`_), except that in the envelope creation
 panel, instead of selecting *revenue* or *expense* from the *envelope type* box,
 you select *pure envelope*. You would then create a `budget item`_ under this
-envelope, for allocating $100 per twelve months towards Christmas food
+envelope, for allocating 100.00 per twelve months towards Christmas food
 expenditure. Then, when the week leading up to Christmas comes round (assuming
-you created this budget item one year before), you would transfer $100 out of
+you created this budget item one year before), you would transfer 100.00 out of
 the "Christmas food fund" pure envelope, and into your usual "Food" expense
 envelope, and spend it out of "Food".
 

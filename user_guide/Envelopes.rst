@@ -47,12 +47,12 @@ You will see an *Initial allocation* box. This represents the initial
 amount that you want to make available for spending on this category, out of
 your initial total net assets (assets minus liabilities), i.e. your
 net assets when your DailyCashManager file is first created. For example,
-suppose that when you create your file, you have $100 in cash, $200 in your bank
-account, and a credit card balance of $(50). Your initial total net assets are
-therefore $250 ($100 + $200 - $50). You might say that you want to allocate
-$50 of this towards "Food", $100 towards "Rent", and the remainder towards
-various other envelopes. You would set the *Initial allocation* to "Food" as
-$50, and to "Rent" as $100.
+suppose that when you create your file, you have 100.00 in cash, 200.00 in your
+bank account, and a credit card balance of (50.00). Your initial total net
+assets are therefore 250.00 (100.00 + 200.00 - 50.00). You might say that you
+want to allocate 50.00 of this towards "Food", 100.00 towards "Rent", and the
+remainder towards various other envelopes. You would set the *Initial
+allocation* to "Food" as 50.00, and to "Rent" as 100.00.
 
 Generally, if you are creating an envelope some time after you have already
 set up your DailyCashManager file, you should leave the *Initial allocation*

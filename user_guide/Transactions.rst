@@ -15,7 +15,7 @@ of the main window (*not* the *Transactions* tab at the top left).
 
 This is best illustrated using examples.
 
-Example 1 - you spend $30.95 from your credit card on a meal at a restaurant:
+Example 1 - you spend 30.95 from your credit card on a meal at a restaurant:
 
 - Select *Spend* from the transaction type box at the top left of the
   transaction panel.
@@ -37,7 +37,7 @@ Example 1 - you spend $30.95 from your credit card on a meal at a restaurant:
   the transaction; or click *Clear* if you want to abandon this transaction
   entry and start again.
 
-Example 2 - you earn $2000 in wages, deposited into your "XYZ Bank savings"
+Example 2 - you earn 2000.00 in wages, deposited into your "XYZ Bank savings"
 account:
 
 - Select *Earn* from the transaction type box at the top left of the transaction
@@ -61,7 +61,7 @@ account:
   the transaction; or click *Clear* if you want to abandon this transaction
   entry and start again.
 
-Example 3 - you withdraw $100 in cash from your "XYZ Bank savings" account:
+Example 3 - you withdraw 100.00 in cash from your "XYZ Bank savings" account:
 
 - Select *Account transfer* from the transaction type box at the top left of the
   transaction panel.
@@ -95,14 +95,14 @@ or envelope (other than pure envelopes) in either row. You can think of the *CR*
 row is the equivalent of the "source" row - and the *DR* row as the
 "destination" row. An example will help to clarify.
 
-Suppose you withdraw $200 from your "XYZ Bank savings" account using an
-automatic teller machine (ATM), and in the process of doing so, you incur a $2
+Suppose you withdraw 200.00 from your "XYZ Bank savings" account using an
+automatic teller machine (ATM), and in the process of doing so, you incur a 2.00
 transaction fee. This transaction has characteristics both of an *Account
 transfer* transaction (since you are transferring money from your bank account
-to the "Cash" account) and of a *Spend* transaction (since you are spending $2
+to the "Cash" account) and of a *Spend* transaction (since you are spending 2.00
 on the transaction fee). If you wanted to, you could break this down into two
-separate transactions, and enter these separately (the $200 transfer, and the
-$2 expenditure on bank fees). However, there is faster way of entering this
+separate transactions, and enter these separately (the 200.00 transfer, and the
+2.00 expenditure on bank fees). However, there is faster way of entering this
 transaction, using the *Generic* transaction type, as follows:
 
 - Select *Generic* from the transaction type box.
@@ -114,11 +114,11 @@ transaction, using the *Generic* transaction type, as follows:
   right (see `Split transactions`_ for more explanation on this).
 - There will now be two rows in the bottom half of the transaction control,
   both with "Cash" selected in the *DR* control. In the first of these
-  rows, enter "200" in the amount box, representing the $200 cash you physically
-  withdrew from the ATM. In the very bottom row, select "Bank fees" from the
-  *DR* box, and enter "2" in the amount box to the right. If you can like you
-  can enter text into the "Memo" boxes. E.g., you might enter "ATM fee" in
-  the very bottom row, and "ATM withdrawal" in the middle row.
+  rows, enter "200" in the amount box, representing the 200.00 cash you
+  physically withdrew from the ATM. In the very bottom row, select "Bank fees"
+  from the *DR* box, and enter "2" in the amount box to the right. If you can
+  like you can enter text into the "Memo" boxes. E.g., you might enter "ATM fee"
+  in the very bottom row, and "ATM withdrawal" in the middle row.
 - Enter the date and click *Save*, as usual.
 
 Generic transactions can save a bit of time, but if you don't feel like using
@@ -129,8 +129,8 @@ Recurring transactions
 ----------------------
 
 Sometimes you will have a certain transaction that occurs again and again, with
-the same amount, at set intervals. For example, you might get paid a $1000
-wage every 2 weeks; or you might have $250 in rent deducted from you bank
+the same amount, at set intervals. For example, you might get paid a 1000.00
+wage every 2 weeks; or you might have 250.00 in rent deducted from you bank
 account every week. It would be tedious to have to remember to enter these
 transactions manually every time they occur. To avoid this tedium,
 DailyCashManager supports recurring transactions. You only have to enter the
@@ -139,7 +139,7 @@ automatically record the transaction for you at the appropriate intervals
 thereafter.
 
 To create a recurring transaction, begin by entering the transaction as you
-normally would. For example, for the $250 rent transaction, you would select
+normally would. For example, for the 250.00 rent transaction, you would select
 the *Spend* transaction type, enter "250" in the amount box, select your
 bank account from the *Account* box, and select "Rent" from the *Envelope*
 box.
@@ -255,15 +255,15 @@ Split transactions
 ------------------
 
 Sometimes you will have a transaction in which a given side of the transaction
-involves multiple accounts or envelopes. For example, you might spend $100 at
-the department, but perhaps $10 of the $100 is spent on "Food", and the other
-$90 is spent on "Clothes". You can reflect this using the split transaction
-feauture. Click the *Split* button, at the right of the row in the transaction
-that you want to split, and it will split into two rows. You can then split it
-into even more rows by clicking *Split* again; or you can remove a row if you
-change your mind, by clicking *Unsplit*. If required, both side of the
-transaction can be split. For example, you might pay for $40 of the $100 you
-spend at the department store using cash, and the remaining $60 using your
+involves multiple accounts or envelopes. For example, you might spend 100.00 at
+the department, but perhaps 10.00 of the 100.00 is spent on "Food", and the
+other 90.00 is spent on "Clothes". You can reflect this using the split
+transaction feauture. Click the *Split* button, at the right of the row in the
+transaction that you want to split, and it will split into two rows. You can
+then split it into even more rows by clicking *Split* again; or you can remove a
+row if you change your mind, by clicking *Unsplit*. If required, both side of
+the transaction can be split. For example, you might pay for 40.00 of the 100.00
+you spend at the department store using cash, and the remaining 60.00 using your
 credit card.
 
 When a given side of the transaction is split, a separate amount box becomes
