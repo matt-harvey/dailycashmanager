@@ -118,7 +118,7 @@ transaction, using the *Generic* transaction type, as follows:
   "200" in the amount box, representing the 200.00 cash you physically withdrew
   from the ATM. Leave this first row as "Cash". Then in the bottom row, select
   "Bank fees" from the *DR* box, and enter "2" in the amount box to the right.
-  If you can like you can enter text into the "Memo" boxes. E.g., you might
+  If you can like you can enter text into the *Memo* boxes. E.g., you might
   enter "ATM fee" in the very bottom row, and "ATM withdrawal" in the middle
   row.
 - Enter the date and click *Save*, as usual.
@@ -212,7 +212,7 @@ First you need to select the transaction you want to view or edit:
 
 Once the desired transaction is selected and appears in the transaction
 panel, you can edit if desired. Simply change the contents of the date,
-amount, *Account*, *Memo* or other boxes as desired; then click *Save* to save
+amount, *Account*, *Memo* and other boxes as desired; then click *Save* to save
 your changes.
 
 To preserve the integrity of your DCM file, there are certain aspects of the
@@ -220,34 +220,41 @@ transaction you won't be able edit; for example, you can't change a *Spend*
 transaction to an *Earn* transaction. Also, if some or all lines in the
 transaction have been reconciled (see `Reconciliations`_), those lines, as well
 as some other aspects of the transaction such as the date, will be greyed out
-and impossible to edit. This is to preserve the integrity of the reconciliation.
-(Don't worry if you don't know what this means right now.) Most aspects of the
-transaction can be edited however.
+and will impossible to edit. This is to preserve the integrity of the
+reconciliation.  (Don't worry if you don't know what that means right now.)
+Most aspects of the transaction can be edited however.
 
 If you decide to abandon your changes and revert to the earlier saved version
-of the transaction, simply click *Cancel* (near the bottom left of the
+of the transaction, just click *Cancel* (near the bottom left of the
 transaction panel, above the *Delete transaction* button). This will cause
 the transaction panel to return to its default blank state, ready for a new
-transaction to be entered; the transaction you had selected for editing will
+transaction to be entered. (The transaction you had selected for editing will
 still be there in your DCM file, unchanged, in the same state it was in when
-you selected it; but it will no longer be showing in the transaction panel.
+you selected it; but it will no longer be showing in the transaction panel.)
 
 Note that if you edit a recurring transaction, it won't cause any changes to
-instances of that recurring transaction that have already been posted; it will
-change only the behaviour of that recurring transaction from that point on.
+the individual instances of that recurring transaction that have already been
+recorded; it will change only the behaviour of that recurring transaction from
+that point on.
 
 Deleting a transaction
 ----------------------
 
 To delete a transaction entirely, whether a one-off transaction or a recurring
-transaction, first select the transaction for editing as explained
-`above`_. Then, click the *Delete transaction* at the bottom right of the
-transaction panel. A message box will appear asking if you are sure you want
-to delete the entire transaction. Click *Yes* to confirm deletion (or *No* to
-abort the deletion and be returned to the transaction panel). Once the
+transaction, first select the transaction for editing as explained `above`_.
+Then, click the *Delete transaction* button at the bottom right of the
+transaction panel. A message box will appear asking if you are sure you want to
+delete the entire transaction. Click *Yes* to confirm deletion, or *No* to
+abort the deletion and be returned to the transaction panel. Once the
 transaction is deleted, account and envelope balances will be updated
-accordingly: the balances will be as if the deleted transaction had
-never occurred.
+accordingly: the balances will be as if the deleted transaction had never
+been recorded.
+
+Note that deleting a recurring transaction does not delete any individual
+instances of that transaction that have already been recorded. That is, while
+past "recordings" of the transaction will remain as is, the recurring
+transaction itself will be deleted, and further "recordings" of the transaction
+will no longer be generated.
 
 Split transactions
 ------------------
