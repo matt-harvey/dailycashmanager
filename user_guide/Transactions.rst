@@ -259,25 +259,33 @@ will no longer be generated.
 Split transactions
 ------------------
 
-Sometimes you will have a transaction in which a given side of the transaction
-involves multiple accounts or envelopes. For example, you might spend 100.00 at
-the department, but perhaps 10.00 of the 100.00 is spent on "Food", and the
-other 90.00 is spent on "Clothes". You can reflect this using the split
-transaction feauture. Click the *Split* button, at the right of the row in the
-transaction that you want to split, and it will split into two rows. You can
-then split it into even more rows by clicking *Split* again; or you can remove a
-row if you change your mind, by clicking *Unsplit*. If required, both side of
-the transaction can be split. For example, you might pay for 40.00 of the 100.00
-you spend at the department store using cash, and the remaining 60.00 using your
-credit card.
+Sometimes you will need to record a transaction one "side" of which involves
+multiple accounts or envelopes. For example, suppose you spend 100.00 at a
+department store in a single transaction, but 10.00 of the 100.00 is spent on
+food and the other 90.00 is spent on clothes. You can reflect this using the
+*split transaction* feature. Click the *Split* button, at the right of the row
+in the transaction that you want to split, and that row will be split into two.
+In this example, you would split the *Envelope* side of the transaction into
+two rows, one for your "Food" envelope, and the other for your "Clothing"
+envelope.
 
-When a given side of the transaction is split, a separate amount box becomes
-available for each side of the transaction. The amounts entered in all the
-rows for that side need to sum to the same amount as the total transaction
-amount entered at the top of the transaction panel. You can enter the amount
-in all the amount boxes manually; however, we see below, under `Handy
-shortcuts`_, that there are often faster ways to populate the amount boxes,
-than entering the number manually.
+You can split a transaction into even more rows by clicking *Split* again; or
+you can remove a row if you change your mind, by clicking *Unsplit*.
+
+If required, both sides of a transaction can be split. Continuing with our
+example, you might pay for 40.00 of the 100.00 at the department store using
+cash, and the remaining 60.00 using your credit card. In this case, you would
+split the *Account* side of the transaction into two rows, one for your "Cash"
+account and the other for your "Credit card" account, as well as splitting the
+*Envelope* side into "Food" and "Clothing".
+
+When a given side of a transaction is split, a separate amount box becomes
+available for each row in the split. The amounts entered in the rows for that
+side need to sum to the same amount as the total transaction amount entered at
+the top of the transaction panel (so, in our example, they would need to sum to
+100.00). You can enter the amount in each amount box manually; however, you
+will see below, under `Handy shortcuts`_, that there are often faster ways to
+populate the amount boxes, than entering the number manually.
 
 Handy shortcuts
 ---------------
