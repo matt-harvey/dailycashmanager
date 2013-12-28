@@ -305,9 +305,10 @@ You enter "80.53" in the "Food" row. Now, you could enter "19.99" manually in
 the "Household supplies" row. But calculating this number may involve adding
 several items from your receipt, or else performing a calculation
 (100.52 - 80.53 = 19.99) to work out how much you spent on household supplies.
-To avoid the bother of performing a calculation, you can simply double-click
-in the amount box of the "Household supplies" row, and DailyCashManager will
-calculate the 19.99 for you, and populate the cell with this figure.
+To avoid the bother of performing a manual calculation, you can simply
+double-click in the amount box of the "Household supplies" row, and
+DailyCashManager will calculate the 19.99 for you, and populate the cell with
+this figure.
 
 In general, whenever you have a split transaction, and you want to populate
 one of the amount cells with whatever is the "remaining" amount of the
@@ -318,49 +319,50 @@ and inserted into the cell automatically.
 Performing simple calculations within an amount cell
 ....................................................
 
-DailyCashManager can act as a primitive calculator. Suppose you spent
-100.52 at the supermarket, but your receipt includes many items, some of
-which fall under "Food", and others of which fall under "Household supplies".
-If you wanted to, you could create a split transaction with a separate row
-for every single item on the receipt. But this would be a bit laborious.
-Instead, you decide to enter all the "Food" items in one row, and all the
-"Household supplies" items in another row. But to do this you need to add up
-the cost of all the food items. Instead of getting out a calculator, you
-can add the cost of the food items directly, within the amount box for the
-"Food" row. Suppose there are three food items, costing 1.52, 19.89 and 5.03.
-Simply type "1.52+19.89+5.03" into the amount cell for this row, then hit
-tab or click outside the cell. Then the result, "26.44", will automatically
-appear in the cell. You can also perform subtractions, e.g. by typing
-"80.89-38.60" in the cell. Note, however, that you can't do multiplication
-or division, and you can't use parentheses in calculations.
+DailyCashManager can act as a primitive calculator. Suppose you spent 100.52 at
+the supermarket, but your receipt includes many items, some of which fall under
+"Food", and others of which fall under "Household supplies".  You could create
+a split transaction with a separate row for every single item on the receipt;
+but this would be cumbersome and laborious.  Instead, you might enter all the
+"Food" items in one row, and all the "Household supplies" items in another row.
+But to do this you need to add up the cost of all the food items. Instead of
+getting out a calculator, you can add the cost of the food items directly,
+within the amount box for the "Food" row. Suppose there are three food items,
+costing 1.52, 19.89 and 5.03.  Simply type "1.52+19.89+5.03" into the amount
+cell for this row, then hit tab or click outside the cell. Then the result,
+"26.44", will automatically appear in the cell. You can also perform
+subtractions, e.g. by typing "80.89-38.60" in the cell. Note, however, that you
+can't do multiplication or division, and you can't use parentheses in
+calculations.
 
 Entering dates
 ..............
 
 If you only enter a single number in the date box, e.g. "23", this will be
 interpreted as meaning "the 23rd of the current month". Similarly, if you enter
-the date and month, but omit the year, this will be interpreted as if you had
-simply entered the current year.
+a date and month, but omit the year, this will be interpreted as if you had
+entered the current year.
 
 Selecting accounts and envelopes from the *Account* and *Envelope* lists
 ........................................................................
 
-If you select one account *and* one envelope in the *Account* and *Envelope*
-lists (the large ones near the left and middle of the main window,
-respectively), and then click *Clear* in the transaction panel, the
-transaction panel will be partially populated with a transaction that is
-appropriate for the select account and envelope. For example, if you
-click once on "Cash" in the *Account* list, and then click once on "Food"
-in the *Envelope* list, and then click *Clear*, then the transaction type
-control in the transaction panel will be automatically set to *Spend*, the
+If you select - by clicking on it once - one account from the *Account* list,
+and one envelope from the *Envelope* list (the large lists near the left and
+middle of the main window, respectively), and then click *Clear* in the
+transaction panel, the transaction panel will be partially populated with a
+transaction that is appropriate for the select account and envelope. For
+example, if you click once on "Cash" in the *Account* list, and then click once
+on "Food" in the *Envelope* list, and then click *Clear*, then the transaction
+type control in the transaction panel will be automatically set to *Spend*, the
 *Account* box will be set to "Cash" and the *Envelope* box will be set to
 "Food". This saves you having to select (or type) the name of the account and
-the envelope from the drop-down lists in the transaction panel. This can save
-some effort when quickly entering a simple transaction; but be aware that
-clicking the *Clear* button causes whatever details are currently entered in
-the transaction panel to be lost. (Clicking *Clear* doesn't actually delete
-any already-saved transaction, but simply clears out the contents of the
-transaction panel, ready for a new transaction to be entered.)
+envelope from the drop-down lists in the transaction panel. This can save some
+effort when quickly entering a simple transaction.
+
+Be aware, however, that clicking the *Clear* button causes whatever details are
+currently entered in the transaction panel to be lost. Clicking *Clear* doesn't
+actually delete any already-saved transaction; but it does clear out the
+contents of the transaction panel, ready for a new transaction to be entered.
 
 .. references
 .. _`below`: Transactions.html#recurring-transactions
