@@ -158,10 +158,10 @@ Sometimes you find that one envelope contains more than excess funds, while
 another contains a shortfall. If this occurs, you should review the budget
 items in each envelope to see whether the ongoing daily allocations to each
 are adequate, or inadequate, and edit these as required. However, as a one-off
-measure, you may want to reallocate funds from one envelope to another. This
-should be done sparingly - after all, if you always shift money around to
-wherever it is required to wherever you want it, you will defeat the purpose
-of budgeting entirely - but sometimes it does make sense to do this.
+measure, you can reallocate funds from one envelope to another. This should be
+done sparingly - after all, if you always shift money around to wherever you
+want it whenever you want it, you will defeat the purpose of envelope budgeting
+entirely - but sometimes it does make sense to do this.
 
 To shift money between envelopes, select *New envelope transfer* from the
 *New* menu at the top of the main window. Enter the amount you want to transfer;
@@ -177,7 +177,7 @@ Targetted saving using pure envelopes
 
 Usually when you create an envelope_, it will be either a *revenue* or an
 *expense* envelope. However, DailyCashManager provides for a third kind of
-envelope, called a *pure envelope*. A pure envelope is one from which it is
+envelope, called a *pure envelope*. A pure envelope is one for which it is
 not possible to record any *actual* transactions. Rather, you use it to
 accumulate funds towards some special goal or other, and then when the
 money is required to be spent on that goal, you transfer it out of the
@@ -190,8 +190,8 @@ on food. Accordingly, you could create a pure envelope called "Christmas food
 fund". You would create this in the same way as you would create any other
 envelope (see `Creating an envelope`_), except that in the envelope creation
 panel, instead of selecting *revenue* or *expense* from the *envelope type* box,
-you select *pure envelope*. You would then create a `budget item`_ under this
-envelope, for allocating 100.00 per twelve months towards Christmas food
+you would select *pure envelope*. You would then create a `budget item`_ under
+this envelope, for allocating 100.00 per twelve months towards Christmas food
 expenditure. Then, when the week leading up to Christmas comes round (assuming
 you created this budget item one year before), you would transfer 100.00 out of
 the "Christmas food fund" pure envelope, and into your usual "Food" expense
