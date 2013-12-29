@@ -80,10 +80,12 @@ a *reconciliation* for that statement, as follows:
       transaction in DailyCashManager by double-clicking it in the
       *Reconciliations* list. This will bring the transaction up in the
       transaction panel, where you can edit it as described in
-      `Viewing or editing a transaction`_. Once you have edited and saved it,
+      `Viewing or editing a transaction`_. Once you have edited the amount so
+      that it matches the amount shown in the bank statement, click *Save*, and
       the *Reconcilations* list will be automatically updated with the revised
-      amount, and assuming this now matches, you can tick off the transaction
-      and mark it as reconciled as described above.
+      amount. Assuming this now matches, you can now tick off the transaction
+      and mark it as reconciled by *right-mouse-clicking* on it; remember to
+      tick it off on your physical bank statement as well.
     - If the transaction on your bank statement does not appear in the
       *Reconciliations* list in DailyCashManager, then it may be because it is
       a bank fee or interest - as you might not otherwise be made aware of these
@@ -92,7 +94,8 @@ a *reconciliation* for that statement, as follows:
       simply forgot to enter at the time - as you normally would (see `Entering
       a one-off transaction`_); once saved, the new transaction will appear in
       the *Reconciliations* list, where you can then mark it as reconciled as
-      described above.
+      by *right-mouse-clicking* on it; remember to tick it off on your physical
+      bank statement as well.
 
 - Once you have worked through each of the transactions on your bank statement,
   you may find that there are transactions in the *Reconciliations* list that
@@ -104,7 +107,7 @@ a *reconciliation* for that statement, as follows:
   list until they are reconciled. Otherwise, if it appears that the transaction
   is simply missing from the bank statement and it's not just a timing issue,
   it might be because you entered in the wrong account by mistake when you
-  originally recorded it in DailyCashManager. You can always double click the
+  originally recorded it in DailyCashManager. You can always double-click the
   "offending" transaction and edit it, as normal, in the transaction panel
   (see `Viewing or editing a transaction`_). Once you have saved your edits,
   if you have changed the account for the transaction, it will disappear from
@@ -118,8 +121,8 @@ a *reconciliation* for that statement, as follows:
   else just continue browsing or working in DailyCashManager as you see fit. If
   the *Reconciled balance* is not equal to the closing balance on your bank
   statement, then double check that the transactions you ticked match the ones
-  you marked as reconciled in the *Reconciliations* list - if they are equal,
-  then the amounts should match.
+  you marked as reconciled in the *Reconciliations* list - once they are equal,
+  the amounts should match.
 
 .. references
 .. _`simple approach`: Reconciliations.html#simple-approach
