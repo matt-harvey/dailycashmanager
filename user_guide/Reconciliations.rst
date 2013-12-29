@@ -9,13 +9,13 @@ maintained by your bank. It is always possible that errors will be made when
 entering transactions into DailyCashManager; or that you might occasionally
 forget to enter a transaction. Therefore, it is important to check occasionally,
 that your record of account balances matches the record that is being kept by
-your bank, credit card companies etc.
+your bank, credit card companies or etc..
 
 Simple approach
 ---------------
 
 One simple way to check that your records are accurate for a given account is
-occasionally to check the balance kept by the bank, and compare it to the
+simply to check occasionally the balance kept by the bank, and compare it to the
 balance of that account in DailyCashManager. If they are the same, then the
 balance in DailyCashManager is presumably accurate. However, this simple
 check is sometimes not as straightforward as might be expected. For example,
@@ -32,10 +32,10 @@ is correct and accurate.
 Using DailyCashManager to perform reconciliations
 -------------------------------------------------
 
-To avoid the possible confusion that can arise from adopting the `simple
-approach`_ described above, it is recommended to use the *Reconciliations*
-facility provided by DailyCashManager, to ensure the balances in your DCM file
-stay in line with those recorded by your bank or other financial institutions.
+To avoid the confusion that can arise from adopting the `simple approach`_
+described above, it is recommended to use the *Reconciliations* facility
+provided by DailyCashManager, to ensure the balances in your DCM file stay in
+line with those recorded by your bank or other financial institutions.
 
 The most straightforward way to do this is, first of all, to make sure, for
 every account that you hold with a financial institution, that you are receiving
@@ -59,8 +59,7 @@ a *reconciliation* for that statement, as follows:
 - In the list, the *Date*, *Memo* and *Amount* of each transaction are shown. In
   addition, you will notice a *Reconciled* column. For transactions that have
   not been reconciled, this column will be blank; once a transaction has been
-  reconciled, the transaction amount will appear in the *Reconciled* colum
-  (as well as in the *Amount* column).
+  reconciled, the transaction amount will appear in the *Reconciled* column.
 - Near the top of the report, you will see a *Closing balance* figure. This is
   the balance as recorded in your DCM file, as at the date you entered in the
   *To* box (the bank statement closing date). You will also see a
