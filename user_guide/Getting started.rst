@@ -87,7 +87,7 @@ envelopes by clicking the *Remove envelope* button, respectively. You can edit
 the boxes for the *Name*, *Type* and *Description* of each envelope directly.
 The *Description* field is optional.
 
-You will notice that each envelope has an *Initial allocation* cell, this is to
+You will notice that each envelope has an *Initial allocation* cell; this is to
 contain the amount of funds you
 want to allocate to the envelope initially, for budgeting purposes. As a rule
 of thumb, you should allocate to each envelope enough money to cover the most
@@ -107,7 +107,7 @@ arrives.
 
 Don't worry if this doesn't make perfect sense immediately; you can adjust
 things later as you become more familiar with the envelope method of
-budgeting, and with your own spending patterns as you record them in the
+budgeting, and with your own spending patterns as you record them in
 DailyCashManager.
 
 Note the *Total to allocate* number at the top right of the wizard page. This
@@ -122,7 +122,7 @@ After allocating what you think you need to your envelopes, if your
 *Unallocated* balance is a positive number, this
 means you have more money than you need to meet your immediate requirements.
 You might want to create a *pure envelope* called "Retirement savings" or
-"Car savings" or the like, to save for some longer term goal, and shift
+"Car savings" or the like, to save for some longer term goal, and put
 your remaining unallocated funds into this (see `Targetted saving using pure
 envelopes`_). If you're not sure, you can leave these funds in *Unallocated*
 for now, and shift them elsewhere at a later time (see `Transferring money
@@ -133,8 +133,8 @@ parentheses e.g. "(100.00)"), this suggests that you don't have sufficient net
 assets to cover your immediate expenditure requirements. See if you can
 realistically reduce some of your envelope allocations to bring *Unallocated*
 to nil. If you can't realistically do this, you can still
-leave the budget negative; but try to aim over time to bring
-*Unallocated* up to *nil*. (You can allocate regular funds into *Unallocated* by
+leave the *Unallocated* negative; but try to aim over time to bring
+*Unallocated* up to *nil*. You can allocate regular funds into *Unallocated* by
 setting up a budget item in the *Unallocated* account editing
 panel (see `Creating and editing budget items`_ for how to do this).
 
