@@ -90,10 +90,10 @@ do this as follows:
   in order to transfer the 0.20 into the "Bank fees" envelope each day,
   DailyCashManager needs transfer that 0.20 *from* some other envelope into
   "Bank fees". By default - and if you click *Leave unbalanced* this deafult
-  will be unchanged - the 0.20 is transferred from the envelope called "Budget
-  imbalance". This is an envelope that DailyCashManager creates automatically
-  to process unbalanced budget amounts. You *don't* normally want "Budget
-  imbalance" to have a balance other than zero. Instead of clicking "Leave
+  will be unchanged - the 0.20 is transferred from the envelope called
+  "Unallocated". This is an envelope that DailyCashManager creates automatically
+  to process unbalanced budget amounts. You *don't* normally want
+  "Unallocated" to have a balance other than zero. Instead of clicking "Leave
   unbalanced", you should select some other envelope to draw the 0.20 / day
   from - by selecting from the drop-down list at the bottom of this panel - and
   then click *Offset to envelope below*. Commonly, you would offset the 0.20 /

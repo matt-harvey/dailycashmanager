@@ -114,28 +114,28 @@ Note the *Total to allocate* number at the top right of the wizard page. This
 represents the total amount of your wealth (assets minus liabilities),
 less the amount you have allocated to envelopes so far. This number
 will be reduced as you allocate more money to the envelopes.
-Any amount that you don't allocate will remain in the *Budget imbalance*
+Any amount that you don't allocate will remain in the *Unallocated*
 envelope: this envelope is automatically created for you by
-DailyCashManager for this purpose.
+DailyCashManager for just this purpose.
 
 After allocating what you think you need to your envelopes, if your
-*Budget imbalance* is a positive number, this
+*Unallocated* balance is a positive number, this
 means you have more money than you need to meet your immediate requirements.
 You might want to create a *pure envelope* called "Retirement savings" or
 "Car savings" or the like, to save for some longer term goal, and shift
 your remaining unallocated funds into this (see `Targetted saving using pure
-envelopes`_). If you're not sure, you can leave this funds in *Budget imbalance*
+envelopes`_). If you're not sure, you can leave these funds in *Unallocated*
 for now, and shift them elsewhere at a later time (see `Transferring money
 between envelopes`_).
 
-On the other hand, if your *Budget imbalance* is negative (indicated by
+On the other hand, if *Unallocated* is negative (indicated by
 parentheses e.g. "(100.00)"), this suggests that you don't have sufficient net
 assets to cover your immediate expenditure requirements. See if you can
-realistically reduce some of your envelope allocations to bring the *Budget
-imbalance* down to nil. If you can't realistically do this, you can still
-leave the budget imbalance negative; but try to aim over time to reduce the
-*Budget imbalance* to *nil*. (You can allocate regular funds into *Budget
-imbalance* by setting up a budget item in the *Budget imbalance* account editing
+realistically reduce some of your envelope allocations to bring *Unallocated*
+to nil. If you can't realistically do this, you can still
+leave the budget negative; but try to aim over time to bring
+*Unallocated* up to *nil*. (You can allocate regular funds into *Unallocated* by
+setting up a budget item in the *Unallocated* account editing
 panel (see `Creating and editing budget items`_ for how to do this).
 
 Opening an existing DailyCashManager file

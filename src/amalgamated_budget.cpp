@@ -96,7 +96,7 @@ AmalgamatedBudget::setup_tables(DcmDatabaseConnection& dbc)
 
 	Handle<Account> const balancing_account(dbc);
 	balancing_account->set_account_type(AccountType::pure_envelope);
-	balancing_account->set_name("Budget imbalance");
+	balancing_account->set_name("Unallocated");
 	balancing_account->set_description("");
 	balancing_account->set_visibility(Visibility::visible);
 	Handle<Commodity> const balancing_account_commodity =
