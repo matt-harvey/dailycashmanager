@@ -48,14 +48,11 @@
 // wasn't showing at all. Once decent icon is created, also make sure it is
 // pulled into the wxBitmap in SetupWizard.
 
-// TODO HIGH PRIORITY Specifie in CMakeLists.txt the version of wxWidgets
-// that is required. State this in README as well.
+// TODO HIGH PRIORITY Specify in CMakeLists.txt the version of wxWidgets
+// that is required. State this in README.rst as well.
 
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.
-
-// TODO MEDIUM PRIORITY Startup time under Windows is really slow, even when
-// compiled in Release mode.
 
 // TODO MEDIUM PRIORITY Give user the option to export to CSV.
 
@@ -64,13 +61,12 @@
 // TODO MEDIUM PRIORITY Allow window borders to be dragged around, especially
 // for DraftJournalListCtrl. This make it easier for users on laptops.
 
-// TODO HIGH PRIORITY User guide. Write it using Sphinx.
+// TODO HIGH PRIORITY Publish user guide.
 
-// TODO HIGH PRIORITY Incorporate "make user_guide" into CMakeLists.txt with
-// target that runs Sphinx to make user guide and then compile into application.
-// The "make install" and "make package" targets also need to be adjusted
-// so that help files will be installed to appropriate locations on the target
-// system.
+// TODO HIGH PRIORITY Incorporate instructions for making user guide into
+// README.rst. Note user guide COULD be installed onto user's system
+// as just a bunch of .html files, which can still be opened by the default
+// browser (instead of having to go to website). Do we want this?
 
 // TODO MEDIUM PRIORITY When the user creates a new file, ask if they want to
 // create a shortcut to the file on their Desktop (assuming they didn't
