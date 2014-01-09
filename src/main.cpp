@@ -37,17 +37,6 @@
 // generated installer will overwrite existing files when doing updates. This
 // is not ideal.
 
-// TODO HIGH PRIORITY Create a decent icon for the application. We want this
-// in both .ico form (for Windows executable icon) and .xpm
-// form (for icon for Frame). Note, when I exported my
-// "token icon" using GIMP to .ico format, and later used this
-// to create a double-clickable icon in Windows, only the text
-// on the icon appeared, and the background image became
-// transparent for some reason. Furthermore, when set as the
-// large in-windows icon in the CPack/NSIS installer, the icon
-// wasn't showing at all. Once decent icon is created, also make sure it is
-// pulled into the wxBitmap in SetupWizard.
-
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.
 
