@@ -40,11 +40,11 @@
 #include <wx/filedlg.h>
 #include <wx/filename.h>
 #include <wx/fs_zip.h>
-#include <wx/help.h>
 #include <wx/log.h>
 #include <wx/snglinst.h>
 #include <wx/string.h>
 #include <wx/tooltip.h>
+#include <wx/utils.h>
 #include <wx/wx.h>
 #include <cstddef>
 #include <cstdlib>
@@ -157,7 +157,6 @@ namespace
 App::App():
 	m_exiting_cleanly(false),
 	m_single_instance_checker(nullptr),
-	m_help_controller(nullptr),
 	m_database_connection(new DcmDatabaseConnection)
 {
 	JEWEL_ASSERT (!m_backup_filepath);
@@ -401,18 +400,6 @@ bool App::OnInit()
 			return false;
 		}
 
-		// initialize the help system
-		wxFileSystem::AddHandler(new wxZipFSHandler);
-		m_help_controller = new wxHelpController;
-
-		// TODO HIGH PRIORITY help (".htb") needs to be installed to a
-		// suitable location (controlled in CMakeLists.txt) and then
-		// that location needs to be passed to the below commented-out
-		// function.
-		wxString const help_file("/home/matthew/Workbench/versioned/dcm/user_guide/_build/htmlhelp/DailyCashManagerdoc.hhp");
-		m_help_controller->Initialize(help_file);
-		m_help_controller->AddBook(wxFileName(help_file));
-
 		// connect to database, prompting user for new or existing
 		// database if required
 		if (m_database_filepath)
@@ -538,6 +525,17 @@ App::locale() const
 }
 
 void
+App::display_help_contents()
+{
+	// TODO HIGH PRIORITY Put proper URL here
+	wxLaunchDefaultBrowser
+	(	"file:///home/matthew/Workbench/versioned/dcm/user_guide/_build/html/"
+			"index.html"
+	);
+	return;
+}
+
+void
 App::set_database_filepath(filesystem::path const& p_database_filepath)
 {
 	m_database_filepath = p_database_filepath;
@@ -587,8 +585,6 @@ int App::OnExit()
 	{
 		filesystem::remove(*m_backup_filepath);
 	}
-	delete m_help_controller;
-	m_help_controller = nullptr;
 	delete m_single_instance_checker;
 	m_single_instance_checker = nullptr;
 	return m_exiting_cleanly? 0: 1;

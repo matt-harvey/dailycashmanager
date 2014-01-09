@@ -25,7 +25,6 @@
 #include <jewel/version_fwd.hpp>
 #include <wx/app.h>
 #include <wx/config.h>
-#include <wx/help.h>
 #include <wx/intl.h>
 #include <wx/snglinst.h>
 #include <wx/string.h>
@@ -92,15 +91,7 @@ public:
 
 	wxLocale const& locale() const;
 
-	// TODO Do this properly.
-	void display_help_contents()
-	{
-		JEWEL_HARD_ASSERT (m_help_controller);
-		m_help_controller->LoadFile("htmlhelp");
-		// m_help_controller->DisplaySection("Overview");
-		m_help_controller->DisplayContents();
-		return;
-	}
+	void display_help_contents();
 
 	DcmDatabaseConnection& database_connection();
 
@@ -132,7 +123,6 @@ private:
 
 	bool m_exiting_cleanly;
 	wxSingleInstanceChecker* m_single_instance_checker;
-	wxHelpController* m_help_controller;
 	std::unique_ptr<DcmDatabaseConnection> m_database_connection;
 	boost::optional<boost::filesystem::path> m_database_filepath;
 	boost::optional<boost::filesystem::path> m_backup_filepath;
