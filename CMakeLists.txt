@@ -88,7 +88,7 @@ find_library (SQLOXX_LIBRARY sqloxx REQUIRED)
 find_library (JEWEL_LIBRARY jewel REQUIRED)
 find_library (UNIT_TEST_LIBRARY UnitTest++ REQUIRED)
 find_package (
-	wxWidgets
+	wxWidgets 2.9.3
 	COMPONENTS
 		aui
 		html

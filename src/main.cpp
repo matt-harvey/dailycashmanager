@@ -48,9 +48,6 @@
 // wasn't showing at all. Once decent icon is created, also make sure it is
 // pulled into the wxBitmap in SetupWizard.
 
-// TODO HIGH PRIORITY Specify in CMakeLists.txt the version of wxWidgets
-// that is required. State this in README.rst as well.
-
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.
 

@@ -43,7 +43,7 @@ To build and install the application, you will need:
 
 - The Sqloxx C++ libraries (version 1.0.0 or later)
 
-- wxWidgets
+- wxWidgets (version 2.9.3 or later)
 
 - UnitTest++ (known to work with version 1.4)
 
