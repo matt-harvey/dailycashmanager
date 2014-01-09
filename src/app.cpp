@@ -527,11 +527,18 @@ App::locale() const
 void
 App::display_help_contents()
 {
-	// TODO HIGH PRIORITY Put proper URL here
-	wxLaunchDefaultBrowser
-	(	"file:///home/matthew/Workbench/versioned/dcm/user_guide/_build/html/"
-			"index.html"
-	);
+	// TODO HIGH PRIORITY Put proper URL here.
+#	ifdef JEWEL_ON_WINDOWS
+		wxLaunchDefaultBrowser
+		(	"C:/Users/Matt/Workbench/versioned/dcm/user_guide/_build/html/"
+				"index.html"
+		);
+#	else
+		wxLaunchDefaultBrowser
+		(	"file:///home/matthew/Workbench/versioned/dcm/user_guide/_build/html/"
+				"index.html"
+		);
+#	endif
 	return;
 }
 

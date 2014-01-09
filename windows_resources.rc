@@ -14,5 +14,5 @@
 // limitations under the License.
 ////
 
-dailycashmanager ICON "images/icon.ico"
+dailycashmanager ICON "images/icon_200_200.ico"
 #include <wx/msw/wx.rc>
