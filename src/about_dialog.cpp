@@ -15,8 +15,12 @@
  */
 
 #include "gui/about_dialog.hpp"
+#include "app.hpp"
 #include "gui/button.hpp"
 #include "gui/sizing.hpp"
+#include <jewel/assert.hpp>
+#include <wx/event.h>
+#include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/string.h>
 #include <wx/window.h>
@@ -26,6 +30,21 @@ namespace dcm
 {
 namespace gui
 {
+
+BEGIN_EVENT_TABLE(AboutDialog, wxGenericAboutDialog)
+	EVT_BUTTON
+	(	s_developers_button_id,
+		AboutDialog::on_developers_button_click
+	)
+	EVT_BUTTON
+	(	s_artists_button_id,
+		AboutDialog::on_artists_button_click
+	)
+	EVT_BUTTON
+	(	s_license_button_id,
+		AboutDialog::on_license_button_click
+	)
+END_EVENT_TABLE()
 
 AboutDialog::AboutDialog(wxAboutDialogInfo const& p_info, wxWindow* p_parent):
 	m_developers_button(nullptr),
@@ -49,6 +68,7 @@ AboutDialog::DoAddCustomControls()
 		wxSize(medium_width(), wxDefaultSize.y),
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
+	AddControl(m_developers_button, wxSizerFlags().Expand());
 	m_artists_button = new Button
 	(	this,
 		s_artists_button_id,
@@ -57,6 +77,7 @@ AboutDialog::DoAddCustomControls()
 		wxSize(medium_width(), wxDefaultSize.y),
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
+	AddControl(m_artists_button, wxSizerFlags().Expand());
 	m_license_button = new Button
 	(	this,
 		s_license_button_id,
@@ -65,11 +86,7 @@ AboutDialog::DoAddCustomControls()
 		wxSize(medium_width(), wxDefaultSize.y),
 		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
 	);
-	AddControl(m_developers_button, wxSizerFlags().Expand());
-	AddControl(m_artists_button, wxSizerFlags().Expand());
 	AddControl(m_license_button, wxSizerFlags().Expand());
-
-	// TODO
 	return;
 }
 
@@ -91,6 +108,44 @@ void
 AboutDialog::set_license(wxString const& p_license)
 {
 	m_license = p_license;
+	return;
+}
+
+void
+AboutDialog::on_developers_button_click(wxCommandEvent& event)
+{
+	(void)event;  // silence compiler re. unused param.
+	wxString msg;
+	for (auto const& developer: m_developers)
+	{
+		msg += developer;
+		msg += "\n";
+	}
+	wxMessageBox(msg, wxString("Developers"));
+	return;
+}
+
+void
+AboutDialog::on_artists_button_click(wxCommandEvent& event)
+{
+	(void)event;  // silence compiler re. unused param.
+	wxString msg;
+	for (auto const& artist: m_artists)
+	{
+		msg += artist;
+		msg += "\n";
+	}
+	wxMessageBox(msg, wxString("Artists"));
+	return;
+}
+
+void
+AboutDialog::on_license_button_click(wxCommandEvent& event)
+{
+	(void)event;  // silence compiler re. unused param.
+	// TODO Instead of wxMessageDialog, we need a scrollable dialog here.
+	wxMessageDialog dialog(this, App::license(), "License");
+	dialog.ShowModal();
 	return;
 }
 

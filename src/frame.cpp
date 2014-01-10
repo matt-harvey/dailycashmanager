@@ -41,6 +41,7 @@
 #include <sqloxx/id.hpp>
 #include <wx/event.h>
 #include <wx/menu.h>
+#include <wx/msgdlg.h>
 #include <wx/string.h>
 #include <wx/icon.h>
 #include <wx/wupdlock.h>

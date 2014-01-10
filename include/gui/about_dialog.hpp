@@ -18,6 +18,7 @@
 #define GUARD_about_dialog_hpp_12818188785025006
 
 #include <wx/aboutdlg.h>
+#include <wx/event.h>
 #include <wx/generic/aboutdlgg.h>
 #include <wx/string.h>
 #include <wx/window.h>
@@ -53,8 +54,12 @@ public:
 	void add_developer(wxString const& p_developer);
 	void add_artist(wxString const& p_artist);
 	void set_license(wxString const& p_license);
-	
+
 private:
+	void on_developers_button_click(wxCommandEvent& event);
+	void on_artists_button_click(wxCommandEvent& event);
+	void on_license_button_click(wxCommandEvent& event);
+
 	static int const s_developers_button_id = wxID_HIGHEST + 1;
 	static int const s_artists_button_id = s_developers_button_id + 1;
 	static int const s_license_button_id = s_artists_button_id + 1;
@@ -64,6 +69,8 @@ private:
 	std::vector<wxString> m_developers;
 	std::vector<wxString> m_artists;
 	wxString m_license;
+
+	DECLARE_EVENT_TABLE()
 
 };  // class AboutDialog
 
