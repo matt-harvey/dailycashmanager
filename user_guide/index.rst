@@ -19,6 +19,7 @@ Contents:
    Budgeting
    Reconciliations
    Reports
+   LICENSE
 
 
 

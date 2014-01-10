@@ -53,7 +53,6 @@ public:
 	// AboutDialog, and this seems to be the only way to do this.
 	void add_developer(wxString const& p_developer);
 	void add_artist(wxString const& p_artist);
-	void set_license(wxString const& p_license);
 
 private:
 	void on_developers_button_click(wxCommandEvent& event);
@@ -68,7 +67,6 @@ private:
 	Button* m_license_button;
 	std::vector<wxString> m_developers;
 	std::vector<wxString> m_artists;
-	wxString m_license;
 
 	DECLARE_EVENT_TABLE()
 

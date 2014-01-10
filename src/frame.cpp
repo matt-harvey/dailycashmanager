@@ -564,7 +564,6 @@ Frame::on_menu_about(wxCommandEvent& event)
 	wxString artist_info("Logo / icon designed by ");
 	artist_info += App::logo_icon_designer();
 	dialog.add_artist(artist_info);
-	dialog.set_license(App::license());
 
 	dialog.ShowModal();
 	return;

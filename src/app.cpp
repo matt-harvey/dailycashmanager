@@ -19,7 +19,6 @@
 #include "date.hpp"
 #include "dcm_database_connection.hpp"
 #include "dcm_exceptions.hpp"
-#include "license.hpp"
 #include "repeater.hpp"
 #include "string_conv.hpp"
 #include "gui/error_reporter.hpp"
@@ -194,12 +193,6 @@ App::copyright()
 		ret += *it;
 	}
 	return ret;
-}
-
-wxString
-App::license()
-{
-	return wxString(license_arr, license_arr_len);
 }
 
 vector<wxString>

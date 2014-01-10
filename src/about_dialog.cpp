@@ -23,6 +23,7 @@
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/string.h>
+#include <wx/utils.h>
 #include <wx/window.h>
 #include <vector>
 
@@ -105,13 +106,6 @@ AboutDialog::add_artist(wxString const& p_artist)
 }
 
 void
-AboutDialog::set_license(wxString const& p_license)
-{
-	m_license = p_license;
-	return;
-}
-
-void
 AboutDialog::on_developers_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused param.
@@ -143,9 +137,11 @@ void
 AboutDialog::on_license_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused param.
-	// TODO Instead of wxMessageDialog, we need a scrollable dialog here.
-	wxMessageDialog dialog(this, App::license(), "License");
-	dialog.ShowModal();
+	// TODO Put proper URL here.
+	wxLaunchDefaultBrowser
+	(	"file:///home/matthew/Workbench/versioned/dcm/user_guide/_build/html/"
+			"LICENSE.html"
+	);
 	return;
 }
 

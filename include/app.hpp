@@ -63,8 +63,6 @@ public:
 
 	static wxString copyright();
 
-	static wxString license();
-
 	static std::vector<wxString> developers();
 
 	static wxString logo_icon_designer();
