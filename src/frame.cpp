@@ -38,6 +38,7 @@
 #include <jewel/version.hpp>
 #include <sqloxx/handle.hpp>
 #include <sqloxx/id.hpp>
+#include <wx/aboutdlg.h>
 #include <wx/event.h>
 #include <wx/menu.h>
 #include <wx/string.h>
@@ -542,17 +543,23 @@ Frame::on_menu_about(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // silence compiler re. unused parameter
-	ostringstream oss;
-	oss << wx_to_std8(App::application_name())
-	    << " v"
-		<< App::version()
-		<< "\n\n"
-		<< wx_to_std8(App::legal_notice())
-	    << endl;
-	wxMessageBox
-	(	std8_to_wx(oss.str()),
-		wxString("About ") + App::application_name()
-	);
+	ostringstream version_stream;
+	version_stream << App::version();
+	wxAboutDialogInfo info;
+	info.SetName(App::application_name());
+	info.SetVersion(std8_to_wx(version_stream.str()));
+	info.SetCopyright(App::copyright());
+	info.SetLicence(App::license());
+	for (auto const developer: App::developers()) info.AddDeveloper(developer);
+	wxString artist_info("Logo / icon designed by ");
+	artist_info += App::logo_icon_designer();
+	info.AddArtist(artist_info);
+	SetIcon(wxIcon(icon_48_48_xpm));
+
+	// TODO HIGH PRIORITY put proper website
+	info.SetWebSite("https://github.com/skybaboon/dailycashmanager");
+
+	wxAboutBox(info);
 	return;
 }
 

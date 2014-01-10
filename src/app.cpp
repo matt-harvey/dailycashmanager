@@ -19,6 +19,7 @@
 #include "date.hpp"
 #include "dcm_database_connection.hpp"
 #include "dcm_exceptions.hpp"
+#include "license.hpp"
 #include "repeater.hpp"
 #include "string_conv.hpp"
 #include "gui/error_reporter.hpp"
@@ -179,21 +180,38 @@ App::version()
 }
 
 wxString
-App::legal_notice()
+App::copyright()
 {
-	// TODO The full text of the Apache License, Version 2.0 should be
-	// in the HTML help system somewhere; this should be reachable from this
-	// "About" dialog somehow.
-	return wxString
-	(	"Copyright 2013 Matthew Harvey\n\n"
-		"This application has been made available under the Apache License, "
-		"Version 2.0\n\n"
-		"Source code for this application is available under the Apache "
-		"License, Version 2.0, from:\n"
-		"https://github.com/skybaboon/dailycashmanager\n\n"
-		"For the text of the Apache License, Version 2.0 see:\n"
-		"http://www.apache.org/licenses/LICENSE-2.0\n"
-	);
+	vector<wxString> devs = developers();
+	wxString ret("Copyright 2013 ");
+	JEWEL_HARD_ASSERT (!devs.empty());
+	auto it = devs.begin();
+	ret += *it;
+	++it;
+	for ( ; it != devs.end(); ++it)
+	{
+		ret += ", ";
+		ret += *it;
+	}
+	return ret;
+}
+
+wxString
+App::license()
+{
+	return wxString(license_arr, license_arr_len);
+}
+
+vector<wxString>
+App::developers()
+{
+	return vector<wxString>{"Matthew Harvey"};
+}
+
+wxString
+App::logo_icon_designer()
+{
+	return wxString("Klara Stanke");
 }
 
 wxString

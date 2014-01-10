@@ -29,6 +29,7 @@
 #include <wx/snglinst.h>
 #include <wx/string.h>
 #include <memory>
+#include <vector>
 
 namespace dcm
 {
@@ -60,7 +61,13 @@ public:
 	 */
 	static jewel::Version version();
 
-	static wxString legal_notice();
+	static wxString copyright();
+
+	static wxString license();
+
+	static std::vector<wxString> developers();
+
+	static wxString logo_icon_designer();
 
 	/**
 	 * @returns filename extension to be used with files
