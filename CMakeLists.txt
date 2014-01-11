@@ -396,10 +396,11 @@ if (
 		set (tarball_name "${package_name}.tar.gz")
 		set (
 			packaged_items
+			include
 			images
 			src
 			tests
-			user_guide
+			build_user_guide.tcl
 			prebuild_driver.tcl
 			CMakeLists.txt
 			Doxyfile
@@ -413,7 +414,11 @@ if (
 			package
 			COMMAND
 				mkdir ${package_name} &&
+				mkdir ${package_name}/user_guide &&
+				cp user_guide/*.rst ${package_name}/user_guide &&
+				cp user_guide/conf.py ${package_name}/user_guide &&
 				cp -r ${packaged_items} ${package_name} &&
+				rm ${package_name}/include/make_currencies_inc.hpp &&
 				tar -sczf ${tarball_name} ${package_name} &&
 				rm -rf ${package_name}
 			DEPENDS ${library_name} test user_guide
