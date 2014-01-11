@@ -49,7 +49,7 @@ option (
 # Define this stuff here as used below
 if (WIN32)
 	set (executable_installation_dir "${CMAKE_INSTALL_PREFIX}\\${application_name}")
-	set (user_guide_installation_dir "${installation_dir})\\doc")
+	set (user_guide_installation_dir "${installation_dir}\\doc")
 else ()
 	set (executable_installation_dir "${CMAKE_INSTALL_PREFIX}/bin")
 	set (
