@@ -1,6 +1,4 @@
-###
-# Copyright 2012, 2013 Matthew Harvey
-# 
+### 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -48,8 +46,8 @@ option (
 
 # Define this stuff here as used below
 if (WIN32)
-	set (executable_installation_dir "${CMAKE_INSTALL_PREFIX}\\${application_name}")
-	set (user_guide_installation_dir "${installation_dir}\\doc")
+	set (executable_installation_dir "${CMAKE_INSTALL_PREFIX}")
+	set (user_guide_installation_dir "${executable_installation_dir}/doc")
 else ()
 	set (executable_installation_dir "${CMAKE_INSTALL_PREFIX}/bin")
 	set (
@@ -82,7 +80,7 @@ if (ENABLE_EXCEPTION_LOGGING)
 	add_definitions (-DJEWEL_ENABLE_EXCEPTION_LOGGING)
 endif ()
 if (CMAKE_COMPILER_IS_GNUCXX)
-	add_definitions (-std=c++0x)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
 endif ()
 
 # Find dependencies
@@ -109,7 +107,6 @@ find_package (
 		core
 		xml
 		base
-	REQUIRED
 )
 find_package (Tclsh 8.4 REQUIRED)
 if (WIN32)
@@ -150,10 +147,44 @@ if (
 	Boost_FOUND AND
 	NOT SQLOXX_LIBRARY-NOTFOUND AND
 	NOT JEWEL_LIBRARY-NOTFOUND AND
-	wxWidgets_FOUND AND
 	NOT UNIT_TEST_LIBRARY-NOTFOUND
 )
-	include (${wxWidgets_USE_FILE})
+	if (wxWidgets_FOUND)
+		include (${wxWidgets_USE_FILE})
+	else ()
+		if (WIN32)
+			set (
+				wxWidgets_INCLUDE_DIRS
+				C:/Dev-Cpp
+				C:/Dev-Cpp/include/common
+				C:/include
+			)
+			set (
+				wxWidgets_LIBRARIES
+				wxmsw29u
+				wxmsw29u_gl
+				wxscintilla
+				wxtiff
+				wxjpeg
+				wxpng
+				wxzlib
+				wxregexu
+				wxexpat
+			)
+			add_definitions (
+				-D__WXMSW__
+				-D__GNUWIN32
+				-D__UNICODE
+				-D_UNICODE
+				-DUNICODE
+			)
+			link_directories (
+				C:/Dev-Cpp/lib/wx/gcc_lib
+				C:/Dev-Cpp/lib
+				C:/Dev-Cpp/MinGW/lib
+			)
+		endif ()
+	endif ()
 	include_directories (
 		include
 		${JEWEL_INCLUDES}
@@ -419,6 +450,7 @@ if (
 				cp user_guide/conf.py ${package_name}/user_guide &&
 				cp -r ${packaged_items} ${package_name} &&
 				rm ${package_name}/include/make_currencies_inc.hpp &&
+				rm ${package_name}/include/user_guide/LICENSE.rst &&
 				tar -sczf ${tarball_name} ${package_name} &&
 				rm -rf ${package_name}
 			DEPENDS ${library_name} test user_guide
