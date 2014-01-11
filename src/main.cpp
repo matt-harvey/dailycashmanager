@@ -17,6 +17,9 @@
 // TODO MEDIUM PRIORITY There is some flicker still when refreshing Report
 // tabs on Windows.
 
+// TODO HIGH PRIORITY Incorporate user guide installation into "make package"
+// instructions.
+
 // TODO MEDIUM PRIORITY Under KDE (at least on Mageia) the way I have set
 // up the widths of ComboBox and TextCtrl and wxButton (in various
 // controls in which these feature), where they are
@@ -47,12 +50,8 @@
 // TODO MEDIUM PRIORITY Allow window borders to be dragged around, especially
 // for DraftJournalListCtrl. This make it easier for users on laptops.
 
-// TODO HIGH PRIORITY Publish user guide.
-
 // TODO HIGH PRIORITY Incorporate instructions for making user guide into
-// README.rst. Note user guide COULD be installed onto user's system
-// as just a bunch of .html files, which can still be opened by the default
-// browser (instead of having to go to website). Do we want this?
+// README.rst.
 
 // TODO MEDIUM PRIORITY When the user creates a new file, ask if they want to
 // create a shortcut to the file on their Desktop (assuming they didn't

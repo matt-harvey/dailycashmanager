@@ -31,4 +31,6 @@ flush $out
 close $out
 
 # Generate html documentation using Sphinx
-exec sphinx-build -b html -d user_guide/_build/doctrees user_guide user_guide/html
+exec sphinx-build -b html -d user_guide/_build/doctrees \
+    user_guide user_guide/html \
+    2>@ stderr >@stdout

@@ -67,6 +67,8 @@ public:
 
 	static wxString logo_icon_designer();
 
+	static boost::filesystem::path user_guide_html_dir();
+
 	/**
 	 * @returns filename extension to be used with files
 	 * belonging to this application. Includes

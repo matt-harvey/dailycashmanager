@@ -207,6 +207,12 @@ App::logo_icon_designer()
 	return wxString("Klara Stanke");
 }
 
+filesystem::path
+App::user_guide_html_dir()
+{
+	return filesystem::path(DCM_USER_GUIDE_DIR) / filesystem::path("html");
+}
+
 wxString
 App::filename_extension()
 {
@@ -538,18 +544,9 @@ App::locale() const
 void
 App::display_help_contents()
 {
-	// TODO HIGH PRIORITY Put proper URL here.
-#	ifdef JEWEL_ON_WINDOWS
-		wxLaunchDefaultBrowser
-		(	"C:/Users/Matt/Workbench/versioned/dcm/user_guide/_build/html/"
-				"index.html"
-		);
-#	else
-		wxLaunchDefaultBrowser
-		(	"file:///home/matthew/Workbench/versioned/dcm/user_guide/_build/html/"
-				"index.html"
-		);
-#	endif
+	filesystem::path const user_guide_index_file =
+		user_guide_html_dir() / filesystem::path("index.html");
+	wxLaunchDefaultBrowser(std8_to_wx(user_guide_index_file.string()));
 	return;
 }
 

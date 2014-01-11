@@ -46,6 +46,18 @@ option (
 	ON
 )
 
+# Define this stuff here as used below
+if (WIN32)
+	set (executable_installation_dir "${CMAKE_INSTALL_PREFIX}\\${application_name}")
+	set (user_guide_installation_dir "${installation_dir})\\doc")
+else ()
+	set (executable_installation_dir "${CMAKE_INSTALL_PREFIX}/bin")
+	set (
+		user_guide_installation_dir
+		"${CMAKE_INSTALL_PREFIX}/share/doc/${executable_stem_name}"
+	)
+endif ()
+
 # Definitions to be passed to the compiler
 
 # NOTE Adding definitions via "add_definitions" can cause problems
@@ -58,6 +70,7 @@ add_definitions (
 	-DDCM_VERSION_MAJOR=${version_major}
 	-DDCM_VERSION_MINOR=${version_minor}
 	-DDCM_VERSION_PATCH=${version_patch}
+	-DDCM_USER_GUIDE_DIR="${user_guide_installation_dir}"
 )
 if (ENABLE_LOGGING)
 	add_definitions (-DJEWEL_ENABLE_LOGGING)
@@ -254,6 +267,14 @@ if (
 	add_library (dcm_common ${common_sources})
 	add_dependencies (dcm_common prebuild)
 
+	# User guide
+
+	add_custom_target (
+		user_guide
+		ALL
+		COMMAND ${TCL_SH} "${PROJECT_SOURCE_DIR}/build_user_guide.tcl"
+	)
+		
 	# Building the tests
 
 	set (
@@ -297,18 +318,18 @@ if (
 	target_link_libraries (${executable_stem_name} dcm_common ${libraries})
 
 	# Installation instructions
-	
-	if (WIN32)
-		set (installation_dir "${CMAKE_INSTALL_PREFIX}\\${application_name}")
-	else ()
-		set (installation_dir "${CMAKE_INSTALL_PREFIX}/bin")
-	endif ()
 
 	install (
 		TARGETS
 			${executable_stem_name}
 		RUNTIME DESTINATION
-			${installation_dir}
+			${executable_installation_dir}
+	)
+	install (
+		DIRECTORY
+			"user_guide/_build/html"
+		DESTINATION
+			${user_guide_installation_dir}
 	)
 
 	# Instructions to build package (source package on Unix-like system, or
@@ -395,7 +416,7 @@ if (
 				cp -r ${packaged_items} ${package_name} &&
 				tar -sczf ${tarball_name} ${package_name} &&
 				rm -rf ${package_name}
-			DEPENDS ${library_name} test
+			DEPENDS ${library_name} test user_guide
 		)
 		set_directory_properties (
 			PROPERTIES
@@ -412,5 +433,3 @@ if (
 	)
 
 endif ()					
-
-

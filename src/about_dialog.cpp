@@ -18,6 +18,7 @@
 #include "app.hpp"
 #include "gui/button.hpp"
 #include "gui/sizing.hpp"
+#include <boost/filesystem.hpp>
 #include <jewel/assert.hpp>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
@@ -26,6 +27,8 @@
 #include <wx/utils.h>
 #include <wx/window.h>
 #include <vector>
+
+namespace filesystem = boost::filesystem;
 
 namespace dcm
 {
@@ -137,11 +140,9 @@ void
 AboutDialog::on_license_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused param.
-	// TODO Put proper URL here.
-	wxLaunchDefaultBrowser
-	(	"file:///home/matthew/Workbench/versioned/dcm/user_guide/_build/html/"
-			"LICENSE.html"
-	);
+	filesystem::path user_guide_license_file =
+		App::user_guide_html_dir() / filesystem::path("LICENSE.html");
+	wxLaunchDefaultBrowser(std8_to_wx(user_guide_license_file.string()));
 	return;
 }
 
