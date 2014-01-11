@@ -207,10 +207,16 @@ App::logo_icon_designer()
 	return wxString("Klara Stanke");
 }
 
-filesystem::path
-App::user_guide_html_dir()
+wxString
+App::user_guide_url()
 {
-	return filesystem::path(DCM_USER_GUIDE_DIR) / filesystem::path("html");
+	auto const s = wxString(DCM_USER_GUIDE_DIR) + "/html";
+	if (s.empty() || s[0] != '/')
+	{
+		return "file:///" + s;
+	}
+	JEWEL_ASSERT (s.size() >= 1 && s[0] == '/');
+	return "file://" + s;
 }
 
 wxString
@@ -544,9 +550,7 @@ App::locale() const
 void
 App::display_help_contents()
 {
-	filesystem::path const user_guide_index_file =
-		user_guide_html_dir() / filesystem::path("index.html");
-	wxLaunchDefaultBrowser(std8_to_wx(user_guide_index_file.string()));
+	wxLaunchDefaultBrowser(user_guide_url() + "/index.html");
 	return;
 }
 

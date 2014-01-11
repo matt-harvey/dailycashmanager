@@ -46,14 +46,9 @@ option (
 
 # Define this stuff here as used below
 if (WIN32)
-	set (executable_installation_dir "${CMAKE_INSTALL_PREFIX}")
-	set (user_guide_installation_dir "${executable_installation_dir}/doc")
+	set (user_guide_rel_dir "doc")
 else ()
-	set (executable_installation_dir "${CMAKE_INSTALL_PREFIX}/bin")
-	set (
-		user_guide_installation_dir
-		"${CMAKE_INSTALL_PREFIX}/share/doc/${executable_stem_name}"
-	)
+	set (user_guide_rel_dir "share/doc/${executable_stem_name}")
 endif ()
 
 # Definitions to be passed to the compiler
@@ -68,7 +63,7 @@ add_definitions (
 	-DDCM_VERSION_MAJOR=${version_major}
 	-DDCM_VERSION_MINOR=${version_minor}
 	-DDCM_VERSION_PATCH=${version_patch}
-	-DDCM_USER_GUIDE_DIR="${user_guide_installation_dir}"
+	-DDCM_USER_GUIDE_DIR="${CMAKE_INSTALL_PREFIX}/${user_guide_rel_dir}"
 )
 if (ENABLE_LOGGING)
 	add_definitions (-DJEWEL_ENABLE_LOGGING)
@@ -350,18 +345,8 @@ if (
 
 	# Installation instructions
 
-	install (
-		TARGETS
-			${executable_stem_name}
-		RUNTIME DESTINATION
-			${executable_installation_dir}
-	)
-	install (
-		DIRECTORY
-			"user_guide/_build/html"
-		DESTINATION
-			${user_guide_installation_dir}
-	)
+	install (TARGETS ${executable_stem_name} RUNTIME DESTINATION .)
+	install (DIRECTORY "user_guide/_build/html" DESTINATION ${user_guide_rel_dir})
 
 	# Instructions to build package (source package on Unix-like system, or
 	# binary installation package on Windows)
@@ -417,9 +402,7 @@ if (
 				DeleteRegKey HKEY_CURRENT_USER 'Software\\\\${application_name}'
 			"
 		)
-
-		install(TARGETS ${executable_stem_name} RUNTIME DESTINATION .)
-		include(CPack)
+		include (CPack)
 
 	else ()
 

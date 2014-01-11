@@ -140,9 +140,7 @@ void
 AboutDialog::on_license_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused param.
-	filesystem::path user_guide_license_file =
-		App::user_guide_html_dir() / filesystem::path("LICENSE.html");
-	wxLaunchDefaultBrowser(std8_to_wx(user_guide_license_file.string()));
+	wxLaunchDefaultBrowser(App::user_guide_url() + "/LICENSE.html");
 	return;
 }
 
