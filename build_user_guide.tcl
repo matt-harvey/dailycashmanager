@@ -30,7 +30,7 @@ close $in
 flush $out
 close $out
 
-# Generate html documentation using Sphinx
+# Generate html user guide using Sphinx
 exec sphinx-build -b html -d user_guide/_build/doctrees \
-    user_guide user_guide/html \
+    user_guide user_guide/_build/html \
     2>@ stderr >@stdout
