@@ -19,7 +19,7 @@
 # Copy text of LICENSE into "user_guide" directory, with suitable title and
 # file extension to satisfy Sphinx.
 set in [open "LICENSE" r]
-set out [open "user_guide/LICENSE.rst" w]
+set out [open [file nativename "user_guide/LICENSE.rst"] w]
 puts $out "LICENSE"
 puts $out "======="
 puts $out ""
@@ -31,6 +31,6 @@ flush $out
 close $out
 
 # Generate html user guide using Sphinx
-exec sphinx-build -b html -d user_guide/_build/doctrees \
-    user_guide user_guide/_build/html \
+exec sphinx-build -b html -d [file nativename "user_guide/_build/doctrees"] \
+    user_guide [file nativename "user_guide/_build/html"] \
     2>@ stderr >@stdout
