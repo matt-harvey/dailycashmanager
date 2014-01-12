@@ -17,9 +17,6 @@
 // TODO MEDIUM PRIORITY There is some flicker still when refreshing Report
 // tabs on Windows.
 
-// TODO HIGH PRIORITY Incorporate user guide installation into "make package"
-// instructions.
-
 // TODO MEDIUM PRIORITY Under KDE (at least on Mageia) the way I have set
 // up the widths of ComboBox and TextCtrl and wxButton (in various
 // controls in which these feature), where they are
