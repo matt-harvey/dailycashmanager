@@ -308,7 +308,7 @@ target_link_libraries (${executable_stem_name} dcm_common ${libraries})
 
 # Installation instructions
 
-install (TARGETS ${executable_stem_name} RUNTIME DESTINATION .)
+install (TARGETS ${executable_stem_name} RUNTIME DESTINATION "bin")
 install (DIRECTORY "user_guide/_build/html" DESTINATION ${user_guide_rel_dir})
 
 # Instructions to build package (source package on Unix-like system, or
