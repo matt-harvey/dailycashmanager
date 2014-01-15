@@ -289,7 +289,8 @@ BudgetPanel::BudgetPanel
 	m_top_sizer->SetSizeHints(this);
 	GetParent()->Fit();
 
-	update_budget_summary(m_budget_items);  // Not sure why this is necessary here.
+	// Not sure why this is necessary here...
+	update_budget_summary(m_budget_items);
 }
 
 BudgetPanel::~BudgetPanel()

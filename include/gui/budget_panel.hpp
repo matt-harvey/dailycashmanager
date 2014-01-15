@@ -73,6 +73,9 @@ public:
 	/**
 	 * @param p_parent parent window. <em>This should not be null.</em>
 	 *
+	 * @param p_account Handle to the Account for which the user is configuring
+	 * BudgetItems.
+	 *
 	 * @throws BudgetEditingException if p_account is the balancing_account()
 	 * of p_account.database_connection() - as the user should not be enabled
 	 * to edit the balancing account's budget directly.

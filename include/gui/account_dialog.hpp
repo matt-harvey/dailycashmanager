@@ -71,6 +71,9 @@ public:
 	 * been set. In that case, the AccountDialog will be used as a means
 	 * for the user optionally to change some or all of the existing
 	 * characteristics of the Account.
+	 *
+	 * @param p_account_super_type AccountSuperType of the Account which will be
+	 * created or edited via the AccountDialog.
 	 */
 	AccountDialog
 	(	wxWindow* p_parent,

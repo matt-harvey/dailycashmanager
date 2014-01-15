@@ -63,6 +63,9 @@ public:
 	 * @param p_account_types the AccountTypes we want represented in the
 	 * AccountCtrl. This must not be empty.
 	 *
+	 * @param p_database_connection connection to database where Account
+	 * details are persisted.
+	 *
 	 * @param p_exclude_balancing_account If \e true, then the
 	 * sqloxx::Handle<Account> returned by
 	 * p_account.database_connection().balancing_account() will not

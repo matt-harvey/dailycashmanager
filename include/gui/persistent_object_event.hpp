@@ -32,10 +32,12 @@ class PersistentObjectEvent: public wxCommandEvent
 public:
 
 	/**
+	 * @param p_event_type type of event.
+	 *
 	 * @param p_event_id is the wxWidgets event id.
 	 *
-	 * @param p_maybe_po_id may contain the id() of the
-	 * sqloxx::PersistentObject to which this event pertains.
+	 * @param p_po_id the id() of the sqloxx::PersistentObject to which this
+	 * event pertains.
 	 */
 	PersistentObjectEvent
 	(	wxEventType p_event_type,

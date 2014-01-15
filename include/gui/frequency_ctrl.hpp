@@ -52,6 +52,8 @@ public:
 	 *
 	 * @param p_size size
 	 *
+	 * @param p_database_connection connection to database
+	 *
 	 * @param p_supports_ordinary_journal pass \e true to support
 	 * "Frequencies" that are  to an OrdinaryJournal (as opposed to
 	 * DraftJournal). The only such Frequency is "once-off" (which is

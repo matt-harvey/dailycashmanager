@@ -116,7 +116,9 @@ public:
 	 * @returns \e true if and only if \e p_name is the name of an Account
 	 * stored in the database, matched case insensitively.
 	 *
-	 * @param p_name name of Account.
+	 * @param p_database_connection connection to database
+	 *
+	 * @param p_name name of Account
 	 *
 	 * @throws SQLiteException or an exception derived therefrom, if
 	 * something goes wrong with the SQL involved in executing
