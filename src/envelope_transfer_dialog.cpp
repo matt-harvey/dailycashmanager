@@ -77,10 +77,13 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 	JEWEL_LOG_TRACE();
 	JEWEL_ASSERT (m_journal.entries().size() == 2);
 
-	int current_row = 0;
-
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());	
 	SetSizer(m_top_sizer);
+
+	int current_row = 0;
+
+	add_blank_space(current_row, 4);
+	++current_row;
 
 	JEWEL_LOG_TRACE();
 	wxStaticText* amount_label = new wxStaticText
@@ -197,9 +200,10 @@ EnvelopeTransferDialog::EnvelopeTransferDialog
 		wxDefaultSpan,
 		wxALIGN_LEFT
 	);
-	JEWEL_LOG_TRACE();
-	wxStaticText* dummy = new wxStaticText(this, wxID_ANY, wxEmptyString);
-	m_top_sizer->Add(dummy, wxGBPosition(current_row, 4));
+
+	++current_row;
+	add_blank_space(current_row, 4);
+
 	m_top_sizer->Fit(this);
 	JEWEL_LOG_TRACE();
 	m_top_sizer->SetSizeHints(this);
@@ -281,6 +285,20 @@ EnvelopeTransferDialog::update_proto_journal_from_dialog() const
 	se->set_amount(amount);
 	de->set_amount(-amount);
 	JEWEL_LOG_TRACE();
+	return;
+}
+
+void
+EnvelopeTransferDialog::add_blank_space(int p_row, int p_column)
+{
+	wxStaticText* dummy = new wxStaticText
+	(	this,
+		wxID_ANY,
+		" ",
+		wxDefaultPosition,
+		wxSize(1, 1)
+	);
+	m_top_sizer->Add(dummy, wxGBPosition(p_row, p_column));
 	return;
 }
 

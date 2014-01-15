@@ -72,6 +72,7 @@ private:
 	void on_cancel_button_click(wxCommandEvent& event);
 
 	void update_proto_journal_from_dialog() const;
+	void add_blank_space(int p_row, int p_column);
 
 	wxGridBagSizer* m_top_sizer;
 	AccountCtrl* m_source_account_ctrl;
