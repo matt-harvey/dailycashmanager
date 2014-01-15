@@ -56,7 +56,6 @@ AboutDialog::AboutDialog(wxAboutDialogInfo const& p_info, wxWindow* p_parent):
 	m_license_button(nullptr)
 {
 	Create(p_info, p_parent);
-		
 }
 
 AboutDialog::~AboutDialog() = default;

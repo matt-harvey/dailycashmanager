@@ -46,8 +46,8 @@ class TextCtrl;
  * Dialog to facilitate creation of new Accounts and editing of details
  * of existing Accounts.
  *
- * @todo LOW PRIORITY Enable user to delete an Account, but only if it's one for
- * which no Entries have been made, and for which the opening balance
+ * @todo LOW PRIORITY Enable user to delete an Account, but only if it's one
+ * for which no Entries have been made, and for which the opening balance
  * is nil, and where, after the proposed deletion, it will still be
  * the case that there is at least one balance sheet Account, at least
  * one revenue Account and at least one expense Account (because this
@@ -72,8 +72,8 @@ public:
 	 * for the user optionally to change some or all of the existing
 	 * characteristics of the Account.
 	 *
-	 * @param p_account_super_type AccountSuperType of the Account which will be
-	 * created or edited via the AccountDialog.
+	 * @param p_account_super_type AccountSuperType of the Account which will
+	 * be created or edited via the AccountDialog.
 	 */
 	AccountDialog
 	(	wxWindow* p_parent,
@@ -95,6 +95,7 @@ private:
 
 	void configure_budget_panel();
 	void configure_bottom_row();
+	void add_blank_space(int p_row, int p_column);
 
 	AccountSuperType account_super_type() const;
 

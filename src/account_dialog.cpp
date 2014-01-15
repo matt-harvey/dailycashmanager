@@ -178,7 +178,7 @@ AccountDialog::AccountDialog
 	m_account(p_account)
 {
 	JEWEL_ASSERT (p_parent);  // precondition
-	
+
 	DcmDatabaseConnection& dbc = m_account->database_connection();
 
 	if
@@ -196,7 +196,10 @@ AccountDialog::AccountDialog
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
 
-	// Row 0
+	add_blank_space(m_current_row, 5);
+	++m_current_row;
+
+	// next row
 	
 	wxStaticText* name_ctrl_label = new wxStaticText
 	(	this,
@@ -229,7 +232,7 @@ AccountDialog::AccountDialog
 
 	++m_current_row;
 
-	// Row 1
+	// next row
 
 	wxStaticText* account_type_ctrl_label = new wxStaticText
 	(	this,
@@ -276,7 +279,7 @@ AccountDialog::AccountDialog
 
 	++m_current_row;
 
-	// Row 2
+	// next row
 	
 	wxStaticText* description_label = new wxStaticText
 	(	this,
@@ -312,7 +315,7 @@ AccountDialog::AccountDialog
 
 	++m_current_row;
 
-	// Row 3
+	// next row
 	
 	wxStaticText* opening_amount_ctrl_label = new wxStaticText
 	(	this,
@@ -382,21 +385,24 @@ AccountDialog::AccountDialog
 		wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
 	);
 
-	// Hack to add some space to right.
-	wxStaticText* dummy = new wxStaticText
-	(	this,
-		wxID_ANY,
-		wxEmptyString,
-		wxDefaultPosition,
-		wxSize(1, 1)
-	);
-	m_top_sizer->Add(dummy, wxGBPosition(m_current_row, 5));
-
-	configure_budget_panel();
-
 	++m_current_row;
 
+	// next row
+
+	add_blank_space(m_current_row, 5);
+
+	configure_budget_panel();
+	++m_current_row;
+
+	// next row
+
 	configure_bottom_row();
+	++m_current_row;
+
+	// next row
+
+	add_blank_space(m_current_row, 5);
+
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
 	CentreOnScreen();
@@ -518,6 +524,21 @@ AccountDialog::configure_bottom_row()
 		wxDefaultSpan,
 		wxALIGN_LEFT
 	);
+
+	return;
+}
+
+void
+AccountDialog::add_blank_space(int p_row, int p_column)
+{
+	wxStaticText* dummy = new wxStaticText
+	(	this,
+		wxID_ANY,
+		" ",
+		wxDefaultPosition,
+		wxSize(1, 1)
+	);
+	m_top_sizer->Add(dummy, wxGBPosition(p_row, p_column));
 	return;
 }
 
