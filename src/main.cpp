@@ -28,6 +28,9 @@
 // require edits to CMakeLists.txt, app.cpp, build_user_guide.tcl and possibly
 // about_dialog.cpp.
 
+// TODO HIGH PRIORITY Put user guide URL in overview.dox, where it refers to
+// User Guide.
+
 // TODO MEDIUM PRIORITY Under KDE (at least on Mageia) the way I have set
 // up the widths of ComboBox and TextCtrl and wxButton (in various
 // controls in which these feature), where they are
