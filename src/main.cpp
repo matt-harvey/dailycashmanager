@@ -24,7 +24,9 @@
 // components such as underscore.js... OR, just give up on installing user-guide
 // on user's machine, and instead change code to access URL of user guide over
 // the net (avoiding a potential maintenance headache in having to maintain all
-// these license files through different versions of Sphinx...).
+// these license files through different versions of Sphinx...) (this would
+// require edits to CMakeLists.txt, app.cpp, build_user_guide.tcl and possibly
+// about_dialog.cpp.
 
 // TODO MEDIUM PRIORITY Under KDE (at least on Mageia) the way I have set
 // up the widths of ComboBox and TextCtrl and wxButton (in various
