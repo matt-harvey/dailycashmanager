@@ -194,6 +194,16 @@ As a safety measure, running ``make package`` always causes the tests to be
 built and run, prior to the package being built. The package will not be built
 unless all the tests pass.
 
+To build a .desktop file
+------------------------
+
+On Linux systems, you may want to create a .desktop file for use with
+``xdg-desktop-icon`` and related utilities. This can be done by entering::
+
+    make desktop_file
+
+The file "dailycashmanager.desktop" should then appear in the project root.
+
 To build multiple targets in one go
 -----------------------------------
 
@@ -202,8 +212,8 @@ to the project root, and enter::
 
 	make
 
-Note this will NOT install the application, will NOT generate the documentation
-and will NOT build a source tarball.
+Note this will NOT install the application, will NOT generate the documentation,
+will NOT generate a .desktop file and will NOT build a source tarball.
 
 Contact
 =======
