@@ -162,7 +162,7 @@ set (
 add_custom_target (
 	prebuild
 	ALL
-	COMMAND ${TCL_SH} "${PROJECT_SOURCE_DIR}/prebuild_driver.tcl"
+	COMMAND ${TCL_TCLSH} "${PROJECT_SOURCE_DIR}/prebuild_driver.tcl"
 )
 
 # Building the dcm_common library, which contains code used by both
@@ -261,7 +261,7 @@ add_dependencies (dcm_common prebuild)
 add_custom_target (
 	user_guide
 	ALL
-	COMMAND ${TCL_SH} "${PROJECT_SOURCE_DIR}/build_user_guide.tcl"
+	COMMAND ${TCL_TCLSH} "${PROJECT_SOURCE_DIR}/build_user_guide.tcl"
 )
 	
 # Building the tests
@@ -310,6 +310,21 @@ target_link_libraries (${executable_stem_name} dcm_common ${libraries})
 
 install (TARGETS ${executable_stem_name} RUNTIME DESTINATION "bin")
 install (DIRECTORY "user_guide/_build/html" DESTINATION ${user_guide_rel_dir})
+if (UNIX)
+	set (icon_filename "icon_100_100.png")
+	set (icon_rel_dir "share/pixmaps/${executable_stem_name}")
+	install (FILES "images/${icon_filename}" DESTINATION ${icon_rel_dir})
+endif ()
+
+# Building the .desktop file
+if (UNIX)
+	set (path_to_installed_icon "${CMAKE_INSTALL_PREFIX}/${icon_rel_dir}/${icon_filename}")
+	add_custom_target (
+		desktop_file
+		ALL
+		COMMAND ${TCL_TCLSH} generate_desktop_file.tcl ${application_name} ${executable_stem_name} ${path_to_installed_icon}
+	)
+endif ()
 
 # Instructions to build package (source package on Unix-like system, or
 # binary installation package on Windows)
