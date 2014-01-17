@@ -58,9 +58,9 @@ make_currencies
 {
 	JEWEL_ASSERT (vec.empty());  // precondition
 	vec.reserve(200);
-	// currency.inl contains repetitive code generated from a csv
+	// contains repetitive code generated from a csv
 	// file via a script.
-	#include "make_currencies_inc.hpp"
+	#include DCM_CURRENCIES_INCLUDE_FILE
 	return;
 }
 

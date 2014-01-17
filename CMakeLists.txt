@@ -159,10 +159,13 @@ set (
 	${wxWidgets_LIBRARIES}
 	${extra_libraries}
 )
+set (prebuild_outfile "make_currencies_inc.hpp")
+set (prebuild_outfilepath "include/${prebuild_outfile}")
+add_definitions (-DDCM_CURRENCIES_INCLUDE_FILE="${prebuild_outfile}")
 add_custom_target (
 	prebuild
 	ALL
-	COMMAND ${TCL_TCLSH} "${PROJECT_SOURCE_DIR}/prebuild_driver.tcl"
+	COMMAND ${TCL_TCLSH} prebuild_driver.tcl ${prebuild_outfilepath}
 )
 
 # Building the dcm_common library, which contains code used by both
@@ -261,7 +264,7 @@ add_dependencies (dcm_common prebuild)
 add_custom_target (
 	user_guide
 	ALL
-	COMMAND ${TCL_TCLSH} "${PROJECT_SOURCE_DIR}/build_user_guide.tcl"
+	COMMAND ${TCL_TCLSH} build_user_guide.tcl
 )
 	
 # Building the tests
@@ -418,8 +421,9 @@ else ()
 	)
 	set_directory_properties (
 		PROPERTIES
-			ADDITIONAL_MAKE_CLEAN_FILES "${tarball_name}"
-			ADDITIONAL_MAKE_CLEAN_FILES "${desktop_filename}"
+			ADDITIONAL_MAKE_CLEAN_FILES ${tarball_name}
+			ADDITIONAL_MAKE_CLEAN_FILES ${desktop_filename}
+			ADDITIONAL_MAKE_CLEAN_FILES ${prebuild_outfilepath}
 	)
 
 endif ()

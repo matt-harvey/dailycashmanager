@@ -17,12 +17,12 @@
 ###
 
 # Scans currencies.csv and outputs the repetitive bit of code
-# required for currency.cpp, as file make_currencies_inc.hpp. It is
+# required for currency.cpp, to file passed to command line argument. It is
 # intended make_currencies_inc.hpp be #included in make_currencies.cpp.
 
 set infile_name "currencies.csv"
 set infile [open $infile_name "r"]
-set outfile [open [file join "include" "make_currencies_inc.hpp"] "w"]
+set outfile [open [lindex $argv 0] "w"]
 
 # Discard comments and header row at top of file
 set start_found 0
