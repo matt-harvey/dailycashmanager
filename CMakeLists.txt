@@ -306,24 +306,24 @@ add_custom_target (
 add_executable(${executable_stem_name} src/main.cpp ${windows_resources})
 target_link_libraries (${executable_stem_name} dcm_common ${libraries})
 
+# Building the .desktop file (NOT part of ALL)
+set (desktop_filename "${executable_stem_name}.desktop")
+if (UNIX)
+	set (icon_filename "icon_100_100.png")
+	set (icon_rel_dir "share/pixmaps/${executable_stem_name}")
+	set (path_to_installed_icon "${CMAKE_INSTALL_PREFIX}/${icon_rel_dir}/${icon_filename}")
+	add_custom_target (
+		desktop_file
+		COMMAND ${TCL_TCLSH} generate_desktop_file.tcl ${application_name} ${executable_stem_name} ${path_to_installed_icon} ${desktop_filename}
+	)
+endif ()
+
 # Installation instructions
 
 install (TARGETS ${executable_stem_name} RUNTIME DESTINATION "bin")
 install (DIRECTORY "user_guide/_build/html" DESTINATION ${user_guide_rel_dir})
 if (UNIX)
-	set (icon_filename "icon_100_100.png")
-	set (icon_rel_dir "share/pixmaps/${executable_stem_name}")
 	install (FILES "images/${icon_filename}" DESTINATION ${icon_rel_dir})
-endif ()
-
-# Building the .desktop file
-if (UNIX)
-	set (path_to_installed_icon "${CMAKE_INSTALL_PREFIX}/${icon_rel_dir}/${icon_filename}")
-	add_custom_target (
-		desktop_file
-		ALL
-		COMMAND ${TCL_TCLSH} generate_desktop_file.tcl ${application_name} ${executable_stem_name} ${path_to_installed_icon}
-	)
 endif ()
 
 # Instructions to build package (source package on Unix-like system, or
@@ -419,6 +419,7 @@ else ()
 	set_directory_properties (
 		PROPERTIES
 			ADDITIONAL_MAKE_CLEAN_FILES "${tarball_name}"
+			ADDITIONAL_MAKE_CLEAN_FILES "${desktop_filename}"
 	)
 
 endif ()

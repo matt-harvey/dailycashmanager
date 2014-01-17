@@ -18,14 +18,12 @@
 
 # Generates the ".desktop" file for Linux builds.
 
-set req_args 3
+set req_args 4
 if {$argc != $req_args} {
     error "Wrong number of arguments: should be $req_args."
 }
-set application_name [lindex $argv 0]
-set executable_name [lindex $argv 1]
-set path_to_icon [lindex $argv 2]
-set out [open "${executable_name}.desktop" w]
+lassign $argv application_name executable_name path_to_icon desktop_filename
+set out [open $desktop_filename w]
 puts $out {[Desktop Entry]}
 puts $out ""
 puts $out "\tValue=1.0"
