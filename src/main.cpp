@@ -31,6 +31,15 @@
 // TODO HIGH PRIORITY Put user guide URL in overview.dox, where it refers to
 // User Guide.
 
+// TODO MEDIUM PRIORITY Do proper "make package" instructions using CPack to
+// make RPM and .deb packages.
+
+// TODO MEDIUM PRIORITY Within "make install" and/or "make package" for
+// Linux, include installation of icon and association of file extension with
+// application so that .dcm files can be opened by double-clicking and so that
+// application icon appears along with other applications' icons as usual for
+// Gnome, KDE etc..
+
 // TODO MEDIUM PRIORITY Under KDE (at least on Mageia) the way I have set
 // up the widths of ComboBox and TextCtrl and wxButton (in various
 // controls in which these feature), where they are
