@@ -414,7 +414,7 @@ else ()
 			cp user_guide/conf.py ${package_name}/user_guide &&
 			cp -r ${packaged_items} ${package_name} &&
 			rm ${package_name}/include/make_currencies_inc.hpp &&
-			rm ${package_name}/include/user_guide/LICENSE.rst &&
+			rm ${package_name}/user_guide/LICENSE.rst &&
 			tar -sczf ${tarball_name} ${package_name} &&
 			rm -rf ${package_name}
 		DEPENDS ${library_name} test user_guide
