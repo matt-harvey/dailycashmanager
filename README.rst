@@ -51,6 +51,15 @@ To build the API documentation, you will need:
 
 - Doxygen (known to work with version 1.8.3.1)
 
+To build the user guide, you will need:
+
+- Sphinx (documentation generator - known to work with version 1.1.3)
+- sphinx-better-theme (known to work with version 0.1.4)
+
+To build a binary installer for Windows, you will need:
+
+- Nullsoft Scriptable Install System (NSIS)
+
 At the time of writing, these dependencies can be obtained from the following
 locations:
 
@@ -61,6 +70,9 @@ locations:
 :Sqloxx:        https://github.com/skybaboon/sqloxx
 :UnitTest++:	http://unittest-cpp.sourceforge.net
 :Doxygen:	    http://www.stack.nl/~dimitri/doxygen
+:Sphinx:        http://sphinx-doc.org
+:sphinx-better-theme:       https://pypi.python.org/pypi/sphinx-better-theme
+:NSIS:          http://nsis.sourceforge.net
 
 Initial build configuration
 ===========================
@@ -92,14 +104,19 @@ to leave these logging options ON. (For more information on the significance of
 these macros, see the documentation for the jewel::Log class, in the Jewel
 library.)
 
-To build, test and install in one go
-====================================
+Basic installation
+==================
 
-At the project root, enter::
+On Unix-like systems
+--------------------
+
+On Unix-like systems, you must currently build and install from source.
+Unpackage the source tarball, ``cd`` into the root of the project source
+directory, then enter::
 	
 	make install
 
-If on a Unix-like system, you may need to run this as root, i.e.::
+You may need to run this as root, i.e.::
 
 	sudo make install
 
@@ -110,10 +127,51 @@ If and only if all the tests succeed, installation of the application
 will then proceed. For your information, a list of the installed files will be
 saved in the file "install_manifest.txt", in the project root.
 
-If any tests fail, you are strongly encouraged to send the developer
-your test output, along with the file "DailyCashManager_test.log" (which should
-appear in the project root), and the details of your system and build
-environment. (See Contact_ below for contact details.)
+If any tests fail, you are encouraged to send the developer your test output,
+along with the file "DailyCashManager_test.log" (which should appear in the
+project root), and the details of your system and build environment. (See
+Contact_ below for contact details.)
+
+On Windows
+----------
+
+Installing from binary installer
+................................
+
+This is by far the easiest way to install DailyCashManager on Windows.  Having
+downloaded the binary installer, simply double-click on the installer icon, and
+follow the prompts.
+
+Building the binary installer
+.............................
+
+If you want to build and install from source on Windows, you should build the
+binary installer first, then install the application using the binary
+installer. To build the binary installer, open a command prompt, and ``cd`` to
+the root of the unpackaged source directory. Then run ``cmake -G ...`` to tell
+CMake which generator to use (with the ``...`` replaced with an appropriate
+string specifying the generator - see CMake documentation for details). Then
+enter::
+
+    make package
+
+This will cause the application and tests to be built, and will cause the
+tests to be run, with the results output to the console. Only if all the tests
+succeed, a binary installer will be created, titled "DailyCashManager
+setup.exe" (or similar). Execute this file, and follow the prompts to install
+the application.
+
+On some configurations on Windows, it has been found that CMake is unable to
+locate wxWidgets during the build process, even if is installed on the system.
+To get around this, the CMake build script ("CMakeLists.txt") provides for the
+possibility of invoking an additional, custom build script, titled
+"wxWidgetsSpecial.cmake". If CMake cannot find wxWidgets in the normal way, then
+it looks for a file by this name, and invokes it if found. If you are
+familiar with the CMake scripting language, and you run into this problem, this
+gives you the opportunity to manually tell CMake which libraries etc. to link
+to on your system, by putting appropriate additional CMake commands into a file
+you create with this name; on most systems, however, you should not have to do
+this.
 
 To generate the documentation
 =============================
