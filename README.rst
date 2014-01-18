@@ -58,7 +58,7 @@ To build the user guide, you will need:
 
 To build a binary installer for Windows, you will need:
 
-- Nullsoft Scriptable Install System (NSIS)
+- Nullsoft Scriptable Install System (NSIS) (known to work with version 2.46)
 
 At the time of writing, these dependencies can be obtained from the following
 locations:
@@ -72,7 +72,7 @@ locations:
 :Doxygen:	    http://www.stack.nl/~dimitri/doxygen
 :Sphinx:        http://sphinx-doc.org
 :sphinx-better-theme:       https://pypi.python.org/pypi/sphinx-better-theme
-:NSIS:          http://nsis.sourceforge.net
+:NSIS:          http://nsis.sourceforge.net
 
 Initial build configuration
 ===========================
