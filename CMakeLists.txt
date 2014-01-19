@@ -323,9 +323,12 @@ endif ()
 
 # Installation instructions
 
-install (TARGETS ${executable_stem_name} RUNTIME DESTINATION "bin")
 install (DIRECTORY "user_guide/_build/html" DESTINATION ${user_guide_rel_dir})
+if (WIN32)
+	install (TARGETS ${executable_stem_name} RUNTIME DESTINATION .)
+endif ()
 if (UNIX)
+	install (TARGETS ${executable_stem_name} RUNTIME DESTINATION "bin")
 	install (FILES "images/${icon_filename}" DESTINATION ${icon_rel_dir})
 endif ()
 
