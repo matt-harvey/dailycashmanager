@@ -301,8 +301,11 @@ On Windows
 ----------
 
 Run the uninstaller, which should be located in the same folder as the
-"dailycashmanager.exe"; it can also be accessed via the Start menu, under
-"All Programs\DailyCashManager\Uninstall".
+"dailycashmanager.exe". (Unless you specified otherwise when installing the
+application, this will usually have defaulted to either "C:\Program Files
+(x86)\DailyCashManager" or "C:\Program Files\DailyCashManager). The uninstaller
+can usually also be accessed via the Start menu, under "All
+Programs\DailyCashManager\Uninstall".
 
 Contact
 =======
