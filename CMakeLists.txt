@@ -324,6 +324,7 @@ endif ()
 
 # Installation instructions
 
+install (FILES ${license_filename} DESTINATION ${doc_rel_dir})
 if (WIN32)
 	install (TARGETS ${executable_stem_name} RUNTIME DESTINATION .)
 endif ()
