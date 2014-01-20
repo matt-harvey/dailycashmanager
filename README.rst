@@ -200,7 +200,7 @@ enter the following at the project root::
 	make docs
 
 HTML documentation will then be generated in the project root directory,
-under ``html``, and can be browsed by opening the following file in your
+under "html", and can be browsed by opening the following file in your
 web browser::
 
 	[project root]/html/index.html
@@ -288,7 +288,7 @@ To build the user guide, enter::
 
     make user_guide
 
-The user guide web contents will be output to ``user_guide/_build/html``.
+The user guide web contents will be output to "user_guide/_build/html".
 
 To build multiple targets in one go
 -----------------------------------
