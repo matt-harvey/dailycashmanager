@@ -174,9 +174,10 @@ command line, and enter::
 
 This will cause the application and tests to be built, and will cause the
 tests to be run, with the results output to the console. Only if all the tests
-succeed, a binary installer will be created, titled "DailyCashManager
-setup.exe" (or similar). Execute this file, and follow the prompts to install
-the application.
+succeed, a binary installer will be created, titled "DailyCashManager-vX.Y.Z-
+setup.exe" (or similar, with "X", "Y" and "Z" being replaced by major, minor
+and patch version numbers, respectively). Execute this file, and follow the
+prompts to install the application.
 
 On some configurations on Windows, it has been found that CMake is unable to
 locate wxWidgets during the build process, even if is installed on the system.
