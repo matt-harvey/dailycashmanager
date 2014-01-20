@@ -27,6 +27,9 @@
 #include <wx/utils.h>
 #include <wx/window.h>
 
+// TODO In this control, alignment of text is unsightly, and some text doesn't
+// fit (at least not on some builds).
+
 namespace filesystem = boost::filesystem;
 
 namespace dcm
