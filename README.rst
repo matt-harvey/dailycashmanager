@@ -47,11 +47,11 @@ To build and install the application, you will need:
 
 - UnitTest++ (known to work with version 1.4)
 
-To build the API documentation, you will need:
+If you want to build the API documentation, you will need:
 
 - Doxygen (known to work with version 1.8.3.1)
 
-To build the user guide, you will need:
+If you want to build the user guide web contents, you will need:
 
 - Sphinx (documentation generator - known to work with version 1.1.3)
 - sphinx-better-theme (known to work with version 0.1.4)
@@ -229,9 +229,9 @@ After the test driver executable is built, the tests will automatically be run
 and the results displayed.
 
 If any tests fail, you are strongly encouraged to send the developer
-your test output, along with the file "DailyCashManager_test.log" (which should appear
-in the project root), and the details of your system and build environment. (See
-below for contact details.)
+your test output, along with the file "DailyCashManager_test.log" (which should
+appear in the project root), and the details of your system and build
+environment. (See below for contact details.)
 
 To build a package for distribution
 -----------------------------------
@@ -262,6 +262,15 @@ On Linux systems, you may want to create a .desktop file for use with
 
 The file "dailycashmanager.desktop" should then appear in the project root.
 
+To build the user guide
+-----------------------
+
+To build the user guide, enter::
+
+    make user_guide
+
+The user guide web contents will be output to ``user_guide/_build/html``.
+
 To build multiple targets in one go
 -----------------------------------
 
@@ -271,7 +280,8 @@ to the project root, and enter::
 	make
 
 Note this will NOT install the application, will NOT generate the documentation,
-will NOT generate a .desktop file and will NOT build a source tarball.
+will NOT generate a .desktop file, will NOT generate the user guide, and will
+NOT build a source tarball.
 
 Contact
 =======

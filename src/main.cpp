@@ -56,9 +56,6 @@
 // TODO MEDIUM PRIORITY Allow window borders to be dragged around, especially
 // for DraftJournalListCtrl. This make it easier for users on laptops.
 
-// TODO Incorporate instructions for making (and installing? or uploading?) user
-// guide into README.rst.
-
 // TODO Any additional "make clean" targets required?
 
 // TODO MEDIUM PRIORITY When the user creates a new file, ask if they want to
