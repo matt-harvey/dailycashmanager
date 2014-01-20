@@ -150,8 +150,26 @@ binary installer first, then install the application using the binary
 installer. To build the binary installer, open a command prompt, and ``cd`` to
 the root of the unpackaged source directory. Then run ``cmake -G ...`` to tell
 CMake which generator to use (with the ``...`` replaced with an appropriate
-string specifying the generator - see CMake documentation for details). Then
-enter::
+string specifying the generator - see CMake documentation for details).
+
+The binary installer will be built via CMake using the NSIS CMake module. By
+default, installers built via this module will *not* overwrite existing files
+with the same name. This is likely to cause unexpected behaviour when using
+the installer to upgrade from one version of the application to another. To
+avoid this confusion, and create an installer that will always overwrite
+existing files of the same name (where the newer file is different from the
+older file), you will need to manually change the file "NSIS.template.in",
+which should be located in the directory in which CMake is installed on your
+system, under the subdirectory
+"share\cmake-[major-version].[minor-version]\Modules". In "NSIS.template.in",
+just above the section entitled "General", add a line reading::
+
+    SetOverwrite on
+
+Save the amended "NSIS.template.in". (Note this will, of course, now effect all
+NSIS installers built using this CMake module, not just for DailyCashManager.)
+Now, return to the unpackaged DailyCashManager source directory, and on the
+command line, and enter::
 
     make package
 
