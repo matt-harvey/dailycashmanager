@@ -152,6 +152,11 @@ namespace
 		}
 	};
 
+	vector<wxString> developers()
+	{
+		return vector<wxString>{"Matthew Harvey"};
+	}
+
 }  // end anonymous namespace
 
 App::App():
@@ -195,16 +200,34 @@ App::copyright()
 	return ret;
 }
 
-vector<wxString>
-App::developers()
+wxString
+App::developer_credits()
 {
-	return vector<wxString>{"Matthew Harvey"};
+	auto const devs = developers();
+	switch (devs.size())
+	{
+	case 0:
+		return wxEmptyString;
+	case 1:
+		return wxString("Developed by ") + devs[0] + ".";
+	default:
+		; // empty statement
+	}
+	JEWEL_ASSERT (devs.size() >= 2);
+	wxString ret("Developed by: ");
+	ret += devs[0];
+	for (decltype(devs)::size_type i = 0 ; i != devs.size(); ++i)
+	{
+		ret += "; ";
+		ret += devs[i];
+	}
+	return ret + ".";
 }
 
 wxString
-App::logo_icon_designer()
+App::artist_credits()
 {
-	return wxString("Klara Stanke");
+	return wxString("Logo / icon design by Klara Stanke.");
 }
 
 wxString

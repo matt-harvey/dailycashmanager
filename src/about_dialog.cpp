@@ -16,17 +16,16 @@
 
 #include "gui/about_dialog.hpp"
 #include "app.hpp"
-#include "gui/button.hpp"
 #include "gui/sizing.hpp"
 #include <boost/filesystem.hpp>
 #include <jewel/assert.hpp>
-#include <wx/event.h>
-#include <wx/msgdlg.h>
+#include <jewel/log.hpp>
+#include <wx/hyperlink.h>
 #include <wx/sizer.h>
+#include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/utils.h>
 #include <wx/window.h>
-#include <vector>
 
 namespace filesystem = boost::filesystem;
 
@@ -35,25 +34,14 @@ namespace dcm
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(AboutDialog, wxGenericAboutDialog)
-	EVT_BUTTON
-	(	s_developers_button_id,
-		AboutDialog::on_developers_button_click
-	)
-	EVT_BUTTON
-	(	s_artists_button_id,
-		AboutDialog::on_artists_button_click
-	)
-	EVT_BUTTON
-	(	s_license_button_id,
-		AboutDialog::on_license_button_click
-	)
-END_EVENT_TABLE()
-
-AboutDialog::AboutDialog(wxAboutDialogInfo const& p_info, wxWindow* p_parent):
-	m_developers_button(nullptr),
-	m_artists_button(nullptr),
-	m_license_button(nullptr)
+AboutDialog::AboutDialog
+(	wxAboutDialogInfo const& p_info,
+	wxWindow* p_parent,
+	wxString const& p_developer_credits,
+	wxString const& p_artist_credits
+):
+	m_developer_credits(p_developer_credits),
+	m_artist_credits(p_artist_credits)
 {
 	Create(p_info, p_parent);
 }
@@ -63,83 +51,58 @@ AboutDialog::~AboutDialog() = default;
 void
 AboutDialog::DoAddCustomControls()
 {
-	m_developers_button = new Button
+	JEWEL_LOG_TRACE();
+	auto developers_summary = new wxStaticText
 	(	this,
-		s_developers_button_id,
-		wxString("Developers"),
+		wxID_ANY,
+		m_developer_credits,
 		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.y),
-		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+		wxDefaultSize,
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
 	);
-	AddControl(m_developers_button, wxSizerFlags().Expand());
-	m_artists_button = new Button
+	AddControl
+	(	developers_summary,
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL | wxEXPAND
+	);
+	auto artists_summary = new wxStaticText
 	(	this,
-		s_artists_button_id,
-		wxString("Artists"),
+		wxID_ANY,
+		m_artist_credits,
 		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.y),
-		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+		wxDefaultSize,
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
 	);
-	AddControl(m_artists_button, wxSizerFlags().Expand());
-	m_license_button = new Button
+	AddControl
+	(	artists_summary,
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL | wxEXPAND
+	);
+	auto license_summary = new wxStaticText
 	(	this,
-		s_license_button_id,
-		wxString("License"),
+		wxID_ANY,
+		App::application_name() +
+			" is made available under the Apache License, Version 2.0, " +
+			"which can be viewed at:",
 		wxDefaultPosition,
-		wxSize(medium_width(), wxDefaultSize.y),
-		wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
+		wxDefaultSize,
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
 	);
-	AddControl(m_license_button, wxSizerFlags().Expand());
-	return;
-}
-
-void
-AboutDialog::add_developer(wxString const& p_developer)
-{
-	m_developers.push_back(p_developer);
-	return;
-}
-
-void
-AboutDialog::add_artist(wxString const& p_artist)
-{
-	m_artists.push_back(p_artist);
-	return;
-}
-
-void
-AboutDialog::on_developers_button_click(wxCommandEvent& event)
-{
-	(void)event;  // silence compiler re. unused param.
-	wxString msg;
-	for (auto const& developer: m_developers)
-	{
-		msg += developer;
-		msg += "\n";
-	}
-	wxMessageBox(msg, wxString("Developers"));
-	return;
-}
-
-void
-AboutDialog::on_artists_button_click(wxCommandEvent& event)
-{
-	(void)event;  // silence compiler re. unused param.
-	wxString msg;
-	for (auto const& artist: m_artists)
-	{
-		msg += artist;
-		msg += "\n";
-	}
-	wxMessageBox(msg, wxString("Artists"));
-	return;
-}
-
-void
-AboutDialog::on_license_button_click(wxCommandEvent& event)
-{
-	(void)event;  // silence compiler re. unused param.
-	wxLaunchDefaultBrowser(App::license_url());
+	AddControl
+	(	license_summary,
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL | wxEXPAND
+	);
+	auto license_url = new wxHyperlinkCtrl
+	(	this,
+		wxID_ANY,
+		wxEmptyString,
+		"http://www.apache.org/licenses/LICENSE-2.0",
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	AddControl
+	(	license_url,
+		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL | wxEXPAND
+	);
+	JEWEL_LOG_TRACE();
 	return;
 }
 

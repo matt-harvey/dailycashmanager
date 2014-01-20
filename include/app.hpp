@@ -29,7 +29,6 @@
 #include <wx/snglinst.h>
 #include <wx/string.h>
 #include <memory>
-#include <vector>
 
 namespace dcm
 {
@@ -63,9 +62,9 @@ public:
 
 	static wxString copyright();
 
-	static std::vector<wxString> developers();
+	static wxString developer_credits();
 
-	static wxString logo_icon_designer();
+	static wxString artist_credits();
 
 	static wxString user_guide_url();
 

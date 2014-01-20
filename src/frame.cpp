@@ -551,19 +551,13 @@ Frame::on_menu_about(wxCommandEvent& event)
 	info.SetVersion(std8_to_wx(version_stream.str()));
 	info.SetCopyright(App::copyright());
 	SetIcon(wxIcon(icon_48_48_xpm));
-
 	info.SetWebSite("http://dailycashmanager.sourceforge.net");
-
-	// For now, using this for all builds, not just Windows...
-	AboutDialog dialog(info, this);
-	for (auto const developer: App::developers())
-	{
-		dialog.add_developer(developer);
-	}
-	wxString artist_info("Logo / icon designed by ");
-	artist_info += App::logo_icon_designer();
-	dialog.add_artist(artist_info);
-
+	AboutDialog dialog
+	(	info,
+		this,
+		App::developer_credits(),
+		App::artist_credits()
+	);
 	dialog.ShowModal();
 	return;
 }
