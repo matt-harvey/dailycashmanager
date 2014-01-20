@@ -222,9 +222,9 @@ Go to the project root and enter::
 This will clean all build targets from the project root, including
 the source tarball (see below) if present, but NOT including the HTML
 documentation or the User Guide. This is due to a quirk of CMake. To remove the
-HTML documentation, simply manually delete the ``html`` directory from the
+HTML documentation, simply manually delete the "html" directory from the
 project root. To remove the generated User Guide, manually delete the
-``user_guide\_build`` directory.
+"user_guide/_build" directory.
 
 Note this will *not* cause the application to be uninstalled from the host
 system.
@@ -321,10 +321,10 @@ On Windows
 
 Run the uninstaller, which should be located in the same folder as the
 "dailycashmanager.exe". (Unless you specified otherwise when installing the
-application, this will usually have defaulted to either "C:\Program Files
-(x86)\DailyCashManager" or "C:\Program Files\DailyCashManager). The uninstaller
+application, this will usually have defaulted to either "C:\\Program Files
+(x86)\\DailyCashManager" or "C:\\Program Files\\DailyCashManager). The uninstaller
 can usually also be accessed via the Start menu, under "All
-Programs\DailyCashManager\Uninstall".
+Programs\\DailyCashManager\\Uninstall".
 
 Contact
 =======
