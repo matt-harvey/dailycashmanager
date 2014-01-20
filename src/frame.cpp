@@ -552,8 +552,7 @@ Frame::on_menu_about(wxCommandEvent& event)
 	info.SetCopyright(App::copyright());
 	SetIcon(wxIcon(icon_48_48_xpm));
 
-	// TODO put proper website
-	info.SetWebSite("https://github.com/skybaboon/dailycashmanager");
+	info.SetWebSite("http://dailycashmanager.sourceforge.net");
 
 	// For now, using this for all builds, not just Windows...
 	AboutDialog dialog(info, this);
