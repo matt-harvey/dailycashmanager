@@ -165,7 +165,7 @@ just above the section entitled "General", add a line reading::
 
     SetOverwrite on
 
-Save the amended "NSIS.template.in". (Note this will, of course, now effect all
+Save the amended "NSIS.template.in". (Note this will, of course, affect all
 NSIS installers built using this CMake module, not just for DailyCashManager.)
 Now, return to the unpackaged DailyCashManager source directory, and on the
 command line, and enter::
