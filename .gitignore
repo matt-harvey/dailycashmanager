@@ -8,6 +8,7 @@ include/make_currencies_inc.hpp
 install_manifest.txt
 libdcm_common.a
 scratch
+scratch.dcm
 test_driver
 tmp
 user_guide/LICENSE.rst
