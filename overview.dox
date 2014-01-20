@@ -21,5 +21,5 @@
  * This documentation concerns the Application Programming Interface (API) of
  * the DailyCashManager C++ code base. It is targetted at developers rather than
  * users. Users seeking help on using the application should consult the User
- * Guide.
+ * Guide at http://dailycashmanager.sourceforge.net/user_guide.
  */

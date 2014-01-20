@@ -210,13 +210,19 @@ App::logo_icon_designer()
 wxString
 App::user_guide_url()
 {
-	auto const s = wxString(DCM_USER_GUIDE_DIR) + "/html";
-	if (s.empty() || s[0] != '/')
+	return "http://dailycashmanager.sourceforge.net/user_guide";
+}
+
+wxString
+App::license_url()
+{
+	auto const s = wxString(DCM_DOC_DIR);
+	if (s.empty() || s[0] == '/')
 	{
-		return "file:///" + s;
+		return "file:///" + s + "/" + DCM_LICENSE_FILENAME;
 	}
 	JEWEL_ASSERT (s.size() >= 1 && s[0] == '/');
-	return "file://" + s;
+	return "file://" + s + "/" + DCM_LICENSE_FILENAME;
 }
 
 wxString

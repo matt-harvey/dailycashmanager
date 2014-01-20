@@ -46,10 +46,11 @@ option (
 
 # Define this stuff here as used below
 if (WIN32)
-	set (user_guide_rel_dir "doc")
+	set (doc_rel_dir "doc")
 else ()
-	set (user_guide_rel_dir "share/doc/${executable_stem_name}")
+	set (doc_rel_dir "share/doc/${executable_stem_name}")
 endif ()
+set (license_filename "LICENSE")
 
 # Definitions to be passed to the compiler
 
@@ -63,7 +64,8 @@ add_definitions (
 	-DDCM_VERSION_MAJOR=${version_major}
 	-DDCM_VERSION_MINOR=${version_minor}
 	-DDCM_VERSION_PATCH=${version_patch}
-	-DDCM_USER_GUIDE_DIR="${CMAKE_INSTALL_PREFIX}/${user_guide_rel_dir}"
+	-DDCM_DOC_DIR="${CMAKE_INSTALL_PREFIX}/${doc_rel_dir}"
+	-DDCM_LICENSE_FILENAME="${license_filename}"
 )
 if (ENABLE_LOGGING)
 	add_definitions (-DJEWEL_ENABLE_LOGGING)
@@ -263,7 +265,6 @@ add_dependencies (dcm_common prebuild)
 
 add_custom_target (
 	user_guide
-	ALL
 	COMMAND ${TCL_TCLSH} build_user_guide.tcl
 )
 	
@@ -323,7 +324,7 @@ endif ()
 
 # Installation instructions
 
-install (DIRECTORY "user_guide/_build/html" DESTINATION ${user_guide_rel_dir})
+install (FILES ${license_filename} DESTINATION ${doc_rel_dir})
 if (WIN32)
 	install (TARGETS ${executable_stem_name} RUNTIME DESTINATION .)
 endif ()
@@ -359,7 +360,7 @@ if (WIN32)
 	set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon_200_200.ico")
 	set (CPACK_NSIS_INSTALLED_ICON_NAME "${executable_stem_name}.exe")
 	set (CPACK_NSIS_MENU_LINKS "${executable_stem_name}.exe" "${application_name}")  # Put a link to the application executable in the Shortcuts menu.
-	set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}\\\\LICENSE")
+	set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}\\\\${license_filename}")
 	set (CPACK_NSIS_MUI_FINISHPAGE_RUN "${executable_stem_name}.exe")  # Give user option to launch application immediately after installing.
 
 	# Create an association on the user's machine between the application
@@ -402,7 +403,7 @@ else ()
 		prebuild_driver.tcl
 		CMakeLists.txt
 		Doxyfile
-		LICENSE
+		${license_filename}
 		coding_style
 		currencies.csv
 		database_conventions
@@ -417,10 +418,10 @@ else ()
 			cp user_guide/conf.py ${package_name}/user_guide &&
 			cp -r ${packaged_items} ${package_name} &&
 			rm ${package_name}/include/make_currencies_inc.hpp &&
-			rm ${package_name}/user_guide/LICENSE.rst &&
+			rm ${package_name}/user_guide/${license_filename}.rst &&
 			tar -sczf ${tarball_name} ${package_name} &&
 			rm -rf ${package_name}
-		DEPENDS ${library_name} test user_guide
+		DEPENDS ${library_name} test
 	)
 	set_directory_properties (
 		PROPERTIES

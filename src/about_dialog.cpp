@@ -139,7 +139,7 @@ void
 AboutDialog::on_license_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused param.
-	wxLaunchDefaultBrowser(App::user_guide_url() + "/LICENSE.html");
+	wxLaunchDefaultBrowser(App::license_url());
 	return;
 }
 
