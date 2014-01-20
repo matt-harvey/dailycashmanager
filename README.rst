@@ -157,11 +157,10 @@ default, installers built via this module will *not* overwrite existing files
 with the same name. This is likely to cause unexpected behaviour when using
 the installer to upgrade from one version of the application to another. To
 avoid this confusion, and create an installer that will always overwrite
-existing files of the same name (where the newer file is different from the
-older file), you will need to manually change the file "NSIS.template.in",
+older versions, you will need to manually change the file "NSIS.template.in",
 which should be located in the directory in which CMake is installed on your
 system, under the subdirectory
-"share\cmake-[major-version].[minor-version]\Modules". In "NSIS.template.in",
+"share\\cmake-[major-version].[minor-version]\\Modules". In "NSIS.template.in",
 just above the section entitled "General", add a line reading::
 
     SetOverwrite on
