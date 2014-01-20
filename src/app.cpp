@@ -237,18 +237,6 @@ App::user_guide_url()
 }
 
 wxString
-App::license_url()
-{
-	auto const s = wxString(DCM_DOC_DIR);
-	if (s.empty() || s[0] == '/')
-	{
-		return "file:///" + s + "/" + DCM_LICENSE_FILENAME;
-	}
-	JEWEL_ASSERT (s.size() >= 1 && s[0] == '/');
-	return "file://" + s + "/" + DCM_LICENSE_FILENAME;
-}
-
-wxString
 App::filename_extension()
 {
 	return wxString(DCM_FILE_EXTENSION);

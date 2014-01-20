@@ -68,8 +68,6 @@ public:
 
 	static wxString user_guide_url();
 
-	static wxString license_url();
-
 	/**
 	 * @returns filename extension to be used with files
 	 * belonging to this application. Includes
