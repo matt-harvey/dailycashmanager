@@ -283,6 +283,27 @@ Note this will NOT install the application, will NOT generate the documentation,
 will NOT generate a .desktop file, will NOT generate the user guide, and will
 NOT build a source tarball.
 
+Uninstalling
+============
+
+On Unix-like systems
+--------------------
+
+In the project directory from which you ran ``make install``, there should be
+a plain text entitled "install_manifest.txt". To uninstall DailyCashManager,
+manually remove each of the files listed in this manifest. In addition, there
+is likely to be a configuration file, ".DailyCashManager", in your home
+folder; if present, remove it also (``rm ~/.DailyCashManager``).
+
+Note there is no ``make uninstall`` target.
+
+On Windows
+----------
+
+Run the uninstaller, which should be located in the same folder as the
+"dailycashmanager.exe"; it can also be accessed via the Start menu, under
+"All Programs\DailyCashManager\Uninstall".
+
 Contact
 =======
 
