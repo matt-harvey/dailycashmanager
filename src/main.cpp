@@ -41,10 +41,7 @@
 
 // TODO Facilitate automatic checking for updates from user's
 // machine, or else provide an easy way for users to sign up to a mailing
-// list that keeps them informed about updates. Also note we had to manually
-// add "SetOverwrite on" to the CMake NSIS template file, to ensure the
-// generated installer will overwrite existing files when doing updates. This
-// is not ideal.
+// list that keeps them informed about updates.
 
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.

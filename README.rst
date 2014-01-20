@@ -220,10 +220,11 @@ Go to the project root and enter::
 	make clean
 
 This will clean all build targets from the project root, including
-the source tarball (see below) if present, but NOT including the
-HTML documentation. This is due to a quirk of CMake. To remove the
+the source tarball (see below) if present, but NOT including the HTML
+documentation or the User Guide. This is due to a quirk of CMake. To remove the
 HTML documentation, simply manually delete the ``html`` directory from the
-project root.
+project root. To remove the generated User Guide, manually delete the
+``user_guide\_build`` directory.
 
 Note this will *not* cause the application to be uninstalled from the host
 system.
