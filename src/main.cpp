@@ -39,9 +39,8 @@
 /// TODO MEDIUM PRIORITY The database file should perhaps have a checksum to
 // guard against its contents changing other than via the application.
 
-// TODO Facilitate automatic checking for updates from user's
-// machine, or else provide an easy way for users to sign up to a mailing
-// list that keeps them informed about updates.
+// TODO LOW PRIORITY Facilitate automatic checking for updates from user's
+// machine.
 
 // TODO HIGH PRIORITY Make the GUI display acceptably on smaller screen
 // i.e. laptop.
