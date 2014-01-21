@@ -36,6 +36,11 @@ namespace dcm
 namespace gui
 {
 
+// TODO MEDIUM PRIORITY Go back to using wxAboutDialog again?
+// We no longer need to provide custom behaviour here, so
+// might as well. However, having custom AboutDialog handy
+// means we can quickly add extra stuff if we need to.
+
 AboutDialog::AboutDialog
 (	wxAboutDialogInfo const& p_info,
 	wxWindow* p_parent,
