@@ -217,7 +217,7 @@ App::developer_credits()
 	JEWEL_ASSERT (devs.size() >= 2);
 	wxString ret("Developed by: ");
 	ret += devs[0];
-	for (size_t i = 0 ; i != devs.size(); ++i)
+	for (size_t i = 1 ; i != devs.size(); ++i)
 	{
 		ret += "; ";
 		ret += devs[i];
