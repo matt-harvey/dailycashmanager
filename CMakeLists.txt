@@ -418,6 +418,7 @@ else ()
 	add_custom_target (
 		package
 		COMMAND
+			rm -rf ${package_name} &&
 			mkdir ${package_name} &&
 			mkdir ${package_name}/user_guide &&
 			cp user_guide/*.rst ${package_name}/user_guide &&
