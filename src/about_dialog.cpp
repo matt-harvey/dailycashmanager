@@ -27,8 +27,7 @@
 #include <wx/utils.h>
 #include <wx/window.h>
 
-// TODO In this control, alignment of text is unsightly, and some text doesn't
-// fit (at least not on some builds).
+// TODO On at least some builds, not all the text actually fits.
 
 namespace filesystem = boost::filesystem;
 
@@ -41,10 +40,14 @@ AboutDialog::AboutDialog
 (	wxAboutDialogInfo const& p_info,
 	wxWindow* p_parent,
 	wxString const& p_developer_credits,
-	wxString const& p_artist_credits
+	wxString const& p_artist_credits,
+	wxString const& p_brief_license_summary,
+	wxString const& p_license_url
 ):
 	m_developer_credits(p_developer_credits),
-	m_artist_credits(p_artist_credits)
+	m_artist_credits(p_artist_credits),
+	m_brief_license_summary(p_brief_license_summary),
+	m_license_url(p_license_url)
 {
 	Create(p_info, p_parent);
 }
@@ -55,56 +58,19 @@ void
 AboutDialog::DoAddCustomControls()
 {
 	JEWEL_LOG_TRACE();
-	auto developers_summary = new wxStaticText
-	(	this,
-		wxID_ANY,
-		m_developer_credits,
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
-	);
-	AddControl
-	(	developers_summary,
-		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL | wxEXPAND
-	);
-	auto artists_summary = new wxStaticText
-	(	this,
-		wxID_ANY,
-		m_artist_credits,
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
-	);
-	AddControl
-	(	artists_summary,
-		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL | wxEXPAND
-	);
-	auto license_summary = new wxStaticText
-	(	this,
-		wxID_ANY,
-		App::application_name() +
-			" is made available under the Apache License, Version 2.0, " +
-			"which can be viewed at:",
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL
-	);
-	AddControl
-	(	license_summary,
-		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL | wxEXPAND
-	);
+	AddText(m_developer_credits);
+	AddText(m_artist_credits);
+	AddText(m_brief_license_summary);
+	AddText("A copy of the license can be obtained here:");
 	auto license_url = new wxHyperlinkCtrl
 	(	this,
 		wxID_ANY,
 		wxEmptyString,
-		"http://www.apache.org/licenses/LICENSE-2.0",
+		m_license_url,
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	AddControl
-	(	license_url,
-		wxALIGN_CENTRE | wxALIGN_CENTRE_VERTICAL | wxEXPAND
-	);
+	AddControl(license_url, wxEXPAND);
 	JEWEL_LOG_TRACE();
 	return;
 }

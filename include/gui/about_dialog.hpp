@@ -40,7 +40,9 @@ public:
 	(	wxAboutDialogInfo const& p_info,
 		wxWindow* p_parent,
 		wxString const& p_developer_credits,
-		wxString const& p_artist_credits
+		wxString const& p_artist_credits,
+		wxString const& p_brief_license_summary,
+		wxString const& p_license_url
 	);
 
 	AboutDialog(AboutDialog const& rhs) = delete;
@@ -51,11 +53,11 @@ public:
 
 	void DoAddCustomControls() override;
 
-
 private:
-
 	wxString m_developer_credits;
 	wxString m_artist_credits;
+	wxString m_brief_license_summary;
+	wxString m_license_url;
 
 };  // class AboutDialog
 

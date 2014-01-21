@@ -556,7 +556,9 @@ Frame::on_menu_about(wxCommandEvent& event)
 	(	info,
 		this,
 		App::developer_credits(),
-		App::artist_credits()
+		App::artist_credits(),
+		App::brief_license_summary(),
+		App::license_url()
 	);
 	dialog.ShowModal();
 	return;

@@ -227,13 +227,25 @@ App::developer_credits()
 wxString
 App::artist_credits()
 {
-	return wxString("Logo / icon design by Klara Stanke.");
+	return wxString("Logo / icon designed by Klara Stanke.");
 }
 
 wxString
 App::user_guide_url()
 {
 	return "http://dailycashmanager.sourceforge.net/user_guide";
+}
+
+wxString
+App::brief_license_summary()
+{
+	return "Licensed under the Apache License, Version 2.0.";
+}
+
+wxString
+App::license_url()
+{
+	return "http://www.apache.org/licenses/LICENSE-2.0";
 }
 
 wxString
