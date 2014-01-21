@@ -301,6 +301,8 @@ App::configure_logging()
 	if (logging_enabled())
 	{
 		Log::set_threshold(Log::trace);
+		// NOTE This directory is also referred to to CMakeLists in NSIS
+		// extra uninstall instructions.
 #		ifdef JEWEL_ON_WINDOWS
 			string const a("C:\\ProgramData\\");
 			string const b = wx_to_std8(application_name()) + "\\";

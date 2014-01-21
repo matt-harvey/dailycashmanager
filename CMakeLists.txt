@@ -380,11 +380,14 @@ if (WIN32)
 	)
 	# NOTE we here we also delete the application name registry key as this is
 	# the one created by wxConfig.
+	# NOTE the directory that is removed here is also referred to in
+	# App::configure_logging().
 	set (
 		CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS " 
 			DeleteRegKey HKEY_CLASSES_ROOT '${file_extension}' 
 			DeleteRegKey HKEY_CLASSES_ROOT '${file_description_word}' 
 			DeleteRegKey HKEY_CURRENT_USER 'Software\\\\${application_name}'
+			RMDir /r /REBOOTOK 'C:\\\\ProgramData\\\\${application_name}'
 		"
 	)
 	include (CPack)
