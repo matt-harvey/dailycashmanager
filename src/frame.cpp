@@ -26,7 +26,6 @@
 #include "repeater.hpp"
 #include "string_conv.hpp"
 #include "string_flags.hpp"
-#include "gui/about_dialog.hpp"
 #include "gui/account_dialog.hpp"
 #include "gui/account_list_ctrl.hpp"
 #include "gui/entry_list_ctrl.hpp"
@@ -39,6 +38,7 @@
 #include <jewel/version.hpp>
 #include <sqloxx/handle.hpp>
 #include <sqloxx/id.hpp>
+#include <wx/aboutdlg.h>
 #include <wx/event.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
@@ -545,14 +545,19 @@ Frame::on_menu_about(wxCommandEvent& event)
 	JEWEL_LOG_TRACE();
 	(void)event;  // silence compiler re. unused parameter
 	ostringstream version_stream;
-	version_stream << App::version();
+	version_stream << 'v' << App::version();
 	wxAboutDialogInfo info;
 	info.SetName(App::application_name());
 	info.SetVersion(std8_to_wx(version_stream.str()));
+	info.SetCopyright(App::copyright());
+	for (auto const dev: App::developers()) info.AddDeveloper(dev);
+	wxString artist_info("Logo/icon designed by ");
+	artist_info += App::logo_icon_designer();
+	info.AddArtist(artist_info);
 	SetIcon(wxIcon(icon_48_48_xpm));
-	info.SetWebSite("http://dailycashmanager.sourceforge.net");
-	AboutDialog dialog(info, this, App::copyright());
-	dialog.ShowModal();
+	info.SetWebSite(App::home_page_url());
+	info.SetLicense(App::license_brief());
+	wxAboutBox(info);
 	return;
 }
 

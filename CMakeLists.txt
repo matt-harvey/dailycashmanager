@@ -214,7 +214,6 @@ set (
 	src/repeater.cpp
 	src/transaction_type.cpp
 	#gui stuff...
-	src/about_dialog.cpp
 	src/account_ctrl.cpp
 	src/account_dialog.cpp
 	src/account_list_ctrl.cpp
