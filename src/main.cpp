@@ -34,6 +34,9 @@
 // hard-coded height number, they still seem to come out different heights
 // on KDE. It doesn't make a lot of sense.
 
+// TODO HIGH PRIORITY Figure out why icon isn't appearing in body of NSIS
+// installer.
+
 // TODO MEDIUM PRIORITY Tooltips aren't showing on Windows.
 
 /// TODO MEDIUM PRIORITY The database file should perhaps have a checksum to
