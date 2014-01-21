@@ -138,9 +138,13 @@ On Windows
 Installing from binary installer
 ................................
 
-This is by far the easiest way to install DailyCashManager on Windows.  Having
-downloaded the binary installer, simply double-click on the installer icon, and
-follow the prompts.
+This is by far the easiest way to install DailyCashManager on Windows.
+
+A binary installer can be obtained from
+https://sourceforge.net/projects/dailycashmanager/files.
+
+Having downloaded the binary installer, simply double-click on the installer
+icon, and follow the prompts.
 
 Building the binary installer
 .............................
