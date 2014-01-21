@@ -314,6 +314,9 @@ manually remove each of the files listed in this manifest. In addition, there
 is likely to be a configuration file, ".DailyCashManager", in your home
 folder; if present, remove it also (``rm ~/.DailyCashManager``).
 
+If you want to be very thorough, you may also want to remove the log file,
+which, if present, should be located at "/tmp/DailyCashManager.log".
+
 Note there is no ``make uninstall`` target.
 
 On Windows
