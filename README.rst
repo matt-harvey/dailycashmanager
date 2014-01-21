@@ -312,16 +312,17 @@ Uninstalling
 On Unix-like systems
 --------------------
 
-In the project directory from which you ran ``make install``, there should be
-a plain text entitled "install_manifest.txt". To uninstall DailyCashManager,
+There is currently no ``make uninstall`` target; however, manual uninstallation
+is easy enough.
+
+In the project directory from which you ran ``make install``, there should be a
+plain text file entitled "install_manifest.txt". To uninstall DailyCashManager,
 manually remove each of the files listed in this manifest. In addition, there
-is likely to be a configuration file, ".DailyCashManager", in your home
-folder; if present, remove it also (``rm ~/.DailyCashManager``).
+is likely to be a configuration file, ".DailyCashManager", in your home folder;
+if present, remove it also (``rm ~/.DailyCashManager``).
 
 If you want to be very thorough, you may also want to remove the log file,
 which, if present, should be located at "/tmp/DailyCashManager.log".
-
-Note there is no ``make uninstall`` target.
 
 On Windows
 ----------

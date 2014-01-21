@@ -20,6 +20,8 @@
 #include <boost/filesystem.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
+#include <wx/aboutdlg.h>
+#include <wx/generic/aboutdlgg.h>
 #include <wx/hyperlink.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -37,15 +39,9 @@ namespace gui
 AboutDialog::AboutDialog
 (	wxAboutDialogInfo const& p_info,
 	wxWindow* p_parent,
-	wxString const& p_developer_credits,
-	wxString const& p_artist_credits,
-	wxString const& p_brief_license_summary,
-	wxString const& p_license_url
+	wxString const& p_credits
 ):
-	m_developer_credits(p_developer_credits),
-	m_artist_credits(p_artist_credits),
-	m_brief_license_summary(p_brief_license_summary),
-	m_license_url(p_license_url)
+	m_credits(p_credits)
 {
 	Create(p_info, p_parent);
 }
@@ -56,19 +52,24 @@ void
 AboutDialog::DoAddCustomControls()
 {
 	JEWEL_LOG_TRACE();
-	AddText(m_developer_credits);
-	AddText(m_artist_credits);
-	AddText(m_brief_license_summary);
-	AddText("A copy of the license can be obtained here:");
-	auto license_url = new wxHyperlinkCtrl
-	(	this,
-		wxID_ANY,
-		wxEmptyString,
-		m_license_url,
-		wxDefaultPosition,
-		wxDefaultSize
+	AddText(m_credits);
+	AddCollapsiblePane
+	(	wxString("License"),
+		wxString
+		(	"Licensed under the Apache License, Version 2.0 (the \"License\");\n"
+			"you may not use this software except in compliance with the License.\n"
+			"You may obtain a copy of the License at\n"
+			"\n"
+			"http://www.apache.org/licenses/LICENSE-2.0\n"
+			"\n"
+			"Unless required by applicable law or agreed to in writing, software\n"
+			"distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+			"WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+			"See the License for the specific language governing permissions and\n"
+			"limitations under the License\n"
+			"\n"
+		)
 	);
-	AddControl(license_url, wxEXPAND);
 	JEWEL_LOG_TRACE();
 	return;
 }

@@ -62,15 +62,7 @@ public:
 
 	static wxString copyright();
 
-	static wxString developer_credits();
-
-	static wxString artist_credits();
-
 	static wxString user_guide_url();
-
-	static wxString brief_license_summary();
-
-	static wxString license_url();
 
 	/**
 	 * @returns filename extension to be used with files

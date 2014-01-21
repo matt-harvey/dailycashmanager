@@ -352,12 +352,12 @@ if (WIN32)
 	set (CPACK_GENERATOR NSIS)
 	set (CPACK_NSIS_PACKAGE_NAME "${application_name}")
 	set (CPACK_PACKAGE_VENDOR "${application_name}")
-	set (CPACK_PACKAGE_FILE_NAME "${application_name}-v${CPACK_PACKAGE_VERSION}-working-setup")
+	set (CPACK_PACKAGE_FILE_NAME "${application_name}-v${CPACK_PACKAGE_VERSION}-setup")
 	set (CPACK_PACKAGE_INSTALL_DIRECTORY "${application_name}")
 
 	set (CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon_200_200.ico")
 	set (CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon_200_200.ico")
-	set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon_200_200.ico")
+	set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon_200_200.xpm")
 	set (CPACK_NSIS_INSTALLED_ICON_NAME "${executable_stem_name}.exe")
 	set (CPACK_NSIS_MENU_LINKS "${executable_stem_name}.exe" "${application_name}")  # Put a link to the application executable in the Shortcuts menu.
 	set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}\\\\${license_filename}")
@@ -394,7 +394,7 @@ if (WIN32)
 
 else ()
 
-	set (package_name "${application_name}-${version_major}.${version_minor}.${version_patch}-working")
+	set (package_name "${application_name}-${version_major}.${version_minor}.${version_patch}")
 	set (tarball_name "${package_name}.tar.gz")
 	set (
 		packaged_items
