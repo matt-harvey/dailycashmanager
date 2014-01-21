@@ -406,7 +406,6 @@ else ()
 		images
 		src
 		tests
-		build_user_guide.tcl
 		prebuild_driver.tcl
 		CMakeLists.txt
 		Doxyfile
