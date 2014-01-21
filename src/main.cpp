@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+// TODO MEDIUM PRIORITY Get icon to show within installer pages (note this
+// wasn't working with "set(CPACK_PACKAGE_ICON...)" - including with a .bmp
+// file); currently, it just uses the generic NSIS installer icon.
+
 // TODO MEDIUM PRIORITY There is some flicker still when refreshing Report
 // tabs on Windows.
 
