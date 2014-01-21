@@ -549,17 +549,9 @@ Frame::on_menu_about(wxCommandEvent& event)
 	wxAboutDialogInfo info;
 	info.SetName(App::application_name());
 	info.SetVersion(std8_to_wx(version_stream.str()));
-	info.SetCopyright(App::copyright());
 	SetIcon(wxIcon(icon_48_48_xpm));
 	info.SetWebSite("http://dailycashmanager.sourceforge.net");
-	AboutDialog dialog
-	(	info,
-		this,
-		App::developer_credits(),
-		App::artist_credits(),
-		App::brief_license_summary(),
-		App::license_url()
-	);
+	AboutDialog dialog(info, this, App::copyright());
 	dialog.ShowModal();
 	return;
 }

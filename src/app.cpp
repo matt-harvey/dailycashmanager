@@ -198,37 +198,8 @@ App::copyright()
 		ret += ", ";
 		ret += *it;
 	}
+	ret += "\nLogo/icon design: Copyright 2013 Klara Stanke";
 	return ret;
-}
-
-wxString
-App::developer_credits()
-{
-	auto const devs = developers();
-	switch (devs.size())
-	{
-	case 0:
-		return wxEmptyString;
-	case 1:
-		return wxString("Developed by ") + devs[0] + ".";
-	default:
-		; // empty statement
-	}
-	JEWEL_ASSERT (devs.size() >= 2);
-	wxString ret("Developed by: ");
-	ret += devs[0];
-	for (size_t i = 1 ; i != devs.size(); ++i)
-	{
-		ret += "; ";
-		ret += devs[i];
-	}
-	return ret + ".";
-}
-
-wxString
-App::artist_credits()
-{
-	return wxString("Logo / icon designed by Klara Stanke.");
 }
 
 wxString
@@ -241,18 +212,6 @@ App::user_guide_url()
 		<< "."
 		<< vn.minor();
 	return std8_to_wx(oss.str());
-}
-
-wxString
-App::brief_license_summary()
-{
-	return "Licensed under the Apache License, Version 2.0.";
-}
-
-wxString
-App::license_url()
-{
-	return "http://www.apache.org/licenses/LICENSE-2.0";
 }
 
 wxString
