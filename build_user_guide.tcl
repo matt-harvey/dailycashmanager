@@ -16,20 +16,6 @@
 # limitations under the License.
 ###
 
-# Copy text of LICENSE into "user_guide" directory, with suitable title and
-# file extension to satisfy Sphinx.
-set in [open "LICENSE" r]
-set out [open [file nativename "user_guide/LICENSE.rst"] w]
-puts $out "LICENSE"
-puts $out "======="
-puts $out ""
-while {[gets $in line] >= 0} {
-    puts $out $line
-}
-close $in
-flush $out
-close $out
-
 # Generate html user guide using Sphinx
 exec sphinx-build -b html -d [file nativename "user_guide/_build/doctrees"] \
     user_guide [file nativename "user_guide/_build/html"] \
