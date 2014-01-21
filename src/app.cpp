@@ -233,7 +233,13 @@ App::artist_credits()
 wxString
 App::user_guide_url()
 {
-	return "http://dailycashmanager.sourceforge.net/user_guide";
+	auto const vn = version();
+	ostringstream oss;
+	oss << "http://dailycashmanager.sourceforge.net/user_guide/"
+	    << vn.major()
+		<< "."
+		<< vn.minor();
+	return std8_to_wx(oss.str());
 }
 
 wxString
