@@ -265,7 +265,12 @@ add_dependencies (dcm_common prebuild)
 
 add_custom_target (
 	user_guide
-	COMMAND ${TCL_TCLSH} build_user_guide.tcl
+	COMMAND
+		sphinx-build
+			-b "html"
+			-d "user_guide/_build/doctrees"
+			"user_guide"
+			"user_guide/_build/html"
 )
 	
 # Building the tests
@@ -421,7 +426,6 @@ else ()
 			cp user_guide/conf.py ${package_name}/user_guide &&
 			cp -r ${packaged_items} ${package_name} &&
 			rm ${package_name}/include/make_currencies_inc.hpp &&
-			rm ${package_name}/user_guide/${license_filename}.rst &&
 			tar -sczf ${tarball_name} ${package_name} &&
 			rm -rf ${package_name}
 		DEPENDS ${library_name} test
