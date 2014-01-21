@@ -27,8 +27,6 @@
 #include <wx/utils.h>
 #include <wx/window.h>
 
-// TODO On at least some builds, not all the text actually fits.
-
 namespace filesystem = boost::filesystem;
 
 namespace dcm
