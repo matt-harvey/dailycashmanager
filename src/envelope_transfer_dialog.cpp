@@ -220,7 +220,7 @@ EnvelopeTransferDialog::on_ok_button_click(wxCommandEvent& event)
 	JEWEL_LOG_TRACE();
 	(void)event;  // silence compiler re. unused parameter
 
-	// TODO MEDIUM PRIORITY Address tiny change of
+	// TODO MEDIUM PRIORITY Address tiny chance of
 	// DecimalUnaryMinusException being thrown here.
 	update_proto_journal_from_dialog();
 
