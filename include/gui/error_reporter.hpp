@@ -27,7 +27,11 @@ namespace gui
 {
 
 /**
- * @todo MEDIUM PRIORITY Document what this does.
+ * An instance of this class constitutes a mechanism for reporting errors
+ * to the user. Usually you would want to create on ErrorReporter instance
+ * for each instance of wxApp. Should only be used to report genuine errors or
+ * exceptions that should not occur in the normal course of application
+ * usage.
  */
 class ErrorReporter
 {
@@ -40,7 +44,6 @@ public:
 	ErrorReporter& operator=(ErrorReporter&& rhs) = delete;
 	virtual ~ErrorReporter();
 
-	// client retains ownership of pointer
 	void report(std::exception* p_exception = nullptr) const;
 
 	void set_db_file_location
