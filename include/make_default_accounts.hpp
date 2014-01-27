@@ -34,8 +34,9 @@ class DcmDatabaseConnection;
 /**
  * @returns a vector of handles to "suggested default Accounts" that might be
  * presented to the user as a starting point when setting up a new DCM
- * file. The Accounts will all names and AccountTypes initialized, and will 
- * have an empty wxString as their description. They will \e not have their
+ * file. The Accounts will all have names and AccountTypes initialized, and
+ * will have their descriptions initialized (possibly to an empty wxString).
+ * They will \e not have their
  * Commodity initialized though - this must be done before the Accounts
  * are saved.
  *
@@ -72,7 +73,6 @@ void make_default_accounts
 	std::vector<sqloxx::Handle<Account> >& vec,
 	AccountType p_account_type
 );
-
 
 }  // namespace dcm
 

@@ -345,7 +345,6 @@ SetupWizard::configure_accounts()
 		if (!name_wx.IsEmpty())
 		{
 			aug_acc.account->set_commodity(selected_currency());
-			aug_acc.account->set_description(wxString(""));
 			aug_acc.account->set_visibility(Visibility::visible);
 			aug_acc.account->save();
 			JEWEL_ASSERT 

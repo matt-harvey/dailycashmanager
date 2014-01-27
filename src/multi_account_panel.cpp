@@ -133,7 +133,7 @@ MultiAccountPanel::MultiAccountPanel
 		wxString(" name:");
 	display_text(account_name_label, 0);
 	display_text(wxString(" Type:"), 1);
-	display_text(wxString(" Description:"), 2);
+	display_text(wxString(" Description (optional):"), 2);
 	// Deliberately skipping column 3.
 	switch (m_account_super_type)
 	{

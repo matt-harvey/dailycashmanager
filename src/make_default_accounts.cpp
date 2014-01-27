@@ -61,34 +61,48 @@ make_default_accounts
 	AccountType p_account_type
 )
 {
-	vector<wxString> names;
+	struct ProtoAccount
+	{
+		wxString const name;
+		wxString const description;
+	};
 
-	// First we fill a vector with the Account names.
+	vector<ProtoAccount> proto_accounts;
+
 	switch (p_account_type)
 	{
 	case AccountType::asset:
-		names.push_back(wxString("Cash"));
-		names.push_back(wxString("Cheque account"));
+		proto_accounts = vector<ProtoAccount>
+		{	ProtoAccount{"Cash", "Notes and coins"},
+			ProtoAccount{"Cheque account", ""}
+		};
 		break;
 	case AccountType::liability:
-		names.push_back(wxString("Credit card"));
+		proto_accounts = vector<ProtoAccount>
+		{	ProtoAccount{"Credit card", ""}
+		};
 		break;
 	case AccountType::equity:
 		// There are no default equity Accounts.
 		break;
 	case AccountType::revenue:
-		names.push_back(wxString("Salary"));
-		names.push_back(wxString("Interest received"));
+		proto_accounts = vector<ProtoAccount>
+		{	ProtoAccount{"Salary", ""},
+			ProtoAccount{"Interest received", ""}
+		};
 		break;
 	case AccountType::expense:
-		names.reserve(7);
-		names.push_back(wxString("Food"));
-		names.push_back(wxString("Household supplies"));
-		names.push_back(wxString("Rent"));
-		names.push_back(wxString("Electricity"));
-		names.push_back(wxString("Gas"));
-		names.push_back(wxString("Interest paid"));
-		names.push_back(wxString("Recreation"));
+		proto_accounts = vector<ProtoAccount>
+		{	ProtoAccount{"Food", "Food and drink"},
+			ProtoAccount
+			{	"Household supplies",
+				"Small household consumables, excluding food"
+			},
+			ProtoAccount{"Rent", ""},
+			ProtoAccount{"Electricity", ""},
+			ProtoAccount{"Interest paid", ""},
+			ProtoAccount{"Entertainment", "Books, music, films etc."}
+		};
 		// TODO MEDIUM PRIORITY Do we want a "mortgage" Account among the
 		// defaults? The correct accounting for mortgage repayments is fairly
 		// complex. How would we present it to the user? Would we just cheat and
@@ -105,10 +119,10 @@ make_default_accounts
 	// (but note we don't save the Accounts - saving them will be at the
 	// discretion of the user, and will be done in client code closer to
 	// the UI).
-	for (wxString const& name: names)
+	for (auto const& proto_account: proto_accounts)
 	{
 		Handle<Account> const account(p_database_connection);
-		account->set_name(name);
+		account->set_name(proto_account.name);
 		account->set_account_type(p_account_type);
 
 		// Note Commodity is left uninitialized. This is a bit odd.
@@ -120,7 +134,7 @@ make_default_accounts
 		// DcmDatabaseConnection. It is easier for certain client code
 		// if it is able to create the Accounts first.
 
-		account->set_description(wxString(""));
+		account->set_description(proto_account.description);
 		account->set_visibility(Visibility::visible);
 		vec.push_back(account);
 	}
