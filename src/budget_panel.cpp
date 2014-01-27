@@ -55,6 +55,7 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/window.h>
+#include <wx/wupdlock.h>
 #include <vector>
 
 using boost::numeric_cast;
@@ -284,6 +285,8 @@ BudgetPanel::BudgetPanel
 		}
 	}
 
+	update_button_disabledness();
+
 	// "Admin"
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -301,6 +304,7 @@ void
 BudgetPanel::on_pop_item_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter.
+	wxWindowUpdateLocker const update_locker(this);
 	pop_item_component();
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
@@ -312,6 +316,7 @@ void
 BudgetPanel::on_push_item_button_click(wxCommandEvent& event)
 {
 	(void)event;  // Silence compiler re. unused parameter.
+	wxWindowUpdateLocker const update_locker(this);
 	Handle<BudgetItem> const budget_item(database_connection());
 	budget_item->set_account(m_account);
 	budget_item->set_description(wxString(""));
@@ -569,6 +574,16 @@ BudgetPanel::update_budgets_from_dialog()
 }
 
 void
+BudgetPanel::update_button_disabledness()
+{
+	if (m_pop_item_button)
+	{
+		m_pop_item_button->Enable(!m_budget_item_components.empty());
+	}
+	return;
+}
+
+void
 BudgetPanel::push_item_component(Handle<BudgetItem> const& p_budget_item)
 {
 	JEWEL_ASSERT (p_budget_item->account() == m_account);
@@ -616,6 +631,7 @@ BudgetPanel::push_item_component(Handle<BudgetItem> const& p_budget_item)
 	);
 	m_budget_item_components.push_back(budget_item_component);
 	++m_next_row;
+	update_button_disabledness();
 	return;
 }
 
@@ -645,6 +661,7 @@ BudgetPanel::pop_item_component()
 
 	m_budget_item_components.pop_back();
 	--m_next_row;
+	update_button_disabledness();
 	update_budget_summary();
 	return;
 }

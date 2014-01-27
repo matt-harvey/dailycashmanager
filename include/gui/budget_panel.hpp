@@ -53,9 +53,6 @@ class TextCtrl;
 /**
  * Dialog for user to configure BudgetItems for a given Account.
  *
- * @todo MEDIUM PRIORITY Make the "Remove item" button appear disabled if there
- * aren't any BudgetItems to delete.
- *
  * @todo MEDIUM PRIORITY Move the "daily top-up summary" down to be on the same
  * row as "Cancel" and "Save" buttons... but these buttons are actually
  * not in BudgetPanel, but are in the parent AccountDialog. So this
@@ -145,6 +142,12 @@ private:
 	 * Precondition: \e m_account must have an Id before this is called.
 	 */
 	void update_budgets_from_dialog();
+
+	/**
+	 * Updates m_pop_item_button and/or m_push_item_button depending on
+	 * whether it makes sense for these to be enabled or disabled.
+	 */
+	void update_button_disabledness();
 
 	/**
 	 * p_budget_item should have all attributes initialized, except that
