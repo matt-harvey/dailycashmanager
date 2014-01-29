@@ -304,7 +304,11 @@ void
 BudgetPanel::on_pop_item_button_click(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused parameter.
-	wxWindowUpdateLocker const update_locker(this);
+
+	// DON'T use wxWindowUpdateLocker here. (Causes problems on
+	// Windows, for some reason.)
+	// wxWindowUpdateLocker const update_locker(this);
+
 	pop_item_component();
 	m_top_sizer->Fit(this);
 	m_top_sizer->SetSizeHints(this);
