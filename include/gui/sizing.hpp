@@ -19,7 +19,7 @@
 
 
 /**
- * @file sizing.hpp
+ * @file
  *
  * Utilities for storing standard sizes used in widgets.
  */

@@ -15,7 +15,7 @@
  */
 
 /**
- * @file finformat.hpp
+ * @file
  *
  * Utilities for formatting and parsing expressions involving jewel::Decimal.
  */

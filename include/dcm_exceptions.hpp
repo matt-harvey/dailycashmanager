@@ -19,7 +19,7 @@
 
 #include <jewel/exception.hpp>
 
-/** @file dcm_exceptions.hpp
+/** @file
  *
  * @brief Header file containing exception classes defined in the dcm
  * namespace. These exceptions are for throwing by DCM-specific
