@@ -38,6 +38,12 @@
 // hard-coded height number, they still seem to come out different heights
 // on KDE. It doesn't make a lot of sense.
 
+// TODO MEDIUM PRIORITY Doxygen documentation is not being generated for at
+// least some namespace-scope functions and namespaces. Setting
+// "EXTRACT_ALL" to "YES", in Doxyfile, would remedy this, but would also cause
+// other stuff to be generated that we may not want. Should work through this
+// properly.
+
 // TODO HIGH PRIORITY Figure out why icon isn't appearing in body of NSIS
 // installer.
 
