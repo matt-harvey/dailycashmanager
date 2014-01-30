@@ -72,21 +72,29 @@ public:
 
 	~BalanceCache();
 
-	// Retrieve the technical balance for a particular Account.
-	// For an explanation of the concept of a "technical balance",
-	// see the documentation for Account::technical_balance().
+	/**
+	 * Retrieve the technical balance for a particular Account.
+	 * For an explanation of the concept of a "technical balance",
+	 * see the documentation for Account::technical_balance().
+	 */
 	jewel::Decimal technical_balance(sqloxx::Id p_account_id);
 
-	// Retrieve the technical opening balance for a particular
-	// Account.
-	// For an explanation of the concept of a "technical opening balance",
-	// see the documentation for Account::technical_opening_balance().
+	/**
+	 * Retrieve the technical opening balance for a particular
+	 * Account.
+	 * For an explanation of the concept of a "technical opening balance",
+	 * see the documentation for Account::technical_opening_balance().
+	 */
 	jewel::Decimal technical_opening_balance(sqloxx::Id p_account_id);
 
-	// Mark the cache as a whole as stale
+	/**
+	 * Mark the cache as a whole as stale.
+	 */
 	void mark_as_stale();
 	
-	// Mark a particular Account's cache entry as stale
+	/**
+	 * Mark a particular Account's cache entry as stale.
+	 */
 	void mark_as_stale(sqloxx::Id p_account_id); 
 
 private:
