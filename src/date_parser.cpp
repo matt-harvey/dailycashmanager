@@ -63,15 +63,14 @@ namespace
 	// Returns true if and only if c is one of the special characters that
 	// can appear in a strftime format string representing a field date or
 	// time field.
-	// TODO MEDIUM PRIORITY There characters under the C++11 standard in
+	// TODO MEDIUM PRIORITY There are characters under the C++11 standard in
 	// addition to the below.
 	bool is_date_time_format_char(char c)
 	{
-		static char const chars_a[] =
+		static unordered_set<char> const chars
 		{	'a', 'A', 'b', 'B', 'c', 'd', 'H', 'I', 'j', 'm', 'M', 'P',
 			'S', 'U', 'w', 'W', 'x', 'X', 'y', 'Y', 'Z'
 		};
-		static unordered_set<char> const chars(begin(chars_a), end(chars_a));
 		return chars.find(c) != chars.end();
 	}
 
