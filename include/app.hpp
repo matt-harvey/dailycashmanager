@@ -136,8 +136,10 @@ private:
 	wxLocale m_locale;
 };
 
+/// @cond
 // Implements App& wxGetApp()
 wxDECLARE_APP(App);
+/// @endcond
 
 }  // namespace dcm
 

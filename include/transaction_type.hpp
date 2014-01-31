@@ -59,14 +59,16 @@ std::vector<TransactionType> const&
 transaction_types();
 
 /**
- * @param p_include_non_actual set to true if and only if we want to
- * include available non-actual (i.e., budget) TransactionTypes in the
- * returned vector.
- *
  * @returns a vector containing every TransactionType for which
  * there exist, saved in p_database_connection, Accounts of the
  * requisite AccountTypes for that TransactionType.
- */
+ *
+ * @param p_database_connection the DcmdatabaseConnection
+ *
+ * @param p_include_non_actual set to true if and only if we want to
+ * include available non-actual (i.e., budget) TransactionTypes in the
+ * returned vector.
+  */
 std::vector<TransactionType>
 available_transaction_types
 (	DcmDatabaseConnection& p_database_connection,
@@ -75,7 +77,10 @@ available_transaction_types
 
 /**
  * @returns a natural language verb or or other phrase corresponding to
- * a p_tranaction_type; for example, "Spend".
+ * a p_transaction_type; for example, "Spend".
+ *
+ * @param p_transaction_type the TransactionType for which we want a
+ * descriptive phrase
  */
 wxString
 transaction_type_to_verb
@@ -89,6 +94,9 @@ transaction_type_to_verb
  *
  * @throws InvalidTransactionTypeException if p_phrase does not correspond to
  * any TransactionType.
+ *
+ * @param p_phrase the phrase for which we want the corresponding
+ * TransactionType
  */
 TransactionType
 transaction_type_from_verb(wxString const& p_phrase);
@@ -96,6 +104,8 @@ transaction_type_from_verb(wxString const& p_phrase);
 /**
  * @returns true if and only if p_transaction_type is a type of actual
  * transaction, as opposed to budget transaction.
+ *
+ * @param p_transaction_type the TransactionType in question
  */
 bool transaction_type_is_actual
 (	TransactionType p_transaction_type
@@ -105,6 +115,8 @@ bool transaction_type_is_actual
  * Check for validity of p_transaction_type, using assert statement.
  * Terminates program if invalid while NDEBUG is not defined; otherwise
  * does nothing.
+ *
+ * @param p_transaction_type the TransactionType in question
  */
 void assert_transaction_type_validity
 (	TransactionType p_transaction_type
@@ -128,6 +140,8 @@ namespace dcm
 /**
  * @returns a vector of AccountTypes appropriate for a given
  * TransactionType's \e source Account.
+ *
+ * @param p_transaction_type the TransactionType in question
  */
 std::vector<AccountType> const&
 source_account_types
@@ -137,6 +151,8 @@ source_account_types
 /**
  * @returns a vector of AccountTypes appropriate for a given
  * TransactionType's \e destination Account.
+ *
+ * @param p_transaction_type the TransactionType in question
  */
 std::vector<AccountType> const&
 destination_account_types

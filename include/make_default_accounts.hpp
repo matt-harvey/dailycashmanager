@@ -53,6 +53,11 @@ make_default_accounts(DcmDatabaseConnection& p_database_connection);
  * Behaves like make_default_accounts(DcmDatabaseConnection&), but
  * instead of returning a vector, it populates the vector passed to \e vec.
  *
+ * @param p_database_connection a connection to the database with which
+ * the returned sqloxx::Handle<Account> instances will be associated
+ * (but note, calling this function will \e not cause the Accounts to be
+ * saved to the database).
+
  * @param vec the vector which the function will populate with
  * sqloxx::Handle<Account>, which will be pushed onto the back of
  * e\ vec - which need not be empty when passed to the function.

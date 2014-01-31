@@ -32,7 +32,7 @@ namespace gui
  * @param p_enable Pass this \e true to enable to window, or \e false to
  * disable it. Note, enabling will disable any tooltip!
  *
- * @param p_tooltip_when_disabled \e If we pass this a wxString, \e then
+ * @param p_tooltip_if_disabled \e If we pass this a wxString, \e then
  * there will be tooltip which will be set on the window if and only
  * \e p_enable was passed true.
  *

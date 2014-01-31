@@ -170,23 +170,19 @@ private:
 	std::unique_ptr<BudgetItemData> m_data;
 };
 
-
 /**
- * @p_budget_items is a vector of Handles to BudgetItems which are assumed to
- * be all of the same DcmDatabaseConnection and the same Account.
- *
  * @returns the amount that approximates, to the Account's native Commodity's
  * precision, the equivalent of normalizing and summing at
  * the DcmDatabaseConnection's budget_frequency(), all the BudgetItems
- * in the range [b, e). Range should not be empty.
+ * in the range [b, e). Range should not be empty. It is assumed that all
+ * Handle<BudgetItem> instances in this range belong to the same
+ * DcmDatabaseConnection and the same Account.
  */
 jewel::Decimal
 normalized_total
 (	std::vector<sqloxx::Handle<BudgetItem> >::const_iterator b,
 	std::vector<sqloxx::Handle<BudgetItem> >::const_iterator const& e
 );
-
-
 
 }  // namespace dcm
 

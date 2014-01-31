@@ -58,6 +58,8 @@ make_currencies(DcmDatabaseConnection& p_database_connection);
  * but instead of returning a vector, it populates the vector
  * passed to \e vec.
  *
+ * @param p_database_connection the database connection
+ *
  * @param vec the vector which the function will populate with
  * Commodities. \e vec should be empty when passed to the function.
  */

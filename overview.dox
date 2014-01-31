@@ -23,3 +23,18 @@
  * users. Users seeking help on using the application should consult the User
  * Guide at http://dailycashmanager.sourceforge.net/user_guide.
  */
+
+/**
+ * Top-level namespace for the DailyCashManager project.
+ */
+namespace dcm
+{
+
+/**
+ * Contains code relating to the graphical user interface (GUI).
+ */
+namespace gui
+{
+}
+
+}  // namespace dcm
