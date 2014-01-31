@@ -130,29 +130,29 @@ public:
 	);
 
 	/**
-	 * Get the abbreviation of the commodity. E.g "AUD" might be
+	 * @returns the abbreviation of the commodity. E.g "AUD" might be
 	 * the abbreviation for Australian dollars.
 	 */
 	wxString abbreviation();
 
 	/**
-	 * Get the full name of the commodity. E.g. "Australian dollars".
+	 * @returns the full name of the commodity. E.g. "Australian dollars".
 	 */
 	wxString name();
 
 	/**
-	 * Get the description of the commodity, e.g. "notes and coins".
+	 * @returns the description of the commodity, e.g. "notes and coins".
 	 */
 	wxString description();
 
 	/**
-	 * Get the number of decimal places of precision for the commodity
+	 * @returns the number of decimal places of precision for the commodity
 	 * to which quantities of the commodity are stored.
 	 */
 	jewel::Decimal::places_type precision();
 
 	/**
-	 * Get the multiplier by which 1 unit of the commodity should
+	 * @returns the multiplier by which 1 unit of the commodity should
 	 * be mulitiplied, to be translated into 1 unit of the base commodity
 	 * of the entity.
 	 */
