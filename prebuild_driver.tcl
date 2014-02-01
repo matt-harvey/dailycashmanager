@@ -22,7 +22,6 @@
 
 set infile_name "currencies.csv"
 set infile [open $infile_name "r"]
-set outfile [open [lindex $argv 0] "w"]
 
 # Discard comments and header row at top of file
 set start_found 0
@@ -45,6 +44,7 @@ if {![string equal $line "Currency,Symbol,Precision"]} {
 }
 
 # Read content and populate outfile
+set outfile [open [lindex $argv 0] "w"]
 while {[gets $infile line] >= 0} {
 	if {$line == {END}} {
 		break
