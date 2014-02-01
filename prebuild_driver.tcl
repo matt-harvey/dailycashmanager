@@ -34,15 +34,17 @@ while {[gets $infile line] >= 0} {
 }
 if {!$start_found} {
     puts "Could not find \"START\" row while reading ${infile_name}."
+    close $infile
     exit 1
 }
 gets $infile line
 if {![string equal $line "Currency,Symbol,Precision"]} {
     puts "Could not find header row while reading ${infile_name}."
+    close $infile
     exit 1
 }
 
-# Read content
+# Read content and populate outfile
 while {[gets $infile line] >= 0} {
 	if {$line == {END}} {
 		break
