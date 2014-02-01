@@ -62,7 +62,7 @@ class TopPanel;
  * to be of TransactionType::envelope, then EnvelopeTransferDialog should
  * be used instead).
  *
- * @todo MEDIUM PRIORITY It may not be obvious to the user that the
+ * TODO MEDIUM PRIORITY It may not be obvious to the user that the
  * TransactionCtrl actually is for creating new transactions (rather than for,
  * say, filtering the information that is displayed to the left).
  */

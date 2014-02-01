@@ -53,12 +53,12 @@ class TextCtrl;
 /**
  * Dialog for user to configure BudgetItems for a given Account.
  *
- * @todo MEDIUM PRIORITY Move the "daily top-up summary" down to be on the same
+ * TODO MEDIUM PRIORITY Move the "daily top-up summary" down to be on the same
  * row as "Cancel" and "Save" buttons... but these buttons are actually
  * not in BudgetPanel, but are in the parent AccountDialog. So this
  * will require some careful refactoring to achieve.
  *
- * @todo MEDIUM PRIORITY There is some messiness in the implementation of this
+ * TODO MEDIUM PRIORITY There is some messiness in the implementation of this
  * class, especially to do with how the BudgetPanel responds when a
  * FrequencyCtrl or DecimalTextCtrl is updated. There is scope for improvement,
  * but it would probably require a ground-up refactor.

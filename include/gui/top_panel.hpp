@@ -58,7 +58,7 @@ class TransactionCtrl;
 /**
  * Top level panel intended as immediate child of Frame.
  *
- * @todo LOW PRIORITY The various "update_for_..." functions each contain calls
+ * TODO LOW PRIORITY The various "update_for_..." functions each contain calls
  * to analogous "update_for_..." functions for each of the sub-widgets
  * in TopPanel. This makes for repetitive code. We could maybe streamline
  * this and make it more maintainable either by using wxWidgets' event
@@ -67,7 +67,7 @@ class TransactionCtrl;
  * in TopPanel, and running through the vector calling "update_for_..." on
  * each.
  *
- * @todo MEDIUM PRIORITY Put some space between the two AccountListCtrls, or do
+ * TODO MEDIUM PRIORITY Put some space between the two AccountListCtrls, or do
  * some other thing, to clearly indicate that these are conceptually separate
  * controls, and that one is not, say, a subset of the other. Put a similar kind
  * of "divider" between the envelope list and the TransactionCtrl to the right.
@@ -186,7 +186,7 @@ public:
 	 * is assumed these are the \e source of the change - we don't update
 	 * these \e again, on pain of circularity.
 	 *
-	 * @todo LOW PRIORITY Make this less messy and "coupled" (see note
+	 * TODO LOW PRIORITY Make this less messy and "coupled" (see note
 	 * above).
 	 */
 	void update_for_reconciliation_status(sqloxx::Handle<Entry> const& p_entry);
