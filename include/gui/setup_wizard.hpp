@@ -61,7 +61,7 @@ class MultiAccountPanel;
  * Represents the wizard that is presented to GUI users when they first
  * start up the application.
  *
- * TODO MEDIUM PRIORITY In the FilepathPage, the controls for the directory
+ * @todo MEDIUM PRIORITY In the FilepathPage, the controls for the directory
  * and the filepath look like you can write in them, but actually you can't.
  * This misleads the user and is bad (which is pointed out in the "GUI Bloopers"
  * book). Fix it.

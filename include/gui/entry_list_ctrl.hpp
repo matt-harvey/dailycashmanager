@@ -57,7 +57,7 @@ class ReconciliationEntryListCtrl;
  * showing in the first column, and should only ever show Entries from
  * OrdinaryJournals (not DraftJournals).
  *
- * TODO LOW PRIORITY Better document the interface with derived classes.
+ * @todo LOW PRIORITY Better document the interface with derived classes.
  */
 class EntryListCtrl: public wxListCtrl
 {

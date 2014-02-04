@@ -46,14 +46,14 @@ class ReportPanel;
  * Displays data constituting either a balance sheet report, or a statement
  * of income and expenses.
  *
- * TODO MEDIUM PRIORITY The "update_for_" functions deliberately do nothing.
+ * @todo MEDIUM PRIORITY The "update_for_" functions deliberately do nothing.
  * The user must
  * re-run the Report explicitly for it to be updated after a Journal or
  * Account is created, amended or deleted. Is this the behaviour we want?
  * It is inconsistent with what is currently occurring in the
  * EntryListPanel and the ReconciliationPanel.
  *
- * TODO MEDIUM PRIORITY The report is rather plain looking. Make it look
+ * @todo MEDIUM PRIORITY The report is rather plain looking. Make it look
  * nicer.
  */
 class Report: public GriddedScrolledPanel

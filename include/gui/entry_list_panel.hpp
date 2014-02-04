@@ -53,7 +53,7 @@ class EntryListCtrl;
  * at the top to enable the user to filter the displayed Entries for a
  * particular Account and/or date range.
  *
- * TODO MEDIUM PRIORITY Do we want the user to be able to view non-actual
+ * @todo MEDIUM PRIORITY Do we want the user to be able to view non-actual
  * transactions? If we do, then, among other things, the AccountCtrl will need
  * to allow the user to select Accounts of AccountType::pure_envelope.
  */
