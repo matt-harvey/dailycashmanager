@@ -17,10 +17,12 @@
 ###
 
 # Scans currencies.csv and outputs the repetitive bit of code
-# required for currency.cpp, to file passed to command line argument. It is
-# intended make_currencies_inc.hpp be #included in make_currencies.cpp.
+# required for currency.cpp, to the output file passed to command line argument.
+# It is intended the output file be #included by make_currencies.cpp.
 
 set infile_name "currencies.csv"
+set outfile_name [lindex $argv 0]
+
 set infile [open $infile_name "r"]
 
 # Discard comments and header row at top of file
@@ -44,7 +46,7 @@ if {![string equal $line "Currency,Symbol,Precision"]} {
 }
 
 # Read content and populate outfile
-set outfile [open [lindex $argv 0] "w"]
+set outfile [open $outfile_name "w"]
 while {[gets $infile line] >= 0} {
 	if {$line == {END}} {
 		break
