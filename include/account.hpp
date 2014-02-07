@@ -119,15 +119,6 @@ public:
 	 * @param p_database_connection connection to database
 	 *
 	 * @param p_name name of Account
-	 *
-	 * @throws SQLiteException or an exception derived therefrom, if
-	 * something goes wrong with the SQL involved in executing
-	 * the function. This might occur if \c p_name contains punctuation
-	 * marks, spaces or etc., or is a SQL keyword, so that it cannot validly
-	 * be a string parameter in a SQL statement. A SQLiteException or
-	 * derivative might also be thrown if the database connection is invalid
-	 * or the database corrupt. It is not guaranteed that these are the only
-	 * circumstances in which an exception might be thrown.
 	 */
 	static bool exists
 	(	DcmDatabaseConnection& p_database_connection,
@@ -162,16 +153,34 @@ public:
 	Account& operator=(Account&&) = delete;
 	~Account();
 
+	/**
+	 * @returns name of Account.
+	 */
 	wxString name();
 
+	/**
+	 * @returns the native Commodity of the Account.
+	 */
 	sqloxx::Handle<Commodity> commodity();
 
+	/**
+	 * @returns the AccountType of the Account.
+	 */
 	AccountType account_type();
 
+	/**
+	 * @returns the AccountSuperType of the Account.
+	 */
 	AccountSuperType account_super_type();
 
+	/**
+	 * @returns the Account description.
+	 */
 	wxString description();
 
+	/**
+	 * @returns the Visibility of the Account.
+	 */
 	Visibility visibility();
 
 	/**
@@ -227,19 +236,48 @@ public:
 	 */
 	std::vector<sqloxx::Handle<BudgetItem> > budget_items();
 
+	/**
+	 * Set the AccountType to \e p_account_type.
+	 */
 	void set_account_type(AccountType p_account_type);
 
+	/**
+	 * Set the name of the Account to \e p_name.
+	 */
 	void set_name(wxString const& p_name);
 
+	/**
+	 * Set the native Commodity of the Account to \e p_commodity.
+	 */
 	void set_commodity(sqloxx::Handle<Commodity> const& p_commodity);
 
+	/**
+	 * Set the description of the Account to \e p_description.
+	 */
 	void set_description(wxString const& p_description);
 
+	/**
+	 * Set the Visibility of the Account to \e p_visibility.
+	 */
 	void set_visibility(Visibility p_visibility);
 
-	// These are tied to SQLoxx API and must be std::string, not
-	// wxString.
+	/**
+	 * @returns the name of the "exclusive" database table for the Account
+	 * class, i.e. the table holding all and only the primary keys for saved
+	 * Account instances.
+	 *
+	 * @note This is tied to the Sqloxx API, which requires std::string here,
+	 * not wxString.
+	 */
 	static std::string exclusive_table_name();
+
+	/**
+	 * @returns the name of the primary key for Account instances as stored in
+	 * the database.
+	 *
+	 * @note This is tied to the Sqloxx API, which requires std::string here,
+	 * not wxString.
+	 */
 	static std::string primary_key_name();
 
 private:

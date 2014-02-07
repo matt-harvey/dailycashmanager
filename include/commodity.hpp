@@ -158,18 +158,55 @@ public:
 	 */
 	jewel::Decimal multiplier_to_base();
 
+	/**
+	 * Set the abbreviation of the Commodity to \e p_abbreviation.
+	 */
 	void set_abbreviation(wxString const& p_abbreviation);
 
+	/**
+	 * Set the name of the Commodity to \e p_name.
+	 */
 	void set_name(wxString const& p_name);
 
+	/**
+	 * Set the description of the Commodity to \e p_description.
+	 */
 	void set_description(wxString const& p_description);
 
+	/**
+	 * Set the precision of the Commodity (i.e. the number of decimal places
+	 * to the right of the decimal point, such that quantities of the
+	 * Commodity will be represented and stored with that degree of precision)
+	 * to \e p_precision.
+	 */
 	void set_precision(jewel::Decimal::places_type p_precision);
 
+	/**
+	 * Set the amount by which a quantity of the Commodity must be multiplied in
+	 * order to convert it to an equivalent quantity of the base (default)
+	 * Commodity. (The default Commodity is the Commodity such that a
+	 * call to DcmDatabaseConnection::default_commodity() returns a
+	 * sqloxx::Handle to that Commodity.)
+	 */
 	void set_multiplier_to_base(jewel::Decimal const& p_multiplier_to_base);
 
-	// These need to return std::string as they involve the SQLoxx API
+	/**
+	 * @returns the name of the "exclusive" database table for the Commodity
+	 * class, i.e. the table holding all and only the primary keys for saved
+	 * Commodity instances.
+	 *
+	 * @note This is tied to the Sqloxx API which requires std::string here,
+	 * not wxString.
+	 */
 	static std::string exclusive_table_name();
+
+	/**
+	 * @returns the name of the primary key for Commodity instances as stored
+	 * in the database.
+	 *
+	 * @note This is tied to the Sqloxx API, which requires std::string here,
+	 * not wxString.
+	 */
 	static std::string primary_key_name();
 
 private:
