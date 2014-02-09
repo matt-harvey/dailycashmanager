@@ -20,6 +20,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
 #include <jewel/decimal_exceptions.hpp>
+#include <jewel/log.hpp>
 #include <wx/intl.h>
 #include <wx/string.h>
 #include <algorithm>
@@ -43,26 +44,20 @@ using std::string;
 using std::use_facet;
 using std::vector;
 
-
-// For debugging
-#include <jewel/log.hpp>
-#include <iostream>
-using std::endl;
-
-
 namespace dcm
 {
 
 namespace
 {
-	void split_plus_minus(wxString const& p_string, vector<wxString>& out)
+	vector<wxString> split_plus_minus(wxString const& p_string)
 	{
+		vector<wxString> ret;
 		wxString current_slice;
 		for (wxChar const wx_char: p_string)
 		{
 			if ((wx_char == wxChar('+')) || (wx_char == wxChar('-')))
 			{
-				out.push_back(current_slice);
+				ret.push_back(current_slice);
 				current_slice.clear();
 			}
 			if (wx_char != wxChar(' '))
@@ -70,8 +65,8 @@ namespace
 				current_slice.Append(wx_char);
 			}
 		}
-		out.push_back(current_slice);
-		return;
+		ret.push_back(current_slice);
+		return ret;
 	}
 
 }  // end anonymous namespace
@@ -283,23 +278,15 @@ wx_to_decimal
 Decimal
 wx_to_simple_sum(wxString wxs, wxLocale const& loc)
 {
-	vector<wxString> vec;
-	split_plus_minus(wxs, vec);
-	Decimal total(0, 0);
-	vector<wxString>::const_iterator it = vec.begin();
-	vector<wxString>::const_iterator const end = vec.end();
-	for ( ; it != end; ++it)
+	Decimal ret(0, 0);
+	auto const flags =
+		DecimalParsingFlags().clear(string_flags::allow_negative_parens);
+	for (auto const& elem: split_plus_minus(wxs))
 	{
-		total += wx_to_decimal
-		(	*it,
-			loc,
-			DecimalParsingFlags().
-				clear(string_flags::allow_negative_parens)
-		);
+		ret += wx_to_decimal(elem, loc, flags);
 	}
-	return total;
+	return ret;
 }
-
 
 }  // namespace dcm
 
