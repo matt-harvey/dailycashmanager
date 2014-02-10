@@ -356,7 +356,7 @@ if (WIN32)
 	set (CPACK_GENERATOR NSIS)
 	set (CPACK_NSIS_PACKAGE_NAME "${application_name}")
 	set (CPACK_PACKAGE_VENDOR "${application_name}")
-	set (CPACK_PACKAGE_FILE_NAME "${application_name}-v${CPACK_PACKAGE_VERSION}-setup")
+	set (CPACK_PACKAGE_FILE_NAME "${application_name}-${CPACK_PACKAGE_VERSION}-setup")
 	set (CPACK_PACKAGE_INSTALL_DIRECTORY "${application_name}")
 
 	set (CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\icon_200_200.ico")
