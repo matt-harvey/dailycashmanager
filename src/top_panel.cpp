@@ -490,11 +490,11 @@ TopPanel::selected_ordinary_journals
 	wxWindow* const page = m_notebook->GetCurrentPage();
 	if (page == static_cast<wxWindow*>(m_notebook_page_transactions))
 	{
-		m_entry_list_panel->selected_entries(entries);
+		entries = m_entry_list_panel->selected_entries();
 	}
 	else if (page == static_cast<wxWindow*>(m_notebook_page_reconciliations))
 	{
-		m_reconciliation_panel->selected_entries(entries);
+		entries = m_reconciliation_panel->selected_entries();
 	}
 	for (Handle<Entry> const& entry: entries)
 	{

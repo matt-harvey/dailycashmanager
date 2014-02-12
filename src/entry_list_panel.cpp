@@ -261,11 +261,12 @@ EntryListPanel::update_for_deleted(vector<sqloxx::Id> const& p_doomed_ids)
 	return;
 }
 
-void
-EntryListPanel::selected_entries(vector<Handle<Entry> >& out)
+vector<Handle<Entry> >
+EntryListPanel::selected_entries()
 {
-	if (m_entry_list_ctrl) m_entry_list_ctrl->selected_entries(out);
-	return;
+	vector<Handle<Entry> > ret;
+	if (m_entry_list_ctrl) ret = m_entry_list_ctrl->selected_entries();
+	return ret;
 }
 
 void

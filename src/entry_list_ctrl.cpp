@@ -435,9 +435,10 @@ EntryListCtrl::update_for_deleted(vector<sqloxx::Id> const& p_doomed_ids)
 	return;
 }
 
-void
-EntryListCtrl::selected_entries(vector<Handle<Entry> >& out)
+vector<Handle<Entry> >
+EntryListCtrl::selected_entries()
 {
+	vector<Handle<Entry> > ret;
 	size_t i = 0;
 	size_t const lim = GetItemCount();
 	for ( ; i != lim; ++i)
@@ -445,10 +446,10 @@ EntryListCtrl::selected_entries(vector<Handle<Entry> >& out)
 		if (GetItemState(i, wxLIST_STATE_SELECTED))
 		{
 			Handle<Entry> const entry(m_database_connection, GetItemData(i));
-			out.push_back(entry);
+			ret.push_back(entry);
 		}
 	}
-	return;
+	return ret;
 }
 
 void

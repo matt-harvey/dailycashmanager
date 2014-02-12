@@ -140,10 +140,10 @@ public:
 	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
 
 	/**
-	 * Populates \e out with handles to the currently selected Entries
-	 * (if any).
+	 * @returns a vector populated with handles to the currently selected
+	 * Entries (if any).
 	 */
-	void selected_entries(std::vector<sqloxx::Handle<Entry> >& out);
+	std::vector<sqloxx::Handle<Entry> > selected_entries();
 
 	/**
 	 * Scroll to the bottom of the displayed list.

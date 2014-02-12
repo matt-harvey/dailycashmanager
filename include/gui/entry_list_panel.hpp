@@ -77,7 +77,8 @@ public:
 	void update_for_new(sqloxx::Handle<Account> const& p_account);
 	void update_for_amended(sqloxx::Handle<Account> const& p_account);
 	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
-	void selected_entries(std::vector<sqloxx::Handle<Entry> >& out);
+
+	std::vector<sqloxx::Handle<Entry> > selected_entries();
 
 	// TODO LOW PRIORITY This should really be private, but we need to call it
 	// from TopPanel to ensure EntryListCtrl is properly sized, AFTER the
