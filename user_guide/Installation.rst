@@ -5,8 +5,9 @@ Installation
 
 .. Put link to download path here? Or will this be elsewhere?
 
-Go to your Downloads folder, and double-click on "DailyCashManager setup.exe".
-This will start a graphical installer; then simply follow the prompts.
+Double click on the downloaded binary installer, which should be named
+"DailyCashManager setup.exe", or similar. This will start the graphical
+installer; then simply follow the prompts.
 
 
 *On Linux*
