@@ -238,8 +238,10 @@ private:
 	 * Entry represented by \e p_entry. (An implementation would generally use
 	 * wxListCtrl::SetItem to do this.)
 	 */
-	virtual void do_set_non_date_columns (	long p_row, sqloxx::Handle<Entry>
-	const& p_entry) = 0;
+	virtual void do_set_non_date_columns
+	(	long p_row,
+		sqloxx::Handle<Entry> const& p_entry
+	) = 0;
 
 	/**
 	 * Inheriting class should implement to set widths of all its columns.
