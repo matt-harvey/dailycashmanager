@@ -56,8 +56,6 @@ class ReconciliationEntryListCtrl;
  * displayed. However every EntryListCtrl will have the date of the Entry
  * showing in the first column, and should only ever show Entries from
  * OrdinaryJournals (not DraftJournals).
- *
- * @todo LOW PRIORITY Better document the interface with derived classes.
  */
 class EntryListCtrl: public wxListCtrl
 {
