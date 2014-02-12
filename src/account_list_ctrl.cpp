@@ -78,9 +78,10 @@ AccountListCtrl::~AccountListCtrl()
 {
 }
 
-void
-AccountListCtrl::selected_accounts(set<sqloxx::Id>& out) const
+set<sqloxx::Id>
+AccountListCtrl::selected_accounts() const
 {
+	set<sqloxx::Id> ret;
 	size_t i = 0;
 	size_t const lim = GetItemCount();
 	for ( ; i != lim; ++i)
@@ -92,10 +93,10 @@ AccountListCtrl::selected_accounts(set<sqloxx::Id>& out) const
 				GetItemData(i)
 			);
 			JEWEL_ASSERT (account->has_id());
-			out.insert(account->id());
+			ret.insert(account->id());
 		}
 	}
-	return;
+	return ret;
 }	
 
 void
@@ -119,8 +120,7 @@ void
 AccountListCtrl::update()
 {
 	// Remember which rows are selected currently
-	set<sqloxx::Id> selected;
-	selected_accounts(selected);
+	set<sqloxx::Id> const selected = selected_accounts();
 
 	// Now (re)draw
 	ClearAll();

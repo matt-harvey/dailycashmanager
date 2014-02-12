@@ -75,11 +75,11 @@ public:
 	virtual ~AccountListCtrl();
 
 	/**
-	 * Populates \e out with the Ids of all and only the currently selected
+	 * @returns a set of Ids of all and only the currently selected
 	 * Accounts in the AccountListCtrl. If an Account in the list does not
-	 * have an Id, then it will not be placed in \e out.
+	 * have an Id, then it will not be included in the returned set.
 	 */
-	void selected_accounts(std::set<sqloxx::Id>& out) const;
+	std::set<sqloxx::Id> selected_accounts() const;
 
 	/**
 	 * Redraw AccountListCtrl on the basis of what is currently in the

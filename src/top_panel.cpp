@@ -261,10 +261,8 @@ TopPanel::configure_report_page()
 ProtoJournal
 TopPanel::make_proto_journal() const
 {
-	vector<Handle<Account> > balance_sheet_accounts;
-	vector<Handle<Account> > pl_accounts;
-	selected_balance_sheet_accounts(balance_sheet_accounts);
-	selected_pl_accounts(pl_accounts);
+	auto balance_sheet_accounts = selected_balance_sheet_accounts();
+	auto pl_accounts = selected_pl_accounts();
 	if (balance_sheet_accounts.size() + pl_accounts.size() < unsigned(2))
 	{
 		if (balance_sheet_accounts.empty())
@@ -456,35 +454,32 @@ TopPanel::toggle_show_hidden_accounts
 	JEWEL_HARD_ASSERT (false);
 }
 
-void
-TopPanel::selected_balance_sheet_accounts(vector<Handle<Account> >& out) const
+vector<Handle<Account> >
+TopPanel::selected_balance_sheet_accounts() const
 {
-	set<sqloxx::Id> selected_ids;
-	m_bs_account_list->selected_accounts(selected_ids);
-	for (sqloxx::Id const selected_id: selected_ids)
+	vector<Handle<Account> > ret;
+	for (sqloxx::Id const selected_id: m_bs_account_list->selected_accounts())
 	{
-		out.push_back(Handle<Account>(m_database_connection, selected_id));
+		ret.push_back(Handle<Account>(m_database_connection, selected_id));
 	}
-	return;
+	return ret;
 }
 
-void
-TopPanel::selected_pl_accounts(vector<Handle<Account> >& out) const
+vector<Handle<Account> >
+TopPanel::selected_pl_accounts() const
 {
-	set<sqloxx::Id> selected_ids;
-	m_pl_account_list->selected_accounts(selected_ids);
-	for (sqloxx::Id const selected_id: selected_ids)
+	vector<Handle<Account> > ret;
+	for (sqloxx::Id const selected_id: m_pl_account_list->selected_accounts())
 	{
-		out.push_back(Handle<Account>(m_database_connection, selected_id));
+		ret.push_back(Handle<Account>(m_database_connection, selected_id));
 	}
-	return;
+	return ret;
 }
 
-void
-TopPanel::selected_ordinary_journals
-(	vector<Handle<OrdinaryJournal> >& out
-) const
+vector<Handle<OrdinaryJournal> >
+TopPanel::selected_ordinary_journals() const
 {
+	vector<Handle<OrdinaryJournal> > ret;
 	vector<Handle<Entry> > entries;
 	JEWEL_ASSERT (m_notebook);
 	wxWindow* const page = m_notebook->GetCurrentPage();
@@ -502,16 +497,15 @@ TopPanel::selected_ordinary_journals
 		(	entry->database_connection(),
 			entry->journal_id()
 		);
-		out.push_back(oj);
+		ret.push_back(oj);
 	}
-	return;
+	return ret;
 }
 
-void
-TopPanel::selected_draft_journals(vector<Handle<DraftJournal> >& out) const
+vector<Handle<DraftJournal> >
+TopPanel::selected_draft_journals() const
 {
-	m_draft_journal_list->selected_draft_journals(out);
-	return;
+	return m_draft_journal_list->selected_draft_journals();
 }
 
 void

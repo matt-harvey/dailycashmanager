@@ -108,9 +108,7 @@ public:
 
 private:
 
-	void selected_augmented_accounts
-	(	std::vector<AugmentedAccount>& out
-	) const;
+	std::vector<AugmentedAccount> selected_augmented_accounts() const;
 
 	class FilepathValidator;
 
@@ -273,9 +271,7 @@ public:
 
 	void render();
 
-	void selected_augmented_accounts
-	(	std::vector<AugmentedAccount>& out
-	) const;
+	std::vector<AugmentedAccount> selected_augmented_accounts() const;
 
 	void set_commodity(sqloxx::Handle<Commodity> const& p_commodity);
 

@@ -409,8 +409,7 @@ Frame::on_menu_edit_bs_account(wxCommandEvent& event)
 	// functions that invoke an AccountDialog.
 
 	(void)event;  // Silence compiler re. unused parameter.
-	vector<Handle<Account> > accounts;
-	selected_balance_sheet_accounts(accounts);
+	auto const accounts = selected_balance_sheet_accounts();
 	if (accounts.empty())
 	{
 		wxMessageBox("Account to edit must first be selected in main window.");
@@ -431,8 +430,7 @@ Frame::on_menu_edit_pl_account(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler re. unused parameter.
-	vector<Handle<Account> > accounts;
-	selected_pl_accounts(accounts);
+	auto const accounts = selected_pl_accounts();
 	if (accounts.empty())
 	{
 		wxString const concept_name = account_concept_name
@@ -457,8 +455,7 @@ Frame::on_menu_edit_ordinary_journal(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
-	vector<Handle<OrdinaryJournal> > journals;
-	selected_ordinary_journals(journals);
+	auto const journals = selected_ordinary_journals();
 	if (journals.empty())
 	{
 		// TODO MEDIUM PRIORITY It should be impossible for the user even to
@@ -479,8 +476,7 @@ Frame::on_menu_edit_draft_journal(wxCommandEvent& event)
 {
 	JEWEL_LOG_TRACE();
 	(void)event;  // Silence compiler warning re. unused parameter.
-	vector<Handle<DraftJournal> > journals;
-	selected_draft_journals(journals);
+	auto const journals = selected_draft_journals();
 	if (journals.empty())
 	{
 		// TODO MEDIUM PRIORITY It should be impossible for the user to even
@@ -740,36 +736,32 @@ Frame::on_reconciliation_status_event(PersistentObjectEvent& event)
 	return;
 }
 
-void
-Frame::selected_balance_sheet_accounts(vector<Handle<Account> >& out) const
+vector<Handle<Account> >
+Frame::selected_balance_sheet_accounts() const
 {
 	JEWEL_LOG_TRACE();
-	m_top_panel->selected_balance_sheet_accounts(out);
-	return;
+	return m_top_panel->selected_balance_sheet_accounts();
 }
 
-void
-Frame::selected_pl_accounts(vector<Handle<Account> >& out) const
+vector<Handle<Account> >
+Frame::selected_pl_accounts() const
 {
 	JEWEL_LOG_TRACE();
-	m_top_panel->selected_pl_accounts(out);
-	return;
+	return m_top_panel->selected_pl_accounts();
 }
 
-void
-Frame::selected_ordinary_journals(vector<Handle<OrdinaryJournal> >& out) const
+vector<Handle<OrdinaryJournal> >
+Frame::selected_ordinary_journals() const
 {
 	JEWEL_LOG_TRACE();
-	m_top_panel->selected_ordinary_journals(out);
-	return;
+	return m_top_panel->selected_ordinary_journals();
 }
 
-void
-Frame::selected_draft_journals(vector<Handle<DraftJournal> >& out) const
+vector<Handle<DraftJournal> >
+Frame::selected_draft_journals() const
 {
 	JEWEL_LOG_TRACE();
-	m_top_panel->selected_draft_journals(out);
-	return;
+	return m_top_panel->selected_draft_journals();
 }
 
 void

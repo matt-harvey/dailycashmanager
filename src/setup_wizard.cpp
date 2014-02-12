@@ -63,6 +63,8 @@
 #include <wx/variant.h>
 #include <wx/window.h>
 #include <wx/wizard.h>
+#include <algorithm>
+#include <iterator>
 #include <sstream>
 #include <set>
 #include <string>
@@ -76,6 +78,8 @@ using jewel::Log;
 using jewel::value;
 using sqloxx::DatabaseTransaction;
 using sqloxx::Handle;
+using std::copy;
+using std::back_inserter;
 using std::ostringstream;
 using std::set;
 using std::string;
@@ -284,12 +288,14 @@ SetupWizard::set_assumed_currency(Handle<Commodity> const& p_commodity)
 	return;
 }
 
-void
-SetupWizard::selected_augmented_accounts(vector<AugmentedAccount>& out) const
+vector<AugmentedAccount>
+SetupWizard::selected_augmented_accounts() const
 {
-	m_balance_sheet_account_page->selected_augmented_accounts(out);
-	m_pl_account_page->selected_augmented_accounts(out);
-	return;
+	vector<AugmentedAccount> ret =
+		m_balance_sheet_account_page->selected_augmented_accounts();
+	auto const more = m_pl_account_page->selected_augmented_accounts();
+	copy(more.begin(), more.end(), back_inserter(ret));
+	return ret;
 }
 
 void
@@ -336,10 +342,8 @@ SetupWizard::delete_file()
 void
 SetupWizard::configure_accounts()
 {
-	vector<AugmentedAccount> augmented_accounts;
-	selected_augmented_accounts(augmented_accounts);
 	DatabaseTransaction transaction(m_database_connection);
-	for (AugmentedAccount& aug_acc: augmented_accounts)
+	for (AugmentedAccount& aug_acc: selected_augmented_accounts())
 	{
 		wxString const name_wx = aug_acc.account->name().Trim();
 		if (!name_wx.IsEmpty())
@@ -934,13 +938,10 @@ SetupWizard::AccountPage::render()
 	JEWEL_LOG_TRACE();
 }
 
-void
-SetupWizard::AccountPage::selected_augmented_accounts
-(	vector<AugmentedAccount>& out
-) const
+vector<AugmentedAccount>
+SetupWizard::AccountPage::selected_augmented_accounts() const
 {
-	m_multi_account_panel->selected_augmented_accounts(out);
-	return;
+	return m_multi_account_panel->selected_augmented_accounts();
 }
 
 void

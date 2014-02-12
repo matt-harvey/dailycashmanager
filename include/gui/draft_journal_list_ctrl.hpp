@@ -56,12 +56,10 @@ public:
 	~DraftJournalListCtrl() = default;
 
 	/**
-	 * Populates \e out with all the DraftJournals currently
+	 * @returns a vector populated with all the DraftJournals currently
 	 * selected by the user in the DraftJournalListCtrl.
 	 */
-	void selected_draft_journals
-	(	std::vector<sqloxx::Handle<DraftJournal> >& out
-	);
+	std::vector<sqloxx::Handle<DraftJournal> > selected_draft_journals();
 
 private:
 

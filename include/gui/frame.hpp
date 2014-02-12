@@ -64,36 +64,32 @@ public:
 	~Frame() = default;
 
 	/**
-	 * Populates \e out with all the balance sheet Accounts currently
-	 * selected by the user in the main window.
+	 * @returns a vector containing handles to all the balance sheet Accounts
+	 * currently selected by the user in the main window.
 	 */
-	void selected_balance_sheet_accounts
-	(	std::vector<sqloxx::Handle<Account> >& out
-	) const;
+	std::vector<sqloxx::Handle<Account> >
+	selected_balance_sheet_accounts() const;
 
 	/**
-	 * Populates \e out with all the P&L Accounts currently selected
-	 * by the user in the main window.
-	 */
-	void selected_pl_accounts
-	(	std::vector<sqloxx::Handle<Account> >& out
-	) const;
-
-	/**
-	 * Populates \e out with all the OrdinaryJournals currently
+	 * @returns a vector containing handles to all the P&L Accounts currently
 	 * selected by the user in the main window.
 	 */
-	void selected_ordinary_journals
-	(	std::vector<sqloxx::Handle<OrdinaryJournal> >& out
-	) const;
+	std::vector<sqloxx::Handle<Account> >
+	selected_pl_accounts() const;
 
 	/**
-	 * Populates \e out with all the DraftJournals currently
+	 * @returns a vector containing handles to all the OrdinaryJournals
+	 * currently selected by the user in the main window.
+	 */
+	std::vector<sqloxx::Handle<OrdinaryJournal> >
+	selected_ordinary_journals() const;
+
+	/**
+	 * @returns a vector containing handles to all the DraftJournals currently
 	 * selected by the user in the main window.
 	 */
-	void selected_draft_journals
-	(	std::vector<sqloxx::Handle<DraftJournal> >& out
-	) const;
+	std::vector<sqloxx::Handle<DraftJournal> >
+	selected_draft_journals() const;
 
 	/**
 	 * Inform the Frame regarding the results of attempting

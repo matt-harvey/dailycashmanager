@@ -379,14 +379,13 @@ MultiAccountPanel::set_commodity(Handle<Commodity> const& p_commodity)
 	return;
 }
 
-void
-MultiAccountPanel::selected_augmented_accounts
-(	vector<AugmentedAccount>& out
-)
+vector<AugmentedAccount>
+MultiAccountPanel::selected_augmented_accounts()
 {
+	vector<AugmentedAccount> ret;
 #	ifndef NDEBUG
 		vector<AugmentedAccount>::size_type const original_size =
-			out.size();
+			ret.size();
 #	endif
 	vector<AugmentedAccount>::size_type const sz =
 		m_account_name_boxes.size();
@@ -415,12 +414,12 @@ MultiAccountPanel::selected_augmented_accounts
 			m_opening_balance_boxes[i]->amount()
 		);
 		JEWEL_ASSERT (!account->has_id());
-		out.push_back(augmented_account);
+		ret.push_back(augmented_account);
 	}
 #	ifndef NDEBUG
-		JEWEL_ASSERT (out.size() == original_size + sz);
+		JEWEL_ASSERT (ret.size() == original_size + sz);
 #	endif
-	return;
+	return ret;
 }
 
 set<wxString>

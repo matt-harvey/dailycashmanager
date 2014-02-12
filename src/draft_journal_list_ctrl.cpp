@@ -75,11 +75,10 @@ DraftJournalListCtrl::DraftJournalListCtrl
 	JEWEL_LOG_TRACE();
 }
 
-void
-DraftJournalListCtrl::selected_draft_journals
-(	vector<Handle<DraftJournal> >& out
-)
+vector<Handle<DraftJournal> >
+DraftJournalListCtrl::selected_draft_journals()
 {
+	vector<Handle<DraftJournal> > ret;
 	size_t i = 0;
 	size_t const lim = GetItemCount();
 	for ( ; i != lim; ++i)
@@ -90,10 +89,10 @@ DraftJournalListCtrl::selected_draft_journals
 			(	m_database_connection,
 				GetItemData(i)
 			);
-			out.push_back(dj);
+			ret.push_back(dj);
 		}
 	}
-	return;
+	return ret;
 }
 
 void

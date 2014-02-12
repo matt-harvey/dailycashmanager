@@ -91,23 +91,16 @@ public:
 	void set_commodity(sqloxx::Handle<Commodity> const& p_commodity);
 
 	/**
-	 * Populates \e out with AugmentedAccounts corresponding to what has
-	 * been entered in the MultiAccountPanel by the user. The
-	 * Accounts in the AugmentedAccounts will not have been saved (so
-	 * will not have IDs). Also, no opening balance Journals will be saved
-	 * (it is the client's responsibility to create opening balance Journals,
-	 * if they desire to do so, using the information provided in the
-	 * AugmentedAccounts. The Accounts in the AugmentedAccounts will have
-	 * their commodity() attribute initialized to
-	 * database_connection().default_commodity().
-	 *
-	 * \e out need not be empty when passed to this function. The selected
-	 * AugmentedAccounts will simply be pushed onto the back of the existing
-	 * vector, whether it is empty or not.
+	 * @returns a vector populated with AugmentedAccounts corresponding to what
+	 * has been entered in the MultiAccountPanel by the user. The Accounts in
+	 * the AugmentedAccounts will not have been saved (so will not have IDs).
+	 * Also, no opening balance Journals will be saved (it is the client's
+	 * responsibility to create opening balance Journals, if they desire to do
+	 * so, using the information provided in the AugmentedAccounts. The
+	 * Accounts in the AugmentedAccounts will have their commodity() attribute
+	 * initialized to database_connection().default_commodity().
 	 */
-	void selected_augmented_accounts
-	(	std::vector<AugmentedAccount>& out
-	);
+	std::vector<AugmentedAccount> selected_augmented_accounts();
 
 	std::set<wxString> selected_account_names() const;
 	
