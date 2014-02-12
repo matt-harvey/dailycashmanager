@@ -64,8 +64,6 @@ add_definitions (
 	-DDCM_VERSION_MAJOR=${version_major}
 	-DDCM_VERSION_MINOR=${version_minor}
 	-DDCM_VERSION_PATCH=${version_patch}
-	-DDCM_DOC_DIR="${CMAKE_INSTALL_PREFIX}/${doc_rel_dir}"
-	-DDCM_LICENSE_FILENAME="${license_filename}"
 )
 if (ENABLE_LOGGING)
 	add_definitions (-DJEWEL_ENABLE_LOGGING)
