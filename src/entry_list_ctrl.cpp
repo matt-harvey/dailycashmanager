@@ -219,17 +219,17 @@ EntryListCtrl::autosize_column_widths()
 void
 EntryListCtrl::adjust_comment_column_to_fit()
 {
-	int total_widths = 0;
-	int const num_cols = num_columns();
-	for (int i = 0; i != num_cols; ++i) total_widths += GetColumnWidth(i);
-	int const shortfall =
-		GetSize().GetWidth() - total_widths - scrollbar_width_allowance();
-	int const current_comment_width =
-		GetColumnWidth(do_get_comment_col_num());
-	SetColumnWidth
-	(	do_get_comment_col_num(),
-		current_comment_width + shortfall
-	);
+	int const ccn = do_get_comment_col_num();
+	if (ccn >= 0)
+	{
+		int total_widths = 0;
+		int const num_cols = num_columns();
+		for (int i = 0; i != num_cols; ++i) total_widths += GetColumnWidth(i);
+		int const shortfall =
+			GetSize().GetWidth() - total_widths - scrollbar_width_allowance();
+		int const current_comment_width = GetColumnWidth(ccn);
+		SetColumnWidth(ccn, current_comment_width + shortfall);
+	}
 	return;
 
 }
@@ -455,10 +455,7 @@ void
 EntryListCtrl::scroll_to_bottom()
 {
 	int const count = GetItemCount();
-	if (count > 0)
-	{
-		EnsureVisible(count - 1);
-	}
+	if (count > 0) EnsureVisible(count - 1);
 	return;
 }
 
