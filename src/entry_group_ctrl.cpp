@@ -572,8 +572,8 @@ EntryGroupCtrl::side_description() const
 	{
 	case TransactionType::expenditure:  // fall through
 	case TransactionType::revenue:
-		if (is_source()) source_super_types(m_transaction_type, super_types);
-		else destination_super_types(m_transaction_type, super_types);
+		if (is_source()) super_types = source_super_types(m_transaction_type);
+		else super_types = destination_super_types(m_transaction_type);
 		JEWEL_ASSERT(super_types.size() == 1);
 		ret += account_concept_name
 		(	*(super_types.begin()),

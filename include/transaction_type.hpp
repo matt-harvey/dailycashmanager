@@ -159,17 +159,11 @@ destination_account_types
 (	TransactionType p_transaction_type
 );
 
-void
-source_super_types
-(	TransactionType p_transaction_type,
-	std::set<AccountSuperType>& out
-);
+std::set<AccountSuperType>
+source_super_types(TransactionType p_transaction_type);
 
-void
-destination_super_types
-(	TransactionType p_transaction_type,
-	std::set<AccountSuperType>& out
-);
+std::set<AccountSuperType>
+destination_super_types(TransactionType p_transaction_type);
 
 
 /**

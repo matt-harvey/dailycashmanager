@@ -331,34 +331,26 @@ source_account_types
 }
 
 
-void
-source_super_types
-(	TransactionType p_transaction_type,
-	set<AccountSuperType>& out
-)
+set<AccountSuperType>
+source_super_types(TransactionType p_transaction_type)
 {
-	vector<AccountType> const& atypes =
-		source_account_types(p_transaction_type);
-	for (AccountType const atype: atypes)
+	set<AccountSuperType> ret;
+	for (auto const atype: source_account_types(p_transaction_type))
 	{
-		out.insert(super_type(atype));
+		ret.insert(super_type(atype));
 	}
-	return;
+	return ret;
 }
 
-void
-destination_super_types
-(	TransactionType p_transaction_type,
-	set<AccountSuperType>& out
-)
+set<AccountSuperType>
+destination_super_types(TransactionType p_transaction_type)
 {
-	vector<AccountType> const& atypes =
-		destination_account_types(p_transaction_type);
-	for (AccountType const atype: atypes)
+	set<AccountSuperType> ret;
+	for (auto const atype: destination_account_types(p_transaction_type))
 	{
-		out.insert(super_type(atype));
+		ret.insert(super_type(atype));
 	}
-	return;
+	return ret;
 }
 
 vector<AccountType> const&
