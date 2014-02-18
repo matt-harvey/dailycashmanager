@@ -102,8 +102,7 @@ vector<wxString> const&
 account_type_names()
 {
 	static vector<wxString> const ret
-	{	
-		"Asset",
+	{	"Asset",
 		"Liability",
 		"Equity",
 		"Revenue",
