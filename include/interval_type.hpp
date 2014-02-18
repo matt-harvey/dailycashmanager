@@ -25,13 +25,12 @@ namespace dcm
 {
 
 /**
- * Enumerated type representing different
- * date interval.
+ * Enumerated type representing different date intervals.
  *
  * Should be self-explanatory; except note that
- * \c month_ends represents an interval between the
+ * \e month_ends represents an interval between the
  * last day of one month and the last day of the next,
- * whereas \c months simply represents an interval of
+ * whereas \e months simply represents an interval of
  * one month with no particular reference to the end
  * of the month.
  *
