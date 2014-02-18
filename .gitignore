@@ -15,3 +15,4 @@ user_guide/LICENSE.rst
 user_guide/_build/
 DailyCashManager*tar.gz
 html/
+.*.swp
