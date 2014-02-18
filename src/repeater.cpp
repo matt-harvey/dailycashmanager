@@ -442,17 +442,20 @@ Repeater::mimic(Repeater& rhs)
 // Implement free functions
 
 vector<RepeaterFiringResult>
-update_repeaters(DcmDatabaseConnection& dbc, gregorian::date d)
+update_repeaters
+(	DcmDatabaseConnection& p_database_connection,
+	gregorian::date p_target_date
+)
 {
 	vector<RepeaterFiringResult> ret;
 	// Read into a vector first - uneasy about reading and writing
 	// at the same time.
-	RepeaterTableIterator const rtit(dbc);
+	RepeaterTableIterator const rtit(p_database_connection);
 	RepeaterTableIterator const rtend;
 	vector<Handle<Repeater> > vec(rtit, rtend);
 	for (Handle<Repeater> const& repeater: vec)
 	{
-		while (repeater->next_date() <= d)
+		while (repeater->next_date() <= p_target_date)
 		{
 			RepeaterFiringResult firing_result
 			(	repeater->draft_journal()->id(),
@@ -469,15 +472,15 @@ update_repeaters(DcmDatabaseConnection& dbc, gregorian::date d)
 				ret.push_back(firing_result);
 				break;
 			}
-			// In the special case where oj is dbc.budget_instrument(),
-			// and is
-			// devoid of entries, firing it does not cause any
-			// OrdinaryJournal to be posted, but simply advances
-			// the next posting date. In this case the returned
-			// OrdinaryJournal will have no id.
+			// In the special case where oj is
+			// p_database_connection.budget_instrument(), and is devoid of
+			// entries, firing it does not cause any OrdinaryJournal to be
+			// posted, but simply advances the next posting date. In this case
+			// the returned OrdinaryJournal will have no id.
 #			ifndef NDEBUG
 				Handle<DraftJournal> const dj = repeater->draft_journal();
-				Handle<DraftJournal> const bi = dbc.budget_instrument();
+				Handle<DraftJournal> const bi =
+					p_database_connection.budget_instrument();
 #			endif
 			if (oj->has_id())
 			{
@@ -497,7 +500,5 @@ update_repeaters(DcmDatabaseConnection& dbc, gregorian::date d)
 	sort(ret.begin(), ret.end());
 	return ret;
 }
-
-
 
 }  // namespace dcm

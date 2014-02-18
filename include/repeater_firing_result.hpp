@@ -84,6 +84,18 @@ private:
 
 };  // class RepeaterFiringResult
 
+/**
+ * @relates RepeaterFiringResult.
+ *
+ * @returns true if and only if the firing date of \e lhs is earlier than the
+ * firing date of \e rhs.
+ */
+bool operator<
+(	RepeaterFiringResult const& lhs,
+	RepeaterFiringResult const& rhs
+);
+
+
 }  // namespace dcm
 
 #endif  // GUARD_repeater_firing_result_hpp_8121989447680297

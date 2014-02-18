@@ -205,32 +205,24 @@ private:
 	std::unique_ptr<RepeaterData> m_data;
 };
 
-bool operator<
-(	RepeaterFiringResult const& lhs,
-	RepeaterFiringResult const& rhs
-);
-
 // Free functions
 
 /**
  * Attempts to bring Repeaters up to date (thereby posting auto posted
- * journals), returning a sequence of FiringResults, each of which conveys
- * the result of a single firing attempt. The sequence is sorted by date of
- * firing (or attempted firing).
+ * journals), returning a sequence of RepeaterFiringResults, each of which
+ * conveys the result of a single firing attempt. The sequence is sorted by
+ * date of firing (or attempted firing).
+ *
+ * @param p_database_connection the database connection with which the
+ * Repeaters we want to update are associated.
+ *
+ * @param p_target_date the date to which we want the Repeaters brought up to
+ * date.
  */
 std::vector<RepeaterFiringResult> update_repeaters
-(	DcmDatabaseConnection& dbc,
-	boost::gregorian::date d = today()
+(	DcmDatabaseConnection& p_database_connection,
+	boost::gregorian::date p_target_date = today()
 );
-
-// Implement inline functions
-
-inline
-bool
-operator<(RepeaterFiringResult const& lhs, RepeaterFiringResult const& rhs)
-{
-	return lhs.firing_date() < rhs.firing_date();
-}
 
 }  // namespace dcm
 

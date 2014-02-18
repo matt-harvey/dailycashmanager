@@ -239,10 +239,5 @@ TEST_FIXTURE(TestFixture, test_repeater_fire_next)
 	CHECK_EQUAL(repeater1b->fire_next()->date(), date(3013, 11, 3));
 }
 
-
-
-
-
-
 }  // namespace test
 }  // namespace dcm

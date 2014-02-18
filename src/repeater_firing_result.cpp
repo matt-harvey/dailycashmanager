@@ -61,4 +61,10 @@ RepeaterFiringResult::mark_as_successful()
 	return;
 }
 
+bool
+operator<(RepeaterFiringResult const& lhs, RepeaterFiringResult const& rhs)
+{
+	return lhs.firing_date() < rhs.firing_date();
+}
+
 }  // namespace dcm
