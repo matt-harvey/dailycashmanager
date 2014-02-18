@@ -22,6 +22,7 @@
 #include "ordinary_journal.hpp"
 #include "dcm_database_connection.hpp"
 #include "proto_journal.hpp"
+#include "repeater_firing_result.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <sqloxx/handle.hpp>
 #include <sqloxx/id.hpp>
@@ -204,29 +205,6 @@ private:
 	std::unique_ptr<RepeaterData> m_data;
 };
 
-/**
- * Used for conveying information about the result of an attempt to update
- * a single Repeater one time.
- */
-struct RepeaterFiringResult
-{
-	/**
-	 * The Id of the DraftJournal which the Repeater relates to.
-	 */
-	sqloxx::Id draft_journal_id;
-
-	/**
-	 * The date on which the Repeater was fired (or, if unsuccessful, the
-	 * date on which it was supposed to fire).
-	 */
-	boost::gregorian::date firing_date;
-
-	/**
-	 * true if and only if the firing attempt was successful
-	 */
-	bool successful;
-};
-
 bool operator<
 (	RepeaterFiringResult const& lhs,
 	RepeaterFiringResult const& rhs
@@ -251,7 +229,7 @@ inline
 bool
 operator<(RepeaterFiringResult const& lhs, RepeaterFiringResult const& rhs)
 {
-	return lhs.firing_date < rhs.firing_date;
+	return lhs.firing_date() < rhs.firing_date();
 }
 
 }  // namespace dcm

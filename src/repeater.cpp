@@ -24,6 +24,7 @@
 #include "dcm_exceptions.hpp"
 #include "proto_journal.hpp"
 #include "repeater.hpp"
+#include "repeater_firing_result.hpp"
 #include "repeater_table_iterator.hpp"
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/sql_statement.hpp>
@@ -453,11 +454,11 @@ update_repeaters(DcmDatabaseConnection& dbc, gregorian::date d)
 	{
 		while (repeater->next_date() <= d)
 		{
-			RepeaterFiringResult firing_result =
-			{	repeater->draft_journal()->id(),
+			RepeaterFiringResult firing_result
+			(	repeater->draft_journal()->id(),
 				repeater->next_date(),
 				false
-			};
+			);
 			Handle<OrdinaryJournal> oj(repeater->database_connection());
 			try
 			{
@@ -480,8 +481,8 @@ update_repeaters(DcmDatabaseConnection& dbc, gregorian::date d)
 #			endif
 			if (oj->has_id())
 			{
-				firing_result.successful = true;
-				JEWEL_ASSERT (firing_result.firing_date == oj->date());
+				firing_result.mark_as_successful();
+				JEWEL_ASSERT (firing_result.firing_date() == oj->date());
 				ret.push_back(firing_result);
 				JEWEL_ASSERT (dj != bi || !dj->entries().empty());
 			}

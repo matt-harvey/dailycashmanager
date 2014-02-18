@@ -24,6 +24,7 @@
 #include "persistent_journal.hpp"
 #include "dcm_database_connection.hpp"
 #include "repeater.hpp"
+#include "repeater_firing_result.hpp"
 #include "string_conv.hpp"
 #include "string_flags.hpp"
 #include "gui/account_dialog.hpp"
@@ -784,7 +785,7 @@ Frame::report_repeater_firing_results
 		{
 			Handle<DraftJournal> const dj
 			(	this->m_database_connection,
-				r.draft_journal_id
+				r.draft_journal_id()
 			);
 			return dj != m_database_connection.budget_instrument();
 		}
@@ -792,7 +793,7 @@ Frame::report_repeater_firing_results
 	auto const end_successful = stable_partition
 	(	p_results.begin(),
 		end_normal,
-		[](RepeaterFiringResult const& r){ return r.successful; }
+		[](RepeaterFiringResult const& r){ return r.successful(); }
 	);
 
 	// p_results is now ordered in three bands, as follows:
@@ -815,12 +816,12 @@ Frame::report_repeater_firing_results
 		{
 			Handle<DraftJournal> const dj
 			(	m_database_connection,
-				it->draft_journal_id
+				it->draft_journal_id()
 			);
-			JEWEL_ASSERT (it->successful);
+			JEWEL_ASSERT (it->successful());
 			oss << "\"" << dj->name() << "\""
 				<< " was recorded on "
-				<< date_format_wx(it->firing_date);
+				<< date_format_wx(it->firing_date());
 			if (end_successful - it == 1) oss << ".\n";
 			else oss << ";\n";
 		}
@@ -854,12 +855,12 @@ Frame::report_repeater_firing_results
 		{
 			Handle<DraftJournal> const dj
 			(	m_database_connection,
-				it->draft_journal_id
+				it->draft_journal_id()
 			);
-			JEWEL_ASSERT (!it->successful);
+			JEWEL_ASSERT (!it->successful());
 			oss2 << "\"" << dj->name() << "\""
 			     << " was not recorded, though it was next scheduled for "
-				 << date_format_wx(it->firing_date);
+				 << date_format_wx(it->firing_date());
 			if (end_normal - it == 1) oss2 << ".\n";
 			else oss2 << ";\n";
 		}
@@ -879,12 +880,12 @@ Frame::report_repeater_firing_results
 		{
 			Handle<DraftJournal> const dj
 			(	m_database_connection,
-				it->draft_journal_id
+				it->draft_journal_id()
 			);
 			JEWEL_ASSERT (dj == m_database_connection.budget_instrument());
 
 			// for budget instrument, we only report unsuccessful firings
-			if (!it->successful)
+			if (!it->successful())
 			{
 				wxMessageBox
 				(	"The regular top-up of envelopes with budget amounts "

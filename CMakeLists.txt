@@ -242,6 +242,7 @@ set (
 	src/pl_account_entry_list_ctrl.cpp
 	src/pl_report.cpp
 	src/reconciliation_entry_list_ctrl.cpp
+	src/repeater_firing_result.cpp
 	src/report.cpp
 	src/report_panel.cpp
 	src/setup_wizard.cpp
