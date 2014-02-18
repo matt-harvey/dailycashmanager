@@ -27,7 +27,6 @@
 #include <wx/string.h>
 #include <iostream>
 #include <ostream>
-#include <numeric>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -38,7 +37,6 @@ using jewel::Decimal;
 using jewel::value;
 using sqloxx::Handle;
 using sqloxx::Id;
-using std::accumulate;
 using std::endl;
 using std::ostream;
 using std::string;
@@ -55,18 +53,6 @@ struct Journal::JournalData
 	boost::optional<wxString> comment;
 	std::vector<Handle<Entry> > entries;
 };
-
-
-namespace
-{
-	Decimal entry_accumulation_aux
-	(	Decimal const& dec,
-		Handle<Entry> const& entry
-	)
-	{
-		return dec + entry->amount();
-	}
-}  // end anonymous namespace
 
 Journal::Journal(): m_data(new JournalData)
 {
@@ -138,12 +124,9 @@ Journal::transaction_type()
 Decimal
 Journal::balance()
 {
-	return accumulate
-	(	entries().begin(),
-		entries().end(),
-		Decimal(0, 0),
-		entry_accumulation_aux
-	);
+	Decimal ret(0, 0);
+	for (auto const& entry: entries()) ret += entry->amount();
+	return ret;
 }
 
 bool
@@ -166,8 +149,7 @@ Journal::primary_amount()
 	return is_actual()? total: -total;
 }
 
-Journal::Journal(Journal const& rhs):
-	m_data(new JournalData(*(rhs.m_data)))
+Journal::Journal(Journal const& rhs): m_data(new JournalData(*(rhs.m_data)))
 {
 }
 
