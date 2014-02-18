@@ -36,7 +36,6 @@
 #include <sqloxx/id.hpp>
 #include <sqloxx/sql_statement.hpp>
 #include <algorithm>
-#include <numeric>
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -45,7 +44,6 @@ using jewel::Decimal;
 using sqloxx::Handle;
 using sqloxx::Id;
 using sqloxx::SQLStatement;
-using std::accumulate;
 using std::ostream;
 using std::pair;
 using std::unique_ptr;

@@ -41,7 +41,6 @@
 #include <wx/msgdlg.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
-#include <numeric>
 #include <set>
 #include <vector>
 
@@ -49,14 +48,8 @@ using jewel::Decimal;
 using jewel::Log;
 using jewel::round;
 using sqloxx::Handle;
-using std::accumulate;
 using std::set;
 using std::vector;
-
-// for debugging
-	#include <jewel/log.hpp>
-	#include <iostream>
-	using std::endl;
 
 namespace dcm
 {
@@ -80,11 +73,6 @@ namespace
 			make_default_accounts(p_database_connection, ret, atype);
 		}
 		return ret;
-	}
-
-	Decimal total_amount_aux(Decimal const& dec, DecimalTextCtrl* ctrl)
-	{
-		return dec + ctrl->amount();
 	}
 
 }  // end anonymous namespace
@@ -484,12 +472,9 @@ MultiAccountPanel::set_account_names_already_taken
 Decimal
 MultiAccountPanel::total_amount() const
 {
-	return accumulate
-	(	m_opening_balance_boxes.begin(),
-		m_opening_balance_boxes.end(),
-		Decimal(0, m_commodity->precision()),
-		total_amount_aux
-	);
+	Decimal ret(0, m_commodity->precision());
+	for (auto const& box: m_opening_balance_boxes) ret += box->amount();
+	return ret;
 }
 
 }  // namespace gui
