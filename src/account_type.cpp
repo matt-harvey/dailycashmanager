@@ -52,40 +52,30 @@ super_type(AccountType p_account_type)
 vector<AccountType> const&
 account_types()
 {
-	static vector<AccountType> ret;
-	if (ret.empty())
-	{
-		ret.reserve(6);
-		ret.push_back(AccountType::asset);
-		ret.push_back(AccountType::liability);
-		ret.push_back(AccountType::equity);
-		ret.push_back(AccountType::revenue);
-		ret.push_back(AccountType::expense);
-		ret.push_back(AccountType::pure_envelope);
-	}
-	JEWEL_ASSERT (ret.size() == 6);
+	static vector<AccountType> const ret
+	{	AccountType::asset,
+		AccountType::liability,
+		AccountType::equity,
+		AccountType::revenue,
+		AccountType::expense,
+		AccountType::pure_envelope
+	};
 	return ret;
 }
 
 vector<AccountType> const&
 account_types(AccountSuperType p_account_super_type)
 {
-	static vector<AccountType> pl_ret;
-	static vector<AccountType> bs_ret;
-	if (pl_ret.empty())
-	{
-		pl_ret.reserve(3);
-		pl_ret.push_back(AccountType::revenue);
-		pl_ret.push_back(AccountType::expense);
-		pl_ret.push_back(AccountType::pure_envelope);
-	}
-	if (bs_ret.empty())
-	{
-		bs_ret.reserve(3);
-		bs_ret.push_back(AccountType::asset);
-		bs_ret.push_back(AccountType::liability);
-		bs_ret.push_back(AccountType::equity);
-	}
+	static vector<AccountType> const pl_ret
+	{	AccountType::revenue,
+		AccountType::expense,
+		AccountType::pure_envelope
+	};
+	static vector<AccountType> const bs_ret
+	{	AccountType::asset,
+		AccountType::liability,
+		AccountType::equity
+	};
 	switch (p_account_super_type)
 	{
 	case AccountSuperType::pl:
@@ -101,31 +91,26 @@ account_types(AccountSuperType p_account_super_type)
 vector<AccountSuperType> const&
 account_super_types()
 {
-	static vector<AccountSuperType> ret;
-	if (ret.empty())
-	{
-		ret.push_back(AccountSuperType::balance_sheet);
-		ret.push_back(AccountSuperType::pl);
-	}
-	JEWEL_ASSERT (!ret.empty());
+	static vector<AccountSuperType> const ret
+	{	AccountSuperType::balance_sheet,
+		AccountSuperType::pl
+	};
 	return ret;
 }
 
 vector<wxString> const&
 account_type_names()
 {
-	static vector<wxString> ret;
-	if (ret.empty())
-	{
-		ret.reserve(6);
-		ret.push_back("Asset");
-		ret.push_back("Liability");
-		ret.push_back("Equity");
-		ret.push_back("Revenue");
-		ret.push_back("Expense");
-		ret.push_back("Pure envelope");
-	}
-	JEWEL_ASSERT (ret.size() == 6);
+	static vector<wxString> const ret
+	{	
+		"Asset",
+		"Liability",
+		"Equity",
+		"Revenue",
+		"Expense",
+		"Pure envelope"
+	};
+	JEWEL_ASSERT (ret.size() == account_types().size());
 	return ret;
 }
 
