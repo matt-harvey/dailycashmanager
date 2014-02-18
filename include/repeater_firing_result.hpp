@@ -47,6 +47,7 @@ public:
 		bool p_successful
 	);
 
+	RepeaterFiringResult() = delete;
 	RepeaterFiringResult(RepeaterFiringResult const& rhs) = default;
 	RepeaterFiringResult(RepeaterFiringResult&& rhs) = default;
 	RepeaterFiringResult& operator=(RepeaterFiringResult const& rhs) = default;
