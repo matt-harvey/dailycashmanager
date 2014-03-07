@@ -21,6 +21,7 @@
 #include <sqloxx/id.hpp>
 #include <wx/event.h>
 #include <wx/window.h>
+#include <vector>
 
 namespace dcm
 {
