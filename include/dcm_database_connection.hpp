@@ -30,7 +30,6 @@
 #include <list>
 #include <string>
 
-
 namespace dcm
 {
 
@@ -49,7 +48,6 @@ class Repeater;
 
 // End forward declarations
 
-
 /**
  * DCM-specific database connection class.
  * See API documentation for sqloxx::DatabaseConnection,
@@ -57,19 +55,18 @@ class Repeater;
  *
  * A DcmDatabaseConnection represents a connection to a
  * particular database in which data is stored for a particular
- * accounting entity. Since there is only on accounting entity
+ * accounting entity. Since there is only one accounting entity
  * per database - and there is no distinct "Entity" class in
  * the DCM object model - we can generally treat
  * a DcmDatabaseConnection as a proxy for the accounting
  * entity itself.
  */
-class DcmDatabaseConnection:
-	public sqloxx::DatabaseConnection
+class DcmDatabaseConnection: public sqloxx::DatabaseConnection
 {
 public:
 	/**
-	 * Exhibits the same throwing behaviour (if any) as
-	 * default constructor for sqloxx::DatabaseConnection.
+	 * Exhibits the same throwing behaviour (if any) as default constructor for
+	 * sqloxx::DatabaseConnection.
 	 */
 	DcmDatabaseConnection();
 
@@ -86,8 +83,7 @@ public:
 
 	/**
 	 * @returns the date on which the database was created. This notionally
-	 * corresponds to the date on which the accounting entity was
-	 * created.
+	 * corresponds to the date on which the accounting entity was created.
 	 */
 	boost::gregorian::date entity_creation_date() const;
 
