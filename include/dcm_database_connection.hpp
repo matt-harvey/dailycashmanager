@@ -155,6 +155,19 @@ public:
 	void set_default_commodity(sqloxx::Handle<Commodity> const& p_commodity);
 
 	/**
+	 * Set the entity creation date for the entity to
+	 * \e p_entity_creation_date. If this is set before the database connection
+	 * has been opened to a database, then, when the connection \e is opened,
+	 * the entity creation date that was set here will be automatically saved
+	 * to the database at that time.
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 */
+	void set_entity_creation_date
+	(	boost::gregorian::date const& p_entity_creation_date
+	);
+
+	/**
 	 * @returns the DraftJournal that serves as the "instrument"
 	 * by means of which the AmalgamatedBudget (for the accounting
 	 * entity represented by the DcmDatabaseConnection) effects regular
@@ -277,9 +290,9 @@ private:
 	class PermanentEntityData;
 
 	/**
-	 * Load creation date from the database into memory.
+	 * Load entity creation date from the database into memory.
 	 */
-	void load_creation_date();
+	void load_entity_creation_date();
 
 	/**
 	 * Load default commodity from the database into memory.
@@ -294,16 +307,19 @@ private:
 	 *
 	 * If this throws an exception, then the database state will be as it was
 	 * prior to the function being called, and the in-memory state of the
-	 * DcmDatabaseConnection and of the
-	 * default Commodity will be virtually as it was (as far as client code
-	 * is concerned).
+	 * DcmDatabaseConnection and of the default Commodity will be virtually as
+	 * it was (as far as client code is concerned).
 	 *
 	 * If this throws sqloxx::UnresolvedTransactionException (extremely
-	 * unlikely), then the program
-	 * should be gracefully exited prior to further SQL being executed on
-	 * the database connection.
+	 * unlikely), then the program should be gracefully exited prior to further
+	 * SQL being executed on the database connection.
 	 */
 	void save_default_commodity();
+
+	/**
+	 * Persist to the database the entity creation date.
+	 */
+	void save_entity_creation_date();
 
 	// Using raw pointers here rather than smart pointers, as we want
 	// to be able easily to verify within the body of the destructor, the
@@ -322,8 +338,6 @@ private:
 
 };  // DcmDatabaseConnection
 
-
 }  // namespace dcm
-
 
 #endif  // GUARD_dcm_database_connection_hpp_19608494974490487

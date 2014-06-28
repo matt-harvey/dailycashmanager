@@ -93,7 +93,7 @@ DateValidator::Validate(wxWindow* WXUNUSED(parent))
 	JEWEL_ASSERT (temp);
 	if (m_min_date && (value(temp) < value(m_min_date)))
 	{
-		// TODO MEDIUM PRIORITY This message doesn't actually explain to the
+		// TODO HIGH PRIORITY This message doesn't actually explain to the
 		// user why they can't enter a date that is this early.
 		wxMessageBox
 		(	wxString("Date should not be earlier than ") +

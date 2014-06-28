@@ -32,12 +32,14 @@
 #include "visibility.hpp"
 #include "gui/button.hpp"
 #include "gui/client_data.hpp"
+#include "gui/date_ctrl.hpp"
 #include "gui/combo_box.hpp"
 #include "gui/frame.hpp"
 #include "gui/locale.hpp"
 #include "gui/multi_account_panel.hpp"
 #include "gui/sizing.hpp"
 #include "gui/text_ctrl.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
@@ -90,8 +92,8 @@ using std::vector;
 #include <iostream>
 using std::endl;
 
-
 namespace filesystem = boost::filesystem;
+namespace gregorian = boost::gregorian;
 
 namespace dcm
 {
@@ -221,6 +223,7 @@ SetupWizard::run()
 		JEWEL_LOG_TRACE();
 		// Then user completed Wizard rather than cancelling.
 		configure_default_commodity();
+		configure_entity_creation_date();
 		create_file();
 		try
 		{
@@ -250,6 +253,12 @@ Handle<Commodity>
 SetupWizard::selected_currency() const
 {
 	return m_filepath_page->selected_currency();
+}
+
+gregorian::date
+SetupWizard::selected_start_date() const
+{
+	return m_filepath_page->selected_start_date();
 }
 
 Decimal
@@ -316,6 +325,15 @@ SetupWizard::configure_default_commodity()
 	Handle<Commodity> const commodity = selected_currency();
 	commodity->set_multiplier_to_base(Decimal(1, 0));
 	m_database_connection.set_default_commodity(commodity);
+	return;
+}
+
+void
+SetupWizard::configure_entity_creation_date()
+{
+	JEWEL_LOG_TRACE();
+	m_database_connection.
+		set_entity_creation_date(selected_start_date());
 	return;
 }
 
@@ -735,8 +753,33 @@ SetupWizard::FilepathPage::FilepathPage
 	m_precision_box->SetSelection(selected_currency()->precision());
 	m_top_sizer->Add(m_precision_box);
 
+	// Twelfth row
+	m_top_sizer->AddSpacer(m_directory_ctrl->GetSize().y);
+
+	// Thirteenth row
+	wxStaticText* start_date_prompt = new wxStaticText
+	(	this,
+		wxID_ANY,
+		wxString
+		(	"Enter a starting date. (You will enter transactions\n"
+			"from this date onwards.)"
+		),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxALIGN_LEFT
+	);
+	m_top_sizer->Add(start_date_prompt);
+
+	// Fourteenth row
+	m_start_date_ctrl = new DateCtrl
+	(	this,
+		s_start_date_ctrl_id,
+		wxDLG_UNIT(this, dlg_unit_size)
+	);
+	m_top_sizer->Add(m_start_date_ctrl);
+
 	// Additional space at bottom
-	for (size_t i = 0; i != 3; ++i)
+	for (size_t i = 0; i != 2; ++i)
 	{
 		m_top_sizer->AddSpacer(m_directory_ctrl->GetSize().y);
 	}
@@ -776,6 +819,15 @@ SetupWizard::FilepathPage::selected_currency() const
 	);
 	JEWEL_ASSERT (data != 0);
 	return data->data();
+}
+
+gregorian::date
+SetupWizard::FilepathPage::selected_start_date() const
+{
+	optional<gregorian::date> const maybe_start_date =
+		m_start_date_ctrl->date();
+	JEWEL_ASSERT (maybe_start_date);
+	return value(maybe_start_date);
 }
 
 void

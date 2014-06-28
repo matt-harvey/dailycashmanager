@@ -20,6 +20,7 @@
 #include "account_type.hpp"
 #include "commodity.hpp"
 #include "gui/text_ctrl.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <sqloxx/handle.hpp>
@@ -51,6 +52,7 @@ namespace gui
 
 class Button;
 class ComboBox;
+class DateCtrl;
 class Frame;
 class MultiAccountPanel;
 
@@ -93,6 +95,7 @@ public:
 	static wxSize standard_text_box_size();
 	
 	sqloxx::Handle<Commodity> selected_currency() const;
+	boost::gregorian::date selected_start_date() const;
 	void set_assumed_currency(sqloxx::Handle<Commodity> const& p_commodity);
 	jewel::Decimal total_opening_balance() const;
 
@@ -125,11 +128,19 @@ private:
 	void configure_default_commodity();
 
 	/**
+	 * Set the entity creation date for m_database_connection, based on
+	 * the start date selected by the user.
+	 *
+	 * Should be called only after calling RunWizard().
+	 */
+	void configure_entity_creation_date();
+
+	/**
 	 * Open m_database_connection to filepath selected by the user
 	 * in the wizard, creating the file in the process.
 	 *
 	 * Should be called only after calling RunWizard(), and after calling
-	 * configure_default_commodity().
+	 * configure_default_commodity() and configure_entity_creation_date().
 	 */
 	void create_file();
 
@@ -215,6 +226,7 @@ public:
 
 	boost::optional<boost::filesystem::path> selected_filepath() const;
 	sqloxx::Handle<Commodity> selected_currency() const;
+	boost::gregorian::date selected_start_date() const;
 private:
 
 	void on_directory_button_click(wxCommandEvent& event);
@@ -233,6 +245,7 @@ private:
 	TextCtrl* m_filename_ctrl;
 	ComboBox* m_currency_box;
 	ComboBox* m_precision_box;
+	DateCtrl* m_start_date_ctrl;
 
 	// Things are simpler in the implementation if this is a raw pointer.
 	// Don't be tempted to change this to a smart pointer or a reference.
@@ -242,6 +255,7 @@ private:
 	static int const s_directory_button_id = wxID_HIGHEST + 1;
 	static int const s_currency_box_id = s_directory_button_id + 1;
 	static int const s_precision_box_id = s_currency_box_id + 1;
+	static int const s_start_date_ctrl_id = s_precision_box_id + 1;
 
 	DECLARE_EVENT_TABLE()
 

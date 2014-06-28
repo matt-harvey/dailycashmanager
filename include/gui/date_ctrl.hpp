@@ -32,9 +32,6 @@ namespace gui
 
 /**
  * Widget with which the user may select a date.
- *
- * @param p_allow_blank should be set to true if and only if we will
- * permit the user to leave the DateCtrl blank.
  */
 class DateCtrl: public TextCtrl
 {

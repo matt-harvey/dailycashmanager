@@ -22,8 +22,8 @@ store your data. A small panel will be displayed on startup, titled,
 Click on *Create a new DailyCashManager file*; the *DailyCashManager Setup
 Wizard* will then guide through the process of setting up your DCM file.
 
-File name, location and currency
-................................
+File name, location, currency and starting date
+...............................................
 
 The first page of the wizard will ask you to select a location
 to save your DCM file. Click the *Browse...* button to browse your filesystem
@@ -49,6 +49,15 @@ currency unit happens to be) you could change this box to read just "0". However
 it is highly recommended that you do *not* do this. Except in some special
 cases, it is best to leave this box unchanged.
 
+You will also be asked to enter a "starting date". This is the date from which
+you will start entering transactions, and will default to today's date. If you
+will only be entering transactions starting from today, you can leave this as
+is. However, to ensure the integrity of your data, you will not be able to
+enter transactions dated earlier than the date you enter here. If you
+have a backlog of past-dated transactions that you want to enter into your newly
+created DCM file, you should set this date to the date of the earliest
+transaction that you will be entering.
+
 When you are happy with your selections here, click *Next* and you will be taken
 to the next page of the wizard.
 
@@ -56,22 +65,23 @@ Setting up accounts
 ...................
 
 The next page asks you to enter your assets and liabilities, with the current
-balances of each. An asset represents an amount of money that you "own" -
-such as a chequing account or savings account - and a liability represents
-an amount that you "owe" - such as a credit card balance or loan. The wizard
-provides you with some suggested asset and liability accounts to get you
-started; however you can and should edit these to match the accounts that you
-actually have. You can edit the *Account name*, *Type*, *Description* and
-*Starting balance* boxes directly. The *Description* is optional; you can enter
-a description of the account here for your own benefit if you feel the need.
-The *Starting balance* box contains the current amount of money in the account;
-in the case of a liability such as a credit card, this should normally be a
-negative number (appearing in parentheses). If you want to add more
-accounts, click the *Add account* button at the top right and a new row will be
-created for you to populate with the details of the new account. You can
-add as many other accounts as you like. To remove any accounts that you don't
-need, click the *Remove account* button; this removes the last account row from
-the page.
+balances of each. An asset represents an amount of money that you "own" - such
+as a chequing account or savings account - and a liability represents an amount
+that you "owe" - such as a credit card balance or loan. The wizard provides you
+with some suggested asset and liability accounts to get you started; however
+you can and should edit these to match the accounts that you actually have. You
+can edit the *Account name*, *Type*, *Description* and *Starting balance* boxes
+directly. The *Description* is optional; you can enter a description of the
+account here for your own benefit if you feel the need.  The *Starting balance*
+box contains the amount of money in the account as at the starting date (which
+will be today's date, unless you entered a different starting date on the
+previous page); in the case of a liability such as a credit card, this should
+normally be a negative number (appearing in parentheses). If you want to add
+more accounts, click the *Add account* button at the top right and a new row
+will be created for you to populate with the details of the new account. You
+can add as many other accounts as you like. To remove any accounts that you
+don't need, click the *Remove account* button; this removes the last account
+row from the page.
 
 When you've finished configuring your accounts, click *Next* at the bottom
 right, to advance to the next page of the wizard.
@@ -88,22 +98,20 @@ the boxes for the *Name*, *Type* and *Description* of each envelope directly.
 The *Description* field is optional.
 
 You will notice that each envelope has an *Initial allocation* cell; this is to
-contain the amount of funds you
-want to allocate to the envelope initially, for budgeting purposes. As a rule
-of thumb, you should allocate to each envelope enough money to cover the most
-that you would normally spend on that category in a single transaction. For
-example, if you usually spend at most 50.00 on food "in one hit", you should
-initially allocate about 50.00 to your "Food" envelope. This is only a rough
-guide however. If you are not expecting to spend from a particular envelope for
-another few weeks or months, then probably don't need to allocate the full
-amount. For example, if you spend about 600.00 every 3 months on electricity,
-and you're
-not expecting your next electricity bill for another month, then you would
-only need to allocate about 400.00 to "Electricity" to begin with. When you
-set up budget items (you can read about this under `Budgeting`_), if you
-allocate 600.00 per 3 months to this envelope, this will ensure that the
-envelope balance reaches the targetted 600.00 by the time the electricity bill
-arrives.
+contain the amount of funds you want to allocate to the envelope initially, at
+the starting date, for budgeting purposes. As a rule of thumb, you should
+allocate to each envelope enough money to cover the most that you would
+normally spend on that category in a single transaction. For example, if you
+usually spend at most 50.00 on food "in one hit", you should initially allocate
+about 50.00 to your "Food" envelope. This is only a rough guide however. If you
+are not expecting to spend from a particular envelope for another few weeks or
+months, then probably don't need to allocate the full amount. For example, if
+you spend about 600.00 every 3 months on electricity, and you're not expecting
+your next electricity bill for another month, then you would only need to
+allocate about 400.00 to "Electricity" to begin with. When you set up budget
+items (you can read about this under `Budgeting`_), if you allocate 600.00 per
+3 months to this envelope, this will ensure that the envelope balance reaches
+the targetted 600.00 by the time the electricity bill arrives.
 
 Don't worry if this doesn't make perfect sense immediately; you can adjust
 things later as you become more familiar with the envelope method of
@@ -119,24 +127,23 @@ envelope: this envelope is automatically created for you by
 DailyCashManager for just this purpose.
 
 After allocating what you think you need to your envelopes, if your
-*Unallocated* balance is a positive number, this
-means you have more money than you need to meet your immediate requirements.
-You might want to create a *pure envelope* called "Retirement savings" or
-"Car savings" or the like, to save for some longer term goal, and put
-your remaining unallocated funds into this (see `Targetted saving using pure
-envelopes`_). If you're not sure, you can leave these funds in *Unallocated*
-for now, and shift them elsewhere at a later time (see `Transferring money
-between envelopes`_).
+*Unallocated* balance is a positive number, this means you have more money than
+you need to meet your immediate requirements.  You might want to create a *pure
+envelope* called "Retirement savings" or "Car savings" or the like, to save for
+some longer term goal, and put your remaining unallocated funds into this (see
+`Targetted saving using pure envelopes`_). If you're not sure, you can leave
+these funds in *Unallocated* for now, and shift them elsewhere at a later time
+(see `Transferring money between envelopes`_).
 
-On the other hand, if *Unallocated* is negative (indicated by
-parentheses e.g. "(100.00)"), this suggests that you don't have sufficient net
-assets to cover your immediate expenditure requirements. See if you can
-realistically reduce some of your envelope allocations to bring *Unallocated*
-to nil. If you can't realistically do this, you can still
-leave the *Unallocated* negative; but try to aim over time to bring
-*Unallocated* up to *nil*. You can allocate regular funds into *Unallocated* by
-setting up a budget item in the *Unallocated* account editing
-panel (see `Creating and editing budget items`_ for how to do this).
+On the other hand, if *Unallocated* is negative (indicated by parentheses e.g.
+"(100.00)"), this suggests that you don't have sufficient net assets to cover
+your immediate expenditure requirements. See if you can realistically reduce
+some of your envelope allocations to bring *Unallocated* to nil. If you can't
+realistically do this, you can still leave the *Unallocated* negative; but try
+to aim over time to bring *Unallocated* up to *nil*. You can allocate regular
+funds into *Unallocated* by setting up a budget item in the *Unallocated*
+account editing panel (see `Creating and editing budget items`_ for how to do
+this).
 
 Opening an existing DailyCashManager file
 -----------------------------------------

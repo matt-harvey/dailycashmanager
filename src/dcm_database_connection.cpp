@@ -88,7 +88,7 @@ namespace
 class DcmDatabaseConnection::PermanentEntityData
 {
 public:
-	PermanentEntityData() = default;
+	PermanentEntityData();
 	PermanentEntityData(PermanentEntityData const&) = delete;
 	PermanentEntityData(PermanentEntityData&&) = delete;
 	PermanentEntityData& operator=(PermanentEntityData const&) = delete;
@@ -97,18 +97,11 @@ public:
 	gregorian::date creation_date() const;
 	bool default_commodity_is_set() const;
 	Handle<Commodity> default_commodity() const;
-	
-	/**
-	 * @throws EntityCreationDateException if we try to set
-	 * the entity creation date when it has already been
-	 * initialized to some other date.
-	 */
 	void set_creation_date(boost::gregorian::date const& p_date);
-
 	void set_default_commodity(Handle<Commodity> const& p_commodity);
 
 private:
-	boost::optional<boost::gregorian::date> m_creation_date;
+	boost::gregorian::date m_creation_date;
 	sqloxx::Handle<Commodity> m_default_commodity;
 };
 
@@ -192,7 +185,7 @@ DcmDatabaseConnection::~DcmDatabaseConnection()
 }
 
 void
-DcmDatabaseConnection::load_creation_date()
+DcmDatabaseConnection::load_entity_creation_date()
 {
 	JEWEL_LOG_TRACE();
 	SQLStatement statement
@@ -253,6 +246,7 @@ DcmDatabaseConnection::do_setup()
 		Commodity::setup_tables(*this);
 		setup_entity_table();
 		save_default_commodity();
+		save_entity_creation_date();
 		Account::setup_tables(*this);
 		PersistentJournal::setup_tables(*this);
 		DraftJournal::setup_tables(*this);
@@ -266,7 +260,7 @@ DcmDatabaseConnection::do_setup()
 		transaction.commit();
 	}
 	JEWEL_ASSERT (tables_are_configured());
-	load_creation_date();
+	load_entity_creation_date();
 	load_default_commodity();
 	perform_integrity_checks();
 	JEWEL_LOG_TRACE();
@@ -348,12 +342,35 @@ DcmDatabaseConnection::set_default_commodity
 		m_permanent_entity_data->set_default_commodity(p_commodity);
 		if (is_valid() && tables_are_configured())
 		{
-			save_default_commodity();  // virtual" strong guarantee
+			save_default_commodity();  // "virtual" strong guarantee
 		}
 	}
 	catch (...)
 	{
 		m_permanent_entity_data->set_default_commodity(old_dc);
+		throw;
+	}
+	return;
+}
+
+void
+DcmDatabaseConnection::set_entity_creation_date
+(	gregorian::date const& p_entity_creation_date
+)
+{
+	JEWEL_ASSERT (m_permanent_entity_data);
+	gregorian::date const old_date = entity_creation_date();
+	try
+	{
+		m_permanent_entity_data->set_creation_date(p_entity_creation_date);
+		if (is_valid() && tables_are_configured())
+		{
+			save_entity_creation_date();  // "virtual" strong guarantee
+		}
+	}
+	catch (...)
+	{
+		m_permanent_entity_data->set_creation_date(old_date);
 		throw;
 	}
 	return;
@@ -398,6 +415,19 @@ DcmDatabaseConnection::save_default_commodity()
 }
 
 void
+DcmDatabaseConnection::save_entity_creation_date()
+{
+	DatabaseTransaction dt(*this);
+	SQLStatement statement
+	(	*this,
+		"update entity_data set creation_date = :creation_date"
+	);
+	statement.bind(":creation_date", julian_int(entity_creation_date()));
+	statement.step_final();
+	return;
+}
+
+void
 DcmDatabaseConnection::setup_entity_table()
 {
 	// Entity table represents entity level data
@@ -420,10 +450,10 @@ DcmDatabaseConnection::setup_entity_table()
 		"insert into entity_data(creation_date) "
 		"values(:creation_date)"
 	);
-	gregorian::date const today_date = today();
-	populator.bind(":creation_date", julian_int(today_date));
+	gregorian::date const creation_date = entity_creation_date();
+	populator.bind(":creation_date", julian_int(creation_date));
 	populator.step_final();
-	m_permanent_entity_data->set_creation_date(today_date);
+	m_permanent_entity_data->set_creation_date(creation_date);
 
 	return;
 }
@@ -535,10 +565,15 @@ BudgetAttorney::budget
 
 // PermanentEntityData
 
+DcmDatabaseConnection::PermanentEntityData::PermanentEntityData():
+	m_creation_date(today())
+{
+}
+
 gregorian::date
 DcmDatabaseConnection::PermanentEntityData::creation_date() const
 {
-	return value(m_creation_date);
+	return m_creation_date;
 }
 
 bool
@@ -559,13 +594,6 @@ DcmDatabaseConnection::PermanentEntityData::set_creation_date
 (	boost::gregorian::date const& p_date
 )
 {
-	if (m_creation_date && (p_date != value(m_creation_date)))
-	{
-		JEWEL_THROW
-		(	EntityCreationDateException,
-			"Entity creation date cannot be changed once set."
-		);
-	}
 	m_creation_date = p_date;
 	return;
 }

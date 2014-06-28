@@ -69,11 +69,6 @@
 // create a shortcut to the file on their Desktop (assuming they didn't
 // actually create the file in their desktop).
 
-// TODO HIGH PRIORITY Some users want to be able to enter transactions dated
-// earlier than the date they created their .dcm file. This is probably best
-// enabled by letting users set the opening balance date manually to a date
-// earlier than the date on which they set up their .dcm file.
-
 #include "app.hpp"
 #include <wx/app.h>
 
