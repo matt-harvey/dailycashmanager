@@ -7,7 +7,7 @@ v1.0.0:
 
 v1.1.0:
 
-- Enable user to set entity creation date manually in set-up wizard.
+- Enabled user to set entity creation date manually in set-up wizard.
 - Fixed bug in BudgetPanel, where final budget item could not be removed from
   panel (at least on Windows).
 - Made it so that in BudgetPanel, when there are no budget item rows to delete,
