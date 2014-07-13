@@ -23,8 +23,8 @@ set (executable_stem_name "dailycashmanager")
 set (file_extension ".dcm")
 project (${application_name})
 set (version_major 1)
-set (version_minor 0)
-set (version_patch 1)
+set (version_minor 1)
+set (version_patch 0)
 
 # Custom configuration options
 
