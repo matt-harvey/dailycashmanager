@@ -24,7 +24,7 @@ set (file_extension ".dcm")
 project (${application_name})
 set (version_major 1)
 set (version_minor 1)
-set (version_patch 0)
+set (version_patch 1)
 
 # Custom configuration options
 
@@ -397,7 +397,7 @@ if (WIN32)
 
 else ()
 
-	set (package_name "${application_name}-${CPACK_PACKAGE_VERSION}")
+	set (package_name "${application_name}-${CPACK_PACKAGE_VERSION}-working")
 	set (tarball_name "${package_name}.tar.gz")
 	set (
 		packaged_items
@@ -409,9 +409,8 @@ else ()
 		CMakeLists.txt
 		Doxyfile
 		${license_filename}
-		coding_style
 		currencies.csv
-		database_conventions
+		style_guide.rst
 		windows_resources.rc
 	)
 	add_custom_target (
