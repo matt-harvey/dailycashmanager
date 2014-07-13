@@ -1,5 +1,5 @@
-Changelog for Jewel C++ library
-===============================
+Changelog for DailyCashManager
+==============================
 
 v1.0.0:
 
