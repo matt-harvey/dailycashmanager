@@ -84,6 +84,7 @@ public:
 
 private:
 	void on_kill_focus(wxFocusEvent& event);
+	void on_set_focus(wxFocusEvent& event);
 	DECLARE_EVENT_TABLE()
 
 };  // class DateCtrl

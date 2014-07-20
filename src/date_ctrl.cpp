@@ -42,6 +42,7 @@ namespace gui
 
 BEGIN_EVENT_TABLE(DateCtrl, TextCtrl)
 	EVT_KILL_FOCUS(DateCtrl::on_kill_focus)
+	EVT_SET_FOCUS(DateCtrl::on_set_focus)
 END_EVENT_TABLE()
 
 DateCtrl::DateCtrl
@@ -90,6 +91,14 @@ DateCtrl::on_kill_focus(wxFocusEvent& event)
 			Validate();
 		}
 	}
+	return;
+}
+
+void
+DateCtrl::on_set_focus(wxFocusEvent& event)
+{
+	event.Skip();
+	SelectAll();
 	return;
 }
 
