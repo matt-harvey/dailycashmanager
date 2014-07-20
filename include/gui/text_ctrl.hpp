@@ -29,12 +29,6 @@ namespace dcm
 namespace gui
 {
 
-/**
- * The sole purpose of this class's existence is to enable us to intercept
- * the tab key manually, since on Windows (at least on some machines), the
- * tab key was not being properly processed for tab traversal by wxTextCtrl
- * itself.
- */
 class TextCtrl: public wxTextCtrl
 {
 public:

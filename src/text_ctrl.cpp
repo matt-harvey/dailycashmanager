@@ -63,6 +63,7 @@ TextCtrl::~TextCtrl()
 void
 TextCtrl::on_char(wxKeyEvent& event)
 {
+	// fix issue with tab traversal on Windows
 	if (event.GetKeyCode() == WXK_TAB)
 	{
 		if (event.ShiftDown())
