@@ -63,8 +63,7 @@ bool
 DecimalValidator::Validate(wxWindow* WXUNUSED(parent))
 {
 	JEWEL_ASSERT (GetWindow()->IsKindOf(CLASSINFO(TextCtrl)));
-	TextCtrl const* const text_ctrl =
-		dynamic_cast<TextCtrl*>(GetWindow());
+	TextCtrl const* const text_ctrl = dynamic_cast<TextCtrl*>(GetWindow());
 	if (!text_ctrl)
 	{
 		return false;
@@ -82,8 +81,7 @@ DecimalValidator::Validate(wxWindow* WXUNUSED(parent))
 		wxString const text(text_ctrl->GetValue());
 		try
 		{
-			Decimal const raw_sum = wx_to_simple_sum(text, locale());
-			m_decimal = round(raw_sum, m_precision);
+			m_decimal = round(wx_to_simple_sum(text, locale()), m_precision);
 			return true;
 		}
 		catch (jewel::DecimalFromStringException&)

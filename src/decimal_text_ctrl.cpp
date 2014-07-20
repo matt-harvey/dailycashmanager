@@ -90,24 +90,14 @@ DecimalTextCtrl::set_amount(Decimal const& p_amount)
 	}
 	JEWEL_ASSERT (p_amount.places() == m_precision);
 	DecimalFormatFlags flags;
-	if (!m_print_dash_for_zero)
-	{
-		flags.clear(string_flags::dash_for_zero);
-	}
-	wxString const amount_string = finformat_wx
-	(	p_amount,
-		locale(),
-		flags
-	);
-	SetValue(amount_string);
+	if (!m_print_dash_for_zero) flags.clear(string_flags::dash_for_zero);
+	SetValue(finformat_wx(p_amount, locale(), flags));
 
 	// TODO LOW PRIORITY This really sucks. We are validating the entire parent
 	// window as a side-effect of setting the value of just one
-	// of its children. But if we call Validate() etc.. on
-	// DecimalTextCtrl directly it doesn't have any effect (for some
-	// reason...).
+	// of its children. But if we call Validate() on DecimalTextCtrl directly it
+	// doesn't have any effect (for some reason).
 	GetParent()->Validate();
-	GetParent()->TransferDataToWindow();
 
 	return;
 }

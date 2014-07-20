@@ -54,8 +54,8 @@ public:
 	 * \e parent window of the DecimalTextCtrl will have
 	 * Validate() and TransferDataFromWindow() called on it.
 	 * This is an unfortunate workaround for odd behaviour whereby
-	 * wWidgets does not seem to support these functions being
-	 * called directly on the DecimalTextCtl itself.
+	 * wxWidgets does not seem to support these functions being
+	 * called directly on the DecimalTextCtrl itself.
 	 */
 	void set_amount(jewel::Decimal const& p_amount);
 
