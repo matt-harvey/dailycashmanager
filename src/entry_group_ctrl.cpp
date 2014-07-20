@@ -397,7 +397,7 @@ EntryGroupCtrl::pop_row()
 	{
 		// Rearrange things to destroy m_unsplit_button, and move
 		// m_split_button to its "inline" position, in place of the remaining
-		// EntryDecimalAmountCtrl.
+		// EntryDecimalTextCtrl.
 		m_top_sizer->Detach(m_entry_rows.back().amount_ctrl);
 		m_entry_rows.back().amount_ctrl->Destroy();
 		m_entry_rows.back().amount_ctrl = 0;

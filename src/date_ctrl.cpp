@@ -76,9 +76,9 @@ DateCtrl::on_kill_focus(wxFocusEvent& event)
 	// Unfortunately if we call Validate() and TransferDataToWindow()
 	// directly on the DateCtrl, it doesn't work. We have to call
 	// through parent instead.
-	GetParent()->Validate();
-	GetParent()->TransferDataToWindow();
 	event.Skip();
+	auto const parent = GetParent();
+	parent->Validate() && parent->TransferDataToWindow();
 	return;
 }
 

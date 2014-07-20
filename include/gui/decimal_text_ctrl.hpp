@@ -52,7 +52,7 @@ public:
 	/**
 	 * NOTE As a side-effect of calling this function, the
 	 * \e parent window of the DecimalTextCtrl will have
-	 * Validate() and TransferDataFromWindow() called on it.
+	 * Validate() called on it.
 	 * This is an unfortunate workaround for odd behaviour whereby
 	 * wxWidgets does not seem to support these functions being
 	 * called directly on the DecimalTextCtrl itself.
@@ -63,7 +63,6 @@ public:
 
 private:
 	void on_kill_focus(wxFocusEvent& event);
-	virtual void do_on_kill_focus(wxFocusEvent& event);
 
 	bool m_print_dash_for_zero;
 	jewel::Decimal::places_type m_precision;

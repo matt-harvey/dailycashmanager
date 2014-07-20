@@ -93,10 +93,10 @@ DecimalTextCtrl::set_amount(Decimal const& p_amount)
 	if (!m_print_dash_for_zero) flags.clear(string_flags::dash_for_zero);
 	SetValue(finformat_wx(p_amount, locale(), flags));
 
-	// TODO LOW PRIORITY This really sucks. We are validating the entire parent
-	// window as a side-effect of setting the value of just one
-	// of its children. But if we call Validate() on DecimalTextCtrl directly it
-	// doesn't have any effect (for some reason).
+	// TODO LOW PRIORITY This really sucks. We are validating the entire
+	// parent window as a side-effect of setting the value of just one
+	// of its children. But if we call Validate() on DecimalTextCtrl directly
+	// it doesn't have any effect (for some reason).
 	GetParent()->Validate();
 
 	return;
@@ -114,13 +114,6 @@ DecimalTextCtrl::amount()
 void
 DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
 {
-	do_on_kill_focus(event);
-	return;
-}
-
-void
-DecimalTextCtrl::do_on_kill_focus(wxFocusEvent& event)
-{
 	// Unfortunately if we call Validate() and TransferDataToWindow()
 	// directly on the DecimalTextCtrl, it doesn't work. We have to call
 	// through parent instead.
@@ -129,19 +122,15 @@ DecimalTextCtrl::do_on_kill_focus(wxFocusEvent& event)
 	// especially the call to GetParent()->TransferDataToWindow().
 	//
 	// TODO LOW PRIORITY The coupling between BudgetPanel and DecimalTextCtrl
-	// and MultiAccountPanel here is a bit ugly and feels fragile. Improve this.
-	auto const orig = amount();
-	if (!GetParent()->Validate())
-	{
-		set_amount(orig);
-		return;
-	}
-	if (!GetParent()->TransferDataToWindow())
-	{
-		set_amount(orig);
-		return;
-	}
+	// and MultiAccountPanel here is a bit ugly and feels fragile. Improve
+	// this.
 	event.Skip();
+	auto const parent = GetParent();
+	auto const orig = amount();
+	if (!parent->Validate() || !parent->TransferDataToWindow())
+	{
+		set_amount(orig);
+	}
 	return;
 }
 
