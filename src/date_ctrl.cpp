@@ -15,6 +15,7 @@
  */
 
 #include "gui/date_ctrl.hpp"
+#include "date.hpp"
 #include "dcm_exceptions.hpp"
 #include "gui/date_validator.hpp"
 #include "gui/locale.hpp"
@@ -22,6 +23,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
+#include <jewel/optional.hpp>
 #include <wx/datetime.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -30,6 +32,7 @@
 #include <wx/window.h>
 
 using boost::optional;
+using jewel::value;
 namespace gregorian = boost::gregorian;
 
 namespace dcm
@@ -60,7 +63,7 @@ DateCtrl::DateCtrl
 	)
 {
 }
-	
+
 optional<gregorian::date>
 DateCtrl::date()
 {
@@ -78,7 +81,15 @@ DateCtrl::on_kill_focus(wxFocusEvent& event)
 	// through parent instead.
 	event.Skip();
 	auto const parent = GetParent();
-	parent->Validate() && parent->TransferDataToWindow();
+	auto const orig = date();
+	if (!parent->Validate() || !parent->TransferDataToWindow())
+	{
+		if (orig)
+		{
+			SetValue(date_format_wx(value(orig)));
+			Validate();
+		}
+	}
 	return;
 }
 
