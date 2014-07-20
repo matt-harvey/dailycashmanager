@@ -38,7 +38,6 @@ namespace gui
 
 BEGIN_EVENT_TABLE(DecimalTextCtrl, TextCtrl)
 	EVT_KILL_FOCUS(DecimalTextCtrl::on_kill_focus)
-	EVT_SET_FOCUS(DecimalTextCtrl::on_set_focus)
 END_EVENT_TABLE()
 
 DecimalTextCtrl::DecimalTextCtrl
@@ -132,14 +131,6 @@ DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
 	{
 		set_amount(orig);
 	}
-	return;
-}
-
-void
-DecimalTextCtrl::on_set_focus(wxFocusEvent& event)
-{
-	event.Skip();
-	SelectAll();
 	return;
 }
 

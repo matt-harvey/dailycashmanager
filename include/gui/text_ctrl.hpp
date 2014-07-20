@@ -59,6 +59,7 @@ public:
 private:
 
 	void on_char(wxKeyEvent& event);
+	void on_set_focus(wxFocusEvent& event);
 
 	DECLARE_EVENT_TABLE();
 

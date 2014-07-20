@@ -63,7 +63,6 @@ public:
 
 private:
 	void on_kill_focus(wxFocusEvent& event);
-	void on_set_focus(wxFocusEvent& event);
 
 	bool m_print_dash_for_zero;
 	jewel::Decimal::places_type m_precision;
