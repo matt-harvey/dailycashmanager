@@ -248,11 +248,11 @@ void
 AccountCtrl::on_kill_focus(wxFocusEvent& event)
 {
 	JEWEL_LOG_TRACE();
-	// Unfortunately if we call Validate() and TransferDataToWindow()
-	// directly on the AccountCtrl, it doesn't work. We have to call
-	// through parent instead.
-	GetParent()->Validate();
-	GetParent()->TransferDataToWindow();
+	StringSetValidator* const validator =
+		dynamic_cast<StringSetValidator*>(GetValidator());
+	JEWEL_ASSERT (validator);
+	validator->Validate(this);
+	validator->TransferToWindow();
 	event.Skip();
 	return;
 }

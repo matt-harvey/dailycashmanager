@@ -581,7 +581,7 @@ EntryGroupCtrl::side_description() const
 		);
 		break;
 	case TransactionType::balance_sheet: // fall through
-	case TransactionType::envelope:  // fall through
+	case TransactionType::envelope:
 		ret += (is_source()? wxString("Source"): wxString("Destination"));
 		break;
 	case TransactionType::generic:
