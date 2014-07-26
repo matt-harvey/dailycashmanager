@@ -30,7 +30,6 @@ namespace gui
 
 BEGIN_EVENT_TABLE(TextCtrl, wxTextCtrl)
 	EVT_CHAR(TextCtrl::on_char)
-	EVT_SET_FOCUS(TextCtrl::on_set_focus)
 END_EVENT_TABLE()
 
 TextCtrl::TextCtrl
@@ -79,14 +78,6 @@ TextCtrl::on_char(wxKeyEvent& event)
 	{
 		event.Skip();
 	}
-	return;
-}
-
-void
-TextCtrl::on_set_focus(wxFocusEvent& event)
-{
-	event.Skip();
-	SelectAll();
 	return;
 }
 
