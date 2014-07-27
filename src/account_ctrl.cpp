@@ -247,13 +247,11 @@ AccountCtrl::update_for_amended(Handle<Account> const& p_account)
 void
 AccountCtrl::on_kill_focus(wxFocusEvent& event)
 {
-	JEWEL_LOG_TRACE();
-	StringSetValidator* const validator =
-		dynamic_cast<StringSetValidator*>(GetValidator());
-	JEWEL_ASSERT (validator);
-	validator->Validate(this);
-	validator->TransferToWindow();
 	event.Skip();
+	auto* const validator = GetValidator();
+	JEWEL_ASSERT (validator);
+	validator->Validate(static_cast<wxWindow*>(this));
+	validator->TransferToWindow();
 	return;
 }
 

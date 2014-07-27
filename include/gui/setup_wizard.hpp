@@ -191,13 +191,13 @@ public:
 	 * to the directory also entered into the FilepathPage to which
 	 * the \e parent belongs, does not already exist.
 	 */
-	bool Validate(wxWindow* parent);
+	bool Validate(wxWindow* parent) override;
 
-	bool TransferFromWindow();
+	bool TransferFromWindow() override;
 
-	bool TransferToWindow();
+	bool TransferToWindow() override;
 
-	wxObject* Clone() const; 
+	wxObject* Clone() const override;
 
 private:
 	boost::filesystem::path* m_filepath;

@@ -41,13 +41,7 @@ namespace gui
 {
 
 BEGIN_EVENT_TABLE(TransactionTypeCtrl, ComboBox)
-	EVT_KILL_FOCUS
-	(	TransactionTypeCtrl::on_kill_focus
-	)
-	EVT_COMBOBOX
-	(	wxID_ANY,
-		TransactionTypeCtrl::on_change
-	)
+	EVT_COMBOBOX(wxID_ANY, TransactionTypeCtrl::on_change)
 END_EVENT_TABLE()
 
 TransactionTypeCtrl::TransactionTypeCtrl
@@ -115,22 +109,6 @@ TransactionTypeCtrl::set_transaction_type(TransactionType p_transaction_type)
 }
 
 void
-TransactionTypeCtrl::on_kill_focus(wxFocusEvent& event)
-{
-	// TODO LOW PRIORITY Make a class from which we can privately inherit,
-	// to capture this on_kill_focus behaviour, which is shared by several
-	// custom widget classes in dcm::gui.
-
-	// Unfortunately if we call Validate() and TransferDataToWindow()
-	// directly on the AccountCtrl, it doesn't work. We have to call
-	// through parent instead.
-	GetParent()->Validate();
-	GetParent()->TransferDataToWindow();
-	event.Skip();
-	return;
-}
-
-void
 TransactionTypeCtrl::on_change(wxCommandEvent& event)
 {
 	(void)event;  // silence compiler re. unused param.
@@ -145,7 +123,6 @@ TransactionTypeCtrl::on_change(wxCommandEvent& event)
 	parent->refresh_for_transaction_type(value(maybe_ttype));
 	return;
 }
-
 
 }  // namespace gui
 }  // namespace dcm

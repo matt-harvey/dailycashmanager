@@ -49,11 +49,12 @@ class TransactionTypeCtrl: public ComboBox
 public:
 
 	/**
-	 * p_parent must be a TransactionCtrl*. Make sure that the vector
+	 * \e p_parent must be a TransactionCtrl*. Make sure that the vector
 	 * passed to p_transaction_types does not contain any TransactionTypes
 	 * that are not in available_transaction_types(p_database_connection) -
 	 * this is the caller's responsibility.
-	 * p_transaction_types should not be empty.
+	 *
+	 * \e p_transaction_types should not be empty.
 	 */
 	TransactionTypeCtrl
 	(	wxWindow* p_parent,
@@ -75,23 +76,17 @@ public:
 	 * we are in Windows and the underlying ComboBox is in a
 	 * transitional state.
 	 */
-	boost::optional<TransactionType>
-	transaction_type() const;
+	boost::optional<TransactionType> transaction_type() const;
 
 	/**
 	 * Sets the TransactionType displayed in the control.
 	 */
-	void set_transaction_type
-	(	TransactionType p_transaction_type
-	);
+	void set_transaction_type(TransactionType p_transaction_type);
 
 private:
-	void on_kill_focus(wxFocusEvent& event);
 	void on_change(wxCommandEvent& event);
-
 	std::vector<TransactionType> m_transaction_types;
 	DcmDatabaseConnection& m_database_connection;
-
 	DECLARE_EVENT_TABLE()
 
 };  // class TransactionTypeCtrl

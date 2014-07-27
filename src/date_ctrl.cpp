@@ -77,18 +77,19 @@ DateCtrl::date()
 void
 DateCtrl::on_kill_focus(wxFocusEvent& event)
 {
-	// Unfortunately if we call Validate() and TransferDataToWindow()
-	// directly on the DateCtrl, it doesn't work. We have to call
-	// through parent instead.
 	event.Skip();
-	auto const parent = GetParent();
 	auto const orig = date();
-	if (!parent->Validate() || !parent->TransferDataToWindow())
+	auto* const validator = GetValidator();
+	JEWEL_ASSERT (validator);
+	if
+	(	!validator->Validate(static_cast<wxWindow*>(this)) ||
+		!validator->TransferToWindow()
+	)
 	{
 		if (orig)
 		{
 			SetValue(date_format_wx(value(orig)));
-			Validate();
+			validator->Validate(static_cast<wxWindow*>(this));
 		}
 	}
 	return;

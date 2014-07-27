@@ -115,20 +115,22 @@ DecimalTextCtrl::amount()
 void
 DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
 {
-	// Unfortunately if we call Validate() and TransferDataToWindow()
-	// directly on the DecimalTextCtrl, it doesn't work. We have to call
-	// through parent instead.
+	// NOTE BudgetPanel and MultiAccountPanel rely on the call
+	// to GetParent()->TransferDataToWindow().
 	//
-	// NOTE BudgetPanel and MultiAccountPanel now rely on this behaviour,
-	// especially the call to GetParent()->TransferDataToWindow().
-	//
-	// TODO LOW PRIORITY The coupling between BudgetPanel and DecimalTextCtrl
-	// and MultiAccountPanel here is a bit ugly and feels fragile. Improve
-	// this.
+	// TODO LOW PRIORITY BudgetPanel and MultiAccountPanel rely on the call to
+	// GetParent()->TransferDataToWindow() here. This coupling seems ugly
+	// and fragile. Improve this.
 	event.Skip();
-	auto const parent = GetParent();
 	auto const orig = amount();
-	if (!parent->Validate() || !parent->TransferDataToWindow())
+	auto* const validator = GetValidator();
+	auto* const parent = GetParent();
+	JEWEL_ASSERT (parent);
+	JEWEL_ASSERT (validator);
+	if
+	(	!validator->Validate(static_cast<wxWindow*>(this)) ||
+		!parent->TransferDataToWindow()
+	)
 	{
 		set_amount(orig);
 	}
