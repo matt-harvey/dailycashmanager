@@ -397,7 +397,7 @@ if (WIN32)
 
 else ()
 
-	set (package_name "${application_name}-${CPACK_PACKAGE_VERSION}-working")
+	set (package_name "${application_name}-${CPACK_PACKAGE_VERSION}")
 	set (tarball_name "${package_name}.tar.gz")
 	set (
 		packaged_items
