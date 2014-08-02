@@ -24,7 +24,7 @@ set (file_extension ".dcm")
 project (${application_name})
 set (version_major 1)
 set (version_minor 1)
-set (version_patch 1)
+set (version_patch 2)
 
 # Custom configuration options
 
@@ -345,7 +345,7 @@ set (CPACK_PACKAGE_VERSION_MINOR "${version_minor}")
 set (CPACK_PACKAGE_VERSION_PATCH "${version_patch}")
 set (
 	CPACK_PACKAGE_VERSION
-	"v${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}"
+	"v${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-working"
 )
 
 if (WIN32)
