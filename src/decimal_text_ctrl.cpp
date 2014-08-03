@@ -17,8 +17,10 @@
 #include "gui/decimal_text_ctrl.hpp"
 #include "finformat.hpp"
 #include "dcm_exceptions.hpp"
+#include "gui/budget_panel.hpp"
 #include "gui/decimal_validator.hpp"
 #include "gui/locale.hpp"
+#include "gui/multi_account_panel.hpp"
 #include "gui/text_ctrl.hpp"
 #include <jewel/assert.hpp>
 #include <jewel/log.hpp>
@@ -115,11 +117,8 @@ DecimalTextCtrl::amount()
 void
 DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
 {
-	// NOTE BudgetPanel and MultiAccountPanel rely on the call
-	// to GetParent()->TransferDataToWindow().
-	//
 	// TODO LOW PRIORITY BudgetPanel and MultiAccountPanel rely on the call to
-	// GetParent()->TransferDataToWindow() here. This coupling seems ugly
+	// GetParent()->TransferDataToWindow() here. This coupling is ugly
 	// and fragile. Improve this.
 	event.Skip();
 	auto const orig = amount();
@@ -127,13 +126,22 @@ DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
 	auto* const parent = GetParent();
 	JEWEL_ASSERT (parent);
 	JEWEL_ASSERT (validator);
-	if
-	(	!validator->Validate(static_cast<wxWindow*>(this)) ||
-		!parent->TransferDataToWindow()
-	)
+	bool ok = validator->Validate(static_cast<wxWindow*>(this));
+	if (ok)
 	{
-		set_amount(orig);
+		if
+		(	dynamic_cast<gui::BudgetPanel*>(parent) ||
+			dynamic_cast<gui::MultiAccountPanel*>(parent)
+		)
+		{
+			ok = parent->TransferDataToWindow();
+		}
+		else
+		{
+			ok = validator->TransferToWindow();
+		}
 	}
+	if (!ok) set_amount(orig);
 	return;
 }
 
