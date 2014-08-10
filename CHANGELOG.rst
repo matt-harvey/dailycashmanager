@@ -1,6 +1,11 @@
 Changelog for DailyCashManager
 ==============================
 
+v1.1.2:
+
+- Fixed bug, which appeared at least on Fedora, but not on Windows, where a
+  DecimalTextCtrl would sometimes unexpectedly revert to its previous value.
+
 v1.1.1:
 
 - Fixed bug re. validation of DecimalTextCtrl. On tabbing out of a
