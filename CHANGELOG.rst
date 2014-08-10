@@ -3,8 +3,10 @@ Changelog for DailyCashManager
 
 v1.1.2:
 
-- Fixed bug, which appeared at least on Fedora, but not on Windows, where a
-  DecimalTextCtrl would sometimes unexpectedly revert to its previous value.
+- Fixed bug where one DecimalTextCtrl would revert to its previous value if
+  another DecimalTextCtrl in the same EntryGroupCtrl lost focus. Bug appeared on
+  (at least) Fedora 19 with Gnome version 3.8.4. Bug did not appear on
+  Windows 7.
 
 v1.1.1:
 
