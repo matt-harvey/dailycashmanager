@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-#define BOOST_TEST_DYN_LINK
+#include <jewel/on_windows.hpp>
+
+#ifndef JEWEL_ON_WINDOWS
+#	define BOOST_TEST_DYN_LINK
+#endif
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>

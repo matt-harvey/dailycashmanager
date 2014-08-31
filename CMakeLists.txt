@@ -151,7 +151,11 @@ set (
 	libraries
 	${JEWEL_LIBRARY}
 	${SQLOXX_LIBRARY}
-	${Boost_LIBRARIES}
+	${Boost_DATE_TIME_LIBRARY}
+	${Boost_FILESYSTEM_LIBRARY}
+	${Boost_LOCALE_LIBRARY}
+	${Boost_REGEX_LIBRARY}
+	${Boost_SYSTEM_LIBRARY}
 	${wxWidgets_LIBRARIES}
 	${extra_libraries}
 )
@@ -290,6 +294,7 @@ add_executable (test_driver ${test_sources})
 target_link_libraries (
 	test_driver
 	dcm_common
+	${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
 	${libraries}
 )
 if (WIN32)
