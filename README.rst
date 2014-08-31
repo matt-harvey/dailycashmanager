@@ -39,9 +39,9 @@ To build and install the application, you will need:
 
 - The Boost C++ libraries (version 1.53.0 or later)
 
-- The Jewel C++ libraries (version 1.0.0 or later)
+- The Jewel C++ library (version 1.0.0 or later)
 
-- The Sqloxx C++ libraries (version 1.0.0 or later)
+- The Sqloxx C++ library (version 1.0.0 or later)
 
 - wxWidgets (version 2.9.3 or later)
 
