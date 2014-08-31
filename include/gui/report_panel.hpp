@@ -22,7 +22,7 @@
 #include <sqloxx/id.hpp>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
-#include <wx/panel.h>
+#include <wx/scrolwin.h>
 #include <wx/window.h>
 #include <vector>
 
@@ -49,7 +49,7 @@ class Report;
  * Panel for holding date-filtered balance sheet and profit-and-loss
  * reports.
  */
-class ReportPanel: public wxPanel
+class ReportPanel: public wxScrolledWindow
 {
 public:
 	ReportPanel
