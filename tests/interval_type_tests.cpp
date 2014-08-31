@@ -15,39 +15,33 @@
  */
 
 #include "interval_type.hpp"
-#include <UnitTest++/UnitTest++.h>
+#include <boost/test/unit_test.hpp>
 #include <wx/string.h>
-
 
 namespace dcm
 {
 namespace test
 {
 
-TEST(test_interval_type_phrase)
+BOOST_AUTO_TEST_CASE(test_interval_type_phrase)
 {
-	CHECK_EQUAL(phrase(IntervalType::days, false), "day");
-	CHECK_EQUAL(phrase(IntervalType::weeks, false), wxString("week"));
-	CHECK_EQUAL(phrase(IntervalType::weeks, false), "week");
-	CHECK_EQUAL(phrase(IntervalType::weeks, false), L"week");
-	CHECK_EQUAL(phrase(IntervalType::months, false), "month");
-	CHECK_EQUAL
+	BOOST_CHECK_EQUAL(phrase(IntervalType::days, false), "day");
+	BOOST_CHECK_EQUAL(phrase(IntervalType::weeks, false), wxString("week"));
+	BOOST_CHECK_EQUAL(phrase(IntervalType::weeks, false), "week");
+	BOOST_CHECK_EQUAL(phrase(IntervalType::weeks, false), L"week");
+	BOOST_CHECK_EQUAL(phrase(IntervalType::months, false), "month");
+	BOOST_CHECK_EQUAL
 	(	phrase(IntervalType::month_ends, false),
 		"month, on the last day of the month"
 	);
-	CHECK_EQUAL(phrase(IntervalType::days, true), "days");
-	CHECK_EQUAL(phrase(IntervalType::weeks, true), "weeks");
-	CHECK_EQUAL(phrase(IntervalType::months, true), "months");
-	CHECK_EQUAL
+	BOOST_CHECK_EQUAL(phrase(IntervalType::days, true), "days");
+	BOOST_CHECK_EQUAL(phrase(IntervalType::weeks, true), "weeks");
+	BOOST_CHECK_EQUAL(phrase(IntervalType::months, true), "months");
+	BOOST_CHECK_EQUAL
 	(	phrase(IntervalType::month_ends, true),
 		wxString("months, on the last day of the month")
 	);
 }
-
-
-
-
-
 
 }  // namespace test
 }  // namespace dcm

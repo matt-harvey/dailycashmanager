@@ -21,13 +21,14 @@
 #include "ordinary_journal.hpp"
 #include "proto_journal.hpp"
 #include "dcm_exceptions.hpp"
+#include "dcm_tests_common.hpp"
 #include "transaction_side.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/test/unit_test.hpp>
 #include <jewel/log.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
-#include <UnitTest++/UnitTest++.h>
 #include <vector>
 
 using boost::gregorian::date;
@@ -40,7 +41,7 @@ namespace dcm
 namespace test
 {
 
-TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
+BOOST_FIXTURE_TEST_CASE(test_ordinary_journal_mimic, TestFixture)
 {
 	DcmDatabaseConnection& dbc = *pdbc;
 
@@ -68,40 +69,40 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	Handle<OrdinaryJournal> const oj1(dbc);
 	oj1->set_date(date(3000, 1, 5));
 	oj1->mimic(journal1);
-	CHECK_EQUAL(oj1->date(), date(3000, 1, 5));
-	CHECK_EQUAL(oj1->is_actual(), true);
-	CHECK_EQUAL(oj1->comment(), "igloo");
-	CHECK_EQUAL(oj1->entries().size(), size_t(2));
-	CHECK
+	BOOST_CHECK_EQUAL(oj1->date(), date(3000, 1, 5));
+	BOOST_CHECK_EQUAL(oj1->is_actual(), true);
+	BOOST_CHECK_EQUAL(oj1->comment(), "igloo");
+	BOOST_CHECK_EQUAL(oj1->entries().size(), size_t(2));
+	BOOST_CHECK
 	(	oj1->transaction_type() ==
 		TransactionType::generic
 	);
 	oj1->save();
-	CHECK(!oj1->entries().empty());
+	BOOST_CHECK(!oj1->entries().empty());
 
 	for (Handle<Entry> const& entry: oj1->entries())
 	{
-		CHECK(entry->id() == 1 || entry->id() == 2);
+		BOOST_CHECK(entry->id() == 1 || entry->id() == 2);
 		if
 		(	entry->account() ==
 			Handle<Account>(dbc, Account::id_for_name(dbc, "cash"))
 		)
 		{
-			CHECK_EQUAL(entry->comment(), "igloo entry a");
-			CHECK_EQUAL(entry->amount(), Decimal("0.99"));
-			CHECK_EQUAL(entry->is_reconciled(), true);
-			CHECK(entry->transaction_side() == TransactionSide::source);
+			BOOST_CHECK_EQUAL(entry->comment(), "igloo entry a");
+			BOOST_CHECK_EQUAL(entry->amount(), Decimal("0.99"));
+			BOOST_CHECK_EQUAL(entry->is_reconciled(), true);
+			BOOST_CHECK(entry->transaction_side() == TransactionSide::source);
 		}
 		else
 		{
-			CHECK
+			BOOST_CHECK
 			(	entry->account() ==
 				Handle<Account>(dbc, Account::id_for_name(dbc, "food"))
 			);
-			CHECK_EQUAL(entry->is_reconciled(), false);
-			CHECK_EQUAL(entry->amount(), Decimal("-0.99"));
-			CHECK_EQUAL(entry->comment(), "igloo entry b");
-			CHECK
+			BOOST_CHECK_EQUAL(entry->is_reconciled(), false);
+			BOOST_CHECK_EQUAL(entry->amount(), Decimal("-0.99"));
+			BOOST_CHECK_EQUAL(entry->comment(), "igloo entry b");
+			BOOST_CHECK
 			(	entry->transaction_side() ==
 				TransactionSide::destination
 			);
@@ -122,29 +123,28 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_mimic)
 	
 	oj1->mimic(*dj2);
 
-	CHECK_EQUAL(oj1->is_actual(), false);
-	CHECK_EQUAL(oj1->comment(), "steam engine");
-	CHECK_EQUAL(oj1->entries().size(), size_t(1));
-	CHECK_EQUAL(oj1->date(), date(3000, 1, 5));
-	CHECK
+	BOOST_CHECK_EQUAL(oj1->is_actual(), false);
+	BOOST_CHECK_EQUAL(oj1->comment(), "steam engine");
+	BOOST_CHECK_EQUAL(oj1->entries().size(), size_t(1));
+	BOOST_CHECK_EQUAL(oj1->date(), date(3000, 1, 5));
+	BOOST_CHECK
 	(	oj1->transaction_type() ==
 		TransactionType::envelope
 	);
 	oj1->save();
 	for (Handle<Entry> const& entry: oj1->entries())
 	{
-		CHECK_EQUAL
+		BOOST_CHECK_EQUAL
 		(	entry->account()->id(),
 			Handle<Account>(dbc, Account::id_for_name(dbc, "food"))->id()
 		);
-		CHECK_EQUAL(entry->comment(), "steam");
-		CHECK_EQUAL(entry->is_reconciled(), false);
-		CHECK(entry->transaction_side() == TransactionSide::source);
+		BOOST_CHECK_EQUAL(entry->comment(), "steam");
+		BOOST_CHECK_EQUAL(entry->is_reconciled(), false);
+		BOOST_CHECK(entry->transaction_side() == TransactionSide::source);
 	}
 }
 
-
-TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
+BOOST_FIXTURE_TEST_CASE(test_ordinary_journal_is_balanced, TestFixture)
 {
 	DcmDatabaseConnection& dbc = *pdbc;
 
@@ -160,7 +160,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	entry1a->set_amount(Decimal("-10.99"));
 	entry1a->set_transaction_side(TransactionSide::source);
 	journal1->push_entry(entry1a);
-	CHECK_THROW(journal1->save(), UnbalancedJournalException);
+	BOOST_CHECK_THROW(journal1->save(), UnbalancedJournalException);
 
 	Handle<Entry> const entry1b(dbc);
 	entry1b->
@@ -172,10 +172,10 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	journal1->push_entry(entry1b);
 	journal1->set_date(date(3000, 1, 5));
 
-	CHECK(!journal1->is_balanced());
-	CHECK_THROW(journal1->save(), UnbalancedJournalException);
+	BOOST_CHECK(!journal1->is_balanced());
+	BOOST_CHECK_THROW(journal1->save(), UnbalancedJournalException);
 	entry1b->set_amount(Decimal("10.99"));
-	CHECK(journal1->is_balanced());
+	BOOST_CHECK(journal1->is_balanced());
 
 	journal1->save();
 
@@ -183,7 +183,7 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	// we expect journal1b to have an id of 2, not 1.
 	Handle<OrdinaryJournal> const journal1b(dbc, 2);
 
-	CHECK(journal1b->is_balanced());
+	BOOST_CHECK(journal1b->is_balanced());
 	Handle<Entry> const entry1c(dbc);
 	entry1c->
 		set_account(Handle<Account>(dbc, Account::id_for_name(dbc, "food")));
@@ -192,16 +192,16 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_is_balanced)
 	entry1c->set_amount(Decimal(0, 0));
 	entry1c->set_transaction_side(TransactionSide::destination);
 	journal1b->push_entry(entry1c);
-	CHECK(journal1b->is_balanced());
-	CHECK(journal1->is_balanced());
+	BOOST_CHECK(journal1b->is_balanced());
+	BOOST_CHECK(journal1->is_balanced());
 	journal1b->save();
 	
 	entry1c->set_amount(Decimal("0.0000001"));
-	CHECK_EQUAL(journal1->is_balanced(), false);
-	CHECK(!journal1b->is_balanced());
+	BOOST_CHECK_EQUAL(journal1->is_balanced(), false);
+	BOOST_CHECK(!journal1b->is_balanced());
 }
 
-TEST_FIXTURE(TestFixture, test_ordinary_journal_remove_entry)
+BOOST_FIXTURE_TEST_CASE(test_ordinary_journal_remove_entry, TestFixture)
 {
 	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<OrdinaryJournal> const journal1(dbc);
@@ -231,20 +231,20 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_remove_entry)
 	journal1->save();
 
 	Handle<OrdinaryJournal> const journal1b = journal1;
-	CHECK_EQUAL(journal1b->entries().size(), static_cast<size_t>(2));
+	BOOST_CHECK_EQUAL(journal1b->entries().size(), static_cast<size_t>(2));
 	journal1b->remove_entry(entry1a);
-	CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(1));
-	CHECK_EQUAL(journal1b->entries().size(), static_cast<size_t>(1));
+	BOOST_CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(1));
+	BOOST_CHECK_EQUAL(journal1b->entries().size(), static_cast<size_t>(1));
 	journal1b->ghostify();
-	CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(2));
-	CHECK_EQUAL(journal1b->entries().size(), static_cast<size_t>(2));
+	BOOST_CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(2));
+	BOOST_CHECK_EQUAL(journal1b->entries().size(), static_cast<size_t>(2));
 	journal1b->remove_entry(entry1a);
-	CHECK(!journal1b->is_balanced());
+	BOOST_CHECK(!journal1b->is_balanced());
 	journal1b->entries().back()->set_amount(Decimal("0.00"));
-	CHECK(journal1b->is_balanced());
+	BOOST_CHECK(journal1b->is_balanced());
 	journal1->save();
-	CHECK_EQUAL(journal1b->entries().size(), static_cast<size_t>(1));
-	CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(1));
+	BOOST_CHECK_EQUAL(journal1b->entries().size(), static_cast<size_t>(1));
+	BOOST_CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(1));
 
 	Handle<Entry> const entry1c(dbc);
 	Handle<Entry> const entry1d(dbc); 
@@ -253,11 +253,11 @@ TEST_FIXTURE(TestFixture, test_ordinary_journal_remove_entry)
 	entry1c->set_comment("c");
 	entry1d->set_comment("d");
 	journal1b->push_entry(entry1d);
-	CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(3));
+	BOOST_CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(3));
 	journal1->remove_entry(entry1c);
-	CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(2));
-	CHECK_EQUAL(journal1->entries().at(0)->comment(), "b");
-	CHECK_EQUAL(journal1->entries().at(1)->comment(), "d");
+	BOOST_CHECK_EQUAL(journal1->entries().size(), static_cast<size_t>(2));
+	BOOST_CHECK_EQUAL(journal1->entries().at(0)->comment(), "b");
+	BOOST_CHECK_EQUAL(journal1->entries().at(1)->comment(), "d");
 }
 
 }  // namespace test

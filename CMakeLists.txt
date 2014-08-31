@@ -88,11 +88,11 @@ find_package (
 		locale
 		regex
 		system
+		unit_test_framework
 	REQUIRED
 )
 find_library (SQLOXX_LIBRARY sqloxx REQUIRED)
 find_library (JEWEL_LIBRARY jewel REQUIRED)
-find_library (UNIT_TEST_LIBRARY UnitTest++ REQUIRED)
 find_package (
 	wxWidgets 2.9.3
 	COMPONENTS
@@ -128,9 +128,6 @@ endif ()
 if (JEWEL_LIBRARY-NOTFOUND)
 	message ("Could not find Jewel library.")
 endif ()
-if (UNIT_TEST_LIBRARY-NOTFOUND)
-	message ("Could not find UnitTest++ - cannot build tests.")
-endif ()
 if (NOT TCLSH_FOUND)
 	message ("Could not find Tclsh - cannot do pre-build code generation step.")
 endif ()
@@ -149,7 +146,6 @@ include_directories (
 	${SQLOXX_INCLUDES}
 	${Boost_INCLUDE_DIRS}
 	SYSTEM ${wxWidgets_INCLUDE_DIRS}
-	${UNIT_TEST_INCLUDES}
 )
 set (
 	libraries
@@ -295,7 +291,6 @@ target_link_libraries (
 	test_driver
 	dcm_common
 	${libraries}
-	${UNIT_TEST_LIBRARY}
 )
 if (WIN32)
 	set (test_execution_command "${PROJECT_SOURCE_DIR}\\test_driver.exe")

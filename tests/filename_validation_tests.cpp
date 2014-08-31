@@ -15,7 +15,7 @@
  */
 
 #include "filename_validation.hpp"
-#include <UnitTest++/UnitTest++.h>
+#include <boost/test/unit_test.hpp>
 #include <jewel/assert.hpp>
 #include <cstdlib>
 #include <iostream>
@@ -27,13 +27,12 @@ using std::endl;
 using std::string;
 using std::vector;
 
-
 namespace dcm
 {
 namespace test
 {
 
-TEST(test_is_valid_filename_re_generally_bad_filenames)
+BOOST_AUTO_TEST_CASE(test_is_valid_filename_re_generally_bad_filenames)
 {
 	const char* const generally_bad_filenames[] =
 	{	"\\",
@@ -66,9 +65,9 @@ TEST(test_is_valid_filename_re_generally_bad_filenames)
 	for (char const* bad_name: generally_bad_filenames)
 	{
 		string message;
-		CHECK(!is_valid_filename(bad_name, message));
-		CHECK(!is_valid_filename(bad_name, message, true));
-		CHECK(!is_valid_filename(bad_name, message, false));
+		BOOST_CHECK(!is_valid_filename(bad_name, message));
+		BOOST_CHECK(!is_valid_filename(bad_name, message, true));
+		BOOST_CHECK(!is_valid_filename(bad_name, message, false));
 	}
 
 	// We have to test strings containing the null character separately, as
@@ -76,23 +75,23 @@ TEST(test_is_valid_filename_re_generally_bad_filenames)
 	string nul_containing_string;
 	nul_containing_string.push_back('\0');
 	string message;
-	CHECK(!is_valid_filename(nul_containing_string, message));
-	CHECK(!is_valid_filename(nul_containing_string, message, true));
-	CHECK(!is_valid_filename(nul_containing_string, message, false));
+	BOOST_CHECK(!is_valid_filename(nul_containing_string, message));
+	BOOST_CHECK(!is_valid_filename(nul_containing_string, message, true));
+	BOOST_CHECK(!is_valid_filename(nul_containing_string, message, false));
 	string nul_containing_string_2;
 	nul_containing_string_2.push_back('a');
 	nul_containing_string_2.push_back('b');
 	nul_containing_string_2.push_back('\0');
 	nul_containing_string_2.push_back('c');
 	JEWEL_ASSERT (nul_containing_string_2.size() == 4);
-	CHECK(!is_valid_filename(nul_containing_string_2, message));
-	CHECK(!is_valid_filename(nul_containing_string_2, message, true));
-	CHECK(!is_valid_filename(nul_containing_string_2, message, false));
+	BOOST_CHECK(!is_valid_filename(nul_containing_string_2, message));
+	BOOST_CHECK(!is_valid_filename(nul_containing_string_2, message, true));
+	BOOST_CHECK(!is_valid_filename(nul_containing_string_2, message, false));
 }
 
 
 
-TEST(test_is_valid_filename_re_generally_good_filenames)
+BOOST_AUTO_TEST_CASE(test_is_valid_filename_re_generally_good_filenames)
 {
 	// Note none of these have the right DailyCashManager extension though.
 	// We test that they are good generally filenames but can't
@@ -121,20 +120,20 @@ TEST(test_is_valid_filename_re_generally_good_filenames)
 		string message;
 
 		// Good generally
-		CHECK(is_valid_filename(good_name, message, false));
+		BOOST_CHECK(is_valid_filename(good_name, message, false));
 		if (!is_valid_filename(good_name, message, false))
 		{
 			cout << good_name << endl;
 		}
 
 		// But doesn't have DailyCashManager extension
-		CHECK(!is_valid_filename(good_name, message, true));
-		CHECK(!is_valid_filename(good_name, message));
+		BOOST_CHECK(!is_valid_filename(good_name, message, true));
+		BOOST_CHECK(!is_valid_filename(good_name, message));
 	}
 }
 
 
-TEST(test_is_valid_filename_re_good_dcm_filenames)
+BOOST_AUTO_TEST_CASE(test_is_valid_filename_re_good_dcm_filenames)
 {
 	const char* const good_dcm_filenames[] =
 	{	"hello.dcm",
@@ -149,11 +148,11 @@ TEST(test_is_valid_filename_re_good_dcm_filenames)
 		string message;
 
 		// Good generally
-		CHECK(is_valid_filename(good_name, message, false));
+		BOOST_CHECK(is_valid_filename(good_name, message, false));
 
 		// Good as DailyCashManager file, too
-		CHECK(is_valid_filename(good_name, message, true));
-		CHECK(is_valid_filename);
+		BOOST_CHECK(is_valid_filename(good_name, message, true));
+		BOOST_CHECK(is_valid_filename);
 	}
 }
 

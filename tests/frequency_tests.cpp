@@ -19,9 +19,9 @@
 #include "interval_type.hpp"
 #include "dcm_exceptions.hpp"
 #include "dcm_tests_common.hpp"
+#include <boost/test/unit_test.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/decimal.hpp>
-#include <UnitTest++/UnitTest++.h>
 #include <iostream>
 #include <string>
 #include <typeinfo>
@@ -33,13 +33,12 @@ using std::string;
 using std::vector;
 using jewel::Decimal;
 
-
 namespace dcm
 {
 namespace test
 {
 
-TEST(test_frequency_constructors_assignment_num_steps_and_step_type)
+BOOST_AUTO_TEST_CASE(test_frequency_constructors_assignment_num_steps_and_step_type)
 {
 	Frequency const freq1(76, IntervalType::days);
 	Frequency const freq2(50, IntervalType::weeks);
@@ -51,23 +50,23 @@ TEST(test_frequency_constructors_assignment_num_steps_and_step_type)
 	Frequency const freq7(5014, IntervalType::months);
 	Frequency const freq8(12, IntervalType::month_ends);
 
-	CHECK_EQUAL(freq1.num_steps(), 76);
-	CHECK(freq1.step_type() == IntervalType::days);
-	CHECK_EQUAL(freq2.num_steps(), 50);
-	CHECK(freq2.step_type() == IntervalType::weeks);
-	CHECK_EQUAL(freq3.num_steps(), 3);
-	CHECK(freq3.step_type() == IntervalType::months);
-	CHECK_EQUAL(freq4.num_steps(), 12);
-	CHECK(freq4.step_type() == IntervalType::month_ends);
+	BOOST_CHECK_EQUAL(freq1.num_steps(), 76);
+	BOOST_CHECK(freq1.step_type() == IntervalType::days);
+	BOOST_CHECK_EQUAL(freq2.num_steps(), 50);
+	BOOST_CHECK(freq2.step_type() == IntervalType::weeks);
+	BOOST_CHECK_EQUAL(freq3.num_steps(), 3);
+	BOOST_CHECK(freq3.step_type() == IntervalType::months);
+	BOOST_CHECK_EQUAL(freq4.num_steps(), 12);
+	BOOST_CHECK(freq4.step_type() == IntervalType::month_ends);
 
-	CHECK(freq5.step_type() == IntervalType::days);
-	CHECK_EQUAL(freq5.num_steps(), 1);
-	CHECK(freq6.step_type() == IntervalType::weeks);
-	CHECK_EQUAL(freq6.num_steps(), 1);
-	CHECK(freq7.step_type() == IntervalType::months);
-	CHECK_EQUAL(freq7.num_steps(), 5014);
-	CHECK(freq8.step_type() == IntervalType::month_ends);
-	CHECK_EQUAL(freq8.num_steps(), 12);
+	BOOST_CHECK(freq5.step_type() == IntervalType::days);
+	BOOST_CHECK_EQUAL(freq5.num_steps(), 1);
+	BOOST_CHECK(freq6.step_type() == IntervalType::weeks);
+	BOOST_CHECK_EQUAL(freq6.num_steps(), 1);
+	BOOST_CHECK(freq7.step_type() == IntervalType::months);
+	BOOST_CHECK_EQUAL(freq7.num_steps(), 5014);
+	BOOST_CHECK(freq8.step_type() == IntervalType::month_ends);
+	BOOST_CHECK_EQUAL(freq8.num_steps(), 12);
 
 	Frequency const freq1a(freq1);
 	Frequency const freq2a = freq2;
@@ -79,84 +78,84 @@ TEST(test_frequency_constructors_assignment_num_steps_and_step_type)
 	Frequency const freq7a = freq7;
 	Frequency const freq8a(freq8);
 
-	CHECK_EQUAL(freq1a.num_steps(), 76);
-	CHECK(freq1a.step_type() == IntervalType::days);
-	CHECK_EQUAL(freq2a.num_steps(), 50);
-	CHECK(freq2a.step_type() == IntervalType::weeks);
-	CHECK_EQUAL(freq3a.num_steps(), 3);
-	CHECK(freq3a.step_type() == IntervalType::months);
-	CHECK_EQUAL(freq4a.num_steps(), 12);
-	CHECK(freq4a.step_type() == IntervalType::month_ends);
+	BOOST_CHECK_EQUAL(freq1a.num_steps(), 76);
+	BOOST_CHECK(freq1a.step_type() == IntervalType::days);
+	BOOST_CHECK_EQUAL(freq2a.num_steps(), 50);
+	BOOST_CHECK(freq2a.step_type() == IntervalType::weeks);
+	BOOST_CHECK_EQUAL(freq3a.num_steps(), 3);
+	BOOST_CHECK(freq3a.step_type() == IntervalType::months);
+	BOOST_CHECK_EQUAL(freq4a.num_steps(), 12);
+	BOOST_CHECK(freq4a.step_type() == IntervalType::month_ends);
 
-	CHECK(freq5a.step_type() == IntervalType::days);
-	CHECK_EQUAL(freq5a.num_steps(), 1);
-	CHECK(freq6a.step_type() == IntervalType::weeks);
-	CHECK_EQUAL(freq6a.num_steps(), 1);
-	CHECK(freq7a.step_type() == IntervalType::months);
-	CHECK_EQUAL(freq7a.num_steps(), 5014);
-	CHECK(freq8a.step_type() == IntervalType::month_ends);
-	CHECK_EQUAL(freq8a.num_steps(), 12);
+	BOOST_CHECK(freq5a.step_type() == IntervalType::days);
+	BOOST_CHECK_EQUAL(freq5a.num_steps(), 1);
+	BOOST_CHECK(freq6a.step_type() == IntervalType::weeks);
+	BOOST_CHECK_EQUAL(freq6a.num_steps(), 1);
+	BOOST_CHECK(freq7a.step_type() == IntervalType::months);
+	BOOST_CHECK_EQUAL(freq7a.num_steps(), 5014);
+	BOOST_CHECK(freq8a.step_type() == IntervalType::month_ends);
+	BOOST_CHECK_EQUAL(freq8a.num_steps(), 12);
 
-	CHECK_THROW
+	BOOST_CHECK_THROW
 	(	Frequency f(0, IntervalType::days),
 		InvalidFrequencyException
 	);
-	CHECK_THROW
+	BOOST_CHECK_THROW
 	(	Frequency f(-102, IntervalType::months),
 		InvalidFrequencyException
 	);
-	CHECK_THROW
+	BOOST_CHECK_THROW
 	(	Frequency f(-1, IntervalType::weeks),
 		InvalidFrequencyException
 	);
 }
 
-TEST(test_frequency_phrase_description)
+BOOST_AUTO_TEST_CASE(test_frequency_phrase_description)
 {
 	Frequency const frequency1(1, IntervalType::days);
-	CHECK_EQUAL(frequency_description(frequency1, "every"), "every day");
-	CHECK
+	BOOST_CHECK_EQUAL(frequency_description(frequency1, "every"), "every day");
+	BOOST_CHECK
 	(	typeid(frequency_description(frequency1)) ==
 		typeid(string)
 	);
-	CHECK_EQUAL(frequency_description(frequency1), wxString("per day"));
+	BOOST_CHECK_EQUAL(frequency_description(frequency1), wxString("per day"));
 
 	Frequency const frequency2(12, IntervalType::days);
-	CHECK_EQUAL(frequency_description(frequency2), "per 12 days");
+	BOOST_CHECK_EQUAL(frequency_description(frequency2), "per 12 days");
 
 	Frequency const frequency3(1, IntervalType::weeks);
-	CHECK_EQUAL(frequency_description(frequency3, "every"), "every week");
+	BOOST_CHECK_EQUAL(frequency_description(frequency3, "every"), "every week");
 	
 	Frequency const frequency4(2, IntervalType::weeks);
-	CHECK_EQUAL(frequency_description(frequency4, " !! "), " !!  2 weeks");
+	BOOST_CHECK_EQUAL(frequency_description(frequency4, " !! "), " !!  2 weeks");
 
 	Frequency const frequency5(3, IntervalType::months);
-	CHECK_EQUAL(frequency_description(frequency5), "per 3 months");
+	BOOST_CHECK_EQUAL(frequency_description(frequency5), "per 3 months");
 
 	Frequency const frequency6(1, IntervalType::months);
-	CHECK_EQUAL(frequency_description(frequency6), "per month");
+	BOOST_CHECK_EQUAL(frequency_description(frequency6), "per month");
 
 	Frequency const frequency7(12, IntervalType::months);
-	CHECK_EQUAL(frequency_description(frequency7), "per 12 months");
+	BOOST_CHECK_EQUAL(frequency_description(frequency7), "per 12 months");
 
 	Frequency const frequency8(1, IntervalType::month_ends);
-	CHECK_EQUAL
+	BOOST_CHECK_EQUAL
 	(	frequency_description(frequency8, "every"),
 		"every month, on the last day of the month"
 	);
 
 	Frequency const frequency9(10, IntervalType::month_ends);
-	CHECK_EQUAL
+	BOOST_CHECK_EQUAL
 	(	frequency_description(frequency9, "every"),
 		"every 10 months, on the last day of the month"
 	);
-	CHECK_EQUAL
+	BOOST_CHECK_EQUAL
 	(	frequency_description(frequency9),
 		wxString("per 10 months, on the last day of the month")
 	);
 }
 
-TEST(frequency_test_convert_to_and_from_canonical)
+BOOST_AUTO_TEST_CASE(frequency_test_convert_to_and_from_canonical)
 {
 	// We test only the Frequencies that are supported by
 	// AmalgamatedBudget. These are deliberately restricted,
@@ -179,7 +178,7 @@ TEST(frequency_test_convert_to_and_from_canonical)
 			JEWEL_ASSERT (AmalgamatedBudget::supports_frequency(f));
 			Decimal const res_a = convert_to_canonical(f, orig_amount);
 			Decimal const res_b = convert_from_canonical(f, res_a);
-			CHECK_EQUAL(res_b, orig_amount);
+			BOOST_CHECK_EQUAL(res_b, orig_amount);
 		}
 	}
 
@@ -189,13 +188,13 @@ TEST(frequency_test_convert_to_and_from_canonical)
 	Frequency const f0(3, IntervalType::months);
 	Decimal const a0i = convert_to_canonical(f0, a0);
 	Frequency const f0b(12, IntervalType::month_ends);
-	CHECK_EQUAL(convert_from_canonical(f0b, a0i), Decimal("942"));
+	BOOST_CHECK_EQUAL(convert_from_canonical(f0b, a0i), Decimal("942"));
 
 	Decimal const a1("-0.005");
 	Frequency const f1(2, IntervalType::weeks);
 	Decimal const a1i = convert_to_canonical(f1, a1);
 	Frequency const f1b(1, IntervalType::days);
-	CHECK_EQUAL
+	BOOST_CHECK_EQUAL
 	(	round(convert_from_canonical(f1b, a1i), 6),
 		Decimal("-0.000357")
 	);
@@ -204,13 +203,13 @@ TEST(frequency_test_convert_to_and_from_canonical)
 	Frequency const f2(10, IntervalType::days);
 	Decimal const a2i = convert_to_canonical(f2, a2);
 	Frequency const f2b(6, IntervalType::months);
-	CHECK_EQUAL(convert_from_canonical(f2b, a2i), Decimal("127033.95"));
+	BOOST_CHECK_EQUAL(convert_from_canonical(f2b, a2i), Decimal("127033.95"));
 
 	Decimal const a3("-1");
 	Frequency const f3(1, IntervalType::weeks);
 	Decimal const a3i = convert_to_canonical(f3, a3);
 	Frequency const f3b(2, IntervalType::days);
-	CHECK_EQUAL(round(convert_from_canonical(f3b, a3i), 4), Decimal("-0.2857"));
+	BOOST_CHECK_EQUAL(round(convert_from_canonical(f3b, a3i), 4), Decimal("-0.2857"));
 }
 
 }  // namespace test

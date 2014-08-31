@@ -23,9 +23,9 @@
 #include "repeater.hpp"
 #include "transaction_type.hpp"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/test/unit_test.hpp>
 #include <jewel/decimal.hpp>
 #include <sqloxx/handle.hpp>
-#include <UnitTest++/UnitTest++.h>
 #include <wx/string.h>
 
 namespace gregorian = boost::gregorian;
@@ -39,7 +39,7 @@ namespace dcm
 namespace test
 {
 
-TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
+BOOST_FIXTURE_TEST_CASE(test_draft_journal_repeater_description, TestFixture)
 {
 	DcmDatabaseConnection& dbc = *pdbc;
 	Handle<DraftJournal> const dj1(dbc);
@@ -57,7 +57,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	dj1->push_entry(entry1);
 
 	wxString target = wxString("");
-	CHECK_EQUAL(dj1->repeater_description(), "");
+	BOOST_CHECK_EQUAL(dj1->repeater_description(), "");
 
 	Handle<Repeater> const repeater1a(dbc);
 	repeater1a->set_frequency(Frequency(1, IntervalType::months));
@@ -68,7 +68,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 	(	"This transaction is automatically recorded every month, "
 		"with the next recording due on 2524-Sep-15."
 	);
-	CHECK_EQUAL(dj1->repeater_description(), target);
+	BOOST_CHECK_EQUAL(dj1->repeater_description(), target);
 
 	Handle<Repeater> const repeater1b(dbc);
 	repeater1b->set_frequency(Frequency(3, IntervalType::days));
@@ -82,7 +82,7 @@ TEST_FIXTURE(TestFixture, test_draft_journal_repeater_description)
 		"3 days, with the next recording due on 3950-Sep-12.\n"
 		"This transaction will next be recorded on 2524-Sep-15."
 	);
-	CHECK_EQUAL(dj1->repeater_description(), target);
+	BOOST_CHECK_EQUAL(dj1->repeater_description(), target);
 }
 
 }  // namespace test

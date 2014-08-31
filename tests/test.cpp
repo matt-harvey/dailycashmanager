@@ -14,38 +14,6 @@
  * limitations under the License.
  */
 
-#include "app.hpp"
-#include "string_conv.hpp"
-#include <UnitTest++/UnitTest++.h>
-#include <jewel/log.hpp>
-#include <string>
-
-using jewel::Log;
-using dcm::App;
-using dcm::wx_to_std8;
-using std::string;
-
-void configure_logging()
-{
-	Log::set_threshold(Log::trace);
-	string const log_name =
-		"./" + wx_to_std8(App::application_name()) + "_test.log";
-	Log::set_filepath(log_name);
-	return;
-}
-
-
-int main()
-{
-	configure_logging();
-	try
-	{
-		return UnitTest::RunAllTests();
-	}
-	// This seems pointless but is necessary to guarantee the stack is
-	// fully unwound if an exception is thrown.
-	catch (...)
-	{
-		throw;
-	}
-}
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>

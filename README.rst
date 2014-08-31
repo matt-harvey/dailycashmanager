@@ -45,8 +45,6 @@ To build and install the application, you will need:
 
 - wxWidgets (version 2.9.3 or later)
 
-- UnitTest++ (known to work with version 1.4)
-
 If you want to build the API documentation, you will need:
 
 - Doxygen (known to work with version 1.8.3.1)
@@ -68,7 +66,6 @@ locations:
 :Boost:	                    http://www.boost.org
 :Jewel:                     https://github.com/skybaboon/jewel
 :Sqloxx:                    https://github.com/skybaboon/sqloxx
-:UnitTest++:	            http://unittest-cpp.sourceforge.net
 :Doxygen:	                http://www.stack.nl/~dimitri/doxygen
 :Sphinx:                    http://sphinx-doc.org
 :sphinx-better-theme:       https://pypi.python.org/pypi/sphinx-better-theme
