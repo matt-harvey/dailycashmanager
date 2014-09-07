@@ -1,0 +1,115 @@
+/*---------------------------*\
+  #MAIN CONTENT
+\*---------------------------*/
+
+#ug-main {
+  padding: 0 2em;
+}
+
+h1 {
+  padding-top: 0.2em;
+}
+
+h2 {
+  padding-top: 1em;
+  margin-top: 1em;
+}
+
+footer {
+  margin-top: 3em;
+  margin-bottom: 3em;
+  color: #888888;
+  font-size: 0.8em;
+}
+
+
+/*---------------------------*\
+  #NAVIGATION MENU
+\*---------------------------*/
+
+#ug-left-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  background-color: #332222;
+  text-align: right;
+}
+
+nav {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 100%;
+  color: white;
+  text-align: right;
+  padding-right: 2em;
+}
+
+img {
+  position: inline-block;
+  padding: 2em;
+}
+
+nav a {
+  text-decoration: none;
+  color: white;
+}
+
+nav a:hover {
+  color: pink;
+}
+
+.ug-menu-item-selected,
+.ug-menu-item-selected:hover {
+  color: red;
+}
+
+nav a:focus {
+  outline: 0;
+  color: red;
+}
+
+.ug-image-link:focus {
+  outline: 0;
+}
+
+nav ul {
+  font-weight: bold;
+  list-style-type: none;
+}
+
+nav ul ul {
+  font-weight: normal;
+  font-size: 0.85em;
+  padding-left: 1em;
+}
+
+nav ul ul li:last-child {
+  margin-bottom: 2em;
+}
+
+nav li {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}
+
+nav > ul > li {
+  margin-bottom: 0.8em;
+}
+
+
+/*---------------------------*\
+  #PRINT STYLES
+\*---------------------------*/
+
+@media print {
+  #ug-left-sidebar {
+    display: none;
+  }
+  #ug-main {
+    margin-left: auto !important;
+  }
+}
+
