@@ -125,13 +125,16 @@ EntryListPanel::EntryListPanel
 	account_label_text += wxString(":");
 	wxStaticText* account_label =
 		new wxStaticText(this, wxID_ANY, account_label_text);
+	account_label->Wrap(large_width());
 	m_top_sizer->Add(account_label, wxGBPosition(m_next_row, 1));
 	wxStaticText* min_date_label =
 		new wxStaticText(this, wxID_ANY, wxString(" From:"));
+	min_date_label->Wrap(medium_width());
 	m_text_ctrl_height = min_date_label->GetSize().GetY();
 	m_top_sizer->Add(min_date_label, wxGBPosition(m_next_row, 2));
 	wxStaticText* max_date_label =
 		new wxStaticText(this, wxID_ANY, wxString(" To:"));
+	max_date_label->Wrap(medium_width());
 	m_top_sizer->Add(max_date_label, wxGBPosition(m_next_row, 3));
 
 	++m_next_row;
@@ -367,14 +370,12 @@ EntryListPanel::preconfigure_summary()
 		JEWEL_ASSERT (m_summary_label_text_items.empty());
 		JEWEL_ASSERT (m_summary_data_text_items.empty());
 
-		wxSize const size(wxDefaultSize.x, m_text_ctrl_height);
-
 		wxStaticText* closing_balance_label = new wxStaticText
 		(	this,
 			wxID_ANY,
 			wxEmptyString,
 			wxDefaultPosition,
-			size
+			wxSize(medium_width(), wxDefaultSize.y)
 		);
 		m_top_sizer->Add(closing_balance_label, wxGBPosition(m_next_row, 2));
 		m_summary_label_text_items.push_back(closing_balance_label);
@@ -384,10 +385,9 @@ EntryListPanel::preconfigure_summary()
 			wxID_ANY,
 			wxEmptyString,
 			wxDefaultPosition,
-			size
+			wxSize(medium_width(), wxDefaultSize.y)
 		);
-		m_top_sizer->
-			Add(reconciled_balance_label, wxGBPosition(m_next_row, 3));
+		m_top_sizer->Add(reconciled_balance_label, wxGBPosition(m_next_row, 3));
 		m_summary_label_text_items.push_back(reconciled_balance_label);
 
 		++m_next_row;
@@ -398,16 +398,17 @@ EntryListPanel::preconfigure_summary()
 			wxID_ANY,
 			wxString(),
 			wxDefaultPosition,
-			size
+			wxSize(large_width(), -1)
 		);
 		m_top_sizer->Add(m_reconciliation_hint, wxGBPosition(m_next_row, 1));
+		m_reconciliation_hint->SetSize(wxSize(large_width(), wxDefaultSize.y));
 
 		wxStaticText* closing_balance_amount = new wxStaticText
 		(	this,
 			wxID_ANY,
 			wxEmptyString,
 			wxDefaultPosition,
-			size,
+			wxSize(medium_width(), -1),
 			wxALIGN_RIGHT
 		);
 		m_top_sizer->Add
@@ -422,7 +423,7 @@ EntryListPanel::preconfigure_summary()
 			wxID_ANY,
 			wxEmptyString,
 			wxDefaultPosition,
-			size,
+			wxSize(medium_width(), -1),
 			wxALIGN_RIGHT
 		);
 		m_top_sizer->Add
@@ -458,6 +459,7 @@ EntryListPanel::postconfigure_summary()
 			m_summary_label_text_items[i]->SetLabel
 			(	summary_data[i].label() + wxString(":")
 			);
+			m_summary_label_text_items[i]->Wrap(medium_width());
 			m_summary_data_text_items[i]->SetLabel
 			(	finformat_wx
 				(	summary_data[i].amount(),
@@ -465,8 +467,10 @@ EntryListPanel::postconfigure_summary()
 					DecimalFormatFlags().clear(string_flags::dash_for_zero)
 				)
 			);
+			m_summary_data_text_items[i]->Wrap(medium_width());
 		}
 		m_reconciliation_hint->SetLabel(reconciliation_hint());
+		m_reconciliation_hint->Wrap(large_width());
 	}
 	Layout();
 	return;

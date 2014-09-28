@@ -323,10 +323,6 @@ Frame::Frame
 
 	SetMenuBar(m_menu_bar);
 
-#	ifdef JEWEL_ON_WINDOWS
-		Maximize();
-#	endif
-
 	m_top_panel = new TopPanel(this, m_database_connection);
 	JEWEL_LOG_TRACE();
 }
