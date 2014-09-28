@@ -15,16 +15,30 @@
  */
 
 #include "gui/sizing.hpp"
+#include <wx/gdicmn.h>
+#include <wx/settings.h>
 
 namespace dcm
 {
 namespace gui
 {
 
+namespace
+{
+	double screen_width_double()
+	{
+		return wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
+	}
+	double screen_height_double()
+	{
+		return wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
+	}
+}
+
 int
 standard_gap()
 {
-	return 5;
+	return screen_width_double() / 320;
 }
 
 int
@@ -36,7 +50,7 @@ standard_border()
 int
 medium_width()
 {
-	return 160;
+	return screen_width_double() / 10;
 }
 
 int
@@ -49,6 +63,12 @@ int
 extra_large_width()
 {
 	return medium_width() * 3 + standard_gap() * 2;
+}
+
+wxSize
+screen_size()
+{
+	return wxSize(screen_width_double(), screen_height_double());
 }
 
 int scrollbar_width_allowance()

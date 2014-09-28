@@ -17,12 +17,13 @@
 #ifndef GUARD_sizing_hpp_3696029835239067
 #define GUARD_sizing_hpp_3696029835239067
 
-
 /**
  * @file
  *
  * Utilities for storing standard sizes used in widgets.
  */
+
+#include <wx/gdicmn.h>
 
 namespace dcm
 {
@@ -59,6 +60,8 @@ int large_width();
  * what would fit if one that is \e large_width() wide.
  */
 int extra_large_width();
+
+wxSize screen_size();
 
 /**
  * @returns a width that is supposed to be as wide as, or slightly wider than,
