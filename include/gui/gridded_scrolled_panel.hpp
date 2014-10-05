@@ -51,10 +51,16 @@ class GriddedScrolledPanel: public wxScrolledWindow
 {
 public:
 
+	/**
+	 * Vertical scrolling is always enabled. Horizontal scrolling
+	 * is only enabled if \e p_horizontal_scrolling_enabled is passed
+	 * \e true.
+	 */
 	GriddedScrolledPanel
 	(	wxWindow* p_parent,
 		wxSize const& p_size,
-		DcmDatabaseConnection& p_database_connection
+		DcmDatabaseConnection& p_database_connection,
+		bool p_horizontal_scrolling_enabled = false
 	);
 
 	GriddedScrolledPanel(GriddedScrolledPanel const&) = delete;

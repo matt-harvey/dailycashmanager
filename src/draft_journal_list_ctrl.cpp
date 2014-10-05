@@ -207,7 +207,7 @@ DraftJournalListCtrl::update
 	SetColumnWidth(s_name_col, wxLIST_AUTOSIZE);
 	SetColumnWidth(s_frequency_col, wxLIST_AUTOSIZE);
 	SetColumnWidth(s_next_date_col, wxLIST_AUTOSIZE);
-#ifdef JEWEL_ON_WINDOWS
+#	ifdef JEWEL_ON_WINDOWS
 		SetColumnWidth(s_name_col, std::max(GetColumnWidth(s_name_col), 150));
 		SetColumnWidth
 		(	s_frequency_col,
@@ -217,7 +217,7 @@ DraftJournalListCtrl::update
 		(	s_next_date_col,
 			std::max(GetColumnWidth(s_next_date_col), 75)
 		);
-#endif
+#	endif
 	Layout();
 
 	JEWEL_LOG_TRACE();

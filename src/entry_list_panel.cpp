@@ -38,7 +38,7 @@
 #include <sqloxx/handle.hpp>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
-#include <wx/scrolwin.h>
+#include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/wupdlock.h>
@@ -63,7 +63,7 @@ namespace dcm
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(EntryListPanel, wxScrolledWindow)
+BEGIN_EVENT_TABLE(EntryListPanel, wxPanel)
 	EVT_BUTTON(s_refresh_button_id, EntryListPanel::on_refresh_button_click)
 END_EVENT_TABLE()
 
@@ -83,13 +83,7 @@ EntryListPanel::EntryListPanel
 	DcmDatabaseConnection& p_database_connection,
 	bool p_support_reconciliations
 ):
-	wxScrolledWindow
-	(	p_parent,
-		wxID_ANY,
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxTAB_TRAVERSAL | wxHSCROLL | wxFULL_REPAINT_ON_RESIZE
-	),
+	wxPanel(p_parent, wxID_ANY),
 	m_support_reconciliations(p_support_reconciliations),
 	m_next_row(0),
 	m_client_size_aux(0),
@@ -105,7 +99,6 @@ EntryListPanel::EntryListPanel
 {
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
-	SetScrollRate(10, 0);
 
 	bool const include_pl_accounts = !m_support_reconciliations;
 	bool const allow_blank_dates = !m_support_reconciliations;

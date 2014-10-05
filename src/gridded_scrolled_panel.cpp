@@ -36,14 +36,15 @@ namespace gui
 GriddedScrolledPanel::GriddedScrolledPanel
 (	wxWindow* p_parent,
 	wxSize const& p_size,
-	DcmDatabaseConnection& p_database_connection
+	DcmDatabaseConnection& p_database_connection,
+	bool p_horizontal_scrolling_enabled
 ):
 	wxScrolledWindow
 	(	p_parent,
 		wxID_ANY,
 		wxDefaultPosition,
 		p_size,
-		wxTAB_TRAVERSAL | wxHSCROLL | wxVSCROLL | wxFULL_REPAINT_ON_RESIZE
+		(p_horizontal_scrolling_enabled? (wxVSCROLL | wxHSCROLL): wxVSCROLL)
 	),
 	m_current_row(0),
 	m_top_sizer(nullptr),
@@ -51,7 +52,10 @@ GriddedScrolledPanel::GriddedScrolledPanel
 {
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
-	SetScrollRate(10, 10);
+	int const standard_scrolling_increment = 10;
+	int const horizontal_scrolling_rate =
+		(p_horizontal_scrolling_enabled? standard_scrolling_increment: 0);
+	SetScrollRate(horizontal_scrolling_rate, standard_scrolling_increment);
 }
 
 GriddedScrolledPanel::~GriddedScrolledPanel()

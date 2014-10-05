@@ -30,7 +30,7 @@
 #include <sqloxx/handle.hpp>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
-#include <wx/scrolwin.h>
+#include <wx/panel.h>
 #include <wx/stattext.h>
 #include <utility>
 
@@ -41,7 +41,7 @@ namespace dcm
 namespace gui
 {
 
-BEGIN_EVENT_TABLE(ReportPanel, wxScrolledWindow)
+BEGIN_EVENT_TABLE(ReportPanel, wxPanel)
 	EVT_BUTTON(s_run_button_id, ReportPanel::on_run_button_click)
 END_EVENT_TABLE()
 
@@ -62,13 +62,7 @@ ReportPanel::ReportPanel
 (	wxWindow* p_parent,
 	DcmDatabaseConnection& p_database_connection
 ):
-	wxScrolledWindow
-	(	p_parent,
-		wxID_ANY,
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxTAB_TRAVERSAL | wxVSCROLL | wxHSCROLL | wxFULL_REPAINT_ON_RESIZE
-	),
+	wxPanel(p_parent, wxID_ANY),
 	m_next_row(0),
 	m_client_size_aux(0),
 	m_text_ctrl_height(0),
@@ -82,7 +76,6 @@ ReportPanel::ReportPanel
 {
 	m_top_sizer = new wxGridBagSizer(standard_gap(), standard_gap());
 	SetSizer(m_top_sizer);
-	SetScrollRate(10, 10);
 
 	++m_next_row;
 	
