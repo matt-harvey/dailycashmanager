@@ -41,7 +41,7 @@ var Ug = function($) {
 
   function createMenu() {
     var $nav = $('nav');
-    $ul = $('<ul></ul>').appendTo($nav);
+    var $ul = $('<ul></ul>').appendTo($nav);
     $('h2').each(function(index, header) {
       var $header = $(header);
       var $listItem =
