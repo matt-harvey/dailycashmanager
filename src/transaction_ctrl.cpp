@@ -898,7 +898,7 @@ TransactionCtrl::post_journal()
 		dj->push_repeater(repeater);
 	
 		// Get a name for the DraftJournal
-		DraftJournalNamingDialog naming_ctrl(0, database_connection());
+		DraftJournalNamingDialog naming_ctrl(nullptr, database_connection());
 		if (naming_ctrl.ShowModal() == wxID_OK)
 		{
 			dj->set_name(naming_ctrl.draft_journal_name());
