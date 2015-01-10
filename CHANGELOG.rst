@@ -1,6 +1,11 @@
 Changelog for DailyCashManager
 ==============================
 
+v1.1.3:
+
+- Resize windows to fit on smaller screens.
+- Use Boost for testing instead of UnitTest++.
+
 v1.1.2:
 
 - Fixed bug where one DecimalTextCtrl would revert to its previous value if

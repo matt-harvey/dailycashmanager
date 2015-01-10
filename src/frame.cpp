@@ -41,6 +41,7 @@
 #include <sqloxx/id.hpp>
 #include <wx/aboutdlg.h>
 #include <wx/event.h>
+#include <wx/gdicmn.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/string.h>
@@ -193,20 +194,7 @@ Frame::Frame
 (	wxString const& title,
 	DcmDatabaseConnection& p_database_connection
 ):
-	wxFrame
-	(	0,
-		wxID_ANY,
-		title,
-		wxDefaultPosition,
-#		ifdef JEWEL_ON_WINDOWS
-			wxDefaultSize
-#		else
-			wxSize
-			(	wxSystemSettings::GetMetric(wxSYS_SCREEN_X),
-				wxSystemSettings::GetMetric(wxSYS_SCREEN_Y)
-			)
-#		endif
-	),
+	wxFrame(0, wxID_ANY, title, wxDefaultPosition, screen_size()),
 	m_database_connection(p_database_connection),
 	m_menu_bar(nullptr),
 	m_file_menu(nullptr),

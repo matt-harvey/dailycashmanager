@@ -23,7 +23,7 @@
 #include <sqloxx/id.hpp>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
-#include <wx/scrolwin.h>
+#include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/window.h>
 #include <vector>
@@ -57,7 +57,7 @@ class EntryListCtrl;
  * transactions? If we do, then, among other things, the AccountCtrl will need
  * to allow the user to select Accounts of AccountType::pure_envelope.
  */
-class EntryListPanel: public wxScrolledWindow
+class EntryListPanel: public wxPanel
 {
 public:
 	EntryListPanel

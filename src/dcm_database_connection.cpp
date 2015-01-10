@@ -647,14 +647,14 @@ DcmDatabaseConnection::identity_map<Commodity>()
 }
 
 template <>
-sqloxx::IdentityMap<dcm::PersistentJournal>&
+sqloxx::IdentityMap<PersistentJournal>&
 DcmDatabaseConnection::identity_map<PersistentJournal>()
 {
 	return *m_journal_map;
 }
 
 template <>
-sqloxx::IdentityMap<dcm::Repeater>&
+sqloxx::IdentityMap<Repeater>&
 DcmDatabaseConnection::identity_map<Repeater>()
 {
 	return *m_repeater_map;
@@ -696,11 +696,5 @@ DcmDatabaseConnection::perform_integrity_checks()
 #	endif
 	return;
 }
-		
-
 
 }  // namespace dcm
-
-
-
-

@@ -104,7 +104,7 @@ EntryListCtrl::create_actual_ordinary_entry_list
 	optional<gregorian::date> const& p_maybe_max_date
 )
 {
-	EntryListCtrl* ret = 0;
+	EntryListCtrl* ret = nullptr;
 	switch (p_account->account_super_type())
 	{
 	case AccountSuperType::balance_sheet:

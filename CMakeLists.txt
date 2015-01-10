@@ -24,7 +24,7 @@ set (file_extension ".dcm")
 project (${application_name})
 set (version_major 1)
 set (version_minor 1)
-set (version_patch 3)
+set (version_patch 4)
 
 # Custom configuration options
 
