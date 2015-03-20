@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(test_date_parser_tolerant_parse)
 	if (md0h) BOOST_CHECK_EQUAL(*md0h, date(2013, 10, 30));
 	optional<date> const md0i = dp0.parse("21", true);
 	BOOST_CHECK(md0i);
-	if (md0i) BOOST_CHECK_EQUAL(md0i, date(today().year(), today().month(), 21));
+	if (md0i) BOOST_CHECK_EQUAL(*md0i, date(today().year(), today().month(), 21));
 
 	DateParser const dp1("%d/%m/%y", "%d/%m/%y");
 	optional<date> const md1a = dp1.parse("13/10/13", true);
