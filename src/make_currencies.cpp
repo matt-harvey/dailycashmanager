@@ -32,45 +32,45 @@ namespace dcm
 
 namespace
 {
-	Handle<Commodity> make_currency
-	(	DcmDatabaseConnection& p_database_connection,
-		wxString const& p_name,  // So we can accept wide string literals
-		string const& p_abbreviation,
-		int p_precision
-	)
-	{
-		Handle<Commodity> const ret(p_database_connection);
-		ret->set_name(p_name);
-		ret->set_abbreviation(std8_to_wx(p_abbreviation));
-		ret->set_description(wxString(""));
-		ret->set_precision(p_precision);
-		return ret;
-	}
+    Handle<Commodity> make_currency
+    (   DcmDatabaseConnection& p_database_connection,
+        wxString const& p_name,  // So we can accept wide string literals
+        string const& p_abbreviation,
+        int p_precision
+    )
+    {
+        Handle<Commodity> const ret(p_database_connection);
+        ret->set_name(p_name);
+        ret->set_abbreviation(std8_to_wx(p_abbreviation));
+        ret->set_description(wxString(""));
+        ret->set_precision(p_precision);
+        return ret;
+    }
 }  // end anonymous namespace
 
 
 
 void
 make_currencies
-(	DcmDatabaseConnection& dbc,
-	vector<Handle<Commodity> >& vec
+(   DcmDatabaseConnection& dbc,
+    vector<Handle<Commodity> >& vec
 )
 {
-	JEWEL_ASSERT (vec.empty());  // precondition
-	vec.reserve(200);
-	// contains repetitive code generated from a csv
-	// file via a script.
-	#include DCM_CURRENCIES_INCLUDE_FILE
-	return;
+    JEWEL_ASSERT (vec.empty());  // precondition
+    vec.reserve(200);
+    // contains repetitive code generated from a csv
+    // file via a script.
+    #include DCM_CURRENCIES_INCLUDE_FILE
+    return;
 }
 
 
 vector<Handle<Commodity> >
 make_currencies(DcmDatabaseConnection& dbc)
 {
-	vector<Handle<Commodity> > ret;
-	make_currencies(dbc, ret);
-	return ret;
+    vector<Handle<Commodity> > ret;
+    make_currencies(dbc, ret);
+    return ret;
 }
 
 

@@ -41,24 +41,24 @@ namespace dcm
  * options. See \e jewel::FlagSet for interface.
  */
 typedef
-	jewel::FlagSet
-	<	string_flags::StringFlags,
-		string_flags::dash_for_zero | string_flags::hard_align_right,
-		string_flags::dash_for_zero  // default
-	>
-	DecimalFormatFlags;
+    jewel::FlagSet
+    <    string_flags::StringFlags,
+        string_flags::dash_for_zero | string_flags::hard_align_right,
+        string_flags::dash_for_zero  // default
+    >
+    DecimalFormatFlags;
 
 /**
  * May be used in some of the below functions to manage boolean
  * options. See \e jewel::FlagSet for interface.
  */
 typedef
-	jewel::FlagSet
-	<	string_flags::StringFlags,
-		string_flags::allow_negative_parens,
-		string_flags::allow_negative_parens  // default
-	>
-	DecimalParsingFlags;
+    jewel::FlagSet
+    <    string_flags::StringFlags,
+        string_flags::allow_negative_parens,
+        string_flags::allow_negative_parens  // default
+    >
+    DecimalParsingFlags;
 
 /**
  * @returns decimal formatted as a wxString, with parentheses
@@ -83,9 +83,9 @@ typedef
  * of \e p_flags.
  */
 wxString finformat_wx
-(	jewel::Decimal const& decimal,
-	wxLocale const& loc,
-	DecimalFormatFlags p_flags = DecimalFormatFlags()
+(   jewel::Decimal const& decimal,
+    wxLocale const& loc,
+    DecimalFormatFlags p_flags = DecimalFormatFlags()
 );
 
 /**
@@ -107,9 +107,9 @@ wxString finformat_wx
  * of \e p_flags.
  */
 jewel::Decimal wx_to_decimal
-(	wxString wxs,
-	wxLocale const& loc,
-	DecimalParsingFlags p_flags = DecimalParsingFlags()
+(   wxString wxs,
+    wxLocale const& loc,
+    DecimalParsingFlags p_flags = DecimalParsingFlags()
 );
 
 /**

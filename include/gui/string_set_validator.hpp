@@ -35,43 +35,43 @@ namespace gui
 class StringSetValidator: public wxValidator
 {
 public:
-	/**
-	 * @param p_text initial text contents of validator
-	 *
-	 * @param p_valid_strings strings considered valid
-	 *
-	 * @param p_description_for_error_message a noun phrase to be incorporated
-	 * into the error message displayed to the user when text is invalid. E.g.
-	 * if p_valid_strings is a list of Account names, then
-	 * p_description_for_error_message might be something like "account".
-	 */
-	StringSetValidator
-	(	wxString const& p_text,
-		wxArrayString const& p_valid_strings,
-		wxString const& p_description_for_error_message
-	);
+    /**
+     * @param p_text initial text contents of validator
+     *
+     * @param p_valid_strings strings considered valid
+     *
+     * @param p_description_for_error_message a noun phrase to be incorporated
+     * into the error message displayed to the user when text is invalid. E.g.
+     * if p_valid_strings is a list of Account names, then
+     * p_description_for_error_message might be something like "account".
+     */
+    StringSetValidator
+    (   wxString const& p_text,
+        wxArrayString const& p_valid_strings,
+        wxString const& p_description_for_error_message
+    );
 
-	StringSetValidator(StringSetValidator const& rhs);
+    StringSetValidator(StringSetValidator const& rhs);
 
-	StringSetValidator(StringSetValidator&&) = delete;
-	StringSetValidator& operator=(StringSetValidator const&) = delete;
-	StringSetValidator& operator=(StringSetValidator&&) = delete;
+    StringSetValidator(StringSetValidator&&) = delete;
+    StringSetValidator& operator=(StringSetValidator const&) = delete;
+    StringSetValidator& operator=(StringSetValidator&&) = delete;
 
-	~StringSetValidator() = default;
+    ~StringSetValidator() = default;
 
-	/**
-	 * @param parent should point to an instance of wxTextEntry.
-	 */
-	bool Validate(wxWindow* parent) override;
+    /**
+     * @param parent should point to an instance of wxTextEntry.
+     */
+    bool Validate(wxWindow* parent) override;
 
-	bool TransferFromWindow() override;
-	bool TransferToWindow() override;
-	wxObject* Clone() const override;
+    bool TransferFromWindow() override;
+    bool TransferToWindow() override;
+    wxObject* Clone() const override;
 
 private:
-	wxString m_text;
-	wxArrayString m_valid_strings;
-	wxString m_description_for_error_message;
+    wxString m_text;
+    wxArrayString m_valid_strings;
+    wxString m_description_for_error_message;
 
 };  // class StringSetValidator
 

@@ -30,94 +30,94 @@ namespace test
 
 BOOST_AUTO_TEST_CASE(test_is_valid_date_for_interval_type)
 {
-	for (int y = 1990; y <= 2015; y += 3)
-	{
-		for (int m = 1; m != 13; ++m)
-		{
-			gregorian::date const first(y, m, 1);
-			gregorian::date const last =
-				first - gregorian::date_duration(1);
-			JEWEL_ASSERT (last.day() >= 28);
-			BOOST_CHECK
-			(	is_valid_date_for_interval_type
-				(	last,
-					IntervalType::month_ends
-				)
-			);
-			for
-			(	gregorian::date prev = last;
-				prev.day() != 28;
-				prev -= gregorian::date_duration(1)
-			)
-			{
-				JEWEL_ASSERT (prev.day() >= 28);
-				JEWEL_ASSERT (prev.day() <= 31);
-				BOOST_CHECK
-				(	!is_valid_date_for_interval_type
-					(	prev,
-						IntervalType::months
-					)
-				);
-			}
-			for (int d = 1; d != 29; ++d)
-			{
-				gregorian::date dt(y, m, d);
-				BOOST_CHECK
-				(	is_valid_date_for_interval_type
-					(	dt,
-						IntervalType::days
-					)
-				);
-				BOOST_CHECK
-				(	is_valid_date_for_interval_type
-					(	dt,
-						IntervalType::weeks
-					)
-				);
-				BOOST_CHECK
-				(	is_valid_date_for_interval_type
-					(	dt,
-						IntervalType::months
-					)
-				);
-			}
-		}
-	}
+    for (int y = 1990; y <= 2015; y += 3)
+    {
+        for (int m = 1; m != 13; ++m)
+        {
+            gregorian::date const first(y, m, 1);
+            gregorian::date const last =
+                first - gregorian::date_duration(1);
+            JEWEL_ASSERT (last.day() >= 28);
+            BOOST_CHECK
+            (   is_valid_date_for_interval_type
+                (   last,
+                    IntervalType::month_ends
+                )
+            );
+            for
+            (   gregorian::date prev = last;
+                prev.day() != 28;
+                prev -= gregorian::date_duration(1)
+            )
+            {
+                JEWEL_ASSERT (prev.day() >= 28);
+                JEWEL_ASSERT (prev.day() <= 31);
+                BOOST_CHECK
+                (   !is_valid_date_for_interval_type
+                    (   prev,
+                        IntervalType::months
+                    )
+                );
+            }
+            for (int d = 1; d != 29; ++d)
+            {
+                gregorian::date dt(y, m, d);
+                BOOST_CHECK
+                (   is_valid_date_for_interval_type
+                    (   dt,
+                        IntervalType::days
+                    )
+                );
+                BOOST_CHECK
+                (   is_valid_date_for_interval_type
+                    (   dt,
+                        IntervalType::weeks
+                    )
+                );
+                BOOST_CHECK
+                (   is_valid_date_for_interval_type
+                    (   dt,
+                        IntervalType::months
+                    )
+                );
+            }
+        }
+    }
 }
 
 BOOST_AUTO_TEST_CASE(test_month_end_for_date)
 {
-	using gregorian::date;
+    using gregorian::date;
 
-	date const d0(2013, 9, 14);
-	BOOST_CHECK_EQUAL(month_end_for_date(d0), date(2013, 9, 30));
+    date const d0(2013, 9, 14);
+    BOOST_CHECK_EQUAL(month_end_for_date(d0), date(2013, 9, 30));
 
-	date const d1(1900, 12, 31);
-	BOOST_CHECK_EQUAL(month_end_for_date(d1), date(1900, 12, 31));
+    date const d1(1900, 12, 31);
+    BOOST_CHECK_EQUAL(month_end_for_date(d1), date(1900, 12, 31));
 
-	date const d2(2980, 6, 1);
-	BOOST_CHECK_EQUAL(month_end_for_date(d2), date(2980, 6, 30));
+    date const d2(2980, 6, 1);
+    BOOST_CHECK_EQUAL(month_end_for_date(d2), date(2980, 6, 30));
 
-	date const d3(1980, 1, 29);
-	BOOST_CHECK_EQUAL(month_end_for_date(d3), date(1980, 1, 31));
+    date const d3(1980, 1, 29);
+    BOOST_CHECK_EQUAL(month_end_for_date(d3), date(1980, 1, 31));
 
-	date const d4(1642, 2, 28);
-	BOOST_CHECK_EQUAL(month_end_for_date(d4), date(1642, 2, 28));
+    date const d4(1642, 2, 28);
+    BOOST_CHECK_EQUAL(month_end_for_date(d4), date(1642, 2, 28));
 
-	date const d5(2000, 2, 3);
-	BOOST_CHECK_EQUAL(month_end_for_date(d5), date(2000, 2, 29));
+    date const d5(2000, 2, 3);
+    BOOST_CHECK_EQUAL(month_end_for_date(d5), date(2000, 2, 29));
 
-	date const d6(2100, 2, 26);
-	BOOST_CHECK_EQUAL(month_end_for_date(d6), date(2100, 2, 28));
+    date const d6(2100, 2, 26);
+    BOOST_CHECK_EQUAL(month_end_for_date(d6), date(2100, 2, 28));
 
-	date const d7(1962, 5, 30);
-	BOOST_CHECK_EQUAL(month_end_for_date(d7), date(1962, 5, 31));
+    date const d7(1962, 5, 30);
+    BOOST_CHECK_EQUAL(month_end_for_date(d7), date(1962, 5, 31));
 
-	date const d8(1500, 11, 30);
-	BOOST_CHECK_EQUAL(month_end_for_date(d8), date(1500, 11, 30));
+    date const d8(1500, 11, 30);
+    BOOST_CHECK_EQUAL(month_end_for_date(d8), date(1500, 11, 30));
 
-	date const d9(2015, 12, 2);
-	BOOST_CHECK_EQUAL(month_end_for_date(d9), date(2015, 12, 31));
+    date const d9(2015, 12, 2);
+    BOOST_CHECK_EQUAL(month_end_for_date(d9), date(2015, 12, 31));
 }
 
 }  // namespace test

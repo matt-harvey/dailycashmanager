@@ -41,42 +41,42 @@ class DraftJournalListCtrl: public wxListCtrl
 {
 public:
 
-	DraftJournalListCtrl
-	(	wxWindow* p_parent,
-		wxSize const& p_size,
-		DraftJournalTableIterator p_beg,
-		DraftJournalTableIterator p_end,
-		DcmDatabaseConnection& p_database_connection
-	);
+    DraftJournalListCtrl
+    (   wxWindow* p_parent,
+        wxSize const& p_size,
+        DraftJournalTableIterator p_beg,
+        DraftJournalTableIterator p_end,
+        DcmDatabaseConnection& p_database_connection
+    );
 
-	DraftJournalListCtrl(DraftJournalListCtrl const&) = delete;
-	DraftJournalListCtrl(DraftJournalListCtrl&&) = delete;
-	DraftJournalListCtrl& operator=(DraftJournalListCtrl const&) = delete;
-	DraftJournalListCtrl& operator=(DraftJournalListCtrl&&) = delete;
-	~DraftJournalListCtrl() = default;
+    DraftJournalListCtrl(DraftJournalListCtrl const&) = delete;
+    DraftJournalListCtrl(DraftJournalListCtrl&&) = delete;
+    DraftJournalListCtrl& operator=(DraftJournalListCtrl const&) = delete;
+    DraftJournalListCtrl& operator=(DraftJournalListCtrl&&) = delete;
+    ~DraftJournalListCtrl() = default;
 
-	/**
-	 * @returns a vector populated with all the DraftJournals currently
-	 * selected by the user in the DraftJournalListCtrl.
-	 */
-	std::vector<sqloxx::Handle<DraftJournal> > selected_draft_journals();
+    /**
+     * @returns a vector populated with all the DraftJournals currently
+     * selected by the user in the DraftJournalListCtrl.
+     */
+    std::vector<sqloxx::Handle<DraftJournal> > selected_draft_journals();
 
 private:
 
-	void on_item_activated(wxListEvent& event);
+    void on_item_activated(wxListEvent& event);
 
-	void update
-	(	DraftJournalTableIterator p_beg,
-		DraftJournalTableIterator p_end
-	);
+    void update
+    (   DraftJournalTableIterator p_beg,
+        DraftJournalTableIterator p_end
+    );
 
-	static int const s_name_col = 0;
-	static int const s_frequency_col = s_name_col + 1;
-	static int const s_next_date_col = s_frequency_col + 1;
+    static int const s_name_col = 0;
+    static int const s_frequency_col = s_name_col + 1;
+    static int const s_next_date_col = s_frequency_col + 1;
 
-	DcmDatabaseConnection& m_database_connection;
+    DcmDatabaseConnection& m_database_connection;
 
-	DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 
 };  // class DraftJournalListCtrl
 

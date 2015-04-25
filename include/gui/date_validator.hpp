@@ -32,35 +32,35 @@ namespace gui
 class DateValidator: public wxValidator
 {
 public:
-	DateValidator
-	(	boost::gregorian::date const& p_date,
-		bool p_allow_blank,
-		boost::optional<boost::gregorian::date> const& p_min_date =
-			boost::optional<boost::gregorian::date>()
-	);
+    DateValidator
+    (   boost::gregorian::date const& p_date,
+        bool p_allow_blank,
+        boost::optional<boost::gregorian::date> const& p_min_date =
+            boost::optional<boost::gregorian::date>()
+    );
 
-	DateValidator(DateValidator const& rhs);
+    DateValidator(DateValidator const& rhs);
 
-	DateValidator(DateValidator&&) = delete;
-	DateValidator& operator=(DateValidator const&) = delete;
-	DateValidator& operator=(DateValidator&&) = delete;
-	~DateValidator() = default;
+    DateValidator(DateValidator&&) = delete;
+    DateValidator& operator=(DateValidator const&) = delete;
+    DateValidator& operator=(DateValidator&&) = delete;
+    ~DateValidator() = default;
 
-	/**
-	 * @param parent should point to an instance of a TextCtrl.
-	 */
-	bool Validate(wxWindow* parent) override;
+    /**
+     * @param parent should point to an instance of a TextCtrl.
+     */
+    bool Validate(wxWindow* parent) override;
 
-	bool TransferFromWindow() override;
-	bool TransferToWindow() override;
-	wxObject* Clone() const override;
+    bool TransferFromWindow() override;
+    bool TransferToWindow() override;
+    wxObject* Clone() const override;
 
-	boost::optional<boost::gregorian::date> date() const;
+    boost::optional<boost::gregorian::date> date() const;
 
 private:
-	bool m_allow_blank;
-	boost::optional<boost::gregorian::date> m_date;
-	boost::optional<boost::gregorian::date> m_min_date;
+    bool m_allow_blank;
+    boost::optional<boost::gregorian::date> m_date;
+    boost::optional<boost::gregorian::date> m_min_date;
 
 };  // class DateValidator
 

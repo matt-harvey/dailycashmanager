@@ -35,16 +35,16 @@ class DcmDatabaseConnection;
  */
 struct AugmentedAccount
 {
-	AugmentedAccount
-	(	DcmDatabaseConnection& p_database_connection,
-		sqloxx::Handle<Commodity> const& p_commodity
-	);
-	AugmentedAccount
-	(	sqloxx::Handle<Account> const& p_account,
-		jewel::Decimal const& p_technical_opening_balance
-	);
-	sqloxx::Handle<Account> account;
-	jewel::Decimal technical_opening_balance;
+    AugmentedAccount
+    (   DcmDatabaseConnection& p_database_connection,
+        sqloxx::Handle<Commodity> const& p_commodity
+    );
+    AugmentedAccount
+    (   sqloxx::Handle<Account> const& p_account,
+        jewel::Decimal const& p_technical_opening_balance
+    );
+    sqloxx::Handle<Account> account;
+    jewel::Decimal technical_opening_balance;
 
 };  // struct AugmentedAccount
 

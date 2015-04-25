@@ -60,55 +60,55 @@ class Report: public GriddedScrolledPanel
 {
 public:
 
-	// Constructor is private - client code should user static "create"
-	// function.
-	
-	Report(Report const&) = delete;
-	Report(Report&&) = delete;
-	Report& operator=(Report const&) = delete;
-	Report& operator=(Report&&) = delete;
-	virtual ~Report();
+    // Constructor is private - client code should user static "create"
+    // function.
+    
+    Report(Report const&) = delete;
+    Report(Report&&) = delete;
+    Report& operator=(Report const&) = delete;
+    Report& operator=(Report&&) = delete;
+    virtual ~Report();
 
-	/**
-	 * @returns a pointer to a heap-allocated Report. Caller will be
-	 * responsible for memory.
-	 */
-	static Report* create
-	(	ReportPanel* p_parent,
-		wxSize const& p_size,
-		AccountSuperType p_account_super_type,
-		DcmDatabaseConnection& p_database_connection,
-		boost::optional<boost::gregorian::date> const& p_maybe_min_date =
-			boost::optional<boost::gregorian::date>(),
-		boost::optional<boost::gregorian::date> const& p_maybe_max_date =
-			boost::optional<boost::gregorian::date>()
-	);
+    /**
+     * @returns a pointer to a heap-allocated Report. Caller will be
+     * responsible for memory.
+     */
+    static Report* create
+    (   ReportPanel* p_parent,
+        wxSize const& p_size,
+        AccountSuperType p_account_super_type,
+        DcmDatabaseConnection& p_database_connection,
+        boost::optional<boost::gregorian::date> const& p_maybe_min_date =
+            boost::optional<boost::gregorian::date>(),
+        boost::optional<boost::gregorian::date> const& p_maybe_max_date =
+            boost::optional<boost::gregorian::date>()
+    );
 
-	void update_for_new(sqloxx::Handle<OrdinaryJournal> const& p_journal);
-	void update_for_amended(sqloxx::Handle<OrdinaryJournal> const& p_journal);
-	void update_for_new(sqloxx::Handle<Account> const& p_account);
-	void update_for_amended(sqloxx::Handle<Account> const& p_account);
-	void update_for_amended_budget(sqloxx::Handle<Account> const& p_account);
-	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
+    void update_for_new(sqloxx::Handle<OrdinaryJournal> const& p_journal);
+    void update_for_amended(sqloxx::Handle<OrdinaryJournal> const& p_journal);
+    void update_for_new(sqloxx::Handle<Account> const& p_account);
+    void update_for_amended(sqloxx::Handle<Account> const& p_account);
+    void update_for_amended_budget(sqloxx::Handle<Account> const& p_account);
+    void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
 
-	void generate();
+    void generate();
 
 protected:
-	Report
-	(	ReportPanel* p_parent,
-		wxSize const& p_size,
-		DcmDatabaseConnection& p_database_connection,
-		boost::optional<boost::gregorian::date> const& p_maybe_min_date,
-		boost::optional<boost::gregorian::date> const& p_maybe_max_date
-	);
+    Report
+    (   ReportPanel* p_parent,
+        wxSize const& p_size,
+        DcmDatabaseConnection& p_database_connection,
+        boost::optional<boost::gregorian::date> const& p_maybe_min_date,
+        boost::optional<boost::gregorian::date> const& p_maybe_max_date
+    );
 
-	boost::gregorian::date min_date() const;
-	boost::optional<boost::gregorian::date> maybe_max_date() const;
+    boost::gregorian::date min_date() const;
+    boost::optional<boost::gregorian::date> maybe_max_date() const;
 
 private:
-	virtual void do_generate() = 0;
-	boost::gregorian::date m_min_date;
-	boost::optional<boost::gregorian::date> m_maybe_max_date;
+    virtual void do_generate() = 0;
+    boost::gregorian::date m_min_date;
+    boost::optional<boost::gregorian::date> m_maybe_max_date;
 
 };  // class Report
 

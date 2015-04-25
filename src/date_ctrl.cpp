@@ -41,66 +41,66 @@ namespace gui
 {
 
 BEGIN_EVENT_TABLE(DateCtrl, TextCtrl)
-	EVT_KILL_FOCUS(DateCtrl::on_kill_focus)
-	EVT_SET_FOCUS(DateCtrl::on_set_focus)
+    EVT_KILL_FOCUS(DateCtrl::on_kill_focus)
+    EVT_SET_FOCUS(DateCtrl::on_set_focus)
 END_EVENT_TABLE()
 
 DateCtrl::DateCtrl
-(	wxWindow* p_parent,
-	unsigned int p_id,
-	wxSize const& p_size,
-	gregorian::date const& p_date,
-	bool p_allow_blank,
-	optional<gregorian::date> const& p_min_date
+(   wxWindow* p_parent,
+    unsigned int p_id,
+    wxSize const& p_size,
+    gregorian::date const& p_date,
+    bool p_allow_blank,
+    optional<gregorian::date> const& p_min_date
 ):
-	TextCtrl
-	(	p_parent,
-		p_id,
-		date_format_wx(p_date),
-		wxDefaultPosition,
-		p_size,
-		wxALIGN_RIGHT,
-		DateValidator(p_date, p_allow_blank, p_min_date)
-	)
+    TextCtrl
+    (   p_parent,
+        p_id,
+        date_format_wx(p_date),
+        wxDefaultPosition,
+        p_size,
+        wxALIGN_RIGHT,
+        DateValidator(p_date, p_allow_blank, p_min_date)
+    )
 {
 }
 
 optional<gregorian::date>
 DateCtrl::date()
 {
-	DateValidator const* const validator =
-		dynamic_cast<DateValidator const*>(GetValidator());
-	JEWEL_ASSERT (validator);
-	return validator->date();
+    DateValidator const* const validator =
+        dynamic_cast<DateValidator const*>(GetValidator());
+    JEWEL_ASSERT (validator);
+    return validator->date();
 }
 
 void
 DateCtrl::on_kill_focus(wxFocusEvent& event)
 {
-	event.Skip();
-	auto const orig = date();
-	auto* const validator = GetValidator();
-	JEWEL_ASSERT (validator);
-	if
-	(	!validator->Validate(static_cast<wxWindow*>(this)) ||
-		!validator->TransferToWindow()
-	)
-	{
-		if (orig)
-		{
-			SetValue(date_format_wx(value(orig)));
-			validator->Validate(static_cast<wxWindow*>(this));
-		}
-	}
-	return;
+    event.Skip();
+    auto const orig = date();
+    auto* const validator = GetValidator();
+    JEWEL_ASSERT (validator);
+    if
+    (   !validator->Validate(static_cast<wxWindow*>(this)) ||
+        !validator->TransferToWindow()
+    )
+    {
+        if (orig)
+        {
+            SetValue(date_format_wx(value(orig)));
+            validator->Validate(static_cast<wxWindow*>(this));
+        }
+    }
+    return;
 }
 
 void
 DateCtrl::on_set_focus(wxFocusEvent& event)
 {
-	event.Skip();
-	SelectAll();
-	return;
+    event.Skip();
+    SelectAll();
+    return;
 }
 
 }  // namespace gui

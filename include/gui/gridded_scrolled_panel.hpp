@@ -51,76 +51,76 @@ class GriddedScrolledPanel: public wxScrolledWindow
 {
 public:
 
-	/**
-	 * Vertical scrolling is always enabled. Horizontal scrolling
-	 * is only enabled if \e p_horizontal_scrolling_enabled is passed
-	 * \e true.
-	 */
-	GriddedScrolledPanel
-	(	wxWindow* p_parent,
-		wxSize const& p_size,
-		DcmDatabaseConnection& p_database_connection,
-		bool p_horizontal_scrolling_enabled = false
-	);
+    /**
+     * Vertical scrolling is always enabled. Horizontal scrolling
+     * is only enabled if \e p_horizontal_scrolling_enabled is passed
+     * \e true.
+     */
+    GriddedScrolledPanel
+    (   wxWindow* p_parent,
+        wxSize const& p_size,
+        DcmDatabaseConnection& p_database_connection,
+        bool p_horizontal_scrolling_enabled = false
+    );
 
-	GriddedScrolledPanel(GriddedScrolledPanel const&) = delete;
-	GriddedScrolledPanel(GriddedScrolledPanel&&) = delete;
-	GriddedScrolledPanel& operator=(GriddedScrolledPanel const&) = delete;
-	GriddedScrolledPanel& operator=(GriddedScrolledPanel&&) = delete;
-	virtual ~GriddedScrolledPanel();
+    GriddedScrolledPanel(GriddedScrolledPanel const&) = delete;
+    GriddedScrolledPanel(GriddedScrolledPanel&&) = delete;
+    GriddedScrolledPanel& operator=(GriddedScrolledPanel const&) = delete;
+    GriddedScrolledPanel& operator=(GriddedScrolledPanel&&) = delete;
+    virtual ~GriddedScrolledPanel();
 
 protected:
 
-	wxGridBagSizer& top_sizer();
+    wxGridBagSizer& top_sizer();
 
-	/**
-	 * An instance of GriddedScrolledPanel will keep track of a
-	 * "current row" for purposes of positioning widgets on its sizing
-	 * grid.
-	 */
-	int current_row() const;
-	void increment_row();
-	void decrement_row();
-	void set_row(int p_row);
+    /**
+     * An instance of GriddedScrolledPanel will keep track of a
+     * "current row" for purposes of positioning widgets on its sizing
+     * grid.
+     */
+    int current_row() const;
+    void increment_row();
+    void decrement_row();
+    void set_row(int p_row);
 
-	/**
-	 * Display wxString using a wxStaticText at the position given
-	 * by current_row() and \e p_column. This both creates the text
-	 * and adds it to the sizer.
-	 *
-	 * @returns a pointer to the displayed wxStaticText. (As always in
-	 * wxWidgets, this points to memory managed by the parent window,
-	 * which in this case is the GriddedScrolledPanel.)
-	 */
-	wxStaticText* display_text
-	(	wxString const& p_text,
-		int p_column,
-		int p_alignment_flags = wxALIGN_LEFT
-	);
+    /**
+     * Display wxString using a wxStaticText at the position given
+     * by current_row() and \e p_column. This both creates the text
+     * and adds it to the sizer.
+     *
+     * @returns a pointer to the displayed wxStaticText. (As always in
+     * wxWidgets, this points to memory managed by the parent window,
+     * which in this case is the GriddedScrolledPanel.)
+     */
+    wxStaticText* display_text
+    (   wxString const& p_text,
+        int p_column,
+        int p_alignment_flags = wxALIGN_LEFT
+    );
 
-	/**
-	 * Display a jewel::Decimal using a wxStaticText at the position
-	 * given by current_row() and \e p_column. This both creates the
-	 * text and adds it to the sizer.
-	 *
-	 * @returns a pointer to the displayed wxStaticText. (As always in
-	 * wxWidgets, this points to memory managed by the parent window,
-	 * which in this case is the GriddedScrolledPanel.)
-	 */
-	wxStaticText* display_decimal
-	(	jewel::Decimal const& p_decimal,
-		int p_column,
-		bool p_dash_for_zero = true
-	);
+    /**
+     * Display a jewel::Decimal using a wxStaticText at the position
+     * given by current_row() and \e p_column. This both creates the
+     * text and adds it to the sizer.
+     *
+     * @returns a pointer to the displayed wxStaticText. (As always in
+     * wxWidgets, this points to memory managed by the parent window,
+     * which in this case is the GriddedScrolledPanel.)
+     */
+    wxStaticText* display_decimal
+    (   jewel::Decimal const& p_decimal,
+        int p_column,
+        bool p_dash_for_zero = true
+    );
 
-	DcmDatabaseConnection& database_connection();
-	DcmDatabaseConnection const& database_connection() const;
+    DcmDatabaseConnection& database_connection();
+    DcmDatabaseConnection const& database_connection() const;
 
 private:
-	
-	int m_current_row;
-	wxGridBagSizer* m_top_sizer;
-	DcmDatabaseConnection& m_database_connection;
+    
+    int m_current_row;
+    wxGridBagSizer* m_top_sizer;
+    DcmDatabaseConnection& m_database_connection;
 
 };  // class GriddedScrolledPanel
 

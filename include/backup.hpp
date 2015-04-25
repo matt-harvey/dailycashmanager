@@ -54,9 +54,9 @@ namespace dcm
  * should be absolute filepaths.
  */
 boost::filesystem::path make_backup
-(	boost::filesystem::path const& p_original,
-	boost::filesystem::path const& p_directory,
-	std::string const& p_infix = std::string()
+(   boost::filesystem::path const& p_original,
+    boost::filesystem::path const& p_directory,
+    std::string const& p_infix = std::string()
 );
 
 }  // namespace dcm

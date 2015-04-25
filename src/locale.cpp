@@ -27,9 +27,9 @@ namespace gui
 wxLocale const&
 locale()
 {
-	App* app = dynamic_cast<App*>(wxTheApp);
-	JEWEL_ASSERT (app);
-	return app->locale();
+    App* app = dynamic_cast<App*>(wxTheApp);
+    JEWEL_ASSERT (app);
+    return app->locale();
 }
 
 }  // namespace gui

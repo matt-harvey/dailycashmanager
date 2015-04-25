@@ -38,28 +38,28 @@ namespace gui
 class Button: public wxButton
 {
 public:
-	Button
-	(	wxWindow* p_parent,
-		wxWindowID p_id,
-		wxString const& p_label = wxEmptyString,
-		wxPoint const& p_position = wxDefaultPosition,
-		wxSize const& p_size = wxDefaultSize,
-		long p_style = 0,
-		wxValidator const& p_validator = wxDefaultValidator,
-		wxString const& p_name = "button"
-	);
+    Button
+    (   wxWindow* p_parent,
+        wxWindowID p_id,
+        wxString const& p_label = wxEmptyString,
+        wxPoint const& p_position = wxDefaultPosition,
+        wxSize const& p_size = wxDefaultSize,
+        long p_style = 0,
+        wxValidator const& p_validator = wxDefaultValidator,
+        wxString const& p_name = "button"
+    );
 
-	Button(Button const& rhs) = delete;
-	Button(Button&& rhs) = delete;
-	Button& operator=(Button const& rhs) = delete;
-	Button& operator=(Button&& rhs) = delete;
-	virtual ~Button();
+    Button(Button const& rhs) = delete;
+    Button(Button&& rhs) = delete;
+    Button& operator=(Button const& rhs) = delete;
+    Button& operator=(Button&& rhs) = delete;
+    virtual ~Button();
 
 private:
-	
-	void on_char(wxKeyEvent& event);
+    
+    void on_char(wxKeyEvent& event);
 
-	DECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE();
 
 };  // class Button
 

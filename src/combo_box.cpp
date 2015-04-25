@@ -29,58 +29,58 @@ namespace gui
 {
 
 BEGIN_EVENT_TABLE(ComboBox, wxComboBox)
-	EVT_CHAR(ComboBox::on_char)
+    EVT_CHAR(ComboBox::on_char)
 END_EVENT_TABLE()
 
 ComboBox::ComboBox
-(	wxWindow* p_parent,
-	wxWindowID p_id,
-	wxString const& p_value,
-	wxPoint const& p_position,
-	wxSize const& p_size,
-	int p_n,
-	wxString const p_choices[],
-	long p_style,
-	wxValidator const& p_validator,
-	wxString const& p_name
+(   wxWindow* p_parent,
+    wxWindowID p_id,
+    wxString const& p_value,
+    wxPoint const& p_position,
+    wxSize const& p_size,
+    int p_n,
+    wxString const p_choices[],
+    long p_style,
+    wxValidator const& p_validator,
+    wxString const& p_name
 ):
-	wxComboBox
-	(	p_parent,
-		p_id,
-		p_value,
-		p_position,
-		p_size,
-		p_n,
-		p_choices,
-		p_style | wxWANTS_CHARS,
-		p_validator,
-		p_name
-	)
+    wxComboBox
+    (   p_parent,
+        p_id,
+        p_value,
+        p_position,
+        p_size,
+        p_n,
+        p_choices,
+        p_style | wxWANTS_CHARS,
+        p_validator,
+        p_name
+    )
 {
 }
 
 ComboBox::ComboBox
-(	wxWindow* p_parent,
-	wxWindowID p_id,
-	wxString const& p_value,
-	wxPoint const& p_pos,
-	wxSize const& p_size,
-	wxArrayString const& p_choices,
-	long p_style,
-	wxValidator const& p_validator,
-	wxString const& p_name
+(   wxWindow* p_parent,
+    wxWindowID p_id,
+    wxString const& p_value,
+    wxPoint const& p_pos,
+    wxSize const& p_size,
+    wxArrayString const& p_choices,
+    long p_style,
+    wxValidator const& p_validator,
+    wxString const& p_name
 ):
-	wxComboBox
-	(	p_parent,
-		p_id,
-		p_value,
-		p_pos,
-		p_size,
-		p_choices,
-		p_style | wxWANTS_CHARS,
-		p_validator,
-		p_name
-	)
+    wxComboBox
+    (   p_parent,
+        p_id,
+        p_value,
+        p_pos,
+        p_size,
+        p_choices,
+        p_style | wxWANTS_CHARS,
+        p_validator,
+        p_name
+    )
 {
 }
 
@@ -91,22 +91,22 @@ ComboBox::~ComboBox()
 void
 ComboBox::on_char(wxKeyEvent& event)
 {
-	if (event.GetKeyCode() == WXK_TAB)
-	{
-		if (event.ShiftDown())
-		{
-			Navigate(wxNavigationKeyEvent::IsBackward);
-		}
-		else
-		{
-			Navigate(wxNavigationKeyEvent::IsForward);
-		}
-	}
-	else
-	{
-		event.Skip();
-	}
-	return;
+    if (event.GetKeyCode() == WXK_TAB)
+    {
+        if (event.ShiftDown())
+        {
+            Navigate(wxNavigationKeyEvent::IsBackward);
+        }
+        else
+        {
+            Navigate(wxNavigationKeyEvent::IsForward);
+        }
+    }
+    else
+    {
+        event.Skip();
+    }
+    return;
 }
 
 }  // namespace gui

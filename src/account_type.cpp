@@ -34,118 +34,118 @@ namespace dcm
 AccountSuperType
 super_type(AccountType p_account_type)
 {
-	switch (p_account_type)
-	{
-	case AccountType::asset:
-	case AccountType::liability:
-	case AccountType::equity:
-		return AccountSuperType::balance_sheet;
-	case AccountType::revenue:
-	case AccountType::expense:
-	case AccountType::pure_envelope:
-		return AccountSuperType::pl;
-	default:
-		JEWEL_HARD_ASSERT (false);
-	}
+    switch (p_account_type)
+    {
+    case AccountType::asset:
+    case AccountType::liability:
+    case AccountType::equity:
+        return AccountSuperType::balance_sheet;
+    case AccountType::revenue:
+    case AccountType::expense:
+    case AccountType::pure_envelope:
+        return AccountSuperType::pl;
+    default:
+        JEWEL_HARD_ASSERT (false);
+    }
 }
 
 vector<AccountType> const&
 account_types()
 {
-	static vector<AccountType> const ret
-	{	AccountType::asset,
-		AccountType::liability,
-		AccountType::equity,
-		AccountType::revenue,
-		AccountType::expense,
-		AccountType::pure_envelope
-	};
-	return ret;
+    static vector<AccountType> const ret
+    {   AccountType::asset,
+        AccountType::liability,
+        AccountType::equity,
+        AccountType::revenue,
+        AccountType::expense,
+        AccountType::pure_envelope
+    };
+    return ret;
 }
 
 vector<AccountType> const&
 account_types(AccountSuperType p_account_super_type)
 {
-	static vector<AccountType> const pl_ret
-	{	AccountType::revenue,
-		AccountType::expense,
-		AccountType::pure_envelope
-	};
-	static vector<AccountType> const bs_ret
-	{	AccountType::asset,
-		AccountType::liability,
-		AccountType::equity
-	};
-	switch (p_account_super_type)
-	{
-	case AccountSuperType::pl:
-		return pl_ret;
-	case AccountSuperType::balance_sheet:
-		return bs_ret;
-	default:
-		JEWEL_HARD_ASSERT (false);
-	}
-	JEWEL_HARD_ASSERT (false);
+    static vector<AccountType> const pl_ret
+    {   AccountType::revenue,
+        AccountType::expense,
+        AccountType::pure_envelope
+    };
+    static vector<AccountType> const bs_ret
+    {   AccountType::asset,
+        AccountType::liability,
+        AccountType::equity
+    };
+    switch (p_account_super_type)
+    {
+    case AccountSuperType::pl:
+        return pl_ret;
+    case AccountSuperType::balance_sheet:
+        return bs_ret;
+    default:
+        JEWEL_HARD_ASSERT (false);
+    }
+    JEWEL_HARD_ASSERT (false);
 }
 
 vector<AccountSuperType> const&
 account_super_types()
 {
-	static vector<AccountSuperType> const ret
-	{	AccountSuperType::balance_sheet,
-		AccountSuperType::pl
-	};
-	return ret;
+    static vector<AccountSuperType> const ret
+    {   AccountSuperType::balance_sheet,
+        AccountSuperType::pl
+    };
+    return ret;
 }
 
 vector<wxString> const&
 account_type_names()
 {
-	static vector<wxString> const ret
-	{	"Asset",
-		"Liability",
-		"Equity",
-		"Revenue",
-		"Expense",
-		"Pure envelope"
-	};
-	JEWEL_ASSERT (ret.size() == account_types().size());
-	return ret;
+    static vector<wxString> const ret
+    {   "Asset",
+        "Liability",
+        "Equity",
+        "Revenue",
+        "Expense",
+        "Pure envelope"
+    };
+    JEWEL_ASSERT (ret.size() == account_types().size());
+    return ret;
 }
 
 wxString
 account_type_to_string(AccountType p_account_type)
 {
-	size_t const index = static_cast<size_t>(p_account_type) - 1;
-	return account_type_names()[index];
+    size_t const index = static_cast<size_t>(p_account_type) - 1;
+    return account_type_names()[index];
 }
 
 AccountType
 string_to_account_type(wxString const& p_string)
 {
-	static bool calculated_already = false;
-	static map<wxString, AccountType> dict;
-	if (!calculated_already)
-	{
-		vector<wxString> const names = account_type_names();
-		int i = 1;
-		for (auto const& name: names)
-		{
-			dict[name] = static_cast<AccountType>(i);
-			++i;
-		}
-		calculated_already = true;
-	}
-	auto const jt = dict.find(p_string);
-	if (jt == dict.end())
-	{
-		JEWEL_THROW
-		(	InvalidAccountTypeStringException,
-			"String does not identify AccountType"
-		);
-	}
-	JEWEL_ASSERT (jt != dict.end());
-	return jt->second;
+    static bool calculated_already = false;
+    static map<wxString, AccountType> dict;
+    if (!calculated_already)
+    {
+        vector<wxString> const names = account_type_names();
+        int i = 1;
+        for (auto const& name: names)
+        {
+            dict[name] = static_cast<AccountType>(i);
+            ++i;
+        }
+        calculated_already = true;
+    }
+    auto const jt = dict.find(p_string);
+    if (jt == dict.end())
+    {
+        JEWEL_THROW
+        (   InvalidAccountTypeStringException,
+            "String does not identify AccountType"
+        );
+    }
+    JEWEL_ASSERT (jt != dict.end());
+    return jt->second;
 }
 
 }  // namespace dcm

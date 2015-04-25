@@ -43,12 +43,12 @@ class DcmDatabaseConnection;
  */
 enum class TransactionType: unsigned char
 {
-	expenditure = 0,
-	revenue,
-	balance_sheet,
-	envelope,
-	generic,
-	num_transaction_types  // do not insert enumerators below here
+    expenditure = 0,
+    revenue,
+    balance_sheet,
+    envelope,
+    generic,
+    num_transaction_types  // do not insert enumerators below here
 };
 
 
@@ -71,8 +71,8 @@ transaction_types();
   */
 std::vector<TransactionType>
 available_transaction_types
-(	DcmDatabaseConnection& p_database_connection,
-	bool p_include_non_actual = true
+(   DcmDatabaseConnection& p_database_connection,
+    bool p_include_non_actual = true
 );
 
 /**
@@ -84,7 +84,7 @@ available_transaction_types
  */
 wxString
 transaction_type_to_verb
-(	TransactionType p_transaction_type
+(   TransactionType p_transaction_type
 );
 
 /**
@@ -108,7 +108,7 @@ transaction_type_from_verb(wxString const& p_phrase);
  * @param p_transaction_type the TransactionType in question
  */
 bool transaction_type_is_actual
-(	TransactionType p_transaction_type
+(   TransactionType p_transaction_type
 );
 
 /**
@@ -119,7 +119,7 @@ bool transaction_type_is_actual
  * @param p_transaction_type the TransactionType in question
  */
 void assert_transaction_type_validity
-(	TransactionType p_transaction_type
+(   TransactionType p_transaction_type
 );
 
 /**
@@ -145,7 +145,7 @@ namespace dcm
  */
 std::vector<AccountType> const&
 source_account_types
-(	TransactionType p_transaction_type
+(   TransactionType p_transaction_type
 );
 
 /**
@@ -156,7 +156,7 @@ source_account_types
  */
 std::vector<AccountType> const&
 destination_account_types
-(	TransactionType p_transaction_type
+(   TransactionType p_transaction_type
 );
 
 std::set<AccountSuperType>
@@ -173,8 +173,8 @@ destination_super_types(TransactionType p_transaction_type);
  * then it would be natural to assume we have an expenditure_transaction.
  */
 TransactionType natural_transaction_type
-(	sqloxx::Handle<Account> const& account_x,
-	sqloxx::Handle<Account> const& account_y
+(   sqloxx::Handle<Account> const& account_x,
+    sqloxx::Handle<Account> const& account_y
 );
 
 
@@ -183,17 +183,17 @@ TransactionType natural_transaction_type
 inline
 void
 assert_transaction_type_validity
-(	TransactionType p_transaction_type
+(   TransactionType p_transaction_type
 )
 {
-#	ifndef NDEBUG
-		int const ttype_as_int = static_cast<int>(p_transaction_type);
-		int const num_ttypes_as_int =
-			static_cast<int>(TransactionType::num_transaction_types);
-		JEWEL_ASSERT (ttype_as_int >= 0);
-		JEWEL_ASSERT (ttype_as_int < num_ttypes_as_int);
-#	endif  // NDEBUG
-	return;
+#   ifndef NDEBUG
+        int const ttype_as_int = static_cast<int>(p_transaction_type);
+        int const num_ttypes_as_int =
+            static_cast<int>(TransactionType::num_transaction_types);
+        JEWEL_ASSERT (ttype_as_int >= 0);
+        JEWEL_ASSERT (ttype_as_int < num_ttypes_as_int);
+#   endif  // NDEBUG
+    return;
 }
 
 

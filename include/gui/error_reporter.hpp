@@ -37,29 +37,29 @@ class ErrorReporter
 {
 public:
 
-	ErrorReporter();
-	ErrorReporter(ErrorReporter const& rhs) = delete;
-	ErrorReporter(ErrorReporter&& rhs) = delete;
-	ErrorReporter& operator=(ErrorReporter const& rhs) = delete;
-	ErrorReporter& operator=(ErrorReporter&& rhs) = delete;
-	virtual ~ErrorReporter();
+    ErrorReporter();
+    ErrorReporter(ErrorReporter const& rhs) = delete;
+    ErrorReporter(ErrorReporter&& rhs) = delete;
+    ErrorReporter& operator=(ErrorReporter const& rhs) = delete;
+    ErrorReporter& operator=(ErrorReporter&& rhs) = delete;
+    virtual ~ErrorReporter();
 
-	void report(std::exception* p_exception = nullptr) const;
+    void report(std::exception* p_exception = nullptr) const;
 
-	void set_db_file_location
-	(	boost::filesystem::path const& p_log_file_location
-	);
-	void set_backup_db_file_location
-	(	boost::filesystem::path const& p_log_file_location
-	);
-	void set_log_file_location
-	(	boost::filesystem::path const& p_log_file_location
-	);
+    void set_db_file_location
+    (   boost::filesystem::path const& p_log_file_location
+    );
+    void set_backup_db_file_location
+    (   boost::filesystem::path const& p_log_file_location
+    );
+    void set_log_file_location
+    (   boost::filesystem::path const& p_log_file_location
+    );
 
 private:
-	boost::optional<boost::filesystem::path> m_db_file_location;
-	boost::optional<boost::filesystem::path> m_backup_db_file_location;
-	boost::optional<boost::filesystem::path> m_log_file_location;
+    boost::optional<boost::filesystem::path> m_db_file_location;
+    boost::optional<boost::filesystem::path> m_backup_db_file_location;
+    boost::optional<boost::filesystem::path> m_log_file_location;
 
 };  // class ErrorReporter
 

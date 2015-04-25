@@ -26,45 +26,45 @@ namespace dcm
 {
 
 RepeaterFiringResult::RepeaterFiringResult
-(	Id p_draft_journal_id,
-	gregorian::date const& p_firing_date,
-	bool p_successful
+(   Id p_draft_journal_id,
+    gregorian::date const& p_firing_date,
+    bool p_successful
 ):
-	m_draft_journal_id(p_draft_journal_id),
-	m_firing_date(p_firing_date),
-	m_successful(p_successful)
+    m_draft_journal_id(p_draft_journal_id),
+    m_firing_date(p_firing_date),
+    m_successful(p_successful)
 {
 }
 
 Id
 RepeaterFiringResult::draft_journal_id() const
 {
-	return m_draft_journal_id;
+    return m_draft_journal_id;
 }
 
 gregorian::date
 RepeaterFiringResult::firing_date() const
 {
-	return m_firing_date;
+    return m_firing_date;
 }
 
 bool
 RepeaterFiringResult::successful() const
 {
-	return m_successful;
+    return m_successful;
 }
 
 void
 RepeaterFiringResult::mark_as_successful()
 {
-	m_successful = true;
-	return;
+    m_successful = true;
+    return;
 }
 
 bool
 operator<(RepeaterFiringResult const& lhs, RepeaterFiringResult const& rhs)
 {
-	return lhs.firing_date() < rhs.firing_date();
+    return lhs.firing_date() < rhs.firing_date();
 }
 
 }  // namespace dcm

@@ -30,9 +30,9 @@ namespace dcm
  */
 enum class TransactionSide: unsigned char
 {
-	source = 0,
-	destination,
-	num_transaction_sides  // do not insert enumerators below here
+    source = 0,
+    destination,
+    num_transaction_sides  // do not insert enumerators below here
 };
 
 }  // namespace dcm

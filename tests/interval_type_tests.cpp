@@ -25,22 +25,22 @@ namespace test
 
 BOOST_AUTO_TEST_CASE(test_interval_type_phrase)
 {
-	BOOST_CHECK_EQUAL(phrase(IntervalType::days, false), "day");
-	BOOST_CHECK_EQUAL(phrase(IntervalType::weeks, false), wxString("week"));
-	BOOST_CHECK_EQUAL(phrase(IntervalType::weeks, false), "week");
-	BOOST_CHECK_EQUAL(phrase(IntervalType::weeks, false), L"week");
-	BOOST_CHECK_EQUAL(phrase(IntervalType::months, false), "month");
-	BOOST_CHECK_EQUAL
-	(	phrase(IntervalType::month_ends, false),
-		"month, on the last day of the month"
-	);
-	BOOST_CHECK_EQUAL(phrase(IntervalType::days, true), "days");
-	BOOST_CHECK_EQUAL(phrase(IntervalType::weeks, true), "weeks");
-	BOOST_CHECK_EQUAL(phrase(IntervalType::months, true), "months");
-	BOOST_CHECK_EQUAL
-	(	phrase(IntervalType::month_ends, true),
-		wxString("months, on the last day of the month")
-	);
+    BOOST_CHECK_EQUAL(phrase(IntervalType::days, false), "day");
+    BOOST_CHECK_EQUAL(phrase(IntervalType::weeks, false), wxString("week"));
+    BOOST_CHECK_EQUAL(phrase(IntervalType::weeks, false), "week");
+    BOOST_CHECK_EQUAL(phrase(IntervalType::weeks, false), L"week");
+    BOOST_CHECK_EQUAL(phrase(IntervalType::months, false), "month");
+    BOOST_CHECK_EQUAL
+    (   phrase(IntervalType::month_ends, false),
+        "month, on the last day of the month"
+    );
+    BOOST_CHECK_EQUAL(phrase(IntervalType::days, true), "days");
+    BOOST_CHECK_EQUAL(phrase(IntervalType::weeks, true), "weeks");
+    BOOST_CHECK_EQUAL(phrase(IntervalType::months, true), "months");
+    BOOST_CHECK_EQUAL
+    (   phrase(IntervalType::month_ends, true),
+        wxString("months, on the last day of the month")
+    );
 }
 
 }  // namespace test

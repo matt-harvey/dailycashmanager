@@ -43,97 +43,97 @@ class DcmDatabaseConnection;
 class App: public wxApp
 {
 public:
-	App();
-	App(App const&) = delete;
-	App(App&&) = delete;
-	App& operator=(App const&) = delete;
-	App& operator=(App&&) = delete;
-	~App() = default;
+    App();
+    App(App const&) = delete;
+    App(App&&) = delete;
+    App& operator=(App const&) = delete;
+    App& operator=(App&&) = delete;
+    ~App() = default;
 
-	/**
-	 * @returns name of the application as presented to the
-	 * user.
-	 */
-	static wxString application_name();
+    /**
+     * @returns name of the application as presented to the
+     * user.
+     */
+    static wxString application_name();
 
-	/**
-	 * @returns a Version struct indicating the version.
-	 */
-	static jewel::Version version();
+    /**
+     * @returns a Version struct indicating the version.
+     */
+    static jewel::Version version();
 
-	static wxString copyright();
-	static std::vector<wxString> developers();
-	static wxString logo_icon_designer();
-	static wxString home_page_url();
-	static wxString user_guide_url();
-	static wxString license_brief();
+    static wxString copyright();
+    static std::vector<wxString> developers();
+    static wxString logo_icon_designer();
+    static wxString home_page_url();
+    static wxString user_guide_url();
+    static wxString license_brief();
 
-	/**
-	 * @returns filename extension to be used with files
-	 * belonging to this application. Includes
-	 * the '.'.
-	 */
-	static wxString filename_extension();
+    /**
+     * @returns filename extension to be used with files
+     * belonging to this application. Includes
+     * the '.'.
+     */
+    static wxString filename_extension();
 
-	/**
-	 * @returns the default directory in which application files
-	 * should be saved unless specified otherwise by the user. This
-	 * would generally correspond to the user's home directory. If
-	 * an initialized optional is returned, then the directory is
-	 * guaranteed to exist at the time it is returned. If an uninitialized
-	 * optional is returned, then an existing default home directory could
-	 * not be determined. If initialized, then the value of the optional
-	 * will be an absolute filepath.
-	 */
-	static boost::optional<boost::filesystem::path> default_directory();
+    /**
+     * @returns the default directory in which application files
+     * should be saved unless specified otherwise by the user. This
+     * would generally correspond to the user's home directory. If
+     * an initialized optional is returned, then the directory is
+     * guaranteed to exist at the time it is returned. If an uninitialized
+     * optional is returned, then an existing default home directory could
+     * not be determined. If initialized, then the value of the optional
+     * will be an absolute filepath.
+     */
+    static boost::optional<boost::filesystem::path> default_directory();
 
-	bool OnInit() override;
-	int OnRun() override;
-	int OnExit() override;
+    bool OnInit() override;
+    int OnRun() override;
+    int OnExit() override;
 
-	void set_database_filepath
-	(	boost::filesystem::path const& p_database_filepath
-	);
+    void set_database_filepath
+    (   boost::filesystem::path const& p_database_filepath
+    );
 
-	wxLocale const& locale() const;
+    wxLocale const& locale() const;
 
-	void display_help_contents();
+    void display_help_contents();
 
-	DcmDatabaseConnection& database_connection();
+    DcmDatabaseConnection& database_connection();
 
 private:
 
-	/**
-	 * @returns the filepath of the application file last opened by the
-	 * user, stored in a boost::optional. The returned optional
-	 * is uninitialized if the user has yet to open an application file,
-	 * or if the last opened file cannot be found.
-	 */
-	static boost::optional<boost::filesystem::path> last_opened_file();
+    /**
+     * @returns the filepath of the application file last opened by the
+     * user, stored in a boost::optional. The returned optional
+     * is uninitialized if the user has yet to open an application file,
+     * or if the last opened file cannot be found.
+     */
+    static boost::optional<boost::filesystem::path> last_opened_file();
 
-	/**
-	 * Record a filepath as being the last application file opened by the
-	 * user.
-	 *
-	 * Precondition: p_path should be an absolute path.
-	 */
-	static void set_last_opened_file(boost::filesystem::path const& p_path);
+    /**
+     * Record a filepath as being the last application file opened by the
+     * user.
+     *
+     * Precondition: p_path should be an absolute path.
+     */
+    static void set_last_opened_file(boost::filesystem::path const& p_path);
 
-	void configure_logging();
-	
-	void make_backup(boost::filesystem::path const& p_original_filepath);
+    void configure_logging();
+    
+    void make_backup(boost::filesystem::path const& p_original_filepath);
 
-	static wxConfig& config();
+    static wxConfig& config();
 
-	boost::filesystem::path elicit_existing_filepath();
+    boost::filesystem::path elicit_existing_filepath();
 
-	bool m_exiting_cleanly;
-	wxSingleInstanceChecker* m_single_instance_checker;
-	std::unique_ptr<DcmDatabaseConnection> m_database_connection;
-	boost::optional<boost::filesystem::path> m_database_filepath;
-	boost::optional<boost::filesystem::path> m_backup_filepath;
-	gui::ErrorReporter m_error_reporter;
-	wxLocale m_locale;
+    bool m_exiting_cleanly;
+    wxSingleInstanceChecker* m_single_instance_checker;
+    std::unique_ptr<DcmDatabaseConnection> m_database_connection;
+    boost::optional<boost::filesystem::path> m_database_filepath;
+    boost::optional<boost::filesystem::path> m_backup_filepath;
+    gui::ErrorReporter m_error_reporter;
+    wxLocale m_locale;
 };
 
 /// @cond

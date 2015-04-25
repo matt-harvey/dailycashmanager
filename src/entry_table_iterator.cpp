@@ -27,19 +27,19 @@ namespace dcm
 
 EntryTableIterator
 make_date_ordered_actual_ordinary_entry_table_iterator
-(	DcmDatabaseConnection& p_database_connection
+(   DcmDatabaseConnection& p_database_connection
 )
 {
-	ostringstream oss;
-	oss << "select entry_id from entries inner join ordinary_journal_detail "
-		<< "using(journal_id) join journals using(journal_id) "
-		<< "where transaction_type_id != "
-		<< static_cast<int>(non_actual_transaction_type())
-		<< " order by date";
-	return EntryTableIterator
-	(	p_database_connection,
-		oss.str()
-	);
+    ostringstream oss;
+    oss << "select entry_id from entries inner join ordinary_journal_detail "
+        << "using(journal_id) join journals using(journal_id) "
+        << "where transaction_type_id != "
+        << static_cast<int>(non_actual_transaction_type())
+        << " order by date";
+    return EntryTableIterator
+    (   p_database_connection,
+        oss.str()
+    );
 }
 
 

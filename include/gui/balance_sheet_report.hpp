@@ -44,42 +44,42 @@ class ReportPanel;
 class BalanceSheetReport: public Report
 {
 public:
-	BalanceSheetReport
-	(	ReportPanel* p_parent,
-		wxSize const& p_size,
-		DcmDatabaseConnection& p_database_connection,
-		boost::optional<boost::gregorian::date> p_maybe_min_date,
-		boost::optional<boost::gregorian::date> p_maybe_max_date
-	);
+    BalanceSheetReport
+    (   ReportPanel* p_parent,
+        wxSize const& p_size,
+        DcmDatabaseConnection& p_database_connection,
+        boost::optional<boost::gregorian::date> p_maybe_min_date,
+        boost::optional<boost::gregorian::date> p_maybe_max_date
+    );
 
-	BalanceSheetReport(BalanceSheetReport const&) = delete;
-	BalanceSheetReport(BalanceSheetReport&&) = delete;
-	BalanceSheetReport& operator=(BalanceSheetReport const&) = delete;
-	BalanceSheetReport& operator=(BalanceSheetReport&&) = delete;
-	virtual ~BalanceSheetReport();
+    BalanceSheetReport(BalanceSheetReport const&) = delete;
+    BalanceSheetReport(BalanceSheetReport&&) = delete;
+    BalanceSheetReport& operator=(BalanceSheetReport const&) = delete;
+    BalanceSheetReport& operator=(BalanceSheetReport&&) = delete;
+    virtual ~BalanceSheetReport();
 
 private:
-	virtual void do_generate() override;
+    virtual void do_generate() override;
 
-	void refresh_map();
+    void refresh_map();
 
-	void display_body();
+    void display_body();
 
-	struct BalanceDatum
-	{
-		BalanceDatum() = default;
-		explicit BalanceDatum(sqloxx::Handle<Account> const& p_account);
-		BalanceDatum(BalanceDatum const&) = default;
-		BalanceDatum(BalanceDatum&&) = default;
-		BalanceDatum& operator=(BalanceDatum const&) = default;
-		BalanceDatum& operator=(BalanceDatum&&) = default;
-		~BalanceDatum() = default;
-		jewel::Decimal opening_balance;
-		jewel::Decimal closing_balance;
-	};
+    struct BalanceDatum
+    {
+        BalanceDatum() = default;
+        explicit BalanceDatum(sqloxx::Handle<Account> const& p_account);
+        BalanceDatum(BalanceDatum const&) = default;
+        BalanceDatum(BalanceDatum&&) = default;
+        BalanceDatum& operator=(BalanceDatum const&) = default;
+        BalanceDatum& operator=(BalanceDatum&&) = default;
+        ~BalanceDatum() = default;
+        jewel::Decimal opening_balance;
+        jewel::Decimal closing_balance;
+    };
 
-	typedef std::unordered_map<sqloxx::Id, BalanceDatum> BalanceMap;
-	BalanceMap m_balance_map;
+    typedef std::unordered_map<sqloxx::Id, BalanceDatum> BalanceMap;
+    BalanceMap m_balance_map;
 
 };  // class BalanceSheetReport
 

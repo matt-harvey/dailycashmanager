@@ -47,9 +47,9 @@ namespace dcm
  * if and only if \e false is returned.
  */
 bool is_valid_filename
-(	std::string const& s,
-	std::string& message,
-	bool extension_is_explicit = true
+(   std::string const& s,
+    std::string& message,
+    bool extension_is_explicit = true
 );
 
 

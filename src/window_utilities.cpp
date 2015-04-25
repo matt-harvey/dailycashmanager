@@ -31,26 +31,26 @@ namespace gui
 
 void
 toggle_enabled
-(	wxWindow* p_window,
-	bool p_enable,
-	optional<wxString> const& p_tooltip_if_disabled
+(   wxWindow* p_window,
+    bool p_enable,
+    optional<wxString> const& p_tooltip_if_disabled
 )
 {
-	JEWEL_ASSERT (p_window);
-	if (p_enable)
-	{
-		p_window->Enable();
-		p_window->SetToolTip(0);
-	}
-	else
-	{
-		p_window->Disable();
-		if (p_tooltip_if_disabled)
-		{
-			p_window->SetToolTip(value(p_tooltip_if_disabled));
-		}
-	}
-	return;
+    JEWEL_ASSERT (p_window);
+    if (p_enable)
+    {
+        p_window->Enable();
+        p_window->SetToolTip(0);
+    }
+    else
+    {
+        p_window->Disable();
+        if (p_tooltip_if_disabled)
+        {
+            p_window->SetToolTip(value(p_tooltip_if_disabled));
+        }
+    }
+    return;
 }
 
 }  // namespace gui

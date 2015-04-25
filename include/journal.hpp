@@ -70,103 +70,103 @@ class Journal
 {
 public:
 
-	Journal();
+    Journal();
 
-	Journal(Journal const& rhs);
-	Journal(Journal&&);
-	Journal& operator=(Journal const&) = delete;
-	Journal& operator=(Journal&&) = delete;
-	virtual ~Journal();
+    Journal(Journal const& rhs);
+    Journal(Journal&&);
+    Journal& operator=(Journal const&) = delete;
+    Journal& operator=(Journal&&) = delete;
+    virtual ~Journal();
 
-	void set_transaction_type
-	(	TransactionType p_transaction_type
-	);
-	void set_comment(wxString const& p_comment);
+    void set_transaction_type
+    (   TransactionType p_transaction_type
+    );
+    void set_comment(wxString const& p_comment);
 
-	void push_entry(sqloxx::Handle<Entry> const& entry);
-	void remove_entry(sqloxx::Handle<Entry> const& entry);
-	void clear_entries();
+    void push_entry(sqloxx::Handle<Entry> const& entry);
+    void remove_entry(sqloxx::Handle<Entry> const& entry);
+    void clear_entries();
 
-	std::vector<sqloxx::Handle<Entry> > const& entries();
-	wxString comment();
+    std::vector<sqloxx::Handle<Entry> > const& entries();
+    wxString comment();
 
-	bool is_actual();
+    bool is_actual();
 
-	TransactionType transaction_type();
+    TransactionType transaction_type();
 
-	jewel::Decimal balance();
+    jewel::Decimal balance();
 
-	/**
-	 * @returns true if and only if the journal balances, i.e. the total
-	 * of the entries is equal to zero.
-	 *
-	 * NOTE thinking a little about this function shows
-	 * that all entries in a journal must be expressed in a common currency.
-	 * It doesn't make sense to think of entries in a single journal as being
-	 * in different currencies. An entry must have its value frozen in time.
-	 */
-	bool is_balanced();
+    /**
+     * @returns true if and only if the journal balances, i.e. the total
+     * of the entries is equal to zero.
+     *
+     * NOTE thinking a little about this function shows
+     * that all entries in a journal must be expressed in a common currency.
+     * It doesn't make sense to think of entries in a single journal as being
+     * in different currencies. An entry must have its value frozen in time.
+     */
+    bool is_balanced();
 
-	/**
-	 * @returns a Decimal being the sum of the amounts of all the
-	 * "destination" Entries in the Journal.
-	 */
-	jewel::Decimal primary_amount();
+    /**
+     * @returns a Decimal being the sum of the amounts of all the
+     * "destination" Entries in the Journal.
+     */
+    jewel::Decimal primary_amount();
 
 
 protected:
 
-	virtual void swap(Journal& rhs);
+    virtual void swap(Journal& rhs);
 
-	virtual std::vector<sqloxx::Handle<Entry> > const& do_get_entries();
-	virtual void do_set_transaction_type
-	(	TransactionType p_transaction_type
-	);
-	virtual void do_set_comment(wxString const& p_comment);
-	virtual void do_push_entry(sqloxx::Handle<Entry> const& entry);
-	virtual void do_remove_entry(sqloxx::Handle<Entry> const& entry);
-	virtual void do_clear_entries();
-	virtual wxString do_get_comment();
-	virtual TransactionType do_get_transaction_type();
+    virtual std::vector<sqloxx::Handle<Entry> > const& do_get_entries();
+    virtual void do_set_transaction_type
+    (   TransactionType p_transaction_type
+    );
+    virtual void do_set_comment(wxString const& p_comment);
+    virtual void do_push_entry(sqloxx::Handle<Entry> const& entry);
+    virtual void do_remove_entry(sqloxx::Handle<Entry> const& entry);
+    virtual void do_clear_entries();
+    virtual wxString do_get_comment();
+    virtual TransactionType do_get_transaction_type();
 
-	/**
-	 * Cause *this to take on the attributes of rhs that would be common
-	 * to all types of Journal.
-	 *
-	 * Thus, for example, where rhs is an OrdinaryJournal, *this does
-	 * \e not take on the \e date attribute of rhs, since ProtoJournal and
-	 * DraftJournal do not have a \e date attribute.
-	 * Note however that the \e id attribute is \e never taken from the
-	 * rhs.
-	 *
-	 * The \e lhs should pass its id and database connection to the
-	 * appropriate parameters in the function. The id should be wrapped
-	 * in a boost::optional (uninitialized if has_id returns false).
-	 *
-	 * The dbc and id parameters are required in order to initialize
-	 * the Entries as they are added to the lhs.
-	 *
-	 * Yes this is a bit messy.
-	 *
-	 * Note a \e deep, rather than shallow copy of the rhs Entries is made.
-	 *
-	 * Note this does \e not offer the strong guarantee by itself, but is
-	 * designed to be called from derived classes which can implement swap
-	 * etc.. to enable the strong guarantee.
-	 */
-	void mimic_core
-	(	Journal& rhs,
-		DcmDatabaseConnection& dbc,
-		boost::optional<sqloxx::Id> id
-	);
+    /**
+     * Cause *this to take on the attributes of rhs that would be common
+     * to all types of Journal.
+     *
+     * Thus, for example, where rhs is an OrdinaryJournal, *this does
+     * \e not take on the \e date attribute of rhs, since ProtoJournal and
+     * DraftJournal do not have a \e date attribute.
+     * Note however that the \e id attribute is \e never taken from the
+     * rhs.
+     *
+     * The \e lhs should pass its id and database connection to the
+     * appropriate parameters in the function. The id should be wrapped
+     * in a boost::optional (uninitialized if has_id returns false).
+     *
+     * The dbc and id parameters are required in order to initialize
+     * the Entries as they are added to the lhs.
+     *
+     * Yes this is a bit messy.
+     *
+     * Note a \e deep, rather than shallow copy of the rhs Entries is made.
+     *
+     * Note this does \e not offer the strong guarantee by itself, but is
+     * designed to be called from derived classes which can implement swap
+     * etc.. to enable the strong guarantee.
+     */
+    void mimic_core
+    (   Journal& rhs,
+        DcmDatabaseConnection& dbc,
+        boost::optional<sqloxx::Id> id
+    );
 
-	void clear_core();
+    void clear_core();
 
 private:
-	struct JournalData;
-	std::unique_ptr<JournalData> m_data;
+    struct JournalData;
+    std::unique_ptr<JournalData> m_data;
 };
-	
+    
 }  // namespace dcm
 
 

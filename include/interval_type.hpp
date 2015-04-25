@@ -40,10 +40,10 @@ namespace dcm
  */
 enum class IntervalType: unsigned char
 {
-	days = 1,
-	weeks,
-	months,
-	month_ends
+    days = 1,
+    weeks,
+    months,
+    month_ends
 };
 
 /**
@@ -64,8 +64,8 @@ wxString phrase(IntervalType x, bool is_plural);
  * day of a month.
  */
 bool is_valid_date_for_interval_type
-(	boost::gregorian::date const& p_date,
-	IntervalType p_interval_type
+(   boost::gregorian::date const& p_date,
+    IntervalType p_interval_type
 );
 
 /**

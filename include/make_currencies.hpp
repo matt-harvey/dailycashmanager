@@ -65,8 +65,8 @@ make_currencies(DcmDatabaseConnection& p_database_connection);
  */
 void
 make_currencies
-(	DcmDatabaseConnection& p_database_connection,	
-	std::vector<sqloxx::Handle<Commodity> >& vec
+(   DcmDatabaseConnection& p_database_connection,    
+    std::vector<sqloxx::Handle<Commodity> >& vec
 );
 
 

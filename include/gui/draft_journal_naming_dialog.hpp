@@ -46,34 +46,34 @@ class TransactionCtrl;
 class DraftJournalNamingDialog: public wxDialog
 {
 public:
-	
-	DraftJournalNamingDialog
-	(	TransactionCtrl* p_parent,
-		DcmDatabaseConnection& p_database_connection
-	);
+    
+    DraftJournalNamingDialog
+    (   TransactionCtrl* p_parent,
+        DcmDatabaseConnection& p_database_connection
+    );
 
-	DraftJournalNamingDialog(DraftJournalNamingDialog const&) = delete;
-	DraftJournalNamingDialog(DraftJournalNamingDialog&&) = delete;
-	DraftJournalNamingDialog& operator=(DraftJournalNamingDialog const&)
-		= delete;
-	DraftJournalNamingDialog& operator=(DraftJournalNamingDialog&&) = delete;
-	virtual ~DraftJournalNamingDialog();
+    DraftJournalNamingDialog(DraftJournalNamingDialog const&) = delete;
+    DraftJournalNamingDialog(DraftJournalNamingDialog&&) = delete;
+    DraftJournalNamingDialog& operator=(DraftJournalNamingDialog const&)
+        = delete;
+    DraftJournalNamingDialog& operator=(DraftJournalNamingDialog&&) = delete;
+    virtual ~DraftJournalNamingDialog();
 
-	wxString draft_journal_name() const;
+    wxString draft_journal_name() const;
 
 private:
 
-	void set_draft_journal_name(wxString const& p_name);
+    void set_draft_journal_name(wxString const& p_name);
 
-	void on_ok_button_click(wxCommandEvent& event);
+    void on_ok_button_click(wxCommandEvent& event);
 
-	wxFlexGridSizer* m_top_sizer;
-	TextCtrl* m_name_ctrl;
-	Button* m_ok_button;
-	DcmDatabaseConnection& m_database_connection;
-	wxString m_draft_journal_name;
+    wxFlexGridSizer* m_top_sizer;
+    TextCtrl* m_name_ctrl;
+    Button* m_ok_button;
+    DcmDatabaseConnection& m_database_connection;
+    wxString m_draft_journal_name;
 
-	DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 
 };  // class DraftJournalNamingDialog
 

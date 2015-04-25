@@ -25,8 +25,8 @@ namespace dcm
 {
 
 typedef
-	sqloxx::TableIterator<sqloxx::Handle<Account> >
-	AccountTableIterator;
+    sqloxx::TableIterator<sqloxx::Handle<Account> >
+    AccountTableIterator;
 
 /**
  * @returns an AccountTableIterator that iterates over all Accounts
@@ -34,7 +34,7 @@ typedef
  */
 AccountTableIterator
 make_name_ordered_account_table_iterator
-(	DcmDatabaseConnection& p_database_connection
+(   DcmDatabaseConnection& p_database_connection
 );
 
 /**
@@ -43,7 +43,7 @@ make_name_ordered_account_table_iterator
  */
 AccountTableIterator
 make_type_name_ordered_account_table_iterator
-(	DcmDatabaseConnection& p_database_connection
+(   DcmDatabaseConnection& p_database_connection
 );
 
 }  // namespace dcm

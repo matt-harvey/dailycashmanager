@@ -26,8 +26,8 @@ namespace dcm
 {
 
 typedef
-	sqloxx::TableIterator<sqloxx::Handle<Entry> >
-	EntryTableIterator;
+    sqloxx::TableIterator<sqloxx::Handle<Entry> >
+    EntryTableIterator;
 
 /**
  * Returns an EntryTableIterator that reads in date ordered all and only
@@ -36,7 +36,7 @@ typedef
  */
 EntryTableIterator
 make_date_ordered_actual_ordinary_entry_table_iterator
-(	DcmDatabaseConnection& p_database_connection
+(   DcmDatabaseConnection& p_database_connection
 );
 
 }  // namespace dcm

@@ -29,29 +29,29 @@ namespace gui
 {
 
 BEGIN_EVENT_TABLE(TextCtrl, wxTextCtrl)
-	EVT_CHAR(TextCtrl::on_char)
+    EVT_CHAR(TextCtrl::on_char)
 END_EVENT_TABLE()
 
 TextCtrl::TextCtrl
-(	wxWindow* p_parent,
-	wxWindowID p_id,
-	wxString const& p_value,
-	wxPoint const& p_pos,
-	wxSize const& p_size,
-	long p_style,
-	wxValidator const& p_validator,
-	wxString const& p_name
+(   wxWindow* p_parent,
+    wxWindowID p_id,
+    wxString const& p_value,
+    wxPoint const& p_pos,
+    wxSize const& p_size,
+    long p_style,
+    wxValidator const& p_validator,
+    wxString const& p_name
 ):
-	wxTextCtrl
-	(	p_parent,
-		p_id,
-		p_value,
-		p_pos,
-		p_size,
-		p_style | wxWANTS_CHARS,
-		p_validator,
-		p_name
-	)
+    wxTextCtrl
+    (   p_parent,
+        p_id,
+        p_value,
+        p_pos,
+        p_size,
+        p_style | wxWANTS_CHARS,
+        p_validator,
+        p_name
+    )
 {
 }
 
@@ -62,23 +62,23 @@ TextCtrl::~TextCtrl()
 void
 TextCtrl::on_char(wxKeyEvent& event)
 {
-	// fix issue with tab traversal on Windows
-	if (event.GetKeyCode() == WXK_TAB)
-	{
-		if (event.ShiftDown())
-		{
-			Navigate(wxNavigationKeyEvent::IsBackward);
-		}
-		else
-		{
-			Navigate(wxNavigationKeyEvent::IsForward);
-		}
-	}
-	else
-	{
-		event.Skip();
-	}
-	return;
+    // fix issue with tab traversal on Windows
+    if (event.GetKeyCode() == WXK_TAB)
+    {
+        if (event.ShiftDown())
+        {
+            Navigate(wxNavigationKeyEvent::IsBackward);
+        }
+        else
+        {
+            Navigate(wxNavigationKeyEvent::IsForward);
+        }
+    }
+    else
+    {
+        event.Skip();
+    }
+    return;
 }
 
 }  // namespace gui

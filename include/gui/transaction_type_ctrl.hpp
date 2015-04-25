@@ -48,46 +48,46 @@ class TransactionTypeCtrl: public ComboBox
 {
 public:
 
-	/**
-	 * \e p_parent must be a TransactionCtrl*. Make sure that the vector
-	 * passed to p_transaction_types does not contain any TransactionTypes
-	 * that are not in available_transaction_types(p_database_connection) -
-	 * this is the caller's responsibility.
-	 *
-	 * \e p_transaction_types should not be empty.
-	 */
-	TransactionTypeCtrl
-	(	wxWindow* p_parent,
-		wxWindowID p_id,
-		wxSize const& p_size,
-		DcmDatabaseConnection& p_database_connection,
-		std::vector<TransactionType> const& p_transaction_types
-	);
+    /**
+     * \e p_parent must be a TransactionCtrl*. Make sure that the vector
+     * passed to p_transaction_types does not contain any TransactionTypes
+     * that are not in available_transaction_types(p_database_connection) -
+     * this is the caller's responsibility.
+     *
+     * \e p_transaction_types should not be empty.
+     */
+    TransactionTypeCtrl
+    (   wxWindow* p_parent,
+        wxWindowID p_id,
+        wxSize const& p_size,
+        DcmDatabaseConnection& p_database_connection,
+        std::vector<TransactionType> const& p_transaction_types
+    );
 
-	TransactionTypeCtrl(TransactionTypeCtrl const&) = delete;
-	TransactionTypeCtrl(TransactionTypeCtrl&&) = delete;
-	TransactionTypeCtrl& operator=(TransactionTypeCtrl const&) = delete;
-	TransactionTypeCtrl& operator=(TransactionTypeCtrl&&) = delete;
-	virtual ~TransactionTypeCtrl();
+    TransactionTypeCtrl(TransactionTypeCtrl const&) = delete;
+    TransactionTypeCtrl(TransactionTypeCtrl&&) = delete;
+    TransactionTypeCtrl& operator=(TransactionTypeCtrl const&) = delete;
+    TransactionTypeCtrl& operator=(TransactionTypeCtrl&&) = delete;
+    virtual ~TransactionTypeCtrl();
 
-	/**
-	 * @returns the currently selected TransactionType, wrapped in a
-	 * boost::optional. This may be an uninitialized optional in case
-	 * we are in Windows and the underlying ComboBox is in a
-	 * transitional state.
-	 */
-	boost::optional<TransactionType> transaction_type() const;
+    /**
+     * @returns the currently selected TransactionType, wrapped in a
+     * boost::optional. This may be an uninitialized optional in case
+     * we are in Windows and the underlying ComboBox is in a
+     * transitional state.
+     */
+    boost::optional<TransactionType> transaction_type() const;
 
-	/**
-	 * Sets the TransactionType displayed in the control.
-	 */
-	void set_transaction_type(TransactionType p_transaction_type);
+    /**
+     * Sets the TransactionType displayed in the control.
+     */
+    void set_transaction_type(TransactionType p_transaction_type);
 
 private:
-	void on_change(wxCommandEvent& event);
-	std::vector<TransactionType> m_transaction_types;
-	DcmDatabaseConnection& m_database_connection;
-	DECLARE_EVENT_TABLE()
+    void on_change(wxCommandEvent& event);
+    std::vector<TransactionType> m_transaction_types;
+    DcmDatabaseConnection& m_database_connection;
+    DECLARE_EVENT_TABLE()
 
 };  // class TransactionTypeCtrl
 

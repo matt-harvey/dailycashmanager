@@ -52,8 +52,8 @@ JEWEL_DERIVED_EXCEPTION(DcmException, jewel::Exception);
  * This exception should not feature in release builds.
  */
 JEWEL_DERIVED_EXCEPTION
-(	UnimplementedFunctionalityException,
-	jewel::Exception
+(   UnimplementedFunctionalityException,
+    jewel::Exception
 );
 
 /*
@@ -111,8 +111,8 @@ JEWEL_DERIVED_EXCEPTION(InvalidFrequencyException, DcmException);
  * been initialized.
  */
 JEWEL_DERIVED_EXCEPTION
-(	UninitializedBalancingAccountException,
-	DcmException
+(   UninitializedBalancingAccountException,
+    DcmException
 );
 
 /*
@@ -194,8 +194,8 @@ JEWEL_DERIVED_EXCEPTION(DefaultAccountGeneratorException, DcmException);
  * AccountType, but purports to do so.
  */
 JEWEL_DERIVED_EXCEPTION
-(	InvalidAccountTypeStringException,
-	DcmException
+(   InvalidAccountTypeStringException,
+    DcmException
 );
 
 /*

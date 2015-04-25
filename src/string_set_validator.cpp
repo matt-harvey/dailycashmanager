@@ -29,76 +29,76 @@ namespace gui
 {
 
 StringSetValidator::StringSetValidator
-(	wxString const& p_text,
-	wxArrayString const& p_valid_strings,
-	wxString const& p_description_for_error_message
+(   wxString const& p_text,
+    wxArrayString const& p_valid_strings,
+    wxString const& p_description_for_error_message
 ):
-	m_text(p_text),
-	m_valid_strings(p_valid_strings),
-	m_description_for_error_message(p_description_for_error_message)
+    m_text(p_text),
+    m_valid_strings(p_valid_strings),
+    m_description_for_error_message(p_description_for_error_message)
 {
 }
 
 StringSetValidator::StringSetValidator(StringSetValidator const& rhs):
-	wxValidator(),
-	m_text(rhs.m_text),
-	m_valid_strings(rhs.m_valid_strings),
-	m_description_for_error_message(rhs.m_description_for_error_message)
+    wxValidator(),
+    m_text(rhs.m_text),
+    m_valid_strings(rhs.m_valid_strings),
+    m_description_for_error_message(rhs.m_description_for_error_message)
 {
 }
 
 bool
 StringSetValidator::Validate(wxWindow* WXUNUSED(wxparent))
 {
-	JEWEL_LOG_TRACE();
-	wxTextEntry const* const text_entry =
-		dynamic_cast<wxTextEntry*>(GetWindow());
-	JEWEL_ASSERT (text_entry);
-	wxString const candidate_text(text_entry->GetValue());
-	int pos = wxNOT_FOUND;
-	if ((pos = m_valid_strings.Index(candidate_text, false)) == wxNOT_FOUND)
-	{
-		wxMessageBox
-		(	wxString("\"") +
-			candidate_text +
-			wxString("\" ") +
-			wxString("is not a valid ") + m_description_for_error_message
-		);
-		JEWEL_LOG_TRACE();
-		return false;
-	}
-	JEWEL_ASSERT (pos != wxNOT_FOUND);
-	JEWEL_ASSERT (pos >= 0);
-	JEWEL_ASSERT (static_cast<unsigned int>(pos) < m_valid_strings.GetCount());
-	m_text = m_valid_strings.Item(pos);
-	JEWEL_LOG_TRACE();
-	return true;
+    JEWEL_LOG_TRACE();
+    wxTextEntry const* const text_entry =
+        dynamic_cast<wxTextEntry*>(GetWindow());
+    JEWEL_ASSERT (text_entry);
+    wxString const candidate_text(text_entry->GetValue());
+    int pos = wxNOT_FOUND;
+    if ((pos = m_valid_strings.Index(candidate_text, false)) == wxNOT_FOUND)
+    {
+        wxMessageBox
+        (   wxString("\"") +
+            candidate_text +
+            wxString("\" ") +
+            wxString("is not a valid ") + m_description_for_error_message
+        );
+        JEWEL_LOG_TRACE();
+        return false;
+    }
+    JEWEL_ASSERT (pos != wxNOT_FOUND);
+    JEWEL_ASSERT (pos >= 0);
+    JEWEL_ASSERT (static_cast<unsigned int>(pos) < m_valid_strings.GetCount());
+    m_text = m_valid_strings.Item(pos);
+    JEWEL_LOG_TRACE();
+    return true;
 }
 
 bool
 StringSetValidator::TransferFromWindow()
 {
-	JEWEL_LOG_TRACE();
-	wxTextEntry* const text_entry = dynamic_cast<wxTextEntry*>(GetWindow());
-	JEWEL_ASSERT (text_entry);	
-	m_text = text_entry->GetValue();
-	return true;
+    JEWEL_LOG_TRACE();
+    wxTextEntry* const text_entry = dynamic_cast<wxTextEntry*>(GetWindow());
+    JEWEL_ASSERT (text_entry);    
+    m_text = text_entry->GetValue();
+    return true;
 }
 
 bool
 StringSetValidator::TransferToWindow()
 {
-	JEWEL_LOG_TRACE();
-	wxTextEntry* const text_entry = dynamic_cast<wxTextEntry*>(GetWindow());
-	JEWEL_ASSERT (text_entry);
-	text_entry->SetValue(m_text);
-	return true;
+    JEWEL_LOG_TRACE();
+    wxTextEntry* const text_entry = dynamic_cast<wxTextEntry*>(GetWindow());
+    JEWEL_ASSERT (text_entry);
+    text_entry->SetValue(m_text);
+    return true;
 }
 
 wxObject*
 StringSetValidator::Clone() const
 {
-	return new StringSetValidator(*this);
+    return new StringSetValidator(*this);
 }
 
 

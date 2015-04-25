@@ -36,15 +36,15 @@ template <typename T>
 class ClientData: public wxClientData
 {
 public:
-	ClientData(T const& p_data);
-	ClientData(ClientData const&) = default;
-	ClientData(ClientData&&) = default;
-	ClientData& operator=(ClientData const&) = default;
-	ClientData& operator=(ClientData&&) = default;
-	virtual ~ClientData();
-	T data() const;
+    ClientData(T const& p_data);
+    ClientData(ClientData const&) = default;
+    ClientData(ClientData&&) = default;
+    ClientData& operator=(ClientData const&) = default;
+    ClientData& operator=(ClientData&&) = default;
+    virtual ~ClientData();
+    T data() const;
 private:
-	T const m_data;
+    T const m_data;
 
 };  // ClientData
 
@@ -52,8 +52,8 @@ private:
 template <typename T>
 inline
 ClientData<T>::ClientData(T const& p_data):
-	wxClientData(),
-	m_data(p_data)
+    wxClientData(),
+    m_data(p_data)
 {
 }
 
@@ -68,7 +68,7 @@ inline
 T
 ClientData<T>::data() const
 {
-	return m_data;
+    return m_data;
 }
 
 }  // namespace gui

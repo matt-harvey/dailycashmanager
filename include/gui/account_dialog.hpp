@@ -59,59 +59,59 @@ class AccountDialog: public wxDialog
 {
 public:
 
-	/**
-	 * @param p_parent parent Window. <em>Should not be null.</em>
-	 *
-	 * @param p_account the Account the editing and possible saving of which
-	 * will be facilitated via this widget. If p_account does not have an
-	 * id, then it is assumed that none of its other settable characteristics
-	 * have been set, and the AccountDialog will be used to populate the
-	 * Account's details from scratch. If p_account does have an id, then
-	 * it is assumed that all of its settable characteristics have already
-	 * been set. In that case, the AccountDialog will be used as a means
-	 * for the user optionally to change some or all of the existing
-	 * characteristics of the Account.
-	 *
-	 * @param p_account_super_type AccountSuperType of the Account which will
-	 * be created or edited via the AccountDialog.
-	 */
-	AccountDialog
-	(	wxWindow* p_parent,
-		sqloxx::Handle<Account> const& p_account,
-		AccountSuperType p_account_super_type
-	);
+    /**
+     * @param p_parent parent Window. <em>Should not be null.</em>
+     *
+     * @param p_account the Account the editing and possible saving of which
+     * will be facilitated via this widget. If p_account does not have an
+     * id, then it is assumed that none of its other settable characteristics
+     * have been set, and the AccountDialog will be used to populate the
+     * Account's details from scratch. If p_account does have an id, then
+     * it is assumed that all of its settable characteristics have already
+     * been set. In that case, the AccountDialog will be used as a means
+     * for the user optionally to change some or all of the existing
+     * characteristics of the Account.
+     *
+     * @param p_account_super_type AccountSuperType of the Account which will
+     * be created or edited via the AccountDialog.
+     */
+    AccountDialog
+    (   wxWindow* p_parent,
+        sqloxx::Handle<Account> const& p_account,
+        AccountSuperType p_account_super_type
+    );
 
-	AccountDialog(AccountDialog const&) = delete;
-	AccountDialog(AccountDialog&&) = delete;
-	AccountDialog& operator=(AccountDialog const&) = delete;
-	AccountDialog& operator=(AccountDialog&&) = delete;
-	virtual ~AccountDialog();
+    AccountDialog(AccountDialog const&) = delete;
+    AccountDialog(AccountDialog&&) = delete;
+    AccountDialog& operator=(AccountDialog const&) = delete;
+    AccountDialog& operator=(AccountDialog&&) = delete;
+    virtual ~AccountDialog();
 
-	AccountType selected_account_type() const;
-	
+    AccountType selected_account_type() const;
+    
 private:
-	void on_ok_button_click(wxCommandEvent& event);
-	void on_cancel_button_click(wxCommandEvent& event);
+    void on_ok_button_click(wxCommandEvent& event);
+    void on_cancel_button_click(wxCommandEvent& event);
 
-	void configure_budget_panel();
-	void configure_bottom_row();
-	void add_blank_space(int p_row, int p_column);
+    void configure_budget_panel();
+    void configure_bottom_row();
+    void add_blank_space(int p_row, int p_column);
 
-	AccountSuperType account_super_type() const;
+    AccountSuperType account_super_type() const;
 
-	int m_current_row;
-	wxGridBagSizer* m_top_sizer;
-	TextCtrl* m_name_ctrl;
-	AccountTypeCtrl* m_account_type_ctrl;
-	TextCtrl* m_description_ctrl;
-	DecimalTextCtrl* m_opening_amount_ctrl;
-	BudgetPanel* m_budget_panel;
-	wxCheckBox* m_visibility_ctrl;
-	Button* m_cancel_button;
-	Button* m_ok_button;
-	sqloxx::Handle<Account> m_account;
+    int m_current_row;
+    wxGridBagSizer* m_top_sizer;
+    TextCtrl* m_name_ctrl;
+    AccountTypeCtrl* m_account_type_ctrl;
+    TextCtrl* m_description_ctrl;
+    DecimalTextCtrl* m_opening_amount_ctrl;
+    BudgetPanel* m_budget_panel;
+    wxCheckBox* m_visibility_ctrl;
+    Button* m_cancel_button;
+    Button* m_ok_button;
+    sqloxx::Handle<Account> m_account;
 
-	DECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE();
 
 };  // class AccountDialog
 

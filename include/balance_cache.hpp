@@ -61,58 +61,58 @@ class BalanceCache
 {
 public:
 
-	static void setup_tables(DcmDatabaseConnection& dbc);
+    static void setup_tables(DcmDatabaseConnection& dbc);
 
-	BalanceCache(DcmDatabaseConnection& p_database_connection);
+    BalanceCache(DcmDatabaseConnection& p_database_connection);
 
-	BalanceCache(BalanceCache const&) = delete;
-	BalanceCache(BalanceCache&&) = delete;
-	BalanceCache& operator=(BalanceCache const&) = delete;
-	BalanceCache& operator=(BalanceCache&&) = delete;
+    BalanceCache(BalanceCache const&) = delete;
+    BalanceCache(BalanceCache&&) = delete;
+    BalanceCache& operator=(BalanceCache const&) = delete;
+    BalanceCache& operator=(BalanceCache&&) = delete;
 
-	~BalanceCache();
+    ~BalanceCache();
 
-	/**
-	 * Retrieve the technical balance for a particular Account.
-	 * For an explanation of the concept of a "technical balance",
-	 * see the documentation for Account::technical_balance().
-	 */
-	jewel::Decimal technical_balance(sqloxx::Id p_account_id);
+    /**
+     * Retrieve the technical balance for a particular Account.
+     * For an explanation of the concept of a "technical balance",
+     * see the documentation for Account::technical_balance().
+     */
+    jewel::Decimal technical_balance(sqloxx::Id p_account_id);
 
-	/**
-	 * Retrieve the technical opening balance for a particular
-	 * Account.
-	 * For an explanation of the concept of a "technical opening balance",
-	 * see the documentation for Account::technical_opening_balance().
-	 */
-	jewel::Decimal technical_opening_balance(sqloxx::Id p_account_id);
+    /**
+     * Retrieve the technical opening balance for a particular
+     * Account.
+     * For an explanation of the concept of a "technical opening balance",
+     * see the documentation for Account::technical_opening_balance().
+     */
+    jewel::Decimal technical_opening_balance(sqloxx::Id p_account_id);
 
-	/**
-	 * Mark the cache as a whole as stale.
-	 */
-	void mark_as_stale();
-	
-	/**
-	 * Mark a particular Account's cache entry as stale.
-	 */
-	void mark_as_stale(sqloxx::Id p_account_id); 
+    /**
+     * Mark the cache as a whole as stale.
+     */
+    void mark_as_stale();
+    
+    /**
+     * Mark a particular Account's cache entry as stale.
+     */
+    void mark_as_stale(sqloxx::Id p_account_id); 
 
 private:
 
-	typedef
-		std::unordered_map
-		<	sqloxx::Id,
-			boost::optional<jewel::Decimal>
-		>
-		Map;
-		
-	void refresh();
-	void refresh_all();
-	void refresh_targetted(std::vector<sqloxx::Id> const& p_targets);
+    typedef
+        std::unordered_map
+        <    sqloxx::Id,
+            boost::optional<jewel::Decimal>
+        >
+        Map;
+        
+    void refresh();
+    void refresh_all();
+    void refresh_targetted(std::vector<sqloxx::Id> const& p_targets);
 
-	DcmDatabaseConnection& m_database_connection;
-	std::unique_ptr<Map> m_map;
-	bool m_map_is_stale;
+    DcmDatabaseConnection& m_database_connection;
+    std::unique_ptr<Map> m_map;
+    bool m_map_is_stale;
 
 };
 

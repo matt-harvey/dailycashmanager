@@ -33,27 +33,27 @@ class TextCtrl: public wxTextCtrl
 {
 public:
 
-	TextCtrl
-	(	wxWindow* p_parent,
-		wxWindowID p_id,
-		wxString const& p_value = "",
-		wxPoint const& p_pos = wxDefaultPosition,
-		wxSize const& p_size = wxDefaultSize,
-		long p_style = 0,
-		wxValidator const& p_validator = wxDefaultValidator,
-		wxString const& p_name = wxTextCtrlNameStr
-	);
+    TextCtrl
+    (   wxWindow* p_parent,
+        wxWindowID p_id,
+        wxString const& p_value = "",
+        wxPoint const& p_pos = wxDefaultPosition,
+        wxSize const& p_size = wxDefaultSize,
+        long p_style = 0,
+        wxValidator const& p_validator = wxDefaultValidator,
+        wxString const& p_name = wxTextCtrlNameStr
+    );
 
-	TextCtrl(TextCtrl const& rhs) = delete;
-	TextCtrl(TextCtrl&& rhs) = delete;
-	TextCtrl& operator=(TextCtrl const& rhs) = delete;
-	TextCtrl& operator=(TextCtrl&& rhs) = delete;
-	virtual ~TextCtrl();
+    TextCtrl(TextCtrl const& rhs) = delete;
+    TextCtrl(TextCtrl&& rhs) = delete;
+    TextCtrl& operator=(TextCtrl const& rhs) = delete;
+    TextCtrl& operator=(TextCtrl&& rhs) = delete;
+    virtual ~TextCtrl();
 
 private:
 
-	void on_char(wxKeyEvent& event);
-	DECLARE_EVENT_TABLE();
+    void on_char(wxKeyEvent& event);
+    DECLARE_EVENT_TABLE();
 
 };  // class TextCtrl
 

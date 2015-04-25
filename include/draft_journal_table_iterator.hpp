@@ -27,8 +27,8 @@ namespace dcm
 
 
 typedef
-	sqloxx::TableIterator<sqloxx::Handle<DraftJournal> >
-	DraftJournalTableIterator;
+    sqloxx::TableIterator<sqloxx::Handle<DraftJournal> >
+    DraftJournalTableIterator;
 
 
 /**
@@ -38,7 +38,7 @@ typedef
  */
 DraftJournalTableIterator
 make_name_ordered_user_draft_journal_table_iterator
-(	DcmDatabaseConnection& p_database_connection
+(   DcmDatabaseConnection& p_database_connection
 );
 
 

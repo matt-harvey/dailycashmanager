@@ -60,64 +60,64 @@ class EntryListCtrl;
 class EntryListPanel: public wxPanel
 {
 public:
-	EntryListPanel
-	(	wxWindow* p_parent,
-		DcmDatabaseConnection& p_database_connection,
-		bool p_support_reconciliations = false
-	);
+    EntryListPanel
+    (   wxWindow* p_parent,
+        DcmDatabaseConnection& p_database_connection,
+        bool p_support_reconciliations = false
+    );
 
-	EntryListPanel(EntryListPanel const&) = delete;
-	EntryListPanel(EntryListPanel&&) = delete;
-	EntryListPanel& operator=(EntryListPanel const&) = delete;
-	EntryListPanel& operator=(EntryListPanel&&) = delete;
-	virtual ~EntryListPanel(); 
+    EntryListPanel(EntryListPanel const&) = delete;
+    EntryListPanel(EntryListPanel&&) = delete;
+    EntryListPanel& operator=(EntryListPanel const&) = delete;
+    EntryListPanel& operator=(EntryListPanel&&) = delete;
+    virtual ~EntryListPanel(); 
 
-	void update_for_new(sqloxx::Handle<OrdinaryJournal> const& p_journal);
-	void update_for_amended(sqloxx::Handle<OrdinaryJournal> const& p_journal);
-	void update_for_new(sqloxx::Handle<Account> const& p_account);
-	void update_for_amended(sqloxx::Handle<Account> const& p_account);
-	void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
+    void update_for_new(sqloxx::Handle<OrdinaryJournal> const& p_journal);
+    void update_for_amended(sqloxx::Handle<OrdinaryJournal> const& p_journal);
+    void update_for_new(sqloxx::Handle<Account> const& p_account);
+    void update_for_amended(sqloxx::Handle<Account> const& p_account);
+    void update_for_deleted(std::vector<sqloxx::Id> const& p_doomed_ids);
 
-	std::vector<sqloxx::Handle<Entry> > selected_entries();
+    std::vector<sqloxx::Handle<Entry> > selected_entries();
 
-	// TODO LOW PRIORITY This should really be private, but we need to call it
-	// from TopPanel to ensure EntryListCtrl is properly sized, AFTER the
-	// EntryListPanel has been constructed. Make this nicer.
-	void configure_entry_list_ctrl();
+    // TODO LOW PRIORITY This should really be private, but we need to call it
+    // from TopPanel to ensure EntryListCtrl is properly sized, AFTER the
+    // EntryListPanel has been constructed. Make this nicer.
+    void configure_entry_list_ctrl();
 
-	void postconfigure_summary();
+    void postconfigure_summary();
 
 private:
-	void preconfigure_summary();
+    void preconfigure_summary();
 
-	void on_refresh_button_click(wxCommandEvent& event);
-	sqloxx::Handle<Account> selected_account() const;
-	boost::optional<boost::gregorian::date> selected_min_date() const;
-	boost::optional<boost::gregorian::date> selected_max_date() const;
-	
-	static int const s_account_ctrl_id = wxID_HIGHEST + 1;
-	static int const s_min_date_ctrl_id = s_account_ctrl_id + 1;
-	static int const s_max_date_ctrl_id = s_min_date_ctrl_id + 1;
-	static int const s_refresh_button_id = s_max_date_ctrl_id + 1;
-	static int const s_entry_list_ctrl_id = s_refresh_button_id + 1;
+    void on_refresh_button_click(wxCommandEvent& event);
+    sqloxx::Handle<Account> selected_account() const;
+    boost::optional<boost::gregorian::date> selected_min_date() const;
+    boost::optional<boost::gregorian::date> selected_max_date() const;
+    
+    static int const s_account_ctrl_id = wxID_HIGHEST + 1;
+    static int const s_min_date_ctrl_id = s_account_ctrl_id + 1;
+    static int const s_max_date_ctrl_id = s_min_date_ctrl_id + 1;
+    static int const s_refresh_button_id = s_max_date_ctrl_id + 1;
+    static int const s_entry_list_ctrl_id = s_refresh_button_id + 1;
 
-	bool m_support_reconciliations;
-	int m_next_row;
-	int m_client_size_aux;
-	int m_text_ctrl_height;
+    bool m_support_reconciliations;
+    int m_next_row;
+    int m_client_size_aux;
+    int m_text_ctrl_height;
 
-	wxGridBagSizer* m_top_sizer;
-	AccountCtrl* m_account_ctrl;
-	DateCtrl* m_min_date_ctrl;
-	DateCtrl* m_max_date_ctrl;
-	Button* m_refresh_button;
-	wxStaticText* m_reconciliation_hint;
-	EntryListCtrl* m_entry_list_ctrl;
-	std::vector<wxStaticText*> m_summary_label_text_items;
-	std::vector<wxStaticText*> m_summary_data_text_items;
-	DcmDatabaseConnection& m_database_connection;
+    wxGridBagSizer* m_top_sizer;
+    AccountCtrl* m_account_ctrl;
+    DateCtrl* m_min_date_ctrl;
+    DateCtrl* m_max_date_ctrl;
+    Button* m_refresh_button;
+    wxStaticText* m_reconciliation_hint;
+    EntryListCtrl* m_entry_list_ctrl;
+    std::vector<wxStaticText*> m_summary_label_text_items;
+    std::vector<wxStaticText*> m_summary_data_text_items;
+    DcmDatabaseConnection& m_database_connection;
 
-	DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 
 };  // class EntryListPanel
 

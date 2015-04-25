@@ -31,33 +31,33 @@ class Frequency
 {
 public:
 
-	/**
-	 * @throws InvalidFrequencyException if p_num_steps is less than 1
-	 */
-	Frequency(int p_num_steps, IntervalType p_step_type);
+    /**
+     * @throws InvalidFrequencyException if p_num_steps is less than 1
+     */
+    Frequency(int p_num_steps, IntervalType p_step_type);
 
-	Frequency(Frequency const&) = default;
-	Frequency(Frequency&&) = default;
-	Frequency& operator=(Frequency const&) = default;
-	Frequency& operator=(Frequency&&) = default;
-	~Frequency() = default;
+    Frequency(Frequency const&) = default;
+    Frequency(Frequency&&) = default;
+    Frequency& operator=(Frequency const&) = default;
+    Frequency& operator=(Frequency&&) = default;
+    ~Frequency() = default;
 
-	/**
-	 * @returns the number of "units" between each event, where the
-	 * size of a "unit" is given by step_type().
-	 */
-	int num_steps() const;
+    /**
+     * @returns the number of "units" between each event, where the
+     * size of a "unit" is given by step_type().
+     */
+    int num_steps() const;
 
-	/**
-	 * @returns the IntervalType in which we count the number of "units"
-	 * between each event. In other words, this is the "unit of
-	 * measure" in which we are measuring the Frequency.
-	 */
-	IntervalType step_type() const;
+    /**
+     * @returns the IntervalType in which we count the number of "units"
+     * between each event. In other words, this is the "unit of
+     * measure" in which we are measuring the Frequency.
+     */
+    IntervalType step_type() const;
 
 private:
-	int m_num_steps;
-	IntervalType m_step_type;
+    int m_num_steps;
+    IntervalType m_step_type;
 };
 
 // Free-standing functions
@@ -79,8 +79,8 @@ Frequency const& canonical_frequency();
  * the string passed to the second parameter.
  */
 std::string frequency_description
-(	Frequency const& frequency,
-	std::string const& first_word = "per"
+(   Frequency const& frequency,
+    std::string const& first_word = "per"
 );
 
 /**
@@ -92,8 +92,8 @@ std::string frequency_description
  * jewel::DecimalMultiplicationException or jewel::DecimalDivisionException.
  */
 jewel::Decimal convert_to_canonical
-(	Frequency const& p_frequency,
-	jewel::Decimal const& p_amount
+(   Frequency const& p_frequency,
+    jewel::Decimal const& p_amount
 );
 
 /**
@@ -106,8 +106,8 @@ jewel::Decimal convert_to_canonical
  * jewel::DecimalMultiplicationException or jewel::DecimalDivisionException.
  */
 jewel::Decimal convert_from_canonical
-(	Frequency const& p_frequency,
-	jewel::Decimal const& p_amount
+(   Frequency const& p_frequency,
+    jewel::Decimal const& p_amount
 );
 
 /**

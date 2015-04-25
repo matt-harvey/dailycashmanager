@@ -70,154 +70,154 @@ class TransactionCtrl: public GriddedScrolledPanel
 {
 public:
 
-	/**
-	 * Create a TransactionCtrl to allow the user to edit an
-	 * already-saved OrdinaryJournal.
-	 */
-	TransactionCtrl
-	(	TopPanel* p_parent,
-		wxSize const& p_size,
-		sqloxx::Handle<OrdinaryJournal> const& p_journal
-	);
+    /**
+     * Create a TransactionCtrl to allow the user to edit an
+     * already-saved OrdinaryJournal.
+     */
+    TransactionCtrl
+    (   TopPanel* p_parent,
+        wxSize const& p_size,
+        sqloxx::Handle<OrdinaryJournal> const& p_journal
+    );
 
-	/**
-	 * Create a TransactionCtrl to allow the user to edit an
-	 * already-saved DraftJournal.
-	 */
-	TransactionCtrl
-	(	TopPanel* p_parent,
-		wxSize const& p_size,
-		sqloxx::Handle<DraftJournal> const& p_journal
-	);
+    /**
+     * Create a TransactionCtrl to allow the user to edit an
+     * already-saved DraftJournal.
+     */
+    TransactionCtrl
+    (   TopPanel* p_parent,
+        wxSize const& p_size,
+        sqloxx::Handle<DraftJournal> const& p_journal
+    );
 
-	/**
-	 * Create a TransactionCtrl to allow the user to edit a
-	 * ProtoJournal (which they will then be able to convert into
-	 * a PersistentJournal and save). \e p_journal should already
-	 * have all its attributes initialized, and should have all the
-	 * basic attributes of a ProtoJournal initialized, and all the Entries
-	 * in p_journal should also have all their attributes initialized,
-	 * before \e p_journal is passed to this function (with the exception
-	 * that \e p_journal and its Entries should not have Ids). \e p_journal
-	 * should have at least two Entries.
-	 */
-	TransactionCtrl
-	(	TopPanel* p_parent,
-		wxSize const& p_size,
-		ProtoJournal& p_journal,
-		DcmDatabaseConnection& p_database_connection
-	);
+    /**
+     * Create a TransactionCtrl to allow the user to edit a
+     * ProtoJournal (which they will then be able to convert into
+     * a PersistentJournal and save). \e p_journal should already
+     * have all its attributes initialized, and should have all the
+     * basic attributes of a ProtoJournal initialized, and all the Entries
+     * in p_journal should also have all their attributes initialized,
+     * before \e p_journal is passed to this function (with the exception
+     * that \e p_journal and its Entries should not have Ids). \e p_journal
+     * should have at least two Entries.
+     */
+    TransactionCtrl
+    (   TopPanel* p_parent,
+        wxSize const& p_size,
+        ProtoJournal& p_journal,
+        DcmDatabaseConnection& p_database_connection
+    );
 
-	TransactionCtrl(TransactionCtrl const&) = delete;
-	TransactionCtrl(TransactionCtrl&&) = delete;
-	TransactionCtrl& operator=(TransactionCtrl const&) = delete;
-	TransactionCtrl& operator=(TransactionCtrl&&) = delete;
-	~TransactionCtrl() = default;
+    TransactionCtrl(TransactionCtrl const&) = delete;
+    TransactionCtrl(TransactionCtrl&&) = delete;
+    TransactionCtrl& operator=(TransactionCtrl const&) = delete;
+    TransactionCtrl& operator=(TransactionCtrl&&) = delete;
+    ~TransactionCtrl() = default;
 
-	/**
-	 * Refresh the selections available in the AccountCtrls in the
-	 * TransactionCtrl, and the selection in the TransactionTypeCtrl,
-	 * to match p_transaction_type.
-	 */
-	void refresh_for_transaction_type(TransactionType p_transaction_type);
+    /**
+     * Refresh the selections available in the AccountCtrls in the
+     * TransactionCtrl, and the selection in the TransactionTypeCtrl,
+     * to match p_transaction_type.
+     */
+    void refresh_for_transaction_type(TransactionType p_transaction_type);
 
-	jewel::Decimal primary_amount() const;
+    jewel::Decimal primary_amount() const;
 
-	/**
-	 * Update to reflect newly created Account.
-	 */
-	void update_for_new(sqloxx::Handle<Account> const& p_saved_object);
+    /**
+     * Update to reflect newly created Account.
+     */
+    void update_for_new(sqloxx::Handle<Account> const& p_saved_object);
 
-	/**
-	 * Update to reflect Account having been amended (and the changes having
-	 * been saved).
-	 */
-	void update_for_amended(sqloxx::Handle<Account> const& p_saved_object);
+    /**
+     * Update to reflect Account having been amended (and the changes having
+     * been saved).
+     */
+    void update_for_amended(sqloxx::Handle<Account> const& p_saved_object);
 
-	/**
-	 * Update to reflect possible change in reconciliation status
-	 * of \e p_entry.
-	 */
-	void update_for_reconciliation_status
-	(	sqloxx::Handle<Entry> const& p_entry
-	);
+    /**
+     * Update to reflect possible change in reconciliation status
+     * of \e p_entry.
+     */
+    void update_for_reconciliation_status
+    (   sqloxx::Handle<Entry> const& p_entry
+    );
 
-	// Reset everything in TransactionCtrl to create and edit a new
-	// ProtoJournal.
-	void reset();
+    // Reset everything in TransactionCtrl to create and edit a new
+    // ProtoJournal.
+    void reset();
 
 private:
-	void on_cancel_button_click(wxCommandEvent& event);
-	void on_delete_button_click(wxCommandEvent& event);
-	void on_ok_button_click(wxCommandEvent& event);
+    void on_cancel_button_click(wxCommandEvent& event);
+    void on_delete_button_click(wxCommandEvent& event);
+    void on_ok_button_click(wxCommandEvent& event);
 
-	void reflect_reconciliation_statuses();
+    void reflect_reconciliation_statuses();
 
-	// Adds some blank space to the right to allow space for vertical
-	// scrollbar.
-	void add_dummy_column();
+    // Adds some blank space to the right to allow space for vertical
+    // scrollbar.
+    void add_dummy_column();
 
-	// Places size of "standard text box" in p_text_box_size.
-	void configure_top_controls
-	(	TransactionType p_transaction_type,
-		wxSize& p_text_box_size,
-		jewel::Decimal const& p_primary_amount,
-		std::vector<TransactionType> const&
-			p_available_transaction_types
-	);
+    // Places size of "standard text box" in p_text_box_size.
+    void configure_top_controls
+    (   TransactionType p_transaction_type,
+        wxSize& p_text_box_size,
+        jewel::Decimal const& p_primary_amount,
+        std::vector<TransactionType> const&
+            p_available_transaction_types
+    );
 
-	// Clear all contents.
-	void clear_all();
+    // Clear all contents.
+    void clear_all();
 
-	// Assumes current contents are all clear.
-	void configure_for_editing_proto_journal(ProtoJournal& p_journal);
+    // Assumes current contents are all clear.
+    void configure_for_editing_proto_journal(ProtoJournal& p_journal);
 
-	// Assume current contents are all clear except for m_journal, which
-	// must have been initialized.
-	void configure_for_editing_persistent_journal();
+    // Assume current contents are all clear except for m_journal, which
+    // must have been initialized.
+    void configure_for_editing_persistent_journal();
 
-	/**
-	 * @returns true if and only if journal was actually posted.
-	 */
-	bool post_journal();
+    /**
+     * @returns true if and only if journal was actually posted.
+     */
+    bool post_journal();
 
-	/**
-	 * Removes *m_journal from database.
-	 *
-	 * @returns true if and only if journal was actually removed.
-	 */
-	bool remove_journal();
+    /**
+     * Removes *m_journal from database.
+     *
+     * @returns true if and only if journal was actually removed.
+     */
+    bool remove_journal();
 
-	/**
-	 * @returns true if and only if existing journal was successfully saved.
-	 */
-	bool save_existing_journal();
+    /**
+     * @returns true if and only if existing journal was successfully saved.
+     */
+    bool save_existing_journal();
 
-	bool is_balanced() const;
+    bool is_balanced() const;
 
-	TransactionTypeCtrl* m_transaction_type_ctrl;
-	EntryGroupCtrl* m_source_entry_ctrl;
-	EntryGroupCtrl* m_destination_entry_ctrl;
-	DecimalTextCtrl* m_primary_amount_ctrl;
-	FrequencyCtrl* m_frequency_ctrl;
-	DateCtrl* m_date_ctrl;
-	Button* m_cancel_button;
-	Button* m_delete_button;
-	Button* m_ok_button;
-	sqloxx::Handle<PersistentJournal> m_journal;
+    TransactionTypeCtrl* m_transaction_type_ctrl;
+    EntryGroupCtrl* m_source_entry_ctrl;
+    EntryGroupCtrl* m_destination_entry_ctrl;
+    DecimalTextCtrl* m_primary_amount_ctrl;
+    FrequencyCtrl* m_frequency_ctrl;
+    DateCtrl* m_date_ctrl;
+    Button* m_cancel_button;
+    Button* m_delete_button;
+    Button* m_ok_button;
+    sqloxx::Handle<PersistentJournal> m_journal;
 
-	static unsigned int const s_date_ctrl_id =
-		wxID_HIGHEST + 1;
-	static unsigned int const s_primary_amount_ctrl_id =
-		s_date_ctrl_id + 1;
-	static unsigned int const s_transaction_type_ctrl_id =
-		s_primary_amount_ctrl_id + 1;
-	static unsigned int const s_delete_button_id =
-		s_transaction_type_ctrl_id + 1;
-	static unsigned int const s_min_entry_row_id =
-		s_delete_button_id + 1;
+    static unsigned int const s_date_ctrl_id =
+        wxID_HIGHEST + 1;
+    static unsigned int const s_primary_amount_ctrl_id =
+        s_date_ctrl_id + 1;
+    static unsigned int const s_transaction_type_ctrl_id =
+        s_primary_amount_ctrl_id + 1;
+    static unsigned int const s_delete_button_id =
+        s_transaction_type_ctrl_id + 1;
+    static unsigned int const s_min_entry_row_id =
+        s_delete_button_id + 1;
 
-	DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 
 };  // class TransactionCtrl
 

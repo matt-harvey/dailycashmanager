@@ -71,96 +71,96 @@ class MultiAccountPanel;
 class SetupWizard: public wxWizard
 {
 public:
-	
-	/**
-	 * Precondition: p_database_connection is not valid (that's the whole
-	 * reason we are calling the wizard...).
-	 */
-	SetupWizard(DcmDatabaseConnection& p_database_connection);
+    
+    /**
+     * Precondition: p_database_connection is not valid (that's the whole
+     * reason we are calling the wizard...).
+     */
+    SetupWizard(DcmDatabaseConnection& p_database_connection);
 
-	SetupWizard(SetupWizard const&) = delete;
-	SetupWizard(SetupWizard&&) = delete;
-	SetupWizard& operator=(SetupWizard const&) = delete;
-	SetupWizard& operator=(SetupWizard&&) = delete;
-	~SetupWizard();
+    SetupWizard(SetupWizard const&) = delete;
+    SetupWizard(SetupWizard&&) = delete;
+    SetupWizard& operator=(SetupWizard const&) = delete;
+    SetupWizard& operator=(SetupWizard&&) = delete;
+    ~SetupWizard();
 
-	void run();
+    void run();
 
-	/**
-	 * @returns a standard size to be used for text controls
-	 * (TextCtrl, ComboBox) in the pages of this wizard.
-	 * The returned wxSize is intended to be used with wxDLG_UNIT macro
-	 * when initializing the controls' sizes.
-	 */
-	static wxSize standard_text_box_size();
-	
-	sqloxx::Handle<Commodity> selected_currency() const;
-	boost::gregorian::date selected_start_date() const;
-	void set_assumed_currency(sqloxx::Handle<Commodity> const& p_commodity);
-	jewel::Decimal total_opening_balance() const;
+    /**
+     * @returns a standard size to be used for text controls
+     * (TextCtrl, ComboBox) in the pages of this wizard.
+     * The returned wxSize is intended to be used with wxDLG_UNIT macro
+     * when initializing the controls' sizes.
+     */
+    static wxSize standard_text_box_size();
+    
+    sqloxx::Handle<Commodity> selected_currency() const;
+    boost::gregorian::date selected_start_date() const;
+    void set_assumed_currency(sqloxx::Handle<Commodity> const& p_commodity);
+    jewel::Decimal total_opening_balance() const;
 
-	/**
-	 * Set the total "Account names already recorded" to p_names. Used
-	 * to ensure Account names not reused between different pages.
-	 */
-	void set_account_names_already_taken(std::set<wxString> const& p_names);
+    /**
+     * Set the total "Account names already recorded" to p_names. Used
+     * to ensure Account names not reused between different pages.
+     */
+    void set_account_names_already_taken(std::set<wxString> const& p_names);
 
-	std::set<wxString> const& account_names_already_taken() const;
-	
-	class AccountPage;
+    std::set<wxString> const& account_names_already_taken() const;
+    
+    class AccountPage;
 
 private:
 
-	std::vector<AugmentedAccount> selected_augmented_accounts() const;
+    std::vector<AugmentedAccount> selected_augmented_accounts() const;
 
-	class FilepathValidator;
+    class FilepathValidator;
 
-	class FilepathPage;
+    class FilepathPage;
 
-	void render_account_pages();
+    void render_account_pages();
 
-	/**
-	 * Set the default Commodity for m_database_connection, based on
-	 * the currency selected by the user.
-	 *
-	 * Should be called only after calling RunWizard().
-	 */
-	void configure_default_commodity();
+    /**
+     * Set the default Commodity for m_database_connection, based on
+     * the currency selected by the user.
+     *
+     * Should be called only after calling RunWizard().
+     */
+    void configure_default_commodity();
 
-	/**
-	 * Set the entity creation date for m_database_connection, based on
-	 * the start date selected by the user.
-	 *
-	 * Should be called only after calling RunWizard().
-	 */
-	void configure_entity_creation_date();
+    /**
+     * Set the entity creation date for m_database_connection, based on
+     * the start date selected by the user.
+     *
+     * Should be called only after calling RunWizard().
+     */
+    void configure_entity_creation_date();
 
-	/**
-	 * Open m_database_connection to filepath selected by the user
-	 * in the wizard, creating the file in the process.
-	 *
-	 * Should be called only after calling RunWizard(), and after calling
-	 * configure_default_commodity() and configure_entity_creation_date().
-	 */
-	void create_file();
+    /**
+     * Open m_database_connection to filepath selected by the user
+     * in the wizard, creating the file in the process.
+     *
+     * Should be called only after calling RunWizard(), and after calling
+     * configure_default_commodity() and configure_entity_creation_date().
+     */
+    void create_file();
 
-	void delete_file();
+    void delete_file();
 
-	/**
-	 * Reflect in the database the Accounts selected by user in
-	 * the wizard.
-	 *
-	 * Should be called only after calling RunWizard(), and after calling
-	 * configure_default_commodity() and create_file().
-	 */
-	void configure_accounts();
+    /**
+     * Reflect in the database the Accounts selected by user in
+     * the wizard.
+     *
+     * Should be called only after calling RunWizard(), and after calling
+     * configure_default_commodity() and create_file().
+     */
+    void configure_accounts();
 
-	DcmDatabaseConnection& m_database_connection;
-	std::set<wxString> m_account_names_already_taken;
-	FilepathPage* m_filepath_page;
-	AccountPage* m_balance_sheet_account_page;
-	AccountPage* m_pl_account_page;
-	
+    DcmDatabaseConnection& m_database_connection;
+    std::set<wxString> m_account_names_already_taken;
+    FilepathPage* m_filepath_page;
+    AccountPage* m_balance_sheet_account_page;
+    AccountPage* m_pl_account_page;
+    
 };  // SetupWizard
 
 
@@ -171,36 +171,36 @@ private:
 class SetupWizard::FilepathValidator: public wxValidator
 {
 public:
-	FilepathValidator(boost::filesystem::path* p_filepath);
-	FilepathValidator(FilepathValidator const& rhs);
+    FilepathValidator(boost::filesystem::path* p_filepath);
+    FilepathValidator(FilepathValidator const& rhs);
 
-	FilepathValidator(FilepathValidator&&) = delete;
-	FilepathValidator& operator=(FilepathValidator const&) = delete;
-	FilepathValidator& operator=(FilepathValidator&&) = delete;
-	virtual ~FilepathValidator();
+    FilepathValidator(FilepathValidator&&) = delete;
+    FilepathValidator& operator=(FilepathValidator const&) = delete;
+    FilepathValidator& operator=(FilepathValidator&&) = delete;
+    virtual ~FilepathValidator();
 
-	/*** Functions inherited from wxValidator virtuals ***/
+    /*** Functions inherited from wxValidator virtuals ***/
 
-	/**
-	 * @param parent should be passed the TextCtrl in
-	 * a FilepathPage,
-	 * that contains the filename entered by the user.
-	 * Then validator then validates this by ensuring that:\n
-	 * (a) it can be a valid filename; and\n
-	 * (b) the filepath consisting of text in \e parent, appended
-	 * to the directory also entered into the FilepathPage to which
-	 * the \e parent belongs, does not already exist.
-	 */
-	bool Validate(wxWindow* parent) override;
+    /**
+     * @param parent should be passed the TextCtrl in
+     * a FilepathPage,
+     * that contains the filename entered by the user.
+     * Then validator then validates this by ensuring that:\n
+     * (a) it can be a valid filename; and\n
+     * (b) the filepath consisting of text in \e parent, appended
+     * to the directory also entered into the FilepathPage to which
+     * the \e parent belongs, does not already exist.
+     */
+    bool Validate(wxWindow* parent) override;
 
-	bool TransferFromWindow() override;
+    bool TransferFromWindow() override;
 
-	bool TransferToWindow() override;
+    bool TransferToWindow() override;
 
-	wxObject* Clone() const override;
+    wxObject* Clone() const override;
 
 private:
-	boost::filesystem::path* m_filepath;
+    boost::filesystem::path* m_filepath;
 };
 
 
@@ -212,52 +212,52 @@ private:
 class SetupWizard::FilepathPage: public wxWizardPageSimple
 {
 public:
-	friend class FilepathValidator;
+    friend class FilepathValidator;
 
-	FilepathPage
-	(	SetupWizard* parent,
-		DcmDatabaseConnection& p_database_connection
-	);
-	FilepathPage(FilepathPage const&) = delete;
-	FilepathPage(FilepathPage&&) = delete;
-	FilepathPage& operator=(FilepathPage const&) = delete;
-	FilepathPage& operator=(FilepathPage&&) = delete;
-	virtual ~FilepathPage();
+    FilepathPage
+    (   SetupWizard* parent,
+        DcmDatabaseConnection& p_database_connection
+    );
+    FilepathPage(FilepathPage const&) = delete;
+    FilepathPage(FilepathPage&&) = delete;
+    FilepathPage& operator=(FilepathPage const&) = delete;
+    FilepathPage& operator=(FilepathPage&&) = delete;
+    virtual ~FilepathPage();
 
-	boost::optional<boost::filesystem::path> selected_filepath() const;
-	sqloxx::Handle<Commodity> selected_currency() const;
-	boost::gregorian::date selected_start_date() const;
+    boost::optional<boost::filesystem::path> selected_filepath() const;
+    sqloxx::Handle<Commodity> selected_currency() const;
+    boost::gregorian::date selected_start_date() const;
 private:
 
-	void on_directory_button_click(wxCommandEvent& event);
-	void on_wizard_page_changing(wxWizardEvent& event);
-	void on_wizard_page_changed(wxWizardEvent& event);
-	void on_currency_selection_change(wxCommandEvent& event);
-	void on_precision_selection_change(wxCommandEvent& event);
+    void on_directory_button_click(wxCommandEvent& event);
+    void on_wizard_page_changing(wxWizardEvent& event);
+    void on_wizard_page_changed(wxWizardEvent& event);
+    void on_currency_selection_change(wxCommandEvent& event);
+    void on_precision_selection_change(wxCommandEvent& event);
 
-	std::vector<sqloxx::Handle<Commodity> > const m_currencies;
+    std::vector<sqloxx::Handle<Commodity> > const m_currencies;
 
-	wxBoxSizer* m_top_sizer;
-	wxBoxSizer* m_filename_row_sizer;
-	wxBoxSizer* m_directory_row_sizer;
-	TextCtrl* m_directory_ctrl;
-	Button* m_directory_button;
-	TextCtrl* m_filename_ctrl;
-	ComboBox* m_currency_box;
-	ComboBox* m_precision_box;
-	DateCtrl* m_start_date_ctrl;
+    wxBoxSizer* m_top_sizer;
+    wxBoxSizer* m_filename_row_sizer;
+    wxBoxSizer* m_directory_row_sizer;
+    TextCtrl* m_directory_ctrl;
+    Button* m_directory_button;
+    TextCtrl* m_filename_ctrl;
+    ComboBox* m_currency_box;
+    ComboBox* m_precision_box;
+    DateCtrl* m_start_date_ctrl;
 
-	// Things are simpler in the implementation if this is a raw pointer.
-	// Don't be tempted to change this to a smart pointer or a reference.
-	// Been there, tried that...
-	boost::filesystem::path* m_selected_filepath;
+    // Things are simpler in the implementation if this is a raw pointer.
+    // Don't be tempted to change this to a smart pointer or a reference.
+    // Been there, tried that...
+    boost::filesystem::path* m_selected_filepath;
 
-	static int const s_directory_button_id = wxID_HIGHEST + 1;
-	static int const s_currency_box_id = s_directory_button_id + 1;
-	static int const s_precision_box_id = s_currency_box_id + 1;
-	static int const s_start_date_ctrl_id = s_precision_box_id + 1;
+    static int const s_directory_button_id = wxID_HIGHEST + 1;
+    static int const s_currency_box_id = s_directory_button_id + 1;
+    static int const s_precision_box_id = s_currency_box_id + 1;
+    static int const s_start_date_ctrl_id = s_precision_box_id + 1;
 
-	DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 
 };  // SetupWizard::FilepathPage
 
@@ -270,84 +270,84 @@ private:
 class SetupWizard::AccountPage: public wxWizardPageSimple
 {
 public:
-	AccountPage
-	(	SetupWizard* p_parent,
-		AccountSuperType p_account_super_type,
-		DcmDatabaseConnection& p_database_connection
-	);
+    AccountPage
+    (   SetupWizard* p_parent,
+        AccountSuperType p_account_super_type,
+        DcmDatabaseConnection& p_database_connection
+    );
 
-	AccountPage(AccountPage const&) = delete;
-	AccountPage(AccountPage&&) = delete;
-	AccountPage& operator=(AccountPage const&) = delete;
-	AccountPage& operator=(AccountPage&&) = delete;
+    AccountPage(AccountPage const&) = delete;
+    AccountPage(AccountPage&&) = delete;
+    AccountPage& operator=(AccountPage const&) = delete;
+    AccountPage& operator=(AccountPage&&) = delete;
 
-	virtual ~AccountPage();
+    virtual ~AccountPage();
 
-	void render();
+    void render();
 
-	std::vector<AugmentedAccount> selected_augmented_accounts() const;
+    std::vector<AugmentedAccount> selected_augmented_accounts() const;
 
-	void set_commodity(sqloxx::Handle<Commodity> const& p_commodity);
+    void set_commodity(sqloxx::Handle<Commodity> const& p_commodity);
 
-	jewel::Decimal total_amount() const;
+    jewel::Decimal total_amount() const;
 
-	/**
-	 * @returns the total_amount() of the <em>balance sheet</em>
-	 * AccountPage that is in the same SetupWizard as this AccountPage.
-	 * This may or may not be the same AccountPage as this one. (Whether
-	 * this is a "balance sheet AccountPage" is determined by
-	 * whether or not AccountSuperType::balance_sheet was passed
-	 * to the constructor.)
-	 */
-	jewel::Decimal total_balance_sheet_amount() const;
+    /**
+     * @returns the total_amount() of the <em>balance sheet</em>
+     * AccountPage that is in the same SetupWizard as this AccountPage.
+     * This may or may not be the same AccountPage as this one. (Whether
+     * this is a "balance sheet AccountPage" is determined by
+     * whether or not AccountSuperType::balance_sheet was passed
+     * to the constructor.)
+     */
+    jewel::Decimal total_balance_sheet_amount() const;
 
-	/**
-	 * Tell the AccountPage that the strings in the given set have already
-	 * been used for Account names in a previous AccountPage. Should only
-	 * be called after render() has been called.
-	 */
-	void set_account_names_already_taken
-	(	std::set<wxString> const& p_account_names_already_taken
-	);
+    /**
+     * Tell the AccountPage that the strings in the given set have already
+     * been used for Account names in a previous AccountPage. Should only
+     * be called after render() has been called.
+     */
+    void set_account_names_already_taken
+    (   std::set<wxString> const& p_account_names_already_taken
+    );
 
 protected:
-	DcmDatabaseConnection& database_connection() const;
-	SetupWizard const& parent() const;
-	wxGridBagSizer& top_sizer();
-	int current_row() const;
-	void increment_row();
+    DcmDatabaseConnection& database_connection() const;
+    SetupWizard const& parent() const;
+    wxGridBagSizer& top_sizer();
+    int current_row() const;
+    void increment_row();
 
-	bool account_names_valid(wxString& p_error_message) const;
-	bool account_types_valid(wxString& p_error_message) const;
+    bool account_names_valid(wxString& p_error_message) const;
+    bool account_types_valid(wxString& p_error_message) const;
 
 private:
 
-	void on_pop_row_button_click(wxCommandEvent& event);
-	void on_push_row_button_click(wxCommandEvent& event);
-	void on_wizard_page_changing(wxWizardEvent& event);
-	void on_wizard_page_changed(wxWizardEvent& event);
+    void on_pop_row_button_click(wxCommandEvent& event);
+    void on_push_row_button_click(wxCommandEvent& event);
+    void on_wizard_page_changing(wxWizardEvent& event);
+    void on_wizard_page_changed(wxWizardEvent& event);
 
-	void render_main_text();
-	void render_buttons();
-	void render_account_view();
-	void refresh_pop_row_button_state();
+    void render_main_text();
+    void render_buttons();
+    void render_account_view();
+    void refresh_pop_row_button_state();
 
-	wxString main_text() const;
+    wxString main_text() const;
 
-	static unsigned int const s_pop_row_button_id = wxID_HIGHEST + 1;
-	static unsigned int const s_push_row_button_id = s_pop_row_button_id + 1;
+    static unsigned int const s_pop_row_button_id = wxID_HIGHEST + 1;
+    static unsigned int const s_push_row_button_id = s_pop_row_button_id + 1;
 
-	DcmDatabaseConnection& m_database_connection;
-	AccountSuperType m_account_super_type;
-	size_t const m_min_num_accounts;
-	int m_current_row; 
-	Button* m_pop_row_button;
-	Button* m_push_row_button;
-	wxGridBagSizer* m_top_sizer;
-	MultiAccountPanel* m_multi_account_panel;
-	SetupWizard const& m_parent;
+    DcmDatabaseConnection& m_database_connection;
+    AccountSuperType m_account_super_type;
+    size_t const m_min_num_accounts;
+    int m_current_row; 
+    Button* m_pop_row_button;
+    Button* m_push_row_button;
+    wxGridBagSizer* m_top_sizer;
+    MultiAccountPanel* m_multi_account_panel;
+    SetupWizard const& m_parent;
 
-	DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 };
 
 

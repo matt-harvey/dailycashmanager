@@ -63,10 +63,10 @@ locations:
 
 :Tcl:                       http://tcl.tk
 :CMake:                     http://www.cmake.org
-:Boost:	                    http://www.boost.org
+:Boost:                        http://www.boost.org
 :Jewel:                     https://github.com/skybaboon/jewel
 :Sqloxx:                    https://github.com/skybaboon/sqloxx
-:Doxygen:	                http://www.stack.nl/~dimitri/doxygen
+:Doxygen:                    http://www.stack.nl/~dimitri/doxygen
 :Sphinx:                    http://sphinx-doc.org
 :sphinx-better-theme:       https://pypi.python.org/pypi/sphinx-better-theme
 :NSIS:                      http://nsis.sourceforge.net
@@ -78,7 +78,7 @@ Open a command line and ``cd`` to the project root.
 
 On Unix-like systems, enter::
 
-	cmake -i
+    cmake -i
 
 (On Windows, you will need to use the ``-G`` option to choose a Makefile
 generator, or else run ``cmake-gui.exe .``. See CMake documentation for further
@@ -110,12 +110,12 @@ On Unix-like systems
 On Unix-like systems, you must currently build and install from source.
 Unpackage the source tarball, ``cd`` into the root of the project source
 directory, then enter::
-	
-	make install
+    
+    make install
 
 You may need to run this as root, i.e.::
 
-	sudo make install
+    sudo make install
 
 This will cause the application and tests to be built (if not built already),
 and will cause the tests to be run, with the results output to the console.
@@ -198,13 +198,13 @@ To generate the documentation
 If you have Doxygen installed and want to generate the API documentation, then
 enter the following at the project root::
 
-	make docs
+    make docs
 
 HTML documentation will then be generated in the project root directory,
 under "html", and can be browsed by opening the following file in your
 web browser::
 
-	[project root]/html/index.html
+    [project root]/html/index.html
 
 Almost all of the Doxygen markup is contained in the
 C++ headers; so an alternative source of information on the DailyCashManager
@@ -217,8 +217,8 @@ To clean build
 --------------
 
 Go to the project root and enter::
-	
-	make clean
+    
+    make clean
 
 This will clean all build targets from the project root, including
 the source tarball (see below) if present, but NOT including the HTML
@@ -235,7 +235,7 @@ To build without installing or testing
 
 At the project root, enter::
 
-	make dailycashmanager
+    make dailycashmanager
 
 
 To build and run the test suite without installing
@@ -243,7 +243,7 @@ To build and run the test suite without installing
 
 At the project root, enter::
 
-	make test
+    make test
 
 After the test driver executable is built, the tests will automatically be run
 and the results displayed.
@@ -259,8 +259,8 @@ To build a package for distribution
 If you are running a Unix-like system, and have the ``tar`` command available,
 you can build a tarball of the project sources by entering the following
 at the project root::
-	
-	make package
+    
+    make package
 
 The tarball will appear in the project root directory.
 
@@ -297,7 +297,7 @@ To build multiple targets in one go
 To build the application, build the tests and run the tests with one command, go
 to the project root, and enter::
 
-	make
+    make
 
 Note this will NOT install the application, will NOT generate the documentation,
 will NOT generate a .desktop file, will NOT generate the user guide, and will

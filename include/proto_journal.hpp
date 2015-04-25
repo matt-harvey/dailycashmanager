@@ -43,14 +43,14 @@ namespace dcm
 class ProtoJournal: public Journal
 {
 public:
-	ProtoJournal() = default;
-	ProtoJournal(ProtoJournal&&) = default;
-	ProtoJournal& operator=(ProtoJournal const&) = default;
-	ProtoJournal& operator=(ProtoJournal&&) = delete;
-	virtual ~ProtoJournal();
+    ProtoJournal() = default;
+    ProtoJournal(ProtoJournal&&) = default;
+    ProtoJournal& operator=(ProtoJournal const&) = default;
+    ProtoJournal& operator=(ProtoJournal&&) = delete;
+    virtual ~ProtoJournal();
 
 protected:
-	ProtoJournal(ProtoJournal const& rhs) = default;
+    ProtoJournal(ProtoJournal const& rhs) = default;
 
 };
 

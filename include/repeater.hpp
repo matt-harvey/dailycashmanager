@@ -62,147 +62,147 @@ class Frequency;
  * only ever via sqloxx::Handle<Repeater>.
  */
 class Repeater:
-	public sqloxx::PersistentObject<Repeater, DcmDatabaseConnection>
+    public sqloxx::PersistentObject<Repeater, DcmDatabaseConnection>
 {
 public:
-	
-	typedef sqloxx::PersistentObject
-	<	Repeater,
-		DcmDatabaseConnection
-	>	PersistentObject;
+    
+    typedef sqloxx::PersistentObject
+    <    Repeater,
+        DcmDatabaseConnection
+    >    PersistentObject;
 
-	/**
-	 * Sets up tables in the database required for the persistence
-	 * of Repeater objects.
-	 */
-	typedef sqloxx::IdentityMap<Repeater> IdentityMap;
+    /**
+     * Sets up tables in the database required for the persistence
+     * of Repeater objects.
+     */
+    typedef sqloxx::IdentityMap<Repeater> IdentityMap;
 
-	static void setup_tables(DcmDatabaseConnection& dbc);
+    static void setup_tables(DcmDatabaseConnection& dbc);
 
-	/**
-	 * Construct a fresh Repeater with no Id, not yet persisted to the
-	 * database.
-	 *
-	 * Cannot be called except by IdentityMap. This is enforced by by
-	 * Signature parameter.
-	 */
-	Repeater
-	(	IdentityMap& p_identity_map,
-		IdentityMap::Signature const& p_signature
-	);
+    /**
+     * Construct a fresh Repeater with no Id, not yet persisted to the
+     * database.
+     *
+     * Cannot be called except by IdentityMap. This is enforced by by
+     * Signature parameter.
+     */
+    Repeater
+    (   IdentityMap& p_identity_map,
+        IdentityMap::Signature const& p_signature
+    );
 
-	/**
-	 * Get a Repeater by Id from the database.
-	 *
-	 * Cannot be called except by IdentityMap. This is enforced by the
-	 * Signature parameter.
-	 */
-	Repeater
-	(	IdentityMap& p_identity_map,
-		sqloxx::Id p_id,
-		IdentityMap::Signature const& p_signature
-	);
+    /**
+     * Get a Repeater by Id from the database.
+     *
+     * Cannot be called except by IdentityMap. This is enforced by the
+     * Signature parameter.
+     */
+    Repeater
+    (   IdentityMap& p_identity_map,
+        sqloxx::Id p_id,
+        IdentityMap::Signature const& p_signature
+    );
 
-	// copy constructor is private
+    // copy constructor is private
 
-	Repeater(Repeater&&) = delete;
-	Repeater& operator=(Repeater const&) = delete;
-	Repeater& operator=(Repeater&&) = delete;
+    Repeater(Repeater&&) = delete;
+    Repeater& operator=(Repeater const&) = delete;
+    Repeater& operator=(Repeater&&) = delete;
 
-	~Repeater();
+    ~Repeater();
 
-	/**
-	 * @throws InvalidFrequencyException in the event that the "next date"
-	 * has already been set for this Repeater and \e p_frequency is
-	 * incompatible with that "next date".
-	 *
-	 * @see \e is_valid_date_for_interval_type
-	 */
-	void set_frequency(Frequency const& p_frequency);
+    /**
+     * @throws InvalidFrequencyException in the event that the "next date"
+     * has already been set for this Repeater and \e p_frequency is
+     * incompatible with that "next date".
+     *
+     * @see \e is_valid_date_for_interval_type
+     */
+    void set_frequency(Frequency const& p_frequency);
 
-	/**
-	 * @throws InvalidRepeaterDateException in the event that the Frequency
-	 * has already been set for this Repeater and \e p_next_date
-	 * incompatible with that frequency.
-	 *
-	 * @throws InvalidRepeaterDateException in the event that \e p_next_date
-	 * is earlier than the database_connection().entity_creation_date().
-	 *
-	 * @see \e is_valid_date_for_interval_type
-	 */
-	void set_next_date(boost::gregorian::date const& p_next_date);
+    /**
+     * @throws InvalidRepeaterDateException in the event that the Frequency
+     * has already been set for this Repeater and \e p_next_date
+     * incompatible with that frequency.
+     *
+     * @throws InvalidRepeaterDateException in the event that \e p_next_date
+     * is earlier than the database_connection().entity_creation_date().
+     *
+     * @see \e is_valid_date_for_interval_type
+     */
+    void set_next_date(boost::gregorian::date const& p_next_date);
 
-	/**
-	 * Associate the Repeater with a particular DraftJournal, by
-	 * passing the id of the DraftJournal to \e p_journal_id.
-	 * This function should \e not normally be called. The usual way
-	 * to associate a Repeater with a DraftJournal is via
-	 * \e DraftJournal::push_repeater(...). The DraftJournal class
-	 * takes care of assigning the correct journal id to Repeaters,
-	 * without client code needing to do this directly.
-	 */
-	void set_journal_id(sqloxx::Id p_journal_id);
-		
-	Frequency frequency();
+    /**
+     * Associate the Repeater with a particular DraftJournal, by
+     * passing the id of the DraftJournal to \e p_journal_id.
+     * This function should \e not normally be called. The usual way
+     * to associate a Repeater with a DraftJournal is via
+     * \e DraftJournal::push_repeater(...). The DraftJournal class
+     * takes care of assigning the correct journal id to Repeaters,
+     * without client code needing to do this directly.
+     */
+    void set_journal_id(sqloxx::Id p_journal_id);
+        
+    Frequency frequency();
 
-	/**
-	 * Calling next_date() (which is equivalent to calling next_date(0)), will
-	 * return the date when the Repeater is next due to fire. Calling
-	 * next_date(1) will return the date when the Repeater is next due to
-	 * fire after \e that. Etc.
-	 *
-	 * @throws UnsafeArithmeticException in the extremely unlikely event of
-	 * arithmetic overflow during execution.
-	 */
-	boost::gregorian::date next_date
-	(	std::vector<boost::gregorian::date>::size_type n = 0
-	);
+    /**
+     * Calling next_date() (which is equivalent to calling next_date(0)), will
+     * return the date when the Repeater is next due to fire. Calling
+     * next_date(1) will return the date when the Repeater is next due to
+     * fire after \e that. Etc.
+     *
+     * @throws UnsafeArithmeticException in the extremely unlikely event of
+     * arithmetic overflow during execution.
+     */
+    boost::gregorian::date next_date
+    (   std::vector<boost::gregorian::date>::size_type n = 0
+    );
 
-	/**
-	 * Post an OrdinaryJournal - based on this Repeater's DraftJournal -
-	 * with the date of the OrdinaryJournal being next_date(0). Then
-	 * update \e next_date internally to (what was) next_date(1).
-	 *
-	 * If the DraftJournal is database_connection().budget_instrument(),
-	 * and is devoid of Entries, then an OrdinaryJournal is not
-	 * actually posted; however the next_date is still updated. In this
-	 * case, an OrdinaryJournal will still be returned, but it will have id,
-	 * no Entries and no other attributes.
-	 * This behaviour is to avoid mystifying the user with
-	 * empty journal posting notifications in case they have not
-	 * yet set up any BudgetItems.
-	 *
-	 * Exception safety: <em>strong guarantee</em>.
-	 */
-	sqloxx::Handle<OrdinaryJournal> fire_next();
-	
-	sqloxx::Handle<DraftJournal> draft_journal();
+    /**
+     * Post an OrdinaryJournal - based on this Repeater's DraftJournal -
+     * with the date of the OrdinaryJournal being next_date(0). Then
+     * update \e next_date internally to (what was) next_date(1).
+     *
+     * If the DraftJournal is database_connection().budget_instrument(),
+     * and is devoid of Entries, then an OrdinaryJournal is not
+     * actually posted; however the next_date is still updated. In this
+     * case, an OrdinaryJournal will still be returned, but it will have id,
+     * no Entries and no other attributes.
+     * This behaviour is to avoid mystifying the user with
+     * empty journal posting notifications in case they have not
+     * yet set up any BudgetItems.
+     *
+     * Exception safety: <em>strong guarantee</em>.
+     */
+    sqloxx::Handle<OrdinaryJournal> fire_next();
+    
+    sqloxx::Handle<DraftJournal> draft_journal();
 
-	void swap(Repeater& rhs);
+    void swap(Repeater& rhs);
 
-	static std::string exclusive_table_name();
-	static std::string primary_key_name();
+    static std::string exclusive_table_name();
+    static std::string primary_key_name();
 
-	/**
-	 * Copy attributes of rhs to *this, but do \e not copy:\n
-	 * 	\e id,\n
-	 * 	\e database_connection, or\n
-	 * 	\e journal_id.
-	 */
-	void mimic(Repeater& rhs);
+    /**
+     * Copy attributes of rhs to *this, but do \e not copy:\n
+     *     \e id,\n
+     *     \e database_connection, or\n
+     *     \e journal_id.
+     */
+    void mimic(Repeater& rhs);
 
 private:
 
-	Repeater(Repeater const& rhs);
-	void do_load() override;
-	void do_save_existing() override;
-	void do_save_new() override;
-	void do_ghostify() override;
-	void process_saving_statement(sqloxx::SQLStatement& statement);
+    Repeater(Repeater const& rhs);
+    void do_load() override;
+    void do_save_existing() override;
+    void do_save_new() override;
+    void do_ghostify() override;
+    void process_saving_statement(sqloxx::SQLStatement& statement);
 
-	struct RepeaterData;
+    struct RepeaterData;
 
-	std::unique_ptr<RepeaterData> m_data;
+    std::unique_ptr<RepeaterData> m_data;
 };
 
 // Free functions
@@ -220,8 +220,8 @@ private:
  * date.
  */
 std::vector<RepeaterFiringResult> update_repeaters
-(	DcmDatabaseConnection& p_database_connection,
-	boost::gregorian::date p_target_date = today()
+(   DcmDatabaseConnection& p_database_connection,
+    boost::gregorian::date p_target_date = today()
 );
 
 }  // namespace dcm

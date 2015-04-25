@@ -39,10 +39,10 @@ namespace gui
  * Precondition: \e p_window should not be null.
  */
 void toggle_enabled
-(	wxWindow* p_window,
-	bool p_enable = true,
-	boost::optional<wxString> const& p_tooltip_if_disabled =
-		boost::optional<wxString>()
+(   wxWindow* p_window,
+    bool p_enable = true,
+    boost::optional<wxString> const& p_tooltip_if_disabled =
+        boost::optional<wxString>()
 );
 
 }  // namespace gui

@@ -34,17 +34,17 @@ void setup_test_accounts(DcmDatabaseConnection& dbc);
 
 struct TestFixture
 {
-	// Setup
-	TestFixture();
+    // Setup
+    TestFixture();
 
-	// Teardown
-	~TestFixture();
+    // Teardown
+    ~TestFixture();
 
-	// Database filepath
-	boost::filesystem::path db_filepath;
+    // Database filepath
+    boost::filesystem::path db_filepath;
 
-	// The connection to the database
-	DcmDatabaseConnection* pdbc;
+    // The connection to the database
+    DcmDatabaseConnection* pdbc;
 };
 
 

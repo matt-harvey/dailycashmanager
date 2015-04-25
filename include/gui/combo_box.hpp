@@ -39,40 +39,40 @@ namespace gui
 class ComboBox: public wxComboBox
 {
 public:
-	ComboBox
-	(	wxWindow* p_parent,
-		wxWindowID p_id,
-		wxString const& p_value = "",
-		wxPoint const& p_position = wxDefaultPosition,
-		wxSize const& p_size = wxDefaultSize,
-		int p_n = 0,
-		wxString const p_choices[] = nullptr,
-		long p_style = 0,
-		wxValidator const& p_validator = wxDefaultValidator,
-		wxString const& p_name = "comboBox"
-	);
-	ComboBox
-	(	wxWindow* p_parent,
-		wxWindowID p_id,
-		wxString const& p_value,
-		wxPoint const& p_pos,
-		wxSize const& p_size,
-		wxArrayString const& p_choices,
-		long p_style = 0,
-		wxValidator const& p_validator = wxDefaultValidator,
-		wxString const& p_name = "comboBox"
-	);
-	ComboBox(ComboBox const& rhs) = delete;
-	ComboBox(ComboBox&& rhs) = delete;
-	ComboBox& operator=(ComboBox const& rhs) = delete;
-	ComboBox& operator=(ComboBox&& rhs) = delete;
-	virtual ~ComboBox();
+    ComboBox
+    (   wxWindow* p_parent,
+        wxWindowID p_id,
+        wxString const& p_value = "",
+        wxPoint const& p_position = wxDefaultPosition,
+        wxSize const& p_size = wxDefaultSize,
+        int p_n = 0,
+        wxString const p_choices[] = nullptr,
+        long p_style = 0,
+        wxValidator const& p_validator = wxDefaultValidator,
+        wxString const& p_name = "comboBox"
+    );
+    ComboBox
+    (   wxWindow* p_parent,
+        wxWindowID p_id,
+        wxString const& p_value,
+        wxPoint const& p_pos,
+        wxSize const& p_size,
+        wxArrayString const& p_choices,
+        long p_style = 0,
+        wxValidator const& p_validator = wxDefaultValidator,
+        wxString const& p_name = "comboBox"
+    );
+    ComboBox(ComboBox const& rhs) = delete;
+    ComboBox(ComboBox&& rhs) = delete;
+    ComboBox& operator=(ComboBox const& rhs) = delete;
+    ComboBox& operator=(ComboBox&& rhs) = delete;
+    virtual ~ComboBox();
 
 private:
 
-	void on_char(wxKeyEvent& event);
+    void on_char(wxKeyEvent& event);
 
-	DECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE();
 
 };  // class ComboBox
 

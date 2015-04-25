@@ -26,9 +26,9 @@ namespace dcm
  */
 enum class Visibility: unsigned char
 {
-	hidden = 0,
-	visible,
-	num_visibilities  // do not add enumerators below here
+    hidden = 0,
+    visible,
+    num_visibilities  // do not add enumerators below here
 };
 
 }  // namespace dcm

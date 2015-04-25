@@ -50,124 +50,124 @@ class Frequency;
  * want any (non-zero) balance sheet budget amounts in the database.
  */
 class BudgetItem:
-	public sqloxx::PersistentObject
-	<	BudgetItem,
-		DcmDatabaseConnection
-	>
+    public sqloxx::PersistentObject
+    <    BudgetItem,
+        DcmDatabaseConnection
+    >
 {
 public:
-	
-	typedef
-		sqloxx::PersistentObject<BudgetItem, DcmDatabaseConnection>
-		PersistentObject;
+    
+    typedef
+        sqloxx::PersistentObject<BudgetItem, DcmDatabaseConnection>
+        PersistentObject;
 
-	typedef
-		sqloxx::IdentityMap<BudgetItem> IdentityMap;
+    typedef
+        sqloxx::IdentityMap<BudgetItem> IdentityMap;
 
-	/**
-	 * Set up tables in the database required for the persistence of
-	 * BudgetItem objects.
-	 */
-	static void setup_tables(DcmDatabaseConnection& dbc);
+    /**
+     * Set up tables in the database required for the persistence of
+     * BudgetItem objects.
+     */
+    static void setup_tables(DcmDatabaseConnection& dbc);
 
-	/**
-	 * Construct a "raw" BudgetItem, that will not yet be saved in the
-	 * database.
-	 *
-	 * The Signature parameter means that this can only be called from
-	 * IdentityMap. Ordinary client code should use
-	 * sqloxx::Handle<BudgetItem>, not BudgetItem directly.
-	 */
-	BudgetItem
-	(	IdentityMap& p_identity_map,
-		IdentityMap::Signature const& p_signature
-	);
+    /**
+     * Construct a "raw" BudgetItem, that will not yet be saved in the
+     * database.
+     *
+     * The Signature parameter means that this can only be called from
+     * IdentityMap. Ordinary client code should use
+     * sqloxx::Handle<BudgetItem>, not BudgetItem directly.
+     */
+    BudgetItem
+    (   IdentityMap& p_identity_map,
+        IdentityMap::Signature const& p_signature
+    );
 
-	/**
-	 * Get a BudgetItem by Id from the database.
-	 *
-	 * The Signature parameter means that this can only be called from
-	 * IdentityMap. Ordinary client code should use
-	 * sqloxx::Handle<BudgetItem>, not BudgetItem directly.
-	 */
-	BudgetItem
-	(	IdentityMap& p_identity_map,
-		sqloxx::Id p_id,
-		IdentityMap::Signature const& p_signature
-	);
+    /**
+     * Get a BudgetItem by Id from the database.
+     *
+     * The Signature parameter means that this can only be called from
+     * IdentityMap. Ordinary client code should use
+     * sqloxx::Handle<BudgetItem>, not BudgetItem directly.
+     */
+    BudgetItem
+    (   IdentityMap& p_identity_map,
+        sqloxx::Id p_id,
+        IdentityMap::Signature const& p_signature
+    );
 
-	// copy constructor is private
-	
-	BudgetItem(BudgetItem&&) = delete;
-	BudgetItem& operator=(BudgetItem const&) = delete;
-	BudgetItem& operator=(BudgetItem&&) = delete;
-	~BudgetItem();
+    // copy constructor is private
+    
+    BudgetItem(BudgetItem&&) = delete;
+    BudgetItem& operator=(BudgetItem const&) = delete;
+    BudgetItem& operator=(BudgetItem&&) = delete;
+    ~BudgetItem();
 
-	/**
-	 * Set a description to be associated with the BudgetItem.
-	 */
-	void set_description(wxString const& p_description);
+    /**
+     * Set a description to be associated with the BudgetItem.
+     */
+    void set_description(wxString const& p_description);
 
-	/**
-	 * Set the Account with which this BudgetItem will be associated.
-	 * \e p_account need not have an ID when this is called; however, it
-	 * should have an ID by the time the BudgetItem is first saved.
-	 */
-	void set_account(sqloxx::Handle<Account> const& p_account);
+    /**
+     * Set the Account with which this BudgetItem will be associated.
+     * \e p_account need not have an ID when this is called; however, it
+     * should have an ID by the time the BudgetItem is first saved.
+     */
+    void set_account(sqloxx::Handle<Account> const& p_account);
 
-	/**
-	 * Set the Frequency with which the BudgetItem is expected to
-	 * occur.
-	 */
-	void set_frequency(Frequency const& p_frequency);
+    /**
+     * Set the Frequency with which the BudgetItem is expected to
+     * occur.
+     */
+    void set_frequency(Frequency const& p_frequency);
 
-	/**
-	 * Set the amount of the BudgetItem.
-	 */
-	void set_amount(jewel::Decimal const& p_amount);
+    /**
+     * Set the amount of the BudgetItem.
+     */
+    void set_amount(jewel::Decimal const& p_amount);
 
-	// Getters...
-	wxString description();
-	sqloxx::Handle<Account> account();
-	Frequency frequency();
-	jewel::Decimal amount();
+    // Getters...
+    wxString description();
+    sqloxx::Handle<Account> account();
+    Frequency frequency();
+    jewel::Decimal amount();
 
-	// Keep as std::string, for consistency with sqloxx
-	static std::string exclusive_table_name();
-	static std::string primary_key_name();
+    // Keep as std::string, for consistency with sqloxx
+    static std::string exclusive_table_name();
+    static std::string primary_key_name();
 
-	/**
-	 * Copy attributes of rhs to *this, but do \e not copy:\n
-	 * \e id, or\n
-	 * \e database_connection.\n
-	 */
-	void mimic(BudgetItem& rhs);
+    /**
+     * Copy attributes of rhs to *this, but do \e not copy:\n
+     * \e id, or\n
+     * \e database_connection.\n
+     */
+    void mimic(BudgetItem& rhs);
 
 private:
-	
-	void swap(BudgetItem& rhs);
+    
+    void swap(BudgetItem& rhs);
 
-	/**
-	 * Copy constructor - implemented, but deliberately private.
-	 */
-	BudgetItem(BudgetItem const& rhs);
+    /**
+     * Copy constructor - implemented, but deliberately private.
+     */
+    BudgetItem(BudgetItem const& rhs);
 
-	void do_load() override;
-	void do_save_existing() override;
-	void do_save_new() override;
-	void do_ghostify() override;
-	void do_remove() override;
-	void process_saving_statement(sqloxx::SQLStatement& statement);
+    void do_load() override;
+    void do_save_existing() override;
+    void do_save_new() override;
+    void do_ghostify() override;
+    void do_remove() override;
+    void process_saving_statement(sqloxx::SQLStatement& statement);
 
-	/**
-	 * @throws InvalidBudgetItemException if and only if the Account
-	 * of the BudgetItem is not of AccountSuperType::pl.
-	 */
-	void ensure_pl_only_budget();
+    /**
+     * @throws InvalidBudgetItemException if and only if the Account
+     * of the BudgetItem is not of AccountSuperType::pl.
+     */
+    void ensure_pl_only_budget();
 
-	struct BudgetItemData;
+    struct BudgetItemData;
 
-	std::unique_ptr<BudgetItemData> m_data;
+    std::unique_ptr<BudgetItemData> m_data;
 };
 
 /**
@@ -180,8 +180,8 @@ private:
  */
 jewel::Decimal
 normalized_total
-(	std::vector<sqloxx::Handle<BudgetItem> >::const_iterator b,
-	std::vector<sqloxx::Handle<BudgetItem> >::const_iterator const& e
+(   std::vector<sqloxx::Handle<BudgetItem> >::const_iterator b,
+    std::vector<sqloxx::Handle<BudgetItem> >::const_iterator const& e
 );
 
 }  // namespace dcm

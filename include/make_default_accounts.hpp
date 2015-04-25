@@ -63,8 +63,8 @@ make_default_accounts(DcmDatabaseConnection& p_database_connection);
  * e\ vec - which need not be empty when passed to the function.
  */
 void make_default_accounts
-(	DcmDatabaseConnection& p_database_connection,
-	std::vector<sqloxx::Handle<Account> >& vec
+(   DcmDatabaseConnection& p_database_connection,
+    std::vector<sqloxx::Handle<Account> >& vec
 );
 
 /**
@@ -74,9 +74,9 @@ void make_default_accounts
  * need not be empty when passed to the function.
  */
 void make_default_accounts
-(	DcmDatabaseConnection& p_database_connection,
-	std::vector<sqloxx::Handle<Account> >& vec,
-	AccountType p_account_type
+(   DcmDatabaseConnection& p_database_connection,
+    std::vector<sqloxx::Handle<Account> >& vec,
+    AccountType p_account_type
 );
 
 }  // namespace dcm

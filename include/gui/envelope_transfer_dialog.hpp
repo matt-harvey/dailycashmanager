@@ -47,43 +47,43 @@ class EnvelopeTransferDialog: public wxDialog
 {
 public:
 
-	/**
-	 * p_journal must have all its attributes already initialized and must have
-	 * exactly two Entries, and all the Entries' attributes should have
-	 * been initialized already. All the Entries' Accounts should be of
-	 * AccountSuperType::pl.
-	 */
-	EnvelopeTransferDialog
-	(	wxWindow* p_parent,
-		ProtoJournal& p_journal,
-		DcmDatabaseConnection& p_database_connection
-	);
-	EnvelopeTransferDialog() = delete;
-	EnvelopeTransferDialog(EnvelopeTransferDialog const& rhs) = delete;
-	EnvelopeTransferDialog(EnvelopeTransferDialog&& rhs) = delete;
-	EnvelopeTransferDialog& operator=(EnvelopeTransferDialog const& rhs) =
-		delete;
-	EnvelopeTransferDialog& operator=(EnvelopeTransferDialog&& rhs) = delete;
-	virtual ~EnvelopeTransferDialog();
+    /**
+     * p_journal must have all its attributes already initialized and must have
+     * exactly two Entries, and all the Entries' attributes should have
+     * been initialized already. All the Entries' Accounts should be of
+     * AccountSuperType::pl.
+     */
+    EnvelopeTransferDialog
+    (   wxWindow* p_parent,
+        ProtoJournal& p_journal,
+        DcmDatabaseConnection& p_database_connection
+    );
+    EnvelopeTransferDialog() = delete;
+    EnvelopeTransferDialog(EnvelopeTransferDialog const& rhs) = delete;
+    EnvelopeTransferDialog(EnvelopeTransferDialog&& rhs) = delete;
+    EnvelopeTransferDialog& operator=(EnvelopeTransferDialog const& rhs) =
+        delete;
+    EnvelopeTransferDialog& operator=(EnvelopeTransferDialog&& rhs) = delete;
+    virtual ~EnvelopeTransferDialog();
 
 private:
 
-	void on_ok_button_click(wxCommandEvent& event);
-	void on_cancel_button_click(wxCommandEvent& event);
+    void on_ok_button_click(wxCommandEvent& event);
+    void on_cancel_button_click(wxCommandEvent& event);
 
-	void update_proto_journal_from_dialog() const;
-	void add_blank_space(int p_row, int p_column);
+    void update_proto_journal_from_dialog() const;
+    void add_blank_space(int p_row, int p_column);
 
-	wxGridBagSizer* m_top_sizer;
-	AccountCtrl* m_source_account_ctrl;
-	AccountCtrl* m_destination_account_ctrl;
-	DecimalTextCtrl* m_amount_ctrl;
-	Button* m_cancel_button;
-	Button* m_ok_button;
-	ProtoJournal& m_journal;
-	DcmDatabaseConnection& m_database_connection;
+    wxGridBagSizer* m_top_sizer;
+    AccountCtrl* m_source_account_ctrl;
+    AccountCtrl* m_destination_account_ctrl;
+    DecimalTextCtrl* m_amount_ctrl;
+    Button* m_cancel_button;
+    Button* m_ok_button;
+    ProtoJournal& m_journal;
+    DcmDatabaseConnection& m_database_connection;
 
-	DECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE();
 
 };  // class EnvelopeTransferDialog
 

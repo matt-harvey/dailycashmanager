@@ -53,7 +53,7 @@ namespace sqloxx
 template <>
 struct PersistenceTraits<dcm::OrdinaryJournal>
 {
-	typedef dcm::PersistentJournal Base;
+    typedef dcm::PersistentJournal Base;
 };
 
 }  // namespace sqloxx
@@ -74,81 +74,81 @@ class OrdinaryJournal: public PersistentJournal
 {
 public:
 
-	static std::string exclusive_table_name();
+    static std::string exclusive_table_name();
 
-	/**
-	 * Create the tables required for the persistence of
-	 * OrdinaryJournal instances in a SQLite database.
-	 */
-	static void setup_tables(DcmDatabaseConnection& dbc);
+    /**
+     * Create the tables required for the persistence of
+     * OrdinaryJournal instances in a SQLite database.
+     */
+    static void setup_tables(DcmDatabaseConnection& dbc);
 
-	/**
-	 * Construct a "raw" OrdinaryJournal, that will not yet
-	 * correspond to any particular object in the database
-	 */
-	OrdinaryJournal
-	(	IdentityMap& p_identity_map,
-		IdentityMap::Signature const& p_signature
-	);
+    /**
+     * Construct a "raw" OrdinaryJournal, that will not yet
+     * correspond to any particular object in the database
+     */
+    OrdinaryJournal
+    (   IdentityMap& p_identity_map,
+        IdentityMap::Signature const& p_signature
+    );
 
-	/**
-	 * Get an OrdinaryJournal by id from the database.
-	 */
-	OrdinaryJournal
-	(	IdentityMap& p_identity_map,	
-		sqloxx::Id p_id,
-		IdentityMap::Signature const& p_signature
-	);
+    /**
+     * Get an OrdinaryJournal by id from the database.
+     */
+    OrdinaryJournal
+    (   IdentityMap& p_identity_map,    
+        sqloxx::Id p_id,
+        IdentityMap::Signature const& p_signature
+    );
 
-	// copy constructor is private
-	
-	OrdinaryJournal(OrdinaryJournal&&) = delete;
-	OrdinaryJournal& operator=(OrdinaryJournal const&) = delete;
-	OrdinaryJournal& operator=(OrdinaryJournal&&) = delete;
+    // copy constructor is private
+    
+    OrdinaryJournal(OrdinaryJournal&&) = delete;
+    OrdinaryJournal& operator=(OrdinaryJournal const&) = delete;
+    OrdinaryJournal& operator=(OrdinaryJournal&&) = delete;
 
-	~OrdinaryJournal() = default;
+    ~OrdinaryJournal() = default;
 
-	/**
-	 * Can throw InvalidJournalDateException, if we attempt to
-	 * set to a prohibited date.
-	 */
-	void set_date(boost::gregorian::date const& p_date);
+    /**
+     * Can throw InvalidJournalDateException, if we attempt to
+     * set to a prohibited date.
+     */
+    void set_date(boost::gregorian::date const& p_date);
 
-	/**
-	 * Allows us to set to any date. Should not normally be used by
-	 * client code.
-	 */
-	void set_date_unrestricted(boost::gregorian::date const& p_date);
+    /**
+     * Allows us to set to any date. Should not normally be used by
+     * client code.
+     */
+    void set_date_unrestricted(boost::gregorian::date const& p_date);
 
-	boost::gregorian::date date();
+    boost::gregorian::date date();
 
-	/**
-	 * Take on the attributes \e rhs, where these exist and are
-	 * applicable to OrdinaryJournal; but do \e not take on the \e id
-	 * attribute of \e rhs, or the date.
-	 */
-	void mimic(Journal& rhs);
+    /**
+     * Take on the attributes \e rhs, where these exist and are
+     * applicable to OrdinaryJournal; but do \e not take on the \e id
+     * attribute of \e rhs, or the date.
+     */
+    void mimic(Journal& rhs);
 
 private:
 
-	void swap(OrdinaryJournal& rhs);
+    void swap(OrdinaryJournal& rhs);
 
-	/**
-	 * Copy constructor - implemented, but deliberately private.
-	 */
-	OrdinaryJournal(OrdinaryJournal const& rhs);
+    /**
+     * Copy constructor - implemented, but deliberately private.
+     */
+    OrdinaryJournal(OrdinaryJournal const& rhs);
 
-	void do_load() override;
-	void do_save_existing() override;
-	void do_save_new() override;
-	void do_ghostify() override;
-	void do_remove() override;
+    void do_load() override;
+    void do_save_existing() override;
+    void do_save_new() override;
+    void do_ghostify() override;
+    void do_remove() override;
 
-	// Sole non-inherited data member. Note this is of a type where copying
-	// does not throw. If we ever add more data members here and/or change
-	// this one's type, it MAY be necessary to wrap this with pimpl to
-	// to preserve exception-safe loading via copy-and-swap.
-	boost::optional<DateRep> m_date;
+    // Sole non-inherited data member. Note this is of a type where copying
+    // does not throw. If we ever add more data members here and/or change
+    // this one's type, it MAY be necessary to wrap this with pimpl to
+    // to preserve exception-safe loading via copy-and-swap.
+    boost::optional<DateRep> m_date;
 };
 
 
@@ -173,12 +173,12 @@ private:
  * will be marked as \e reconciled.
  */
 sqloxx::Handle<OrdinaryJournal> create_opening_balance_journal
-(	sqloxx::Handle<Account> const& p_account,
-	jewel::Decimal const& p_desired_opening_balance
+(   sqloxx::Handle<Account> const& p_account,
+    jewel::Decimal const& p_desired_opening_balance
 );
 
-			
-				
+            
+                
 
 }  // namespace dcm
 

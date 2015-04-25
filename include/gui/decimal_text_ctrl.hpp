@@ -35,38 +35,38 @@ namespace gui
 class DecimalTextCtrl: public TextCtrl
 {
 public:
-	DecimalTextCtrl
-	(	wxWindow* p_parent,
-		unsigned int p_id,
-		wxSize const& p_size,
-		jewel::Decimal::places_type p_precision,
-		bool p_print_dash_for_zero = true
-	);
+    DecimalTextCtrl
+    (   wxWindow* p_parent,
+        unsigned int p_id,
+        wxSize const& p_size,
+        jewel::Decimal::places_type p_precision,
+        bool p_print_dash_for_zero = true
+    );
 
-	DecimalTextCtrl(DecimalTextCtrl const&) = delete;
-	DecimalTextCtrl(DecimalTextCtrl&&) = delete;
-	DecimalTextCtrl& operator=(DecimalTextCtrl const&) = delete;
-	DecimalTextCtrl& operator=(DecimalTextCtrl&&) = delete;
-	virtual ~DecimalTextCtrl();
+    DecimalTextCtrl(DecimalTextCtrl const&) = delete;
+    DecimalTextCtrl(DecimalTextCtrl&&) = delete;
+    DecimalTextCtrl& operator=(DecimalTextCtrl const&) = delete;
+    DecimalTextCtrl& operator=(DecimalTextCtrl&&) = delete;
+    virtual ~DecimalTextCtrl();
 
-	/**
-	 * NOTE As a side-effect of calling this function, the
-	 * \e parent window of the DecimalTextCtrl will have
-	 * Validate() called on it.
-	 * This is an unfortunate workaround for odd behaviour whereby
-	 * wxWidgets does not seem to support these functions being
-	 * called directly on the DecimalTextCtrl itself.
-	 */
-	void set_amount(jewel::Decimal const& p_amount);
+    /**
+     * NOTE As a side-effect of calling this function, the
+     * \e parent window of the DecimalTextCtrl will have
+     * Validate() called on it.
+     * This is an unfortunate workaround for odd behaviour whereby
+     * wxWidgets does not seem to support these functions being
+     * called directly on the DecimalTextCtrl itself.
+     */
+    void set_amount(jewel::Decimal const& p_amount);
 
-	jewel::Decimal amount();
+    jewel::Decimal amount();
 
 private:
-	void on_kill_focus(wxFocusEvent& event);
-	void on_set_focus(wxFocusEvent& event);
-	bool m_print_dash_for_zero;
-	jewel::Decimal::places_type m_precision;
-	DECLARE_EVENT_TABLE()
+    void on_kill_focus(wxFocusEvent& event);
+    void on_set_focus(wxFocusEvent& event);
+    bool m_print_dash_for_zero;
+    jewel::Decimal::places_type m_precision;
+    DECLARE_EVENT_TABLE()
 
 };  // class DecimalTextCtrl
 

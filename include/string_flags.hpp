@@ -30,16 +30,16 @@ namespace dcm
  */
 namespace string_flags
 {
-	enum StringFlags
-	{
-		capitalize			  = (1 << 0),  // capitalize
-		include_article		  = (1 << 1),  // use indefinite article
-		pluralize			  = (1 << 2),  // use plural form
-		dash_for_zero		  = (1 << 3),  // allow '-' to mean zero
-		allow_negative_parens = (1 << 4),  // allow parentheses for negative
-		hard_align_right	  = (1 << 5),  // always align hard to the right,
-		                                   // without any padding
-	};
+    enum StringFlags
+    {
+        capitalize              = (1 << 0),  // capitalize
+        include_article          = (1 << 1),  // use indefinite article
+        pluralize              = (1 << 2),  // use plural form
+        dash_for_zero          = (1 << 3),  // allow '-' to mean zero
+        allow_negative_parens = (1 << 4),  // allow parentheses for negative
+        hard_align_right      = (1 << 5),  // always align hard to the right,
+                                           // without any padding
+    };
 
 }  // namespace string_flags
 

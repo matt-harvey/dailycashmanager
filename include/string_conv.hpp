@@ -42,14 +42,14 @@ inline
 wxString
 std8_to_wx(std::string const& s)
 {
-	return wxString::FromUTF8(s.c_str());
+    return wxString::FromUTF8(s.c_str());
 }
 
 inline
 std::string
 wx_to_std8(wxString const& wxs)
 {
-	return std::string(wxs.utf8_str());
+    return std::string(wxs.utf8_str());
 }
 
 }  // namespace dcm

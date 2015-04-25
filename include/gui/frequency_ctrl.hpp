@@ -45,76 +45,76 @@ class FrequencyCtrl: public ComboBox
 {
 public:
 
-	/**
-	 * @param p_parent parent window
-	 *
-	 * @param p_id id
-	 *
-	 * @param p_size size
-	 *
-	 * @param p_database_connection connection to database
-	 *
-	 * @param p_supports_ordinary_journal pass \e true to support
-	 * "Frequencies" that are  to an OrdinaryJournal (as opposed to
-	 * DraftJournal). The only such Frequency is "once-off" (which is
-	 * not actually represented by a Frequency at all).
-	 *
-	 * @param p_supports_draft_journal pass \e true to support Frequencies
-	 * that are required for repeating DraftJournals (i.e. DraftJournals
-	 * with at least one Repeater).
-	 *
-	 * If both p_supports_ordinary_journal and p_supports_draft_journal are
-	 * passed e\ false, then the FrequencyCtrl will display text appropriate
-	 * to selected a Frequency for the purpose of a BudgetItem (as opposed
-	 * to a Journal).
-	 */
-	FrequencyCtrl
-	(	wxWindow* p_parent,
-		wxWindowID p_id,
-		wxSize const& p_size,
-		DcmDatabaseConnection& p_database_connection,
-		bool p_supports_ordinary_journal = false,
-		bool p_supports_draft_journal = false
-	);
+    /**
+     * @param p_parent parent window
+     *
+     * @param p_id id
+     *
+     * @param p_size size
+     *
+     * @param p_database_connection connection to database
+     *
+     * @param p_supports_ordinary_journal pass \e true to support
+     * "Frequencies" that are  to an OrdinaryJournal (as opposed to
+     * DraftJournal). The only such Frequency is "once-off" (which is
+     * not actually represented by a Frequency at all).
+     *
+     * @param p_supports_draft_journal pass \e true to support Frequencies
+     * that are required for repeating DraftJournals (i.e. DraftJournals
+     * with at least one Repeater).
+     *
+     * If both p_supports_ordinary_journal and p_supports_draft_journal are
+     * passed e\ false, then the FrequencyCtrl will display text appropriate
+     * to selected a Frequency for the purpose of a BudgetItem (as opposed
+     * to a Journal).
+     */
+    FrequencyCtrl
+    (   wxWindow* p_parent,
+        wxWindowID p_id,
+        wxSize const& p_size,
+        DcmDatabaseConnection& p_database_connection,
+        bool p_supports_ordinary_journal = false,
+        bool p_supports_draft_journal = false
+    );
 
-	FrequencyCtrl(FrequencyCtrl const&) = delete;
-	FrequencyCtrl(FrequencyCtrl&&) = delete;
-	FrequencyCtrl& operator=(FrequencyCtrl const&) = delete;
-	FrequencyCtrl& operator=(FrequencyCtrl&&) = delete;
-	virtual ~FrequencyCtrl();
+    FrequencyCtrl(FrequencyCtrl const&) = delete;
+    FrequencyCtrl(FrequencyCtrl&&) = delete;
+    FrequencyCtrl& operator=(FrequencyCtrl const&) = delete;
+    FrequencyCtrl& operator=(FrequencyCtrl&&) = delete;
+    virtual ~FrequencyCtrl();
 
-	/**
-	 * If no Frequency is selected (i.e. "Once off" or equivalent is selected)
-	 * then this returns an uninitialized boost::optional<Frequency>.
-	 * If a Frequency is selected, then this returns a
-	 * boost::optional<Frequency> that has been initialized with that
-	 * Frequency.
-	 */
-	boost::optional<Frequency> frequency() const;
+    /**
+     * If no Frequency is selected (i.e. "Once off" or equivalent is selected)
+     * then this returns an uninitialized boost::optional<Frequency>.
+     * If a Frequency is selected, then this returns a
+     * boost::optional<Frequency> that has been initialized with that
+     * Frequency.
+     */
+    boost::optional<Frequency> frequency() const;
 
-	/**
-	 * If p_maybe_frequency is passed an uninitialized optional, then
-	 * the FrequencyCtrl will display "Once off" or equivalent, or else
-	 * will throw InvalidFrequencyException if OrdinaryJournals are not
-	 * supported.
-	 *
-	 * If p_maybe_frequency is passed an initialized optional, then
-	 * the FrequencyCtrl will display text describing the Frequency with
-	 * which it has been initialized, or else will throw
-	 * InvalidFrequencyException if DraftJournals are not supported.
-	 */
-	void set_frequency(boost::optional<Frequency> const& p_maybe_frequency);
-	
+    /**
+     * If p_maybe_frequency is passed an uninitialized optional, then
+     * the FrequencyCtrl will display "Once off" or equivalent, or else
+     * will throw InvalidFrequencyException if OrdinaryJournals are not
+     * supported.
+     *
+     * If p_maybe_frequency is passed an initialized optional, then
+     * the FrequencyCtrl will display text describing the Frequency with
+     * which it has been initialized, or else will throw
+     * InvalidFrequencyException if DraftJournals are not supported.
+     */
+    void set_frequency(boost::optional<Frequency> const& p_maybe_frequency);
+    
 private:
-	bool supports_ordinary_journal() const;
-	bool supports_draft_journal() const;
-	bool supports_budget_item() const;
+    bool supports_ordinary_journal() const;
+    bool supports_draft_journal() const;
+    bool supports_budget_item() const;
 
-	std::vector<Frequency> m_frequencies;
+    std::vector<Frequency> m_frequencies;
 
-	DcmDatabaseConnection& m_database_connection;
-	bool const m_supports_ordinary_journal;
-	bool const m_supports_draft_journal;
+    DcmDatabaseConnection& m_database_connection;
+    bool const m_supports_ordinary_journal;
+    bool const m_supports_draft_journal;
 
 };  // class FrequencyCtrl
 

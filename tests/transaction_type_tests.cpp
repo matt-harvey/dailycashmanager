@@ -36,190 +36,190 @@ typedef Vec::size_type Size;
 
 BOOST_AUTO_TEST_CASE(TestSourceAccountTypesExpenditureTransaction)
 {
-	Vec const& account_types_ref =
-		source_account_types(TransactionType::expenditure);
-	Vec const account_types_cpy =
-		source_account_types(TransactionType::expenditure);
-	BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
-	BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
-	for (Size i = 0; i != account_types_ref.size(); ++i)
-	{
-		BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
-		BOOST_CHECK
-		(	(account_types_ref[i] == AccountType::asset) ||
-			(account_types_ref[i] == AccountType::liability)
-		);
-	}
+    Vec const& account_types_ref =
+        source_account_types(TransactionType::expenditure);
+    Vec const account_types_cpy =
+        source_account_types(TransactionType::expenditure);
+    BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
+    BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
+    for (Size i = 0; i != account_types_ref.size(); ++i)
+    {
+        BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
+        BOOST_CHECK
+        (   (account_types_ref[i] == AccountType::asset) ||
+            (account_types_ref[i] == AccountType::liability)
+        );
+    }
 }
 
 BOOST_AUTO_TEST_CASE(TestDestinationAccountTypesExpenditureTransaction)
 {
-	Vec const& account_types_ref =
-		destination_account_types(TransactionType::expenditure);
-	Vec const account_types_cpy =
-		destination_account_types(TransactionType::expenditure);
-	BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
-	BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(1));
-	for (Size i = 0; i != account_types_ref.size(); ++i)
-	{
-		BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
-		BOOST_CHECK(account_types_ref[i] == AccountType::expense);
-	}
+    Vec const& account_types_ref =
+        destination_account_types(TransactionType::expenditure);
+    Vec const account_types_cpy =
+        destination_account_types(TransactionType::expenditure);
+    BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
+    BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(1));
+    for (Size i = 0; i != account_types_ref.size(); ++i)
+    {
+        BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
+        BOOST_CHECK(account_types_ref[i] == AccountType::expense);
+    }
 }
 
 BOOST_AUTO_TEST_CASE(TestSourceAccountTypesRevenueTransaction)
 {
-	Vec const& account_types_ref =
-		source_account_types(TransactionType::revenue);
-	Vec const account_types_cpy =
-		source_account_types(TransactionType::revenue);
-	BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
-	BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(1));
-	for (Size i = 0; i != account_types_ref.size(); ++i)
-	{
-		BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
-		BOOST_CHECK(account_types_ref[i] == AccountType::revenue);
-	}
+    Vec const& account_types_ref =
+        source_account_types(TransactionType::revenue);
+    Vec const account_types_cpy =
+        source_account_types(TransactionType::revenue);
+    BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
+    BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(1));
+    for (Size i = 0; i != account_types_ref.size(); ++i)
+    {
+        BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
+        BOOST_CHECK(account_types_ref[i] == AccountType::revenue);
+    }
 }
 
 BOOST_AUTO_TEST_CASE(TestDestinationAccountTypesRevenueTransaction)
 {
-	Vec const& account_types_ref =
-		destination_account_types(TransactionType::revenue);
-	Vec const account_types_cpy =
-		destination_account_types(TransactionType::revenue);
-	BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
-	BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
-	for (Size i = 0; i != account_types_ref.size(); ++i)
-	{
-		BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
-		BOOST_CHECK
-		(	(account_types_ref[i] == AccountType::asset) ||
-			(account_types_ref[i] == AccountType::liability)
-		);
-	}
+    Vec const& account_types_ref =
+        destination_account_types(TransactionType::revenue);
+    Vec const account_types_cpy =
+        destination_account_types(TransactionType::revenue);
+    BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
+    BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
+    for (Size i = 0; i != account_types_ref.size(); ++i)
+    {
+        BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
+        BOOST_CHECK
+        (   (account_types_ref[i] == AccountType::asset) ||
+            (account_types_ref[i] == AccountType::liability)
+        );
+    }
 }
 
 BOOST_AUTO_TEST_CASE(TestSourceAccountTypesBalanceSheetTransaction)
 {
-	Vec const& account_types_ref = source_account_types
-	(	TransactionType::balance_sheet
-	);
-	Vec const account_types_cpy = source_account_types
-	(	TransactionType::balance_sheet
-	);
-	BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
-	BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
-	for (Size i = 0; i != account_types_ref.size(); ++i)
-	{
-		BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
-		BOOST_CHECK
-		(	(account_types_ref[i] == AccountType::asset) ||
-			(account_types_ref[i] == AccountType::liability)
-		);
-	}
+    Vec const& account_types_ref = source_account_types
+    (   TransactionType::balance_sheet
+    );
+    Vec const account_types_cpy = source_account_types
+    (   TransactionType::balance_sheet
+    );
+    BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
+    BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
+    for (Size i = 0; i != account_types_ref.size(); ++i)
+    {
+        BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
+        BOOST_CHECK
+        (   (account_types_ref[i] == AccountType::asset) ||
+            (account_types_ref[i] == AccountType::liability)
+        );
+    }
 }
 
 BOOST_AUTO_TEST_CASE(TestDestinationAccountTypesBalanceSheetTransaction)
 {
-	Vec const& account_types_ref = destination_account_types
-	(	TransactionType::balance_sheet
-	);
-	Vec const account_types_cpy = destination_account_types
-	(	TransactionType::balance_sheet
-	);
-	BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
-	BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
-	for (Size i = 0; i != account_types_ref.size(); ++i)
-	{
-		BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
-		BOOST_CHECK
-		(	(account_types_ref[i] == AccountType::asset) ||
-			(account_types_ref[i] == AccountType::liability)
-		);
-	}
+    Vec const& account_types_ref = destination_account_types
+    (   TransactionType::balance_sheet
+    );
+    Vec const account_types_cpy = destination_account_types
+    (   TransactionType::balance_sheet
+    );
+    BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
+    BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(2));
+    for (Size i = 0; i != account_types_ref.size(); ++i)
+    {
+        BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
+        BOOST_CHECK
+        (   (account_types_ref[i] == AccountType::asset) ||
+            (account_types_ref[i] == AccountType::liability)
+        );
+    }
 }
 
 BOOST_AUTO_TEST_CASE(TestSourceAccountTypesEnvelopeTransaction)
 {
-	Vec const& account_types_ref =
-		source_account_types(TransactionType::envelope);
-	Vec const account_types_cpy =
-		source_account_types(TransactionType::envelope);
-	BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
-	BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(3));
-	for (Size i = 0; i != account_types_ref.size(); ++i)
-	{
-		BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
-		BOOST_CHECK
-		(	(account_types_ref[i] == AccountType::revenue) ||
-			(account_types_ref[i] == AccountType::expense) ||
-			(account_types_ref[i] == AccountType::pure_envelope)
-		);
-	}
+    Vec const& account_types_ref =
+        source_account_types(TransactionType::envelope);
+    Vec const account_types_cpy =
+        source_account_types(TransactionType::envelope);
+    BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
+    BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(3));
+    for (Size i = 0; i != account_types_ref.size(); ++i)
+    {
+        BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
+        BOOST_CHECK
+        (   (account_types_ref[i] == AccountType::revenue) ||
+            (account_types_ref[i] == AccountType::expense) ||
+            (account_types_ref[i] == AccountType::pure_envelope)
+        );
+    }
 }
 
 BOOST_AUTO_TEST_CASE(TestDestinationAccountTypesEnvelopeTransaction)
 {
-	Vec const& account_types_ref =
-		destination_account_types(TransactionType::envelope);
-	Vec const account_types_cpy =
-		destination_account_types(TransactionType::envelope);
-	BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
-	BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(3));
-	for (Size i = 0; i != account_types_ref.size(); ++i)
-	{
-		BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
-		BOOST_CHECK
-		(	(account_types_ref[i] == AccountType::revenue) ||
-			(account_types_ref[i] == AccountType::expense) ||
-			(account_types_ref[i] == AccountType::pure_envelope)
-		);
-	}
+    Vec const& account_types_ref =
+        destination_account_types(TransactionType::envelope);
+    Vec const account_types_cpy =
+        destination_account_types(TransactionType::envelope);
+    BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
+    BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(3));
+    for (Size i = 0; i != account_types_ref.size(); ++i)
+    {
+        BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
+        BOOST_CHECK
+        (   (account_types_ref[i] == AccountType::revenue) ||
+            (account_types_ref[i] == AccountType::expense) ||
+            (account_types_ref[i] == AccountType::pure_envelope)
+        );
+    }
 }
 
 BOOST_AUTO_TEST_CASE(TestSourceAccountTypesGenericTransaction)
 {
-	Vec const& account_types_ref =
-		source_account_types(TransactionType::generic);
-	Vec const account_types_cpy =
-		source_account_types(TransactionType::generic);
-	BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
-	BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(6));
-	for (Size i = 0; i != account_types_ref.size(); ++i)
-	{
-		BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
-		BOOST_CHECK
-		(	(account_types_ref[i] == AccountType::revenue) ||
-			(account_types_ref[i] == AccountType::expense) ||
-			(account_types_ref[i] == AccountType::pure_envelope) ||
-			(account_types_ref[i] == AccountType::asset) ||
-			(account_types_ref[i] == AccountType::liability) ||
-			(account_types_ref[i] == AccountType::equity)
-		);
-	}
+    Vec const& account_types_ref =
+        source_account_types(TransactionType::generic);
+    Vec const account_types_cpy =
+        source_account_types(TransactionType::generic);
+    BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
+    BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(6));
+    for (Size i = 0; i != account_types_ref.size(); ++i)
+    {
+        BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
+        BOOST_CHECK
+        (   (account_types_ref[i] == AccountType::revenue) ||
+            (account_types_ref[i] == AccountType::expense) ||
+            (account_types_ref[i] == AccountType::pure_envelope) ||
+            (account_types_ref[i] == AccountType::asset) ||
+            (account_types_ref[i] == AccountType::liability) ||
+            (account_types_ref[i] == AccountType::equity)
+        );
+    }
 }
 
 BOOST_AUTO_TEST_CASE(TestDestinationAccountTypesGenericTransaction)
 {
-	Vec const& account_types_ref =
-		destination_account_types(TransactionType::generic);
-	Vec const account_types_cpy =
-		destination_account_types(TransactionType::generic);
-	BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
-	BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(6));
-	for (Size i = 0; i != account_types_ref.size(); ++i)
-	{
-		BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
-		BOOST_CHECK
-		(	(account_types_ref[i] == AccountType::revenue) ||
-			(account_types_ref[i] == AccountType::expense) ||
-			(account_types_ref[i] == AccountType::pure_envelope) ||
-			(account_types_ref[i] == AccountType::asset) ||
-			(account_types_ref[i] == AccountType::liability) ||
-			(account_types_ref[i] == AccountType::equity)
-		);
-	}
+    Vec const& account_types_ref =
+        destination_account_types(TransactionType::generic);
+    Vec const account_types_cpy =
+        destination_account_types(TransactionType::generic);
+    BOOST_CHECK_EQUAL(account_types_ref.size(), account_types_cpy.size());
+    BOOST_CHECK_EQUAL(account_types_ref.size(), static_cast<size_t>(6));
+    for (Size i = 0; i != account_types_ref.size(); ++i)
+    {
+        BOOST_CHECK(account_types_cpy[i] == account_types_ref[i]);
+        BOOST_CHECK
+        (   (account_types_ref[i] == AccountType::revenue) ||
+            (account_types_ref[i] == AccountType::expense) ||
+            (account_types_ref[i] == AccountType::pure_envelope) ||
+            (account_types_ref[i] == AccountType::asset) ||
+            (account_types_ref[i] == AccountType::liability) ||
+            (account_types_ref[i] == AccountType::equity)
+        );
+    }
 }
 
 }  // namespace test

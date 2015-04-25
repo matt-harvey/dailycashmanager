@@ -31,36 +31,36 @@ namespace gui
 class DecimalValidator: public wxTextValidator
 {
 public:
-	DecimalValidator
-	(	jewel::Decimal const& p_decimal,
-		jewel::Decimal::places_type p_precision,
-  		// Allow dash for zero when PRINTING (always allowed when reading)
-		bool p_print_dash_for_zero = true
-	);
+    DecimalValidator
+    (   jewel::Decimal const& p_decimal,
+        jewel::Decimal::places_type p_precision,
+          // Allow dash for zero when PRINTING (always allowed when reading)
+        bool p_print_dash_for_zero = true
+    );
 
-	DecimalValidator(DecimalValidator const&) = default;
-	DecimalValidator(DecimalValidator&&) = default;
-	DecimalValidator& operator=(DecimalValidator const&) = default;
-	DecimalValidator& operator=(DecimalValidator&&) = default;
-	~DecimalValidator() = default;
+    DecimalValidator(DecimalValidator const&) = default;
+    DecimalValidator(DecimalValidator&&) = default;
+    DecimalValidator& operator=(DecimalValidator const&) = default;
+    DecimalValidator& operator=(DecimalValidator&&) = default;
+    ~DecimalValidator() = default;
 
-	/**
-	 * @param parent should point to an instance of TextCtrl.
-	 */
-	bool Validate(wxWindow* parent) override;
+    /**
+     * @param parent should point to an instance of TextCtrl.
+     */
+    bool Validate(wxWindow* parent) override;
 
-	bool TransferFromWindow() override;
-	bool TransferToWindow() override;
-	wxObject* Clone() const override;
+    bool TransferFromWindow() override;
+    bool TransferToWindow() override;
+    wxObject* Clone() const override;
 
-	jewel::Decimal decimal() const;
-	
-	void set_precision(jewel::Decimal::places_type p_precision);
+    jewel::Decimal decimal() const;
+    
+    void set_precision(jewel::Decimal::places_type p_precision);
 
 private:
-	bool m_print_dash_for_zero;
-	jewel::Decimal::places_type m_precision;
-	jewel::Decimal m_decimal;
+    bool m_print_dash_for_zero;
+    jewel::Decimal::places_type m_precision;
+    jewel::Decimal m_decimal;
 
 };  // class DecimalValidator
 

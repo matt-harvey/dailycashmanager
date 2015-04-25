@@ -44,81 +44,81 @@ class Entry;
  * want any (non-zero) balance sheet budget amounts in the database.
  */
 class PersistentJournal:
-	public sqloxx::PersistentObject
-	<	PersistentJournal,
-		DcmDatabaseConnection
-	>,
-	public Journal
+    public sqloxx::PersistentObject
+    <    PersistentJournal,
+        DcmDatabaseConnection
+    >,
+    public Journal
 {
 public:
 
-	typedef
-		sqloxx::PersistentObject
-		<	PersistentJournal,
-			DcmDatabaseConnection
-		>
-		PersistentObject;
-	
-	typedef
-		sqloxx::IdentityMap<PersistentJournal> IdentityMap;
-	
-	static void setup_tables(DcmDatabaseConnection& dbc);
+    typedef
+        sqloxx::PersistentObject
+        <    PersistentJournal,
+            DcmDatabaseConnection
+        >
+        PersistentObject;
+    
+    typedef
+        sqloxx::IdentityMap<PersistentJournal> IdentityMap;
+    
+    static void setup_tables(DcmDatabaseConnection& dbc);
 
-	static std::string exclusive_table_name();
-	static std::string primary_key_name();
+    static std::string exclusive_table_name();
+    static std::string primary_key_name();
 
-	PersistentJournal
-	(	IdentityMap& p_identity_map,
-		IdentityMap::Signature const& p_signature
-	);
+    PersistentJournal
+    (   IdentityMap& p_identity_map,
+        IdentityMap::Signature const& p_signature
+    );
 
-	PersistentJournal
-	(	IdentityMap& p_identity_map,
-		sqloxx::Id p_id,
-		IdentityMap::Signature const& p_signature
-	);
-		
-	// copy constructor is protected
-	
-	PersistentJournal(PersistentJournal&&) = delete;
-	PersistentJournal& operator=(PersistentJournal const&) = delete;
-	PersistentJournal& operator=(PersistentJournal&&) = delete;
-	virtual ~PersistentJournal();
+    PersistentJournal
+    (   IdentityMap& p_identity_map,
+        sqloxx::Id p_id,
+        IdentityMap::Signature const& p_signature
+    );
+        
+    // copy constructor is protected
+    
+    PersistentJournal(PersistentJournal&&) = delete;
+    PersistentJournal& operator=(PersistentJournal const&) = delete;
+    PersistentJournal& operator=(PersistentJournal&&) = delete;
+    virtual ~PersistentJournal();
 
 protected:
 
-	PersistentJournal(PersistentJournal const& rhs);
+    PersistentJournal(PersistentJournal const& rhs);
 
-	virtual void swap(PersistentJournal& rhs);
+    virtual void swap(PersistentJournal& rhs);
 
-	void load_journal_core();
-	void save_existing_journal_core();
-	sqloxx::Id save_new_journal_core();
-	void ghostify_journal_core();
+    void load_journal_core();
+    void save_existing_journal_core();
+    sqloxx::Id save_new_journal_core();
+    void ghostify_journal_core();
 
-	std::vector<sqloxx::Handle<Entry> > const& do_get_entries() override;
-	void do_set_transaction_type(TransactionType p_transaction_type) override;
-	void do_set_comment(wxString const& p_comment) override;
-	void do_push_entry(sqloxx::Handle<Entry> const& p_entry) override;
-	void do_remove_entry(sqloxx::Handle<Entry> const& p_entry) override;
-	void do_clear_entries() override;
-	wxString do_get_comment() override;
-	TransactionType do_get_transaction_type() override;
+    std::vector<sqloxx::Handle<Entry> > const& do_get_entries() override;
+    void do_set_transaction_type(TransactionType p_transaction_type) override;
+    void do_set_comment(wxString const& p_comment) override;
+    void do_push_entry(sqloxx::Handle<Entry> const& p_entry) override;
+    void do_remove_entry(sqloxx::Handle<Entry> const& p_entry) override;
+    void do_clear_entries() override;
+    wxString do_get_comment() override;
+    TransactionType do_get_transaction_type() override;
 
 private:
 
-	/**
-	 * @throws InvalidJournalException if and only if the PersistentJournal
-	 * is a budget Journal that contains an Entry with a balance sheet
-	 * Account.
-	 */
-	void ensure_pl_only_budget();
+    /**
+     * @throws InvalidJournalException if and only if the PersistentJournal
+     * is a budget Journal that contains an Entry with a balance sheet
+     * Account.
+     */
+    void ensure_pl_only_budget();
 
-	/**
-	 * @returns true if and only if posting the Journal would cause arithmetic
-	 * overflow in Account balances.
-	 */
-	bool would_cause_overflow();
+    /**
+     * @returns true if and only if posting the Journal would cause arithmetic
+     * overflow in Account balances.
+     */
+    bool would_cause_overflow();
 };
 
 

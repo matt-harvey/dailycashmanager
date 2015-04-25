@@ -41,33 +41,33 @@ namespace gui
 class AccountTypeCtrl: public ComboBox
 {
 public:
-	AccountTypeCtrl
-	(	wxWindow* p_parent,
-		wxWindowID p_id,
-		wxSize const& p_size,
-		DcmDatabaseConnection& p_database_connection,
-		AccountSuperType p_account_super_type
-	);
+    AccountTypeCtrl
+    (   wxWindow* p_parent,
+        wxWindowID p_id,
+        wxSize const& p_size,
+        DcmDatabaseConnection& p_database_connection,
+        AccountSuperType p_account_super_type
+    );
 
-	AccountTypeCtrl(AccountTypeCtrl const&) = delete;
-	AccountTypeCtrl(AccountTypeCtrl&&) = delete;
-	AccountTypeCtrl& operator=(AccountTypeCtrl const&) = delete;
-	AccountTypeCtrl& operator=(AccountTypeCtrl&&) = delete;
+    AccountTypeCtrl(AccountTypeCtrl const&) = delete;
+    AccountTypeCtrl(AccountTypeCtrl&&) = delete;
+    AccountTypeCtrl& operator=(AccountTypeCtrl const&) = delete;
+    AccountTypeCtrl& operator=(AccountTypeCtrl&&) = delete;
 
-	~AccountTypeCtrl() = default;
+    ~AccountTypeCtrl() = default;
 
-	AccountType account_type() const;
+    AccountType account_type() const;
 
-	/**
-	 * @throws InvalidAccountTypeException if p_account_type
-	 * does not have m_account_super_type as it AccountSuperType.
-	 */
-	void set_account_type(AccountType p_account_type);
+    /**
+     * @throws InvalidAccountTypeException if p_account_type
+     * does not have m_account_super_type as it AccountSuperType.
+     */
+    void set_account_type(AccountType p_account_type);
 
 private:
 
-	AccountSuperType m_account_super_type;
-	DcmDatabaseConnection& m_database_connection;
+    AccountSuperType m_account_super_type;
+    DcmDatabaseConnection& m_database_connection;
 
 };  // class AccountTypeCtrl
 

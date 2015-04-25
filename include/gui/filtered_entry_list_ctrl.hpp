@@ -47,49 +47,49 @@ namespace gui
 class FilteredEntryListCtrl: public EntryListCtrl
 {
 public:
-	FilteredEntryListCtrl
-	(	wxWindow* p_parent,
-		wxSize const& p_size,
-		sqloxx::Handle<Account> const& p_account,
-		boost::optional<boost::gregorian::date> const& p_maybe_min_date,
-		boost::optional<boost::gregorian::date> const& p_maybe_max_date
-	);
+    FilteredEntryListCtrl
+    (   wxWindow* p_parent,
+        wxSize const& p_size,
+        sqloxx::Handle<Account> const& p_account,
+        boost::optional<boost::gregorian::date> const& p_maybe_min_date,
+        boost::optional<boost::gregorian::date> const& p_maybe_max_date
+    );
 
-	FilteredEntryListCtrl(FilteredEntryListCtrl const&) = delete;
-	FilteredEntryListCtrl(FilteredEntryListCtrl&&) = delete;
-	FilteredEntryListCtrl& operator=(FilteredEntryListCtrl const&) = delete;
-	FilteredEntryListCtrl& operator=(FilteredEntryListCtrl&&) = delete;
-	virtual ~FilteredEntryListCtrl();
+    FilteredEntryListCtrl(FilteredEntryListCtrl const&) = delete;
+    FilteredEntryListCtrl(FilteredEntryListCtrl&&) = delete;
+    FilteredEntryListCtrl& operator=(FilteredEntryListCtrl const&) = delete;
+    FilteredEntryListCtrl& operator=(FilteredEntryListCtrl&&) = delete;
+    virtual ~FilteredEntryListCtrl();
 
 protected:
-	sqloxx::Handle<Account> const& account() const;
-	boost::gregorian::date min_date() const;
+    sqloxx::Handle<Account> const& account() const;
+    boost::gregorian::date min_date() const;
 
 private:
 
-	virtual bool do_require_progress_log() const override;
+    virtual bool do_require_progress_log() const override;
 
-	virtual void do_insert_non_date_columns() = 0;
+    virtual void do_insert_non_date_columns() = 0;
 
-	virtual bool do_approve_entry
-	(	sqloxx::Handle<Entry> const& p_entry
-	) const override;
+    virtual bool do_approve_entry
+    (   sqloxx::Handle<Entry> const& p_entry
+    ) const override;
 
-	virtual void do_set_column_widths() override;
+    virtual void do_set_column_widths() override;
 
-	virtual int do_get_num_columns() const = 0;
+    virtual int do_get_num_columns() const = 0;
 
-	virtual int do_get_comment_col_num() const = 0;
+    virtual int do_get_comment_col_num() const = 0;
 
-	virtual std::unique_ptr<sqloxx::SQLStatement>
-		do_create_entry_selector() override;
+    virtual std::unique_ptr<sqloxx::SQLStatement>
+        do_create_entry_selector() override;
 
-	sqloxx::Handle<Account> const m_account;
-	boost::gregorian::date m_min_date;
-	boost::optional<boost::gregorian::date> const m_maybe_max_date;
+    sqloxx::Handle<Account> const m_account;
+    boost::gregorian::date m_min_date;
+    boost::optional<boost::gregorian::date> const m_maybe_max_date;
 
 };  // class FilteredEntryListCtrl
-	
+    
 
 }  // namespace gui
 }  // namespace dcm

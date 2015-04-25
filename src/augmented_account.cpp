@@ -29,20 +29,20 @@ namespace dcm
 
 
 AugmentedAccount::AugmentedAccount
-(	DcmDatabaseConnection& p_database_connection,
-	Handle<Commodity> const& p_commodity
+(   DcmDatabaseConnection& p_database_connection,
+    Handle<Commodity> const& p_commodity
 ):
-	account(p_database_connection),
-	technical_opening_balance(0, p_commodity->precision())
+    account(p_database_connection),
+    technical_opening_balance(0, p_commodity->precision())
 {
 }
 
 AugmentedAccount::AugmentedAccount
-(	Handle<Account> const& p_account,
-	jewel::Decimal const& p_technical_opening_balance
+(   Handle<Account> const& p_account,
+    jewel::Decimal const& p_technical_opening_balance
 ):
-	account(p_account),
-	technical_opening_balance(p_technical_opening_balance)
+    account(p_account),
+    technical_opening_balance(p_technical_opening_balance)
 {
 }
 

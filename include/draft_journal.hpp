@@ -44,7 +44,7 @@ namespace sqloxx
 template <>
 struct PersistenceTraits<dcm::DraftJournal>
 {
-	typedef dcm::PersistentJournal Base;
+    typedef dcm::PersistentJournal Base;
 };
 
 }  // namespace sqloxx
@@ -71,114 +71,114 @@ class DraftJournal: public PersistentJournal
 {
 public:
 
-	static std::string exclusive_table_name();
+    static std::string exclusive_table_name();
 
-	/**
-	 * Create the tables required for the persistence of DraftJournal
-	 * instances to the database.
-	 */
-	static void setup_tables(DcmDatabaseConnection& dbc);
+    /**
+     * Create the tables required for the persistence of DraftJournal
+     * instances to the database.
+     */
+    static void setup_tables(DcmDatabaseConnection& dbc);
 
-	/**
-	 * @returns \e true if the only DraftJournal
-	 * that is saved is p_database_connection.budget_instrument(), or
-	 * if there are no DraftJournals saved at all. If there is one
-	 * or more DraftJournal saved other than
-	 * p_database_connection.budget_instrument(), then this
-	 * function returns false.
-	 */
-	static bool no_user_draft_journals_saved
-	(	DcmDatabaseConnection& p_database_connection
-	);
+    /**
+     * @returns \e true if the only DraftJournal
+     * that is saved is p_database_connection.budget_instrument(), or
+     * if there are no DraftJournals saved at all. If there is one
+     * or more DraftJournal saved other than
+     * p_database_connection.budget_instrument(), then this
+     * function returns false.
+     */
+    static bool no_user_draft_journals_saved
+    (   DcmDatabaseConnection& p_database_connection
+    );
 
-	/**
-	 * Construct a "raw" DraftJournal, not yet saved in the database,
-	 * and without an Id.
-	 *
-	 * The Signature parameter prevents this constructor from being
-	 * called except by IdentityMap.
-	 *
-	 * Ordinary client code should use sqloxx::Handle<DraftJournal>, not
-	 * DraftJournal directly.
-	 */
-	DraftJournal
-	(	IdentityMap& p_identity_map,
-		IdentityMap::Signature const& p_signature
-	);
+    /**
+     * Construct a "raw" DraftJournal, not yet saved in the database,
+     * and without an Id.
+     *
+     * The Signature parameter prevents this constructor from being
+     * called except by IdentityMap.
+     *
+     * Ordinary client code should use sqloxx::Handle<DraftJournal>, not
+     * DraftJournal directly.
+     */
+    DraftJournal
+    (   IdentityMap& p_identity_map,
+        IdentityMap::Signature const& p_signature
+    );
 
-	/**
-	 * Get a DraftJournal by Id from the database.
-	 *
-	 * The Signature parameter prevents this constructor from being
-	 * called except by IdentityMap.
-	 *
-	 * Ordinary client code should use sqloxx::Handle<DraftJournal>, not
-	 * DraftJournal directly.
-	 */
-	DraftJournal
-	(	IdentityMap& p_identity_map,
-		sqloxx::Id p_id,
-		IdentityMap::Signature const& p_signature
-	);
+    /**
+     * Get a DraftJournal by Id from the database.
+     *
+     * The Signature parameter prevents this constructor from being
+     * called except by IdentityMap.
+     *
+     * Ordinary client code should use sqloxx::Handle<DraftJournal>, not
+     * DraftJournal directly.
+     */
+    DraftJournal
+    (   IdentityMap& p_identity_map,
+        sqloxx::Id p_id,
+        IdentityMap::Signature const& p_signature
+    );
 
-	// copy constructor is private
+    // copy constructor is private
 
-	DraftJournal(DraftJournal&&) = delete;
-	DraftJournal& operator=(DraftJournal const&) = delete;
-	DraftJournal& operator=(DraftJournal&&) = delete;
+    DraftJournal(DraftJournal&&) = delete;
+    DraftJournal& operator=(DraftJournal const&) = delete;
+    DraftJournal& operator=(DraftJournal&&) = delete;
 
-	~DraftJournal();
+    ~DraftJournal();
 
-	static bool exists
-	(	DcmDatabaseConnection& p_database_connection,
-		wxString const& p_name
-	);
+    static bool exists
+    (   DcmDatabaseConnection& p_database_connection,
+        wxString const& p_name
+    );
 
-	void set_name(wxString const& p_name);
-	
-	void push_repeater(sqloxx::Handle<Repeater> const& repeater);
-	
-	wxString name();
+    void set_name(wxString const& p_name);
+    
+    void push_repeater(sqloxx::Handle<Repeater> const& repeater);
+    
+    wxString name();
 
-	wxString repeater_description();
+    wxString repeater_description();
 
-	/**
-	 * Take on the attributes of \e rhs, where these exist and are
-	 * applicable to DraftJournal.
-	 */
-	void mimic(Journal& rhs);
-	void mimic(DraftJournal& rhs);  // not const& rhs because loading required
+    /**
+     * Take on the attributes of \e rhs, where these exist and are
+     * applicable to DraftJournal.
+     */
+    void mimic(Journal& rhs);
+    void mimic(DraftJournal& rhs);  // not const& rhs because loading required
 
-	std::vector<sqloxx::Handle<Repeater> > const& repeaters();
+    std::vector<sqloxx::Handle<Repeater> > const& repeaters();
 
-	bool has_repeaters();
+    bool has_repeaters();
 
-	void clear_repeaters();
+    void clear_repeaters();
 
 private:
 
-	void swap(DraftJournal& rhs);
+    void swap(DraftJournal& rhs);
 
-	/**
-	 * Copy constructor - implemented, but deliberately private.
-	 */
-	DraftJournal(DraftJournal const& rhs);	
+    /**
+     * Copy constructor - implemented, but deliberately private.
+     */
+    DraftJournal(DraftJournal const& rhs);    
 
-	void do_load() override;
-	void do_save_existing() override;
-	void do_save_new() override;
-	void do_ghostify() override;
+    void do_load() override;
+    void do_save_existing() override;
+    void do_save_new() override;
+    void do_ghostify() override;
 
-	/**
-	 * Note if the DraftJournal corresponds to the budget instrument
-	 * for database_connection(), then PreservedRecordDeletionException is
-	 * thrown.
-	 */
-	void do_remove() override;
+    /**
+     * Note if the DraftJournal corresponds to the budget instrument
+     * for database_connection(), then PreservedRecordDeletionException is
+     * thrown.
+     */
+    void do_remove() override;
 
-	struct DraftJournalData;
+    struct DraftJournalData;
 
-	std::unique_ptr<DraftJournalData> m_dj_data;
+    std::unique_ptr<DraftJournalData> m_dj_data;
 };
 
 

@@ -28,16 +28,16 @@ namespace dcm
  */
 enum class AccountType: unsigned char
 {
-	// enum order is significant, as the database contains
-	// a table with primary keys in this order.
-	// Other functions in this file also depend on
-	// the exact size and order of this enumeration.
-	asset = 1,
-	liability,
-	equity,
-	revenue,
-	expense,
-	pure_envelope,
+    // enum order is significant, as the database contains
+    // a table with primary keys in this order.
+    // Other functions in this file also depend on
+    // the exact size and order of this enumeration.
+    asset = 1,
+    liability,
+    equity,
+    revenue,
+    expense,
+    pure_envelope,
 };
 
 /**
@@ -45,8 +45,8 @@ enum class AccountType: unsigned char
  */
 enum class AccountSuperType: unsigned char
 {
-	balance_sheet,
-	pl  			// Profit and loss
+    balance_sheet,
+    pl              // Profit and loss
 };
 
 AccountSuperType

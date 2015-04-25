@@ -48,14 +48,14 @@ if {![string equal $line "Currency,Symbol,Precision"]} {
 # Read content and populate outfile
 set outfile [open $outfile_name "w"]
 while {[gets $infile line] >= 0} {
-	if {$line == {END}} {
-		break
-	}
-	set record [split $line ","]
-	puts -nonewline $outfile "\t\tvec.push_back(make_currency(dbc, "
-	puts -nonewline $outfile "L\"[string trim [lindex $record 0]]\", "
-	puts -nonewline $outfile "\"[string trim [lindex $record 1]]\", "
-	puts $outfile "[string trim [lindex $record 2]]));"
+    if {$line == {END}} {
+        break
+    }
+    set record [split $line ","]
+    puts -nonewline $outfile "\t\tvec.push_back(make_currency(dbc, "
+    puts -nonewline $outfile "L\"[string trim [lindex $record 0]]\", "
+    puts -nonewline $outfile "\"[string trim [lindex $record 1]]\", "
+    puts $outfile "[string trim [lindex $record 2]]));"
 }
 
 flush $outfile

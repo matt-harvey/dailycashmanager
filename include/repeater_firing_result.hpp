@@ -31,56 +31,56 @@ class RepeaterFiringResult
 {
 public:
 
-	/**
-	 * @param p_draft_journal_id the Id of the DraftJournal with which the
-	 * Repeater is associated.
-	 *
-	 * @param p_firing_date the date on which the Repeater was fired (or, if
-	 * unsuccessful, the date on which it was supposed to fire).
-	 *
-	 * @param p_successful pass this \e true if an only if the firing attempt
-	 * was successful.
-	 */
-	RepeaterFiringResult
-	(	sqloxx::Id p_draft_journal_id,
-		boost::gregorian::date const& p_firing_date,
-		bool p_successful
-	);
+    /**
+     * @param p_draft_journal_id the Id of the DraftJournal with which the
+     * Repeater is associated.
+     *
+     * @param p_firing_date the date on which the Repeater was fired (or, if
+     * unsuccessful, the date on which it was supposed to fire).
+     *
+     * @param p_successful pass this \e true if an only if the firing attempt
+     * was successful.
+     */
+    RepeaterFiringResult
+    (   sqloxx::Id p_draft_journal_id,
+        boost::gregorian::date const& p_firing_date,
+        bool p_successful
+    );
 
-	RepeaterFiringResult() = delete;
-	RepeaterFiringResult(RepeaterFiringResult const& rhs) = default;
-	RepeaterFiringResult(RepeaterFiringResult&& rhs) = default;
-	RepeaterFiringResult& operator=(RepeaterFiringResult const& rhs) = default;
-	RepeaterFiringResult& operator=(RepeaterFiringResult&& rhs) = default;
-	~RepeaterFiringResult() = default;
+    RepeaterFiringResult() = delete;
+    RepeaterFiringResult(RepeaterFiringResult const& rhs) = default;
+    RepeaterFiringResult(RepeaterFiringResult&& rhs) = default;
+    RepeaterFiringResult& operator=(RepeaterFiringResult const& rhs) = default;
+    RepeaterFiringResult& operator=(RepeaterFiringResult&& rhs) = default;
+    ~RepeaterFiringResult() = default;
 
-	/**
-	 * @returns the Id of the DraftJournal with which the Repeater is
-	 * associated.
-	 */
-	sqloxx::Id draft_journal_id() const;
+    /**
+     * @returns the Id of the DraftJournal with which the Repeater is
+     * associated.
+     */
+    sqloxx::Id draft_journal_id() const;
 
-	/**
-	 * @returns the date on which the Repeater was fired (or, if unsuccessful,
-	 * the date on which it was supposed to fire).
-	 */
-	boost::gregorian::date firing_date() const;
+    /**
+     * @returns the date on which the Repeater was fired (or, if unsuccessful,
+     * the date on which it was supposed to fire).
+     */
+    boost::gregorian::date firing_date() const;
 
-	/**
-	 * @returns \e true if and only if the firing attempt was unsuccessful.
-	 */
-	bool successful() const;
+    /**
+     * @returns \e true if and only if the firing attempt was unsuccessful.
+     */
+    bool successful() const;
 
-	/**
-	 * Mark RepeaterFiringResult as successful.
-	 */
-	void mark_as_successful();
+    /**
+     * Mark RepeaterFiringResult as successful.
+     */
+    void mark_as_successful();
 
 private:
 
-	sqloxx::Id m_draft_journal_id;
-	boost::gregorian::date m_firing_date;
-	bool m_successful;
+    sqloxx::Id m_draft_journal_id;
+    boost::gregorian::date m_firing_date;
+    bool m_successful;
 
 };  // class RepeaterFiringResult
 
@@ -91,8 +91,8 @@ private:
  * firing date of \e rhs.
  */
 bool operator<
-(	RepeaterFiringResult const& lhs,
-	RepeaterFiringResult const& rhs
+(   RepeaterFiringResult const& lhs,
+    RepeaterFiringResult const& rhs
 );
 
 
