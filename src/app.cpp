@@ -158,7 +158,7 @@ namespace
 App::App():
     m_exiting_cleanly(false),
     m_single_instance_checker(nullptr),
-    m_database_connection(new DcmDatabaseConnection)
+    m_database_connection(nullptr)
 {
     JEWEL_ASSERT (!m_backup_filepath);
 }
@@ -386,8 +386,9 @@ bool App::OnInit()
     JEWEL_LOG_TRACE();
     try
     {
-        configure_logging();
+        configure_logging();  // this should be done before anything else
         JEWEL_LOG_MESSAGE(Log::info, "Configured logging.");
+        m_database_connection.reset(new DcmDatabaseConnection);
         wxApp::SetInstance(this);
 
         // parse command line
