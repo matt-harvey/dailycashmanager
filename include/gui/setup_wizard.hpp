@@ -44,7 +44,7 @@ namespace dcm
 
 // Begin forward declarations
 
-class AugmentedAccount;
+struct AugmentedAccount;
 class DcmDatabaseConnection;
 
 namespace gui
@@ -111,7 +111,7 @@ public:
 
 private:
 
-    std::vector<AugmentedAccount> selected_augmented_accounts() const;
+    std::vector<AugmentedAccount> augmented_accounts() const;
 
     class FilepathValidator;
 
@@ -285,7 +285,7 @@ public:
 
     void render();
 
-    std::vector<AugmentedAccount> selected_augmented_accounts() const;
+    std::vector<AugmentedAccount> augmented_accounts() const;
 
     void set_commodity(sqloxx::Handle<Commodity> const& p_commodity);
 
@@ -322,26 +322,27 @@ protected:
 
 private:
 
-    void on_pop_row_button_click(wxCommandEvent& event);
+    void on_remove_checked_button_click(wxCommandEvent& event);
     void on_push_row_button_click(wxCommandEvent& event);
     void on_wizard_page_changing(wxWizardEvent& event);
     void on_wizard_page_changed(wxWizardEvent& event);
+    void on_check_box_clicked(wxCommandEvent& event);
 
     void render_main_text();
     void render_buttons();
     void render_account_view();
-    void refresh_pop_row_button_state();
+    void refresh_remove_checked_button_state();
 
     wxString main_text() const;
 
-    static unsigned int const s_pop_row_button_id = wxID_HIGHEST + 1;
-    static unsigned int const s_push_row_button_id = s_pop_row_button_id + 1;
+    static unsigned int const s_remove_checked_button_id = wxID_HIGHEST + 1;
+    static unsigned int const s_push_row_button_id = s_remove_checked_button_id + 1;
 
     DcmDatabaseConnection& m_database_connection;
     AccountSuperType m_account_super_type;
     size_t const m_min_num_accounts;
     int m_current_row; 
-    Button* m_pop_row_button;
+    Button* m_remove_checked_button;
     Button* m_push_row_button;
     wxGridBagSizer* m_top_sizer;
     MultiAccountPanel* m_multi_account_panel;
@@ -350,9 +351,7 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
-
 }  // namespace gui
 }  // namespace dcm
-
 
 #endif  // GUARD_setup_wizard_hpp_8623281646810137

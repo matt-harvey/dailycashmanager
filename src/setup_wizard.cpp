@@ -298,11 +298,11 @@ SetupWizard::set_assumed_currency(Handle<Commodity> const& p_commodity)
 }
 
 vector<AugmentedAccount>
-SetupWizard::selected_augmented_accounts() const
+SetupWizard::augmented_accounts() const
 {
     vector<AugmentedAccount> ret =
-        m_balance_sheet_account_page->selected_augmented_accounts();
-    auto const more = m_pl_account_page->selected_augmented_accounts();
+        m_balance_sheet_account_page->augmented_accounts();
+    auto const more = m_pl_account_page->augmented_accounts();
     copy(more.begin(), more.end(), back_inserter(ret));
     return ret;
 }
@@ -361,7 +361,7 @@ void
 SetupWizard::configure_accounts()
 {
     DatabaseTransaction transaction(m_database_connection);
-    for (AugmentedAccount& aug_acc: selected_augmented_accounts())
+    for (AugmentedAccount& aug_acc: augmented_accounts())
     {
         wxString const name_wx = aug_acc.account->name().Trim();
         if (!name_wx.IsEmpty())
@@ -930,8 +930,8 @@ SetupWizard::FilepathPage::on_precision_selection_change(wxCommandEvent& event)
 
 BEGIN_EVENT_TABLE(SetupWizard::AccountPage, wxWizardPageSimple)
     EVT_BUTTON
-    (   s_pop_row_button_id,
-        SetupWizard::AccountPage::on_pop_row_button_click
+    (   s_remove_checked_button_id,
+        SetupWizard::AccountPage::on_remove_checked_button_click
     )
     EVT_BUTTON
     (   s_push_row_button_id,
@@ -945,6 +945,10 @@ BEGIN_EVENT_TABLE(SetupWizard::AccountPage, wxWizardPageSimple)
     (   wxID_ANY,
         SetupWizard::AccountPage::on_wizard_page_changed
     )
+    EVT_CHECKBOX
+    (   wxID_ANY,
+        SetupWizard::AccountPage::on_check_box_clicked
+    )
 END_EVENT_TABLE()
 
 SetupWizard::AccountPage::AccountPage
@@ -957,7 +961,7 @@ SetupWizard::AccountPage::AccountPage
     m_account_super_type(p_account_super_type),
     m_min_num_accounts(1),
     m_current_row(0),
-    m_pop_row_button(nullptr),
+    m_remove_checked_button(nullptr),
     m_push_row_button(nullptr),
     m_top_sizer(nullptr),
     m_multi_account_panel(nullptr),
@@ -991,9 +995,9 @@ SetupWizard::AccountPage::render()
 }
 
 vector<AugmentedAccount>
-SetupWizard::AccountPage::selected_augmented_accounts() const
+SetupWizard::AccountPage::augmented_accounts() const
 {
-    return m_multi_account_panel->selected_augmented_accounts();
+    return m_multi_account_panel->augmented_accounts();
 }
 
 void
@@ -1058,16 +1062,16 @@ SetupWizard::AccountPage::render_buttons()
 {
     JEWEL_LOG_TRACE();
     wxString const concept_name = account_concept_name(m_account_super_type);
-    m_pop_row_button = new Button
+    m_remove_checked_button = new Button
     (   this,
-        s_pop_row_button_id,
-        wxString("Remove ") + concept_name,
+        s_remove_checked_button_id,
+        wxString("Remove checked"),
         wxDefaultPosition,
         wxSize(medium_width(), wxDefaultSize.y),
         wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
     );
     top_sizer().Add
-    (   m_pop_row_button,
+    (   m_remove_checked_button,
         wxGBPosition(current_row(), 3),
         wxDefaultSpan,
         wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
@@ -1125,7 +1129,7 @@ SetupWizard::AccountPage::render_account_view()
         wxGBSpan(1, 5)
     );
 
-    refresh_pop_row_button_state();
+    refresh_remove_checked_button_state();
 
     // Add an empty row at bottom. This is a hack to prevent the scrolled
     // area from dropping off the bottom. Unclear on why this was happening -
@@ -1145,15 +1149,17 @@ SetupWizard::AccountPage::render_account_view()
 }
 
 void
-SetupWizard::AccountPage::refresh_pop_row_button_state()
+SetupWizard::AccountPage::refresh_remove_checked_button_state()
 {
     JEWEL_ASSERT (m_multi_account_panel);
     JEWEL_ASSERT (m_multi_account_panel->num_rows() >= m_min_num_accounts);
-    JEWEL_ASSERT (m_pop_row_button);
-    if (m_multi_account_panel->num_rows() > m_min_num_accounts)
+    JEWEL_ASSERT (m_remove_checked_button);
+    auto const num_checked = m_multi_account_panel->num_checked_rows();
+    auto const num_rows = m_multi_account_panel->num_rows();
+    if (num_rows - num_checked >= m_min_num_accounts)
     {
-        m_pop_row_button->Enable();
-        m_pop_row_button->SetToolTip(0);
+        m_remove_checked_button->Enable();
+        m_remove_checked_button->SetToolTip(0);
     }
     else
     {
@@ -1161,7 +1167,7 @@ SetupWizard::AccountPage::refresh_pop_row_button_state()
         (   m_multi_account_panel->num_rows() ==
             m_min_num_accounts
         );
-        m_pop_row_button->Disable();
+        m_remove_checked_button->Disable();
         ostringstream oss;
         oss << m_min_num_accounts;
         wxString const min_rows_string = std8_to_wx(oss.str());
@@ -1169,7 +1175,7 @@ SetupWizard::AccountPage::refresh_pop_row_button_state()
         {
             account_concept_name(m_account_super_type) += wxString("s");
         }
-        m_pop_row_button->SetToolTip
+        m_remove_checked_button->SetToolTip
         (   wxString("You will need at least ") +
             min_rows_string +
             wxString(" ") +
@@ -1264,12 +1270,12 @@ SetupWizard::AccountPage::account_types_valid
 }
 
 void
-SetupWizard::AccountPage::on_pop_row_button_click(wxCommandEvent& event)
+SetupWizard::AccountPage::on_remove_checked_button_click(wxCommandEvent& event)
 {
     (void)event;  // silence compiler re. unused variable
     JEWEL_ASSERT (m_multi_account_panel);
-    m_multi_account_panel->pop_row();
-    refresh_pop_row_button_state();
+    m_multi_account_panel->remove_checked_rows();
+    refresh_remove_checked_button_state();
     return;
 }
 
@@ -1279,7 +1285,7 @@ SetupWizard::AccountPage::on_push_row_button_click(wxCommandEvent& event)
     (void)event;  // silence compiler re. unused variable
     JEWEL_ASSERT (m_multi_account_panel);
     m_multi_account_panel->push_row();
-    refresh_pop_row_button_state();
+    refresh_remove_checked_button_state();
     return;
 }
 
@@ -1329,6 +1335,15 @@ SetupWizard::AccountPage::on_wizard_page_changed
         set_account_names_already_taken(p->account_names_already_taken());
     JEWEL_LOG_TRACE();
     return;
+}
+
+void
+SetupWizard::AccountPage::on_check_box_clicked(wxCommandEvent& event)
+{
+    JEWEL_LOG_TRACE();
+    (void)event;  // silence compiler re. unused parameter
+    refresh_remove_checked_button_state(); 
+    JEWEL_LOG_TRACE();
 }
 
 wxString

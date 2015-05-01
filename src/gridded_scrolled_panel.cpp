@@ -76,16 +76,16 @@ GriddedScrolledPanel::current_row() const
 }
 
 void
-GriddedScrolledPanel::increment_row()
+GriddedScrolledPanel::increment_row(int p_inc)
 {
-    ++m_current_row;
+    m_current_row += p_inc;
     return;
 }
 
 void
 GriddedScrolledPanel::decrement_row()
 {
-    --m_current_row;
+    increment_row(-1);
     return;
 }
 

@@ -26,6 +26,7 @@
 #include <jewel/decimal.hpp>
 #include <jewel/log.hpp>
 #include <sqloxx/handle.hpp>
+#include <wx/checkbox.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
@@ -39,7 +40,7 @@ namespace dcm
 // begin forward declarations
 
 class Account;
-class AugmentedAccount;
+struct AugmentedAccount;
 class DcmDatabaseConnection;
 
 namespace gui
@@ -100,7 +101,7 @@ public:
      * Accounts in the AugmentedAccounts will have their commodity() attribute
      * initialized to database_connection().default_commodity().
      */
-    std::vector<AugmentedAccount> selected_augmented_accounts();
+    std::vector<AugmentedAccount> augmented_accounts();
 
     std::set<wxString> selected_account_names() const;
     
@@ -132,32 +133,29 @@ public:
      * Add a new row with blank text boxes, and zero (rounded to precision
      * of the Commodity of the MultiAccountPanel) in the opening balance
      * boxes.
-     * 
-     * @returns \e true (assuming no exeption thrown) (never returns false).
-     * This returns a truth value rather than \e void, for consistency with
-     * \e pop_row().
      */
-    bool push_row();
+    void push_row();
 
     /**
-     * Removes the bottom Account row and returns true, provided the
-     * minimum number of rows would not be maintained; otherwise, does
-     * nothing and returns false.
+     * Removes the checked Account rows (those with checkboxes selected),
+     * and returns true, provided the minimum number of rows would still be
+     * maintained; otherwise, does nothing and returns false. If no rows are
+     * checked, it returns true but does nothing.
      */
-    bool pop_row();
+    bool remove_checked_rows();
 
     void update_summary();
 
     size_t num_rows() const;
+    
+    size_t num_checked_rows() const;
 
     /**
      * @returns \e true if and only if the user has selected this
      * AccountType in at least one row (which may or may not be a row in
      * which a non-empty Account name has been entered).
      */
-    bool account_type_is_selected
-    (   AccountType p_account_type
-    ) const;
+    bool account_type_is_selected(AccountType p_account_type)const;
     
 private:
 
@@ -167,7 +165,7 @@ private:
 
     /**
      * @returns a handle to a newly created Account with Commodity not set but
-     * with text fields set to the empty string. The Account
+     * with text fields set to the empty string. The Account will
      * not have been saved to the database (so will not have an ID).
      * Account AccountType will be set to an AccountType belonging to
      * \e m_account_super_type.
@@ -177,12 +175,13 @@ private:
     /**
      * Add a row to the display showing details for p_account. Be warned
      * that this will set \e p_account.commodity() to m_commodity, even
-     * if \e p_account already has a Commodity set. Always returns \e true
-     * (returns \e bool for consistency with \e pop_row()).
+     * if \e p_account already has a Commodity set.
      */
-    bool push_row(sqloxx::Handle<Account> const& p_account);
+    void push_row(sqloxx::Handle<Account> const& p_account);
 
-    template <typename T> void pop_widget_from(std::vector<T>& p_vec);
+    template <typename T> void remove_widgets_from(std::vector<T>& p_vec);
+
+    std::set<std::vector<wxCheckBox*>::size_type> checked_rows() const;
     
     AccountSuperType m_account_super_type;
     sqloxx::Handle<Commodity> m_commodity;
@@ -196,6 +195,7 @@ private:
     std::vector<AccountTypeCtrl*> m_account_type_boxes;
     std::vector<TextCtrl*> m_description_boxes;
     std::vector<DecimalTextCtrl*> m_opening_balance_boxes;
+    std::vector<wxCheckBox*> m_check_boxes;
 
 };  // class MultiAccountPanel
 
@@ -204,16 +204,17 @@ private:
 
 template <typename T>
 void
-MultiAccountPanel::pop_widget_from(std::vector<T>& p_vec)
+MultiAccountPanel::remove_widgets_from(std::vector<T>& p_vec)
 {
-    T doomed_elem = p_vec.back();
-    top_sizer().Detach(doomed_elem);
-    doomed_elem->Destroy();
-    doomed_elem = 0;
-    p_vec.pop_back();
+    for (auto* elem: p_vec)
+    {
+        top_sizer().Detach(elem);
+        elem->Destroy();
+        elem = nullptr;
+    }
+    p_vec.clear();
     return;
 }
-
 
 }  // namespace gui
 }  // namespace dcm

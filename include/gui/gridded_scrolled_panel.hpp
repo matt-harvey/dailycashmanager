@@ -79,7 +79,7 @@ protected:
      * grid.
      */
     int current_row() const;
-    void increment_row();
+    void increment_row(int p_inc = 1);
     void decrement_row();
     void set_row(int p_row);
 

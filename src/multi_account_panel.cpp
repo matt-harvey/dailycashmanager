@@ -36,11 +36,13 @@
 #include <jewel/decimal.hpp>
 #include <jewel/log.hpp>
 #include <sqloxx/handle.hpp>
+#include <wx/checkbox.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/msgdlg.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
+#include <wx/wupdlock.h>
 #include <set>
 #include <vector>
 
@@ -58,16 +60,15 @@ namespace gui
 
 namespace
 {
-    vector<Handle<Account> > suggested_accounts
+    vector<Handle<Account>> suggested_accounts
     (   DcmDatabaseConnection& p_database_connection,
         AccountSuperType p_account_super_type
     )
     {
-        vector<Handle<Account> > ret;
+        vector<Handle<Account>> ret;
         JEWEL_ASSERT (ret.empty());
         typedef vector<AccountType> ATypeVec;
-        ATypeVec const& account_types =
-            dcm::account_types(p_account_super_type);
+        ATypeVec const& account_types = dcm::account_types(p_account_super_type);
         for (AccountType atype: account_types)
         {
             make_default_accounts(p_database_connection, ret, atype);
@@ -139,13 +140,14 @@ MultiAccountPanel::MultiAccountPanel
 
     // Main body of MultiAccountPanel - a grid of fields where user
     // can edit Account attributes and opening balances.
-    vector<Handle<Account> > sugg_accounts =
+    vector<Handle<Account>> sugg_accounts =
         suggested_accounts(database_connection(), m_account_super_type);
     auto const sz = sugg_accounts.size();
     m_account_name_boxes.reserve(sz);
     m_account_type_boxes.reserve(sz);
     m_description_boxes.reserve(sz);
     m_opening_balance_boxes.reserve(sz);
+    m_check_boxes.reserve(sz);
     for (auto const& account: sugg_accounts)
     {
         push_row(account);
@@ -171,39 +173,72 @@ MultiAccountPanel::required_width()
     return
         medium_width() * 3 +
         large_width() * 1 +
-        standard_gap() * 3 +
+        standard_gap() * 5 +
         standard_border() * 2 +
         scrollbar_width_allowance();
 }
 
-bool
+void
 MultiAccountPanel::push_row()
 {
     Handle<Account> account = blank_account();
-    return push_row(account);
+    push_row(account);
+    return;
 }
 
 bool
-MultiAccountPanel::pop_row()
+MultiAccountPanel::remove_checked_rows()
 {
-    if (m_account_name_boxes.size() <= m_minimum_num_rows)
+    wxWindowUpdateLocker const window_update_locker(this);
+    JEWEL_LOG_TRACE();
+    auto const checked = checked_rows();        
+    JEWEL_ASSERT (checked.size() <= m_account_name_boxes.size());
+    if (m_account_name_boxes.size() - checked.size() < m_minimum_num_rows)
     {
-        return false;
+        JEWEL_LOG_TRACE();
+        return false; 
     }
-    JEWEL_ASSERT (m_account_name_boxes.size() > 1);
 #   ifndef NDEBUG
         vector<TextCtrl*>::size_type const sz = m_account_name_boxes.size();
         JEWEL_ASSERT (sz > 0);
         JEWEL_ASSERT (sz == m_account_type_boxes.size());
         JEWEL_ASSERT (sz == m_description_boxes.size());
         JEWEL_ASSERT (sz == m_opening_balance_boxes.size());
+        JEWEL_ASSERT (sz == m_check_boxes.size());
 #   endif
-    pop_widget_from(m_opening_balance_boxes);
-    pop_widget_from(m_description_boxes);
-    pop_widget_from(m_account_type_boxes);
-    pop_widget_from(m_account_name_boxes);
-    decrement_row();
+    vector<AugmentedAccount> aug_accounts = augmented_accounts();
+    JEWEL_ASSERT (aug_accounts.size() == m_check_boxes.size());
+    vector<AugmentedAccount> preserved_aug_accounts;
+    for (vector<AugmentedAccount>::size_type i = 0; i != aug_accounts.size(); ++i)
+    {
+        if (!m_check_boxes[i]->GetValue())
+        {
+            preserved_aug_accounts.push_back(aug_accounts[i]);
+        }
+    }
+    if (preserved_aug_accounts.size() == aug_accounts.size())
+    {
+        return true;
+    }
+    auto const lim = m_account_name_boxes.size();
+    remove_widgets_from(m_check_boxes);
+    remove_widgets_from(m_opening_balance_boxes);
+    remove_widgets_from(m_description_boxes);
+    remove_widgets_from(m_account_type_boxes);
+    remove_widgets_from(m_account_name_boxes);
+    increment_row(-lim);
+    for (auto const& preserved_aug_account: preserved_aug_accounts)
+    {
+        push_row(preserved_aug_account.account);
+        m_opening_balance_boxes.back()->set_amount
+        (    m_account_super_type == AccountSuperType::pl?
+            -preserved_aug_account.technical_opening_balance:
+            preserved_aug_account.technical_opening_balance
+        );
+    }
+    update_summary();
     FitInside();
+    JEWEL_LOG_TRACE();
     return true;
 }
 
@@ -243,6 +278,17 @@ MultiAccountPanel::num_rows() const
     JEWEL_ASSERT (sz == m_description_boxes.size());
     JEWEL_ASSERT (sz == m_opening_balance_boxes.size());
     return m_account_name_boxes.size();
+}
+
+size_t
+MultiAccountPanel::num_checked_rows() const
+{
+    size_t ret = 0;
+    for (auto const* check_box: m_check_boxes)
+    {
+        if (check_box->GetValue()) ++ret;
+    }
+    return ret;
 }
 
 bool
@@ -287,7 +333,7 @@ MultiAccountPanel::blank_account()
     return ret;
 }
 
-bool
+void
 MultiAccountPanel::push_row(Handle<Account> const& p_account)
 {
     int const row = current_row();
@@ -327,8 +373,7 @@ MultiAccountPanel::push_row(Handle<Account> const& p_account)
         wxSize(large_width(), height),
         wxALIGN_LEFT
     );
-    top_sizer().
-        Add(description_box, wxGBPosition(row, 2), wxGBSpan(1, 2));
+    top_sizer().Add(description_box, wxGBPosition(row, 2), wxGBSpan(1, 2));
     m_description_boxes.push_back(description_box);
 
     p_account->set_commodity(m_commodity);
@@ -344,11 +389,35 @@ MultiAccountPanel::push_row(Handle<Account> const& p_account)
     top_sizer().Add(opening_balance_box, wxGBPosition(row, 4));
     m_opening_balance_boxes.push_back(opening_balance_box);
 
+    // Check-box
+    wxCheckBox* check_box = new wxCheckBox
+    (   this,
+        wxID_ANY,
+        wxString(),
+        wxDefaultPosition,
+        wxSize(medium_width(), height)
+    );
+    check_box->SetValue(false);
+    top_sizer().Add(check_box, wxGBPosition(row, 5));
+    m_check_boxes.push_back(check_box);
+
     increment_row();
 
     FitInside();
 
-    return true;
+    return;
+}
+
+set<vector<wxCheckBox*>::size_type>
+MultiAccountPanel::checked_rows() const
+{
+    typedef vector<wxCheckBox*>::size_type Sz;
+    set<Sz> ret;
+    for (Sz i = 0; i != m_check_boxes.size(); ++i)
+    {
+        if (m_check_boxes[i]->GetValue()) ret.insert(i);
+    }
+    return ret;
 }
 
 void
@@ -368,7 +437,7 @@ MultiAccountPanel::set_commodity(Handle<Commodity> const& p_commodity)
 }
 
 vector<AugmentedAccount>
-MultiAccountPanel::selected_augmented_accounts()
+MultiAccountPanel::augmented_accounts()
 {
     vector<AugmentedAccount> ret;
 #   ifndef NDEBUG
