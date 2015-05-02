@@ -63,14 +63,6 @@ namespace
     }
 
     /**
-     * Characters that cannot occur \e anywhere in a filepath.
-     */
-    bool is_prohibited_filepath_character(char c)
-    {
-        return c == '\0';
-    }
-
-    /**
      * Filenames that are prohibited, regardless of the extension.
      * Populates \e message with an error message if and only if the
      * return value is \e true.

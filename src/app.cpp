@@ -89,6 +89,7 @@ namespace
         return;
     }
 
+#ifdef JEWEL_ON_WINDOWS
     bool ensure_dir_exists(string const& p_directory)
     {
         if (filesystem::exists(p_directory))
@@ -97,6 +98,7 @@ namespace
         }
         return filesystem::create_directory(p_directory);
     }
+#endif
 
     wxString filepath_wildcard()
     {

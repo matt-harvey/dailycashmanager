@@ -49,17 +49,6 @@ BEGIN_EVENT_TABLE(AccountCtrl, ComboBox)
     EVT_KILL_FOCUS(AccountCtrl::on_kill_focus)
 END_EVENT_TABLE()
 
-namespace
-{
-    bool compare_account_names
-    (   Handle<Account> const& lhs,
-        Handle<Account> const& rhs
-    )
-    {
-        return lhs->name() < rhs->name();
-    }
-}  // end anonymous namespace
-
 AccountCtrl::AccountCtrl
 (   wxWindow* p_parent,
     unsigned int p_id,

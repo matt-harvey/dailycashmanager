@@ -51,16 +51,6 @@ namespace
         static Decimal const ret("12");
         return ret;
     }
-    Decimal const& days_per_month()
-    {
-        static Decimal const ret =
-            days_per_year() / months_per_year();
-        return ret;
-    }
-    bool is_whole(Decimal const& d)
-    {
-        return round(d, 0) == d;
-    }
     Decimal const& days_per_canonical_interval()
     {
         // A number with that's wholly divisible

@@ -124,23 +124,6 @@ END_EVENT_TABLE()
 // TODO LOW PRIORITY add a button to pop up a wxCalendarCtrl
 // if the user wants one.
 
-namespace
-{
-    bool contains_reconciled_entry(Journal& p_journal)
-    {
-        for (Handle<Entry> const& entry: p_journal.entries())
-        {
-            if (entry->has_id() && entry->is_reconciled())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-}  // end anonymous namespace
-
-
 TransactionCtrl::TransactionCtrl
 (   TopPanel* p_parent,
     wxSize const& p_size,

@@ -141,26 +141,7 @@ namespace
         return s;
     }
 
-    void make_default_augmented_accounts
-    (   DcmDatabaseConnection& dbc,
-        vector<AugmentedAccount>& vec,
-        AccountType p_account_type,
-        Decimal::places_type precision
-    )
-    {
-        vector<Handle<Account> > accounts;
-        make_default_accounts(dbc, accounts, p_account_type);
-        Decimal const zero(0, precision);
-        for (Handle<Account> const& account: accounts)
-        {
-            AugmentedAccount const augmented_account(account, zero);
-            vec.push_back(augmented_account);
-        }
-        return;
-    }
-
 }  // end anonymous namespace
-
 
 
 /*** SetupWizard ***/
