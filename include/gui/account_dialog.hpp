@@ -21,7 +21,6 @@
 #include "account_type.hpp"
 #include "budget_panel.hpp"
 #include <sqloxx/handle.hpp>
-#include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -37,6 +36,7 @@ namespace gui
 
 class AccountTypeCtrl;
 class Button;
+class CheckBox;
 class DecimalTextCtrl;
 class TextCtrl;
 
@@ -106,7 +106,7 @@ private:
     TextCtrl* m_description_ctrl;
     DecimalTextCtrl* m_opening_amount_ctrl;
     BudgetPanel* m_budget_panel;
-    wxCheckBox* m_visibility_ctrl;
+    CheckBox* m_visibility_ctrl;
     Button* m_cancel_button;
     Button* m_ok_button;
     sqloxx::Handle<Account> m_account;

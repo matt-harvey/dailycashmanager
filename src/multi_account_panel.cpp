@@ -26,6 +26,7 @@
 #include "visibility.hpp"
 #include "gui/account_type_ctrl.hpp"
 #include "gui/button.hpp"
+#include "gui/check_box.hpp"
 #include "gui/decimal_text_ctrl.hpp"
 #include "gui/gridded_scrolled_panel.hpp"
 #include "gui/locale.hpp"
@@ -36,7 +37,6 @@
 #include <jewel/decimal.hpp>
 #include <jewel/log.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/checkbox.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/msgdlg.h>
@@ -390,7 +390,7 @@ MultiAccountPanel::push_row(Handle<Account> const& p_account)
     m_opening_balance_boxes.push_back(opening_balance_box);
 
     // Check-box
-    wxCheckBox* check_box = new wxCheckBox
+    CheckBox* check_box = new CheckBox
     (   this,
         wxID_ANY,
         wxString(),
@@ -408,10 +408,10 @@ MultiAccountPanel::push_row(Handle<Account> const& p_account)
     return;
 }
 
-set<vector<wxCheckBox*>::size_type>
+set<vector<CheckBox*>::size_type>
 MultiAccountPanel::checked_rows() const
 {
-    typedef vector<wxCheckBox*>::size_type Sz;
+    typedef vector<CheckBox*>::size_type Sz;
     set<Sz> ret;
     for (Sz i = 0; i != m_check_boxes.size(); ++i)
     {

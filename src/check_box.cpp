@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Matthew Harvey
+ * Copyright 2015 Matthew Harvey
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-#include "gui/button.hpp"
-#include <jewel/assert.hpp>
-#include <jewel/log.hpp>
-#include <wx/button.h>
+#include "gui/check_box.hpp"
+#include <wx/checkbox.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
@@ -29,14 +27,11 @@ namespace dcm
 namespace gui
 {
 
-// TODO LOW PRIORITY There is code shared between this, CheckBox and ComboBox,
-// which might be factored out.
-
-BEGIN_EVENT_TABLE(Button, wxButton)
-    EVT_CHAR(Button::on_char)
+BEGIN_EVENT_TABLE(CheckBox, wxCheckBox)
+    EVT_CHAR(CheckBox::on_char)
 END_EVENT_TABLE()
 
-Button::Button
+CheckBox::CheckBox
 (   wxWindow* p_parent,
     wxWindowID p_id,
     wxString const& p_label,
@@ -46,26 +41,27 @@ Button::Button
     wxValidator const& p_validator,
     wxString const& p_name
 ):
-    wxButton
+    wxCheckBox
     (   p_parent,
         p_id,
         p_label,
         p_position,
         p_size,
-        p_style,
+        p_style | wxWANTS_CHARS,
         p_validator,
         p_name
     )
 {
 }
 
-Button::~Button()
+CheckBox::~CheckBox()
 {
 }
 
 void
-Button::on_char(wxKeyEvent& event)
+CheckBox::on_char(wxKeyEvent& event)
 {
+    // fix issue with tab traversal on Windows
     if (event.GetKeyCode() == WXK_TAB)
     {
         if (event.ShiftDown())

@@ -27,6 +27,7 @@
 #include "gui/account_type_ctrl.hpp"
 #include "gui/button.hpp"
 #include "gui/budget_panel.hpp"
+#include "gui/check_box.hpp"
 #include "gui/decimal_text_ctrl.hpp"
 #include "gui/frame.hpp"
 #include "gui/persistent_object_event.hpp"
@@ -40,7 +41,6 @@
 #include <sqloxx/database_transaction.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/app.h>
-#include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gbsizer.h>
@@ -466,7 +466,7 @@ void
 AccountDialog::configure_bottom_row()
 {
     JEWEL_ASSERT (!m_visibility_ctrl);
-    m_visibility_ctrl = new wxCheckBox
+    m_visibility_ctrl = new CheckBox
     (   this,
         wxID_ANY,
         wxString("&Show in list"),

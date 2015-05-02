@@ -26,7 +26,6 @@
 #include <jewel/decimal.hpp>
 #include <jewel/log.hpp>
 #include <sqloxx/handle.hpp>
-#include <wx/checkbox.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
@@ -47,6 +46,7 @@ namespace gui
 {
 
 class Button;
+class CheckBox;
 class TextCtrl;
 
 // end forward declarations
@@ -181,7 +181,7 @@ private:
 
     template <typename T> void remove_widgets_from(std::vector<T>& p_vec);
 
-    std::set<std::vector<wxCheckBox*>::size_type> checked_rows() const;
+    std::set<std::vector<CheckBox*>::size_type> checked_rows() const;
     
     AccountSuperType m_account_super_type;
     sqloxx::Handle<Commodity> m_commodity;
@@ -195,7 +195,7 @@ private:
     std::vector<AccountTypeCtrl*> m_account_type_boxes;
     std::vector<TextCtrl*> m_description_boxes;
     std::vector<DecimalTextCtrl*> m_opening_balance_boxes;
-    std::vector<wxCheckBox*> m_check_boxes;
+    std::vector<CheckBox*> m_check_boxes;
 
 };  // class MultiAccountPanel
 
