@@ -117,7 +117,7 @@ DecimalTextCtrl::amount()
 void
 DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
 {
-    // TODO LOW PRIORITY BudgetPanel and MultiAccountPanel rely on the call to
+    // TODO LOW PRIORITY BudgetPanel relies on the call to
     // GetParent()->TransferDataToWindow() here. This coupling is ugly
     // and fragile. Improve this.
     event.Skip();
@@ -129,10 +129,7 @@ DecimalTextCtrl::on_kill_focus(wxFocusEvent& event)
     bool ok = validator->Validate(static_cast<wxWindow*>(this));
     if (ok)
     {
-        if
-        (   dynamic_cast<gui::BudgetPanel*>(parent) ||
-            dynamic_cast<gui::MultiAccountPanel*>(parent)
-        )
+        if (dynamic_cast<gui::BudgetPanel*>(parent) != nullptr)
         {
             ok = parent->TransferDataToWindow();
         }

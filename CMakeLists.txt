@@ -239,6 +239,7 @@ set (
     src/gridded_scrolled_panel.cpp
     src/locale.cpp
     src/multi_account_panel.cpp
+    src/opening_balance_ctrl.cpp
     src/persistent_object_event.cpp
     src/pl_account_entry_list_ctrl.cpp
     src/pl_report.cpp

@@ -20,6 +20,7 @@
 #include "account.hpp"
 #include "account_type.hpp"
 #include "budget_panel.hpp"
+#include <jewel/decimal_fwd.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -37,7 +38,7 @@ namespace gui
 class AccountTypeCtrl;
 class Button;
 class CheckBox;
-class DecimalTextCtrl;
+class OpeningBalanceCtrl;
 class TextCtrl;
 
 // End forward declarations
@@ -104,7 +105,7 @@ private:
     TextCtrl* m_name_ctrl;
     AccountTypeCtrl* m_account_type_ctrl;
     TextCtrl* m_description_ctrl;
-    DecimalTextCtrl* m_opening_amount_ctrl;
+    OpeningBalanceCtrl* m_opening_amount_ctrl;
     BudgetPanel* m_budget_panel;
     CheckBox* m_visibility_ctrl;
     Button* m_cancel_button;

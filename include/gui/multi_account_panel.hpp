@@ -20,9 +20,9 @@
 #include "account_type.hpp"
 #include "account_type_ctrl.hpp"
 #include "commodity.hpp"
-#include "decimal_text_ctrl.hpp"
 #include "gridded_scrolled_panel.hpp"
 #include "setup_wizard.hpp"
+#include "opening_balance_ctrl.hpp"
 #include <jewel/decimal.hpp>
 #include <jewel/log.hpp>
 #include <sqloxx/handle.hpp>
@@ -156,6 +156,15 @@ public:
      * which a non-empty Account name has been entered).
      */
     bool account_type_is_selected(AccountType p_account_type)const;
+
+    /**
+     * Returns the AccountType that is currently set for the row in
+     * which OpeningBalanceCtrl is situated.
+     *
+     * Precondition: \e p_ctrl must have this MultiAccountPanel as its
+     * parent.
+     */
+    AccountType account_type_for(OpeningBalanceCtrl const* p_ctrl) const;
     
 private:
 
@@ -182,7 +191,7 @@ private:
     template <typename T> void remove_widgets_from(std::vector<T>& p_vec);
 
     std::set<std::vector<CheckBox*>::size_type> checked_rows() const;
-    
+
     AccountSuperType m_account_super_type;
     sqloxx::Handle<Commodity> m_commodity;
     std::set<wxString> m_account_names_already_taken;
@@ -194,7 +203,7 @@ private:
     std::vector<TextCtrl*> m_account_name_boxes;
     std::vector<AccountTypeCtrl*> m_account_type_boxes;
     std::vector<TextCtrl*> m_description_boxes;
-    std::vector<DecimalTextCtrl*> m_opening_balance_boxes;
+    std::vector<OpeningBalanceCtrl*> m_opening_balance_boxes;
     std::vector<CheckBox*> m_check_boxes;
 
 };  // class MultiAccountPanel

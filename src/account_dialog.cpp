@@ -28,7 +28,7 @@
 #include "gui/button.hpp"
 #include "gui/budget_panel.hpp"
 #include "gui/check_box.hpp"
-#include "gui/decimal_text_ctrl.hpp"
+#include "gui/opening_balance_ctrl.hpp"
 #include "gui/frame.hpp"
 #include "gui/persistent_object_event.hpp"
 #include "gui/sizing.hpp"
@@ -331,7 +331,7 @@ AccountDialog::AccountDialog
         wxDefaultSpan,
         wxALIGN_RIGHT | wxALIGN_CENTRE_VERTICAL
     );
-    m_opening_amount_ctrl = new DecimalTextCtrl
+    m_opening_amount_ctrl = new OpeningBalanceCtrl
     (   this,
         wxID_ANY,
         wxSize(medium_width(), wxDefaultSize.y),
@@ -340,8 +340,7 @@ AccountDialog::AccountDialog
     );
     if (m_account->has_id())
     {
-        m_opening_amount_ctrl->
-            set_amount(m_account->friendly_opening_balance());
+        m_opening_amount_ctrl->set_amount(m_account->friendly_opening_balance());
     }
     m_top_sizer->Add
     (   m_opening_amount_ctrl,
@@ -614,16 +613,16 @@ AccountDialog::on_ok_button_click(wxCommandEvent& event)
     JEWEL_ASSERT (frame);
     PersistentObjectEvent::fire(frame, event_type, m_account->id());
     JEWEL_LOG_TRACE();
-    Decimal opening_amount = m_opening_amount_ctrl->amount();
+    Decimal amount = m_opening_amount_ctrl->amount();
     if (m_account->account_super_type() == AccountSuperType::pl)
     {
         // TODO MEDIUM PRIORITY Handle very small possibility of overflow
         // here (currently it would just throw an exception and crash).
-        opening_amount = -opening_amount;
+        amount = -amount;
     }
     objnl = create_opening_balance_journal
     (   m_account,
-        opening_amount
+        amount
     );
     if (objnl->primary_amount() != Decimal(0, 0))
     {

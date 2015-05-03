@@ -42,7 +42,7 @@ namespace dcm
  */
 typedef
     jewel::FlagSet
-    <    string_flags::StringFlags,
+    <   string_flags::StringFlags,
         string_flags::dash_for_zero | string_flags::hard_align_right,
         string_flags::dash_for_zero  // default
     >
@@ -54,7 +54,7 @@ typedef
  */
 typedef
     jewel::FlagSet
-    <    string_flags::StringFlags,
+    <   string_flags::StringFlags,
         string_flags::allow_negative_parens,
         string_flags::allow_negative_parens  // default
     >

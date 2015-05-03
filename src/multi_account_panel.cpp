@@ -27,9 +27,9 @@
 #include "gui/account_type_ctrl.hpp"
 #include "gui/button.hpp"
 #include "gui/check_box.hpp"
-#include "gui/decimal_text_ctrl.hpp"
 #include "gui/gridded_scrolled_panel.hpp"
 #include "gui/locale.hpp"
+#include "gui/opening_balance_ctrl.hpp"
 #include "gui/setup_wizard.hpp"
 #include "gui/sizing.hpp"
 #include "gui/text_ctrl.hpp"
@@ -39,7 +39,6 @@
 #include <sqloxx/handle.hpp>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
-#include <wx/msgdlg.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/wupdlock.h>
@@ -259,6 +258,8 @@ MultiAccountPanel::summary_amount() const
 void
 MultiAccountPanel::update_summary()
 {
+    // TODO HIGH PRIORITY Gracefully handle the case where this causes
+    // Decimal overflow. (Currently, it will crash, albeit "harmlessly".)
     m_summary_amount_text->SetLabel
     (   finformat_wx
         (   summary_amount(),
@@ -304,6 +305,21 @@ MultiAccountPanel::account_type_is_selected
         }
     }
     return false;
+}
+
+AccountType
+MultiAccountPanel::account_type_for(OpeningBalanceCtrl const* p_ctrl) const
+{
+    JEWEL_ASSERT (p_ctrl->GetParent() == this);
+    for (size_t i = 0; i != m_opening_balance_boxes.size(); ++i)
+    {
+        if (m_opening_balance_boxes[i] == p_ctrl)
+        {
+            JEWEL_ASSERT (i < m_account_type_boxes.size());
+            return m_account_type_boxes[i]->account_type();
+        }
+    }
+    JEWEL_HARD_ASSERT (false);
 }
 
 bool
@@ -379,7 +395,7 @@ MultiAccountPanel::push_row(Handle<Account> const& p_account)
     p_account->set_commodity(m_commodity);
 
     // Opening balance
-    DecimalTextCtrl* opening_balance_box = new DecimalTextCtrl
+    OpeningBalanceCtrl* opening_balance_box = new OpeningBalanceCtrl
     (   this,
         wxID_ANY,
         wxSize(medium_width(), height),
@@ -393,7 +409,7 @@ MultiAccountPanel::push_row(Handle<Account> const& p_account)
     CheckBox* check_box = new CheckBox
     (   this,
         wxID_ANY,
-        wxString(),
+        wxEmptyString,
         wxDefaultPosition,
         wxSize(medium_width(), height)
     );
@@ -424,13 +440,13 @@ void
 MultiAccountPanel::set_commodity(Handle<Commodity> const& p_commodity)
 {
     m_commodity = p_commodity;
-    Decimal::places_type const precision = p_commodity->precision();
-    for (DecimalTextCtrl* ctrl: m_opening_balance_boxes)
+    auto const precision = p_commodity->precision();
+    for (auto* ctrl: m_opening_balance_boxes)
     {
         // TODO MEDIUM PRIORITY Handle potential Decimal exception here on
         // rounding.
-        Decimal const old_amount = ctrl->amount();
-        Decimal const new_amount = round(old_amount, precision);
+        auto const old_amount = ctrl->amount();
+        auto const new_amount = round(old_amount, precision);
         ctrl->set_amount(new_amount);
     }
     return;
