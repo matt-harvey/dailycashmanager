@@ -2,10 +2,18 @@ var Ug = function($) {
 
   var autoScrolling = false;
 
+  function wideView(windowWidth) {
+    var w = (typeof windowWidth === 'undefined' ? $(window).width() : windowWidth);
+    return w > 787;
+  }
+
   function scrollTo($element) {
+    var navHeight = $('#ug-left-sidebar').height();
+    var adjustment = (wideView() ? 0 : navHeight);
+    var targetPosition = $element.offset().top - adjustment;
     autoScrolling = true;
     $('html, body').stop().animate(
-      { 'scrollTop': $element.offset().top },
+      { 'scrollTop': targetPosition },
       'slow',
       function() { autoScrolling = false; }
     );
@@ -33,7 +41,7 @@ var Ug = function($) {
     var $link = $('nav a').filter(function() {
       return squashedTextContent($(this)) === squashedTextContent($header);
     });
-    var $menuItem = $link.closest('li');
+    var $menuItem = $link.closest('li:visible');
     contractMenu();
     expandMenuItem($menuItem);
     $menuItem.children('a').focus();
@@ -63,12 +71,18 @@ var Ug = function($) {
   }
 
   function setWidths() {
-    var w = Math.max($(window).width() * 0.25, 200);
-    $('#ug-left-sidebar, nav').width(w);
-    $('#ug-main').css({ 'margin-left': w + 20 + 'px' });
-
-    // hide menu scrollbar
-    $('#ug-left-sidebar').width($('nav').get(0).scrollWidth);
+    var windowWidth = $(window).width();
+    var w = Math.max(windowWidth * 0.25, 200);
+    if (wideView(windowWidth)) {
+      $('#ug-left-sidebar, nav').width(w);
+      $('#ug-left-sidebar').show();
+      $('#ug-main').css({ 'margin-left': w + 20 + 'px' });
+      $('#ug-main').css({ 'padding-top': 0 });
+    } else {
+      $('#ug-left-sidebar, nav').width(windowWidth);
+      $('#ug-main').css({ 'margin-left': '0' });
+      $('#ug-main').css({ 'padding-top': $('#ug-left-sidebar').height() + 'px' });
+    }
   }
 
   function enableScrollToTop() {

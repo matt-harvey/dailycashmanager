@@ -1,9 +1,25 @@
 /*---------------------------*\
-  #MAIN CONTENT
+  GENERAL
+\*---------------------------*/
+
+* {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/*---------------------------*\
+  MAIN CONTENT
 \*---------------------------*/
 
 #ug-main {
   padding: 0 2em;
+  margin-left: 20px;
+}
+
+@media screen and (max-width: 800px) {
+  #ug-main {
+    padding: 0 1.25em;
+    margin-left: 0;
+  }
 }
 
 h1 {
@@ -22,9 +38,12 @@ footer {
   font-size: 0.8em;
 }
 
+a {
+  text-decoration: none;
+}
 
 /*---------------------------*\
-  #NAVIGATION MENU
+  NAVIGATION MENU
 \*---------------------------*/
 
 #ug-left-sidebar {
@@ -32,43 +51,51 @@ footer {
   top: 0;
   left: 0;
   bottom: 0;
-  overflow-x: hidden;
-  overflow-y: hidden;
-  background-color: #332222;
+  overflow: hidden;
+  background-color: #dddddd;
+  background-image: linear-gradient(to bottom, #efefef, #cbcbcb);
   text-align: right;
+  padding-right: 2em;
+}
+
+.ug-left-sidebar-heading {
+  display: none;
 }
 
 nav {
+  position: fixed;
+  top: 0;
+  bottom: 0;
   overflow-x: hidden;
-  overflow-y: scroll;
-  height: 100%;
-  color: white;
+  overflow-y: auto;
+  height: auto;
+  color: black;
   text-align: right;
   padding-right: 2em;
 }
 
 img {
   position: inline-block;
-  padding: 2em;
+  padding: 2em 0 0 0;
 }
 
 nav a {
   text-decoration: none;
-  color: white;
+  color: black;
 }
 
 nav a:hover {
-  color: pink;
+  color: blue;
 }
 
 .ug-menu-item-selected,
 .ug-menu-item-selected:hover {
-  color: red;
+  color: blue;
 }
 
 nav a:focus {
   outline: 0;
-  color: red;
+  color: blue;
 }
 
 .ug-image-link:focus {
@@ -99,9 +126,80 @@ nav > ul > li {
   margin-bottom: 0.8em;
 }
 
+@media screen and (max-width: 800px) {
+  #ug-left-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: auto;
+    overflow-x: visible;
+    overflow-y: visible;
+    text-align: center;
+    padding-bottom: 5%;
+    border-width: 0 0 1px 0;
+    border-style: solid;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 0;
+    overflow: visible;
+  }
+  #ug-main {
+    padding-top: 20px;
+  }
+  .ug-left-sidebar-heading {
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+  .ug-left-sidebar-heading a {
+    color: black;
+    margin: 0;
+    padding: 0;
+  }
+  .ug-left-sidebar-heading a:hover {
+    color: blue;
+    margin: 0;
+    padding: 0;
+  }
+  .ug-left-sidebar-heading h1 {
+    font-size: 1em;
+    margin: 0;
+    padding: 1em 1em 0.1em 1em;
+  }
+  nav {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    overflow-x: visible;
+    overflow-y: visible;
+    padding-bottom: 0;
+    padding-right: 0;
+    border-width: 0 0 0 0;
+  }
+  nav ul {
+    font-weight: normal;
+    font-size: 1em;
+    text-align: center;
+    padding-left: 0;
+  }
+  nav > ul > li {
+    display: inline-block !important;
+    padding: 0 1em 0.2em 1em;
+    margin: 0.02em 0 0.02em 0;
+    text-align: center;
+  }
+  nav ul ul {
+    display: none !important;
+  }
+  img {
+    display: none;
+  }
+}
 
 /*---------------------------*\
-  #PRINT STYLES
+  PRINT STYLES
 \*---------------------------*/
 
 @media print {
@@ -112,4 +210,5 @@ nav > ul > li {
     margin-left: auto !important;
   }
 }
+
 
