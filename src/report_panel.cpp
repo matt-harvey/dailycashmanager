@@ -26,6 +26,7 @@
 #include "gui/report.hpp"
 #include "gui/sizing.hpp"
 #include "gui/string_set_validator.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <jewel/assert.hpp>
 #include <sqloxx/handle.hpp>
 #include <wx/event.h>
@@ -35,6 +36,8 @@
 #include <utility>
 
 using sqloxx::Handle;
+
+namespace gregorian = boost::gregorian;
 
 namespace dcm
 {
@@ -140,12 +143,14 @@ ReportPanel::configure_top()
 
     // Date range boxes
 
-    bool const allow_blank_dates = true;
+    auto const allow_blank_dates = true;
+    auto const default_max_date = today();
+    auto const default_min_date = default_max_date - gregorian::date_duration(6);
     m_min_date_ctrl = new DateCtrl
     (   this,
         s_min_date_ctrl_id,
         wxSize(medium_width(), std_height),
-        today(),
+        default_min_date,
         allow_blank_dates
     );
     m_top_sizer->Add(m_min_date_ctrl, wxGBPosition(m_next_row, 2));
@@ -153,7 +158,7 @@ ReportPanel::configure_top()
     (   this,
         s_max_date_ctrl_id,
         wxSize(medium_width(), std_height),
-        today(),
+        default_max_date,
         allow_blank_dates
     );
     m_top_sizer->Add(m_max_date_ctrl, wxGBPosition(m_next_row, 3));

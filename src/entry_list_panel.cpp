@@ -17,9 +17,9 @@
 #include "gui/entry_list_panel.hpp"
 #include "account.hpp"
 #include "date.hpp"
+#include "dcm_database_connection.hpp"
 #include "entry.hpp"
 #include "ordinary_journal.hpp"
-#include "dcm_database_connection.hpp"
 #include "string_flags.hpp"
 #include "gui/account_ctrl.hpp"
 #include "gui/button.hpp"
@@ -162,11 +162,14 @@ EntryListPanel::EntryListPanel
     }
     int const std_height = m_account_ctrl->GetSize().GetHeight();
     m_top_sizer->Add(m_account_ctrl, wxGBPosition(m_next_row, 1));
+
+    auto const default_max_date = today();
+    auto const default_min_date = default_max_date - gregorian::date_duration(6);
     m_min_date_ctrl = new DateCtrl
     (   this,
         s_min_date_ctrl_id,
         wxSize(medium_width(), std_height),
-        today(),
+        default_min_date,
         allow_blank_dates
     );
     m_top_sizer->Add(m_min_date_ctrl, wxGBPosition(m_next_row, 2));
@@ -174,10 +177,11 @@ EntryListPanel::EntryListPanel
     (   this,
         s_max_date_ctrl_id,
         wxSize(medium_width(), std_height),
-        today(),
+        default_max_date,
         allow_blank_dates
     );
     m_top_sizer->Add(m_max_date_ctrl, wxGBPosition(m_next_row, 3));
+
     m_refresh_button = new Button
     (   this,
         s_refresh_button_id,
