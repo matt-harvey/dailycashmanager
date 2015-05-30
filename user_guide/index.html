@@ -1,0 +1,1582 @@
+<doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>DailyCashManager | User Guide</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/vendor/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script>
+    window.jQuery ||
+    document.write('<script src="js/vendor/jquery-1.11.1.min.js"><\/script>')
+  </script>
+  <script src="js/vendor/waypoints.min.js"></script>
+  <script src="js/main.js"></script>
+</head>
+
+<body>
+
+<div id="ug-left-sidebar">
+  <div class="ug-left-sidebar-heading">
+    <a href="#" class="js-ug-scroll-to-top" title="Return to top">
+      <h1>DailyCashManager User Guide</h1>
+    </a>
+  </div>
+  <nav>
+    <a href="#" class="ug-image-link js-ug-scroll-to-top" title="Return to top">
+      <img src="images/icon_100_100.png" alt="DCM-squirrel-icon"></img>
+    </a>
+    <!-- populated via JavaScript -->
+  </nav>
+</div>
+
+<div id="ug-main">
+
+<h1>DailyCashManager User Guide</h1>
+
+<div class="js-ug-headed-section">
+  <h2>Installation</h2>
+  <p>
+    <em>On Windows</em>
+  </p>
+  <p>
+    Double click on the downloaded binary installer, which should be named
+    &quot;DailyCashManager setup.exe&quot;, or similar. This will start the
+    graphical installer; then simply follow the prompts.
+  </p>
+  <p>
+    <em>On Linux</em>
+  </p>
+  <p>
+    Currently to install DCM on Linux, the application must be compiled from
+    source. Uncompress the tarball or zipball, and <code>cd</code> into the
+    resulting source directory. Follow the instructions in README.rst to build,
+    test and install the application.
+  </p>
+</div>
+
+
+<div class="js-ug-headed-section">
+  <h2>Getting Started</h2>
+
+  <div class="js-ug-headed-section">
+    <h3>Running DailyCashManager for the first time</h3>
+    <p>
+      <em>On Windows</em>
+    </p>
+    <p>
+      Double-click the DailyCashManager icon in the Start menu.
+    </p>
+    <p>
+      <em>On Linux</em>
+    </p>
+    <p>
+      Enter <code>dailycashmanager</code> at the command line.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Creating a DailyCashManager file</h3>
+    <p>
+      When you first run DCM, the application needs to create a file in which to
+      store your data. A small panel will be displayed on startup, titled,
+      &quot;Welcome to DailyCashManager!&quot;
+    </p>
+    <p>
+      Click on <em>Create a new DailyCashManager file</em>; the
+      <em>DailyCashManager Setup Wizard</em> will then guide through the
+      process of setting up your DCM file.
+    </p>
+
+    <div class="js-ug-headed-section">
+      <h4>File name, location, currency and starting date</h4>
+      <p>
+        The first page of the wizard will ask you to select a location to save
+        your DCM file. Click the <em>Browse...</em> button to browse your
+        filesystem and select a suitable location. It doesn't matter much where
+        you save the file, as long as you can easily remember where you saved
+        it. By default, the new file will be saved in your home folder; if
+        you're happy for it to be saved here, you can just leave this option
+        unchanged.
+      </p>
+      <p>
+        Next, enter a name for your new file. This defaults to your user name,
+        but you can enter any other name you choose, providing it is a valid
+        filename on your system. The &quot;.dcm&quot; extension will be
+        automatically added to whatever filename you enter; do not type
+        &quot;.dcm&quot; in the box yourself.
+      </p>
+      <p>
+        Next, select your currency from the drop-down list provided.
+      </p>
+      <p>
+        Depending on what currency you select, the box titled <em>Confirm the
+        precision of your currency</em> will display a &quot;0&quot; with a
+        number of decimal places to the right of the decimal point
+        corresponding to minor currency unit (cents, pence or etc.) of the
+        currency. For example, if you selected &quot;United States dollar
+        (USD)&quot;, this box would display &quot;0.00&quot;, because there are
+        100 cents in the dollar. If you didn't want to keep track of cents (or
+        whatever your minor currency unit happens to be) you could change this
+        box to read just &quot;0&quot;. However it is highly recommended that
+        you do <em>not</em> do this. Except in some special cases, it is best
+        to leave this box unchanged.
+      </p>
+      <p>
+        You will also be asked to enter a &quot;starting date&quot;. This is
+        the date from which you will start entering transactions, and will
+        default to today's date. If you will only be entering transactions
+        starting from today, you can leave this as is. However, to ensure the
+        integrity of your data, you will not be able to enter transactions
+        dated earlier than the date you enter here. If you have a backlog of
+        past-dated transactions that you want to enter into your newly created
+        DCM file, you should set this date to the date of the earliest
+        transaction that you will be entering.
+      </p>
+      <p>
+        When you are happy with your selections here, click <em>Next</em> and
+        you will be taken to the next page of the wizard.
+      </p>
+    </div>
+
+    <div class="js-ug-headed-section">
+      <h4>Setting up accounts</h4>
+      <p>
+        The next page asks you to enter your assets and liabilities, with the
+        current balances of each. An asset represents an amount of money that
+        you &quot;own&quot; - such as a chequing account or savings account -
+        and a liability represents an amount that you &quot;owe&quot; - such as
+        a credit card balance or loan. The wizard provides you with some
+        suggested asset and liability accounts to get you started; however you
+        can and should edit these to match the accounts that you actually have.
+        You can edit the <em>Account name</em>, <em>Type</em>,
+        <em>Description</em> and <em>Starting balance</em> boxes directly. The
+        <em>Description</em> is optional; you can enter a description of the
+        account here for your own benefit if you feel the need.  The
+        <em>Starting balance</em> box contains the amount of money in the
+        account as at the starting date (which will be today's date, unless you
+        entered a different starting date on the previous page); in the case of
+        a liability such as a credit card, this should normally be a negative
+        number (appearing in parentheses). If you want to add more accounts,
+        click the <em>Add account</em> button at the top right and a new row
+        will be created for you to populate with the details of the new
+        account. You can add as many other accounts as you like. To remove any
+        accounts that you don't need, click the <em>Remove account</em> button;
+        this removes the last account row from the page.
+      </p>
+      <p>
+        When you've finished configuring your accounts, click <em>Next</em> at
+        the bottom right, to advance to the next page of the wizard.
+      </p>
+    </div>
+
+    <div class="js-ug-headed-section">
+      <h4>Setting up envelopes</h4>
+      <p>
+        The next page asks you to enter some revenue and expenditure
+        categories.  These will form the initial &quot;envelopes&quot; that you
+        use to classify your transactions. As with the account setup page, you
+        can add envelopes by clicking the button at the top right, labelled
+        <em>Add envelope</em> in this case, or remove envelopes by clicking the
+        <em>Remove envelope</em> button, respectively. You can edit the boxes
+        for the <em>Name</em>, <em>Type</em> and <em>Description</em> of each
+        envelope directly. The <em>Description</em> field is optional.
+      </p>
+      <p>
+        You will notice that each envelope has an <em>Initial allocation</em>
+        cell; this is to contain the amount of funds you want to allocate to
+        the envelope initially, at the starting date, for budgeting purposes.
+        As a rule of thumb, you should allocate to each envelope enough money
+        to cover the most that you would normally spend on that category in a
+        single transaction. For example, if you usually spend at most 50.00 on
+        food &quot;in one hit&quot;, you should initially allocate about 50.00
+        to your &quot;Food&quot; envelope. This is only a rough guide however.
+        If you are not expecting to spend from a particular envelope for
+        another few weeks or months, then probably don't need to allocate the
+        full amount. For example, if you spend about 600.00 every 3 months on
+        electricity, and you're not expecting your next electricity bill for
+        another month, then you would only need to allocate about 400.00 to
+        &quot;Electricity&quot; to begin with. When you set up budget items
+        (you can read about this under <a href="#"
+        class="js-ug-autolink">Budgeting</a>), if you allocate 600.00 per 3 months
+        to this envelope, this will ensure that the envelope balance reaches
+        the targetted 600.00 by the time the electricity bill arrives.
+      </p>
+      <p>
+        Don't worry if this doesn't make perfect sense immediately; you can
+        adjust things later as you become more familiar with the envelope
+        method of budgeting, and with your own spending patterns as you record
+        them in DailyCashManager.
+      </p>
+      <p>
+        Note the <em>Total to allocate</em> number at the top right of the
+        wizard page. This represents the total amount of your wealth (assets
+        minus liabilities), less the amount you have allocated to envelopes so
+        far. This number will be reduced as you allocate more money to the
+        envelopes. Any amount that you don't allocate will remain in the
+        <em>Unallocated</em> envelope: this envelope is automatically created
+        for you by DailyCashManager for just this purpose.
+      </p>
+      <p>
+        After allocating what you think you need to your envelopes, if your
+        <em>Unallocated</em> balance is a positive number, this means you have
+        more money than you need to meet your immediate requirements. You might
+        want to create a <em>pure envelope</em> called &quot;Retirement
+        savings&quot; or &quot;Car savings&quot; or the like, to save for some
+        longer term goal, and put your remaining unallocated funds into this
+        (see <a href="#" class="js-ug-autolink">Targetted saving using pure
+        envelopes</a>). If you're not sure, you can leave these funds in
+        <em>Unallocated</em> for now, and shift them elsewhere at a later time
+        (see <a href="#" class="js-ug-autolink">Transferring money between
+        envelopes</a>).
+      </p>
+      <p>
+        On the other hand, if <em>Unallocated</em> is negative (indicated by
+        parentheses e.g. &quot;(100.00)&quot;), this suggests that you don't
+        have sufficient net assets to cover your immediate expenditure
+        requirements. See if you can realistically reduce some of your envelope
+        allocations to bring <em>Unallocated</em> to nil. If you can't
+        realistically do this, you can still leave the <em>Unallocated</em>
+        negative; but try to aim over time to bring <em>Unallocated</em> up to
+        <em>nil</em>. You can allocate regular funds into <em>Unallocated</em>
+        by setting up a budget item in the <em>Unallocated</em> account editing
+        panel (see <a href="#" class="js-ug-autolink">Creating and editing budget
+        items</a> for how to do this).
+      </p>
+    </div>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Opening an existing DailyCashManager file</h3>
+    <p>
+      Generally you will only want one DCM file to record all your transactions
+      and budgets. In your first session, you will create your DCM file. In
+      subsequent sessions, you will simply open your existing DCM file. There
+      are several ways to open an existing DCM file:
+    </p>
+    <ul>
+      <li>
+        In Windows, double click directly on the DCM file.
+      </li>
+      <li>
+        In Windows, double click the DailyCashManager icon in the Start Menu,
+        then select <em>Open existing DailyCashManager file</em> and follow the
+        prompts.
+      </li>
+      <li>
+        In Linux, type <code>dailycashmanager [FILE]</code> at the command line
+        (where <code>[FILE]</code> is the path to your DCM file.
+      </li>
+      <li>
+        In Linux, type <code>dailycashmanager</code> at the command line, select
+        <em>Open existing DailyCashManager file</em>, and follow the prompts.
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="js-ug-headed-section">
+  <h2>Accounts</h2>
+
+  <p>
+    An account represents either an amount of money that you &quot;own&quot; -
+    such as a chequing account or savings account - or an amount that you
+    &quot;owe&quot; - such as a credit card balance or loan. Managing your
+    finances using DailyCashManager, you will keep track of the amount of money
+    owned, or owing, in each account.
+  </p>
+  <p>
+    When you first set up your DailyCashManager file, you will want to create an
+    account in the program for each account that you have in real life.
+  </p>
+
+  <div class="js-ug-headed-section">
+    <h3>Creating an account</h3>
+    <p>
+      When you first set up your DCM file, you will create some accounts in the
+      <em>setup wizard</em> to begin with. But if you want to create further
+      accounts at a later time, it is easy to do so, as follows.
+    </p>
+    <p>
+      To create an account, click on <em>New</em> in the menu bar at the top,
+      and select <em>New account</em> from the resulting menu. A small panel
+      will appear near the centre of the screen. Enter the name of the account
+      (e.g.  &quot;Cheque account&quot;, or &quot;Rewards saver&quot;, or
+      &quot;XYZ Bank Credit card&quot;).
+    </p>
+    <p>
+      In the next row, select whether the account is an asset, or a liability.
+      An asset represents wealth that you own, such as a bank account; whereas
+      a liability is a debt, something you owe - for example, a credit card or
+      loan.
+    </p>
+    <p>
+      Next enter a description for the new account in the <em>Description</em>
+      box.  For example, you might enter &quot;Savings account with XYZ Bank
+      Pty Ltd&quot;. You can leave this blank if you wish.
+    </p>
+    <p>
+      Finally, enter the initial balance of the account in the <em>Initial
+      balance</em> box. The initial balance is the balance of the account on
+      the date shown in the panel, which is the same as the date you created
+      your DCM file. If the account wasn't created in real life until after you
+      set up the DCM file, then the initial balance should be left as zero.
+    </p>
+    <p>
+      Note that if it's an asset account, then the initial balance (if it isn't
+      zero), should generally be a positive number; if it's a liability, then
+      this will generally be a negative number.
+    </p>
+    <p>
+      When you're done entering the details of the new account, click
+      <em>Save</em>. The new account should then appear in the <em>Account</em>
+      list at the left of the main window.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Editing an account</h3>
+    <p>
+      If you want to edit the name, description or other properties of an
+      account after you've created it, you can do so either by double-clicking
+      on the account in the <em>Account</em> list on the left of the main
+      window, or else by selecting the account and then selecting <em>Edit
+      selected account</em> from the <em>Edit</em> menu at the top. A panel
+      will then appear in the centre of the screen. Change things as you see
+      fit, then click <em>Save</em> to keep your changes, or <em>Cancel</em> to
+      abort.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Hiding an account</h3>
+    <p>
+      By default, all accounts are shown in the <em>Account</em> list at the
+      left of the main window. However, there may be times when you find you no
+      longer need to use a particular account. To preserve the integrity of
+      past transactions recorded in the DCM file, there is no way to delete an
+      account once created; however you can hide an account from view, by
+      opening the account editing panel (see <a href="#"
+      class="js-ug-autolink">Editing an account</a>), and unchecking <em>Show in
+      list</em>. Click <em>Save</em> to save the change, and the account will
+      then disappear from the list.
+    </p>
+    <p>
+      If you later decide you want to show the account, you can re-check the
+      <em>Show in list</em> box, as follows. To edit the account given that it
+      is currently hidden, you first need to select <em>Show hidden
+      accounts</em> from the <em>View</em> menu at the top of the main window.
+      This will cause all the hidden accounts to be displayed in the
+      <em>Account</em> list. Double-click the account that you want to
+      &quot;unhide&quot; to bring up the account editing panel; then click
+      <em>Show in list</em>, and <em>Save</em>. Then open the <em>View</em>
+      menu again, and select <em>Hide hidden accounts</em>. You will see that
+      the account in question will still be visible, even though any other
+      hidden accounts will again be hidden from view.
+    </p>
+  </div>
+</div>
+
+<div class="js-ug-headed-section">
+  <h2>Envelopes</h2>
+  <p>
+    An envelope represents a category of expenditure or revenue. It is up to
+    you to decide what envelopes you want to create in order to categorize your
+    transactions, but you would typically create envelopes such as the
+    following.
+  </p>
+  <p>
+    Typical expenditure envelopes:
+  </p>
+  <ul>
+    <li>Food</li>
+    <li>Entertainment</li>
+    <li>Holidays</li>
+    <li>Electricity</li>
+    <li>Bank fees</li>
+  </ul>
+  <p>
+    Typical revenue envelopes:
+  </p>
+  <ul>
+    <li>Salary</li>
+    <li>Interest received</li>
+  </ul>
+  <p>
+    In addition, DailyCashManager provides for a third category of envelope,
+    called a <em>pure envelope</em>. A pure envelope is created in order to save
+    for separately for some special or one-off item that is not covered by your
+    day-to-day budgets; pure envelopes are discussed under <a href="#"
+    class="js-ug-autolink">Targetted saving using pure envelopes</a>.
+  </p>
+
+  <div class="js-ug-headed-section">
+    <h3>Creating an envelope</h3>
+    <p>
+      To create an envelope, click on <em>New</em> in the menu bar at the top,
+      and select <em>New envelope</em> from the resulting menu. A small panel
+      will appear near the centre of the screen. Enter the name of the envelope
+      (e.g.  &quot;Groceries&quot;, or &quot;Salary&quot;).
+    </p>
+    <p>
+      Next, in the <em>Envelope type</em> box, select whether the envelope is a
+      revenue, expense or pure envelope.
+    </p>
+    <p>
+      Next, you may want to enter a description in the <em>Description</em>
+      box.  For example, if you had an &quot;Entertainment&quot; envelope, you
+      might enter &quot;Spending on books, music and movies&quot; in the
+      <em>Description</em> box. This field is optional, and is simply for your
+      own future reference to clarify what kind of transactions will fall under
+      this envelope.
+    </p>
+    <p>
+      You will see an <em>Initial allocation</em> box. This represents the
+      initial amount that you want to make available for spending on this
+      category, out of your initial net assets (the total of your assets minus
+      liabilities), i.e.  your net assets when your DCM file is first created.
+      For example, suppose that when you create your file, you have 100.00 in
+      cash, 200.00 in your bank account, and a credit card balance of (50.00).
+      Your initial total net assets are therefore 250.00 (100.00 + 200.00 -
+      50.00). You might say that you want to allocate 50.00 of this 250.00
+      towards &quot;Food&quot;, 100.00 towards &quot;Rent&quot;, and the
+      remainder towards various other envelopes. You would then set the
+      <em>Initial allocation</em> to &quot;Food&quot; as 50.00, and to
+      &quot;Rent&quot; as 100.00.
+    </p>
+    <p>
+      Generally, if you are creating an envelope some time after you have
+      already set up your DCM file, you should leave the <em>Initial
+      allocation</em> at zero.
+    </p>
+    <p>
+      For now, you can ignore the <em>BUDGET ITEMS</em> section of this panel.
+      See <a href="#" class="js-ug-autolink">Creating and editing budget items</a>
+      for a detailed explanation of this.
+    </p>
+    <p>
+      Click <em>Save</em> at the bottom right to save the newly created
+      envelope; or click <em>Cancel</em> if you change your mind and no longer
+      want to create the new envelope.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Editing an envelope</h3>
+    <p>
+      If you want to edit the name, description or other properties of an
+      envelope after you've created it, you can do so either by double-clicking
+      on the envelope where it appears in the <em>Envelope</em> list (near the
+      centre of the main window), or else by selecting the envelope and then
+      selecting <em>Edit selected envelope</em> from the <em>Edit</em> menu at
+      the top. A panel will then appear at the centre of the screen, showing
+      the details of the envelope. Edit things as you see fit, then click
+      <em>Save</em> to keep your changes, or <em>Cancel</em> to abort.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Hiding an envelope</h3>
+    <p>
+      By default, all envelopes are shown in the <em>Envelope</em> list near
+      the centre of the main window. However, there may be times when you find
+      you no longer need to use a particular envelope. To preserve the
+      integrity of the transactions already recorded in the DCM file, there is
+      no way to delete an envelope once created; however you can always hide an
+      envelope from view, by opening the envelope editing panel (see <a
+      href="#" class="js-ug-autolink">Editing an envelope</a>), and unchecking
+      <em>Show in list</em>. The envelope will then disappear from the list.
+    </p>
+    <p>
+      If you later decide you want to show the envelope, you can re-check the
+      <em>Show in list</em> box, as follows. To edit the envelope given that is
+      currently hidden, you will first need to select <em>Show hidden
+      envelopes</em> from the <em>View</em> menu at the top of the main window.
+      This will cause all hidden envelopes to be displayed in the
+      <em>Envelope</em> list. Double-click the envelope that you want to
+      &quot;unhide&quot; to bring up the envelope editing panel; then click
+      <em>Show in list</em>, and <em>Save</em>. Then open the <em>View</em>
+      menu again, and select <em>Hide hidden envelopes</em>. You will see that
+      the envelope in question will still be visible, even though any other
+      hidden envelopes will again be hidden from view.
+    </p>
+  </div>
+</div>
+
+<div class="js-ug-headed-section">
+  <h2>Transactions</h2>
+
+  <p>
+    Every time you perform any transaction - such as spending money, receiving a
+    salary payment, withdrawing money from the bank, transferring funds between
+    bank accounts, or paying a bill - you should record the transaction in your
+    DCM file.
+  </p>
+
+  <div class="js-ug-headed-section">
+    <h3>Entering a one-off transaction</h3>
+    <p>
+      Most of the time you will be entering a single transaction. This is a
+      matter of entering the transaction details in the <em>transaction
+      panel</em>. The <em>transaction panel</em> is the large area at the top
+      right of the main window. (This is distinct from the
+      <em>Transactions</em> tab at the top left.)
+    </p>
+    <p>
+      This is best illustrated using examples.
+    </p>
+    <p>
+      Example 1 - you spend 30.95 from your credit card on a meal at a
+      restaurant:
+    </p>
+    <ul>
+      <li>
+        Select <em>Spend</em> from the transaction type box at the top left of
+        the transaction panel.
+      </li>
+      <li>
+        Enter &quot;30.95&quot; into the amount box at the top right of the
+        transaction panel.
+      </li>
+      <li>
+        In the next row, select your credit card account from box labelled
+        <em>Account</em>. Enter an optional memo in the row next to the
+        <em>Account</em> box. For example, you might enter the name of the
+        restaurant.
+      </li>
+      <li>
+        Select &quot;Food&quot; from the box labelled <em>Envelope</em>. Enter
+        an optional memo, e.g. &quot;dinner at restaurant&quot;.
+      </li>
+      <li>
+        In the next row, there should be a box containing the text, &quot;Record
+        once only, on&quot;. This means you are entering a single, one-off
+        transaction. Leave this as is.
+      </li>
+      <li>
+        There should be a box near the bottom right of the transaction panel,
+        containing today's date. If you are entering the transaction on the same
+        day the the transaction occurred (generally a good idea), you can leave
+        this as is; otherwise, manually enter the date the transaction actually
+        occurred in this box.
+      </li>
+      <li>
+        At the bottom right of the transaction panel, click <em>Save</em> to
+        confirm and save the transaction; or click <em>Clear</em> if you want to
+        abandon this transaction entry and start again.
+      </li>
+    </ul>
+    <p>
+      Example 2 - you earn 2000.00 in wages, deposited into your &quot;XYZ Bank
+      savings&quot; account:
+    </p>
+    <ul>
+      <li>
+        Select <em>Earn</em> from the transaction type box at the top left of
+        the transaction panel.
+      </li>
+      <li>
+        Enter &quot;2000&quot; into the amount box at the top right of the
+        transaction panel.
+      </li>
+      <li>
+        In the next row, select &quot;XYZ Bank savings&quot; from the box
+        labelled <em>Account</em>. Enter an optional memo in the row next to
+        the <em>Account</em> box. For example, you might enter the name of your
+        employer.
+      </li>
+      <li>
+        In the next row, select &quot;Salary&quot; from the box labelled
+        <em>Envelope</em>. Enter an optional memo: you might enter the pay
+        number, for example; or you might simply leave this blank.
+      </li>
+      <li>
+        In the next row, there should be a box containing the text, &quot;Record
+        once only, on&quot;. This means you are entering a single, one-off
+        transaction. Leave this as is.
+      </li>
+      <li>
+        There should be a box near the bottom right of the transaction panel,
+        containing today's date. If you are entering the transaction on the same
+        day that the transaction occurred (generally a good idea), you can leave
+        this as is; otherwise, manually enter the date the transaction actually
+        occurred in this box.
+      </li>
+      <li>
+        At the bottom right of the transaction panel, click <em>Save</em> to
+        confirm and save the transaction; or click <em>Clear</em> if you want to
+        abandon this transaction entry and start again.
+      </li>
+    </ul>
+    <p>
+      Example 3 - you withdraw 100.00 in cash from your &quot;XYZ Bank
+      savings&quot; account:
+    </p>
+    <ul>
+      <li>
+        Select <em>Account transfer</em> from the transaction type box at the
+        top left of the transaction panel.
+      </li>
+      <li>
+        Enter &quot;100&quot; into the amount box at the top right of the
+        transaction panel.
+      </li>
+      <li>
+        In the next row, select &quot;XYZ Bank savings&quot; from the box
+        labelled <em>Source</em>. Enter an optional memo in the row next to the
+        <em>Source</em> box (for example, you might enter &quot;withdraw cash
+        at bank ATM&quot;).
+      </li>
+      <li>
+        In the next row, select &quot;Cash&quot; from the box labelled
+        <em>Destination</em>. Enter an optional memo.
+      </li>
+      <li>
+        Select &quot;Record once only, on&quot;, enter the date and click
+        <em>Save</em>.
+      </li>
+    </ul>
+    <p>
+      Note that when entering the date of a one-off transaction, you can enter
+      a past date, leave it as today's date, or enter a future date. Regardless
+      of what date you enter (even if you enter a future date), the
+      corresponding account and envelope balances will be update immediately.
+      (This is unlike a recurring transaction, which is not actually recorded
+      until the &quot;Next date&quot; is reached - see <a href="#"
+      class="js-ug-autolink">Recurring transactions</a> below.)
+    </p>
+
+    <div class="js-ug-headed-section">
+      <h4>Generic transactions</h4>
+      <p>
+        In addition to the transaction types <em>Spend</em>, <em>Earn</em> and
+        <em>Account transfer</em>, there is a fourth transaction type,
+        <em>Generic</em>. You might never feel the need to use this category;
+        and if you don't that's fine. It is provided to enable you to enter
+        complicated transactions that don't fit neatly into any of the other
+        categories. When you select the <em>Generic</em> transaction type, you
+        will notice that the account and envelope selection boxes are labelled
+        <em>CR</em> and <em>DR</em>. These refer to the concept of accounting
+        credits and debits. You will also notice that both for the <em>CR</em>
+        and the <em>DR</em> row, you can select <em>any</em> account or
+        envelope (other than pure envelopes) in either row. You can think of
+        the <em>CR</em> row is the equivalent of the &quot;source&quot; row -
+        and the <em>DR</em> row as the &quot;destination&quot; row. An example
+        will help to clarify.
+      </p>
+      <p>
+        Suppose you withdraw 200.00 from your &quot;XYZ Bank savings&quot;
+        account using an automatic teller machine (ATM), and in the process of
+        doing so, you incur a 2.00 transaction fee. This transaction has
+        characteristics both of an <em>Account transfer</em> transaction (since
+        you are transferring money from your bank account to the
+        &quot;Cash&quot; account) and of a <em>Spend</em> transaction (since
+        you are spending 2.00 on the transaction fee). If you wanted to, you
+        could break this down into two separate transactions, and enter these
+        separately (the 200.00 transfer, and the 2.00 expenditure on bank
+        fees). However, there is faster way of entering this transaction, using
+        the <em>Generic</em> transaction type, as follows:
+      </p>
+      <ul>
+        <li>
+          Select <em>Generic</em> from the transaction type box.
+        </li>
+        <li>
+          Enter &quot;202&quot; in the amount box at the top right. This
+          corresponds to the total amount deducted from your bank account in
+          the course of this transaction.
+        </li>
+        <li>
+          In the <em>CR</em> box, select &quot;XYZ Bank savings&quot;.
+        </li>
+        <li>
+          In the second row, select &quot;Cash&quot;, then click the
+          <em>Split</em> button to the right (see <a href="#"
+          class="js-ug-autolink">Split transactions</a> for more explanation on
+          this).
+        </li>
+        <li>
+          There will now be two rows in the bottom half of the transaction
+          control, both with &quot;Cash&quot; showing in the <em>DR</em> box.
+          In the first of these rows, enter &quot;200&quot; in the amount box,
+          representing the 200.00 cash you physically withdrew from the ATM.
+          Leave this first row as &quot;Cash&quot;. Then in the bottom row,
+          select &quot;Bank fees&quot; from the <em>DR</em> box, and enter
+          &quot;2&quot; in the amount box to the right. If you can like you can
+          enter text into the <em>Memo</em> boxes.  E.g., you might enter
+          &quot;ATM fee&quot; in the very bottom row, and &quot;ATM
+          withdrawal&quot; in the middle row.
+        </li>
+        <li>
+          Enter the date and click <em>Save</em>, as usual.
+        </li>
+      </ul>
+      <p>
+        Generic transactions can save a bit of time, but if you don't feel like
+        using this feature, there is no need to do so; just split any
+        complicated transactions like this into their component parts, and
+        enter these separately.
+      </p>
+    </div>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Recurring transactions</h3>
+    <p>
+      Sometimes you will have a certain transaction that occurs again and
+      again, with the same amount, at set intervals. For example, you might get
+      paid a 1000.00 wage every 2 weeks; or you might have 250.00 in rent
+      deducted from you bank account every week. It would be tedious to have to
+      remember to enter these transactions manually every time they occur. To
+      avoid this tedium, DailyCashManager supports the concept of recurring
+      transactions. You only have to enter a recurring transaction once, and
+      DailyCashManager will automatically record the transaction for you at the
+      appropriate intervals thereafter.
+    </p>
+    <p>
+      To create a recurring transaction, begin by entering the transaction as
+      you normally would. For example, for the 250.00 weekly rent payment, you
+      would select the <em>Spend</em> transaction type, enter &quot;250&quot;
+      in the amount box, select your bank account from the <em>Account</em>
+      box, and select &quot;Rent&quot; from the <em>Envelope</em> box.
+    </p>
+    <p>
+      Before hitting <em>Save</em>, however, you need to select the recurring
+      transaction interval from the large box near the bottom left of the
+      transaction panel (the one that normally reads &quot;Record once only,
+      on&quot;). In this case, you would select &quot;Record every week,
+      starting&quot;.
+    </p>
+    <p>
+      Finally, in the date box near the bottom right, enter the date when the
+      recurring transaction will <em>next</em> occur. Hit <em>Save</em> as
+      usual to save the transaction. You will be prompted to enter a unique
+      name for the recurring transaction. You might simply enter &quot;Rent
+      payment&quot; here; it's up to you what you enter - this is just so that
+      you can easily identify the transaction later on. Click <em>OK</em> to
+      confirm. You will notice that your new recurring transaction is now
+      recorded in the <em>Recurring transaction</em> list at the bottom right
+      of the main window, with the date you entered recorded in the <em>Next
+      date</em> column.
+    </p>
+    <p>
+      The first time you open your DCM file <em>on or after</em> the <em>Next
+      date</em> for this transaction, you will find that DailyCashManager has
+      automatically recorded this transaction for you; a message box will
+      appear at that time, informing you that the transaction has been
+      recorded. The transaction will continue to be recorded automatically at
+      the intervals you specify, until you delete it (or edit it to record at
+      some other interval).
+    </p>
+
+    <div class="js-ug-headed-section">
+      <h4>
+        Setting a recurring transaction to record on the last day of the month
+      </h4>
+      <p>
+        To avoid confusion, DailyCashManager has two different types of
+        &quot;monthly&quot; frequencies. Normally if you want a transaction to
+        be recorded every month (or every 2 months or etc.), you would select
+        &quot;Record every month, starting&quot; (or &quot;Record every 2
+        months, starting&quot;, or etc.) from the frequency selection list.
+        However, suppose you want to record a transaction on the <em>last</em>
+        day of every month.  Suppose the next date that you want the
+        transaction to be recorded on is 30 April 2014, say. If you were simply
+        to specify that you wanted this transaction to be recorded every month,
+        this would entail that you want it to be recorded on the <em>30th</em>
+        of each month; but that's not want you want at all; because the last
+        day of May, for example, is the 31st, not the 30th.  To avoid this
+        confusion, DailyCashManager prevents you from entering a simple
+        &quot;every month&quot; transaction with the 29th, 30th or 31st as the
+        next recording date. If you want a transaction to be recorded on the
+        last day of each month (which might be the 30th, 31st, 28th or 29th,
+        depending on the month in question), select &quot;Record every month,
+        on the last day of the month, starting&quot; from the frequency box,
+        and this will have the desired effect.
+      </p>
+    </div>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Viewing or editing a transaction</h3>
+    <p>
+      You can view or edit a transaction after you have already saved it.
+    </p>
+    <p>
+      First you need to select the transaction you want to view or edit:
+    </p>
+    <ul>
+      <li>
+        To select a one-off transaction for editing, click the
+        <em>Transactions</em> tab near the top left of the main window (between
+        the <em>Balances</em> and <em>Reconciliations</em> tabs). From the
+        <em>Account or envelope</em> box, select one of the accounts or
+        envelopes you know was involved in the transaction you are interested
+        in. Then enter a date range in the <em>From</em> and <em>To</em> boxes
+        (you can leave these blank to view all transactions regardless of
+        date). Then click <em>Run</em>. A list of transactions, involving the
+        selected account or envelope, will be displayed in the large panel
+        below. Locate the transaction you want to edit in this list. You can
+        view this transaction either by double-clicking it, or else by
+        selecting it and then choosing <em>Edit selected ordinary
+        transaction</em> from the <em>Edit</em> menu. This will cause the full
+        detail of the selected transaction to appear in the transaction panel
+        to the right.
+      </li>
+      <li>
+        To view or edit a recurring transaction, locate it in the <em>Recurring
+        transaction</em> list at the bottom right of the main window. Either
+        double-click it, or else select it and then choose <em>Edit selected
+        recurring transaction</em> from the <em>Edit</em> menu. This will cause
+        the full detail of the selected transaction to appear in the
+        transaction panel above.
+      </li>
+    </ul>
+    <p>
+      Once the desired transaction is selected and appears in the transaction
+      panel, you can edit if desired. Simply change the contents of the date,
+      amount, <em>Account</em>, <em>Memo</em> and other boxes as desired; then
+      click <em>Save</em> to save your changes.
+    </p>
+    <p>
+      To preserve the integrity of your DCM file, there are certain aspects of
+      the transaction you won't be able edit; for example, you can't change a
+      <em>Spend</em> transaction to an <em>Earn</em> transaction. Also, if some
+      or all lines in the transaction have been reconciled (see <a href="#"
+      class="js-ug-autolink">Reconciliations</a>), those lines, as well as some
+      other aspects of the transaction such as the date, will be greyed out and
+      will impossible to edit. This is to preserve the integrity of the
+      reconciliation.  (Don't worry if you don't know what that means right
+      now.) Most aspects of the transaction can be edited however.
+    </p>
+    <p>
+      If you decide to abandon your changes and revert to the earlier saved
+      version of the transaction, just click <em>Cancel</em> (near the bottom
+      left of the transaction panel, above the <em>Delete transaction</em>
+      button). This will cause the transaction panel to return to its default
+      blank state, ready for a new transaction to be entered. (The transaction
+      you had selected for editing will still be there in your DCM file,
+      unchanged, in the same state it was in when you selected it; but it will
+      no longer be showing in the transaction panel.)
+    </p>
+    <p>
+      Note that if you edit a recurring transaction, it won't cause any changes
+      to the individual instances of that recurring transaction that have
+      already been recorded; it will change only the behaviour of that
+      recurring transaction from that point on.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Deleting a transaction</h3>
+    <p>
+      To delete a transaction entirely, whether a one-off transaction or a
+      recurring transaction, first select the transaction for editing as
+      explained under <a href="#" class="js-ug-autolink">Viewing or editing a
+      transaction</a> above. Then, click the <em>Delete transaction</em> button
+      at the bottom right of the transaction panel. A message box will appear
+      asking if you are sure you want to delete the entire transaction. Click
+      <em>Yes</em> to confirm deletion, or <em>No</em> to abort the deletion
+      and be returned to the transaction panel.  Once the transaction is
+      deleted, account and envelope balances will be updated accordingly: the
+      balances will be as if the deleted transaction had never been recorded.
+    </p>
+    <p>
+      Note that deleting a recurring transaction does not delete any individual
+      instances of that transaction that have already been recorded. That is,
+      while past &quot;recordings&quot; of the transaction will remain as is,
+      the recurring transaction itself will be deleted, and further
+      &quot;recordings&quot; of the transaction will no longer be generated.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Split transactions</h3>
+    <p>
+      Sometimes you will need to record a transaction one &quot;side&quot; of
+      which involves multiple accounts or envelopes. For example, suppose you
+      spend 100.00 at a department store in a single transaction, but 10.00 of
+      the 100.00 is spent on food and the other 90.00 is spent on clothes. You
+      can reflect this using the <em>split transaction</em> feature. Click the
+      <em>Split</em> button, at the right of the row in the transaction that
+      you want to split, and that row will be split into two. In this example,
+      you would split the <em>Envelope</em> side of the transaction into two
+      rows, one for your &quot;Food&quot; envelope, and the other for your
+      &quot;Clothing&quot; envelope.
+    </p>
+    <p>
+      You can split a transaction into even more rows by clicking <em>Split</em>
+      again; or you can remove a row if you change your mind, by clicking
+      <em>Unsplit</em>.
+    </p>
+    <p>
+      If required, both sides of a transaction can be split. Continuing with
+      our example, you might pay for 40.00 of the 100.00 at the department
+      store using cash, and the remaining 60.00 using your credit card. In this
+      case, you would split the <em>Account</em> side of the transaction into
+      two rows, one for your &quot;Cash&quot; account and the other for your
+      &quot;Credit card&quot; account, as well as splitting the
+      <em>Envelope</em> side into &quot;Food&quot; and &quot;Clothing&quot;.
+    </p>
+    <p>
+      When a given side of a transaction is split, a separate amount box
+      becomes available for each row in the split. The amounts entered in the
+      rows for that side need to sum to the same amount as the total
+      transaction amount entered at the top of the transaction panel (so, in
+      our example, they would need to sum to 100.00). You can enter the amount
+      in each amount box manually; however, you will see below, under <a
+      href="#" class="js-ug-autolink">Handy shortcuts</a>, that there are often
+      faster ways to populate the amount boxes, than entering the number
+      manually.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Handy shortcuts</h3>
+    <p>
+      Entering transactions is the action you will find yourself performing
+      most frequently when using DailyCashManager. There are some shortcuts you
+      can use to make the process of recording transactions quicker and easier.
+    </p>
+
+    <div class="js-ug-headed-section">
+      <h4>Automatic balancing of split transactions</h4>
+      <p>
+        Suppose you have entered &quot;100.52&quot; in the main amount box of
+        the transaction panel, for some <em>Expense</em> transaction. You then
+        split the <em>Envelope</em> row into two, and select &quot;Food&quot;
+        for one row and &quot;Household supplies&quot; for the other row. Say
+        you spent 80.53 on food, and the remainder, 19.99, on household
+        supplies. You enter &quot;80.53&quot; in the &quot;Food&quot; row. Now,
+        you could enter &quot;19.99&quot; manually in the &quot;Household
+        supplies&quot; row. But calculating this number may involve adding
+        several items from your receipt, or else performing a calculation
+        (100.52 - 80.53 = 19.99) to work out how much you spent on household
+        supplies. To avoid the bother of performing a manual calculation, you
+        can simply double-click in the amount box of the &quot;Household
+        supplies&quot; row, and DailyCashManager will calculate the 19.99 for
+        you, and populate the cell with this figure.
+      </p>
+      <p>
+        In general, whenever you have a split transaction, and you want to
+        populate one of the amount cells with whatever is the
+        &quot;remaining&quot; amount of the total transaction amount that has
+        not yet been entered, simply double-click on the cell you want to
+        populate, and the remaining amount will be calculated and inserted into
+        the cell automatically.
+      </p>
+    </div>
+
+    <div class="js-ug-headed-section">
+      <h4>Performing simple calculations within an amount cell</h4>
+      <p>
+        DailyCashManager can act as a primitive calculator. Suppose you spent
+        100.52 at the supermarket, but your receipt includes many items, some
+        of which fall under &quot;Food&quot;, and others of which fall under
+        &quot;Household supplies&quot;. You could create a split transaction
+        with a separate row for every single item on the receipt; but this
+        would be cumbersome and laborious.  Instead, you might enter all the
+        &quot;Food&quot; items in one row, and all the &quot;Household
+        supplies&quot; items in another row. But to do this you need to add up
+        the cost of all the food items. Instead of getting out a calculator,
+        you can add the cost of the food items directly, within the amount box
+        for the &quot;Food&quot; row. Suppose there are three food items,
+        costing 1.52, 19.89 and 5.03. Simply type &quot;1.52+19.89+5.03&quot;
+        into the amount cell for this row, then hit tab or click outside the
+        cell. Then the result, &quot;26.44&quot;, will automatically appear in
+        the cell. You can also perform subtractions, e.g. by typing
+        &quot;80.89-38.60&quot; in the cell. Note, however, that you can't do
+        multiplication or division, and you can't use parentheses in
+        calculations.
+      </p>
+    </div>
+
+    <div class="js-ug-headed-section">
+      <h4>Entering dates</h4>
+      <p>
+        If you only enter a single number in the date box, e.g. &quot;23&quot;,
+        this will be interpreted as meaning &quot;the 23rd of the current
+        month&quot;.  Similarly, if you enter a date and month, but omit the
+        year, this will be interpreted as if you had entered the current year.
+      </p>
+    </div>
+
+    <div class="js-ug-headed-section">
+      <h4>
+        Selecting accounts and envelopes from the <em>Account</em> and
+        <em>Envelope</em> lists
+      </h4>
+      <p>
+        If you select - by clicking on it once - one account from the
+        <em>Account</em> list, and one envelope from the <em>Envelope</em> list
+        (the large lists near the left and middle of the main window,
+        respectively), and then click <em>Clear</em> in the transaction panel,
+        the transaction panel will be partially populated with a transaction
+        that is appropriate for the select account and envelope. For example,
+        if you click once on &quot;Cash&quot; in the <em>Account</em> list, and
+        then click once on &quot;Food&quot; in the <em>Envelope</em> list, and
+        then click <em>Clear</em>, then the transaction type control in the
+        transaction panel will be automatically set to <em>Spend</em>, the
+        <em>Account</em> box will be set to &quot;Cash&quot; and the
+        <em>Envelope</em> box will be set to &quot;Food&quot;. This saves you
+        having to select (or type) the name of the account and envelope from
+        the drop-down lists in the transaction panel. This can save some effort
+        when quickly entering a simple transaction.
+      </p>
+      <p>
+        Be aware, however, that clicking the <em>Clear</em> button causes
+        whatever details are currently entered in the transaction panel to be
+        lost. Clicking <em>Clear</em> doesn't actually delete any already-saved
+        transaction; but it does clear out the contents of the transaction
+        panel, ready for a new transaction to be entered.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="js-ug-headed-section">
+  <h2>Budgeting</h2>
+  <p>
+    If you want to, you can use DailyCashManager simply as a means of recording
+    your financial transactions as they occur, keeping track of your asset and
+    liability balances, your earnings, and the amounts spent on different
+    expense categories. If you use DailyCashManager in this way, you will build
+    up a record of <em>historical</em> financial data. It can be quite useful
+    to have this record; but it will be purely &quot;backward-looking&quot;. To
+    really manage your finances effectively, you'll want to know not only how
+    much money you <em>have</em> spent on one category or another, but also,
+    how much you <em>can</em> spend on one category or another, if you want to
+    meet your financial goals. That is, you'll want to use DailyCashManager not
+    only as a historical record, but also as a planning mechanism, a mechanism
+    for taking <em>control</em> of your spending so that you can reach your
+    financial goals.
+  </p>
+
+  <div class="js-ug-headed-section">
+    <h3>Envelope budgeting</h3>
+    <p>
+      To facilitate this planning and control function, DailyCashManager
+      implements a system known as <em>envelope budgeting</em>. Envelope
+      budgeting is a well-tried financial strategy that involves allocating
+      your money, as you earn it, into different &quot;envelopes&quot;, to save
+      for different categories of expenditure. Traditional envelope budgeting
+      would involve physically placing cash into physical envelopes out of your
+      paycheck each time you were paid. If you knew you spent on average
+      1000.00 a year, say, on electricity bills, and if you were paid monthly,
+      you would have put 83.33 per month into the &quot;Electricity&quot;
+      envelope. Then when the electicity bill arrived, there would be a lump of
+      money sitting in the electricity envelope, set aside just for the purpose
+      of paying the electricity bill. You would remove the amount of the bill
+      from the electricity envelope, and pay the bill.
+    </p>
+    <p>
+      These days, most people don't get paid in physical cash; we keep most of
+      our money in bank accounts, shares, term deposits or other assets; and
+      many people have credit cards, loans and other liabilities offsetting
+      those assets. These accounts are digital in nature; and so the crude
+      method of dividing physical cash into different envelopes is awkward or
+      impossible to apply. That's where an application like DailyCashManager
+      comes in.
+    </p>
+    <p>
+      Instead of physical envelopes, DailyCashManager facilitates the creation
+      of &quot;virtual&quot; envelopes, each envelope representing a different
+      category of revenue or expenditure. And instead of allocating a blob of
+      cash into each envelope with each paycheck, DailyCashManager allocates a
+      small, steady amount of money to each envelope, on a <em>daily</em>
+      basis.
+    </p>
+    <p>
+      Let's say you receive 1000.00 cash, paid into your &quot;XYZ Bank
+      saving&quot; bank account. You would enter a revenue transaction in
+      DailyCashManager, with &quot;XYZ Bank saving&quot; as the account, and
+      &quot;Salary&quot; as the envelope. The balance of &quot;XYZ Bank
+      saving&quot; would increase by 1000.00, and the balance of the
+      &quot;Salary&quot; envelope would also increase by 1000.00.
+    </p>
+    <p>
+      Each day thereafter - depending on how you have set up your <em>budget
+      items</em> (explained below) - a small amount of that 1000.00 would be
+      transferred automatically by DailyCashManager from the &quot;Salary&quot;
+      envelope, into each of your expense envelopes, to set aside towards each
+      category of expenditure. Let's now see how to set up your <em>budget
+      items</em> to make this happen.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Creating and editing budget items</h3>
+    <p>
+      A <em>budget item</em> represents a given expense or revenue item for
+      which you want to set aside money in an envelope. Often you will need to
+      create only a single budget item for a given envelope; but you can create
+      multiple budget items for a single envelope if you wish.
+    </p>
+    <p>
+      For example, you might have an expense envelope called &quot;Bank
+      fees&quot;.  Within this envelope, you might record two different ongoing
+      fees: a 2.00 monthly account fee; a 50.45 annual credit card fee. You
+      would create one budget item for the monthly account fee, and another
+      budget item for the credit card fee. You would do this as follows:
+    </p>
+    <ul>
+      <li>
+        Open the envelope editing panel for &quot;Bank fees&quot;, either by
+        double-clicking &quot;Bank fees&quot; in the <em>Envelope</em> list, or
+        by selecting &quot;Bank fees&quot; in the <em>Envelope</em> list and
+        then selecting <em>Edit selected envelope</em> form the <em>Edit</em>
+        menu.
+      </li>
+      <li>
+        Within the envelope editing panel, click <em>Add item</em>. A new row
+        will appear under <em>BUDGET ITEMS</em>. Enter &quot;Monthly account
+        fee&quot; in the <em>Description</em> box and &quot;2&quot; in the
+        <em>Amount</em> box, and select &quot;per month&quot; from the
+        <em>Frequency</em> box.
+      </li>
+      <li>
+        Click <em>Add item</em> again. This will produce another row of boxes.
+        Enter &quot;Credit card fee&quot; in the <em>Description</em> box and
+        &quot;50.45&quot; in the <em>Amount</em> box, and select &quot;per 12
+        months&quot; from the <em>Frequency</em> box.
+      </li>
+      <li>
+        Notice that just above the words &quot;BUDGET ITEMS&quot;, the
+        <em>Daily top up</em> amount will read &quot;0.20&quot;. This means
+        that, in order to set aside enough money to cover the two budget items
+        you have entered, DailyCashManager will automatically transfer an
+        amount of 0.20 into the &quot;Bank account&quot; envelope every day.
+        This is calculated as follows: (2 * 12) + 50.45 / 365.25 = 0.20.
+      </li>
+      <li>
+        Click <em>Save</em>. Another window will now appear informing you that
+        the &quot;Budget is now out of balance by an amount of (0.20).&quot;
+        This is saying that, in order to transfer the 0.20 into the &quot;Bank
+        fees&quot; envelope each day, DailyCashManager needs transfer that 0.20
+        <em>from</em> some other envelope into &quot;Bank fees&quot;. By
+        default - and if you click <em>Leave unbalanced</em> this deafult will
+        be unchanged - the 0.20 is transferred from the envelope called
+        &quot;Unallocated&quot;. This is an envelope that DailyCashManager
+        creates automatically to process unbalanced budget amounts. You
+        <em>don't</em> normally want &quot;Unallocated&quot; to have a balance
+        other than zero. Instead of clicking &quot;Leave unbalanced&quot;, you
+        should select some other envelope to draw the 0.20 / day from - by
+        selecting from the drop-down list at the bottom of this panel - and
+        then click <em>Offset to envelope below</em>. Commonly, you would
+        offset the 0.20 / day to your &quot;Salary&quot; envelope (or whatever
+        is your main source of ongoing income, e.g. &quot;Pension&quot;,
+        &quot;Allowance&quot; or etc..). This means that every day, 0.20 will
+        be transferred from your &quot;Salary&quot; envelope to your &quot;Bank
+        fees&quot; envelope, to provide for both your monthly account fee and
+        your annual credit card fee. - After clicking <em>Save</em>, the
+        envelope editing panel will disappear. Notice that in the
+        <em>Envelope</em> list near the centre of the main window, there will
+        be a &quot;0.20&quot; in the <em>Daily top-up</em> column, next to
+        &quot;Bank fees&quot;.
+      </li>
+    </ul>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Living within your means</h3>
+    <p>
+      In DailyCashManager, the amount in an expense envelope at a given point
+      in time represents the amount that is available to spend on that category
+      of expenditure at that time. Budgeting using the DailyCashManager
+      envelope system means trying not to spend any more on each expenditure
+      category than what is available in the corresponding envelope at a given
+      point in time. You can think of an envelope in DCM as just the electronic
+      equivalent of physical cash in a physical envelope: if the money isn't
+      there to spend, you can't (or rather shouldn't) spend it.
+    </p>
+    <p>
+      Sometimes, of course, reality asserts itself, and you may have no
+      realistic choice but to spend more than what's in a given envelope for a
+      given expenditure category. If this happens, you should still enter the
+      transaction as usual; and this will cause the envelope balance to become
+      negative.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Responding to a negative envelope balance</h3>
+    <p>
+      If the balance in an envelope becomes negative, it usually makes sense,
+      first of all, to examine the budget items for that envelope, and
+      realistically ask yourself whether they are set at adequate levels. There
+      may simply not be enough allocated to some budget item; or perhaps you
+      should create an additional budget item to cover off some item of
+      expenditure that you hadn't considered previously. To get some idea of
+      whether your ongoing budget item allocations are realistic, you might
+      want to run an <a href="#" class="js-ug-autolink">Income and expenditure</a>
+      report and look at the average daily expenditure for the relevant
+      envelope for, say, the last 6 or 12 months (or whatever time period you
+      have available), and compare this to the daily allocation for that
+      envelope that is being generated by your budget items.  (Depending on the
+      time period, you might want to allow for inflation when making this
+      comparison.)
+    </p>
+    <p>
+      Often, if the envelope hasn't gone <em>too</em> far into a negative
+      balance, the best response is simply to wait: continue on, trying if
+      possible not to spend any more from the envelope with the negative
+      balance until it has become positive, and then restricting one's
+      expenditure on that category to whatever positive balance is available in
+      that envelope thereafter.
+    </p>
+    <p>
+      If there is a <em>large</em> negative balance, however, you might want to
+      look for another envelope in which you have excess funds - funds which
+      you don't realistically think you will require for that other category of
+      expenditure - and transfer some of those excess funds into the negative
+      envelope, if possible restoring the latter to a positive balance. We
+      discuss this next.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Transferring money between envelopes</h3>
+    <p>
+      Sometimes you find that one envelope contains more than excess funds,
+      while another contains a shortfall. If this occurs, you should review the
+      budget items in each envelope to see whether the ongoing daily
+      allocations to each are adequate, or inadequate, and edit these as
+      required. However, as a one-off measure, you can reallocate funds from
+      one envelope to another. This should be done sparingly - after all, if
+      you always shift money around to wherever you want it whenever you want
+      it, you will defeat the purpose of envelope budgeting entirely - but
+      sometimes it does make sense to do this.
+    </p>
+    <p>
+      To shift money between envelopes, select <em>New envelope transfer</em>
+      from the <em>New</em> menu at the top of the main window. Enter the
+      amount you want to transfer; select the envelope to transfer
+      <em>from</em> in the <em>Source</em> box; and select the envelope you
+      want to transfer the funds into, from the <em>Destination</em> box. Then
+      click <em>OK</em> to proceed with the transfer, or <em>Cancel</em> to
+      abort.
+    </p>
+    <p>
+      On returning to the main window, you will notice that the balances of the
+      affected envelopes have been updated accordingly.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Targetted saving using pure envelopes</h3>
+    <p>
+      Usually when you create an envelope, it will be either a <em>revenue</em>
+      or an <em>expense</em> envelope. However, DailyCashManager provides for a
+      third kind of envelope, called a <em>pure envelope</em>. A pure envelope
+      is one for which it is not possible to record any <em>actual</em>
+      transactions. Rather, you use it to accumulate funds towards some special
+      goal or other, and then when the money is required to be spent on that
+      goal, you transfer it out of the pure envelope, and into an ordinary
+      expense envelope, and spend it from the expense envelope.
+    </p>
+    <p>
+      For example, you might know that, on average, you spend 100.00 on food
+      during the week leading up to Christmas, over and above your usual weekly
+      spending on food. Accordingly, you could create a pure envelope called
+      &quot;Christmas food fund&quot;. You would create this in the same way as
+      you would create any other envelope (see <a href="#"
+      class="js-ug-autolink">Creating an envelope</a>), except that in the
+      envelope creation panel, instead of selecting <em>revenue</em> or
+      <em>expense</em> from the <em>envelope type</em> box, you would select
+      <em>pure envelope</em>.  You would then create a budget item under this
+      envelope (see <a href="#" class="js-ug-autolink">Creating and editing budget
+      items</a>), for allocating 100.00 per twelve months towards Christmas
+      food expenditure. Then, when the week leading up to Christmas comes round
+      (assuming you created this budget item one year before), you would
+      transfer 100.00 out of the &quot;Christmas food fund&quot; pure envelope,
+      and into your usual &quot;Food&quot; expense envelope, and spend it out
+      of &quot;Food&quot;.
+    </p>
+  </div>
+</div>
+
+<div class="js-ug-headed-section">
+  <h2>Reconciliations</h2>
+  <p>
+    One of the benefits of using DailyCashManager is that you can see, at a
+    glance, the balances of your various bank accounts and credit cards,
+    without having to check with your bank. However, it is still important to
+    make sure that the record of account balances in your DCM file aligns with
+    the record that is being maintained by your bank. It is always possible
+    that errors will be made when entering transactions into DailyCashManager;
+    or that you might occasionally forget to enter a transaction. Therefore, it
+    is important to check occasionally, that your record of account balances
+    matches the record that is being kept by your bank, credit card companies
+    or etc..
+  </p>
+
+  <div class="js-ug-headed-section">
+    <h3>Simple approach</h3>
+    <p>
+      One simple way to check that your records are accurate for a given
+      account is simply to check occasionally the balance kept by the bank, and
+      compare it to the balance of that account in DailyCashManager. If they
+      are the same, then the balance in DailyCashManager is presumably
+      accurate. However, this simple check is sometimes not as straightforward
+      as might be expected. For example, suppose the account in question is
+      your credit card account. You might make a purchase of 30.00 on 1st July.
+      You enter this in your DCM file, and your credit card balance decreases
+      by 30.00. However as there is often a delay in processing credit card
+      transaction through to your credit card account, the 30.00 is not
+      deducted from your credit card at the bank's end until 3rd July.  If, on
+      2nd July, you were to compare the balance in your DCM file with the
+      balance as it appear in the bank's record of your credit card account,
+      these two amounts would differ by 30.00 - even though the record in your
+      DCM file is correct and accurate.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Using DailyCashManager to perform reconciliations</h3>
+    <p>
+      To avoid the confusion that can arise from adopting the simple approach
+      described above, it is recommended to use the <em>Reconciliations</em>
+      facility provided by DailyCashManager, to ensure the balances in your DCM
+      file stay in line with those recorded by your bank or other financial
+      institutions.
+    </p>
+    <p>
+      The most straightforward way to do this is, first of all, to make sure,
+      for every account that you hold with a financial institution, that you
+      are receiving account statements from that institution on a regular
+      basis. Then, each time you receive a statement for that account, open
+      your DCM file, and perform a <em>reconciliation</em> for that statement,
+      as follows:
+    </p>
+    <ul>
+      <li>
+        Have a pen and your bank statement handy.
+      </li>
+      <li>
+        Click on the <em>Reconciliations</em> tab, which is third tab from the
+        left, near the top left of the main window.
+      </li>
+      <li>
+        Select the account that you are reconciling, from the <em>Account</em>
+        box.
+      </li>
+      <li>
+        Enter the opening date of the bank statement in the <em>From</em> box.
+      </li>
+      <li>
+        Enter the closing date of the bank statement in the <em>To</em> box.
+      </li>
+      <li>
+        Click <em>Run</em>. A list of transactions will be displayed. The list
+        will show all transactions from the <em>To</em> date to the
+        <em>From</em> date, inclusive, for the selected account. In addition,
+        the list will show any transactions on this account <em>before</em> the
+        <em>From</em> date, that have not yet been &quot;reconciled&quot;. A
+        transaction is regarded &quot;reconciled&quot; when you have confirmed
+        that it is correct, and that the amount of the transaction matches the
+        amount shown on your bank statement for that transaction.
+      </li>
+      <li>
+        In the list, the <em>Date</em>, <em>Memo</em> and <em>Amount</em> of
+        each transaction are shown. In addition, you will notice a
+        <em>Reconciled</em> column. For transactions that have not been
+        reconciled, this column will be blank; once a transaction has been
+        reconciled, the transaction amount will appear in the
+        <em>Reconciled</em> column.
+      </li>
+      <li>
+        Near the top of the report, you will see a <em>Closing balance</em>
+        figure.  This is the balance as recorded in your DCM file, as at the
+        date you entered in the <em>To</em> box (the bank statement closing
+        date). You will also see a <em>Reconciled balance</em> number. This is
+        the total of the <em>reconciled</em> transactions up to and including
+        the <em>To</em> date.
+      </li>
+      <li>
+        Now, look at each transaction in your bank statement in turn. Look for
+        that same transaction in the <em>Reconciliations</em> list:
+        <ul>
+          <li>
+            If the transaction amount in your bank statement matches the
+            transaction amount in DailyCashManager - and you're satisfied that
+            the other details of the transaction are correct - then you can
+            mark that transaction as reconciled: physically tick it off with
+            pen on your bank statement; and <em>right-mouse-click</em> on the
+            transaction in the <em>Reconciliations</em> panel. This will cause
+            the <em>Reconciled</em> column to be populated with the amount for
+            that transaction.
+          </li>
+          <li>
+            If the transaction amounts do not match, then, assuming you are
+            satisfied that the amount on your bank statement is correct, you
+            can edit the transaction in DailyCashManager by double-clicking it
+            in the <em>Reconciliations</em> list. This will bring the
+            transaction up in the transaction panel, where you can edit it as
+            described in <a href="#" class="js-ug-autolink">Viewing or editing a
+            transaction</a>. Once you have edited the amount so that it matches
+            the amount shown in the bank statement, click <em>Save</em>, and
+            the <em>Reconcilations</em> list will be automatically updated with
+            the revised amount. Assuming this now matches, you can now tick off
+            the transaction and mark it as reconciled by
+            <em>right-mouse-clicking</em> on it; remember to tick it off on
+            your physical bank statement as well.
+          </li>
+          <li>
+            If the transaction on your bank statement does not appear in the
+            <em>Reconciliations</em> list in DailyCashManager, then it may be
+            because it is a bank fee or interest - as you might not otherwise
+            be made aware of these until you actually receive the bank
+            statement.  During the reconciliation process, you can enter newly
+            discoved transactions - or transactions you simply forgot to enter
+            at the time - as you normally would (see <a href="#"
+            class="js-ug-autolink">Entering a one-off transaction</a>); once
+            saved, the new transaction will appear in the
+            <em>Reconciliations</em> list, where you can then mark it as
+            reconciled as by <em>right-mouse-clicking</em> on it; remember to
+            tick it off on your physical bank statement as well.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Once you have worked through each of the transactions on your bank
+        statement, you may find that there are transactions in the
+        <em>Reconciliations</em> list that have still not been marked as
+        reconciled. This is often because of a delay in bank or credit card
+        processing. If the transaction in question is near the <em>To</em> date
+        (the closing date on the statement), this is to be expected. Just leave
+        it until you get the next statement - you can reconcile it then, since
+        unreconciled transactions will continue to show up in the
+        <em>Reconciliations</em> list until they are reconciled. Otherwise, if
+        it appears that the transaction is simply missing from the bank
+        statement and it's not just a timing issue, it might be because you
+        entered in the wrong account by mistake when you originally recorded it
+        in DailyCashManager. You can always double-click the
+        &quot;offending&quot; transaction and edit it, as normal, in the
+        transaction panel (see <a href="#" class="js-ug-autolink">Viewing or
+        editing a transaction</a>).  Once you have saved your edits, if you
+        have changed the account for the transaction, it will disappear from
+        the <em>Reconciliations</em> list for that account automatically.
+      </li>
+      <li>
+        Having dealt with all the transactions in the bank statement and
+        <em>Reconciliations</em> list as described above, all the transactions
+        in your bank statement (or credit card statement or etc.) should now be
+        ticked off, and the <em>Reconciled balance</em> figure (near the top of
+        the list) should now be equal to the closing balance shown on your bank
+        statement. If it is, then the reconciliation is complete; you can
+        simply close out of DailyCashManager, or else just continue browsing or
+        working in DailyCashManager as you see fit. If the <em>Reconciled
+        balance</em> is not equal to the closing balance on your bank
+        statement, then double check that the transactions you ticked match the
+        ones you marked as reconciled in the <em>Reconciliations</em> list -
+        once they are equal, the amounts should match.
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="js-ug-headed-section">
+  <h2>Reports</h2>
+  <p>
+    DailyCashManager enables you to view certain high level summary reports.
+    These can be useful if you want to get a quick overview of your finances.
+  </p>
+
+  <div class="js-ug-headed-section">
+    <h3>Balance sheet</h3>
+    <p>
+      The <em>Balance sheet</em> report enables you to see a summary of your
+      net wealth -i.e. assets minus liabilities - at a given point in time. To
+      see this report, click on the <em>Reports</em> tab, which is near the top
+      left of the main window. Select <em>Balance sheet</em> from the
+      <em>Report type</em> box (if it is not already selected). Enter the date
+      range you are interested in in the <em>From</em> and <em>To</em> boxes.
+      By default, these will both be set to today's date, i.e. the day on which
+      you are running the report. Click the <em>Run</em> button to run the
+      report for the first time; this button will appear as <em>Refresh</em>,
+      if there is already a report showing in this panel, in which case you
+      should click <em>Refresh</em> to make sure the report is current. The
+      report will appear in the panel below. The <em>Opening balance</em>
+      column shows the balance of each account as at the start of the date in
+      the <em>From</em> box; and the <em>Closing balance</em> column shows the
+      balance as at the end of the date entered in the <em>To</em> box. The
+      <em>Movement</em> column shows the increase or decrease in the account
+      balance during this period of time. Accounts for which the opening
+      balance, closing balance and movement are all nil, are not shown in the
+      report. Note liabilities normally have a negative balance (surrounded by
+      brackets) and assets normally have a positive balance.
+    </p>
+    <p>
+      You also have the option of leaving the <em>From</em> and/or the
+      <em>To</em> boxes blank. If you leave the <em>From</em> box blank, then
+      the <em>Opening balance</em> will show the opening balances of the
+      accounts as at the date you created your DCM file. If you leave the
+      <em>To</em> box blank, then the <em>Closing balance</em> column will
+      reflect <em>all</em> transactions <em>since</em> the <em>From</em> date -
+      even those which are future dated (but it will not reflect recurring
+      transaction occurrences that have not been recorded yet).
+    </p>
+    <p>
+      Note that the <em>Balance sheet</em> report will not be automatically
+      updated if you record, edit or delete any transactions after you have run
+      it. You should <em>Refresh</em> the report each time you want to view it,
+      to ensure it reflects the current state of your DCM file.
+    </p>
+  </div>
+
+  <div class="js-ug-headed-section">
+    <h3>Income and expenditure</h3>
+    <p>
+      The <em>Income and expenditure</em> report enables you to see the total
+      revenue earned, less total spent on your various expense envelopes, over
+      a given period of time. To see this report, click on the <em>Reports</em>
+      tab, which is near the top left of the main window. Select <em>Income and
+      expenditure</em> from the <em>Report type</em> box. Enter the date range
+      you are interested in in the <em>From</em> and <em>To</em> boxes. By
+      default, today's date, i.e. the day on which you are running the report,
+      will be entered in both boxes. Click the <em>Run</em> button to run the
+      report for the first time; this button will appear as <em>Refresh</em>,
+      if there is already a report showing in this panel, in which case you
+      should click <em>Refresh</em> to make sure the report is current. The
+      report will appear in the panel below. The <em>Total</em> column shows
+      the total income (for revenue envelopes) or expenditure (for expense
+      envelopes) for each of the envelopes listed, during the period of time
+      you have entered. Envelopes for which there has been no revenue or
+      expenditure for the period are not shown.  The <em>Daily average</em>
+      column shows the average (mean) revenue or expenditure (as the case may
+      be) over the selected period. This can be a useful figure to compare with
+      the <em>Daily top-up</em> for your various envelopes, to see if the daily
+      top-up is realistic in light of actual spending on a given envelope.
+    </p>
+    <p>
+      You also have the option of leaving the <em>From</em> and/or <em>To</em>
+      boxes blank. If you leave the <em>From</em> box blank, then the date you
+      created the DCM file is treated as the starting date for the purposes of
+      this report. If you leave the <em>To</em> box blank, then all
+      transactions from the <em>From</em> date onwards are included in the
+      figures shown; however, the <em>Daily average</em> column will now show
+      &quot;N/A&quot;, as the possibility of future-dated transactions being
+      included in the total means any average shown in this case would have the
+      potential to be misleading.
+    </p>
+    <p>
+      Note that the <em>Income and expenditure</em> report will not be
+      automatically updated if you record, edit or delete any transactions
+      after you have run it. You should <em>Refresh</em> the report each time
+      you want to view it, to ensure it reflects the current state of the DCM
+      file.
+    </p>
+  </div>
+</div>
+
+<footer>
+  Copyright 2013, 2014 Matthew Harvey
+</footer>
+
+</div><!-- ug-main -->
+
+</body>
+</html>
