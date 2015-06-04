@@ -54,6 +54,7 @@ a {
   overflow: hidden;
   background-color: #dddddd;
   background-image: linear-gradient(to bottom, #efefef, #cbcbcb);
+  background-image: -moz-linear-gradient(top, #efefef, #cbcbcb);
   text-align: right;
   padding-right: 2em;
 }
