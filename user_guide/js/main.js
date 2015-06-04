@@ -14,7 +14,7 @@ var Ug = function($) {
     autoScrolling = true;
     $('html, body').stop().animate(
       { 'scrollTop': targetPosition },
-      'slow',
+      'fast',
       function() { autoScrolling = false; }
     );
   }
