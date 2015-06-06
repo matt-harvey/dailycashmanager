@@ -260,18 +260,6 @@ set (
 )
 add_library (dcm_common ${common_sources})
 add_dependencies (dcm_common prebuild)
-
-# User guide
-
-add_custom_target (
-    user_guide
-    COMMAND
-        sphinx-build
-            -b "html"
-            -d "user_guide/_build/doctrees"
-            "user_guide"
-            "user_guide/_build/html"
-)
     
 # Building the tests
 
@@ -407,6 +395,7 @@ else ()
         images
         src
         tests
+        user_guide
         prebuild_driver.tcl
         CMakeLists.txt
         Doxyfile
@@ -420,9 +409,6 @@ else ()
         COMMAND
             rm -rf ${package_name} &&
             mkdir ${package_name} &&
-            mkdir ${package_name}/user_guide &&
-            cp user_guide/*.rst ${package_name}/user_guide &&
-            cp user_guide/conf.py ${package_name}/user_guide &&
             cp -r ${packaged_items} ${package_name} &&
             rm ${package_name}/include/make_currencies_inc.hpp &&
             tar -sczf ${tarball_name} ${package_name} &&

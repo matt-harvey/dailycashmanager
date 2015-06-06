@@ -49,11 +49,6 @@ If you want to build the API documentation, you will need:
 
 - Doxygen (known to work with version 1.8.3.1)
 
-If you want to build the user guide web contents, you will need:
-
-- Sphinx (documentation generator - known to work with version 1.1.3)
-- sphinx-better-theme (known to work with version 0.1.4)
-
 To build a binary installer for Windows, you will need:
 
 - Nullsoft Scriptable Install System (NSIS) (known to work with version 2.46)
@@ -67,8 +62,6 @@ locations:
 :Jewel:                     https://github.com/skybaboon/jewel
 :Sqloxx:                    https://github.com/skybaboon/sqloxx
 :Doxygen:                    http://www.stack.nl/~dimitri/doxygen
-:Sphinx:                    http://sphinx-doc.org
-:sphinx-better-theme:       https://pypi.python.org/pypi/sphinx-better-theme
 :NSIS:                      http://nsis.sourceforge.net
 
 Initial build configuration
@@ -222,10 +215,9 @@ Go to the project root and enter::
 
 This will clean all build targets from the project root, including
 the source tarball (see below) if present, but NOT including the HTML
-documentation or the User Guide. This is due to a quirk of CMake. To remove the
+documentation. This is due to a quirk of CMake. To remove the
 HTML documentation, simply manually delete the "html" directory from the
-project root. To remove the generated User Guide, manually delete the
-"user_guide/_build" directory.
+project root.
 
 Note this will *not* cause the application to be uninstalled from the host
 system.
@@ -282,15 +274,6 @@ On Linux systems, you may want to create a .desktop file for use with
 
 The file "dailycashmanager.desktop" should then appear in the project root.
 
-To build the user guide
------------------------
-
-To build the user guide, enter::
-
-    make user_guide
-
-The user guide web contents will be output to "user_guide/_build/html".
-
 To build multiple targets in one go
 -----------------------------------
 
@@ -300,8 +283,7 @@ to the project root, and enter::
     make
 
 Note this will NOT install the application, will NOT generate the documentation,
-will NOT generate a .desktop file, will NOT generate the user guide, and will
-NOT build a source tarball.
+will NOT generate a .desktop file, and will NOT build a source tarball.
 
 Uninstalling
 ============
