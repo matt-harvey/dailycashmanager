@@ -1,0 +1,10 @@
+The source code distribution for DailyCashManager may contain source code, or
+minified source code, comprising software components provided by third parties.
+Even though these components may be distributed with the source code for
+DailyCashManager, these components are distributed subject to their own
+licences, which may be found within the relevant third-party source files
+themselves. These files are contained in the following directories of this
+DailyCashManager source distribution.
+
+user_guide/css/vendor/
+user_guide/js/vendor/
