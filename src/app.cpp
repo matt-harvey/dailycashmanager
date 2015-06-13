@@ -185,7 +185,7 @@ wxString
 App::copyright()
 {
     vector<wxString> devs = developers();
-    wxString ret("Copyright 2013, 2014 ");
+    wxString ret("Copyright 2013-2015 ");
     JEWEL_HARD_ASSERT (!devs.empty());
     auto it = devs.begin();
     ret += *it;
