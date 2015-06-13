@@ -15,13 +15,6 @@
   margin-left: 20px;
 }
 
-@media screen and (max-width: 800px) {
-  #ug-main {
-    padding: 0 1.25em;
-    margin-left: 0;
-  }
-}
-
 h1 {
   padding-top: 0.2em;
 }
@@ -42,6 +35,26 @@ a {
   text-decoration: none;
 }
 
+p {
+  padding-top: 0;
+}
+
+.clickable-title:hover {
+  cursor: pointer;  
+}
+
+@media screen and (max-width: 800px) {
+  #ug-main {
+    padding: 0 1.25em;
+    margin-left: 0;
+  }
+  h2 {
+    padding-top: 0.25em;
+    margin-top: 0;
+    border-top: grey solid 1px;
+  }
+}
+
 /*---------------------------*\
   NAVIGATION MENU
 \*---------------------------*/
@@ -53,8 +66,8 @@ a {
   bottom: 0;
   overflow: hidden;
   background-color: #dddddd;
-  background-image: linear-gradient(to bottom, #efefef, #cbcbcb);
-  background-image: -moz-linear-gradient(top, #efefef, #cbcbcb);
+  background-image: linear-gradient(to bottom, #f0f0f0, #ababab);
+  background-image: -moz-linear-gradient(top, #ffffff, #ababab);
   text-align: right;
   padding-right: 2em;
 }

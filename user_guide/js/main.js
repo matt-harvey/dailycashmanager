@@ -2,25 +2,29 @@ var Ug = function($) {
 
   var autoScrolling = false;
 
+  /* window querying */
+
   function wideView(windowWidth) {
     var w = (typeof windowWidth === 'undefined' ? $(window).width() : windowWidth);
     return w > 787;
   }
 
+  /* text manipulation */
+
+  function squashedTextContent($element) {
+    return $element.text().replace(/\s+/g, ' ');
+  }
+
+  /* menu and navigation - wide window */
+
   function scrollTo($element) {
-    var navHeight = $('#ug-left-sidebar').height();
-    var adjustment = (wideView() ? 0 : navHeight);
-    var targetPosition = $element.offset().top - adjustment;
+    var targetPosition = $element.offset().top;
     autoScrolling = true;
     $('html, body').stop().animate(
       { 'scrollTop': targetPosition },
       'fast',
       function() { autoScrolling = false; }
     );
-  }
-
-  function squashedTextContent($element) {
-    return $element.text().replace(/\s+/g, ' ');
   }
 
   function $createAutolinkTo($header) {
@@ -66,21 +70,8 @@ var Ug = function($) {
         $subList.appendTo($listItem);
       }
     });
-    setWidths();
+    configureForSize();
     contractMenu();
-  }
-
-  function setWidths() {
-    var windowWidth = $(window).width();
-    var w = Math.max(windowWidth * 0.25, 200);
-    if (wideView(windowWidth)) {
-      $('#ug-left-sidebar, nav').width(w);
-      $('#ug-left-sidebar').show();
-      $('#ug-main').css({ 'margin-left': w + 20 + 'px' });
-    } else {
-      $('#ug-left-sidebar, nav').width(windowWidth);
-      $('#ug-main').css({ 'margin-left': '0' });
-    }
   }
 
   function enableScrollToTop() {
@@ -88,17 +79,6 @@ var Ug = function($) {
       event.preventDefault();
       contractMenu();
       scrollTo($('body')); 
-    });
-  }
-
-  function enableAutolinks() {
-    $('body').on('click', '.js-ug-autolink', function(event) {
-      var $autolink = $(this);
-      var $header = $(':header').filter(function() {
-        return squashedTextContent($(this)) === squashedTextContent($autolink);
-      });
-      scrollTo($header);
-      selectMenuItemFor($header);
     });
   }
 
@@ -110,12 +90,62 @@ var Ug = function($) {
     });
   }
 
+  /* toggling sections - for narrow window */
+
+  function toggleMajorSection(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    $(this)
+      .closest('.js-ug-headed-section-major')
+      .find('.js-ug-headed-section-major-body')
+      .toggle();
+  }
+
+  function configureForSize() {
+    var windowWidth = $(window).width();
+    var w = Math.max(windowWidth * 0.25, 200);
+    if (wideView(windowWidth)) {
+      $('#ug-left-sidebar, nav').width(w);
+      $('#ug-left-sidebar').show();
+      $('#ug-main').css({ 'margin-left': w + 20 + 'px' });
+      $('.js-ug-headed-section-major-body').show();
+      $('.js-ug-headed-section-major-title').each(function() {
+        $(this).removeClass('clickable-title').off('click', toggleMajorSection);
+      });
+    } else {
+      $('#ug-left-sidebar, nav').width(windowWidth);
+      $('#ug-main').css({ 'margin-left': '0' });
+      $('.js-ug-headed-section-major-body').hide();
+      $('.js-ug-headed-section-major-title:not(.clickable-title)').each(function() {
+        $(this).on('click', toggleMajorSection).addClass('clickable-title');
+      });
+    }
+  }
+
+  /* internal links to headed sections */
+
+  function enableAutolinks() {
+    $('body').on('click', '.js-ug-autolink', function(event) {
+      var $autolink = $(this);
+      var $header = $(':header').filter(function() {
+        return squashedTextContent($(this)) === squashedTextContent($autolink);
+      });
+      $header
+        .closest('.js-ug-headed-section-major')
+        .find('.js-ug-headed-section-major-body')
+        .slideDown({ duration: 'fast' });
+      scrollTo($header);
+      selectMenuItemFor($header);
+    });
+  }
+
+
   function initialize() {
     createMenu();
     enableAutolinks();
     enableScrollToTop();
     activateMenuItemsOnScroll();
-    $(window).resize(setWidths);
+    $(window).resize(configureForSize);
   }
 
   return {
