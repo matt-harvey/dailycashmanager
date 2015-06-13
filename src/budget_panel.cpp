@@ -30,6 +30,7 @@
 #include "gui/account_ctrl.hpp"
 #include "gui/account_dialog.hpp"
 #include "gui/button.hpp"
+#include "gui/check_box.hpp"
 #include "gui/decimal_text_ctrl.hpp"
 #include "gui/frame.hpp"
 #include "gui/frequency_ctrl.hpp"
@@ -77,8 +78,8 @@ namespace gui
 
 BEGIN_EVENT_TABLE(BudgetPanel, wxPanel)
     EVT_BUTTON
-    (   s_pop_item_button_id,
-        BudgetPanel::on_pop_item_button_click
+    (   s_remove_checked_button_id,
+        BudgetPanel::on_remove_checked_button_click
     )
     EVT_BUTTON
     (   s_push_item_button_id,
@@ -115,7 +116,7 @@ BudgetPanel::BudgetPanel
     m_top_sizer(nullptr),
     m_summary_label(nullptr),
     m_summary_amount_text(nullptr),
-    m_pop_item_button(nullptr),
+    m_remove_checked_button(nullptr),
     m_push_item_button(nullptr),
     m_account(p_account)
 {
@@ -205,16 +206,16 @@ BudgetPanel::BudgetPanel
         wxDefaultSpan,
         wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
     );
-    m_pop_item_button = new Button
+    m_remove_checked_button = new Button
     (   this,
-        s_pop_item_button_id,
-        wxString("Remove item"),
+        s_remove_checked_button_id,
+        wxString("Remove checked"),
         wxDefaultPosition,
         wxSize(medium_width(), wxDefaultSize.y),
         wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
     );
     m_top_sizer->Add
-    (   m_pop_item_button,
+    (   m_remove_checked_button,
         wxGBPosition(m_next_row, 2),
         wxDefaultSpan,
         wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL
@@ -265,7 +266,19 @@ BudgetPanel::BudgetPanel
     );
     m_top_sizer->Add
     (   frequency_label,
-        wxGBPosition(m_next_row, 3)
+        wxGBPosition(m_next_row, 3),
+        wxGBSpan(1, 2)
+    );
+    wxStaticText* dummy_label = new wxStaticText
+    (   this,
+        wxID_ANY,
+        wxEmptyString,
+        wxDefaultPosition,
+        wxSize(small_width(), wxDefaultSize.y)
+    );
+    m_top_sizer->Add
+    (   dummy_label,
+        wxGBPosition(m_next_row, 5)
     );
 
     ++m_next_row;
@@ -278,8 +291,8 @@ BudgetPanel::BudgetPanel
         for ( ; it != end; ++it)
         {
             if ((*it)->account() == m_account)
-             {
-                 push_item_component(*it);
+            {
+                push_item_component(*it);
                 m_budget_items.push_back(*it);
             }
         }
@@ -291,6 +304,7 @@ BudgetPanel::BudgetPanel
     m_top_sizer->Fit(this);
     m_top_sizer->SetSizeHints(this);
     GetParent()->Fit();
+    GetParent()->Layout();
 
     // Not sure why this is necessary here...
     update_budget_summary(m_budget_items);
@@ -301,7 +315,7 @@ BudgetPanel::~BudgetPanel()
 }
 
 void
-BudgetPanel::on_pop_item_button_click(wxCommandEvent& event)
+BudgetPanel::on_remove_checked_button_click(wxCommandEvent& event)
 {
     (void)event;  // silence compiler re. unused parameter.
 
@@ -309,10 +323,11 @@ BudgetPanel::on_pop_item_button_click(wxCommandEvent& event)
     // Windows, for some reason.)
     // wxWindowUpdateLocker const update_locker(this);
 
-    pop_item_component();
+    remove_checked_components();
     m_top_sizer->Fit(this);
     m_top_sizer->SetSizeHints(this);
     GetParent()->Fit();
+    GetParent()->Layout();
     return;
 }
 
@@ -330,6 +345,7 @@ BudgetPanel::on_push_item_button_click(wxCommandEvent& event)
     m_top_sizer->Fit(this);
     m_top_sizer->SetSizeHints(this);
     GetParent()->Fit();
+    GetParent()->Layout();
     return;
 }
 
@@ -580,9 +596,9 @@ BudgetPanel::update_budgets_from_dialog()
 void
 BudgetPanel::update_button_disabledness()
 {
-    if (m_pop_item_button)
+    if (m_remove_checked_button)
     {
-        m_pop_item_button->Enable(!m_budget_item_components.empty());
+        m_remove_checked_button->Enable(!m_budget_item_components.empty());
     }
     return;
 }
@@ -633,6 +649,18 @@ BudgetPanel::push_item_component(Handle<BudgetItem> const& p_budget_item)
         wxGBPosition(m_next_row, 3),
         wxGBSpan(1, 2)
     );
+    budget_item_component.check_box = new CheckBox
+    (   this,
+        wxID_ANY,
+        wxEmptyString,
+        wxDefaultPosition,
+        wxSize(small_width(), desc_size.y)
+    );
+    budget_item_component.check_box->SetValue(false);
+    m_top_sizer->Add
+    (   budget_item_component.check_box,
+        wxGBPosition(m_next_row, 5)
+    );
     m_budget_item_components.push_back(budget_item_component);
     ++m_next_row;
     update_button_disabledness();
@@ -640,7 +668,7 @@ BudgetPanel::push_item_component(Handle<BudgetItem> const& p_budget_item)
 }
 
 void
-BudgetPanel::pop_item_component()
+BudgetPanel::remove_checked_components()
 {
     if (m_budget_item_components.empty())
     {
@@ -648,23 +676,48 @@ BudgetPanel::pop_item_component()
     }
     JEWEL_ASSERT (m_budget_item_components.size() >= 1);
 
-    // Bare scope
+    auto const budget_items = make_budget_items();
+    vector<Handle<BudgetItem>> preserved_budget_items;
+    for (vector<Handle<BudgetItem>>::size_type i = 0; i != budget_items.size(); ++i)
     {
-        BudgetItemComponent& last =
-            m_budget_item_components[m_budget_item_components.size() - 1];
-        m_top_sizer->Detach(last.description_ctrl);
-        m_top_sizer->Detach(last.amount_ctrl);
-        m_top_sizer->Detach(last.frequency_ctrl);
-        last.description_ctrl->Destroy();
-        last.description_ctrl = 0;
-        last.amount_ctrl->Destroy();
-        last.amount_ctrl = 0;
-        last.frequency_ctrl->Destroy();
-        last.frequency_ctrl = 0;
+        if (!m_budget_item_components[i].check_box->GetValue())
+        {
+            preserved_budget_items.push_back(budget_items[i]);
+        }
     }
+    if (preserved_budget_items.size() == budget_items.size())
+    {
+        return;
+    }
+    auto const lim = m_budget_item_components.size();
+    while (!m_budget_item_components.empty())
+    {
+        auto& last = m_budget_item_components.back();
 
-    m_budget_item_components.pop_back();
-    --m_next_row;
+        m_top_sizer->Detach(last.check_box);
+        last.check_box->Destroy();
+        last.check_box = nullptr;
+
+        m_top_sizer->Detach(last.frequency_ctrl);
+        last.frequency_ctrl->Destroy();
+        last.frequency_ctrl = nullptr;
+
+        m_top_sizer->Detach(last.amount_ctrl);
+        last.amount_ctrl->Destroy();
+        last.amount_ctrl = nullptr;
+
+        m_top_sizer->Detach(last.description_ctrl);
+        last.description_ctrl->Destroy();
+        last.description_ctrl = nullptr;
+
+        m_budget_item_components.pop_back();
+    }
+    m_next_row -= lim;
+
+    for (auto const& preserved_budget_item: preserved_budget_items)
+    {
+        push_item_component(preserved_budget_item);
+    }
     update_button_disabledness();
     update_budget_summary();
     return;
@@ -953,7 +1006,8 @@ BudgetPanel::BalancingDialog::BalancingDialog
 
     m_top_sizer->Fit(this);
     m_top_sizer->SetSizeHints(this);
-    Layout();
+    GetParent()->Fit();
+    GetParent()->Layout();
 }
 
 void

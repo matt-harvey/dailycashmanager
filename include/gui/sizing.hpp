@@ -43,8 +43,14 @@ int standard_gap();
 int standard_border();
 
 /**
+ * @returns a standardized "small" width suitable, for example, for a
+ * check-box.
+ */
+int small_width();
+
+/**
  * @returns a standardized "medium" width suitable, for example, for
- * a DecimalTextCtrl. This is guaranteed to be an even integer.
+ * a DecimalTextCtrl.
  */
 int medium_width();
 

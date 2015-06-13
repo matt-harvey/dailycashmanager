@@ -190,8 +190,6 @@ private:
 
     template <typename T> void remove_widgets_from(std::vector<T>& p_vec);
 
-    std::set<std::vector<CheckBox*>::size_type> checked_rows() const;
-
     AccountSuperType m_account_super_type;
     sqloxx::Handle<Commodity> m_commodity;
     std::set<wxString> m_account_names_already_taken;

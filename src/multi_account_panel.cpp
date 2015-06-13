@@ -190,9 +190,8 @@ MultiAccountPanel::remove_checked_rows()
 {
     wxWindowUpdateLocker const window_update_locker(this);
     JEWEL_LOG_TRACE();
-    auto const checked = checked_rows();        
-    JEWEL_ASSERT (checked.size() <= m_account_name_boxes.size());
-    if (m_account_name_boxes.size() - checked.size() < m_minimum_num_rows)
+    JEWEL_ASSERT (num_checked_rows() <= m_account_name_boxes.size());
+    if (m_account_name_boxes.size() - num_checked_rows() < m_minimum_num_rows)
     {
         JEWEL_LOG_TRACE();
         return false; 
@@ -422,18 +421,6 @@ MultiAccountPanel::push_row(Handle<Account> const& p_account)
     FitInside();
 
     return;
-}
-
-set<vector<CheckBox*>::size_type>
-MultiAccountPanel::checked_rows() const
-{
-    typedef vector<CheckBox*>::size_type Sz;
-    set<Sz> ret;
-    for (Sz i = 0; i != m_check_boxes.size(); ++i)
-    {
-        if (m_check_boxes[i]->GetValue()) ret.insert(i);
-    }
-    return ret;
 }
 
 void

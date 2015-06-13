@@ -44,6 +44,7 @@ namespace gui
 class AccountCtrl;
 class AccountDialog;
 class Button;
+class CheckBox;
 class DecimalTextCtrl;
 class TextCtrl;
 
@@ -99,7 +100,7 @@ private:
 
     void revert_dialog_to_budgets();
 
-    void on_pop_item_button_click(wxCommandEvent& event);
+    void on_remove_checked_button_click(wxCommandEvent& event);
     void on_push_item_button_click(wxCommandEvent& event);
 
     /**
@@ -144,7 +145,7 @@ private:
     void update_budgets_from_dialog();
 
     /**
-     * Updates m_pop_item_button and/or m_push_item_button depending on
+     * Updates m_removed_checked_button and/or m_push_item_button depending on
      * whether it makes sense for these to be enabled or disabled.
      */
     void update_button_disabledness();
@@ -160,18 +161,18 @@ private:
     void push_item_component(sqloxx::Handle<BudgetItem> const& p_budget_item);
 
     /**
-     * Remove the last BudgetItemComponent and update the budget summary text
-     * accordingly. This does \e affect the underlying BudgetItems (to update
+     * Remove the checked BudgetItemComponents and update the budget summary text
+     * accordingly. This does \e not affect the underlying BudgetItems (to update
      * these call update_budgets_from_dialog()).
      */
-    void pop_item_component();
+    void remove_checked_components();
 
     DcmDatabaseConnection& database_connection() const;
 
     jewel::Decimal zero() const;
 
-    static int const s_pop_item_button_id = wxID_HIGHEST + 1;
-    static int const s_push_item_button_id = s_pop_item_button_id + 1;
+    static int const s_remove_checked_button_id = wxID_HIGHEST + 1;
+    static int const s_push_item_button_id = s_remove_checked_button_id + 1;
 
     /**
      * @returns string describing the standardized budget frequency for
@@ -209,12 +210,14 @@ private:
         BudgetItemComponent():
             description_ctrl(nullptr),
             amount_ctrl(nullptr),
-            frequency_ctrl(nullptr)
+            frequency_ctrl(nullptr),
+            check_box(nullptr)
         {
         }
         TextCtrl* description_ctrl;
         DecimalTextCtrl* amount_ctrl;
         SpecialFrequencyCtrl* frequency_ctrl;
+        CheckBox* check_box;
     };
 
     /**
@@ -306,7 +309,7 @@ private:
     wxGridBagSizer* m_top_sizer;
     wxStaticText* m_summary_label;
     wxStaticText* m_summary_amount_text;
-    Button* m_pop_item_button;
+    Button* m_remove_checked_button;
     Button* m_push_item_button;
     sqloxx::Handle<Account> const& m_account;
 

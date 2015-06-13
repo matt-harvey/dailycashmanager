@@ -48,6 +48,12 @@ standard_border()
 }
 
 int
+small_width()
+{
+    return screen_width_double() / 40;
+}
+
+int
 medium_width()
 {
     return screen_width_double() / 10;
