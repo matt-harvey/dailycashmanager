@@ -77,11 +77,9 @@ var Ug = function($) {
       $('#ug-left-sidebar, nav').width(w);
       $('#ug-left-sidebar').show();
       $('#ug-main').css({ 'margin-left': w + 20 + 'px' });
-      $('#ug-main').css({ 'padding-top': 0 });
     } else {
       $('#ug-left-sidebar, nav').width(windowWidth);
       $('#ug-main').css({ 'margin-left': '0' });
-      $('#ug-main').css({ 'padding-top': $('#ug-left-sidebar').height() + 'px' });
     }
   }
 
