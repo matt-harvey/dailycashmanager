@@ -189,6 +189,9 @@ bool
 MultiAccountPanel::remove_checked_rows()
 {
     wxWindowUpdateLocker const window_update_locker(this);
+
+    auto const scrolled_position = GetScrollPos(wxVERTICAL);
+
     JEWEL_LOG_TRACE();
     JEWEL_ASSERT (num_checked_rows() <= m_account_name_boxes.size());
     if (m_account_name_boxes.size() - num_checked_rows() < m_minimum_num_rows)
@@ -235,6 +238,9 @@ MultiAccountPanel::remove_checked_rows()
         );
     }
     update_summary();
+
+    Scroll(wxVERTICAL, scrolled_position);  // restore original position
+
     FitInside();
     JEWEL_LOG_TRACE();
     return true;
