@@ -411,7 +411,7 @@ else ()
             mkdir ${package_name} &&
             cp -r ${packaged_items} ${package_name} &&
             rm ${package_name}/include/make_currencies_inc.hpp &&
-            tar -sczf ${tarball_name} ${package_name} &&
+            tar -czf ${tarball_name} ${package_name} &&
             rm -rf ${package_name}
         DEPENDS ${library_name} test
     )
