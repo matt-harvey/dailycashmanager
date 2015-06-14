@@ -120,7 +120,14 @@ void
 AccountListCtrl::update()
 {
     // Remember which rows are selected currently
-    set<sqloxx::Id> const selected = selected_accounts();
+    auto const selected = selected_accounts();
+
+    // Remember scrolled position
+    auto const item_count = GetItemCount();
+    auto const top_item = GetTopItem();
+    auto const last_item = item_count - 1;
+    auto const last_position = top_item + GetCountPerPage();
+    auto const bottom_item = ((last_position < last_item) ? last_position : last_item);
 
     // Now (re)draw
     ClearAll();
@@ -218,6 +225,9 @@ AccountListCtrl::update()
         SetColumnWidth(s_budget_col, wxLIST_AUTOSIZE);
         SetColumnWidth(s_budget_col, max(GetColumnWidth(s_budget_col), 90));
     }
+
+    // Reinstate scrolled position
+    if (bottom_item > 0) EnsureVisible(bottom_item - 1);
 
     Layout();
 
