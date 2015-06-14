@@ -1,6 +1,27 @@
 Changelog for DailyCashManager
 ==============================
 
+v1.2.0:
+
+- Completely new layout for user guide: now on a single page to facilitate
+  easy printing and search, with sidebar navigation on wide screens, and
+  mobile-friendly layout with expanding / collapsing sections for narrow
+  screens.
+- Warn user if they set the sign (positive or negative) of an account opening
+  balance to an abnormal direction for the given account type.
+- In account / envelope editing dialog, enable multiple budget items
+  to be selected for removal, rather than only the last one.
+- In setup wizard, enable multiple accounts / envelopes to be selected
+  for removal, rather than only the last one.
+- Ensure account and envelope lists retain their scrolled position after
+  a transaction or other event occurs that requires them to be updated.
+  (Previously the lists would jump back to the top position each time.)
+- Fix issue with Enter key not activating some buttons on Windows.
+- Ensure focus always returns to account type control at top left of
+  transaction panel, after a transaction is saved, deleted or cancelled.
+- Fix "make package" build command not working on some Linux distributions.
+- Minor code fixes and tidy-ups.
+
 v1.1.3:
 
 - Resize windows to fit on smaller screens.
