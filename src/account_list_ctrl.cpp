@@ -127,7 +127,19 @@ AccountListCtrl::update()
     auto const top_item = GetTopItem();
     auto const last_item = item_count - 1;
     auto const last_position = top_item + GetCountPerPage();
-    auto const bottom_item = ((last_position < last_item) ? last_position : last_item);
+    long bottom_item;
+    if (last_position < last_item)
+    {
+        bottom_item = last_position - 1; 
+    }
+    else if (last_position == last_item)
+    {
+        bottom_item = last_item - 1;
+    }
+    else
+    {
+        bottom_item = last_item;
+    }
 
     // Now (re)draw
     ClearAll();
@@ -227,7 +239,7 @@ AccountListCtrl::update()
     }
 
     // Reinstate scrolled position
-    if (bottom_item > 0) EnsureVisible(bottom_item - 1);
+    if (bottom_item >= 0) EnsureVisible(bottom_item);
 
     Layout();
 
