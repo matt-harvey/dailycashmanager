@@ -382,7 +382,13 @@ TransactionCtrl::configure_for_editing_proto_journal(ProtoJournal& p_journal)
     );
 
     top_sizer().Add(m_ok_button, wxGBPosition(current_row(), 3));
-    m_ok_button->SetDefault();  // Enter key will now trigger "Save" button
+
+#   ifndef JEWEL_ON_WINDOWS
+        // Enter key will now trigger "Save" button (does not work on Windows).
+        m_ok_button->SetDefault();
+#   endif
+
+    m_transaction_type_ctrl->SetFocus();
 
     // "Admin"
     top_sizer().Fit(this);
@@ -564,6 +570,8 @@ TransactionCtrl::configure_for_editing_persistent_journal()
     // If there are any reconciled Entries in the Journal, then
     // make it impossible for the user to edit it.
     reflect_reconciliation_statuses();
+
+    m_transaction_type_ctrl->SetFocus();
 
     // "Admin"
     top_sizer().Fit(this);
@@ -774,6 +782,7 @@ TransactionCtrl::reset()
     ProtoJournal proto_journal = parent->make_proto_journal();
     clear_all();
     configure_for_editing_proto_journal(proto_journal);
+    m_transaction_type_ctrl->SetFocus();
     parent->Layout();
     return;
 }

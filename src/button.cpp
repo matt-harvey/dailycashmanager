@@ -66,7 +66,8 @@ Button::~Button()
 void
 Button::on_char(wxKeyEvent& event)
 {
-    if (event.GetKeyCode() == WXK_TAB)
+    auto const key_code = event.GetKeyCode();
+    if (key_code == WXK_TAB)
     {
         if (event.ShiftDown())
         {
@@ -76,6 +77,13 @@ Button::on_char(wxKeyEvent& event)
         {
             Navigate(wxNavigationKeyEvent::IsForward);
         }
+    }
+    else if (key_code == WXK_RETURN)
+    {
+        // workaround for mysterious failure of Cancel, Save and Delete
+        // buttons to respond to Enter in TransactionCtrl on Windows
+        wxCommandEvent e(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
+        GetEventHandler()->ProcessEvent(e);
     }
     else
     {
