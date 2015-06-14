@@ -3,8 +3,11 @@
 == Version 2.0, in this case for DailyCashManager                     ==
 ========================================================================
 
-DailyCashManager was created by Matthew Harvey in 2013, with the exception of
-the components described below.
+DailyCashManager was created by Matthew Harvey in 2013 (with updates in
+2014 and 2015), with the exception of the components described below.
 
 The "squirrel" image/s, located in the "images" directory of the source
 distribution, was/were created by Klara Stanke in 2013.
+
+Items as detailed in the file LICENSES_THIRD_PARTY were provided by third
+parties; see LICENSES_THIRD_PARTY for details.
