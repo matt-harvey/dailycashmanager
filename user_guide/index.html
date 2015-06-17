@@ -37,7 +37,7 @@
 
 <h1>DailyCashManager User Guide</h1>
 
-<div class="js-ug-headed-section js-ug-headed-section-major">
+<div id="installation" class="js-ug-headed-section js-ug-headed-section-major">
   <h2 class="js-ug-headed-section-major-title">Installation</h2>
   <div class="js-ug-headed-section-major-body">
     <p>
@@ -61,11 +61,11 @@
 </div>
 
 
-<div class="js-ug-headed-section js-ug-headed-section-major">
+<div id="getting-started" class="js-ug-headed-section js-ug-headed-section-major">
   <h2 class="js-ug-headed-section-major-title">Getting Started</h2>
   <div class="js-ug-headed-section-major-body">
 
-    <div class="js-ug-headed-section">
+    <div id="running-dailycashmanager-for-the-first-time" class="js-ug-headed-section">
       <h3>Running DailyCashManager for the first time</h3>
       <p>
         <em>On Windows</em>
@@ -81,7 +81,7 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="creating-a-dailycashmanager-file" class="js-ug-headed-section">
       <h3>Creating a DailyCashManager file</h3>
       <p>
         When you first run DCM, the application needs to create a file in which to
@@ -94,7 +94,7 @@
         process of setting up your DCM file.
       </p>
 
-      <div class="js-ug-headed-section">
+      <div id="file-name-location-currency-and-starting-date" class="js-ug-headed-section">
         <h4>File name, location, currency and starting date</h4>
         <p>
           The first page of the wizard will ask you to select a location to save
@@ -145,7 +145,7 @@
         </p>
       </div>
 
-      <div class="js-ug-headed-section">
+      <div id="setting-up-accounts" class="js-ug-headed-section">
         <h4>Setting up accounts</h4>
         <p>
           The next page asks you to enter your assets and liabilities, with the
@@ -177,7 +177,7 @@
         </p>
       </div>
 
-      <div class="js-ug-headed-section">
+      <div id="setting-up-envelopes" class="js-ug-headed-section">
         <h4>Setting up envelopes</h4>
         <p>
           The next page asks you to enter some revenue and expenditure
@@ -204,8 +204,8 @@
           electricity, and you're not expecting your next electricity bill for
           another month, then you would only need to allocate about 400.00 to
           &quot;Electricity&quot; to begin with. When you set up budget items
-          (you can read about this under <a href="#"
-          class="js-ug-autolink">Budgeting</a>), if you allocate 600.00 per 3 months
+          (you can read about this under <a href="#budgeting"
+          class="js-ug-internal-link">Budgeting</a>), if you allocate 600.00 per 3 months
           to this envelope, this will ensure that the envelope balance reaches
           the targetted 600.00 by the time the electricity bill arrives.
         </p>
@@ -231,10 +231,11 @@
           want to create a <em>pure envelope</em> called &quot;Retirement
           savings&quot; or &quot;Car savings&quot; or the like, to save for some
           longer term goal, and put your remaining unallocated funds into this
-          (see <a href="#" class="js-ug-autolink">Targetted saving using pure
+          (see <a href="#targetted-saving-using-pure-envelopes" class="js-ug-internal-link">Targetted saving using pure
           envelopes</a>). If you're not sure, you can leave these funds in
           <em>Unallocated</em> for now, and shift them elsewhere at a later time
-          (see <a href="#" class="js-ug-autolink">Transferring money between
+          (see <a href="#transferring-money-between-envelopes"
+          class="js-ug-internal-link">Transferring money between
           envelopes</a>).
         </p>
         <p>
@@ -247,13 +248,14 @@
           negative; but try to aim over time to bring <em>Unallocated</em> up to
           <em>nil</em>. You can allocate regular funds into <em>Unallocated</em>
           by setting up a budget item in the <em>Unallocated</em> account editing
-          panel (see <a href="#" class="js-ug-autolink">Creating and editing budget
+          panel (see <a href="#creating-and-editing-budget-items"
+          class="js-ug-internal-link">Creating and editing budget
           items</a> for how to do this).
         </p>
       </div>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="opening-an-existing-dailycashmanager-file" class="js-ug-headed-section">
       <h3>Opening an existing DailyCashManager file</h3>
       <p>
         Generally you will only want one DCM file to record all your transactions
@@ -283,7 +285,7 @@
   </div>
 </div>
 
-<div class="js-ug-headed-section js-ug-headed-section-major">
+<div id="accounts" class="js-ug-headed-section js-ug-headed-section-major">
   <h2 class="js-ug-headed-section-major-title">Accounts</h2>
   <div class="js-ug-headed-section-major-body">
 
@@ -299,7 +301,7 @@
       account in the program for each account that you have in real life.
     </p>
 
-    <div class="js-ug-headed-section">
+    <div id="creating-an-account" class="js-ug-headed-section">
       <h3>Creating an account</h3>
       <p>
         When you first set up your DCM file, you will create some accounts in the
@@ -344,7 +346,7 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="editing-an-account" class="js-ug-headed-section">
       <h3>Editing an account</h3>
       <p>
         If you want to edit the name, description or other properties of an
@@ -358,7 +360,7 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="hiding-an-account" class="js-ug-headed-section">
       <h3>Hiding an account</h3>
       <p>
         By default, all accounts are shown in the <em>Account</em> list at the
@@ -366,8 +368,8 @@
         longer need to use a particular account. To preserve the integrity of
         past transactions recorded in the DCM file, there is no way to delete an
         account once created; however you can hide an account from view, by
-        opening the account editing panel (see <a href="#"
-        class="js-ug-autolink">Editing an account</a>), and unchecking <em>Show in
+        opening the account editing panel (see <a href="#editing-an-account"
+        class="js-ug-internal-link">Editing an account</a>), and unchecking <em>Show in
         list</em>. Click <em>Save</em> to save the change, and the account will
         then disappear from the list.
       </p>
@@ -388,7 +390,7 @@
   </div>
 </div>
 
-<div class="js-ug-headed-section js-ug-headed-section-major">
+<div id="envelopes" class="js-ug-headed-section js-ug-headed-section-major">
   <h2 class="js-ug-headed-section-major-title">Envelopes</h2>
   <div class="js-ug-headed-section-major-body">
     <p>
@@ -418,11 +420,12 @@
       In addition, DailyCashManager provides for a third category of envelope,
       called a <em>pure envelope</em>. A pure envelope is created in order to save
       for separately for some special or one-off item that is not covered by your
-      day-to-day budgets; pure envelopes are discussed under <a href="#"
-      class="js-ug-autolink">Targetted saving using pure envelopes</a>.
+      day-to-day budgets; pure envelopes are discussed under
+      <a href="#targetted-saving-using-pure-envelopes"
+      class="js-ug-internal-link">Targetted saving using pure envelopes</a>.
     </p>
 
-    <div class="js-ug-headed-section">
+    <div id="creating-an-envelope" class="js-ug-headed-section">
       <h3>Creating an envelope</h3>
       <p>
         To create an envelope, click on <em>New</em> in the menu bar at the top,
@@ -463,8 +466,8 @@
       </p>
       <p>
         For now, you can ignore the <em>BUDGET ITEMS</em> section of this panel.
-        See <a href="#" class="js-ug-autolink">Creating and editing budget items</a>
-        for a detailed explanation of this.
+        See <a href="#creating-and-editing-budget-items" class="js-ug-internal-link">
+        Creating and editing budget items</a> for a detailed explanation of this.
       </p>
       <p>
         Click <em>Save</em> at the bottom right to save the newly created
@@ -473,7 +476,7 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="editing-an-envelope" class="js-ug-headed-section">
       <h3>Editing an envelope</h3>
       <p>
         If you want to edit the name, description or other properties of an
@@ -487,17 +490,19 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="hiding-an-envelope" class="js-ug-headed-section">
       <h3>Hiding an envelope</h3>
       <p>
         By default, all envelopes are shown in the <em>Envelope</em> list near
-        the centre of the main window. However, there may be times when you find
-        you no longer need to use a particular envelope. To preserve the
-        integrity of the transactions already recorded in the DCM file, there is
-        no way to delete an envelope once created; however you can always hide an
-        envelope from view, by opening the envelope editing panel (see <a
-        href="#" class="js-ug-autolink">Editing an envelope</a>), and unchecking
-        <em>Show in list</em>. The envelope will then disappear from the list.
+        the centre of the main window. However, there may be times when you
+        find you no longer need to use a particular envelope. To preserve the
+        integrity of the transactions already recorded in the DCM file, there
+        is no way to delete an envelope once created; however you can always
+        hide an envelope from view, by opening the envelope editing panel (see
+        <a href="#editing-an-envelope" class="js-ug-internal-link">Editing an
+        envelope</a>), and unchecking <em>Show in list</em>. The envelope will
+        then disappear from the list.
+
       </p>
       <p>
         If you later decide you want to show the envelope, you can re-check the
@@ -516,7 +521,7 @@
   </div>
 </div>
 
-<div class="js-ug-headed-section js-ug-headed-section-major">
+<div id="transactions" class="js-ug-headed-section js-ug-headed-section-major">
   <h2 class="js-ug-headed-section-major-title">Transactions</h2>
   <div class="js-ug-headed-section-major-body">
     <p>
@@ -526,7 +531,7 @@
       DCM file.
     </p>
 
-    <div class="js-ug-headed-section">
+    <div id="entering-a-one-off-transaction" class="js-ug-headed-section">
       <h3>Entering a one-off transaction</h3>
       <p>
         Most of the time you will be entering a single transaction. This is a
@@ -651,15 +656,16 @@
       </ul>
       <p>
         Note that when entering the date of a one-off transaction, you can enter
-        a past date, leave it as today's date, or enter a future date. Regardless
-        of what date you enter (even if you enter a future date), the
-        corresponding account and envelope balances will be update immediately.
-        (This is unlike a recurring transaction, which is not actually recorded
-        until the &quot;Next date&quot; is reached&mdash;see <a href="#"
-        class="js-ug-autolink">Recurring transactions</a> below.)
+        a past date, leave it as today's date, or enter a future date.
+        Regardless of what date you enter (even if you enter a future date),
+        the corresponding account and envelope balances will be update
+        immediately.  (This is unlike a recurring transaction, which is not
+        actually recorded until the &quot;Next date&quot; is reached&mdash;see
+        <a href="#recurring-transactions" class="js-ug-internal-link">Recurring
+        transactions</a> below.)
       </p>
 
-      <div class="js-ug-headed-section">
+      <div id="generic-transactions" class="js-ug-headed-section">
         <h4>Generic transactions</h4>
         <p>
           In addition to the transaction types <em>Spend</em>, <em>Earn</em> and
@@ -704,8 +710,8 @@
           </li>
           <li>
             In the second row, select &quot;Cash&quot;, then click the
-            <em>Split</em> button to the right (see <a href="#"
-            class="js-ug-autolink">Split transactions</a> for more explanation on
+            <em>Split</em> button to the right (see <a href="#split-transactions"
+            class="js-ug-internal-link">Split transactions</a> for more explanation on
             this).
           </li>
           <li>
@@ -733,7 +739,7 @@
       </div>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="recurring-transactions" class="js-ug-headed-section">
       <h3>Recurring transactions</h3>
       <p>
         Sometimes you will have a certain transaction that occurs again and
@@ -782,7 +788,8 @@
         some other interval).
       </p>
 
-      <div class="js-ug-headed-section">
+      <div id="setting-a-recurring-transaction-to-record-on-the-last-day-of-the-month"
+        class="js-ug-headed-section">
         <h4>
           Setting a recurring transaction to record on the last day of the month
         </h4>
@@ -810,7 +817,7 @@
       </div>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="viewing-or-editing-a-transaction" class="js-ug-headed-section">
       <h3>Viewing or editing a transaction</h3>
       <p>
         You can view or edit a transaction after you have already saved it.
@@ -855,8 +862,8 @@
         To preserve the integrity of your DCM file, there are certain aspects of
         the transaction you won't be able edit; for example, you can't change a
         <em>Spend</em> transaction to an <em>Earn</em> transaction. Also, if some
-        or all lines in the transaction have been reconciled (see <a href="#"
-        class="js-ug-autolink">Reconciliations</a>), those lines, as well as some
+        or all lines in the transaction have been reconciled (see <a href="#reconciliations"
+        class="js-ug-internal-link">Reconciliations</a>), those lines, as well as some
         other aspects of the transaction such as the date, will be greyed out and
         will impossible to edit. This is to preserve the integrity of the
         reconciliation.  (Don't worry if you don't know what that means right
@@ -880,12 +887,13 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="deleting-a-transaction" class="js-ug-headed-section">
       <h3>Deleting a transaction</h3>
       <p>
         To delete a transaction entirely, whether a one-off transaction or a
         recurring transaction, first select the transaction for editing as
-        explained under <a href="#" class="js-ug-autolink">Viewing or editing a
+        explained under <a href="#viewing-or-editing-a-transaction"
+        class="js-ug-internal-link">Viewing or editing a
         transaction</a> above. Then, click the <em>Delete transaction</em> button
         at the bottom right of the transaction panel. A message box will appear
         asking if you are sure you want to delete the entire transaction. Click
@@ -903,7 +911,7 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="split-transactions" class="js-ug-headed-section">
       <h3>Split transactions</h3>
       <p>
         Sometimes you will need to record a transaction one &quot;side&quot; of
@@ -938,13 +946,13 @@
         transaction amount entered at the top of the transaction panel (so, in
         our example, they would need to sum to 100.00). You can enter the amount
         in each amount box manually; however, you will see below, under <a
-        href="#" class="js-ug-autolink">Handy shortcuts</a>, that there are often
-        faster ways to populate the amount boxes, than entering the number
-        manually.
+        href="#handy-shortcuts" class="js-ug-internal-link">Handy shortcuts</a>, that
+        there are often faster ways to populate the amount boxes, than entering
+        the number manually.
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="handy-shortcuts" class="js-ug-headed-section">
       <h3>Handy shortcuts</h3>
       <p>
         Entering transactions is the action you will find yourself performing
@@ -952,7 +960,7 @@
         can use to make the process of recording transactions quicker and easier.
       </p>
 
-      <div class="js-ug-headed-section">
+      <div id="automatic-balancing-of-split-transactions" class="js-ug-headed-section">
         <h4>Automatic balancing of split transactions</h4>
         <p>
           Suppose you have entered &quot;100.52&quot; in the main amount box of
@@ -980,7 +988,8 @@
         </p>
       </div>
 
-      <div class="js-ug-headed-section">
+      <div id="performing-simple-calculations-within-an-amount-cell"
+        class="js-ug-headed-section">
         <h4>Performing simple calculations within an amount cell</h4>
         <p>
           DailyCashManager can act as a primitive calculator. Suppose you spent
@@ -1004,7 +1013,7 @@
         </p>
       </div>
 
-      <div class="js-ug-headed-section">
+      <div id="entering-dates" class="js-ug-headed-section">
         <h4>Entering dates</h4>
         <p>
           If you only enter a single number in the date box, e.g. &quot;23&quot;,
@@ -1014,7 +1023,8 @@
         </p>
       </div>
 
-      <div class="js-ug-headed-section">
+      <div id="selecting-accounts-and-envelopes-from-the-account-and-envelope-lists"
+        class="js-ug-headed-section">
         <h4>
           Selecting accounts and envelopes from the <em>Account</em> and
           <em>Envelope</em> lists
@@ -1048,7 +1058,7 @@
   </div>
 </div>
 
-<div class="js-ug-headed-section js-ug-headed-section-major">
+<div id="budgeting" class="js-ug-headed-section js-ug-headed-section-major">
   <h2 class="js-ug-headed-section-major-title">Budgeting</h2>
   <div class="js-ug-headed-section-major-body">
     <p>
@@ -1067,7 +1077,7 @@
       financial goals.
     </p>
 
-    <div class="js-ug-headed-section">
+    <div id="envelope-budgeting" class="js-ug-headed-section">
       <h3>Envelope budgeting</h3>
       <p>
         To facilitate this planning and control function, DailyCashManager
@@ -1119,7 +1129,7 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="creating-and-editing-budget-items" class="js-ug-headed-section">
       <h3>Creating and editing budget items</h3>
       <p>
         A <em>budget item</em> represents a given expense or revenue item for
@@ -1192,7 +1202,7 @@
       </ul>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="living-within-your-means" class="js-ug-headed-section">
       <h3>Living within your means</h3>
       <p>
         In DailyCashManager, the amount in an expense envelope at a given point
@@ -1213,7 +1223,7 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="responding-to-a-negative-envelope-balance" class="js-ug-headed-section">
       <h3>Responding to a negative envelope balance</h3>
       <p>
         If the balance in an envelope becomes negative, it usually makes sense,
@@ -1223,7 +1233,8 @@
         should create an additional budget item to cover off some item of
         expenditure that you hadn't considered previously. To get some idea of
         whether your ongoing budget item allocations are realistic, you might
-        want to run an <a href="#" class="js-ug-autolink">Income and expenditure</a>
+        want to run an <a href="#income-and-expenditure"
+        class="js-ug-internal-link">Income and expenditure</a>
         report and look at the average daily expenditure for the relevant
         envelope for, say, the last 6 or 12 months (or whatever time period you
         have available), and compare this to the daily allocation for that
@@ -1249,7 +1260,7 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="transferring-money-between-envelopes" class="js-ug-headed-section">
       <h3>Transferring money between envelopes</h3>
       <p>
         Sometimes you find that one envelope contains more than excess funds,
@@ -1277,7 +1288,7 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="targetted-saving-using-pure-envelopes" class="js-ug-headed-section">
       <h3>Targetted saving using pure envelopes</h3>
       <p>
         Usually when you create an envelope, it will be either a <em>revenue</em>
@@ -1294,12 +1305,13 @@
         during the week leading up to Christmas, over and above your usual weekly
         spending on food. Accordingly, you could create a pure envelope called
         &quot;Christmas food fund&quot;. You would create this in the same way as
-        you would create any other envelope (see <a href="#"
-        class="js-ug-autolink">Creating an envelope</a>), except that in the
+        you would create any other envelope (see <a href="#creating-an-envelope"
+        class="js-ug-internal-link">Creating an envelope</a>), except that in the
         envelope creation panel, instead of selecting <em>revenue</em> or
         <em>expense</em> from the <em>envelope type</em> box, you would select
         <em>pure envelope</em>.  You would then create a budget item under this
-        envelope (see <a href="#" class="js-ug-autolink">Creating and editing budget
+        envelope (see <a href="#creating-and-editing-budget-items"
+        class="js-ug-internal-link">Creating and editing budget
         items</a>), for allocating 100.00 per twelve months towards Christmas
         food expenditure. Then, when the week leading up to Christmas comes round
         (assuming you created this budget item one year before), you would
@@ -1311,7 +1323,7 @@
   </div>
 </div>
 
-<div class="js-ug-headed-section js-ug-headed-section-major">
+<div id="reconciliations" class="js-ug-headed-section js-ug-headed-section-major">
   <h2 class="js-ug-headed-section-major-title">Reconciliations</h2>
   <div class="js-ug-headed-section-major-body">
     <p>
@@ -1327,7 +1339,7 @@
       or etc..
     </p>
 
-    <div class="js-ug-headed-section">
+    <div id="simple-approach" class="js-ug-headed-section">
       <h3>Simple approach</h3>
       <p>
         One simple way to check that your records are accurate for a given
@@ -1348,7 +1360,8 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="using-dailycashmanager-to-perform-reconciliations"
+      class="js-ug-headed-section">
       <h3>Using DailyCashManager to perform reconciliations</h3>
       <p>
         To avoid the confusion that can arise from adopting the simple approach
@@ -1429,7 +1442,8 @@
               can edit the transaction in DailyCashManager by double-clicking it
               in the <em>Reconciliations</em> list. This will bring the
               transaction up in the transaction panel, where you can edit it as
-              described in <a href="#" class="js-ug-autolink">Viewing or editing a
+              described in <a href="#viewing-or-editing-a-transaction"
+              class="js-ug-internal-link">Viewing or editing a
               transaction</a>. Once you have edited the amount so that it matches
               the amount shown in the bank statement, click <em>Save</em>, and
               the <em>Reconcilations</em> list will be automatically updated with
@@ -1445,8 +1459,9 @@
               be made aware of these until you actually receive the bank
               statement.  During the reconciliation process, you can enter newly
               discoved transactions&mdash;or transactions you simply forgot to enter
-              at the time&mdash;as you normally would (see <a href="#"
-              class="js-ug-autolink">Entering a one-off transaction</a>); once
+              at the time&mdash;as you normally would (see
+              <a href="#entering-a-one-off-transaction"
+              class="js-ug-internal-link">Entering a one-off transaction</a>); once
               saved, the new transaction will appear in the
               <em>Reconciliations</em> list, where you can then mark it as
               reconciled as by <em>right-mouse-clicking</em> on it; remember to
@@ -1469,7 +1484,8 @@
           entered in the wrong account by mistake when you originally recorded it
           in DailyCashManager. You can always double-click the
           &quot;offending&quot; transaction and edit it, as normal, in the
-          transaction panel (see <a href="#" class="js-ug-autolink">Viewing or
+          transaction panel (see <a href="#viewing-or-editing-a-transaction"
+          class="js-ug-internal-link">Viewing or
           editing a transaction</a>).  Once you have saved your edits, if you
           have changed the account for the transaction, it will disappear from
           the <em>Reconciliations</em> list for that account automatically.
@@ -1493,7 +1509,7 @@
   </div>
 </div>
 
-<div class="js-ug-headed-section js-ug-headed-section-major">
+<div id="reports" class="js-ug-headed-section js-ug-headed-section-major">
   <h2 class="js-ug-headed-section-major-title">Reports</h2>
     <div class="js-ug-headed-section-major-body">
     <p>
@@ -1501,7 +1517,7 @@
       These can be useful if you want to get a quick overview of your finances.
     </p>
 
-    <div class="js-ug-headed-section">
+    <div id="balance-sheet" class="js-ug-headed-section">
       <h3>Balance sheet</h3>
       <p>
         The <em>Balance sheet</em> report enables you to see a summary of your
@@ -1543,7 +1559,7 @@
       </p>
     </div>
 
-    <div class="js-ug-headed-section">
+    <div id="income-and-expenditure" class="js-ug-headed-section">
       <h3>Income and expenditure</h3>
       <p>
         The <em>Income and expenditure</em> report enables you to see the total
@@ -1590,7 +1606,7 @@
 </div>
 
 <footer>
-  Copyright 2013, 2014 Matthew Harvey
+  Copyright 2013-2015 Matthew Harvey
 </footer>
 
 </div><!-- ug-main -->

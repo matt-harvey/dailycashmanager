@@ -24,25 +24,34 @@ var Ug = function($) {
     return $element.text().replace(/\s+/g, ' ');
   }
 
+  function hyphenize(text) {
+    return text.replace(/\s/g, '-');
+  }
+
   /* menu and navigation - wide window */
 
-  function scrollTo($element) {
-    var targetPosition = $element.offset().top;
+  function scrollTo($section) {
+    var targetPosition = $section.offset().top;
     autoScrolling = true;
     $('html, body').stop().animate(
       { 'scrollTop': targetPosition },
       'fast',
-      function() { autoScrolling = false; }
+      function() {
+        selectMenuItemFor($section);
+        autoScrolling = false;
+      }
     );
   }
 
   function $createAutolinkTo($header) {
     var text = squashedTextContent($header);
-    return $('<a href="#" class="js-ug-autolink">' + text + '</a>');
+    var id = $header.closest('.js-ug-headed-section').prop('id');
+    return $('<a class="js-ug-internal-link" href="#' + id + '">' + text + '</a>');
   }
 
   function contractMenu() {
     $('nav ul ul').hide();
+
   }
 
   function expandMenuItem($menuListItem) {
@@ -50,14 +59,16 @@ var Ug = function($) {
     $menuListItem.children('ul').show();
   }
 
-  function selectMenuItemFor($header) {
-    var $link = $('nav a').filter(function() {
-      return squashedTextContent($(this)) === squashedTextContent($header);
-    });
-    var $menuItem = $link.closest('li:visible');
-    contractMenu();
-    expandMenuItem($menuItem);
-    $menuItem.children('a').focus();
+  function selectMenuItemFor($section) {
+    var $link = $('nav [href="#' + $section.prop('id') + '"]');
+    if ($link.size() === 0) {
+      selectMenuItemFor($section.parent().closest('.js-ug-headed-section'));
+    } else {
+      var $menuItem = $link.closest('li');
+      contractMenu();
+      expandMenuItem($menuItem);
+      $menuItem.children('a').focus();
+    }
   }
 
   function createMenu() {
@@ -83,19 +94,22 @@ var Ug = function($) {
   }
 
   function enableScrollToTop() {
-    $('.js-ug-scroll-to-top').click(function(event) {
-      event.preventDefault();
-      contractMenu();
-      scrollTo($('body')); 
-    });
+    $('.js-ug-scroll-to-top').click(contractMenu);
   }
 
   function activateMenuItemsOnScroll() {
-    $('h2, h3').waypoint(function(direction) {
+    $('.js-ug-headed-section').waypoint(function(direction) {
       if (!autoScrolling) {
         selectMenuItemFor($(this));
       }
     });
+  }
+
+  function expandMenuForHash() {
+    var hash = window.location.hash.substring(1);
+    if (hash) {
+      selectMenuItemFor($('#' + hash));
+    }
   }
 
   /* toggling sections - for narrow window */
@@ -108,6 +122,18 @@ var Ug = function($) {
       .find('.js-ug-headed-section-major-body')
       .toggle();
   }
+
+  /* internal links to headed sections */
+
+  function configureAutolinks() {
+    $('.js-ug-internal-link').click(function(event) {
+      var $section = $($(this).attr('href'));
+      $section.closest('.js-ug-headed-section-major').show();
+      scrollTo($section);
+    });
+  }
+
+  /* set things up depending on the viewport width */
 
   function configureForSize() {
     var width = viewportWidth();
@@ -130,29 +156,14 @@ var Ug = function($) {
     }
   }
 
-  /* internal links to headed sections */
-
-  function enableAutolinks() {
-    $('body').on('click', '.js-ug-autolink', function(event) {
-      var $autolink = $(this);
-      var $header = $(':header').filter(function() {
-        return squashedTextContent($(this)) === squashedTextContent($autolink);
-      });
-      $header
-        .closest('.js-ug-headed-section-major')
-        .find('.js-ug-headed-section-major-body')
-        .slideDown({ duration: 'fast' });
-      scrollTo($header);
-      selectMenuItemFor($header);
-    });
-  }
-
+  /* initialize */
 
   function initialize() {
     createMenu();
-    enableAutolinks();
-    enableScrollToTop();
     activateMenuItemsOnScroll();
+    configureAutolinks();
+    contractMenu();
+    expandMenuForHash();
     $(window).resize(configureForSize);
   }
 
