@@ -69,8 +69,6 @@ var Ug = function($) {
       selectMenuItemFor($section.parent().closest('.js-ug-headed-section'));
     } else {
       var $menuItem = $link.closest('li');
-      $('.js-major-menu-item-current').removeClass('js-major-menu-item-current');
-      $menuItem.closest('.js-major-menu-item').addClass('js-major-menu-item-current');
       contractMenu();
       expandMenuItem($menuItem);
       $menuItem.children('a').focus();
@@ -82,10 +80,7 @@ var Ug = function($) {
     var $ul = $('<ul></ul>').appendTo($nav);
     $('h2').each(function(index, header) {
       var $header = $(header);
-      var $listItem =
-        $('<li class="js-major-menu-item"></li>')
-        .append($createAutolinkTo($header))
-        .appendTo($ul);
+      var $listItem = $('<li></li>').append($createAutolinkTo($header)).appendTo($ul);
       var $subHeaders = $header.closest('.js-ug-headed-section').find('h3');
       if ($subHeaders.size() !== 0) {
         var $subList = $('<ul></ul>');
@@ -96,17 +91,6 @@ var Ug = function($) {
             appendTo($subList);
         });
         $subList.appendTo($listItem);
-        $listItem.hover(
-          function(event) {
-            expandMenuItem($(this));
-          },
-          function(event) {
-            var $item = $(this);
-            if (!$item.is('.js-major-menu-item-current')) {
-              contractMenuItem($item);
-            }
-          }
-        );
       }
     });
     configureForSize();
