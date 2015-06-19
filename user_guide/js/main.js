@@ -59,12 +59,18 @@ var Ug = function($) {
     $menuListItem.children('ul').show();
   }
 
+  function contractMenuItem($menuListItem) {
+    $menuListItem.children('ul').hide();
+  }
+
   function selectMenuItemFor($section) {
     var $link = $('nav [href="#' + $section.prop('id') + '"]');
     if ($link.size() === 0) {
       selectMenuItemFor($section.parent().closest('.js-ug-headed-section'));
     } else {
       var $menuItem = $link.closest('li');
+      $('.js-major-menu-item-current').removeClass('js-major-menu-item-current');
+      $menuItem.closest('.js-major-menu-item').addClass('js-major-menu-item-current');
       contractMenu();
       expandMenuItem($menuItem);
       $menuItem.children('a').focus();
@@ -76,7 +82,10 @@ var Ug = function($) {
     var $ul = $('<ul></ul>').appendTo($nav);
     $('h2').each(function(index, header) {
       var $header = $(header);
-      var $listItem = $('<li></li>').append($createAutolinkTo($header)).appendTo($ul);
+      var $listItem =
+        $('<li class="js-major-menu-item"></li>')
+        .append($createAutolinkTo($header))
+        .appendTo($ul);
       var $subHeaders = $header.closest('.js-ug-headed-section').find('h3');
       if ($subHeaders.size() !== 0) {
         var $subList = $('<ul></ul>');
@@ -87,6 +96,17 @@ var Ug = function($) {
             appendTo($subList);
         });
         $subList.appendTo($listItem);
+        $listItem.hover(
+          function(event) {
+            expandMenuItem($(this));
+          },
+          function(event) {
+            var $item = $(this);
+            if (!$item.is('.js-major-menu-item-current')) {
+              contractMenuItem($item);
+            }
+          }
+        );
       }
     });
     configureForSize();
@@ -108,7 +128,12 @@ var Ug = function($) {
   function expandMenuForHash() {
     var hash = window.location.hash.substring(1);
     if (hash) {
-      selectMenuItemFor($('#' + hash));
+      var $section = $('#' + hash);
+      selectMenuItemFor($section);
+      $section
+        .closest('.js-ug-headed-section-major')
+        .find('.js-ug-headed-section-major-body')
+        .show();
     }
   }
 
@@ -128,7 +153,10 @@ var Ug = function($) {
   function configureAutolinks() {
     $('.js-ug-internal-link').click(function(event) {
       var $section = $($(this).attr('href'));
-      $section.closest('.js-ug-headed-section-major').show();
+      $section
+        .closest('.js-ug-headed-section-major')
+        .find('.js-ug-headed-section-major-body')
+        .show();
       scrollTo($section);
     });
   }
@@ -143,6 +171,7 @@ var Ug = function($) {
       $('#ug-left-sidebar').show();
       $('#ug-main').css({ 'margin-left': w + 20 + 'px' });
       $('.js-ug-headed-section-major-body').show();
+      $('.clickable-title').unwrap();
       $('.js-ug-headed-section-major-title').each(function() {
         $(this).removeClass('clickable-title').off('click', toggleMajorSection);
       });
@@ -151,7 +180,13 @@ var Ug = function($) {
       $('#ug-main').css({ 'margin-left': '0' });
       $('.js-ug-headed-section-major-body').hide();
       $('.js-ug-headed-section-major-title:not(.clickable-title)').each(function() {
-        $(this).on('click', toggleMajorSection).addClass('clickable-title');
+        var $title = $(this);
+        var $section = $title.closest('.js-ug-headed-section');
+        var sectionId = $section.prop('id');
+        $title
+          .on('click', toggleMajorSection)
+          .addClass('clickable-title')
+          .wrap('<a href="#' + sectionId + '" class="clickable-title-wrapper"></a>');
       });
     }
   }

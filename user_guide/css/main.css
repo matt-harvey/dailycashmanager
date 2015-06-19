@@ -35,6 +35,10 @@ a {
   text-decoration: none;
 }
 
+.clickable-title-wrapper {
+  color: #000000;
+}
+
 p {
   padding-top: 0;
 }
@@ -43,7 +47,7 @@ p {
   cursor: pointer;  
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   #ug-main {
     padding: 0 1.25em;
     margin-left: 0;
@@ -140,7 +144,7 @@ nav > ul > li {
   margin-bottom: 0.8em;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   #ug-left-sidebar {
     display: none;
   }
