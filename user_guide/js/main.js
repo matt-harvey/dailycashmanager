@@ -122,12 +122,12 @@ var Ug = function($) {
     });
   }
 
-  function expandMenuForHash() {
+  function positionForHash() {
     var hash = window.location.hash;
     if (hash.length > 0) {
       var $hashSection = $(hash);
-      selectMenuItemFor($hashSection);
       $majorSectionBody($hashSection).show();
+      scrollTo($hashSection);
     }
   }
 
@@ -186,7 +186,7 @@ var Ug = function($) {
     activateMenuItemsOnScroll();
     configureAutolinks();
     contractMenu();
-    expandMenuForHash();
+    positionForHash();
     $(window).resize(configureForSize);
   }
 
