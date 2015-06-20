@@ -4,6 +4,10 @@ var Ug = function($) {
 
   /* window querying */
 
+  function $majorSectionBody($section) {
+    return $section.closest('.js-ug-section-major').find('.js-ug-section-major-body');
+  }
+
   function viewportWidth() {
     if ('innerWidth' in window) {
       return window.innerWidth;
@@ -29,10 +33,6 @@ var Ug = function($) {
     return $element.text().replace(/\s+/g, ' ');
   }
 
-  function hyphenize(text) {
-    return text.replace(/\s/g, '-');
-  }
-
   /* menu and navigation - wide window */
 
   function scrollTo($section) {
@@ -48,9 +48,9 @@ var Ug = function($) {
     );
   }
 
-  function $createAutolinkTo($header) {
+  function $createInternalLink($header) {
     var text = squashedTextContent($header);
-    var id = $header.closest('.js-ug-headed-section').prop('id');
+    var id = $header.closest('.js-ug-section').prop('id');
     return $('<a class="js-ug-internal-link" href="#' + id + '">' + text + '</a>');
   }
 
@@ -71,7 +71,7 @@ var Ug = function($) {
   function selectMenuItemFor($section) {
     var $link = $('nav [href="#' + $section.prop('id') + '"]');
     if ($link.size() === 0) {
-      selectMenuItemFor($section.parent().closest('.js-ug-headed-section'));
+      selectMenuItemFor($section.parent().closest('.js-ug-section'));
     } else {
       var $menuItem = $link.closest('li');
       contractMenu();
@@ -85,14 +85,14 @@ var Ug = function($) {
     var $ul = $('<ul></ul>').appendTo($nav);
     $('h2').each(function(index, header) {
       var $header = $(header);
-      var $listItem = $('<li></li>').append($createAutolinkTo($header)).appendTo($ul);
-      var $subHeaders = $header.closest('.js-ug-headed-section').find('h3');
+      var $listItem = $('<li></li>').append($createInternalLink($header)).appendTo($ul);
+      var $subHeaders = $header.closest('.js-ug-section').find('h3');
       if ($subHeaders.size() !== 0) {
         var $subList = $('<ul></ul>');
         $subHeaders.each(function(index, subHeader) {
           var $subHeader = $(subHeader);
           $('<li></li>').
-            append($createAutolinkTo($subHeader)).
+            append($createInternalLink($subHeader)).
             appendTo($subList);
         });
         $subList.appendTo($listItem);
@@ -107,7 +107,7 @@ var Ug = function($) {
   }
 
   function activateMenuItemsOnScroll() {
-    $('.js-ug-headed-section').waypoint(function(direction) {
+    $('.js-ug-section').waypoint(function(direction) {
       if (!autoScrolling) {
         var hash = window.location.hash;
         if (hash.length > 1) {
@@ -127,10 +127,7 @@ var Ug = function($) {
     if (hash.length > 0) {
       var $hashSection = $(hash);
       selectMenuItemFor($hashSection);
-      $hashSection
-        .closest('.js-ug-headed-section-major')
-        .find('.js-ug-headed-section-major-body')
-        .show();
+      $majorSectionBody($hashSection).show();
     }
   }
 
@@ -139,10 +136,7 @@ var Ug = function($) {
   function toggleMajorSection(event) {
     event.preventDefault();
     event.stopPropagation();
-    $(this)
-      .closest('.js-ug-headed-section-major')
-      .find('.js-ug-headed-section-major-body')
-      .toggle();
+    $majorSectionBody($(this)).toggle();
   }
 
   /* internal links to headed sections */
@@ -150,10 +144,7 @@ var Ug = function($) {
   function configureAutolinks() {
     $('.js-ug-internal-link').click(function(event) {
       var $section = $($(this).attr('href'));
-      $section
-        .closest('.js-ug-headed-section-major')
-        .find('.js-ug-headed-section-major-body')
-        .show();
+      $majorSectionBody($section).show();
       scrollTo($section);
     });
   }
@@ -167,18 +158,18 @@ var Ug = function($) {
       $('#ug-left-sidebar, nav').width(w);
       $('#ug-left-sidebar').show();
       $('#ug-main').css({ 'margin-left': w + 20 + 'px' });
-      $('.js-ug-headed-section-major-body').show();
+      $('.js-ug-section-major-body').show();
       $('.clickable-title').unwrap();
-      $('.js-ug-headed-section-major-title').each(function() {
+      $('.js-ug-section-major-title').each(function() {
         $(this).removeClass('clickable-title').off('click', toggleMajorSection);
       });
     } else {
       $('#ug-left-sidebar, nav').width(width);
       $('#ug-main').css({ 'margin-left': '0' });
-      $('.js-ug-headed-section-major-body').hide();
-      $('.js-ug-headed-section-major-title:not(.clickable-title)').each(function() {
+      $('.js-ug-section-major-body').hide();
+      $('.js-ug-section-major-title:not(.clickable-title)').each(function() {
         var $title = $(this);
-        var $section = $title.closest('.js-ug-headed-section');
+        var $section = $title.closest('.js-ug-section');
         var sectionId = $section.prop('id');
         $title
           .on('click', toggleMajorSection)
