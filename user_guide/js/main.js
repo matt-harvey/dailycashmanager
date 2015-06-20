@@ -18,6 +18,11 @@ var Ug = function($) {
     return (typeof width === 'undefined' ? $(window).width() : width) > 800;
   }
 
+  function inViewport(elem) {
+    var bounds = elem.getBoundingClientRect();
+    return bounds.top < window.innerHeight && bounds.bottom > 0;
+  };
+
   /* text manipulation */
 
   function squashedTextContent($element) {
@@ -104,17 +109,25 @@ var Ug = function($) {
   function activateMenuItemsOnScroll() {
     $('.js-ug-headed-section').waypoint(function(direction) {
       if (!autoScrolling) {
+        var hash = window.location.hash;
+        if (hash.length > 1) {
+          var $hashSection = $(hash);
+          if (inViewport($hashSection[0])) {
+            selectMenuItemFor($hashSection);
+            return;
+          }
+        }
         selectMenuItemFor($(this));
       }
     });
   }
 
   function expandMenuForHash() {
-    var hash = window.location.hash.substring(1);
-    if (hash) {
-      var $section = $('#' + hash);
-      selectMenuItemFor($section);
-      $section
+    var hash = window.location.hash;
+    if (hash.length > 0) {
+      var $hashSection = $(hash);
+      selectMenuItemFor($hashSection);
+      $hashSection
         .closest('.js-ug-headed-section-major')
         .find('.js-ug-headed-section-major-body')
         .show();
