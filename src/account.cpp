@@ -62,6 +62,9 @@ namespace gregorian = boost::gregorian;
 namespace dcm
 {
 
+using BalanceCacheAttorney = DcmDatabaseConnection::BalanceCacheAttorney;
+using BudgetAttorney = DcmDatabaseConnection::BudgetAttorney;
+
 namespace
 {
     // Convert a "technical balance" to a "friendly balance",
@@ -82,14 +85,6 @@ namespace
             JEWEL_HARD_ASSERT (false);
         }
     }
-
-    typedef
-        DcmDatabaseConnection::BalanceCacheAttorney
-        BalanceCacheAttorney;
-
-    typedef
-        DcmDatabaseConnection::BudgetAttorney
-        BudgetAttorney;
 
 }  // end anonymous namespace
 

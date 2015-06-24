@@ -168,7 +168,7 @@ private:
     void refresh();
     bool m_exclude_balancing_account;
     DcmDatabaseConnection& m_database_connection;
-    typedef std::map<wxString, sqloxx::Id> AccountMap;
+    using AccountMap = std::map<wxString, sqloxx::Id>;
     AccountMap m_account_map;
     std::set<AccountType> m_available_account_types;
     DECLARE_EVENT_TABLE()

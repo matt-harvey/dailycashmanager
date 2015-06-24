@@ -226,7 +226,7 @@ BalanceCache::refresh()
 void
 BalanceCache::refresh_all()
 {
-    typedef unordered_map<sqloxx::Id, Decimal::int_type> WorkingMap;
+    using WorkingMap = unordered_map<sqloxx::Id, Decimal::int_type>;
     WorkingMap working_map;
     JEWEL_ASSERT (working_map.empty());
     SQLStatement accounts_scanner

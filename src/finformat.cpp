@@ -88,8 +88,7 @@ wxString finformat_wx
     // TODO LOW PRIORITY Make this cleaner and more efficient.
     Decimal::places_type const places = decimal.places();
     Decimal::int_type const intval = decimal.intval();
-    typedef wxChar CharT;
-    static CharT const zeroc = wxChar('0');
+    static auto const zeroc = wxChar('0');
     wxString const decimal_point_s = loc.GetInfo
     (   wxLOCALE_DECIMAL_POINT,
         wxLOCALE_CAT_MONEY
@@ -99,17 +98,17 @@ wxString finformat_wx
         wxLOCALE_CAT_MONEY
     );
     // We will build it backwards.
-    deque<CharT> ret;
+    deque<wxChar> ret;
     JEWEL_ASSERT (ret.empty());
     // Special case of zero
     if (dash_for_zero && (intval == 0))
     {
-        ret.push_back(CharT('-'));
+        ret.push_back(wxChar('-'));
         if (places > 0)
         {
-            for (deque<CharT>::size_type i = 0; i != places; ++i)
+            for (deque<wxChar>::size_type i = 0; i != places; ++i)
             {
-                ret.push_back(CharT(' '));
+                ret.push_back(wxChar(' '));
             }
         }
     }
@@ -127,7 +126,7 @@ wxString finformat_wx
             tempstream << intval;
             wxtemp = std8_to_wx(tempstream.str());
             wxString::const_iterator it = wxtemp.begin();
-            JEWEL_ASSERT (*it == CharT('-'));
+            JEWEL_ASSERT (*it == wxChar('-'));
             ++it;
             wxtemp = wxString(it, wxtemp.end());
         }
@@ -208,15 +207,15 @@ wxString finformat_wx
     // Indicate negative if required
     if (intval < 0)
     {
-        ret.push_front(CharT('('));
-        ret.push_back(CharT(')'));
+        ret.push_front(wxChar('('));
+        ret.push_back(wxChar(')'));
     }
     else if (pad)
     {
-        ret.push_back(CharT(' '));
+        ret.push_back(wxChar(' '));
     }
     wxString wret;
-    for (CharT const& elem: ret) wret.Append(elem);
+    for (wxChar const& elem: ret) wret.Append(elem);
     return wret;
 }
 
@@ -230,10 +229,9 @@ wx_to_decimal
     bool const allow_parens =
         p_flags.test(string_flags::allow_negative_parens);
     wxs = wxs.Trim().Trim(false);  // trim both right and left.
-    typedef wxChar CharT;
-    static CharT const open_paren = wxChar('(');
-    static CharT const close_paren = wxChar(')');
-    static CharT const minus_sign = wxChar('-');
+    static auto const open_paren = wxChar('(');
+    static auto const close_paren = wxChar(')');
+    static auto const minus_sign = wxChar('-');
     wxString const decimal_point_s = loc.GetInfo
     (   wxLOCALE_DECIMAL_POINT,
         wxLOCALE_CAT_MONEY

@@ -49,10 +49,8 @@ class Entry:
 {
 public:
 
-    typedef sqloxx::PersistentObject<Entry, DcmDatabaseConnection>
-        PersistentObject;
-
-    typedef sqloxx::IdentityMap<Entry> IdentityMap;
+    using PersistentObject = sqloxx::PersistentObject<Entry, DcmDatabaseConnection>;
+    using IdentityMap = sqloxx::IdentityMap<Entry>;
     
     /*
      * Set up tables in the database required for the persistence of

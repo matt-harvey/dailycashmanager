@@ -346,7 +346,7 @@ private:
     void push_back_entry(sqloxx::Handle<Entry> const& p_entry);
 
     // To remember which Entries have been added.
-    typedef std::unordered_set<sqloxx::Id> IdSet;
+    using IdSet = std::unordered_set<sqloxx::Id>;
     IdSet m_id_set;
 
     DcmDatabaseConnection& m_database_connection;

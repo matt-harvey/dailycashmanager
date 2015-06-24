@@ -40,25 +40,21 @@ namespace dcm
  * May be used in some of the below functions to manage boolean
  * options. See \e jewel::FlagSet for interface.
  */
-typedef
-    jewel::FlagSet
-    <   string_flags::StringFlags,
-        string_flags::dash_for_zero | string_flags::hard_align_right,
-        string_flags::dash_for_zero  // default
-    >
-    DecimalFormatFlags;
+using DecimalFormatFlags = jewel::FlagSet
+<   string_flags::StringFlags,
+    string_flags::dash_for_zero | string_flags::hard_align_right,
+    string_flags::dash_for_zero  // default
+>;
 
 /**
  * May be used in some of the below functions to manage boolean
  * options. See \e jewel::FlagSet for interface.
  */
-typedef
-    jewel::FlagSet
-    <   string_flags::StringFlags,
-        string_flags::allow_negative_parens,
-        string_flags::allow_negative_parens  // default
-    >
-    DecimalParsingFlags;
+using DecimalParsingFlags = jewel::FlagSet
+<   string_flags::StringFlags,
+    string_flags::allow_negative_parens,
+    string_flags::allow_negative_parens  // default
+>;
 
 /**
  * @returns decimal formatted as a wxString, with parentheses

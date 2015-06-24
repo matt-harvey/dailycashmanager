@@ -524,7 +524,7 @@ BudgetPanel::update_budget_summary()
 void
 BudgetPanel::update_budgets_from_dialog_without_saving()
 {
-    typedef vector<Handle<BudgetItem> > ItemVec;
+    using ItemVec = vector<Handle<BudgetItem>>;
 
     // Make m_budget_items match the BudgetItems implied by
     // m_budget_item_components (what is shown in the BudgetPanel).

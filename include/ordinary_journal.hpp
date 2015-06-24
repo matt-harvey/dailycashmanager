@@ -53,7 +53,7 @@ namespace sqloxx
 template <>
 struct PersistenceTraits<dcm::OrdinaryJournal>
 {
-    typedef dcm::PersistentJournal Base;
+    using Base = dcm::PersistentJournal;
 };
 
 }  // namespace sqloxx

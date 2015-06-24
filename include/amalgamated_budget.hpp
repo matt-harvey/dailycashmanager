@@ -103,7 +103,7 @@ public:
 
 private:
 
-    typedef std::unordered_map<sqloxx::Id, jewel::Decimal> Map;
+    using Map = std::unordered_map<sqloxx::Id, jewel::Decimal>;
 
     void regenerate_map();
 

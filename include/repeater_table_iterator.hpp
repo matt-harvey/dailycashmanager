@@ -24,9 +24,7 @@
 namespace dcm
 {
 
-typedef
-    sqloxx::TableIterator<sqloxx::Handle<Repeater> >
-    RepeaterTableIterator;
+using RepeaterTableIterator = sqloxx::TableIterator<sqloxx::Handle<Repeater>>;
 
 }  // namespace dcm
 

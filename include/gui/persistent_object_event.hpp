@@ -217,9 +217,7 @@ END_DECLARE_EVENT_TYPES()
 
 // Various boilerplate called for by the wxWidgets event system.
 
-typedef
-    void (wxEvtHandler::*PersistentObjectEventFunction)
-    (PersistentObjectEvent&);
+using PersistentObjectEventFunction = void (wxEvtHandler::*)(PersistentObjectEvent&);
 
 #define DCM_EVT_ACCOUNT_CREATING(id, fn) \
     DECLARE_EVENT_TABLE_ENTRY( DCM_ACCOUNT_CREATING_EVENT, id, -1, \

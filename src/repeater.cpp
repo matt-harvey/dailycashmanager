@@ -211,7 +211,7 @@ gregorian::date
 Repeater::next_date(vector<gregorian::date>::size_type n)
 {
     load();
-    typedef vector<gregorian::date>::size_type Size;
+    using Size = vector<gregorian::date>::size_type;
     using gregorian::date;
     using gregorian::date_duration;
     date ret = boost_date_from_julian_int(value(m_data->next_date));

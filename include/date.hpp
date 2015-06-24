@@ -40,7 +40,7 @@ namespace dcm
  * aspects of exception-safety) MAY rely on the non-throwing
  * copying behaviour that comes with DateRep being a native type.
  */
-typedef int DateRep;
+using DateRep = int;
 
 /**
  * Returns \c true iff \c date is a valid

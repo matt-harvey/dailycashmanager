@@ -25,9 +25,7 @@
 namespace dcm
 {
 
-typedef 
-    sqloxx::TableIterator<sqloxx::Handle<BudgetItem> >
-    BudgetItemTableIterator;
+using BudgetItemTableIterator = sqloxx::TableIterator<sqloxx::Handle<BudgetItem>>;
 
 }  // namespace dcm
 

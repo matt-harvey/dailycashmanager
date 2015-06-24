@@ -99,12 +99,7 @@ public:
 
 private:
 
-    typedef
-        std::unordered_map
-        <    sqloxx::Id,
-            boost::optional<jewel::Decimal>
-        >
-        Map;
+    using Map = std::unordered_map<sqloxx::Id, boost::optional<jewel::Decimal>>;
         
     void refresh();
     void refresh_all();

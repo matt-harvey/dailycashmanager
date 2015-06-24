@@ -25,9 +25,7 @@
 namespace dcm
 {
 
-typedef
-    sqloxx::TableIterator<sqloxx::Handle<Entry> >
-    EntryTableIterator;
+using EntryTableIterator = sqloxx::TableIterator<sqloxx::Handle<Entry>>;
 
 /**
  * Returns an EntryTableIterator that reads in date ordered all and only

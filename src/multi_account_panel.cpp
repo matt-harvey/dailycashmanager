@@ -66,7 +66,7 @@ namespace
     {
         vector<Handle<Account>> ret;
         JEWEL_ASSERT (ret.empty());
-        typedef vector<AccountType> ATypeVec;
+        using ATypeVec = vector<AccountType>;
         ATypeVec const& account_types = dcm::account_types(p_account_super_type);
         for (AccountType atype: account_types)
         {

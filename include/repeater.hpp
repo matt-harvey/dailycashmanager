@@ -66,16 +66,8 @@ class Repeater:
 {
 public:
     
-    typedef sqloxx::PersistentObject
-    <    Repeater,
-        DcmDatabaseConnection
-    >    PersistentObject;
-
-    /**
-     * Sets up tables in the database required for the persistence
-     * of Repeater objects.
-     */
-    typedef sqloxx::IdentityMap<Repeater> IdentityMap;
+    using PersistentObject = sqloxx::PersistentObject<Repeater, DcmDatabaseConnection>;
+    using IdentityMap = sqloxx::IdentityMap<Repeater>;
 
     static void setup_tables(DcmDatabaseConnection& dbc);
 

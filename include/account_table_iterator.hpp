@@ -24,9 +24,7 @@
 namespace dcm
 {
 
-typedef
-    sqloxx::TableIterator<sqloxx::Handle<Account> >
-    AccountTableIterator;
+using AccountTableIterator = sqloxx::TableIterator<sqloxx::Handle<Account>>;
 
 /**
  * @returns an AccountTableIterator that iterates over all Accounts

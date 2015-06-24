@@ -116,7 +116,7 @@ namespace
      */
     string filename_extension(string const& s)
     {
-        typedef string::const_iterator Iter;
+        using Iter = string::const_iterator;
         Iter rev = s.end();
         while (rev != s.begin() && *rev != '.') --rev;
         if (rev == s.begin())

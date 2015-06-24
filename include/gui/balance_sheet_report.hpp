@@ -78,7 +78,7 @@ private:
         jewel::Decimal closing_balance;
     };
 
-    typedef std::unordered_map<sqloxx::Id, BalanceDatum> BalanceMap;
+    using BalanceMap = std::unordered_map<sqloxx::Id, BalanceDatum>;
     BalanceMap m_balance_map;
 
 };  // class BalanceSheetReport
