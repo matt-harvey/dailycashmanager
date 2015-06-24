@@ -1,4 +1,4 @@
-Copyright 2012, 2013 Matthew Harvey
+Copyright 2012, 2013, 2015 Matthew Harvey
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,6 +16,13 @@ Style guide
 ===========
 
 **Conditional statements**::
+
+    // don't do this
+
+    if (some_condition)
+        not_ok();
+
+    // these are OK
 
     if (some_condition) this_is_acceptable();
     
@@ -40,9 +47,9 @@ Style guide
 
 **Function calls**::
 
-    int x = some_function_call(3, y, some_other_thing(y));
+    auto x = some_function_call(3, y, some_other_thing(y));
 
-    int x = some_quite_long_function_call
+    auto x = some_quite_long_function_call
     (	with,
         lots,
         of,
@@ -74,3 +81,20 @@ Style guide
 
 All exception classes should be derived from std::exception (either directly
 or indirectly).
+
+**Typedefs**::
+
+    // don't do
+    typedef Blah Bloob;
+
+    // do do
+    using Boob = Blah;
+
+**Auto**::
+
+Use auto unless there's a really good reason not to. Even if you need to
+initialize a variable of one type by converting from another type, still prefer
+auto - with a static_cast to make the conversion extra-obvious::
+
+  auto const x = static_cast<int>(function_returning_a_double());
+
