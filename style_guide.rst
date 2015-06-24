@@ -79,7 +79,7 @@ Style guide
     things  // name of SQL table
     thing_id  // name of primary key
     thing_id  // name of foreign key
-    thing_property // name of ordinary column
+    attribute // name of ordinary column
 
 **Exceptions**
 
