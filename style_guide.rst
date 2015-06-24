@@ -22,6 +22,10 @@ Style guide
     if (some_condition)
         not_ok();
 
+    if (some_condition) {
+        not_ok();
+    }
+
     // these are OK
 
     if (some_condition) this_is_acceptable();
@@ -53,7 +57,7 @@ Style guide
     (	with,
         lots,
         of,
-        arguments_that_don't_fit_on,
+        arguments_that_do_not_fit_on,
         one_line
     );
 
@@ -67,7 +71,7 @@ Style guide
     GUARD_header_guard_hpp
     m_member_variable
     s_static_class_variable
-    p_parameter_if_required_to_distinguish_from_member_variable
+    p_parameter
     EnumName
     StructName
     MACRO
