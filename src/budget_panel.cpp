@@ -312,6 +312,7 @@ BudgetPanel::BudgetPanel
 
 BudgetPanel::~BudgetPanel()
 {
+    for (auto const& bi: m_budget_items) bi->ghostify();
 }
 
 void
