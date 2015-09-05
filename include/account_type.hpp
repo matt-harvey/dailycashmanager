@@ -59,7 +59,10 @@ std::vector<AccountSuperType> const&
 account_super_types();
 
 std::vector<AccountType> const&
-account_types(AccountSuperType p_account_super_type);
+account_types
+(   AccountSuperType p_account_super_type,
+    bool p_expense_first = true
+);
 
 std::vector<wxString> const&
 account_type_names();

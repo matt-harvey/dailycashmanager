@@ -64,9 +64,14 @@ account_types()
 }
 
 vector<AccountType> const&
-account_types(AccountSuperType p_account_super_type)
+account_types(AccountSuperType p_account_super_type, bool p_expense_first)
 {
-    static vector<AccountType> const pl_ret
+    static vector<AccountType> const pl_ret_expense_first
+    {   AccountType::expense,
+        AccountType::revenue,
+        AccountType::pure_envelope
+    };
+    static vector<AccountType> const pl_ret_logical
     {   AccountType::revenue,
         AccountType::expense,
         AccountType::pure_envelope
@@ -79,7 +84,7 @@ account_types(AccountSuperType p_account_super_type)
     switch (p_account_super_type)
     {
     case AccountSuperType::pl:
-        return pl_ret;
+        return p_expense_first ? pl_ret_expense_first : pl_ret_logical;
     case AccountSuperType::balance_sheet:
         return bs_ret;
     default:

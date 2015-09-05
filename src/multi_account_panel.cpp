@@ -67,7 +67,7 @@ namespace
         vector<Handle<Account>> ret;
         JEWEL_ASSERT (ret.empty());
         using ATypeVec = vector<AccountType>;
-        ATypeVec const& account_types = dcm::account_types(p_account_super_type);
+        ATypeVec const& account_types = dcm::account_types(p_account_super_type, false);
         for (AccountType atype: account_types)
         {
             make_default_accounts(p_database_connection, ret, atype);
