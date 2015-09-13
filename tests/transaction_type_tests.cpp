@@ -31,8 +31,8 @@ namespace dcm
 namespace test
 {
 
-using Vec =  vector<AccountType>;
-using Size = Vec::size_type;
+typedef vector<AccountType> Vec;
+typedef Vec::size_type Size;
 
 BOOST_AUTO_TEST_CASE(TestSourceAccountTypesExpenditureTransaction)
 {

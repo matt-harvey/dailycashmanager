@@ -489,7 +489,10 @@ DcmDatabaseConnection::supports_budget_frequency
 
 // BalanceCacheAttorney
 
-using BalanceCacheAttorney = DcmDatabaseConnection::BalanceCacheAttorney;
+typedef
+    DcmDatabaseConnection::BalanceCacheAttorney
+    BalanceCacheAttorney;
+
 
 void
 BalanceCacheAttorney::mark_as_stale
@@ -537,7 +540,9 @@ BalanceCacheAttorney::technical_opening_balance
 
 // BudgetAttorney
 
-using BudgetAttorney = DcmDatabaseConnection::BudgetAttorney;
+typedef
+    DcmDatabaseConnection::BudgetAttorney
+    BudgetAttorney;
 
 void
 BudgetAttorney::regenerate

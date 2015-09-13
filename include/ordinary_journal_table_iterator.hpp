@@ -24,7 +24,10 @@
 namespace dcm
 {
 
-using OrdinaryJournalTableIterator = sqloxx::TableIterator<sqloxx::Handle<OrdinaryJournal>>;
+typedef
+    sqloxx::TableIterator<sqloxx::Handle<OrdinaryJournal> >
+    OrdinaryJournalTableIterator;
+
 
 }  // namespace dcm
 

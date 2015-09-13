@@ -61,8 +61,10 @@ class Account:
 {
 public:
     
-    using PersistentObject = sqloxx::PersistentObject<Account, DcmDatabaseConnection>;
-    using IdentityMap = sqloxx::IdentityMap<Account>;
+    typedef sqloxx::PersistentObject<Account, DcmDatabaseConnection>
+        PersistentObject;
+
+    typedef sqloxx::IdentityMap<Account> IdentityMap;
 
     /**
      * Sets up tables in the database required for the persistence of
@@ -307,12 +309,14 @@ private:
  * \e account_concepts_phrase functions. For interface, see
  * documentation for \e jewel::FlagSet, in the Jewel library.
  */
-using AccountPhraseFlags = jewel::FlagSet
-<   string_flags::StringFlags,
-    string_flags::capitalize |
-    string_flags::include_article |
-    string_flags::pluralize
->;
+typedef
+    jewel::FlagSet
+    <    string_flags::StringFlags,
+        string_flags::capitalize |
+        string_flags::include_article |
+        string_flags::pluralize
+    >
+    AccountPhraseFlags;
 
 /**
  * @returns "account", "category" or some such string to describe

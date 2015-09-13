@@ -49,7 +49,10 @@ using std::vector;
 namespace dcm
 {
 
-using BudgetAttorney = DcmDatabaseConnection::BudgetAttorney;
+typedef
+    DcmDatabaseConnection::BudgetAttorney
+    BudgetAttorney;
+
 
 struct BudgetItem::BudgetItemData
 {

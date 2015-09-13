@@ -24,7 +24,7 @@ namespace dcm
 namespace gui
 {
 
-using ReconciliationListPanel =  EntryListPanel;
+typedef EntryListPanel ReconciliationListPanel;
 
 }  // namespace gui
 }  // namespace dcm

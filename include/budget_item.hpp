@@ -57,8 +57,12 @@ class BudgetItem:
 {
 public:
     
-    using PersistentObject = sqloxx::PersistentObject<BudgetItem, DcmDatabaseConnection>;
-    using IdentityMap = sqloxx::IdentityMap<BudgetItem>;
+    typedef
+        sqloxx::PersistentObject<BudgetItem, DcmDatabaseConnection>
+        PersistentObject;
+
+    typedef
+        sqloxx::IdentityMap<BudgetItem> IdentityMap;
 
     /**
      * Set up tables in the database required for the persistence of

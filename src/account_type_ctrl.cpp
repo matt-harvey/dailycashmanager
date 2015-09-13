@@ -72,7 +72,7 @@ AccountTypeCtrl::AccountTypeCtrl
     m_account_super_type(p_account_super_type),
     m_database_connection(p_database_connection)
 {
-    using ATypeVec = vector<AccountType>;
+    typedef vector<AccountType> ATypeVec;
     ATypeVec const& atypes = account_types(m_account_super_type);
     for (AccountType const elem: atypes)
     {

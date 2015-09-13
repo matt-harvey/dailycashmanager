@@ -25,7 +25,11 @@
 namespace dcm
 {
 
-using DraftJournalTableIterator = sqloxx::TableIterator<sqloxx::Handle<DraftJournal>>;
+
+typedef
+    sqloxx::TableIterator<sqloxx::Handle<DraftJournal> >
+    DraftJournalTableIterator;
+
 
 /**
  * @returns DraftJournalTableIterator that reads all DraftJournals in

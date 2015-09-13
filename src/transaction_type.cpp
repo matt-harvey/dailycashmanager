@@ -48,7 +48,7 @@ using std::vector;
 // Anonymous namespace
 namespace
 {
-    using AccountTypeSet = set<AccountType>;
+    typedef set<AccountType> AccountTypeSet;
 
     AccountTypeSet available_account_types
     (   DcmDatabaseConnection& p_database_connection
@@ -126,8 +126,8 @@ available_transaction_types
     bool p_include_non_actual
 )
 {
-    using TTypeVec = vector<TransactionType>;
-    using ATypeVec = vector<AccountType>;
+    typedef vector<TransactionType> TTypeVec;
+    typedef vector<AccountType> ATypeVec;
 
     TTypeVec ret;
 
@@ -204,9 +204,9 @@ transaction_type_to_verb(TransactionType p_transaction_type)
 TransactionType
 transaction_type_from_verb(wxString const& p_phrase)
 {
-    using Dict = map<wxString, TransactionType>;
+    typedef map<wxString, TransactionType> Dict;
     static Dict dict;
-    static auto calculated_already = false;
+    static bool calculated_already = false;
     if (!calculated_already)
     {
         JEWEL_ASSERT (dict.empty());

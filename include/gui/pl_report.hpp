@@ -77,7 +77,7 @@ private:
 
     void display_body();
 
-    using Map = std::unordered_map<sqloxx::Id, jewel::Decimal>;
+    typedef std::unordered_map<sqloxx::Id, jewel::Decimal> Map;
     Map m_map;
 
 };  // class PLReport

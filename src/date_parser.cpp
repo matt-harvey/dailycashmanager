@@ -84,7 +84,7 @@ namespace
     map<char, DateComponentType> const&
     ordinary_date_format_chars_map()
     {
-        using Map = map<char, DateComponentType>;
+        typedef map<char, DateComponentType> Map;
         static Map ret;
         if (ret.empty())
         {

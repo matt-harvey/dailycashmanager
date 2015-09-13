@@ -161,7 +161,7 @@ private:
 
     wxSize m_text_ctrl_size;
 
-    using ATypeVec = std::vector<AccountType>;
+    typedef std::vector<AccountType> ATypeVec;
     std::unique_ptr<ATypeVec> m_available_account_types;
 
     wxGridBagSizer* m_top_sizer;

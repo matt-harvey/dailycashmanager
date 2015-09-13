@@ -235,9 +235,11 @@ EntryGroupCtrl::primary_amount() const
 vector<Handle<Entry> >
 EntryGroupCtrl::make_entries() const
 {
-    auto const sz = m_entry_rows.size();
-    vector<Handle<Entry>> ret;
-    for (auto i = decltype(sz){0}; i != sz; ++i)
+    typedef std::vector<Handle<Entry> >::size_type Size;
+    Size const sz = m_entry_rows.size();
+
+    vector<Handle<Entry> > ret;
+    for (Size i = 0; i != sz; ++i)
     {
         EntryRow const& entry_row = m_entry_rows[i];
         Handle<Entry> const entry = entry_row.entry;

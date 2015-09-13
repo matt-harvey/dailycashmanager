@@ -52,8 +52,15 @@ class PersistentJournal:
 {
 public:
 
-    using PersistentObject = sqloxx::PersistentObject<PersistentJournal, DcmDatabaseConnection >;
-    using IdentityMap = sqloxx::IdentityMap<PersistentJournal>;
+    typedef
+        sqloxx::PersistentObject
+        <    PersistentJournal,
+            DcmDatabaseConnection
+        >
+        PersistentObject;
+    
+    typedef
+        sqloxx::IdentityMap<PersistentJournal> IdentityMap;
     
     static void setup_tables(DcmDatabaseConnection& dbc);
 

@@ -57,8 +57,13 @@ class Commodity:
 
 public:
 
-    using PersistentObject = sqloxx::PersistentObject<Commodity, DcmDatabaseConnection>;
-    using IdentityMap = sqloxx::IdentityMap<Commodity>;
+    typedef sqloxx::PersistentObject
+        <    Commodity,
+            DcmDatabaseConnection
+        >
+        PersistentObject;
+
+    typedef sqloxx::IdentityMap<Commodity> IdentityMap;
 
     /**
      * Set up tables required in the database for the persistence of
