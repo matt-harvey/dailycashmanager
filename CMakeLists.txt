@@ -23,8 +23,8 @@ set (executable_stem_name "dailycashmanager")
 set (file_extension ".dcm")
 project (${application_name})
 set (version_major 1)
-set (version_minor 2)
-set (version_patch 1)
+set (version_minor 3)
+set (version_patch 0)
 
 # Custom configuration options
 
@@ -335,7 +335,7 @@ set (CPACK_PACKAGE_VERSION_MINOR "${version_minor}")
 set (CPACK_PACKAGE_VERSION_PATCH "${version_patch}")
 set (
     CPACK_PACKAGE_VERSION
-    "v${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-working"
+    "v${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}"
 )
 
 if (WIN32)

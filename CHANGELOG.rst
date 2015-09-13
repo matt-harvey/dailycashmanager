@@ -1,6 +1,15 @@
 Changelog for DailyCashManager
 ==============================
 
+v1.3.0:
+
+- Default type for new envelopes is now expense, not revenue.
+- Fixed bug where budget items were not reset to previous value after
+  cancelling and then reopening dialog. (Even though cancelled changes were
+  not actually saved, they were still reappearing in the dialog when reopened.)
+- Minor changes to user guide.
+- Minor code tidy-ups.
+
 v1.2.0:
 
 - Completely new layout for user guide: now on a single page to facilitate
