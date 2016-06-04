@@ -59,8 +59,8 @@ locations:
 :Tcl:                       http://tcl.tk
 :CMake:                     http://www.cmake.org
 :Boost:                        http://www.boost.org
-:Jewel:                     https://github.com/skybaboon/jewel
-:Sqloxx:                    https://github.com/skybaboon/sqloxx
+:Jewel:                     https://github.com/matt-harvey/jewel
+:Sqloxx:                    https://github.com/matt-harvey/sqloxx
 :Doxygen:                    http://www.stack.nl/~dimitri/doxygen
 :NSIS:                      http://nsis.sourceforge.net
 
